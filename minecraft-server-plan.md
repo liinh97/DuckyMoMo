@@ -26,6 +26,7 @@
 | 5 | **Chế độ chủ lực đầu tiên (đề xuất): "Bang hội chiến"**, tức Factions kiểu mới, chạy theo mùa | Khớp sở thích và văn hóa bang hội hay công thành của người chơi Việt. *Cần xác nhận lại khi thiết kế luật chơi* |
 | 6 | **Giai đoạn đầu chạy trên máy nhà**, chưa thuê máy chủ | Chưa cần tối ưu cho người chơi. Gần như 0 đồng |
 | 7 | **Kiếm tiền theo đúng luật Mojang**: chỉ bán đồ trang trí và tiện ích nhỏ, **không pay-to-win** | Bền vững lâu dài, có thể làm content hay hợp tác. Pay-to-win khiến server chết nhanh |
+| 8 | **Chạy toàn bộ bằng Docker Compose** (không dùng Pterodactyl): mỗi thành phần và mỗi chế độ một file `compose.yaml`, file gốc gom lại bằng `include` | Giống nhau giữa máy nhà và máy thuê, cấu hình nằm trong Git, thêm chế độ chỉ là thêm 1 thư mục + 1 dòng include |
 
 ---
 
@@ -118,7 +119,8 @@ Không nên chọn Crystal PvP (điện thoại khó chơi) hay Cobblemon (cần
 ## 5. Công cụ sẽ dùng
 
 ### Hạ tầng (đều miễn phí, trừ sao lưu)
-- Ubuntu Server, Docker, **Pterodactyl Panel**
+- Ubuntu Server (hoặc Windows + Docker Desktop/WSL2 khi chạy máy nhà), **Docker + Docker Compose**
+- Image: **`itzg/minecraft-server`** (Paper, Fabric), **`itzg/mc-proxy`** (Velocity), `mariadb`, `redis`, `itzg/mc-backup` (sao lưu)
 - **Velocity** (proxy), **Paper** hoặc Purpur, **Geyser + Floodgate**, ViaVersion
 - **MariaDB + Redis**
 - Sao lưu: restic hoặc rclone, đẩy lên kho lưu trữ đám mây (khoảng 50–100k/tháng)
@@ -168,7 +170,7 @@ Không nên chọn Crystal PvP (điện thoại khó chơi) hay Cobblemon (cần
   - **playit.gg** (khuyên dùng giai đoạn thử): hỗ trợ cả Java (TCP) lẫn Bedrock (UDP), giấu IP nhà, có gói miễn phí.
   - TCPShield: chỉ hỗ trợ Java, không hợp với người chơi điện thoại.
   - VPS rẻ chạy Velocity, kết nối về máy nhà qua WireGuard: khoảng 100–200k/tháng, giấu IP hoàn toàn.
-- **Để sau này chuyển máy dễ**: chạy bằng Docker hoặc Pterodactyl, lưu cấu hình bằng Git, sao lưu định kỳ, dùng tên miền riêng từ đầu (ví dụ `play.tenserver.vn`).
+- **Để sau này chuyển máy dễ**: chạy bằng **Docker Compose**, lưu cấu hình bằng Git (dữ liệu trong `data/` và mật khẩu trong `.env` không commit), sao lưu định kỳ, dùng tên miền riêng từ đầu (ví dụ `play.tenserver.vn`).
 
 ---
 
@@ -219,7 +221,7 @@ Các hướng khác đã cân nhắc nhưng chưa chọn: game trên Roblox, ser
 - [ ] **Kiểm tra máy nhà**: CPU, RAM, ổ cứng, hệ điều hành (Windows hay Linux). Kiểm tra mạng có bị CGNAT không.
 - [ ] **Thiết kế luật chơi Bang hội chiến**: lập bang, chiếm đất, lịch công thành, combat, phần thưởng mùa, luật chống lạm dụng.
 - [ ] **Chọn nền tảng kỹ thuật cho bang chiến**: Towny + SiegeWar, hay Factions kèm phần tự viết. Nên thử cả hai trên máy nhà.
-- [ ] **Dựng khung network trên máy nhà**: Docker hoặc Pterodactyl, Velocity, Geyser + Floodgate, lobby, MariaDB, LuckPerms.
+- [ ] **Dựng khung network trên máy nhà bằng Docker Compose**: `infra` (MariaDB, Redis), `proxy` (Velocity + Geyser + Floodgate), `lobby`, LuckPerms. File mẫu ở mục 6 của `network-architecture.md`.
 - [ ] Cài và cấu hình chế độ Bang hội chiến cùng các plugin đi kèm.
 - [ ] Đưa cấu hình lên Git, thiết lập sao lưu.
 - [ ] Mua tên miền và trỏ qua playit.gg.
@@ -251,4 +253,4 @@ Các hướng khác đã cân nhắc nhưng chưa chọn: game trên Roblox, ser
 
 ## Gợi ý "Project instructions" khi tạo Claude Project mới
 
-> Tôi đang xây dựng một network server Minecraft cho người chơi Việt Nam (Java Paper + Geyser/Floodgate cho Bedrock, proxy Velocity). Chế độ chủ lực đầu tiên là "Bang hội chiến" (Factions kiểu mới: chiến tranh theo lịch, theo mùa, combat 1.8). Giai đoạn đầu chạy trên máy nhà qua playit.gg. Kiếm tiền tuân thủ Minecraft Usage Guidelines (không pay-to-win, không bán cape). Tôi là dev, đã có app quản lý bán hàng (đơn hàng, sản phẩm, khách hàng, báo cáo, thuế, kết nối bên thứ 3, đa cửa hàng) và muốn tận dụng cho web store và thanh toán (VietQR, thẻ cào qua DotMan). Xem file kế hoạch đính kèm để biết các quyết định đã chốt, công cụ, chi phí và việc cần làm. Hãy trả lời bằng tiếng Việt, thực tế, và nói rõ khi thông tin cần kiểm tra lại.
+> Tôi đang xây dựng một network server Minecraft cho người chơi Việt Nam (Java Paper + Geyser/Floodgate cho Bedrock, proxy Velocity), chạy toàn bộ bằng Docker Compose. Chế độ chủ lực đầu tiên là "Bang hội chiến" (Factions kiểu mới: chiến tranh theo lịch, theo mùa, combat 1.8). Giai đoạn đầu chạy trên máy nhà qua playit.gg. Kiếm tiền tuân thủ Minecraft Usage Guidelines (không pay-to-win, không bán cape). Tôi là dev, đã có app quản lý bán hàng (đơn hàng, sản phẩm, khách hàng, báo cáo, thuế, kết nối bên thứ 3, đa cửa hàng) và muốn tận dụng cho web store và thanh toán (VietQR, thẻ cào qua DotMan). Xem file kế hoạch đính kèm để biết các quyết định đã chốt, công cụ, chi phí và việc cần làm. Hãy trả lời bằng tiếng Việt, thực tế, và nói rõ khi thông tin cần kiểm tra lại.

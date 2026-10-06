@@ -1,0 +1,26 @@
+services:
+  proxy:
+    image: itzg/mc-proxy   # khi chạy thật nên ghim tag cụ thể
+    restart: unless-stopped
+    environment:
+      TYPE: VELOCITY
+      MEMORY: 1G
+      TZ: Asia/Ho_Chi_Minh
+      # Plugin proxy tải từ trang chính thức của GeyserMC
+      PLUGINS: |
+        https://download.geysermc.org/v2/projects/geyser/versions/latest/builds/latest/downloads/velocity
+        https://download.geysermc.org/v2/projects/floodgate/versions/latest/builds/latest/downloads/velocity
+      # Biến CFG_* được thay vào ${CFG_...} trong các file ở proxy/config khi khởi động
+      CFG_VELOCITY_SECRET: ${VELOCITY_SECRET:?Chưa đặt VELOCITY_SECRET trong .env}
+      # Thêm đuôi "secret" để file forwarding.secret cũng được thay biến
+      REPLACE_ENV_SUFFIXES: yml,yaml,txt,cfg,conf,properties,hjson,json,tml,toml,secret
+    ports:
+      - "${JAVA_PORT:-25565}:25577"          # Java
+      - "${BEDROCK_PORT:-19132}:19132/udp"   # Bedrock (điện thoại) qua Geyser
+    volumes:
+      - ./config:/config:ro        # velocity.toml, forwarding.secret (mẫu) - có trong Git
+      - ./plugins:/plugins:ro      # cấu hình plugin proxy, jar tải tay (nếu có)
+      - ../data/proxy:/server      # dữ liệu chạy
+    depends_on:
+      lobby:
+        condition: service_started

@@ -1,0 +1,39 @@
+services:
+  lobby:
+    image: itzg/minecraft-server   # khi chạy thật nên ghim tag cụ thể
+    restart: unless-stopped
+    environment:
+      EULA: "TRUE"
+      TYPE: PAPER
+      VERSION: ${MC_VERSION:-LATEST}
+      MEMORY: 2G
+      TZ: Asia/Ho_Chi_Minh
+      ONLINE_MODE: "FALSE"        # proxy lo xác thực; server con không mở cổng ra ngoài
+      MOTD: "DuckyMoMo Lobby"
+      # Lobby: thế giới phẳng, an toàn, không quái
+      LEVEL_TYPE: minecraft:flat
+      GENERATE_STRUCTURES: "FALSE"
+      MODE: adventure
+      DIFFICULTY: peaceful
+      SPAWN_MONSTERS: "FALSE"
+      ALLOW_NETHER: "FALSE"
+      VIEW_DISTANCE: "6"
+      # Plugin tải tự động từ Modrinth
+      MODRINTH_PROJECTS: |
+        luckperms
+      # Biến cho các file cấu hình trong ./config và ./plugins
+      CFG_SERVER_NAME: lobby
+      CFG_VELOCITY_SECRET: ${VELOCITY_SECRET}
+      CFG_DB_USER: ${DB_USER}
+      CFG_DB_PASSWORD: ${DB_PASSWORD}
+      CFG_REDIS_PASSWORD: ${REDIS_PASSWORD}
+    mem_limit: 3g
+    volumes:
+      - ../data/lobby:/data
+      - ./config:/config:ro        # -> /data/config (paper-global.yml…)
+      - ./plugins:/plugins:ro      # -> /data/plugins (cấu hình plugin, jar tải tay)
+    depends_on:
+      mariadb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy

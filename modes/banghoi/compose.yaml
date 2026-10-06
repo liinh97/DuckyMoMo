@@ -1,0 +1,35 @@
+services:
+  banghoi-1:
+    image: itzg/minecraft-server
+    restart: unless-stopped
+    environment:
+      EULA: "TRUE"
+      TYPE: PAPER
+      VERSION: ${MC_VERSION:-LATEST}
+      MEMORY: 4G
+      TZ: Asia/Ho_Chi_Minh
+      ONLINE_MODE: "FALSE"
+      MOTD: "Bang Hoi Chien"
+      DIFFICULTY: normal
+      VIEW_DISTANCE: "8"
+      SIMULATION_DISTANCE: "6"
+      # Plugin tải tự động từ Modrinth. Plugin không có trên Modrinth: đặt .jar vào ./server/plugins
+      MODRINTH_PROJECTS: |
+        luckperms
+        worldedit
+        chunky
+      CFG_SERVER_NAME: banghoi-1
+      CFG_VELOCITY_SECRET: ${VELOCITY_SECRET}
+      CFG_DB_USER: ${DB_USER}
+      CFG_DB_PASSWORD: ${DB_PASSWORD}
+      CFG_REDIS_PASSWORD: ${REDIS_PASSWORD}
+    mem_limit: 5g
+    volumes:
+      - ../../data/banghoi-1:/data
+      - ./server/config:/config:ro
+      - ./server/plugins:/plugins:ro
+    depends_on:
+      mariadb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy

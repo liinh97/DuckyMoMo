@@ -1,0 +1,30 @@
+# Khuôn mẫu chế độ Paper. Dùng ./ops/new-mode.sh <id> để tạo chế độ mới từ khuôn này.
+services:
+  __MODE_ID__-1:
+    image: itzg/minecraft-server
+    profiles: ["__MODE_ID__"]     # đang thử: chỉ chạy khi --profile __MODE_ID__. Bỏ dòng này khi mở chính thức
+    restart: unless-stopped
+    environment:
+      EULA: "TRUE"
+      TYPE: PAPER
+      VERSION: ${MC_VERSION:-LATEST}
+      MEMORY: 3G
+      TZ: Asia/Ho_Chi_Minh
+      ONLINE_MODE: "FALSE"
+      MODRINTH_PROJECTS: |
+        luckperms
+      CFG_SERVER_NAME: __MODE_ID__-1
+      CFG_VELOCITY_SECRET: ${VELOCITY_SECRET}
+      CFG_DB_USER: ${DB_USER}
+      CFG_DB_PASSWORD: ${DB_PASSWORD}
+      CFG_REDIS_PASSWORD: ${REDIS_PASSWORD}
+    mem_limit: 4g
+    volumes:
+      - ../../data/__MODE_ID__-1:/data
+      - ./server/config:/config:ro
+      - ./server/plugins:/plugins:ro
+    depends_on:
+      mariadb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy

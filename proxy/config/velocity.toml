@@ -1,0 +1,60 @@
+# Cấu hình Velocity cho DuckyMoMo Network.
+# File này được copy vào /server khi container khởi động.
+config-version = "2.7"
+
+# Cổng bên trong container (compose.yaml ánh xạ ra cổng JAVA_PORT của máy)
+bind = "0.0.0.0:25577"
+
+motd = "<gradient:#f7b733:#fc4a1a><bold>DuckyMoMo Network</bold></gradient><newline><gray>Bang Hội Chiến - PC & điện thoại"
+show-max-players = 500
+
+# Proxy xác thực tài khoản; server con để online-mode=false và tin proxy qua secret
+online-mode = true
+force-key-authentication = true
+prevent-client-proxy-connections = false
+
+# "modern" = Velocity modern forwarding (an toàn nhất, Paper/Fabric đều hỗ trợ)
+player-info-forwarding-mode = "modern"
+forwarding-secret-file = "forwarding.secret"
+
+announce-forge = false
+kick-existing-players = false
+ping-passthrough = "DISABLED"
+sample-players-in-ping = false
+enable-player-address-logging = true
+
+[servers]
+# Tên = tên service trong Docker Compose. network-core sau này sẽ đăng ký động từ bảng network.servers.
+lobby = "lobby:25565"
+banghoi-1 = "banghoi-1:25565"
+# Bật khi chạy chế độ Pokémon (docker compose --profile pokemon up -d):
+# pokemon-1 = "pokemon-1:25565"
+
+# Người chơi vào sẽ tới lobby trước
+try = ["lobby"]
+
+[forced-hosts]
+# Ví dụ sau này: vào thẳng chế độ Pokémon bằng tên miền riêng
+# "pokemon.tenserver.vn" = ["pokemon-1"]
+
+[advanced]
+compression-threshold = 256
+compression-level = -1
+login-ratelimit = 3000
+connection-timeout = 5000
+read-timeout = 30000
+haproxy-protocol = false
+tcp-fast-open = false
+bungee-plugin-message-channel = true
+show-ping-requests = false
+failover-on-unexpected-server-disconnect = true
+announce-proxy-commands = true
+log-command-executions = false
+log-player-connections = true
+accepts-transfers = false
+
+[query]
+enabled = false
+port = 25577
+map = "Velocity"
+show-plugins = false

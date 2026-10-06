@@ -1,0 +1,2 @@
+# Script shell luôn dùng LF để chạy được khi clone trên Windows
+*.sh text eol=lf

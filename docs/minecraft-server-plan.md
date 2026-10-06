@@ -221,7 +221,7 @@ Các hướng khác đã cân nhắc nhưng chưa chọn: game trên Roblox, ser
 - [ ] **Kiểm tra máy nhà**: CPU, RAM, ổ cứng, hệ điều hành (Windows hay Linux). Kiểm tra mạng có bị CGNAT không.
 - [ ] **Thiết kế luật chơi Bang hội chiến**: lập bang, chiếm đất, lịch công thành, combat, phần thưởng mùa, luật chống lạm dụng.
 - [ ] **Chọn nền tảng kỹ thuật cho bang chiến**: Towny + SiegeWar, hay Factions kèm phần tự viết. Nên thử cả hai trên máy nhà.
-- [ ] **Dựng khung network trên máy nhà bằng Docker Compose**: `infra` (MariaDB, Redis), `proxy` (Velocity + Geyser + Floodgate), `lobby`, LuckPerms. File mẫu ở mục 6 của `network-architecture.md`.
+- [ ] **Dựng khung network trên máy nhà bằng Docker Compose**: `infra` (MariaDB, Redis), `proxy` (Velocity + Geyser + Floodgate), `lobby`, LuckPerms. **Đã dựng khung trong repo (xem `README.md`)**, còn chạy lần đầu trên máy nhà.
 - [ ] Cài và cấu hình chế độ Bang hội chiến cùng các plugin đi kèm.
 - [ ] Đưa cấu hình lên Git, thiết lập sao lưu.
 - [ ] Mua tên miền và trỏ qua playit.gg.

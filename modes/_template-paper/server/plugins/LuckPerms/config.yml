@@ -1,0 +1,20 @@
+# LuckPerms - chỉ ghi các mục cần đổi, các mục khác dùng mặc định của plugin.
+# Biến dạng CFG_... (đặt trong compose.yaml) được điền vào khi container khởi động.
+
+# Tên server: dùng cho quyền theo ngữ cảnh "server=<tên>"
+server: ${CFG_SERVER_NAME}
+
+# Lưu dữ liệu chung ở MariaDB để rank dùng chung toàn network
+storage-method: MariaDB
+data:
+  address: mariadb:3306
+  database: luckperms
+  username: ${CFG_DB_USER}
+  password: ${CFG_DB_PASSWORD}
+
+# Đồng bộ thay đổi quyền giữa các server qua Redis
+messaging-service: redis
+redis:
+  enabled: true
+  address: redis:6379
+  password: ${CFG_REDIS_PASSWORD}

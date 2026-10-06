@@ -1,0 +1,26 @@
+services:
+  pokemon-1:
+    image: itzg/minecraft-server
+    profiles: ["pokemon"]          # mặc định KHÔNG chạy. Bật: docker compose --profile pokemon up -d
+    restart: unless-stopped
+    environment:
+      EULA: "TRUE"
+      TYPE: FABRIC
+      VERSION: ${POKEMON_MC_VERSION:-1.21.1}   # phải đúng phiên bản Cobblemon hỗ trợ
+      MEMORY: 8G
+      TZ: Asia/Ho_Chi_Minh
+      ONLINE_MODE: "FALSE"
+      # Mod tải tự động từ Modrinth
+      MODRINTH_PROJECTS: |
+        fabric-api
+        cobblemon
+        fabricproxy-lite
+        luckperms
+      CFG_VELOCITY_SECRET: ${VELOCITY_SECRET}
+    mem_limit: 10g
+    volumes:
+      - ../../data/pokemon-1:/data
+      - ./server/config:/config:ro    # -> /data/config (FabricProxy-Lite.toml…)
+    depends_on:
+      mariadb:
+        condition: service_healthy

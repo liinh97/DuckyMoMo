@@ -1,0 +1,12 @@
+# Mật khẩu và dữ liệu chạy
+.env
+data/
+
+# File plugin/mod tải tay (tải tự động qua Modrinth thì không nằm ở đây)
+*.jar
+
+# Hệ điều hành / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

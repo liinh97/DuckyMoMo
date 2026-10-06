@@ -1,0 +1,16 @@
+id: __MODE_ID__
+display_name: "__MODE_ID__"
+description: ""
+icon: "minecraft:grass_block"
+status: beta
+platform: paper
+minecraft_version: "LATEST"
+clients: [java, bedrock]
+servers:
+  - name: __MODE_ID__-1
+    address: __MODE_ID__-1:25565
+visibility:
+  beta_permission: "network.beta"
+economy: isolated
+database: mode___MODE_ID__
+cosmetics: [chat_tag, name_color]

@@ -1,0 +1,18 @@
+id: pokemon
+display_name: "Pokémon"
+description: "Bắt, nuôi và đấu Pokémon (cần cài modpack)"
+icon: "cobblemon:poke_ball"
+status: closed                   # chưa mở. Đổi sang beta khi bắt đầu thử
+platform: fabric
+minecraft_version: "1.21.1"      # khớp POKEMON_MC_VERSION trong .env
+clients: [java_modded]           # Bedrock không vào được (Geyser không hiển thị nội dung mod)
+required_mods: [cobblemon]
+modpack_url: ""                  # link modpack trên Modrinth (sẽ tạo)
+servers:
+  - name: pokemon-1
+    address: pokemon-1:25565
+visibility:
+  beta_permission: "network.beta"
+economy: isolated
+database: mode_pokemon
+cosmetics: [chat_tag, name_color]

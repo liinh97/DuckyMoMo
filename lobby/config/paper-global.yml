@@ -1,0 +1,7 @@
+# Paper: chỉ ghi các mục cần đổi, các mục khác Paper tự điền mặc định.
+# Bật Velocity modern forwarding. Secret lấy từ .env (VELOCITY_SECRET), không ghi thẳng vào đây.
+proxies:
+  velocity:
+    enabled: true
+    online-mode: true
+    secret: "${CFG_VELOCITY_SECRET}"

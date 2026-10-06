@@ -1,0 +1,6 @@
+# Kết nối server Fabric với Velocity (modern forwarding)
+hackOnlineMode = true
+hackEarlySend = false
+hackMessageChain = true
+disconnectMessage = "Vui lòng vào qua proxy DuckyMoMo"
+secret = "${CFG_VELOCITY_SECRET}"

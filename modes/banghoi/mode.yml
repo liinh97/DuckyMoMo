@@ -1,0 +1,17 @@
+# Khai báo chế độ. Lobby và network-core đọc file này (đồng bộ vào bảng network.modes).
+id: banghoi
+display_name: "Bang Hội Chiến"
+description: "Lập bang, chiếm đất, công thành theo lịch"
+icon: "minecraft:white_banner"
+status: beta                     # open | beta | maintenance | closed
+platform: paper
+minecraft_version: "LATEST"      # theo MC_VERSION trong .env
+clients: [java, bedrock]
+servers:
+  - name: banghoi-1
+    address: banghoi-1:25565
+visibility:
+  beta_permission: "network.beta"
+economy: isolated                # tiền, vật phẩm riêng của chế độ
+database: mode_banghoi
+cosmetics: [chat_tag, name_color, kill_effect, particle, guild_banner]

@@ -141,7 +141,7 @@ mode_banghoi.*             mode_survival.*           mode_pokemon.*   (mỗi ch�
 ## 5. Cấu trúc repo cấu hình (Git)
 
 ```
-mc-network/
+(repo DuckyMoMo, thư mục gốc)
 ├── compose.yaml            # file gốc: chỉ gồm danh sách include
 ├── .env.example            # mẫu biến môi trường (commit). File .env thật KHÔNG commit
 ├── .gitignore              # bỏ qua .env, data/
@@ -153,14 +153,13 @@ mc-network/
 │   ├── compose.yaml        # Velocity + Geyser + Floodgate
 │   ├── config/             # velocity.toml, cấu hình plugin proxy
 │   └── plugins/
-├── shared/                 # cấu hình dùng chung (LuckPerms storage, kết nối DB/Redis) dạng template
 ├── lobby/
 │   ├── compose.yaml
 │   ├── config/
 │   └── plugins/
 ├── modes/
 │   ├── _template-paper/    # khuôn mẫu chế độ Paper mới (có sẵn compose.yaml)
-│   ├── _template-fabric/   # khuôn mẫu chế độ Fabric (mod) mới
+│   ├── _template-fabric/   # khuôn mẫu chế độ Fabric (mod) mới (tạo khi làm Pokémon)
 │   ├── banghoi/
 │   │   ├── compose.yaml
 │   │   ├── mode.yml
@@ -192,158 +191,20 @@ mc-network/
 - Đặt **giới hạn RAM** cho từng service (`MEMORY` cho JVM, `mem_limit` cho container) để một chế độ không ăn hết RAM của máy.
 - Image dùng chung: **`itzg/minecraft-server`** (Paper, Fabric, tải plugin/mod từ Modrinth) và **`itzg/mc-proxy`** (Velocity). Khi chạy thật nên **ghim tag cụ thể** thay vì `latest`.
 
-### File mẫu (đã kiểm tra cú pháp bằng `docker compose config`)
+### File thật trong repo
+Khung đã được dựng trong repo (xem `README.md` ở thư mục gốc). Các file chính:
+- `compose.yaml`: file gốc, chỉ gồm danh sách `include`.
+- `infra/compose.yaml`, `infra/db-init/`: MariaDB, Redis, tạo database `network`, `luckperms`, `mode_*` và bảng ban đầu.
+- `proxy/compose.yaml`, `proxy/config/velocity.toml`: Velocity (modern forwarding) + Geyser + Floodgate.
+- `lobby/compose.yaml`, `modes/banghoi/compose.yaml`: Paper, plugin tải từ Modrinth qua `MODRINTH_PROJECTS`.
+- `modes/pokemon/compose.yaml`: Fabric + Cobblemon + FabricProxy-Lite, gắn `profiles: ["pokemon"]`.
+- `modes/_template-paper/` và `ops/new-mode.sh`: tạo chế độ mới.
 
-`compose.yaml` (gốc)
-```yaml
-name: mc-network
-
-include:
-  - infra/compose.yaml
-  - proxy/compose.yaml
-  - lobby/compose.yaml
-  - modes/banghoi/compose.yaml
-  - modes/pokemon/compose.yaml   # chỉ chạy khi bật profile "pokemon"
-```
-
-`infra/compose.yaml`
-```yaml
-services:
-  mariadb:
-    image: mariadb:11.4
-    restart: unless-stopped
-    environment:
-      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
-      MARIADB_DATABASE: network
-      MARIADB_USER: ${DB_USER}
-      MARIADB_PASSWORD: ${DB_PASSWORD}
-    volumes:
-      - ../data/mariadb:/var/lib/mysql
-      - ./db-init:/docker-entrypoint-initdb.d:ro   # tạo schema network, mode_* lần đầu
-    healthcheck:
-      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
-      interval: 10s
-      retries: 10
-    # KHÔNG mở cổng ra ngoài; các container khác gọi bằng tên "mariadb"
-
-  redis:
-    image: redis:7-alpine
-    restart: unless-stopped
-    command: ["redis-server", "--requirepass", "${REDIS_PASSWORD}", "--appendonly", "yes"]
-    volumes:
-      - ../data/redis:/data
-```
-
-`proxy/compose.yaml`
-```yaml
-services:
-  proxy:
-    image: itzg/mc-proxy
-    restart: unless-stopped
-    environment:
-      TYPE: VELOCITY
-      MEMORY: 1G
-    ports:
-      - "25565:25577"       # Java
-      - "19132:19132/udp"   # Bedrock qua Geyser
-    volumes:
-      - ./config:/config:ro     # velocity.toml, cấu hình Geyser/Floodgate/LuckPerms (trong Git)
-      - ./plugins:/plugins:ro   # file .jar plugin proxy
-      - ../data/proxy:/server
-    depends_on:
-      mariadb:
-        condition: service_healthy
-      redis:
-        condition: service_started
-```
-
-`lobby/compose.yaml`
-```yaml
-services:
-  lobby:
-    image: itzg/minecraft-server   # nên ghim tag cụ thể khi chạy thật
-    restart: unless-stopped
-    environment:
-      EULA: "TRUE"
-      TYPE: PAPER
-      VERSION: ${MC_VERSION}
-      MEMORY: 2G
-      ONLINE_MODE: "FALSE"      # proxy lo xác thực; server con không mở cổng ra ngoài
-    mem_limit: 3g
-    volumes:
-      - ../data/lobby:/data
-      - ./config:/config:ro
-      - ./plugins:/plugins:ro
-    depends_on:
-      mariadb:
-        condition: service_healthy
-```
-
-`modes/banghoi/compose.yaml`
-```yaml
-services:
-  banghoi-1:
-    image: itzg/minecraft-server
-    restart: unless-stopped
-    environment:
-      EULA: "TRUE"
-      TYPE: PAPER
-      VERSION: ${MC_VERSION}
-      MEMORY: 4G
-      ONLINE_MODE: "FALSE"
-    mem_limit: 5g
-    volumes:
-      - ../../data/banghoi-1:/data
-      - ./server/config:/config:ro
-      - ./server/plugins:/plugins:ro
-    depends_on:
-      mariadb:
-        condition: service_healthy
-```
-
-`modes/pokemon/compose.yaml`
-```yaml
-services:
-  pokemon-1:
-    image: itzg/minecraft-server
-    profiles: ["pokemon"]       # mặc định KHÔNG chạy; bật bằng --profile pokemon
-    restart: unless-stopped
-    environment:
-      EULA: "TRUE"
-      TYPE: FABRIC
-      VERSION: ${POKEMON_MC_VERSION}   # khóa theo phiên bản Cobblemon hỗ trợ
-      MEMORY: 8G
-      ONLINE_MODE: "FALSE"
-      MODRINTH_PROJECTS: |
-        fabric-api
-        cobblemon
-        fabricproxy-lite
-        luckperms
-    mem_limit: 10g
-    volumes:
-      - ../../data/pokemon-1:/data
-      - ./server/config:/config:ro
-    depends_on:
-      mariadb:
-        condition: service_healthy
-```
-
-`.env.example`
-```bash
-# Sao chép thành .env rồi đổi mật khẩu. KHÔNG commit file .env
-DB_ROOT_PASSWORD=doi-mat-khau
-DB_USER=mc
-DB_PASSWORD=doi-mat-khau
-REDIS_PASSWORD=doi-mat-khau
-MC_VERSION=1.21.4
-POKEMON_MC_VERSION=1.21.1
-```
-
-> Đây là **bản khung**. Khi dựng thật còn phải: cấu hình Velocity modern forwarding (secret dùng chung giữa proxy và các server con), khai báo server con trong `velocity.toml` (hoặc để `network-core` đăng ký động), cấu hình Geyser/Floodgate, và kiểm tra lại tên biến môi trường theo tài liệu của image `itzg`.
+**Mật khẩu và secret**: chỉ nằm trong `.env`. Các file cấu hình trong Git ghi `${CFG_TEN_BIEN}`, image `itzg` tự điền giá trị từ biến môi trường `CFG_*` khi copy cấu hình vào container.
 
 ### Lệnh thường dùng
 ```bash
-cp .env.example .env              # lần đầu, rồi sửa mật khẩu
+./ops/init.sh                     # lần đầu: tạo .env với mật khẩu ngẫu nhiên
 docker compose up -d              # chạy mọi thứ (trừ service có profile)
 docker compose --profile pokemon up -d   # bật thêm chế độ Pokémon
 docker compose ps                 # xem trạng thái
@@ -363,11 +224,11 @@ docker compose down               # tắt toàn bộ (dữ liệu trong data/ v�
 
 ## 7. Checklist thêm một chế độ mới
 
-1. Copy `_template-paper` hoặc `_template-fabric` thành `modes/<id>/`.
+1. Chạy `./ops/new-mode.sh <id>` (chế độ Paper). Script làm luôn bước 1 và 3 bên dưới. Hoặc copy `_template-paper` / `_template-fabric` thành `modes/<id>/` bằng tay.
 2. Sửa `modes/<id>/compose.yaml`: tên service, RAM, đường dẫn `data/`. Có thể gắn `profiles: ["<id>"]` để chạy thử riêng.
 3. Thêm một dòng `- modes/<id>/compose.yaml` vào `include` của `compose.yaml` gốc.
 4. Điền `mode.yml` với `status: beta`.
-5. Cài plugin hoặc mod của chế độ, cấu hình kết nối DB/Redis từ template `shared/`.
+5. Cài plugin hoặc mod của chế độ, cấu hình kết nối DB/Redis (khuôn mẫu đã có sẵn file LuckPerms).
 6. Viết migration SQL cho schema `mode_<id>` nếu cần.
 7. Chạy `docker compose up -d <service>` (hoặc `docker compose --profile <id> up -d`).
 8. Cấu hình LuckPerms context cho server mới, khai báo đồ trang trí áp dụng được.

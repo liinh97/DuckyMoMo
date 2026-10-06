@@ -5,6 +5,7 @@ vào **lobby** rồi chọn chế độ. Chạy toàn bộ bằng **Docker Compo
 
 - Kế hoạch tổng quát: [`docs/minecraft-server-plan.md`](docs/minecraft-server-plan.md)
 - Thiết kế kiến trúc: [`docs/network-architecture.md`](docs/network-architecture.md)
+- **Bàn giao / tiếp tục ở session khác: [`docs/HANDOFF.md`](docs/HANDOFF.md)**
 
 ```
  Java (PC) ─┐                      ┌─► lobby       (Paper)

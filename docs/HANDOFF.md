@@ -112,7 +112,7 @@ Môi trường cloud chặn các host: `api.papermc.io`, `fill.papermc.io`, `dow
 
 1. **Chạy lần đầu trên máy nhà** theo checklist trong `README.md`, sửa lỗi từ log. Sau đó ghim `MC_VERSION` và tag của image.
 2. **Hoàn thiện plugin cho Bang Hội Chiến**: Towny + SiegeWar, Vault, EssentialsX (tiền tệ), CoreProtect (bắt buộc), WorldGuard, OldCombatMechanics. Kiểm tra slug trên Modrinth, plugin nào không có thì tải `.jar` bằng tay. Danh sách nằm trong `modes/banghoi/README.md`.
-3. **Luật chơi Bang Hội Chiến**: bản nháp 1 đã có ở `docs/banghoi-design.md` (07/10/2026): lịch trận, cấu hình SiegeWar đề xuất, mùa 8 tuần, chống acc phụ, bán gì được. **Còn 6 câu hỏi [cần chốt]** ở mục 14 của file đó. Sau khi chốt và chạy thử thì áp cấu hình vào `modes/banghoi/server/plugins/`.
+3. **Luật chơi Bang Hội Chiến**: bản nháp 1 đã có ở `docs/banghoi-design.md` (07/10/2026): lịch trận, cấu hình SiegeWar đề xuất, mùa 8 tuần, chống acc phụ, bán gì được. Các câu hỏi đã được trả lời (mục 14): PvP hoang dã bật, End mở bằng sự kiện, mùa thử 4 tuần rồi mùa chính 8 tuần; giờ trận và cấm vật phẩm để sau mùa thử. Sau khi chốt và chạy thử thì áp cấu hình vào `modes/banghoi/server/plugins/`.
 4. **Sao lưu**: thêm `itzg/mc-backup` (restic) cho các server có thế giới, và `mariadb-dump` định kỳ.
 5. **Tunnel playit.gg**: thêm service agent với profile `tunnel`, trỏ tới `proxy:25577` và `proxy:19132/udp`. Kiểm tra image chính thức của playit trước.
 6. **network-core phiên bản 1** (Gradle nhiều module, Java hoặc Kotlin): `core-api`, `core-common`, `core-velocity`, `core-paper`.
@@ -128,7 +128,7 @@ Môi trường cloud chặn các host: `api.papermc.io`, `fill.papermc.io`, `dow
 
 ## 7. Câu hỏi còn mở
 - Tên miền (tên đã chốt là DuckyMoMo).
-- Cho crack vào thì **web store có bán cho người chơi crack không**? Luật Mojang về server offline-mode chưa rõ ràng, cần đọc lại EULA và Usage Guidelines trước khi mở bán.
+- Đã chốt **bán đồ trang trí cho cả người chơi crack**. Việc còn lại: đọc kỹ EULA và Usage Guidelines về server offline-mode trước khi mở web store.
 - Máy nhà chạy Windows hay Linux, cấu hình bao nhiêu?
 
 ## 8. Prompt gợi ý để mở session mới

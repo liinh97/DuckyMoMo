@@ -1,6 +1,6 @@
-# Thiết kế Bang Hội Chiến (bản nháp 1)
+# Thiết kế Bang Hội Chiến (bản nháp 2)
 
-> Viết 07/10/2026. Nền tảng: **Towny + SiegeWar** (đã chốt).
+> Viết 07/10/2026, cập nhật cùng ngày theo câu trả lời của chủ server (mục 14). Nền tảng: **Towny + SiegeWar** (đã chốt).
 > Đây là **đề xuất** để chạy thử với bạn bè. Mục có **[cần chốt]** là chủ server quyết định.
 > Số liệu là điểm xuất phát, sẽ chỉnh sau khi chơi thử.
 > Cơ chế SiegeWar lấy theo wiki và mã nguồn chính thức (nguồn ở cuối file). Tên mục cấu hình của Towny **chưa kiểm tra**, phải đối chiếu với file `config.yml` sinh ra ở lần chạy đầu.
@@ -84,8 +84,8 @@ battle_session_scheduler.session_duration_minutes: 60
 ```
 (Viết dạng có dấu chấm cho gọn; trong file YAML thật là các mục lồng nhau.)
 
-**[cần chốt]** Giờ trận. Đề xuất trên giả định người chơi chủ yếu là học sinh, sinh viên, người đi làm.
-Nếu bạn bè chơi được giờ khác thì đổi ở đây trước khi mở.
+**Giờ trận: dùng lịch trên cho mùa thử, chốt sau khi chơi thử** (chủ server, 07/10/2026).
+Trong mùa thử, hỏi bạn bè giờ nào tiện và đếm số người có mặt mỗi trận để chỉnh.
 
 ## 5. Luật PvP và bảo vệ
 
@@ -93,7 +93,7 @@ Nếu bạn bè chơi được giờ khác thì đổi ở đây trước khi m�
 |---|---|---|---|
 | Spawn (WorldGuard) | Tắt | Tắt | Chợ, bảng hướng dẫn, cổng ra hoang dã |
 | Trong thành | Tắt (mặc định Towny) | Chỉ người trong thành | Không ai phá được nhà lúc offline |
-| Hoang dã | **[cần chốt]** Bật hay tắt | Được | Bật thì giống Factions hơn nhưng người mới dễ bị giết. Đề xuất: **bật**, nhưng chết ở hoang dã chỉ rơi một phần đồ (cần plugin hoặc tự viết, để sau) |
+| Hoang dã | **Bật** (đã chốt) | Được | Giống Factions. Mùa thử để chết **rơi toàn bộ đồ** như bản gốc; nếu người mới bỏ chơi vì bị giết nhiều thì cân nhắc chỉ rơi một phần (cần plugin hoặc tự viết). Bật bằng lệnh thế giới của Towny (`/tw toggle pvp`, kiểm tra lại tên lệnh) |
 | Vùng chiến lúc có trận | **Bật** | Không phá được thành | SiegeWar tự bật PvP trong bán kính quanh cờ |
 
 - Trong lúc vây, **thành không bị phá và không bị lấy đồ** (đặc tính của SiegeWar). Mất mát chỉ là tiền (cướp) và quyền sở hữu thành (chiếm).
@@ -121,11 +121,20 @@ Nếu bạn bè chơi được giờ khác thì đổi ở đây trước khi m�
 - Một thế giới chính, **viền 5.000 x 5.000** ô lúc thử với bạn bè (`/worldborder`), tạo trước bằng Chunky để không giật.
   Nới rộng khi đông người.
 - Spawn ở giữa, bán kính khoảng 150 ô là khu an toàn. **Cấm lập thành trong khoảng 500 ô quanh spawn** (Towny có giới hạn khoảng cách tới spawn; tên mục cần kiểm tra).
-- Nether, End: **[cần chốt]** mở luôn hay khoá End đến tuần 3 để có sự kiện mở End.
+- Nether: **mở ngay** từ đầu mùa.
+- End: **khoá, mở bằng sự kiện** (đã chốt).
+  - Khoá: `settings.allow-end: false` trong `data/banghoi-1/bukkit.yml` (file này không nằm trong thư mục được đồng bộ từ Git nên sửa thẳng trong `data/`), khởi động lại server.
+  - Ngày sự kiện: thông báo trước 1 tuần; đặt `allow-end: true`, khởi động lại vào giờ hẹn (đề xuất tối thứ 4, không trùng ngày có trận).
+  - Bang hạ Rồng Ender đầu tiên nhận danh hiệu trang trí `[Diệt Long]` cho cả bang. Chỉ trang trí, không thưởng đồ.
+  - Mùa thử: mở End ở tuần 2. Mùa chính: mở End ở tuần 3 (đầu giai đoạn chiến tranh).
 
 ## 8. Mùa giải
 
-Đề xuất **mùa 8 tuần**:
+**Độ dài mùa** (chủ server để Claude đề xuất, 07/10/2026):
+- **Mùa thử (mùa 0): 4 tuần**, chơi với bạn bè. Ngắn để thấy lỗi và chỉnh nhanh: tuần 1 xây dựng, tuần 2–3 chiến tranh (mở End ở tuần 2), tuần 4 đại chiến và tổng kết.
+  Không có phần thưởng giữ lại, chỉ để thử.
+- **Mùa chính: 8 tuần** như bảng dưới. Lý do: 6 tuần có trận là đủ để bang mạnh lên, chiếm và mất thành vài lần; ngắn hơn thì bang chưa kịp lớn, dài hơn (3 tháng) thì người thua giữa mùa dễ bỏ server.
+  Sau 1–2 mùa chính, xem số người còn chơi ở tuần cuối để chỉnh (nhiều người bỏ từ tuần 5–6 thì rút xuống 6 tuần).
 
 | Tuần | Diễn biến |
 |---|---|
@@ -164,8 +173,8 @@ Cho crack vào thì tạo acc phụ rất dễ (chỉ cần đổi tên). Các t
 ## 10. Combat
 
 - **OldCombatMechanics**: bỏ thời gian hồi đòn, giống 1.8. Người chơi điện thoại đánh ngang PC hơn.
-- **[cần chốt]** Có cho dùng vật phẩm làm lệch cân bằng không: ngọc toàn mạng (totem), cung nỏ xuyên giáp, đinh ba, đồ netherite.
-  Đề xuất lúc thử: giữ nguyên hết, xem trận thật rồi mới cấm.
+- Totem, nỏ xuyên giáp, đinh ba, netherite: **giữ nguyên trong mùa thử, xem trận thật rồi mới quyết** (đã chốt).
+  Trong mùa thử, ghi lại vật phẩm nào quyết định thắng thua quá nhiều để bàn sau.
 - Không bắt buộc pháo TNT. SiegeWar thắng bằng giữ cờ và hạ địch, nên người chơi điện thoại vẫn đóng góp được.
 
 ## 11. Bán gì được (đúng luật Mojang)
@@ -179,7 +188,8 @@ Cho crack vào thì tạo acc phụ rất dễ (chỉ cần đổi tên). Các t
 | Gói mùa trang trí (season pass) | Bất cứ thứ gì giúp thắng trận |
 
 - **Không bán cape**, không bán gì liên quan Pokémon (luật chung của network).
-- **[cần chốt]** Có mở bán cho người chơi crack không (câu hỏi mở trong `docs/HANDOFF.md`).
+- **Bán cho cả người chơi crack** (đã chốt 07/10/2026). Vẫn chỉ đồ trang trí như bảng trên.
+  Lưu ý: luật Mojang với server offline-mode chưa rõ ràng, **cần đọc lại EULA và Minecraft Usage Guidelines trước khi mở web store**.
 
 ## 12. Plugin cần có để chạy bản thiết kế này
 
@@ -194,17 +204,21 @@ Có thể thêm sau (không bắt buộc lúc thử):
 1. Cài plugin, chạy `/swa install`, áp cấu hình ở mục 4, chép cấu hình về `modes/banghoi/server/plugins/` để lưu Git.
 2. Thử một mình với 2 acc (1 bản quyền, 1 crack): lập 2 thành, 2 bang, phong quân hàm, cắm cờ.
    Tạm thêm giờ trận gần giờ hiện tại để thử luôn, thử xong thì trả lại lịch.
-3. Rủ 4–6 bạn chơi 1 tuần, có ít nhất 1 cuộc vây thật.
+3. Rủ 4–6 bạn chơi **mùa thử 4 tuần** (mục 8), có ít nhất 2 cuộc vây thật.
 4. Ghi lại: trận có vui không, giờ trận có hợp không, tiền có lạm phát không → sửa bản nháp này.
 
-## 14. Câu hỏi cần chốt (tóm tắt)
+## 14. Các quyết định (07/10/2026)
 
-- [ ] Giờ trận (mục 4).
-- [ ] PvP ở hoang dã bật hay tắt (mục 5).
-- [ ] Nether, End mở ngay hay mở theo sự kiện (mục 7).
-- [ ] Độ dài mùa: 8 tuần có hợp không (mục 8).
-- [ ] Cấm hay giữ totem, netherite… (mục 10).
-- [ ] Có bán cho người chơi crack không (mục 11).
+| Câu hỏi | Kết quả |
+|---|---|
+| Giờ trận (mục 4) | Dùng lịch đề xuất cho mùa thử, **chốt sau khi chơi thử** |
+| PvP ở hoang dã (mục 5) | **Bật** |
+| Nether, End (mục 7) | Nether mở ngay, **End mở bằng sự kiện** |
+| Độ dài mùa (mục 8) | Theo đề xuất của Claude: **mùa thử 4 tuần, mùa chính 8 tuần** |
+| Totem, netherite… (mục 10) | **Giữ nguyên, thử xong mới quyết** |
+| Bán cho người chơi crack (mục 11) | **Có** (chỉ đồ trang trí; cần kiểm tra luật Mojang trước khi mở store) |
+
+Còn để sau mùa thử: giờ trận chính thức, cấm vật phẩm nào, có đổi cách rơi đồ ở hoang dã không, số tiền (phí thành, giá chợ).
 
 ## Nguồn
 - SiegeWar User Guide: https://github.com/TownyAdvanced/SiegeWar/wiki/Siege-War-User-Guide

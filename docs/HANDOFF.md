@@ -15,9 +15,9 @@
 
 ## 2. Repo
 
-- GitHub: `liinh97/DuckyMoMo`. **Đã quyết dùng `main` làm nhánh chính** (07/10/2026, người dùng để Claude chọn).
-  Nhánh `main` được tạo từ `claude/confident-thompson-q939lp`. Người dùng cần vào GitHub **Settings → Branches** đặt `main` làm nhánh mặc định (Claude không đổi được cài đặt này).
-- Mỗi session làm trên một nhánh `claude/...` riêng rồi gộp vào `main`. Nhánh `claude/exciting-cray-lh5jgq`: cho crack vào (LibreLogin + limbo), chuyển Bang Hội Chiến sang Towny + SiegeWar.
+- GitHub: `liinh97/DuckyMoMo`, nhánh mặc định **`claude/confident-thompson-q939lp`**. **Không đổi sang `main`** (người dùng chốt 07/10/2026).
+  Nhánh `main` từng được tạo nhầm (trùng commit `efa0f7e`, không có gì mới), người dùng có thể xoá trên GitHub.
+- Mỗi session làm trên một nhánh `claude/...` riêng rồi gộp vào nhánh mặc định. Nhánh `claude/exciting-cray-lh5jgq`: cho crack vào (LibreLogin + limbo), chuyển Bang Hội Chiến sang Towny + SiegeWar.
 - Claude GitHub App đã được cấp quyền cho repo này.
 
 ## 3. Các quyết định đã chốt (tóm tắt)
@@ -133,4 +133,4 @@ Môi trường cloud chặn các host: `api.papermc.io`, `fill.papermc.io`, `dow
 
 ## 8. Prompt gợi ý để mở session mới
 
-> Tôi đang làm dự án DuckyMoMo Network (server Minecraft, Docker Compose) trong repo `liinh97/DuckyMoMo`, nhánh `main`. Hãy đọc `docs/HANDOFF.md`, `README.md` và các file trong `docs/` trước, rồi tiếp tục từ mục "Việc tiếp theo". Trả lời bằng tiếng Việt, nói rõ khi thông tin cần kiểm tra lại.
+> Tôi đang làm dự án DuckyMoMo Network (server Minecraft, Docker Compose) trong repo `liinh97/DuckyMoMo`, nhánh `claude/confident-thompson-q939lp`. Hãy đọc `docs/HANDOFF.md`, `README.md` và các file trong `docs/` trước, rồi tiếp tục từ mục "Việc tiếp theo". Trả lời bằng tiếng Việt, nói rõ khi thông tin cần kiểm tra lại.

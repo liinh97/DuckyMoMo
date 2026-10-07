@@ -76,7 +76,7 @@
 - **Theo mùa** 2–3 tháng: tổng kết, trao danh hiệu, reset.
 - Có chức vụ trong bang, liên minh, ngoại giao, buôn bán giữa các bang.
 - **Khởi đầu**: mời sẵn vài nhóm hoặc bang trước khi mở. Cần khoảng 30 người chơi thường xuyên trở lên thì bang chiến mới vui.
-- **Phương án kỹ thuật**: Towny + SiegeWar, **hoặc** plugin Factions có sẵn kèm phần bang chiến theo lịch tự viết (phần tự viết có thể đem bán sau).
+- **Phương án kỹ thuật**: **Towny + SiegeWar** (chốt 07/10/2026). Phương án Factions kèm phần tự viết bị loại vì tốn nhiều tuần code.
 - **Phương án dự phòng** nếu thấy quá nặng: Survival kinh tế + bang hội nhẹ (PvP ở khu riêng).
 
 ---
@@ -220,7 +220,7 @@ Các hướng khác đã cân nhắc nhưng chưa chọn: game trên Roblox, ser
 
 - [ ] **Kiểm tra máy nhà**: CPU, RAM, ổ cứng, hệ điều hành (Windows hay Linux). Kiểm tra mạng có bị CGNAT không.
 - [ ] **Thiết kế luật chơi Bang hội chiến**: lập bang, chiếm đất, lịch công thành, combat, phần thưởng mùa, luật chống lạm dụng.
-- [ ] **Chọn nền tảng kỹ thuật cho bang chiến**: Towny + SiegeWar, hay Factions kèm phần tự viết. Nên thử cả hai trên máy nhà.
+- [x] **Chọn nền tảng kỹ thuật cho bang chiến**: **Towny + SiegeWar** (chốt 07/10/2026).
 - [ ] **Dựng khung network trên máy nhà bằng Docker Compose**: `infra` (MariaDB, Redis), `proxy` (Velocity + Geyser + Floodgate), `lobby`, LuckPerms. **Đã dựng khung trong repo (xem `README.md`)**, còn chạy lần đầu trên máy nhà.
 - [ ] Cài và cấu hình chế độ Bang hội chiến cùng các plugin đi kèm.
 - [ ] Đưa cấu hình lên Git, thiết lập sao lưu.
@@ -234,8 +234,8 @@ Các hướng khác đã cân nhắc nhưng chưa chọn: game trên Roblox, ser
 
 ## 10. Câu hỏi còn mở
 - Xác nhận cuối cùng: chế độ chủ lực là Bang hội chiến hay phương án dự phòng (Survival kinh tế + bang nhẹ)?
-- Có cho người chơi crack (offline mode) vào không? Nếu có thì nhiều người hơn, nhưng là vùng xám về pháp lý và khó kiếm tiền bền vững.
-- Tên server, thương hiệu, tên miền.
+- ~~Có cho người chơi crack vào không?~~ **Đã chốt 07/10/2026: có**, đăng nhập qua LibreLogin. Vẫn là vùng xám về luật Mojang, cần xem lại trước khi mở web store.
+- ~~Tên server~~ **Đã chốt: DuckyMoMo.** Tên miền chưa mua.
 - Có làm content không, và ai làm?
 
 ---

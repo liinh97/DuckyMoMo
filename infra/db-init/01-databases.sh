@@ -6,9 +6,11 @@ set -euo pipefail
 mariadb -uroot -p"${MARIADB_ROOT_PASSWORD}" <<SQL
 CREATE DATABASE IF NOT EXISTS \`network\`   CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 CREATE DATABASE IF NOT EXISTS \`luckperms\` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE DATABASE IF NOT EXISTS \`librelogin\` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 GRANT ALL PRIVILEGES ON \`network\`.*   TO '${MARIADB_USER}'@'%';
 GRANT ALL PRIVILEGES ON \`luckperms\`.* TO '${MARIADB_USER}'@'%';
+GRANT ALL PRIVILEGES ON \`librelogin\`.* TO '${MARIADB_USER}'@'%';
 -- Mỗi chế độ có database riêng tên mode_<id> (tạo trong 02-modes.sql hoặc khi thêm chế độ)
 GRANT ALL PRIVILEGES ON \`mode\_%\`.* TO '${MARIADB_USER}'@'%';
 FLUSH PRIVILEGES;

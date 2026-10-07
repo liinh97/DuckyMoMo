@@ -8,9 +8,11 @@ bind = "0.0.0.0:25577"
 motd = "<gradient:#f7b733:#fc4a1a><bold>DuckyMoMo Network</bold></gradient><newline><gray>Bang Hội Chiến - PC & điện thoại"
 show-max-players = 500
 
-# Proxy xác thực tài khoản; server con để online-mode=false và tin proxy qua secret
-online-mode = true
-force-key-authentication = true
+# Cho cả người chơi crack vào (đã chốt 07/10/2026). Đăng nhập do plugin LibreLogin lo:
+# người chơi crack /register, /login trong phòng chờ "limbo"; tài khoản bản quyền tự đăng nhập.
+# Server con vẫn để online-mode=false và tin proxy qua secret.
+online-mode = false
+force-key-authentication = false
 prevent-client-proxy-connections = false
 
 # "modern" = Velocity modern forwarding (an toàn nhất, Paper/Fabric đều hỗ trợ)
@@ -26,11 +28,14 @@ enable-player-address-logging = true
 [servers]
 # Tên = tên service trong Docker Compose. network-core sau này sẽ đăng ký động từ bảng network.servers.
 lobby = "lobby:25565"
+# Phòng chờ đăng nhập (NanoLimbo). LibreLogin tự đưa người chơi vào đây rồi sang lobby.
+limbo = "limbo:25565"
 banghoi-1 = "banghoi-1:25565"
 # Bật khi chạy chế độ Pokémon (docker compose --profile pokemon up -d):
 # pokemon-1 = "pokemon-1:25565"
 
-# Người chơi vào sẽ tới lobby trước
+# LibreLogin quyết định server đầu tiên (limbo khi chưa đăng nhập, lobby khi đã đăng nhập).
+# Danh sách này chỉ dùng khi bị đá khỏi server khác.
 try = ["lobby"]
 
 [forced-hosts]

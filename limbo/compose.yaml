@@ -1,0 +1,17 @@
+services:
+  # Phòng chờ đăng nhập: người chơi chưa /login hoặc /register ở đây (LibreLogin trên proxy điều khiển).
+  # Không mở cổng ra ngoài, chỉ nhận kết nối từ proxy qua Velocity modern forwarding.
+  limbo:
+    image: eclipse-temurin:21-jre-alpine
+    restart: unless-stopped
+    entrypoint: ["sh", "/entrypoint.sh"]
+    environment:
+      TZ: Asia/Ho_Chi_Minh
+      MEMORY: 256M
+      VELOCITY_SECRET: ${VELOCITY_SECRET:?Chưa đặt VELOCITY_SECRET trong .env}
+      NANOLIMBO_URL: ${NANOLIMBO_URL:-https://github.com/Nan1t/NanoLimbo/releases/latest/download/NanoLimbo.jar}
+    mem_limit: 512m
+    volumes:
+      - ../data/limbo:/data
+      - ./settings.yml:/template/settings.yml:ro
+      - ./entrypoint.sh:/entrypoint.sh:ro

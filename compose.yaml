@@ -4,7 +4,8 @@ name: duckymomo
 
 include:
   - infra/compose.yaml          # MariaDB, Redis
-  - proxy/compose.yaml          # Velocity + Geyser + Floodgate (cổng duy nhất mở ra ngoài)
+  - proxy/compose.yaml          # Velocity + Geyser + Floodgate + LibreLogin (cổng duy nhất mở ra ngoài)
+  - limbo/compose.yaml          # Phòng chờ đăng nhập (NanoLimbo) cho LibreLogin
   - lobby/compose.yaml          # Lobby (Paper)
   - modes/banghoi/compose.yaml  # Chế độ 1: Bang Hội Chiến (Paper)
   - modes/pokemon/compose.yaml  # Chế độ Pokémon (Fabric) - chỉ chạy khi bật: --profile pokemon

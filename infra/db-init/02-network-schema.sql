@@ -2,11 +2,12 @@
 -- Chỉ chạy 1 lần khi khởi tạo. Thay đổi về sau sẽ do network-core quản lý bằng migration.
 USE `network`;
 
--- Hồ sơ người chơi (Java, Bedrock qua Floodgate, Java có modpack)
+-- Hồ sơ người chơi (Java, Bedrock qua Floodgate, Java có modpack; bản quyền hoặc crack)
 CREATE TABLE IF NOT EXISTS players (
   uuid          CHAR(36)     NOT NULL PRIMARY KEY,
   name          VARCHAR(32)  NOT NULL,           -- người chơi Bedrock có tiền tố Floodgate, ví dụ ".TenNguoiChoi"
   platform      ENUM('java','bedrock','java_modded') NOT NULL DEFAULT 'java',
+  auth          ENUM('premium','cracked','floodgate') NOT NULL DEFAULT 'cracked',  -- cách đăng nhập (LibreLogin / Floodgate)
   first_seen_at DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
   last_seen_at  DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   KEY idx_players_name (name)

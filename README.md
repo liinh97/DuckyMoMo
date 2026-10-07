@@ -1,16 +1,18 @@
 # DuckyMoMo Network
 
 Network server Minecraft cho người chơi Việt Nam: **Java (PC) và Bedrock (điện thoại) chơi chung**,
-vào **lobby** rồi chọn chế độ. Chạy toàn bộ bằng **Docker Compose**.
+**cho cả người chơi crack** (đăng nhập bằng mật khẩu qua LibreLogin), vào **lobby** rồi chọn chế độ.
+Chạy toàn bộ bằng **Docker Compose**.
 
 - Kế hoạch tổng quát: [`docs/minecraft-server-plan.md`](docs/minecraft-server-plan.md)
 - Thiết kế kiến trúc: [`docs/network-architecture.md`](docs/network-architecture.md)
 - **Bàn giao / tiếp tục ở session khác: [`docs/HANDOFF.md`](docs/HANDOFF.md)**
 
 ```
- Java (PC) ─┐                      ┌─► lobby       (Paper)
-            ├─► proxy (Velocity) ──┼─► banghoi-1   (Paper)   Bang Hội Chiến
- Bedrock ───┘   + Geyser/Floodgate └─► pokemon-1   (Fabric)  Pokémon - chưa mở
+ Java (PC) ─┐                      ┌─► limbo       (NanoLimbo) chờ /login, /register (chỉ người chơi crack)
+            ├─► proxy (Velocity) ──┼─► lobby       (Paper)
+ Bedrock ───┘   + Geyser/Floodgate ├─► banghoi-1   (Paper)   Bang Hội Chiến (Towny + SiegeWar)
+                + LibreLogin       └─► pokemon-1   (Fabric)  Pokémon - chưa mở
                                          │
                           mariadb + redis (dùng chung, không mở ra ngoài)
 ```
@@ -37,6 +39,9 @@ Cho bạn bè ngoài mạng nhà vào: dùng **playit.gg** (xem `docs/network-ar
 - [ ] `docker compose ps`: tất cả service ở trạng thái `running` / `healthy`.
 - [ ] Vào được lobby bằng Java. Gõ `/server banghoi-1` để sang Bang Hội Chiến (sau này sẽ có menu ở lobby).
 - [ ] Kiểm tra `data/proxy/plugins/Geyser-Velocity/config.yml` có **auth-type: floodgate** (xem `proxy/plugins/README.md`).
+- [ ] `docker compose logs limbo`: NanoLimbo tải và chạy được (xem `limbo/README.md`).
+- [ ] LibreLogin: vào bằng Java crack phải bị giữ ở limbo đến khi `/register`; tài khoản bản quyền và Bedrock
+      phải vào thẳng lobby (xem `proxy/plugins/README.md`).
 - [ ] Vào được bằng Bedrock. Tên người chơi Bedrock có tiền tố của Floodgate (ví dụ `.TenNguoiChoi`).
 - [ ] Cấp quyền admin cho mình: `docker compose exec lobby rcon-cli lp user <TenBan> permission set "*" true`
       (LuckPerms dùng chung MariaDB nên quyền có hiệu lực ở mọi server Paper).
@@ -58,7 +63,8 @@ docker compose --profile pokemon up -d     # bật thêm chế độ Pokémon
 compose.yaml           File gốc: danh sách include
 .env.example           Mẫu biến môi trường (.env thật không commit)
 infra/                 MariaDB + Redis; db-init/ tạo database và bảng lần đầu
-proxy/                 Velocity + Geyser + Floodgate; config/velocity.toml
+proxy/                 Velocity + Geyser + Floodgate + LibreLogin; config/velocity.toml, plugins/librelogin/config.conf
+limbo/                 Phòng chờ đăng nhập (NanoLimbo) cho người chơi crack
 lobby/                 Lobby (Paper)
 modes/
   _template-paper/     Khuôn mẫu chế độ Paper mới
@@ -95,6 +101,8 @@ Chi tiết: `docs/network-architecture.md`, mục 7.
 | `ops/init.sh`, `ops/new-mode.sh` | ✅ Đã chạy thử |
 | Proxy, lobby, Bang Hội Chiến khởi động và vào game | ⏳ **Chưa chạy thử được**: môi trường dựng khung chặn tải Paper/Velocity/plugin. Cần chạy lần đầu trên máy nhà theo checklist ở trên |
 | Geyser auth-type floodgate | ⏳ Kiểm tra ở lần chạy đầu |
+| Cho crack vào: LibreLogin + limbo (NanoLimbo) | ⏳ Đã viết cấu hình theo wiki, **chưa chạy thử** (link tải, tên thư mục cấu hình) |
+| Plugin Bang Hội Chiến (Towny + SiegeWar…) | ⏳ Chưa cài, xem `modes/banghoi/README.md` |
 | Pokémon (Fabric) | ⏳ Chưa mở; LuckPerms Fabric chưa cấu hình MariaDB |
 | network-core (menu lobby tự sinh, đăng ký server động, giao hàng web store) | 🔜 Bước tiếp theo |
 | Sao lưu tự động (`itzg/mc-backup`) | 🔜 Chưa thêm |

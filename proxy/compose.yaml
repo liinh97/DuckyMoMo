@@ -6,12 +6,16 @@ services:
       TYPE: VELOCITY
       MEMORY: 1G
       TZ: Asia/Ho_Chi_Minh
-      # Plugin proxy tải từ trang chính thức của GeyserMC
+      # Geyser, Floodgate: trang chính thức của GeyserMC. LibreLogin (đăng nhập cho crack): GitHub releases.
+      # Nếu link LibreLogin lỗi, tải .jar tay từ https://github.com/kyngs/LibreLogin/releases vào proxy/plugins/
       PLUGINS: |
         https://download.geysermc.org/v2/projects/geyser/versions/latest/builds/latest/downloads/velocity
         https://download.geysermc.org/v2/projects/floodgate/versions/latest/builds/latest/downloads/velocity
+        ${LIBRELOGIN_URL:-https://github.com/kyngs/LibreLogin/releases/latest/download/LibreLogin.jar}
       # Biến CFG_* được thay vào ${CFG_...} trong các file ở proxy/config khi khởi động
       CFG_VELOCITY_SECRET: ${VELOCITY_SECRET:?Chưa đặt VELOCITY_SECRET trong .env}
+      CFG_DB_USER: ${DB_USER}
+      CFG_DB_PASSWORD: ${DB_PASSWORD}
       # Thêm đuôi "secret" để file forwarding.secret cũng được thay biến
       REPLACE_ENV_SUFFIXES: yml,yaml,txt,cfg,conf,properties,hjson,json,tml,toml,secret
     ports:
@@ -19,8 +23,12 @@ services:
       - "${BEDROCK_PORT:-19132}:19132/udp"   # Bedrock (điện thoại) qua Geyser
     volumes:
       - ./config:/config:ro        # velocity.toml, forwarding.secret (mẫu) - có trong Git
-      - ./plugins:/plugins:ro      # cấu hình plugin proxy, jar tải tay (nếu có)
+      - ./plugins:/plugins:ro      # cấu hình plugin proxy (librelogin/config.conf…), jar tải tay (nếu có)
       - ../data/proxy:/server      # dữ liệu chạy
     depends_on:
+      mariadb:
+        condition: service_healthy   # LibreLogin lưu tài khoản trong MariaDB
+      limbo:
+        condition: service_started
       lobby:
         condition: service_started

@@ -45,6 +45,7 @@ Sao lưu chạy tự động ngay khi `up` (thế giới mỗi giờ, database m
 - [ ] `docker compose logs limbo`: NanoLimbo tải và chạy được (xem `limbo/README.md`).
 - [ ] LibreLogin: vào bằng Java crack phải bị giữ ở limbo đến khi `/register`; tài khoản bản quyền và Bedrock
       phải vào thẳng lobby (xem `proxy/plugins/README.md`).
+- [ ] Vào được bằng Java bản cũ hơn server (ví dụ 1.20.4) nhờ ViaVersion + ViaBackwards.
 - [ ] Vào được bằng Bedrock. Tên người chơi Bedrock có tiền tố của Floodgate (ví dụ `.TenNguoiChoi`).
 - [ ] Cấp quyền admin cho mình: `docker compose exec lobby rcon-cli lp user <TenBan> permission set "*" true`
       (LuckPerms dùng chung MariaDB nên quyền có hiệu lực ở mọi server Paper).
@@ -110,6 +111,7 @@ Chi tiết: `docs/network-architecture.md`, mục 7.
 | `ops/init.sh`, `ops/new-mode.sh` | ✅ Đã chạy thử |
 | Proxy, lobby, Bang Hội Chiến khởi động và vào game | ⏳ **Chưa chạy thử được**: môi trường dựng khung chặn tải Paper/Velocity/plugin. Cần chạy lần đầu trên máy nhà theo checklist ở trên |
 | Geyser auth-type floodgate | ⏳ Kiểm tra ở lần chạy đầu |
+| ViaVersion + ViaBackwards trên proxy (nhiều phiên bản Java) | ⏳ Đã thêm, chưa chạy thử (tải qua Spiget chưa kiểm tra) |
 | Cho crack vào: LibreLogin + limbo (NanoLimbo) | ⏳ Đã viết cấu hình theo wiki, **chưa chạy thử** (link tải, tên thư mục cấu hình) |
 | Plugin Bang Hội Chiến (Towny + SiegeWar…) | ⏳ Chưa cài, xem `modes/banghoi/README.md` |
 | Pokémon (Fabric) | ⏳ Chưa mở; LuckPerms Fabric chưa cấu hình MariaDB |

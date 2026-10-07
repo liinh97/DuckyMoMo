@@ -12,6 +12,9 @@ services:
         https://download.geysermc.org/v2/projects/geyser/versions/latest/builds/latest/downloads/velocity
         https://download.geysermc.org/v2/projects/floodgate/versions/latest/builds/latest/downloads/velocity
         ${LIBRELOGIN_URL:-https://github.com/kyngs/LibreLogin/releases/latest/download/LibreLogin.jar}
+      # ViaVersion (19254) + ViaBackwards (27448) từ SpigotMC: người chơi Java dùng bản cũ hơn server vẫn vào được.
+      # Nếu tải lỗi, tải .jar tay từ https://hangar.papermc.io/ViaVersion vào proxy/plugins/ (xem proxy/plugins/README.md)
+      SPIGET_PLUGINS: "19254,27448"
       # Biến CFG_* được thay vào ${CFG_...} trong các file ở proxy/config khi khởi động
       CFG_VELOCITY_SECRET: ${VELOCITY_SECRET:?Chưa đặt VELOCITY_SECRET trong .env}
       CFG_DB_USER: ${DB_USER}

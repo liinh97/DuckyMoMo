@@ -89,6 +89,7 @@ Môi trường cloud chặn các host: `api.papermc.io`, `fill.papermc.io`, `dow
   - LibreLogin lưu tài khoản trong MariaDB, database `librelogin`. `new-uuid-creator=MOJANG` (người chơi bản quyền giữ UUID thật), `auto-register=true` (crack không chiếm được tên bản quyền). **Không đổi UUID creator sau khi đã có người chơi.**
   - Limbo là NanoLimbo chạy bằng `eclipse-temurin:21-jre-alpine` và script `limbo/entrypoint.sh` (itzg không hỗ trợ NanoLimbo). Script tự tải jar lần đầu, điền secret bằng `sed`.
   - Bảng `network.players` có thêm cột `auth` (`premium`, `cracked`, `floodgate`) cho network-core sau này.
+- **ViaVersion + ViaBackwards** cài trên proxy (07/10/2026) qua `SPIGET_PLUGINS: "19254,27448"` của mc-proxy (không cần `MINECRAFT_VERSION` như Modrinth). Jar của Via dùng chung mọi nền tảng. Chưa thử tải qua Spiget; dự phòng: tải tay bản Velocity từ Hangar. Chưa thêm ViaRewind (1.8).
 - **Qua playit mọi người chơi chung một IP** (proxy thấy IP của agent): vì vậy đã **tắt phiên đăng nhập theo IP của LibreLogin** (`session-timeout=0`), và chưa đối chiếu IP để bắt acc phụ được. Muốn lấy IP thật thì dùng PROXY protocol của playit + `haproxy-protocol = true` trong Velocity (chưa kiểm tra, xem `tunnel/README.md`).
 - **Sao lưu**: mc-backup tự đọc mật khẩu RCON từ `data/<server>/.rcon-cli.env` (image server tự sinh), tự `restic init` kho `backups/restic`. Mỗi service backup phải có `hostname` cố định. Image dùng entrypoint `backup`, chạy restic tay thì `--entrypoint restic`.
 - **LuckPerms**:

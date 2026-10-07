@@ -1,139 +1,162 @@
 # Bàn giao dự án DuckyMoMo Network
 
 > Dùng file này để tiếp tục ở session hoặc Project Claude khác. Cập nhật: 07/10/2026.
-> Đọc kèm: `README.md`, `docs/minecraft-server-plan.md` (kế hoạch, quyết định), `docs/network-architecture.md` (kiến trúc).
+> Đọc kèm: `README.md` (cách chạy, checklist), `docs/banghoi-design.md` (luật Bang Hội Chiến), `docs/backup.md`,
+> `docs/minecraft-server-plan.md` (kế hoạch tổng), `docs/network-architecture.md` (kiến trúc).
 
 ---
+
+## 0. Bắt đầu session mới ở đâu
+
+- **Nhánh làm việc mới nhất: `claude/exciting-cray-lh5jgq`** (chưa gộp vào nhánh mặc định `claude/confident-thompson-q939lp`).
+  Session mới nên tiếp tục trên nhánh này, hoặc gộp nó vào nhánh mặc định trước (người dùng chưa yêu cầu tạo PR).
+- **Người dùng chưa chạy server trên máy nhà lần nào.** Mọi thứ về Minecraft (Paper, Velocity, plugin) chưa ai vào game thử.
+- 👉 **Việc đầu tiên**: hỏi người dùng đã chạy theo mục 6 chưa, máy **Windows hay Linux**, rồi xin
+  `docker compose ps` và `docker compose logs --tail 200 <service>` của phần lỗi để sửa.
 
 ## 1. Người làm dự án và cách làm việc
 
 - Chủ quán đồ ăn vặt (nem chua rán, bánh rán…), đồng thời là **dev**, đang tự làm app quản lý bán hàng (đơn hàng, sản phẩm, khách hàng, báo cáo, thuế, kết nối bên thứ 3, đa cửa hàng).
-- Từng chơi Minecraft khoảng 10 năm trước, thích **Factions**, sinh tồn, xây dựng, cày tiến độ, nhập vai. Có **hơn 15 giờ mỗi tuần** cho dự án. Chưa tính đến làm content.
-- **Trả lời bằng tiếng Việt**, thực tế, nói rõ chỗ nào chưa chắc hoặc cần kiểm tra lại. Không tự chốt thay người dùng những thứ chưa được chốt.
+- Từng chơi Minecraft khoảng 10 năm trước, thích **Factions**, sinh tồn, xây dựng, cày tiến độ, nhập vai. Có **hơn 15 giờ mỗi tuần**. Chưa tính đến làm content.
+- **Trả lời bằng tiếng Việt**, thực tế, ngắn gọn, nói rõ chỗ nào chưa chắc hoặc cần kiểm tra lại. **Không tự chốt thay người dùng.**
+  Khi người dùng trả lời mơ hồ (ví dụ "Đúng" cho câu hỏi chọn A hay B) thì hỏi lại.
 - Người dùng muốn **build từng phần một**, chưa cần tối ưu cho đông người. Giai đoạn đầu **chạy trên máy nhà**.
-- **Bắt buộc dùng Docker Compose** (không dùng Pterodactyl).
+- **Bắt buộc dùng Docker Compose** (không dùng Pterodactyl). Không commit mật khẩu.
 
 ## 2. Repo
 
-- GitHub: `liinh97/DuckyMoMo`, nhánh mặc định **`claude/confident-thompson-q939lp`**. **Không đổi sang `main`** (người dùng chốt 07/10/2026).
-  Nhánh `main` từng được tạo nhầm (trùng commit `efa0f7e`, không có gì mới), người dùng có thể xoá trên GitHub.
-- Mỗi session làm trên một nhánh `claude/...` riêng rồi gộp vào nhánh mặc định. Nhánh `claude/exciting-cray-lh5jgq`: cho crack vào (LibreLogin + limbo), chuyển Bang Hội Chiến sang Towny + SiegeWar.
-- Claude GitHub App đã được cấp quyền cho repo này.
+- GitHub: `liinh97/DuckyMoMo`. Nhánh mặc định **`claude/confident-thompson-q939lp`**. **Không đổi sang `main`** (người dùng chốt).
+  Có một nhánh `main` bị tạo nhầm (trùng commit `efa0f7e`, không có gì mới). Claude không xoá được (bị chặn quyền); người dùng tự xoá trên GitHub nếu muốn.
+- Mỗi session làm trên một nhánh `claude/...` riêng.
+- Kiểm tra trước khi push (theo `CLAUDE.md`): `./ops/init.sh && docker compose config --quiet && docker compose --profile pokemon config --quiet`, rồi xoá `.env`, `data/`, `backups/` vừa tạo.
 
-## 3. Các quyết định đã chốt (tóm tắt)
+## 3. Các quyết định đã chốt
 
-1. Server **Java (Paper)**, cho **Bedrock (điện thoại)** vào qua **Geyser + Floodgate**.
-2. **Network nhiều chế độ** (lobby rồi chọn chế độ). **Build từng chế độ một**, dựng khung network ngay từ đầu.
-3. **Chế độ đầu tiên: Bang Hội Chiến**, tức Factions kiểu mới. Chiến tranh theo lịch, chạy theo mùa, combat kiểu 1.8, không cướp lúc người chơi offline. **Nền tảng: Towny + SiegeWar** (chốt 07/10/2026). *Luật chơi chi tiết chưa thiết kế.*
-4. **Pokémon (Cobblemon, Fabric)** sẽ thêm sau. Chỉ người chơi Java có modpack vào được. **Không bán gì liên quan Pokémon.**
-5. **Kiếm tiền đúng luật Mojang**: chỉ đồ trang trí và tiện ích nhỏ, không pay-to-win, **không bán cape**.
-6. Chạy máy nhà trước, cho bạn bè vào qua **playit.gg**. Thuê máy chủ khi mở công khai.
-7. **Docker Compose**: mỗi thành phần và mỗi chế độ một file `compose.yaml`, file gốc gom lại bằng `include`.
-8. **Cho người chơi crack vào** (chốt 07/10/2026): proxy `online-mode = false`, đăng nhập bằng **LibreLogin** trên proxy, người chơi chưa đăng nhập chờ ở **limbo (NanoLimbo)**. Tài khoản bản quyền tự đăng nhập, Bedrock vào qua Floodgate không cần mật khẩu.
-9. **Tên: DuckyMoMo.** Tên miền chưa mua.
+| # | Quyết định |
+|---|---|
+| 1 | Server **Java (Paper)**, điện thoại (**Bedrock**) vào qua **Geyser + Floodgate** (đăng nhập Xbox, không cần tài khoản Java, không cần mật khẩu) |
+| 2 | **Network nhiều chế độ**: lobby rồi chọn chế độ. Build từng chế độ một |
+| 3 | **Chế độ đầu tiên: Bang Hội Chiến** trên nền **Towny + SiegeWar**. Luật: `docs/banghoi-design.md` |
+| 4 | **Pokémon (Cobblemon, Fabric)** làm sau. **Không bán gì liên quan Pokémon** |
+| 5 | **Kiếm tiền đúng luật Mojang**: chỉ đồ trang trí, không pay-to-win, **không bán cape**. **Bán cả cho người chơi crack** |
+| 6 | **Cho người chơi crack vào**: proxy `online-mode = false`, đăng nhập bằng **LibreLogin**, chờ ở **limbo (NanoLimbo)** |
+| 7 | **ViaVersion + ViaBackwards** trên proxy: Java bản cũ hơn server vẫn vào được |
+| 8 | Chạy máy nhà trước, bạn bè vào qua **playit.gg**. Thuê máy chủ khi mở công khai |
+| 9 | **Tên: DuckyMoMo.** Tên miền chưa mua |
+| 10 | Bang Hội Chiến: PvP hoang dã **bật**, Nether mở ngay, **End mở bằng sự kiện**, **mùa thử 4 tuần** rồi **mùa chính 8 tuần**; giờ trận và cấm vật phẩm (totem, netherite…) **quyết sau mùa thử** |
 
-## 4. Trạng thái hiện tại
+## 4. Trạng thái
 
-### Đã có trong repo
+### Thành phần trong repo
 | Thành phần | File chính |
 |---|---|
-| File gốc | `compose.yaml` (danh sách include), `.env.example`, `.gitignore`, `.gitattributes` |
-| MariaDB + Redis | `infra/compose.yaml`, `infra/db-init/01-databases.sh`, `02-network-schema.sql`, `03-mode-databases.sql` |
-| Proxy | `proxy/compose.yaml`, `proxy/config/velocity.toml`, `proxy/config/forwarding.secret` (mẫu chứa biến), `proxy/plugins/librelogin/config.conf` |
-| Limbo (NanoLimbo) | `limbo/compose.yaml`, `limbo/entrypoint.sh`, `limbo/settings.yml` |
-| Lobby (Paper) | `lobby/compose.yaml`, `lobby/config/paper-global.yml`, `lobby/plugins/LuckPerms/config.yml` |
-| Bang Hội Chiến (Paper) | `modes/banghoi/` (compose, mode.yml, README, server/config, server/plugins) |
-| Pokémon (Fabric, profile `pokemon`) | `modes/pokemon/` (compose, mode.yml, README, FabricProxy-Lite.toml) |
-| Khuôn mẫu chế độ Paper | `modes/_template-paper/` (dùng placeholder `__MODE_ID__`) |
-| Script | `ops/init.sh` (tạo `.env` với mật khẩu ngẫu nhiên), `ops/new-mode.sh <id>` |
+| File gốc | `compose.yaml` (include), `.env.example`, `.gitignore`, `.gitattributes` |
+| MariaDB + Redis + sao lưu DB | `infra/compose.yaml`, `infra/db-init/*`, `infra/backup-db.sh` |
+| Proxy (Velocity + Geyser + Floodgate + LibreLogin + ViaVersion + ViaBackwards) | `proxy/compose.yaml`, `proxy/config/velocity.toml`, `proxy/config/forwarding.secret`, `proxy/plugins/librelogin/config.conf`, `proxy/plugins/README.md` |
+| Limbo (NanoLimbo, chờ đăng nhập) | `limbo/compose.yaml`, `limbo/entrypoint.sh`, `limbo/settings.yml`, `limbo/README.md` |
+| Lobby (Paper) + sao lưu | `lobby/compose.yaml`, `lobby/config/`, `lobby/plugins/LuckPerms/` |
+| Bang Hội Chiến (Paper) + sao lưu | `modes/banghoi/` (compose, mode.yml, README có danh sách plugin) |
+| Pokémon (Fabric, profile `pokemon`) + sao lưu | `modes/pokemon/` |
+| Khuôn mẫu chế độ Paper (có sẵn sao lưu) | `modes/_template-paper/` (placeholder `__MODE_ID__`) |
+| Tunnel playit.gg (profile `tunnel`) | `tunnel/compose.yaml`, `tunnel/README.md` |
+| Script | `ops/init.sh` (tạo `.env`, mật khẩu ngẫu nhiên kể cả `RESTIC_PASSWORD`), `ops/new-mode.sh <id>` |
+| Tài liệu | `README.md`, `docs/banghoi-design.md`, `docs/backup.md`, `docs/minecraft-server-plan.md`, `docs/network-architecture.md` |
 
-### Đã kiểm chứng (chạy thật trong session trước)
-- `docker compose config`: hợp lệ cả mặc định lẫn `--profile pokemon`.
-- MariaDB tạo đúng database `network`, `luckperms`, `mode_banghoi`, `mode_pokemon`, các bảng `players`, `modes`, `servers` và dữ liệu khởi tạo. User có quyền tạo database `mode_%`.
-- Redis bắt buộc mật khẩu, healthcheck chạy.
-- Điền biến `CFG_*` vào `forwarding.secret`, `paper-global.yml`, LuckPerms `config.yml` (thử bằng `mc-image-helper` trong image).
-- `ops/init.sh`, `ops/new-mode.sh` (kể cả kiểm tra id sai).
+### Đã chạy thử thật (trong môi trường cloud)
+- `docker compose config` hợp lệ: mặc định, `--profile pokemon`, `--profile tunnel`.
+- MariaDB tạo đúng database `network`, `luckperms`, `librelogin`, `mode_banghoi`, `mode_pokemon`, bảng `players` (có cột `auth`), `modes`, `servers`.
+- Redis có mật khẩu, healthcheck chạy.
+- Điền biến `CFG_*` vào file cấu hình (bằng công cụ của image itzg).
+- Script limbo: điền đúng secret vào `settings.yml`; báo lỗi rõ khi không tải được jar.
+- `db-backup`: dump MariaDB, **xoá một database rồi khôi phục từ dump thành công**.
+- Lệnh restic trong `docs/backup.md` (init, backup, snapshots, restore) bằng image `itzg/mc-backup`: chạy đúng với thế giới giả.
+- `ops/init.sh`, `ops/new-mode.sh` (chế độ mới có sẵn service sao lưu cùng profile).
 
-### Chưa kiểm chứng
-Môi trường cloud chặn các host: `api.papermc.io`, `fill.papermc.io`, `download.geysermc.org`, `api.modrinth.com`, `piston-meta.mojang.com`. Vì vậy chưa kiểm tra được:
-- Proxy, lobby, Bang Hội Chiến **khởi động hoàn chỉnh và vào được game** (Java và Bedrock).
-- Geyser có dùng **`auth-type: floodgate`** không (xem `proxy/plugins/README.md`).
-- Velocity có nhận hết các key trong `velocity.toml` không (viết theo mẫu `config-version = "2.7"`).
-- Slug Modrinth `luckperms`, `worldedit`, `chunky` (Paper) và `fabric-api`, `cobblemon`, `fabricproxy-lite`, `luckperms` (Fabric) có tải được không.
-- Các key trong `FabricProxy-Lite.toml`.
-- **LibreLogin và limbo** (thêm 07/10/2026): link tải `LIBRELOGIN_URL`, `NANOLIMBO_URL` là đoán theo tên file, chưa thử. Thư mục cấu hình `plugins/librelogin/` chưa chắc đúng tên. `limbo/settings.yml` lấy từ nhánh `main` của NanoLimbo, có thể mới hơn bản release. `config.conf` của LibreLogin lấy theo wiki (revision 8). Xem `proxy/plugins/README.md`, `limbo/README.md`.
-- Slug Modrinth của Towny, SiegeWar và các plugin Bang Hội Chiến còn lại.
-
-👉 **Việc đầu tiên của session mới**: hỏi người dùng đã chạy thử trên máy nhà chưa. Nếu rồi, xin log `docker compose logs <service>` để sửa.
+### Chưa kiểm chứng (môi trường cloud chặn papermc, geysermc, modrinth, mojang, hangar, spigot, github releases, playit)
+- **Khởi động hoàn chỉnh và vào game**: proxy, limbo, lobby, Bang Hội Chiến; cả Java (bản quyền, crack, bản cũ) lẫn Bedrock.
+- Geyser có `auth-type: floodgate` chưa (xem `proxy/plugins/README.md`).
+- Velocity nhận đủ key trong `velocity.toml` không (viết theo `config-version = "2.7"`).
+- **Link tải đoán theo tên file**: `LIBRELOGIN_URL`, `NANOLIMBO_URL` (trong `.env`). Tên thư mục cấu hình `plugins/librelogin/` chưa chắc đúng.
+- `limbo/settings.yml` lấy từ nhánh `main` của NanoLimbo, có thể mới hơn bản release.
+- `config.conf` của LibreLogin lấy theo wiki (revision 8).
+- **ViaVersion/ViaBackwards qua Spiget** (`SPIGET_PLUGINS: "19254,27448"`): SpigotMC có thể chặn tải tự động; dự phòng là tải tay bản Velocity từ Hangar.
+- Slug Modrinth: `luckperms`, `worldedit`, `chunky` (Paper); `fabric-api`, `cobblemon`, `fabricproxy-lite`, `luckperms` (Fabric). Towny, SiegeWar và các plugin Bang Hội Chiến khác **chưa thêm**.
+- Sao lưu tự động qua RCON với server thật (`backup-<server>`).
+- Tunnel playit: trang playit có nhận địa chỉ local `proxy` không; UDP cho Bedrock có miễn phí không; PROXY protocol.
+- SiegeWar có dùng đúng múi giờ `Asia/Ho_Chi_Minh` không; lệnh bật PvP hoang dã của Towny (`/tw toggle pvp`).
 
 ## 5. Chi tiết kỹ thuật cần nhớ
 
 ### Image `itzg`
-- `itzg/minecraft-server` (bản `latest` hiện dùng **Java 25**) và `itzg/mc-proxy`.
-- **Đồng bộ cấu hình khi khởi động**:
-  - minecraft-server: `/config` → `/data/config`, `/plugins` → `/data/plugins`.
-  - mc-proxy: `/config` → `/server`, `/plugins` → `/server/plugins`.
-- **Điền biến**: chuỗi `${CFG_TEN_BIEN}` trong các file đồng bộ được thay bằng biến môi trường `CFG_TEN_BIEN` (mặc định `REPLACE_ENV_DURING_SYNC=true`, tiền tố `CFG_`). Chỉ áp dụng cho các đuôi trong `REPLACE_ENV_SUFFIXES`. Proxy đã thêm đuôi `secret` để điền được `forwarding.secret`.
-- Khi đồng bộ, **file trong `data/` mới hơn sẽ không bị ghi đè**.
-- **Secret của Velocity**: mc-proxy chỉ tự sinh `/server/forwarding.secret` khi file chưa có. Ở đây file được tạo từ mẫu `proxy/config/forwarding.secret`, nên dùng đúng `VELOCITY_SECRET` trong `.env`. Paper nhận secret qua `paper-global.yml`, Fabric qua `FabricProxy-Lite.toml`.
-- Trên mc-proxy, `MODRINTH_PROJECTS` **bắt buộc có `MINECRAFT_VERSION` cụ thể**. Vì vậy Geyser và Floodgate được tải qua `PLUGINS` bằng URL chính thức của download.geysermc.org.
-- Trên minecraft-server, `MODRINTH_PROJECTS` dùng được với `VERSION=LATEST`.
-- Tải tay plugin: đặt file `.jar` vào thư mục `plugins` của service (`.jar` đã nằm trong `.gitignore`).
+- `itzg/minecraft-server` (bản `latest` dùng **Java 25**) và `itzg/mc-proxy`.
+- Đồng bộ cấu hình khi khởi động: minecraft-server `/config` → `/data/config`, `/plugins` → `/data/plugins`; mc-proxy `/config` → `/server`, `/plugins` → `/server/plugins`.
+- `${CFG_TEN_BIEN}` trong file đồng bộ được thay bằng biến môi trường `CFG_TEN_BIEN`, chỉ với đuôi trong `REPLACE_ENV_SUFFIXES` (proxy đã thêm `secret`; `conf` có sẵn nên `librelogin/config.conf` cũng được điền).
+- **File trong `data/` mới hơn sẽ không bị ghi đè** khi đồng bộ. Sửa cấu hình sau lần chạy đầu thì sửa trong `data/` rồi chép ngược về repo.
+- Secret Velocity: tạo từ mẫu `proxy/config/forwarding.secret` = `VELOCITY_SECRET`. Paper nhận qua `paper-global.yml`, Fabric qua `FabricProxy-Lite.toml`, NanoLimbo qua `limbo/entrypoint.sh`.
+- mc-proxy: `MODRINTH_PROJECTS` **bắt buộc `MINECRAFT_VERSION` cụ thể**, nên dùng `PLUGINS` (URL) cho Geyser, Floodgate, LibreLogin và `SPIGET_PLUGINS` cho Via.
+- minecraft-server: `MODRINTH_PROJECTS` dùng được với `VERSION=LATEST`.
+- Tải tay plugin: đặt `.jar` vào thư mục `plugins` của service (`.jar` có trong `.gitignore`).
 
-### Network
-- **Chỉ proxy mở cổng**: 25565/tcp sang 25577 trong container, 19132/udp cho Geyser. Các service khác gọi nhau bằng tên service.
-- Mục `[servers]` trong `velocity.toml` **chưa khai báo `pokemon-1`**, vì service không chạy thì tên không phân giải được. Bật Pokémon thì bỏ comment dòng đó.
-- **Floodgate hiện chỉ cài trên proxy.** Muốn dùng **Bedrock Forms** (menu cho điện thoại) trên lobby hoặc server con thì phải cài Floodgate trên các server đó, dùng **chung `key.pem`** với proxy. Đây là việc cần làm khi viết menu lobby.
-- **Crack + LibreLogin**:
-  - Velocity `online-mode = false`, `force-key-authentication = false`. Server con vẫn dùng modern forwarding nên không ai vào thẳng server con được.
-  - LibreLogin lưu tài khoản trong MariaDB, database `librelogin`. `new-uuid-creator=MOJANG` (người chơi bản quyền giữ UUID thật), `auto-register=true` (crack không chiếm được tên bản quyền). **Không đổi UUID creator sau khi đã có người chơi.**
-  - Limbo là NanoLimbo chạy bằng `eclipse-temurin:21-jre-alpine` và script `limbo/entrypoint.sh` (itzg không hỗ trợ NanoLimbo). Script tự tải jar lần đầu, điền secret bằng `sed`.
-  - Bảng `network.players` có thêm cột `auth` (`premium`, `cracked`, `floodgate`) cho network-core sau này.
-- **ViaVersion + ViaBackwards** cài trên proxy (07/10/2026) qua `SPIGET_PLUGINS: "19254,27448"` của mc-proxy (không cần `MINECRAFT_VERSION` như Modrinth). Jar của Via dùng chung mọi nền tảng. Chưa thử tải qua Spiget; dự phòng: tải tay bản Velocity từ Hangar. Chưa thêm ViaRewind (1.8).
-- **Qua playit mọi người chơi chung một IP** (proxy thấy IP của agent): vì vậy đã **tắt phiên đăng nhập theo IP của LibreLogin** (`session-timeout=0`), và chưa đối chiếu IP để bắt acc phụ được. Muốn lấy IP thật thì dùng PROXY protocol của playit + `haproxy-protocol = true` trong Velocity (chưa kiểm tra, xem `tunnel/README.md`).
-- **Sao lưu**: mc-backup tự đọc mật khẩu RCON từ `data/<server>/.rcon-cli.env` (image server tự sinh), tự `restic init` kho `backups/restic`. Mỗi service backup phải có `hostname` cố định. Image dùng entrypoint `backup`, chạy restic tay thì `--entrypoint restic`.
-- **LuckPerms**:
-  - Paper: thư mục `plugins/LuckPerms/`, cấu hình dạng YAML rút gọn (`server: ${CFG_SERVER_NAME}`, MariaDB, Redis messaging).
-  - Fabric: `config/luckperms/luckperms.conf` (HOCON), **chưa cấu hình**.
-  - Proxy: **chưa cài** LuckPerms-Velocity, sẽ thêm cùng network-core.
-- Lệnh `include` của Compose: đường dẫn tương đối tính theo thư mục của từng file compose con.
+### Network và đăng nhập
+- **Chỉ proxy mở cổng**: 25565/tcp → 25577 trong container, 19132/udp cho Geyser. Service khác gọi nhau bằng tên service.
+- `[servers]` trong `velocity.toml`: `lobby`, `limbo`, `banghoi-1`; `pokemon-1` đang comment (bật Pokémon thì bỏ comment).
+- **LibreLogin**: database `librelogin` (MariaDB); `new-uuid-creator=MOJANG` (**không đổi sau khi đã có người chơi**); `auto-register=true` (crack không dùng được tên trùng tài khoản bản quyền); `limbo=[limbo]`, `lobby.root=[lobby]`; kick sau 120 giây chưa đăng nhập, sai 5 lần; TOTP tắt (cần Protocolize).
+- **Qua playit mọi người chơi chung một IP** (proxy thấy IP agent), nên **`session-timeout=0`** (tắt nhớ đăng nhập theo IP, nếu bật thì người khác mạo danh được). Lấy IP thật cần PROXY protocol của playit + `haproxy-protocol = true` trong Velocity (chưa kiểm tra; sau đó vào thẳng bằng localhost sẽ không được nữa). `login-ratelimit = 3000` tính theo IP nên có thể chặn nhiều người vào cùng lúc qua playit.
+- **Floodgate chỉ cài trên proxy.** Muốn Bedrock Forms (menu điện thoại) ở lobby thì cài Floodgate trên lobby, dùng **chung `key.pem`** với proxy.
+- **LuckPerms**: Paper dùng `plugins/LuckPerms/config.yml` (MariaDB + Redis messaging). Fabric **chưa cấu hình**. Proxy **chưa cài** LuckPerms-Velocity.
+- `include` của Compose: đường dẫn tương đối tính theo thư mục của từng file con. Biến dùng `:?` sẽ bị đòi **kể cả khi service đang tắt theo profile**, nên `PLAYIT_SECRET_KEY` dùng `:-`.
 
 ### Database
-- `network`: dữ liệu dùng chung. `luckperms`: dữ liệu LuckPerms. `librelogin`: tài khoản đăng nhập. `mode_<id>`: dữ liệu riêng từng chế độ.
-- Nếu máy nhà **đã chạy MariaDB trước 07/10/2026** thì database `librelogin` chưa có, phải tạo tay. Mở console:
-  `docker compose exec mariadb sh -c 'mariadb -uroot -p"$MARIADB_ROOT_PASSWORD"'` rồi chạy
-  `CREATE DATABASE librelogin CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci; GRANT ALL PRIVILEGES ON librelogin.* TO 'mc'@'%';`
-  (thay `mc` bằng `DB_USER` trong `.env`). (cột `players.auth` cũng chưa có, nhưng bảng chưa dùng nên có thể xoá `data/mariadb` để tạo lại nếu chưa có dữ liệu quan trọng).
-- Script trong `infra/db-init/` **chỉ chạy một lần khi `data/mariadb` còn trống**. Thay đổi schema về sau sẽ do network-core quản lý bằng migration (dự kiến Flyway).
+- `network` (dùng chung), `luckperms`, `librelogin`, `mode_<id>` (riêng từng chế độ).
+- `infra/db-init/` **chỉ chạy một lần khi `data/mariadb` còn trống**. Schema về sau do network-core quản lý (dự kiến Flyway).
+
+### Sao lưu (`docs/backup.md`)
+- `backup-<server>` (`itzg/mc-backup` + restic) cạnh mỗi server có thế giới, kho chung `backups/restic`, mã hoá bằng `RESTIC_PASSWORD`.
+  Mỗi giờ (lobby mỗi ngày), chỉ khi có người chơi. Giữ 24 bản theo giờ, 14 theo ngày, 8 theo tuần.
+- mc-backup tự đọc mật khẩu RCON từ `data/<server>/.rcon-cli.env`, tự `restic init`. Mỗi service backup cần `hostname` cố định.
+  Entrypoint của image là `backup`: chạy restic tay thì `docker compose run --rm --no-deps --entrypoint restic backup-<server> ...`.
+- `db-backup`: `mariadb-dump --all-databases` mỗi 6 giờ ra `backups/mariadb/`, giữ 14 ngày.
+- **Chưa có bản sao ngoài máy** (ổ ngoài hoặc cloud qua rclone).
 
 ### Chạy Docker trong session cloud của Claude Code
-- Docker daemon không tự chạy, phải bật bằng `dockerd > <scratchpad>/dockerd.log 2>&1 &`.
-- Docker Hub đôi khi trả **429** (giới hạn lượt tải), thử lại sau.
-- Container không tải được Paper hay plugin vì các host bị chặn (mục 4). Muốn chạy thử trọn vẹn thì người dùng phải thêm các host đó vào Network access của môi trường.
+- Docker daemon không tự chạy: `dockerd > <scratchpad>/dockerd.log 2>&1 &`. Container có thể khởi động lại giữa chừng làm daemon tắt, khi đó bật lại.
+- Docker Hub đôi khi trả **429**, thử lại sau.
+- `raw.githubusercontent.com` đọc được (dùng để đọc README, wiki: `raw.githubusercontent.com/wiki/<owner>/<repo>/<Trang>.md`). `api.github.com`, `github.com` releases, Hangar, SpigotMC, Modrinth, PaperMC, GeyserMC, playit bị chặn.
 
-## 6. Việc tiếp theo (theo thứ tự đề xuất)
+## 6. Người dùng cần làm (chạy lần đầu trên máy nhà)
 
-1. **Chạy lần đầu trên máy nhà** theo checklist trong `README.md`, sửa lỗi từ log. Sau đó ghim `MC_VERSION` và tag của image.
-2. **Hoàn thiện plugin cho Bang Hội Chiến**: Towny + SiegeWar, Vault, EssentialsX (tiền tệ), CoreProtect (bắt buộc), WorldGuard, OldCombatMechanics. Kiểm tra slug trên Modrinth, plugin nào không có thì tải `.jar` bằng tay. Danh sách nằm trong `modes/banghoi/README.md`.
-3. **Luật chơi Bang Hội Chiến**: bản nháp 1 đã có ở `docs/banghoi-design.md` (07/10/2026): lịch trận, cấu hình SiegeWar đề xuất, mùa 8 tuần, chống acc phụ, bán gì được. Các câu hỏi đã được trả lời (mục 14): PvP hoang dã bật, End mở bằng sự kiện, mùa thử 4 tuần rồi mùa chính 8 tuần; giờ trận và cấm vật phẩm để sau mùa thử. Sau khi chốt và chạy thử thì áp cấu hình vào `modes/banghoi/server/plugins/`.
-4. ~~Sao lưu~~ **Đã thêm (07/10/2026)**: `backup-<server>` (`itzg/mc-backup` + restic) cạnh mỗi server có thế giới, kể cả trong khuôn mẫu chế độ; `db-backup` dump MariaDB mỗi 6 giờ. Tất cả vào `backups/`. Xem `docs/backup.md`. **Còn thiếu: chép bản sao lưu ra ngoài máy** (ổ ngoài hoặc cloud qua rclone).
-5. ~~Tunnel playit.gg~~ **Đã thêm (07/10/2026)**: `tunnel/compose.yaml`, profile `tunnel`, image `ghcr.io/playit-cloud/playit-agent`. Chưa thử: trang playit có nhận địa chỉ `proxy` không, UDP cho Bedrock có miễn phí không. Xem `tunnel/README.md`.
-6. **network-core phiên bản 1** (Gradle nhiều module, Java hoặc Kotlin): `core-api`, `core-common`, `core-velocity`, `core-paper`.
-   - Đồng bộ `modes/*/mode.yml` vào bảng `network.modes`.
-   - Velocity **đăng ký server động** từ bảng `network.servers`.
-   - Ghi hồ sơ người chơi vào `network.players` (phân biệt Java, Bedrock, Java có modpack).
-   - **Menu lobby tự sinh** từ danh sách chế độ: menu dạng rương cho Java, Bedrock Forms cho điện thoại (cần Floodgate trên lobby và chung `key.pem`).
-   - Chế độ beta chỉ hiện với người có quyền `network.beta`; chế độ maintenance hiện nhưng không cho vào.
-7. Về sau:
-   - Web store (VietQR, thẻ cào qua DotMan) với bảng `network.deliveries`, giao hàng khi người chơi online, không dùng RCON trực tiếp.
-   - Đồ trang trí dùng chung toàn network.
-   - Chế độ Pokémon: viết `core-fabric`, tạo `_template-fabric`, làm modpack, thử chuyển server từ lobby Paper sang Fabric.
+1. Cài Docker. Windows: Docker Desktop + WSL2 + Ubuntu, để thư mục dự án **trong Ubuntu**. Cần khoảng 8 GB RAM trống.
+2. Tải code và tạo mật khẩu:
+   ```bash
+   git clone -b claude/exciting-cray-lh5jgq https://github.com/liinh97/DuckyMoMo.git
+   cd DuckyMoMo
+   ./ops/init.sh      # chép RESTIC_PASSWORD trong .env ra chỗ an toàn
+   ```
+3. `docker compose up -d`, chờ 5–10 phút, `docker compose ps`.
+4. Vào game thử:
+   - Java bản quyền `localhost`: vào thẳng lobby.
+   - Java crack: bị giữ ở limbo, `/register matkhau matkhau` rồi sang lobby.
+   - Java bản cũ (ví dụ 1.20.4): vẫn vào được (ViaBackwards).
+   - Điện thoại: IP máy tính (`192.168.x.x`), cổng `19132`: vào thẳng lobby.
+   - Ở lobby `/server banghoi-1`.
+5. Gửi cho Claude: hệ điều hành, `docker compose ps`, log phần lỗi.
 
-## 7. Câu hỏi còn mở
-- Tên miền (tên đã chốt là DuckyMoMo).
-- Đã chốt **bán đồ trang trí cho cả người chơi crack**. Việc còn lại: đọc kỹ EULA và Usage Guidelines về server offline-mode trước khi mở web store.
-- Máy nhà chạy Windows hay Linux, cấu hình bao nhiêu?
+## 7. Việc tiếp theo (thứ tự đề xuất)
 
-## 8. Prompt gợi ý để mở session mới
+1. **Sửa lỗi từ lần chạy đầu** (mục 6). Sau đó ghim `MC_VERSION` và tag image.
+2. **Cài plugin Bang Hội Chiến**: Towny (cần 0.101.2.5 trở lên), SiegeWar (`/swa install` sau khi cài), Vault, EssentialsX (tiền tệ), CoreProtect (bắt buộc), WorldGuard, OldCombatMechanics. Kiểm tra slug Modrinth, không có thì tải `.jar` tay. Danh sách: `modes/banghoi/README.md`.
+3. **Áp cấu hình SiegeWar** theo `docs/banghoi-design.md` mục 4 (giờ trận T6 20:30, T7/CN 15:00 và 20:30; 5 trận; 1 cuộc vây/bang; vùng chiến 150 ô; bật Siege Assembly), khoá End (`settings.allow-end: false` trong `data/banghoi-1/bukkit.yml`), bật PvP hoang dã. Chép cấu hình về `modes/banghoi/server/plugins/`.
+4. **Bật tunnel playit** (`tunnel/README.md`), cho bạn bè vào **mùa thử 4 tuần**.
+5. **Chép sao lưu ra ngoài máy** (ổ ngoài hoặc rclone lên cloud).
+6. **network-core v1** (Gradle nhiều module: `core-api`, `core-common`, `core-velocity`, `core-paper`): đồng bộ `modes/*/mode.yml` vào `network.modes`; đăng ký server động từ `network.servers`; ghi `network.players` (platform + auth); menu lobby tự sinh (rương cho Java, Bedrock Forms cho điện thoại); chế độ beta chỉ hiện với quyền `network.beta`; tự tính điểm mùa Bang Hội Chiến; acc mới phải chơi đủ vài giờ mới nhận quân hàm.
+7. Về sau: web store (VietQR, thẻ cào qua DotMan, bảng `network.deliveries`, giao khi người chơi online, không dùng RCON trực tiếp); đồ trang trí dùng chung network; chế độ Pokémon (`core-fabric`, `_template-fabric`, modpack); có thể thêm ViaRewind (1.8), Dynmap + Dynmap-Towny, TownyResources.
 
-> Tôi đang làm dự án DuckyMoMo Network (server Minecraft, Docker Compose) trong repo `liinh97/DuckyMoMo`, nhánh `claude/confident-thompson-q939lp`. Hãy đọc `docs/HANDOFF.md`, `README.md` và các file trong `docs/` trước, rồi tiếp tục từ mục "Việc tiếp theo". Trả lời bằng tiếng Việt, nói rõ khi thông tin cần kiểm tra lại.
+## 8. Câu hỏi còn mở
+- Tên miền.
+- Đọc kỹ EULA và Minecraft Usage Guidelines về server offline-mode **trước khi mở web store** (đã chốt bán đồ trang trí cho cả người chơi crack).
+- Máy nhà chạy Windows hay Linux, cấu hình bao nhiêu.
+- Sau mùa thử: giờ trận chính thức, cấm vật phẩm nào, có đổi cách rơi đồ ở hoang dã không, số tiền (phí thành, giá chợ).
+
+## 9. Prompt gợi ý để mở session mới
+
+> Tôi đang làm dự án DuckyMoMo Network (server Minecraft, Docker Compose) trong repo `liinh97/DuckyMoMo`, nhánh `claude/exciting-cray-lh5jgq`. Hãy đọc `docs/HANDOFF.md` trước (bắt đầu từ mục 0), rồi `README.md` và các file trong `docs/`. Trả lời bằng tiếng Việt, nói rõ khi thông tin cần kiểm tra lại.

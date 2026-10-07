@@ -33,7 +33,10 @@ Vào game:
 - **PC (Java)**: thêm server `localhost` (hoặc IP máy chạy Docker), cổng `25565`.
 - **Điện thoại (Bedrock)**: thêm server IP máy chạy Docker, cổng `19132`.
 
-Cho bạn bè ngoài mạng nhà vào: dùng **playit.gg** (xem `docs/network-architecture.md`, mục 6), không mở port trên modem.
+Cho bạn bè ngoài mạng nhà vào: dùng **playit.gg** (`docker compose --profile tunnel up -d`, hướng dẫn trong `tunnel/README.md`), không mở port trên modem.
+
+Sao lưu chạy tự động ngay khi `up` (thế giới mỗi giờ, database mỗi 6 giờ, vào thư mục `backups/`). Xem `docs/backup.md`.
+**Chép `RESTIC_PASSWORD` trong `.env` ra chỗ an toàn**, mất nó thì không khôi phục được.
 
 ## Checklist sau lần chạy đầu
 - [ ] `docker compose ps`: tất cả service ở trạng thái `running` / `healthy`.
@@ -46,6 +49,8 @@ Cho bạn bè ngoài mạng nhà vào: dùng **playit.gg** (xem `docs/network-ar
 - [ ] Cấp quyền admin cho mình: `docker compose exec lobby rcon-cli lp user <TenBan> permission set "*" true`
       (LuckPerms dùng chung MariaDB nên quyền có hiệu lực ở mọi server Paper).
 - [ ] Ghim phiên bản: đổi `MC_VERSION=LATEST` trong `.env` thành phiên bản đang chạy.
+- [ ] Sao lưu: `docker compose logs backup-banghoi-1 db-backup` không báo lỗi; `ls backups/mariadb` có file. Tập khôi phục một lần theo `docs/backup.md`.
+- [ ] Tunnel (khi cần): bạn bè vào được qua địa chỉ playit, cả Java lẫn Bedrock (xem `tunnel/README.md`).
 
 ## Lệnh thường dùng
 ```bash
@@ -56,13 +61,15 @@ docker compose exec lobby rcon-cli         # console của server (gõ lệnh nh
 docker compose pull && docker compose up -d   # cập nhật image
 docker compose down                        # tắt tất cả (dữ liệu trong data/ vẫn giữ)
 docker compose --profile pokemon up -d     # bật thêm chế độ Pokémon
+docker compose --profile tunnel up -d      # bật tunnel playit.gg
+docker compose exec backup-banghoi-1 backup now   # sao lưu ngay
 ```
 
 ## Cấu trúc thư mục
 ```
 compose.yaml           File gốc: danh sách include
 .env.example           Mẫu biến môi trường (.env thật không commit)
-infra/                 MariaDB + Redis; db-init/ tạo database và bảng lần đầu
+infra/                 MariaDB + Redis + db-backup; db-init/ tạo database và bảng lần đầu
 proxy/                 Velocity + Geyser + Floodgate + LibreLogin; config/velocity.toml, plugins/librelogin/config.conf
 limbo/                 Phòng chờ đăng nhập (NanoLimbo) cho người chơi crack
 lobby/                 Lobby (Paper)
@@ -70,9 +77,11 @@ modes/
   _template-paper/     Khuôn mẫu chế độ Paper mới
   banghoi/             Bang Hội Chiến: compose.yaml, mode.yml, server/{config,plugins}
   pokemon/             Pokémon (Fabric + Cobblemon), mặc định không chạy
+tunnel/                Agent playit.gg (profile tunnel)
 ops/                   init.sh, new-mode.sh
 docs/                  Kế hoạch và thiết kế
-data/                  Dữ liệu chạy (KHÔNG commit, cần sao lưu)
+data/                  Dữ liệu chạy (KHÔNG commit)
+backups/               Bản sao lưu restic + dump MariaDB (KHÔNG commit, nên chép ra ổ khác)
 ```
 
 ### Cấu hình và mật khẩu
@@ -105,4 +114,6 @@ Chi tiết: `docs/network-architecture.md`, mục 7.
 | Plugin Bang Hội Chiến (Towny + SiegeWar…) | ⏳ Chưa cài, xem `modes/banghoi/README.md` |
 | Pokémon (Fabric) | ⏳ Chưa mở; LuckPerms Fabric chưa cấu hình MariaDB |
 | network-core (menu lobby tự sinh, đăng ký server động, giao hàng web store) | 🔜 Bước tiếp theo |
-| Sao lưu tự động (`itzg/mc-backup`) | 🔜 Chưa thêm |
+| Sao lưu: dump và khôi phục MariaDB | ✅ Đã chạy thử |
+| Sao lưu: lệnh restic sao lưu và khôi phục (image `itzg/mc-backup`) | ✅ Đã chạy thử với thế giới giả; ⏳ sao lưu tự động qua RCON chưa thử với server thật |
+| Tunnel playit.gg | ⏳ Chưa thử (môi trường dựng khung không vào được playit.gg) |

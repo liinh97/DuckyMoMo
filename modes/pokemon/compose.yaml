@@ -24,3 +24,29 @@ services:
     depends_on:
       mariadb:
         condition: service_healthy
+
+  # Sao lưu thế giới + dữ liệu plugin của pokemon-1 bằng restic (chỉ lưu phần thay đổi).
+  # Dùng RCON tạm dừng ghi khi sao lưu; mật khẩu RCON tự đọc từ data/.rcon-cli.env. Xem docs/backup.md.
+  backup-pokemon-1:
+    image: itzg/mc-backup
+    profiles: ["pokemon"]
+    restart: unless-stopped
+    hostname: backup-pokemon-1       # restic phân biệt bản sao lưu theo hostname, phải cố định
+    environment:
+      TZ: Asia/Ho_Chi_Minh
+      BACKUP_METHOD: restic
+      BACKUP_NAME: pokemon-1
+      RCON_HOST: pokemon-1
+      BACKUP_INTERVAL: 1h
+      PAUSE_IF_NO_PLAYERS: "true"   # không ai chơi thì không sao lưu lại
+      INITIAL_DELAY: 5m
+      RESTIC_REPOSITORY: /backups/restic
+      RESTIC_PASSWORD: ${RESTIC_PASSWORD:?Chưa đặt RESTIC_PASSWORD trong .env}
+      RESTIC_RETRY_LOCK: 5m         # nhiều service dùng chung một kho
+      PRUNE_RESTIC_RETENTION: --keep-hourly 24 --keep-daily 14 --keep-weekly 8
+    volumes:
+      - ../../data/pokemon-1:/data:ro
+      - ../../backups:/backups
+    depends_on:
+      pokemon-1:
+        condition: service_started

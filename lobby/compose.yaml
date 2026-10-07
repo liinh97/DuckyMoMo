@@ -37,3 +37,28 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
+
+  # Sao lưu thế giới + dữ liệu plugin của lobby bằng restic (chỉ lưu phần thay đổi).
+  # Dùng RCON tạm dừng ghi khi sao lưu; mật khẩu RCON tự đọc từ data/.rcon-cli.env. Xem docs/backup.md.
+  backup-lobby:
+    image: itzg/mc-backup
+    restart: unless-stopped
+    hostname: backup-lobby       # restic phân biệt bản sao lưu theo hostname, phải cố định
+    environment:
+      TZ: Asia/Ho_Chi_Minh
+      BACKUP_METHOD: restic
+      BACKUP_NAME: lobby
+      RCON_HOST: lobby
+      BACKUP_INTERVAL: 24h
+      PAUSE_IF_NO_PLAYERS: "true"   # không ai chơi thì không sao lưu lại
+      INITIAL_DELAY: 5m
+      RESTIC_REPOSITORY: /backups/restic
+      RESTIC_PASSWORD: ${RESTIC_PASSWORD:?Chưa đặt RESTIC_PASSWORD trong .env}
+      RESTIC_RETRY_LOCK: 5m         # nhiều service dùng chung một kho
+      PRUNE_RESTIC_RETENTION: --keep-hourly 24 --keep-daily 14 --keep-weekly 8
+    volumes:
+      - ../data/lobby:/data:ro
+      - ../backups:/backups
+    depends_on:
+      lobby:
+        condition: service_started

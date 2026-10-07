@@ -1,6 +1,7 @@
 # Mật khẩu và dữ liệu chạy
 .env
 data/
+backups/
 
 # File plugin/mod tải tay (tải tự động qua Modrinth thì không nằm ở đây)
 *.jar

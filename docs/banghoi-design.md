@@ -160,7 +160,7 @@ Cho crack vào thì tạo acc phụ rất dễ (chỉ cần đổi tên). Các t
 | Trò | Cách chặn |
 |---|---|
 | Lập thành giả rồi tự vây để lấy thời gian miễn công thành | **Bật Siege Assembly** (mục 4): phải ghi đủ điểm trong 10 phút mới được mở vây |
-| Acc phụ đứng cho địch giết để cày điểm hạ địch (150 điểm/lần) | Chỉ người có **quân hàm** mới bị tính điểm, và quân hàm do bang chủ phong. Luật: **mỗi người chỉ dùng 1 acc trong chiến tranh**. Admin đối chiếu IP trong database `librelogin` khi có tố cáo |
+| Acc phụ đứng cho địch giết để cày điểm hạ địch (150 điểm/lần) | Chỉ người có **quân hàm** mới bị tính điểm, và quân hàm do bang chủ phong. Luật: **mỗi người chỉ dùng 1 acc trong chiến tranh**. Admin đối chiếu IP trong database `librelogin` khi có tố cáo. **Lưu ý:** qua tunnel playit mọi người chung một IP, nên chỉ đối chiếu được khi đã bật PROXY protocol (xem `tunnel/README.md`); trước đó dựa vào CoreProtect và lời khai |
 | Acc phụ làm gián điệp trong bang địch | Việc của các bang tự lo (không cấm, là một phần của chơi ngoại giao). Admin không can thiệp |
 | Vây bằng cách bao quanh thành địch bằng thành của mình | Luật của wiki SiegeWar: **cấm bao vây thành khác bằng thành** |
 | Cắm cờ ở chỗ không lên được (trên trời, dưới hang) | Luật: **cờ đặt ngang độ cao của thành, đường tới cờ đi được** |

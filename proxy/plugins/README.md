@@ -11,7 +11,7 @@ Proxy để `online-mode = false` nên ai cũng vào được. LibreLogin chặn
 
 | Người chơi | Lần đầu | Lần sau |
 |---|---|---|
-| Crack | Vào phòng chờ `limbo`, gõ `/register <mật khẩu> <mật khẩu>` | `/login <mật khẩu>` (cùng IP trong 1 ngày thì không cần) |
+| Crack | Vào phòng chờ `limbo`, gõ `/register <mật khẩu> <mật khẩu>` | `/login <mật khẩu>` mỗi lần vào (phiên đăng nhập theo IP đang tắt, xem `tunnel/README.md`) |
 | Bản quyền | Tự đăng ký và tự đăng nhập (`auto-register=true`) | Tự đăng nhập |
 | Bedrock (Floodgate) | Không cần đăng nhập | Không cần đăng nhập |
 

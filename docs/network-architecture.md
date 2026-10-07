@@ -147,7 +147,7 @@ mode_banghoi.*             mode_survival.*           mode_pokemon.*   (mỗi ch�
 ├── .gitignore              # bỏ qua .env, data/
 ├── data/                   # dữ liệu chạy (thế giới, DB…), KHÔNG commit, có sao lưu
 ├── infra/
-│   ├── compose.yaml        # MariaDB, Redis (sau này thêm backup)
+│   ├── compose.yaml        # MariaDB, Redis, db-backup
 │   └── db-init/            # SQL tạo schema network và mode_* lần đầu
 ├── proxy/
 │   ├── compose.yaml        # Velocity + Geyser + Floodgate

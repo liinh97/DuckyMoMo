@@ -9,3 +9,4 @@ include:
   - lobby/compose.yaml          # Lobby (Paper)
   - modes/banghoi/compose.yaml  # Chế độ 1: Bang Hội Chiến (Paper)
   - modes/pokemon/compose.yaml  # Chế độ Pokémon (Fabric) - chỉ chạy khi bật: --profile pokemon
+  - tunnel/compose.yaml         # Tunnel playit.gg - chỉ chạy khi bật: --profile tunnel

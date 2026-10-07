@@ -14,10 +14,12 @@ else
     -e "s/^DB_PASSWORD=.*/DB_PASSWORD=$(rand 32)/" \
     -e "s/^REDIS_PASSWORD=.*/REDIS_PASSWORD=$(rand 32)/" \
     -e "s/^VELOCITY_SECRET=.*/VELOCITY_SECRET=$(rand 48)/" \
+    -e "s/^RESTIC_PASSWORD=.*/RESTIC_PASSWORD=$(rand 40)/" \
     .env.example > .env
   chmod 600 .env
   echo "Đã tạo .env với mật khẩu ngẫu nhiên."
+  echo "QUAN TRỌNG: chép RESTIC_PASSWORD trong .env ra chỗ an toàn, mất nó thì không khôi phục được bản sao lưu."
 fi
 
-mkdir -p data
+mkdir -p data backups
 echo "Xong. Chạy tiếp:  docker compose up -d   rồi   docker compose logs -f"

@@ -1,0 +1,15 @@
+services:
+  # Tunnel playit.gg: cho bạn bè ngoài mạng nhà vào mà không cần mở port trên modem.
+  # Chỉ chạy khi bật:  docker compose --profile tunnel up -d
+  # Cách lấy SECRET_KEY và tạo tunnel: xem tunnel/README.md
+  playit:
+    image: ghcr.io/playit-cloud/playit-agent:latest   # khi chạy ổn nên ghim tag cụ thể
+    profiles: ["tunnel"]
+    restart: unless-stopped
+    environment:
+      # Không dùng ":?" vì Compose đọc biến của cả service đang tắt; thiếu key thì agent tự báo lỗi khi chạy.
+      SECRET_KEY: ${PLAYIT_SECRET_KEY:-}
+    # Chung mạng Docker với proxy: tunnel trỏ thẳng tới proxy:25577 (Java) và proxy:19132 (Bedrock).
+    depends_on:
+      proxy:
+        condition: service_started

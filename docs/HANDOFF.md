@@ -89,6 +89,8 @@ Môi trường cloud chặn các host: `api.papermc.io`, `fill.papermc.io`, `dow
   - LibreLogin lưu tài khoản trong MariaDB, database `librelogin`. `new-uuid-creator=MOJANG` (người chơi bản quyền giữ UUID thật), `auto-register=true` (crack không chiếm được tên bản quyền). **Không đổi UUID creator sau khi đã có người chơi.**
   - Limbo là NanoLimbo chạy bằng `eclipse-temurin:21-jre-alpine` và script `limbo/entrypoint.sh` (itzg không hỗ trợ NanoLimbo). Script tự tải jar lần đầu, điền secret bằng `sed`.
   - Bảng `network.players` có thêm cột `auth` (`premium`, `cracked`, `floodgate`) cho network-core sau này.
+- **Qua playit mọi người chơi chung một IP** (proxy thấy IP của agent): vì vậy đã **tắt phiên đăng nhập theo IP của LibreLogin** (`session-timeout=0`), và chưa đối chiếu IP để bắt acc phụ được. Muốn lấy IP thật thì dùng PROXY protocol của playit + `haproxy-protocol = true` trong Velocity (chưa kiểm tra, xem `tunnel/README.md`).
+- **Sao lưu**: mc-backup tự đọc mật khẩu RCON từ `data/<server>/.rcon-cli.env` (image server tự sinh), tự `restic init` kho `backups/restic`. Mỗi service backup phải có `hostname` cố định. Image dùng entrypoint `backup`, chạy restic tay thì `--entrypoint restic`.
 - **LuckPerms**:
   - Paper: thư mục `plugins/LuckPerms/`, cấu hình dạng YAML rút gọn (`server: ${CFG_SERVER_NAME}`, MariaDB, Redis messaging).
   - Fabric: `config/luckperms/luckperms.conf` (HOCON), **chưa cấu hình**.
@@ -113,8 +115,8 @@ Môi trường cloud chặn các host: `api.papermc.io`, `fill.papermc.io`, `dow
 1. **Chạy lần đầu trên máy nhà** theo checklist trong `README.md`, sửa lỗi từ log. Sau đó ghim `MC_VERSION` và tag của image.
 2. **Hoàn thiện plugin cho Bang Hội Chiến**: Towny + SiegeWar, Vault, EssentialsX (tiền tệ), CoreProtect (bắt buộc), WorldGuard, OldCombatMechanics. Kiểm tra slug trên Modrinth, plugin nào không có thì tải `.jar` bằng tay. Danh sách nằm trong `modes/banghoi/README.md`.
 3. **Luật chơi Bang Hội Chiến**: bản nháp 1 đã có ở `docs/banghoi-design.md` (07/10/2026): lịch trận, cấu hình SiegeWar đề xuất, mùa 8 tuần, chống acc phụ, bán gì được. Các câu hỏi đã được trả lời (mục 14): PvP hoang dã bật, End mở bằng sự kiện, mùa thử 4 tuần rồi mùa chính 8 tuần; giờ trận và cấm vật phẩm để sau mùa thử. Sau khi chốt và chạy thử thì áp cấu hình vào `modes/banghoi/server/plugins/`.
-4. **Sao lưu**: thêm `itzg/mc-backup` (restic) cho các server có thế giới, và `mariadb-dump` định kỳ.
-5. **Tunnel playit.gg**: thêm service agent với profile `tunnel`, trỏ tới `proxy:25577` và `proxy:19132/udp`. Kiểm tra image chính thức của playit trước.
+4. ~~Sao lưu~~ **Đã thêm (07/10/2026)**: `backup-<server>` (`itzg/mc-backup` + restic) cạnh mỗi server có thế giới, kể cả trong khuôn mẫu chế độ; `db-backup` dump MariaDB mỗi 6 giờ. Tất cả vào `backups/`. Xem `docs/backup.md`. **Còn thiếu: chép bản sao lưu ra ngoài máy** (ổ ngoài hoặc cloud qua rclone).
+5. ~~Tunnel playit.gg~~ **Đã thêm (07/10/2026)**: `tunnel/compose.yaml`, profile `tunnel`, image `ghcr.io/playit-cloud/playit-agent`. Chưa thử: trang playit có nhận địa chỉ `proxy` không, UDP cho Bedrock có miễn phí không. Xem `tunnel/README.md`.
 6. **network-core phiên bản 1** (Gradle nhiều module, Java hoặc Kotlin): `core-api`, `core-common`, `core-velocity`, `core-paper`.
    - Đồng bộ `modes/*/mode.yml` vào bảng `network.modes`.
    - Velocity **đăng ký server động** từ bảng `network.servers`.

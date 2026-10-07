@@ -37,3 +37,20 @@ services:
       retries: 6
     environment:
       REDIS_PASSWORD: ${REDIS_PASSWORD}
+
+  # Dump toàn bộ database mỗi 6 giờ ra backups/mariadb/ (giữ 14 ngày). Xem docs/backup.md.
+  db-backup:
+    image: mariadb:11.4
+    restart: unless-stopped
+    entrypoint: ["bash", "/backup-db.sh"]
+    environment:
+      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      TZ: Asia/Ho_Chi_Minh
+      INTERVAL: 6h
+      KEEP_DAYS: "14"
+    volumes:
+      - ./backup-db.sh:/backup-db.sh:ro
+      - ../backups:/backups
+    depends_on:
+      mariadb:
+        condition: service_healthy

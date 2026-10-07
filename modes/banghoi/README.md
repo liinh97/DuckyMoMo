@@ -2,13 +2,13 @@
 
 Factions kiểu mới: lập bang, chiếm lãnh thổ, **công thành theo lịch**, chạy theo mùa, combat kiểu 1.8.
 Dùng **Towny + SiegeWar**.
-Thiết kế chi tiết: xem `docs/minecraft-server-plan.md` (mục 3).
+Luật chơi (bản nháp): **`docs/banghoi-design.md`**. Định hướng chung: `docs/minecraft-server-plan.md` (mục 3).
 
 ## Nền tảng: Towny + SiegeWar (đã chốt 07/10/2026)
 - **Towny**: lập thị trấn (town), gộp thành quốc gia (nation) = **bang**, chiếm đất theo ô (plot), thuế và phí duy trì.
 - **SiegeWar**: công thành. Bang tấn công dựng cờ, hai bên giành điểm trong vùng quanh cờ, thắng thì chiếm hoặc cướp thị trấn.
   Chỉ diễn ra trong **khung giờ chiến** (cấu hình được), nên không ai bị đánh lúc offline. Khớp với ý tưởng "công thành theo lịch".
-- Chưa thiết kế luật chi tiết (giờ chiến, phí, phần thưởng mùa). Sẽ viết ở `docs/banghoi-design.md`.
+- Luật chi tiết (giờ trận, mùa giải, chống lạm dụng, cấu hình SiegeWar đề xuất): `docs/banghoi-design.md`.
 
 ## Plugin
 | Plugin | Vai trò | Cách cài | Trạng thái |
@@ -17,7 +17,7 @@ Thiết kế chi tiết: xem `docs/minecraft-server-plan.md` (mục 3).
 | WorldEdit | Dựng công trình | Modrinth (tự động) | ✅ |
 | Chunky | Tạo trước bản đồ | Modrinth (tự động) | ✅ |
 | **Towny** | Thị trấn, bang, đất | Xem bên dưới | ⏳ |
-| **SiegeWar** | Công thành theo giờ | Xem bên dưới. **Phải khớp phiên bản Towny** (xem trang release của SiegeWar) | ⏳ |
+| **SiegeWar** | Công thành theo giờ | Xem bên dưới. Cần **Towny 0.101.2.5 trở lên**; xem trang release của SiegeWar để chọn bản khớp. Cài xong chạy `/swa install` | ⏳ |
 | Vault (hoặc VaultUnlocked) | Cầu nối tiền tệ, Towny cần để thu thuế, phí | Xem bên dưới | ⏳ |
 | EssentialsX | Lệnh cơ bản + **tiền tệ** (Towny dùng qua Vault) | Xem bên dưới | ⏳ |
 | CoreProtect | Ghi lại và khôi phục phá hoại (**bắt buộc** trước khi mở) | Xem bên dưới | ⏳ |

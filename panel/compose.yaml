@@ -1,0 +1,17 @@
+services:
+  # Trang Cài đặt: chỉnh setting của từng chế độ trên web, bấm Lưu là áp dụng ngay (ghi cấu hình plugin + nạp lại qua RCON).
+  # Mở: http://localhost:${PANEL_PORT:-8889}  (chỉ máy chạy Docker vào được). Đăng nhập: PANEL_USER / PANEL_PASSWORD trong .env
+  # Định nghĩa cài đặt: modes/<id>/settings.schema.yml, giá trị: modes/<id>/settings.yml (có trong Git).
+  panel:
+    build: .
+    restart: unless-stopped
+    environment:
+      PANEL_USER: ${PANEL_USER:-admin}
+      PANEL_PASSWORD: ${PANEL_PASSWORD:?Chưa đặt PANEL_PASSWORD trong .env (chạy lại ./ops/init.sh)}
+      DOZZLE_URL: http://localhost:${DASHBOARD_PORT:-8888}
+      TZ: Asia/Ho_Chi_Minh
+    ports:
+      - "127.0.0.1:${PANEL_PORT:-8889}:8080"
+    volumes:
+      - ../modes:/repo/modes      # đọc định nghĩa, ghi settings.yml
+      - ../data:/data             # ghi file cấu hình plugin, đọc mật khẩu RCON (data/<server>/.rcon-cli.env)

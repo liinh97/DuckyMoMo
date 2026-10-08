@@ -14,9 +14,22 @@ else
     -e "s/^DB_PASSWORD=.*/DB_PASSWORD=$(rand 32)/" \
     -e "s/^REDIS_PASSWORD=.*/REDIS_PASSWORD=$(rand 32)/" \
     -e "s/^VELOCITY_SECRET=.*/VELOCITY_SECRET=$(rand 48)/" \
+    -e "s/^AUTHME_SECRET=.*/AUTHME_SECRET=$(rand 64)/" \
+    -e "s/^PANEL_PASSWORD=.*/PANEL_PASSWORD=$(rand 20)/" \
     .env.example > .env
   chmod 600 .env
   echo "Đã tạo .env với mật khẩu ngẫu nhiên."
+fi
+
+# Biến thêm sau này: bổ sung vào .env cũ nếu còn thiếu
+if ! grep -q '^AUTHME_SECRET=' .env; then
+  printf '\n# AuthMe (thêm bởi ops/init.sh)\nAUTHME_SECRET=%s\n' "$(rand 64)" >> .env
+  echo "Đã thêm AUTHME_SECRET vào .env."
+fi
+
+if ! grep -q '^PANEL_PASSWORD=' .env; then
+  printf '\n# Trang Cài đặt (thêm bởi ops/init.sh)\nPANEL_USER=admin\nPANEL_PASSWORD=%s\n' "$(rand 20)" >> .env
+  echo "Đã thêm PANEL_USER/PANEL_PASSWORD vào .env (đăng nhập trang Cài đặt)."
 fi
 
 mkdir -p data

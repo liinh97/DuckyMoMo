@@ -1,0 +1,7 @@
+name: DuckyMoMoCore
+version: ${version}
+main: vn.duckymomo.core.paper.DuckyMoMoCore
+api-version: 1.21.11
+description: Plugin dùng chung của DuckyMoMo Network (bản Paper)
+softdepend:
+  - AuthMe

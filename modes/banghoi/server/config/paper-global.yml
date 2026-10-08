@@ -3,5 +3,5 @@
 proxies:
   velocity:
     enabled: true
-    online-mode: true
+    online-mode: false   # proxy chạy offline mode (AuthMe lo đăng nhập)
     secret: "${CFG_VELOCITY_SECRET}"

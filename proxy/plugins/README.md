@@ -7,7 +7,10 @@
   Các file cấu hình được copy vào `/server/plugins` khi khởi động.
 
 ## Việc cần kiểm tra ở lần chạy đầu
-Sau lần chạy đầu, mở `data/proxy/plugins/Geyser-Velocity/config.yml` và kiểm tra
+Đã làm (07/10/2026): file `Geyser-Velocity/config.yml` trong thư mục này đặt sẵn `auth-type: floodgate`.
+Nếu nâng cấp Geyser, so lại với file mới sinh trong `data/` rồi mới ghi đè.
+
+Cách làm gốc: sau lần chạy đầu, mở `data/proxy/plugins/Geyser-Velocity/config.yml` và kiểm tra
 **auth-type** đang là `floodgate` (để người chơi Bedrock không cần tài khoản Java).
 Nếu chưa, sửa thành `floodgate` rồi `docker compose restart proxy`.
 Khi đã ổn, copy file cấu hình đó vào `proxy/plugins/Geyser-Velocity/config.yml` để lưu vào Git.

@@ -1,0 +1,28 @@
+# Giá trị cài đặt của chế độ Bang Hội Chiến. Ý nghĩa từng mục: settings.schema.yml.
+# Sửa qua trang Cài đặt (http://localhost:8889): bấm Lưu là áp dụng ngay.
+# Sửa tay file này thì vào trang Cài đặt bấm "Áp dụng lại tất cả".
+siege_monday: ''
+siege_tuesday: ''
+siege_wednesday: ''
+siege_thursday: ''
+siege_friday: ''
+siege_saturday: '20:00,21:00'
+siege_sunday: '20:00,21:00'
+siege_session_minutes: 60
+siege_sessions_per_siege: 4
+siege_weeks: weekly
+siege_max_attacks: 2
+siege_warchest_per_plot: 20.0
+siege_immunity_hours: 168
+siege_immunity_new_town_hours: 168
+towny_price_new_town: 500.0
+towny_price_new_nation: 1000.0
+towny_price_claim: 25.0
+towny_town_upkeep: 10.0
+towny_nation_upkeep: 100.0
+combat_mode:
+  - old
+world_radius: 5000
+map_type: natural
+map_url: ''
+reset_each_season: true

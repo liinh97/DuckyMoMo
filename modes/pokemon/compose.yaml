@@ -3,6 +3,7 @@ services:
     image: itzg/minecraft-server
     profiles: ["pokemon"]          # mặc định KHÔNG chạy. Bật: docker compose --profile pokemon up -d
     restart: unless-stopped
+    stop_grace_period: 1m        # cho server đủ thời gian lưu thế giới khi tắt (mặc định Docker chỉ chờ 10 giây)
     environment:
       EULA: "TRUE"
       TYPE: FABRIC

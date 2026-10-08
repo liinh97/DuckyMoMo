@@ -1,0 +1,33 @@
+# AuthMe trên proxy (Velocity). Nằm trong proxy/config (không phải proxy/plugins) vì mc-proxy chỉ điền biến ${CFG_...} cho file trong /config.
+# Mẫu đầy đủ: https://github.com/AuthMe/AuthMeReloaded/blob/master/docs/proxies/velocity/config.yml
+
+# Server có cài AuthMe, nơi người chơi /register, /login. Proxy luôn đưa người mới vào lobby trước.
+authServers:
+- lobby
+allServersAreAuthServers: false
+serverSwitch:
+    # Chưa đăng nhập thì không sang được server khác (banghoi-1… không cần cài AuthMe)
+    requiresAuth: true
+    kickMessage: Bạn cần đăng nhập ở lobby trước (/login hoặc /register).
+autoLogin: false
+sendOnLogout: false
+unloggedUserServer: ''
+commands:
+    requireAuth: true
+    whitelist:
+    - /login
+    - /register
+    - /l
+    - /reg
+    - /email
+    - /captcha
+    - /2fa
+    - /totp
+    - /log
+chatRequiresAuth: true
+loginServer: ''
+# Lấy từ AUTHME_SECRET trong .env, phải trùng Hooks.proxySharedSecret ở lobby
+proxySharedSecret: '${CFG_AUTHME_SECRET}'
+premium:
+    # Người có bản quyền gõ /premium vẫn giữ UUID offline, để dữ liệu (quyền, đồ…) không bị tách đôi
+    keepOfflineUuidCompatibility: true

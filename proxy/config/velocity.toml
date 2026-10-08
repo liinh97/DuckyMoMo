@@ -8,9 +8,11 @@ bind = "0.0.0.0:25577"
 motd = "<gradient:#f7b733:#fc4a1a><bold>DuckyMoMo Network</bold></gradient><newline><gray>Bang Hội Chiến - PC & điện thoại"
 show-max-players = 500
 
-# Proxy xác thực tài khoản; server con để online-mode=false và tin proxy qua secret
-online-mode = true
-force-key-authentication = true
+# Offline mode: cho cả người chơi không bản quyền vào (quyết định 07/10/2026).
+# Bảo vệ tên bằng AuthMe: /register, /login ở lobby. Người có bản quyền gõ /premium để bỏ qua mật khẩu.
+# Server con vẫn để online-mode=false và tin proxy qua secret.
+online-mode = false
+force-key-authentication = false
 prevent-client-proxy-connections = false
 
 # "modern" = Velocity modern forwarding (an toàn nhất, Paper/Fabric đều hỗ trợ)

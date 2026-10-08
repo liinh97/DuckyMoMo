@@ -10,3 +10,7 @@ data/
 Thumbs.db
 .idea/
 .vscode/
+
+# Kết quả build network-core
+network-core/.gradle/
+network-core/**/build/

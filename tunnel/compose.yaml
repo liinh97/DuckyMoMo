@@ -1,0 +1,18 @@
+services:
+  # playit.gg: cho người ngoài mạng nhà vào server, không cần mở cổng modem.
+  # Chỉ chạy khi bật:  docker compose --profile tunnel up -d
+  playit:
+    image: ghcr.io/playit-cloud/playit-agent:1.0
+    profiles: ["tunnel"]
+    restart: unless-stopped
+    environment:
+      # Lấy ở playit.gg (Add agent > Docker). Không commit key này.
+      SECRET_KEY: ${PLAYIT_SECRET_KEY:?Chưa đặt PLAYIT_SECRET_KEY trong .env}
+    # Dùng chung mạng với proxy: trên dashboard playit, tunnel trỏ tới 127.0.0.1
+    #   Minecraft Java    -> 127.0.0.1:25577 (TCP)
+    #   Minecraft Bedrock -> 127.0.0.1:19132 (UDP)
+    network_mode: "service:proxy"
+    depends_on:
+      proxy:
+        condition: service_started
+        restart: true             # proxy khởi động lại thì playit cũng khởi động lại để giữ mạng

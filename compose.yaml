@@ -8,3 +8,6 @@ include:
   - lobby/compose.yaml          # Lobby (Paper)
   - modes/banghoi/compose.yaml  # Chế độ 1: Bang Hội Chiến (Paper)
   - modes/pokemon/compose.yaml  # Chế độ Pokémon (Fabric) - chỉ chạy khi bật: --profile pokemon
+  - tunnel/compose.yaml         # playit.gg cho người ngoài mạng nhà - chỉ chạy khi bật: --profile tunnel
+  - dashboard/compose.yaml      # Dozzle: xem log/chat qua trình duyệt, http://localhost:8888
+  - panel/compose.yaml          # Trang Cài đặt: chỉnh setting các chế độ, http://localhost:8889

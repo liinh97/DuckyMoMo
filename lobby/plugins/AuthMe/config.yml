@@ -1,0 +1,33 @@
+# AuthMe trên lobby: chỉ ghi các mục cần đổi, plugin tự điền phần còn lại.
+# Tài liệu: https://github.com/AuthMe/AuthMeReloaded/blob/master/docs/config.md
+DataSource:
+    backend: MARIADB
+    # Tắt cache khi chạy sau proxy (theo khuyến nghị của AuthMe)
+    caching: false
+    mySQLHost: mariadb
+    mySQLPort: '3306'
+    mySQLUseSSL: false
+    mySQLCheckServerCertificate: false
+    mySQLUsername: '${CFG_DB_USER}'
+    mySQLPassword: '${CFG_DB_PASSWORD}'
+    # Tài khoản dùng chung toàn network nên để trong database network
+    mySQLDatabase: network
+    mySQLTablename: authme
+settings:
+    serverName: DuckyMoMo
+    messagesLanguage: vn
+    # Người có bản quyền gõ /premium để lần sau vào thẳng, không cần mật khẩu (proxy xác minh với Mojang)
+    enablePremium: true
+    restrictions:
+        # 0 = không giới hạn. Chơi trong mạng nhà (và qua playit.gg) nhiều người chung 1 IP,
+        # để 1 như mặc định thì người thứ hai không đăng ký được. Xem lại khi mở công khai.
+        maxRegPerIp: 0
+        # Cho phép dấu chấm ở đầu: tiền tố tên người chơi Bedrock của Floodgate (ví dụ .TenNguoiChoi)
+        allowedNicknameCharacters: '\.?[a-zA-Z0-9_]*'
+    security:
+        minPasswordLength: 6
+        passwordHash: BCRYPT
+Hooks:
+    bungeecord: true
+    # Lấy từ AUTHME_SECRET trong .env, phải trùng proxySharedSecret trên proxy
+    proxySharedSecret: '${CFG_AUTHME_SECRET}'

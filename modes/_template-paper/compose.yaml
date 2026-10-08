@@ -4,6 +4,7 @@ services:
     image: itzg/minecraft-server
     profiles: ["__MODE_ID__"]     # đang thử: chỉ chạy khi --profile __MODE_ID__. Bỏ dòng này khi mở chính thức
     restart: unless-stopped
+    stop_grace_period: 1m        # cho server đủ thời gian lưu thế giới khi tắt (mặc định Docker chỉ chờ 10 giây)
     environment:
       EULA: "TRUE"
       TYPE: PAPER
@@ -11,8 +12,14 @@ services:
       MEMORY: 3G
       TZ: Asia/Ho_Chi_Minh
       ONLINE_MODE: "FALSE"
+      # viaversion/viabackwards/viarewind: cho client nhiều phiên bản vào (cài trên server Paper, không cài ở proxy).
+      #   viaversion: client mới hơn server, viabackwards: client cũ hơn, viarewind: 1.7-1.8
+      # Lưu ý: dòng bắt đầu bằng # BÊN TRONG khối '|' không phải comment, image itzg sẽ đọc thành tên plugin.
       MODRINTH_PROJECTS: |
         luckperms
+        viaversion
+        viabackwards
+        viarewind
       CFG_SERVER_NAME: __MODE_ID__-1
       CFG_VELOCITY_SECRET: ${VELOCITY_SECRET}
       CFG_DB_USER: ${DB_USER}

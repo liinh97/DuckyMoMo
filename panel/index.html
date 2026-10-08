@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DuckyMoMo · Cài đặt</title>
+<style>
+  :root {
+    --bg: #f5f6f8; --card: #fff; --text: #1d2330; --muted: #667085; --line: #e3e6ec;
+    --accent: #e8711c; --accent-text: #fff; --ok: #1e8e3e; --err: #c62828; --changed: #fff4e6;
+    --input: #fff;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #14161b; --card: #1d2027; --text: #e6e8ee; --muted: #9aa3b2; --line: #2d313b;
+            --changed: #3a2a17; --input: #15171c; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); }
+  header { display: flex; align-items: center; gap: 16px; padding: 14px 20px; border-bottom: 1px solid var(--line); background: var(--card); position: sticky; top: 0; z-index: 2; }
+  header h1 { font-size: 17px; margin: 0; }
+  header a { color: var(--muted); text-decoration: none; font-size: 14px; }
+  header a:hover { color: var(--text); }
+  .tabs { display: flex; gap: 6px; flex: 1; }
+  .tab { border: 1px solid var(--line); background: transparent; color: var(--text); padding: 5px 12px; border-radius: 999px; cursor: pointer; font: inherit; font-size: 14px; }
+  .tab.active { background: var(--accent); border-color: var(--accent); color: var(--accent-text); }
+  main { max-width: 860px; margin: 0 auto; padding: 20px 16px 120px; }
+  .group { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; margin-bottom: 16px; }
+  .group h2 { font-size: 15px; margin: 0 0 2px; }
+  .group p.desc { color: var(--muted); margin: 0 0 10px; font-size: 13.5px; }
+  .row { display: grid; grid-template-columns: 220px 1fr; gap: 6px 16px; padding: 8px 6px; border-radius: 6px; align-items: start; }
+  .row.changed { background: var(--changed); }
+  .row label { padding-top: 6px; font-size: 14px; }
+  .row .note { grid-column: 2; color: var(--muted); font-size: 12.5px; margin-top: -2px; }
+  input, select { width: 100%; padding: 6px 9px; border: 1px solid var(--line); border-radius: 6px; background: var(--input); color: var(--text); font: inherit; }
+  input:focus, select:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+  .bar { position: fixed; bottom: 0; left: 0; right: 0; background: var(--card); border-top: 1px solid var(--line); padding: 12px 16px; }
+  .bar .inner { max-width: 860px; margin: 0 auto; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  .bar .status { flex: 1; font-size: 13.5px; color: var(--muted); min-width: 200px; }
+  .status.ok { color: var(--ok); } .status.err { color: var(--err); }
+  button.primary { background: var(--accent); color: var(--accent-text); border: 0; padding: 8px 16px; border-radius: 6px; font: inherit; font-weight: 600; cursor: pointer; }
+  button.primary:disabled { opacity: .45; cursor: default; }
+  button.ghost { background: transparent; color: var(--text); border: 1px solid var(--line); padding: 8px 14px; border-radius: 6px; font: inherit; cursor: pointer; }
+  details.results { margin-top: 8px; font-size: 12.5px; color: var(--muted); }
+  details.results pre { white-space: pre-wrap; margin: 4px 0 0; }
+  @media (max-width: 640px) { .row { grid-template-columns: 1fr; } .row .note { grid-column: 1; } header { flex-wrap: wrap; } }
+</style>
+</head>
+<body>
+<header>
+  <h1>DuckyMoMo · Cài đặt</h1>
+  <nav class="tabs" id="tabs"></nav>
+  <a id="dozzle" href="__DOZZLE_URL__" target="_blank" rel="noopener">Xem log ↗</a>
+</header>
+<main id="main"><p>Đang tải…</p></main>
+<div class="bar"><div class="inner">
+  <div class="status" id="status">Sửa giá trị rồi bấm Lưu. Ô đã sửa được tô màu.</div>
+  <button class="ghost" id="reapply" title="Ghi lại mọi giá trị vào plugin và nạp lại (dùng khi server mới cài hoặc sửa tay settings.yml)">Áp dụng lại tất cả</button>
+  <button class="primary" id="save" disabled>Lưu và áp dụng</button>
+</div></div>
+
+<script>
+let modes = [], current = null, edits = {};
+const $ = (id) => document.getElementById(id);
+const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
+
+if (!"__DOZZLE_URL__".startsWith("http")) $("dozzle").style.display = "none";
+
+async function load() {
+  const r = await fetch("/api/modes");
+  modes = await r.json();
+  if (!current || !modes.find(m => m.id === current)) current = modes[0] && modes[0].id;
+  edits = {};
+  render();
+}
+
+function render() {
+  $("tabs").innerHTML = "";
+  for (const m of modes) {
+    const b = document.createElement("button");
+    b.className = "tab" + (m.id === current ? " active" : "");
+    b.textContent = m.schema.title || m.id;
+    b.onclick = () => { if (Object.keys(edits).length && !confirm("Bỏ các thay đổi chưa lưu?")) return; current = m.id; edits = {}; render(); };
+    $("tabs").appendChild(b);
+  }
+  const mode = modes.find(m => m.id === current);
+  const main = $("main");
+  main.innerHTML = "";
+  if (!mode) { main.textContent = "Chưa có chế độ nào có settings.schema.yml."; return; }
+  for (const g of mode.schema.groups) {
+    const box = document.createElement("section");
+    box.className = "group";
+    box.innerHTML = `<h2></h2>${g.description ? '<p class="desc"></p>' : ""}`;
+    box.querySelector("h2").textContent = g.title;
+    if (g.description) box.querySelector(".desc").textContent = g.description;
+    for (const s of g.settings) box.appendChild(row(mode, s));
+    main.appendChild(box);
+  }
+  updateBar();
+}
+
+function row(mode, s) {
+  const div = document.createElement("div");
+  div.className = "row";
+  const id = "f_" + s.key;
+  const label = document.createElement("label");
+  label.htmlFor = id; label.textContent = s.label;
+  div.appendChild(label);
+  const saved = mode.values[s.key];
+  const value = s.key in edits ? edits[s.key] : saved;
+  let input;
+  if (s.type === "select") {
+    input = document.createElement("select");
+    s.options.forEach((o, i) => {
+      const opt = document.createElement("option");
+      opt.value = i; opt.textContent = o.label;
+      if (same(o.value, value)) opt.selected = true;
+      input.appendChild(opt);
+    });
+    input.onchange = () => change(mode, s, s.options[input.value].value, div);
+  } else {
+    input = document.createElement("input");
+    if (s.type === "int" || s.type === "number") {
+      input.type = "number"; input.step = s.type === "int" ? "1" : "any";
+      if (s.min !== undefined) input.min = s.min;
+      if (s.max !== undefined) input.max = s.max;
+    } else if (s.type === "times") {
+      input.placeholder = "Ví dụ: 20:00,21:00 (để trống = không có phiên)";
+    }
+    input.value = value ?? "";
+    input.oninput = () => {
+      let v = input.value;
+      if (s.type === "int") v = v === "" ? "" : parseInt(v, 10);
+      if (s.type === "number") v = v === "" ? "" : parseFloat(v);
+      change(mode, s, v, div);
+    };
+  }
+  input.id = id;
+  div.appendChild(input);
+  if (s.note) { const n = document.createElement("div"); n.className = "note"; n.textContent = s.note; div.appendChild(n); }
+  if (s.key in edits) div.classList.add("changed");
+  return div;
+}
+
+function change(mode, s, v, div) {
+  if (same(v, mode.values[s.key])) delete edits[s.key]; else edits[s.key] = v;
+  div.classList.toggle("changed", s.key in edits);
+  updateBar();
+}
+
+function updateBar() {
+  const n = Object.keys(edits).length;
+  $("save").disabled = n === 0;
+  $("save").textContent = n ? `Lưu và áp dụng (${n})` : "Lưu và áp dụng";
+}
+
+function showResult(res) {
+  const st = $("status");
+  st.className = "status " + (res.ok ? "ok" : "err");
+  st.textContent = res.message;
+  if (res.results && res.results.length) {
+    const d = document.createElement("details");
+    d.className = "results";
+    d.innerHTML = "<summary>Kết quả lệnh</summary><pre></pre>";
+    d.querySelector("pre").textContent = res.results.map(r => `> ${r.command}\n${r.output || "(không có phản hồi)"}`).join("\n\n");
+    st.appendChild(d);
+  }
+}
+
+async function post(path, body) {
+  $("save").disabled = true; $("reapply").disabled = true;
+  $("status").className = "status"; $("status").textContent = "Đang lưu và áp dụng…";
+  try {
+    const r = await fetch(path, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+    const res = await r.json();
+    if (r.ok) { await load(); }
+    showResult(res);
+  } catch (e) {
+    showResult({ ok: false, message: "Không gửi được: " + e });
+  } finally {
+    $("reapply").disabled = false; updateBar();
+  }
+}
+
+$("save").onclick = () => post(`/api/modes/${current}/save`, { values: edits });
+$("reapply").onclick = () => {
+  if (confirm("Ghi lại toàn bộ cài đặt vào plugin và nạp lại?")) post(`/api/modes/${current}/apply-all`, {});
+};
+window.addEventListener("beforeunload", (e) => { if (Object.keys(edits).length) { e.preventDefault(); e.returnValue = ""; } });
+load().catch(e => { $("main").textContent = "Không tải được cài đặt: " + e; });
+</script>
+</body>
+</html>

@@ -1,0 +1,88 @@
+# Định nghĩa trang Cài đặt cho chế độ Bang Hội Chiến (panel/ đọc file này).
+# Giá trị đang dùng nằm ở settings.yml (cùng thư mục), trang Cài đặt ghi vào đó khi bấm Lưu.
+#
+# Mỗi mục:
+#   key      tên trong settings.yml
+#   type     text | times | int | number | select | info
+#   file     file cấu hình plugin, tính từ data/<server>/  (bỏ trống = chỉ lưu, không ghi vào plugin)
+#   path     đường dẫn trong file YAML, nối bằng dấu chấm
+#   commands lệnh RCON chạy khi giá trị đổi ({value}, {double} = giá trị x2)
+#   note     ghi chú hiện dưới ô nhập
+# Mỗi nhóm: apply = lệnh RCON chạy sau khi có mục trong nhóm đổi (nạp lại cấu hình plugin).
+title: Bang Hội Chiến
+server: banghoi-1
+
+groups:
+  - title: Lịch công thành
+    description: Giờ bắt đầu các phiên chiến (giờ Việt Nam). Mỗi phiên PvP bật quanh cờ vây thành.
+    apply: [swa reload]
+    settings:
+      - { key: siege_monday,    label: Thứ 2,    type: times, file: plugins/SiegeWar/config.yml, path: battle_session_scheduler.start_times.monday }
+      - { key: siege_tuesday,   label: Thứ 3,    type: times, file: plugins/SiegeWar/config.yml, path: battle_session_scheduler.start_times.tuesday }
+      - { key: siege_wednesday, label: Thứ 4,    type: times, file: plugins/SiegeWar/config.yml, path: battle_session_scheduler.start_times.wednesday }
+      - { key: siege_thursday,  label: Thứ 5,    type: times, file: plugins/SiegeWar/config.yml, path: battle_session_scheduler.start_times.thursday }
+      - { key: siege_friday,    label: Thứ 6,    type: times, file: plugins/SiegeWar/config.yml, path: battle_session_scheduler.start_times.friday }
+      - { key: siege_saturday,  label: Thứ 7,    type: times, file: plugins/SiegeWar/config.yml, path: battle_session_scheduler.start_times.saturday }
+      - { key: siege_sunday,    label: Chủ nhật, type: times, file: plugins/SiegeWar/config.yml, path: battle_session_scheduler.start_times.sunday }
+      - { key: siege_session_minutes, label: Độ dài mỗi phiên (phút), type: int, min: 10, max: 240,
+          file: plugins/SiegeWar/config.yml, path: battle_session_scheduler.session_duration_minutes }
+      - { key: siege_sessions_per_siege, label: Số phiên mỗi cuộc vây, type: int, min: 1, max: 20,
+          file: plugins/SiegeWar/config.yml, path: war.siege.times.duration_battle_sessions,
+          note: "Cuộc vây kết thúc sau ngần này phiên. Đổi giá trị chỉ ảnh hưởng cuộc vây bắt đầu sau đó." }
+      - { key: siege_weeks, label: Tuần có công thành, type: select,
+          file: plugins/SiegeWar/config.yml, path: battle_session_scheduler.allowed_siege_battle_session_weeks,
+          options: [ { value: weekly, label: Mọi tuần }, { value: odd-weeks-only, label: Chỉ tuần lẻ }, { value: even-weeks-only, label: Chỉ tuần chẵn } ] }
+
+  - title: Luật công thành
+    apply: [swa reload]
+    settings:
+      - { key: siege_max_attacks, label: Số cuộc vây tấn công tối đa mỗi quốc gia, type: int, min: 1, max: 10,
+          file: plugins/SiegeWar/config.yml, path: war.siege.quantities.max_active_siege_attacks_per_nation }
+      - { key: siege_warchest_per_plot, label: Quỹ chiến tranh (tiền / ô đất của thị trấn bị vây), type: number, min: 0,
+          file: plugins/SiegeWar/config.yml, path: war.siege.money.warchest_cost_per_plot }
+      - { key: siege_immunity_hours, label: Miễn vây sau một cuộc vây (giờ), type: int, min: 0,
+          file: plugins/SiegeWar/config.yml, path: war.siege.times.siege_immunity_post_siege_hours,
+          note: "Thủ đô được gấp đôi." }
+      - { key: siege_immunity_new_town_hours, label: Miễn vây cho thị trấn mới lập (giờ), type: int, min: 0,
+          file: plugins/SiegeWar/config.yml, path: war.siege.times.siege_immunity_time_new_town_hours }
+
+  - title: Thị trấn và quốc gia
+    apply: [ta reload config]
+    settings:
+      - { key: towny_price_new_town,   label: Phí lập thị trấn,   type: number, min: 0, file: plugins/Towny/settings/config.yml, path: economy.new_expand.price_new_town }
+      - { key: towny_price_new_nation, label: Phí lập quốc gia,   type: number, min: 0, file: plugins/Towny/settings/config.yml, path: economy.new_expand.price_new_nation }
+      - { key: towny_price_claim,      label: Giá mua 1 ô đất,     type: number, min: 0, file: plugins/Towny/settings/config.yml, path: economy.new_expand.price_claim_townblock }
+      - { key: towny_town_upkeep,      label: Phí duy trì thị trấn mỗi ngày,  type: number, min: 0, file: plugins/Towny/settings/config.yml, path: economy.daily_taxes.price_town_upkeep }
+      - { key: towny_nation_upkeep,    label: Phí duy trì quốc gia mỗi ngày,  type: number, min: 0, file: plugins/Towny/settings/config.yml, path: economy.daily_taxes.price_nation_upkeep }
+
+  - title: Combat
+    apply: [ocm reload]
+    settings:
+      - key: combat_mode
+        label: Kiểu combat
+        type: select
+        file: plugins/OldCombatMechanics/config.yml
+        path: worlds.__default__
+        options:
+          - { value: [old],      label: "1.8 (cũ), bắt buộc mọi người" }
+          - { value: [new],      label: "Mới (1.9+), bắt buộc mọi người" }
+          - { value: [old, new], label: "Mặc định 1.8, người chơi tự đổi được (/ocm mode)" }
+          - { value: [new, old], label: "Mặc định mới, người chơi tự đổi được (/ocm mode)" }
+        note: "Cho tự đổi thì người chơi có thể chọn kiểu có lợi cho mình."
+
+  - title: Thế giới
+    settings:
+      - { key: world_radius, label: Bán kính viền thế giới (block), type: int, min: 500, max: 30000000,
+          commands: ["worldborder center 0 0", "worldborder set {double}"],
+          note: "Áp dụng ngay, không cần khởi động lại." }
+      - key: map_type
+        label: Loại map
+        type: select
+        options: [ { value: natural, label: Map tự nhiên }, { value: earth, label: Map Trái Đất (tải sẵn) } ]
+        note: "Chỉ ghi lại; áp dụng khi mở mùa mới (đổi giữa mùa người chơi mất thành)."
+      - { key: map_url, label: Link tải map Trái Đất, type: text, note: "Dùng khi Loại map = Trái Đất. Kiểm tra giấy phép của map trước." }
+      - key: reset_each_season
+        label: Reset thế giới mỗi mùa
+        type: select
+        options: [ { value: true, label: Có }, { value: false, label: Không } ]
+        note: "Chỉ ghi lại; dùng khi mở mùa mới."

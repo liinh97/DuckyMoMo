@@ -1,0 +1,38 @@
+# Mẫu chung cho tab log người chơi (activity). Script: dashboard/log-feed.sh
+x-log-feed: &log-feed
+  image: docker:29-cli
+  restart: unless-stopped
+  entrypoint: ["sh", "/log-feed.sh"]
+  volumes:
+    - /var/run/docker.sock:/var/run/docker.sock:ro   # đọc log các server (cùng lưu ý bảo mật như Dozzle)
+    - ./log-feed.sh:/log-feed.sh:ro
+
+services:
+  # Dozzle: xem log trực tiếp (chat, vào/ra, lỗi) của mọi server qua trình duyệt.
+  # Mở: http://localhost:${DASHBOARD_PORT:-8888}  (chỉ máy chạy Docker vào được)
+  # Chỉ xem log, không gõ lệnh được. Gõ lệnh: docker compose exec <server> rcon-cli
+  dozzle:
+    image: amir20/dozzle:latest   # khi chạy ổn nên ghim tag cụ thể
+    restart: unless-stopped
+    environment:
+      # Chỉ hiện container của dự án này, không hiện các container khác trên máy
+      DOZZLE_FILTER: label=com.docker.compose.project=duckymomo
+      DOZZLE_NO_ANALYTICS: "true"
+      # Bắt đăng nhập. Tạo/đổi tài khoản: ./ops/dozzle-user.sh <ten> (lưu ở data/dozzle/users.yml)
+      DOZZLE_AUTH_PROVIDER: simple
+      TZ: Asia/Ho_Chi_Minh
+    ports:
+      # Chỉ mở trên localhost. Muốn xem từ ngoài: Cloudflare Tunnel + Cloudflare Access, không mở qua playit.
+      - "127.0.0.1:${DASHBOARD_PORT:-8888}:8080"
+    volumes:
+      # Dozzle đọc log qua Docker API. Lưu ý: ":ro" không giới hạn quyền gọi API,
+      # nên không được mở dashboard này ra ngoài khi chưa có lớp đăng nhập.
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ../data/dozzle:/data       # lưu cài đặt của Dozzle
+
+  # Tab "activity" trong Dozzle: chỉ chat + vào/ra + lệnh của người chơi, không lẫn log khác.
+  # Mỗi dòng có nhãn CHAT / VÀO/RA / LỆNH. Tự nhận server mới thêm sau (theo label của Docker Compose).
+  # Muốn tách riêng từng loại: thêm service với MODE: chat | join | commands.
+  activity:
+    <<: *log-feed
+    environment: { PROJECT: duckymomo, MODE: all, TZ: Asia/Ho_Chi_Minh }

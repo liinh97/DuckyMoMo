@@ -234,7 +234,7 @@ Các hướng khác đã cân nhắc nhưng chưa chọn: game trên Roblox, ser
 
 ## 10. Câu hỏi còn mở
 - Xác nhận cuối cùng: chế độ chủ lực là Bang hội chiến hay phương án dự phòng (Survival kinh tế + bang nhẹ)?
-- Có cho người chơi crack (offline mode) vào không? Nếu có thì nhiều người hơn, nhưng là vùng xám về pháp lý và khó kiếm tiền bền vững.
+- ~~Có cho người chơi crack (offline mode) vào không?~~ **Đã chốt 07/10/2026: có**, dùng AuthMe bảo vệ tên và `/premium` cho người có bản quyền (xem `docs/HANDOFF.md`). Vẫn cần kiểm tra điều khoản thương mại của Mojang với server offline trước khi bán hàng.
 - Tên server, thương hiệu, tên miền.
 - Có làm content không, và ai làm?
 

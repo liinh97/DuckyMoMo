@@ -24,18 +24,26 @@ vào **lobby** rồi chọn chế độ. Chạy toàn bộ bằng **Docker Compo
 ## Chạy lần đầu
 ```bash
 ./ops/init.sh                 # tạo .env với mật khẩu/secret ngẫu nhiên, tạo thư mục data/
+./ops/build-core.sh           # build plugin DuckyMoMoCore (network-core) bằng Docker, copy vào lobby/plugins
 docker compose up -d          # tải image, Paper, Velocity, plugin rồi khởi động
 docker compose logs -f        # theo dõi log (Ctrl+C để thoát xem log, server vẫn chạy)
 ```
 Vào game:
 - **PC (Java)**: thêm server `localhost` (hoặc IP máy chạy Docker), cổng `25565`.
+  Server chạy bản mới nhất, nhưng nhờ ViaVersion/ViaBackwards/ViaRewind, client **1.7 tới bản mới** đều vào được.
 - **Điện thoại (Bedrock)**: thêm server IP máy chạy Docker, cổng `19132`.
 
-Cho bạn bè ngoài mạng nhà vào: dùng **playit.gg** (xem `docs/network-architecture.md`, mục 6), không mở port trên modem.
+Cho bạn bè ngoài mạng nhà vào: dùng **playit.gg**, không mở port trên modem.
+1. Trên playit.gg tạo agent Docker, copy `SECRET_KEY` vào `PLAYIT_SECRET_KEY` trong `.env`.
+2. `docker compose --profile tunnel up -d playit`
+3. Trên dashboard playit tạo tunnel: Minecraft Java trỏ tới `127.0.0.1:25577`, Minecraft Bedrock trỏ tới `127.0.0.1:19132`
+   (agent dùng chung mạng với proxy). Gửi bạn bè địa chỉ playit cấp cho mỗi tunnel.
 
 ## Checklist sau lần chạy đầu
 - [ ] `docker compose ps`: tất cả service ở trạng thái `running` / `healthy`.
-- [ ] Vào được lobby bằng Java. Gõ `/server banghoi-1` để sang Bang Hội Chiến (sau này sẽ có menu ở lobby).
+- [ ] Vào được lobby bằng Java. Server chạy **offline mode**: lần đầu gõ `/register <matkhau> <matkhau>`, các lần sau `/login <matkhau>`.
+      Có bản quyền thì gõ thêm `/premium` để lần sau vào thẳng. **Đăng ký tên admin của mình trước tiên.**
+- [ ] Gõ `/server banghoi-1` để sang Bang Hội Chiến (sau này sẽ có menu ở lobby). Chưa đăng nhập thì phải bị chặn.
 - [ ] Kiểm tra `data/proxy/plugins/Geyser-Velocity/config.yml` có **auth-type: floodgate** (xem `proxy/plugins/README.md`).
 - [ ] Vào được bằng Bedrock. Tên người chơi Bedrock có tiền tố của Floodgate (ví dụ `.TenNguoiChoi`).
 - [ ] Cấp quyền admin cho mình: `docker compose exec lobby rcon-cli lp user <TenBan> permission set "*" true`
@@ -48,6 +56,8 @@ docker compose ps                          # trạng thái
 docker compose logs -f banghoi-1           # log của một service
 docker compose restart proxy               # khởi động lại một service
 docker compose exec lobby rcon-cli         # console của server (gõ lệnh như admin)
+# Xem log/chat của mọi server qua trình duyệt: http://localhost:8888 (Dozzle, chỉ mở trên máy nhà)
+# Trang Cài đặt (bấm Lưu là áp dụng): http://localhost:8889, đăng nhập bằng PANEL_USER/PANEL_PASSWORD trong .env
 docker compose pull && docker compose up -d   # cập nhật image
 docker compose down                        # tắt tất cả (dữ liệu trong data/ vẫn giữ)
 docker compose --profile pokemon up -d     # bật thêm chế độ Pokémon
@@ -93,8 +103,9 @@ Chi tiết: `docs/network-architecture.md`, mục 7.
 | Redis có mật khẩu | ✅ Đã chạy thử |
 | Điền secret/mật khẩu vào cấu hình (`CFG_*`) | ✅ Đã chạy thử với công cụ của image |
 | `ops/init.sh`, `ops/new-mode.sh` | ✅ Đã chạy thử |
-| Proxy, lobby, Bang Hội Chiến khởi động và vào game | ⏳ **Chưa chạy thử được**: môi trường dựng khung chặn tải Paper/Velocity/plugin. Cần chạy lần đầu trên máy nhà theo checklist ở trên |
-| Geyser auth-type floodgate | ⏳ Kiểm tra ở lần chạy đầu |
+| Proxy, lobby, Bang Hội Chiến khởi động | ✅ Chạy trên máy nhà (WSL, 07/10/2026): Paper 26.2, Velocity 4.2.0, Geyser 2.11.3, cả 5 service `healthy`, ping được cổng 25565 và 19132 |
+| Vào game bằng Java / Bedrock | ⏳ Cần người thật vào thử |
+| Geyser auth-type floodgate | ✅ Đã đặt trong `proxy/plugins/Geyser-Velocity/config.yml` |
 | Pokémon (Fabric) | ⏳ Chưa mở; LuckPerms Fabric chưa cấu hình MariaDB |
 | network-core (menu lobby tự sinh, đăng ký server động, giao hàng web store) | 🔜 Bước tiếp theo |
 | Sao lưu tự động (`itzg/mc-backup`) | 🔜 Chưa thêm |

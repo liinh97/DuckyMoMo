@@ -2,6 +2,7 @@ services:
   banghoi-1:
     image: itzg/minecraft-server
     restart: unless-stopped
+    stop_grace_period: 1m        # cho server đủ thời gian lưu thế giới khi tắt (mặc định Docker chỉ chờ 10 giây)
     environment:
       EULA: "TRUE"
       TYPE: PAPER
@@ -14,10 +15,31 @@ services:
       VIEW_DISTANCE: "8"
       SIMULATION_DISTANCE: "6"
       # Plugin tải tự động từ Modrinth. Plugin không có trên Modrinth: đặt .jar vào ./server/plugins
+      # viaversion/viabackwards/viarewind: cho client nhiều phiên bản vào (cài trên server Paper, không cài ở proxy).
+      #   viaversion: client mới hơn server, viabackwards: client cũ hơn, viarewind: 1.7-1.8
+      # Lưu ý: dòng bắt đầu bằng # BÊN TRONG khối '|' không phải comment, image itzg sẽ đọc thành tên plugin.
+      # towny: thị trấn/quốc gia; vaultunlocked: lớp nối kinh tế; coreprotect: ghi lại phá/đặt để khôi phục;
+      # worldguard: bảo vệ spawn/chợ. Thiết kế: docs/banghoi-design.md
       MODRINTH_PROJECTS: |
         luckperms
         worldedit
         chunky
+        viaversion
+        viabackwards
+        viarewind
+        towny
+        vaultunlocked
+        coreprotect
+        worldguard
+      # Plugin không có (hoặc chưa có bản 26.2) trên Modrinth: ghim link tải cụ thể. Nâng cấp: thay link.
+      #   SiegeWar 3.7.0 (GitHub), OldCombatMechanics 2.7.0 (GitHub, combat kiểu 1.8),
+      #   EssentialsX bản dev #1832 (bản chính thức 2.22.0 mới tới 26.1.2): lõi + Chat + Spawn
+      PLUGINS: |
+        https://github.com/TownyAdvanced/SiegeWar/releases/download/3.7.0/SiegeWar-3.7.0.jar
+        https://github.com/kernitus/BukkitOldCombatMechanics/releases/download/v2.7.0/OldCombatMechanics.jar
+        https://ci.ender.zone/job/EssentialsX/1832/artifact/jars/EssentialsX-2.22.1-dev%2B27-e70bdb8.jar
+        https://ci.ender.zone/job/EssentialsX/1832/artifact/jars/EssentialsXChat-2.22.1-dev%2B27-e70bdb8.jar
+        https://ci.ender.zone/job/EssentialsX/1832/artifact/jars/EssentialsXSpawn-2.22.1-dev%2B27-e70bdb8.jar
       CFG_SERVER_NAME: banghoi-1
       CFG_VELOCITY_SECRET: ${VELOCITY_SECRET}
       CFG_DB_USER: ${DB_USER}

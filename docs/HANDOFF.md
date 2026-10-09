@@ -105,6 +105,26 @@
 - Towny không có bản dịch tiếng Việt.
 - OldCombatMechanics dùng "modeset": `old` (1.8), `new`. `worlds.__default__` quyết định ai được dùng kiểu nào; người chơi tự đổi bằng `/ocm mode` nếu danh sách có nhiều kiểu.
 
+### Sao lưu tự động (08/10/2026)
+- Mỗi server có thế giới có service sao lưu đi kèm **trong chính compose của nó**: `backup-lobby` (lobby/), `backup-banghoi-1` (modes/banghoi/), `backup-pokemon-1` (profile `pokemon`), `backup-__MODE_ID__-1` trong `_template-paper` (cùng profile với chế độ). Image `itzg/mc-backup`, tar.gz, `PAUSE_IF_NO_PLAYERS=true`, bỏ `*.jar,cache,logs`.
+- Database: `backup-db` trong `infra/compose.yaml`, script `infra/backup-db.sh` (`mariadb-dump --all-databases --single-transaction`, gzip, xoá bản cũ hơn `BACKUP_KEEP_DAYS`). Mật khẩu root qua `MYSQL_PWD`.
+- `.env`: `BACKUP_DIR` (bỏ trống = `backups/` trong repo, có trong `.gitignore`; đặt thì phải là đường dẫn **tuyệt đối**, vì đường dẫn tương đối tính theo từng file compose con), `BACKUP_INTERVAL` (6h), `BACKUP_KEEP_DAYS` (7).
+- **RCON dùng chung**: `RCON_PASSWORD` trong `.env` (`ops/init.sh` tự sinh), đặt cho mọi server Paper/Fabric. itzg ghi mật khẩu này ra `data/<server>/.rcon-cli.env`, nên trang Cài đặt vẫn đọc được.
+- Đã kiểm chứng: `backup now` tạo `.tar.gz` có `world/level.dat` và cấu hình plugin; dump database có đủ 5 database, có bảng `authme`. **Chưa diễn tập khôi phục thật** (lệnh khôi phục ở README mục "Sao lưu và khôi phục").
+- Bản sao lưu vẫn nằm trên **cùng ổ C** với server. Nên đẩy thêm một bản ra ngoài (ổ F, cloud bằng rclone/restic) khi mở công khai.
+
+### Map Trái Đất 1:2000 cho banghoi-1 (09/10/2026)
+- Người dùng không muốn mua map → **tự tạo** bằng WorldPainter 2.27.1 + script DerMattinger/MinecraftEarthMap (MIT). Công cụ và hướng dẫn: `tools/earthmap/` (`build-earth.sh`, `README.md`); file tải về và map tạo ra ở `tools/earthmap/work/` (không commit).
+- Đã lắp vào `data/banghoi-1/world` (21.504 × 10.752 block, 4,2 GB). Thế giới tự nhiên cũ giữ ở `data/banghoi-1/world-tu-nhien-20261009`.
+- Viền: **ChunkyBorder** (Modrinth `chunkyborder`) hình chữ nhật 10752 × 5376, viền vanilla nới tối đa. Spawn: Hà Nội (6323, 63, -1256). Đều là setting trên trang Cài đặt (`border_x`, `border_z`, `spawn_x`, `spawn_z`).
+- Tạo 1:2000 cần ~8 GB heap: lần này đã tắt cả network DuckyMoMo ~1 giờ. **Người dùng yêu cầu (09/10): DuckyMoMo, tram6, goc6 phải chạy liên tục, không tắt cái nào.** Lần sau muốn tạo lại map phải có đủ RAM trước (nâng WSL/nâng RAM máy), không tắt dịch vụ.
+- **Giảm RAM (09/10)**: lobby `INIT_MEMORY 512M / MAX_MEMORY 1G` (mem_limit 2g), banghoi-1 `1G / 3G` (mem_limit 4g), proxy `MEMORY 512M`. **Không dùng `USE_AIKAR_FLAGS`**: nó có `AlwaysPreTouch`, chiếm sẵn toàn bộ heap (banghoi-1 lên 3,6/4 GB, sát mem_limit). Kết quả: lobby 1,1 GB, banghoi-1 1,8 GB, WSL trống từ ~2 lên ~4 GB. Đông người thì tăng MAX_MEMORY và mem_limit.
+- **Bẫy playit**: playit dùng `network_mode: service:proxy`. Tạo lại proxy (`up -d proxy`) **không** tự tạo lại playit, nên playit bám vào mạng của container proxy cũ và tunnel chết. Sau mỗi lần tạo lại proxy: `docker compose --profile tunnel up -d --force-recreate playit`.
+- RAM (09/10): máy 32 GB (2×16 GB DDR4-2133, còn 2 khe trống, tối đa 128 GB); WSL mặc định ~16 GB; khi chạy cả ba dự án chỉ còn ~2 GB trống và đã dùng swap 3/4 GB. Đã khuyên: `.wslconfig` `memory=22GB` (người dùng tự áp dụng, cần `wsl --shutdown`), về sau nâng lên 64 GB.
+- **Bắt buộc ghi nguồn dữ liệu** (OpenStreetMap, NASA, ESA, USGS…) ở spawn/web: nội dung trong `tools/earthmap/README.md`. Chưa làm.
+- Chưa làm: bảo vệ khu spawn (WorldGuard), cấm lập thị trấn sát spawn, chưa ai vào xem map bằng game.
+- Docker Desktop + WSL: **bind mount file lẻ** hay lỗi `no such file` khi tạo lại container → gắn cả thư mục (`dashboard/`, `infra/` đã đổi).
+
 ### Trang Cài đặt `panel/` (08/10/2026)
 - Người dùng muốn chỉnh setting trên web, **bấm Lưu là áp dụng**. `panel/compose.yaml`: build `panel/Dockerfile` (python:3.13-alpine + `ruamel.yaml`), mở `127.0.0.1:${PANEL_PORT:-8889}`, đăng nhập HTTP Basic bằng `PANEL_USER`/`PANEL_PASSWORD` trong `.env` (`ops/init.sh` tự sinh).
 - Mỗi chế độ: `modes/<id>/settings.schema.yml` (nhóm, nhãn tiếng Việt, kiểu, file + đường dẫn YAML trong `data/<server>/`, lệnh RCON) và `modes/<id>/settings.yml` (giá trị, có trong Git). Panel tự tìm mọi `modes/*/settings.schema.yml`.
@@ -178,7 +198,7 @@
 1. **Chạy lần đầu trên máy nhà** theo checklist trong `README.md`, sửa lỗi từ log. Sau đó ghim `MC_VERSION` và tag của image.
 2. **Hoàn thiện plugin cho Bang Hội Chiến**: Towny + SiegeWar (hoặc Factions kèm phần tự viết), CoreProtect (bắt buộc), WorldGuard, EssentialsX, OldCombatMechanics. Kiểm tra slug trên Modrinth, plugin nào không có thì tải `.jar` bằng tay. Danh sách nằm trong `modes/banghoi/README.md`.
 3. **Thiết kế luật chơi Bang Hội Chiến**: đã có bản nháp `docs/banghoi-design.md` (Towny + SiegeWar). Còn chốt số liệu ở mục 12 của file đó.
-4. **Sao lưu**: thêm `itzg/mc-backup` (restic) cho các server có thế giới, và `mariadb-dump` định kỳ.
+4. ~~**Sao lưu**~~: đã có (tar.gz + mariadb-dump, 6 giờ/lần, giữ 7 ngày). Còn lại: đẩy bản sao ra ngoài ổ C, diễn tập khôi phục.
 5. ~~**Tunnel playit.gg**~~: đã thêm (`tunnel/compose.yaml`). Còn lại: tạo 2 tunnel trên dashboard, thử từ ngoài mạng nhà, tạo lại secret key.
 6. **network-core phiên bản 1** (Gradle nhiều module, Java hoặc Kotlin): `core-api`, `core-common`, `core-velocity`, `core-paper`.
    - Đồng bộ `modes/*/mode.yml` vào bảng `network.modes`.

@@ -9,8 +9,10 @@ services:
       EULA: "TRUE"
       TYPE: PAPER
       VERSION: ${MC_VERSION:-LATEST}
-      MEMORY: 3G
+      INIT_MEMORY: 1G
+      MAX_MEMORY: 3G
       TZ: Asia/Ho_Chi_Minh
+      RCON_PASSWORD: ${RCON_PASSWORD:?Chưa đặt RCON_PASSWORD trong .env (chạy lại ./ops/init.sh)}   # dùng chung với dịch vụ sao lưu, trang Cài đặt
       ONLINE_MODE: "FALSE"
       # viaversion/viabackwards/viarewind: cho client nhiều phiên bản vào (cài trên server Paper, không cài ở proxy).
       #   viaversion: client mới hơn server, viabackwards: client cũ hơn, viarewind: 1.7-1.8
@@ -35,3 +37,25 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
+
+  # Sao lưu thế giới + plugin của __MODE_ID__-1 (itzg/mc-backup: tạm dừng ghi qua RCON, nén tar.gz, xoá bản cũ).
+  # Sao lưu ngay: docker compose exec backup-__MODE_ID__-1 backup now. Khôi phục: README.md, mục "Sao lưu và khôi phục".
+  backup-__MODE_ID__-1:
+    image: itzg/mc-backup
+    profiles: ["__MODE_ID__"]
+    restart: unless-stopped
+    environment:
+      RCON_HOST: __MODE_ID__-1
+      RCON_PASSWORD: ${RCON_PASSWORD}
+      BACKUP_NAME: __MODE_ID__-1
+      BACKUP_INTERVAL: ${BACKUP_INTERVAL:-6h}
+      PRUNE_BACKUPS_DAYS: ${BACKUP_KEEP_DAYS:-7}
+      PAUSE_IF_NO_PLAYERS: "true"      # không ai vào kể từ lần trước thì bỏ qua, đỡ tốn ổ
+      INITIAL_DELAY: 5m
+      TZ: Asia/Ho_Chi_Minh
+    volumes:
+      - ../../data/__MODE_ID__-1:/data:ro
+      # BACKUP_DIR trong .env phải là đường dẫn tuyệt đối (ví dụ /mnt/f/DuckyMoMo-backups); bỏ trống = backups/ trong repo
+      - ${BACKUP_DIR:-../../backups}/__MODE_ID__-1:/backups
+    depends_on:
+      - __MODE_ID__-1

@@ -63,6 +63,37 @@ docker compose down                        # tắt tất cả (dữ liệu trong
 docker compose --profile pokemon up -d     # bật thêm chế độ Pokémon
 ```
 
+## Sao lưu và khôi phục
+Tự động chạy cùng `docker compose up -d`, mặc định **6 giờ một lần, giữ 7 ngày**. Chỉnh trong `.env`:
+`BACKUP_INTERVAL`, `BACKUP_KEEP_DAYS`, `BACKUP_DIR` (bỏ trống = `backups/` trong repo; muốn sang ổ F: `BACKUP_DIR=/mnt/f/DuckyMoMo-backups`).
+
+| Thư mục | Nội dung | Service |
+|---|---|---|
+| `backups/lobby/`, `backups/banghoi-1/` | Thế giới + cấu hình plugin (`.tar.gz`, không kèm file `.jar`) | `backup-lobby`, `backup-banghoi-1` |
+| `backups/db/` | Toàn bộ MariaDB: tài khoản AuthMe, quyền LuckPerms, dữ liệu network (`.sql.gz`) | `backup-db` |
+
+Server không có ai vào kể từ lần sao lưu trước thì bỏ qua lần đó (đỡ tốn ổ).
+
+```bash
+docker compose exec backup-banghoi-1 backup now      # sao lưu ngay một server
+```
+
+**Khôi phục thế giới** (ví dụ banghoi-1):
+```bash
+docker compose stop banghoi-1
+mv data/banghoi-1 data/banghoi-1.truoc-khi-khoi-phuc       # giữ lại bản hiện tại phòng khi cần
+mkdir data/banghoi-1
+tar -xzf backups/banghoi-1/banghoi-1-YYYYMMDD-HHMMSS.tar.gz -C data/banghoi-1
+docker compose up -d banghoi-1                              # plugin (.jar) tự tải lại khi khởi động
+```
+
+**Khôi phục database** (ghi đè dữ liệu hiện tại, nên tắt các server trước):
+```bash
+docker compose stop lobby banghoi-1 proxy
+zcat backups/db/db-YYYYMMDD-HHMMSS.sql.gz | docker compose exec -T mariadb sh -c 'mariadb -uroot -p"$MARIADB_ROOT_PASSWORD"'
+docker compose up -d
+```
+
 ## Cấu trúc thư mục
 ```
 compose.yaml           File gốc: danh sách include
@@ -108,4 +139,4 @@ Chi tiết: `docs/network-architecture.md`, mục 7.
 | Geyser auth-type floodgate | ✅ Đã đặt trong `proxy/plugins/Geyser-Velocity/config.yml` |
 | Pokémon (Fabric) | ⏳ Chưa mở; LuckPerms Fabric chưa cấu hình MariaDB |
 | network-core (menu lobby tự sinh, đăng ký server động, giao hàng web store) | 🔜 Bước tiếp theo |
-| Sao lưu tự động (`itzg/mc-backup`) | 🔜 Chưa thêm |
+| Sao lưu tự động (`itzg/mc-backup` + `mariadb-dump`) | ✅ Đã chạy thử, xem mục "Sao lưu và khôi phục" |

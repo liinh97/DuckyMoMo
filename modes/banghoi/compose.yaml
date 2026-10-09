@@ -7,8 +7,12 @@ services:
       EULA: "TRUE"
       TYPE: PAPER
       VERSION: ${MC_VERSION:-LATEST}
-      MEMORY: 4G
+      # Không bật USE_AIKAR_FLAGS: bộ tham số đó chiếm sẵn toàn bộ heap (AlwaysPreTouch), máy nhà đang thiếu RAM.
+      # INIT_MEMORY nhỏ: Java bắt đầu ít RAM, chỉ lấy thêm khi cần, tối đa MAX_MEMORY.
+      INIT_MEMORY: 1G
+      MAX_MEMORY: 3G              # đủ cho ~15 người chơi thử. Đông thì tăng (và mem_limit)
       TZ: Asia/Ho_Chi_Minh
+      RCON_PASSWORD: ${RCON_PASSWORD:?Chưa đặt RCON_PASSWORD trong .env (chạy lại ./ops/init.sh)}   # dùng chung với dịch vụ sao lưu, trang Cài đặt
       ONLINE_MODE: "FALSE"
       MOTD: "Bang Hoi Chien"
       DIFFICULTY: normal
@@ -19,7 +23,7 @@ services:
       #   viaversion: client mới hơn server, viabackwards: client cũ hơn, viarewind: 1.7-1.8
       # Lưu ý: dòng bắt đầu bằng # BÊN TRONG khối '|' không phải comment, image itzg sẽ đọc thành tên plugin.
       # towny: thị trấn/quốc gia; vaultunlocked: lớp nối kinh tế; coreprotect: ghi lại phá/đặt để khôi phục;
-      # worldguard: bảo vệ spawn/chợ. Thiết kế: docs/banghoi-design.md
+      # worldguard: bảo vệ spawn/chợ; chunkyborder: viền thế giới hình chữ nhật (map Trái Đất). Thiết kế: docs/banghoi-design.md
       MODRINTH_PROJECTS: |
         luckperms
         worldedit
@@ -31,6 +35,7 @@ services:
         vaultunlocked
         coreprotect
         worldguard
+        chunkyborder
       # Plugin không có (hoặc chưa có bản 26.2) trên Modrinth: ghim link tải cụ thể. Nâng cấp: thay link.
       #   SiegeWar 3.7.0 (GitHub), OldCombatMechanics 2.7.0 (GitHub, combat kiểu 1.8),
       #   EssentialsX bản dev #1832 (bản chính thức 2.22.0 mới tới 26.1.2): lõi + Chat + Spawn
@@ -45,7 +50,7 @@ services:
       CFG_DB_USER: ${DB_USER}
       CFG_DB_PASSWORD: ${DB_PASSWORD}
       CFG_REDIS_PASSWORD: ${REDIS_PASSWORD}
-    mem_limit: 5g
+    mem_limit: 4g
     volumes:
       - ../../data/banghoi-1:/data
       - ./server/config:/config:ro
@@ -55,3 +60,24 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
+
+  # Sao lưu thế giới + plugin của banghoi-1 (itzg/mc-backup: tạm dừng ghi qua RCON, nén tar.gz, xoá bản cũ).
+  # Sao lưu ngay: docker compose exec backup-banghoi-1 backup now. Khôi phục: README.md, mục "Sao lưu và khôi phục".
+  backup-banghoi-1:
+    image: itzg/mc-backup
+    restart: unless-stopped
+    environment:
+      RCON_HOST: banghoi-1
+      RCON_PASSWORD: ${RCON_PASSWORD}
+      BACKUP_NAME: banghoi-1
+      BACKUP_INTERVAL: ${BACKUP_INTERVAL:-6h}
+      PRUNE_BACKUPS_DAYS: ${BACKUP_KEEP_DAYS:-7}
+      PAUSE_IF_NO_PLAYERS: "true"      # không ai vào kể từ lần trước thì bỏ qua, đỡ tốn ổ
+      INITIAL_DELAY: 5m
+      TZ: Asia/Ho_Chi_Minh
+    volumes:
+      - ../../data/banghoi-1:/data:ro
+      # BACKUP_DIR trong .env phải là đường dẫn tuyệt đối (ví dụ /mnt/f/DuckyMoMo-backups); bỏ trống = backups/ trong repo
+      - ${BACKUP_DIR:-../../backups}/banghoi-1:/backups
+    depends_on:
+      - banghoi-1

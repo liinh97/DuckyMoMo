@@ -16,6 +16,7 @@ else
     -e "s/^VELOCITY_SECRET=.*/VELOCITY_SECRET=$(rand 48)/" \
     -e "s/^AUTHME_SECRET=.*/AUTHME_SECRET=$(rand 64)/" \
     -e "s/^PANEL_PASSWORD=.*/PANEL_PASSWORD=$(rand 20)/" \
+    -e "s/^RCON_PASSWORD=.*/RCON_PASSWORD=$(rand 32)/" \
     .env.example > .env
   chmod 600 .env
   echo "Đã tạo .env với mật khẩu ngẫu nhiên."
@@ -30,6 +31,11 @@ fi
 if ! grep -q '^PANEL_PASSWORD=' .env; then
   printf '\n# Trang Cài đặt (thêm bởi ops/init.sh)\nPANEL_USER=admin\nPANEL_PASSWORD=%s\n' "$(rand 20)" >> .env
   echo "Đã thêm PANEL_USER/PANEL_PASSWORD vào .env (đăng nhập trang Cài đặt)."
+fi
+
+if ! grep -q '^RCON_PASSWORD=' .env; then
+  printf '\n# RCON dùng chung (thêm bởi ops/init.sh)\nRCON_PASSWORD=%s\n' "$(rand 32)" >> .env
+  echo "Đã thêm RCON_PASSWORD vào .env."
 fi
 
 mkdir -p data

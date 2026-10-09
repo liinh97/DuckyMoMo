@@ -218,10 +218,14 @@ def save_and_apply(mode_id, incoming, apply_all=False):
         yaml_rt().dump(values, f)
 
     # 3) Áp dụng qua RCON: lệnh riêng của từng mục, rồi lệnh nạp lại của từng nhóm (mỗi lệnh 1 lần)
+    # Lệnh dùng được {value}, {double} (giá trị x2) và {tên_mục_khác} (giá trị hiện tại của mục đó)
+    current = {k: plain(v) for k, v in values.items()}
     commands = []
     for group, s, v in changed:
         for c in s.get("commands", []):
-            commands.append(c.format(value=v, double=int(v) * 2 if s["type"] in ("int", "number") else v))
+            cmd = c.format(**current, value=v, double=int(v) * 2 if s["type"] in ("int", "number") else v)
+            if cmd not in commands:
+                commands.append(cmd)
     for group in schema.get("groups", []):
         if any(g is group for g, _, _ in changed):
             for c in group.get("apply", []):

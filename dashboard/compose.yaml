@@ -2,10 +2,11 @@
 x-log-feed: &log-feed
   image: docker:29-cli
   restart: unless-stopped
-  entrypoint: ["sh", "/log-feed.sh"]
+  entrypoint: ["sh", "/feed/log-feed.sh"]
   volumes:
     - /var/run/docker.sock:/var/run/docker.sock:ro   # đọc log các server (cùng lưu ý bảo mật như Dozzle)
-    - ./log-feed.sh:/log-feed.sh:ro
+    # Gắn cả thư mục, không gắn file lẻ: Docker Desktop + WSL hay lỗi "no such file" với bind mount từng file
+    - ./:/feed:ro
 
 services:
   # Dozzle: xem log trực tiếp (chat, vào/ra, lỗi) của mọi server qua trình duyệt.

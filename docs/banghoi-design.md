@@ -31,7 +31,7 @@
 ## 3. Thế giới
 
 - **Một thế giới chính** cho mùa, có viền (world border) **(đề xuất)** bán kính **5.000 block** cho giai đoạn 30–50 người; nới rộng nếu đông.
-- **Không tự xây map.** Chọn một trong hai **(chưa chốt)**:
+- **Đã chọn (09/10/2026): map Trái Đất tự tạo, tỉ lệ 1:2000** (21.504 × 10.752 block), xem `tools/earthmap/`. Spawn ở Hà Nội. Hai phương án đã cân nhắc:
   - **Map Trái Đất tải sẵn** (tỉ lệ 1:1000 hoặc 1:2000): hợp Towny/SiegeWar (EarthPol, CCNet dùng). Nặng (vài GB trở lên), phải **kiểm tra giấy phép** (nhiều map cấm dùng cho server thu tiền hoặc bắt ghi tên tác giả).
   - **Map tự nhiên do server sinh**: dễ nhất, không vướng bản quyền. Dùng Chunky **sinh sẵn địa hình** (không phải xây) trước khi mở để đỡ giật.
 - **Công trình** (spawn, chợ): tải schematic làm sẵn, dán bằng WorldEdit. Kiểm tra giấy phép trước khi dùng.

@@ -1,6 +1,7 @@
-# Mật khẩu và dữ liệu chạy
+# Mật khẩu, dữ liệu chạy, bản sao lưu
 .env
 data/
+backups/
 
 # File plugin/mod tải tay (tải tự động qua Modrinth thì không nằm ở đây)
 *.jar
@@ -14,3 +15,6 @@ Thumbs.db
 # Kết quả build network-core
 network-core/.gradle/
 network-core/**/build/
+
+# Tạo map Trái Đất: công cụ, dữ liệu tải về, map tạo ra (lớn, không commit)
+tools/earthmap/work/

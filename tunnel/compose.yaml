@@ -11,6 +11,7 @@ services:
     # Dùng chung mạng với proxy: trên dashboard playit, tunnel trỏ tới 127.0.0.1
     #   Minecraft Java    -> 127.0.0.1:25577 (TCP)
     #   Minecraft Bedrock -> 127.0.0.1:19132 (UDP)
+    # LƯU Ý: tạo lại proxy thì phải tạo lại playit:  docker compose --profile tunnel up -d --force-recreate playit
     network_mode: "service:proxy"
     depends_on:
       proxy:

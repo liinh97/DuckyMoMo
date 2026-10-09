@@ -7,8 +7,12 @@ services:
       EULA: "TRUE"
       TYPE: PAPER
       VERSION: ${MC_VERSION:-LATEST}
-      MEMORY: 2G
+      # Không bật USE_AIKAR_FLAGS: bộ tham số đó chiếm sẵn toàn bộ heap (AlwaysPreTouch), máy nhà đang thiếu RAM.
+      # INIT_MEMORY nhỏ: Java bắt đầu ít RAM, chỉ lấy thêm khi cần, tối đa MAX_MEMORY.
+      INIT_MEMORY: 512M
+      MAX_MEMORY: 1G              # lobby phẳng, ít người. Tăng khi đông (và mem_limit)
       TZ: Asia/Ho_Chi_Minh
+      RCON_PASSWORD: ${RCON_PASSWORD:?Chưa đặt RCON_PASSWORD trong .env (chạy lại ./ops/init.sh)}   # dùng chung với dịch vụ sao lưu, trang Cài đặt
       ONLINE_MODE: "FALSE"        # proxy lo xác thực; server con không mở cổng ra ngoài
       MOTD: "DuckyMoMo Lobby"
       # Lobby: thế giới phẳng, an toàn, không quái
@@ -37,7 +41,7 @@ services:
       CFG_DB_PASSWORD: ${DB_PASSWORD}
       CFG_REDIS_PASSWORD: ${REDIS_PASSWORD}
       CFG_AUTHME_SECRET: ${AUTHME_SECRET}
-    mem_limit: 3g
+    mem_limit: 2g
     volumes:
       - ../data/lobby:/data
       - ./config:/config:ro        # -> /data/config (paper-global.yml…)
@@ -47,3 +51,24 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
+
+  # Sao lưu thế giới + plugin của lobby (itzg/mc-backup: tạm dừng ghi qua RCON, nén tar.gz, xoá bản cũ).
+  # Sao lưu ngay: docker compose exec backup-lobby backup now. Khôi phục: README.md, mục "Sao lưu và khôi phục".
+  backup-lobby:
+    image: itzg/mc-backup
+    restart: unless-stopped
+    environment:
+      RCON_HOST: lobby
+      RCON_PASSWORD: ${RCON_PASSWORD}
+      BACKUP_NAME: lobby
+      BACKUP_INTERVAL: ${BACKUP_INTERVAL:-6h}
+      PRUNE_BACKUPS_DAYS: ${BACKUP_KEEP_DAYS:-7}
+      PAUSE_IF_NO_PLAYERS: "true"      # không ai vào kể từ lần trước thì bỏ qua, đỡ tốn ổ
+      INITIAL_DELAY: 5m
+      TZ: Asia/Ho_Chi_Minh
+    volumes:
+      - ../data/lobby:/data:ro
+      # BACKUP_DIR trong .env phải là đường dẫn tuyệt đối (ví dụ /mnt/f/DuckyMoMo-backups); bỏ trống = backups/ trong repo
+      - ${BACKUP_DIR:-../backups}/lobby:/backups
+    depends_on:
+      - lobby

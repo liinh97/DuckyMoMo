@@ -6,7 +6,7 @@
 #   type     text | times | int | number | select | info
 #   file     file cấu hình plugin, tính từ data/<server>/  (bỏ trống = chỉ lưu, không ghi vào plugin)
 #   path     đường dẫn trong file YAML, nối bằng dấu chấm
-#   commands lệnh RCON chạy khi giá trị đổi ({value}, {double} = giá trị x2)
+#   commands lệnh RCON chạy khi giá trị đổi ({value}, {double} = giá trị x2, {tên_mục} = giá trị của mục khác)
 #   note     ghi chú hiện dưới ô nhập
 # Mỗi nhóm: apply = lệnh RCON chạy sau khi có mục trong nhóm đổi (nạp lại cấu hình plugin).
 title: Bang Hội Chiến
@@ -72,15 +72,30 @@ groups:
 
   - title: Thế giới
     settings:
-      - { key: world_radius, label: Bán kính viền thế giới (block), type: int, min: 500, max: 30000000,
-          commands: ["worldborder center 0 0", "worldborder set {double}"],
-          note: "Áp dụng ngay, không cần khởi động lại." }
+      # Viền hình chữ nhật bằng ChunkyBorder (viền vanilla chỉ vuông). Map Trái Đất 1:2000: 10752 x 5376.
+      - { key: border_x, label: Viền thế giới, bán kính Đông–Tây (block), type: int, min: 500, max: 29000000,
+          commands: ["worldborder set 59999968", "chunky world world", "chunky shape rectangle", "chunky center 0 0",
+                     "chunky radius {border_x} {border_z}", "chunky border add world"],
+          note: "Áp dụng ngay. Map Trái Đất 1:2000: 10752." }
+      - { key: border_z, label: Viền thế giới, bán kính Bắc–Nam (block), type: int, min: 500, max: 29000000,
+          commands: ["worldborder set 59999968", "chunky world world", "chunky shape rectangle", "chunky center 0 0",
+                     "chunky radius {border_x} {border_z}", "chunky border add world"],
+          note: "Map Trái Đất 1:2000: 5376." }
+      - { key: spawn_x, label: Điểm spawn, toạ độ X, type: int, min: -29000000, max: 29000000,
+          commands: ["execute in minecraft:overworld run forceload add {spawn_x} {spawn_z}",
+                     "execute in minecraft:overworld positioned {spawn_x} 0 {spawn_z} positioned over motion_blocking_no_leaves run setworldspawn ~ ~ ~",
+                     "execute in minecraft:overworld run forceload remove {spawn_x} {spawn_z}"],
+          note: "Độ cao tự lấy theo mặt đất. Map Trái Đất 1:2000: 1 độ kinh/vĩ ≈ 59,7 block (Hà Nội ≈ 6323, -1256)." }
+      - { key: spawn_z, label: Điểm spawn, toạ độ Z, type: int, min: -29000000, max: 29000000,
+          commands: ["execute in minecraft:overworld run forceload add {spawn_x} {spawn_z}",
+                     "execute in minecraft:overworld positioned {spawn_x} 0 {spawn_z} positioned over motion_blocking_no_leaves run setworldspawn ~ ~ ~",
+                     "execute in minecraft:overworld run forceload remove {spawn_x} {spawn_z}"] }
       - key: map_type
         label: Loại map
         type: select
-        options: [ { value: natural, label: Map tự nhiên }, { value: earth, label: Map Trái Đất (tải sẵn) } ]
+        options: [ { value: natural, label: Map tự nhiên }, { value: earth, label: "Map Trái Đất tự tạo (tools/earthmap)" } ]
         note: "Chỉ ghi lại; áp dụng khi mở mùa mới (đổi giữa mùa người chơi mất thành)."
-      - { key: map_url, label: Link tải map Trái Đất, type: text, note: "Dùng khi Loại map = Trái Đất. Kiểm tra giấy phép của map trước." }
+      - { key: map_url, label: Link tải map (nếu dùng map tải sẵn), type: text, note: "Map tải về: kiểm tra giấy phép trước khi dùng." }
       - key: reset_each_season
         label: Reset thế giới mỗi mùa
         type: select

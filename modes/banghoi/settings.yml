@@ -22,7 +22,10 @@ towny_town_upkeep: 10.0
 towny_nation_upkeep: 100.0
 combat_mode:
   - old
-world_radius: 5000
-map_type: natural
+border_x: 10752
+border_z: 5376
+spawn_x: 6323
+spawn_z: -1256
+map_type: earth
 map_url: ''
 reset_each_season: true

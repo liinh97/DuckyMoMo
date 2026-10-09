@@ -10,6 +10,7 @@ services:
       VERSION: ${POKEMON_MC_VERSION:-1.21.1}   # phải đúng phiên bản Cobblemon hỗ trợ
       MEMORY: 8G
       TZ: Asia/Ho_Chi_Minh
+      RCON_PASSWORD: ${RCON_PASSWORD:?Chưa đặt RCON_PASSWORD trong .env (chạy lại ./ops/init.sh)}   # dùng chung với dịch vụ sao lưu, trang Cài đặt
       ONLINE_MODE: "FALSE"
       # Mod tải tự động từ Modrinth
       MODRINTH_PROJECTS: |
@@ -25,3 +26,25 @@ services:
     depends_on:
       mariadb:
         condition: service_healthy
+
+  # Sao lưu thế giới + plugin của pokemon-1 (itzg/mc-backup: tạm dừng ghi qua RCON, nén tar.gz, xoá bản cũ).
+  # Sao lưu ngay: docker compose exec backup-pokemon-1 backup now. Khôi phục: README.md, mục "Sao lưu và khôi phục".
+  backup-pokemon-1:
+    image: itzg/mc-backup
+    profiles: ["pokemon"]
+    restart: unless-stopped
+    environment:
+      RCON_HOST: pokemon-1
+      RCON_PASSWORD: ${RCON_PASSWORD}
+      BACKUP_NAME: pokemon-1
+      BACKUP_INTERVAL: ${BACKUP_INTERVAL:-6h}
+      PRUNE_BACKUPS_DAYS: ${BACKUP_KEEP_DAYS:-7}
+      PAUSE_IF_NO_PLAYERS: "true"      # không ai vào kể từ lần trước thì bỏ qua, đỡ tốn ổ
+      INITIAL_DELAY: 5m
+      TZ: Asia/Ho_Chi_Minh
+    volumes:
+      - ../../data/pokemon-1:/data:ro
+      # BACKUP_DIR trong .env phải là đường dẫn tuyệt đối (ví dụ /mnt/f/DuckyMoMo-backups); bỏ trống = backups/ trong repo
+      - ${BACKUP_DIR:-../../backups}/pokemon-1:/backups
+    depends_on:
+      - pokemon-1

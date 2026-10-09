@@ -37,3 +37,21 @@ services:
       retries: 6
     environment:
       REDIS_PASSWORD: ${REDIS_PASSWORD}
+
+  # Sao lưu toàn bộ MariaDB theo chu kỳ (script: infra/backup-db.sh). File: backups/db/db-*.sql.gz
+  backup-db:
+    image: mariadb:11.4
+    restart: unless-stopped
+    entrypoint: ["sh", "/infra/backup-db.sh"]
+    environment:
+      MYSQL_PWD: ${DB_ROOT_PASSWORD}       # mariadb-dump đọc mật khẩu từ biến này, không lộ trên dòng lệnh
+      BACKUP_INTERVAL: ${BACKUP_INTERVAL:-6h}
+      BACKUP_KEEP_DAYS: ${BACKUP_KEEP_DAYS:-7}
+      TZ: Asia/Ho_Chi_Minh
+    volumes:
+      # Gắn cả thư mục, không gắn file lẻ: Docker Desktop + WSL hay lỗi "no such file" với bind mount từng file
+      - ./:/infra:ro
+      - ${BACKUP_DIR:-../backups}/db:/backups
+    depends_on:
+      mariadb:
+        condition: service_healthy

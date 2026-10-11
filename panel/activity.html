@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DuckyMoMo · Hoạt động người chơi</title>
+<style>
+  /* Giao diện kiểu Dozzle: nền tối, mỗi sự kiện một dòng chữ đơn cách, mới nhất ở dưới */
+  :root {
+    --bg: #121212; --bar: #1a1a1a; --row: #161616; --row-alt: #1b1b1b; --hover: #242424; --line: #2a2a2a;
+    --text: #e4e4e4; --muted: #8a8a8a; --dim: #6b6b6b; --input: #202020; --live: #2ecc71;
+    --chat: #8ab4f8; --join: #81c995; --command: #fdd663; --server: #c7a6ff;
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 14px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+         display: flex; flex-direction: column; }
+  header { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 10px 16px; background: var(--bar);
+           border-bottom: 1px solid var(--line); }
+  header .title { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 14px; white-space: nowrap; margin-right: 6px; }
+  header .title b { color: var(--text); } header .title span { color: var(--dim); }
+  .chip { border: 1px solid var(--line); background: transparent; color: var(--muted); padding: 3px 11px; border-radius: 999px;
+          cursor: pointer; font: inherit; font-size: 13px; }
+  .chip.on { color: #111; border-color: transparent; font-weight: 600; }
+  .chip.on[data-type="chat"] { background: var(--chat); }
+  .chip.on[data-type="join"] { background: var(--join); }
+  .chip.on[data-type="command"] { background: var(--command); }
+  select, input { padding: 4px 8px; border: 1px solid var(--line); border-radius: 6px; background: var(--input); color: var(--text);
+                  font: inherit; font-size: 13px; color-scheme: dark; }
+  input { width: 140px; }
+  input[type="date"] { width: auto; }
+  .custom { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); }
+  .custom[hidden] { display: none; }
+  .right { margin-left: auto; display: flex; align-items: center; gap: 14px; font-size: 13px; }
+  .right a { color: var(--muted); text-decoration: none; } .right a:hover { color: var(--text); }
+  label.live { display: flex; align-items: center; gap: 6px; color: var(--muted); cursor: pointer; user-select: none; }
+  label.live input { display: none; }
+  label.live .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--dim); }
+  label.live.on .dot { background: var(--live); box-shadow: 0 0 6px var(--live); }
+  label.live.on { color: var(--text); }
+  #log { flex: 1; overflow-y: auto; font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace; font-size: 13px; }
+  .line { display: grid; grid-template-columns: 170px 1fr; gap: 16px; padding: 4px 16px; background: var(--row); }
+  .line:nth-child(even) { background: var(--row-alt); }
+  .line:hover { background: var(--hover); }
+  .line .ts { color: var(--dim); white-space: nowrap; }
+  .line .msg { white-space: pre-wrap; word-break: break-word; }
+  .srv { color: var(--server); } .mode { color: var(--dim); }
+  .tag { font-weight: 700; } .tag.chat { color: var(--chat); } .tag.join { color: var(--join); } .tag.command { color: var(--command); }
+  .info { padding: 6px 16px; color: var(--dim); font-size: 12.5px; }
+  .empty { padding: 40px 16px; text-align: center; color: var(--muted); font-family: system-ui, sans-serif; }
+  @media (max-width: 700px) { .line { grid-template-columns: 1fr; gap: 0; } input { width: 110px; } }
+</style>
+</head>
+<body>
+<header>
+  <div class="title"><b>duckymomo</b><span> · hoạt động người chơi</span></div>
+  <button class="chip on" data-type="chat">Chat</button>
+  <button class="chip on" data-type="join">Vào/ra</button>
+  <button class="chip on" data-type="command">Lệnh</button>
+  <select id="mode" title="Chế độ"><option value="">Mọi chế độ</option></select>
+  <select id="range" title="Khoảng ngày">
+    <option value="all">Mọi ngày</option>
+    <option value="today">Hôm nay</option>
+    <option value="yesterday">Hôm qua</option>
+    <option value="7">7 ngày qua</option>
+    <option value="30">30 ngày qua</option>
+    <option value="custom">Chọn ngày…</option>
+  </select>
+  <span id="custom" class="custom" hidden>
+    <input type="date" id="from" title="Từ ngày"> – <input type="date" id="to" title="Đến ngày (tính cả ngày này)">
+  </span>
+  <input id="player" placeholder="Người chơi">
+  <input id="q" placeholder="Tìm trong nội dung">
+  <div class="right">
+    <a href="./">Cài đặt</a>
+    <a id="dozzle" href="__DOZZLE_URL__" target="_blank" rel="noopener">Xem log ↗</a>
+    <label class="live on" id="liveLabel" title="Tự cập nhật mỗi 5 giây"><input type="checkbox" id="auto" checked><span class="dot"></span>Live</label>
+  </div>
+</header>
+<div id="log"><div class="empty">Đang tải…</div></div>
+<script>
+const $ = (id) => document.getElementById(id);
+if (!"__DOZZLE_URL__") $("dozzle").style.display = "none";
+const TYPE_NAME = { chat: "CHAT", join: "VÀO/RA", command: "LỆNH" };
+let modeNames = {}, timer = null, firstRender = true;
+
+// Bộ lọc nhớ trong địa chỉ trang (#types=chat&mode=banghoi…) để gửi link / tải lại không mất
+const saved = new URLSearchParams(location.hash.slice(1));
+if (saved.has("types")) {
+  const t = saved.get("types").split(",");
+  document.querySelectorAll(".chip").forEach((c) => c.classList.toggle("on", t.includes(c.dataset.type)));
+}
+$("player").value = saved.get("player") || "";
+$("range").value = saved.get("range") || "today";   // mặc định: hôm nay
+$("from").value = saved.get("from") || "";
+$("to").value = saved.get("to") || "";
+$("custom").hidden = $("range").value !== "custom";
+
+// Ngày theo giờ máy người xem (Việt Nam) -> mốc UTC cho server. Trả [từ, đến) dạng "YYYY-MM-DDTHH:MM:SSZ".
+const iso = (d) => d.toISOString().slice(0, 19) + "Z";
+const dayStart = (d) => new Date(d.getFullYear(), d.getMonth(), d.getDate());
+const addDays = (d, n) => new Date(d.getFullYear(), d.getMonth(), d.getDate() + n);
+function dateRange() {
+  const today = dayStart(new Date());
+  switch ($("range").value) {
+    case "today": return [today, addDays(today, 1)];
+    case "yesterday": return [addDays(today, -1), today];
+    case "7": return [addDays(today, -6), addDays(today, 1)];
+    case "30": return [addDays(today, -29), addDays(today, 1)];
+    case "custom": {
+      const parse = (v) => { const [y, m, d] = v.split("-").map(Number); return new Date(y, m - 1, d); };
+      return [$("from").value ? parse($("from").value) : null, $("to").value ? addDays(parse($("to").value), 1) : null];
+    }
+  }
+  return [null, null];
+}
+$("q").value = saved.get("q") || "";
+
+function params() {
+  const p = new URLSearchParams();
+  p.set("types", [...document.querySelectorAll(".chip.on")].map((c) => c.dataset.type).join(","));
+  if ($("mode").value || saved.get("mode")) p.set("mode", $("mode").value || saved.get("mode"));
+  if ($("player").value.trim()) p.set("player", $("player").value.trim());
+  if ($("q").value.trim()) p.set("q", $("q").value.trim());
+  const [from, to] = dateRange();
+  if (from) p.set("from", iso(from));
+  if (to) p.set("to", iso(to));
+  return p;
+}
+
+const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+const fmt = (ts) => {
+  const d = new Date(ts);
+  if (isNaN(d)) return ts;
+  const p = (n) => String(n).padStart(2, "0");
+  return `${p(d.getDate())}/${p(d.getMonth() + 1)}/${d.getFullYear()} ${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`;
+};
+
+async function load() {
+  const p = params();
+  if (!p.get("types")) { render([]); return; }
+  try {
+    const r = await fetch("api/activity?" + p.toString());
+    const data = await r.json();
+    if ($("mode").options.length === 1) {
+      for (const m of data.modes) $("mode").add(new Option(m.name, m.id));
+      if (saved.get("mode")) $("mode").value = saved.get("mode");
+    }
+    modeNames = Object.fromEntries(data.modes.map((m) => [m.id, m.name]));
+    if (!data.has_file) {
+      $("log").innerHTML = '<div class="empty">Chưa có dữ liệu. Service <code>activity</code> chưa ghi file data/activity/activity.jsonl.</div>';
+      return;
+    }
+    render(data.events);
+  } catch (e) {
+    $("log").innerHTML = '<div class="empty">Không tải được: ' + esc(e) + '</div>';
+  }
+}
+
+function render(events) {
+  const log = $("log");
+  const atBottom = log.scrollHeight - log.scrollTop - log.clientHeight < 40;
+  const rows = events.slice().reverse();   // API trả mới nhất trước; hiện như log: mới nhất ở dưới
+  const info = `<div class="info">${rows.length} sự kiện${rows.length >= 300 ? " gần nhất (tối đa 300)" : ""}</div>`;
+  log.innerHTML = rows.length ? info + rows.map((e) => `<div class="line">
+      <span class="ts">${esc(fmt(e.ts))}</span>
+      <span class="msg"><span class="srv">[${esc(e.server)}]</span> <span class="mode">${esc(modeNames[e.mode] || e.mode)}</span> <span class="tag ${esc(e.type)}">${esc(TYPE_NAME[e.type] || e.type)}</span> ${esc(e.text)}</span></div>`).join("")
+    : '<div class="empty">Không có sự kiện nào khớp bộ lọc.</div>';
+  if (atBottom || firstRender) log.scrollTop = log.scrollHeight;
+  firstRender = false;
+}
+
+function changed() {
+  firstRender = true;
+  saved.delete("mode");
+  // địa chỉ trang lưu lựa chọn (range, from, to), không lưu mốc UTC đã tính, để "Hôm nay" mở lại hôm sau vẫn đúng
+  const p = params(); p.delete("from"); p.delete("to");
+  if ($("range").value) p.set("range", $("range").value);
+  if ($("range").value === "custom") {
+    if ($("from").value) p.set("from", $("from").value);
+    if ($("to").value) p.set("to", $("to").value);
+  }
+  history.replaceState(null, "", "#" + p.toString());
+  load();
+}
+document.querySelectorAll(".chip").forEach((c) => c.onclick = () => { c.classList.toggle("on"); changed(); });
+$("mode").onchange = changed;
+$("range").onchange = () => { $("custom").hidden = $("range").value !== "custom"; changed(); };
+$("from").onchange = changed;
+$("to").onchange = changed;
+let typing;
+for (const id of ["player", "q"]) $(id).oninput = () => { clearTimeout(typing); typing = setTimeout(changed, 300); };
+function schedule() { clearInterval(timer); if ($("auto").checked) timer = setInterval(load, 5000); }
+$("auto").onchange = () => { $("liveLabel").classList.toggle("on", $("auto").checked); schedule(); };
+
+load();
+schedule();
+</script>
+</body>
+</html>

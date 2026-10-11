@@ -1,0 +1,5 @@
+# DuckyMoMoCore ở lobby: bật menu chọn chế độ (la bàn trên tay + /menu)
+lobby-menu:
+  enabled: true
+  modes-dir: /modes       # ../modes gắn vào đây (chỉ đọc), xem lobby/compose.yaml
+  item-slot: 4

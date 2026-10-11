@@ -20,12 +20,14 @@ towny_price_new_nation: 1000.0
 towny_price_claim: 25.0
 towny_town_upkeep: 10.0
 towny_nation_upkeep: 100.0
+eco_starting_balance: 100
+eco_per_player_locale: true
 combat_mode:
   - old
-border_x: 10752
-border_z: 5376
-spawn_x: 6323
-spawn_z: -1256
+border_x: 21504
+border_z: 10752
+spawn_x: 12646
+spawn_z: -2512
 map_type: earth
 map_url: ''
 reset_each_season: true

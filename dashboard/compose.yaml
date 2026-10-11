@@ -10,7 +10,8 @@ x-log-feed: &log-feed
 
 services:
   # Dozzle: xem log trực tiếp (chat, vào/ra, lỗi) của mọi server qua trình duyệt.
-  # Mở: http://localhost:${DASHBOARD_PORT:-8888}  (chỉ máy chạy Docker vào được)
+  # Mở: http://localhost:${DASHBOARD_PORT:-8888}/mc/log/  (chỉ máy chạy Docker vào được)
+  # Từ ngoài: Trạm 6 https://app.goc6.io.vn/mc/log/ (gateway Trạm 6 bắt đăng nhập rồi chuyển vào cổng này)
   # Chỉ xem log, không gõ lệnh được. Gõ lệnh: docker compose exec <server> rcon-cli
   dozzle:
     image: amir20/dozzle:latest   # khi chạy ổn nên ghim tag cụ thể
@@ -19,6 +20,8 @@ services:
       # Chỉ hiện container của dự án này, không hiện các container khác trên máy
       DOZZLE_FILTER: label=com.docker.compose.project=duckymomo
       DOZZLE_NO_ANALYTICS: "true"
+      # Chạy dưới đường dẫn /mc/log để Trạm 6 (~/works/tram6) chuyển tiếp nguyên đường dẫn, không phải cắt tiền tố
+      DOZZLE_BASE: /mc/log
       # Bắt đăng nhập. Tạo/đổi tài khoản: ./ops/dozzle-user.sh <ten> (lưu ở data/dozzle/users.yml)
       DOZZLE_AUTH_PROVIDER: simple
       TZ: Asia/Ho_Chi_Minh
@@ -34,6 +37,11 @@ services:
   # Tab "activity" trong Dozzle: chỉ chat + vào/ra + lệnh của người chơi, không lẫn log khác.
   # Mỗi dòng có nhãn CHAT / VÀO/RA / LỆNH. Tự nhận server mới thêm sau (theo label của Docker Compose).
   # Muốn tách riêng từng loại: thêm service với MODE: chat | join | commands.
+  # Đồng thời ghi data/activity/activity.jsonl cho trang "Hoạt động người chơi" của panel (lọc theo loại, chế độ, người chơi).
   activity:
     <<: *log-feed
-    environment: { PROJECT: duckymomo, MODE: all, TZ: Asia/Ho_Chi_Minh }
+    environment: { PROJECT: duckymomo, MODE: all, TZ: Asia/Ho_Chi_Minh, JSONL: /out/activity.jsonl }
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./:/feed:ro
+      - ../data/activity:/out

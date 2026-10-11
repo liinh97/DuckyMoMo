@@ -55,6 +55,20 @@ groups:
       - { key: towny_town_upkeep,      label: Phí duy trì thị trấn mỗi ngày,  type: number, min: 0, file: plugins/Towny/settings/config.yml, path: economy.daily_taxes.price_town_upkeep }
       - { key: towny_nation_upkeep,    label: Phí duy trì quốc gia mỗi ngày,  type: number, min: 0, file: plugins/Towny/settings/config.yml, path: economy.daily_taxes.price_nation_upkeep }
 
+  - title: Kinh tế
+    description: Tiền dùng riêng trong Bang Hội Chiến. Nguồn tiền khởi đầu là /sell (bán đồ cho server theo bảng giá Essentials/worth.yml).
+    apply: [essentials reload]
+    settings:
+      - { key: eco_starting_balance, label: Tiền khởi đầu cho người mới, type: int, min: 0, max: 1000000,
+          file: plugins/Essentials/config.yml, path: starting-balance,
+          note: "Chỉ áp dụng cho người vào lần đầu sau khi đổi. Lập thị trấn tốn phí ở nhóm Thị trấn và quốc gia." }
+      - key: eco_per_player_locale
+        label: Tin nhắn EssentialsX theo ngôn ngữ máy người chơi
+        type: select
+        file: plugins/Essentials/config.yml
+        path: per-player-locale
+        options: [ { value: true, label: "Có (máy để tiếng Việt thì thấy tiếng Việt)" }, { value: false, label: Không (tiếng Anh) } ]
+
   - title: Combat
     apply: [ocm reload]
     settings:
@@ -72,20 +86,20 @@ groups:
 
   - title: Thế giới
     settings:
-      # Viền hình chữ nhật bằng ChunkyBorder (viền vanilla chỉ vuông). Map Trái Đất 1:2000: 10752 x 5376.
+      # Viền hình chữ nhật bằng ChunkyBorder (viền vanilla chỉ vuông). Map Trái Đất 1:1000 (từ 11/10/2026): 21504 x 10752; 1:2000: 10752 x 5376.
       - { key: border_x, label: Viền thế giới, bán kính Đông–Tây (block), type: int, min: 500, max: 29000000,
           commands: ["worldborder set 59999968", "chunky world world", "chunky shape rectangle", "chunky center 0 0",
                      "chunky radius {border_x} {border_z}", "chunky border add world"],
-          note: "Áp dụng ngay. Map Trái Đất 1:2000: 10752." }
+          note: "Áp dụng ngay. Map Trái Đất 1:1000: 21504 (1:2000: 10752)." }
       - { key: border_z, label: Viền thế giới, bán kính Bắc–Nam (block), type: int, min: 500, max: 29000000,
           commands: ["worldborder set 59999968", "chunky world world", "chunky shape rectangle", "chunky center 0 0",
                      "chunky radius {border_x} {border_z}", "chunky border add world"],
-          note: "Map Trái Đất 1:2000: 5376." }
+          note: "Map Trái Đất 1:1000: 10752 (1:2000: 5376)." }
       - { key: spawn_x, label: Điểm spawn, toạ độ X, type: int, min: -29000000, max: 29000000,
           commands: ["execute in minecraft:overworld run forceload add {spawn_x} {spawn_z}",
                      "execute in minecraft:overworld positioned {spawn_x} 0 {spawn_z} positioned over motion_blocking_no_leaves run setworldspawn ~ ~ ~",
                      "execute in minecraft:overworld run forceload remove {spawn_x} {spawn_z}"],
-          note: "Độ cao tự lấy theo mặt đất. Map Trái Đất 1:2000: 1 độ kinh/vĩ ≈ 59,7 block (Hà Nội ≈ 6323, -1256)." }
+          note: "Độ cao tự lấy theo mặt đất. Map Trái Đất 1:1000: 1 độ kinh/vĩ ≈ 119,5 block (Hà Nội ≈ 12646, -2512)." }
       - { key: spawn_z, label: Điểm spawn, toạ độ Z, type: int, min: -29000000, max: 29000000,
           commands: ["execute in minecraft:overworld run forceload add {spawn_x} {spawn_z}",
                      "execute in minecraft:overworld positioned {spawn_x} 0 {spawn_z} positioned over motion_blocking_no_leaves run setworldspawn ~ ~ ~",

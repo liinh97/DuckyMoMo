@@ -10,7 +10,7 @@ services:
       TYPE: PAPER
       VERSION: ${MC_VERSION:-LATEST}
       INIT_MEMORY: 1G
-      MAX_MEMORY: 3G
+      MAX_MEMORY: 4G              # chế độ mới chạy thử; chạy thật thì làm như banghoi (MEMORY + USE_AIKAR_FLAGS)
       TZ: Asia/Ho_Chi_Minh
       RCON_PASSWORD: ${RCON_PASSWORD:?Chưa đặt RCON_PASSWORD trong .env (chạy lại ./ops/init.sh)}   # dùng chung với dịch vụ sao lưu, trang Cài đặt
       ONLINE_MODE: "FALSE"
@@ -27,7 +27,7 @@ services:
       CFG_DB_USER: ${DB_USER}
       CFG_DB_PASSWORD: ${DB_PASSWORD}
       CFG_REDIS_PASSWORD: ${REDIS_PASSWORD}
-    mem_limit: 4g
+    mem_limit: 6g
     volumes:
       - ../../data/__MODE_ID__-1:/data
       - ./server/config:/config:ro
@@ -38,7 +38,7 @@ services:
       redis:
         condition: service_healthy
 
-  # Sao lưu thế giới + plugin của __MODE_ID__-1 (itzg/mc-backup: tạm dừng ghi qua RCON, nén tar.gz, xoá bản cũ).
+  # Sao lưu thế giới + plugin của __MODE_ID__-1 (itzg/mc-backup + restic: tạm dừng ghi qua RCON, chỉ lưu phần thay đổi, xoá bản quá hạn).
   # Sao lưu ngay: docker compose exec backup-__MODE_ID__-1 backup now. Khôi phục: README.md, mục "Sao lưu và khôi phục".
   backup-__MODE_ID__-1:
     image: itzg/mc-backup
@@ -49,7 +49,15 @@ services:
       RCON_PASSWORD: ${RCON_PASSWORD}
       BACKUP_NAME: __MODE_ID__-1
       BACKUP_INTERVAL: ${BACKUP_INTERVAL:-6h}
-      PRUNE_BACKUPS_DAYS: ${BACKUP_KEEP_DAYS:-7}
+      # restic: kho sao lưu khử trùng lặp, lần đầu ~ cỡ world, các lần sau chỉ phần thay đổi (map 1:1000 nặng 17+ GB,
+      # nén tar.gz mỗi lần sẽ đầy ổ). Mất RESTIC_PASSWORD là KHÔNG khôi phục được: cất thêm một bản ngoài máy.
+      BACKUP_METHOD: restic
+      RESTIC_REPOSITORY: /backups/restic
+      RESTIC_PASSWORD: ${RESTIC_PASSWORD:?Chưa đặt RESTIC_PASSWORD trong .env (chạy lại ./ops/init.sh)}
+      RESTIC_HOSTNAME: __MODE_ID__-1
+      PRUNE_RESTIC_RETENTION: "--keep-within ${BACKUP_KEEP_DAYS:-7}d --keep-daily 30"
+      # Không sao lưu file tải lại được (*.jar), log, cache, và các world cũ đã cất bằng ops/doi-map-banghoi.sh
+      EXCLUDES: "*.jar,cache,logs,*.tmp,world-cu-*,world-1-2000-*,world-tu-nhien-*"
       PAUSE_IF_NO_PLAYERS: "true"      # không ai vào kể từ lần trước thì bỏ qua, đỡ tốn ổ
       INITIAL_DELAY: 5m
       TZ: Asia/Ho_Chi_Minh

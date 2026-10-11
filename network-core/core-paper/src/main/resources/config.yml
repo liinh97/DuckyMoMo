@@ -1,0 +1,31 @@
+# DuckyMoMoCore (bản Paper). Mỗi server ghi đè bằng file plugins/DuckyMoMoCore/config.yml của nó.
+
+lobby-menu:
+  # Menu chọn chế độ (la bàn + /menu). Chỉ bật ở lobby.
+  enabled: false
+  # Thư mục chứa modes/<id>/mode.yml (lobby gắn ../modes vào /modes, chỉ đọc)
+  modes-dir: /modes
+  # Ô trên thanh công cụ đặt la bàn (0-8)
+  item-slot: 4
+
+decorate:
+  # Trang trí map (cây, cỏ, hoa, công trình vanilla). Chỉ bật ở server có map WorldPainter (banghoi-1).
+  enabled: false
+  world: world
+  # Vùng duyệt (block), thường bằng viền thế giới
+  min-x: -10752
+  max-x: 10752
+  min-z: -5376
+  max-z: 5376
+  # Nhân mật độ cây (1.0 = mặc định theo biome)
+  tree-density: 1.0
+  # Lưới công trình mặt đất: mỗi ô N x N chunk có một cơ hội (64 chunk ~ 1 km)
+  structure-spacing-chunks: 64
+  structure-chance: 0.6
+  # Không trang trí quanh spawn (block)
+  exclude: {x: 0, z: 0, radius: 300}
+  # Thời gian xử lý tối đa mỗi tick (ms) và số chunk nạp cùng lúc: càng nhỏ càng nhẹ, càng lâu xong
+  tick-budget-ms: 15
+  max-chunks-loading: 8
+  # Server khởi động lại giữa chừng thì tự chạy tiếp
+  auto-resume: true

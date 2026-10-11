@@ -1,0 +1,245 @@
+package vn.duckymomo.core.paper;
+
+import com.google.common.io.ByteArrayDataOutput;
+import com.google.common.io.ByteStreams;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.event.player.PlayerSwapHandItemsEvent;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataType;
+
+/**
+ * Menu chọn chế độ ở lobby: la bàn trên thanh công cụ (chuột phải / chạm để mở) và lệnh /menu.
+ * Danh sách chế độ tự lấy từ modes/*\/mode.yml; bấm vào là chuyển server qua proxy (kênh BungeeCord của Velocity).
+ * Người chơi điện thoại (Geyser) thấy menu dạng rương như Java.
+ */
+final class LobbyMenu implements Listener {
+
+    private static final String CHANNEL = "BungeeCord";
+
+    private final DuckyMoMoCore plugin;
+    private final File modesDir;
+    private final int itemSlot;
+    private final NamespacedKey menuItemKey;
+    private final NamespacedKey modeKey;
+
+    LobbyMenu(DuckyMoMoCore plugin, File modesDir, int itemSlot) {
+        this.plugin = plugin;
+        this.modesDir = modesDir;
+        this.itemSlot = itemSlot;
+        this.menuItemKey = new NamespacedKey(plugin, "lobby_menu_item");
+        this.modeKey = new NamespacedKey(plugin, "mode_server");
+        plugin.getServer().getMessenger().registerOutgoingPluginChannel(plugin, CHANNEL);
+    }
+
+    // ------------------------------------------------------------------ la bàn trên tay
+
+    private ItemStack menuItem() {
+        ItemStack item = new ItemStack(Material.COMPASS);
+        ItemMeta meta = item.getItemMeta();
+        meta.displayName(text("Chọn chế độ", NamedTextColor.GOLD).decoration(TextDecoration.BOLD, true));
+        meta.lore(List.of(text("Chuột phải (điện thoại: chạm giữ) để mở", NamedTextColor.GRAY)));
+        meta.getPersistentDataContainer().set(menuItemKey, PersistentDataType.BYTE, (byte) 1);
+        item.setItemMeta(meta);
+        return item;
+    }
+
+    private boolean isMenuItem(ItemStack item) {
+        return item != null && item.hasItemMeta()
+            && item.getItemMeta().getPersistentDataContainer().has(menuItemKey, PersistentDataType.BYTE);
+    }
+
+    private void giveMenuItem(Player player) {
+        for (ItemStack it : player.getInventory().getContents()) {
+            if (isMenuItem(it)) {
+                return;
+            }
+        }
+        player.getInventory().setItem(itemSlot, menuItem());
+    }
+
+    @EventHandler
+    public void onJoin(PlayerJoinEvent event) {
+        giveMenuItem(event.getPlayer());
+    }
+
+    @EventHandler
+    public void onRespawn(PlayerRespawnEvent event) {
+        plugin.getServer().getScheduler().runTask(plugin, () -> giveMenuItem(event.getPlayer()));
+    }
+
+    @EventHandler
+    public void onInteract(PlayerInteractEvent event) {
+        if (event.getAction() == Action.PHYSICAL || !isMenuItem(event.getItem())) {
+            return;
+        }
+        event.setCancelled(true);
+        open(event.getPlayer());
+    }
+
+    @EventHandler
+    public void onDrop(PlayerDropItemEvent event) {
+        if (isMenuItem(event.getItemDrop().getItemStack())) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onSwapHands(PlayerSwapHandItemsEvent event) {
+        if (isMenuItem(event.getMainHandItem()) || isMenuItem(event.getOffHandItem())) {
+            event.setCancelled(true);
+        }
+    }
+
+    // ------------------------------------------------------------------ menu
+
+    /** Đánh dấu inventory là menu của plugin (để nhận ra khi bấm). */
+    private static final class MenuHolder implements InventoryHolder {
+        private Inventory inventory;
+
+        @Override
+        public Inventory getInventory() {
+            return inventory;
+        }
+    }
+
+    void open(Player player) {
+        List<GameMode> visible = new ArrayList<>();
+        for (GameMode mode : GameMode.loadAll(modesDir, plugin.getLogger())) {
+            if (mode.hidden() || mode.server() == null) {
+                continue;
+            }
+            if (mode.status().equals("beta") && !player.hasPermission(mode.betaPermission())) {
+                continue;
+            }
+            visible.add(mode);
+        }
+
+        int rows = Math.max(3, Math.min(6, (visible.size() + 8) / 9 + 2));
+        MenuHolder holder = new MenuHolder();
+        Inventory inv = plugin.getServer().createInventory(holder, rows * 9, text("Chọn chế độ", NamedTextColor.DARK_GRAY));
+        holder.inventory = inv;
+
+        if (visible.isEmpty()) {
+            inv.setItem(13, button(Material.BARRIER, text("Chưa có chế độ nào mở", NamedTextColor.RED),
+                List.of(text("Quay lại sau nhé!", NamedTextColor.GRAY)), null));
+        }
+        boolean bedrock = BedrockAuthListener.isBedrock(player.getUniqueId(), player.getName());
+        int slot = 10;
+        for (GameMode mode : visible) {
+            if (slot % 9 == 8) {
+                slot += 2;
+            }
+            if (slot >= inv.getSize() - 9) {
+                break;
+            }
+            inv.setItem(slot++, modeButton(mode, bedrock));
+        }
+        player.openInventory(inv);
+    }
+
+    private ItemStack modeButton(GameMode mode, boolean bedrock) {
+        Material icon = Material.matchMaterial(mode.icon());
+        if (icon == null || !icon.isItem()) {
+            icon = Material.GRASS_BLOCK; // icon của mod (vd cobblemon:poke_ball) không có trên Paper
+        }
+        List<Component> lore = new ArrayList<>();
+        if (!mode.description().isBlank()) {
+            lore.add(text(mode.description(), NamedTextColor.GRAY));
+        }
+        lore.add(Component.empty());
+        String server = mode.server();
+        switch (mode.status()) {
+            case "open" -> lore.add(text("● Đang mở", NamedTextColor.GREEN));
+            case "beta" -> lore.add(text("● Thử nghiệm (beta)", NamedTextColor.YELLOW));
+            case "maintenance" -> lore.add(text("● Đang bảo trì", NamedTextColor.RED));
+            default -> lore.add(text("● " + mode.status(), NamedTextColor.GRAY));
+        }
+        if (bedrock && !mode.supportsBedrock()) {
+            lore.add(text("Chế độ này chưa hỗ trợ điện thoại", NamedTextColor.RED));
+            server = null;
+        } else if (!mode.joinable()) {
+            server = null;
+        } else {
+            lore.add(text("» Bấm để vào", NamedTextColor.AQUA));
+        }
+        return button(icon, text(mode.displayName(), NamedTextColor.GOLD).decoration(TextDecoration.BOLD, true), lore, server);
+    }
+
+    private ItemStack button(Material material, Component name, List<Component> lore, String server) {
+        ItemStack item = new ItemStack(material);
+        ItemMeta meta = item.getItemMeta();
+        meta.displayName(name);
+        meta.lore(lore);
+        if (server != null) {
+            meta.getPersistentDataContainer().set(modeKey, PersistentDataType.STRING, server);
+        }
+        item.setItemMeta(meta);
+        return item;
+    }
+
+    @EventHandler
+    public void onClick(InventoryClickEvent event) {
+        // Không cho kéo la bàn ra khỏi chỗ
+        if (isMenuItem(event.getCurrentItem()) || isMenuItem(event.getCursor())) {
+            event.setCancelled(true);
+        }
+        if (!(event.getInventory().getHolder() instanceof MenuHolder)) {
+            return;
+        }
+        event.setCancelled(true);
+        if (!(event.getWhoClicked() instanceof Player player) || event.getClickedInventory() != event.getInventory()) {
+            return;
+        }
+        ItemStack clicked = event.getCurrentItem();
+        if (clicked == null || !clicked.hasItemMeta()) {
+            return;
+        }
+        String server = clicked.getItemMeta().getPersistentDataContainer().get(modeKey, PersistentDataType.STRING);
+        if (server == null) {
+            return;
+        }
+        player.closeInventory();
+        player.sendMessage(text("Đang chuyển sang ", NamedTextColor.GRAY)
+            .append(clicked.getItemMeta().displayName() == null ? Component.text(server) : clicked.getItemMeta().displayName())
+            .append(text("…", NamedTextColor.GRAY)));
+        connect(player, server);
+    }
+
+    @EventHandler
+    public void onDrag(InventoryDragEvent event) {
+        if (event.getInventory().getHolder() instanceof MenuHolder) {
+            event.setCancelled(true);
+        }
+    }
+
+    private void connect(Player player, String server) {
+        ByteArrayDataOutput out = ByteStreams.newDataOutput();
+        out.writeUTF("Connect");
+        out.writeUTF(server);
+        player.sendPluginMessage(plugin, CHANNEL, out.toByteArray());
+    }
+
+    private static Component text(String s, NamedTextColor color) {
+        return Component.text(s, color).decoration(TextDecoration.ITALIC, false);
+    }
+}

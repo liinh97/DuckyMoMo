@@ -27,7 +27,7 @@ services:
       mariadb:
         condition: service_healthy
 
-  # Sao lưu thế giới + plugin của pokemon-1 (itzg/mc-backup: tạm dừng ghi qua RCON, nén tar.gz, xoá bản cũ).
+  # Sao lưu thế giới + plugin của pokemon-1 (itzg/mc-backup + restic: tạm dừng ghi qua RCON, chỉ lưu phần thay đổi, xoá bản quá hạn).
   # Sao lưu ngay: docker compose exec backup-pokemon-1 backup now. Khôi phục: README.md, mục "Sao lưu và khôi phục".
   backup-pokemon-1:
     image: itzg/mc-backup
@@ -38,7 +38,15 @@ services:
       RCON_PASSWORD: ${RCON_PASSWORD}
       BACKUP_NAME: pokemon-1
       BACKUP_INTERVAL: ${BACKUP_INTERVAL:-6h}
-      PRUNE_BACKUPS_DAYS: ${BACKUP_KEEP_DAYS:-7}
+      # restic: kho sao lưu khử trùng lặp, lần đầu ~ cỡ world, các lần sau chỉ phần thay đổi (map 1:1000 nặng 17+ GB,
+      # nén tar.gz mỗi lần sẽ đầy ổ). Mất RESTIC_PASSWORD là KHÔNG khôi phục được: cất thêm một bản ngoài máy.
+      BACKUP_METHOD: restic
+      RESTIC_REPOSITORY: /backups/restic
+      RESTIC_PASSWORD: ${RESTIC_PASSWORD:?Chưa đặt RESTIC_PASSWORD trong .env (chạy lại ./ops/init.sh)}
+      RESTIC_HOSTNAME: pokemon-1
+      PRUNE_RESTIC_RETENTION: "--keep-within ${BACKUP_KEEP_DAYS:-7}d --keep-daily 30"
+      # Không sao lưu file tải lại được (*.jar), log, cache, và các world cũ đã cất bằng ops/doi-map-banghoi.sh
+      EXCLUDES: "*.jar,cache,logs,*.tmp,world-cu-*,world-1-2000-*,world-tu-nhien-*"
       PAUSE_IF_NO_PLAYERS: "true"      # không ai vào kể từ lần trước thì bỏ qua, đỡ tốn ổ
       INITIAL_DELAY: 5m
       TZ: Asia/Ho_Chi_Minh

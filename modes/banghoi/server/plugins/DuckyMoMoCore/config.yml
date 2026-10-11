@@ -1,0 +1,17 @@
+# DuckyMoMoCore ở banghoi-1: trang trí map Trái Đất (cây, cỏ, công trình). Lệnh: /dmm decorate start|pause|status
+lobby-menu:
+  enabled: false
+decorate:
+  enabled: true
+  world: world
+  min-x: -21504
+  max-x: 21504
+  min-z: -10752
+  max-z: 10752
+  tree-density: 1.0
+  structure-spacing-chunks: 64
+  structure-chance: 0.6
+  exclude: {x: 12646, z: -2512, radius: 300}   # spawn Hà Nội (map 1:1000)
+  tick-budget-ms: 15
+  max-chunks-loading: 8
+  auto-resume: true

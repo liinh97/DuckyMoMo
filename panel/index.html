@@ -49,6 +49,7 @@
 <header>
   <h1>DuckyMoMo · Cài đặt</h1>
   <nav class="tabs" id="tabs"></nav>
+  <a href="hoatdong">Hoạt động người chơi</a>
   <a id="dozzle" href="__DOZZLE_URL__" target="_blank" rel="noopener">Xem log ↗</a>
 </header>
 <main id="main"><p>Đang tải…</p></main>
@@ -63,10 +64,10 @@ let modes = [], current = null, edits = {};
 const $ = (id) => document.getElementById(id);
 const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
 
-if (!"__DOZZLE_URL__".startsWith("http")) $("dozzle").style.display = "none";
+if (!"__DOZZLE_URL__") $("dozzle").style.display = "none";
 
 async function load() {
-  const r = await fetch("/api/modes");
+  const r = await fetch("api/modes");
   modes = await r.json();
   if (!current || !modes.find(m => m.id === current)) current = modes[0] && modes[0].id;
   edits = {};
@@ -181,9 +182,9 @@ async function post(path, body) {
   }
 }
 
-$("save").onclick = () => post(`/api/modes/${current}/save`, { values: edits });
+$("save").onclick = () => post(`api/modes/${current}/save`, { values: edits });
 $("reapply").onclick = () => {
-  if (confirm("Ghi lại toàn bộ cài đặt vào plugin và nạp lại?")) post(`/api/modes/${current}/apply-all`, {});
+  if (confirm("Ghi lại toàn bộ cài đặt vào plugin và nạp lại?")) post(`api/modes/${current}/apply-all`, {});
 };
 window.addEventListener("beforeunload", (e) => { if (Object.keys(edits).length) { e.preventDefault(); e.returnValue = ""; } });
 load().catch(e => { $("main").textContent = "Không tải được cài đặt: " + e; });

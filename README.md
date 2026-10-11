@@ -56,7 +56,7 @@ docker compose ps                          # trạng thái
 docker compose logs -f banghoi-1           # log của một service
 docker compose restart proxy               # khởi động lại một service
 docker compose exec lobby rcon-cli         # console của server (gõ lệnh như admin)
-# Xem log/chat của mọi server qua trình duyệt: http://localhost:8888 (Dozzle, chỉ mở trên máy nhà)
+# Xem log/chat của mọi server qua trình duyệt: http://localhost:8888/mc/log/ (Dozzle; từ ngoài: Trạm 6 /mc/log/)
 # Trang Cài đặt (bấm Lưu là áp dụng): http://localhost:8889, đăng nhập bằng PANEL_USER/PANEL_PASSWORD trong .env
 docker compose pull && docker compose up -d   # cập nhật image
 docker compose down                        # tắt tất cả (dữ liệu trong data/ vẫn giữ)
@@ -64,28 +64,33 @@ docker compose --profile pokemon up -d     # bật thêm chế độ Pokémon
 ```
 
 ## Sao lưu và khôi phục
-Tự động chạy cùng `docker compose up -d`, mặc định **6 giờ một lần, giữ 7 ngày**. Chỉnh trong `.env`:
+Tự động chạy cùng `docker compose up -d`, mặc định **6 giờ một lần**. Chỉnh trong `.env`:
 `BACKUP_INTERVAL`, `BACKUP_KEEP_DAYS`, `BACKUP_DIR` (bỏ trống = `backups/` trong repo; muốn sang ổ F: `BACKUP_DIR=/mnt/f/DuckyMoMo-backups`).
 
 | Thư mục | Nội dung | Service |
 |---|---|---|
-| `backups/lobby/`, `backups/banghoi-1/` | Thế giới + cấu hình plugin (`.tar.gz`, không kèm file `.jar`) | `backup-lobby`, `backup-banghoi-1` |
+| `backups/lobby/restic`, `backups/banghoi-1/restic` | Kho **restic**: thế giới + cấu hình plugin (không kèm `.jar`, log, world cũ đã cất) | `backup-lobby`, `backup-banghoi-1` |
 | `backups/db/` | Toàn bộ MariaDB: tài khoản AuthMe, quyền LuckPerms, dữ liệu network (`.sql.gz`) | `backup-db` |
 
-Server không có ai vào kể từ lần sao lưu trước thì bỏ qua lần đó (đỡ tốn ổ).
+- **restic** chỉ lưu phần thay đổi: lần đầu banghoi-1 (map 1:1000, 17 GB) lưu thành ~12 GB trong 50 giây, các lần sau vài trăm KB đến vài trăm MB. Giữ mọi bản trong `BACKUP_KEEP_DAYS` ngày + mỗi ngày một bản trong 30 ngày.
+- Kho được mã hoá bằng `RESTIC_PASSWORD` trong `.env`. **Mất mật khẩu là không khôi phục được**: cất thêm một bản ngoài máy (trình quản lý mật khẩu…).
+- Server không có ai vào kể từ lần sao lưu trước thì bỏ qua lần đó.
 
 ```bash
-docker compose exec backup-banghoi-1 backup now      # sao lưu ngay một server
+docker compose exec backup-banghoi-1 backup now              # sao lưu ngay một server
+docker compose exec backup-banghoi-1 restic snapshots        # danh sách bản sao lưu (ID, giờ)
 ```
 
-**Khôi phục thế giới** (ví dụ banghoi-1):
+**Khôi phục thế giới** (ví dụ banghoi-1; thay `latest` bằng ID trong danh sách để lấy bản cũ hơn):
 ```bash
 docker compose stop banghoi-1
+docker compose run --rm --no-deps --entrypoint restic -v "$PWD/data:/khoiphuc" backup-banghoi-1 \
+  restore latest --target /khoiphuc/restic-restore
 mv data/banghoi-1 data/banghoi-1.truoc-khi-khoi-phuc       # giữ lại bản hiện tại phòng khi cần
-mkdir data/banghoi-1
-tar -xzf backups/banghoi-1/banghoi-1-YYYYMMDD-HHMMSS.tar.gz -C data/banghoi-1
+mv data/restic-restore/data data/banghoi-1 && rmdir data/restic-restore
 docker compose up -d banghoi-1                              # plugin (.jar) tự tải lại khi khởi động
 ```
+Lấy lại một file lẻ: thêm `--include /data/<đường dẫn>` vào lệnh `restore`.
 
 **Khôi phục database** (ghi đè dữ liệu hiện tại, nên tắt các server trước):
 ```bash

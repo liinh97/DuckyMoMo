@@ -3,7 +3,8 @@
 # Chạy WorldPainter không giao diện trong Docker (eclipse-temurin), không cần cài Java.
 #
 # Dùng:  ./tools/earthmap/build-earth.sh <scale>
-#   scale 10 = 1:4000 (thử nhanh), 20 = 1:2000 (dùng cho server), 40 = 1:1000 (cần ~19 GB RAM, máy hiện tại không đủ)
+#   scale 10 = 1:4000 (thử nhanh), 20 = 1:2000, 40 = 1:1000 (cần ~20 GB RAM trở lên; máy 64 GB, WSL 40 GB chạy được)
+# MEM_LIMIT=24g: giới hạn RAM của container tạo map, để thiếu RAM thì chỉ container này bị dừng, không ảnh hưởng dịch vụ khác.
 # Kết quả: tools/earthmap/work/out/earth_1-<tỉ lệ>/  (thế giới Minecraft 26.x)
 # Chuẩn bị công cụ: xem tools/earthmap/README.md
 set -euo pipefail
@@ -53,6 +54,7 @@ mkdir -p "$W/out" "$W/home"
 rm -rf "${W:?}/out/$NAME"
 echo "Tạo $NAME (scale $SCALE, RAM tối đa $XMX). Có thể mất từ vài phút đến hơn một giờ…"
 time docker run --rm -u "$(id -u):$(id -g)" \
+  ${MEM_LIMIT:+--memory "$MEM_LIMIT" --memory-swap "$MEM_LIMIT"} \
   -e HOME=/src/home \
   -v "$W:/src" -w /src \
   eclipse-temurin:25-jdk \

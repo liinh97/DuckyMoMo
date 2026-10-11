@@ -113,111 +113,22 @@
 - Đã kiểm chứng: `backup now` tạo `.tar.gz` có `world/level.dat` và cấu hình plugin; dump database có đủ 5 database, có bảng `authme`. **Chưa diễn tập khôi phục thật** (lệnh khôi phục ở README mục "Sao lưu và khôi phục").
 - Bản sao lưu vẫn nằm trên **cùng ổ C** với server. Nên đẩy thêm một bản ra ngoài (ổ F, cloud bằng rclone/restic) khi mở công khai.
 
+### Đổi sang map Trái Đất 1:1000 (11/10/2026)
+- Tạo bằng `XMX=30g MEM_LIMIT=33g ./tools/earthmap/build-earth.sh 40`: **3 giờ 32 phút** (tạo dữ liệu 80 phút, ghi file ~2 giờ), container lên tới **31 GB** (19g heap không đủ: lần đầu 18,5 GB sau 10 phút). Lúc tạo đã tạm tắt DuckyMoMo và phần Trạm 6 không liên quan quán (giữ goc6 + gateway/auth/portal/ShopeeFood/Grab/Zalo/SePay). Kết quả `tools/earthmap/work/out/earth_1-1000`: 17 GB, 3.528 region, 43.008 × 21.504 block. Chunk WorldPainter **không có heightmap** (server tính khi nạp), nên script warp chỉ chạy được sau lượt trồng cây.
+- Lắp bằng `./ops/doi-map-banghoi.sh <map> <nhãn>` (người dùng tự chạy; Claude bị chặn quyền khi đổi tên thư mục data). Script không xoá gì: world cũ `data/banghoi-1/world-1-2000-20261011`, warp cũ `plugins/Essentials/warps-world-1-2000-20261011`, tiến độ trang trí/công trình cũ `*.world-1-2000-20261011`; dời vùng WorldGuard `spawn` theo `spawn_x/spawn_z`.
+- Thông số mới: viền 21504 × 10752, spawn Hà Nội (12646, 63, -2512), vùng spawn x 12582..12710, z -2576..-2448; 1 độ ≈ 119,47 block (X = kinh độ × 119,47; Z = −vĩ độ × 119,47). `make-warps.py` tự lấy tỉ lệ từ `border_x` trong `settings.yml`.
+- Trồng cây chạy lại từ 19:03 11/10: 3.612.672 chunk, ~138 chunk/s, dự kiến ~7 giờ, TPS 20. banghoi-1 dùng ~7,5 GB khi trang trí → `mem_limit` 8g → **10g**. Còn lại sau khi xong: `/dmm structures start` (đặt công trình), rồi tạo lại warp + biển tên (warp cũ đã gỡ khỏi repo).
+
+### Sao lưu chuyển sang restic + dọn ổ (11/10/2026)
+- Map 1:1000 làm mỗi bản `.tar.gz` nặng 17 GB (gần như không nén được; 6 giờ/lần × 7 ngày sẽ ~480 GB). `backup-banghoi-1`, `backup-lobby`, pokemon, mẫu `_template-paper`: `BACKUP_METHOD=restic`, kho ở `backups/<server>/restic` (thư mục root-only, xem bằng container), `RESTIC_HOSTNAME`=tên server, giữ `--keep-within ${BACKUP_KEEP_DAYS}d --keep-daily 30`, `EXCLUDES` thêm `world-cu-*,world-1-2000-*,world-tu-nhien-*`. `RESTIC_PASSWORD` trong `.env` (`ops/init.sh` tự sinh) — **mất là không khôi phục được**; người dùng đã cất thêm một bản ngoài máy (11/10).
+- Đo: lần đầu banghoi-1 17,0 GB → 12,1 GB lưu, 49 giây; lần hai 107 KB; khôi phục thử `level.dat` khớp file hiện tại. Lệnh khôi phục: README "Sao lưu và khôi phục". `backup-db` vẫn là `mariadb-dump` `.sql.gz`.
+- Lưu ý: khi `backup now` server `save-off` vài giây–1 phút; trong lúc trang trí map nên `/dmm decorate pause` trước (chưa chắc chunk bị gỡ lúc `save-off` có được lưu).
+- Đã dọn: 12 bản tar.gz 1:2000 cũ của banghoi-1 (giữ `banghoi-1-20261011-150128.tar.gz`, bản 1:2000 cuối), tar.gz lobby cũ (giữ bản cuối), map gốc 1:2000/1:4000, image Chrome. Ổ: 112 → 150 GB trống. Còn giữ: world 1:2000 `data/banghoi-1/world-1-2000-20261011` (4,8 GB, xoá khi map mới ổn), map gốc 1:1000 `tools/earthmap/work/out/earth_1-1000` (17 GB, để reset mùa).
+
 ### Map Trái Đất 1:2000 cho banghoi-1 (09/10/2026)
 - Người dùng không muốn mua map → **tự tạo** bằng WorldPainter 2.27.1 + script DerMattinger/MinecraftEarthMap (MIT). Công cụ và hướng dẫn: `tools/earthmap/` (`build-earth.sh`, `README.md`); file tải về và map tạo ra ở `tools/earthmap/work/` (không commit).
 - Đã lắp vào `data/banghoi-1/world` (21.504 × 10.752 block, 4,2 GB). Thế giới tự nhiên cũ giữ ở `data/banghoi-1/world-tu-nhien-20261009`.
 - Viền: **ChunkyBorder** (Modrinth `chunkyborder`) hình chữ nhật 10752 × 5376, viền vanilla nới tối đa. Spawn: Hà Nội (6323, 63, -1256). Đều là setting trên trang Cài đặt (`border_x`, `border_z`, `spawn_x`, `spawn_z`).
 - Tạo 1:2000 cần ~8 GB heap: lần này đã tắt cả network DuckyMoMo ~1 giờ. **Người dùng yêu cầu (09/10): DuckyMoMo, tram6, goc6 phải chạy liên tục, không tắt cái nào.** Lần sau muốn tạo lại map phải có đủ RAM trước (nâng WSL/nâng RAM máy), không tắt dịch vụ.
 - **Giảm RAM (09/10)**: lobby `INIT_MEMORY 512M / MAX_MEMORY 1G` (mem_limit 2g), banghoi-1 `1G / 3G` (mem_limit 4g), proxy `MEMORY 512M`. **Không dùng `USE_AIKAR_FLAGS`**: nó có `AlwaysPreTouch`, chiếm sẵn toàn bộ heap (banghoi-1 lên 3,6/4 GB, sát mem_limit). Kết quả: lobby 1,1 GB, banghoi-1 1,8 GB, WSL trống từ ~2 lên ~4 GB. Đông người thì tăng MAX_MEMORY và mem_limit.
-- **Bẫy playit**: playit dùng `network_mode: service:proxy`. Tạo lại proxy (`up -d proxy`) **không** tự tạo lại playit, nên playit bám vào mạng của container proxy cũ và tunnel chết. Sau mỗi lần tạo lại proxy: `docker compose --profile tunnel up -d --force-recreate playit`.
-- RAM (09/10): máy 32 GB (2×16 GB DDR4-2133, còn 2 khe trống, tối đa 128 GB); WSL mặc định ~16 GB; khi chạy cả ba dự án chỉ còn ~2 GB trống và đã dùng swap 3/4 GB. Đã khuyên: `.wslconfig` `memory=22GB` (người dùng tự áp dụng, cần `wsl --shutdown`), về sau nâng lên 64 GB.
-- **Bắt buộc ghi nguồn dữ liệu** (OpenStreetMap, NASA, ESA, USGS…) ở spawn/web: nội dung trong `tools/earthmap/README.md`. Chưa làm.
-- Chưa làm: bảo vệ khu spawn (WorldGuard), cấm lập thị trấn sát spawn, chưa ai vào xem map bằng game.
-- Docker Desktop + WSL: **bind mount file lẻ** hay lỗi `no such file` khi tạo lại container → gắn cả thư mục (`dashboard/`, `infra/` đã đổi).
-
-### Trang Cài đặt `panel/` (08/10/2026)
-- Người dùng muốn chỉnh setting trên web, **bấm Lưu là áp dụng**. `panel/compose.yaml`: build `panel/Dockerfile` (python:3.13-alpine + `ruamel.yaml`), mở `127.0.0.1:${PANEL_PORT:-8889}`, đăng nhập HTTP Basic bằng `PANEL_USER`/`PANEL_PASSWORD` trong `.env` (`ops/init.sh` tự sinh).
-- Mỗi chế độ: `modes/<id>/settings.schema.yml` (nhóm, nhãn tiếng Việt, kiểu, file + đường dẫn YAML trong `data/<server>/`, lệnh RCON) và `modes/<id>/settings.yml` (giá trị, có trong Git). Panel tự tìm mọi `modes/*/settings.schema.yml`.
-- Bấm Lưu: kiểm tra giá trị, ghi vào file cấu hình plugin (ruamel giữ comment và kiểu nháy, ví dụ `'20.0'`), ghi `settings.yml`, rồi gửi lệnh qua RCON (`swa reload`, `ta reload config`, `ocm reload`, `worldborder …`). Mật khẩu RCON đọc từ `data/<server>/.rcon-cli.env` (itzg tự sinh), **không cần `docker.sock`**.
-- "Áp dụng lại tất cả": ghi toàn bộ `settings.yml` vào plugin. Dùng khi server mới cài (plugin vừa tạo file cấu hình mặc định) hoặc khi sửa tay `settings.yml`.
-- Đã thử: apply-all chỉ đổi đúng các dòng cần, comment giữ nguyên, các lệnh nạp lại đều thành công.
-- Mục chỉ lưu (không có `file`/`commands`): loại map, link map, reset mỗi mùa. Dùng khi làm chức năng mở mùa mới.
-- **Chưa làm**: bật/tắt plugin (TownyResources, jobs) từ trang này, vì cần thêm/bớt plugin và khởi động lại container; chức năng "mở mùa mới".
-
-### Dashboard xem log: Dozzle (07/10/2026)
-- `dashboard/compose.yaml`: `amir20/dozzle` (đang là v11.3.0), chạy mặc định, **chỉ mở trên `127.0.0.1:8888`** (`DASHBOARD_PORT`).
-- `DOZZLE_FILTER=label=com.docker.compose.project=duckymomo`: chỉ hiện container của dự án này, không hiện tram6/goc6.
-- Chỉ xem log (chat, vào/ra, lỗi), không gõ lệnh. Gõ lệnh: `docker compose exec <server> rcon-cli`.
-- Mount `docker.sock` (`:ro` không giới hạn quyền gọi API), nên **không được mở ra ngoài** khi chưa có lớp đăng nhập. Muốn xem từ xa: Cloudflare Tunnel + Cloudflare Access.
-- Cài đặt của Dozzle lưu ở `data/dozzle`.
-- **Tab `activity`** (08/10/2026, người dùng muốn gộp chat + vào/ra + lệnh vào **một** tab, tách khỏi log khác): service `activity` trong `dashboard/compose.yaml` (mẫu `x-log-feed`, image `docker:29-cli`, `MODE: all`). Script `dashboard/log-feed.sh` đọc log các container của dự án qua `docker.sock`, lọc bằng awk, in `[server] giờ NHÃN nội dung`, nhãn `CHAT` / `VÀO/RA` / `LỆNH`.
-  - CHAT: `<Tên> nội dung` từ các server Paper.
-  - VÀO/RA: từ proxy (vào/rời network, `→ server`) và Paper (`mất kết nối: lý do`).
-  - LỆNH: `issued server command` từ Paper. **Lệnh có mật khẩu bị che** (`/login ***`, `/register ***`, `/changepassword ***`…).
-  - Script vẫn hỗ trợ `MODE: chat | join | commands` nếu sau này muốn tách tab.
-  - Lần đầu hiện lại 6 giờ log gần nhất (`HISTORY`), sau đó chỉ log mới. Tự nhận server mới mỗi 30 giây (lọc theo label project + image `itzg/minecraft-server` / `itzg/mc-proxy`).
-- **Đăng nhập**: `DOZZLE_AUTH_PROVIDER: simple`. Tạo hoặc đổi tài khoản bằng `./ops/dozzle-user.sh <ten>`: mật khẩu gõ ẩn, ghi `data/dozzle/users.yml` (dạng băm), rồi tạo lại container. Trang thiết lập trên web của Dozzle chỉ cho tạo tài khoản trong 15 phút đầu sau khi cài, quá hạn thì báo lỗi, nên phải dùng script.
-- Nhóm LuckPerms `admin` (quyền `*`, weight 100, prefix `&c[Admin] `). `.Griim7833` (Bedrock, UUID `00000000-0000-0000-0009-01f6ea9a66df`) thuộc nhóm này. Tên Bedrock có dấu chấm thì LuckPerms không nhận, phải dùng UUID.
-- Hướng tiếp theo đã bàn: DiscordSRV (chat ↔ Discord, console), Plan (thống kê người chơi), web RCON (cần kiểm tra công cụ còn được cập nhật).
-
-### Chưa kiểm chứng
-- Vào bằng client cũ (ví dụ 1.8.9, 1.12.2, 1.20.1): có vào được không, AuthMe đăng ký/đăng nhập thế nào.
-- Tạo tunnel trên dashboard và vào game qua địa chỉ playit từ ngoài mạng nhà.
-- **Vào game thật** bằng Java (launcher không bản quyền) và Bedrock: `/register`, `/login`, chặn `/server banghoi-1` khi chưa đăng nhập, `/premium`, skin, tên Bedrock có tiền tố Floodgate.
-- Bedrock có phải `/register` không, và hộp thoại đăng nhập (dialog) của AuthMe hiện thế nào trên điện thoại qua Geyser.
-- Người dùng app Bedrock bẻ khóa (không đăng nhập Xbox) có vào được qua Floodgate không.
-- Pokémon (Fabric): slug `fabric-api`, `cobblemon`, `fabricproxy-lite`, `luckperms` và các key trong `FabricProxy-Lite.toml`.
-
-👉 **Việc đầu tiên của session mới**: hỏi người dùng đã vào game thử chưa. Nếu lỗi, xin log `docker compose logs <service>` để sửa. Sau đó ghim `MC_VERSION` và tag image.
-
-## 5. Chi tiết kỹ thuật cần nhớ
-
-### Image `itzg`
-- `itzg/minecraft-server` (bản `latest` hiện dùng **Java 25**) và `itzg/mc-proxy`.
-- **Đồng bộ cấu hình khi khởi động**:
-  - minecraft-server: `/config` → `/data/config`, `/plugins` → `/data/plugins`.
-  - mc-proxy: `/config` → `/server`, `/plugins` → `/server/plugins`.
-- **Điền biến**: chuỗi `${CFG_TEN_BIEN}` trong các file đồng bộ được thay bằng biến môi trường `CFG_TEN_BIEN` (mặc định `REPLACE_ENV_DURING_SYNC=true`, tiền tố `CFG_`). Chỉ áp dụng cho các đuôi trong `REPLACE_ENV_SUFFIXES`. Proxy đã thêm đuôi `secret` để điền được `forwarding.secret`.
-- Khi đồng bộ, **file trong `data/` mới hơn sẽ không bị ghi đè**.
-- **Secret của Velocity**: mc-proxy chỉ tự sinh `/server/forwarding.secret` khi file chưa có. Ở đây file được tạo từ mẫu `proxy/config/forwarding.secret`, nên dùng đúng `VELOCITY_SECRET` trong `.env`. Paper nhận secret qua `paper-global.yml`, Fabric qua `FabricProxy-Lite.toml`.
-- Trên mc-proxy, `MODRINTH_PROJECTS` **bắt buộc có `MINECRAFT_VERSION` cụ thể**. Vì vậy Geyser và Floodgate được tải qua `PLUGINS` bằng URL chính thức của download.geysermc.org.
-- Trên minecraft-server, `MODRINTH_PROJECTS` dùng được với `VERSION=LATEST`.
-- Tải tay plugin: đặt file `.jar` vào thư mục `plugins` của service (`.jar` đã nằm trong `.gitignore`).
-
-### Network
-- **Chỉ proxy mở cổng**: 25565/tcp sang 25577 trong container, 19132/udp cho Geyser. Các service khác gọi nhau bằng tên service.
-- Mục `[servers]` trong `velocity.toml` **chưa khai báo `pokemon-1`**, vì service không chạy thì tên không phân giải được. Bật Pokémon thì bỏ comment dòng đó.
-- **Floodgate hiện chỉ cài trên proxy.** Muốn dùng **Bedrock Forms** (menu cho điện thoại) trên lobby hoặc server con thì phải cài Floodgate trên các server đó, dùng **chung `key.pem`** với proxy. Đây là việc cần làm khi viết menu lobby.
-- **LuckPerms**:
-  - Paper: thư mục `plugins/LuckPerms/`, cấu hình dạng YAML rút gọn (`server: ${CFG_SERVER_NAME}`, MariaDB, Redis messaging).
-  - Fabric: `config/luckperms/luckperms.conf` (HOCON), **chưa cấu hình**.
-  - Proxy: **chưa cài** LuckPerms-Velocity, sẽ thêm cùng network-core.
-- Lệnh `include` của Compose: đường dẫn tương đối tính theo thư mục của từng file compose con.
-
-### Database
-- `network`: dữ liệu dùng chung. `luckperms`: dữ liệu LuckPerms. `mode_<id>`: dữ liệu riêng từng chế độ.
-- Script trong `infra/db-init/` **chỉ chạy một lần khi `data/mariadb` còn trống**. Thay đổi schema về sau sẽ do network-core quản lý bằng migration (dự kiến Flyway).
-
-### Chạy Docker trong session cloud của Claude Code
-- Docker daemon không tự chạy, phải bật bằng `dockerd > <scratchpad>/dockerd.log 2>&1 &`.
-- Docker Hub đôi khi trả **429** (giới hạn lượt tải), thử lại sau.
-- Container không tải được Paper hay plugin vì các host bị chặn (mục 4). Muốn chạy thử trọn vẹn thì người dùng phải thêm các host đó vào Network access của môi trường.
-
-## 6. Việc tiếp theo (theo thứ tự đề xuất)
-
-1. **Chạy lần đầu trên máy nhà** theo checklist trong `README.md`, sửa lỗi từ log. Sau đó ghim `MC_VERSION` và tag của image.
-2. **Hoàn thiện plugin cho Bang Hội Chiến**: Towny + SiegeWar (hoặc Factions kèm phần tự viết), CoreProtect (bắt buộc), WorldGuard, EssentialsX, OldCombatMechanics. Kiểm tra slug trên Modrinth, plugin nào không có thì tải `.jar` bằng tay. Danh sách nằm trong `modes/banghoi/README.md`.
-3. **Thiết kế luật chơi Bang Hội Chiến**: đã có bản nháp `docs/banghoi-design.md` (Towny + SiegeWar). Còn chốt số liệu ở mục 12 của file đó.
-4. ~~**Sao lưu**~~: đã có (tar.gz + mariadb-dump, 6 giờ/lần, giữ 7 ngày). Còn lại: đẩy bản sao ra ngoài ổ C, diễn tập khôi phục.
-5. ~~**Tunnel playit.gg**~~: đã thêm (`tunnel/compose.yaml`). Còn lại: tạo 2 tunnel trên dashboard, thử từ ngoài mạng nhà, tạo lại secret key.
-6. **network-core phiên bản 1** (Gradle nhiều module, Java hoặc Kotlin): `core-api`, `core-common`, `core-velocity`, `core-paper`.
-   - Đồng bộ `modes/*/mode.yml` vào bảng `network.modes`.
-   - Velocity **đăng ký server động** từ bảng `network.servers`.
-   - Ghi hồ sơ người chơi vào `network.players` (phân biệt Java, Bedrock, Java có modpack).
-   - **Menu lobby tự sinh** từ danh sách chế độ: menu dạng rương cho Java, Bedrock Forms cho điện thoại (cần Floodgate trên lobby và chung `key.pem`).
-   - Chế độ beta chỉ hiện với người có quyền `network.beta`; chế độ maintenance hiện nhưng không cho vào.
-7. Về sau:
-   - Web store (VietQR, thẻ cào qua DotMan) với bảng `network.deliveries`, giao hàng khi người chơi online, không dùng RCON trực tiếp.
-   - Đồ trang trí dùng chung toàn network.
-   - Chế độ Pokémon: viết `core-fabric`, tạo `_template-fabric`, làm modpack, thử chuyển server từ lobby Paper sang Fabric.
-
-## 7. Câu hỏi còn mở
-- Đổi nhánh mặc định sang `main`?
-- ~~Bang Hội Chiến dùng Towny + SiegeWar hay Factions?~~ Đã chốt 08/10/2026: **Towny + SiegeWar**. Bản thiết kế nháp: `docs/banghoi-design.md` (còn các câu hỏi ở mục 12).
-- ~~Có cho người chơi crack (offline mode) vào không?~~ Đã chốt: **có** (mục 3.8). Còn mở: điều khoản thương mại của Mojang có nói gì riêng về server offline không. Cần đọc kỹ trước khi mở web store.
-- Tên server, thương hiệu, tên miền.
-- Máy nhà chạy Windows hay Linux, cấu hình bao nhiêu?
-
-## 8. Prompt gợi ý để mở session mới
-
-> Tôi đang làm dự án DuckyMoMo Network (server Minecraft, Docker Compose) trong repo `liinh97/DuckyMoMo`, nhánh `claude/confident-thompson-q939lp`. Hãy đọc `docs/HANDOFF.md`, `README.md` và các file trong `docs/` trước, rồi tiếp tục từ mục "Việc tiếp theo". Trả lời bằng tiếng Việt, nói rõ khi thông tin cần kiểm tra lại.
+- **Nâng RAM (11/10)**: máy lên **64 GB** (lắp thêm 2×16 GB, mã `UD848 CL18`; cả 4 thanh chạy 3466 MHz). `.wslconfig` (`C:\Users\linh_\.wslconfig`) đổi `memory=16GB` → `40GB` (bản cũ: `.wslconfig.bak-16GB-20261011`). banghoi-1: `MEMORY 6G` + `USE_AIKAR_FLAGS` (giữ sẵn cả heap), `mem_limit 8g`; lobby `MAX_MEMORY 2G`, `mem_limit 3g`; proxy `MEMORY 1G`; mẫu `_template-paper` `MAX_MEMORY 4G`, `mem_limit 6g`. **Chỉ có hiệu lực sau `wsl --shutdown` rồi `docker compose --profile tunnel up -d`** (không áp dụng khi WSL còn 16 GB: banghoi-1 giữ sẵn 6 GB sẽ làm WSL thiếu RAM). Sau khi WSL khởi động lại phải kiểm tra bind mount (xem "Sự cố 11/10"). **Đã áp dụng 11/10 ~15:00**: WSL 39 GB, banghoi-1 chạy `-Xms6G -Xmx6G` + AlwaysPreTouch (dùng ~6,8/8 GB), TPS 20, Windows còn trống ~27 GB; bind mount world và thư mục sao lưu đều ghi đúng ra ổ cứng.

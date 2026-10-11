@@ -1,6 +1,7 @@
 services:
   # Trang Cài đặt: chỉnh setting của từng chế độ trên web, bấm Lưu là áp dụng ngay (ghi cấu hình plugin + nạp lại qua RCON).
   # Mở: http://localhost:${PANEL_PORT:-8889}  (chỉ máy chạy Docker vào được). Đăng nhập: PANEL_USER / PANEL_PASSWORD trong .env
+  # Từ ngoài: Trạm 6 https://app.goc6.io.vn/mc/caidat/ (gateway Trạm 6 bắt đăng nhập Trạm 6, rồi vẫn hỏi PANEL_USER)
   # Định nghĩa cài đặt: modes/<id>/settings.schema.yml, giá trị: modes/<id>/settings.yml (có trong Git).
   panel:
     build: .
@@ -8,7 +9,9 @@ services:
     environment:
       PANEL_USER: ${PANEL_USER:-admin}
       PANEL_PASSWORD: ${PANEL_PASSWORD:?Chưa đặt PANEL_PASSWORD trong .env (chạy lại ./ops/init.sh)}
-      DOZZLE_URL: http://localhost:${DASHBOARD_PORT:-8888}
+      DOZZLE_URL: http://localhost:${DASHBOARD_PORT:-8888}/mc/log/
+      # Link "Xem log" khi mở qua Trạm 6 (gateway gửi kèm header X-Forwarded-Prefix)
+      DOZZLE_PROXY_URL: /mc/log/
       TZ: Asia/Ho_Chi_Minh
     ports:
       - "127.0.0.1:${PANEL_PORT:-8889}:8080"

@@ -5,3 +5,14 @@ api-version: 1.21.11
 description: Plugin dùng chung của DuckyMoMo Network (bản Paper)
 softdepend:
   - AuthMe
+commands:
+  menu:
+    description: Mở menu chọn chế độ (ở lobby)
+    aliases: [chedo, modes]
+  dmm:
+    description: Lệnh admin của DuckyMoMo (trang trí map…)
+    permission: duckymomo.admin
+permissions:
+  duckymomo.admin:
+    description: Lệnh admin /dmm
+    default: op

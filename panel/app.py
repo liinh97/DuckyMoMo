@@ -13,6 +13,7 @@ import re
 import socket
 import struct
 import sys
+import urllib.parse
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
@@ -24,8 +25,14 @@ DATA_DIR = Path(os.environ.get("DATA_DIR", "/data"))
 PANEL_USER = os.environ.get("PANEL_USER", "admin")
 PANEL_PASSWORD = os.environ["PANEL_PASSWORD"]
 DOZZLE_URL = os.environ.get("DOZZLE_URL", "")
+# Mở qua Trạm 6 (gateway cắt tiền tố /mc/caidat và gửi X-Forwarded-Prefix): link log trỏ vào đường dẫn của Trạm 6
+DOZZLE_PROXY_URL = os.environ.get("DOZZLE_PROXY_URL", DOZZLE_URL)
 RCON_PORT = 25575
 INDEX_HTML = (Path(__file__).parent / "index.html").read_text(encoding="utf-8")
+ACTIVITY_HTML = (Path(__file__).parent / "activity.html").read_text(encoding="utf-8")
+# Do service "activity" (dashboard/log-feed.sh, JSONL=…) ghi ra
+ACTIVITY_FILE = DATA_DIR / "activity" / "activity.jsonl"
+ACTIVITY_TAIL_BYTES = 4_000_000
 TIMES_RE = re.compile(r"^$|^([01]\d|2[0-3]):[0-5]\d(,([01]\d|2[0-3]):[0-5]\d)*$")
 
 
@@ -254,6 +261,84 @@ def modes_json():
     return out
 
 
+# ---------------------------------------------------------------- hoạt động người chơi
+
+NETWORK_MODE = {"id": "network", "name": "Chung (sảnh, proxy)"}
+
+
+def mode_index():
+    """Danh sách chế độ (modes/*/mode.yml, bỏ thư mục bắt đầu bằng _) và bảng server -> chế độ."""
+    modes, by_server = [], {}
+    for f in sorted(MODES_DIR.glob("*/mode.yml")):
+        if f.parent.name.startswith("_"):
+            continue
+        try:
+            m = YAML(typ="safe").load(f.read_text(encoding="utf-8")) or {}
+        except Exception:
+            continue
+        mode_id = m.get("id") or f.parent.name
+        modes.append({"id": mode_id, "name": m.get("display_name") or mode_id})
+        for srv in m.get("servers") or []:
+            if isinstance(srv, dict) and srv.get("name"):
+                by_server[srv["name"]] = mode_id
+    return [NETWORK_MODE] + modes, by_server
+
+
+def read_activity(params):
+    """Sự kiện mới nhất trước. Lọc: types (chat,join,command), mode, player, q (tìm trong nội dung),
+    from / to (mốc UTC dạng 2026-10-10T17:00:00Z, trình duyệt tự đổi ngày giờ Việt Nam sang), limit."""
+    types = set(filter(None, params.get("types", "").split(","))) or {"chat", "join", "command"}
+    mode = params.get("mode", "")
+    player = params.get("player", "").strip().lower()
+    q = params.get("q", "").strip().lower()
+    ts_from, ts_to = params.get("from", ""), params.get("to", "")
+    try:
+        limit = max(1, min(2000, int(params.get("limit", "300"))))
+    except ValueError:
+        limit = 300
+    modes, by_server = mode_index()
+    events = []
+    if ACTIVITY_FILE.exists():
+        with ACTIVITY_FILE.open("rb") as f:
+            f.seek(0, 2)
+            size = f.tell()
+            # lọc theo ngày thì đọc cả file (tối đa ~20 MB) để thấy được ngày cũ; không thì chỉ đọc phần cuối
+            tail = size if ts_from else ACTIVITY_TAIL_BYTES
+            f.seek(max(0, size - tail))
+            raw = f.read().decode("utf-8", "replace").splitlines()
+        if size > tail:
+            raw = raw[1:]  # dòng đầu có thể bị cắt giữa chừng
+        seen = set()
+        for line in raw:
+            try:
+                e = json.loads(line)
+            except ValueError:
+                continue
+            key = (e.get("ts"), e.get("server"), e.get("text"))
+            if key in seen:  # lịch sử nạp lại khi log-feed khởi động lại
+                continue
+            seen.add(key)
+            # chuyển server (proxy → banghoi-1) tính cho chế độ của server đích
+            e["mode"] = by_server.get(e.get("target") or e.get("server"), "network")
+            events.append(e)
+    events.sort(key=lambda e: e.get("ts", ""))
+    out = []
+    for e in reversed(events):
+        if e.get("type") not in types or (mode and e["mode"] != mode):
+            continue
+        ts = e.get("ts", "")
+        if (ts_from and ts < ts_from) or (ts_to and ts >= ts_to):
+            continue
+        if player and player not in e.get("player", "").lower():
+            continue
+        if q and q not in e.get("text", "").lower():
+            continue
+        out.append(e)
+        if len(out) >= limit:
+            break
+    return {"modes": modes, "events": out, "has_file": ACTIVITY_FILE.exists()}
+
+
 # ---------------------------------------------------------------- HTTP
 
 class Handler(BaseHTTPRequestHandler):
@@ -291,15 +376,21 @@ class Handler(BaseHTTPRequestHandler):
     def do_GET(self):
         if not self.guard():
             return
-        if self.path == "/":
-            body = INDEX_HTML.replace("__DOZZLE_URL__", DOZZLE_URL).encode("utf-8")
+        path, _, query = self.path.partition("?")
+        if path in ("/", "/hoatdong"):
+            dozzle = DOZZLE_PROXY_URL if self.headers.get("X-Forwarded-Prefix") else DOZZLE_URL
+            page = INDEX_HTML if path == "/" else ACTIVITY_HTML
+            body = page.replace("__DOZZLE_URL__", dozzle).encode("utf-8")
             self.send_response(200)
             self.send_header("Content-Type", "text/html; charset=utf-8")
             self.send_header("Content-Length", str(len(body)))
             self.end_headers()
             self.wfile.write(body)
-        elif self.path == "/api/modes":
+        elif path == "/api/modes":
             self.send_json(200, modes_json())
+        elif path == "/api/activity":
+            params = {k: v[-1] for k, v in urllib.parse.parse_qs(query).items()}
+            self.send_json(200, read_activity(params))
         else:
             self.send_json(404, {"error": "không có"})
 

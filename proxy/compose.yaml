@@ -4,7 +4,7 @@ services:
     restart: unless-stopped
     environment:
       TYPE: VELOCITY
-      MEMORY: 512M                # Velocity nhẹ; tăng khi đông người
+      MEMORY: 1G                  # Velocity nhẹ; 1G đủ vài trăm người (11/10: 512M -> 1G)
       TZ: Asia/Ho_Chi_Minh
       # Geyser/Floodgate tải từ trang chính thức của GeyserMC (luôn bản mới nhất).
       # AuthMe, SkinsRestorer ghim phiên bản bằng link Modrinth (mc-proxy cần MINECRAFT_VERSION cụ thể

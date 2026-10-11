@@ -17,6 +17,7 @@ else
     -e "s/^AUTHME_SECRET=.*/AUTHME_SECRET=$(rand 64)/" \
     -e "s/^PANEL_PASSWORD=.*/PANEL_PASSWORD=$(rand 20)/" \
     -e "s/^RCON_PASSWORD=.*/RCON_PASSWORD=$(rand 32)/" \
+    -e "s/^RESTIC_PASSWORD=.*/RESTIC_PASSWORD=$(rand 40)/" \
     .env.example > .env
   chmod 600 .env
   echo "Đã tạo .env với mật khẩu ngẫu nhiên."
@@ -36,6 +37,11 @@ fi
 if ! grep -q '^RCON_PASSWORD=' .env; then
   printf '\n# RCON dùng chung (thêm bởi ops/init.sh)\nRCON_PASSWORD=%s\n' "$(rand 32)" >> .env
   echo "Đã thêm RCON_PASSWORD vào .env."
+fi
+
+if ! grep -q '^RESTIC_PASSWORD=' .env; then
+  printf '\n# Mật khẩu kho sao lưu restic (thêm bởi ops/init.sh). MẤT LÀ KHÔNG KHÔI PHỤC ĐƯỢC: cất thêm một bản ngoài máy.\nRESTIC_PASSWORD=%s\n' "$(rand 40)" >> .env
+  echo "Đã thêm RESTIC_PASSWORD vào .env. Hãy cất thêm một bản ngoài máy (mất là không khôi phục được sao lưu)."
 fi
 
 mkdir -p data

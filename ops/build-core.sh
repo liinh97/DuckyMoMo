@@ -14,6 +14,7 @@ docker run --rm \
   -w /src \
   "$GRADLE_IMAGE" gradle --no-daemon -q :core-paper:build
 
-# core-paper: hiện chỉ cần ở server có AuthMe (lobby). File .jar không commit (.gitignore).
+# core-paper: lobby (menu chọn chế độ, Bedrock auto-login) và banghoi-1 (trang trí map). File .jar không commit (.gitignore).
 cp network-core/core-paper/build/libs/DuckyMoMoCore.jar lobby/plugins/DuckyMoMoCore.jar
-echo "Xong: lobby/plugins/DuckyMoMoCore.jar. Áp dụng:  docker compose restart lobby"
+cp network-core/core-paper/build/libs/DuckyMoMoCore.jar modes/banghoi/server/plugins/DuckyMoMoCore.jar
+echo "Xong: lobby/plugins + modes/banghoi/server/plugins/DuckyMoMoCore.jar. Áp dụng:  docker compose restart lobby banghoi-1"

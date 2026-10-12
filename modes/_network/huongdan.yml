@@ -1,0 +1,331 @@
+# Cẩm nang trong game (/huongdan, /hd). BẢN GỐC: sửa file này rồi chạy ./ops/huongdan.sh (chép sang lobby, banghoi, practice,
+# có hiệu lực ngay, không cần khởi động lại). Plugin: DuckyMoMoCore (Guide.java).
+# - Mỗi trang sách khoảng 12 dòng x 19 ký tự (dòng cuối tự thêm "« Mục lục"). Xuống dòng bằng \n hoặc khối "|-".
+# - Mã màu: &0 đen, &1 xanh đậm, &2 xanh lá đậm, &4 đỏ đậm, &5 tím, &6 vàng cam, &8 xám, &l đậm, &r bỏ định dạng.
+#   Nền sách màu giấy: tránh &e/&f/&a (khó đọc).
+# - Người chơi điện thoại (Bedrock) thấy cả chương trong một bảng.
+# - SỐ LIỆU (phí thị trấn, lịch công thành, giá...) ghi tay: đổi trên trang Cài đặt thì sửa luôn ở đây.
+title: "&6Cẩm nang DuckyMoMo"
+author: DuckyMoMo
+toc-title: "&6&lCẨM NANG\n&8DuckyMoMo Network\n&8/huongdan để mở lại\n\n"
+toc-footer: "\n&8Bấm tên chương\n&8để mở."
+
+chapters:
+  - id: batdau
+    name: Bắt đầu
+    pages:
+      - |-
+        &6&lChào mừng!
+        &0DuckyMoMo có nhiều
+        chế độ chơi, vào từ
+        &lsảnh&r&0 (đảo hoa anh
+        đào).
+
+        &1Lần đầu vào:
+        &0/register <mk> <mk>
+        &1Lần sau:
+        &0/login <mk>
+      - |-
+        &6&lChọn chế độ
+        &0Bấm &lla bàn&r&0 trên tay
+        hoặc gõ &1/menu&0.
+
+        &0Đổi chế độ bất cứ
+        lúc nào:
+        &1/server lobby
+        &1/server banghoi-1
+        &1/server practice-1
+      - |-
+        &6&lLệnh chung
+        &1/msg <tên> <tin>
+        &0nhắn riêng
+        &1/r <tin> &0trả lời
+        &1/huongdan &0cẩm nang
+        &1/rank &0rank donate
+        &1/changepassword
+        &0đổi mật khẩu
+
+        &0Điện thoại: bấm la
+        bàn hiện bảng nút.
+
+  - id: luat
+    name: Luật server
+    pages:
+      - |-
+        &4&lLUẬT
+        &01. Không hack, không
+        x-ray, không auto-
+        click.
+        2. Không chửi bới,
+        quấy rối, phân biệt.
+        Từ tục bị che &8***&0.
+        3. Không spam, không
+        quảng cáo server
+        khác.
+      - |-
+        &4&lLUẬT (tiếp)
+        &04. Không lợi dụng
+        lỗi game: thấy lỗi
+        thì báo admin.
+        5. Đánh nhau theo luật
+        công thành. Thoát
+        game khi đang đánh
+        = chết, rơi đồ.
+
+        &8Vi phạm: mute, kick,
+        &8ban tuỳ mức độ.
+
+  - id: banghoi
+    name: Bang Hội Chiến
+    pages:
+      - |-
+        &6&lBANG HỘI CHIẾN
+        &0Lập thị trấn, gom
+        thành quốc gia, chiếm
+        đất và &lcông thành&r&0
+        nước khác.
+
+        &0Bản đồ là &lTrái Đất
+        &l1:1000&r&0. Mùa 1: &lĐông
+        &lNam Á&r&0 (có viền,
+        hết mùa mở vùng mới).
+      - |-
+        &6&lMới vào
+        &0Có &l15 phút&r&0 bảo vệ:
+        không ai đánh được.
+        &1/newbie disable &0tắt
+        sớm.
+
+        &1/warp &0đi địa danh
+        (Hà Nội, Sài Gòn,
+        Bangkok...)
+        &1/sethome &0đặt nhà
+        &1/home &0về nhà
+      - |-
+        &6&lMới vào (tiếp)
+        &1/spawn &0về spawn
+        &1/tpa <tên> &0xin tới
+        chỗ bạn
+        &1/tpaccept &0đồng ý
+
+        &0Khu spawn an toàn:
+        không PvP, không phá.
+        Bảng bên phải: tiền,
+        thị trấn. &1/sb &0ẩn.
+      - |-
+        &6&lKiếm tiền
+        &0Bắt đầu với &l200 xu&r&0.
+
+        &2Nghề (tự động):
+        &0đào quặng, chặt cây,
+        săn quái, trồng, câu
+        cá đều có tiền.
+        &1/jobs &0xem cấp nghề.
+        &8Phá lại block tự đặt
+        &8không có tiền.
+      - |-
+        &6&lBán đồ
+        &1/sell hand &0bán đồ
+        đang cầm
+        &1/sell all &0bán hết
+        &1/worth &0xem giá
+
+        &0Biển &l[Sell]&r&0 ở spawn:
+        bấm để bán.
+        &8Đá cuội, đất, cát
+        &8không bán được.
+      - |-
+        &6&lBuôn bán
+        &2Cửa hàng rương:
+        &0cầm đồ, bấm trái vào
+        rương, gõ giá.
+        &2Chợ đấu giá:
+        &1/ah &0xem, &1/ah sell
+        &1<giá> &0bán đồ đang
+        cầm (tối đa 5 món).
+        &2Đổi trực tiếp:
+        &1/trade <tên>
+      - |-
+        &6&lThị trấn
+        &1/t new <tên>
+        &0lập thị trấn (&l500
+        &lxu&r&0), nhà bạn được
+        bảo vệ.
+        &1/t claim &0mua thêm ô
+        đất 16x16 (&l25 xu&r&0)
+        &1/t add <tên> &0mời dân
+        &1/t deposit <tiền>
+        &0nộp quỹ thị trấn
+      - |-
+        &6&lThị trấn (tiếp)
+        &0Phí duy trì &l10 xu
+        &lmỗi ngày&r&0, trừ vào
+        quỹ. Hết quỹ thì
+        thị trấn tan!
+        &1/t spawn &0về thị trấn
+        &1/t &0thông tin
+        &1/res &0thông tin bạn
+        &1/plot claim &0nhận lô
+        đất trong thị trấn
+      - |-
+        &6&lQuốc gia
+        &0Gom nhiều thị trấn:
+        &1/n new <tên>
+        &0(&l1000 xu&r&0, thị trấn
+        bạn là thủ đô)
+        &1/n add <thị trấn>
+        &1/n ally add <nước>
+        &0kết đồng minh
+        &0Phí &l100 xu/ngày&r&0.
+        &4Chỉ quốc gia mới
+        &4công thành được.
+      - |-
+        &6&lCông thành (1)
+        &0Muốn đánh thị trấn
+        địch: cắm &lbanner màu
+        &0(không trắng) sát rìa
+        thị trấn đó.
+
+        &0Quốc gia trả &lquỹ
+        &lchiến tranh&r&0 20 xu
+        mỗi ô đất của thị
+        trấn bị vây.
+      - |-
+        &6&lCông thành (2)
+        &0Đánh theo &lphiên&r&0:
+        &lTối thứ 7 và CN
+        &l20:00 và 21:00
+        &0(mỗi phiên 1 giờ,
+        4 phiên mỗi cuộc vây).
+        Trong phiên, quanh cờ
+        bật PvP.
+        &1/sw &0xem cuộc vây.
+      - |-
+        &6&lCông thành (3)
+        &0Ghi điểm: giữ khu
+        vực quanh cờ và hạ
+        lính địch.
+        Hết các phiên, bên
+        nhiều điểm thắng:
+        lấy quỹ, cướp tiền
+        hoặc chiếm thị trấn.
+        &2Chết trong vùng vây
+        &2không rơi đồ.
+      - |-
+        &6&lCông thành (4)
+        &0Thị trấn vừa bị vây
+        được &lmiễn vây 7 ngày
+        &0(thủ đô 14 ngày),
+        thị trấn mới lập cũng
+        được 7 ngày.
+        Thị trấn không bị
+        phá hay trộm khi chủ
+        offline.
+      - |-
+        &6&lĐánh nhau
+        &0Bị đánh thì bị &lgắn
+        &lcờ giao tranh&r&0 15
+        giây: &4thoát game lúc
+        &4này là chết, rơi đồ.
+        &0Đang giao tranh không
+        dịch chuyển được.
+        &0Combat kiểu &l1.8&r&0:
+        bấm nhanh, không hồi
+        chiêu.
+      - |-
+        &6&lMẹo
+        &0Đồ rơi dưới đất bị
+        &ldọn mỗi 10 phút&r&0
+        (có báo trước).
+        &0Đồ đổi tên bằng đe
+        không bị dọn.
+        &0Có &lbản đồ web&r&0 của
+        cả vùng mùa 1, xem
+        ranh giới thị trấn.
+
+  - id: practice
+    name: Practice (luyện PvP)
+    pages:
+      - |-
+        &6&lPRACTICE
+        &0Đấu 1v1 với bộ đồ có
+        sẵn, không mất đồ.
+        Combat kiểu &l1.8&r&0.
+
+        &2Bộ đồ: &0NoDebuff,
+        Gapple, Classic,
+        Archer, Boxing, Combo,
+        Sumo.
+      - |-
+        &6&lTìm trận
+        &1/queue &0vào hàng chờ,
+        tự ghép người
+        &1/queue leave &0rời
+
+        &1/duel <tên> &0thách
+        đấu bạn bè
+        &1/duel accept <tên>
+        &1/duel deny <tên>
+      - |-
+        &6&lKhác
+        &1/spectate <tên>
+        &0xem người khác đấu
+        &1/duel stats &0thành
+        tích của bạn
+        &1/duel top &0bảng xếp
+        hạng
+        &1/kit edit <bộ> &0sắp
+        lại vị trí đồ
+
+  - id: rank
+    name: Rank donate
+    pages:
+      - |-
+        &6&lRANK DONATE
+        &0Ủng hộ server, nhận
+        &ltước vị&r&0: chỉ để
+        &ltrang trí&r&0, không
+        mua được lợi thế.
+
+        &2Nam Tước &1Tử Tước
+        &1Bá Tước &5Hầu Tước
+        &6&lCông Tước
+      - |-
+        &6&lQuyền lợi
+        &0prefix màu, chat
+        màu, &1/hat&0, &1/nick&0,
+        hiệu ứng hạt &1/pp&0,
+        pet &1/pet&0 (không cưỡi
+        được), chào khi vào
+        server.
+
+        &1/rank &0xem giá, quyền
+        lợi từng bậc, cách mua.
+
+  - id: pokemon
+    name: Pokémon (sắp mở)
+    pages:
+      - |-
+        &6&lPOKÉMON
+        &0Bắt, nuôi và đấu
+        Pokémon. Cần cài
+        modpack riêng.
+
+        &8Chế độ này chưa mở.
+        &8Theo dõi thông báo
+        &8trên server.
+
+  - id: hotro
+    name: Cần giúp đỡ
+    pages:
+      - |-
+        &6&lCẦN GIÚP?
+        &0Hỏi người có prefix
+        &2[Helper]&0, &1[Mod]&0,
+        &4[Admin]&0 trong chat.
+
+        &0Quên mật khẩu: nhờ
+        admin đặt lại.
+        &0Bị hack nhầm, bị
+        kick nhầm: báo admin
+        kèm thời gian.

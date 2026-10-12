@@ -52,3 +52,8 @@ donate-ranks:
       color: "&6"
       perks: [chat/nick màu tuỳ chọn (hex), 6 hiệu ứng hạt, mọi pet, chuông khi vào server]
       prices: [1 tháng 150k, 3 tháng 390k, 6 tháng 690k, 1 năm 1.200k]
+
+# Cẩm nang trong game (/huongdan): nội dung plugins/DuckyMoMoCore/huongdan.yml (bản gốc modes/_network/huongdan.yml, chép bằng ./ops/huongdan.sh)
+guide:
+  default-chapter: practice
+  join-hint: "&6✦ &fGõ &e/huongdan &fđể xem cách chơi Practice (bấm vào đây)."

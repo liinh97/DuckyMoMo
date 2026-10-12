@@ -69,6 +69,7 @@ worth_string: 0.75
 worth_gunpowder: 2.0
 worth_ender_pearl: 5.0
 tab_bossbar_tips:
+  - '&e✦ &fMới chơi? Gõ &e/huongdan &fđể xem cẩm nang &e✦'
   - '&e✦ &fGõ &e/warp &fđể tới các địa danh mùa 1 &e✦'
   - '&e✦ &fLập thị trấn: &e/t new <tên> &f(500 xu) &e✦'
   - '&e✦ &fChợ đấu giá: &e/ah &f• Đổi đồ: &e/trade <tên> &e✦'

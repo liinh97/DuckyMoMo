@@ -28,6 +28,7 @@ guide:
     items:
       - ["Đăng ký / đăng nhập", "Lần đầu: /register <mật khẩu> <mật khẩu> · lần sau: /login <mật khẩu>"]
       - ["Chọn chế độ", "Bấm la bàn ở sảnh hoặc /menu (điện thoại: hiện bảng nút bấm)"]
+      - ["Cẩm nang trong game", "/huongdan — sửa nội dung: modes/_network/huongdan.yml rồi ./ops/huongdan.sh (có hiệu lực ngay)"]
       - ["Bang Hội Chiến", "/warp để đi các địa danh · /t new <tên> lập thị trấn · /jobs xem nghề · /sell hand bán đồ · /ah chợ"]
       - ["Rank donate", "/rank xem các bậc, giá, cách mua (chỉ trang trí, không mua được lợi thế)"]
   - title: Địa chỉ vào server
@@ -106,6 +107,7 @@ plugins:
     purpose: "Plugin riêng của DuckyMoMo: menu chọn chế độ, rank donate, thông báo vào/ra, lọc chat, chat có prefix ở sảnh, rơi khỏi đảo về spawn, dọn rác, chống đặt-phá lấy tiền nghề, ranh giới thị trấn trên bản đồ web, menu nút bấm cho Bedrock."
     player:
       - ["/menu", "Mở menu chọn chế độ (ở sảnh)"]
+      - ["/huongdan [chương] · /hd", "Cẩm nang trong game (sách; điện thoại: bảng nút). Chương: batdau, luat, banghoi, practice, rank, pokemon, hotro"]
       - ["/rank", "Xem các bậc rank donate, giá, rank của mình"]
     admin:
       - ["/rank give <tên> <bậc> <tháng>", "Cấp rank donate (gia hạn cộng dồn)"]

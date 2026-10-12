@@ -20,6 +20,9 @@ commands:
   rank:
     description: "Xem rank donate (tước vị), giá, rank của bạn. Admin: /rank give|remove|check"
     aliases: [donate, tuocvi]
+  huongdan:
+    description: "Cẩm nang: hướng dẫn chơi các chế độ"
+    aliases: [hd, guide, camnang, cn]
 permissions:
   duckymomo.rank.admin:
     description: Cấp/gỡ/xem rank donate của người khác (/rank give|remove|check)

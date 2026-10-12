@@ -94,6 +94,15 @@ public final class DuckyMoMoCore extends JavaPlugin {
             });
         }
 
+        // Cẩm nang trong game: /huongdan (nội dung plugins/DuckyMoMoCore/huongdan.yml)
+        PluginCommand guideCmd = getCommand("huongdan");
+        if (guideCmd != null) {
+            Guide guide = new Guide(this, Guide.defaultChapter(getConfig().getConfigurationSection("guide")),
+                    getConfig().getString("guide.join-hint", ""));
+            getServer().getPluginManager().registerEvents(guide, this);
+            guideCmd.setExecutor((sender, cmd, label, args) -> guide.command(sender, args));
+        }
+
         // Chat có prefix role + rank donate (lobby không có EssentialsX Chat): chat-format.enabled
         if (getConfig().getBoolean("chat-format.enabled") && getServer().getPluginManager().isPluginEnabled("LuckPerms")) {
             getServer().getPluginManager().registerEvents(new ChatFormat(), this);

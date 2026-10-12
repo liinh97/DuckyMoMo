@@ -1,0 +1,969 @@
+jobs:
+  hunter:
+    name: "<gradient:#FF0000:#A20000>Thợ săn"
+    bossbar:
+      title: "<yellow>Cấp <level> <gray><job> <gradient:#6D6666:#938B8B:#777676>+<gained_exp><symbol_exp> <exp>/<next_exp>"
+      levelup: "<gradient:#5DFF00:#E8FF00:{phase}>Bạn đã lên cấp <bold><level></bold> nghề <job>!"
+      overlay: NOTCHED_10
+      color: RED
+    icon: NETHERITE_SWORD
+    #commands that will be executed by console when player levels up
+    #<player> player's name, <level> new level, math equations available
+    levelup_commands:
+      #- "money give <player> <level>*10"
+    #available message types: title, actionbar, sound, chat
+    #all can be used at the same time
+    #chat and sound can also be list
+    #<player> player's name, <level> new level
+    levelup_message:
+      #chat: ""
+      sound: entity.player.levelup
+    level_equation: "<next_level>*<next_level>*5"
+    actions:
+      kill:
+        zombie:
+          exp: 2
+          money: 0.25
+        skeleton:
+          exp: 2
+          money: 0.25
+        spider:
+          exp: 2
+          money: 0.25
+        creeper:
+          exp: 2
+          money: 0.25
+        cave_spider:
+          exp: 2.1
+          money: 0.3
+        husk:
+          exp: 2.05
+          money: 0.275
+        stray:
+          exp: 2.2
+          money: 0.375
+        drowned:
+          exp: 2.1
+          money: 0.325
+        enderman:
+          exp: 2.5
+          money: 0.375
+        blaze:
+          exp: 2.5
+          money: 0.375
+        elder_guardian:
+          exp: 20
+          money: 12.5
+        endermite:
+          exp: 3
+          money: 0.75
+        evoker:
+          exp: 5
+          money: 2.5
+        guardian:
+          exp: 2.3
+          money: 0.425
+        vindicator:
+          exp: 2.9
+          money: 0.35
+        piglin:
+          exp: 2.2
+          money: 0.3
+        piglin_brute:
+          exp: 10
+          money: 17.5
+        pillager:
+          exp: 2.1
+          money: 0.275
+        ravager:
+          exp: 5
+          money: 6.25
+        silverfish:
+          exp: 1
+          money: 0.025
+        vex:
+          exp: 2
+          money: 0.25
+        warden:
+          exp: 100
+          money: 25.0
+        witch:
+          exp: 3
+          money: 0.75
+        wither:
+          exp: 50
+          money: 12.5
+        wither_skeleton:
+          exp: 2.5
+          money: 0.375
+        zoglin:
+          exp: 2.3
+          money: 0.325
+        zombie_villager:
+          exp: 2.3
+          money: 0.325
+        ender_dragon:
+          exp: 250
+          money: 62.5
+        pig:
+          exp: 1
+          money: 0.025
+        chicken:
+          exp: 1
+          money: 0.025
+        sheep:
+          exp: 1
+          money: 0.025
+        cow:
+          exp: 1
+          money: 0.025
+        cod:
+          exp: 2.2
+          money: 0.45
+        salmon:
+          exp: 2.2
+          money: 0.45
+        pufferfish:
+          exp: 2.9
+          money: 0.725
+        tropical_fish:
+          exp: 2.7
+          money: 0.675
+        horse:
+          exp: 2.1
+          money: 0.3
+        donkey:
+          exp: 2.1
+          money: 0.3
+        wolf:
+          exp: 2.4
+          money: 0.6
+        fox:
+          exp: 4
+          money: 1.0
+        rabbit:
+          exp: 3
+          money: 0.875
+        iron_golem:
+          exp: 5
+          money: 1.25
+        goat:
+          exp: 2.3
+          money: 0.75
+        llama:
+          exp: 2.1
+          money: 0.525
+        squid:
+          exp: 2.7
+          money: 0.675
+        glow_squid:
+          exp: 2.8
+          money: 0.7
+        mooshroom:
+          exp: 5
+          money: 1.25
+        strider:
+          exp: 2.5
+          money: 0.375
+  miner:
+    name: "<gradient:#9B9B9B:#646464>Thợ mỏ"
+    bossbar:
+      title: "<yellow>Cấp <level> <gray><job> <gradient:#6D6666:#938B8B:#777676>+<gained_exp><symbol_exp> <exp>/<next_exp>"
+      levelup: "<gradient:#5DFF00:#E8FF00:{phase}>Bạn đã lên cấp <bold><level></bold> nghề <job>!"
+      overlay: NOTCHED_10
+      color: WHITE
+    icon: NETHERITE_PICKAXE
+    levelup_commands:
+    #- "money give <player> <level>*10"
+    levelup_message:
+      sound: entity.player.levelup
+    level_equation: "<next_level>*<next_level>*5"
+    actions:
+      break:
+        stone:
+          exp: 0.1
+          money: 0.02
+        deepslate:
+          exp: 0.11
+          money: 0.022
+        coal_ore:
+          exp: 1
+          money: 0.5
+        deepslate_coal_ore:
+          exp: 1.1
+          money: 0.55
+        iron_ore:
+          exp: 1.1
+          money: 0.55
+        deepslate_iron_ore:
+          exp: 1.2
+          money: 0.6
+        copper_ore:
+          exp: 1.2
+          money: 0.6
+        deepslate_copper_ore:
+          exp: 1.3
+          money: 0.65
+        gold_ore:
+          exp: 1.4
+          money: 0.7
+        deepslate_gold_ore:
+          exp: 1.5
+          money: 0.75
+        redstone_ore:
+          exp: 1.3
+          money: 0.65
+        deepslate_redstone_ore:
+          exp: 1.4
+          money: 0.7
+        emerald_ore:
+          exp: 1.6
+          money: 0.8
+        deepslate_emerald_ore:
+          exp: 1.7
+          money: 0.85
+        lapis_ore:
+          exp: 1.5
+          money: 0.75
+        deepslate_lapis_ore:
+          exp: 1.6
+          money: 0.8
+        diamond_ore:
+          exp: 1.7
+          money: 0.85
+        deepslate_diamond_ore:
+          exp: 1.8
+          money: 0.9
+        nether_gold_ore:
+          exp: 1
+          money: 0.5
+        nether_quartz_ore:
+          exp: 1.1
+          money: 0.55
+        netherrack:
+          exp: 0.08
+          money: 0.016
+        gilded_blackstone:
+          exp: 1.2
+          money: 0.6
+        blackstone:
+          exp: 0.1
+          money: 0.02
+        basalt:
+          exp: 0.1
+          money: 0.02
+        end_stone:
+          exp: 0.1
+          money: 0.02
+        diorite:
+          exp: 0.1
+          money: 0.02
+        andesite:
+          exp: 0.1
+          money: 0.02
+        granite:
+          exp: 0.1
+          money: 0.02
+        sandstone:
+          exp: 0.1
+          money: 0.02
+        tuff:
+          exp: 0.1
+          money: 0.02
+        calcite:
+          exp: 0.1
+          money: 0.02
+        smooth_basalt:
+          exp: 0.1
+          money: 0.02
+        amethyst_block:
+          exp: 0.1
+          money: 0.02
+        amethyst_cluster:
+          exp: 0.1
+          money: 0.05
+  farmer:
+    name: "<gradient:#FFD500:#FF9B00>Nông dân"
+    bossbar:
+      title: "<yellow>Cấp <level> <gray><job> <gradient:#6D6666:#938B8B:#777676>+<gained_exp><symbol_exp> <exp>/<next_exp>"
+      levelup: "<gradient:#5DFF00:#E8FF00:{phase}>Bạn đã lên cấp <bold><level></bold> nghề <job>!"
+      overlay: NOTCHED_10
+      color: YELLOW
+    icon: NETHERITE_HOE
+    levelup_commands:
+    #- "money give <player> <level>*10"
+    levelup_message:
+      sound: entity.player.levelup
+    level_equation: "<next_level>*<next_level>*5"
+    actions:
+      break:
+        wheat7:
+          exp: 1
+          money: 0.05
+        potatoes7:
+          exp: 1
+          money: 0.05
+        carrots7:
+          exp: 1
+          money: 0.05
+        beetroots3:
+          exp: 1.1
+          money: 0.055
+        melon:
+          exp: 1
+          money: 0.05
+        #bamboo
+      harvest:
+        glow_berries:
+          exp: 1
+          money: 0.05
+        sweet_berries:
+          exp: 1
+          money: 0.05
+  husbandry:
+    name: "<gradient:#FF00BD:#AA4B00>Chăn nuôi"
+    bossbar:
+      title: "<yellow>Cấp <level> <gray><job> <gradient:#6D6666:#938B8B:#777676>+<gained_exp><symbol_exp> <exp>/<next_exp>"
+      levelup: "<gradient:#5DFF00:#E8FF00:{phase}>Bạn đã lên cấp <bold><level></bold> nghề <job>!"
+      overlay: NOTCHED_10
+      color: PINK
+    icon: LEAD
+    levelup_commands:
+    #- "money give <player> <level>*10"
+    levelup_message:
+      sound: entity.player.levelup
+    level_equation: "<next_level>*<next_level>*5"
+    actions:
+      breed:
+        pig:
+          exp: 1
+          money: 0.03
+        chicken:
+          exp: 1
+          money: 0.03
+        cow:
+          exp: 1
+          money: 0.03
+        sheep:
+          exp: 1
+          money: 0.03
+        horse:
+          exp: 1
+          money: 0.03
+        donkey:
+          exp: 1
+          money: 0.03
+        mule:
+          exp: 1
+          money: 0.03
+        llama:
+          exp: 1
+          money: 0.03
+        trader_llama:
+          exp: 1
+          money: 0.03
+        rabbit:
+          exp: 1
+          money: 0.03
+        fox:
+          exp: 1
+          money: 0.03
+        wolf:
+          exp: 1
+          money: 0.03
+        cat:
+          exp: 1
+          money: 0.03
+        turtle:
+          exp: 1
+          money: 0.03
+        bee:
+          exp: 1
+          money: 0.03
+        camel:
+          exp: 1
+          money: 0.03
+        panda:
+          exp: 1
+          money: 0.03
+        parrot:
+          exp: 1
+          money: 0.03
+        polar_bear:
+          exp: 1
+          money: 0.03
+        frog:
+          exp: 1
+          money: 0.03
+        axolotl:
+          exp: 1
+          money: 0.03
+        mooshroom:
+          exp: 1
+          money: 0.03
+        ocelot:
+          exp: 1
+          money: 0.03
+        strider:
+          exp: 1
+          money: 0.03
+        sniffer:
+          exp: 1
+          money: 0.03
+      tame:
+        wolf:
+          exp: 1
+          money: 0.03
+        cat:
+          exp: 1
+          money: 0.03
+        camel:
+          exp: 1
+          money: 0.03
+        horse:
+          exp: 1
+          money: 0.03
+        mule:
+          exp: 1
+          money: 0.03
+        donkey:
+          exp: 1
+          money: 0.03
+        trader_llama:
+          exp: 1
+          money: 0.03
+        llama:
+          exp: 1
+          money: 0.03
+        parrot:
+          exp: 1
+          money: 0.03
+  fisher:
+    name: "<gradient:#00D8FF:#0A75C8>Ngư dân"
+    bossbar:
+      title: "<yellow>Cấp <level> <gray><job> <gradient:#6D6666:#938B8B:#777676>+<gained_exp><symbol_exp> <exp>/<next_exp>"
+      levelup: "<gradient:#5DFF00:#E8FF00:{phase}>Bạn đã lên cấp <bold><level></bold> nghề <job>!"
+      overlay: NOTCHED_10
+      color: BLUE
+    icon: FISHING_ROD
+    levelup_commands:
+    #- "money give <player> <level>*10"
+    levelup_message:
+      sound: entity.player.levelup
+    level_equation: "<next_level>*<next_level>*5"
+    actions:
+      fish:
+        cod:
+          exp: 1
+          money: 0.5
+        salmon:
+          exp: 1
+          money: 0.5
+        tropical_fish:
+          exp: 3
+          money: 1.5
+        pufferfish:
+          exp: 2.5
+          money: 1.25
+  witcher:
+    name: "<gradient:#FF00FB:#9B00FF>Phù thuỷ"
+    bossbar:
+      title: "<yellow>Cấp <level> <gray><job> <gradient:#6D6666:#938B8B:#777676>+<gained_exp><symbol_exp> <exp>/<next_exp>"
+      levelup: "<gradient:#5DFF00:#E8FF00:{phase}>Bạn đã lên cấp <bold><level></bold> nghề <job>!"
+      overlay: NOTCHED_10
+      color: PURPLE
+    icon: ENCHANTING_TABLE
+    levelup_commands:
+    #- "money give <player> <level>*10"
+    levelup_message:
+      sound: entity.player.levelup
+    level_equation: "<next_level>*<next_level>*5"
+    actions:
+      enchant:
+        1:
+          exp: 1
+          money: 0.1
+        2:
+          exp: 2
+          money: 0.2
+        3:
+          exp: 3
+          money: 0.3
+        4:
+          exp: 4
+          money: 0.4
+        5:
+          exp: 5
+          money: 0.5
+        6:
+          exp: 6
+          money: 0.6
+        7:
+          exp: 7
+          money: 0.7
+        8:
+          exp: 8
+          money: 0.8
+        9:
+          exp: 9
+          money: 0.9
+        10:
+          exp: 10
+          money: 1.0
+        11:
+          exp: 11
+          money: 1.1
+        12:
+          exp: 12
+          money: 1.2
+        13:
+          exp: 13
+          money: 1.3
+        14:
+          exp: 14
+          money: 1.4
+        15:
+          exp: 15
+          money: 1.5
+        16:
+          exp: 16
+          money: 1.6
+        17:
+          exp: 17
+          money: 1.7
+        18:
+          exp: 18
+          money: 1.8
+        19:
+          exp: 19
+          money: 1.9
+        20:
+          exp: 20
+          money: 2.0
+        21:
+          exp: 21
+          money: 2.1
+        22:
+          exp: 22
+          money: 2.2
+        23:
+          exp: 23
+          money: 2.3
+        24:
+          exp: 24
+          money: 2.4
+        25:
+          exp: 25
+          money: 2.5
+        26:
+          exp: 26
+          money: 2.6
+        27:
+          exp: 27
+          money: 2.7
+        28:
+          exp: 28
+          money: 2.8
+        29:
+          exp: 29
+          money: 2.9
+        30:
+          exp: 30
+          money: 3.0
+      anvil_merge:
+        enchanted_book:
+          exp: 1.5
+          money: 1.5
+  lumberjack:
+    name: "<gradient:#CB7800:#00B503>Tiều phu"
+    bossbar:
+      title: "<yellow>Cấp <level> <gray><job> <gradient:#6D6666:#938B8B:#777676>+<gained_exp><symbol_exp> <exp>/<next_exp>"
+      levelup: "<gradient:#5DFF00:#E8FF00:{phase}>Bạn đã lên cấp <bold><level></bold> nghề <job>!"
+      overlay: NOTCHED_10
+      color: GREEN
+    icon: NETHERITE_AXE
+    levelup_commands:
+    #- "money give <player> <level>*10"
+    levelup_message:
+      sound: entity.player.levelup
+    level_equation: "<next_level>*<next_level>*5"
+    actions:
+      break:
+        oak_log:
+          exp: 1
+          money: 0.3
+        birch_log:
+          exp: 1
+          money: 0.3
+        spruce_log:
+          exp: 1
+          money: 0.3
+        dark_oak_log:
+          exp: 1
+          money: 0.3
+        jungle_log:
+          exp: 1
+          money: 0.3
+        acacia_log:
+          exp: 1
+          money: 0.3
+        mangrove_log:
+          exp: 1
+          money: 0.3
+        mangrove_roots:
+          exp: 0.7
+          money: 0.21
+        warped_stem:
+          exp: 1.5
+          money: 0.45
+        crimson_stem:
+          exp: 1.5
+          money: 0.45
+        cherry_log:
+          exp: 1
+          money: 0.3
+        pale_oak_log:
+          exp: 1
+          money: 0.3
+  digger:
+    name: "<gradient:#69A5E8:#AE69E8>Thợ đào đất"
+    bossbar:
+      title: "<yellow>Cấp <level> <gray><job> <gradient:#6D6666:#938B8B:#777676>+<gained_exp><symbol_exp> <exp>/<next_exp>"
+      levelup: "<gradient:#5DFF00:#E8FF00:{phase}>Bạn đã lên cấp <bold><level></bold> nghề <job>!"
+      overlay: NOTCHED_10
+      color: BLUE
+    icon: NETHERITE_SHOVEL
+    levelup_commands:
+    #- "money give <player> <level>*10"
+    levelup_message:
+      sound: entity.player.levelup
+    level_equation: "<next_level>*<next_level>*5"
+    actions:
+      break:
+        sand:
+          exp: 1
+          money: 0.02
+        red_sand:
+          exp: 1.1
+          money: 0.022
+        clay:
+          exp: 2
+          money: 0.04
+        mud:
+          exp: 1.5
+          money: 0.03
+        gravel:
+          exp: 1.25
+          money: 0.025
+        mycelium:
+          exp: 2
+          money: 0.04
+        podzol:
+          exp: 1.1
+          money: 0.022
+        coarse_dirt:
+          exp: 1.1
+          money: 0.022
+        dirt:
+          exp: 1
+          money: 0.02
+        grass_block:
+          exp: 1
+          money: 0.02
+        soul_sand:
+          exp: 2
+          money: 0.04
+  gladiator:
+    name: "<gradient:#FF0000:#FFFF00>Đấu sĩ"
+    bossbar:
+      title: "<yellow>Cấp <level> <gray><job> <gradient:#6D6666:#938B8B:#777676>+<gained_exp><symbol_exp> <exp>/<next_exp>"
+      levelup: "<gradient:#5DFF00:#E8FF00:{phase}>Bạn đã lên cấp <bold><level></bold> nghề <job>!"
+      overlay: NOTCHED_10
+      color: RED
+    icon: NETHERITE_HELMET
+    levelup_commands:
+    #- "money give <player> <level>*10"
+    levelup_message:
+      sound: entity.player.levelup
+    level_equation: "<next_level>*<next_level>*5"
+    actions:
+      kill:
+        player:
+          exp: 1
+          money: 0.0
+  guardian:
+    name: "<gradient:#1FFF00:#769072>Hộ vệ làng"
+    bossbar:
+      title: "<yellow>Cấp <level> <gray><job> <gradient:#6D6666:#938B8B:#777676>+<gained_exp><symbol_exp> <exp>/<next_exp>"
+      levelup: "<gradient:#5DFF00:#E8FF00:{phase}>Bạn đã lên cấp <bold><level></bold> nghề <job>!"
+      overlay: NOTCHED_10
+      color: GREEN
+    icon: SHIELD
+    levelup_commands:
+    #- "money give <player> <level>*10"
+    levelup_message:
+      sound: entity.player.levelup
+    level_equation: "<next_level>*<next_level>*5"
+    actions:
+      raid:
+        win:
+          exp: 10
+          money: 0.2
+        wave:
+          exp: 1
+          money: 0.02
+  producer:
+    name: "<gradient:#A26238:#AF8D5B>Thợ chế tạo"
+    bossbar:
+      title: "<yellow>Cấp <level> <gray><job> <gradient:#6D6666:#938B8B:#777676>+<gained_exp><symbol_exp> <exp>/<next_exp>"
+      levelup: "<gradient:#5DFF00:#E8FF00:{phase}>Bạn đã lên cấp <bold><level></bold> nghề <job>!"
+      overlay: NOTCHED_10
+      color: WHITE
+    icon: CRAFTING_TABLE
+    levelup_commands:
+    #- "money give <player> <level>*10"
+    levelup_message:
+      sound: entity.player.levelup
+    level_equation: "<next_level>*<next_level>*5"
+    actions:
+      craft:
+        piston:
+          exp: 1
+          money: 0.1
+        sticky_piston:
+          exp: 0.1
+          money: 0.01
+        lectern:
+          exp: 1
+          money: 0.1
+        redstone_lamp:
+          exp: 1
+          money: 0.1
+        tnt:
+          exp: 0.5
+          money: 0.05
+        dispenser:
+          exp: 0.5
+          money: 0.05
+        dropper:
+          exp: 0.4
+          money: 0.04
+        target:
+          exp: 1
+          money: 0.1
+        repeater:
+          exp: 1.5
+          money: 0.15
+        comparator:
+          exp: 3
+          money: 0.3
+        daylight_detector:
+          exp: 5
+          money: 0.5
+        note_block:
+          exp: 0.5
+          money: 0.05
+        observer:
+          exp: 1
+          money: 0.1
+        minecart:
+          exp: 0.2
+          money: 0.02
+  trader:
+    name: "<gradient:#0CFF00:#F7FF00>Thương nhân"
+    bossbar:
+      title: "<yellow>Cấp <level> <gray><job> <gradient:#6D6666:#938B8B:#777676>+<gained_exp><symbol_exp> <exp>/<next_exp>"
+      levelup: "<gradient:#5DFF00:#E8FF00:{phase}>Bạn đã lên cấp <bold><level></bold> nghề <job>!"
+      overlay: NOTCHED_10
+      color: BLUE
+    icon: EMERALD
+    levelup_commands:
+    #- "money give <player> <level>*10"
+    levelup_message:
+      sound: entity.player.levelup
+    level_equation: "<next_level>*<next_level>*5"
+    actions:
+      trade:
+        emerald:
+          exp: 1
+          money: 0.2
+  traveler:
+    name: "<gradient:#00AAFF:#00FF13>Nhà thám hiểm"
+    bossbar:
+      title: "<yellow>Cấp <level> <gray><job> <gradient:#6D6666:#938B8B:#777676>+<gained_exp><symbol_exp> <exp>/<next_exp>"
+      levelup: "<gradient:#5DFF00:#E8FF00:{phase}>Bạn đã lên cấp <bold><level></bold> nghề <job>!"
+      overlay: NOTCHED_10
+      color: BLUE
+    icon: SPYGLASS
+    levelup_commands:
+    #- "money give <player> <level>*10"
+    levelup_message:
+      sound: entity.player.levelup
+    level_equation: "<next_level>*<next_level>*5"
+    actions:
+      generate_loot:
+        desert_pyramid:
+          exp: 12.5
+          money: 10.0
+        abandoned_mineshaft:
+          exp: 10
+          money: 5.0
+        ancient_city:
+          exp: 50
+          money: 50.0
+        ancient_city_ice_box:
+          exp: 50
+          money: 50.0
+        bastion_bridge:
+          exp: 25
+          money: 22.0
+        bastion_other:
+          exp: 25
+          money: 22.0
+        bastion_treasure:
+          exp: 50
+          money: 50.0
+        bastion_hoglin_stable:
+          exp: 25
+          money: 22.0
+        buried_treasure:
+          exp: 100
+          money: 100.0
+        end_city_treasure:
+          exp: 20
+          money: 17.0
+        igloo_chest:
+          exp: 150
+          money: 125.0
+        jungle_temple:
+          exp: 75
+          money: 60.0
+        jungle_temple_dispenser:
+          exp: 75
+          money: 60.0
+        pillager_outpost:
+          exp: 20
+          money: 16.0
+        ruined_portal:
+          exp: 10
+          money: 7.0
+        shipwreck_map:
+          exp: 7
+          money: 5.0
+        shipwreck_supply:
+          exp: 7
+          money: 5.0
+        shipwreck_treasure:
+          exp: 11
+          money: 9.0
+        simple_dungeon:
+          exp: 18
+          money: 15.0
+        stronghold_corridor:
+          exp: 40
+          money: 34.0
+        stronghold_crossing:
+          exp: 40
+          money: 34.0
+        stronghold_library:
+          exp: 40
+          money: 34.0
+        underwater_ruin_big:
+          exp: 10
+          money: 7.0
+        underwater_ruin_small:
+          exp: 10
+          money: 7.0
+        village/village_armorer:
+          exp: 5
+          money: 1.5
+        village/village_butcher:
+          exp: 5
+          money: 1.5
+        village/village_cartographer:
+          exp: 5
+          money: 1.5
+        village/village_desert_house:
+          exp: 5
+          money: 1.5
+        village/village_fisher:
+          exp: 5
+          money: 1.5
+        village/village_fletcher:
+          exp: 5
+          money: 1.5
+        village/village_mason:
+          exp: 5
+          money: 1.5
+        village/village_plains_house:
+          exp: 5
+          money: 1.5
+        village/village_savanna_house:
+          exp: 5
+          money: 1.5
+        village/village_shepherd:
+          exp: 5
+          money: 1.5
+        village/village_snowy_house:
+          exp: 5
+          money: 1.5
+        village/village_taiga_house:
+          exp: 5
+          money: 1.5
+        village/village_tannery:
+          exp: 5
+          money: 1.5
+        village/village_temple:
+          exp: 5
+          money: 1.5
+        village/village_toolsmith:
+          exp: 5
+          money: 1.5
+        village/village_weaponsmith:
+          exp: 5
+          money: 1.5
+        woodland_mansion:
+          exp: 5
+          money: 1.5
+        nether_bridge:
+          exp: 5
+          money: 1.5
+        trial_chambers/corridor:
+          exp: 3
+          money: 0.15
+        trial_chambers/entrance:
+          exp: 5
+          money: 0.25
+        trial_chambers/intersection:
+          exp: 3
+          money: 0.15
+        trial_chambers/intersection_barrel:
+          exp: 1
+          money: 0.1
+        trial_chambers/reward:
+          exp: 10
+          money: 1.0
+        trial_chambers/reward_common:
+          exp: 1
+          money: 0.1
+        trial_chambers/reward_ominous:
+          exp: 1
+          money: 0.1
+        trial_chambers/reward_ominous_common:
+          exp: 1
+          money: 0.1
+        trial_chambers/reward_ominous_rare:
+          exp: 1
+          money: 0.1
+        trial_chambers/reward_ominous_unique:
+          exp: 1
+          money: 0.1
+        trial_chambers/reward_rare:
+          exp: 1
+          money: 0.1
+        trial_chambers/reward_unique:
+          exp: 1
+          money: 0.1
+        trial_chambers/supply:
+          exp: 1
+          money: 0.1

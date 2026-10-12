@@ -9,6 +9,7 @@ public final class DuckyMoMoCore extends JavaPlugin {
 
     private MapDecorator decorator;
     private StructurePlacer structures;
+    private TownyMapLayer townyMap;
 
     @Override
     public void onEnable() {
@@ -43,6 +44,47 @@ public final class DuckyMoMoCore extends JavaPlugin {
             });
         }
 
+        // Lọc chat: che từ tục tiếng Việt, chống spam (chat-filter.enabled)
+        if (getConfig().getBoolean("chat-filter.enabled")) {
+            getServer().getPluginManager().registerEvents(new ChatFilter(getConfig().getConfigurationSection("chat-filter")), this);
+            getLogger().info("Lọc chat: bật");
+        }
+
+        // Chat có prefix role + rank donate (lobby không có EssentialsX Chat): chat-format.enabled
+        if (getConfig().getBoolean("chat-format.enabled") && getServer().getPluginManager().isPluginEnabled("LuckPerms")) {
+            getServer().getPluginManager().registerEvents(new ChatFormat(), this);
+            getLogger().info("Chat có prefix LuckPerms: bật");
+        }
+
+        // Đảo bay (lobby): rơi xuống dưới void-teleport.below-y thì về spawn (không đặt = tắt)
+        if (getConfig().isInt("void-teleport.below-y")) {
+            int belowY = getConfig().getInt("void-teleport.below-y");
+            getServer().getPluginManager().registerEvents(new VoidTeleport(belowY, getConfig().getBoolean("void-teleport.spawn-on-join")), this);
+            getLogger().info("Rơi xuống hư không về spawn: bật (y < " + belowY + ")");
+        }
+
+        // Chống đặt rồi phá block để lấy tiền nghề (uJobs): job-guard.enabled
+        if (getConfig().getBoolean("job-guard.enabled")) {
+            getServer().getPluginManager().registerEvents(
+                    new PlacedBlockGuard(this, getConfig().getStringList("job-guard.materials")), this);
+            getLogger().info("Chống đặt-phá lấy tiền nghề: bật");
+        }
+
+        // Ranh giới thị trấn Towny trên bản đồ web squaremap (towny-map.enabled)
+        if (getConfig().getBoolean("towny-map.enabled") && getServer().getPluginManager().isPluginEnabled("Towny")
+                && getServer().getPluginManager().isPluginEnabled("squaremap")) {
+            townyMap = new TownyMapLayer(this, getConfig().getString("towny-map.world", "world"),
+                    getConfig().getInt("towny-map.interval-seconds", 60));
+            townyMap.start();
+        }
+
+        // Dọn rác định kỳ (banghoi): item-cleaner.enabled
+        ItemCleaner cleaner = getConfig().getBoolean("item-cleaner.enabled")
+                ? new ItemCleaner(this, getConfig().getConfigurationSection("item-cleaner")) : null;
+        if (cleaner != null) {
+            cleaner.start();
+        }
+
         // Lệnh admin /dmm. Trang trí map (cây, cỏ, công trình) chỉ bật ở server có decorate.enabled (banghoi-1)
         decorator = getConfig().getBoolean("decorate.enabled") ? new MapDecorator(this) : null;
         structures = decorator != null ? new StructurePlacer(this) : null;
@@ -61,8 +103,14 @@ public final class DuckyMoMoCore extends JavaPlugin {
                     } else {
                         structures.command(sender, args);
                     }
+                } else if (args.length >= 1 && args[0].equalsIgnoreCase("clean")) {
+                    if (cleaner == null) {
+                        sender.sendMessage("Dọn rác chưa bật trên server này (config: item-cleaner.enabled).");
+                    } else {
+                        sender.sendMessage(cleaner.cleanNow());
+                    }
                 } else {
-                    sender.sendMessage("/dmm decorate|structures start | pause | status | reset");
+                    sender.sendMessage("/dmm decorate|structures start | pause | status | reset   /dmm clean");
                 }
                 return true;
             });
@@ -78,6 +126,9 @@ public final class DuckyMoMoCore extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        if (townyMap != null) {
+            townyMap.stop();
+        }
         if (decorator != null) {
             decorator.shutdown();
             structures.shutdown();

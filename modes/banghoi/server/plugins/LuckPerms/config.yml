@@ -18,3 +18,16 @@ redis:
   enabled: true
   address: redis:6379
   password: ${CFG_REDIS_PASSWORD}
+
+# Prefix trong chat = role + rank donate, ví dụ "[Admin] [VIP] Linh".
+#   Role (chức vụ): Dân (default), Builder, Helper, Mod, Admin; đường thăng chức "staff": helper -> mod -> admin.
+#   Rank donate: đường "donate" (hiện có vip), CHỈ trang trí (màu chat, nick, mũ), không lợi thế khi chơi (luật Mojang).
+meta-formatting:
+  prefix:
+    format:
+      - "highest_not_on_track_donate"
+      - "highest_on_track_donate"
+    duplicates: first-only
+    start-spacer: ""
+    middle-spacer: ""
+    end-spacer: ""

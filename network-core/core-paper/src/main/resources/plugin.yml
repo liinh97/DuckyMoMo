@@ -5,6 +5,11 @@ api-version: 1.21.11
 description: Plugin dùng chung của DuckyMoMo Network (bản Paper)
 softdepend:
   - AuthMe
+  - LuckPerms
+  - CoreProtect
+  - Towny
+  - squaremap
+  - floodgate
 commands:
   menu:
     description: Mở menu chọn chế độ (ở lobby)
@@ -15,4 +20,7 @@ commands:
 permissions:
   duckymomo.admin:
     description: Lệnh admin /dmm
+    default: op
+  duckymomo.chat.bypass:
+    description: Không bị chống spam chat (vẫn bị che từ tục)
     default: op

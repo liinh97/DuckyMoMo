@@ -1,0 +1,59 @@
+# Giá /sell (bán cho server) của Bang Hội Chiến, tính cho MỘT vật phẩm. Viết lại 12/10/2026 (thay file mẫu của EssentialsX).
+# Khớp giá biển [Sell] ở spawn (tools/spawn-signs.py, SELL): sửa giá thì sửa cả hai chỗ.
+# Nguyên tắc: không mua thứ farm vô hạn gần như miễn phí (đá cuội, đá, đất, cát, sỏi, đá nether...);
+# đồ từ máy farm (sắt, vàng, đồ quái) giá thấp; kim cương, ngọc lục bảo giá cao vì phải đi đào.
+# Không có tên ở đây = không bán được bằng /sell.
+worth:
+  # Nông sản
+  wheat: 0.75
+  carrot: 0.6
+  potato: 0.6
+  beetroot: 0.6
+  sugar_cane: 1.0
+  pumpkin: 2.0
+  melon_slice: 0.2
+  cocoa_beans: 0.5
+  sweet_berries: 0.2
+  egg: 0.3
+  # Khoáng sản
+  coal: 1.0
+  copper_ingot: 1.0
+  iron_ingot: 4.0
+  gold_ingot: 6.0
+  redstone: 0.5
+  lapis_lazuli: 1.0
+  quartz: 1.0
+  amethyst_shard: 1.0
+  emerald: 20.0
+  diamond: 60.0
+  netherite_scrap: 150.0
+  # Đồ từ quái
+  rotten_flesh: 0.25
+  bone: 0.5
+  string: 0.75
+  spider_eye: 1.0
+  gunpowder: 2.0
+  slime_ball: 2.0
+  ender_pearl: 5.0
+  blaze_rod: 5.0
+  ghast_tear: 15.0
+  phantom_membrane: 3.0
+  # Gỗ (cây trồng lại được nhưng phải chặt tay, giá thấp)
+  oak_log: 0.6
+  spruce_log: 0.6
+  birch_log: 0.6
+  jungle_log: 0.6
+  acacia_log: 0.6
+  dark_oak_log: 0.6
+  mangrove_log: 0.6
+  cherry_log: 0.6
+  # Cá, thịt (bán sống)
+  cod: 0.5
+  salmon: 0.6
+  beef: 0.5
+  porkchop: 0.5
+  chicken: 0.4
+  mutton: 0.4
+  leather: 1.0
+  white_wool: 0.5
+  feather: 0.25

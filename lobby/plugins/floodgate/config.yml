@@ -1,0 +1,20 @@
+# Floodgate ở server con: nhận thông tin người chơi Bedrock do proxy gửi (proxy: send-floodgate-data: true).
+# Khoá phải giống proxy: compose gắn data/proxy/plugins/floodgate/key.pem vào /run/floodgate/key.pem (không có trong Git).
+# Gắn file vào ngoài thư mục plugins/floodgate vì Docker tạo thư mục cha thuộc root -> Floodgate không ghi được config.
+key-file-name: /run/floodgate/key.pem
+username-prefix: "."
+replace-spaces: true
+disconnect:
+  invalid-key: Please connect through the official Geyser
+  invalid-arguments-length: Expected {} arguments, got {}. Is Geyser up-to-date?
+player-link:
+  enabled: true
+  require-link: false
+  enable-own-linking: false
+  allowed: true
+  link-code-timeout: 300
+  type: sqlite
+  enable-global-linking: true
+metrics:
+  enabled: false
+config-version: 3

@@ -4,6 +4,8 @@
 #
 # Dùng:  ./tools/earthmap/build-earth.sh <scale>
 #   scale 10 = 1:4000 (thử nhanh), 20 = 1:2000, 40 = 1:1000 (cần ~20 GB RAM trở lên; máy 64 GB, WSL 40 GB chạy được)
+# POPULATE=1: để Minecraft tự "trang trí" khi nạp chunk (cây, cỏ, hoa, quặng, hồ, động vật theo biome): chunk được ghi
+#   trạng thái chưa xong (liquid_carvers) thay vì full. Kết quả ra thư mục earth_1-<tỉ lệ>-populate.
 # MEM_LIMIT=24g: giới hạn RAM của container tạo map, để thiếu RAM thì chỉ container này bị dừng, không ảnh hưởng dịch vụ khác.
 # Kết quả: tools/earthmap/work/out/earth_1-<tỉ lệ>/  (thế giới Minecraft 26.x)
 # Chuẩn bị công cụ: xem tools/earthmap/README.md
@@ -15,7 +17,7 @@ case "$SCALE" in 10|20|40) ;; *) echo "scale phải là 10, 20 hoặc 40" >&2; e
 RATIO=$((40000 / SCALE))
 case "$SCALE" in 10) DEF_XMX=4g ;; 20) DEF_XMX=9g ;; 40) DEF_XMX=20g ;; esac
 XMX="${XMX:-$DEF_XMX}"
-NAME="earth_1-$RATIO"
+NAME="earth_1-$RATIO${POPULATE:+-populate}"
 W="$PWD/work"
 
 [ -d "$W/worldpainter/lib" ] && [ -f "$W/MinecraftEarthMap/world.js" ] \
@@ -25,9 +27,9 @@ W="$PWD/work"
 #  - đường dẫn dữ liệu trong container, block theo bản mới nhất script hỗ trợ ("1-14"), tỉ lệ
 #  - định dạng Minecraft 26.x (JAVA_ANVIL_26_1), giới hạn độ cao -64..320 như Minecraft hiện đại
 #  - xuất thẳng ra thư mục thế giới Minecraft (script gốc chỉ lưu file .world để xuất bằng tay)
-python3 - "$W/MinecraftEarthMap/world.js" "$W/world-generated.js" "$SCALE" "$NAME" <<'PY'
+python3 - "$W/MinecraftEarthMap/world.js" "$W/world-generated.js" "$SCALE" "$NAME" "${POPULATE:-}" <<'PY'
 import re, sys
-src, dst, scale, name = sys.argv[1:]
+src, dst, scale, name, populate = sys.argv[1:]
 s = open(src, encoding="utf-8").read()
 s = re.sub(r'^var path = .*$', 'var path = "/src/MinecraftEarthMap/";', s, count=1, flags=re.M)
 s = re.sub(r'^var version = .*$', 'var version = "1-14";', s, count=1, flags=re.M)
@@ -40,7 +42,8 @@ fmt = ('.toLevels(0, 255)'
        '.withLowerBuildLimit(-64).withUpperBuildLimit(320)')
 assert s.count('.toLevels(0, 255)') >= 1
 s = s.replace('.toLevels(0, 255)', fmt, 1)
-export = ('world.setName("%s");\n'
+export = (('var dims = world.getDimensions().iterator(); while (dims.hasNext()) { dims.next().setPopulate(true); }\n'
+           'print("Bật populate: Minecraft sẽ tự trang trí chunk khi nạp");\n') if populate else '') + ('world.setName("%s");\n'
           'print("Đang xuất thế giới Minecraft 26.x: /src/out/%s");\n'
           'wp.exportWorld(world).toDirectory("/src/out").go();\n'
           'print("Xong.");\n') % (name, name)

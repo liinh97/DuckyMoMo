@@ -14,7 +14,8 @@ docker run --rm \
   -w /src \
   "$GRADLE_IMAGE" gradle --no-daemon -q :core-paper:build
 
-# core-paper: lobby (menu chọn chế độ, Bedrock auto-login) và banghoi-1 (trang trí map). File .jar không commit (.gitignore).
+# core-paper: lobby (menu chọn chế độ, Bedrock auto-login), banghoi-1 (trang trí map, dọn rác, chống đặt-phá) và practice-1 (lọc chat). File .jar không commit (.gitignore).
 cp network-core/core-paper/build/libs/DuckyMoMoCore.jar lobby/plugins/DuckyMoMoCore.jar
 cp network-core/core-paper/build/libs/DuckyMoMoCore.jar modes/banghoi/server/plugins/DuckyMoMoCore.jar
-echo "Xong: lobby/plugins + modes/banghoi/server/plugins/DuckyMoMoCore.jar. Áp dụng:  docker compose restart lobby banghoi-1"
+cp network-core/core-paper/build/libs/DuckyMoMoCore.jar modes/practice/server/plugins/DuckyMoMoCore.jar
+echo "Xong: lobby, banghoi, practice. Áp dụng:  docker compose restart lobby banghoi-1 practice-1"

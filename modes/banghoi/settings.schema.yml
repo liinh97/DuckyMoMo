@@ -87,14 +87,24 @@ groups:
   - title: Thế giới
     settings:
       # Viền hình chữ nhật bằng ChunkyBorder (viền vanilla chỉ vuông). Map Trái Đất 1:1000 (từ 11/10/2026): 21504 x 10752; 1:2000: 10752 x 5376.
+      # Mỗi mùa một vùng (cách 3, 12/10/2026): viền chữ nhật quanh vùng của mùa. Mùa 1: Đông Nam Á lục địa + Nam Trung Quốc,
+      # tâm (12500, -2000), bán kính 1300 x 1200 (x 11200..13800, z -3200..-800). Cả Trái Đất: tâm 0 0, bán kính 21504 x 10752.
+      - { key: border_center_x, label: Tâm viền, toạ độ X, type: int, min: -29000000, max: 29000000,
+          commands: ["worldborder set 59999968", "chunky world world", "chunky shape rectangle", "chunky center {border_center_x} {border_center_z}",
+                     "chunky radius {border_x} {border_z}", "chunky border add world"],
+          note: "Mùa 1 (Đông Nam Á): 12500. Cả Trái Đất: 0. 1 độ kinh ≈ 119,5 block." }
+      - { key: border_center_z, label: Tâm viền, toạ độ Z, type: int, min: -29000000, max: 29000000,
+          commands: ["worldborder set 59999968", "chunky world world", "chunky shape rectangle", "chunky center {border_center_x} {border_center_z}",
+                     "chunky radius {border_x} {border_z}", "chunky border add world"],
+          note: "Mùa 1: -2000. Cả Trái Đất: 0. Z = -vĩ độ x 119,5." }
       - { key: border_x, label: Viền thế giới, bán kính Đông–Tây (block), type: int, min: 500, max: 29000000,
-          commands: ["worldborder set 59999968", "chunky world world", "chunky shape rectangle", "chunky center 0 0",
+          commands: ["worldborder set 59999968", "chunky world world", "chunky shape rectangle", "chunky center {border_center_x} {border_center_z}",
                      "chunky radius {border_x} {border_z}", "chunky border add world"],
-          note: "Áp dụng ngay. Map Trái Đất 1:1000: 21504 (1:2000: 10752)." }
+          note: "Áp dụng ngay. Mùa 1: 1300. Cả Trái Đất 1:1000: 21504." }
       - { key: border_z, label: Viền thế giới, bán kính Bắc–Nam (block), type: int, min: 500, max: 29000000,
-          commands: ["worldborder set 59999968", "chunky world world", "chunky shape rectangle", "chunky center 0 0",
+          commands: ["worldborder set 59999968", "chunky world world", "chunky shape rectangle", "chunky center {border_center_x} {border_center_z}",
                      "chunky radius {border_x} {border_z}", "chunky border add world"],
-          note: "Map Trái Đất 1:1000: 10752 (1:2000: 5376)." }
+          note: "Mùa 1: 1200. Cả Trái Đất 1:1000: 10752." }
       - { key: spawn_x, label: Điểm spawn, toạ độ X, type: int, min: -29000000, max: 29000000,
           commands: ["execute in minecraft:overworld run forceload add {spawn_x} {spawn_z}",
                      "execute in minecraft:overworld positioned {spawn_x} 0 {spawn_z} positioned over motion_blocking_no_leaves run setworldspawn ~ ~ ~",

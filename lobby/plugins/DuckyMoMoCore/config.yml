@@ -3,3 +3,29 @@ lobby-menu:
   enabled: true
   modes-dir: /modes       # ../modes gắn vào đây (chỉ đọc), xem lobby/compose.yaml
   item-slot: 4
+
+# World sảnh là đảo bay (Sakura Spawn): rơi xuống dưới y này thì về spawn, không chết vì hư không
+void-teleport:
+  below-y: 0
+  spawn-on-join: true      # mỗi lần vào sảnh đều đứng giữa ô spawn (0, 89, 0)
+
+# Chat có prefix role + rank donate từ LuckPerms ("[Admin] [VIP] Linh: ..."), vì lobby không có EssentialsX Chat
+chat-format:
+  enabled: true
+
+# Lọc chat (chung lobby/banghoi/practice, giữ giống nhau ở cả 3 file config.yml): che từ tục bằng ***, chống spam.
+#   words-accented: khớp đúng dạng CÓ DẤU (từ mà bỏ dấu sẽ trùng từ thường: lồn/lớn, cặc/các, buồi/buổi, đéo/đeo, đĩ/đi).
+#   words-plain: khớp sau khi bỏ dấu (bắt cả kiểu gõ không dấu), chỉ dùng cho từ không trùng từ thường.
+#   Quyền duckymomo.chat.bypass (op): không bị chống spam.
+chat-filter:
+  enabled: true
+  words-accented: [lồn, cặc, buồi, đéo, đĩ, đụ, đụ má, đụ mẹ, mẹ mày, má mày, con mẹ mày, óc chó, chó má, thằng chó, con chó,
+                   ngu như chó, lìn, cứt]
+  words-plain: [dm, dmm, dmmm, dcm, dkm, dcmm, dcmn, dit, dit me, dit ma, djt, vcl, vkl, vcc, vklm, vl, vloz, vlon, clm, clmm, cmm,
+                cmn, cmnr, ccmm, dmcs, dmvl, cl, cc, loz, l0n, lon me, cak, cac lon, du ma, du me, ditconme, dcmvl, dmml, fuck,
+                fucking, shit, bitch, dick, pussy, motherfucker]
+  min-interval-seconds: 1.5
+  repeat-seconds: 30
+  caps-ratio: 0.7
+  too-fast-message: "&cChat chậm lại một chút!"
+  repeat-message: "&cĐừng gửi lặp lại cùng một câu!"

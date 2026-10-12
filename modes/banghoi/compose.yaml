@@ -6,7 +6,7 @@ services:
     environment:
       EULA: "TRUE"
       TYPE: PAPER
-      VERSION: ${MC_VERSION:-LATEST}
+      VERSION: ${MC_VERSION:-26.2}
       # 11/10/2026: máy lên 64 GB, WSL 40 GB. Bật bộ tham số GC của Aikar (khuyên dùng cho Paper, ít khựng hơn).
       # Aikar giữ sẵn cả heap (Xms = Xmx = MEMORY, AlwaysPreTouch) nên container luôn dùng ~MEMORY + 1-1,5 GB.
       # Map Trái Đất rộng, nhiều người bay khắp nơi tốn chunk: 6G đủ cho vài chục người. Đông hơn thì tăng (và mem_limit).
@@ -25,6 +25,14 @@ services:
       # Lưu ý: dòng bắt đầu bằng # BÊN TRONG khối '|' không phải comment, image itzg sẽ đọc thành tên plugin.
       # towny: thị trấn/quốc gia; vaultunlocked: lớp nối kinh tế; coreprotect: ghi lại phá/đặt để khôi phục;
       # worldguard: bảo vệ spawn/chợ; chunkyborder: viền thế giới hình chữ nhật (map Trái Đất). Thiết kế: docs/banghoi-design.md
+      # Trade (12/10): quickshop-hikari = cửa hàng rương của người chơi; zauctionhouse = chợ đấu giá /ah;
+      #   tradepro = trao đổi trực tiếp /trade <tên> (hai bên cùng xác nhận). zauctionhouse cần zmenu + placeholderapi.
+      # 12/10: grimac = chống hack (chỉ có bản ALPHA cho 26.2, ghim id bản 2.3.74; có bản chính thức thì bỏ ":id");
+      #   pvpmanager = gắn cờ đánh nhau, thoát game khi đang đánh thì chết + rơi đồ (CombatLogX chưa có 26.2);
+      #   ujobs = nghề kiếm tiền (đào, chặt, giết quái… tự động, không cần /jobs join; Jobs Reborn chưa có 26.2);
+      #   squaremap = bản đồ web (cổng 8080 trong container, mở ra máy ở SQUAREMAP_PORT, Trạm 6 /mc/map);
+      #   tab-was-taken (TAB) = bảng bên phải, boss bar, đầu/cuối danh sách Tab, prefix trong Tab.
+      #   discordsrv = chat game <-> Discord (token bot, kênh: DISCORD_BOT_TOKEN, DISCORD_CHANNEL_ID trong .env; trống thì plugin tự tắt).
       MODRINTH_PROJECTS: |
         luckperms
         worldedit
@@ -32,28 +40,46 @@ services:
         viaversion
         viabackwards
         viarewind
+        decentholograms
         towny
         vaultunlocked
         coreprotect
         worldguard
         chunkyborder
+        quickshop-hikari
+        placeholderapi
+        zmenu
+        zauctionhouse
+        tradepro
+        grimac:nKI7MWZj
+        pvpmanager
+        ujobs
+        squaremap
+        tab-was-taken
+        discordsrv
       # Plugin không có (hoặc chưa có bản 26.2) trên Modrinth: ghim link tải cụ thể. Nâng cấp: thay link.
       #   SiegeWar 3.7.0 (GitHub), OldCombatMechanics 2.7.0 (GitHub, combat kiểu 1.8),
       #   EssentialsX bản dev #1832 (bản chính thức 2.22.0 mới tới 26.1.2): lõi + Chat + Spawn
       PLUGINS: |
+        https://download.geysermc.org/v2/projects/floodgate/versions/latest/builds/latest/downloads/spigot
         https://github.com/TownyAdvanced/SiegeWar/releases/download/3.7.0/SiegeWar-3.7.0.jar
         https://github.com/kernitus/BukkitOldCombatMechanics/releases/download/v2.7.0/OldCombatMechanics.jar
         https://ci.ender.zone/job/EssentialsX/1832/artifact/jars/EssentialsX-2.22.1-dev%2B27-e70bdb8.jar
         https://ci.ender.zone/job/EssentialsX/1832/artifact/jars/EssentialsXChat-2.22.1-dev%2B27-e70bdb8.jar
         https://ci.ender.zone/job/EssentialsX/1832/artifact/jars/EssentialsXSpawn-2.22.1-dev%2B27-e70bdb8.jar
       CFG_SERVER_NAME: banghoi-1
+      CFG_DISCORD_BOT_TOKEN: ${DISCORD_BOT_TOKEN:-}
+      CFG_DISCORD_CHANNEL_ID: ${DISCORD_CHANNEL_ID:-000000000000000000}
       CFG_VELOCITY_SECRET: ${VELOCITY_SECRET}
       CFG_DB_USER: ${DB_USER}
       CFG_DB_PASSWORD: ${DB_PASSWORD}
       CFG_REDIS_PASSWORD: ${REDIS_PASSWORD}
+    ports:
+      - "127.0.0.1:${SQUAREMAP_PORT:-8890}:8080"   # bản đồ web squaremap (chỉ máy nhà; Trạm 6 chuyển tiếp)
     mem_limit: 10g             # heap 6G + bộ nhớ ngoài heap khi nạp nhiều chunk (trang trí map dùng ~7,5 GB)
     volumes:
       - ../../data/banghoi-1:/data
+      - ../../data/proxy/plugins/floodgate/key.pem:/run/floodgate/key.pem:ro   # khoá Floodgate chung với proxy (plugins/floodgate/config.yml: key-file-name)
       - ./server/config:/config:ro
       - ./server/plugins:/plugins:ro
     depends_on:
@@ -80,7 +106,7 @@ services:
       RESTIC_HOSTNAME: banghoi-1
       PRUNE_RESTIC_RETENTION: "--keep-within ${BACKUP_KEEP_DAYS:-7}d --keep-daily 30"
       # Không sao lưu file tải lại được (*.jar), log, cache, và các world cũ đã cất bằng ops/doi-map-banghoi.sh
-      EXCLUDES: "*.jar,cache,logs,*.tmp,world-cu-*,world-1-2000-*,world-tu-nhien-*"
+      EXCLUDES: "*.jar,cache,logs,*.tmp,world-*"   # world-* = các world cũ đã cất (world_nether, world_the_end dùng dấu gạch dưới nên vẫn được sao lưu)
       PAUSE_IF_NO_PLAYERS: "true"      # không ai vào kể từ lần trước thì bỏ qua, đỡ tốn ổ
       INITIAL_DELAY: 5m
       TZ: Asia/Ho_Chi_Minh

@@ -4,14 +4,62 @@ lobby-menu:
 decorate:
   enabled: true
   world: world
-  min-x: -21504
-  max-x: 21504
-  min-z: -10752
-  max-z: 10752
+  # Biên cho /dmm structures (và /dmm decorate nếu chạy): vùng mùa 1 Đông Nam Á, trùng viền ChunkyBorder.
+  min-x: 11200
+  max-x: 13800
+  min-z: -3200
+  max-z: -800
   tree-density: 1.0
-  structure-spacing-chunks: 64
-  structure-chance: 0.6
-  exclude: {x: 12646, z: -2512, radius: 300}   # spawn Hà Nội (map 1:1000)
+  structure-spacing-chunks: 24   # vùng mùa 1 nhỏ: ~384 block giữa các điểm công trình mặt đất
+  structure-chance: 0.7
+  exclude: {x: 12699, z: -2465, radius: 190}   # khu spawn Hà Nội: công trình GlassCup x 12599..12799, z -2620..-2310
+  # Từ 12/10 map dùng cách B (WorldPainter populate: Minecraft tự trồng cây/cỏ/hoa/động vật khi nạp chunk) nên
+  # KHÔNG chạy /dmm decorate nữa. Cấu hình dưới đây chỉ còn để tham khảo (lượt 2 trồng rừng thủ công trên map cũ).
+  plants: false
+  patch-noise: true
   tick-budget-ms: 15
   max-chunks-loading: 8
-  auto-resume: true
+  auto-resume: false
+
+# Dọn rác: xoá vật phẩm rơi trên đất + mũi tên cắm đất định kỳ, báo trước trong chat. Dọn ngay: /dmm clean
+# Không xoá: vật phẩm rơi chưa đủ min-age-seconds (đồ rơi khi chết còn kịp nhặt), vật phẩm đã đổi tên, đinh ba.
+item-cleaner:
+  enabled: true
+  interval-minutes: 10
+  warn-seconds: [60, 30, 10, 5, 3, 2, 1]
+  min-age-seconds: 30
+  arrows: true
+  warn-message: "&c[⚠] &7Dọn vật phẩm dưới đất sau &e{s}s&7."
+  done-message: "&c[⚠] &7Đã dọn sạch &e{n} &7vật phẩm!"
+
+# Chống "đặt rồi phá" lấy tiền nghề (uJobs): block trong danh sách do người chơi đặt, phá lại thì không được tiền.
+# Phải khớp các block có tiền ở plugins/UJobs/jobs.yml (miner, lumberjack, digger). Dạng: tên đúng, *_LOG (đuôi), STONE* (đầu).
+job-guard:
+  enabled: true
+  materials: ["*_LOG", "*_STEM", "*_ORE", "ANCIENT_DEBRIS", "STONE", "DEEPSLATE", "NETHERRACK", "BLACKSTONE", "GILDED_BLACKSTONE",
+              "BASALT", "SMOOTH_BASALT", "END_STONE", "DIORITE", "ANDESITE", "GRANITE", "TUFF", "CALCITE", "SANDSTONE",
+              "AMETHYST_BLOCK", "AMETHYST_CLUSTER", "SAND", "RED_SAND", "GRAVEL", "CLAY", "MUD", "MYCELIUM", "SOUL_SAND", "SOUL_SOIL",
+              "DIRT", "GRASS_BLOCK", "PODZOL", "COARSE_DIRT", "ROOTED_DIRT", "MELON", "PUMPKIN"]
+
+# Lọc chat (chung lobby/banghoi/practice, giữ giống nhau ở cả 3 file config.yml): che từ tục bằng ***, chống spam.
+#   words-accented: khớp đúng dạng CÓ DẤU (từ mà bỏ dấu sẽ trùng từ thường: lồn/lớn, cặc/các, buồi/buổi, đéo/đeo, đĩ/đi).
+#   words-plain: khớp sau khi bỏ dấu (bắt cả kiểu gõ không dấu), chỉ dùng cho từ không trùng từ thường.
+#   Quyền duckymomo.chat.bypass (op): không bị chống spam.
+chat-filter:
+  enabled: true
+  words-accented: [lồn, cặc, buồi, đéo, đĩ, đụ, đụ má, đụ mẹ, mẹ mày, má mày, con mẹ mày, óc chó, chó má, thằng chó, con chó,
+                   ngu như chó, lìn, cứt]
+  words-plain: [dm, dmm, dmmm, dcm, dkm, dcmm, dcmn, dit, dit me, dit ma, djt, vcl, vkl, vcc, vklm, vl, vloz, vlon, clm, clmm, cmm,
+                cmn, cmnr, ccmm, dmcs, dmvl, cl, cc, loz, l0n, lon me, cak, cac lon, du ma, du me, ditconme, dcmvl, dmml, fuck,
+                fucking, shit, bitch, dick, pussy, motherfucker]
+  min-interval-seconds: 1.5
+  repeat-seconds: 30
+  caps-ratio: 0.7
+  too-fast-message: "&cChat chậm lại một chút!"
+  repeat-message: "&cĐừng gửi lặp lại cùng một câu!"
+
+# Ranh giới thị trấn Towny trên bản đồ web squaremap (lớp "Thị trấn", màu theo quốc gia, rê chuột xem thông tin)
+towny-map:
+  enabled: true
+  world: world
+  interval-seconds: 60

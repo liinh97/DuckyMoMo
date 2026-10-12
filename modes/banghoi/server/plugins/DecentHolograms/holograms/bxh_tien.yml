@@ -1,0 +1,24 @@
+location: world:12699.500:69.500:-2517.500
+enabled: true
+display-range: 48
+update-range: 48
+update-interval: 20
+facing: 0.0
+down-origin: false
+pages:
+- lines:
+  - content: '&6&l✦ TOP GIÀU NHẤT ✦'
+    height: 0.3
+  - content: '&e1. &f%essentials_baltop_player_0% &8- &a%essentials_baltop_balance_formatted_0%'
+    height: 0.3
+  - content: '&e2. &f%essentials_baltop_player_1% &8- &a%essentials_baltop_balance_formatted_1%'
+    height: 0.3
+  - content: '&e3. &f%essentials_baltop_player_2% &8- &a%essentials_baltop_balance_formatted_2%'
+    height: 0.3
+  - content: '&e4. &f%essentials_baltop_player_3% &8- &a%essentials_baltop_balance_formatted_3%'
+    height: 0.3
+  - content: '&e5. &f%essentials_baltop_player_4% &8- &a%essentials_baltop_balance_formatted_4%'
+    height: 0.3
+  - content: '&7Kiếm tiền: /jobs, /sell, buôn bán'
+    height: 0.3
+  actions: {}

@@ -1,0 +1,91 @@
+# Chế độ Practice: luyện PvP (đấu 1v1/đội, kit có sẵn, hàng chờ ghép trận) bằng Duels Optimised. Combat kiểu 1.8.
+services:
+  practice-1:
+    image: itzg/minecraft-server
+    restart: unless-stopped
+    stop_grace_period: 1m        # cho server đủ thời gian lưu thế giới khi tắt (mặc định Docker chỉ chờ 10 giây)
+    environment:
+      EULA: "TRUE"
+      TYPE: PAPER
+      VERSION: ${MC_VERSION:-26.2}
+      INIT_MEMORY: 1G
+      MAX_MEMORY: 3G              # world nhỏ (sảnh + đấu trường); đông người thì tăng (và mem_limit)
+      # World hư không: sảnh và đấu trường xây bằng lệnh (tools/build-practice.py). Không quái, không phá block ngoài trận.
+      LEVEL_TYPE: minecraft:flat
+      GENERATOR_SETTINGS: '{"layers":[{"block":"minecraft:air","height":1}],"biome":"minecraft:plains"}'
+      GENERATE_STRUCTURES: "FALSE"
+      MODE: adventure
+      DIFFICULTY: normal
+      SPAWN_MONSTERS: "FALSE"
+      SPAWN_ANIMALS: "FALSE"
+      ALLOW_NETHER: "FALSE"
+      PVP: "TRUE"
+      VIEW_DISTANCE: "8"
+      TZ: Asia/Ho_Chi_Minh
+      RCON_PASSWORD: ${RCON_PASSWORD:?Chưa đặt RCON_PASSWORD trong .env (chạy lại ./ops/init.sh)}   # dùng chung với dịch vụ sao lưu, trang Cài đặt
+      ONLINE_MODE: "FALSE"
+      # viaversion/viabackwards/viarewind: cho client nhiều phiên bản vào (cài trên server Paper, không cài ở proxy).
+      #   viaversion: client mới hơn server, viabackwards: client cũ hơn, viarewind: 1.7-1.8
+      # Lưu ý: dòng bắt đầu bằng # BÊN TRONG khối '|' không phải comment, image itzg sẽ đọc thành tên plugin.
+      # duels-optimised: đấu 1v1/NvN, hàng chờ, kit, party, nhiều hiệp (GPL-3.0). Tắt tự cập nhật trong config của nó.
+      MODRINTH_PROJECTS: |
+        luckperms
+        viaversion
+        viabackwards
+        viarewind
+        decentholograms
+        vaultunlocked
+        duels-optimised
+        grimac:nKI7MWZj
+      # Ghim link như banghoi: OldCombatMechanics (combat 1.8), EssentialsX bản dev cho 26.2 (chat có role, /spawn)
+      PLUGINS: |
+        https://download.geysermc.org/v2/projects/floodgate/versions/latest/builds/latest/downloads/spigot
+        https://github.com/kernitus/BukkitOldCombatMechanics/releases/download/v2.7.0/OldCombatMechanics.jar
+        https://ci.ender.zone/job/EssentialsX/1832/artifact/jars/EssentialsX-2.22.1-dev%2B27-e70bdb8.jar
+        https://ci.ender.zone/job/EssentialsX/1832/artifact/jars/EssentialsXChat-2.22.1-dev%2B27-e70bdb8.jar
+        https://ci.ender.zone/job/EssentialsX/1832/artifact/jars/EssentialsXSpawn-2.22.1-dev%2B27-e70bdb8.jar
+      CFG_SERVER_NAME: practice-1
+      CFG_VELOCITY_SECRET: ${VELOCITY_SECRET}
+      CFG_DB_USER: ${DB_USER}
+      CFG_DB_PASSWORD: ${DB_PASSWORD}
+      CFG_REDIS_PASSWORD: ${REDIS_PASSWORD}
+    mem_limit: 4g
+    volumes:
+      - ../../data/practice-1:/data
+      - ../../data/proxy/plugins/floodgate/key.pem:/run/floodgate/key.pem:ro   # khoá Floodgate chung với proxy (plugins/floodgate/config.yml: key-file-name)
+      - ./server/config:/config:ro
+      - ./server/plugins:/plugins:ro
+    depends_on:
+      mariadb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  # Sao lưu thế giới + plugin của practice-1 (itzg/mc-backup + restic: tạm dừng ghi qua RCON, chỉ lưu phần thay đổi, xoá bản quá hạn).
+  # Sao lưu ngay: docker compose exec backup-practice-1 backup now. Khôi phục: README.md, mục "Sao lưu và khôi phục".
+  backup-practice-1:
+    image: itzg/mc-backup
+    restart: unless-stopped
+    environment:
+      RCON_HOST: practice-1
+      RCON_PASSWORD: ${RCON_PASSWORD}
+      BACKUP_NAME: practice-1
+      BACKUP_INTERVAL: ${BACKUP_INTERVAL:-6h}
+      # restic: kho sao lưu khử trùng lặp, lần đầu ~ cỡ world, các lần sau chỉ phần thay đổi (map 1:1000 nặng 17+ GB,
+      # nén tar.gz mỗi lần sẽ đầy ổ). Mất RESTIC_PASSWORD là KHÔNG khôi phục được: cất thêm một bản ngoài máy.
+      BACKUP_METHOD: restic
+      RESTIC_REPOSITORY: /backups/restic
+      RESTIC_PASSWORD: ${RESTIC_PASSWORD:?Chưa đặt RESTIC_PASSWORD trong .env (chạy lại ./ops/init.sh)}
+      RESTIC_HOSTNAME: practice-1
+      PRUNE_RESTIC_RETENTION: "--keep-within ${BACKUP_KEEP_DAYS:-7}d --keep-daily 30"
+      # Không sao lưu file tải lại được (*.jar), log, cache, và các world cũ đã cất bằng ops/doi-map-banghoi.sh
+      EXCLUDES: "*.jar,cache,logs,*.tmp,world-*"   # world-* = các world cũ đã cất (world_nether, world_the_end dùng dấu gạch dưới nên vẫn được sao lưu)
+      PAUSE_IF_NO_PLAYERS: "true"      # không ai vào kể từ lần trước thì bỏ qua, đỡ tốn ổ
+      INITIAL_DELAY: 5m
+      TZ: Asia/Ho_Chi_Minh
+    volumes:
+      - ../../data/practice-1:/data:ro
+      # BACKUP_DIR trong .env phải là đường dẫn tuyệt đối (ví dụ /mnt/f/DuckyMoMo-backups); bỏ trống = backups/ trong repo
+      - ${BACKUP_DIR:-../../backups}/practice-1:/backups
+    depends_on:
+      - practice-1

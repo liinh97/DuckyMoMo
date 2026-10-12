@@ -134,6 +134,29 @@ final class LobbyMenu implements Listener {
             visible.add(mode);
         }
 
+        // Bedrock (Floodgate): form nút bấm thay cho giao diện rương
+        if (BedrockMenu.available() && BedrockMenu.isBedrock(player.getUniqueId())) {
+            List<BedrockMenu.Entry> entries = new ArrayList<>();
+            for (GameMode mode : visible) {
+                String state = switch (mode.status()) {
+                    case "open" -> "Đang mở";
+                    case "beta" -> "Thử nghiệm";
+                    case "maintenance" -> "Bảo trì";
+                    default -> mode.status();
+                };
+                boolean ok = mode.joinable() && mode.supportsBedrock();
+                String label = mode.displayName() + "\n" + (mode.supportsBedrock() ? state : "Chưa hỗ trợ điện thoại");
+                entries.add(new BedrockMenu.Entry(label, ok ? mode.server() : null));
+            }
+            BedrockMenu.open(player.getUniqueId(), "Chọn chế độ",
+                    entries.isEmpty() ? "Chưa có chế độ nào mở, quay lại sau nhé!" : "Bấm vào chế độ muốn chơi:",
+                    entries, server -> plugin.getServer().getScheduler().runTask(plugin, () -> {
+                        player.sendMessage(text("Đang chuyển sang " + server + "…", NamedTextColor.GRAY));
+                        connect(player, server);
+                    }));
+            return;
+        }
+
         int rows = Math.max(3, Math.min(6, (visible.size() + 8) / 9 + 2));
         MenuHolder holder = new MenuHolder();
         Inventory inv = plugin.getServer().createInventory(holder, rows * 9, text("Chọn chế độ", NamedTextColor.DARK_GRAY));

@@ -29,6 +29,7 @@ enable-player-address-logging = true
 # Tên = tên service trong Docker Compose. network-core sau này sẽ đăng ký động từ bảng network.servers.
 lobby = "lobby:25565"
 banghoi-1 = "banghoi-1:25565"
+practice-1 = "practice-1:25565"
 # Bật khi chạy chế độ Pokémon (docker compose --profile pokemon up -d):
 # pokemon-1 = "pokemon-1:25565"
 
@@ -48,7 +49,7 @@ read-timeout = 30000
 haproxy-protocol = false
 tcp-fast-open = false
 bungee-plugin-message-channel = true
-show-ping-requests = false
+show-ping-requests = true   # 12/10: ghi cả lượt ping danh sách server -> playit-watchdog phân biệt được playit kẹt với ping
 failover-on-unexpected-server-disconnect = true
 announce-proxy-commands = true
 log-command-executions = false

@@ -6,7 +6,7 @@ services:
     environment:
       EULA: "TRUE"
       TYPE: PAPER
-      VERSION: ${MC_VERSION:-LATEST}
+      VERSION: ${MC_VERSION:-26.2}
       # Không bật USE_AIKAR_FLAGS: lobby nhẹ, không cần giữ sẵn cả heap (AlwaysPreTouch).
       # INIT_MEMORY nhỏ: Java bắt đầu ít RAM, chỉ lấy thêm khi cần, tối đa MAX_MEMORY.
       INIT_MEMORY: 512M
@@ -15,25 +15,37 @@ services:
       RCON_PASSWORD: ${RCON_PASSWORD:?Chưa đặt RCON_PASSWORD trong .env (chạy lại ./ops/init.sh)}   # dùng chung với dịch vụ sao lưu, trang Cài đặt
       ONLINE_MODE: "FALSE"        # proxy lo xác thực; server con không mở cổng ra ngoài
       MOTD: "DuckyMoMo Lobby"
-      # Lobby: thế giới phẳng, an toàn, không quái
+      # Lobby: đảo bay "Sakura Spawn" của ArtillexStudios (map tải về, bản 1.12.2; Paper tự chuyển chunk sang 26.2 khi nạp,
+      # đã nạp + lưu sẵn). Spawn (0, 89, 0), viền 360 block quanh (0, -40), khoá trưa + trời quang.
+      # Rơi khỏi đảo thì DuckyMoMoCore đưa về spawn (plugins/DuckyMoMoCore/config.yml: void-teleport).
+      # World cũ vẫn giữ trong data/lobby: world (phẳng), lobby-hub, lobby-sanh (thử 12/10). Quay lại: LEVEL: world.
+      LEVEL: sakura               # ghi rõ: level-name đã lưu trong server.properties, bỏ biến LEVEL không tự quay về
       LEVEL_TYPE: minecraft:flat
       GENERATE_STRUCTURES: "FALSE"
       MODE: adventure
       DIFFICULTY: peaceful
       SPAWN_MONSTERS: "FALSE"
       ALLOW_NETHER: "FALSE"
-      VIEW_DISTANCE: "6"
+      VIEW_DISTANCE: "10"         # đảo sảnh rộng ~460 block, nhìn xa mới thấy hết
+      SIMULATION_DISTANCE: "4"
       # Plugin tải tự động từ Modrinth
       # authmereloaded: lobby là nơi /register, /login (proxy chặn chưa đăng nhập thì không sang server khác)
       # viaversion/viabackwards/viarewind: cho client nhiều phiên bản vào (cài trên server Paper, không cài ở proxy).
       #   viaversion: client mới hơn server, viabackwards: client cũ hơn, viarewind: 1.7-1.8
+      # decentholograms: chữ nổi (hologram) /dh create <tên> <chữ>; bản 2.10.1 hỗ trợ 26.2
       # Lưu ý: dòng bắt đầu bằng # BÊN TRONG khối '|' không phải comment, image itzg sẽ đọc thành tên plugin.
+      # WorldEdit: Modrinth chỉ có bản beta cho 26.2 nên image không tự tải; chép tay worldedit-bukkit-7.4.5.jar vào data/lobby/plugins
+      # (lấy từ data/banghoi-1/plugins). Không có trong Git.
       MODRINTH_PROJECTS: |
         luckperms
         authmereloaded
         viaversion
         viabackwards
         viarewind
+        decentholograms
+      # Floodgate (bản Spigot, tải từ GeyserMC): nhận người chơi Bedrock từ proxy (send-floodgate-data), menu dạng form
+      PLUGINS: |
+        https://download.geysermc.org/v2/projects/floodgate/versions/latest/builds/latest/downloads/spigot
       # Biến cho các file cấu hình trong ./config và ./plugins
       CFG_SERVER_NAME: lobby
       CFG_VELOCITY_SECRET: ${VELOCITY_SECRET}
@@ -44,6 +56,7 @@ services:
     mem_limit: 3g
     volumes:
       - ../data/lobby:/data
+      - ../data/proxy/plugins/floodgate/key.pem:/run/floodgate/key.pem:ro   # khoá Floodgate chung với proxy (plugins/floodgate/config.yml: key-file-name)
       - ./config:/config:ro        # -> /data/config (paper-global.yml…)
       - ./plugins:/plugins:ro      # -> /data/plugins (cấu hình plugin, jar tải tay)
       - ../modes:/modes:ro         # menu chọn chế độ đọc modes/*/mode.yml
@@ -71,7 +84,7 @@ services:
       RESTIC_HOSTNAME: lobby
       PRUNE_RESTIC_RETENTION: "--keep-within ${BACKUP_KEEP_DAYS:-7}d --keep-daily 30"
       # Không sao lưu file tải lại được (*.jar), log, cache, và các world cũ đã cất bằng ops/doi-map-banghoi.sh
-      EXCLUDES: "*.jar,cache,logs,*.tmp,world-cu-*,world-1-2000-*,world-tu-nhien-*"
+      EXCLUDES: "*.jar,cache,logs,*.tmp,world-*"   # world-* = các world cũ đã cất (world_nether, world_the_end dùng dấu gạch dưới nên vẫn được sao lưu)
       PAUSE_IF_NO_PLAYERS: "true"      # không ai vào kể từ lần trước thì bỏ qua, đỡ tốn ổ
       INITIAL_DELAY: 5m
       TZ: Asia/Ho_Chi_Minh

@@ -7,17 +7,15 @@ import os, sys, struct, zlib, math
 REGION = sys.argv[1]
 OUT = sys.argv[2]
 WORLD_UUID = "83762995-117c-4aba-9404-a7d9ba9b6dd8"
-# Block mỗi độ = chiều rộng map / 360. Chiều rộng = 2 x border_x trong modes/banghoi/settings.yml (viền ChunkyBorder,
-# trang Cài đặt). 1:2000: border_x 10752 -> 59,73; 1:1000: border_x 21504 -> 119,47. Ghi đè: biến môi trường BORDER_X.
-_settings = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "modes", "banghoi", "settings.yml")
-_border_x = int(os.environ.get("BORDER_X") or next(
-    l.split(":", 1)[1] for l in open(_settings, encoding="utf-8") if l.startswith("border_x:")))
-K = _border_x * 2 / 360
+# Block mỗi độ = chiều rộng map / 360 = 2 x nửa chiều rộng / 360. Map 1:1000: nửa chiều rộng 21504 -> 119,47;
+# 1:2000: 10752 -> 59,73. KHÔNG lấy từ border_x (viền theo mùa nhỏ hơn cả map). Ghi đè: biến môi trường MAP_HALF_WIDTH.
+K = int(os.environ.get("MAP_HALF_WIDTH", "21504")) * 2 / 360
 
 # (warp, tên thành phố/địa danh, nước, vĩ độ, kinh độ). Tên ngắn (biển tên ~15 ký tự mỗi dòng).
+# hanoi: chỉnh về quảng trường spawn (12699, -2509 ở 1:1000); nội thành Hà Nội trong dữ liệu map lệch ~55 block đông.
 PLACES = [
     # Việt Nam
-    ("hanoi", "Hà Nội", "Việt Nam", 21.03, 105.85), ("hcm", "TP. Hồ Chí Minh", "Việt Nam", 10.78, 106.70),
+    ("hanoi", "Hà Nội", "Việt Nam", 21.00, 106.30), ("hcm", "TP. Hồ Chí Minh", "Việt Nam", 10.78, 106.70),
     ("haiphong", "Hải Phòng", "Việt Nam", 20.86, 106.68), ("halong", "Vịnh Hạ Long", "Việt Nam", 20.95, 107.08),
     ("sapa", "Sa Pa", "Việt Nam", 22.34, 103.84), ("hagiang", "Hà Giang", "Việt Nam", 22.82, 104.98),
     ("dienbienphu", "Điện Biên Phủ", "Việt Nam", 21.39, 103.02), ("caobang", "Cao Bằng", "Việt Nam", 22.67, 106.26),
@@ -113,7 +111,10 @@ def heightmaps(cx, cz):
                 f.seek(off * 4096)
                 ln, comp = struct.unpack(">IB", f.read(5))
                 raw = zlib.decompress(f.read(ln - 1))
-                res = tuple(read_hm(raw, n) for n in ("MOTION_BLOCKING_NO_LEAVES", "OCEAN_FLOOR"))
+                try:
+                    res = tuple(read_hm(raw, n) for n in ("MOTION_BLOCKING_NO_LEAVES", "OCEAN_FLOOR"))
+                except ValueError:
+                    res = None  # chunk chưa hoàn thiện (ngoài vùng đã nạp, map populate): chưa có heightmap
     _cache[(cx, cz)] = res
     return res
 
@@ -139,7 +140,7 @@ def column(x, z):
     return hm[0][i], hm[1][i]
 
 
-def find_land(x0, z0, maxr=20):
+def find_land(x0, z0, maxr=50):  # 50 block = 50 km ở 1:1000 (đảo, thành phố ven biển)
     for r in range(0, maxr + 1):
         best = None
         for dx in range(-r, r + 1):

@@ -16,6 +16,8 @@ DataSource:
 settings:
     serverName: DuckyMoMo
     messagesLanguage: vn
+    # Mọi người đều nhận tiếng Việt (bật thì AuthMe theo ngôn ngữ client: client để English sẽ thấy tiếng Anh)
+    perPlayerLocale: false
     # Người có bản quyền gõ /premium để lần sau vào thẳng, không cần mật khẩu (proxy xác minh với Mojang)
     enablePremium: true
     restrictions:
@@ -24,6 +26,14 @@ settings:
         maxRegPerIp: 0
         # Cho phép dấu chấm ở đầu: tiền tố tên người chơi Bedrock của Floodgate (ví dụ .TenNguoiChoi)
         allowedNicknameCharacters: '\.?[a-zA-Z0-9_]*'
+    registration:
+        dialog:
+            # Không dùng hộp thoại mật khẩu (người dùng muốn vào game rồi gõ /login, /register trong chat).
+            # preJoin: hộp thoại trước khi vào (màn hình đen); postJoin: hộp thoại sau khi vào sảnh.
+            preJoin:
+                enable: false
+            postJoin:
+                enable: false
     security:
         minPasswordLength: 6
         passwordHash: BCRYPT

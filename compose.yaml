@@ -11,3 +11,4 @@ include:
   - tunnel/compose.yaml         # playit.gg cho người ngoài mạng nhà - chỉ chạy khi bật: --profile tunnel
   - dashboard/compose.yaml      # Dozzle: xem log/chat qua trình duyệt, http://localhost:8888/mc/log/
   - panel/compose.yaml          # Trang Cài đặt: chỉnh setting các chế độ, http://localhost:8889
+  - modes/practice/compose.yaml

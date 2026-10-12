@@ -1,0 +1,16 @@
+id: practice
+display_name: "Practice"
+description: "Luyện PvP: đấu 1v1, đấu đội, kit có sẵn, combat 1.8"
+icon: "minecraft:iron_sword"
+status: beta
+platform: paper
+minecraft_version: "26.2"
+clients: [java, bedrock]
+servers:
+  - name: practice-1
+    address: practice-1:25565
+visibility:
+  beta_permission: "network.beta"
+economy: isolated
+database: mode_practice
+cosmetics: [chat_tag, name_color]

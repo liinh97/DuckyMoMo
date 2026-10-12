@@ -8,7 +8,7 @@ services:
     environment:
       EULA: "TRUE"
       TYPE: PAPER
-      VERSION: ${MC_VERSION:-LATEST}
+      VERSION: ${MC_VERSION:-26.2}
       INIT_MEMORY: 1G
       MAX_MEMORY: 4G              # chế độ mới chạy thử; chạy thật thì làm như banghoi (MEMORY + USE_AIKAR_FLAGS)
       TZ: Asia/Ho_Chi_Minh
@@ -22,6 +22,7 @@ services:
         viaversion
         viabackwards
         viarewind
+        decentholograms
       CFG_SERVER_NAME: __MODE_ID__-1
       CFG_VELOCITY_SECRET: ${VELOCITY_SECRET}
       CFG_DB_USER: ${DB_USER}
@@ -57,7 +58,7 @@ services:
       RESTIC_HOSTNAME: __MODE_ID__-1
       PRUNE_RESTIC_RETENTION: "--keep-within ${BACKUP_KEEP_DAYS:-7}d --keep-daily 30"
       # Không sao lưu file tải lại được (*.jar), log, cache, và các world cũ đã cất bằng ops/doi-map-banghoi.sh
-      EXCLUDES: "*.jar,cache,logs,*.tmp,world-cu-*,world-1-2000-*,world-tu-nhien-*"
+      EXCLUDES: "*.jar,cache,logs,*.tmp,world-*"   # world-* = các world cũ đã cất (world_nether, world_the_end dùng dấu gạch dưới nên vẫn được sao lưu)
       PAUSE_IF_NO_PLAYERS: "true"      # không ai vào kể từ lần trước thì bỏ qua, đỡ tốn ổ
       INITIAL_DELAY: 5m
       TZ: Asia/Ho_Chi_Minh

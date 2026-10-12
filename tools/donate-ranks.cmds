@@ -1,0 +1,78 @@
+# Rank donate (tước vị) trong LuckPerms, chạy bằng: docker exec -i duckymomo-banghoi-1-1 rcon-cli < tools/donate-ranks.cmds
+# CHỈ quyền trang trí (luật Mojang). Quyền hiệu ứng hạt/pet ghi ở đây, giới hạn cụ thể nằm trong config PlayerParticles/SimplePets.
+lp deletegroup vip
+lp creategroup namtuoc
+lp creategroup tutuoc
+lp creategroup batuoc
+lp creategroup hautuoc
+lp creategroup congtuoc
+lp group namtuoc setdisplayname "Nam Tước"
+lp group tutuoc setdisplayname "Tử Tước"
+lp group batuoc setdisplayname "Bá Tước"
+lp group hautuoc setdisplayname "Hầu Tước"
+lp group congtuoc setdisplayname "Công Tước"
+lp group namtuoc setweight 5
+lp group tutuoc setweight 6
+lp group batuoc setweight 7
+lp group hautuoc setweight 8
+lp group congtuoc setweight 9
+lp group namtuoc meta setprefix 5 "&a[Nam Tước] "
+lp group tutuoc meta setprefix 6 "&b[Tử Tước] "
+lp group batuoc meta setprefix 7 "&9[Bá Tước] "
+lp group hautuoc meta setprefix 8 "&d[Hầu Tước] "
+lp group congtuoc meta setprefix 9 "&6&l[Công Tước]&r "
+lp group tutuoc parent add namtuoc
+lp group batuoc parent add tutuoc
+lp group hautuoc parent add batuoc
+lp group congtuoc parent add hautuoc
+lp group namtuoc permission set essentials.chat.color true
+lp group namtuoc permission set essentials.hat true
+lp group namtuoc permission set duckymomo.rank.join true
+lp group tutuoc permission set essentials.nick true
+lp group tutuoc permission set playerparticles.particles.max.1 true
+lp group tutuoc permission set playerparticles.effect.* true
+lp group tutuoc permission set playerparticles.style.* true
+lp group batuoc permission set essentials.nick.color true
+lp group batuoc permission set playerparticles.particles.max.2 true
+lp group batuoc permission set pet.type.cat.* true
+lp group batuoc permission set pet.type.wolf.* true
+lp group batuoc permission set pet.type.chicken.* true
+lp group batuoc permission set pet.type.pig.* true
+lp group batuoc permission set pet.type.rabbit.* true
+lp group batuoc permission set pet.type.parrot.* true
+lp group batuoc permission set pet.type.fox.* true
+lp group batuoc permission set pet.type.bee.* true
+lp group batuoc permission set pet.type.axolotl.* true
+lp group batuoc permission set pet.type.frog.* true
+lp group batuoc permission set pet.type.turtle.* true
+lp group batuoc permission set pet.type.sheep.* true
+lp group batuoc permission set pet.type.cow.* true
+lp group hautuoc permission set essentials.chat.format true
+lp group hautuoc permission set essentials.nick.format true
+lp group hautuoc permission set playerparticles.particles.max.3 true
+lp group hautuoc permission set pet.type.panda.* true
+lp group hautuoc permission set pet.type.polarbear.* true
+lp group hautuoc permission set pet.type.goat.* true
+lp group hautuoc permission set pet.type.allay.* true
+lp group hautuoc permission set pet.type.armadillo.* true
+lp group hautuoc permission set pet.type.camel.* true
+lp group hautuoc permission set pet.type.sniffer.* true
+lp group hautuoc permission set pet.type.mooshroom.* true
+lp group hautuoc permission set pet.type.ocelot.* true
+lp group hautuoc permission set pet.type.llama.* true
+lp group hautuoc permission set pet.type.tadpole.* true
+lp group hautuoc permission set pet.type.copper_golem.* true
+lp group hautuoc permission set pet.type.dolphin.* true
+lp group hautuoc permission set pet.type.happy_ghast.* true
+lp group congtuoc permission set essentials.chat.rgb true
+lp group congtuoc permission set essentials.nick.rgb true
+lp group congtuoc permission set playerparticles.particles.max.6 true
+lp group congtuoc permission set pet.type.passive true
+lp group congtuoc permission set duckymomo.rank.join.special true
+lp deletetrack donate
+lp createtrack donate
+lp track donate append namtuoc
+lp track donate append tutuoc
+lp track donate append batuoc
+lp track donate append hautuoc
+lp track donate append congtuoc

@@ -43,6 +43,8 @@ services:
         viabackwards
         viarewind
         decentholograms
+        playerparticles
+        simplepets
       # Floodgate (bản Spigot, tải từ GeyserMC): nhận người chơi Bedrock từ proxy (send-floodgate-data), menu dạng form
       PLUGINS: |
         https://download.geysermc.org/v2/projects/floodgate/versions/latest/builds/latest/downloads/spigot

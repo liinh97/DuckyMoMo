@@ -17,7 +17,19 @@ commands:
   dmm:
     description: Lệnh admin của DuckyMoMo (trang trí map…)
     permission: duckymomo.admin
+  rank:
+    description: "Xem rank donate (tước vị), giá, rank của bạn. Admin: /rank give|remove|check"
+    aliases: [donate, tuocvi]
 permissions:
+  duckymomo.rank.admin:
+    description: Cấp/gỡ/xem rank donate của người khác (/rank give|remove|check)
+    default: op
+  duckymomo.rank.join:
+    description: Có dòng chào khi vào server (rank donate)
+    default: false
+  duckymomo.rank.join.special:
+    description: Vào server có tiếng chuông cho cả server (bậc cao nhất)
+    default: false
   duckymomo.admin:
     description: Lệnh admin /dmm
     default: op

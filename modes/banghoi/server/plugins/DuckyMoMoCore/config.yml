@@ -66,3 +66,40 @@ towny-map:
   # Viền mùa vẽ lên bản đồ (minX, minZ, maxX, maxZ), khớp ChunkyBorder/settings.yml (tâm 12500,-2000, bán kính 1300x1200)
   border: [11200, -3200, 13800, -800]
   border-label: "Viền mùa 1"
+
+# Rank donate (tước vị) + thông báo vào/ra server. Giữ GIỐNG NHAU ở lobby/banghoi/practice.
+# Nhóm LuckPerms: tools/donate-ranks.cmds (bậc cao kế thừa bậc thấp). CHỈ quyền trang trí (luật Mojang).
+# Admin cấp: /rank give <tên> <bậc> <1|3|6|12> (1 tháng = 30 ngày, gia hạn cộng dồn). /rank remove, /rank check.
+# prices: giá ĐỀ XUẤT (12/10/2026), sửa theo ý chủ server.
+donate-ranks:
+  enabled: true
+  how-to-buy: "&7Mua rank: nhắn admin qua Discord/Zalo, chuyển khoản ghi &fTÊN NHÂN VẬT + GÓI&7. Admin cấp trong ngày."
+  join-message: "&8[&a+&8] {prefix}&f{player}"
+  quit-message: "&8[&c-&8] {prefix}&f{player}"
+  rank-join-message: "&e✦ {tiercolor}{tier} &f{player} &evừa giá lâm!"
+  tiers:
+    - group: namtuoc
+      name: Nam Tước
+      color: "&a"
+      perks: [prefix, chat màu, /hat, chào khi vào server]
+      prices: [1 tháng 20k, 3 tháng 50k, 6 tháng 90k, 1 năm 160k]
+    - group: tutuoc
+      name: Tử Tước
+      color: "&b"
+      perks: [/nick, 1 hiệu ứng hạt (/pp)]
+      prices: [1 tháng 40k, 3 tháng 100k, 6 tháng 180k, 1 năm 320k]
+    - group: batuoc
+      name: Bá Tước
+      color: "&9"
+      perks: [nick có màu, 2 hiệu ứng hạt, 1 pet (/pet)]
+      prices: [1 tháng 70k, 3 tháng 180k, 6 tháng 320k, 1 năm 560k]
+    - group: hautuoc
+      name: Hầu Tước
+      color: "&d"
+      perks: [chat đậm/nghiêng, 3 hiệu ứng hạt, pet hiếm]
+      prices: [1 tháng 100k, 3 tháng 260k, 6 tháng 460k, 1 năm 800k]
+    - group: congtuoc
+      name: Công Tước
+      color: "&6"
+      perks: [chat/nick màu tuỳ chọn (hex), 6 hiệu ứng hạt, mọi pet, chuông khi vào server]
+      prices: [1 tháng 150k, 3 tháng 390k, 6 tháng 690k, 1 năm 1.200k]

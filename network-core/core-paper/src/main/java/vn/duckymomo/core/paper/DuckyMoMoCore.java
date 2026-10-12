@@ -50,6 +50,22 @@ public final class DuckyMoMoCore extends JavaPlugin {
             getLogger().info("Lọc chat: bật");
         }
 
+        // Rank donate (tước vị) + thông báo vào/ra: donate-ranks.enabled
+        PluginCommand rankCmd = getCommand("rank");
+        if (getConfig().getBoolean("donate-ranks.enabled") && getServer().getPluginManager().isPluginEnabled("LuckPerms")) {
+            DonateRanks ranks = new DonateRanks(this, getConfig().getConfigurationSection("donate-ranks"));
+            getServer().getPluginManager().registerEvents(ranks, this);
+            if (rankCmd != null) {
+                rankCmd.setExecutor((sender, cmd, label, args) -> ranks.command(sender, args));
+            }
+            getLogger().info("Rank donate + thông báo vào/ra: bật");
+        } else if (rankCmd != null) {
+            rankCmd.setExecutor((sender, cmd, label, args) -> {
+                sender.sendMessage("Rank donate chưa bật trên server này.");
+                return true;
+            });
+        }
+
         // Chat có prefix role + rank donate (lobby không có EssentialsX Chat): chat-format.enabled
         if (getConfig().getBoolean("chat-format.enabled") && getServer().getPluginManager().isPluginEnabled("LuckPerms")) {
             getServer().getPluginManager().registerEvents(new ChatFormat(), this);

@@ -1,0 +1,279 @@
+package vn.duckymomo.core.paper;
+
+import java.time.Duration;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import net.luckperms.api.LuckPerms;
+import net.luckperms.api.LuckPermsProvider;
+import net.luckperms.api.model.data.TemporaryNodeMergeStrategy;
+import net.luckperms.api.model.user.User;
+import net.luckperms.api.node.types.InheritanceNode;
+import org.bukkit.Bukkit;
+import org.bukkit.Sound;
+import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.plugin.java.JavaPlugin;
+
+/**
+ * Rank donate (tước vị) + thông báo vào/ra server.
+ * - Bậc (thấp -> cao) và giá lấy từ config donate-ranks; nhóm LuckPerms tạo bằng tools/donate-ranks.cmds
+ *   (bậc cao kế thừa bậc thấp, track "donate"). CHỈ quyền trang trí (luật Mojang: không bán lợi thế khi chơi).
+ * - /rank: người chơi xem các bậc, quyền lợi, giá, rank của mình và ngày hết hạn.
+ * - /rank give <tên> <bậc> <tháng>: admin cấp rank có thời hạn (1 tháng = 30 ngày), gia hạn thì cộng dồn;
+ *   đổi sang bậc khác thì bỏ bậc cũ (báo admin số ngày còn lại của bậc cũ để tự bù). /rank remove, /rank check.
+ * - Thông báo khi vào/ra: mọi người đều có dòng vào/ra kèm prefix; có rank (duckymomo.rank.join) thì thêm dòng
+ *   chào; bậc cao nhất (duckymomo.rank.join.special) thêm tiếng chuông cho cả server.
+ */
+final class DonateRanks implements Listener {
+
+    record Tier(String group, String name, String color, List<String> perks, List<String> prices) {
+    }
+
+    private static final LegacyComponentSerializer LEGACY = LegacyComponentSerializer.legacyAmpersand();
+    private static final DateTimeFormatter DATE = DateTimeFormatter.ofPattern("dd/MM/yyyy").withZone(ZoneId.of("Asia/Ho_Chi_Minh"));
+
+    private final JavaPlugin plugin;
+    private final List<Tier> tiers = new ArrayList<>();
+    private final String howToBuy;
+    private final String joinMsg;
+    private final String quitMsg;
+    private final String rankJoinMsg;
+
+    DonateRanks(JavaPlugin plugin, ConfigurationSection c) {
+        this.plugin = plugin;
+        for (var m : c.getMapList("tiers")) {
+            tiers.add(new Tier(String.valueOf(m.get("group")), String.valueOf(m.get("name")), String.valueOf(m.get("color")),
+                    asList(m.get("perks")), asList(m.get("prices"))));
+        }
+        this.howToBuy = c.getString("how-to-buy", "&7Liên hệ admin để mua rank.");
+        this.joinMsg = c.getString("join-message", "&8[&a+&8] {prefix}&f{player}");
+        this.quitMsg = c.getString("quit-message", "&8[&c-&8] {prefix}&f{player}");
+        this.rankJoinMsg = c.getString("rank-join-message", "&e✦ {tiercolor}{tier} &f{player} &evừa giá lâm!");
+    }
+
+    private static List<String> asList(Object o) {
+        List<String> out = new ArrayList<>();
+        if (o instanceof List<?> l) {
+            for (Object x : l) {
+                out.add(String.valueOf(x));
+            }
+        }
+        return out;
+    }
+
+    private static Component c(String s) {
+        return LEGACY.deserialize(s);
+    }
+
+    private static LuckPerms lp() {
+        return LuckPermsProvider.get();
+    }
+
+    private Tier tierOf(User u) {
+        Tier best = null;
+        for (Tier t : tiers) {
+            if (u.getInheritedGroups(u.getQueryOptions()).stream().anyMatch(g -> g.getName().equalsIgnoreCase(t.group()))) {
+                best = t;
+            }
+        }
+        return best;
+    }
+
+    private String prefixOf(Player p) {
+        User u = lp().getUserManager().getUser(p.getUniqueId());
+        String pre = u == null ? null : u.getCachedData().getMetaData().getPrefix();
+        return pre == null ? "" : pre;
+    }
+
+    // ---------------------------------------------------------------- vào / ra
+
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onJoin(PlayerJoinEvent e) {
+        Player p = e.getPlayer();
+        e.joinMessage(c(joinMsg.replace("{prefix}", prefixOf(p)).replace("{player}", p.getName())));
+        if (!p.hasPermission("duckymomo.rank.join")) {
+            return;
+        }
+        User u = lp().getUserManager().getUser(p.getUniqueId());
+        Tier t = u == null ? null : tierOf(u);
+        if (t == null) {
+            return;
+        }
+        Bukkit.broadcast(c(rankJoinMsg.replace("{tiercolor}", t.color()).replace("{tier}", t.name()).replace("{player}", p.getName())));
+        if (p.hasPermission("duckymomo.rank.join.special")) {
+            for (Player o : Bukkit.getOnlinePlayers()) {
+                o.playSound(o.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 0.6f, 1.2f);
+            }
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onQuit(PlayerQuitEvent e) {
+        e.quitMessage(c(quitMsg.replace("{prefix}", prefixOf(e.getPlayer())).replace("{player}", e.getPlayer().getName())));
+    }
+
+    // ---------------------------------------------------------------- lệnh
+
+    boolean command(CommandSender s, String[] a) {
+        boolean admin = s.hasPermission("duckymomo.rank.admin");
+        if (a.length == 0) {
+            showInfo(s);
+            return true;
+        }
+        switch (a[0].toLowerCase()) {
+            case "give" -> {
+                if (!admin || a.length < 4) {
+                    s.sendMessage(c(admin ? "&cDùng: /rank give <tên> <bậc> <số tháng: 1|3|6|12>" : "&cBạn không có quyền."));
+                    return true;
+                }
+                give(s, a[1], a[2], a[3]);
+            }
+            case "remove" -> {
+                if (!admin || a.length < 2) {
+                    s.sendMessage(c(admin ? "&cDùng: /rank remove <tên>" : "&cBạn không có quyền."));
+                    return true;
+                }
+                withUser(s, a[1], u -> {
+                    int n = clearTiers(u);
+                    s.sendMessage(c("&aĐã gỡ rank donate của &f" + u.getUsername() + " &7(" + n + " mục)."));
+                });
+            }
+            case "check" -> {
+                if (!admin || a.length < 2) {
+                    s.sendMessage(c(admin ? "&cDùng: /rank check <tên>" : "&cBạn không có quyền."));
+                    return true;
+                }
+                withUser(s, a[1], u -> s.sendMessage(c("&f" + u.getUsername() + "&7: " + describe(u))));
+            }
+            default -> showInfo(s);
+        }
+        return true;
+    }
+
+    private void showInfo(CommandSender s) {
+        s.sendMessage(c("&6&l✦ RANK DONATE (tước vị) ✦ &7chỉ trang trí, không lợi thế khi chơi"));
+        for (Tier t : tiers) {
+            s.sendMessage(c(t.color() + "&l" + t.name() + "&7: " + String.join("&7, ", t.perks().stream().map(x -> "&f" + x).toList())));
+            if (!t.prices().isEmpty()) {
+                s.sendMessage(c("   &8Giá: &e" + String.join("&8 | &e", t.prices())));
+            }
+        }
+        s.sendMessage(c("&7Bậc cao có đủ quyền của các bậc thấp hơn."));
+        s.sendMessage(c(howToBuy));
+        if (s instanceof Player p) {
+            User u = lp().getUserManager().getUser(p.getUniqueId());
+            if (u != null) {
+                s.sendMessage(c("&7Rank của bạn: " + describe(u)));
+            }
+        }
+    }
+
+    /** "Bá Tước (hết hạn 12/11/2026)" hoặc "chưa có". */
+    private String describe(User u) {
+        Tier t = tierOf(u);
+        if (t == null) {
+            return "&8chưa có";
+        }
+        for (InheritanceNode n : u.getNodes(net.luckperms.api.node.NodeType.INHERITANCE)) {
+            if (n.getGroupName().equalsIgnoreCase(t.group())) {
+                return t.color() + t.name() + (n.hasExpiry()
+                        ? " &7(hết hạn &f" + DATE.format(n.getExpiry()) + "&7, còn &f" + daysLeft(n.getExpiry()) + " &7ngày)"
+                        : " &7(vĩnh viễn)");
+            }
+        }
+        return t.color() + t.name();
+    }
+
+    private static long daysLeft(Instant exp) {
+        return Math.max(0, Duration.between(Instant.now(), exp).toDays());
+    }
+
+    private void give(CommandSender s, String name, String tierArg, String monthsArg) {
+        Tier tier = tiers.stream().filter(t -> t.group().equalsIgnoreCase(tierArg)
+                || fold(t.name()).replace(" ", "").equalsIgnoreCase(fold(tierArg).replace(" ", ""))).findFirst().orElse(null);
+        if (tier == null) {
+            s.sendMessage(c("&cKhông có bậc '" + tierArg + "'. Có: " + String.join(", ", tiers.stream().map(Tier::group).toList())));
+            return;
+        }
+        int months;
+        try {
+            months = Integer.parseInt(monthsArg);
+        } catch (NumberFormatException ex) {
+            months = 0;
+        }
+        if (months < 1 || months > 24) {
+            s.sendMessage(c("&cSố tháng phải từ 1 đến 24 (gói thường dùng: 1, 3, 6, 12)."));
+            return;
+        }
+        int m = months;
+        withUser(s, name, u -> {
+            // bỏ các bậc khác (giữ bậc đang cấp để cộng dồn thời gian)
+            StringBuilder lost = new StringBuilder();
+            for (InheritanceNode n : new ArrayList<>(u.getNodes(net.luckperms.api.node.NodeType.INHERITANCE))) {
+                boolean donate = tiers.stream().anyMatch(t -> t.group().equalsIgnoreCase(n.getGroupName()));
+                if (donate && !n.getGroupName().equalsIgnoreCase(tier.group())) {
+                    lost.append(n.getGroupName()).append(n.hasExpiry() ? " còn " + daysLeft(n.getExpiry()) + " ngày" : " vĩnh viễn").append("; ");
+                    u.data().remove(n);
+                }
+            }
+            InheritanceNode node = InheritanceNode.builder(tier.group()).expiry(30L * m, TimeUnit.DAYS).build();
+            u.data().add(node, TemporaryNodeMergeStrategy.ADD_NEW_DURATION_TO_EXISTING);
+            lp().getUserManager().saveUser(u).thenRun(() -> {
+                lp().getMessagingService().ifPresent(ms -> ms.pushUserUpdate(u));
+                Bukkit.getScheduler().runTask(plugin, () -> {
+                    s.sendMessage(c("&aĐã cấp " + tier.color() + tier.name() + " &a" + m + " tháng cho &f" + u.getUsername()
+                            + "&a. Hiện: " + describe(u)));
+                    if (!lost.isEmpty()) {
+                        s.sendMessage(c("&eĐã bỏ bậc cũ: &f" + lost + "&e(bù thời gian nếu cần)."));
+                    }
+                    plugin.getLogger().info("Rank donate: " + s.getName() + " cấp " + tier.group() + " " + m + " tháng cho "
+                            + u.getUsername() + (lost.isEmpty() ? "" : " (bỏ: " + lost + ")"));
+                    Player p = Bukkit.getPlayer(u.getUniqueId());
+                    if (p != null) {
+                        p.sendMessage(c("&6✦ Cảm ơn bạn đã ủng hộ server! Bạn đã nhận " + tier.color() + tier.name() + " &6(" + m + " tháng)."));
+                    }
+                });
+            });
+        });
+    }
+
+    private int clearTiers(User u) {
+        int n = 0;
+        for (InheritanceNode node : new ArrayList<>(u.getNodes(net.luckperms.api.node.NodeType.INHERITANCE))) {
+            if (tiers.stream().anyMatch(t -> t.group().equalsIgnoreCase(node.getGroupName()))) {
+                u.data().remove(node);
+                n++;
+            }
+        }
+        lp().getUserManager().saveUser(u).thenRun(() -> lp().getMessagingService().ifPresent(ms -> ms.pushUserUpdate(u)));
+        return n;
+    }
+
+    /** Tải user (kể cả offline) theo tên rồi chạy việc trên luồng chính. */
+    private void withUser(CommandSender s, String name, java.util.function.Consumer<User> job) {
+        lp().getUserManager().lookupUniqueId(name).thenAccept((UUID id) -> {
+            if (id == null) {
+                Bukkit.getScheduler().runTask(plugin, () -> s.sendMessage(c("&cKhông thấy người chơi '" + name + "' (chưa từng vào server?).")));
+                return;
+            }
+            lp().getUserManager().loadUser(id).thenAccept(u -> Bukkit.getScheduler().runTask(plugin, () -> job.accept(u)));
+        });
+    }
+
+    private static String fold(String s) {
+        return ChatFilter.fold(s);
+    }
+}

@@ -1,4 +1,4 @@
-# Cẩm nang trong game (/huongdan, /hd). BẢN GỐC: sửa file này rồi chạy ./ops/huongdan.sh (chép sang lobby, banghoi, practice,
+# Cẩm nang trong game (/huongdan, /hd). Sửa trên trang Cài đặt > "Cẩm nang game" (tự chép, có hiệu lực ngay), hoặc sửa file này rồi chạy ./ops/huongdan.sh (chép sang lobby, banghoi, practice,
 # có hiệu lực ngay, không cần khởi động lại). Plugin: DuckyMoMoCore (Guide.java).
 # - Mỗi trang sách khoảng 12 dòng x 19 ký tự (dòng cuối tự thêm "« Mục lục"). Xuống dòng bằng \n hoặc khối "|-".
 # - Mã màu: &0 đen, &1 xanh đậm, &2 xanh lá đậm, &4 đỏ đậm, &5 tím, &6 vàng cam, &8 xám, &l đậm, &r bỏ định dạng.
@@ -6,7 +6,7 @@
 # - Người chơi điện thoại (Bedrock) thấy cả chương trong một bảng.
 # - SỐ LIỆU (phí thị trấn, lịch công thành, giá...) ghi tay: đổi trên trang Cài đặt thì sửa luôn ở đây.
 title: "&6Cẩm nang DuckyMoMo"
-author: DuckyMoMo
+author: "DuckyMoMo"
 toc-title: "&6&lCẨM NANG\n&8DuckyMoMo Network\n&8/huongdan để mở lại\n\n"
 toc-footer: "\n&8Bấm tên chương\n&8để mở."
 
@@ -47,7 +47,6 @@ chapters:
 
         &0Điện thoại: bấm la
         bàn hiện bảng nút.
-
   - id: luat
     name: Luật server
     pages:
@@ -74,7 +73,6 @@ chapters:
 
         &8Vi phạm: mute, kick,
         &8ban tuỳ mức độ.
-
   - id: banghoi
     name: Bang Hội Chiến
     pages:
@@ -242,7 +240,6 @@ chapters:
         &0Có &lbản đồ web&r&0 của
         cả vùng mùa 1, xem
         ranh giới thị trấn.
-
   - id: practice
     name: Practice (luyện PvP)
     pages:
@@ -276,7 +273,6 @@ chapters:
         hạng
         &1/kit edit <bộ> &0sắp
         lại vị trí đồ
-
   - id: rank
     name: Rank donate
     pages:
@@ -301,7 +297,6 @@ chapters:
 
         &1/rank &0xem giá, quyền
         lợi từng bậc, cách mua.
-
   - id: pokemon
     name: Pokémon (sắp mở)
     pages:
@@ -314,7 +309,6 @@ chapters:
         &8Chế độ này chưa mở.
         &8Theo dõi thông báo
         &8trên server.
-
   - id: hotro
     name: Cần giúp đỡ
     pages:

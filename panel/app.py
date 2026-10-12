@@ -18,7 +18,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
 from ruamel.yaml import YAML
-from ruamel.yaml.scalarstring import DoubleQuotedScalarString, SingleQuotedScalarString
+from ruamel.yaml.scalarstring import DoubleQuotedScalarString, LiteralScalarString, SingleQuotedScalarString
 
 MODES_DIR = Path(os.environ.get("MODES_DIR", "/repo/modes"))
 DATA_DIR = Path(os.environ.get("DATA_DIR", "/data"))
@@ -31,6 +31,14 @@ RCON_PORT = 25575
 INDEX_HTML = (Path(__file__).parent / "index.html").read_text(encoding="utf-8")
 ACTIVITY_HTML = (Path(__file__).parent / "activity.html").read_text(encoding="utf-8")
 CAMNANG_HTML = (Path(__file__).parent / "camnang.html").read_text(encoding="utf-8")
+HUONGDAN_HTML = (Path(__file__).parent / "huongdan.html").read_text(encoding="utf-8")
+# Cẩm nang trong game (/huongdan): bản gốc + các bản chép (repo của từng server, data/ để có hiệu lực ngay)
+HUONGDAN_FILE = MODES_DIR / "_network" / "huongdan.yml"
+HUONGDAN_COPIES = [MODES_DIR / "banghoi/server/plugins/DuckyMoMoCore/huongdan.yml",
+                   MODES_DIR / "practice/server/plugins/DuckyMoMoCore/huongdan.yml",
+                   Path("/repo/lobby-dmm/huongdan.yml")] + \
+                  [DATA_DIR / srv / "plugins/DuckyMoMoCore/huongdan.yml" for srv in ("lobby", "banghoi-1", "practice-1")]
+ID_RE = re.compile(r"^[a-z0-9_-]{1,32}$")
 # Cẩm nang: nội dung ở modes/_network/camnang.yml (sửa không cần build lại); server quét plugin thật đang cài
 CAMNANG_FILE = MODES_DIR / "_network" / "camnang.yml"
 CAMNANG_SERVERS = ["proxy", "lobby", "banghoi-1", "practice-1", "pokemon-1"]
@@ -325,6 +333,53 @@ def camnang_json():
     return {"guide": doc.get("guide", []), "plugins": doc.get("plugins", []), "servers": list(jars), "unknown": unknown}
 
 
+def huongdan_json():
+    doc = YAML(typ="safe").load(HUONGDAN_FILE.read_text(encoding="utf-8")) or {}
+    return {k: doc.get(k, "") for k in ("title", "author", "toc-title", "toc-footer")} | {"chapters": doc.get("chapters", [])}
+
+
+def huongdan_save(data):
+    """Ghi cẩm nang (giữ chú thích đầu file), chép sang các server. Trả về thông báo."""
+    chapters = data.get("chapters") or []
+    if not chapters:
+        raise ValueError("cần ít nhất một chương")
+    ids = set()
+    clean = []
+    for c in chapters:
+        cid = str(c.get("id", "")).strip().lower()
+        name = str(c.get("name", "")).strip()
+        if not ID_RE.match(cid):
+            raise ValueError(f"mã chương '{cid}' chỉ gồm chữ thường không dấu, số, _ hoặc - (vd banghoi)")
+        if cid in ids:
+            raise ValueError(f"mã chương '{cid}' bị trùng")
+        if not name:
+            raise ValueError(f"chương '{cid}' chưa có tên")
+        ids.add(cid)
+        pages = [str(p).replace("\r", "").rstrip() for p in c.get("pages") or [] if str(p).strip()]
+        if not pages:
+            raise ValueError(f"chương '{name}' chưa có trang nào")
+        clean.append((cid, name, pages))
+    y = yaml_rt()
+    doc = y.load(HUONGDAN_FILE.read_text(encoding="utf-8"))
+    for k in ("title", "author", "toc-title", "toc-footer"):
+        if k in data:
+            doc[k] = DoubleQuotedScalarString(str(data[k]))
+    doc["chapters"] = [{"id": cid, "name": name, "pages": [LiteralScalarString(p) for p in pages]}
+                       for cid, name, pages in clean]
+    tmp = HUONGDAN_FILE.with_suffix(".yml.tmp")
+    with tmp.open("w", encoding="utf-8") as f:
+        y.dump(doc, f)
+    tmp.replace(HUONGDAN_FILE)
+    text = HUONGDAN_FILE.read_bytes()
+    done = []
+    for dst in HUONGDAN_COPIES:
+        if dst.parent.is_dir():
+            dst.write_bytes(text)
+            done.append(str(dst).replace(str(DATA_DIR), "data").replace(str(MODES_DIR), "modes"))
+    n_pages = sum(len(p) for _, _, p in clean)
+    return f"Đã lưu {len(clean)} chương, {n_pages} trang và chép sang {len(done)} chỗ. Người chơi mở /huongdan là thấy ngay."
+
+
 def modes_json():
     out = []
     for mode_id, m in load_modes().items():
@@ -449,9 +504,9 @@ class Handler(BaseHTTPRequestHandler):
         if not self.guard():
             return
         path, _, query = self.path.partition("?")
-        if path in ("/", "/hoatdong", "/camnang"):
+        if path in ("/", "/hoatdong", "/camnang", "/huongdan"):
             dozzle = DOZZLE_PROXY_URL if self.headers.get("X-Forwarded-Prefix") else DOZZLE_URL
-            page = {"/": INDEX_HTML, "/hoatdong": ACTIVITY_HTML, "/camnang": CAMNANG_HTML}[path]
+            page = {"/": INDEX_HTML, "/hoatdong": ACTIVITY_HTML, "/camnang": CAMNANG_HTML, "/huongdan": HUONGDAN_HTML}[path]
             body = page.replace("__DOZZLE_URL__", dozzle).encode("utf-8")
             self.send_response(200)
             self.send_header("Content-Type", "text/html; charset=utf-8")
@@ -462,6 +517,8 @@ class Handler(BaseHTTPRequestHandler):
             self.send_json(200, modes_json())
         elif path == "/api/camnang":
             self.send_json(200, camnang_json())
+        elif path == "/api/huongdan":
+            self.send_json(200, huongdan_json())
         elif path == "/api/activity":
             params = {k: v[-1] for k, v in urllib.parse.parse_qs(query).items()}
             self.send_json(200, read_activity(params))
@@ -470,6 +527,15 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_POST(self):
         if not self.guard():
+            return
+        if self.path == "/api/huongdan":
+            try:
+                length = int(self.headers.get("Content-Length", "0"))
+                self.send_json(200, {"ok": True, "message": huongdan_save(json.loads(self.rfile.read(length) or b"{}"))})
+            except ValueError as e:
+                self.send_json(400, {"ok": False, "message": str(e)})
+            except Exception as e:
+                self.send_json(500, {"ok": False, "message": f"Lỗi: {e}"})
             return
         m = re.fullmatch(r"/api/modes/([a-z0-9_-]+)/(save|apply-all)", self.path)
         if not m:

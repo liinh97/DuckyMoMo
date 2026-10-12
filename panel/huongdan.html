@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DuckyMoMo · Cẩm nang game</title>
+<style>
+  :root {
+    --bg: #f5f6f8; --card: #fff; --text: #1d2330; --muted: #667085; --line: #e3e6ec;
+    --accent: #e8711c; --accent-text: #fff; --ok: #1e8e3e; --err: #c62828; --input: #fff; --paper: #f4ecd8; --paper-line: #d9cba6;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #14161b; --card: #1d2027; --text: #e6e8ee; --muted: #9aa3b2; --line: #2d313b; --input: #15171c; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); }
+  header { display: flex; align-items: center; gap: 16px; padding: 14px 20px; border-bottom: 1px solid var(--line); background: var(--card); position: sticky; top: 0; z-index: 3; flex-wrap: wrap; }
+  header h1 { font-size: 17px; margin: 0; flex: 1; }
+  header a { color: var(--muted); text-decoration: none; font-size: 14px; }
+  header a:hover { color: var(--text); }
+  main { max-width: 1100px; margin: 0 auto; padding: 20px 16px 120px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 14px 18px; margin-bottom: 14px; }
+  .card h2 { font-size: 15px; margin: 0 0 8px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .grid2 { display: grid; grid-template-columns: 160px 1fr; gap: 8px 12px; align-items: center; }
+  input, textarea { width: 100%; padding: 6px 9px; border: 1px solid var(--line); border-radius: 6px; background: var(--input); color: var(--text); font: inherit; }
+  textarea { font: 13.5px/1.45 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; resize: vertical; }
+  button { font: inherit; cursor: pointer; border-radius: 6px; border: 1px solid var(--line); background: transparent; color: var(--text); padding: 4px 10px; }
+  button:hover { border-color: var(--accent); }
+  button.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-text); padding: 7px 16px; }
+  button.danger { color: var(--err); }
+  .chap-head { display: grid; grid-template-columns: 1fr 160px auto; gap: 8px; align-items: center; margin-bottom: 10px; }
+  .page { display: grid; grid-template-columns: 1fr 260px; gap: 12px; padding: 10px 0; border-top: 1px dashed var(--line); }
+  .page-tools { display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap; align-items: center; font-size: 13px; color: var(--muted); }
+  .book { background: var(--paper); color: #000; border: 1px solid var(--paper-line); border-radius: 4px; padding: 10px 12px; width: 260px;
+          font: 13px/18px "Segoe UI", system-ui, sans-serif; min-height: calc(18px * 14 + 20px); }
+  .book .ln { white-space: pre; height: 18px; overflow: hidden; }
+  .book .toc { color: #8a8a8a; text-decoration: underline; }
+  .book.over { outline: 2px solid var(--err); }
+  .pv-label { font-size: 12px; color: var(--muted); margin: 4px 0; }
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 13px; }
+  .legend code { padding: 1px 5px; border-radius: 4px; background: var(--paper); font-weight: 600; }
+  .bar { position: fixed; left: 0; right: 0; bottom: 0; background: var(--card); border-top: 1px solid var(--line); padding: 10px 20px; display: flex; gap: 12px; align-items: center; justify-content: flex-end; z-index: 3; }
+  .status { flex: 1; font-size: 14px; color: var(--muted); }
+  .status.ok { color: var(--ok); } .status.err { color: var(--err); }
+  .note { color: var(--muted); font-size: 13.5px; margin: 4px 0 0; }
+  @media (max-width: 760px) { .page { grid-template-columns: 1fr; } .chap-head, .grid2 { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<header>
+  <h1>DuckyMoMo · Cẩm nang game <span style="font-weight:400;color:var(--muted);font-size:14px">(/huongdan)</span></h1>
+  <a href="./">Cài đặt</a>
+  <a href="camnang">Cẩm nang admin</a>
+  <a href="hoatdong">Hoạt động người chơi</a>
+</header>
+<main>
+  <section class="card">
+    <h2>Cách viết</h2>
+    <p class="note">Mỗi ô là một trang nguồn; trong game tự ngắt dòng, trang dài tự sang trang kế (khung xem trước bên phải giống sách, viền đỏ = bị tách thành nhiều trang).
+      Người chơi điện thoại thấy cả chương trong một bảng. Số liệu (phí, lịch công thành…) ghi tay: đổi ở trang Cài đặt thì sửa luôn ở đây.
+      Lưu xong có hiệu lực ngay ở sảnh, Bang Hội Chiến, practice.</p>
+    <div class="legend" id="legend"></div>
+  </section>
+  <section class="card">
+    <h2>Bìa và mục lục</h2>
+    <div class="grid2">
+      <label>Tên sách</label><input id="title">
+      <label>Tác giả</label><input id="author">
+      <label>Đầu mục lục</label><textarea id="toc-title" rows="3"></textarea>
+      <label>Cuối mục lục</label><textarea id="toc-footer" rows="2"></textarea>
+    </div>
+  </section>
+  <div id="chapters"></div>
+  <button id="addChap">+ Thêm chương</button>
+</main>
+<div class="bar">
+  <div class="status" id="status">Sửa rồi bấm Lưu.</div>
+  <button class="primary" id="save">Lưu cẩm nang</button>
+</div>
+<script>
+const $ = (id) => document.getElementById(id);
+const COLORS = { "0": "#000000", "1": "#0000AA", "2": "#00AA00", "3": "#00AAAA", "4": "#AA0000", "5": "#AA00AA", "6": "#FFAA00", "7": "#AAAAAA",
+  "8": "#555555", "9": "#5555FF", a: "#55FF55", b: "#55FFFF", c: "#FF5555", d: "#FF55FF", e: "#FFFF55", f: "#FFFFFF" };
+const NAMES = { "0": "đen", "1": "xanh đậm", "2": "xanh lá đậm", "3": "xanh ngọc đậm", "4": "đỏ đậm", "5": "tím", "6": "vàng cam", "7": "xám nhạt",
+  "8": "xám", "9": "xanh dương", a: "xanh lá", b: "xanh ngọc", c: "đỏ", d: "hồng", e: "vàng", f: "trắng" };
+let data = null, dirty = false;
+
+// Bảng màu + kiểu chữ
+$("legend").innerHTML = Object.keys(COLORS).map(k => `<span><code style="color:${COLORS[k]}">&amp;${k}</code> ${NAMES[k]}${"ef".includes(k) || k === "a" || k === "b" || k === "7" ? " (khó đọc trên giấy)" : ""}</span>`).join("")
+  + `<span><code>&amp;l</code> <b>đậm</b></span><span><code>&amp;o</code> <i>nghiêng</i></span><span><code>&amp;n</code> <u>gạch chân</u></span><span><code>&amp;r</code> bỏ định dạng</span>`;
+
+// ---- ngắt dòng giống plugin (Guide.paginate): trang 114 px, 13 dòng + dòng « Mục lục
+function w(ch, bold) {
+  const b = ch.normalize("NFD")[0];
+  let x = 6;
+  if ("i!.,:;|'".includes(b)) x = 2; else if ("l`".includes(b)) x = 3; else if ("tI [] ".includes(b)) x = 4;
+  else if ("fk(){}<>*\"".includes(b)) x = 5; else if ("@~«»".includes(b)) x = 7;
+  return x + (bold && b !== " " ? 1 : 0);
+}
+function paginate(src) {
+  const lines = []; let color = "", format = "";
+  for (const raw of src.split("\n")) {
+    let cur = [], px = 0, startFmt = color + format;
+    for (const word of raw.split(" ")) {
+      let wpx = 0, c2 = color, f2 = format, bold = format.includes("&l");
+      for (let i = 0; i < word.length; i++) {
+        const ch = word[i];
+        if (ch === "&" && i + 1 < word.length && "0123456789abcdefklmnor".includes(word[i + 1].toLowerCase())) {
+          const code = word[++i].toLowerCase();
+          if ("0123456789abcdef".includes(code)) { c2 = "&" + code; f2 = ""; } else if (code === "r") { c2 = ""; f2 = ""; } else f2 += "&" + code;
+          bold = f2.includes("&l"); continue;
+        }
+        wpx += w(ch, bold);
+      }
+      let sp = cur.length ? w(" ", format.includes("&l")) : 0;
+      if (cur.length && px + sp + wpx > 114) { lines.push(startFmt + cur.join(" ")); cur = []; px = 0; sp = 0; startFmt = color + format; }
+      cur.push(word); px += sp + wpx; color = c2; format = f2;
+    }
+    lines.push(startFmt + cur.join(" "));
+  }
+  while (lines.length > 1 && !lines[lines.length - 1].replace(/&./g, "").trim()) lines.pop();
+  const pages = [];
+  for (let i = 0; i < lines.length; i += 13) pages.push(lines.slice(i, i + 13));
+  return pages;
+}
+function esc(s) { return s.replace(/[&<>]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c])); }
+function renderLine(line) {
+  let out = "", style = { c: "#000000", b: false, i: false, u: false };
+  const parts = line.split(/(&[0-9a-fk-or])/i);
+  for (const p of parts) {
+    const m = /^&([0-9a-fk-or])$/i.exec(p);
+    if (m) {
+      const k = m[1].toLowerCase();
+      if (COLORS[k]) style = { c: COLORS[k], b: false, i: false, u: false };
+      else if (k === "r") style = { c: "#000000", b: false, i: false, u: false };
+      else if (k === "l") style.b = true; else if (k === "o") style.i = true; else if (k === "n") style.u = true;
+      continue;
+    }
+    if (p) out += `<span style="color:${style.c};${style.b ? "font-weight:700;" : ""}${style.i ? "font-style:italic;" : ""}${style.u ? "text-decoration:underline;" : ""}">${esc(p)}</span>`;
+  }
+  return out || " ";
+}
+function preview(box, label, src) {
+  const pages = paginate(src || "");
+  box.innerHTML = pages.map(lines => `<div class="book">${lines.map(l => `<div class="ln">${renderLine(l)}</div>`).join("")}<div class="ln"> </div><div class="ln toc">« Mục lục</div></div>`).join('<div style="height:6px"></div>');
+  label.textContent = pages.length > 1 ? `Bị tách thành ${pages.length} trang trong game` : `${pages[0].length}/13 dòng`;
+  box.querySelectorAll(".book").forEach(b => b.classList.toggle("over", pages.length > 1));
+}
+
+function mark() { dirty = true; $("status").className = "status"; $("status").textContent = "Có thay đổi chưa lưu."; }
+
+function render() {
+  for (const k of ["title", "author", "toc-title", "toc-footer"]) { $(k).value = data[k] || ""; $(k).oninput = () => { data[k] = $(k).value; mark(); }; }
+  const wrap = $("chapters"); wrap.innerHTML = "";
+  data.chapters.forEach((c, ci) => {
+    const card = document.createElement("section"); card.className = "card";
+    card.innerHTML = `<h2>Chương ${ci + 1}</h2>
+      <div class="chap-head">
+        <input class="name" placeholder="Tên chương (hiện ở mục lục)">
+        <input class="cid" placeholder="mã (vd banghoi)" title="Mã chương: /huongdan <mã>. Chữ thường không dấu.">
+        <span><button class="up" title="Lên">↑</button> <button class="down" title="Xuống">↓</button> <button class="danger del">Xoá chương</button></span>
+      </div><div class="pages"></div><button class="addPage">+ Thêm trang</button>`;
+    const name = card.querySelector(".name"), cid = card.querySelector(".cid");
+    name.value = c.name || ""; cid.value = c.id || "";
+    name.oninput = () => { c.name = name.value; mark(); };
+    cid.oninput = () => { c.id = cid.value; mark(); };
+    card.querySelector(".up").onclick = () => { if (ci > 0) { [data.chapters[ci - 1], data.chapters[ci]] = [data.chapters[ci], data.chapters[ci - 1]]; mark(); render(); } };
+    card.querySelector(".down").onclick = () => { if (ci < data.chapters.length - 1) { [data.chapters[ci + 1], data.chapters[ci]] = [data.chapters[ci], data.chapters[ci + 1]]; mark(); render(); } };
+    card.querySelector(".del").onclick = () => { if (confirm(`Xoá chương "${c.name}"?`)) { data.chapters.splice(ci, 1); mark(); render(); } };
+    card.querySelector(".addPage").onclick = () => { c.pages.push("&6&lTiêu đề\n&0Nội dung..."); mark(); render(); };
+    const pagesBox = card.querySelector(".pages");
+    c.pages.forEach((p, pi) => {
+      const row = document.createElement("div"); row.className = "page";
+      row.innerHTML = `<div><textarea rows="12"></textarea>
+        <div class="page-tools">Trang ${pi + 1}
+          <button class="pu">↑</button><button class="pd">↓</button><button class="danger pdel">Xoá trang</button></div></div>
+        <div><div class="pv-label"></div><div class="pv"></div></div>`;
+      const ta = row.querySelector("textarea");
+      ta.value = p;
+      const upd = () => preview(row.querySelector(".pv"), row.querySelector(".pv-label"), ta.value);
+      ta.oninput = () => { c.pages[pi] = ta.value; mark(); upd(); };
+      row.querySelector(".pu").onclick = () => { if (pi > 0) { [c.pages[pi - 1], c.pages[pi]] = [c.pages[pi], c.pages[pi - 1]]; mark(); render(); } };
+      row.querySelector(".pd").onclick = () => { if (pi < c.pages.length - 1) { [c.pages[pi + 1], c.pages[pi]] = [c.pages[pi], c.pages[pi + 1]]; mark(); render(); } };
+      row.querySelector(".pdel").onclick = () => { if (confirm("Xoá trang này?")) { c.pages.splice(pi, 1); mark(); render(); } };
+      pagesBox.appendChild(row); upd();
+    });
+    wrap.appendChild(card);
+  });
+}
+
+$("addChap").onclick = () => { data.chapters.push({ id: "chuongmoi", name: "Chương mới", pages: ["&6&lChương mới\n&0Nội dung..."] }); mark(); render(); };
+$("save").onclick = async () => {
+  $("save").disabled = true; $("status").className = "status"; $("status").textContent = "Đang lưu…";
+  try {
+    const r = await fetch("api/huongdan", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) });
+    const res = await r.json();
+    $("status").className = "status " + (res.ok ? "ok" : "err"); $("status").textContent = res.message;
+    if (res.ok) dirty = false;
+  } catch (e) { $("status").className = "status err"; $("status").textContent = "Không gửi được: " + e; }
+  $("save").disabled = false;
+};
+window.addEventListener("beforeunload", (e) => { if (dirty) { e.preventDefault(); e.returnValue = ""; } });
+fetch("api/huongdan").then(r => r.json()).then(d => { data = d; render(); })
+  .catch(e => { $("chapters").textContent = "Không tải được: " + e; });
+</script>
+</body>
+</html>

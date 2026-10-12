@@ -18,3 +18,4 @@ services:
     volumes:
       - ../modes:/repo/modes      # đọc định nghĩa, ghi settings.yml
       - ../data:/data             # ghi file cấu hình plugin, đọc mật khẩu RCON (data/<server>/.rcon-cli.env)
+      - ../lobby/plugins/DuckyMoMoCore:/repo/lobby-dmm   # trang "Cẩm nang game" ghi huongdan.yml của lobby trong repo

@@ -38,6 +38,7 @@ services:
       #   squaremap = bản đồ web (cổng 8080 trong container, mở ra máy ở SQUAREMAP_PORT, Trạm 6 /mc/map);
       #   tab-was-taken (TAB) = bảng bên phải, boss bar, đầu/cuối danh sách Tab, prefix trong Tab.
       #   playerparticles (/pp hiệu ứng hạt), simplepets (/pet): quyền lợi trang trí của rank donate (tools/donate-ranks.cmds).
+      #   enchantio = phù phép mới kiểu gốc (sách ra từ rương/câu cá/dân làng -> hàng để đổi bán); chọn phù phép ở plugins/Enchantio/.
       #   discordsrv = chat game <-> Discord (token bot, kênh: DISCORD_BOT_TOKEN, DISCORD_CHANNEL_ID trong .env; trống thì plugin tự tắt).
       MODRINTH_PROJECTS: |
         luckperms
@@ -65,6 +66,7 @@ services:
         discordsrv
         playerparticles
         simplepets
+        enchantio
       # Plugin không có (hoặc chưa có bản 26.2) trên Modrinth: ghim link tải cụ thể. Nâng cấp: thay link.
       #   SiegeWar 3.7.0 (GitHub), OldCombatMechanics 2.7.0 (GitHub, combat kiểu 1.8),
       #   EssentialsX bản dev #1832 (bản chính thức 2.22.0 mới tới 26.1.2): lõi + Chat + Spawn

@@ -144,6 +144,18 @@ chapters:
         &2Đổi trực tiếp:
         &1/trade <tên>
       - |-
+        &6&lPhù phép hiếm
+        &0Có phù phép mới, chỉ
+        tìm được sách trong
+        &lrương công trình&r&0,
+        khi &lcâu cá&r&0 hoặc đổi
+        với &ldân làng&r&0:
+        &2Telepathy, Smelting,
+        &2Tunnelling (đào 3x3),
+        &2Replanting, Volley...
+        &0Ghép bằng &lđe&r&0. Hiếm
+        nên bán được giá cao!
+      - |-
         &6&lThị trấn
         &1/t new <tên>
         &0lập thị trấn (&l500

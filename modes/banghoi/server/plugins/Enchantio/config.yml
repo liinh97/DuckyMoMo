@@ -1,0 +1,303 @@
+# Enchantio (Bang Hội Chiến, 12/10/2026): phù phép mới kiểu gốc, làm hàng đổi bán (/ah, /trade, cửa hàng rương).
+# - KHÔNG ra từ bàn phù phép: chỉ rương công trình, câu cá, dân làng (#tradeable #on_random_loot #treasure) -> sách hiếm, có giá.
+# - TẮT (phá luật chiến tranh): soulbound (giữ đồ khi chết), homecoming (vật tổ -> về nhà, trốn trận),
+#   cloaking (ngồi yên tàng hình, phục kích), ward (tự đỡ đòn).
+# - Giới hạn: executioner tối đa cấp 2, volley tối đa cấp 2; tunnelling chỉ đào đá tự nhiên + quặng (không gạch/bê tông).
+# - Đổi danh sách phù phép (registry) phải KHỞI ĐỘNG LẠI server, không reload được.
+enchants:
+  soulbound:
+    anvilCost: 1
+    weight: 10
+    minimumCost:
+      base: 10
+      additionalPerLevel: 1
+    maximumCost:
+      base: 65
+      additionalPerLevel: 1
+    enchantmentTags:
+    - '#tradeable'
+    - '#on_random_loot'
+    - '#treasure'
+    supportedItemTags:
+    - '#minecraft:enchantable/armor'
+    - '#minecraft:enchantable/weapon'
+    - '#minecraft:enchantable/mining'
+    enabled: false
+  telepathy:
+    anvilCost: 1
+    weight: 5
+    minimumCost:
+      base: 15
+      additionalPerLevel: 1
+    maximumCost:
+      base: 65
+      additionalPerLevel: 1
+    enchantmentTags:
+    - '#tradeable'
+    - '#on_random_loot'
+    - '#treasure'
+    supportedItemTags:
+    - '#minecraft:enchantable/mining'
+    activeSlots:
+    - MAINHAND
+    onlyUserCanPickupItems: false
+    enabled: true
+  replanting:
+    anvilCost: 1
+    weight: 10
+    minimumCost:
+      base: 1
+      additionalPerLevel: 1
+    maximumCost:
+      base: 65
+      additionalPerLevel: 1
+    enchantmentTags:
+    - '#tradeable'
+    - '#on_random_loot'
+    - '#treasure'
+    supportedItemTags:
+    - '#minecraft:hoes'
+    enabled: true
+  executioner:
+    anvilCost: 1
+    weight: 10
+    minimumCost:
+      base: 40
+      additionalPerLevel: 3
+    maximumCost:
+      base: 65
+      additionalPerLevel: 1
+    enchantmentTags:
+    - '#tradeable'
+    - '#on_random_loot'
+    - '#treasure'
+    supportedItemTags:
+    - '#minecraft:enchantable/weapon'
+    activeSlots:
+    - MAINHAND
+    maxLevel: 2
+    damageMultiplierPerLevel: 0.05
+    maxDamageHpThreshold: 0.25
+    enabled: true
+  beheading:
+    anvilCost: 1
+    weight: 1
+    minimumCost:
+      base: 40
+      additionalPerLevel: 3
+    maximumCost:
+      base: 65
+      additionalPerLevel: 1
+    enchantmentTags:
+    - '#tradeable'
+    - '#on_random_loot'
+    - '#treasure'
+    supportedItemTags:
+    - '#minecraft:axes'
+    activeSlots:
+    - MAINHAND
+    maxLevel: 1
+    chanceToDropHeadPerLevel: 0.1
+    enabled: true
+  smelting:
+    anvilCost: 1
+    weight: 10
+    minimumCost:
+      base: 40
+      additionalPerLevel: 3
+    maximumCost:
+      base: 65
+      additionalPerLevel: 1
+    enchantmentTags:
+    - '#tradeable'
+    - '#on_random_loot'
+    - '#treasure'
+    supportedItemTags:
+    - '#minecraft:enchantable/mining'
+    enabled: true
+  airbag:
+    anvilCost: 1
+    weight: 10
+    minimumCost:
+      base: 40
+      additionalPerLevel: 3
+    maximumCost:
+      base: 65
+      additionalPerLevel: 1
+    enchantmentTags:
+    - '#tradeable'
+    - '#on_random_loot'
+    - '#treasure'
+    supportedItemTags:
+    - minecraft:elytra
+    activeSlots:
+    - CHEST
+    maxLevel: 4
+    damageReductionPerLevel: 0.2
+    enabled: true
+  homecoming:
+    anvilCost: 1
+    weight: 10
+    minimumCost:
+      base: 40
+      additionalPerLevel: 3
+    maximumCost:
+      base: 65
+      additionalPerLevel: 1
+    enchantmentTags:
+    - '#tradeable'
+    - '#on_random_loot'
+    - '#treasure'
+    supportedItemTags:
+    - minecraft:totem_of_undying
+    enabled: false
+  cloaking:
+    anvilCost: 1
+    weight: 10
+    minimumCost:
+      base: 25
+      additionalPerLevel: 1
+    maximumCost:
+      base: 65
+      additionalPerLevel: 1
+    enchantmentTags:
+    - '#tradeable'
+    - '#on_random_loot'
+    - '#treasure'
+    supportedItemTags:
+    - '#minecraft:leg_armor'
+    activeSlots:
+    - LEGS
+    ticksToActivate: 30
+    enabled: false
+  volley:
+    anvilCost: 1
+    weight: 10
+    minimumCost:
+      base: 40
+      additionalPerLevel: 3
+    maximumCost:
+      base: 65
+      additionalPerLevel: 1
+    enchantmentTags:
+    - '#tradeable'
+    - '#on_random_loot'
+    - '#treasure'
+    supportedItemTags:
+    - minecraft:bow
+    activeSlots:
+    - MAINHAND
+    maxLevel: 2
+    additionalArrowsPerLevel: 1
+    spread: 0.5
+    enabled: true
+  ward:
+    anvilCost: 12
+    weight: 2
+    minimumCost:
+      base: 35
+      additionalPerLevel: 1
+    maximumCost:
+      base: 65
+      additionalPerLevel: 1
+    enchantmentTags:
+    - '#tradeable'
+    - '#on_random_loot'
+    - '#treasure'
+    supportedItemTags:
+    - minecraft:shield
+    activeSlots:
+    - OFFHAND
+    cooldownTicks: 40
+    blockSound: minecraft:item.shield.block
+    enabled: false
+  tunnelling:
+    anvilCost: 1
+    weight: 10
+    minimumCost:
+      base: 40
+      additionalPerLevel: 3
+    maximumCost:
+      base: 65
+      additionalPerLevel: 1
+    enchantmentTags:
+    - '#tradeable'
+    - '#on_random_loot'
+    - '#treasure'
+    supportedItemTags:
+    - '#minecraft:enchantable/mining'
+    affectedBlockTags:
+    - '#minecraft:base_stone_overworld'
+    - '#minecraft:base_stone_nether'
+    - '#minecraft:coal_ores'
+    - '#minecraft:iron_ores'
+    - '#minecraft:copper_ores'
+    - '#minecraft:gold_ores'
+    - '#minecraft:redstone_ores'
+    - '#minecraft:lapis_ores'
+    - '#minecraft:diamond_ores'
+    - '#minecraft:emerald_ores'
+    - minecraft:end_stone
+    - minecraft:cobblestone
+    - minecraft:cobbled_deepslate
+    maxLevel: 1
+    blocksPerLevel: 1
+    visualizeBreaking: true
+    enabled: true
+curses:
+  panic:
+    anvilCost: 1
+    weight: 2
+    minimumCost:
+      base: 0
+      additionalPerLevel: 3
+    maximumCost:
+      base: 20
+      additionalPerLevel: 1
+    enchantmentTags:
+    - '#on_random_loot'
+    - '#treasure'
+    - '#curse'
+    supportedItemTags:
+    - '#minecraft:enchantable/armor'
+    activeSlots:
+    - ARMOR
+    maxLevel: 1
+    panicChancePerLevel: 0.025
+    enabled: true
+  vampirism:
+    anvilCost: 1
+    weight: 2
+    minimumCost:
+      base: 0
+      additionalPerLevel: 3
+    maximumCost:
+      base: 30
+      additionalPerLevel: 1
+    enchantmentTags:
+    - '#on_random_loot'
+    - '#treasure'
+    - '#curse'
+    supportedItemTags:
+    - '#minecraft:enchantable/armor'
+    activeSlots:
+    - ANY
+    enabled: true
+  insomnia:
+    anvilCost: 1
+    weight: 2
+    minimumCost:
+      base: 0
+      additionalPerLevel: 3
+    maximumCost:
+      base: 30
+      additionalPerLevel: 1
+    enchantmentTags:
+    - '#on_random_loot'
+    - '#treasure'
+    - '#curse'
+    supportedItemTags:
+    - '#minecraft:enchantable/armor'
+    activeSlots:
+    - ARMOR
+    enabled: true

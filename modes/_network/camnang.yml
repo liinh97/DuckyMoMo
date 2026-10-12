@@ -235,6 +235,18 @@ plugins:
     player:
       - ["/trade <tên>", "Gửi lời mời đổi đồ"]
 
+  - name: Enchantio
+    jar: Enchantio
+    kind: Kinh tế & buôn bán
+    purpose: "Phù phép mới kiểu gốc Minecraft, làm hàng hiếm để đổi bán. KHÔNG ra từ bàn phù phép: chỉ có sách trong rương công trình, câu cá, dân làng; ghép vào đồ bằng đe. Đang bật: Telepathy (đồ đào vào thẳng túi), Replanting (cuốc tự trồng lại), Smelting (tự nung quặng), Tunnelling (đào 3x3 đá và quặng), Executioner I-II (đánh mạnh hơn khi địch dưới 25% máu), Volley I-II (bắn thêm tên), Beheading (rơi đầu), Airbag (giảm va đập khi bay cánh) + 3 lời nguyền. Đã tắt: Soulbound, Homecoming, Cloaking, Ward (phá luật chiến tranh)."
+    player:
+      - ["(không có lệnh)", "Tìm sách trong rương công trình, câu cá, đổi với dân làng thủ thư; ghép vào đồ bằng đe; bán qua /ah, /trade, cửa hàng rương"]
+    admin:
+      - ["/minecraft:enchant <tên> enchantio:<phù phép> <cấp>", "Phù phép đồ đang cầm của người chơi (vd enchantio:telepathy 1)"]
+      - ["/minecraft:give <tên> minecraft:enchanted_book[stored_enchantments={'enchantio:smelting':1}]", "Tặng sách (làm quà sự kiện); /give của Essentials không hiểu cú pháp này"]
+    settings: "modes/banghoi/server/plugins/Enchantio/config.yml (bật/tắt, cấp tối đa, nguồn ra sách). Đổi phải KHỞI ĐỘNG LẠI banghoi-1."
+    notes: "Config mặc định có thẻ #minecraft:ores không tồn tại (Tunnelling không đào quặng): đã thay bằng *_ores từng loại."
+
   # ---------------------------------------------------------------- Thị trấn & chiến tranh
   - name: Towny
     jar: Towny

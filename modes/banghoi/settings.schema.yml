@@ -205,3 +205,337 @@ groups:
           note: "Dòng trống: gõ một dấu cách không được (bị bỏ), dùng &r làm dòng trống." }
       - { key: tab_header, label: Đầu danh sách Tab (mỗi dòng 1 dòng), type: lines, file: plugins/TAB/config.yml, path: header-footer.designs.default.header }
       - { key: tab_footer, label: Cuối danh sách Tab, type: lines, file: plugins/TAB/config.yml, path: header-footer.designs.default.footer }
+
+  # ---- Nghề (uJobs): mức tiền mỗi hành động, sinh từ plugins/UJobs/jobs.yml (12/10/2026). Thêm/bớt hành động: sửa jobs.yml.
+
+  - title: "Nghề: Thợ săn"
+    category: Nghề
+    description: "Tiền mỗi lần làm (xu). Đã áp dụng hệ số 12/10: quặng x5, đá/đất x2, quái x2.5, gỗ x3, nông sản x5, chăn nuôi x3, câu cá x0.5 (treo máy), giết người x0. Phá lại block tự đặt không được tiền; đào quặng bằng Mềm Mại không được tiền."
+    apply: [jobs reload]
+    settings:
+      - { key: job_hunter_kill_zombie, label: "Giết zombie", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.hunter.actions.kill.zombie.money }
+      - { key: job_hunter_kill_skeleton, label: "Giết bộ xương", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.hunter.actions.kill.skeleton.money }
+      - { key: job_hunter_kill_spider, label: "Giết nhện", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.hunter.actions.kill.spider.money }
+      - { key: job_hunter_kill_creeper, label: "Giết creeper", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.hunter.actions.kill.creeper.money }
+      - { key: job_hunter_kill_cave_spider, label: "Giết nhện hang", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.hunter.actions.kill.cave_spider.money }
+      - { key: job_hunter_kill_husk, label: "Giết husk", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.hunter.actions.kill.husk.money }
+      - { key: job_hunter_kill_stray, label: "Giết stray", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.hunter.actions.kill.stray.money }
+      - { key: job_hunter_kill_drowned, label: "Giết drowned", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.hunter.actions.kill.drowned.money }
+      - { key: job_hunter_kill_enderman, label: "Giết enderman", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.hunter.actions.kill.enderman.money }
+      - { key: job_hunter_kill_blaze, label: "Giết blaze", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.hunter.actions.kill.blaze.money }
+      - { key: job_hunter_kill_elder_guardian, label: "Giết elder guardian", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.hunter.actions.kill.elder_guardian.money }
+      - { key: job_hunter_kill_endermite, label: "Giết endermite", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.hunter.actions.kill.endermite.money }
+      - { key: job_hunter_kill_evoker, label: "Giết evoker", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.hunter.actions.kill.evoker.money }
+      - { key: job_hunter_kill_guardian, label: "Giết guardian", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.hunter.actions.kill.guardian.money }
+      - { key: job_hunter_kill_vindicator, label: "Giết vindicator", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.hunter.actions.kill.vindicator.money }
+      - { key: job_hunter_kill_piglin, label: "Giết piglin", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.hunter.actions.kill.piglin.money }
+      - { key: job_hunter_kill_piglin_brute, label: "Giết piglin brute", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.hunter.actions.kill.piglin_brute.money }
+      - { key: job_hunter_kill_pillager, label: "Giết pillager", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.hunter.actions.kill.pillager.money }
+      - { key: job_hunter_kill_ravager, label: "Giết ravager", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.hunter.actions.kill.ravager.money }
+      - { key: job_hunter_kill_silverfish, label: "Giết silverfish", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.hunter.actions.kill.silverfish.money }
+      - { key: job_hunter_kill_vex, label: "Giết vex", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.hunter.actions.kill.vex.money }
+      - { key: job_hunter_kill_warden, label: "Giết warden", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.hunter.actions.kill.warden.money }
+      - { key: job_hunter_kill_witch, label: "Giết phù thuỷ", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.hunter.actions.kill.witch.money }
+      - { key: job_hunter_kill_wither, label: "Giết wither", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.hunter.actions.kill.wither.money }
+      - { key: job_hunter_kill_wither_skeleton, label: "Giết wither skeleton", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.hunter.actions.kill.wither_skeleton.money }
+      - { key: job_hunter_kill_zoglin, label: "Giết zoglin", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.hunter.actions.kill.zoglin.money }
+      - { key: job_hunter_kill_zombie_villager, label: "Giết zombie villager", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.hunter.actions.kill.zombie_villager.money }
+      - { key: job_hunter_kill_ender_dragon, label: "Giết ender dragon", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.hunter.actions.kill.ender_dragon.money }
+      - { key: job_hunter_kill_pig, label: "Giết lợn", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.hunter.actions.kill.pig.money }
+      - { key: job_hunter_kill_chicken, label: "Giết gà", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.hunter.actions.kill.chicken.money }
+      - { key: job_hunter_kill_sheep, label: "Giết cừu", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.hunter.actions.kill.sheep.money }
+      - { key: job_hunter_kill_cow, label: "Giết bò", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.hunter.actions.kill.cow.money }
+      - { key: job_hunter_kill_cod, label: "Giết cá tuyết", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.hunter.actions.kill.cod.money }
+      - { key: job_hunter_kill_salmon, label: "Giết cá hồi", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.hunter.actions.kill.salmon.money }
+      - { key: job_hunter_kill_pufferfish, label: "Giết cá nóc", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.hunter.actions.kill.pufferfish.money }
+      - { key: job_hunter_kill_tropical_fish, label: "Giết cá nhiệt đới", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.hunter.actions.kill.tropical_fish.money }
+      - { key: job_hunter_kill_horse, label: "Giết ngựa", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.hunter.actions.kill.horse.money }
+      - { key: job_hunter_kill_donkey, label: "Giết donkey", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.hunter.actions.kill.donkey.money }
+      - { key: job_hunter_kill_wolf, label: "Giết sói", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.hunter.actions.kill.wolf.money }
+      - { key: job_hunter_kill_fox, label: "Giết fox", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.hunter.actions.kill.fox.money }
+      - { key: job_hunter_kill_rabbit, label: "Giết rabbit", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.hunter.actions.kill.rabbit.money }
+      - { key: job_hunter_kill_iron_golem, label: "Giết iron golem", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.hunter.actions.kill.iron_golem.money }
+      - { key: job_hunter_kill_goat, label: "Giết goat", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.hunter.actions.kill.goat.money }
+      - { key: job_hunter_kill_llama, label: "Giết llama", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.hunter.actions.kill.llama.money }
+      - { key: job_hunter_kill_squid, label: "Giết squid", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.hunter.actions.kill.squid.money }
+      - { key: job_hunter_kill_glow_squid, label: "Giết glow squid", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.hunter.actions.kill.glow_squid.money }
+      - { key: job_hunter_kill_mooshroom, label: "Giết mooshroom", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.hunter.actions.kill.mooshroom.money }
+      - { key: job_hunter_kill_strider, label: "Giết strider", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.hunter.actions.kill.strider.money }
+
+  - title: "Nghề: Thợ mỏ"
+    category: Nghề
+    description: "Tiền mỗi lần làm (xu). Đã áp dụng hệ số 12/10: quặng x5, đá/đất x2, quái x2.5, gỗ x3, nông sản x5, chăn nuôi x3, câu cá x0.5 (treo máy), giết người x0. Phá lại block tự đặt không được tiền; đào quặng bằng Mềm Mại không được tiền."
+    apply: [jobs reload]
+    settings:
+      - { key: job_miner_break_stone, label: "Phá đá", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.miner.actions.break.stone.money }
+      - { key: job_miner_break_deepslate, label: "Phá đá phiến sâu", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.miner.actions.break.deepslate.money }
+      - { key: job_miner_break_coal_ore, label: "Phá quặng than", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.miner.actions.break.coal_ore.money }
+      - { key: job_miner_break_deepslate_coal_ore, label: "Phá quặng than (phiến sâu)", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.miner.actions.break.deepslate_coal_ore.money }
+      - { key: job_miner_break_iron_ore, label: "Phá quặng sắt", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.miner.actions.break.iron_ore.money }
+      - { key: job_miner_break_deepslate_iron_ore, label: "Phá quặng sắt (phiến sâu)", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.miner.actions.break.deepslate_iron_ore.money }
+      - { key: job_miner_break_copper_ore, label: "Phá quặng đồng", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.miner.actions.break.copper_ore.money }
+      - { key: job_miner_break_deepslate_copper_ore, label: "Phá quặng đồng (phiến sâu)", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.miner.actions.break.deepslate_copper_ore.money }
+      - { key: job_miner_break_gold_ore, label: "Phá quặng vàng", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.miner.actions.break.gold_ore.money }
+      - { key: job_miner_break_deepslate_gold_ore, label: "Phá quặng vàng (phiến sâu)", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.miner.actions.break.deepslate_gold_ore.money }
+      - { key: job_miner_break_redstone_ore, label: "Phá quặng đá đỏ", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.miner.actions.break.redstone_ore.money }
+      - { key: job_miner_break_deepslate_redstone_ore, label: "Phá quặng đá đỏ (phiến sâu)", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.miner.actions.break.deepslate_redstone_ore.money }
+      - { key: job_miner_break_emerald_ore, label: "Phá quặng ngọc lục bảo", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.miner.actions.break.emerald_ore.money }
+      - { key: job_miner_break_deepslate_emerald_ore, label: "Phá quặng ngọc lục bảo (phiến sâu)", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.miner.actions.break.deepslate_emerald_ore.money }
+      - { key: job_miner_break_lapis_ore, label: "Phá quặng lưu ly", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.miner.actions.break.lapis_ore.money }
+      - { key: job_miner_break_deepslate_lapis_ore, label: "Phá quặng lưu ly (phiến sâu)", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.miner.actions.break.deepslate_lapis_ore.money }
+      - { key: job_miner_break_diamond_ore, label: "Phá quặng kim cương", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.miner.actions.break.diamond_ore.money }
+      - { key: job_miner_break_deepslate_diamond_ore, label: "Phá quặng kim cương (phiến sâu)", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.miner.actions.break.deepslate_diamond_ore.money }
+      - { key: job_miner_break_nether_gold_ore, label: "Phá quặng vàng nether", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.miner.actions.break.nether_gold_ore.money }
+      - { key: job_miner_break_nether_quartz_ore, label: "Phá quặng thạch anh", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.miner.actions.break.nether_quartz_ore.money }
+      - { key: job_miner_break_netherrack, label: "Phá đá nether", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.miner.actions.break.netherrack.money }
+      - { key: job_miner_break_gilded_blackstone, label: "Phá gilded blackstone", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.miner.actions.break.gilded_blackstone.money }
+      - { key: job_miner_break_blackstone, label: "Phá blackstone", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.miner.actions.break.blackstone.money }
+      - { key: job_miner_break_basalt, label: "Phá basalt", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.miner.actions.break.basalt.money }
+      - { key: job_miner_break_end_stone, label: "Phá end stone", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.miner.actions.break.end_stone.money }
+      - { key: job_miner_break_diorite, label: "Phá diorite", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.miner.actions.break.diorite.money }
+      - { key: job_miner_break_andesite, label: "Phá andesite", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.miner.actions.break.andesite.money }
+      - { key: job_miner_break_granite, label: "Phá granite", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.miner.actions.break.granite.money }
+      - { key: job_miner_break_sandstone, label: "Phá sandstone", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.miner.actions.break.sandstone.money }
+      - { key: job_miner_break_tuff, label: "Phá tuff", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.miner.actions.break.tuff.money }
+      - { key: job_miner_break_calcite, label: "Phá calcite", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.miner.actions.break.calcite.money }
+      - { key: job_miner_break_smooth_basalt, label: "Phá smooth basalt", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.miner.actions.break.smooth_basalt.money }
+      - { key: job_miner_break_amethyst_block, label: "Phá amethyst block", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.miner.actions.break.amethyst_block.money }
+      - { key: job_miner_break_amethyst_cluster, label: "Phá amethyst cluster", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.miner.actions.break.amethyst_cluster.money }
+
+  - title: "Nghề: Nông dân"
+    category: Nghề
+    description: "Tiền mỗi lần làm (xu). Đã áp dụng hệ số 12/10: quặng x5, đá/đất x2, quái x2.5, gỗ x3, nông sản x5, chăn nuôi x3, câu cá x0.5 (treo máy), giết người x0. Phá lại block tự đặt không được tiền; đào quặng bằng Mềm Mại không được tiền."
+    apply: [jobs reload]
+    settings:
+      - { key: job_farmer_break_wheat7, label: "Phá lúa mì chín", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.farmer.actions.break.wheat7.money }
+      - { key: job_farmer_break_potatoes7, label: "Phá khoai tây chín", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.farmer.actions.break.potatoes7.money }
+      - { key: job_farmer_break_carrots7, label: "Phá cà rốt chín", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.farmer.actions.break.carrots7.money }
+      - { key: job_farmer_break_beetroots3, label: "Phá củ dền chín", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.farmer.actions.break.beetroots3.money }
+      - { key: job_farmer_break_melon, label: "Phá dưa hấu", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.farmer.actions.break.melon.money }
+      - { key: job_farmer_harvest_glow_berries, label: "Hái glow berries", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.farmer.actions.harvest.glow_berries.money }
+      - { key: job_farmer_harvest_sweet_berries, label: "Hái sweet berries", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.farmer.actions.harvest.sweet_berries.money }
+
+  - title: "Nghề: Chăn nuôi"
+    category: Nghề
+    description: "Tiền mỗi lần làm (xu). Đã áp dụng hệ số 12/10: quặng x5, đá/đất x2, quái x2.5, gỗ x3, nông sản x5, chăn nuôi x3, câu cá x0.5 (treo máy), giết người x0. Phá lại block tự đặt không được tiền; đào quặng bằng Mềm Mại không được tiền."
+    apply: [jobs reload]
+    settings:
+      - { key: job_husbandry_breed_pig, label: "Cho đẻ lợn", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.husbandry.actions.breed.pig.money }
+      - { key: job_husbandry_breed_chicken, label: "Cho đẻ gà", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.husbandry.actions.breed.chicken.money }
+      - { key: job_husbandry_breed_cow, label: "Cho đẻ bò", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.husbandry.actions.breed.cow.money }
+      - { key: job_husbandry_breed_sheep, label: "Cho đẻ cừu", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.husbandry.actions.breed.sheep.money }
+      - { key: job_husbandry_breed_horse, label: "Cho đẻ ngựa", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.husbandry.actions.breed.horse.money }
+      - { key: job_husbandry_breed_donkey, label: "Cho đẻ donkey", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.husbandry.actions.breed.donkey.money }
+      - { key: job_husbandry_breed_mule, label: "Cho đẻ mule", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.husbandry.actions.breed.mule.money }
+      - { key: job_husbandry_breed_llama, label: "Cho đẻ llama", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.husbandry.actions.breed.llama.money }
+      - { key: job_husbandry_breed_trader_llama, label: "Cho đẻ trader llama", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.husbandry.actions.breed.trader_llama.money }
+      - { key: job_husbandry_breed_rabbit, label: "Cho đẻ rabbit", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.husbandry.actions.breed.rabbit.money }
+      - { key: job_husbandry_breed_fox, label: "Cho đẻ fox", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.husbandry.actions.breed.fox.money }
+      - { key: job_husbandry_breed_wolf, label: "Cho đẻ sói", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.husbandry.actions.breed.wolf.money }
+      - { key: job_husbandry_breed_cat, label: "Cho đẻ mèo", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.husbandry.actions.breed.cat.money }
+      - { key: job_husbandry_breed_turtle, label: "Cho đẻ turtle", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.husbandry.actions.breed.turtle.money }
+      - { key: job_husbandry_breed_bee, label: "Cho đẻ bee", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.husbandry.actions.breed.bee.money }
+      - { key: job_husbandry_breed_camel, label: "Cho đẻ camel", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.husbandry.actions.breed.camel.money }
+      - { key: job_husbandry_breed_panda, label: "Cho đẻ panda", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.husbandry.actions.breed.panda.money }
+      - { key: job_husbandry_breed_parrot, label: "Cho đẻ parrot", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.husbandry.actions.breed.parrot.money }
+      - { key: job_husbandry_breed_polar_bear, label: "Cho đẻ polar bear", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.husbandry.actions.breed.polar_bear.money }
+      - { key: job_husbandry_breed_frog, label: "Cho đẻ frog", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.husbandry.actions.breed.frog.money }
+      - { key: job_husbandry_breed_axolotl, label: "Cho đẻ axolotl", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.husbandry.actions.breed.axolotl.money }
+      - { key: job_husbandry_breed_mooshroom, label: "Cho đẻ mooshroom", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.husbandry.actions.breed.mooshroom.money }
+      - { key: job_husbandry_breed_ocelot, label: "Cho đẻ ocelot", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.husbandry.actions.breed.ocelot.money }
+      - { key: job_husbandry_breed_strider, label: "Cho đẻ strider", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.husbandry.actions.breed.strider.money }
+      - { key: job_husbandry_breed_sniffer, label: "Cho đẻ sniffer", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.husbandry.actions.breed.sniffer.money }
+      - { key: job_husbandry_tame_wolf, label: "Thuần hoá sói", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.husbandry.actions.tame.wolf.money }
+      - { key: job_husbandry_tame_cat, label: "Thuần hoá mèo", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.husbandry.actions.tame.cat.money }
+      - { key: job_husbandry_tame_camel, label: "Thuần hoá camel", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.husbandry.actions.tame.camel.money }
+      - { key: job_husbandry_tame_horse, label: "Thuần hoá ngựa", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.husbandry.actions.tame.horse.money }
+      - { key: job_husbandry_tame_mule, label: "Thuần hoá mule", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.husbandry.actions.tame.mule.money }
+      - { key: job_husbandry_tame_donkey, label: "Thuần hoá donkey", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.husbandry.actions.tame.donkey.money }
+      - { key: job_husbandry_tame_trader_llama, label: "Thuần hoá trader llama", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.husbandry.actions.tame.trader_llama.money }
+      - { key: job_husbandry_tame_llama, label: "Thuần hoá llama", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.husbandry.actions.tame.llama.money }
+      - { key: job_husbandry_tame_parrot, label: "Thuần hoá parrot", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.husbandry.actions.tame.parrot.money }
+
+  - title: "Nghề: Ngư dân"
+    category: Nghề
+    description: "Tiền mỗi lần làm (xu). Đã áp dụng hệ số 12/10: quặng x5, đá/đất x2, quái x2.5, gỗ x3, nông sản x5, chăn nuôi x3, câu cá x0.5 (treo máy), giết người x0. Phá lại block tự đặt không được tiền; đào quặng bằng Mềm Mại không được tiền."
+    apply: [jobs reload]
+    settings:
+      - { key: job_fisher_fish_cod, label: "Câu cá tuyết", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.fisher.actions.fish.cod.money }
+      - { key: job_fisher_fish_salmon, label: "Câu cá hồi", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.fisher.actions.fish.salmon.money }
+      - { key: job_fisher_fish_tropical_fish, label: "Câu cá nhiệt đới", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.fisher.actions.fish.tropical_fish.money }
+      - { key: job_fisher_fish_pufferfish, label: "Câu cá nóc", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.fisher.actions.fish.pufferfish.money }
+
+  - title: "Nghề: Phù thuỷ (phù phép)"
+    category: Nghề
+    description: "Tiền mỗi lần làm (xu). Đã áp dụng hệ số 12/10: quặng x5, đá/đất x2, quái x2.5, gỗ x3, nông sản x5, chăn nuôi x3, câu cá x0.5 (treo máy), giết người x0. Phá lại block tự đặt không được tiền; đào quặng bằng Mềm Mại không được tiền."
+    apply: [jobs reload]
+    settings:
+      - { key: job_witcher_enchant_1, label: "Phù phép tốn cấp 1", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.witcher.actions.enchant.1.money }
+      - { key: job_witcher_enchant_2, label: "Phù phép tốn cấp 2", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.witcher.actions.enchant.2.money }
+      - { key: job_witcher_enchant_3, label: "Phù phép tốn cấp 3", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.witcher.actions.enchant.3.money }
+      - { key: job_witcher_enchant_4, label: "Phù phép tốn cấp 4", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.witcher.actions.enchant.4.money }
+      - { key: job_witcher_enchant_5, label: "Phù phép tốn cấp 5", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.witcher.actions.enchant.5.money }
+      - { key: job_witcher_enchant_6, label: "Phù phép tốn cấp 6", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.witcher.actions.enchant.6.money }
+      - { key: job_witcher_enchant_7, label: "Phù phép tốn cấp 7", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.witcher.actions.enchant.7.money }
+      - { key: job_witcher_enchant_8, label: "Phù phép tốn cấp 8", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.witcher.actions.enchant.8.money }
+      - { key: job_witcher_enchant_9, label: "Phù phép tốn cấp 9", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.witcher.actions.enchant.9.money }
+      - { key: job_witcher_enchant_10, label: "Phù phép tốn cấp 10", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.witcher.actions.enchant.10.money }
+      - { key: job_witcher_enchant_11, label: "Phù phép tốn cấp 11", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.witcher.actions.enchant.11.money }
+      - { key: job_witcher_enchant_12, label: "Phù phép tốn cấp 12", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.witcher.actions.enchant.12.money }
+      - { key: job_witcher_enchant_13, label: "Phù phép tốn cấp 13", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.witcher.actions.enchant.13.money }
+      - { key: job_witcher_enchant_14, label: "Phù phép tốn cấp 14", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.witcher.actions.enchant.14.money }
+      - { key: job_witcher_enchant_15, label: "Phù phép tốn cấp 15", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.witcher.actions.enchant.15.money }
+      - { key: job_witcher_enchant_16, label: "Phù phép tốn cấp 16", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.witcher.actions.enchant.16.money }
+      - { key: job_witcher_enchant_17, label: "Phù phép tốn cấp 17", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.witcher.actions.enchant.17.money }
+      - { key: job_witcher_enchant_18, label: "Phù phép tốn cấp 18", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.witcher.actions.enchant.18.money }
+      - { key: job_witcher_enchant_19, label: "Phù phép tốn cấp 19", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.witcher.actions.enchant.19.money }
+      - { key: job_witcher_enchant_20, label: "Phù phép tốn cấp 20", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.witcher.actions.enchant.20.money }
+      - { key: job_witcher_enchant_21, label: "Phù phép tốn cấp 21", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.witcher.actions.enchant.21.money }
+      - { key: job_witcher_enchant_22, label: "Phù phép tốn cấp 22", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.witcher.actions.enchant.22.money }
+      - { key: job_witcher_enchant_23, label: "Phù phép tốn cấp 23", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.witcher.actions.enchant.23.money }
+      - { key: job_witcher_enchant_24, label: "Phù phép tốn cấp 24", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.witcher.actions.enchant.24.money }
+      - { key: job_witcher_enchant_25, label: "Phù phép tốn cấp 25", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.witcher.actions.enchant.25.money }
+      - { key: job_witcher_enchant_26, label: "Phù phép tốn cấp 26", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.witcher.actions.enchant.26.money }
+      - { key: job_witcher_enchant_27, label: "Phù phép tốn cấp 27", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.witcher.actions.enchant.27.money }
+      - { key: job_witcher_enchant_28, label: "Phù phép tốn cấp 28", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.witcher.actions.enchant.28.money }
+      - { key: job_witcher_enchant_29, label: "Phù phép tốn cấp 29", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.witcher.actions.enchant.29.money }
+      - { key: job_witcher_enchant_30, label: "Phù phép tốn cấp 30", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.witcher.actions.enchant.30.money }
+      - { key: job_witcher_anvil_merge_enchanted_book, label: "Gộp trên đe sách phù phép", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.witcher.actions.anvil_merge.enchanted_book.money }
+
+  - title: "Nghề: Tiều phu"
+    category: Nghề
+    description: "Tiền mỗi lần làm (xu). Đã áp dụng hệ số 12/10: quặng x5, đá/đất x2, quái x2.5, gỗ x3, nông sản x5, chăn nuôi x3, câu cá x0.5 (treo máy), giết người x0. Phá lại block tự đặt không được tiền; đào quặng bằng Mềm Mại không được tiền."
+    apply: [jobs reload]
+    settings:
+      - { key: job_lumberjack_break_oak_log, label: "Phá gỗ sồi", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.lumberjack.actions.break.oak_log.money }
+      - { key: job_lumberjack_break_birch_log, label: "Phá gỗ bạch dương", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.lumberjack.actions.break.birch_log.money }
+      - { key: job_lumberjack_break_spruce_log, label: "Phá gỗ vân sam", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.lumberjack.actions.break.spruce_log.money }
+      - { key: job_lumberjack_break_dark_oak_log, label: "Phá gỗ sồi sẫm", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.lumberjack.actions.break.dark_oak_log.money }
+      - { key: job_lumberjack_break_jungle_log, label: "Phá gỗ rừng nhiệt đới", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.lumberjack.actions.break.jungle_log.money }
+      - { key: job_lumberjack_break_acacia_log, label: "Phá gỗ keo", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.lumberjack.actions.break.acacia_log.money }
+      - { key: job_lumberjack_break_mangrove_log, label: "Phá gỗ đước", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.lumberjack.actions.break.mangrove_log.money }
+      - { key: job_lumberjack_break_mangrove_roots, label: "Phá mangrove roots", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.lumberjack.actions.break.mangrove_roots.money }
+      - { key: job_lumberjack_break_warped_stem, label: "Phá warped stem", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.lumberjack.actions.break.warped_stem.money }
+      - { key: job_lumberjack_break_crimson_stem, label: "Phá crimson stem", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.lumberjack.actions.break.crimson_stem.money }
+      - { key: job_lumberjack_break_cherry_log, label: "Phá gỗ anh đào", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.lumberjack.actions.break.cherry_log.money }
+      - { key: job_lumberjack_break_pale_oak_log, label: "Phá pale oak log", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.lumberjack.actions.break.pale_oak_log.money }
+
+  - title: "Nghề: Thợ đào đất"
+    category: Nghề
+    description: "Tiền mỗi lần làm (xu). Đã áp dụng hệ số 12/10: quặng x5, đá/đất x2, quái x2.5, gỗ x3, nông sản x5, chăn nuôi x3, câu cá x0.5 (treo máy), giết người x0. Phá lại block tự đặt không được tiền; đào quặng bằng Mềm Mại không được tiền."
+    apply: [jobs reload]
+    settings:
+      - { key: job_digger_break_sand, label: "Phá cát", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.digger.actions.break.sand.money }
+      - { key: job_digger_break_red_sand, label: "Phá cát đỏ", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.digger.actions.break.red_sand.money }
+      - { key: job_digger_break_clay, label: "Phá đất sét", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.digger.actions.break.clay.money }
+      - { key: job_digger_break_mud, label: "Phá bùn", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.digger.actions.break.mud.money }
+      - { key: job_digger_break_gravel, label: "Phá sỏi", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.digger.actions.break.gravel.money }
+      - { key: job_digger_break_mycelium, label: "Phá mycelium", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.digger.actions.break.mycelium.money }
+      - { key: job_digger_break_podzol, label: "Phá podzol", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.digger.actions.break.podzol.money }
+      - { key: job_digger_break_coarse_dirt, label: "Phá coarse dirt", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.digger.actions.break.coarse_dirt.money }
+      - { key: job_digger_break_dirt, label: "Phá dirt", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.digger.actions.break.dirt.money }
+      - { key: job_digger_break_grass_block, label: "Phá grass block", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.digger.actions.break.grass_block.money }
+      - { key: job_digger_break_soul_sand, label: "Phá soul sand", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.digger.actions.break.soul_sand.money }
+
+  - title: "Nghề: Đấu sĩ (giết người chơi)"
+    category: Nghề
+    description: "Tiền mỗi lần làm (xu). Đã áp dụng hệ số 12/10: quặng x5, đá/đất x2, quái x2.5, gỗ x3, nông sản x5, chăn nuôi x3, câu cá x0.5 (treo máy), giết người x0. Phá lại block tự đặt không được tiền; đào quặng bằng Mềm Mại không được tiền."
+    apply: [jobs reload]
+    settings:
+      - { key: job_gladiator_kill_player, label: "Giết người chơi", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.gladiator.actions.kill.player.money }
+
+  - title: "Nghề: Hộ vệ làng (raid)"
+    category: Nghề
+    description: "Tiền mỗi lần làm (xu). Đã áp dụng hệ số 12/10: quặng x5, đá/đất x2, quái x2.5, gỗ x3, nông sản x5, chăn nuôi x3, câu cá x0.5 (treo máy), giết người x0. Phá lại block tự đặt không được tiền; đào quặng bằng Mềm Mại không được tiền."
+    apply: [jobs reload]
+    settings:
+      - { key: job_guardian_raid_win, label: "Raid thắng raid", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.guardian.actions.raid.win.money }
+      - { key: job_guardian_raid_wave, label: "Raid mỗi đợt raid", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.guardian.actions.raid.wave.money }
+
+  - title: "Nghề: Thợ chế tạo"
+    category: Nghề
+    description: "Tiền mỗi lần làm (xu). Đã áp dụng hệ số 12/10: quặng x5, đá/đất x2, quái x2.5, gỗ x3, nông sản x5, chăn nuôi x3, câu cá x0.5 (treo máy), giết người x0. Phá lại block tự đặt không được tiền; đào quặng bằng Mềm Mại không được tiền."
+    apply: [jobs reload]
+    settings:
+      - { key: job_producer_craft_piston, label: "Chế tạo piston", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.producer.actions.craft.piston.money }
+      - { key: job_producer_craft_sticky_piston, label: "Chế tạo sticky piston", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.producer.actions.craft.sticky_piston.money }
+      - { key: job_producer_craft_lectern, label: "Chế tạo lectern", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.producer.actions.craft.lectern.money }
+      - { key: job_producer_craft_redstone_lamp, label: "Chế tạo redstone lamp", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.producer.actions.craft.redstone_lamp.money }
+      - { key: job_producer_craft_tnt, label: "Chế tạo tnt", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.producer.actions.craft.tnt.money }
+      - { key: job_producer_craft_dispenser, label: "Chế tạo dispenser", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.producer.actions.craft.dispenser.money }
+      - { key: job_producer_craft_dropper, label: "Chế tạo dropper", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.producer.actions.craft.dropper.money }
+      - { key: job_producer_craft_target, label: "Chế tạo target", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.producer.actions.craft.target.money }
+      - { key: job_producer_craft_repeater, label: "Chế tạo repeater", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.producer.actions.craft.repeater.money }
+      - { key: job_producer_craft_comparator, label: "Chế tạo comparator", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.producer.actions.craft.comparator.money }
+      - { key: job_producer_craft_daylight_detector, label: "Chế tạo daylight detector", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.producer.actions.craft.daylight_detector.money }
+      - { key: job_producer_craft_note_block, label: "Chế tạo note block", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.producer.actions.craft.note_block.money }
+      - { key: job_producer_craft_observer, label: "Chế tạo observer", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.producer.actions.craft.observer.money }
+      - { key: job_producer_craft_minecart, label: "Chế tạo minecart", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.producer.actions.craft.minecart.money }
+
+  - title: "Nghề: Thương nhân"
+    category: Nghề
+    description: "Tiền mỗi lần làm (xu). Đã áp dụng hệ số 12/10: quặng x5, đá/đất x2, quái x2.5, gỗ x3, nông sản x5, chăn nuôi x3, câu cá x0.5 (treo máy), giết người x0. Phá lại block tự đặt không được tiền; đào quặng bằng Mềm Mại không được tiền."
+    apply: [jobs reload]
+    settings:
+      - { key: job_trader_trade_emerald, label: "Đổi với dân làng, nhận ngọc lục bảo", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.trader.actions.trade.emerald.money }
+
+  - title: "Nghề: Nhà thám hiểm (mở rương công trình)"
+    category: Nghề
+    description: "Tiền mỗi lần làm (xu). Đã áp dụng hệ số 12/10: quặng x5, đá/đất x2, quái x2.5, gỗ x3, nông sản x5, chăn nuôi x3, câu cá x0.5 (treo máy), giết người x0. Phá lại block tự đặt không được tiền; đào quặng bằng Mềm Mại không được tiền."
+    apply: [jobs reload]
+    settings:
+      - { key: job_traveler_generate_loot_desert_pyramid, label: "Mở rương desert pyramid", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.traveler.actions.generate_loot.desert_pyramid.money }
+      - { key: job_traveler_generate_loot_abandoned_mineshaft, label: "Mở rương abandoned mineshaft", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.traveler.actions.generate_loot.abandoned_mineshaft.money }
+      - { key: job_traveler_generate_loot_ancient_city, label: "Mở rương ancient city", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.traveler.actions.generate_loot.ancient_city.money }
+      - { key: job_traveler_generate_loot_ancient_city_ice_box, label: "Mở rương ancient city ice box", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.traveler.actions.generate_loot.ancient_city_ice_box.money }
+      - { key: job_traveler_generate_loot_bastion_bridge, label: "Mở rương bastion bridge", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.traveler.actions.generate_loot.bastion_bridge.money }
+      - { key: job_traveler_generate_loot_bastion_other, label: "Mở rương bastion other", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.traveler.actions.generate_loot.bastion_other.money }
+      - { key: job_traveler_generate_loot_bastion_treasure, label: "Mở rương bastion treasure", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.traveler.actions.generate_loot.bastion_treasure.money }
+      - { key: job_traveler_generate_loot_bastion_hoglin_stable, label: "Mở rương bastion hoglin stable", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.traveler.actions.generate_loot.bastion_hoglin_stable.money }
+      - { key: job_traveler_generate_loot_buried_treasure, label: "Mở rương buried treasure", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.traveler.actions.generate_loot.buried_treasure.money }
+      - { key: job_traveler_generate_loot_end_city_treasure, label: "Mở rương end city treasure", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.traveler.actions.generate_loot.end_city_treasure.money }
+      - { key: job_traveler_generate_loot_igloo_chest, label: "Mở rương igloo chest", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.traveler.actions.generate_loot.igloo_chest.money }
+      - { key: job_traveler_generate_loot_jungle_temple, label: "Mở rương jungle temple", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.traveler.actions.generate_loot.jungle_temple.money }
+      - { key: job_traveler_generate_loot_jungle_temple_dispenser, label: "Mở rương jungle temple dispenser", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.traveler.actions.generate_loot.jungle_temple_dispenser.money }
+      - { key: job_traveler_generate_loot_pillager_outpost, label: "Mở rương pillager outpost", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.traveler.actions.generate_loot.pillager_outpost.money }
+      - { key: job_traveler_generate_loot_ruined_portal, label: "Mở rương ruined portal", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.traveler.actions.generate_loot.ruined_portal.money }
+      - { key: job_traveler_generate_loot_shipwreck_map, label: "Mở rương shipwreck map", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.traveler.actions.generate_loot.shipwreck_map.money }
+      - { key: job_traveler_generate_loot_shipwreck_supply, label: "Mở rương shipwreck supply", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.traveler.actions.generate_loot.shipwreck_supply.money }
+      - { key: job_traveler_generate_loot_shipwreck_treasure, label: "Mở rương shipwreck treasure", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.traveler.actions.generate_loot.shipwreck_treasure.money }
+      - { key: job_traveler_generate_loot_simple_dungeon, label: "Mở rương simple dungeon", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.traveler.actions.generate_loot.simple_dungeon.money }
+      - { key: job_traveler_generate_loot_stronghold_corridor, label: "Mở rương stronghold corridor", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.traveler.actions.generate_loot.stronghold_corridor.money }
+      - { key: job_traveler_generate_loot_stronghold_crossing, label: "Mở rương stronghold crossing", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.traveler.actions.generate_loot.stronghold_crossing.money }
+      - { key: job_traveler_generate_loot_stronghold_library, label: "Mở rương stronghold library", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.traveler.actions.generate_loot.stronghold_library.money }
+      - { key: job_traveler_generate_loot_underwater_ruin_big, label: "Mở rương underwater ruin big", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.traveler.actions.generate_loot.underwater_ruin_big.money }
+      - { key: job_traveler_generate_loot_underwater_ruin_small, label: "Mở rương underwater ruin small", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.traveler.actions.generate_loot.underwater_ruin_small.money }
+      - { key: job_traveler_generate_loot_village_village_armorer, label: "Mở rương village/village armorer", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.traveler.actions.generate_loot.village/village_armorer.money }
+      - { key: job_traveler_generate_loot_village_village_butcher, label: "Mở rương village/village butcher", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.traveler.actions.generate_loot.village/village_butcher.money }
+      - { key: job_traveler_generate_loot_village_village_cartographer, label: "Mở rương village/village cartographer", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.traveler.actions.generate_loot.village/village_cartographer.money }
+      - { key: job_traveler_generate_loot_village_village_desert_house, label: "Mở rương village/village desert house", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.traveler.actions.generate_loot.village/village_desert_house.money }
+      - { key: job_traveler_generate_loot_village_village_fisher, label: "Mở rương village/village fisher", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.traveler.actions.generate_loot.village/village_fisher.money }
+      - { key: job_traveler_generate_loot_village_village_fletcher, label: "Mở rương village/village fletcher", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.traveler.actions.generate_loot.village/village_fletcher.money }
+      - { key: job_traveler_generate_loot_village_village_mason, label: "Mở rương village/village mason", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.traveler.actions.generate_loot.village/village_mason.money }
+      - { key: job_traveler_generate_loot_village_village_plains_house, label: "Mở rương village/village plains house", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.traveler.actions.generate_loot.village/village_plains_house.money }
+      - { key: job_traveler_generate_loot_village_village_savanna_house, label: "Mở rương village/village savanna house", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.traveler.actions.generate_loot.village/village_savanna_house.money }
+      - { key: job_traveler_generate_loot_village_village_shepherd, label: "Mở rương village/village shepherd", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.traveler.actions.generate_loot.village/village_shepherd.money }
+      - { key: job_traveler_generate_loot_village_village_snowy_house, label: "Mở rương village/village snowy house", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.traveler.actions.generate_loot.village/village_snowy_house.money }
+      - { key: job_traveler_generate_loot_village_village_taiga_house, label: "Mở rương village/village taiga house", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.traveler.actions.generate_loot.village/village_taiga_house.money }
+      - { key: job_traveler_generate_loot_village_village_tannery, label: "Mở rương village/village tannery", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.traveler.actions.generate_loot.village/village_tannery.money }
+      - { key: job_traveler_generate_loot_village_village_temple, label: "Mở rương village/village temple", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.traveler.actions.generate_loot.village/village_temple.money }
+      - { key: job_traveler_generate_loot_village_village_toolsmith, label: "Mở rương village/village toolsmith", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.traveler.actions.generate_loot.village/village_toolsmith.money }
+      - { key: job_traveler_generate_loot_village_village_weaponsmith, label: "Mở rương village/village weaponsmith", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.traveler.actions.generate_loot.village/village_weaponsmith.money }
+      - { key: job_traveler_generate_loot_woodland_mansion, label: "Mở rương woodland mansion", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.traveler.actions.generate_loot.woodland_mansion.money }
+      - { key: job_traveler_generate_loot_nether_bridge, label: "Mở rương nether bridge", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.traveler.actions.generate_loot.nether_bridge.money }
+      - { key: job_traveler_generate_loot_trial_chambers_corridor, label: "Mở rương trial chambers/corridor", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.traveler.actions.generate_loot.trial_chambers/corridor.money }
+      - { key: job_traveler_generate_loot_trial_chambers_entrance, label: "Mở rương trial chambers/entrance", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.traveler.actions.generate_loot.trial_chambers/entrance.money }
+      - { key: job_traveler_generate_loot_trial_chambers_intersection, label: "Mở rương trial chambers/intersection", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.traveler.actions.generate_loot.trial_chambers/intersection.money }
+      - { key: job_traveler_generate_loot_trial_chambers_intersection_barrel, label: "Mở rương trial chambers/intersection barrel", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.traveler.actions.generate_loot.trial_chambers/intersection_barrel.money }
+      - { key: job_traveler_generate_loot_trial_chambers_reward, label: "Mở rương trial chambers/reward", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.traveler.actions.generate_loot.trial_chambers/reward.money }
+      - { key: job_traveler_generate_loot_trial_chambers_reward_common, label: "Mở rương trial chambers/reward common", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.traveler.actions.generate_loot.trial_chambers/reward_common.money }
+      - { key: job_traveler_generate_loot_trial_chambers_reward_ominous, label: "Mở rương trial chambers/reward ominous", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.traveler.actions.generate_loot.trial_chambers/reward_ominous.money }
+      - { key: job_traveler_generate_loot_trial_chambers_reward_ominous_common, label: "Mở rương trial chambers/reward ominous common", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.traveler.actions.generate_loot.trial_chambers/reward_ominous_common.money }
+      - { key: job_traveler_generate_loot_trial_chambers_reward_ominous_rare, label: "Mở rương trial chambers/reward ominous rare", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.traveler.actions.generate_loot.trial_chambers/reward_ominous_rare.money }
+      - { key: job_traveler_generate_loot_trial_chambers_reward_ominous_unique, label: "Mở rương trial chambers/reward ominous unique", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.traveler.actions.generate_loot.trial_chambers/reward_ominous_unique.money }
+      - { key: job_traveler_generate_loot_trial_chambers_reward_rare, label: "Mở rương trial chambers/reward rare", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.traveler.actions.generate_loot.trial_chambers/reward_rare.money }
+      - { key: job_traveler_generate_loot_trial_chambers_reward_unique, label: "Mở rương trial chambers/reward unique", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.traveler.actions.generate_loot.trial_chambers/reward_unique.money }
+      - { key: job_traveler_generate_loot_trial_chambers_supply, label: "Mở rương trial chambers/supply", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.traveler.actions.generate_loot.trial_chambers/supply.money }

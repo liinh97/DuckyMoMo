@@ -108,3 +108,10 @@ donate-ranks:
 guide:
   default-chapter: banghoi
   join-hint: "&6✦ &fGõ &e/huongdan &fđể xem cách chơi Bang Hội Chiến (bấm vào đây)."
+
+# Đồ / sách phù phép vượt cấp (vd Sắc bén XXX): CHỈ admin tạo bằng /dmm enchant <phù phép> <cấp> (món đang cầm)
+# và /dmm sach <phù phép> <cấp> [người]. Đe: ghép sách vượt cấp vào đồ giữ nguyên cấp. Làm phần thưởng / hàng hiếm
+# trong game, KHÔNG bán lấy tiền thật (luật Mojang).
+over-enchant:
+  enabled: true
+  max-level: 50

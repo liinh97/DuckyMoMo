@@ -115,6 +115,8 @@ plugins:
       - ["/rank check <tên>", "Xem rank và hạn"]
       - ["/rank remove <tên>", "Gỡ rank donate"]
       - ["/dmm clean", "Dọn rác ngay"]
+      - ["/dmm enchant <phù phép> <cấp>", "Phù phép VƯỢT CẤP món đang cầm (vd sharpness 30, efficiency 20; cấp 0 = gỡ; tối đa over-enchant.max-level = 50)"]
+      - ["/dmm sach <phù phép> <cấp> [người]", "Tạo sách vượt cấp tặng người chơi đang online; người chơi ghép bằng đe giữ nguyên cấp. Chỉ làm phần thưởng / hàng trong game, KHÔNG bán lấy tiền thật"]
       - ["/dmm reload", "Nạp lại config"]
       - ["/dmm decorate | structures start|pause|status", "Trang trí map / đặt công trình (dùng khi làm map mới)"]
     settings: "Trang Cài đặt: Toàn mạng (Chat, Rank donate, Sảnh), Bang Hội Chiến (Hệ thống)"

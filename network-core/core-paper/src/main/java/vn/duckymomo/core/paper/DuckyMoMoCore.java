@@ -12,6 +12,7 @@ public final class DuckyMoMoCore extends JavaPlugin {
     private StructurePlacer structures;
     private TownyMapLayer townyMap;
     private ItemCleaner cleaner;
+    private OverEnchant overEnchant;
 
     @Override
     public void onEnable() {
@@ -138,6 +139,14 @@ public final class DuckyMoMoCore extends JavaPlugin {
             cleaner.start();
         }
 
+        // Đồ/sách phù phép vượt cấp (chỉ admin tạo; đe giữ cấp của sách): over-enchant.enabled
+        overEnchant = getConfig().getBoolean("over-enchant.enabled")
+                ? new OverEnchant(getConfig().getInt("over-enchant.max-level", 50)) : null;
+        if (overEnchant != null) {
+            getServer().getPluginManager().registerEvents(overEnchant, this);
+            getLogger().info("Đồ phù phép vượt cấp: bật (tối đa cấp " + getConfig().getInt("over-enchant.max-level", 50) + ")");
+        }
+
         // Lệnh admin /dmm. Trang trí map (cây, cỏ, công trình) chỉ bật ở server có decorate.enabled (banghoi-1)
         decorator = getConfig().getBoolean("decorate.enabled") ? new MapDecorator(this) : null;
         structures = decorator != null ? new StructurePlacer(this) : null;
@@ -162,11 +171,17 @@ public final class DuckyMoMoCore extends JavaPlugin {
                     } else {
                         sender.sendMessage(cleaner.cleanNow());
                     }
+                } else if (args.length >= 1 && (args[0].equalsIgnoreCase("enchant") || args[0].equalsIgnoreCase("sach"))) {
+                    if (overEnchant == null) {
+                        sender.sendMessage("Đồ vượt cấp chưa bật trên server này (config: over-enchant.enabled).");
+                    } else {
+                        overEnchant.command(sender, args);
+                    }
                 } else if (args.length >= 1 && args[0].equalsIgnoreCase("reload")) {
                     reload();
                     sender.sendMessage("DuckyMoMoCore: đã nạp lại config.yml");
                 } else {
-                    sender.sendMessage("/dmm decorate|structures start | pause | status | reset   /dmm clean   /dmm reload");
+                    sender.sendMessage("/dmm decorate|structures start | pause | status | reset   /dmm clean   /dmm reload   /dmm enchant|sach <phù phép> <cấp>");
                 }
                 return true;
             });

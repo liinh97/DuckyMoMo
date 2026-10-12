@@ -539,3 +539,116 @@ groups:
       - { key: job_traveler_generate_loot_trial_chambers_reward_rare, label: "Mở rương trial chambers/reward rare", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.traveler.actions.generate_loot.trial_chambers/reward_rare.money }
       - { key: job_traveler_generate_loot_trial_chambers_reward_unique, label: "Mở rương trial chambers/reward unique", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.traveler.actions.generate_loot.trial_chambers/reward_unique.money }
       - { key: job_traveler_generate_loot_trial_chambers_supply, label: "Mở rương trial chambers/supply", type: number, min: 0, max: 100000, file: plugins/UJobs/jobs.yml, path: jobs.traveler.actions.generate_loot.trial_chambers/supply.money }
+
+  # ---- Chống hack (GrimAC, bản alpha 2.3.74): ghi cho cả banghoi-1 và practice-1 ----
+  - title: Chống hack - cách xử lý từng nhóm kiểm tra
+    category: Chống hack
+    description: "GrimAC bản ALPHA cho 26.2, có thể bắt nhầm (nhất là người ping cao, người chơi điện thoại). Nên để Chỉ báo admin vài tuần, xem cảnh báo (Mod/Admin thấy trong game) rồi mới bật kick. Số vi phạm tự quên sau thời gian ở nhóm dưới."
+    apply: [grim reload]
+    settings:
+      - key: grim_simulation
+        label: "Di chuyển (bay, tốc độ, Timer, NoFall)"
+        type: select
+        servers: [banghoi-1, practice-1]
+        file: plugins/GrimAC/punishments.yml
+        path: Punishments.Simulation.commands
+        options:
+          - { value: ["100:40 [alert]", "1:1 [log]", "100:100 [webhook]", "100:100 [proxy]"], label: "Chỉ báo admin (không kick)" }
+          - { value: ["100:40 [alert]", "1:1 [log]", "100:100 [webhook]", "100:100 [proxy]", "300:0 kick %player% Hệ thống chống hack: nghi dùng hack (%check_name%). Nếu bị nhầm, báo admin."], label: "Báo + kick khi đủ 300 vi phạm" }
+          - { value: ["100:40 [alert]", "1:1 [log]", "100:100 [webhook]", "100:100 [proxy]", "150:0 kick %player% Hệ thống chống hack: nghi dùng hack (%check_name%). Nếu bị nhầm, báo admin."], label: "Báo + kick sớm khi đủ 150 vi phạm (dễ nhầm hơn)" }
+      - key: grim_knockback
+        label: "Chống đẩy lùi (Velocity/AntiKB)"
+        type: select
+        servers: [banghoi-1, practice-1]
+        file: plugins/GrimAC/punishments.yml
+        path: Punishments.Knockback.commands
+        options:
+          - { value: ["5:5 [alert]", "1:1 [log]", "20:20 [webhook]", "20:20 [proxy]"], label: "Chỉ báo admin (không kick)" }
+          - { value: ["5:5 [alert]", "1:1 [log]", "20:20 [webhook]", "20:20 [proxy]", "40:0 kick %player% Hệ thống chống hack: nghi dùng hack (%check_name%). Nếu bị nhầm, báo admin."], label: "Báo + kick khi đủ 40 vi phạm" }
+          - { value: ["5:5 [alert]", "1:1 [log]", "20:20 [webhook]", "20:20 [proxy]", "20:0 kick %player% Hệ thống chống hack: nghi dùng hack (%check_name%). Nếu bị nhầm, báo admin."], label: "Báo + kick sớm khi đủ 20 vi phạm (dễ nhầm hơn)" }
+      - key: grim_post
+        label: "Gói tin bất thường (Post)"
+        type: select
+        servers: [banghoi-1, practice-1]
+        file: plugins/GrimAC/punishments.yml
+        path: Punishments.Post.commands
+        options:
+          - { value: ["20:20 [alert]", "1:1 [log]", "40:40 [webhook]", "40:40 [proxy]"], label: "Chỉ báo admin (không kick)" }
+          - { value: ["20:20 [alert]", "1:1 [log]", "40:40 [webhook]", "40:40 [proxy]", "80:0 kick %player% Hệ thống chống hack: nghi dùng hack (%check_name%). Nếu bị nhầm, báo admin."], label: "Báo + kick khi đủ 80 vi phạm" }
+          - { value: ["20:20 [alert]", "1:1 [log]", "40:40 [webhook]", "40:40 [proxy]", "40:0 kick %player% Hệ thống chống hack: nghi dùng hack (%check_name%). Nếu bị nhầm, báo admin."], label: "Báo + kick sớm khi đủ 40 vi phạm (dễ nhầm hơn)" }
+      - key: grim_badpackets
+        label: "Gói tin sai / làm crash (BadPackets)"
+        type: select
+        servers: [banghoi-1, practice-1]
+        file: plugins/GrimAC/punishments.yml
+        path: Punishments.BadPackets.commands
+        options:
+          - { value: ["20:20 [alert]", "1:1 [log]", "40:40 [webhook]", "40:40 [proxy]"], label: "Chỉ báo admin (không kick)" }
+          - { value: ["20:20 [alert]", "1:1 [log]", "40:40 [webhook]", "40:40 [proxy]", "80:0 kick %player% Hệ thống chống hack: nghi dùng hack (%check_name%). Nếu bị nhầm, báo admin."], label: "Báo + kick khi đủ 80 vi phạm" }
+          - { value: ["20:20 [alert]", "1:1 [log]", "40:40 [webhook]", "40:40 [proxy]", "40:0 kick %player% Hệ thống chống hack: nghi dùng hack (%check_name%). Nếu bị nhầm, báo admin."], label: "Báo + kick sớm khi đủ 40 vi phạm (dễ nhầm hơn)" }
+      - key: grim_reach
+        label: "Đánh xa (Reach)"
+        type: select
+        servers: [banghoi-1, practice-1]
+        file: plugins/GrimAC/punishments.yml
+        path: Punishments.Reach.commands
+        options:
+          - { value: ["1:1 [alert]", "1:1 [log]", "1:1 [webhook]", "1:1 [proxy]"], label: "Chỉ báo admin (không kick)" }
+          - { value: ["1:1 [alert]", "1:1 [log]", "1:1 [webhook]", "1:1 [proxy]", "15:0 kick %player% Hệ thống chống hack: nghi dùng hack (%check_name%). Nếu bị nhầm, báo admin."], label: "Báo + kick khi đủ 15 vi phạm" }
+          - { value: ["1:1 [alert]", "1:1 [log]", "1:1 [webhook]", "1:1 [proxy]", "7:0 kick %player% Hệ thống chống hack: nghi dùng hack (%check_name%). Nếu bị nhầm, báo admin."], label: "Báo + kick sớm khi đủ 7 vi phạm (dễ nhầm hơn)" }
+      - key: grim_hitboxes
+        label: "Hitbox to"
+        type: select
+        servers: [banghoi-1, practice-1]
+        file: plugins/GrimAC/punishments.yml
+        path: Punishments.Hitboxes.commands
+        options:
+          - { value: ["5:3 [alert]", "1:1 [log]", "5:3 [webhook]", "5:3 [proxy]"], label: "Chỉ báo admin (không kick)" }
+          - { value: ["5:3 [alert]", "1:1 [log]", "5:3 [webhook]", "5:3 [proxy]", "20:0 kick %player% Hệ thống chống hack: nghi dùng hack (%check_name%). Nếu bị nhầm, báo admin."], label: "Báo + kick khi đủ 20 vi phạm" }
+          - { value: ["5:3 [alert]", "1:1 [log]", "5:3 [webhook]", "5:3 [proxy]", "10:0 kick %player% Hệ thống chống hack: nghi dùng hack (%check_name%). Nếu bị nhầm, báo admin."], label: "Báo + kick sớm khi đủ 10 vi phạm (dễ nhầm hơn)" }
+      - key: grim_misc
+        label: "Khác (NoSlow, đặt/phá block, Baritone, Elytra...)"
+        type: select
+        servers: [banghoi-1, practice-1]
+        file: plugins/GrimAC/punishments.yml
+        path: Punishments.Misc.commands
+        options:
+          - { value: ["10:5 [alert]", "1:1 [log]", "20:10 [webhook]", "20:10 [proxy]"], label: "Chỉ báo admin (không kick)" }
+          - { value: ["10:5 [alert]", "1:1 [log]", "20:10 [webhook]", "20:10 [proxy]", "60:0 kick %player% Hệ thống chống hack: nghi dùng hack (%check_name%). Nếu bị nhầm, báo admin."], label: "Báo + kick khi đủ 60 vi phạm" }
+          - { value: ["10:5 [alert]", "1:1 [log]", "20:10 [webhook]", "20:10 [proxy]", "30:0 kick %player% Hệ thống chống hack: nghi dùng hack (%check_name%). Nếu bị nhầm, báo admin."], label: "Báo + kick sớm khi đủ 30 vi phạm (dễ nhầm hơn)" }
+      - key: grim_combat
+        label: "Ngắm/tương tác (Aim, Interact)"
+        type: select
+        servers: [banghoi-1, practice-1]
+        file: plugins/GrimAC/punishments.yml
+        path: Punishments.Combat.commands
+        options:
+          - { value: ["20:40 [alert]", "1:1 [log]"], label: "Chỉ báo admin (không kick)" }
+          - { value: ["20:40 [alert]", "1:1 [log]", "80:0 kick %player% Hệ thống chống hack: nghi dùng hack (%check_name%). Nếu bị nhầm, báo admin."], label: "Báo + kick khi đủ 80 vi phạm" }
+          - { value: ["20:40 [alert]", "1:1 [log]", "40:0 kick %player% Hệ thống chống hack: nghi dùng hack (%check_name%). Nếu bị nhầm, báo admin."], label: "Báo + kick sớm khi đủ 40 vi phạm (dễ nhầm hơn)" }
+      - key: grim_autoclicker
+        label: "Autoclicker (bấm tự động)"
+        type: select
+        servers: [banghoi-1, practice-1]
+        file: plugins/GrimAC/punishments.yml
+        path: Punishments.Autoclicker.commands
+        options:
+          - { value: ["20:40 [alert]", "1:1 [log]"], label: "Chỉ báo admin (không kick)" }
+          - { value: ["20:40 [alert]", "1:1 [log]", "60:0 kick %player% Hệ thống chống hack: nghi dùng hack (%check_name%). Nếu bị nhầm, báo admin."], label: "Báo + kick khi đủ 60 vi phạm" }
+          - { value: ["20:40 [alert]", "1:1 [log]", "30:0 kick %player% Hệ thống chống hack: nghi dùng hack (%check_name%). Nếu bị nhầm, báo admin."], label: "Báo + kick sớm khi đủ 30 vi phạm (dễ nhầm hơn)" }
+
+  - title: Chống hack - cài đặt chung
+    category: Chống hack
+    apply: [grim reload]
+    settings:
+      - { key: grim_forget_seconds, label: Quên vi phạm sau (giây) - nhóm Di chuyển, type: int, min: 30, max: 86400, servers: [banghoi-1, practice-1], file: plugins/GrimAC/punishments.yml, path: Punishments.Simulation.remove-violations-after,
+          note: "Số vi phạm chỉ cộng dồn trong khoảng này. Mặc định 300 (5 phút)." }
+      - { key: grim_forget_combat, label: Quên vi phạm sau (giây) - nhóm Đánh xa, type: int, min: 30, max: 86400, servers: [banghoi-1, practice-1], file: plugins/GrimAC/punishments.yml, path: Punishments.Reach.remove-violations-after }
+      - { key: grim_block_reach, label: Chặn luôn cú đánh không thể xảy ra (quá xa), type: select, servers: [banghoi-1, practice-1], file: plugins/GrimAC/config.yml, path: Reach.block-impossible-hits,
+          options: [ { value: true, label: Có }, { value: false, label: Không } ] }
+      - { key: grim_experimental, label: Bật các kiểm tra thử nghiệm, type: select, servers: [banghoi-1, practice-1], file: plugins/GrimAC/config.yml, path: experimental-checks,
+          options: [ { value: false, label: "Không (nên để tắt, dễ bắt nhầm)" }, { value: true, label: Có } ] }
+      - { key: grim_alert_console, label: Ghi cảnh báo vào log server, type: select, servers: [banghoi-1, practice-1], file: plugins/GrimAC/config.yml, path: alerts.print-to-console,
+          options: [ { value: true, label: "Có (xem ở trang Log)" }, { value: false, label: Không } ] }
+      - { key: grim_forge_kick, label: Chặn bản Forge bị cấm (client hack giả Forge), type: select, servers: [banghoi-1, practice-1], file: plugins/GrimAC/config.yml, path: client-brand.disconnect-blacklisted-forge-versions,
+          options: [ { value: true, label: Có }, { value: false, label: Không } ] }

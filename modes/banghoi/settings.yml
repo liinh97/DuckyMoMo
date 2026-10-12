@@ -352,3 +352,50 @@ job_traveler_generate_loot_trial_chambers_reward_ominous_unique: 0.1
 job_traveler_generate_loot_trial_chambers_reward_rare: 0.1
 job_traveler_generate_loot_trial_chambers_reward_unique: 0.1
 job_traveler_generate_loot_trial_chambers_supply: 0.1
+grim_simulation:
+  - 100:40 [alert]
+  - 1:1 [log]
+  - 100:100 [webhook]
+  - 100:100 [proxy]
+grim_knockback:
+  - 5:5 [alert]
+  - 1:1 [log]
+  - 20:20 [webhook]
+  - 20:20 [proxy]
+grim_post:
+  - 20:20 [alert]
+  - 1:1 [log]
+  - 40:40 [webhook]
+  - 40:40 [proxy]
+grim_badpackets:
+  - 20:20 [alert]
+  - 1:1 [log]
+  - 40:40 [webhook]
+  - 40:40 [proxy]
+grim_reach:
+  - 1:1 [alert]
+  - 1:1 [log]
+  - 1:1 [webhook]
+  - 1:1 [proxy]
+grim_hitboxes:
+  - 5:3 [alert]
+  - 1:1 [log]
+  - 5:3 [webhook]
+  - 5:3 [proxy]
+grim_misc:
+  - 10:5 [alert]
+  - 1:1 [log]
+  - 20:10 [webhook]
+  - 20:10 [proxy]
+grim_combat:
+  - 20:40 [alert]
+  - 1:1 [log]
+grim_autoclicker:
+  - 20:40 [alert]
+  - 1:1 [log]
+grim_forget_seconds: 300
+grim_forget_combat: 300
+grim_block_reach: true
+grim_experimental: false
+grim_alert_console: true
+grim_forge_kick: true

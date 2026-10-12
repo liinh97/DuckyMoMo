@@ -102,18 +102,37 @@ def validate(s, v):
         return v
     if t == "text":
         return str(v or "")
+    if t in ("list", "lines"):
+        # list: các mục cách nhau dấu phẩy; lines: mỗi dòng một mục. items: int/number -> đổi sang số
+        if isinstance(v, str):
+            parts = v.split("\n") if t == "lines" else v.split(",")
+        else:
+            parts = list(v or [])
+        out = [str(x).strip() for x in parts if str(x).strip()]
+        if s.get("items") in ("int", "number"):
+            try:
+                out = [int(x) if s["items"] == "int" else float(x) for x in out]
+            except ValueError:
+                raise ValueError(f"{label}: mỗi mục phải là số")
+        if "min_items" in s and len(out) < s["min_items"]:
+            raise ValueError(f"{label}: cần ít nhất {s['min_items']} mục")
+        return out
     raise ValueError(f"{label}: kiểu {t} không ghi được")
 
 
 def set_path(doc, dotted, value):
-    keys = dotted.split(".")
+    # Phần tử là số = chỉ số trong danh sách YAML (ví dụ donate-ranks.tiers.0.prices)
+    keys = [int(k) if k.isdigit() else k for k in dotted.split(".")]
     node = doc
     for k in keys[:-1]:
+        if isinstance(k, int):
+            node = node[k]
+            continue
         if k not in node or node[k] is None:
             node[k] = {}
         node = node[k]
     last = keys[-1]
-    old = node.get(last) if hasattr(node, "get") else None
+    old = node[last] if isinstance(last, int) else (node.get(last) if hasattr(node, "get") else None)
     # Giữ kiểu ghi của file gốc: Towny/SiegeWar ghi số dạng chuỗi trong nháy đơn ('20.0')
     if isinstance(value, list):
         new = list(value)
@@ -200,15 +219,20 @@ def save_and_apply(mode_id, incoming, apply_all=False):
     if not changed:
         return {"ok": True, "message": "Không có gì thay đổi.", "results": []}
 
-    # 1) Ghi vào file cấu hình plugin (gom theo file)
+    # Mục có "servers" ghi vào file của nhiều server (vd lọc chat, rank donate: lobby + banghoi + practice)
+    def servers_of(s):
+        return s.get("servers") or [server]
+
+    # 1) Ghi vào file cấu hình plugin (gom theo server + file)
     by_file = {}
     for _, s, v in changed:
         if s.get("file"):
-            by_file.setdefault(s["file"], []).append((s["path"], v))
-    for rel, items in by_file.items():
-        path = DATA_DIR / server / rel
+            for srv in servers_of(s):
+                by_file.setdefault((srv, s["file"]), []).append((s["path"], v))
+    for (srv, rel), items in by_file.items():
+        path = DATA_DIR / srv / rel
         if not path.exists():
-            raise FileNotFoundError(f"chưa có {rel}: server cần chạy ít nhất một lần để plugin tạo file")
+            raise FileNotFoundError(f"chưa có {srv}/{rel}: server cần chạy ít nhất một lần để plugin tạo file")
         y = yaml_rt()
         doc = y.load(path.read_text(encoding="utf-8"))
         for dotted, v in items:
@@ -226,28 +250,41 @@ def save_and_apply(mode_id, incoming, apply_all=False):
 
     # 3) Áp dụng qua RCON: lệnh riêng của từng mục, rồi lệnh nạp lại của từng nhóm (mỗi lệnh 1 lần)
     # Lệnh dùng được {value}, {double} (giá trị x2) và {tên_mục_khác} (giá trị hiện tại của mục đó)
+    # Lệnh nhóm (apply) chạy trên mọi server có mục đổi trong nhóm đó.
     current = {k: plain(v) for k, v in values.items()}
-    commands = []
+    per_server = {}
     for group, s, v in changed:
         for c in s.get("commands", []):
             cmd = c.format(**current, value=v, double=int(v) * 2 if s["type"] in ("int", "number") else v)
-            if cmd not in commands:
-                commands.append(cmd)
+            for srv in servers_of(s):
+                lst = per_server.setdefault(srv, [])
+                if cmd not in lst:
+                    lst.append(cmd)
     for group in schema.get("groups", []):
-        if any(g is group for g, _, _ in changed):
+        srvs = []
+        for g, s, _ in changed:
+            if g is group:
+                srvs += [x for x in servers_of(s) if x not in srvs]
+        for srv in srvs:
             for c in group.get("apply", []):
-                if c not in commands:
-                    commands.append(c)
+                lst = per_server.setdefault(srv, [])
+                if c not in lst:
+                    lst.append(c)
 
     stored_only = [s["label"] for _, s, _ in changed if not s.get("file") and not s.get("commands")]
-    try:
-        results = rcon(server, commands) if commands else []
+    results, failed = [], []
+    for srv, cmds in per_server.items():
+        try:
+            for c, o in rcon(srv, cmds):
+                results.append((f"[{srv}] {c}" if len(per_server) > 1 else c, o))
+        except Exception as e:  # server đang tắt / đang khởi động
+            failed.append(f"{srv} ({e})")
+    ok = not failed
+    if ok:
         msg = "Đã lưu và áp dụng."
-        ok = True
-    except Exception as e:  # server đang tắt / đang khởi động
-        results = []
-        msg = f"Đã lưu, nhưng chưa áp dụng được ({e}). Server {server} có thể đang tắt; bật lên sẽ dùng giá trị mới (riêng viền thế giới phải bấm Áp dụng lại tất cả)."
-        ok = False
+    else:
+        msg = (f"Đã lưu, nhưng chưa áp dụng được trên: {', '.join(failed)}. Server có thể đang tắt; bật lên sẽ dùng giá trị mới "
+               "(riêng viền thế giới phải bấm Áp dụng lại tất cả).")
     if stored_only:
         msg += " Chỉ ghi lại (dùng khi mở mùa mới): " + ", ".join(stored_only) + "."
     return {"ok": ok, "message": msg, "results": [{"command": c, "output": o} for c, o in results]}

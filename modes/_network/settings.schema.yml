@@ -1,0 +1,94 @@
+# Trang "Toàn mạng" của trang Cài đặt: cài đặt dùng chung lobby + Bang Hội Chiến + practice (panel/ đọc file này).
+# Thư mục bắt đầu bằng "_" nên menu chọn chế độ ở lobby bỏ qua. Định dạng: xem modes/banghoi/settings.schema.yml.
+# Mỗi nhóm có category (loại): trang Cài đặt có thanh chọn loại, chỉ hiện các nhóm của loại đang chọn.
+# Mục có "servers": ghi cùng giá trị vào file của từng server trong danh sách, lệnh nạp lại chạy trên từng server.
+title: Toàn mạng
+server: lobby
+
+groups:
+  - title: Lọc chat
+    category: Chat
+    description: Che từ tục (thay bằng ***) và chống spam ở lobby, Bang Hội Chiến, practice. Admin (op) không bị chống spam.
+    apply: [dmm reload]
+    settings:
+      - { key: chat_filter_enabled, label: Bật lọc chat, type: select, servers: [lobby, banghoi-1, practice-1], file: plugins/DuckyMoMoCore/config.yml, path: chat-filter.enabled,
+          options: [ { value: true, label: Bật }, { value: false, label: Tắt } ] }
+      - { key: chat_words_accented, label: Từ cấm (khớp đúng dạng CÓ DẤU), type: lines, servers: [lobby, banghoi-1, practice-1], file: plugins/DuckyMoMoCore/config.yml, path: chat-filter.words-accented,
+          note: "Mỗi dòng một từ/cụm từ. Dùng cho từ mà bỏ dấu sẽ trùng từ thường (lồn/lớn, cặc/các, buồi/buổi, đéo/đeo)." }
+      - { key: chat_words_plain, label: Từ cấm (khớp cả khi gõ KHÔNG DẤU), type: lines, servers: [lobby, banghoi-1, practice-1], file: plugins/DuckyMoMoCore/config.yml, path: chat-filter.words-plain,
+          note: "Mỗi dòng một từ. Chỉ dùng cho từ không trùng từ thường khi bỏ dấu (đm, vcl, dcm...)." }
+      - { key: chat_min_interval, label: Khoảng cách tối thiểu giữa 2 tin (giây), type: number, min: 0, max: 30, servers: [lobby, banghoi-1, practice-1], file: plugins/DuckyMoMoCore/config.yml, path: chat-filter.min-interval-seconds }
+      - { key: chat_repeat_seconds, label: Không cho gửi lặp lại cùng câu trong (giây), type: int, min: 0, max: 3600, servers: [lobby, banghoi-1, practice-1], file: plugins/DuckyMoMoCore/config.yml, path: chat-filter.repeat-seconds }
+      - { key: chat_caps_ratio, label: Tỉ lệ chữ hoa để tự hạ thành chữ thường (0-1), type: number, min: 0, max: 1, servers: [lobby, banghoi-1, practice-1], file: plugins/DuckyMoMoCore/config.yml, path: chat-filter.caps-ratio,
+          note: "0.7 = câu có từ 70% chữ hoa trở lên (và từ 8 chữ cái) bị đổi về chữ thường. 1 = tắt." }
+      - { key: chat_too_fast_msg, label: Tin báo khi chat quá nhanh, type: text, servers: [lobby, banghoi-1, practice-1], file: plugins/DuckyMoMoCore/config.yml, path: chat-filter.too-fast-message }
+      - { key: chat_repeat_msg, label: Tin báo khi gửi lặp, type: text, servers: [lobby, banghoi-1, practice-1], file: plugins/DuckyMoMoCore/config.yml, path: chat-filter.repeat-message }
+
+  - title: Thông báo vào/ra server
+    category: Chat
+    description: "Mã màu &a, &e... {prefix} = role + rank, {player} = tên, {tier} = tên bậc donate, {tiercolor} = màu bậc."
+    apply: [dmm reload]
+    settings:
+      - { key: join_message, label: Dòng khi có người vào, type: text, servers: [lobby, banghoi-1, practice-1], file: plugins/DuckyMoMoCore/config.yml, path: donate-ranks.join-message }
+      - { key: quit_message, label: Dòng khi có người ra, type: text, servers: [lobby, banghoi-1, practice-1], file: plugins/DuckyMoMoCore/config.yml, path: donate-ranks.quit-message }
+      - { key: rank_join_message, label: Dòng chào thêm cho người có rank donate, type: text, servers: [lobby, banghoi-1, practice-1], file: plugins/DuckyMoMoCore/config.yml, path: donate-ranks.rank-join-message }
+
+  - title: Rank donate (tước vị)
+    category: Rank donate
+    description: "Chỉ trang trí (luật Mojang). Admin cấp: /rank give <tên> <bậc> <số tháng>. Người chơi xem: /rank. Quyền lợi cụ thể của từng bậc nằm trong LuckPerms (tools/donate-ranks.cmds); ô Quyền lợi dưới đây chỉ là chữ hiện trong /rank."
+    apply: [dmm reload]
+    settings:
+      - { key: donate_how_to_buy, label: Hướng dẫn mua (hiện trong /rank), type: text, servers: [lobby, banghoi-1, practice-1], file: plugins/DuckyMoMoCore/config.yml, path: donate-ranks.how-to-buy }
+      - { key: tier0_name, label: "Bậc 1 (namtuoc): tên hiển thị", type: text, servers: [lobby, banghoi-1, practice-1], file: plugins/DuckyMoMoCore/config.yml, path: donate-ranks.tiers.0.name }
+      - { key: tier0_prefix, label: "Bậc 1 (namtuoc): prefix trong chat/Tab", type: text,
+          commands: ["lp group namtuoc meta removeprefix 5", "lp group namtuoc meta setprefix 5 \"{value} \""],
+          note: "Ví dụ &a[Nam Tước]. Ghi vào LuckPerms (dùng chung toàn mạng), có hiệu lực ngay." }
+      - { key: tier0_prices, label: "Bậc 1 (namtuoc): giá các gói", type: list, servers: [lobby, banghoi-1, practice-1], file: plugins/DuckyMoMoCore/config.yml, path: donate-ranks.tiers.0.prices,
+          note: "Cách nhau dấu phẩy, ví dụ: 1 tháng 20k, 3 tháng 50k, 6 tháng 90k, 1 năm 160k" }
+      - { key: tier0_perks, label: "Bậc 1 (namtuoc): quyền lợi (chữ hiện trong /rank)", type: list, servers: [lobby, banghoi-1, practice-1], file: plugins/DuckyMoMoCore/config.yml, path: donate-ranks.tiers.0.perks }
+      - { key: tier1_name, label: "Bậc 2 (tutuoc): tên hiển thị", type: text, servers: [lobby, banghoi-1, practice-1], file: plugins/DuckyMoMoCore/config.yml, path: donate-ranks.tiers.1.name }
+      - { key: tier1_prefix, label: "Bậc 2 (tutuoc): prefix trong chat/Tab", type: text,
+          commands: ["lp group tutuoc meta removeprefix 6", "lp group tutuoc meta setprefix 6 \"{value} \""],
+          note: "Ví dụ &b[Tử Tước]. Ghi vào LuckPerms (dùng chung toàn mạng), có hiệu lực ngay." }
+      - { key: tier1_prices, label: "Bậc 2 (tutuoc): giá các gói", type: list, servers: [lobby, banghoi-1, practice-1], file: plugins/DuckyMoMoCore/config.yml, path: donate-ranks.tiers.1.prices,
+          note: "Cách nhau dấu phẩy, ví dụ: 1 tháng 20k, 3 tháng 50k, 6 tháng 90k, 1 năm 160k" }
+      - { key: tier1_perks, label: "Bậc 2 (tutuoc): quyền lợi (chữ hiện trong /rank)", type: list, servers: [lobby, banghoi-1, practice-1], file: plugins/DuckyMoMoCore/config.yml, path: donate-ranks.tiers.1.perks }
+      - { key: tier2_name, label: "Bậc 3 (batuoc): tên hiển thị", type: text, servers: [lobby, banghoi-1, practice-1], file: plugins/DuckyMoMoCore/config.yml, path: donate-ranks.tiers.2.name }
+      - { key: tier2_prefix, label: "Bậc 3 (batuoc): prefix trong chat/Tab", type: text,
+          commands: ["lp group batuoc meta removeprefix 7", "lp group batuoc meta setprefix 7 \"{value} \""],
+          note: "Ví dụ &9[Bá Tước]. Ghi vào LuckPerms (dùng chung toàn mạng), có hiệu lực ngay." }
+      - { key: tier2_prices, label: "Bậc 3 (batuoc): giá các gói", type: list, servers: [lobby, banghoi-1, practice-1], file: plugins/DuckyMoMoCore/config.yml, path: donate-ranks.tiers.2.prices,
+          note: "Cách nhau dấu phẩy, ví dụ: 1 tháng 20k, 3 tháng 50k, 6 tháng 90k, 1 năm 160k" }
+      - { key: tier2_perks, label: "Bậc 3 (batuoc): quyền lợi (chữ hiện trong /rank)", type: list, servers: [lobby, banghoi-1, practice-1], file: plugins/DuckyMoMoCore/config.yml, path: donate-ranks.tiers.2.perks }
+      - { key: tier3_name, label: "Bậc 4 (hautuoc): tên hiển thị", type: text, servers: [lobby, banghoi-1, practice-1], file: plugins/DuckyMoMoCore/config.yml, path: donate-ranks.tiers.3.name }
+      - { key: tier3_prefix, label: "Bậc 4 (hautuoc): prefix trong chat/Tab", type: text,
+          commands: ["lp group hautuoc meta removeprefix 8", "lp group hautuoc meta setprefix 8 \"{value} \""],
+          note: "Ví dụ &d[Hầu Tước]. Ghi vào LuckPerms (dùng chung toàn mạng), có hiệu lực ngay." }
+      - { key: tier3_prices, label: "Bậc 4 (hautuoc): giá các gói", type: list, servers: [lobby, banghoi-1, practice-1], file: plugins/DuckyMoMoCore/config.yml, path: donate-ranks.tiers.3.prices,
+          note: "Cách nhau dấu phẩy, ví dụ: 1 tháng 20k, 3 tháng 50k, 6 tháng 90k, 1 năm 160k" }
+      - { key: tier3_perks, label: "Bậc 4 (hautuoc): quyền lợi (chữ hiện trong /rank)", type: list, servers: [lobby, banghoi-1, practice-1], file: plugins/DuckyMoMoCore/config.yml, path: donate-ranks.tiers.3.perks }
+      - { key: tier4_name, label: "Bậc 5 (congtuoc): tên hiển thị", type: text, servers: [lobby, banghoi-1, practice-1], file: plugins/DuckyMoMoCore/config.yml, path: donate-ranks.tiers.4.name }
+      - { key: tier4_prefix, label: "Bậc 5 (congtuoc): prefix trong chat/Tab", type: text,
+          commands: ["lp group congtuoc meta removeprefix 9", "lp group congtuoc meta setprefix 9 \"{value} \""],
+          note: "Ví dụ &6&l[Công Tước]. Ghi vào LuckPerms (dùng chung toàn mạng), có hiệu lực ngay." }
+      - { key: tier4_prices, label: "Bậc 5 (congtuoc): giá các gói", type: list, servers: [lobby, banghoi-1, practice-1], file: plugins/DuckyMoMoCore/config.yml, path: donate-ranks.tiers.4.prices,
+          note: "Cách nhau dấu phẩy, ví dụ: 1 tháng 20k, 3 tháng 50k, 6 tháng 90k, 1 năm 160k" }
+      - { key: tier4_perks, label: "Bậc 5 (congtuoc): quyền lợi (chữ hiện trong /rank)", type: list, servers: [lobby, banghoi-1, practice-1], file: plugins/DuckyMoMoCore/config.yml, path: donate-ranks.tiers.4.perks }
+
+  - title: Sảnh (lobby)
+    category: Sảnh
+    apply: [dmm reload]
+    settings:
+      - { key: lobby_void_y, label: Rơi thấp hơn độ cao này thì về spawn, type: int, min: -64, max: 300, servers: [lobby], file: plugins/DuckyMoMoCore/config.yml, path: void-teleport.below-y,
+          note: "Đảo Sakura thấp nhất khoảng y 20-50. Spawn ở y 89." }
+      - { key: lobby_spawn_on_join, label: Mỗi lần vào đều đứng ở spawn, type: select, servers: [lobby], file: plugins/DuckyMoMoCore/config.yml, path: void-teleport.spawn-on-join,
+          options: [ { value: true, label: Có }, { value: false, label: "Không (vào lại chỗ thoát lần trước)" } ] }
+
+  - title: Hiệu ứng hạt (PlayerParticles)
+    category: Rank donate
+    description: "Có hiệu lực sau khi khởi động lại lobby và Bang Hội Chiến (lệnh pp reload của plugin không chạy được qua RCON)."
+    settings:
+      - { key: pp_toggle_on_combat, label: Ẩn hiệu ứng khi đang đánh nhau, type: select, servers: [lobby, banghoi-1], file: plugins/PlayerParticles/config.yml, path: toggle-on-combat,
+          options: [ { value: true, label: "Có (nên bật: hạt làm lộ vị trí trong chiến tranh)" }, { value: false, label: Không } ] }
+      - { key: pp_max_default, label: Số hiệu ứng cho người KHÔNG có rank, type: int, min: 0, max: 10, servers: [lobby, banghoi-1], file: plugins/PlayerParticles/config.yml, path: max-particles,
+          note: "0 = chỉ người có rank (Tử Tước trở lên) mới dùng được /pp." }

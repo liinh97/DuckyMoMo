@@ -1,0 +1,136 @@
+# Giá trị cài đặt trang "Toàn mạng". Ý nghĩa từng mục: settings.schema.yml. Sửa qua trang Cài đặt.
+chat_filter_enabled: true
+chat_words_accented:
+  - lồn
+  - cặc
+  - buồi
+  - đéo
+  - đĩ
+  - đụ
+  - đụ má
+  - đụ mẹ
+  - mẹ mày
+  - má mày
+  - con mẹ mày
+  - óc chó
+  - chó má
+  - thằng chó
+  - con chó
+  - ngu như chó
+  - lìn
+  - cứt
+chat_words_plain:
+  - dm
+  - dmm
+  - dmmm
+  - dcm
+  - dkm
+  - dcmm
+  - dcmn
+  - dit
+  - dit me
+  - dit ma
+  - djt
+  - vcl
+  - vkl
+  - vcc
+  - vklm
+  - vl
+  - vloz
+  - vlon
+  - clm
+  - clmm
+  - cmm
+  - cmn
+  - cmnr
+  - ccmm
+  - dmcs
+  - dmvl
+  - cl
+  - cc
+  - loz
+  - l0n
+  - lon me
+  - cak
+  - cac lon
+  - du ma
+  - du me
+  - ditconme
+  - dcmvl
+  - dmml
+  - fuck
+  - fucking
+  - shit
+  - bitch
+  - dick
+  - pussy
+  - motherfucker
+chat_min_interval: 1.5
+chat_repeat_seconds: 30
+chat_caps_ratio: 0.7
+chat_too_fast_msg: '&cChat chậm lại một chút!'
+chat_repeat_msg: '&cĐừng gửi lặp lại cùng một câu!'
+join_message: '&8[&a+&8] {prefix}&f{player}'
+quit_message: '&8[&c-&8] {prefix}&f{player}'
+rank_join_message: '&e✦ {tiercolor}{tier} &f{player} &evừa giá lâm!'
+donate_how_to_buy: '&7Mua rank: nhắn admin qua Discord/Zalo, chuyển khoản ghi &fTÊN NHÂN VẬT + GÓI&7. Admin cấp trong ngày.'
+tier0_name: Nam Tước
+tier0_prefix: '&a[Nam Tước]'
+tier0_prices:
+  - 1 tháng 20k
+  - 3 tháng 50k
+  - 6 tháng 90k
+  - 1 năm 160k
+tier0_perks:
+  - prefix
+  - chat màu
+  - /hat
+  - chào khi vào server
+tier1_name: Tử Tước
+tier1_prefix: '&b[Tử Tước]'
+tier1_prices:
+  - 1 tháng 40k
+  - 3 tháng 100k
+  - 6 tháng 180k
+  - 1 năm 320k
+tier1_perks:
+  - /nick
+  - 1 hiệu ứng hạt (/pp)
+tier2_name: Bá Tước
+tier2_prefix: '&9[Bá Tước]'
+tier2_prices:
+  - 1 tháng 70k
+  - 3 tháng 180k
+  - 6 tháng 320k
+  - 1 năm 560k
+tier2_perks:
+  - nick có màu
+  - 2 hiệu ứng hạt
+  - 1 pet (/pet)
+tier3_name: Hầu Tước
+tier3_prefix: '&d[Hầu Tước]'
+tier3_prices:
+  - 1 tháng 100k
+  - 3 tháng 260k
+  - 6 tháng 460k
+  - 1 năm 800k
+tier3_perks:
+  - chat đậm/nghiêng
+  - 3 hiệu ứng hạt
+  - pet hiếm
+tier4_name: Công Tước
+tier4_prefix: '&6&l[Công Tước]&r'
+tier4_prices:
+  - 1 tháng 150k
+  - 3 tháng 390k
+  - 6 tháng 690k
+  - 1 năm 1.200k
+tier4_perks:
+  - chat/nick màu tuỳ chọn (hex)
+  - 6 hiệu ứng hạt
+  - mọi pet
+  - chuông khi vào server
+lobby_void_y: 0
+lobby_spawn_on_join: true
+pp_toggle_on_combat: true
+pp_max_default: 0

@@ -31,8 +31,12 @@
   .row.changed { background: var(--changed); }
   .row label { padding-top: 6px; font-size: 14px; }
   .row .note { grid-column: 2; color: var(--muted); font-size: 12.5px; margin-top: -2px; }
-  input, select { width: 100%; padding: 6px 9px; border: 1px solid var(--line); border-radius: 6px; background: var(--input); color: var(--text); font: inherit; }
-  input:focus, select:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+  input, select, textarea { width: 100%; padding: 6px 9px; border: 1px solid var(--line); border-radius: 6px; background: var(--input); color: var(--text); font: inherit; }
+  textarea { resize: vertical; line-height: 1.4; }
+  .cats { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 14px; }
+  .cat { padding: 6px 12px; border-radius: 999px; border: 1px solid var(--line); background: transparent; color: var(--text); font: inherit; cursor: pointer; }
+  .cat.active { background: var(--accent); border-color: var(--accent); color: var(--accent-text); }
+  input:focus, select:focus, textarea:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
   .bar { position: fixed; bottom: 0; left: 0; right: 0; background: var(--card); border-top: 1px solid var(--line); padding: 12px 16px; }
   .bar .inner { max-width: 860px; margin: 0 auto; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
   .bar .status { flex: 1; font-size: 13.5px; color: var(--muted); min-width: 200px; }
@@ -60,7 +64,7 @@
 </div></div>
 
 <script>
-let modes = [], current = null, edits = {};
+let modes = [], current = null, edits = {}, category = {};
 const $ = (id) => document.getElementById(id);
 const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
 
@@ -87,7 +91,23 @@ function render() {
   const main = $("main");
   main.innerHTML = "";
   if (!mode) { main.textContent = "Chưa có chế độ nào có settings.schema.yml."; return; }
+  // Thanh chọn loại (category của nhóm); "Tất cả" hiện mọi nhóm. Loại có mục đã sửa chưa lưu được đánh dấu •
+  const cats = [];
+  for (const g of mode.schema.groups) { const c = g.category || "Khác"; if (!cats.includes(c)) cats.push(c); }
+  if (!category[mode.id] || (category[mode.id] !== "*" && !cats.includes(category[mode.id]))) category[mode.id] = cats[0];
+  const nav = document.createElement("nav");
+  nav.className = "cats";
+  for (const c of [...cats, "*"]) {
+    const b = document.createElement("button");
+    b.className = "cat" + (category[mode.id] === c ? " active" : "");
+    const dirty = mode.schema.groups.some(g => (c === "*" || (g.category || "Khác") === c) && g.settings.some(st => st.key in edits));
+    b.textContent = (c === "*" ? "Tất cả" : c) + (dirty ? " •" : "");
+    b.onclick = () => { category[mode.id] = c; render(); };
+    nav.appendChild(b);
+  }
+  main.appendChild(nav);
   for (const g of mode.schema.groups) {
+    if (category[mode.id] !== "*" && (g.category || "Khác") !== category[mode.id]) continue;
     const box = document.createElement("section");
     box.className = "group";
     box.innerHTML = `<h2></h2>${g.description ? '<p class="desc"></p>' : ""}`;
@@ -118,6 +138,23 @@ function row(mode, s) {
       input.appendChild(opt);
     });
     input.onchange = () => change(mode, s, s.options[input.value].value, div);
+  } else if (s.type === "lines") {
+    // Mỗi dòng một mục (lưu thành danh sách)
+    input = document.createElement("textarea");
+    input.rows = Math.min(12, Math.max(3, (value || []).length + 1));
+    input.value = (value || []).join("\n");
+    input.oninput = () => change(mode, s, input.value.split("\n").map(x => x.trim()).filter(x => x), div);
+  } else if (s.type === "list") {
+    // Các mục cách nhau dấu phẩy (lưu thành danh sách)
+    input = document.createElement("input");
+    input.value = (value || []).join(", ");
+    input.placeholder = "Các mục cách nhau dấu phẩy";
+    input.oninput = () => {
+      let v = input.value.split(",").map(x => x.trim()).filter(x => x);
+      if (s.items === "int") v = v.map(x => parseInt(x, 10));
+      if (s.items === "number") v = v.map(x => parseFloat(x));
+      change(mode, s, v, div);
+    };
   } else {
     input = document.createElement("input");
     if (s.type === "int" || s.type === "number") {
@@ -146,6 +183,13 @@ function change(mode, s, v, div) {
   if (same(v, mode.values[s.key])) delete edits[s.key]; else edits[s.key] = v;
   div.classList.toggle("changed", s.key in edits);
   updateBar();
+  const active = document.querySelector(".cat.active");
+  if (active) for (const b of document.querySelectorAll(".cat")) {
+    const c = b.textContent.replace(" •", "");
+    const mode2 = modes.find(m => m.id === current);
+    const dirty = mode2.schema.groups.some(g => (c === "Tất cả" || (g.category || "Khác") === c) && g.settings.some(st => st.key in edits));
+    b.textContent = c + (dirty ? " •" : "");
+  }
 }
 
 function updateBar() {

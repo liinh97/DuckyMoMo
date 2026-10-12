@@ -3,17 +3,20 @@
 #
 # Mỗi mục:
 #   key      tên trong settings.yml
-#   type     text | times | int | number | select | info
+#   type     text | times | int | number | select | list (phẩy) | lines (mỗi dòng 1 mục) | info
+#   servers  (tuỳ chọn) ghi vào file của nhiều server, vd [lobby, banghoi-1, practice-1]; mặc định = server của trang
+#   path     có thể chứa chỉ số danh sách: donate-ranks.tiers.0.prices
 #   file     file cấu hình plugin, tính từ data/<server>/  (bỏ trống = chỉ lưu, không ghi vào plugin)
 #   path     đường dẫn trong file YAML, nối bằng dấu chấm
 #   commands lệnh RCON chạy khi giá trị đổi ({value}, {double} = giá trị x2, {tên_mục} = giá trị của mục khác)
 #   note     ghi chú hiện dưới ô nhập
-# Mỗi nhóm: apply = lệnh RCON chạy sau khi có mục trong nhóm đổi (nạp lại cấu hình plugin).
+# Mỗi nhóm: category = loại (thanh chọn loại trên trang Cài đặt); apply = lệnh RCON chạy sau khi có mục trong nhóm đổi (nạp lại cấu hình plugin).
 title: Bang Hội Chiến
 server: banghoi-1
 
 groups:
   - title: Lịch công thành
+    category: Chiến tranh
     description: Giờ bắt đầu các phiên chiến (giờ Việt Nam). Mỗi phiên PvP bật quanh cờ vây thành.
     apply: [swa reload]
     settings:
@@ -34,6 +37,7 @@ groups:
           options: [ { value: weekly, label: Mọi tuần }, { value: odd-weeks-only, label: Chỉ tuần lẻ }, { value: even-weeks-only, label: Chỉ tuần chẵn } ] }
 
   - title: Luật công thành
+    category: Chiến tranh
     apply: [swa reload]
     settings:
       - { key: siege_max_attacks, label: Số cuộc vây tấn công tối đa mỗi quốc gia, type: int, min: 1, max: 10,
@@ -47,6 +51,7 @@ groups:
           file: plugins/SiegeWar/config.yml, path: war.siege.times.siege_immunity_time_new_town_hours }
 
   - title: Thị trấn và quốc gia
+    category: Thị trấn
     apply: [ta reload config]
     settings:
       - { key: towny_price_new_town,   label: Phí lập thị trấn,   type: number, min: 0, file: plugins/Towny/settings/config.yml, path: economy.new_expand.price_new_town }
@@ -56,6 +61,7 @@ groups:
       - { key: towny_nation_upkeep,    label: Phí duy trì quốc gia mỗi ngày,  type: number, min: 0, file: plugins/Towny/settings/config.yml, path: economy.daily_taxes.price_nation_upkeep }
 
   - title: Kinh tế
+    category: Kinh tế
     description: Tiền dùng riêng trong Bang Hội Chiến. Nguồn tiền khởi đầu là /sell (bán đồ cho server theo bảng giá Essentials/worth.yml).
     apply: [essentials reload]
     settings:
@@ -70,6 +76,7 @@ groups:
         options: [ { value: true, label: "Có (máy để tiếng Việt thì thấy tiếng Việt)" }, { value: false, label: Không (tiếng Anh) } ]
 
   - title: Combat
+    category: PvP & combat
     apply: [ocm reload]
     settings:
       - key: combat_mode
@@ -85,6 +92,7 @@ groups:
         note: "Cho tự đổi thì người chơi có thể chọn kiểu có lợi cho mình."
 
   - title: Thế giới
+    category: Thế giới
     settings:
       # Viền hình chữ nhật bằng ChunkyBorder (viền vanilla chỉ vuông). Map Trái Đất 1:1000 (từ 11/10/2026): 21504 x 10752; 1:2000: 10752 x 5376.
       # Mỗi mùa một vùng (cách 3, 12/10/2026): viền chữ nhật quanh vùng của mùa. Mùa 1: Đông Nam Á lục địa + Nam Trung Quốc,
@@ -125,3 +133,75 @@ groups:
         type: select
         options: [ { value: true, label: Có }, { value: false, label: Không } ]
         note: "Chỉ ghi lại; dùng khi mở mùa mới."
+
+  - title: Chống thoát game khi đánh nhau (PvPManager)
+    category: PvP & combat
+    description: Bị đánh thì gắn cờ giao tranh; thoát game lúc đó thì chết và rơi đồ. Người mới được bảo vệ khỏi PvP một thời gian.
+    apply: [pmr reload]
+    settings:
+      - { key: pvp_tag_seconds, label: Thời gian gắn cờ giao tranh (giây), type: int, min: 5, max: 120, file: plugins/PvPManager/config.yml, path: Combat Tag.Time }
+      - { key: pvp_kill_on_logout, label: Thoát game khi đang giao tranh thì chết, type: select, file: plugins/PvPManager/config.yml, path: Combat Log Punishments.Kill on Logout.Enabled,
+          options: [ { value: true, label: "Có (rơi đồ)" }, { value: false, label: Không } ] }
+      - { key: pvp_block_teleport, label: Cấm dịch chuyển (/spawn, /home, /warp...) khi đang giao tranh, type: select, file: plugins/PvPManager/config.yml, path: Combat Tag.Actions Blocked.Teleport,
+          options: [ { value: true, label: Cấm }, { value: false, label: Cho phép } ] }
+      - { key: pvp_newbie_enabled, label: Bảo vệ người mới, type: select, file: plugins/PvPManager/config.yml, path: Newbie Protection.Enabled,
+          options: [ { value: true, label: Bật }, { value: false, label: Tắt } ] }
+      - { key: pvp_newbie_seconds, label: Thời gian bảo vệ người mới (giây), type: int, min: 0, max: 86400, file: plugins/PvPManager/config.yml, path: Newbie Protection.Time,
+          note: "900 = 15 phút. Người mới tự tắt được bằng /newbie disable." }
+
+  - title: Dọn rác
+    category: Hệ thống
+    description: Xoá vật phẩm rơi dưới đất định kỳ, báo trước trong chat. Admin dọn ngay bằng /dmm clean.
+    apply: [dmm reload]
+    settings:
+      - { key: cleaner_enabled, label: Bật dọn rác, type: select, file: plugins/DuckyMoMoCore/config.yml, path: item-cleaner.enabled,
+          options: [ { value: true, label: Bật }, { value: false, label: Tắt } ] }
+      - { key: cleaner_interval, label: Dọn mỗi (phút), type: int, min: 1, max: 120, file: plugins/DuckyMoMoCore/config.yml, path: item-cleaner.interval-minutes }
+      - { key: cleaner_warn, label: Báo trước ở các mốc (giây), type: list, items: int, file: plugins/DuckyMoMoCore/config.yml, path: item-cleaner.warn-seconds,
+          note: "Ví dụ: 60, 30, 10, 5, 3, 2, 1" }
+      - { key: cleaner_min_age, label: Không xoá vật phẩm vừa rơi dưới (giây), type: int, min: 0, max: 600, file: plugins/DuckyMoMoCore/config.yml, path: item-cleaner.min-age-seconds,
+          note: "Để đồ rơi khi chết còn kịp nhặt. Vật phẩm đã đổi tên bằng đe không bao giờ bị xoá." }
+      - { key: cleaner_arrows, label: Xoá cả mũi tên cắm đất, type: select, file: plugins/DuckyMoMoCore/config.yml, path: item-cleaner.arrows,
+          options: [ { value: true, label: Có }, { value: false, label: Không } ] }
+      - { key: cleaner_warn_msg, label: "Tin báo trước ({s} = số giây)", type: text, file: plugins/DuckyMoMoCore/config.yml, path: item-cleaner.warn-message }
+      - { key: cleaner_done_msg, label: "Tin sau khi dọn ({n} = số vật phẩm)", type: text, file: plugins/DuckyMoMoCore/config.yml, path: item-cleaner.done-message }
+
+  - title: Bảng giá bán cho server (/sell)
+    category: Kinh tế
+    description: Giá bán MỘT vật phẩm bằng /sell. Biển thu mua ở spawn ghi giá riêng (tools/spawn-signs.py), đổi giá ở đây nên đổi cả biển. Vật phẩm khác sửa trong worth.yml.
+    apply: [essentials reload]
+    settings:
+      - { key: worth_diamond, label: "Kim cương", type: number, min: 0, max: 100000, file: plugins/Essentials/worth.yml, path: worth.diamond }
+      - { key: worth_emerald, label: "Ngọc lục bảo", type: number, min: 0, max: 100000, file: plugins/Essentials/worth.yml, path: worth.emerald }
+      - { key: worth_gold_ingot, label: "Thỏi vàng", type: number, min: 0, max: 100000, file: plugins/Essentials/worth.yml, path: worth.gold_ingot }
+      - { key: worth_iron_ingot, label: "Thỏi sắt", type: number, min: 0, max: 100000, file: plugins/Essentials/worth.yml, path: worth.iron_ingot }
+      - { key: worth_copper_ingot, label: "Thỏi đồng", type: number, min: 0, max: 100000, file: plugins/Essentials/worth.yml, path: worth.copper_ingot }
+      - { key: worth_coal, label: "Than", type: number, min: 0, max: 100000, file: plugins/Essentials/worth.yml, path: worth.coal }
+      - { key: worth_wheat, label: "Lúa mì", type: number, min: 0, max: 100000, file: plugins/Essentials/worth.yml, path: worth.wheat }
+      - { key: worth_carrot, label: "Cà rốt", type: number, min: 0, max: 100000, file: plugins/Essentials/worth.yml, path: worth.carrot }
+      - { key: worth_potato, label: "Khoai tây", type: number, min: 0, max: 100000, file: plugins/Essentials/worth.yml, path: worth.potato }
+      - { key: worth_sugar_cane, label: "Mía", type: number, min: 0, max: 100000, file: plugins/Essentials/worth.yml, path: worth.sugar_cane }
+      - { key: worth_oak_log, label: "Gỗ sồi (và các loại gỗ khác: sửa worth.yml)", type: number, min: 0, max: 100000, file: plugins/Essentials/worth.yml, path: worth.oak_log }
+      - { key: worth_rotten_flesh, label: "Thịt thối", type: number, min: 0, max: 100000, file: plugins/Essentials/worth.yml, path: worth.rotten_flesh }
+      - { key: worth_bone, label: "Xương", type: number, min: 0, max: 100000, file: plugins/Essentials/worth.yml, path: worth.bone }
+      - { key: worth_string, label: "Tơ nhện", type: number, min: 0, max: 100000, file: plugins/Essentials/worth.yml, path: worth.string }
+      - { key: worth_gunpowder, label: "Thuốc súng", type: number, min: 0, max: 100000, file: plugins/Essentials/worth.yml, path: worth.gunpowder }
+      - { key: worth_ender_pearl, label: "Ngọc ender", type: number, min: 0, max: 100000, file: plugins/Essentials/worth.yml, path: worth.ender_pearl }
+
+  - title: Bảng bên phải, boss bar, danh sách Tab
+    category: Hiển thị
+    description: "Mã màu &a, &e, &l (đậm)... Biến: %player%, %online%, %ping%, %luckperms-prefix%, %vault_eco_balance_formatted%, %townyadvanced_town_unformatted%."
+    apply: [tab reload]
+    settings:
+      - { key: tab_bossbar_tips, label: Boss bar trên cùng (mỗi dòng 1 mẹo, xoay vòng), type: lines, file: plugins/TAB/animations.yml, path: MeoChoi.texts }
+      - { key: tab_bossbar_interval, label: Đổi mẹo mỗi (mili giây), type: int, min: 1000, max: 600000, file: plugins/TAB/animations.yml, path: MeoChoi.change-interval,
+          note: "8000 = 8 giây." }
+      - { key: tab_bossbar_enabled, label: Hiện boss bar, type: select, file: plugins/TAB/config.yml, path: bossbar.enabled,
+          options: [ { value: true, label: Có }, { value: false, label: Không } ] }
+      - { key: tab_sb_enabled, label: Hiện bảng bên phải, type: select, file: plugins/TAB/config.yml, path: scoreboard.enabled,
+          options: [ { value: true, label: Có }, { value: false, label: Không } ] }
+      - { key: tab_sb_title, label: Tiêu đề bảng bên phải, type: text, file: plugins/TAB/config.yml, path: scoreboard.scoreboards.banghoi.title }
+      - { key: tab_sb_lines, label: Các dòng bảng bên phải (tối đa 15), type: lines, file: plugins/TAB/config.yml, path: scoreboard.scoreboards.banghoi.lines,
+          note: "Dòng trống: gõ một dấu cách không được (bị bỏ), dùng &r làm dòng trống." }
+      - { key: tab_header, label: Đầu danh sách Tab (mỗi dòng 1 dòng), type: lines, file: plugins/TAB/config.yml, path: header-footer.designs.default.header }
+      - { key: tab_footer, label: Cuối danh sách Tab, type: lines, file: plugins/TAB/config.yml, path: header-footer.designs.default.footer }

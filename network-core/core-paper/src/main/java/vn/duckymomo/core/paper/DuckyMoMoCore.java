@@ -2,6 +2,7 @@ package vn.duckymomo.core.paper;
 
 import java.io.File;
 import org.bukkit.command.PluginCommand;
+import org.bukkit.event.HandlerList;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -10,11 +11,38 @@ public final class DuckyMoMoCore extends JavaPlugin {
     private MapDecorator decorator;
     private StructurePlacer structures;
     private TownyMapLayer townyMap;
+    private ItemCleaner cleaner;
 
     @Override
     public void onEnable() {
         saveDefaultConfig();
+        setup(false);
+    }
 
+    /**
+     * /dmm reload: đọc lại config.yml rồi bật lại mọi phần (trang Cài đặt gọi lệnh này sau khi ghi config).
+     * Trang trí map đang chạy dở thì bị dừng (lưu tiến độ), chạy tiếp bằng /dmm decorate start.
+     */
+    private void reload() {
+        teardown();
+        HandlerList.unregisterAll(this);
+        getServer().getScheduler().cancelTasks(this);
+        reloadConfig();
+        setup(true);
+    }
+
+    private void teardown() {
+        if (townyMap != null) {
+            townyMap.stop();
+            townyMap = null;
+        }
+        if (decorator != null) {
+            decorator.shutdown();
+            structures.shutdown();
+        }
+    }
+
+    private void setup(boolean reloading) {
         // Người chơi Bedrock (đã xác thực qua Xbox + Floodgate) không phải nhập mật khẩu AuthMe.
         // Chỉ bật trên server có AuthMe (hiện tại là lobby).
         if (getServer().getPluginManager().isPluginEnabled("AuthMe")) {
@@ -95,7 +123,7 @@ public final class DuckyMoMoCore extends JavaPlugin {
         }
 
         // Dọn rác định kỳ (banghoi): item-cleaner.enabled
-        ItemCleaner cleaner = getConfig().getBoolean("item-cleaner.enabled")
+        cleaner = getConfig().getBoolean("item-cleaner.enabled")
                 ? new ItemCleaner(this, getConfig().getConfigurationSection("item-cleaner")) : null;
         if (cleaner != null) {
             cleaner.start();
@@ -125,13 +153,16 @@ public final class DuckyMoMoCore extends JavaPlugin {
                     } else {
                         sender.sendMessage(cleaner.cleanNow());
                     }
+                } else if (args.length >= 1 && args[0].equalsIgnoreCase("reload")) {
+                    reload();
+                    sender.sendMessage("DuckyMoMoCore: đã nạp lại config.yml");
                 } else {
-                    sender.sendMessage("/dmm decorate|structures start | pause | status | reset   /dmm clean");
+                    sender.sendMessage("/dmm decorate|structures start | pause | status | reset   /dmm clean   /dmm reload");
                 }
                 return true;
             });
         }
-        if (decorator != null && getConfig().getBoolean("decorate.auto-resume")) {
+        if (!reloading && decorator != null && getConfig().getBoolean("decorate.auto-resume")) {
             // chạy tiếp sau khi server khởi động lại (nếu lần trước đang chạy dở)
             getServer().getScheduler().runTaskLater(this, () -> {
                 decorator.resumeIfUnfinished();
@@ -142,12 +173,6 @@ public final class DuckyMoMoCore extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        if (townyMap != null) {
-            townyMap.stop();
-        }
-        if (decorator != null) {
-            decorator.shutdown();
-            structures.shutdown();
-        }
+        teardown();
     }
 }

@@ -22,7 +22,7 @@ mcmeta = {"pack": {"description": "§6DuckyMoMo §f- font tiếng Việt dễ đ
 # Thứ tự: khoảng trắng gốc, font TTF (chữ), rồi font gốc (ký hiệu font TTF không có)
 default = {"providers": [
     {"type": "reference", "id": "minecraft:include/space"},
-    {"type": "ttf", "file": "minecraft:bevietnampro-medium.ttf", "shift": [0.0, 1.0], "size": 10.0, "oversample": 6.0},
+    {"type": "ttf", "file": "minecraft:bevietnampro-medium.ttf", "shift": [0.0, 1.5], "size": 7.5, "oversample": 8.0},
     {"type": "reference", "id": "minecraft:include/default"},
     {"type": "reference", "id": "minecraft:include/unifont"}]}
 out = "tools/fontpack/out/duckymomo-font.zip"

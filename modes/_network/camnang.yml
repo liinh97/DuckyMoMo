@@ -249,6 +249,25 @@ plugins:
     settings: "modes/banghoi/server/plugins/Enchantio/config.yml (bật/tắt, cấp tối đa, nguồn ra sách). Đổi phải KHỞI ĐỘNG LẠI banghoi-1."
     notes: "Config mặc định có thẻ #minecraft:ores không tồn tại (Tunnelling không đào quặng): đã thay bằng *_ores từng loại."
 
+  - name: CrazyEnchantments
+    jar: CrazyEnchantments
+    kind: Kinh tế & buôn bán
+    purpose: "105 phù phép kiểu server factions (bản BETA cho 26.x). Sách có tỉ lệ thành công / vỡ đồ; cuộn giấy trắng (giữ đồ khi ghép hỏng), đen (tách phù phép), bụi tăng tỉ lệ; thợ rèn gộp sách; tinkerer đổi đồ lấy kinh nghiệm. Shop /ce bán sách Thường 300 xu, Hiếm 800 xu (44 phù phép nhẹ/tiện ích). 50 phù phép mạnh (Rage, StormCaller, LifeSteal, VeinMiner, Blast, Gears...) chỉ ở Huyền thoại/Thần thoại: admin phát làm thưởng. Đã tắt: Wings, SystemReboot, Cyborg, Boom, SelfDestruct, Guards, Necromancer, Infestation, Disarmer, Telepathy, Furnace."
+    player:
+      - ["/ce", "Mở shop sách phù phép, cuộn giấy, bụi (trả bằng tiền)"]
+      - ["Kéo sách vào đồ trong túi đồ", "Ghép phù phép (có tỉ lệ thành công / vỡ đồ ghi trên sách)"]
+      - ["/blacksmith", "Thợ rèn: gộp 2 sách cùng loại lên cấp"]
+      - ["/tinker", "Đổi đồ / sách không dùng lấy kinh nghiệm"]
+      - ["/ce info [phù phép]", "Xem công dụng phù phép"]
+    admin:
+      - ["/ce book <phù phép> <cấp> 1 <người>", "Phát sách (cả Huyền thoại/Thần thoại), vd /ce book Rage 3 1 Linh"]
+      - ["/ce lostbook <Common|Rare|Legendary|Mythical> 1 <người>", "Phát sách bí ẩn (mở ra phù phép ngẫu nhiên của độ hiếm đó)"]
+      - ["/ce scroll <white|black|transmog> 1 <người>", "Phát cuộn giấy"]
+      - ["/ce add <phù phép> <cấp> · /ce remove <phù phép>", "Thêm / gỡ phù phép món đang cầm"]
+      - ["/ce reload", "Nạp lại cấu hình"]
+    settings: "modes/banghoi/server/plugins/CrazyEnchantments/ (README.txt ghi lý do từng thay đổi); quyền người chơi trong LuckPerms nhóm default"
+    notes: "Bản BETA cho 26.x: lỗi thì xem log banghoi-1 và báo. GKitz (bộ đồ phát miễn phí) đã tắt."
+
   # ---------------------------------------------------------------- Thị trấn & chiến tranh
   - name: Towny
     jar: Towny

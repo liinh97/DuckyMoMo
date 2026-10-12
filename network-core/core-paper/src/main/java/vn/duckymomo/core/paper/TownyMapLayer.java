@@ -73,6 +73,15 @@ final class TownyMapLayer {
     }
 
     private void update() {
+        // /squaremap reload tạo lại MapWorld: lớp đã đăng ký mất theo -> đăng ký lại
+        World w = Bukkit.getWorld(worldName);
+        if (w != null) {
+            SquaremapProvider.get().getWorldIfEnabled(BukkitAdapter.worldIdentifier(w)).ifPresent(m -> {
+                if (!m.layerRegistry().hasEntry(LAYER)) {
+                    m.layerRegistry().register(LAYER, provider);
+                }
+            });
+        }
         int size = TownySettings.getTownBlockSize();
         provider.clearMarkers();
         for (Town town : TownyAPI.getInstance().getTowns()) {

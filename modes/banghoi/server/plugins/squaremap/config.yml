@@ -2,10 +2,11 @@
 # - visibility-limits: CHỈ vẽ vùng mùa 1 (khớp viền ChunkyBorder 11200..13800 x -3200..-800). Map Trái Đất có sẵn mọi chunk,
 #   vẽ hết rất lâu và tốn đĩa. Đổi mùa thì sửa vùng này rồi /map resetmap world + /map fullrender world.
 # - player-tracker: TẮT, server chiến tranh, hiện vị trí người chơi trên web là lộ quân.
-# - Ranh giới thị trấn/quốc gia: lớp "Thị trấn" do DuckyMoMoCore vẽ (towny-map trong DuckyMoMoCore/config.yml).
+# - Ranh giới thị trấn/quốc gia: lớp "Thị trấn" do DuckyMoMoCore vẽ (towny-map trong DuckyMoMoCore/config.yml), tự đăng ký lại sau /squaremap reload.
+# - Giao diện tiếng Việt: locale/lang-vi.yml. Ô "Người chơi" ẩn (show-controls: false) vì đã tắt theo dõi người chơi.
 config-version: 2
 settings:
-    language-file: lang-en.yml
+    language-file: lang-vi.yml
     debug-mode: false
     update-checker: true
     web-address: http://localhost:8080
@@ -94,7 +95,7 @@ world-settings:
         player-tracker:
             enabled: false
             update-interval-seconds: 1
-            show-controls: true
+            show-controls: false
             default-hidden: false
             layer-priority: 2
             z-index: 2

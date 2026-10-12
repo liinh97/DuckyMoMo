@@ -23,6 +23,7 @@ guide:
       - ["Dọn rác ngay", "/dmm clean (Bang Hội Chiến)"]
       - ["Áp dụng lại config DuckyMoMoCore", "/dmm reload — trang Cài đặt tự gọi khi bấm Lưu"]
       - ["Chuyển server", "/server lobby | banghoi-1 | practice-1"]
+      - ["Font tiếng Việt", "Gói font gửi tự động khi vào (không bắt buộc). Sửa/làm lại: ./ops/build-font-pack.sh rồi docker compose up -d lobby banghoi-1 practice-1"]
       - ["Sao lưu ngay", "Trên máy chủ: docker compose exec backup-banghoi-1 backup now (lưu ở F:\\DuckyMoMo-backups)"]
   - title: Người chơi mới cần biết
     items:

@@ -81,24 +81,33 @@ tab_bossbar_tips:
 tab_bossbar_interval: 8000
 tab_bossbar_enabled: true
 tab_sb_enabled: true
-tab_sb_title: '&6&lBANG HỘI CHIẾN'
+tab_sb_title: '<#FFC23D>⚔ BANG HỘI CHIẾN ⚔</#FF6A00>'
 tab_sb_lines:
-  - '&8%date%'
-  - '&f%player%'
-  - '&7Role: %luckperms-prefix%'
-  - '&7Tiền: &a%vault_eco_balance_formatted%'
-  - '&7Thị trấn: &e%townyadvanced_town_unformatted%'
-  - '&7Quốc gia: &e%townyadvanced_nation_unformatted%'
-  - '&7Online: &f%online%'
-  - '&7Ping: &f%ping%ms'
-  - '&6duckymomo &8• &7/sb ẩn bảng'
+  - '&8%date% &7· &6Mùa 1 &7Đông Nam Á'
+  - '&r'
+  - '&#FFD966❤ &f%player%'
+  - '&#B0B8C8  %luckperms-prefix%'
+  - '&r'
+  - '&#7CFC9A⛃ &7Tiền: &a%vault_eco_balance_formatted% &2xu'
+  - '&#FF9F43⚑ &7Thị trấn: &#FFD580%townyadvanced_town_unformatted%'
+  - '&#C77DFF♛ &7Quốc gia: &#E0B0FF%townyadvanced_nation_unformatted%'
+  - '&r'
+  - '&#5FD3F3☺ &7Online: &b%online%'
+  - '&#5FD3F3⚡ &7Ping: %condition:pingmau%'
+  - '&r'
+  - '&#FFB000» &e/huongdan &8· &e/sb &7ẩn bảng'
 tab_header:
-  - '&6&lDUCKYMOMO &8• &e&lBANG HỘI CHIẾN'
-  - '&7Chào &f%player%&7! Mùa 1: Đông Nam Á'
+  - '&r'
+  - <#FFC23D>&l✦ DUCKYMOMO ✦</#FF6A00>
+  - '&6⚔ &eBang Hội Chiến &6⚔'
+  - '&7Chào &f%player%&7! Mùa 1: &aĐông Nam Á'
+  - '&r'
 tab_footer:
-  - '&7Online: &f%online% &8• &7Ping: &f%ping%ms'
-  - '&7/warp &8• &7/ah &8• &7/t &8• &7/jobs &8• &7/spawn'
-  - '&8Công thành: tối thứ 7, Chủ nhật 20:00 và 21:00'
+  - '&r'
+  - '&7☺ Online &f%online% &8· &7⚡ Ping %condition:pingmau%'
+  - '&e/huongdan &8· &e/warp &8· &e/ah &8· &e/jobs &8· &e/rank'
+  - '&8⚔ Công thành: tối T7, CN 20:00 & 21:00'
+  - '&r'
 job_hunter_kill_zombie: 0.25
 job_hunter_kill_skeleton: 0.25
 job_hunter_kill_spider: 0.25

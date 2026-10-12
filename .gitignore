@@ -18,3 +18,4 @@ network-core/**/build/
 
 # Tạo map Trái Đất: công cụ, dữ liệu tải về, map tạo ra (lớn, không commit)
 tools/earthmap/work/
+tools/fontpack/out/

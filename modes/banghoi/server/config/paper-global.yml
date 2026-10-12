@@ -5,3 +5,7 @@ proxies:
     enabled: true
     online-mode: false   # proxy chạy offline mode (AuthMe lo đăng nhập)
     secret: "${CFG_VELOCITY_SECRET}"
+# Giới hạn gửi chunk cho mỗi người (12/10/2026): mặc định 75 chunk/giây (~8-12 Mbps khi bay) làm nghẽn tunnel playit,
+# ping vọt lên ~500 ms. 30 chunk/giây: chunk xa hiện chậm hơn chút khi bay, ping ổn định hơn.
+chunk-loading-basic:
+  player-max-chunk-send-rate: 30.0

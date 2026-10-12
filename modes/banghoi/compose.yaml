@@ -15,6 +15,11 @@ services:
       TZ: Asia/Ho_Chi_Minh
       RCON_PASSWORD: ${RCON_PASSWORD:?Chưa đặt RCON_PASSWORD trong .env (chạy lại ./ops/init.sh)}   # dùng chung với dịch vụ sao lưu, trang Cài đặt
       ONLINE_MODE: "FALSE"
+      # Gói font tiếng Việt (ops/build-font-pack.sh ghi FONT_PACK_URL/SHA1 vào .env). Không bắt buộc: từ chối vẫn chơi được.
+      RESOURCE_PACK: ${FONT_PACK_URL:-}
+      RESOURCE_PACK_SHA1: ${FONT_PACK_SHA1:-}
+      RESOURCE_PACK_ENFORCE: "FALSE"
+      RESOURCE_PACK_PROMPT: '{"text":"Tải font tiếng Việt dễ đọc (khoảng 60 KB)? Bấm Có để chữ có dấu rõ hơn.","color":"gold"}'
       MOTD: "Bang Hoi Chien"
       DIFFICULTY: normal
       VIEW_DISTANCE: "8"

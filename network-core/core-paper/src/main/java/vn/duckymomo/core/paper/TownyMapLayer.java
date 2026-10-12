@@ -34,16 +34,21 @@ import xyz.jpenilla.squaremap.api.marker.MarkerOptions;
 final class TownyMapLayer {
 
     private static final Key LAYER = Key.of("duckymomo_towny");
+    private static final Key BORDER = Key.of("duckymomo_border");
 
     private final JavaPlugin plugin;
     private final String worldName;
     private final int intervalSeconds;
+    private final List<Integer> border;
     private SimpleLayerProvider provider;
+    private SimpleLayerProvider borderProvider;
 
-    TownyMapLayer(JavaPlugin plugin, String worldName, int intervalSeconds) {
+    /** border: [minX, minZ, maxX, maxZ] của viền mùa (vẽ thành lớp "Viền mùa", không có ô chọn); rỗng = không vẽ. */
+    TownyMapLayer(JavaPlugin plugin, String worldName, int intervalSeconds, List<Integer> border) {
         this.plugin = plugin;
         this.worldName = worldName;
         this.intervalSeconds = Math.max(10, intervalSeconds);
+        this.border = border;
     }
 
     void start() {
@@ -59,6 +64,15 @@ final class TownyMapLayer {
             provider = SimpleLayerProvider.builder("Thị trấn").showControls(true).defaultHidden(false)
                     .layerPriority(5).zIndex(5).build();
             map.layerRegistry().register(LAYER, provider);
+            if (border.size() == 4) {
+                // Lớp viền có sẵn của squaremap giữ tên tiếng Anh "World Border": tắt nó (config squaremap), tự vẽ ở đây
+                borderProvider = SimpleLayerProvider.builder(plugin.getConfig().getString("towny-map.border-label", "Viền mùa"))
+                        .showControls(false).defaultHidden(false).layerPriority(1).zIndex(1).build();
+                borderProvider.addMarker(Key.of("season_border"), Marker.rectangle(
+                        Point.of(border.get(0), border.get(1)), Point.of(border.get(2), border.get(3)))
+                        .markerOptions(MarkerOptions.builder().fill(false).strokeColor(new Color(0xE53935)).strokeWeight(3).build()));
+                map.layerRegistry().register(BORDER, borderProvider);
+            }
             Bukkit.getScheduler().runTaskTimer(plugin, this::update, 20L, intervalSeconds * 20L);
             plugin.getLogger().info("Bản đồ thị trấn: bật (world " + worldName + ", mỗi " + intervalSeconds + " giây)");
         }, 200L);
@@ -68,7 +82,12 @@ final class TownyMapLayer {
         World w = Bukkit.getWorld(worldName);
         if (provider != null && w != null) {
             SquaremapProvider.get().getWorldIfEnabled(BukkitAdapter.worldIdentifier(w))
-                    .ifPresent(m -> m.layerRegistry().unregister(LAYER));
+                    .ifPresent(m -> {
+                        m.layerRegistry().unregister(LAYER);
+                        if (borderProvider != null) {
+                            m.layerRegistry().unregister(BORDER);
+                        }
+                    });
         }
     }
 
@@ -79,6 +98,9 @@ final class TownyMapLayer {
             SquaremapProvider.get().getWorldIfEnabled(BukkitAdapter.worldIdentifier(w)).ifPresent(m -> {
                 if (!m.layerRegistry().hasEntry(LAYER)) {
                     m.layerRegistry().register(LAYER, provider);
+                }
+                if (borderProvider != null && !m.layerRegistry().hasEntry(BORDER)) {
+                    m.layerRegistry().register(BORDER, borderProvider);
                 }
             });
         }

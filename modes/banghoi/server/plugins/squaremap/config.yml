@@ -4,7 +4,8 @@
 # - player-tracker: TẮT, server chiến tranh, hiện vị trí người chơi trên web là lộ quân.
 # - Ranh giới thị trấn/quốc gia: lớp "Thị trấn" do DuckyMoMoCore vẽ (towny-map trong DuckyMoMoCore/config.yml), tự đăng ký lại sau /squaremap reload.
 # - Giao diện tiếng Việt: locale/lang-vi.yml. Ô "Người chơi" ẩn (show-controls: false) vì đã tắt theo dõi người chơi.
-#   Viền luôn hiện, không có ô chọn: tên lớp viền squaremap 1.3.15 giữ tiếng Anh "World Border" dù đã dịch.
+#   Lớp viền có sẵn TẮT (squaremap 1.3.15 giữ tên tiếng Anh "World Border", reload còn tạo lớp trùng): DuckyMoMoCore
+#   vẽ "Viền mùa 1" (towny-map.border trong DuckyMoMoCore/config.yml). Đổi mùa: sửa cả visibility-limits và towny-map.border.
 config-version: 2
 settings:
     language-file: lang-vi.yml
@@ -81,7 +82,7 @@ world-settings:
                     layer-priority: 0
                     z-index: 0
                 world-border:
-                    enabled: true
+                    enabled: false
                     show-controls: false
                     default-hidden: false
                     layer-priority: 1

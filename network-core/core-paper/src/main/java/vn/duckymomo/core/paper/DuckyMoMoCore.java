@@ -74,7 +74,7 @@ public final class DuckyMoMoCore extends JavaPlugin {
         if (getConfig().getBoolean("towny-map.enabled") && getServer().getPluginManager().isPluginEnabled("Towny")
                 && getServer().getPluginManager().isPluginEnabled("squaremap")) {
             townyMap = new TownyMapLayer(this, getConfig().getString("towny-map.world", "world"),
-                    getConfig().getInt("towny-map.interval-seconds", 60));
+                    getConfig().getInt("towny-map.interval-seconds", 60), getConfig().getIntegerList("towny-map.border"));
             townyMap.start();
         }
 

@@ -30,6 +30,10 @@ DOZZLE_PROXY_URL = os.environ.get("DOZZLE_PROXY_URL", DOZZLE_URL)
 RCON_PORT = 25575
 INDEX_HTML = (Path(__file__).parent / "index.html").read_text(encoding="utf-8")
 ACTIVITY_HTML = (Path(__file__).parent / "activity.html").read_text(encoding="utf-8")
+CAMNANG_HTML = (Path(__file__).parent / "camnang.html").read_text(encoding="utf-8")
+# Cẩm nang: nội dung ở modes/_network/camnang.yml (sửa không cần build lại); server quét plugin thật đang cài
+CAMNANG_FILE = MODES_DIR / "_network" / "camnang.yml"
+CAMNANG_SERVERS = ["proxy", "lobby", "banghoi-1", "practice-1", "pokemon-1"]
 # Do service "activity" (dashboard/log-feed.sh, JSONL=…) ghi ra
 ACTIVITY_FILE = DATA_DIR / "activity" / "activity.jsonl"
 ACTIVITY_TAIL_BYTES = 4_000_000
@@ -290,6 +294,37 @@ def save_and_apply(mode_id, incoming, apply_all=False):
     return {"ok": ok, "message": msg, "results": [{"command": c, "output": o} for c, o in results]}
 
 
+def camnang_json():
+    """Cẩm nang + plugin đang cài thật ở từng server (quét data/<server>/plugins/*.jar, mods/*.jar với Fabric)."""
+    doc = YAML(typ="safe").load(CAMNANG_FILE.read_text(encoding="utf-8")) or {}
+    jars = {}
+    for srv in CAMNANG_SERVERS:
+        found = []
+        for sub in ("plugins", "mods"):
+            d = DATA_DIR / srv / sub
+            if d.is_dir():
+                found += sorted(p.name[:-4] for p in d.glob("*.jar"))
+        if found or (DATA_DIR / srv).is_dir():
+            jars[srv] = found
+    used = {srv: set() for srv in jars}
+    for p in doc.get("plugins", []):
+        key = str(p.get("jar", "")).lower()
+        p["installed"] = []
+        for srv, names in jars.items():
+            if key == "-":
+                if srv == "proxy":
+                    p["installed"].append(srv)
+                continue
+            hit = [n for n in names if n.lower().startswith(key)]
+            if hit:
+                p["installed"].append(srv)
+                used[srv].update(hit)
+    # jar đi kèm (thư viện/phần phụ) của plugin đã có mục: không coi là "chưa có trong cẩm nang"
+    companions = ("viabackwards", "viarewind", "essentialsxchat", "essentialsxspawn", "chunkyborder", "zmenu", "geyser")
+    unknown = {srv: [n for n in names if n not in used[srv] and not n.lower().startswith(companions)] for srv, names in jars.items()}
+    return {"guide": doc.get("guide", []), "plugins": doc.get("plugins", []), "servers": list(jars), "unknown": unknown}
+
+
 def modes_json():
     out = []
     for mode_id, m in load_modes().items():
@@ -414,9 +449,9 @@ class Handler(BaseHTTPRequestHandler):
         if not self.guard():
             return
         path, _, query = self.path.partition("?")
-        if path in ("/", "/hoatdong"):
+        if path in ("/", "/hoatdong", "/camnang"):
             dozzle = DOZZLE_PROXY_URL if self.headers.get("X-Forwarded-Prefix") else DOZZLE_URL
-            page = INDEX_HTML if path == "/" else ACTIVITY_HTML
+            page = {"/": INDEX_HTML, "/hoatdong": ACTIVITY_HTML, "/camnang": CAMNANG_HTML}[path]
             body = page.replace("__DOZZLE_URL__", dozzle).encode("utf-8")
             self.send_response(200)
             self.send_header("Content-Type", "text/html; charset=utf-8")
@@ -425,6 +460,8 @@ class Handler(BaseHTTPRequestHandler):
             self.wfile.write(body)
         elif path == "/api/modes":
             self.send_json(200, modes_json())
+        elif path == "/api/camnang":
+            self.send_json(200, camnang_json())
         elif path == "/api/activity":
             params = {k: v[-1] for k, v in urllib.parse.parse_qs(query).items()}
             self.send_json(200, read_activity(params))

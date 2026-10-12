@@ -1,0 +1,351 @@
+# Cẩm nang sử dụng: trang Cài đặt > "Cẩm nang" (panel đọc file này mỗi lần mở, không cần build lại).
+# Mỗi plugin:
+#   name      tên hiển thị
+#   jar       đoạn đầu tên file .jar trong data/<server>/plugins (để trang tự đánh dấu đang cài ở server nào)
+#   kind      loại (nhóm trên trang): Đăng nhập & kết nối, Quản lý, Chat & hiển thị, Kinh tế & buôn bán, Thị trấn & chiến tranh,
+#             PvP & chống hack, Rank donate, Bản đồ & thế giới, Practice, Hệ thống
+#   purpose   dùng để làm gì
+#   player    lệnh cho người chơi: [lệnh, ý nghĩa]
+#   admin     lệnh cho admin/mod: [lệnh, ý nghĩa]
+#   settings  chỉnh ở đâu (trang Cài đặt / file)
+#   notes     lưu ý
+# Thêm plugin mới: thêm một mục ở đây. Plugin đang cài mà chưa có mục sẽ hiện ở cuối trang "Chưa có trong cẩm nang".
+
+guide:
+  - title: Việc admin hay làm
+    items:
+      - ["Cấp role staff", "/lp user <tên> parent add helper  (lên tiếp: /lp user <tên> promote staff → mod → admin)"]
+      - ["Cấp rank donate", "/rank give <tên> <namtuoc|tutuoc|batuoc|hautuoc|congtuoc> <số tháng>  · xem: /rank check <tên> · gỡ: /rank remove <tên>"]
+      - ["Cộng/trừ tiền", "/eco give <tên> <số> · /eco take <tên> <số> · /eco set <tên> <số>  (Bang Hội Chiến)"]
+      - ["Phạt", "/mute <tên> <thời gian> · /kick <tên> <lý do> · /tempban <tên> 1d <lý do> · /ban <tên> <lý do> · /unban <tên>"]
+      - ["Kiểm tra phá hoại", "/co i (bấm vào block xem ai phá/đặt) · /co rollback u:<tên> t:2h r:30 (khôi phục)"]
+      - ["Xem cảnh báo hack", "/grim alerts (bật/tắt) — Mod/Admin tự bật khi vào"]
+      - ["Dọn rác ngay", "/dmm clean (Bang Hội Chiến)"]
+      - ["Áp dụng lại config DuckyMoMoCore", "/dmm reload — trang Cài đặt tự gọi khi bấm Lưu"]
+      - ["Chuyển server", "/server lobby | banghoi-1 | practice-1"]
+      - ["Sao lưu ngay", "Trên máy chủ: docker compose exec backup-banghoi-1 backup now (lưu ở F:\\DuckyMoMo-backups)"]
+  - title: Người chơi mới cần biết
+    items:
+      - ["Đăng ký / đăng nhập", "Lần đầu: /register <mật khẩu> <mật khẩu> · lần sau: /login <mật khẩu>"]
+      - ["Chọn chế độ", "Bấm la bàn ở sảnh hoặc /menu (điện thoại: hiện bảng nút bấm)"]
+      - ["Bang Hội Chiến", "/warp để đi các địa danh · /t new <tên> lập thị trấn · /jobs xem nghề · /sell hand bán đồ · /ah chợ"]
+      - ["Rank donate", "/rank xem các bậc, giá, cách mua (chỉ trang trí, không mua được lợi thế)"]
+  - title: Địa chỉ vào server
+    items:
+      - ["Máy tính (Java)", "pgsql-youths.tun.ply.gg — bản 1.13 tới mới nhất"]
+      - ["Điện thoại (Bedrock)", "pgsql-mississauga.tun.ply.gg cổng 21185"]
+
+plugins:
+  # ---------------------------------------------------------------- Đăng nhập & kết nối
+  - name: Velocity (proxy)
+    jar: "-"
+    kind: Đăng nhập & kết nối
+    purpose: Cổng vào chung của cả network, chuyển người chơi giữa lobby, Bang Hội Chiến, practice. Không phải plugin, là phần mềm proxy.
+    player:
+      - ["/server <tên>", "Chuyển sang server khác (lobby, banghoi-1, practice-1)"]
+    admin:
+      - ["/glist", "Ai đang ở server nào"]
+      - ["/send <tên> <server>", "Đưa người chơi sang server khác"]
+    settings: "proxy/config/velocity.toml"
+  - name: AuthMe
+    jar: AuthMe
+    kind: Đăng nhập & kết nối
+    purpose: Đăng ký / đăng nhập bằng mật khẩu (server chạy offline mode). Chưa đăng nhập thì không rời sảnh được. Người chơi Bedrock tự đăng nhập.
+    player:
+      - ["/register <mk> <mk>", "Đăng ký lần đầu"]
+      - ["/login <mk>", "Đăng nhập"]
+      - ["/changepassword <mk cũ> <mk mới>", "Đổi mật khẩu"]
+      - ["/logout", "Đăng xuất"]
+    admin:
+      - ["/authme unregister <tên>", "Xoá đăng ký (người chơi quên mật khẩu)"]
+      - ["/authme password <tên> <mk>", "Đặt lại mật khẩu cho người chơi"]
+      - ["/authme reload", "Nạp lại cấu hình"]
+    settings: "lobby/plugins/AuthMe/config.yml"
+  - name: Geyser + Floodgate
+    jar: floodgate
+    kind: Đăng nhập & kết nối
+    purpose: Cho người chơi Bedrock (điện thoại, console) vào server Java. Floodgate ở các server con để nhận ra người Bedrock (menu nút bấm, chống hack).
+    player:
+      - ["(không cần lệnh)", "Điện thoại vào địa chỉ Bedrock ở trên; tên có dấu chấm đầu, ví dụ .griim7833"]
+    admin:
+      - ["/geyser reload", "Nạp lại Geyser (trên proxy)"]
+    settings: "proxy/plugins/Geyser-Velocity, */plugins/floodgate/config.yml"
+  - name: SkinsRestorer
+    jar: SkinsRestorer
+    kind: Đăng nhập & kết nối
+    purpose: Hiện skin cho người chơi offline mode (lấy skin theo tên tài khoản Mojang).
+    player:
+      - ["/skin set <tên Mojang>", "Đổi skin theo tên"]
+      - ["/skin clear", "Bỏ skin"]
+    admin:
+      - ["/sr reload", "Nạp lại"]
+  - name: ViaVersion + ViaBackwards + ViaRewind
+    jar: ViaVersion
+    kind: Đăng nhập & kết nối
+    purpose: Cho client nhiều phiên bản vào (1.13 tới mới nhất). Bản 1.12 trở xuống bị proxy chặn (đã chốt).
+    admin:
+      - ["/viaver list", "Ai đang dùng phiên bản nào"]
+
+  # ---------------------------------------------------------------- Quản lý
+  - name: LuckPerms
+    jar: LuckPerms
+    kind: Quản lý
+    purpose: Quyền và nhóm (role, rank donate), dùng chung toàn network (lưu MariaDB).
+    admin:
+      - ["/lp user <tên> info", "Xem nhóm, quyền của người chơi"]
+      - ["/lp user <tên> parent add <nhóm>", "Thêm vào nhóm (helper, mod, admin, builder)"]
+      - ["/lp user <tên> parent remove <nhóm>", "Bỏ khỏi nhóm"]
+      - ["/lp user <tên> promote staff", "Thăng chức Helper → Mod → Admin"]
+      - ["/lp user <tên> demote staff", "Giáng chức"]
+      - ["/lp editor", "Mở trình sửa quyền trên web"]
+    settings: "Rank donate: dùng /rank (DuckyMoMoCore), không cấp tay bằng lp. Danh sách quyền rank: tools/donate-ranks.cmds"
+    notes: "Role: Dân (mặc định), Builder, Helper, Mod, Admin. Rank donate: 5 tước vị, track donate."
+  - name: DuckyMoMoCore
+    jar: DuckyMoMoCore
+    kind: Quản lý
+    purpose: "Plugin riêng của DuckyMoMo: menu chọn chế độ, rank donate, thông báo vào/ra, lọc chat, chat có prefix ở sảnh, rơi khỏi đảo về spawn, dọn rác, chống đặt-phá lấy tiền nghề, ranh giới thị trấn trên bản đồ web, menu nút bấm cho Bedrock."
+    player:
+      - ["/menu", "Mở menu chọn chế độ (ở sảnh)"]
+      - ["/rank", "Xem các bậc rank donate, giá, rank của mình"]
+    admin:
+      - ["/rank give <tên> <bậc> <tháng>", "Cấp rank donate (gia hạn cộng dồn)"]
+      - ["/rank check <tên>", "Xem rank và hạn"]
+      - ["/rank remove <tên>", "Gỡ rank donate"]
+      - ["/dmm clean", "Dọn rác ngay"]
+      - ["/dmm reload", "Nạp lại config"]
+      - ["/dmm decorate | structures start|pause|status", "Trang trí map / đặt công trình (dùng khi làm map mới)"]
+    settings: "Trang Cài đặt: Toàn mạng (Chat, Rank donate, Sảnh), Bang Hội Chiến (Hệ thống)"
+  - name: WorldEdit
+    jar: worldedit
+    kind: Quản lý
+    purpose: Công cụ xây dựng cho admin (chọn vùng, đặt/xoá hàng loạt, dán công trình).
+    admin:
+      - ["//wand", "Lấy rìu chọn vùng"]
+      - ["//set <block>", "Đặt block cho vùng chọn"]
+      - ["//undo", "Hoàn tác"]
+      - ["//schem load <tên>.schem rồi //paste", "Dán công trình (thư mục plugins/WorldEdit/schematics)"]
+    notes: "Lobby cài tay (không có trên Modrinth cho 26.2)."
+  - name: EssentialsX (+ Chat, Spawn)
+    jar: EssentialsX
+    kind: Quản lý
+    purpose: Lệnh cơ bản (nhà, dịch chuyển, tin nhắn), tiền tệ, /sell, định dạng chat có prefix.
+    player:
+      - ["/spawn", "Về spawn"]
+      - ["/sethome [tên] · /home [tên] · /delhome", "Đặt / về nhà"]
+      - ["/warp [tên]", "Danh sách / đi tới địa danh"]
+      - ["/tpa <tên> · /tpaccept · /tpdeny", "Xin dịch chuyển tới người khác"]
+      - ["/msg <tên> <tin> · /r <tin>", "Nhắn riêng / trả lời"]
+      - ["/bal · /baltop · /pay <tên> <tiền>", "Xem tiền, top giàu, chuyển tiền"]
+      - ["/sell hand · /sell all · /worth", "Bán đồ cho server, xem giá"]
+      - ["/hat · /nick <tên>", "Đội đồ lên đầu, đổi tên hiển thị (cần rank donate)"]
+    admin:
+      - ["/eco give|take|set <tên> <số>", "Sửa tiền"]
+      - ["/mute · /kick · /tempban · /ban · /unban", "Phạt"]
+      - ["/tp <tên> · /tphere <tên> · /vanish · /invsee <tên>", "Kiểm tra người chơi"]
+      - ["/setwarp <tên> · /delwarp <tên>", "Tạo / xoá warp"]
+      - ["/essentials reload", "Nạp lại"]
+    settings: "Trang Cài đặt: Bang Hội Chiến > Kinh tế (tiền khởi đầu, giá /sell)"
+  - name: Vault (VaultUnlocked)
+    jar: VaultUnlocked
+    kind: Quản lý
+    purpose: Lớp nối kinh tế/quyền để các plugin dùng chung tiền EssentialsX. Không có lệnh.
+  - name: PlaceholderAPI
+    jar: PlaceholderAPI
+    kind: Quản lý
+    purpose: Biến hiển thị (%vault_eco_balance%, %townyadvanced_town%…) cho bảng bên phải, chữ nổi.
+    admin:
+      - ["/papi ecloud download <tên> · /papi reload", "Cài phần mở rộng (đã có: Vault, Essentials)"]
+      - ["/papi parse <tên> <%biến%>", "Thử một biến"]
+  - name: CoreProtect
+    jar: CoreProtect
+    kind: Quản lý
+    purpose: Ghi lại mọi lượt phá/đặt block, mở rương để tra cứu và khôi phục khi bị phá hoại.
+    admin:
+      - ["/co i", "Bật chế độ soi: bấm vào block xem lịch sử"]
+      - ["/co lookup u:<tên> t:1h", "Xem người đó làm gì trong 1 giờ"]
+      - ["/co rollback u:<tên> t:2h r:30", "Khôi phục những gì người đó phá trong 2 giờ, bán kính 30"]
+      - ["/co restore …", "Làm lại (huỷ rollback)"]
+  - name: WorldGuard
+    jar: worldguard
+    kind: Quản lý
+    purpose: Vùng bảo vệ (khu spawn không PvP, không xây phá).
+    admin:
+      - ["/rg info", "Xem vùng đang đứng"]
+      - ["//wand rồi /rg define <tên>", "Tạo vùng"]
+      - ["/rg flag <vùng> pvp deny", "Đặt cờ cho vùng"]
+      - ["/wg reload", "Nạp lại"]
+    notes: "Vùng spawn Bang Hội Chiến: spawn (x 12556..12801, z -2623..-2298)."
+  - name: DecentHolograms
+    jar: DecentHolograms
+    kind: Chat & hiển thị
+    purpose: Chữ nổi (bảng xếp hạng, ghi công, hướng dẫn).
+    admin:
+      - ["/dh create <tên> <chữ>", "Tạo chữ nổi tại chỗ đứng"]
+      - ["/dh line add <tên> 1 <chữ>", "Thêm dòng"]
+      - ["/dh movehere <tên>", "Dời tới chỗ đứng"]
+      - ["/dh delete <tên> · /dh list", "Xoá / danh sách"]
+    notes: "Bảng xếp hạng giàu nhất: bxh_tien (spawn Bang Hội Chiến)."
+  - name: TAB
+    jar: TAB
+    kind: Chat & hiển thị
+    purpose: Bảng thông tin bên phải, boss bar mẹo trên cùng, đầu/cuối danh sách Tab, prefix trong Tab.
+    player:
+      - ["/sb", "Ẩn/hiện bảng bên phải"]
+      - ["/bossbar", "Ẩn/hiện boss bar"]
+    admin:
+      - ["/tab reload", "Nạp lại"]
+    settings: "Trang Cài đặt: Bang Hội Chiến > Hiển thị"
+
+  # ---------------------------------------------------------------- Kinh tế & buôn bán
+  - name: uJobs
+    jar: UJobs
+    kind: Kinh tế & buôn bán
+    purpose: Nghề kiếm tiền tự động (đào, chặt, săn, trồng, câu cá…), không cần tham gia nghề.
+    player:
+      - ["/jobs", "Xem cấp nghề, bảng xếp hạng, cách kiếm tiền"]
+    admin:
+      - ["/jobs reload", "Nạp lại"]
+    settings: "Trang Cài đặt: Bang Hội Chiến > Nghề (tiền từng hành động)"
+    notes: "Phá lại block tự đặt và đào quặng bằng Mềm Mại không được tiền."
+  - name: QuickShop-Hikari
+    jar: QuickShop
+    kind: Kinh tế & buôn bán
+    purpose: Cửa hàng rương của người chơi; người khác mua bán được cả khi chủ offline.
+    player:
+      - ["Cầm món đồ, bấm chuột trái vào rương, gõ giá", "Tạo cửa hàng"]
+      - ["/qs price <giá>", "Đổi giá (nhìn vào rương)"]
+      - ["/qs sell · /qs buy", "Đổi cửa hàng thành thu mua / bán ra"]
+      - ["/qs remove", "Xoá cửa hàng"]
+  - name: zAuctionHouse (+ zMenu)
+    jar: zAuctionHouse
+    kind: Kinh tế & buôn bán
+    purpose: Chợ đấu giá chung, mỗi người đăng tối đa 5 món.
+    player:
+      - ["/ah", "Mở chợ"]
+      - ["/ah sell <giá>", "Đăng bán món đang cầm"]
+    admin:
+      - ["/ah admin reload", "Nạp lại"]
+  - name: TradePro
+    jar: TradePro
+    kind: Kinh tế & buôn bán
+    purpose: Đổi đồ trực tiếp giữa 2 người, hai bên cùng bấm đồng ý mới đổi.
+    player:
+      - ["/trade <tên>", "Gửi lời mời đổi đồ"]
+
+  # ---------------------------------------------------------------- Thị trấn & chiến tranh
+  - name: Towny
+    jar: Towny
+    kind: Thị trấn & chiến tranh
+    purpose: Thị trấn, quốc gia, đất đai (chống phá nhà), thuế.
+    player:
+      - ["/t new <tên>", "Lập thị trấn (500 xu)"]
+      - ["/t claim · /t unclaim", "Mua / bỏ ô đất (16x16)"]
+      - ["/t add <tên> · /t kick <tên>", "Thêm / đuổi dân"]
+      - ["/t deposit <tiền> · /t spawn · /t set spawn", "Nộp quỹ, về thị trấn"]
+      - ["/n new <tên> · /n add <thị trấn> · /n ally add <quốc gia>", "Quốc gia, đồng minh"]
+      - ["/res · /t · /n", "Xem thông tin"]
+    admin:
+      - ["/ta reload config", "Nạp lại"]
+      - ["/ta town <tên> …", "Sửa thị trấn"]
+    settings: "Trang Cài đặt: Bang Hội Chiến > Thị trấn"
+  - name: SiegeWar
+    jar: SiegeWar
+    kind: Thị trấn & chiến tranh
+    purpose: Công thành giữa các quốc gia (cắm cờ vây, phiên chiến cuối tuần, cướp/chiếm thị trấn).
+    player:
+      - ["Cắm banner (không trắng) ở rìa thị trấn địch", "Bắt đầu vây thành (quốc gia trả quỹ chiến tranh)"]
+      - ["/sw", "Hướng dẫn, thông tin cuộc vây"]
+    admin:
+      - ["/swa reload", "Nạp lại"]
+      - ["/swa siege <thị trấn> remove", "Huỷ cuộc vây"]
+    settings: "Trang Cài đặt: Bang Hội Chiến > Chiến tranh (lịch, luật). Báo Discord: ops/siege-discord.sh"
+
+  # ---------------------------------------------------------------- PvP & chống hack
+  - name: PvPManager
+    jar: PvPManager
+    kind: PvP & chống hack
+    purpose: Gắn cờ giao tranh (thoát game lúc đánh nhau thì chết, rơi đồ), bảo vệ người mới 15 phút.
+    player:
+      - ["/newbie disable", "Tự tắt bảo vệ người mới"]
+      - ["/newbie checktime", "Còn bao lâu được bảo vệ"]
+      - ["/pvpinfo · /pvpstatus", "Trạng thái PvP / giao tranh"]
+    admin:
+      - ["/pmr reload", "Nạp lại"]
+      - ["/pvpglobal on|off", "Bật/tắt PvP toàn server"]
+    settings: "Trang Cài đặt: Bang Hội Chiến > PvP & combat"
+  - name: OldCombatMechanics
+    jar: OldCombatMechanics
+    kind: PvP & chống hack
+    purpose: Combat kiểu 1.8 (không hồi chiêu) hoặc mới, chọn trên trang Cài đặt.
+    player:
+      - ["/ocm mode", "Tự đổi kiểu combat (nếu trang Cài đặt cho phép)"]
+    admin:
+      - ["/ocm reload", "Nạp lại"]
+  - name: GrimAC
+    jar: grimac
+    kind: PvP & chống hack
+    purpose: Chống hack (bay, tốc độ, đánh xa, autoclicker…). Bản alpha, hiện chỉ báo admin.
+    admin:
+      - ["/grim alerts", "Bật/tắt nhận cảnh báo"]
+      - ["/grim verbose", "Cảnh báo chi tiết"]
+      - ["/grim profile <tên>", "Xem thông tin client người chơi"]
+      - ["/grim reload", "Nạp lại"]
+    settings: "Trang Cài đặt: Bang Hội Chiến > Chống hack (chỉ báo / kick)"
+
+  # ---------------------------------------------------------------- Rank donate
+  - name: PlayerParticles
+    jar: PlayerParticles
+    kind: Rank donate
+    purpose: Hiệu ứng hạt quanh người (quyền lợi rank Tử Tước trở lên). Tự ẩn khi đánh nhau.
+    player:
+      - ["/pp", "Mở menu hiệu ứng"]
+      - ["/pp reset", "Tắt hết hiệu ứng"]
+    settings: "Trang Cài đặt: Toàn mạng > Rank donate (cần khởi động lại server)"
+  - name: SimplePets
+    jar: SimplePets
+    kind: Rank donate
+    purpose: Pet trang trí đi theo (Bá Tước trở lên). Không cưỡi, không bay.
+    player:
+      - ["/pet", "Mở menu pet"]
+      - ["/pet remove", "Cất pet"]
+
+  # ---------------------------------------------------------------- Bản đồ & thế giới
+  - name: squaremap
+    jar: squaremap
+    kind: Bản đồ & thế giới
+    purpose: Bản đồ web vùng mùa 1 kèm ranh giới thị trấn (Trạm 6 > Server MC > Bản đồ). Không hiện vị trí người chơi.
+    admin:
+      - ["/squaremap fullrender minecraft:overworld", "Vẽ lại toàn bộ (vài giây)"]
+      - ["/squaremap reload", "Nạp lại"]
+  - name: Chunky + ChunkyBorder
+    jar: Chunky
+    kind: Bản đồ & thế giới
+    purpose: Tạo trước chunk, viền thế giới hình chữ nhật (viền mùa).
+    admin:
+      - ["/chunky start · /chunky status · /chunky pause", "Tạo trước chunk trong viền"]
+    settings: "Trang Cài đặt: Bang Hội Chiến > Thế giới (viền, spawn)"
+
+  # ---------------------------------------------------------------- Hệ thống
+  - name: DiscordSRV
+    jar: DiscordSRV
+    kind: Hệ thống
+    purpose: Nối chat game với kênh Discord. Đang tắt vì chưa có token bot (điền DISCORD_BOT_TOKEN, DISCORD_CHANNEL_ID trong .env).
+    player:
+      - ["/discord link", "Liên kết tài khoản Discord"]
+    admin:
+      - ["/discord reload", "Nạp lại"]
+
+  # ---------------------------------------------------------------- Practice
+  - name: Duels
+    jar: Duels
+    kind: Practice
+    purpose: Đấu 1v1 với bộ đồ có sẵn (NoDebuff, Gapple, Classic, Archer, Boxing, Combo, Sumo).
+    player:
+      - ["/duel <tên>", "Thách đấu"]
+      - ["/duel accept <tên> · /duel deny <tên>", "Nhận / từ chối"]
+      - ["/queue", "Vào hàng chờ ghép trận (/queue leave để rời)"]
+      - ["/spectate <tên>", "Xem người khác đấu"]
+      - ["/duel stats · /duel top", "Thành tích, bảng xếp hạng"]
+      - ["/kit edit <bộ>", "Sắp xếp lại bộ đồ của mình"]
+    admin:
+      - ["/duels reload", "Nạp lại"]

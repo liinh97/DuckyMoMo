@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DuckyMoMo · Cẩm nang</title>
+<style>
+  :root {
+    --bg: #f5f6f8; --card: #fff; --text: #1d2330; --muted: #667085; --line: #e3e6ec;
+    --accent: #e8711c; --accent-text: #fff; --ok: #1e8e3e; --code: #f0f2f5; --warn: #b26a00;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #14161b; --card: #1d2027; --text: #e6e8ee; --muted: #9aa3b2; --line: #2d313b; --code: #262a33; --warn: #f0a540; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); }
+  header { display: flex; align-items: center; gap: 16px; padding: 14px 20px; border-bottom: 1px solid var(--line); background: var(--card); position: sticky; top: 0; z-index: 2; flex-wrap: wrap; }
+  header h1 { font-size: 17px; margin: 0; flex: 1; }
+  header a { color: var(--muted); text-decoration: none; font-size: 14px; }
+  header a:hover { color: var(--text); }
+  main { max-width: 980px; margin: 0 auto; padding: 20px 16px 80px; }
+  .tools { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; }
+  .tools input { flex: 1; min-width: 200px; padding: 7px 10px; border: 1px solid var(--line); border-radius: 6px; background: var(--card); color: var(--text); font: inherit; }
+  .cats { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+  .chip { padding: 5px 12px; border-radius: 999px; border: 1px solid var(--line); background: transparent; color: var(--text); font: inherit; font-size: 14px; cursor: pointer; }
+  .chip.active { background: var(--accent); border-color: var(--accent); color: var(--accent-text); }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 14px 18px; margin-bottom: 14px; }
+  .card h2 { font-size: 16px; margin: 0; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .card h3 { font-size: 13px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); margin: 12px 0 4px; }
+  .purpose { margin: 4px 0 0; }
+  .srv { font-size: 12px; font-weight: 500; padding: 1px 8px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); }
+  .srv.on { border-color: var(--ok); color: var(--ok); }
+  .kind { font-size: 12px; color: var(--muted); font-weight: 400; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  td { padding: 5px 6px; border-top: 1px solid var(--line); vertical-align: top; }
+  td:first-child { width: 42%; }
+  code { background: var(--code); padding: 1px 5px; border-radius: 4px; font: 13px/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; overflow-wrap: anywhere; }
+  .meta { font-size: 13.5px; color: var(--muted); margin-top: 8px; }
+  .meta b { color: var(--text); font-weight: 500; }
+  .guide td:first-child { width: 28%; font-weight: 500; }
+  .unknown { color: var(--warn); }
+  .empty { color: var(--muted); padding: 20px 0; }
+  @media (max-width: 640px) { td:first-child, .guide td:first-child { width: auto; } table, tbody, tr, td { display: block; } td { border-top: none; padding: 2px 0; } tr { border-top: 1px solid var(--line); padding: 6px 0; } }
+</style>
+</head>
+<body>
+<header>
+  <h1>DuckyMoMo · Cẩm nang</h1>
+  <a href="./">Cài đặt</a>
+  <a href="hoatdong">Hoạt động người chơi</a>
+  <a id="dozzle" href="__DOZZLE_URL__" target="_blank" rel="noopener">Xem log ↗</a>
+</header>
+<main>
+  <div class="tools">
+    <input id="q" type="search" placeholder="Tìm plugin hoặc lệnh, ví dụ: tiền, /t claim, kick…">
+  </div>
+  <div class="cats" id="servers"></div>
+  <div class="cats" id="cats"></div>
+  <div id="list"><p class="empty">Đang tải…</p></div>
+</main>
+<script>
+const $ = (id) => document.getElementById(id);
+if (!"__DOZZLE_URL__") $("dozzle").style.display = "none";
+const SRV = { proxy: "Proxy", lobby: "Sảnh", "banghoi-1": "Bang Hội Chiến", "practice-1": "Practice", "pokemon-1": "Pokémon" };
+let data = null, kind = "Hướng dẫn nhanh", server = "*";
+
+function esc(s) { return String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
+// Đoạn bắt đầu bằng / hoặc // trong cột lệnh hiện dạng code
+function cmd(s) { return esc(s).split(" · ").map(x => /^\/|^\(/.test(x.trim()) ? `<code>${x.trim()}</code>` : x).join(" · "); }
+function rows(list, isCmd) {
+  return `<table>${list.map(([a, b]) => `<tr><td>${isCmd ? cmd(a) : esc(a)}</td><td>${isCmd ? esc(b) : cmd(b)}</td></tr>`).join("")}</table>`;
+}
+function match(p, q) {
+  if (!q) return true;
+  const hay = [p.name, p.purpose, p.settings, p.notes, ...(p.player || []).flat(), ...(p.admin || []).flat()].join(" ").toLowerCase();
+  return q.toLowerCase().split(/\s+/).every(w => hay.includes(w));
+}
+
+function render() {
+  const q = $("q").value.trim();
+  // lọc server
+  $("servers").innerHTML = "";
+  for (const s of ["*", ...data.servers]) {
+    const b = document.createElement("button");
+    b.className = "chip" + (server === s ? " active" : "");
+    b.textContent = s === "*" ? "Mọi server" : (SRV[s] || s);
+    b.onclick = () => { server = s; render(); };
+    $("servers").appendChild(b);
+  }
+  // loại
+  const kinds = ["Hướng dẫn nhanh"];
+  for (const p of data.plugins) if (!kinds.includes(p.kind)) kinds.push(p.kind);
+  kinds.push("Tất cả");
+  $("cats").innerHTML = "";
+  for (const k of kinds) {
+    const b = document.createElement("button");
+    b.className = "chip" + (kind === k ? " active" : "");
+    b.textContent = k;
+    b.onclick = () => { kind = k; render(); };
+    $("cats").appendChild(b);
+  }
+  const out = [];
+  if ((kind === "Hướng dẫn nhanh" || kind === "Tất cả") && !q) {
+    for (const g of data.guide) out.push(`<section class="card guide"><h2>${esc(g.title)}</h2>${rows(g.items, false)}</section>`);
+  }
+  const plugins = data.plugins.filter(p =>
+    (q || kind === "Tất cả" || p.kind === kind) &&
+    (server === "*" || p.installed.includes(server)) && match(p, q));
+  for (const p of plugins) {
+    const badges = data.servers.filter(s => s !== "pokemon-1" || p.installed.includes(s))
+      .map(s => `<span class="srv ${p.installed.includes(s) ? "on" : ""}" title="${p.installed.includes(s) ? "đang cài" : "không cài"}">${esc(SRV[s] || s)}</span>`).join("");
+    out.push(`<section class="card">
+      <h2>${esc(p.name)} <span class="kind">${esc(p.kind)}</span> ${badges}</h2>
+      <p class="purpose">${esc(p.purpose)}</p>
+      ${p.player && p.player.length ? `<h3>Lệnh người chơi</h3>${rows(p.player, true)}` : ""}
+      ${p.admin && p.admin.length ? `<h3>Lệnh admin / mod</h3>${rows(p.admin, true)}` : ""}
+      ${p.settings ? `<div class="meta"><b>Chỉnh ở:</b> ${esc(p.settings)}</div>` : ""}
+      ${p.notes ? `<div class="meta"><b>Lưu ý:</b> ${esc(p.notes)}</div>` : ""}
+    </section>`);
+  }
+  const unk = Object.entries(data.unknown).filter(([s, l]) => l.length && (server === "*" || s === server));
+  if (unk.length && (kind === "Tất cả" || q === "")) {
+    out.push(`<section class="card"><h2 class="unknown">Đang cài nhưng chưa có trong cẩm nang</h2>
+      <p class="meta">Thêm mục vào modes/_network/camnang.yml.</p>
+      ${rows(unk.map(([s, l]) => [SRV[s] || s, l.join(", ")]), false)}</section>`);
+  }
+  $("list").innerHTML = out.join("") || `<p class="empty">Không tìm thấy.</p>`;
+}
+
+$("q").oninput = render;
+fetch("api/camnang").then(r => r.json()).then(d => { data = d; render(); })
+  .catch(e => { $("list").innerHTML = `<p class="empty">Không tải được cẩm nang: ${esc(e)}</p>`; });
+</script>
+</body>
+</html>

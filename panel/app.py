@@ -37,6 +37,9 @@ ROLE_HTML = (Path(__file__).parent / "role.html").read_text(encoding="utf-8")
 STAFF_GROUPS = ["admin", "mod", "helper", "builder", "default"]
 DONATE_GROUPS = ["congtuoc", "hautuoc", "batuoc", "tutuoc", "namtuoc"]
 PLAYER_RE = re.compile(r"^\.?[A-Za-z0-9_]{1,17}$")
+PERM_RE = re.compile(r"^[A-Za-z0-9_.*-]{1,120}$")
+SERVER_CTX = ["global", "lobby", "banghoi-1", "practice-1"]
+QUYEN_FILE = MODES_DIR / "_network" / "quyen.yml"
 # Cẩm nang trong game (/huongdan): bản gốc + các bản chép (repo của từng server, data/ để có hiệu lực ngay)
 HUONGDAN_FILE = MODES_DIR / "_network" / "huongdan.yml"
 HUONGDAN_COPIES = [MODES_DIR / "banghoi/server/plugins/DuckyMoMoCore/huongdan.yml",
@@ -416,6 +419,14 @@ def roles_json():
             if g == "default":
                 continue
             members.setdefault(g, []).append({"name": user, "expiry": int(expiry or 0), "server": server})
+        cur.execute("SELECT name, permission, value, server FROM luckperms_group_permissions WHERE permission NOT LIKE 'prefix.%%' "
+                    "AND permission NOT LIKE 'weight.%%' AND permission NOT LIKE 'displayname.%%' AND permission NOT LIKE 'suffix.%%'")
+        perms, parents = {}, {}
+        for name, perm, value, server in cur.fetchall():
+            if perm.startswith("group."):
+                parents.setdefault(name, []).append(perm[6:])
+            else:
+                perms.setdefault(name, []).append({"node": perm, "value": bool(value), "server": server})
         cur.execute("SELECT COUNT(*) FROM luckperms_players")
         total = cur.fetchone()[0]
     finally:
@@ -426,13 +437,32 @@ def roles_json():
         out.append({"name": g, "kind": "default" if g == "default" else ("donate" if g in DONATE_GROUPS else "staff"),
                     "prefix": m.get("prefix", ""), "weight": m.get("weight", 0), "display": m.get("display", g),
                     "members": sorted(members.get(g, []), key=lambda x: x["name"].lower()),
-                    "count": total if g == "default" else len(members.get(g, []))})
-    return {"groups": out, "players": total}
+                    "count": total if g == "default" else len(members.get(g, [])),
+                    "perms": sorted(perms.get(g, []), key=lambda x: x["node"]), "parents": parents.get(g, [])})
+    catalog = YAML(typ="safe").load(QUYEN_FILE.read_text(encoding="utf-8")) if QUYEN_FILE.exists() else {}
+    return {"groups": out, "players": total, "catalog": (catalog or {}).get("groups", []), "servers": SERVER_CTX}
 
 
 def role_action(data):
     """Cấp / gỡ role qua RCON ở lobby (LuckPerms dùng chung DB + Redis nên áp dụng toàn mạng)."""
     act, player, group = data.get("action"), str(data.get("player", "")).strip(), data.get("group")
+    if act in ("perm_set", "perm_unset", "perm_deny"):
+        node, server = str(data.get("node", "")).strip(), data.get("server") or "global"
+        if group not in STAFF_GROUPS + DONATE_GROUPS:
+            raise ValueError("Role không hợp lệ")
+        if not PERM_RE.match(node) or node.startswith("group."):
+            raise ValueError("Tên quyền không hợp lệ (vd essentials.fly)")
+        if server not in SERVER_CTX:
+            raise ValueError("Server không hợp lệ")
+        ctx = "" if server == "global" else f" server={server}"
+        if act == "perm_unset":
+            cmd = f"lp group {group} permission unset {node}{ctx}"
+        else:
+            cmd = f"lp group {group} permission set {node} {'false' if act == 'perm_deny' else 'true'}{ctx}"
+        rcon("lobby", [cmd])
+        import time
+        time.sleep(1.5)
+        return {"ok": True, "message": f"Đã gửi: /{cmd}", "data": roles_json()}
     if not PLAYER_RE.match(player):
         raise ValueError("Tên người chơi không hợp lệ")
     if group not in STAFF_GROUPS + DONATE_GROUPS or group == "default":

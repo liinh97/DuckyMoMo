@@ -39,6 +39,17 @@
   .empty { color: var(--muted); font-size: 13.5px; }
   h3 { font-size: 13px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); margin: 18px 0 8px; }
   .note { color: var(--muted); font-size: 13.5px; margin: 6px 0 0; }
+  .perm-btn { margin-top: 8px; font-size: 13px; padding: 3px 10px; }
+  .perms { margin-top: 10px; border-top: 1px dashed var(--line); padding-top: 8px; }
+  .perms h4 { font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); margin: 10px 0 4px; }
+  .pl { display: flex; gap: 8px; align-items: flex-start; font-size: 13.5px; padding: 2px 0; }
+  .pl input { width: auto; margin-top: 3px; }
+  .pl code { font-size: 11.5px; color: var(--muted); }
+  .pl .inh { color: var(--muted); font-size: 12px; }
+  .ctx { display: flex; gap: 6px; align-items: center; font-size: 13px; color: var(--muted); margin-bottom: 4px; }
+  .ctx select { width: auto; padding: 3px 6px; }
+  .addp { display: grid; grid-template-columns: 1fr auto; gap: 6px; margin-top: 8px; }
+  .warn { color: #b26a00; font-size: 12.5px; }
   @media (max-width: 640px) { .form { grid-template-columns: 1fr; } }
 </style>
 </head>
@@ -59,7 +70,7 @@
       <input id="months" type="number" min="1" max="24" value="1" title="Số tháng (chỉ rank donate)">
       <button class="primary" id="give">Cấp</button>
     </div>
-    <p class="note">Role chức vụ: vĩnh viễn, đến khi gỡ. Rank donate: theo số tháng (1 tháng = 30 ngày), cấp tiếp thì cộng dồn; đổi bậc thì bậc cũ bị bỏ.
+    <p class="note">Bấm "Quyền" ở từng role để tick / bỏ tick quyền (có hiệu lực ngay). Role chức vụ: vĩnh viễn, đến khi gỡ. Rank donate: theo số tháng (1 tháng = 30 ngày), cấp tiếp thì cộng dồn; đổi bậc thì bậc cũ bị bỏ.
       Người chơi phải từng vào server. Áp dụng ngay toàn mạng. Sửa prefix: trang Cài đặt &gt; Toàn mạng &gt; Role / Rank donate.</p>
     <div class="status" id="status"></div>
   </section>
@@ -74,7 +85,7 @@ const COLORS = { "0": "#000000", "1": "#0000AA", "2": "#00AA00", "3": "#00AAAA",
   "8": "#555555", "9": "#5555FF", a: "#55FF55", b: "#55FFFF", c: "#FF5555", d: "#FF55FF", e: "#FFFF55", f: "#FFFFFF" };
 const NAMES = { default: "Dân (mặc định)", builder: "Builder", helper: "Helper", mod: "Mod", admin: "Admin",
   namtuoc: "Nam Tước", tutuoc: "Tử Tước", batuoc: "Bá Tước", hautuoc: "Hầu Tước", congtuoc: "Công Tước" };
-let data = null;
+let data = null; const open = {}; const ctxSel = {};
 function esc(s) { return String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
 function mc(text) {
   let out = "", color = "#FFFFFF", bold = false;
@@ -99,14 +110,74 @@ function render() {
       const members = g.kind === "default" ? `<div class="empty">Mọi người chơi (${g.count} người đã từng vào)</div>`
         : (g.members.length ? `<div class="members">${g.members.map(m => `<span class="m">${esc(m.name)}${m.expiry ? ` <small>đến ${new Date(m.expiry * 1000).toLocaleDateString("vi-VN")}</small>` : ""}${m.server !== "global" ? ` <small>(${esc(m.server)})</small>` : ""}<button class="x" title="Gỡ" data-p="${esc(m.name)}" data-g="${g.name}">×</button></span>`).join("")}</div>`
         : `<div class="empty">Chưa có ai</div>`);
+      const own = g.perms.filter(p => p.value).length;
       div.innerHTML = `<div class="head"><b>${esc(NAMES[g.name] || g.name)}</b><span class="prefix">${mc(g.prefix)}</span></div>
-        <div class="meta">nhóm <code>${g.name}</code> · weight ${g.weight}${g.kind !== "default" ? ` · ${g.count} người` : ""}</div>${members}`;
+        <div class="meta">nhóm <code>${g.name}</code> · weight ${g.weight}${g.kind !== "default" ? ` · ${g.count} người` : ""}${g.parents.length ? ` · kế thừa: ${g.parents.map(x => NAMES[x] || x).join(", ")}` : ""}</div>${members}
+        <button class="perm-btn">${open[g.name] ? "Ẩn quyền" : `Quyền (${own})`}</button>`;
+      div.querySelector(".perm-btn").onclick = () => { open[g.name] = !open[g.name]; render(); };
+      if (open[g.name]) div.appendChild(permEditor(g));
       box.appendChild(div);
     }
   }
   document.querySelectorAll("button.x").forEach(b => b.onclick = () => {
     if (confirm(`Gỡ ${NAMES[b.dataset.g] || b.dataset.g} của ${b.dataset.p}?`)) act("remove", b.dataset.p, b.dataset.g);
   });
+}
+// quyền kế thừa từ các nhóm cha (đệ quy): node -> tên nhóm cho quyền
+function inherited(g, seen = new Set()) {
+  const out = {};
+  for (const pn of g.parents) {
+    if (seen.has(pn)) continue; seen.add(pn);
+    const pg = data.groups.find(x => x.name === pn); if (!pg) continue;
+    for (const p of pg.perms) if (p.value && !(p.node in out)) out[p.node] = pn + (p.server !== "global" ? ` @${p.server}` : "");
+    Object.assign(out, Object.fromEntries(Object.entries(inherited(pg, seen)).filter(([k]) => !(k in out))));
+  }
+  return out;
+}
+function permEditor(g) {
+  const wrap = document.createElement("div"); wrap.className = "perms";
+  const server = ctxSel[g.name] || "global";
+  const has = (node) => g.perms.find(p => p.node === node && p.server === server);
+  const inh = inherited(g);
+  const isDonate = g.kind === "donate";
+  const cats = data.catalog.filter(c => isDonate ? (c.donate || c.title.startsWith("Chat")) : !c.donate);
+  let html = `<div class="ctx">Áp dụng cho: <select>${data.servers.map(sv => `<option value="${sv}" ${sv === server ? "selected" : ""}>${sv === "global" ? "Toàn mạng" : sv}</option>`).join("")}</select></div>`;
+  if (isDonate) html += `<div class="warn">Rank donate: chỉ cấp quyền trang trí. Cấp lợi thế khi chơi (bay, kit, đồ mạnh…) là pay-to-win, vi phạm luật Mojang.</div>`;
+  if (g.perms.some(p => p.node === "*")) html += `<div class="warn">Role này có quyền * (tất cả quyền).</div>`;
+  const known = new Set();
+  for (const c of cats) {
+    html += `<h4>${esc(c.title)}</h4>`;
+    for (const [node, label] of c.perms) {
+      known.add(node);
+      const own = has(node), from = inh[node];
+      html += `<label class="pl"><input type="checkbox" data-node="${esc(node)}" ${own && own.value ? "checked" : ""}>
+        <span>${esc(label)} <code>${esc(node)}</code>${own && !own.value ? ' <span class="inh">(đang CẤM)</span>' : ""}${!own && from ? ` <span class="inh">(có sẵn từ ${esc(NAMES[from.split(" ")[0]] || from)})</span>` : ""}</span></label>`;
+    }
+  }
+  const others = g.perms.filter(p => !known.has(p.node) || p.server !== server);
+  if (others.length) {
+    html += `<h4>Quyền khác của role này</h4><div class="members">${others.map(p => `<span class="m">${p.value ? "" : "CẤM "}<code>${esc(p.node)}</code>${p.server !== "global" ? ` <small>@${esc(p.server)}</small>` : ""}<button class="x" data-unset="${esc(p.node)}" data-srv="${esc(p.server)}">×</button></span>`).join("")}</div>`;
+  }
+  html += `<div class="addp"><input placeholder="Thêm quyền khác, vd essentials.workbench"><button>Thêm</button></div>`;
+  wrap.innerHTML = html;
+  wrap.querySelector(".ctx select").onchange = (e) => { ctxSel[g.name] = e.target.value; render(); };
+  wrap.querySelectorAll("input[type=checkbox]").forEach(cb => cb.onchange = () =>
+    perm(cb.checked ? "perm_set" : "perm_unset", g.name, cb.dataset.node, server));
+  wrap.querySelectorAll("button[data-unset]").forEach(b => b.onclick = () => {
+    if (confirm(`Gỡ quyền ${b.dataset.unset} khỏi ${NAMES[g.name] || g.name}?`)) perm("perm_unset", g.name, b.dataset.unset, b.dataset.srv);
+  });
+  const inp = wrap.querySelector(".addp input");
+  wrap.querySelector(".addp button").onclick = () => { if (inp.value.trim()) perm("perm_set", g.name, inp.value.trim(), server); };
+  return wrap;
+}
+async function perm(action, group, node, server) {
+  $("status").className = "status"; $("status").textContent = "Đang gửi…";
+  try {
+    const r = await fetch("api/roles", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action, group, node, server }) });
+    const res = await r.json();
+    $("status").className = "status " + (res.ok ? "ok" : "err"); $("status").textContent = res.message;
+    if (res.data) { data = res.data; render(); }
+  } catch (e) { $("status").className = "status err"; $("status").textContent = "Không gửi được: " + e; }
 }
 function updMonths() { const g = data && data.groups.find(x => x.name === $("group").value); $("months").disabled = !(g && g.kind === "donate"); }
 $("group").onchange = updMonths;

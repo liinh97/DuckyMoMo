@@ -1,0 +1,90 @@
+# Danh mục quyền hay dùng cho trang Role (panel /role): tick để cấp cho role, bỏ tick để gỡ (lệnh lp group … permission).
+# Thêm quyền: thêm một dòng [quyền, mô tả]. Quyền không có trong danh mục vẫn thêm được ở ô "Thêm quyền khác" trên trang.
+# Lưu ý: role cao KẾ THỪA role thấp (mod kế thừa helper, admin có tất cả '*'); quyền kế thừa hiện "(từ helper)".
+# server mặc định khi tick: global = toàn mạng (sảnh, Bang Hội Chiến, practice).
+groups:
+  - title: Di chuyển
+    perms:
+      - [essentials.fly, "Bay (/fly)"]
+      - [essentials.gamemode, "Đổi chế độ chơi (/gamemode) — cần thêm quyền từng chế độ bên dưới"]
+      - [essentials.gamemode.creative, "  … chế độ Sáng tạo"]
+      - [essentials.gamemode.survival, "  … chế độ Sinh tồn"]
+      - [essentials.gamemode.spectator, "  … chế độ Quan sát"]
+      - [essentials.gamemode.adventure, "  … chế độ Phiêu lưu"]
+      - [essentials.speed, "Đổi tốc độ đi / bay (/speed)"]
+      - [essentials.tp, "Dịch chuyển tới người khác (/tp)"]
+      - [essentials.tphere, "Kéo người khác tới mình (/tphere)"]
+      - [essentials.back, "Quay lại chỗ cũ (/back)"]
+      - [essentials.top, "Lên mặt đất (/top)"]
+      - [essentials.jump, "Nhảy tới chỗ đang nhìn (/jump)"]
+  - title: Quản lý người chơi
+    perms:
+      - [essentials.kick, "Kick (/kick)"]
+      - [essentials.mute, "Cấm chat (/mute)"]
+      - [essentials.tempban, "Ban có thời hạn (/tempban)"]
+      - [essentials.ban, "Ban vĩnh viễn (/ban)"]
+      - [essentials.unban, "Gỡ ban (/unban)"]
+      - [essentials.seen, "Xem lần cuối online, IP (/seen)"]
+      - [essentials.invsee, "Xem túi đồ người khác (/invsee)"]
+      - [essentials.enderchest.others, "Xem rương ender người khác"]
+      - [essentials.vanish, "Tàng hình (/vanish)"]
+      - [essentials.socialspy, "Đọc tin nhắn riêng của mọi người (/socialspy)"]
+      - [essentials.heal, "Hồi máu (/heal)"]
+      - [essentials.feed, "Hồi đói (/feed)"]
+  - title: Xây dựng và bảo vệ
+    perms:
+      - [worldedit.*, "WorldEdit đầy đủ (//set, //copy, //paste…)"]
+      - [worldguard.region.bypass.*, "Xây/phá trong vùng bảo vệ (khu spawn…)"]
+      - [worldguard.region.info.*, "Xem thông tin vùng bảo vệ (/rg info)"]
+      - [towny.admin, "Quản trị Towny (sửa thị trấn, xây trong mọi thị trấn)"]
+      - [essentials.give, "Lấy đồ (/give)"]
+      - [essentials.item, "Lấy đồ (/i)"]
+  - title: Soi phá hoại (CoreProtect)
+    perms:
+      - [coreprotect.inspect, "Soi block (/co i)"]
+      - [coreprotect.lookup, "Tra lịch sử (/co lookup)"]
+      - [coreprotect.rollback, "Khôi phục phá hoại (/co rollback)"]
+      - [coreprotect.restore, "Hoàn tác khôi phục (/co restore)"]
+  - title: Chống hack
+    perms:
+      - [grim.alerts, "Nhận cảnh báo hack (GrimAC)"]
+      - [grim.alerts.enable-on-join, "Tự bật cảnh báo khi vào"]
+      - [pvpmanager.admin, "Quản trị PvP (tắt PvP toàn server, gỡ cờ giao tranh…)"]
+  - title: Chat và trang trí
+    perms:
+      - [essentials.chat.color, "Chat có màu"]
+      - [essentials.chat.format, "Chat chữ đậm/nghiêng"]
+      - [essentials.nick, "Đổi tên hiển thị (/nick)"]
+      - [essentials.hat, "Đội đồ lên đầu (/hat)"]
+      - [duckymomo.chat.bypass, "Không bị chống spam chat"]
+  - title: Kinh tế và quản trị
+    perms:
+      - [essentials.eco, "Sửa tiền người chơi (/eco)"]
+      - [duckymomo.rank.admin, "Cấp/gỡ rank donate (/rank give)"]
+      - [duckymomo.admin, "Lệnh /dmm (dọn rác, đồ vượt cấp, reload…)"]
+      - [shopkeeper.admin, "Tạo/sửa dân làng bán hàng"]
+      - [crazyenchantments.admin, "Phát sách phù phép CrazyEnchantments"]
+  - title: Quyền lợi rank donate (CHỈ trang trí — luật Mojang)
+    donate: true
+    perms:
+      - [duckymomo.rank.join, "Dòng chào khi vào server"]
+      - [duckymomo.rank.join.special, "Tiếng chuông cho cả server khi vào"]
+      - [essentials.nick.color, "Nick có màu"]
+      - [essentials.nick.format, "Nick đậm/nghiêng"]
+      - [essentials.chat.rgb, "Chat màu tuỳ chọn (hex)"]
+      - [essentials.nick.rgb, "Nick màu tuỳ chọn (hex)"]
+      - [playerparticles.effect.*, "Dùng mọi hiệu ứng hạt (/pp)"]
+      - [playerparticles.style.*, "Dùng mọi kiểu bay của hiệu ứng"]
+      - [playerparticles.particles.max.1, "Tối đa 1 hiệu ứng cùng lúc"]
+      - [playerparticles.particles.max.2, "Tối đa 2 hiệu ứng"]
+      - [playerparticles.particles.max.3, "Tối đa 3 hiệu ứng"]
+      - [playerparticles.particles.max.6, "Tối đa 6 hiệu ứng"]
+      - [pet.type.passive, "Mọi pet hiền (/pet)"]
+      - [pet.type.cat.*, "Pet mèo"]
+      - [pet.type.wolf.*, "Pet sói"]
+      - [pet.type.parrot.*, "Pet vẹt"]
+      - [pet.type.fox.*, "Pet cáo"]
+      - [pet.type.axolotl.*, "Pet kỳ giông"]
+      - [pet.type.panda.*, "Pet gấu trúc"]
+      - [pet.type.allay.*, "Pet allay"]
+      - [pet.type.happy_ghast.*, "Pet ghast vui vẻ"]

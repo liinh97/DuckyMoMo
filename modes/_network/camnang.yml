@@ -14,6 +14,7 @@
 guide:
   - title: Việc admin hay làm
     items:
+      - ["Quyền của role / rank", "Trang Cài đặt > Role > nút Quyền trên từng role: tick để cấp (vd Helper: bay; Builder: gamemode)"]
       - ["Cấp role staff", "Trang Cài đặt > Role (bấm nút), hoặc /lp user <tên> parent add helper  (lên tiếp: /lp user <tên> promote staff → mod → admin)"]
       - ["Cấp rank donate", "/rank give <tên> <namtuoc|tutuoc|batuoc|hautuoc|congtuoc> <số tháng>  · xem: /rank check <tên> · gỡ: /rank remove <tên>"]
       - ["Đồ phù phép vượt cấp", "/dmm enchant sharpness 30 (món đang cầm) · /dmm sach sharpness 30 <tên> (tặng sách)"]

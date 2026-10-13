@@ -926,3 +926,22 @@ groups:
           options: [ { value: true, label: Bật }, { value: false, label: Tắt } ] }
       - { key: over_enchant_max, label: Cấp tối đa được tạo, type: int, min: 1, max: 255, file: plugins/DuckyMoMoCore/config.yml, path: over-enchant.max-level,
           note: "Vd 30 = tạo được tới Sắc bén XXX. Tối đa của game là 255." }
+
+  - title: Dân làng bán hàng (Shopkeepers)
+    category: Shop
+    description: "Admin tạo NPC bằng /shopkeeper admin rồi chuột phải (cúi) vào NPC để sửa đồ bán và giá."
+    apply: [shopkeeper reload, shopkeepersaddon reload]
+    settings:
+      - key: sk_player_shops
+        label: Người chơi tự mở shop dân làng
+        type: select
+        options: [ { value: false, label: "Không (chỉ admin; người chơi dùng cửa hàng rương)" }, { value: true, label: "Cho phép" } ]
+        commands: ["lp group default permission set shopkeeper.player {value}"]
+        note: "Đặt quyền trong LuckPerms, có hiệu lực ngay."
+      - { key: sk_daily_limit_on, label: Giới hạn tiền kiếm được mỗi ngày khi bán cho shop admin, type: select, file: plugins/ShopkeepersAddon/config.yml, path: economy.daily-earning-limit.enabled,
+          options: [ { value: true, label: Bật }, { value: false, label: Tắt } ] }
+      - { key: sk_daily_limit, label: Mức giới hạn mỗi ngày (xu), type: number, min: 0, max: 100000000, file: plugins/ShopkeepersAddon/config.yml, path: economy.daily-earning-limit.limit }
+      - { key: sk_tax, label: "Thuế shop người chơi (0-100 %)", type: int, min: 0, max: 100, file: plugins/Shopkeepers/config.yml, path: tax-rate }
+      - { key: sk_max_shops, label: "Số shop tối đa mỗi người (-1 = không giới hạn)", type: int, min: -1, max: 1000, file: plugins/Shopkeepers/config.yml, path: max-shops-per-player }
+      - { key: sk_towny, label: Shop người chơi chỉ được đặt trong thị trấn (ô đất thương mại), type: select, file: plugins/Shopkeepers/config.yml, path: enable-towny-restrictions,
+          options: [ { value: true, label: Có }, { value: false, label: Không } ] }

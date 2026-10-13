@@ -280,6 +280,23 @@ plugins:
     settings: "Trang Cài đặt: Bang Hội Chiến > Phù phép > Đồ phù phép vượt cấp (bật/tắt, cấp tối đa)"
     notes: "Chỉ làm phần thưởng hoặc bán bằng tiền trong game. KHÔNG bán lấy tiền thật (pay-to-win, vi phạm luật Mojang). Mỗi lần tạo đều ghi log server."
 
+  - name: Shopkeepers (+ ShopkeepersAddon)
+    jar: Shopkeepers
+    kind: Kinh tế & buôn bán
+    purpose: "Dân làng NPC bán hàng (vd ở spawn bán các set đồ). Admin tạo NPC, chọn đồ bán và giá (vật phẩm hoặc tiền trong game qua Addon). Người chơi bấm vào NPC ra bảng đổi đồ như dân làng thường (dùng được trên điện thoại). Người chơi tự mở shop dân làng: đang TẮT (quyền shopkeeper.player = false; đã có cửa hàng rương). Bán đồ cho shop admin bị giới hạn 1.000 xu/ngày mỗi người (chống lạm phát)."
+    player:
+      - ["Bấm chuột phải vào dân làng bán hàng", "Mở bảng đổi đồ"]
+      - ["/shops", "Menu danh sách shop"]
+      - ["/shopsearch <món>", "Tìm shop bán món đồ"]
+    admin:
+      - ["/shopkeeper admin", "Tạo shop admin tại chỗ đang nhìn (gõ /shopkeeper để xem các loại; mặc định là dân làng)"]
+      - ["Chuột phải (cúi người) vào NPC", "Mở trình sửa: kéo đồ bán vào hàng trên, giá vào hàng dưới; đổi tên, nghề, kiểu dáng"]
+      - ["/shopkeeper list admin · /shopkeeper remove <id> · /shopkeeper teleport <id>", "Danh sách / xoá / dịch chuyển tới shop"]
+      - ["/shopkeeper history all", "Xem lịch sử giao dịch"]
+      - ["/shopkeeper reload · /shopkeepersaddon reload", "Nạp lại"]
+    settings: "Trang Cài đặt: Bang Hội Chiến > Shop > Dân làng bán hàng (Shopkeepers). Config: data/banghoi-1/plugins/Shopkeepers/config.yml, modes/banghoi/server/plugins/ShopkeepersAddon/config.yml"
+    notes: "Tiền tệ hiện '100 xu'. Giao diện admin tiếng Anh (plugin chỉ có tiếng Anh, Đức)."
+
   # ---------------------------------------------------------------- Thị trấn & chiến tranh
   - name: Towny
     jar: Towny

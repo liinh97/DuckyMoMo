@@ -623,3 +623,9 @@ tp_same_ip: true
 ah_max_listings: 5
 over_enchant_on: true
 over_enchant_max: 50
+sk_player_shops: false
+sk_daily_limit_on: true
+sk_daily_limit: 1000.0
+sk_tax: 0
+sk_max_shops: -1
+sk_towny: false

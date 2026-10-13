@@ -41,6 +41,7 @@ services:
       #   enchantio = phù phép mới kiểu gốc (sách ra từ rương/câu cá/dân làng -> hàng để đổi bán); chọn phù phép ở plugins/Enchantio/.
       #   crazyenchantments (BETA cho 26.x, ghim id) = 105 phù phép kiểu factions + sách tỉ lệ thành công, cuộn giấy, thợ rèn;
       #     shop /ce chỉ bán Thường/Hiếm bằng tiền, Huyền thoại/Thần thoại admin phát (người dùng chọn hướng C 12/10).
+      #   Shopkeepers 2.28.1 (dev.bukkit, link ghim ở PLUGINS) = dân làng NPC bán hàng (/shopkeeper); shopkeepers-addon = bán bằng tiền + menu tìm shop.
       #   discordsrv = chat game <-> Discord (token bot, kênh: DISCORD_BOT_TOKEN, DISCORD_CHANNEL_ID trong .env; trống thì plugin tự tắt).
       MODRINTH_PROJECTS: |
         luckperms
@@ -70,12 +71,14 @@ services:
         simplepets
         enchantio
         crazyenchantments:QUo33hOY
+        shopkeepers-addon
       # Plugin không có (hoặc chưa có bản 26.2) trên Modrinth: ghim link tải cụ thể. Nâng cấp: thay link.
-      #   SiegeWar 3.7.0 (GitHub), OldCombatMechanics 2.7.0 (GitHub, combat kiểu 1.8),
+      #   Shopkeepers 2.28.1 (dev.bukkit / forgecdn, Spigot ghi đã thử 26.2), SiegeWar 3.7.0 (GitHub), OldCombatMechanics 2.7.0 (GitHub, combat kiểu 1.8),
       #   EssentialsX bản dev #1832 (bản chính thức 2.22.0 mới tới 26.1.2): lõi + Chat + Spawn
       PLUGINS: |
         https://download.geysermc.org/v2/projects/floodgate/versions/latest/builds/latest/downloads/spigot
         https://github.com/TownyAdvanced/SiegeWar/releases/download/3.7.0/SiegeWar-3.7.0.jar
+        https://mediafilez.forgecdn.net/files/8983/363/Shopkeepers-2.28.1.jar
         https://github.com/kernitus/BukkitOldCombatMechanics/releases/download/v2.7.0/OldCombatMechanics.jar
         https://ci.ender.zone/job/EssentialsX/1832/artifact/jars/EssentialsX-2.22.1-dev%2B27-e70bdb8.jar
         https://ci.ender.zone/job/EssentialsX/1832/artifact/jars/EssentialsXChat-2.22.1-dev%2B27-e70bdb8.jar

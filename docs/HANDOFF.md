@@ -74,6 +74,9 @@
 - **Bẫy**: mc-proxy chỉ điền `${CFG_...}` cho file trong `/config`, không điền cho `/plugins`. Cấu hình plugin proxy nào có secret thì đặt ở `proxy/config/plugins/<plugin>/`.
 
 ### Tunnel playit.gg (07/10/2026)
+- **Sonar 2.1.52 (chống bot, proxy, 13/10)**: link Modrinth ghim trong `proxy/compose.yaml`, cấu hình `proxy/plugins/sonar/config.yml` (max-online-per-ip 20 vì qua playit có thể chung IP 127.x; verification DURING_ATTACK; Bedrock bỏ qua). Lệnh `/sonar` chỉ chạy ở console proxy (chưa LuckPerms ở proxy). Không chống được DDoS băng thông: giấu IP nhà (playit / Cloudflare cho web; chưa mở cổng modem). Ping thử Java qua playit TỪ TRONG NHÀ báo EOF (vòng ngược), người chơi thật vào bình thường (Linh vào được 13/10) — đừng dùng phép thử đó để kết luận tunnel hỏng.
+- **Mạng nhà (13/10)**: modem Viettel ONT 192.168.1.1 (IP public, không CGNAT, PPPoE) → ZTE H196A chính 192.168.2.253 (MAC …aa:df) → máy server 192.168.2.3 (MAC CC:28:AA:89:62:00, cắm vào ZTE phụ 192.168.2.2 …ab:eb). Hai tầng NAT: mở cổng phải làm ở cả ONT và ZTE chính. Người dùng chọn CHƯA mở cổng (lộ IP nhà → DDoS). Mật khẩu thiết bị không ghi ở đây. Backhaul ZTE phụ đang là Wi-Fi (sau khi bấm Wireless BackHaul), cần đưa về dây.
+- playit edge `147.185.221.x` (anycast), ping từ nhà ~63 ms qua NTT; playit không có máy chủ ở Việt Nam (chưa xác nhận chính thức).
 - `tunnel/compose.yaml`: service `playit` (`ghcr.io/playit-cloud/playit-agent:1.0`, đang là 1.0.12), profile `tunnel`, key ở `PLAYIT_SECRET_KEY` trong `.env`.
 - `network_mode: "service:proxy"`: dùng chung mạng với proxy, nên trên dashboard playit, tunnel trỏ tới `127.0.0.1:25577` (Java, TCP) và `127.0.0.1:19132` (Bedrock, UDP). `depends_on.restart: true` để proxy khởi động lại thì playit cũng khởi động lại.
 - Bật: `docker compose --profile tunnel up -d playit`. Agent đã kết nối được (agent tên `duckymomo`).

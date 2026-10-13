@@ -7,13 +7,14 @@ services:
       MEMORY: 1G                  # Velocity nhẹ; 1G đủ vài trăm người (11/10: 512M -> 1G)
       TZ: Asia/Ho_Chi_Minh
       # Geyser/Floodgate tải từ trang chính thức của GeyserMC (luôn bản mới nhất).
-      # AuthMe, SkinsRestorer ghim phiên bản bằng link Modrinth (mc-proxy cần MINECRAFT_VERSION cụ thể
+      # AuthMe, SkinsRestorer, Sonar (chống bot) ghim phiên bản bằng link Modrinth (mc-proxy cần MINECRAFT_VERSION cụ thể
       # mới dùng được MODRINTH_PROJECTS). Nâng cấp: thay link bằng bản mới trên modrinth.com.
       PLUGINS: |
         https://download.geysermc.org/v2/projects/geyser/versions/latest/builds/latest/downloads/velocity
         https://download.geysermc.org/v2/projects/floodgate/versions/latest/builds/latest/downloads/velocity
         https://cdn.modrinth.com/data/9js4IEHC/versions/6CyGMFMO/AuthMe-6.0.1-Velocity.jar
         https://cdn.modrinth.com/data/TsLS8Py5/versions/ziIzW16f/SkinsRestorer.jar
+        https://cdn.modrinth.com/data/I2qO6xbc/versions/kIBJBQSM/Sonar-Velocity.jar
       # Biến CFG_* được thay vào ${CFG_...} trong các file ở proxy/config khi khởi động
       CFG_VELOCITY_SECRET: ${VELOCITY_SECRET:?Chưa đặt VELOCITY_SECRET trong .env}
       CFG_AUTHME_SECRET: ${AUTHME_SECRET:?Chưa đặt AUTHME_SECRET trong .env (chạy lại ./ops/init.sh)}

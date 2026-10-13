@@ -84,6 +84,19 @@ plugins:
       - ["/skin clear", "Bỏ skin"]
     admin:
       - ["/sr reload", "Nạp lại"]
+  - name: Sonar (chống bot)
+    jar: Sonar
+    kind: Đăng nhập & kết nối
+    purpose: Chống nhồi bot ở proxy. Xếp hàng người mới vào, tối đa 20 người/IP; khi phát hiện người mới vào dồn dập (bị tấn công) thì bắt người mới qua bài kiểm tra rơi/va chạm (đạt thì bị kick 1 lần, vào lại là xong). Bedrock không bị kiểm tra. Không chặn được DDoS làm nghẽn mạng (cần giấu IP nhà bằng playit hoặc VPS).
+    admin:
+      - ["/sonar stats", "Số người đang chờ, đã xác minh, bị chặn"]
+      - ["/sonar verbose", "Bật/tắt dòng theo dõi tấn công trên thanh hành động"]
+      - ["/sonar notify", "Bật/tắt thông báo khi bị tấn công"]
+      - ["/sonar blacklist remove <IP>", "Gỡ chặn IP bị nhầm"]
+      - ["/sonar verified remove <IP>", "Bắt một IP kiểm tra lại"]
+      - ["/sonar reload", "Nạp lại cấu hình"]
+    settings: proxy/plugins/sonar/config.yml (chép vào data/proxy khi proxy khởi động lại)
+    notes: "Lệnh /sonar gõ ở console proxy (proxy chưa có LuckPerms nên trong game chưa ai có quyền sonar.*). Danh sách đã xác minh lưu trong RAM, khởi động lại proxy thì mất (không sao vì chỉ kiểm tra khi bị tấn công)."
   - name: ViaVersion + ViaBackwards + ViaRewind
     jar: ViaVersion
     kind: Đăng nhập & kết nối

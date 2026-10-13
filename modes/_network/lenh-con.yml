@@ -31,6 +31,15 @@ groups:
       - ["sr reload", "Nạp lại cấu hình SkinsRestorer", Chỉ admin]
       - ["sr status", "Kiểm tra kết nối tới máy chủ skin", Chỉ admin]
       - ["sr drop <người|skin>", "Xoá dữ liệu skin đã lưu", Chỉ admin]
+  - plugin: Sonar (proxy)
+    servers: [proxy]
+    commands:
+      - ["sonar stats", "Thống kê chống bot (đang chờ, đã xác minh, bị chặn)", Console]
+      - ["sonar verbose", "Theo dõi tấn công trên thanh hành động", Console]
+      - ["sonar notify", "Bật/tắt thông báo khi bị tấn công", Console]
+      - ["sonar blacklist remove <IP>", "Gỡ chặn IP", Console]
+      - ["sonar verified remove <IP>", "Bắt IP kiểm tra lại", Console]
+      - ["sonar reload", "Nạp lại cấu hình Sonar", Console]
   - plugin: Geyser (proxy)
     servers: [proxy]
     commands:

@@ -39,7 +39,7 @@ SELL = [("Nông sản", [(16, "wheat", 12), (16, "carrot", 10), (16, "potato", 1
         ("Gỗ", [(32, "oak_log", 19), (32, "spruce_log", 19), (32, "birch_log", 19), (32, "jungle_log", 19)])]
 # Mùa 1 (Đông Nam Á lục địa + Nam Trung Quốc): chỉ warp nằm trong viền mùa
 WARP = [("Tây Bắc - Việt Bắc", ["sapa", "hagiang", "dienbienphu", "caobang"]),
-        ("Đồng bằng Bắc Bộ", ["hanoi", "haiphong", "halong", "ninhbinh"]),
+        ("Miền xa", ["luangnamtha", "condao", "naypyidaw", "phuket"]),  # 13/10: bỏ hanoi/haiphong/halong/ninhbinh (nằm trong khu spawn)
         ("Bắc Trung Bộ", ["vinh", "hue", "danang", "hoian"]),
         ("Nam Trung Bộ", ["quynhon", "nhatrang", "pleiku", "buonmathuot"]),
         ("Đông Nam Bộ", ["hcm", "dalat", "vungtau", "cantho"]),

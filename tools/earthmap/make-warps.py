@@ -30,7 +30,8 @@ PLACES = [
     ("vientiane", "Viêng Chăn", "Lào", 17.97, 102.61), ("luangprabang", "Luông Pha Băng", "Lào", 19.89, 102.13),
     ("phnompenh", "Phnôm Pênh", "Campuchia", 11.56, 104.92), ("angkor", "Angkor Wat", "Campuchia", 13.41, 103.87),
     ("bangkok", "Bangkok", "Thái Lan", 13.76, 100.50), ("chiangmai", "Chiang Mai", "Thái Lan", 18.79, 98.98),
-    ("phuket", "Phuket", "Thái Lan", 7.88, 98.39), ("yangon", "Yangon", "Myanmar", 16.87, 96.20),
+    ("phuket", "Phuket", "Thái Lan", 7.88, 98.39), ("condao", "Côn Đảo", "Việt Nam", 8.68, 106.61),
+    ("luangnamtha", "Luang Namtha", "Lào", 20.95, 101.40), ("yangon", "Yangon", "Myanmar", 16.87, 96.20),
     ("mandalay", "Mandalay", "Myanmar", 21.97, 96.08), ("naypyidaw", "Naypyidaw", "Myanmar", 19.76, 96.08),
     ("kualalumpur", "Kuala Lumpur", "Malaysia", 3.14, 101.69), ("singapore", "Singapore", "Singapore", 1.35, 103.82),
     ("jakarta", "Jakarta", "Indonesia", -6.21, 106.85), ("bali", "Bali", "Indonesia", -8.41, 115.19),
@@ -178,7 +179,11 @@ def sign_cmd(warp, city, country, x, z):
 
 os.makedirs(OUT, exist_ok=True)
 signs = []
+# ONLY=a,b: chỉ tạo các warp này (thêm warp mới mà không ghi đè warp cũ). Bỏ warp: /delwarp <tên> + xoá file.
+ONLY = set(filter(None, os.environ.get("ONLY", "").split(",")))
 for warp, city, country, lat, lon in PLACES:
+    if ONLY and warp not in ONLY:
+        continue
     name = f"{city} ({country})"
     x0, z0 = round(lon * K), round(-lat * K)
     found = find_land(x0, z0)

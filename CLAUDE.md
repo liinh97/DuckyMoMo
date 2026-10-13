@@ -6,3 +6,5 @@
 - **Không commit mật khẩu.** Mật khẩu để trong `.env`; file cấu hình dùng `${CFG_TEN_BIEN}` (image itzg tự điền).
 - Kiểm tra trước khi push: `./ops/init.sh && docker compose config --quiet && docker compose --profile pokemon config --quiet`, sau đó xoá `.env` và `data/` vừa tạo khi thử.
 - Kiếm tiền phải đúng luật Mojang: không pay-to-win, không bán cape, không bán gì liên quan Pokémon.
+- Cài plugin hoặc thêm lệnh mới thì ghi ngay vào cẩm nang `modes/_network/camnang.yml` (lệnh con vào `lenh-con.yml`; người chơi cần biết thì thêm `huongdan.yml` + `./ops/huongdan.sh`).
+- Kiểm tra có ai online trước khi khởi động lại server. DuckyMoMo, tram6, goc6 phải luôn chạy. Chủ server cố ý vào game bằng địa chỉ playit, đừng khuyên dùng localhost.

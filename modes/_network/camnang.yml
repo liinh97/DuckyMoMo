@@ -372,9 +372,14 @@ plugins:
     jar: SimplePets
     kind: Rank donate
     purpose: Pet trang trí đi theo (Bá Tước trở lên). Không cưỡi, không bay.
+    admin:
+      - ["/pet summon target <tên> <loài>", "Gọi pet cho người chơi (thử pet)"]
+      - ["/pet reload config", "Nạp lại config"]
+    notes: "Config: Simpler-Pet-GUI-Command: true (gõ /pet là mở menu; mặc định plugin phải gõ /pet gui). /pets là alias trong commands.yml của server, có hiệu lực sau khi khởi động lại."
     player:
-      - ["/pet", "Mở menu pet"]
-      - ["/pet remove", "Cất pet"]
+      - ["/pet (hoặc /pets)", "Mở menu pet"]
+      - ["/pet summon <loài>", "Gọi pet thẳng, vd /pet summon cat (wolf, parrot, fox, axolotl, panda...)"]
+      - ["/pet remove · /pet rename <loài> <tên>", "Cất pet / đặt tên pet"]
 
   # ---------------------------------------------------------------- Bản đồ & thế giới
   - name: squaremap

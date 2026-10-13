@@ -945,3 +945,14 @@ groups:
       - { key: sk_max_shops, label: "Số shop tối đa mỗi người (-1 = không giới hạn)", type: int, min: -1, max: 1000, file: plugins/Shopkeepers/config.yml, path: max-shops-per-player }
       - { key: sk_towny, label: Shop người chơi chỉ được đặt trong thị trấn (ô đất thương mại), type: select, file: plugins/Shopkeepers/config.yml, path: enable-towny-restrictions,
           options: [ { value: true, label: Có }, { value: false, label: Không } ] }
+
+  - title: Quà tân thủ và chào người mới
+    category: Người mới
+    description: "Người chơi vào Bang Hội Chiến LẦN ĐẦU tự nhận kit quà (một lần duy nhất) và cả server thấy dòng chào. Tiền khởi đầu: loại Kinh tế."
+    apply: [essentials reload]
+    settings:
+      - { key: newbie_kit_items, label: "Đồ trong kit quà (mỗi dòng: tên_đồ số_lượng)", type: lines, file: plugins/Essentials/kits.yml, path: kits.tanthu.items,
+          note: "Tên đồ tiếng Anh kiểu Minecraft: stone_sword 1, bread 16, iron_pickaxe 1 efficiency:2... Dòng bắt đầu bằng / là lệnh chạy khi phát ({USERNAME} = tên người chơi)." }
+      - { key: newbie_kit_on, label: Phát kit quà khi vào lần đầu, type: select, file: plugins/Essentials/config.yml, path: newbies.kit,
+          options: [ { value: tanthu, label: "Có (kit tanthu)" }, { value: "", label: Không phát } ] }
+      - { key: newbie_announce, label: "Dòng chào cả server ({DISPLAYNAME} = tên; để trống = tắt)", type: text, file: plugins/Essentials/config.yml, path: newbies.announce-format }

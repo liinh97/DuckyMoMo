@@ -18,6 +18,7 @@ guide:
       - ["Cấp role staff", "Trang Cài đặt > Role (bấm nút), hoặc /lp user <tên> parent add helper  (lên tiếp: /lp user <tên> promote staff → mod → admin)"]
       - ["Cấp rank donate", "/rank give <tên> <namtuoc|tutuoc|batuoc|hautuoc|congtuoc> <số tháng>  · xem: /rank check <tên> · gỡ: /rank remove <tên>"]
       - ["Đồ phù phép vượt cấp", "/dmm enchant sharpness 30 (món đang cầm) · /dmm sach sharpness 30 <tên> (tặng sách)"]
+      - ["Kit quà tân thủ", "Tự phát khi vào Bang Hội Chiến lần đầu (kit tanthu). Sửa đồ trong kit: trang Cài đặt > Bang Hội Chiến > Người mới. Phát tay: /kit tanthu <tên>"]
       - ["Cộng/trừ tiền", "/eco give <tên> <số> · /eco take <tên> <số> · /eco set <tên> <số>  (Bang Hội Chiến)"]
       - ["Phạt", "/mute <tên> <thời gian> · /kick <tên> <lý do> · /tempban <tên> 1d <lý do> · /ban <tên> <lý do> · /unban <tên>"]
       - ["Kiểm tra phá hoại", "/co i (bấm vào block xem ai phá/đặt) · /co rollback u:<tên> t:2h r:30 (khôi phục)"]

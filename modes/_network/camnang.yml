@@ -14,7 +14,7 @@
 guide:
   - title: Việc admin hay làm
     items:
-      - ["Cấp role staff", "/lp user <tên> parent add helper  (lên tiếp: /lp user <tên> promote staff → mod → admin)"]
+      - ["Cấp role staff", "Trang Cài đặt > Role (bấm nút), hoặc /lp user <tên> parent add helper  (lên tiếp: /lp user <tên> promote staff → mod → admin)"]
       - ["Cấp rank donate", "/rank give <tên> <namtuoc|tutuoc|batuoc|hautuoc|congtuoc> <số tháng>  · xem: /rank check <tên> · gỡ: /rank remove <tên>"]
       - ["Đồ phù phép vượt cấp", "/dmm enchant sharpness 30 (món đang cầm) · /dmm sach sharpness 30 <tên> (tặng sách)"]
       - ["Cộng/trừ tiền", "/eco give <tên> <số> · /eco take <tên> <số> · /eco set <tên> <số>  (Bang Hội Chiến)"]

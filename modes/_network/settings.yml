@@ -134,3 +134,8 @@ lobby_void_y: 0
 lobby_spawn_on_join: true
 pp_toggle_on_combat: true
 pp_max_default: 0
+role_default_prefix: "&7[Dân]"
+role_builder_prefix: "&b[Builder]"
+role_helper_prefix: "&a[Helper]"
+role_mod_prefix: "&9[Mod]"
+role_admin_prefix: "&c[Admin]"

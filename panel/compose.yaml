@@ -9,6 +9,9 @@ services:
     environment:
       PANEL_USER: ${PANEL_USER:-admin}
       PANEL_PASSWORD: ${PANEL_PASSWORD:?Chưa đặt PANEL_PASSWORD trong .env (chạy lại ./ops/init.sh)}
+      # Trang Role: đọc LuckPerms (MariaDB) để liệt kê thành viên; cấp/gỡ role bằng RCON (lệnh lp, rank)
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
       DOZZLE_URL: http://localhost:${DASHBOARD_PORT:-8888}/mc/log/
       # Link "Xem log" khi mở qua Trạm 6 (gateway gửi kèm header X-Forwarded-Prefix)
       DOZZLE_PROXY_URL: /mc/log/

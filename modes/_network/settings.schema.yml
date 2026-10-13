@@ -92,3 +92,18 @@ groups:
           options: [ { value: true, label: "Có (nên bật: hạt làm lộ vị trí trong chiến tranh)" }, { value: false, label: Không } ] }
       - { key: pp_max_default, label: Số hiệu ứng cho người KHÔNG có rank, type: int, min: 0, max: 10, servers: [lobby, banghoi-1], file: plugins/PlayerParticles/config.yml, path: max-particles,
           note: "0 = chỉ người có rank (Tử Tước trở lên) mới dùng được /pp." }
+
+  - title: Role chức vụ - prefix
+    category: Role
+    description: "Prefix hiện trước tên trong chat và Tab (mã màu &a, &c, &l đậm...). Cấp / gỡ role cho người chơi: trang Role (link trên thanh đầu). Quyền của từng role: lệnh /lp trong game (xem cẩm nang LuckPerms)."
+    settings:
+      - { key: role_default_prefix, label: "Dân (mặc định): prefix", type: text,
+          commands: ["lp group default meta removeprefix 0", "lp group default meta setprefix 0 \"{value} \""] }
+      - { key: role_builder_prefix, label: "Builder: prefix", type: text,
+          commands: ["lp group builder meta removeprefix 40", "lp group builder meta setprefix 40 \"{value} \""] }
+      - { key: role_helper_prefix, label: "Helper: prefix", type: text,
+          commands: ["lp group helper meta removeprefix 50", "lp group helper meta setprefix 50 \"{value} \""] }
+      - { key: role_mod_prefix, label: "Mod: prefix", type: text,
+          commands: ["lp group mod meta removeprefix 70", "lp group mod meta setprefix 70 \"{value} \""] }
+      - { key: role_admin_prefix, label: "Admin: prefix", type: text,
+          commands: ["lp group admin meta removeprefix 100", "lp group admin meta setprefix 100 \"{value} \""] }

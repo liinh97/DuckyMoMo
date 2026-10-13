@@ -32,6 +32,11 @@ INDEX_HTML = (Path(__file__).parent / "index.html").read_text(encoding="utf-8")
 ACTIVITY_HTML = (Path(__file__).parent / "activity.html").read_text(encoding="utf-8")
 CAMNANG_HTML = (Path(__file__).parent / "camnang.html").read_text(encoding="utf-8")
 HUONGDAN_HTML = (Path(__file__).parent / "huongdan.html").read_text(encoding="utf-8")
+ROLE_HTML = (Path(__file__).parent / "role.html").read_text(encoding="utf-8")
+# Trang Role: role chức vụ (track staff + builder + default) và rank donate (track donate), lưu ở LuckPerms (MariaDB)
+STAFF_GROUPS = ["admin", "mod", "helper", "builder", "default"]
+DONATE_GROUPS = ["congtuoc", "hautuoc", "batuoc", "tutuoc", "namtuoc"]
+PLAYER_RE = re.compile(r"^\.?[A-Za-z0-9_]{1,17}$")
 # Cẩm nang trong game (/huongdan): bản gốc + các bản chép (repo của từng server, data/ để có hiệu lực ngay)
 HUONGDAN_FILE = MODES_DIR / "_network" / "huongdan.yml"
 HUONGDAN_COPIES = [MODES_DIR / "banghoi/server/plugins/DuckyMoMoCore/huongdan.yml",
@@ -380,6 +385,77 @@ def huongdan_save(data):
     return f"Đã lưu {len(clean)} chương, {n_pages} trang và chép sang {len(done)} chỗ. Người chơi mở /huongdan là thấy ngay."
 
 
+def lp_db():
+    import pymysql
+    return pymysql.connect(host="mariadb", user=os.environ["DB_USER"], password=os.environ["DB_PASSWORD"],
+                           database="luckperms", charset="utf8mb4", connect_timeout=5)
+
+
+def roles_json():
+    """Mỗi nhóm: tên, kiểu (staff/donate/default), prefix, weight, thành viên (tên, hạn, server)."""
+    con = lp_db()
+    try:
+        cur = con.cursor()
+        cur.execute("SELECT name, permission FROM luckperms_group_permissions WHERE permission LIKE 'prefix.%%' "
+                    "OR permission LIKE 'weight.%%' OR permission LIKE 'displayname.%%'")
+        meta = {}
+        for name, perm in cur.fetchall():
+            m = meta.setdefault(name, {})
+            if perm.startswith("prefix."):
+                _, w, text = perm.split(".", 2)
+                m["prefix"] = text
+            elif perm.startswith("weight."):
+                m["weight"] = int(perm.split(".", 1)[1])
+            else:
+                m["display"] = perm.split(".", 1)[1]
+        cur.execute("SELECT p.username, up.permission, up.expiry, up.server FROM luckperms_user_permissions up "
+                    "JOIN luckperms_players p ON p.uuid = up.uuid WHERE up.permission LIKE 'group.%%' AND up.value = 1")
+        members = {}
+        for user, perm, expiry, server in cur.fetchall():
+            g = perm[6:]
+            if g == "default":
+                continue
+            members.setdefault(g, []).append({"name": user, "expiry": int(expiry or 0), "server": server})
+        cur.execute("SELECT COUNT(*) FROM luckperms_players")
+        total = cur.fetchone()[0]
+    finally:
+        con.close()
+    out = []
+    for g in STAFF_GROUPS + DONATE_GROUPS:
+        m = meta.get(g, {})
+        out.append({"name": g, "kind": "default" if g == "default" else ("donate" if g in DONATE_GROUPS else "staff"),
+                    "prefix": m.get("prefix", ""), "weight": m.get("weight", 0), "display": m.get("display", g),
+                    "members": sorted(members.get(g, []), key=lambda x: x["name"].lower()),
+                    "count": total if g == "default" else len(members.get(g, []))})
+    return {"groups": out, "players": total}
+
+
+def role_action(data):
+    """Cấp / gỡ role qua RCON ở lobby (LuckPerms dùng chung DB + Redis nên áp dụng toàn mạng)."""
+    act, player, group = data.get("action"), str(data.get("player", "")).strip(), data.get("group")
+    if not PLAYER_RE.match(player):
+        raise ValueError("Tên người chơi không hợp lệ")
+    if group not in STAFF_GROUPS + DONATE_GROUPS or group == "default":
+        raise ValueError("Role không hợp lệ")
+    if group in DONATE_GROUPS and act == "add":
+        months = int(data.get("months") or 1)
+        if not 1 <= months <= 24:
+            raise ValueError("Số tháng từ 1 đến 24")
+        cmds = [f"rank give {player} {group} {months}"]
+    elif group in DONATE_GROUPS and act == "remove":
+        cmds = [f"rank remove {player}"]
+    elif act == "add":
+        cmds = [f"lp user {player} parent add {group}"]
+    elif act == "remove":
+        cmds = [f"lp user {player} parent remove {group}"]
+    else:
+        raise ValueError("Thao tác không hợp lệ")
+    rcon("lobby", cmds)
+    import time
+    time.sleep(2)  # lệnh chạy bất đồng bộ (tải người chơi, ghi DB)
+    return {"ok": True, "message": f"Đã gửi: /{cmds[0]}. Người chơi phải từng vào server.", "data": roles_json()}
+
+
 def modes_json():
     out = []
     for mode_id, m in load_modes().items():
@@ -504,9 +580,9 @@ class Handler(BaseHTTPRequestHandler):
         if not self.guard():
             return
         path, _, query = self.path.partition("?")
-        if path in ("/", "/hoatdong", "/camnang", "/huongdan"):
+        if path in ("/", "/hoatdong", "/camnang", "/huongdan", "/role"):
             dozzle = DOZZLE_PROXY_URL if self.headers.get("X-Forwarded-Prefix") else DOZZLE_URL
-            page = {"/": INDEX_HTML, "/hoatdong": ACTIVITY_HTML, "/camnang": CAMNANG_HTML, "/huongdan": HUONGDAN_HTML}[path]
+            page = {"/": INDEX_HTML, "/hoatdong": ACTIVITY_HTML, "/camnang": CAMNANG_HTML, "/huongdan": HUONGDAN_HTML, "/role": ROLE_HTML}[path]
             body = page.replace("__DOZZLE_URL__", dozzle).encode("utf-8")
             self.send_response(200)
             self.send_header("Content-Type", "text/html; charset=utf-8")
@@ -519,6 +595,11 @@ class Handler(BaseHTTPRequestHandler):
             self.send_json(200, camnang_json())
         elif path == "/api/huongdan":
             self.send_json(200, huongdan_json())
+        elif path == "/api/roles":
+            try:
+                self.send_json(200, roles_json())
+            except Exception as e:
+                self.send_json(500, {"error": f"Không đọc được LuckPerms: {e}"})
         elif path == "/api/activity":
             params = {k: v[-1] for k, v in urllib.parse.parse_qs(query).items()}
             self.send_json(200, read_activity(params))
@@ -527,6 +608,15 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_POST(self):
         if not self.guard():
+            return
+        if self.path == "/api/roles":
+            try:
+                length = int(self.headers.get("Content-Length", "0"))
+                self.send_json(200, role_action(json.loads(self.rfile.read(length) or b"{}")))
+            except ValueError as e:
+                self.send_json(400, {"ok": False, "message": str(e)})
+            except Exception as e:
+                self.send_json(500, {"ok": False, "message": f"Lỗi: {e}"})
             return
         if self.path == "/api/huongdan":
             try:

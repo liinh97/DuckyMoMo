@@ -338,7 +338,78 @@ def camnang_json():
     # jar đi kèm (thư viện/phần phụ) của plugin đã có mục: không coi là "chưa có trong cẩm nang"
     companions = ("viabackwards", "viarewind", "essentialsxchat", "essentialsxspawn", "chunkyborder", "zmenu", "geyser")
     unknown = {srv: [n for n in names if n not in used[srv] and not n.lower().startswith(companions)] for srv, names in jars.items()}
-    return {"guide": doc.get("guide", []), "plugins": doc.get("plugins", []), "servers": list(jars), "unknown": unknown}
+    return {"guide": doc.get("guide", []), "plugins": doc.get("plugins", []), "servers": list(jars), "unknown": unknown,
+            "commands": all_commands(doc)}
+
+
+# Lệnh vanilla mà người chơi thường dùng được (permission level 0)
+VANILLA_PLAYER = {"help", "list", "me", "msg", "tell", "w", "teammsg", "tm", "trigger", "random"}
+
+
+def all_commands(doc):
+    """Mọi lệnh của lobby/banghoi/practice (DuckyMoMoCore xuất ra commands.json) + mô tả tiếng Việt + ai dùng được."""
+    vi = {}
+    f = MODES_DIR / "_network" / "lenh-vi.yml"
+    if f.exists():
+        vi = {str(k).lower(): str(v) for k, v in (YAML(typ="safe").load(f.read_text(encoding="utf-8")) or {}).items()}
+    # mô tả trong cẩm nang tay: dòng lệnh "/ten ..." -> mô tả (không ghi đè lenh-vi.yml)
+    for p in doc.get("plugins", []):
+        for row in (p.get("player") or []) + (p.get("admin") or []):
+            for part in str(row[0]).split("·"):
+                m = re.match(r"\s*/([a-z0-9_:-]+)", part.strip())
+                if m:
+                    vi.setdefault(m.group(1).split(":")[-1], str(row[1]))
+    # quyền của từng nhóm (để biết ai dùng được)
+    holders = {}
+    try:
+        con = lp_db()
+        try:
+            cur = con.cursor()
+            cur.execute("SELECT name, permission, value, server FROM luckperms_group_permissions")
+            for name, perm, value, server in cur.fetchall():
+                holders.setdefault(perm.lower(), []).append((name, bool(value), server))
+        finally:
+            con.close()
+    except Exception:
+        pass
+    order = ["default", "namtuoc", "tutuoc", "batuoc", "hautuoc", "congtuoc", "builder", "helper", "mod"]
+
+    def who(perm, default, server):
+        if not perm:
+            return "?"
+        hs = [h for h in holders.get(perm.lower(), []) if h[2] in ("global", server)]
+        if any(n == "default" and not v for n, v, _ in hs):
+            return "Chỉ admin"
+        if any(n == "default" and v for n, v, _ in hs) or default in ("true",):
+            return "Mọi người"
+        grp = [n for n in order if any(h[0] == n and h[1] for h in hs)]
+        if grp:
+            return "Từ " + grp[0]
+        return "Chỉ admin"
+
+    out = {}
+    for srv in ("lobby", "banghoi-1", "practice-1"):
+        f = DATA_DIR / srv / "plugins" / "DuckyMoMoCore" / "commands.json"
+        if not f.exists():
+            continue
+        try:
+            data = json.loads(f.read_text(encoding="utf-8"))
+        except Exception:
+            continue
+        rows = []
+        for c in data.get("commands", []):
+            name, plugin, perm, default = c["name"], c["plugin"], c.get("permission") or "", c.get("default") or ""
+            if not perm and plugin.lower().startswith("essentials"):
+                perm, default = f"essentials.{name}", ""
+            if c["ns"] == "minecraft":
+                plugin = "Minecraft (gốc)"
+                w = "Mọi người" if name in VANILLA_PLAYER else "Chỉ admin"
+            else:
+                w = who(perm, default, srv)
+            rows.append({"plugin": plugin, "name": name, "aliases": c.get("aliases", []), "desc_vi": vi.get(name.lower(), ""),
+                         "desc": c.get("description", ""), "usage": c.get("usage", ""), "perm": perm, "who": w})
+        out[srv] = {"generated": data.get("generated"), "commands": rows}
+    return out
 
 
 def huongdan_json():

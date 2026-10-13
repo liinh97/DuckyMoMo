@@ -92,7 +92,7 @@ function render() {
   // loại
   const kinds = ["Hướng dẫn nhanh"];
   for (const p of data.plugins) if (!kinds.includes(p.kind)) kinds.push(p.kind);
-  kinds.push("Tất cả");
+  kinds.push("Tất cả", "Tất cả lệnh");
   $("cats").innerHTML = "";
   for (const k of kinds) {
     const b = document.createElement("button");
@@ -102,6 +102,7 @@ function render() {
     $("cats").appendChild(b);
   }
   const out = [];
+  if (kind === "Tất cả lệnh") { $("list").innerHTML = allCommands(q); return; }
   if ((kind === "Hướng dẫn nhanh" || kind === "Tất cả") && !q) {
     for (const g of data.guide) out.push(`<section class="card guide"><h2>${esc(g.title)}</h2>${rows(g.items, false)}</section>`);
   }
@@ -126,7 +127,47 @@ function render() {
       <p class="meta">Thêm mục vào modes/_network/camnang.yml.</p>
       ${rows(unk.map(([s, l]) => [SRV[s] || s, l.join(", ")]), false)}</section>`);
   }
+  if (q) out.push(allCommands(q, true));
   $("list").innerHTML = out.join("") || `<p class="empty">Không tìm thấy.</p>`;
+}
+
+// Mọi lệnh đang đăng ký trên các server (DuckyMoMoCore xuất commands.json; /dmm lenh để xuất lại)
+function mergedCommands() {
+  const m = new Map();
+  for (const [srv, d] of Object.entries(data.commands || {})) {
+    if (server !== "*" && srv !== server) continue;
+    for (const c of d.commands) {
+      const k = c.plugin + " " + c.name;
+      if (!m.has(k)) m.set(k, { ...c, servers: [], whos: new Set() });
+      const e = m.get(k); e.servers.push(srv); e.whos.add(c.who);
+    }
+  }
+  return [...m.values()];
+}
+function allCommands(q, inSearch) {
+  let list = mergedCommands();
+  if (q) {
+    const ws = q.toLowerCase().replace(/^\//, "").split(/\s+/);
+    list = list.filter(c => {
+      const hay = [c.plugin, c.name, ...c.aliases, c.desc_vi, c.desc, c.perm].join(" ").toLowerCase();
+      return ws.every(w => hay.includes(w));
+    });
+  }
+  if (!list.length) return inSearch ? "" : `<p class="empty">${Object.keys(data.commands || {}).length ? "Không tìm thấy lệnh." : "Chưa có danh sách lệnh (server chưa chạy DuckyMoMoCore bản mới, hoặc gõ /dmm lenh)."}</p>`;
+  const byPlugin = new Map();
+  for (const c of list) { if (!byPlugin.has(c.plugin)) byPlugin.set(c.plugin, []); byPlugin.get(c.plugin).push(c); }
+  const plugins = [...byPlugin.keys()].sort((a, b) => a.startsWith("Minecraft") - b.startsWith("Minecraft") || a.localeCompare(b));
+  const head = `<section class="card"><h2>${inSearch ? "Lệnh khớp" : "Tất cả lệnh"} <span class="kind">${list.length} lệnh</span></h2>
+    <p class="meta">Lấy trực tiếp từ server (mọi plugin). "Ai dùng được" suy từ quyền của lệnh và quyền các nhóm LuckPerms;
+    rank donate/role cao kế thừa role thấp. "?" = plugin không khai báo quyền, tự kiểm tra trong game. Mô tả tiếng Việt thêm ở modes/_network/lenh-vi.yml.</p></section>`;
+  return head + plugins.map(pl => {
+    const cs = byPlugin.get(pl).sort((a, b) => a.name.localeCompare(b.name));
+    return `<section class="card"><h2>${esc(pl)} <span class="kind">${cs.length} lệnh</span></h2><table>${cs.map(c => `<tr>
+      <td><code>/${esc(c.name)}</code>${c.aliases.length ? `<div class="meta">gọi tắt: ${c.aliases.map(a => "/" + esc(a)).join(", ")}</div>` : ""}</td>
+      <td>${esc(c.desc_vi || c.desc || "")}${c.usage && c.usage !== "/" + c.name ? `<div class="meta"><code>${esc(c.usage.replace(/<command>/g, c.name))}</code></div>` : ""}
+        <div class="meta"><b>${esc([...c.whos].join(" / "))}</b>${c.perm ? ` · quyền <code>${esc(c.perm)}</code>` : ""} · ${c.servers.map(s => esc(SRV[s] || s)).join(", ")}</div></td>
+    </tr>`).join("")}</table></section>`;
+  }).join("");
 }
 
 $("q").oninput = render;

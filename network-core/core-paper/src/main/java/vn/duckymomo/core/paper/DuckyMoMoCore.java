@@ -13,6 +13,7 @@ public final class DuckyMoMoCore extends JavaPlugin {
     private TownyMapLayer townyMap;
     private ItemCleaner cleaner;
     private OverEnchant overEnchant;
+    private CommandDump commandDump;
 
     @Override
     public void onEnable() {
@@ -147,6 +148,12 @@ public final class DuckyMoMoCore extends JavaPlugin {
             getLogger().info("Đồ phù phép vượt cấp: bật (tối đa cấp " + getConfig().getInt("over-enchant.max-level", 50) + ")");
         }
 
+        // Xuất mọi lệnh của server cho trang Cẩm nang (plugins/DuckyMoMoCore/commands.json), 30 giây sau khi khởi động
+        commandDump = new CommandDump(this);
+        if (!reloading) {
+            commandDump.schedule();
+        }
+
         // Lệnh admin /dmm. Trang trí map (cây, cỏ, công trình) chỉ bật ở server có decorate.enabled (banghoi-1)
         decorator = getConfig().getBoolean("decorate.enabled") ? new MapDecorator(this) : null;
         structures = decorator != null ? new StructurePlacer(this) : null;
@@ -177,11 +184,13 @@ public final class DuckyMoMoCore extends JavaPlugin {
                     } else {
                         overEnchant.command(sender, args);
                     }
+                } else if (args.length >= 1 && args[0].equalsIgnoreCase("lenh")) {
+                    sender.sendMessage("DuckyMoMoCore: đã xuất " + commandDump.dump() + " lệnh ra commands.json");
                 } else if (args.length >= 1 && args[0].equalsIgnoreCase("reload")) {
                     reload();
                     sender.sendMessage("DuckyMoMoCore: đã nạp lại config.yml");
                 } else {
-                    sender.sendMessage("/dmm decorate|structures start | pause | status | reset   /dmm clean   /dmm reload   /dmm enchant|sach <phù phép> <cấp>");
+                    sender.sendMessage("/dmm decorate|structures start | pause | status | reset   /dmm clean   /dmm reload   /dmm lenh   /dmm enchant|sach <phù phép> <cấp>");
                 }
                 return true;
             });

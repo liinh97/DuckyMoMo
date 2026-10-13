@@ -159,11 +159,14 @@ function allCommands(q, inSearch) {
   const plugins = [...byPlugin.keys()].sort((a, b) => a.startsWith("Minecraft") - b.startsWith("Minecraft") || a.localeCompare(b));
   const head = `<section class="card"><h2>${inSearch ? "Lệnh khớp" : "Tất cả lệnh"} <span class="kind">${list.length} lệnh</span></h2>
     <p class="meta">Lấy trực tiếp từ server (mọi plugin). "Ai dùng được" suy từ quyền của lệnh và quyền các nhóm LuckPerms;
-    rank donate/role cao kế thừa role thấp. "?" = plugin không khai báo quyền, tự kiểm tra trong game. Mô tả tiếng Việt thêm ở modes/_network/lenh-vi.yml.</p></section>`;
+    rank donate/role cao kế thừa role thấp. "?" = plugin không khai báo quyền, tự kiểm tra trong game. Mô tả tiếng Việt thêm ở modes/_network/lenh-vi.yml.
+    Lệnh của proxy (dùng ở mọi server) và lệnh con của plugin lớn (/t claim, /co rollback…) ghi tay ở modes/_network/lenh-con.yml.
+    Lệnh Towny "Thị trưởng"/"Vua" = hạng trong thị trấn/quốc gia.</p></section>`;
   return head + plugins.map(pl => {
-    const cs = byPlugin.get(pl).sort((a, b) => a.name.localeCompare(b.name));
+    // lệnh tự xuất trước, lệnh con ghi tay giữ thứ tự trong lenh-con.yml
+    const cs = byPlugin.get(pl).map((c, i) => [c, i]).sort(([a, i], [b, j]) => (a.manual ? 1 : 0) - (b.manual ? 1 : 0) || (a.manual ? i - j : a.name.localeCompare(b.name))).map(([c]) => c);
     return `<section class="card"><h2>${esc(pl)} <span class="kind">${cs.length} lệnh</span></h2><table>${cs.map(c => `<tr>
-      <td><code>/${esc(c.name)}</code>${c.aliases.length ? `<div class="meta">gọi tắt: ${c.aliases.map(a => "/" + esc(a)).join(", ")}</div>` : ""}</td>
+      <td>${c.name.split(" · ").map(n => `<code>/${esc(n)}</code>`).join(" · ")}${c.aliases.length ? `<div class="meta">gọi tắt: ${c.aliases.map(a => "/" + esc(a)).join(", ")}</div>` : ""}</td>
       <td>${esc(c.desc_vi || c.desc || "")}${c.usage && c.usage !== "/" + c.name ? `<div class="meta"><code>${esc(c.usage.replace(/<command>/g, c.name))}</code></div>` : ""}
         <div class="meta"><b>${esc([...c.whos].join(" / "))}</b>${c.perm ? ` · quyền <code>${esc(c.perm)}</code>` : ""} · ${c.servers.map(s => esc(SRV[s] || s)).join(", ")}</div></td>
     </tr>`).join("")}</table></section>`;

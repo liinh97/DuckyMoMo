@@ -398,7 +398,9 @@ def all_commands(doc):
             continue
         rows = []
         for c in data.get("commands", []):
-            name, plugin, perm, default = c["name"], c["plugin"], c.get("permission") or "", c.get("default") or ""
+            # vài plugin (Paper bọc lệnh) tự đặt tên kèm "plugin:" -> bỏ đi
+            name, plugin, perm, default = c["name"].split(":")[-1], c["plugin"], c.get("permission") or "", c.get("default") or ""
+            c["aliases"] = [a for a in c.get("aliases", []) if ":" not in a and a != name]
             if not perm and plugin.lower().startswith("essentials"):
                 perm, default = f"essentials.{name}", ""
             if c["ns"] == "minecraft":
@@ -408,7 +410,26 @@ def all_commands(doc):
                 w = who(perm, default, srv)
             rows.append({"plugin": plugin, "name": name, "aliases": c.get("aliases", []), "desc_vi": vi.get(name.lower(), ""),
                          "desc": c.get("description", ""), "usage": c.get("usage", ""), "perm": perm, "who": w})
+        # bỏ dòng trùng: tên đã là tên gọi tắt của lệnh khác cùng plugin (uJobs đăng ký /job, /ujob… riêng)
+        alias_of = {(r["plugin"], a) for r in rows for a in r["aliases"]}
+        rows = [r for r in rows if (r["plugin"], r["name"]) not in alias_of or r["aliases"]]
         out[srv] = {"generated": data.get("generated"), "commands": rows}
+    # lệnh ghi tay: proxy + lệnh con của plugin lớn
+    f = MODES_DIR / "_network" / "lenh-con.yml"
+    if f.exists():
+        for g in (YAML(typ="safe").load(f.read_text(encoding="utf-8")) or {}).get("groups", []):
+            for srv in g.get("servers", []):
+                if srv != "proxy" and srv not in out:
+                    continue
+                d = out.setdefault(srv, {"generated": None, "commands": []})
+                for row in g.get("commands", []):
+                    same = [r for r in d["commands"] if r["plugin"] == g["plugin"] and r["name"] == str(row[0])]
+                    if same:  # trùng lệnh tự xuất: dùng mô tả + "ai dùng được" ghi tay
+                        same[0].update(desc_vi=str(row[1]), who=str(row[2]) if len(row) > 2 else same[0]["who"])
+                        continue
+                    d["commands"].append({"plugin": g["plugin"], "name": str(row[0]), "aliases": [], "desc_vi": str(row[1]),
+                                          "desc": "", "usage": "", "perm": "", "who": str(row[2]) if len(row) > 2 else "?",
+                                          "manual": True})
     return out
 
 

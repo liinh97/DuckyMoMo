@@ -621,3 +621,5 @@ tp_money_tax: 0.0
 tp_xp_on: true
 tp_same_ip: true
 ah_max_listings: 5
+over_enchant_on: true
+over_enchant_max: 50

@@ -916,3 +916,13 @@ groups:
       - { key: tp_xp_on, label: Cho đổi kèm kinh nghiệm, type: select, file: plugins/TradePro/config.yml, path: extras.experience.enabled, options: [ { value: true, label: Bật }, { value: false, label: Tắt } ] }
       - { key: tp_same_ip, label: Cho hai tài khoản cùng mạng (cùng IP) đổi đồ, type: select, file: plugins/TradePro/config.yml, path: allow-same-ip-trade,
           options: [ { value: true, label: "Cho phép (chơi cùng nhà, quán net)" }, { value: false, label: "Chặn (chống chuyển đồ sang nick phụ)" } ] }
+
+  - title: Đồ phù phép vượt cấp (chỉ admin tạo)
+    category: Phù phép
+    description: "Lệnh admin: /dmm enchant <phù phép> <cấp> (món đang cầm), /dmm sach <phù phép> <cấp> [người] (tặng sách). Ghép sách vượt cấp vào đồ bằng đe giữ nguyên cấp. KHÔNG bán lấy tiền thật."
+    apply: [dmm reload]
+    settings:
+      - { key: over_enchant_on, label: Bật lệnh tạo đồ vượt cấp, type: select, file: plugins/DuckyMoMoCore/config.yml, path: over-enchant.enabled,
+          options: [ { value: true, label: Bật }, { value: false, label: Tắt } ] }
+      - { key: over_enchant_max, label: Cấp tối đa được tạo, type: int, min: 1, max: 255, file: plugins/DuckyMoMoCore/config.yml, path: over-enchant.max-level,
+          note: "Vd 30 = tạo được tới Sắc bén XXX. Tối đa của game là 255." }

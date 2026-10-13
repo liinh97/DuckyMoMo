@@ -16,6 +16,7 @@ guide:
     items:
       - ["Cấp role staff", "/lp user <tên> parent add helper  (lên tiếp: /lp user <tên> promote staff → mod → admin)"]
       - ["Cấp rank donate", "/rank give <tên> <namtuoc|tutuoc|batuoc|hautuoc|congtuoc> <số tháng>  · xem: /rank check <tên> · gỡ: /rank remove <tên>"]
+      - ["Đồ phù phép vượt cấp", "/dmm enchant sharpness 30 (món đang cầm) · /dmm sach sharpness 30 <tên> (tặng sách)"]
       - ["Cộng/trừ tiền", "/eco give <tên> <số> · /eco take <tên> <số> · /eco set <tên> <số>  (Bang Hội Chiến)"]
       - ["Phạt", "/mute <tên> <thời gian> · /kick <tên> <lý do> · /tempban <tên> 1d <lý do> · /ban <tên> <lý do> · /unban <tên>"]
       - ["Kiểm tra phá hoại", "/co i (bấm vào block xem ai phá/đặt) · /co rollback u:<tên> t:2h r:30 (khôi phục)"]
@@ -267,6 +268,17 @@ plugins:
       - ["/ce reload", "Nạp lại cấu hình"]
     settings: "modes/banghoi/server/plugins/CrazyEnchantments/ (README.txt ghi lý do từng thay đổi); quyền người chơi trong LuckPerms nhóm default"
     notes: "Bản BETA cho 26.x: lỗi thì xem log banghoi-1 và báo. GKitz (bộ đồ phát miễn phí) đã tắt."
+
+  - name: Đồ phù phép vượt cấp (Sắc bén XXX…)
+    jar: DuckyMoMoCore
+    kind: Kinh tế & buôn bán
+    purpose: "Admin tạo đồ hoặc sách phù phép VƯỢT cấp tối đa của game (vd Sắc bén 30, Hiệu suất 20, Bền bỉ 10) làm phần thưởng sự kiện / hàng hiếm. Người chơi không tự ghép lên được: ghép hai sách với nhau vẫn theo luật gốc; ghép sách vượt cấp vào đồ bằng đe thì giữ nguyên cấp (tốn 30 cấp kinh nghiệm). Có ở Bang Hội Chiến."
+    admin:
+      - ["/dmm enchant <phù phép> <cấp>", "Phù phép món đang cầm, vd /dmm enchant sharpness 30 · /dmm enchant efficiency 20 · cấp 0 = gỡ"]
+      - ["/dmm sach <phù phép> <cấp> [người]", "Tạo sách tặng người chơi đang online, vd /dmm sach sharpness 30 Linh"]
+      - ["Tên phù phép", "Tên gốc tiếng Anh: sharpness (sắc bén), protection (bảo vệ), efficiency (hiệu suất), unbreaking (bền bỉ), fortune (gia tài), looting (cướp bóc), power (sức mạnh), feather_falling, mending... hoặc enchantio:telepathy"]
+    settings: "Trang Cài đặt: Bang Hội Chiến > Phù phép > Đồ phù phép vượt cấp (bật/tắt, cấp tối đa)"
+    notes: "Chỉ làm phần thưởng hoặc bán bằng tiền trong game. KHÔNG bán lấy tiền thật (pay-to-win, vi phạm luật Mojang). Mỗi lần tạo đều ghi log server."
 
   # ---------------------------------------------------------------- Thị trấn & chiến tranh
   - name: Towny

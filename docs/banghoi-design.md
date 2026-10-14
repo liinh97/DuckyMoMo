@@ -3,6 +3,7 @@
 > Bản nháp 08/10/2026. **Nền tảng đã chốt: Towny + SiegeWar.**
 > Mọi con số đánh dấu **(đề xuất)** đều chưa chốt; chỉnh sau khi chơi thử với nhóm nhỏ.
 > Định hướng gốc: `docs/minecraft-server-plan.md` mục 3. Ghi chú kỹ thuật: `docs/HANDOFF.md`.
+> **Luật cụ thể mùa 1 (đề xuất 13/10, chờ chốt): `docs/banghoi-luat-mua1.md`.**
 
 ---
 

@@ -9,5 +9,6 @@ subprojects {
         maven("https://maven.playpro.com") // CoreProtect API
         maven("https://repo.glaremasters.me/repository/towny/") // Towny API
         maven("https://repo.opencollab.dev/main/") // Floodgate API (form cho Bedrock)
+        maven("https://jitpack.io") // Vault API (thu phí /tpr)
     }
 }

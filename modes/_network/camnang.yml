@@ -121,11 +121,12 @@ plugins:
   - name: DuckyMoMoCore
     jar: DuckyMoMoCore
     kind: Quản lý
-    purpose: "Plugin riêng của DuckyMoMo: menu chọn chế độ, rank donate, thông báo vào/ra, lọc chat, chat có prefix ở sảnh, rơi khỏi đảo về spawn, dọn rác, chống đặt-phá lấy tiền nghề, ranh giới thị trấn trên bản đồ web, menu nút bấm cho Bedrock."
+    purpose: "Plugin riêng của DuckyMoMo: menu chọn chế độ, rank donate, thông báo vào/ra, lọc chat, chat có prefix ở sảnh, rơi khỏi đảo về spawn, dọn rác, dịch chuyển ngẫu nhiên /tpr (NPC ở spawn), luật chiến tranh (PvP đất hoang bật/tắt, giờ chơi tối thiểu để được phong quân hàm, tài khoản phụ), chống đặt-phá lấy tiền nghề, ranh giới thị trấn trên bản đồ web, menu nút bấm cho Bedrock."
     player:
       - ["/menu", "Mở menu chọn chế độ (ở sảnh)"]
       - ["/huongdan [chương] · /hd", "Cẩm nang trong game (sách; điện thoại: bảng nút). Chương: batdau, luat, banghoi, practice, rank, pokemon, hotro"]
       - ["/rank", "Xem các bậc rank donate, giá, rank của mình"]
+      - ["/tpr [khu] · /rtp", "Bang Hội Chiến: dịch chuyển ngẫu nhiên tới đất hoang (không menu thì mở menu chọn khu; NPC dân làng ở spawn cũng mở menu này). Khu: taybac, lao, trungbo, nambo, thailan, myanmar, namtq, ngaunhien"]
     admin:
       - ["/rank give <tên> <bậc> <tháng>", "Cấp rank donate (gia hạn cộng dồn)"]
       - ["/rank check <tên>", "Xem rank và hạn"]
@@ -134,8 +135,10 @@ plugins:
       - ["/dmm enchant <phù phép> <cấp>", "Phù phép VƯỢT CẤP món đang cầm (vd sharpness 30, efficiency 20; cấp 0 = gỡ; tối đa over-enchant.max-level = 50)"]
       - ["/dmm sach <phù phép> <cấp> [người]", "Tạo sách vượt cấp tặng người chơi đang online; người chơi ghép bằng đe giữ nguyên cấp. Chỉ làm phần thưởng / hàng trong game, KHÔNG bán lấy tiền thật"]
       - ["/dmm reload", "Nạp lại config"]
+      - ["/dmm phu add <phụ> <chính> | remove <phụ> | list", "Ghi tài khoản phụ (Bang Hội Chiến): không được phong quân hàm, không gây sát thương trong vùng vây lúc có phiên. Lưu ở plugins/DuckyMoMoCore/taikhoanphu.yml"]
+      - ["/dmm rtpnpc [remove]", "Đặt NPC dịch chuyển ngẫu nhiên (dân làng + chữ nổi) tại chỗ đang đứng; đặt lại thì NPC cũ bị xoá; remove = xoá"]
       - ["/dmm decorate | structures start|pause|status", "Trang trí map / đặt công trình (dùng khi làm map mới)"]
-    settings: "Trang Cài đặt: Toàn mạng (Chat, Rank donate, Sảnh), Bang Hội Chiến (Hệ thống)"
+    settings: "Trang Cài đặt: Toàn mạng (Chat, Rank donate, Sảnh), Bang Hội Chiến (Hệ thống; Thế giới: /tpr thời gian chờ, phí; Chiến tranh > Giai đoạn mùa và PvP). Danh sách khu /tpr: modes/banghoi/server/plugins/DuckyMoMoCore/config.yml mục rtp.zones"
   - name: WorldEdit
     jar: worldedit
     kind: Quản lý

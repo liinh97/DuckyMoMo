@@ -16,6 +16,8 @@ dependencies {
     compileOnly("com.palmergames.bukkit.towny:towny:0.103.2.0") { isTransitive = false }
     // Menu dạng form cho người chơi Bedrock (Floodgate trên server con)
     compileOnly("org.geysermc.floodgate:api:2.2.5-SNAPSHOT")
+    // Thu phí /tpr qua Vault (VaultUnlocked giữ API Vault cũ)
+    compileOnly("com.github.MilkBowl:VaultAPI:1.7.1") { isTransitive = false }
 }
 
 tasks.withType<JavaCompile>().configureEach {

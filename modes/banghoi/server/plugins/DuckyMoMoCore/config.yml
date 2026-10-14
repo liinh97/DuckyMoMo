@@ -31,6 +31,16 @@ item-cleaner:
   arrows: true
   warn-message: "&c[⚠] &7Dọn vật phẩm dưới đất sau &e{s}s&7."
   done-message: "&c[⚠] &7Đã dọn sạch &e{n} &7vật phẩm!"
+  # Giữ đồ rơi khi chết: không dọn đồ trong bán kính death-protect-radius quanh chỗ chết trong death-protect-minutes phút (0 = tắt)
+  death-protect-minutes: 10
+  death-protect-radius: 8
+  # Không dọn trong giờ phiên đánh công thành (theo lịch battle_session_scheduler của SiegeWar)
+  pause-during-battle: true
+  battle-skip-message: "&7[♻] Đang giờ công thành, bỏ qua lượt dọn rác."
+  # Không dọn đồ trong đất thị trấn Towny (cẩn thận: máy farm trong thị trấn có thể để đồ tồn đọng gây lag)
+  skip-towns: false
+  # Vùng không dọn, mỗi dòng "x1 z1 x2 z2" (mọi world)
+  exclude-areas: []
 
 # Chống "đặt rồi phá" lấy tiền nghề (uJobs): block trong danh sách do người chơi đặt, phá lại thì không được tiền.
 # Phải khớp các block có tiền ở plugins/UJobs/jobs.yml (miner, lumberjack, digger). Dạng: tên đúng, *_LOG (đuôi), STONE* (đầu).
@@ -115,3 +125,41 @@ guide:
 over-enchant:
   enabled: true
   max-level: 50
+
+# Dịch chuyển ngẫu nhiên /tpr (alias /rtp, /ngaunhien): menu chọn khu (Java: rương, Bedrock: form) hoặc /tpr <khu>.
+# Chỉ thả xuống đất hoang Towny (cách thị trấn >= town-buffer block), không xuống nước/dung nham/ngọn cây, ngoài vùng exclude.
+# NPC ở spawn: admin đứng tại chỗ muốn đặt rồi gõ /dmm rtpnpc (đặt lại = xoá cái cũ), xoá: /dmm rtpnpc remove.
+# Toạ độ khu: map 1:1000, x = kinh độ x 119,47, z = -vĩ độ x 119,47. radius 0 = cả vùng mùa (border).
+rtp:
+  enabled: true
+  world: world
+  cooldown-seconds: 300         # trang Cài đặt sửa được; người có duckymomo.rtp.bypass không phải chờ
+  cost: 0                       # phí mỗi lần (0 = miễn phí); duckymomo.rtp.free không mất phí
+  max-attempts: 15
+  town-buffer: 32
+  border: [11200, -3200, 13800, -800]       # viền mùa 1 (tâm 12500/-2000, 1300x1200), thả cách viền >= 16 block
+  exclude:
+    - [12556, -2623, 12801, -2298]           # khu spawn (công trình GlassCup + vùng WorldGuard spawn)
+  blocked-biomes: [ocean, river, beach]
+  npc:
+    name: "&6&lDịch chuyển ngẫu nhiên"
+    lines: ["&7Bấm vào để chọn khu", "&8(PC: chuột phải · Điện thoại: chạm)"]
+  zones:
+    - { id: taybac,    name: "&aTây Bắc Việt Nam",       icon: MOSSY_COBBLESTONE, center-x: 12365, center-z: -2569, radius: 230, description: "Núi rừng, gần spawn" }
+    - { id: lao,       name: "&aLào",                    icon: JUNGLE_SAPLING,    center-x: 12305, center-z: -2330, radius: 230, description: "Rừng núi" }
+    - { id: trungbo,   name: "&eTrung Bộ, Tây Nguyên",   icon: COCOA_BEANS,      center-x: 12843, center-z: -1732, radius: 230, description: "Cao nguyên, ven biển miền Trung" }
+    - { id: nambo,     name: "&eNam Bộ, Campuchia",      icon: WHEAT,             center-x: 12604, center-z: -1374, radius: 230, description: "Đồng bằng, hợp làm ruộng" }
+    - { id: thailan,   name: "&6Thái Lan",               icon: GOLD_BLOCK,        center-x: 12007, center-z: -1792, radius: 230, description: "Đồng bằng sông Chao Phraya" }
+    - { id: myanmar,   name: "&6Myanmar",                icon: BAMBOO,            center-x: 11529, center-z: -2389, radius: 230, description: "Xa spawn nhất về phía tây" }
+    - { id: namtq,     name: "&cNam Trung Quốc",         icon: RED_SAND,          center-x: 13142, center-z: -2808, radius: 230, description: "Phía bắc vùng mùa" }
+    - { id: ngaunhien, name: "&dNgẫu nhiên toàn vùng",   icon: ENDER_PEARL,       center-x: 0,     center-z: 0,     radius: 0,   description: "Bất kỳ đâu trong vùng mùa 1" }
+
+# Luật chiến tranh (docs/banghoi-luat-mua1.md). Trang Cài đặt > Chiến tranh.
+# wild-pvp: true (mặc định) = PvP đất hoang như thường, không phụ thuộc lịch công thành; false = ngoài đất thị trấn chỉ đánh được trong vùng vây lúc có phiên.
+# Quân hàm trong military-ranks chỉ phong được cho người đã chơi >= min-rank-hours giờ ở server này và không phải tài khoản phụ.
+# Tài khoản phụ: /dmm phu add <phụ> <chính> (lưu ở plugins/DuckyMoMoCore/taikhoanphu.yml): không nhận quân hàm, không đánh trận.
+pvp-rules:
+  enabled: true
+  wild-pvp: true
+  min-rank-hours: 5
+  military-ranks: [guard, private, sergeant, lieutenant, captain, major, colonel, general]

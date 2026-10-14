@@ -646,3 +646,13 @@ newbie_kit_items:
   - /msg {USERNAME} Chào mừng tới Bang Hội Chiến! Gõ /huongdan để xem cách chơi.
 newbie_kit_on: tanthu
 newbie_announce: '&d✦ Chào mừng &f{DISPLAYNAME} &dlần đầu tới Bang Hội Chiến!'
+siege_enabled: true
+pvp_wild: true
+war_min_rank_hours: 5
+rtp_enabled: true
+rtp_cooldown: 300
+rtp_cost: 0
+cleaner_death_minutes: 10
+cleaner_pause_battle: true
+cleaner_skip_towns: false
+cleaner_exclude: []

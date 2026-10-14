@@ -36,6 +36,20 @@ groups:
           file: plugins/SiegeWar/config.yml, path: battle_session_scheduler.allowed_siege_battle_session_weeks,
           options: [ { value: weekly, label: Mọi tuần }, { value: odd-weeks-only, label: Chỉ tuần lẻ }, { value: even-weeks-only, label: Chỉ tuần chẵn } ] }
 
+  - title: Giai đoạn mùa và PvP
+    category: Chiến tranh
+    description: "Luật mùa 1 (docs/banghoi-luat-mua1.md): 2 tuần đầu hoà bình = tắt vây thành, từ tuần 3 bật. PvP đất hoang là cài đặt riêng, mặc định bật, không phụ thuộc lịch công thành."
+    apply: [swa reload, dmm reload]
+    settings:
+      - { key: siege_enabled, label: Cho phép vây thành, type: select, file: plugins/SiegeWar/config.yml, path: war.siege.switches.enabled,
+          options: [ { value: true, label: Bật }, { value: false, label: Tắt (thời kỳ hoà bình) } ],
+          note: "Tắt thì không ai cắm cờ vây được. Bật lại đầu tuần 3 của mùa." }
+      - { key: pvp_wild, label: PvP ở đất hoang, type: select, file: plugins/DuckyMoMoCore/config.yml, path: pvp-rules.wild-pvp,
+          options: [ { value: true, label: "Bật (mặc định): đánh ở đất hoang, chết rơi đồ" }, { value: false, label: "Tắt: chỉ đánh trong vùng công thành lúc có phiên" } ],
+          note: "Trong thị trấn vẫn theo cài đặt của từng thị trấn (/t toggle pvp). Spawn luôn tắt." }
+      - { key: war_min_rank_hours, label: Giờ chơi tối thiểu để được phong quân hàm, type: number, min: 0, max: 200, file: plugins/DuckyMoMoCore/config.yml, path: pvp-rules.min-rank-hours,
+          note: "Tính giờ chơi ở Bang Hội Chiến. Chống dùng tài khoản phụ làm quân. Tài khoản phụ (admin ghi bằng /dmm phu) không bao giờ được phong." }
+
   - title: Luật công thành
     category: Chiến tranh
     apply: [swa reload]
@@ -163,8 +177,30 @@ groups:
           note: "Để đồ rơi khi chết còn kịp nhặt. Vật phẩm đã đổi tên bằng đe không bao giờ bị xoá." }
       - { key: cleaner_arrows, label: Xoá cả mũi tên cắm đất, type: select, file: plugins/DuckyMoMoCore/config.yml, path: item-cleaner.arrows,
           options: [ { value: true, label: Có }, { value: false, label: Không } ] }
+      - { key: cleaner_death_minutes, label: Giữ đồ rơi khi chết (phút), type: int, min: 0, max: 60, file: plugins/DuckyMoMoCore/config.yml, path: item-cleaner.death-protect-minutes,
+          note: "Đồ trong bán kính 8 block quanh chỗ chết không bị dọn trong chừng này phút, bất kể lượt dọn rơi vào lúc nào. 0 = tắt." }
+      - { key: cleaner_pause_battle, label: Không dọn trong giờ công thành, type: select, file: plugins/DuckyMoMoCore/config.yml, path: item-cleaner.pause-during-battle,
+          options: [ { value: true, label: Có }, { value: false, label: Không } ],
+          note: "Theo lịch phiên đánh ở nhóm Lịch công thành (kể cả tuần không có cuộc vây nào)." }
+      - { key: cleaner_skip_towns, label: Không dọn trong đất thị trấn, type: select, file: plugins/DuckyMoMoCore/config.yml, path: item-cleaner.skip-towns,
+          options: [ { value: false, label: Không (dọn cả thị trấn) }, { value: true, label: Có (chỉ dọn đất hoang) } ],
+          note: "Bật thì máy farm trong thị trấn có thể để đồ tồn đọng, gây lag." }
+      - { key: cleaner_exclude, label: Vùng không dọn, type: lines, file: plugins/DuckyMoMoCore/config.yml, path: item-cleaner.exclude-areas,
+          note: "Mỗi dòng: x1 z1 x2 z2 (hai góc đối nhau). Ví dụ khu spawn: 12556 -2623 12801 -2298" }
       - { key: cleaner_warn_msg, label: "Tin báo trước ({s} = số giây)", type: text, file: plugins/DuckyMoMoCore/config.yml, path: item-cleaner.warn-message }
       - { key: cleaner_done_msg, label: "Tin sau khi dọn ({n} = số vật phẩm)", type: text, file: plugins/DuckyMoMoCore/config.yml, path: item-cleaner.done-message }
+
+  - title: Dịch chuyển ngẫu nhiên (/tpr)
+    category: Thế giới
+    description: "Người chơi gõ /tpr hoặc bấm NPC ở spawn để tới một chỗ đất hoang ngẫu nhiên trong khu đã chọn. Danh sách khu sửa ở plugins/DuckyMoMoCore/config.yml (rtp.zones)."
+    apply: [dmm reload]
+    settings:
+      - { key: rtp_enabled, label: Bật /tpr, type: select, file: plugins/DuckyMoMoCore/config.yml, path: rtp.enabled,
+          options: [ { value: true, label: Bật }, { value: false, label: Tắt } ] }
+      - { key: rtp_cooldown, label: Thời gian chờ giữa hai lần (giây), type: int, min: 0, max: 86400, file: plugins/DuckyMoMoCore/config.yml, path: rtp.cooldown-seconds,
+          note: "300 = 5 phút. Admin (quyền duckymomo.rtp.bypass) không phải chờ." }
+      - { key: rtp_cost, label: Phí mỗi lần (0 = miễn phí), type: number, min: 0, file: plugins/DuckyMoMoCore/config.yml, path: rtp.cost,
+          note: "Trừ tiền sau khi tìm được chỗ; dịch chuyển hỏng thì trả lại." }
 
   - title: Bảng giá bán cho server (/sell)
     category: Shop

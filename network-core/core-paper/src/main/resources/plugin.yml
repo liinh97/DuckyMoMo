@@ -10,6 +10,7 @@ softdepend:
   - Towny
   - squaremap
   - floodgate
+  - Vault
 commands:
   menu:
     description: Mở menu chọn chế độ (ở lobby)
@@ -23,7 +24,20 @@ commands:
   huongdan:
     description: "Cẩm nang: hướng dẫn chơi các chế độ"
     aliases: [hd, guide, camnang, cn]
+  tpr:
+    description: "Dịch chuyển ngẫu nhiên tới đất hoang trong vùng mùa: /tpr (menu) hoặc /tpr <khu>"
+    aliases: [rtp, ngaunhien]
+    permission: duckymomo.rtp
 permissions:
+  duckymomo.rtp:
+    description: Dùng /tpr (dịch chuyển ngẫu nhiên)
+    default: true
+  duckymomo.rtp.bypass:
+    description: Không phải chờ giữa hai lần /tpr
+    default: op
+  duckymomo.rtp.free:
+    description: Không mất phí /tpr
+    default: op
   duckymomo.rank.admin:
     description: Cấp/gỡ/xem rank donate của người khác (/rank give|remove|check)
     default: op
@@ -35,6 +49,9 @@ permissions:
     default: false
   duckymomo.admin:
     description: Lệnh admin /dmm
+    default: op
+  duckymomo.war.bypass:
+    description: Phong quân hàm không cần đủ giờ chơi (admin)
     default: op
   duckymomo.chat.bypass:
     description: Không bị chống spam chat (vẫn bị che từ tục)

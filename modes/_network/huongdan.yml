@@ -73,6 +73,19 @@ chapters:
 
         &8Vi phạm: mute, kick,
         &8ban tuỳ mức độ.
+      - |-
+        &4&lLUẬT (tiếp)
+        &06. Map là Trái Đất
+        nhưng lãnh thổ trong
+        game &lkhông&r&0 liên quan
+        chủ quyền thật. Cấm
+        tên, chat kích động
+        biên giới, biển đảo,
+        dân tộc.
+        7. Tối đa 2 tài khoản.
+        Acc phụ phải khai với
+        admin, không được
+        đánh trận.
   - id: banghoi
     name: Bang Hội Chiến
     pages:
@@ -110,6 +123,19 @@ chapters:
         không PvP, không phá.
         Bảng bên phải: tiền,
         thị trấn. &1/sb &0ẩn.
+      - |-
+        &6&lĐi tìm đất
+        &0Muốn lập thị trấn xa
+        spawn? Bấm &lNPC dân
+        &llàng&r&0 ở spawn hoặc gõ
+        &1/tpr&0, chọn khu (Tây
+        Bắc, Lào, Thái Lan...).
+
+        &0Được đưa tới đất hoang
+        ngẫu nhiên trong khu.
+        &1/tpr <khu> &0đi thẳng.
+        &8Có thời gian chờ giữa
+        &8hai lần dùng.
       - |-
         &6&lKiếm tiền
         &0Bắt đầu với &l200 xu&r&0.

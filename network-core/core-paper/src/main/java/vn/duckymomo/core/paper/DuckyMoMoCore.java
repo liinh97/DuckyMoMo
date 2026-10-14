@@ -14,6 +14,8 @@ public final class DuckyMoMoCore extends JavaPlugin {
     private ItemCleaner cleaner;
     private OverEnchant overEnchant;
     private CommandDump commandDump;
+    private RandomTeleport rtp;
+    private WarRules warRules;
 
     @Override
     public void onEnable() {
@@ -137,6 +139,7 @@ public final class DuckyMoMoCore extends JavaPlugin {
         cleaner = getConfig().getBoolean("item-cleaner.enabled")
                 ? new ItemCleaner(this, getConfig().getConfigurationSection("item-cleaner")) : null;
         if (cleaner != null) {
+            getServer().getPluginManager().registerEvents(cleaner, this);
             cleaner.start();
         }
 
@@ -146,6 +149,30 @@ public final class DuckyMoMoCore extends JavaPlugin {
         if (overEnchant != null) {
             getServer().getPluginManager().registerEvents(overEnchant, this);
             getLogger().info("Đồ phù phép vượt cấp: bật (tối đa cấp " + getConfig().getInt("over-enchant.max-level", 50) + ")");
+        }
+
+        // Dịch chuyển ngẫu nhiên /tpr + NPC ở spawn (banghoi): rtp.enabled
+        PluginCommand tprCmd = getCommand("tpr");
+        rtp = getConfig().getBoolean("rtp.enabled") ? new RandomTeleport(this, getConfig().getConfigurationSection("rtp")) : null;
+        if (rtp != null) {
+            getServer().getPluginManager().registerEvents(rtp, this);
+            if (tprCmd != null) {
+                tprCmd.setExecutor((sender, cmd, label, args) -> rtp.command(sender, args));
+                tprCmd.setTabCompleter((sender, cmd, label, args) -> rtp.tab(args));
+            }
+            getLogger().info("Dịch chuyển ngẫu nhiên /tpr: bật (" + rtp.zoneCount() + " khu)");
+        } else if (tprCmd != null) {
+            tprCmd.setExecutor((sender, cmd, label, args) -> {
+                sender.sendMessage("Dịch chuyển ngẫu nhiên chưa bật trên server này.");
+                return true;
+            });
+        }
+
+        // Luật chiến tranh: PvP đất hoang bật/tắt, điều kiện phong quân hàm, tài khoản phụ (banghoi): pvp-rules.enabled
+        warRules = getConfig().getBoolean("pvp-rules.enabled") ? new WarRules(this, getConfig().getConfigurationSection("pvp-rules")) : null;
+        if (warRules != null) {
+            getServer().getPluginManager().registerEvents(warRules, this);
+            getLogger().info("Luật chiến tranh: " + warRules.describe());
         }
 
         // Xuất mọi lệnh của server cho trang Cẩm nang (plugins/DuckyMoMoCore/commands.json), 30 giây sau khi khởi động
@@ -184,13 +211,25 @@ public final class DuckyMoMoCore extends JavaPlugin {
                     } else {
                         overEnchant.command(sender, args);
                     }
+                } else if (args.length >= 1 && args[0].equalsIgnoreCase("rtpnpc")) {
+                    if (rtp == null) {
+                        sender.sendMessage("Dịch chuyển ngẫu nhiên chưa bật trên server này (config: rtp.enabled).");
+                    } else {
+                        rtp.npcCommand(sender, args);
+                    }
+                } else if (args.length >= 1 && args[0].equalsIgnoreCase("phu")) {
+                    if (warRules == null) {
+                        sender.sendMessage("Luật chiến tranh chưa bật trên server này (config: pvp-rules.enabled).");
+                    } else {
+                        warRules.altCommand(sender, args);
+                    }
                 } else if (args.length >= 1 && args[0].equalsIgnoreCase("lenh")) {
                     sender.sendMessage("DuckyMoMoCore: đã xuất " + commandDump.dump() + " lệnh ra commands.json");
                 } else if (args.length >= 1 && args[0].equalsIgnoreCase("reload")) {
                     reload();
                     sender.sendMessage("DuckyMoMoCore: đã nạp lại config.yml");
                 } else {
-                    sender.sendMessage("/dmm decorate|structures start | pause | status | reset   /dmm clean   /dmm reload   /dmm lenh   /dmm enchant|sach <phù phép> <cấp>");
+                    sender.sendMessage("/dmm decorate|structures start | pause | status | reset   /dmm clean   /dmm reload   /dmm lenh   /dmm enchant|sach <phù phép> <cấp>   /dmm rtpnpc [remove]   /dmm phu add|remove|list");
                 }
                 return true;
             });

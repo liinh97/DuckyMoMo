@@ -122,6 +122,11 @@ final class RandomTeleport implements Listener {
         return o instanceof Number n ? n.intValue() : 0;
     }
 
+    /** /choilai: xoá thời gian chờ /tpr. */
+    static void clearCooldown(UUID id) {
+        LAST_USE.remove(id);
+    }
+
     int zoneCount() {
         return zones.size();
     }

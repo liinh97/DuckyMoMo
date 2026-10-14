@@ -1,0 +1,21 @@
+services:
+  # Cổng VPS: người chơi vào IP/tên miền của VPS, VPS chuyển qua WireGuard về proxy ở nhà, giữ IP thật.
+  # Chạy cùng playit:  docker compose --profile tunnel up -d   (playit vẫn là đường dự phòng)
+  # Phía VPS: relay/vps/ (wg0.conf + chuyển cổng). Xem trạng thái: docker compose logs relay
+  # LƯU Ý: tạo lại proxy thì phải tạo lại relay (giống playit):  docker compose --profile tunnel up -d --force-recreate playit relay
+  relay:
+    build: .
+    image: duckymomo-relay:local
+    profiles: ["tunnel"]
+    restart: unless-stopped
+    network_mode: "service:proxy"
+    cap_add: [NET_ADMIN]
+    environment:
+      RELAY_WG_PRIVATE_KEY: ${RELAY_WG_PRIVATE_KEY:-}   # trong .env, không commit; trống = không làm gì
+      RELAY_VPS_PUBLIC_KEY: ${RELAY_VPS_PUBLIC_KEY:-n6/M9qTdbOWYRFffR+xAy8saGGsNhxD2nSUSBpR0IWM=}
+      RELAY_VPS_ENDPOINT: ${RELAY_VPS_ENDPOINT:-42.96.4.244:51820}   # BKNS Cheap VPS "mc-relay"
+      TZ: ICT-7   # alpine không có tzdata: chuỗi POSIX (UTC+7)
+    depends_on:
+      proxy:
+        condition: service_started
+        restart: true

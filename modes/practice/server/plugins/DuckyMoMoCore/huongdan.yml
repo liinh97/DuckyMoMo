@@ -137,6 +137,87 @@ chapters:
         &8Có thời gian chờ giữa
         &8hai lần dùng.
       - |-
+        &6&lGiờ chơi thật
+        &1/hoatdong &0xem giờ.
+        &0Chỉ tính lúc bạn thật
+        sự chơi, đứng AFK
+        không tính.
+        &03 giờ: lập thị trấn.
+        &05 giờ: nhận quân hàm.
+        &0Chơi 3 giờ/tuần mới
+        là &ldân hoạt động&r&0,
+        thị trấn mới được
+        thêm đất nhờ bạn.
+      - |-
+        &2&lLiên minh Hoà Bình
+        &0Thị trấn trong liên
+        minh không bị vây,
+        không bị chiếm, đất
+        luôn tắt PvP.
+        &0Đổi lại: không quân
+        hàm, không đánh trận,
+        chỉ được tự vệ.
+        &1/hoabinh &0xem thêm.
+        &8Chợ &1/ah &8chỉ mở trong
+        &8đất hoà bình.
+      - |-
+        &2&lHoà bình (tiếp)
+        &0Thị trấn phải chạm
+        đất liên minh mới vào
+        được. Vào chờ 2 ngày.
+        &0Rời: mất ngay, 14
+        ngày mới vào lại.
+        &0Có công thành gần nhà
+        sẽ báo trước: hãy di
+        tản khỏi vùng vây.
+        &8Bán đồ ở kinh đô
+        &8được thêm 20%.
+      - |-
+        &5&lDungeon & Boss
+        &0Dungeon: nơi cày đồ,
+        cày tiền, đi theo
+        nhóm. Gõ &1/em&0.
+        &0Sắp có sự kiện &l"Trái
+        &lĐất lâm nguy"&r&0: boss
+        xuất hiện, các bang
+        hội chung tay đánh,
+        chia thưởng theo
+        công sức.
+      - |-
+        &4&lHội Bàn Tròn
+        &0Giết dân hoà bình
+        trong/gần đất hoà
+        bình = vụ án: bồi
+        thường, cấm vào đất
+        hoà bình và cấm công
+        thành tới khi xử.
+        &0Thủ lĩnh các quốc gia
+        mạnh nhất họp tại
+        chỗ để xử. &1/bantron
+      - |-
+        &6&lBảng xếp hạng
+        &1/bxh&0: Bá Chủ (quốc
+        gia), Chiến Thần, Đại
+        Phú Hộ, Kiến Trúc Sư.
+        &0Thưởng là &ldanh hiệu
+        &r&0giữ mãi: &1/danhhieu
+        &0NPC cửa hàng ở spawn
+        bán vật liệu, đồ trang
+        trí, danh hiệu bằng xu.
+        &8Không bán sức mạnh.
+      - |-
+        &6&lChơi lại từ đầu
+        &1/choilai&0: mất hết đồ,
+        tiền, nhà, nghề, thị
+        trấn. Giữ rank, danh
+        hiệu, án phạt.
+        &07 ngày/lần, 3 lần/mùa.
+        &0Quà tân thủ chỉ lần
+        đầu. Dỡ shop rương,
+        rút hàng &1/ah &0trước.
+        &8Tối đa 2 tài khoản:
+        &8khai bằng &1/taikhoanphu
+      - |-
         &6&lKiếm tiền
         &0Bắt đầu với &l200 xu&r&0.
 

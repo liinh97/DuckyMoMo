@@ -91,7 +91,7 @@ donate-ranks:
     - group: namtuoc
       name: Nam Tước
       color: "&a"
-      perks: [prefix, chat màu, /hat, chào khi vào server]
+      perks: [prefix, chat màu, /hat, chào khi vào server, /cuahang khi ở kinh đô]
       prices: [1 tháng 20k, 3 tháng 50k, 6 tháng 90k, 1 năm 160k]
     - group: tutuoc
       name: Tử Tước
@@ -162,4 +162,174 @@ pvp-rules:
   enabled: true
   wild-pvp: true
   min-rank-hours: 5
+  max-accounts: 2           # mỗi người tối đa (tạm 2, đông thì 1)
   military-ranks: [guard, private, sergeant, lieutenant, captain, major, colonel, general]
+
+# Giờ chơi thật (không tính AFK): plugins/DuckyMoMoCore/hoatdong.yml. /hoatdong xem giờ. Chốt 14/10 (docs/banghoi-luat-mua1.md mục 11D).
+# Dân hoạt động = chơi thật >= active-hours-per-week giờ trong 7 ngày VÀ ở thị trấn >= new-member-days ngày.
+active-play:
+  enabled: true
+  active-hours-per-week: 3
+  new-member-days: 3
+
+# Luật đất đai Towny (mục 11E). spawn = toạ độ kinh đô; reserved-nation = tên quốc gia Liên minh Hoà Bình (đợt 2, trống = không ai lấn được vòng spawn).
+town-rules:
+  enabled: true
+  town-min-hours: 3
+  nation-min-active-residents: 3
+  siege-min-towns: 2
+  join-cooldown-days: 3
+  land-per-active-resident: true
+  reserved-spawn-radius: 300
+  reserved-nation: ""        # bỏ qua khi peace-alliance bật (dùng peace-alliance.nation)
+  world: world
+  spawn: [12699, -2523]
+
+# Chơi lại từ đầu /choilai (mục 11F). Đổi season khi sang mùa mới để đếm lại số lần và quà.
+player-reset:
+  enabled: true
+  cooldown-days: 7
+  max-per-season: 3
+  season: "1"
+  gift-first-only: true
+  starting-money: 200
+  kit: tanthu
+  backup-days: 7
+
+# Liên minh Hoà Bình (docs/banghoi-luat-mua1.md mục 10–11A). Lập lần đầu: admin đứng giữa spawn gõ /dmm hoabinh setup,
+# rồi /dmm hoabinh claim <bán kính ô>. SiegeWar phải có peaceful_towns.allow_peaceful_capitals: true (kinh đô hoà bình).
+peace-alliance:
+  enabled: true
+  nation: LienMinhHoaBinh
+  capital: KinhDo
+  join-wait-days: 2
+  rejoin-cooldown-days: 14
+  plot-base-price: 25
+  plot-price-per-plot: 0.5
+  protection-fee-per-plot: 0.5
+  sell-bonus-percent: 20
+  shop-tax-inside: 0
+  shop-tax-outside: 0.05
+  auction-only-in-peace: true
+  auction-commands: [zauctionhouse, ah, hdv, auction, zauction]
+  siege-warn-days-before: 2
+  siege-remind-minutes: [60, 10]
+
+# Hội đồng Hoà Bình (mục 11A-13): thị trưởng thị trấn hoà bình có >= min-active-residents dân hoạt động có phiếu.
+council:
+  enabled: true
+  min-active-residents: 3
+  term-days: 30
+  election-days: 2
+  max-terms: 2
+  motion-days: 3
+
+# Tổ chức + giấy phép (mục 11A-12). Phí trừ vào quỹ tổ chức mỗi tuần.
+organizations:
+  enabled: true
+  min-members: 3
+  weekly-fee: 100
+  slots: {thuonghoi: 3, sukien: 2}
+  ad-cooldown-minutes: 60
+  event-teleport-hours: 24
+
+# Bảng xếp hạng mùa (mục 8 + 11C). season-start: ngày bắt đầu mùa (yyyy-mm-dd), trống = chưa mở mùa (không tính tuần).
+leaderboard:
+  enabled: true
+  season: "1"
+  season-start: ""
+  double-week: 10
+  register-week: 9
+  vote-week: 10
+  snapshot-day: SUNDAY
+  snapshot-time: "23:00"
+  town-active-residents: 3
+  plots-per-point: 10
+  min-defender-residents: 3
+  min-town-age-days: 3
+  kill-cap: 3
+  title-min-hours: 10
+  title-member-before-week: 9
+  points: {town: 10, attack-win: 30, defend-win: 20, revolt-win: 20, kill: 3, banner: 5}
+  titles:
+    bachu: "&6&l[Bá Chủ S{mua}]"
+    achu: "&e[Á Chủ S{mua}]"
+    chienthan: "&c&l[Chiến Thần S{mua}]"
+    dungtuong: "&c[Dũng Tướng S{mua}]"
+    phuho: "&a[Phú Hộ S{mua}]"
+    kientrucsu: "&b[Kiến Trúc Sư S{mua}]"
+    mua: "&7[Mùa {mua}]"
+    luukhach: "&7[Lữ Khách]"
+    nghenhan: "&d[Nghệ Nhân]"
+    phuthuong: "&6[Phú Thương]"
+
+# Án giết dân hoà bình + Hội Bàn Tròn (mục 10.3 + 11B). exile-spawn: "x y z" nơi đưa người bị cấm ra (trống = ngoài vòng kinh đô).
+# Nhà tù: admin đứng ở nhà tù kinh đô gõ /setjail nhatu.
+justice:
+  enabled: true
+  buffer-blocks: 100
+  self-defense-seconds: 30
+  floor-fine: 100
+  repeat-multiplier: 2
+  heavy-multiplier: 3
+  bounty-days: 3
+  jail-name: nhatu
+  jail-minutes: 45
+  exile-days: 14
+  exile-spawn: ""
+  roundtable:
+    seats: 5
+    day: WEDNESDAY
+    time: "21:00"
+    min-seats: 3
+    table-radius: 16
+    no-teleport-radius: 150
+    no-teleport-minutes: 30
+    choose-deadline-hours: 24
+    quorum-wait-minutes: 15
+    item-minutes: 10
+    max-hours: 3
+    emergency-notice-hours: 24
+    peace-seat-votes-on-peace-victims: true
+
+# Cửa hàng trang trí bằng xu (mục 11A-14): chỉ đồ không tăng sức mạnh.
+decor-shop:
+  enabled: true
+  # Cửa hàng Kinh Đô (14/10): rank ủng hộ (rank-permission) mở /cuahang khi đứng trong kinh đô; mọi người bấm NPC (/dmm shopnpc).
+  # materials: vật liệu cơ bản server bán (không mua lại). Giá mỗi cái phải > giá thu mua /sell, không thì tự bị bỏ.
+  rank-permission: duckymomo.cuahang
+  npc-name: "&6&lCửa hàng Kinh Đô"
+  materials:
+    - {material: DIRT, amount: 64, price: 100}
+    - {material: COBBLESTONE, amount: 64, price: 100}
+    - {material: SAND, amount: 64, price: 120}
+    - {material: GRAVEL, amount: 64, price: 120}
+    - {material: OAK_PLANKS, amount: 64, price: 160}
+    - {material: STONE, amount: 64, price: 160}
+    - {material: CLAY, amount: 64, price: 200}
+    - {material: GLASS, amount: 64, price: 250}
+    - {material: STONE_BRICKS, amount: 64, price: 250}
+    - {material: TORCH, amount: 32, price: 80}
+  items:
+    - {material: LANTERN, amount: 8, price: 40}
+    - {material: SEA_LANTERN, amount: 8, price: 80}
+    - {material: GLOWSTONE, amount: 16, price: 60}
+    - {material: PRISMARINE_BRICKS, amount: 32, price: 60}
+    - {material: PURPUR_BLOCK, amount: 32, price: 80}
+    - {material: WHITE_GLAZED_TERRACOTTA, amount: 16, price: 40}
+    - {material: CYAN_GLAZED_TERRACOTTA, amount: 16, price: 40}
+    - {material: TERRACOTTA, amount: 64, price: 50}
+    - {material: QUARTZ_BLOCK, amount: 32, price: 80}
+    - {material: AMETHYST_BLOCK, amount: 16, price: 60}
+    - {material: CANDLE, amount: 16, price: 30}
+    - {material: FLOWER_POT, amount: 16, price: 20}
+    - {material: ITEM_FRAME, amount: 16, price: 30}
+    - {material: ARMOR_STAND, amount: 4, price: 40}
+    - {material: PAINTING, amount: 8, price: 30}
+    - {material: FLOWER_BANNER_PATTERN, amount: 1, price: 100}
+    - {material: GLOBE_BANNER_PATTERN, amount: 1, price: 150}
+    - {material: GLOW_INK_SAC, amount: 16, price: 40}
+  titles:
+    - {id: luukhach, text: "&7[Lữ Khách]", price: 1000}
+    - {id: nghenhan, text: "&d[Nghệ Nhân]", price: 3000}
+    - {id: phuthuong, text: "&6[Phú Thương]", price: 8000}

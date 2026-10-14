@@ -11,6 +11,9 @@ softdepend:
   - squaremap
   - floodgate
   - Vault
+  - PlaceholderAPI
+  - SiegeWar
+  - Essentials
 commands:
   menu:
     description: Mở menu chọn chế độ (ở lobby)
@@ -28,7 +31,56 @@ commands:
     description: "Dịch chuyển ngẫu nhiên tới đất hoang trong vùng mùa: /tpr (menu) hoặc /tpr <khu>"
     aliases: [rtp, ngaunhien]
     permission: duckymomo.rtp
+  hoatdong:
+    description: "Xem giờ chơi thật (không tính AFK) của bạn"
+    aliases: [giochoi]
+  taikhoanphu:
+    description: "Khai tài khoản phụ: /taikhoanphu khai <tên chính>, tài khoản chính /taikhoanphu xacnhan <tên phụ>"
+    aliases: [accphu]
+  choilai:
+    description: "Chơi lại từ đầu ở Bang Hội Chiến (mất hết đồ, tiền, nhà, nghề, thị trấn)"
+    aliases: [reset]
+  hoabinh:
+    description: "Liên minh Hoà Bình: /hoabinh (thông tin), vao, roi, danhsach"
+    aliases: [lienminh]
+  hoidong:
+    description: "Hội đồng Hoà Bình: bầu đại diện, bỏ phiếu kiến nghị"
+  tochuc:
+    description: "Tổ chức của dân hoà bình, xin giấy phép Thương Hội / Sự kiện"
+  quangcao:
+    description: "Thương Hội có giấy phép rao hàng toàn server (1 lần mỗi giờ)"
+  sukien:
+    description: "Sự kiện: xem, tới nơi (/sukien den <mã>); Tổ chức Sự kiện tạo sự kiện"
+  bantron:
+    description: "Hội Bàn Tròn: lịch họp, vụ án, bỏ phiếu, kháng án, kiến nghị"
+    aliases: [an, hoibantron]
+  bxh:
+    description: "Bảng xếp hạng mùa: Bá Chủ, Chiến Thần, Đại Phú Hộ, Kiến Trúc Sư"
+    aliases: [bangxephang]
+  binhchon:
+    description: "Giải Kiến Trúc Sư: đăng ký, tham quan, bỏ phiếu"
+  danhhieu:
+    description: "Xem và chọn danh hiệu"
+    aliases: [title]
+  cuahang:
+    description: "Cửa hàng Kinh Đô (vật liệu, trang trí, danh hiệu): rank ủng hộ mở khi đứng trong kinh đô; mọi người bấm NPC ở spawn"
+    aliases: [trangtri]
 permissions:
+  duckymomo.cuahang:
+    description: Mở Cửa hàng Kinh Đô bằng /cuahang khi đứng trong kinh đô (rank ủng hộ, cấp cho nhóm namtuoc)
+    default: op
+  duckymomo.giayphep.thuonghoi:
+    description: Thành viên Thương Hội có giấy phép (nhóm LuckPerms giayphep-thuonghoi)
+    default: false
+  duckymomo.giayphep.sukien:
+    description: Thành viên Tổ chức Sự kiện có giấy phép (nhóm LuckPerms giayphep-sukien)
+    default: false
+  duckymomo.peace.admin:
+    description: Bỏ qua luật Liên minh Hoà Bình (tự bật hoà bình, /ah ở mọi nơi)
+    default: op
+  duckymomo.town.bypass:
+    description: Bỏ qua luật đất đai (giờ chơi, vòng spawn, chờ đổi thị trấn) - admin, thị trấn của server
+    default: op
   duckymomo.rtp:
     description: Dùng /tpr (dịch chuyển ngẫu nhiên)
     default: true

@@ -28,6 +28,8 @@ guide:
       - ["Chuyển server", "/server lobby | banghoi-1 | practice-1"]
       - ["Font tiếng Việt", "Gói font gửi tự động khi vào (không bắt buộc). Sửa/làm lại: ./ops/build-font-pack.sh rồi docker compose up -d lobby banghoi-1 practice-1"]
       - ["Sao lưu ngay", "Trên máy chủ: docker compose exec backup-banghoi-1 backup now (lưu ở F:\\DuckyMoMo-backups)"]
+      - ["Cổng VPS (giữ IP thật)", "VPS 42.96.4.244 chuyển người chơi về nhà qua WireGuard: Java cổng 25570, Bedrock cổng 19130 (BKNS chặn 25565/19132). Xem trạng thái: docker compose logs relay. playit vẫn chạy làm đường dự phòng"]
+      - ["Tự sửa sau khi máy khởi động lại", "Tự chạy 2 phút sau khi đăng nhập Windows (tác vụ 'DuckyMoMo tu sua'): sửa cổng chết, thư mục gắn bị treo, playit cho cả Minecraft, Trạm 6, goc6; có người online thì không khởi động lại. Chạy tay: ./ops/tu-sua-sau-khoi-dong.sh (thêm --kiem-tra để chỉ xem). Nhật ký: data/ops/tu-sua.log"]
   - title: Người chơi mới cần biết
     items:
       - ["Đăng ký / đăng nhập", "Lần đầu: /register <mật khẩu> <mật khẩu> · lần sau: /login <mật khẩu>"]
@@ -37,8 +39,9 @@ guide:
       - ["Rank donate", "/rank xem các bậc, giá, cách mua (chỉ trang trí, không mua được lợi thế)"]
   - title: Địa chỉ vào server
     items:
-      - ["Máy tính (Java)", "pgsql-youths.tun.ply.gg — bản 1.13 tới mới nhất"]
-      - ["Điện thoại (Bedrock)", "pgsql-mississauga.tun.ply.gg cổng 21185"]
+      - ["Máy tính (Java)", "mc.goc6.io.vn (không cần cổng) — bản 1.13 tới mới nhất"]
+      - ["Điện thoại (Bedrock)", "mc.goc6.io.vn cổng 19130 (không phải 19132 mặc định)"]
+      - ["Dự phòng (playit, khi VPS hỏng)", "Java pgsql-youths.tun.ply.gg · Bedrock pgsql-mississauga.tun.ply.gg cổng 21185"]
 
 plugins:
   # ---------------------------------------------------------------- Đăng nhập & kết nối
@@ -121,11 +124,24 @@ plugins:
   - name: DuckyMoMoCore
     jar: DuckyMoMoCore
     kind: Quản lý
-    purpose: "Plugin riêng của DuckyMoMo: menu chọn chế độ, rank donate, thông báo vào/ra, lọc chat, chat có prefix ở sảnh, rơi khỏi đảo về spawn, dọn rác, dịch chuyển ngẫu nhiên /tpr (NPC ở spawn), luật chiến tranh (PvP đất hoang bật/tắt, giờ chơi tối thiểu để được phong quân hàm, tài khoản phụ), chống đặt-phá lấy tiền nghề, ranh giới thị trấn trên bản đồ web, menu nút bấm cho Bedrock."
+    purpose: "Plugin riêng của DuckyMoMo: menu chọn chế độ, rank donate, thông báo vào/ra, lọc chat, chat có prefix ở sảnh, rơi khỏi đảo về spawn, dọn rác, dịch chuyển ngẫu nhiên /tpr (NPC ở spawn), luật chiến tranh (PvP đất hoang bật/tắt, giờ chơi thật tối thiểu để được phong quân hàm, tài khoản phụ), giờ chơi thật, luật đất đai Towny (lập thị trấn/quốc gia, vòng spawn, chờ đổi thị trấn, đất theo dân hoạt động, quốc gia cần 2 thị trấn mới cắm cờ), chơi lại /choilai, Hội đồng Hoà Bình, tổ chức và giấy phép, Hội Bàn Tròn và án, bảng xếp hạng và danh hiệu, cửa hàng trang trí, Liên minh Hoà Bình (/hoabinh: đất lan liền kề, giá tăng dần, phí bảo hộ, /ah chỉ trong đất hoà bình, /sell ở kinh đô +20%, shop rương miễn thuế, báo vây thành cho dân hoà bình, vùng vây trên bản đồ web), chống đặt-phá lấy tiền nghề, ranh giới thị trấn trên bản đồ web, menu nút bấm cho Bedrock."
     player:
       - ["/menu", "Mở menu chọn chế độ (ở sảnh)"]
       - ["/huongdan [chương] · /hd", "Cẩm nang trong game (sách; điện thoại: bảng nút). Chương: batdau, luat, banghoi, practice, rank, pokemon, hotro"]
       - ["/rank", "Xem các bậc rank donate, giá, rank của mình"]
+      - ["/hoatdong · /giochoi", "Bang Hội Chiến: xem giờ chơi thật (không tính AFK) và có phải dân hoạt động không"]
+      - ["/taikhoanphu khai <chính> · xacnhan <phụ>", "Bang Hội Chiến: tự khai tài khoản phụ (tối đa 2 tài khoản/người); tài khoản phụ không nhận quân hàm, không đánh trận"]
+      - ["/choilai · /choilai xacnhan", "Bang Hội Chiến: chơi lại từ đầu (mất đồ, tiền, nhà, nghề, thị trấn; giữ rank, danh hiệu, án). 7 ngày/lần, 3 lần/mùa, quà tân thủ chỉ lần đầu. Phải dỡ shop rương, rút hàng /ah trước"]
+      - ["/hoabinh · vao · roi · danhsach", "Bang Hội Chiến: Liên minh Hoà Bình (thị trưởng đưa thị trấn vào/ra; vào chờ 2 ngày mới hoà bình, rời 14 ngày mới vào lại; thị trấn phải chạm đất liên minh)"]
+      - ["/hoidong · ungcu · bau <tên> · phieu <mã> co|khong · baimien · deuoi <thị trấn> <lý do>", "Hội đồng Hoà Bình: dân hoà bình ứng cử, thị trưởng (thị trấn >= 3 dân hoạt động) bầu đại diện và bỏ phiếu kiến nghị"]
+      - ["/tochuc lap thuonghoi|sukien <tên> · moi · vao · roi · gop <tiền> · xinphep · danhsach", "Tổ chức của dân hoà bình; đủ 3 người xin giấy phép, Hội đồng Hoà Bình duyệt, phí 100 xu/tuần từ quỹ"]
+      - ["/quangcao <nội dung>", "Thương Hội có giấy phép rao hàng toàn server, 1 lần mỗi giờ"]
+      - ["/sukien · den <mã> · tao <phút> <tên> · thuong <người> <tiền> · dautruong · ket", "Xem và tới sự kiện; Tổ chức Sự kiện có giấy phép tạo sự kiện, trao thưởng từ quỹ, mở đấu trường (đánh không mất đồ)"]
+      - ["/bantron · xu <mã> <mức> · lichsu · vu <mã> · toi · datban · chon <thị trấn> · suthan <tên> · khangan <mã> <bằng chứng> · kiennghi ...", "Hội Bàn Tròn: lịch họp, vụ án giết dân hoà bình, bỏ phiếu tại chỗ (phải đứng gần bàn tròn), kháng án, kiến nghị trừ điểm / thu hồi giấy phép. /an = /bantron"]
+      - ["/bxh [chienthan|phuho|kientruc|quocgia <tên>]", "Bảng xếp hạng mùa: Bá Chủ, Chiến Thần, Đại Phú Hộ, Kiến Trúc Sư"]
+      - ["/binhchon dangky · xem <thị trấn> · <thị trấn>", "Giải Kiến Trúc Sư: thị trưởng đăng ký tuần 9, người chơi (>= 5 giờ) bỏ 1 phiếu tuần 10"]
+      - ["/danhhieu · chon <mã> · tat", "Danh hiệu (giữ qua các mùa): giành bằng bảng xếp hạng hoặc mua ở /cuahang"]
+      - ["/cuahang", "Cửa hàng Kinh Đô: vật liệu cơ bản (đất, đá, cát, kính… 64 cái), đồ trang trí, danh hiệu, trả bằng xu. Mọi người bấm NPC ở khu shop tại spawn; rank ủng hộ gõ /cuahang nhưng chỉ khi đứng trong kinh đô"]
       - ["/tpr [khu] · /rtp", "Bang Hội Chiến: dịch chuyển ngẫu nhiên tới đất hoang (không menu thì mở menu chọn khu; NPC dân làng ở spawn cũng mở menu này). Khu: taybac, lao, trungbo, nambo, thailan, myanmar, namtq, ngaunhien"]
     admin:
       - ["/rank give <tên> <bậc> <tháng>", "Cấp rank donate (gia hạn cộng dồn)"]
@@ -135,6 +151,12 @@ plugins:
       - ["/dmm enchant <phù phép> <cấp>", "Phù phép VƯỢT CẤP món đang cầm (vd sharpness 30, efficiency 20; cấp 0 = gỡ; tối đa over-enchant.max-level = 50)"]
       - ["/dmm sach <phù phép> <cấp> [người]", "Tạo sách vượt cấp tặng người chơi đang online; người chơi ghép bằng đe giữ nguyên cấp. Chỉ làm phần thưởng / hàng trong game, KHÔNG bán lấy tiền thật"]
       - ["/dmm reload", "Nạp lại config"]
+      - ["/hoatdong <tên>", "Xem giờ chơi thật của người khác"]
+      - ["/dmm hoabinh setup", "Lập Liên minh Hoà Bình lần đầu: đứng giữa spawn, tạo kinh đô KinhDo (thị trưởng NPC), quốc gia LienMinhHoaBinh, bật hoà bình"]
+      - ["/bxh dongmua · traothuong · hologram", "Đóng mùa (khoá điểm, 3 ngày khiếu nại ở Hội Bàn Tròn), trao danh hiệu; hologram = hướng dẫn tạo hologram bảng xếp hạng"]
+      - ["/dmm shopnpc [remove]", "Đặt NPC Cửa hàng Kinh Đô (dân làng + chữ nổi) tại chỗ đứng ở khu shop spawn; đặt lại thì NPC cũ bị xoá"]
+      - ["/setjail nhatu", "Essentials: đặt nhà tù kinh đô (Hội Bàn Tròn phạt tù dùng tên này)"]
+      - ["/dmm hoabinh claim <bán kính ô>", "Kinh đô chiếm đất quanh nhà chính (1 ô = 16 block; spawn hiện cần khoảng 14)"]
       - ["/dmm phu add <phụ> <chính> | remove <phụ> | list", "Ghi tài khoản phụ (Bang Hội Chiến): không được phong quân hàm, không gây sát thương trong vùng vây lúc có phiên. Lưu ở plugins/DuckyMoMoCore/taikhoanphu.yml"]
       - ["/dmm rtpnpc [remove]", "Đặt NPC dịch chuyển ngẫu nhiên (dân làng + chữ nổi) tại chỗ đang đứng; đặt lại thì NPC cũ bị xoá; remove = xoá"]
       - ["/dmm decorate | structures start|pause|status", "Trang trí map / đặt công trình (dùng khi làm map mới)"]
@@ -298,6 +320,18 @@ plugins:
     settings: "Trang Cài đặt: Bang Hội Chiến > Phù phép > Đồ phù phép vượt cấp (bật/tắt, cấp tối đa)"
     notes: "Chỉ làm phần thưởng hoặc bán bằng tiền trong game. KHÔNG bán lấy tiền thật (pay-to-win, vi phạm luật Mojang). Mỗi lần tạo đều ghi log server."
 
+  - name: EliteMobs
+    jar: EliteMobs
+    kind: Boss & Dungeon
+    purpose: "Nội dung PvE (cài 14/10): dungeon cày đồ, cày tiền; boss tuỳ chỉnh; sự kiện boss (dự kiến chuỗi 'Trái Đất lâm nguy': các bang hội chung tay đánh boss ở nhiều bối cảnh). Quái elite tự sinh ngoài thế giới: TẮT (không lệch cán cân chiến tranh). Tiền rơi dùng xu chung của server, hệ số 0,3. Dungeon tải trong game bằng /em setup (cần mã tài khoản Nightbreak của chủ server; khoảng một nửa nội dung miễn phí). Menu tiếng Anh (chưa có bản tiếng Việt)."
+    player:
+      - ["/em", "Menu EliteMobs: dungeon, cấp kỹ năng, đồ, nhiệm vụ (khi đã cài nội dung)"]
+      - ["Đánh boss", "Chia thưởng theo sát thương mỗi người gây ra"]
+    admin:
+      - ["/em setup", "Tải/cập nhật dungeon, sự kiện, gói đồ (cần mã tài khoản Nightbreak)"]
+      - ["/em reload", "Nạp lại cấu hình (trang Cài đặt tự gọi)"]
+    settings: "Trang Cài đặt: Bang Hội Chiến > Thế giới > Boss & Dungeon (EliteMobs). File: plugins/EliteMobs/"
+    notes: "Cần FreeMinecraftModels cho gậy phép và lớp pháp sư (tuỳ chọn, chưa cài). Không cài ResourcePackManager để khỏi đụng gói font tiếng Việt."
   - name: Shopkeepers (+ ShopkeepersAddon)
     jar: Shopkeepers
     kind: Kinh tế & buôn bán

@@ -322,7 +322,7 @@ Module `Leaderboard` trong DuckyMoMoCore: chụp điểm lãnh thổ hằng tu�
 1. Liên minh do **server quản lý, thủ đô là khu spawn**. Ý thêm của chủ server: **lập một hội được giao quyền xử lý vấn đề gameplay**
    (tức Hội đồng Hoà Bình điều hành thay server; admin không trực tiếp quản).
 2. Vào chờ 2 ngày; rời mất hoà bình ngay; 14 ngày sau mới vào lại.
-3. Tắt thu phục (subvert) của SiegeWar: **chờ chủ server đọc giải thích** (Claude khuyên tắt).
+3. **Tắt thu phục** (subvert) của SiegeWar (chốt sau khi giải thích): đã áp dụng 14/10, `peaceful_towns.subvert_enabled = false`, có trên trang Cài đặt.
 4. Thị trấn hoà bình không tính điểm Bá Chủ.
 5. Giá ô đất hoà bình = 25 + 0,5 × tổng số ô của liên minh (tạm, nên là cài đặt).
 6. Chạm chéo không tính là liền kề.
@@ -362,9 +362,10 @@ Module `Leaderboard` trong DuckyMoMoCore: chụp điểm lãnh thổ hằng tu�
 37. Khi lên VPS: **tối đa 2 đăng ký mỗi IP mỗi ngày**; nhiều tài khoản cùng IP chỉ đánh dấu cho staff.
 
 **E. Đất đai và chiến tranh**
-38. Nhà chính hai thị trấn cách ≥ 10 ô (160 block).
+38. Nhà chính hai thị trấn cách ≥ 10 ô (160 block): đã áp dụng 14/10 (`min_distance_between_homeblocks = 10`, trang Cài đặt).
 39. Vòng 300 block quanh spawn chỉ dành cho Liên minh Hoà Bình.
-40. Lập quốc gia cần thị trấn ≥ 3 dân. Chủ server hỏi thêm "quốc gia cần bao nhiêu thị trấn" (chờ trả lời đề xuất).
+40. Lập quốc gia: 1 thị trấn có ≥ 3 dân hoạt động. **Cắm cờ vây thành (chinh phục): quốc gia phải có ≥ 2 thị trấn**; phòng thủ ai cũng đánh.
+    Cả hai là cài đặt. (Chốt 14/10.)
 41. Tuần 10 đại chiến (3 cuộc vây/quốc gia, thêm phiên thứ 6 20:00): **là cài đặt** (chưa chốt ngày giờ).
 
 **F. Chơi lại `/choilai`**: 42 7 ngày/lần, tối đa 3 lần/mùa; 43 **(b)** quà tân thủ + tiền khởi đầu chỉ lần đầu trong mùa
@@ -374,6 +375,48 @@ về spawn + bảo vệ người mới. Giữ: rank donate, danh hiệu, **án v
 đang đánh nhau, không có án chưa xử, thị trấn không đang bị vây. Xác nhận `/choilai xacnhan` trong 30 giây; lưu bản sao dữ liệu 7 ngày.
 
 **G.** 45 commit phần đã làm (14/10).
+
+**Đã code đợt 1 (14/10, chưa thử trong game):** giờ chơi thật (`Activity`, /hoatdong), luật đất đai (`TownRules`: lập thị trấn 3 giờ,
+quốc gia 3 dân hoạt động, cắm cờ chinh phục cần 2 thị trấn, vòng 300 block quanh spawn chỉ dành cho `reserved-nation`, đổi thị trấn chờ
+3 ngày, đất theo dân hoạt động bằng bonus âm), phong quân hàm theo giờ chơi thật + ở thị trấn đủ 3 ngày, tự khai tài khoản phụ
+(/taikhoanphu, tối đa 2), /choilai (`PlayerReset` + `Integrations`). Tất cả có trên trang Cài đặt (Thị trấn > "Đất đai và người chơi thật",
+Hệ thống > "Chơi lại từ đầu"). Tắt thu phục (3) và khoảng cách thị trấn (38) đã áp dụng. Giờ chơi thật bắt đầu đếm từ 14/10:
+người chơi cũ đều có 0 giờ (admin/op bỏ qua bằng quyền `duckymomo.town.bypass`).
+
+**Đã code đợt 2 (14/10, chưa thử trong game): Liên minh Hoà Bình** (`PeaceAlliance`): /hoabinh vao|roi|danhsach; không ai tự bật hoà bình;
+plugin bật/tắt hoà bình bằng `swa town <t> setpeaceful`; vào chờ 2 ngày, rời mất ngay, 14 ngày mới vào lại; thị trấn phải chạm đất liên minh;
+lập thị trấn trong vòng 300 block quanh spawn phải sát đất hoà bình và tự vào liên minh; không tiền đồn; giá ô = 25 + 0,5 × tổng ô các thị trấn
+hoà bình (không tính kinh đô); phí bảo hộ 0,5 xu/ô/ngày cộng vào phí duy trì; đất hoà bình luôn tắt PvP; /ah chỉ mở trong đất hoà bình;
+/sell trong kinh đô +20%; shop rương trong đất hoà bình miễn thuế, ngoài 5%; báo vây thành (toàn server + tin/thư cho dân hoà bình có đất trong
+vùng vây, nhắc trước 2 ngày, 60 và 10 phút trước phiên); vùng vây vẽ đỏ, liên minh tô xanh trên bản đồ web. SiegeWar
+`allow_peaceful_capitals: true` (kinh đô hoà bình). **Chưa lập liên minh**: admin đứng giữa spawn gõ `/dmm hoabinh setup` rồi
+`/dmm hoabinh claim 14`. Còn lại cho đợt 3: Hội đồng Hoà Bình, đại diện, giấy phép tổ chức, án giết dân hoà bình (dải đệm 100 block),
+Hội Bàn Tròn; mục 14 (thương quán, cửa hàng trang trí bằng xu).
+
+**Đã code đợt 3-4 + mục 14 (14/10, CHƯA THỬ TRONG GAME):**
+- `PeaceCouncil` (/hoidong): thị trưởng thị trấn hoà bình có >= 3 dân hoạt động có phiếu; bầu đại diện 30 ngày, bầu trong 2 ngày cuối,
+  tối đa 2 nhiệm kỳ liền, bãi nhiệm 2/3, không ai đắc cử thì thị trưởng thị trấn lớn nhất tạm giữ; kiến nghị bỏ phiếu từ xa 3 ngày:
+  duyệt giấy phép, đuổi thị trấn (quá bán, thị trấn bị đuổi không bỏ phiếu), bãi nhiệm.
+- `Organizations` (/tochuc, /quangcao, /sukien): tổ chức >= 3 dân hoà bình, giấy phép Thương Hội (3 suất: QuickShop 30 shop thay vì 10,
+  `zauctionhouse.max.15`, /quangcao 1 lần/giờ) và Tổ chức Sự kiện (2 suất: /sukien tao|thuong|dautruong|ket, chữ nổi, dịch chuyển 24 giờ);
+  phí 100 xu/tuần từ quỹ (/tochuc gop), hết tiền thì treo, hết mùa hết hạn; nhóm LuckPerms `giayphep-thuonghoi|sukien` (server=banghoi-1).
+  Chỉ /sukien dautruong mới đổi ô thành đấu trường; Towny `keep_inventory_on_death_in_arena: true`.
+- `Leaderboard` (/bxh, /binhchon, /danhhieu): điểm như mục 8 (chụp tuần Chủ nhật 23:00, SiegeEndEvent, chết trong vùng vây, chiếm cờ),
+  /bxh dongmua → 3 ngày → /bxh traothuong trao danh hiệu (LuckPerms suffix khi chọn bằng /danhhieu). Placeholder `%dmm_bachu_N_ten|diem%`,
+  `%dmm_chienthan_N_...%` (/bxh hologram in lệnh tạo hologram). **Phải đặt `leaderboard.season-start`** (trang Cài đặt) khi mở mùa.
+- `Justice` (/bantron, /an): như mục 10.3/11B; mức phạt: giu, phatnang, truyna, tu, luuday, camct1-3; kiến nghị trudiem/thuhoi/mở lại;
+  không có việc thì không họp. Ghế hoà bình vẫn được bỏ phiếu ở vụ có nạn nhân hoà bình (`peace-seat-votes-on-peace-victims`), nếu không
+  ghế này bị tránh ở mọi vụ (quy tắc "cùng quốc gia với nạn nhân"). **Admin phải đặt nhà tù**: `/setjail nhatu` (Essentials, tính giờ lúc online).
+- `DecorShop` = **Cửa hàng Kinh Đô** (đổi 14/10 tối theo chủ server): 3 mục vật liệu cơ bản (10 món, 64 cái, ví dụ 100 xu = 64 đất; chỉ
+  server bán, giá mỗi cái phải > giá /sell không thì tự bỏ), trang trí (18), danh hiệu (3). Mọi người mua qua **NPC ở khu shop spawn**
+  (`/dmm shopnpc`); **rank ủng hộ được gõ /cuahang nhưng chỉ khi đứng trong kinh đô** (quyền `duckymomo.cuahang` cho nhóm namtuoc,
+  các bậc trên thừa kế). Đây là ngoại lệ duy nhất không thuần trang trí trong rank, chủ server chốt; rủi ro thấp vì không mua từ xa được.
+- **Dân làng đổi đồ (Shopkeepers, đổi vật lấy vật, không dùng tiền)**: hướng của chủ server là cây nâng cấp: đồ thường → đồ chế biến
+  → "mảnh" → mảnh + nguyên liệu khác ra giáp/vũ khí phù phép. Bảng Claude đưa (đá→đá nhẵn, Mảnh Rèn/Tinh Thể/Ma Thuật, đồ cấp III…) CHỈ
+  LÀ VÍ DỤ, chi tiết cần tham khảo thêm. Lưu ý khi chốt: mỗi mảnh cần ít nhất một nguyên liệu khó farm (máy farm đá cuội/sắt), đồ đổi
+  không vượt bàn phù phép; Shopkeepers mặc định đổi không giới hạn lượt (chưa kiểm tra addon có giới hạn ngày không).
+- Thương quán: dùng ô sứ quán (embassy) có sẵn của Towny, không cần code.
+- Chưa làm: trang web xem hồ sơ Hội Bàn Tròn (trong game xem bằng /bantron lichsu); giải Đệ Nhất Thương Nhân, kỳ quan (để sau).
 
 ## 9. Những việc phải làm sau khi chốt
 1. Sửa cấu hình theo các mục **[đề xuất]** đã chốt (khoảng cách giữa thị trấn, cấm sát spawn; Nether/End chờ chốt). Đã xong: công tắc vây thành, PvP đất hoang, giờ phong quân hàm, tài khoản phụ.

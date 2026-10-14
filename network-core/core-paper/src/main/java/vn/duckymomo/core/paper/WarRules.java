@@ -14,7 +14,6 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.Statistic;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -35,8 +34,10 @@ import org.bukkit.projectiles.ProjectileSource;
  * Luật chiến tranh Bang Hội Chiến (mục pvp-rules trong config.yml):
  *  - wild-pvp: false = ngoài đất thị trấn chỉ được đánh người trong vùng vây khi đang có phiên đánh (giai đoạn hoà bình);
  *    true = PvP đất hoang như thường. Trong thị trấn Towny tự quyết như cũ.
- *  - Quân hàm (guard, private…general): chỉ phong được cho người đã chơi đủ min-rank-hours ở server này, không phải tài khoản phụ.
- *  - Tài khoản phụ (admin ghi bằng /dmm phu): không nhận quân hàm, không đánh người trong vùng vây.
+ *  - Quân hàm (guard, private…general): chỉ phong được cho người đã chơi thật đủ min-rank-hours (Activity, không tính AFK),
+ *    đã ở thị trấn đủ new-member-days ngày, không phải tài khoản phụ.
+ *  - Tài khoản phụ: người chơi tự khai (/taikhoanphu khai <chính>, tài khoản chính /taikhoanphu xacnhan <phụ>) hoặc admin ghi
+ *    (/dmm phu). Mỗi người tối đa max-accounts tài khoản. Tài khoản phụ không nhận quân hàm, không đánh người trong vùng vây.
  */
 final class WarRules implements Listener {
 
@@ -49,8 +50,14 @@ final class WarRules implements Listener {
     private final Set<String> militaryRanks;
     private final File altsFile;
     private final YamlConfiguration alts;
+    private final Activity activity;
+    private final int maxAccounts;
+    // yêu cầu khai đang chờ: tên phụ (thường) -> tên chính, hết hạn sau 10 phút
+    private final Map<String, String[]> pending = new java.util.HashMap<>();
 
-    WarRules(DuckyMoMoCore plugin, ConfigurationSection c) {
+    WarRules(DuckyMoMoCore plugin, Activity activity, ConfigurationSection c) {
+        this.activity = activity;
+        this.maxAccounts = Math.max(1, c.getInt("max-accounts", 2));
         this.wildPvp = c.getBoolean("wild-pvp", true);
         this.minRankHours = Math.max(0, c.getDouble("min-rank-hours", 5));
         this.militaryRanks = c.getStringList("military-ranks").stream()
@@ -61,7 +68,8 @@ final class WarRules implements Listener {
 
     String describe() {
         return "PvP đất hoang " + (wildPvp ? "bật" : "TẮT (chỉ đánh trong vùng vây lúc có phiên)")
-                + ", phong quân hàm cần " + minRankHours + " giờ chơi, " + alts.getKeys(false).size() + " tài khoản phụ";
+                + ", phong quân hàm cần " + minRankHours + " giờ chơi thật, tối đa " + maxAccounts + " tài khoản/người, "
+                + alts.getKeys(false).size() + " tài khoản phụ";
     }
 
     // ------------------------------------------------------------------ PvP
@@ -135,27 +143,26 @@ final class WarRules implements Listener {
             sender.sendMessage(c("&c" + target + " là tài khoản phụ (" + alts.getString(key(target) + ".chinh") + "), không được nhận quân hàm."));
             return;
         }
-        double hours = playHours(target);
-        if (hours < 0) {
+        OfflinePlayer tp = Bukkit.getPlayerExact(target);
+        if (tp == null) {
+            tp = Bukkit.getOfflinePlayerIfCached(target);
+        }
+        if (tp == null) {
             return; // chưa từng vào server: để Towny tự báo lỗi
         }
+        double hours = activity.totalHours(tp.getUniqueId());
         if (hours < minRankHours) {
             event.setCancelled(true);
             sender.sendMessage(c(String.format(Locale.ROOT,
-                    "&c%s mới chơi %.1f giờ ở server này, cần đủ %.0f giờ mới được phong quân hàm.", target, hours, minRankHours)));
+                    "&c%s mới chơi thật %.1f giờ, cần đủ %.0f giờ mới được phong quân hàm (/hoatdong).", target, hours, minRankHours)));
+            return;
         }
-    }
-
-    /** Số giờ đã chơi ở server này (thống kê Minecraft), -1 nếu không tìm thấy người chơi. */
-    private static double playHours(String name) {
-        OfflinePlayer p = Bukkit.getPlayerExact(name);
-        if (p == null) {
-            p = Bukkit.getOfflinePlayerIfCached(name);
+        double days = Bukkit.getPluginManager().isPluginEnabled("Towny") ? TownyCheck.daysInTown(tp.getUniqueId()) : 999;
+        if (days < activity.newMemberDays()) {
+            event.setCancelled(true);
+            sender.sendMessage(c(String.format(Locale.ROOT,
+                    "&c%s mới vào thị trấn %.1f ngày, cần ở đủ %d ngày mới được phong quân hàm.", target, days, activity.newMemberDays())));
         }
-        if (p == null || !p.hasPlayedBefore() && !p.isOnline()) {
-            return -1;
-        }
-        return p.getStatistic(Statistic.PLAY_ONE_MINUTE) / 20.0 / 3600.0;
     }
 
     // ------------------------------------------------------------------ tài khoản phụ
@@ -166,6 +173,63 @@ final class WarRules implements Listener {
 
     boolean isAlt(String name) {
         return alts.isConfigurationSection(key(name));
+    }
+
+    private List<String> altsOf(String main) {
+        List<String> out = new ArrayList<>();
+        for (String k : alts.getKeys(false)) {
+            if (main.equalsIgnoreCase(alts.getString(k + ".chinh", ""))) {
+                out.add(alts.getString(k + ".ten", k));
+            }
+        }
+        return out;
+    }
+
+    /**
+     * /taikhoanphu: người chơi tự khai. Tài khoản phụ gõ "khai <chính>", tài khoản chính gõ "xacnhan <phụ>" trong 10 phút.
+     * Gỡ tài khoản phụ chỉ admin làm (/dmm phu remove) để không ai gỡ ra đánh trận rồi khai lại.
+     */
+    boolean selfCommand(CommandSender s, String[] args) {
+        if (!(s instanceof Player p)) {
+            s.sendMessage("Chỉ người chơi dùng được. Admin: /dmm phu");
+            return true;
+        }
+        String sub = args.length >= 1 ? args[0].toLowerCase(Locale.ROOT) : "";
+        if (sub.equals("khai") && args.length >= 2) {
+            String main = args[1];
+            if (main.equalsIgnoreCase(p.getName())) {
+                p.sendMessage(c("&cTên tài khoản chính phải khác tên bạn."));
+            } else if (isAlt(p.getName())) {
+                p.sendMessage(c("&cBạn đã được ghi là tài khoản phụ của &f" + alts.getString(key(p.getName()) + ".chinh")));
+            } else if (isAlt(main)) {
+                p.sendMessage(c("&c" + main + " cũng là tài khoản phụ, hãy khai với tài khoản chính."));
+            } else {
+                pending.put(key(p.getName()), new String[] {main, Long.toString(System.currentTimeMillis())});
+                p.sendMessage(c("&aĐã gửi. Vào tài khoản &f" + main + " &avà gõ &f/taikhoanphu xacnhan " + p.getName() + " &atrong 10 phút."));
+            }
+        } else if (sub.equals("xacnhan") && args.length >= 2) {
+            String[] req = pending.get(key(args[1]));
+            if (req == null || !req[0].equalsIgnoreCase(p.getName()) || System.currentTimeMillis() - Long.parseLong(req[1]) > 600_000L) {
+                p.sendMessage(c("&cKhông có yêu cầu khai nào từ &f" + args[1] + " &c(hoặc đã quá 10 phút)."));
+            } else if (altsOf(p.getName()).size() >= maxAccounts - 1) {
+                p.sendMessage(c("&cMỗi người tối đa " + maxAccounts + " tài khoản. Bạn đã có: &f" + String.join(", ", altsOf(p.getName()))));
+            } else {
+                pending.remove(key(args[1]));
+                alts.set(key(args[1]) + ".ten", args[1]);
+                alts.set(key(args[1]) + ".chinh", p.getName());
+                alts.set(key(args[1]) + ".ghi-boi", "tu-khai");
+                alts.set(key(args[1]) + ".ngay", java.time.LocalDate.now().toString());
+                save(s);
+                p.sendMessage(c("&aĐã ghi &f" + args[1] + " &alà tài khoản phụ của bạn. Tài khoản phụ không nhận quân hàm, không đánh trận."));
+            }
+        } else {
+            String main = isAlt(p.getName()) ? alts.getString(key(p.getName()) + ".chinh") : null;
+            p.sendMessage(c(main != null ? "&7Bạn là tài khoản phụ của &f" + main
+                    : "&7Tài khoản phụ của bạn: &f" + (altsOf(p.getName()).isEmpty() ? "không có" : String.join(", ", altsOf(p.getName())))));
+            p.sendMessage(c("&7Luật: mỗi người tối đa &f" + maxAccounts + " &7tài khoản, tài khoản phụ phải khai. Giấu tài khoản phụ là vi phạm nặng."));
+            p.sendMessage(c("&7Khai: vào tài khoản phụ gõ &f/taikhoanphu khai <tên chính>&7, rồi tài khoản chính gõ &f/taikhoanphu xacnhan <tên phụ>"));
+        }
+        return true;
     }
 
     /** /dmm phu add <phụ> <chính> | remove <phụ> | list */
@@ -211,6 +275,15 @@ final class WarRules implements Listener {
     private static final class TownyCheck {
         static boolean wilderness(Location loc) {
             return com.palmergames.bukkit.towny.TownyAPI.getInstance().isWilderness(loc);
+        }
+
+        /** Số ngày đã ở thị trấn hiện tại (999 nếu không có dữ liệu). */
+        static double daysInTown(java.util.UUID id) {
+            com.palmergames.bukkit.towny.object.Resident r = com.palmergames.bukkit.towny.TownyAPI.getInstance().getResident(id);
+            if (r == null || !r.hasTown() || r.getJoinedTownAt() <= 0) {
+                return 999;
+            }
+            return (System.currentTimeMillis() - r.getJoinedTownAt()) / 86_400_000.0;
         }
     }
 }

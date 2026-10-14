@@ -1,0 +1,917 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<link rel="icon" type="image/png" href="favicon.png">
+<meta property="og:image" content="logo.png">
+<title>DuckyMoMo Network – Bang Hội Chiến trên bản đồ Trái Đất</title>
+<meta name="description" content="Server Minecraft Việt: lập thị trấn, dựng quốc gia, công thành mỗi cuối tuần trên bản đồ Đông Nam Á. Chơi được trên máy tính và điện thoại, không cần bản quyền.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0d1117;--bg2:#121a24;--card:#17212e;--card2:#1d2a3a;--line:#2a3a4f;
+  --text:#e8eef5;--muted:#9fb0c3;--dim:#6f8399;
+  --gold:#f2b84b;--gold2:#ffd98a;--red:#ef5350;--jade:#3ecf8e;--jade2:#9af0c8;--sky:#5ab4ff;--violet:#b48cff;
+  --radius:16px;--shadow:0 10px 30px rgba(0,0,0,.35);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Be Vietnam Pro",system-ui,-apple-system,Segoe UI,Roboto,sans-serif;line-height:1.6;font-size:16px}
+a{color:var(--gold2);text-decoration:none}a:hover{text-decoration:underline}
+img{max-width:100%}
+.wrap{max-width:1120px;margin:0 auto;padding:0 16px}
+h1,h2,h3{line-height:1.25;margin:0 0 .5em}
+h2{font-size:clamp(1.6rem,3.6vw,2.3rem);font-weight:800}
+h3{font-size:1.15rem;font-weight:700}
+p{margin:0 0 .9em}
+.muted{color:var(--muted)}.dim{color:var(--dim)}
+.gold{color:var(--gold)}.jade{color:var(--jade)}.red{color:var(--red)}.sky{color:var(--sky)}
+.pill{display:inline-flex;align-items:center;gap:.4em;padding:.25em .75em;border-radius:999px;font-size:.82rem;font-weight:600;background:var(--card2);border:1px solid var(--line);color:var(--muted)}
+.dot{width:.55em;height:.55em;border-radius:50%;background:var(--dim);display:inline-block}
+.dot.on{background:var(--jade);box-shadow:0 0 0 0 rgba(62,207,142,.6);animation:pulse 2s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(62,207,142,.5)}70%{box-shadow:0 0 0 8px rgba(62,207,142,0)}100%{box-shadow:0 0 0 0 rgba(62,207,142,0)}}
+
+/* nav */
+header.nav{position:sticky;top:0;z-index:50;background:rgba(13,17,23,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.nav .wrap{display:flex;align-items:center;justify-content:space-between;height:60px;gap:12px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;color:var(--text);font-size:1.05rem;white-space:nowrap}
+.brand:hover{text-decoration:none}
+.logo{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,var(--gold),#c97a1a);display:grid;place-items:center;color:#1a1206;font-weight:900}
+.links{display:flex;gap:4px;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
+.links::-webkit-scrollbar{display:none}
+.links a{color:var(--muted);padding:6px 10px;border-radius:8px;font-size:.9rem;font-weight:600;white-space:nowrap}
+.links a:hover{color:var(--text);background:var(--card);text-decoration:none}
+.menu-btn{display:none;background:var(--card);border:1px solid var(--line);color:var(--text);border-radius:10px;padding:8px 12px;font:inherit;font-weight:700}
+@media (max-width:900px){
+  .links{display:none;position:absolute;top:60px;left:0;right:0;flex-direction:column;background:var(--bg2);border-bottom:1px solid var(--line);padding:8px 16px 14px}
+  .links.open{display:flex}
+  .links a{padding:10px 8px}
+  .menu-btn{display:block}
+}
+
+/* hero */
+.hero{position:relative;overflow:hidden;padding:72px 0 56px;background:
+  radial-gradient(900px 400px at 15% -10%,rgba(242,184,75,.18),transparent 60%),
+  radial-gradient(700px 400px at 95% 10%,rgba(62,207,142,.12),transparent 60%),var(--bg)}
+.hero::before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);background-size:32px 32px;mask-image:linear-gradient(180deg,#000 30%,transparent)}
+.hero .wrap{position:relative;display:grid;grid-template-columns:1.15fr .85fr;gap:40px;align-items:center}
+@media (max-width:900px){.hero .wrap{grid-template-columns:1fr}.hero{padding:44px 0 36px}}
+.hero h1{font-size:clamp(2rem,5.4vw,3.4rem);font-weight:800;letter-spacing:-.01em}
+.hero h1 .accent{background:linear-gradient(90deg,var(--gold2),var(--gold) 45%,#ff8f3a);-webkit-background-clip:text;background-clip:text;color:transparent}
+.lead{font-size:1.12rem;color:var(--muted);max-width:40em}
+.cta{display:flex;gap:12px;flex-wrap:wrap;margin:22px 0 18px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 18px;border-radius:12px;font-weight:700;border:1px solid var(--line);background:var(--card);color:var(--text);cursor:pointer;font:inherit;font-weight:700}
+.btn:hover{text-decoration:none;border-color:var(--gold)}
+.btn.primary{background:linear-gradient(135deg,var(--gold),#d98b25);color:#1d1203;border:none}
+.btn.primary:hover{filter:brightness(1.08)}
+.hero-badges{display:flex;gap:8px;flex-wrap:wrap}
+.mapcard{background:linear-gradient(180deg,var(--card),var(--bg2));border:1px solid var(--line);border-radius:20px;padding:16px;box-shadow:var(--shadow)}
+.mapcard svg{width:100%;height:auto;display:block}
+.mapcard .cap{display:flex;justify-content:space-between;align-items:center;font-size:.82rem;color:var(--dim);margin-top:8px}
+
+/* stats */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:-6px}
+@media (max-width:700px){.stats{grid-template-columns:repeat(2,1fr)}}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+.stat b{display:block;font-size:1.5rem;font-weight:800}
+.stat span{font-size:.85rem;color:var(--muted)}
+
+section{padding:64px 0;border-top:1px solid rgba(42,58,79,.5)}
+section.alt{background:var(--bg2)}
+.kicker{font-size:.8rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
+.kicker.j{color:var(--jade)}.kicker.r{color:var(--red)}.kicker.s{color:var(--sky)}.kicker.v{color:var(--violet)}
+.intro{max-width:46em;color:var(--muted);font-size:1.05rem;margin-bottom:28px}
+.grid{display:grid;gap:16px}
+.grid>*,.journey>*,.stats>*{min-width:0}
+.g2{grid-template-columns:repeat(2,1fr)}.g3{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(4,1fr)}
+@media (max-width:900px){.g3,.g4{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:620px){.g2,.g3,.g4{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:20px}
+.card.hl{border-color:rgba(242,184,75,.45);background:linear-gradient(180deg,rgba(242,184,75,.07),var(--card) 60%)}
+.card.jade{border-color:rgba(62,207,142,.4);background:linear-gradient(180deg,rgba(62,207,142,.07),var(--card) 60%)}
+.card.redc{border-color:rgba(239,83,80,.4);background:linear-gradient(180deg,rgba(239,83,80,.07),var(--card) 60%)}
+.card p:last-child{margin-bottom:0}
+.ic{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;margin-bottom:12px;background:var(--card2);border:1px solid var(--line)}
+.ic svg{width:22px;height:22px}
+ul.clean{list-style:none;padding:0;margin:0}
+ul.clean li{padding:6px 0 6px 26px;position:relative}
+ul.clean li::before{content:"";position:absolute;left:4px;top:15px;width:8px;height:8px;border-radius:2px;background:var(--gold)}
+ul.clean.j li::before{background:var(--jade)}ul.clean.r li::before{background:var(--red)}ul.clean.s li::before{background:var(--sky)}
+code,.kbd{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;background:#0b1118;border:1px solid var(--line);border-radius:6px;padding:.08em .4em;font-size:.9em;color:var(--gold2)}
+
+/* join */
+.tabs{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.tab{padding:10px 16px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--muted);font:inherit;font-weight:700;cursor:pointer}
+.tab.on{color:#1d1203;background:var(--gold);border-color:var(--gold)}
+.pane{display:none}.pane.on{display:block}
+.addr{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:#0b1118;border:1px dashed var(--line);border-radius:12px;padding:12px 14px;margin:8px 0}
+.addr code{background:none;border:none;font-size:1.05rem;padding:0;color:var(--gold2);word-break:break-all}
+.copy{margin-left:auto;padding:6px 12px;border-radius:8px;border:1px solid var(--line);background:var(--card2);color:var(--text);font:inherit;font-size:.85rem;font-weight:700;cursor:pointer}
+.steps{counter-reset:s;display:grid;gap:12px}
+.step{display:grid;grid-template-columns:40px 1fr;gap:12px;align-items:start}
+.step::before{counter-increment:s;content:counter(s);width:36px;height:36px;border-radius:10px;display:grid;place-items:center;font-weight:800;background:var(--card2);border:1px solid var(--line);color:var(--gold)}
+
+/* timeline */
+.journey{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;position:relative}
+@media (max-width:900px){.journey{grid-template-columns:1fr}}
+.jstep{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;position:relative}
+.jstep .n{font-size:.75rem;font-weight:800;color:var(--gold);letter-spacing:.1em}
+.season{display:grid;grid-template-columns:repeat(10,1fr);gap:6px;margin:18px 0 10px}
+.wk{height:56px;border-radius:10px;display:grid;place-items:center;font-weight:800;font-size:.85rem;border:1px solid var(--line)}
+.wk.peace{background:rgba(62,207,142,.15);color:var(--jade2)}
+.wk.war{background:rgba(242,184,75,.12);color:var(--gold2)}
+.wk.big{background:rgba(239,83,80,.2);color:#ffb3b1}
+.wk.now{outline:2px solid var(--text);outline-offset:2px}
+@media (max-width:620px){.season{grid-template-columns:repeat(5,1fr)}}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:.85rem;color:var(--muted)}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+
+/* siege flow */
+.flow{display:grid;gap:10px}
+.flow .f{display:grid;grid-template-columns:120px 1fr;gap:14px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px}
+.flow .f b.when{color:var(--gold)}
+@media (max-width:620px){.flow .f{grid-template-columns:1fr;gap:4px}}
+
+/* tables */
+table{width:100%;border-collapse:collapse;font-size:.95rem}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--muted);font-weight:700;font-size:.82rem;text-transform:uppercase;letter-spacing:.06em}
+.tbl{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:auto}
+.tbl table{min-width:420px}
+td.rank{font-weight:800;color:var(--gold);width:48px}
+
+/* live */
+.live{display:flex;align-items:center;gap:8px;font-size:.8rem;color:var(--muted);font-weight:600}
+.empty{color:var(--dim);font-style:italic;padding:12px 0}
+.case{border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:10px;background:var(--card2)}
+.case .h{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;font-weight:700}
+.tag{font-size:.75rem;font-weight:800;padding:.15em .6em;border-radius:6px}
+.tag.open{background:rgba(239,83,80,.18);color:#ff9d9b}.tag.done{background:rgba(62,207,142,.15);color:var(--jade2)}
+.votes{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.votes span{font-size:.78rem;background:#0b1118;border:1px solid var(--line);border-radius:6px;padding:.1em .5em;color:var(--muted)}
+
+/* penalty ladder */
+.ladder{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+@media (max-width:900px){.ladder{grid-template-columns:repeat(2,1fr)}}
+.lv{border-radius:12px;padding:12px;border:1px solid var(--line);background:var(--card)}
+.lv b{display:block}.lv small{color:var(--muted)}
+
+/* donate */
+.tier{border-radius:14px;padding:18px;background:var(--card);border:1px solid var(--line);position:relative}
+.tier h3{margin-bottom:6px}
+.tier .price{font-size:.88rem;color:var(--muted)}
+
+/* faq */
+details{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:0 16px;margin-bottom:10px}
+summary{cursor:pointer;padding:14px 0;font-weight:700;list-style:none;display:flex;justify-content:space-between;gap:12px}
+summary::after{content:"+";color:var(--gold);font-weight:800}
+details[open] summary::after{content:"–"}
+details>div{padding:0 0 14px;color:var(--muted)}
+
+.callout{border-left:4px solid var(--gold);background:rgba(242,184,75,.07);padding:14px 16px;border-radius:0 12px 12px 0;margin:16px 0}
+.callout.j{border-color:var(--jade);background:rgba(62,207,142,.07)}.callout.r{border-color:var(--red);background:rgba(239,83,80,.07)}
+footer{padding:40px 0 60px;border-top:1px solid var(--line);color:var(--dim);font-size:.9rem}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);opacity:0;background:var(--jade);color:#04150d;font-weight:800;padding:10px 16px;border-radius:10px;transition:.25s;z-index:99}
+.toast.show{opacity:1;transform:translateX(-50%)}
+.mc{font-family:ui-monospace,Consolas,monospace}
+
+/* ===== Bản toàn khung + hiệu ứng (14/10) ===== */
+.wrap{max-width:1440px;padding:0 clamp(16px,4vw,56px)}
+header.nav .wrap{height:64px}
+.brand img{width:38px;height:38px;filter:drop-shadow(0 2px 6px rgba(242,184,75,.45));transition:transform .3s}
+.brand:hover img{transform:rotate(-12deg) scale(1.08)}
+.nav-cta{padding:8px 14px;border-radius:10px;font-weight:800;font-size:.9rem;background:linear-gradient(135deg,var(--gold),#d98b25);color:#1d1203!important;white-space:nowrap}
+.nav-cta:hover{text-decoration:none;filter:brightness(1.1)}
+@media (max-width:900px){.nav-cta{display:none}}
+
+.hero{min-height:calc(100svh - 64px);display:flex;flex-direction:column;justify-content:center;padding:56px 0 40px}
+.hero .wrap{grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:clamp(24px,4vw,72px)}
+.hero h1{font-size:clamp(2.4rem,5.4vw,4.8rem);line-height:1.08;letter-spacing:-.02em;margin-top:18px}
+.hero h1 .accent{background:linear-gradient(90deg,#ffe39a,var(--gold) 35%,#ff8f3a 70%,#ffcf6b);background-size:200% auto;-webkit-background-clip:text;background-clip:text;color:transparent;animation:shine 6s linear infinite}
+@keyframes shine{to{background-position:200% center}}
+.lead{font-size:clamp(1.05rem,1.4vw,1.25rem)}
+.aurora{position:absolute;inset:-20% -10% auto;height:120%;pointer-events:none;filter:blur(80px);opacity:.55;z-index:0}
+.aurora span{position:absolute;border-radius:50%;animation:float 18s ease-in-out infinite}
+.aurora span:nth-child(1){width:42vw;height:42vw;left:-8vw;top:-6vw;background:radial-gradient(circle,rgba(242,184,75,.55),transparent 65%)}
+.aurora span:nth-child(2){width:36vw;height:36vw;right:-6vw;top:4vw;background:radial-gradient(circle,rgba(62,207,142,.4),transparent 65%);animation-delay:-6s}
+.aurora span:nth-child(3){width:30vw;height:30vw;left:35vw;top:22vw;background:radial-gradient(circle,rgba(180,140,255,.28),transparent 65%);animation-delay:-12s}
+@keyframes float{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(4vw,3vw) scale(1.1)}66%{transform:translate(-3vw,2vw) scale(.95)}}
+.hero .wrap,.hero .statwrap{position:relative;z-index:1}
+.hero .statwrap{display:block}
+
+.btn{transition:transform .15s,box-shadow .2s,border-color .2s}
+.btn:hover{transform:translateY(-2px)}
+.btn.primary{position:relative;overflow:hidden;box-shadow:0 8px 28px rgba(242,184,75,.35);font-size:1.05rem;padding:14px 22px}
+.btn.primary::after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 30%,rgba(255,255,255,.55) 50%,transparent 70%);transform:translateX(-120%);animation:sweep 3.2s ease-in-out infinite}
+@keyframes sweep{60%,100%{transform:translateX(120%)}}
+
+.visual{position:relative}
+.duck{position:absolute;left:-9%;bottom:-12%;width:clamp(150px,17vw,260px);z-index:3}
+.duck::before{content:"";position:absolute;inset:-18%;border-radius:50%;background:radial-gradient(circle,rgba(255,214,0,.42),rgba(242,184,75,.1) 45%,transparent 70%);animation:pulseGlow 4s ease-in-out infinite;z-index:-1;pointer-events:none}
+@keyframes pulseGlow{50%{transform:scale(1.12);opacity:.8}}
+.mascot{display:block;width:100%;filter:drop-shadow(0 18px 30px rgba(0,0,0,.55));animation:bob 3.6s ease-in-out infinite;transform-origin:50% 90%;cursor:pointer}
+.mascot:hover{animation:wiggle .5s ease-in-out 2}
+@keyframes bob{0%,100%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-14px) rotate(3deg)}}
+@keyframes wiggle{25%{transform:rotate(-12deg)}75%{transform:rotate(12deg)}}
+.bubble{position:absolute;left:48%;bottom:96%;background:#fff;color:#1a1206;font-weight:800;font-size:.9rem;padding:8px 12px;border-radius:14px;box-shadow:0 8px 20px rgba(0,0,0,.35);white-space:nowrap;animation:pop 6s ease-in-out infinite}
+.bubble::after{content:"";position:absolute;left:18px;bottom:-8px;border:8px solid transparent;border-top-color:#fff;border-bottom:0}
+@keyframes pop{0%,12%{opacity:0;transform:scale(.6)}18%,80%{opacity:1;transform:scale(1)}90%,100%{opacity:0;transform:scale(.8)}}
+.mapcard{transform:perspective(1200px) rotateY(-6deg) rotateX(3deg);transition:transform .5s;position:relative;z-index:1}
+.mapcard:hover{transform:perspective(1200px) rotateY(0) rotateX(0)}
+.zp{animation:zp 2.4s ease-out infinite;transform-box:fill-box;transform-origin:center}
+@keyframes zp{0%{transform:scale(.6);opacity:.9}100%{transform:scale(2.4);opacity:0}}
+.ring{animation:spin 30s linear infinite;transform-box:fill-box;transform-origin:center}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media (max-width:900px){
+  .hero{min-height:auto}
+  .hero .wrap{grid-template-columns:1fr}
+  .visual{margin-bottom:60px}
+  .duck{left:-2%;bottom:-16%;width:130px}
+  .bubble{font-size:.8rem;left:40%;white-space:normal;width:max-content;max-width:170px}
+  .mapcard{transform:none}
+}
+
+.statwrap{margin-top:clamp(28px,4vw,48px)}
+.stat{position:relative;overflow:hidden;transition:transform .2s,border-color .2s}
+.stat:hover{transform:translateY(-3px);border-color:rgba(242,184,75,.5)}
+.stat b{font-size:clamp(1.6rem,2.6vw,2.3rem);background:linear-gradient(180deg,#fff,#c9d6e6);-webkit-background-clip:text;background-clip:text;color:transparent}
+#stSiege{font-size:clamp(1.15rem,1.9vw,1.75rem);padding-right:28px}
+.stat i{position:absolute;right:12px;top:10px;font-style:normal;font-size:1.6rem;opacity:.35}
+
+.marquee{overflow:hidden;border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:linear-gradient(90deg,rgba(242,184,75,.08),rgba(62,207,142,.06));padding:14px 0}
+.marquee .track{display:flex;gap:44px;width:max-content;animation:marq 38s linear infinite;font-weight:700;color:var(--muted);white-space:nowrap}
+.marquee .track span b{color:var(--gold2)}
+@keyframes marq{to{transform:translateX(-50%)}}
+
+section{padding:clamp(56px,7vw,96px) 0}
+h2{font-size:clamp(1.8rem,3.4vw,2.8rem);letter-spacing:-.01em}
+.kicker{display:inline-flex;align-items:center;gap:10px}
+.kicker::before{content:"";width:28px;height:2px;background:currentColor;border-radius:2px}
+.card,.jstep,.lv,.tier,.flow .f{transition:transform .25s,border-color .25s,box-shadow .25s}
+.card:hover,.jstep:hover,.lv:hover,.tier:hover{transform:translateY(-4px);border-color:rgba(242,184,75,.45);box-shadow:0 14px 34px rgba(0,0,0,.35)}
+.card.jade:hover{border-color:rgba(62,207,142,.6)}.card.redc:hover{border-color:rgba(239,83,80,.6)}
+.jstep .n{display:inline-block;padding:2px 8px;border-radius:6px;background:rgba(242,184,75,.12)}
+@media (min-width:1300px){.journey{gap:18px}}
+
+.reveal{opacity:0;transform:translateY(26px);transition:opacity .7s ease,transform .7s ease}
+.reveal.in{opacity:1;transform:none}
+
+.addr{background:linear-gradient(90deg,#0b1118,#111b28);border-style:solid;border-color:rgba(242,184,75,.35);box-shadow:inset 0 0 0 1px rgba(255,255,255,.02),0 0 24px rgba(242,184,75,.08)}
+.copy:hover{border-color:var(--gold)}
+.cta-band{margin:40px 0 clamp(56px,7vw,96px);border-radius:24px;padding:clamp(24px,4vw,44px);display:grid;grid-template-columns:auto 1fr auto;gap:24px;align-items:center;
+  background:radial-gradient(600px 200px at 10% 0%,rgba(242,184,75,.25),transparent),linear-gradient(135deg,#1b2433,#121a24);border:1px solid rgba(242,184,75,.35)}
+.cta-band img{width:110px;animation:bob 3.6s ease-in-out infinite}
+.cta-band h3{font-size:clamp(1.3rem,2.4vw,1.9rem);margin:0}
+@media (max-width:760px){.cta-band{grid-template-columns:1fr;text-align:center}.cta-band img{margin:0 auto}}
+footer .fbrand{display:flex;align-items:center;gap:12px}
+footer .fbrand img{width:44px}
+
+/* thẻ giải thưởng: vuốt ngang trên điện thoại */
+.dots{display:none}
+@media (max-width:620px){
+  .swipe{display:flex!important;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-padding:0 16px;margin:16px -16px 0;padding:4px 16px 8px;scrollbar-width:none}
+  .swipe::-webkit-scrollbar{display:none}
+  .swipe>*{flex:0 0 82%;scroll-snap-align:start}
+  .swipe .card:hover{transform:none}
+  .tbl table{min-width:0}
+  .tbl th,.tbl td{padding:9px 10px}
+  .dots{display:flex;justify-content:center;gap:8px;margin-top:10px}
+  .dots i{width:8px;height:8px;border-radius:99px;background:var(--line);transition:width .25s,background .25s}
+  .dots i.on{width:22px;background:var(--gold)}
+}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}.reveal{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap">
+    <a class="brand" href="#top"><img src="logo.png" alt="Logo DuckyMoMo"><span>DuckyMoMo</span></a>
+    <nav class="links" id="links">
+      <a href="#vao">Cách vào</a>
+      <a href="#banghoi">Bang Hội Chiến</a>
+      <a href="#congthanh">Công thành</a>
+      <a href="#hoabinh">Hoà Bình</a>
+      <a href="#boss">Boss</a>
+      <a href="#bantron">Hội Bàn Tròn</a>
+      <a href="#xephang">Xếp hạng</a>
+      <a href="#luat">Luật</a>
+      <a href="#hoidap">Hỏi đáp</a>
+    </nav>
+    <a class="nav-cta" href="#vao">Vào chơi</a>
+    <button class="menu-btn" id="menuBtn" aria-label="Mở menu">Menu</button>
+  </div>
+</header>
+
+<!-- ============ HERO ============ -->
+<div class="hero" id="top">
+  <div class="aurora" aria-hidden="true"><span></span><span></span><span></span></div>
+  <div class="wrap">
+    <div>
+      <div class="hero-badges">
+        <span class="pill"><span class="dot" id="onDot"></span><span id="onText">Đang kiểm tra server…</span></span>
+        <span class="pill">Mùa <span data-k="season.id">1</span> · Đông Nam Á</span>
+        <span class="pill">Máy tính &amp; điện thoại</span>
+      </div>
+      <h1 style="margin-top:16px">Dựng quốc gia của bạn trên <span class="accent">bản đồ Trái Đất</span></h1>
+      <p class="lead">Bang Hội Chiến là chế độ chiến lược sinh tồn trên bản đồ Đông Nam Á thật, tỉ lệ 1:1000. Lập thị trấn, kết minh thành quốc gia,
+        làm kinh tế và <b class="gold">công thành mỗi cuối tuần</b>. Thích yên bình thì vào <b class="jade">Liên minh Hoà Bình</b>: buôn bán,
+        xây dựng, không bao giờ bị chiếm. Ai giết dân hoà bình sẽ phải ra trước <b>Hội Bàn Tròn</b>.</p>
+      <div class="cta">
+        <a class="btn primary" href="#vao">Vào chơi ngay</a>
+        <a class="btn" href="#banghoi">Xem cách chơi</a>
+      </div>
+      <p class="dim" style="font-size:.9rem;margin:0">Không cần tài khoản bản quyền · Java <span data-k="site.java.phien-ban">1.13 tới bản mới nhất</span> · Bedrock trên iOS, Android</p>
+    </div>
+    <div class="visual">
+    <div class="duck">
+      <div class="bubble" id="bubble">Công thành tối nay không? ⚔️</div>
+      <img class="mascot" src="logo.png" alt="Vịt DuckyMoMo">
+    </div>
+    <div class="mapcard" aria-label="Sơ đồ vùng mùa 1">
+      <svg id="mapSvg" viewBox="0 0 400 370" role="img" aria-label="Các khu trong vùng mùa 1"></svg>
+      <div class="cap"><span>Vùng mùa 1 · 2.600 × 2.400 block</span><span>● khu dịch chuyển /tpr</span></div>
+    </div>
+    </div>
+  </div>
+  <div class="wrap statwrap">
+    <div class="stats">
+      <div class="stat"><i>🎮</i><b id="stPlayers">–</b><span>người đang online</span></div>
+      <div class="stat"><i>🏰</i><b id="stTowns">–</b><span>thị trấn đã lập</span></div>
+      <div class="stat"><i>🚩</i><b id="stNations">–</b><span>quốc gia</span></div>
+      <div class="stat"><i>⚔️</i><b id="stSiege">–</b><span>giờ công thành</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="marquee" aria-hidden="true"><div class="track" id="marq"></div></div>
+
+<!-- ============ CÁCH VÀO ============ -->
+<section id="vao">
+  <div class="wrap">
+    <div class="kicker">Bắt đầu trong 2 phút</div>
+    <h2>Cách vào server</h2>
+    <p class="intro">Server chấp nhận cả bản Minecraft không bản quyền. Máy tính dùng bản Java, điện thoại và console dùng bản Bedrock: hai bên chơi chung một thế giới.</p>
+    <div class="tabs">
+      <button class="tab on" data-pane="pJava">💻 Máy tính (Java)</button>
+      <button class="tab" data-pane="pBedrock">📱 Điện thoại (Bedrock)</button>
+    </div>
+    <div class="grid g2">
+      <div>
+        <div class="pane on" id="pJava">
+          <div class="steps">
+            <div class="step"><div><h3>Mở Minecraft Java</h3><p class="muted">Bản chính hãng hoặc launcher miễn phí (TLauncher, SKLauncher…). Phiên bản <span data-k="site.java.phien-ban">1.13 tới mới nhất</span>.</p></div></div>
+            <div class="step"><div><h3>Multiplayer → Add Server</h3><p class="muted">Dán địa chỉ dưới đây vào ô Server Address, không cần nhập cổng.</p>
+              <div class="addr"><code id="javaAddr">mc.goc6.io.vn</code><button class="copy" data-copy="javaAddr">Sao chép</button></div>
+              <p class="dim" id="javaBackup" style="margin-top:6px;font-size:.85rem">Không vào được? Thử địa chỉ dự phòng: <code>pgsql-youths.tun.ply.gg</code></p></div></div>
+            <div class="step"><div><h3>Đăng ký lần đầu</h3><p class="muted">Gõ <span class="kbd">/register &lt;mật khẩu&gt; &lt;mật khẩu&gt;</span>. Lần sau chỉ cần <span class="kbd">/login &lt;mật khẩu&gt;</span>.</p></div></div>
+            <div class="step"><div><h3>Chọn Bang Hội Chiến</h3><p class="muted">Ở sảnh, chuột phải vào la bàn (hoặc gõ <span class="kbd">/menu</span>) rồi chọn chế độ.</p></div></div>
+          </div>
+        </div>
+        <div class="pane" id="pBedrock">
+          <div class="steps">
+            <div class="step"><div><h3>Mở Minecraft trên điện thoại</h3><p class="muted">iOS, Android, Windows 10/11 bản Bedrock, console đều được. Đăng nhập Xbox như thường.</p></div></div>
+            <div class="step"><div><h3>Chơi → Máy chủ → Thêm máy chủ</h3><p class="muted">Nhập địa chỉ và cổng dưới đây. Nhớ sửa ô Cổng: <b>không</b> để 19132 mặc định.</p>
+              <div class="addr"><code id="bedAddr">mc.goc6.io.vn</code><button class="copy" data-copy="bedAddr">Sao chép</button></div>
+              <div class="addr"><span class="muted">Cổng</span><code id="bedPort">19130</code><button class="copy" data-copy="bedPort">Sao chép</button></div>
+              <p class="dim" id="bedBackup" style="margin-top:6px;font-size:.85rem">Không vào được? Thử địa chỉ dự phòng: <code>pgsql-mississauga.tun.ply.gg</code> cổng <code>21185</code></p></div></div>
+            <div class="step"><div><h3>Không cần mật khẩu</h3><p class="muted">Người chơi Bedrock tự đăng nhập bằng tài khoản Xbox. Tên trong game có dấu chấm ở đầu, ví dụ <span class="kbd">.griim7833</span>.</p></div></div>
+            <div class="step"><div><h3>Menu nút bấm</h3><p class="muted">Trên điện thoại, các menu hiện dạng nút bấm to, dễ chạm. Chạm giữ la bàn ở sảnh để chọn chế độ.</p></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="grid">
+        <div class="card hl"><h3>🎁 Người mới được gì?</h3>
+          <ul class="clean">
+            <li><b data-k="player.start_money">200</b> xu khởi đầu và <b>bộ quà tân thủ</b></li>
+            <li><b data-k="player.newbie_minutes">15</b> phút được bảo vệ, không ai đánh được</li>
+            <li>Sách cẩm nang tiếng Việt: gõ <span class="kbd">/huongdan</span></li>
+            <li>Dịch chuyển tới vùng đất trống: <span class="kbd">/tpr</span> hoặc bấm NPC ở spawn</li>
+          </ul></div>
+        <div class="card"><h3>Các chế độ</h3>
+          <ul class="clean s">
+            <li><b>Bang Hội Chiến</b> <span class="pill" style="margin-left:6px">Đang mở</span><br><span class="muted">Chiến lược, thị trấn, công thành trên bản đồ Trái Đất.</span></li>
+            <li><b>Practice / Duels</b> <span class="pill" style="margin-left:6px">Thử nghiệm</span><br><span class="muted">Đấu 1v1 luyện PvP, không mất đồ.</span></li>
+          </ul></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="wrap"><div class="cta-band reveal">
+  <img src="logo.png" alt="">
+  <div><h3>Vịt đã mài dao sẵn. Còn bạn?</h3><p class="muted" style="margin:6px 0 0">Vào sớm để chọn đất đẹp, lập thị trấn trước khi mùa chiến tranh bắt đầu.</p></div>
+  <a class="btn primary" href="#vao">Lấy địa chỉ server</a>
+</div></div>
+
+<!-- ============ BANG HỘI CHIẾN ============ -->
+<section id="banghoi" class="alt">
+  <div class="wrap">
+    <div class="kicker">Chế độ chính</div>
+    <h2>Bang Hội Chiến: từ kẻ lang thang thành Bá Chủ</h2>
+    <p class="intro">Bản đồ là Đông Nam Á thật, thu nhỏ 1:1000: từ Myanmar tới Nam Trung Quốc, từ Tây Bắc Việt Nam tới Nam Bộ. Spawn đặt ở Hà Nội, nơi có
+      kinh đô của Liên minh Hoà Bình. Mỗi mùa kéo dài 10 tuần rồi mở thế giới mới cho công bằng.</p>
+
+    <div class="journey">
+      <div class="jstep"><div class="n">BƯỚC 1</div><h3>Đặt chân</h3><p class="muted">Nhận quà tân thủ, đọc <span class="kbd">/huongdan</span>, dùng <span class="kbd">/tpr</span> chọn vùng đất muốn tới.</p></div>
+      <div class="jstep"><div class="n">BƯỚC 2</div><h3>Kiếm tiền</h3><p class="muted">Đào, chặt, săn, trồng, câu cá đều có tiền tự động. Bán đồ bằng <span class="kbd">/sell</span>, buôn ở chợ.</p></div>
+      <div class="jstep"><div class="n">BƯỚC 3</div><h3>Lập thị trấn</h3><p class="muted">Chơi đủ <b data-k="town.min_hours">3</b> giờ, có <b data-k="town.price" data-f="xu">500 xu</b>: gõ <span class="kbd">/t new &lt;tên&gt;</span>.</p></div>
+      <div class="jstep"><div class="n">BƯỚC 4</div><h3>Lập quốc gia</h3><p class="muted">Thị trấn có <b data-k="town.nation_min_active">3</b> dân hoạt động và <b data-k="town.nation_price" data-f="xu">1.000 xu</b>: <span class="kbd">/n new</span>.</p></div>
+      <div class="jstep"><div class="n">BƯỚC 5</div><h3>Công thành</h3><p class="muted">Cắm cờ vây thành địch, đánh vào tối cuối tuần, cướp tiền hoặc chiếm làm thuộc địa.</p></div>
+    </div>
+
+    <h3 style="margin-top:36px">Lịch một mùa (10 tuần)</h3>
+    <div class="season" id="seasonBar"></div>
+    <div class="legend"><span><i style="background:rgba(62,207,142,.5)"></i>Hoà bình: xây dựng, chưa cho công thành</span><span><i style="background:rgba(242,184,75,.5)"></i>Chiến tranh: công thành theo lịch</span><span><i style="background:rgba(239,83,80,.6)"></i>Đại chiến + đóng mùa</span></div>
+
+    <div class="grid g3" style="margin-top:32px">
+      <div class="card"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#f2b84b" stroke-width="2"><path d="M3 21h18M5 21V9l7-5 7 5v12M9 21v-6h6v6"/></svg></div>
+        <h3>Thị trấn &amp; đất đai</h3>
+        <ul class="clean">
+          <li>Mỗi dân hoạt động mang lại <b data-k="town.plots_per_resident">8</b> ô đất (16×16 block)</li>
+          <li>Mua thêm ô: <b data-k="town.claim_price" data-f="xu">25 xu</b>, càng nhiều càng đắt</li>
+          <li>Phí duy trì <b data-k="town.upkeep" data-f="xu">10 xu</b>/ngày; hết tiền thì nợ, không bị xoá</li>
+          <li>Hai thị trấn cách nhau ít nhất <b data-k="town.homeblock_distance">10</b> ô</li>
+          <li>Không lập thị trấn ở Nether và End</li>
+        </ul></div>
+      <div class="card"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#5ab4ff" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></div>
+        <h3>Giờ chơi thật</h3>
+        <p class="muted">Server chỉ tính phút bạn thật sự chơi; đứng AFK hay bị nước đẩy đi không tính. Xem bằng <span class="kbd">/hoatdong</span>.</p>
+        <ul class="clean s">
+          <li><b data-k="town.active_hours">3</b> giờ/tuần là <b>dân hoạt động</b></li>
+          <li><b data-k="player.rank_hours">5</b> giờ mới được nhận quân hàm</li>
+          <li>Đổi thị trấn phải chờ <b data-k="town.join_cooldown">3</b> ngày</li>
+        </ul></div>
+      <div class="card"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#3ecf8e" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+        <h3>Kinh tế</h3>
+        <ul class="clean j">
+          <li>Nghề tự động: thợ mỏ, tiều phu, nông dân, thợ săn, ngư dân… (<span class="kbd">/jobs</span>)</li>
+          <li>Bán cho server: <span class="kbd">/sell hand</span>, <span class="kbd">/worth</span></li>
+          <li>Chợ đấu giá <span class="kbd">/ah</span>, shop rương, trao đổi <span class="kbd">/trade</span></li>
+          <li>Phù phép: sách hiếm, shop <span class="kbd">/ce</span></li>
+          <li>Cửa hàng Kinh Đô ở spawn: vật liệu cơ bản, đồ trang trí, danh hiệu, trả bằng xu</li>
+        </ul></div>
+      <div class="card"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#ef5350" stroke-width="2"><path d="M14.5 17.5 3 6V3h3l11.5 11.5M13 19l6-6M16 16l4 4M19 21l2-2"/></svg></div>
+        <h3>PvP &amp; sinh tồn</h3>
+        <ul class="clean r">
+          <li>Đất hoang: PvP <b id="pvpWild">bật</b>, chết rơi đồ</li>
+          <li>Đồ rơi khi chết được giữ <b data-k="player.death_keep_minutes">10</b> phút, không bị dọn rác</li>
+          <li>Trong thị trấn và ở spawn: không ai đánh được bạn</li>
+          <li>Thoát game khi đang đánh nhau = chết, rơi đồ</li>
+          <li>Đang đánh nhau không dùng được lệnh dịch chuyển</li>
+        </ul></div>
+      <div class="card"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#b48cff" stroke-width="2"><path d="M12 22s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/></svg></div>
+        <h3>Dịch chuyển ngẫu nhiên</h3>
+        <p class="muted">Gõ <span class="kbd">/tpr</span> hoặc bấm NPC ở spawn, chọn khu. Bạn được thả xuống đất hoang an toàn, xa thị trấn khác. Chờ <b data-k="player.tpr_cooldown">5</b> phút giữa hai lần.</p>
+        <div id="zoneList" class="votes"></div></div>
+      <div class="card"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#f2b84b" stroke-width="2"><path d="M3 12a9 9 0 1 0 3-6.7L3 8M3 3v5h5"/></svg></div>
+        <h3>Chơi lại từ đầu</h3>
+        <p class="muted"><span class="kbd">/choilai</span> đưa bạn về như tài khoản mới (giữ rank, danh hiệu). <b data-k="player.reset_days">7</b> ngày một lần, tối đa <b data-k="player.reset_max">3</b> lần mỗi mùa. Chơi lại không xoá án phạt.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CÔNG THÀNH ============ -->
+<section id="congthanh">
+  <div class="wrap">
+    <div class="kicker r">Trái tim của chế độ</div>
+    <h2>Công thành có hẹn, không mất trắng</h2>
+    <p class="intro">Thành không bao giờ bị phá hay trộm lúc bạn offline. Chiến tranh chỉ diễn ra theo lịch, trong vùng vây quanh cờ, và chết trong trận
+      <b>không rơi đồ</b>. Chỉ <b>quốc gia</b> có ít nhất <b data-k="siege.min_towns">2</b> thị trấn mới được đi đánh; thị trấn nào cũng được phòng thủ.</p>
+    <div class="grid g2">
+      <div class="flow" id="siegeFlow">
+        <div class="f"><b class="when" id="flowStart">Thứ 5</b><div><b>Cắm cờ vây</b><br><span class="muted">Vua hoặc Tướng cắm cờ (banner không trắng) sát rìa thành địch, nộp quỹ chiến tranh <span data-k="siege.warchest_per_plot">20</span> xu × số ô của thành bị vây.</span></div></div>
+        <div class="f"><b class="when" id="flowDays">T7, CN</b><div><b>Các phiên đánh</b><br><span class="muted"><span data-k="siege.sessions">4</span> phiên, mỗi phiên <span data-k="siege.session_minutes">60</span> phút. PvP mở trong bán kính <span data-k="siege.zone_radius">200</span> block quanh cờ.</span></div></div>
+        <div class="f"><b class="when">Trong trận</b><div><b>Giữ cờ và hạ quân địch</b><br><span class="muted">Đứng gần cờ đủ 7 phút để chiếm, giữ cờ được điểm mỗi phút; hạ người có quân hàm được 150 điểm. Giành lại cờ: điểm ×3.</span></div></div>
+        <div class="f"><b class="when">Kết thúc</b><div><b>Thắng thua</b><br><span class="muted">Tấn công thắng: lấy lại quỹ, cướp <span data-k="siege.plunder_per_plot">40</span> xu × số ô, có thể chiếm làm thuộc địa (thủ đô không bị chiếm). Phòng thủ thắng: nhận quỹ chiến tranh.</span></div></div>
+        <div class="f"><b class="when">Sau trận</b><div><b>Miễn vây và khởi nghĩa</b><br><span class="muted">Thành vừa bị vây được miễn <span data-k="siege.immunity_days">7</span> ngày. Thuộc địa có thể khởi nghĩa giành lại tự do.</span></div></div>
+      </div>
+      <div class="grid">
+        <div class="card hl"><h3>Lịch công thành</h3><div id="siegeTable" class="muted">Đang tải…</div>
+          <p class="dim" style="font-size:.85rem;margin-top:10px" id="siegeState"></p></div>
+        <div class="card"><h3>Quân hàm</h3><p class="muted">Vua phong quân hàm từ <b>Binh nhì</b> tới <b>Tướng</b> bằng <span class="kbd">/n rank add</span>. Chỉ người có quân hàm mới được tính điểm giữ cờ. Muốn có quân hàm phải chơi thật đủ <b data-k="player.rank_hours">5</b> giờ và ở thị trấn đủ 3 ngày: tài khoản phụ không làm lính được.</p></div>
+        <div class="card"><h3>Luật chống gian</h3><ul class="clean"><li>Không xây tường obsidian/băng, không đổ nham thạch ở đất hoang</li><li>Thành đang bị vây không mời thêm dân, không mua bán đất</li><li>Người ngoài vào vùng vây bị "bệnh chiến tranh"</li><li>Mỗi quốc gia vây tối đa <span data-k="siege.max_attacks">2</span> thành cùng lúc</li></ul></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ HOÀ BÌNH ============ -->
+<section id="hoabinh" class="alt">
+  <div class="wrap">
+    <div class="kicker j">Cho người thích yên bình</div>
+    <h2>Liên minh Hoà Bình</h2>
+    <p class="intro">Không thích chiến tranh? Cả server chỉ có <b class="jade">một</b> Liên minh Hoà Bình, do server quản lý, thủ đô là kinh đô ở spawn. Thị trấn trong liên minh
+      <b>không bị vây, không bị chiếm, không bị cướp</b>. Dân hoà bình là thương nhân, thợ thủ công, kiến trúc sư và nhà ngoại giao của server.</p>
+    <div class="grid g3">
+      <div class="card jade"><h3>✅ Được gì</h3><ul class="clean j">
+        <li>Không bao giờ bị công thành hay chiếm đóng</li>
+        <li>Đất luôn tắt PvP, trang trại lớn không sợ bị phá</li>
+        <li>Chợ đấu giá <span class="kbd">/ah</span> <span id="ahOnly">chỉ mở trong đất hoà bình</span></li>
+        <li>Bán đồ ở chợ kinh đô được thêm <b data-k="peace.sell_bonus">20</b>%</li>
+        <li>Shop rương trong đất hoà bình miễn thuế (nơi khác <span data-k="peace.tax_outside">5</span>%)</li>
+        <li>1 ghế trong Hội Bàn Tròn</li>
+      </ul></div>
+      <div class="card"><h3>⚖️ Cái giá</h3><ul class="clean">
+        <li>Không có quân hàm, không đánh trận, không tính điểm Bá Chủ</li>
+        <li>Chỉ được tự vệ: giết người không phải tự vệ thì bị đuổi</li>
+        <li>Phí bảo hộ <span data-k="peace.fee">0,5</span> xu/ô mỗi ngày</li>
+        <li>Đất mới phải liền sát đất cũ; giá ô = <span data-k="peace.plot_base">25</span> + <span data-k="peace.plot_step">0,5</span> × tổng ô của liên minh</li>
+        <li>Cấm giữ đồ hộ, do thám, đánh thuê cho một quốc gia</li>
+      </ul></div>
+      <div class="card"><h3>🚪 Vào và rời</h3><ul class="clean s">
+        <li>Thị trưởng gõ <span class="kbd">/hoabinh vao</span>; thị trấn phải chạm đất liên minh</li>
+        <li>Chờ <b data-k="peace.join_wait">2</b> ngày mới có hiệu lực</li>
+        <li>Rời: mất hoà bình ngay, <b data-k="peace.rejoin">14</b> ngày mới vào lại</li>
+        <li>Có cờ vây gần nhà: server báo trước để di tản</li>
+      </ul></div>
+    </div>
+
+    <div class="grid g2" style="margin-top:16px">
+      <div class="card"><h3>Dân hoà bình chơi gì?</h3>
+        <div class="grid g2" style="gap:10px">
+          <div><b class="jade">Thương nhân</b><br><span class="muted">Mở gian hàng, cho thuê ô chợ, mở thương quán ở thành các quốc gia.</span></div>
+          <div><b class="jade">Thợ thủ công</b><br><span class="muted">Rèn, phù phép, ủ thuốc, nông trại lớn an toàn.</span></div>
+          <div><b class="jade">Kiến trúc sư</b><br><span class="muted">Xây kinh đô, nhận xây thành luỹ thuê, tranh giải Kiến Trúc Sư.</span></div>
+          <div><b class="jade">Nhà tổ chức</b><br><span class="muted">Giải đấu, đua thuyền, chợ phiên, lễ hội ở kinh đô.</span></div>
+        </div></div>
+      <div class="card"><h3>Tổ chức &amp; giấy phép</h3>
+        <p class="muted">Từ 3 dân hoà bình lập tổ chức (<span class="kbd">/tochuc</span>), Hội đồng Hoà Bình bỏ phiếu cấp giấy phép, phí <span data-k="peace.license_fee">100</span> xu/tuần từ quỹ tổ chức.</p>
+        <ul class="clean j"><li><b>Thương Hội</b>: thêm shop rương, thêm món đấu giá, rao hàng toàn server <span class="kbd">/quangcao</span></li>
+          <li><b>Tổ chức Sự kiện</b>: tạo sự kiện có điểm dịch chuyển, trao thưởng, mở đấu trường không mất đồ</li></ul>
+        <div id="orgList"></div></div>
+    </div>
+    <div class="card" style="margin-top:16px"><div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px"><h3 style="margin:0">Thị trấn trong liên minh</h3><span class="live"><span class="dot on"></span>Trực tiếp từ server</span></div>
+      <div id="peaceTowns" style="margin-top:10px"></div></div>
+  </div>
+</section>
+
+<!-- ============ DUNGEON & BOSS ============ -->
+<section id="boss">
+  <div class="wrap">
+    <div class="kicker v">Ngoài chiến tranh</div>
+    <h2>Dungeon &amp; Boss: Trái Đất lâm nguy</h2>
+    <p class="intro">Không chỉ đánh nhau giữa các bang hội. Có những thứ đáng sợ hơn đang thức giấc trên bản đồ Trái Đất, và đôi khi kẻ thù của hôm qua phải đứng chung một chiến tuyến.</p>
+    <div class="grid g2">
+      <div class="card hl">
+        <span class="pill" style="margin-bottom:10px">Đang chuẩn bị nội dung</span>
+        <h3>🗝️ Dungeon: cày đồ, cày tiền</h3>
+        <ul class="clean">
+          <li>Khu riêng đầy quái mạnh, bẫy và rương báu</li>
+          <li>Đi một mình hoặc lập nhóm với bạn bè, kể cả dân Liên minh Hoà Bình</li>
+          <li>Rơi xu dùng chung với cả server và đồ cấp cao</li>
+          <li>Có cấp kỹ năng: càng đánh càng mạnh, mở khoá đồ xịn hơn</li>
+          <li>Vào bằng lệnh <span class="kbd">/em</span></li>
+        </ul>
+      </div>
+      <div class="card redc">
+        <span class="pill" style="margin-bottom:10px">Sự kiện sắp ra mắt</span>
+        <h3>🌋 Trái Đất lâm nguy</h3>
+        <ul class="clean r">
+          <li>Boss khổng lồ bất ngờ xuất hiện ở một vùng trên bản đồ</li>
+          <li>Cả server được báo động, các bang hội chung tay tiêu diệt</li>
+          <li>Phần thưởng chia theo công sức của từng người</li>
+          <li>Mỗi lần một bối cảnh khác: núi lửa, quái biển, rừng sâu…</li>
+        </ul>
+      </div>
+    </div>
+    <p class="dim" style="margin-top:14px">Quái elite không tự sinh ngoài thế giới, nên đồ từ dungeon và boss là phần thưởng của người dám đi săn, không làm hỏng thế cân bằng chiến tranh.</p>
+  </div>
+</section>
+
+<!-- ============ HỘI BÀN TRÒN ============ -->
+<section id="bantron">
+  <div class="wrap">
+    <div class="kicker">Người chơi tự quản</div>
+    <h2>Hội Bàn Tròn</h2>
+    <p class="intro">Ở DuckyMoMo, admin chỉ xử hack và lỗi game. Mọi tranh chấp trong luật chơi do chính người chơi phân xử. Hội Bàn Tròn gồm thủ lĩnh
+      <b data-k="justice.seats">5</b> quốc gia mạnh nhất và đại diện Liên minh Hoà Bình. Hội họp <b>trực tiếp trong game</b>, tại một bàn tròn trong vùng hoà bình:
+      ai muốn bỏ phiếu phải tự đi tới, không thể ngồi nhà gõ lệnh.</p>
+
+    <div class="grid g3">
+      <div class="card redc"><h3>🗡️ Khi nào có án?</h3><p class="muted">Giết dân hoà bình trong đất hoà bình hoặc trong <b data-k="justice.buffer">100</b> block quanh đó. Không tính khi nạn nhân đánh trước (tự vệ <span data-k="justice.self_defense">30</span> giây), khi đang trong trận công thành, hoặc trên đấu trường.</p></div>
+      <div class="card hl"><h3>⚡ Phạt ngay (mức sàn)</h3><p class="muted">Tự động bồi thường <b data-k="justice.floor" data-f="xu">100 xu</b> cho nạn nhân (tái phạm gấp đôi), <b>cấm vào đất hoà bình</b> và <b>cấm vào vùng công thành</b> cho tới khi Hội xử xong. Không ai tha được mức sàn.</p></div>
+      <div class="card"><h3>🏛️ Họp thế nào?</h3><p class="muted">Định kỳ <b data-k="justice.day">Thứ 4</b> lúc <b data-k="justice.time">21:00</b>, có việc mới họp. Phải có ít nhất <b data-k="justice.min_seats">3</b> ghế có mặt, đứng trong <span data-k="justice.radius">16</span> block quanh bàn. Từ 30 phút trước không ai dịch chuyển tới gần nơi họp được: phải đi đường. Mọi phiếu đều công khai.</p></div>
+    </div>
+
+    <h3 style="margin-top:28px">Các mức Hội có thể phạt thêm</h3>
+    <div class="ladder">
+      <div class="lv"><b>Giữ mức sàn</b><small>Không phạt thêm</small></div>
+      <div class="lv"><b class="gold">Phạt nặng</b><small>Bồi thường tổng cộng gấp 3</small></div>
+      <div class="lv"><b class="gold">Truy nã</b><small><span data-k="justice.bounty_days">3</span> ngày, tên đỏ, ai hạ được nhận tiền thưởng</small></div>
+      <div class="lv"><b class="gold">Tù</b><small><span data-k="justice.jail_minutes">45</span> phút ở nhà tù kinh đô</small></div>
+      <div class="lv"><b class="red">Lưu đày</b><small>Cấm vào đất hoà bình <span data-k="justice.exile_days">14</span> ngày</small></div>
+      <div class="lv"><b class="red">Cấm công thành</b><small>1 tới 3 tuần không được vào vùng vây</small></div>
+      <div class="lv"><b class="sky">Kháng án</b><small>1 lần, phải có bằng chứng mới</small></div>
+      <div class="lv"><b class="sky">Kiến nghị</b><small>Trừ điểm Bá Chủ, thu hồi giấy phép</small></div>
+    </div>
+
+    <div class="grid g2" style="margin-top:24px">
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap"><h3 style="margin:0">Phiên họp tới</h3><span class="live"><span class="dot on"></span>Trực tiếp</span></div>
+        <div id="meeting" style="margin-top:10px" class="muted">Đang tải…</div>
+        <h3 style="margin-top:18px">Hội đồng Hoà Bình</h3>
+        <div id="council" class="muted">Đang tải…</div>
+      </div>
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap"><h3 style="margin:0">Hồ sơ vụ án</h3><span class="pill" id="openCount">0 vụ đang chờ</span></div>
+        <div id="cases" style="margin-top:10px;max-height:460px;overflow:auto"></div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:16px"><h3>Kiến nghị gần đây</h3><div id="motions"></div></div>
+
+    <div class="callout j" style="margin-top:20px"><b>Ai xử lý việc gì?</b> Hội Bàn Tròn: án giết dân hoà bình, vây giả, khiếu nại xếp hạng · Hội đồng Hoà Bình: giấy phép, đuổi thị trấn làm tay sai, bầu đại diện ·
+      Vua và thị trưởng: việc trong quốc gia · Helper/Mod: chat, quấy rối · Admin: chỉ hack, lỗi game, tài khoản phụ bị giấu.</div>
+  </div>
+</section>
+
+<!-- ============ XẾP HẠNG ============ -->
+<section id="xephang" class="alt">
+  <div class="wrap">
+    <div class="kicker v">Vinh danh mỗi mùa</div>
+    <h2>Bảng xếp hạng &amp; danh hiệu</h2>
+    <p class="intro">Bốn giải mỗi mùa, tính tự động từ trận đấu và lãnh thổ. Phần thưởng là <b>danh hiệu giữ mãi</b> trên toàn server, tượng ở Đền Vinh Danh và cờ riêng cho mùa sau. Không giải nào mua được bằng tiền thật.</p>
+    <div class="grid g2">
+      <div class="card hl"><div style="display:flex;justify-content:space-between;align-items:center"><h3 style="margin:0">⚑ Bá Chủ (quốc gia)</h3><span class="live"><span class="dot on"></span>Trực tiếp</span></div>
+        <p class="muted" style="font-size:.9rem;margin:8px 0">Mỗi tối Chủ nhật: +10 mỗi thị trấn kiểm soát, +1 mỗi 10 ô. Tấn công thắng +30, phòng thủ thắng +20. Tuần cuối nhân đôi.</p>
+        <div class="tbl"><table><thead><tr><th>#</th><th>Quốc gia</th><th>Điểm</th><th>Trận thắng</th></tr></thead><tbody id="tBachu"></tbody></table></div></div>
+      <div class="card"><div style="display:flex;justify-content:space-between;align-items:center"><h3 style="margin:0">⚔ Chiến Thần</h3><span class="live"><span class="dot on"></span>Trực tiếp</span></div>
+        <p class="muted" style="font-size:.9rem;margin:8px 0">+3 mỗi lần hạ người có quân hàm phe địch trong trận, +5 khi chiếm cờ. Cùng một người tối đa 3 lần mỗi phiên.</p>
+        <div class="tbl"><table><thead><tr><th>#</th><th>Chiến binh</th><th>Điểm</th></tr></thead><tbody id="tChienthan"></tbody></table></div></div>
+    </div>
+    <div class="grid g4 swipe" id="awards" style="margin-top:16px">
+      <div class="card"><h3>💰 Đại Phú Hộ</h3><p class="muted">Giàu nhất lúc đóng mùa. Xem top 5 ở hologram tại spawn hoặc <span class="kbd">/bxh phuho</span>.</p></div>
+      <div class="card"><h3>🏯 Kiến Trúc Sư</h3><p class="muted">Tuần 9 thị trấn đăng ký, tuần 10 người chơi bình chọn (<span class="kbd">/binhchon</span>). Không bỏ phiếu cho thị trấn mình.</p></div>
+      <div class="card"><h3>🎖️ Danh hiệu</h3><div id="titles" class="votes"></div><p class="muted" style="margin-top:8px;font-size:.9rem">Chọn hiển thị bằng <span class="kbd">/danhhieu</span>.</p></div>
+      <div class="card"><h3>🛡️ Công bằng</h3><p class="muted">Danh hiệu cả quốc gia chỉ cho thành viên từ trước tuần 9 và chơi đủ 10 giờ. Đóng mùa có 3 ngày khiếu nại ở Hội Bàn Tròn.</p></div>
+    </div>
+    <div class="dots" id="awardDots" aria-hidden="true"></div>
+  </div>
+</section>
+
+<!-- ============ LUẬT ============ -->
+<section id="luat">
+  <div class="wrap">
+    <div class="kicker r">Đọc trước khi chơi</div>
+    <h2>Luật server</h2>
+    <div class="grid g2">
+      <div class="card"><ul class="clean r">
+        <li><b>Không hack</b>, x-ray, autoclick, macro. Có chống hack tự động, mọi block đều được ghi lại.</li>
+        <li><b>Không lợi dụng lỗi game</b> (nhân đồ, xuyên tường). Báo lỗi cho admin còn được thưởng.</li>
+        <li><b>Tối đa <span data-k="player.max_accounts">2</span> tài khoản</b> mỗi người. Tài khoản phụ phải khai (<span class="kbd">/taikhoanphu</span>), không được nhận quân hàm, không đánh trận.</li>
+        <li><b>Không vây giả</b> (hai quốc gia dàn xếp để lấy tiền, điểm).</li>
+      </ul></div>
+      <div class="card"><ul class="clean r">
+        <li><b>Map là Trái Đất, nhưng lãnh thổ trong game không liên quan chủ quyền thật.</b> Cấm đặt tên hoặc chat kích động biên giới, biển đảo, dân tộc, chính trị.</li>
+        <li>Không chửi bới, quấy rối, phân biệt; không spam, không quảng cáo server khác.</li>
+        <li>Lời hứa giữa người chơi không được bảo đảm: giao dịch an toàn bằng <span class="kbd">/trade</span>, chợ, shop.</li>
+        <li>Vi phạm nặng (hack, nhân đồ, giấu tài khoản phụ): cấm 7 ngày, tái phạm cấm hết mùa.</li>
+      </ul></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ỦNG HỘ ============ -->
+<section id="ungho" class="alt">
+  <div class="wrap">
+    <div class="kicker">Giữ server sống</div>
+    <h2>Ủng hộ server: chỉ đồ trang trí</h2>
+    <p class="intro">Theo đúng luật của Mojang: <b>không bán sức mạnh</b>, không bán tiền trong game, đất, giáp, vũ khí hay bất cứ thứ gì giúp thắng trận. Rank ủng hộ chỉ làm bạn trông nổi bật hơn.</p>
+    <div class="grid g3" id="tiers"></div>
+    <p class="dim" style="margin-top:14px" id="donateHow"></p>
+  </div>
+</section>
+
+<!-- ============ HỎI ĐÁP ============ -->
+<section id="hoidap">
+  <div class="wrap">
+    <div class="kicker s">Hỏi đáp</div>
+    <h2>Câu hỏi thường gặp</h2>
+    <details><summary>Không có Minecraft bản quyền có chơi được không?</summary><div>Được. Server chạy chế độ không bản quyền cho bản Java: dùng launcher miễn phí như TLauncher hay SKLauncher, đăng ký mật khẩu khi vào lần đầu. Điện thoại cần bản Minecraft Bedrock (mua trên App Store hoặc CH Play) và tài khoản Xbox miễn phí.</div></details>
+    <details><summary>iPhone có chơi được không?</summary><div>Được, bằng Minecraft Bedrock trên iOS. Vào Máy chủ → Thêm máy chủ, nhập địa chỉ Bedrock và cổng ở mục Cách vào. Menu trên điện thoại hiện dạng nút bấm cho dễ chạm.</div></details>
+    <details><summary>Tôi có bị mất hết đồ khi đang offline không?</summary><div>Không. Thành không thể bị phá hay trộm, chiến tranh chỉ diễn ra theo lịch công thành. Chết trong trận công thành cũng không rơi đồ (chỉ mòn 5%). Chỉ khi chết ngoài đất hoang mới rơi đồ, và đồ đó được giữ 10 phút cho bạn quay lại nhặt.</div></details>
+    <details><summary>Tôi chỉ muốn xây và buôn bán, không thích đánh nhau?</summary><div>Vào Liên minh Hoà Bình: thị trấn không bao giờ bị vây hay chiếm, có chợ kinh đô, cửa hàng, sự kiện, giải Kiến Trúc Sư. Ra đất hoang vẫn có thể gặp người chơi khác, nhưng ai giết bạn gần vùng hoà bình sẽ phải ra Hội Bàn Tròn.</div></details>
+    <details><summary>Ping cao không?</summary><div>Ping hiện khoảng 150–300 ms. Server chạy ổn định (không lag phía server), nên chơi xây dựng, buôn bán thoải mái; đánh PvP thì nên dùng mạng ổn định, tránh 4G yếu.</div></details>
+    <details><summary>Lỡ chơi hỏng, muốn làm lại từ đầu?</summary><div>Gõ <span class="kbd">/choilai</span>: mất đồ, tiền, nhà, nghề, thị trấn; giữ rank và danh hiệu. Lần đầu trong mùa còn được nhận lại quà tân thủ.</div></details>
+    <details><summary>Hết mùa thì sao?</summary><div>Sau 10 tuần mùa đóng lại, trao danh hiệu, thế giới cũ được giữ làm bảo tàng để xem lại. Mùa mới mở vùng đất mới, mọi người bắt đầu ngang nhau; danh hiệu và rank ủng hộ được giữ.</div></details>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div style="display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap">
+      <div class="fbrand"><img src="logo.png" alt=""><div><b style="color:var(--text)">DuckyMoMo Network</b><br>Server Minecraft Việt · Bang Hội Chiến trên bản đồ Trái Đất</div></div>
+      <div id="links2"></div>
+    </div>
+    <p style="margin-top:16px">Không liên kết với Mojang hay Microsoft. Minecraft là thương hiệu của Mojang AB. Số liệu trên trang cập nhật trực tiếp từ server.</p>
+  </div>
+</footer>
+<div class="toast" id="toast">Đã sao chép</div>
+
+<script>
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const nf = new Intl.NumberFormat("vi-VN");
+const MC = {"&0":"#555","&1":"#3b5bdb","&2":"#2f9e44","&3":"#1098ad","&4":"#c92a2a","&5":"#9c36b5","&6":"#f2b84b","&7":"#adb5bd","&8":"#868e96","&9":"#5c7cfa","&a":"#69db7c","&b":"#66d9e8","&c":"#ff6b6b","&d":"#f783ac","&e":"#ffe066","&f":"#f8f9fa"};
+
+// menu, tab, copy
+$("#menuBtn").onclick = () => $("#links").classList.toggle("open");
+document.querySelectorAll("#links a").forEach(a => a.onclick = () => $("#links").classList.remove("open"));
+document.querySelectorAll(".tab").forEach(t => t.onclick = () => {
+  document.querySelectorAll(".tab").forEach(x => x.classList.toggle("on", x === t));
+  document.querySelectorAll(".pane").forEach(p => p.classList.toggle("on", p.id === t.dataset.pane));
+});
+if (/android|iphone|ipad/i.test(navigator.userAgent)) document.querySelector('[data-pane="pBedrock"]').click();
+document.querySelectorAll(".copy").forEach(b => b.onclick = async () => {
+  try { await navigator.clipboard.writeText($("#" + b.dataset.copy).textContent.trim()); } catch (e) {}
+  const t = $("#toast"); t.classList.add("show"); setTimeout(() => t.classList.remove("show"), 1400);
+});
+
+async function j(u){ const r = await fetch(u, {cache:"no-store"}); if(!r.ok) throw new Error(u); return r.json(); }
+function get(o, p){ return p.split(".").reduce((a,k)=> a == null ? a : a[k], o); }
+function fmt(v, f){ if (typeof v === "number") { const s = nf.format(Math.round(v*100)/100); return f === "xu" ? s + " xu" : s; } return v; }
+
+// sơ đồ vùng mùa 1: x = kinh độ, y = vĩ độ (khung 93.7–115.5°E, 6.7–26.8°N)
+function drawMap(zones){
+  const ZXY = {taybac:[103.5,21.5,"end",-8,-6],lao:[103.0,19.5,"end",-8,4],trungbo:[107.5,14.5,"start",8,4],nambo:[105.5,11.5,"start",8,4],
+               thailan:[100.5,15.0,"end",-8,4],myanmar:[96.5,20.0,"start",8,4],namtq:[110.0,23.5,"start",8,4]};
+  const X = lon => 20 + (lon-93.7)/(115.5-93.7)*360, Y = lat => 20 + (26.8-lat)/(26.8-6.7)*330;
+  const pts = a => a.map(p => X(p[0]).toFixed(1)+","+Y(p[1]).toFixed(1)).join(" ");
+  // Đất liền Đông Nam Á giản lược (kinh độ, vĩ độ), khung 93.7–115.5°E, 6.7–26.8°N
+  const land = [[93.7,26.8],[115.5,26.8],[115.5,22.8],[113.5,22.2],[111,21.5],[110.4,21.2],[110.2,20.3],[109.7,21.4],[108,21.6],[106.7,20.7],
+    [106,19.9],[105.7,18.8],[106.5,17.5],[107.5,16.4],[108.2,16],[109.2,13.8],[109.4,12.2],[108.9,11],[107.1,10.4],[106.7,9.6],[105.2,8.6],
+    [104.8,9.8],[104.4,10.4],[103.5,10.6],[102.9,11.6],[102.2,12.3],[101,12.6],[100.9,13.4],[100.5,13.5],[99.9,13.2],[99.9,12],[99.2,10.5],
+    [100,9.2],[100.3,8],[100.6,7.2],[101.2,6.7],[99.7,6.7],[99.8,6.9],[98.4,7.9],[98.3,9],[98.6,10.4],[98.7,11.8],[98.2,14.1],[97.7,15.5],
+    [97.6,16.5],[96.8,16.8],[96.2,16.8],[95.3,15.8],[94.3,16],[94.4,17.5],[94,18.8],[93.7,19.5]];
+  const hainan = [[108.6,19.2],[109.5,18.2],[110.5,18.6],[111,19.6],[110.6,20.1],[109.7,20],[108.7,19.7]];
+  let s = `<defs><radialGradient id="g" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#f2b84b" stop-opacity=".9"/><stop offset="1" stop-color="#f2b84b" stop-opacity="0"/></radialGradient>
+    <clipPath id="clip"><rect x="20" y="20" width="360" height="330" rx="14"/></clipPath></defs>`;
+  s += `<rect x="20" y="20" width="360" height="330" rx="14" fill="#0a1626"/><g clip-path="url(#clip)">`;
+  for (let i=0;i<=12;i++){ s += `<line x1="${20+i*30}" y1="20" x2="${20+i*30}" y2="350" stroke="#10213a"/>`; }
+  for (let i=0;i<=11;i++){ s += `<line x1="20" y1="${20+i*30}" x2="380" y2="${20+i*30}" stroke="#10213a"/>`; }
+  s += `<polygon points="${pts(land)}" fill="#1b2b22" stroke="#3a5a46" stroke-width="1.2" stroke-linejoin="round"/>`;
+  s += `<polygon points="${pts(hainan)}" fill="#1b2b22" stroke="#3a5a46" stroke-width="1.2"/></g>`;
+  s += `<rect x="20" y="20" width="360" height="330" rx="14" fill="none" stroke="#2a3a4f"/>`;
+  s += `<text x="${X(108.3)}" y="${Y(12.6)}" fill="#3d6a9a" font-size="10" font-style="italic">Biển Đông</text>`;
+  s += `<text x="${X(100.6)}" y="${Y(10.3)}" fill="#3d6a9a" font-size="10" font-style="italic">Vịnh Thái Lan</text>`;
+  const hx = X(105.85), hy = Y(21.03);
+  s += `<circle class="ring" cx="${hx}" cy="${hy}" r="34" fill="rgba(62,207,142,.08)" stroke="#3ecf8e" stroke-dasharray="4 4" opacity=".8"/>`;
+  s += `<circle cx="${hx}" cy="${hy}" r="6" fill="#3ecf8e"/><text x="${hx+9}" y="${hy-12}" fill="#9af0c8" font-size="12" font-weight="700">Kinh đô · Hà Nội</text>`;
+  (zones||[]).forEach(z => { const p = ZXY[z.id]; if(!p) return; const x = X(p[0]), y = Y(p[1]);
+    s += `<circle cx="${x}" cy="${y}" r="16" fill="url(#g)" opacity=".55"/><circle class="zp" cx="${x}" cy="${y}" r="5" fill="none" stroke="#f2b84b" stroke-width="1.5" style="animation-delay:${(Object.keys(ZXY).indexOf(z.id)*0.3).toFixed(1)}s"/><circle cx="${x}" cy="${y}" r="4.5" fill="#f2b84b"/>`;
+    s += `<text x="${x+p[3]}" y="${y+p[4]}" text-anchor="${p[2]}" fill="#e8eef5" font-size="11" paint-order="stroke" stroke="#0a1626" stroke-width="3">${esc(z.name)}</text>`; });
+  $("#mapSvg").innerHTML = s;
+}
+
+function seasonBar(info){
+  const start = info.season.start ? new Date(info.season.start + "T00:00:00+07:00") : null;
+  const week = start ? Math.floor((Date.now()-start)/604800000)+1 : 0;
+  let h = "";
+  for (let w=1; w<=10; w++){
+    const cls = w<=2 ? "peace" : w===10 ? "big" : "war";
+    h += `<div class="wk ${cls} ${w===week?'now':''}" title="Tuần ${w}">T${w}</div>`;
+  }
+  $("#seasonBar").innerHTML = h;
+}
+
+async function loadInfo(){
+  const info = await j("api/info");
+  document.querySelectorAll("[data-k]").forEach(el => {
+    let v = get(info, el.dataset.k);
+    if (el.dataset.k === "siege.immunity_days") v = Math.round(info.siege.immunity_hours/24);
+    if (v !== undefined && v !== null && v !== "") el.textContent = fmt(v, el.dataset.f);
+  });
+  const site = info.site || {};
+  if (site.java) { $("#javaAddr").textContent = site.java["dia-chi"]; }
+  if (site.bedrock) { $("#bedAddr").textContent = site.bedrock["dia-chi"]; $("#bedPort").textContent = site.bedrock.cong; }
+  for (const [k, id] of [["java", "#javaBackup"], ["bedrock", "#bedBackup"]]) {
+    const dp = site[k] && site[k]["du-phong"];
+    if (dp) $(id).innerHTML = `Không vào được? Thử địa chỉ dự phòng: <code>${esc(dp)}</code>`;
+    else if (site[k]) $(id).style.display = "none";
+  }
+  const links = [];
+  if (site.discord) links.push(`<a href="${esc(site.discord)}" target="_blank" rel="noopener">Discord</a>`);
+  if (site.zalo) links.push(`<a href="${esc(site.zalo)}" target="_blank" rel="noopener">Nhóm Zalo</a>`);
+  if (site["ban-do"]) links.push(`<a href="${esc(site["ban-do"])}" target="_blank" rel="noopener">Bản đồ web</a>`);
+  $("#links2").innerHTML = links.join(" · ");
+  // công thành
+  const days = info.siege.days;
+  $("#flowStart").textContent = info.siege.start_day;
+  $("#flowDays").textContent = days.map(d=>d.day).join(", ") || "Chưa đặt";
+  $("#siegeTable").innerHTML = days.length ? `<table><tbody>${days.map(d=>`<tr><td><b>${esc(d.day)}</b></td><td>${d.times.map(t=>`<span class="pill" style="margin:2px">${esc(t)}</span>`).join("")}</td></tr>`).join("")}</tbody></table>` : "Chưa đặt lịch.";
+  $("#stSiege").textContent = days.length ? days.map(d=>d.day.replace("Thứ ","T").replace("Chủ nhật","CN")).join("+") + " " + (days[0].times[0]||"") : "–";
+  $("#siegeState").textContent = info.siege.enabled ? "Vây thành đang mở." : "Đang thời kỳ hoà bình: chưa cho cắm cờ vây.";
+  $("#pvpWild").textContent = info.player.pvp_wild ? "bật" : "tắt (chỉ đánh trong trận công thành)";
+  $("#ahOnly").textContent = info.peace.auction_only ? "chỉ mở trong đất hoà bình" : "ở đâu cũng dùng được";
+  $("#zoneList").innerHTML = info.player.tpr_zones.map(z => `<span title="${esc(z.desc)}">${esc(z.name)}</span>`).join("");
+  drawMap(info.player.tpr_zones);
+  seasonBar(info);
+  const T = info.titles || {};
+  $("#titles").innerHTML = Object.keys(T).filter(k=>!["luukhach","nghenhan","phuthuong"].includes(k)).map(k=>`<span>${esc(T[k].replace("{mua}", info.season.id))}</span>`).join("");
+  $("#tiers").innerHTML = (info.donate.tiers||[]).map(t => `<div class="tier" style="border-top:3px solid ${MC[t.color]||"#f2b84b"}">
+      <h3 style="color:${MC[t.color]||"#f2b84b"}">${esc(t.name)}</h3>
+      <ul class="clean">${t.perks.map(p=>`<li>${esc(p)}</li>`).join("")}</ul>
+      <p class="price">${t.prices.map(esc).join(" · ")}</p></div>`).join("");
+  $("#donateHow").textContent = info.donate.how || "";
+}
+
+async function loadStatus(){
+  try {
+    const s = await j("api/status");
+    const on = s.ping.online;
+    $("#onDot").classList.toggle("on", on);
+    $("#onText").textContent = on ? `${s.ping.players} người đang chơi` : "Server đang bảo trì";
+    if (on) countTo($("#stPlayers"), s.ping.players); else $("#stPlayers").textContent = "–";
+    countTo($("#stTowns"), s.towns); countTo($("#stNations"), s.nations);
+    $("#peaceTowns").innerHTML = s.peace_towns.length
+      ? `<div class="votes">${s.peace_towns.map(t=>`<span>${esc(t.name)} · ${t.dan||0} dân${t.o?` · ${t.o} ô`:""}</span>`).join("")}</div>`
+      : `<div class="empty">Liên minh chưa có thị trấn thành viên. Hãy là người đầu tiên!</div>`;
+  } catch (e) { $("#onText").textContent = "Không lấy được trạng thái"; }
+}
+
+function voteChips(v){ return v.length ? `<div class="votes">${v.map(x=>`<span>${esc(x.nguoi)}: ${esc(x.chon)}</span>`).join("")}</div>` : ""; }
+
+async function loadBantron(){
+  try {
+    const b = await j("api/bantron");
+    $("#openCount").textContent = `${b.open_cases} vụ đang chờ`;
+    $("#meeting").innerHTML = b.hop.dang_hop
+      ? `<b class="red">Đang họp</b> tại <b>${esc(b.hop.noi||"?")}</b>`
+      : (b.open_cases ? `<b>${esc(b.hop.luc||"Chưa lên lịch")}</b>${b.hop.noi?` tại <b>${esc(b.hop.noi)}</b>`:" · nơi họp sẽ được công bố trước 24 giờ"}`
+                      : `Chưa có vụ việc nào, Hội không cần họp. <span class="dim">(Có việc mới họp.)</span>`);
+    const d = b.daidien;
+    let c = d.ten ? `Đại diện: <b class="jade">${esc(d.ten)}</b>${d.tam?" (tạm giữ)":""} · nhiệm kỳ tới ${esc(d.den||"?")}` : "Chưa có đại diện.";
+    if (b.bau.mo) c += `<br>Đang bầu đại diện tới ${esc(b.bau.dong)}. Ứng viên: ${b.bau.ungvien.map(esc).join(", ")||"chưa có"}`;
+    $("#council").innerHTML = c;
+    $("#cases").innerHTML = b.cases.length ? b.cases.map(x => `<div class="case"><div class="h"><span>${esc(x.id)} · ${esc(x.ke)} giết ${esc(x.nan)}</span>
+        <span class="tag ${x.trangthai==="Đã xử"?"done":"open"}">${esc(x.trangthai)}</span></div>
+        <div class="muted" style="font-size:.88rem">${esc(x.luc)} · mức sàn ${nf.format(x.san||0)} xu${x.phanquyet?` · phán quyết: <b style="color:var(--text)">${esc(x.phanquyet)}</b>`:""}${x.molai?" · đã mở lại":""}</div>${voteChips(x.phieu)}</div>`).join("")
+      : `<div class="empty">Chưa có vụ án nào. Mùa này vẫn yên bình.</div>`;
+    $("#motions").innerHTML = b.motions.length ? b.motions.map(m => `<div class="case"><div class="h"><span>${esc(m.id)} · ${esc(m.loai)}: ${esc(m.muc)}${m.giatri?` (${m.giatri} điểm)`:""}</span>
+        <span class="tag ${m.ketqua?"done":"open"}">${esc(m.ketqua||"Chờ họp")}</span></div><div class="muted" style="font-size:.88rem">${esc(m.ly||"")} · ${esc(m.nguoi)} · ${esc(m.luc)}</div>${voteChips(m.phieu)}</div>`).join("")
+      : `<div class="empty">Chưa có kiến nghị.</div>`;
+    $("#orgList").innerHTML = b.orgs.length ? `<div class="votes">${b.orgs.map(o=>`<span>${esc(o.ten)} · ${esc(o.loai)} · ${esc(o.giayphep)}</span>`).join("")}</div>` : `<div class="empty">Chưa có tổ chức nào.</div>`;
+  } catch (e) { $("#cases").innerHTML = `<div class="empty">Không tải được hồ sơ.</div>`; }
+}
+
+async function loadBxh(){
+  try {
+    const b = await j("api/bxh");
+    $("#tBachu").innerHTML = b.bachu.length ? b.bachu.map((n,i)=>`<tr><td class="rank">${i+1}</td><td>${esc(n.ten)}</td><td><b>${nf.format(n.diem)}</b></td><td>${n.tran}</td></tr>`).join("")
+      : `<tr><td colspan="4" class="empty">Chưa có điểm: mùa ${esc(b.mua)} vừa bắt đầu. Quốc gia đầu tiên có thể là của bạn!</td></tr>`;
+    $("#tChienthan").innerHTML = b.chienthan.length ? b.chienthan.map((n,i)=>`<tr><td class="rank">${i+1}</td><td>${esc(n.ten)}</td><td><b>${nf.format(n.diem)}</b></td></tr>`).join("")
+      : `<tr><td colspan="3" class="empty">Chưa có trận công thành nào.</td></tr>`;
+  } catch (e) {}
+}
+
+
+// hiện dần khi cuộn tới
+(function(){
+  const els = document.querySelectorAll("section h2, section .intro, .card, .jstep, .lv, .tier, details, .flow .f, .tbl, .season, .stat");
+  els.forEach(e => e.classList.add("reveal"));
+  if (!("IntersectionObserver" in window)) { els.forEach(e => e.classList.add("in")); return; }
+  const io = new IntersectionObserver(es => es.forEach(en => { if (en.isIntersecting) { en.target.classList.add("in"); io.unobserve(en.target); } }), {threshold: .12});
+  els.forEach((e, i) => { e.style.transitionDelay = (i % 4) * 70 + "ms"; io.observe(e); });
+  document.querySelectorAll(".cta-band.reveal").forEach(e => io.observe(e));
+})();
+// đếm số nhảy lên
+function countTo(el, n){
+  if (typeof n !== "number" || isNaN(n)) { el.textContent = n; return; }
+  const t0 = performance.now(), d = 900;
+  (function step(t){ const k = Math.min(1, (t - t0) / d); el.textContent = Math.round(n * (1 - Math.pow(1 - k, 3))); if (k < 1) requestAnimationFrame(step); })(t0);
+}
+
+// chấm chỉ vị trí cho dải thẻ vuốt
+(function(){
+  const box = $("#awards"), dots = $("#awardDots");
+  if (!box || !dots) return;
+  const n = box.children.length;
+  dots.innerHTML = Array.from({length:n}, (_, i) => `<i class="${i ? "" : "on"}"></i>`).join("");
+  box.addEventListener("scroll", () => {
+    const w = box.children[0].getBoundingClientRect().width + 12;
+    const k = Math.min(n - 1, Math.round(box.scrollLeft / w));
+    [...dots.children].forEach((d, i) => d.classList.toggle("on", i === k));
+  }, {passive: true});
+})();
+// dải chữ chạy
+(function(){
+  const items = ["⚔️ Công thành <b>mỗi cuối tuần</b>","🗺️ Bản đồ <b>Trái Đất 1:1000</b>","🕊️ <b>Liên minh Hoà Bình</b> không bao giờ bị chiếm","⚖️ <b>Hội Bàn Tròn</b> do người chơi tự quản",
+    "📱 Chơi được trên <b>điện thoại</b>","🏆 <b>Danh hiệu</b> giữ mãi mỗi mùa","💰 Nghề tự động, <b>chợ đấu giá</b>","🚫 <b>Không bán sức mạnh</b>","🌋 <b>Trái Đất lâm nguy</b>: boss sự kiện","🗝️ <b>Dungeon</b> cày đồ, cày tiền"];
+  const one = items.map(x => `<span>${x}</span>`).join("");
+  $("#marq").innerHTML = one + one;
+})();
+// lời thoại của vịt
+(function(){
+  const lines = ["Công thành tối nay không? ⚔️","Đất Tây Bắc còn trống kìa! 🏔️","Giết dân hoà bình là ra toà nha ⚖️","Vào sớm chọn đất đẹp! 🏰","Bán đồ ở kinh đô được +20% 💰","Có gì đó đang thức giấc… 🌋"];
+  let i = 0; setInterval(() => { i = (i + 1) % lines.length; const b = $("#bubble"); if (b) b.textContent = lines[i]; }, 6000);
+})();
+loadInfo().catch(()=>{}); loadStatus(); loadBantron(); loadBxh();
+setInterval(loadStatus, 30000); setInterval(loadBantron, 60000); setInterval(loadBxh, 60000);
+</script>
+</body>
+</html>

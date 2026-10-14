@@ -52,6 +52,8 @@ CAMNANG_FILE = MODES_DIR / "_network" / "camnang.yml"
 CAMNANG_SERVERS = ["proxy", "lobby", "banghoi-1", "practice-1", "pokemon-1"]
 # Do service "activity" (dashboard/log-feed.sh, JSONL=…) ghi ra
 ACTIVITY_FILE = DATA_DIR / "activity" / "activity.jsonl"
+# Tin admin gửi từ trang Hoạt động: file riêng (activity.jsonl thuộc service activity, panel không ghi được), gộp khi đọc
+ADMIN_FILE = DATA_DIR / "panel" / "admin.jsonl"
 ACTIVITY_TAIL_BYTES = 4_000_000
 TIMES_RE = re.compile(r"^$|^([01]\d|2[0-3]):[0-5]\d(,([01]\d|2[0-3]):[0-5]\d)*$")
 
@@ -612,7 +614,7 @@ def mode_index():
 def read_activity(params):
     """Sự kiện mới nhất trước. Lọc: types (chat,join,command), mode, player, q (tìm trong nội dung),
     from / to (mốc UTC dạng 2026-10-10T17:00:00Z, trình duyệt tự đổi ngày giờ Việt Nam sang), limit."""
-    types = set(filter(None, params.get("types", "").split(","))) or {"chat", "join", "command"}
+    types = set(filter(None, params.get("types", "").split(","))) or {"chat", "join", "command", "admin"}
     mode = params.get("mode", "")
     player = params.get("player", "").strip().lower()
     q = params.get("q", "").strip().lower()
@@ -633,6 +635,8 @@ def read_activity(params):
             raw = f.read().decode("utf-8", "replace").splitlines()
         if size > tail:
             raw = raw[1:]  # dòng đầu có thể bị cắt giữa chừng
+        if ADMIN_FILE.exists():
+            raw += ADMIN_FILE.read_text(encoding="utf-8", errors="replace").splitlines()[-2000:]
         seen = set()
         for line in raw:
             try:
@@ -663,6 +667,63 @@ def read_activity(params):
             break
     return {"modes": modes, "events": out, "has_file": ACTIVITY_FILE.exists()}
 
+
+
+# ---------------------------------------------------------------- gửi tin vào game (trang Hoạt động)
+
+# Server Paper nhận tin (proxy Velocity không có RCON). Server đang tắt thì bỏ qua, báo lại.
+SAY_SERVERS = {"lobby": "Sảnh", "banghoi-1": "Bang Hội Chiến", "practice-1": "Practice", "pokemon-1": "Pokémon"}
+SAY_KINDS = {"chat": "Chat admin", "broadcast": "Thông báo", "title": "Thông báo giữa màn hình"}
+
+
+def say(payload):
+    """Gửi tin vào game bằng tellraw/title qua RCON, rồi ghi vào dòng hoạt động (loại "admin")."""
+    text = re.sub(r"[\x00-\x1f\x7f§]", "", str(payload.get("text", ""))).strip()
+    name = re.sub(r"[\x00-\x1f\x7f§]", "", str(payload.get("name", "") or "Admin")).strip()[:24] or "Admin"
+    kind = payload.get("kind", "chat")
+    target = payload.get("target", "all")
+    if not text:
+        raise ValueError("Chưa nhập nội dung")
+    if len(text) > 200:
+        raise ValueError("Tối đa 200 ký tự")
+    if kind not in SAY_KINDS:
+        raise ValueError("Kiểu gửi không hợp lệ")
+    servers = list(SAY_SERVERS) if target == "all" else [target]
+    if any(s not in SAY_SERVERS for s in servers):
+        raise ValueError("Server không hợp lệ")
+    if kind == "chat":
+        raw = ["", {"text": "[Admin] ", "color": "red", "bold": True}, {"text": name + ": ", "color": "gold"}, {"text": text, "color": "white"}]
+        cmds = ["tellraw @a " + json.dumps(raw, ensure_ascii=False)]
+    else:
+        raw = ["", {"text": "✦ THÔNG BÁO ✦ ", "color": "gold", "bold": True}, {"text": text, "color": "yellow"}]
+        cmds = ["tellraw @a " + json.dumps(raw, ensure_ascii=False)]
+        if kind == "title":
+            cmds += ["title @a times 10 100 20",
+                     "title @a subtitle " + json.dumps({"text": text, "color": "yellow"}, ensure_ascii=False),
+                     "title @a title " + json.dumps({"text": "Thông báo", "color": "gold", "bold": True}, ensure_ascii=False)]
+    sent, failed = [], []
+    for srv in servers:
+        try:
+            rcon(srv, cmds)
+            sent.append(SAY_SERVERS[srv])
+        except Exception:
+            failed.append(SAY_SERVERS[srv])
+    if not sent:
+        raise ValueError("Không gửi được: server đang tắt (" + ", ".join(failed) + ")")
+    from datetime import datetime, timezone
+    event = {"ts": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"), "server": "web" if target == "all" else target,
+             "type": "admin", "player": name, "text": f"{SAY_KINDS[kind]} ({'cả mạng' if target == 'all' else SAY_SERVERS[target]}) · {name}: {text}",
+             "target": "" if target == "all" else target}
+    try:
+        ADMIN_FILE.parent.mkdir(parents=True, exist_ok=True)
+        with ADMIN_FILE.open("a", encoding="utf-8") as f:
+            f.write(json.dumps(event, ensure_ascii=False) + "\n")
+    except OSError as e:
+        print(f"Không ghi được {ADMIN_FILE}: {e}", flush=True)
+    msg = "Đã gửi tới " + ", ".join(sent)
+    if failed:
+        msg += " (bỏ qua server đang tắt: " + ", ".join(failed) + ")"
+    return {"ok": True, "message": msg}
 
 # ---------------------------------------------------------------- HTTP
 
@@ -735,6 +796,17 @@ class Handler(BaseHTTPRequestHandler):
             try:
                 length = int(self.headers.get("Content-Length", "0"))
                 self.send_json(200, role_action(json.loads(self.rfile.read(length) or b"{}")))
+            except ValueError as e:
+                self.send_json(400, {"ok": False, "message": str(e)})
+            except Exception as e:
+                self.send_json(500, {"ok": False, "message": f"Lỗi: {e}"})
+            return
+        if self.path == "/api/say":
+            try:
+                length = int(self.headers.get("Content-Length", "0"))
+                if length > 4096:
+                    raise ValueError("Tin quá dài")
+                self.send_json(200, say(json.loads(self.rfile.read(length) or b"{}")))
             except ValueError as e:
                 self.send_json(400, {"ok": False, "message": str(e)})
             except Exception as e:

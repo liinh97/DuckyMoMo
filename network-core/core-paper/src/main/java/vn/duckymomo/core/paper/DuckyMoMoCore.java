@@ -16,6 +16,9 @@ public final class DuckyMoMoCore extends JavaPlugin {
     private CommandDump commandDump;
     private RandomTeleport rtp;
     private WarRules warRules;
+    private Activity activity;
+    private PeaceAlliance peace;
+    private DecorShop decorShop;
 
     @Override
     public void onEnable() {
@@ -36,6 +39,10 @@ public final class DuckyMoMoCore extends JavaPlugin {
     }
 
     private void teardown() {
+        if (activity != null) {
+            activity.shutdown();
+            activity = null;
+        }
         if (townyMap != null) {
             townyMap.stop();
             townyMap = null;
@@ -52,6 +59,10 @@ public final class DuckyMoMoCore extends JavaPlugin {
         if (getServer().getPluginManager().isPluginEnabled("AuthMe")) {
             getServer().getPluginManager().registerEvents(new BedrockAuthListener(this), this);
             getLogger().info("Bedrock auto-login: bật (AuthMe có trên server này)");
+            if (!reloading && getConfig().getBoolean("register-limit.enabled", true)) {
+                boolean ok = new RegisterLimit(this, getConfig().getConfigurationSection("register-limit")).hook();
+                getLogger().info("Giới hạn đăng ký theo IP mỗi 24 giờ: " + ok);
+            }
         }
 
         // Menu chọn chế độ: chỉ bật ở lobby (plugins/DuckyMoMoCore/config.yml: lobby-menu.enabled)
@@ -168,11 +179,144 @@ public final class DuckyMoMoCore extends JavaPlugin {
             });
         }
 
-        // Luật chiến tranh: PvP đất hoang bật/tắt, điều kiện phong quân hàm, tài khoản phụ (banghoi): pvp-rules.enabled
-        warRules = getConfig().getBoolean("pvp-rules.enabled") ? new WarRules(this, getConfig().getConfigurationSection("pvp-rules")) : null;
+        // Giờ chơi thật (không tính AFK) cho dân hoạt động, quân hàm, lập thị trấn (banghoi): active-play.enabled
+        activity = getConfig().getBoolean("active-play.enabled") ? new Activity(this, getConfig().getConfigurationSection("active-play")) : null;
+        if (activity != null) {
+            getServer().getPluginManager().registerEvents(activity, this);
+            activity.start();
+        }
+        PluginCommand hdCmd = getCommand("hoatdong");
+        if (hdCmd != null) {
+            hdCmd.setExecutor((sender, cmd, label, args) -> {
+                if (activity == null) {
+                    sender.sendMessage("Giờ chơi thật chưa bật trên server này.");
+                    return true;
+                }
+                return activity.command(sender, args);
+            });
+        }
+
+        // Luật chiến tranh: PvP đất hoang bật/tắt, điều kiện phong quân hàm, tài khoản phụ (banghoi): pvp-rules.enabled (cần active-play)
+        warRules = activity != null && getConfig().getBoolean("pvp-rules.enabled")
+                ? new WarRules(this, activity, getConfig().getConfigurationSection("pvp-rules")) : null;
         if (warRules != null) {
             getServer().getPluginManager().registerEvents(warRules, this);
             getLogger().info("Luật chiến tranh: " + warRules.describe());
+        }
+        PluginCommand altCmd = getCommand("taikhoanphu");
+        if (altCmd != null) {
+            altCmd.setExecutor((sender, cmd, label, args) -> {
+                if (warRules == null) {
+                    sender.sendMessage("Chỉ dùng ở Bang Hội Chiến.");
+                    return true;
+                }
+                return warRules.selfCommand(sender, args);
+            });
+        }
+
+        // Luật đất đai Towny (lập thị trấn/quốc gia, vòng spawn, đổi thị trấn, đất theo dân hoạt động, cắm cờ): town-rules.enabled
+        // Liên minh Hoà Bình (banghoi): peace-alliance.enabled
+        peace = getConfig().getBoolean("peace-alliance.enabled") && getServer().getPluginManager().isPluginEnabled("Towny")
+                ? new PeaceAlliance(this, getConfig().getConfigurationSection("peace-alliance")) : null;
+        if (peace != null) {
+            getServer().getPluginManager().registerEvents(peace, this);
+            peace.start();
+        }
+        PluginCommand peaceCmd = getCommand("hoabinh");
+        if (peaceCmd != null) {
+            peaceCmd.setExecutor((sender, cmd, label, args) -> {
+                if (peace == null) {
+                    sender.sendMessage("Liên minh Hoà Bình chỉ có ở Bang Hội Chiến.");
+                    return true;
+                }
+                return peace.command(sender, args);
+            });
+        }
+
+        if (activity != null && getConfig().getBoolean("town-rules.enabled") && getServer().getPluginManager().isPluginEnabled("Towny")) {
+            TownRules townRules = new TownRules(this, activity, peace, getConfig().getConfigurationSection("town-rules"));
+            getServer().getPluginManager().registerEvents(townRules, this);
+            townRules.start();
+        }
+
+        // Chơi lại từ đầu /choilai (banghoi): player-reset.enabled
+        PlayerReset reset = activity != null && getConfig().getBoolean("player-reset.enabled")
+                ? new PlayerReset(this, activity, getConfig().getConfigurationSection("player-reset")) : null;
+        if (reset != null) {
+            getServer().getPluginManager().registerEvents(reset, this);
+            getLogger().info("Chơi lại từ đầu /choilai: bật");
+        }
+        // Đợt 3-4: Hội đồng Hoà Bình, tổ chức, bảng xếp hạng, án + Hội Bàn Tròn, cửa hàng trang trí (banghoi)
+        PeaceCouncil council = peace != null && activity != null && getConfig().getBoolean("council.enabled")
+                ? new PeaceCouncil(this, peace, activity, getConfig().getConfigurationSection("council")) : null;
+        if (council != null) {
+            council.start();
+        }
+        Organizations orgs = council != null && getConfig().getBoolean("organizations.enabled")
+                ? new Organizations(this, peace, council, getConfig().getConfigurationSection("organizations"),
+                        getConfig().getString("leaderboard.season", "1")) : null;
+        if (orgs != null) {
+            getServer().getPluginManager().registerEvents(orgs, this);
+            orgs.start();
+        }
+        java.util.Set<String> ranks = new java.util.HashSet<>();
+        getConfig().getStringList("pvp-rules.military-ranks").forEach(x -> ranks.add(x.toLowerCase(java.util.Locale.ROOT)));
+        Leaderboard board = activity != null && getConfig().getBoolean("leaderboard.enabled") && getServer().getPluginManager().isPluginEnabled("Towny")
+                ? new Leaderboard(this, activity, warRules, peace == null ? "" : peace.nationName(), getConfig().getConfigurationSection("leaderboard"), ranks) : null;
+        if (board != null) {
+            getServer().getPluginManager().registerEvents(board, this);
+            board.start();
+        }
+        Justice justice = council != null && board != null && getConfig().getBoolean("justice.enabled")
+                ? new Justice(this, peace, council, orgs, board, warRules, getConfig().getConfigurationSection("justice")) : null;
+        if (justice != null) {
+            getServer().getPluginManager().registerEvents(justice, this);
+            justice.start();
+        }
+        // Kinh đô: đất thị trấn thủ đô của Liên minh Hoà Bình; chưa lập liên minh thì tạm tính vòng quanh spawn (town-rules)
+        java.util.List<Integer> sp = getConfig().getIntegerList("town-rules.spawn");
+        int ring = getConfig().getInt("town-rules.reserved-spawn-radius", 300);
+        PeaceAlliance pa = peace;
+        java.util.function.Predicate<org.bukkit.Location> inCapital = loc -> {
+            if (pa != null && pa.nation() != null) {
+                return pa.inCapital(loc);
+            }
+            if (sp.size() < 2 || !loc.getWorld().getName().equals(getConfig().getString("town-rules.world", "world"))) {
+                return false;
+            }
+            double dx = loc.getX() - sp.get(0);
+            double dz = loc.getZ() - sp.get(1);
+            return dx * dx + dz * dz <= (double) ring * ring;
+        };
+        DecorShop shop = board != null && getConfig().getBoolean("decor-shop.enabled")
+                ? new DecorShop(this, board, inCapital, getConfig().getConfigurationSection("decor-shop")) : null;
+        if (shop != null) {
+            getServer().getPluginManager().registerEvents(shop, this);
+        }
+        decorShop = shop;
+        bind("hoidong", council == null ? null : council::command, "Hội đồng Hoà Bình");
+        bind("tochuc", orgs == null ? null : orgs::command, "Tổ chức hoà bình");
+        bind("quangcao", orgs == null ? null : orgs::adCommand, "Quảng cáo Thương Hội");
+        bind("sukien", orgs == null ? null : orgs::eventCommand, "Sự kiện");
+        bind("bxh", board == null ? null : board::command, "Bảng xếp hạng");
+        bind("binhchon", board == null ? null : board::voteCommand, "Bình chọn Kiến Trúc Sư");
+        bind("danhhieu", board == null ? null : board::titleCommand, "Danh hiệu");
+        bind("bantron", justice == null ? null : justice::command, "Hội Bàn Tròn");
+        bind("cuahang", shop == null ? null : shop::command, "Cửa hàng trang trí");
+        if (council != null) {
+            getLogger().info("Hội đồng Hoà Bình, tổ chức, bảng xếp hạng, Hội Bàn Tròn, cửa hàng: "
+                    + (orgs != null) + "/" + (board != null) + "/" + (justice != null) + "/" + (shop != null));
+        }
+
+        PluginCommand resetCmd = getCommand("choilai");
+        if (resetCmd != null) {
+            resetCmd.setExecutor((sender, cmd, label, args) -> {
+                if (reset == null) {
+                    sender.sendMessage("Chơi lại từ đầu chỉ có ở Bang Hội Chiến.");
+                    return true;
+                }
+                return reset.command(sender, args);
+            });
         }
 
         // Xuất mọi lệnh của server cho trang Cẩm nang (plugins/DuckyMoMoCore/commands.json), 30 giây sau khi khởi động
@@ -217,6 +361,18 @@ public final class DuckyMoMoCore extends JavaPlugin {
                     } else {
                         rtp.npcCommand(sender, args);
                     }
+                } else if (args.length >= 1 && args[0].equalsIgnoreCase("shopnpc")) {
+                    if (decorShop == null) {
+                        sender.sendMessage("Cửa hàng chưa bật trên server này (config: decor-shop.enabled).");
+                    } else {
+                        decorShop.npcCommand(sender, args);
+                    }
+                } else if (args.length >= 1 && args[0].equalsIgnoreCase("hoabinh")) {
+                    if (peace == null) {
+                        sender.sendMessage("Liên minh Hoà Bình chưa bật trên server này (config: peace-alliance.enabled).");
+                    } else {
+                        peace.adminCommand(sender, args);
+                    }
                 } else if (args.length >= 1 && args[0].equalsIgnoreCase("phu")) {
                     if (warRules == null) {
                         sender.sendMessage("Luật chiến tranh chưa bật trên server này (config: pvp-rules.enabled).");
@@ -229,7 +385,7 @@ public final class DuckyMoMoCore extends JavaPlugin {
                     reload();
                     sender.sendMessage("DuckyMoMoCore: đã nạp lại config.yml");
                 } else {
-                    sender.sendMessage("/dmm decorate|structures start | pause | status | reset   /dmm clean   /dmm reload   /dmm lenh   /dmm enchant|sach <phù phép> <cấp>   /dmm rtpnpc [remove]   /dmm phu add|remove|list");
+                    sender.sendMessage("/dmm decorate|structures start | pause | status | reset   /dmm clean   /dmm reload   /dmm lenh   /dmm enchant|sach <phù phép> <cấp>   /dmm rtpnpc [remove]   /dmm phu add|remove|list   /dmm hoabinh setup|claim <r>   /dmm shopnpc [remove]");
                 }
                 return true;
             });
@@ -241,6 +397,21 @@ public final class DuckyMoMoCore extends JavaPlugin {
                 structures.resumeIfUnfinished();
             }, 200L);
         }
+    }
+
+    /** Gắn lệnh: có module thì chạy, không thì báo chỉ có ở Bang Hội Chiến. */
+    private void bind(String name, java.util.function.BiFunction<org.bukkit.command.CommandSender, String[], Boolean> run, String what) {
+        PluginCommand cmd = getCommand(name);
+        if (cmd == null) {
+            return;
+        }
+        cmd.setExecutor((sender, c, label, args) -> {
+            if (run == null) {
+                sender.sendMessage(what + " chỉ có ở Bang Hội Chiến.");
+                return true;
+            }
+            return run.apply(sender, args);
+        });
     }
 
     @Override

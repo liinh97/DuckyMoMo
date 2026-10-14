@@ -30,7 +30,7 @@ donate-ranks:
     - group: namtuoc
       name: Nam Tước
       color: "&a"
-      perks: [prefix, chat màu, /hat, chào khi vào server]
+      perks: [prefix, chat màu, /hat, chào khi vào server, /cuahang khi ở kinh đô]
       prices: [1 tháng 20k, 3 tháng 50k, 6 tháng 90k, 1 năm 160k]
     - group: tutuoc
       name: Tử Tước

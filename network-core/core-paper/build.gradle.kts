@@ -18,6 +18,8 @@ dependencies {
     compileOnly("org.geysermc.floodgate:api:2.2.5-SNAPSHOT")
     // Thu phí /tpr qua Vault (VaultUnlocked giữ API Vault cũ)
     compileOnly("com.github.MilkBowl:VaultAPI:1.7.1") { isTransitive = false }
+    // Placeholder %dmm_bachu_1_ten%… cho hologram bảng xếp hạng (PlaceholderAPI 2.12.3 đang chạy ở banghoi)
+    compileOnly("me.clip:placeholderapi:2.12.3") { isTransitive = false }
 }
 
 tasks.withType<JavaCompile>().configureEach {

@@ -76,3 +76,6 @@ lp track donate append tutuoc
 lp track donate append batuoc
 lp track donate append hautuoc
 lp track donate append congtuoc
+# Ngoại lệ duy nhất không phải trang trí (chủ server chốt 14/10): mở Cửa hàng Kinh Đô bằng lệnh, NHƯNG chỉ khi đứng trong kinh đô
+# (mọi người đều mua được qua NPC ở spawn, rank chỉ đỡ đi bộ vài bước). Các bậc trên thừa kế từ namtuoc.
+lp group namtuoc permission set duckymomo.cuahang true server=banghoi-1

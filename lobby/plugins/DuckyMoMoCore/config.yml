@@ -4,6 +4,12 @@ lobby-menu:
   modes-dir: /modes       # ../modes gắn vào đây (chỉ đọc), xem lobby/compose.yaml
   item-slot: 4
 
+# Giới hạn đăng ký AuthMe: tối đa N tài khoản mỗi IP trong 24 giờ (luật mùa 1, mục 37). Không tính IP 127.x (playit) và mạng nội bộ.
+# Không dùng maxRegPerIp của AuthMe: nó tính tổng vĩnh viễn, sẽ khoá cả quán net / mạng 4G dùng chung IP. Lưu: dangky-ip.yml
+register-limit:
+  enabled: true
+  per-ip-per-day: 2
+
 # World sảnh là đảo bay (Sakura Spawn): rơi xuống dưới y này thì về spawn, không chết vì hư không
 void-teleport:
   below-y: 0
@@ -44,7 +50,7 @@ donate-ranks:
     - group: namtuoc
       name: Nam Tước
       color: "&a"
-      perks: [prefix, chat màu, /hat, chào khi vào server]
+      perks: [prefix, chat màu, /hat, chào khi vào server, /cuahang khi ở kinh đô]
       prices: [1 tháng 20k, 3 tháng 50k, 6 tháng 90k, 1 năm 160k]
     - group: tutuoc
       name: Tử Tước

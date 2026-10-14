@@ -18,8 +18,9 @@
 - Commit/push chỉ khi người dùng bảo. Trước khi push: `./ops/init.sh && docker compose config --quiet && docker compose --profile pokemon config --quiet` trong bản sao sạch rồi xoá `.env`/`data/` tạo ra.
 
 ### Đang chạy
-- Proxy Velocity (cổng 25565 → 25577, Bedrock 19132/udp; Geyser, Floodgate, AuthMe, SkinsRestorer, **Sonar**), `lobby`, `banghoi-1` (Bang Hội Chiến mùa 1, map Trái Đất 1:1000 Đông Nam Á), `practice-1` (Duels, beta), MariaDB, panel Cài đặt (`127.0.0.1:8889`, qua Trạm 6 `https://app.goc6.io.vn/mc/caidat/`), Dozzle log (8888), squaremap (8890), restic backup ra `/mnt/f/DuckyMoMo-backups`.
-- Vào game: playit — Java `pgsql-youths.tun.ply.gg` (SRV, cổng 28438), Bedrock `pgsql-mississauga.tun.ply.gg:21185`. `playit-watchdog` tự khởi động lại agent khi kẹt. **Tạo lại proxy thì phải** `docker compose --profile tunnel up -d --force-recreate playit`.
+- Proxy Velocity (cổng 25565 → 25577, Bedrock 19132/udp; Geyser, Floodgate, AuthMe, SkinsRestorer, **Sonar**), `lobby`, `banghoi-1` (Bang Hội Chiến mùa 1, map Trái Đất 1:1000 Đông Nam Á), `practice-1` (Duels, beta), MariaDB, panel Cài đặt (`127.0.0.1:8889`, qua Trạm 6 `https://app.goc6.io.vn/mc/caidat/`), Dozzle log (8888), squaremap (8890), trang giới thiệu `site` (8892), restic backup ra `/mnt/f/DuckyMoMo-backups`.
+- Vào game (từ 15/10): **chính** VPS — Java `mc.goc6.io.vn` (SRV → 42.96.4.244:25570), Bedrock `mc.goc6.io.vn` cổng **19130**; người dùng đã vào
+  game thật qua VPS 15/10 03:18 (proxy ghi IP thật). **Dự phòng** playit — Java `pgsql-youths.tun.ply.gg` (SRV, cổng 28438), Bedrock `pgsql-mississauga.tun.ply.gg:21185`. `playit-watchdog` tự khởi động lại agent khi kẹt. **Tạo lại proxy thì phải** `docker compose --profile tunnel up -d --force-recreate playit`.
 - DuckyMoMoCore (plugin riêng, `network-core/core-paper`, build `./ops/build-core.sh`): dọn đồ rơi, lọc chat, chặn job đồ đặt, lớp thị trấn trên map, menu Bedrock, rơi void, định dạng chat, rank donate `/rank`, sách `/huongdan`, đồ vượt cấp `/dmm enchant|sach`, xuất lệnh `/dmm lenh`, dịch chuyển ngẫu nhiên `/tpr`.
 
 ### Làm trong ngày 12–13/10 (chi tiết ở các mục bên dưới và git log)
@@ -42,6 +43,94 @@
 - **Bảng chốt 45 mục (14/10)**: `docs/banghoi-luat-mua1.md` mục 11 (đè lên các chỗ [treo] ở mục 8, 10). Còn hỏi: mục 3 (tắt thu phục,
   đã giải thích lại), mục 40 (quốc gia cần bao nhiêu thị trấn). Nhiều con số là cài đặt (mức phạt, giờ họp, báo trước công thành, đại chiến).
   Thứ tự code đề xuất: (1) đất đai + giờ chơi thật + tài khoản + `/choilai`; (2) Liên minh Hoà Bình; (3) Hội Bàn Tròn + án; (4) xếp hạng.
+- **Đợt code 1 (14/10, chưa thử trong game)**: `Activity.java` (giờ chơi thật, `hoatdong.yml`), `TownRules.java` (Towny events: PreNewTownEvent,
+  TownPreClaimEvent, PreNewNationEvent, TownPreAddResidentEvent/TownRemoveResidentEvent; đất theo dân hoạt động = `setBonusBlocks` âm, số đã áp
+  lưu ở `datdai.yml`; PreSiegeWarStartEvent qua `registerEvent` + reflection), `PlayerReset.java` + `Integrations.java` (/choilai: QuickShop
+  `getAllShops(UUID)`, zAuctionHouse `getItemsListedForSale`/EXPIRED/PURCHASED qua reflection, Essentials homes đọc userdata + `delhome`,
+  uJobs `ujobs setlevel <p> <job> 0` cho mọi job trong jobs.yml, `spawn`, `kit tanthu`, `newbie add`; sao lưu playerdata + userdata vào
+  `choilai-backup/` 7 ngày), `/taikhoanphu`. Lệnh console của Essentials/PvPManager chưa thử thật. Tắt thu phục SiegeWar, khoảng cách
+  nhà chính 10 ô đã áp dụng (cả hai trên trang Cài đặt; đường dẫn Towny: `claiming.distance_rules.min_distance_between_homeblocks`).
+- **Đợt code 2 (14/10, chưa thử trong game): Liên minh Hoà Bình** `PeaceAlliance.java` (chi tiết: `docs/banghoi-luat-mua1.md` cuối mục 11).
+  Dùng Towny events NationAdd/RemoveTownEvent, TownToggleNeutral/PVPEvent, TownBlockClaimCostCalculationEvent, TownUpkeepCalculationEvent,
+  NewTownEvent; Essentials `UserBalanceUpdateEvent` (cause COMMAND_SELL) và QuickShop `ShopTaxEvent` qua `registerEvent` + reflection;
+  `SiegeWarHook.activeSieges()/nextBattleSessionStart()`; kinh đô chiếm đất bằng `new TownBlock(wc)` + `TownyUniverse.addTownBlock`.
+  **Việc của người dùng**: vào game đứng giữa spawn gõ `/dmm hoabinh setup`, rồi `/dmm hoabinh claim 14`. Cú pháp `ta town new <tên> npc`
+  chưa thử thật. Dữ liệu: `plugins/DuckyMoMoCore/hoabinh.yml`. SiegeWar `allow_peaceful_capitals` đã đổi thành true (file trong data/).
+- **Đợt code 3-4 + mục 14 (14/10, CHƯA THỬ TRONG GAME, người dùng muốn làm hết rồi test một lượt)**: `PeaceCouncil`, `Organizations`,
+  `Leaderboard` (+ `BxhPlaceholders`, PlaceholderAPI 2.12.3 compileOnly từ repo.extendedclip.com), `Justice`, `DecorShop`, `Members` (hàm chung).
+  Chi tiết + việc admin phải làm: `docs/banghoi-luat-mua1.md` cuối mục 11. Dữ liệu: `hoidong.yml`, `tochuc.yml`, `bxh.yml`, `an.yml`.
+  Đã đổi cấu hình plugin khác (trong data/, không có trong repo): QuickShop `limits.use: true, default 10, duckymomo.giayphep.thuonghoi: 30`;
+  Towny `keep_inventory/experience_on_death_in_arena: true`; Essentials `jail-online-time: true`; SiegeWar `allow_peaceful_capitals: true`,
+  `subvert_enabled: false`. `SiegeWarHook` lấy từng hàm riêng (getBattleSession ở lớp `objects.BattleSession`).
+- **Trang giới thiệu công khai (14/10)**: dịch vụ `site` (`site/`, compose include), `127.0.0.1:${SITE_PORT:-8892}`. Python stdlib + PyYAML,
+  CHỈ ĐỌC `data/` và `modes/` (mount ro), API `/api/info|status|bantron|bxh` (cache 20–30 giây; ping Velocity `proxy:25577` bằng Server List Ping;
+  không trả UUID/IP). Trang một tệp `site/public/index.html` (mount thẳng, sửa là thấy, trình duyệt giữ cache 5 phút); địa chỉ vào game, link
+  Discord/Zalo/bản đồ: `site/config/site.yml`. Đã xem trên trình duyệt (máy tính + điện thoại 375px, không tràn ngang).
+  **CÔNG KHAI từ 14/10: https://app.goc6.io.vn/mc/web/** (người dùng đồng ý, dặn tránh bị lần ngược về app). Route Trạm 6 `mc-web`
+  (priority 80, không bắt đăng nhập, middleware `mc-web-slash|strip|headers`: bỏ header Server, `X-Robots-Tag: noindex`, `no-referrer`) →
+  `host.docker.internal:8892`. Trang không có link nào về Trạm 6.
+  Giao diện toàn khung (14/10 tối, theo yêu cầu): logo vịt người dùng gửi (`site/public/logo.png` 512px đã xoá nền, `favicon.png` 96px),
+  linh vật vịt ở góc bản đồ có lời thoại đổi mỗi 6 giây, nền aurora, dải chữ chạy, số đếm nhảy, hiện dần khi cuộn; tắt hết khi máy bật
+  "giảm chuyển động". Đã xem ở 1600px, ~800px, 375px (không tràn ngang).
+- **Trạm 6 portal (14/10, theo yêu cầu)**: chưa đăng nhập chỉ thấy form đăng nhập; bỏ tab Đăng ký (API đăng ký vẫn khoá bằng
+  `ALLOW_REGISTER=false`, thử trả 403); danh sách mục chuyển khỏi mã JS sang `apps/portal/rieng/modules.json`, phục vụ ở `/_rieng/`
+  qua route `portal-rieng` có `require-login` (chưa đăng nhập: 401). Thêm/bớt mục: sửa file JSON đó rồi build lại portal.
+  Dòng phụ đề "đầu tư, giải trí…" của trang chủ vẫn còn (chưa được yêu cầu bỏ). Các thay đổi trong repo tram6 CHƯA commit
+  (repo đó lẫn thay đổi khác của người dùng — hỏi trước khi commit).
+- **Cửa hàng Kinh Đô (14/10 tối)**: `DecorShop` 3 mục (vật liệu/trang trí/danh hiệu), NPC `/dmm shopnpc` cho mọi người, `/cuahang` cho rank ủng hộ
+  chỉ trong kinh đô (đất thủ đô liên minh; chưa lập liên minh thì vòng `reserved-spawn-radius` quanh spawn). LP: `lp group namtuoc permission set
+  duckymomo.cuahang true server=banghoi-1` (đã chạy; có trong `tools/donate-ranks.cmds`). Quyền lợi Nam Tước thêm "/cuahang khi ở kinh đô" (trang
+  Cài đặt `tier0_perks` + config lobby/banghoi/practice). Dân làng đổi đồ: chờ người dùng tham khảo, xem `docs/banghoi-luat-mua1.md` cuối mục 11.
+  Trang web: bỏ câu hứa "sẽ chuyển máy chủ Việt Nam" (người dùng yêu cầu). Trang vote: để tới khi lên VPS (cần cổng Votifier 8192).
+- **Gửi tin vào game từ trang Hoạt động (14/10 tối)**: panel `/hoatdong` có thanh gửi (Cả mạng / Bang Hội Chiến / Sảnh / Practice; Chat admin /
+  Thông báo / Thông báo giữa màn hình = title), API `POST /api/say` (Basic auth panel, tối đa 200 ký tự, bỏ ký tự điều khiển và §) gửi `tellraw`/`title`
+  qua RCON. Tin gửi ghi vào `data/panel/admin.jsonl` (activity.jsonl thuộc service activity chạy root, panel uid 1000 không ghi được) và gộp vào dòng
+  hoạt động với loại `admin` (nút lọc "Admin"). Đã thử gửi thật vào banghoi-1 lúc 0 người online.
+- **Boss & Dungeon (14/10, người dùng: "cứ bổ sung plugin, test sau")**: ý tưởng (1) **Dungeon** cày đồ, cày tiền; (2) **"Trái Đất lâm nguy"**:
+  boss sự kiện, các bang hội chung tay, nhiều bối cảnh. Đã cài **EliteMobs 10.9.8** (Modrinth `elitemobs`, GPL, có bản 26.2/26.3; MythicMobs có bản
+  26.2 nhưng không có dungeon miễn phí). Đã chỉnh trong `data/banghoi-1/plugins/EliteMobs/`: `MobCombatSettings.yml doNaturalEliteMobSpawning: false`
+  (không có elite tự sinh, chỉ dungeon/sự kiện/boss), `EconomySettings.yml useVault: true` + `currencyShowerTierMultiplier: 0.3` (xu chung, tác giả
+  cảnh báo lạm phát). Trang Cài đặt > Thế giới > Boss & Dungeon. **Việc của người dùng**: tạo tài khoản Nightbreak lấy mã, vào game `/em setup`
+  tải dungeon (khoảng nửa miễn phí). CHƯA làm: thiết kế boss "Trái Đất lâm nguy" (boss tuỳ chỉnh EliteMobs `custombosses/` + sự kiện
+  `customevents/`), bản tiếng Việt (plugin chưa có), FreeMinecraftModels (tuỳ chọn). Không cài ResourcePackManager (đụng gói font).
+- **Logo trong danh sách server (15/10)**: `proxy/config/server-icon.png` (64×64, cắt từ `site/public/logo.png`, nền trong suốt); itzg chép sang
+  `data/proxy/` lúc khởi động. Velocity chỉ đọc icon khi khởi động (proxy không có console/rcon, không có LuckPerms để dùng `/velocity reload`)
+  → đổi icon phải khởi động lại proxy lúc 0 người online, rồi `docker compose --profile tunnel up -d --no-deps --force-recreate playit relay`.
+- **Tự sửa sau khi Windows/WSL khởi động lại (15/10)**: `ops/tu-sua-sau-khoi-dong.sh` (bash trong WSL; `--kiem-tra` = chỉ báo; nhật ký
+  `data/ops/tu-sua.log`; khoá `data/ops/tu-sua.pid`). Tự dò MỌI container đang chạy (DuckyMoMo, tram6, be_goc6, ql_goc6, fe_goc6): (1) cổng tcp publish
+  thử từ Windows bằng `curl.exe telnet://` + `time_connect` > 0 (telnet:// qua WSL không tự đóng nên mã lỗi luôn 28, phải dựa time_connect);
+  cổng chết → `docker restart` container đó. (2) bind mount: tạo file đánh dấu ở thư mục nguồn, `docker exec test -e` trong container, không thấy →
+  `docker compose -p <proj> -f <config_files> up -d --no-deps --force-recreate <svc>` trong working_dir (nhãn compose; container tram6 tạo từ
+  Windows có nhãn `\\wsl.localhost\...` → hàm `unc2wsl`). (3) proxy bị đụng hoặc playit không chạy → tạo lại playit. Server MC (hoặc proxy khi
+  cả mạng) có người online thì BỎ QUA. Đã thử 15/10: 41 thư mục gắn, mọi cổng sống, compose `--dry-run` đúng cho cả 4 dự án; nhánh sửa thật CHƯA
+  gặp lỗi thật để thử. **Đừng dùng `docker info`** trong script: Docker Desktop sinh 2 `dbus-daemon` mỗi lần gọi, chúng giữ phiên WSL làm
+  `wsl.exe` không thoát (và giữ khoá flock). Đăng ký chạy khi đăng nhập: `ops/windows/dang-ky-tu-sua.ps1` (tác vụ "DuckyMoMo tu sua", chờ 2 phút,
+  `conhost --headless wsl.exe ...`; file có BOM vì PowerShell 5.1) — **người dùng tự chạy** (cài đặt hệ thống), cùng với tự đăng nhập Windows
+  và giờ hoạt động Windows Update.
+- **VPS làm cửa ngõ (15/10, người dùng chọn: server chính vẫn ở nhà, VPS chỉ chuyển tiếp IP)**: đo từ nhà (Viettel, Bắc Ninh; mạng trong nhà 1–2 ms):
+  BKNS Hà Nội ~7–12 ms, Viettel IDC HCM 26 ms, FPT HCM (VPSSIEUTOC) ~45–50 ms. Đề xuất **BKNS VPS – Cheap 1** (70k/tháng, tối thiểu 1 tháng, 1C/1G/20G,
+  IPv4 VN, chống DDoS cơ bản); cần hỏi BKNS: cho WireGuard/chuyển tiếp game? mở UDP? Đã tạo khoá SSH trên WSL `~/.ssh/duckymomo_vps` (ed25519, không
+  passphrase; chỉ đưa khoá công khai cho người dùng).
+  **ĐÃ DỰNG (15/10 03:05)**: VPS BKNS "VPS MMO1" (gói Cheap, 3 tháng, hạn 15/01/2027) **`42.96.4.244`**, SSH **cổng 26266**, `root`, vào bằng khoá
+  `~/.ssh/duckymomo_vps` (người dùng đã đổi mật khẩu root; SSH bằng mật khẩu ĐÃ TẮT 15/10: `/etc/ssh/sshd_config.d/00-duckymomo.conf`, root chỉ vào bằng khoá; console web BKNS vẫn dùng mật khẩu). Ubuntu 24.04, KVM,
+  ping từ nhà ~9,7 ms. **BKNS chặn chiều vào TCP 25565/25566/25577 và UDP 19132/19133/25565** (mạng nhà không chặn; các cổng khác thông) →
+  dùng **Java TCP 25570, Bedrock UDP 19130** (DNAT cả 25565/19132 sẵn, BKNS mở là chạy). Chưa hỏi BKNS gói này có cho chạy game không.
+  Cách chạy: VPS `wg-quick@wg0` (10.66.0.1, UDP 51820, MTU 1380, `relay-up.sh` DNAT về 10.66.0.2, không SNAT; mẫu ở `relay/vps/`). Nhà: service
+  **`relay`** (`relay/compose.yaml`, profile tunnel, `network_mode: service:proxy`, NET_ADMIN, image tự build alpine + iproute2 + wg) dựng wg0
+  10.66.0.2 trong mạng proxy; chiều về dùng **luật theo cổng nguồn** (`ip rule ipproto tcp sport 25577` / `udp sport 19132` → bảng 66 default dev
+  wg0, trừ đích 127/8, 10/8, 172.16/12, 192.168/16, 100.64/10) — không dùng connmark vì UDP của Geyser (socket 0.0.0.0) chọn IP nguồn theo
+  route ban đầu. Khoá nhà `RELAY_WG_PRIVATE_KEY` trong `.env`; khoá công khai VPS + endpoint là mặc định trong compose. Proxy `rp_filter=0` (cần).
+  Đã thử từ nhà qua VPS: Java 25570 OK ~40 ms, Bedrock 19130 OK ~19 ms (đi vòng nhà→VPS→nhà), Velocity ghi **IP thật** `116.98.36.229`.
+  Proxy không phải khởi động lại; tạo lại proxy thì tạo lại cả `playit relay` (script tự sửa đã làm). **DNS đã tạo 15/10** qua API (token
+  `CF_API_TOKEN` trong `be_goc6/.env`, quyền tunnel + DNS): A `mc.goc6.io.vn` → 42.96.4.244 (DNS only, TTL 300) + SRV `_minecraft._tcp.mc` →
+  0 5 25570 mc.goc6.io.vn; đã phân giải đúng qua 1.1.1.1/8.8.8.8, ping Java/Bedrock bằng tên miền OK. Người chơi: Java `mc.goc6.io.vn`,
+  Bedrock `mc.goc6.io.vn` cổng 19130. **Xong 15/10**: địa chỉ mới trên web (`site/config/site.yml`
+  có `du-phong` = playit, trang tự hiện dòng dự phòng) + cẩm nang; tường lửa VPS ufw (xem `relay/vps/README.md`); giới hạn đăng ký
+  **2 tài khoản/IP/24 giờ** bằng DuckyMoMoCore `RegisterLimit` ở lobby (sự kiện AuthMe `AuthMeAsyncPreRegisterEvent.setCanRegister(false)` qua
+  reflection, lưu `plugins/DuckyMoMoCore/dangky-ip.yml`, bỏ qua IP loopback/nội bộ; config `register-limit` trong
+  `lobby/plugins/DuckyMoMoCore/config.yml`). KHÔNG dùng `maxRegPerIp` của AuthMe (tính tổng vĩnh viễn → khoá cả quán net/4G chung IP; AuthMe tự
+  bỏ qua IP loopback). Sonar `max-online-per-ip` vẫn 20 (playit chung IP 127.x; chưa rõ Sonar có bỏ qua loopback). CHƯA: theo dõi băng thông
+  VPS, đánh dấu nhiều tài khoản cùng IP cho staff. playit giữ làm dự phòng.
 - **IP thật người chơi (14/10): KHÔNG có** — qua playit mọi kết nối hiện `127.21.235.67`. Không giới hạn theo IP được (AuthMe, Sonar).
   Có IP thật khi chuyển sang VPS (**người dùng chốt: khi chạy thật thì đổi sang VPS**) hoặc bật Proxy Protocol trên playit + Velocity `haproxy-protocol`.
 - Font tiếng Việt (resource pack Be Vietnam Pro, host trên Trạm 6 `/mc/pack/`), bảng TAB, warp "Miền xa" (Côn Đảo, Luang Namtha…).

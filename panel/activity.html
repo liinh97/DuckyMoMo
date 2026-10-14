@@ -9,7 +9,7 @@
   :root {
     --bg: #121212; --bar: #1a1a1a; --row: #161616; --row-alt: #1b1b1b; --hover: #242424; --line: #2a2a2a;
     --text: #e4e4e4; --muted: #8a8a8a; --dim: #6b6b6b; --input: #202020; --live: #2ecc71;
-    --chat: #8ab4f8; --join: #81c995; --command: #fdd663; --server: #c7a6ff;
+    --chat: #8ab4f8; --join: #81c995; --command: #fdd663; --server: #c7a6ff; --admin: #ff8a80;
   }
   * { box-sizing: border-box; }
   html, body { height: 100%; }
@@ -25,6 +25,7 @@
   .chip.on[data-type="chat"] { background: var(--chat); }
   .chip.on[data-type="join"] { background: var(--join); }
   .chip.on[data-type="command"] { background: var(--command); }
+  .chip.on[data-type="admin"] { background: var(--admin); }
   select, input { padding: 4px 8px; border: 1px solid var(--line); border-radius: 6px; background: var(--input); color: var(--text);
                   font: inherit; font-size: 13px; color-scheme: dark; }
   input { width: 140px; }
@@ -45,9 +46,18 @@
   .line .ts { color: var(--dim); white-space: nowrap; }
   .line .msg { white-space: pre-wrap; word-break: break-word; }
   .srv { color: var(--server); } .mode { color: var(--dim); }
-  .tag { font-weight: 700; } .tag.chat { color: var(--chat); } .tag.join { color: var(--join); } .tag.command { color: var(--command); }
+  .tag { font-weight: 700; } .tag.chat { color: var(--chat); } .tag.join { color: var(--join); } .tag.command { color: var(--command); } .tag.admin { color: var(--admin); }
   .info { padding: 6px 16px; color: var(--dim); font-size: 12.5px; }
   .empty { padding: 40px 16px; text-align: center; color: var(--muted); font-family: system-ui, sans-serif; }
+  /* Thanh gửi tin vào game (dưới cùng) */
+  #say { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; padding: 10px 16px; background: var(--bar); border-top: 1px solid var(--line); }
+  #say input#sayText { flex: 1; min-width: 200px; width: auto; padding: 8px 10px; font-size: 14px; }
+  #say input#sayName { width: 110px; }
+  #say button { padding: 7px 16px; border: none; border-radius: 6px; background: var(--admin); color: #111; font: inherit; font-weight: 700; cursor: pointer; }
+  #say button:disabled { opacity: .5; cursor: default; }
+  #say .count { color: var(--dim); font-size: 12px; min-width: 52px; text-align: right; }
+  #sayMsg { padding: 0 16px 8px; background: var(--bar); font-size: 13px; color: var(--muted); min-height: 0; }
+  #sayMsg.ok { color: var(--join); } #sayMsg.err { color: var(--admin); }
   @media (max-width: 700px) { .line { grid-template-columns: 1fr; gap: 0; } input { width: 110px; } }
 </style>
 </head>
@@ -57,6 +67,7 @@
   <button class="chip on" data-type="chat">Chat</button>
   <button class="chip on" data-type="join">Vào/ra</button>
   <button class="chip on" data-type="command">Lệnh</button>
+  <button class="chip on" data-type="admin" title="Tin admin gửi từ trang này">Admin</button>
   <select id="mode" title="Chế độ"><option value="">Mọi chế độ</option></select>
   <select id="range" title="Khoảng ngày">
     <option value="all">Mọi ngày</option>
@@ -78,10 +89,28 @@
   </div>
 </header>
 <div id="log"><div class="empty">Đang tải…</div></div>
+<form id="say" autocomplete="off">
+  <select id="sayTarget" title="Gửi tới">
+    <option value="all">Cả mạng</option>
+    <option value="banghoi-1">Bang Hội Chiến</option>
+    <option value="lobby">Sảnh</option>
+    <option value="practice-1">Practice</option>
+  </select>
+  <select id="sayKind" title="Kiểu gửi">
+    <option value="chat">Chat admin</option>
+    <option value="broadcast">Thông báo</option>
+    <option value="title">Thông báo giữa màn hình</option>
+  </select>
+  <input id="sayName" placeholder="Tên hiển thị" value="Admin" maxlength="24" title="Tên hiện trước tin chat">
+  <input id="sayText" placeholder="Nhập tin gửi vào game… (Enter để gửi)" maxlength="200">
+  <span class="count" id="sayCount">0/200</span>
+  <button type="submit" id="sayBtn">Gửi</button>
+</form>
+<div id="sayMsg"></div>
 <script>
 const $ = (id) => document.getElementById(id);
 if (!"__DOZZLE_URL__") $("dozzle").style.display = "none";
-const TYPE_NAME = { chat: "CHAT", join: "VÀO/RA", command: "LỆNH" };
+const TYPE_NAME = { chat: "CHAT", join: "VÀO/RA", command: "LỆNH", admin: "ADMIN" };
 let modeNames = {}, timer = null, firstRender = true;
 
 // Bộ lọc nhớ trong địa chỉ trang (#types=chat&mode=banghoi…) để gửi link / tải lại không mất
@@ -192,6 +221,31 @@ let typing;
 for (const id of ["player", "q"]) $(id).oninput = () => { clearTimeout(typing); typing = setTimeout(changed, 300); };
 function schedule() { clearInterval(timer); if ($("auto").checked) timer = setInterval(load, 5000); }
 $("auto").onchange = () => { $("liveLabel").classList.toggle("on", $("auto").checked); schedule(); };
+
+// Gửi tin vào game: chat admin, thông báo, hoặc thông báo giữa màn hình (title) qua RCON
+try { $("sayName").value = localStorage.getItem("dmm_say_name") || "Admin"; } catch (e) {}
+$("sayText").oninput = () => { $("sayCount").textContent = $("sayText").value.length + "/200"; };
+$("say").onsubmit = async (ev) => {
+  ev.preventDefault();
+  const text = $("sayText").value.trim();
+  if (!text) return;
+  const kind = $("sayKind").value, target = $("sayTarget").value;
+  if (kind === "title" && !confirm("Hiện chữ to giữa màn hình của mọi người chơi " + ($("sayTarget").selectedOptions[0].text) + "?")) return;
+  $("sayBtn").disabled = true;
+  try { localStorage.setItem("dmm_say_name", $("sayName").value.trim() || "Admin"); } catch (e) {}
+  try {
+    const r = await fetch("api/say", { method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text, kind, target, name: $("sayName").value.trim() || "Admin" }) });
+    const d = await r.json();
+    $("sayMsg").textContent = d.message || (d.ok ? "Đã gửi" : "Lỗi");
+    $("sayMsg").className = d.ok ? "ok" : "err";
+    if (d.ok) { $("sayText").value = ""; $("sayCount").textContent = "0/200"; firstRender = true; load(); }
+  } catch (e) {
+    $("sayMsg").textContent = "Không gửi được: " + e; $("sayMsg").className = "err";
+  }
+  $("sayBtn").disabled = false;
+  $("sayText").focus();
+};
 
 load();
 schedule();

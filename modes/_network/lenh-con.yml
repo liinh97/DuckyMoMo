@@ -229,6 +229,12 @@ groups:
       - ["tempban <người> <thời gian> <lý do>", "Ban có thời hạn (vd 3d, 12h)", Từ mod]
       - ["mute <người> <thời gian> <lý do>", "Cấm chat có thời hạn", Từ helper]
       - ["essentials reload", "Nạp lại cấu hình Essentials", Chỉ admin]
+  - plugin: EliteMobs
+    servers: [banghoi-1]
+    commands:
+      - ["em", "Menu EliteMobs (dungeon, kỹ năng, đồ)", Mọi người]
+      - ["em setup", "Tải dungeon, sự kiện, gói nội dung", Chỉ admin]
+      - ["em reload", "Nạp lại cấu hình EliteMobs", Chỉ admin]
   - plugin: DuckyMoMoCore
     servers: [lobby, banghoi-1, practice-1]
     commands:
@@ -243,6 +249,22 @@ groups:
       - ["dmm sach <phù phép> <cấp> [người]", "Tạo sách phù phép vượt cấp (làm phần thưởng)", Chỉ admin]
       - ["dmm lenh", "Xuất lại danh sách lệnh cho trang Cẩm nang", Chỉ admin]
       - ["tpr [khu]", "Dịch chuyển ngẫu nhiên tới đất hoang (banghoi-1); không ghi khu thì mở menu", Mọi người]
+      - ["hoatdong [tên]", "Giờ chơi thật (không tính AFK); xem người khác cần quyền admin", Mọi người]
+      - ["taikhoanphu khai <chính>", "Tài khoản phụ tự khai; tài khoản chính gõ taikhoanphu xacnhan <phụ> trong 10 phút", Mọi người]
+      - ["hoabinh [vao|roi|danhsach]", "Liên minh Hoà Bình: xem, đưa thị trấn vào/ra", Thị trưởng]
+      - ["dmm hoabinh setup|claim <r>", "Lập Liên minh Hoà Bình, kinh đô chiếm đất", Chỉ admin]
+      - ["hoidong [ungcu|bau|phieu|baimien|deuoi]", "Hội đồng Hoà Bình", Thị trưởng]
+      - ["tochuc [lap|moi|vao|roi|gop|xinphep|danhsach]", "Tổ chức và giấy phép của dân hoà bình", Mọi người]
+      - ["quangcao <nội dung>", "Rao hàng toàn server (Thương Hội có giấy phép)", Mọi người]
+      - ["sukien [den|tao|thuong|dautruong|ket]", "Sự kiện (tạo: Tổ chức Sự kiện có giấy phép)", Mọi người]
+      - ["bantron [xu|lichsu|vu|toi|datban|chon|suthan|khangan|kiennghi]", "Hội Bàn Tròn và vụ án", Mọi người]
+      - ["bxh [chienthan|phuho|kientruc|quocgia]", "Bảng xếp hạng mùa", Mọi người]
+      - ["bxh dongmua|traothuong|hologram", "Đóng mùa, trao danh hiệu", Chỉ admin]
+      - ["binhchon [dangky|xem <thị trấn>|<thị trấn>]", "Giải Kiến Trúc Sư", Mọi người]
+      - ["danhhieu [chon <mã>|tat]", "Danh hiệu", Mọi người]
+      - ["cuahang", "Cửa hàng Kinh Đô (rank ủng hộ, chỉ trong kinh đô; người khác dùng NPC ở spawn)", Mọi người]
+      - ["dmm shopnpc [remove]", "Đặt/xoá NPC Cửa hàng Kinh Đô", Chỉ admin]
+      - ["choilai [xacnhan]", "Chơi lại từ đầu ở Bang Hội Chiến", Mọi người]
       - ["dmm phu add <phụ> <chính>", "Ghi tài khoản phụ: không được quân hàm, không đánh trận (remove, list)", Chỉ admin]
       - ["dmm rtpnpc [remove]", "Đặt/xoá NPC dịch chuyển ngẫu nhiên ở chỗ đang đứng", Chỉ admin]
   - plugin: PvPManager

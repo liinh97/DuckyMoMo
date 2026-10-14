@@ -23,6 +23,10 @@ final class VaultEconomy {
         return rsp == null ? null : rsp.getProvider();
     }
 
+    static double balance(OfflinePlayer p) {
+        return economy().getBalance(p);
+    }
+
     static boolean has(OfflinePlayer p, double amount) {
         return economy().has(p, amount);
     }
@@ -33,6 +37,19 @@ final class VaultEconomy {
 
     static void deposit(OfflinePlayer p, double amount) {
         economy().depositPlayer(p, amount);
+    }
+
+    /** Đặt số dư về đúng amount (rút hết rồi nạp lại). */
+    static void setBalance(OfflinePlayer p, double amount) {
+        double bal = economy().getBalance(p);
+        if (bal > 0) {
+            economy().withdrawPlayer(p, bal);
+        } else if (bal < 0) {
+            economy().depositPlayer(p, -bal);
+        }
+        if (amount > 0) {
+            economy().depositPlayer(p, amount);
+        }
     }
 
     static String format(double amount) {

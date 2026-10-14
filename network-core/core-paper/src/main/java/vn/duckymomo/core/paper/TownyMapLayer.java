@@ -117,9 +117,10 @@ final class TownyMapLayer {
                 continue;
             }
             Nation nation = town.getNationOrNull();
-            Color color = nation == null ? new Color(0x9E9E9E) : colorOf(nation.getName());
+            boolean peaceful = nation != null && nation.getName().equalsIgnoreCase(plugin.getConfig().getString("peace-alliance.nation", ""));
+            Color color = nation == null ? new Color(0x9E9E9E) : peaceful ? new Color(0x66BB6A) : colorOf(nation.getName());
             String tip = "<b>" + esc(town.getName()) + "</b>"
-                    + "<br>Quốc gia: " + (nation == null ? "<i>tự do</i>" : esc(nation.getName()))
+                    + "<br>Quốc gia: " + (nation == null ? "<i>tự do</i>" : esc(nation.getName()) + (peaceful ? " (hoà bình)" : ""))
                     + "<br>Thị trưởng: " + (town.getMayor() == null ? "?" : esc(town.getMayor().getName()))
                     + "<br>Dân: " + town.getResidents().size()
                     + "<br>Ô đất: " + town.getTownBlocks().size();
@@ -134,6 +135,24 @@ final class TownyMapLayer {
                         .markerOptions(opt);
                 provider.addMarker(Key.of("town_" + town.getUUID() + "_" + i++), m);
             }
+        }
+        drawSieges();
+    }
+
+    /** Vùng vây đang diễn ra: vòng tròn đỏ quanh cờ (bán kính siegezone_radius_blocks của SiegeWar). */
+    private void drawSieges() {
+        int r = org.bukkit.configuration.file.YamlConfiguration.loadConfiguration(
+                new java.io.File(plugin.getDataFolder().getParentFile(), "SiegeWar/config.yml")).getInt("war.siege.distances.siegezone_radius_blocks", 200);
+        int i = 0;
+        for (SiegeWarHook.SiegeInfo s : SiegeWarHook.activeSieges()) {
+            if (s.flag() == null || !worldName.equals(s.flag().getWorld().getName())) {
+                continue;
+            }
+            Color red = new Color(0xE53935);
+            provider.addMarker(Key.of("siege_" + i++), Marker.circle(Point.of(s.flag().getX(), s.flag().getZ()), r)
+                    .markerOptions(MarkerOptions.builder().fillColor(red).fillOpacity(0.15).strokeColor(red).strokeWeight(2)
+                            .hoverTooltip("<b>Vùng vây: " + esc(s.town()) + "</b><br>Bên tấn công: " + esc(s.attacker())
+                                    + "<br>Dân hoà bình hãy di tản").build()));
         }
     }
 

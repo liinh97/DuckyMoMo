@@ -320,6 +320,18 @@ plugins:
     settings: "Trang Cài đặt: Bang Hội Chiến > Phù phép > Đồ phù phép vượt cấp (bật/tắt, cấp tối đa)"
     notes: "Chỉ làm phần thưởng hoặc bán bằng tiền trong game. KHÔNG bán lấy tiền thật (pay-to-win, vi phạm luật Mojang). Mỗi lần tạo đều ghi log server."
 
+  - name: AzuVotifier (+ thưởng vote DuckyMoMoCore)
+    jar: Votifier
+    kind: Vote server
+    purpose: "Nhận vote từ các trang xếp hạng server (cài 15/10, bản Paper 3.3.6 ở banghoi-1; không cài ở proxy vì Velocity 4). Vote vào VPS mc.goc6.io.vn:8192 → relay (socat) → banghoi-1:8192. Thưởng do DuckyMoMoCore phát: 100 xu/lượt, 7 ngày liền +500, mỗi 30 lượt cả server: vote party 200 xu cho người online. Người chưa từng vào server thì bỏ qua."
+    player:
+      - ["/vote", "Link các trang vote (bấm được), phần thưởng, số lượt và chuỗi ngày của bạn"]
+      - ["/vote top", "Bảng vote tháng"]
+    admin:
+      - ["Thêm trang vote", "Đăng ký server trên trang vote (IP mc.goc6.io.vn, cổng game 25570, Votifier cổng 8192 + khoá công khai plugins/Votifier/rsa/public.key), rồi thêm link vào vote.sites trong config DuckyMoMoCore (banghoi-1) + /dmm reload"]
+      - ["Thử vote", "Trang vote thường có nút 'Test vote'; xem log banghoi-1: dòng 'Vote từ ...'"]
+    settings: "plugins/DuckyMoMoCore/config.yml mục vote (banghoi-1); trang web tự hiện link + top tháng (site /api/vote)"
+    notes: "Không bán gì: vote chỉ thưởng xu trong game. Dữ liệu: plugins/DuckyMoMoCore/vote.yml."
   - name: EliteMobs
     jar: EliteMobs
     kind: Boss & Dungeon

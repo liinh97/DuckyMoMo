@@ -4,7 +4,7 @@
 (an.yml), Hội đồng Hoà Bình (hoidong.yml), bảng xếp hạng (bxh.yml), tổ chức (tochuc.yml), Towny (flatfile). Hỏi proxy Velocity
 bằng Server List Ping để biết số người online. Không trả UUID, mật khẩu, IP; không ghi gì vào server.
 
-API: /api/info  /api/status  /api/bantron  /api/bxh   (kết quả giữ 30 giây)
+API: /api/info  /api/status  /api/bantron  /api/bxh  /api/vote   (kết quả giữ 30 giây)
 """
 import json
 import os
@@ -333,11 +333,26 @@ def api_bxh():
             "kientruc": len(get(b, "kts.dangky", []) or [])}
 
 
+def api_vote():
+    v = get(load_yaml(plugin("DuckyMoMoCore", "config.yml")), "vote", {}) or {}
+    d = load_yaml(plugin("DuckyMoMoCore", "vote.yml"))
+    month = datetime.now(VN).strftime("%Y-%m")
+    top = sorted(((p.get("name"), p.get("month-votes", 0)) for p in (d.get("players") or {}).values()
+                  if p.get("month") == month and p.get("month-votes", 0) > 0), key=lambda x: x[1], reverse=True)
+    sites = [{"ten": s.get("name", k), "url": s["url"]} for k, s in (v.get("sites") or {}).items()
+             if isinstance(s, dict) and str(s.get("url", "")).startswith("https://")]
+    return {"bat": bool(v.get("enabled")), "xu": v.get("money-per-vote", 100), "chuoi_ngay": v.get("streak-days", 7),
+            "chuoi_thuong": v.get("streak-bonus", 500), "party_moi": v.get("party-every", 30), "party_xu": v.get("party-money", 200),
+            "party_dem": get(d, "party.count", 0) or 0, "trang": sites, "thang": datetime.now(VN).strftime("%m/%Y"),
+            "top": [{"ten": n, "luot": c} for n, c in top[:10]]}
+
+
 ROUTES = {
     "/api/info": lambda: cached("info", 30, api_info),
     "/api/status": lambda: cached("status", 20, api_status),
     "/api/bantron": lambda: cached("bantron", 20, api_bantron),
     "/api/bxh": lambda: cached("bxh", 30, api_bxh),
+    "/api/vote": lambda: cached("vote", 30, api_vote),
 }
 TYPES = {".html": "text/html; charset=utf-8", ".css": "text/css; charset=utf-8", ".js": "application/javascript; charset=utf-8",
          ".png": "image/png", ".jpg": "image/jpeg", ".webp": "image/webp", ".svg": "image/svg+xml", ".ico": "image/x-icon",

@@ -14,7 +14,11 @@ softdepend:
   - PlaceholderAPI
   - SiegeWar
   - Essentials
+  - Votifier
 commands:
+  vote:
+    description: "Vote cho server trên các trang xếp hạng, nhận xu. /vote top: bảng vote tháng"
+    aliases: [bauchon]
   menu:
     description: Mở menu chọn chế độ (ở lobby)
     aliases: [chedo, modes]

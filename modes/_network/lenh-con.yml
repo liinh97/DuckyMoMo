@@ -243,6 +243,8 @@ groups:
       - ["rank give <người> <bậc> <số tháng>", "Cấp rank donate (sau khi nhận tiền)", Chỉ admin]
       - ["rank remove <người>", "Gỡ rank donate", Chỉ admin]
       - ["rank check <người>", "Xem rank và ngày hết hạn", Chỉ admin]
+      - ["vote", "Link các trang vote, thưởng, thành tích của bạn (Bang Hội Chiến)", Mọi người]
+      - ["vote top", "Bảng vote tháng", Mọi người]
       - ["dmm reload", "Nạp lại cấu hình DuckyMoMoCore", Chỉ admin]
       - ["dmm clean", "Dọn đồ rơi trên đất ngay", Chỉ admin]
       - ["dmm enchant <phù phép> <cấp>", "Phù phép vượt cấp đồ đang cầm (vd sharpness 20)", Chỉ admin]

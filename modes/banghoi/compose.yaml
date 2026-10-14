@@ -86,6 +86,7 @@ services:
         https://ci.ender.zone/job/EssentialsX/1832/artifact/jars/EssentialsX-2.22.1-dev%2B27-e70bdb8.jar
         https://ci.ender.zone/job/EssentialsX/1832/artifact/jars/EssentialsXChat-2.22.1-dev%2B27-e70bdb8.jar
         https://ci.ender.zone/job/EssentialsX/1832/artifact/jars/EssentialsXSpawn-2.22.1-dev%2B27-e70bdb8.jar
+        https://cdn.modrinth.com/data/YbRigZrU/versions/tlCVriD3/nuvotifier-bukkit-3.3.6-dist.jar
       CFG_SERVER_NAME: banghoi-1
       CFG_DISCORD_BOT_TOKEN: ${DISCORD_BOT_TOKEN:-}
       CFG_DISCORD_CHANNEL_ID: ${DISCORD_CHANNEL_ID:-000000000000000000}

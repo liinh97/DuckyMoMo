@@ -93,6 +93,15 @@
   cảnh báo lạm phát). Trang Cài đặt > Thế giới > Boss & Dungeon. **Việc của người dùng**: tạo tài khoản Nightbreak lấy mã, vào game `/em setup`
   tải dungeon (khoảng nửa miễn phí). CHƯA làm: thiết kế boss "Trái Đất lâm nguy" (boss tuỳ chỉnh EliteMobs `custombosses/` + sự kiện
   `customevents/`), bản tiếng Việt (plugin chưa có), FreeMinecraftModels (tuỳ chọn). Không cài ResourcePackManager (đụng gói font).
+- **Vote server (15/10)**: AzuVotifier 3.3.6 bản Paper ở banghoi-1 (link Modrinth trong `PLUGINS` của `modes/banghoi/compose.yaml`; KHÔNG cài
+  ở proxy vì proxy là Velocity 4.2.0, AzuVotifier build cho Velocity 3). Đường vote: trang vote → VPS `42.96.4.244:8192` (BKNS không chặn;
+  DNAT trong `relay-up.sh` + `ufw route allow` 8192) → wg → relay `socat TCP-LISTEN:8192 → banghoi-1:8192` (ip rule `tcp sport 8192` → bảng 66).
+  Thưởng: DuckyMoMoCore `VoteRewards` (sự kiện `com.vexsoftware.votifier.model.VotifierEvent` qua reflection; config `vote` ở banghoi-1:
+  100 xu/lượt, 7 ngày liền +500, mỗi 30 lượt cả server vote party 200 xu/người online; lưu `vote.yml`; `/vote`, `/vote top`; người chưa từng vào
+  bị bỏ qua; tên Bedrock thử thêm dấu chấm đầu). Trang web: mục `#vote` + `/api/vote` (link từ `vote.sites` có `https://`, top tháng).
+  Thứ tự áp dụng: VPS đã nạp (15/10); CHỜ lúc 0 người online để `docker compose --profile tunnel up -d --build --no-deps --force-recreate relay`
+  và khởi động lại banghoi-1 (tải Votifier + jar DuckyMoMoCore mới). Sau đó: lấy `plugins/Votifier/rsa/public.key` + token; NGƯỜI DÙNG đăng ký
+  server trên các trang vote (tài khoản của họ), rồi điền `vote.sites`.
 - **Logo trong danh sách server (15/10)**: `proxy/config/server-icon.png` (64×64, cắt từ `site/public/logo.png`, nền trong suốt); itzg chép sang
   `data/proxy/` lúc khởi động. Velocity chỉ đọc icon khi khởi động (proxy không có console/rcon, không có LuckPerms để dùng `/velocity reload`)
   → đổi icon phải khởi động lại proxy lúc 0 người online, rồi `docker compose --profile tunnel up -d --no-deps --force-recreate playit relay`.

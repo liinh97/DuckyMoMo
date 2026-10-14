@@ -59,7 +59,7 @@ public final class DuckyMoMoCore extends JavaPlugin {
         if (getServer().getPluginManager().isPluginEnabled("AuthMe")) {
             getServer().getPluginManager().registerEvents(new BedrockAuthListener(this), this);
             getLogger().info("Bedrock auto-login: bật (AuthMe có trên server này)");
-            if (!reloading && getConfig().getBoolean("register-limit.enabled", true)) {
+            if (getConfig().getBoolean("register-limit.enabled", true)) {
                 boolean ok = new RegisterLimit(this, getConfig().getConfigurationSection("register-limit")).hook();
                 getLogger().info("Giới hạn đăng ký theo IP mỗi 24 giờ: " + ok);
             }
@@ -303,6 +303,13 @@ public final class DuckyMoMoCore extends JavaPlugin {
         bind("danhhieu", board == null ? null : board::titleCommand, "Danh hiệu");
         bind("bantron", justice == null ? null : justice::command, "Hội Bàn Tròn");
         bind("cuahang", shop == null ? null : shop::command, "Cửa hàng trang trí");
+
+        // Thưởng vote server (Votifier ở banghoi-1; vote từ VPS qua relay socat 8192)
+        VoteRewards vote = getConfig().getBoolean("vote.enabled") ? new VoteRewards(this, getConfig().getConfigurationSection("vote")) : null;
+        if (vote != null && !vote.hook()) {
+            getLogger().info("Thưởng vote: chưa có Votifier, /vote vẫn hiện link");
+        }
+        bind("vote", vote == null ? null : vote::command, "Vote server");
         if (council != null) {
             getLogger().info("Hội đồng Hoà Bình, tổ chức, bảng xếp hạng, Hội Bàn Tròn, cửa hàng: "
                     + (orgs != null) + "/" + (board != null) + "/" + (justice != null) + "/" + (shop != null));

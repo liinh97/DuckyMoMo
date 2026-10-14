@@ -187,6 +187,8 @@ header.nav .wrap{height:64px}
 .brand:hover img{transform:rotate(-12deg) scale(1.08)}
 .nav-cta{padding:8px 14px;border-radius:10px;font-weight:800;font-size:.9rem;background:linear-gradient(135deg,var(--gold),#d98b25);color:#1d1203!important;white-space:nowrap}
 .nav-cta:hover{text-decoration:none;filter:brightness(1.1)}
+.vbtn{display:inline-block;padding:10px 16px;border-radius:10px;font-weight:800;background:linear-gradient(135deg,var(--gold),#d98b25);color:#1d1203!important}
+.vbtn:hover{text-decoration:none;filter:brightness(1.1)}
 @media (max-width:900px){.nav-cta{display:none}}
 
 .hero{min-height:calc(100svh - 64px);display:flex;flex-direction:column;justify-content:center;padding:56px 0 40px}
@@ -300,6 +302,7 @@ footer .fbrand img{width:44px}
       <a href="#boss">Boss</a>
       <a href="#bantron">Hội Bàn Tròn</a>
       <a href="#xephang">Xếp hạng</a>
+      <a href="#vote">Vote</a>
       <a href="#luat">Luật</a>
       <a href="#hoidap">Hỏi đáp</a>
     </nav>
@@ -654,6 +657,31 @@ footer .fbrand img{width:44px}
   </div>
 </section>
 
+<!-- ============ VOTE ============ -->
+<section id="vote">
+  <div class="wrap">
+    <div class="kicker">Ủng hộ miễn phí, mỗi ngày</div>
+    <h2>Vote cho server, nhận xu</h2>
+    <p class="intro">Mỗi ngày vào các trang xếp hạng bên dưới, nhập <b>đúng tên trong game</b> rồi bấm vote. Xu được cộng ngay vào tài khoản, kể cả khi bạn đang offline. Vote giúp nhiều người tìm thấy DuckyMoMo hơn.</p>
+    <div class="grid g2">
+      <div class="card hl">
+        <h3>🎁 Phần thưởng</h3>
+        <ul class="clean">
+          <li>Mỗi lượt vote: <b id="vXu">100</b> xu (mỗi trang 1 lần/ngày)</li>
+          <li>Vote <b id="vNgay">7</b> ngày liên tiếp: thưởng thêm <b id="vChuoi">500</b> xu</li>
+          <li>Cứ <b id="vParty">30</b> lượt vote của cả server: <b>Vote Party</b>, ai đang online nhận <b id="vPartyXu">200</b> xu <span class="dim" id="vPartyDem"></span></li>
+          <li>Trong game gõ <span class="kbd">/vote</span> để mở link, <span class="kbd">/vote top</span> xem bảng tháng</li>
+        </ul>
+        <div id="voteSites" style="display:flex;flex-wrap:wrap;gap:10px;margin-top:14px"></div>
+      </div>
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center"><h3 style="margin:0">🏆 Top vote tháng <span id="vThang"></span></h3><span class="live"><span class="dot on"></span>Trực tiếp</span></div>
+        <div class="tbl" style="margin-top:10px"><table><thead><tr><th>#</th><th>Người chơi</th><th>Lượt</th></tr></thead><tbody id="tVote"></tbody></table></div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- ============ LUẬT ============ -->
 <section id="luat">
   <div class="wrap">
@@ -869,6 +897,20 @@ async function loadBxh(){
   } catch (e) {}
 }
 
+async function loadVote(){
+  try {
+    const v = await j("api/vote");
+    $("#vXu").textContent = nf.format(v.xu); $("#vNgay").textContent = v.chuoi_ngay; $("#vChuoi").textContent = nf.format(v.chuoi_thuong);
+    $("#vParty").textContent = v.party_moi; $("#vPartyXu").textContent = nf.format(v.party_xu);
+    $("#vPartyDem").textContent = v.party_moi ? `(đang ${v.party_dem}/${v.party_moi})` : "";
+    $("#vThang").textContent = v.thang;
+    $("#voteSites").innerHTML = v.trang.length
+      ? v.trang.map(s => `<a class="vbtn" href="${esc(s.url)}" target="_blank" rel="noopener">Vote: ${esc(s.ten)}</a>`).join("")
+      : `<p class="dim" style="margin:0">Server đang đăng ký lên các trang vote, link sẽ hiện ở đây.</p>`;
+    $("#tVote").innerHTML = v.top.length ? v.top.map((n,i)=>`<tr><td class="rank">${i+1}</td><td>${esc(n.ten)}</td><td><b>${n.luot}</b></td></tr>`).join("")
+      : `<tr><td colspan="3" class="empty">Chưa ai vote tháng này. Người đầu tiên là bạn?</td></tr>`;
+  } catch (e) {}
+}
 
 // hiện dần khi cuộn tới
 (function(){
@@ -910,8 +952,8 @@ function countTo(el, n){
   const lines = ["Công thành tối nay không? ⚔️","Đất Tây Bắc còn trống kìa! 🏔️","Giết dân hoà bình là ra toà nha ⚖️","Vào sớm chọn đất đẹp! 🏰","Bán đồ ở kinh đô được +20% 💰","Có gì đó đang thức giấc… 🌋"];
   let i = 0; setInterval(() => { i = (i + 1) % lines.length; const b = $("#bubble"); if (b) b.textContent = lines[i]; }, 6000);
 })();
-loadInfo().catch(()=>{}); loadStatus(); loadBantron(); loadBxh();
-setInterval(loadStatus, 30000); setInterval(loadBantron, 60000); setInterval(loadBxh, 60000);
+loadInfo().catch(()=>{}); loadStatus(); loadBantron(); loadBxh(); loadVote();
+setInterval(loadStatus, 30000); setInterval(loadBantron, 60000); setInterval(loadBxh, 60000); setInterval(loadVote, 60000);
 </script>
 </body>
 </html>

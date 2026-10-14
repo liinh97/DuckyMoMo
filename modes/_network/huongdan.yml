@@ -428,6 +428,17 @@ chapters:
 
         &1/rank &0xem giá, quyền
         lợi từng bậc, cách mua.
+      - |-
+        &2&lVOTE MIỄN PHÍ
+        &0Ủng hộ server mà
+        không tốn tiền: gõ
+        &1/vote&0, bấm link,
+        nhập đúng tên.
+        &0Mỗi lượt &6100 xu&0,
+        7 ngày liền thêm
+        &6500 xu&0, mỗi 30
+        lượt cả server có
+        &dVote Party&0.
   - id: pokemon
     name: Pokémon (sắp mở)
     pages:

@@ -333,3 +333,18 @@ decor-shop:
     - {id: luukhach, text: "&7[Lữ Khách]", price: 1000}
     - {id: nghenhan, text: "&d[Nghệ Nhân]", price: 3000}
     - {id: phuthuong, text: "&6[Phú Thương]", price: 8000}
+
+# Thưởng vote server (Votifier/AzuVotifier). Vote vào từ VPS: cổng 8192 → relay (socat) → banghoi-1:8192.
+# Lượt vote của người chưa từng vào server bị bỏ qua. Dữ liệu: plugins/DuckyMoMoCore/vote.yml
+vote:
+  enabled: true
+  money-per-vote: 100
+  streak-days: 7          # vote đủ N ngày liên tiếp (ít nhất 1 trang mỗi ngày) thì thưởng thêm
+  streak-bonus: 500
+  party-every: 30         # cứ M lượt vote toàn server: vote party, ai đang online cũng nhận party-money
+  party-money: 200
+  broadcast: true
+  sites:                  # link hiện ở /vote và trang web; url trống = ẩn. Thêm trang: copy một mục
+    trang1:
+      name: "Trang vote 1"
+      url: ""

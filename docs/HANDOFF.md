@@ -99,9 +99,12 @@
   Thưởng: DuckyMoMoCore `VoteRewards` (sự kiện `com.vexsoftware.votifier.model.VotifierEvent` qua reflection; config `vote` ở banghoi-1:
   100 xu/lượt, 7 ngày liền +500, mỗi 30 lượt cả server vote party 200 xu/người online; lưu `vote.yml`; `/vote`, `/vote top`; người chưa từng vào
   bị bỏ qua; tên Bedrock thử thêm dấu chấm đầu). Trang web: mục `#vote` + `/api/vote` (link từ `vote.sites` có `https://`, top tháng).
-  Thứ tự áp dụng: VPS đã nạp (15/10); CHỜ lúc 0 người online để `docker compose --profile tunnel up -d --build --no-deps --force-recreate relay`
-  và khởi động lại banghoi-1 (tải Votifier + jar DuckyMoMoCore mới). Sau đó: lấy `plugins/Votifier/rsa/public.key` + token; NGƯỜI DÙNG đăng ký
-  server trên các trang vote (tài khoản của họ), rồi điền `vote.sites`.
+  **Đã áp dụng 15/10 03:39** (lúc 0 người online). Bẫy: `docker compose restart` KHÔNG nạp env mới (PLUGINS) → phải `docker compose up -d
+  --no-deps banghoi-1`. Đã gửi thử vote v2 thật qua `42.96.4.244:8192` (token đọc từ `plugins/Votifier/config.yml`, KHÔNG in ra): Votifier
+  `status ok`, Linh +100, web top tháng hiện. Lượt thử ghi `ThuNghiem` trong vote.yml (party.count 1). Khoá công khai v1:
+  `plugins/Votifier/rsa/public.key` (đã gửi người dùng). CHỜ NGƯỜI DÙNG: đăng ký server trên các trang vote (tài khoản của họ) rồi gửi link →
+  điền `vote.sites` (repo + data) + `/dmm reload`. Tiền hiện "$100" vì Essentials `currency-symbol: '$'` (cả server, có từ trước) trong khi web/cẩm
+  nang gọi là "xu" — đã hỏi người dùng có đổi không.
 - **Logo trong danh sách server (15/10)**: `proxy/config/server-icon.png` (64×64, cắt từ `site/public/logo.png`, nền trong suốt); itzg chép sang
   `data/proxy/` lúc khởi động. Velocity chỉ đọc icon khi khởi động (proxy không có console/rcon, không có LuckPerms để dùng `/velocity reload`)
   → đổi icon phải khởi động lại proxy lúc 0 người online, rồi `docker compose --profile tunnel up -d --no-deps --force-recreate playit relay`.

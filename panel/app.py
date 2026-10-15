@@ -158,6 +158,24 @@ def validate(s, v):
             if lst:
                 out[day] = lst
         return dict(sorted(out.items()))
+    if t == "spin":
+        out = []
+        for pz in (v or []):
+            pz = pz or {}
+            try:
+                w = int(pz.get("weight"))
+            except (TypeError, ValueError):
+                raise ValueError(f"{label}: trọng số phải là số")
+            if not 1 <= w <= 100000:
+                raise ValueError(f"{label}: trọng số 1–100000")
+            rw = check_rewards(label, pz.get("rewards"))
+            if not rw:
+                raise ValueError(f"{label}: mỗi phần thưởng cần ít nhất một món quà")
+            name = str(pz.get("label", "")).strip()[:40] or rw[0]
+            out.append({"label": name, "weight": w, "rare": bool(pz.get("rare")), "rewards": rw})
+        if not out:
+            raise ValueError(f"{label}: cần ít nhất một phần thưởng")
+        return out
     if t == "quests":
         out = {}
         for qid, q in (v or {}).items():

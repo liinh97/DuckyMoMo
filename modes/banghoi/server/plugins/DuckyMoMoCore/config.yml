@@ -379,3 +379,22 @@ daily-quests:
     xay_dung: {name: "Đặt 200 khối", type: place, targets: ["*"], amount: 200, rewards: ["xu 100"]}
     cau_ca: {name: "Câu 10 con cá", type: fish, targets: ["*"], amount: 10, rewards: ["xu 100"]}
     thu_hoach: {name: "Thu hoạch 64 nông sản", type: harvest, targets: [WHEAT, CARROTS, POTATOES, BEETROOTS, NETHER_WART, COCOA], amount: 64, rewards: ["xu 100"]}
+
+# Vòng quay miễn phí (/vongquay): mỗi minutes-per-key phút CHƠI THẬT (không tính treo máy) được 1 vé, giữ tối đa max-keys.
+# Vé không bán, không trao đổi. Tỉ lệ = weight / tổng weight (hiện trong menu). rare: báo cả server. Lưu: vongquay.yml
+# Placeholder: %dmmvq_ve% (số vé), %dmmvq_con% (phút tới vé tiếp theo). Đừng đặt đồ quá mạnh (lệch chiến tranh).
+lucky-spin:
+  enabled: true
+  minutes-per-key: 60
+  max-keys: 5
+  prizes:
+    - {label: "200 xu", weight: 28, rare: false, rewards: ["xu 200"]}
+    - {label: "500 xu", weight: 14, rare: false, rewards: ["xu 500"]}
+    - {label: "16 thỏi sắt", weight: 14, rare: false, rewards: ["vat IRON_INGOT 16"]}
+    - {label: "16 bánh mì", weight: 12, rare: false, rewards: ["vat BREAD 16"]}
+    - {label: "8 ngọc lục bảo", weight: 10, rare: false, rewards: ["vat EMERALD 8"]}
+    - {label: "2 táo vàng", weight: 8, rare: false, rewards: ["vat GOLDEN_APPLE 2"]}
+    - {label: "5 kim cương", weight: 6, rare: false, rewards: ["vat DIAMOND 5"]}
+    - {label: "2000 xu", weight: 4, rare: true, rewards: ["xu 2000"]}
+    - {label: "1 khối kim cương", weight: 2, rare: true, rewards: ["vat DIAMOND_BLOCK 1"]}
+    - {label: "Đĩa nhạc Cat (trang trí)", weight: 2, rare: true, rewards: ["vat MUSIC_DISC_CAT 1"]}

@@ -22,6 +22,8 @@ public final class DuckyMoMoCore extends JavaPlugin {
     private ItemLibrary itemLibrary;
     private Rewards rewards;
     private DailyQuests quests;
+    private LuckySpin spin;
+    private me.clip.placeholderapi.expansion.PlaceholderExpansion spinPapi;
 
     @Override
     public void onEnable() {
@@ -45,6 +47,14 @@ public final class DuckyMoMoCore extends JavaPlugin {
         if (quests != null) {
             quests.flush();
             quests = null;
+        }
+        if (spin != null) {
+            spin.flush();
+            spin = null;
+        }
+        if (spinPapi != null) {
+            spinPapi.unregister();
+            spinPapi = null;
         }
         if (activity != null) {
             activity.shutdown();
@@ -364,6 +374,18 @@ public final class DuckyMoMoCore extends JavaPlugin {
             getServer().getPluginManager().registerEvents(quests, this);
         }
         bind("nhiemvu", quests == null ? null : quests::command, "Nhiệm vụ hằng ngày");
+
+        // Vòng quay miễn phí: vé theo giờ chơi thật (Bang Hội Chiến: lucky-spin.enabled)
+        spin = getConfig().getBoolean("lucky-spin.enabled")
+                ? new LuckySpin(this, getConfig().getConfigurationSection("lucky-spin"), rewards, activity, itemLibrary) : null;
+        if (spin != null) {
+            getServer().getPluginManager().registerEvents(spin, this);
+            if (getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+                spinPapi = spin.placeholders();
+                spinPapi.register();
+            }
+        }
+        bind("vongquay", spin == null ? null : spin::command, "Vòng quay");
         PluginCommand dmm = getCommand("dmm");
         if (dmm != null) {
             dmm.setExecutor((sender, cmd, label, args) -> {

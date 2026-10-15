@@ -460,6 +460,16 @@ chapters:
         &6thưởng&0. Đổi lúc 0h.
         &8Khối tự đặt rồi phá
         &8không được tính.
+      - |-
+        &6&lVÒNG QUAY
+        &0Chơi thật mỗi &l60
+        &lphút&r&0 được 1 vé
+        (treo máy không tính,
+        giữ tối đa 5 vé).
+        &1/vongquay &0để quay,
+        menu ghi rõ &ltỉ lệ
+        &ltừng món&r&0. Vé miễn
+        phí, không bán.
   - id: pokemon
     name: Pokémon (sắp mở)
     pages:

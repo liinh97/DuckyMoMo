@@ -58,6 +58,11 @@
   .qe-head { display: grid; grid-template-columns: 120px 1fr 120px 90px 28px; gap: 6px; margin-bottom: 6px; }
   .qe-head .x { background: none; border: 0; color: var(--err); cursor: pointer; font-size: 16px; }
   .qe-tg { margin-bottom: 6px; }
+  .sp-head { display: grid; grid-template-columns: 1fr 90px 60px auto 28px; gap: 6px; align-items: center; margin-bottom: 6px; }
+  .sp-head .x { background: none; border: 0; color: var(--err); cursor: pointer; font-size: 16px; }
+  .sp-pct { text-align: right; color: var(--accent); }
+  .sp-rare { font-size: 13px; display: flex; gap: 4px; align-items: center; white-space: nowrap; }
+  .sp-rare input { width: auto; }
   @media (max-width: 640px) { .rw-row, .qe-head { grid-template-columns: 1fr 1fr; } }
 </style>
 </head>
@@ -281,6 +286,40 @@ function questsEditor(value, onChange) {
   return box;
 }
 
+
+// ---- Trình soạn vòng quay: [{label, weight, rare, rewards[]}], tỉ lệ = weight / tổng
+function spinEditor(value, onChange) {
+  const box = document.createElement("div");
+  const ps = [];
+  const pct = () => {
+    const total = ps.reduce((a, p) => a + (parseInt(p.w.value, 10) || 0), 0);
+    for (const p of ps) { const w = parseInt(p.w.value, 10) || 0; p.pct.textContent = total ? (100 * w / total).toFixed(1) + "%" : "–"; }
+  };
+  const emit = () => {
+    pct();
+    onChange(ps.map(p => ({ label: p.label.value.trim(), weight: parseInt(p.w.value, 10) || 0, rare: p.rare.checked, rewards: p.rewards }))
+      .filter(p => p.weight > 0 && p.rewards.length));
+  };
+  const add = document.createElement("button"); add.type = "button"; add.className = "rw-add"; add.textContent = "+ Thêm phần thưởng";
+  function addP(d) {
+    const wrap = document.createElement("div"); wrap.className = "ms";
+    const head = document.createElement("div"); head.className = "sp-head";
+    head.innerHTML = '<input placeholder="Tên hiện trong vòng quay, vd 5 kim cương"><input type="number" min="1" max="100000" title="Trọng số (càng lớn càng dễ trúng)"><b class="sp-pct"></b><label class="sp-rare"><input type="checkbox"> Hiếm (báo cả server)</label><button type="button" class="x" title="Bỏ">×</button>';
+    const [label, w] = head.querySelectorAll("input");
+    const p = { label, w, rare: head.querySelector(".sp-rare input"), pct: head.querySelector(".sp-pct"), rewards: (d.rewards || []).slice() };
+    label.value = d.label || ""; w.value = d.weight || 10; p.rare.checked = !!d.rare;
+    label.oninput = w.oninput = emit; p.rare.onchange = emit;
+    head.querySelector(".x").onclick = () => { ps.splice(ps.indexOf(p), 1); wrap.remove(); emit(); };
+    wrap.append(head, rewardsEditor(p.rewards, v => { p.rewards = v; emit(); }));
+    ps.push(p); box.insertBefore(wrap, add);
+  }
+  box.appendChild(add);
+  add.onclick = () => { addP({ label: "", weight: 10, rewards: ["xu 200"] }); emit(); };
+  for (const d of value || []) addP(d || {});
+  pct();
+  return box;
+}
+
 function row(mode, s) {
   const div = document.createElement("div");
   div.className = "row";
@@ -308,6 +347,8 @@ function row(mode, s) {
     input.oninput = () => change(mode, s, input.value.split("\n").map(x => x.trim()).filter(x => x), div);
   } else if (s.type === "rewards") {
     input = rewardsEditor(value || [], v => change(mode, s, v, div));
+  } else if (s.type === "spin") {
+    input = spinEditor(value || [], v => change(mode, s, v, div));
   } else if (s.type === "quests") {
     input = questsEditor(value || {}, v => change(mode, s, v, div));
   } else if (s.type === "milestones") {

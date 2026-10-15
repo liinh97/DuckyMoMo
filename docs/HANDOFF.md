@@ -158,7 +158,7 @@
   nhà nối vào; người dùng sẽ xin huỷ/hoàn tiền (đừng tắt hộ khi chưa hỏi).
 - **Kế hoạch tính năng (15/10, người dùng chốt thứ tự)**: (1) Thư viện đồ ✅ → (2) điểm danh ✅ (giữ chuỗi khi bỏ ngày, ngày nào điểm danh nhận thưởng
   ngày đó, mốc 7/14/30, cài đặt trên web) → (3) boss bar đếm ngược bảo vệ người mới ✅ → (4) nhiệm vụ hằng ngày ✅ → (5) chìa khoá theo giờ online +
-  vòng quay hiện tỉ lệ (chỉ phát miễn phí) → (6) mảnh sự kiện (ĐỒ VẬT, trao đổi được, giới hạn nhận/ngày; nguồn: boss sự kiện theo sát thương,
+  vòng quay hiện tỉ lệ (chỉ phát miễn phí) ✅ → (6) mảnh sự kiện (ĐỒ VẬT, trao đổi được, giới hạn nhận/ngày; nguồn: boss sự kiện theo sát thương,
   dungeon, mốc điểm danh, đủ nhiệm vụ ngày, vote/vòng quay tỉ lệ thấp; mỗi sự kiện loại mảnh riêng + hạn đổi) + cửa hàng đổi mảnh trên web →
   (7) tạo boss trên web (EliteMobs custombosses + em reload) → (8) cửa hàng trên web (Kinh Đô, đổi mảnh; Shopkeepers cần xem kỹ vì tự ghi đè).
 - **Thư viện đồ (15/10)**: DuckyMoMoCore `ItemLibrary` (mọi server; dùng ở banghoi-1): `plugins/DuckyMoMoCore/thuvien-do.yml`, mục `items.<mã>`:
@@ -182,6 +182,14 @@
   `quests` (trình soạn nhiệm vụ, kiểm tra `QUEST_TYPES`/`QUEST_TARGET_RE`). Mặc định 7 nhiệm vụ 100–150 xu + 300 xu xong hết. `Rewards.describe()`
   cho người chơi đọc. Đã thử: lệnh nạp, lưu thật qua panel (sửa câu cá 10→12→10), chặn loại sai, giao diện. CHƯA thử tiến độ trong game.
   Kinh tế: ~650 xu/ngày từ nhiệm vụ + 100 điểm danh + vote; chỉnh nếu lạm phát.
+- **Vòng quay (15/10)**: DuckyMoMoCore `LuckySpin` (`/vongquay`, alias vq/quay; config `lucky-spin` ở banghoi-1): mỗi `minutes-per-key` (60)
+  phút CHƠI THẬT (`Activity.activeNow`: có thao tác trong 60 giây) +1 vé, tối đa `max-keys` (5; đầy thì ngừng tích). Vé là số trong
+  `vongquay.yml` (không phải đồ: không bán, không trao đổi được). Menu 6 hàng: phần thưởng (icon từ quà/`icon`, lore "Tỉ lệ x%" = weight/tổng
+  + mô tả quà), nút Quay ô 49; quà phát NGAY khi quay, hiệu ứng 16 bước chỉ để xem; `rare` báo cả server. Placeholder PAPI `dmmvq`:
+  `%dmmvq_ve%`, `%dmmvq_con%`; dòng "🔑 Vé quay" thêm vào scoreboard TAB (repo + data). Admin: `/vongquay give <người> <số>`.
+  Mặc định 10 phần thưởng (xu, sắt, bánh mì, ngọc lục bảo, táo vàng, kim cương; hiếm: 2000 xu, khối kim cương, đĩa nhạc), không đồ mạnh.
+  Panel: kiểu ô `spin` (trình soạn: tên, trọng số, % tự tính, hiếm, quà). Lobby không có PAPI vẫn khởi động bình thường (đã thử).
+  Đã tặng Linh 1 vé để thử. CHƯA thử quay trong game.
 - **Thanh đếm ngược bảo vệ người mới**: đã có sẵn ở PvPManager (`Newbie Protection.Boss Bar`); thêm ô bật/chữ/màu vào Cài đặt > PvP & combat.
 - **Ping nhảy khi chạy nhanh (15/10, đã sửa bằng BBR)**: người dùng thấy ping 900+ ms khi chạy (TPS vẫn 20). Đo: tuyến **VPS Vinahost →
   nhà mất ~2% gói** ở mọi tốc độ (UDP iperf 5M/20M: 2,2%/1,7%), không phải trần băng thông (4 luồng TCP = 23,6 Mbps). TCP cubic 1 luồng chỉ

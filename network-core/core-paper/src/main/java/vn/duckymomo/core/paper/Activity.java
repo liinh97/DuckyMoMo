@@ -163,6 +163,12 @@ final class Activity implements Listener {
         return sum / 60.0;
     }
 
+    /** Có thao tác trong phút vừa qua (đang chơi thật, không treo máy). */
+    boolean activeNow(UUID id) {
+        Long last = lastActive.get(id);
+        return last != null && System.currentTimeMillis() - last <= 60_000L;
+    }
+
     /** UUID (chuỗi) mọi người chơi từng có giờ chơi thật. */
     java.util.Set<String> knownPlayers() {
         return data.getKeys(false);

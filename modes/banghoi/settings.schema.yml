@@ -119,6 +119,19 @@ groups:
       - { key: nv_pool, label: Danh sách nhiệm vụ, type: quests, file: plugins/DuckyMoMoCore/config.yml, path: daily-quests.pool,
           note: "Mục tiêu: tên vật liệu/mob tiếng Anh, cách nhau dấu phẩy. *_ORE = mọi quặng, *_LOG = mọi khúc gỗ, * = tất cả, @HOSTILE = mọi quái thù địch." }
 
+  - title: Vòng quay miễn phí
+    category: Thưởng & sự kiện
+    description: "/vongquay: chơi thật (không tính treo máy) đủ số phút thì được 1 vé quay. Vé miễn phí, KHÔNG bán, không trao đổi (luật Mojang, không pay-to-win). Menu trong game hiện tỉ lệ từng phần thưởng."
+    apply: [dmm reload]
+    settings:
+      - { key: vq_on, label: Bật vòng quay, type: select, file: plugins/DuckyMoMoCore/config.yml, path: lucky-spin.enabled,
+          options: [ { value: true, label: Bật }, { value: false, label: Tắt } ] }
+      - { key: vq_minutes, label: Số phút chơi thật cho 1 vé, type: int, min: 5, max: 1440, file: plugins/DuckyMoMoCore/config.yml, path: lucky-spin.minutes-per-key }
+      - { key: vq_max, label: Giữ tối đa bao nhiêu vé, type: int, min: 1, max: 100, file: plugins/DuckyMoMoCore/config.yml, path: lucky-spin.max-keys,
+          note: "Đầy vé thì ngừng tích, để người chơi quay đều thay vì để dành." }
+      - { key: vq_prizes, label: Phần thưởng và tỉ lệ, type: spin, file: plugins/DuckyMoMoCore/config.yml, path: lucky-spin.prizes,
+          note: "Trọng số càng lớn càng dễ trúng; % tự tính. Chỉ nên đặt tài nguyên, xu, đồ trang trí: đồ quá mạnh làm lệch chiến tranh." }
+
   - title: Liên minh Hoà Bình
     category: Thị trấn
     description: "Quốc gia duy nhất được hoà bình, do server quản lý, thủ đô là kinh đô ở spawn. Thị trưởng vào/rời bằng /hoabinh. Lập lần đầu: admin đứng giữa spawn gõ /dmm hoabinh setup rồi /dmm hoabinh claim 14."

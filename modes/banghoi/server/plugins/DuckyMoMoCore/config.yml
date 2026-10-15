@@ -165,6 +165,15 @@ pvp-rules:
   max-accounts: 2           # mỗi người tối đa (tạm 2, đông thì 1)
   military-ranks: [guard, private, sergeant, lieutenant, captain, major, colonel, general]
 
+
+# Vũ khí nổ lên NGƯỜI CHƠI (ý từ TDSMP: cấm crystal/anchor, giảm xe goòng TNT). Hệ số sát thương: 0 = không gây sát thương, 0.3 = còn 30%, 1 = như gốc.
+# Chỉ áp cho người bị trúng là người chơi; quái, rồng Ender, phá khối như gốc. TNT khối thường không đổi.
+explosive-pvp:
+  enabled: true
+  end-crystal: 0
+  respawn-anchor: 0
+  bed: 0
+  tnt-minecart: 0.3
 # Giờ chơi thật (không tính AFK): plugins/DuckyMoMoCore/hoatdong.yml. /hoatdong xem giờ. Chốt 14/10 (docs/banghoi-luat-mua1.md mục 11D).
 # Dân hoạt động = chơi thật >= active-hours-per-week giờ trong 7 ngày VÀ ở thị trấn >= new-member-days ngày.
 active-play:

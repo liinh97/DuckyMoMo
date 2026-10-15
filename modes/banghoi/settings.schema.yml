@@ -372,6 +372,18 @@ groups:
         options: [ { value: true, label: Có }, { value: false, label: Không } ]
         note: "Chỉ ghi lại; dùng khi mở mùa mới."
 
+  - title: Vũ khí nổ (crystal, anchor, giường, xe goòng TNT)
+    category: PvP & combat
+    description: "Sát thương của vũ khí nổ lên NGƯỜI CHƠI. 0 = cấm (không gây sát thương, không hất), 0.3 = còn 30%, 1 = như gốc. Quái, rồng Ender, phá khối không đổi. Crystal/anchor/nổ giường giết người trong 1 giây, đè hết lối chơi khác khi công thành."
+    apply: [dmm reload]
+    settings:
+      - { key: boom_on, label: Áp dụng luật vũ khí nổ, type: select, file: plugins/DuckyMoMoCore/config.yml, path: explosive-pvp.enabled,
+          options: [ { value: true, label: Bật }, { value: false, label: Tắt (như gốc) } ] }
+      - { key: boom_crystal, label: "End crystal: hệ số sát thương", type: number, min: 0, max: 1, file: plugins/DuckyMoMoCore/config.yml, path: explosive-pvp.end-crystal }
+      - { key: boom_anchor, label: "Respawn anchor: hệ số sát thương", type: number, min: 0, max: 1, file: plugins/DuckyMoMoCore/config.yml, path: explosive-pvp.respawn-anchor }
+      - { key: boom_bed, label: "Nổ giường (Nether, End): hệ số sát thương", type: number, min: 0, max: 1, file: plugins/DuckyMoMoCore/config.yml, path: explosive-pvp.bed }
+      - { key: boom_tntcart, label: "Xe goòng TNT: hệ số sát thương", type: number, min: 0, max: 1, file: plugins/DuckyMoMoCore/config.yml, path: explosive-pvp.tnt-minecart }
+
   - title: Chống thoát game khi đánh nhau (PvPManager)
     category: PvP & combat
     description: Bị đánh thì gắn cờ giao tranh; thoát game lúc đó thì chết và rơi đồ. Người mới được bảo vệ khỏi PvP một thời gian.

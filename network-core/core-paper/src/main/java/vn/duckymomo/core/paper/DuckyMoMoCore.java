@@ -256,6 +256,13 @@ public final class DuckyMoMoCore extends JavaPlugin {
             });
         }
 
+        // Vũ khí nổ lên người chơi: crystal, respawn anchor, giường, xe goòng TNT (Bang Hội Chiến: explosive-pvp.enabled)
+        if (getConfig().getBoolean("explosive-pvp.enabled")) {
+            ExplosionRules boom = new ExplosionRules(getConfig().getConfigurationSection("explosive-pvp"));
+            getServer().getPluginManager().registerEvents(boom, this);
+            getLogger().info("Vũ khí nổ lên người chơi: " + boom.describe());
+        }
+
         // Luật đất đai Towny (lập thị trấn/quốc gia, vòng spawn, đổi thị trấn, đất theo dân hoạt động, cắm cờ): town-rules.enabled
         // Liên minh Hoà Bình (banghoi): peace-alliance.enabled
         peace = getConfig().getBoolean("peace-alliance.enabled") && getServer().getPluginManager().isPluginEnabled("Towny")

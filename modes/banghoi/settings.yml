@@ -945,3 +945,8 @@ mua_kho_carrots: 1.4
 mua_kho_melon: 1.3
 mua_kho_pumpkin: 1.3
 mua_kho_cactus: 1.5
+boom_on: true
+boom_crystal: 0
+boom_anchor: 0
+boom_bed: 0
+boom_tntcart: 0.3

@@ -176,7 +176,13 @@
   (kernel WSL `CONFIG_TCP_CONG_BBR=m`, WSL không có systemd) phải nạp khi WSL khởi động: **người dùng tự thêm** `[boot] command = modprobe
   tcp_bbr` vào `/etc/wsl.conf` (15/10 module đang nạp sẵn). Người chơi phải vào lại mới dùng BBR. Cũng thấy: mạng trong Docker Desktop tải
   xuống ~37 Mbps (Windows 103, WSL 132), lên VPS qua đường hầm ~57 Mbps — đông người thì là nút thắt; về lâu dài cân nhắc Docker Engine trong
-  WSL thay Docker Desktop. Chưa làm: báo Vinahost về mất gói; nhờ người chơi miền Nam đo.
+  WSL thay Docker Desktop.
+  **Nguyên nhân thật (15/10 chiều)**: đo thêm thì mất gói có cả từ BKNS (UDP 1,4%) và ping tới Cloudflare → lỗi ở **đường Viettel vào nhà**,
+  không riêng Vinahost; trong nhà (2 router ZTE, kể cả lúc tải 94 Mbps) 0% mất gói. Người dùng nhắn Zalo "Viettel Telecom", Viettel
+  **khởi động lại modem từ xa** (~13:14, IP nhà đổi 116.98.36.229 → 171.255.251.82; đường hầm + playit tự nối lại) → **0% mất gói** (ping 100
+  gói tới Vinahost/BKNS/Cloudflare, UDP 16.000 gói), TCP cubic VPS → nhà 92 Mbps. BBR vẫn để bật làm dự phòng. Nếu ping lại nhảy: đo ping 100
+  gói tới 1.1.1.1 trước; mất gói thì nhờ Viettel kiểm tra / khởi động lại modem. Vinahost ticket #244254 trả lời chung chung (đã gửi kết quả
+  ping). Chưa làm: nhờ người chơi miền Nam đo.
 - **Ý tưởng từ CherryMC (15/10, người dùng gửi ảnh; ĐỂ SAU, xử lý mạng trước)**: họ có điểm danh `/diemdanh` (chuỗi ngày, thưởng tiền +
   "mảnh sự kiện" đổi quà), nhiệm vụ `/quest`, `/menukit`, chìa khoá miễn phí theo giờ online (scoreboard đếm ngược) + vòng quay "VQ FREE" hiện tỉ
   lệ từng món, boss bar đếm ngược "Bảo vệ PvP" cho người mới + boss bar mẹo xoay vòng, lệnh bấm được trong chat, nhắc chống lừa tpa, /ah báo

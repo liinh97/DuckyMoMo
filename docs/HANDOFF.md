@@ -1,6 +1,6 @@
 # Bàn giao dự án DuckyMoMo Network
 
-> Dùng file này để tiếp tục ở session hoặc Project Claude khác. Cập nhật: 15/10/2026 tối (thêm mục 10: đăng nhập web) (đọc mục 00 rồi mục 0).
+> Dùng file này để tiếp tục ở session hoặc Project Claude khác. Cập nhật: 16/10/2026 rạng sáng (mục 16–25 + DANH SÁCH CẦN THỬ) (đọc mục 00 rồi mục 0).
 > Đọc kèm: `README.md`, `docs/minecraft-server-plan.md` (kế hoạch, quyết định), `docs/network-architecture.md` (kiến trúc).
 
 ---
@@ -8,7 +8,7 @@
 ## 00. Đọc trước nhất — tình trạng 15/10/2026 tối (chuyển sang session cloud)
 
 > Mục này tóm tắt mọi thứ làm trong ngày 14–15/10 và những việc còn dở. Mục 0 trở xuống vẫn đúng (cách làm việc, lịch sử), chi tiết từng tính năng
-> nằm rải trong mục 0 (tìm theo tên). Nhánh làm việc: `claude/confident-thompson-q939lp` (đã push lên `origin`).
+> nằm rải trong mục 0 (tìm theo tên). Nhánh làm việc hiện tại: `claude/happy-ritchie-2p60v7` (trước đó `claude/confident-thompson-q939lp`).
 
 ### Session cloud làm được gì, không làm được gì
 - Session cloud chỉ có **repo** (không có `data/`, `.env`, mật khẩu, không có Docker của máy nhà, không SSH được VPS). Sửa code/cấu hình/tài liệu
@@ -194,6 +194,22 @@
      (2) trang "Hướng dẫn cài voice chat" trên web + lệnh `/voice` hiện link; (3) nhắc người chưa có mod 1 lần/ngày khi vào server.
      Hỏi người dùng: người chơi dùng TLauncher hay SKLauncher nhiều hơn.
 
+### Tình trạng triển khai (16/10 ~02:30)
+- ĐÃ build + khởi động lại lobby/banghoi-1/practice-1 với bản có mục 16–25. Bang Hội Chiến lên ổn: EvenMoreFish nạp 4 độ hiếm / 24 cá,
+  1 file thi câu (2 lịch), voicechat v2.6.24 chạy cổng 24454 (proxy CHƯA có jar voice, VPS CHƯA mở cổng → voice chưa dùng được, đúng ý để sau).
+- Lỗi build 1: import sai `org.bukkit.entity.ExplosiveMinecart` → đúng là `org.bukkit.entity.minecart.ExplosiveMinecart` (đã sửa).
+- Lỗi chạy 1 (NGHIÊM TRỌNG, đã sửa, CHỜ build lại + restart lobby, kiểm tra practice): DuckyMoMoCore KHÔNG nạp ở sảnh
+  (`NoClassDefFoundError: me/clip/placeholderapi/expansion/PlaceholderExpansion`, sảnh không có PlaceholderAPI) → mất menu chọn server.
+  Nguyên nhân: `statsPapi = new PlayerStatsPlaceholders()` gán lớp con vào biến PlaceholderExpansion → JVM nạp PAPI khi kiểm tra lớp DuckyMoMoCore.
+  Sửa: `PlayerStatsPlaceholders.create()` (hàm tĩnh trả PlaceholderExpansion). QUY TẮC: trong DuckyMoMoCore.java đừng `new` lớp con của
+  lớp plugin tuỳ chọn (PAPI, Towny, Vault…) rồi gán vào biến kiểu lớp cha; tạo qua hàm tĩnh/phương thức của lớp module.
+- La bàn sảnh dịch chuyển thay vì mở menu (với admin): gậy dịch chuyển WorldEdit (navigation-wand) gắn theo PHIÊN của người chơi.
+  Đã đổi `data/lobby/plugins/WorldEdit/config.yml` navigation-wand.item → minecraft:stick + `we reload`; người đã gắn thì cầm la bàn gõ `//none`.
+  LobbyMenu bắt PlayerInteractEvent ở LOWEST + setUseItemInHand(DENY) + mở menu tick sau (chặn WorldEdit). Người dùng đã //none: hết dịch chuyển.
+- Trang Donate có 1 yêu cầu thử của Linh (Nam Tước 3 tháng, "Chưa báo chuyển", tạo 21:49 15/10 từ web) — yêu cầu thử, huỷ được.
+- Sau MỖI lần build: xem log cả 3 server (`docker compose logs <srv> --since 5m | grep -iE "Could not load|Exception|DuckyMoMoCore"`),
+  không chỉ banghoi-1. Chỉ đổi jar → `docker compose restart <srv>`; đổi compose (env, MODRINTH_PROJECTS, PLUGINS) → `up -d --no-deps <srv>`.
+
 ### DANH SÁCH CẦN THỬ (người dùng chốt 15/10: làm xong hết rồi thử một lượt; mục 16–25)
 Triển khai một lần: `git stash && git pull && git stash pop` → `./ops/build-core.sh` (lỗi biên dịch thì gửi ảnh, Java viết ở cloud CHƯA biên
 dịch) → kiểm tra không ai online → `docker compose up -d --no-deps lobby banghoi-1 practice-1` → `docker compose up -d --build panel site`.
@@ -215,6 +231,8 @@ Log: `docker compose logs banghoi-1 --since 5m | grep -iE "DuckyMoMoCore|Mùa:|V
       (bắn trúng hồi máu), Búa Tạ; `/xuong tang <id>` để thử nhanh; món PvP bị chặn trong vùng vây đang đánh.
 - [ ] Prefix Manager: Role > Manager > Áp bộ quyền khuyên dùng → [Manager].
 - [ ] Trang web: mục Mùa & câu cá, Hằng ngày (Khai hoang, Sàn thu mua), Hội Bàn Tròn (Treo thưởng).
+- [ ] Sảnh sau bản sửa PAPI: la bàn mở menu, chọn Bang Hội Chiến vào được; log sảnh có "Menu chọn chế độ: bật", không có "Could not load".
+- [ ] Practice: log không có "Could not load plugin 'DuckyMoMoCore.jar'".
 
 ### Người dùng phải tự làm (nhắc lại khi phù hợp)
 - Thêm `[boot] command = modprobe tcp_bbr` vào `/etc/wsl.conf` (để BBR có sau mỗi lần khởi động WSL):
@@ -226,6 +244,11 @@ Log: `docker compose logs banghoi-1 --since 5m | grep -iE "DuckyMoMoCore|Mùa:|V
   món thư viện có phù phép CE, sửa boss có sẵn rồi gọi ra xem.
 
 ### Còn dở / hoãn (chờ người dùng quyết)
+- Voice chat (mục 17) + server Discord: người dùng chốt làm từ từ. Cần hỏi người chơi dùng TLauncher hay SKLauncher.
+- Ý tưởng chưa làm (từ bài tuyển mem / UniMC): thưởng theo mốc giờ chơi, rương quay đặt ở spawn làm hình ảnh cho vòng quay (vé không bán),
+  AuraSkills (chỉ nếu tắt cộng chỉ số chiến đấu), balo chế tạo. Không làm: bán chìa khoá rương, coinflip/cá cược, ngân hàng lãi, prestige,
+  minion, khu AFK, đồ VIP tăng sức mạnh, nhiều loại tiền, xô dung nham vô tận.
+- Số liệu cần chỉnh theo kinh tế thật sau vài ngày chạy: mốc Khai hoang (300k/800k/2tr), giá đồ Xưởng, giá cá (worth-multiplier), thưởng thi câu.
 - Shopkeepers (dân làng bán hàng) chưa sửa được trên web vì plugin tự ghi đè file lưu khi đang chạy; cây giao dịch dân làng chờ quyết định.
 - Thiết kế sự kiện boss "Trái Đất lâm nguy". Cân bằng kinh tế. Ký hiệu tiền Essentials `$` hay "xu" (đã hỏi, chưa trả lời).
 - Chuyển Docker Desktop → Docker Engine trong WSL (mạng Docker Desktop là nút cổ chai băng thông) — chưa làm.

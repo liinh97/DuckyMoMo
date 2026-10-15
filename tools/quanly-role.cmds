@@ -76,6 +76,7 @@ lp group quanly permission set worldedit.* true
 lp group quanly permission set worldguard.region.bypass.* true
 lp group quanly permission set towny.admin true
 lp group quanly permission set essentials.eco true
+lp group quanly permission set essentials.eco.* true
 lp group quanly permission set essentials.clearinventory.others true
 lp group quanly permission set essentials.kill true
 lp group quanly permission set essentials.killall true

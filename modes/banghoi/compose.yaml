@@ -47,6 +47,7 @@ services:
       #     (cần mã tài khoản Nightbreak của chủ server). Tắt quái elite tự sinh ở world chính (xem docs/HANDOFF.md).
       #   evenmorefish (15/10, GPL, miễn phí) = câu cá kiểu mới: 24 loại cá Việt theo mùa mưa/khô (%dmmmua_id% của DuckyMoMoCore), độ dài, nhật ký,
       #     bán cá /emf shop, thi câu cuối tuần. Giữ đồ kho báu gốc (only-fish). Config: server/plugins/EvenMoreFish/. Không cần resource pack (Bedrock chơi được).
+      # simple-voice-chat (15/10): voice theo khoảng cách cho người chơi Java có cài mod; cấu hình ở plugins/voicechat/, đi qua proxy (UDP 24454).
       MODRINTH_PROJECTS: |
         luckperms
         worldedit
@@ -78,6 +79,7 @@ services:
         shopkeepers-addon
         elitemobs
         evenmorefish
+        simple-voice-chat
       # Plugin không có (hoặc chưa có bản 26.2) trên Modrinth: ghim link tải cụ thể. Nâng cấp: thay link.
       #   Shopkeepers 2.28.1 (dev.bukkit / forgecdn, Spigot ghi đã thử 26.2), SiegeWar 3.7.0 (GitHub), OldCombatMechanics 2.7.0 (GitHub, combat kiểu 1.8),
       #   EssentialsX bản dev #1832 (bản chính thức 2.22.0 mới tới 26.1.2): lõi + Chat + Spawn

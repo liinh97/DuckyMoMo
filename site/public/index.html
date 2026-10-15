@@ -820,7 +820,7 @@ footer .fbrand img{width:44px}
     <details><summary>Ping cao không?</summary><div>Ping hiện khoảng 150–300 ms. Server chạy ổn định (không lag phía server), nên chơi xây dựng, buôn bán thoải mái; đánh PvP thì nên dùng mạng ổn định, tránh 4G yếu.</div></details>
     <details><summary>Lỡ chơi hỏng, muốn làm lại từ đầu?</summary><div>Gõ <span class="kbd">/choilai</span>: mất đồ, tiền, nhà, nghề, thị trấn; giữ rank và danh hiệu. Lần đầu trong mùa còn được nhận lại quà tân thủ.</div></details>
     <details><summary>Mùa mưa, mùa khô là gì?</summary><div>Bang Hội Chiến đổi mùa theo ngày thật, mỗi mùa vài ngày, xen kẽ nhau. Mùa mưa lúa, mía, tre lớn nhanh và trời hay mưa; mùa khô khoai, cà rốt, dưa, bí lớn nhanh, ít mưa. Đúng mùa, gặt cây chín còn có cơ hội rơi thêm. Nhiều loài cá chỉ câu được trong một mùa. Xem mùa hiện tại ở mục <a href="#muavu">Mùa &amp; câu cá</a> hoặc gõ <span class="kbd">/mua</span>.</div></details>
-    <details><summary>Có voice chat không?</summary><div>Chưa có. Voice chat cần người chơi máy tính tự cài mod và không dùng được trên điện thoại, nên server chưa bật. Hãy dùng Discord hoặc Zalo để nói chuyện với đồng đội.</div></details>
+    <details><summary>Có voice chat không?</summary><div>Có, cho người chơi <b>máy tính (Java)</b>: cài mod <b>Simple Voice Chat</b> (qua Fabric hoặc Forge, đúng phiên bản game) rồi vào server là nói được. Nghe trong khoảng 40 block quanh mình, càng xa càng nhỏ; giữ <span class="kbd">Caps Lock</span> để nói (đổi sang tự bắt tiếng được trong menu <span class="kbd">V</span>), phím <span class="kbd">G</span> lập nhóm để cả thị trấn nghe nhau ở mọi nơi. <b>Điện thoại (Bedrock) chưa dùng được</b> voice trong game: hãy dùng Discord hoặc Zalo để nói chuyện với đồng đội.</div></details>
     <details><summary>Hết mùa thì sao?</summary><div>Sau 10 tuần mùa đóng lại, trao danh hiệu, thế giới cũ được giữ làm bảo tàng để xem lại. Mùa mới mở vùng đất mới, mọi người bắt đầu ngang nhau; danh hiệu và rank ủng hộ được giữ.</div></details>
   </div>
 </section>
@@ -1127,7 +1127,7 @@ function countTo(el, n){
 // dải chữ chạy
 (function(){
   const items = ["⚔️ Công thành <b>mỗi cuối tuần</b>","🗺️ Bản đồ <b>Trái Đất 1:1000</b>","🕊️ <b>Liên minh Hoà Bình</b> không bao giờ bị chiếm","⚖️ <b>Hội Bàn Tròn</b> do người chơi tự quản",
-    "📱 Chơi được trên <b>điện thoại</b>","🏆 <b>Danh hiệu</b> giữ mãi mỗi mùa","💰 Nghề tự động, <b>chợ đấu giá</b>","🚫 <b>Không bán sức mạnh</b>","🌋 <b>Trái Đất lâm nguy</b>: boss sự kiện","🗝️ <b>Dungeon</b> cày đồ, cày tiền","☔ <b>Mùa mưa, mùa khô</b> đổi theo ngày thật","🎣 <b>24 loài cá Việt</b>, thi câu cuối tuần","🎁 <b>Điểm danh, nhiệm vụ, vòng quay</b> miễn phí"];
+    "📱 Chơi được trên <b>điện thoại</b>","🏆 <b>Danh hiệu</b> giữ mãi mỗi mùa","💰 Nghề tự động, <b>chợ đấu giá</b>","🚫 <b>Không bán sức mạnh</b>","🌋 <b>Trái Đất lâm nguy</b>: boss sự kiện","🗝️ <b>Dungeon</b> cày đồ, cày tiền","☔ <b>Mùa mưa, mùa khô</b> đổi theo ngày thật","🎣 <b>24 loài cá Việt</b>, thi câu cuối tuần","🎁 <b>Điểm danh, nhiệm vụ, vòng quay</b> miễn phí","🎙️ <b>Voice chat</b> theo khoảng cách (máy tính)"];
   const one = items.map(x => `<span>${x}</span>`).join("");
   $("#marq").innerHTML = one + one;
 })();

@@ -41,6 +41,7 @@ services:
       # Lưu ý: dòng bắt đầu bằng # BÊN TRONG khối '|' không phải comment, image itzg sẽ đọc thành tên plugin.
       # WorldEdit: Modrinth chỉ có bản beta cho 26.2 nên image không tự tải; chép tay worldedit-bukkit-7.4.5.jar vào data/lobby/plugins
       # (lấy từ data/banghoi-1/plugins). Không có trong Git.
+      # simple-voice-chat (15/10): voice theo khoảng cách cho người chơi Java có cài mod; cấu hình ở plugins/voicechat/, đi qua proxy (UDP 24454).
       MODRINTH_PROJECTS: |
         luckperms
         authmereloaded
@@ -50,6 +51,7 @@ services:
         decentholograms
         playerparticles
         simplepets
+        simple-voice-chat
       # Floodgate (bản Spigot, tải từ GeyserMC): nhận người chơi Bedrock từ proxy (send-floodgate-data), menu dạng form
       PLUGINS: |
         https://download.geysermc.org/v2/projects/floodgate/versions/latest/builds/latest/downloads/spigot

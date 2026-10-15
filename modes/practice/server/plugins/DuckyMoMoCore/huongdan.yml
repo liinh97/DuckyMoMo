@@ -538,6 +538,19 @@ chapters:
         &lĐăng nhập&r&0.
         &4Đừng đưa mã cho ai,
         &4admin không hỏi mã.
+      - |-
+        &3&lVOICE CHAT
+        &0Máy tính (Java): cài
+        mod &lSimple Voice
+        &lChat&r&0 (Fabric hoặc
+        Forge) là nói được.
+        &0Nghe xa &l40 block&r&0.
+        &1V&0: menu voice
+        &1Caps Lock&0: giữ để nói
+        &1G&0: nhóm (nghe ở mọi
+        nơi, vd cả thị trấn).
+        &8Điện thoại chưa có
+        &8voice.
         &0Bị hack nhầm, bị
         kick nhầm: báo admin
         kèm thời gian.

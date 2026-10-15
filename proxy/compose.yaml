@@ -9,6 +9,8 @@ services:
       # Geyser/Floodgate tải từ trang chính thức của GeyserMC (luôn bản mới nhất).
       # AuthMe, SkinsRestorer, Sonar (chống bot) ghim phiên bản bằng link Modrinth (mc-proxy cần MINECRAFT_VERSION cụ thể
       # mới dùng được MODRINTH_PROJECTS). Nâng cấp: thay link bằng bản mới trên modrinth.com.
+      # Simple Voice Chat bản Velocity: Modrinth chỉ có bản alpha nên không tự tải ở đây (tải lỗi thì proxy không lên = sập cả mạng).
+      #   Chạy ./ops/voicechat.sh ở máy nhà: tải jar vào proxy/plugins/ (không commit), proxy chép vào khi khởi động.
       PLUGINS: |
         https://download.geysermc.org/v2/projects/geyser/versions/latest/builds/latest/downloads/velocity
         https://download.geysermc.org/v2/projects/floodgate/versions/latest/builds/latest/downloads/velocity
@@ -23,6 +25,7 @@ services:
     ports:
       - "${JAVA_PORT:-25565}:25577"          # Java
       - "${BEDROCK_PORT:-19132}:19132/udp"   # Bedrock (điện thoại) qua Geyser
+      - "${VOICE_PORT:-24454}:24454/udp"     # Voice chat (Simple Voice Chat, mod Java). Người chơi ngoài vào qua VPS (relay), cổng này cho LAN
     volumes:
       - ./config:/config:ro        # velocity.toml, forwarding.secret (mẫu) - có trong Git
       - ./plugins:/plugins:ro      # cấu hình plugin proxy, jar tải tay (nếu có)

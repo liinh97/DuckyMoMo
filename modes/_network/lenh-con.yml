@@ -235,6 +235,14 @@ groups:
       - ["em", "Menu EliteMobs (dungeon, kỹ năng, đồ)", Mọi người]
       - ["em setup", "Tải dungeon, sự kiện, gói nội dung", Chỉ admin]
       - ["em reload", "Nạp lại cấu hình EliteMobs", Chỉ admin]
+  - plugin: Simple Voice Chat
+    servers: [lobby, banghoi-1, practice-1]
+    commands:
+      - ["voicechat join <nhóm> [mật khẩu]", "Vào nhóm voice", Mọi người]
+      - ["voicechat invite <người>", "Mời người khác vào nhóm voice", Mọi người]
+      - ["voicechat leave", "Rời nhóm voice", Mọi người]
+      - ["voicechat help", "Hướng dẫn lệnh voice", Mọi người]
+      - ["voicechat test <người>", "Kiểm tra kết nối voice của người chơi", Chỉ admin]
   - plugin: EvenMoreFish
     servers: [banghoi-1]
     commands:

@@ -33,6 +33,7 @@ services:
       #   viaversion: client mới hơn server, viabackwards: client cũ hơn, viarewind: 1.7-1.8
       # Lưu ý: dòng bắt đầu bằng # BÊN TRONG khối '|' không phải comment, image itzg sẽ đọc thành tên plugin.
       # duels-optimised: đấu 1v1/NvN, hàng chờ, kit, party, nhiều hiệp (GPL-3.0). Tắt tự cập nhật trong config của nó.
+      # simple-voice-chat (15/10): voice theo khoảng cách cho người chơi Java có cài mod; cấu hình ở plugins/voicechat/, đi qua proxy (UDP 24454).
       MODRINTH_PROJECTS: |
         luckperms
         viaversion
@@ -42,6 +43,7 @@ services:
         vaultunlocked
         duels-optimised
         grimac:nKI7MWZj
+        simple-voice-chat
       # Ghim link như banghoi: OldCombatMechanics (combat 1.8), EssentialsX bản dev cho 26.2 (chat có role, /spawn)
       PLUGINS: |
         https://download.geysermc.org/v2/projects/floodgate/versions/latest/builds/latest/downloads/spigot

@@ -31,6 +31,12 @@ groups:
       - [essentials.socialspy, "Đọc tin nhắn riêng của mọi người (/socialspy)"]
       - [essentials.heal, "Hồi máu (/heal)"]
       - [essentials.feed, "Hồi đói (/feed)"]
+  - title: Voice chat (Simple Voice Chat)
+    perms:
+      - [voicechat.speak, "Nói trong voice (mặc định ai cũng có; đặt FALSE cho người bị phạt = cấm nói)"]
+      - [voicechat.listen, "Nghe voice (mặc định ai cũng có)"]
+      - [voicechat.groups, "Vào nhóm voice (mặc định ai cũng có)"]
+      - [voicechat.admin, "Kiểm tra kết nối voice của người khác (/voicechat test)"]
   - title: Xây dựng và bảo vệ
     perms:
       - [worldedit.*, "WorldEdit đầy đủ (//set, //copy, //paste…)"]

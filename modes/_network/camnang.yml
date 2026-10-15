@@ -472,6 +472,22 @@ plugins:
       - ["/pet remove · /pet rename <loài> <tên>", "Cất pet / đặt tên pet"]
 
   # ---------------------------------------------------------------- Bản đồ & thế giới
+  - name: Simple Voice Chat
+    jar: voicechat
+    kind: Chat & hiển thị
+    purpose: "Nói chuyện bằng giọng theo khoảng cách (nói thường 40 block, thì thầm 20) và nhóm (nghe nhau ở mọi nơi). CHỈ người chơi Java có cài mod Simple Voice Chat; Bedrock (điện thoại) chưa dùng được. Cài ở lobby, banghoi-1, practice-1 + proxy Velocity (một cổng UDP 24454 qua VPS)."
+    player:
+      - ["Cài mod", "Fabric/Forge/NeoForge + mod Simple Voice Chat (modrinth.com/plugin/simple-voice-chat) đúng phiên bản game"]
+      - ["Phím V", "Mở menu voice (âm lượng, micro, tắt tiếng từng người)"]
+      - ["Caps Lock (giữ)", "Bấm để nói (mặc định). Đổi sang tự nói khi có tiếng trong cài đặt voice"]
+      - ["Phím G · /voicechat join <nhóm>", "Tạo / vào nhóm (có thể đặt mật khẩu)"]
+      - ["/voicechat invite <người>", "Mời vào nhóm"]
+      - ["/voicechat leave", "Rời nhóm"]
+    admin:
+      - ["/voicechat test <người>", "Kiểm tra kết nối voice của người đó"]
+      - ["/lp user <tên> permission set voicechat.speak false", "Cấm nói voice (gỡ: permission unset)"]
+    settings: "plugins/voicechat/voicechat-server.properties ở lobby/, modes/banghoi/server/, modes/practice/server/ (khoảng cách, nhóm); proxy/plugins/voicechat/voicechat-proxy.properties (cổng 24454). Jar proxy: ./ops/voicechat.sh"
+    notes: "Voice không ghi âm được (allow_recording=false) nên chửi bới qua voice không có bằng chứng: xử lý theo báo cáo, cấm nói bằng quyền voicechat.speak. Đường dự phòng playit không có voice. Mỗi người đang nói tốn ~3–6 KB/s cho mỗi người nghe (ước tính)."
   - name: EvenMoreFish
     jar: even-more-fish
     kind: Bản đồ & thế giới

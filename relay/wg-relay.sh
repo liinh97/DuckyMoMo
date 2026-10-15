@@ -1,14 +1,14 @@
 #!/bin/sh
 # Dựng wg0 trong mạng của proxy (network_mode: service:proxy) để người chơi vào qua VPS giữ nguyên IP thật.
 #   VPS DNAT cổng game → 10.66.0.2 (wg0 ở đây), không SNAT.
-#   Chiều về: chỉ gói trả lời của Velocity (tcp sport 25577) và Geyser (udp sport 19132) gửi tới IP công khai
+#   Chiều về: chỉ gói trả lời của Velocity (tcp sport 25577), Geyser (udp sport 19132), voice (udp sport 24454) gửi tới IP công khai
 #   mới đi bảng 66 (default dev wg0). playit (127.0.0.1), mạng Docker/LAN và mọi kết nối khác giữ đường cũ.
 #   Vote (Votifier): socat 8192 → banghoi-1:8192, chiều về theo luật tcp sport 8192.
 #   Luật theo cổng nguồn (không dùng connmark) để UDP của Geyser chọn đúng IP nguồn 10.66.0.2.
 set -u
 ADDR=${RELAY_WG_ADDRESS:-10.66.0.2/32}
 TABLE=66
-PREFS="100 101 102 103 104 300 301 302"
+PREFS="100 101 102 103 104 300 301 302 303"
 VOTIFIER=${RELAY_VOTIFIER_TARGET:-banghoi-1:8192}
 
 cleanup() {
@@ -47,6 +47,8 @@ ip rule add to 100.64.0.0/10 lookup main pref 104
 ip rule add ipproto tcp sport 25577 lookup $TABLE pref 300
 ip rule add ipproto udp sport 19132 lookup $TABLE pref 301
 ip rule add ipproto tcp sport 8192 lookup $TABLE pref 302
+# Voice chat (Simple Voice Chat ở Velocity, UDP 24454): gói trả lời đi lại qua VPS
+ip rule add ipproto udp sport 24454 lookup $TABLE pref 303
 set +e
 echo "Đã dựng wg0 $ADDR → $RELAY_VPS_ENDPOINT"
 # Votifier: trang vote gửi tới VPS:8192 → đây → banghoi-1:8192 (không cần IP người gửi)

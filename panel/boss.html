@@ -67,6 +67,9 @@
   .pv-cap { position: absolute; top: 8px; left: 12px; font-size: 11px; text-transform: uppercase; letter-spacing: .07em; color: #b9c9b9; }
   @media (min-width: 1500px) { #editor { display: grid; grid-template-columns: minmax(0, 1fr) 380px; column-gap: 28px; } #editor > * { grid-column: 1; } #editor > .pv { grid-column: 2; grid-row: 1 / span 30; position: sticky; top: 18px; align-self: start; margin: 0; min-height: 220px; justify-content: center; } #editor > [id$=note] + .sec { margin-top: 0; border-top: 0; padding-top: 0; } }
   @media (max-width: 700px) { .g2, .g-name, .g-id { grid-template-columns: minmax(0, 1fr); } }
+  .shipnote { grid-column: 1; background: var(--accent-soft); border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent); border-radius: 10px; padding: 12px 14px; font-size: 13.5px; margin-bottom: 4px; }
+  .shipnote .shipbtns { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+  .shipnote .use { display: block; margin-top: 6px; color: var(--warn); }
   .chk { display: flex; gap: 6px; align-items: center; font-size: 14px; }
   .chk input { width: auto; }
   .pw-sel { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; min-height: 28px; align-items: center; }
@@ -93,18 +96,23 @@
 </style>
 <link rel="stylesheet" href="ui.css">
 </head>
-<body data-dozzle="__DOZZLE_URL__" data-title="Boss" data-sub="Tạo boss EliteMobs, gọi boss ra. Boss có sẵn của EliteMobs / dungeon chỉ xem.">
+<body data-dozzle="__DOZZLE_URL__" data-title="Boss" data-sub="Tạo và sửa boss EliteMobs, gọi boss ra. Boss có sẵn của EliteMobs sửa được (tự sao lưu bản gốc) hoặc chép thành boss mới.">
 <script src="shell.js"></script>
 <main>
   <section class="card">
     <h2><span>Boss <span id="count" class="badge"></span></span><button class="primary" id="new">+ Tạo boss</button></h2>
     <div class="list" id="list"><p class="note">Đang tải…</p></div>
-    <p class="note">Boss tạo ở đây (file <code>dmm_*.yml</code>) sửa được. Boss có sẵn của EliteMobs và dungeon chỉ xem và gọi ra thử.</p>
+    <p class="note">Boss tạo ở đây là file <code>dmm_*.yml</code>. Boss "có sẵn" của EliteMobs sửa thẳng file gốc (tự sao lưu, khôi phục được) hoặc chép thành boss mới.</p>
   </section>
 
   <section class="card" id="editor">
     <div class="pv"><div class="pv-cap">Xem trước</div><div class="plate" id="pvName"></div><div class="stats" id="pvStats"></div></div>
-    <div id="ronote" class="warn" hidden>Boss có sẵn của EliteMobs / dungeon: chỉ xem và gọi thử, không sửa trên web.</div>
+    <div id="ronote" class="shipnote" hidden>
+      <div><b>Boss có sẵn của EliteMobs</b> (<code id="shipFile"></code>). Sửa ở đây là sửa thẳng file gốc: chỉ ghi các mục bạn đổi,
+        mọi thiết lập khác trong file giữ nguyên<span id="shipExtra"></span>. Lần sửa đầu tự sao lưu bản gốc.
+        <span id="shipUse"></span></div>
+      <div class="shipbtns"><button class="ghost" id="copyBoss">📋 Chép thành boss mới để sửa</button><button class="ghost" id="restoreBoss">↺ Khôi phục bản gốc</button></div>
+    </div>
 
     <div class="sec">
       <h3>1 · Tên và loại quái</h3>
@@ -200,7 +208,13 @@ const ETYPE_VN = { ZOMBIE: "Xác sống", HUSK: "Xác khô", DROWNED: "Xác ch�
   MAGMA_CUBE: "Khối dung nham", PHANTOM: "Phantom", GUARDIAN: "Guardian", ELDER_GUARDIAN: "Elder Guardian", BREEZE: "Breeze",
   WOLF: "Sói", POLAR_BEAR: "Gấu Bắc Cực", SILVERFISH: "Mọt bạc", ENDERMITE: "Endermite", VEX: "Vex", GHAST: "Ghast", SHULKER: "Shulker" };
 const SLOT_VN = { helmet: "Mũ", chestplate: "Áo", leggings: "Quần", boots: "Giày", mainHand: "Tay chính", offHand: "Tay phụ" };
-let data = null, cur = null, isNew = true, selPowers = [];
+let data = null, cur = null, isNew = true, selPowers = [], orig = null;
+// boss có sẵn mà plugin dùng vào việc khác: sửa sẽ ảnh hưởng chỗ đó
+const SHIP_USE = { summonable_wolf: "Con này do phù phép Summon Wolf của EliteMobs gọi ra.", the_returned: "Đây là quân tiếp viện do kỹ năng summon_the_returned gọi ra.",
+  transport_cannon_seat: "Theo tên là ghế ngồi kỹ thuật của pháo dịch chuyển, không nên sửa.", test_boss: "Boss thử nghiệm, dùng trong nhiệm vụ và rương mẫu của EliteMobs.",
+  damage_test_dummy: "Hình nộm thử sát thương.", necronomicon_skeleton: "Do kỹ năng zombie_necronomicon gọi ra.",
+  necronomicon_zombie: "Do kỹ năng zombie_necronomicon gọi ra.", zombie_friends_friend: "Do kỹ năng zombie_friends gọi ra.",
+  zombie_parents_dad: "Do kỹ năng zombie_parents gọi ra.", zombie_parents_mom: "Do kỹ năng zombie_parents gọi ra." };
 
 function esc(s) { return String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
 // &-mã màu + <g:#a:#b>…</g> của EliteMobs (xem trước gần đúng: chuyển màu đầu → cuối)
@@ -229,7 +243,7 @@ function form() {
   return b;
 }
 function render() {
-  const b = cur && !cur.web ? Object.assign({}, cur.data) : form();
+  const b = form();
   $("pvName").innerHTML = mc(b.name || "(chưa đặt tên)");
   const eq = data.slots.filter(sl => b[sl]).map(sl => SLOT_VN[sl] + ": " + String(b[sl]).toLowerCase()).join(", ");
   $("pvStats").innerHTML = esc(`${ETYPE_VN[b.entityType] || b.entityType || "?"} · cấp ${b.level ?? "dynamic"} · máu ×${b.healthMultiplier ?? 1} · sát thương ×${b.damageMultiplier ?? 1}`)
@@ -238,7 +252,7 @@ function render() {
   const w = [];
   if ((b.healthMultiplier || 1) > 200) w.push("Máu rất cao: cần nhiều người đánh rất lâu.");
   if ((b.damageMultiplier || 1) > 5) w.push("Sát thương cao: có thể giết người chơi trong một đòn.");
-  if (!(b.onDeathCommands || []).length && cur?.web !== false) w.push("Chưa có phần thưởng: thêm lệnh chia mảnh hoặc bật rơi đồ EliteMobs.");
+  if (!(b.onDeathCommands || []).length && (!cur || cur.web)) w.push("Chưa có phần thưởng: thêm lệnh chia mảnh hoặc bật rơi đồ EliteMobs.");
   $("warns").innerHTML = w.map(x => `<p class="warn">⚠ ${esc(x)}</p>`).join("");
   const pv = (t) => t ? `<span class="mc">${mc(t)}</span>` : "";
   $("pvSpawn").innerHTML = pv(b.spawnMessage); $("pvDeath").innerHTML = pv(b.deathMessage);
@@ -249,7 +263,7 @@ function renderPowers() {
   $("pwcount").textContent = selPowers.length;
   $("pwsel").innerHTML = selPowers.length ? selPowers.map(p => `<span>${esc(pwName(p))}<button data-p="${esc(p)}" title="Bỏ">×</button></span>`).join("") : '<em class="none">Chưa chọn kỹ năng nào. Bấm kỹ năng bên dưới để thêm.</em>';
   $("pwsel").querySelectorAll("button").forEach(b => b.onclick = () => { selPowers = selPowers.filter(x => x !== b.dataset.p); renderPowers(); render(); });
-  const f = $("pwfilter").value.trim().toLowerCase().replace(/\s+/g, "_"), ro = cur && !cur.web;
+  const f = $("pwfilter").value.trim().toLowerCase().replace(/\s+/g, "_"), ro = false;
   $("pwlist").innerHTML = data.powers.filter(p => !f || p.toLowerCase().includes(f)).map(p =>
     `<label class="${selPowers.includes(p) ? "on" : ""}${ro ? " dis" : ""}"><input type="checkbox" value="${esc(p)}" ${selPowers.includes(p) ? "checked" : ""} ${ro ? "disabled" : ""}>${esc(pwName(p))}</label>`).join("") || '<em class="none" style="color:var(--muted);font-size:13.5px">Không có kỹ năng nào khớp.</em>';
   $("pwlist").querySelectorAll("input").forEach(cb => cb.onchange = () => {
@@ -275,10 +289,25 @@ function load(bs) {
   $("deathMsgs").value = (d.deathMessages || []).join("\n"); $("cmds").value = (d.onDeathCommands || []).join("\n");
   for (const sl of data.slots) $("slot_" + sl).value = d[sl] || "";
   selPowers = (d.powers || []).map(p => String(p).split(":")[0]);
-  const ro = bs && !bs.web;
-  $("ronote").hidden = !ro; setEditable(!ro); $("del").disabled = !bs || ro; $("spawn").disabled = !bs;
+  const ship = !!bs && !bs.web;
+  $("ronote").hidden = !ship; setEditable(true); $("del").disabled = !bs || ship; $("spawn").disabled = !bs;
+  if (ship) {
+    $("id").value = bs.file;
+    $("shipFile").textContent = bs.file;
+    $("shipExtra").textContent = bs.extra && bs.extra.length ? ` (web chưa hiện: ${bs.extra.join(", ")})` : "";
+    $("shipUse").innerHTML = SHIP_USE[bs.id] ? `<span class="use">⚠ ${esc(SHIP_USE[bs.id])}</span>` : "";
+    $("restoreBoss").disabled = !bs.backup;
+    $("restoreBoss").title = bs.backup ? "Trả file về như lúc trước lần sửa đầu tiên" : "Chưa sửa lần nào, đang là bản gốc";
+  }
   document.querySelectorAll(".li").forEach(b => b.classList.toggle("on", !!bs && b.dataset.file === bs.file));
   renderPowers(); render();
+  orig = form();
+}
+// các mục đã đổi so với lúc mở (boss đã có: chỉ gửi mục đổi, để không ghi mặc định đè lên file)
+function changedFields() {
+  const now = form(), out = {};
+  for (const k of Object.keys(now)) if (JSON.stringify(now[k]) !== JSON.stringify(orig[k])) out[k] = now[k];
+  return out;
 }
 function renderList() {
   const items = data.bosses.slice().sort((a, b) => (b.web - a.web) || a.file.localeCompare(b.file));
@@ -286,7 +315,7 @@ function renderList() {
   $("list").innerHTML = "";
   for (const bs of items) {
     const b = document.createElement("button"); b.className = "li" + (bs.web ? "" : " ro"); b.dataset.file = bs.file;
-    b.innerHTML = `<span class="nm">${mc(bs.data.name || bs.id)}</span><small><code>${esc(bs.file)}</code>${bs.web ? "" : '<span class="badge">có sẵn</span>'}${bs.data.isEnabled === false ? '<span class="badge">tắt</span>' : ""}</small>`;
+    b.innerHTML = `<span class="nm">${mc(bs.data.name || bs.id)}</span><small><code>${esc(bs.file)}</code>${bs.web ? "" : '<span class="badge">có sẵn</span>'}${bs.backup ? '<span class="badge">đã sửa</span>' : ""}${bs.data.isEnabled === false ? '<span class="badge">tắt</span>' : ""}</small>`;
     b.onclick = () => load(bs);
     $("list").appendChild(b);
   }
@@ -311,10 +340,33 @@ $("addFm").onclick = (e) => {
   $("cmds").value = ($("cmds").value.trim() ? $("cmds").value.trim() + "\n" : "") + `doimanh chia ${t} ${n} $players`; render();
 };
 $("save").onclick = async () => {
+  if (cur) {
+    const diff = changedFields();
+    if (!Object.keys(diff).length) { status(false, "Chưa đổi gì."); return; }
+    if (!cur.web && SHIP_USE[cur.id] && !confirm(`${SHIP_USE[cur.id]}\nVẫn sửa file gốc ${cur.file}?`)) return;
+    const file = cur.file;
+    const res = await post({ action: "save", file, id: cur.web ? cur.id : undefined, boss: diff });
+    if (res.ok) load(data.bosses.find(b => b.file === file));
+    return;
+  }
   const id = $("id").value.trim();
   if (!/^[a-z0-9_]{1,32}$/.test(id)) { status(false, "Mã chỉ gồm chữ thường không dấu, số, _ (vd rong_lua)"); return; }
-  const res = await post({ action: "save", id, is_new: isNew, boss: form() });
+  const res = await post({ action: "save", id, is_new: true, boss: form() });
   if (res.ok) load(data.bosses.find(b => b.file === "dmm_" + id + ".yml"));
+};
+$("copyBoss").onclick = async () => {
+  if (!cur) return;
+  const sug = cur.id.toLowerCase().replace(/[^a-z0-9_]/g, "_").slice(0, 26) + "_moi";
+  const nid = (prompt("Mã boss mới (chữ thường không dấu, số, _). Boss mới giữ đủ mọi thiết lập của bản gốc:", sug) || "").trim();
+  if (!nid) return;
+  const res = await post({ action: "copy", file: cur.file, new_id: nid });
+  if (res.ok) load(data.bosses.find(b => b.file === "dmm_" + nid + ".yml"));
+};
+$("restoreBoss").onclick = async () => {
+  if (!cur || !confirm(`Trả ${cur.file} về bản gốc (bỏ mọi thay đổi đã lưu)?`)) return;
+  const file = cur.file;
+  const res = await post({ action: "restore", file });
+  if (res.ok) load(data.bosses.find(b => b.file === file));
 };
 $("del").onclick = async () => { if (cur && cur.web && confirm(`Xoá boss "${cur.id}"?`)) { const res = await post({ action: "delete", id: cur.id }); if (res.ok) load(null); } };
 $("spawn").onclick = () => {

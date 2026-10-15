@@ -198,7 +198,7 @@
   `lamnguy` (Mảnh Lâm Nguy) + 3 món (5000 xu, 16 kim cương, đĩa nhạc). Panel: kiểu ô `fragtypes`, `fragshop`. Đã thử: lệnh, chặn giá/hạn sai,
   giao diện. CHƯA thử đổi trong game. Chưa có nguồn mảnh tự động (chờ boss "Trái Đất lâm nguy": EliteMobs onDeathCommands gọi /doimanh give).
 - **Boss trên web (15/10)**: panel trang `/boss` (`panel/boss.html`), API GET/POST `/api/boss` (`boss_json`/`boss_action` trong `panel/app.py`).
-  Boss web = `data/banghoi-1/plugins/EliteMobs/custombosses/dmm_<mã>.yml` (ghi toàn bộ file, có dòng chú thích đầu); boss khác chỉ xem + gọi.
+  Boss web = `data/banghoi-1/plugins/EliteMobs/custombosses/dmm_<mã>.yml` (có dòng chú thích đầu). Boss có sẵn (file không có dmm_) sửa được từ 15/10: lưu chỉ gửi các mục đã đổi (`boss_clean` partial, ruamel giữ mọi mục khác: trails, onDamageMessages, kỹ năng có tham số…); lần sửa đầu chép bản gốc vào `data/panel/boss-goc/` (action `restore` trả lại, rồi xoá bản sao lưu); action `copy` chép nguyên file sang `dmm_<mã>.yml`. Boss có sẵn không xoá trên web. Một số con do kỹ năng/vật phẩm khác gọi ra (summonable_wolf, the_returned, necronomicon_*, zombie_parents_*, zombie_friends_friend, transport_cannon_seat): trang hiện cảnh báo + hỏi lại. CHƯA rõ EliteMobs có ghi đè file mặc định khi cập nhật plugin hay không.
   Trường: isEnabled, entityType (danh sách `BOSS_ENTITIES`), name (& hoặc `<g:#a:#b>`), level (dynamic/1–200), healthMultiplier (0,1–1000),
   damageMultiplier (0,1–100), powers (lọc theo file có trong `EliteMobs/powers`, 71 cái), 6 ô trang bị, spawnMessage, deathMessage,
   deathMessages, onDeathCommands (bỏ "/" đầu), announcementPriority, timeout (phút), dropsEliteMobsLoot. Lưu/xoá → RCON `em reload`.

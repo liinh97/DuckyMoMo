@@ -1013,6 +1013,12 @@ BOSS_ENTITIES = ["ZOMBIE", "HUSK", "DROWNED", "ZOMBIE_VILLAGER", "SKELETON", "ST
 BOSS_SLOTS = ["helmet", "chestplate", "leggings", "boots", "mainHand", "offHand"]
 BOSS_ID_RE = re.compile(r"^[a-z0-9_]{1,32}$")
 WORLD_RE = re.compile(r"^[A-Za-z0-9_\-]{1,64}$")
+BOSS_FILE_RE = re.compile(r"^[A-Za-z0-9_\-]{1,64}\.yml$")
+# bản gốc boss có sẵn của EliteMobs, chép ra trước lần sửa đầu (để khôi phục); ngoài thư mục EliteMobs để plugin không đọc nhầm
+BOSS_BACKUP_DIR = DATA_DIR / "panel" / "boss-goc"
+# các mục trang Boss quản lý; mục khác trong file (vệt hạt, câu nói, loot riêng…) luôn được giữ nguyên
+BOSS_KEYS = ["isEnabled", "entityType", "name", "level", "healthMultiplier", "damageMultiplier", "powers", "spawnMessage",
+             "deathMessage", "deathMessages", "onDeathCommands", "announcementPriority", "timeout", "dropsEliteMobsLoot"]
 
 
 def boss_powers():
@@ -1030,11 +1036,66 @@ def boss_json():
             except Exception:
                 d = {}
             web = f.name.startswith("dmm_")
-            keys = ["isEnabled", "entityType", "name", "level", "healthMultiplier", "damageMultiplier", "powers", "spawnMessage",
-                    "deathMessage", "deathMessages", "onDeathCommands", "announcementPriority", "timeout", "dropsEliteMobsLoot"] + BOSS_SLOTS
+            extra = [k for k in d if k not in BOSS_KEYS + BOSS_SLOTS + ["bossType", "classLoot", "onSpawnBlockStates", "onRemoveBlockStates"]]
             bosses.append({"file": f.name, "id": f.stem[4:] if web else f.stem, "web": web,
-                           "data": {k: d.get(k) for k in keys if k in d}})
+                           "backup": (BOSS_BACKUP_DIR / f.name).exists(), "extra": extra,
+                           "data": {k: d.get(k) for k in BOSS_KEYS + BOSS_SLOTS if k in d}})
     return {"bosses": bosses, "powers": boss_powers(), "entities": BOSS_ENTITIES, "slots": BOSS_SLOTS, "world": "world"}
+
+
+def boss_clean(b, partial, old_etype=None):
+    """Kiểm tra và chuẩn hoá các mục boss gửi từ web. partial: chỉ các mục có trong b. None = xoá mục khỏi file."""
+    out = {}
+    has = (lambda k: k in b) if partial else (lambda k: True)
+    if has("entityType"):
+        etype = str(b.get("entityType", "")).upper()
+        if etype not in BOSS_ENTITIES and etype != str(old_etype or "").upper():
+            raise ValueError("Loại quái không hợp lệ")
+        out["entityType"] = etype
+    if has("isEnabled"):
+        out["isEnabled"] = bool(b.get("isEnabled", True))
+    if has("name"):
+        out["name"] = DoubleQuotedScalarString(str(b.get("name", ""))[:160] or "Boss")
+    if has("level"):
+        level = str(b.get("level", "dynamic")).strip().lower()
+        if level != "dynamic" and not (level.isdigit() and 1 <= int(level) <= 200):
+            raise ValueError("Cấp: 1–200 hoặc dynamic")
+        out["level"] = "dynamic" if level == "dynamic" else int(level)
+    for k, lo, hi in (("healthMultiplier", 0.01, 1000), ("damageMultiplier", 0.01, 100)):
+        if has(k):
+            try:
+                v = float(b.get(k, 1))
+            except (TypeError, ValueError):
+                raise ValueError("Hệ số máu / sát thương phải là số")
+            if not lo <= v <= hi:
+                raise ValueError("Hệ số máu 0,01–1000; sát thương 0,01–100")
+            out[k] = v
+    if has("powers"):
+        known = set(boss_powers())
+        out["powers"] = [str(p) for p in (b.get("powers") or []) if str(p) in known]
+    if has("dropsEliteMobsLoot"):
+        out["dropsEliteMobsLoot"] = bool(b.get("dropsEliteMobsLoot", True))
+    if has("announcementPriority"):
+        out["announcementPriority"] = max(0, min(3, int(b.get("announcementPriority", 2) or 0)))
+    if has("timeout"):
+        out["timeout"] = max(0, min(1440, int(b.get("timeout", 0) or 0)))
+    for k in ("spawnMessage", "deathMessage"):
+        if has(k):
+            v = str(b.get(k) or "").strip()
+            out[k] = DoubleQuotedScalarString(v[:200]) if v else None
+    for k in ("deathMessages", "onDeathCommands"):
+        if has(k):
+            lines = [str(x).strip()[:200] for x in (b.get(k) or []) if str(x).strip()][:20]
+            if k == "onDeathCommands":
+                lines = [x.lstrip("/") for x in lines]
+            out[k] = [DoubleQuotedScalarString(x) for x in lines] if lines else None
+    for slot in BOSS_SLOTS:
+        if has(slot):
+            m = str(b.get(slot) or "").strip().upper()
+            if m and not MATERIAL_RE.match(m):
+                raise ValueError(f"Trang bị {slot} sai: {m}")
+            out[slot] = m or None
+    return out
 
 
 def boss_action(data):
@@ -1068,58 +1129,77 @@ def boss_action(data):
         cmd = f"em spawn bossAt {fname} {world} {x:.1f} {y:.1f} {z:.1f}" + (f" {level}" if level else "")
         out = rcon(BOSS_SERVER, [cmd])[0][1]
         return {"ok": True, "message": f"Đã gọi {fname} tại {world} {x:.0f} {y:.0f} {z:.0f}. {out}".strip()}
-    bid = str(data.get("id", ""))
-    if not BOSS_ID_RE.match(bid):
-        raise ValueError("Mã boss chỉ gồm chữ thường không dấu, số, _ (vd rong_lua)")
-    path = BOSS_DIR / f"dmm_{bid}.yml"
+    fname = str(data.get("file") or "")
+    shipped = bool(fname) and not fname.startswith("dmm_")
+    if shipped:
+        # boss có sẵn của EliteMobs / dungeon: sửa thẳng file gốc (chỉ các mục đã đổi), khôi phục, hoặc chép thành boss mới
+        if not BOSS_FILE_RE.match(fname) or not (BOSS_DIR / fname).exists():
+            raise ValueError("Không có boss này")
+        path, bid = BOSS_DIR / fname, fname[:-4]
+    else:
+        bid = str(data.get("id", ""))
+        if not BOSS_ID_RE.match(bid):
+            raise ValueError("Mã boss chỉ gồm chữ thường không dấu, số, _ (vd rong_lua)")
+        path = BOSS_DIR / f"dmm_{bid}.yml"
     if action == "delete":
+        if shipped:
+            raise ValueError("Boss có sẵn không xoá được trên web (tắt bằng công tắc Bật boss)")
         if not path.exists():
             raise ValueError("Không có boss này")
         path.unlink()
+    elif action == "restore":
+        bak = BOSS_BACKUP_DIR / fname
+        if not shipped or not bak.exists():
+            raise ValueError("Không có bản gốc để khôi phục")
+        path.write_bytes(bak.read_bytes())
+        bak.unlink()
+    elif action == "copy":
+        new_id = str(data.get("new_id", ""))
+        if not BOSS_ID_RE.match(new_id):
+            raise ValueError("Mã boss mới chỉ gồm chữ thường không dấu, số, _ (vd snoopy_lua)")
+        dst = BOSS_DIR / f"dmm_{new_id}.yml"
+        if dst.exists():
+            raise ValueError("Mã đã có, chọn mã khác")
+        dst.write_text(f"# Chép từ {path.name} trên trang quản trị DuckyMoMo (Boss).\n" + path.read_text(encoding="utf-8"), encoding="utf-8")
+        bid = new_id
     elif action == "save":
         b = data.get("boss") or {}
-        if data.get("is_new") and path.exists():
+        if not shipped and data.get("is_new") and path.exists():
             raise ValueError("Mã đã có, chọn mã khác")
-        etype = str(b.get("entityType", "")).upper()
-        if etype not in BOSS_ENTITIES:
-            raise ValueError("Loại quái không hợp lệ")
-        level = str(b.get("level", "dynamic")).strip().lower()
-        if level != "dynamic" and not (level.isdigit() and 1 <= int(level) <= 200):
-            raise ValueError("Cấp: 1–200 hoặc dynamic")
-        try:
-            hm, dm = float(b.get("healthMultiplier", 1)), float(b.get("damageMultiplier", 1))
-        except (TypeError, ValueError):
-            raise ValueError("Hệ số máu / sát thương phải là số")
-        if not (0.1 <= hm <= 1000 and 0.1 <= dm <= 100):
-            raise ValueError("Hệ số máu 0,1–1000; sát thương 0,1–100")
-        known = set(boss_powers())
-        powers = [str(p) for p in (b.get("powers") or []) if str(p) in known]
-        doc = {"isEnabled": bool(b.get("isEnabled", True)), "entityType": etype,
-               "name": DoubleQuotedScalarString(str(b.get("name", ""))[:120] or bid),
-               "level": "dynamic" if level == "dynamic" else int(level), "healthMultiplier": hm, "damageMultiplier": dm,
-               "powers": powers, "bossType": "NORMAL", "classLoot": True,
-               "dropsEliteMobsLoot": bool(b.get("dropsEliteMobsLoot", True)),
-               "announcementPriority": max(0, min(3, int(b.get("announcementPriority", 2) or 0))),
-               "timeout": max(0, min(1440, int(b.get("timeout", 0) or 0)))}
-        for k in ("spawnMessage", "deathMessage"):
-            if str(b.get(k) or "").strip():
-                doc[k] = DoubleQuotedScalarString(str(b[k])[:200])
-        for k in ("deathMessages", "onDeathCommands"):
-            lines = [str(x).strip()[:200] for x in (b.get(k) or []) if str(x).strip()][:20]
-            if k == "onDeathCommands":
-                lines = [x.lstrip("/") for x in lines]
-            if lines:
-                doc[k] = [DoubleQuotedScalarString(x) for x in lines]
-        for slot in BOSS_SLOTS:
-            m = str(b.get(slot) or "").strip().upper()
-            if m:
-                if not MATERIAL_RE.match(m):
-                    raise ValueError(f"Trang bị {slot} sai: {m}")
-                doc[slot] = m
+        y = yaml_rt()
+        doc = y.load(path.read_text(encoding="utf-8")) if path.exists() else None
+        if doc is None:
+            doc = {}
+        # boss có sẵn: chỉ ghi mục được gửi (đã đổi); boss web mới: đủ mục + mặc định
+        partial = shipped or bool(doc)
+        upd = boss_clean(b, partial, doc.get("entityType"))
+        if shipped and not upd:
+            raise ValueError("Chưa đổi gì")
+        if "powers" in upd:
+            # giữ kỹ năng trang web không quản (có tham số, dạng bảng, hoặc không có trong thư mục powers)
+            known = set(boss_powers())
+            keep = [p for p in (doc.get("powers") or []) if not isinstance(p, str) or p not in known]
+            upd["powers"] = keep + upd["powers"]
+        for k, v in upd.items():
+            if v is None:
+                doc.pop(k, None)
+            else:
+                doc[k] = v
+        if not partial:
+            doc.setdefault("bossType", "NORMAL")
+            doc.setdefault("classLoot", True)
+        if shipped:
+            BOSS_BACKUP_DIR.mkdir(parents=True, exist_ok=True)
+            bak = BOSS_BACKUP_DIR / fname
+            if not bak.exists():
+                bak.write_bytes(path.read_bytes())
         BOSS_DIR.mkdir(parents=True, exist_ok=True)
-        with path.open("w", encoding="utf-8") as f:
-            f.write("# Tạo trên trang quản trị DuckyMoMo (Boss). Sửa trên web, đừng sửa tay (sẽ bị ghi đè).\n")
-            yaml_rt().dump(doc, f)
+        tmp = path.with_suffix(".yml.tmp")
+        with tmp.open("w", encoding="utf-8") as f:
+            if not shipped and not path.exists():
+                f.write("# Tạo trên trang quản trị DuckyMoMo (Boss). Sửa trên web, đừng sửa tay (sẽ bị ghi đè).\n")
+            y.dump(doc, f)
+        tmp.replace(path)
     else:
         raise ValueError("Thao tác không hợp lệ")
     try:
@@ -1127,7 +1207,7 @@ def boss_action(data):
         res = "EliteMobs đã nạp lại."
     except Exception as e:
         res = f"Đã lưu file nhưng chưa nạp được ({e}); bật server lên sẽ đọc."
-    verb = "Đã xoá" if action == "delete" else "Đã lưu"
+    verb = {"delete": "Đã xoá", "restore": "Đã khôi phục bản gốc", "copy": "Đã chép thành"}.get(action, "Đã lưu")
     return {"ok": True, "message": f"{verb} boss \"{bid}\". {res}", "data": boss_json()}
 
 # ---------------------------------------------------------------- HTTP

@@ -34,7 +34,10 @@ wg set wg0 private-key /tmp/wg.key peer "$RELAY_VPS_PUBLIC_KEY" endpoint "$RELAY
 rm -f /tmp/wg.key
 ip addr add "$ADDR" dev wg0
 ip link set wg0 mtu 1380 up
-ip route add default dev wg0 table $TABLE
+# BBR cho kết nối người chơi: tuyến VPS → người chơi mất ~2% gói (đo 15/10), cubic chỉ ~3 Mbps/người → ping nhảy khi chạy
+# (chunk dồn), BBR ~27 Mbps. Gắn theo tuyến (congctl) vì Docker Desktop bỏ qua --sysctl. Cần module tcp_bbr đã nạp
+# (/etc/wsl.conf [boot] command); chưa có thì dùng cubic và vòng lặp dưới tự thử lại.
+ip route add default dev wg0 table $TABLE congctl bbr 2>/dev/null || ip route add default dev wg0 table $TABLE
 # Đích nội bộ luôn đi bảng chính
 ip rule add to 127.0.0.0/8 lookup main pref 100
 ip rule add to 10.0.0.0/8 lookup main pref 101
@@ -60,6 +63,9 @@ while :; do
   if [ -z "$hs" ] || [ "$hs" = 0 ]; then st="chưa bắt tay được với VPS"
   elif [ $((now - hs)) -gt 180 ]; then st="MẤT kết nối VPS ($((now - hs)) giây chưa bắt tay)"
   else st="đang kết nối VPS"; fi
+  if ! ip route show table $TABLE | grep -q 'congctl bbr'; then
+    ip route replace default dev wg0 table $TABLE congctl bbr 2>/dev/null && st="$st, đã bật BBR" || st="$st, chưa có BBR (cubic)"
+  fi
   [ "$st" != "$last" ] && echo "$(date '+%F %T') $st" && last=$st
   sleep 60 & wait $!
 done

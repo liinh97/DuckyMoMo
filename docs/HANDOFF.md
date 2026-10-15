@@ -156,6 +156,22 @@
   lúc 0 người online; thử qua IP mới: Java 25565/25570, Bedrock 19132/19130, Votifier 8192 đều OK, proxy ghi IP thật. DNS: A → 125.212.218.74,
   SRV → 25565 (qua API). Ping ước tính: người chơi miền Nam ~30–40 ms, miền Bắc (kể cả chủ server) ~55–65 ms. VPS BKNS: vẫn bật nhưng không còn
   nhà nối vào; người dùng sẽ xin huỷ/hoàn tiền (đừng tắt hộ khi chưa hỏi).
+- **Ping nhảy khi chạy nhanh (15/10, đã sửa bằng BBR)**: người dùng thấy ping 900+ ms khi chạy (TPS vẫn 20). Đo: tuyến **VPS Vinahost →
+  nhà mất ~2% gói** ở mọi tốc độ (UDP iperf 5M/20M: 2,2%/1,7%), không phải trần băng thông (4 luồng TCP = 23,6 Mbps). TCP cubic 1 luồng chỉ
+  ~3–5 Mbps → chunk dồn khi chạy, gói keep-alive xếp sau gói gửi lại → ping nhảy. BBR 1 luồng: 92 Mbps (VPS gửi), **trên đúng đường người
+  chơi (proxy → wg → VPS → nhà) cubic 2,7 → BBR 27,3 Mbps**. Docker Desktop bỏ qua `--sysctl net.ipv4.tcp_congestion_control` → gắn theo
+  tuyến: `ip route ... table 66 congctl bbr` trong `relay/wg-relay.sh` (vòng lặp tự thử lại mỗi phút nếu chưa có module). Module `tcp_bbr`
+  (kernel WSL `CONFIG_TCP_CONG_BBR=m`, WSL không có systemd) phải nạp khi WSL khởi động: **người dùng tự thêm** `[boot] command = modprobe
+  tcp_bbr` vào `/etc/wsl.conf` (15/10 module đang nạp sẵn). Người chơi phải vào lại mới dùng BBR. Cũng thấy: mạng trong Docker Desktop tải
+  xuống ~37 Mbps (Windows 103, WSL 132), lên VPS qua đường hầm ~57 Mbps — đông người thì là nút thắt; về lâu dài cân nhắc Docker Engine trong
+  WSL thay Docker Desktop. Chưa làm: báo Vinahost về mất gói; nhờ người chơi miền Nam đo.
+- **Ý tưởng từ CherryMC (15/10, người dùng gửi ảnh; ĐỂ SAU, xử lý mạng trước)**: họ có điểm danh `/diemdanh` (chuỗi ngày, thưởng tiền +
+  "mảnh sự kiện" đổi quà), nhiệm vụ `/quest`, `/menukit`, chìa khoá miễn phí theo giờ online (scoreboard đếm ngược) + vòng quay "VQ FREE" hiện tỉ
+  lệ từng món, boss bar đếm ngược "Bảo vệ PvP" cho người mới + boss bar mẹo xoay vòng, lệnh bấm được trong chat, nhắc chống lừa tpa, /ah báo
+  lên chat kèm thuế, rank người mới [SEED], nhãn giới tính, ghép đôi (LOVE), claim kiểu GriefPrevention, `/mhome` menu nhiều nhà, thanh máu/mana.
+  Đề xuất cho DuckyMoMo (chưa làm): (1) điểm danh hằng ngày + mốc 7/14/30 ngày (DuckyMoMoCore, giống VoteRewards); (2) nhiệm vụ hằng ngày gắn
+  nghề; (3) boss bar đếm ngược bảo vệ người mới; (4) chìa khoá miễn phí theo giờ online + vòng quay ghi rõ tỉ lệ, chỉ tài nguyên/trang trí, KHÔNG
+  bán chìa; (5) mảnh sự kiện cho "Trái Đất lâm nguy". Không làm: nhãn giới tính (dễ bị quấy rối), chỉ số máu/mana (lệch PvP công thành).
 - **IP thật người chơi (14/10): KHÔNG có** — qua playit mọi kết nối hiện `127.21.235.67`. Không giới hạn theo IP được (AuthMe, Sonar).
   Có IP thật khi chuyển sang VPS (**người dùng chốt: khi chạy thật thì đổi sang VPS**) hoặc bật Proxy Protocol trên playit + Velocity `haproxy-protocol`.
 - Font tiếng Việt (resource pack Be Vietnam Pro, host trên Trạm 6 `/mc/pack/`), bảng TAB, warp "Miền xa" (Côn Đảo, Luang Namtha…).

@@ -109,6 +109,10 @@
 14. **Role Builder** (CHƯA chạy): `tools/builder-role.cmds`. WorldEdit + vượt vùng + /gamemode + /tp chỉ ở lobby (lệnh gốc vì lobby không có
    Essentials); cấm ở banghoi-1; cấm mọi nơi fill/clone/setblock, towny.admin, give/item/eco.
 
+15. **Nút bộ quyền khuyên dùng (trang Role)**: role có file trong `ROLE_PRESETS` (quanly, builder) hiện nút "Tạo role + bộ quyền khuyên dùng"
+   / "Áp bộ quyền khuyên dùng" (chỉ toàn quyền), chạy các dòng `lp ...` của `tools/<role>-role.cmds` qua RCON lobby. Panel mount `../tools:/repo/tools:ro`.
+   Role chưa có trong LuckPerms hiện cảnh báo đỏ (`exists` từ bảng luckperms_groups).
+
 ### Người dùng phải tự làm (nhắc lại khi phù hợp)
 - Thêm `[boot] command = modprobe tcp_bbr` vào `/etc/wsl.conf` (để BBR có sau mỗi lần khởi động WSL):
   `wsl -d Ubuntu-22.04 -u root -- sh -c "printf '\n[boot]\ncommand = modprobe tcp_bbr\n' >> /etc/wsl.conf"`

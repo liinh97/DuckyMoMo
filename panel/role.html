@@ -66,6 +66,7 @@
   .badge.deny { background: rgba(217, 48, 37, .12); color: var(--err); }
   .pr.busy { opacity: .5; pointer-events: none; }
   .pr.via { cursor: default; }
+  .preset { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-top: 14px; }
   .badge.srv { border: 0; cursor: pointer; background: rgba(26, 115, 232, .13); color: #4c8df6; font: inherit; font-size: 11px; padding: 0 7px; }
   .badge.srv:hover { text-decoration: underline; }
   .pr.via .switch { opacity: .55; }
@@ -95,7 +96,7 @@
 </main>
 <script>
 const $ = (id) => document.getElementById(id);
-const NAMES = { default: "Dân (mặc định)", builder: "Builder", helper: "Helper", mod: "Mod", admin: "Admin",
+const NAMES = { default: "Dân (mặc định)", builder: "Builder", helper: "Helper", mod: "Mod", quanly: "Quản lý", admin: "Admin",
   namtuoc: "Nam Tước", tutuoc: "Tử Tước", batuoc: "Bá Tước", hautuoc: "Hầu Tước", congtuoc: "Công Tước" };
 const KIND = { staff: "Role chức vụ", donate: "Rank donate", default: "Nhóm mặc định" };
 const name = (g) => NAMES[g] || g;
@@ -149,6 +150,9 @@ function renderDetail() {
       <span class="badge accent">${KIND[g.kind]}</span><span class="badge">nhóm <code>${esc(g.name)}</code></span><span class="badge" title="Số lớn hơn = ưu tiên hơn (prefix, quyền)">weight ${g.weight}</span>
       ${parents ? `<span class="badge">kế thừa: ${parents}</span>` : ""}</div></div></div>
     ${isDonate ? '<div class="warnbox">Rank donate chỉ được có quyền <b>trang trí</b>. Cấp lợi thế khi chơi (bay, kit, đồ mạnh…) là pay-to-win, vi phạm luật Mojang.</div>' : ""}
+    ${!g.exists ? `<div class="warnbox" style="background:rgba(217,48,37,.12);color:var(--err)">Role này <b>chưa có trong LuckPerms</b>${g.preset ? ": bấm nút bên dưới để tạo kèm bộ quyền khuyên dùng." : "."}</div>` : ""}
+    ${g.preset ? `<div class="preset"><button class="primary" id="preset">${g.exists ? "Áp bộ quyền khuyên dùng" : "Tạo role + bộ quyền khuyên dùng"}</button>
+      <span class="hint">Chạy <code>tools/${g.name === "quanly" ? "quanly" : "builder"}-role.cmds</code> (chỉ Admin). Chạy lại được: bật lại quyền trong file, không gỡ quyền bạn tự thêm.</span></div>` : ""}
     <p class="hint">Sửa prefix: trang Cài đặt › Toàn mạng › ${isDonate ? "Rank donate" : "Role"}.</p></section>`;
   // --- thành viên
   h += `<section class="card"><h2>👥 Thành viên ${g.kind !== "default" ? `<span class="badge">${g.count}</span>` : ""}</h2>`;
@@ -187,6 +191,10 @@ function renderDetail() {
   h += `<div class="others"><h3>Quyền khác của role này <span class="hint" style="font-weight:400">(không có trong danh mục, mọi server)</span></h3>${others.length ? `<div class="members" style="margin-top:0">${others.map(p => `<span class="mem">${p.value ? "" : '<span class="badge deny">CẤM</span>'}<code>${esc(p.node)}</code>${p.server !== "global" ? `<span class="exp">@${esc(p.server)}</span>` : ""}<button class="x" title="Gỡ quyền" data-unset="${esc(p.node)}" data-srv="${esc(p.server)}">×</button></span>`).join("")}</div>` : '<p class="hint" style="margin:0">Không có.</p>'}
     <div class="addp"><input id="newp" placeholder="Thêm quyền theo tên, vd essentials.workbench (áp dụng: ${server === "global" ? "toàn mạng" : esc(server)})"><button class="ghost" id="addp">Thêm quyền</button></div></div></section>`;
   d.innerHTML = h;
+  if ($("preset")) $("preset").onclick = async () => {
+    if (await ask(`${g.exists ? "Áp lại" : "Tạo role và áp"} bộ quyền khuyên dùng cho ${name(g.name)}? Người đang giữ role nhận quyền mới ngay.`, { title: "Bộ quyền khuyên dùng", ok: "Chạy" }))
+      post({ action: "preset", group: g.name });
+  };
   d.querySelectorAll("[data-go]").forEach(a => a.onclick = () => { sel = a.dataset.go; history.replaceState(null, "", "#" + sel); render(); });
   d.querySelectorAll("[data-rm]").forEach(b => b.onclick = async () => { if (await ask(`Gỡ ${name(g.name)} của ${b.dataset.rm}? Người này nhận tin trong game (nếu đang online).`, { title: "Gỡ role", ok: "Gỡ", danger: true })) post({ action: "remove", player: b.dataset.rm, group: g.name }); });
   if ($("give")) {

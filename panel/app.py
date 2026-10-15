@@ -703,6 +703,8 @@ def roles_json():
                 parents.setdefault(name, []).append(perm[6:])
             else:
                 perms.setdefault(name, []).append({"node": perm, "value": bool(value), "server": server})
+        cur.execute("SELECT name FROM luckperms_groups")
+        existing = {r[0] for r in cur.fetchall()}
         cur.execute("SELECT COUNT(*) FROM luckperms_players")
         total = cur.fetchone()[0]
     finally:
@@ -711,17 +713,42 @@ def roles_json():
     for g in STAFF_GROUPS + DONATE_GROUPS:
         m = meta.get(g, {})
         out.append({"name": g, "kind": "default" if g == "default" else ("donate" if g in DONATE_GROUPS else "staff"),
-                    "prefix": m.get("prefix", ""), "weight": m.get("weight", 0), "display": m.get("display", g),
+                    "prefix": m.get("prefix", ""), "weight": m.get("weight", 0), "display": m.get("display", {"quanly": "Quản lý"}.get(g, g)),
                     "members": sorted(members.get(g, []), key=lambda x: x["name"].lower()),
                     "count": total if g == "default" else len(members.get(g, [])),
-                    "perms": sorted(perms.get(g, []), key=lambda x: x["node"]), "parents": parents.get(g, [])})
+                    "perms": sorted(perms.get(g, []), key=lambda x: x["node"]), "parents": parents.get(g, []),
+                    "exists": g in existing or g == "default", "preset": g in ROLE_PRESETS})
     catalog = YAML(typ="safe").load(QUYEN_FILE.read_text(encoding="utf-8")) if QUYEN_FILE.exists() else {}
     return {"groups": out, "players": total, "catalog": (catalog or {}).get("groups", []), "servers": SERVER_CTX}
+
+
+# Bộ quyền khuyên dùng cho role (tools/<file>, mount ro vào /repo/tools): nút trên trang Role chạy từng dòng "lp ..." qua RCON ở lobby
+ROLE_PRESETS = {"quanly": "quanly-role.cmds", "builder": "builder-role.cmds"}
+TOOLS_DIR = Path(os.environ.get("TOOLS_DIR", "/repo/tools"))
+
+
+def apply_role_preset(group):
+    f = TOOLS_DIR / ROLE_PRESETS[group]
+    if not f.exists():
+        raise ValueError(f"Không thấy {f.name}: panel cần mount ../tools (git pull rồi docker compose up -d --build panel)")
+    lines = [l.strip() for l in f.read_text(encoding="utf-8").splitlines() if l.strip().startswith("lp ")]
+    # RCON gửi từng lệnh riêng (không qua shell): chỉ cần mỗi dòng đúng là lệnh LuckPerms quản lý nhóm/track
+    if not lines or any(not re.fullmatch(r"lp (group|track|creategroup|createtrack) \S.*", l) for l in lines):
+        raise ValueError(f"{f.name} có dòng không phải lệnh lp hợp lệ, không chạy.")
+    out = rcon("lobby", lines)
+    bad = [o for _, o in out if re.search(r"(?i)error|invalid|không hợp lệ", o) and "already" not in o.lower()]
+    time.sleep(1.5)
+    msg = f"Đã chạy {len(lines)} lệnh trong {f.name}." + (f" {len(bad)} lệnh báo lỗi: {bad[0][:120]}" if bad else "")
+    return {"ok": not bad, "message": msg, "data": roles_json()}
 
 
 def role_action(data):
     """Cấp / gỡ role qua RCON ở lobby (LuckPerms dùng chung DB + Redis nên áp dụng toàn mạng)."""
     act, player, group = data.get("action"), str(data.get("player", "")).strip(), data.get("group")
+    if act == "preset":
+        if group not in ROLE_PRESETS:
+            raise ValueError("Role này không có bộ quyền khuyên dùng")
+        return apply_role_preset(group)
     if act in ("perm_set", "perm_unset", "perm_deny"):
         node, server = str(data.get("node", "")).strip(), data.get("server") or "global"
         if group not in STAFF_GROUPS + DONATE_GROUPS:
@@ -1966,7 +1993,9 @@ class Handler(BaseHTTPRequestHandler):
         protected = PROTECTED_FOR_QUANLY if self.who.get("quanly") else PROTECTED_GROUPS
         if p == "/api/roles":
             grp = str(b.get("group", ""))
-            if b.get("action") in ("perm_set", "perm_unset", "perm_deny"):
+            if b.get("action") == "preset":
+                ok = full
+            elif b.get("action") in ("perm_set", "perm_unset", "perm_deny"):
                 node = str(b.get("node", "")).strip().lower()
                 ok = self.can("role-quyen") and (full or (grp not in protected and not PROTECTED_PERM_RE.match(node)))
             else:

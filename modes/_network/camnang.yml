@@ -175,7 +175,7 @@ plugins:
       - ["/dmm reload", "Nạp lại config"]
       - ["/hoatdong <tên>", "Xem giờ chơi thật của người khác"]
       - ["/dmm hoabinh setup", "Lập Liên minh Hoà Bình lần đầu: đứng giữa spawn, tạo kinh đô KinhDo (thị trưởng NPC), quốc gia LienMinhHoaBinh, bật hoà bình"]
-      - ["/bxh dongmua · traothuong · hologram", "Đóng mùa (khoá điểm, 3 ngày khiếu nại ở Hội Bàn Tròn), trao danh hiệu; hologram = hướng dẫn tạo hologram bảng xếp hạng"]
+      - ["/bxh dongmua · traothuong · hologram", "Đóng mùa (khoá điểm, 3 ngày khiếu nại ở Hội Bàn Tròn), trao danh hiệu; hologram = hướng dẫn tạo hologram bảng xếp hạng. Dòng riêng cho từng người xem: %dmm_toi_chienthan% ("12 điểm (#3)"), %dmm_toi_bachu% (quốc gia của mình + hạng). Hologram đã có thì thêm: /dh line add bxh_chienthan 1 &7Bạn: &f%dmm_toi_chienthan% · /dh line add bxh_bachu 1 &7Quốc gia bạn: &f%dmm_toi_bachu%"]
       - ["/dmm shopnpc [remove]", "Đặt NPC Cửa hàng Kinh Đô (dân làng + chữ nổi) tại chỗ đứng ở khu shop spawn; đặt lại thì NPC cũ bị xoá"]
       - ["/setjail nhatu", "Essentials: đặt nhà tù kinh đô (Hội Bàn Tròn phạt tù dùng tên này)"]
       - ["/dmm hoabinh claim <bán kính ô>", "Kinh đô chiếm đất quanh nhà chính (1 ô = 16 block; spawn hiện cần khoảng 14)"]

@@ -5,11 +5,12 @@
 nhom:
   - ten: Người chơi
     lenh: [huongdan, menu, server, web, tpr, warp, spawn, home, sethome, back, tpa, tpaccept, msg, r,
-           diemdanh, nhiemvu, vongquay, vote, doimanh, hoatdong, bal, pay, sell, ah, trade, jobs, ce,
+           diemdanh, nhiemvu, vongquay, vote, doimanh, hoatdong, mua, emf, emf shop, donhang, donhang cuatoi, khaihoang,
+           treothuong, xuong, rank mua, bal, pay, sell, ah, trade, jobs, ce,
            t, t spawn, t new, t claim, t add, n, hoabinh, bxh, danhhieu, cuahang, choilai,
            duel, queue, party, skin, skins, pp, pet, rank, changepassword]
   - ten: Staff
     lenh: [co i, co lookup, co rollback, co restore, kick, mute, tempban, ban, unban, seen, invsee, vanish, socialspy,
            tp, tphere, fly, heal, grim alerts]
   - ten: Admin
-    lenh: [dmm, dmm laydo, dmm luudo, rank give, rank check, eco give, eco take, gamemode, give, lp editor, lp user, em, ta, swa]
+    lenh: [dmm, dmm laydo, dmm luudo, rank give, rank check, mua dat, khaihoang them, xuong tang, emfa competition start, emfa reload, eco give, eco take, gamemode, give, lp editor, lp user, em, ta, swa]

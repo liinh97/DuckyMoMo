@@ -86,6 +86,17 @@ chapters:
         Acc phụ phải khai với
         admin, không được
         đánh trận.
+      - |-
+        &4&lLUẬT (tiếp)
+        &08. Vũ khí nổ &lkhông
+        &lgiết người&r&0: end
+        crystal, respawn
+        anchor, nổ giường
+        không trừ máu người
+        chơi; xe goòng TNT
+        chỉ còn 30%.
+        &0Đánh bằng kiếm, cung,
+        chuỳ cho công bằng.
   - id: banghoi
     name: Bang Hội Chiến
     pages:
@@ -428,6 +439,18 @@ chapters:
 
         &1/rank &0xem giá, quyền
         lợi từng bậc, cách mua.
+      - |-
+        &6&lỦNG HỘ BẰNG QR
+        &0Gõ &1/rank mua&0, chọn
+        gói: mã QR hiện trên
+        &ltấm bản đồ&r&0 trong
+        tay (10 phút).
+        &0Mở app ngân hàng
+        quét mã, chuyển xong
+        bấm &a[Tôi đã chuyển
+        &akhoản]&0 trong chat.
+        Admin cấp rank trong
+        ngày.
       - |-
         &2&lVOTE MIỄN PHÍ
         &0Ủng hộ server mà

@@ -1556,6 +1556,30 @@ def account_times(name):
         return {}
 
 
+def cmd_key(name):
+    """'tpr [khu]' -> 'tpr', 'co lookup u:<người> t:<thời gian>' -> 'co lookup', '/co i' -> 'co i' (bỏ tham số, chữ thường)."""
+    words = []
+    for w in str(name).split("·")[0].split():
+        if w[:1] in "<[(" or ":" in w or w.startswith("-"):
+            break
+        words.append(w)
+    return " ".join(words).lstrip("/").lower()
+
+
+def common_commands():
+    """modes/_network/lenh-hay-dung.yml -> {tên lệnh: [tên nhóm, thứ tự]}"""
+    try:
+        doc = YAML(typ="safe").load((MODES_DIR / "_network" / "lenh-hay-dung.yml").read_text(encoding="utf-8")) or {}
+    except Exception:
+        return {}
+    out, i = {}, 0
+    for g in doc.get("nhom") or []:
+        for c in g.get("lenh") or []:
+            out.setdefault(str(c).lower().strip(), [str(g.get("ten", "")), i])
+            i += 1
+    return out
+
+
 def web_profile(name, by_code):
     """Hồ sơ cho trang "Tài khoản của tôi": role, rank, số liệu chơi, lệnh dùng được, quyền quản trị."""
     perms = taikhoan.load_perms(name)
@@ -1571,6 +1595,7 @@ def web_profile(name, by_code):
         roles.append({"id": g, "ten": m.get("display", g), "prefix": m.get("prefix", ""), "het": d["expiry"],
                       "server": d["server"], "loai": "donate" if g in DONATE_GROUPS else ("staff" if g in STAFF_GROUPS else "khac")})
     cmds = web_cached("lenh", 60, lambda: all_commands(YAML(typ="safe").load(CAMNANG_FILE.read_text(encoding="utf-8")) or {}))
+    common = web_cached("hay-dung", 30, common_commands)
     hoso = taikhoan.profile(perms)
     roles_towny = set((hoso.get("towny") or {}).get("chuc", []))
     lenh = {}
@@ -1581,8 +1606,12 @@ def web_profile(name, by_code):
             if not ok or (r["plugin"], r["name"]) in seen:
                 continue
             seen.add((r["plugin"], r["name"]))
-            rows.append({"plugin": r["plugin"], "ten": r["name"], "goi_tat": r.get("aliases", [])[:4],
-                         "mo_ta": r.get("desc_vi") or r.get("desc", ""), "nhan": tag})
+            row = {"plugin": r["plugin"], "ten": r["name"], "goi_tat": r.get("aliases", [])[:4],
+                   "mo_ta": r.get("desc_vi") or r.get("desc", ""), "nhan": tag}
+            hit = common.get(cmd_key(r["name"])) or next((common[a.lower()] for a in r.get("aliases", []) if a.lower() in common), None)
+            if hit:
+                row["hay"] = hit  # [nhóm, thứ tự]
+            rows.append(row)
         lenh[srv] = rows
     is_staff = bool(acc["features"]) or acc["toan_quyen"]
     return {"ok": True, "ten": perms["name"] if perms["name"].lower() == name.lower() else name, "bedrock": name.startswith("."),

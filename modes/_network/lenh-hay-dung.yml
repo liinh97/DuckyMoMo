@@ -1,0 +1,15 @@
+# Lệnh HAY DÙNG: hiện đầu mục "Lệnh bạn dùng được" trên trang tài khoản (site/public/taikhoan.html), đúng thứ tự dưới đây.
+# Mỗi dòng là tên lệnh KHÔNG có "/" và không có tham số, khớp với tên trong cẩm nang lệnh (vd "co i", "t spawn", "rank give").
+# Người chơi chỉ thấy lệnh mình dùng được và có ở server đang xem; lệnh không tìm thấy thì tự bỏ qua.
+# panel/app.py đọc file này mỗi lần (sửa xong không cần build lại).
+nhom:
+  - ten: Người chơi
+    lenh: [huongdan, menu, server, web, tpr, warp, spawn, home, sethome, back, tpa, tpaccept, msg, r,
+           diemdanh, nhiemvu, vongquay, vote, doimanh, hoatdong, bal, pay, sell, ah, trade, jobs, ce,
+           t, t spawn, t new, t claim, t add, n, hoabinh, bxh, danhhieu, cuahang, choilai,
+           duel, queue, party, skin, skins, pp, pet, rank, changepassword]
+  - ten: Staff
+    lenh: [co i, co lookup, co rollback, co restore, kick, mute, tempban, ban, unban, seen, invsee, vanish, socialspy,
+           tp, tphere, fly, heal, grim alerts]
+  - ten: Admin
+    lenh: [dmm, dmm laydo, dmm luudo, rank give, rank check, eco give, eco take, gamemode, give, lp editor, lp user, em, ta, swa]

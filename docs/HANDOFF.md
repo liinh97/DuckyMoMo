@@ -83,6 +83,8 @@
      "Tôi đã chuyển khoản" → báo admin online (quyền duckymomo.rank.admin) + dòng Hoạt động; trang quản trị `/donate` (panel/donate.html) cấp rank bằng
      `/rank give` hoặc huỷ. Chưa tự động đối soát (người dùng chốt: chưa cần). Dữ liệu `data/panel/donate.json`.
    - Trang Role: quyền có sẵn (kế thừa hoặc qua `*`) hiện công tắc BẬT mờ, khoá (trước hiện tắt, admin tưởng không có quyền). Cấp/gỡ role báo vào game.
+   - Lệnh hay dùng: `modes/_network/lenh-hay-dung.yml` (nhóm Người chơi/Staff/Admin, khớp theo tên lệnh bỏ tham số, `cmd_key` trong panel);
+     trang tài khoản hiện mục "⭐ Hay dùng" trước, lệnh khác gom theo plugin, thu gọn (tìm kiếm thì mở hết).
    - Sảnh KHÔNG cài EssentialsX: /fly, /kick… ở sảnh báo "Unknown command" với mọi người. Mod dùng ở banghoi/practice. Chưa quyết có cài Essentials ở sảnh không.
 
 ### Người dùng phải tự làm (nhắc lại khi phù hợp)

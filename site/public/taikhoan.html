@@ -80,7 +80,13 @@ code,.kbd{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;background:
 .feat small{display:block;color:var(--muted)}
 .note{border-radius:12px;padding:12px 14px;background:rgba(242,184,75,.08);border:1px solid rgba(242,184,75,.35);margin-bottom:12px}
 .note.red{background:rgba(239,83,80,.08);border-color:rgba(239,83,80,.45)}
-.cmds{max-height:560px;overflow:auto;margin-top:8px}
+.cmds{max-height:640px;overflow:auto;margin-top:8px;padding-right:4px}
+.hay{border:1px solid rgba(242,184,75,.35);background:linear-gradient(180deg,rgba(242,184,75,.06),transparent 70%);border-radius:12px;padding:4px 14px 8px}
+.hayt{font-weight:800;margin:12px 0 2px;color:var(--gold2)}
+details.plg{border-bottom:1px solid rgba(42,58,79,.6)}
+details.plg>summary{cursor:pointer;padding:10px 0;font-size:.8rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);list-style:none}
+details.plg>summary::before{content:"▸ ";color:var(--gold)}
+details.plg[open]>summary::before{content:"▾ "}
 .cmdgrp{margin:12px 0 4px;font-size:.8rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--dim)}
 .cmd{display:grid;grid-template-columns:minmax(160px,34%) 1fr;gap:14px;padding:8px 0;border-bottom:1px solid rgba(42,58,79,.5);font-size:.92rem}
 .cmd>*{min-width:0}
@@ -332,14 +338,33 @@ function render(){
 }
 
 const fold = s => String(s || "").normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/đ/g, "d").toLowerCase();
+function cmdRow(c){
+  return `<div class="cmd"><div><code>/${esc(c.ten)}</code>${c.nhan ? `<span class="own">${esc(c.nhan)}</span>` : ""}${c.goi_tat.length ? `<div class="al">${c.goi_tat.map(a => "/" + esc(a)).join(" ")}</div>` : ""}</div><div class="muted">${esc(c.mo_ta) || '<span class="dim">Chưa có mô tả</span>'}</div></div>`;
+}
+const OPEN = new Set();  // nhóm plugin đang mở
 function drawCmds(){
   const q = fold(cmdQ.trim());
-  const rows = ((D.lenh || {})[cmdSrv] || []).filter(c => (!onlyMine || c.nhan) && (!q || fold(c.ten + " " + c.goi_tat.join(" ") + " " + c.mo_ta + " " + c.plugin).includes(q)));
-  const by = {};
-  rows.forEach(c => (by[c.plugin] = by[c.plugin] || []).push(c));
-  $("#cmds").innerHTML = rows.length ? Object.keys(by).sort().map(p => `<div class="cmdgrp">${esc(p)}</div>` + by[p].map(c =>
-    `<div class="cmd"><div><code>/${esc(c.ten)}</code>${c.nhan ? `<span class="own">${esc(c.nhan)}</span>` : ""}${c.goi_tat.length ? `<div class="al">${c.goi_tat.map(a => "/" + esc(a)).join(" ")}</div>` : ""}</div><div class="muted">${esc(c.mo_ta) || '<span class="dim">Chưa có mô tả</span>'}</div></div>`).join("")).join("")
-    : '<p class="muted" style="margin-top:12px">Không có lệnh nào khớp.</p>';
+  const all = ((D.lenh || {})[cmdSrv] || []).filter(c => (!onlyMine || c.nhan) && (!q || fold(c.ten + " " + c.goi_tat.join(" ") + " " + c.mo_ta + " " + c.plugin).includes(q)));
+  if (!all.length) { $("#cmds").innerHTML = '<p class="muted" style="margin-top:12px">Không có lệnh nào khớp.</p>'; return; }
+  let h = "";
+  // hay dùng: theo thứ tự lenh-hay-dung.yml, chia nhóm Người chơi / Staff / Admin
+  // mỗi lệnh hay dùng chỉ hiện 1 dòng: dòng đứng đầu trong cẩm nang (thường là cách dùng chung), biến thể khác về "Tất cả lệnh khác"
+  const seenH = new Set(), hay = [];
+  all.map((c, i) => [c, i]).filter(([c]) => c.hay).sort((a, b) => a[0].hay[1] - b[0].hay[1] || a[1] - b[1]).map(([c]) => c)
+    .forEach(c => { if (!seenH.has(c.hay[1])) { seenH.add(c.hay[1]); hay.push(c); } });
+  if (hay.length) {
+    h += `<div class="hay"><div class="hayt">⭐ Hay dùng</div>`;
+    let g = null;
+    for (const c of hay) { if (c.hay[0] !== g) { g = c.hay[0]; h += `<div class="cmdgrp">${esc(g)}</div>`; } h += cmdRow(c); }
+    h += `</div>`;
+  }
+  const rest = all.filter(c => !hay.includes(c)), by = {};
+  rest.forEach(c => (by[c.plugin] = by[c.plugin] || []).push(c));
+  if (rest.length) h += `<div class="hayt" style="margin-top:16px">${hay.length ? "Tất cả lệnh khác" : "Tất cả lệnh"} <span class="dim small">(${rest.length}, bấm tên plugin để mở)</span></div>`;
+  // đang tìm thì mở hết; không thì thu gọn theo plugin
+  h += Object.keys(by).sort((a, b) => a.localeCompare(b)).map(p => `<details class="plg" ${q || OPEN.has(p) ? "open" : ""} data-p="${esc(p)}"><summary>${esc(p)} <span class="dim">(${by[p].length})</span></summary>${by[p].map(cmdRow).join("")}</details>`).join("");
+  $("#cmds").innerHTML = h;
+  $("#cmds").querySelectorAll("details.plg").forEach(d => d.ontoggle = () => { if (!q) d.open ? OPEN.add(d.dataset.p) : OPEN.delete(d.dataset.p); });
 }
 
 async function load(){

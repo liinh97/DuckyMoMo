@@ -120,3 +120,32 @@ MeoChoi:
     - "&c✦ &fĐang đánh nhau mà thoát game sẽ chết và rơi đồ &c✦"
     - "&e✦ &fCông thành: tối thứ 7, Chủ nhật 20:00 và 21:00 &e✦"
     - "&e✦ &fBản đồ thế giới online: Trạm 6 &e✦"
+
+# Bảng bên phải 2 trang tự đổi (config.yml scoreboard: %animation:SbTieuDe%, %animation:SbDong1..4%). Cùng change-interval để đổi trang đồng thời.
+# Trang 1 kinh tế & mùa, trang 2 chiến tranh. %dmmtoi_*% (giết/chết/KDA) và %dmmmua_*% (mùa) do DuckyMoMoCore cung cấp.
+SbTieuDe:
+  change-interval: 8000
+  texts:
+    - '&e&lKINH TẾ & MÙA &8● &7○'
+    - '&c&lCHIẾN TRANH &7○ &8●'
+SbDong1:
+  change-interval: 8000
+  texts:
+    - '&#7CFC9A⛃ &7Tiền: &a%vault_eco_balance_formatted% &2xu'
+    - '&#FF9F43⚑ &7Thị trấn: &#FFD580%townyadvanced_town_unformatted%'
+SbDong2:
+  change-interval: 8000
+  texts:
+    - '&#FFCC33🔑 &7Vé quay: &e%dmmvq_ve% &8(%dmmvq_con%)'
+    - '&#C77DFF♛ &7Quốc gia: &#E0B0FF%townyadvanced_nation_unformatted%'
+SbDong3:
+  change-interval: 8000
+  texts:
+    - '&#5FD3F3☂ &7Mùa: %dmmmua_ten%'
+    - '&#FF6B6B⚔ &7Giết: &f%dmmtoi_giet% &8· &7Chết: &f%dmmtoi_chet%'
+SbDong4:
+  change-interval: 8000
+  texts:
+    - '&7  còn &f%dmmmua_con% &7ngày'
+    - '&#FF6B6B☠ &7KDA: &f%dmmtoi_kda%'
+

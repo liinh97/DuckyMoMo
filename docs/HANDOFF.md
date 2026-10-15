@@ -135,6 +135,11 @@
      thi câu + đếm ngược) và mục "Hằng ngày" (`/api/hangngay`: điểm danh, nhiệm vụ, vòng quay có tỉ lệ, mảnh sự kiện, đọc config DuckyMoMoCore).
      Luật thêm chống x-ray, hỏi đáp thêm "Mùa mưa, mùa khô" và "Có voice chat không". Triển khai: `docker compose up -d --build site`.
 
+18. **Bảng bên phải 2 trang (15/10 tối, CHƯA build)**: ý từ UniMC. TAB `animations.yml` SbTieuDe + SbDong1..4 (change-interval 8000, đổi đồng thời):
+   trang 1 Kinh tế & mùa (tiền, vé quay, mùa + số ngày còn), trang 2 Chiến tranh (thị trấn, quốc gia, giết/chết, KDA). DuckyMoMoCore
+   `PlayerStatsPlaceholders` (%dmmtoi_giet|chet|kda%, thống kê gốc PLAYER_KILLS/DEATHS của server). settings.yml `tab_sb_lines` đã khớp.
+   Triển khai cùng lần build plugin (mục 16), TAB tự nạp khi khởi động lại banghoi-1 (hoặc /tab reload).
+
 17. **Voice chat: Simple Voice Chat (15/10 tối, CHƯA cài; người dùng chốt: ghi lại, CHƯA vội triển khai)**. Chỉ người chơi Java có cài mod; Bedrock chưa có cách tốt (xem dưới).
    - Server con lobby/banghoi-1/practice-1: `simple-voice-chat` trong MODRINTH_PROJECTS (bản bukkit 2.6.x, release, hỗ trợ 26.2),
      cấu hình `plugins/voicechat/voicechat-server.properties` (40/20 block, codec VOIP, nhóm bật, cấm ghi âm, không bắt buộc mod, cổng 24454 trong Docker).

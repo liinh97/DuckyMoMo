@@ -499,7 +499,7 @@ groups:
           options: [ { value: true, label: Có }, { value: false, label: Không } ] }
       - { key: tab_sb_title, label: Tiêu đề bảng bên phải, type: text, file: plugins/TAB/config.yml, path: scoreboard.scoreboards.banghoi.title }
       - { key: tab_sb_lines, label: Các dòng bảng bên phải (tối đa 15), type: lines, file: plugins/TAB/config.yml, path: scoreboard.scoreboards.banghoi.lines,
-          note: "Dòng trống: gõ một dấu cách không được (bị bỏ), dùng &r làm dòng trống." }
+          note: "Dòng trống: gõ một dấu cách không được (bị bỏ), dùng &r làm dòng trống. Bảng có 2 trang tự đổi mỗi 8 giây: các dòng %animation:SbTieuDe%, %animation:SbDong1..4% lấy nội dung từng trang trong plugins/TAB/animations.yml. Có sẵn: %dmmmua_ten%, %dmmmua_con% (mùa), %dmmtoi_giet%, %dmmtoi_chet%, %dmmtoi_kda%." }
       - { key: tab_header, label: Đầu danh sách Tab (mỗi dòng 1 dòng), type: lines, file: plugins/TAB/config.yml, path: header-footer.designs.default.header }
       - { key: tab_footer, label: Cuối danh sách Tab, type: lines, file: plugins/TAB/config.yml, path: header-footer.designs.default.footer }
 

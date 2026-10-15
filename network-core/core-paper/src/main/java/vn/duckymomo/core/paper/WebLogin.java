@@ -68,19 +68,31 @@ final class WebLogin {
         return true;
     }
 
-    /** /dmm webma <tên> <mã> (chỉ console/RCON): kiểm tra và huỷ mã. */
+    /**
+     * /dmm webma <tên> <mã> (chỉ console/RCON): kiểm tra và huỷ mã. Trả "WEBMA OK <tên thật>" hoặc lý do để web báo rõ:
+     * WEBMA KHAC (mã đúng nhưng của tài khoản khác, mã đó KHÔNG bị huỷ), HET (hết hạn), SAI (sai số), KHONG (tên này chưa lấy mã).
+     */
     String check(String name, String code) {
         String key = name.toLowerCase(Locale.ROOT);
+        String given = code.trim();
+        long now = System.currentTimeMillis();
+        codes.values().removeIf(e -> now > e.until + 600_000L); // dọn mã quá hạn lâu
         Entry e = codes.get(key);
+        if (e == null || !same(e.code, given)) {
+            boolean other = codes.entrySet().stream()
+                    .anyMatch(x -> !x.getKey().equals(key) && now <= x.getValue().until && same(x.getValue().code, given));
+            if (other) {
+                return "WEBMA KHAC";
+            }
+        }
         if (e == null) {
-            return "WEBMA SAI";
+            return "WEBMA KHONG";
         }
-        if (System.currentTimeMillis() > e.until) {
+        if (now > e.until) {
             codes.remove(key);
-            return "WEBMA SAI";
+            return "WEBMA HET";
         }
-        boolean ok = MessageDigest.isEqual(e.code.getBytes(StandardCharsets.UTF_8), code.trim().getBytes(StandardCharsets.UTF_8));
-        if (!ok) {
+        if (!same(e.code, given)) {
             if (++e.tries >= MAX_TRIES) {
                 codes.remove(key);
             }
@@ -88,5 +100,9 @@ final class WebLogin {
         }
         codes.remove(key);
         return "WEBMA OK " + e.name;
+    }
+
+    private static boolean same(String a, String b) {
+        return MessageDigest.isEqual(a.getBytes(StandardCharsets.UTF_8), b.getBytes(StandardCharsets.UTF_8));
     }
 }

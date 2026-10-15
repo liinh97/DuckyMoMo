@@ -55,13 +55,18 @@
 10. **Đăng nhập web bằng tài khoản game (15/10 tối, session cloud, nhánh `claude/happy-ritchie-2p60v7`, CHƯA TRIỂN KHAI)**:
    - Plugin: lệnh `/web` (`WebLogin.java`) cấp mã 6 số trong bộ nhớ (1 lần, 5 phút, sai 5 lần huỷ); `/dmm webma <tên> <mã>` chỉ
      console/RCON. Cấu hình (không bắt buộc, có mặc định): `web-login.url`, `web-login.code-minutes`. KHÔNG build thử được ở cloud (mạng chặn kho Maven).
-   - Panel: `panel/taikhoan.py` (xác minh mật khẩu AuthMe bằng bcrypt / mã qua RCON, tính quyền LuckPerms giống LP: đúng tên > a.b.* > *,
+   - CHỈ đăng nhập bằng mã /web (người dùng chốt 15/10: bỏ đăng nhập bằng mật khẩu, web không nhận mật khẩu game).
+   - Panel: `panel/taikhoan.py` (xác minh mã qua RCON, tính quyền LuckPerms giống LP: đúng tên > a.b.* > *,
      gán thẳng > nhóm nặng hơn, có kế thừa và server; hồ sơ người chơi). `app.py`: khoá `PANEL_SITE_KEY` (header `X-DMM-Key`), `/api/web/xacminh`,
      `/api/web/hoso`, `/api/toi`; staff vào qua web chỉ thấy/làm phần có quyền (`modes/_network/web-quyen.yml`, quyền `duckymomo.web.*` trong
      `quyen.yml`), cấm đụng role admin/mod và cấp `*`/quyền web nếu không toàn quyền; nhật ký `data/panel/web-thaotac.jsonl`; món thư viện ghi `nguoi-luu`.
    - Site: `/api/dangnhap|dangxuat|dangxuat-het|toi`, phiên trong bộ nhớ (cookie HttpOnly, SameSite=Lax, 7 ngày; khởi động lại site = đăng nhập lại),
      khoá 5 lần sai/tên/15 phút + 20/IP, chặn CSRF (Origin/Sec-Fetch-Site), `/quantri/*` chuyển sang panel CHỈ khi phiên đã nhập mã /web
-     (12 giờ). Trang `site/public/taikhoan.html`, nút Đăng nhập trên trang chủ. Mỗi lần đăng nhập web báo vào game cho chủ tài khoản.
+     (12 giờ; hết thì nhập mã mới, vẫn xem được tài khoản trong 7 ngày). Trang `site/public/taikhoan.html`, nút Đăng nhập trên trang chủ. Mỗi lần đăng nhập web báo vào game cho chủ tài khoản.
+   - Báo lỗi đăng nhập rõ: `/dmm webma` trả OK / KHAC (mã của tài khoản khác, không huỷ mã đó) / HET / SAI / KHONG; web báo từng trường hợp.
+   - Chơi lại từ đầu trên web (15/10 tối): thẻ trên trang tài khoản đọc `choilai.yml` + `player-reset` (số lần, chờ, quà, vua/thị trưởng);
+     nút gọi `/dmm choilaiweb <tên>` (console/RCON) → `PlayerReset.webRequest` mở bước xác nhận /choilai TRONG GAME (người chơi phải online ở
+     banghoi-1). Web không tự xoá gì. Bảng lệnh trên trang tài khoản: tên lệnh dài tự xuống dòng (trước bị đè cột mô tả).
    - Đã thử ở cloud: panel + site thật, LuckPerms/AuthMe/RCON giả lập, 45 kiểm tra (phân quyền, giả danh header, CSRF, khoá sai) + ảnh chụp 1400px/375px.
    - Triển khai ở nhà: `git pull` → `./ops/init.sh` (thêm `PANEL_SITE_KEY` vào .env) → `./ops/build-core.sh` → kiểm tra online rồi
      `docker compose up -d --no-deps lobby banghoi-1 practice-1` → `docker compose up -d --build panel site`. Cấp quyền web cho role ở trang Role.

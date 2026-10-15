@@ -3,10 +3,8 @@
 Dùng bởi panel/app.py. Trang web công khai (site/) gọi panel qua mạng nội bộ Docker kèm khoá PANEL_SITE_KEY;
 panel tự đọc quyền từ LuckPerms ở MỖI yêu cầu (không tin quyền do trang web gửi sang).
 
-Hai cách đăng nhập:
-  - mật khẩu AuthMe (cùng mật khẩu /login trong game; băm BCRYPT trong bảng network.authme)
-  - mã một lần từ game: người chơi gõ /web (DuckyMoMoCore WebLogin), panel hỏi lại qua RCON "dmm webma <tên> <mã>".
-Mở trang quản trị (staff) BẮT BUỘC đăng nhập bằng mã từ game: chứng minh người đó đang đăng nhập trong game.
+Chỉ một cách đăng nhập: mã một lần lấy trong game. Người chơi (đã /login AuthMe) gõ /web (DuckyMoMoCore WebLogin),
+panel hỏi lại qua RCON "dmm webma <tên> <mã>". Trang web không nhận mật khẩu, nên không ai dò mật khẩu game qua web được.
 """
 import os
 import re
@@ -45,49 +43,29 @@ def slug(s):
 
 # ---------------------------------------------------------------- xác minh
 
-_DUMMY = []
-
-
-def _dummy_hash():
-    import bcrypt
-    if not _DUMMY:
-        _DUMMY.append(bcrypt.hashpw(b"dmm", bcrypt.gensalt(10)))
-    return _DUMMY[0]
-
-
-def verify_password(name, password):
-    """Mật khẩu AuthMe. Trả tên thật (đúng hoa thường) hoặc None."""
-    import bcrypt
-    con = db("network")
-    try:
-        cur = con.cursor()
-        cur.execute("SELECT realname, password FROM authme WHERE username = %s", (name.lower(),))
-        row = cur.fetchone()
-    finally:
-        con.close()
-    if not row or not row[1] or not str(row[1]).startswith("$2"):
-        # vẫn chạy bcrypt cho người không tồn tại: thời gian trả lời không lộ tên nào có tài khoản
-        bcrypt.checkpw(b"x", _dummy_hash())
-        return None
-    # AuthMe (jBCrypt) chỉ dùng 72 byte đầu; thư viện bcrypt mới báo lỗi nếu dài hơn
-    if bcrypt.checkpw(password.encode("utf-8")[:72], str(row[1]).encode()):
-        return row[0] or name
-    return None
+# Lý do sai, ưu tiên báo cái cụ thể nhất (mã chỉ nằm ở MỘT server: server người chơi gõ /web)
+CODE_REASONS = ["KHAC", "HET", "SAI", "KHONG"]
 
 
 def verify_code(name, code, rcon, servers):
-    """Mã /web: hỏi lần lượt các server (mã nằm ở server người chơi gõ /web). Trả tên thật hoặc None."""
+    """Mã /web: hỏi lần lượt các server. Trả (tên thật, None) hoặc (None, lý do: KHAC|HET|SAI|KHONG|TAT)."""
     if not re.fullmatch(r"\d{6}", code):
-        return None
+        return None, "SAI"
+    found, reached = [], False
     for srv in servers:
         try:
             out = rcon(srv, [f"dmm webma {name} {code}"])[0][1]
         except Exception:
             continue
+        reached = True
         m = re.match(r"WEBMA OK (\S+)", out)
         if m:
-            return m.group(1)
-    return None
+            return m.group(1), None
+        m = re.match(r"WEBMA (\w+)", out)
+        found.append(m.group(1) if m else "SAI")
+    if not reached:
+        return None, "TAT"
+    return None, next((r for r in CODE_REASONS if r in found), "SAI")
 
 
 # ---------------------------------------------------------------- quyền LuckPerms
@@ -283,6 +261,23 @@ def profile(perms):
     tn = (an.get("truyna") or {}).get(uuid)
     out["an"] = {"truyna": {"den": tn.get("den"), "tien": tn.get("tien")} if tn and (tn.get("den") or 0) > time.time() * 1000 else None,
                  "tu_phut": (an.get("tu") or {}).get(uuid) or 0}
+    pr = core.get("player-reset") or {}
+    if pr.get("enabled"):
+        cl = safe_yaml(DMM / "choilai.yml").get(uuid) or {}
+        season = str(pr.get("season", "1"))
+        done = int(((cl.get("mua") or {}).get(season) or {}).get("so-lan", 0) or 0)
+        last, cooldown, maxn = int(cl.get("lan-cuoi") or 0), int(pr.get("cooldown-days", 7)), int(pr.get("max-per-season", 3))
+        wait_until = last + cooldown * 86_400_000 if last else 0
+        t = out["towny"] or {}
+        blockers = []
+        if "Vua" in t.get("chuc", []):
+            blockers.append("Bạn đang là vua: nhường ngôi trước (/n set king <tên>).")
+        elif "Thị trưởng" in t.get("chuc", []):
+            blockers.append("Bạn đang là thị trưởng: nhường chức trước (/t set mayor <tên>).")
+        out["choilai"] = {"da_lam": done, "toi_da": maxn, "cach_ngay": cooldown, "lan_cuoi": last,
+                          "cho_den": wait_until if wait_until > time.time() * 1000 else 0,
+                          "co_qua": not pr.get("gift-first-only", True) or done == 0, "tien_dau": pr.get("starting-money", 200),
+                          "vuong": blockers}
     tiers = (core.get("donate-ranks") or {}).get("tiers") or []
     out["donate"] = {"tiers": [{"group": t.get("group"), "ten": t.get("name"), "mau": t.get("color", "&f"), "quyen_loi": t.get("perks") or [],
                                 "gia": t.get("prices") or []} for t in tiers],

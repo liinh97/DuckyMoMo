@@ -5,7 +5,8 @@
 # - Admin có '*' (hoặc quyền duckymomo.web.toanquyen) được tất cả, kể cả "Áp dụng lại tất cả" và sửa role admin.
 # - Đăng nhập kiểu cũ (PANEL_USER qua Trạm 6) vẫn luôn được tất cả.
 # - Cấp quyền cho một role: trang Role > nhóm "Trang quản trị web" (quyen.yml), hoặc lp group <role> permission set <quyền> true.
-# - Staff chỉ mở được trang quản trị khi đăng nhập bằng MÃ TỪ GAME (/web), không dùng mật khẩu.
+# - Đăng nhập web chỉ bằng mã một lần lấy trong game (/web), không có mật khẩu web. Staff mở trang quản trị
+#   trong 12 giờ sau khi nhập mã; hết thì gõ /web lấy mã mới.
 tinh-nang:
   - id: thuvien
     ten: Thư viện đồ

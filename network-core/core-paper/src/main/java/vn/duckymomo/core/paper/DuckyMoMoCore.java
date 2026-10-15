@@ -461,6 +461,13 @@ public final class DuckyMoMoCore extends JavaPlugin {
                     } else {
                         sender.sendMessage(webLogin.check(args[1], args[2]));
                     }
+                } else if (args.length >= 1 && args[0].equalsIgnoreCase("choilaiweb")) {
+                    // chỉ console/RCON: nút "Chơi lại từ đầu" trên trang web, mở bước xác nhận trong game
+                    if (sender instanceof org.bukkit.entity.Player || args.length < 2) {
+                        sender.sendMessage("CHOILAI SAI");
+                    } else {
+                        sender.sendMessage(reset == null ? "CHOILAI TAT" : reset.webRequest(args[1]));
+                    }
                 } else if (args.length >= 1 && args[0].equalsIgnoreCase("lenh")) {
                     sender.sendMessage("DuckyMoMoCore: đã xuất " + commandDump.dump() + " lệnh ra commands.json");
                 } else if (args.length >= 1 && args[0].equalsIgnoreCase("reload")) {

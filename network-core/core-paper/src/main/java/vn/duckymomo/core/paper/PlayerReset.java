@@ -133,6 +133,21 @@ final class PlayerReset implements Listener {
         return true;
     }
 
+    /**
+     * Trang web (RCON: /dmm choilaiweb <tên>): người chơi phải đang online ở server này. Mở bước xác nhận y như gõ /choilai,
+     * việc xoá chỉ xảy ra khi chính người đó xác nhận TRONG GAME (/choilai xacnhan hoặc nút trên Bedrock).
+     */
+    String webRequest(String name) {
+        Player p = Bukkit.getPlayerExact(name);
+        if (p == null) {
+            return "CHOILAI OFFLINE";
+        }
+        List<String> problems = problems(p);
+        p.sendMessage(c("&6[Web] &7Bạn vừa bấm &fChơi lại từ đầu &7trên trang web. Không phải bạn thì bỏ qua (không xác nhận là không mất gì)."));
+        command(p, new String[0]);
+        return problems.isEmpty() ? "CHOILAI OK" : "CHOILAI CHUA " + String.join(" | ", problems);
+    }
+
     private int countThisSeason(UUID id) {
         return data.getInt(id + ".mua." + season + ".so-lan");
     }

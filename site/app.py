@@ -7,8 +7,8 @@ bằng Server List Ping để biết số người online. Không trả UUID, m�
 API: /api/info  /api/status  /api/bantron  /api/bxh  /api/vote   (kết quả giữ 30 giây)
 
 Đăng nhập bằng tài khoản game (khi có PANEL_SITE_KEY): /api/dangnhap, /api/dangxuat, /api/toi; trang quản trị cho staff ở
-/quantri/ (chuyển tiếp sang panel, panel tự kiểm quyền LuckPerms). Trang web không giữ mật khẩu, không đọc database:
-mọi kiểm tra do panel làm. Phiên đăng nhập chỉ nằm trong bộ nhớ (khởi động lại = đăng nhập lại).
+/quantri/ (chuyển tiếp sang panel, panel tự kiểm quyền LuckPerms). Chỉ đăng nhập bằng mã một lần lấy trong game (/web),
+không có mật khẩu web; trang web không đọc database, mọi kiểm tra do panel làm. Phiên đăng nhập chỉ nằm trong bộ nhớ (khởi động lại = đăng nhập lại).
 """
 import hashlib
 import http.client
@@ -361,10 +361,10 @@ def api_vote():
 
 COOKIE = "dmm_phien"
 SESSION_DAYS = 7          # phiên xem tài khoản
-ADMIN_HOURS = 12          # quyền mở trang quản trị sau khi nhập mã từ game; hết thì nhập mã /web lại
+ADMIN_HOURS = 12          # staff mở trang quản trị trong 12 giờ sau khi nhập mã; hết thì gõ /web lấy mã mới (vẫn xem được tài khoản)
 NAME_RE = re.compile(r"^\.?[A-Za-z0-9_]{1,17}$")
 FAIL_WINDOW = 15 * 60
-FAIL_PER_NAME = 5         # sai 5 lần / 15 phút: khoá tên đó 15 phút (chống dò mật khẩu)
+FAIL_PER_NAME = 5         # sai 5 lần / 15 phút: khoá tên đó 15 phút (chống dò mã)
 FAIL_PER_IP = 20
 _sessions = {}            # sha256(token) -> {ten, tao, het, game_het, ip}
 _fails = {}               # ("ten"|"ip", giá trị) -> [mốc thời gian sai]
@@ -423,17 +423,24 @@ def login(data, ip):
         return 400, {"ok": False, "message": "Tên nhân vật không hợp lệ."}, None
     if _blocked(("ten", name.lower()), FAIL_PER_NAME) or _blocked(("ip", ip), FAIL_PER_IP):
         return 429, {"ok": False, "message": "Sai quá nhiều lần. Đợi 15 phút rồi thử lại, hoặc vào game gõ /web để lấy mã."}, None
-    ma, mk = str(data.get("ma", "")).strip(), str(data.get("matkhau", ""))
-    if not ma and not mk:
-        return 400, {"ok": False, "message": "Nhập mật khẩu hoặc mã từ game."}, None
-    body = json.dumps({"ten": name, "ma": ma} if ma else {"ten": name, "matkhau": mk[:200]}).encode()
+    # Chỉ đăng nhập bằng mã /web (chứng minh đang đăng nhập trong game); trang web không nhận mật khẩu
+    ma = re.sub(r"\D", "", str(data.get("ma", "")))
+    if len(ma) != 6:
+        return 400, {"ok": False, "message": "Nhập mã 6 số: vào game gõ /web để lấy mã."}, None
+    body = json.dumps({"ten": name, "ma": ma}).encode()
     status, _, raw = panel("POST", "/api/web/xacminh", body, ip=ip)
     res = json.loads(raw or b"{}") if status == 200 else {}
     if not res.get("ok"):
         _fail(("ten", name.lower()), ("ip", ip))
         if status != 200:
             return 502, {"ok": False, "message": "Máy chủ đang bận, thử lại sau."}, None
-        return 401, {"ok": False, "message": "Sai mã (mã dùng 1 lần, hết hạn sau 5 phút)." if ma else "Sai tên hoặc mật khẩu."}, None
+        msg = {
+            "KHAC": f"Mã này được tạo cho tài khoản khác, không phải {name}. Nhập đúng tên nhân vật bạn đã gõ /web trong game.",
+            "HET": "Mã đã hết hạn (5 phút). Vào game gõ /web để lấy mã mới.",
+            "KHONG": f"Tài khoản {name} chưa có mã (hoặc mã đã dùng rồi). Vào game bằng nhân vật này, gõ /web để lấy mã.",
+            "TAT": "Server game đang tắt hoặc khởi động lại, thử lại sau ít phút.",
+        }.get(res.get("ly_do"), "Sai mã. Kiểm tra lại 6 số trong chat game (mã dùng 1 lần).")
+        return 401, {"ok": False, "message": msg}, None
     token = secrets.token_urlsafe(32)
     now = time.time()
     with _slock:
@@ -442,7 +449,7 @@ def login(data, ip):
         for k in [k for k, v in _fails.items() if not v or now - v[-1] > FAIL_WINDOW]:
             _fails.pop(k, None)
         _sessions[hashlib.sha256(token.encode()).hexdigest()] = {
-            "ten": res["ten"], "tao": now, "het": now + SESSION_DAYS * 86400, "game_het": now + ADMIN_HOURS * 3600 if ma else 0, "ip": ip}
+            "ten": res["ten"], "tao": now, "het": now + SESSION_DAYS * 86400, "game_het": now + ADMIN_HOURS * 3600, "ip": ip}
     return 200, {"ok": True, "ten": res["ten"]}, token
 
 
@@ -570,6 +577,12 @@ class Handler(BaseHTTPRequestHandler):
                 code, obj, token = login(self.body_json(), self.client_ip())
                 extra = {"Set-Cookie": self.cookie(token, SESSION_DAYS * 86400)} if token else None
                 return self._json(code, obj, extra)
+            if path == "/api/choilai":
+                s = session_of(self.token())
+                if not s:
+                    return self._json(401, {"ok": False, "message": "Phiên đăng nhập đã hết, đăng nhập lại."})
+                st, _, raw = panel("POST", "/api/web/choilai", json.dumps({"ten": s["ten"]}).encode(), ip=self.client_ip())
+                return self._json(200, json.loads(raw or b"{}") if st == 200 else {"ok": False, "message": "Máy chủ đang bận, thử lại sau."})
             if path in ("/api/dangxuat", "/api/dangxuat-het"):
                 logout(self.token(), everywhere=path.endswith("-het"))
                 return self._json(200, {"ok": True}, {"Set-Cookie": self.cookie("", 0)})

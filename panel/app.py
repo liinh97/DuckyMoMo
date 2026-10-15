@@ -1337,19 +1337,37 @@ def warn_login(name, how, ip):
 
 
 def web_login(data, ip):
-    """Trang web hỏi: tên + mật khẩu AuthMe, hoặc tên + mã /web. Trả tên thật nếu đúng."""
+    """Trang web hỏi: tên + mã /web (chỉ cách này, không nhận mật khẩu). Trả tên thật nếu đúng."""
     name = str(data.get("ten", "")).strip()
     if not PLAYER_RE.match(name):
         return {"ok": False, "message": "Tên nhân vật không hợp lệ"}
-    if data.get("ma"):
-        real, how = taikhoan.verify_code(name, str(data["ma"]).strip(), rcon, GAME_SERVERS), "mã từ game"
-    else:
-        real, how = taikhoan.verify_password(name, str(data.get("matkhau", ""))), "mật khẩu"
-    web_log({"viec": "dang-nhap", "nguoi": name, "cach": how, "ok": bool(real), "ip": ip})
+    (real, reason), how = taikhoan.verify_code(name, str(data.get("ma", "")).strip(), rcon, GAME_SERVERS), "mã /web"
+    web_log({"viec": "dang-nhap", "nguoi": name, "cach": how, "ok": bool(real), "ly_do": reason, "ip": ip})
     if not real:
-        return {"ok": False}
+        return {"ok": False, "ly_do": reason}
     threading.Thread(target=warn_login, args=(real, how, ip), daemon=True).start()
     return {"ok": True, "ten": real}
+
+
+def web_reset(data, ip):
+    """Nút "Chơi lại từ đầu": mở bước xác nhận trong game (người chơi phải đang ở Bang Hội Chiến). Web không tự xoá gì."""
+    name = str(data.get("ten", "")).strip()
+    if not PLAYER_RE.match(name):
+        raise ValueError("Tên không hợp lệ")
+    try:
+        out = rcon("banghoi-1", [f"dmm choilaiweb {name}"])[0][1]
+    except Exception:
+        out = "LOI"
+    web_log({"viec": "choilai-web", "nguoi": name, "kq": out[:200], "ip": ip})
+    if out.startswith("CHOILAI OK"):
+        return {"ok": True, "message": "Đã mở bước xác nhận trong game. Xem chat trong game và gõ /choilai xacnhan trong 30 giây (Bedrock: bấm nút)."}
+    if out.startswith("CHOILAI CHUA"):
+        return {"ok": False, "message": "Chưa chơi lại được: " + out[len("CHOILAI CHUA"):].strip()}
+    if out.startswith("CHOILAI OFFLINE"):
+        return {"ok": False, "message": "Bạn cần đang online ở Bang Hội Chiến (vì đồ trên người được xoá ngay lúc đó). Vào game rồi bấm lại."}
+    if out.startswith("CHOILAI TAT"):
+        return {"ok": False, "message": "Chơi lại từ đầu đang tắt trên server."}
+    return {"ok": False, "message": "Server Bang Hội Chiến đang tắt hoặc chưa cập nhật, thử lại sau."}
 
 
 def account_times(name):
@@ -1485,6 +1503,8 @@ class Handler(BaseHTTPRequestHandler):
         try:
             if method == "POST" and path == "/api/web/xacminh":
                 self.send_json(200, web_login(self.read_body(4096), self.headers.get("X-DMM-Ip", "")))
+            elif method == "POST" and path == "/api/web/choilai":
+                self.send_json(200, web_reset(self.read_body(4096), self.headers.get("X-DMM-Ip", "")))
             elif method == "GET" and path == "/api/web/hoso":
                 q = {k: v[-1] for k, v in urllib.parse.parse_qs(query).items()}
                 name = q.get("ten", "")

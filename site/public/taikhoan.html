@@ -82,8 +82,9 @@ code,.kbd{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;background:
 .note.red{background:rgba(239,83,80,.08);border-color:rgba(239,83,80,.45)}
 .cmds{max-height:560px;overflow:auto;margin-top:8px}
 .cmdgrp{margin:12px 0 4px;font-size:.8rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--dim)}
-.cmd{display:grid;grid-template-columns:minmax(120px,220px) 1fr;gap:12px;padding:8px 0;border-bottom:1px solid rgba(42,58,79,.5);font-size:.92rem}
-.cmd code{white-space:nowrap}
+.cmd{display:grid;grid-template-columns:minmax(160px,34%) 1fr;gap:14px;padding:8px 0;border-bottom:1px solid rgba(42,58,79,.5);font-size:.92rem}
+.cmd>*{min-width:0}
+.cmd code{white-space:normal;overflow-wrap:anywhere}
 .cmd .al{color:var(--dim);font-size:.8rem}
 .cmd .own{color:var(--violet);font-size:.75rem;font-weight:800;margin-left:6px}
 @media (max-width:620px){.cmd{grid-template-columns:1fr;gap:2px}}
@@ -102,7 +103,7 @@ footer{padding:30px 0;color:var(--dim);font-size:.85rem}
 </div></header>
 
 <main class="wrap" id="main"><p class="muted" style="margin-top:40px">Đang tải…</p></main>
-<footer><div class="wrap">Trang web không lưu mật khẩu của bạn. Mọi kiểm tra đăng nhập làm trên máy chủ, giống như khi bạn <code>/login</code> trong game.</div></footer>
+<footer><div class="wrap">Trang web không dùng mật khẩu: chỉ người đang đăng nhập trong game mới lấy được mã <code>/web</code>.</div></footer>
 
 <script>
 const $ = s => document.querySelector(s);
@@ -133,15 +134,12 @@ function loginView(needCode){
   <div class="login">
     <div class="card">
       <h1 style="margin-bottom:6px">Đăng nhập</h1>
-      <p class="muted">Dùng tài khoản trong game DuckyMoMo. ${needCode ? '<b style="color:var(--gold2)">Mở trang quản trị cần đăng nhập bằng mã từ game.</b>' : ""}</p>
-      <div class="tabs"><button class="tab on" data-t="ma">Mã từ game (an toàn nhất)</button><button class="tab" data-t="mk">Mật khẩu</button></div>
+      <p class="muted">Dùng tài khoản trong game DuckyMoMo, không cần mật khẩu: vào game gõ <code>/web</code> để lấy mã. ${needCode ? '<br><b style="color:var(--gold2)">Phiên quản trị đã hết hạn, lấy mã mới để mở lại.</b>' : ""}</p>
       <form id="f" autocomplete="on">
         <label for="ten">Tên nhân vật</label>
         <input id="ten" name="username" autocomplete="username" maxlength="18" required placeholder="vd Linh (Bedrock có dấu chấm đầu: .Linh)">
-        <div id="boxMa"><label for="ma">Mã 6 số</label>
-          <input id="ma" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="Vào game gõ /web để lấy mã"></div>
-        <div id="boxMk" hidden><label for="mk">Mật khẩu</label>
-          <input id="mk" type="password" name="password" autocomplete="current-password" maxlength="200" placeholder="Mật khẩu /login trong game"></div>
+        <label for="ma">Mã 6 số</label>
+        <input id="ma" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="Vào game gõ /web để lấy mã">
         <div class="err" id="err"></div>
         <button class="btn primary" id="go" style="width:100%;margin-top:6px">Đăng nhập</button>
       </form>
@@ -153,26 +151,19 @@ function loginView(needCode){
         <div><span>Gõ <code>/web</code>: server gửi riêng cho bạn mã 6 số.</span></div>
         <div><span>Nhập tên + mã ở đây. Mã dùng <b>1 lần</b>, hết hạn sau 5 phút.</span></div>
       </div>
-      <p class="small muted">Người chơi Bedrock (điện thoại) dùng cách này, vì tài khoản Bedrock không có mật khẩu.</p>
+      <p class="small muted">Máy tính và điện thoại (Bedrock) đều dùng cách này. Trang web không bao giờ hỏi mật khẩu game của bạn.</p>
       <h2 style="margin-top:18px">🛡️ Giữ tài khoản an toàn</h2>
       <ul class="safe small">
-        <li>Chỉ nhập ở trang <b>app.goc6.io.vn/mc/web</b>. Admin <b>không bao giờ</b> hỏi mật khẩu hay mã của bạn.</li>
+        <li>Chỉ nhập mã ở trang <b>app.goc6.io.vn/mc/web</b>. Admin <b>không bao giờ</b> hỏi mã hay mật khẩu của bạn; trang nào đòi mật khẩu game là giả.</li>
         <li>Mỗi lần tài khoản đăng nhập web, server báo vào game cho bạn. Không phải bạn thì đổi mật khẩu ngay: <code>/changepassword</code>.</li>
         <li>Sai 5 lần, tên đó bị khoá đăng nhập web 15 phút.</li>
       </ul>
     </div>
   </div>`;
-  let mode = "ma";
-  document.querySelectorAll(".tab").forEach(t => t.onclick = () => {
-    mode = t.dataset.t;
-    document.querySelectorAll(".tab").forEach(x => x.classList.toggle("on", x === t));
-    $("#boxMa").hidden = mode !== "ma"; $("#boxMk").hidden = mode !== "mk"; $("#err").textContent = "";
-  });
   $("#f").onsubmit = async e => {
     e.preventDefault();
-    const body = {ten: $("#ten").value.trim()};
-    if (mode === "ma") body.ma = $("#ma").value.replace(/\D/g, ""); else body.matkhau = $("#mk").value;
-    if (!body.ten || (mode === "ma" ? body.ma.length !== 6 : !body.matkhau)) { $("#err").textContent = mode === "ma" ? "Nhập tên và mã 6 số." : "Nhập tên và mật khẩu."; return; }
+    const body = {ten: $("#ten").value.trim(), ma: $("#ma").value.replace(/\D/g, "")};
+    if (!body.ten || body.ma.length !== 6) { $("#err").textContent = "Nhập tên nhân vật và mã 6 số."; return; }
     $("#go").disabled = true; $("#err").textContent = "";
     const d = await api("api/dangnhap", body).catch(() => ({message: "Không kết nối được."}));
     $("#go").disabled = false;
@@ -217,7 +208,7 @@ function render(){
   // quản trị
   if (q.la_staff) {
     html += `<div class="card" style="margin-top:14px"><h2>🛠️ Quản trị ${q.toan_quyen ? '<span class="pill on">Toàn quyền</span>' : ""}</h2>`;
-    if (!q.qua_game) html += `<div class="note">Bạn đăng nhập bằng mật khẩu. Để mở trang quản trị, vào game gõ <code>/web</code> rồi nhập mã:
+    if (!q.qua_game) html += `<div class="note">Phiên quản trị đã hết hạn (12 giờ). Vào game gõ <code>/web</code> rồi nhập mã mới:
         <div class="tools" style="margin-top:8px"><input id="ma2" inputmode="numeric" maxlength="6" placeholder="Mã 6 số" style="max-width:160px"><button class="btn primary small" id="go2">Xác nhận mã</button></div><div class="err" id="err2"></div></div>`;
     else html += `<p class="small dim">Quyền mở trang quản trị còn đến ${when(D.phien.quan_tri_het)} (sau đó nhập mã /web lại). Mọi thao tác được ghi lại kèm tên bạn.</p>`;
     html += (q.tinh_nang || []).map(f => `<div class="feat"><div><b>${esc(f.ten)}</b><small>${esc(f.mo_ta)}${f.nho ? ` · nhờ quyền <code>${esc(f.nho)}</code>` : ""}</small></div>
@@ -243,6 +234,23 @@ function render(){
     <div class="tools"><input id="cq" placeholder="Tìm lệnh (vd tpr, nha, shop)…" value="${esc(cmdQ)}"><label class="check"><input type="checkbox" id="mine" ${onlyMine ? "checked" : ""}> Chỉ lệnh có nhờ role / rank</label></div>
     <div class="cmds" id="cmds"></div></div>`;
 
+  const cl = h.choilai;
+  if (cl) {
+    const left = Math.max(0, cl.toi_da - cl.da_lam), blocked = [].concat(cl.cho_den ? [`Mỗi lần cách nhau ${cl.cach_ngay} ngày: chờ tới ${when(cl.cho_den)}.`] : [],
+      left ? [] : [`Đã chơi lại ${cl.toi_da} lần trong mùa này (tối đa).`], cl.vuong || []);
+    html += `<div class="card" style="margin-top:14px"><h2>🔄 Chơi lại từ đầu <span class="pill">Bang Hội Chiến</span></h2>
+      <div class="grid g2"><div>
+        <p class="small"><b style="color:#ff9d9b">Mất hết:</b> <span class="muted">đồ trên người, rương Ender, kinh nghiệm, tiền, nhà (/home), cấp nghề, thị trấn và quân hàm, giờ chơi thật. Đồ cất trong rương ngoài thế giới vẫn còn.</span></p>
+        <p class="small"><b style="color:var(--jade2)">Giữ lại:</b> <span class="muted">rank ủng hộ, danh hiệu, án và lệnh cấm.</span></p>
+        <p class="small muted">${cl.co_qua ? `Lần này <b style="color:var(--jade2)">có quà tân thủ + ${nf.format(cl.tien_dau)} xu</b>.` : "Lần này <b>không có</b> quà tân thủ và tiền khởi đầu (chỉ lần đầu trong mùa)."}
+          Phải dỡ shop rương và rút hàng trên chợ /ah trước; server kiểm tra lại khi bạn xác nhận.</p></div>
+      <div><p class="small muted">Đã chơi lại <b>${cl.da_lam}/${cl.toi_da}</b> lần trong mùa${cl.lan_cuoi ? ` · lần cuối ${when(cl.lan_cuoi)}` : ""}.</p>
+        ${blocked.length ? `<div class="note red small">${blocked.map(esc).join("<br>")}</div>` :
+          `<p class="small muted">Bấm nút khi đang <b>online ở Bang Hội Chiến</b>: server hỏi lại trong game, bạn gõ <code>/choilai xacnhan</code> trong 30 giây mới bắt đầu lại. Không xác nhận thì không mất gì.</p>
+          <label class="check" style="margin:8px 0"><input type="checkbox" id="clOk"> Tôi hiểu sẽ mất hết đồ, tiền, nhà, nghề, thị trấn và không hoàn tác được</label>
+          <button class="btn small" id="clGo" style="border-color:rgba(239,83,80,.6)">Chơi lại từ đầu…</button><div class="err" id="clMsg"></div>`}</div></div></div>`;
+  }
+
   html += `<div class="card" style="margin-top:14px"><h2>🔒 Bảo mật</h2>
     <p class="small muted">Phiên đăng nhập này hết hạn ${when(D.phien.het)}. Đăng xuất mọi thiết bị nếu bạn từng đăng nhập ở máy lạ. Đổi mật khẩu trong game: <code>/changepassword &lt;cũ&gt; &lt;mới&gt;</code>.</p>
     <button class="btn small" id="outAll">Đăng xuất mọi thiết bị</button></div>`;
@@ -260,6 +268,14 @@ function render(){
     const d = await api("api/dangnhap", {ten: D.ten, ma}).catch(() => ({message: "Không kết nối được."}));
     $("#go2").disabled = false;
     if (d.ok) load(); else $("#err2").textContent = d.message || "Sai mã.";
+  };
+  if ($("#clGo")) $("#clGo").onclick = async () => {
+    if (!$("#clOk").checked) { $("#clMsg").textContent = "Tick ô xác nhận trước."; return; }
+    $("#clGo").disabled = true;
+    const d = await api("api/choilai", {}).catch(() => ({message: "Không kết nối được."}));
+    $("#clGo").disabled = false;
+    $("#clMsg").style.color = d.ok ? "var(--jade2)" : "";
+    $("#clMsg").textContent = d.message || (d.ok ? "Đã gửi." : "Không gửi được.");
   };
   drawCmds();
 }

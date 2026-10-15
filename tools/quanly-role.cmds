@@ -8,6 +8,7 @@
 lp creategroup quanly
 lp group quanly setdisplayname "Manager"
 lp group quanly setweight 90
+lp group quanly meta removeprefix 90
 lp group quanly meta setprefix 90 "&e&l[Manager]&r "
 lp group quanly parent add mod
 lp track staff insert quanly 3

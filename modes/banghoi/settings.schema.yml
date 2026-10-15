@@ -475,6 +475,21 @@ groups:
       - { key: mua_kho_pumpkin, label: "Mùa khô: Bí ngô (quả)", type: number, min: 0, max: 5, file: plugins/DuckyMoMoCore/config.yml, path: seasons.list.kho.growth.PUMPKIN }
       - { key: mua_kho_cactus, label: "Mùa khô: Xương rồng", type: number, min: 0, max: 5, file: plugins/DuckyMoMoCore/config.yml, path: seasons.list.kho.growth.CACTUS }
 
+  - title: Sàn thu mua (/donhang)
+    category: Shop
+    description: "Người chơi đặt đơn \"cần N món, giá P/món\": tiền bị giữ trước, người khác giao hàng nhận tiền ngay, hàng chờ người mua nhận cả khi offline. Phí đăng đơn không hoàn (rút tiền khỏi kinh tế). Chỉ nhận đồ thường (không tên riêng, không phù phép). Vật cấm đặt: plugins/DuckyMoMoCore/config.yml (orders.blacklist)."
+    apply: [dmm reload]
+    settings:
+      - { key: dh_on, label: Bật sàn thu mua, type: select, file: plugins/DuckyMoMoCore/config.yml, path: orders.enabled,
+          options: [ { value: true, label: Bật }, { value: false, label: Tắt } ] }
+      - { key: dh_max, label: Số đơn mở tối đa mỗi người, type: int, min: 1, max: 50, file: plugins/DuckyMoMoCore/config.yml, path: orders.max-per-player }
+      - { key: dh_amount, label: Số lượng tối đa một đơn, type: int, min: 1, max: 100000, file: plugins/DuckyMoMoCore/config.yml, path: orders.max-amount }
+      - { key: dh_fee, label: Phí đăng đơn (%), type: number, min: 0, max: 50, file: plugins/DuckyMoMoCore/config.yml, path: orders.fee-percent,
+          note: "Tính trên tổng tiền đơn, trả khi đăng, không hoàn khi huỷ." }
+      - { key: dh_days, label: Đơn tự đóng sau (ngày), type: int, min: 1, max: 60, file: plugins/DuckyMoMoCore/config.yml, path: orders.days }
+      - { key: dh_minprice, label: Đơn giá thấp nhất, type: number, min: 0, file: plugins/DuckyMoMoCore/config.yml, path: orders.min-price }
+      - { key: dh_maxprice, label: Đơn giá cao nhất, type: number, min: 0, file: plugins/DuckyMoMoCore/config.yml, path: orders.max-price }
+
   - title: Bảng giá bán cho server (/sell)
     category: Shop
     description: Giá bán MỘT vật phẩm bằng /sell. Biển thu mua ở spawn ghi giá riêng (tools/spawn-signs.py), đổi giá ở đây nên đổi cả biển. Vật phẩm khác sửa trong worth.yml.

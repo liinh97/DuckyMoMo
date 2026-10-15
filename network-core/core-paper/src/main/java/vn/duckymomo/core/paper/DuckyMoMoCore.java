@@ -362,6 +362,19 @@ public final class DuckyMoMoCore extends JavaPlugin {
             getLogger().info("Thưởng vote: chưa có Votifier, /vote vẫn hiện link");
         }
         bind("vote", vote == null ? null : vote::command, "Vote server");
+        // Sàn thu mua /donhang (Bang Hội Chiến: orders.enabled, cần Vault)
+        Orders orders = getConfig().getBoolean("orders.enabled") && getConfig().isConfigurationSection("orders")
+                ? new Orders(this, getConfig().getConfigurationSection("orders")) : null;
+        if (orders != null) {
+            getServer().getPluginManager().registerEvents(orders, this);
+            orders.start();
+        }
+        bind("donhang", orders == null ? null : orders::command, "Sàn thu mua");
+        PluginCommand dhCmd = getCommand("donhang");
+        if (dhCmd != null) {
+            Orders oo = orders;
+            dhCmd.setTabCompleter(oo == null ? null : (sender, cmd, label, args) -> oo.tab(args));
+        }
         // Đăng nhập trang web bằng tài khoản game: /web cấp mã, trang web kiểm tra qua RCON (/dmm webma)
         WebLogin webLogin = new WebLogin(getConfig().getConfigurationSection("web-login"));
         bind("web", webLogin::command, "Đăng nhập web");

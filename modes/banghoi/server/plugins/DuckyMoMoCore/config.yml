@@ -166,6 +166,19 @@ pvp-rules:
   military-ranks: [guard, private, sergeant, lieutenant, captain, major, colonel, general]
 
 
+# Sàn thu mua (/donhang, ý từ UniMC "Orders"): người mua đặt đơn, tiền (số lượng x đơn giá) bị giữ trước + phí fee-percent % (không hoàn,
+# rút tiền khỏi kinh tế). Người giao nhận tiền ngay, hàng nằm trong kho đơn chờ người mua nhận. Hết days ngày: đóng, trả tiền phần chưa giao.
+# Chỉ đồ "trơn" (không tên, không phù phép, không hỏng). blacklist: vật không cho đặt. Lưu: donhang.yml
+orders:
+  enabled: true
+  max-per-player: 5
+  max-amount: 6400
+  min-price: 0.01
+  max-price: 100000
+  fee-percent: 2
+  days: 7
+  blacklist: [BEDROCK, BARRIER, COMMAND_BLOCK, CHAIN_COMMAND_BLOCK, REPEATING_COMMAND_BLOCK, STRUCTURE_BLOCK, JIGSAW, LIGHT, SPAWNER, TRIAL_SPAWNER, END_PORTAL_FRAME, DEBUG_STICK, KNOWLEDGE_BOOK]
+
 # Vũ khí nổ lên NGƯỜI CHƠI (ý từ TDSMP: cấm crystal/anchor, giảm xe goòng TNT). Hệ số sát thương: 0 = không gây sát thương, 0.3 = còn 30%, 1 = như gốc.
 # Chỉ áp cho người bị trúng là người chơi; quái, rồng Ender, phá khối như gốc. TNT khối thường không đổi.
 explosive-pvp:

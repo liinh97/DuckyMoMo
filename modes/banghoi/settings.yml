@@ -950,3 +950,10 @@ boom_crystal: 0
 boom_anchor: 0
 boom_bed: 0
 boom_tntcart: 0.3
+dh_on: true
+dh_max: 5
+dh_amount: 6400
+dh_fee: 2
+dh_days: 7
+dh_minprice: 0.01
+dh_maxprice: 100000

@@ -365,7 +365,14 @@ CROP_VI = {"WHEAT": "Lúa mì", "CARROTS": "Cà rốt", "POTATOES": "Khoai tây"
 MAT_VI = {"GOLDEN_APPLE": "táo vàng", "ENCHANTED_GOLDEN_APPLE": "táo vàng phù phép", "DIAMOND": "kim cương", "DIAMOND_BLOCK": "khối kim cương",
           "EMERALD": "ngọc lục bảo", "IRON_INGOT": "thỏi sắt", "GOLD_INGOT": "thỏi vàng", "BREAD": "bánh mì", "EXPERIENCE_BOTTLE": "bình kinh nghiệm",
           "ENDER_PEARL": "ngọc ender", "NETHERITE_SCRAP": "mảnh vụn netherite", "TOTEM_OF_UNDYING": "vật tổ bất tử", "NAME_TAG": "thẻ tên",
-          "COOKED_BEEF": "bít tết", "ARROW": "mũi tên", "SADDLE": "yên ngựa"}
+          "COOKED_BEEF": "bít tết", "ARROW": "mũi tên", "SADDLE": "yên ngựa", "DIRT": "đất", "COBBLESTONE": "đá cuội", "STONE": "đá",
+          "SAND": "cát", "GRAVEL": "sỏi", "GLASS": "kính", "OAK_LOG": "gỗ sồi", "SPRUCE_LOG": "gỗ vân sam", "BIRCH_LOG": "gỗ bạch dương",
+          "JUNGLE_LOG": "gỗ rừng", "OAK_PLANKS": "ván gỗ sồi", "WHEAT": "lúa mì", "CARROT": "cà rốt", "POTATO": "khoai tây", "SUGAR_CANE": "mía",
+          "COAL": "than", "IRON_ORE": "quặng sắt", "RAW_IRON": "sắt thô", "COPPER_INGOT": "thỏi đồng", "REDSTONE": "đá đỏ", "LAPIS_LAZULI": "lưu ly",
+          "QUARTZ": "thạch anh", "OBSIDIAN": "hắc diện thạch", "STRING": "tơ nhện", "LEATHER": "da", "FEATHER": "lông", "BONE": "xương",
+          "GUNPOWDER": "thuốc súng", "SLIME_BALL": "chất nhờn", "WOOL": "len", "WHITE_WOOL": "len trắng", "BRICKS": "gạch", "CLAY_BALL": "đất sét",
+          "COOKED_COD": "cá tuyết nướng", "COD": "cá tuyết", "SALMON": "cá hồi", "MELON_SLICE": "lát dưa hấu", "PUMPKIN": "bí ngô",
+          "BAMBOO": "tre", "CACTUS": "xương rồng", "KELP": "tảo bẹ", "STONE_BRICKS": "gạch đá", "DEEPSLATE": "đá phiến sâu", "NETHERRACK": "đá Nether"}
 RARITY_COLOR = {"gray": "#adb5bd", "white": "#f8f9fa", "aqua": "#66d9e8", "light_purple": "#f783ac", "gold": "#f2b84b",
                 "green": "#69db7c", "yellow": "#ffe066", "red": "#ff6b6b", "blue": "#5c7cfa", "dark_purple": "#9c36b5"}
 DAYS_EN = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"]
@@ -548,6 +555,19 @@ def api_hangngay():
         return [x for x in (reward_text(r, lib) for r in lst or []) if x]
 
     dc, dq, ls, ef = (get(core, k, {}) or {} for k in ("daily-checkin", "daily-quests", "lucky-spin", "event-fragments"))
+    oc = get(core, "orders", {}) or {}
+    days = int(oc.get("days", 7) or 7)
+    now_ms = time.time() * 1000
+    don = []
+    for k, o in (load_yaml(plugin("DuckyMoMoCore", "donhang.yml")).get("don") or {}).items():
+        if not isinstance(o, dict) or o.get("dong") or int(o.get("da", 0)) >= int(o.get("can", 0)):
+            continue
+        if now_ms > float(o.get("tao", 0)) + days * 86400000:
+            continue
+        m = str(o.get("vat", ""))
+        don.append({"id": int(k), "ten": o.get("ten"), "vat": MAT_VI.get(m, m.lower().replace("_", " ")), "can": int(o.get("can", 0)),
+                    "da": int(o.get("da", 0)), "gia": float(o.get("gia", 0))})
+    don.sort(key=lambda x: -x["id"])
     prizes = [p for p in ls.get("prizes") or [] if isinstance(p, dict)]
     tw = sum(float(p.get("weight", 0) or 0) for p in prizes) or 1
     return {
@@ -558,6 +578,7 @@ def api_hangngay():
         "vongquay": {"bat": bool(ls.get("enabled")), "phut": ls.get("minutes-per-key", 60), "toi_da": ls.get("max-keys", 5),
                      "qua": [{"ten": strip_colors(p.get("label", "")), "tile": round(float(p.get("weight", 0) or 0) * 100 / tw, 1),
                               "hiem": bool(p.get("rare"))} for p in prizes]},
+        "donhang": {"bat": bool(oc.get("enabled")), "phi": oc.get("fee-percent", 2), "ngay": days, "ds": don[:12], "tong": len(don)},
         "manh": {"bat": bool(ef.get("enabled")), "toi_da_ngay": ef.get("daily-cap", 20),
                  "doi": [{"ten": strip_colors(x.get("label", "")), "gia": sum(int(v) for v in (x.get("cost") or {}).values())}
                          for x in ef.get("shop") or [] if isinstance(x, dict)]},

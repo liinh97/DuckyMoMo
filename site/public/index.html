@@ -1090,6 +1090,11 @@ async function loadDaily(){
     if (d.vongquay.bat) cards.push(`<div class="card hl"><h3>🎡 Vòng quay <span class="kbd">/vongquay</span></h3>
       <p class="muted">Chơi thật mỗi <b style="color:var(--text)">${d.vongquay.phut} phút</b> được 1 vé (giữ tối đa ${d.vongquay.toi_da}). Vé miễn phí, không bán. Tỉ lệ công khai:</p>
       ${d.vongquay.qua.map(p => `<div class="prize ${p.hiem ? "rare" : ""}"><b>${esc(p.ten)}${p.hiem ? " ✦" : ""}</b><span class="muted">${p.tile}%</span><div class="bar"><i style="width:${Math.min(100, p.tile * 3)}%"></i></div></div>`).join("")}</div>`);
+    if (d.donhang && d.donhang.bat) cards.push(`<div class="card jade"><h3>🧾 Sàn thu mua <span class="kbd">/donhang</span></h3>
+      <p class="muted">Cần nhiều gỗ, đá, lương thực? Cầm một món làm mẫu, gõ <span class="kbd">/donhang tao &lt;số lượng&gt; &lt;đơn giá&gt;</span>: tiền được giữ trước, người khác giao hàng là nhận tiền ngay, bạn nhận hàng cả khi offline. Phí đăng đơn ${d.donhang.phi}%, đơn mở ${d.donhang.ngay} ngày.</p>
+      ${d.donhang.ds.length ? `<div class="tbl"><table><thead><tr><th>Cần mua</th><th>Đơn giá</th><th>Tiến độ</th><th>Người đặt</th></tr></thead><tbody>${d.donhang.ds.map(o => `<tr><td><b>${esc(o.vat)}</b></td><td>${nf.format(o.gia)} xu</td><td>${o.da}/${o.can}</td><td class="muted">${esc(o.ten)}</td></tr>`).join("")}</tbody></table></div>
+        ${d.donhang.tong > d.donhang.ds.length ? `<p class="dim" style="margin-top:8px">… và ${d.donhang.tong - d.donhang.ds.length} đơn khác trong game.</p>` : ""}`
+      : `<div class="empty">Chưa có đơn nào đang mở. Đặt đơn đầu tiên trong game!</div>`}</div>`);
     if (d.manh.bat) cards.push(`<div class="card"><h3>💎 Mảnh sự kiện <span class="kbd">/doimanh</span></h3>
       <p class="muted">Rơi từ boss, sự kiện, mốc điểm danh. Là đồ thật, trao đổi được (tối đa ${d.manh.toi_da_ngay} mảnh/ngày từ quà thường). Đổi lấy:</p>
       <div class="votes">${d.manh.doi.map(x => `<span>${esc(x.ten)} · ${x.gia} mảnh</span>`).join("")}</div></div>`);

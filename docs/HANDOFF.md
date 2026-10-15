@@ -140,6 +140,16 @@
    `PlayerStatsPlaceholders` (%dmmtoi_giet|chet|kda%, thống kê gốc PLAYER_KILLS/DEATHS của server). settings.yml `tab_sb_lines` đã khớp.
    Triển khai cùng lần build plugin (mục 16), TAB tự nạp khi khởi động lại banghoi-1 (hoặc /tab reload).
 
+19. **Luật vũ khí nổ (15/10 tối, CHƯA build)**: DuckyMoMoCore `ExplosionRules`, config `explosive-pvp` (banghoi): hệ số sát thương lên NGƯỜI CHƠI
+   end crystal 0, respawn anchor 0, nổ giường 0, xe goòng TNT 0.3 (0 = huỷ sự kiện, không hất). Anchor/giường nhận qua
+   `EntityDamageByBlockEvent#getDamagerBlockState()` (Paper). Cài đặt > PvP & combat > Vũ khí nổ. Towny world: Explosions ON nhưng
+   Entity/Block Explosion Revert ON (người dùng chụp /townyworld 15/10) → nổ ở đất hoang tự hồi khối.
+
+20. **Sàn thu mua /donhang (15/10 tối, CHƯA build)**: DuckyMoMoCore `Orders`, config `orders`, dữ liệu `donhang.yml` (don.<id>: owner, ten, vat,
+   can, gia, da, kho, tao, dong; tiep). Tiền giữ trước (can x gia) + phí 2% không hoàn; giao hàng → trả tiền người giao ngay, hàng vào "kho"
+   của đơn; người mua nhận ở /donhang cuatoi (trái nhận, phải huỷ; Bedrock dùng /donhang huy <số>). Hết 7 ngày đóng, trả tiền phần chưa giao
+   (deposit cả khi offline). Chỉ đồ trơn (isSimilar với ItemStack mới). Web: thẻ "Sàn thu mua" trong mục Hằng ngày (/api/hangngay → donhang).
+
 17. **Voice chat: Simple Voice Chat (15/10 tối, CHƯA cài; người dùng chốt: ghi lại, CHƯA vội triển khai)**. Chỉ người chơi Java có cài mod; Bedrock chưa có cách tốt (xem dưới).
    - Server con lobby/banghoi-1/practice-1: `simple-voice-chat` trong MODRINTH_PROJECTS (bản bukkit 2.6.x, release, hỗ trợ 26.2),
      cấu hình `plugins/voicechat/voicechat-server.properties` (40/20 block, codec VOIP, nhóm bật, cấm ghi âm, không bắt buộc mod, cổng 24454 trong Docker).

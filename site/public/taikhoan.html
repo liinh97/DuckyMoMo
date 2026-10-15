@@ -31,8 +31,9 @@ p{margin:0 0 .8em}
 .muted{color:var(--muted)}.dim{color:var(--dim)}.small{font-size:.85rem}
 .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px}
 .grid{display:grid;gap:14px}
-.g2{grid-template-columns:repeat(2,minmax(0,1fr))}.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
-@media (max-width:900px){.g4{grid-template-columns:repeat(2,minmax(0,1fr))}.g2{grid-template-columns:1fr}}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}.g3{grid-template-columns:repeat(3,minmax(0,1fr))}.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media (max-width:900px){.g4{grid-template-columns:repeat(2,minmax(0,1fr))}.g2,.g3{grid-template-columns:1fr}}
+p.red{color:#ff9d9b}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 16px;border-radius:10px;border:1px solid var(--line);background:var(--card2);color:var(--text);font:inherit;font-weight:700;cursor:pointer}
 .btn:hover{border-color:var(--gold);text-decoration:none}
 .btn.primary{background:linear-gradient(135deg,var(--gold),#d98b25);color:#1d1203;border:none}
@@ -274,6 +275,8 @@ function render(){
     ${stat("🏰 Thị trấn", t && t.thitran ? esc(t.thitran) : "Chưa có", t && t.quocgia ? "Quốc gia " + esc(t.quocgia) + (t.chuc.length ? " · " + esc(t.chuc.join(", ")) : "") : (t && t.chuc.length ? esc(t.chuc.join(", ")) : "Lập hoặc vào thị trấn trong game"))}
     ${stat("🗳️ Vote tháng này", vt.thang || 0, `Tổng ${vt.tong || 0} lượt · chuỗi ${vt.chuoi || 0} ngày`)}
     ${stat("⚔️ Chiến Thần", ct.diem || 0, ct.hang ? "Hạng " + ct.hang + " mùa này" : "Chưa có điểm")}
+    ${stat("⚔️ Giết / Chết", ((h.pvp || {}).giet || 0) + " / " + ((h.pvp || {}).chet || 0), "KDA " + ((h.pvp || {}).kda || 0) + " · Bang Hội Chiến")}
+    ${stat("🌦️ Mùa", h.mua ? esc(h.mua.ten) : "–", h.mua ? (h.mua.con != null ? "Còn " + h.mua.con + " ngày · gõ /mua xem cây, cá" : "Admin đang thử mùa") : "")}
     ${stat("👑 Rank ủng hộ", donateRoles.length ? donateRoles.map(r => esc(r.ten)).join(", ") : "Chưa có", donateRoles.length && donateRoles[0].het ? "Hết hạn " + day(donateRoles[0].het * 1000) : "Chỉ đồ trang trí, không bán sức mạnh")}
   </div>`;
 
@@ -290,6 +293,19 @@ function render(){
 
   html += trangTriHtml();
 
+  // kinh tế, khai hoang, treo thưởng (Bang Hội Chiến)
+  const dh = h.donhang || {}, kh = h.khaihoang || {}, tt = h.treothuong || {};
+  html += `<div class="grid g3" style="margin-top:14px">
+    <div class="card"><h2>🧾 Sàn thu mua</h2>${dh.mo || dh.cho_nhan
+        ? `<p>Bạn có <b>${dh.mo || 0}</b> đơn đang mở${dh.cho_nhan ? `, <b>${nf.format(dh.cho_nhan)}</b> món đã giao <b>chờ nhận</b>` : ""}.</p><p class="small muted">Nhận hàng: <code>/donhang cuatoi</code></p>`
+        : `<p class="muted">Chưa có đơn nào. Cầm món cần mua, gõ <code>/donhang tao &lt;số lượng&gt; &lt;đơn giá&gt;</code>; người khác giao là bạn nhận cả khi offline.</p>`}</div>
+    <div class="card"><h2>🗺️ Khai hoang</h2><p>Bạn đã góp <b>${nf.format(Math.round(kh.gop || 0))} xu</b> vào quỹ chung (quỹ: ${nf.format(Math.round(kh.quy || 0))} xu).</p>
+      <p class="small muted">Bán đồ bằng <code>/sell</code> là tự góp (bạn không mất gì), hoặc <code>/khaihoang gop &lt;xu&gt;</code>. Đủ mốc thì mở vùng đất mới.</p></div>
+    <div class="card"><h2>☠ Treo thưởng</h2>${tt.tren_ban ? `<p class="red">Đầu bạn đang bị treo <b>${nf.format(Math.round(tt.tren_ban))} xu</b>. Cẩn thận ngoài đất hoang!</p>` : `<p class="muted">Không ai treo thưởng lên bạn.</p>`}
+      ${(tt.da_treo || []).length ? `<p class="small">Bạn đang treo: ${tt.da_treo.map(x => esc(x.ten) + " (" + nf.format(Math.round(x.xu)) + " xu)").join(", ")}</p>` : ""}
+      <p class="small muted"><code>/treothuong</code> xem danh sách · <code>/treothuong dat &lt;người&gt; &lt;xu&gt;</code></p></div>
+  </div>`;
+
   // nhiệm vụ + rank
   const quests = h.nhiemvu || [];
   html += `<div class="grid g2" style="margin-top:14px">
@@ -297,7 +313,7 @@ function render(){
       return `<div class="quest"><div class="t"><span>${esc(x.ten)}</span><b>${nf.format(Math.min(x.da, x.can))}/${nf.format(x.can)}${pc >= 100 ? " ✓" : ""}</b></div><div class="bar"><i style="width:${pc}%"></i></div></div>`; }).join("")
       : '<p class="muted">Chưa nhận nhiệm vụ hôm nay. Vào Bang Hội Chiến gõ <code>/nhiemvu</code>.</p>'}</div>
     <div class="card" id="ungho"><h2>👑 Ủng hộ server</h2>
-      <p class="small muted">Rank chỉ là đồ trang trí (prefix, màu chat, hiệu ứng, pet), không bán sức mạnh. Chọn gói để lấy mã QR chuyển khoản.</p>
+      <p class="small muted">Rank chỉ là đồ trang trí (prefix, màu chat, hiệu ứng, pet), không bán sức mạnh. Chọn gói để lấy mã QR chuyển khoản. Đang trong game thì gõ <code>/rank mua</code>: mã QR hiện ngay trên tấm bản đồ trong tay.</p>
       ${(h.donate && h.donate.tiers || []).map((ti, i) => { const mine = donateRoles.find(r => r.id === ti.group), pk = ((DN.bac || [])[i] || {}).goi || [];
       return `<div class="tier ${mine ? "mine" : ""}"><div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap"><b>${mc(ti.mau + ti.ten)}</b>${mine ? `<span class="pill on">Của bạn${mine.het ? " · đến " + day(mine.het * 1000) : ""}</span>` : ""}</div>
         <div class="perks">${esc((ti.quyen_loi || []).join(" · "))}</div>

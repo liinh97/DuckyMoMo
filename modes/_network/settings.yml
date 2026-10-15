@@ -141,3 +141,6 @@ role_helper_prefix: "&a[Helper]"
 role_mod_prefix: "&9[Mod]"
 role_quanly_prefix: "&e&l[Manager]&r"
 role_admin_prefix: "&c[Admin]"
+dqr_on: true
+dqr_minutes: 10
+dqr_web: "https://app.goc6.io.vn/mc/web/taikhoan.html"

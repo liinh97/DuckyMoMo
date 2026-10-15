@@ -521,6 +521,49 @@ groups:
       - { key: dh_minprice, label: Đơn giá thấp nhất, type: number, min: 0, file: plugins/DuckyMoMoCore/config.yml, path: orders.min-price }
       - { key: dh_maxprice, label: Đơn giá cao nhất, type: number, min: 0, file: plugins/DuckyMoMoCore/config.yml, path: orders.max-price }
 
+  - title: Xưởng chế tạo (/xuong)
+    category: Shop
+    description: "Đồ đặc biệt chế bằng xu + nguyên liệu, có lượt dùng và thời hạn, hết là biến mất (rút tiền khỏi kinh tế). Nguyên liệu, phù phép, tính năng: plugins/DuckyMoMoCore/config.yml (workshop.items). Món đã chế giữ lượt/hạn lúc chế."
+    apply: [dmm reload]
+    settings:
+      - { key: xw_tui_hu_on, label: "Túi Hư: bán", type: select, file: plugins/DuckyMoMoCore/config.yml, path: workshop.items.tui_hu.enabled, options: [ { value: true, label: Có }, { value: false, label: Ẩn } ] }
+      - { key: xw_tui_hu_cost, label: "Túi Hư: giá (xu)", type: number, min: 0, file: plugins/DuckyMoMoCore/config.yml, path: workshop.items.tui_hu.cost }
+      - { key: xw_tui_hu_days, label: "Túi Hư: dùng được (ngày)", type: int, min: 1, max: 60, file: plugins/DuckyMoMoCore/config.yml, path: workshop.items.tui_hu.days }
+      - { key: xw_tui_hu_uses, label: "Túi Hư: số lượt", type: int, min: 1, max: 1000000, file: plugins/DuckyMoMoCore/config.yml, path: workshop.items.tui_hu.uses }
+      - { key: xw_nuoc_on, label: "Nước Nguồn: bán", type: select, file: plugins/DuckyMoMoCore/config.yml, path: workshop.items.nuoc.enabled, options: [ { value: true, label: Có }, { value: false, label: Ẩn } ] }
+      - { key: xw_nuoc_cost, label: "Nước Nguồn: giá (xu)", type: number, min: 0, file: plugins/DuckyMoMoCore/config.yml, path: workshop.items.nuoc.cost }
+      - { key: xw_nuoc_days, label: "Nước Nguồn: dùng được (ngày)", type: int, min: 1, max: 60, file: plugins/DuckyMoMoCore/config.yml, path: workshop.items.nuoc.days }
+      - { key: xw_nuoc_uses, label: "Nước Nguồn: số lượt", type: int, min: 1, max: 1000000, file: plugins/DuckyMoMoCore/config.yml, path: workshop.items.nuoc.uses }
+      - { key: xw_hut_do_on, label: "Dây Hút Đồ: bán", type: select, file: plugins/DuckyMoMoCore/config.yml, path: workshop.items.hut_do.enabled, options: [ { value: true, label: Có }, { value: false, label: Ẩn } ] }
+      - { key: xw_hut_do_cost, label: "Dây Hút Đồ: giá (xu)", type: number, min: 0, file: plugins/DuckyMoMoCore/config.yml, path: workshop.items.hut_do.cost }
+      - { key: xw_hut_do_days, label: "Dây Hút Đồ: dùng được (ngày)", type: int, min: 1, max: 60, file: plugins/DuckyMoMoCore/config.yml, path: workshop.items.hut_do.days }
+      - { key: xw_hut_do_uses, label: "Dây Hút Đồ: số lượt", type: int, min: 1, max: 1000000, file: plugins/DuckyMoMoCore/config.yml, path: workshop.items.hut_do.uses }
+      - { key: xw_cung_mau_on, label: "Cung Máu: bán", type: select, file: plugins/DuckyMoMoCore/config.yml, path: workshop.items.cung_mau.enabled, options: [ { value: true, label: Có }, { value: false, label: Ẩn } ] }
+      - { key: xw_cung_mau_cost, label: "Cung Máu: giá (xu)", type: number, min: 0, file: plugins/DuckyMoMoCore/config.yml, path: workshop.items.cung_mau.cost }
+      - { key: xw_cung_mau_days, label: "Cung Máu: dùng được (ngày)", type: int, min: 1, max: 60, file: plugins/DuckyMoMoCore/config.yml, path: workshop.items.cung_mau.days }
+      - { key: xw_cung_mau_uses, label: "Cung Máu: số lượt", type: int, min: 1, max: 1000000, file: plugins/DuckyMoMoCore/config.yml, path: workshop.items.cung_mau.uses }
+      - { key: xw_bua_ta_on, label: "Búa Tạ: bán", type: select, file: plugins/DuckyMoMoCore/config.yml, path: workshop.items.bua_ta.enabled, options: [ { value: true, label: Có }, { value: false, label: Ẩn } ] }
+      - { key: xw_bua_ta_cost, label: "Búa Tạ: giá (xu)", type: number, min: 0, file: plugins/DuckyMoMoCore/config.yml, path: workshop.items.bua_ta.cost }
+      - { key: xw_bua_ta_days, label: "Búa Tạ: dùng được (ngày)", type: int, min: 1, max: 60, file: plugins/DuckyMoMoCore/config.yml, path: workshop.items.bua_ta.days }
+
+  - title: Câu cá (EvenMoreFish)
+    category: Thế giới
+    description: "24 loại cá Việt, 4 độ hiếm. Tỉ lệ cắn = trọng số / tổng trọng số. Giá bán /emf shop = chiều dài (cm) x giá mỗi cm. Thêm/sửa từng loài cá: plugins/EvenMoreFish/rarities/*.yml. Thưởng thi câu: competitions/thicau.yml."
+    apply: [emfa reload]
+    settings:
+      - { key: emf_common_w, label: "Cá Thường: trọng số (càng lớn càng hay cắn)", type: number, min: 0, file: plugins/EvenMoreFish/rarities/common.yml, path: weight }
+      - { key: emf_common_gia, label: "Cá Thường: giá bán mỗi cm (xu)", type: number, min: 0, file: plugins/EvenMoreFish/rarities/common.yml, path: worth-multiplier }
+      - { key: emf_rare_w, label: "Cá Hiếm: trọng số (càng lớn càng hay cắn)", type: number, min: 0, file: plugins/EvenMoreFish/rarities/rare.yml, path: weight }
+      - { key: emf_rare_gia, label: "Cá Hiếm: giá bán mỗi cm (xu)", type: number, min: 0, file: plugins/EvenMoreFish/rarities/rare.yml, path: worth-multiplier }
+      - { key: emf_epic_w, label: "Cá Quý: trọng số (càng lớn càng hay cắn)", type: number, min: 0, file: plugins/EvenMoreFish/rarities/epic.yml, path: weight }
+      - { key: emf_epic_gia, label: "Cá Quý: giá bán mỗi cm (xu)", type: number, min: 0, file: plugins/EvenMoreFish/rarities/epic.yml, path: worth-multiplier }
+      - { key: emf_legendary_w, label: "Cá Huyền thoại: trọng số (càng lớn càng hay cắn)", type: number, min: 0, file: plugins/EvenMoreFish/rarities/legendary.yml, path: weight }
+      - { key: emf_legendary_gia, label: "Cá Huyền thoại: giá bán mỗi cm (xu)", type: number, min: 0, file: plugins/EvenMoreFish/rarities/legendary.yml, path: worth-multiplier }
+      - { key: emf_tc_phut, label: "Thi câu: kéo dài (phút)", type: int, min: 1, max: 120, file: plugins/EvenMoreFish/competitions/thicau.yml, path: duration }
+      - { key: emf_tc_nguoi, label: "Thi câu: cần ít nhất (người online)", type: int, min: 1, max: 100, file: plugins/EvenMoreFish/competitions/thicau.yml, path: minimum-players }
+      - { key: emf_tc_t7, label: "Thi câu: giờ thứ 7", type: list, file: plugins/EvenMoreFish/competitions/thicau.yml, path: days.Saturday, note: "Dạng 20:00, nhiều giờ cách nhau dấu phẩy" }
+      - { key: emf_tc_cn, label: "Thi câu: giờ chủ nhật", type: list, file: plugins/EvenMoreFish/competitions/thicau.yml, path: days.Sunday }
+
   - title: Bảng giá bán cho server (/sell)
     category: Shop
     description: Giá bán MỘT vật phẩm bằng /sell. Biển thu mua ở spawn ghi giá riêng (tools/spawn-signs.py), đổi giá ở đây nên đổi cả biển. Vật phẩm khác sửa trong worth.yml.

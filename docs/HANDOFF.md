@@ -207,6 +207,13 @@
   Đã đổi `data/lobby/plugins/WorldEdit/config.yml` navigation-wand.item → minecraft:stick + `we reload`; người đã gắn thì cầm la bàn gõ `//none`.
   LobbyMenu bắt PlayerInteractEvent ở LOWEST + setUseItemInHand(DENY) + mở menu tick sau (chặn WorldEdit). Người dùng đã //none: hết dịch chuyển.
 - Trang Donate có 1 yêu cầu thử của Linh (Nam Tước 3 tháng, "Chưa báo chuyển", tạo 21:49 15/10 từ web) — yêu cầu thử, huỷ được.
+- Rà 16/10 (người dùng hỏi "đã có ở Cài đặt, web chưa đăng nhập, đã đăng nhập chưa"): đã bổ sung
+  Cài đặt: Xưởng (bán/giá/ngày/lượt từng món, loại Shop), Câu cá EvenMoreFish (trọng số + giá/cm từng độ hiếm, thi câu: phút, số người, giờ T7/CN;
+  apply `emfa reload`), QR ủng hộ (Toàn mạng > Rank donate: bật, phút hết hạn, link web). Đã có từ trước: Mùa, Khai hoang, Sàn thu mua,
+  Treo thưởng, Vũ khí nổ, bảng bên phải. Web công khai: thẻ Xưởng (/api/hangngay → xuong), dòng /rank mua ở mục Ủng hộ, SỬA hỏi đáp voice
+  (trước ghi "Có" sai → "Sắp có"; sách /huongdan cũng sửa). Trang tài khoản (đăng nhập): ô Giết/Chết/KDA (world/stats/<uuid>.json), ô Mùa,
+  thẻ Sàn thu mua (đơn mở, hàng chờ nhận), Khai hoang (đã góp), Treo thưởng (đang bị treo, mình đang treo); panel taikhoan.profile thêm
+  pvp/mua/donhang/khaihoang/treothuong. Cần `docker compose up -d --build panel site`.
 - Sau MỖI lần build: xem log cả 3 server (`docker compose logs <srv> --since 5m | grep -iE "Could not load|Exception|DuckyMoMoCore"`),
   không chỉ banghoi-1. Chỉ đổi jar → `docker compose restart <srv>`; đổi compose (env, MODRINTH_PROJECTS, PLUGINS) → `up -d --no-deps <srv>`.
 

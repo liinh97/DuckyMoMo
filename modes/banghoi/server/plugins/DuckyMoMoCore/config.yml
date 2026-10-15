@@ -200,7 +200,7 @@ workshop:
       days: 7
       cost: 1500
       ingredients: {IRON_INGOT: 4, REDSTONE: 8}
-      description: ["Để trong túi: đồ từ khối bạn đào và quái bạn săn", "bay thẳng vào túi (không hút đồ người khác)"]
+      description: ["Chỉ cần để trong túi, không hút đồ người khác"]
     cung_mau:
       name: "&c&lCung Máu"
       material: BOW

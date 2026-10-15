@@ -7,6 +7,7 @@ Chỉ một cách đăng nhập: mã một lần lấy trong game. Người chơ
 panel hỏi lại qua RCON "dmm webma <tên> <mã>". Trang web không nhận mật khẩu, nên không ai dò mật khẩu game qua web được.
 """
 import os
+import json
 import re
 import time
 import unicodedata
@@ -233,6 +234,27 @@ def money(uuid):
         return None
 
 
+def season_now(cfg):
+    """Mùa hiện tại giống Seasons.java (ngày thật giờ VN, ghi đè ở mua.yml): {ten, con} hoặc None."""
+    from datetime import date, datetime
+    from zoneinfo import ZoneInfo
+    lst = cfg.get("list") or {}
+    order = [o for o in (cfg.get("order") or []) if o in lst]
+    if not cfg.get("enabled") or not order:
+        return None
+    sd = cfg.get("start-date", "2026-10-12")
+    try:
+        start = sd if isinstance(sd, date) else date.fromisoformat(str(sd).strip())
+    except ValueError:
+        start = date(2026, 10, 12)
+    per = max(1, int(cfg.get("days-per-season", 7) or 7))
+    since = (datetime.now(ZoneInfo("Asia/Ho_Chi_Minh")).date() - start).days
+    forced = str(safe_yaml(DMM / "mua.yml").get("ghi-de") or "")
+    cur = forced if forced in order else order[(since // per) % len(order)]
+    name = re.sub(r"[&§][0-9a-fk-orA-FK-OR]", "", str((lst.get(cur) or {}).get("name", cur)))
+    return {"id": cur, "ten": name, "con": None if forced in order else per - since % per}
+
+
 def profile(perms):
     """Số liệu Bang Hội Chiến của người chơi: giờ chơi, điểm danh, nhiệm vụ, vé quay, vote, xếp hạng, án."""
     uuid, name = perms["uuid"], perms["name"]
@@ -286,6 +308,28 @@ def profile(perms):
                           "cho_den": wait_until if wait_until > time.time() * 1000 else 0,
                           "co_qua": not pr.get("gift-first-only", True) or done == 0, "tien_dau": pr.get("starting-money", 200),
                           "vuong": blockers}
+    # Giết / chết: thống kê gốc của Minecraft ở Bang Hội Chiến (world/stats/<uuid>.json)
+    try:
+        st = json.loads((DATA_DIR / SRV / "world" / "stats" / f"{uuid}.json").read_text(encoding="utf-8")).get("stats", {})
+        custom = st.get("minecraft:custom", {})
+        k, d = int(custom.get("minecraft:player_kills", 0)), int(custom.get("minecraft:deaths", 0))
+        out["pvp"] = {"giet": k, "chet": d, "kda": round(k / max(1, d), 1)}
+    except (OSError, ValueError, AttributeError):
+        out["pvp"] = {"giet": 0, "chet": 0, "kda": 0}
+    out["mua"] = season_now(core.get("seasons") or {})
+    # Sàn thu mua: đơn của mình đang mở, hàng chờ nhận
+    don = [v for v in (safe_yaml(DMM / "donhang.yml").get("don") or {}).values() if isinstance(v, dict) and v.get("owner") == uuid]
+    out["donhang"] = {"mo": sum(1 for v in don if not v.get("dong")), "cho_nhan": sum(int(v.get("kho", 0) or 0) for v in don)}
+    kh = safe_yaml(DMM / "khaihoang.yml")
+    out["khaihoang"] = {"gop": float(((kh.get("gop") or {}).get(uuid) or {}).get("xu", 0) or 0), "quy": float(kh.get("quy", 0) or 0)}
+    tt = (safe_yaml(DMM / "treothuong.yml").get("muc") or {})
+    me = tt.get(uuid) or {}
+    on_me = 0.0
+    if me and float(me.get("het", 0) or 0) > time.time() * 1000:
+        on_me = float(me.get("he-thong", 0) or 0) + sum(float((p or {}).get("xu", 0) or 0) for p in (me.get("nguoi") or {}).values())
+    placed = [{"ten": v.get("ten"), "xu": float(((v.get("nguoi") or {}).get(uuid) or {}).get("xu", 0) or 0)}
+              for v in tt.values() if isinstance(v, dict) and uuid in (v.get("nguoi") or {}) and float(v.get("het", 0) or 0) > time.time() * 1000]
+    out["treothuong"] = {"tren_ban": on_me, "da_treo": placed}
     tiers = (core.get("donate-ranks") or {}).get("tiers") or []
     out["donate"] = {"tiers": [{"group": t.get("group"), "ten": t.get("name"), "mau": t.get("color", "&f"), "quyen_loi": t.get("perks") or [],
                                 "gia": t.get("prices") or []} for t in tiers],

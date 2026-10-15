@@ -383,7 +383,8 @@ MAT_VI = {"GOLDEN_APPLE": "táo vàng", "ENCHANTED_GOLDEN_APPLE": "táo vàng ph
           "QUARTZ": "thạch anh", "OBSIDIAN": "hắc diện thạch", "STRING": "tơ nhện", "LEATHER": "da", "FEATHER": "lông", "BONE": "xương",
           "GUNPOWDER": "thuốc súng", "SLIME_BALL": "chất nhờn", "WOOL": "len", "WHITE_WOOL": "len trắng", "BRICKS": "gạch", "CLAY_BALL": "đất sét",
           "COOKED_COD": "cá tuyết nướng", "COD": "cá tuyết", "SALMON": "cá hồi", "MELON_SLICE": "lát dưa hấu", "PUMPKIN": "bí ngô",
-          "BAMBOO": "tre", "CACTUS": "xương rồng", "KELP": "tảo bẹ", "STONE_BRICKS": "gạch đá", "DEEPSLATE": "đá phiến sâu", "NETHERRACK": "đá Nether"}
+          "BAMBOO": "tre", "OBSIDIAN": "hắc diện thạch", "ENDER_EYE": "mắt ender", "GHAST_TEAR": "nước mắt ghast", "BREEZE_ROD": "que breeze",
+          "IRON_BLOCK": "khối sắt", "CACTUS": "xương rồng", "KELP": "tảo bẹ", "STONE_BRICKS": "gạch đá", "DEEPSLATE": "đá phiến sâu", "NETHERRACK": "đá Nether"}
 RARITY_COLOR = {"gray": "#adb5bd", "white": "#f8f9fa", "aqua": "#66d9e8", "light_purple": "#f783ac", "gold": "#f2b84b",
                 "green": "#69db7c", "yellow": "#ffe066", "red": "#ff6b6b", "blue": "#5c7cfa", "dark_purple": "#9c36b5"}
 DAYS_EN = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"]
@@ -567,6 +568,23 @@ def khaihoang(core):
             "top": [{"ten": n, "xu": x} for n, x in top]}
 
 
+FEATURE_VI = {"tui_hu": "Rương ender mở ở mọi nơi", "nuoc": "Nguồn nước vô tận", "hut_do": "Đồ đào/săn quái bay thẳng vào túi",
+              "hut_mau": "Hút máu mỗi phát bắn trúng"}
+
+
+def xuong(core):
+    w = get(core, "workshop", {}) or {}
+    items = []
+    for k, r in (w.get("items") or {}).items():
+        if not isinstance(r, dict) or r.get("enabled") is False:
+            continue
+        ing = [f"{n} {MAT_VI.get(str(m).upper(), str(m).lower().replace('_', ' '))}" for m, n in (r.get("ingredients") or {}).items()]
+        items.append({"ten": strip_colors(r.get("name", k)), "tinh_nang": FEATURE_VI.get(r.get("feature", ""), "Phù phép đặc biệt"),
+                      "luot": r.get("uses", -1), "ngay": r.get("days", 7), "gia": r.get("cost", 0), "nguyen_lieu": ing,
+                      "pvp": bool(r.get("pvp")), "mo_ta": " ".join(r.get("description") or [])})
+    return {"bat": bool(w.get("enabled")), "mon": items}
+
+
 def api_hangngay():
     core = load_yaml(plugin("DuckyMoMoCore", "config.yml"))
     # tên món trong Thư viện đồ (quà "do <mã>"): tên hiện trong game, không có thì tên gợi nhớ
@@ -603,6 +621,7 @@ def api_hangngay():
                      "qua": [{"ten": strip_colors(p.get("label", "")), "tile": round(float(p.get("weight", 0) or 0) * 100 / tw, 1),
                               "hiem": bool(p.get("rare"))} for p in prizes]},
         "khaihoang": khaihoang(core),
+        "xuong": xuong(core),
         "donhang": {"bat": bool(oc.get("enabled")), "phi": oc.get("fee-percent", 2), "ngay": days, "ds": don[:12], "tong": len(don)},
         "manh": {"bat": bool(ef.get("enabled")), "toi_da_ngay": ef.get("daily-cap", 20),
                  "doi": [{"ten": strip_colors(x.get("label", "")), "gia": sum(int(v) for v in (x.get("cost") or {}).values())}

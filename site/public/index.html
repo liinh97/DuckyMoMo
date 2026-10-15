@@ -641,8 +641,8 @@ footer .fbrand img{width:44px}
 <section id="hangngay" class="alt">
   <div class="wrap">
     <div class="kicker j">Vào mỗi ngày</div>
-    <h2>Quà hằng ngày, miễn phí cho mọi người</h2>
-    <p class="intro">Không cần nạp tiền: chỉ cần vào chơi thật. Treo máy không được tính, tài khoản phụ không ăn gian được.</p>
+    <h2>Hằng ngày &amp; kinh tế: quà miễn phí, chợ, xưởng</h2>
+    <p class="intro">Không cần nạp tiền: chỉ cần vào chơi thật. Treo máy không được tính, tài khoản phụ không ăn gian được. Cả server cùng góp quỹ mở đất mới, đặt mua hàng của nhau, chế đồ đặc biệt ở xưởng.</p>
     <div class="grid g2" id="dailyGrid"><div class="card muted">Đang tải…</div></div>
   </div>
 </section>
@@ -809,6 +809,7 @@ footer .fbrand img{width:44px}
     <p class="intro">Theo đúng luật của Mojang: <b>không bán sức mạnh</b>, không bán tiền trong game, đất, giáp, vũ khí hay bất cứ thứ gì giúp thắng trận. Rank ủng hộ chỉ làm bạn trông nổi bật hơn.</p>
     <div class="grid g3" id="tiers"></div>
     <p class="dim" style="margin-top:14px" id="donateHow"></p>
+    <p class="muted" style="margin-top:8px">Đang trong game? Gõ <span class="kbd">/rank mua</span>: chọn gói, mã QR chuyển khoản hiện ngay trên tấm bản đồ trong tay, quét bằng app ngân hàng là xong. Hoặc đăng nhập trang tài khoản (nút Đăng nhập ở trên) để lấy mã QR.</p>
   </div>
 </section>
 
@@ -824,7 +825,7 @@ footer .fbrand img{width:44px}
     <details><summary>Ping cao không?</summary><div>Ping hiện khoảng 150–300 ms. Server chạy ổn định (không lag phía server), nên chơi xây dựng, buôn bán thoải mái; đánh PvP thì nên dùng mạng ổn định, tránh 4G yếu.</div></details>
     <details><summary>Lỡ chơi hỏng, muốn làm lại từ đầu?</summary><div>Gõ <span class="kbd">/choilai</span>: mất đồ, tiền, nhà, nghề, thị trấn; giữ rank và danh hiệu. Lần đầu trong mùa còn được nhận lại quà tân thủ.</div></details>
     <details><summary>Mùa mưa, mùa khô là gì?</summary><div>Bang Hội Chiến đổi mùa theo ngày thật, mỗi mùa vài ngày, xen kẽ nhau. Mùa mưa lúa, mía, tre lớn nhanh và trời hay mưa; mùa khô khoai, cà rốt, dưa, bí lớn nhanh, ít mưa. Đúng mùa, gặt cây chín còn có cơ hội rơi thêm. Nhiều loài cá chỉ câu được trong một mùa. Xem mùa hiện tại ở mục <a href="#muavu">Mùa &amp; câu cá</a> hoặc gõ <span class="kbd">/mua</span>.</div></details>
-    <details><summary>Có voice chat không?</summary><div>Có, cho người chơi <b>máy tính (Java)</b>: cài mod <b>Simple Voice Chat</b> (qua Fabric hoặc Forge, đúng phiên bản game) rồi vào server là nói được. Nghe trong khoảng 40 block quanh mình, càng xa càng nhỏ; giữ <span class="kbd">Caps Lock</span> để nói (đổi sang tự bắt tiếng được trong menu <span class="kbd">V</span>), phím <span class="kbd">G</span> lập nhóm để cả thị trấn nghe nhau ở mọi nơi. <b>Điện thoại (Bedrock) chưa dùng được</b> voice trong game: hãy dùng Discord hoặc Zalo để nói chuyện với đồng đội.</div></details>
+    <details><summary>Có voice chat không?</summary><div><b>Sắp có</b> cho người chơi máy tính (Java, cài thêm mod Simple Voice Chat): nghe nhau trong khoảng 40 block, lập nhóm để cả thị trấn nói chuyện ở mọi nơi. Điện thoại (Bedrock) chưa dùng được voice trong game. Trong lúc chờ, hãy dùng Discord hoặc Zalo để nói chuyện với đồng đội.</div></details>
     <details><summary>Hết mùa thì sao?</summary><div>Sau 10 tuần mùa đóng lại, trao danh hiệu, thế giới cũ được giữ làm bảo tàng để xem lại. Mùa mới mở vùng đất mới, mọi người bắt đầu ngang nhau; danh hiệu và rank ủng hộ được giữ.</div></details>
   </div>
 </section>
@@ -1110,6 +1111,11 @@ async function loadDaily(){
       ${d.donhang.ds.length ? `<div class="tbl"><table><thead><tr><th>Cần mua</th><th>Đơn giá</th><th>Tiến độ</th><th>Người đặt</th></tr></thead><tbody>${d.donhang.ds.map(o => `<tr><td><b>${esc(o.vat)}</b></td><td>${nf.format(o.gia)} xu</td><td>${o.da}/${o.can}</td><td class="muted">${esc(o.ten)}</td></tr>`).join("")}</tbody></table></div>
         ${d.donhang.tong > d.donhang.ds.length ? `<p class="dim" style="margin-top:8px">… và ${d.donhang.tong - d.donhang.ds.length} đơn khác trong game.</p>` : ""}`
       : `<div class="empty">Chưa có đơn nào đang mở. Đặt đơn đầu tiên trong game!</div>`}</div>`);
+    const xw = d.xuong;
+    if (xw && xw.bat && xw.mon.length) cards.push(`<div class="card" style="grid-column:1/-1"><h3>⚒️ Xưởng chế tạo <span class="kbd">/xuong</span></h3>
+      <p class="muted">Đồ đặc biệt chế bằng xu + nguyên liệu, dùng được <b>7 ngày</b> rồi tự biến mất (không ai giữ đồ mạnh mãi). Không bán bằng tiền thật.</p>
+      <div class="fishes">${xw.mon.map(m => `<div class="fish" style="--c:#f2b84b"><b>${esc(m.ten)}</b><div class="d">${esc(m.tinh_nang)}${m.mo_ta ? ". " + esc(m.mo_ta) : ""}</div><div class="m">
+        ${m.luot > 0 ? `<span>${nf.format(m.luot)} lượt</span>` : ""}<span>${m.ngay} ngày</span><span>${nf.format(m.gia)} xu</span>${m.nguyen_lieu.map(x => `<span>${esc(x)}</span>`).join("")}${m.pvp ? `<span class="s-mua">không dùng khi vây thành</span>` : ""}</div></div>`).join("")}</div></div>`);
     if (d.manh.bat) cards.push(`<div class="card"><h3>💎 Mảnh sự kiện <span class="kbd">/doimanh</span></h3>
       <p class="muted">Rơi từ boss, sự kiện, mốc điểm danh. Là đồ thật, trao đổi được (tối đa ${d.manh.toi_da_ngay} mảnh/ngày từ quà thường). Đổi lấy:</p>
       <div class="votes">${d.manh.doi.map(x => `<span>${esc(x.ten)} · ${x.gia} mảnh</span>`).join("")}</div></div>`);
@@ -1148,7 +1154,7 @@ function countTo(el, n){
 // dải chữ chạy
 (function(){
   const items = ["⚔️ Công thành <b>mỗi cuối tuần</b>","🗺️ Bản đồ <b>Trái Đất 1:1000</b>","🕊️ <b>Liên minh Hoà Bình</b> không bao giờ bị chiếm","⚖️ <b>Hội Bàn Tròn</b> do người chơi tự quản",
-    "📱 Chơi được trên <b>điện thoại</b>","🏆 <b>Danh hiệu</b> giữ mãi mỗi mùa","💰 Nghề tự động, <b>chợ đấu giá</b>","🚫 <b>Không bán sức mạnh</b>","🌋 <b>Trái Đất lâm nguy</b>: boss sự kiện","🗝️ <b>Dungeon</b> cày đồ, cày tiền","☔ <b>Mùa mưa, mùa khô</b> đổi theo ngày thật","🎣 <b>24 loài cá Việt</b>, thi câu cuối tuần","🎁 <b>Điểm danh, nhiệm vụ, vòng quay</b> miễn phí","🎙️ <b>Voice chat</b> theo khoảng cách (máy tính)"];
+    "📱 Chơi được trên <b>điện thoại</b>","🏆 <b>Danh hiệu</b> giữ mãi mỗi mùa","💰 Nghề tự động, <b>chợ đấu giá</b>","🚫 <b>Không bán sức mạnh</b>","🌋 <b>Trái Đất lâm nguy</b>: boss sự kiện","🗝️ <b>Dungeon</b> cày đồ, cày tiền","☔ <b>Mùa mưa, mùa khô</b> đổi theo ngày thật","🎣 <b>24 loài cá Việt</b>, thi câu cuối tuần","🎁 <b>Điểm danh, nhiệm vụ, vòng quay</b> miễn phí"];
   const one = items.map(x => `<span>${x}</span>`).join("");
   $("#marq").innerHTML = one + one;
 })();

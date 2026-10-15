@@ -91,6 +91,16 @@ groups:
           note: "Cách nhau dấu phẩy, ví dụ: 1 tháng 20k, 3 tháng 50k, 6 tháng 90k, 1 năm 160k" }
       - { key: tier4_perks, label: "Bậc 5 (congtuoc): quyền lợi (chữ hiện trong /rank)", type: list, servers: [lobby, banghoi-1, practice-1], file: plugins/DuckyMoMoCore/config.yml, path: donate-ranks.tiers.4.perks }
 
+  - title: Ủng hộ bằng QR trong game (/rank mua)
+    category: Rank donate
+    description: "Người chơi gõ /rank mua, chọn gói → mã VietQR hiện trên tấm bản đồ trong tay → bấm [Tôi đã chuyển khoản] → admin duyệt ở trang quản trị > Donate (chung hàng chờ với trang web). Tài khoản ngân hàng lấy từ site/config/site.yml (donate). Giá các gói lấy từ nhóm Rank donate ở trên."
+    apply: [dmm reload]
+    settings:
+      - { key: dqr_on, label: Bật QR trong game, type: select, servers: [lobby, banghoi-1, practice-1], file: plugins/DuckyMoMoCore/config.yml, path: donate-qr.enabled,
+          options: [ { value: true, label: Bật }, { value: false, label: "Tắt (chỉ hiện hướng dẫn mua)" } ] }
+      - { key: dqr_minutes, label: Mã QR hết hạn sau (phút), type: int, min: 1, max: 60, servers: [lobby, banghoi-1, practice-1], file: plugins/DuckyMoMoCore/config.yml, path: donate-qr.minutes }
+      - { key: dqr_web, label: Link trang tài khoản (khi không tạo được QR), type: text, servers: [lobby, banghoi-1, practice-1], file: plugins/DuckyMoMoCore/config.yml, path: donate-qr.web }
+
   - title: Sảnh (lobby)
     category: Sảnh
     apply: [dmm reload]

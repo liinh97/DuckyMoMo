@@ -23,6 +23,9 @@ commands:
   vongquay:
     description: "Vòng quay miễn phí: chơi đủ giờ được vé, xem tỉ lệ từng phần thưởng. Admin: /vongquay give <người> <số>"
     aliases: [vq, quay]
+  treothuong:
+    description: "Treo thưởng: /treothuong xem ai bị treo, /treothuong dat <người> <xu>. Ai hạ được thì nhận hết"
+    aliases: [bounty, sanloi]
   khaihoang:
     description: "Khai hoang vùng mới: cả server góp quỹ (bán /sell, /khaihoang gop <xu>), đủ mốc thì mở rộng bản đồ"
     aliases: [khaimo, frontier]

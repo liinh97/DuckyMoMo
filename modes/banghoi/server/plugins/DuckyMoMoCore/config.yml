@@ -166,6 +166,22 @@ pvp-rules:
   military-ranks: [guard, private, sergeant, lieutenant, captain, major, colonel, general]
 
 
+# Treo thưởng (/treothuong, ý từ UniMC "Bounty"; khác "truy nã" là án của Hội Bàn Tròn). Người chơi treo tiền (phí fee-percent % không hoàn),
+# ai hạ được người đó nhận hết. streak: giết liền kills mạng chưa chết thì hệ thống tự treo reward, mỗi mạng thêm per-kill (tiền hệ thống tạo ra).
+# Không tính: giết tài khoản phụ, cùng IP, dân Liên minh Hoà Bình (allow-on-peace). Hết days ngày: trả lại tiền người treo. Lưu: treothuong.yml
+bounty:
+  enabled: true
+  min: 100
+  max-total: 100000
+  fee-percent: 5
+  days: 3
+  allow-on-peace: false
+  streak:
+    enabled: true
+    kills: 5
+    reward: 500
+    per-kill: 100
+
 # Khai hoang vùng mới (/khaihoang, ý từ "Khai mở thứ nguyên" của UniMC). Quỹ chung tăng khi người chơi bán /sell (sell-percent % tiền bán,
 # người bán KHÔNG mất gì) và khi góp /khaihoang gop <xu> (tiền bị rút). Đủ mốc thì chạy commands (console) theo thứ tự goals.
 # Mốc mặc định nới viền ChunkyBorder (mùa 1 hiện: tâm 12500 -2000, bán kính 1300 x 1200). SAU KHI MỞ: sửa 4 ô viền ở Cài đặt > Thế giới cho khớp

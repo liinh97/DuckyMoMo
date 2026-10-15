@@ -388,6 +388,21 @@ groups:
       - { key: kh_g3, label: "Mốc 3: Borneo + Java (xu)", type: number, min: 1, file: plugins/DuckyMoMoCore/config.yml, path: frontier.goals.2.need,
           note: "Sau khi mở: Tâm viền 13150 / -1050, bán kính 1950 x 2150." }
 
+  - title: Treo thưởng (/treothuong)
+    category: PvP & combat
+    description: "Người chơi bỏ tiền treo thưởng lên đầu người khác, ai hạ được nhận hết; hết hạn trả lại tiền. Hệ thống tự treo người có chuỗi giết dài (tiền hệ thống tạo thêm). Không tính giết tài khoản phụ, cùng IP; không treo lên dân Liên minh Hoà Bình."
+    apply: [dmm reload]
+    settings:
+      - { key: tt_on, label: Bật treo thưởng, type: select, file: plugins/DuckyMoMoCore/config.yml, path: bounty.enabled,
+          options: [ { value: true, label: Bật }, { value: false, label: Tắt } ] }
+      - { key: tt_min, label: Treo ít nhất (xu), type: number, min: 1, file: plugins/DuckyMoMoCore/config.yml, path: bounty.min }
+      - { key: tt_max, label: Tổng treo tối đa lên một người (xu), type: number, min: 1, file: plugins/DuckyMoMoCore/config.yml, path: bounty.max-total }
+      - { key: tt_fee, label: Phí treo (%), type: number, min: 0, max: 50, file: plugins/DuckyMoMoCore/config.yml, path: bounty.fee-percent }
+      - { key: tt_days, label: Hết hạn sau (ngày), type: int, min: 1, max: 30, file: plugins/DuckyMoMoCore/config.yml, path: bounty.days }
+      - { key: tt_streak, label: Hệ thống tự treo khi giết liền (mạng), type: int, min: 2, max: 100, file: plugins/DuckyMoMoCore/config.yml, path: bounty.streak.kills }
+      - { key: tt_streak_xu, label: "Hệ thống treo lần đầu (xu, 0 = tắt)", type: number, min: 0, file: plugins/DuckyMoMoCore/config.yml, path: bounty.streak.reward }
+      - { key: tt_streak_them, label: Mỗi mạng thêm sau đó (xu), type: number, min: 0, file: plugins/DuckyMoMoCore/config.yml, path: bounty.streak.per-kill }
+
   - title: Vũ khí nổ (crystal, anchor, giường, xe goòng TNT)
     category: PvP & combat
     description: "Sát thương của vũ khí nổ lên NGƯỜI CHƠI. 0 = cấm (không gây sát thương, không hất), 0.3 = còn 30%, 1 = như gốc. Quái, rồng Ender, phá khối không đổi. Crystal/anchor/nổ giường giết người trong 1 giây, đè hết lối chơi khác khi công thành."

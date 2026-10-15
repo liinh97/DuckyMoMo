@@ -322,7 +322,18 @@ def api_bantron():
                          "giayphep": {"CO": "Có giấy phép", "CHO": "Chờ duyệt", "TREO": "Bị treo", "CHUA": "Chưa xin",
                                       "KHONG": "Không được duyệt", "THUHOI": "Bị thu hồi", "HETHAN": "Hết hạn"}.get(o.get("giayphep"), o.get("giayphep")),
                          "thanhvien": len(o.get("thanhvien") or [])})
+    tt = []
+    now_ms = time.time() * 1000
+    for v in ((load_yaml(plugin("DuckyMoMoCore", "treothuong.yml")).get("muc")) or {}).values():
+        if not isinstance(v, dict) or float(v.get("het", 0) or 0) <= now_ms:
+            continue
+        nguoi = [p.get("ten") for p in (v.get("nguoi") or {}).values() if isinstance(p, dict)]
+        tong = float(v.get("he-thong", 0) or 0) + sum(float(p.get("xu", 0) or 0) for p in (v.get("nguoi") or {}).values() if isinstance(p, dict))
+        tt.append({"ten": v.get("ten"), "tong": tong, "boi": (["Hệ thống"] if float(v.get("he-thong", 0) or 0) > 0 else []) + nguoi,
+                   "het": fmt_ms(v.get("het"))})
+    tt.sort(key=lambda x: -x["tong"])
     return {
+        "treothuong": tt[:10],
         "hop": {"luc": fmt_ms(hop.get("luc")), "noi": hop.get("ban-thitran"), "dang_hop": hop.get("trangthai") == "MO"},
         "cases": cases[:30], "motions": motions[:20],
         "open_cases": len([c for c in cases if c["trangthai"] == "Đang chờ xử"]),

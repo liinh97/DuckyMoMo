@@ -165,6 +165,11 @@
    ../site/config:/repo/site-config) → tải ảnh, đen trắng 128x128, MapRenderer, tấm bản đồ có PDC qr_het (không vứt/cất rương, chết không rơi,
    hết hạn tự xoá). [Tôi đã chuyển khoản] → action bao → panel báo admin như web. Chưa rõ: QR 128 điểm ảnh quét có dễ không (UniMC làm được).
 
+24. **Treo thưởng /treothuong (15/10 tối, CHƯA build)**: DuckyMoMoCore `Bounty`, config `bounty`, dữ liệu `treothuong.yml`. Người chơi treo
+   (phí 5%), người hạ nhận hết (tiền chính mình treo thì trả lại); chuỗi 5 mạng → hệ thống treo 500 (+100/mạng, tiền tạo thêm); không tính
+   tài khoản phụ (WarRules.isAlt), cùng IP, dân Hoà Bình; hết 3 ngày trả tiền người treo. Riêng với truy nã của Hội Bàn Tròn (Justice).
+   Web: bảng Treo thưởng trong mục Hội Bàn Tròn (/api/bantron → treothuong).
+
 17. **Voice chat: Simple Voice Chat (15/10 tối, CHƯA cài; người dùng chốt: ghi lại, CHƯA vội triển khai)**. Chỉ người chơi Java có cài mod; Bedrock chưa có cách tốt (xem dưới).
    - Server con lobby/banghoi-1/practice-1: `simple-voice-chat` trong MODRINTH_PROJECTS (bản bukkit 2.6.x, release, hỗ trợ 26.2),
      cấu hình `plugins/voicechat/voicechat-server.properties` (40/20 block, codec VOIP, nhóm bật, cấm ghi âm, không bắt buộc mod, cổng 24454 trong Docker).

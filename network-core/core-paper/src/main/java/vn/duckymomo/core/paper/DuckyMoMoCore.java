@@ -372,6 +372,19 @@ public final class DuckyMoMoCore extends JavaPlugin {
         bind("binhchon", board == null ? null : board::voteCommand, "Bình chọn Kiến Trúc Sư");
         bind("danhhieu", board == null ? null : board::titleCommand, "Danh hiệu");
         bind("bantron", justice == null ? null : justice::command, "Hội Bàn Tròn");
+        // Treo thưởng /treothuong: người chơi treo + hệ thống tự treo chuỗi giết (Bang Hội Chiến: bounty.enabled, cần Vault)
+        Bounty bounty = getConfig().getBoolean("bounty.enabled") && getConfig().isConfigurationSection("bounty")
+                ? new Bounty(this, getConfig().getConfigurationSection("bounty"), warRules, peace) : null;
+        if (bounty != null) {
+            getServer().getPluginManager().registerEvents(bounty, this);
+            bounty.start();
+        }
+        bind("treothuong", bounty == null ? null : bounty::command, "Treo thưởng");
+        PluginCommand ttCmd = getCommand("treothuong");
+        if (ttCmd != null) {
+            Bounty bb = bounty;
+            ttCmd.setTabCompleter(bb == null ? null : (sender, cmd, label, args) -> bb.tab(args));
+        }
         bind("cuahang", shop == null ? null : shop::command, "Cửa hàng trang trí");
 
         // Thưởng vote server (Votifier ở banghoi-1; vote từ VPS qua relay socat 8192)

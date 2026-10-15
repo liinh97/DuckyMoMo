@@ -720,6 +720,9 @@ footer .fbrand img{width:44px}
       </div>
     </div>
     <div class="card" style="margin-top:16px"><h3>Kiến nghị gần đây</h3><div id="motions"></div></div>
+    <div class="card redc" style="margin-top:16px"><h3>☠ Treo thưởng <span class="kbd">/treothuong</span></h3>
+      <p class="muted" style="margin-bottom:8px">Người chơi bỏ tiền treo thưởng, ai hạ được người bị treo thì nhận hết. Giết liền nhiều mạng không chết thì hệ thống tự treo thưởng lên bạn. Không treo lên dân Liên minh Hoà Bình.</p>
+      <div id="bounties"></div></div>
 
     <div class="callout j" style="margin-top:20px"><b>Ai xử lý việc gì?</b> Hội Bàn Tròn: án giết dân hoà bình, vây giả, khiếu nại xếp hạng · Hội đồng Hoà Bình: giấy phép, đuổi thị trấn làm tay sai, bầu đại diện ·
       Vua và thị trưởng: việc trong quốc gia · Helper/Mod: chat, quấy rối · Admin: chỉ hack, lỗi game, tài khoản phụ bị giấu.</div>
@@ -979,6 +982,8 @@ async function loadBantron(){
     $("#motions").innerHTML = b.motions.length ? b.motions.map(m => `<div class="case"><div class="h"><span>${esc(m.id)} · ${esc(m.loai)}: ${esc(m.muc)}${m.giatri?` (${m.giatri} điểm)`:""}</span>
         <span class="tag ${m.ketqua?"done":"open"}">${esc(m.ketqua||"Chờ họp")}</span></div><div class="muted" style="font-size:.88rem">${esc(m.ly||"")} · ${esc(m.nguoi)} · ${esc(m.luc)}</div>${voteChips(m.phieu)}</div>`).join("")
       : `<div class="empty">Chưa có kiến nghị.</div>`;
+    $("#bounties").innerHTML = (b.treothuong || []).length ? `<div class="tbl"><table><thead><tr><th>Bị treo</th><th>Tiền thưởng</th><th>Người treo</th><th>Hết hạn</th></tr></thead><tbody>${b.treothuong.map(t => `<tr><td><b class="red">${esc(t.ten)}</b></td><td><b>${nf.format(Math.round(t.tong))} xu</b></td><td class="muted">${esc(t.boi.join(", "))}</td><td class="muted">${esc(t.het || "")}</td></tr>`).join("")}</tbody></table></div>`
+      : `<div class="empty">Chưa có ai bị treo thưởng.</div>`;
     $("#orgList").innerHTML = b.orgs.length ? `<div class="votes">${b.orgs.map(o=>`<span>${esc(o.ten)} · ${esc(o.loai)} · ${esc(o.giayphep)}</span>`).join("")}</div>` : `<div class="empty">Chưa có tổ chức nào.</div>`;
   } catch (e) { $("#cases").innerHTML = `<div class="empty">Không tải được hồ sơ.</div>`; }
 }

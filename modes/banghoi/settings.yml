@@ -962,3 +962,11 @@ kh_sell: 100
 kh_g1: 300000
 kh_g2: 800000
 kh_g3: 2000000
+tt_on: true
+tt_min: 100
+tt_max: 100000
+tt_fee: 5
+tt_days: 3
+tt_streak: 5
+tt_streak_xu: 500
+tt_streak_them: 100

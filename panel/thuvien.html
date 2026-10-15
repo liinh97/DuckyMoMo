@@ -18,7 +18,7 @@
   header h1 { font-size: 17px; margin: 0; flex: 1; }
   header a { color: var(--muted); text-decoration: none; font-size: 14px; }
   header a:hover { color: var(--text); }
-  main { max-width: 1240px; margin: 0 auto; padding: 0 0 80px; display: grid; grid-template-columns: 300px 1fr; gap: 22px; align-items: start; }
+  main { padding: 0 0 80px; display: grid; grid-template-columns: 320px minmax(0, 1fr); gap: 22px; align-items: start; }
   main > section:first-of-type { position: sticky; top: 18px; }
   @media (max-width: 860px) { main { grid-template-columns: minmax(0, 1fr); } main > section:first-of-type { position: static; } }
   .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; }
@@ -48,6 +48,7 @@
   .pv-cap { position: absolute; top: 8px; left: 12px; font-size: 11px; text-transform: uppercase; letter-spacing: .07em; color: #9aa; }
   .pv-wrap { position: relative; padding-top: 30px !important; }
   .glint { display: flex; gap: 8px; align-items: center; font-size: 14px; }
+  @media (min-width: 1500px) { #editor { display: grid; grid-template-columns: minmax(0, 1fr) 380px; column-gap: 28px; } #editor > * { grid-column: 1; } #editor > .pv-wrap { grid-column: 2; grid-row: 1 / span 30; position: sticky; top: 18px; align-self: start; margin: 0; min-height: 260px; align-items: center; } #editor > [id$=note] + .sec { margin-top: 0; border-top: 0; padding-top: 0; } }
   @media (max-width: 640px) { .g-mat, .g-id, .g-give { grid-template-columns: minmax(0, 1fr); } }
   label.f { display: block; font-size: 13px; color: var(--muted); margin: 10px 0 3px; }
   .note { color: var(--muted); font-size: 13px; margin: 4px 0 0; }

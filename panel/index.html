@@ -6,7 +6,7 @@
 <title>DuckyMoMo · Cài đặt</title>
 <style>
   @media (max-width: 900px) { .page { padding: 18px 14px 0; } }
-  .page { max-width: 1240px; margin: 0 auto; }
+  .page { }
   .page-head .search { position: relative; width: min(420px, 100%); }
   .page-head .search input { width: 100%; padding: 10px 14px 10px 38px; border-radius: 10px; font-size: 15px; }
   .page-head .search::before { content: "🔎"; position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-size: 14px; opacity: .7; }
@@ -64,7 +64,7 @@
   /* thanh lưu */
   .savebar { position: fixed; bottom: 0; right: 0; left: 236px; z-index: 30; padding: 0 32px 16px; pointer-events: none; }
   @media (max-width: 900px) { .savebar { left: 0; padding: 0 10px 10px; } }
-  .savebar .inner { pointer-events: auto; max-width: 1240px; margin: 0 auto; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 12px 16px; box-shadow: 0 8px 30px rgba(0, 0, 0, .18); }
+  .savebar .inner { pointer-events: auto; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 12px 16px; box-shadow: 0 8px 30px rgba(0, 0, 0, .18); }
   .savebar.dirty .inner { border-color: var(--accent); }
   .savebar .status { flex: 1; font-size: 14px; color: var(--muted); min-width: 200px; }
   .status.ok { color: var(--ok); } .status.err { color: var(--err); }
@@ -92,9 +92,9 @@
   .fs-head { display: grid; grid-template-columns: 1fr 1fr 90px 32px; gap: 8px; margin-bottom: 8px; }
   .ms textarea { width: 100%; margin-bottom: 8px; }
   .sh-row { display: grid; grid-template-columns: 130px 1fr 100px 120px 32px; gap: 8px; align-items: center; }
-  .sh-row select, .sh-row input, .sh-row span > * { width: 100%; }
+  .sh-row select, .sh-row input, .sh-row > span > * { width: 100%; }
   .mcline { margin-top: 6px; } .mcline .mc { display: inline-block; padding: 4px 10px; }
-  .row.wide .ctl { max-width: 900px; }
+
   /* danh sách dạng thẻ */
   .tg { border: 1px solid var(--line); border-radius: 10px; background: var(--input); overflow: hidden; }
   .tg-top { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-bottom: 1px solid var(--line-2); background: var(--card-2); }

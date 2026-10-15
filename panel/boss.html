@@ -18,7 +18,7 @@
   header h1 { font-size: 17px; margin: 0; flex: 1; }
   header a { color: var(--muted); text-decoration: none; font-size: 14px; }
   header a:hover { color: var(--text); }
-  main { max-width: 1240px; margin: 0 auto; padding: 0 0 80px; display: grid; grid-template-columns: 300px 1fr; gap: 22px; align-items: start; }
+  main { padding: 0 0 80px; display: grid; grid-template-columns: 320px minmax(0, 1fr); gap: 22px; align-items: start; }
   main > section:first-of-type { position: sticky; top: 18px; }
   @media (max-width: 860px) { main { grid-template-columns: minmax(0, 1fr); } main > section:first-of-type { position: static; } }
   .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; }
@@ -65,6 +65,7 @@
   .spawn #spPlayer { width: 220px; } .spawn .n { width: 74px; } .spawn .or { color: var(--muted); font-size: 13px; }
   .pv { position: relative; padding-top: 30px !important; }
   .pv-cap { position: absolute; top: 8px; left: 12px; font-size: 11px; text-transform: uppercase; letter-spacing: .07em; color: #b9c9b9; }
+  @media (min-width: 1500px) { #editor { display: grid; grid-template-columns: minmax(0, 1fr) 380px; column-gap: 28px; } #editor > * { grid-column: 1; } #editor > .pv { grid-column: 2; grid-row: 1 / span 30; position: sticky; top: 18px; align-self: start; margin: 0; min-height: 220px; justify-content: center; } #editor > [id$=note] + .sec { margin-top: 0; border-top: 0; padding-top: 0; } }
   @media (max-width: 700px) { .g2, .g-name, .g-id { grid-template-columns: minmax(0, 1fr); } }
   .chk { display: flex; gap: 6px; align-items: center; font-size: 14px; }
   .chk input { width: auto; }
@@ -101,7 +102,7 @@
     <p class="note">Boss tạo ở đây (file <code>dmm_*.yml</code>) sửa được. Boss có sẵn của EliteMobs và dungeon chỉ xem và gọi ra thử.</p>
   </section>
 
-  <section class="card">
+  <section class="card" id="editor">
     <div class="pv"><div class="pv-cap">Xem trước</div><div class="plate" id="pvName"></div><div class="stats" id="pvStats"></div></div>
     <div id="ronote" class="warn" hidden>Boss có sẵn của EliteMobs / dungeon: chỉ xem và gọi thử, không sửa trên web.</div>
 

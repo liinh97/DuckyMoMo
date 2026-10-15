@@ -93,8 +93,10 @@ plugins:
     player:
       - ["/skin set <tên Mojang>", "Đổi skin theo tên"]
       - ["/skin clear", "Bỏ skin"]
+      - ["/skins", "Mở kho skin (menu chọn skin)"]
     admin:
       - ["/sr reload", "Nạp lại"]
+    notes: "Cài ở proxy VÀ mọi server con (cùng bản 15.12.6, link ghim trong PLUGINS của từng compose). Thiếu ở server con thì /skins chỉ báo 'Opening the skins menu' mà không mở menu (menu là kho đồ, chỉ server con mở được). Server con tự nhận chế độ proxy (proxyMode AUTO)."
   - name: Sonar (chống bot)
     jar: Sonar
     kind: Đăng nhập & kết nối

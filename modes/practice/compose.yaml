@@ -45,6 +45,7 @@ services:
       # Ghim link như banghoi: OldCombatMechanics (combat 1.8), EssentialsX bản dev cho 26.2 (chat có role, /spawn)
       PLUGINS: |
         https://download.geysermc.org/v2/projects/floodgate/versions/latest/builds/latest/downloads/spigot
+        https://cdn.modrinth.com/data/TsLS8Py5/versions/ziIzW16f/SkinsRestorer.jar
         https://github.com/kernitus/BukkitOldCombatMechanics/releases/download/v2.7.0/OldCombatMechanics.jar
         https://ci.ender.zone/job/EssentialsX/1832/artifact/jars/EssentialsX-2.22.1-dev%2B27-e70bdb8.jar
         https://ci.ender.zone/job/EssentialsX/1832/artifact/jars/EssentialsXChat-2.22.1-dev%2B27-e70bdb8.jar

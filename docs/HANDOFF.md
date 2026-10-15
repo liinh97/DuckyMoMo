@@ -311,7 +311,7 @@
 
 ### Chuyển sang offline mode + AuthMe (07/10/2026)
 - Proxy: `online-mode = false`, `force-key-authentication = false`. Paper (lobby, banghoi-1, khuôn mẫu): `proxies.velocity.online-mode: false`.
-- Plugin proxy (ghim bằng link Modrinth trong `PLUGINS`): **AuthMe-Velocity 6.0.1**, **SkinsRestorer 15.12.6**. Lobby: `authmereloaded` qua `MODRINTH_PROJECTS` (đang là 6.0.1).
+- Plugin proxy (ghim bằng link Modrinth trong `PLUGINS`): **AuthMe-Velocity 6.0.1**, **SkinsRestorer 15.12.6** (15/10: thêm cùng link vào PLUGINS của lobby, banghoi, practice; thiếu ở server con thì menu /skins không mở). Lobby: `authmereloaded` qua `MODRINTH_PROJECTS` (đang là 6.0.1).
 - Không cần plugin AuthMeVelocity riêng: từ bản 6, AuthMeReloaded có sẵn plugin Velocity.
 - AuthMe chỉ cài ở **lobby**. Proxy chặn người chưa đăng nhập sang server khác (`serverSwitch.requiresAuth`), nên banghoi-1 không cần AuthMe.
 - Tài khoản lưu ở bảng `network.authme` (MariaDB), mật khẩu băm BCRYPT, tin nhắn tiếng Việt (`vn`).

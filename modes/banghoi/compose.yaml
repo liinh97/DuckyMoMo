@@ -80,6 +80,7 @@ services:
       #   EssentialsX bản dev #1832 (bản chính thức 2.22.0 mới tới 26.1.2): lõi + Chat + Spawn
       PLUGINS: |
         https://download.geysermc.org/v2/projects/floodgate/versions/latest/builds/latest/downloads/spigot
+        https://cdn.modrinth.com/data/TsLS8Py5/versions/ziIzW16f/SkinsRestorer.jar
         https://github.com/TownyAdvanced/SiegeWar/releases/download/3.7.0/SiegeWar-3.7.0.jar
         https://mediafilez.forgecdn.net/files/8983/363/Shopkeepers-2.28.1.jar
         https://github.com/kernitus/BukkitOldCombatMechanics/releases/download/v2.7.0/OldCombatMechanics.jar

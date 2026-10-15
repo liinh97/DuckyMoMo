@@ -439,6 +439,16 @@ chapters:
         &6500 xu&0, mỗi 30
         lượt cả server có
         &dVote Party&0.
+      - |-
+        &2&lĐIỂM DANH
+        &0Mỗi ngày gõ
+        &1/diemdanh &0(online
+        đủ 5 phút) nhận xu.
+        &0Đủ &67, 14, 30 ngày
+        &0có quà mốc. Bỏ một
+        ngày &lkhông mất&r&0 chuỗi.
+        &1/diemdanh xem &0xem
+        tiến độ.
   - id: pokemon
     name: Pokémon (sắp mở)
     pages:

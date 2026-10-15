@@ -20,6 +20,7 @@ public final class DuckyMoMoCore extends JavaPlugin {
     private PeaceAlliance peace;
     private DecorShop decorShop;
     private ItemLibrary itemLibrary;
+    private Rewards rewards;
 
     @Override
     public void onEnable() {
@@ -341,6 +342,15 @@ public final class DuckyMoMoCore extends JavaPlugin {
         if (!reloading) {
             getServer().getScheduler().runTaskLater(this, itemLibrary::exportMeta, 40L);
         }
+        rewards = new Rewards(this, itemLibrary);
+
+        // Điểm danh hằng ngày (Bang Hội Chiến: daily-checkin.enabled)
+        DailyCheckin checkin = getConfig().getBoolean("daily-checkin.enabled")
+                ? new DailyCheckin(this, getConfig().getConfigurationSection("daily-checkin"), rewards) : null;
+        if (checkin != null) {
+            getServer().getPluginManager().registerEvents(checkin, this);
+        }
+        bind("diemdanh", checkin == null ? null : checkin::command, "Điểm danh");
         PluginCommand dmm = getCommand("dmm");
         if (dmm != null) {
             dmm.setExecutor((sender, cmd, label, args) -> {

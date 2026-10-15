@@ -348,3 +348,18 @@ vote:
     trang1:
       name: "Trang vote 1"
       url: ""
+
+# Điểm danh hằng ngày (/diemdanh): đếm TỔNG số ngày (bỏ ngày không mất chuỗi). Lưu: diemdanh.yml
+# Quà, mỗi dòng một món: xu <số> | do <mã thư viện đồ> [số] | vat <VẬT_LIỆU> [số] | lenh <lệnh, {player}> | manh <loại> <số>
+daily-checkin:
+  enabled: true
+  min-online-minutes: 5       # phải online đủ trong phiên mới điểm danh được (chống tài khoản phụ)
+  remind-on-join: true
+  broadcast-milestone: true
+  cycle-days: 30              # mốc lặp lại sau mỗi 30 lần điểm danh (0 = không lặp)
+  daily-rewards:
+    - "xu 100"
+  milestones:
+    7: ["xu 500", "vat GOLDEN_APPLE 2"]
+    14: ["xu 1000", "vat DIAMOND 3"]
+    30: ["xu 3000", "vat DIAMOND 8"]

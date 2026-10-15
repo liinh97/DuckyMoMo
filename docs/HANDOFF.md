@@ -156,7 +156,7 @@
   lúc 0 người online; thử qua IP mới: Java 25565/25570, Bedrock 19132/19130, Votifier 8192 đều OK, proxy ghi IP thật. DNS: A → 125.212.218.74,
   SRV → 25565 (qua API). Ping ước tính: người chơi miền Nam ~30–40 ms, miền Bắc (kể cả chủ server) ~55–65 ms. VPS BKNS: vẫn bật nhưng không còn
   nhà nối vào; người dùng sẽ xin huỷ/hoàn tiền (đừng tắt hộ khi chưa hỏi).
-- **Kế hoạch tính năng (15/10, người dùng chốt thứ tự)**: (1) Thư viện đồ ✅ → (2) điểm danh (giữ chuỗi khi bỏ ngày, ngày nào điểm danh nhận thưởng
+- **Kế hoạch tính năng (15/10, người dùng chốt thứ tự)**: (1) Thư viện đồ ✅ → (2) điểm danh ✅ (giữ chuỗi khi bỏ ngày, ngày nào điểm danh nhận thưởng
   ngày đó, mốc 7/14/30, cài đặt trên web) → (3) boss bar đếm ngược bảo vệ người mới → (4) nhiệm vụ hằng ngày → (5) chìa khoá theo giờ online +
   vòng quay hiện tỉ lệ (chỉ phát miễn phí) → (6) mảnh sự kiện (ĐỒ VẬT, trao đổi được, giới hạn nhận/ngày; nguồn: boss sự kiện theo sát thương,
   dungeon, mốc điểm danh, đủ nhiệm vụ ngày, vote/vòng quay tỉ lệ thấp; mỗi sự kiện loại mảnh riêng + hạn đổi) + cửa hàng đổi mảnh trên web →
@@ -168,6 +168,13 @@
   54 gồm Enchantio; 1.536 vật liệu). Panel: trang `/thuvien` (`panel/thuvien.html`), API GET/POST `/api/thuvien` (save/delete/give; ghi YAML bằng
   ruamel rồi RCON `dmm thuvien nap`; give = `dmm laydo`). Đã thử API thật (lưu món vượt cấp + Enchantio, chặn trùng mã/vật liệu sai, xoá) và
   giao diện trên bản giả lập dữ liệu thật; CHƯA thử `/dmm luudo` và nút Đưa trong game (cần người online). Các module sau dùng `ItemLibrary.build(mã, số)`.
+- **Điểm danh (15/10)**: DuckyMoMoCore `DailyCheckin` (`/diemdanh`, `/diemdanh xem`; config `daily-checkin` ở banghoi-1): đếm TỔNG số ngày đã
+  điểm danh (`diemdanh.yml` players.<uuid>.count/last), ngày theo giờ VN; quà ngày `daily-rewards` + quà mốc `milestones` {ngày: [quà]} theo
+  `cycle-days` (30: lần 37 nhận mốc 7); phải online `min-online-minutes` (5) trong phiên; nhắc khi vào (bấm được); báo cả server khi chạm mốc.
+  **Quà dùng chung** `Rewards`: `xu <số>` | `do <mã thư viện> [số]` | `vat <VẬT_LIỆU> [số]` | `lenh <lệnh {player}>` | `manh <loại> <số>` (chờ
+  module mảnh); túi đầy thì rơi dưới chân. Panel: kiểu ô mới `rewards` (danh sách quà, chọn loại; đồ thư viện chọn từ danh sách) và
+  `milestones` (mốc ngày + quà), kiểm tra bằng `REWARD_RES` trong `panel/app.py`; nhóm mới "Thưởng & sự kiện". Đã thử: lưu thật qua panel
+  (ghi mốc dạng map, `dmm reload`), chặn quà sai; giao diện trên bản xem thử. CHƯA thử /diemdanh trong game (cần người chơi).
 - **Ping nhảy khi chạy nhanh (15/10, đã sửa bằng BBR)**: người dùng thấy ping 900+ ms khi chạy (TPS vẫn 20). Đo: tuyến **VPS Vinahost →
   nhà mất ~2% gói** ở mọi tốc độ (UDP iperf 5M/20M: 2,2%/1,7%), không phải trần băng thông (4 luồng TCP = 23,6 Mbps). TCP cubic 1 luồng chỉ
   ~3–5 Mbps → chunk dồn khi chạy, gói keep-alive xếp sau gói gửi lại → ping nhảy. BBR 1 luồng: 92 Mbps (VPS gửi), **trên đúng đường người

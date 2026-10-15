@@ -16,6 +16,9 @@ softdepend:
   - Essentials
   - Votifier
 commands:
+  diemdanh:
+    description: "Điểm danh nhận quà mỗi ngày (bỏ ngày không mất chuỗi). /diemdanh xem: xem tiến độ"
+    aliases: [dd, checkin]
   vote:
     description: "Vote cho server trên các trang xếp hạng, nhận xu. /vote top: bảng vote tháng"
     aliases: [bauchon]

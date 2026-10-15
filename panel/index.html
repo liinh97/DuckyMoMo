@@ -47,6 +47,15 @@
   details.results { margin-top: 8px; font-size: 12.5px; color: var(--muted); }
   details.results pre { white-space: pre-wrap; margin: 4px 0 0; }
   @media (max-width: 640px) { .row { grid-template-columns: 1fr; } .row .note { grid-column: 1; } header { flex-wrap: wrap; } }
+  .rw { display: flex; flex-direction: column; gap: 6px; }
+  .rw-row { display: grid; grid-template-columns: 130px 1fr 80px 28px; gap: 6px; align-items: center; }
+  .rw-row select, .rw-row input { width: 100%; }
+  .rw-row .x, .ms-head .x { background: none; border: 0; color: var(--err); cursor: pointer; font-size: 16px; }
+  .rw-add { align-self: flex-start; background: transparent; border: 1px dashed var(--line); color: var(--muted); border-radius: 6px; padding: 3px 10px; cursor: pointer; font: inherit; font-size: 13px; }
+  .ms { border: 1px solid var(--line); border-radius: 8px; padding: 8px; margin-bottom: 6px; }
+  .ms-head { display: flex; gap: 6px; align-items: center; margin-bottom: 6px; font-size: 13.5px; }
+  .ms-head input { width: 80px; }
+  @media (max-width: 640px) { .rw-row { grid-template-columns: 1fr 1fr; } }
 </style>
 </head>
 <body>
@@ -123,6 +132,112 @@ function render() {
   updateBar();
 }
 
+
+// ---- Ô chọn quà (DuckyMoMoCore Rewards): xu <số> | do <mã> [số] | vat <VẬT_LIỆU> [số] | lenh <lệnh> | manh <loại> <số>
+let libCache = null;
+function lib() {
+  if (!libCache) libCache = fetch("api/thuvien").then(r => r.json()).catch(() => ({ items: [], meta: null }));
+  return libCache;
+}
+const RW_KINDS = [["xu", "Xu"], ["do", "Đồ thư viện"], ["vat", "Đồ thường"], ["lenh", "Lệnh console"], ["manh", "Mảnh sự kiện"]];
+function rewardsEditor(list, onChange) {
+  const box = document.createElement("div"); box.className = "rw";
+  const rows = [];
+  const emit = () => onChange(rows.map(r => r.val()).filter(Boolean));
+  const add = document.createElement("button"); add.type = "button"; add.className = "rw-add"; add.textContent = "+ Thêm quà";
+  function addRow(spec) {
+    const parts = String(spec || "xu 100").trim().split(/\s+/);
+    const row = document.createElement("div"); row.className = "rw-row";
+    const kind = document.createElement("select");
+    for (const [k, t] of RW_KINDS) { const o = document.createElement("option"); o.value = k; o.textContent = t; kind.appendChild(o); }
+    kind.value = RW_KINDS.some(x => x[0] === parts[0]) ? parts[0] : "lenh";
+    const mid = document.createElement("span"), amt = document.createElement("input"), x = document.createElement("button");
+    amt.type = "number"; amt.min = "0"; x.type = "button"; x.className = "x"; x.textContent = "×"; x.title = "Bỏ";
+    let main = null;
+    function build(init) {
+      mid.innerHTML = ""; amt.style.visibility = "visible";
+      const k = kind.value, a = init ? parts.slice(1) : [];
+      if (k === "xu") {
+        main = document.createElement("input"); main.type = "number"; main.min = "1"; main.value = a[0] || "100"; amt.style.visibility = "hidden";
+      } else if (k === "do") {
+        main = document.createElement("select");
+        main.innerHTML = '<option value="">(đang tải thư viện…)</option>';
+        main.dataset.v = a[0] || "";
+        lib().then(d => {
+          const cur = main.dataset.v;
+          const items = d.items || [];
+          main.innerHTML = items.map(it => '<option value="' + it.id + '">' + it.id + (it.ten_goi && it.ten_goi !== it.id ? " · " + String(it.ten_goi).replace(/[<>&"]/g, "") : "") + "</option>").join("")
+            || '<option value="">(thư viện trống: tạo ở trang Thư viện đồ)</option>';
+          if (cur && !items.some(it => it.id === cur)) main.insertAdjacentHTML("afterbegin", '<option value="' + cur + '">' + cur + " (không còn trong thư viện!)</option>");
+          if (cur) main.value = cur;
+          main.dataset.v = main.value;
+          emit();
+        });
+        amt.value = a[1] || "1"; amt.title = "Số lượng (0 = theo thư viện)";
+      } else if (k === "vat") {
+        main = document.createElement("input"); main.setAttribute("list", "rw-mats"); main.placeholder = "DIAMOND"; main.value = a[0] || ""; amt.value = a[1] || "1"; amt.title = "Số lượng";
+      } else if (k === "manh") {
+        main = document.createElement("input"); main.placeholder = "loại mảnh, vd lamnguy"; main.value = a[0] || ""; amt.value = a[1] || "1"; amt.title = "Số mảnh";
+      } else {
+        main = document.createElement("input"); main.placeholder = "lệnh không có /, {player} = tên người chơi"; main.value = a.join(" "); amt.style.visibility = "hidden";
+      }
+      main.oninput = main.onchange = () => { main.dataset.v = main.value; emit(); };
+      mid.appendChild(main);
+    }
+    build(true);
+    kind.onchange = () => { build(false); emit(); };
+    amt.oninput = emit;
+    const r = {
+      val() {
+        const k = kind.value, v = String(main.value || "").trim(), n = parseInt(amt.value || "0", 10);
+        if (!v) return "";
+        if (k === "xu") return "xu " + v;
+        if (k === "lenh") return "lenh " + v;
+        if (k === "vat") return "vat " + v.toUpperCase() + " " + (n > 0 ? n : 1);
+        if (k === "manh") return "manh " + v.toLowerCase() + " " + (n > 0 ? n : 1);
+        return n > 0 ? "do " + v + " " + n : "do " + v;
+      }
+    };
+    x.onclick = () => { rows.splice(rows.indexOf(r), 1); row.remove(); emit(); };
+    row.append(kind, mid, amt, x); rows.push(r); box.insertBefore(row, add);
+  }
+  box.appendChild(add);
+  add.onclick = () => { addRow("xu 100"); emit(); };
+  for (const sp of list || []) addRow(sp);
+  if (!document.getElementById("rw-mats")) {
+    const dl = document.createElement("datalist"); dl.id = "rw-mats"; document.body.appendChild(dl);
+    lib().then(d => { dl.innerHTML = ((d.meta && d.meta.materials) || []).map(m => '<option value="' + m + '">').join(""); });
+  }
+  return box;
+}
+function milestonesEditor(value, onChange) {
+  const box = document.createElement("div");
+  const ms = [];
+  const emit = () => {
+    const o = {};
+    for (const m of ms) { const d = parseInt(m.day.value, 10); if (d > 0 && m.list.length) o[d] = m.list; }
+    onChange(o);
+  };
+  const add = document.createElement("button"); add.type = "button"; add.className = "rw-add"; add.textContent = "+ Thêm mốc";
+  function addMs(day, list) {
+    const wrap = document.createElement("div"); wrap.className = "ms";
+    const head = document.createElement("div"); head.className = "ms-head";
+    head.innerHTML = 'Ngày thứ <input type="number" min="1" max="3650"> <span style="flex:1"></span><button type="button" class="x" title="Bỏ mốc">×</button>';
+    const m = { day: head.querySelector("input"), list: (list || []).slice() };
+    m.day.value = day || ""; m.day.oninput = emit;
+    head.querySelector(".x").onclick = () => { ms.splice(ms.indexOf(m), 1); wrap.remove(); emit(); };
+    wrap.append(head, rewardsEditor(m.list, v => { m.list = v; emit(); }));
+    ms.push(m); box.insertBefore(wrap, add);
+  }
+  box.appendChild(add);
+  add.onclick = () => {
+    const last = ms.length ? Math.max(...ms.map(m => parseInt(m.day.value, 10) || 0)) : 0;
+    addMs(last + 7, ["xu 500"]); emit();
+  };
+  for (const [d, l] of Object.entries(value || {})) addMs(d, l);
+  return box;
+}
+
 function row(mode, s) {
   const div = document.createElement("div");
   div.className = "row";
@@ -148,6 +263,10 @@ function row(mode, s) {
     input.rows = Math.min(12, Math.max(3, (value || []).length + 1));
     input.value = (value || []).join("\n");
     input.oninput = () => change(mode, s, input.value.split("\n").map(x => x.trim()).filter(x => x), div);
+  } else if (s.type === "rewards") {
+    input = rewardsEditor(value || [], v => change(mode, s, v, div));
+  } else if (s.type === "milestones") {
+    input = milestonesEditor(value || {}, v => change(mode, s, v, div));
   } else if (s.type === "list") {
     // Các mục cách nhau dấu phẩy (lưu thành danh sách)
     input = document.createElement("input");

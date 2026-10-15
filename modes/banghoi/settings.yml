@@ -738,3 +738,20 @@ em_dmg_player: 1.0
 em_dmg_elite: 1.0
 em_vault: true
 em_coin_mult: 0.3
+dd_on: true
+dd_min: 5
+dd_daily:
+  - xu 100
+dd_miles:
+  7:
+    - xu 500
+    - vat GOLDEN_APPLE 2
+  14:
+    - xu 1000
+    - vat DIAMOND 3
+  30:
+    - xu 3000
+    - vat DIAMOND 8
+dd_cycle: 30
+dd_remind: true
+dd_bc: true

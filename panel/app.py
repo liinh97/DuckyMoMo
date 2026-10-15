@@ -56,6 +56,20 @@ ACTIVITY_FILE = DATA_DIR / "activity" / "activity.jsonl"
 # Tin admin gửi từ trang Hoạt động: file riêng (activity.jsonl thuộc service activity, panel không ghi được), gộp khi đọc
 ADMIN_FILE = DATA_DIR / "panel" / "admin.jsonl"
 ACTIVITY_TAIL_BYTES = 4_000_000
+# Quà (DuckyMoMoCore Rewards): xu <số> | do <mã thư viện> [số] | vat <VẬT_LIỆU> [số] | lenh <lệnh> | manh <loại> <số>
+REWARD_RES = [re.compile(r"^xu \d{1,9}(\.\d{1,2})?$"), re.compile(r"^do [a-z0-9_]{1,32}( \d{1,2})?$"),
+              re.compile(r"^vat [A-Za-z0-9_]{1,64}( \d{1,4})?$"), re.compile(r"^lenh \S.{0,199}$"),
+              re.compile(r"^manh [a-z0-9_]{1,32} \d{1,4}$")]
+
+
+def check_rewards(label, v):
+    out = [" ".join(str(x).split()) for x in (v or []) if str(x).strip()]
+    for r in out:
+        if not any(rx.match(r) for rx in REWARD_RES):
+            raise ValueError(f"{label}: quà không hợp lệ \"{r}\"")
+    return out
+
+
 TIMES_RE = re.compile(r"^$|^([01]\d|2[0-3]):[0-5]\d(,([01]\d|2[0-3]):[0-5]\d)*$")
 
 
@@ -91,6 +105,8 @@ def plain(v):
     """Chuyển giá trị ruamel về kiểu Python thường (để so sánh / trả JSON)."""
     if isinstance(v, (list, tuple)):
         return [plain(x) for x in v]
+    if isinstance(v, dict):
+        return {str(k): plain(x) for k, x in v.items()}
     if isinstance(v, bool) or v is None:
         return v
     if isinstance(v, int):
@@ -125,6 +141,21 @@ def validate(s, v):
         return v
     if t == "text":
         return str(v or "")
+    if t == "rewards":
+        return check_rewards(label, v)
+    if t == "milestones":
+        out = {}
+        for k, rw in (v or {}).items():
+            try:
+                day = int(k)
+            except (TypeError, ValueError):
+                raise ValueError(f"{label}: mốc phải là số ngày")
+            if not 1 <= day <= 3650:
+                raise ValueError(f"{label}: mốc 1–3650 ngày")
+            lst = check_rewards(f"{label} (mốc {day})", rw)
+            if lst:
+                out[day] = lst
+        return dict(sorted(out.items()))
     if t in ("list", "lines"):
         # list: các mục cách nhau dấu phẩy; lines: mỗi dòng một mục. items: int/number -> đổi sang số
         if isinstance(v, str):

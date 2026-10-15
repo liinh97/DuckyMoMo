@@ -89,6 +89,24 @@ groups:
       - { key: em_coin_mult, label: Hệ số tiền rơi, type: number, min: 0, max: 5, file: plugins/EliteMobs/EconomySettings.yml, path: currencyShowerTierMultiplier,
           note: "0,3 = 30% lượng mặc định của EliteMobs." }
 
+  - title: Điểm danh hằng ngày
+    category: Thưởng & sự kiện
+    description: "/diemdanh: mỗi ngày nhận quà ngày; chạm mốc (đếm TỔNG số ngày đã điểm danh, bỏ ngày không mất chuỗi) nhận thêm quà mốc. Quà chọn từ xu, Thư viện đồ, đồ thường, lệnh."
+    apply: [dmm reload]
+    settings:
+      - { key: dd_on, label: Bật điểm danh, type: select, file: plugins/DuckyMoMoCore/config.yml, path: daily-checkin.enabled,
+          options: [ { value: true, label: Bật }, { value: false, label: Tắt } ] }
+      - { key: dd_min, label: Phải online đủ (phút) mới điểm danh được, type: int, min: 0, max: 120, file: plugins/DuckyMoMoCore/config.yml, path: daily-checkin.min-online-minutes,
+          note: "Chống tạo tài khoản phụ vào điểm danh lấy quà rồi thoát." }
+      - { key: dd_daily, label: Quà mỗi ngày, type: rewards, file: plugins/DuckyMoMoCore/config.yml, path: daily-checkin.daily-rewards }
+      - { key: dd_miles, label: Quà mốc (ngày thứ … được thêm), type: milestones, file: plugins/DuckyMoMoCore/config.yml, path: daily-checkin.milestones }
+      - { key: dd_cycle, label: Chu kỳ mốc (ngày), type: int, min: 0, max: 365, file: plugins/DuckyMoMoCore/config.yml, path: daily-checkin.cycle-days,
+          note: "30 = mốc lặp lại sau mỗi 30 lần điểm danh (lần 37 nhận quà mốc 7). 0 = mốc chỉ nhận một lần." }
+      - { key: dd_remind, label: Nhắc khi vào game nếu chưa điểm danh, type: select, file: plugins/DuckyMoMoCore/config.yml, path: daily-checkin.remind-on-join,
+          options: [ { value: true, label: Có }, { value: false, label: Không } ] }
+      - { key: dd_bc, label: Báo cả server khi có người chạm mốc, type: select, file: plugins/DuckyMoMoCore/config.yml, path: daily-checkin.broadcast-milestone,
+          options: [ { value: true, label: Có }, { value: false, label: Không } ] }
+
   - title: Liên minh Hoà Bình
     category: Thị trấn
     description: "Quốc gia duy nhất được hoà bình, do server quản lý, thủ đô là kinh đô ở spawn. Thị trưởng vào/rời bằng /hoabinh. Lập lần đầu: admin đứng giữa spawn gõ /dmm hoabinh setup rồi /dmm hoabinh claim 14."

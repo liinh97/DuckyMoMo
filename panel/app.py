@@ -909,6 +909,15 @@ def lib_meta():
         return None
 
 
+def ce_vi():
+    """Tên + mô tả tiếng Việt phù phép CrazyEnchantments: {Tên: [tên Việt, mô tả]} (modes/_network/ce-vi.yml)."""
+    try:
+        d = YAML(typ="safe").load((MODES_DIR / "_network" / "ce-vi.yml").read_text(encoding="utf-8")) or {}
+        return {str(k).lower(): v for k, v in d.items() if isinstance(v, list) and len(v) >= 2}
+    except (OSError, ValueError):
+        return {}
+
+
 def thuvien_json():
     _, doc = lib_load()
     items = []
@@ -929,7 +938,14 @@ def thuvien_json():
         online = [n.strip().split(" ")[-1] for n in re.split(r"[,\n]", names) if n.strip()]
     except Exception:
         pass
-    return {"items": items, "meta": lib_meta(), "online": [n for n in online if PLAYER_RE.match(n)]}
+    meta = lib_meta()
+    if meta and meta.get("ce"):
+        vi = ce_vi()
+        for c in meta["ce"]:
+            v = vi.get(str(c.get("name", "")).lower())
+            if v:
+                c["vi"], c["vi_desc"] = str(v[0]), str(v[1])
+    return {"items": items, "meta": meta, "online": [n for n in online if PLAYER_RE.match(n)]}
 
 
 def thuvien_action(data):

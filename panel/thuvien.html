@@ -216,8 +216,14 @@ function short(k) { return String(k).replace(/^minecraft:/, ""); }
 const isCe = (k) => String(k).startsWith("ce:");
 const strip = (t) => String(t || "").replace(/[&§][0-9a-fk-or]/gi, "").trim();
 function ceInfo(k) { const n = String(k).slice(3).toLowerCase(); return ((data && data.meta && data.meta.ce) || []).find(c => c.name.toLowerCase() === n) || null; }
+const CE_TYPE = { Boots: "Ủng", Bow: "Cung", Helmet: "Mũ", Sword: "Kiếm", Armor: "Giáp", Axe: "Rìu", Pickaxe: "Cúp", Tool: "Dụng cụ", Hoe: "Cuốc",
+  "Damaged-Items": "Đồ đã hỏng" };
 function descOf(k) {
-  if (isCe(k)) { const c = ceInfo(k); return c ? `[CE · ${c.type || "?"}] ` + strip((c.desc || []).filter(Boolean).join(" ")) + (c.active ? "" : " · ĐANG TẮT trong cài đặt CE") : ""; }
+  if (isCe(k)) {
+    const c = ceInfo(k); if (!c) return "";
+    const d = c.vi_desc || strip((c.desc || []).filter(Boolean).join(" ").split("Found in:")[0]);
+    return `${CE_TYPE[c.type] || c.type || "?"}: ${d}` + (c.active ? "" : " · ĐANG TẮT trong cài đặt CE");
+  }
   return DESC[k] || "";
 }
 function enchName(k) {
@@ -289,7 +295,7 @@ function render() {
 }
 // "Sắc bén / Sharpness" (vanilla), "Volley [Enchantio]" (plugin): tìm được bằng cả hai tên
 function enchLabel(k) {
-  if (isCe(k)) return enchName(k) + " [CE]";
+  if (isCe(k)) { const c = ceInfo(k); return c && c.vi ? `${c.vi} / ${strip(c.display) || c.name} [CE]` : enchName(k) + " [CE]"; }
   const s = short(k);
   const en = prettyMat(s.includes(":") ? s.split(":")[1] : s);
   return VN[s] ? `${VN[s]} / ${en}` : enchName(k);
@@ -306,7 +312,7 @@ function fits(k, mat) {
 function enchItems(q) {
   const mat = curMat(), all = $("enchAll") && $("enchAll").checked, f = fold(q);
   return enchKeys().filter(k => all || fits(k, mat))
-    .filter(k => !f || fold(enchLabel(k) + " " + k).includes(f))
+    .filter(k => !f || fold(enchLabel(k) + " " + k + " " + (isCe(k) ? descOf(k) : "")).includes(f))
     .sort((a, b) => (fits(b, mat) - fits(a, mat)) || enchName(a).localeCompare(enchName(b), "vi"))
     .map(k => ({ value: k, label: enchLabel(k), sub: `tối đa ${enchMax(k) || "?"} · ${descOf(k)}${fits(k, mat) ? "" : " · KHÔNG hợp loại đồ này"}`, dim: !fits(k, mat) }));
 }

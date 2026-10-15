@@ -1583,6 +1583,23 @@ def notify_admins(text):
         pass
 
 
+SITE_CFG = Path(os.environ.get("SITE_CFG", "/repo/site-config/site.yml"))
+
+
+def donate_qr(don):
+    """Link ảnh VietQR (chỉ mã, cho tấm bản đồ trong game) + thông tin ngân hàng từ site/config/site.yml (mount ro). Thiếu = không có QR."""
+    try:
+        bank = (taikhoan.safe_yaml(SITE_CFG).get("donate") or {})
+    except Exception:
+        bank = {}
+    nh, stk = str(bank.get("ngan-hang") or "").strip(), str(bank.get("so-tai-khoan") or "").strip()
+    if not nh or not stk:
+        return {"qr": "", "bank": {}}
+    q = urllib.parse.urlencode({"amount": don["tien"], "addInfo": don["noi_dung"], "accountName": bank.get("chu-tai-khoan") or ""}, quote_via=urllib.parse.quote)
+    return {"qr": f"https://img.vietqr.io/image/{urllib.parse.quote(nh)}-{urllib.parse.quote(stk)}-qr_only.png?{q}",
+            "bank": {"ngan-hang": nh, "so-tai-khoan": stk, "chu-tai-khoan": bank.get("chu-tai-khoan") or ""}}
+
+
 def web_donate(data, ip):
     """Trang web: tạo mã chuyển khoản (action=tao) hoặc báo đã chuyển (action=bao); xem yêu cầu của mình (action=ds)."""
     import secrets
@@ -1604,7 +1621,7 @@ def web_donate(data, ip):
             # dùng lại mã chưa báo của đúng gói này (bấm lại không sinh mã mới mỗi lần)
             old = next((r for r in mine if r["trang_thai"] == "tao" and r["group"] == tiers[ti]["group"] and r["thang"] == g["thang"]), None)
             if old:
-                return {"ok": True, "don": old}
+                return {"ok": True, "don": old, **donate_qr(old)}
             if sum(1 for r in mine if r["trang_thai"] in ("tao", "cho")) >= 5:
                 raise ValueError("Bạn đang có 5 yêu cầu chưa xong. Chờ admin duyệt hoặc nhắn admin.")
             rid = "".join(secrets.choice("ABCDEFGHJKLMNPQRSTUVWXYZ23456789") for _ in range(4))
@@ -1613,7 +1630,7 @@ def web_donate(data, ip):
                    "tao_luc": int(time.time() * 1000), "ip": ip}
             rows.append(don)
             donate_save(rows)
-            return {"ok": True, "don": don}
+            return {"ok": True, "don": don, **donate_qr(don)}
         if act == "bao":
             don = next((r for r in mine if r["id"] == str(data.get("id", ""))), None)
             if not don or don["trang_thai"] != "tao":

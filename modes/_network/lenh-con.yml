@@ -262,6 +262,8 @@ groups:
     commands:
       - ["huongdan [chương]", "Mở cẩm nang trong game", Mọi người]
       - ["rank", "Xem rank donate và quyền lợi", Mọi người]
+      - ["rank mua", "Ủng hộ bằng QR: chọn gói, mã VietQR hiện trên tấm bản đồ trong tay", Mọi người]
+      - ["rank dachuyen", "Báo admin đã chuyển khoản (bấm trong chat sau khi quét QR)", Mọi người]
       - ["rank give <người> <bậc> <số tháng>", "Cấp rank donate (sau khi nhận tiền)", Chỉ admin]
       - ["rank remove <người>", "Gỡ rank donate", Chỉ admin]
       - ["rank check <người>", "Xem rank và ngày hết hạn", Chỉ admin]

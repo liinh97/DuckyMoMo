@@ -57,3 +57,10 @@ donate-ranks:
 guide:
   default-chapter: practice
   join-hint: "&6✦ &fGõ &e/huongdan &fđể xem cách chơi Practice (bấm vào đây)."
+
+# Ủng hộ bằng QR ngay trong game (/rank mua): chọn gói -> panel tạo yêu cầu (chung hàng chờ trang quản trị > Donate) -> QR VietQR vẽ trên tấm bản đồ,
+# hết hạn sau minutes phút. Cần PANEL_URL + PANEL_SITE_KEY (compose) và tài khoản ngân hàng trong site/config/site.yml (donate). Thiếu thì chỉ hiện link web.
+donate-qr:
+  enabled: true
+  minutes: 10
+  web: "https://app.goc6.io.vn/mc/web/taikhoan.html"

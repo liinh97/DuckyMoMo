@@ -47,6 +47,17 @@ final class DonateRanks implements Listener {
 
     private final JavaPlugin plugin;
     private final List<Tier> tiers = new ArrayList<>();
+    private DonateQr qr;
+
+    List<Tier> tiers() {
+        return tiers;
+    }
+
+    /** Ủng hộ bằng QR trong game (/rank mua). */
+    void setQr(DonateQr qr) {
+        this.qr = qr;
+    }
+
     private final String howToBuy;
     private final String joinMsg;
     private final String quitMsg;
@@ -134,6 +145,23 @@ final class DonateRanks implements Listener {
             return true;
         }
         switch (a[0].toLowerCase()) {
+            case "mua", "qr", "nap" -> {
+                if (qr != null && s instanceof Player p) {
+                    qr.open(p);
+                } else {
+                    showInfo(s);
+                }
+            }
+            case "dachuyen" -> {
+                if (qr != null && s instanceof Player p) {
+                    qr.reported(p, a.length > 1 ? a[1] : null);
+                }
+            }
+            case "huyqr" -> {
+                if (qr != null && s instanceof Player p) {
+                    qr.cancel(p);
+                }
+            }
             case "give" -> {
                 if (!admin || a.length < 4) {
                     s.sendMessage(c(admin ? "&cDùng: /rank give <tên> <bậc> <số tháng: 1|3|6|12>" : "&cBạn không có quyền."));
@@ -172,7 +200,12 @@ final class DonateRanks implements Listener {
             }
         }
         s.sendMessage(c("&7Bậc cao có đủ quyền của các bậc thấp hơn."));
-        s.sendMessage(c(howToBuy));
+        if (qr != null && qr.ready() && s instanceof Player) {
+            s.sendMessage(c("&a&l[Bấm để ủng hộ bằng mã QR]").clickEvent(net.kyori.adventure.text.event.ClickEvent.runCommand("/rank mua"))
+                    .append(c(" &7hoặc gõ &e/rank mua &7(quét bằng app ngân hàng, hiện ngay trong game)")));
+        } else {
+            s.sendMessage(c(howToBuy));
+        }
         if (s instanceof Player p) {
             User u = lp().getUserManager().getUser(p.getUniqueId());
             if (u != null) {

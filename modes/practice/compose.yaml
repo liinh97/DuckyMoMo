@@ -53,6 +53,9 @@ services:
         https://ci.ender.zone/job/EssentialsX/1832/artifact/jars/EssentialsXChat-2.22.1-dev%2B27-e70bdb8.jar
         https://ci.ender.zone/job/EssentialsX/1832/artifact/jars/EssentialsXSpawn-2.22.1-dev%2B27-e70bdb8.jar
       CFG_SERVER_NAME: practice-1
+      # /rank mua (QR ủng hộ trong game): plugin hỏi panel tạo yêu cầu donate, cùng khoá với trang web
+      PANEL_URL: http://panel:8080
+      PANEL_SITE_KEY: ${PANEL_SITE_KEY:-}
       CFG_VELOCITY_SECRET: ${VELOCITY_SECRET}
       CFG_DB_USER: ${DB_USER}
       CFG_DB_PASSWORD: ${DB_PASSWORD}

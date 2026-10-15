@@ -159,6 +159,12 @@
    xu; con số đoán, chỉnh theo kinh tế thật). SAU KHI MỞ phải sửa border_* ở Cài đặt cho khớp (ghi chú từng mốc). Placeholder %dmmkh_*%.
    Web: thẻ Khai hoang đầu mục Hằng ngày (/api/hangngay → khaihoang). Sửa lỗi YAML camnang.yml (ngoặc kép lồng) từ commit trước.
 
+23. **QR ủng hộ trong game /rank mua (15/10 tối, CHƯA build)**: DuckyMoMoCore `DonateQr` (lobby, banghoi, practice; config `donate-qr`),
+   menu chọn bậc/gói (chỉ số bậc = thứ tự tiers, gói = thứ tự prices, khớp donate_tiers() của panel) → POST panel /api/web/donate (X-DMM-Key,
+   env PANEL_URL + PANEL_SITE_KEY thêm vào 3 compose) → panel trả thêm `qr` (VietQR qr_only) + `bank` (đọc site/config/site.yml, mount ro mới
+   ../site/config:/repo/site-config) → tải ảnh, đen trắng 128x128, MapRenderer, tấm bản đồ có PDC qr_het (không vứt/cất rương, chết không rơi,
+   hết hạn tự xoá). [Tôi đã chuyển khoản] → action bao → panel báo admin như web. Chưa rõ: QR 128 điểm ảnh quét có dễ không (UniMC làm được).
+
 17. **Voice chat: Simple Voice Chat (15/10 tối, CHƯA cài; người dùng chốt: ghi lại, CHƯA vội triển khai)**. Chỉ người chơi Java có cài mod; Bedrock chưa có cách tốt (xem dưới).
    - Server con lobby/banghoi-1/practice-1: `simple-voice-chat` trong MODRINTH_PROJECTS (bản bukkit 2.6.x, release, hỗ trợ 26.2),
      cấu hình `plugins/voicechat/voicechat-server.properties` (40/20 block, codec VOIP, nhóm bật, cấm ghi âm, không bắt buộc mod, cổng 24454 trong Docker).

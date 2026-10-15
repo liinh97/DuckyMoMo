@@ -33,6 +33,7 @@ ACTIVITY_HTML = (Path(__file__).parent / "activity.html").read_text(encoding="ut
 CAMNANG_HTML = (Path(__file__).parent / "camnang.html").read_text(encoding="utf-8")
 HUONGDAN_HTML = (Path(__file__).parent / "huongdan.html").read_text(encoding="utf-8")
 ROLE_HTML = (Path(__file__).parent / "role.html").read_text(encoding="utf-8")
+THUVIEN_HTML = (Path(__file__).parent / "thuvien.html").read_text(encoding="utf-8")
 # Trang Role: role chức vụ (track staff + builder + default) và rank donate (track donate), lưu ở LuckPerms (MariaDB)
 STAFF_GROUPS = ["admin", "mod", "helper", "builder", "default"]
 DONATE_GROUPS = ["congtuoc", "hautuoc", "batuoc", "tutuoc", "namtuoc"]
@@ -725,6 +726,121 @@ def say(payload):
         msg += " (bỏ qua server đang tắt: " + ", ".join(failed) + ")"
     return {"ok": True, "message": msg}
 
+# ---------------------------------------------------------------- Thư viện đồ (DuckyMoMoCore ItemLibrary, banghoi-1)
+
+LIB_SERVER = "banghoi-1"
+LIB_DIR = DATA_DIR / LIB_SERVER / "plugins" / "DuckyMoMoCore"
+LIB_FILE = LIB_DIR / "thuvien-do.yml"
+LIB_META = LIB_DIR / "thuvien-meta.json"
+LIB_ID_RE = re.compile(r"^[a-z0-9_]{1,32}$")
+ENCH_KEY_RE = re.compile(r"^[a-z0-9_.-]+(:[a-z0-9_./-]+)?$")
+MATERIAL_RE = re.compile(r"^[A-Z0-9_]{1,64}$")
+
+
+def lib_load():
+    y = yaml_rt()
+    doc = y.load(LIB_FILE.read_text(encoding="utf-8")) if LIB_FILE.exists() else None
+    return y, (doc if doc is not None else {})
+
+
+def lib_meta():
+    try:
+        return json.loads(LIB_META.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return None
+
+
+def thuvien_json():
+    _, doc = lib_load()
+    items = []
+    for iid, s in (doc.get("items") or {}).items():
+        s = s or {}
+        it = {"id": str(iid), "nguon": s.get("nguon", "web"), "ten_goi": s.get("ten-goi", "")}
+        src = (s.get("preview") or {}) if it["nguon"] == "game" else s
+        it.update({"material": src.get("material", ""), "amount": src.get("amount", 1), "name": src.get("name", ""),
+                   "lore": list(src.get("lore") or []), "enchants": {str(k): int(v) for k, v in (src.get("enchants") or {}).items()},
+                   "unbreakable": bool(src.get("unbreakable", False)), "hide_enchants": bool(s.get("hide-enchants", False)),
+                   "glint": s.get("glint"), "nguoi_luu": s.get("nguoi-luu", "")})
+        items.append(it)
+    online = []
+    try:
+        out = rcon(LIB_SERVER, ["list"])[0][1]
+        names = out.split(":", 1)[1] if ":" in out else ""
+        online = [n.strip().split(" ")[-1] for n in re.split(r"[,\n]", names) if n.strip()]
+    except Exception:
+        pass
+    return {"items": items, "meta": lib_meta(), "online": [n for n in online if PLAYER_RE.match(n)]}
+
+
+def thuvien_action(data):
+    action = data.get("action")
+    iid = str(data.get("id", ""))
+    if not LIB_ID_RE.match(iid):
+        raise ValueError("Mã không hợp lệ: chỉ chữ thường không dấu, số, dấu _ (tối đa 32), vd kiem_rong")
+    if action == "give":
+        player = str(data.get("player", "")).strip()
+        amount = int(data.get("amount") or 0)
+        if not PLAYER_RE.match(player) or not 0 <= amount <= 64:
+            raise ValueError("Tên người chơi hoặc số lượng không hợp lệ")
+        res = rcon(LIB_SERVER, [f"dmm laydo {iid} {player} {amount}"])[0][1]
+        return {"ok": res.startswith("Đã"), "message": res or "Đã gửi lệnh"}
+    y, doc = lib_load()
+    items = doc.setdefault("items", {})
+    if action == "delete":
+        if iid not in items:
+            raise ValueError("Không có món này")
+        del items[iid]
+    elif action == "save":
+        it = data.get("item") or {}
+        old = items.get(iid)
+        if data.get("is_new") and old is not None:
+            raise ValueError("Mã đã có trong thư viện, chọn mã khác")
+        if old is not None and old.get("nguon") == "game":
+            raise ValueError("Mã này là đồ lấy từ game (giữ nguyên vẹn), không sửa trên web. Đổi mã khác, hoặc xoá món cũ trước.")
+        meta = lib_meta() or {}
+        mat = str(it.get("material", "")).upper().strip()
+        if not MATERIAL_RE.match(mat) or (meta.get("materials") and mat not in meta["materials"]):
+            raise ValueError(f"Vật liệu không có trong server: {mat or '(trống)'}")
+        name = str(it.get("name", ""))[:150]
+        lore = [str(x)[:150] for x in (it.get("lore") or [])][:20]
+        ench = {}
+        for k, v in (it.get("enchants") or {}).items():
+            k = str(k).lower().strip()
+            if k.startswith("minecraft:"):
+                k = k[len("minecraft:"):]
+            lvl = int(v)
+            if not ENCH_KEY_RE.match(k) or not 1 <= lvl <= 255:
+                raise ValueError(f"Phù phép không hợp lệ: {k} {v} (cấp 1–255)")
+            ench[k] = lvl
+        amount = int(it.get("amount") or 1)
+        if not 1 <= amount <= 64:
+            raise ValueError("Số lượng 1–64")
+        entry = {"nguon": "web", "ten-goi": DoubleQuotedScalarString(str(it.get("ten_goi", ""))[:60] or iid), "material": mat, "amount": amount}
+        if name:
+            entry["name"] = DoubleQuotedScalarString(name)
+        if lore:
+            entry["lore"] = [DoubleQuotedScalarString(x) for x in lore]
+        if ench:
+            entry["enchants"] = ench
+        if it.get("unbreakable"):
+            entry["unbreakable"] = True
+        if it.get("hide_enchants"):
+            entry["hide-enchants"] = True
+        if it.get("glint") in (True, False):
+            entry["glint"] = it["glint"]
+        items[iid] = entry
+    else:
+        raise ValueError("Thao tác không hợp lệ")
+    LIB_DIR.mkdir(parents=True, exist_ok=True)
+    with LIB_FILE.open("w", encoding="utf-8") as f:
+        y.dump(doc, f)
+    try:
+        res = rcon(LIB_SERVER, ["dmm thuvien nap"])[0][1]
+    except Exception as e:
+        res = f"Đã lưu file nhưng chưa nạp được vào server ({e}); server bật lên sẽ tự đọc."
+    verb = "Đã xoá" if action == "delete" else "Đã lưu"
+    return {"ok": "lỗi:" not in res, "message": f"{verb} \"{iid}\". {res}", "data": thuvien_json()}
+
 # ---------------------------------------------------------------- HTTP
 
 class Handler(BaseHTTPRequestHandler):
@@ -763,9 +879,10 @@ class Handler(BaseHTTPRequestHandler):
         if not self.guard():
             return
         path, _, query = self.path.partition("?")
-        if path in ("/", "/hoatdong", "/camnang", "/huongdan", "/role"):
+        if path in ("/", "/hoatdong", "/camnang", "/huongdan", "/role", "/thuvien"):
             dozzle = DOZZLE_PROXY_URL if self.headers.get("X-Forwarded-Prefix") else DOZZLE_URL
-            page = {"/": INDEX_HTML, "/hoatdong": ACTIVITY_HTML, "/camnang": CAMNANG_HTML, "/huongdan": HUONGDAN_HTML, "/role": ROLE_HTML}[path]
+            page = {"/": INDEX_HTML, "/hoatdong": ACTIVITY_HTML, "/camnang": CAMNANG_HTML, "/huongdan": HUONGDAN_HTML, "/role": ROLE_HTML,
+                    "/thuvien": THUVIEN_HTML}[path]
             body = page.replace("__DOZZLE_URL__", dozzle).encode("utf-8")
             self.send_response(200)
             self.send_header("Content-Type", "text/html; charset=utf-8")
@@ -783,6 +900,8 @@ class Handler(BaseHTTPRequestHandler):
                 self.send_json(200, roles_json())
             except Exception as e:
                 self.send_json(500, {"error": f"Không đọc được LuckPerms: {e}"})
+        elif path == "/api/thuvien":
+            self.send_json(200, thuvien_json())
         elif path == "/api/activity":
             params = {k: v[-1] for k, v in urllib.parse.parse_qs(query).items()}
             self.send_json(200, read_activity(params))
@@ -807,6 +926,17 @@ class Handler(BaseHTTPRequestHandler):
                 if length > 4096:
                     raise ValueError("Tin quá dài")
                 self.send_json(200, say(json.loads(self.rfile.read(length) or b"{}")))
+            except ValueError as e:
+                self.send_json(400, {"ok": False, "message": str(e)})
+            except Exception as e:
+                self.send_json(500, {"ok": False, "message": f"Lỗi: {e}"})
+            return
+        if self.path == "/api/thuvien":
+            try:
+                length = int(self.headers.get("Content-Length", "0"))
+                if length > 65536:
+                    raise ValueError("Dữ liệu quá lớn")
+                self.send_json(200, thuvien_action(json.loads(self.rfile.read(length) or b"{}")))
             except ValueError as e:
                 self.send_json(400, {"ok": False, "message": str(e)})
             except Exception as e:

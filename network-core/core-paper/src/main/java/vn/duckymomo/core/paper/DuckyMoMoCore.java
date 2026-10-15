@@ -19,6 +19,7 @@ public final class DuckyMoMoCore extends JavaPlugin {
     private Activity activity;
     private PeaceAlliance peace;
     private DecorShop decorShop;
+    private ItemLibrary itemLibrary;
 
     @Override
     public void onEnable() {
@@ -335,10 +336,18 @@ public final class DuckyMoMoCore extends JavaPlugin {
         // Lệnh admin /dmm. Trang trí map (cây, cỏ, công trình) chỉ bật ở server có decorate.enabled (banghoi-1)
         decorator = getConfig().getBoolean("decorate.enabled") ? new MapDecorator(this) : null;
         structures = decorator != null ? new StructurePlacer(this) : null;
+        // Thư viện đồ (mọi server): /dmm luudo|laydo|thuvien; trang web /thuvien đọc thuvien-meta.json
+        itemLibrary = new ItemLibrary(this);
+        if (!reloading) {
+            getServer().getScheduler().runTaskLater(this, itemLibrary::exportMeta, 40L);
+        }
         PluginCommand dmm = getCommand("dmm");
         if (dmm != null) {
             dmm.setExecutor((sender, cmd, label, args) -> {
-                if (args.length >= 1 && args[0].equalsIgnoreCase("decorate")) {
+                if (args.length >= 1 && (args[0].equalsIgnoreCase("luudo") || args[0].equalsIgnoreCase("laydo")
+                        || args[0].equalsIgnoreCase("thuvien"))) {
+                    itemLibrary.command(sender, args);
+                } else if (args.length >= 1 && args[0].equalsIgnoreCase("decorate")) {
                     if (decorator == null) {
                         sender.sendMessage("Trang trí map chưa bật trên server này (config: decorate.enabled).");
                     } else {
@@ -392,7 +401,7 @@ public final class DuckyMoMoCore extends JavaPlugin {
                     reload();
                     sender.sendMessage("DuckyMoMoCore: đã nạp lại config.yml");
                 } else {
-                    sender.sendMessage("/dmm decorate|structures start | pause | status | reset   /dmm clean   /dmm reload   /dmm lenh   /dmm enchant|sach <phù phép> <cấp>   /dmm rtpnpc [remove]   /dmm phu add|remove|list   /dmm hoabinh setup|claim <r>   /dmm shopnpc [remove]");
+                    sender.sendMessage("/dmm decorate|structures start | pause | status | reset   /dmm clean   /dmm reload   /dmm lenh   /dmm enchant|sach <phù phép> <cấp>   /dmm rtpnpc [remove]   /dmm phu add|remove|list   /dmm hoabinh setup|claim <r>   /dmm shopnpc [remove]   /dmm luudo <mã>   /dmm laydo <mã> [người] [số]   /dmm thuvien [nap]");
                 }
                 return true;
             });

@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DuckyMoMo · Thư viện đồ</title>
+<style>
+  :root {
+    --bg: #f5f6f8; --card: #fff; --text: #1d2330; --muted: #667085; --line: #e3e6ec;
+    --accent: #e8711c; --accent-text: #fff; --ok: #1e8e3e; --err: #c62828; --input: #fff; --chip: #f0f2f5; --warn: #b26a00;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #14161b; --card: #1d2027; --text: #e6e8ee; --muted: #9aa3b2; --line: #2d313b; --input: #15171c; --chip: #262a33; --warn: #e0a040; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); }
+  header { display: flex; align-items: center; gap: 16px; padding: 14px 20px; border-bottom: 1px solid var(--line); background: var(--card); position: sticky; top: 0; z-index: 2; flex-wrap: wrap; }
+  header h1 { font-size: 17px; margin: 0; flex: 1; }
+  header a { color: var(--muted); text-decoration: none; font-size: 14px; }
+  header a:hover { color: var(--text); }
+  main { max-width: 1180px; margin: 0 auto; padding: 20px 16px 80px; display: grid; grid-template-columns: 320px 1fr; gap: 16px; align-items: start; }
+  @media (max-width: 860px) { main { grid-template-columns: 1fr; } }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; }
+  .card h2 { font-size: 15px; margin: 0 0 10px; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  input, select, textarea { width: 100%; padding: 7px 9px; border: 1px solid var(--line); border-radius: 6px; background: var(--input); color: var(--text); font: inherit; }
+  textarea { min-height: 84px; resize: vertical; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 13.5px; }
+  input:disabled, select:disabled, textarea:disabled { opacity: .6; }
+  button { font: inherit; cursor: pointer; border-radius: 6px; border: 1px solid var(--line); background: transparent; color: var(--text); padding: 6px 12px; }
+  button.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-text); }
+  button.danger { color: var(--err); }
+  button:disabled { opacity: .5; cursor: default; }
+  .list { display: flex; flex-direction: column; gap: 6px; max-height: 70vh; overflow: auto; }
+  .li { text-align: left; padding: 8px 10px; border-radius: 8px; border: 1px solid var(--line); background: var(--chip); }
+  .li.on { border-color: var(--accent); }
+  .li .nm { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 13.5px; background: #1b1d22; padding: 1px 6px; border-radius: 4px; display: inline-block; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .li small { color: var(--muted); display: block; margin-top: 3px; }
+  .badge { font-size: 11px; padding: 1px 6px; border-radius: 999px; background: var(--line); color: var(--muted); margin-left: 4px; }
+  .empty { color: var(--muted); font-size: 13.5px; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .grid4 { display: grid; grid-template-columns: 1.2fr 1fr 1.6fr 90px; gap: 10px; }
+  @media (max-width: 640px) { .grid2, .grid4 { grid-template-columns: 1fr; } }
+  label.f { display: block; font-size: 13px; color: var(--muted); margin: 10px 0 3px; }
+  .note { color: var(--muted); font-size: 13px; margin: 4px 0 0; }
+  .warn { color: var(--warn); font-size: 13px; margin: 6px 0 0; }
+  .palette { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 5px; }
+  .palette button { width: 24px; height: 22px; padding: 0; border-radius: 4px; font-size: 11px; font-weight: 700; }
+  .ench { display: grid; grid-template-columns: 1fr 80px 30px; gap: 6px; margin-top: 6px; align-items: center; }
+  .ench button { padding: 4px 0; color: var(--err); border: none; }
+  .opts { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; margin-top: 10px; font-size: 14px; }
+  .opts label { display: flex; gap: 6px; align-items: center; }
+  .opts input[type=checkbox] { width: auto; }
+  .opts select { width: auto; }
+  .bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line); }
+  .bar .sp { flex: 1; }
+  .bar input { width: 170px; } .bar input.n { width: 70px; }
+  .status { margin-top: 8px; font-size: 14px; color: var(--muted); min-height: 21px; }
+  .status.ok { color: var(--ok); } .status.err { color: var(--err); }
+  /* tooltip giống trong game */
+  .pv-wrap { display: flex; justify-content: center; padding: 18px 10px; background: repeating-conic-gradient(#3b3b3b 0% 25%, #353535 0% 50%) 50% / 24px 24px; border-radius: 8px; margin-bottom: 12px; }
+  .tip { background: rgba(16, 0, 16, .94); border: 2px solid; border-image: linear-gradient(#5000ff, #28007f) 1; padding: 6px 9px; min-width: 200px; max-width: 100%;
+    font: 15px/1.45 ui-monospace, "Cascadia Mono", Menlo, Consolas, monospace; color: #fff; text-shadow: 2px 2px 0 #3f3f3f; word-break: break-word; }
+  .tip .id { color: #555; text-shadow: none; font-size: 12.5px; margin-top: 4px; }
+  .obf { filter: blur(1.5px); }
+</style>
+</head>
+<body>
+<header>
+  <h1>DuckyMoMo · Thư viện đồ</h1>
+  <a href="./">Cài đặt</a>
+  <a href="camnang">Cẩm nang</a>
+  <a href="huongdan">Cẩm nang game</a>
+  <a href="role">Role</a>
+  <a href="hoatdong">Hoạt động người chơi</a>
+</header>
+<main>
+  <section class="card">
+    <h2><span>Đồ trong thư viện <span id="count" class="badge"></span></span><button class="primary" id="new">+ Tạo mới</button></h2>
+    <div class="list" id="list"><p class="empty">Đang tải…</p></div>
+    <p class="note">Đồ ở đây dùng làm phần thưởng (điểm danh, nhiệm vụ, vòng quay, đổi mảnh, cửa hàng) hoặc admin phát.
+      Lấy đồ đặc biệt từ game: cầm trên tay, gõ <code>/dmm luudo &lt;mã&gt;</code> (giữ nguyên vẹn, kể cả phù phép CrazyEnchantments).</p>
+  </section>
+
+  <section class="card" id="editor">
+    <div class="pv-wrap"><div class="tip" id="tip"></div></div>
+    <div id="gamenote" class="warn" hidden></div>
+    <div class="grid4">
+      <div><label class="f" for="id">Mã (không dấu)</label><input id="id" placeholder="kiem_rong" maxlength="32"></div>
+      <div><label class="f" for="tengoi">Tên gợi nhớ</label><input id="tengoi" placeholder="Kiếm rồng (quà mốc 30 ngày)" maxlength="60"></div>
+      <div><label class="f" for="material">Loại đồ</label><input id="material" list="materials" placeholder="DIAMOND_SWORD"></div>
+      <div><label class="f" for="amount">Số lượng</label><input id="amount" type="number" min="1" max="64" value="1"></div>
+    </div>
+    <datalist id="materials"></datalist>
+
+    <label class="f" for="name">Tên hiển thị (mã màu &amp;: &amp;6 vàng, &amp;l đậm, &amp;o nghiêng…)</label>
+    <input id="name" placeholder="&6&lKiếm Rồng" maxlength="150">
+    <div class="palette" id="palette"></div>
+
+    <label class="f" for="lore">Mô tả (lore), mỗi dòng một dòng trong game</label>
+    <textarea id="lore" placeholder="&7Rèn từ vảy rồng phương Bắc&#10;&8Quà mốc điểm danh 30 ngày"></textarea>
+
+    <label class="f">Phù phép</label>
+    <div id="enchs"></div>
+    <button id="addench" style="margin-top:6px">+ Thêm phù phép</button>
+
+    <div class="opts">
+      <label><input type="checkbox" id="unbreakable"> Không thể hỏng</label>
+      <label><input type="checkbox" id="hide"> Ẩn dòng phù phép</label>
+      <label>Ánh lấp lánh <select id="glint"><option value="">Mặc định</option><option value="true">Luôn có</option><option value="false">Không có</option></select></label>
+    </div>
+    <div id="warns"></div>
+
+    <div class="bar">
+      <button class="primary" id="save">Lưu</button>
+      <button class="danger" id="del">Xoá</button>
+      <span class="sp"></span>
+      <input id="player" list="online" placeholder="Đưa cho (tên người chơi)">
+      <input id="gamount" class="n" type="number" min="0" max="64" value="0" title="0 = số lượng ghi trong thư viện">
+      <button id="give">Đưa</button>
+    </div>
+    <datalist id="online"></datalist>
+    <div class="status" id="status"></div>
+    <p class="note">Bấm Lưu là server Bang Hội Chiến nạp lại thư viện ngay. "Đưa" chỉ đưa được cho người đang ở Bang Hội Chiến.</p>
+  </section>
+</main>
+<script>
+const $ = (id) => document.getElementById(id);
+const COLORS = { "0": "#000000", "1": "#0000AA", "2": "#00AA00", "3": "#00AAAA", "4": "#AA0000", "5": "#AA00AA", "6": "#FFAA00", "7": "#AAAAAA",
+  "8": "#555555", "9": "#5555FF", a: "#55FF55", b: "#55FFFF", c: "#FF5555", d: "#FF55FF", e: "#FFFF55", f: "#FFFFFF" };
+// Tên tiếng Việt của phù phép vanilla (trong game hiện theo ngôn ngữ của người chơi)
+const VN = { protection: "Bảo vệ", fire_protection: "Chống lửa", feather_falling: "Rơi nhẹ", blast_protection: "Chống nổ",
+  projectile_protection: "Chống tên bắn", respiration: "Thở dưới nước", aqua_affinity: "Thạo nước", thorns: "Gai",
+  depth_strider: "Lội nước sâu", frost_walker: "Băng giá", binding_curse: "Lời nguyền ràng buộc", soul_speed: "Tốc độ linh hồn",
+  swift_sneak: "Lén nhanh", sharpness: "Sắc bén", smite: "Trừng phạt (xác sống)", bane_of_arthropods: "Khắc tinh chân đốt",
+  knockback: "Đẩy lùi", fire_aspect: "Lửa", looting: "Cướp bóc", sweeping_edge: "Lưỡi quét", efficiency: "Hiệu suất",
+  silk_touch: "Mềm mại", unbreaking: "Độ bền", fortune: "Gia tài", power: "Sức mạnh", punch: "Bật lùi", flame: "Tên lửa",
+  infinity: "Vô hạn", luck_of_the_sea: "May mắn biển cả", lure: "Mồi nhử", loyalty: "Trung thành", impaling: "Xiên",
+  riptide: "Sóng xô", channeling: "Dẫn sét", multishot: "Bắn loạt", quick_charge: "Nạp nhanh", piercing: "Xuyên thủng",
+  mending: "Tự sửa", vanishing_curse: "Lời nguyền biến mất", density: "Mật độ", breach: "Phá giáp", wind_burst: "Bùng gió", lunge: "Lao tới" };
+const ROMAN = ["", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"];
+let data = null, cur = null, isNew = true, enchRows = [], lastField = "name";
+
+function esc(s) { return String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
+function short(k) { return String(k).replace(/^minecraft:/, ""); }
+function enchName(k) {
+  const s = short(k);
+  if (VN[s]) return VN[s];
+  const [ns, key] = s.includes(":") ? s.split(":") : ["", s];
+  return prettyMat(key) + (ns ? ` [${prettyMat(ns)}]` : "");
+}
+function prettyMat(m) { return String(m || "").toLowerCase().split("_").map(w => w ? w[0].toUpperCase() + w.slice(1) : "").join(" "); }
+// &-mã màu -> HTML (như trong game): đổi màu thì bỏ định dạng; &r về mặc định
+function mc(text, defColor, defItalic) {
+  let out = "", st = { c: defColor, b: false, i: defItalic, u: false, s: false, k: false };
+  for (const part of String(text).split(/(&[0-9a-fk-or])/i)) {
+    const m = /^&([0-9a-fk-or])$/i.exec(part);
+    if (m) {
+      const k = m[1].toLowerCase();
+      if (COLORS[k]) st = { c: COLORS[k], b: false, i: false, u: false, s: false, k: false };
+      else if (k === "l") st.b = true; else if (k === "o") st.i = true; else if (k === "n") st.u = true;
+      else if (k === "m") st.s = true; else if (k === "k") st.k = true;
+      else if (k === "r") st = { c: defColor, b: false, i: defItalic, u: false, s: false, k: false };
+      continue;
+    }
+    if (!part) continue;
+    const deco = [st.u ? "underline" : "", st.s ? "line-through" : ""].filter(Boolean).join(" ");
+    out += `<span class="${st.k ? "obf" : ""}" style="color:${st.c};${st.b ? "font-weight:700;" : ""}${st.i ? "font-style:italic;" : ""}${deco ? "text-decoration:" + deco + ";" : ""}">${esc(part)}</span>`;
+  }
+  return out;
+}
+function form() {
+  const ench = {};
+  for (const r of enchRows) { const k = r.sel.value, l = parseInt(r.lvl.value, 10); if (k && l > 0) ench[k] = l; }
+  const g = $("glint").value;
+  return { ten_goi: $("tengoi").value.trim(), material: $("material").value.trim().toUpperCase(), amount: parseInt($("amount").value || "1", 10),
+    name: $("name").value, lore: $("lore").value.replace(/\s+$/, "").split("\n").filter((l, i, a) => a.length > 1 || l !== ""),
+    enchants: ench, unbreakable: $("unbreakable").checked, hide_enchants: $("hide").checked, glint: g === "" ? null : g === "true" };
+}
+function render() {
+  const f = cur && cur.nguon === "game" ? cur : form();
+  const mat = f.material || "STONE";
+  const hasEnch = Object.keys(f.enchants || {}).length > 0;
+  let html = f.name ? `<div>${mc(f.name, "#FFFFFF", false)}</div>`
+    : `<div style="color:${hasEnch ? "#55FFFF" : "#FFFFFF"}">${esc(prettyMat(mat))}</div>`;
+  if (!f.hide_enchants) for (const [k, l] of Object.entries(f.enchants || {})) {
+    const curse = /curse/.test(k);
+    html += `<div style="color:${curse ? "#FF5555" : "#AAAAAA"}">${esc(enchName(k))}${(enchMax(k) === 1 && l === 1) ? "" : " " + (ROMAN[l] || l)}</div>`;
+  }
+  for (const line of f.lore || []) html += `<div>${line ? mc(line, "#AAAAAA", false) : "&nbsp;"}</div>`;
+  if (f.unbreakable) html += `<div style="color:#5555FF">Không thể phá huỷ</div>`;
+  html += `<div class="id">minecraft:${esc(mat.toLowerCase())}${(f.amount || 1) > 1 ? " ×" + f.amount : ""}</div>`;
+  $("tip").innerHTML = html;
+  // cảnh báo
+  const w = [];
+  for (const [k, l] of Object.entries(f.enchants || {})) { const mx = enchMax(k); if (mx && l > mx) w.push(`${enchName(k)} ${l} vượt cấp tối đa vanilla (${mx})`); }
+  const mats = data && data.meta ? data.meta.materials : null;
+  if (mats && f.material && !mats.includes(f.material)) w.push(`Không có loại đồ "${f.material}" trong server`);
+  if (w.length) w.push("Đồ phát cho người chơi: đồ quá mạnh làm lệch cân bằng chiến tranh.");
+  $("warns").innerHTML = w.map(x => `<p class="warn">⚠ ${esc(x)}</p>`).join("");
+}
+function enchMax(k) { const e = data && data.meta ? data.meta.enchantments.find(e => short(e.key) === short(k)) : null; return e ? e.max : 0; }
+function enchOptions(sel) {
+  const list = data && data.meta ? data.meta.enchantments.map(e => short(e.key)) : Object.keys(VN);
+  return list.sort((a, b) => enchName(a).localeCompare(enchName(b), "vi"))
+    .map(k => `<option value="${esc(k)}" ${k === sel ? "selected" : ""}>${esc(enchName(k))} (${esc(k)}${enchMax(k) ? ", tối đa " + enchMax(k) : ""})</option>`).join("");
+}
+function addEnch(key = "", lvl = 1) {
+  const row = document.createElement("div"); row.className = "ench";
+  row.innerHTML = `<select>${enchOptions(key)}</select><input type="number" min="1" max="255" value="${lvl}"><button title="Bỏ">×</button>`;
+  const r = { el: row, sel: row.querySelector("select"), lvl: row.querySelector("input") };
+  if (!key) r.sel.value = "sharpness";
+  r.sel.onchange = r.lvl.oninput = render;
+  row.querySelector("button").onclick = () => { enchRows = enchRows.filter(x => x !== r); row.remove(); render(); };
+  enchRows.push(r); $("enchs").appendChild(row);
+}
+function setEditable(on) {
+  for (const id of ["tengoi", "material", "amount", "name", "lore", "unbreakable", "hide", "glint", "addench", "save"]) $(id).disabled = !on;
+  enchRows.forEach(r => { r.sel.disabled = r.lvl.disabled = !on; r.el.querySelector("button").disabled = !on; });
+}
+function load(it) {
+  cur = it; isNew = !it;
+  $("id").value = it ? it.id : ""; $("id").disabled = !!it;
+  $("tengoi").value = it ? it.ten_goi : ""; $("material").value = it ? it.material : "DIAMOND_SWORD";
+  $("amount").value = it ? it.amount : 1; $("name").value = it ? it.name : ""; $("lore").value = it ? (it.lore || []).join("\n") : "";
+  $("unbreakable").checked = !!(it && it.unbreakable); $("hide").checked = !!(it && it.hide_enchants);
+  $("glint").value = it && it.glint !== null && it.glint !== undefined ? String(it.glint) : "";
+  enchRows = []; $("enchs").innerHTML = "";
+  for (const [k, l] of Object.entries(it ? it.enchants : {})) addEnch(short(k), l);
+  const game = it && it.nguon === "game";
+  $("gamenote").hidden = !game;
+  $("gamenote").textContent = game ? `Đồ lấy từ game${it.nguoi_luu ? " (" + it.nguoi_luu + " lưu)" : ""}: giữ nguyên vẹn nên không sửa trên web. Muốn đổi: sửa trong game rồi /dmm luudo ${it.id} lại.` : "";
+  setEditable(!game); $("del").disabled = !it; $("give").disabled = !it;
+  document.querySelectorAll(".li").forEach(b => b.classList.toggle("on", !!it && b.dataset.id === it.id));
+  render();
+}
+function renderList() {
+  const items = data.items;
+  $("count").textContent = items.length;
+  $("list").innerHTML = items.length ? "" : `<p class="empty">Chưa có món nào. Bấm "+ Tạo mới" hoặc dùng /dmm luudo trong game.</p>`;
+  for (const it of items) {
+    const b = document.createElement("button"); b.className = "li"; b.dataset.id = it.id;
+    b.innerHTML = `<span class="nm">${it.name ? mc(it.name, "#FFFFFF", false) : `<span style="color:#fff">${esc(prettyMat(it.material))}</span>`}</span>
+      <small><code>${esc(it.id)}</code>${it.nguon === "game" ? '<span class="badge">từ game</span>' : ""} ${esc(it.ten_goi && it.ten_goi !== it.id ? "· " + it.ten_goi : "")}</small>`;
+    b.onclick = () => load(it);
+    $("list").appendChild(b);
+  }
+  $("materials").innerHTML = (data.meta ? data.meta.materials : []).map(m => `<option value="${m}">`).join("");
+  $("online").innerHTML = (data.online || []).map(p => `<option value="${esc(p)}">`).join("");
+}
+function status(ok, msg) { $("status").className = "status " + (ok === null ? "" : ok ? "ok" : "err"); $("status").textContent = msg; }
+async function post(body) {
+  status(null, "Đang gửi…");
+  try {
+    const r = await fetch("api/thuvien", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+    const res = await r.json();
+    status(!!res.ok, res.message);
+    if (res.data) { data = res.data; renderList(); }
+    return res;
+  } catch (e) { status(false, "Không gửi được: " + e); return {}; }
+}
+// bảng màu: chèn mã vào ô đang gõ (tên hoặc lore)
+for (const [k, c] of Object.entries(COLORS)) {
+  const b = document.createElement("button"); b.style.background = c; b.title = "&" + k; $("palette").appendChild(b);
+}
+for (const [k, t, s] of [["l", "B", "font-weight:900"], ["o", "I", "font-style:italic"], ["n", "U", "text-decoration:underline"], ["r", "↺", ""]]) {
+  const b = document.createElement("button"); b.textContent = t; b.title = "&" + k; b.style.cssText = s; $("palette").appendChild(b);
+}
+$("palette").querySelectorAll("button").forEach(b => b.onclick = (e) => {
+  e.preventDefault();
+  const el = $(lastField), code = b.title, p = el.selectionStart ?? el.value.length;
+  el.value = el.value.slice(0, p) + code + el.value.slice(el.selectionEnd ?? p); el.focus(); el.selectionStart = el.selectionEnd = p + code.length; render();
+});
+$("name").onfocus = () => lastField = "name"; $("lore").onfocus = () => lastField = "lore";
+for (const id of ["material", "amount", "name", "lore", "unbreakable", "hide", "glint", "tengoi"]) $(id).addEventListener("input", render);
+$("addench").onclick = (e) => { e.preventDefault(); addEnch(); render(); };
+$("new").onclick = () => load(null);
+$("save").onclick = async () => {
+  const id = $("id").value.trim();
+  if (!/^[a-z0-9_]{1,32}$/.test(id)) { status(false, "Mã chỉ gồm chữ thường không dấu, số, dấu _ (vd kiem_rong)"); return; }
+  const res = await post({ action: "save", id, is_new: isNew, item: form() });
+  if (res.ok) load(data.items.find(x => x.id === id));
+};
+$("del").onclick = async () => { if (cur && confirm(`Xoá "${cur.id}" khỏi thư viện?`)) { const res = await post({ action: "delete", id: cur.id }); if (res.ok) load(null); } };
+$("give").onclick = () => {
+  const p = $("player").value.trim(); if (!cur || !p) { status(false, "Chọn một món và nhập tên người chơi"); return; }
+  post({ action: "give", id: cur.id, player: p, amount: parseInt($("gamount").value || "0", 10) });
+};
+fetch("api/thuvien").then(r => r.json()).then(d => {
+  data = d; renderList(); load(null);
+  if (!d.meta) status(false, "Chưa có danh sách phù phép/vật liệu từ server (thuvien-meta.json): khởi động lại Bang Hội Chiến với bản DuckyMoMoCore mới.");
+}).catch(e => { $("list").innerHTML = `<p class="empty">${esc(e)}</p>`; });
+</script>
+</body>
+</html>

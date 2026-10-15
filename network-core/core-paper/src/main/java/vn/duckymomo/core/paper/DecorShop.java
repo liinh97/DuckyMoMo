@@ -52,7 +52,8 @@ final class DecorShop implements Listener {
         CATS.put("danhhieu", "Danh hiệu");
     }
 
-    record Offer(String key, String cat, Material icon, int amount, double price, String title, String titleText) {
+    /** lib: mã trong Thư viện đồ (bán đồ admin thiết kế), null = đồ thường theo icon. */
+    record Offer(String key, String cat, Material icon, int amount, double price, String title, String titleText, String lib) {
     }
 
     private final DuckyMoMoCore plugin;
@@ -64,9 +65,11 @@ final class DecorShop implements Listener {
     private final NamespacedKey offerKey;
     private final NamespacedKey catKey;
     private final NamespacedKey npcKey;
+    private final ItemLibrary library;
 
-    DecorShop(DuckyMoMoCore plugin, Leaderboard board, Predicate<Location> inCapital, ConfigurationSection c) {
+    DecorShop(DuckyMoMoCore plugin, Leaderboard board, Predicate<Location> inCapital, ConfigurationSection c, ItemLibrary library) {
         this.plugin = plugin;
+        this.library = library;
         this.board = board;
         this.inCapital = inCapital;
         this.rankPermission = c.getString("rank-permission", "duckymomo.cuahang");
@@ -97,19 +100,29 @@ final class DecorShop implements Listener {
         }
         for (Map<?, ?> m : c.getMapList("titles")) {
             offers.add(new Offer("t" + offers.size(), "danhhieu", Material.NAME_TAG, 1,
-                    m.get("price") instanceof Number n ? n.doubleValue() : 0, String.valueOf(m.get("id")), String.valueOf(m.get("text"))));
+                    m.get("price") instanceof Number n ? n.doubleValue() : 0, String.valueOf(m.get("id")), String.valueOf(m.get("text")), null));
         }
         plugin.getLogger().info("Cửa hàng Kinh Đô: " + offers.size() + " món" + (skipped > 0 ? " (bỏ " + skipped + " món rẻ hơn giá /sell)" : ""));
     }
 
     private Offer item(Map<?, ?> m, String cat) {
+        int amount = m.get("amount") instanceof Number n ? Math.max(1, n.intValue()) : 1;
+        double price = m.get("price") instanceof Number n ? n.doubleValue() : 0;
+        String key = (cat.equals("vatlieu") ? "v" : "i") + offers.size();
+        if (m.get("library") != null) {
+            String id = String.valueOf(m.get("library"));
+            ItemStack sample = library == null ? null : library.build(id, 1);
+            if (sample == null) {
+                plugin.getLogger().warning("Cửa hàng: bỏ món thư viện \"" + id + "\" (không có trong Thư viện đồ)");
+                return null;
+            }
+            return new Offer(key, cat, sample.getType(), amount, price, null, null, id);
+        }
         Material mat = Material.matchMaterial(String.valueOf(m.get("material")));
         if (mat == null || !mat.isItem()) {
             return null;
         }
-        int amount = m.get("amount") instanceof Number n ? Math.max(1, n.intValue()) : 1;
-        double price = m.get("price") instanceof Number n ? n.doubleValue() : 0;
-        return new Offer((cat.equals("vatlieu") ? "v" : "i") + offers.size(), cat, mat, amount, price, null, null);
+        return new Offer(key, cat, mat, amount, price, null, null, null);
     }
 
     private static Component c(String s) {
@@ -193,7 +206,11 @@ final class DecorShop implements Listener {
         h.inv = inv;
         for (int i = 0; i < list.size() && i < inv.getSize() - 9; i++) {
             Offer o = list.get(i);
-            ItemStack it = new ItemStack(o.icon(), Math.max(1, Math.min(o.amount(), o.icon().getMaxStackSize())));
+            ItemStack it = o.lib() != null ? library.build(o.lib(), 1) : null;
+            if (it == null) {
+                it = new ItemStack(o.icon());
+            }
+            it.setAmount(Math.max(1, Math.min(o.amount(), it.getMaxStackSize())));
             ItemMeta m = it.getItemMeta();
             m.displayName(c(label(o)));
             List<Component> lore = new ArrayList<>();
@@ -216,8 +233,15 @@ final class DecorShop implements Listener {
         p.openInventory(inv);
     }
 
-    private static String label(Offer o) {
-        return o.title() != null ? "Danh hiệu " + o.titleText() : "&f" + o.amount() + " × " + o.icon().name().toLowerCase(Locale.ROOT).replace('_', ' ');
+    private String label(Offer o) {
+        if (o.title() != null) {
+            return "Danh hiệu " + o.titleText();
+        }
+        if (o.lib() != null) {
+            ItemStack s = library.build(o.lib(), 1);
+            return "&f" + o.amount() + " × " + (s == null ? o.lib() : Rewards.nameOf(s));
+        }
+        return "&f" + o.amount() + " × " + o.icon().name().toLowerCase(Locale.ROOT).replace('_', ' ');
     }
 
     private void buy(Player p, String key) {
@@ -238,8 +262,15 @@ final class DecorShop implements Listener {
         } else {
             int left = o.amount();
             while (left > 0) {
-                int n = Math.min(left, o.icon().getMaxStackSize());
-                for (ItemStack rest : p.getInventory().addItem(new ItemStack(o.icon(), n)).values()) {
+                ItemStack give = o.lib() != null ? library.build(o.lib(), 1) : new ItemStack(o.icon());
+                if (give == null) {
+                    VaultEconomy.deposit(p, o.price() * left / o.amount()); // món thư viện vừa bị xoá: hoàn tiền phần chưa giao
+                    p.sendMessage(c("&cMón này không còn trong kho, đã hoàn tiền."));
+                    break;
+                }
+                int n = Math.min(left, give.getMaxStackSize());
+                give.setAmount(n);
+                for (ItemStack rest : p.getInventory().addItem(give).values()) {
                     p.getWorld().dropItemNaturally(p.getLocation(), rest);
                 }
                 left -= n;

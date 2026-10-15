@@ -853,3 +853,73 @@ fm_shop:
   - {label: "5000 xu", cost: {lamnguy: 25}, limit: 0, rewards: [xu 5000]}
   - {label: "16 kim cương", cost: {lamnguy: 40}, limit: 0, rewards: [vat DIAMOND 16]}
   - {label: "Đĩa nhạc Pigstep (trang trí)", cost: {lamnguy: 20}, limit: 1, rewards: [vat MUSIC_DISC_PIGSTEP 1]}
+decor_materials:
+  - {material: DIRT, amount: 64, price: 100}
+  - {material: COBBLESTONE, amount: 64, price: 100}
+  - {material: SAND, amount: 64, price: 120}
+  - {material: GRAVEL, amount: 64, price: 120}
+  - {material: OAK_PLANKS, amount: 64, price: 160}
+  - {material: STONE, amount: 64, price: 160}
+  - {material: CLAY, amount: 64, price: 200}
+  - {material: GLASS, amount: 64, price: 250}
+  - {material: STONE_BRICKS, amount: 64, price: 250}
+  - {material: TORCH, amount: 32, price: 80}
+decor_items:
+  - material: LANTERN
+    amount: 8
+    price: 40
+  - material: SEA_LANTERN
+    amount: 8
+    price: 80
+  - material: GLOWSTONE
+    amount: 16
+    price: 60
+  - material: PRISMARINE_BRICKS
+    amount: 32
+    price: 60
+  - material: PURPUR_BLOCK
+    amount: 32
+    price: 80
+  - material: WHITE_GLAZED_TERRACOTTA
+    amount: 16
+    price: 40
+  - material: CYAN_GLAZED_TERRACOTTA
+    amount: 16
+    price: 40
+  - material: TERRACOTTA
+    amount: 64
+    price: 50
+  - material: QUARTZ_BLOCK
+    amount: 32
+    price: 80
+  - material: AMETHYST_BLOCK
+    amount: 16
+    price: 60
+  - material: CANDLE
+    amount: 16
+    price: 30
+  - material: FLOWER_POT
+    amount: 16
+    price: 20
+  - material: ITEM_FRAME
+    amount: 16
+    price: 30
+  - material: ARMOR_STAND
+    amount: 4
+    price: 40
+  - material: PAINTING
+    amount: 8
+    price: 30
+  - material: FLOWER_BANNER_PATTERN
+    amount: 1
+    price: 100
+  - material: GLOBE_BANNER_PATTERN
+    amount: 1
+    price: 150
+  - material: GLOW_INK_SAC
+    amount: 16
+    price: 40
+decor_titles:
+  - {id: luukhach, text: "&7[Lữ Khách]", price: 1000}
+  - {id: nghenhan, text: "&d[Nghệ Nhân]", price: 3000}
+  - {id: phuthuong, text: "&6[Phú Thương]", price: 8000}

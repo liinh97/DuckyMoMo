@@ -71,6 +71,8 @@ public final class DuckyMoMoCore extends JavaPlugin {
     }
 
     private void setup(boolean reloading) {
+        // Thư viện đồ (mọi server): dựng trước để cửa hàng, phần thưởng dùng; /dmm luudo|laydo|thuvien
+        itemLibrary = new ItemLibrary(this);
         // Người chơi Bedrock (đã xác thực qua Xbox + Floodgate) không phải nhập mật khẩu AuthMe.
         // Chỉ bật trên server có AuthMe (hiện tại là lobby).
         if (getServer().getPluginManager().isPluginEnabled("AuthMe")) {
@@ -306,7 +308,7 @@ public final class DuckyMoMoCore extends JavaPlugin {
             return dx * dx + dz * dz <= (double) ring * ring;
         };
         DecorShop shop = board != null && getConfig().getBoolean("decor-shop.enabled")
-                ? new DecorShop(this, board, inCapital, getConfig().getConfigurationSection("decor-shop")) : null;
+                ? new DecorShop(this, board, inCapital, getConfig().getConfigurationSection("decor-shop"), itemLibrary) : null;
         if (shop != null) {
             getServer().getPluginManager().registerEvents(shop, this);
         }
@@ -353,7 +355,6 @@ public final class DuckyMoMoCore extends JavaPlugin {
         decorator = getConfig().getBoolean("decorate.enabled") ? new MapDecorator(this) : null;
         structures = decorator != null ? new StructurePlacer(this) : null;
         // Thư viện đồ (mọi server): /dmm luudo|laydo|thuvien; trang web /thuvien đọc thuvien-meta.json
-        itemLibrary = new ItemLibrary(this);
         if (!reloading) {
             getServer().getScheduler().runTaskLater(this, itemLibrary::exportMeta, 40L);
         }

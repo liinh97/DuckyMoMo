@@ -67,6 +67,10 @@
   .fs-head { display: grid; grid-template-columns: 1fr 1fr 80px 28px; gap: 6px; margin-bottom: 6px; }
   .fm-head .x, .fs-head .x { background: none; border: 0; color: var(--err); cursor: pointer; font-size: 16px; }
   .ms textarea { width: 100%; margin-bottom: 6px; }
+  .sh-row { display: grid; grid-template-columns: 120px 1fr 90px 110px 28px; gap: 6px; align-items: center; }
+  .sh-row select, .sh-row input, .sh-row span > * { width: 100%; }
+  .sh-row .x { background: none; border: 0; color: var(--err); cursor: pointer; font-size: 16px; }
+  @media (max-width: 640px) { .sh-row { grid-template-columns: 1fr 1fr; } }
   @media (max-width: 640px) { .fm-head, .fs-head { grid-template-columns: 1fr 1fr; } }
   @media (max-width: 640px) { .rw-row, .qe-head { grid-template-columns: 1fr 1fr; } }
 </style>
@@ -392,6 +396,75 @@ function fragShopEditor(value, onChange) {
   return box;
 }
 
+
+// ---- Cửa hàng Kinh Đô: món [{material|library, amount, price}] và danh hiệu [{id, text, price}]
+function shopItemsEditor(value, onChange) {
+  const box = document.createElement("div"); box.className = "rw";
+  const rows = [];
+  const emit = () => onChange(rows.map(r => r.val()).filter(Boolean));
+  const add = document.createElement("button"); add.type = "button"; add.className = "rw-add"; add.textContent = "+ Thêm món";
+  function addRow(d) {
+    const row = document.createElement("div"); row.className = "sh-row";
+    row.innerHTML = '<select><option value="vat">Đồ thường</option><option value="do">Đồ thư viện</option></select><span></span><input type="number" min="1" max="2304" title="Số lượng mỗi lần mua"><input type="number" min="1" max="100000000" title="Giá (xu)"><button type="button" class="x" title="Bỏ">×</button>';
+    const [src, mid, amt, price, x] = [row.children[0], row.children[1], row.children[2], row.children[3], row.children[4]];
+    let main = null;
+    function build(init) {
+      mid.innerHTML = "";
+      if (src.value === "do") {
+        main = document.createElement("select"); main.innerHTML = '<option value="">(đang tải…)</option>';
+        const cur = init ? (d.library || "") : "";
+        lib().then(t => {
+          const items = t.items || [];
+          main.innerHTML = items.map(it => '<option value="' + it.id + '">' + it.id + (it.ten_goi && it.ten_goi !== it.id ? " · " + String(it.ten_goi).replace(/[<>&"]/g, "") : "") + "</option>").join("")
+            || '<option value="">(thư viện trống)</option>';
+          if (cur) { if (!items.some(it => it.id === cur)) main.insertAdjacentHTML("afterbegin", '<option value="' + cur + '">' + cur + " (không còn!)</option>"); main.value = cur; }
+          emit();
+        });
+      } else {
+        main = document.createElement("input"); main.setAttribute("list", "rw-mats"); main.placeholder = "DIRT"; main.value = init ? (d.material || "") : "";
+      }
+      main.oninput = main.onchange = emit; mid.appendChild(main);
+    }
+    src.value = d.library ? "do" : "vat"; build(true);
+    amt.value = d.amount || 1; price.value = d.price || 100;
+    src.onchange = () => { build(false); emit(); };
+    amt.oninput = price.oninput = emit;
+    const r = { val() {
+      const v = String(main.value || "").trim(); if (!v) return null;
+      const o = { amount: parseInt(amt.value || "1", 10), price: parseFloat(price.value || "0") };
+      if (src.value === "do") o.library = v; else o.material = v.toUpperCase();
+      return o;
+    } };
+    x.onclick = () => { rows.splice(rows.indexOf(r), 1); row.remove(); emit(); };
+    rows.push(r); box.insertBefore(row, add);
+  }
+  box.appendChild(add);
+  add.onclick = () => { addRow({ material: "", amount: 16, price: 100 }); emit(); };
+  for (const d of value || []) addRow(d || {});
+  if (!document.getElementById("rw-mats")) rewardsEditor([], () => {});
+  return box;
+}
+function shopTitlesEditor(value, onChange) {
+  const box = document.createElement("div"); box.className = "rw";
+  const rows = [];
+  const emit = () => onChange(rows.map(r => ({ id: r.id.value.trim().toLowerCase(), text: r.text.value, price: parseFloat(r.price.value || "0") })).filter(t => t.id && t.text.trim()));
+  const add = document.createElement("button"); add.type = "button"; add.className = "rw-add"; add.textContent = "+ Thêm danh hiệu";
+  function addRow(d) {
+    const row = document.createElement("div"); row.className = "sh-row";
+    row.innerHTML = '<input placeholder="mã, vd phuthuong"><input placeholder="&6[Phú Thương]"><input type="number" min="1" title="Giá (xu)" style="grid-column: span 2"><button type="button" class="x" title="Bỏ">×</button>';
+    const [id, text, price, x] = row.children;
+    id.value = d.id || ""; text.value = d.text || ""; price.value = d.price || 1000;
+    const r = { id, text, price };
+    id.oninput = text.oninput = price.oninput = emit;
+    x.onclick = () => { rows.splice(rows.indexOf(r), 1); row.remove(); emit(); };
+    rows.push(r); box.insertBefore(row, add);
+  }
+  box.appendChild(add);
+  add.onclick = () => { addRow({}); emit(); };
+  for (const d of value || []) addRow(d || {});
+  return box;
+}
+
 function row(mode, s) {
   const div = document.createElement("div");
   div.className = "row";
@@ -419,6 +492,10 @@ function row(mode, s) {
     input.oninput = () => change(mode, s, input.value.split("\n").map(x => x.trim()).filter(x => x), div);
   } else if (s.type === "rewards") {
     input = rewardsEditor(value || [], v => change(mode, s, v, div));
+  } else if (s.type === "shopitems") {
+    input = shopItemsEditor(value || [], v => change(mode, s, v, div));
+  } else if (s.type === "shoptitles") {
+    input = shopTitlesEditor(value || [], v => change(mode, s, v, div));
   } else if (s.type === "fragtypes") {
     input = fragTypesEditor(value || {}, v => change(mode, s, v, div));
   } else if (s.type === "fragshop") {

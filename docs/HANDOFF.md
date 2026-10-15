@@ -206,6 +206,11 @@
   + `Dimension` (phải ở overworld "world"), lệch x +4. Chia mảnh: DuckyMoMoCore `/doimanh chia <loại> <tổng> $players` (EliteMobs thay $players
   = danh sách tên) chia đều cho người online, không tính giới hạn ngày. Đã thử API: lưu (file đúng định dạng), chặn loại sai, gọi (lệnh chạy,
   EliteMobs KHÔNG in kết quả qua RCON → CHƯA xác nhận boss xuất hiện), xoá; giao diện trên bản xem thử. CHƯA thử đánh boss/chia mảnh trong game.
+- **Cửa hàng trên web (15/10)**: Cửa hàng Kinh Đô (`DecorShop`) sửa trên Cài đặt > Shop: kiểu ô `shopitems` (vật liệu, đồ trang trí: mỗi món
+  `material` HOẶC `library: <mã thư viện đồ>`, amount, price) và `shoptitles` (id, text, price); kiểm tra trong `panel/app.py`. DecorShop
+  nhận `ItemLibrary` (dựng ở đầu `setup()`), bán đồ thư viện (icon/tên lấy từ món; món bị xoá khỏi thư viện thì bỏ khi nạp, lúc mua thì hoàn
+  tiền). Đã thử: lưu thật (thêm BELL → 32 món → trả lại 31), chặn giá 0 / vật liệu sai, giao diện. Shopkeepers (dân làng NPC) KHÔNG làm trên
+  web: plugin tự lưu `save.yml` khi đang chạy nên ghi từ web dễ bị đè; cây trade dân làng vẫn chờ người dùng chốt.
 - **Thanh đếm ngược bảo vệ người mới**: đã có sẵn ở PvPManager (`Newbie Protection.Boss Bar`); thêm ô bật/chữ/màu vào Cài đặt > PvP & combat.
 - **Ping nhảy khi chạy nhanh (15/10, đã sửa bằng BBR)**: người dùng thấy ping 900+ ms khi chạy (TPS vẫn 20). Đo: tuyến **VPS Vinahost →
   nhà mất ~2% gói** ở mọi tốc độ (UDP iperf 5M/20M: 2,2%/1,7%), không phải trần băng thông (4 luồng TCP = 23,6 Mbps). TCP cubic 1 luồng chỉ

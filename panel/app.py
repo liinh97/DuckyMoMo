@@ -159,6 +159,45 @@ def validate(s, v):
             if lst:
                 out[day] = lst
         return dict(sorted(out.items()))
+    if t == "shopitems":
+        out = []
+        for d in (v or []):
+            d = d or {}
+            try:
+                amount, price = int(d.get("amount") or 1), float(d.get("price"))
+            except (TypeError, ValueError):
+                raise ValueError(f"{label}: số lượng / giá phải là số")
+            if not (1 <= amount <= 2304 and 0 < price <= 100000000):
+                raise ValueError(f"{label}: số lượng 1–2304, giá lớn hơn 0")
+            price = int(price) if price == int(price) else price
+            if d.get("library"):
+                lid = str(d["library"]).strip()
+                if not LIB_ID_RE.match(lid):
+                    raise ValueError(f"{label}: mã thư viện sai \"{lid}\"")
+                out.append({"library": lid, "amount": amount, "price": price})
+            else:
+                mat = str(d.get("material", "")).strip().upper()
+                meta = lib_meta() or {}
+                if not MATERIAL_RE.match(mat) or (meta.get("materials") and mat not in meta["materials"]):
+                    raise ValueError(f"{label}: vật liệu không có trong server \"{mat}\"")
+                out.append({"material": mat, "amount": amount, "price": price})
+        return out
+    if t == "shoptitles":
+        out = []
+        for d in (v or []):
+            d = d or {}
+            tid = str(d.get("id", "")).strip().lower()
+            if not LIB_ID_RE.match(tid):
+                raise ValueError(f"{label}: mã danh hiệu sai \"{tid}\"")
+            try:
+                price = float(d.get("price"))
+            except (TypeError, ValueError):
+                raise ValueError(f"{label}: giá phải là số")
+            text = str(d.get("text", "")).strip()[:40]
+            if not text or price <= 0:
+                raise ValueError(f"{label} ({tid}): cần chữ hiển thị và giá")
+            out.append({"id": tid, "text": DoubleQuotedScalarString(text), "price": int(price) if price == int(price) else price})
+        return out
     if t == "fragtypes":
         out = {}
         for fid, d in (v or {}).items():

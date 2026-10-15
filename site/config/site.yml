@@ -1,13 +1,13 @@
 # Thông tin công khai cho trang giới thiệu (site/config/site.yml). Sửa ở đây, không cần build lại (trang đọc mỗi 30 giây).
 ten: DuckyMoMo Network
-# Địa chỉ chính: VPS BKNS (mc.goc6.io.vn, Java qua bản ghi SRV cổng 25570). Dự phòng: playit (khi VPS hỏng).
+# Địa chỉ chính: VPS Vinahost (mc.goc6.io.vn → 125.212.218.74, cổng chuẩn 25565 / 19132). Dự phòng: playit (khi VPS hỏng).
 java:
   dia-chi: mc.goc6.io.vn
   phien-ban: "1.13 tới bản mới nhất"
   du-phong: pgsql-youths.tun.ply.gg
 bedrock:
   dia-chi: mc.goc6.io.vn
-  cong: 19130
+  cong: 19132
   du-phong: "pgsql-mississauga.tun.ply.gg cổng 21185"
 discord: ""        # link mời Discord khi có
 zalo: ""           # link nhóm Zalo khi có

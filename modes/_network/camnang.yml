@@ -28,7 +28,7 @@ guide:
       - ["Chuyển server", "/server lobby | banghoi-1 | practice-1"]
       - ["Font tiếng Việt", "Gói font gửi tự động khi vào (không bắt buộc). Sửa/làm lại: ./ops/build-font-pack.sh rồi docker compose up -d lobby banghoi-1 practice-1"]
       - ["Sao lưu ngay", "Trên máy chủ: docker compose exec backup-banghoi-1 backup now (lưu ở F:\\DuckyMoMo-backups)"]
-      - ["Cổng VPS (giữ IP thật)", "VPS 42.96.4.244 chuyển người chơi về nhà qua WireGuard: Java cổng 25570, Bedrock cổng 19130 (BKNS chặn 25565/19132). Xem trạng thái: docker compose logs relay. playit vẫn chạy làm đường dự phòng"]
+      - ["Cổng VPS (giữ IP thật)", "VPS Vinahost 125.212.218.74 (Viettel TP.HCM) chuyển người chơi về nhà qua WireGuard: Java 25565, Bedrock 19132, vote 8192 (25570/19130 cũ vẫn chạy). Xem trạng thái: docker compose logs relay. playit vẫn chạy làm đường dự phòng"]
       - ["Tự sửa sau khi máy khởi động lại", "Tự chạy 2 phút sau khi đăng nhập Windows (tác vụ 'DuckyMoMo tu sua'): sửa cổng chết, thư mục gắn bị treo, playit cho cả Minecraft, Trạm 6, goc6; có người online thì không khởi động lại. Chạy tay: ./ops/tu-sua-sau-khoi-dong.sh (thêm --kiem-tra để chỉ xem). Nhật ký: data/ops/tu-sua.log"]
   - title: Người chơi mới cần biết
     items:
@@ -40,7 +40,7 @@ guide:
   - title: Địa chỉ vào server
     items:
       - ["Máy tính (Java)", "mc.goc6.io.vn (không cần cổng) — bản 1.13 tới mới nhất"]
-      - ["Điện thoại (Bedrock)", "mc.goc6.io.vn cổng 19130 (không phải 19132 mặc định)"]
+      - ["Điện thoại (Bedrock)", "mc.goc6.io.vn cổng 19132 (mặc định)"]
       - ["Dự phòng (playit, khi VPS hỏng)", "Java pgsql-youths.tun.ply.gg · Bedrock pgsql-mississauga.tun.ply.gg cổng 21185"]
 
 plugins:
@@ -328,7 +328,7 @@ plugins:
       - ["/vote", "Link các trang vote (bấm được), phần thưởng, số lượt và chuỗi ngày của bạn"]
       - ["/vote top", "Bảng vote tháng"]
     admin:
-      - ["Thêm trang vote", "Đăng ký server trên trang vote (IP mc.goc6.io.vn, cổng game 25570, Votifier cổng 8192 + khoá công khai plugins/Votifier/rsa/public.key), rồi thêm link vào vote.sites trong config DuckyMoMoCore (banghoi-1) + /dmm reload"]
+      - ["Thêm trang vote", "Đăng ký server trên trang vote (IP mc.goc6.io.vn, cổng game 25565, Votifier cổng 8192 + khoá công khai plugins/Votifier/rsa/public.key), rồi thêm link vào vote.sites trong config DuckyMoMoCore (banghoi-1) + /dmm reload"]
       - ["Thử vote", "Trang vote thường có nút 'Test vote'; xem log banghoi-1: dòng 'Vote từ ...'"]
     settings: "plugins/DuckyMoMoCore/config.yml mục vote (banghoi-1); trang web tự hiện link + top tháng (site /api/vote)"
     notes: "Không bán gì: vote chỉ thưởng xu trong game. Dữ liệu: plugins/DuckyMoMoCore/vote.yml."

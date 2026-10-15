@@ -1,7 +1,7 @@
 #!/bin/sh
 # Chuyển người chơi về proxy ở nhà qua WireGuard, KHÔNG đổi IP nguồn (server thấy IP thật).
-#   Java    TCP 25565 (BKNS đang chặn), 25570 → 10.66.0.2:25577 (Velocity)
-#   Bedrock UDP 19132 (BKNS đang chặn), 19130 → 10.66.0.2:19132 (Geyser)
+#   Java    TCP 25565 (+ 25570 cũ thời BKNS) → 10.66.0.2:25577 (Velocity)
+#   Bedrock UDP 19132 (+ 19130 cũ thời BKNS) → 10.66.0.2:19132 (Geyser)
 #   Vote    TCP 8192 → 10.66.0.2:8192 (relay socat → banghoi-1 Votifier)
 H=10.66.0.2
 iptables -t nat -N MC_RELAY 2>/dev/null; iptables -t nat -F MC_RELAY

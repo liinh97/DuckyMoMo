@@ -12,8 +12,8 @@ services:
     cap_add: [NET_ADMIN]
     environment:
       RELAY_WG_PRIVATE_KEY: ${RELAY_WG_PRIVATE_KEY:-}   # trong .env, không commit; trống = không làm gì
-      RELAY_VPS_PUBLIC_KEY: ${RELAY_VPS_PUBLIC_KEY:-n6/M9qTdbOWYRFffR+xAy8saGGsNhxD2nSUSBpR0IWM=}
-      RELAY_VPS_ENDPOINT: ${RELAY_VPS_ENDPOINT:-42.96.4.244:51820}   # BKNS Cheap VPS "mc-relay"
+      RELAY_VPS_PUBLIC_KEY: ${RELAY_VPS_PUBLIC_KEY:-235WvjBPc9ZmDyV3B1whgnH+wgXukWRUJi5m3mIL1S8=}
+      RELAY_VPS_ENDPOINT: ${RELAY_VPS_ENDPOINT:-125.212.218.74:51820}   # Vinahost CheapSSD 1 (Viettel TP.HCM); BKNS cũ cấm game
       TZ: ICT-7   # alpine không có tzdata: chuỗi POSIX (UTC+7)
     depends_on:
       proxy:

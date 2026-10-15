@@ -19,7 +19,7 @@
 
 ### Đang chạy
 - Proxy Velocity (cổng 25565 → 25577, Bedrock 19132/udp; Geyser, Floodgate, AuthMe, SkinsRestorer, **Sonar**), `lobby`, `banghoi-1` (Bang Hội Chiến mùa 1, map Trái Đất 1:1000 Đông Nam Á), `practice-1` (Duels, beta), MariaDB, panel Cài đặt (`127.0.0.1:8889`, qua Trạm 6 `https://app.goc6.io.vn/mc/caidat/`), Dozzle log (8888), squaremap (8890), trang giới thiệu `site` (8892), restic backup ra `/mnt/f/DuckyMoMo-backups`.
-- Vào game (từ 15/10): **chính** VPS — Java `mc.goc6.io.vn` (SRV → 42.96.4.244:25570), Bedrock `mc.goc6.io.vn` cổng **19130**; người dùng đã vào
+- Vào game (từ 15/10 11:15): **chính** VPS Vinahost — Java `mc.goc6.io.vn` (A → 125.212.218.74, SRV → 25565), Bedrock `mc.goc6.io.vn` cổng **19132** (mặc định); người dùng đã vào
   game thật qua VPS 15/10 03:18 (proxy ghi IP thật). **Dự phòng** playit — Java `pgsql-youths.tun.ply.gg` (SRV, cổng 28438), Bedrock `pgsql-mississauga.tun.ply.gg:21185`. `playit-watchdog` tự khởi động lại agent khi kẹt. **Tạo lại proxy thì phải** `docker compose --profile tunnel up -d --force-recreate playit`.
 - DuckyMoMoCore (plugin riêng, `network-core/core-paper`, build `./ops/build-core.sh`): dọn đồ rơi, lọc chat, chặn job đồ đặt, lớp thị trấn trên map, menu Bedrock, rơi void, định dạng chat, rank donate `/rank`, sách `/huongdan`, đồ vượt cấp `/dmm enchant|sach`, xuất lệnh `/dmm lenh`, dịch chuyển ngẫu nhiên `/tpr`.
 
@@ -123,6 +123,7 @@
   BKNS Hà Nội ~7–12 ms, Viettel IDC HCM 26 ms, FPT HCM (VPSSIEUTOC) ~45–50 ms. Đề xuất **BKNS VPS – Cheap 1** (70k/tháng, tối thiểu 1 tháng, 1C/1G/20G,
   IPv4 VN, chống DDoS cơ bản); cần hỏi BKNS: cho WireGuard/chuyển tiếp game? mở UDP? Đã tạo khoá SSH trên WSL `~/.ssh/duckymomo_vps` (ed25519, không
   passphrase; chỉ đưa khoá công khai cho người dùng).
+  **ĐÃ CHUYỂN SANG VINAHOST (15/10 11:15)** — xem mục "VPS Vinahost" ngay dưới; đoạn BKNS sau đây là lịch sử.
   **ĐÃ DỰNG (15/10 03:05)**: VPS BKNS "VPS MMO1" (gói Cheap, 3 tháng, hạn 15/01/2027) **`42.96.4.244`**, SSH **cổng 26266**, `root`, vào bằng khoá
   `~/.ssh/duckymomo_vps` (người dùng đã đổi mật khẩu root; SSH bằng mật khẩu ĐÃ TẮT 15/10: `/etc/ssh/sshd_config.d/00-duckymomo.conf`, root chỉ vào bằng khoá; console web BKNS vẫn dùng mật khẩu). Ubuntu 24.04, KVM,
   ping từ nhà ~9,7 ms. **BKNS chặn chiều vào TCP 25565/25566/25577 và UDP 19132/19133/25565** (mạng nhà không chặn; các cổng khác thông) →
@@ -143,6 +144,18 @@
   `lobby/plugins/DuckyMoMoCore/config.yml`). KHÔNG dùng `maxRegPerIp` của AuthMe (tính tổng vĩnh viễn → khoá cả quán net/4G chung IP; AuthMe tự
   bỏ qua IP loopback). Sonar `max-online-per-ip` vẫn 20 (playit chung IP 127.x; chưa rõ Sonar có bỏ qua loopback). CHƯA: theo dõi băng thông
   VPS, đánh dấu nhiều tài khoản cùng IP cho staff. playit giữ làm dự phòng.
+- **VPS Vinahost (15/10 11:15, thay BKNS)**: BKNS cấm chạy game (người dùng hỏi); VPSTTT, Cloudfly từ chối; P.A, DPTCloud (TP.HCM, ~31 ms) chưa/không
+  phù hợp; **Vinahost đồng ý bằng văn bản** trong chat (nhân viên Đinh Thịnh: "được anh nhé", người dùng giữ ảnh chụp). Gói **CheapSSD 1**
+  (1 vCPU, 1 GB, 25 GB, 100 Mbps trong nước, 1–10 Mbps quốc tế), 3 tháng 280.500đ gồm VAT (85k/tháng; 61k chỉ khi trả 2–3 năm), hạn 15/01/2027,
+  DC **Viettel TP.HCM** (Cheap chỉ có TP.HCM; VPS NVMe ~161k mới có Hà Nội). Người dùng nói đa số người chơi ở miền Nam → chọn TP.HCM.
+  Host `60880.vpsvinahost.vn`, **`125.212.218.74`**, SSH **cổng 22** (Vinahost dặn giữ SSH mặc định, không đổi cấu hình mạng), khoá
+  `~/.ssh/duckymomo_vps` (người dùng thêm), SSH mật khẩu ĐÃ TẮT (`00-duckymomo.conf`); mật khẩu root lộ trong ảnh chụp → đã dặn đổi.
+  Lúc đầu Virtualizor báo **Suspended** (không ping/SSH được), sau ~30 phút tự hết. Cổng: **mọi cổng thông** (TCP 25565/25570/8192, UDP 19132/
+  19130/51820) từ nhà và từ BKNS. Ping nhà → VPS 31,8 ms; VPS ↔ TP.HCM 2 ms. Cài giống BKNS (`relay/vps/`: wg-quick@wg0 + ufw, thêm
+  `ufw allow 22/tcp`); khoá công khai VPS `235WvjBPc9ZmDyV3B1whgnH+wgXukWRUJi5m3mIL1S8=` (mặc định trong `relay/compose.yaml`). Đã tạo lại relay
+  lúc 0 người online; thử qua IP mới: Java 25565/25570, Bedrock 19132/19130, Votifier 8192 đều OK, proxy ghi IP thật. DNS: A → 125.212.218.74,
+  SRV → 25565 (qua API). Ping ước tính: người chơi miền Nam ~30–40 ms, miền Bắc (kể cả chủ server) ~55–65 ms. VPS BKNS: vẫn bật nhưng không còn
+  nhà nối vào; người dùng sẽ xin huỷ/hoàn tiền (đừng tắt hộ khi chưa hỏi).
 - **IP thật người chơi (14/10): KHÔNG có** — qua playit mọi kết nối hiện `127.21.235.67`. Không giới hạn theo IP được (AuthMe, Sonar).
   Có IP thật khi chuyển sang VPS (**người dùng chốt: khi chạy thật thì đổi sang VPS**) hoặc bật Proxy Protocol trên playit + Velocity `haproxy-protocol`.
 - Font tiếng Việt (resource pack Be Vietnam Pro, host trên Trạm 6 `/mc/pack/`), bảng TAB, warp "Miền xa" (Côn Đảo, Luang Namtha…).

@@ -1,4 +1,8 @@
-# Phía VPS của cổng chuyển tiếp (BKNS "mc-relay", Ubuntu 24.04, SSH cổng 26266, chỉ vào bằng khoá ~/.ssh/duckymomo_vps)
+# Phía VPS của cổng chuyển tiếp (Vinahost CheapSSD 1 "60880.vpsvinahost.vn", 125.212.218.74, Viettel TP.HCM, Ubuntu 24.04)
+
+SSH: `ssh -i ~/.ssh/duckymomo_vps root@125.212.218.74` (cổng 22: Vinahost dặn giữ SSH mặc định và không đổi cấu hình mạng).
+Panel: Virtualizor trong trang khách hàng Vinahost (Start/Stop, VNC, SSH Keys, Firewall). Trước đó (15/10 sáng) dùng BKNS 42.96.4.244 —
+BKNS cấm chạy game, chặn 25565/19132; đã bỏ.
 
 Cài lại từ đầu:
 

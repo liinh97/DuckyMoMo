@@ -681,8 +681,12 @@ def roles_json():
         for name, perm in cur.fetchall():
             m = meta.setdefault(name, {})
             if perm.startswith("prefix."):
+                # nhiều prefix (sót từ lần đặt trước, khác priority): LuckPerms hiện cái priority cao nhất, trang cũng vậy
                 _, w, text = perm.split(".", 2)
-                m["prefix"] = text
+                w = int(w) if w.lstrip("-").isdigit() else 0
+                if w >= m.get("prefix_w", -10**9):
+                    m["prefix"], m["prefix_w"] = text, w
+                m.setdefault("prefixes", []).append(text)
             elif perm.startswith("weight."):
                 m["weight"] = int(perm.split(".", 1)[1])
             else:
@@ -713,7 +717,7 @@ def roles_json():
     for g in STAFF_GROUPS + DONATE_GROUPS:
         m = meta.get(g, {})
         out.append({"name": g, "kind": "default" if g == "default" else ("donate" if g in DONATE_GROUPS else "staff"),
-                    "prefix": m.get("prefix", ""), "weight": m.get("weight", 0), "display": m.get("display", {"quanly": "Manager"}.get(g, g)),
+                    "prefix": m.get("prefix", ""), "prefixes": m.get("prefixes", []), "weight": m.get("weight", 0), "display": m.get("display", {"quanly": "Manager"}.get(g, g)),
                     "members": sorted(members.get(g, []), key=lambda x: x["name"].lower()),
                     "count": total if g == "default" else len(members.get(g, [])),
                     "perms": sorted(perms.get(g, []), key=lambda x: x["node"]), "parents": parents.get(g, []),
@@ -739,7 +743,12 @@ def apply_role_preset(group):
     bad = [o for _, o in out if re.search(r"(?i)error|invalid|không hợp lệ", o) and "already" not in o.lower()]
     time.sleep(1.5)
     msg = f"Đã chạy {len(lines)} lệnh trong {f.name}." + (f" {len(bad)} lệnh báo lỗi: {bad[0][:120]}" if bad else "")
-    return {"ok": not bad, "message": msg, "data": roles_json()}
+    data = roles_json()
+    # báo luôn prefix thật trong LuckPerms sau khi chạy, để biết lệnh đã ăn hay chưa
+    g = next((x for x in data["groups"] if x["name"] == group), {})
+    if g.get("prefixes"):
+        msg += f" Prefix trong LuckPerms: {' | '.join(p.strip() for p in g['prefixes'])}."
+    return {"ok": not bad, "message": msg, "data": data}
 
 
 def role_action(data):

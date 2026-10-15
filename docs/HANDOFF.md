@@ -105,6 +105,9 @@
    Một người giữ nhiều role được; mâu thuẫn thì role weight cao thắng (Quản lý 90 > Mod 70; Admin 100 + * thắng hết). Panel: `STAFF_GROUPS` có quanly; Quản lý cấp/gỡ được tới Mod (`PROTECTED_FOR_QUANLY`),
    người khác có quyền role chỉ dưới Mod. Đã thử bằng cách đọc chính file .cmds thành bộ quyền (test ở scratchpad).
 
+14. **Role Builder** (CHƯA chạy): `tools/builder-role.cmds`. WorldEdit + vượt vùng + /gamemode + /tp chỉ ở lobby (lệnh gốc vì lobby không có
+   Essentials); cấm ở banghoi-1; cấm mọi nơi fill/clone/setblock, towny.admin, give/item/eco.
+
 ### Người dùng phải tự làm (nhắc lại khi phù hợp)
 - Thêm `[boot] command = modprobe tcp_bbr` vào `/etc/wsl.conf` (để BBR có sau mỗi lần khởi động WSL):
   `wsl -d Ubuntu-22.04 -u root -- sh -c "printf '\n[boot]\ncommand = modprobe tcp_bbr\n' >> /etc/wsl.conf"`

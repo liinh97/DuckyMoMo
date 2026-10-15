@@ -1,0 +1,21 @@
+# Role BUILDER: xây công trình chung (spawn, kinh đô, đấu trường, sự kiện) ở SẢNH. Không có quyền gì ở Bang Hội Chiến ngoài người chơi thường.
+# Chạy (LuckPerms dùng chung toàn mạng):  docker exec -i duckymomo-lobby-1 rcon-cli < tools/builder-role.cmds
+# Cần xây trong Bang Hội Chiến: xây ở sảnh rồi admin dán bằng //schem, hoặc admin tạm cấp quyền theo vùng rồi gỡ.
+# fill/clone/setblock gốc của Minecraft CẤM: WorldEdit làm được hết và có //undo, lệnh gốc thì không hoàn tác được.
+# ---- được làm, CHỈ ở sảnh (server=lobby)
+lp group builder permission set worldedit.* true server=lobby
+lp group builder permission set worldguard.region.bypass.* true server=lobby
+# sảnh không cài Essentials: dùng lệnh gốc /gamemode, /tp (ở chế độ sáng tạo thì tự bay được)
+lp group builder permission set minecraft.command.gamemode true server=lobby
+lp group builder permission set minecraft.command.teleport true server=lobby
+# ---- CẤM ở mọi server (ghi false để dù role khác lỡ cấp rộng vẫn bị chặn, trừ khi người đó giữ role cao hơn)
+lp group builder permission set worldedit.* false server=banghoi-1
+lp group builder permission set worldguard.region.bypass.* false server=banghoi-1
+lp group builder permission set essentials.gamemode.creative false server=banghoi-1
+lp group builder permission set minecraft.command.fill false
+lp group builder permission set minecraft.command.clone false
+lp group builder permission set minecraft.command.setblock false
+lp group builder permission set towny.admin false
+lp group builder permission set essentials.give false
+lp group builder permission set essentials.item false
+lp group builder permission set essentials.eco false

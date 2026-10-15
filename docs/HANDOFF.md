@@ -99,7 +99,7 @@
      trang tài khoản hiện mục "⭐ Hay dùng" trước, lệnh khác gom theo plugin, thu gọn (tìm kiếm thì mở hết).
    - Sảnh KHÔNG cài EssentialsX: /fly, /kick… ở sảnh báo "Unknown command" với mọi người. Mod dùng ở banghoi/practice. Chưa quyết có cài Essentials ở sảnh không.
 
-13. **Role Quản lý `quanly` (15/10 tối, CHƯA tạo trong LuckPerms)**: `tools/quanly-role.cmds` (weight 90, prefix &e&l[Quản lý], kế thừa mod,
+13. **Role Manager (mã nhóm `quanly`; tên tiếng Anh cho đồng bộ Admin/Mod/Helper/Builder, rank donate vẫn tiếng Việt) (15/10 tối, CHƯA tạo trong LuckPerms)**: `tools/quanly-role.cmds` (weight 90, prefix &e&l[Manager], kế thừa mod,
    track staff chèn vị trí 3). Được vận hành (phạt, điều tra, rollback, rank donate, phần lớn web); CẤM rõ bằng `false` mọi thứ đụng phân quyền,
    /sudo, điều khiển server/plugin/luật thế giới, /dmm, xoá log CoreProtect. ĐƯỢC (người dùng chốt): kinh tế, đồ, WorldEdit, fill/clone/
    setblock, vượt vùng bảo vệ, towny.admin, sáng tạo (CoreProtect ghi lại nên vẫn khôi phục được).

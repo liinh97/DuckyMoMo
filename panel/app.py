@@ -713,7 +713,7 @@ def roles_json():
     for g in STAFF_GROUPS + DONATE_GROUPS:
         m = meta.get(g, {})
         out.append({"name": g, "kind": "default" if g == "default" else ("donate" if g in DONATE_GROUPS else "staff"),
-                    "prefix": m.get("prefix", ""), "weight": m.get("weight", 0), "display": m.get("display", {"quanly": "Quản lý"}.get(g, g)),
+                    "prefix": m.get("prefix", ""), "weight": m.get("weight", 0), "display": m.get("display", {"quanly": "Manager"}.get(g, g)),
                     "members": sorted(members.get(g, []), key=lambda x: x["name"].lower()),
                     "count": total if g == "default" else len(members.get(g, [])),
                     "perms": sorted(perms.get(g, []), key=lambda x: x["node"]), "parents": parents.get(g, []),
@@ -855,7 +855,7 @@ def sync_perm_change(group, node, act):
 
 def tell_role_change(player, group, act, months=None):
     """Báo vào game cho người vừa được cấp/gỡ role (nếu đang online). LuckPerms tự làm mới danh sách lệnh của client."""
-    shown = {"admin": "Admin", "quanly": "Quản lý", "mod": "Mod", "helper": "Helper", "builder": "Builder"}.get(group, group)
+    shown = {"admin": "Admin", "quanly": "Manager", "mod": "Mod", "helper": "Helper", "builder": "Builder"}.get(group, group)
     if group in DONATE_GROUPS:
         shown = {"namtuoc": "Nam Tước", "tutuoc": "Tử Tước", "batuoc": "Bá Tước", "hautuoc": "Hầu Tước", "congtuoc": "Công Tước"}[group]
     if act == "add":
@@ -1816,8 +1816,8 @@ PAGE_FEATURES = {"/": ("caidat",), "/thuvien": ("thuvien", "thuvien-dua"), "/bos
 API_GET_FEATURES = {"/api/modes": ("caidat",), "/api/camnang": ("camnang",), "/api/huongdan": ("huongdan",), "/api/roles": ("role", "role-quyen"),
                     "/api/boss": ("boss",), "/api/activity": ("hoatdong",), "/api/donate": ("donate",), "/api/thuvien": None, "/api/toi": None}
 # Không ai ngoài admin toàn quyền đụng được: role admin/mod, quyền nguy hiểm
-# Role cấp/gỡ được tuỳ người làm: Quản lý xếp được Mod, Helper, Builder, rank donate; người khác (có quyền web role) chỉ dưới Mod.
-# Không ai ngoài Admin đụng được Admin và Quản lý.
+# Role cấp/gỡ được tuỳ người làm: Manager (quanly) xếp được Mod, Helper, Builder, rank donate; người khác (có quyền web role) chỉ dưới Mod.
+# Không ai ngoài Admin đụng được Admin và Manager.
 PROTECTED_GROUPS = {"admin", "quanly", "mod"}
 PROTECTED_FOR_QUANLY = {"admin", "quanly"}
 PROTECTED_PERM_RE = re.compile(r"^(\*|duckymomo\.web.*|duckymomo\.admin.*|luckperms.*)$")

@@ -1,14 +1,14 @@
-# Role QUẢN LÝ (quanly): dưới Admin, trên Mod. Điều hành hằng ngày được, KHÔNG can thiệp sâu vào hệ thống.
+# Role MANAGER (mã nhóm quanly, tên tiếng Anh cho đồng bộ Admin/Mod/Helper/Builder): dưới Admin, trên Mod. Điều hành hằng ngày được, KHÔNG can thiệp sâu vào hệ thống.
 # Chạy MỘT lần (LuckPerms dùng chung DB toàn mạng):  docker exec -i duckymomo-lobby-1 rcon-cli < tools/quanly-role.cmds
-# Cấp người: trang Role > Quản lý > Thêm (hoặc lp user <tên> parent add quanly). Gỡ role: lp deletegroup quanly.
+# Cấp người: trang Role > Manager > Thêm (hoặc lp user <tên> parent add quanly). Gỡ role: lp deletegroup quanly.
 #
 # Nguyên tắc: làm được hầu hết mọi việc (phạt, kinh tế, đồ, xây, Towny); CẤM (false) những gì chiếm quyền hoặc làm sập server:
 # phân quyền, /sudo, điều khiển server/plugin, luật thế giới, /dmm, xoá log CoreProtect.
 # Quyền CẤM ghi rõ "false" để dù sau này có ai lỡ cấp quyền rộng (vd essentials.*) cho role cha thì vẫn bị chặn.
 lp creategroup quanly
-lp group quanly setdisplayname "Quản lý"
+lp group quanly setdisplayname "Manager"
 lp group quanly setweight 90
-lp group quanly meta setprefix 90 "&e&l[Quản lý]&r "
+lp group quanly meta setprefix 90 "&e&l[Manager]&r "
 lp group quanly parent add mod
 lp track staff insert quanly 3
 # ---- được làm: xử lý vi phạm, điều tra, khôi phục phá hoại
@@ -65,7 +65,7 @@ lp group quanly permission set duckymomo.web.caidat.chat true
 lp group quanly permission set duckymomo.web.caidat.hienthi true
 lp group quanly permission set duckymomo.web.caidat.sanh true
 lp group quanly permission set duckymomo.web.caidat.rankdonate true
-# ---- được làm (người dùng chốt 15/10: Quản lý làm hầu hết mọi việc): kinh tế, đồ, xây dựng, quản trị Towny
+# ---- được làm (người dùng chốt 15/10: Manager làm hầu hết mọi việc): kinh tế, đồ, xây dựng, quản trị Towny
 #      CoreProtect ghi lại mọi block đặt/phá (kể cả WorldEdit) nên vẫn tra và khôi phục được; vì vậy coreprotect.purge vẫn CẤM.
 lp group quanly permission set minecraft.command.fill true
 lp group quanly permission set minecraft.command.clone true

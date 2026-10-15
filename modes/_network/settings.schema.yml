@@ -121,5 +121,7 @@ groups:
           commands: ["lp group helper meta removeprefix 50", "lp group helper meta setprefix 50 \"{value} \""] }
       - { key: role_mod_prefix, label: "Mod: prefix", type: text,
           commands: ["lp group mod meta removeprefix 70", "lp group mod meta setprefix 70 \"{value} \""] }
+      - { key: role_quanly_prefix, label: "Manager: prefix", type: text,
+          commands: ["lp group quanly meta removeprefix 90", "lp group quanly meta setprefix 90 \"{value} \""] }
       - { key: role_admin_prefix, label: "Admin: prefix", type: text,
           commands: ["lp group admin meta removeprefix 100", "lp group admin meta setprefix 100 \"{value} \""] }

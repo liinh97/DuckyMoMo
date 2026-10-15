@@ -100,6 +100,11 @@ details.plg[open]>summary::before{content:"▾ "}
 .check input{width:auto}
 .tools label.check{margin:0}
 footer{padding:30px 0;color:var(--dim);font-size:.85rem}
+.ttmsg{margin-top:12px;padding:10px 12px;border-radius:10px;font-weight:600}
+.ttmsg:empty{display:none}
+.ttmsg.ok{background:rgba(62,207,142,.12);color:var(--jade2);border:1px solid rgba(62,207,142,.35)}
+.ttmsg.bad{background:rgba(239,83,80,.12);color:#ffb3b1;border:1px solid rgba(239,83,80,.4)}
+.ttmsg.wait{background:rgba(242,184,75,.1);color:var(--gold2);border:1px solid rgba(242,184,75,.35)}
 .tt-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
 @media (max-width:820px){.tt-grid{grid-template-columns:1fr}}
 .tt{border:1px solid var(--line);border-radius:14px;padding:14px;background:var(--card2);min-width:0}
@@ -426,7 +431,7 @@ function trangTriHtml(){
       ${n.rgb ? `<label class="hex" title="Màu tuỳ chọn">🎨<input type="color" id="hexPick" value="#ffaa33"></label>` : ""}</div>
     <div class="pv"><div class="pv-sky"><div class="tag" id="pvTag"></div><div class="steve"></div></div>
       <div class="pv-chat" id="pvChat"></div><div class="pv-tab" id="pvTab"></div></div>
-    <div class="small dim" style="margin:6px 0">Chữ không dấu, số, dấu _ · 3–16 ký tự. Tên lưu riêng ở từng server.</div>
+    <div class="small dim" style="margin:6px 0"><b id="nickCount"></b> · chữ không dấu, số, dấu _. ${n.bo_mau ? "Mã màu không tính vào độ dài." : "Server đang tính cả mã màu vào độ dài (&6 = 2 ký tự)."} Tên lưu riêng ở từng server.</div>
     ${n.duoc ? `<div class="tools"><button class="btn primary small" data-tt="nick">Áp dụng tên</button><button class="btn small" data-tt="nick_off">Về tên gốc</button></div>` : ""}</div>`;
   // hiệu ứng hạt
   h += `<div class="tt"><h3>🎆 Hiệu ứng hạt ${pp.toi_da ? `<span class="pill">tối đa ${pp.toi_da} cùng lúc</span>` : lock("Tử Tước")}</h3>
@@ -448,7 +453,7 @@ function trangTriHtml(){
       : `<p class="small muted">Chưa có. Giành bằng bảng xếp hạng mùa (/bxh) hoặc mua bằng xu ở /cuahang.</p>`}
     <h3 style="margin-top:16px">🎩 Đội đồ lên đầu ${TT.hat ? "" : lock("Nam Tước")}</h3>
     <p class="small muted">${TT.hat ? "Cầm món đồ muốn đội trên tay trong game rồi gõ <code>/hat</code> (vd đội hoa, kính, khối trang trí)." : "Đội bất kỳ món đồ nào lên đầu bằng /hat."}</p></div>`;
-  h += `</div><div class="err" id="ttMsg"></div></div>`;
+  h += `</div><div class="ttmsg" id="ttMsg" role="status" aria-live="polite"></div></div>`;
   return h;
 }
 
@@ -456,7 +461,9 @@ function drawNickPreview(){
   if (!TT) return;
   const roles = (D.roles || []), staff = roles.find(r => r.loai !== "donate"), don = roles.find(r => r.loai === "donate");
   const title = (TT.danhhieu.co.find(t => t.id === TT.danhhieu.dung) || {}).chu || "";
-  const name = (nickVal || "").trim() ? "&r~" + nickVal.trim() : "&f" + D.ten;
+  const name = (nickVal || "").trim() ? "&r" + (TT.nick.dau || "") + nickVal.trim() : "&f" + D.ten;
+  const v = (nickVal || "").trim(), plain = v.replace(/&#[0-9a-f]{6}|&[0-9a-fk-or]/gi, ""), n = TT.nick.bo_mau ? plain.length : v.length;
+  const cnt = $("#nickCount"); if (cnt) { cnt.textContent = v ? `${n}/${TT.nick.toi_da} ký tự` : `Tối đa ${TT.nick.toi_da} ký tự`; cnt.style.color = n > TT.nick.toi_da ? "#ff9d9b" : ""; }
   const pre = (staff && staff.prefix ? staff.prefix : "&7[Dân] ") + (don && don.prefix ? don.prefix : "");
   $("#pvChat").innerHTML = mc(pre + name + (title ? " " + title : "") + "&7: &fXin chào mọi người!");
   $("#pvTag").innerHTML = mc(name);
@@ -539,10 +546,12 @@ function bindTrangTri(){
 }
 
 async function doTT(body){
-  const m = $("#ttMsg"); m.style.color = ""; m.textContent = "Đang gửi…";
+  const m = $("#ttMsg"); m.className = "ttmsg wait"; m.textContent = "⏳ Đang gửi tới server…";
   const d = await api("api/trangtri", body).catch(() => ({message: "Không kết nối được."}));
-  m.style.color = d.ok ? "var(--jade2)" : ""; m.textContent = d.message || (d.ok ? "Xong." : "Không áp dụng được.");
-  if (d.ok && d.trangtri) { D.trangtri = d.trangtri; if (body.viec.startsWith("danhhieu") || body.viec.startsWith("nick")) { if (body.viec === "nick_off") nickVal = ""; const y = scrollY; render(); scrollTo(0, y); $("#ttMsg").style.color = "var(--jade2)"; $("#ttMsg").textContent = d.message; } }
+  const show = () => { const e = $("#ttMsg"); e.className = "ttmsg " + (d.ok ? (d.pending ? "wait" : "ok") : "bad");
+    e.textContent = (d.ok ? (d.pending ? "⏳ " : "✓ ") : "✕ ") + (d.message || (d.ok ? "Xong." : "Không áp dụng được.")); };
+  show();
+  if (d.ok && d.trangtri) { D.trangtri = d.trangtri; if (body.viec.startsWith("danhhieu") || body.viec.startsWith("nick")) { if (body.viec === "nick_off") nickVal = ""; const y = scrollY; render(); scrollTo(0, y); show(); } }
 }
 
 function cmdRow(c){

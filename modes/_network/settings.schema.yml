@@ -5,6 +5,7 @@
 title: Toàn mạng
 server: lobby
 
+# default (tuỳ chọn): giá trị khuyên dùng cho mục chưa từng lưu; trang Cài đặt điền sẵn thành "thay đổi chưa lưu", bấm Lưu là ghi.
 groups:
   - title: Lọc chat
     category: Chat
@@ -23,6 +24,21 @@ groups:
           note: "0.7 = câu có từ 70% chữ hoa trở lên (và từ 8 chữ cái) bị đổi về chữ thường. 1 = tắt." }
       - { key: chat_too_fast_msg, label: Tin báo khi chat quá nhanh, type: text, servers: [lobby, banghoi-1, practice-1], file: plugins/DuckyMoMoCore/config.yml, path: chat-filter.too-fast-message }
       - { key: chat_repeat_msg, label: Tin báo khi gửi lặp, type: text, servers: [lobby, banghoi-1, practice-1], file: plugins/DuckyMoMoCore/config.yml, path: chat-filter.repeat-message }
+
+  - title: Tên hiển thị và định dạng chat (Essentials)
+    category: Chat
+    description: "Bang Hội Chiến + Practice (sảnh dùng DuckyMoMoCore, không có Essentials). Chat bị lặp [Mod] [Công Tước] hai lần: tắt 'Gắn prefix vào tên hiển thị' (định dạng chat đã có {PREFIX}). Lưu là nạp lại Essentials ngay."
+    apply: [essentials reload]
+    settings:
+      - { key: ess_chat_format, label: Định dạng chat, type: text, servers: [banghoi-1, practice-1], file: plugins/Essentials/config.yml, path: chat.format, default: "{PREFIX}{DISPLAYNAME}{SUFFIX}&7: &f{MESSAGE}",
+          note: "{PREFIX} = role + rank (LuckPerms), {DISPLAYNAME} = tên (hoặc tên đã đổi), {SUFFIX} = danh hiệu, {MESSAGE} = nội dung. Gợi ý: {PREFIX}{DISPLAYNAME}{SUFFIX}&7: &f{MESSAGE}" }
+      - { key: ess_add_prefix_suffix, label: Gắn prefix/suffix vào tên hiển thị, type: select, servers: [banghoi-1, practice-1], file: plugins/Essentials/config.yml, path: add-prefix-suffix, default: false,
+          options: [ { value: false, label: "Tắt (khuyên dùng: định dạng chat đã có {PREFIX})" }, { value: true, label: "Bật (role/rank sẽ hiện 2 lần nếu định dạng có {PREFIX})" } ] }
+      - { key: ess_nick_max, label: Tên hiển thị (/nick) dài tối đa, type: int, min: 3, max: 32, servers: [banghoi-1, practice-1], file: plugins/Essentials/config.yml, path: max-nick-length, default: 16 }
+      - { key: ess_nick_ignore_colors, label: Không tính mã màu vào độ dài tên, type: select, servers: [banghoi-1, practice-1], file: plugins/Essentials/config.yml, path: ignore-colors-in-max-nick-length, default: true,
+          options: [ { value: true, label: "Bật (khuyên dùng: &6&lTên chỉ tính 3 chữ)" }, { value: false, label: "Tắt (mặc định Essentials: mã màu cũng tính)" } ] }
+      - { key: ess_nick_prefix, label: Ký tự đứng trước tên đã đổi, type: text, servers: [banghoi-1, practice-1], file: plugins/Essentials/config.yml, path: nickname-prefix, default: "~",
+          note: "Mặc định ~ để người khác biết đây là tên đã đổi (chống giả làm admin). Để trống = không có." }
 
   - title: Thông báo vào/ra server
     category: Chat

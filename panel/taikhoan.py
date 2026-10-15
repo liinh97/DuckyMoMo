@@ -313,6 +313,7 @@ def cosmetics(perms):
     srv = "banghoi-1"
     h = lambda n: has(perms, n, srv)
     ess = safe_yaml(DATA_DIR / srv / "plugins" / "Essentials" / "userdata" / f"{perms['uuid']}.yml")
+    esscfg = safe_yaml(DATA_DIR / srv / "plugins" / "Essentials" / "config.yml")
     max_pp = max([n for n in range(1, 11) if h(f"playerparticles.particles.max.{n}")] or [0])
     pets = [t for t in PASSIVE_PETS if h(f"pet.type.{t}.spawn") or h("pet.type.passive")]
     core = safe_yaml(DMM / "config.yml")
@@ -325,7 +326,10 @@ def cosmetics(perms):
         return str(titles.get(t, titles.get(base, f"&7[{t}]"))).replace("{mua}", season)
     return {
         "nick": {"duoc": h("essentials.nick"), "mau": h("essentials.nick.color"), "dinhdang": h("essentials.nick.format"),
-                 "rgb": h("essentials.nick.rgb"), "hien_tai": ess.get("nickname") or ""},
+                 "rgb": h("essentials.nick.rgb"), "hien_tai": ess.get("nickname") or "",
+                 # giới hạn của Essentials: mặc định 15 ký tự và TÍNH CẢ mã màu (&6 = 2 ký tự)
+                 "toi_da": int(esscfg.get("max-nick-length", 15) or 15), "bo_mau": bool(esscfg.get("ignore-colors-in-max-nick-length", False)),
+                 "dau": str(esscfg.get("nickname-prefix", "~") if esscfg.get("nickname-prefix") is not None else "~")},
         "hat": h("essentials.hat"),
         "pp": {"toi_da": max_pp, "hieu_ung": [e for e in PP_EFFECTS if h(f"playerparticles.effect.{e}")] if max_pp else [],
                "kieu": [s for s in PP_STYLES if h(f"playerparticles.style.{s}")] if max_pp else []},
@@ -346,8 +350,12 @@ def cosmetic_command(perms, data):
         if not NICK_RE.match(v):
             raise ValueError("Tên chỉ gồm chữ không dấu, số, dấu _ và mã màu (&a, &l, &#ff8800).")
         plain = re.sub(r"&#[0-9a-fA-F]{6}|&[0-9a-fk-orA-FK-OR]", "", v)
-        if not 3 <= len(plain) <= 16:
-            raise ValueError("Tên hiển thị dài 3–16 ký tự (không tính mã màu).")
+        n, limit = (len(plain) if c["nick"]["bo_mau"] else len(v)), c["nick"]["toi_da"]
+        if len(plain) < 3:
+            raise ValueError("Tên hiển thị cần ít nhất 3 chữ.")
+        if n > limit:
+            raise ValueError(f"Tên quá dài: {n}/{limit} ký tự" + ("" if c["nick"]["bo_mau"] else " (server đang tính cả mã màu, vd &6 = 2 ký tự)")
+                             + ". Bớt chữ hoặc bớt mã màu.")
         if not c["nick"]["duoc"]:
             raise ValueError("Rank của bạn chưa có quyền đổi tên.")
         if re.search(r"&[0-9a-fA-F]", v) and not c["nick"]["mau"]:

@@ -205,6 +205,8 @@ function render() {
   const main = $("main");
   main.innerHTML = "";
   if (!mode) { main.innerHTML = '<p class="empty">Chưa có chế độ nào có settings.schema.yml.</p>'; return; }
+  // mục mới chưa từng lưu nhưng schema có giá trị khuyên dùng (default): điền sẵn thành thay đổi chưa lưu
+  for (const g of mode.schema.groups) for (const s of g.settings) if ("default" in s && !(s.key in mode.values) && !(s.key in edits)) edits[s.key] = s.default;
   const cats = catsOf(mode);
   if (!category[mode.id] || (category[mode.id] !== "*" && !cats.includes(category[mode.id]))) category[mode.id] = cats[0];
   renderCats(mode, cats);

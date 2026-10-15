@@ -87,7 +87,12 @@
      (`STATE_REVOKE` trong panel/app.py: fly/god/vanish off, speed 1, gamemode về mặc định của server). Gỡ role cũng tắt. Thêm quyền trạng thái khác: sửa `STATE_REVOKE`.
    - Trang trí trên web (trang tài khoản): đổi tên, hiệu ứng hạt, pet, danh hiệu, có xem trước (canvas cho hạt). Áp dụng bằng RCON
      `sudo <tên> <lệnh>` (Essentials) ở server người đó đang online (banghoi-1/practice-1), web lọc lệnh theo quyền trước
-     (`taikhoan.cosmetics`/`cosmetic_command`), plugin kiểm lại. Chưa thử trong game: Essentials có thể giới hạn độ dài/ký tự nick khác web.
+     (`taikhoan.cosmetics`/`cosmetic_command`), plugin kiểm lại. Kết quả: đổi tên kiểm bằng `/whois`, danh hiệu đọc bxh.yml; hạt/pet
+     không đọc được nên web báo "đã gửi, xem lỗi trong chat game". Độ dài tên theo `max-nick-length` + `ignore-colors-in-max-nick-length`
+     của Essentials (đọc từ data/banghoi-1), đếm ký tự ngay khi gõ.
+   - Chat lặp role/rank ([Mod] [Công Tước] hai lần) ở banghoi: do Essentials `add-prefix-suffix` + format có {PREFIX}. Cài đặt > Toàn mạng >
+     Chat > nhóm "Tên hiển thị và định dạng chat (Essentials)" (mới, có giá trị khuyên dùng điền sẵn: add-prefix-suffix false, format có
+     {SUFFIX} cho danh hiệu, nick tối đa 16, không tính mã màu, tiền tố ~). Schema hỗ trợ `default:` (index.html điền sẵn thành thay đổi chưa lưu).
    - Lệnh hay dùng: `modes/_network/lenh-hay-dung.yml` (nhóm Người chơi/Staff/Admin, khớp theo tên lệnh bỏ tham số, `cmd_key` trong panel);
      trang tài khoản hiện mục "⭐ Hay dùng" trước, lệnh khác gom theo plugin, thu gọn (tìm kiếm thì mở hết).
    - Sảnh KHÔNG cài EssentialsX: /fly, /kick… ở sảnh báo "Unknown command" với mọi người. Mod dùng ở banghoi/practice. Chưa quyết có cài Essentials ở sảnh không.

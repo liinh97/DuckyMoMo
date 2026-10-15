@@ -1639,12 +1639,52 @@ def web_cosmetic(data, ip):
         where = "Bang Hội Chiến" if need == ["banghoi-1"] else "Bang Hội Chiến hoặc Practice"
         return {"ok": False, "message": f"Bạn cần đang online ở {where} để áp dụng (sảnh không hỗ trợ). Vào game rồi bấm lại."}
     out = rcon(srv, [f"sudo {perms['name']} {cmd}"])[0][1]
-    web_log({"viec": "trangtri", "nguoi": name, "lenh": cmd, "server": srv, "kq": out[:150], "ip": ip})
-    if "not found" in out.lower() or "không tìm" in out.lower():
-        return {"ok": False, "message": "Server chưa thấy bạn online, thử lại sau vài giây."}
     where = "Bang Hội Chiến" if srv == "banghoi-1" else "Practice"
-    extra = " Tên hiển thị lưu riêng từng server." if cmd.startswith("nick") else ""
-    return {"ok": True, "message": f"Đã áp dụng ở {where}. Xem kết quả trong game.{extra}", "trangtri": taikhoan.cosmetics(perms)}
+    if "not found" in out.lower() or "không tìm" in out.lower():
+        res = {"ok": False, "message": "Server chưa thấy bạn online, thử lại sau vài giây."}
+    else:
+        res = cosmetic_result(perms, srv, where, cmd, data)
+    web_log({"viec": "trangtri", "nguoi": name, "lenh": cmd, "server": srv, "ok": res["ok"], "kq": res["message"][:150], "ip": ip})
+    res["trangtri"] = taikhoan.cosmetics(perms)
+    return res
+
+
+def cosmetic_result(perms, srv, where, cmd, data):
+    """Kiểm tra kết quả thật sau khi chạy lệnh thay người chơi (plugin chỉ báo lỗi trong chat game, RCON không thấy).
+    Đổi tên: hỏi /whois. Danh hiệu: đọc bxh.yml. Hạt, pet: không đọc được kết quả -> nói rõ là đã gửi."""
+    plain = lambda s: re.sub(r"(?i)[&§]#[0-9a-f]{6}|[&§][0-9a-fk-or]", "", s or "")
+    if cmd.startswith("nick"):
+        time.sleep(0.8)
+        try:
+            who = rcon(srv, [f"whois {perms['name']}"])[0][1]
+        except Exception:
+            who = ""
+        line = next((l for l in who.splitlines() if "nick" in l.lower()), "")
+        now = plain(line.split(":", 1)[1]).strip() if ":" in line else ""
+        if cmd == "nick off":
+            if not now or now.lstrip("~").lower() == perms["name"].lower():
+                return {"ok": True, "message": f"Đã trả về tên gốc ở {where}."}
+            return {"ok": False, "message": f"Server chưa bỏ tên đổi (đang là {now}). Xem dòng báo lỗi trong chat game."}
+        want = plain(str(data.get("gia_tri", ""))).strip()
+        if want and now.endswith(want):
+            return {"ok": True, "message": f"Đã đổi tên thành {now} ở {where}. Tên lưu riêng từng server."}
+        if not line:
+            return {"ok": False, "message": "Đã gửi nhưng không kiểm tra được kết quả (server không trả /whois). Xem chat trong game."}
+        return {"ok": False, "message": f"Server KHÔNG nhận tên mới (tên hiện tại: {now or perms['name']}). Lý do hay gặp: tên quá dài "
+                                         "(Essentials tính cả mã màu), trùng tên người khác, hoặc ký tự không cho phép. Xem dòng báo lỗi trong chat game."}
+    if cmd.startswith("danhhieu"):
+        time.sleep(0.6)
+        dh = (taikhoan.safe_yaml(taikhoan.DMM / "bxh.yml").get("danhhieu") or {}).get(perms["uuid"]) or {}
+        if cmd == "danhhieu tat":
+            ok = not dh.get("dung")
+            return {"ok": ok, "message": "Đã ẩn danh hiệu." if ok else "Server chưa ẩn danh hiệu, xem chat trong game."}
+        ok = dh.get("dung") == data.get("ma")
+        return {"ok": ok, "message": "Đã đổi danh hiệu, hiện sau tên trong chat." if ok else "Server chưa đổi danh hiệu, xem dòng báo lỗi trong chat game."}
+    what = {"pp add": "thêm hiệu ứng", "pp reset": "tắt mọi hiệu ứng", "pet summon": "gọi pet", "pet remove": "cất pet"}
+    act = next((v for k, v in what.items() if cmd.startswith(k)), "gửi lệnh")
+    return {"ok": True, "pending": True,
+            "message": f"Đã gửi lệnh {act} ở {where}. Plugin không báo kết quả về web: nếu không thấy thay đổi, xem dòng báo lỗi trong chat game "
+                       + ("(vd đã đủ số hiệu ứng tối đa thì tắt bớt trước)." if cmd.startswith("pp add") else "(vd đang đánh nhau).")}
 
 
 def account_times(name):

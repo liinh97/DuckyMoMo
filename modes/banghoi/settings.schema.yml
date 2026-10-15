@@ -107,6 +107,18 @@ groups:
       - { key: dd_bc, label: Báo cả server khi có người chạm mốc, type: select, file: plugins/DuckyMoMoCore/config.yml, path: daily-checkin.broadcast-milestone,
           options: [ { value: true, label: Có }, { value: false, label: Không } ] }
 
+  - title: Nhiệm vụ hằng ngày
+    category: Thưởng & sự kiện
+    description: "/nhiemvu: mỗi người mỗi ngày nhận vài nhiệm vụ ngẫu nhiên (cố định trong ngày, đổi lúc 0 giờ) từ danh sách dưới. Khối người chơi tự đặt rồi phá không được tính."
+    apply: [dmm reload]
+    settings:
+      - { key: nv_on, label: Bật nhiệm vụ hằng ngày, type: select, file: plugins/DuckyMoMoCore/config.yml, path: daily-quests.enabled,
+          options: [ { value: true, label: Bật }, { value: false, label: Tắt } ] }
+      - { key: nv_per_day, label: Số nhiệm vụ mỗi ngày, type: int, min: 1, max: 10, file: plugins/DuckyMoMoCore/config.yml, path: daily-quests.per-day }
+      - { key: nv_bonus, label: Thưởng thêm khi xong hết trong ngày, type: rewards, file: plugins/DuckyMoMoCore/config.yml, path: daily-quests.complete-all-rewards }
+      - { key: nv_pool, label: Danh sách nhiệm vụ, type: quests, file: plugins/DuckyMoMoCore/config.yml, path: daily-quests.pool,
+          note: "Mục tiêu: tên vật liệu/mob tiếng Anh, cách nhau dấu phẩy. *_ORE = mọi quặng, *_LOG = mọi khúc gỗ, * = tất cả, @HOSTILE = mọi quái thù địch." }
+
   - title: Liên minh Hoà Bình
     category: Thị trấn
     description: "Quốc gia duy nhất được hoà bình, do server quản lý, thủ đô là kinh đô ở spawn. Thị trưởng vào/rời bằng /hoabinh. Lập lần đầu: admin đứng giữa spawn gõ /dmm hoabinh setup rồi /dmm hoabinh claim 14."
@@ -341,6 +353,13 @@ groups:
           options: [ { value: true, label: Bật }, { value: false, label: Tắt } ] }
       - { key: pvp_newbie_seconds, label: Thời gian bảo vệ người mới (giây), type: int, min: 0, max: 86400, file: plugins/PvPManager/config.yml, path: Newbie Protection.Time,
           note: "900 = 15 phút. Người mới tự tắt được bằng /newbie disable." }
+      - { key: pvp_newbie_bar, label: Thanh đếm ngược bảo vệ người mới (boss bar), type: select, file: plugins/PvPManager/config.yml, path: Newbie Protection.Boss Bar.Enabled,
+          options: [ { value: true, label: Hiện }, { value: false, label: Ẩn } ] }
+      - { key: pvp_newbie_bar_text, label: Chữ trên thanh, type: text, file: plugins/PvPManager/config.yml, path: Newbie Protection.Boss Bar.Message,
+          note: "<time> = thời gian còn lại (phút:giây). Mã màu &." }
+      - { key: pvp_newbie_bar_color, label: Màu thanh, type: select, file: plugins/PvPManager/config.yml, path: Newbie Protection.Boss Bar.BarColor,
+          options: [ { value: GREEN, label: Xanh lá }, { value: YELLOW, label: Vàng }, { value: BLUE, label: Xanh dương }, { value: PINK, label: Hồng },
+                     { value: PURPLE, label: Tím }, { value: RED, label: Đỏ }, { value: WHITE, label: Trắng } ] }
 
   - title: Dọn rác
     category: Hệ thống

@@ -157,7 +157,7 @@
   SRV → 25565 (qua API). Ping ước tính: người chơi miền Nam ~30–40 ms, miền Bắc (kể cả chủ server) ~55–65 ms. VPS BKNS: vẫn bật nhưng không còn
   nhà nối vào; người dùng sẽ xin huỷ/hoàn tiền (đừng tắt hộ khi chưa hỏi).
 - **Kế hoạch tính năng (15/10, người dùng chốt thứ tự)**: (1) Thư viện đồ ✅ → (2) điểm danh ✅ (giữ chuỗi khi bỏ ngày, ngày nào điểm danh nhận thưởng
-  ngày đó, mốc 7/14/30, cài đặt trên web) → (3) boss bar đếm ngược bảo vệ người mới → (4) nhiệm vụ hằng ngày → (5) chìa khoá theo giờ online +
+  ngày đó, mốc 7/14/30, cài đặt trên web) → (3) boss bar đếm ngược bảo vệ người mới ✅ → (4) nhiệm vụ hằng ngày ✅ → (5) chìa khoá theo giờ online +
   vòng quay hiện tỉ lệ (chỉ phát miễn phí) → (6) mảnh sự kiện (ĐỒ VẬT, trao đổi được, giới hạn nhận/ngày; nguồn: boss sự kiện theo sát thương,
   dungeon, mốc điểm danh, đủ nhiệm vụ ngày, vote/vòng quay tỉ lệ thấp; mỗi sự kiện loại mảnh riêng + hạn đổi) + cửa hàng đổi mảnh trên web →
   (7) tạo boss trên web (EliteMobs custombosses + em reload) → (8) cửa hàng trên web (Kinh Đô, đổi mảnh; Shopkeepers cần xem kỹ vì tự ghi đè).
@@ -175,6 +175,14 @@
   module mảnh); túi đầy thì rơi dưới chân. Panel: kiểu ô mới `rewards` (danh sách quà, chọn loại; đồ thư viện chọn từ danh sách) và
   `milestones` (mốc ngày + quà), kiểm tra bằng `REWARD_RES` trong `panel/app.py`; nhóm mới "Thưởng & sự kiện". Đã thử: lưu thật qua panel
   (ghi mốc dạng map, `dmm reload`), chặn quà sai; giao diện trên bản xem thử. CHƯA thử /diemdanh trong game (cần người chơi).
+- **Nhiệm vụ hằng ngày (15/10)**: DuckyMoMoCore `DailyQuests` (`/nhiemvu`, alias `/nv`; config `daily-quests` ở banghoi-1): mỗi người `per-day`
+  (3) nhiệm vụ ngẫu nhiên từ `pool` (seed = uuid + ngày VN, cố định trong ngày); loại break/place/kill/fish/harvest, `targets` (tên, `*_ORE`,
+  `OAK_*`, `*`, `@HOSTILE`), `amount`, `rewards`; xong hết `complete-all-rewards`. Nghe sự kiện MONITOR + ignoreCancelled nên khối người chơi
+  đặt rồi phá (PlacedBlockGuard huỷ) không tính. Tiến độ `nhiemvu.yml`, ghi mỗi phút + khi thoát + trong `teardown()` (reload). Panel: kiểu ô
+  `quests` (trình soạn nhiệm vụ, kiểm tra `QUEST_TYPES`/`QUEST_TARGET_RE`). Mặc định 7 nhiệm vụ 100–150 xu + 300 xu xong hết. `Rewards.describe()`
+  cho người chơi đọc. Đã thử: lệnh nạp, lưu thật qua panel (sửa câu cá 10→12→10), chặn loại sai, giao diện. CHƯA thử tiến độ trong game.
+  Kinh tế: ~650 xu/ngày từ nhiệm vụ + 100 điểm danh + vote; chỉnh nếu lạm phát.
+- **Thanh đếm ngược bảo vệ người mới**: đã có sẵn ở PvPManager (`Newbie Protection.Boss Bar`); thêm ô bật/chữ/màu vào Cài đặt > PvP & combat.
 - **Ping nhảy khi chạy nhanh (15/10, đã sửa bằng BBR)**: người dùng thấy ping 900+ ms khi chạy (TPS vẫn 20). Đo: tuyến **VPS Vinahost →
   nhà mất ~2% gói** ở mọi tốc độ (UDP iperf 5M/20M: 2,2%/1,7%), không phải trần băng thông (4 luồng TCP = 23,6 Mbps). TCP cubic 1 luồng chỉ
   ~3–5 Mbps → chunk dồn khi chạy, gói keep-alive xếp sau gói gửi lại → ping nhảy. BBR 1 luồng: 92 Mbps (VPS gửi), **trên đúng đường người

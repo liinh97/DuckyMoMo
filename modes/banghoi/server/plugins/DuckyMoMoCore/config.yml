@@ -363,3 +363,19 @@ daily-checkin:
     7: ["xu 500", "vat GOLDEN_APPLE 2"]
     14: ["xu 1000", "vat DIAMOND 3"]
     30: ["xu 3000", "vat DIAMOND 8"]
+
+# Nhiệm vụ hằng ngày (/nhiemvu): mỗi người mỗi ngày per-day nhiệm vụ ngẫu nhiên từ pool. Lưu: nhiemvu.yml
+# type: break (phá khối) | place (đặt khối) | kill (giết mob) | fish (câu cá) | harvest (thu hoạch cây chín)
+# targets: tên vật liệu/mob, *_ORE, OAK_*, * (tất cả), @HOSTILE (mọi quái thù địch). Khối người chơi tự đặt không tính khi phá.
+daily-quests:
+  enabled: true
+  per-day: 3
+  complete-all-rewards: ["xu 300"]
+  pool:
+    dao_da: {name: "Đào 128 khối đá", type: break, targets: [STONE, COBBLESTONE, DEEPSLATE, COBBLED_DEEPSLATE, ANDESITE, DIORITE, GRANITE, TUFF], amount: 128, rewards: ["xu 100"]}
+    dao_quang: {name: "Đào 16 quặng", type: break, targets: ["*_ORE"], amount: 16, rewards: ["xu 150"]}
+    chat_go: {name: "Chặt 64 khúc gỗ", type: break, targets: ["*_LOG", "*_STEM"], amount: 64, rewards: ["xu 100"]}
+    san_quai: {name: "Săn 20 quái vật", type: kill, targets: ["@HOSTILE"], amount: 20, rewards: ["xu 150"]}
+    xay_dung: {name: "Đặt 200 khối", type: place, targets: ["*"], amount: 200, rewards: ["xu 100"]}
+    cau_ca: {name: "Câu 10 con cá", type: fish, targets: ["*"], amount: 10, rewards: ["xu 100"]}
+    thu_hoach: {name: "Thu hoạch 64 nông sản", type: harvest, targets: [WHEAT, CARROTS, POTATOES, BEETROOTS, NETHER_WART, COCOA], amount: 64, rewards: ["xu 100"]}

@@ -755,3 +755,79 @@ dd_miles:
 dd_cycle: 30
 dd_remind: true
 dd_bc: true
+pvp_newbie_bar: true
+pvp_newbie_bar_text: "&6✦ &a&lBẢO VỆ NGƯỜI MỚI &6✦ &e&l<time>"
+pvp_newbie_bar_color: GREEN
+nv_on: true
+nv_per_day: 3
+nv_bonus: [xu 300]
+nv_pool:
+  dao_da:
+    name: Đào 128 khối đá
+    type: break
+    targets:
+      - STONE
+      - COBBLESTONE
+      - DEEPSLATE
+      - COBBLED_DEEPSLATE
+      - ANDESITE
+      - DIORITE
+      - GRANITE
+      - TUFF
+    amount: 128
+    rewards:
+      - xu 100
+  dao_quang:
+    name: Đào 16 quặng
+    type: break
+    targets:
+      - '*_ORE'
+    amount: 16
+    rewards:
+      - xu 150
+  chat_go:
+    name: Chặt 64 khúc gỗ
+    type: break
+    targets:
+      - '*_LOG'
+      - '*_STEM'
+    amount: 64
+    rewards:
+      - xu 100
+  san_quai:
+    name: Săn 20 quái vật
+    type: kill
+    targets:
+      - '@HOSTILE'
+    amount: 20
+    rewards:
+      - xu 150
+  xay_dung:
+    name: Đặt 200 khối
+    type: place
+    targets:
+      - '*'
+    amount: 200
+    rewards:
+      - xu 100
+  cau_ca:
+    name: Câu 10 con cá
+    type: fish
+    targets:
+      - '*'
+    amount: 10
+    rewards:
+      - xu 100
+  thu_hoach:
+    name: Thu hoạch 64 nông sản
+    type: harvest
+    targets:
+      - WHEAT
+      - CARROTS
+      - POTATOES
+      - BEETROOTS
+      - NETHER_WART
+      - COCOA
+    amount: 64
+    rewards:
+      - xu 100

@@ -55,7 +55,10 @@
   .ms { border: 1px solid var(--line); border-radius: 8px; padding: 8px; margin-bottom: 6px; }
   .ms-head { display: flex; gap: 6px; align-items: center; margin-bottom: 6px; font-size: 13.5px; }
   .ms-head input { width: 80px; }
-  @media (max-width: 640px) { .rw-row { grid-template-columns: 1fr 1fr; } }
+  .qe-head { display: grid; grid-template-columns: 120px 1fr 120px 90px 28px; gap: 6px; margin-bottom: 6px; }
+  .qe-head .x { background: none; border: 0; color: var(--err); cursor: pointer; font-size: 16px; }
+  .qe-tg { margin-bottom: 6px; }
+  @media (max-width: 640px) { .rw-row, .qe-head { grid-template-columns: 1fr 1fr; } }
 </style>
 </head>
 <body>
@@ -238,6 +241,46 @@ function milestonesEditor(value, onChange) {
   return box;
 }
 
+
+// ---- Trình soạn nhiệm vụ hằng ngày: {mã: {name, type, targets[], amount, rewards[]}}
+const QUEST_TYPES = [["break", "Phá khối (đào, chặt)"], ["place", "Đặt khối (xây)"], ["kill", "Giết mob (săn)"], ["fish", "Câu cá"], ["harvest", "Thu hoạch cây chín"]];
+function questsEditor(value, onChange) {
+  const box = document.createElement("div");
+  const qs = [];
+  const emit = () => {
+    const o = {};
+    for (const q of qs) {
+      const id = q.id.value.trim();
+      if (!id) continue;
+      o[id] = { name: q.name.value.trim(), type: q.type.value,
+        targets: q.tg.value.split(",").map(x => x.trim().toUpperCase()).filter(Boolean),
+        amount: parseInt(q.amount.value || "1", 10), rewards: q.rewards };
+    }
+    onChange(o);
+  };
+  const add = document.createElement("button"); add.type = "button"; add.className = "rw-add"; add.textContent = "+ Thêm nhiệm vụ";
+  function addQ(id, d) {
+    const wrap = document.createElement("div"); wrap.className = "ms";
+    const head = document.createElement("div"); head.className = "qe-head";
+    head.innerHTML = '<input placeholder="mã, vd dao_da"><input placeholder="Tên hiện cho người chơi"><select></select><input type="number" min="1" max="100000" title="Số lượng cần đạt"><button type="button" class="x" title="Bỏ nhiệm vụ">×</button>';
+    const [idEl, nameEl, typeEl, amtEl] = head.querySelectorAll("input,select");
+    for (const [k, t] of QUEST_TYPES) { const o = document.createElement("option"); o.value = k; o.textContent = t; typeEl.appendChild(o); }
+    const tg = document.createElement("input"); tg.className = "qe-tg"; tg.placeholder = "Mục tiêu, vd STONE, *_ORE, @HOSTILE (trống = tất cả)";
+    const q = { id: idEl, name: nameEl, type: typeEl, amount: amtEl, tg, rewards: (d.rewards || []).slice() };
+    idEl.value = id || ""; nameEl.value = d.name || ""; typeEl.value = d.type || "break"; amtEl.value = d.amount || 10;
+    tg.value = (d.targets || []).join(", ");
+    for (const el of [idEl, nameEl, amtEl, tg]) el.oninput = emit;
+    typeEl.onchange = emit;
+    head.querySelector(".x").onclick = () => { qs.splice(qs.indexOf(q), 1); wrap.remove(); emit(); };
+    wrap.append(head, tg, rewardsEditor(q.rewards, v => { q.rewards = v; emit(); }));
+    qs.push(q); box.insertBefore(wrap, add);
+  }
+  box.appendChild(add);
+  add.onclick = () => { addQ("", { type: "break", amount: 32, rewards: ["xu 100"] }); emit(); };
+  for (const [id, d] of Object.entries(value || {})) addQ(id, d || {});
+  return box;
+}
+
 function row(mode, s) {
   const div = document.createElement("div");
   div.className = "row";
@@ -265,6 +308,8 @@ function row(mode, s) {
     input.oninput = () => change(mode, s, input.value.split("\n").map(x => x.trim()).filter(x => x), div);
   } else if (s.type === "rewards") {
     input = rewardsEditor(value || [], v => change(mode, s, v, div));
+  } else if (s.type === "quests") {
+    input = questsEditor(value || {}, v => change(mode, s, v, div));
   } else if (s.type === "milestones") {
     input = milestonesEditor(value || {}, v => change(mode, s, v, div));
   } else if (s.type === "list") {

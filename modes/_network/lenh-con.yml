@@ -247,6 +247,7 @@ groups:
       - ["vote top", "Bảng vote tháng", Mọi người]
       - ["diemdanh", "Điểm danh nhận quà ngày + quà mốc (Bang Hội Chiến)", Mọi người]
       - ["diemdanh xem", "Xem số ngày đã điểm danh và mốc tiếp theo", Mọi người]
+      - ["nhiemvu", "Nhiệm vụ hôm nay và tiến độ (Bang Hội Chiến)", Mọi người]
       - ["dmm reload", "Nạp lại cấu hình DuckyMoMoCore", Chỉ admin]
       - ["dmm clean", "Dọn đồ rơi trên đất ngay", Chỉ admin]
       - ["dmm enchant <phù phép> <cấp>", "Phù phép vượt cấp đồ đang cầm (vd sharpness 20)", Chỉ admin]

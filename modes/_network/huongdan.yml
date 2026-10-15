@@ -449,6 +449,17 @@ chapters:
         ngày &lkhông mất&r&0 chuỗi.
         &1/diemdanh xem &0xem
         tiến độ.
+      - |-
+        &2&lNHIỆM VỤ NGÀY
+        &0Gõ &1/nhiemvu&0: mỗi
+        ngày 3 nhiệm vụ
+        (đào, chặt, săn, xây,
+        câu, thu hoạch).
+        &0Xong mỗi cái nhận
+        xu, xong hết &6thêm
+        &6thưởng&0. Đổi lúc 0h.
+        &8Khối tự đặt rồi phá
+        &8không được tính.
   - id: pokemon
     name: Pokémon (sắp mở)
     pages:

@@ -16,6 +16,9 @@ softdepend:
   - Essentials
   - Votifier
 commands:
+  nhiemvu:
+    description: "Nhiệm vụ hằng ngày: đào, chặt, săn, xây, câu cá, thu hoạch để nhận quà"
+    aliases: [nv]
   diemdanh:
     description: "Điểm danh nhận quà mỗi ngày (bỏ ngày không mất chuỗi). /diemdanh xem: xem tiến độ"
     aliases: [dd, checkin]

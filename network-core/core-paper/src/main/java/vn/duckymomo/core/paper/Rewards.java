@@ -118,6 +118,29 @@ final class Rewards {
         }
     }
 
+    /** Mô tả quà cho người chơi đọc (không phát): "100 xu", "Kiếm Rồng x1", "3 Diamond", "2 mảnh lamnguy". Lệnh: bỏ qua. */
+    List<String> describe(List<String> specs) {
+        List<String> out = new ArrayList<>();
+        for (String spec : specs) {
+            String[] a = spec.trim().split("\\s+");
+            try {
+                switch (a[0].toLowerCase(Locale.ROOT)) {
+                    case "xu" -> out.add(VaultEconomy.available() ? VaultEconomy.format(Double.parseDouble(a[1])) : a[1] + " xu");
+                    case "do" -> {
+                        ItemStack item = library.build(a[1], a.length > 2 ? Integer.parseInt(a[2]) : 0);
+                        out.add(item == null ? a[1] : nameOf(item) + " x" + item.getAmount());
+                    }
+                    case "vat" -> out.add((a.length > 2 ? a[2] : "1") + " " + pretty(a[1]));
+                    case "manh" -> out.add(a[2] + " mảnh " + a[1]);
+                    default -> { }
+                }
+            } catch (RuntimeException ignored) {
+                // quà sai định dạng: không mô tả
+            }
+        }
+        return out;
+    }
+
     static void hand(Player p, ItemStack item) {
         for (ItemStack left : p.getInventory().addItem(item).values()) {
             p.getWorld().dropItemNaturally(p.getLocation(), left);

@@ -21,6 +21,7 @@ public final class DuckyMoMoCore extends JavaPlugin {
     private DecorShop decorShop;
     private ItemLibrary itemLibrary;
     private Rewards rewards;
+    private DailyQuests quests;
 
     @Override
     public void onEnable() {
@@ -41,6 +42,10 @@ public final class DuckyMoMoCore extends JavaPlugin {
     }
 
     private void teardown() {
+        if (quests != null) {
+            quests.flush();
+            quests = null;
+        }
         if (activity != null) {
             activity.shutdown();
             activity = null;
@@ -351,6 +356,14 @@ public final class DuckyMoMoCore extends JavaPlugin {
             getServer().getPluginManager().registerEvents(checkin, this);
         }
         bind("diemdanh", checkin == null ? null : checkin::command, "Điểm danh");
+
+        // Nhiệm vụ hằng ngày (Bang Hội Chiến: daily-quests.enabled)
+        quests = getConfig().getBoolean("daily-quests.enabled")
+                ? new DailyQuests(this, getConfig().getConfigurationSection("daily-quests"), rewards) : null;
+        if (quests != null) {
+            getServer().getPluginManager().registerEvents(quests, this);
+        }
+        bind("nhiemvu", quests == null ? null : quests::command, "Nhiệm vụ hằng ngày");
         PluginCommand dmm = getCommand("dmm");
         if (dmm != null) {
             dmm.setExecutor((sender, cmd, label, args) -> {

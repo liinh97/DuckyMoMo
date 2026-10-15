@@ -70,6 +70,8 @@ def check_rewards(label, v):
     return out
 
 
+QUEST_TYPES = ("break", "place", "kill", "fish", "harvest")
+QUEST_TARGET_RE = re.compile(r"^(\*|@HOSTILE|\*?[A-Z0-9_]{1,64}\*?)$")
 TIMES_RE = re.compile(r"^$|^([01]\d|2[0-3]):[0-5]\d(,([01]\d|2[0-3]):[0-5]\d)*$")
 
 
@@ -156,6 +158,32 @@ def validate(s, v):
             if lst:
                 out[day] = lst
         return dict(sorted(out.items()))
+    if t == "quests":
+        out = {}
+        for qid, q in (v or {}).items():
+            qid = str(qid).strip()
+            if not LIB_ID_RE.match(qid):
+                raise ValueError(f"{label}: mã nhiệm vụ \"{qid}\" chỉ gồm chữ thường không dấu, số, _")
+            q = q or {}
+            qtype = str(q.get("type", "")).lower()
+            if qtype not in QUEST_TYPES:
+                raise ValueError(f"{label} ({qid}): loại không hợp lệ")
+            targets = [str(x).strip().upper() for x in (q.get("targets") or []) if str(x).strip()] or ["*"]
+            for tg in targets:
+                if not QUEST_TARGET_RE.match(tg):
+                    raise ValueError(f"{label} ({qid}): mục tiêu sai \"{tg}\"")
+            try:
+                amount = int(q.get("amount"))
+            except (TypeError, ValueError):
+                raise ValueError(f"{label} ({qid}): số lượng phải là số")
+            if not 1 <= amount <= 100000:
+                raise ValueError(f"{label} ({qid}): số lượng 1–100000")
+            name = str(q.get("name", "")).strip()[:60] or qid
+            out[qid] = {"name": name, "type": qtype, "targets": targets, "amount": amount,
+                        "rewards": check_rewards(f"{label} ({qid})", q.get("rewards"))}
+        if not out:
+            raise ValueError(f"{label}: cần ít nhất một nhiệm vụ")
+        return out
     if t in ("list", "lines"):
         # list: các mục cách nhau dấu phẩy; lines: mỗi dòng một mục. items: int/number -> đổi sang số
         if isinstance(v, str):

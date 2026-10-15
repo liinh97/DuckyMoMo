@@ -406,6 +406,16 @@ public final class DuckyMoMoCore extends JavaPlugin {
         Frontier fr = frontier;
         bind("khaihoang", fr == null ? null : fr::command, "Khai hoang vùng mới");
 
+        // Xưởng chế tạo /xuong: đồ có lượt dùng + hạn (Bang Hội Chiến: workshop.enabled)
+        Workshop workshop = getConfig().getBoolean("workshop.enabled") && getConfig().isConfigurationSection("workshop")
+                ? new Workshop(this, getConfig().getConfigurationSection("workshop")) : null;
+        if (workshop != null) {
+            getServer().getPluginManager().registerEvents(workshop, this);
+            workshop.start();
+            getLogger().info("Xưởng chế tạo: " + workshop.size() + " món");
+        }
+        bind("xuong", workshop == null ? null : workshop::command, "Xưởng chế tạo");
+
         // Sàn thu mua /donhang (Bang Hội Chiến: orders.enabled, cần Vault)
         Orders orders = getConfig().getBoolean("orders.enabled") && getConfig().isConfigurationSection("orders")
                 ? new Orders(this, getConfig().getConfigurationSection("orders")) : null;

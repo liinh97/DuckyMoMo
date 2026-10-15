@@ -166,6 +166,64 @@ pvp-rules:
   military-ranks: [guard, private, sergeant, lieutenant, captain, major, colonel, general]
 
 
+# Xưởng chế tạo (/xuong, ý từ "Server Tools" của UniMC): đồ có LƯỢT DÙNG (uses, -1 = theo độ bền gốc) và HẠN (days), chế bằng xu (cost) + nguyên liệu
+# (ingredients: đồ thường). Hết lượt/hạn là biến mất -> rút tiền và tài nguyên khỏi kinh tế.
+# feature: tui_hu (rương ender mọi nơi), nuoc (xô nước vô tận), hut_do (để trong túi: đồ đào/săn quái bay vào túi; không hút đồ người chơi),
+#          hut_mau (cung: hồi value máu mỗi phát trúng, 2 = 1 tim), trống = chỉ phù phép gốc (enchants: tên phù phép minecraft -> cấp).
+# pvp: true = không gây sát thương / không hồi máu trong vùng vây đang có phiên đánh. enabled: false = ẩn món đó. Admin tặng: /xuong tang <id> [người]
+workshop:
+  enabled: true
+  items:
+    tui_hu:
+      name: "&5&lTúi Hư"
+      material: ENDER_CHEST
+      feature: tui_hu
+      uses: 300
+      days: 7
+      cost: 2000
+      ingredients: {OBSIDIAN: 8, ENDER_EYE: 1}
+      description: ["Chuột phải để mở rương ender ở bất cứ đâu"]
+    nuoc:
+      name: "&b&lNước Nguồn"
+      material: WATER_BUCKET
+      feature: nuoc
+      uses: 1000
+      days: 7
+      cost: 500
+      ingredients: {IRON_INGOT: 3}
+      description: ["Đổ nước không bao giờ cạn"]
+    hut_do:
+      name: "&e&lDây Hút Đồ"
+      material: LEAD
+      feature: hut_do
+      uses: 5000
+      days: 7
+      cost: 1500
+      ingredients: {IRON_INGOT: 4, REDSTONE: 8}
+      description: ["Để trong túi: đồ từ khối bạn đào và quái bạn săn", "bay thẳng vào túi (không hút đồ người khác)"]
+    cung_mau:
+      name: "&c&lCung Máu"
+      material: BOW
+      feature: hut_mau
+      value: 1
+      uses: 1500
+      days: 7
+      cost: 5000
+      pvp: true
+      ingredients: {GHAST_TEAR: 2, STRING: 8}
+      enchants: {power: 3}
+      description: ["Mỗi phát trúng hồi nửa tim"]
+    bua_ta:
+      name: "&6&lBúa Tạ"
+      material: MACE
+      uses: -1
+      days: 7
+      cost: 15000
+      pvp: true
+      ingredients: {BREEZE_ROD: 4, IRON_BLOCK: 2}
+      enchants: {wind_burst: 1, density: 2}
+      description: ["Nện đất: rơi càng cao đánh càng đau,", "trúng đòn thì bật lên cao để nện tiếp"]
+
 # Treo thưởng (/treothuong, ý từ UniMC "Bounty"; khác "truy nã" là án của Hội Bàn Tròn). Người chơi treo tiền (phí fee-percent % không hoàn),
 # ai hạ được người đó nhận hết. streak: giết liền kills mạng chưa chết thì hệ thống tự treo reward, mỗi mạng thêm per-kill (tiền hệ thống tạo ra).
 # Không tính: giết tài khoản phụ, cùng IP, dân Liên minh Hoà Bình (allow-on-peace). Hết days ngày: trả lại tiền người treo. Lưu: treothuong.yml

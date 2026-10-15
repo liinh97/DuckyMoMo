@@ -274,6 +274,8 @@ groups:
       - ["nhiemvu", "Nhiệm vụ hôm nay và tiến độ (Bang Hội Chiến)", Mọi người]
       - ["vongquay", "Vòng quay miễn phí: menu phần thưởng + tỉ lệ, bấm Quay (Bang Hội Chiến)", Mọi người]
       - ["vongquay give <người> <số>", "Tặng/trừ vé vòng quay (số âm để trừ)", Chỉ admin]
+      - ["xuong", "Xưởng chế tạo đồ có hạn dùng (Bang Hội Chiến)", Mọi người]
+      - ["xuong tang <id> [người]", "Tặng đồ xưởng (sự kiện)", Chỉ admin]
       - ["treothuong", "Xem ai đang bị treo thưởng (Bang Hội Chiến)", Mọi người]
       - ["treothuong dat <người> <xu>", "Treo thưởng lên đầu người khác", Mọi người]
       - ["khaihoang", "Quỹ khai hoang: tiến độ mở vùng mới, người góp nhiều nhất (Bang Hội Chiến)", Mọi người]

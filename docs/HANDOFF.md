@@ -170,6 +170,10 @@
    tài khoản phụ (WarRules.isAlt), cùng IP, dân Hoà Bình; hết 3 ngày trả tiền người treo. Riêng với truy nã của Hội Bàn Tròn (Justice).
    Web: bảng Treo thưởng trong mục Hội Bàn Tròn (/api/bantron → treothuong).
 
+25. **Xưởng chế tạo /xuong (15/10 tối, CHƯA build)**: DuckyMoMoCore `Workshop`, config `workshop.items` (5 món: tui_hu, nuoc, hut_do,
+   cung_mau, bua_ta). PDC xuong_id / xuong_luot / xuong_het; quét túi mỗi phút xoá đồ hết hạn; món pvp bị chặn trong vùng vây đang đánh
+   (SiegeWarHook). Dây hút đồ chỉ hút đồ từ khối mình đào (BlockDropItemEvent) và quái mình giết (EntityDeathEvent), không hút đồ người chơi.
+
 17. **Voice chat: Simple Voice Chat (15/10 tối, CHƯA cài; người dùng chốt: ghi lại, CHƯA vội triển khai)**. Chỉ người chơi Java có cài mod; Bedrock chưa có cách tốt (xem dưới).
    - Server con lobby/banghoi-1/practice-1: `simple-voice-chat` trong MODRINTH_PROJECTS (bản bukkit 2.6.x, release, hỗ trợ 26.2),
      cấu hình `plugins/voicechat/voicechat-server.properties` (40/20 block, codec VOIP, nhóm bật, cấm ghi âm, không bắt buộc mod, cổng 24454 trong Docker).
@@ -189,6 +193,28 @@
      (1) modpack `.mrpack` DuckyMoMo (chỉ liệt kê link Modrinth: Fabric + Simple Voice Chat + Sodium), cần thử SKLauncher/TLauncher có mở được không;
      (2) trang "Hướng dẫn cài voice chat" trên web + lệnh `/voice` hiện link; (3) nhắc người chưa có mod 1 lần/ngày khi vào server.
      Hỏi người dùng: người chơi dùng TLauncher hay SKLauncher nhiều hơn.
+
+### DANH SÁCH CẦN THỬ (người dùng chốt 15/10: làm xong hết rồi thử một lượt; mục 16–25)
+Triển khai một lần: `git stash && git pull && git stash pop` → `./ops/build-core.sh` (lỗi biên dịch thì gửi ảnh, Java viết ở cloud CHƯA biên
+dịch) → kiểm tra không ai online → `docker compose up -d --no-deps lobby banghoi-1 practice-1` → `docker compose up -d --build panel site`.
+Log: `docker compose logs banghoi-1 --since 5m | grep -iE "DuckyMoMoCore|Mùa:|Vũ khí nổ|Xưởng|EvenMoreFish|ERROR|Exception"`.
+- [ ] Mùa: `/mua`, `/mua dat kho` rồi `/mua dat tudong`, `/papi parse me %dmmmua_id%` = mua/kho; cây lớn nhanh/chậm; mưa theo mùa.
+- [ ] Câu cá: câu ở sông và biển ra cá Việt có độ dài; cá theo mùa; sách phù phép vẫn câu ra; `/emf shop`; thi câu T7/CN 20:00.
+- [ ] Chống x-ray: dùng texture xray thử dưới y 64 không thấy quặng.
+- [ ] Bảng bên phải 2 trang đổi mỗi 8 giây; giết/chết/KDA đúng.
+- [ ] Vũ khí nổ: end crystal / respawn anchor / nổ giường không trừ máu người chơi; xe goòng TNT còn ~30%.
+- [ ] Sàn thu mua: `/donhang tao 64 1` khi cầm đất, nick khác `/donhang` giao, người mua `/donhang cuatoi` nhận; huỷ (chuột phải, `/donhang huy <số>`)
+      trả lại tiền phần chưa giao; web mục Hằng ngày hiện đơn.
+- [ ] Hạng của bạn: thêm 2 dòng `/dh line add …` (cẩm nang) → hologram hiện "Bạn: … (#…)".
+- [ ] Khai hoang: `/khaihoang`; bán `/sell` thấy quỹ tăng; `/khaihoang gop 100`; thử `/khaihoang them <xu>` cho đủ mốc → viền nới
+      (sau đó sửa border_* ở Cài đặt); web thẻ Khai hoang.
+- [ ] QR ủng hộ: `/rank mua` → chọn gói → tấm bản đồ QR quét được bằng app ngân hàng; [Tôi đã chuyển khoản] → admin nhận tin; trang Donate có yêu cầu;
+      bản đồ không vứt/cất rương được, hết 10 phút tự mất. Cần điền ngân hàng ở site/config/site.yml.
+- [ ] Treo thưởng: `/treothuong dat <người> 100`, người khác hạ → nhận tiền; giết liền 5 mạng → hệ thống treo; không treo được dân Hoà Bình; web mục Hội Bàn Tròn.
+- [ ] Xưởng: `/xuong` chế Túi Hư (chuột phải mở rương ender), Nước Nguồn (đổ không cạn, lượt giảm), Dây Hút Đồ (đào đá → vào túi), Cung Máu
+      (bắn trúng hồi máu), Búa Tạ; `/xuong tang <id>` để thử nhanh; món PvP bị chặn trong vùng vây đang đánh.
+- [ ] Prefix Manager: Role > Manager > Áp bộ quyền khuyên dùng → [Manager].
+- [ ] Trang web: mục Mùa & câu cá, Hằng ngày (Khai hoang, Sàn thu mua), Hội Bàn Tròn (Treo thưởng).
 
 ### Người dùng phải tự làm (nhắc lại khi phù hợp)
 - Thêm `[boot] command = modprobe tcp_bbr` vào `/etc/wsl.conf` (để BBR có sau mỗi lần khởi động WSL):

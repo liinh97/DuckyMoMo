@@ -23,6 +23,9 @@ commands:
   vongquay:
     description: "Vòng quay miễn phí: chơi đủ giờ được vé, xem tỉ lệ từng phần thưởng. Admin: /vongquay give <người> <số>"
     aliases: [vq, quay]
+  xuong:
+    description: "Xưởng chế tạo: đồ đặc biệt có lượt dùng và hạn 7 ngày (Túi Hư, xô nước vô tận, dây hút đồ, cung máu, búa tạ)"
+    aliases: [chetao, servertools]
   treothuong:
     description: "Treo thưởng: /treothuong xem ai bị treo, /treothuong dat <người> <xu>. Ai hạ được thì nhận hết"
     aliases: [bounty, sanloi]

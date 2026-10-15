@@ -591,7 +591,7 @@ class Handler(BaseHTTPRequestHandler):
                 if not s:
                     return self._json(401, {"ok": False, "message": "Phiên đăng nhập đã hết, đăng nhập lại."})
                 d = self.body_json()
-                body = {k: d.get(k) for k in ("viec", "gia_tri", "hieu_ung", "kieu", "loai", "ma")} | {"ten": s["ten"]}
+                body = {k: d.get(k) for k in ("viec", "gia_tri", "hieu_ung", "kieu", "loai", "ma", "id")} | {"ten": s["ten"]}
                 st, _, raw = panel("POST", "/api/web/trangtri", json.dumps(body).encode(), ip=self.client_ip())
                 return self._json(st if st in (200, 400) else 502, json.loads(raw or b"{}") if st in (200, 400) else
                                   {"ok": False, "message": "Máy chủ đang bận, thử lại sau."})

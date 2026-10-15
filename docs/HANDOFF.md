@@ -89,7 +89,9 @@
      `sudo <tên> <lệnh>` (Essentials) ở server người đó đang online (banghoi-1/practice-1), web lọc lệnh theo quyền trước
      (`taikhoan.cosmetics`/`cosmetic_command`), plugin kiểm lại. Kết quả: đổi tên kiểm bằng `/whois`, danh hiệu đọc bxh.yml; hạt/pet
      không đọc được nên web báo "đã gửi, xem lỗi trong chat game". Độ dài tên theo `max-nick-length` + `ignore-colors-in-max-nick-length`
-     của Essentials (đọc từ data/banghoi-1), đếm ký tự ngay khi gõ.
+     của Essentials (đọc từ data/banghoi-1), đếm ký tự ngay khi gõ. Hiệu ứng hạt đang bật: đọc SQLite PlayerParticles
+     (`plugins/PlayerParticles/*.db`, bảng *_group name='active' + *_particle; chỉ đọc), hiện "Đang bật" + nút gỡ (`pp remove <id>`),
+     thêm/tắt/gỡ được kiểm lại bằng file đó. Pet: chưa đọc được pet đang gọi (SimplePets).
    - Chat lặp role/rank ([Mod] [Công Tước] hai lần) ở banghoi: do Essentials `add-prefix-suffix` + format có {PREFIX}. Cài đặt > Toàn mạng >
      Chat > nhóm "Tên hiển thị và định dạng chat (Essentials)" (mới, có giá trị khuyên dùng điền sẵn: add-prefix-suffix false, format có
      {SUFFIX} cho danh hiệu, nick tối đa 16, không tính mã màu, tiền tố ~). Schema hỗ trợ `default:` (index.html điền sẵn thành thay đổi chưa lưu).

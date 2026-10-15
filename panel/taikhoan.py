@@ -309,8 +309,32 @@ PASSIVE_PETS = ["cat", "wolf", "chicken", "pig", "rabbit", "parrot", "fox", "bee
 COSMETIC_SERVERS = ["banghoi-1", "practice-1"]  # có Essentials (/sudo)
 
 
-def cosmetics(perms):
-    srv = "banghoi-1"
+def active_particles(uuid, srv="banghoi-1"):
+    """Hiệu ứng hạt đang bật của người chơi, đọc thẳng SQLite của PlayerParticles (chỉ đọc). Trả [{id, hieu_ung, kieu}] hoặc None
+    nếu không đọc được (plugin dùng MySQL, chưa có file, cấu trúc bảng khác bản 8.x)."""
+    import sqlite3
+    d = DATA_DIR / srv / "plugins" / "PlayerParticles"
+    db = next((f for f in [d / "playerparticles.db"] + sorted(d.glob("*.db")) if f.exists()), None)
+    if not db:
+        return None
+    try:
+        con = sqlite3.connect(f"file:{db}?mode=ro", uri=True, timeout=2)
+        try:
+            tables = {r[0] for r in con.execute("SELECT name FROM sqlite_master WHERE type='table'")}
+            pt = next((t for t in tables if t.endswith("particle") and not t.endswith("fixed_particle")), None)
+            gt = next((t for t in tables if t.endswith("group")), None)
+            if not pt or not gt:
+                return None
+            rows = con.execute(f"SELECT p.id, p.effect, p.style FROM {pt} p JOIN {gt} g ON p.group_uuid = g.uuid "
+                               f"WHERE g.owner_uuid = ? AND g.name = 'active' ORDER BY p.id", (uuid,)).fetchall()
+        finally:
+            con.close()
+    except sqlite3.Error:
+        return None
+    return [{"id": int(i), "hieu_ung": str(e).lower(), "kieu": str(s).lower()} for i, e, s in rows]
+
+
+def cosmetics(perms, srv="banghoi-1"):
     h = lambda n: has(perms, n, srv)
     ess = safe_yaml(DATA_DIR / srv / "plugins" / "Essentials" / "userdata" / f"{perms['uuid']}.yml")
     esscfg = safe_yaml(DATA_DIR / srv / "plugins" / "Essentials" / "config.yml")
@@ -331,7 +355,7 @@ def cosmetics(perms):
                  "toi_da": int(esscfg.get("max-nick-length", 15) or 15), "bo_mau": bool(esscfg.get("ignore-colors-in-max-nick-length", False)),
                  "dau": str(esscfg.get("nickname-prefix", "~") if esscfg.get("nickname-prefix") is not None else "~")},
         "hat": h("essentials.hat"),
-        "pp": {"toi_da": max_pp, "hieu_ung": [e for e in PP_EFFECTS if h(f"playerparticles.effect.{e}")] if max_pp else [],
+        "pp": {"toi_da": max_pp, "dang": active_particles(perms["uuid"], srv) if max_pp else [], "hieu_ung": [e for e in PP_EFFECTS if h(f"playerparticles.effect.{e}")] if max_pp else [],
                "kieu": [s for s in PP_STYLES if h(f"playerparticles.style.{s}")] if max_pp else []},
         "pet": {"loai": pets},
         "danhhieu": {"co": [{"id": t, "chu": title_text(t)} for t in dh.get("co") or []], "dung": dh.get("dung")},
@@ -341,9 +365,9 @@ def cosmetics(perms):
 NICK_RE = re.compile(r"^(?:&#[0-9a-fA-F]{6}|&[0-9a-fk-orA-FK-OR]|[A-Za-z0-9_])+$")
 
 
-def cosmetic_command(perms, data):
+def cosmetic_command(perms, data, srv="banghoi-1"):
     """Kiểm tra yêu cầu từ web, trả lệnh (không có /) để chạy thay người chơi. ValueError nếu không hợp lệ."""
-    c = cosmetics(perms)
+    c = cosmetics(perms, srv)
     viec = data.get("viec")
     if viec == "nick":
         v = str(data.get("gia_tri", "")).strip()
@@ -374,6 +398,11 @@ def cosmetic_command(perms, data):
         return f"pp add {e} {s}"
     if viec == "pp_reset":
         return "pp reset"
+    if viec == "pp_remove":
+        pid = int(data.get("id") or 0)
+        if pid not in [x["id"] for x in (c["pp"]["dang"] or [])]:
+            raise ValueError("Không có hiệu ứng này (tải lại trang).")
+        return f"pp remove {pid}"
     if viec == "pet":
         t = str(data.get("loai", ""))
         if t not in c["pet"]["loai"]:

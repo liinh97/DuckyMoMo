@@ -1632,8 +1632,8 @@ def web_cosmetic(data, ip):
     perms = taikhoan.load_perms(name)
     if not perms:
         raise ValueError("Chưa có dữ liệu tài khoản.")
-    cmd = taikhoan.cosmetic_command(perms, data)
     srv = online_players(fresh=True).get(name.lower())
+    cmd = taikhoan.cosmetic_command(perms, data, srv if srv in taikhoan.COSMETIC_SERVERS else "banghoi-1")
     need = ["banghoi-1"] if data.get("viec", "").startswith("danhhieu") else taikhoan.COSMETIC_SERVERS
     if srv not in need:
         where = "Bang Hội Chiến" if need == ["banghoi-1"] else "Bang Hội Chiến hoặc Practice"
@@ -1645,7 +1645,21 @@ def web_cosmetic(data, ip):
     else:
         res = cosmetic_result(perms, srv, where, cmd, data)
     web_log({"viec": "trangtri", "nguoi": name, "lenh": cmd, "server": srv, "ok": res["ok"], "kq": res["message"][:150], "ip": ip})
-    res["trangtri"] = taikhoan.cosmetics(perms)
+    if cmd.startswith("pp"):
+        time.sleep(0.8)  # PlayerParticles ghi SQLite bất đồng bộ
+    res["trangtri"] = taikhoan.cosmetics(perms, srv)
+    if cmd.startswith("pp") and res["trangtri"]["pp"]["dang"] is not None:
+        # đọc lại được danh sách hiệu ứng: báo chắc chắn thay vì "đã gửi"
+        have = {(x["hieu_ung"], x["kieu"]) for x in res["trangtri"]["pp"]["dang"]}
+        if cmd.startswith("pp add"):
+            want = (data.get("hieu_ung"), data.get("kieu"))
+            res.update(ok=want in have, pending=False, message=f"Đã thêm hiệu ứng ở {where} ({len(have)}/{res['trangtri']['pp']['toi_da']})." if want in have
+                       else f"Server KHÔNG thêm hiệu ứng (đang có {len(have)}/{res['trangtri']['pp']['toi_da']}). Đủ tối đa thì gỡ bớt trước; xem thêm dòng báo lỗi trong chat game.")
+        elif cmd == "pp reset":
+            res.update(ok=not have, pending=False, message="Đã tắt mọi hiệu ứng." if not have else "Server chưa tắt hiệu ứng, xem chat trong game.")
+        elif cmd.startswith("pp remove"):
+            gone = all(x["id"] != int(data.get("id") or 0) for x in res["trangtri"]["pp"]["dang"])
+            res.update(ok=gone, pending=False, message="Đã gỡ hiệu ứng." if gone else "Server chưa gỡ hiệu ứng, xem chat trong game.")
     return res
 
 
@@ -1680,7 +1694,7 @@ def cosmetic_result(perms, srv, where, cmd, data):
             return {"ok": ok, "message": "Đã ẩn danh hiệu." if ok else "Server chưa ẩn danh hiệu, xem chat trong game."}
         ok = dh.get("dung") == data.get("ma")
         return {"ok": ok, "message": "Đã đổi danh hiệu, hiện sau tên trong chat." if ok else "Server chưa đổi danh hiệu, xem dòng báo lỗi trong chat game."}
-    what = {"pp add": "thêm hiệu ứng", "pp reset": "tắt mọi hiệu ứng", "pet summon": "gọi pet", "pet remove": "cất pet"}
+    what = {"pp add": "thêm hiệu ứng", "pp reset": "tắt mọi hiệu ứng", "pp remove": "gỡ hiệu ứng", "pet summon": "gọi pet", "pet remove": "cất pet"}
     act = next((v for k, v in what.items() if cmd.startswith(k)), "gửi lệnh")
     return {"ok": True, "pending": True,
             "message": f"Đã gửi lệnh {act} ở {where}. Plugin không báo kết quả về web: nếu không thấy thay đổi, xem dòng báo lỗi trong chat game "
@@ -1762,7 +1776,8 @@ def web_profile(name, by_code):
     return {"ok": True, "ten": perms["name"] if perms["name"].lower() == name.lower() else name, "bedrock": name.startswith("."),
             "taikhoan": account_times(name), "online": online_players().get(name.lower()),
             "roles": roles, "nhom": sorted(g for g in perms["groups"] if g != "default"),
-            "hoso": hoso, "lenh": lenh, "trangtri": taikhoan.cosmetics(perms),
+            "hoso": hoso, "lenh": lenh,
+            "trangtri": taikhoan.cosmetics(perms, online_players().get(name.lower()) if online_players().get(name.lower()) in taikhoan.COSMETIC_SERVERS else "banghoi-1"),
             "quantri": {"la_staff": is_staff, "toan_quyen": acc["toan_quyen"], "qua_game": by_code,
                         "tinh_nang": list(acc["features"].values()), "loai_caidat": acc["categories"]}}
 

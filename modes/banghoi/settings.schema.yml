@@ -132,6 +132,20 @@ groups:
       - { key: vq_prizes, label: Phần thưởng và tỉ lệ, type: spin, file: plugins/DuckyMoMoCore/config.yml, path: lucky-spin.prizes,
           note: "Trọng số càng lớn càng dễ trúng; % tự tính. Chỉ nên đặt tài nguyên, xu, đồ trang trí: đồ quá mạnh làm lệch chiến tranh." }
 
+  - title: Mảnh sự kiện & đổi quà
+    category: Thưởng & sự kiện
+    description: "Mảnh là đồ vật (trao đổi, bán được), có dấu ẩn nên không làm giả được. /doimanh mở cửa hàng đổi quà. Phát từ phần thưởng (loại Mảnh sự kiện, có giới hạn mỗi ngày) hoặc admin/boss: /doimanh give <người> <loại> <số>."
+    apply: [dmm reload]
+    settings:
+      - { key: fm_on, label: Bật mảnh sự kiện, type: select, file: plugins/DuckyMoMoCore/config.yml, path: event-fragments.enabled,
+          options: [ { value: true, label: Bật }, { value: false, label: Tắt } ] }
+      - { key: fm_cap, label: Mỗi người nhận tối đa (mảnh/ngày) từ phần thưởng, type: int, min: 0, max: 10000, file: plugins/DuckyMoMoCore/config.yml, path: event-fragments.daily-cap,
+          note: "Chống tài khoản phụ cày mảnh. 0 = không giới hạn. Mảnh từ /doimanh give (boss, admin) không tính." }
+      - { key: fm_types, label: Các loại mảnh, type: fragtypes, file: plugins/DuckyMoMoCore/config.yml, path: event-fragments.types,
+          note: "Hạn đổi: hết ngày đó thì cửa hàng không nhận loại mảnh này nữa (để trống = không hạn)." }
+      - { key: fm_shop, label: Cửa hàng đổi mảnh, type: fragshop, file: plugins/DuckyMoMoCore/config.yml, path: event-fragments.shop,
+          note: "Giá: mã loại mảnh + số, nhiều loại cách dấu phẩy (vd lamnguy 40). Chỉ nên đặt tài nguyên, xu, đồ trang trí." }
+
   - title: Liên minh Hoà Bình
     category: Thị trấn
     description: "Quốc gia duy nhất được hoà bình, do server quản lý, thủ đô là kinh đô ở spawn. Thị trưởng vào/rời bằng /hoabinh. Lập lần đầu: admin đứng giữa spawn gõ /dmm hoabinh setup rồi /dmm hoabinh claim 14."

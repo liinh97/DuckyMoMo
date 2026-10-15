@@ -250,6 +250,8 @@ groups:
       - ["nhiemvu", "Nhiệm vụ hôm nay và tiến độ (Bang Hội Chiến)", Mọi người]
       - ["vongquay", "Vòng quay miễn phí: menu phần thưởng + tỉ lệ, bấm Quay (Bang Hội Chiến)", Mọi người]
       - ["vongquay give <người> <số>", "Tặng/trừ vé vòng quay (số âm để trừ)", Chỉ admin]
+      - ["doimanh", "Cửa hàng đổi mảnh sự kiện lấy quà (Bang Hội Chiến)", Mọi người]
+      - ["doimanh give <người> <loại> <số>", "Phát mảnh sự kiện (boss, sự kiện; không tính giới hạn ngày)", Chỉ admin]
       - ["dmm reload", "Nạp lại cấu hình DuckyMoMoCore", Chỉ admin]
       - ["dmm clean", "Dọn đồ rơi trên đất ngay", Chỉ admin]
       - ["dmm enchant <phù phép> <cấp>", "Phù phép vượt cấp đồ đang cầm (vd sharpness 20)", Chỉ admin]

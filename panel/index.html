@@ -63,6 +63,11 @@
   .sp-pct { text-align: right; color: var(--accent); }
   .sp-rare { font-size: 13px; display: flex; gap: 4px; align-items: center; white-space: nowrap; }
   .sp-rare input { width: auto; }
+  .fm-head { display: grid; grid-template-columns: 110px 1fr 150px 140px 28px; gap: 6px; margin-bottom: 6px; }
+  .fs-head { display: grid; grid-template-columns: 1fr 1fr 80px 28px; gap: 6px; margin-bottom: 6px; }
+  .fm-head .x, .fs-head .x { background: none; border: 0; color: var(--err); cursor: pointer; font-size: 16px; }
+  .ms textarea { width: 100%; margin-bottom: 6px; }
+  @media (max-width: 640px) { .fm-head, .fs-head { grid-template-columns: 1fr 1fr; } }
   @media (max-width: 640px) { .rw-row, .qe-head { grid-template-columns: 1fr 1fr; } }
 </style>
 </head>
@@ -320,6 +325,72 @@ function spinEditor(value, onChange) {
   return box;
 }
 
+
+// ---- Loại mảnh sự kiện: {mã: {name, material, lore[], until}}
+function fragTypesEditor(value, onChange) {
+  const box = document.createElement("div");
+  const ts = [];
+  const emit = () => {
+    const o = {};
+    for (const t of ts) {
+      const id = t.id.value.trim().toLowerCase();
+      if (!id) continue;
+      o[id] = { name: t.name.value, material: t.mat.value.trim().toUpperCase() || "AMETHYST_SHARD",
+        lore: t.lore.value.split("\n").map(x => x.trimEnd()).filter(Boolean), until: t.until.value };
+    }
+    onChange(o);
+  };
+  const add = document.createElement("button"); add.type = "button"; add.className = "rw-add"; add.textContent = "+ Thêm loại mảnh";
+  function addT(id, d) {
+    const wrap = document.createElement("div"); wrap.className = "ms";
+    wrap.innerHTML = '<div class="fm-head"><input placeholder="mã, vd lamnguy"><input placeholder="Tên (mã màu &), vd &c&lMảnh Lâm Nguy"><input list="rw-mats" placeholder="AMETHYST_SHARD"><input type="date" title="Hạn đổi (trống = không hạn)"><button type="button" class="x" title="Bỏ">×</button></div><textarea rows="2" placeholder="Mô tả (lore), mỗi dòng một dòng"></textarea>';
+    const [idEl, nameEl, matEl, untilEl] = wrap.querySelectorAll("input");
+    const t = { id: idEl, name: nameEl, mat: matEl, until: untilEl, lore: wrap.querySelector("textarea") };
+    idEl.value = id || ""; nameEl.value = d.name || ""; matEl.value = d.material || "AMETHYST_SHARD"; untilEl.value = d.until || "";
+    t.lore.value = (d.lore || []).join("\n");
+    for (const el of [idEl, nameEl, matEl, untilEl, t.lore]) el.oninput = emit;
+    wrap.querySelector(".x").onclick = () => { ts.splice(ts.indexOf(t), 1); wrap.remove(); emit(); };
+    ts.push(t); box.insertBefore(wrap, add);
+  }
+  box.appendChild(add);
+  add.onclick = () => { addT("", { material: "AMETHYST_SHARD" }); emit(); };
+  for (const [id, d] of Object.entries(value || {})) addT(id, d || {});
+  if (!document.getElementById("rw-mats")) rewardsEditor([], () => {}); // tạo datalist vật liệu
+  return box;
+}
+
+// ---- Cửa hàng đổi mảnh: [{label, cost {loại: số}, limit, rewards[]}]
+function fragShopEditor(value, onChange) {
+  const box = document.createElement("div");
+  const os = [];
+  const emit = () => onChange(os.map(o => {
+    const cost = {};
+    for (const part of o.cost.value.split(",")) {
+      const m = part.trim().match(/^([a-z0-9_]+)\s+(\d+)$/i) || part.trim().match(/^(\d+)\s+([a-z0-9_]+)$/i);
+      if (m) { const [k, n] = /^\d+$/.test(m[1]) ? [m[2], m[1]] : [m[1], m[2]]; cost[k.toLowerCase()] = parseInt(n, 10); }
+    }
+    return { label: o.label.value.trim(), cost, limit: parseInt(o.limit.value || "0", 10), rewards: o.rewards };
+  }).filter(o => Object.keys(o.cost).length && o.rewards.length));
+  const add = document.createElement("button"); add.type = "button"; add.className = "rw-add"; add.textContent = "+ Thêm món đổi";
+  function addO(d) {
+    const wrap = document.createElement("div"); wrap.className = "ms";
+    const head = document.createElement("div"); head.className = "fs-head";
+    head.innerHTML = '<input placeholder="Tên món, vd 16 kim cương"><input placeholder="Giá: loại số, vd lamnguy 40 (nhiều loại cách dấu phẩy)"><input type="number" min="0" max="1000" title="Mỗi người đổi tối đa (0 = không giới hạn)"><button type="button" class="x" title="Bỏ">×</button>';
+    const [label, cost, limit] = head.querySelectorAll("input");
+    const o = { label, cost, limit, rewards: (d.rewards || []).slice() };
+    label.value = d.label || ""; limit.value = d.limit || 0;
+    cost.value = Object.entries(d.cost || {}).map(([k, n]) => k + " " + n).join(", ");
+    for (const el of [label, cost, limit]) el.oninput = emit;
+    head.querySelector(".x").onclick = () => { os.splice(os.indexOf(o), 1); wrap.remove(); emit(); };
+    wrap.append(head, rewardsEditor(o.rewards, v => { o.rewards = v; emit(); }));
+    os.push(o); box.insertBefore(wrap, add);
+  }
+  box.appendChild(add);
+  add.onclick = () => { addO({ label: "", cost: {}, limit: 0, rewards: ["xu 1000"] }); emit(); };
+  for (const d of value || []) addO(d || {});
+  return box;
+}
+
 function row(mode, s) {
   const div = document.createElement("div");
   div.className = "row";
@@ -347,6 +418,10 @@ function row(mode, s) {
     input.oninput = () => change(mode, s, input.value.split("\n").map(x => x.trim()).filter(x => x), div);
   } else if (s.type === "rewards") {
     input = rewardsEditor(value || [], v => change(mode, s, v, div));
+  } else if (s.type === "fragtypes") {
+    input = fragTypesEditor(value || {}, v => change(mode, s, v, div));
+  } else if (s.type === "fragshop") {
+    input = fragShopEditor(value || [], v => change(mode, s, v, div));
   } else if (s.type === "spin") {
     input = spinEditor(value || [], v => change(mode, s, v, div));
   } else if (s.type === "quests") {

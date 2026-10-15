@@ -158,6 +158,45 @@ def validate(s, v):
             if lst:
                 out[day] = lst
         return dict(sorted(out.items()))
+    if t == "fragtypes":
+        out = {}
+        for fid, d in (v or {}).items():
+            fid = str(fid).strip().lower()
+            if not LIB_ID_RE.match(fid):
+                raise ValueError(f"{label}: mã loại mảnh \"{fid}\" chỉ gồm chữ thường không dấu, số, _")
+            d = d or {}
+            mat = str(d.get("material", "AMETHYST_SHARD")).strip().upper() or "AMETHYST_SHARD"
+            if not MATERIAL_RE.match(mat):
+                raise ValueError(f"{label} ({fid}): vật liệu sai")
+            until = str(d.get("until") or "").strip()
+            if until and not re.match(r"^\d{4}-\d{2}-\d{2}$", until):
+                raise ValueError(f"{label} ({fid}): hạn đổi dạng năm-tháng-ngày")
+            out[fid] = {"name": str(d.get("name", "")).strip()[:60] or fid, "material": mat,
+                        "lore": [str(x)[:100] for x in (d.get("lore") or [])][:8], "until": until}
+        return out
+    if t == "fragshop":
+        out = []
+        for o in (v or []):
+            o = o or {}
+            cost = {}
+            for k, n in (o.get("cost") or {}).items():
+                k = str(k).strip().lower()
+                try:
+                    n = int(n)
+                except (TypeError, ValueError):
+                    raise ValueError(f"{label}: giá phải là số")
+                if not LIB_ID_RE.match(k) or not 1 <= n <= 100000:
+                    raise ValueError(f"{label}: giá sai ({k} {n})")
+                cost[k] = n
+            rw = check_rewards(label, o.get("rewards"))
+            if not cost or not rw:
+                raise ValueError(f"{label}: mỗi món cần giá và quà")
+            try:
+                limit = int(o.get("limit") or 0)
+            except (TypeError, ValueError):
+                raise ValueError(f"{label}: giới hạn phải là số")
+            out.append({"label": str(o.get("label", "")).strip()[:40] or rw[0], "cost": cost, "limit": max(0, limit), "rewards": rw})
+        return out
     if t == "spin":
         out = []
         for pz in (v or []):

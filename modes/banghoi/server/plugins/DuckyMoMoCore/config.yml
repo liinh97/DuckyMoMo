@@ -398,3 +398,20 @@ lucky-spin:
     - {label: "2000 xu", weight: 4, rare: true, rewards: ["xu 2000"]}
     - {label: "1 khối kim cương", weight: 2, rare: true, rewards: ["vat DIAMOND_BLOCK 1"]}
     - {label: "Đĩa nhạc Cat (trang trí)", weight: 2, rare: true, rewards: ["vat MUSIC_DISC_CAT 1"]}
+
+# Mảnh sự kiện + đổi quà (/doimanh). Mảnh là ĐỒ VẬT (trao đổi, bán được), có dấu ẩn nên không làm giả được.
+# Phần thưởng "manh <loại> <số>" (điểm danh, nhiệm vụ, vòng quay…) bị giới hạn daily-cap mảnh/người/ngày.
+# Boss/dungeon/admin phát bằng: /doimanh give <người> <loại> <số> (không tính giới hạn). until: hạn đổi yyyy-MM-dd (trống = không hạn).
+event-fragments:
+  enabled: true
+  daily-cap: 20
+  types:
+    lamnguy:
+      name: "&c&lMảnh Lâm Nguy"
+      material: AMETHYST_SHARD
+      lore: ["&7Rơi từ sự kiện Trái Đất lâm nguy", "&7Đổi quà: &f/doimanh"]
+      until: ""
+  shop:
+    - {label: "5000 xu", cost: {lamnguy: 25}, limit: 0, rewards: ["xu 5000"]}
+    - {label: "16 kim cương", cost: {lamnguy: 40}, limit: 0, rewards: ["vat DIAMOND 16"]}
+    - {label: "Đĩa nhạc Pigstep (trang trí)", cost: {lamnguy: 20}, limit: 1, rewards: ["vat MUSIC_DISC_PIGSTEP 1"]}

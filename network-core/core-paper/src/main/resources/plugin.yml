@@ -16,6 +16,9 @@ softdepend:
   - Essentials
   - Votifier
 commands:
+  doimanh:
+    description: "Đổi mảnh sự kiện lấy quà. Admin: /doimanh give <người> <loại> <số>"
+    aliases: [manh]
   vongquay:
     description: "Vòng quay miễn phí: chơi đủ giờ được vé, xem tỉ lệ từng phần thưởng. Admin: /vongquay give <người> <số>"
     aliases: [vq, quay]

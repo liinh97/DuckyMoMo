@@ -359,6 +359,15 @@ public final class DuckyMoMoCore extends JavaPlugin {
         }
         rewards = new Rewards(this, itemLibrary);
 
+        // Mảnh sự kiện + cửa hàng đổi mảnh (Bang Hội Chiến: event-fragments.enabled); phần thưởng "manh" dùng module này
+        FragmentShop fragments = getConfig().getBoolean("event-fragments.enabled")
+                ? new FragmentShop(this, getConfig().getConfigurationSection("event-fragments"), rewards) : null;
+        if (fragments != null) {
+            getServer().getPluginManager().registerEvents(fragments, this);
+            rewards.setFragments(fragments);
+        }
+        bind("doimanh", fragments == null ? null : fragments::command, "Đổi mảnh sự kiện");
+
         // Điểm danh hằng ngày (Bang Hội Chiến: daily-checkin.enabled)
         DailyCheckin checkin = getConfig().getBoolean("daily-checkin.enabled")
                 ? new DailyCheckin(this, getConfig().getConfigurationSection("daily-checkin"), rewards) : null;

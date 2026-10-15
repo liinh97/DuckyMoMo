@@ -18,9 +18,11 @@
   header h1 { font-size: 17px; margin: 0; flex: 1; }
   header a { color: var(--muted); text-decoration: none; font-size: 14px; }
   header a:hover { color: var(--text); }
-  main { max-width: 1180px; margin: 0 auto; padding: 20px 16px 80px; display: grid; grid-template-columns: 300px 1fr; gap: 16px; align-items: start; }
-  @media (max-width: 860px) { main { grid-template-columns: 1fr; } }
-  .card { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; }
+  main { max-width: 1240px; margin: 0 auto; padding: 0 0 80px; display: grid; grid-template-columns: 300px 1fr; gap: 22px; align-items: start; }
+  main > section:first-of-type { position: sticky; top: 18px; }
+  @media (max-width: 860px) { main { grid-template-columns: minmax(0, 1fr); } main > section:first-of-type { position: static; } }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; }
+  .card h2 button { white-space: nowrap; }
   .card h2 { font-size: 15px; margin: 0 0 10px; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
   h3 { font-size: 13px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); margin: 16px 0 6px; }
   input, select, textarea { width: 100%; padding: 7px 9px; border: 1px solid var(--line); border-radius: 6px; background: var(--input); color: var(--text); font: inherit; }
@@ -39,23 +41,48 @@
   .badge { font-size: 11px; padding: 1px 6px; border-radius: 999px; background: var(--line); color: var(--muted); margin-left: 4px; }
   .g { display: grid; gap: 10px; }
   .g3 { grid-template-columns: repeat(3, 1fr); } .g4 { grid-template-columns: repeat(4, 1fr); } .g6 { grid-template-columns: repeat(6, 1fr); }
-  @media (max-width: 700px) { .g3, .g4, .g6 { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 700px) { .g3, .g4, .g6 { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
   label.f { display: block; font-size: 13px; color: var(--muted); margin: 0 0 3px; }
   .note { color: var(--muted); font-size: 13px; margin: 4px 0 0; }
   .warn { color: var(--warn); font-size: 13px; margin: 6px 0 0; }
+  .sec { border-top: 1px solid var(--line); padding: 16px 0 4px; margin-top: 14px; }
+  .sec h3 { font-size: 12px; letter-spacing: .07em; margin: 0 0 10px; display: flex; align-items: center; gap: 6px; }
+  .hint { color: var(--muted); font-weight: 400; font-size: 12px; margin-left: 4px; }
+  .g2 { grid-template-columns: 1fr 1fr; }
+  .g-name { grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); }
+  .g-id { grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); align-items: end; }
+  .g-id .bar { margin: 0; }
+  .opts { display: flex; flex-wrap: wrap; gap: 22px; align-items: center; margin-top: 14px; font-size: 14px; }
+  .prio { display: flex; gap: 8px; align-items: center; } .prio select { width: auto; }
+  .pw-box { border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+  .pw-top { display: flex; gap: 10px; align-items: center; padding: 8px 10px; border-bottom: 1px solid var(--line-2); background: var(--card-2); }
+  .pw-top input { flex: 1; }
+  .mcline { margin-top: 6px; } .mcline:empty { display: none; } .mcline .mc { display: inline-block; padding: 4px 10px; }
+  .g.dm { align-items: stretch; } .g.dm .mc-box { max-height: 200px; overflow: auto; font-size: 12.5px; }
+  .fm { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-top: 10px; font-size: 13.5px; color: var(--muted); }
+  .fm input { width: 150px; } .fm input[type=number] { width: 80px; }
+  .spawn { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .spawn #spPlayer { width: 220px; } .spawn .n { width: 74px; } .spawn .or { color: var(--muted); font-size: 13px; }
+  .pv { position: relative; padding-top: 30px !important; }
+  .pv-cap { position: absolute; top: 8px; left: 12px; font-size: 11px; text-transform: uppercase; letter-spacing: .07em; color: #b9c9b9; }
+  @media (max-width: 700px) { .g2, .g-name, .g-id { grid-template-columns: minmax(0, 1fr); } }
   .chk { display: flex; gap: 6px; align-items: center; font-size: 14px; }
   .chk input { width: auto; }
-  .pw-sel { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 6px; min-height: 26px; }
-  .pw-sel span { background: var(--accent); color: var(--accent-text); border-radius: 999px; padding: 1px 4px 1px 10px; font-size: 12.5px; display: inline-flex; gap: 4px; align-items: center; }
-  .pw-sel button { border: 0; color: var(--accent-text); padding: 0 4px; }
-  .pw-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 2px 10px; max-height: 190px; overflow: auto; border: 1px solid var(--line); border-radius: 6px; padding: 6px 8px; margin-top: 6px; }
-  .pw-list label { font-size: 13px; display: flex; gap: 6px; align-items: center; font-family: ui-monospace, Menlo, Consolas, monospace; }
-  .pw-list input { width: auto; }
+  .pw-sel { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; min-height: 28px; align-items: center; }
+  .pw-sel span { background: var(--accent); color: var(--accent-text); border-radius: 999px; padding: 3px 4px 3px 12px; font-size: 13px; display: inline-flex; gap: 4px; align-items: center; }
+  .pw-sel button { border: 0; color: var(--accent-text); padding: 0 6px; font-size: 15px; }
+  .pw-sel .none { color: var(--muted); font-size: 13.5px; }
+  .pw-list { display: flex; flex-wrap: wrap; gap: 6px; max-height: 210px; overflow: auto; padding: 10px; }
+  .pw-list label { font-size: 13px; display: inline-flex; align-items: center; padding: 4px 11px; border-radius: 999px; border: 1px solid var(--line); background: var(--chip); cursor: pointer; user-select: none; }
+  .pw-list label:hover { border-color: var(--accent); }
+  .pw-list label.on { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); font-weight: 600; }
+  .pw-list label.dis { cursor: default; opacity: .7; }
+  .pw-list input { display: none; }
   .pv { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 18px 10px; border-radius: 8px; margin-bottom: 12px;
     background: linear-gradient(#2b4a2b, #1f331f 60%, #3a2a1a); }
   .plate { background: rgba(0,0,0,.35); padding: 2px 8px; font: 16px/1.4 ui-monospace, Menlo, Consolas, monospace; color: #fff; text-shadow: 2px 2px 0 #3f3f3f; }
   .stats { font-size: 13px; color: #d6e4d6; text-align: center; }
-  .bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line); }
+  .bar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
   .bar .sp { flex: 1; }
   .bar input { width: 120px; } .bar input.n { width: 80px; }
   .status { margin-top: 8px; font-size: 14px; color: var(--muted); min-height: 21px; }
@@ -75,62 +102,89 @@
   </section>
 
   <section class="card">
-    <div class="pv"><div class="plate" id="pvName"></div><div class="stats" id="pvStats"></div></div>
+    <div class="pv"><div class="pv-cap">Xem trước</div><div class="plate" id="pvName"></div><div class="stats" id="pvStats"></div></div>
     <div id="ronote" class="warn" hidden>Boss có sẵn của EliteMobs / dungeon: chỉ xem và gọi thử, không sửa trên web.</div>
 
-    <div class="g g4">
-      <div><label class="f" for="id">Mã (không dấu)</label><input id="id" maxlength="32" placeholder="rong_lua"></div>
-      <div style="grid-column: span 2"><label class="f" for="name">Tên (mã màu &amp;, hoặc &lt;g:#ff0000:#ffaa00&gt;tên&lt;/g&gt;)</label><input id="name" maxlength="120" placeholder="&c&lRồng Lửa Phương Nam"></div>
-      <div><label class="f" for="etype">Loại quái</label><select id="etype"></select></div>
-    </div>
-    <div class="g g4" style="margin-top:10px">
-      <div><label class="f" for="level">Cấp (số, hoặc dynamic)</label><input id="level" value="dynamic"></div>
-      <div><label class="f" for="hm">Máu × (hệ số)</label><input id="hm" type="number" step="0.1" min="0.1" max="1000" value="10"></div>
-      <div><label class="f" for="dm">Sát thương × (hệ số)</label><input id="dm" type="number" step="0.1" min="0.1" max="100" value="1"></div>
-      <div><label class="f" for="timeout">Tự biến mất sau (phút, 0 = không)</label><input id="timeout" type="number" min="0" max="1440" value="30"></div>
-    </div>
-    <div class="g g3" style="margin-top:10px">
-      <label class="chk"><input type="checkbox" id="enabled" checked> Bật</label>
-      <label class="chk"><input type="checkbox" id="emloot" checked> Rơi đồ của EliteMobs</label>
-      <div><label class="f" for="prio">Mức thông báo khi xuất hiện</label>
-        <select id="prio"><option value="0">0: không báo</option><option value="1">1: báo gần</option><option value="2" selected>2: báo cả server</option><option value="3">3: báo cả server + Discord</option></select></div>
+    <div class="sec">
+      <h3>1 · Tên và loại quái</h3>
+      <div class="g g-name">
+        <div><label class="f" for="name">Tên hiện trên đầu boss <span class="hint">mã màu &amp;, hoặc &lt;g:#ff0000:#ffaa00&gt;tên&lt;/g&gt;</span></label><input id="name" maxlength="120" placeholder="&c&lRồng Lửa Phương Nam"></div>
+        <div><label class="f" for="etype">Loại quái</label><input id="etype" placeholder="Chọn loại quái…"></div>
+      </div>
     </div>
 
-    <h3>Kỹ năng (<span id="pwcount">0</span>)</h3>
-    <div class="pw-sel" id="pwsel"></div>
-    <input id="pwfilter" placeholder="Lọc kỹ năng, vd fire, arrow, summon…">
-    <div class="pw-list" id="pwlist"></div>
-
-    <h3>Trang bị</h3>
-    <div class="g g6" id="slots"></div>
-    <datalist id="mats"></datalist>
-
-    <h3>Thông báo</h3>
-    <div class="g g3" style="grid-template-columns: 1fr 1fr">
-      <div><label class="f" for="spawnMsg">Khi xuất hiện</label><input id="spawnMsg" placeholder="&c⚠ Rồng Lửa đã thức giấc ở phương Nam!"></div>
-      <div><label class="f" for="deathMsg">Khi bị hạ (1 dòng)</label><input id="deathMsg" placeholder="&aRồng Lửa đã bị hạ bởi $players!"></div>
+    <div class="sec">
+      <h3>2 · Sức mạnh</h3>
+      <div class="g g4">
+        <div><label class="f" for="level">Cấp <span class="hint">số, hoặc dynamic</span></label><input id="level" value="dynamic"></div>
+        <div><label class="f" for="hm">Máu ×</label><input id="hm" type="number" step="0.1" min="0.1" max="1000" value="10"></div>
+        <div><label class="f" for="dm">Sát thương ×</label><input id="dm" type="number" step="0.1" min="0.1" max="100" value="1"></div>
+        <div><label class="f" for="timeout">Tự biến mất sau <span class="hint">phút, 0 = không</span></label><input id="timeout" type="number" min="0" max="1440" value="30"></div>
+      </div>
+      <div class="opts">
+        <label class="switch"><input type="checkbox" id="enabled" checked><span class="track"></span><span class="txt">Bật boss</span></label>
+        <label class="switch"><input type="checkbox" id="emloot" checked><span class="track"></span><span class="txt">Rơi đồ của EliteMobs</span></label>
+        <label class="prio">Thông báo khi xuất hiện
+          <select id="prio"><option value="0">Không báo</option><option value="1">Báo người ở gần</option><option value="2" selected>Báo cả server</option><option value="3">Báo cả server + Discord</option></select></label>
+      </div>
     </div>
-    <label class="f" for="deathMsgs" style="margin-top:10px">Bảng vinh danh khi bị hạ (mỗi dòng một dòng; $damager1name, $damager1damage… $players)</label>
-    <textarea id="deathMsgs"></textarea>
 
-    <h3>Lệnh chạy khi boss bị hạ</h3>
-    <textarea id="cmds" placeholder="doimanh chia lamnguy 30 $players"></textarea>
-    <div class="inline">Chia mảnh cho người tham gia: <input id="fmType" placeholder="loại, vd lamnguy"><input id="fmTotal" type="number" min="1" value="30" style="width:80px"><button id="addFm">Thêm lệnh</button></div>
-    <p class="note">Lệnh console (không có /). <code>$players</code> = mọi người đã đánh boss. Mảnh chia đều cho người tham gia đang online, không tính giới hạn ngày.</p>
-    <div id="warns"></div>
+    <div class="sec">
+      <h3>3 · Kỹ năng <span class="badge" id="pwcount">0</span></h3>
+      <div class="pw-sel" id="pwsel"></div>
+      <div class="pw-box">
+        <div class="pw-top"><input type="search" id="pwfilter" placeholder="Tìm kỹ năng: fire, arrow, summon, freeze…"><span class="hint">bấm để chọn / bỏ</span></div>
+        <div class="pw-list" id="pwlist"></div>
+      </div>
+    </div>
 
-    <div class="bar">
-      <button class="primary" id="save">Lưu</button>
-      <button class="danger" id="del">Xoá</button>
-      <span class="sp"></span>
-      Gọi boss: <input id="spPlayer" list="online" placeholder="cạnh người chơi">
-      <span class="note">hoặc</span>
-      <input id="spX" class="n" placeholder="x"><input id="spY" class="n" placeholder="y"><input id="spZ" class="n" placeholder="z">
-      <input id="spLevel" class="n" placeholder="cấp">
-      <button id="spawn">Gọi</button>
+    <div class="sec">
+      <h3>4 · Trang bị</h3>
+      <div class="g g3" id="slots"></div>
+    </div>
+
+    <div class="sec">
+      <h3>5 · Thông báo</h3>
+      <div class="g g2">
+        <div><label class="f" for="spawnMsg">Khi xuất hiện</label><input id="spawnMsg" placeholder="&c⚠ Rồng Lửa đã thức giấc ở phương Nam!"><div class="mcline" id="pvSpawn"></div></div>
+        <div><label class="f" for="deathMsg">Khi bị hạ <span class="hint">1 dòng</span></label><input id="deathMsg" placeholder="&aRồng Lửa đã bị hạ bởi $players!"><div class="mcline" id="pvDeath"></div></div>
+      </div>
+      <label class="f" for="deathMsgs" style="margin-top:14px">Bảng vinh danh khi bị hạ <span class="hint">mỗi dòng một dòng; $damager1name, $damager1damage… $players</span></label>
+      <div class="g g2 dm">
+        <textarea id="deathMsgs" rows="7"></textarea>
+        <div class="mc-box" id="pvDeathMsgs"></div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <h3>6 · Phần thưởng khi bị hạ</h3>
+      <label class="f" for="cmds">Lệnh console chạy khi boss chết <span class="hint">không có /, mỗi dòng một lệnh; $players = mọi người đã đánh boss</span></label>
+      <textarea id="cmds" rows="3" placeholder="doimanh chia lamnguy 30 $players"></textarea>
+      <div class="fm"><span>Thêm nhanh: chia mảnh sự kiện cho người tham gia</span><input id="fmType" placeholder="loại, vd lamnguy"><input id="fmTotal" type="number" min="1" value="30" title="Tổng số mảnh"><button id="addFm" class="ghost">+ Thêm lệnh</button></div>
+      <p class="note">Mảnh chia đều cho người tham gia đang online, không tính giới hạn ngày.</p>
+      <div id="warns"></div>
+    </div>
+
+    <div class="sec">
+      <h3>7 · Lưu</h3>
+      <div class="g g-id">
+        <div><label class="f" for="id">Mã <span class="hint">không dấu, tên file dmm_&lt;mã&gt;.yml</span></label><input id="id" maxlength="32" placeholder="rong_lua"></div>
+        <div class="bar"><button class="primary" id="save">Lưu boss</button><button class="danger" id="del">Xoá</button><span class="note">Lưu là EliteMobs nạp lại (em reload).</span></div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <h3>Gọi boss ra</h3>
+      <div class="spawn">
+        <input id="spPlayer" list="online" placeholder="Cạnh người chơi (tên)">
+        <span class="or">hoặc toạ độ</span>
+        <input id="spX" class="n" placeholder="x"><input id="spY" class="n" placeholder="y"><input id="spZ" class="n" placeholder="z">
+        <input id="spLevel" class="n" placeholder="cấp" title="Bỏ trống = theo cấu hình">
+        <button id="spawn" class="ghost">Gọi boss</button>
+      </div>
+      <p class="note">Gọi ở thế giới chính của Bang Hội Chiến; chọn chỗ không có người chơi chưa sẵn sàng.</p>
     </div>
     <div class="status" id="status"></div>
-    <p class="note">Bấm Lưu là EliteMobs nạp lại (em reload). Gọi boss ở thế giới chính của Bang Hội Chiến; nhớ gọi ở chỗ không có người chơi chưa sẵn sàng.</p>
   </section>
 </main>
 <script>
@@ -185,14 +239,18 @@ function render() {
   if ((b.damageMultiplier || 1) > 5) w.push("Sát thương cao: có thể giết người chơi trong một đòn.");
   if (!(b.onDeathCommands || []).length && cur?.web !== false) w.push("Chưa có phần thưởng: thêm lệnh chia mảnh hoặc bật rơi đồ EliteMobs.");
   $("warns").innerHTML = w.map(x => `<p class="warn">⚠ ${esc(x)}</p>`).join("");
+  const pv = (t) => t ? `<span class="mc">${mc(t)}</span>` : "";
+  $("pvSpawn").innerHTML = pv(b.spawnMessage); $("pvDeath").innerHTML = pv(b.deathMessage);
+  $("pvDeathMsgs").innerHTML = (b.deathMessages || []).map(l => `<div class="ln">${mc(l) || "&nbsp;"}</div>`).join("") || '<span class="mc-empty">(trống)</span>';
 }
+const pwName = (p) => String(p).replace(/\.(lua|yml)$/, "").replace(/_/g, " ");
 function renderPowers() {
   $("pwcount").textContent = selPowers.length;
-  $("pwsel").innerHTML = selPowers.length ? selPowers.map(p => `<span>${esc(p.replace(/\.(lua|yml)$/, ""))}<button data-p="${esc(p)}" title="Bỏ">×</button></span>`).join("") : '<span class="note" style="background:none;color:var(--muted)">Chưa chọn kỹ năng nào</span>';
+  $("pwsel").innerHTML = selPowers.length ? selPowers.map(p => `<span>${esc(pwName(p))}<button data-p="${esc(p)}" title="Bỏ">×</button></span>`).join("") : '<em class="none">Chưa chọn kỹ năng nào. Bấm kỹ năng bên dưới để thêm.</em>';
   $("pwsel").querySelectorAll("button").forEach(b => b.onclick = () => { selPowers = selPowers.filter(x => x !== b.dataset.p); renderPowers(); render(); });
-  const f = $("pwfilter").value.trim().toLowerCase(), ro = cur && !cur.web;
+  const f = $("pwfilter").value.trim().toLowerCase().replace(/\s+/g, "_"), ro = cur && !cur.web;
   $("pwlist").innerHTML = data.powers.filter(p => !f || p.toLowerCase().includes(f)).map(p =>
-    `<label><input type="checkbox" value="${esc(p)}" ${selPowers.includes(p) ? "checked" : ""} ${ro ? "disabled" : ""}>${esc(p.replace(/\.(lua|yml)$/, ""))}</label>`).join("");
+    `<label class="${selPowers.includes(p) ? "on" : ""}${ro ? " dis" : ""}"><input type="checkbox" value="${esc(p)}" ${selPowers.includes(p) ? "checked" : ""} ${ro ? "disabled" : ""}>${esc(pwName(p))}</label>`).join("") || '<em class="none" style="color:var(--muted);font-size:13.5px">Không có kỹ năng nào khớp.</em>';
   $("pwlist").querySelectorAll("input").forEach(cb => cb.onchange = () => {
     selPowers = cb.checked ? [...selPowers, cb.value] : selPowers.filter(x => x !== cb.value); renderPowers(); render();
   });
@@ -244,7 +302,7 @@ async function post(body) {
 }
 $("new").onclick = () => load(null);
 $("pwfilter").oninput = renderPowers;
-for (const id of ["name", "etype", "level", "hm", "dm", "timeout", "enabled", "emloot", "cmds"]) $(id).addEventListener("input", render);
+for (const id of ["name", "level", "hm", "dm", "timeout", "enabled", "emloot", "cmds", "spawnMsg", "deathMsg", "deathMsgs"]) $(id).addEventListener("input", render);
 $("addFm").onclick = (e) => {
   e.preventDefault();
   const t = $("fmType").value.trim().toLowerCase(), n = parseInt($("fmTotal").value || "0", 10);
@@ -267,12 +325,19 @@ $("spawn").onclick = () => {
 };
 fetch("api/boss").then(r => r.json()).then(d => {
   data = d;
-  $("etype").innerHTML = d.entities.map(e => `<option value="${e}">${esc(ETYPE_VN[e] || e)} (${e})</option>`).join("");
-  $("slots").innerHTML = d.slots.map(sl => `<div><label class="f" for="slot_${sl}">${SLOT_VN[sl]}</label><input id="slot_${sl}" list="mats" placeholder="trống"></div>`).join("");
-  for (const sl of d.slots) $("slot_" + sl).addEventListener("input", render);
+  combo($("etype"), (q) => d.entities.filter(e => !q || fold(e + " " + (ETYPE_VN[e] || "")).includes(fold(q)))
+    .map(e => ({ value: e, label: ETYPE_VN[e] || prettyMat(e), sub: e })), render,
+    { label: (v) => [ETYPE_VN[v] || prettyMat(v), v], search: "Tìm loại quái: xác sống, nhện, skeleton…" });
+  $("slots").innerHTML = d.slots.map(sl => `<div><label class="f" for="slot_${sl}">${SLOT_VN[sl]}</label><input id="slot_${sl}" placeholder="Không mặc"></div>`).join("");
+  let mats = [];
+  const slotCombos = d.slots.map(sl => combo($("slot_" + sl), (q) => {
+    const f = fold(q), out = q ? [] : [{ value: "", label: "Không mặc / để trống" }];
+    for (const m of mats) { const vn = vnMat(m); if (!f || fold(m + " " + prettyMat(m) + " " + (vn || "")).includes(f)) out.push({ value: m, label: matLabel(m), sub: m, r: vn ? 0 : 1 }); }
+    return out.sort((a, b) => (a.r || 0) - (b.r || 0)).slice(0, 200);
+  }, render, { label: (v) => [v ? matLabel(v) : "Không mặc", v], search: "Tìm: mũ kim cương, netherite sword…" }));
   renderList(); load(null);
   fetch("api/thuvien").then(r => r.json()).then(t => {
-    $("mats").innerHTML = ((t.meta && t.meta.materials) || []).map(m => `<option value="${m}">`).join("");
+    mats = (t.meta && t.meta.materials) || []; slotCombos.forEach(c => c.refresh());
     const on = document.createElement("datalist"); on.id = "online"; on.innerHTML = (t.online || []).map(p => `<option value="${esc(p)}">`).join(""); document.body.appendChild(on);
   }).catch(() => {});
 }).catch(e => { $("list").innerHTML = `<p class="note">${esc(e)}</p>`; });

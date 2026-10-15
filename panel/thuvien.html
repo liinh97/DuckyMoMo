@@ -18,9 +18,10 @@
   header h1 { font-size: 17px; margin: 0; flex: 1; }
   header a { color: var(--muted); text-decoration: none; font-size: 14px; }
   header a:hover { color: var(--text); }
-  main { max-width: 1180px; margin: 0 auto; padding: 20px 16px 80px; display: grid; grid-template-columns: 320px 1fr; gap: 16px; align-items: start; }
-  @media (max-width: 860px) { main { grid-template-columns: 1fr; } }
-  .card { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; }
+  main { max-width: 1240px; margin: 0 auto; padding: 0 0 80px; display: grid; grid-template-columns: 300px 1fr; gap: 22px; align-items: start; }
+  main > section:first-of-type { position: sticky; top: 18px; }
+  @media (max-width: 860px) { main { grid-template-columns: minmax(0, 1fr); } main > section:first-of-type { position: static; } }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; }
   .card h2 { font-size: 15px; margin: 0 0 10px; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
   input, select, textarea { width: 100%; padding: 7px 9px; border: 1px solid var(--line); border-radius: 6px; background: var(--input); color: var(--text); font: inherit; }
   textarea { min-height: 84px; resize: vertical; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 13.5px; }
@@ -36,9 +37,18 @@
   .li small { color: var(--muted); display: block; margin-top: 3px; }
   .badge { font-size: 11px; padding: 1px 6px; border-radius: 999px; background: var(--line); color: var(--muted); margin-left: 4px; }
   .empty { color: var(--muted); font-size: 13.5px; }
-  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .grid4 { display: grid; grid-template-columns: 1.2fr 1fr 1.6fr 90px; gap: 10px; }
-  @media (max-width: 640px) { .grid2, .grid4 { grid-template-columns: 1fr; } }
+  .sec { border-top: 1px solid var(--line); padding: 16px 0 4px; margin-top: 14px; }
+  .sec h3 { font-size: 12px; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); margin: 0 0 4px; }
+  .g-mat { display: grid; grid-template-columns: minmax(0, 1fr) 110px; gap: 12px; }
+  .g-id { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); gap: 12px; }
+  .g-give { display: grid; grid-template-columns: minmax(0, 1fr) 90px auto; gap: 10px; margin-top: 8px; }
+  .hint { color: var(--muted); font-weight: 400; font-size: 12px; margin-left: 4px; }
+  .ench-bar { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; margin-top: 10px; }
+  .ench-bar .switch .txt { font-size: 13px; color: var(--muted); }
+  .pv-cap { position: absolute; top: 8px; left: 12px; font-size: 11px; text-transform: uppercase; letter-spacing: .07em; color: #9aa; }
+  .pv-wrap { position: relative; padding-top: 30px !important; }
+  .glint { display: flex; gap: 8px; align-items: center; font-size: 14px; }
+  @media (max-width: 640px) { .g-mat, .g-id, .g-give { grid-template-columns: minmax(0, 1fr); } }
   label.f { display: block; font-size: 13px; color: var(--muted); margin: 10px 0 3px; }
   .note { color: var(--muted); font-size: 13px; margin: 4px 0 0; }
   .warn { color: var(--warn); font-size: 13px; margin: 6px 0 0; }
@@ -51,26 +61,17 @@
   .ench .d.warn { color: var(--warn); }
   .enchopt { display: flex; gap: 8px; align-items: center; font-size: 13px; color: var(--muted); margin: 6px 0 0; }
   .enchopt input { width: auto; }
-  /* ô chọn có tìm kiếm */
-  .cb { position: relative; }
-  .cb > input { width: 100%; padding-right: 30px; }
-  .cb-arrow { position: absolute; right: 4px; top: 50%; transform: translateY(-50%); border: 0; background: transparent; color: var(--muted); cursor: pointer; padding: 2px 6px; font-size: 14px; }
-  .cb-list { position: absolute; z-index: 20; left: 0; right: 0; top: calc(100% + 4px); max-height: 320px; overflow-y: auto; background: var(--card); border: 1px solid var(--line); border-radius: 10px; box-shadow: 0 12px 32px rgba(0,0,0,.28); padding: 4px; }
-  .cb-it { padding: 7px 10px; border-radius: 7px; cursor: pointer; }
-  .cb-it b { font-weight: 600; font-size: 14px; display: block; }
-  .cb-it small { color: var(--muted); font-size: 12px; display: block; }
-  .cb-it.act { background: var(--accent-soft, rgba(232,113,28,.12)); }
-  .cb-it.sel b::after { content: " ✓"; color: var(--accent); }
-  .cb-it.dim { opacity: .55; }
-  .cb-empty { padding: 10px; color: var(--muted); font-size: 13px; }
-  .ench button { padding: 4px 0; color: var(--err); border: none; }
-  .opts { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; margin-top: 10px; font-size: 14px; }
+  .ench > button { padding: 4px 0; color: var(--err); border: none; font-size: 17px; }
+  .rw-add { align-self: flex-start; background: transparent; border: 1px dashed var(--line); color: var(--muted); border-radius: 8px; padding: 6px 12px; cursor: pointer; font-size: 13.5px; }
+  .rw-add:hover { border-color: var(--accent); color: var(--accent); }
+  .opts { display: flex; flex-wrap: wrap; gap: 22px; align-items: center; margin-top: 10px; font-size: 14px; }
   .opts label { display: flex; gap: 6px; align-items: center; }
   .opts input[type=checkbox] { width: auto; }
   .opts select { width: auto; }
-  .bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line); }
+  .bar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 14px; }
+  .bar .note { margin: 0 0 0 6px; }
   .bar .sp { flex: 1; }
-  .bar input { width: 170px; } .bar input.n { width: 70px; }
+  .card h2 button { white-space: nowrap; padding: 7px 14px; }
   .status { margin-top: 8px; font-size: 14px; color: var(--muted); min-height: 21px; }
   .status.ok { color: var(--ok); } .status.err { color: var(--err); }
   /* tooltip giống trong game */
@@ -93,45 +94,69 @@
   </section>
 
   <section class="card" id="editor">
-    <div class="pv-wrap"><div class="tip" id="tip"></div></div>
+    <div class="pv-wrap"><div class="pv-cap">Xem trước trong game</div><div class="tip" id="tip"></div></div>
     <div id="gamenote" class="warn" hidden></div>
-    <div class="grid4">
-      <div><label class="f" for="id">Mã (không dấu)</label><input id="id" placeholder="kiem_rong" maxlength="32"></div>
-      <div><label class="f" for="tengoi">Tên gợi nhớ</label><input id="tengoi" placeholder="Kiếm rồng (quà mốc 30 ngày)" maxlength="60"></div>
-      <div><label class="f" for="material">Loại đồ</label><input id="material" placeholder="Tìm: kiếm, giáp, DIAMOND_SWORD…"></div>
-      <div><label class="f" for="amount">Số lượng</label><input id="amount" type="number" min="1" max="64" value="1"></div>
+
+    <div class="sec">
+      <h3>1 · Loại đồ</h3>
+      <div class="g-mat">
+        <div><label class="f" for="material">Loại đồ</label><input id="material" placeholder="Chọn loại đồ…"></div>
+        <div><label class="f" for="amount">Số lượng</label><input id="amount" type="number" min="1" max="64" value="1"></div>
+      </div>
     </div>
 
-    <label class="f" for="name">Tên hiển thị (mã màu &amp;: &amp;6 vàng, &amp;l đậm, &amp;o nghiêng…)</label>
-    <input id="name" placeholder="&6&lKiếm Rồng" maxlength="150">
-    <div class="palette" id="palette"></div>
-
-    <label class="f" for="lore">Mô tả (lore), mỗi dòng một dòng trong game</label>
-    <textarea id="lore" placeholder="&7Rèn từ vảy rồng phương Bắc&#10;&8Quà mốc điểm danh 30 ngày"></textarea>
-
-    <label class="f">Phù phép</label>
-    <div id="enchs"></div>
-    <button id="addench" style="margin-top:6px">+ Thêm phù phép</button>
-    <label class="enchopt"><input type="checkbox" id="enchAll"> Hiện cả phù phép không hợp loại đồ (làm đồ đặc biệt, phù phép đó sẽ không có tác dụng)</label>
-
-    <div class="opts">
-      <label><input type="checkbox" id="unbreakable"> Không thể hỏng</label>
-      <label><input type="checkbox" id="hide"> Ẩn dòng phù phép</label>
-      <label>Ánh lấp lánh <select id="glint"><option value="">Mặc định</option><option value="true">Luôn có</option><option value="false">Không có</option></select></label>
+    <div class="sec">
+      <h3>2 · Tên và mô tả</h3>
+      <label class="f" for="name">Tên hiển thị <span class="hint">mã màu &amp;: &amp;6 vàng, &amp;l đậm, &amp;o nghiêng… hoặc bấm ô màu</span></label>
+      <input id="name" placeholder="&6&lKiếm Rồng" maxlength="150">
+      <div class="palette" id="palette"></div>
+      <label class="f" for="lore">Mô tả (lore) <span class="hint">mỗi dòng ở đây là một dòng trong game</span></label>
+      <textarea id="lore" placeholder="&7Rèn từ vảy rồng phương Bắc&#10;&8Quà mốc điểm danh 30 ngày"></textarea>
     </div>
-    <div id="warns"></div>
 
-    <div class="bar">
-      <button class="primary" id="save">Lưu</button>
-      <button class="danger" id="del">Xoá</button>
-      <span class="sp"></span>
-      <input id="player" list="online" placeholder="Đưa cho (tên người chơi)">
-      <input id="gamount" class="n" type="number" min="0" max="64" value="0" title="0 = số lượng ghi trong thư viện">
-      <button id="give">Đưa</button>
+    <div class="sec">
+      <h3>3 · Phù phép</h3>
+      <div id="enchs"></div>
+      <div class="ench-bar">
+        <button id="addench" class="rw-add">+ Thêm phù phép</button>
+        <label class="switch"><input type="checkbox" id="enchAll"><span class="track"></span><span class="txt">Hiện cả phù phép không hợp loại đồ</span></label>
+      </div>
+    </div>
+
+    <div class="sec">
+      <h3>4 · Tuỳ chọn</h3>
+      <div class="opts">
+        <label class="switch"><input type="checkbox" id="unbreakable"><span class="track"></span><span class="txt">Không thể hỏng</span></label>
+        <label class="switch"><input type="checkbox" id="hide"><span class="track"></span><span class="txt">Ẩn dòng phù phép</span></label>
+        <label class="glint">Ánh lấp lánh <select id="glint"><option value="">Mặc định</option><option value="true">Luôn có</option><option value="false">Không có</option></select></label>
+      </div>
+      <div id="warns"></div>
+    </div>
+
+    <div class="sec save">
+      <h3>5 · Lưu vào thư viện</h3>
+      <div class="g-id">
+        <div><label class="f" for="id">Mã <span class="hint">không dấu, dùng trong quà/cửa hàng</span></label><input id="id" placeholder="kiem_rong" maxlength="32"></div>
+        <div><label class="f" for="tengoi">Tên gợi nhớ <span class="hint">chỉ admin thấy</span></label><input id="tengoi" placeholder="Kiếm rồng (quà mốc 30 ngày)" maxlength="60"></div>
+      </div>
+      <div class="bar">
+        <button class="primary" id="save">Lưu</button>
+        <button class="danger" id="del">Xoá</button>
+        <span class="note">Lưu là server Bang Hội Chiến nạp lại thư viện ngay.</span>
+      </div>
+    </div>
+
+    <div class="sec">
+      <h3>Đưa cho người chơi</h3>
+      <div class="g-give">
+        <input id="player" list="online" placeholder="Tên người chơi đang online ở Bang Hội Chiến">
+        <input id="gamount" type="number" min="0" max="64" value="0" title="0 = số lượng ghi trong thư viện">
+        <button id="give" class="ghost">Đưa</button>
+      </div>
+      <p class="note">Số lượng 0 = theo số lượng ghi trong thư viện. Phải lưu đồ trước khi đưa.</p>
     </div>
     <datalist id="online"></datalist>
     <div class="status" id="status"></div>
-    <p class="note">Bấm Lưu là server Bang Hội Chiến nạp lại thư viện ngay. "Đưa" chỉ đưa được cho người đang ở Bang Hội Chiến.</p>
   </section>
 </main>
 <script>
@@ -181,69 +206,6 @@ const DESC = {
   "enchantio:vampirism_curse": "Lời nguyền (giáp): theo tên là bất lợi kiểu ma cà rồng (ví dụ dưới nắng). Chưa kiểm chứng.",
   "enchantio:insomnia_curse": "Lời nguyền (giáp): theo tên là gây mất ngủ. Chưa kiểm chứng.",
 };
-// ---- Ô chọn có tìm kiếm (thay datalist: datalist chỉ gợi ý đúng chữ đang có trong ô nên không chọn được món khác)
-// combo(input, items(query) -> [{value, label, sub, dim}], onPick(value))
-const fold = (s) => String(s || "").normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/đ/g, "d").replace(/Đ/g, "D").toLowerCase();
-function combo(input, items, onPick) {
-  const wrap = document.createElement("div"); wrap.className = "cb";
-  input.parentNode.insertBefore(wrap, input); wrap.appendChild(input);
-  input.autocomplete = "off";
-  const btn = document.createElement("button"); btn.type = "button"; btn.className = "cb-arrow"; btn.tabIndex = -1; btn.textContent = "▾";
-  const list = document.createElement("div"); list.className = "cb-list"; list.hidden = true;
-  wrap.append(btn, list);
-  let showAll = false, act = -1, cur = [];
-  function draw() {
-    cur = items(showAll ? "" : input.value.trim());
-    act = Math.max(0, cur.findIndex(x => x.value === input.value.trim()));
-    list.innerHTML = cur.length ? "" : '<div class="cb-empty">Không tìm thấy</div>';
-    cur.forEach((it, i) => {
-      const d = document.createElement("div");
-      d.className = "cb-it" + (it.dim ? " dim" : "") + (i === act ? " act" : "") + (it.value === input.value.trim() ? " sel" : "");
-      d.innerHTML = `<b></b>${it.sub ? "<small></small>" : ""}`;
-      d.querySelector("b").textContent = it.label;
-      if (it.sub) d.querySelector("small").textContent = it.sub;
-      d.onmousedown = (e) => { e.preventDefault(); pick(it.value); };
-      list.appendChild(d);
-    });
-    const a = list.children[act]; if (a && a.scrollIntoView) a.scrollIntoView({ block: "nearest" });
-  }
-  function open(all) { if (input.disabled) return; showAll = all; list.hidden = false; draw(); }
-  function close() { list.hidden = true; }
-  function pick(v) { input.value = v; close(); onPick(v); }
-  input.addEventListener("focus", () => open(true));
-  input.addEventListener("click", () => open(true));
-  input.addEventListener("input", () => { showAll = false; list.hidden = false; draw(); });
-  input.addEventListener("blur", () => setTimeout(close, 120));
-  input.addEventListener("keydown", (e) => {
-    if (list.hidden && (e.key === "ArrowDown" || e.key === "Enter")) { open(false); e.preventDefault(); return; }
-    if (e.key === "ArrowDown" || e.key === "ArrowUp") {
-      e.preventDefault(); act = Math.max(0, Math.min(cur.length - 1, act + (e.key === "ArrowDown" ? 1 : -1)));
-      [...list.children].forEach((c, i) => c.classList.toggle("act", i === act));
-      const a = list.children[act]; if (a) a.scrollIntoView({ block: "nearest" });
-    } else if (e.key === "Enter") { e.preventDefault(); if (cur[act]) pick(cur[act].value); }
-    else if (e.key === "Escape") close();
-  });
-  btn.onmousedown = (e) => { e.preventDefault(); if (list.hidden) { input.focus(); open(true); } else close(); };
-  return { refresh: () => { if (!list.hidden) draw(); } };
-}
-
-// Tên tiếng Việt cho đồ hay làm phần thưởng (vũ khí, giáp, dụng cụ): "Kiếm kim cương"
-const MAT_PART = { SWORD: "Kiếm", AXE: "Rìu", PICKAXE: "Cúp", SHOVEL: "Xẻng", HOE: "Cuốc", SPEAR: "Giáo", HELMET: "Mũ", CHESTPLATE: "Áo giáp",
-  LEGGINGS: "Quần giáp", BOOTS: "Giày", HORSE_ARMOR: "Giáp ngựa" };
-const MAT_TIER = { WOODEN: "gỗ", STONE: "đá", IRON: "sắt", GOLDEN: "vàng", DIAMOND: "kim cương", NETHERITE: "netherite", COPPER: "đồng",
-  LEATHER: "da", CHAINMAIL: "xích", TURTLE: "rùa" };
-const MAT_ONE = { BOW: "Cung", CROSSBOW: "Nỏ", TRIDENT: "Đinh ba", MACE: "Chuỳ", ELYTRA: "Cánh (elytra)", SHIELD: "Khiên", FISHING_ROD: "Cần câu",
-  SHEARS: "Kéo", FLINT_AND_STEEL: "Bật lửa", CARROT_ON_A_STICK: "Cần câu cà rốt", WARPED_FUNGUS_ON_A_STICK: "Cần câu nấm", BRUSH: "Chổi",
-  ENCHANTED_BOOK: "Sách phù phép", BOOK: "Sách", TURTLE_HELMET: "Mũ rùa", WOLF_ARMOR: "Giáp sói", GOLDEN_APPLE: "Táo vàng",
-  ENCHANTED_GOLDEN_APPLE: "Táo vàng phù phép", DIAMOND: "Kim cương", EMERALD: "Ngọc lục bảo", NETHERITE_INGOT: "Thỏi netherite",
-  IRON_INGOT: "Thỏi sắt", GOLD_INGOT: "Thỏi vàng", TOTEM_OF_UNDYING: "Vật tổ bất tử", NAME_TAG: "Thẻ tên", CARVED_PUMPKIN: "Bí ngô khắc" };
-function vnMat(m) {
-  if (MAT_ONE[m]) return MAT_ONE[m];
-  for (const [part, vn] of Object.entries(MAT_PART)) {
-    if (m.endsWith("_" + part)) { const tier = m.slice(0, -part.length - 1); return MAT_TIER[tier] ? `${vn} ${MAT_TIER[tier]}` : null; }
-  }
-  return null;
-}
 const ROMAN = ["", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"];
 let data = null, cur = null, isNew = true, enchRows = [], lastField = "name";
 
@@ -255,7 +217,6 @@ function enchName(k) {
   const [ns, key] = s.includes(":") ? s.split(":") : ["", s];
   return prettyMat(key) + (ns ? ` [${prettyMat(ns)}]` : "");
 }
-function prettyMat(m) { return String(m || "").toLowerCase().split("_").map(w => w ? w[0].toUpperCase() + w.slice(1) : "").join(" "); }
 // &-mã màu -> HTML (như trong game): đổi màu thì bỏ định dạng; &r về mặc định
 function mc(text, defColor, defItalic) {
   let out = "", st = { c: defColor, b: false, i: defItalic, u: false, s: false, k: false };
@@ -341,7 +302,8 @@ function matItems(q) {
 function enchKeys() { return data && data.meta ? data.meta.enchantments.map(e => short(e.key)) : Object.keys(VN); }
 // Danh sách gợi ý dùng chung: gõ tên Việt, tên Anh hoặc mã đều lọc được
 function buildEnchList() {
-  combo($("material"), matItems, () => { enchRows.forEach(enchDesc); render(); });
+  combo($("material"), matItems, () => { enchRows.forEach(enchDesc); render(); },
+    { label: (v) => [matLabel(v), v], search: "Tìm loại đồ: kiếm, giáp, cúp, diamond…" });
 }
 function enchDesc(r) {
   const k = r.sel.value.trim().toLowerCase().replace(/^minecraft:/, "");
@@ -354,7 +316,7 @@ function enchDesc(r) {
 }
 function addEnch(key = "", lvl = 1) {
   const row = document.createElement("div"); row.className = "ench";
-  row.innerHTML = `<input placeholder="Tìm: sắc bén, sharpness, volley…" value="${esc(key)}"><input type="number" min="1" max="255" value="${lvl}"><button title="Bỏ">×</button><div class="d"></div>`;
+  row.innerHTML = `<input placeholder="Chọn phù phép…" value="${esc(key)}"><input type="number" min="1" max="255" value="${lvl}"><button title="Bỏ">×</button><div class="d"></div>`;
   const ins = row.querySelectorAll("input");
   const r = { el: row, sel: ins[0], lvl: ins[1], d: row.querySelector(".d") };
   if (!key) {
@@ -362,16 +324,16 @@ function addEnch(key = "", lvl = 1) {
     const free = enchItems("").filter(x => !x.dim && !enchRows.some(o => o.sel.value === x.value)).map(x => x.value);
     r.sel.value = ["sharpness", "protection", "efficiency", "power", "piercing", "loyalty", "density", "unbreaking"].find(k => free.includes(k)) || free[0] || "";
   }
-  r.sel.oninput = () => { enchDesc(r); render(); };
-  combo(r.sel, enchItems, () => { enchDesc(r); render(); });
+  combo(r.sel, enchItems, () => { enchDesc(r); render(); },
+    { label: (v) => [enchLabel(v), v ? "tối đa " + (enchMax(v) || "?") : ""], search: "Tìm phù phép: sắc bén, sharpness, volley…" });
   r.lvl.oninput = render;
   enchDesc(r);
-  row.querySelector("button").onclick = () => { enchRows = enchRows.filter(x => x !== r); row.remove(); render(); };
+  row.querySelector(":scope > button").onclick = () => { enchRows = enchRows.filter(x => x !== r); row.remove(); render(); };
   enchRows.push(r); $("enchs").appendChild(row);
 }
 function setEditable(on) {
   for (const id of ["tengoi", "material", "amount", "name", "lore", "unbreakable", "hide", "glint", "addench", "save"]) $(id).disabled = !on;
-  enchRows.forEach(r => { r.sel.disabled = r.lvl.disabled = !on; r.el.querySelector("button").disabled = !on; });
+  enchRows.forEach(r => { r.sel.disabled = r.lvl.disabled = !on; r.el.querySelector(":scope > button").disabled = !on; });
 }
 function load(it) {
   cur = it; isNew = !it;

@@ -1,6 +1,135 @@
 // Khung chung trang quản trị: thanh điều hướng trái (thu thành nút menu trên điện thoại), tiêu đề trang.
 // Trang dùng: <link rel="stylesheet" href="ui.css"> + <script src="shell.js"></script> ngay sau <body>.
 // <body data-dozzle="__DOZZLE_URL__" data-title="…" data-sub="…">: link xem log, tiêu đề trang (trang chưa tự có .page-head).
+// Dùng chung: mcHtml("&c[Admin] &#FFCC33…") -> HTML có màu như trong game (&mã màu, &#hex, &l/&o/&n/&m, %placeholder%).
+window.mcHtml = function (text, opts) {
+  const C = { 0: "#000000", 1: "#0000AA", 2: "#00AA00", 3: "#00AAAA", 4: "#AA0000", 5: "#AA00AA", 6: "#FFAA00", 7: "#AAAAAA",
+    8: "#555555", 9: "#5555FF", a: "#55FF55", b: "#55FFFF", c: "#FF5555", d: "#FF55FF", e: "#FFFF55", f: "#FFFFFF" };
+  const esc = (s) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  const base = (opts && opts.base) || "#FFFFFF";
+  let color = base, st = {}, out = "";
+  const parts = String(text ?? "").split(/([&§]#[0-9a-fA-F]{6}|[&§][0-9a-fk-orA-FK-OR]|%[A-Za-z0-9_:.\-]+%)/);
+  for (const p of parts) {
+    if (!p) continue;
+    let m;
+    if ((m = /^[&§]#([0-9a-fA-F]{6})$/.exec(p))) { color = "#" + m[1]; st = {}; continue; }
+    if ((m = /^[&§]([0-9a-fk-or])$/i.exec(p))) {
+      const k = m[1].toLowerCase();
+      if (C[k]) { color = C[k]; st = {}; } else if (k === "r") { color = base; st = {}; } else st[k] = true;
+      continue;
+    }
+    const css = `color:${color};${st.l ? "font-weight:700;" : ""}${st.o ? "font-style:italic;" : ""}${st.n || st.m ? `text-decoration:${st.n ? "underline " : ""}${st.m ? "line-through" : ""};` : ""}`;
+    if (/^%[^%]+%$/.test(p)) out += `<span class="mc-ph" style="${css}">${esc(p)}</span>`;
+    else out += `<span style="${css}">${esc(st.k ? p.replace(/\S/g, "▒") : p)}</span>`;
+  }
+  return out || '<span class="mc-empty">(dòng trống)</span>';
+};
+// Bỏ dấu để tìm: "kiem" khớp "Kiếm"
+window.fold = (s) => String(s || "").normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/đ/g, "d").replace(/Đ/g, "D").toLowerCase();
+
+// Tên tiếng Việt cho đồ hay dùng (vũ khí, giáp, dụng cụ…): vnMat("DIAMOND_SWORD") = "Kiếm kim cương"; không biết thì null
+(function () {
+  const PART = { SWORD: "Kiếm", AXE: "Rìu", PICKAXE: "Cúp", SHOVEL: "Xẻng", HOE: "Cuốc", SPEAR: "Giáo", HELMET: "Mũ", CHESTPLATE: "Áo giáp",
+    LEGGINGS: "Quần giáp", BOOTS: "Giày", HORSE_ARMOR: "Giáp ngựa", INGOT: "Thỏi", BLOCK: "Khối", ORE: "Quặng", NUGGET: "Mảnh" };
+  const TIER = { WOODEN: "gỗ", STONE: "đá", IRON: "sắt", GOLDEN: "vàng", GOLD: "vàng", DIAMOND: "kim cương", NETHERITE: "netherite", COPPER: "đồng",
+    LEATHER: "da", CHAINMAIL: "xích", TURTLE: "rùa", EMERALD: "ngọc lục bảo", COAL: "than", LAPIS: "lưu ly", REDSTONE: "đá đỏ", DEEPSLATE_IRON: "sắt (đá sâu)",
+    DEEPSLATE_DIAMOND: "kim cương (đá sâu)", DEEPSLATE_GOLD: "vàng (đá sâu)" };
+  const ONE = { BOW: "Cung", CROSSBOW: "Nỏ", TRIDENT: "Đinh ba", MACE: "Chuỳ", ELYTRA: "Cánh (elytra)", SHIELD: "Khiên", FISHING_ROD: "Cần câu",
+    SHEARS: "Kéo", FLINT_AND_STEEL: "Bật lửa", CARROT_ON_A_STICK: "Cần câu cà rốt", WARPED_FUNGUS_ON_A_STICK: "Cần câu nấm", BRUSH: "Chổi",
+    ENCHANTED_BOOK: "Sách phù phép", BOOK: "Sách", TURTLE_HELMET: "Mũ rùa", WOLF_ARMOR: "Giáp sói", GOLDEN_APPLE: "Táo vàng",
+    ENCHANTED_GOLDEN_APPLE: "Táo vàng phù phép", DIAMOND: "Kim cương", EMERALD: "Ngọc lục bảo", NETHERITE_SCRAP: "Mảnh vụn netherite",
+    TOTEM_OF_UNDYING: "Vật tổ bất tử", NAME_TAG: "Thẻ tên", CARVED_PUMPKIN: "Bí ngô khắc", EXPERIENCE_BOTTLE: "Bình kinh nghiệm",
+    ENDER_PEARL: "Ngọc ender", COOKED_BEEF: "Bít tết", BREAD: "Bánh mì", ARROW: "Mũi tên", COBBLESTONE: "Đá cuội", DIRT: "Đất", OAK_LOG: "Gỗ sồi",
+    AMETHYST_SHARD: "Mảnh thạch anh tím", NETHER_STAR: "Ngôi sao Nether", BEACON: "Đèn hiệu", SADDLE: "Yên ngựa", TORCH: "Đuốc",
+    CHEST: "Rương", SHULKER_BOX: "Hộp shulker", FIREWORK_ROCKET: "Pháo hoa", EMERALD_BLOCK: "Khối ngọc lục bảo", COAL: "Than", STICK: "Que" };
+  window.vnMat = function (m) {
+    m = String(m || "").toUpperCase();
+    if (ONE[m]) return ONE[m];
+    for (const [part, vn] of Object.entries(PART)) {
+      if (m.endsWith("_" + part)) { const t = m.slice(0, -part.length - 1); return TIER[t] ? `${vn} ${TIER[t]}` : null; }
+    }
+    return null;
+  };
+  window.prettyMat = (m) => String(m || "").toLowerCase().split("_").map(w => w ? w[0].toUpperCase() + w.slice(1) : "").join(" ");
+  // "Kiếm kim cương · Diamond Sword"
+  window.matLabel = (m) => { const vn = vnMat(m); return vn ? `${vn} · ${prettyMat(m)}` : prettyMat(m); };
+})();
+
+// Ô chọn có ô tìm kiếm riêng. input gốc bị ẩn nhưng vẫn giữ giá trị (đọc/ghi .value, .disabled như cũ).
+// combo(input, items(query) -> [{value, label, sub, dim}], onPick(value), {label: v -> [chữ, chữ phụ], search: "gợi ý ô tìm"})
+window.combo = function (input, items, onPick, opts) {
+  opts = opts || {};
+  const wrap = document.createElement("div"); wrap.className = "cb";
+  input.parentNode.insertBefore(wrap, input); wrap.appendChild(input);
+  input.hidden = true;
+  const trig = document.createElement("button"); trig.type = "button"; trig.className = "cb-trig";
+  trig.innerHTML = '<span class="cb-v"><b></b><small></small></span><span class="cb-arrow">▾</span>';
+  const pop = document.createElement("div"); pop.className = "cb-pop"; pop.hidden = true;
+  pop.innerHTML = '<div class="cb-search"><input type="search" autocomplete="off"></div><div class="cb-list"></div><div class="cb-foot"></div>';
+  wrap.append(trig, pop);
+  const q = pop.querySelector("input"), list = pop.querySelector(".cb-list"), foot = pop.querySelector(".cb-foot");
+  q.placeholder = opts.search || "Gõ để tìm (có dấu hoặc không)…";
+  let act = 0, cur = [];
+  const desc = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value");
+  function sync() {
+    const v = desc.get.call(input).trim();
+    let lab = v, sub = "";
+    if (opts.label) [lab, sub] = opts.label(v); else { const f = items("").find(x => x.value === v); if (f) { lab = f.label; sub = f.sub || ""; } }
+    trig.querySelector("b").textContent = v ? lab : (input.placeholder || "Chọn…");
+    trig.querySelector("small").textContent = v ? (sub || "") : "";
+    trig.classList.toggle("ph", !v);
+  }
+  Object.defineProperty(input, "value", { get() { return desc.get.call(this); }, set(v) { desc.set.call(this, v); sync(); } });
+  new MutationObserver(() => { trig.disabled = input.disabled; if (input.disabled) close(); }).observe(input, { attributes: true, attributeFilter: ["disabled"] });
+  trig.disabled = input.disabled;
+  function draw() {
+    cur = items(q.value.trim());
+    const v = input.value.trim();
+    list.innerHTML = cur.length ? "" : '<div class="cb-empty">Không tìm thấy. Thử tên tiếng Anh hoặc mã (vd diamond_sword).</div>';
+    cur.forEach((it, i) => {
+      const d = document.createElement("div");
+      d.className = "cb-it" + (it.dim ? " dim" : "") + (i === act ? " act" : "") + (it.value === v ? " sel" : "");
+      d.innerHTML = `<b></b>${it.sub ? "<small></small>" : ""}`;
+      d.querySelector("b").textContent = it.label;
+      if (it.sub) d.querySelector("small").textContent = it.sub;
+      d.onmousedown = (e) => { e.preventDefault(); pick(it.value); };
+      d.onmousemove = () => { if (act !== i) { act = i; mark(); } };
+      list.appendChild(d);
+    });
+    foot.textContent = cur.length ? `${cur.length} kết quả · ↑↓ chọn · Enter xác nhận · Esc đóng` : "";
+    mark();
+  }
+  function mark() { [...list.children].forEach((c, i) => c.classList.toggle("act", i === act)); const a = list.children[act]; if (a && a.scrollIntoView) a.scrollIntoView({ block: "nearest" }); }
+  function open() {
+    if (input.disabled) return;
+    document.querySelectorAll(".cb-pop").forEach(p => { if (p !== pop) p.hidden = true; });
+    pop.hidden = false; q.value = "";
+    cur = items(""); act = Math.max(0, cur.findIndex(x => x.value === input.value.trim()));
+    draw(); q.focus();
+  }
+  function close() { pop.hidden = true; }
+  function pick(v) { input.value = v; close(); trig.focus(); onPick && onPick(v); }
+  trig.onclick = () => (pop.hidden ? open() : close());
+  trig.onkeydown = (e) => { if (e.key === "ArrowDown" || (e.key.length === 1 && e.key !== " " && !e.ctrlKey && !e.metaKey)) { open(); if (e.key.length === 1) { q.value = e.key; act = 0; draw(); e.preventDefault(); } } };
+  q.oninput = () => { act = 0; draw(); };
+  q.onkeydown = (e) => {
+    if (e.key === "ArrowDown" || e.key === "ArrowUp") { e.preventDefault(); act = Math.max(0, Math.min(cur.length - 1, act + (e.key === "ArrowDown" ? 1 : -1))); mark(); }
+    else if (e.key === "Enter") { e.preventDefault(); if (cur[act]) pick(cur[act].value); }
+    else if (e.key === "Escape") { close(); trig.focus(); }
+  };
+  document.addEventListener("mousedown", (e) => { if (!pop.hidden && !wrap.contains(e.target)) close(); });
+  sync();
+  return { refresh: () => { sync(); if (!pop.hidden) draw(); }, open };
+};
+
+// Thông báo nổi góc dưới: toast("Đã lưu", "ok" | "err" | ""); kind "" = đang xử lý (không tự tắt).
+window.toast = function (msg, kind) {
+  let t = document.getElementById("toast");
+  if (!t) { t = document.createElement("div"); t.id = "toast"; t.className = "toast"; document.body.appendChild(t); }
+  t.textContent = msg; t.className = "toast show " + (kind || "");
+  clearTimeout(t._h);
+  if (kind) t._h = setTimeout(() => t.classList.remove("show"), kind === "err" ? 9000 : 4000);
+};
 (function () {
   const NAV = [
     ["Cấu hình", [["", "⚙️", "Cài đặt"], ["thuvien", "🗡️", "Thư viện đồ"], ["boss", "🐉", "Boss"], ["role", "👑", "Role & rank"]]],

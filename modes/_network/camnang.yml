@@ -14,8 +14,8 @@
 guide:
   - title: Việc admin hay làm
     items:
-      - ["Quyền của role / rank", "Trang Cài đặt > Role > nút Quyền trên từng role: tick để cấp (vd Helper: bay; Builder: gamemode)"]
-      - ["Cấp role staff", "Trang Cài đặt > Role (bấm nút), hoặc /lp user <tên> parent add helper  (lên tiếp: /lp user <tên> promote staff → mod → admin)"]
+      - ["Quyền của role / rank", "Trang Role & rank: chọn role bên trái, bật công tắc quyền (vd Helper: bay; Builder: gamemode). Có thể chọn áp dụng toàn mạng hoặc từng server"]
+      - ["Cấp role staff", "Trang Role & rank: chọn role, gõ tên ở mục Thành viên, hoặc /lp user <tên> parent add helper  (lên tiếp: /lp user <tên> promote staff → mod → admin)"]
       - ["Cấp rank donate", "/rank give <tên> <namtuoc|tutuoc|batuoc|hautuoc|congtuoc> <số tháng>  · xem: /rank check <tên> · gỡ: /rank remove <tên>"]
       - ["Đồ phù phép vượt cấp", "/dmm enchant sharpness 30 (món đang cầm) · /dmm sach sharpness 30 <tên> (tặng sách)"]
       - ["Kit quà tân thủ", "Tự phát khi vào Bang Hội Chiến lần đầu (kit tanthu). Sửa đồ trong kit: trang Cài đặt > Bang Hội Chiến > Người mới. Phát tay: /kit tanthu <tên>"]

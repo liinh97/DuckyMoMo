@@ -5,60 +5,58 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>DuckyMoMo · Hoạt động người chơi</title>
 <style>
-  /* Giao diện kiểu Dozzle: nền tối, mỗi sự kiện một dòng chữ đơn cách, mới nhất ở dưới */
-  :root {
-    --bg: #121212; --bar: #1a1a1a; --row: #161616; --row-alt: #1b1b1b; --hover: #242424; --line: #2a2a2a;
-    --text: #e4e4e4; --muted: #8a8a8a; --dim: #6b6b6b; --input: #202020; --live: #2ecc71;
-    --chat: #8ab4f8; --join: #81c995; --command: #fdd663; --server: #c7a6ff; --admin: #ff8a80;
-  }
-  * { box-sizing: border-box; }
-  html, body { height: 100%; }
-  body { margin: 0; background: var(--bg); color: var(--text); font: 14px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-         display: flex; flex-direction: column; }
-  header { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 10px 16px; background: var(--bar);
-           border-bottom: 1px solid var(--line); }
-  header .title { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 14px; white-space: nowrap; margin-right: 6px; }
-  header .title b { color: var(--text); } header .title span { color: var(--dim); }
-  .chip { border: 1px solid var(--line); background: transparent; color: var(--muted); padding: 3px 11px; border-radius: 999px;
-          cursor: pointer; font: inherit; font-size: 13px; }
-  .chip.on { color: #111; border-color: transparent; font-weight: 600; }
-  .chip.on[data-type="chat"] { background: var(--chat); }
-  .chip.on[data-type="join"] { background: var(--join); }
-  .chip.on[data-type="command"] { background: var(--command); }
-  .chip.on[data-type="admin"] { background: var(--admin); }
-  select, input { padding: 4px 8px; border: 1px solid var(--line); border-radius: 6px; background: var(--input); color: var(--text);
-                  font: inherit; font-size: 13px; color-scheme: dark; }
-  input { width: 140px; }
+  /* Mỗi sự kiện một dòng, mới nhất ở dưới; chia nhóm theo ngày */
+  :root { --chat: #3b82f6; --join: #16a34a; --command: #c48a00; --admin: #e5484d; --server: #8b5cf6; }
+  @media (prefers-color-scheme: dark) { :root { --chat: #8ab4f8; --join: #81c995; --command: #fdd663; --admin: #ff8a80; --server: #c7a6ff; } }
+  header.keep { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 12px 14px; background: var(--card); }
+  .chip { border: 1px solid var(--line); background: transparent; color: var(--muted); padding: 5px 13px; border-radius: 999px; cursor: pointer; font: inherit; font-size: 13.5px; display: inline-flex; align-items: center; gap: 6px; }
+  .chip::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: currentColor; opacity: .5; }
+  .chip.on { font-weight: 600; color: var(--text); background: var(--chip); }
+  .chip.on::before { opacity: 1; }
+  .chip[data-type="chat"]::before { background: var(--chat); } .chip[data-type="join"]::before { background: var(--join); }
+  .chip[data-type="command"]::before { background: var(--command); } .chip[data-type="admin"]::before { background: var(--admin); }
+  header.keep .sepr { width: 1px; height: 24px; background: var(--line); margin: 0 2px; }
+  header.keep select, header.keep input { padding: 6px 10px; font-size: 14px; }
+  header.keep input#player { width: 130px; } header.keep input#q { width: 170px; }
   input[type="date"] { width: auto; }
   .custom { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); }
   .custom[hidden] { display: none; }
-  .right { margin-left: auto; display: flex; align-items: center; gap: 14px; font-size: 13px; }
-  .right a { color: var(--muted); text-decoration: none; } .right a:hover { color: var(--text); }
+  .right { margin-left: auto; display: flex; align-items: center; gap: 14px; font-size: 13.5px; }
   label.live { display: flex; align-items: center; gap: 6px; color: var(--muted); cursor: pointer; user-select: none; }
   label.live input { display: none; }
-  label.live .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--dim); }
-  label.live.on .dot { background: var(--live); box-shadow: 0 0 6px var(--live); }
+  label.live .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); }
+  label.live.on .dot { background: #2ecc71; box-shadow: 0 0 6px #2ecc71; }
   label.live.on { color: var(--text); }
-  #log { flex: 1; overflow-y: auto; font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace; font-size: 13px; }
-  .line { display: grid; grid-template-columns: 170px 1fr; gap: 16px; padding: 4px 16px; background: var(--row); }
-  .line:nth-child(even) { background: var(--row-alt); }
-  .line:hover { background: var(--hover); }
-  .line .ts { color: var(--dim); white-space: nowrap; }
+  /* nhật ký */
+  .logcard { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+  #log { height: calc(100vh - 330px); min-height: 320px; overflow-y: auto; font-size: 14px; }
+  .info { padding: 8px 16px; color: var(--muted); font-size: 12.5px; border-bottom: 1px solid var(--line-2); }
+  .day { position: sticky; top: 0; z-index: 1; background: var(--card-2); padding: 6px 16px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); border-bottom: 1px solid var(--line-2); border-top: 1px solid var(--line-2); }
+  .line { display: grid; grid-template-columns: 70px 76px minmax(0, 1fr) auto; gap: 12px; align-items: baseline; padding: 6px 16px; border-bottom: 1px solid var(--line-2); }
+  .line:hover { background: var(--chip); }
+  .line .ts { color: var(--muted); font-variant-numeric: tabular-nums; font-size: 13px; }
+  .tag { font-size: 11px; font-weight: 700; text-align: center; border-radius: 999px; padding: 1px 0; letter-spacing: .03em; }
+  .tag.chat { color: var(--chat); background: color-mix(in srgb, var(--chat) 14%, transparent); }
+  .tag.join { color: var(--join); background: color-mix(in srgb, var(--join) 14%, transparent); }
+  .tag.command { color: var(--command); background: color-mix(in srgb, var(--command) 16%, transparent); }
+  .tag.admin { color: var(--admin); background: color-mix(in srgb, var(--admin) 14%, transparent); }
   .line .msg { white-space: pre-wrap; word-break: break-word; }
-  .srv { color: var(--server); } .mode { color: var(--dim); }
-  .tag { font-weight: 700; } .tag.chat { color: var(--chat); } .tag.join { color: var(--join); } .tag.command { color: var(--command); } .tag.admin { color: var(--admin); }
-  .info { padding: 6px 16px; color: var(--dim); font-size: 12.5px; }
-  .empty { padding: 40px 16px; text-align: center; color: var(--muted); font-family: system-ui, sans-serif; }
-  /* Thanh gửi tin vào game (dưới cùng) */
-  #say { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; padding: 10px 16px; background: var(--bar); border-top: 1px solid var(--line); }
-  #say input#sayText { flex: 1; min-width: 200px; width: auto; padding: 8px 10px; font-size: 14px; }
-  #say input#sayName { width: 110px; }
-  #say button { padding: 7px 16px; border: none; border-radius: 6px; background: var(--admin); color: #111; font: inherit; font-weight: 700; cursor: pointer; }
-  #say button:disabled { opacity: .5; cursor: default; }
-  #say .count { color: var(--dim); font-size: 12px; min-width: 52px; text-align: right; }
-  #sayMsg { padding: 0 16px 8px; background: var(--bar); font-size: 13px; color: var(--muted); min-height: 0; }
-  #sayMsg.ok { color: var(--join); } #sayMsg.err { color: var(--admin); }
-  @media (max-width: 700px) { .line { grid-template-columns: 1fr; gap: 0; } input { width: 110px; } }
+  .line .msg b { font-weight: 600; }
+  .line .msg code { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 13px; background: var(--chip); border-radius: 5px; padding: 1px 6px; }
+  .line.join .msg { color: var(--muted); } .line.join .msg b { color: var(--text); }
+  .where { font-size: 12px; color: var(--muted); white-space: nowrap; }
+  .where .srv { color: var(--server); }
+  .empty { padding: 50px 16px; text-align: center; color: var(--muted); }
+  /* gửi tin vào game */
+  #say { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; padding: 12px 14px; border-top: 1px solid var(--line); background: var(--card-2); }
+  #say input#sayText { flex: 1; min-width: 220px; }
+  #say input#sayName { width: 120px; }
+  #say .count { color: var(--muted); font-size: 12px; min-width: 52px; text-align: right; }
+  #sayMsg { padding: 0 14px; font-size: 13px; color: var(--muted); background: var(--card-2); }
+  #sayMsg:not(:empty) { padding-bottom: 10px; }
+  #sayMsg.ok { color: var(--ok); } #sayMsg.err { color: var(--err); }
+  @media (max-width: 900px) { #log { height: calc(100vh - 360px); } header.keep { border-radius: 0; } .logcard { border-radius: 0; border-left: 0; border-right: 0; } }
+  @media (max-width: 700px) { .line { grid-template-columns: 62px minmax(0, 1fr); } .line .tag { display: none; } .line .where { grid-column: 2; } header.keep input#player, header.keep input#q { width: 130px; } header.keep .sepr { display: none; } }
 </style>
 <link rel="stylesheet" href="ui.css">
 </head>
@@ -69,6 +67,7 @@
   <button class="chip on" data-type="join">Vào/ra</button>
   <button class="chip on" data-type="command">Lệnh</button>
   <button class="chip on" data-type="admin" title="Tin admin gửi từ trang này">Admin</button>
+  <span class="sepr"></span>
   <select id="mode" title="Chế độ"><option value="">Mọi chế độ</option></select>
   <select id="range" title="Khoảng ngày">
     <option value="all">Mọi ngày</option>
@@ -87,6 +86,7 @@
     <label class="live on" id="liveLabel" title="Tự cập nhật mỗi 5 giây"><input type="checkbox" id="auto" checked><span class="dot"></span>Live</label>
   </div>
 </header>
+<div class="logcard">
 <div id="log"><div class="empty">Đang tải…</div></div>
 <form id="say" autocomplete="off">
   <select id="sayTarget" title="Gửi tới">
@@ -103,9 +103,10 @@
   <input id="sayName" placeholder="Tên hiển thị" value="Admin" maxlength="24" title="Tên hiện trước tin chat">
   <input id="sayText" placeholder="Nhập tin gửi vào game… (Enter để gửi)" maxlength="200">
   <span class="count" id="sayCount">0/200</span>
-  <button type="submit" id="sayBtn">Gửi</button>
+  <button type="submit" id="sayBtn" class="primary">Gửi vào game</button>
 </form>
 <div id="sayMsg"></div>
+</div>
 <script>
 const $ = (id) => document.getElementById(id);
 if (!"__DOZZLE_URL__") $("dozzle").style.display = "none";
@@ -164,6 +165,22 @@ const fmt = (ts) => {
   return `${p(d.getDate())}/${p(d.getMonth() + 1)}/${d.getFullYear()} ${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`;
 };
 
+const hms = (d) => isNaN(d) ? "" : [d.getHours(), d.getMinutes(), d.getSeconds()].map((n) => String(n).padStart(2, "0")).join(":");
+function dayName(d) {
+  if (isNaN(d)) return "";
+  const t = dayStart(new Date()), x = dayStart(d), diff = Math.round((t - x) / 86400000);
+  const date = fmt(d).slice(0, 10);
+  return diff === 0 ? "Hôm nay · " + date : diff === 1 ? "Hôm qua · " + date : ["Chủ nhật", "Thứ hai", "Thứ ba", "Thứ tư", "Thứ năm", "Thứ sáu", "Thứ bảy"][d.getDay()] + " · " + date;
+}
+// tên người chơi in đậm; lệnh hiện dạng mã
+function msgHtml(e) {
+  const t = String(e.text || ""), p = e.player || "";
+  if (!p || !t.startsWith(p)) return esc(t);
+  let rest = t.slice(p.length);
+  if (e.type === "command" && /^:\s*\//.test(rest)) return `<b>${esc(p)}</b> <code>${esc(rest.replace(/^:\s*/, ""))}</code>`;
+  return `<b>${esc(p)}</b>${esc(rest)}`;
+}
+
 async function load() {
   const p = params();
   if (!p.get("types")) { render([]); return; }
@@ -190,10 +207,15 @@ function render(events) {
   const atBottom = log.scrollHeight - log.scrollTop - log.clientHeight < 40;
   const rows = events.slice().reverse();   // API trả mới nhất trước; hiện như log: mới nhất ở dưới
   const info = `<div class="info">${rows.length} sự kiện${rows.length >= 300 ? " gần nhất (tối đa 300)" : ""}</div>`;
-  log.innerHTML = rows.length ? info + rows.map((e) => `<div class="line">
-      <span class="ts">${esc(fmt(e.ts))}</span>
-      <span class="msg"><span class="srv">[${esc(e.server)}]</span> <span class="mode">${esc(modeNames[e.mode] || e.mode)}</span> <span class="tag ${esc(e.type)}">${esc(TYPE_NAME[e.type] || e.type)}</span> ${esc(e.text)}</span></div>`).join("")
-    : '<div class="empty">Không có sự kiện nào khớp bộ lọc.</div>';
+  let day = "", html = "";
+  for (const e of rows) {
+    const d = new Date(e.ts), dk = isNaN(d) ? "" : d.toDateString();
+    if (dk !== day) { day = dk; html += `<div class="day">${esc(dayName(d))}</div>`; }
+    html += `<div class="line ${esc(e.type)}"><span class="ts" title="${esc(fmt(e.ts))}">${esc(hms(d) || e.ts)}</span>
+      <span class="tag ${esc(e.type)}">${esc(TYPE_NAME[e.type] || e.type)}</span><span class="msg">${msgHtml(e)}</span>
+      <span class="where"><span class="srv">${esc(e.server)}</span> · ${esc(modeNames[e.mode] || e.mode)}</span></div>`;
+  }
+  log.innerHTML = rows.length ? info + html : '<div class="empty">Không có sự kiện nào khớp bộ lọc.</div>';
   if (atBottom || firstRender) log.scrollTop = log.scrollHeight;
   firstRender = false;
 }

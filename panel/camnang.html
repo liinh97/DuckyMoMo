@@ -61,8 +61,31 @@ const SRV = { proxy: "Proxy", lobby: "Sảnh", "banghoi-1": "Bang Hội Chiến"
 let data = null, kind = "Hướng dẫn nhanh", server = "*";
 
 function esc(s) { return String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
-// Đoạn bắt đầu bằng / hoặc // trong cột lệnh hiện dạng code
-function cmd(s) { return esc(s).split(" · ").map(x => /^\/|^\(/.test(x.trim()) ? `<code>${x.trim()}</code>` : x).join(" · "); }
+// Chỉ phần lệnh hiện dạng code: "/dmm enchant sharpness 30 (món đang cầm)" -> <code>/dmm enchant sharpness 30</code> (món đang cầm)
+// Lệnh = từ "/chữ" + các từ tiếp theo kiểu lệnh (chữ không dấu, số, <tham số>, a|b); dừng ở chữ có dấu, "(", "—", dấu câu cuối.
+function cmd(s) {
+  const toks = String(s ?? "").match(/<[^>]*>|\s+|[^\s<]+/g) || [];
+  let out = "", run = null;
+  const flush = () => { if (run !== null) { out += `<code>${esc(run.trimEnd())}</code>` + (/\s$/.test(run) ? " " : ""); run = null; } };
+  const argLike = (t) => /^<[^>]*>$/.test(t) || /^[\x21-\x7e]+$/.test(t) && !/^[(\u2014-]$/.test(t) && !t.startsWith("(");
+  for (const t of toks) {
+    if (/^\s+$/.test(t)) { if (run !== null) run += t; else out += t; continue; }
+    if (run === null && /^\/{1,2}[a-z]/i.test(t)) {
+      const m = /^(.*?)([,;.:)]*)$/.exec(t); run = m[1];
+      if (m[2]) { flush(); out += esc(m[2]); }
+      continue;
+    }
+    if (run !== null && argLike(t)) {
+      const m = /^(.*?)([,;.]*)$/.exec(t);
+      if (m[1]) run += m[1];
+      if (m[2]) { flush(); out += esc(m[2]); }
+      continue;
+    }
+    flush(); out += esc(t);
+  }
+  flush();
+  return out;
+}
 function rows(list, isCmd) {
   return `<table>${list.map(([a, b]) => `<tr><td>${isCmd ? cmd(a) : esc(a)}</td><td>${isCmd ? esc(b) : cmd(b)}</td></tr>`).join("")}</table>`;
 }

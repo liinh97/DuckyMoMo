@@ -27,7 +27,7 @@
   .cat .dirty { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
   .cat.all { border-top: 1px solid var(--line-2); margin-top: 4px; padding-top: 11px; border-radius: 0 0 8px 8px; }
   @media (max-width: 900px) {
-    .layout { grid-template-columns: 1fr; gap: 14px; }
+    .layout { grid-template-columns: minmax(0, 1fr); gap: 14px; }
     .cats { position: static; flex-direction: row; overflow-x: auto; padding: 6px; scrollbar-width: none; }
     .cats::-webkit-scrollbar { display: none; }
     .savebar .status { flex-basis: 100%; min-width: 0; font-size: 13px; }
@@ -93,6 +93,41 @@
   .ms textarea { width: 100%; margin-bottom: 8px; }
   .sh-row { display: grid; grid-template-columns: 130px 1fr 100px 120px 32px; gap: 8px; align-items: center; }
   .sh-row select, .sh-row input, .sh-row span > * { width: 100%; }
+  .mcline { margin-top: 6px; } .mcline .mc { display: inline-block; padding: 4px 10px; }
+  .row.wide .ctl { max-width: 900px; }
+  /* danh sách dạng thẻ */
+  .tg { border: 1px solid var(--line); border-radius: 10px; background: var(--input); overflow: hidden; }
+  .tg-top { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-bottom: 1px solid var(--line-2); background: var(--card-2); }
+  .tg-top .tg-filter { flex: 1; max-width: 260px; padding: 5px 10px; font-size: 13.5px; }
+  .tg-top.few .tg-filter { visibility: hidden; }
+  .tg-n, .ln-n { font-size: 12.5px; color: var(--muted); margin-left: auto; }
+  .tg-mode { background: none; border: 0; color: var(--accent); cursor: pointer; font-size: 13px; padding: 2px 4px; }
+  .tg-mode:hover { text-decoration: underline; }
+  .tg-chips { display: flex; flex-wrap: wrap; gap: 6px; padding: 10px; cursor: text; max-height: 260px; overflow-y: auto; }
+  .tg-chip { display: inline-flex; align-items: center; gap: 2px; background: var(--chip); border: 1px solid var(--line); border-radius: 999px; padding: 2px 3px 2px 11px; font-size: 13.5px; }
+  .tg-chip button { border: 0; background: none; color: var(--muted); cursor: pointer; width: 20px; height: 20px; border-radius: 50%; font-size: 14px; line-height: 1; }
+  .tg-chip button:hover { background: rgba(217, 48, 37, .14); color: var(--err); }
+  .tg-chip.flash { animation: tgflash .9s; }
+  @keyframes tgflash { 0%, 60% { background: var(--accent-soft); border-color: var(--accent); } }
+  .tg-in { border: 0 !important; box-shadow: none !important; background: transparent !important; flex: 1; min-width: 160px; padding: 3px 4px !important; font-size: 13.5px; }
+  .tg-none { color: var(--muted); font-size: 13px; padding: 3px 4px; }
+  .tg-text { width: 100%; border: 0 !important; border-radius: 0 !important; box-shadow: none !important; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 13.5px; resize: vertical; padding: 10px !important; }
+  /* nhiều dòng chữ */
+  .ln-rows { display: flex; flex-direction: column; gap: 6px; }
+  .ln-row { display: grid; grid-template-columns: 26px minmax(0, 1fr) auto; gap: 8px; align-items: center; }
+  .ln-row .ln-i { color: var(--muted); font-size: 12px; text-align: right; font-variant-numeric: tabular-nums; }
+  .ln-row input { width: 100%; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 13.5px; }
+  .ln-act { display: inline-flex; gap: 2px; opacity: .35; transition: opacity .15s; }
+  .ln-row:hover .ln-act, .ln-row:focus-within .ln-act { opacity: 1; }
+  .ln-act button { border: 0; background: none; color: var(--muted); cursor: pointer; width: 26px; height: 26px; border-radius: 6px; font-size: 14px; }
+  .ln-act button:hover:not(:disabled) { background: var(--chip); color: var(--text); }
+  .ln-act button:disabled { opacity: .3; cursor: default; }
+  .ln-act button.x { color: var(--err); font-size: 17px; }
+  .ln-bar { display: flex; align-items: center; gap: 10px; margin-top: 8px; }
+  .ln-text { width: 100%; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 13.5px; resize: vertical; }
+  .ln-prev { margin-top: 12px; }
+  .ln-cap { font-size: 11.5px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin-bottom: 5px; }
+  @media (max-width: 700px) { .ln-act { opacity: 1; } .ln-row { grid-template-columns: minmax(0, 1fr) auto; } .ln-row .ln-i { display: none; } }
   @media (max-width: 700px) { .rw-row, .qe-head, .fm-head, .fs-head, .sh-row, .sp-head { grid-template-columns: 1fr 1fr; } }
 </style>
 <link rel="stylesheet" href="ui.css">
@@ -119,6 +154,8 @@
 
 <script>
 let modes = [], current = null, edits = {}, category = {}, query = "";
+// nhớ chế độ + danh mục trên địa chỉ trang (#banghoi/Chat): tải lại vẫn đúng chỗ
+{ const [m, c] = location.hash.slice(1).split("/").map(decodeURIComponent); if (m) { current = m; if (c) category[m] = c; } }
 const $ = (id) => document.getElementById(id);
 const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
 const CAT_ICON = { "Chiến tranh": "⚔️", "Thị trấn": "🏘️", "Thế giới": "🌍", "Thưởng & sự kiện": "🎁", "Shop": "🛒", "Hệ thống": "⚙️",
@@ -171,6 +208,7 @@ function render() {
   const cats = catsOf(mode);
   if (!category[mode.id] || (category[mode.id] !== "*" && !cats.includes(category[mode.id]))) category[mode.id] = cats[0];
   renderCats(mode, cats);
+  history.replaceState(null, "", "#" + encodeURIComponent(mode.id) + "/" + encodeURIComponent(category[mode.id]));
   let shown = 0;
   for (const g of mode.schema.groups) {
     if (!query && category[mode.id] !== "*" && (g.category || "Khác") !== category[mode.id]) continue;
@@ -211,7 +249,10 @@ function isBool(s) { return s.type === "select" && s.options.length === 2 && s.o
 
 function row(mode, s) {
   const div = document.createElement("div");
-  div.className = "row" + (WIDE.has(s.type) ? " wide" : "");
+  const saved0 = s.key in edits ? edits[s.key] : mode.values[s.key];
+  // dòng chữ có mã màu (bảng bên phải, Tab…): dàn hết bề ngang cho dễ đọc
+  const colorLines = s.type === "lines" && s.style !== "tags" && (saved0 || []).some(v => /[&§][0-9a-fk-or#]/i.test(String(v)));
+  div.className = "row" + (WIDE.has(s.type) || colorLines ? " wide" : "");
   const id = "f_" + s.key;
   const lab = document.createElement("div"); lab.className = "lab";
   const label = document.createElement("label"); label.htmlFor = id;
@@ -247,15 +288,10 @@ function row(mode, s) {
       input.appendChild(opt);
     });
     input.onchange = () => change(mode, s, s.options[input.value].value, div);
+  } else if (s.type === "lines" && s.style === "tags") {
+    input = tagsEditor(value || [], v => change(mode, s, v, div), {});
   } else if (s.type === "lines") {
-    input = document.createElement("textarea");
-    input.rows = Math.min(14, Math.max(4, (value || []).length + 1));
-    input.value = (value || []).join("\n");
-    const cnt = document.createElement("div"); cnt.className = "count";
-    const upd = () => { const n = input.value.split("\n").filter(x => x.trim()).length; cnt.textContent = n + " mục · mỗi dòng một mục"; };
-    input.oninput = () => { upd(); change(mode, s, input.value.split("\n").map(x => x.trim()).filter(x => x), div); };
-    upd();
-    ctl.appendChild(input); ctl.appendChild(cnt);
+    input = linesEditor(value || [], v => change(mode, s, v, div));
   } else if (s.type === "rewards") {
     input = rewardsEditor(value || [], v => change(mode, s, v, div));
   } else if (s.type === "shopitems") {
@@ -273,15 +309,7 @@ function row(mode, s) {
   } else if (s.type === "milestones") {
     input = milestonesEditor(value || {}, v => change(mode, s, v, div));
   } else if (s.type === "list") {
-    input = document.createElement("input");
-    input.value = (value || []).join(", ");
-    input.placeholder = "Các mục cách nhau dấu phẩy";
-    input.oninput = () => {
-      let v = input.value.split(",").map(x => x.trim()).filter(x => x);
-      if (s.items === "int") v = v.map(x => parseInt(x, 10));
-      if (s.items === "number") v = v.map(x => parseFloat(x));
-      change(mode, s, v, div);
-    };
+    input = tagsEditor(value || [], v => change(mode, s, v, div), { items: s.items });
   } else {
     input = document.createElement("input");
     if (s.type === "int" || s.type === "number") {
@@ -292,6 +320,13 @@ function row(mode, s) {
       input.placeholder = "Ví dụ: 20:00,21:00 (để trống = không có phiên)";
     }
     input.value = value ?? "";
+    // chữ có mã màu: xem trước như trong game ngay dưới ô
+    if (s.type === "text" || !s.type) {
+      const pv = document.createElement("div"); pv.className = "mcline";
+      const upd = () => { const t = String(input.value || ""); pv.hidden = !/[&§][0-9a-fk-or#]/i.test(t); if (!pv.hidden) pv.innerHTML = '<span class="mc">' + mcHtml(t) + "</span>"; };
+      input.addEventListener("input", upd); upd();
+      setTimeout(() => ctl.appendChild(pv));
+    }
     input.oninput = () => {
       let v = input.value;
       if (s.type === "int") v = v === "" ? "" : parseInt(v, 10);
@@ -365,6 +400,124 @@ let qTimer = null;
 $("q").oninput = () => { clearTimeout(qTimer); qTimer = setTimeout(() => { query = $("q").value.trim(); render(); }, 150); };
 window.addEventListener("beforeunload", (e) => { if (Object.keys(edits).length) { e.preventDefault(); e.returnValue = ""; } });
 
+// ---- Danh sách ngắn (từ cấm, tên thế giới…): thẻ nhỏ, gõ rồi Enter để thêm, dán nhiều dòng/dấu phẩy cũng được
+function tagsEditor(list, onChange, opts) {
+  let vals = (list || []).map(String);
+  const box = document.createElement("div"); box.className = "tg";
+  box.innerHTML = '<div class="tg-top"><input type="search" class="tg-filter" placeholder="Lọc…"><span class="tg-n"></span><button type="button" class="tg-mode">Sửa dạng văn bản</button></div>'
+    + '<div class="tg-chips"></div><textarea class="tg-text" hidden></textarea>';
+  const chips = box.querySelector(".tg-chips"), filter = box.querySelector(".tg-filter"), n = box.querySelector(".tg-n");
+  const text = box.querySelector(".tg-text"), modeBtn = box.querySelector(".tg-mode");
+  const add = document.createElement("input"); add.className = "tg-in"; add.placeholder = opts.items ? "Thêm số… (Enter)" : "Thêm… (Enter để thêm)";
+  const conv = (x) => opts.items === "int" ? parseInt(x, 10) : opts.items === "number" ? parseFloat(x) : x;
+  const emit = () => { n.textContent = vals.length + " mục"; onChange(vals.map(conv)); };
+  function draw() {
+    const f = fold(filter.value.trim());
+    chips.innerHTML = "";
+    vals.forEach((v, i) => {
+      if (f && !fold(v).includes(f)) return;
+      const c = document.createElement("span"); c.className = "tg-chip"; c.dataset.v = v;
+      c.innerHTML = '<span></span><button type="button" title="Bỏ">×</button>';
+      c.firstChild.textContent = v;
+      c.querySelector("button").onclick = () => { vals.splice(i, 1); draw(); emit(); };
+      chips.appendChild(c);
+    });
+    if (f && !chips.children.length) { const e = document.createElement("span"); e.className = "tg-none"; e.textContent = "Không có mục nào khớp"; chips.appendChild(e); }
+    chips.appendChild(add);
+    box.querySelector(".tg-top").classList.toggle("few", vals.length < 12);
+  }
+  function push(raw) {
+    let added = 0;
+    for (let t of String(raw).split(/[\n,]/)) {
+      t = t.trim(); if (!t) continue;
+      if (opts.items && isNaN(conv(t))) continue;
+      const dup = vals.findIndex(v => v.toLowerCase() === t.toLowerCase());
+      if (dup >= 0) { const el = [...chips.children].find(c => c.dataset && c.dataset.v === vals[dup]); if (el) { el.classList.remove("flash"); void el.offsetWidth; el.classList.add("flash"); } continue; }
+      vals.push(t); added++;
+    }
+    if (added) { filter.value = ""; draw(); emit(); }
+    add.value = ""; add.focus();
+  }
+  add.onkeydown = (e) => { if (e.key === "Enter" || e.key === ",") { e.preventDefault(); push(add.value); } };
+  add.onblur = () => { if (add.value.trim()) push(add.value); };
+  add.onpaste = (e) => { const t = (e.clipboardData || window.clipboardData).getData("text"); if (/[\n,]/.test(t)) { e.preventDefault(); push(t); } };
+  chips.onclick = (e) => { if (e.target === chips) add.focus(); };
+  filter.oninput = draw;
+  modeBtn.onclick = () => {
+    const toText = text.hidden;
+    if (toText) { text.value = vals.join("\n"); text.rows = Math.min(16, Math.max(5, vals.length + 1)); }
+    text.hidden = !toText; chips.hidden = toText; filter.hidden = toText;
+    modeBtn.textContent = toText ? "Xong, về dạng thẻ" : "Sửa dạng văn bản";
+    if (!toText) draw();
+  };
+  text.oninput = () => { vals = text.value.split("\n").map(x => x.trim()).filter(Boolean); emit(); };
+  draw(); n.textContent = vals.length + " mục";
+  return box;
+}
+
+// ---- Nhiều dòng chữ (bảng bên phải, Tab, mẹo, mô tả…): mỗi dòng một ô, đổi thứ tự, xem trước màu như trong game
+function linesEditor(list, onChange) {
+  let vals = (list || []).map(String);
+  const box = document.createElement("div"); box.className = "ln";
+  box.innerHTML = '<div class="ln-rows"></div><textarea class="ln-text" hidden></textarea>'
+    + '<div class="ln-bar"><button type="button" class="rw-add ln-add">+ Thêm dòng</button><span class="ln-n"></span><button type="button" class="tg-mode">Sửa dạng văn bản</button></div>'
+    + '<div class="ln-prev" hidden><div class="ln-cap">Xem trước trong game</div><div class="mc-box"></div></div>';
+  const rows = box.querySelector(".ln-rows"), text = box.querySelector(".ln-text"), prev = box.querySelector(".ln-prev");
+  const modeBtn = box.querySelector(".tg-mode"), n = box.querySelector(".ln-n");
+  const colored = () => vals.some(v => /[&§][0-9a-fk-or#]/i.test(v));
+  function preview() {
+    n.textContent = vals.length + " dòng";
+    prev.hidden = !colored();
+    if (!prev.hidden) prev.querySelector(".mc-box").innerHTML = vals.map(v => `<div class="ln">${v.trim() === "" || /^(&r)+$/i.test(v.trim()) ? "&nbsp;" : mcHtml(v)}</div>`).join("");
+  }
+  const emit = () => { preview(); onChange(vals.filter(v => v.trim() !== "" || colored())); };
+  function draw(focus) {
+    rows.innerHTML = "";
+    vals.forEach((v, i) => {
+      const r = document.createElement("div"); r.className = "ln-row";
+      r.innerHTML = `<span class="ln-i">${i + 1}</span><input><span class="ln-act"><button type="button" title="Lên">↑</button><button type="button" title="Xuống">↓</button><button type="button" class="x" title="Bỏ dòng">×</button></span>`;
+      const inp = r.querySelector("input"); inp.value = v;
+      inp.oninput = () => { vals[i] = inp.value; emit(); };
+      inp.onkeydown = (e) => { if (e.key === "Enter") { e.preventDefault(); vals.splice(i + 1, 0, ""); draw(i + 1); emit(); } };
+      const [up, down, x] = r.querySelectorAll("button");
+      up.disabled = i === 0; down.disabled = i === vals.length - 1;
+      up.onclick = () => { [vals[i - 1], vals[i]] = [vals[i], vals[i - 1]]; draw(); emit(); };
+      down.onclick = () => { [vals[i + 1], vals[i]] = [vals[i], vals[i + 1]]; draw(); emit(); };
+      x.onclick = () => { vals.splice(i, 1); draw(); emit(); };
+      rows.appendChild(r);
+    });
+    if (focus !== undefined && rows.children[focus]) rows.children[focus].querySelector("input").focus();
+  }
+  box.querySelector(".ln-add").onclick = () => { vals.push(""); draw(vals.length - 1); emit(); };
+  modeBtn.onclick = () => {
+    const toText = text.hidden;
+    if (toText) { text.value = vals.join("\n"); text.rows = Math.min(16, Math.max(4, vals.length + 1)); }
+    text.hidden = !toText; rows.hidden = toText; box.querySelector(".ln-add").hidden = toText;
+    modeBtn.textContent = toText ? "Xong, về từng dòng" : "Sửa dạng văn bản";
+    if (!toText) draw();
+  };
+  text.oninput = () => { vals = text.value.split("\n"); emit(); };
+  draw(); preview();
+  return box;
+}
+
+// ---- Ô chọn vật phẩm (có tìm kiếm tên Việt/Anh), danh sách lấy từ server
+let MATS = [];
+function matSearch(q) {
+  const f = fold(q), out = [];
+  for (const m of MATS) {
+    const vn = vnMat(m);
+    if (f && !fold(m + " " + prettyMat(m) + " " + (vn || "")).includes(f)) continue;
+    out.push({ value: m, label: matLabel(m), sub: m, r: vn ? 0 : 1 });
+  }
+  return out.sort((a, b) => a.r - b.r).slice(0, 200);
+}
+function matPick(input, onPick) {
+  const h = combo(input, matSearch, onPick, { label: (v) => [matLabel(v), v], search: "Tìm vật phẩm: kim cương, diamond, gỗ…" });
+  if (!MATS.length) lib().then(d => { MATS = (d.meta && d.meta.materials) || []; h.refresh(); });
+  return h;
+}
+
 // ---- Ô chọn quà (DuckyMoMoCore Rewards): xu <số> | do <mã> [số] | vat <VẬT_LIỆU> [số] | lenh <lệnh> | manh <loại> <số>
 let libCache = null;
 function lib() {
@@ -407,7 +560,7 @@ function rewardsEditor(list, onChange) {
         });
         amt.value = a[1] || "1"; amt.title = "Số lượng (0 = theo thư viện)";
       } else if (k === "vat") {
-        main = document.createElement("input"); main.setAttribute("list", "rw-mats"); main.placeholder = "DIAMOND"; main.value = a[0] || ""; amt.value = a[1] || "1"; amt.title = "Số lượng";
+        main = document.createElement("input"); main.placeholder = "Chọn vật phẩm…"; main.value = a[0] || ""; amt.value = a[1] || "1"; amt.title = "Số lượng";
       } else if (k === "manh") {
         main = document.createElement("input"); main.placeholder = "loại mảnh, vd lamnguy"; main.value = a[0] || ""; amt.value = a[1] || "1"; amt.title = "Số mảnh";
       } else {
@@ -415,6 +568,7 @@ function rewardsEditor(list, onChange) {
       }
       main.oninput = main.onchange = () => { main.dataset.v = main.value; emit(); };
       mid.appendChild(main);
+      if (k === "vat") matPick(main, () => { main.dataset.v = main.value; emit(); });
     }
     build(true);
     kind.onchange = () => { build(false); emit(); };
@@ -562,7 +716,7 @@ function fragTypesEditor(value, onChange) {
   const add = document.createElement("button"); add.type = "button"; add.className = "rw-add"; add.textContent = "+ Thêm loại mảnh";
   function addT(id, d) {
     const wrap = document.createElement("div"); wrap.className = "ms";
-    wrap.innerHTML = '<div class="fm-head"><input placeholder="mã, vd lamnguy"><input placeholder="Tên (mã màu &), vd &c&lMảnh Lâm Nguy"><input list="rw-mats" placeholder="AMETHYST_SHARD"><input type="date" title="Hạn đổi (trống = không hạn)"><button type="button" class="x" title="Bỏ">×</button></div><textarea rows="2" placeholder="Mô tả (lore), mỗi dòng một dòng"></textarea>';
+    wrap.innerHTML = '<div class="fm-head"><input placeholder="mã, vd lamnguy"><input placeholder="Tên (mã màu &), vd &c&lMảnh Lâm Nguy"><input placeholder="Chọn vật phẩm…"><input type="date" title="Hạn đổi (trống = không hạn)"><button type="button" class="x" title="Bỏ">×</button></div><textarea rows="2" placeholder="Mô tả (lore), mỗi dòng một dòng"></textarea>';
     const [idEl, nameEl, matEl, untilEl] = wrap.querySelectorAll("input");
     const t = { id: idEl, name: nameEl, mat: matEl, until: untilEl, lore: wrap.querySelector("textarea") };
     idEl.value = id || ""; nameEl.value = d.name || ""; matEl.value = d.material || "AMETHYST_SHARD"; untilEl.value = d.until || "";
@@ -570,6 +724,7 @@ function fragTypesEditor(value, onChange) {
     for (const el of [idEl, nameEl, matEl, untilEl, t.lore]) el.oninput = emit;
     wrap.querySelector(".x").onclick = () => { ts.splice(ts.indexOf(t), 1); wrap.remove(); emit(); };
     ts.push(t); box.insertBefore(wrap, add);
+    matPick(matEl, emit);
   }
   box.appendChild(add);
   add.onclick = () => { addT("", { material: "AMETHYST_SHARD" }); emit(); };
@@ -635,9 +790,10 @@ function shopItemsEditor(value, onChange) {
           emit();
         });
       } else {
-        main = document.createElement("input"); main.setAttribute("list", "rw-mats"); main.placeholder = "DIRT"; main.value = init ? (d.material || "") : "";
+        main = document.createElement("input"); main.placeholder = "Chọn vật phẩm…"; main.value = init ? (d.material || "") : "";
       }
       main.oninput = main.onchange = emit; mid.appendChild(main);
+      if (src.value !== "do") matPick(main, emit);
     }
     src.value = d.library ? "do" : "vat"; build(true);
     amt.value = d.amount || 1; price.value = d.price || 100;

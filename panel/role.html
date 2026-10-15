@@ -4,119 +4,124 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>DuckyMoMo · Role</title>
-<style>
-  :root {
-    --bg: #f5f6f8; --card: #fff; --text: #1d2330; --muted: #667085; --line: #e3e6ec;
-    --accent: #e8711c; --accent-text: #fff; --ok: #1e8e3e; --err: #c62828; --input: #fff; --chip: #f0f2f5;
-  }
-  @media (prefers-color-scheme: dark) {
-    :root { --bg: #14161b; --card: #1d2027; --text: #e6e8ee; --muted: #9aa3b2; --line: #2d313b; --input: #15171c; --chip: #262a33; }
-  }
-  * { box-sizing: border-box; }
-  body { margin: 0; font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); }
-  header { display: flex; align-items: center; gap: 16px; padding: 14px 20px; border-bottom: 1px solid var(--line); background: var(--card); position: sticky; top: 0; z-index: 2; flex-wrap: wrap; }
-  header h1 { font-size: 17px; margin: 0; flex: 1; }
-  header a { color: var(--muted); text-decoration: none; font-size: 14px; }
-  header a:hover { color: var(--text); }
-  main { max-width: 980px; margin: 0 auto; padding: 20px 16px 80px; }
-  .card { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 14px 18px; margin-bottom: 14px; }
-  .card h2 { font-size: 15px; margin: 0 0 10px; }
-  .form { display: grid; grid-template-columns: 1fr 1fr 110px auto; gap: 8px; align-items: center; }
-  input, select { width: 100%; padding: 7px 9px; border: 1px solid var(--line); border-radius: 6px; background: var(--input); color: var(--text); font: inherit; }
-  button { font: inherit; cursor: pointer; border-radius: 6px; border: 1px solid var(--line); background: transparent; color: var(--text); padding: 6px 12px; }
-  button.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-text); }
-  button.x { padding: 0 6px; border: none; color: var(--err); font-size: 15px; }
-  .status { margin-top: 8px; font-size: 14px; color: var(--muted); }
-  .status.ok { color: var(--ok); } .status.err { color: var(--err); }
-  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 12px; }
-  .role { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; }
-  .role .head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
-  .prefix { font-weight: 700; padding: 2px 8px; border-radius: 6px; background: #1b1d22; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 14px; }
-  .meta { color: var(--muted); font-size: 13px; }
-  .members { margin-top: 8px; display: flex; flex-wrap: wrap; gap: 6px; }
-  .m { background: var(--chip); border-radius: 999px; padding: 2px 4px 2px 10px; font-size: 13.5px; display: inline-flex; align-items: center; gap: 4px; }
-  .m small { color: var(--muted); }
-  .empty { color: var(--muted); font-size: 13.5px; }
-  h3 { font-size: 13px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); margin: 18px 0 8px; }
-  .note { color: var(--muted); font-size: 13.5px; margin: 6px 0 0; }
-  .perm-btn { margin-top: 8px; font-size: 13px; padding: 3px 10px; }
-  .perms { margin-top: 10px; border-top: 1px dashed var(--line); padding-top: 8px; }
-  .perms h4 { font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); margin: 10px 0 4px; }
-  .pl { display: flex; gap: 8px; align-items: flex-start; font-size: 13.5px; padding: 2px 0; }
-  .pl input { width: auto; margin-top: 3px; }
-  .pl code { font-size: 11.5px; color: var(--muted); }
-  .pl .inh { color: var(--muted); font-size: 12px; }
-  .ctx { display: flex; gap: 6px; align-items: center; font-size: 13px; color: var(--muted); margin-bottom: 4px; }
-  .ctx select { width: auto; padding: 3px 6px; }
-  .addp { display: grid; grid-template-columns: 1fr auto; gap: 6px; margin-top: 8px; }
-  .warn { color: #b26a00; font-size: 12.5px; }
-  @media (max-width: 640px) { .form { grid-template-columns: 1fr; } }
-</style>
 <link rel="stylesheet" href="ui.css">
+<style>
+  main { max-width: 1240px; margin: 0 auto; }
+  .rl { display: grid; grid-template-columns: 270px minmax(0, 1fr); gap: 22px; align-items: start; }
+  /* danh sách role bên trái */
+  .rl-list { position: sticky; top: 18px; padding: 8px; display: flex; flex-direction: column; gap: 2px; max-height: calc(100vh - 36px); overflow-y: auto; }
+  .rl-list .sec { font-size: 11.5px; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); padding: 12px 10px 6px; }
+  .rl-list .sec:first-child { padding-top: 6px; }
+  .ri { display: flex; align-items: center; gap: 10px; width: 100%; text-align: left; border: 0; background: transparent; color: var(--text); padding: 8px 10px; border-radius: 9px; cursor: pointer; }
+  .ri:hover { background: var(--chip); }
+  .ri.on { background: var(--accent-soft); box-shadow: inset 3px 0 0 var(--accent); }
+  .ri .t { display: flex; flex-direction: column; min-width: 0; flex: 1; }
+  .ri .t b { font-size: 14.5px; font-weight: 600; }
+  .ri .t small { color: var(--muted); font-size: 12.5px; }
+  .ri .mc { font-size: 12px; padding: 1px 7px; flex: none; }
+  /* chi tiết */
+  .rd { display: flex; flex-direction: column; gap: 18px; min-width: 0; }
+  .rd .card { padding: 20px 22px; }
+  .rd h2 { font-size: 16px; margin: 0; display: flex; align-items: center; gap: 8px; }
+  .rd .hint { color: var(--muted); font-size: 13.5px; margin: 6px 0 0; }
+  .hero { display: flex; gap: 18px; align-items: center; flex-wrap: wrap; }
+  .hero .mc { font-size: 20px; padding: 8px 16px; border-radius: 10px; }
+  .hero h1 { font-size: 22px; margin: 0 0 6px; }
+  .hero .badges { display: flex; gap: 6px; flex-wrap: wrap; }
+  .hero .badge a { color: inherit; cursor: pointer; text-decoration: underline dotted; }
+  .warnbox { margin-top: 14px; background: rgba(178, 106, 0, .1); color: var(--warn); border-radius: 8px; padding: 9px 12px; font-size: 13.5px; }
+  @media (prefers-color-scheme: dark) { .warnbox { color: #f0b35a; } }
+  /* thành viên */
+  .members { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+  .mem { display: inline-flex; align-items: center; gap: 8px; background: var(--chip); border-radius: 999px; padding: 5px 6px 5px 12px; font-size: 14px; }
+  .mem .exp { color: var(--muted); font-size: 12.5px; }
+  .mem .exp.soon { color: var(--err); }
+  .x { border: 0; background: transparent; color: var(--muted); cursor: pointer; width: 22px; height: 22px; border-radius: 50%; font-size: 15px; line-height: 1; display: inline-grid; place-items: center; }
+  .x:hover { background: rgba(217, 48, 37, .12); color: var(--err); }
+  .empty { color: var(--muted); font-size: 14px; margin-top: 12px; }
+  .addm { display: grid; grid-template-columns: minmax(0, 1fr) 150px auto; gap: 10px; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--line-2); }
+  .addm.no-months { grid-template-columns: minmax(0, 1fr) auto; }
+  /* quyền */
+  .ph { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; }
+  .tools { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 14px; }
+  .seg { display: inline-flex; background: var(--chip); border-radius: 9px; padding: 3px; gap: 2px; flex-wrap: wrap; }
+  .seg button { border: 0; background: transparent; color: var(--muted); padding: 5px 12px; border-radius: 7px; cursor: pointer; font-size: 13.5px; }
+  .seg button.on { background: var(--card); color: var(--text); font-weight: 600; box-shadow: var(--shadow); }
+  .tools input[type=search] { flex: 1; min-width: 180px; }
+  .tools .switch .txt { font-size: 13.5px; color: var(--muted); }
+  .sum { display: flex; gap: 6px; flex-wrap: wrap; }
+  .pcats { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 14px; margin-top: 16px; }
+  .pcat { border: 1px solid var(--line); border-radius: 10px; background: var(--card-2); overflow: hidden; }
+  .pcat h3 { font-size: 14px; margin: 0; padding: 10px 14px; display: flex; justify-content: space-between; gap: 8px; border-bottom: 1px solid var(--line); }
+  .pcat h3 .badge { font-weight: 500; }
+  .pr { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 2px 12px; align-items: start; padding: 10px 14px; border-top: 1px solid var(--line-2); cursor: pointer; }
+  .pr:first-of-type { border-top: 0; }
+  .pr:hover { background: var(--chip); }
+  .pr .switch { grid-row: span 2; margin-top: 1px; }
+  .pr .lb { font-size: 14px; }
+  .pr .nd { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+  .pr code { font-size: 11.5px; color: var(--muted); }
+  .pr .badge { font-size: 11px; padding: 0 7px; }
+  .badge.inh { background: rgba(30, 142, 62, .12); color: var(--ok); }
+  .badge.deny { background: rgba(217, 48, 37, .12); color: var(--err); }
+  .pr.busy { opacity: .5; pointer-events: none; }
+  .others { margin-top: 18px; }
+  .others h3 { font-size: 14px; margin: 0 0 8px; }
+  .others .mem code { font-size: 12.5px; }
+  .addp { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; margin-top: 12px; }
+  .noresult { color: var(--muted); padding: 20px; text-align: center; grid-column: 1 / -1; }
+  @media (max-width: 1000px) {
+    .rl { grid-template-columns: minmax(0, 1fr); }
+    .rl-list { position: static; flex-direction: row; overflow-x: auto; max-height: none; scrollbar-width: none; }
+    .rl-list .sec { display: none; }
+    .ri { width: auto; flex: none; }
+    .ri .t small { display: none; }
+    .pcats { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 600px) { .addm, .addm.no-months { grid-template-columns: 1fr; } .rd .card { padding: 16px; } }
+</style>
 </head>
-<body data-dozzle="__DOZZLE_URL__" data-title="Role & rank" data-sub="Cấp role chức vụ, rank donate; tick quyền cho từng role.">
+<body data-dozzle="__DOZZLE_URL__" data-title="Role & rank" data-sub="Chọn một role bên trái: xem ai đang giữ, thêm/gỡ người, bật/tắt quyền. Mọi thay đổi có hiệu lực ngay toàn mạng.">
 <script src="shell.js"></script>
 <main>
-  <section class="card">
-    <h2>Cấp role / rank cho người chơi</h2>
-    <div class="form">
-      <input id="player" placeholder="Tên người chơi (Bedrock có dấu chấm đầu, vd .griim7833)">
-      <select id="group"></select>
-      <input id="months" type="number" min="1" max="24" value="1" title="Số tháng (chỉ rank donate)">
-      <button class="primary" id="give">Cấp</button>
-    </div>
-    <p class="note">Bấm "Quyền" ở từng role để tick / bỏ tick quyền (có hiệu lực ngay). Role chức vụ: vĩnh viễn, đến khi gỡ. Rank donate: theo số tháng (1 tháng = 30 ngày), cấp tiếp thì cộng dồn; đổi bậc thì bậc cũ bị bỏ.
-      Người chơi phải từng vào server. Áp dụng ngay toàn mạng. Sửa prefix: trang Cài đặt &gt; Toàn mạng &gt; Role / Rank donate.</p>
-    <div class="status" id="status"></div>
-  </section>
-  <h3>Role chức vụ</h3>
-  <div class="grid" id="staff"></div>
-  <h3>Rank donate</h3>
-  <div class="grid" id="donate"></div>
+  <div class="rl">
+    <nav class="card rl-list" id="list"><div class="empty">Đang tải…</div></nav>
+    <div class="rd" id="detail"></div>
+  </div>
 </main>
 <script>
 const $ = (id) => document.getElementById(id);
-const COLORS = { "0": "#000000", "1": "#0000AA", "2": "#00AA00", "3": "#00AAAA", "4": "#AA0000", "5": "#AA00AA", "6": "#FFAA00", "7": "#AAAAAA",
-  "8": "#555555", "9": "#5555FF", a: "#55FF55", b: "#55FFFF", c: "#FF5555", d: "#FF55FF", e: "#FFFF55", f: "#FFFFFF" };
 const NAMES = { default: "Dân (mặc định)", builder: "Builder", helper: "Helper", mod: "Mod", admin: "Admin",
   namtuoc: "Nam Tước", tutuoc: "Tử Tước", batuoc: "Bá Tước", hautuoc: "Hầu Tước", congtuoc: "Công Tước" };
-let data = null; const open = {}; const ctxSel = {};
-function esc(s) { return String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
-function mc(text) {
-  let out = "", color = "#FFFFFF", bold = false;
-  for (const part of String(text).split(/(&[0-9a-fk-or])/i)) {
-    const m = /^&([0-9a-fk-or])$/i.exec(part);
-    if (m) { const k = m[1].toLowerCase(); if (COLORS[k]) { color = COLORS[k]; bold = false; } else if (k === "l") bold = true; else if (k === "r") { color = "#FFFFFF"; bold = false; } continue; }
-    if (part) out += `<span style="color:${color};${bold ? "" : "font-weight:500"}">${esc(part)}</span>`;
-  }
-  return out || '<span style="color:#888">(trống)</span>';
-}
+const KIND = { staff: "Role chức vụ", donate: "Rank donate", default: "Nhóm mặc định" };
+const name = (g) => NAMES[g] || g;
+let data = null, sel = decodeURIComponent(location.hash.slice(1)) || "", server = "global", filter = "", onlyOn = false;
+const esc = (s) => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const fold = (s) => String(s || "").normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/đ/g, "d").toLowerCase();
+const prefixText = (g) => (g.prefix || "").trim() || "&7(không prefix)";
+
 function render() {
-  const sel = $("group"); const cur = sel.value; sel.innerHTML = "";
-  for (const g of data.groups) if (g.kind !== "default") {
-    const o = document.createElement("option"); o.value = g.name; o.textContent = (g.kind === "donate" ? "Rank: " : "Role: ") + (NAMES[g.name] || g.name); sel.appendChild(o);
-  }
-  if (cur) sel.value = cur;
-  updMonths();
-  for (const kind of ["staff", "donate"]) {
-    const box = $(kind); box.innerHTML = "";
-    for (const g of data.groups.filter(g => kind === "staff" ? g.kind !== "donate" : g.kind === "donate")) {
-      const div = document.createElement("div"); div.className = "role";
-      const members = g.kind === "default" ? `<div class="empty">Mọi người chơi (${g.count} người đã từng vào)</div>`
-        : (g.members.length ? `<div class="members">${g.members.map(m => `<span class="m">${esc(m.name)}${m.expiry ? ` <small>đến ${new Date(m.expiry * 1000).toLocaleDateString("vi-VN")}</small>` : ""}${m.server !== "global" ? ` <small>(${esc(m.server)})</small>` : ""}<button class="x" title="Gỡ" data-p="${esc(m.name)}" data-g="${g.name}">×</button></span>`).join("")}</div>`
-        : `<div class="empty">Chưa có ai</div>`);
+  if (!data.groups.some(g => g.name === sel)) sel = data.groups[0].name;
+  renderList(); renderDetail();
+}
+function renderList() {
+  let h = "";
+  for (const [kind, title] of [["staff", "Role chức vụ"], ["donate", "Rank donate"]]) {
+    h += `<div class="sec">${title}</div>`;
+    for (const g of data.groups.filter(g => kind === "donate" ? g.kind === "donate" : g.kind !== "donate")) {
       const own = g.perms.filter(p => p.value).length;
-      div.innerHTML = `<div class="head"><b>${esc(NAMES[g.name] || g.name)}</b><span class="prefix">${mc(g.prefix)}</span></div>
-        <div class="meta">nhóm <code>${g.name}</code> · weight ${g.weight}${g.kind !== "default" ? ` · ${g.count} người` : ""}${g.parents.length ? ` · kế thừa: ${g.parents.map(x => NAMES[x] || x).join(", ")}` : ""}</div>${members}
-        <button class="perm-btn">${open[g.name] ? "Ẩn quyền" : `Quyền (${own})`}</button>`;
-      div.querySelector(".perm-btn").onclick = () => { open[g.name] = !open[g.name]; render(); };
-      if (open[g.name]) div.appendChild(permEditor(g));
-      box.appendChild(div);
+      const who = g.kind === "default" ? "mọi người chơi" : (g.count ? g.count + " người" : "chưa có ai");
+      h += `<button class="ri${g.name === sel ? " on" : ""}" data-g="${esc(g.name)}"><span class="t"><b>${esc(name(g.name))}</b><small>${who} · ${own} quyền</small></span><span class="mc">${mcHtml(prefixText(g))}</span></button>`;
     }
   }
-  document.querySelectorAll("button.x").forEach(b => b.onclick = () => {
-    if (confirm(`Gỡ ${NAMES[b.dataset.g] || b.dataset.g} của ${b.dataset.p}?`)) act("remove", b.dataset.p, b.dataset.g);
-  });
+  $("list").innerHTML = h;
+  $("list").querySelectorAll(".ri").forEach(b => b.onclick = () => { sel = b.dataset.g; filter = ""; history.replaceState(null, "", "#" + sel); render(); if (innerWidth < 1000) $("detail").scrollIntoView({ behavior: "smooth" }); });
+}
+
+function expiry(m) {
+  if (!m.expiry) return "";
+  const days = Math.ceil((m.expiry * 1000 - Date.now()) / 86400000);
+  return `<span class="exp${days <= 3 ? " soon" : ""}" title="Hết hạn ${new Date(m.expiry * 1000).toLocaleString("vi-VN")}">còn ${days} ngày</span>`;
 }
 // quyền kế thừa từ các nhóm cha (đệ quy): node -> tên nhóm cho quyền
 function inherited(g, seen = new Set()) {
@@ -124,70 +129,106 @@ function inherited(g, seen = new Set()) {
   for (const pn of g.parents) {
     if (seen.has(pn)) continue; seen.add(pn);
     const pg = data.groups.find(x => x.name === pn); if (!pg) continue;
-    for (const p of pg.perms) if (p.value && !(p.node in out)) out[p.node] = pn + (p.server !== "global" ? ` @${p.server}` : "");
-    Object.assign(out, Object.fromEntries(Object.entries(inherited(pg, seen)).filter(([k]) => !(k in out))));
+    for (const p of pg.perms) if (p.value && (p.server === "global" || p.server === server) && !(p.node in out)) out[p.node] = pn;
+    for (const [k, v] of Object.entries(inherited(pg, seen))) if (!(k in out)) out[k] = v;
   }
   return out;
 }
-function permEditor(g) {
-  const wrap = document.createElement("div"); wrap.className = "perms";
-  const server = ctxSel[g.name] || "global";
-  const has = (node) => g.perms.find(p => p.node === node && p.server === server);
-  const inh = inherited(g);
+
+function renderDetail() {
+  const g = data.groups.find(x => x.name === sel);
+  const d = $("detail");
   const isDonate = g.kind === "donate";
+  // --- đầu trang role
+  const parents = g.parents.map(p => `<a data-go="${esc(p)}">${esc(name(p))}</a>`).join(", ");
+  let h = `<section class="card"><div class="hero"><span class="mc">${mcHtml(prefixText(g))}</span><div><h1>${esc(name(g.name))}</h1><div class="badges">
+      <span class="badge accent">${KIND[g.kind]}</span><span class="badge">nhóm <code>${esc(g.name)}</code></span><span class="badge" title="Số lớn hơn = ưu tiên hơn (prefix, quyền)">weight ${g.weight}</span>
+      ${parents ? `<span class="badge">kế thừa: ${parents}</span>` : ""}</div></div></div>
+    ${isDonate ? '<div class="warnbox">Rank donate chỉ được có quyền <b>trang trí</b>. Cấp lợi thế khi chơi (bay, kit, đồ mạnh…) là pay-to-win, vi phạm luật Mojang.</div>' : ""}
+    <p class="hint">Sửa prefix: trang Cài đặt › Toàn mạng › ${isDonate ? "Rank donate" : "Role"}.</p></section>`;
+  // --- thành viên
+  h += `<section class="card"><h2>👥 Thành viên ${g.kind !== "default" ? `<span class="badge">${g.count}</span>` : ""}</h2>`;
+  if (g.kind === "default") {
+    h += `<p class="hint">Mọi người chơi đều thuộc nhóm này (${g.count} người đã từng vào). Không cần thêm tay.</p>`;
+  } else {
+    h += g.members.length ? `<div class="members">${g.members.map(m => `<span class="mem"><b>${esc(m.name)}</b>${expiry(m)}${m.server !== "global" ? `<span class="exp">chỉ ${esc(m.server)}</span>` : ""}<button class="x" title="Gỡ ${esc(m.name)} khỏi ${esc(name(g.name))}" data-rm="${esc(m.name)}">×</button></span>`).join("")}</div>`
+      : `<p class="empty">Chưa có ai giữ ${isDonate ? "rank" : "role"} này.</p>`;
+    h += `<div class="addm${isDonate ? "" : " no-months"}"><input id="player" placeholder="Tên người chơi (Bedrock có dấu chấm đầu, vd .griim7833)" autocomplete="off">
+      ${isDonate ? `<select id="months">${[1, 2, 3, 6, 12].map(n => `<option value="${n}">${n} tháng</option>`).join("")}</select>` : ""}
+      <button class="primary" id="give">Thêm vào ${esc(name(g.name))}</button></div>
+      <p class="hint">${isDonate ? "1 tháng = 30 ngày. Cấp tiếp cùng bậc thì cộng dồn; đổi bậc thì bậc cũ bị bỏ." : "Role chức vụ giữ vĩnh viễn đến khi gỡ."} Người chơi phải từng vào server.</p>`;
+  }
+  h += `</section>`;
+  // --- quyền
+  const own = (node) => g.perms.find(p => p.node === node && p.server === server);
+  const inh = inherited(g);
   const cats = data.catalog.filter(c => isDonate ? (c.donate || c.title.startsWith("Chat")) : !c.donate);
-  let html = `<div class="ctx">Áp dụng cho: <select>${data.servers.map(sv => `<option value="${sv}" ${sv === server ? "selected" : ""}>${sv === "global" ? "Toàn mạng" : sv}</option>`).join("")}</select></div>`;
-  if (isDonate) html += `<div class="warn">Rank donate: chỉ cấp quyền trang trí. Cấp lợi thế khi chơi (bay, kit, đồ mạnh…) là pay-to-win, vi phạm luật Mojang.</div>`;
-  if (g.perms.some(p => p.node === "*")) html += `<div class="warn">Role này có quyền * (tất cả quyền).</div>`;
-  const known = new Set();
-  for (const c of cats) {
-    html += `<h4>${esc(c.title)}</h4>`;
-    for (const [node, label] of c.perms) {
-      known.add(node);
-      const own = has(node), from = inh[node];
-      html += `<label class="pl"><input type="checkbox" data-node="${esc(node)}" ${own && own.value ? "checked" : ""}>
-        <span>${esc(label)} <code>${esc(node)}</code>${own && !own.value ? ' <span class="inh">(đang CẤM)</span>' : ""}${!own && from ? ` <span class="inh">(có sẵn từ ${esc(NAMES[from.split(" ")[0]] || from)})</span>` : ""}</span></label>`;
-    }
-  }
+  const nOn = g.perms.filter(p => p.value && p.server === server).length;
+  h += `<section class="card"><div class="ph"><div><h2>🔑 Quyền</h2><p class="hint">Bật công tắc là cấp quyền ngay. Quyền <span class="badge inh">có sẵn</span> đến từ role cha, không cần bật lại.</p></div>
+      <div class="sum"><span class="badge accent">${nOn} quyền riêng đang bật</span><span class="badge inh">${Object.keys(inh).length} có sẵn từ role cha</span></div></div>
+    <div class="tools"><div class="seg" title="Quyền áp dụng ở đâu">${data.servers.map(sv => `<button data-sv="${esc(sv)}" class="${sv === server ? "on" : ""}">${sv === "global" ? "Toàn mạng" : esc(sv)}</button>`).join("")}</div>
+      <input type="search" id="pf" placeholder="Lọc quyền… (vd bay, kick, worldedit)" value="${esc(filter)}">
+      <label class="switch"><input type="checkbox" id="onlyon" ${onlyOn ? "checked" : ""}><span class="track"></span><span class="txt">Chỉ quyền đang có</span></label></div>`;
+  if (g.perms.some(p => p.node === "*" && p.value)) h += `<div class="warnbox">Role này có quyền <code>*</code> (tất cả quyền).</div>`;
+  h += `<div class="pcats" id="pcats"></div>`;
+  const known = new Set(cats.flatMap(c => c.perms.map(p => p[0])));
   const others = g.perms.filter(p => !known.has(p.node) || p.server !== server);
-  if (others.length) {
-    html += `<h4>Quyền khác của role này</h4><div class="members">${others.map(p => `<span class="m">${p.value ? "" : "CẤM "}<code>${esc(p.node)}</code>${p.server !== "global" ? ` <small>@${esc(p.server)}</small>` : ""}<button class="x" data-unset="${esc(p.node)}" data-srv="${esc(p.server)}">×</button></span>`).join("")}</div>`;
+  h += `<div class="others"><h3>Quyền khác của role này</h3>${others.length ? `<div class="members" style="margin-top:0">${others.map(p => `<span class="mem">${p.value ? "" : '<span class="badge deny">CẤM</span>'}<code>${esc(p.node)}</code>${p.server !== "global" ? `<span class="exp">@${esc(p.server)}</span>` : ""}<button class="x" title="Gỡ quyền" data-unset="${esc(p.node)}" data-srv="${esc(p.server)}">×</button></span>`).join("")}</div>` : '<p class="hint" style="margin:0">Không có.</p>'}
+    <div class="addp"><input id="newp" placeholder="Thêm quyền theo tên, vd essentials.workbench (áp dụng: ${server === "global" ? "toàn mạng" : esc(server)})"><button class="ghost" id="addp">Thêm quyền</button></div></div></section>`;
+  d.innerHTML = h;
+  d.querySelectorAll("[data-go]").forEach(a => a.onclick = () => { sel = a.dataset.go; history.replaceState(null, "", "#" + sel); render(); });
+  d.querySelectorAll("[data-rm]").forEach(b => b.onclick = () => { if (confirm(`Gỡ ${name(g.name)} của ${b.dataset.rm}?`)) post({ action: "remove", player: b.dataset.rm, group: g.name }); });
+  if ($("give")) {
+    const give = () => { const p = $("player").value.trim(); if (!p) return $("player").focus(); post({ action: "add", player: p, group: g.name, months: $("months") ? parseInt($("months").value, 10) : 1 }); };
+    $("give").onclick = give; $("player").onkeydown = (e) => { if (e.key === "Enter") give(); };
   }
-  html += `<div class="addp"><input placeholder="Thêm quyền khác, vd essentials.workbench"><button>Thêm</button></div>`;
-  wrap.innerHTML = html;
-  wrap.querySelector(".ctx select").onchange = (e) => { ctxSel[g.name] = e.target.value; render(); };
-  wrap.querySelectorAll("input[type=checkbox]").forEach(cb => cb.onchange = () =>
-    perm(cb.checked ? "perm_set" : "perm_unset", g.name, cb.dataset.node, server));
-  wrap.querySelectorAll("button[data-unset]").forEach(b => b.onclick = () => {
-    if (confirm(`Gỡ quyền ${b.dataset.unset} khỏi ${NAMES[g.name] || g.name}?`)) perm("perm_unset", g.name, b.dataset.unset, b.dataset.srv);
+  d.querySelectorAll("[data-sv]").forEach(b => b.onclick = () => { server = b.dataset.sv; renderDetail(); });
+  $("pf").oninput = () => { filter = $("pf").value; renderPerms(g, cats, own, inh); };
+  $("onlyon").onchange = () => { onlyOn = $("onlyon").checked; renderPerms(g, cats, own, inh); };
+  d.querySelectorAll("[data-unset]").forEach(b => b.onclick = () => { if (confirm(`Gỡ quyền ${b.dataset.unset} khỏi ${name(g.name)}?`)) post({ action: "perm_unset", group: g.name, node: b.dataset.unset, server: b.dataset.srv }); });
+  const addp = () => { const v = $("newp").value.trim(); if (v) post({ action: "perm_set", group: g.name, node: v, server }); };
+  $("addp").onclick = addp; $("newp").onkeydown = (e) => { if (e.key === "Enter") addp(); };
+  renderPerms(g, cats, own, inh);
+}
+
+function renderPerms(g, cats, own, inh) {
+  const q = fold(filter.trim());
+  const so = own("*"), star = (so && so.value) || inh["*"];
+  let h = "";
+  for (const c of cats) {
+    const rows = c.perms.filter(([node, label]) => {
+      if (q && !fold(label + " " + node).includes(q)) return false;
+      const o = own(node);
+      return !onlyOn || (o && o.value) || inh[node] || star;
+    });
+    if (!rows.length) continue;
+    const on = c.perms.filter(([node]) => { const o = own(node); return (o && o.value) || inh[node] || star; }).length;
+    h += `<div class="pcat"><h3><span>${esc(c.title)}</span><span class="badge">${on}/${c.perms.length}</span></h3>`;
+    for (const [node, label] of rows) {
+      const o = own(node), from = inh[node];
+      h += `<label class="pr"><span class="switch"><input type="checkbox" data-node="${esc(node)}" ${o && o.value ? "checked" : ""}><span class="track"></span></span>
+        <span class="lb">${esc(label)}</span><span class="nd"><code>${esc(node)}</code>${o && !o.value ? '<span class="badge deny">đang CẤM</span>' : ""}${!o && from ? `<span class="badge inh">✓ có sẵn từ ${esc(name(from))}</span>` : ""}${!o && !from && star ? '<span class="badge inh">✓ có qua quyền *</span>' : ""}</span></label>`;
+    }
+    h += `</div>`;
+  }
+  $("pcats").innerHTML = h || `<div class="noresult">Không có quyền nào khớp.</div>`;
+  $("pcats").querySelectorAll("input[data-node]").forEach(cb => cb.onchange = () => {
+    cb.closest(".pr").classList.add("busy");
+    post({ action: cb.checked ? "perm_set" : "perm_unset", group: g.name, node: cb.dataset.node, server });
   });
-  const inp = wrap.querySelector(".addp input");
-  wrap.querySelector(".addp button").onclick = () => { if (inp.value.trim()) perm("perm_set", g.name, inp.value.trim(), server); };
-  return wrap;
 }
-async function perm(action, group, node, server) {
-  $("status").className = "status"; $("status").textContent = "Đang gửi…";
+
+async function post(body) {
+  toast("Đang gửi…", "");
   try {
-    const r = await fetch("api/roles", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action, group, node, server }) });
+    const r = await fetch("api/roles", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
     const res = await r.json();
-    $("status").className = "status " + (res.ok ? "ok" : "err"); $("status").textContent = res.message;
-    if (res.data) { data = res.data; render(); }
-  } catch (e) { $("status").className = "status err"; $("status").textContent = "Không gửi được: " + e; }
+    toast(res.message || (res.ok ? "Xong." : "Lỗi."), res.ok ? "ok" : "err");
+    if (res.data) { data = res.data; const y = scrollY; render(); scrollTo(0, y); }
+  } catch (e) { toast("Không gửi được: " + e, "err"); }
 }
-function updMonths() { const g = data && data.groups.find(x => x.name === $("group").value); $("months").disabled = !(g && g.kind === "donate"); }
-$("group").onchange = updMonths;
-async function act(action, player, group, months) {
-  $("status").className = "status"; $("status").textContent = "Đang gửi…";
-  try {
-    const r = await fetch("api/roles", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action, player, group, months }) });
-    const res = await r.json();
-    $("status").className = "status " + (res.ok ? "ok" : "err"); $("status").textContent = res.message;
-    if (res.data) { data = res.data; render(); }
-  } catch (e) { $("status").className = "status err"; $("status").textContent = "Không gửi được: " + e; }
-}
-$("give").onclick = () => { const p = $("player").value.trim(); if (!p) return; act("add", p, $("group").value, parseInt($("months").value || "1", 10)); };
 fetch("api/roles").then(r => r.json()).then(d => { if (d.error) throw d.error; data = d; render(); })
-  .catch(e => { $("staff").innerHTML = `<p class="empty">${esc(e)}</p>`; });
+  .catch(e => { $("list").innerHTML = `<p class="empty">${esc(e)}</p>`; });
 </script>
 </body>
 </html>

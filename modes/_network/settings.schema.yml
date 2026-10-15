@@ -13,10 +13,10 @@ groups:
     settings:
       - { key: chat_filter_enabled, label: Bật lọc chat, type: select, servers: [lobby, banghoi-1, practice-1], file: plugins/DuckyMoMoCore/config.yml, path: chat-filter.enabled,
           options: [ { value: true, label: Bật }, { value: false, label: Tắt } ] }
-      - { key: chat_words_accented, label: Từ cấm (khớp đúng dạng CÓ DẤU), type: lines, servers: [lobby, banghoi-1, practice-1], file: plugins/DuckyMoMoCore/config.yml, path: chat-filter.words-accented,
-          note: "Mỗi dòng một từ/cụm từ. Dùng cho từ mà bỏ dấu sẽ trùng từ thường (lồn/lớn, cặc/các, buồi/buổi, đéo/đeo)." }
-      - { key: chat_words_plain, label: Từ cấm (khớp cả khi gõ KHÔNG DẤU), type: lines, servers: [lobby, banghoi-1, practice-1], file: plugins/DuckyMoMoCore/config.yml, path: chat-filter.words-plain,
-          note: "Mỗi dòng một từ. Chỉ dùng cho từ không trùng từ thường khi bỏ dấu (đm, vcl, dcm...)." }
+      - { key: chat_words_accented, label: Từ cấm (khớp đúng dạng CÓ DẤU), type: lines, style: tags, servers: [lobby, banghoi-1, practice-1], file: plugins/DuckyMoMoCore/config.yml, path: chat-filter.words-accented,
+          note: "Mỗi thẻ một từ/cụm từ. Dùng cho từ mà bỏ dấu sẽ trùng từ thường (lồn/lớn, cặc/các, buồi/buổi, đéo/đeo)." }
+      - { key: chat_words_plain, label: Từ cấm (khớp cả khi gõ KHÔNG DẤU), type: lines, style: tags, servers: [lobby, banghoi-1, practice-1], file: plugins/DuckyMoMoCore/config.yml, path: chat-filter.words-plain,
+          note: "Mỗi thẻ một từ. Chỉ dùng cho từ không trùng từ thường khi bỏ dấu (đm, vcl, dcm...)." }
       - { key: chat_min_interval, label: Khoảng cách tối thiểu giữa 2 tin (giây), type: number, min: 0, max: 30, servers: [lobby, banghoi-1, practice-1], file: plugins/DuckyMoMoCore/config.yml, path: chat-filter.min-interval-seconds }
       - { key: chat_repeat_seconds, label: Không cho gửi lặp lại cùng câu trong (giây), type: int, min: 0, max: 3600, servers: [lobby, banghoi-1, practice-1], file: plugins/DuckyMoMoCore/config.yml, path: chat-filter.repeat-seconds }
       - { key: chat_caps_ratio, label: Tỉ lệ chữ hoa để tự hạ thành chữ thường (0-1), type: number, min: 0, max: 1, servers: [lobby, banghoi-1, practice-1], file: plugins/DuckyMoMoCore/config.yml, path: chat-filter.caps-ratio,

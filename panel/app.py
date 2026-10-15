@@ -737,7 +737,9 @@ def role_action(data):
             cmd = f"lp group {group} permission set {node} {'false' if act == 'perm_deny' else 'true'}{ctx}"
         rcon("lobby", [cmd])
         time.sleep(1.5)
-        return {"ok": True, "message": f"Đã gửi: /{cmd}", "data": roles_json()}
+        threading.Thread(target=sync_perm_change, args=(group, node, act), daemon=True).start()
+        return {"ok": True, "message": f"Đã gửi: /{cmd}. Người trong role đang online sẽ nhận tin (mất quyền bay/bất tử… thì tắt luôn).",
+                "data": roles_json()}
     if not PLAYER_RE.match(player):
         raise ValueError("Tên người chơi không hợp lệ")
     if group not in STAFF_GROUPS + DONATE_GROUPS or group == "default":
@@ -761,6 +763,69 @@ def role_action(data):
     return {"ok": True, "message": f"Đã gửi: /{cmds[0]}. Người chơi phải từng vào server.", "data": roles_json()}
 
 
+# Quyền kiểu "trạng thái": bỏ quyền chỉ chặn GÕ lệnh, trạng thái đang bật vẫn còn (vẫn bay…) nên phải tắt bằng lệnh.
+# {p} = tên người chơi, {mode} = chế độ chơi mặc định của server đó.
+STATE_REVOKE = {
+    "essentials.fly": ["fly {p} off"],
+    "essentials.god": ["god {p} off"],
+    "essentials.vanish": ["vanish {p} off"],
+    "essentials.speed": ["speed walk 1 {p}", "speed fly 1 {p}"],
+    "essentials.gamemode": ["gamemode {mode} {p}"],
+}
+DEFAULT_MODE = {"lobby": "adventure", "banghoi-1": "survival", "practice-1": "adventure"}
+
+
+def perm_label(node):
+    try:
+        cat = YAML(typ="safe").load(QUYEN_FILE.read_text(encoding="utf-8")) or {}
+        for g in cat.get("groups", []):
+            for n, label in g.get("perms", []):
+                if n == node:
+                    return f"{str(label).strip()} ({node})"
+    except Exception:
+        pass
+    return node
+
+
+def revoke_states(perms, srv, only=None):
+    """Lệnh tắt các trạng thái mà người chơi không còn quyền (only: chỉ xét các quyền khớp tiền tố này)."""
+    cmds = []
+    for node, lst in STATE_REVOKE.items():
+        if only and not (node == only or node.startswith(only.rstrip("*").rstrip(".") + ".") or only in ("*", node)):
+            continue
+        if node == "essentials.gamemode":
+            # còn được đổi chế độ chơi thì thôi; mất hẳn thì đưa về chế độ mặc định của server
+            if taikhoan.has(perms, node, srv) or any(taikhoan.has(perms, f"{node}.{m}", srv) for m in ("creative", "spectator")):
+                continue
+        elif taikhoan.has(perms, node, srv):
+            continue
+        cmds += [c.format(p=perms["name"], mode=DEFAULT_MODE.get(srv, "survival")) for c in lst]
+    return cmds
+
+
+def sync_perm_change(group, node, act):
+    """Sau khi bật/tắt quyền của role: báo người trong role (kể cả role kế thừa) đang online; ai vừa mất quyền trạng thái thì tắt luôn."""
+    shown = group.capitalize()
+    label = perm_label(node)
+    base = node.split(".gamemode.")[0] + ".gamemode" if ".gamemode." in node else node
+    for name, srv in online_players(fresh=True).items():
+        try:
+            perms = taikhoan.load_perms(name)
+            if not perms or group not in perms["groups"]:
+                continue
+            now = taikhoan.has(perms, node, srv)
+            if act == "perm_set" and now:
+                msg, cmds = f"Role {shown} vừa được thêm quyền: {label}.", []
+            elif act != "perm_set" and not now:
+                msg, cmds = f"Role {shown} vừa bị bỏ quyền: {label}.", revoke_states(perms, srv, base)
+            else:
+                continue  # vẫn có / vẫn không có quyền này nhờ role khác: không đổi gì với người này
+            raw = ["", {"text": "[Role] ", "color": "gold", "bold": True}, {"text": msg, "color": "yellow"}]
+            rcon(srv, cmds + [f"tellraw {perms['name']} " + json.dumps(raw, ensure_ascii=False)])
+        except Exception:
+            pass
+
+
 def tell_role_change(player, group, act, months=None):
     """Báo vào game cho người vừa được cấp/gỡ role (nếu đang online). LuckPerms tự làm mới danh sách lệnh của client."""
     shown = {"admin": "Admin", "mod": "Mod", "helper": "Helper", "builder": "Builder"}.get(group, group)
@@ -773,11 +838,18 @@ def tell_role_change(player, group, act, months=None):
             text += " Lệnh Essentials (/fly, /kick…) dùng ở Bang Hội Chiến và Practice."
     else:
         text = f"Role {shown} của bạn đã được gỡ."
-    srv = online_players().get(player.lower())
+    srv = online_players(fresh=True).get(player.lower())
     if srv:
         raw = ["", {"text": "[Role] ", "color": "gold", "bold": True}, {"text": text, "color": "yellow"}]
+        cmds = []
+        if act == "remove":
+            try:
+                perms = taikhoan.load_perms(player)
+                cmds = revoke_states(perms, srv) if perms else []  # gỡ mod: tắt bay, tàng hình… nếu không còn quyền
+            except Exception:
+                pass
         try:
-            rcon(srv, [f"tellraw {player} " + json.dumps(raw, ensure_ascii=False)])
+            rcon(srv, cmds + [f"tellraw {player} " + json.dumps(raw, ensure_ascii=False)])
         except Exception:
             pass
 
@@ -1338,8 +1410,11 @@ def web_log(event):
         print(f"Không ghi được {WEB_LOG_FILE}: {e}", flush=True)
 
 
-def online_players():
-    """{tên thường: server} của người đang online ở lobby/banghoi/practice (giữ 15 giây)."""
+def online_players(fresh=False):
+    """{tên thường: server} của người đang online ở lobby/banghoi/practice (giữ 15 giây; fresh=True: hỏi lại ngay)."""
+    if fresh:
+        with _web_lock:
+            _web_cache.pop("online", None)
     def load():
         out = {}
         for srv in GAME_SERVERS:

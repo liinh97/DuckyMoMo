@@ -168,17 +168,25 @@ def access(perms, categories):
     return {"toan_quyen": full_admin(perms), "features": feats, "categories": cats}
 
 
-def can_use_command(row, perms, srv):
-    """Lệnh trong cẩm nang (app.all_commands) người này dùng được không. 'Từ helper' = có nhóm helper (kể cả kế thừa)."""
+def command_access(row, perms, srv, towny_roles=()):
+    """Lệnh trong cẩm nang (app.all_commands) người này dùng được không, và nhờ đâu.
+    Trả (được dùng, nhãn): nhãn rỗng = mọi người dùng được; "Thị trưởng"/"Vua" = theo chức trong Towny;
+    "Từ helper" = role; "Admin" = chỉ admin. srv=None: lệnh proxy (tính quyền ở mọi server)."""
     who = row.get("who", "?")
+    if who == "Console":
+        return False, ""
     if who == "Mọi người":
-        return True
-    if row.get("perm"):
-        return has(perms, row["perm"], srv)
+        return True, ""
+    if who in ("Thị trưởng", "Vua"):
+        return who in towny_roles, who
     m = re.match(r"Từ (\S+)", who)
+    if row.get("perm"):
+        if has(perms, row["perm"], srv):
+            return True, who if m else ("Admin" if who == "Chỉ admin" else "Quyền riêng")
+        return False, ""
     if m:
-        return has(perms, f"group.{m.group(1)}", srv)
-    return full_admin(perms)
+        return has(perms, f"group.{m.group(1)}", srv), who
+    return full_admin(perms), "Admin"
 
 
 # ---------------------------------------------------------------- hồ sơ người chơi (đọc file của banghoi-1)

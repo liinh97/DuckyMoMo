@@ -12,3 +12,9 @@ bedrock:
 discord: ""        # link mời Discord khi có
 zalo: ""           # link nhóm Zalo khi có
 ban-do: ""         # link bản đồ web công khai nếu mở (squaremap hiện cần đăng nhập Trạm 6)
+# Chuyển khoản donate (trang tài khoản: chọn gói -> mã QR VietQR). Trống = ẩn QR, chỉ hiện "nhắn admin".
+# ngan-hang: mã ngân hàng theo VietQR (vd MB, VCB, TCB, ACB, VPB, BIDV, ICB = VietinBank, TPB) hoặc mã BIN 6 số.
+donate:
+  ngan-hang: ""
+  so-tai-khoan: ""
+  chu-tai-khoan: ""    # IN HOA KHÔNG DẤU, đúng tên chủ tài khoản

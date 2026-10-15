@@ -75,6 +75,16 @@
    chỉ thấy ô "Chưa có chế độ nào mở" (beta chỉ hiện cho quyền `network.beta`). Menu đọc mode.yml mỗi lần mở (mount `../modes:/modes:ro`):
    git pull là có hiệu lực, không cần khởi động lại. Practice vẫn `beta` (chưa ai thử Duels).
 
+12. **Đợt sửa tối 15/10 (sau khi người dùng chạy thử)**:
+   - Lệnh trên trang tài khoản: lệnh ghi tay (`lenh-con.yml`) chỉ hiện ở server mà lệnh gốc đang chạy (trước: sảnh hiện /diemdanh, /cuahang…);
+     DuckyMoMoCore `CommandDump` ghi `"off": true` cho lệnh có đăng ký nhưng module tắt (cần build plugin + 30 giây sau khởi động);
+     thêm tab "Mọi server" (lệnh proxy), lệnh Thị trưởng/Vua theo chức Towny thật, bỏ lệnh Console, nhãn "nhờ đâu" (Từ helper, Thị trưởng, Admin).
+   - Donate qua web: chọn gói → QR VietQR (`site/config/site.yml` mục `donate`: ngân hàng, số tài khoản, chủ tài khoản — CÒN TRỐNG, người dùng điền),
+     "Tôi đã chuyển khoản" → báo admin online (quyền duckymomo.rank.admin) + dòng Hoạt động; trang quản trị `/donate` (panel/donate.html) cấp rank bằng
+     `/rank give` hoặc huỷ. Chưa tự động đối soát (người dùng chốt: chưa cần). Dữ liệu `data/panel/donate.json`.
+   - Trang Role: quyền có sẵn (kế thừa hoặc qua `*`) hiện công tắc BẬT mờ, khoá (trước hiện tắt, admin tưởng không có quyền). Cấp/gỡ role báo vào game.
+   - Sảnh KHÔNG cài EssentialsX: /fly, /kick… ở sảnh báo "Unknown command" với mọi người. Mod dùng ở banghoi/practice. Chưa quyết có cài Essentials ở sảnh không.
+
 ### Người dùng phải tự làm (nhắc lại khi phù hợp)
 - Thêm `[boot] command = modprobe tcp_bbr` vào `/etc/wsl.conf` (để BBR có sau mỗi lần khởi động WSL):
   `wsl -d Ubuntu-22.04 -u root -- sh -c "printf '\n[boot]\ncommand = modprobe tcp_bbr\n' >> /etc/wsl.conf"`

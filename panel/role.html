@@ -65,6 +65,8 @@
   .badge.inh { background: rgba(30, 142, 62, .12); color: var(--ok); }
   .badge.deny { background: rgba(217, 48, 37, .12); color: var(--err); }
   .pr.busy { opacity: .5; pointer-events: none; }
+  .pr.via { cursor: default; }
+  .pr.via .switch { opacity: .55; }
   .others { margin-top: 18px; }
   .others h3 { font-size: 14px; margin: 0 0 8px; }
   .others .mem code { font-size: 12.5px; }
@@ -169,7 +171,8 @@ function renderDetail() {
     <div class="tools"><div class="seg" title="Quyền áp dụng ở đâu">${data.servers.map(sv => `<button data-sv="${esc(sv)}" class="${sv === server ? "on" : ""}">${sv === "global" ? "Toàn mạng" : esc(sv)}</button>`).join("")}</div>
       <input type="search" id="pf" placeholder="Lọc quyền… (vd bay, kick, worldedit)" value="${esc(filter)}">
       <label class="switch"><input type="checkbox" id="onlyon" ${onlyOn ? "checked" : ""}><span class="track"></span><span class="txt">Chỉ quyền đang có</span></label></div>`;
-  if (g.perms.some(p => p.node === "*" && p.value)) h += `<div class="warnbox">Role này có quyền <code>*</code> (tất cả quyền).</div>`;
+  if (g.perms.some(p => p.node === "*" && p.value)) h += `<div class="warnbox">Role này có quyền <code>*</code> (tất cả quyền): mọi công tắc bên dưới đều đang có hiệu lực (hiện bật mờ).</div>`;
+  h += `<p class="hint">Lệnh của EssentialsX (/fly, /kick, /ban, /tp, /gamemode…) chỉ có ở <b>Bang Hội Chiến</b> và <b>Practice</b>. Sảnh không cài Essentials nên gõ ở sảnh sẽ báo "Unknown command" dù có quyền.</p>`;
   h += `<div class="pcats" id="pcats"></div>`;
   const known = new Set(cats.flatMap(c => c.perms.map(p => p[0])));
   const others = g.perms.filter(p => !known.has(p.node) || p.server !== server);
@@ -206,7 +209,9 @@ function renderPerms(g, cats, own, inh) {
     h += `<div class="pcat"><h3><span>${esc(c.title)}</span><span class="badge">${on}/${c.perms.length}</span></h3>`;
     for (const [node, label] of rows) {
       const o = own(node), from = inh[node];
-      h += `<label class="pr"><span class="switch"><input type="checkbox" data-node="${esc(node)}" ${o && o.value ? "checked" : ""}><span class="track"></span></span>
+      // có sẵn (kế thừa từ role cha hoặc qua *): công tắc hiện BẬT nhưng khoá, khỏi tưởng role không có quyền
+      const via = !o && (from || star);
+      h += `<label class="pr${via ? " via" : ""}" ${via ? `title="Đã có ${from ? "từ " + esc(name(from)) : "qua quyền *"}, không cần bật riêng"` : ""}><span class="switch"><input type="checkbox" data-node="${esc(node)}" ${(o && o.value) || via ? "checked" : ""} ${via ? "disabled" : ""}><span class="track"></span></span>
         <span class="lb">${esc(label)}</span><span class="nd"><code>${esc(node)}</code>${o && !o.value ? '<span class="badge deny">đang CẤM</span>' : ""}${!o && from ? `<span class="badge inh">✓ có sẵn từ ${esc(name(from))}</span>` : ""}${!o && !from && star ? '<span class="badge inh">✓ có qua quyền *</span>' : ""}</span></label>`;
     }
     h += `</div>`;

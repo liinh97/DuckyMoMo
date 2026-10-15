@@ -15,6 +15,8 @@ public final class DuckyMoMoCore extends JavaPlugin {
     private ItemCleaner cleaner;
     private OverEnchant overEnchant;
     private CommandDump commandDump;
+    // Lệnh có đăng ký (plugin.yml) nhưng module tắt trên server này: chỉ trả lời "chỉ có ở…". commands.json đánh dấu để web không liệt kê.
+    private final java.util.Set<String> offCommands = java.util.concurrent.ConcurrentHashMap.newKeySet();
     private RandomTeleport rtp;
     private WarRules warRules;
     private Activity activity;
@@ -72,6 +74,7 @@ public final class DuckyMoMoCore extends JavaPlugin {
     }
 
     private void setup(boolean reloading) {
+        offCommands.clear();
         // Thư viện đồ (mọi server): dựng trước để cửa hàng, phần thưởng dùng; /dmm luudo|laydo|thuvien
         itemLibrary = new ItemLibrary(this);
         // Người chơi Bedrock (đã xác thực qua Xbox + Floodgate) không phải nhập mật khẩu AuthMe.
@@ -101,6 +104,7 @@ public final class DuckyMoMoCore extends JavaPlugin {
             }
             getLogger().info("Menu chọn chế độ: bật, đọc chế độ từ " + modesDir);
         } else if (menuCommand != null) {
+            offCommands.add("menu");
             menuCommand.setExecutor((sender, cmd, label, args) -> {
                 sender.sendMessage("Menu chọn chế độ chỉ có ở lobby. Gõ /server lobby để về sảnh.");
                 return true;
@@ -123,6 +127,7 @@ public final class DuckyMoMoCore extends JavaPlugin {
             }
             getLogger().info("Rank donate + thông báo vào/ra: bật");
         } else if (rankCmd != null) {
+            offCommands.add("rank");
             rankCmd.setExecutor((sender, cmd, label, args) -> {
                 sender.sendMessage("Rank donate chưa bật trên server này.");
                 return true;
@@ -193,6 +198,7 @@ public final class DuckyMoMoCore extends JavaPlugin {
             }
             getLogger().info("Dịch chuyển ngẫu nhiên /tpr: bật (" + rtp.zoneCount() + " khu)");
         } else if (tprCmd != null) {
+            offCommands.add("tpr");
             tprCmd.setExecutor((sender, cmd, label, args) -> {
                 sender.sendMessage("Dịch chuyển ngẫu nhiên chưa bật trên server này.");
                 return true;
@@ -206,6 +212,9 @@ public final class DuckyMoMoCore extends JavaPlugin {
             activity.start();
         }
         PluginCommand hdCmd = getCommand("hoatdong");
+        if (activity == null) {
+            offCommands.add("hoatdong");
+        }
         if (hdCmd != null) {
             hdCmd.setExecutor((sender, cmd, label, args) -> {
                 if (activity == null) {
@@ -224,6 +233,9 @@ public final class DuckyMoMoCore extends JavaPlugin {
             getLogger().info("Luật chiến tranh: " + warRules.describe());
         }
         PluginCommand altCmd = getCommand("taikhoanphu");
+        if (warRules == null) {
+            offCommands.add("taikhoanphu");
+        }
         if (altCmd != null) {
             altCmd.setExecutor((sender, cmd, label, args) -> {
                 if (warRules == null) {
@@ -243,6 +255,9 @@ public final class DuckyMoMoCore extends JavaPlugin {
             peace.start();
         }
         PluginCommand peaceCmd = getCommand("hoabinh");
+        if (peace == null) {
+            offCommands.add("hoabinh");
+        }
         if (peaceCmd != null) {
             peaceCmd.setExecutor((sender, cmd, label, args) -> {
                 if (peace == null) {
@@ -339,6 +354,9 @@ public final class DuckyMoMoCore extends JavaPlugin {
         }
 
         PluginCommand resetCmd = getCommand("choilai");
+        if (reset == null) {
+            offCommands.add("choilai");
+        }
         if (resetCmd != null) {
             resetCmd.setExecutor((sender, cmd, label, args) -> {
                 if (reset == null) {
@@ -350,7 +368,7 @@ public final class DuckyMoMoCore extends JavaPlugin {
         }
 
         // Xuất mọi lệnh của server cho trang Cẩm nang (plugins/DuckyMoMoCore/commands.json), 30 giây sau khi khởi động
-        commandDump = new CommandDump(this);
+        commandDump = new CommandDump(this, offCommands);
         if (!reloading) {
             commandDump.schedule();
         }
@@ -579,6 +597,9 @@ public final class DuckyMoMoCore extends JavaPlugin {
         PluginCommand cmd = getCommand(name);
         if (cmd == null) {
             return;
+        }
+        if (run == null) {
+            offCommands.add(name);
         }
         cmd.setExecutor((sender, c, label, args) -> {
             if (run == null) {

@@ -38,6 +38,11 @@ tinh-nang:
     mo-ta: Tick/bỏ quyền của từng role trên trang Role
     trang: role
     quyen: [duckymomo.web.role.quyen]
+  - id: donate
+    ten: Donate
+    mo-ta: Xem yêu cầu donate người chơi báo đã chuyển khoản, cấp rank hoặc huỷ
+    trang: donate
+    quyen: [duckymomo.web.donate, duckymomo.rank.admin]
   - id: camnang
     ten: Cẩm nang admin
     mo-ta: Đọc cẩm nang plugin và danh sách mọi lệnh

@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -18,14 +19,17 @@ import org.bukkit.plugin.java.JavaPlugin;
 /**
  * Xuất MỌI lệnh đang đăng ký trên server ra plugins/DuckyMoMoCore/commands.json cho trang Cẩm nang (panel /camnang,
  * mục "Tất cả lệnh"). Chạy 30 giây sau khi server khởi động (để plugin đăng ký lệnh muộn cũng có) và bằng /dmm lenh.
- * Mỗi lệnh: plugin (namespace), tên, tên gọi khác, mô tả, cách dùng, quyền, mặc định của quyền (true/op/false/not_op).
+ * Mỗi lệnh: plugin (namespace), tên, tên gọi khác, mô tả, cách dùng, quyền, mặc định của quyền (true/op/false/not_op),
+ * "off": true nếu là lệnh của DuckyMoMoCore mà module tắt trên server này (chỉ báo "chỉ có ở Bang Hội Chiến").
  */
 final class CommandDump {
 
     private final JavaPlugin plugin;
+    private final Set<String> off;
 
-    CommandDump(JavaPlugin plugin) {
+    CommandDump(JavaPlugin plugin, Set<String> off) {
         this.plugin = plugin;
+        this.off = off;
     }
 
     void schedule() {
@@ -60,7 +64,8 @@ final class CommandDump {
             String json = "{\"plugin\":" + q(owner) + ",\"ns\":" + q(e.getValue()) + ",\"name\":" + q(c.getName())
                     + ",\"aliases\":[" + String.join(",", aliases.stream().map(CommandDump::q).toList()) + "]"
                     + ",\"description\":" + q(c.getDescription()) + ",\"usage\":" + q(c.getUsage())
-                    + ",\"permission\":" + q(perm == null ? "" : perm) + ",\"default\":" + q(def) + "}";
+                    + ",\"permission\":" + q(perm == null ? "" : perm) + ",\"default\":" + q(def)
+                    + (owner.equals(plugin.getName()) && off.contains(c.getName()) ? ",\"off\":true" : "") + "}";
             rows.put(owner.toLowerCase() + " " + c.getName() + " " + e.getValue(), json);
         }
         String out = "{\"server\":" + q(serverName()) + ",\"generated\":" + System.currentTimeMillis() / 1000

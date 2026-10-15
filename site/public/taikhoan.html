@@ -86,7 +86,7 @@ code,.kbd{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;background:
 .cmd>*{min-width:0}
 .cmd code{white-space:normal;overflow-wrap:anywhere}
 .cmd .al{color:var(--dim);font-size:.8rem}
-.cmd .own{color:var(--violet);font-size:.75rem;font-weight:800;margin-left:6px}
+.cmd .own{color:var(--violet);font-size:.72rem;font-weight:800;margin-left:6px;text-transform:uppercase;white-space:nowrap}
 @media (max-width:620px){.cmd{grid-template-columns:1fr;gap:2px}}
 .tools{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 .tools input{flex:1;min-width:180px}
@@ -94,6 +94,15 @@ code,.kbd{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;background:
 .check input{width:auto}
 .tools label.check{margin:0}
 footer{padding:30px 0;color:var(--dim);font-size:.85rem}
+.pkgs{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.pkg{padding:6px 11px;border-radius:9px;border:1px solid var(--line);background:#0b1118;color:var(--text);font:inherit;font-size:.85rem;font-weight:700;cursor:pointer}
+.pkg:hover,.pkg.on{border-color:var(--gold);color:var(--gold2)}
+.paygrid{display:grid;grid-template-columns:260px minmax(0,1fr);gap:22px;align-items:start}
+@media (max-width:700px){.paygrid{grid-template-columns:1fr}.qr{margin:0 auto}}
+.qr{display:block;width:260px;height:260px;max-width:100%;border-radius:12px;background:#fff;padding:6px}
+.kv{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:7px 0;border-bottom:1px solid rgba(42,58,79,.6)}
+.kv span{color:var(--muted);font-size:.85rem;min-width:110px}
+.kv b{overflow-wrap:anywhere}
 </style>
 </head>
 <body>
@@ -109,7 +118,7 @@ footer{padding:30px 0;color:var(--dim);font-size:.85rem}
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const nf = new Intl.NumberFormat("vi-VN");
-const SRV = {"banghoi-1": "Bang Hội Chiến", "lobby": "Sảnh", "practice-1": "Practice"};
+const SRV = {"banghoi-1": "Bang Hội Chiến", "lobby": "Sảnh", "practice-1": "Practice", "proxy": "Mọi server"};
 const MC = {0:"#555",1:"#3b5bdb",2:"#2f9e44",3:"#1098ad",4:"#c92a2a",5:"#9c36b5",6:"#f2b84b",7:"#adb5bd",8:"#868e96",9:"#5c7cfa",a:"#69db7c",b:"#66d9e8",c:"#ff6b6b",d:"#f783ac",e:"#ffe066",f:"#f8f9fa"};
 // "&6&l[Công Tước]" -> chữ có màu như trong game
 function mc(t){ let color = "#e8eef5", bold = false, out = "";
@@ -173,7 +182,8 @@ function loginView(needCode){
 }
 
 // ------------------------------------------------------------ hồ sơ
-let D = null, cmdSrv = "banghoi-1", onlyMine = false, cmdQ = "";
+let D = null, cmdSrv = "banghoi-1", onlyMine = false, cmdQ = "", DN = {}, PICK = null, BANK = null;
+async function loadDonate(){ DN = await api("api/donate", {action: "ds"}).catch(() => ({})); }
 function stat(label, value, sub){ return `<div class="stat"><small>${label}</small><b>${value}</b>${sub ? `<span>${sub}</span>` : ""}</div>`; }
 
 function render(){
@@ -222,16 +232,42 @@ function render(){
     <div class="card"><h2>📜 Nhiệm vụ hôm nay</h2>${quests.length ? quests.map(x => { const pc = x.can ? Math.min(100, Math.round(x.da / x.can * 100)) : 0;
       return `<div class="quest"><div class="t"><span>${esc(x.ten)}</span><b>${nf.format(Math.min(x.da, x.can))}/${nf.format(x.can)}${pc >= 100 ? " ✓" : ""}</b></div><div class="bar"><i style="width:${pc}%"></i></div></div>`; }).join("")
       : '<p class="muted">Chưa nhận nhiệm vụ hôm nay. Vào Bang Hội Chiến gõ <code>/nhiemvu</code>.</p>'}</div>
-    <div class="card"><h2>👑 Rank ủng hộ</h2>${(h.donate && h.donate.tiers || []).map(ti => { const mine = donateRoles.find(r => r.id === ti.group);
+    <div class="card" id="ungho"><h2>👑 Ủng hộ server</h2>
+      <p class="small muted">Rank chỉ là đồ trang trí (prefix, màu chat, hiệu ứng, pet), không bán sức mạnh. Chọn gói để lấy mã QR chuyển khoản.</p>
+      ${(h.donate && h.donate.tiers || []).map((ti, i) => { const mine = donateRoles.find(r => r.id === ti.group), pk = ((DN.bac || [])[i] || {}).goi || [];
       return `<div class="tier ${mine ? "mine" : ""}"><div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap"><b>${mc(ti.mau + ti.ten)}</b>${mine ? `<span class="pill on">Của bạn${mine.het ? " · đến " + day(mine.het * 1000) : ""}</span>` : ""}</div>
-        <div class="perks">${esc((ti.quyen_loi || []).join(" · "))}</div></div>`; }).join("")}
-      <p class="small dim" style="margin-top:8px">${mc((h.donate && h.donate.cach_mua) || "")}</p></div>
+        <div class="perks">${esc((ti.quyen_loi || []).join(" · "))}</div>
+        <div class="pkgs">${pk.map(g => `<button class="pkg${PICK && PICK.bac === i && PICK.goi === g.id ? " on" : ""}" data-b="${i}" data-g="${g.id}">${esc(g.thang >= 12 && g.thang % 12 === 0 ? g.thang / 12 + " năm" : g.thang + " tháng")} · ${nf.format(g.tien)}đ</button>`).join("")}</div></div>`; }).join("")}
+      </div>
   </div>`;
+
+  // thanh toán donate
+  if (PICK && PICK.don) {
+    const o = PICK.don, bank = BANK, ok = bank && bank["ngan-hang"] && bank["so-tai-khoan"];
+    const qr = ok ? `https://img.vietqr.io/image/${encodeURIComponent(bank["ngan-hang"])}-${encodeURIComponent(bank["so-tai-khoan"])}-compact2.png?amount=${o.tien}&addInfo=${encodeURIComponent(o.noi_dung)}&accountName=${encodeURIComponent(bank["chu-tai-khoan"] || "")}` : "";
+    html += `<div class="card pay" id="pay" style="margin-top:14px"><h2>💳 Chuyển khoản: ${esc(o.bac)} · ${esc(o.goi)}</h2>
+      ${ok ? `<div class="paygrid"><img class="qr" src="${qr}" alt="Mã QR chuyển khoản" width="260" height="260">
+        <div><div class="kv"><span>Ngân hàng</span><b>${esc(bank["ngan-hang"])}</b></div>
+          <div class="kv"><span>Số tài khoản</span><b>${esc(bank["so-tai-khoan"])}</b><button class="btn small cp" data-v="${esc(bank["so-tai-khoan"])}">Chép</button></div>
+          <div class="kv"><span>Chủ tài khoản</span><b>${esc(bank["chu-tai-khoan"] || "")}</b></div>
+          <div class="kv"><span>Số tiền</span><b style="color:var(--gold2)">${nf.format(o.tien)}đ</b><button class="btn small cp" data-v="${o.tien}">Chép</button></div>
+          <div class="kv"><span>Nội dung</span><b><code>${esc(o.noi_dung)}</code></b><button class="btn small cp" data-v="${esc(o.noi_dung)}">Chép</button></div>
+          <p class="small muted" style="margin-top:10px">Quét QR bằng app ngân hàng (đã điền sẵn số tiền + nội dung). <b>Giữ nguyên nội dung</b> để admin nhận ra bạn.</p>
+          ${o.trang_thai === "tao" ? `<button class="btn primary" id="paid">Tôi đã chuyển khoản</button>` : `<p class="note small">${o.trang_thai === "cho" ? "Đã báo admin, đang chờ duyệt." : "Yêu cầu này đã xử lý."}</p>`}
+          <div class="err" id="payMsg"></div></div></div>`
+      : `<p class="muted">Server chưa mở chuyển khoản tự động trên web. ${mc((h.donate && h.donate.cach_mua) || "Nhắn admin để mua rank.")} Ghi nội dung: <code>${esc(o.noi_dung)}</code></p>`}
+    </div>`;
+  }
+  if ((DN.yeu_cau || []).length) {
+    const ST = {tao: "Chưa báo chuyển", cho: "Chờ admin duyệt", da_cap: "Đã cấp rank ✓", huy: "Đã huỷ"};
+    html += `<div class="card" style="margin-top:14px"><h2>🧾 Yêu cầu ủng hộ của bạn</h2>${DN.yeu_cau.map(r => `<div class="feat"><div><b>${esc(r.bac)} · ${esc(r.goi)} · ${nf.format(r.tien)}đ</b>
+      <small>Nội dung ${esc(r.noi_dung)} · ${when(r.tao_luc)}</small></div><span class="pill ${r.trang_thai === "da_cap" ? "on" : r.trang_thai === "huy" ? "" : "warn"}">${ST[r.trang_thai] || r.trang_thai}</span></div>`).join("")}</div>`;
+  }
 
   // lệnh
   html += `<div class="card" style="margin-top:14px"><h2>⌨️ Lệnh bạn dùng được</h2>
     <div class="tabs" id="srvTabs">${Object.keys(SRV).filter(s => (D.lenh || {})[s]).map(s => `<button class="tab ${s === cmdSrv ? "on" : ""}" data-s="${s}">${SRV[s]} (${D.lenh[s].length})</button>`).join("")}</div>
-    <div class="tools"><input id="cq" placeholder="Tìm lệnh (vd tpr, nha, shop)…" value="${esc(cmdQ)}"><label class="check"><input type="checkbox" id="mine" ${onlyMine ? "checked" : ""}> Chỉ lệnh có nhờ role / rank</label></div>
+    <div class="tools"><input id="cq" placeholder="Tìm lệnh (vd tpr, nha, shop)…" value="${esc(cmdQ)}"><label class="check"><input type="checkbox" id="mine" ${onlyMine ? "checked" : ""}> Chỉ lệnh riêng của bạn (nhờ role, rank, chức)</label></div>
     <div class="cmds" id="cmds"></div></div>`;
 
   const cl = h.choilai;
@@ -269,6 +305,21 @@ function render(){
     $("#go2").disabled = false;
     if (d.ok) load(); else $("#err2").textContent = d.message || "Sai mã.";
   };
+  document.querySelectorAll(".pkg").forEach(b => b.onclick = async () => {
+    b.disabled = true;
+    const d = await api("api/donate", {action: "tao", bac: +b.dataset.b, goi: +b.dataset.g}).catch(() => ({message: "Không kết nối được."}));
+    b.disabled = false;
+    if (!d.ok) { alert(d.message || "Không tạo được mã."); return; }
+    PICK = {bac: +b.dataset.b, goi: +b.dataset.g, don: d.don}; render(); $("#pay").scrollIntoView({behavior: "smooth", block: "start"});
+  });
+  document.querySelectorAll(".cp").forEach(b => b.onclick = async () => { try { await navigator.clipboard.writeText(b.dataset.v); b.textContent = "Đã chép"; } catch (e) {} });
+  if ($("#paid")) $("#paid").onclick = async () => {
+    if (!confirm("Bạn đã chuyển khoản xong với đúng số tiền và nội dung?")) return;
+    $("#paid").disabled = true;
+    const d = await api("api/donate", {action: "bao", id: PICK.don.id}).catch(() => ({message: "Không kết nối được."}));
+    if (d.ok) { PICK.don = d.don; await loadDonate(); render(); $("#pay").scrollIntoView({block: "start"}); alert(d.message); }
+    else { $("#paid").disabled = false; $("#payMsg").textContent = d.message || "Không gửi được."; }
+  };
   if ($("#clGo")) $("#clGo").onclick = async () => {
     if (!$("#clOk").checked) { $("#clMsg").textContent = "Tick ô xác nhận trước."; return; }
     $("#clGo").disabled = true;
@@ -283,11 +334,11 @@ function render(){
 const fold = s => String(s || "").normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/đ/g, "d").toLowerCase();
 function drawCmds(){
   const q = fold(cmdQ.trim());
-  const rows = ((D.lenh || {})[cmdSrv] || []).filter(c => (!onlyMine || c.rieng) && (!q || fold(c.ten + " " + c.goi_tat.join(" ") + " " + c.mo_ta + " " + c.plugin).includes(q)));
+  const rows = ((D.lenh || {})[cmdSrv] || []).filter(c => (!onlyMine || c.nhan) && (!q || fold(c.ten + " " + c.goi_tat.join(" ") + " " + c.mo_ta + " " + c.plugin).includes(q)));
   const by = {};
   rows.forEach(c => (by[c.plugin] = by[c.plugin] || []).push(c));
   $("#cmds").innerHTML = rows.length ? Object.keys(by).sort().map(p => `<div class="cmdgrp">${esc(p)}</div>` + by[p].map(c =>
-    `<div class="cmd"><div><code>/${esc(c.ten)}</code>${c.rieng ? '<span class="own">RIÊNG</span>' : ""}${c.goi_tat.length ? `<div class="al">${c.goi_tat.map(a => "/" + esc(a)).join(" ")}</div>` : ""}</div><div class="muted">${esc(c.mo_ta) || '<span class="dim">Chưa có mô tả</span>'}</div></div>`).join("")).join("")
+    `<div class="cmd"><div><code>/${esc(c.ten)}</code>${c.nhan ? `<span class="own">${esc(c.nhan)}</span>` : ""}${c.goi_tat.length ? `<div class="al">${c.goi_tat.map(a => "/" + esc(a)).join(" ")}</div>` : ""}</div><div class="muted">${esc(c.mo_ta) || '<span class="dim">Chưa có mô tả</span>'}</div></div>`).join("")).join("")
     : '<p class="muted" style="margin-top:12px">Không có lệnh nào khớp.</p>';
 }
 
@@ -298,7 +349,9 @@ async function load(){
   if (!d.dang_nhap) return loginView(new URLSearchParams(location.search).get("can") === "ma");
   if (!d.ok) { $("#main").innerHTML = `<div class="card" style="margin-top:40px"><h1>${esc(d.ten || "")}</h1><p class="muted">${esc(d.message || "Không tải được thông tin.")}</p><button class="btn small" id="out">Đăng xuất</button></div>`;
     $("#out").onclick = async () => { await api("api/dangxuat", {}); load(); }; return; }
-  D = d; render();
+  D = d;
+  await Promise.all([loadDonate(), api("api/info").then(i => { BANK = (i.site || {}).donate || null; }).catch(() => {})]);
+  render();
 }
 load();
 </script>

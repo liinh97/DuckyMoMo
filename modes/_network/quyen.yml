@@ -98,6 +98,7 @@ groups:
       - [duckymomo.web.role.quyen, "Sửa quyền của role (trừ admin, mod; không cấp được * hay quyền web)"]
       - [duckymomo.web.camnang, "Đọc cẩm nang admin (helper, builder đã có sẵn)"]
       - [duckymomo.web.huongdan, "Sửa cẩm nang trong game"]
+      - [duckymomo.web.donate, "Duyệt donate (duckymomo.rank.admin cũng mở được)"]
       - [duckymomo.web.caidat.*, "Sửa MỌI loại trong trang Cài đặt"]
       - [duckymomo.web.caidat.chat, "Cài đặt: chỉ loại Chat"]
       - [duckymomo.web.caidat.chientranh, "Cài đặt: chỉ loại Chiến tranh"]

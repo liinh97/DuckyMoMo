@@ -577,6 +577,15 @@ class Handler(BaseHTTPRequestHandler):
                 code, obj, token = login(self.body_json(), self.client_ip())
                 extra = {"Set-Cookie": self.cookie(token, SESSION_DAYS * 86400)} if token else None
                 return self._json(code, obj, extra)
+            if path == "/api/donate":
+                s = session_of(self.token())
+                if not s:
+                    return self._json(401, {"ok": False, "message": "Phiên đăng nhập đã hết, đăng nhập lại."})
+                d = self.body_json()
+                body = {"ten": s["ten"], "action": d.get("action"), "bac": d.get("bac"), "goi": d.get("goi"), "id": d.get("id")}
+                st, _, raw = panel("POST", "/api/web/donate", json.dumps(body).encode(), ip=self.client_ip())
+                return self._json(st if st in (200, 400) else 502, json.loads(raw or b"{}") if st in (200, 400) else
+                                  {"ok": False, "message": "Máy chủ đang bận, thử lại sau."})
             if path == "/api/choilai":
                 s = session_of(self.token())
                 if not s:

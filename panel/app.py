@@ -44,6 +44,7 @@ HUONGDAN_HTML = (Path(__file__).parent / "huongdan.html").read_text(encoding="ut
 ROLE_HTML = (Path(__file__).parent / "role.html").read_text(encoding="utf-8")
 THUVIEN_HTML = (Path(__file__).parent / "thuvien.html").read_text(encoding="utf-8")
 BOSS_HTML = (Path(__file__).parent / "boss.html").read_text(encoding="utf-8")
+DONATE_HTML = (Path(__file__).parent / "donate.html").read_text(encoding="utf-8")
 # Khung chung mọi trang (thanh điều hướng trái, màu, nút): ui.css, shell.js
 STATIC = {"/ui.css": ("text/css; charset=utf-8", (Path(__file__).parent / "ui.css").read_bytes()),
           "/shell.js": ("application/javascript; charset=utf-8", (Path(__file__).parent / "shell.js").read_bytes())}
@@ -559,6 +560,8 @@ def all_commands(doc):
         return "Chỉ admin"
 
     out = {}
+    # lệnh đang chạy thật của từng plugin ở từng server (tên + tên gọi khác), để lọc lệnh ghi tay bên dưới
+    active = {}
     for srv in ("lobby", "banghoi-1", "practice-1"):
         f = DATA_DIR / srv / "plugins" / "DuckyMoMoCore" / "commands.json"
         if not f.exists():
@@ -569,6 +572,11 @@ def all_commands(doc):
             continue
         rows = []
         for c in data.get("commands", []):
+            # lệnh DuckyMoMoCore có đăng ký nhưng module tắt ở server này (chỉ báo "chỉ có ở Bang Hội Chiến"): không liệt kê
+            if c.get("off"):
+                continue
+            active.setdefault(srv, {}).setdefault(c["plugin"].lower(), set()).update(
+                [c["name"].split(":")[-1].lower()] + [a.lower() for a in c.get("aliases", [])])
             # vài plugin (Paper bọc lệnh) tự đặt tên kèm "plugin:" -> bỏ đi
             name, plugin, perm, default = c["name"].split(":")[-1], c["plugin"], c.get("permission") or "", c.get("default") or ""
             c["aliases"] = [a for a in c.get("aliases", []) if ":" not in a and a != name]
@@ -593,7 +601,12 @@ def all_commands(doc):
                 if srv != "proxy" and srv not in out:
                     continue
                 d = out.setdefault(srv, {"generated": None, "commands": []})
+                plug = active.get(srv, {}).get(str(g["plugin"]).lower())
                 for row in g.get("commands", []):
+                    # plugin có trong danh sách tự xuất của server này mà lệnh gốc (/diemdanh của "diemdanh xem") không chạy
+                    # ở đây (module tắt, chỉ có ở Bang Hội Chiến) -> không liệt kê cho server này
+                    if plug is not None and str(row[0]).split()[0].lower() not in plug:
+                        continue
                     same = [r for r in d["commands"] if r["plugin"] == g["plugin"] and r["name"] == str(row[0])]
                     if same:  # trùng lệnh tự xuất: dùng mô tả + "ai dùng được" ghi tay
                         same[0].update(desc_vi=str(row[1]), who=str(row[2]) if len(row) > 2 else same[0]["who"])
@@ -723,7 +736,6 @@ def role_action(data):
         else:
             cmd = f"lp group {group} permission set {node} {'false' if act == 'perm_deny' else 'true'}{ctx}"
         rcon("lobby", [cmd])
-        import time
         time.sleep(1.5)
         return {"ok": True, "message": f"Đã gửi: /{cmd}", "data": roles_json()}
     if not PLAYER_RE.match(player):
@@ -744,9 +756,30 @@ def role_action(data):
     else:
         raise ValueError("Thao tác không hợp lệ")
     rcon("lobby", cmds)
-    import time
     time.sleep(2)  # lệnh chạy bất đồng bộ (tải người chơi, ghi DB)
+    threading.Thread(target=tell_role_change, args=(player, group, act, data.get("months")), daemon=True).start()
     return {"ok": True, "message": f"Đã gửi: /{cmds[0]}. Người chơi phải từng vào server.", "data": roles_json()}
+
+
+def tell_role_change(player, group, act, months=None):
+    """Báo vào game cho người vừa được cấp/gỡ role (nếu đang online). LuckPerms tự làm mới danh sách lệnh của client."""
+    shown = {"admin": "Admin", "mod": "Mod", "helper": "Helper", "builder": "Builder"}.get(group, group)
+    if group in DONATE_GROUPS:
+        shown = {"namtuoc": "Nam Tước", "tutuoc": "Tử Tước", "batuoc": "Bá Tước", "hautuoc": "Hầu Tước", "congtuoc": "Công Tước"}[group]
+    if act == "add":
+        text = f"Bạn vừa được cấp {shown}" + (f" ({months} tháng)" if group in DONATE_GROUPS and months else "") + \
+            ". Xem quyền và lệnh mới: gõ /web rồi mở trang tài khoản."
+        if group not in DONATE_GROUPS:
+            text += " Lệnh Essentials (/fly, /kick…) dùng ở Bang Hội Chiến và Practice."
+    else:
+        text = f"Role {shown} của bạn đã được gỡ."
+    srv = online_players().get(player.lower())
+    if srv:
+        raw = ["", {"text": "[Role] ", "color": "gold", "bold": True}, {"text": text, "color": "yellow"}]
+        try:
+            rcon(srv, [f"tellraw {player} " + json.dumps(raw, ensure_ascii=False)])
+        except Exception:
+            pass
 
 
 def modes_json(cats=None):
@@ -1370,6 +1403,145 @@ def web_reset(data, ip):
     return {"ok": False, "message": "Server Bang Hội Chiến đang tắt hoặc chưa cập nhật, thử lại sau."}
 
 
+# ---------------------------------------------------------------- donate (chuyển khoản QR, admin duyệt tay)
+# Người chơi chọn gói trên trang tài khoản, quét QR, bấm "Tôi đã chuyển khoản" -> ghi data/panel/donate.json + báo admin
+# (tin trong game cho admin đang online, dòng "admin" ở trang Hoạt động, trang /donate). Chưa tự cấp rank: admin kiểm tra
+# tiền đã về rồi bấm "Cấp rank" (chạy /rank give) hoặc "Huỷ".
+
+DONATE_FILE = DATA_DIR / "panel" / "donate.json"
+_donate_lock = threading.Lock()
+PRICE_RE = re.compile(r"(\d+)\s*(tháng|thang|năm|nam)\D*?([\d.,]+)\s*(k|nghìn|ngàn|tr|triệu|đ|vnd)?", re.I)
+
+
+def donate_tiers():
+    """Các bậc + gói từ cấu hình DuckyMoMoCore (giá ghi kiểu '3 tháng 50k', '1 năm 1.200k')."""
+    core = taikhoan.safe_yaml(taikhoan.DMM / "config.yml")
+    out = []
+    for t in (core.get("donate-ranks") or {}).get("tiers") or []:
+        goi = []
+        for i, txt in enumerate(t.get("prices") or []):
+            m = PRICE_RE.search(str(txt))
+            if not m:
+                continue
+            n = int(m.group(1)) * (12 if m.group(2).lower() in ("năm", "nam") else 1)
+            num = float(m.group(3).replace(".", "").replace(",", "."))
+            unit = (m.group(4) or "").lower()
+            vnd = int(num * (1000 if unit in ("k", "nghìn", "ngàn") else 1_000_000 if unit in ("tr", "triệu") else 1))
+            goi.append({"id": i, "ten": str(txt), "thang": n, "tien": vnd})
+        out.append({"group": t.get("group"), "ten": t.get("name"), "mau": t.get("color", "&f"), "goi": goi})
+    return out
+
+
+def donate_load():
+    try:
+        return json.loads(DONATE_FILE.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return []
+
+
+def donate_save(rows):
+    DONATE_FILE.parent.mkdir(parents=True, exist_ok=True)
+    tmp = DONATE_FILE.with_suffix(".tmp")
+    tmp.write_text(json.dumps(rows, ensure_ascii=False, indent=1), encoding="utf-8")
+    tmp.replace(DONATE_FILE)
+
+
+def donate_code(name, tier_idx, months, rid):
+    """Nội dung chuyển khoản: chỉ chữ + số (ngân hàng bỏ ký tự lạ), vd 'DMM B0YBN R1 3T K7Q2'."""
+    return f"DMM {re.sub(r'[^A-Za-z0-9]', '', name).upper()} R{tier_idx + 1} {months}T {rid}"
+
+
+def notify_admins(text):
+    """Báo admin đang online (có quyền duckymomo.rank.admin) bằng tin trong game + ghi dòng trang Hoạt động."""
+    raw = ["", {"text": "[Donate] ", "color": "gold", "bold": True}, {"text": text, "color": "yellow"}]
+    for name, srv in online_players().items():
+        try:
+            perms = taikhoan.load_perms(name)
+            if perms and taikhoan.has(perms, "duckymomo.rank.admin"):
+                rcon(srv, [f"tellraw {perms['name']} " + json.dumps(raw, ensure_ascii=False)])
+        except Exception:
+            pass
+    from datetime import datetime, timezone
+    event = {"ts": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"), "server": "web", "type": "admin", "player": "Donate",
+             "text": "Donate · " + text, "target": ""}
+    try:
+        ADMIN_FILE.parent.mkdir(parents=True, exist_ok=True)
+        with ADMIN_FILE.open("a", encoding="utf-8") as f:
+            f.write(json.dumps(event, ensure_ascii=False) + "\n")
+    except OSError:
+        pass
+
+
+def web_donate(data, ip):
+    """Trang web: tạo mã chuyển khoản (action=tao) hoặc báo đã chuyển (action=bao); xem yêu cầu của mình (action=ds)."""
+    import secrets
+    name = str(data.get("ten", "")).strip()
+    if not PLAYER_RE.match(name):
+        raise ValueError("Tên không hợp lệ")
+    act = data.get("action")
+    with _donate_lock:
+        rows = donate_load()
+        mine = [r for r in rows if r["ten"].lower() == name.lower()]
+        if act == "ds":
+            return {"ok": True, "yeu_cau": mine[-10:][::-1], "bac": donate_tiers()}
+        if act == "tao":
+            tiers = donate_tiers()
+            ti, gi = int(data.get("bac", -1)), int(data.get("goi", -1))
+            if not (0 <= ti < len(tiers)) or not any(g["id"] == gi for g in tiers[ti]["goi"]):
+                raise ValueError("Gói không hợp lệ")
+            g = next(g for g in tiers[ti]["goi"] if g["id"] == gi)
+            # dùng lại mã chưa báo của đúng gói này (bấm lại không sinh mã mới mỗi lần)
+            old = next((r for r in mine if r["trang_thai"] == "tao" and r["group"] == tiers[ti]["group"] and r["thang"] == g["thang"]), None)
+            if old:
+                return {"ok": True, "don": old}
+            if sum(1 for r in mine if r["trang_thai"] in ("tao", "cho")) >= 5:
+                raise ValueError("Bạn đang có 5 yêu cầu chưa xong. Chờ admin duyệt hoặc nhắn admin.")
+            rid = "".join(secrets.choice("ABCDEFGHJKLMNPQRSTUVWXYZ23456789") for _ in range(4))
+            don = {"id": rid, "ten": name, "group": tiers[ti]["group"], "bac": tiers[ti]["ten"], "goi": g["ten"], "thang": g["thang"],
+                   "tien": g["tien"], "noi_dung": donate_code(name, ti, g["thang"], rid), "trang_thai": "tao",
+                   "tao_luc": int(time.time() * 1000), "ip": ip}
+            rows.append(don)
+            donate_save(rows)
+            return {"ok": True, "don": don}
+        if act == "bao":
+            don = next((r for r in mine if r["id"] == str(data.get("id", ""))), None)
+            if not don or don["trang_thai"] != "tao":
+                raise ValueError("Không có yêu cầu này, hoặc đã báo rồi.")
+            don.update(trang_thai="cho", bao_luc=int(time.time() * 1000))
+            donate_save(rows)
+    if act != "bao":
+        raise ValueError("Thao tác không hợp lệ")
+    msg = f"{name} báo đã chuyển {don['tien']:,}đ cho {don['bac']} {don['goi']} (nội dung: {don['noi_dung']}). Kiểm tra tài khoản rồi duyệt ở trang quản trị > Donate.".replace(",", ".")
+    threading.Thread(target=notify_admins, args=(msg,), daemon=True).start()
+    web_log({"viec": "donate-bao", "nguoi": name, "don": don["id"], "ip": ip})
+    return {"ok": True, "don": don, "message": "Đã báo admin. Admin kiểm tra tiền đã về rồi cấp rank (thường trong ngày)."}
+
+
+def donate_admin(data, actor):
+    """Trang /donate: cap (chạy /rank give rồi đánh dấu đã cấp) | xong (đã cấp tay) | huy."""
+    act, rid = data.get("action"), str(data.get("id", ""))
+    with _donate_lock:
+        rows = donate_load()
+        don = next((r for r in rows if r["id"] == rid), None)
+        if not don:
+            raise ValueError("Không có yêu cầu này")
+        if act == "cap":
+            if don["trang_thai"] == "da_cap":
+                raise ValueError("Yêu cầu này đã cấp rank rồi")
+            res = rcon("lobby", [f"rank give {don['ten']} {don['group']} {don['thang']}"])[0][1]
+            don.update(trang_thai="da_cap", ket_qua=res[:200])
+        elif act == "xong":
+            don["trang_thai"] = "da_cap"
+        elif act == "huy":
+            don["trang_thai"] = "huy"
+        else:
+            raise ValueError("Thao tác không hợp lệ")
+        don.update(xu_ly_boi=actor or PANEL_USER, xu_ly_luc=int(time.time() * 1000))
+        donate_save(rows)
+    return {"ok": True, "message": {"cap": "Đã gửi /rank give: " + don.get("ket_qua", ""), "xong": "Đã đánh dấu đã cấp.", "huy": "Đã huỷ yêu cầu."}[act],
+            "data": donate_load()[::-1]}
+
+
 def account_times(name):
     try:
         con = taikhoan.db("network")
@@ -1399,25 +1571,34 @@ def web_profile(name, by_code):
         roles.append({"id": g, "ten": m.get("display", g), "prefix": m.get("prefix", ""), "het": d["expiry"],
                       "server": d["server"], "loai": "donate" if g in DONATE_GROUPS else ("staff" if g in STAFF_GROUPS else "khac")})
     cmds = web_cached("lenh", 60, lambda: all_commands(YAML(typ="safe").load(CAMNANG_FILE.read_text(encoding="utf-8")) or {}))
+    hoso = taikhoan.profile(perms)
+    roles_towny = set((hoso.get("towny") or {}).get("chuc", []))
     lenh = {}
-    for srv in GAME_SERVERS:
-        rows = (cmds.get(srv) or {}).get("commands", [])
-        lenh[srv] = [{"plugin": r["plugin"], "ten": r["name"], "goi_tat": r.get("aliases", [])[:4], "mo_ta": r.get("desc_vi") or r.get("desc", ""),
-                      "rieng": r.get("who") != "Mọi người"} for r in rows if taikhoan.can_use_command(r, perms, srv)]
+    for srv in GAME_SERVERS + ["proxy"]:
+        rows, seen = [], set()
+        for r in (cmds.get(srv) or {}).get("commands", []):
+            ok, tag = taikhoan.command_access(r, perms, None if srv == "proxy" else srv, roles_towny)
+            if not ok or (r["plugin"], r["name"]) in seen:
+                continue
+            seen.add((r["plugin"], r["name"]))
+            rows.append({"plugin": r["plugin"], "ten": r["name"], "goi_tat": r.get("aliases", [])[:4],
+                         "mo_ta": r.get("desc_vi") or r.get("desc", ""), "nhan": tag})
+        lenh[srv] = rows
     is_staff = bool(acc["features"]) or acc["toan_quyen"]
     return {"ok": True, "ten": perms["name"] if perms["name"].lower() == name.lower() else name, "bedrock": name.startswith("."),
             "taikhoan": account_times(name), "online": online_players().get(name.lower()),
             "roles": roles, "nhom": sorted(g for g in perms["groups"] if g != "default"),
-            "hoso": taikhoan.profile(perms), "lenh": lenh,
+            "hoso": hoso, "lenh": lenh,
             "quantri": {"la_staff": is_staff, "toan_quyen": acc["toan_quyen"], "qua_game": by_code,
                         "tinh_nang": list(acc["features"].values()), "loai_caidat": acc["categories"]}}
 
 
 # Trang/API -> tính năng cần có (staff đăng nhập bằng tài khoản game)
 PAGE_FEATURES = {"/": ("caidat",), "/thuvien": ("thuvien", "thuvien-dua"), "/boss": ("boss",), "/role": ("role", "role-quyen"),
-                 "/hoatdong": ("hoatdong",), "/camnang": ("camnang",), "/huongdan": ("huongdan",)}
+                 "/hoatdong": ("hoatdong",), "/camnang": ("camnang",), "/huongdan": ("huongdan",),
+                 "/donate": ("donate",)}
 API_GET_FEATURES = {"/api/modes": ("caidat",), "/api/camnang": ("camnang",), "/api/huongdan": ("huongdan",), "/api/roles": ("role", "role-quyen"),
-                    "/api/boss": ("boss",), "/api/activity": ("hoatdong",), "/api/thuvien": None, "/api/toi": None}
+                    "/api/boss": ("boss",), "/api/activity": ("hoatdong",), "/api/donate": ("donate",), "/api/thuvien": None, "/api/toi": None}
 # Không ai ngoài admin toàn quyền đụng được: role admin/mod, quyền nguy hiểm
 PROTECTED_GROUPS = {"admin", "mod"}
 PROTECTED_PERM_RE = re.compile(r"^(\*|duckymomo\.web.*|duckymomo\.admin.*|luckperms.*)$")
@@ -1503,6 +1684,8 @@ class Handler(BaseHTTPRequestHandler):
         try:
             if method == "POST" and path == "/api/web/xacminh":
                 self.send_json(200, web_login(self.read_body(4096), self.headers.get("X-DMM-Ip", "")))
+            elif method == "POST" and path == "/api/web/donate":
+                self.send_json(200, web_donate(self.read_body(4096), self.headers.get("X-DMM-Ip", "")))
             elif method == "POST" and path == "/api/web/choilai":
                 self.send_json(200, web_reset(self.read_body(4096), self.headers.get("X-DMM-Ip", "")))
             elif method == "GET" and path == "/api/web/hoso":
@@ -1540,10 +1723,10 @@ class Handler(BaseHTTPRequestHandler):
             return self.send_json(200, {"ten": self.who["name"] if self.who else PANEL_USER, "game": self.who is not None,
                                         "toan_quyen": acc["toan_quyen"] if acc else True,
                                         "tinh_nang": list(acc["features"]) if acc else None})
-        if path in ("/", "/hoatdong", "/camnang", "/huongdan", "/role", "/thuvien", "/boss"):
+        if path in ("/", "/hoatdong", "/camnang", "/huongdan", "/role", "/thuvien", "/boss", "/donate"):
             dozzle = DOZZLE_PROXY_URL if self.headers.get("X-Forwarded-Prefix") else DOZZLE_URL
             page = {"/": INDEX_HTML, "/hoatdong": ACTIVITY_HTML, "/camnang": CAMNANG_HTML, "/huongdan": HUONGDAN_HTML, "/role": ROLE_HTML,
-                    "/thuvien": THUVIEN_HTML, "/boss": BOSS_HTML}[path]
+                    "/thuvien": THUVIEN_HTML, "/boss": BOSS_HTML, "/donate": DONATE_HTML}[path]
             body = page.replace("__DOZZLE_URL__", "" if self.who else dozzle).encode("utf-8")
             self.send_response(200)
             self.send_header("Content-Type", "text/html; charset=utf-8")
@@ -1574,6 +1757,8 @@ class Handler(BaseHTTPRequestHandler):
             self.send_json(200, thuvien_json())
         elif path == "/api/boss":
             self.send_json(200, boss_json())
+        elif path == "/api/donate":
+            self.send_json(200, {"rows": donate_load()[::-1]})
         elif path == "/api/activity":
             params = {k: v[-1] for k, v in urllib.parse.parse_qs(query).items()}
             self.send_json(200, read_activity(params))
@@ -1599,6 +1784,8 @@ class Handler(BaseHTTPRequestHandler):
             ok = self.can("thuvien-dua" if b.get("action") == "give" else "thuvien")
         elif p == "/api/huongdan":
             ok = self.can("huongdan")
+        elif p == "/api/donate":
+            ok = self.can("donate")
         else:
             m = re.fullmatch(r"/api/modes/([a-z0-9_-]+)/(save|apply-all)", p)
             if m and m.group(2) == "save":
@@ -1650,6 +1837,14 @@ class Handler(BaseHTTPRequestHandler):
         if self.path == "/api/thuvien":
             try:
                 self.send_json(200, thuvien_action(self.body, self.who["name"] if self.who else None))
+            except ValueError as e:
+                self.send_json(400, {"ok": False, "message": str(e)})
+            except Exception as e:
+                self.send_json(500, {"ok": False, "message": f"Lỗi: {e}"})
+            return
+        if self.path == "/api/donate":
+            try:
+                self.send_json(200, donate_admin(self.body, self.who["name"] if self.who else None))
             except ValueError as e:
                 self.send_json(400, {"ok": False, "message": str(e)})
             except Exception as e:

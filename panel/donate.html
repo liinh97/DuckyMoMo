@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DuckyMoMo · Donate</title>
+<link rel="stylesheet" href="ui.css">
+<style>
+  main { padding: 0 0 80px; }
+  .tabs { display: flex; gap: 6px; flex-wrap: wrap; margin: 4px 0 14px; }
+  .tabs button { border: 1px solid var(--line); background: var(--card); color: var(--muted); border-radius: 999px; padding: 6px 14px; cursor: pointer; font-weight: 600; }
+  .tabs button.on { background: var(--accent); color: var(--accent-text); border-color: var(--accent); }
+  .list { display: flex; flex-direction: column; gap: 10px; }
+  .don { padding: 14px 18px; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; align-items: center; }
+  .don h3 { margin: 0 0 4px; font-size: 16px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .don .meta { color: var(--muted); font-size: 13.5px; }
+  .don code { background: var(--chip); border-radius: 6px; padding: 1px 7px; font-size: 13px; }
+  .don .money { font-weight: 700; color: var(--accent); }
+  .don .acts { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+  .st-cho { background: rgba(178, 106, 0, .14); color: var(--warn); font-weight: 600; }
+  .st-da_cap { background: rgba(30, 142, 62, .12); color: var(--ok); font-weight: 600; }
+  .st-huy { color: var(--muted); }
+  .empty { color: var(--muted); padding: 18px 0; }
+  .hint { color: var(--muted); font-size: 13.5px; margin: 0 0 12px; }
+  @media (max-width: 700px) { .don { grid-template-columns: 1fr; } .don .acts { justify-content: flex-start; } }
+</style>
+</head>
+<body data-dozzle="__DOZZLE_URL__" data-title="Donate" data-sub="Người chơi chọn gói trên trang tài khoản, quét QR chuyển khoản rồi bấm 'Tôi đã chuyển khoản'. Kiểm tra tiền đã về (đúng số tiền + nội dung) rồi mới cấp rank.">
+<script src="shell.js"></script>
+<main>
+  <div class="tabs" id="tabs"></div>
+  <p class="hint">"Cấp rank" chạy <code>/rank give &lt;tên&gt; &lt;bậc&gt; &lt;tháng&gt;</code> (gia hạn thì cộng dồn). Chỉ đồ trang trí, đúng luật Mojang.</p>
+  <div class="list" id="list"><div class="empty">Đang tải…</div></div>
+</main>
+<script>
+const ST = { cho: "Chờ duyệt", tao: "Chưa báo chuyển", da_cap: "Đã cấp", huy: "Đã huỷ" };
+let rows = [], tab = "cho";
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const when = ms => ms ? new Date(ms).toLocaleString("vi-VN", { hour: "2-digit", minute: "2-digit", day: "2-digit", month: "2-digit" }) : "";
+function draw() {
+  const count = k => rows.filter(r => r.trang_thai === k).length;
+  document.getElementById("tabs").innerHTML = ["cho", "tao", "da_cap", "huy"].map(k =>
+    `<button class="${k === tab ? "on" : ""}" data-k="${k}">${ST[k]} (${count(k)})</button>`).join("");
+  document.querySelectorAll("#tabs button").forEach(b => b.onclick = () => { tab = b.dataset.k; draw(); });
+  const list = rows.filter(r => r.trang_thai === tab);
+  document.getElementById("list").innerHTML = list.length ? list.map(r => `
+    <div class="card don"><div>
+      <h3>${esc(r.ten)} <span class="badge accent">${esc(r.bac)}</span> <span class="badge">${esc(r.goi)}</span> <span class="badge st-${r.trang_thai}">${ST[r.trang_thai]}</span></h3>
+      <div class="meta"><span class="money">${Number(r.tien).toLocaleString("vi-VN")}đ</span> · nội dung <code>${esc(r.noi_dung)}</code>
+        · tạo ${when(r.tao_luc)}${r.bao_luc ? " · báo đã chuyển " + when(r.bao_luc) : ""}${r.xu_ly_boi ? ` · ${esc(r.xu_ly_boi)} xử lý ${when(r.xu_ly_luc)}` : ""}</div>
+    </div><div class="acts">${r.trang_thai === "cho" || r.trang_thai === "tao" ? `
+      <button class="primary" data-a="cap" data-id="${r.id}">Cấp rank ${esc(r.thang)} tháng</button>
+      <button class="ghost" data-a="xong" data-id="${r.id}">Đã cấp tay</button>
+      <button class="ghost" data-a="huy" data-id="${r.id}">Huỷ</button>` : ""}</div></div>`).join("")
+    : `<div class="empty">Không có yêu cầu nào${tab === "cho" ? " đang chờ duyệt" : ""}.</div>`;
+  document.querySelectorAll("[data-a]").forEach(b => b.onclick = () => act(b.dataset.a, b.dataset.id));
+}
+async function act(a, id) {
+  const r = rows.find(x => x.id === id);
+  const q = { cap: `Cấp ${r.bac} ${r.thang} tháng cho ${r.ten}? Kiểm tra đã nhận ${Number(r.tien).toLocaleString("vi-VN")}đ với nội dung ${r.noi_dung}.`,
+    xong: `Đánh dấu đã cấp (bạn đã tự cấp bằng lệnh)?`, huy: `Huỷ yêu cầu của ${r.ten}?` }[a];
+  if (!confirm(q)) return;
+  toast("Đang xử lý…");
+  const res = await fetch("api/donate", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: a, id }) });
+  const d = await res.json().catch(() => ({}));
+  toast(d.message || "Lỗi", d.ok ? "ok" : "err");
+  if (d.data) { rows = d.data; draw(); }
+}
+fetch("api/donate").then(r => r.json()).then(d => { rows = d.rows || []; draw(); })
+  .catch(() => { document.getElementById("list").innerHTML = '<div class="empty">Không tải được.</div>'; });
+</script>
+</body>
+</html>

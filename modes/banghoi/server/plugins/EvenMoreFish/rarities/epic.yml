@@ -1,0 +1,63 @@
+# DuckyMoMo: độ hiếm <light_purple>Quý. Cá có "mùa" chỉ câu được trong mùa đó (placeholder %dmmmua_id% của DuckyMoMoCore, /mua).
+# Cá biển (biome-set oceans) chỉ câu ở biển. Giá bán /emf shop = chiều dài (cm) x worth-multiplier.
+id: Epic
+disabled: false
+displayname: '<light_purple>Quý'
+format: '<light_purple><bold>{name}'
+weight: 6
+item:
+  material: magenta_concrete_powder
+broadcast:
+  enabled: true
+  only-rods: false
+  range: -1
+catch-type: CATCH
+size:
+  minSize: 40
+  maxSize: 100
+worth-multiplier: 0.15
+fish:
+  CaBop:
+    displayname: 'Cá bớp'
+    sort-index: 0
+    item:
+      material: SALMON
+      lore:
+        - '<gray>Cá biển thịt chắc'
+    requirements:
+      biome-set:
+        - oceans
+  CaHong:
+    displayname: 'Cá hồng'
+    sort-index: 1
+    item:
+      material: SALMON
+      lore:
+        - '<gray>Màu đỏ may mắn'
+    requirements:
+      biome-set:
+        - oceans
+  CaChinh:
+    displayname: 'Cá chình'
+    sort-index: 2
+    item:
+      material: COD
+      lore:
+        - '<gray>Chỉ lên mặt nước khi mưa lớn'
+        - '<aqua>☔ Chỉ mùa mưa'
+    requirements:
+      placeholder:
+        - "%dmmmua_id% == mua"
+  CaMu:
+    displayname: 'Cá mú'
+    sort-index: 3
+    item:
+      material: PUFFERFISH
+      lore:
+        - '<gray>Núp trong rạn san hô mùa khô'
+        - '<gold>☀ Chỉ mùa khô'
+    requirements:
+      placeholder:
+        - "%dmmmua_id% == kho"
+      biome-set:
+        - oceans

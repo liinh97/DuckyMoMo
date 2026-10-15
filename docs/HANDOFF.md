@@ -112,6 +112,24 @@
 15. **Nút bộ quyền khuyên dùng (trang Role)**: role có file trong `ROLE_PRESETS` (quanly, builder) hiện nút "Tạo role + bộ quyền khuyên dùng"
    / "Áp bộ quyền khuyên dùng" (chỉ toàn quyền), chạy các dòng `lp ...` của `tools/<role>-role.cmds` qua RCON lobby. Panel mount `../tools:/repo/tools:ro`.
    Role chưa có trong LuckPerms hiện cảnh báo đỏ (`exists` từ bảng luckperms_groups).
+   Trong preset và Cài đặt, prefix Manager được đặt bằng `meta clear prefix` (xoá MỌI prefix cũ, vd [Quản lý]) rồi mới setprefix 90. Trang Role hiện
+   prefix có priority cao nhất (như game) và cảnh báo khi role còn nhiều prefix.
+
+16. **Mùa mưa / mùa khô + câu cá theo mùa (15/10 tối, CHƯA build, CHƯA thử)**. Ý tưởng từ bài tuyển mem "4 mùa, nông sản, cá theo mùa".
+   Người dùng chọn tự làm mùa + plugin câu cá (KHÔNG dùng CustomCrops: bắt buộc CraftEngine/ItemsAdder + resource pack ép tải, Bedrock thấy lỗi).
+   - DuckyMoMoCore `Seasons.java`, config `seasons` (banghoi): mùa theo ngày thật giờ VN (`start-date` 2026-10-12 = mùa mưa, 7 ngày/mùa, lặp mua → kho).
+     Hệ số lớn của cây theo khối mọc ra (BlockGrowEvent: <1 huỷ bớt, >1 cây có tuổi lên thêm 1 bậc), được mùa (% rơi thêm khi gặt cây chín),
+     mưa theo mùa (mỗi 5 phút đổ/tạnh theo %), title + tin khi đổi mùa, tin khi vào game, `/mua` (+ `/mua dat <id|tudong>` quyền duckymomo.mua.admin,
+     ghi đè lưu ở mua.yml). Placeholder `%dmmmua_id|ten|ten_tron|con|sau%`. Trang Cài đặt > Bang Hội Chiến > Thế giới > Mùa mưa / mùa khô.
+   - **EvenMoreFish** (Modrinth `evenmorefish`, GPL, miễn phí, có module 26.2; thay cho CustomFishing vì CustomFishing trả phí ~12 USD, không có
+     bản tải miễn phí): config ở `modes/banghoi/server/plugins/EvenMoreFish/` (bản 2.5.1 sửa: locale vn, only-fish true giữ kho báu gốc,
+     chống câu treo, sqlite, cá ăn/nướng được, chỉ world). 24 cá Việt trong `rarities/` (Common/Rare/Epic/Legendary), cá theo mùa bằng
+     `requirements.placeholder: "%dmmmua_id% == mua|kho"`, cá biển `biome-set: oceans`. Thi câu T7, CN 20:00 (`competitions/thicau.yml`, thưởng xu),
+     2 mồi (`baits/`). Thư mục rarities/competitions/baits có sẵn nên plugin KHÔNG tạo bộ mặc định tiếng Anh (rods/ thì có, không ảnh hưởng).
+     Chưa rõ: uJobs nghề Ngư dân có còn tính tiền với cá EMF (vẫn là COD/SALMON…), bản tiếng Việt `messages_vn` có thiếu dòng nào không.
+   - **Chống xray** (Paper có sẵn): `modes/banghoi/server/config/paper-world-defaults.yml`, engine-mode 1, dưới y 64. Cần khởi động lại banghoi-1.
+   - Triển khai ở nhà: git pull → `./ops/build-core.sh` → kiểm tra không ai online → `docker compose up -d --no-deps banghoi-1` (nạp PLUGINS mới)
+     → thử `/mua`, `/mua dat kho`, câu cá ở sông và biển, `/emf shop`, `/papi parse me %dmmmua_id%`.
 
 ### Người dùng phải tự làm (nhắc lại khi phù hợp)
 - Thêm `[boot] command = modprobe tcp_bbr` vào `/etc/wsl.conf` (để BBR có sau mỗi lần khởi động WSL):

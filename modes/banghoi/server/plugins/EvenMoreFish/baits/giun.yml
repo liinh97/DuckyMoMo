@@ -1,0 +1,16 @@
+# DuckyMoMo: mồi câu (rơi ngẫu nhiên khi câu, catch-percentage trong config.yml). Gắn vào cần: /emf applybaits (cầm cần, mở menu).
+id: giunDat
+disabled: false
+silent: false
+item:
+  material: STRING
+  displayname: <yellow>Mồi giun đất
+  glowing: true
+  lore:
+    - '<gray>Cá thường và cá hiếm cắn nhiều hơn'
+rarity-modifiers:
+  Common: "*1.5"
+  Rare: "*1.5"
+catch-weight: 30
+application-weight: 40
+max-baits: 16

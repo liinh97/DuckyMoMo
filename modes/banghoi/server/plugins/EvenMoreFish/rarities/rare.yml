@@ -1,0 +1,82 @@
+# DuckyMoMo: độ hiếm <aqua>Hiếm. Cá có "mùa" chỉ câu được trong mùa đó (placeholder %dmmmua_id% của DuckyMoMoCore, /mua).
+# Cá biển (biome-set oceans) chỉ câu ở biển. Giá bán /emf shop = chiều dài (cm) x worth-multiplier.
+id: Rare
+disabled: false
+displayname: '<aqua>Hiếm'
+format: '<aqua>{name}'
+weight: 25
+item:
+  material: light_blue_concrete_powder
+broadcast:
+  enabled: false
+  only-rods: false
+  range: -1
+catch-type: CATCH
+size:
+  minSize: 20
+  maxSize: 60
+worth-multiplier: 0.08
+fish:
+  CaThu:
+    displayname: 'Cá thu'
+    sort-index: 0
+    item:
+      material: COD
+      lore:
+        - '<gray>Cá thu một nắng'
+    requirements:
+      biome-set:
+        - oceans
+  CaBasa:
+    displayname: 'Cá basa'
+    sort-index: 1
+    item:
+      material: SALMON
+      lore:
+        - '<gray>Đặc sản sông Mê Kông'
+  TomCangXanh:
+    displayname: 'Tôm càng xanh'
+    sort-index: 2
+    item:
+      material: TROPICAL_FISH
+      lore:
+        - '<gray>Mùa nước nổi tôm càng to nhất'
+        - '<aqua>☔ Chỉ mùa mưa'
+    requirements:
+      placeholder:
+        - "%dmmmua_id% == mua"
+  CuaDong:
+    displayname: 'Cua đồng'
+    sort-index: 3
+    item:
+      material: TROPICAL_FISH
+      lore:
+        - '<gray>Nấu canh rau đay'
+        - '<aqua>☔ Chỉ mùa mưa'
+    requirements:
+      placeholder:
+        - "%dmmmua_id% == mua"
+  CaKeo:
+    displayname: 'Cá kèo'
+    sort-index: 4
+    item:
+      material: COD
+      lore:
+        - '<gray>Lẩu cá kèo lá giang'
+        - '<gold>☀ Chỉ mùa khô'
+    requirements:
+      placeholder:
+        - "%dmmmua_id% == kho"
+  MucOng:
+    displayname: 'Mực ống'
+    sort-index: 5
+    item:
+      material: INK_SAC
+      lore:
+        - '<gray>Mùa khô câu mực đêm'
+        - '<gold>☀ Chỉ mùa khô'
+    requirements:
+      placeholder:
+        - "%dmmmua_id% == kho"
+      biome-set:
+        - oceans

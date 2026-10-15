@@ -415,3 +415,39 @@ event-fragments:
     - {label: "5000 xu", cost: {lamnguy: 25}, limit: 0, rewards: ["xu 5000"]}
     - {label: "16 kim cương", cost: {lamnguy: 40}, limit: 0, rewards: ["vat DIAMOND 16"]}
     - {label: "Đĩa nhạc Pigstep (trang trí)", cost: {lamnguy: 20}, limit: 1, rewards: ["vat MUSIC_DISC_PIGSTEP 1"]}
+
+# Mùa mưa / mùa khô (/mua). Đổi theo NGÀY THẬT giờ Việt Nam: start-date = ngày bắt đầu mùa đầu tiên trong order, mỗi mùa days-per-season ngày, lặp vòng.
+# growth: hệ số lớn của cây theo khối mọc ra (WHEAT lúa mì, CARROTS, POTATOES, BEETROOTS, SUGAR_CANE, BAMBOO, CACTUS, MELON/PUMPKIN = quả,
+#   MELON_STEM/PUMPKIN_STEM = dây, COCOA, KELP, SWEET_BERRY_BUSH). 0.5 = chậm một nửa, 1.5 = nhanh thêm ~50% (cây có tuổi). Không ghi = như gốc.
+# harvest-bonus: % rơi thêm 1 nông sản khi gặt cây ĐÃ CHÍN (WHEAT, CARROTS, POTATOES, BEETROOTS, COCOA).
+# rain-start-chance / rain-stop-chance: % mỗi 5 phút đổ mưa (khi đang tạnh) / tạnh (khi đang mưa), cộng với thời tiết gốc.
+# Cá theo mùa: EvenMoreFish đọc %dmmmua_id% (plugins/EvenMoreFish/rarities/*.yml, requirements.placeholder). Đổi id mùa thì sửa cả ở đó.
+# Admin thử: /mua dat kho · /mua dat tudong (trả về theo lịch).
+seasons:
+  enabled: true
+  start-date: "2026-10-12"
+  days-per-season: 7
+  worlds: [world]
+  join-message: true
+  order: [mua, kho]
+  list:
+    mua:
+      name: "&b☔ Mùa mưa"
+      subtitle: "&7Lúa, mía, tre lớn nhanh · cá linh, cá lóc về đồng"
+      rain-start-chance: 25
+      rain-stop-chance: 5
+      growth: {WHEAT: 1.4, SUGAR_CANE: 1.5, BAMBOO: 1.5, KELP: 1.3, MELON_STEM: 1.2, CACTUS: 0.5, POTATOES: 0.8, BEETROOTS: 0.8}
+      harvest-bonus: {WHEAT: 25}
+      hints:
+        - "&b≈ Cá mùa này: &fcá linh, cá lóc đồng, cá rô phi, tôm càng, cá chình, cá tra dầu (huyền thoại)"
+        - "&7Câu cá: &f/emf &7(nhật ký cá, bán cá: &f/emf shop&7)"
+    kho:
+      name: "&6☀ Mùa khô"
+      subtitle: "&7Khoai, cà rốt, dưa, bí được mùa · cá cơm, cá kèo, mực ra khơi"
+      rain-start-chance: 0
+      rain-stop-chance: 50
+      growth: {POTATOES: 1.4, CARROTS: 1.4, BEETROOTS: 1.3, MELON: 1.3, PUMPKIN: 1.3, COCOA: 1.3, CACTUS: 1.5, WHEAT: 0.8, SUGAR_CANE: 0.6, BAMBOO: 0.7}
+      harvest-bonus: {POTATOES: 25, CARROTS: 25, BEETROOTS: 25}
+      hints:
+        - "&6≈ Cá mùa này: &fcá cơm, cá bống, cá kèo, mực ống, cá mú, cá hô (huyền thoại)"
+        - "&7Câu cá: &f/emf &7(nhật ký cá, bán cá: &f/emf shop&7)"

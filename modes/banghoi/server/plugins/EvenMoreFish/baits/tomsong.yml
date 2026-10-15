@@ -1,0 +1,16 @@
+# DuckyMoMo: mồi hiếm, tăng cơ hội cá quý và huyền thoại.
+id: tomSong
+disabled: false
+silent: false
+item:
+  material: PRISMARINE_CRYSTALS
+  displayname: <light_purple>Mồi tôm sống
+  glowing: true
+  lore:
+    - '<gray>Cá quý, cá huyền thoại cắn nhiều hơn'
+rarity-modifiers:
+  Epic: "*2"
+  Legendary: "*2"
+catch-weight: 5
+application-weight: 10
+max-baits: 8

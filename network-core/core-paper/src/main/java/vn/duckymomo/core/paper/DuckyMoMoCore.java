@@ -27,6 +27,7 @@ public final class DuckyMoMoCore extends JavaPlugin {
     private DailyQuests quests;
     private LuckySpin spin;
     private me.clip.placeholderapi.expansion.PlaceholderExpansion spinPapi;
+    private me.clip.placeholderapi.expansion.PlaceholderExpansion seasonPapi;
 
     @Override
     public void onEnable() {
@@ -58,6 +59,10 @@ public final class DuckyMoMoCore extends JavaPlugin {
         if (spinPapi != null) {
             spinPapi.unregister();
             spinPapi = null;
+        }
+        if (seasonPapi != null) {
+            seasonPapi.unregister();
+            seasonPapi = null;
         }
         if (activity != null) {
             activity.shutdown();
@@ -418,6 +423,28 @@ public final class DuckyMoMoCore extends JavaPlugin {
             }
         }
         bind("vongquay", spin == null ? null : spin::command, "Vòng quay");
+
+        // Mùa mưa / mùa khô: cây lớn nhanh/chậm, được mùa, mưa theo mùa, placeholder cho cá theo mùa (Bang Hội Chiến: seasons.enabled)
+        Seasons seasons = getConfig().getBoolean("seasons.enabled") && getConfig().isConfigurationSection("seasons")
+                ? new Seasons(this, getConfig().getConfigurationSection("seasons")) : null;
+        if (seasons != null && !seasons.ready()) {
+            getLogger().warning("Mùa: seasons.order trống hoặc sai, tắt");
+            seasons = null;
+        }
+        if (seasons != null) {
+            getServer().getPluginManager().registerEvents(seasons, this);
+            seasons.start();
+            if (getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+                seasonPapi = seasons.placeholders();
+                seasonPapi.register();
+            }
+        }
+        bind("mua", seasons == null ? null : seasons::command, "Mùa mưa / mùa khô");
+        PluginCommand muaCmd = getCommand("mua");
+        if (muaCmd != null) {
+            Seasons ss = seasons;
+            muaCmd.setTabCompleter(ss == null ? null : (sender, cmd, label, args) -> ss.tab(sender, args));
+        }
         PluginCommand dmm = getCommand("dmm");
         if (dmm != null) {
             dmm.setExecutor((sender, cmd, label, args) -> {

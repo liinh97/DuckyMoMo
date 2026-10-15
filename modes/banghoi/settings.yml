@@ -923,3 +923,23 @@ decor_titles:
   - {id: luukhach, text: "&7[Lữ Khách]", price: 1000}
   - {id: nghenhan, text: "&d[Nghệ Nhân]", price: 3000}
   - {id: phuthuong, text: "&6[Phú Thương]", price: 8000}
+mua_on: true
+mua_start: "2026-10-12"
+mua_days: 7
+mua_join: true
+mua_mua_rain: 25
+mua_kho_stop: 50
+mua_mua_wheat: 1.4
+mua_mua_sugar_cane: 1.5
+mua_mua_potatoes: 0.8
+mua_mua_carrots: 1.0
+mua_mua_melon: 1.0
+mua_mua_pumpkin: 1.0
+mua_mua_cactus: 0.5
+mua_kho_wheat: 0.8
+mua_kho_sugar_cane: 0.6
+mua_kho_potatoes: 1.4
+mua_kho_carrots: 1.4
+mua_kho_melon: 1.3
+mua_kho_pumpkin: 1.3
+mua_kho_cactus: 1.5

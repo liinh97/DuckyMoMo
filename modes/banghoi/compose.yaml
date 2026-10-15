@@ -45,6 +45,8 @@ services:
       #   discordsrv = chat game <-> Discord (token bot, kênh: DISCORD_BOT_TOKEN, DISCORD_CHANNEL_ID trong .env; trống thì plugin tự tắt).
       #   elitemobs (14/10, GPL, MagmaGuy) = dungeon cày đồ/tiền + boss tuỳ chỉnh + sự kiện boss; dungeon tải trong game /em setup
       #     (cần mã tài khoản Nightbreak của chủ server). Tắt quái elite tự sinh ở world chính (xem docs/HANDOFF.md).
+      #   evenmorefish (15/10, GPL, miễn phí) = câu cá kiểu mới: 24 loại cá Việt theo mùa mưa/khô (%dmmmua_id% của DuckyMoMoCore), độ dài, nhật ký,
+      #     bán cá /emf shop, thi câu cuối tuần. Giữ đồ kho báu gốc (only-fish). Config: server/plugins/EvenMoreFish/. Không cần resource pack (Bedrock chơi được).
       MODRINTH_PROJECTS: |
         luckperms
         worldedit
@@ -75,6 +77,7 @@ services:
         crazyenchantments:QUo33hOY
         shopkeepers-addon
         elitemobs
+        evenmorefish
       # Plugin không có (hoặc chưa có bản 26.2) trên Modrinth: ghim link tải cụ thể. Nâng cấp: thay link.
       #   Shopkeepers 2.28.1 (dev.bukkit / forgecdn, Spigot ghi đã thử 26.2), SiegeWar 3.7.0 (GitHub), OldCombatMechanics 2.7.0 (GitHub, combat kiểu 1.8),
       #   EssentialsX bản dev #1832 (bản chính thức 2.22.0 mới tới 26.1.2): lõi + Chat + Spawn

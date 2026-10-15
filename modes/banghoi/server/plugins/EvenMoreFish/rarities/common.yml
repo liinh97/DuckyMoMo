@@ -1,0 +1,114 @@
+# DuckyMoMo: độ hiếm <gray>Thường. Cá có "mùa" chỉ câu được trong mùa đó (placeholder %dmmmua_id% của DuckyMoMoCore, /mua).
+# Cá biển (biome-set oceans) chỉ câu ở biển. Giá bán /emf shop = chiều dài (cm) x worth-multiplier.
+id: Common
+disabled: false
+displayname: '<gray>Thường'
+format: '<gray>{name}'
+weight: 100
+item:
+  material: light_gray_concrete_powder
+broadcast:
+  enabled: false
+  only-rods: false
+  range: -1
+catch-type: CATCH
+size:
+  minSize: 10
+  maxSize: 40
+worth-multiplier: 0.03
+fish:
+  CaRoDong:
+    displayname: 'Cá rô đồng'
+    sort-index: 0
+    item:
+      material: COD
+      lore:
+        - '<gray>Cá đồng quen thuộc, kho tộ là nhất'
+  CaChep:
+    displayname: 'Cá chép'
+    sort-index: 1
+    item:
+      material: COD
+      lore:
+        - '<gray>Cá chép vượt vũ môn'
+  CaTre:
+    displayname: 'Cá trê'
+    sort-index: 2
+    item:
+      material: COD
+      lore:
+        - '<gray>Da trơn, ria dài'
+  CaDieuHong:
+    displayname: 'Cá diêu hồng'
+    sort-index: 3
+    item:
+      material: SALMON
+      lore:
+        - '<gray>Hấp xì dầu cho cả nhà'
+  CaNuc:
+    displayname: 'Cá nục'
+    sort-index: 4
+    item:
+      material: COD
+      lore:
+        - '<gray>Cá biển rẻ mà ngon'
+    requirements:
+      biome-set:
+        - oceans
+  CaLinh:
+    displayname: 'Cá linh'
+    sort-index: 5
+    item:
+      material: COD
+      lore:
+        - '<gray>Về theo con nước nổi mùa mưa'
+        - '<aqua>☔ Chỉ mùa mưa'
+    requirements:
+      placeholder:
+        - "%dmmmua_id% == mua"
+  CaLocDong:
+    displayname: 'Cá lóc đồng'
+    sort-index: 6
+    item:
+      material: COD
+      lore:
+        - '<gray>Nướng trui rơm mùa nước lên'
+        - '<aqua>☔ Chỉ mùa mưa'
+    requirements:
+      placeholder:
+        - "%dmmmua_id% == mua"
+  CaRoPhi:
+    displayname: 'Cá rô phi'
+    sort-index: 7
+    item:
+      material: COD
+      lore:
+        - '<gray>Sinh sôi khắp ao hồ mùa mưa'
+        - '<aqua>☔ Chỉ mùa mưa'
+    requirements:
+      placeholder:
+        - "%dmmmua_id% == mua"
+  CaCom:
+    displayname: 'Cá cơm'
+    sort-index: 8
+    item:
+      material: COD
+      lore:
+        - '<gray>Mùa khô biển lặng, cá cơm vào lộng'
+        - '<gold>☀ Chỉ mùa khô'
+    requirements:
+      placeholder:
+        - "%dmmmua_id% == kho"
+      biome-set:
+        - oceans
+  CaBong:
+    displayname: 'Cá bống'
+    sort-index: 9
+    item:
+      material: COD
+      lore:
+        - '<gray>Nước cạn, bống lộ ra'
+        - '<gold>☀ Chỉ mùa khô'
+    requirements:
+      placeholder:
+        - "%dmmmua_id% == kho"

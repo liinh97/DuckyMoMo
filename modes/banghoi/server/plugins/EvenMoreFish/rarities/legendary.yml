@@ -1,0 +1,58 @@
+# DuckyMoMo: độ hiếm <gold>Huyền thoại. Cá có "mùa" chỉ câu được trong mùa đó (placeholder %dmmmua_id% của DuckyMoMoCore, /mua).
+# Cá biển (biome-set oceans) chỉ câu ở biển. Giá bán /emf shop = chiều dài (cm) x worth-multiplier.
+id: Legendary
+disabled: false
+displayname: '<gold>Huyền thoại'
+format: '<gold><bold>{name}'
+weight: 1
+item:
+  material: orange_concrete_powder
+broadcast:
+  enabled: true
+  only-rods: false
+  range: -1
+catch-type: CATCH
+size:
+  minSize: 80
+  maxSize: 250
+worth-multiplier: 0.3
+fish:
+  CaAnhVu:
+    displayname: 'Cá anh vũ'
+    sort-index: 0
+    item:
+      material: SALMON
+      lore:
+        - '<gray>Tiến vua, cả đời mới gặp một lần'
+  CaNguDaiDuong:
+    displayname: 'Cá ngừ đại dương'
+    sort-index: 1
+    item:
+      material: COD
+      lore:
+        - '<gray>Kình ngư ngoài khơi xa'
+    requirements:
+      biome-set:
+        - oceans
+  CaTraDau:
+    displayname: 'Cá tra dầu khổng lồ'
+    sort-index: 2
+    item:
+      material: SALMON
+      lore:
+        - '<gray>Thuỷ quái sông Mê Kông, chỉ lộ diện mùa mưa'
+        - '<aqua>☔ Chỉ mùa mưa'
+    requirements:
+      placeholder:
+        - "%dmmmua_id% == mua"
+  CaHo:
+    displayname: 'Cá hô'
+    sort-index: 3
+    item:
+      material: SALMON
+      lore:
+        - '<gray>Cá chép khổng lồ, mùa khô xuống vực sâu'
+        - '<gold>☀ Chỉ mùa khô'
+    requirements:
+      placeholder:
+        - "%dmmmua_id% == kho"

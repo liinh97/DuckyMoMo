@@ -433,6 +433,36 @@ groups:
       - { key: rtp_cost, label: Phí mỗi lần (0 = miễn phí), type: number, min: 0, file: plugins/DuckyMoMoCore/config.yml, path: rtp.cost,
           note: "Trừ tiền sau khi tìm được chỗ; dịch chuyển hỏng thì trả lại." }
 
+  - title: Mùa mưa / mùa khô (/mua)
+    category: Thế giới
+    description: "Mùa đổi theo ngày thật (giờ Việt Nam), mỗi mùa vài ngày, lặp vòng mưa → khô. Mỗi mùa có cây lớn nhanh/chậm, được mùa (rơi thêm khi gặt), mưa nhiều/ít, cá riêng (EvenMoreFish). Hệ số cây: 1 = như gốc, 0.5 = chậm một nửa, 1.4 = nhanh hơn ~40%. Chỉnh thêm cây, % được mùa, câu gợi ý: plugins/DuckyMoMoCore/config.yml (seasons). Admin thử trong game: /mua dat kho, /mua dat tudong."
+    apply: [dmm reload]
+    settings:
+      - { key: mua_on, label: Bật mùa, type: select, file: plugins/DuckyMoMoCore/config.yml, path: seasons.enabled,
+          options: [ { value: true, label: Bật }, { value: false, label: Tắt } ] }
+      - { key: mua_start, label: Ngày bắt đầu mùa mưa đầu tiên (yyyy-MM-dd), type: text, file: plugins/DuckyMoMoCore/config.yml, path: seasons.start-date,
+          note: "Từ ngày này: mùa mưa, rồi mùa khô, rồi lặp lại. Đổi ngày là đổi mùa hiện tại ngay." }
+      - { key: mua_days, label: Số ngày mỗi mùa, type: int, min: 1, max: 60, file: plugins/DuckyMoMoCore/config.yml, path: seasons.days-per-season,
+          note: "Một mùa server 10 tuần: 7 ngày = 5 vòng mưa/khô." }
+      - { key: mua_join, label: Báo mùa khi vào game, type: select, file: plugins/DuckyMoMoCore/config.yml, path: seasons.join-message,
+          options: [ { value: true, label: Có }, { value: false, label: Không } ] }
+      - { key: mua_mua_rain, label: "Mùa mưa: % đổ mưa mỗi 5 phút (khi đang tạnh)", type: number, min: 0, max: 100, file: plugins/DuckyMoMoCore/config.yml, path: seasons.list.mua.rain-start-chance }
+      - { key: mua_kho_stop, label: "Mùa khô: % tạnh mưa mỗi 5 phút (khi đang mưa)", type: number, min: 0, max: 100, file: plugins/DuckyMoMoCore/config.yml, path: seasons.list.kho.rain-stop-chance }
+      - { key: mua_mua_wheat, label: "Mùa mưa: Lúa mì", type: number, min: 0, max: 5, file: plugins/DuckyMoMoCore/config.yml, path: seasons.list.mua.growth.WHEAT }
+      - { key: mua_mua_sugar_cane, label: "Mùa mưa: Mía", type: number, min: 0, max: 5, file: plugins/DuckyMoMoCore/config.yml, path: seasons.list.mua.growth.SUGAR_CANE }
+      - { key: mua_mua_potatoes, label: "Mùa mưa: Khoai tây", type: number, min: 0, max: 5, file: plugins/DuckyMoMoCore/config.yml, path: seasons.list.mua.growth.POTATOES }
+      - { key: mua_mua_carrots, label: "Mùa mưa: Cà rốt", type: number, min: 0, max: 5, file: plugins/DuckyMoMoCore/config.yml, path: seasons.list.mua.growth.CARROTS }
+      - { key: mua_mua_melon, label: "Mùa mưa: Dưa hấu (quả)", type: number, min: 0, max: 5, file: plugins/DuckyMoMoCore/config.yml, path: seasons.list.mua.growth.MELON }
+      - { key: mua_mua_pumpkin, label: "Mùa mưa: Bí ngô (quả)", type: number, min: 0, max: 5, file: plugins/DuckyMoMoCore/config.yml, path: seasons.list.mua.growth.PUMPKIN }
+      - { key: mua_mua_cactus, label: "Mùa mưa: Xương rồng", type: number, min: 0, max: 5, file: plugins/DuckyMoMoCore/config.yml, path: seasons.list.mua.growth.CACTUS }
+      - { key: mua_kho_wheat, label: "Mùa khô: Lúa mì", type: number, min: 0, max: 5, file: plugins/DuckyMoMoCore/config.yml, path: seasons.list.kho.growth.WHEAT }
+      - { key: mua_kho_sugar_cane, label: "Mùa khô: Mía", type: number, min: 0, max: 5, file: plugins/DuckyMoMoCore/config.yml, path: seasons.list.kho.growth.SUGAR_CANE }
+      - { key: mua_kho_potatoes, label: "Mùa khô: Khoai tây", type: number, min: 0, max: 5, file: plugins/DuckyMoMoCore/config.yml, path: seasons.list.kho.growth.POTATOES }
+      - { key: mua_kho_carrots, label: "Mùa khô: Cà rốt", type: number, min: 0, max: 5, file: plugins/DuckyMoMoCore/config.yml, path: seasons.list.kho.growth.CARROTS }
+      - { key: mua_kho_melon, label: "Mùa khô: Dưa hấu (quả)", type: number, min: 0, max: 5, file: plugins/DuckyMoMoCore/config.yml, path: seasons.list.kho.growth.MELON }
+      - { key: mua_kho_pumpkin, label: "Mùa khô: Bí ngô (quả)", type: number, min: 0, max: 5, file: plugins/DuckyMoMoCore/config.yml, path: seasons.list.kho.growth.PUMPKIN }
+      - { key: mua_kho_cactus, label: "Mùa khô: Xương rồng", type: number, min: 0, max: 5, file: plugins/DuckyMoMoCore/config.yml, path: seasons.list.kho.growth.CACTUS }
+
   - title: Bảng giá bán cho server (/sell)
     category: Shop
     description: Giá bán MỘT vật phẩm bằng /sell. Biển thu mua ở spawn ghi giá riêng (tools/spawn-signs.py), đổi giá ở đây nên đổi cả biển. Vật phẩm khác sửa trong worth.yml.

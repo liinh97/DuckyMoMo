@@ -1,0 +1,43 @@
+# Paper (áp cho mọi thế giới): chỉ ghi các mục cần đổi, các mục khác Paper tự điền mặc định.
+# Chống xray có sẵn của Paper (15/10/2026). engine-mode 1: quặng bị đá bao kín gửi cho máy người chơi thành đá thường (netherrack ở Nether),
+# đào lộ ra mới thấy quặng thật -> xray/texture pack nhìn xuyên không thấy quặng. Nhẹ, gần như không tốn thêm băng thông
+# (engine-mode 2 giấu kỹ hơn nhưng gửi thêm nhiều dữ liệu chunk, không hợp đường mạng nhà). Đổi cần khởi động lại server.
+anticheat:
+  anti-xray:
+    enabled: true
+    engine-mode: 1
+    max-block-height: 64
+    update-radius: 2
+    lava-obscures: false
+    use-permission: false
+    hidden-blocks:
+      - copper_ore
+      - deepslate_copper_ore
+      - raw_copper_block
+      - gold_ore
+      - deepslate_gold_ore
+      - iron_ore
+      - deepslate_iron_ore
+      - raw_iron_block
+      - coal_ore
+      - deepslate_coal_ore
+      - lapis_ore
+      - deepslate_lapis_ore
+      - redstone_ore
+      - deepslate_redstone_ore
+      - diamond_ore
+      - deepslate_diamond_ore
+      - emerald_ore
+      - deepslate_emerald_ore
+      - ancient_debris
+      - nether_gold_ore
+      - nether_quartz_ore
+      - chest
+      - ender_chest
+      - mossy_cobblestone
+      - obsidian
+      - clay
+    replacement-blocks:
+      - stone
+      - oak_planks
+      - deepslate

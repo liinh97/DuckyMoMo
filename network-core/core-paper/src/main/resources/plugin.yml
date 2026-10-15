@@ -23,6 +23,9 @@ commands:
   vongquay:
     description: "Vòng quay miễn phí: chơi đủ giờ được vé, xem tỉ lệ từng phần thưởng. Admin: /vongquay give <người> <số>"
     aliases: [vq, quay]
+  mua:
+    description: "Mùa mưa / mùa khô: còn mấy ngày, cây nào lớn nhanh, cá nào xuất hiện. Admin: /mua dat <mua|kho|tudong>"
+    aliases: [season, muavu]
   nhiemvu:
     description: "Nhiệm vụ hằng ngày: đào, chặt, săn, xây, câu cá, thu hoạch để nhận quà"
     aliases: [nv]
@@ -87,6 +90,9 @@ commands:
     description: "Cửa hàng Kinh Đô (vật liệu, trang trí, danh hiệu): rank ủng hộ mở khi đứng trong kinh đô; mọi người bấm NPC ở spawn"
     aliases: [trangtri]
 permissions:
+  duckymomo.mua.admin:
+    description: Đổi mùa bằng tay để thử (/mua dat <mua|kho|tudong>)
+    default: op
   duckymomo.cuahang:
     description: Mở Cửa hàng Kinh Đô bằng /cuahang khi đứng trong kinh đô (rank ủng hộ, cấp cho nhóm namtuoc)
     default: op

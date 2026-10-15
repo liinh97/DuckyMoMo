@@ -153,6 +153,12 @@
 21. **"Hạng của bạn" trên hologram (15/10 tối, CHƯA build)**: BxhPlaceholders thêm %dmm_toi_chienthan%, %dmm_toi_bachu% (danh sách cache 5 giây,
    quốc gia lấy từ Towny Resident). Hologram đã đặt thì admin chạy 2 lệnh /dh line add (ghi trong cẩm nang, /bxh hologram cũng in ra).
 
+22. **Khai hoang vùng mới /khaihoang (15/10 tối, CHƯA build)**: DuckyMoMoCore `Frontier`, config `frontier`, dữ liệu `khaihoang.yml`
+   (quy, dat, gop.<uuid>). Quỹ tăng khi /sell (UserBalanceUpdateEvent COMMAND_SELL qua reflection, MONITOR, sell-percent %; người bán không mất)
+   và /khaihoang gop (rút tiền). Đủ mốc: chạy lệnh console của mốc (mặc định nới ChunkyBorder: Mã Lai 300k, Philippines 800k, Borneo+Java 2 triệu
+   xu; con số đoán, chỉnh theo kinh tế thật). SAU KHI MỞ phải sửa border_* ở Cài đặt cho khớp (ghi chú từng mốc). Placeholder %dmmkh_*%.
+   Web: thẻ Khai hoang đầu mục Hằng ngày (/api/hangngay → khaihoang). Sửa lỗi YAML camnang.yml (ngoặc kép lồng) từ commit trước.
+
 17. **Voice chat: Simple Voice Chat (15/10 tối, CHƯA cài; người dùng chốt: ghi lại, CHƯA vội triển khai)**. Chỉ người chơi Java có cài mod; Bedrock chưa có cách tốt (xem dưới).
    - Server con lobby/banghoi-1/practice-1: `simple-voice-chat` trong MODRINTH_PROJECTS (bản bukkit 2.6.x, release, hỗ trợ 26.2),
      cấu hình `plugins/voicechat/voicechat-server.properties` (40/20 block, codec VOIP, nhóm bật, cấm ghi âm, không bắt buộc mod, cổng 24454 trong Docker).

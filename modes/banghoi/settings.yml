@@ -957,3 +957,8 @@ dh_fee: 2
 dh_days: 7
 dh_minprice: 0.01
 dh_maxprice: 100000
+kh_on: true
+kh_sell: 100
+kh_g1: 300000
+kh_g2: 800000
+kh_g3: 2000000

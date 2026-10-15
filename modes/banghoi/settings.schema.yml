@@ -372,6 +372,22 @@ groups:
         options: [ { value: true, label: Có }, { value: false, label: Không } ]
         note: "Chỉ ghi lại; dùng khi mở mùa mới."
 
+  - title: Khai hoang vùng mới (/khaihoang)
+    category: Thế giới
+    description: "Cả server góp chung một quỹ: bán đồ bằng /sell (tính % tiền bán, người bán không mất gì) và góp thẳng /khaihoang gop <xu>. Đủ mốc thì tự nới viền bản đồ (lệnh trong plugins/DuckyMoMoCore/config.yml, frontier.goals). SAU KHI MỞ MỐC: sửa 4 ô Tâm viền / Viền thế giới ở nhóm Thế giới cho khớp, không thì Áp dụng lại tất cả sẽ thu viền về cũ."
+    apply: [dmm reload]
+    settings:
+      - { key: kh_on, label: Bật khai hoang, type: select, file: plugins/DuckyMoMoCore/config.yml, path: frontier.enabled,
+          options: [ { value: true, label: Bật }, { value: false, label: Tắt } ] }
+      - { key: kh_sell, label: "% tiền bán /sell tính vào quỹ", type: number, min: 0, max: 1000, file: plugins/DuckyMoMoCore/config.yml, path: frontier.sell-percent,
+          note: "Chỉ để đếm, người bán vẫn nhận đủ tiền. 100 = bán 1 xu thì quỹ +1." }
+      - { key: kh_g1, label: "Mốc 1: Mã Lai + Singapore (xu)", type: number, min: 1, file: plugins/DuckyMoMoCore/config.yml, path: frontier.goals.0.need,
+          note: "Sau khi mở: Tâm viền 12500 / -1650, bán kính 1300 x 1550." }
+      - { key: kh_g2, label: "Mốc 2: Philippines (xu)", type: number, min: 1, file: plugins/DuckyMoMoCore/config.yml, path: frontier.goals.1.need,
+          note: "Sau khi mở: Tâm viền 13150 / -1650, bán kính 1950 x 1550." }
+      - { key: kh_g3, label: "Mốc 3: Borneo + Java (xu)", type: number, min: 1, file: plugins/DuckyMoMoCore/config.yml, path: frontier.goals.2.need,
+          note: "Sau khi mở: Tâm viền 13150 / -1050, bán kính 1950 x 2150." }
+
   - title: Vũ khí nổ (crystal, anchor, giường, xe goòng TNT)
     category: PvP & combat
     description: "Sát thương của vũ khí nổ lên NGƯỜI CHƠI. 0 = cấm (không gây sát thương, không hất), 0.3 = còn 30%, 1 = như gốc. Quái, rồng Ender, phá khối không đổi. Crystal/anchor/nổ giường giết người trong 1 giây, đè hết lối chơi khác khi công thành."

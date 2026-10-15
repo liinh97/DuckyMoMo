@@ -166,6 +166,31 @@ pvp-rules:
   military-ranks: [guard, private, sergeant, lieutenant, captain, major, colonel, general]
 
 
+# Khai hoang vùng mới (/khaihoang, ý từ "Khai mở thứ nguyên" của UniMC). Quỹ chung tăng khi người chơi bán /sell (sell-percent % tiền bán,
+# người bán KHÔNG mất gì) và khi góp /khaihoang gop <xu> (tiền bị rút). Đủ mốc thì chạy commands (console) theo thứ tự goals.
+# Mốc mặc định nới viền ChunkyBorder (mùa 1 hiện: tâm 12500 -2000, bán kính 1300 x 1200). SAU KHI MỞ: sửa 4 ô viền ở Cài đặt > Thế giới cho khớp
+# (không thì "Áp dụng lại tất cả" thu viền về cũ). Dữ liệu: khaihoang.yml. Hologram: %dmmkh_ten%, %dmmkh_quy%, %dmmkh_can%, %dmmkh_pct%, %dmmkh_thanh%.
+frontier:
+  enabled: true
+  sell-percent: 100
+  min-donate: 10
+  goals:
+    - id: malaysia
+      name: "&eMở bán đảo Mã Lai và Singapore"
+      need: 300000
+      message: "Viền phía nam đã nới xuống tới Singapore."
+      commands: ["chunky world world", "chunky shape rectangle", "chunky center 12500 -1650", "chunky radius 1300 1550", "chunky border add world"]
+    - id: philippines
+      name: "&bMở quần đảo Philippines"
+      need: 800000
+      message: "Viền phía đông đã nới ra Philippines."
+      commands: ["chunky world world", "chunky shape rectangle", "chunky center 13150 -1650", "chunky radius 1950 1550", "chunky border add world"]
+    - id: indonesia
+      name: "&dMở Borneo và Java (Indonesia)"
+      need: 2000000
+      message: "Viền phía nam đã nới tới đảo Java."
+      commands: ["chunky world world", "chunky shape rectangle", "chunky center 13150 -1050", "chunky radius 1950 2150", "chunky border add world"]
+
 # Sàn thu mua (/donhang, ý từ UniMC "Orders"): người mua đặt đơn, tiền (số lượng x đơn giá) bị giữ trước + phí fee-percent % (không hoàn,
 # rút tiền khỏi kinh tế). Người giao nhận tiền ngay, hàng nằm trong kho đơn chờ người mua nhận. Hết days ngày: đóng, trả tiền phần chưa giao.
 # Chỉ đồ "trơn" (không tên, không phù phép, không hỏng). blacklist: vật không cho đặt. Lưu: donhang.yml

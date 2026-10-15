@@ -29,6 +29,8 @@ public final class DuckyMoMoCore extends JavaPlugin {
     private me.clip.placeholderapi.expansion.PlaceholderExpansion spinPapi;
     private me.clip.placeholderapi.expansion.PlaceholderExpansion seasonPapi;
     private me.clip.placeholderapi.expansion.PlaceholderExpansion statsPapi;
+    private me.clip.placeholderapi.expansion.PlaceholderExpansion frontierPapi;
+    private Frontier frontier;
 
     @Override
     public void onEnable() {
@@ -68,6 +70,14 @@ public final class DuckyMoMoCore extends JavaPlugin {
         if (statsPapi != null) {
             statsPapi.unregister();
             statsPapi = null;
+        }
+        if (frontierPapi != null) {
+            frontierPapi.unregister();
+            frontierPapi = null;
+        }
+        if (frontier != null) {
+            frontier.flush();
+            frontier = null;
         }
         if (activity != null) {
             activity.shutdown();
@@ -362,6 +372,19 @@ public final class DuckyMoMoCore extends JavaPlugin {
             getLogger().info("Thưởng vote: chưa có Votifier, /vote vẫn hiện link");
         }
         bind("vote", vote == null ? null : vote::command, "Vote server");
+        // Khai hoang vùng mới /khaihoang: quỹ chung từ /sell + góp, đủ mốc thì mở vùng (Bang Hội Chiến: frontier.enabled)
+        frontier = getConfig().getBoolean("frontier.enabled") && getConfig().isConfigurationSection("frontier")
+                ? new Frontier(this, getConfig().getConfigurationSection("frontier")) : null;
+        if (frontier != null) {
+            frontier.start();
+            if (getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+                frontierPapi = frontier.placeholders();
+                frontierPapi.register();
+            }
+        }
+        Frontier fr = frontier;
+        bind("khaihoang", fr == null ? null : fr::command, "Khai hoang vùng mới");
+
         // Sàn thu mua /donhang (Bang Hội Chiến: orders.enabled, cần Vault)
         Orders orders = getConfig().getBoolean("orders.enabled") && getConfig().isConfigurationSection("orders")
                 ? new Orders(this, getConfig().getConfigurationSection("orders")) : null;

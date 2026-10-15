@@ -23,6 +23,9 @@ commands:
   vongquay:
     description: "Vòng quay miễn phí: chơi đủ giờ được vé, xem tỉ lệ từng phần thưởng. Admin: /vongquay give <người> <số>"
     aliases: [vq, quay]
+  khaihoang:
+    description: "Khai hoang vùng mới: cả server góp quỹ (bán /sell, /khaihoang gop <xu>), đủ mốc thì mở rộng bản đồ"
+    aliases: [khaimo, frontier]
   donhang:
     description: "Sàn thu mua: đặt đơn cần mua (tiền giữ trước), người khác giao hàng nhận tiền ngay. /donhang tao <số> <giá>, /donhang cuatoi"
     aliases: [order, orders, thumua]

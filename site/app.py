@@ -543,6 +543,19 @@ def api_mua():
     return out
 
 
+def khaihoang(core):
+    fc = get(core, "frontier", {}) or {}
+    d = load_yaml(plugin("DuckyMoMoCore", "khaihoang.yml"))
+    quy = float(d.get("quy", 0) or 0)
+    dat = d.get("dat") or []
+    goals = [{"ten": strip_colors(g.get("name", g.get("id"))), "can": float(g.get("need", 0) or 0), "mo": g.get("id") in dat}
+             for g in fc.get("goals") or [] if isinstance(g, dict) and g.get("id")]
+    top = sorted(((v.get("ten"), float(v.get("xu", 0) or 0)) for v in (d.get("gop") or {}).values() if isinstance(v, dict)),
+                 key=lambda x: -x[1])[:8]
+    return {"bat": bool(fc.get("enabled")), "quy": quy, "ban": fc.get("sell-percent", 100), "moc": goals,
+            "top": [{"ten": n, "xu": x} for n, x in top]}
+
+
 def api_hangngay():
     core = load_yaml(plugin("DuckyMoMoCore", "config.yml"))
     # tên món trong Thư viện đồ (quà "do <mã>"): tên hiện trong game, không có thì tên gợi nhớ
@@ -578,6 +591,7 @@ def api_hangngay():
         "vongquay": {"bat": bool(ls.get("enabled")), "phut": ls.get("minutes-per-key", 60), "toi_da": ls.get("max-keys", 5),
                      "qua": [{"ten": strip_colors(p.get("label", "")), "tile": round(float(p.get("weight", 0) or 0) * 100 / tw, 1),
                               "hiem": bool(p.get("rare"))} for p in prizes]},
+        "khaihoang": khaihoang(core),
         "donhang": {"bat": bool(oc.get("enabled")), "phi": oc.get("fee-percent", 2), "ngay": days, "ds": don[:12], "tong": len(don)},
         "manh": {"bat": bool(ef.get("enabled")), "toi_da_ngay": ef.get("daily-cap", 20),
                  "doi": [{"ten": strip_colors(x.get("label", "")), "gia": sum(int(v) for v in (x.get("cost") or {}).values())}

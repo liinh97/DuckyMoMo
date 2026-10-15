@@ -11,6 +11,9 @@ services:
       BANGHOI_SERVER: banghoi-1
       PROXY_HOST: proxy
       PROXY_PORT: "25577"
+      # Đăng nhập bằng tài khoản game: trang web hỏi panel (mạng nội bộ Docker). Không có khoá = tắt nút Đăng nhập.
+      PANEL_URL: http://panel:8080
+      PANEL_SITE_KEY: ${PANEL_SITE_KEY:-}
     ports:
       - "127.0.0.1:${SITE_PORT:-8892}:8080"
     volumes:

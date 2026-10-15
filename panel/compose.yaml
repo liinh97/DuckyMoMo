@@ -10,6 +10,8 @@ services:
       PANEL_USER: ${PANEL_USER:-admin}
       PANEL_PASSWORD: ${PANEL_PASSWORD:?Chưa đặt PANEL_PASSWORD trong .env (chạy lại ./ops/init.sh)}
       # Trang Role: đọc LuckPerms (MariaDB) để liệt kê thành viên; cấp/gỡ role bằng RCON (lệnh lp, rank)
+      # Trang web công khai (site/) gọi panel kèm khoá này: đăng nhập bằng tài khoản game, staff mở trang quản trị theo quyền
+      PANEL_SITE_KEY: ${PANEL_SITE_KEY:-}
       DB_USER: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
       DOZZLE_URL: http://localhost:${DASHBOARD_PORT:-8888}/mc/log/

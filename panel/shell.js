@@ -150,11 +150,28 @@ window.toast = function (msg, kind) {
         if (dozzle) html += `<a class="item" href="${dozzle}" target="_blank" rel="noopener"><span class="ic">${ic}</span>${label}</a>`;
         continue;
       }
-      html += `<a class="item${href === page ? " on" : ""}" href="${href || "./"}"><span class="ic">${ic}</span>${label}</a>`;
+      html += `<a class="item${href === page ? " on" : ""}" data-page="${href || "caidat"}" href="${href || "./"}"><span class="ic">${ic}</span>${label}</a>`;
     }
   }
   html += '<div class="foot">Lưu là áp dụng ngay lên server.<br>Đổi lớn: kiểm tra người online trước.</div>';
   nav.innerHTML = html;
+  // Staff đăng nhập bằng tài khoản game (qua trang web công khai): chỉ hiện trang mình có quyền, thêm tên + link về tài khoản
+  fetch("api/toi").then(r => r.json()).then(t => {
+    if (!t.game) return;
+    const can = new Set(t.tinh_nang || []);
+    const page = { caidat: ["caidat"], thuvien: ["thuvien", "thuvien-dua"], boss: ["boss"], role: ["role", "role-quyen"], hoatdong: ["hoatdong"],
+      camnang: ["camnang"], huongdan: ["huongdan"] };
+    nav.querySelectorAll("a.item[data-page]").forEach(a => {
+      if (!t.toan_quyen && !(page[a.dataset.page] || []).some(f => can.has(f))) a.remove();
+    });
+    nav.querySelectorAll(".sec").forEach(s => { const n = s.nextElementSibling; if (!n || n.classList.contains("sec") || n.classList.contains("foot")) s.remove(); });
+    const who = document.createElement("div");
+    who.className = "foot";
+    who.innerHTML = `Đăng nhập: <b></b><br><a href="../taikhoan.html">← Tài khoản của tôi</a><br>Mọi thao tác được ghi lại kèm tên bạn.`;
+    who.querySelector("b").textContent = t.ten;
+    nav.querySelector(".foot").replaceWith(who);
+    nav.querySelector(".brand").setAttribute("href", "../taikhoan.html");
+  }).catch(() => {});
   const bar = document.createElement("div");
   bar.className = "navtoggle";
   bar.innerHTML = '<button type="button" aria-label="Menu">☰</button><span>🦆 DuckyMoMo</span>';

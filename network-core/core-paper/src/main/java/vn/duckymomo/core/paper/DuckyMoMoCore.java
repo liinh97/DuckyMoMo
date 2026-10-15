@@ -330,6 +330,9 @@ public final class DuckyMoMoCore extends JavaPlugin {
             getLogger().info("Thưởng vote: chưa có Votifier, /vote vẫn hiện link");
         }
         bind("vote", vote == null ? null : vote::command, "Vote server");
+        // Đăng nhập trang web bằng tài khoản game: /web cấp mã, trang web kiểm tra qua RCON (/dmm webma)
+        WebLogin webLogin = new WebLogin(getConfig().getConfigurationSection("web-login"));
+        bind("web", webLogin::command, "Đăng nhập web");
         if (council != null) {
             getLogger().info("Hội đồng Hoà Bình, tổ chức, bảng xếp hạng, Hội Bàn Tròn, cửa hàng: "
                     + (orgs != null) + "/" + (board != null) + "/" + (justice != null) + "/" + (shop != null));
@@ -450,6 +453,13 @@ public final class DuckyMoMoCore extends JavaPlugin {
                         sender.sendMessage("Luật chiến tranh chưa bật trên server này (config: pvp-rules.enabled).");
                     } else {
                         warRules.altCommand(sender, args);
+                    }
+                } else if (args.length >= 1 && args[0].equalsIgnoreCase("webma")) {
+                    // chỉ console/RCON (trang web gọi): người chơi có quyền admin cũng không dùng để dò mã
+                    if (sender instanceof org.bukkit.entity.Player || args.length < 3) {
+                        sender.sendMessage("WEBMA SAI");
+                    } else {
+                        sender.sendMessage(webLogin.check(args[1], args[2]));
                     }
                 } else if (args.length >= 1 && args[0].equalsIgnoreCase("lenh")) {
                     sender.sendMessage("DuckyMoMoCore: đã xuất " + commandDump.dump() + " lệnh ra commands.json");

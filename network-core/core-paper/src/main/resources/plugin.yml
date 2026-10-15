@@ -80,6 +80,9 @@ commands:
   danhhieu:
     description: "Xem và chọn danh hiệu"
     aliases: [title]
+  web:
+    description: "Lấy mã đăng nhập trang web (xem tài khoản, rank, lệnh của bạn; staff mở trang quản trị theo quyền)"
+    aliases: [dangnhapweb, weblogin]
   cuahang:
     description: "Cửa hàng Kinh Đô (vật liệu, trang trí, danh hiệu): rank ủng hộ mở khi đứng trong kinh đô; mọi người bấm NPC ở spawn"
     aliases: [trangtri]

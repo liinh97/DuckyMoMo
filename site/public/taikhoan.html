@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<link rel="icon" type="image/png" href="favicon.png">
+<title>Tài khoản DuckyMoMo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0d1117;--bg2:#121a24;--card:#17212e;--card2:#1d2a3a;--line:#2a3a4f;
+  --text:#e8eef5;--muted:#9fb0c3;--dim:#6f8399;
+  --gold:#f2b84b;--gold2:#ffd98a;--red:#ef5350;--jade:#3ecf8e;--jade2:#9af0c8;--sky:#5ab4ff;--violet:#b48cff;
+}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(900px 400px at 10% -10%,rgba(242,184,75,.12),transparent 60%),radial-gradient(700px 400px at 95% 0,rgba(62,207,142,.08),transparent 60%),var(--bg);color:var(--text);font-family:"Be Vietnam Pro",system-ui,-apple-system,Segoe UI,Roboto,sans-serif;line-height:1.55;font-size:16px;min-height:100vh}
+a{color:var(--gold2);text-decoration:none}a:hover{text-decoration:underline}
+.wrap{max-width:1180px;margin:0 auto;padding:0 clamp(16px,4vw,40px)}
+header{position:sticky;top:0;z-index:20;background:rgba(13,17,23,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+header .wrap{display:flex;align-items:center;justify-content:space-between;height:60px;gap:12px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;color:var(--text);white-space:nowrap}
+.brand img{width:34px;height:34px}
+.brand:hover{text-decoration:none}
+h1{font-size:clamp(1.5rem,3vw,2rem);margin:0}
+h2{font-size:1.1rem;margin:0 0 12px;display:flex;align-items:center;gap:8px}
+p{margin:0 0 .8em}
+.muted{color:var(--muted)}.dim{color:var(--dim)}.small{font-size:.85rem}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px}
+.grid{display:grid;gap:14px}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media (max-width:900px){.g4{grid-template-columns:repeat(2,minmax(0,1fr))}.g2{grid-template-columns:1fr}}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 16px;border-radius:10px;border:1px solid var(--line);background:var(--card2);color:var(--text);font:inherit;font-weight:700;cursor:pointer}
+.btn:hover{border-color:var(--gold);text-decoration:none}
+.btn.primary{background:linear-gradient(135deg,var(--gold),#d98b25);color:#1d1203;border:none}
+.btn.small{padding:6px 12px;font-size:.85rem}
+.btn:disabled{opacity:.6;cursor:wait}
+input{width:100%;padding:11px 12px;border-radius:10px;border:1px solid var(--line);background:#0b1118;color:var(--text);font:inherit}
+input:focus{outline:2px solid rgba(242,184,75,.5);border-color:var(--gold)}
+label{display:block;font-size:.85rem;font-weight:700;color:var(--muted);margin:12px 0 6px}
+.pill{display:inline-flex;align-items:center;gap:.4em;padding:.2em .7em;border-radius:999px;font-size:.8rem;font-weight:700;background:var(--card2);border:1px solid var(--line);color:var(--muted)}
+.pill.on{color:var(--jade2);border-color:rgba(62,207,142,.4)}
+.pill.warn{color:#ffb3b1;border-color:rgba(239,83,80,.45)}
+.dot{width:.55em;height:.55em;border-radius:50%;background:var(--dim);display:inline-block}.dot.on{background:var(--jade)}
+code,.kbd{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;background:#0b1118;border:1px solid var(--line);border-radius:6px;padding:.05em .4em;font-size:.9em;color:var(--gold2)}
+.err{color:#ff9d9b;font-weight:600;min-height:1.4em;margin-top:10px}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.tab{padding:8px 14px;border-radius:10px;border:1px solid var(--line);background:var(--card2);color:var(--muted);font:inherit;font-weight:700;cursor:pointer}
+.tab.on{background:var(--gold);color:#1d1203;border-color:var(--gold)}
+
+/* đăng nhập */
+.login{max-width:980px;margin:40px auto;display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:18px}
+@media (max-width:800px){.login{grid-template-columns:1fr;margin:20px auto}}
+.steps{counter-reset:s;display:grid;gap:10px;margin:10px 0}
+.steps>div{display:grid;grid-template-columns:32px 1fr;gap:10px;align-items:start}
+.steps>div::before{counter-increment:s;content:counter(s);width:30px;height:30px;border-radius:9px;display:grid;place-items:center;font-weight:800;background:var(--card2);border:1px solid var(--line);color:var(--gold)}
+.safe li{margin:6px 0;color:var(--muted)}
+
+/* hồ sơ */
+.head{display:flex;gap:18px;align-items:center;flex-wrap:wrap;margin:26px 0 18px}
+.avatar{width:72px;height:72px;border-radius:18px;display:grid;place-items:center;font-size:2rem;font-weight:800;background:linear-gradient(135deg,var(--gold),#c97a1a);color:#1d1203;flex:none}
+.head .who{flex:1;min-width:220px}
+.badges{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;min-width:0}
+.stat small{display:block;color:var(--muted);font-size:.8rem;font-weight:600}
+.stat b{display:block;font-size:1.4rem;font-weight:800;margin-top:2px;overflow-wrap:anywhere}
+.stat span{font-size:.8rem;color:var(--dim)}
+.bar{height:8px;border-radius:99px;background:#0b1118;border:1px solid var(--line);overflow:hidden;margin-top:6px}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--jade),var(--jade2))}
+.quest{margin:10px 0}
+.quest .t{display:flex;justify-content:space-between;gap:8px;font-size:.92rem}
+.tier{border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:var(--card2);margin-bottom:8px}
+.tier.mine{border-color:rgba(242,184,75,.6);background:linear-gradient(180deg,rgba(242,184,75,.1),var(--card2))}
+.tier .perks{font-size:.85rem;color:var(--muted);margin-top:4px}
+.feat{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid rgba(42,58,79,.6)}
+.feat:last-child{border-bottom:none}
+.feat small{display:block;color:var(--muted)}
+.note{border-radius:12px;padding:12px 14px;background:rgba(242,184,75,.08);border:1px solid rgba(242,184,75,.35);margin-bottom:12px}
+.note.red{background:rgba(239,83,80,.08);border-color:rgba(239,83,80,.45)}
+.cmds{max-height:560px;overflow:auto;margin-top:8px}
+.cmdgrp{margin:12px 0 4px;font-size:.8rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--dim)}
+.cmd{display:grid;grid-template-columns:minmax(120px,220px) 1fr;gap:12px;padding:8px 0;border-bottom:1px solid rgba(42,58,79,.5);font-size:.92rem}
+.cmd code{white-space:nowrap}
+.cmd .al{color:var(--dim);font-size:.8rem}
+.cmd .own{color:var(--violet);font-size:.75rem;font-weight:800;margin-left:6px}
+@media (max-width:620px){.cmd{grid-template-columns:1fr;gap:2px}}
+.tools{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.tools input{flex:1;min-width:180px}
+.check{display:inline-flex;gap:6px;align-items:center;font-size:.88rem;color:var(--muted);cursor:pointer}
+.check input{width:auto}
+.tools label.check{margin:0}
+footer{padding:30px 0;color:var(--dim);font-size:.85rem}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <a class="brand" href="./"><img src="logo.png" alt=""><span>DuckyMoMo</span></a>
+  <a class="btn small" href="./">← Trang chủ</a>
+</div></header>
+
+<main class="wrap" id="main"><p class="muted" style="margin-top:40px">Đang tải…</p></main>
+<footer><div class="wrap">Trang web không lưu mật khẩu của bạn. Mọi kiểm tra đăng nhập làm trên máy chủ, giống như khi bạn <code>/login</code> trong game.</div></footer>
+
+<script>
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const nf = new Intl.NumberFormat("vi-VN");
+const SRV = {"banghoi-1": "Bang Hội Chiến", "lobby": "Sảnh", "practice-1": "Practice"};
+const MC = {0:"#555",1:"#3b5bdb",2:"#2f9e44",3:"#1098ad",4:"#c92a2a",5:"#9c36b5",6:"#f2b84b",7:"#adb5bd",8:"#868e96",9:"#5c7cfa",a:"#69db7c",b:"#66d9e8",c:"#ff6b6b",d:"#f783ac",e:"#ffe066",f:"#f8f9fa"};
+// "&6&l[Công Tước]" -> chữ có màu như trong game
+function mc(t){ let color = "#e8eef5", bold = false, out = "";
+  for (const p of String(t || "").split(/(&#[0-9a-fA-F]{6}|&[0-9a-fk-or])/i)) {
+    if (!p) continue; let m;
+    if ((m = /^&#([0-9a-f]{6})$/i.exec(p))) { color = "#" + m[1]; bold = false; continue; }
+    if ((m = /^&([0-9a-fk-or])$/i.exec(p))) { const k = m[1].toLowerCase(); if (MC[k]) { color = MC[k]; bold = false; } else if (k === "l") bold = true; else if (k === "r") { color = "#e8eef5"; bold = false; } continue; }
+    out += `<span style="color:${color};${bold ? "font-weight:800" : ""}">${esc(p)}</span>`; }
+  return out; }
+const day = ms => ms ? new Date(ms).toLocaleDateString("vi-VN") : "–";
+const when = ms => ms ? new Date(ms).toLocaleString("vi-VN", {hour:"2-digit", minute:"2-digit", day:"2-digit", month:"2-digit", year:"numeric"}) : "–";
+async function api(u, body){
+  const r = await fetch(u, body ? {method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify(body)} : {cache:"no-store"});
+  const d = await r.json().catch(() => ({}));
+  if (!r.ok && !d.message) d.message = "Lỗi " + r.status;
+  return d;
+}
+
+// ------------------------------------------------------------ đăng nhập
+function loginView(needCode){
+  $("#main").innerHTML = `
+  <div class="login">
+    <div class="card">
+      <h1 style="margin-bottom:6px">Đăng nhập</h1>
+      <p class="muted">Dùng tài khoản trong game DuckyMoMo. ${needCode ? '<b style="color:var(--gold2)">Mở trang quản trị cần đăng nhập bằng mã từ game.</b>' : ""}</p>
+      <div class="tabs"><button class="tab on" data-t="ma">Mã từ game (an toàn nhất)</button><button class="tab" data-t="mk">Mật khẩu</button></div>
+      <form id="f" autocomplete="on">
+        <label for="ten">Tên nhân vật</label>
+        <input id="ten" name="username" autocomplete="username" maxlength="18" required placeholder="vd Linh (Bedrock có dấu chấm đầu: .Linh)">
+        <div id="boxMa"><label for="ma">Mã 6 số</label>
+          <input id="ma" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="Vào game gõ /web để lấy mã"></div>
+        <div id="boxMk" hidden><label for="mk">Mật khẩu</label>
+          <input id="mk" type="password" name="password" autocomplete="current-password" maxlength="200" placeholder="Mật khẩu /login trong game"></div>
+        <div class="err" id="err"></div>
+        <button class="btn primary" id="go" style="width:100%;margin-top:6px">Đăng nhập</button>
+      </form>
+    </div>
+    <div class="card">
+      <h2>🔑 Lấy mã từ game</h2>
+      <div class="steps">
+        <div><span>Vào server, đăng nhập như thường (<code>/login</code>).</span></div>
+        <div><span>Gõ <code>/web</code>: server gửi riêng cho bạn mã 6 số.</span></div>
+        <div><span>Nhập tên + mã ở đây. Mã dùng <b>1 lần</b>, hết hạn sau 5 phút.</span></div>
+      </div>
+      <p class="small muted">Người chơi Bedrock (điện thoại) dùng cách này, vì tài khoản Bedrock không có mật khẩu.</p>
+      <h2 style="margin-top:18px">🛡️ Giữ tài khoản an toàn</h2>
+      <ul class="safe small">
+        <li>Chỉ nhập ở trang <b>app.goc6.io.vn/mc/web</b>. Admin <b>không bao giờ</b> hỏi mật khẩu hay mã của bạn.</li>
+        <li>Mỗi lần tài khoản đăng nhập web, server báo vào game cho bạn. Không phải bạn thì đổi mật khẩu ngay: <code>/changepassword</code>.</li>
+        <li>Sai 5 lần, tên đó bị khoá đăng nhập web 15 phút.</li>
+      </ul>
+    </div>
+  </div>`;
+  let mode = "ma";
+  document.querySelectorAll(".tab").forEach(t => t.onclick = () => {
+    mode = t.dataset.t;
+    document.querySelectorAll(".tab").forEach(x => x.classList.toggle("on", x === t));
+    $("#boxMa").hidden = mode !== "ma"; $("#boxMk").hidden = mode !== "mk"; $("#err").textContent = "";
+  });
+  $("#f").onsubmit = async e => {
+    e.preventDefault();
+    const body = {ten: $("#ten").value.trim()};
+    if (mode === "ma") body.ma = $("#ma").value.replace(/\D/g, ""); else body.matkhau = $("#mk").value;
+    if (!body.ten || (mode === "ma" ? body.ma.length !== 6 : !body.matkhau)) { $("#err").textContent = mode === "ma" ? "Nhập tên và mã 6 số." : "Nhập tên và mật khẩu."; return; }
+    $("#go").disabled = true; $("#err").textContent = "";
+    const d = await api("api/dangnhap", body).catch(() => ({message: "Không kết nối được."}));
+    $("#go").disabled = false;
+    if (d.ok) { history.replaceState(null, "", "taikhoan.html"); load(); } else $("#err").textContent = d.message || "Đăng nhập không được.";
+  };
+  $("#ten").focus();
+}
+
+// ------------------------------------------------------------ hồ sơ
+let D = null, cmdSrv = "banghoi-1", onlyMine = false, cmdQ = "";
+function stat(label, value, sub){ return `<div class="stat"><small>${label}</small><b>${value}</b>${sub ? `<span>${sub}</span>` : ""}</div>`; }
+
+function render(){
+  const h = D.hoso || {}, q = D.quantri || {}, tk = D.taikhoan || {};
+  const donateRoles = (D.roles || []).filter(r => r.loai === "donate"), staffRoles = (D.roles || []).filter(r => r.loai !== "donate");
+  const badges = [`<span class="pill">${D.bedrock ? "📱 Bedrock" : "💻 Java"}</span>`,
+    D.online ? `<span class="pill on"><span class="dot on"></span>Đang chơi · ${esc(SRV[D.online] || D.online)}</span>` : `<span class="pill"><span class="dot"></span>Đang offline</span>`]
+    .concat((D.roles || []).map(r => `<span class="pill" title="${esc(r.ten)}">${r.prefix ? mc(r.prefix.trim()) : esc(r.ten)}${r.het ? ` <span class="dim">· đến ${day(r.het * 1000)}</span>` : ""}</span>`));
+  const t = h.towny, gc = h.giochoi || {}, dd = h.diemdanh || {}, vq = h.vongquay || {}, vt = h.vote || {}, ct = h.chienthan || {};
+  let html = `
+  <div class="head">
+    <div class="avatar">${esc((D.ten || "?").replace(/^\./, "").slice(0, 1).toUpperCase())}</div>
+    <div class="who"><h1>${esc(D.ten)}</h1>
+      <div class="badges">${badges.join("")}</div>
+      <div class="small dim" style="margin-top:6px">Đăng ký ${day(tk.dangky)} · Vào game lần cuối ${when(tk.lancuoi)}</div></div>
+    <div class="tools"><button class="btn small" id="out">Đăng xuất</button></div>
+  </div>`;
+  if (h.an && (h.an.truyna || h.an.tu_phut)) {
+    html += `<div class="note red">⚖️ ${h.an.truyna ? `Bạn đang bị <b>truy nã</b> đến ${when(h.an.truyna.den)} (tiền thưởng ${nf.format(h.an.truyna.tien || 0)} xu). ` : ""}${h.an.tu_phut ? `Còn <b>${h.an.tu_phut} phút</b> tù.` : ""} Xem chi tiết ở Hội Bàn Tròn trên trang chủ.</div>`;
+  }
+  html += `<div class="grid g4">
+    ${stat("💰 Tiền", h.tien == null ? "–" : nf.format(Math.round(h.tien)) + " xu", "Bang Hội Chiến")}
+    ${stat("⏱️ Giờ chơi thật 7 ngày", (gc.tuan ?? 0) + " giờ", `Cả mùa ${gc.tong ?? 0} giờ · cần ${gc.can_tuan} giờ/tuần để là dân hoạt động`)}
+    ${stat("📅 Điểm danh", (dd.so_ngay || 0) + " ngày", dd.hom_nay ? "Hôm nay đã điểm danh ✓" : "Hôm nay chưa điểm danh: gõ /diemdanh")}
+    ${stat("🎡 Vé vòng quay", vq.ve || 0, `Đã quay ${vq.da_quay || 0} lần${vq.phut_moi_ve ? ` · ${vq.phut_moi_ve} phút chơi = 1 vé` : ""}`)}
+    ${stat("🏰 Thị trấn", t && t.thitran ? esc(t.thitran) : "Chưa có", t && t.quocgia ? "Quốc gia " + esc(t.quocgia) + (t.chuc.length ? " · " + esc(t.chuc.join(", ")) : "") : (t && t.chuc.length ? esc(t.chuc.join(", ")) : "Lập hoặc vào thị trấn trong game"))}
+    ${stat("🗳️ Vote tháng này", vt.thang || 0, `Tổng ${vt.tong || 0} lượt · chuỗi ${vt.chuoi || 0} ngày`)}
+    ${stat("⚔️ Chiến Thần", ct.diem || 0, ct.hang ? "Hạng " + ct.hang + " mùa này" : "Chưa có điểm")}
+    ${stat("👑 Rank ủng hộ", donateRoles.length ? donateRoles.map(r => esc(r.ten)).join(", ") : "Chưa có", donateRoles.length && donateRoles[0].het ? "Hết hạn " + day(donateRoles[0].het * 1000) : "Chỉ đồ trang trí, không bán sức mạnh")}
+  </div>`;
+
+  // quản trị
+  if (q.la_staff) {
+    html += `<div class="card" style="margin-top:14px"><h2>🛠️ Quản trị ${q.toan_quyen ? '<span class="pill on">Toàn quyền</span>' : ""}</h2>`;
+    if (!q.qua_game) html += `<div class="note">Bạn đăng nhập bằng mật khẩu. Để mở trang quản trị, vào game gõ <code>/web</code> rồi nhập mã:
+        <div class="tools" style="margin-top:8px"><input id="ma2" inputmode="numeric" maxlength="6" placeholder="Mã 6 số" style="max-width:160px"><button class="btn primary small" id="go2">Xác nhận mã</button></div><div class="err" id="err2"></div></div>`;
+    else html += `<p class="small dim">Quyền mở trang quản trị còn đến ${when(D.phien.quan_tri_het)} (sau đó nhập mã /web lại). Mọi thao tác được ghi lại kèm tên bạn.</p>`;
+    html += (q.tinh_nang || []).map(f => `<div class="feat"><div><b>${esc(f.ten)}</b><small>${esc(f.mo_ta)}${f.nho ? ` · nhờ quyền <code>${esc(f.nho)}</code>` : ""}</small></div>
+      ${q.qua_game ? `<a class="btn small" href="quantri/${esc(f.trang || "")}">Mở</a>` : ""}</div>`).join("");
+    html += `</div>`;
+  }
+
+  // nhiệm vụ + rank
+  const quests = h.nhiemvu || [];
+  html += `<div class="grid g2" style="margin-top:14px">
+    <div class="card"><h2>📜 Nhiệm vụ hôm nay</h2>${quests.length ? quests.map(x => { const pc = x.can ? Math.min(100, Math.round(x.da / x.can * 100)) : 0;
+      return `<div class="quest"><div class="t"><span>${esc(x.ten)}</span><b>${nf.format(Math.min(x.da, x.can))}/${nf.format(x.can)}${pc >= 100 ? " ✓" : ""}</b></div><div class="bar"><i style="width:${pc}%"></i></div></div>`; }).join("")
+      : '<p class="muted">Chưa nhận nhiệm vụ hôm nay. Vào Bang Hội Chiến gõ <code>/nhiemvu</code>.</p>'}</div>
+    <div class="card"><h2>👑 Rank ủng hộ</h2>${(h.donate && h.donate.tiers || []).map(ti => { const mine = donateRoles.find(r => r.id === ti.group);
+      return `<div class="tier ${mine ? "mine" : ""}"><div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap"><b>${mc(ti.mau + ti.ten)}</b>${mine ? `<span class="pill on">Của bạn${mine.het ? " · đến " + day(mine.het * 1000) : ""}</span>` : ""}</div>
+        <div class="perks">${esc((ti.quyen_loi || []).join(" · "))}</div></div>`; }).join("")}
+      <p class="small dim" style="margin-top:8px">${mc((h.donate && h.donate.cach_mua) || "")}</p></div>
+  </div>`;
+
+  // lệnh
+  html += `<div class="card" style="margin-top:14px"><h2>⌨️ Lệnh bạn dùng được</h2>
+    <div class="tabs" id="srvTabs">${Object.keys(SRV).filter(s => (D.lenh || {})[s]).map(s => `<button class="tab ${s === cmdSrv ? "on" : ""}" data-s="${s}">${SRV[s]} (${D.lenh[s].length})</button>`).join("")}</div>
+    <div class="tools"><input id="cq" placeholder="Tìm lệnh (vd tpr, nha, shop)…" value="${esc(cmdQ)}"><label class="check"><input type="checkbox" id="mine" ${onlyMine ? "checked" : ""}> Chỉ lệnh có nhờ role / rank</label></div>
+    <div class="cmds" id="cmds"></div></div>`;
+
+  html += `<div class="card" style="margin-top:14px"><h2>🔒 Bảo mật</h2>
+    <p class="small muted">Phiên đăng nhập này hết hạn ${when(D.phien.het)}. Đăng xuất mọi thiết bị nếu bạn từng đăng nhập ở máy lạ. Đổi mật khẩu trong game: <code>/changepassword &lt;cũ&gt; &lt;mới&gt;</code>.</p>
+    <button class="btn small" id="outAll">Đăng xuất mọi thiết bị</button></div>`;
+  $("#main").innerHTML = html;
+
+  $("#out").onclick = async () => { await api("api/dangxuat", {}); load(); };
+  $("#outAll").onclick = async () => { if (confirm("Đăng xuất tài khoản này khỏi mọi trình duyệt?")) { await api("api/dangxuat-het", {}); load(); } };
+  document.querySelectorAll("#srvTabs .tab").forEach(b => b.onclick = () => { cmdSrv = b.dataset.s; document.querySelectorAll("#srvTabs .tab").forEach(x => x.classList.toggle("on", x === b)); drawCmds(); });
+  $("#cq").oninput = e => { cmdQ = e.target.value; drawCmds(); };
+  $("#mine").onchange = e => { onlyMine = e.target.checked; drawCmds(); };
+  if ($("#go2")) $("#go2").onclick = async () => {
+    const ma = $("#ma2").value.replace(/\D/g, "");
+    if (ma.length !== 6) { $("#err2").textContent = "Mã gồm 6 số."; return; }
+    $("#go2").disabled = true;
+    const d = await api("api/dangnhap", {ten: D.ten, ma}).catch(() => ({message: "Không kết nối được."}));
+    $("#go2").disabled = false;
+    if (d.ok) load(); else $("#err2").textContent = d.message || "Sai mã.";
+  };
+  drawCmds();
+}
+
+const fold = s => String(s || "").normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/đ/g, "d").toLowerCase();
+function drawCmds(){
+  const q = fold(cmdQ.trim());
+  const rows = ((D.lenh || {})[cmdSrv] || []).filter(c => (!onlyMine || c.rieng) && (!q || fold(c.ten + " " + c.goi_tat.join(" ") + " " + c.mo_ta + " " + c.plugin).includes(q)));
+  const by = {};
+  rows.forEach(c => (by[c.plugin] = by[c.plugin] || []).push(c));
+  $("#cmds").innerHTML = rows.length ? Object.keys(by).sort().map(p => `<div class="cmdgrp">${esc(p)}</div>` + by[p].map(c =>
+    `<div class="cmd"><div><code>/${esc(c.ten)}</code>${c.rieng ? '<span class="own">RIÊNG</span>' : ""}${c.goi_tat.length ? `<div class="al">${c.goi_tat.map(a => "/" + esc(a)).join(" ")}</div>` : ""}</div><div class="muted">${esc(c.mo_ta) || '<span class="dim">Chưa có mô tả</span>'}</div></div>`).join("")).join("")
+    : '<p class="muted" style="margin-top:12px">Không có lệnh nào khớp.</p>';
+}
+
+async function load(){
+  const d = await api("api/toi").catch(() => null);
+  if (!d) { $("#main").innerHTML = '<p class="muted" style="margin-top:40px">Không kết nối được máy chủ, thử lại sau.</p>'; return; }
+  if (!d.bat) { $("#main").innerHTML = '<div class="card" style="margin-top:40px"><h1>Đăng nhập chưa mở</h1><p class="muted">Server chưa bật đăng nhập trên web.</p></div>'; return; }
+  if (!d.dang_nhap) return loginView(new URLSearchParams(location.search).get("can") === "ma");
+  if (!d.ok) { $("#main").innerHTML = `<div class="card" style="margin-top:40px"><h1>${esc(d.ten || "")}</h1><p class="muted">${esc(d.message || "Không tải được thông tin.")}</p><button class="btn small" id="out">Đăng xuất</button></div>`;
+    $("#out").onclick = async () => { await api("api/dangxuat", {}); load(); }; return; }
+  D = d; render();
+}
+load();
+</script>
+</body>
+</html>

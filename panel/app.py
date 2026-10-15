@@ -13,12 +13,16 @@ import re
 import socket
 import struct
 import sys
+import threading
+import time
 import urllib.parse
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
 from ruamel.yaml import YAML
 from ruamel.yaml.scalarstring import DoubleQuotedScalarString, LiteralScalarString, SingleQuotedScalarString
+
+import taikhoan
 
 MODES_DIR = Path(os.environ.get("MODES_DIR", "/repo/modes"))
 DATA_DIR = Path(os.environ.get("DATA_DIR", "/data"))
@@ -28,6 +32,11 @@ DOZZLE_URL = os.environ.get("DOZZLE_URL", "")
 # Mở qua Trạm 6 (gateway cắt tiền tố /mc/caidat và gửi X-Forwarded-Prefix): link log trỏ vào đường dẫn của Trạm 6
 DOZZLE_PROXY_URL = os.environ.get("DOZZLE_PROXY_URL", DOZZLE_URL)
 RCON_PORT = 25575
+# Trang web công khai (site/) gọi panel kèm khoá này khi người chơi đăng nhập bằng tài khoản game. Trống = tắt.
+PANEL_SITE_KEY = os.environ.get("PANEL_SITE_KEY", "")
+# Nhật ký đăng nhập web + mọi thao tác của staff đăng nhập bằng tài khoản game
+WEB_LOG_FILE = DATA_DIR / "panel" / "web-thaotac.jsonl"
+GAME_SERVERS = ["lobby", "banghoi-1", "practice-1"]
 INDEX_HTML = (Path(__file__).parent / "index.html").read_text(encoding="utf-8")
 ACTIVITY_HTML = (Path(__file__).parent / "activity.html").read_text(encoding="utf-8")
 CAMNANG_HTML = (Path(__file__).parent / "camnang.html").read_text(encoding="utf-8")
@@ -740,12 +749,40 @@ def role_action(data):
     return {"ok": True, "message": f"Đã gửi: /{cmds[0]}. Người chơi phải từng vào server.", "data": roles_json()}
 
 
-def modes_json():
+def modes_json(cats=None):
+    """cats: chỉ trả các nhóm thuộc những loại này (staff đăng nhập bằng tài khoản game); None = tất cả."""
     out = []
     for mode_id, m in load_modes().items():
-        out.append({"id": mode_id, "schema": m["schema"],
+        schema = m["schema"]
+        if cats is not None:
+            schema = dict(schema, groups=[g for g in schema.get("groups", []) if (g.get("category") or "Khác") in cats])
+            if not schema["groups"]:
+                continue
+        out.append({"id": mode_id, "schema": schema,
                     "values": {k: plain(v) for k, v in m["values"].items()}})
     return out
+
+
+_cat_cache = {}
+
+
+def all_categories():
+    """Các loại trên trang Cài đặt. Đọc schema mất gần 1 giây nên giữ lại tới khi file schema đổi (mỗi yêu cầu của staff đều cần)."""
+    stamp = tuple((str(f), f.stat().st_mtime) for f in sorted(MODES_DIR.glob("*/settings.schema.yml")))
+    if _cat_cache.get("stamp") != stamp:
+        cats = set()
+        for f in sorted(MODES_DIR.glob("*/settings.schema.yml")):
+            schema = YAML(typ="safe").load(f.read_text(encoding="utf-8")) or {}
+            cats |= {g.get("category") or "Khác" for g in schema.get("groups", [])}
+        _cat_cache.update(stamp=stamp, cats=sorted(cats))
+    return _cat_cache["cats"]
+
+
+def allowed_keys(mode_id, cats):
+    m = load_modes().get(mode_id)
+    if not m:
+        return set()
+    return {s["key"] for g, s in all_settings(m["schema"]) if (g.get("category") or "Khác") in cats}
 
 
 # ---------------------------------------------------------------- hoạt động người chơi
@@ -948,7 +985,7 @@ def thuvien_json():
     return {"items": items, "meta": meta, "online": [n for n in online if PLAYER_RE.match(n)]}
 
 
-def thuvien_action(data):
+def thuvien_action(data, actor=None):
     action = data.get("action")
     iid = str(data.get("id", ""))
     if not LIB_ID_RE.match(iid):
@@ -1014,6 +1051,8 @@ def thuvien_action(data):
             entry["hide-enchants"] = True
         if it.get("glint") in (True, False):
             entry["glint"] = it["glint"]
+        if actor:
+            entry["nguoi-luu"] = actor
         items[iid] = entry
     else:
         raise ValueError("Thao tác không hợp lệ")
@@ -1237,6 +1276,135 @@ def boss_action(data):
     verb = {"delete": "Đã xoá", "restore": "Đã khôi phục bản gốc", "copy": "Đã chép thành"}.get(action, "Đã lưu")
     return {"ok": True, "message": f"{verb} boss \"{bid}\". {res}", "data": boss_json()}
 
+# ---------------------------------------------------------------- đăng nhập bằng tài khoản game (trang web công khai)
+
+_web_cache = {}
+_web_lock = threading.Lock()
+
+
+def web_cached(key, ttl, fn):
+    now = time.time()
+    with _web_lock:
+        hit = _web_cache.get(key)
+        if hit and now - hit[0] < ttl:
+            return hit[1]
+    val = fn()
+    with _web_lock:
+        _web_cache[key] = (now, val)
+    return val
+
+
+def web_log(event):
+    from datetime import datetime, timezone
+    event = {"ts": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")} | event
+    try:
+        WEB_LOG_FILE.parent.mkdir(parents=True, exist_ok=True)
+        with WEB_LOG_FILE.open("a", encoding="utf-8") as f:
+            f.write(json.dumps(event, ensure_ascii=False) + "\n")
+    except OSError as e:
+        print(f"Không ghi được {WEB_LOG_FILE}: {e}", flush=True)
+
+
+def online_players():
+    """{tên thường: server} của người đang online ở lobby/banghoi/practice (giữ 15 giây)."""
+    def load():
+        out = {}
+        for srv in GAME_SERVERS:
+            try:
+                text = rcon(srv, ["list"])[0][1]
+            except Exception:
+                continue
+            names = text.split(":", 1)[1] if ":" in text else ""
+            for n in re.split(r"[,\n]", names):
+                n = n.strip().split(" ")[-1]
+                if PLAYER_RE.match(n):
+                    out[n.lower()] = srv
+        return out
+    return web_cached("online", 15, load)
+
+
+def warn_login(name, how, ip):
+    """Báo vào game cho chủ tài khoản (nếu đang online) mỗi lần tài khoản đăng nhập web."""
+    raw = ["", {"text": "[Web] ", "color": "gold", "bold": True},
+           {"text": f"Tài khoản của bạn vừa đăng nhập trang web ({how}) lúc {time.strftime('%H:%M')}. ", "color": "yellow"},
+           {"text": "Không phải bạn? Đổi mật khẩu bằng /changepassword và báo admin ngay.", "color": "red"}]
+    srv = online_players().get(name.lower())
+    if srv:
+        try:
+            rcon(srv, [f"tellraw {name} " + json.dumps(raw, ensure_ascii=False)])
+        except Exception:
+            pass
+
+
+def web_login(data, ip):
+    """Trang web hỏi: tên + mật khẩu AuthMe, hoặc tên + mã /web. Trả tên thật nếu đúng."""
+    name = str(data.get("ten", "")).strip()
+    if not PLAYER_RE.match(name):
+        return {"ok": False, "message": "Tên nhân vật không hợp lệ"}
+    if data.get("ma"):
+        real, how = taikhoan.verify_code(name, str(data["ma"]).strip(), rcon, GAME_SERVERS), "mã từ game"
+    else:
+        real, how = taikhoan.verify_password(name, str(data.get("matkhau", ""))), "mật khẩu"
+    web_log({"viec": "dang-nhap", "nguoi": name, "cach": how, "ok": bool(real), "ip": ip})
+    if not real:
+        return {"ok": False}
+    threading.Thread(target=warn_login, args=(real, how, ip), daemon=True).start()
+    return {"ok": True, "ten": real}
+
+
+def account_times(name):
+    try:
+        con = taikhoan.db("network")
+        try:
+            cur = con.cursor()
+            cur.execute("SELECT regdate, lastlogin FROM authme WHERE username = %s", (name.lower(),))
+            row = cur.fetchone()
+        finally:
+            con.close()
+        return {"dangky": int(row[0] or 0), "lancuoi": int(row[1] or 0)} if row else {}
+    except Exception:
+        return {}
+
+
+def web_profile(name, by_code):
+    """Hồ sơ cho trang "Tài khoản của tôi": role, rank, số liệu chơi, lệnh dùng được, quyền quản trị."""
+    perms = taikhoan.load_perms(name)
+    if not perms:
+        return {"ok": False, "message": "Chưa có dữ liệu của tài khoản này: vào server ít nhất một lần."}
+    acc = taikhoan.access(perms, all_categories())
+    roles = []
+    for d in perms["direct"]:
+        g = d["group"]
+        if g == "default":
+            continue
+        m = perms["meta"].get(g, {})
+        roles.append({"id": g, "ten": m.get("display", g), "prefix": m.get("prefix", ""), "het": d["expiry"],
+                      "server": d["server"], "loai": "donate" if g in DONATE_GROUPS else ("staff" if g in STAFF_GROUPS else "khac")})
+    cmds = web_cached("lenh", 60, lambda: all_commands(YAML(typ="safe").load(CAMNANG_FILE.read_text(encoding="utf-8")) or {}))
+    lenh = {}
+    for srv in GAME_SERVERS:
+        rows = (cmds.get(srv) or {}).get("commands", [])
+        lenh[srv] = [{"plugin": r["plugin"], "ten": r["name"], "goi_tat": r.get("aliases", [])[:4], "mo_ta": r.get("desc_vi") or r.get("desc", ""),
+                      "rieng": r.get("who") != "Mọi người"} for r in rows if taikhoan.can_use_command(r, perms, srv)]
+    is_staff = bool(acc["features"]) or acc["toan_quyen"]
+    return {"ok": True, "ten": perms["name"] if perms["name"].lower() == name.lower() else name, "bedrock": name.startswith("."),
+            "taikhoan": account_times(name), "online": online_players().get(name.lower()),
+            "roles": roles, "nhom": sorted(g for g in perms["groups"] if g != "default"),
+            "hoso": taikhoan.profile(perms), "lenh": lenh,
+            "quantri": {"la_staff": is_staff, "toan_quyen": acc["toan_quyen"], "qua_game": by_code,
+                        "tinh_nang": list(acc["features"].values()), "loai_caidat": acc["categories"]}}
+
+
+# Trang/API -> tính năng cần có (staff đăng nhập bằng tài khoản game)
+PAGE_FEATURES = {"/": ("caidat",), "/thuvien": ("thuvien", "thuvien-dua"), "/boss": ("boss",), "/role": ("role", "role-quyen"),
+                 "/hoatdong": ("hoatdong",), "/camnang": ("camnang",), "/huongdan": ("huongdan",)}
+API_GET_FEATURES = {"/api/modes": ("caidat",), "/api/camnang": ("camnang",), "/api/huongdan": ("huongdan",), "/api/roles": ("role", "role-quyen"),
+                    "/api/boss": ("boss",), "/api/activity": ("hoatdong",), "/api/thuvien": None, "/api/toi": None}
+# Không ai ngoài admin toàn quyền đụng được: role admin/mod, quyền nguy hiểm
+PROTECTED_GROUPS = {"admin", "mod"}
+PROTECTED_PERM_RE = re.compile(r"^(\*|duckymomo\.web.*|duckymomo\.admin.*|luckperms.*)$")
+
+
 # ---------------------------------------------------------------- HTTP
 
 class Handler(BaseHTTPRequestHandler):
@@ -1264,6 +1432,29 @@ class Handler(BaseHTTPRequestHandler):
         self.wfile.write(body)
 
     def guard(self):
+        """Hai kiểu: PANEL_USER (Basic auth, toàn quyền) hoặc trang web công khai (khoá PANEL_SITE_KEY):
+        không kèm người chơi = chỉ gọi /api/web/*; kèm X-DMM-Player = staff, quyền tính lại từ LuckPerms mỗi lần."""
+        self.who, self.site = None, False
+        key = self.headers.get("X-DMM-Key", "")
+        if key:
+            if not PANEL_SITE_KEY or not hmac.compare_digest(key.encode(), PANEL_SITE_KEY.encode()):
+                self.send_json(403, {"ok": False, "message": "Sai khoá"})
+                return False
+            self.site = True
+            name = self.headers.get("X-DMM-Player", "")
+            if not name:
+                return True
+            try:
+                perms = taikhoan.load_perms(name) if PLAYER_RE.match(name) else None
+            except Exception as e:
+                self.send_json(500, {"ok": False, "message": f"Không đọc được quyền: {e}"})
+                return False
+            acc = taikhoan.access(perms, all_categories()) if perms else None
+            if not acc or not (acc["features"] or acc["toan_quyen"]):
+                self.send_json(403, {"ok": False, "message": "Tài khoản này không có quyền quản trị."})
+                return False
+            self.who = {"name": name, "acc": acc}
+            return True
         if self.authorized():
             return True
         self.send_response(401)
@@ -1271,15 +1462,69 @@ class Handler(BaseHTTPRequestHandler):
         self.end_headers()
         return False
 
+    def can(self, *features):
+        if self.who is None:
+            return True
+        acc = self.who["acc"]
+        return acc["toan_quyen"] or any(f in acc["features"] for f in features)
+
+    def deny(self, msg="Tài khoản của bạn không có quyền làm việc này."):
+        self.send_json(403, {"ok": False, "message": msg})
+
+    def read_body(self, limit=65536):
+        length = int(self.headers.get("Content-Length", "0"))
+        if length > limit:
+            raise ValueError("Dữ liệu quá lớn")
+        return json.loads(self.rfile.read(length) or b"{}")
+
+    def web_internal(self, method, path, query):
+        """/api/web/*: chỉ trang web công khai gọi (khoá, không kèm người chơi)."""
+        if not self.site or self.who is not None:
+            self.send_json(404, {"error": "không có"})
+            return
+        try:
+            if method == "POST" and path == "/api/web/xacminh":
+                self.send_json(200, web_login(self.read_body(4096), self.headers.get("X-DMM-Ip", "")))
+            elif method == "GET" and path == "/api/web/hoso":
+                q = {k: v[-1] for k, v in urllib.parse.parse_qs(query).items()}
+                name = q.get("ten", "")
+                if not PLAYER_RE.match(name):
+                    raise ValueError("Tên không hợp lệ")
+                self.send_json(200, web_profile(name, q.get("qua_game") == "1"))
+            else:
+                self.send_json(404, {"error": "không có"})
+        except ValueError as e:
+            self.send_json(400, {"ok": False, "message": str(e)})
+        except Exception as e:
+            self.send_json(500, {"ok": False, "message": f"Lỗi: {e}"})
+
     def do_GET(self):
         if not self.guard():
             return
         path, _, query = self.path.partition("?")
+        if path.startswith("/api/web/") or (self.site and self.who is None):
+            return self.web_internal("GET", path, query)
+        if self.who is not None:
+            need = PAGE_FEATURES.get(path) or API_GET_FEATURES.get(path, ())
+            if path == "/" and not self.can("caidat"):
+                first = next((f["trang"] for f in self.who["acc"]["features"].values() if f.get("trang")), None)
+                if first:
+                    self.send_response(302)
+                    self.send_header("Location", first)
+                    self.end_headers()
+                    return
+            if need and not self.can(*need):
+                return self.deny()
+        if path == "/api/toi":
+            acc = self.who["acc"] if self.who else None
+            return self.send_json(200, {"ten": self.who["name"] if self.who else PANEL_USER, "game": self.who is not None,
+                                        "toan_quyen": acc["toan_quyen"] if acc else True,
+                                        "tinh_nang": list(acc["features"]) if acc else None})
         if path in ("/", "/hoatdong", "/camnang", "/huongdan", "/role", "/thuvien", "/boss"):
             dozzle = DOZZLE_PROXY_URL if self.headers.get("X-Forwarded-Prefix") else DOZZLE_URL
             page = {"/": INDEX_HTML, "/hoatdong": ACTIVITY_HTML, "/camnang": CAMNANG_HTML, "/huongdan": HUONGDAN_HTML, "/role": ROLE_HTML,
                     "/thuvien": THUVIEN_HTML, "/boss": BOSS_HTML}[path]
-            body = page.replace("__DOZZLE_URL__", dozzle).encode("utf-8")
+            body = page.replace("__DOZZLE_URL__", "" if self.who else dozzle).encode("utf-8")
             self.send_response(200)
             self.send_header("Content-Type", "text/html; charset=utf-8")
             self.send_header("Content-Length", str(len(body)))
@@ -1294,7 +1539,8 @@ class Handler(BaseHTTPRequestHandler):
             self.end_headers()
             self.wfile.write(body)
         elif path == "/api/modes":
-            self.send_json(200, modes_json())
+            scoped = self.who is not None and not self.who["acc"]["toan_quyen"]
+            self.send_json(200, modes_json(self.who["acc"]["categories"] if scoped else None))
         elif path == "/api/camnang":
             self.send_json(200, camnang_json())
         elif path == "/api/huongdan":
@@ -1314,13 +1560,52 @@ class Handler(BaseHTTPRequestHandler):
         else:
             self.send_json(404, {"error": "không có"})
 
+    def scoped_post_ok(self):
+        """Staff đăng nhập bằng tài khoản game: kiểm tra quyền từng thao tác ghi, ghi nhật ký web-thaotac.jsonl."""
+        acc, p, b = self.who["acc"], self.path, self.body
+        full = acc["toan_quyen"]
+        if p == "/api/roles":
+            grp = str(b.get("group", ""))
+            if b.get("action") in ("perm_set", "perm_unset", "perm_deny"):
+                node = str(b.get("node", "")).strip().lower()
+                ok = self.can("role-quyen") and (full or (grp not in PROTECTED_GROUPS and not PROTECTED_PERM_RE.match(node)))
+            else:
+                ok = self.can("role") and (full or grp not in PROTECTED_GROUPS)
+        elif p == "/api/say":
+            ok = self.can("hoatdong")
+        elif p == "/api/boss":
+            ok = self.can("boss")
+        elif p == "/api/thuvien":
+            ok = self.can("thuvien-dua" if b.get("action") == "give" else "thuvien")
+        elif p == "/api/huongdan":
+            ok = self.can("huongdan")
+        else:
+            m = re.fullmatch(r"/api/modes/([a-z0-9_-]+)/(save|apply-all)", p)
+            if m and m.group(2) == "save":
+                keys = set((b.get("values") or {}).keys())
+                ok = self.can("caidat") and (full or keys <= allowed_keys(m.group(1), acc["categories"]))
+            else:
+                ok = bool(m) and full
+        web_log({"viec": p, "nguoi": self.who["name"], "hanh_dong": b.get("action"), "doi_tuong": b.get("id") or b.get("group") or b.get("player"),
+                 "ok": ok})
+        if not ok:
+            self.deny()
+        return ok
+
     def do_POST(self):
         if not self.guard():
             return
+        if self.path.startswith("/api/web/") or (self.site and self.who is None):
+            return self.web_internal("POST", self.path, "")
+        try:
+            self.body = self.read_body(4_000_000)
+        except ValueError as e:
+            return self.send_json(400, {"ok": False, "message": str(e) or "Dữ liệu không hợp lệ"})
+        if self.who is not None and not self.scoped_post_ok():
+            return
         if self.path == "/api/roles":
             try:
-                length = int(self.headers.get("Content-Length", "0"))
-                self.send_json(200, role_action(json.loads(self.rfile.read(length) or b"{}")))
+                self.send_json(200, role_action(self.body))
             except ValueError as e:
                 self.send_json(400, {"ok": False, "message": str(e)})
             except Exception as e:
@@ -1328,10 +1613,7 @@ class Handler(BaseHTTPRequestHandler):
             return
         if self.path == "/api/say":
             try:
-                length = int(self.headers.get("Content-Length", "0"))
-                if length > 4096:
-                    raise ValueError("Tin quá dài")
-                self.send_json(200, say(json.loads(self.rfile.read(length) or b"{}")))
+                self.send_json(200, say(self.body))
             except ValueError as e:
                 self.send_json(400, {"ok": False, "message": str(e)})
             except Exception as e:
@@ -1339,10 +1621,7 @@ class Handler(BaseHTTPRequestHandler):
             return
         if self.path == "/api/boss":
             try:
-                length = int(self.headers.get("Content-Length", "0"))
-                if length > 65536:
-                    raise ValueError("Dữ liệu quá lớn")
-                self.send_json(200, boss_action(json.loads(self.rfile.read(length) or b"{}")))
+                self.send_json(200, boss_action(self.body))
             except ValueError as e:
                 self.send_json(400, {"ok": False, "message": str(e)})
             except Exception as e:
@@ -1350,10 +1629,7 @@ class Handler(BaseHTTPRequestHandler):
             return
         if self.path == "/api/thuvien":
             try:
-                length = int(self.headers.get("Content-Length", "0"))
-                if length > 65536:
-                    raise ValueError("Dữ liệu quá lớn")
-                self.send_json(200, thuvien_action(json.loads(self.rfile.read(length) or b"{}")))
+                self.send_json(200, thuvien_action(self.body, self.who["name"] if self.who else None))
             except ValueError as e:
                 self.send_json(400, {"ok": False, "message": str(e)})
             except Exception as e:
@@ -1361,8 +1637,7 @@ class Handler(BaseHTTPRequestHandler):
             return
         if self.path == "/api/huongdan":
             try:
-                length = int(self.headers.get("Content-Length", "0"))
-                self.send_json(200, {"ok": True, "message": huongdan_save(json.loads(self.rfile.read(length) or b"{}"))})
+                self.send_json(200, {"ok": True, "message": huongdan_save(self.body)})
             except ValueError as e:
                 self.send_json(400, {"ok": False, "message": str(e)})
             except Exception as e:
@@ -1373,8 +1648,7 @@ class Handler(BaseHTTPRequestHandler):
             self.send_json(404, {"error": "không có"})
             return
         try:
-            length = int(self.headers.get("Content-Length", "0"))
-            payload = json.loads(self.rfile.read(length) or b"{}")
+            payload = self.body
             result = save_and_apply(m.group(1), payload.get("values", {}), apply_all=m.group(2) == "apply-all")
             self.send_json(200, result)
         except ValueError as e:

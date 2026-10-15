@@ -1,0 +1,58 @@
+# Ai được làm gì trên TRANG QUẢN TRỊ khi đăng nhập bằng tài khoản game (nút "Đăng nhập" trên trang web công khai).
+# panel/taikhoan.py đọc file này ở mỗi lần hỏi (sửa xong không cần build lại).
+#
+# - Mỗi tính năng có danh sách quyền LuckPerms: có MỘT trong số đó là được (quyền game cũng tính, vd essentials.enchant).
+# - Admin có '*' (hoặc quyền duckymomo.web.toanquyen) được tất cả, kể cả "Áp dụng lại tất cả" và sửa role admin.
+# - Đăng nhập kiểu cũ (PANEL_USER qua Trạm 6) vẫn luôn được tất cả.
+# - Cấp quyền cho một role: trang Role > nhóm "Trang quản trị web" (quyen.yml), hoặc lp group <role> permission set <quyền> true.
+# - Staff chỉ mở được trang quản trị khi đăng nhập bằng MÃ TỪ GAME (/web), không dùng mật khẩu.
+tinh-nang:
+  - id: thuvien
+    ten: Thư viện đồ
+    mo-ta: Tạo, sửa, xoá đồ trong thư viện (đồ thưởng, đồ bán ở cửa hàng)
+    trang: thuvien
+    quyen: [duckymomo.web.thuvien, essentials.enchant, minecraft.command.enchant]
+  - id: thuvien-dua
+    ten: Đưa đồ thư viện
+    mo-ta: Đưa đồ trong thư viện cho người chơi đang online
+    trang: thuvien
+    quyen: [duckymomo.web.thuvien.dua, essentials.give, minecraft.command.give]
+  - id: boss
+    ten: Boss
+    mo-ta: Tạo, sửa boss EliteMobs
+    trang: boss
+    quyen: [duckymomo.web.boss]
+  - id: hoatdong
+    ten: Hoạt động người chơi
+    mo-ta: Xem chat, lệnh, vào/ra; gửi thông báo vào game
+    trang: hoatdong
+    quyen: [duckymomo.web.hoatdong]
+  - id: role
+    ten: Role & rank
+    mo-ta: Cấp, gỡ role và rank donate (không đụng được role admin)
+    trang: role
+    quyen: [duckymomo.web.role]
+  - id: role-quyen
+    ten: Sửa quyền của role
+    mo-ta: Tick/bỏ quyền của từng role trên trang Role
+    trang: role
+    quyen: [duckymomo.web.role.quyen]
+  - id: camnang
+    ten: Cẩm nang admin
+    mo-ta: Đọc cẩm nang plugin và danh sách mọi lệnh
+    trang: camnang
+    quyen: [duckymomo.web.camnang, group.helper, group.builder]
+  - id: huongdan
+    ten: Cẩm nang trong game
+    mo-ta: Sửa sách /huongdan
+    trang: huongdan
+    quyen: [duckymomo.web.huongdan]
+
+# Trang Cài đặt: mỗi LOẠI (thanh chọn loại trên trang) mở bằng quyen-chung + "." + tên loại viết liền không dấu,
+# vd loại "Thưởng & sự kiện" = duckymomo.web.caidat.thuongsukien; duckymomo.web.caidat.* = mọi loại.
+# "them": quyền game cũng mở được loại đó.
+cai-dat:
+  quyen-chung: duckymomo.web.caidat
+  them:
+    Thị trấn: [towny.admin]
+    PvP & combat: [pvpmanager.admin]

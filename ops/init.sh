@@ -18,6 +18,7 @@ else
     -e "s/^PANEL_PASSWORD=.*/PANEL_PASSWORD=$(rand 20)/" \
     -e "s/^RCON_PASSWORD=.*/RCON_PASSWORD=$(rand 32)/" \
     -e "s/^RESTIC_PASSWORD=.*/RESTIC_PASSWORD=$(rand 40)/" \
+    -e "s/^PANEL_SITE_KEY=.*/PANEL_SITE_KEY=$(rand 48)/" \
     .env.example > .env
   chmod 600 .env
   echo "Đã tạo .env với mật khẩu ngẫu nhiên."
@@ -29,6 +30,10 @@ if ! grep -q '^AUTHME_SECRET=' .env; then
   echo "Đã thêm AUTHME_SECRET vào .env."
 fi
 
+if ! grep -q '^PANEL_SITE_KEY=' .env; then
+  printf '\n# Khoá nội bộ giữa trang web công khai và trang quản trị (thêm bởi ops/init.sh)\nPANEL_SITE_KEY=%s\n' "$(rand 48)" >> .env
+  echo "Đã thêm PANEL_SITE_KEY vào .env (đăng nhập trang web bằng tài khoản game)."
+fi
 if ! grep -q '^PANEL_PASSWORD=' .env; then
   printf '\n# Trang Cài đặt (thêm bởi ops/init.sh)\nPANEL_USER=admin\nPANEL_PASSWORD=%s\n' "$(rand 20)" >> .env
   echo "Đã thêm PANEL_USER/PANEL_PASSWORD vào .env (đăng nhập trang Cài đặt)."

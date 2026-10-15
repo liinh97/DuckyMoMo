@@ -39,6 +39,7 @@ guide:
       - ["Thanh đếm ngược bảo vệ người mới", "Boss bar của PvPManager (15 phút). Sửa chữ, màu, bật/tắt: Cài đặt > Bang Hội Chiến > PvP & combat"]
       - ["Thư viện đồ (phần thưởng)", "Trang quản trị > Thư viện đồ: tạo đồ trên web (tên màu, lore, phù phép kể cả vượt cấp, Enchantio và CrazyEnchantments (Boom, Vampire…, ghi [CE]), không thể hỏng), xem trước như trong game, Lưu là Bang Hội Chiến nạp ngay; nút Đưa cho người chơi đang online. Đồ đặc biệt từ game: cầm trên tay, /dmm luudo <mã> (giữ nguyên vẹn). Phát: /dmm laydo <mã> [người] [số]. Dùng cho điểm danh, nhiệm vụ, vòng quay, đổi mảnh, cửa hàng (đang làm)"]
       - ["Tự sửa sau khi máy khởi động lại", "Tự chạy 2 phút sau khi đăng nhập Windows (tác vụ 'DuckyMoMo tu sua'): sửa cổng chết, thư mục gắn bị treo, playit cho cả Minecraft, Trạm 6, goc6; có người online thì không khởi động lại. Chạy tay: ./ops/tu-sua-sau-khoi-dong.sh (thêm --kiem-tra để chỉ xem). Nhật ký: data/ops/tu-sua.log"]
+      - ["Đăng nhập web bằng tài khoản game", "Trang web có nút Đăng nhập (taikhoan.html): người chơi xem rank, hạn rank, tiền, giờ chơi, điểm danh, nhiệm vụ, vé quay, vote, thị trấn, lệnh mình dùng được. Đăng nhập bằng mật khẩu AuthMe hoặc mã 6 số từ /web (dùng 1 lần, 5 phút). Staff mở trang quản trị NGAY TRÊN TRANG WEB, chỉ thấy phần có quyền (modes/_network/web-quyen.yml; cấp quyền ở trang Role > Trang quản trị web), và PHẢI đăng nhập bằng mã /web (mật khẩu không đủ), phiên quản trị 12 giờ. Sai 5 lần khoá tên 15 phút; mỗi lần đăng nhập web báo vào game cho chủ tài khoản. Nhật ký đăng nhập + thao tác: data/panel/web-thaotac.jsonl"]
   - title: Người chơi mới cần biết
     items:
       - ["Đăng ký / đăng nhập", "Lần đầu: /register <mật khẩu> <mật khẩu> · lần sau: /login <mật khẩu>"]
@@ -140,6 +141,7 @@ plugins:
       - ["/menu", "Mở menu chọn chế độ (ở sảnh)"]
       - ["/huongdan [chương] · /hd", "Cẩm nang trong game (sách; điện thoại: bảng nút). Chương: batdau, luat, banghoi, practice, rank, pokemon, hotro"]
       - ["/rank", "Xem các bậc rank donate, giá, rank của mình"]
+      - ["/web · /dangnhapweb", "Lấy mã 6 số đăng nhập trang web (dùng 1 lần, hết hạn 5 phút; Bedrock dùng cách này vì không có mật khẩu). Staff cần mã này để mở trang quản trị trên web"]
       - ["/hoatdong · /giochoi", "Bang Hội Chiến: xem giờ chơi thật (không tính AFK) và có phải dân hoạt động không"]
       - ["/taikhoanphu khai <chính> · xacnhan <phụ>", "Bang Hội Chiến: tự khai tài khoản phụ (tối đa 2 tài khoản/người); tài khoản phụ không nhận quân hàm, không đánh trận"]
       - ["/choilai · /choilai xacnhan", "Bang Hội Chiến: chơi lại từ đầu (mất đồ, tiền, nhà, nghề, thị trấn; giữ rank, danh hiệu, án). 7 ngày/lần, 3 lần/mùa, quà tân thủ chỉ lần đầu. Phải dỡ shop rương, rút hàng /ah trước"]
@@ -169,6 +171,7 @@ plugins:
       - ["/setjail nhatu", "Essentials: đặt nhà tù kinh đô (Hội Bàn Tròn phạt tù dùng tên này)"]
       - ["/dmm hoabinh claim <bán kính ô>", "Kinh đô chiếm đất quanh nhà chính (1 ô = 16 block; spawn hiện cần khoảng 14)"]
       - ["/dmm phu add <phụ> <chính> | remove <phụ> | list", "Ghi tài khoản phụ (Bang Hội Chiến): không được phong quân hàm, không gây sát thương trong vùng vây lúc có phiên. Lưu ở plugins/DuckyMoMoCore/taikhoanphu.yml"]
+      - ["/dmm webma <tên> <mã>", "Chỉ console/RCON (trang web tự gọi để kiểm tra mã /web). Người chơi gõ thì luôn báo sai"]
       - ["/dmm rtpnpc [remove]", "Đặt NPC dịch chuyển ngẫu nhiên (dân làng + chữ nổi) tại chỗ đang đứng; đặt lại thì NPC cũ bị xoá; remove = xoá"]
       - ["/dmm decorate | structures start|pause|status", "Trang trí map / đặt công trình (dùng khi làm map mới)"]
     settings: "Trang Cài đặt: Toàn mạng (Chat, Rank donate, Sảnh), Bang Hội Chiến (Hệ thống; Thế giới: /tpr thời gian chờ, phí; Chiến tranh > Giai đoạn mùa và PvP). Danh sách khu /tpr: modes/banghoi/server/plugins/DuckyMoMoCore/config.yml mục rtp.zones"

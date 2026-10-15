@@ -190,6 +190,10 @@ header.nav .wrap{height:64px}
 .vbtn{display:inline-block;padding:10px 16px;border-radius:10px;font-weight:800;background:linear-gradient(135deg,var(--gold),#d98b25);color:#1d1203!important}
 .vbtn:hover{text-decoration:none;filter:brightness(1.1)}
 @media (max-width:900px){.nav-cta{display:none}}
+.nav-login{display:inline-flex;align-items:center;gap:8px;padding:7px 12px;border-radius:10px;font-weight:700;font-size:.9rem;border:1px solid var(--line);background:var(--card);color:var(--text)!important;white-space:nowrap;max-width:180px;overflow:hidden;text-overflow:ellipsis}
+.nav-login:hover{text-decoration:none;border-color:var(--gold)}
+.nav-login img{width:22px;height:22px;border-radius:5px;image-rendering:pixelated}
+.nav-right{display:flex;align-items:center;gap:8px}
 
 .hero{min-height:calc(100svh - 64px);display:flex;flex-direction:column;justify-content:center;padding:56px 0 40px}
 .hero .wrap{grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:clamp(24px,4vw,72px)}
@@ -306,8 +310,11 @@ footer .fbrand img{width:44px}
       <a href="#luat">Luật</a>
       <a href="#hoidap">Hỏi đáp</a>
     </nav>
-    <a class="nav-cta" href="#vao">Vào chơi</a>
-    <button class="menu-btn" id="menuBtn" aria-label="Mở menu">Menu</button>
+    <div class="nav-right">
+      <a class="nav-login" id="navLogin" href="taikhoan.html" hidden>Đăng nhập</a>
+      <a class="nav-cta" href="#vao">Vào chơi</a>
+      <button class="menu-btn" id="menuBtn" aria-label="Mở menu">Menu</button>
+    </div>
   </div>
 </header>
 
@@ -952,6 +959,12 @@ function countTo(el, n){
   const lines = ["Công thành tối nay không? ⚔️","Đất Tây Bắc còn trống kìa! 🏔️","Giết dân hoà bình là ra toà nha ⚖️","Vào sớm chọn đất đẹp! 🏰","Bán đồ ở kinh đô được +20% 💰","Có gì đó đang thức giấc… 🌋"];
   let i = 0; setInterval(() => { i = (i + 1) % lines.length; const b = $("#bubble"); if (b) b.textContent = lines[i]; }, 6000);
 })();
+// nút Đăng nhập / tên tài khoản (ẩn khi server chưa bật đăng nhập web)
+j("api/toi").then(t => {
+  const a = $("#navLogin");
+  if (t.dang_nhap && t.ten) { a.textContent = t.ten; a.title = "Tài khoản của tôi"; }
+  if (t.bat) a.hidden = false;
+}).catch(() => {});
 loadInfo().catch(()=>{}); loadStatus(); loadBantron(); loadBxh(); loadVote();
 setInterval(loadStatus, 30000); setInterval(loadBantron, 60000); setInterval(loadBxh, 60000); setInterval(loadVote, 60000);
 </script>

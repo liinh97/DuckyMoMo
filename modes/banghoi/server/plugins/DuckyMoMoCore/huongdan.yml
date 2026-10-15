@@ -503,6 +503,17 @@ chapters:
 
         &0Quên mật khẩu: nhờ
         admin đặt lại.
+      - |-
+        &6&lTRANG WEB
+        &0Xem rank, tiền, giờ
+        chơi, nhiệm vụ, lệnh
+        của bạn trên web.
+
+        &0Gõ &l/web&r&0 lấy mã 6
+        số, vào web bấm
+        &lĐăng nhập&r&0.
+        &4Đừng đưa mã cho ai,
+        &4admin không hỏi mã.
         &0Bị hack nhầm, bị
         kick nhầm: báo admin
         kèm thời gian.

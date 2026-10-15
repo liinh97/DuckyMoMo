@@ -5,9 +5,17 @@
 bằng Server List Ping để biết số người online. Không trả UUID, mật khẩu, IP; không ghi gì vào server.
 
 API: /api/info  /api/status  /api/bantron  /api/bxh  /api/vote   (kết quả giữ 30 giây)
+
+Đăng nhập bằng tài khoản game (khi có PANEL_SITE_KEY): /api/dangnhap, /api/dangxuat, /api/toi; trang quản trị cho staff ở
+/quantri/ (chuyển tiếp sang panel, panel tự kiểm quyền LuckPerms). Trang web không giữ mật khẩu, không đọc database:
+mọi kiểm tra do panel làm. Phiên đăng nhập chỉ nằm trong bộ nhớ (khởi động lại = đăng nhập lại).
 """
+import hashlib
+import http.client
 import json
 import os
+import re
+import secrets
 import socket
 import struct
 import threading
@@ -26,6 +34,8 @@ SITE_CFG = Path(__file__).parent / "config" / "site.yml"
 SRV = os.environ.get("BANGHOI_SERVER", "banghoi-1")
 PROXY = (os.environ.get("PROXY_HOST", "proxy"), int(os.environ.get("PROXY_PORT", "25577")))
 VN = ZoneInfo("Asia/Ho_Chi_Minh")
+PANEL_URL = os.environ.get("PANEL_URL", "http://panel:8080")
+PANEL_SITE_KEY = os.environ.get("PANEL_SITE_KEY", "")
 DAYS_VI = {"MONDAY": "Thứ 2", "TUESDAY": "Thứ 3", "WEDNESDAY": "Thứ 4", "THURSDAY": "Thứ 5", "FRIDAY": "Thứ 6",
            "SATURDAY": "Thứ 7", "SUNDAY": "Chủ nhật"}
 OPTIONS_VI = {"giu": "Giữ mức sàn", "phatnang": "Phạt nặng", "truyna": "Truy nã", "tu": "Tù", "luuday": "Lưu đày",
@@ -347,6 +357,116 @@ def api_vote():
             "top": [{"ten": n, "luot": c} for n, c in top[:10]]}
 
 
+# ---------------------------------------------------------------- đăng nhập bằng tài khoản game
+
+COOKIE = "dmm_phien"
+SESSION_DAYS = 7          # phiên xem tài khoản
+ADMIN_HOURS = 12          # quyền mở trang quản trị sau khi nhập mã từ game; hết thì nhập mã /web lại
+NAME_RE = re.compile(r"^\.?[A-Za-z0-9_]{1,17}$")
+FAIL_WINDOW = 15 * 60
+FAIL_PER_NAME = 5         # sai 5 lần / 15 phút: khoá tên đó 15 phút (chống dò mật khẩu)
+FAIL_PER_IP = 20
+_sessions = {}            # sha256(token) -> {ten, tao, het, game_het, ip}
+_fails = {}               # ("ten"|"ip", giá trị) -> [mốc thời gian sai]
+_slock = threading.Lock()
+
+
+def panel(method, path, body=None, player=None, ip=""):
+    """Gọi panel qua mạng nội bộ Docker. Trả (status, headers, bytes)."""
+    u = PANEL_URL.split("://", 1)[1]
+    host, _, port = u.partition(":")
+    con = http.client.HTTPConnection(host, int(port or 80), timeout=30)
+    headers = {"X-DMM-Key": PANEL_SITE_KEY, "X-DMM-Ip": ip}
+    if player:
+        headers["X-DMM-Player"] = player
+    if body is not None:
+        headers["Content-Type"] = "application/json"
+    try:
+        con.request(method, path, body=body, headers=headers)
+        r = con.getresponse()
+        return r.status, dict(r.getheaders()), r.read()
+    finally:
+        con.close()
+
+
+def _blocked(key, limit):
+    now = time.time()
+    with _slock:
+        lst = [t for t in _fails.get(key, []) if now - t < FAIL_WINDOW]
+        _fails[key] = lst
+        return len(lst) >= limit
+
+
+def _fail(*keys):
+    with _slock:
+        for k in keys:
+            _fails.setdefault(k, []).append(time.time())
+
+
+def session_of(token):
+    if not token:
+        return None
+    h = hashlib.sha256(token.encode()).hexdigest()
+    with _slock:
+        s = _sessions.get(h)
+        if s and s["het"] < time.time():
+            _sessions.pop(h, None)
+            s = None
+    return s
+
+
+def login(data, ip):
+    name = str(data.get("ten", "")).strip()
+    if not PANEL_SITE_KEY:
+        return 503, {"ok": False, "message": "Đăng nhập chưa bật trên server."}, None
+    if not NAME_RE.match(name):
+        return 400, {"ok": False, "message": "Tên nhân vật không hợp lệ."}, None
+    if _blocked(("ten", name.lower()), FAIL_PER_NAME) or _blocked(("ip", ip), FAIL_PER_IP):
+        return 429, {"ok": False, "message": "Sai quá nhiều lần. Đợi 15 phút rồi thử lại, hoặc vào game gõ /web để lấy mã."}, None
+    ma, mk = str(data.get("ma", "")).strip(), str(data.get("matkhau", ""))
+    if not ma and not mk:
+        return 400, {"ok": False, "message": "Nhập mật khẩu hoặc mã từ game."}, None
+    body = json.dumps({"ten": name, "ma": ma} if ma else {"ten": name, "matkhau": mk[:200]}).encode()
+    status, _, raw = panel("POST", "/api/web/xacminh", body, ip=ip)
+    res = json.loads(raw or b"{}") if status == 200 else {}
+    if not res.get("ok"):
+        _fail(("ten", name.lower()), ("ip", ip))
+        if status != 200:
+            return 502, {"ok": False, "message": "Máy chủ đang bận, thử lại sau."}, None
+        return 401, {"ok": False, "message": "Sai mã (mã dùng 1 lần, hết hạn sau 5 phút)." if ma else "Sai tên hoặc mật khẩu."}, None
+    token = secrets.token_urlsafe(32)
+    now = time.time()
+    with _slock:
+        for k in [k for k, v in _sessions.items() if v["het"] < now]:
+            _sessions.pop(k, None)
+        for k in [k for k, v in _fails.items() if not v or now - v[-1] > FAIL_WINDOW]:
+            _fails.pop(k, None)
+        _sessions[hashlib.sha256(token.encode()).hexdigest()] = {
+            "ten": res["ten"], "tao": now, "het": now + SESSION_DAYS * 86400, "game_het": now + ADMIN_HOURS * 3600 if ma else 0, "ip": ip}
+    return 200, {"ok": True, "ten": res["ten"]}, token
+
+
+def logout(token, everywhere=False):
+    s = session_of(token)
+    with _slock:
+        if s and everywhere:
+            for k in [k for k, v in _sessions.items() if v["ten"].lower() == s["ten"].lower()]:
+                _sessions.pop(k, None)
+        elif token:
+            _sessions.pop(hashlib.sha256(token.encode()).hexdigest(), None)
+
+
+def me(token, ip):
+    s = session_of(token)
+    if not s:
+        return {"dang_nhap": False, "bat": bool(PANEL_SITE_KEY)}
+    qua_game = s["game_het"] > time.time()
+    status, _, raw = panel("GET", f"/api/web/hoso?ten={s['ten']}&qua_game={1 if qua_game else 0}", ip=ip)
+    data = json.loads(raw or b"{}") if status == 200 else {"ok": False, "message": "Không tải được thông tin, thử lại sau."}
+    data.update(dang_nhap=True, bat=True, phien={"het": int(s["het"] * 1000), "quan_tri_het": int(s["game_het"] * 1000) if qua_game else 0})
+    return data
+
+
 ROUTES = {
     "/api/info": lambda: cached("info", 30, api_info),
     "/api/status": lambda: cached("status", 20, api_status),
@@ -364,7 +484,7 @@ class Handler(BaseHTTPRequestHandler):
     server_version = "web"
     sys_version = ""
 
-    def _send(self, code, body, ctype, cache="no-cache"):
+    def _send(self, code, body, ctype, cache="no-cache", extra=None):
         self.send_response(code)
         self.send_header("Content-Type", ctype)
         self.send_header("Content-Length", str(len(body)))
@@ -372,11 +492,100 @@ class Handler(BaseHTTPRequestHandler):
         self.send_header("X-Content-Type-Options", "nosniff")
         self.send_header("X-Robots-Tag", "noindex, nofollow")
         self.send_header("Referrer-Policy", "no-referrer")
+        self.send_header("X-Frame-Options", "DENY")
+        for k, v in (extra or {}).items():
+            self.send_header(k, v)
         self.end_headers()
         self.wfile.write(body)
 
+    def _json(self, code, obj, extra=None):
+        self._send(code, json.dumps(obj, ensure_ascii=False).encode("utf-8"), "application/json; charset=utf-8", "no-store", extra)
+
+    def client_ip(self):
+        # Trạm 6 (Traefik) ghi X-Real-Ip; chạy thẳng thì lấy địa chỉ kết nối
+        return (self.headers.get("X-Real-Ip") or self.client_address[0])[:64]
+
+    def token(self):
+        for part in self.headers.get("Cookie", "").split(";"):
+            k, _, v = part.strip().partition("=")
+            if k == COOKIE:
+                return v
+        return ""
+
+    def cookie(self, token, max_age):
+        prefix = self.headers.get("X-Forwarded-Prefix", "").rstrip("/") + "/"
+        secure = "; Secure" if self.headers.get("X-Forwarded-Proto") == "https" else ""
+        return f"{COOKIE}={token}; Path={prefix}; Max-Age={max_age}; HttpOnly; SameSite=Lax{secure}"
+
+    def same_origin(self):
+        """Chặn trang khác gửi yêu cầu thay người dùng (CSRF): trình duyệt luôn gửi Origin / Sec-Fetch-Site với fetch POST."""
+        site = self.headers.get("Sec-Fetch-Site")
+        if site and site not in ("same-origin", "none"):
+            return False
+        origin = self.headers.get("Origin")
+        if origin:
+            host = self.headers.get("X-Forwarded-Host") or self.headers.get("Host", "")
+            return origin.split("://", 1)[-1].rstrip("/") == host
+        return True
+
+    def body_json(self, limit=8192):
+        length = int(self.headers.get("Content-Length", "0") or 0)
+        if length > limit:
+            raise ValueError("Dữ liệu quá lớn")
+        return json.loads(self.rfile.read(length) or b"{}")
+
+    def admin(self, method):
+        """/quantri/… -> panel. Chỉ phiên đã nhập mã từ game (còn hạn); panel kiểm quyền từng trang/thao tác."""
+        path = self.path[len("/quantri"):] or "/"
+        s = session_of(self.token())
+        if self.path.split("?", 1)[0] == "/quantri":
+            return self._send(302, b"", "text/plain", "no-store", {"Location": "quantri/"})
+        if not s or s["game_het"] < time.time():
+            if path.startswith("/api/"):
+                return self._json(401, {"ok": False, "message": "Phiên quản trị hết hạn: vào game gõ /web rồi đăng nhập lại bằng mã."})
+            return self._send(302, b"", "text/plain", "no-store", {"Location": "../taikhoan.html?can=ma"})
+        if method == "POST" and not self.same_origin():
+            return self._json(403, {"ok": False, "message": "Yêu cầu không hợp lệ"})
+        body = None
+        if method == "POST":
+            length = int(self.headers.get("Content-Length", "0") or 0)
+            if length > 4_000_000:
+                return self._json(413, {"ok": False, "message": "Dữ liệu quá lớn"})
+            body = self.rfile.read(length)
+        try:
+            status, headers, raw = panel(method, path, body, player=s["ten"], ip=self.client_ip())
+        except OSError:
+            return self._json(502, {"ok": False, "message": "Trang quản trị đang tắt, thử lại sau."})
+        extra = {"Location": headers["Location"]} if "Location" in headers else None
+        self._send(status, raw, headers.get("Content-Type", "text/plain"), "no-store", extra)
+
+    def do_POST(self):
+        path = self.path.split("?", 1)[0]
+        if path.startswith("/quantri"):
+            return self.admin("POST")
+        if not self.same_origin():
+            return self._json(403, {"ok": False, "message": "Yêu cầu không hợp lệ"})
+        try:
+            if path == "/api/dangnhap":
+                code, obj, token = login(self.body_json(), self.client_ip())
+                extra = {"Set-Cookie": self.cookie(token, SESSION_DAYS * 86400)} if token else None
+                return self._json(code, obj, extra)
+            if path in ("/api/dangxuat", "/api/dangxuat-het"):
+                logout(self.token(), everywhere=path.endswith("-het"))
+                return self._json(200, {"ok": True}, {"Set-Cookie": self.cookie("", 0)})
+        except (ValueError, OSError) as e:
+            return self._json(400 if isinstance(e, ValueError) else 502, {"ok": False, "message": "Không xử lý được, thử lại sau."})
+        self._json(404, {"ok": False})
+
     def do_GET(self):
         path = self.path.split("?", 1)[0]
+        if path.startswith("/quantri"):
+            return self.admin("GET")
+        if path == "/api/toi":
+            try:
+                return self._json(200, me(self.token(), self.client_ip()))
+            except OSError:
+                return self._json(200, {"dang_nhap": True, "ok": False, "message": "Không tải được thông tin, thử lại sau."})
         if path in ROUTES:
             try:
                 body = json.dumps(ROUTES[path](), ensure_ascii=False).encode("utf-8")

@@ -71,6 +71,10 @@
    - Triển khai ở nhà: `git pull` → `./ops/init.sh` (thêm `PANEL_SITE_KEY` vào .env) → `./ops/build-core.sh` → kiểm tra online rồi
      `docker compose up -d --no-deps lobby banghoi-1 practice-1` → `docker compose up -d --build panel site`. Cấp quyền web cho role ở trang Role.
 
+11. **Bang Hội Chiến mở cho mọi người (15/10 tối)**: `modes/banghoi/mode.yml` `status: beta` → `open`. Trước đó tài khoản mới vào sảnh bấm la bàn
+   chỉ thấy ô "Chưa có chế độ nào mở" (beta chỉ hiện cho quyền `network.beta`). Menu đọc mode.yml mỗi lần mở (mount `../modes:/modes:ro`):
+   git pull là có hiệu lực, không cần khởi động lại. Practice vẫn `beta` (chưa ai thử Duels).
+
 ### Người dùng phải tự làm (nhắc lại khi phù hợp)
 - Thêm `[boot] command = modprobe tcp_bbr` vào `/etc/wsl.conf` (để BBR có sau mỗi lần khởi động WSL):
   `wsl -d Ubuntu-22.04 -u root -- sh -c "printf '\n[boot]\ncommand = modprobe tcp_bbr\n' >> /etc/wsl.conf"`

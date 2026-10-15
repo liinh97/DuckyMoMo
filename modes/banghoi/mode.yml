@@ -3,7 +3,7 @@ id: banghoi
 display_name: "Bang Hội Chiến"
 description: "Lập bang, chiếm đất, công thành theo lịch"
 icon: "minecraft:white_banner"
-status: beta                     # open | beta | maintenance | closed
+status: open                     # open | beta (chỉ người có quyền network.beta thấy) | maintenance | closed
 platform: paper
 minecraft_version: "LATEST"      # theo MC_VERSION trong .env
 clients: [java, bedrock]

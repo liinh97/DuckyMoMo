@@ -99,6 +99,11 @@
      trang tài khoản hiện mục "⭐ Hay dùng" trước, lệnh khác gom theo plugin, thu gọn (tìm kiếm thì mở hết).
    - Sảnh KHÔNG cài EssentialsX: /fly, /kick… ở sảnh báo "Unknown command" với mọi người. Mod dùng ở banghoi/practice. Chưa quyết có cài Essentials ở sảnh không.
 
+13. **Role Quản lý `quanly` (15/10 tối, CHƯA tạo trong LuckPerms)**: `tools/quanly-role.cmds` (weight 90, prefix &e&l[Quản lý], kế thừa mod,
+   track staff chèn vị trí 3). Được vận hành (phạt, điều tra, rollback, rank donate, phần lớn web); CẤM rõ bằng `false` mọi thứ đụng phân quyền,
+   điều khiển server/plugin/thế giới, kinh tế/đồ. Panel: `STAFF_GROUPS` có quanly; Quản lý cấp/gỡ được tới Mod (`PROTECTED_FOR_QUANLY`),
+   người khác có quyền role chỉ dưới Mod. Đã thử bằng cách đọc chính file .cmds thành bộ quyền (test ở scratchpad).
+
 ### Người dùng phải tự làm (nhắc lại khi phù hợp)
 - Thêm `[boot] command = modprobe tcp_bbr` vào `/etc/wsl.conf` (để BBR có sau mỗi lần khởi động WSL):
   `wsl -d Ubuntu-22.04 -u root -- sh -c "printf '\n[boot]\ncommand = modprobe tcp_bbr\n' >> /etc/wsl.conf"`

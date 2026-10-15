@@ -49,7 +49,7 @@ DONATE_HTML = (Path(__file__).parent / "donate.html").read_text(encoding="utf-8"
 STATIC = {"/ui.css": ("text/css; charset=utf-8", (Path(__file__).parent / "ui.css").read_bytes()),
           "/shell.js": ("application/javascript; charset=utf-8", (Path(__file__).parent / "shell.js").read_bytes())}
 # Trang Role: role chức vụ (track staff + builder + default) và rank donate (track donate), lưu ở LuckPerms (MariaDB)
-STAFF_GROUPS = ["admin", "mod", "helper", "builder", "default"]
+STAFF_GROUPS = ["admin", "quanly", "mod", "helper", "builder", "default"]
 DONATE_GROUPS = ["congtuoc", "hautuoc", "batuoc", "tutuoc", "namtuoc"]
 PLAYER_RE = re.compile(r"^\.?[A-Za-z0-9_]{1,17}$")
 PERM_RE = re.compile(r"^[A-Za-z0-9_.*-]{1,120}$")
@@ -544,7 +544,7 @@ def all_commands(doc):
             con.close()
     except Exception:
         pass
-    order = ["default", "namtuoc", "tutuoc", "batuoc", "hautuoc", "congtuoc", "builder", "helper", "mod"]
+    order = ["default", "namtuoc", "tutuoc", "batuoc", "hautuoc", "congtuoc", "builder", "helper", "mod", "quanly"]
 
     def who(perm, default, server):
         if not perm:
@@ -828,7 +828,7 @@ def sync_perm_change(group, node, act):
 
 def tell_role_change(player, group, act, months=None):
     """Báo vào game cho người vừa được cấp/gỡ role (nếu đang online). LuckPerms tự làm mới danh sách lệnh của client."""
-    shown = {"admin": "Admin", "mod": "Mod", "helper": "Helper", "builder": "Builder"}.get(group, group)
+    shown = {"admin": "Admin", "quanly": "Quản lý", "mod": "Mod", "helper": "Helper", "builder": "Builder"}.get(group, group)
     if group in DONATE_GROUPS:
         shown = {"namtuoc": "Nam Tước", "tutuoc": "Tử Tước", "batuoc": "Bá Tước", "hautuoc": "Hầu Tước", "congtuoc": "Công Tước"}[group]
     if act == "add":
@@ -1789,7 +1789,10 @@ PAGE_FEATURES = {"/": ("caidat",), "/thuvien": ("thuvien", "thuvien-dua"), "/bos
 API_GET_FEATURES = {"/api/modes": ("caidat",), "/api/camnang": ("camnang",), "/api/huongdan": ("huongdan",), "/api/roles": ("role", "role-quyen"),
                     "/api/boss": ("boss",), "/api/activity": ("hoatdong",), "/api/donate": ("donate",), "/api/thuvien": None, "/api/toi": None}
 # Không ai ngoài admin toàn quyền đụng được: role admin/mod, quyền nguy hiểm
-PROTECTED_GROUPS = {"admin", "mod"}
+# Role cấp/gỡ được tuỳ người làm: Quản lý xếp được Mod, Helper, Builder, rank donate; người khác (có quyền web role) chỉ dưới Mod.
+# Không ai ngoài Admin đụng được Admin và Quản lý.
+PROTECTED_GROUPS = {"admin", "quanly", "mod"}
+PROTECTED_FOR_QUANLY = {"admin", "quanly"}
 PROTECTED_PERM_RE = re.compile(r"^(\*|duckymomo\.web.*|duckymomo\.admin.*|luckperms.*)$")
 
 
@@ -1841,7 +1844,7 @@ class Handler(BaseHTTPRequestHandler):
             if not acc or not (acc["features"] or acc["toan_quyen"]):
                 self.send_json(403, {"ok": False, "message": "Tài khoản này không có quyền quản trị."})
                 return False
-            self.who = {"name": name, "acc": acc}
+            self.who = {"name": name, "acc": acc, "quanly": "quanly" in perms["groups"]}
             return True
         if self.authorized():
             return True
@@ -1960,13 +1963,14 @@ class Handler(BaseHTTPRequestHandler):
         """Staff đăng nhập bằng tài khoản game: kiểm tra quyền từng thao tác ghi, ghi nhật ký web-thaotac.jsonl."""
         acc, p, b = self.who["acc"], self.path, self.body
         full = acc["toan_quyen"]
+        protected = PROTECTED_FOR_QUANLY if self.who.get("quanly") else PROTECTED_GROUPS
         if p == "/api/roles":
             grp = str(b.get("group", ""))
             if b.get("action") in ("perm_set", "perm_unset", "perm_deny"):
                 node = str(b.get("node", "")).strip().lower()
-                ok = self.can("role-quyen") and (full or (grp not in PROTECTED_GROUPS and not PROTECTED_PERM_RE.match(node)))
+                ok = self.can("role-quyen") and (full or (grp not in protected and not PROTECTED_PERM_RE.match(node)))
             else:
-                ok = self.can("role") and (full or grp not in PROTECTED_GROUPS)
+                ok = self.can("role") and (full or grp not in protected)
         elif p == "/api/say":
             ok = self.can("hoatdong")
         elif p == "/api/boss":

@@ -30,7 +30,7 @@ tinh-nang:
     quyen: [duckymomo.web.hoatdong]
   - id: role
     ten: Role & rank
-    mo-ta: Cấp, gỡ role và rank donate (không đụng được role admin)
+    mo-ta: Cấp, gỡ role và rank donate (Quản lý xếp được tới Mod; không ai ngoài Admin đụng Admin, Quản lý)
     trang: role
     quyen: [duckymomo.web.role]
   - id: role-quyen

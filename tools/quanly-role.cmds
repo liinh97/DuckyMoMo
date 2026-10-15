@@ -1,0 +1,104 @@
+# Role QUẢN LÝ (quanly): dưới Admin, trên Mod. Điều hành hằng ngày được, KHÔNG can thiệp sâu vào hệ thống.
+# Chạy MỘT lần (LuckPerms dùng chung DB toàn mạng):  docker exec -i duckymomo-lobby-1 rcon-cli < tools/quanly-role.cmds
+# Cấp người: trang Role > Quản lý > Thêm (hoặc lp user <tên> parent add quanly). Gỡ role: lp deletegroup quanly.
+#
+# Nguyên tắc: được làm việc VẬN HÀNH có log/hoàn tác được; CẤM (false) mọi thứ không hoàn tác được hoặc đụng cấu hình lõi.
+# Quyền CẤM ghi rõ "false" để dù sau này có ai lỡ cấp quyền rộng (vd essentials.*) cho role cha thì vẫn bị chặn.
+lp creategroup quanly
+lp group quanly setdisplayname "Quản lý"
+lp group quanly setweight 90
+lp group quanly meta setprefix 90 "&e&l[Quản lý]&r "
+lp group quanly parent add mod
+lp track staff insert quanly 3
+# ---- được làm: xử lý vi phạm, điều tra, khôi phục phá hoại
+lp group quanly permission set essentials.ban true
+lp group quanly permission set essentials.tempban true
+lp group quanly permission set essentials.unban true
+lp group quanly permission set essentials.kick true
+lp group quanly permission set essentials.mute true
+lp group quanly permission set essentials.jail true
+lp group quanly permission set essentials.seen true
+lp group quanly permission set essentials.invsee true
+lp group quanly permission set essentials.enderchest.others true
+lp group quanly permission set essentials.socialspy true
+lp group quanly permission set essentials.vanish true
+lp group quanly permission set essentials.tp true
+lp group quanly permission set essentials.tphere true
+lp group quanly permission set essentials.back true
+lp group quanly permission set essentials.broadcast true
+lp group quanly permission set essentials.gamemode true
+lp group quanly permission set essentials.gamemode.survival true
+lp group quanly permission set essentials.gamemode.spectator true
+lp group quanly permission set coreprotect.inspect true
+lp group quanly permission set coreprotect.lookup true
+lp group quanly permission set coreprotect.rollback true
+lp group quanly permission set coreprotect.restore true
+lp group quanly permission set grim.alerts true
+lp group quanly permission set grim.alerts.enable-on-join true
+lp group quanly permission set worldguard.region.info.* true
+# ---- được làm: rank donate (duyệt donate trên web), trang quản trị web
+lp group quanly permission set duckymomo.rank.admin true
+lp group quanly permission set duckymomo.web.thuvien true
+lp group quanly permission set duckymomo.web.boss true
+lp group quanly permission set duckymomo.web.hoatdong true
+lp group quanly permission set duckymomo.web.role true
+lp group quanly permission set duckymomo.web.donate true
+lp group quanly permission set duckymomo.web.camnang true
+lp group quanly permission set duckymomo.web.huongdan true
+lp group quanly permission set duckymomo.web.caidat.chientranh true
+lp group quanly permission set duckymomo.web.caidat.thitran true
+lp group quanly permission set duckymomo.web.caidat.thuongsukien true
+lp group quanly permission set duckymomo.web.caidat.shop true
+lp group quanly permission set duckymomo.web.caidat.kinhte true
+lp group quanly permission set duckymomo.web.caidat.nghe true
+lp group quanly permission set duckymomo.web.caidat.phuphep true
+lp group quanly permission set duckymomo.web.caidat.pvpcombat true
+lp group quanly permission set duckymomo.web.caidat.thegioi true
+lp group quanly permission set duckymomo.web.caidat.nguoimoi true
+lp group quanly permission set duckymomo.web.caidat.chat true
+lp group quanly permission set duckymomo.web.caidat.hienthi true
+lp group quanly permission set duckymomo.web.caidat.sanh true
+lp group quanly permission set duckymomo.web.caidat.rankdonate true
+# ---- CẤM: phân quyền, toàn quyền web, cấu hình lõi (Hệ thống, Chống hack, Role), đưa đồ miễn phí
+lp group quanly permission set luckperms.* false
+lp group quanly permission set duckymomo.web.toanquyen false
+lp group quanly permission set duckymomo.web.role.quyen false
+lp group quanly permission set duckymomo.web.thuvien.dua false
+lp group quanly permission set duckymomo.web.caidat.hethong false
+lp group quanly permission set duckymomo.web.caidat.chonghack false
+lp group quanly permission set duckymomo.web.caidat.role false
+lp group quanly permission set duckymomo.admin false
+# ---- CẤM: điều khiển server, plugin, thế giới (không hoàn tác được)
+lp group quanly permission set minecraft.command.op false
+lp group quanly permission set minecraft.command.deop false
+lp group quanly permission set minecraft.command.stop false
+lp group quanly permission set minecraft.command.reload false
+lp group quanly permission set minecraft.command.whitelist false
+lp group quanly permission set minecraft.command.save-off false
+lp group quanly permission set minecraft.command.execute false
+lp group quanly permission set minecraft.command.function false
+lp group quanly permission set minecraft.command.datapack false
+lp group quanly permission set minecraft.command.fill false
+lp group quanly permission set minecraft.command.clone false
+lp group quanly permission set minecraft.command.setblock false
+lp group quanly permission set minecraft.command.gamerule false
+lp group quanly permission set minecraft.command.worldborder false
+lp group quanly permission set minecraft.command.forceload false
+lp group quanly permission set minecraft.command.kill false
+lp group quanly permission set minecraft.command.give false
+lp group quanly permission set bukkit.command.reload false
+lp group quanly permission set bukkit.command.plugins false
+lp group quanly permission set worldedit.* false
+lp group quanly permission set worldguard.region.bypass.* false
+lp group quanly permission set towny.admin false
+lp group quanly permission set coreprotect.purge false
+# ---- CẤM: kinh tế và đồ (in tiền, cho đồ, xoá đồ người khác, điều khiển người khác)
+lp group quanly permission set essentials.eco false
+lp group quanly permission set essentials.give false
+lp group quanly permission set essentials.item false
+lp group quanly permission set essentials.sudo false
+lp group quanly permission set essentials.clearinventory.others false
+lp group quanly permission set essentials.kill false
+lp group quanly permission set essentials.killall false
+lp group quanly permission set essentials.spawnmob false
+lp group quanly permission set essentials.gamemode.creative false

@@ -101,7 +101,8 @@
 
 13. **Role Quản lý `quanly` (15/10 tối, CHƯA tạo trong LuckPerms)**: `tools/quanly-role.cmds` (weight 90, prefix &e&l[Quản lý], kế thừa mod,
    track staff chèn vị trí 3). Được vận hành (phạt, điều tra, rollback, rank donate, phần lớn web); CẤM rõ bằng `false` mọi thứ đụng phân quyền,
-   điều khiển server/plugin/thế giới, kinh tế/đồ. Panel: `STAFF_GROUPS` có quanly; Quản lý cấp/gỡ được tới Mod (`PROTECTED_FOR_QUANLY`),
+   điều khiển server/plugin/thế giới, in tiền. Cho đồ ĐƯỢC (người dùng chốt): essentials.give/item + đưa đồ thư viện trên web.
+   Một người giữ nhiều role được; mâu thuẫn thì role weight cao thắng (Quản lý 90 > Mod 70; Admin 100 + * thắng hết). Panel: `STAFF_GROUPS` có quanly; Quản lý cấp/gỡ được tới Mod (`PROTECTED_FOR_QUANLY`),
    người khác có quyền role chỉ dưới Mod. Đã thử bằng cách đọc chính file .cmds thành bộ quyền (test ở scratchpad).
 
 ### Người dùng phải tự làm (nhắc lại khi phù hợp)

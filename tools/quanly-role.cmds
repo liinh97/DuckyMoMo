@@ -43,6 +43,11 @@ lp group quanly permission set duckymomo.web.boss true
 lp group quanly permission set duckymomo.web.hoatdong true
 lp group quanly permission set duckymomo.web.role true
 lp group quanly permission set duckymomo.web.donate true
+# ---- được làm: CHO ĐỒ (đưa đồ thư viện trên web ghi tên người đưa vào data/panel/web-thaotac.jsonl;
+#      /give, /i trong game hiện ở trang Hoạt động mục Lệnh). /give gốc của Minecraft (tạo được đồ NBT lạ) vẫn cấm bên dưới.
+lp group quanly permission set duckymomo.web.thuvien.dua true
+lp group quanly permission set essentials.give true
+lp group quanly permission set essentials.item true
 lp group quanly permission set duckymomo.web.camnang true
 lp group quanly permission set duckymomo.web.huongdan true
 lp group quanly permission set duckymomo.web.caidat.chientranh true
@@ -59,11 +64,10 @@ lp group quanly permission set duckymomo.web.caidat.chat true
 lp group quanly permission set duckymomo.web.caidat.hienthi true
 lp group quanly permission set duckymomo.web.caidat.sanh true
 lp group quanly permission set duckymomo.web.caidat.rankdonate true
-# ---- CẤM: phân quyền, toàn quyền web, cấu hình lõi (Hệ thống, Chống hack, Role), đưa đồ miễn phí
+# ---- CẤM: phân quyền, toàn quyền web, cấu hình lõi (Hệ thống, Chống hack, Role)
 lp group quanly permission set luckperms.* false
 lp group quanly permission set duckymomo.web.toanquyen false
 lp group quanly permission set duckymomo.web.role.quyen false
-lp group quanly permission set duckymomo.web.thuvien.dua false
 lp group quanly permission set duckymomo.web.caidat.hethong false
 lp group quanly permission set duckymomo.web.caidat.chonghack false
 lp group quanly permission set duckymomo.web.caidat.role false
@@ -92,10 +96,8 @@ lp group quanly permission set worldedit.* false
 lp group quanly permission set worldguard.region.bypass.* false
 lp group quanly permission set towny.admin false
 lp group quanly permission set coreprotect.purge false
-# ---- CẤM: kinh tế và đồ (in tiền, cho đồ, xoá đồ người khác, điều khiển người khác)
+# ---- CẤM: kinh tế (in tiền), xoá đồ người khác, điều khiển người khác
 lp group quanly permission set essentials.eco false
-lp group quanly permission set essentials.give false
-lp group quanly permission set essentials.item false
 lp group quanly permission set essentials.sudo false
 lp group quanly permission set essentials.clearinventory.others false
 lp group quanly permission set essentials.kill false

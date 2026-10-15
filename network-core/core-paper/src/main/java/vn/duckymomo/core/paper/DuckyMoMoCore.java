@@ -521,7 +521,7 @@ public final class DuckyMoMoCore extends JavaPlugin {
         bind("mua", seasons == null ? null : seasons::command, "Mùa mưa / mùa khô");
         // Giết / chết / KDA của người chơi cho bảng bên phải: %dmmtoi_giet%, %dmmtoi_chet%, %dmmtoi_kda%
         if (getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-            statsPapi = new PlayerStatsPlaceholders();
+            statsPapi = PlayerStatsPlaceholders.create();
             statsPapi.register();
         }
         PluginCommand muaCmd = getCommand("mua");

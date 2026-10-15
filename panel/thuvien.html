@@ -44,7 +44,10 @@
   .warn { color: var(--warn); font-size: 13px; margin: 6px 0 0; }
   .palette { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 5px; }
   .palette button { width: 24px; height: 22px; padding: 0; border-radius: 4px; font-size: 11px; font-weight: 700; }
-  .ench { display: grid; grid-template-columns: 1fr 80px 30px; gap: 6px; margin-top: 6px; align-items: center; }
+  .ench { display: grid; grid-template-columns: 1fr 80px 30px; gap: 4px 6px; margin-top: 8px; align-items: center; }
+  .ench .d { grid-column: 1 / -1; font-size: 12.5px; color: var(--muted); }
+  .ench .d b { color: var(--text); font-weight: 600; }
+  .ench .d.bad { color: var(--err); }
   .ench button { padding: 4px 0; color: var(--err); border: none; }
   .opts { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; margin-top: 10px; font-size: 14px; }
   .opts label { display: flex; gap: 6px; align-items: center; }
@@ -137,6 +140,39 @@ const VN = { protection: "Bảo vệ", fire_protection: "Chống lửa", feather
   infinity: "Vô hạn", luck_of_the_sea: "May mắn biển cả", lure: "Mồi nhử", loyalty: "Trung thành", impaling: "Xiên",
   riptide: "Sóng xô", channeling: "Dẫn sét", multishot: "Bắn loạt", quick_charge: "Nạp nhanh", piercing: "Xuyên thủng",
   mending: "Tự sửa", vanishing_curse: "Lời nguyền biến mất", density: "Mật độ", breach: "Phá giáp", wind_burst: "Bùng gió", lunge: "Lao tới" };
+// Tác dụng từng phù phép (vanilla theo Minecraft; Enchantio theo plugins/Enchantio/config.yml của server)
+const DESC = {
+  protection: "Giáp: giảm mọi loại sát thương (4%/cấp).", fire_protection: "Giáp: giảm sát thương lửa, bớt thời gian bị cháy.",
+  feather_falling: "Giày: giảm sát thương khi rơi.", blast_protection: "Giáp: giảm sát thương nổ (creeper, TNT), giảm bị hất văng.",
+  projectile_protection: "Giáp: giảm sát thương tên, cầu lửa, đinh ba ném.", respiration: "Mũ: thở dưới nước lâu hơn.",
+  aqua_affinity: "Mũ: đào dưới nước nhanh như trên cạn.", thorns: "Giáp: phản sát thương lại kẻ đánh mình (tốn độ bền).",
+  depth_strider: "Giày: đi dưới nước nhanh hơn.", frost_walker: "Giày: đóng băng nước dưới chân khi đi.",
+  binding_curse: "Lời nguyền: mặc vào là không cởi ra được (trừ khi chết).", soul_speed: "Giày: chạy nhanh trên cát linh hồn.",
+  swift_sneak: "Quần: đi lén (ngồi) nhanh hơn.", sharpness: "Kiếm, rìu: tăng sát thương mọi mục tiêu.",
+  smite: "Kiếm, rìu: tăng sát thương lên xác sống, bộ xương, Wither.", bane_of_arthropods: "Kiếm, rìu: tăng sát thương lên nhện, ong, mọt bạc; làm chậm.",
+  knockback: "Kiếm: đánh bật lùi mục tiêu xa hơn.", fire_aspect: "Kiếm: đốt cháy mục tiêu.", looting: "Kiếm: mob rơi nhiều đồ hơn.",
+  sweeping_edge: "Kiếm: tăng sát thương đòn chém lan.", efficiency: "Dụng cụ đào: đào nhanh hơn.",
+  silk_touch: "Dụng cụ đào: lấy nguyên khối (quặng, kính, cỏ…).", unbreaking: "Mọi đồ: bền hơn, lâu hỏng.",
+  fortune: "Dụng cụ đào: quặng rơi nhiều hơn.", power: "Cung: tên gây nhiều sát thương hơn.", punch: "Cung: tên đẩy lùi mục tiêu.",
+  flame: "Cung: tên bốc lửa.", infinity: "Cung: bắn không tốn tên (cần 1 mũi tên trong túi).", luck_of_the_sea: "Cần câu: câu ra đồ quý nhiều hơn.",
+  lure: "Cần câu: cá cắn câu nhanh hơn.", loyalty: "Đinh ba: ném xong tự bay về tay.", impaling: "Đinh ba: tăng sát thương lên sinh vật dưới nước / khi mưa.",
+  riptide: "Đinh ba: ném khi trời mưa/dưới nước thì phóng người theo.", channeling: "Đinh ba: ném lúc giông thì gọi sét.",
+  multishot: "Nỏ: bắn 3 mũi tên cùng lúc.", quick_charge: "Nỏ: lên dây nhanh hơn.", piercing: "Nỏ: tên xuyên qua nhiều mục tiêu.",
+  mending: "Mọi đồ: nhặt kinh nghiệm thì tự sửa đồ.", vanishing_curse: "Lời nguyền: chết là món đồ biến mất.",
+  density: "Chuỳ (mace): rơi từ càng cao đánh càng đau.", breach: "Chuỳ (mace): xuyên giáp, bỏ qua một phần giáp mục tiêu.",
+  wind_burst: "Chuỳ (mace): đánh trúng khi rơi thì bật người lên cao.", lunge: "Giáo: lao người về phía trước khi đâm.",
+  "enchantio:telepathy": "Dụng cụ đào: đồ đào được bay thẳng vào túi, không rơi ra đất.",
+  "enchantio:replanting": "Cuốc: thu hoạch cây đã chín thì tự gieo lại.",
+  "enchantio:executioner": "Vũ khí: +5% sát thương mỗi cấp khi mục tiêu còn dưới 25% máu.",
+  "enchantio:beheading": "Rìu: 10% làm mục tiêu bị giết rơi đầu (người chơi, mob).",
+  "enchantio:smelting": "Dụng cụ đào: tự nung đồ đào được (quặng sắt → thỏi sắt…).",
+  "enchantio:airbag": "Cánh (elytra): giảm 20% sát thương va đập khi bay mỗi cấp.",
+  "enchantio:volley": "Cung: bắn thêm 1 mũi tên mỗi cấp, toả ra hình quạt (cấp 2 = 3 mũi).",
+  "enchantio:tunnelling": "Dụng cụ đào: đào 3×3, chỉ đá tự nhiên và quặng (không phá đồ xây).",
+  "enchantio:panic_curse": "Lời nguyền (giáp): 2,5% mỗi lần bị đánh thì hoảng loạn. Chưa kiểm chứng hiệu ứng cụ thể.",
+  "enchantio:vampirism_curse": "Lời nguyền (giáp): theo tên là bất lợi kiểu ma cà rồng (ví dụ dưới nắng). Chưa kiểm chứng.",
+  "enchantio:insomnia_curse": "Lời nguyền (giáp): theo tên là gây mất ngủ. Chưa kiểm chứng.",
+};
 const ROMAN = ["", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"];
 let data = null, cur = null, isNew = true, enchRows = [], lastField = "name";
 
@@ -170,7 +206,7 @@ function mc(text, defColor, defItalic) {
 }
 function form() {
   const ench = {};
-  for (const r of enchRows) { const k = r.sel.value, l = parseInt(r.lvl.value, 10); if (k && l > 0) ench[k] = l; }
+  for (const r of enchRows) { const k = r.sel.value.trim().toLowerCase().replace(/^minecraft:/, ""), l = parseInt(r.lvl.value, 10); if (k && l > 0 && enchKeys().includes(k)) ench[k] = l; }
   const g = $("glint").value;
   return { ten_goi: $("tengoi").value.trim(), material: $("material").value.trim().toUpperCase(), amount: parseInt($("amount").value || "1", 10),
     name: $("name").value, lore: $("lore").value.replace(/\s+$/, "").split("\n").filter((l, i, a) => a.length > 1 || l !== ""),
@@ -198,18 +234,37 @@ function render() {
   if (w.length) w.push("Đồ phát cho người chơi: đồ quá mạnh làm lệch cân bằng chiến tranh.");
   $("warns").innerHTML = w.map(x => `<p class="warn">⚠ ${esc(x)}</p>`).join("");
 }
+// "Sắc bén / Sharpness" (vanilla), "Volley [Enchantio]" (plugin): tìm được bằng cả hai tên
+function enchLabel(k) {
+  const s = short(k);
+  const en = prettyMat(s.includes(":") ? s.split(":")[1] : s);
+  return VN[s] ? `${VN[s]} / ${en}` : enchName(k);
+}
 function enchMax(k) { const e = data && data.meta ? data.meta.enchantments.find(e => short(e.key) === short(k)) : null; return e ? e.max : 0; }
-function enchOptions(sel) {
-  const list = data && data.meta ? data.meta.enchantments.map(e => short(e.key)) : Object.keys(VN);
-  return list.sort((a, b) => enchName(a).localeCompare(enchName(b), "vi"))
-    .map(k => `<option value="${esc(k)}" ${k === sel ? "selected" : ""}>${esc(enchName(k))} (${esc(k)}${enchMax(k) ? ", tối đa " + enchMax(k) : ""})</option>`).join("");
+function enchKeys() { return data && data.meta ? data.meta.enchantments.map(e => short(e.key)) : Object.keys(VN); }
+// Danh sách gợi ý dùng chung: gõ tên Việt, tên Anh hoặc mã đều lọc được
+function buildEnchList() {
+  let dl = document.getElementById("ench-list");
+  if (!dl) { dl = document.createElement("datalist"); dl.id = "ench-list"; document.body.appendChild(dl); }
+  dl.innerHTML = enchKeys().sort((a, b) => enchName(a).localeCompare(enchName(b), "vi"))
+    .map(k => `<option value="${esc(k)}" label="${esc(enchLabel(k))} · tối đa ${enchMax(k) || "?"}"></option>`).join("");
+}
+function enchDesc(r) {
+  const k = r.sel.value.trim().toLowerCase().replace(/^minecraft:/, "");
+  if (!k) { r.d.className = "d"; r.d.textContent = "Gõ tên phù phép (Việt hoặc Anh) để tìm"; return; }
+  if (!enchKeys().includes(k)) { r.d.className = "d bad"; r.d.textContent = `Không có phù phép "${k}" trên server`; return; }
+  r.d.className = "d";
+  r.d.innerHTML = `<b>${esc(enchLabel(k))}</b> · tối đa ${enchMax(k) || "?"} · ${esc(DESC[k] || "Chưa có mô tả.")}`;
 }
 function addEnch(key = "", lvl = 1) {
   const row = document.createElement("div"); row.className = "ench";
-  row.innerHTML = `<select>${enchOptions(key)}</select><input type="number" min="1" max="255" value="${lvl}"><button title="Bỏ">×</button>`;
-  const r = { el: row, sel: row.querySelector("select"), lvl: row.querySelector("input") };
+  row.innerHTML = `<input list="ench-list" placeholder="Tìm: sắc bén, sharpness, volley…" value="${esc(key)}"><input type="number" min="1" max="255" value="${lvl}"><button title="Bỏ">×</button><div class="d"></div>`;
+  const ins = row.querySelectorAll("input");
+  const r = { el: row, sel: ins[0], lvl: ins[1], d: row.querySelector(".d") };
   if (!key) r.sel.value = "sharpness";
-  r.sel.onchange = r.lvl.oninput = render;
+  r.sel.oninput = r.sel.onchange = () => { enchDesc(r); render(); };
+  r.lvl.oninput = render;
+  enchDesc(r);
   row.querySelector("button").onclick = () => { enchRows = enchRows.filter(x => x !== r); row.remove(); render(); };
   enchRows.push(r); $("enchs").appendChild(row);
 }
@@ -286,7 +341,7 @@ $("give").onclick = () => {
   post({ action: "give", id: cur.id, player: p, amount: parseInt($("gamount").value || "0", 10) });
 };
 fetch("api/thuvien").then(r => r.json()).then(d => {
-  data = d; renderList(); load(null);
+  data = d; buildEnchList(); renderList(); load(null);
   if (!d.meta) status(false, "Chưa có danh sách phù phép/vật liệu từ server (thuvien-meta.json): khởi động lại Bang Hội Chiến với bản DuckyMoMoCore mới.");
 }).catch(e => { $("list").innerHTML = `<p class="empty">${esc(e)}</p>`; });
 </script>

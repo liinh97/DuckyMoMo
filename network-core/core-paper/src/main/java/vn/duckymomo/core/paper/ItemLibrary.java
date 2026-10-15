@@ -259,8 +259,26 @@ final class ItemLibrary {
     void exportMeta() {
         StringBuilder sb = new StringBuilder("{\"enchantments\":[");
         boolean first = true;
+        List<Material> items = new ArrayList<>();
+        for (Material m : Material.values()) {
+            if (m.isItem() && !m.isAir() && !m.isLegacy()) {
+                items.add(m);
+            }
+        }
         for (Enchantment e : RegistryAccess.registryAccess().getRegistry(RegistryKey.ENCHANTMENT)) {
-            sb.append(first ? "" : ",").append("{\"key\":\"").append(e.getKey().asString()).append("\",\"max\":").append(e.getMaxLevel()).append('}');
+            // "items": vật liệu phù phép này dùng được (theo luật của server, gồm cả phù phép plugin) — trang web lọc theo loại đồ
+            StringBuilder ok = new StringBuilder();
+            for (Material m : items) {
+                try {
+                    if (e.canEnchantItem(new ItemStack(m))) {
+                        ok.append(ok.length() > 0 ? "," : "").append('"').append(m.name()).append('"');
+                    }
+                } catch (RuntimeException ignored) {
+                    // vật liệu lạ: bỏ
+                }
+            }
+            sb.append(first ? "" : ",").append("{\"key\":\"").append(e.getKey().asString()).append("\",\"max\":").append(e.getMaxLevel())
+                    .append(",\"items\":[").append(ok).append("]}");
             first = false;
         }
         sb.append("],\"materials\":[");

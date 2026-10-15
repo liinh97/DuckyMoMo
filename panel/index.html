@@ -5,101 +5,127 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>DuckyMoMo · Cài đặt</title>
 <style>
-  :root {
-    --bg: #f5f6f8; --card: #fff; --text: #1d2330; --muted: #667085; --line: #e3e6ec;
-    --accent: #e8711c; --accent-text: #fff; --ok: #1e8e3e; --err: #c62828; --changed: #fff4e6;
-    --input: #fff;
+  @media (max-width: 900px) { .page { padding: 18px 14px 0; } }
+  .page { max-width: 1240px; margin: 0 auto; }
+  .page-head .search { position: relative; width: min(420px, 100%); }
+  .page-head .search input { width: 100%; padding: 10px 14px 10px 38px; border-radius: 10px; font-size: 15px; }
+  .page-head .search::before { content: "🔎"; position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-size: 14px; opacity: .7; }
+  /* chọn chế độ */
+  .modes { display: inline-flex; gap: 4px; padding: 4px; background: var(--card); border: 1px solid var(--line); border-radius: 12px; margin-bottom: 20px; flex-wrap: wrap; box-shadow: var(--shadow); }
+  .mode { border: 0; background: transparent; color: var(--muted); padding: 8px 16px; border-radius: 9px; cursor: pointer; font-weight: 600; font-size: 14.5px; }
+  .mode:hover { color: var(--text); background: var(--chip); }
+  .mode.active { background: var(--accent); color: var(--accent-text); }
+  .mode .dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: currentColor; margin-left: 6px; vertical-align: middle; }
+  /* bố cục: danh mục trái + nội dung */
+  .layout { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 24px; align-items: start; }
+  .cats { position: sticky; top: 18px; display: flex; flex-direction: column; gap: 2px; padding: 8px; background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); }
+  .cat { display: flex; align-items: center; gap: 10px; width: 100%; text-align: left; border: 0; background: transparent; color: var(--text); padding: 9px 10px; border-radius: 8px; cursor: pointer; font-size: 14.5px; }
+  .cat:hover { background: var(--chip); }
+  .cat.active { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+  .cat .ic { width: 22px; text-align: center; }
+  .cat .n { margin-left: auto; font-size: 12px; color: var(--muted); background: var(--chip); border-radius: 999px; padding: 0 8px; font-weight: 500; }
+  .cat .dirty { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
+  .cat.all { border-top: 1px solid var(--line-2); margin-top: 4px; padding-top: 11px; border-radius: 0 0 8px 8px; }
+  @media (max-width: 900px) {
+    .layout { grid-template-columns: 1fr; gap: 14px; }
+    .cats { position: static; flex-direction: row; overflow-x: auto; padding: 6px; scrollbar-width: none; }
+    .cats::-webkit-scrollbar { display: none; }
+    .savebar .status { flex-basis: 100%; min-width: 0; font-size: 13px; }
+    .savebar #reapply { display: none; }
+    .savebar .inner { padding: 10px 12px; gap: 8px; }
+    .savebar button { flex: 1; }
+    .cat { width: auto; white-space: nowrap; }
+    .cat .n { display: none; }
+    .cat.all { border-top: 0; margin-top: 0; padding-top: 9px; }
   }
-  @media (prefers-color-scheme: dark) {
-    :root { --bg: #14161b; --card: #1d2027; --text: #e6e8ee; --muted: #9aa3b2; --line: #2d313b;
-            --changed: #3a2a17; --input: #15171c; }
-  }
-  * { box-sizing: border-box; }
-  body { margin: 0; font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); }
-  header { display: flex; align-items: center; gap: 16px; padding: 14px 20px; border-bottom: 1px solid var(--line); background: var(--card); position: sticky; top: 0; z-index: 2; }
-  header h1 { font-size: 17px; margin: 0; }
-  header a { color: var(--muted); text-decoration: none; font-size: 14px; }
-  header a:hover { color: var(--text); }
-  .tabs { display: flex; gap: 6px; flex: 1; }
-  .tab { border: 1px solid var(--line); background: transparent; color: var(--text); padding: 5px 12px; border-radius: 999px; cursor: pointer; font: inherit; font-size: 14px; }
-  .tab.active { background: var(--accent); border-color: var(--accent); color: var(--accent-text); }
-  main { max-width: 860px; margin: 0 auto; padding: 20px 16px 120px; }
-  .group { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; margin-bottom: 16px; }
-  .group h2 { font-size: 15px; margin: 0 0 2px; }
-  .group p.desc { color: var(--muted); margin: 0 0 10px; font-size: 13.5px; }
-  .row { display: grid; grid-template-columns: 220px 1fr; gap: 6px 16px; padding: 8px 6px; border-radius: 6px; align-items: start; }
-  .row.changed { background: var(--changed); }
-  .row label { padding-top: 6px; font-size: 14px; }
-  .row .note { grid-column: 2; color: var(--muted); font-size: 12.5px; margin-top: -2px; }
-  input, select, textarea { width: 100%; padding: 6px 9px; border: 1px solid var(--line); border-radius: 6px; background: var(--input); color: var(--text); font: inherit; }
-  textarea { resize: vertical; line-height: 1.4; }
-  .cats { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 14px; }
-  .cat { padding: 6px 12px; border-radius: 999px; border: 1px solid var(--line); background: transparent; color: var(--text); font: inherit; cursor: pointer; }
-  .cat.active { background: var(--accent); border-color: var(--accent); color: var(--accent-text); }
-  input:focus, select:focus, textarea:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
-  .bar { position: fixed; bottom: 0; left: 0; right: 0; background: var(--card); border-top: 1px solid var(--line); padding: 12px 16px; }
-  .bar .inner { max-width: 860px; margin: 0 auto; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
-  .bar .status { flex: 1; font-size: 13.5px; color: var(--muted); min-width: 200px; }
+  /* nhóm cài đặt */
+  #main { display: flex; flex-direction: column; gap: 20px; padding-bottom: 110px; }
+  .group { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
+  .ghead { padding: 18px 22px 14px; border-bottom: 1px solid var(--line-2); }
+  .ghead .gcat { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin-bottom: 2px; }
+  .ghead h2 { font-size: 17px; margin: 0; }
+  .ghead p.desc { color: var(--muted); margin: 6px 0 0; font-size: 14px; max-width: 80ch; }
+  .row { display: grid; grid-template-columns: minmax(200px, 36%) minmax(0, 1fr); gap: 8px 28px; padding: 16px 22px; border-top: 1px solid var(--line-2); align-items: start; position: relative; }
+  .gbody .row:first-child { border-top: 0; }
+  .row.wide { grid-template-columns: 1fr; }
+  .row.changed { background: var(--changed); box-shadow: inset 3px 0 0 var(--accent); }
+  .row .lab label { font-weight: 600; font-size: 14.5px; display: block; }
+  .row .lab .note { color: var(--muted); font-size: 13px; margin-top: 4px; }
+  .row .lab .pill { display: none; font-size: 11px; font-weight: 600; color: var(--accent); background: var(--accent-soft); border-radius: 999px; padding: 1px 8px; margin-left: 6px; vertical-align: 1px; }
+  .row.changed .lab .pill { display: inline-block; }
+  .row .ctl { min-width: 0; }
+  .row .ctl > input, .row .ctl > select, .row .ctl > textarea { width: 100%; }
+  .row .ctl > input[type=number] { max-width: 220px; }
+  .row .ctl > textarea { min-height: 110px; resize: vertical; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 13.5px; line-height: 1.5; }
+  .row .count { font-size: 12px; color: var(--muted); margin-top: 4px; }
+  .row mark { background: rgba(255, 200, 0, .35); color: inherit; border-radius: 3px; padding: 0 1px; }
+  @media (max-width: 700px) { .row { grid-template-columns: 1fr; padding: 14px 16px; } .ghead { padding: 16px; } }
+  .empty { color: var(--muted); padding: 40px; text-align: center; background: var(--card); border: 1px dashed var(--line); border-radius: var(--radius); }
+  /* thanh lưu */
+  .savebar { position: fixed; bottom: 0; right: 0; left: 236px; z-index: 30; padding: 0 32px 16px; pointer-events: none; }
+  @media (max-width: 900px) { .savebar { left: 0; padding: 0 10px 10px; } }
+  .savebar .inner { pointer-events: auto; max-width: 1240px; margin: 0 auto; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 12px 16px; box-shadow: 0 8px 30px rgba(0, 0, 0, .18); }
+  .savebar.dirty .inner { border-color: var(--accent); }
+  .savebar .status { flex: 1; font-size: 14px; color: var(--muted); min-width: 200px; }
   .status.ok { color: var(--ok); } .status.err { color: var(--err); }
-  button.primary { background: var(--accent); color: var(--accent-text); border: 0; padding: 8px 16px; border-radius: 6px; font: inherit; font-weight: 600; cursor: pointer; }
-  button.primary:disabled { opacity: .45; cursor: default; }
-  button.ghost { background: transparent; color: var(--text); border: 1px solid var(--line); padding: 8px 14px; border-radius: 6px; font: inherit; cursor: pointer; }
-  details.results { margin-top: 8px; font-size: 12.5px; color: var(--muted); }
-  details.results pre { white-space: pre-wrap; margin: 4px 0 0; }
-  @media (max-width: 640px) { .row { grid-template-columns: 1fr; } .row .note { grid-column: 1; } header { flex-wrap: wrap; } }
-  .rw { display: flex; flex-direction: column; gap: 6px; }
-  .rw-row { display: grid; grid-template-columns: 130px 1fr 80px 28px; gap: 6px; align-items: center; }
+  details.results { margin-top: 6px; font-size: 12.5px; color: var(--muted); }
+  details.results pre { white-space: pre-wrap; margin: 4px 0 0; max-height: 200px; overflow: auto; }
+  /* trình soạn (quà, mốc, nhiệm vụ, vòng quay, mảnh, cửa hàng) */
+  .ctl input, .ctl select, .ctl textarea { padding: 7px 10px; }
+  .rw { display: flex; flex-direction: column; gap: 8px; }
+  .rw-row { display: grid; grid-template-columns: 150px 1fr 90px 32px; gap: 8px; align-items: center; }
   .rw-row select, .rw-row input { width: 100%; }
-  .rw-row .x, .ms-head .x { background: none; border: 0; color: var(--err); cursor: pointer; font-size: 16px; }
-  .rw-add { align-self: flex-start; background: transparent; border: 1px dashed var(--line); color: var(--muted); border-radius: 6px; padding: 3px 10px; cursor: pointer; font: inherit; font-size: 13px; }
-  .ms { border: 1px solid var(--line); border-radius: 8px; padding: 8px; margin-bottom: 6px; }
-  .ms-head { display: flex; gap: 6px; align-items: center; margin-bottom: 6px; font-size: 13.5px; }
-  .ms-head input { width: 80px; }
-  .qe-head { display: grid; grid-template-columns: 120px 1fr 120px 90px 28px; gap: 6px; margin-bottom: 6px; }
-  .qe-head .x { background: none; border: 0; color: var(--err); cursor: pointer; font-size: 16px; }
-  .qe-tg { margin-bottom: 6px; }
-  .sp-head { display: grid; grid-template-columns: 1fr 90px 60px auto 28px; gap: 6px; align-items: center; margin-bottom: 6px; }
-  .sp-head .x { background: none; border: 0; color: var(--err); cursor: pointer; font-size: 16px; }
-  .sp-pct { text-align: right; color: var(--accent); }
-  .sp-rare { font-size: 13px; display: flex; gap: 4px; align-items: center; white-space: nowrap; }
+  .rw-row .x, .ms-head .x, .qe-head .x, .sp-head .x, .fm-head .x, .fs-head .x, .sh-row .x { background: none; border: 0; color: var(--err); cursor: pointer; font-size: 18px; border-radius: 6px; }
+  .rw-row .x:hover, .ms-head .x:hover, .qe-head .x:hover, .sp-head .x:hover, .fm-head .x:hover, .fs-head .x:hover, .sh-row .x:hover { background: rgba(217, 48, 37, .1); }
+  .rw-add { align-self: flex-start; background: transparent; border: 1px dashed var(--line); color: var(--muted); border-radius: 8px; padding: 6px 12px; cursor: pointer; font-size: 13.5px; }
+  .rw-add:hover { border-color: var(--accent); color: var(--accent); }
+  .ms { border: 1px solid var(--line); background: var(--card-2); border-radius: 10px; padding: 12px; margin-bottom: 10px; }
+  .ms-head { display: flex; gap: 8px; align-items: center; margin-bottom: 10px; font-size: 14px; font-weight: 600; }
+  .ms-head input { width: 90px; }
+  .qe-head { display: grid; grid-template-columns: 130px 1fr 170px 100px 32px; gap: 8px; margin-bottom: 8px; }
+  .qe-tg { width: 100%; margin-bottom: 8px; }
+  .sp-head { display: grid; grid-template-columns: 1fr 100px 64px auto 32px; gap: 8px; align-items: center; margin-bottom: 8px; }
+  .sp-pct { text-align: right; color: var(--accent); font-weight: 700; }
+  .sp-rare { font-size: 13px; display: flex; gap: 6px; align-items: center; white-space: nowrap; }
   .sp-rare input { width: auto; }
-  .fm-head { display: grid; grid-template-columns: 110px 1fr 150px 140px 28px; gap: 6px; margin-bottom: 6px; }
-  .fs-head { display: grid; grid-template-columns: 1fr 1fr 80px 28px; gap: 6px; margin-bottom: 6px; }
-  .fm-head .x, .fs-head .x { background: none; border: 0; color: var(--err); cursor: pointer; font-size: 16px; }
-  .ms textarea { width: 100%; margin-bottom: 6px; }
-  .sh-row { display: grid; grid-template-columns: 120px 1fr 90px 110px 28px; gap: 6px; align-items: center; }
+  .fm-head { display: grid; grid-template-columns: 120px 1fr 160px 150px 32px; gap: 8px; margin-bottom: 8px; }
+  .fs-head { display: grid; grid-template-columns: 1fr 1fr 90px 32px; gap: 8px; margin-bottom: 8px; }
+  .ms textarea { width: 100%; margin-bottom: 8px; }
+  .sh-row { display: grid; grid-template-columns: 130px 1fr 100px 120px 32px; gap: 8px; align-items: center; }
   .sh-row select, .sh-row input, .sh-row span > * { width: 100%; }
-  .sh-row .x { background: none; border: 0; color: var(--err); cursor: pointer; font-size: 16px; }
-  @media (max-width: 640px) { .sh-row { grid-template-columns: 1fr 1fr; } }
-  @media (max-width: 640px) { .fm-head, .fs-head { grid-template-columns: 1fr 1fr; } }
-  @media (max-width: 640px) { .rw-row, .qe-head { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 700px) { .rw-row, .qe-head, .fm-head, .fs-head, .sh-row, .sp-head { grid-template-columns: 1fr 1fr; } }
 </style>
+<link rel="stylesheet" href="ui.css">
 </head>
-<body>
-<header>
-  <h1>DuckyMoMo · Cài đặt</h1>
-  <nav class="tabs" id="tabs"></nav>
-  <a href="camnang">Cẩm nang</a>
-  <a href="huongdan">Cẩm nang game</a>
-  <a href="role">Role</a>
-  <a href="thuvien">Thư viện đồ</a>
-  <a href="boss">Boss</a>
-  <a href="hoatdong">Hoạt động người chơi</a>
-  <a id="dozzle" href="__DOZZLE_URL__" target="_blank" rel="noopener">Xem log ↗</a>
-</header>
-<main id="main"><p>Đang tải…</p></main>
-<div class="bar"><div class="inner">
-  <div class="status" id="status">Sửa giá trị rồi bấm Lưu. Ô đã sửa được tô màu.</div>
+<body data-dozzle="__DOZZLE_URL__">
+<script src="shell.js"></script>
+<div class="page">
+  <div class="page-head">
+    <div><h1>Cài đặt</h1><p class="sub">Chỉnh từng chế độ. Bấm Lưu là ghi vào plugin và nạp lại ngay trên server.</p></div>
+    <div class="search"><input id="q" type="search" placeholder="Tìm cài đặt… (vd: quà, thời gian, PvP)" autocomplete="off"></div>
+  </div>
+  <nav class="modes" id="tabs"></nav>
+  <div class="layout">
+    <nav class="cats" id="cats"></nav>
+    <div id="main"><p class="empty">Đang tải…</p></div>
+  </div>
+</div>
+<div class="savebar" id="savebar"><div class="inner">
+  <div class="status" id="status">Sửa giá trị rồi bấm Lưu. Mục đã sửa có viền cam.</div>
+  <button class="ghost" id="discard" disabled>Huỷ thay đổi</button>
   <button class="ghost" id="reapply" title="Ghi lại mọi giá trị vào plugin và nạp lại (dùng khi server mới cài hoặc sửa tay settings.yml)">Áp dụng lại tất cả</button>
   <button class="primary" id="save" disabled>Lưu và áp dụng</button>
 </div></div>
 
 <script>
-let modes = [], current = null, edits = {}, category = {};
+let modes = [], current = null, edits = {}, category = {}, query = "";
 const $ = (id) => document.getElementById(id);
 const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
-
-if (!"__DOZZLE_URL__") $("dozzle").style.display = "none";
+const CAT_ICON = { "Chiến tranh": "⚔️", "Thị trấn": "🏘️", "Thế giới": "🌍", "Thưởng & sự kiện": "🎁", "Shop": "🛒", "Hệ thống": "⚙️",
+  "Kinh tế": "💰", "PvP & combat": "🗡️", "Hiển thị": "🎨", "Nghề": "⛏️", "Chống hack": "🛡️", "Phù phép": "✨", "Người mới": "🐣",
+  "Chat": "💬", "Rank donate": "👑", "Sảnh": "🏰", "Role": "🎭", "Khác": "📁" };
+const WIDE = new Set(["rewards", "milestones", "quests", "spin", "fragtypes", "fragshop", "shopitems", "shoptitles"]);
+const fold = (s) => String(s || "").normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/đ/g, "d").replace(/Đ/g, "D").toLowerCase();
 
 async function load() {
   const r = await fetch("api/modes");
@@ -109,47 +135,235 @@ async function load() {
   render();
 }
 
+function catsOf(mode) {
+  const cats = [];
+  for (const g of mode.schema.groups) { const c = g.category || "Khác"; if (!cats.includes(c)) cats.push(c); }
+  return cats;
+}
+function settingMatches(g, s) {
+  if (!query) return true;
+  const q = fold(query);
+  return [s.label, s.note, s.key, g.title].some(x => fold(x).includes(q));
+}
+function highlight(el, text) {
+  if (!query) { el.textContent = text; return; }
+  const f = fold(text), q = fold(query), i = f.indexOf(q);
+  if (i < 0) { el.textContent = text; return; }
+  el.innerHTML = "";
+  el.append(text.slice(0, i));
+  const m = document.createElement("mark"); m.textContent = text.slice(i, i + query.length); el.append(m);
+  el.append(text.slice(i + query.length));
+}
+
 function render() {
   $("tabs").innerHTML = "";
   for (const m of modes) {
     const b = document.createElement("button");
-    b.className = "tab" + (m.id === current ? " active" : "");
+    b.className = "mode" + (m.id === current ? " active" : "");
     b.textContent = m.schema.title || m.id;
-    b.onclick = () => { if (Object.keys(edits).length && !confirm("Bỏ các thay đổi chưa lưu?")) return; current = m.id; edits = {}; render(); };
+    b.onclick = () => { if (m.id === current) return; if (Object.keys(edits).length && !confirm("Bỏ các thay đổi chưa lưu?")) return; current = m.id; edits = {}; render(); };
     $("tabs").appendChild(b);
   }
   const mode = modes.find(m => m.id === current);
   const main = $("main");
   main.innerHTML = "";
-  if (!mode) { main.textContent = "Chưa có chế độ nào có settings.schema.yml."; return; }
-  // Thanh chọn loại (category của nhóm); "Tất cả" hiện mọi nhóm. Loại có mục đã sửa chưa lưu được đánh dấu •
-  const cats = [];
-  for (const g of mode.schema.groups) { const c = g.category || "Khác"; if (!cats.includes(c)) cats.push(c); }
+  if (!mode) { main.innerHTML = '<p class="empty">Chưa có chế độ nào có settings.schema.yml.</p>'; return; }
+  const cats = catsOf(mode);
   if (!category[mode.id] || (category[mode.id] !== "*" && !cats.includes(category[mode.id]))) category[mode.id] = cats[0];
-  const nav = document.createElement("nav");
-  nav.className = "cats";
-  for (const c of [...cats, "*"]) {
-    const b = document.createElement("button");
-    b.className = "cat" + (category[mode.id] === c ? " active" : "");
-    const dirty = mode.schema.groups.some(g => (c === "*" || (g.category || "Khác") === c) && g.settings.some(st => st.key in edits));
-    b.textContent = (c === "*" ? "Tất cả" : c) + (dirty ? " •" : "");
-    b.onclick = () => { category[mode.id] = c; render(); };
-    nav.appendChild(b);
-  }
-  main.appendChild(nav);
+  renderCats(mode, cats);
+  let shown = 0;
   for (const g of mode.schema.groups) {
-    if (category[mode.id] !== "*" && (g.category || "Khác") !== category[mode.id]) continue;
+    if (!query && category[mode.id] !== "*" && (g.category || "Khác") !== category[mode.id]) continue;
+    const settings = g.settings.filter(s => s.type !== "info" && settingMatches(g, s));
+    if (!settings.length) continue;
     const box = document.createElement("section");
     box.className = "group";
-    box.innerHTML = `<h2></h2>${g.description ? '<p class="desc"></p>' : ""}`;
-    box.querySelector("h2").textContent = g.title;
+    box.innerHTML = `<div class="ghead">${query || category[mode.id] === "*" ? '<div class="gcat"></div>' : ""}<h2></h2>${g.description ? '<p class="desc"></p>' : ""}</div><div class="gbody"></div>`;
+    if (box.querySelector(".gcat")) box.querySelector(".gcat").textContent = (CAT_ICON[g.category || "Khác"] || "") + " " + (g.category || "Khác");
+    highlight(box.querySelector("h2"), g.title);
     if (g.description) box.querySelector(".desc").textContent = g.description;
-    for (const s of g.settings) box.appendChild(row(mode, s));
+    for (const s of settings) box.querySelector(".gbody").appendChild(row(mode, s));
     main.appendChild(box);
+    shown += settings.length;
   }
+  if (!shown) main.innerHTML = `<p class="empty">${query ? `Không có cài đặt nào khớp "${query.replace(/[<>&]/g, "")}".` : "Mục này chưa có cài đặt."}</p>`;
   updateBar();
 }
 
+function renderCats(mode, cats) {
+  const nav = $("cats");
+  nav.innerHTML = "";
+  for (const c of [...cats, "*"]) {
+    const groups = mode.schema.groups.filter(g => c === "*" || (g.category || "Khác") === c);
+    const n = groups.reduce((a, g) => a + g.settings.filter(s => s.type !== "info").length, 0);
+    const dirty = groups.some(g => g.settings.some(st => st.key in edits));
+    const b = document.createElement("button");
+    b.className = "cat" + (c === "*" ? " all" : "") + (!query && category[mode.id] === c ? " active" : "");
+    b.innerHTML = `<span class="ic">${c === "*" ? "📚" : (CAT_ICON[c] || "📁")}</span><span class="t"></span>${dirty ? '<span class="dirty" title="Có mục đã sửa chưa lưu"></span>' : ""}<span class="n">${n}</span>`;
+    b.querySelector(".t").textContent = c === "*" ? "Tất cả" : c;
+    b.onclick = () => { query = ""; $("q").value = ""; category[mode.id] = c; render(); window.scrollTo({ top: 0, behavior: "smooth" }); };
+    nav.appendChild(b);
+  }
+}
+
+// select có đúng 2 lựa chọn true/false -> công tắc
+function isBool(s) { return s.type === "select" && s.options.length === 2 && s.options.every(o => o.value === true || o.value === false); }
+
+function row(mode, s) {
+  const div = document.createElement("div");
+  div.className = "row" + (WIDE.has(s.type) ? " wide" : "");
+  const id = "f_" + s.key;
+  const lab = document.createElement("div"); lab.className = "lab";
+  const label = document.createElement("label"); label.htmlFor = id;
+  highlight(label, s.label);
+  const pill = document.createElement("span"); pill.className = "pill"; pill.textContent = "đã sửa";
+  label.appendChild(pill);
+  lab.appendChild(label);
+  if (s.note) { const n = document.createElement("div"); n.className = "note"; highlight(n, s.note); lab.appendChild(n); }
+  div.appendChild(lab);
+  const ctl = document.createElement("div"); ctl.className = "ctl";
+  const saved = mode.values[s.key];
+  const value = s.key in edits ? edits[s.key] : saved;
+  let input;
+  if (isBool(s)) {
+    const on = s.options.find(o => o.value === true), off = s.options.find(o => o.value === false);
+    input = document.createElement("label"); input.className = "switch";
+    input.innerHTML = '<input type="checkbox"><span class="track"></span><span class="txt"></span>';
+    const cb = input.querySelector("input"), txt = input.querySelector(".txt");
+    cb.checked = value === true; txt.textContent = cb.checked ? on.label : off.label;
+    cb.onchange = () => { txt.textContent = cb.checked ? on.label : off.label; change(mode, s, cb.checked, div); };
+    cb.id = id;
+    ctl.appendChild(input);
+    div.appendChild(ctl);
+    if (s.key in edits) div.classList.add("changed");
+    return div;
+  }
+  if (s.type === "select") {
+    input = document.createElement("select");
+    s.options.forEach((o, i) => {
+      const opt = document.createElement("option");
+      opt.value = i; opt.textContent = o.label;
+      if (same(o.value, value)) opt.selected = true;
+      input.appendChild(opt);
+    });
+    input.onchange = () => change(mode, s, s.options[input.value].value, div);
+  } else if (s.type === "lines") {
+    input = document.createElement("textarea");
+    input.rows = Math.min(14, Math.max(4, (value || []).length + 1));
+    input.value = (value || []).join("\n");
+    const cnt = document.createElement("div"); cnt.className = "count";
+    const upd = () => { const n = input.value.split("\n").filter(x => x.trim()).length; cnt.textContent = n + " mục · mỗi dòng một mục"; };
+    input.oninput = () => { upd(); change(mode, s, input.value.split("\n").map(x => x.trim()).filter(x => x), div); };
+    upd();
+    ctl.appendChild(input); ctl.appendChild(cnt);
+  } else if (s.type === "rewards") {
+    input = rewardsEditor(value || [], v => change(mode, s, v, div));
+  } else if (s.type === "shopitems") {
+    input = shopItemsEditor(value || [], v => change(mode, s, v, div));
+  } else if (s.type === "shoptitles") {
+    input = shopTitlesEditor(value || [], v => change(mode, s, v, div));
+  } else if (s.type === "fragtypes") {
+    input = fragTypesEditor(value || {}, v => change(mode, s, v, div));
+  } else if (s.type === "fragshop") {
+    input = fragShopEditor(value || [], v => change(mode, s, v, div));
+  } else if (s.type === "spin") {
+    input = spinEditor(value || [], v => change(mode, s, v, div));
+  } else if (s.type === "quests") {
+    input = questsEditor(value || {}, v => change(mode, s, v, div));
+  } else if (s.type === "milestones") {
+    input = milestonesEditor(value || {}, v => change(mode, s, v, div));
+  } else if (s.type === "list") {
+    input = document.createElement("input");
+    input.value = (value || []).join(", ");
+    input.placeholder = "Các mục cách nhau dấu phẩy";
+    input.oninput = () => {
+      let v = input.value.split(",").map(x => x.trim()).filter(x => x);
+      if (s.items === "int") v = v.map(x => parseInt(x, 10));
+      if (s.items === "number") v = v.map(x => parseFloat(x));
+      change(mode, s, v, div);
+    };
+  } else {
+    input = document.createElement("input");
+    if (s.type === "int" || s.type === "number") {
+      input.type = "number"; input.step = s.type === "int" ? "1" : "any";
+      if (s.min !== undefined) input.min = s.min;
+      if (s.max !== undefined) input.max = s.max;
+    } else if (s.type === "times") {
+      input.placeholder = "Ví dụ: 20:00,21:00 (để trống = không có phiên)";
+    }
+    input.value = value ?? "";
+    input.oninput = () => {
+      let v = input.value;
+      if (s.type === "int") v = v === "" ? "" : parseInt(v, 10);
+      if (s.type === "number") v = v === "" ? "" : parseFloat(v);
+      change(mode, s, v, div);
+    };
+  }
+  input.id = id;
+  if (!ctl.contains(input)) ctl.appendChild(input);
+  if ((s.type === "int" || s.type === "number") && (s.min !== undefined || s.max !== undefined)) {
+    const r = document.createElement("div"); r.className = "count";
+    r.textContent = "Trong khoảng " + (s.min ?? "…") + " – " + (s.max ?? "…");
+    ctl.appendChild(r);
+  }
+  div.appendChild(ctl);
+  if (s.key in edits) div.classList.add("changed");
+  return div;
+}
+
+function change(mode, s, v, div) {
+  if (same(v, mode.values[s.key])) delete edits[s.key]; else edits[s.key] = v;
+  div.classList.toggle("changed", s.key in edits);
+  updateBar();
+  renderCats(mode, catsOf(mode));
+}
+
+function updateBar() {
+  const n = Object.keys(edits).length;
+  $("save").disabled = n === 0;
+  $("discard").disabled = n === 0;
+  $("save").textContent = n ? `Lưu và áp dụng (${n})` : "Lưu và áp dụng";
+  $("savebar").classList.toggle("dirty", n > 0);
+  if (n && !$("status").dataset.keep) { $("status").className = "status"; $("status").textContent = `${n} mục đã sửa, chưa lưu.`; }
+}
+
+function showResult(res) {
+  const st = $("status");
+  st.className = "status " + (res.ok ? "ok" : "err");
+  st.textContent = res.message;
+  st.dataset.keep = "1"; setTimeout(() => delete st.dataset.keep, 4000);
+  if (res.results && res.results.length) {
+    const d = document.createElement("details");
+    d.className = "results";
+    d.innerHTML = "<summary>Kết quả lệnh</summary><pre></pre>";
+    d.querySelector("pre").textContent = res.results.map(r => `> ${r.command}\n${r.output || "(không có phản hồi)"}`).join("\n\n");
+    st.appendChild(d);
+  }
+}
+
+async function post(path, body) {
+  $("save").disabled = true; $("reapply").disabled = true; $("discard").disabled = true;
+  $("status").className = "status"; $("status").textContent = "Đang lưu và áp dụng…";
+  try {
+    const r = await fetch(path, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+    const res = await r.json();
+    if (r.ok) { await load(); }
+    showResult(res);
+  } catch (e) {
+    showResult({ ok: false, message: "Không gửi được: " + e });
+  } finally {
+    $("reapply").disabled = false; updateBar();
+  }
+}
+
+$("save").onclick = () => post(`api/modes/${current}/save`, { values: edits });
+$("discard").onclick = () => { if (confirm("Bỏ mọi thay đổi chưa lưu?")) { edits = {}; render(); $("status").className = "status"; $("status").textContent = "Đã bỏ thay đổi."; } };
+$("reapply").onclick = () => {
+  if (confirm("Ghi lại toàn bộ cài đặt vào plugin và nạp lại?")) post(`api/modes/${current}/apply-all`, {});
+};
+let qTimer = null;
+$("q").oninput = () => { clearTimeout(qTimer); qTimer = setTimeout(() => { query = $("q").value.trim(); render(); }, 150); };
+window.addEventListener("beforeunload", (e) => { if (Object.keys(edits).length) { e.preventDefault(); e.returnValue = ""; } });
 
 // ---- Ô chọn quà (DuckyMoMoCore Rewards): xu <số> | do <mã> [số] | vat <VẬT_LIỆU> [số] | lenh <lệnh> | manh <loại> <số>
 let libCache = null;
@@ -465,135 +679,8 @@ function shopTitlesEditor(value, onChange) {
   return box;
 }
 
-function row(mode, s) {
-  const div = document.createElement("div");
-  div.className = "row";
-  const id = "f_" + s.key;
-  const label = document.createElement("label");
-  label.htmlFor = id; label.textContent = s.label;
-  div.appendChild(label);
-  const saved = mode.values[s.key];
-  const value = s.key in edits ? edits[s.key] : saved;
-  let input;
-  if (s.type === "select") {
-    input = document.createElement("select");
-    s.options.forEach((o, i) => {
-      const opt = document.createElement("option");
-      opt.value = i; opt.textContent = o.label;
-      if (same(o.value, value)) opt.selected = true;
-      input.appendChild(opt);
-    });
-    input.onchange = () => change(mode, s, s.options[input.value].value, div);
-  } else if (s.type === "lines") {
-    // Mỗi dòng một mục (lưu thành danh sách)
-    input = document.createElement("textarea");
-    input.rows = Math.min(12, Math.max(3, (value || []).length + 1));
-    input.value = (value || []).join("\n");
-    input.oninput = () => change(mode, s, input.value.split("\n").map(x => x.trim()).filter(x => x), div);
-  } else if (s.type === "rewards") {
-    input = rewardsEditor(value || [], v => change(mode, s, v, div));
-  } else if (s.type === "shopitems") {
-    input = shopItemsEditor(value || [], v => change(mode, s, v, div));
-  } else if (s.type === "shoptitles") {
-    input = shopTitlesEditor(value || [], v => change(mode, s, v, div));
-  } else if (s.type === "fragtypes") {
-    input = fragTypesEditor(value || {}, v => change(mode, s, v, div));
-  } else if (s.type === "fragshop") {
-    input = fragShopEditor(value || [], v => change(mode, s, v, div));
-  } else if (s.type === "spin") {
-    input = spinEditor(value || [], v => change(mode, s, v, div));
-  } else if (s.type === "quests") {
-    input = questsEditor(value || {}, v => change(mode, s, v, div));
-  } else if (s.type === "milestones") {
-    input = milestonesEditor(value || {}, v => change(mode, s, v, div));
-  } else if (s.type === "list") {
-    // Các mục cách nhau dấu phẩy (lưu thành danh sách)
-    input = document.createElement("input");
-    input.value = (value || []).join(", ");
-    input.placeholder = "Các mục cách nhau dấu phẩy";
-    input.oninput = () => {
-      let v = input.value.split(",").map(x => x.trim()).filter(x => x);
-      if (s.items === "int") v = v.map(x => parseInt(x, 10));
-      if (s.items === "number") v = v.map(x => parseFloat(x));
-      change(mode, s, v, div);
-    };
-  } else {
-    input = document.createElement("input");
-    if (s.type === "int" || s.type === "number") {
-      input.type = "number"; input.step = s.type === "int" ? "1" : "any";
-      if (s.min !== undefined) input.min = s.min;
-      if (s.max !== undefined) input.max = s.max;
-    } else if (s.type === "times") {
-      input.placeholder = "Ví dụ: 20:00,21:00 (để trống = không có phiên)";
-    }
-    input.value = value ?? "";
-    input.oninput = () => {
-      let v = input.value;
-      if (s.type === "int") v = v === "" ? "" : parseInt(v, 10);
-      if (s.type === "number") v = v === "" ? "" : parseFloat(v);
-      change(mode, s, v, div);
-    };
-  }
-  input.id = id;
-  div.appendChild(input);
-  if (s.note) { const n = document.createElement("div"); n.className = "note"; n.textContent = s.note; div.appendChild(n); }
-  if (s.key in edits) div.classList.add("changed");
-  return div;
-}
 
-function change(mode, s, v, div) {
-  if (same(v, mode.values[s.key])) delete edits[s.key]; else edits[s.key] = v;
-  div.classList.toggle("changed", s.key in edits);
-  updateBar();
-  const active = document.querySelector(".cat.active");
-  if (active) for (const b of document.querySelectorAll(".cat")) {
-    const c = b.textContent.replace(" •", "");
-    const mode2 = modes.find(m => m.id === current);
-    const dirty = mode2.schema.groups.some(g => (c === "Tất cả" || (g.category || "Khác") === c) && g.settings.some(st => st.key in edits));
-    b.textContent = c + (dirty ? " •" : "");
-  }
-}
-
-function updateBar() {
-  const n = Object.keys(edits).length;
-  $("save").disabled = n === 0;
-  $("save").textContent = n ? `Lưu và áp dụng (${n})` : "Lưu và áp dụng";
-}
-
-function showResult(res) {
-  const st = $("status");
-  st.className = "status " + (res.ok ? "ok" : "err");
-  st.textContent = res.message;
-  if (res.results && res.results.length) {
-    const d = document.createElement("details");
-    d.className = "results";
-    d.innerHTML = "<summary>Kết quả lệnh</summary><pre></pre>";
-    d.querySelector("pre").textContent = res.results.map(r => `> ${r.command}\n${r.output || "(không có phản hồi)"}`).join("\n\n");
-    st.appendChild(d);
-  }
-}
-
-async function post(path, body) {
-  $("save").disabled = true; $("reapply").disabled = true;
-  $("status").className = "status"; $("status").textContent = "Đang lưu và áp dụng…";
-  try {
-    const r = await fetch(path, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
-    const res = await r.json();
-    if (r.ok) { await load(); }
-    showResult(res);
-  } catch (e) {
-    showResult({ ok: false, message: "Không gửi được: " + e });
-  } finally {
-    $("reapply").disabled = false; updateBar();
-  }
-}
-
-$("save").onclick = () => post(`api/modes/${current}/save`, { values: edits });
-$("reapply").onclick = () => {
-  if (confirm("Ghi lại toàn bộ cài đặt vào plugin và nạp lại?")) post(`api/modes/${current}/apply-all`, {});
-};
-window.addEventListener("beforeunload", (e) => { if (Object.keys(edits).length) { e.preventDefault(); e.returnValue = ""; } });
-load().catch(e => { $("main").textContent = "Không tải được cài đặt: " + e; });
+load().catch(e => { $("main").innerHTML = '<p class="empty">Không tải được cài đặt: ' + e + "</p>"; });
 </script>
 </body>
 </html>

@@ -42,18 +42,10 @@
   .empty { color: var(--muted); padding: 20px 0; }
   @media (max-width: 640px) { td:first-child, .guide td:first-child { width: auto; } table, tbody, tr, td { display: block; } td { border-top: none; padding: 2px 0; } tr { border-top: 1px solid var(--line); padding: 6px 0; } }
 </style>
+<link rel="stylesheet" href="ui.css">
 </head>
-<body>
-<header>
-  <h1>DuckyMoMo · Cẩm nang</h1>
-  <a href="./">Cài đặt</a>
-  <a href="huongdan">Cẩm nang game</a>
-  <a href="role">Role</a>
-  <a href="thuvien">Thư viện đồ</a>
-  <a href="boss">Boss</a>
-  <a href="hoatdong">Hoạt động người chơi</a>
-  <a id="dozzle" href="__DOZZLE_URL__" target="_blank" rel="noopener">Xem log ↗</a>
-</header>
+<body data-dozzle="__DOZZLE_URL__" data-title="Cẩm nang admin" data-sub="Plugin đang cài thật trên từng server, lệnh và cách chỉnh.">
+<script src="shell.js"></script>
 <main>
   <div class="tools">
     <input id="q" type="search" placeholder="Tìm plugin hoặc lệnh, ví dụ: tiền, /t claim, kick…">

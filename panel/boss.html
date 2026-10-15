@@ -63,17 +63,10 @@
   .inline { display: flex; gap: 6px; align-items: center; margin-top: 6px; }
   .inline input { width: 140px; }
 </style>
+<link rel="stylesheet" href="ui.css">
 </head>
-<body>
-<header>
-  <h1>DuckyMoMo · Boss</h1>
-  <a href="./">Cài đặt</a>
-  <a href="camnang">Cẩm nang</a>
-  <a href="huongdan">Cẩm nang game</a>
-  <a href="role">Role</a>
-  <a href="thuvien">Thư viện đồ</a>
-  <a href="hoatdong">Hoạt động người chơi</a>
-</header>
+<body data-dozzle="__DOZZLE_URL__" data-title="Boss" data-sub="Tạo boss EliteMobs, gọi boss ra. Boss có sẵn của EliteMobs / dungeon chỉ xem.">
+<script src="shell.js"></script>
 <main>
   <section class="card">
     <h2><span>Boss <span id="count" class="badge"></span></span><button class="primary" id="new">+ Tạo boss</button></h2>

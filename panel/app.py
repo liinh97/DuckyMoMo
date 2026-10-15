@@ -35,6 +35,9 @@ HUONGDAN_HTML = (Path(__file__).parent / "huongdan.html").read_text(encoding="ut
 ROLE_HTML = (Path(__file__).parent / "role.html").read_text(encoding="utf-8")
 THUVIEN_HTML = (Path(__file__).parent / "thuvien.html").read_text(encoding="utf-8")
 BOSS_HTML = (Path(__file__).parent / "boss.html").read_text(encoding="utf-8")
+# Khung chung mọi trang (thanh điều hướng trái, màu, nút): ui.css, shell.js
+STATIC = {"/ui.css": ("text/css; charset=utf-8", (Path(__file__).parent / "ui.css").read_bytes()),
+          "/shell.js": ("application/javascript; charset=utf-8", (Path(__file__).parent / "shell.js").read_bytes())}
 # Trang Role: role chức vụ (track staff + builder + default) và rank donate (track donate), lưu ở LuckPerms (MariaDB)
 STAFF_GROUPS = ["admin", "mod", "helper", "builder", "default"]
 DONATE_GROUPS = ["congtuoc", "hautuoc", "batuoc", "tutuoc", "namtuoc"]
@@ -1173,6 +1176,14 @@ class Handler(BaseHTTPRequestHandler):
             self.send_response(200)
             self.send_header("Content-Type", "text/html; charset=utf-8")
             self.send_header("Content-Length", str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+        elif path in STATIC:
+            ctype, body = STATIC[path]
+            self.send_response(200)
+            self.send_header("Content-Type", ctype)
+            self.send_header("Content-Length", str(len(body)))
+            self.send_header("Cache-Control", "no-cache")
             self.end_headers()
             self.wfile.write(body)
         elif path == "/api/modes":

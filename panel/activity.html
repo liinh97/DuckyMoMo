@@ -60,10 +60,11 @@
   #sayMsg.ok { color: var(--join); } #sayMsg.err { color: var(--admin); }
   @media (max-width: 700px) { .line { grid-template-columns: 1fr; gap: 0; } input { width: 110px; } }
 </style>
+<link rel="stylesheet" href="ui.css">
 </head>
-<body>
-<header>
-  <div class="title"><b>duckymomo</b><span> · hoạt động người chơi</span></div>
+<body data-dozzle="__DOZZLE_URL__" data-title="Hoạt động người chơi" data-sub="Chat, vào/ra, lệnh của người chơi; gửi tin vào game.">
+<script src="shell.js"></script>
+<header class="keep">
   <button class="chip on" data-type="chat">Chat</button>
   <button class="chip on" data-type="join">Vào/ra</button>
   <button class="chip on" data-type="command">Lệnh</button>
@@ -83,10 +84,6 @@
   <input id="player" placeholder="Người chơi">
   <input id="q" placeholder="Tìm trong nội dung">
   <div class="right">
-    <a href="./">Cài đặt</a>
-    <a href="thuvien">Thư viện đồ</a>
-  <a href="boss">Boss</a>
-    <a id="dozzle" href="__DOZZLE_URL__" target="_blank" rel="noopener">Xem log ↗</a>
     <label class="live on" id="liveLabel" title="Tự cập nhật mỗi 5 giây"><input type="checkbox" id="auto" checked><span class="dot"></span>Live</label>
   </div>
 </header>

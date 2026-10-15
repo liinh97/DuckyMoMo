@@ -48,6 +48,21 @@
   .ench .d { grid-column: 1 / -1; font-size: 12.5px; color: var(--muted); }
   .ench .d b { color: var(--text); font-weight: 600; }
   .ench .d.bad { color: var(--err); }
+  .ench .d.warn { color: var(--warn); }
+  .enchopt { display: flex; gap: 8px; align-items: center; font-size: 13px; color: var(--muted); margin: 6px 0 0; }
+  .enchopt input { width: auto; }
+  /* ô chọn có tìm kiếm */
+  .cb { position: relative; }
+  .cb > input { width: 100%; padding-right: 30px; }
+  .cb-arrow { position: absolute; right: 4px; top: 50%; transform: translateY(-50%); border: 0; background: transparent; color: var(--muted); cursor: pointer; padding: 2px 6px; font-size: 14px; }
+  .cb-list { position: absolute; z-index: 20; left: 0; right: 0; top: calc(100% + 4px); max-height: 320px; overflow-y: auto; background: var(--card); border: 1px solid var(--line); border-radius: 10px; box-shadow: 0 12px 32px rgba(0,0,0,.28); padding: 4px; }
+  .cb-it { padding: 7px 10px; border-radius: 7px; cursor: pointer; }
+  .cb-it b { font-weight: 600; font-size: 14px; display: block; }
+  .cb-it small { color: var(--muted); font-size: 12px; display: block; }
+  .cb-it.act { background: var(--accent-soft, rgba(232,113,28,.12)); }
+  .cb-it.sel b::after { content: " ✓"; color: var(--accent); }
+  .cb-it.dim { opacity: .55; }
+  .cb-empty { padding: 10px; color: var(--muted); font-size: 13px; }
   .ench button { padding: 4px 0; color: var(--err); border: none; }
   .opts { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; margin-top: 10px; font-size: 14px; }
   .opts label { display: flex; gap: 6px; align-items: center; }
@@ -65,17 +80,10 @@
   .tip .id { color: #555; text-shadow: none; font-size: 12.5px; margin-top: 4px; }
   .obf { filter: blur(1.5px); }
 </style>
+<link rel="stylesheet" href="ui.css">
 </head>
-<body>
-<header>
-  <h1>DuckyMoMo · Thư viện đồ</h1>
-  <a href="./">Cài đặt</a>
-  <a href="camnang">Cẩm nang</a>
-  <a href="huongdan">Cẩm nang game</a>
-  <a href="role">Role</a>
-  <a href="boss">Boss</a>
-  <a href="hoatdong">Hoạt động người chơi</a>
-</header>
+<body data-dozzle="__DOZZLE_URL__" data-title="Thư viện đồ" data-sub="Đồ dùng làm phần thưởng, bán ở cửa hàng, hoặc admin phát cho người chơi.">
+<script src="shell.js"></script>
 <main>
   <section class="card">
     <h2><span>Đồ trong thư viện <span id="count" class="badge"></span></span><button class="primary" id="new">+ Tạo mới</button></h2>
@@ -90,10 +98,9 @@
     <div class="grid4">
       <div><label class="f" for="id">Mã (không dấu)</label><input id="id" placeholder="kiem_rong" maxlength="32"></div>
       <div><label class="f" for="tengoi">Tên gợi nhớ</label><input id="tengoi" placeholder="Kiếm rồng (quà mốc 30 ngày)" maxlength="60"></div>
-      <div><label class="f" for="material">Loại đồ</label><input id="material" list="materials" placeholder="DIAMOND_SWORD"></div>
+      <div><label class="f" for="material">Loại đồ</label><input id="material" placeholder="Tìm: kiếm, giáp, DIAMOND_SWORD…"></div>
       <div><label class="f" for="amount">Số lượng</label><input id="amount" type="number" min="1" max="64" value="1"></div>
     </div>
-    <datalist id="materials"></datalist>
 
     <label class="f" for="name">Tên hiển thị (mã màu &amp;: &amp;6 vàng, &amp;l đậm, &amp;o nghiêng…)</label>
     <input id="name" placeholder="&6&lKiếm Rồng" maxlength="150">
@@ -105,6 +112,7 @@
     <label class="f">Phù phép</label>
     <div id="enchs"></div>
     <button id="addench" style="margin-top:6px">+ Thêm phù phép</button>
+    <label class="enchopt"><input type="checkbox" id="enchAll"> Hiện cả phù phép không hợp loại đồ (làm đồ đặc biệt, phù phép đó sẽ không có tác dụng)</label>
 
     <div class="opts">
       <label><input type="checkbox" id="unbreakable"> Không thể hỏng</label>
@@ -173,6 +181,69 @@ const DESC = {
   "enchantio:vampirism_curse": "Lời nguyền (giáp): theo tên là bất lợi kiểu ma cà rồng (ví dụ dưới nắng). Chưa kiểm chứng.",
   "enchantio:insomnia_curse": "Lời nguyền (giáp): theo tên là gây mất ngủ. Chưa kiểm chứng.",
 };
+// ---- Ô chọn có tìm kiếm (thay datalist: datalist chỉ gợi ý đúng chữ đang có trong ô nên không chọn được món khác)
+// combo(input, items(query) -> [{value, label, sub, dim}], onPick(value))
+const fold = (s) => String(s || "").normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/đ/g, "d").replace(/Đ/g, "D").toLowerCase();
+function combo(input, items, onPick) {
+  const wrap = document.createElement("div"); wrap.className = "cb";
+  input.parentNode.insertBefore(wrap, input); wrap.appendChild(input);
+  input.autocomplete = "off";
+  const btn = document.createElement("button"); btn.type = "button"; btn.className = "cb-arrow"; btn.tabIndex = -1; btn.textContent = "▾";
+  const list = document.createElement("div"); list.className = "cb-list"; list.hidden = true;
+  wrap.append(btn, list);
+  let showAll = false, act = -1, cur = [];
+  function draw() {
+    cur = items(showAll ? "" : input.value.trim());
+    act = Math.max(0, cur.findIndex(x => x.value === input.value.trim()));
+    list.innerHTML = cur.length ? "" : '<div class="cb-empty">Không tìm thấy</div>';
+    cur.forEach((it, i) => {
+      const d = document.createElement("div");
+      d.className = "cb-it" + (it.dim ? " dim" : "") + (i === act ? " act" : "") + (it.value === input.value.trim() ? " sel" : "");
+      d.innerHTML = `<b></b>${it.sub ? "<small></small>" : ""}`;
+      d.querySelector("b").textContent = it.label;
+      if (it.sub) d.querySelector("small").textContent = it.sub;
+      d.onmousedown = (e) => { e.preventDefault(); pick(it.value); };
+      list.appendChild(d);
+    });
+    const a = list.children[act]; if (a && a.scrollIntoView) a.scrollIntoView({ block: "nearest" });
+  }
+  function open(all) { if (input.disabled) return; showAll = all; list.hidden = false; draw(); }
+  function close() { list.hidden = true; }
+  function pick(v) { input.value = v; close(); onPick(v); }
+  input.addEventListener("focus", () => open(true));
+  input.addEventListener("click", () => open(true));
+  input.addEventListener("input", () => { showAll = false; list.hidden = false; draw(); });
+  input.addEventListener("blur", () => setTimeout(close, 120));
+  input.addEventListener("keydown", (e) => {
+    if (list.hidden && (e.key === "ArrowDown" || e.key === "Enter")) { open(false); e.preventDefault(); return; }
+    if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+      e.preventDefault(); act = Math.max(0, Math.min(cur.length - 1, act + (e.key === "ArrowDown" ? 1 : -1)));
+      [...list.children].forEach((c, i) => c.classList.toggle("act", i === act));
+      const a = list.children[act]; if (a) a.scrollIntoView({ block: "nearest" });
+    } else if (e.key === "Enter") { e.preventDefault(); if (cur[act]) pick(cur[act].value); }
+    else if (e.key === "Escape") close();
+  });
+  btn.onmousedown = (e) => { e.preventDefault(); if (list.hidden) { input.focus(); open(true); } else close(); };
+  return { refresh: () => { if (!list.hidden) draw(); } };
+}
+
+// Tên tiếng Việt cho đồ hay làm phần thưởng (vũ khí, giáp, dụng cụ): "Kiếm kim cương"
+const MAT_PART = { SWORD: "Kiếm", AXE: "Rìu", PICKAXE: "Cúp", SHOVEL: "Xẻng", HOE: "Cuốc", SPEAR: "Giáo", HELMET: "Mũ", CHESTPLATE: "Áo giáp",
+  LEGGINGS: "Quần giáp", BOOTS: "Giày", HORSE_ARMOR: "Giáp ngựa" };
+const MAT_TIER = { WOODEN: "gỗ", STONE: "đá", IRON: "sắt", GOLDEN: "vàng", DIAMOND: "kim cương", NETHERITE: "netherite", COPPER: "đồng",
+  LEATHER: "da", CHAINMAIL: "xích", TURTLE: "rùa" };
+const MAT_ONE = { BOW: "Cung", CROSSBOW: "Nỏ", TRIDENT: "Đinh ba", MACE: "Chuỳ", ELYTRA: "Cánh (elytra)", SHIELD: "Khiên", FISHING_ROD: "Cần câu",
+  SHEARS: "Kéo", FLINT_AND_STEEL: "Bật lửa", CARROT_ON_A_STICK: "Cần câu cà rốt", WARPED_FUNGUS_ON_A_STICK: "Cần câu nấm", BRUSH: "Chổi",
+  ENCHANTED_BOOK: "Sách phù phép", BOOK: "Sách", TURTLE_HELMET: "Mũ rùa", WOLF_ARMOR: "Giáp sói", GOLDEN_APPLE: "Táo vàng",
+  ENCHANTED_GOLDEN_APPLE: "Táo vàng phù phép", DIAMOND: "Kim cương", EMERALD: "Ngọc lục bảo", NETHERITE_INGOT: "Thỏi netherite",
+  IRON_INGOT: "Thỏi sắt", GOLD_INGOT: "Thỏi vàng", TOTEM_OF_UNDYING: "Vật tổ bất tử", NAME_TAG: "Thẻ tên", CARVED_PUMPKIN: "Bí ngô khắc" };
+function vnMat(m) {
+  if (MAT_ONE[m]) return MAT_ONE[m];
+  for (const [part, vn] of Object.entries(MAT_PART)) {
+    if (m.endsWith("_" + part)) { const tier = m.slice(0, -part.length - 1); return MAT_TIER[tier] ? `${vn} ${MAT_TIER[tier]}` : null; }
+  }
+  return null;
+}
 const ROMAN = ["", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"];
 let data = null, cur = null, isNew = true, enchRows = [], lastField = "name";
 
@@ -241,28 +312,58 @@ function enchLabel(k) {
   return VN[s] ? `${VN[s]} / ${en}` : enchName(k);
 }
 function enchMax(k) { const e = data && data.meta ? data.meta.enchantments.find(e => short(e.key) === short(k)) : null; return e ? e.max : 0; }
+function curMat() { return ($("material").value || "").trim().toUpperCase(); }
+// Phù phép dùng được cho loại đồ (theo luật của server, gồm phù phép plugin). Sách phù phép: mọi phù phép.
+function fits(k, mat) {
+  if (!mat || mat === "ENCHANTED_BOOK" || mat === "BOOK") return true;
+  const e = data && data.meta ? data.meta.enchantments.find(e => short(e.key) === short(k)) : null;
+  return !e || !e.items || e.items.includes(mat);
+}
+function enchItems(q) {
+  const mat = curMat(), all = $("enchAll") && $("enchAll").checked, f = fold(q);
+  return enchKeys().filter(k => all || fits(k, mat))
+    .filter(k => !f || fold(enchLabel(k) + " " + k).includes(f))
+    .sort((a, b) => (fits(b, mat) - fits(a, mat)) || enchName(a).localeCompare(enchName(b), "vi"))
+    .map(k => ({ value: k, label: enchLabel(k), sub: `tối đa ${enchMax(k) || "?"} · ${DESC[k] || ""}${fits(k, mat) ? "" : " · KHÔNG hợp loại đồ này"}`, dim: !fits(k, mat) }));
+}
+function matItems(q) {
+  const mats = data && data.meta ? data.meta.materials : [], f = fold(q);
+  const enchantable = new Set((data && data.meta ? data.meta.enchantments : []).flatMap(e => e.items || []));
+  const out = [];
+  for (const m of mats) {
+    const vn = vnMat(m);
+    if (f && !fold(m + " " + prettyMat(m) + " " + (vn || "")).includes(f)) continue;
+    out.push({ value: m, label: vn ? `${vn} · ${prettyMat(m)}` : prettyMat(m), sub: m + (enchantable.has(m) ? " · phù phép được" : ""), rank: enchantable.has(m) ? 0 : 1 });
+  }
+  out.sort((a, b) => a.rank - b.rank);
+  return out.slice(0, 250);
+}
 function enchKeys() { return data && data.meta ? data.meta.enchantments.map(e => short(e.key)) : Object.keys(VN); }
 // Danh sách gợi ý dùng chung: gõ tên Việt, tên Anh hoặc mã đều lọc được
 function buildEnchList() {
-  let dl = document.getElementById("ench-list");
-  if (!dl) { dl = document.createElement("datalist"); dl.id = "ench-list"; document.body.appendChild(dl); }
-  dl.innerHTML = enchKeys().sort((a, b) => enchName(a).localeCompare(enchName(b), "vi"))
-    .map(k => `<option value="${esc(k)}" label="${esc(enchLabel(k))} · tối đa ${enchMax(k) || "?"}"></option>`).join("");
+  combo($("material"), matItems, () => { enchRows.forEach(enchDesc); render(); });
 }
 function enchDesc(r) {
   const k = r.sel.value.trim().toLowerCase().replace(/^minecraft:/, "");
   if (!k) { r.d.className = "d"; r.d.textContent = "Gõ tên phù phép (Việt hoặc Anh) để tìm"; return; }
   if (!enchKeys().includes(k)) { r.d.className = "d bad"; r.d.textContent = `Không có phù phép "${k}" trên server`; return; }
-  r.d.className = "d";
-  r.d.innerHTML = `<b>${esc(enchLabel(k))}</b> · tối đa ${enchMax(k) || "?"} · ${esc(DESC[k] || "Chưa có mô tả.")}`;
+  const ok = fits(k, curMat());
+  r.d.className = "d" + (ok ? "" : " warn");
+  r.d.innerHTML = `<b>${esc(enchLabel(k))}</b> · tối đa ${enchMax(k) || "?"} · ${esc(DESC[k] || "Chưa có mô tả.")}`
+    + (ok ? "" : ` <b>· Không có tác dụng trên ${esc(vnMat(curMat()) || prettyMat(curMat()))}</b>`);
 }
 function addEnch(key = "", lvl = 1) {
   const row = document.createElement("div"); row.className = "ench";
-  row.innerHTML = `<input list="ench-list" placeholder="Tìm: sắc bén, sharpness, volley…" value="${esc(key)}"><input type="number" min="1" max="255" value="${lvl}"><button title="Bỏ">×</button><div class="d"></div>`;
+  row.innerHTML = `<input placeholder="Tìm: sắc bén, sharpness, volley…" value="${esc(key)}"><input type="number" min="1" max="255" value="${lvl}"><button title="Bỏ">×</button><div class="d"></div>`;
   const ins = row.querySelectorAll("input");
   const r = { el: row, sel: ins[0], lvl: ins[1], d: row.querySelector(".d") };
-  if (!key) r.sel.value = "sharpness";
-  r.sel.oninput = r.sel.onchange = () => { enchDesc(r); render(); };
+  if (!key) {
+    // gợi ý phù phép hay dùng nhất của loại đồ (Sắc bén cho kiếm, Bảo vệ cho giáp…), chưa có trong danh sách
+    const free = enchItems("").filter(x => !x.dim && !enchRows.some(o => o.sel.value === x.value)).map(x => x.value);
+    r.sel.value = ["sharpness", "protection", "efficiency", "power", "piercing", "loyalty", "density", "unbreaking"].find(k => free.includes(k)) || free[0] || "";
+  }
+  r.sel.oninput = () => { enchDesc(r); render(); };
+  combo(r.sel, enchItems, () => { enchDesc(r); render(); });
   r.lvl.oninput = render;
   enchDesc(r);
   row.querySelector("button").onclick = () => { enchRows = enchRows.filter(x => x !== r); row.remove(); render(); };
@@ -299,7 +400,6 @@ function renderList() {
     b.onclick = () => load(it);
     $("list").appendChild(b);
   }
-  $("materials").innerHTML = (data.meta ? data.meta.materials : []).map(m => `<option value="${m}">`).join("");
   $("online").innerHTML = (data.online || []).map(p => `<option value="${esc(p)}">`).join("");
 }
 function status(ok, msg) { $("status").className = "status " + (ok === null ? "" : ok ? "ok" : "err"); $("status").textContent = msg; }
@@ -327,6 +427,7 @@ $("palette").querySelectorAll("button").forEach(b => b.onclick = (e) => {
 });
 $("name").onfocus = () => lastField = "name"; $("lore").onfocus = () => lastField = "lore";
 for (const id of ["material", "amount", "name", "lore", "unbreakable", "hide", "glint", "tengoi"]) $(id).addEventListener("input", render);
+$("material").addEventListener("input", () => enchRows.forEach(enchDesc));
 $("addench").onclick = (e) => { e.preventDefault(); addEnch(); render(); };
 $("new").onclick = () => load(null);
 $("save").onclick = async () => {

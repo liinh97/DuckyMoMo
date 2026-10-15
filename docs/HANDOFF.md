@@ -1,7 +1,75 @@
 # Bàn giao dự án DuckyMoMo Network
 
-> Dùng file này để tiếp tục ở session hoặc Project Claude khác. Cập nhật: 13/10/2026 (đọc mục 0 trước).
+> Dùng file này để tiếp tục ở session hoặc Project Claude khác. Cập nhật: 15/10/2026 tối (đọc mục 00 rồi mục 0).
 > Đọc kèm: `README.md`, `docs/minecraft-server-plan.md` (kế hoạch, quyết định), `docs/network-architecture.md` (kiến trúc).
+
+---
+
+## 00. Đọc trước nhất — tình trạng 15/10/2026 tối (chuyển sang session cloud)
+
+> Mục này tóm tắt mọi thứ làm trong ngày 14–15/10 và những việc còn dở. Mục 0 trở xuống vẫn đúng (cách làm việc, lịch sử), chi tiết từng tính năng
+> nằm rải trong mục 0 (tìm theo tên). Nhánh làm việc: `claude/confident-thompson-q939lp` (đã push lên `origin`).
+
+### Session cloud làm được gì, không làm được gì
+- Session cloud chỉ có **repo** (không có `data/`, `.env`, mật khẩu, không có Docker của máy nhà, không SSH được VPS). Sửa code/cấu hình/tài liệu
+  được; **build, triển khai, khởi động lại server, xem log, RCON thì phải làm trên máy nhà** (WSL Ubuntu-22.04, repo ở
+  `/home/developer/works/DuckyMoMo`). Ghi rõ cho người dùng các lệnh cần chạy ở nhà sau khi pull.
+- Các file plugin trong `data/<server>/...` (giá trị thật mà panel đã ghi) KHÔNG có trong Git. Repo chỉ có bản mẫu ở `modes/<mode>/server/...`,
+  `lobby/...`; itzg chỉ chép từ repo khi file repo MỚI hơn → sửa file mẫu trong repo có thể đè giá trị đã chỉnh trên web (xem cuối mục 4).
+- Triển khai thường dùng (máy nhà, thư mục repo):
+  - Plugin DuckyMoMoCore: `./ops/build-core.sh` rồi khởi động lại lobby / banghoi-1 / practice-1 (KIỂM TRA AI ONLINE TRƯỚC:
+    `docker compose exec -T <srv> rcon-cli list`).
+  - Panel (trang quản trị): `docker compose up -d --build panel` (không ảnh hưởng người chơi). Schema/settings/camnang/ce-vi đọc trực tiếp, không cần build.
+  - Đổi env/PLUGINS trong compose của server: `docker compose up -d --no-deps <srv>` (restart thường KHÔNG nạp env mới).
+  - Kiểm tra trước khi push: `./ops/init.sh && docker compose config --quiet && docker compose --profile pokemon config --quiet`.
+
+### Đang chạy (15/10 tối)
+- Mọi container chạy bình thường; 3 server Paper khởi động lại lúc 19:26 (không ai online) với plugin mới nhất.
+- Người chơi vào qua VPS **Vinahost CheapSSD 1** (Viettel TP.HCM, IP 125.212.218.74, `mc.goc6.io.vn`, Java 25565 / Bedrock 19132, vote 8192).
+  Relay WireGuard nhà → VPS, giữ IP thật; BBR trên đường về. Dự phòng: playit. Chi tiết: `relay/`, `relay/vps/README.md`, mục 0.
+- Ping giật khi chạy: nguyên nhân là mất gói trên đường Viettel nhà; Viettel khởi động lại modem từ xa thì hết (0% loss).
+
+### Làm trong 14–15/10 (theo thứ tự commit)
+1. **Tự sửa sau khi Windows/WSL khởi động lại**: `ops/tu-sua-sau-khoi-dong.sh` + `ops/windows/dang-ky-tu-sua.ps1` (người dùng đã đăng ký task,
+   chạy 1 lần lúc đăng nhập, KHÔNG chạy định kỳ).
+2. **VPS relay**: BKNS (cấm game) → Vinahost (nhân viên đã đồng ý cho dùng relay). DNS Cloudflare qua API (token trong `be_goc6/.env`, không in ra).
+3. **Vote**: AzuVotifier 3.3.6 ở banghoi-1 (cổng 8192 qua relay), thưởng trong `vote` của DuckyMoMoCore, mục vote trên site. Người dùng còn phải
+   tự đăng ký server trên các trang vote rồi gửi link để điền `vote.sites`.
+4. **8 tính năng mùa 1 (ý tưởng từ CherryMC)**: Thư viện đồ, điểm danh `/diemdanh`, nhiệm vụ ngày `/nhiemvu`, vòng quay miễn phí `/vongquay`
+   (vé theo giờ chơi thật, không bán vé), mảnh sự kiện `/doimanh` (trao đổi được, giới hạn/ngày), boss bar bảo hộ người mới, sửa boss EliteMobs
+   trên web, sửa cửa hàng Kinh Đô trên web. Mô tả từng cái: tìm trong mục 0. **Chưa thử trong game.**
+5. **Trang quản trị làm lại toàn bộ** (`panel/`): khung chung `ui.css` + `shell.js` (thanh trái, tiêu đề, `combo()` ô chọn có ô tìm riêng,
+   `mcHtml()` xem trước mã màu, `vnMat()`/`matLabel()` tên đồ tiếng Việt, `toast()`), trang Cài đặt (tìm kiếm không dấu, danh mục, công tắc,
+   danh sách dạng thẻ `style: tags`, dòng chữ có mã màu + xem trước, thanh lưu nổi, nhớ `#chế_độ/danh_mục`), Role (danh sách + chi tiết, công tắc
+   quyền), Thư viện đồ / Boss (khối đánh số, xem trước cột phải khi màn rộng), Hoạt động (nhóm theo ngày), Cẩm nang (chỉ phần lệnh là mã).
+   Toàn bộ trang dùng hết bề ngang. Kiểm tra bằng bản xem thử chỉ đọc (container `panel-xemthu`, cổng 8899, script ở scratchpad máy nhà) + Chrome headless.
+6. **Boss có sẵn của EliteMobs sửa được**: lưu chỉ ghi mục đã đổi (giữ mọi thiết lập khác), lần sửa đầu sao lưu bản gốc vào
+   `data/panel/boss-goc/`, nút Khôi phục, nút Chép thành boss mới (`dmm_<mã>.yml`). Boss do kỹ năng khác gọi ra có cảnh báo.
+7. **SkinsRestorer cài cả ở lobby/banghoi/practice** (trước chỉ ở proxy nên `/skins` không mở menu). Cùng link 15.12.6 trong `PLUGINS`.
+   Người dùng CHƯA báo lại menu đã mở chưa.
+8. **`/dmm` có gợi ý Tab + tên dài `/duckymomo`** (dmm = DuckyMoMo), `/dmm` trống in hướng dẫn nhiều dòng.
+9. **Thư viện đồ có phù phép CrazyEnchantments**: `CeBridge.java` (reflection, không cần jar CE khi build), `thuvien-meta.json` có `ce`,
+   món web lưu `ce-enchants`; tên + mô tả tiếng Việt 105 phù phép CE ở `modes/_network/ce-vi.yml` (cũng dùng cho trang Cài đặt > Phù phép).
+   Người dùng tạo `kiem_rong` (kiếm kim cương, Sắc bén 10). Lấy đồ: `/dmm laydo <mã> [người] [số]` hoặc nút Đưa trên web.
+
+### Người dùng phải tự làm (nhắc lại khi phù hợp)
+- Thêm `[boot] command = modprobe tcp_bbr` vào `/etc/wsl.conf` (để BBR có sau mỗi lần khởi động WSL):
+  `wsl -d Ubuntu-22.04 -u root -- sh -c "printf '\n[boot]\ncommand = modprobe tcp_bbr\n' >> /etc/wsl.conf"`
+- Đổi mật khẩu root VPS Vinahost (mật khẩu từng lộ trong ảnh chụp; Claude KHÔNG dùng mật khẩu, chỉ SSH key `~/.ssh/duckymomo_vps`).
+- Huỷ/hoàn tiền BKNS (đừng tắt VPS BKNS khi chưa hỏi). Trả lời đóng ticket Vinahost #244254.
+- Đăng ký server lên các trang vote, gửi link để điền `vote.sites`.
+- Thử trong game: `/vongquay`, `/diemdanh`, `/nhiemvu`, `/dmm luudo`, nút Đưa, gọi boss, chia mảnh, `/doimanh`, `/skins` (menu), Tab sau `/dmm`,
+  món thư viện có phù phép CE, sửa boss có sẵn rồi gọi ra xem.
+
+### Còn dở / hoãn (chờ người dùng quyết)
+- Shopkeepers (dân làng bán hàng) chưa sửa được trên web vì plugin tự ghi đè file lưu khi đang chạy; cây giao dịch dân làng chờ quyết định.
+- Thiết kế sự kiện boss "Trái Đất lâm nguy". Cân bằng kinh tế. Ký hiệu tiền Essentials `$` hay "xu" (đã hỏi, chưa trả lời).
+- Chuyển Docker Desktop → Docker Engine trong WSL (mạng Docker Desktop là nút cổ chai băng thông) — chưa làm.
+- Nhờ người chơi miền Nam đo ping qua VPS.
+- Cấp phù phép > 10 hiện "enchantment.level.N" trong tooltip (client chỉ có chữ La Mã tới 10). Có thể làm: ẩn dòng phù phép gốc + tự ghi
+  "Sắc bén XX" vào lore — chưa làm, chưa hỏi.
+- Phù phép CE nói "đồng minh" (Commander, Angel, Charge, Revenge, Doctor, Leadership): chưa rõ CE có nhận Towny làm đồng minh.
+- EliteMobs có ghi đè file boss mặc định khi cập nhật plugin hay không: chưa rõ (khuyên dùng "Chép thành boss mới" cho boss lâu dài).
 
 ---
 

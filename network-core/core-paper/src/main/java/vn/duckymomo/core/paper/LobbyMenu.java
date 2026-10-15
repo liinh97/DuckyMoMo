@@ -87,13 +87,23 @@ final class LobbyMenu implements Listener {
         plugin.getServer().getScheduler().runTask(plugin, () -> giveMenuItem(event.getPlayer()));
     }
 
-    @EventHandler
+    // LOWEST + DENY: chạy trước WorldEdit. La bàn cũng là "gậy dịch chuyển" của WorldEdit (trái: nhảy tới, phải: xuyên tường),
+    // admin/builder có quyền WorldEdit bấm la bàn bị dịch chuyển thay vì mở menu. WorldEdit bỏ qua sự kiện có useItemInHand = DENY.
+    @EventHandler(priority = org.bukkit.event.EventPriority.LOWEST)
     public void onInteract(PlayerInteractEvent event) {
         if (event.getAction() == Action.PHYSICAL || !isMenuItem(event.getItem())) {
             return;
         }
+        event.setUseItemInHand(org.bukkit.event.Event.Result.DENY);
+        event.setUseInteractedBlock(org.bukkit.event.Event.Result.DENY);
         event.setCancelled(true);
-        open(event.getPlayer());
+        Player p = event.getPlayer();
+        // mở ở tick sau: nếu plugin khác vẫn dịch chuyển/đóng giao diện trong tick này thì menu không bị đóng mất
+        org.bukkit.Bukkit.getScheduler().runTask(plugin, () -> {
+            if (p.isOnline()) {
+                open(p);
+            }
+        });
     }
 
     @EventHandler

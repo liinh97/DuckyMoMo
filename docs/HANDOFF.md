@@ -160,7 +160,7 @@
   ngày đó, mốc 7/14/30, cài đặt trên web) → (3) boss bar đếm ngược bảo vệ người mới ✅ → (4) nhiệm vụ hằng ngày ✅ → (5) chìa khoá theo giờ online +
   vòng quay hiện tỉ lệ (chỉ phát miễn phí) ✅ → (6) mảnh sự kiện (ĐỒ VẬT, trao đổi được, giới hạn nhận/ngày; nguồn: boss sự kiện theo sát thương,
   dungeon, mốc điểm danh, đủ nhiệm vụ ngày, vote/vòng quay tỉ lệ thấp; mỗi sự kiện loại mảnh riêng + hạn đổi) + cửa hàng đổi mảnh trên web ✅ →
-  (7) tạo boss trên web (EliteMobs custombosses + em reload) ✅ → (8) cửa hàng trên web (Kinh Đô, đổi mảnh; Shopkeepers cần xem kỹ vì tự ghi đè).
+  (7) tạo boss trên web (EliteMobs custombosses + em reload) ✅ → (8) cửa hàng trên web (Kinh Đô, đổi mảnh; Shopkeepers cần xem kỹ vì tự ghi đè) ✅. Cả 8 bước xong 15/10.
 - **Thư viện đồ (15/10)**: DuckyMoMoCore `ItemLibrary` (mọi server; dùng ở banghoi-1): `plugins/DuckyMoMoCore/thuvien-do.yml`, mục `items.<mã>`:
   `nguon: web` (material, amount, name/lore mã &, enchants {khoá: cấp} cho phép vượt cấp + khoá plugin `enchantio:...`, unbreakable,
   hide-enchants, glint) hoặc `nguon: game` (`data` = base64 `ItemStack.serializeAsBytes()`, kèm `preview` cho web; web KHÔNG sửa).

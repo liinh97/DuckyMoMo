@@ -918,6 +918,7 @@ def thuvien_json():
         src = (s.get("preview") or {}) if it["nguon"] == "game" else s
         it.update({"material": src.get("material", ""), "amount": src.get("amount", 1), "name": src.get("name", ""),
                    "lore": list(src.get("lore") or []), "enchants": {str(k): int(v) for k, v in (src.get("enchants") or {}).items()},
+                   "ce_enchants": {str(k): int(v) for k, v in (s.get("ce-enchants") or {}).items()},
                    "unbreakable": bool(src.get("unbreakable", False)), "hide_enchants": bool(s.get("hide-enchants", False)),
                    "glint": s.get("glint"), "nguoi_luu": s.get("nguoi-luu", "")})
         items.append(it)
@@ -971,6 +972,14 @@ def thuvien_action(data):
             if not ENCH_KEY_RE.match(k) or not 1 <= lvl <= 255:
                 raise ValueError(f"Phù phép không hợp lệ: {k} {v} (cấp 1–255)")
             ench[k] = lvl
+        # phù phép CrazyEnchantments: tên phải có trong danh sách CE server xuất ra (meta.ce)
+        ce_names = {str(c.get("name", "")).lower(): str(c.get("name", "")) for c in (meta.get("ce") or [])}
+        cee = {}
+        for k, v in (it.get("ce_enchants") or {}).items():
+            real, lvl = ce_names.get(str(k).lower()), int(v)
+            if not real or not 1 <= lvl <= 255:
+                raise ValueError(f"Phù phép CrazyEnchantments không có trên server: {k} (cấp 1–255)")
+            cee[real] = lvl
         amount = int(it.get("amount") or 1)
         if not 1 <= amount <= 64:
             raise ValueError("Số lượng 1–64")
@@ -981,6 +990,8 @@ def thuvien_action(data):
             entry["lore"] = [DoubleQuotedScalarString(x) for x in lore]
         if ench:
             entry["enchants"] = ench
+        if cee:
+            entry["ce-enchants"] = cee
         if it.get("unbreakable"):
             entry["unbreakable"] = True
         if it.get("hide_enchants"):

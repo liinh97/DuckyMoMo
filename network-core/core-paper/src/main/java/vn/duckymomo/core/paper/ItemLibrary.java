@@ -45,10 +45,12 @@ final class ItemLibrary {
 
     private final JavaPlugin plugin;
     private final File file;
+    private final CeBridge ce;
 
     ItemLibrary(JavaPlugin plugin) {
         this.plugin = plugin;
         this.file = new File(plugin.getDataFolder(), "thuvien-do.yml");
+        this.ce = new CeBridge(plugin.getLogger());
     }
 
     private YamlConfiguration load() {
@@ -138,6 +140,16 @@ final class ItemLibrary {
             meta.setEnchantmentGlintOverride(s.getBoolean("glint"));
         }
         item.setItemMeta(meta);
+        // phù phép CrazyEnchantments (Boom, Lifesteal…): CE tự ghi dòng mô tả và dữ liệu lên đồ
+        ConfigurationSection cee = s.getConfigurationSection("ce-enchants");
+        if (cee != null) {
+            for (String k : cee.getKeys(false)) {
+                int lvl = cee.getInt(k);
+                if (lvl < 1 || !ce.add(item, k, lvl)) {
+                    plugin.getLogger().warning("Thư viện đồ: bỏ qua phù phép CE " + k + " (không có CrazyEnchantments hoặc không có phù phép này)");
+                }
+            }
+        }
         return item;
     }
 
@@ -255,6 +267,26 @@ final class ItemLibrary {
         s.sendMessage("§7/dmm luudo <mã> · /dmm laydo <mã> [người] [số] · /dmm thuvien nap");
     }
 
+    private static String js(String v) {
+        StringBuilder b = new StringBuilder("\"");
+        for (char ch : String.valueOf(v).toCharArray()) {
+            switch (ch) {
+                case '"' -> b.append("\\\"");
+                case '\\' -> b.append("\\\\");
+                case '\n' -> b.append("\\n");
+                case '\r' -> { }
+                default -> {
+                    if (ch < 0x20) {
+                        b.append(String.format("\\u%04x", (int) ch));
+                    } else {
+                        b.append(ch);
+                    }
+                }
+            }
+        }
+        return b.append('"').toString();
+    }
+
     /** Danh sách phù phép + vật liệu cho trang web (đọc registry thật, gồm cả phù phép plugin). */
     void exportMeta() {
         StringBuilder sb = new StringBuilder("{\"enchantments\":[");
@@ -279,6 +311,23 @@ final class ItemLibrary {
             }
             sb.append(first ? "" : ",").append("{\"key\":\"").append(e.getKey().asString()).append("\",\"max\":").append(e.getMaxLevel())
                     .append(",\"items\":[").append(ok).append("]}");
+            first = false;
+        }
+        // phù phép CrazyEnchantments: tên, tên hiện, cấp tối đa, đang bật (Enabled trong Enchantments.yml), loại đồ
+        sb.append("],\"ce\":[");
+        first = true;
+        for (CeBridge.Info i : ce.list()) {
+            sb.append(first ? "" : ",").append("{\"name\":").append(js(i.name())).append(",\"display\":").append(js(i.display()))
+                    .append(",\"max\":").append(i.max()).append(",\"active\":").append(i.active()).append(",\"type\":").append(js(i.type()))
+                    .append(",\"items\":[");
+            for (int j = 0; j < i.items().size(); j++) {
+                sb.append(j > 0 ? "," : "").append(js(i.items().get(j)));
+            }
+            sb.append("],\"desc\":[");
+            for (int j = 0; j < i.desc().size(); j++) {
+                sb.append(j > 0 ? "," : "").append(js(i.desc().get(j)));
+            }
+            sb.append("]}");
             first = false;
         }
         sb.append("],\"materials\":[");

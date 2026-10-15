@@ -12,6 +12,7 @@ softdepend:
   - floodgate
   - Vault
   - PlaceholderAPI
+  - CrazyEnchantments
   - SiegeWar
   - Essentials
   - Votifier

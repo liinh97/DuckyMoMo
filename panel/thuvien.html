@@ -212,7 +212,16 @@ let data = null, cur = null, isNew = true, enchRows = [], lastField = "name";
 
 function esc(s) { return String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
 function short(k) { return String(k).replace(/^minecraft:/, ""); }
+// Phù phép CrazyEnchantments (Boom, Lifesteal…): mã trên web "ce:<tên thường>", dữ liệu ở meta.ce (do DuckyMoMoCore xuất)
+const isCe = (k) => String(k).startsWith("ce:");
+const strip = (t) => String(t || "").replace(/[&§][0-9a-fk-or]/gi, "").trim();
+function ceInfo(k) { const n = String(k).slice(3).toLowerCase(); return ((data && data.meta && data.meta.ce) || []).find(c => c.name.toLowerCase() === n) || null; }
+function descOf(k) {
+  if (isCe(k)) { const c = ceInfo(k); return c ? `[CE · ${c.type || "?"}] ` + strip((c.desc || []).filter(Boolean).join(" ")) + (c.active ? "" : " · ĐANG TẮT trong cài đặt CE") : ""; }
+  return DESC[k] || "";
+}
 function enchName(k) {
+  if (isCe(k)) { const c = ceInfo(k); return c ? (strip(c.display) || c.name) : String(k).slice(3); }
   const s = short(k);
   if (VN[s]) return VN[s];
   const [ns, key] = s.includes(":") ? s.split(":") : ["", s];
@@ -238,23 +247,29 @@ function mc(text, defColor, defItalic) {
   return out;
 }
 function form() {
-  const ench = {};
-  for (const r of enchRows) { const k = r.sel.value.trim().toLowerCase().replace(/^minecraft:/, ""), l = parseInt(r.lvl.value, 10); if (k && l > 0 && enchKeys().includes(k)) ench[k] = l; }
+  const ench = {}, cee = {};
+  for (const r of enchRows) {
+    const k = r.sel.value.trim().toLowerCase().replace(/^minecraft:/, ""), l = parseInt(r.lvl.value, 10);
+    if (!k || !(l > 0) || !enchKeys().includes(k)) continue;
+    if (isCe(k)) cee[ceInfo(k).name] = l; else ench[k] = l;
+  }
   const g = $("glint").value;
   return { ten_goi: $("tengoi").value.trim(), material: $("material").value.trim().toUpperCase(), amount: parseInt($("amount").value || "1", 10),
     name: $("name").value, lore: $("lore").value.replace(/\s+$/, "").split("\n").filter((l, i, a) => a.length > 1 || l !== ""),
-    enchants: ench, unbreakable: $("unbreakable").checked, hide_enchants: $("hide").checked, glint: g === "" ? null : g === "true" };
+    enchants: ench, ce_enchants: cee, unbreakable: $("unbreakable").checked, hide_enchants: $("hide").checked, glint: g === "" ? null : g === "true" };
 }
 function render() {
   const f = cur && cur.nguon === "game" ? cur : form();
   const mat = f.material || "STONE";
-  const hasEnch = Object.keys(f.enchants || {}).length > 0;
+  const hasEnch = Object.keys(f.enchants || {}).length + Object.keys(f.ce_enchants || {}).length > 0;
   let html = f.name ? `<div>${mc(f.name, "#FFFFFF", false)}</div>`
     : `<div style="color:${hasEnch ? "#55FFFF" : "#FFFFFF"}">${esc(prettyMat(mat))}</div>`;
   if (!f.hide_enchants) for (const [k, l] of Object.entries(f.enchants || {})) {
     const curse = /curse/.test(k);
     html += `<div style="color:${curse ? "#FF5555" : "#AAAAAA"}">${esc(enchName(k))}${(enchMax(k) === 1 && l === 1) ? "" : " " + (ROMAN[l] || l)}</div>`;
   }
+  // CE tự thêm dòng "<tên CE> <cấp>" vào mô tả (lore) của đồ
+  for (const [n, l] of Object.entries(f.ce_enchants || {})) { const c = ceInfo("ce:" + n); html += `<div>${mc((c ? c.display : "&7" + n) + " " + (ROMAN[l] || l), "#AAAAAA", false)}</div>`; }
   for (const line of f.lore || []) html += `<div>${line ? mc(line, "#AAAAAA", false) : "&nbsp;"}</div>`;
   if (f.unbreakable) html += `<div style="color:#5555FF">Không thể phá huỷ</div>`;
   html += `<div class="id">minecraft:${esc(mat.toLowerCase())}${(f.amount || 1) > 1 ? " ×" + f.amount : ""}</div>`;
@@ -262,6 +277,11 @@ function render() {
   // cảnh báo
   const w = [];
   for (const [k, l] of Object.entries(f.enchants || {})) { const mx = enchMax(k); if (mx && l > mx) w.push(`${enchName(k)} ${l} vượt cấp tối đa vanilla (${mx})`); }
+  for (const [n, l] of Object.entries(f.ce_enchants || {})) {
+    const c = ceInfo("ce:" + n);
+    if (c && !c.active) w.push(`Phù phép CE ${strip(c.display) || n} đang TẮT (Cài đặt › Phù phép) nên gắn vào cũng không có tác dụng`);
+    if (c && c.max && l > c.max) w.push(`${strip(c.display) || n} ${l} vượt cấp tối đa của CE (${c.max})`);
+  }
   const mats = data && data.meta ? data.meta.materials : null;
   if (mats && f.material && !mats.includes(f.material)) w.push(`Không có loại đồ "${f.material}" trong server`);
   if (w.length) w.push("Đồ phát cho người chơi: đồ quá mạnh làm lệch cân bằng chiến tranh.");
@@ -269,15 +289,17 @@ function render() {
 }
 // "Sắc bén / Sharpness" (vanilla), "Volley [Enchantio]" (plugin): tìm được bằng cả hai tên
 function enchLabel(k) {
+  if (isCe(k)) return enchName(k) + " [CE]";
   const s = short(k);
   const en = prettyMat(s.includes(":") ? s.split(":")[1] : s);
   return VN[s] ? `${VN[s]} / ${en}` : enchName(k);
 }
-function enchMax(k) { const e = data && data.meta ? data.meta.enchantments.find(e => short(e.key) === short(k)) : null; return e ? e.max : 0; }
+function enchMax(k) { if (isCe(k)) { const c = ceInfo(k); return c ? c.max : 0; } const e = data && data.meta ? data.meta.enchantments.find(e => short(e.key) === short(k)) : null; return e ? e.max : 0; }
 function curMat() { return ($("material").value || "").trim().toUpperCase(); }
 // Phù phép dùng được cho loại đồ (theo luật của server, gồm phù phép plugin). Sách phù phép: mọi phù phép.
 function fits(k, mat) {
   if (!mat || mat === "ENCHANTED_BOOK" || mat === "BOOK") return true;
+  if (isCe(k)) { const c = ceInfo(k); return !c || !c.items || !c.items.length || c.items.includes(mat); }
   const e = data && data.meta ? data.meta.enchantments.find(e => short(e.key) === short(k)) : null;
   return !e || !e.items || e.items.includes(mat);
 }
@@ -286,7 +308,7 @@ function enchItems(q) {
   return enchKeys().filter(k => all || fits(k, mat))
     .filter(k => !f || fold(enchLabel(k) + " " + k).includes(f))
     .sort((a, b) => (fits(b, mat) - fits(a, mat)) || enchName(a).localeCompare(enchName(b), "vi"))
-    .map(k => ({ value: k, label: enchLabel(k), sub: `tối đa ${enchMax(k) || "?"} · ${DESC[k] || ""}${fits(k, mat) ? "" : " · KHÔNG hợp loại đồ này"}`, dim: !fits(k, mat) }));
+    .map(k => ({ value: k, label: enchLabel(k), sub: `tối đa ${enchMax(k) || "?"} · ${descOf(k)}${fits(k, mat) ? "" : " · KHÔNG hợp loại đồ này"}`, dim: !fits(k, mat) }));
 }
 function matItems(q) {
   const mats = data && data.meta ? data.meta.materials : [], f = fold(q);
@@ -300,7 +322,10 @@ function matItems(q) {
   out.sort((a, b) => a.rank - b.rank);
   return out.slice(0, 250);
 }
-function enchKeys() { return data && data.meta ? data.meta.enchantments.map(e => short(e.key)) : Object.keys(VN); }
+function enchKeys() {
+  if (!data || !data.meta) return Object.keys(VN);
+  return data.meta.enchantments.map(e => short(e.key)).concat((data.meta.ce || []).map(c => "ce:" + c.name.toLowerCase()));
+}
 // Danh sách gợi ý dùng chung: gõ tên Việt, tên Anh hoặc mã đều lọc được
 function buildEnchList() {
   combo($("material"), matItems, () => { enchRows.forEach(enchDesc); render(); },
@@ -312,7 +337,7 @@ function enchDesc(r) {
   if (!enchKeys().includes(k)) { r.d.className = "d bad"; r.d.textContent = `Không có phù phép "${k}" trên server`; return; }
   const ok = fits(k, curMat());
   r.d.className = "d" + (ok ? "" : " warn");
-  r.d.innerHTML = `<b>${esc(enchLabel(k))}</b> · tối đa ${enchMax(k) || "?"} · ${esc(DESC[k] || "Chưa có mô tả.")}`
+  r.d.innerHTML = `<b>${esc(enchLabel(k))}</b> · tối đa ${enchMax(k) || "?"} · ${esc(descOf(k) || "Chưa có mô tả.")}`
     + (ok ? "" : ` <b>· Không có tác dụng trên ${esc(vnMat(curMat()) || prettyMat(curMat()))}</b>`);
 }
 function addEnch(key = "", lvl = 1) {
@@ -326,7 +351,7 @@ function addEnch(key = "", lvl = 1) {
     r.sel.value = ["sharpness", "protection", "efficiency", "power", "piercing", "loyalty", "density", "unbreaking"].find(k => free.includes(k)) || free[0] || "";
   }
   combo(r.sel, enchItems, () => { enchDesc(r); render(); },
-    { label: (v) => [enchLabel(v), v ? "tối đa " + (enchMax(v) || "?") : ""], search: "Tìm phù phép: sắc bén, sharpness, volley…" });
+    { label: (v) => [enchLabel(v), v ? "tối đa " + (enchMax(v) || "?") : ""], search: "Tìm phù phép: sắc bén, sharpness, volley, boom, lifesteal…" });
   r.lvl.oninput = render;
   enchDesc(r);
   row.querySelector(":scope > button").onclick = () => { enchRows = enchRows.filter(x => x !== r); row.remove(); render(); };
@@ -345,6 +370,7 @@ function load(it) {
   $("glint").value = it && it.glint !== null && it.glint !== undefined ? String(it.glint) : "";
   enchRows = []; $("enchs").innerHTML = "";
   for (const [k, l] of Object.entries(it ? it.enchants : {})) addEnch(short(k), l);
+  for (const [k, l] of Object.entries(it && it.nguon !== "game" ? (it.ce_enchants || {}) : {})) addEnch("ce:" + k.toLowerCase(), l);
   const game = it && it.nguon === "game";
   $("gamenote").hidden = !game;
   $("gamenote").textContent = game ? `Đồ lấy từ game${it.nguoi_luu ? " (" + it.nguoi_luu + " lưu)" : ""}: giữ nguyên vẹn nên không sửa trên web. Muốn đổi: sửa trong game rồi /dmm luudo ${it.id} lại.` : "";

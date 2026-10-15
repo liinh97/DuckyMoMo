@@ -85,6 +85,9 @@
    - Trang Role: quyền có sẵn (kế thừa hoặc qua `*`) hiện công tắc BẬT mờ, khoá (trước hiện tắt, admin tưởng không có quyền). Cấp/gỡ role báo vào game.
    - Bật/tắt quyền role (trang Role): `sync_perm_change` báo người trong role đang online; mất quyền trạng thái thì chạy lệnh tắt
      (`STATE_REVOKE` trong panel/app.py: fly/god/vanish off, speed 1, gamemode về mặc định của server). Gỡ role cũng tắt. Thêm quyền trạng thái khác: sửa `STATE_REVOKE`.
+   - Trang trí trên web (trang tài khoản): đổi tên, hiệu ứng hạt, pet, danh hiệu, có xem trước (canvas cho hạt). Áp dụng bằng RCON
+     `sudo <tên> <lệnh>` (Essentials) ở server người đó đang online (banghoi-1/practice-1), web lọc lệnh theo quyền trước
+     (`taikhoan.cosmetics`/`cosmetic_command`), plugin kiểm lại. Chưa thử trong game: Essentials có thể giới hạn độ dài/ký tự nick khác web.
    - Lệnh hay dùng: `modes/_network/lenh-hay-dung.yml` (nhóm Người chơi/Staff/Admin, khớp theo tên lệnh bỏ tham số, `cmd_key` trong panel);
      trang tài khoản hiện mục "⭐ Hay dùng" trước, lệnh khác gom theo plugin, thu gọn (tìm kiếm thì mở hết).
    - Sảnh KHÔNG cài EssentialsX: /fly, /kick… ở sảnh báo "Unknown command" với mọi người. Mod dùng ở banghoi/practice. Chưa quyết có cài Essentials ở sảnh không.

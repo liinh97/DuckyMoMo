@@ -1617,6 +1617,36 @@ def donate_admin(data, actor):
             "data": donate_load()[::-1]}
 
 
+_cos_last = {}
+
+
+def web_cosmetic(data, ip):
+    """Trang trí từ web: chạy lệnh THAY người chơi (/sudo của Essentials) ở server họ đang online (Bang Hội Chiến/Practice)."""
+    name = str(data.get("ten", "")).strip()
+    if not PLAYER_RE.match(name):
+        raise ValueError("Tên không hợp lệ")
+    now = time.time()
+    if now - _cos_last.get(name.lower(), 0) < 2:
+        raise ValueError("Bấm chậm lại một chút.")
+    _cos_last[name.lower()] = now
+    perms = taikhoan.load_perms(name)
+    if not perms:
+        raise ValueError("Chưa có dữ liệu tài khoản.")
+    cmd = taikhoan.cosmetic_command(perms, data)
+    srv = online_players(fresh=True).get(name.lower())
+    need = ["banghoi-1"] if data.get("viec", "").startswith("danhhieu") else taikhoan.COSMETIC_SERVERS
+    if srv not in need:
+        where = "Bang Hội Chiến" if need == ["banghoi-1"] else "Bang Hội Chiến hoặc Practice"
+        return {"ok": False, "message": f"Bạn cần đang online ở {where} để áp dụng (sảnh không hỗ trợ). Vào game rồi bấm lại."}
+    out = rcon(srv, [f"sudo {perms['name']} {cmd}"])[0][1]
+    web_log({"viec": "trangtri", "nguoi": name, "lenh": cmd, "server": srv, "kq": out[:150], "ip": ip})
+    if "not found" in out.lower() or "không tìm" in out.lower():
+        return {"ok": False, "message": "Server chưa thấy bạn online, thử lại sau vài giây."}
+    where = "Bang Hội Chiến" if srv == "banghoi-1" else "Practice"
+    extra = " Tên hiển thị lưu riêng từng server." if cmd.startswith("nick") else ""
+    return {"ok": True, "message": f"Đã áp dụng ở {where}. Xem kết quả trong game.{extra}", "trangtri": taikhoan.cosmetics(perms)}
+
+
 def account_times(name):
     try:
         con = taikhoan.db("network")
@@ -1692,7 +1722,7 @@ def web_profile(name, by_code):
     return {"ok": True, "ten": perms["name"] if perms["name"].lower() == name.lower() else name, "bedrock": name.startswith("."),
             "taikhoan": account_times(name), "online": online_players().get(name.lower()),
             "roles": roles, "nhom": sorted(g for g in perms["groups"] if g != "default"),
-            "hoso": hoso, "lenh": lenh,
+            "hoso": hoso, "lenh": lenh, "trangtri": taikhoan.cosmetics(perms),
             "quantri": {"la_staff": is_staff, "toan_quyen": acc["toan_quyen"], "qua_game": by_code,
                         "tinh_nang": list(acc["features"].values()), "loai_caidat": acc["categories"]}}
 
@@ -1790,6 +1820,8 @@ class Handler(BaseHTTPRequestHandler):
                 self.send_json(200, web_login(self.read_body(4096), self.headers.get("X-DMM-Ip", "")))
             elif method == "POST" and path == "/api/web/donate":
                 self.send_json(200, web_donate(self.read_body(4096), self.headers.get("X-DMM-Ip", "")))
+            elif method == "POST" and path == "/api/web/trangtri":
+                self.send_json(200, web_cosmetic(self.read_body(4096), self.headers.get("X-DMM-Ip", "")))
             elif method == "POST" and path == "/api/web/choilai":
                 self.send_json(200, web_reset(self.read_body(4096), self.headers.get("X-DMM-Ip", "")))
             elif method == "GET" and path == "/api/web/hoso":

@@ -291,3 +291,93 @@ def profile(perms):
                                 "gia": t.get("prices") or []} for t in tiers],
                      "cach_mua": (core.get("donate-ranks") or {}).get("how-to-buy", "")}
     return out
+
+
+# ---------------------------------------------------------------- trang trí (đổi tên, hiệu ứng hạt, pet, danh hiệu)
+# Trang tài khoản cho người có quyền trang trí chỉnh trực tiếp. Lệnh chạy THAY người chơi bằng /sudo của Essentials
+# (chỉ có ở Bang Hội Chiến, Practice) nên chính plugin kiểm quyền như khi gõ trong game; web chỉ lọc trước cho gọn.
+
+PP_EFFECTS = ["flame", "soul_fire_flame", "heart", "note", "enchant", "happy_villager", "angry_villager", "cloud", "snowflake",
+              "end_rod", "portal", "witch", "totem_of_undying", "cherry_leaves", "glow", "electric_spark", "crit", "dripping_honey"]
+PP_STYLES = ["normal", "halo", "orbit", "feet", "overhead", "point", "spin", "quadhelix", "wings", "rings", "sphere", "vortex",
+             "beam", "whirl", "celebration", "twins", "pulse"]
+# pet.type.passive (Công Tước) = mọi pet hiền dưới đây; các bậc dưới có quyền từng loài pet.type.<loài>.*
+PASSIVE_PETS = ["cat", "wolf", "chicken", "pig", "rabbit", "parrot", "fox", "bee", "axolotl", "frog", "turtle", "sheep", "cow", "panda",
+                "polarbear", "goat", "allay", "armadillo", "camel", "sniffer", "mooshroom", "ocelot", "llama", "tadpole", "copper_golem",
+                "dolphin", "happy_ghast", "horse", "donkey", "mule", "squid", "glow_squid", "cod", "salmon", "tropical_fish",
+                "trader_llama", "strider", "bat"]
+COSMETIC_SERVERS = ["banghoi-1", "practice-1"]  # có Essentials (/sudo)
+
+
+def cosmetics(perms):
+    srv = "banghoi-1"
+    h = lambda n: has(perms, n, srv)
+    ess = safe_yaml(DATA_DIR / srv / "plugins" / "Essentials" / "userdata" / f"{perms['uuid']}.yml")
+    max_pp = max([n for n in range(1, 11) if h(f"playerparticles.particles.max.{n}")] or [0])
+    pets = [t for t in PASSIVE_PETS if h(f"pet.type.{t}.spawn") or h("pet.type.passive")]
+    core = safe_yaml(DMM / "config.yml")
+    titles = (core.get("leaderboard") or {}).get("titles") or {}
+    season = str((core.get("leaderboard") or {}).get("season", "1"))
+    dh = (safe_yaml(DMM / "bxh.yml").get("danhhieu") or {}).get(perms["uuid"]) or {}
+
+    def title_text(t):
+        base = re.sub(r"\d+$", "", t)
+        return str(titles.get(t, titles.get(base, f"&7[{t}]"))).replace("{mua}", season)
+    return {
+        "nick": {"duoc": h("essentials.nick"), "mau": h("essentials.nick.color"), "dinhdang": h("essentials.nick.format"),
+                 "rgb": h("essentials.nick.rgb"), "hien_tai": ess.get("nickname") or ""},
+        "hat": h("essentials.hat"),
+        "pp": {"toi_da": max_pp, "hieu_ung": [e for e in PP_EFFECTS if h(f"playerparticles.effect.{e}")] if max_pp else [],
+               "kieu": [s for s in PP_STYLES if h(f"playerparticles.style.{s}")] if max_pp else []},
+        "pet": {"loai": pets},
+        "danhhieu": {"co": [{"id": t, "chu": title_text(t)} for t in dh.get("co") or []], "dung": dh.get("dung")},
+    }
+
+
+NICK_RE = re.compile(r"^(?:&#[0-9a-fA-F]{6}|&[0-9a-fk-orA-FK-OR]|[A-Za-z0-9_])+$")
+
+
+def cosmetic_command(perms, data):
+    """Kiểm tra yêu cầu từ web, trả lệnh (không có /) để chạy thay người chơi. ValueError nếu không hợp lệ."""
+    c = cosmetics(perms)
+    viec = data.get("viec")
+    if viec == "nick":
+        v = str(data.get("gia_tri", "")).strip()
+        if not NICK_RE.match(v):
+            raise ValueError("Tên chỉ gồm chữ không dấu, số, dấu _ và mã màu (&a, &l, &#ff8800).")
+        plain = re.sub(r"&#[0-9a-fA-F]{6}|&[0-9a-fk-orA-FK-OR]", "", v)
+        if not 3 <= len(plain) <= 16:
+            raise ValueError("Tên hiển thị dài 3–16 ký tự (không tính mã màu).")
+        if not c["nick"]["duoc"]:
+            raise ValueError("Rank của bạn chưa có quyền đổi tên.")
+        if re.search(r"&[0-9a-fA-F]", v) and not c["nick"]["mau"]:
+            raise ValueError("Rank của bạn chưa được tô màu tên.")
+        if re.search(r"&[k-oK-O]", v) and not c["nick"]["dinhdang"]:
+            raise ValueError("Rank của bạn chưa được chữ đậm/nghiêng.")
+        if "&#" in v and not c["nick"]["rgb"]:
+            raise ValueError("Rank của bạn chưa được màu tuỳ chọn (#hex).")
+        return f"nick {v}"
+    if viec == "nick_off":
+        return "nick off"
+    if viec == "pp_add":
+        e, s = str(data.get("hieu_ung", "")), str(data.get("kieu", ""))
+        if e not in c["pp"]["hieu_ung"] or s not in c["pp"]["kieu"]:
+            raise ValueError("Rank của bạn chưa có hiệu ứng hoặc kiểu này.")
+        return f"pp add {e} {s}"
+    if viec == "pp_reset":
+        return "pp reset"
+    if viec == "pet":
+        t = str(data.get("loai", ""))
+        if t not in c["pet"]["loai"]:
+            raise ValueError("Rank của bạn chưa có pet này.")
+        return f"pet summon {t}"
+    if viec == "pet_off":
+        return "pet remove"
+    if viec == "danhhieu":
+        t = str(data.get("ma", ""))
+        if t not in [x["id"] for x in c["danhhieu"]["co"]]:
+            raise ValueError("Bạn chưa có danh hiệu này.")
+        return f"danhhieu chon {t}"
+    if viec == "danhhieu_off":
+        return "danhhieu tat"
+    raise ValueError("Thao tác không hợp lệ")

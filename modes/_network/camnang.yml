@@ -14,6 +14,7 @@
 guide:
   - title: Việc admin hay làm
     items:
+      - ["Lệnh admin /dmm", "/dmm = DuckyMoMo (lệnh riêng của plugin DuckyMoMoCore, gõ dài /duckymomo). Gõ /dmm rồi bấm Tab để gợi ý lệnh con, tên phù phép, mã thư viện đồ, tên người chơi; gõ /dmm không kèm gì để xem hướng dẫn"]
       - ["Quyền của role / rank", "Trang Role & rank: chọn role bên trái, bật công tắc quyền (vd Helper: bay; Builder: gamemode). Có thể chọn áp dụng toàn mạng hoặc từng server"]
       - ["Cấp role staff", "Trang Role & rank: chọn role, gõ tên ở mục Thành viên, hoặc /lp user <tên> parent add helper  (lên tiếp: /lp user <tên> promote staff → mod → admin)"]
       - ["Cấp rank donate", "/rank give <tên> <namtuoc|tutuoc|batuoc|hautuoc|congtuoc> <số tháng>  · xem: /rank check <tên> · gỡ: /rank remove <tên>"]

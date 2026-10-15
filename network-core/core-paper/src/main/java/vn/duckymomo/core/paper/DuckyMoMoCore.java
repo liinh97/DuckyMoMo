@@ -1,5 +1,6 @@
 package vn.duckymomo.core.paper;
 
+import java.util.List;
 import java.io.File;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.event.HandlerList;
@@ -456,10 +457,13 @@ public final class DuckyMoMoCore extends JavaPlugin {
                     reload();
                     sender.sendMessage("DuckyMoMoCore: đã nạp lại config.yml");
                 } else {
-                    sender.sendMessage("/dmm decorate|structures start | pause | status | reset   /dmm clean   /dmm reload   /dmm lenh   /dmm enchant|sach <phù phép> <cấp>   /dmm rtpnpc [remove]   /dmm phu add|remove|list   /dmm hoabinh setup|claim <r>   /dmm shopnpc [remove]   /dmm luudo <mã>   /dmm laydo <mã> [người] [số]   /dmm thuvien [nap]");
+                    for (String line : DMM_HELP) {
+                        sender.sendMessage(line);
+                    }
                 }
                 return true;
             });
+            dmm.setTabCompleter((sender, cmd, label, args) -> dmmTab(args));
         }
         if (!reloading && decorator != null && getConfig().getBoolean("decorate.auto-resume")) {
             // chạy tiếp sau khi server khởi động lại (nếu lần trước đang chạy dở)
@@ -468,6 +472,89 @@ public final class DuckyMoMoCore extends JavaPlugin {
                 structures.resumeIfUnfinished();
             }, 200L);
         }
+    }
+
+    private static final List<String> DMM_HELP = List.of(
+            "§6§l/dmm §7(DuckyMoMo, gõ dài: /duckymomo) §8— bấm Tab để gợi ý",
+            "§e/dmm enchant <phù phép> <cấp> §7phù phép vượt cấp món đang cầm (0 = gỡ)",
+            "§e/dmm sach <phù phép> <cấp> [người] §7tặng sách phù phép",
+            "§e/dmm laydo <mã> [người] [số] §7lấy đồ trong Thư viện đồ",
+            "§e/dmm luudo <mã> [tên gợi nhớ] §7lưu món đang cầm vào thư viện",
+            "§e/dmm thuvien [nap] §7xem mã / kiểm tra thư viện",
+            "§e/dmm clean §7dọn rác ngay   §e/dmm reload §7nạp lại config   §e/dmm lenh §7xuất danh sách lệnh",
+            "§e/dmm rtpnpc|shopnpc [remove] §7đặt/gỡ NPC   §e/dmm phu add|remove|list §7tài khoản phụ",
+            "§e/dmm hoabinh setup|claim <r> §7Liên minh Hoà Bình   §e/dmm decorate|structures start|pause|status|reset");
+    private static final List<String> DMM_SUBS = List.of("enchant", "sach", "laydo", "luudo", "thuvien", "clean", "reload", "lenh",
+            "rtpnpc", "shopnpc", "phu", "hoabinh", "decorate", "structures");
+
+    /** Gợi ý Tab cho /dmm: lệnh con, tên phù phép, mã thư viện đồ, tên người chơi. */
+    private List<String> dmmTab(String[] a) {
+        List<String> opts = new java.util.ArrayList<>();
+        String sub = a[0].toLowerCase(java.util.Locale.ROOT);
+        java.util.function.Supplier<List<String>> players = () -> getServer().getOnlinePlayers().stream().map(org.bukkit.entity.Player::getName).toList();
+        if (a.length == 1) {
+            opts.addAll(DMM_SUBS);
+        } else {
+            switch (sub) {
+                case "enchant", "sach" -> {
+                    if (a.length == 2) {
+                        for (org.bukkit.enchantments.Enchantment e : io.papermc.paper.registry.RegistryAccess.registryAccess()
+                                .getRegistry(io.papermc.paper.registry.RegistryKey.ENCHANTMENT)) {
+                            org.bukkit.NamespacedKey k = e.getKey();
+                            opts.add("minecraft".equals(k.getNamespace()) ? k.getKey() : k.asString());
+                        }
+                    } else if (a.length == 3) {
+                        opts.addAll(sub.equals("enchant") ? List.of("0", "5", "10", "20", "30", "50") : List.of("5", "10", "20", "30", "50"));
+                    } else if (a.length == 4 && sub.equals("sach")) {
+                        opts.addAll(players.get());
+                    }
+                }
+                case "laydo" -> {
+                    if (a.length == 2) {
+                        opts.addAll(itemLibrary.ids());
+                    } else if (a.length == 3) {
+                        opts.addAll(players.get());
+                    } else if (a.length == 4) {
+                        opts.addAll(List.of("1", "16", "64"));
+                    }
+                }
+                case "luudo" -> {
+                    if (a.length == 2) {
+                        opts.addAll(itemLibrary.ids());
+                    }
+                }
+                case "thuvien" -> {
+                    if (a.length == 2) {
+                        opts.add("nap");
+                    }
+                }
+                case "decorate", "structures" -> {
+                    if (a.length == 2) {
+                        opts.addAll(List.of("start", "pause", "status", "reset"));
+                    }
+                }
+                case "rtpnpc", "shopnpc" -> {
+                    if (a.length == 2) {
+                        opts.add("remove");
+                    }
+                }
+                case "phu" -> {
+                    if (a.length == 2) {
+                        opts.addAll(List.of("add", "remove", "list"));
+                    } else if (a.length == 3) {
+                        opts.addAll(players.get());
+                    }
+                }
+                case "hoabinh" -> {
+                    if (a.length == 2) {
+                        opts.addAll(List.of("setup", "claim"));
+                    }
+                }
+                default -> { }
+            }
+        }
+        String last = a[a.length - 1].toLowerCase(java.util.Locale.ROOT);
+        return opts.stream().filter(o -> o.toLowerCase(java.util.Locale.ROOT).startsWith(last)).sorted().toList();
     }
 
     /** Gắn lệnh: có module thì chạy, không thì báo chỉ có ở Bang Hội Chiến. */

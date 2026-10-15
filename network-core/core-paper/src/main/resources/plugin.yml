@@ -35,7 +35,8 @@ commands:
     description: Mở menu chọn chế độ (ở lobby)
     aliases: [chedo, modes]
   dmm:
-    description: Lệnh admin của DuckyMoMo (trang trí map…)
+    description: "Lệnh admin của DuckyMoMo: phù phép vượt cấp, thư viện đồ, dọn rác, NPC… (bấm Tab để gợi ý)"
+    aliases: [duckymomo]
     permission: duckymomo.admin
   rank:
     description: "Xem rank donate (tước vị), giá, rank của bạn. Admin: /rank give|remove|check"

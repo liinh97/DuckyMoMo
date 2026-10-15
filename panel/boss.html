@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DuckyMoMo · Boss</title>
+<style>
+  :root {
+    --bg: #f5f6f8; --card: #fff; --text: #1d2330; --muted: #667085; --line: #e3e6ec;
+    --accent: #e8711c; --accent-text: #fff; --ok: #1e8e3e; --err: #c62828; --input: #fff; --chip: #f0f2f5; --warn: #b26a00;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #14161b; --card: #1d2027; --text: #e6e8ee; --muted: #9aa3b2; --line: #2d313b; --input: #15171c; --chip: #262a33; --warn: #e0a040; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); }
+  header { display: flex; align-items: center; gap: 16px; padding: 14px 20px; border-bottom: 1px solid var(--line); background: var(--card); position: sticky; top: 0; z-index: 2; flex-wrap: wrap; }
+  header h1 { font-size: 17px; margin: 0; flex: 1; }
+  header a { color: var(--muted); text-decoration: none; font-size: 14px; }
+  header a:hover { color: var(--text); }
+  main { max-width: 1180px; margin: 0 auto; padding: 20px 16px 80px; display: grid; grid-template-columns: 300px 1fr; gap: 16px; align-items: start; }
+  @media (max-width: 860px) { main { grid-template-columns: 1fr; } }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; }
+  .card h2 { font-size: 15px; margin: 0 0 10px; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  h3 { font-size: 13px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); margin: 16px 0 6px; }
+  input, select, textarea { width: 100%; padding: 7px 9px; border: 1px solid var(--line); border-radius: 6px; background: var(--input); color: var(--text); font: inherit; }
+  textarea { min-height: 70px; resize: vertical; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 13px; }
+  input:disabled, select:disabled, textarea:disabled { opacity: .6; }
+  button { font: inherit; cursor: pointer; border-radius: 6px; border: 1px solid var(--line); background: transparent; color: var(--text); padding: 6px 12px; }
+  button.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-text); }
+  button.danger { color: var(--err); }
+  button:disabled { opacity: .5; cursor: default; }
+  .list { display: flex; flex-direction: column; gap: 6px; max-height: 72vh; overflow: auto; }
+  .li { text-align: left; padding: 8px 10px; border-radius: 8px; border: 1px solid var(--line); background: var(--chip); }
+  .li.on { border-color: var(--accent); }
+  .li.ro { opacity: .7; }
+  .li .nm { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 13.5px; background: #1b1d22; padding: 1px 6px; border-radius: 4px; display: inline-block; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .li small { color: var(--muted); display: block; margin-top: 3px; }
+  .badge { font-size: 11px; padding: 1px 6px; border-radius: 999px; background: var(--line); color: var(--muted); margin-left: 4px; }
+  .g { display: grid; gap: 10px; }
+  .g3 { grid-template-columns: repeat(3, 1fr); } .g4 { grid-template-columns: repeat(4, 1fr); } .g6 { grid-template-columns: repeat(6, 1fr); }
+  @media (max-width: 700px) { .g3, .g4, .g6 { grid-template-columns: 1fr 1fr; } }
+  label.f { display: block; font-size: 13px; color: var(--muted); margin: 0 0 3px; }
+  .note { color: var(--muted); font-size: 13px; margin: 4px 0 0; }
+  .warn { color: var(--warn); font-size: 13px; margin: 6px 0 0; }
+  .chk { display: flex; gap: 6px; align-items: center; font-size: 14px; }
+  .chk input { width: auto; }
+  .pw-sel { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 6px; min-height: 26px; }
+  .pw-sel span { background: var(--accent); color: var(--accent-text); border-radius: 999px; padding: 1px 4px 1px 10px; font-size: 12.5px; display: inline-flex; gap: 4px; align-items: center; }
+  .pw-sel button { border: 0; color: var(--accent-text); padding: 0 4px; }
+  .pw-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 2px 10px; max-height: 190px; overflow: auto; border: 1px solid var(--line); border-radius: 6px; padding: 6px 8px; margin-top: 6px; }
+  .pw-list label { font-size: 13px; display: flex; gap: 6px; align-items: center; font-family: ui-monospace, Menlo, Consolas, monospace; }
+  .pw-list input { width: auto; }
+  .pv { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 18px 10px; border-radius: 8px; margin-bottom: 12px;
+    background: linear-gradient(#2b4a2b, #1f331f 60%, #3a2a1a); }
+  .plate { background: rgba(0,0,0,.35); padding: 2px 8px; font: 16px/1.4 ui-monospace, Menlo, Consolas, monospace; color: #fff; text-shadow: 2px 2px 0 #3f3f3f; }
+  .stats { font-size: 13px; color: #d6e4d6; text-align: center; }
+  .bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line); }
+  .bar .sp { flex: 1; }
+  .bar input { width: 120px; } .bar input.n { width: 80px; }
+  .status { margin-top: 8px; font-size: 14px; color: var(--muted); min-height: 21px; }
+  .status.ok { color: var(--ok); } .status.err { color: var(--err); }
+  .inline { display: flex; gap: 6px; align-items: center; margin-top: 6px; }
+  .inline input { width: 140px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>DuckyMoMo · Boss</h1>
+  <a href="./">Cài đặt</a>
+  <a href="camnang">Cẩm nang</a>
+  <a href="huongdan">Cẩm nang game</a>
+  <a href="role">Role</a>
+  <a href="thuvien">Thư viện đồ</a>
+  <a href="hoatdong">Hoạt động người chơi</a>
+</header>
+<main>
+  <section class="card">
+    <h2><span>Boss <span id="count" class="badge"></span></span><button class="primary" id="new">+ Tạo boss</button></h2>
+    <div class="list" id="list"><p class="note">Đang tải…</p></div>
+    <p class="note">Boss tạo ở đây (file <code>dmm_*.yml</code>) sửa được. Boss có sẵn của EliteMobs và dungeon chỉ xem và gọi ra thử.</p>
+  </section>
+
+  <section class="card">
+    <div class="pv"><div class="plate" id="pvName"></div><div class="stats" id="pvStats"></div></div>
+    <div id="ronote" class="warn" hidden>Boss có sẵn của EliteMobs / dungeon: chỉ xem và gọi thử, không sửa trên web.</div>
+
+    <div class="g g4">
+      <div><label class="f" for="id">Mã (không dấu)</label><input id="id" maxlength="32" placeholder="rong_lua"></div>
+      <div style="grid-column: span 2"><label class="f" for="name">Tên (mã màu &amp;, hoặc &lt;g:#ff0000:#ffaa00&gt;tên&lt;/g&gt;)</label><input id="name" maxlength="120" placeholder="&c&lRồng Lửa Phương Nam"></div>
+      <div><label class="f" for="etype">Loại quái</label><select id="etype"></select></div>
+    </div>
+    <div class="g g4" style="margin-top:10px">
+      <div><label class="f" for="level">Cấp (số, hoặc dynamic)</label><input id="level" value="dynamic"></div>
+      <div><label class="f" for="hm">Máu × (hệ số)</label><input id="hm" type="number" step="0.1" min="0.1" max="1000" value="10"></div>
+      <div><label class="f" for="dm">Sát thương × (hệ số)</label><input id="dm" type="number" step="0.1" min="0.1" max="100" value="1"></div>
+      <div><label class="f" for="timeout">Tự biến mất sau (phút, 0 = không)</label><input id="timeout" type="number" min="0" max="1440" value="30"></div>
+    </div>
+    <div class="g g3" style="margin-top:10px">
+      <label class="chk"><input type="checkbox" id="enabled" checked> Bật</label>
+      <label class="chk"><input type="checkbox" id="emloot" checked> Rơi đồ của EliteMobs</label>
+      <div><label class="f" for="prio">Mức thông báo khi xuất hiện</label>
+        <select id="prio"><option value="0">0: không báo</option><option value="1">1: báo gần</option><option value="2" selected>2: báo cả server</option><option value="3">3: báo cả server + Discord</option></select></div>
+    </div>
+
+    <h3>Kỹ năng (<span id="pwcount">0</span>)</h3>
+    <div class="pw-sel" id="pwsel"></div>
+    <input id="pwfilter" placeholder="Lọc kỹ năng, vd fire, arrow, summon…">
+    <div class="pw-list" id="pwlist"></div>
+
+    <h3>Trang bị</h3>
+    <div class="g g6" id="slots"></div>
+    <datalist id="mats"></datalist>
+
+    <h3>Thông báo</h3>
+    <div class="g g3" style="grid-template-columns: 1fr 1fr">
+      <div><label class="f" for="spawnMsg">Khi xuất hiện</label><input id="spawnMsg" placeholder="&c⚠ Rồng Lửa đã thức giấc ở phương Nam!"></div>
+      <div><label class="f" for="deathMsg">Khi bị hạ (1 dòng)</label><input id="deathMsg" placeholder="&aRồng Lửa đã bị hạ bởi $players!"></div>
+    </div>
+    <label class="f" for="deathMsgs" style="margin-top:10px">Bảng vinh danh khi bị hạ (mỗi dòng một dòng; $damager1name, $damager1damage… $players)</label>
+    <textarea id="deathMsgs"></textarea>
+
+    <h3>Lệnh chạy khi boss bị hạ</h3>
+    <textarea id="cmds" placeholder="doimanh chia lamnguy 30 $players"></textarea>
+    <div class="inline">Chia mảnh cho người tham gia: <input id="fmType" placeholder="loại, vd lamnguy"><input id="fmTotal" type="number" min="1" value="30" style="width:80px"><button id="addFm">Thêm lệnh</button></div>
+    <p class="note">Lệnh console (không có /). <code>$players</code> = mọi người đã đánh boss. Mảnh chia đều cho người tham gia đang online, không tính giới hạn ngày.</p>
+    <div id="warns"></div>
+
+    <div class="bar">
+      <button class="primary" id="save">Lưu</button>
+      <button class="danger" id="del">Xoá</button>
+      <span class="sp"></span>
+      Gọi boss: <input id="spPlayer" list="online" placeholder="cạnh người chơi">
+      <span class="note">hoặc</span>
+      <input id="spX" class="n" placeholder="x"><input id="spY" class="n" placeholder="y"><input id="spZ" class="n" placeholder="z">
+      <input id="spLevel" class="n" placeholder="cấp">
+      <button id="spawn">Gọi</button>
+    </div>
+    <div class="status" id="status"></div>
+    <p class="note">Bấm Lưu là EliteMobs nạp lại (em reload). Gọi boss ở thế giới chính của Bang Hội Chiến; nhớ gọi ở chỗ không có người chơi chưa sẵn sàng.</p>
+  </section>
+</main>
+<script>
+const $ = (id) => document.getElementById(id);
+const COLORS = { "0": "#000000", "1": "#0000AA", "2": "#00AA00", "3": "#00AAAA", "4": "#AA0000", "5": "#AA00AA", "6": "#FFAA00", "7": "#AAAAAA",
+  "8": "#555555", "9": "#5555FF", a: "#55FF55", b: "#55FFFF", c: "#FF5555", d: "#FF55FF", e: "#FFFF55", f: "#FFFFFF" };
+const ETYPE_VN = { ZOMBIE: "Xác sống", HUSK: "Xác khô", DROWNED: "Xác chết đuối", ZOMBIE_VILLAGER: "Dân làng xác sống", SKELETON: "Bộ xương",
+  STRAY: "Bộ xương băng", BOGGED: "Bộ xương đầm lầy", WITHER_SKELETON: "Bộ xương Wither", SPIDER: "Nhện", CAVE_SPIDER: "Nhện hang",
+  CREEPER: "Creeper", ENDERMAN: "Enderman", BLAZE: "Blaze", WITCH: "Phù thuỷ", VINDICATOR: "Vindicator", PILLAGER: "Kẻ cướp",
+  EVOKER: "Evoker", ILLUSIONER: "Ảo thuật gia", RAVAGER: "Ravager", PIGLIN: "Piglin", PIGLIN_BRUTE: "Piglin hung bạo",
+  ZOMBIFIED_PIGLIN: "Piglin xác sống", HOGLIN: "Hoglin", ZOGLIN: "Zoglin", IRON_GOLEM: "Người sắt", SLIME: "Slime",
+  MAGMA_CUBE: "Khối dung nham", PHANTOM: "Phantom", GUARDIAN: "Guardian", ELDER_GUARDIAN: "Elder Guardian", BREEZE: "Breeze",
+  WOLF: "Sói", POLAR_BEAR: "Gấu Bắc Cực", SILVERFISH: "Mọt bạc", ENDERMITE: "Endermite", VEX: "Vex", GHAST: "Ghast", SHULKER: "Shulker" };
+const SLOT_VN = { helmet: "Mũ", chestplate: "Áo", leggings: "Quần", boots: "Giày", mainHand: "Tay chính", offHand: "Tay phụ" };
+let data = null, cur = null, isNew = true, selPowers = [];
+
+function esc(s) { return String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
+// &-mã màu + <g:#a:#b>…</g> của EliteMobs (xem trước gần đúng: chuyển màu đầu → cuối)
+function mc(text) {
+  let s = String(text || "").replace(/\$\w*[Ll]evel\b/g, "[Lv 50]")
+    .replace(/<(?!\/?g\b|g:)\/?[a-z_]+(:[^>]*)?>/gi, ""); // thẻ MiniMessage khác (<rainbow>…): bỏ khi xem trước
+  s = s.replace(/<g:(#[0-9a-f]{6}):(#[0-9a-f]{6})>(.*?)<\/g>/gi, (_, a, b, t) => `\u0000g${a}${b}\u0001${t}\u0002`);
+  let out = "", color = "#FFFFFF", bold = false, italic = false;
+  for (const part of s.split(/(&[0-9a-fk-or]|\u0000g#[0-9a-f]{6}#[0-9a-f]{6}\u0001[^\u0002]*\u0002)/i)) {
+    if (!part) continue;
+    const m = /^&([0-9a-fk-or])$/i.exec(part);
+    if (m) { const k = m[1].toLowerCase(); if (COLORS[k]) { color = COLORS[k]; bold = italic = false; } else if (k === "l") bold = true; else if (k === "o") italic = true; else if (k === "r") { color = "#FFFFFF"; bold = italic = false; } continue; }
+    const g = /^\u0000g(#[0-9a-f]{6})(#[0-9a-f]{6})\u0001([^\u0002]*)\u0002$/i.exec(part);
+    if (g) { out += `<span style="background:linear-gradient(90deg,${g[1]},${g[2]});-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:none;${bold ? "font-weight:700;" : ""}">${esc(g[3])}</span>`; continue; }
+    out += `<span style="color:${color};${bold ? "font-weight:700;" : ""}${italic ? "font-style:italic;" : ""}">${esc(part)}</span>`;
+  }
+  return out;
+}
+function form() {
+  const b = { isEnabled: $("enabled").checked, entityType: $("etype").value, name: $("name").value, level: $("level").value.trim() || "dynamic",
+    healthMultiplier: parseFloat($("hm").value || "1"), damageMultiplier: parseFloat($("dm").value || "1"),
+    timeout: parseInt($("timeout").value || "0", 10), dropsEliteMobsLoot: $("emloot").checked, announcementPriority: parseInt($("prio").value, 10),
+    powers: selPowers.slice(), spawnMessage: $("spawnMsg").value, deathMessage: $("deathMsg").value,
+    deathMessages: $("deathMsgs").value.split("\n").filter(x => x.trim()), onDeathCommands: $("cmds").value.split("\n").map(x => x.trim().replace(/^\//, "")).filter(Boolean) };
+  for (const sl of data.slots) b[sl] = $("slot_" + sl).value.trim().toUpperCase();
+  return b;
+}
+function render() {
+  const b = cur && !cur.web ? Object.assign({}, cur.data) : form();
+  $("pvName").innerHTML = mc(b.name || "(chưa đặt tên)");
+  const eq = data.slots.filter(sl => b[sl]).map(sl => SLOT_VN[sl] + ": " + String(b[sl]).toLowerCase()).join(", ");
+  $("pvStats").innerHTML = esc(`${ETYPE_VN[b.entityType] || b.entityType || "?"} · cấp ${b.level ?? "dynamic"} · máu ×${b.healthMultiplier ?? 1} · sát thương ×${b.damageMultiplier ?? 1}`)
+    + "<br>" + esc((b.powers || []).length ? (b.powers || []).length + " kỹ năng" : "không kỹ năng") + (eq ? " · " + esc(eq) : "")
+    + (b.isEnabled === false ? '<br><b style="color:#ff8080">ĐANG TẮT</b>' : "");
+  const w = [];
+  if ((b.healthMultiplier || 1) > 200) w.push("Máu rất cao: cần nhiều người đánh rất lâu.");
+  if ((b.damageMultiplier || 1) > 5) w.push("Sát thương cao: có thể giết người chơi trong một đòn.");
+  if (!(b.onDeathCommands || []).length && cur?.web !== false) w.push("Chưa có phần thưởng: thêm lệnh chia mảnh hoặc bật rơi đồ EliteMobs.");
+  $("warns").innerHTML = w.map(x => `<p class="warn">⚠ ${esc(x)}</p>`).join("");
+}
+function renderPowers() {
+  $("pwcount").textContent = selPowers.length;
+  $("pwsel").innerHTML = selPowers.length ? selPowers.map(p => `<span>${esc(p.replace(/\.(lua|yml)$/, ""))}<button data-p="${esc(p)}" title="Bỏ">×</button></span>`).join("") : '<span class="note" style="background:none;color:var(--muted)">Chưa chọn kỹ năng nào</span>';
+  $("pwsel").querySelectorAll("button").forEach(b => b.onclick = () => { selPowers = selPowers.filter(x => x !== b.dataset.p); renderPowers(); render(); });
+  const f = $("pwfilter").value.trim().toLowerCase(), ro = cur && !cur.web;
+  $("pwlist").innerHTML = data.powers.filter(p => !f || p.toLowerCase().includes(f)).map(p =>
+    `<label><input type="checkbox" value="${esc(p)}" ${selPowers.includes(p) ? "checked" : ""} ${ro ? "disabled" : ""}>${esc(p.replace(/\.(lua|yml)$/, ""))}</label>`).join("");
+  $("pwlist").querySelectorAll("input").forEach(cb => cb.onchange = () => {
+    selPowers = cb.checked ? [...selPowers, cb.value] : selPowers.filter(x => x !== cb.value); renderPowers(); render();
+  });
+}
+function setEditable(on) {
+  for (const el of document.querySelectorAll("#name,#etype,#level,#hm,#dm,#timeout,#enabled,#emloot,#prio,#spawnMsg,#deathMsg,#deathMsgs,#cmds,#fmType,#fmTotal,#addFm,#save,[id^=slot_]"))
+    el.disabled = !on;
+}
+function load(bs) {
+  cur = bs; isNew = !bs;
+  const d = bs ? bs.data : { isEnabled: true, entityType: "ZOMBIE", level: "dynamic", healthMultiplier: 10, damageMultiplier: 1, timeout: 30,
+    dropsEliteMobsLoot: true, announcementPriority: 2, powers: [],
+    deathMessages: ["&e&l---------------------------------------------", "&6&l$name đã bị hạ!", "&c&l  Hạng 1: $damager1name &c($damager1damage sát thương)",
+      "&6&l  Hạng 2: $damager2name &6($damager2damage)", "&e&l  Hạng 3: $damager3name &e($damager3damage)", "&aNgười tham gia: $players",
+      "&e&l---------------------------------------------"] };
+  $("id").value = bs ? bs.id : ""; $("id").disabled = !!bs;
+  $("name").value = d.name || ""; $("etype").value = d.entityType || "ZOMBIE"; $("level").value = d.level ?? "dynamic";
+  $("hm").value = d.healthMultiplier ?? 1; $("dm").value = d.damageMultiplier ?? 1; $("timeout").value = d.timeout ?? 0;
+  $("enabled").checked = d.isEnabled !== false; $("emloot").checked = d.dropsEliteMobsLoot !== false; $("prio").value = String(d.announcementPriority ?? 2);
+  $("spawnMsg").value = d.spawnMessage || ""; $("deathMsg").value = d.deathMessage || "";
+  $("deathMsgs").value = (d.deathMessages || []).join("\n"); $("cmds").value = (d.onDeathCommands || []).join("\n");
+  for (const sl of data.slots) $("slot_" + sl).value = d[sl] || "";
+  selPowers = (d.powers || []).map(p => String(p).split(":")[0]);
+  const ro = bs && !bs.web;
+  $("ronote").hidden = !ro; setEditable(!ro); $("del").disabled = !bs || ro; $("spawn").disabled = !bs;
+  document.querySelectorAll(".li").forEach(b => b.classList.toggle("on", !!bs && b.dataset.file === bs.file));
+  renderPowers(); render();
+}
+function renderList() {
+  const items = data.bosses.slice().sort((a, b) => (b.web - a.web) || a.file.localeCompare(b.file));
+  $("count").textContent = items.length;
+  $("list").innerHTML = "";
+  for (const bs of items) {
+    const b = document.createElement("button"); b.className = "li" + (bs.web ? "" : " ro"); b.dataset.file = bs.file;
+    b.innerHTML = `<span class="nm">${mc(bs.data.name || bs.id)}</span><small><code>${esc(bs.file)}</code>${bs.web ? "" : '<span class="badge">có sẵn</span>'}${bs.data.isEnabled === false ? '<span class="badge">tắt</span>' : ""}</small>`;
+    b.onclick = () => load(bs);
+    $("list").appendChild(b);
+  }
+}
+function status(ok, msg) { $("status").className = "status " + (ok === null ? "" : ok ? "ok" : "err"); $("status").textContent = msg; }
+async function post(body) {
+  status(null, "Đang gửi…");
+  try {
+    const r = await fetch("api/boss", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+    const res = await r.json(); status(!!res.ok, res.message);
+    if (res.data) { data = res.data; renderList(); }
+    return res;
+  } catch (e) { status(false, "Không gửi được: " + e); return {}; }
+}
+$("new").onclick = () => load(null);
+$("pwfilter").oninput = renderPowers;
+for (const id of ["name", "etype", "level", "hm", "dm", "timeout", "enabled", "emloot", "cmds"]) $(id).addEventListener("input", render);
+$("addFm").onclick = (e) => {
+  e.preventDefault();
+  const t = $("fmType").value.trim().toLowerCase(), n = parseInt($("fmTotal").value || "0", 10);
+  if (!/^[a-z0-9_]+$/.test(t) || n < 1) { status(false, "Nhập loại mảnh (vd lamnguy) và tổng số"); return; }
+  $("cmds").value = ($("cmds").value.trim() ? $("cmds").value.trim() + "\n" : "") + `doimanh chia ${t} ${n} $players`; render();
+};
+$("save").onclick = async () => {
+  const id = $("id").value.trim();
+  if (!/^[a-z0-9_]{1,32}$/.test(id)) { status(false, "Mã chỉ gồm chữ thường không dấu, số, _ (vd rong_lua)"); return; }
+  const res = await post({ action: "save", id, is_new: isNew, boss: form() });
+  if (res.ok) load(data.bosses.find(b => b.file === "dmm_" + id + ".yml"));
+};
+$("del").onclick = async () => { if (cur && cur.web && confirm(`Xoá boss "${cur.id}"?`)) { const res = await post({ action: "delete", id: cur.id }); if (res.ok) load(null); } };
+$("spawn").onclick = () => {
+  if (!cur) return;
+  const player = $("spPlayer").value.trim();
+  const body = { action: "spawn", file: cur.file, level: $("spLevel").value.trim(), player };
+  if (!player) { body.x = $("spX").value; body.y = $("spY").value; body.z = $("spZ").value; }
+  if (confirm(`Gọi ${cur.file} ${player ? "cạnh " + player : "tại toạ độ đã nhập"}?`)) post(body);
+};
+fetch("api/boss").then(r => r.json()).then(d => {
+  data = d;
+  $("etype").innerHTML = d.entities.map(e => `<option value="${e}">${esc(ETYPE_VN[e] || e)} (${e})</option>`).join("");
+  $("slots").innerHTML = d.slots.map(sl => `<div><label class="f" for="slot_${sl}">${SLOT_VN[sl]}</label><input id="slot_${sl}" list="mats" placeholder="trống"></div>`).join("");
+  for (const sl of d.slots) $("slot_" + sl).addEventListener("input", render);
+  renderList(); load(null);
+  fetch("api/thuvien").then(r => r.json()).then(t => {
+    $("mats").innerHTML = ((t.meta && t.meta.materials) || []).map(m => `<option value="${m}">`).join("");
+    const on = document.createElement("datalist"); on.id = "online"; on.innerHTML = (t.online || []).map(p => `<option value="${esc(p)}">`).join(""); document.body.appendChild(on);
+  }).catch(() => {});
+}).catch(e => { $("list").innerHTML = `<p class="note">${esc(e)}</p>`; });
+</script>
+</body>
+</html>

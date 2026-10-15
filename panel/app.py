@@ -34,6 +34,7 @@ CAMNANG_HTML = (Path(__file__).parent / "camnang.html").read_text(encoding="utf-
 HUONGDAN_HTML = (Path(__file__).parent / "huongdan.html").read_text(encoding="utf-8")
 ROLE_HTML = (Path(__file__).parent / "role.html").read_text(encoding="utf-8")
 THUVIEN_HTML = (Path(__file__).parent / "thuvien.html").read_text(encoding="utf-8")
+BOSS_HTML = (Path(__file__).parent / "boss.html").read_text(encoding="utf-8")
 # Trang Role: role chức vụ (track staff + builder + default) và rank donate (track donate), lưu ở LuckPerms (MariaDB)
 STAFF_GROUPS = ["admin", "mod", "helper", "builder", "default"]
 DONATE_GROUPS = ["congtuoc", "hautuoc", "batuoc", "tutuoc", "namtuoc"]
@@ -957,6 +958,136 @@ def thuvien_action(data):
     verb = "Đã xoá" if action == "delete" else "Đã lưu"
     return {"ok": "lỗi:" not in res, "message": f"{verb} \"{iid}\". {res}", "data": thuvien_json()}
 
+# ---------------------------------------------------------------- Boss (EliteMobs custombosses, banghoi-1)
+# Boss tạo trên web: custombosses/dmm_<mã>.yml (sửa được). Boss khác (EliteMobs, dungeon): chỉ xem.
+
+BOSS_SERVER = "banghoi-1"
+EM_DIR = DATA_DIR / BOSS_SERVER / "plugins" / "EliteMobs"
+BOSS_DIR = EM_DIR / "custombosses"
+BOSS_ENTITIES = ["ZOMBIE", "HUSK", "DROWNED", "ZOMBIE_VILLAGER", "SKELETON", "STRAY", "BOGGED", "WITHER_SKELETON", "SPIDER", "CAVE_SPIDER",
+                 "CREEPER", "ENDERMAN", "BLAZE", "WITCH", "VINDICATOR", "PILLAGER", "EVOKER", "ILLUSIONER", "RAVAGER", "PIGLIN", "PIGLIN_BRUTE",
+                 "ZOMBIFIED_PIGLIN", "HOGLIN", "ZOGLIN", "IRON_GOLEM", "SLIME", "MAGMA_CUBE", "PHANTOM", "GUARDIAN", "ELDER_GUARDIAN",
+                 "BREEZE", "WOLF", "POLAR_BEAR", "SILVERFISH", "ENDERMITE", "VEX", "GHAST", "SHULKER"]
+BOSS_SLOTS = ["helmet", "chestplate", "leggings", "boots", "mainHand", "offHand"]
+BOSS_ID_RE = re.compile(r"^[a-z0-9_]{1,32}$")
+WORLD_RE = re.compile(r"^[A-Za-z0-9_\-]{1,64}$")
+
+
+def boss_powers():
+    pdir = EM_DIR / "powers"
+    return sorted(p.name for p in pdir.iterdir() if p.suffix in (".lua", ".yml")) if pdir.exists() else []
+
+
+def boss_json():
+    safe = YAML(typ="safe")
+    bosses = []
+    if BOSS_DIR.exists():
+        for f in sorted(BOSS_DIR.glob("*.yml")):
+            try:
+                d = safe.load(f.read_text(encoding="utf-8")) or {}
+            except Exception:
+                d = {}
+            web = f.name.startswith("dmm_")
+            keys = ["isEnabled", "entityType", "name", "level", "healthMultiplier", "damageMultiplier", "powers", "spawnMessage",
+                    "deathMessage", "deathMessages", "onDeathCommands", "announcementPriority", "timeout", "dropsEliteMobsLoot"] + BOSS_SLOTS
+            bosses.append({"file": f.name, "id": f.stem[4:] if web else f.stem, "web": web,
+                           "data": {k: d.get(k) for k in keys if k in d}})
+    return {"bosses": bosses, "powers": boss_powers(), "entities": BOSS_ENTITIES, "slots": BOSS_SLOTS, "world": "world"}
+
+
+def boss_action(data):
+    action = data.get("action")
+    if action == "spawn":
+        fname = str(data.get("file", ""))
+        if not re.match(r"^[A-Za-z0-9_\-]{1,64}\.yml$", fname) or not (BOSS_DIR / fname).exists():
+            raise ValueError("Không có boss này")
+        level = str(data.get("level") or "").strip()
+        if level and not re.match(r"^\d{1,3}$", level):
+            raise ValueError("Cấp phải là số")
+        player = str(data.get("player") or "").strip()
+        if player:
+            if not PLAYER_RE.match(player):
+                raise ValueError("Tên người chơi không hợp lệ")
+            pos = rcon(BOSS_SERVER, [f"minecraft:data get entity {player} Pos", f"minecraft:data get entity {player} Dimension"])
+            nums = re.findall(r"-?\d+(?:\.\d+)?d", pos[0][1])
+            if len(nums) < 3 or "overworld" not in pos[1][1]:
+                raise ValueError(f"{player} không online ở thế giới chính của Bang Hội Chiến")
+            x, y, z = (float(n[:-1]) for n in nums[:3])
+            world = "world"
+            x += 4  # đặt lệch vài khối, không đè lên người chơi
+        else:
+            world = str(data.get("world") or "world")
+            if not WORLD_RE.match(world):
+                raise ValueError("Tên world không hợp lệ")
+            try:
+                x, y, z = (float(data.get(k)) for k in ("x", "y", "z"))
+            except (TypeError, ValueError):
+                raise ValueError("Toạ độ x, y, z phải là số")
+        cmd = f"em spawn bossAt {fname} {world} {x:.1f} {y:.1f} {z:.1f}" + (f" {level}" if level else "")
+        out = rcon(BOSS_SERVER, [cmd])[0][1]
+        return {"ok": True, "message": f"Đã gọi {fname} tại {world} {x:.0f} {y:.0f} {z:.0f}. {out}".strip()}
+    bid = str(data.get("id", ""))
+    if not BOSS_ID_RE.match(bid):
+        raise ValueError("Mã boss chỉ gồm chữ thường không dấu, số, _ (vd rong_lua)")
+    path = BOSS_DIR / f"dmm_{bid}.yml"
+    if action == "delete":
+        if not path.exists():
+            raise ValueError("Không có boss này")
+        path.unlink()
+    elif action == "save":
+        b = data.get("boss") or {}
+        if data.get("is_new") and path.exists():
+            raise ValueError("Mã đã có, chọn mã khác")
+        etype = str(b.get("entityType", "")).upper()
+        if etype not in BOSS_ENTITIES:
+            raise ValueError("Loại quái không hợp lệ")
+        level = str(b.get("level", "dynamic")).strip().lower()
+        if level != "dynamic" and not (level.isdigit() and 1 <= int(level) <= 200):
+            raise ValueError("Cấp: 1–200 hoặc dynamic")
+        try:
+            hm, dm = float(b.get("healthMultiplier", 1)), float(b.get("damageMultiplier", 1))
+        except (TypeError, ValueError):
+            raise ValueError("Hệ số máu / sát thương phải là số")
+        if not (0.1 <= hm <= 1000 and 0.1 <= dm <= 100):
+            raise ValueError("Hệ số máu 0,1–1000; sát thương 0,1–100")
+        known = set(boss_powers())
+        powers = [str(p) for p in (b.get("powers") or []) if str(p) in known]
+        doc = {"isEnabled": bool(b.get("isEnabled", True)), "entityType": etype,
+               "name": DoubleQuotedScalarString(str(b.get("name", ""))[:120] or bid),
+               "level": "dynamic" if level == "dynamic" else int(level), "healthMultiplier": hm, "damageMultiplier": dm,
+               "powers": powers, "bossType": "NORMAL", "classLoot": True,
+               "dropsEliteMobsLoot": bool(b.get("dropsEliteMobsLoot", True)),
+               "announcementPriority": max(0, min(3, int(b.get("announcementPriority", 2) or 0))),
+               "timeout": max(0, min(1440, int(b.get("timeout", 0) or 0)))}
+        for k in ("spawnMessage", "deathMessage"):
+            if str(b.get(k) or "").strip():
+                doc[k] = DoubleQuotedScalarString(str(b[k])[:200])
+        for k in ("deathMessages", "onDeathCommands"):
+            lines = [str(x).strip()[:200] for x in (b.get(k) or []) if str(x).strip()][:20]
+            if k == "onDeathCommands":
+                lines = [x.lstrip("/") for x in lines]
+            if lines:
+                doc[k] = [DoubleQuotedScalarString(x) for x in lines]
+        for slot in BOSS_SLOTS:
+            m = str(b.get(slot) or "").strip().upper()
+            if m:
+                if not MATERIAL_RE.match(m):
+                    raise ValueError(f"Trang bị {slot} sai: {m}")
+                doc[slot] = m
+        BOSS_DIR.mkdir(parents=True, exist_ok=True)
+        with path.open("w", encoding="utf-8") as f:
+            f.write("# Tạo trên trang quản trị DuckyMoMo (Boss). Sửa trên web, đừng sửa tay (sẽ bị ghi đè).\n")
+            yaml_rt().dump(doc, f)
+    else:
+        raise ValueError("Thao tác không hợp lệ")
+    try:
+        rcon(BOSS_SERVER, ["em reload"])
+        res = "EliteMobs đã nạp lại."
+    except Exception as e:
+        res = f"Đã lưu file nhưng chưa nạp được ({e}); bật server lên sẽ đọc."
+    verb = "Đã xoá" if action == "delete" else "Đã lưu"
+    return {"ok": True, "message": f"{verb} boss \"{bid}\". {res}", "data": boss_json()}
+
 # ---------------------------------------------------------------- HTTP
 
 class Handler(BaseHTTPRequestHandler):
@@ -995,10 +1126,10 @@ class Handler(BaseHTTPRequestHandler):
         if not self.guard():
             return
         path, _, query = self.path.partition("?")
-        if path in ("/", "/hoatdong", "/camnang", "/huongdan", "/role", "/thuvien"):
+        if path in ("/", "/hoatdong", "/camnang", "/huongdan", "/role", "/thuvien", "/boss"):
             dozzle = DOZZLE_PROXY_URL if self.headers.get("X-Forwarded-Prefix") else DOZZLE_URL
             page = {"/": INDEX_HTML, "/hoatdong": ACTIVITY_HTML, "/camnang": CAMNANG_HTML, "/huongdan": HUONGDAN_HTML, "/role": ROLE_HTML,
-                    "/thuvien": THUVIEN_HTML}[path]
+                    "/thuvien": THUVIEN_HTML, "/boss": BOSS_HTML}[path]
             body = page.replace("__DOZZLE_URL__", dozzle).encode("utf-8")
             self.send_response(200)
             self.send_header("Content-Type", "text/html; charset=utf-8")
@@ -1018,6 +1149,8 @@ class Handler(BaseHTTPRequestHandler):
                 self.send_json(500, {"error": f"Không đọc được LuckPerms: {e}"})
         elif path == "/api/thuvien":
             self.send_json(200, thuvien_json())
+        elif path == "/api/boss":
+            self.send_json(200, boss_json())
         elif path == "/api/activity":
             params = {k: v[-1] for k, v in urllib.parse.parse_qs(query).items()}
             self.send_json(200, read_activity(params))
@@ -1042,6 +1175,17 @@ class Handler(BaseHTTPRequestHandler):
                 if length > 4096:
                     raise ValueError("Tin quá dài")
                 self.send_json(200, say(json.loads(self.rfile.read(length) or b"{}")))
+            except ValueError as e:
+                self.send_json(400, {"ok": False, "message": str(e)})
+            except Exception as e:
+                self.send_json(500, {"ok": False, "message": f"Lỗi: {e}"})
+            return
+        if self.path == "/api/boss":
+            try:
+                length = int(self.headers.get("Content-Length", "0"))
+                if length > 65536:
+                    raise ValueError("Dữ liệu quá lớn")
+                self.send_json(200, boss_action(json.loads(self.rfile.read(length) or b"{}")))
             except ValueError as e:
                 self.send_json(400, {"ok": False, "message": str(e)})
             except Exception as e:

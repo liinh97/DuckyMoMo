@@ -160,7 +160,7 @@
   ngày đó, mốc 7/14/30, cài đặt trên web) → (3) boss bar đếm ngược bảo vệ người mới ✅ → (4) nhiệm vụ hằng ngày ✅ → (5) chìa khoá theo giờ online +
   vòng quay hiện tỉ lệ (chỉ phát miễn phí) ✅ → (6) mảnh sự kiện (ĐỒ VẬT, trao đổi được, giới hạn nhận/ngày; nguồn: boss sự kiện theo sát thương,
   dungeon, mốc điểm danh, đủ nhiệm vụ ngày, vote/vòng quay tỉ lệ thấp; mỗi sự kiện loại mảnh riêng + hạn đổi) + cửa hàng đổi mảnh trên web ✅ →
-  (7) tạo boss trên web (EliteMobs custombosses + em reload) → (8) cửa hàng trên web (Kinh Đô, đổi mảnh; Shopkeepers cần xem kỹ vì tự ghi đè).
+  (7) tạo boss trên web (EliteMobs custombosses + em reload) ✅ → (8) cửa hàng trên web (Kinh Đô, đổi mảnh; Shopkeepers cần xem kỹ vì tự ghi đè).
 - **Thư viện đồ (15/10)**: DuckyMoMoCore `ItemLibrary` (mọi server; dùng ở banghoi-1): `plugins/DuckyMoMoCore/thuvien-do.yml`, mục `items.<mã>`:
   `nguon: web` (material, amount, name/lore mã &, enchants {khoá: cấp} cho phép vượt cấp + khoá plugin `enchantio:...`, unbreakable,
   hide-enchants, glint) hoặc `nguon: game` (`data` = base64 `ItemStack.serializeAsBytes()`, kèm `preview` cho web; web KHÔNG sửa).
@@ -197,6 +197,15 @@
   cửa hàng. `shop`: [{label, cost {loại: số}, limit lần/người, rewards}]. Menu 6 hàng, lore giá đỏ/xanh theo số mảnh đang có. Mặc định loại
   `lamnguy` (Mảnh Lâm Nguy) + 3 món (5000 xu, 16 kim cương, đĩa nhạc). Panel: kiểu ô `fragtypes`, `fragshop`. Đã thử: lệnh, chặn giá/hạn sai,
   giao diện. CHƯA thử đổi trong game. Chưa có nguồn mảnh tự động (chờ boss "Trái Đất lâm nguy": EliteMobs onDeathCommands gọi /doimanh give).
+- **Boss trên web (15/10)**: panel trang `/boss` (`panel/boss.html`), API GET/POST `/api/boss` (`boss_json`/`boss_action` trong `panel/app.py`).
+  Boss web = `data/banghoi-1/plugins/EliteMobs/custombosses/dmm_<mã>.yml` (ghi toàn bộ file, có dòng chú thích đầu); boss khác chỉ xem + gọi.
+  Trường: isEnabled, entityType (danh sách `BOSS_ENTITIES`), name (& hoặc `<g:#a:#b>`), level (dynamic/1–200), healthMultiplier (0,1–1000),
+  damageMultiplier (0,1–100), powers (lọc theo file có trong `EliteMobs/powers`, 71 cái), 6 ô trang bị, spawnMessage, deathMessage,
+  deathMessages, onDeathCommands (bỏ "/" đầu), announcementPriority, timeout (phút), dropsEliteMobsLoot. Lưu/xoá → RCON `em reload`.
+  Gọi: `em spawn bossAt <file> <world> <x> <y> <z> [level]` (đọc từ jar; console được); "cạnh người chơi" lấy `data get entity <tên> Pos`
+  + `Dimension` (phải ở overworld "world"), lệch x +4. Chia mảnh: DuckyMoMoCore `/doimanh chia <loại> <tổng> $players` (EliteMobs thay $players
+  = danh sách tên) chia đều cho người online, không tính giới hạn ngày. Đã thử API: lưu (file đúng định dạng), chặn loại sai, gọi (lệnh chạy,
+  EliteMobs KHÔNG in kết quả qua RCON → CHƯA xác nhận boss xuất hiện), xoá; giao diện trên bản xem thử. CHƯA thử đánh boss/chia mảnh trong game.
 - **Thanh đếm ngược bảo vệ người mới**: đã có sẵn ở PvPManager (`Newbie Protection.Boss Bar`); thêm ô bật/chữ/màu vào Cài đặt > PvP & combat.
 - **Ping nhảy khi chạy nhanh (15/10, đã sửa bằng BBR)**: người dùng thấy ping 900+ ms khi chạy (TPS vẫn 20). Đo: tuyến **VPS Vinahost →
   nhà mất ~2% gói** ở mọi tốc độ (UDP iperf 5M/20M: 2,2%/1,7%), không phải trần băng thông (4 luồng TCP = 23,6 Mbps). TCP cubic 1 luồng chỉ

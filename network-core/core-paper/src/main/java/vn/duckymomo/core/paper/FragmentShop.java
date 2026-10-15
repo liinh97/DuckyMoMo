@@ -323,6 +323,35 @@ final class FragmentShop implements Listener, Rewards.FragmentGiver {
     }
 
     boolean command(CommandSender s, String[] args) {
+        // Boss EliteMobs: onDeathCommands "doimanh chia <loại> <tổng> $players" -> chia đều cho người tham gia đang online
+        if (args.length >= 4 && args[0].equalsIgnoreCase("chia") && s.hasPermission("duckymomo.admin")) {
+            int total;
+            try {
+                total = Integer.parseInt(args[2]);
+            } catch (NumberFormatException e) {
+                s.sendMessage("Tổng số mảnh không hợp lệ.");
+                return true;
+            }
+            List<Player> got = new ArrayList<>();
+            for (String name : String.join(" ", java.util.Arrays.copyOfRange(args, 3, args.length)).split("[,\\s]+")) {
+                Player t = Bukkit.getPlayerExact(name.trim());
+                if (t != null && !got.contains(t)) {
+                    got.add(t);
+                }
+            }
+            if (got.isEmpty() || total <= 0) {
+                return true;
+            }
+            int each = Math.max(1, total / got.size());
+            for (Player t : got) {
+                String d = grant(t, args[1].toLowerCase(Locale.ROOT), each, true);
+                if (d != null) {
+                    t.sendMessage(c("&d✦ Phần của bạn: &f" + d));
+                }
+            }
+            plugin.getLogger().info("Chia " + each + " mảnh " + args[1] + " cho " + got.size() + " người");
+            return true;
+        }
         if (args.length >= 1 && args[0].equalsIgnoreCase("give")) {
             if (!s.hasPermission("duckymomo.admin")) {
                 s.sendMessage("Chỉ admin.");

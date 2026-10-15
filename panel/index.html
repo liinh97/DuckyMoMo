@@ -198,7 +198,7 @@ function render() {
     const b = document.createElement("button");
     b.className = "mode" + (m.id === current ? " active" : "");
     b.textContent = m.schema.title || m.id;
-    b.onclick = () => { if (m.id === current) return; if (Object.keys(edits).length && !confirm("Bỏ các thay đổi chưa lưu?")) return; current = m.id; edits = {}; render(); };
+    b.onclick = async () => { if (m.id === current) return; if (Object.keys(edits).length && !(await ask("Bạn có thay đổi chưa lưu. Chuyển trang sẽ bỏ các thay đổi đó.", { title: "Bỏ thay đổi?", ok: "Bỏ thay đổi", danger: true }))) return; current = m.id; edits = {}; render(); };
     $("tabs").appendChild(b);
   }
   const mode = modes.find(m => m.id === current);
@@ -392,9 +392,9 @@ async function post(path, body) {
 }
 
 $("save").onclick = () => post(`api/modes/${current}/save`, { values: edits });
-$("discard").onclick = () => { if (confirm("Bỏ mọi thay đổi chưa lưu?")) { edits = {}; render(); $("status").className = "status"; $("status").textContent = "Đã bỏ thay đổi."; } };
-$("reapply").onclick = () => {
-  if (confirm("Ghi lại toàn bộ cài đặt vào plugin và nạp lại?")) post(`api/modes/${current}/apply-all`, {});
+$("discard").onclick = async () => { if (await ask("Bỏ mọi thay đổi chưa lưu?", { title: "Bỏ thay đổi", ok: "Bỏ thay đổi", danger: true })) { edits = {}; render(); $("status").className = "status"; $("status").textContent = "Đã bỏ thay đổi."; } };
+$("reapply").onclick = async () => {
+  if (await ask("Ghi lại toàn bộ cài đặt của chế độ này vào plugin và nạp lại?", { title: "Áp dụng lại tất cả", ok: "Áp dụng" })) post(`api/modes/${current}/apply-all`, {});
 };
 let qTimer = null;
 $("q").oninput = () => { clearTimeout(qTimer); qTimer = setTimeout(() => { query = $("q").value.trim(); render(); }, 150); };

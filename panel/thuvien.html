@@ -431,7 +431,7 @@ $("save").onclick = async () => {
   const res = await post({ action: "save", id, is_new: isNew, item: form() });
   if (res.ok) load(data.items.find(x => x.id === id));
 };
-$("del").onclick = async () => { if (cur && confirm(`Xoá "${cur.id}" khỏi thư viện?`)) { const res = await post({ action: "delete", id: cur.id }); if (res.ok) load(null); } };
+$("del").onclick = async () => { if (cur && await ask(`Xoá "${cur.id}" khỏi thư viện? Quà/cửa hàng đang dùng mã này sẽ không phát được món này nữa.`, { title: "Xoá món", ok: "Xoá", danger: true })) { const res = await post({ action: "delete", id: cur.id }); if (res.ok) load(null); } };
 $("give").onclick = () => {
   const p = $("player").value.trim(); if (!cur || !p) { status(false, "Chọn một món và nhập tên người chơi"); return; }
   post({ action: "give", id: cur.id, player: p, amount: parseInt($("gamount").value || "0", 10) });

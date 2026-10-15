@@ -122,6 +122,39 @@ window.combo = function (input, items, onPick, opts) {
   return { refresh: () => { sync(); if (!pop.hidden) draw(); }, open };
 };
 
+// Hộp xác nhận theo giao diện trang (thay confirm/prompt của trình duyệt). Trả Promise:
+//   await ask("Xoá boss?", { title: "Xoá boss", ok: "Xoá", danger: true })      -> true / false
+//   await ask("Mã boss mới:", { input: "rong_moi" })                           -> chuỗi đã nhập / null
+// Enter = đồng ý, Esc hoặc bấm ra ngoài = huỷ.
+window.ask = function (message, opts) {
+  opts = opts || {};
+  return new Promise((resolve) => {
+    const wrap = document.createElement("div");
+    wrap.className = "ask-wrap";
+    wrap.innerHTML = `<div class="ask" role="dialog" aria-modal="true"><h3></h3><p></p>${opts.input !== undefined ? '<input class="ask-in">' : ""}
+      <div class="ask-btns"><button type="button" class="ghost ask-no"></button><button type="button" class="primary ask-ok"></button></div></div>`;
+    const box = wrap.querySelector(".ask");
+    box.querySelector("h3").textContent = opts.title || (opts.danger ? "Xác nhận" : "Xác nhận");
+    box.querySelector("p").textContent = message;
+    const ok = box.querySelector(".ask-ok"), no = box.querySelector(".ask-no"), inp = box.querySelector(".ask-in");
+    ok.textContent = opts.ok || "Đồng ý";
+    no.textContent = opts.cancel || "Huỷ";
+    if (opts.danger) ok.classList.add("danger");
+    if (inp) inp.value = opts.input || "";
+    const prev = document.activeElement;
+    const done = (v) => { document.removeEventListener("keydown", key, true); wrap.remove(); if (prev && prev.focus) prev.focus(); resolve(v); };
+    const yes = () => done(inp ? inp.value.trim() || null : true);
+    const key = (e) => { if (e.key === "Escape") { e.preventDefault(); done(inp ? null : false); } else if (e.key === "Enter" && e.target !== no) { e.preventDefault(); yes(); } };
+    ok.onclick = yes;
+    no.onclick = () => done(inp ? null : false);
+    wrap.onmousedown = (e) => { if (e.target === wrap) done(inp ? null : false); };
+    document.addEventListener("keydown", key, true);
+    document.body.appendChild(wrap);
+    (inp || ok).focus();
+    if (inp) inp.select();
+  });
+};
+
 // Thông báo nổi góc dưới: toast("Đã lưu", "ok" | "err" | ""); kind "" = đang xử lý (không tự tắt).
 window.toast = function (msg, kind) {
   let t = document.getElementById("toast");

@@ -251,7 +251,7 @@ $("say").onsubmit = async (ev) => {
   const text = $("sayText").value.trim();
   if (!text) return;
   const kind = $("sayKind").value, target = $("sayTarget").value;
-  if (kind === "title" && !confirm("Hiện chữ to giữa màn hình của mọi người chơi " + ($("sayTarget").selectedOptions[0].text) + "?")) return;
+  if (kind === "title" && !(await ask("Hiện chữ to giữa màn hình của mọi người chơi " + ($("sayTarget").selectedOptions[0].text) + "?", { title: "Thông báo giữa màn hình", ok: "Gửi" }))) return;
   $("sayBtn").disabled = true;
   try { localStorage.setItem("dmm_say_name", $("sayName").value.trim() || "Admin"); } catch (e) {}
   try {

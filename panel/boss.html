@@ -343,7 +343,7 @@ $("save").onclick = async () => {
   if (cur) {
     const diff = changedFields();
     if (!Object.keys(diff).length) { status(false, "Chưa đổi gì."); return; }
-    if (!cur.web && SHIP_USE[cur.id] && !confirm(`${SHIP_USE[cur.id]}\nVẫn sửa file gốc ${cur.file}?`)) return;
+    if (!cur.web && SHIP_USE[cur.id] && !(await ask(`${SHIP_USE[cur.id]}\nVẫn sửa file gốc ${cur.file}?`, { title: "Sửa boss có sẵn", ok: "Vẫn sửa" }))) return;
     const file = cur.file;
     const res = await post({ action: "save", file, id: cur.web ? cur.id : undefined, boss: diff });
     if (res.ok) load(data.bosses.find(b => b.file === file));
@@ -357,24 +357,24 @@ $("save").onclick = async () => {
 $("copyBoss").onclick = async () => {
   if (!cur) return;
   const sug = cur.id.toLowerCase().replace(/[^a-z0-9_]/g, "_").slice(0, 26) + "_moi";
-  const nid = (prompt("Mã boss mới (chữ thường không dấu, số, _). Boss mới giữ đủ mọi thiết lập của bản gốc:", sug) || "").trim();
+  const nid = ((await ask("Mã boss mới (chữ thường không dấu, số, _). Boss mới giữ đủ mọi thiết lập của bản gốc.", { title: "Chép thành boss mới", ok: "Chép", input: sug })) || "").trim();
   if (!nid) return;
   const res = await post({ action: "copy", file: cur.file, new_id: nid });
   if (res.ok) load(data.bosses.find(b => b.file === "dmm_" + nid + ".yml"));
 };
 $("restoreBoss").onclick = async () => {
-  if (!cur || !confirm(`Trả ${cur.file} về bản gốc (bỏ mọi thay đổi đã lưu)?`)) return;
+  if (!cur || !(await ask(`Trả ${cur.file} về bản gốc (bỏ mọi thay đổi đã lưu)?`, { title: "Khôi phục bản gốc", ok: "Khôi phục", danger: true }))) return;
   const file = cur.file;
   const res = await post({ action: "restore", file });
   if (res.ok) load(data.bosses.find(b => b.file === file));
 };
-$("del").onclick = async () => { if (cur && cur.web && confirm(`Xoá boss "${cur.id}"?`)) { const res = await post({ action: "delete", id: cur.id }); if (res.ok) load(null); } };
-$("spawn").onclick = () => {
+$("del").onclick = async () => { if (cur && cur.web && await ask(`Xoá boss "${cur.id}"? Không hoàn tác được.`, { title: "Xoá boss", ok: "Xoá", danger: true })) { const res = await post({ action: "delete", id: cur.id }); if (res.ok) load(null); } };
+$("spawn").onclick = async () => {
   if (!cur) return;
   const player = $("spPlayer").value.trim();
   const body = { action: "spawn", file: cur.file, level: $("spLevel").value.trim(), player };
   if (!player) { body.x = $("spX").value; body.y = $("spY").value; body.z = $("spZ").value; }
-  if (confirm(`Gọi ${cur.file} ${player ? "cạnh " + player : "tại toạ độ đã nhập"}?`)) post(body);
+  if (await ask(`Gọi ${cur.file} ${player ? "cạnh " + player : "tại toạ độ đã nhập"}?`, { title: "Gọi boss", ok: "Gọi boss" })) post(body);
 };
 fetch("api/boss").then(r => r.json()).then(d => {
   data = d;

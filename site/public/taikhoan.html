@@ -100,6 +100,12 @@ details.plg[open]>summary::before{content:"▾ "}
 .check input{width:auto}
 .tools label.check{margin:0}
 footer{padding:30px 0;color:var(--dim);font-size:.85rem}
+.ask-wrap{position:fixed;inset:0;z-index:100;background:rgba(5,8,12,.6);backdrop-filter:blur(3px);display:grid;place-items:center;padding:16px}
+.ask{width:min(440px,100%);background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px 22px 18px;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.ask h3{margin:0 0 8px;font-size:1.05rem}
+.ask p{margin:0;color:var(--muted);overflow-wrap:anywhere}
+.ask-btns{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}
+.btn.danger{background:var(--red);color:#fff;border:none}
 .pkgs{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
 .pkg{padding:6px 11px;border-radius:9px;border:1px solid var(--line);background:#0b1118;color:var(--text);font:inherit;font-size:.85rem;font-weight:700;cursor:pointer}
 .pkg:hover,.pkg.on{border-color:var(--gold);color:var(--gold2)}
@@ -136,6 +142,23 @@ function mc(t){ let color = "#e8eef5", bold = false, out = "";
   return out; }
 const day = ms => ms ? new Date(ms).toLocaleDateString("vi-VN") : "–";
 const when = ms => ms ? new Date(ms).toLocaleString("vi-VN", {hour:"2-digit", minute:"2-digit", day:"2-digit", month:"2-digit", year:"numeric"}) : "–";
+// Hộp xác nhận / thông báo theo giao diện trang (thay confirm/alert của trình duyệt). ask(...) -> Promise<true|false>
+function ask(message, o = {}){
+  return new Promise(resolve => {
+    const w = document.createElement("div"); w.className = "ask-wrap";
+    w.innerHTML = `<div class="ask" role="dialog" aria-modal="true"><h3></h3><p></p><div class="ask-btns">${o.info ? "" : '<button class="btn small ask-no"></button>'}<button class="btn primary small ask-ok"></button></div></div>`;
+    w.querySelector("h3").textContent = o.title || "Xác nhận"; w.querySelector("p").textContent = message;
+    const ok = w.querySelector(".ask-ok"), no = w.querySelector(".ask-no");
+    ok.textContent = o.ok || (o.info ? "Đã hiểu" : "Đồng ý"); if (o.danger) ok.classList.add("danger");
+    if (no) no.textContent = o.cancel || "Huỷ";
+    const done = v => { document.removeEventListener("keydown", key, true); w.remove(); resolve(v); };
+    const key = e => { if (e.key === "Escape") done(!!o.info); else if (e.key === "Enter") { e.preventDefault(); done(true); } };
+    ok.onclick = () => done(true); if (no) no.onclick = () => done(false);
+    w.onmousedown = e => { if (e.target === w) done(!!o.info); };
+    document.addEventListener("keydown", key, true); document.body.appendChild(w); ok.focus();
+  });
+}
+const notice = (message, title) => ask(message, {info: true, title: title || "Thông báo"});
 async function api(u, body){
   const r = await fetch(u, body ? {method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify(body)} : {cache:"no-store"});
   const d = await r.json().catch(() => ({}));
@@ -299,7 +322,7 @@ function render(){
   $("#main").innerHTML = html;
 
   $("#out").onclick = async () => { await api("api/dangxuat", {}); load(); };
-  $("#outAll").onclick = async () => { if (confirm("Đăng xuất tài khoản này khỏi mọi trình duyệt?")) { await api("api/dangxuat-het", {}); load(); } };
+  $("#outAll").onclick = async () => { if (await ask("Mọi trình duyệt đang đăng nhập tài khoản này sẽ bị đăng xuất, kể cả máy này.", {title: "Đăng xuất mọi thiết bị", ok: "Đăng xuất hết", danger: true})) { await api("api/dangxuat-het", {}); load(); } };
   document.querySelectorAll("#srvTabs .tab").forEach(b => b.onclick = () => { cmdSrv = b.dataset.s; document.querySelectorAll("#srvTabs .tab").forEach(x => x.classList.toggle("on", x === b)); drawCmds(); });
   $("#cq").oninput = e => { cmdQ = e.target.value; drawCmds(); };
   $("#mine").onchange = e => { onlyMine = e.target.checked; drawCmds(); };
@@ -315,15 +338,15 @@ function render(){
     b.disabled = true;
     const d = await api("api/donate", {action: "tao", bac: +b.dataset.b, goi: +b.dataset.g}).catch(() => ({message: "Không kết nối được."}));
     b.disabled = false;
-    if (!d.ok) { alert(d.message || "Không tạo được mã."); return; }
+    if (!d.ok) { notice(d.message || "Không tạo được mã.", "Chưa tạo được mã"); return; }
     PICK = {bac: +b.dataset.b, goi: +b.dataset.g, don: d.don}; render(); $("#pay").scrollIntoView({behavior: "smooth", block: "start"});
   });
   document.querySelectorAll(".cp").forEach(b => b.onclick = async () => { try { await navigator.clipboard.writeText(b.dataset.v); b.textContent = "Đã chép"; } catch (e) {} });
   if ($("#paid")) $("#paid").onclick = async () => {
-    if (!confirm("Bạn đã chuyển khoản xong với đúng số tiền và nội dung?")) return;
+    if (!(await ask(`Bạn đã chuyển ${nf.format(PICK.don.tien)}đ với nội dung "${PICK.don.noi_dung}"? Admin sẽ kiểm tra tiền về rồi mới cấp rank.`, {title: "Xác nhận đã chuyển khoản", ok: "Tôi đã chuyển", cancel: "Chưa"}))) return;
     $("#paid").disabled = true;
     const d = await api("api/donate", {action: "bao", id: PICK.don.id}).catch(() => ({message: "Không kết nối được."}));
-    if (d.ok) { PICK.don = d.don; await loadDonate(); render(); $("#pay").scrollIntoView({block: "start"}); alert(d.message); }
+    if (d.ok) { PICK.don = d.don; await loadDonate(); render(); $("#pay").scrollIntoView({block: "start"}); notice(d.message, "Đã báo admin"); }
     else { $("#paid").disabled = false; $("#payMsg").textContent = d.message || "Không gửi được."; }
   };
   if ($("#clGo")) $("#clGo").onclick = async () => {

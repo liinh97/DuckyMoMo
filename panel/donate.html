@@ -59,7 +59,8 @@ async function act(a, id) {
   const r = rows.find(x => x.id === id);
   const q = { cap: `Cấp ${r.bac} ${r.thang} tháng cho ${r.ten}? Kiểm tra đã nhận ${Number(r.tien).toLocaleString("vi-VN")}đ với nội dung ${r.noi_dung}.`,
     xong: `Đánh dấu đã cấp (bạn đã tự cấp bằng lệnh)?`, huy: `Huỷ yêu cầu của ${r.ten}?` }[a];
-  if (!confirm(q)) return;
+  if (!(await ask(q, { title: { cap: "Cấp rank", xong: "Đánh dấu đã cấp", huy: "Huỷ yêu cầu" }[a], ok: { cap: "Cấp rank", xong: "Đã cấp", huy: "Huỷ yêu cầu" }[a],
+    cancel: "Quay lại", danger: a === "huy" }))) return;
   toast("Đang xử lý…");
   const res = await fetch("api/donate", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: a, id }) });
   const d = await res.json().catch(() => ({}));

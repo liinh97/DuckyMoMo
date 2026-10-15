@@ -115,3 +115,15 @@ button.ghost:hover:not(:disabled) { background: var(--chip); }
 .cb-empty { padding: 12px; color: var(--muted); font-size: 13px; }
 .cb-foot { font-size: 11.5px; color: var(--muted); padding: 6px 12px; border-top: 1px solid var(--line-2); }
 .cb-foot:empty { display: none; }
+
+/* Hộp xác nhận (shell.js ask) */
+.ask-wrap { position: fixed; inset: 0; z-index: 1000; background: rgba(8, 10, 14, .55); backdrop-filter: blur(2px); display: grid; place-items: center; padding: 16px; animation: askfade .12s ease-out; }
+.ask { width: min(440px, 100%); background: var(--card); color: var(--text); border: 1px solid var(--line); border-radius: 14px; padding: 20px 22px 18px; box-shadow: 0 18px 50px rgba(0, 0, 0, .35); animation: askpop .14s ease-out; }
+.ask h3 { margin: 0 0 8px; font-size: 16px; }
+.ask p { margin: 0; color: var(--muted); font-size: 14.5px; line-height: 1.55; white-space: pre-line; overflow-wrap: anywhere; }
+.ask .ask-in { width: 100%; margin-top: 12px; box-sizing: border-box; }
+.ask-btns { display: flex; justify-content: flex-end; gap: 8px; margin-top: 18px; }
+.ask button.primary.danger { background: var(--err); }
+@keyframes askfade { from { opacity: 0; } }
+@keyframes askpop { from { transform: translateY(6px) scale(.98); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .ask-wrap, .ask { animation: none; } }

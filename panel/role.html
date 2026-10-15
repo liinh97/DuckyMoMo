@@ -180,11 +180,15 @@ function renderDetail() {
   const known = new Set(cats.flatMap(c => c.perms.map(p => p[0])));
   // quyền trong danh mục mà bật ở server khác: hiện thành nhãn "bật ở …" ngay trên công tắc, không lặp ở đây
   const others = g.perms.filter(p => !known.has(p.node));
+  // rank donate chỉ được quyền TRANG TRÍ (luật Mojang): quyền ngoài danh mục trang trí/chat hiện cảnh báo đỏ
+  const p2w = isDonate ? others.filter(p => p.value) : [];
+  if (p2w.length) h += `<div class="warnbox" style="background:rgba(217,48,37,.12);color:var(--err)">⚠️ Rank donate đang có quyền không phải trang trí: ${p2w.map(p => `<code>${esc(p.node)}</code>`).join(", ")}.
+    Bán rank kèm lợi thế chơi (bay, đồ, tiền…) là <b>trái luật Mojang</b> (EULA), có thể bị chặn server. Bấm × bên dưới để gỡ.</div>`;
   h += `<div class="others"><h3>Quyền khác của role này <span class="hint" style="font-weight:400">(không có trong danh mục, mọi server)</span></h3>${others.length ? `<div class="members" style="margin-top:0">${others.map(p => `<span class="mem">${p.value ? "" : '<span class="badge deny">CẤM</span>'}<code>${esc(p.node)}</code>${p.server !== "global" ? `<span class="exp">@${esc(p.server)}</span>` : ""}<button class="x" title="Gỡ quyền" data-unset="${esc(p.node)}" data-srv="${esc(p.server)}">×</button></span>`).join("")}</div>` : '<p class="hint" style="margin:0">Không có.</p>'}
     <div class="addp"><input id="newp" placeholder="Thêm quyền theo tên, vd essentials.workbench (áp dụng: ${server === "global" ? "toàn mạng" : esc(server)})"><button class="ghost" id="addp">Thêm quyền</button></div></div></section>`;
   d.innerHTML = h;
   d.querySelectorAll("[data-go]").forEach(a => a.onclick = () => { sel = a.dataset.go; history.replaceState(null, "", "#" + sel); render(); });
-  d.querySelectorAll("[data-rm]").forEach(b => b.onclick = () => { if (confirm(`Gỡ ${name(g.name)} của ${b.dataset.rm}?`)) post({ action: "remove", player: b.dataset.rm, group: g.name }); });
+  d.querySelectorAll("[data-rm]").forEach(b => b.onclick = async () => { if (await ask(`Gỡ ${name(g.name)} của ${b.dataset.rm}? Người này nhận tin trong game (nếu đang online).`, { title: "Gỡ role", ok: "Gỡ", danger: true })) post({ action: "remove", player: b.dataset.rm, group: g.name }); });
   if ($("give")) {
     const give = () => { const p = $("player").value.trim(); if (!p) return $("player").focus(); post({ action: "add", player: p, group: g.name, months: $("months") ? parseInt($("months").value, 10) : 1 }); };
     $("give").onclick = give; $("player").onkeydown = (e) => { if (e.key === "Enter") give(); };
@@ -192,7 +196,7 @@ function renderDetail() {
   d.querySelectorAll("[data-sv]").forEach(b => b.onclick = () => { server = b.dataset.sv; renderDetail(); });
   $("pf").oninput = () => { filter = $("pf").value; renderPerms(g, cats, own, inh); };
   $("onlyon").onchange = () => { onlyOn = $("onlyon").checked; renderPerms(g, cats, own, inh); };
-  d.querySelectorAll("[data-unset]").forEach(b => b.onclick = () => { if (confirm(`Gỡ quyền ${b.dataset.unset} khỏi ${name(g.name)}?`)) post({ action: "perm_unset", group: g.name, node: b.dataset.unset, server: b.dataset.srv }); });
+  d.querySelectorAll("[data-unset]").forEach(b => b.onclick = async () => { if (await ask(`Gỡ quyền ${b.dataset.unset}${b.dataset.srv !== "global" ? " (ở " + b.dataset.srv + ")" : ""} khỏi ${name(g.name)}?`, { title: "Gỡ quyền", ok: "Gỡ quyền", danger: true })) post({ action: "perm_unset", group: g.name, node: b.dataset.unset, server: b.dataset.srv }); });
   const addp = () => { const v = $("newp").value.trim(); if (v) post({ action: "perm_set", group: g.name, node: v, server }); };
   $("addp").onclick = addp; $("newp").onkeydown = (e) => { if (e.key === "Enter") addp(); };
   renderPerms(g, cats, own, inh);

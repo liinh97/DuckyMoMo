@@ -162,7 +162,7 @@ function render() {
     cid.oninput = () => { c.id = cid.value; mark(); };
     card.querySelector(".up").onclick = () => { if (ci > 0) { [data.chapters[ci - 1], data.chapters[ci]] = [data.chapters[ci], data.chapters[ci - 1]]; mark(); render(); } };
     card.querySelector(".down").onclick = () => { if (ci < data.chapters.length - 1) { [data.chapters[ci + 1], data.chapters[ci]] = [data.chapters[ci], data.chapters[ci + 1]]; mark(); render(); } };
-    card.querySelector(".del").onclick = () => { if (confirm(`Xoá chương "${c.name}"?`)) { data.chapters.splice(ci, 1); mark(); render(); } };
+    card.querySelector(".del").onclick = async () => { if (await ask(`Xoá chương "${c.name}"? (chưa lưu thì vẫn bỏ được bằng cách tải lại trang)`, { title: "Xoá chương", ok: "Xoá", danger: true })) { data.chapters.splice(ci, 1); mark(); render(); } };
     card.querySelector(".addPage").onclick = () => { c.pages.push("&6&lTiêu đề\n&0Nội dung..."); mark(); render(); };
     const pagesBox = card.querySelector(".pages");
     c.pages.forEach((p, pi) => {
@@ -177,7 +177,7 @@ function render() {
       ta.oninput = () => { c.pages[pi] = ta.value; mark(); upd(); };
       row.querySelector(".pu").onclick = () => { if (pi > 0) { [c.pages[pi - 1], c.pages[pi]] = [c.pages[pi], c.pages[pi - 1]]; mark(); render(); } };
       row.querySelector(".pd").onclick = () => { if (pi < c.pages.length - 1) { [c.pages[pi + 1], c.pages[pi]] = [c.pages[pi], c.pages[pi + 1]]; mark(); render(); } };
-      row.querySelector(".pdel").onclick = () => { if (confirm("Xoá trang này?")) { c.pages.splice(pi, 1); mark(); render(); } };
+      row.querySelector(".pdel").onclick = async () => { if (await ask("Xoá trang này?", { title: "Xoá trang", ok: "Xoá", danger: true })) { c.pages.splice(pi, 1); mark(); render(); } };
       pagesBox.appendChild(row); upd();
     });
     wrap.appendChild(card);

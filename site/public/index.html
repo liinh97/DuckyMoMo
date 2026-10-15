@@ -166,6 +166,49 @@ td.rank{font-weight:800;color:var(--gold);width:48px}
 .tier h3{margin-bottom:6px}
 .tier .price{font-size:.88rem;color:var(--muted)}
 
+/* mùa vụ + câu cá */
+.sea{position:relative;overflow:hidden;border-radius:20px;padding:24px;border:1px solid var(--line);min-height:210px}
+.sea.mua{background:linear-gradient(160deg,#10304d,#0f2236 55%,#121a24);border-color:rgba(90,180,255,.45)}
+.sea.kho{background:linear-gradient(160deg,#4a2e0c,#2b1d0d 55%,#121a24);border-color:rgba(242,184,75,.5)}
+.sea .fx{position:absolute;inset:0;pointer-events:none}
+.sea.mua .fx{background-image:repeating-linear-gradient(105deg,rgba(150,210,255,.0) 0 18px,rgba(150,210,255,.16) 18px 19px);background-size:120px 120px;animation:rain .7s linear infinite;mask-image:linear-gradient(180deg,#000,transparent 85%)}
+@keyframes rain{to{background-position:-34px 120px}}
+.sea.kho .fx{background:radial-gradient(260px 200px at 88% 8%,rgba(255,200,80,.45),transparent 70%);animation:sun 6s ease-in-out infinite alternate}
+@keyframes sun{to{opacity:.55}}
+@media (prefers-reduced-motion:reduce){.sea .fx{animation:none}}
+.sea>*{position:relative}
+.sea .big{font-size:clamp(1.7rem,4vw,2.4rem);font-weight:800;margin:4px 0 2px}
+.sea .days{display:flex;gap:5px;margin:16px 0 8px}
+.sea .days i{flex:1;height:8px;border-radius:4px;background:rgba(255,255,255,.12)}
+.sea .days i.done{background:rgba(255,255,255,.55)}.sea .days i.now{background:var(--gold2);box-shadow:0 0 10px var(--gold)}
+.sea.mua .days i.now{background:#9fd8ff;box-shadow:0 0 10px #5ab4ff}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font-size:.82rem;font-weight:700;border-radius:999px;padding:.2em .7em;border:1px solid var(--line);background:#0b1118;color:var(--muted)}
+.chip.up{color:var(--jade2);border-color:rgba(62,207,142,.4)}.chip.down{color:#ff9d9b;border-color:rgba(239,83,80,.4)}.chip.bonus{color:var(--gold2);border-color:rgba(242,184,75,.45)}
+.cropcol h4{margin:12px 0 6px;font-size:.85rem;color:var(--muted);font-weight:700}
+.fishbar{display:flex;gap:8px;flex-wrap:wrap;margin:22px 0 12px}
+.fishbar .tab{padding:7px 13px;font-size:.9rem}
+.rar{margin-top:14px}
+.rar .rh{display:flex;align-items:center;gap:10px;margin-bottom:8px;font-weight:800}
+.rar .rh small{font-weight:600;color:var(--dim)}
+.fishes{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px}
+.fish{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--c,#adb5bd);border-radius:12px;padding:10px 12px;min-width:0}
+.fish b{display:block}
+.fish .d{font-size:.84rem;color:var(--muted);margin:2px 0 6px}
+.fish .m{display:flex;flex-wrap:wrap;gap:5px;font-size:.75rem}
+.fish .m span{background:#0b1118;border:1px solid var(--line);border-radius:6px;padding:.05em .45em;color:var(--muted)}
+.fish .m .s-mua{color:#9fd8ff;border-color:rgba(90,180,255,.45)}.fish .m .s-kho{color:var(--gold2);border-color:rgba(242,184,75,.45)}
+.fish.off{opacity:.38}
+@media (max-width:620px){.fishes{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.fish{padding:8px 9px}.fish .d{font-size:.78rem}}
+.cd{font-size:1.6rem;font-weight:800;font-variant-numeric:tabular-nums;color:var(--gold2)}
+.prize{display:grid;grid-template-columns:1fr auto;gap:2px 10px;align-items:center;font-size:.9rem;margin:6px 0}
+.prize .bar{grid-column:1/-1;height:6px;border-radius:3px;background:#0b1118;overflow:hidden}
+.prize .bar i{display:block;height:100%;background:linear-gradient(90deg,var(--gold),#ff8f3a);border-radius:3px}
+.prize.rare b{color:var(--violet)}.prize.rare .bar i{background:linear-gradient(90deg,var(--violet),#f783ac)}
+.miles{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+.mile{display:grid;grid-template-columns:78px 1fr;gap:10px;align-items:center}
+.mile b{white-space:nowrap;background:var(--card2);border:1px solid var(--line);border-radius:10px;text-align:center;padding:4px 0;color:var(--gold)}
+
 /* faq */
 details{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:0 16px;margin-bottom:10px}
 summary{cursor:pointer;padding:14px 0;font-weight:700;list-style:none;display:flex;justify-content:space-between;gap:12px}
@@ -303,6 +346,8 @@ footer .fbrand img{width:44px}
       <a href="#banghoi">Bang Hội Chiến</a>
       <a href="#congthanh">Công thành</a>
       <a href="#hoabinh">Hoà Bình</a>
+      <a href="#muavu">Mùa &amp; câu cá</a>
+      <a href="#hangngay">Hằng ngày</a>
       <a href="#boss">Boss</a>
       <a href="#bantron">Hội Bàn Tròn</a>
       <a href="#xephang">Xếp hạng</a>
@@ -561,6 +606,47 @@ footer .fbrand img{width:44px}
   </div>
 </section>
 
+<!-- ============ MÙA VỤ & CÂU CÁ ============ -->
+<section id="muavu">
+  <div class="wrap">
+    <div class="kicker s">Thế giới sống theo mùa</div>
+    <h2>Mùa mưa, mùa khô &amp; câu cá</h2>
+    <p class="intro">Bang Hội Chiến có hai mùa xen kẽ theo ngày thật. Mỗi mùa có cây lớn nhanh, cây lớn chậm, mưa nhiều hay ít, và những loài cá chỉ xuất hiện trong mùa đó. Nông dân và ngư dân nên tính trước. Gõ <span class="kbd">/mua</span> trong game để xem.</p>
+    <div class="grid g2" id="seaGrid">
+      <div class="sea" id="seaNow"><div class="fx"></div><div class="muted">Đang tải mùa…</div></div>
+      <div class="card" id="seaCrops"><h3>🌾 Nông sản mùa này</h3><div class="muted">Đang tải…</div></div>
+    </div>
+    <div class="fishbar" id="fishTabs">
+      <button class="tab on" data-f="now">🎣 Câu được bây giờ</button>
+      <button class="tab" data-f="all">Tất cả</button>
+      <button class="tab" data-f="mua">☔ Chỉ mùa mưa</button>
+      <button class="tab" data-f="kho">☀ Chỉ mùa khô</button>
+      <button class="tab" data-f="bien">🌊 Cá biển</button>
+    </div>
+    <div id="fishList"><div class="empty">Đang tải danh sách cá…</div></div>
+    <div class="grid g2" style="margin-top:20px">
+      <div class="card hl" id="contest"><h3>🏆 Thi câu cá</h3><div class="muted">Đang tải…</div></div>
+      <div class="card"><h3>🎣 Câu cá thế nào?</h3><ul class="clean s">
+        <li>Câu như bình thường, cá ra có <b>tên, độ dài và độ hiếm</b>. Sách phù phép, yên ngựa… vẫn câu ra như cũ.</li>
+        <li>Cá biển chỉ cắn ở biển; cá đồng, cá sông câu ở ao hồ, sông suối.</li>
+        <li><span class="kbd">/emf</span> menu câu cá · <span class="kbd">/emf journal</span> nhật ký loài đã câu · <span class="kbd">/emf shop</span> bán cá lấy xu (cá càng dài càng đắt).</li>
+        <li>Mồi rơi ngẫu nhiên khi câu, gắn vào cần bằng <span class="kbd">/emf applybaits</span> để tăng cơ hội cá hiếm.</li>
+        <li>Cá vẫn ăn, nướng được. Câu treo máy bị chặn.</li>
+      </ul></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ HẰNG NGÀY ============ -->
+<section id="hangngay" class="alt">
+  <div class="wrap">
+    <div class="kicker j">Vào mỗi ngày</div>
+    <h2>Quà hằng ngày, miễn phí cho mọi người</h2>
+    <p class="intro">Không cần nạp tiền: chỉ cần vào chơi thật. Treo máy không được tính, tài khoản phụ không ăn gian được.</p>
+    <div class="grid g2" id="dailyGrid"><div class="card muted">Đang tải…</div></div>
+  </div>
+</section>
+
 <!-- ============ DUNGEON & BOSS ============ -->
 <section id="boss">
   <div class="wrap">
@@ -696,7 +782,7 @@ footer .fbrand img{width:44px}
     <h2>Luật server</h2>
     <div class="grid g2">
       <div class="card"><ul class="clean r">
-        <li><b>Không hack</b>, x-ray, autoclick, macro. Có chống hack tự động, mọi block đều được ghi lại.</li>
+        <li><b>Không hack</b>, x-ray, autoclick, macro. Có chống hack tự động, <b>quặng được giấu khỏi x-ray</b> (chỉ thấy khi đào lộ ra), mọi block đều được ghi lại.</li>
         <li><b>Không lợi dụng lỗi game</b> (nhân đồ, xuyên tường). Báo lỗi cho admin còn được thưởng.</li>
         <li><b>Tối đa <span data-k="player.max_accounts">2</span> tài khoản</b> mỗi người. Tài khoản phụ phải khai (<span class="kbd">/taikhoanphu</span>), không được nhận quân hàm, không đánh trận.</li>
         <li><b>Không vây giả</b> (hai quốc gia dàn xếp để lấy tiền, điểm).</li>
@@ -733,6 +819,8 @@ footer .fbrand img{width:44px}
     <details><summary>Tôi chỉ muốn xây và buôn bán, không thích đánh nhau?</summary><div>Vào Liên minh Hoà Bình: thị trấn không bao giờ bị vây hay chiếm, có chợ kinh đô, cửa hàng, sự kiện, giải Kiến Trúc Sư. Ra đất hoang vẫn có thể gặp người chơi khác, nhưng ai giết bạn gần vùng hoà bình sẽ phải ra Hội Bàn Tròn.</div></details>
     <details><summary>Ping cao không?</summary><div>Ping hiện khoảng 150–300 ms. Server chạy ổn định (không lag phía server), nên chơi xây dựng, buôn bán thoải mái; đánh PvP thì nên dùng mạng ổn định, tránh 4G yếu.</div></details>
     <details><summary>Lỡ chơi hỏng, muốn làm lại từ đầu?</summary><div>Gõ <span class="kbd">/choilai</span>: mất đồ, tiền, nhà, nghề, thị trấn; giữ rank và danh hiệu. Lần đầu trong mùa còn được nhận lại quà tân thủ.</div></details>
+    <details><summary>Mùa mưa, mùa khô là gì?</summary><div>Bang Hội Chiến đổi mùa theo ngày thật, mỗi mùa vài ngày, xen kẽ nhau. Mùa mưa lúa, mía, tre lớn nhanh và trời hay mưa; mùa khô khoai, cà rốt, dưa, bí lớn nhanh, ít mưa. Đúng mùa, gặt cây chín còn có cơ hội rơi thêm. Nhiều loài cá chỉ câu được trong một mùa. Xem mùa hiện tại ở mục <a href="#muavu">Mùa &amp; câu cá</a> hoặc gõ <span class="kbd">/mua</span>.</div></details>
+    <details><summary>Có voice chat không?</summary><div>Chưa có. Voice chat cần người chơi máy tính tự cài mod và không dùng được trên điện thoại, nên server chưa bật. Hãy dùng Discord hoặc Zalo để nói chuyện với đồng đội.</div></details>
     <details><summary>Hết mùa thì sao?</summary><div>Sau 10 tuần mùa đóng lại, trao danh hiệu, thế giới cũ được giữ làm bảo tàng để xem lại. Mùa mới mở vùng đất mới, mọi người bắt đầu ngang nhau; danh hiệu và rank ủng hộ được giữ.</div></details>
   </div>
 </section>
@@ -919,6 +1007,95 @@ async function loadVote(){
   } catch (e) {}
 }
 
+// ---------------- mùa vụ, câu cá
+let MUA = null, fishFilter = "now";
+function seaCard(m){
+  const n = m.hien_tai, cls = n.id === "kho" ? "kho" : "mua";
+  const days = Array.from({length: m.moi_mua}, (_, i) => `<i class="${i+1 < m.ngay_thu ? "done" : i+1 === m.ngay_thu ? "now" : ""}"></i>`).join("");
+  const el = $("#seaNow"); el.className = "sea " + cls;
+  el.innerHTML = `<div class="fx"></div><span class="pill">Mùa hiện tại · Bang Hội Chiến</span>
+    <div class="big">${esc(n.ten)}</div><div class="muted">${esc(n.mo_ta)}</div>
+    ${m.ghi_de ? `<p class="dim" style="margin-top:14px">Admin đang thử mùa này, lịch tự động tạm dừng.</p>` :
+      `<div class="days" title="Ngày ${m.ngay_thu}/${m.moi_mua}">${days}</div>
+       <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:.92rem"><span>Còn <b>${m.con}</b> ngày</span><span class="muted">Tiếp theo: <b style="color:var(--text)">${esc(m.tiep.ten)}</b></span></div>`}
+    <p class="dim" style="margin:12px 0 0;font-size:.85rem">${n.mua_bat >= 15 ? "🌧️ Trời hay đổ mưa" : n.mua_tanh >= 30 ? "🌤️ Mưa hiếm, nhanh tạnh" : "⛅ Thời tiết bình thường"}</p>`;
+  const chips = (a, c) => a.map(x => `<span class="chip ${c}">${esc(x.ten)} ${x.pct > 0 ? "+" : ""}${x.pct}%</span>`).join("");
+  $("#seaCrops").innerHTML = `<h3>🌾 Nông sản ${esc(n.ten.replace(/^\S+\s/, "").toLowerCase())}</h3>
+    ${n.nhanh.length ? `<div class="cropcol"><h4>▲ Lớn nhanh</h4><div class="chips">${chips(n.nhanh, "up")}</div></div>` : ""}
+    ${n.cham.length ? `<div class="cropcol"><h4>▼ Lớn chậm</h4><div class="chips">${chips(n.cham, "down")}</div></div>` : ""}
+    ${n.duoc_mua.length ? `<div class="cropcol"><h4>✦ Được mùa: gặt cây chín có cơ hội rơi thêm</h4><div class="chips">${n.duoc_mua.map(x => `<span class="chip bonus">${esc(x.ten)} ${x.pct}%</span>`).join("")}</div></div>` : ""}
+    <p class="dim" style="margin:14px 0 0;font-size:.85rem">Sang ${esc(m.tiep.ten)}: lớn nhanh ${m.tiep.nhanh.map(x => esc(x.ten.toLowerCase())).join(", ") || "không có"}.</p>`;
+}
+function fishList(){
+  const m = MUA; if (!m) return;
+  const cur = m.bat ? m.hien_tai.id : null;
+  const ok = f => fishFilter === "all" ? true : fishFilter === "bien" ? f.bien : fishFilter === "now" ? (!f.mua || f.mua === cur) : f.mua === fishFilter;
+  const label = {mua: "☔ Mùa mưa", kho: "☀ Mùa khô"};
+  let h = "";
+  for (const r of m.ca) {
+    const list = r.ca.filter(ok);
+    if (!list.length) continue;
+    h += `<div class="rar"><div class="rh"><span style="color:${r.mau}">● ${esc(r.ten)}</span><small>${r.tile}% số lần cá cắn · ${list.length} loài</small></div><div class="fishes">`;
+    h += list.map(f => `<div class="fish" style="--c:${r.mau}"><b>${esc(f.ten)}</b><div class="d">${esc(f.mo_ta)}</div><div class="m">
+      ${f.mua ? `<span class="s-${f.mua}">${label[f.mua] || esc(f.mua)}${f.mua === cur ? " · đang mùa" : ""}</span>` : `<span>Quanh năm</span>`}
+      ${f.bien ? `<span>🌊 Biển</span>` : ""}<span>${f.dai[0]}–${f.dai[1]} cm</span>${f.gia ? `<span>~${nf.format(f.gia[0])}–${nf.format(f.gia[1])} xu</span>` : ""}</div></div>`).join("");
+    h += `</div></div>`;
+  }
+  $("#fishList").innerHTML = h || `<div class="empty">Không có loài cá nào trong mục này.</div>`;
+}
+document.querySelectorAll("#fishTabs .tab").forEach(t => t.onclick = () => {
+  document.querySelectorAll("#fishTabs .tab").forEach(x => x.classList.toggle("on", x === t));
+  fishFilter = t.dataset.f; fishList();
+});
+function contestCard(list){
+  const c = list[0];
+  if (!c) { $("#contest").innerHTML = `<h3>🏆 Thi câu cá</h3><div class="empty">Chưa có lịch thi câu.</div>`; return; }
+  const th = c.thuong, place = {"1": "🥇 Nhất", "2": "🥈 Nhì", "3": "🥉 Ba", participation: "Tham gia"};
+  $("#contest").innerHTML = `<h3>🏆 ${esc(c.ten)}</h3>
+    <p class="muted" style="margin-bottom:6px">${esc(c.kieu)} trong ${c.phut} phút · cần ít nhất ${c.it_nhat} người online · ${c.lich.map(esc).join(", ")}</p>
+    ${c.tiep ? `<div class="dim" style="font-size:.85rem">Lần tới bắt đầu sau</div><div class="cd" id="cdown" data-t="${c.tiep}">…</div>` : ""}
+    <div class="votes" style="margin-top:10px">${Object.keys(place).filter(k => th[k]).map(k => `<span>${place[k]}: ${nf.format(+th[k])} xu</span>`).join("")}</div>`;
+  tickContest();
+}
+function tickContest(){
+  const el = $("#cdown"); if (!el) return;
+  let s = Math.max(0, Math.round((+el.dataset.t - Date.now()) / 1000));
+  if (!s) { el.textContent = "Đang diễn ra!"; return; }
+  const d = Math.floor(s / 86400); s %= 86400;
+  const p = n => String(n).padStart(2, "0");
+  el.textContent = (d ? d + " ngày " : "") + p(Math.floor(s / 3600)) + ":" + p(Math.floor(s % 3600 / 60)) + ":" + p(s % 60);
+}
+setInterval(tickContest, 1000);
+async function loadMua(){
+  try {
+    const m = await j("api/mua"); MUA = m;
+    if (m.bat) seaCard(m);
+    else { $("#seaGrid").innerHTML = `<div class="card muted">Mùa mưa / mùa khô đang tắt.</div>`; if (fishFilter === "now") fishFilter = "all"; }
+    fishList(); contestCard(m.thicau || []);
+  } catch (e) { $("#fishList").innerHTML = `<div class="empty">Không tải được thông tin mùa.</div>`; }
+}
+
+// ---------------- hằng ngày
+async function loadDaily(){
+  try {
+    const d = await j("api/hangngay"), cards = [];
+    const list = a => a.map(esc).join(", ");
+    if (d.diemdanh.bat) cards.push(`<div class="card jade"><h3>📅 Điểm danh <span class="kbd">/diemdanh</span></h3>
+      <p class="muted">Online đủ ${d.diemdanh.phut} phút rồi gõ lệnh. Mỗi ngày: <b style="color:var(--text)">${list(d.diemdanh.ngay)}</b>. Bỏ ngày không mất chuỗi, chỉ đếm tổng số ngày.</p>
+      <div class="miles">${d.diemdanh.moc.map(x => `<div class="mile"><b>${x.ngay} ngày</b><span>${list(x.qua)}</span></div>`).join("")}</div></div>`);
+    if (d.nhiemvu.bat) cards.push(`<div class="card"><h3>📜 Nhiệm vụ <span class="kbd">/nhiemvu</span></h3>
+      <p class="muted">Mỗi ngày nhận <b style="color:var(--text)">${d.nhiemvu.moi_ngay}</b> nhiệm vụ ngẫu nhiên, đổi lúc 0 giờ.${d.nhiemvu.xong_het.length ? ` Xong hết thưởng thêm <b style="color:var(--text)">${list(d.nhiemvu.xong_het)}</b>.` : ""}</p>
+      <div class="votes">${d.nhiemvu.ds.map(q => `<span>${esc(q.ten)}${q.qua.length ? " · " + list(q.qua) : ""}</span>`).join("")}</div></div>`);
+    if (d.vongquay.bat) cards.push(`<div class="card hl"><h3>🎡 Vòng quay <span class="kbd">/vongquay</span></h3>
+      <p class="muted">Chơi thật mỗi <b style="color:var(--text)">${d.vongquay.phut} phút</b> được 1 vé (giữ tối đa ${d.vongquay.toi_da}). Vé miễn phí, không bán. Tỉ lệ công khai:</p>
+      ${d.vongquay.qua.map(p => `<div class="prize ${p.hiem ? "rare" : ""}"><b>${esc(p.ten)}${p.hiem ? " ✦" : ""}</b><span class="muted">${p.tile}%</span><div class="bar"><i style="width:${Math.min(100, p.tile * 3)}%"></i></div></div>`).join("")}</div>`);
+    if (d.manh.bat) cards.push(`<div class="card"><h3>💎 Mảnh sự kiện <span class="kbd">/doimanh</span></h3>
+      <p class="muted">Rơi từ boss, sự kiện, mốc điểm danh. Là đồ thật, trao đổi được (tối đa ${d.manh.toi_da_ngay} mảnh/ngày từ quà thường). Đổi lấy:</p>
+      <div class="votes">${d.manh.doi.map(x => `<span>${esc(x.ten)} · ${x.gia} mảnh</span>`).join("")}</div></div>`);
+    $("#dailyGrid").innerHTML = cards.join("") || `<div class="card muted">Chưa bật hoạt động hằng ngày.</div>`;
+  } catch (e) { $("#dailyGrid").innerHTML = `<div class="card muted">Không tải được.</div>`; }
+}
+
 // hiện dần khi cuộn tới
 (function(){
   const els = document.querySelectorAll("section h2, section .intro, .card, .jstep, .lv, .tier, details, .flow .f, .tbl, .season, .stat");
@@ -950,13 +1127,13 @@ function countTo(el, n){
 // dải chữ chạy
 (function(){
   const items = ["⚔️ Công thành <b>mỗi cuối tuần</b>","🗺️ Bản đồ <b>Trái Đất 1:1000</b>","🕊️ <b>Liên minh Hoà Bình</b> không bao giờ bị chiếm","⚖️ <b>Hội Bàn Tròn</b> do người chơi tự quản",
-    "📱 Chơi được trên <b>điện thoại</b>","🏆 <b>Danh hiệu</b> giữ mãi mỗi mùa","💰 Nghề tự động, <b>chợ đấu giá</b>","🚫 <b>Không bán sức mạnh</b>","🌋 <b>Trái Đất lâm nguy</b>: boss sự kiện","🗝️ <b>Dungeon</b> cày đồ, cày tiền"];
+    "📱 Chơi được trên <b>điện thoại</b>","🏆 <b>Danh hiệu</b> giữ mãi mỗi mùa","💰 Nghề tự động, <b>chợ đấu giá</b>","🚫 <b>Không bán sức mạnh</b>","🌋 <b>Trái Đất lâm nguy</b>: boss sự kiện","🗝️ <b>Dungeon</b> cày đồ, cày tiền","☔ <b>Mùa mưa, mùa khô</b> đổi theo ngày thật","🎣 <b>24 loài cá Việt</b>, thi câu cuối tuần","🎁 <b>Điểm danh, nhiệm vụ, vòng quay</b> miễn phí"];
   const one = items.map(x => `<span>${x}</span>`).join("");
   $("#marq").innerHTML = one + one;
 })();
 // lời thoại của vịt
 (function(){
-  const lines = ["Công thành tối nay không? ⚔️","Đất Tây Bắc còn trống kìa! 🏔️","Giết dân hoà bình là ra toà nha ⚖️","Vào sớm chọn đất đẹp! 🏰","Bán đồ ở kinh đô được +20% 💰","Có gì đó đang thức giấc… 🌋"];
+  const lines = ["Công thành tối nay không? ⚔️","Đất Tây Bắc còn trống kìa! 🏔️","Giết dân hoà bình là ra toà nha ⚖️","Vào sớm chọn đất đẹp! 🏰","Bán đồ ở kinh đô được +20% 💰","Có gì đó đang thức giấc… 🌋","Mùa mưa cá linh về đầy đồng 🎣","Điểm danh chưa đấy? 🎁"];
   let i = 0; setInterval(() => { i = (i + 1) % lines.length; const b = $("#bubble"); if (b) b.textContent = lines[i]; }, 6000);
 })();
 // nút Đăng nhập / tên tài khoản (ẩn khi server chưa bật đăng nhập web)
@@ -965,8 +1142,8 @@ j("api/toi").then(t => {
   if (t.dang_nhap && t.ten) { a.textContent = t.ten; a.title = "Tài khoản của tôi"; }
   if (t.bat) a.hidden = false;
 }).catch(() => {});
-loadInfo().catch(()=>{}); loadStatus(); loadBantron(); loadBxh(); loadVote();
-setInterval(loadStatus, 30000); setInterval(loadBantron, 60000); setInterval(loadBxh, 60000); setInterval(loadVote, 60000);
+loadInfo().catch(()=>{}); loadStatus(); loadBantron(); loadBxh(); loadVote(); loadMua(); loadDaily();
+setInterval(loadStatus, 30000); setInterval(loadBantron, 60000); setInterval(loadBxh, 60000); setInterval(loadVote, 60000); setInterval(loadMua, 300000);
 </script>
 </body>
 </html>

@@ -130,6 +130,10 @@
    - **Chống xray** (Paper có sẵn): `modes/banghoi/server/config/paper-world-defaults.yml`, engine-mode 1, dưới y 64. Cần khởi động lại banghoi-1.
    - Triển khai ở nhà: git pull → `./ops/build-core.sh` → kiểm tra không ai online → `docker compose up -d --no-deps banghoi-1` (nạp PLUGINS mới)
      → thử `/mua`, `/mua dat kho`, câu cá ở sông và biển, `/emf shop`, `/papi parse me %dmmmua_id%`.
+   - **Trang web công khai** (site): mục "Mùa & câu cá" (`/api/mua`: mùa hiện tại tính giống Seasons.java + ghi đè mua.yml, cây nhanh/chậm,
+     được mùa, danh sách cá đọc `data/banghoi-1/plugins/EvenMoreFish/rarities` (chưa có thì đọc bản mẫu trong repo) có lọc theo mùa/biển,
+     thi câu + đếm ngược) và mục "Hằng ngày" (`/api/hangngay`: điểm danh, nhiệm vụ, vòng quay có tỉ lệ, mảnh sự kiện, đọc config DuckyMoMoCore).
+     Luật thêm chống x-ray, hỏi đáp thêm "Mùa mưa, mùa khô" và "Có voice chat không" (chưa có). Triển khai: `docker compose up -d --build site`.
 
 ### Người dùng phải tự làm (nhắc lại khi phù hợp)
 - Thêm `[boot] command = modprobe tcp_bbr` vào `/etc/wsl.conf` (để BBR có sau mỗi lần khởi động WSL):

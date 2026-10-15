@@ -4,7 +4,7 @@
 (an.yml), Hội đồng Hoà Bình (hoidong.yml), bảng xếp hạng (bxh.yml), tổ chức (tochuc.yml), Towny (flatfile). Hỏi proxy Velocity
 bằng Server List Ping để biết số người online. Không trả UUID, mật khẩu, IP; không ghi gì vào server.
 
-API: /api/info  /api/status  /api/bantron  /api/bxh  /api/vote   (kết quả giữ 30 giây)
+API: /api/info  /api/status  /api/bantron  /api/bxh  /api/vote  /api/mua  /api/hangngay   (kết quả giữ 30 giây)
 
 Đăng nhập bằng tài khoản game (khi có PANEL_SITE_KEY): /api/dangnhap, /api/dangxuat, /api/toi; trang quản trị cho staff ở
 /quantri/ (chuyển tiếp sang panel, panel tự kiểm quyền LuckPerms). Chỉ đăng nhập bằng mã một lần lấy trong game (/web),
@@ -20,7 +20,7 @@ import socket
 import struct
 import threading
 import time
-from datetime import datetime, timedelta
+from datetime import date, datetime, timedelta
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from zoneinfo import ZoneInfo
@@ -357,6 +357,213 @@ def api_vote():
             "top": [{"ten": n, "luot": c} for n, c in top[:10]]}
 
 
+# ---------------------------------------------------------------- mùa mưa/khô, câu cá (EvenMoreFish), hoạt động hằng ngày
+
+CROP_VI = {"WHEAT": "Lúa mì", "CARROTS": "Cà rốt", "POTATOES": "Khoai tây", "BEETROOTS": "Củ dền", "COCOA": "Ca cao", "SUGAR_CANE": "Mía",
+           "BAMBOO": "Tre", "CACTUS": "Xương rồng", "MELON": "Dưa hấu", "MELON_STEM": "Dây dưa hấu", "PUMPKIN": "Bí ngô",
+           "PUMPKIN_STEM": "Dây bí ngô", "SWEET_BERRY_BUSH": "Dâu rừng", "KELP": "Tảo bẹ"}
+MAT_VI = {"GOLDEN_APPLE": "táo vàng", "ENCHANTED_GOLDEN_APPLE": "táo vàng phù phép", "DIAMOND": "kim cương", "DIAMOND_BLOCK": "khối kim cương",
+          "EMERALD": "ngọc lục bảo", "IRON_INGOT": "thỏi sắt", "GOLD_INGOT": "thỏi vàng", "BREAD": "bánh mì", "EXPERIENCE_BOTTLE": "bình kinh nghiệm",
+          "ENDER_PEARL": "ngọc ender", "NETHERITE_SCRAP": "mảnh vụn netherite", "TOTEM_OF_UNDYING": "vật tổ bất tử", "NAME_TAG": "thẻ tên",
+          "COOKED_BEEF": "bít tết", "ARROW": "mũi tên", "SADDLE": "yên ngựa"}
+RARITY_COLOR = {"gray": "#adb5bd", "white": "#f8f9fa", "aqua": "#66d9e8", "light_purple": "#f783ac", "gold": "#f2b84b",
+                "green": "#69db7c", "yellow": "#ffe066", "red": "#ff6b6b", "blue": "#5c7cfa", "dark_purple": "#9c36b5"}
+DAYS_EN = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"]
+EMF_SRC = MODES / "banghoi" / "server" / "plugins" / "EvenMoreFish"
+
+
+def mm_strip(s):
+    """Bỏ thẻ MiniMessage (<gold>, <bold>…) và mã màu &x."""
+    return strip_colors(re.sub(r"<[^>]*>", "", str(s or ""))).strip()
+
+
+def reward_text(spec, library=None):
+    a = str(spec).split()
+    if not a:
+        return None
+    k = a[0].lower()
+    try:
+        if k == "xu":
+            return f"{float(a[1]):,.0f}".replace(",", ".") + " xu"
+        if k == "vat":
+            n = a[2] if len(a) > 2 else "1"
+            return f"{n} {MAT_VI.get(a[1].upper(), a[1].lower().replace('_', ' '))}"
+        if k == "manh":
+            return f"{a[2]} mảnh sự kiện"
+        if k == "do":
+            name = (library or {}).get(a[1]) or "đồ đặc biệt"
+            return f"{name}" + (f" x{a[2]}" if len(a) > 2 else "")
+    except (IndexError, ValueError):
+        return None
+    return None
+
+
+def season_now(cfg):
+    """Giống Seasons.java: mùa theo ngày thật giờ VN, ghi đè của admin ở mua.yml."""
+    lst = cfg.get("list") or {}
+    order = [o for o in (cfg.get("order") or []) if o in lst]
+    if not order:
+        return None
+    sd = cfg.get("start-date", "2026-10-12")
+    try:
+        start = sd if isinstance(sd, date) else date.fromisoformat(str(sd).strip())
+    except ValueError:
+        start = date(2026, 10, 12)
+    per = max(1, int(cfg.get("days-per-season", 7) or 7))
+    since = (datetime.now(VN).date() - start).days
+    idx = (since // per) % len(order)
+    forced = str(load_yaml(plugin("DuckyMoMoCore", "mua.yml")).get("ghi-de") or "")
+    cur = forced if forced in order else order[idx]
+    left = per - since % per
+    return {"order": order, "cur": cur, "next": order[(order.index(cur) + 1) % len(order)], "per": per,
+            "left": None if forced in order else left, "day": per - left + 1, "forced": forced in order}
+
+
+def season_view(sid, sc):
+    up, down = [], []
+    for k, v in (sc.get("growth") or {}).items():
+        try:
+            v = float(v)
+        except (TypeError, ValueError):
+            continue
+        item = {"ten": CROP_VI.get(str(k).upper(), str(k).lower()), "pct": round((v - 1) * 100)}
+        (up if v > 1 else down if v < 1 else []).append(item)
+    bonus = [{"ten": CROP_VI.get(str(k).upper(), str(k).lower()), "pct": round(float(v))}
+             for k, v in (sc.get("harvest-bonus") or {}).items() if float(v or 0) > 0]
+    return {"id": sid, "ten": strip_colors(sc.get("name", sid)), "mo_ta": strip_colors(sc.get("subtitle", "")),
+            "mua_bat": float(sc.get("rain-start-chance", 0) or 0), "mua_tanh": float(sc.get("rain-stop-chance", 0) or 0),
+            "nhanh": sorted(up, key=lambda x: -x["pct"]), "cham": sorted(down, key=lambda x: x["pct"]), "duoc_mua": bonus}
+
+
+def emf_dir(*parts):
+    live = plugin("EvenMoreFish", *parts)
+    return live if live.exists() else EMF_SRC.joinpath(*parts)
+
+
+def fish_catalog():
+    rar = []
+    for f in sorted(emf_dir("rarities").glob("*.yml")):
+        if f.name.startswith("_"):
+            continue
+        r = load_yaml(f)
+        if not r or r.get("disabled"):
+            continue
+        m = re.match(r"<(\w+)>", str(r.get("format", "")))
+        size = r.get("size") or {}
+        mult = float(r.get("worth-multiplier", 0) or 0)
+        fish = []
+        for fid, fc in (r.get("fish") or {}).items():
+            fc = fc if isinstance(fc, dict) else {}
+            if fc.get("disabled"):
+                continue
+            req = fc.get("requirements") or {}
+            mua = None
+            for ph in req.get("placeholder") or []:
+                mm = re.search(r"dmmmua_id%\s*==?\s*(\w+)", str(ph))
+                if mm:
+                    mua = mm.group(1)
+            fsize = fc.get("size") or size
+            lo, hi = int(fsize.get("minSize", 0) or 0), int(fsize.get("maxSize", 0) or 0)
+            lore = (fc.get("item") or {}).get("lore") or []
+            fish.append({"ten": mm_strip(fc.get("displayname") or (fc.get("item") or {}).get("displayname") or fid),
+                         "mo_ta": mm_strip(lore[0]) if lore else "", "mua": mua, "bien": "oceans" in (req.get("biome-set") or []),
+                         "dai": [lo, hi], "gia": [round(lo * mult, 1), round(hi * mult, 1)] if mult else None})
+        rar.append({"id": r.get("id"), "ten": mm_strip(r.get("displayname") or r.get("id")), "mau": RARITY_COLOR.get(m.group(1) if m else "", "#e8eef5"),
+                    "w": float(r.get("weight", 0) or 0), "ca": fish})
+    total = sum(x["w"] for x in rar) or 1
+    for x in rar:
+        x["tile"] = round(x["w"] * 100 / total, 1)
+    rar.sort(key=lambda x: -x["w"])
+    return rar
+
+
+def next_competitions():
+    now = datetime.now(VN)
+    out = []
+    for f in sorted(emf_dir("competitions").glob("*.yml")):
+        if f.name.startswith("_"):
+            continue
+        c = load_yaml(f)
+        if not c or c.get("disabled"):
+            continue
+        slots = []
+        for day, times in (c.get("days") or {}).items():
+            if str(day).upper() in DAYS_EN:
+                slots += [(DAYS_EN.index(str(day).upper()), str(t)) for t in times or []]
+        blacklist = [str(d).upper() for d in c.get("blacklisted-days") or []]
+        for t in c.get("times") or []:
+            slots += [(i, str(t)) for i, d in enumerate(DAYS_EN) if d not in blacklist]
+        nxt = None
+        for add in range(0, 8):
+            d = now + timedelta(days=add)
+            for wd, t in sorted(slots, key=lambda x: x[1]):
+                if wd != d.weekday():
+                    continue
+                try:
+                    hh, mi = map(int, t.split(":"))
+                except ValueError:
+                    continue
+                at = d.replace(hour=hh, minute=mi, second=0, microsecond=0)
+                if at > now and (nxt is None or at < nxt):
+                    nxt = at
+            if nxt:
+                break
+        rewards = {}
+        for k, v in (c.get("rewards") or {}).items():
+            money = [x.split(":", 1)[1] for x in v or [] if str(x).upper().startswith("MONEY:")]
+            if money:
+                rewards[str(k)] = money[0]
+        kinds = {"LARGEST_FISH": "Con dài nhất", "MOST_FISH": "Câu nhiều nhất", "LARGEST_TOTAL": "Tổng chiều dài lớn nhất",
+                 "SPECIFIC_FISH": "Câu đúng loại cá", "SPECIFIC_RARITY": "Câu đúng độ hiếm", "SHORTEST_FISH": "Con ngắn nhất", "RANDOM": "Ngẫu nhiên"}
+        lich = sorted({(wd, t) for wd, t in slots})
+        out.append({"ten": mm_strip(c.get("bossbar-prefix", "")).rstrip(": ") or c.get("id"), "kieu": kinds.get(str(c.get("type")), c.get("type")),
+                    "phut": c.get("duration", 10), "it_nhat": c.get("minimum-players", 1),
+                    "lich": [("Chủ nhật" if wd == 6 else f"Thứ {wd + 2}") + " " + t for wd, t in lich],
+                    "tiep": int(nxt.timestamp() * 1000) if nxt else None, "thuong": rewards})
+    return out
+
+
+def api_mua():
+    core = load_yaml(plugin("DuckyMoMoCore", "config.yml"))
+    cfg = core.get("seasons") or {}
+    out = {"bat": False, "ca": fish_catalog(), "thicau": next_competitions(), "emf": plugin("EvenMoreFish").exists()}
+    st = season_now(cfg) if cfg.get("enabled") else None
+    if st:
+        lst = cfg.get("list") or {}
+        out.update({"bat": True, "hien_tai": season_view(st["cur"], lst[st["cur"]]), "tiep": season_view(st["next"], lst[st["next"]]),
+                    "con": st["left"], "ngay_thu": st["day"], "moi_mua": st["per"], "ghi_de": st["forced"],
+                    "cac_mua": [season_view(o, lst[o]) for o in st["order"]]})
+    return out
+
+
+def api_hangngay():
+    core = load_yaml(plugin("DuckyMoMoCore", "config.yml"))
+    # tên món trong Thư viện đồ (quà "do <mã>"): tên hiện trong game, không có thì tên gợi nhớ
+    lib = {}
+    for k, it in (load_yaml(plugin("DuckyMoMoCore", "thuvien-do.yml")).get("items") or {}).items():
+        if isinstance(it, dict):
+            lib[k] = strip_colors(get(it, "preview.name") or it.get("ten") or it.get("ten-goi") or k)
+
+    def rw(lst):
+        return [x for x in (reward_text(r, lib) for r in lst or []) if x]
+
+    dc, dq, ls, ef = (get(core, k, {}) or {} for k in ("daily-checkin", "daily-quests", "lucky-spin", "event-fragments"))
+    prizes = [p for p in ls.get("prizes") or [] if isinstance(p, dict)]
+    tw = sum(float(p.get("weight", 0) or 0) for p in prizes) or 1
+    return {
+        "diemdanh": {"bat": bool(dc.get("enabled")), "phut": dc.get("min-online-minutes", 5), "ngay": rw(dc.get("daily-rewards")),
+                     "moc": [{"ngay": int(k), "qua": rw(v)} for k, v in sorted((dc.get("milestones") or {}).items(), key=lambda x: int(x[0]))]},
+        "nhiemvu": {"bat": bool(dq.get("enabled")), "moi_ngay": dq.get("per-day", 3), "xong_het": rw(dq.get("complete-all-rewards")),
+                    "ds": [{"ten": q.get("name", k), "qua": rw(q.get("rewards"))} for k, q in (dq.get("pool") or {}).items() if isinstance(q, dict)]},
+        "vongquay": {"bat": bool(ls.get("enabled")), "phut": ls.get("minutes-per-key", 60), "toi_da": ls.get("max-keys", 5),
+                     "qua": [{"ten": strip_colors(p.get("label", "")), "tile": round(float(p.get("weight", 0) or 0) * 100 / tw, 1),
+                              "hiem": bool(p.get("rare"))} for p in prizes]},
+        "manh": {"bat": bool(ef.get("enabled")), "toi_da_ngay": ef.get("daily-cap", 20),
+                 "doi": [{"ten": strip_colors(x.get("label", "")), "gia": sum(int(v) for v in (x.get("cost") or {}).values())}
+                         for x in ef.get("shop") or [] if isinstance(x, dict)]},
+    }
+
+
 # ---------------------------------------------------------------- đăng nhập bằng tài khoản game
 
 COOKIE = "dmm_phien"
@@ -480,6 +687,8 @@ ROUTES = {
     "/api/bantron": lambda: cached("bantron", 20, api_bantron),
     "/api/bxh": lambda: cached("bxh", 30, api_bxh),
     "/api/vote": lambda: cached("vote", 30, api_vote),
+    "/api/mua": lambda: cached("mua", 60, api_mua),
+    "/api/hangngay": lambda: cached("hangngay", 60, api_hangngay),
 }
 TYPES = {".html": "text/html; charset=utf-8", ".css": "text/css; charset=utf-8", ".js": "application/javascript; charset=utf-8",
          ".png": "image/png", ".jpg": "image/jpeg", ".webp": "image/webp", ".svg": "image/svg+xml", ".ico": "image/x-icon",

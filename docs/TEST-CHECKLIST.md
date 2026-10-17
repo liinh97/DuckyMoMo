@@ -1,0 +1,73 @@
+# Danh sách test trong game (gom 18/10/2026)
+
+Chủ server muốn "làm hết tính năng rồi test một thể". File này gom những gì **đã code + đã nạp server nhưng chưa thử trong game**.
+Đánh dấu `[x]` khi xong; lỗi thì ghi ngay dưới mục đó. Chi tiết kỹ thuật từng phần: `docs/HANDOFF.md`.
+
+Chuẩn bị: 2–4 tài khoản (Java + Bedrock nếu được), 1 tài khoản admin (op). Nhiều mục cần **2 nước** để thử công thành:
+bật công tắc vây thành, rút lịch phiên còn vài phút (Cài đặt › Chiến tranh › Lịch công thành), xong trả lại.
+
+---
+
+## 1. Pet chiến đấu (MyPet)
+- [ ] Bắt pet: đánh con vật còn ≤ 10% máu bằng dây xích → thông báo trượt (khói, "còn N lần thử") hoặc bắt được. Hết 3 lần thì "con vật hoảng".
+- [ ] Chờ 2 giây giữa 2 lần thử (đánh liền thì báo chờ, không tính lần thử).
+- [ ] Sói/mèo/ngựa ĐÃ thuần hoá của mình: bắt chắc chắn, không quay xác suất.
+- [ ] Bùa bắt pet: `/buabatpet give <tên> 3` → cầm tay trái khi bắt: "+25%", mất 1 bùa mỗi lần thử.
+- [ ] `/bxhpet tyle`: tỉ lệ đúng theo mùa/sự kiện (Lũ: Thủy tộc 70%). `/bxhpet`, `/bxhpet chienbinh` hiện pet.
+- [ ] `/petchooseskilltree`: chỉ thấy 5 hệ; mô tả có "Nhóm loài: …". Đổi loài khác thấy mô tả nhóm khác.
+- [ ] Lên cấp (`/mypetadmin exp <tên> 2000`) → tin "Pet đạt cấp 15…" ở mốc; `/petinfo` thấy kỹ năng mới (Hộ chủ, Dậm đất…).
+- [ ] Tên kỹ năng tiếng Việt: Hộ chủ, Dậm đất, Héo mòn, Sét đánh, Chảy máu.
+- [ ] Thú Cưỡi: loài bay (dơi, vẹt, blaze…) cấp 5 bay được (giữ phím nhảy trên không), hết quãng thì rơi không mất máu; ngựa thì KHÔNG bay.
+- [ ] Pet đánh người: sát thương giảm 50%. Pet giết người → án/treo thưởng/điểm tính cho chủ.
+- [ ] Cho pet ăn cá câu (chuột phải pet bằng cá EvenMoreFish): no, hồi máu, + kinh nghiệm; quá 300/ngày thì chỉ no + hồi máu.
+- [ ] Trao đổi: `/pettrade <người> 100` → người kia `/pettrade accept` → trừ/cộng xu, pet sang chủ mới.
+- [ ] Pet không nhận kinh nghiệm khi giết quái từ lồng quái (máy farm).
+- [ ] Thanh máu trên đầu quái (HoloMobHealth), không đè chữ boss EliteMobs.
+- [ ] Trang tài khoản web: pet hiện tên Việt, "Hệ · Nhóm loài", hạng #.
+
+## 2. Đấu Trường (/warp pvp, /dautruong)
+- [ ] NPC Đấu Trường ở spawn → tới sảnh PvP. Bước vào cổng → vào thẳng sân chờ; nút đổi 2v2, cược, thoát.
+- [ ] Trận 1v1 thật: đếm ngược, đánh, chết không rơi đồ, chuyển xem; kết quả, ELO, chia cược.
+- [ ] Thắng (còn trong 5 trận thưởng/ngày) → "+30 kinh nghiệm pet". Cùng IP → giao hữu, không thưởng.
+- [ ] Không cưỡi pet được trong thế giới đấu trường. Không phá/đặt khối.
+
+## 3. Công thành (cần 2 nước)
+- [ ] Cắm cờ: quỹ chiến tranh tăng theo số thị trấn (thông báo "quỹ chiến tranh thêm"). Nước còn nợ phí thuộc địa → không cắm được.
+- [ ] Phiên có/không pet theo lịch `/lichcongthanh`; phiên không cho pet → pet không gây sát thương cho người trong vùng vây.
+- [ ] Cấm bay bằng pet trong vùng vây (cao hơn 3 khối → bị đẩy xuống, Rơi chậm).
+- [ ] Thời tiết: đêm (giờ game) → Bóng tối trừ ai dẫn pet mắt đêm (được Nhìn đêm); mưa → đi bộ Chậm, cưỡi pet thì không;
+      nắng gắt mùa khô → Đói trừ ai dẫn pet lửa. Tin nhắc khi trời đổi.
+- [ ] Kho lương: nộp `/kholuong nop|noptat`; trong trận được nuôi no (thanh đói đầy), kho trừ 2 điểm/phút/người; kho cạn → Đói.
+- [ ] Bên phòng thủ ít dân (bên kia gấp 2): điểm giữ cờ +15% (so số điểm SiegeWar báo với số mong đợi).
+- [ ] Thắng → cướp tiền; thị trấn thua không đủ tiền → nợ trả dần 7 ngày (không phá sản).
+- [ ] Chiếm thuộc địa: quá 3 thuộc địa thì không chiếm được; thông báo hạn khởi nghĩa (72 giờ trừ 12 giờ/thuộc địa khác).
+- [ ] Phí thuộc địa trừ ngân khố nước mỗi ngày; thiếu thì ghi nợ (`/canbang`).
+- [ ] Bá chủ: nước ≥ 30% thị trấn (≥ 5) → thông báo; đánh vào được hoàn 30% quỹ, +15% điểm; chỉ hưởng đặc sản 2 vùng.
+- [ ] Điểm bảng xếp hạng: tấn công thắng +30, phòng thủ +20; Chiến Thần +3/hạ người có quân hàm, +5 chiếm cờ.
+
+## 4. Mùa, câu cá, món ăn, đặc sản
+- [ ] `/mua`: mùa, sự kiện (Lũ/Hạn hán), tốc độ lớn đã gộp sự kiện. `/mua sukien han` → thử Hạn hán; `/mua sukien tudong` trả lại.
+- [ ] Gặt cây chín đúng mùa: thỉnh thoảng rơi thêm 1.
+- [ ] Câu cá: cá theo mùa, cá biển; `/emf shop` bán; thi câu (hoặc `/emf admin competition start`) → hạng 1–3 nhận Bùa bắt pet.
+- [ ] `/nauan`: nấu đủ 5 món (thiếu nguyên liệu báo rõ); ăn → hiệu ứng; ăn món khác trong 20 phút bị chặn.
+- [ ] Trang Cài đặt › Món ăn ra trận › Các món: thêm/sửa món, chọn nguyên liệu (vật phẩm / cá), chọn hiệu ứng → Lưu → `/nauan` thấy ngay.
+- [ ] `/dacsan`: chủ vùng sau khi có thị trấn; người phe chủ vùng gặt đặc sản ở đâu cũng thỉnh thoảng rơi thêm.
+
+## 5. Quảng trường Vinh danh (sảnh)
+- [ ] Chọn chỗ trống ở sảnh (map sakura). Đứng, quay mặt về phía người xem: `/vinhdanh dat moinhat tieude`, rồi `bachu`, `chienthan`, `phuho`,
+      `kientrucsu`, `dautruong`, `pet` ở các chỗ khác. Bảng chữ nổi + đầu người chơi đúng hướng, không đè nhau.
+- [ ] `/vinhdanh xoa` bỏ đúng điểm gần nhất; `/vinhdanh tp` tới quảng trường.
+- [ ] Bang Hội Chiến `/vinhdanh tam` → sảnh tự cập nhật trong 1 phút. Web mục Vinh danh khớp.
+- [ ] Đầu người chơi: tài khoản bản quyền có da đúng; không bản quyền ra mặt mặc định (chấp nhận được?).
+
+## 6. Web
+- [ ] Trang chủ (máy tính + điện thoại): thanh trên cùng, menu, mọi mục tải dữ liệu (Pet, Đấu Trường, Công thành, Mùa, Vinh danh).
+- [ ] Trang tài khoản: đăng nhập `/web`, thẻ pet, Đấu Trường, trang trí (pet trang trí chỉ liệt kê loài), nút quản trị.
+- [ ] Trang quản trị: Role (chỉ thấy role/rank được quản), nút ⓘ, Cài đặt (các nhóm mới), Thư viện đồ.
+
+## 7. Cũ hơn, vẫn chưa thử (xem HANDOFF)
+- [ ] Liên minh Hoà Bình, Hội đồng, Hội Bàn Tròn, tổ chức/giấy phép, án giết dân hoà bình.
+- [ ] `/tpr` (chờ 3 giây, đứng yên), `/choilai`, tài khoản phụ, quân hàm cần 5 giờ chơi.
+- [ ] Điểm danh, nhiệm vụ hằng ngày, vòng quay, đổi mảnh (`/doimanh`, giá bằng cá), cửa hàng Kinh Đô, xưởng chế tạo.
+- [ ] Boss / sự kiện "Trái Đất lâm nguy" (EliteMobs), chia thưởng.
+- [ ] Client cũ (1.8–1.20) và Bedrock: vào được, AuthMe, form.

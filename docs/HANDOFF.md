@@ -347,7 +347,7 @@
 - Sảnh: tools/build-pvp-lobby.py (tâm 0,64,-150; xuất hiện 0.5,65,-130.5; 3 cổng z -172 x -14/0/14, màu xanh/cam/tím; tường+trần barrier).
   dautruong.yml: sanh, cong.<sân> (ô bước vào), ten.<sân>. Bước vào cổng → tin bấm được: vào 1v1/2v2 (hàng chờ RIÊNG sân đó, khoá
   `<cỡ>:<cược>:<sân>`), có cược (gợi ý lệnh), Xem trận. Bảng chữ nổi DecentHolograms dt_cong_san1..3 + dt_sanh (file trong data,
-  placeholder %dmmdt_<sân>_trangthai|cho|xem|ten%). Rơi khỏi sảnh → về sảnh. Warp Essentials `pvp` (data/.../warps/pvp.yml,
+  placeholder %dmmdt_<sân>_trangthai|cho|xem|ten%; 17/10 hạ xuống ngang tầm mắt trước cổng: y 70.6, z -168.5; dt_sanh y 68.4 z -146.5; chữ sáng, không dùng &8). Rơi khỏi sảnh → về sảnh. Warp Essentials `pvp` (data/.../warps/pvp.yml,
   world uid 0ec3615c-3436-4f3c-b530-1a87a3dc883a).
 - LỖI ĐÃ SỬA: Arena.shutdown() từng save() ghi đè dautruong.yml (sửa tay rồi /dmm reload thì mất). Giờ không lưu lúc tắt.
 - NPC Đấu Trường ở spawn Kinh Đô: (12704.5, 65, -2522.5) nhìn về spawn (hướng 90), dân làng WEAPONSMITH + 4 armor stand chữ, PDC

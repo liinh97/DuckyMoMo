@@ -664,14 +664,18 @@ def huongdan_save(data):
     return f"Đã lưu {len(clean)} chương, {n_pages} trang và chép sang {len(done)} chỗ. Người chơi mở /huongdan là thấy ngay."
 
 
-def lp_uuid(name):
-    """UUID LuckPerms của người chơi theo tên (không phân biệt hoa thường); None nếu chưa từng vào."""
+def lp_player(name):
+    """(UUID, tên đúng) trong LuckPerms theo tên, không phân biệt hoa thường; quên dấu chấm của Bedrock thì thử thêm "."
+    None nếu chưa từng vào server."""
     con = lp_db()
     try:
         cur = con.cursor()
-        cur.execute("SELECT uuid FROM luckperms_players WHERE LOWER(username) = LOWER(%s) LIMIT 1", (name,))
-        row = cur.fetchone()
-        return row[0] if row else None
+        for n in [name] + ([] if name.startswith(".") else ["." + name]):
+            cur.execute("SELECT uuid, username FROM luckperms_players WHERE LOWER(username) = LOWER(%s) LIMIT 1", (n,))
+            row = cur.fetchone()
+            if row:
+                return row[0], row[1]
+        return None
     finally:
         con.close()
 
@@ -875,6 +879,10 @@ def role_action(data):
         raise ValueError("Tên người chơi không hợp lệ")
     if group not in STAFF_GROUPS + DONATE_GROUPS or group == "default":
         raise ValueError("Role không hợp lệ")
+    found = lp_player(player)
+    if not found:
+        raise ValueError(f"Không thấy {player}: người chơi phải vào server ít nhất một lần (Bedrock có dấu chấm đầu, vd .griim7833).")
+    uid, player = found
     if group in DONATE_GROUPS and act == "add":
         months = int(data.get("months") or 1)
         if not 1 <= months <= 24:
@@ -884,16 +892,18 @@ def role_action(data):
         cmds = [f"rank remove {player}"]
     elif act in ("add", "remove"):
         # LuckPerms từ chối tên có dấu chấm (người chơi Bedrock: .ten) trong "lp user <tên>" -> gửi theo UUID trong DB
-        uid = lp_uuid(player)
-        if not uid:
-            raise ValueError(f"Không thấy {player} trong LuckPerms: người chơi phải vào server ít nhất một lần (Bedrock có dấu chấm đầu, vd .griim7833).")
         cmds = [f"lp user {uid} parent {act} {group}"]
     else:
         raise ValueError("Thao tác không hợp lệ")
     rcon("lobby", cmds)
     time.sleep(2)  # lệnh chạy bất đồng bộ (tải người chơi, ghi DB)
     threading.Thread(target=tell_role_change, args=(player, group, act, data.get("months")), daemon=True).start()
-    return {"ok": True, "message": f"Đã gửi: /{cmds[0]}. Người chơi phải từng vào server.", "data": roles_json()}
+    shown = {"admin": "Admin", "quanly": "Manager", "mod": "Mod", "helper": "Helper", "builder": "Builder"}.get(group, group)
+    if group in DONATE_GROUPS:
+        msg = f"Đã cấp {shown} cho {player} ({data.get('months') or 1} tháng)." if act == "add" else f"Đã gỡ rank của {player}."
+    else:
+        msg = f"Đã thêm {player} vào {shown}." if act == "add" else f"Đã gỡ {player} khỏi {shown}."
+    return {"ok": True, "message": msg + " Người chơi nhận tin trong game nếu đang online.", "data": roles_json()}
 
 
 # Quyền kiểu "trạng thái": bỏ quyền chỉ chặn GÕ lệnh, trạng thái đang bật vẫn còn (vẫn bay…) nên phải tắt bằng lệnh.

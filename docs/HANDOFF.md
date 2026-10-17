@@ -301,6 +301,10 @@
   sảnh/practice (kể cả chỉ gọi static) thì KHÔNG được chứa PlaceholderExpansion; để expansion trong lớp riêng. (Arena/Frontier/LuckySpin vẫn
   chứa nhưng chỉ nạp ở banghoi.) Sau khi build nên khởi động lại cả lobby và xem log "Enabling DuckyMoMoCore" không kèm lỗi.
 
+- LỖI ĐÃ SỬA 18/10 ~03:00: JS trang chủ hỏng từ commit d6ba60e (~01:20, dòng báo sự kiện mùa chen giữa if/else trong loadMua) → cả
+  trang không tải dữ liệu. Sau khi sửa site/public/*.html hoặc panel/*.html: tách <script> ra và chạy `node --check`, rồi mở trang bằng
+  Playwright xem pageerror. Web bảng bắt pet giờ cộng cả capture-bonus của sự kiện mùa (khớp PetCapture).
+
 ### 18/10: cân bằng chiến tranh (/canbang) + trả dần tiền cướp
 - SiegeWar plunder_paid_over_time: true, 7 ngày (data/banghoi-1/plugins/SiegeWar/config.yml, đã swa reload); ô siege_plunder_* trên Cài đặt.
 - WarBalance.java (war-balance), SiegeWar qua phản chiếu (registerEvent theo tên lớp): PreSiegeWarStartEvent (chặn khi nước còn nợ phí thuộc

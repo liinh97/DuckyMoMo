@@ -1236,8 +1236,8 @@ async function loadMua(){
   try {
     const m = await j("api/mua"); MUA = m;
     if (m.bat) seaCard(m);
-    $("#seaEvent").innerHTML = m.su_kien ? `<div class="card hl" style="margin-bottom:14px"><b>⚡ Sự kiện mùa: ${esc(m.su_kien.ten)}</b> <span class="muted">— ${esc(m.su_kien.mo_ta)}</span></div>` : "";
     else { $("#seaGrid").innerHTML = `<div class="card muted">Mùa mưa / mùa khô đang tắt.</div>`; if (fishFilter === "now") fishFilter = "all"; }
+    $("#seaEvent").innerHTML = m.su_kien ? `<div class="card hl" style="margin-bottom:14px"><b>⚡ Sự kiện mùa: ${esc(m.su_kien.ten)}</b> <span class="muted">— ${esc(m.su_kien.mo_ta)}</span></div>` : "";
     fishList(); contestCard(m.thicau || []);
   } catch (e) { $("#fishList").innerHTML = `<div class="empty">Không tải được thông tin mùa.</div>`; }
 }

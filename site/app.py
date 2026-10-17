@@ -270,10 +270,18 @@ def pet_capture(core):
     names = {g["ma"]: g["ten"] for g in pet_trees()[1]}
     gc = get(core, "pet-capture.group-chance", {}) or {}
     now = season_id(core)
-    bonus = (get(core, "pet-capture.season-bonus", {}) or {}).get(now or "", {}) or {}
+    bonus = dict((get(core, "pet-capture.season-bonus", {}) or {}).get(now or "", {}) or {})
+    cfg = core.get("seasons") or {}
+    st = season_now(cfg) if cfg.get("enabled") else None
+    ev = season_event(cfg, st)
+    if ev:   # sự kiện mùa (Lũ…) cộng thêm như PetCapture.bonusNow
+        for g, v in ((cfg.get("events") or {}).get(ev["id"], {}).get("capture-bonus") or {}).items():
+            bonus[g] = int(bonus.get(g, 0)) + int(v)
     groups = sorted(({"ten": names.get(k, k), "tyle": int(v), "mua_nay": int(bonus.get(k, 0))} for k, v in gc.items()),
                     key=lambda g: -(g["tyle"] + g["mua_nay"]))
     sname = strip_colors(get(core, f"seasons.list.{now}.name", "") or "") if now else ""
+    if ev:
+        sname += " · " + ev["ten"]
     return {"enabled": True, "default": get(core, "pet-capture.chance-percent", 30), "attempts": get(core, "pet-capture.attempts-per-mob", 3),
             "cooldown": get(core, "pet-capture.cooldown-seconds", 2), "groups": groups, "season": sname.strip()}
 

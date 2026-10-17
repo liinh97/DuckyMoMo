@@ -124,6 +124,9 @@ final class Arena implements Listener {
     private final Map<UUID, Saved> saved = new HashMap<>();
     private final Map<UUID, Invite> invites = new HashMap<>();
     private final Set<UUID> watching = new HashSet<>();
+    /** người đang xem -> sân. */
+    private final Map<UUID, String> watchSan = new HashMap<>();
+    private final Map<UUID, Long> gateCooldown = new HashMap<>();
 
     Arena(DuckyMoMoCore plugin, ConfigurationSection c) {
         this.plugin = plugin;
@@ -142,7 +145,8 @@ final class Arena implements Listener {
     }
 
     String describe() {
-        return "thế giới " + WORLD + ", " + sanIds().size() + " sân, " + fightSeconds + " giây/trận, phí cược " + fmt(feePercent) + "%";
+        World w = Bukkit.getWorld(WORLD);
+        return "thế giới " + WORLD + (w == null ? "" : " (uid " + w.getUID() + ")") + ", " + sanIds().size() + " sân, " + fightSeconds + " giây/trận, phí cược " + fmt(feePercent) + "%";
     }
 
     // ------------------------------------------------------------------ thế giới, sân
@@ -220,6 +224,14 @@ final class Arena implements Listener {
                 p.sendMessage(c("&7Đã từ chối lời thách đấu."));
             }
             case "xem", "spectate" -> spectate(p, args);
+            case "xemsan" -> {
+                Match m = args.length >= 2 ? sanBusy.get(args[1].toLowerCase(Locale.ROOT)) : null;
+                if (m == null) {
+                    p.sendMessage(c("&7Sân này đang trống, chưa có trận để xem."));
+                } else {
+                    spectate(p, new String[] {"xem", Bukkit.getOfflinePlayer(m.a.get(0)).getName()});
+                }
+            }
             case "top" -> top(p);
             case "toi", "me" -> me(p);
             default -> help(p);
@@ -229,7 +241,7 @@ final class Arena implements Listener {
 
     private void help(Player p) {
         p.sendMessage(c("&6&l⚔ ĐẤU TRƯỜNG &7(người + pet, đồ của mình, chết không rơi đồ)"));
-        p.sendMessage(c("&e/dautruong vao <1v1|2v2> [cược] &7vào hàng chờ (ghép người cùng mức cược)"));
+        p.sendMessage(c("&e/dautruong vao <1v1|2v2> [cược] [sân] &7vào hàng chờ (ghép người cùng mức cược); &e/warp pvp &7tới sảnh có 3 cổng"));
         p.sendMessage(c("&e/dautruong thachdau <người> [cược] &7thách đấu 1v1; người kia &e/dautruong dongy"));
         p.sendMessage(c("&e/dautruong roi &7rời hàng chờ / thôi xem"));
         p.sendMessage(c("&e/dautruong xem [người] &7xem trận đang đấu"));
@@ -289,11 +301,21 @@ final class Arena implements Listener {
         if (stake < 0) {
             return;
         }
+        String san = args.length >= 4 ? args[3].toLowerCase(Locale.ROOT) : "*";
+        if (!san.equals("*") && !sanIds().contains(san)) {
+            p.sendMessage(c("&cKhông có sân " + san + "."));
+            return;
+        }
+        if (!san.equals("*") && !sanReady(san, size)) {
+            p.sendMessage(c("&cSân " + sanName(san) + " &ckhông có kiểu " + mode + "."));
+            return;
+        }
         leaveQueue(p.getUniqueId());
-        String key = size + ":" + (long) stake;
+        String key = size + ":" + (long) stake + ":" + san;
         queues.computeIfAbsent(key, k -> new ArrayList<>()).add(p.getUniqueId());
         queuedIn.put(p.getUniqueId(), key);
-        p.sendMessage(c("&aĐã vào hàng chờ &f" + mode + (stake > 0 ? " &acược &f" + money(stake) : "") + "&a. Rời: &e/dautruong roi"));
+        p.sendMessage(c("&aĐã vào hàng chờ &f" + mode + (san.equals("*") ? "" : " &asân &f" + sanName(san)) + (stake > 0 ? " &acược &f" + money(stake) : "")
+                + "&a. Rời: &e/dautruong roi"));
         tryMatch(key);
     }
 
@@ -306,6 +328,7 @@ final class Arena implements Listener {
 
     private void leave(Player p) {
         UUID u = p.getUniqueId();
+        watchSan.remove(u);
         if (watching.remove(u)) {
             restore(p);
             p.sendMessage(c("&7Đã thôi xem trận."));
@@ -329,10 +352,12 @@ final class Arena implements Listener {
             return;
         }
         q.removeIf(u -> Bukkit.getPlayer(u) == null);
-        int size = Integer.parseInt(key.split(":")[0]);
-        double stake = Double.parseDouble(key.split(":")[1]);
+        String[] kp = key.split(":");
+        int size = Integer.parseInt(kp[0]);
+        double stake = Double.parseDouble(kp[1]);
+        String want = kp.length > 2 ? kp[2] : "*";
         while (q.size() >= size * 2) {
-            String san = freeSan(size);
+            String san = want.equals("*") ? freeSan(size) : (!sanBusy.containsKey(want) && sanReady(want, size) ? want : null);
             if (san == null) {
                 for (UUID u : q) {
                     Player p = Bukkit.getPlayer(u);
@@ -701,6 +726,7 @@ final class Arena implements Listener {
         saved.put(p.getUniqueId(), new Saved(p.getLocation().clone(), p.getGameMode()));
         persistRestore(p);
         watching.add(p.getUniqueId());
+        watchSan.put(p.getUniqueId(), m.sanId);
         p.teleport(at);
         p.setGameMode(GameMode.SPECTATOR);
         p.sendMessage(c("&7Đang xem trận. Thôi xem: &e/dautruong roi"));
@@ -813,7 +839,35 @@ final class Arena implements Listener {
                 }
                 s.sendMessage("Đã huỷ mọi trận.");
             }
-            default -> s.sendMessage("/dautruong admin den | dat <sân> <a1|a2|b1|b2|xem> | xoa <sân> | ds | huy");
+            case "sanh" -> {
+                if (s instanceof Player p && p.getWorld().getName().equals(WORLD)) {
+                    data.set("sanh", locStr(p.getLocation()));
+                    save();
+                    s.sendMessage("Đã đặt sảnh PvP tại chỗ đứng.");
+                } else {
+                    s.sendMessage("Đứng trong thế giới " + WORLD + " rồi gõ lại.");
+                }
+            }
+            case "cong" -> {
+                // /dautruong admin cong <sân> x1 y1 z1 x2 y2 z2 : ô bước vào là cổng của sân (gõ được ở console)
+                if (args.length < 9) {
+                    s.sendMessage("/dautruong admin cong <sân> x1 y1 z1 x2 y2 z2");
+                    return true;
+                }
+                data.set("cong." + args[2], String.join(",", java.util.Arrays.copyOfRange(args, 3, 9)));
+                save();
+                s.sendMessage("Đã đặt cổng của sân " + args[2] + ".");
+            }
+            case "ten" -> {
+                if (args.length < 4) {
+                    s.sendMessage("/dautruong admin ten <sân> <tên hiển thị, có mã màu &>");
+                    return true;
+                }
+                data.set("ten." + args[2], String.join(" ", java.util.Arrays.copyOfRange(args, 3, args.length)));
+                save();
+                s.sendMessage("Đã đặt tên sân " + args[2] + ".");
+            }
+            default -> s.sendMessage("/dautruong admin den | sanh | dat <sân> <a1|a2|b1|b2|xem> | cong <sân> x1 y1 z1 x2 y2 z2 | ten <sân> <tên> | xoa <sân> | ds | huy");
         }
         return true;
     }
@@ -890,6 +944,11 @@ final class Arena implements Listener {
         Match m = inMatch.get(p.getUniqueId());
         if (m == null || m.state != State.FIGHT || m.out.contains(p.getUniqueId())) {
             event.setCancelled(true);
+            if (event.getCause() == EntityDamageEvent.DamageCause.VOID && m == null && !watching.contains(p.getUniqueId())) {
+                Location l = lobby();
+                p.setFallDistance(0);
+                p.teleport(l != null ? l : p.getWorld().getSpawnLocation());
+            }
         }
     }
 
@@ -939,6 +998,7 @@ final class Arena implements Listener {
         UUID u = p.getUniqueId();
         leaveQueue(u);
         invites.remove(u);
+        watchSan.remove(u);
         if (watching.remove(u)) {
             restore(p);
             return;
@@ -1014,7 +1074,187 @@ final class Arena implements Listener {
         sanBusy.clear();
         inMatch.clear();
         watching.clear();
-        save();
+        // KHÔNG save() ở đây: mọi thay đổi đã lưu ngay khi đổi; lưu lúc tắt sẽ ghi đè file admin vừa sửa tay rồi /dmm reload
+    }
+
+    // ------------------------------------------------------------------ sảnh PvP + cổng
+
+    private Location lobby() {
+        String v = data.getString("sanh");
+        if (v == null) {
+            return null;
+        }
+        String[] p = v.split(",");
+        World w = Bukkit.getWorld(p[0]);
+        return w == null ? null : new Location(w, Double.parseDouble(p[1]), Double.parseDouble(p[2]), Double.parseDouble(p[3]),
+                Float.parseFloat(p[4]), Float.parseFloat(p[5]));
+    }
+
+    private static String locStr(Location l) {
+        return l.getWorld().getName() + "," + l.getX() + "," + l.getY() + "," + l.getZ() + "," + l.getYaw() + "," + l.getPitch();
+    }
+
+    String sanName(String san) {
+        return data.getString("ten." + san, "&f" + san);
+    }
+
+    private String gateAt(Location l) {
+        ConfigurationSection g = data.getConfigurationSection("cong");
+        if (g == null) {
+            return null;
+        }
+        for (String san : g.getKeys(false)) {
+            String[] v = g.getString(san, "").split(",");
+            if (v.length < 6) {
+                continue;
+            }
+            int[] b = new int[6];
+            for (int i = 0; i < 6; i++) {
+                b[i] = Integer.parseInt(v[i].trim());
+            }
+            int x = l.getBlockX(), y = l.getBlockY(), z = l.getBlockZ();
+            if (x >= Math.min(b[0], b[3]) && x <= Math.max(b[0], b[3]) && y >= Math.min(b[1], b[4]) && y <= Math.max(b[1], b[4])
+                    && z >= Math.min(b[2], b[5]) && z <= Math.max(b[2], b[5])) {
+                return san;
+            }
+        }
+        return null;
+    }
+
+    @EventHandler
+    public void onGate(PlayerMoveEvent event) {
+        if (!event.hasChangedBlock() || !event.getTo().getWorld().getName().equals(WORLD)) {
+            return;
+        }
+        Player p = event.getPlayer();
+        UUID u = p.getUniqueId();
+        if (inMatch.containsKey(u) || watching.contains(u)) {
+            return;
+        }
+        String san = gateAt(event.getTo());
+        if (san == null) {
+            return;
+        }
+        long now = System.currentTimeMillis();
+        if (now - gateCooldown.getOrDefault(u, 0L) < 3000L) {
+            return;
+        }
+        gateCooldown.put(u, now);
+        // đẩy nhẹ người chơi ra khỏi cổng (về phía sảnh) để không bật menu liên tục
+        Location home = lobby();
+        if (home != null) {
+            org.bukkit.util.Vector v = home.toVector().subtract(p.getLocation().toVector()).setY(0);
+            if (v.lengthSquared() > 0.01) {
+                p.setVelocity(v.normalize().multiply(0.6).setY(0.25));
+            }
+        }
+        gateMenu(p, san);
+    }
+
+    private void gateMenu(Player p, String san) {
+        p.sendMessage(c("&6&l⚔ " + sanName(san) + " &7— " + status(san)));
+        net.kyori.adventure.text.TextComponent.Builder row = Component.text();
+        for (int size : new int[] {1, 2}) {
+            if (!sanReady(san, size)) {
+                continue;
+            }
+            String mode = size + "v" + size;
+            row.append(button("&a[Vào " + mode + "]", "/dautruong vao " + mode + " 0 " + san, false, "Vào hàng chờ " + mode + " của sân này, không cược"));
+            row.append(Component.text(" "));
+            row.append(button("&e[" + mode + " có cược]", "/dautruong vao " + mode + " 100 " + san, true, "Gõ số xu cược thay cho 100 rồi Enter"));
+            row.append(Component.text("  "));
+        }
+        if (sanBusy.containsKey(san)) {
+            row.append(button("&b[👁 Xem trận]", "/dautruong xemsan " + san, false, "Vào xem trận đang đấu"));
+        }
+        p.sendMessage(row.build());
+        p.sendMessage(c("&7Bấm vào chữ trong chat (Bedrock: gõ &f/dautruong vao 1v1 0 " + san + "&7). Rời hàng chờ: &f/dautruong roi"));
+    }
+
+    private Component button(String label, String cmd, boolean suggest, String hover) {
+        return c(label).clickEvent(suggest ? net.kyori.adventure.text.event.ClickEvent.suggestCommand(cmd)
+                : net.kyori.adventure.text.event.ClickEvent.runCommand(cmd)).hoverEvent(net.kyori.adventure.text.event.HoverEvent.showText(c("&7" + hover)));
+    }
+
+    /** Trạng thái sân cho bảng chữ nổi / menu cổng (mã màu &). */
+    String status(String san) {
+        Match m = sanBusy.get(san);
+        if (m == null) {
+            return "&aTrống &7— bước vào cổng để đấu";
+        }
+        String vs = "&f" + names(m.a) + " &7vs &f" + names(m.b);
+        if (m.state == State.COUNTDOWN) {
+            return "&eChuẩn bị: " + vs;
+        }
+        if (m.state == State.END) {
+            return "&7Vừa xong: " + vs;
+        }
+        long rem = Math.max(0, (m.fightEnd - System.currentTimeMillis()) / 1000L);
+        return "&cĐang đấu " + m.size + "v" + m.size + ": " + vs + " &7· còn &f" + rem + "s";
+    }
+
+    private int queued(String san) {
+        int n = 0;
+        for (Map.Entry<String, List<UUID>> e : queues.entrySet()) {
+            String[] kp = e.getKey().split(":");
+            if (kp.length > 2 && kp[2].equals(san)) {
+                n += e.getValue().size();
+            }
+        }
+        return n;
+    }
+
+    private int watchers(String san) {
+        int n = 0;
+        for (String v : watchSan.values()) {
+            if (v.equals(san)) {
+                n++;
+            }
+        }
+        return n;
+    }
+
+    /** PlaceholderAPI %dmmdt_<sân>_trangthai|cho|xem|ten% cho bảng chữ nổi trên cổng (gọi chỉ khi có PlaceholderAPI). */
+    me.clip.placeholderapi.expansion.PlaceholderExpansion placeholders() {
+        return new me.clip.placeholderapi.expansion.PlaceholderExpansion() {
+            @Override
+            public String getIdentifier() {
+                return "dmmdt";
+            }
+
+            @Override
+            public String getAuthor() {
+                return "DuckyMoMo";
+            }
+
+            @Override
+            public String getVersion() {
+                return "1";
+            }
+
+            @Override
+            public boolean persist() {
+                return true;
+            }
+
+            @Override
+            public String onRequest(org.bukkit.OfflinePlayer player, String params) {
+                int i = params.lastIndexOf('_');
+                if (i <= 0) {
+                    return null;
+                }
+                String san = params.substring(0, i);
+                String what = params.substring(i + 1);
+                String out = switch (what) {
+                    case "trangthai" -> status(san);
+                    case "cho" -> "&7Hàng chờ: &f" + queued(san) + " &7người";
+                    case "xem" -> "&7Đang xem: &f" + watchers(san) + " &7người";
+                    case "ten" -> sanName(san);
+                    default -> null;
+                };
+                return out == null ? null : LegacyComponentSerializer.legacySection().serialize(c(out));
+            }
+        };
     }
 
     // ------------------------------------------------------------------ tiện ích

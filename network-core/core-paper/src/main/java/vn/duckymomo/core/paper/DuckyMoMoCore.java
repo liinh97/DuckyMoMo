@@ -31,6 +31,7 @@ public final class DuckyMoMoCore extends JavaPlugin {
     private me.clip.placeholderapi.expansion.PlaceholderExpansion seasonPapi;
     private me.clip.placeholderapi.expansion.PlaceholderExpansion statsPapi;
     private me.clip.placeholderapi.expansion.PlaceholderExpansion frontierPapi;
+    private me.clip.placeholderapi.expansion.PlaceholderExpansion arenaPapi;
     private Frontier frontier;
 
     @Override
@@ -52,6 +53,10 @@ public final class DuckyMoMoCore extends JavaPlugin {
     }
 
     private void teardown() {
+        if (arenaPapi != null) {
+            arenaPapi.unregister();
+            arenaPapi = null;
+        }
         if (arena != null) {
             arena.shutdown();
             arena = null;
@@ -409,6 +414,10 @@ public final class DuckyMoMoCore extends JavaPlugin {
         if (arena != null) {
             getServer().getPluginManager().registerEvents(arena, this);
             getLogger().info("Đấu Trường: " + arena.describe());
+            if (getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+                arenaPapi = arena.placeholders();
+                arenaPapi.register();
+            }
         }
         Arena ar = arena;
         bind("dautruong", ar == null ? null : ar::command, "Đấu Trường");

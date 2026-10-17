@@ -336,6 +336,22 @@
 - CHƯA có sân: chờ người dùng tải map (.schem, BuiltByBit) → plugins/WorldEdit/schematics/ → /dautruong admin den, //schem load, //paste,
   /dautruong admin dat <sân> a1|a2|b1|b2|xem. CHƯA thử trận thật (cần 2-4 người).
 
+### 17/10: sân đấu + sảnh PvP (/warp pvp)
+- 3 map MineSchematic (người dùng tải .schem, KHÔNG tải tự động: điều khoản trang cấm scrape; giấy phép không ghi rõ → ghi tên tác giả trên
+  bảng chữ nổi). File ở data/banghoi-1/plugins/WorldEdit/schematics/ (không commit). Đặt bằng tools/place-schem.py (thêm Y_MIN/Y_MAX)
+  với tiền tố `execute in minecraft:dautruong run`:
+  san1 Abandoned Altar (mercuryceres) gốc (0,64,0) + nền cỏ y63 + tường/trần barrier x -8..76 z -8..68;
+  san2 Battle Arena (RougeRex) gốc (300,64,0) (có sẵn tường barrier);
+  san3 PVP 2 Obsidian Coven (Miguel302) gốc (600,13,0) chỉ lớp 51..128 của file (file gồm cả đất/hang bên dưới; lớp 128 là trần barrier).
+  Điểm a1/a2/b1/b2/xem tính tự động (ô đứng được, hai đội nhìn nhau) — ghi ở dautruong.yml mục san.
+- Sảnh: tools/build-pvp-lobby.py (tâm 0,64,-150; xuất hiện 0.5,65,-130.5; 3 cổng z -172 x -14/0/14, màu xanh/cam/tím; tường+trần barrier).
+  dautruong.yml: sanh, cong.<sân> (ô bước vào), ten.<sân>. Bước vào cổng → tin bấm được: vào 1v1/2v2 (hàng chờ RIÊNG sân đó, khoá
+  `<cỡ>:<cược>:<sân>`), có cược (gợi ý lệnh), Xem trận. Bảng chữ nổi DecentHolograms dt_cong_san1..3 + dt_sanh (file trong data,
+  placeholder %dmmdt_<sân>_trangthai|cho|xem|ten%). Rơi khỏi sảnh → về sảnh. Warp Essentials `pvp` (data/.../warps/pvp.yml,
+  world uid 0ec3615c-3436-4f3c-b530-1a87a3dc883a).
+- LỖI ĐÃ SỬA: Arena.shutdown() từng save() ghi đè dautruong.yml (sửa tay rồi /dmm reload thì mất). Giờ không lưu lúc tắt.
+- CHƯA thử trong game: đi qua cổng, bảng chữ, trận thật, góc nhìn điểm xem.
+
 ### DANH SÁCH CẦN THỬ (người dùng chốt 15/10: làm xong hết rồi thử một lượt; mục 16–25)
 Triển khai một lần: `git stash && git pull && git stash pop` → `./ops/build-core.sh` (lỗi biên dịch thì gửi ảnh, Java viết ở cloud CHƯA biên
 dịch) → kiểm tra không ai online → `docker compose up -d --no-deps lobby banghoi-1 practice-1` → `docker compose up -d --build panel site`.

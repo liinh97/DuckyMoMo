@@ -508,6 +508,7 @@ plugins:
     kind: Bang Hội Chiến
     purpose: "Người + pet MyPet đấu 1v1 / 2v2 trong thế giới riêng 'dautruong' (Towny tắt). Đồ của mình, chết không rơi đồ. Hàng chờ ghép theo mức cược, thách đấu 1v1, xem trận, ELO + top. Cùng IP = giao hữu (không cược, không điểm)."
     player:
+      - ["/warp pvp", "Tới sảnh PvP: 3 cổng (Bàn Thờ Cổ, Đấu Trường Cát, Tàn Tích Hắc Thạch); bước vào cổng để chọn 1v1/2v2, cược hoặc xem trận"]
       - ["/dautruong", "Hướng dẫn Đấu Trường"]
       - ["/dautruong vao <1v1|2v2> [cược]", "Vào hàng chờ"]
       - ["/dautruong thachdau <người> [cược] · /dautruong dongy · tuchoi", "Thách đấu 1v1 / nhận / từ chối"]
@@ -518,8 +519,9 @@ plugins:
       - ["/dautruong admin den", "Tới thế giới đấu trường (có sàn kính tạm ở 0 100 0)"]
       - ["/dautruong admin dat <sân> <a1|a2|b1|b2|xem>", "Đặt điểm xuất phát (đứng tại chỗ, nhìn về phía đối thủ); 1v1 cần a1+b1, 2v2 cần thêm a2+b2"]
       - ["/dautruong admin ds · xoa <sân> · huy", "Danh sách sân / xoá sân / huỷ mọi trận (trả cược)"]
+      - ["/dautruong admin sanh · cong <sân> x1 y1 z1 x2 y2 z2 · ten <sân> <tên>", "Đặt sảnh / ô cổng của sân / tên sân hiện trên bảng chữ nổi"]
     settings: "Trang Cài đặt > Bang Hội Chiến > PvP & combat > Đấu Trường. Dữ liệu: plugins/DuckyMoMoCore/dautruong.yml"
-    notes: "Map: tải .schem (vd BuiltByBit), đặt vào plugins/WorldEdit/schematics/ rồi //schem load + //paste trong thế giới dautruong. Mọi sát thương trong thế giới này do module quyết định (ghi đè PvPManager/WorldGuard). Đang trận chỉ dùng được /dautruong, /petinfo, /msg."
+    notes: "Sảnh PvP (0,65,-130) có 3 cổng phía bắc; bảng chữ nổi dt_cong_san1..3 dùng %dmmdt_<sân>_trangthai|cho|xem|ten%. Sân: san1 Abandoned Altar (mercuryceres) quanh x 0..68, san2 Battle Arena (RougeRex) quanh x 300, san3 PVP 2 Obsidian Coven (Miguel302) quanh x 600 — map tải từ MineSchematic, đặt bằng tools/place-schem.py. Dựng lại sảnh: tools/build-pvp-lobby.py. Mọi sát thương trong thế giới này do module quyết định. Đang trận chỉ dùng được /dautruong, /petinfo, /msg."
   - name: SimplePets
     jar: SimplePets
     kind: Rank donate

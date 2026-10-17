@@ -6,6 +6,7 @@ Cách dùng (từ thư mục gốc repo):
   docker exec -i duckymomo-banghoi-1-1 rcon-cli < /tmp/place.cmds
   - x1 z1 x2 z2: vùng cắt trong file (toạ độ trong schematic, tính cả hai đầu).
   - ox oy oz: block (0,0,0) của file nằm ở đâu trong world (world = o + toạ độ trong file).
+  - Y_MIN=.. Y_MAX=.. (biến môi trường, tuỳ chọn): chỉ đặt các lớp này của file (vd bỏ phần đất/hang bên dưới sân).
   - trần_không_khí (mặc định 100): ô không khí của file chỉ được đặt (để dọn đất/cây cũ) khi world y <= trần này;
     phía trên đó world vốn đã trống, bỏ qua cho đỡ lệnh.
 Quy tắc: mỗi cột chỉ đặt từ block thấp nhất của file trở lên, nên phần đất phía dưới đáy công trình giữ nguyên
@@ -55,6 +56,13 @@ def main():
     x1, z1, x2, z2, ox, oy, oz = map(int, sys.argv[2:9])
     air_max = int(sys.argv[9]) if len(sys.argv) > 9 else 100
     arr, states = load(path)
+    # Cắt theo chiều cao (tuỳ chọn): biến môi trường Y_MIN / Y_MAX = lớp trong file (tính cả hai đầu); oy vẫn ứng với lớp 0 của file
+    ymin, ymax = int(os.environ.get("Y_MIN", 0)), int(os.environ.get("Y_MAX", arr.shape[0] - 1))
+    if ymin > 0 or ymax < arr.shape[0] - 1:
+        arr = arr.copy()
+        is_air0 = [i for i, st in enumerate(states) if st in AIR][0]
+        arr[:ymin] = is_air0
+        arr[ymax + 1:] = is_air0
     H = arr.shape[0]
     crop = arr[:, z1:z2 + 1, x1:x2 + 1]
     is_air = np.array([s in AIR for s in states])

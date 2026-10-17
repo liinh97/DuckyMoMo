@@ -291,6 +291,16 @@
 - Pet theo rank (LuckPerms): Dân, Nam Tước, Tử Tước không có; Bá Tước 13 loài; Hầu Tước +14; Công Tước pet.type.passive (mọi pet hiền).
   Pet SimplePets chỉ là bản trang trí gọi ra, không bắt/thuần hoá.
 
+### 17/10: MyPet — pet chiến đấu bắt trong game (Bang Hội Chiến)
+- MyPet Legacy 3.14.3 (LGPL, Modrinth `mypet:mkMAIOff` trong MODRINTH_PROJECTS banghoi). Bản 3 "hết cập nhật" (tác giả chuyển sang
+  MyPet 4 trả phí) nhưng có bản 26.2. Hook: Towny, PvPManager, Vault, PlaceholderAPI.
+- Bắt: đánh tới yếu máu (LowHp) rồi chuột phải bằng dây xích. Quyền cho nhóm default server=banghoi-1: `tools/mypet.cmds` (79 lệnh, đã chạy):
+  MyPet.leash.<loài> trừ Warden, Wither, EnderDragon, ElderGuardian, Ravager, IronGolem, Ghast, Giant, Illusioner + vài MyPet.command.*.
+- data/banghoi-1/plugins/MyPet/config.yml (không có trong repo): DisablePetVersusPlayer: true (CHỜ người dùng quyết pet có đánh người chơi
+  trong chiến tranh không), OverwriteLanguages: vi, OP-Notification: false. KHÔNG có lệnh reload: đổi config phải khởi động lại banghoi-1.
+- Cẩm nang (camnang, lenh-con, lenh-vi), sách /huongdan chương banghoi thêm 2 trang. CHƯA thử bắt pet trong game.
+- KHÔNG bán MyPet qua rank donate (pet chiến đấu = lợi thế chơi).
+
 ### DANH SÁCH CẦN THỬ (người dùng chốt 15/10: làm xong hết rồi thử một lượt; mục 16–25)
 Triển khai một lần: `git stash && git pull && git stash pop` → `./ops/build-core.sh` (lỗi biên dịch thì gửi ảnh, Java viết ở cloud CHƯA biên
 dịch) → kiểm tra không ai online → `docker compose up -d --no-deps lobby banghoi-1 practice-1` → `docker compose up -d --build panel site`.

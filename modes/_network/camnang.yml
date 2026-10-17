@@ -465,6 +465,30 @@ plugins:
       - ["/pp", "Mở menu hiệu ứng"]
       - ["/pp reset", "Tắt hết hiệu ứng"]
     settings: "Trang Cài đặt: Toàn mạng > Rank donate (cần khởi động lại server)"
+  - name: MyPet (pet chiến đấu)
+    jar: MyPet
+    kind: Bang Hội Chiến
+    purpose: "Bắt quái/thú làm pet thật: đánh quái còn ít máu rồi quăng dây xích (lead) vào. Pet theo chủ, đánh quái, lên cấp (tối đa 100) mở kỹ năng: túi đồ, nhặt đồ, cưỡi, hồi máu, đổi hành vi. Ai cũng bắt được (không bán qua rank). Khác SimplePets (pet trang trí của rank donate)."
+    player:
+      - ["Dây xích (lead)", "Đánh con vật/quái tới khi yếu máu rồi bấm chuột phải bằng dây xích để bắt"]
+      - ["/petinfo", "Thông tin pet: cấp, máu, kỹ năng"]
+      - ["/petcall · /petsendaway", "Gọi pet ra / cất pet đi"]
+      - ["/petname <tên>", "Đặt tên pet"]
+      - ["/petchooseskilltree", "Chọn hướng phát triển (cây kỹ năng) cho pet"]
+      - ["/petskill", "Xem kỹ năng đang có"]
+      - ["/petinventory", "Mở túi đồ của pet (khi có kỹ năng Túi đồ)"]
+      - ["/petpickup", "Bật/tắt pet tự nhặt đồ"]
+      - ["/petbehavior", "Đổi hành vi: thân thiện, hung hăng, làm nông, đột kích…"]
+      - ["/petrespawn", "Hồi sinh pet ngay (tốn tiền) thay vì chờ"]
+      - ["/petswitch · /petstore · /petlist", "Đổi pet đang dùng / cất pet vào kho / danh sách pet"]
+      - ["/petrelease <tên>", "Thả pet (mất vĩnh viễn)"]
+      - ["/petcapturehelper", "Hiện cách bắt con đang nhìn (cần làm gì)"]
+    admin:
+      - ["/mypetadmin info <người>", "Xem pet của người chơi"]
+      - ["/mypetadmin exp <người> <số>", "Cộng kinh nghiệm cho pet"]
+      - ["/mypetadmin remove <người>", "Xoá pet đang dùng của người chơi"]
+    settings: "data/banghoi-1/plugins/MyPet/config.yml (KHÔNG có lệnh nạp lại: phải khởi động lại banghoi-1); pet-config.yml (máu, tốc độ, cách bắt từng loài); skilltrees/"
+    notes: "17/10: pet KHÔNG đánh người chơi (DisablePetVersusPlayer: true, chờ người dùng quyết); tiếng Việt (OverwriteLanguages: vi). Quyền bắt cho nhóm default ở banghoi-1: tools/mypet.cmds (không cho bắt Warden, Wither, Rồng Ender, Elder Guardian, Ravager, Golem sắt, Ghast)."
   - name: SimplePets
     jar: SimplePets
     kind: Rank donate

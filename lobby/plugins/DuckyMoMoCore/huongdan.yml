@@ -382,6 +382,29 @@ chapters:
         &0Có &lbản đồ web&r&0 của
         cả vùng mùa 1, xem
         ranh giới thị trấn.
+      - |-
+        &6&lPET CHIẾN ĐẤU
+        &0Bắt thú, quái làm pet:
+        đánh tới khi &cyếu máu&0
+        rồi cầm &ldây xích&r&0
+        bấm chuột phải.
+        &0Pet theo bạn, đánh
+        quái, &llên cấp&r&0 mở
+        kỹ năng: túi đồ, nhặt
+        đồ, cưỡi, hồi máu.
+        &0Không bắt được boss.
+      - |-
+        &6&lLệnh pet
+        &1/petinfo &0thông tin
+        &1/petcall &0gọi ra
+        &1/petsendaway &0cất đi
+        &1/petname &0đặt tên
+        &1/petchooseskilltree
+        &0chọn kỹ năng
+        &1/petinventory &0túi đồ
+        &1/petlist &0danh sách
+        &0Pet chết thì tự hồi
+        sinh sau một lúc.
   - id: practice
     name: Practice (luyện PvP)
     pages:

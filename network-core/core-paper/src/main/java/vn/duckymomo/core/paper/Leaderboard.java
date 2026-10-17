@@ -286,8 +286,7 @@ final class Leaderboard implements Listener {
         if (!(victim.getLastDamageCause() instanceof EntityDamageByEntityEvent last)) {
             return;
         }
-        Player killer = last.getDamager() instanceof Player p ? p
-                : last.getDamager() instanceof Projectile pr && pr.getShooter() instanceof Player p2 ? p2 : null;
+        Player killer = Culprit.of(last.getDamager());   // pet / mũi tên tính về chủ
         if (killer == null || killer.equals(victim) || !SiegeWarHook.battleActive() || !SiegeWarHook.inActiveSiegeZone(victim.getLocation())) {
             return;
         }

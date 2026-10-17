@@ -262,8 +262,7 @@ final class Justice implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onHit(EntityDamageByEntityEvent e) {
-        Player a = e.getDamager() instanceof Player p ? p
-                : e.getDamager() instanceof Projectile pr && pr.getShooter() instanceof Player p2 ? p2 : null;
+        Player a = Culprit.of(e.getDamager());
         if (a != null && e.getEntity() instanceof Player v) {
             hits.put(a.getUniqueId() + "|" + v.getUniqueId(), System.currentTimeMillis());
         }
@@ -305,8 +304,7 @@ final class Justice implements Listener {
         if (!(victim.getLastDamageCause() instanceof EntityDamageByEntityEvent last)) {
             return;
         }
-        Player killer = last.getDamager() instanceof Player p ? p
-                : last.getDamager() instanceof Projectile pr && pr.getShooter() instanceof Player p2 ? p2 : null;
+        Player killer = Culprit.of(last.getDamager());   // pet giết dân Hoà Bình vẫn mở án cho chủ
         if (killer == null || killer.equals(victim)) {
             return;
         }

@@ -190,11 +190,7 @@ final class Bounty implements Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     public void onDeath(PlayerDeathEvent e) {
         Player victim = e.getEntity();
-        Player killer = null;
-        if (victim.getLastDamageCause() instanceof EntityDamageByEntityEvent last) {
-            killer = last.getDamager() instanceof Player p ? p
-                    : last.getDamager() instanceof Projectile pr && pr.getShooter() instanceof Player p2 ? p2 : null;
-        }
+        Player killer = Culprit.killer(victim);   // pet / mũi tên / thú thuần hoá tính về chủ
         UUID vid = victim.getUniqueId();
         data.set("chuoi." + vid, null);   // chết: mất chuỗi
         if (killer == null || killer.equals(victim)) {

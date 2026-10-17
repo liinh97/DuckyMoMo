@@ -110,7 +110,10 @@ final class WarRules implements Listener {
         } else if (damager instanceof Tameable pet && pet.getOwner() instanceof Player p) {
             return p;
         }
-        return src instanceof Player p ? p : null;
+        if (src instanceof Player p) {
+            return p;
+        }
+        return Culprit.of(damager);   // pet MyPet (và mũi tên pet bắn) tính về chủ
     }
 
     private static boolean wilderness(Location loc) {

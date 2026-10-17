@@ -300,6 +300,27 @@ groups:
       - { key: siege_plunder_days, label: Trả dần trong (ngày), type: int, min: 1, max: 60,
           file: plugins/SiegeWar/config.yml, path: war.siege.money.plunder.number_of_payments }
 
+  - title: Cân bằng chiến tranh (/canbang)
+    category: Chiến tranh
+    description: "Chống nước to nuốt hết: nước lớn đi vây tốn hơn, thuộc địa tốn phí và có giới hạn, bên phòng thủ yếu được cộng điểm, có danh hiệu Bá chủ."
+    info: "Là gì: giữ cho nước nhỏ có cửa sống mà không cấm nước lớn mạnh lên.\nNgười chơi xem: /canbang (kèm tình trạng nước mình), trang chủ web mục Công thành.\nLưu xong: có hiệu lực ngay (dmm reload)."
+    apply: [dmm reload]
+    settings:
+      - { key: wb_on, label: Bật cân bằng chiến tranh, type: select, file: plugins/DuckyMoMoCore/config.yml, path: war-balance.enabled, options: [ { value: true, label: Bật }, { value: false, label: Tắt } ] }
+      - { key: wb_chest, label: "Quỹ chiến tranh tăng theo mỗi thị trấn của nước đi vây (%)", type: number, min: 0, file: plugins/DuckyMoMoCore/config.yml, path: war-balance.war-chest-extra-percent-per-town, info: "Ví dụ 10: nước có 6 thị trấn đi vây tốn quỹ +50%. Thắng thì lấy lại cả quỹ như thường." }
+      - { key: wb_upkeep, label: "Phí duy trì mỗi thuộc địa (xu/ngày)", type: number, min: 0, file: plugins/DuckyMoMoCore/config.yml, path: war-balance.colony-upkeep-per-day, info: "Trừ ngân khố nước chiếm mỗi ngày (giờ Việt Nam). Thiếu thì ghi nợ, tự trừ khi có tiền; còn nợ thì không cắm cờ vây được." }
+      - { key: wb_maxcol, label: "Tối đa thuộc địa mỗi nước", type: int, min: 0, file: plugins/DuckyMoMoCore/config.yml, path: war-balance.max-colonies, info: "Đủ số này thì thắng trận chỉ cướp được, không chiếm thêm. 0 = không giới hạn." }
+      - { key: wb_revolt, label: "Thuộc địa được khởi nghĩa sau (giờ)", type: number, min: 0, file: plugins/DuckyMoMoCore/config.yml, path: war-balance.revolt-hours-base }
+      - { key: wb_revolt_less, label: "Bớt giờ khởi nghĩa cho mỗi thuộc địa khác (giờ)", type: number, min: 0, file: plugins/DuckyMoMoCore/config.yml, path: war-balance.revolt-hours-less-per-colony, info: "Nước có 3 thuộc địa: thuộc địa mới khởi nghĩa sớm hơn 2 × số này." }
+      - { key: wb_revolt_min, label: "Khởi nghĩa sớm nhất sau (giờ)", type: number, min: 0, file: plugins/DuckyMoMoCore/config.yml, path: war-balance.revolt-hours-min }
+      - { key: wb_ratio, label: "Bên yếu: bên tấn công đông dân gấp (lần)", type: number, min: 0, file: plugins/DuckyMoMoCore/config.yml, path: war-balance.underdog-ratio, info: "Đếm tổng dân hai phe (không phải người online)." }
+      - { key: wb_underdog, label: "Bên yếu: cộng thêm điểm giữ cờ (%)", type: number, min: 0, file: plugins/DuckyMoMoCore/config.yml, path: war-balance.underdog-points-percent, info: "Nên để vừa phải (10–20%): đủ để nước nhỏ có cửa, không lật kèo vô lý." }
+      - { key: wb_heg, label: "Bá chủ: nắm từ (% số thị trấn cả server)", type: number, min: 0, file: plugins/DuckyMoMoCore/config.yml, path: war-balance.hegemon-percent }
+      - { key: wb_heg_min, label: "Bá chủ: tối thiểu số thị trấn", type: int, min: 0, file: plugins/DuckyMoMoCore/config.yml, path: war-balance.hegemon-min-towns, info: "Tránh lúc server ít thị trấn thì nước 2 thị trấn đã thành Bá chủ." }
+      - { key: wb_heg_disc, label: "Đánh vào Bá chủ: hoàn lại quỹ chiến tranh (%)", type: number, min: 0, file: plugins/DuckyMoMoCore/config.yml, path: war-balance.hegemon-warchest-discount }
+      - { key: wb_heg_pts, label: "Đánh vào Bá chủ: cộng thêm điểm giữ cờ (%)", type: number, min: 0, file: plugins/DuckyMoMoCore/config.yml, path: war-balance.hegemon-points-percent }
+      - { key: wb_heg_reg, label: "Bá chủ hưởng đặc sản tối đa (vùng)", type: int, min: 0, file: plugins/DuckyMoMoCore/config.yml, path: war-balance.hegemon-max-regions }
+
   - title: Thị trấn và quốc gia
     category: Thị trấn
     apply: [ta reload config]

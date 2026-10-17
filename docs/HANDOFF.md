@@ -283,6 +283,17 @@
   ticks-per-particle). Ghi vào plugins/PlayerParticles/styles/<kiểu>.yml ở lobby + banghoi-1, CẦN khởi động lại 2 server mới có hiệu lực.
 - PlayerParticles có sẵn `locale: vi_VN`, EssentialsX có `messages_vi` — chưa bật (đã hỏi người dùng).
 
+### 18/10: cân bằng chiến tranh (/canbang) + trả dần tiền cướp
+- SiegeWar plunder_paid_over_time: true, 7 ngày (data/banghoi-1/plugins/SiegeWar/config.yml, đã swa reload); ô siege_plunder_* trên Cài đặt.
+- WarBalance.java (war-balance), SiegeWar qua phản chiếu (registerEvent theo tên lớp): PreSiegeWarStartEvent (chặn khi nước còn nợ phí thuộc
+  địa hoặc ngân khố không đủ quỹ đã tăng), SiegeWarStartEvent (thu thêm / hoàn lại phần chênh, setWarChestAmount), PreInvadeEvent (chặn quá
+  max-colonies; 2 giây sau đặt TownMetaDataController.setRevoltImmunityEndTime theo số thuộc địa), BannerControlPointsEvent (bên được điểm
+  là phòng thủ yếu hoặc đang đánh Bá chủ → adjustDefender/AttackerBattlePoints thêm %, tick sau). Mỗi 10 phút: tính Bá chủ (>= hegemon-percent
+  % thị trấn và >= hegemon-min-towns), thu phí thuộc địa 1 lần/ngày (giờ VN, nợ lưu canbang.yml "no.<uuid nước>", trả dần), ghi canbang.json.
+  Thuộc địa đếm bằng TownOccupationController.getOccupiedForeignTowns. RegionSpecialty: Bá chủ chỉ hưởng hegemon-max-regions vùng.
+- Chưa thử với cuộc vây thật (cần 2 nước). Điểm cộng dựa vào BannerControlPointsEvent: nếu SiegeWar bắn sự kiện trước khi cộng điểm thì vẫn đúng
+  (mình cộng thêm ở tick sau).
+
 ### 18/10 rạng sáng: kho lương, món ăn ra trận, đặc sản vùng, bùa bắt pet, sự kiện mùa (bỏ món đổi cá mặc định)
 - Người dùng tự đặt món đổi bằng cá ở /doimanh: đã BỎ 6 món mặc định; vẫn giữ giá ca:<độ hiếm> + quà petexp để họ tự thêm.
 - SiegeSupply.java /kholuong [nop|noptat|top] (config siege-supply): kho điểm theo UUID thị trấn (kholuong.yml, kholuong.json cho web).

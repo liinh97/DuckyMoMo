@@ -162,11 +162,21 @@ final class RegionSpecialty {
             return 0.0;
         }
         String k = key(t);
-        double sum = 0;
+        List<Region> mine = new ArrayList<>();
         for (Region r : regions) {
             if (k.equals(owner.get(r.id()))) {
-                sum += r.crops().getOrDefault(crop, 0.0);
+                mine.add(r);
             }
+        }
+        // Bá chủ (WarBalance) chỉ hưởng đặc sản ở vài vùng mạnh nhất của mình
+        WarBalance wb = WarBalance.INSTANCE;
+        if (wb != null && WarBalance.hegemon(t.getNationOrNull()) && mine.size() > wb.hegemonMaxRegions) {
+            mine.sort((a, b) -> Integer.compare(ownerTowns.getOrDefault(b.id(), 0), ownerTowns.getOrDefault(a.id(), 0)));
+            mine = mine.subList(0, wb.hegemonMaxRegions);
+        }
+        double sum = 0;
+        for (Region r : mine) {
+            sum += r.crops().getOrDefault(crop, 0.0);
         }
         return sum;
     }

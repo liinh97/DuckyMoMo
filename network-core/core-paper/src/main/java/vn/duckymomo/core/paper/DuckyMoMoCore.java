@@ -22,6 +22,7 @@ public final class DuckyMoMoCore extends JavaPlugin {
     private Arena arena;
     private SiegeSupply supply;
     private RegionSpecialty specialty;
+    private WarBalance warBalance;
     private Activity activity;
     private PeaceAlliance peace;
     private DecorShop decorShop;
@@ -62,6 +63,10 @@ public final class DuckyMoMoCore extends JavaPlugin {
         if (specialty != null) {
             specialty.stop();
             specialty = null;
+        }
+        if (warBalance != null) {
+            warBalance.stop();
+            warBalance = null;
         }
         if (arenaPapi != null) {
             arenaPapi.unregister();
@@ -609,6 +614,16 @@ public final class DuckyMoMoCore extends JavaPlugin {
         }
         RegionSpecialty rsp = specialty;
         bind("dacsan", rsp == null ? null : rsp::command, "Đặc sản vùng");
+        // Cân bằng chiến tranh (war-balance): nước lớn tốn hơn, kẻ yếu được cộng điểm, giới hạn thuộc địa, Bá chủ (cần Towny + SiegeWar)
+        warBalance = towny && getServer().getPluginManager().isPluginEnabled("SiegeWar") && getConfig().getBoolean("war-balance.enabled")
+                && getConfig().isConfigurationSection("war-balance") ? new WarBalance(this, getConfig().getConfigurationSection("war-balance")) : null;
+        if (warBalance != null && warBalance.start()) {
+            getLogger().info("Cân bằng chiến tranh: " + warBalance.describe());
+        } else {
+            warBalance = null;
+        }
+        WarBalance wbl = warBalance;
+        bind("canbang", wbl == null ? null : wbl::command, "Cân bằng chiến tranh");
 
         Seasons.INSTANCE = seasons;
         if (seasons != null) {

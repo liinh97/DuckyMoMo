@@ -430,6 +430,7 @@ groups:
       - ["lichcongthanh", "Lịch công thành: phiên tới có cho pet chiến đấu tham chiến không", Mọi người]
       - ["bxhpet [chienbinh|haucan|dausi|thucuoi|nongtrai]", "Bảng xếp hạng pet, lọc theo hệ", Mọi người]
       - ["bxhpet tyle", "Xác suất bắt pet từng nhóm loài", Mọi người]
+      - ["canbang", "Cân bằng chiến tranh: Bá chủ, thuộc địa, phí, tình trạng nước mình", Mọi người]
       - ["kholuong", "Xem kho lương thị trấn mình", Mọi người]
       - ["kholuong nop", "Nộp đồ ăn đang cầm vào kho lương", Mọi người]
       - ["kholuong noptat", "Nộp mọi đồ ăn trong túi vào kho lương", Mọi người]

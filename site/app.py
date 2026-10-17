@@ -403,6 +403,13 @@ def api_info():
                    "list": [{"ten": strip_colors(d.get("name", k)).strip(), "can": d.get("need", {}), "hieu_ung": d.get("effects", [])}
                             for k, d in (get(core, "dishes.list", {}) or {}).items()]},
         "specialty": core_json("dacsan.json").get("vung", []) if get(core, "region-specialty.enabled", False) else [],
+        "balance": {"enabled": bool(get(core, "war-balance.enabled", False)),
+                    **{k: get(core, f"war-balance.{p}", d) for k, p, d in [
+                        ("chest", "war-chest-extra-percent-per-town", 10), ("upkeep", "colony-upkeep-per-day", 50), ("max_col", "max-colonies", 3),
+                        ("revolt", "revolt-hours-base", 72), ("revolt_less", "revolt-hours-less-per-colony", 12), ("revolt_min", "revolt-hours-min", 24),
+                        ("ratio", "underdog-ratio", 2), ("underdog", "underdog-points-percent", 15), ("heg", "hegemon-percent", 30),
+                        ("heg_disc", "hegemon-warchest-discount", 30), ("heg_pts", "hegemon-points-percent", 15), ("heg_reg", "hegemon-max-regions", 2)]},
+                    "nations": sorted(core_json("canbang.json").get("nuoc", []), key=lambda n: -n.get("thi_tran", 0))[:10]},
         "arena": {
             "enabled": bool(get(core, "arena.enabled", False)),
             "fight": get(core, "arena.fight-seconds", 180),

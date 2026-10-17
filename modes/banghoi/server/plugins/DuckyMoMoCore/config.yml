@@ -595,6 +595,23 @@ seasons:
       supply-multiplier: 1.5
       capture-bonus: {bay: 5, nhay: 10}
 
+# Cân bằng chiến tranh (/canbang): chống "nước to nuốt hết". Trang Cài đặt > Chiến tranh > Cân bằng chiến tranh
+war-balance:
+  enabled: true
+  war-chest-extra-percent-per-town: 10   # quỹ chiến tranh tăng % cho mỗi thị trấn (trừ thị trấn đầu) nước đi vây đang có
+  colony-upkeep-per-day: 50              # mỗi thuộc địa tốn ngần này xu/ngày từ ngân khố nước chiếm (thiếu thì ghi nợ, còn nợ không cắm cờ vây được)
+  max-colonies: 3                        # tối đa thuộc địa mỗi nước (0 = không giới hạn)
+  revolt-hours-base: 72                  # thuộc địa được khởi nghĩa sau ngần này giờ
+  revolt-hours-less-per-colony: 12       # bớt ngần này giờ cho mỗi thuộc địa khác của nước chiếm
+  revolt-hours-min: 24
+  underdog-ratio: 2                      # bên tấn công đông dân gấp ngần này lần bên phòng thủ thì bên phòng thủ được cộng điểm
+  underdog-points-percent: 15            # % điểm giữ cờ cộng thêm cho bên phòng thủ yếu (vừa phải)
+  hegemon-percent: 30                    # nước nắm từ ngần này % thị trấn cả server là Bá chủ
+  hegemon-min-towns: 5
+  hegemon-warchest-discount: 30          # đánh vào Bá chủ: hoàn lại % quỹ chiến tranh
+  hegemon-points-percent: 15             # đánh vào Bá chủ: % điểm giữ cờ cộng thêm
+  hegemon-max-regions: 2                 # Bá chủ chỉ hưởng đặc sản tối đa ngần này vùng
+
 # Kho lương công thành (/kholuong): thị trấn nộp lương, lúc có phiên đánh quân trong vùng vây ăn từ kho thị trấn mình
 siege-supply:
   enabled: true

@@ -100,6 +100,13 @@ Bán kính vùng vây 200 block ≈ 185 km ngoài đời (cỡ một tỉnh lớ
    - **Phòng thủ thắng**: nhận quỹ chiến tranh của bên tấn công.
 7. Sau trận: thị trấn được **miễn vây 7 ngày**. Thuộc địa được **khởi nghĩa** (revolt) để giành lại tự do sau 72 giờ.
 
+### 4.1b Cân bằng chiến tranh **[đang chạy 18/10]** (/canbang, trang Cài đặt > Chiến tranh)
+- Nước đi vây tốn quỹ chiến tranh +10% cho mỗi thị trấn (trừ thị trấn đầu) đang có.
+- Mỗi thuộc địa 50 xu/ngày từ ngân khố nước; còn nợ thì không cắm cờ vây được. Tối đa 3 thuộc địa/nước (đủ thì thắng chỉ cướp).
+- Thuộc địa khởi nghĩa sau 72 giờ, bớt 12 giờ cho mỗi thuộc địa khác của nước chiếm (ít nhất 24 giờ).
+- Bên phòng thủ ít dân hơn hẳn (bên kia gấp 2): +15% điểm giữ cờ.
+- Bá chủ (nắm >= 30% thị trấn, >= 5 thị trấn): đánh vào được hoàn 30% quỹ và +15% điểm; Bá chủ chỉ hưởng đặc sản 2 vùng.
+
 ### 4.2 Giới hạn
 - Mỗi quốc gia tối đa **2 cuộc vây tấn công cùng lúc** **[đang chạy]**, tuần đại chiến **3** **[đề xuất]**.
 - Không đặt được obsidian, băng ở đất hoang; không đổ nước, dung nham; TNT ở đất hoang không phá block **[đang chạy]**

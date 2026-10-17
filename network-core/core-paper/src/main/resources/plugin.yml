@@ -105,6 +105,9 @@ commands:
   lichcongthanh:
     description: "Lịch công thành: phiên tới, phiên đó có cho pet chiến đấu tham chiến không"
     aliases: [congthanh, lichvay]
+  canbang:
+    description: "Cân bằng chiến tranh: Bá chủ, thuộc địa, phí, lợi thế cho bên yếu"
+    aliases: [bachu, canbangchientranh]
   kholuong:
     description: "Kho lương công thành của thị trấn: xem, nộp nông sản/cá/món ăn (/kholuong nop|noptat|top)"
     aliases: [kl, luongthuc]

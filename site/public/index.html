@@ -580,6 +580,14 @@ footer .fbrand img{width:44px}
         <p class="muted">Nấu cá câu + nông sản thành món có hiệu ứng ngắn. Ăn xong chờ <b data-k="dishes.cooldown">20</b> phút mới ăn món khác.</p>
         <div id="dishList" class="muted">Đang tải…</div></div>
     </div>
+    <div class="card" style="margin-top:16px" id="wbCard"><h3>⚖ Cân bằng chiến tranh <span class="kbd">/canbang</span></h3>
+      <ul class="clean">
+        <li>Nước càng to đi vây càng tốn: quỹ chiến tranh <b>+<span data-k="balance.chest">10</span>%</b> cho mỗi thị trấn (trừ thị trấn đầu).</li>
+        <li>Mỗi thuộc địa tốn <b><span data-k="balance.upkeep">50</span> xu/ngày</b>, tối đa <b data-k="balance.max_col">3</b> thuộc địa mỗi nước. Thuộc địa được khởi nghĩa sau <span data-k="balance.revolt">72</span> giờ, nước càng nhiều thuộc địa thì càng sớm (ít nhất <span data-k="balance.revolt_min">24</span> giờ).</li>
+        <li>Thủ nhà mà ít người hơn hẳn (bên kia đông gấp <span data-k="balance.ratio">2</span>): <b>+<span data-k="balance.underdog">15</span>%</b> điểm giữ cờ.</li>
+        <li><b>Bá chủ</b> (nắm từ <span data-k="balance.heg">30</span>% thị trấn cả server): ai đánh vào được hoàn <span data-k="balance.heg_disc">30</span>% quỹ và +<span data-k="balance.heg_pts">15</span>% điểm; Bá chủ chỉ hưởng đặc sản <span data-k="balance.heg_reg">2</span> vùng.</li>
+      </ul>
+      <div id="wbNations" class="muted"></div></div>
     <div class="card" style="margin-top:16px" id="swCard"><h3>🌦 Trời đất trong trận công thành</h3>
       <p class="muted">Lúc đang đánh, trong vùng vây, thời tiết và ngày đêm (theo giờ trong game) làm trận nặng nề hơn, và pet đúng loài thành lợi thế:</p>
       <ul class="clean">
@@ -1052,6 +1060,8 @@ async function loadInfo(){
   $("#dishList").innerHTML = ds.enabled && (ds.list || []).length ? `<table><tbody>${ds.list.map(d => `<tr><td><b>${esc(d.ten)}</b><div class="dim" style="font-size:.8rem">${Object.entries(d.can || {}).map(([k, n]) => n + " " + esc(NEED_VI[k] || NEED_VI[k.toUpperCase()] || k.toLowerCase())).join(" + ")}</div></td><td style="font-size:.85rem">${(d.hieu_ung || []).map(e => { const a = String(e).split(/\s+/); return esc(EFF_VI[a[0]] || a[0]) + " " + (ROMAN[+a[1] || 0] || "") + " " + (a[2] || "") + "s"; }).join("<br>")}</td></tr>`).join("")}</tbody></table>` : "Đang tắt.";
   const sv = info.specialty || [];
   $("#dacsan").innerHTML = sv.length ? `<table><tbody>${sv.map(v => `<tr><td><b>${esc(v.ten)}</b><div class="dim" style="font-size:.8rem">${esc(v.dac_san)}</div></td><td>${(v.cay || []).map(esc).join(", ")}</td><td>${v.chu ? esc(v.chu) + ` <span class="dim">(${v.so_thi_tran} thị trấn)</span>` : '<span class="dim">chưa có chủ</span>'}</td></tr>`).join("")}</tbody></table>` : "Đang tắt hoặc chưa tính (vài phút sau khi server bật).";
+  const wbn = (info.balance || {}).nations || [];
+  $("#wbNations").innerHTML = wbn.length ? `<table><tbody>${wbn.map(n => `<tr><td><b>${esc(n.ten)}</b>${n.ba_chu ? ' <span class="pill" style="background:rgba(255,107,107,.15);color:#ff9d9b">Bá chủ</span>' : ""}</td><td>${n.thi_tran} thị trấn</td><td>${n.thuoc_dia} thuộc địa</td></tr>`).join("")}</tbody></table>` : "";
   const sw = pet.weather || {};
   if (sw.eyes && sw.eyes.length) $("#swEyes").textContent = sw.eyes.join(", ");
   const tp = pet.top || [];

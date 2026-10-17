@@ -1218,7 +1218,7 @@ def thuvien_json():
         items.append(it)
     online = []
     try:
-        out = rcon(LIB_SERVER, ["list"])[0][1]
+        out = rcon(LIB_SERVER, ["minecraft:list"])[0][1]
         names = out.split(":", 1)[1] if ":" in out else ""
         online = [n.strip().split(" ")[-1] for n in re.split(r"[,\n]", names) if n.strip()]
     except Exception:
@@ -1561,8 +1561,9 @@ def online_players(fresh=False):
     def load():
         out = {}
         for srv in GAME_SERVERS:
+            # list gốc của Minecraft: luôn tên thật (list của Essentials hiện tên /nick, vd ~b0ybn2013)
             try:
-                text = rcon(srv, ["list"])[0][1]
+                text = rcon(srv, ["minecraft:list"])[0][1]
             except Exception:
                 continue
             names = text.split(":", 1)[1] if ":" in text else ""

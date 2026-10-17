@@ -263,6 +263,8 @@
   thì báo lỗi rõ. Plugin: Leaderboard (danh hiệu) dùng `p.getUniqueId()`, Organizations (giấy phép) dùng `lpTarget()` (UUID nếu tên không hợp lệ).
   QUY TẮC: lệnh `lp user` luôn dùng UUID. `/nick` không liên quan (chỉ đổi tên hiển thị).
 - Mọi giải thích (quyen.yml 107/107 quyền, trang Role, settings `info:`) theo khung dòng "Nhãn: nội dung" (Làm gì / Cách dùng / Có ở / Ví dụ / Lưu ý).
+- Người online: panel dùng `minecraft:list` (tên thật). `list` của Essentials hiện tên /nick (vd `~b0ybn2013`) → trước đó Trang trí trên web
+  và nút Đưa đồ không thấy người đã đổi tên. QUY TẮC: tìm người chơi theo tên thật/UUID, không theo `list` của Essentials.
 - LỖI ĐÃ SỬA: khoá cài đặt mới `tp_delay/tp_cooldown/tp_invuln` trùng tiền tố `tp_` của TradePro (tp_cooldown trùng hẳn) → đổi thành
   `tele_delay/tele_cooldown/tele_invuln`. Thêm khoá mới: kiểm tra trùng trong settings.schema.yml và settings.yml trước khi commit.
 

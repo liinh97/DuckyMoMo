@@ -1969,7 +1969,10 @@ class Handler(BaseHTTPRequestHandler):
             acc = self.who["acc"] if self.who else None
             return self.send_json(200, {"ten": self.who["name"] if self.who else PANEL_USER, "game": self.who is not None,
                                         "toan_quyen": acc["toan_quyen"] if acc else True,
-                                        "tinh_nang": list(acc["features"]) if acc else None})
+                                        "tinh_nang": list(acc["features"]) if acc else None,
+                                        # role không được cấp/gỡ/sửa quyền (trang Role ẩn nút, máy chủ vẫn chặn ở scoped_post_ok)
+                                        "role_khoa": [] if not acc or acc["toan_quyen"] else
+                                        sorted(PROTECTED_FOR_QUANLY if self.who.get("quanly") else PROTECTED_GROUPS)})
         if path in ("/", "/hoatdong", "/camnang", "/huongdan", "/role", "/thuvien", "/boss", "/donate"):
             dozzle = DOZZLE_PROXY_URL if self.headers.get("X-Forwarded-Prefix") else DOZZLE_URL
             page = {"/": INDEX_HTML, "/hoatdong": ACTIVITY_HTML, "/camnang": CAMNANG_HTML, "/huongdan": HUONGDAN_HTML, "/role": ROLE_HTML,

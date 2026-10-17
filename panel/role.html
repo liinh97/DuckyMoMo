@@ -104,16 +104,25 @@ let data = null, sel = decodeURIComponent(location.hash.slice(1)) || "", server 
 const esc = (s) => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const fold = (s) => String(s || "").normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/đ/g, "d").toLowerCase();
 const prefixText = (g) => (g.prefix || "").trim() || "&7(không prefix)";
+// người đang xem làm được gì (staff đăng nhập bằng tài khoản game bị giới hạn; máy chủ vẫn kiểm tra lại)
+let me = { full: true, role: true, quyen: true, khoa: new Set() };
+const canMembers = (g) => g.kind !== "default" && (me.full || (me.role && !me.khoa.has(g.name)));
+const canPerms = (g) => me.full || (me.quyen && !me.khoa.has(g.name));
 
+// chỉ hiện role/rank người đang xem cấp/gỡ người hoặc sửa quyền được
+const visible = () => data.groups.filter(g => canMembers(g) || canPerms(g));
 function render() {
-  if (!data.groups.some(g => g.name === sel)) sel = data.groups[0].name;
+  if (!visible().length) { $("list").innerHTML = '<p class="empty">Tài khoản của bạn không quản lý được role nào.</p>'; $("detail").innerHTML = ""; return; }
+  if (!visible().some(g => g.name === sel)) sel = visible()[0].name;
   renderList(); renderDetail();
 }
 function renderList() {
   let h = "";
   for (const [kind, title] of [["staff", "Role chức vụ"], ["donate", "Rank donate"]]) {
     h += `<div class="sec">${title}</div>`;
-    for (const g of data.groups.filter(g => kind === "donate" ? g.kind === "donate" : g.kind !== "donate")) {
+    const gs = visible().filter(g => kind === "donate" ? g.kind === "donate" : g.kind !== "donate");
+    if (!gs.length) { h = h.slice(0, h.lastIndexOf('<div class="sec">')); continue; }
+    for (const g of gs) {
       const own = g.perms.filter(p => p.value).length;
       const who = g.kind === "default" ? "mọi người chơi" : (g.count ? g.count + " người" : "chưa có ai");
       h += `<button class="ri${g.name === sel ? " on" : ""}" data-g="${esc(g.name)}"><span class="t"><b>${esc(name(g.name))}</b><small>${who} · ${own} quyền</small></span><span class="mc">${mcHtml(prefixText(g))}</span></button>`;
@@ -145,30 +154,33 @@ function renderDetail() {
   const d = $("detail");
   const isDonate = g.kind === "donate";
   // --- đầu trang role
-  const parents = g.parents.map(p => `<a data-go="${esc(p)}">${esc(name(p))}</a>`).join(", ");
+  const vis = new Set(visible().map(x => x.name));
+  const parents = g.parents.map(p => vis.has(p) ? `<a data-go="${esc(p)}">${esc(name(p))}</a>` : esc(name(p))).join(", ");
   let h = `<section class="card"><div class="hero"><span class="mc">${mcHtml(prefixText(g))}</span><div><h1>${esc(name(g.name))}</h1><div class="badges">
       <span class="badge accent">${KIND[g.kind]}</span><span class="badge">nhóm <code>${esc(g.name)}</code></span><span class="badge" title="Số lớn hơn = ưu tiên hơn (prefix, quyền)">weight ${g.weight}</span>
       ${parents ? `<span class="badge">kế thừa: ${parents}</span>` : ""}</div></div></div>
     ${isDonate ? '<div class="warnbox">Rank donate chỉ được có quyền <b>trang trí</b>. Cấp lợi thế khi chơi (bay, kit, đồ mạnh…) là pay-to-win, vi phạm luật Mojang.</div>' : ""}
     ${!g.exists ? `<div class="warnbox" style="background:rgba(217,48,37,.12);color:var(--err)">Role này <b>chưa có trong LuckPerms</b>${g.preset ? ": bấm nút bên dưới để tạo kèm bộ quyền khuyên dùng." : "."}</div>` : ""}
-    ${g.preset ? `<div class="preset"><button class="primary" id="preset">${g.exists ? "Áp bộ quyền khuyên dùng" : "Tạo role + bộ quyền khuyên dùng"}</button>
+    ${g.preset && me.full ? `<div class="preset"><button class="primary" id="preset">${g.exists ? "Áp bộ quyền khuyên dùng" : "Tạo role + bộ quyền khuyên dùng"}</button>
       <span class="hint">Chạy <code>tools/${g.name === "quanly" ? "quanly" : "builder"}-role.cmds</code> (chỉ Admin). Chạy lại được: bật lại quyền trong file, không gỡ quyền bạn tự thêm.</span></div>` : ""}
     <p class="hint">Sửa prefix: trang Cài đặt › Toàn mạng › ${isDonate ? "Rank donate" : "Role"}.</p>
     ${(g.prefixes || []).length > 1 ? `<p class="hint">⚠ Role này đang có ${g.prefixes.length} prefix trong LuckPerms (${g.prefixes.map(p => esc(p.trim())).join(" | ")}); game hiện cái priority cao nhất. Lưu lại prefix ở Cài đặt sẽ xoá hết và đặt lại một cái.</p>` : ""}</section>`;
   // --- thành viên
   h += `<section class="card"><h2>👥 Thành viên ${g.kind !== "default" ? `<span class="badge">${g.count}</span>` : ""}</h2>`;
+  const cm = canMembers(g), cp = canPerms(g);
   if (g.kind === "default") {
     h += `<p class="hint">Mọi người chơi đều thuộc nhóm này (${g.count} người đã từng vào). Không cần thêm tay.</p>`;
   } else {
-    h += g.members.length ? `<div class="members">${g.members.map(m => `<span class="mem"><b>${esc(m.name)}</b>${expiry(m)}${m.server !== "global" ? `<span class="exp">chỉ ${esc(m.server)}</span>` : ""}<button class="x" title="Gỡ ${esc(m.name)} khỏi ${esc(name(g.name))}" data-rm="${esc(m.name)}">×</button></span>`).join("")}</div>`
+    h += g.members.length ? `<div class="members">${g.members.map(m => `<span class="mem"><b>${esc(m.name)}</b>${expiry(m)}${m.server !== "global" ? `<span class="exp">chỉ ${esc(m.server)}</span>` : ""}${cm ? `<button class="x" title="Gỡ ${esc(m.name)} khỏi ${esc(name(g.name))}" data-rm="${esc(m.name)}">×</button>` : ""}</span>`).join("")}</div>`
       : `<p class="empty">Chưa có ai giữ ${isDonate ? "rank" : "role"} này.</p>`;
-    h += `<div class="addm${isDonate ? "" : " no-months"}"><input id="player" placeholder="Tên người chơi (Bedrock có dấu chấm đầu, vd .griim7833)" autocomplete="off">
+    if (cm) h += `<div class="addm${isDonate ? "" : " no-months"}"><input id="player" placeholder="Tên người chơi (Bedrock có dấu chấm đầu, vd .griim7833)" autocomplete="off">
       ${isDonate ? `<select id="months">${[1, 2, 3, 6, 12].map(n => `<option value="${n}">${n} tháng</option>`).join("")}</select>` : ""}
       <button class="primary" id="give">Thêm vào ${esc(name(g.name))}</button></div>
       <p class="hint">${isDonate ? "1 tháng = 30 ngày. Cấp tiếp cùng bậc thì cộng dồn; đổi bậc thì bậc cũ bị bỏ." : "Role chức vụ giữ vĩnh viễn đến khi gỡ."} Người chơi phải từng vào server.</p>`;
   }
   h += `</section>`;
-  // --- quyền
+  // --- quyền (không có quyền sửa thì ẩn cả phần)
+  if (!cp) { d.innerHTML = h; bindTop(g); return; }
   const own = (node) => g.perms.find(p => p.node === node && p.server === server);
   const inh = inherited(g);
   const cats = data.catalog.filter(c => isDonate ? (c.donate || c.title.startsWith("Chat")) : !c.donate);
@@ -192,6 +204,19 @@ function renderDetail() {
   h += `<div class="others"><h3>Quyền khác của role này <span class="hint" style="font-weight:400">(không có trong danh mục, mọi server)</span></h3>${others.length ? `<div class="members" style="margin-top:0">${others.map(p => `<span class="mem">${p.value ? "" : '<span class="badge deny">CẤM</span>'}<code>${esc(p.node)}</code>${p.server !== "global" ? `<span class="exp">@${esc(p.server)}</span>` : ""}<button class="x" title="Gỡ quyền" data-unset="${esc(p.node)}" data-srv="${esc(p.server)}">×</button></span>`).join("")}</div>` : '<p class="hint" style="margin:0">Không có.</p>'}
     <div class="addp"><input id="newp" placeholder="Thêm quyền theo tên, vd essentials.workbench (áp dụng: ${server === "global" ? "toàn mạng" : esc(server)})"><button class="ghost" id="addp">Thêm quyền</button></div></div></section>`;
   d.innerHTML = h;
+  bindTop(g);
+  d.querySelectorAll("[data-sv]").forEach(b => b.onclick = () => { server = b.dataset.sv; renderDetail(); });
+  $("pf").oninput = () => { filter = $("pf").value; renderPerms(g, cats, own, inh); };
+  $("onlyon").onchange = () => { onlyOn = $("onlyon").checked; renderPerms(g, cats, own, inh); };
+  d.querySelectorAll("[data-unset]").forEach(b => b.onclick = async () => { if (await ask(`Gỡ quyền ${b.dataset.unset}${b.dataset.srv !== "global" ? " (ở " + b.dataset.srv + ")" : ""} khỏi ${name(g.name)}?`, { title: "Gỡ quyền", ok: "Gỡ quyền", danger: true })) post({ action: "perm_unset", group: g.name, node: b.dataset.unset, server: b.dataset.srv }); });
+  const addp = () => { const v = $("newp").value.trim(); if (v) post({ action: "perm_set", group: g.name, node: v, server }); };
+  $("addp").onclick = addp; $("newp").onkeydown = (e) => { if (e.key === "Enter") addp(); };
+  renderPerms(g, cats, own, inh);
+}
+
+// nút ở đầu trang role + phần thành viên
+function bindTop(g) {
+  const d = $("detail");
   if ($("preset")) $("preset").onclick = async () => {
     if (await ask(`${g.exists ? "Áp lại" : "Tạo role và áp"} bộ quyền khuyên dùng cho ${name(g.name)}? Người đang giữ role nhận quyền mới ngay.`, { title: "Bộ quyền khuyên dùng", ok: "Chạy" }))
       post({ action: "preset", group: g.name });
@@ -202,13 +227,6 @@ function renderDetail() {
     const give = () => { const p = $("player").value.trim(); if (!p) return $("player").focus(); post({ action: "add", player: p, group: g.name, months: $("months") ? parseInt($("months").value, 10) : 1 }); };
     $("give").onclick = give; $("player").onkeydown = (e) => { if (e.key === "Enter") give(); };
   }
-  d.querySelectorAll("[data-sv]").forEach(b => b.onclick = () => { server = b.dataset.sv; renderDetail(); });
-  $("pf").oninput = () => { filter = $("pf").value; renderPerms(g, cats, own, inh); };
-  $("onlyon").onchange = () => { onlyOn = $("onlyon").checked; renderPerms(g, cats, own, inh); };
-  d.querySelectorAll("[data-unset]").forEach(b => b.onclick = async () => { if (await ask(`Gỡ quyền ${b.dataset.unset}${b.dataset.srv !== "global" ? " (ở " + b.dataset.srv + ")" : ""} khỏi ${name(g.name)}?`, { title: "Gỡ quyền", ok: "Gỡ quyền", danger: true })) post({ action: "perm_unset", group: g.name, node: b.dataset.unset, server: b.dataset.srv }); });
-  const addp = () => { const v = $("newp").value.trim(); if (v) post({ action: "perm_set", group: g.name, node: v, server }); };
-  $("addp").onclick = addp; $("newp").onkeydown = (e) => { if (e.key === "Enter") addp(); };
-  renderPerms(g, cats, own, inh);
 }
 
 function renderPerms(g, cats, own, inh) {
@@ -254,7 +272,14 @@ async function post(body) {
     if (res.data) { data = res.data; const y = scrollY; render(); scrollTo(0, y); }
   } catch (e) { toast("Không gửi được: " + e, "err"); }
 }
-fetch("api/roles").then(r => r.json()).then(d => { if (d.error) throw d.error; data = d; render(); })
+Promise.all([fetch("api/roles").then(r => r.json()), fetch("api/toi").then(r => r.json()).catch(() => null)]).then(([d, t]) => {
+  if (d.error) throw d.error;
+  if (t && t.game && !t.toan_quyen) {
+    const f = new Set(t.tinh_nang || []);
+    me = { full: false, role: f.has("role"), quyen: f.has("role-quyen"), khoa: new Set(t.role_khoa || []) };
+  }
+  data = d; render();
+})
   .catch(e => { $("list").innerHTML = `<p class="empty">${esc(e)}</p>`; });
 </script>
 </body>

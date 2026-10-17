@@ -217,6 +217,13 @@
 - Sau MỖI lần build: xem log cả 3 server (`docker compose logs <srv> --since 5m | grep -iE "Could not load|Exception|DuckyMoMoCore"`),
   không chỉ banghoi-1. Chỉ đổi jar → `docker compose restart <srv>`; đổi compose (env, MODRINTH_PROJECTS, PLUGINS) → `up -d --no-deps <srv>`.
 
+### 17/10: trang Role và trang tài khoản theo quyền
+- Trang Role chỉ hiện role/rank người xem quản lý được: cấp/gỡ người (`duckymomo.web.role`, trừ nhóm khoá) hoặc sửa quyền
+  (`duckymomo.web.role.quyen`). Không có quyền sửa quyền thì ẩn cả phần Quyền; không có quyền cấp/gỡ thì ẩn ô thêm và nút gỡ; nhóm Dân chỉ hiện khi sửa
+  được quyền; nút bộ quyền khuyên dùng chỉ toàn quyền. `/api/toi` trả thêm `role_khoa` (Manager: admin, quanly; staff khác: admin, quanly, mod; toàn quyền: rỗng)
+  — cùng bộ `PROTECTED_*` mà `scoped_post_ok` dùng để chặn phía máy chủ. Manager hiện thấy: Mod, Helper, Builder, 5 rank donate, không thấy phần Quyền.
+- Trang tài khoản (site): khung Quản trị chỉ còn một nút "Mở trang quản trị" (mở mục đầu tiên được phép; thanh trái panel tự ẩn mục không có quyền).
+
 ### DANH SÁCH CẦN THỬ (người dùng chốt 15/10: làm xong hết rồi thử một lượt; mục 16–25)
 Triển khai một lần: `git stash && git pull && git stash pop` → `./ops/build-core.sh` (lỗi biên dịch thì gửi ảnh, Java viết ở cloud CHƯA biên
 dịch) → kiểm tra không ai online → `docker compose up -d --no-deps lobby banghoi-1 practice-1` → `docker compose up -d --build panel site`.

@@ -285,9 +285,12 @@ function render(){
     html += `<div class="card" style="margin-top:14px"><h2>🛠️ Quản trị ${q.toan_quyen ? '<span class="pill on">Toàn quyền</span>' : ""}</h2>`;
     if (!q.qua_game) html += `<div class="note">Phiên quản trị đã hết hạn (12 giờ). Vào game gõ <code>/web</code> rồi nhập mã mới:
         <div class="tools" style="margin-top:8px"><input id="ma2" inputmode="numeric" maxlength="6" placeholder="Mã 6 số" style="max-width:160px"><button class="btn primary small" id="go2">Xác nhận mã</button></div><div class="err" id="err2"></div></div>`;
-    else html += `<p class="small dim">Quyền mở trang quản trị còn đến ${when(D.phien.quan_tri_het)} (sau đó nhập mã /web lại). Mọi thao tác được ghi lại kèm tên bạn.</p>`;
-    html += (q.tinh_nang || []).map(f => `<div class="feat"><div><b>${esc(f.ten)}</b><small>${esc(f.mo_ta)}${f.nho ? ` · nhờ quyền <code>${esc(f.nho)}</code>` : ""}</small></div>
-      ${q.qua_game ? `<a class="btn small" href="quantri/${esc(f.trang || "")}" target="_blank" rel="noopener">Mở ↗</a>` : ""}</div>`).join("");
+    else {
+      // chỉ một nút: trang quản trị tự ẩn những mục không có quyền (mở mục đầu tiên được phép)
+      const first = q.toan_quyen ? "" : ((q.tinh_nang || [])[0] || {}).trang || "";
+      html += `<div class="feat"><div><b>Trang quản trị</b><small>Còn mở được đến ${when(D.phien.quan_tri_het)} (sau đó nhập mã /web lại). Mọi thao tác được ghi lại kèm tên bạn.</small></div>
+        <a class="btn primary small" href="quantri/${esc(first)}" target="_blank" rel="noopener">Mở trang quản trị ↗</a></div>`;
+    }
     html += `</div>`;
   }
 

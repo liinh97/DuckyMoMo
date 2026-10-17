@@ -283,6 +283,14 @@
   ticks-per-particle). Ghi vào plugins/PlayerParticles/styles/<kiểu>.yml ở lobby + banghoi-1, CẦN khởi động lại 2 server mới có hiệu lực.
 - PlayerParticles có sẵn `locale: vi_VN`, EssentialsX có `messages_vi` — chưa bật (đã hỏi người dùng).
 
+### 17/10: pet trên web
+- Đã thử 38/38 loài trong PASSIVE_PETS gọi thật (`pet summon target b0ybn <loài>` → có thực thể quanh người chơi), cất lại hết.
+- Web gọi/cất pet bằng lệnh CONSOLE `pet summon|remove target <tên> <loài>` (`web_pet` trong panel/app.py) thay vì /sudo: đọc được kết quả
+  ("Successfully summoned/removed N"), chạy cả ở Sảnh. Quyền vẫn lọc ở `taikhoan.cosmetic_command`. Practice KHÔNG có SimplePets và
+  PlayerParticles → pet: Sảnh + Bang Hội Chiến; hạt: chỉ Bang Hội Chiến; đổi tên: Bang Hội Chiến + Practice.
+- Pet theo rank (LuckPerms): Dân, Nam Tước, Tử Tước không có; Bá Tước 13 loài; Hầu Tước +14; Công Tước pet.type.passive (mọi pet hiền).
+  Pet SimplePets chỉ là bản trang trí gọi ra, không bắt/thuần hoá.
+
 ### DANH SÁCH CẦN THỬ (người dùng chốt 15/10: làm xong hết rồi thử một lượt; mục 16–25)
 Triển khai một lần: `git stash && git pull && git stash pop` → `./ops/build-core.sh` (lỗi biên dịch thì gửi ảnh, Java viết ở cloud CHƯA biên
 dịch) → kiểm tra không ai online → `docker compose up -d --no-deps lobby banghoi-1 practice-1` → `docker compose up -d --build panel site`.

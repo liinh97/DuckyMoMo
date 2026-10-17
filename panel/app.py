@@ -664,6 +664,18 @@ def huongdan_save(data):
     return f"Đã lưu {len(clean)} chương, {n_pages} trang và chép sang {len(done)} chỗ. Người chơi mở /huongdan là thấy ngay."
 
 
+def lp_uuid(name):
+    """UUID LuckPerms của người chơi theo tên (không phân biệt hoa thường); None nếu chưa từng vào."""
+    con = lp_db()
+    try:
+        cur = con.cursor()
+        cur.execute("SELECT uuid FROM luckperms_players WHERE LOWER(username) = LOWER(%s) LIMIT 1", (name,))
+        row = cur.fetchone()
+        return row[0] if row else None
+    finally:
+        con.close()
+
+
 def group_weights():
     """weight của từng nhóm LuckPerms (meta weight.N; không có = 0)."""
     con = lp_db()
@@ -870,10 +882,12 @@ def role_action(data):
         cmds = [f"rank give {player} {group} {months}"]
     elif group in DONATE_GROUPS and act == "remove":
         cmds = [f"rank remove {player}"]
-    elif act == "add":
-        cmds = [f"lp user {player} parent add {group}"]
-    elif act == "remove":
-        cmds = [f"lp user {player} parent remove {group}"]
+    elif act in ("add", "remove"):
+        # LuckPerms từ chối tên có dấu chấm (người chơi Bedrock: .ten) trong "lp user <tên>" -> gửi theo UUID trong DB
+        uid = lp_uuid(player)
+        if not uid:
+            raise ValueError(f"Không thấy {player} trong LuckPerms: người chơi phải vào server ít nhất một lần (Bedrock có dấu chấm đầu, vd .griim7833).")
+        cmds = [f"lp user {uid} parent {act} {group}"]
     else:
         raise ValueError("Thao tác không hợp lệ")
     rcon("lobby", cmds)

@@ -257,6 +257,15 @@
 - Nút i: mỗi dòng "Nhãn: nội dung" in đậm nhãn (shell.js). Danh mục quyền tự động: Làm gì / Cách dùng (tên tham số dịch: <người>, <số>…) / Gọi tắt / Có ở.
 - quyen.yml thêm nhóm Di chuyển: essentials.teleport.timer.bypass, .timer.move, .cooldown.bypass, duckymomo.rtp.bypass, duckymomo.rtp.free.
 
+### 17/10: tên Bedrock trong lệnh LuckPerms; khung giải thích thống nhất
+- LuckPerms (allow-invalid-usernames mặc định false) TỪ CHỐI `lp user .ten …` (tên Bedrock có dấu chấm). Trang Role trước báo "Đã gửi"
+  nhưng không có tác dụng. Sửa: panel `lp_uuid()` tra UUID trong `luckperms_players` rồi gửi `lp user <uuid> parent add|remove`; chưa từng vào
+  thì báo lỗi rõ. Plugin: Leaderboard (danh hiệu) dùng `p.getUniqueId()`, Organizations (giấy phép) dùng `lpTarget()` (UUID nếu tên không hợp lệ).
+  QUY TẮC: lệnh `lp user` luôn dùng UUID. `/nick` không liên quan (chỉ đổi tên hiển thị).
+- Mọi giải thích (quyen.yml 107/107 quyền, trang Role, settings `info:`) theo khung dòng "Nhãn: nội dung" (Làm gì / Cách dùng / Có ở / Ví dụ / Lưu ý).
+- LỖI ĐÃ SỬA: khoá cài đặt mới `tp_delay/tp_cooldown/tp_invuln` trùng tiền tố `tp_` của TradePro (tp_cooldown trùng hẳn) → đổi thành
+  `tele_delay/tele_cooldown/tele_invuln`. Thêm khoá mới: kiểm tra trùng trong settings.schema.yml và settings.yml trước khi commit.
+
 ### DANH SÁCH CẦN THỬ (người dùng chốt 15/10: làm xong hết rồi thử một lượt; mục 16–25)
 Triển khai một lần: `git stash && git pull && git stash pop` → `./ops/build-core.sh` (lỗi biên dịch thì gửi ảnh, Java viết ở cloud CHƯA biên
 dịch) → kiểm tra không ai online → `docker compose up -d --no-deps lobby banghoi-1 practice-1` → `docker compose up -d --build panel site`.

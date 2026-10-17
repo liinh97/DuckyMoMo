@@ -670,14 +670,14 @@ final class Leaderboard implements Listener {
                 }
                 data.set("danhhieu." + p.getUniqueId() + ".dung", args[1]);
                 save();
-                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "lp user " + p.getName() + " meta removesuffix 60");
-                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "lp user " + p.getName() + " meta addsuffix 60 \" " + titleText(args[1]) + "\"");
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "lp user " + p.getUniqueId() + " meta removesuffix 60");
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "lp user " + p.getUniqueId() + " meta addsuffix 60 \" " + titleText(args[1]) + "\"");
                 p.sendMessage(c("&aĐang dùng danh hiệu " + titleText(args[1])));
             }
             case "tat" -> {
                 data.set("danhhieu." + p.getUniqueId() + ".dung", null);
                 save();
-                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "lp user " + p.getName() + " meta removesuffix 60");
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "lp user " + p.getUniqueId() + " meta removesuffix 60");
                 p.sendMessage(c("&aĐã ẩn danh hiệu."));
             }
             default -> {

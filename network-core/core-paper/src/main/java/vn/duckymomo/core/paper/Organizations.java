@@ -173,12 +173,12 @@ final class Organizations implements Listener {
         List<String> have = data.getStringList("tc." + id + ".da-cap");
         for (String m : have) {
             if (!want.contains(m)) {
-                console("lp user " + m + " parent remove " + group + " server=banghoi-1");
+                console("lp user " + lpTarget(m) + " parent remove " + group + " server=banghoi-1");
             }
         }
         for (String m : want) {
             if (!have.contains(m)) {
-                console("lp user " + m + " parent add " + group + " server=banghoi-1");
+                console("lp user " + lpTarget(m) + " parent add " + group + " server=banghoi-1");
             }
         }
         data.set("tc." + id + ".da-cap", want);
@@ -614,5 +614,14 @@ final class Organizations implements Listener {
         } catch (IOException e) {
             plugin.getLogger().warning("Không lưu được tochuc.yml: " + e.getMessage());
         }
+    }
+
+    /** LuckPerms từ chối tên có dấu chấm (Bedrock: .ten) trong "lp user": dùng UUID nếu server đã biết người chơi. */
+    private static String lpTarget(String name) {
+        if (name.matches("[A-Za-z0-9_]{1,16}")) {
+            return name;
+        }
+        org.bukkit.OfflinePlayer op = org.bukkit.Bukkit.getOfflinePlayerIfCached(name);
+        return op != null ? op.getUniqueId().toString() : name;
     }
 }

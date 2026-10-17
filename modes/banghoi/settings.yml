@@ -655,9 +655,9 @@ rtp_enabled: true
 rtp_cooldown: 300
 rtp_cost: 0
 rtp_warmup: 3
-tp_delay: 3
-tp_cooldown: 0
-tp_invuln: 4
+tele_delay: 3
+tele_cooldown: 0
+tele_invuln: 4
 cleaner_death_minutes: 10
 cleaner_pause_battle: true
 cleaner_skip_towns: false

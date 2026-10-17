@@ -353,6 +353,9 @@
 - NPC Đấu Trường ở spawn Kinh Đô: (12704.5, 65, -2522.5) nhìn về spawn (hướng 90), dân làng WEAPONSMITH + 4 armor stand chữ, PDC
   `duckymomo:dautruong_npc`; bấm = `performCommand("warp pvp")` (có chờ 3 giây). Đặt/xoá: /dautruong admin npc [x y z hướng] | npc xoa.
   Phía tây đối xứng (12694, 65, -2523) để trống cho NPC /tpr (/dmm rtpnpc) nếu đặt.
+- 17/10 tối: bước vào cổng = VÀO THẲNG SÂN chờ (waitSan; chỗ cũ = sảnh), mặc định 1v1 không cược; nút [Đổi sang 2v2] (/dautruong doi),
+  [Cược…] (/dautruong cuoc <xu>), [Thoát về sảnh] (/dautruong roi); thanh hành động nhắc mỗi 2 giây. Sân đang đấu → vào xem + nút thoát.
+  Trận khác bắt đầu trên sân → người chờ chuyển xem, xong trận về lại chỗ chờ. Thế giới đấu trường cấm phá/đặt khối (trừ admin).
 - CHƯA thử trong game: đi qua cổng, bảng chữ, trận thật, góc nhìn điểm xem.
 
 ### DANH SÁCH CẦN THỬ (người dùng chốt 15/10: làm xong hết rồi thử một lượt; mục 16–25)

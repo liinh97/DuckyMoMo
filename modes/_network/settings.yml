@@ -144,3 +144,18 @@ role_admin_prefix: "&c[Admin]"
 dqr_on: true
 dqr_minutes: 10
 dqr_web: "https://app.goc6.io.vn/mc/web/taikhoan.html"
+ess_chat_format: '{PREFIX}{DISPLAYNAME}{SUFFIX}&7: &f{MESSAGE}'
+ess_add_prefix_suffix: false
+ess_nick_max: 16
+ess_nick_ignore_colors: true
+ess_nick_prefix: '~'
+pp_speed_orbit: 120
+pp_speed_spin: 30
+pp_speed_quadhelix: 80
+pp_speed_twins: 60
+pp_speed_whirl: 1
+pp_speed_vortex: 70
+pp_speed_pulse: 15
+pp_speed_wings: 3
+pp_speed_celebration: 15
+pp_ticks_per_particle: 1

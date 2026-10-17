@@ -418,12 +418,26 @@ function render(){
 
 const fold = s => String(s || "").normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/đ/g, "d").toLowerCase();
 // ------------------------------------------------------------ trang trí: đổi tên, hiệu ứng hạt, pet, danh hiệu (có xem trước)
-const EFFECTS = {flame: ["#ff9b2f", "●", "Lửa"], soul_fire_flame: ["#4fe3ff", "●", "Lửa linh hồn"], heart: ["#ff4f6d", "❤", "Trái tim"],
-  note: ["*", "♪", "Nốt nhạc"], enchant: ["#b98cff", "ᚠ", "Phù phép"], happy_villager: ["#5cf06b", "✦", "Dân làng vui"],
-  angry_villager: ["#9aa3ad", "✸", "Dân làng giận"], cloud: ["#f2f5f8", "●", "Mây"], snowflake: ["#dff4ff", "❄", "Bông tuyết"],
-  end_rod: ["#ffffff", "✧", "Thanh End"], portal: ["#a35cff", "●", "Cổng không gian"], witch: ["#e04fe0", "✦", "Phù thuỷ"],
-  totem_of_undying: ["#c8ff4f", "◆", "Vật tổ"], cherry_leaves: ["#ffb7d5", "❀", "Lá anh đào"], glow: ["#7ff7ff", "✺", "Phát sáng"],
-  electric_spark: ["#ffee55", "⚡", "Tia điện"], crit: ["#ffffff", "✕", "Chí mạng"], dripping_honey: ["#ffb02e", "●", "Mật ong"]};
+// [màu xem trước, ký hiệu, tên, trong game trông thế nào] — tên đặt theo hình dạng thật trong game, không dịch sát tên tiếng Anh
+const EFFECTS = {
+  flame: ["#ff9b2f", "●", "Ngọn lửa", "Đốm lửa cam nhỏ bập bùng, như lửa đuốc."],
+  soul_fire_flame: ["#4fe3ff", "●", "Lửa xanh linh hồn", "Đốm lửa màu xanh lam, như đuốc linh hồn."],
+  heart: ["#ff4f6d", "❤", "Trái tim", "Trái tim đỏ nhỏ, như khi cho thú ăn để nhân giống."],
+  note: ["*", "♪", "Nốt nhạc", "Nốt nhạc nhiều màu, như khối nốt nhạc."],
+  enchant: ["#d9d2ff", "ᚠ", "Chữ cổ ma thuật", "Ký tự cổ màu trắng tím bay lơ lửng, như quanh bàn phù phép."],
+  happy_villager: ["#5cf06b", "✦", "Lấp lánh xanh lá", "Đốm sao xanh lá nhỏ, như khi bón bột xương hoặc giao dịch với dân làng."],
+  angry_villager: ["#5d636b", "☁", "Mây giông", "Đám mây xám đen nhỏ có tia sét, như khi dân làng tức giận."],
+  cloud: ["#f2f5f8", "●", "Mây trắng", "Làn khói trắng mờ, như khói phả ra khi thú biến mất."],
+  snowflake: ["#dff4ff", "❄", "Bông tuyết", "Bông tuyết trắng rơi nhẹ, như trong tuyết bột."],
+  end_rod: ["#ffffff", "✧", "Đốm sáng trắng", "Đốm sáng trắng trôi chậm rồi tắt, như quanh thanh End."],
+  portal: ["#a35cff", "●", "Bụi tím dịch chuyển", "Hạt tím li ti xoáy vào, như quanh cổng Nether, ngọc Ender."],
+  witch: ["#e04fe0", "✦", "Lấp lánh tím", "Đốm sao màu tím hồng, như quanh phù thuỷ khi uống thuốc."],
+  totem_of_undying: ["#c8ff4f", "◆", "Hoa giấy vật tổ", "Mảnh vàng và xanh lá bung ra, như khi vật tổ cứu mạng."],
+  cherry_leaves: ["#ffb7d5", "❀", "Cánh hoa anh đào", "Cánh hoa hồng rơi lả tả, như dưới cây anh đào."],
+  glow: ["#7ff7ff", "✺", "Đốm sáng xanh ngọc", "Đốm xanh ngọc phát sáng, như quanh mực phát sáng."],
+  electric_spark: ["#eaf2ff", "✛", "Tia lửa điện", "Dấu cộng nhỏ màu trắng xanh nhạt loé lên, như khi sét đánh vào cột thu lôi."],
+  crit: ["#f3e2c0", "✕", "Vệt chí mạng", "Vệt sáng màu kem bắn ra, như khi đánh chí mạng (nhảy lên chém)."],
+  dripping_honey: ["#ffb02e", "●", "Giọt mật ong", "Giọt mật vàng nhỏ xuống, như dưới tổ ong đầy mật."]};
 const STYLES = {normal: "Quanh người", halo: "Vòng hào quang", orbit: "Bay quanh", feet: "Dưới chân", overhead: "Trên đầu", point: "Một điểm",
   spin: "Xoay trên đầu", quadhelix: "Xoắn 4 dải", wings: "Đôi cánh", rings: "Vòng quanh", sphere: "Quả cầu", vortex: "Lốc xoáy",
   beam: "Vòng lên xuống", whirl: "Cuộn xoáy", celebration: "Pháo hoa", twins: "Song sinh", pulse: "Sóng toả"};
@@ -466,7 +480,8 @@ function trangTriHtml(){
         `<span class="chip on cur" title="Bấm để xem trước" data-cur="${esc(x.hieu_ung)}|${esc(x.kieu)}">${(EFFECTS[x.hieu_ung] || ["", "•"])[1]} ${esc((EFFECTS[x.hieu_ung] || [0, 0, x.hieu_ung])[2])} · ${esc(STYLES[x.kieu] || x.kieu)}<button class="x" data-ppdel="${x.id}" title="Gỡ hiệu ứng này">×</button></span>`).join("")
         : '<span class="small dim">Chưa bật hiệu ứng nào.</span>'}</div>`) : ""}
     <canvas id="ppCv" width="260" height="220" aria-label="Xem trước hiệu ứng"></canvas>
-    <div class="small muted">Hiệu ứng</div><div class="chips">${Object.keys(EFFECTS).map(e => `<button class="chip${e === ppE ? " on" : ""}${pp.hieu_ung.includes(e) ? "" : " off"}" data-e="${e}">${EFFECTS[e][1]} ${EFFECTS[e][2]}</button>`).join("")}</div>
+    <div class="small muted">Hiệu ứng</div><div class="chips">${Object.keys(EFFECTS).map(e => `<button class="chip${e === ppE ? " on" : ""}${pp.hieu_ung.includes(e) ? "" : " off"}" data-e="${e}" title="${esc(EFFECTS[e][3])}">${EFFECTS[e][1]} ${EFFECTS[e][2]}</button>`).join("")}</div>
+    <div class="small dim" id="ppDesc" style="margin-top:6px">${esc((EFFECTS[ppE] || [])[3] || "")}</div>
     <div class="small muted" style="margin-top:8px">Kiểu</div><div class="chips">${Object.keys(STYLES).map(s => `<button class="chip${s === ppS ? " on" : ""}${pp.kieu.includes(s) ? "" : " off"}" data-s="${s}">${STYLES[s]}</button>`).join("")}</div>
     <div class="small dim" style="margin:6px 0">Mờ = rank chưa có (vẫn xem thử được). Đánh nhau thì hiệu ứng tự ẩn.</div>
     ${pp.toi_da ? `<div class="tools"><button class="btn primary small" data-tt="pp_add">Thêm hiệu ứng này</button><button class="btn small" data-tt="pp_reset">Tắt hết</button></div>` : ""}</div>`;
@@ -561,11 +576,11 @@ function bindTrangTri(){
     inp.value = inp.value.slice(0, a) + code + inp.value.slice(b); inp.focus(); inp.selectionStart = inp.selectionEnd = a + code.length; nickVal = inp.value; drawNickPreview(); };
   document.querySelectorAll("#trangtri [data-code]").forEach(b => b.onclick = () => insert(b.dataset.code));
   if ($("#hexPick")) $("#hexPick").onchange = e => insert("&" + e.target.value.toLowerCase());
-  document.querySelectorAll("#trangtri [data-e]").forEach(b => b.onclick = () => { ppE = b.dataset.e; document.querySelectorAll("#trangtri [data-e]").forEach(x => x.classList.toggle("on", x === b)); startPP(); });
+  document.querySelectorAll("#trangtri [data-e]").forEach(b => b.onclick = () => { ppE = b.dataset.e; document.querySelectorAll("#trangtri [data-e]").forEach(x => x.classList.toggle("on", x === b)); if ($("#ppDesc")) $("#ppDesc").textContent = (EFFECTS[ppE] || [])[3] || ""; startPP(); });
   document.querySelectorAll("#trangtri [data-s]").forEach(b => b.onclick = () => { ppS = b.dataset.s; document.querySelectorAll("#trangtri [data-s]").forEach(x => x.classList.toggle("on", x === b)); startPP(); });
   document.querySelectorAll("#trangtri [data-pet]").forEach(b => b.onclick = () => { petSel = b.dataset.pet; document.querySelectorAll("#trangtri [data-pet]").forEach(x => x.classList.toggle("on", x === b)); $("#petBig").textContent = (PETS[petSel] || "🐾").split(" ")[0]; });
   document.querySelectorAll("#trangtri [data-cur]").forEach(b => b.onclick = (e) => { if (e.target.dataset.ppdel) return; [ppE, ppS] = b.dataset.cur.split("|");
-    document.querySelectorAll("#trangtri [data-e]").forEach(x => x.classList.toggle("on", x.dataset.e === ppE)); document.querySelectorAll("#trangtri [data-s]").forEach(x => x.classList.toggle("on", x.dataset.s === ppS)); startPP(); });
+    document.querySelectorAll("#trangtri [data-e]").forEach(x => x.classList.toggle("on", x.dataset.e === ppE)); document.querySelectorAll("#trangtri [data-s]").forEach(x => x.classList.toggle("on", x.dataset.s === ppS)); if ($("#ppDesc")) $("#ppDesc").textContent = (EFFECTS[ppE] || [])[3] || ""; startPP(); });
   document.querySelectorAll("#trangtri [data-ppdel]").forEach(b => b.onclick = () => { lastTT = '[data-tt="pp_add"]'; doTT({viec: "pp_remove", id: +b.dataset.ppdel}); });
   document.querySelectorAll("#trangtri [data-dh]").forEach(b => b.onclick = () => { lastTT = "#trangtri [data-dh]"; doTT({viec: "danhhieu", ma: b.dataset.dh}); });
   document.querySelectorAll("#trangtri [data-tt]").forEach(b => b.onclick = () => {

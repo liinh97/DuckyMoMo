@@ -113,12 +113,42 @@ groups:
 
   - title: Hiệu ứng hạt (PlayerParticles)
     category: Rank donate
-    description: "Có hiệu lực sau khi khởi động lại lobby và Bang Hội Chiến (lệnh pp reload của plugin không chạy được qua RCON)."
+    description: "Có hiệu lực sau khi khởi động lại lobby và Bang Hội Chiến (lệnh pp reload của plugin không chạy được qua RCON). Tốc độ áp dụng cho cả server theo từng kiểu, người chơi không tự chỉnh riêng được (PlayerParticles không hỗ trợ)."
     settings:
       - { key: pp_toggle_on_combat, label: Ẩn hiệu ứng khi đang đánh nhau, type: select, servers: [lobby, banghoi-1], file: plugins/PlayerParticles/config.yml, path: toggle-on-combat,
           options: [ { value: true, label: "Có (nên bật: hạt làm lộ vị trí trong chiến tranh)" }, { value: false, label: Không } ] }
       - { key: pp_max_default, label: Số hiệu ứng cho người KHÔNG có rank, type: int, min: 0, max: 10, servers: [lobby, banghoi-1], file: plugins/PlayerParticles/config.yml, path: max-particles,
           note: "0 = chỉ người có rank (Tử Tước trở lên) mới dùng được /pp." }
+      - { key: pp_speed_orbit, label: "Tốc độ kiểu Bay quanh", type: select, servers: [lobby, banghoi-1], file: plugins/PlayerParticles/styles/orbit.yml, path: steps,
+          info: "Là gì: các quả cầu hạt bay vòng quanh người.\nTrong file: steps = số bước cho một vòng (ít bước = quay nhanh).",
+          options: [ { value: 180, label: "Chậm" }, { value: 120, label: "Vừa (mặc định)" }, { value: 70, label: "Nhanh" } ] }
+      - { key: pp_speed_spin, label: "Tốc độ kiểu Xoay trên đầu", type: select, servers: [lobby, banghoi-1], file: plugins/PlayerParticles/styles/spin.yml, path: particles-per-rotation,
+          info: "Là gì: một điểm hạt xoay tròn trên đầu.\nTrong file: particles-per-rotation (ít = xoay nhanh).",
+          options: [ { value: 45, label: "Chậm" }, { value: 30, label: "Vừa (mặc định)" }, { value: 18, label: "Nhanh" } ] }
+      - { key: pp_speed_quadhelix, label: "Tốc độ kiểu Xoắn 4 dải", type: select, servers: [lobby, banghoi-1], file: plugins/PlayerParticles/styles/quadhelix.yml, path: steps-x,
+          info: "Là gì: 4 dải hạt xoắn quanh người lên xuống.\nTrong file: steps-x (ít = nhanh).",
+          options: [ { value: 120, label: "Chậm" }, { value: 80, label: "Vừa (mặc định)" }, { value: 50, label: "Nhanh" } ] }
+      - { key: pp_speed_twins, label: "Tốc độ kiểu Song sinh", type: select, servers: [lobby, banghoi-1], file: plugins/PlayerParticles/styles/twins.yml, path: horizontal-steps,
+          info: "Là gì: 2 quả cầu hạt bay vòng quanh, lên xuống.\nTrong file: horizontal-steps (ít = nhanh).",
+          options: [ { value: 90, label: "Chậm" }, { value: 60, label: "Vừa (mặc định)" }, { value: 35, label: "Nhanh" } ] }
+      - { key: pp_speed_whirl, label: "Tốc độ kiểu Cuộn xoáy", type: select, servers: [lobby, banghoi-1], file: plugins/PlayerParticles/styles/whirl.yml, path: speed-multiplier,
+          info: "Là gì: các tia hạt cuộn xoáy dưới chân.\nTrong file: speed-multiplier (lớn = nhanh).",
+          options: [ { value: 0.6, label: "Chậm" }, { value: 1, label: "Vừa (mặc định)" }, { value: 1.8, label: "Nhanh" } ] }
+      - { key: pp_speed_vortex, label: "Tốc độ kiểu Lốc xoáy", type: select, servers: [lobby, banghoi-1], file: plugins/PlayerParticles/styles/vortex.yml, path: step-amount,
+          info: "Là gì: hạt xoáy thành cơn lốc quanh người.\nTrong file: step-amount (ít = nhanh).",
+          options: [ { value: 100, label: "Chậm" }, { value: 70, label: "Vừa (mặc định)" }, { value: 40, label: "Nhanh" } ] }
+      - { key: pp_speed_pulse, label: "Tốc độ kiểu Sóng toả", type: select, servers: [lobby, banghoi-1], file: plugins/PlayerParticles/styles/pulse.yml, path: delay,
+          info: "Là gì: vòng hạt toả ra từ chân theo nhịp.\nTrong file: delay = số tick giữa hai nhịp (ít = dồn dập).",
+          options: [ { value: 25, label: "Chậm" }, { value: 15, label: "Vừa (mặc định)" }, { value: 8, label: "Nhanh" } ] }
+      - { key: pp_speed_wings, label: "Tốc độ kiểu Đôi cánh", type: select, servers: [lobby, banghoi-1], file: plugins/PlayerParticles/styles/wings.yml, path: spawn-delay,
+          info: "Là gì: đôi cánh hạt sau lưng, vẽ lại theo nhịp.\nTrong file: spawn-delay = số tick giữa hai lần vẽ (ít = nhanh, tốn tài nguyên hơn).",
+          options: [ { value: 5, label: "Chậm" }, { value: 3, label: "Vừa (mặc định)" }, { value: 2, label: "Nhanh" } ] }
+      - { key: pp_speed_celebration, label: "Tốc độ kiểu Pháo hoa", type: select, servers: [lobby, banghoi-1], file: plugins/PlayerParticles/styles/celebration.yml, path: spawn-frequency,
+          info: "Là gì: pháo hoa hạt bắn lên quanh người.\nTrong file: spawn-frequency = số tick giữa hai lần bắn (ít = dày).",
+          options: [ { value: 25, label: "Thưa" }, { value: 15, label: "Vừa (mặc định)" }, { value: 8, label: "Dày" } ] }
+      - { key: pp_ticks_per_particle, label: "Mật độ chung mọi hiệu ứng", type: select, servers: [lobby, banghoi-1], file: plugins/PlayerParticles/config.yml, path: ticks-per-particle,
+          info: "Là gì: cứ bao nhiêu tick thì vẽ hạt một lần, áp dụng MỌI hiệu ứng.\nLưu ý: thưa hơn thì hiệu ứng chạy chậm, ít hạt hơn, nhẹ máy hơn khi đông người.",
+          options: [ { value: 1, label: "Dày (mặc định, mỗi tick)" }, { value: 2, label: "Vừa (2 tick)" }, { value: 3, label: "Thưa (3 tick)" } ] }
 
   - title: Role chức vụ - prefix
     info: "Là gì: role staff (Admin, Manager, Mod, Helper, Builder) và Dân.\nSửa ở đây: chỉ prefix.\nThêm người, bật quyền: trang Role & rank."

@@ -275,6 +275,14 @@
 - Khung "Lấy đồ trong game": lệnh điền sẵn mã đang xem + nút Chép: /dmm laydo <mã>, /dmm laydo <mã> <người> [số], /dmm luudo <mã>,
   dòng quà `do <mã> [số]`.
 
+### 17/10: hiệu ứng hạt — tên theo hình dạng thật, tốc độ theo kiểu
+- Trang tài khoản (site/public/taikhoan.html `EFFECTS`): tên đặt theo hình dạng trong game (angry_villager = "Mây giông", electric_spark =
+  "Tia lửa điện" dấu cộng trắng xanh, happy_villager = "Lấp lánh xanh lá"…) + dòng mô tả "trông như gì" dưới danh sách, màu xem trước sát hơn.
+- Tốc độ: PlayerParticles KHÔNG cho từng người chỉnh; chỉnh theo kiểu, cả server: Cài đặt › Toàn mạng › Rank donate › Hiệu ứng hạt
+  (Chậm/Vừa/Nhanh cho Bay quanh, Xoay trên đầu, Xoắn 4 dải, Song sinh, Cuộn xoáy, Lốc xoáy, Sóng toả, Đôi cánh, Pháo hoa + mật độ chung
+  ticks-per-particle). Ghi vào plugins/PlayerParticles/styles/<kiểu>.yml ở lobby + banghoi-1, CẦN khởi động lại 2 server mới có hiệu lực.
+- PlayerParticles có sẵn `locale: vi_VN`, EssentialsX có `messages_vi` — chưa bật (đã hỏi người dùng).
+
 ### DANH SÁCH CẦN THỬ (người dùng chốt 15/10: làm xong hết rồi thử một lượt; mục 16–25)
 Triển khai một lần: `git stash && git pull && git stash pop` → `./ops/build-core.sh` (lỗi biên dịch thì gửi ảnh, Java viết ở cloud CHƯA biên
 dịch) → kiểm tra không ai online → `docker compose up -d --no-deps lobby banghoi-1 practice-1` → `docker compose up -d --build panel site`.

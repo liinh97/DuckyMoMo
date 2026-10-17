@@ -49,5 +49,5 @@ if ! grep -q '^RESTIC_PASSWORD=' .env; then
   echo "Đã thêm RESTIC_PASSWORD vào .env. Hãy cất thêm một bản ngoài máy (mất là không khôi phục được sao lưu)."
 fi
 
-mkdir -p data
+mkdir -p data data/shared/vinhdanh   # data/shared: dùng chung giữa các server (vinh danh mùa)
 echo "Xong. Chạy tiếp:  docker compose up -d   rồi   docker compose logs -f"

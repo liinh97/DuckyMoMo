@@ -431,7 +431,7 @@ final class Leaderboard implements Listener {
         return true;
     }
 
-    private Map<String, Integer> architectVotes() {
+    Map<String, Integer> architectVotes() {
         Map<String, Integer> out = new LinkedHashMap<>();
         for (String id : data.getStringList("kts.dangky")) {
             Town t = TownyAPI.getInstance().getTown(UUID.fromString(id));

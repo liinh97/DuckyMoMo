@@ -721,9 +721,9 @@ org_ad_cooldown: 60
 org_event_hours: 24
 lb_season: '1'
 lb_season_start: ''
-lb_double_week: 10
-lb_register_week: 9
-lb_vote_week: 10
+lb_double_week: 13
+lb_register_week: 12
+lb_vote_week: 13
 lb_snapshot_day: SUNDAY
 lb_snapshot_time: '23:00'
 lb_pts_town: 10
@@ -735,7 +735,7 @@ lb_pts_kill: 3
 lb_pts_banner: 5
 lb_kill_cap: 3
 lb_title_hours: 10
-lb_title_week: 9
+lb_title_week: 12
 jus_buffer: 100
 jus_self_defense: 30
 jus_floor: 100

@@ -1,6 +1,5 @@
 package vn.duckymomo.core.paper;
 
-import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.kyori.adventure.title.Title;
@@ -130,11 +129,11 @@ final class Seasons implements Listener {
         plugin.getLogger().info("Mùa: bật, hiện là " + plain(name(last)) + " (còn " + daysLeft() + " ngày)");
     }
 
-    private static Component c(String s) {
+    static Component c(String s) {
         return LEGACY.deserialize(s);
     }
 
-    private static String plain(String s) {
+    static String plain(String s) {
         return s.replaceAll("[&§][0-9a-fk-orA-FK-OR]", "");
     }
 
@@ -212,7 +211,7 @@ final class Seasons implements Listener {
         return order.get(i);
     }
 
-    private String next() {
+    String next() {
         int i = order.indexOf(current());
         return order.get((i + 1) % order.size());
     }
@@ -528,45 +527,5 @@ final class Seasons implements Listener {
         }
         String typed = a[a.length - 1].toLowerCase(Locale.ROOT);
         return out.stream().filter(o -> o.startsWith(typed)).toList();
-    }
-
-    PlaceholderExpansion placeholders() {
-        return new PlaceholderExpansion() {
-            @Override
-            public String getIdentifier() {
-                return "dmmmua";
-            }
-
-            @Override
-            public String getAuthor() {
-                return "DuckyMoMo";
-            }
-
-            @Override
-            public String getVersion() {
-                return "1";
-            }
-
-            @Override
-            public boolean persist() {
-                return true;
-            }
-
-            @Override
-            public String onRequest(OfflinePlayer player, String params) {
-                return switch (params) {
-                    case "id" -> current();
-                    case "ten" -> LegacyComponentSerializer.legacySection().serialize(c(name(current())));
-                    case "ten_tron" -> plain(name(current()));
-                    case "con" -> String.valueOf(daysLeft());
-                    case "sau" -> plain(name(next()));
-                    case "sukien" -> {
-                        ConfigurationSection ev = event();
-                        yield ev == null ? "" : plain(ev.getString("name", ev.getName()));
-                    }
-                    default -> null;
-                };
-            }
-        };
     }
 }

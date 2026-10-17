@@ -283,6 +283,24 @@
   ticks-per-particle). Ghi vào plugins/PlayerParticles/styles/<kiểu>.yml ở lobby + banghoi-1, CẦN khởi động lại 2 server mới có hiệu lực.
 - PlayerParticles có sẵn `locale: vi_VN`, EssentialsX có `messages_vi` — chưa bật (đã hỏi người dùng).
 
+### 18/10: mùa 3 tháng + Quảng trường Vinh danh
+- Mùa = 3 tháng (13 tuần): leaderboard double-week 13, register-week 12, vote-week 13, title-member-before-week 12 (config + settings.yml).
+  leaderboard.season-start vẫn TRỐNG (chưa mở mùa chính thức): đặt ngày khi mở server cho người chơi.
+- Hết mùa: làm lại từ đầu với BẢN ĐỒ MỚI (người dùng chốt 18/10). Giữ: tài khoản, rank donate, đồ trang trí, danh hiệu, Quảng trường Vinh danh.
+- Thư mục dùng chung data/shared (mount /shared: banghoi-1 ghi, lobby đọc ro, site đọc qua ../data). ops/init.sh tạo data/shared/vinhdanh.
+- HallOfFameSnapshot (banghoi, hall-of-fame.snapshot): /shared/vinhdanh/S<leaderboard.season>.json, tạm tính 30 phút/lần, /vinhdanh tam (ghi ngay),
+  /vinhdanh chot [ghide] (khoá). Bá Chủ: nước + vua + thị trấn + thị trưởng + thành viên với chức vụ (Vua, Thị trưởng, rank nation/town dịch
+  ROLE_VI); Á Chủ 2–3; Chiến Thần, Đại Phú Hộ (topRich), Kiến Trúc Sư (architectVotes, đã mở package-private), Đấu Trường (dautruong.yml
+  stats elo, có trận), Pet (pets.db).
+- HallOfFameDisplay (lobby, hall-of-fame.display): /vinhdanh dat <mùa|moinhat> <tieude|bachu|chienthan|phuho|kientrucsu|dautruong|pet> ở chỗ
+  admin đứng (bảng quay về phía admin), TextDisplay + ItemDisplay đầu top 3 (profile.complete lấy da Mojang theo tên), không lưu vào world,
+  forceload chunk, làm mới khi file đổi (mỗi phút). Điểm đặt: data/lobby/plugins/DuckyMoMoCore/vinhdanh.yml. CHƯA đặt điểm nào (cần admin
+  trong game chọn chỗ ở map sakura). Web: mục Vinh danh (#vinhdanh, api/vinhdanh).
+- LỖI ĐÃ SỬA 18/10 02:54: DuckyMoMoCore TẮT HẲN ở sảnh vì Seasons.INSTANCE làm nạp lớp Seasons có anonymous PlaceholderExpansion
+  (sảnh/practice không có PlaceholderAPI → NoClassDefFoundError lúc enable). Đã tách sang SeasonsPapi. QUY TẮC: lớp nào có thể bị nạp ở
+  sảnh/practice (kể cả chỉ gọi static) thì KHÔNG được chứa PlaceholderExpansion; để expansion trong lớp riêng. (Arena/Frontier/LuckySpin vẫn
+  chứa nhưng chỉ nạp ở banghoi.) Sau khi build nên khởi động lại cả lobby và xem log "Enabling DuckyMoMoCore" không kèm lỗi.
+
 ### 18/10: cân bằng chiến tranh (/canbang) + trả dần tiền cướp
 - SiegeWar plunder_paid_over_time: true, 7 ngày (data/banghoi-1/plugins/SiegeWar/config.yml, đã swa reload); ô siege_plunder_* trên Cài đặt.
 - WarBalance.java (war-balance), SiegeWar qua phản chiếu (registerEvent theo tên lớp): PreSiegeWarStartEvent (chặn khi nước còn nợ phí thuộc

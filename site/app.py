@@ -333,6 +333,18 @@ def pet_top(limit=10):
     return out
 
 
+def api_vinhdanh():
+    """Vinh danh các mùa: data/shared/vinhdanh/S<mùa>.json do Bang Hội Chiến ghi (HallOfFameSnapshot), mới nhất trước."""
+    out = []
+    d = DATA / "shared" / "vinhdanh"
+    for f in sorted(d.glob("S*.json"), key=lambda f: -int(re.sub(r"\D", "", f.stem) or 0)) if d.exists() else []:
+        try:
+            out.append(json.loads(f.read_text(encoding="utf-8")))
+        except (OSError, ValueError):
+            continue
+    return {"mua": out}
+
+
 def api_dautruong():
     """Đấu Trường trực tiếp: plugin ghi dautruong-live.json mỗi 5 giây; cũ hơn 60 giây = server đang tắt."""
     try:
@@ -988,6 +1000,7 @@ ROUTES = {
     "/api/bxh": lambda: cached("bxh", 30, api_bxh),
     "/api/vote": lambda: cached("vote", 30, api_vote),
     "/api/mua": lambda: cached("mua", 60, api_mua),
+    "/api/vinhdanh": lambda: cached("vinhdanh", 120, api_vinhdanh),
     "/api/dautruong": lambda: cached("dautruong", 5, api_dautruong),
     "/api/hangngay": lambda: cached("hangngay", 60, api_hangngay),
 }

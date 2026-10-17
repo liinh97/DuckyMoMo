@@ -112,7 +112,8 @@ services:
     mem_limit: 10g             # heap 6G + bộ nhớ ngoài heap khi nạp nhiều chunk (trang trí map dùng ~7,5 GB)
     volumes:
       - ../../data/banghoi-1:/data
-      - ../../data/proxy/plugins/floodgate/key.pem:/run/floodgate/key.pem:ro   # khoá Floodgate chung với proxy (plugins/floodgate/config.yml: key-file-name)
+      - ../../data/proxy/plugins/floodgate/key.pem:/run/floodgate/key.pem:ro
+      - ../../data/shared:/shared            # dùng chung giữa các server: vinh danh mùa (vinhdanh/S<mùa>.json) cho sảnh + web   # khoá Floodgate chung với proxy (plugins/floodgate/config.yml: key-file-name)
       - ./server/config:/config:ro
       - ./server/plugins:/plugins:ro
     depends_on:

@@ -366,6 +366,7 @@ footer .fbrand img{width:44px}
       <a href="#dautruong">Đấu Trường</a>
       <a href="#bantron">Hội Bàn Tròn</a>
       <a href="#xephang">Xếp hạng</a>
+      <a href="#vinhdanh">Vinh danh</a>
       <a href="#vote">Vote</a>
       <a href="#luat">Luật</a>
       <a href="#hoidap">Hỏi đáp</a>
@@ -853,6 +854,17 @@ footer .fbrand img{width:44px}
   </div>
 </section>
 
+<!-- ============ QUẢNG TRƯỜNG VINH DANH ============ -->
+<section id="vinhdanh">
+  <div class="wrap">
+    <div class="kicker">Ghi danh mãi mãi</div>
+    <h2>Quảng trường Vinh danh</h2>
+    <p class="intro">Mỗi mùa kéo dài 3 tháng rồi làm lại từ đầu với bản đồ mới. Người thắng được khắc tên, dựng tượng ở <b>Quảng trường Vinh danh</b> tại sảnh (gõ <span class="kbd">/vinhdanh tp</span>) và giữ danh hiệu mãi mãi: nước Bá Chủ cùng từng thị trấn, thành viên và chức vụ; Chiến Thần; Đại Phú Hộ; Kiến Trúc Sư; Đấu Trường; Pet mạnh nhất.</p>
+    <div class="fishbar" id="vdTabs"></div>
+    <div id="vdBody" class="muted">Đang tải…</div>
+  </div>
+</section>
+
 <!-- ============ VOTE ============ -->
 <section id="vote">
   <div class="wrap">
@@ -1311,13 +1323,51 @@ function countTo(el, n){
   const lines = ["Công thành tối nay không? ⚔️","Đất Tây Bắc còn trống kìa! 🏔️","Giết dân hoà bình là ra toà nha ⚖️","Vào sớm chọn đất đẹp! 🏰","Bán đồ ở kinh đô được +20% 💰","Có gì đó đang thức giấc… 🌋","Mùa mưa cá linh về đầy đồng 🎣","Điểm danh chưa đấy? 🎁"];
   let i = 0; setInterval(() => { i = (i + 1) % lines.length; const b = $("#bubble"); if (b) b.textContent = lines[i]; }, 6000);
 })();
+
+// ---------------- vinh danh
+const HE_VD = {Combat: "Chiến Binh", Utility: "Hậu Cần", PvP: "Đấu Sĩ", Ride: "Thú Cưỡi", Farm: "Nông Trại"};
+let VD = [], vdSel = 0;
+function vdRender(){
+  const m = VD[vdSel];
+  if (!m) { $("#vdBody").innerHTML = "Chưa có mùa nào được ghi. Bảng tạm tính tự cập nhật khi mùa 1 bắt đầu có điểm."; return; }
+  const medal = ["🥇", "🥈", "🥉"];
+  const list = (a, unit) => (a || []).length ? `<table><tbody>${a.map((p, i) => `<tr><td>${medal[i] || ""}</td><td><b>${esc(p.ten)}</b></td><td>${nf.format(p.diem || 0)}${unit}</td></tr>`).join("")}</tbody></table>` : '<p class="dim">Chưa có.</p>';
+  const ns = m.ba_chu || [], bc = ns[0];
+  let h = m.trang_thai === "tam" ? '<p class="dim">Mùa đang diễn ra: số liệu tạm tính, cập nhật 30 phút/lần. Chốt khi đóng mùa.</p>' : "";
+  h += `<div class="card hl" style="margin-bottom:16px"><h3>⚔ Công thành chiến${bc ? ` — Bá Chủ: ${esc(bc.ten)} <span class="dim">(${bc.diem} điểm)</span>` : ""}</h3>`;
+  if (bc) {
+    h += `<p>Vua <b>${esc(bc.vua || "?")}</b></p>`;
+    h += (bc.thi_tran || []).map(t => `<details style="margin:6px 0"><summary><b>${esc(t.ten)}</b> <span class="dim">· thị trưởng ${esc(t.thi_truong)} · ${t.so_dan} dân</span></summary>
+      <div style="margin:6px 0 4px 14px;font-size:.9rem">${(t.thanh_vien || []).map(x => esc(x.ten) + ((x.chuc_vu || []).length ? ` <span class="dim">(${x.chuc_vu.map(esc).join(", ")})</span>` : "")).join(" · ")}</div></details>`).join("");
+    if (ns.length > 1) h += `<p class="dim" style="margin-top:8px">Á Chủ: ${ns.slice(1).map(n => `<b>${esc(n.ten)}</b> (${n.diem} điểm)`).join(" · ")}</p>`;
+  } else h += '<p class="dim">Chưa có quốc gia nào ghi điểm.</p>';
+  h += "</div>";
+  const k = m.kien_truc_su;
+  const pets = (m.pet || []).length ? `<table><tbody>${m.pet.map((p, i) => `<tr><td>${medal[i] || ""}</td><td><b>${esc(p.ten)}</b><div class="dim" style="font-size:.8rem">${esc(p.loai)} · ${esc(HE_VD[p.he] || p.he || "")}</div></td><td>Cấp ${p.cap}</td><td>${esc(p.chu || "?")}</td></tr>`).join("")}</tbody></table>` : '<p class="dim">Chưa có.</p>';
+  h += `<div class="grid g3">
+    <div class="card"><h3>⚔ Chiến Thần</h3>${list(m.chien_than, " điểm")}</div>
+    <div class="card"><h3>💰 Đại Phú Hộ</h3>${list(m.phu_ho, " xu")}</div>
+    <div class="card"><h3>🏯 Kiến Trúc Sư</h3>${k ? `<p><b>${esc(k.ten)}</b> <span class="dim">(${k.phieu} phiếu)</span></p><p class="dim" style="font-size:.85rem">${(k.thanh_vien || []).map(x => esc(x.ten)).join(", ")}</p>` : '<p class="dim">Chưa bình chọn.</p>'}</div>
+    <div class="card"><h3>🏟 Đấu Trường</h3>${list(m.dau_truong, " điểm")}</div>
+    <div class="card"><h3>🐾 Pet mạnh nhất</h3>${pets}</div>
+  </div>`;
+  $("#vdBody").innerHTML = h;
+}
+async function loadVinhDanh(){
+  try {
+    VD = (await j("api/vinhdanh")).mua || [];
+    $("#vdTabs").innerHTML = VD.map((m, i) => `<button class="tab${i === vdSel ? " on" : ""}" data-vd="${i}">Mùa ${esc(m.mua)}${m.trang_thai === "tam" ? " (đang diễn ra)" : ""}</button>`).join("");
+    document.querySelectorAll("#vdTabs [data-vd]").forEach(b => b.onclick = () => { vdSel = +b.dataset.vd; document.querySelectorAll("#vdTabs [data-vd]").forEach(x => x.classList.toggle("on", x === b)); vdRender(); });
+    vdRender();
+  } catch (e) { $("#vdBody").textContent = "Không tải được vinh danh."; }
+}
 // nút Đăng nhập / tên tài khoản (ẩn khi server chưa bật đăng nhập web)
 j("api/toi").then(t => {
   const a = $("#navLogin");
   if (t.dang_nhap && t.ten) { a.textContent = t.ten; a.title = "Tài khoản của tôi"; }
   if (t.bat) a.hidden = false;
 }).catch(() => {});
-loadInfo().catch(()=>{}); loadStatus(); loadArena(); setInterval(loadArena, 10000); loadBantron(); loadBxh(); loadVote(); loadMua(); loadDaily();
+loadInfo().catch(()=>{}); loadVinhDanh(); loadStatus(); loadArena(); setInterval(loadArena, 10000); loadBantron(); loadBxh(); loadVote(); loadMua(); loadDaily();
 setInterval(loadStatus, 30000); setInterval(loadBantron, 60000); setInterval(loadBxh, 60000); setInterval(loadVote, 60000); setInterval(loadMua, 300000);
 </script>
 </body>

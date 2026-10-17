@@ -23,6 +23,7 @@ public final class DuckyMoMoCore extends JavaPlugin {
     private SiegeSupply supply;
     private RegionSpecialty specialty;
     private WarBalance warBalance;
+    private HallOfFameDisplay hallDisplay;
     private Activity activity;
     private PeaceAlliance peace;
     private DecorShop decorShop;
@@ -67,6 +68,10 @@ public final class DuckyMoMoCore extends JavaPlugin {
         if (warBalance != null) {
             warBalance.stop();
             warBalance = null;
+        }
+        if (hallDisplay != null) {
+            hallDisplay.stop();
+            hallDisplay = null;
         }
         if (arenaPapi != null) {
             arenaPapi.unregister();
@@ -362,6 +367,23 @@ public final class DuckyMoMoCore extends JavaPlugin {
             getServer().getPluginManager().registerEvents(board, this);
             board.start();
         }
+        // Vinh danh mùa: Bang Hội Chiến chụp người thắng ra thư mục dùng chung (hall-of-fame.snapshot), sảnh dựng Quảng trường Vinh danh (hall-of-fame.display)
+        org.bukkit.configuration.ConfigurationSection hof = getConfig().getConfigurationSection("hall-of-fame");
+        HallOfFameSnapshot hofSnap = hof != null && hof.getBoolean("snapshot") && board != null
+                ? new HallOfFameSnapshot(this, board, hof, getConfig().getString("leaderboard.season", "1")) : null;
+        if (hofSnap != null) {
+            hofSnap.start();
+        }
+        hallDisplay = hof != null && hof.getBoolean("display") ? new HallOfFameDisplay(this, hof) : null;
+        if (hallDisplay != null) {
+            hallDisplay.start();
+        }
+        HallOfFameDisplay hd = hallDisplay;
+        bind("vinhdanh", hd != null ? hd::command : hofSnap != null ? hofSnap::command : null, "Quảng trường Vinh danh");
+        org.bukkit.command.PluginCommand vdCmd = getCommand("vinhdanh");
+        if (vdCmd != null) {
+            vdCmd.setTabCompleter(hd == null ? null : (sender, cmd, label, a) -> hd.tab(sender, a));
+        }
         Justice justice = council != null && board != null && getConfig().getBoolean("justice.enabled")
                 ? new Justice(this, peace, council, orgs, board, warRules, getConfig().getConfigurationSection("justice")) : null;
         if (justice != null) {
@@ -630,7 +652,7 @@ public final class DuckyMoMoCore extends JavaPlugin {
             getServer().getPluginManager().registerEvents(seasons, this);
             seasons.start();
             if (getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-                seasonPapi = seasons.placeholders();
+                seasonPapi = SeasonsPapi.create(seasons);
                 seasonPapi.register();
             }
         }

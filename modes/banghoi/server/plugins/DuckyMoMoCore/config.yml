@@ -355,14 +355,20 @@ organizations:
   ad-cooldown-minutes: 60
   event-teleport-hours: 24
 
+# Vinh danh mùa: chụp người thắng ra thư mục dùng chung (data/shared/vinhdanh, mount /shared) cho Quảng trường Vinh danh ở sảnh + web.
+# Tự ghi bản tạm tính 30 phút/lần; hết mùa: /bxh dongmua -> /bxh traothuong -> /vinhdanh chot.
+hall-of-fame:
+  snapshot: true
+  dir: /shared/vinhdanh
+
 # Bảng xếp hạng mùa (mục 8 + 11C). season-start: ngày bắt đầu mùa (yyyy-mm-dd), trống = chưa mở mùa (không tính tuần).
 leaderboard:
   enabled: true
   season: "1"
   season-start: ""
-  double-week: 10
-  register-week: 9
-  vote-week: 10
+  double-week: 13
+  register-week: 12
+  vote-week: 13
   snapshot-day: SUNDAY
   snapshot-time: "23:00"
   town-active-residents: 3
@@ -371,7 +377,7 @@ leaderboard:
   min-town-age-days: 3
   kill-cap: 3
   title-min-hours: 10
-  title-member-before-week: 9
+  title-member-before-week: 12
   points: {town: 10, attack-win: 30, defend-win: 20, revolt-win: 20, kill: 3, banner: 5}
   titles:
     bachu: "&6&l[Bá Chủ S{mua}]"

@@ -69,6 +69,7 @@ services:
     mem_limit: 3g
     volumes:
       - ../data/lobby:/data
+      - ../data/shared:/shared:ro         # vinh danh mùa do Bang Hội Chiến ghi (Quảng trường Vinh danh)
       - ../data/proxy/plugins/floodgate/key.pem:/run/floodgate/key.pem:ro   # khoá Floodgate chung với proxy (plugins/floodgate/config.yml: key-file-name)
       - ./config:/config:ro        # -> /data/config (paper-global.yml…)
       - ./plugins:/plugins:ro      # -> /data/plugins (cấu hình plugin, jar tải tay)

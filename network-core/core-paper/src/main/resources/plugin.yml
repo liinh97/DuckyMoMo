@@ -105,6 +105,9 @@ commands:
   lichcongthanh:
     description: "Lịch công thành: phiên tới, phiên đó có cho pet chiến đấu tham chiến không"
     aliases: [congthanh, lichvay]
+  vinhdanh:
+    description: "Quảng trường Vinh danh: người thắng các mùa; admin: /vinhdanh chot|tam (Bang Hội Chiến), /vinhdanh dat|xoa|lammoi (sảnh)"
+    aliases: [dentvinhdanh, halloffame]
   canbang:
     description: "Cân bằng chiến tranh: Bá chủ, thuộc địa, phí, lợi thế cho bên yếu"
     aliases: [bachu, canbangchientranh]
@@ -127,6 +130,9 @@ commands:
     description: "Đấu Trường: người + pet đấu 1v1, 2v2 (hàng chờ, thách đấu, cược, xếp hạng)"
     aliases: [dt, arena]
 permissions:
+  duckymomo.vinhdanh.admin:
+    description: "Chốt vinh danh mùa, đặt bảng/tượng ở Quảng trường Vinh danh"
+    default: op
   duckymomo.pet.admin:
     description: "Phát Bùa bắt pet (/buabatpet give)"
     default: op

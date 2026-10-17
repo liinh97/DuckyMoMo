@@ -482,6 +482,22 @@ groups:
           note: "300 = 5 phút. Admin (quyền duckymomo.rtp.bypass) không phải chờ." }
       - { key: rtp_cost, label: Phí mỗi lần (0 = miễn phí), type: number, min: 0, file: plugins/DuckyMoMoCore/config.yml, path: rtp.cost,
           note: "Trừ tiền sau khi tìm được chỗ; dịch chuyển hỏng thì trả lại." }
+      - { key: rtp_warmup, label: Đứng yên bao lâu trước khi đi (giây), type: int, min: 0, max: 30, file: plugins/DuckyMoMoCore/config.yml, path: rtp.warmup-seconds,
+          note: "3 = như các server khác. Di chuyển hoặc bị đánh trong lúc chờ là huỷ. 0 = đi ngay.",
+          info: "Chống dùng /tpr để chạy trốn khi đang đánh nhau. Đếm ngược hiện trên thanh hành động.\nStaff có quyền essentials.teleport.timer.bypass hoặc duckymomo.rtp.bypass đi ngay." }
+
+  - title: Dịch chuyển bằng lệnh (/home, /spawn, /warp, /tpa, /back)
+    category: Thế giới
+    description: "Thời gian chờ của mọi lệnh dịch chuyển EssentialsX ở Bang Hội Chiến. /tpr có ô chờ riêng ở nhóm trên."
+    apply: [essentials reload]
+    settings:
+      - { key: tp_delay, label: Đứng yên bao lâu trước khi đi (giây), type: int, min: 0, max: 30, file: plugins/Essentials/config.yml, path: teleport-delay,
+          note: "3 = như các server khác. Di chuyển hoặc bị đánh trong lúc chờ là huỷ. 0 = đi ngay.",
+          info: "Áp dụng cho /home, /spawn, /warp, /back, /tpa (đếm khi người kia /tpaccept), /tpahere.\nStaff có quyền essentials.teleport.timer.bypass (Admin có sẵn qua *) đi ngay.\nMuốn ai đó được di chuyển trong lúc chờ: quyền essentials.teleport.timer.move." }
+      - { key: tp_cooldown, label: Phải chờ giữa hai lần dịch chuyển (giây), type: int, min: 0, max: 3600, file: plugins/Essentials/config.yml, path: teleport-cooldown,
+          note: "0 = không giới hạn.", info: "Sau một lần /home, /tp… phải chờ ngần này giây mới dùng lệnh dịch chuyển tiếp. Bỏ qua: essentials.teleport.cooldown.bypass." }
+      - { key: tp_invuln, label: Bất tử sau khi dịch chuyển (giây), type: int, min: 0, max: 30, file: plugins/Essentials/config.yml, path: teleport-invulnerability,
+          note: "Trong thời gian này không bị đánh và cũng không đánh được người khác." }
 
   - title: Mùa mưa / mùa khô (/mua)
     category: Thế giới

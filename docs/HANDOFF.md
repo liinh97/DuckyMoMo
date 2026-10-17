@@ -243,6 +243,12 @@
   KHÔNG có ở đây (quyền của chúng xem Cẩm nang hoặc thêm tay ở "Quyền khác"). Rank donate không thấy nhóm tự động (chỉ trang trí).
 - Trang Role: nhóm tự động thu gọn, bấm tiêu đề mở; ô Lọc quyền tìm cả tên gọi tắt (vd "sun" → essentials.weather).
 
+### 17/10: chờ 3 giây trước khi dịch chuyển (Bang Hội Chiến)
+- EssentialsX `teleport-delay: 3` (data/banghoi-1, đã `essentials reload`): /home, /spawn, /warp, /back, /tpa. Practice vẫn 0 (chưa hỏi).
+- `/tpr`: `RandomTeleport` thêm `rtp.warmup-seconds` (mặc định 3): đứng yên, đếm trên thanh hành động, di chuyển khỏi khối / bị đánh = huỷ;
+  bỏ qua nếu có essentials.teleport.timer.bypass hoặc duckymomo.rtp.bypass. Đã build + khởi động lại banghoi-1 (0 người online), CHƯA thử trong game.
+- Trang Cài đặt › Thế giới: ô chờ của /tpr + nhóm mới "Dịch chuyển bằng lệnh" (teleport-delay, teleport-cooldown, teleport-invulnerability).
+
 ### DANH SÁCH CẦN THỬ (người dùng chốt 15/10: làm xong hết rồi thử một lượt; mục 16–25)
 Triển khai một lần: `git stash && git pull && git stash pop` → `./ops/build-core.sh` (lỗi biên dịch thì gửi ảnh, Java viết ở cloud CHƯA biên
 dịch) → kiểm tra không ai online → `docker compose up -d --no-deps lobby banghoi-1 practice-1` → `docker compose up -d --build panel site`.

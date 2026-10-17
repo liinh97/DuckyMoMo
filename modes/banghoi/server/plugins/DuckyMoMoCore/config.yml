@@ -134,6 +134,7 @@ rtp:
   enabled: true
   world: world
   cooldown-seconds: 300         # trang Cài đặt sửa được; người có duckymomo.rtp.bypass không phải chờ
+  warmup-seconds: 3             # đứng yên N giây rồi mới đi (di chuyển/bị đánh = huỷ); 0 = đi ngay; staff có essentials.teleport.timer.bypass đi ngay
   cost: 0                       # phí mỗi lần (0 = miễn phí); duckymomo.rtp.free không mất phí
   max-attempts: 15
   town-buffer: 32

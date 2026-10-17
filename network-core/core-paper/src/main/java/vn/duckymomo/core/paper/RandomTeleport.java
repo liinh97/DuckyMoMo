@@ -86,12 +86,16 @@ final class RandomTeleport implements Listener {
     private final NamespacedKey npcKey;
     private final NamespacedKey zoneKey;
     private final Set<UUID> busy = new HashSet<>();
+    private final int warmupSeconds;
+    /** Đang đếm ngược trước khi dịch chuyển (đứng yên N giây, giống teleport-delay của Essentials). */
+    private final Map<UUID, org.bukkit.scheduler.BukkitTask> warming = new HashMap<>();
 
     RandomTeleport(DuckyMoMoCore plugin, ConfigurationSection cfg) {
         this.plugin = plugin;
         this.worldName = cfg.getString("world", "world");
         this.cooldownMs = Math.max(0, cfg.getLong("cooldown-seconds", 300)) * 1000L;
         this.cost = Math.max(0, cfg.getDouble("cost", 0));
+        this.warmupSeconds = Math.max(0, cfg.getInt("warmup-seconds", 3));
         this.maxAttempts = Math.max(1, cfg.getInt("max-attempts", 15));
         this.townBuffer = Math.max(0, cfg.getInt("town-buffer", 32));
         this.border = Rect.of(cfg.getIntegerList("border"));
@@ -304,8 +308,58 @@ final class RandomTeleport implements Listener {
             p.sendMessage(c("&7Đang tìm chỗ cho bạn, chờ chút…"));
             return;
         }
-        p.sendMessage(c("&7Đang tìm chỗ đất hoang ở " + z.name() + "&7…"));
-        attempt(p, z, w, 1);
+        // chờ đứng yên trước khi đi (staff có quyền bỏ qua thời gian chờ thì đi ngay)
+        if (warmupSeconds <= 0 || p.hasPermission("essentials.teleport.timer.bypass") || p.hasPermission("duckymomo.rtp.bypass")) {
+            p.sendMessage(c("&7Đang tìm chỗ đất hoang ở " + z.name() + "&7…"));
+            attempt(p, z, w, 1);
+            return;
+        }
+        UUID id = p.getUniqueId();
+        Location from = p.getLocation().clone();
+        int[] count = {warmupSeconds};
+        p.sendMessage(c("&7Đứng yên &f" + warmupSeconds + " giây &7để dịch chuyển (di chuyển hoặc bị đánh là huỷ)."));
+        warming.put(id, plugin.getServer().getScheduler().runTaskTimer(plugin, () -> {
+            if (!p.isOnline()) {
+                stopWarmup(id, null);
+            } else if (moved(from, p.getLocation())) {
+                stopWarmup(id, "&cBạn đã di chuyển, huỷ dịch chuyển.");
+            } else if (count[0] <= 0) {
+                org.bukkit.scheduler.BukkitTask t = warming.remove(id);
+                if (t != null) {
+                    t.cancel();
+                }
+                p.sendMessage(c("&7Đang tìm chỗ đất hoang ở " + z.name() + "&7…"));
+                attempt(p, z, w, 1);
+            } else {
+                p.sendActionBar(c("&eDịch chuyển sau &f" + count[0] + " &egiây… đứng yên"));
+                count[0]--;
+            }
+        }, 0L, 20L));
+    }
+
+    private static boolean moved(Location a, Location b) {
+        return a.getWorld() != b.getWorld() || a.getBlockX() != b.getBlockX() || a.getBlockZ() != b.getBlockZ()
+                || Math.abs(a.getY() - b.getY()) > 1.0;
+    }
+
+    private void stopWarmup(UUID id, String msg) {
+        org.bukkit.scheduler.BukkitTask t = warming.remove(id);
+        if (t != null) {
+            t.cancel();
+        }
+        busy.remove(id);
+        Player p = plugin.getServer().getPlayer(id);
+        if (msg != null && p != null) {
+            p.sendMessage(c(msg));
+            p.sendActionBar(c(msg));
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onWarmupDamage(EntityDamageEvent event) {
+        if (event.getEntity() instanceof Player p && warming.containsKey(p.getUniqueId())) {
+            stopWarmup(p.getUniqueId(), "&cBạn bị tấn công, huỷ dịch chuyển.");
+        }
     }
 
     private void attempt(Player p, Zone z, World w, int n) {

@@ -109,7 +109,7 @@
 </div>
 <script>
 const $ = (id) => document.getElementById(id);
-if (!"__DOZZLE_URL__") $("dozzle").style.display = "none";
+if (!"__DOZZLE_URL__" && $("dozzle")) $("dozzle").style.display = "none";
 const TYPE_NAME = { chat: "CHAT", join: "VÀO/RA", command: "LỆNH", admin: "ADMIN" };
 let modeNames = {}, timer = null, firstRender = true;
 

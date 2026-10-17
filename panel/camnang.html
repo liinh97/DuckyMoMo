@@ -56,7 +56,7 @@
 </main>
 <script>
 const $ = (id) => document.getElementById(id);
-if (!"__DOZZLE_URL__") $("dozzle").style.display = "none";
+if (!"__DOZZLE_URL__" && $("dozzle")) $("dozzle").style.display = "none";
 const SRV = { proxy: "Proxy", lobby: "Sảnh", "banghoi-1": "Bang Hội Chiến", "practice-1": "Practice", "pokemon-1": "Pokémon" };
 let data = null, kind = "Hướng dẫn nhanh", server = "*";
 

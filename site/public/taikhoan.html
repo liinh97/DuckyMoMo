@@ -79,6 +79,7 @@ code,.kbd{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;background:
 .feat{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid rgba(42,58,79,.6)}
 .feat:last-child{border-bottom:none}
 .feat small{display:block;color:var(--muted)}
+@media (max-width:560px){.feat{flex-direction:column;align-items:stretch}.feat .btn{text-align:center}}
 .note{border-radius:12px;padding:12px 14px;background:rgba(242,184,75,.08);border:1px solid rgba(242,184,75,.35);margin-bottom:12px}
 .note.red{background:rgba(239,83,80,.08);border-color:rgba(239,83,80,.45)}
 .cmds{max-height:640px;overflow:auto;margin-top:8px;padding-right:4px}

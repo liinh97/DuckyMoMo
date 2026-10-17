@@ -1311,6 +1311,16 @@ final class Arena implements Listener {
         }
     }
 
+    /** Thế giới đấu trường: không cưỡi pet (Thú Cưỡi cấp 10+ bay được, bay ra khỏi sân / lơ lửng ngoài tầm đánh). */
+    @EventHandler(ignoreCancelled = true)
+    public void onMount(org.bukkit.event.entity.EntityMountEvent event) {
+        if (event.getEntity() instanceof Player p && PetCombat.isPet(event.getMount())
+                && event.getMount().getWorld().getName().equals(WORLD)) {
+            event.setCancelled(true);
+            p.sendMessage(c("&cĐấu trường không cho cưỡi pet."));
+        }
+    }
+
     @EventHandler
     public void onGate(PlayerMoveEvent event) {
         if (!event.hasChangedBlock() || !event.getTo().getWorld().getName().equals(WORLD)) {

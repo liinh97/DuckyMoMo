@@ -510,13 +510,6 @@ def cosmetic_command(perms, data, srv="banghoi-1"):
         if pid not in [x["id"] for x in (c["pp"]["dang"] or [])]:
             raise ValueError("Không có hiệu ứng này (tải lại trang).")
         return f"pp remove {pid}"
-    if viec == "pet":
-        t = str(data.get("loai", ""))
-        if t not in c["pet"]["loai"]:
-            raise ValueError("Rank của bạn chưa có pet này.")
-        return f"pet summon {t}"
-    if viec == "pet_off":
-        return "pet remove"
     if viec == "danhhieu":
         t = str(data.get("ma", ""))
         if t not in [x["id"] for x in c["danhhieu"]["co"]]:

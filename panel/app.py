@@ -1782,34 +1782,6 @@ def donate_admin(data, actor):
 _cos_last = {}
 
 
-PET_SERVERS = {"lobby": "Sảnh", "banghoi-1": "Bang Hội Chiến"}  # có SimplePets
-
-
-def web_pet(perms, data, srv, name, ip):
-    """Gọi/cất pet: chạy lệnh console "pet summon|remove target <tên>" (SimplePets trả kết quả thật, chạy được cả ở Sảnh
-    không có /sudo). Quyền đã lọc ở taikhoan.cosmetic_command (đúng loài rank được dùng)."""
-    if srv not in PET_SERVERS:
-        return {"ok": False, "message": "Bạn cần đang online ở Sảnh hoặc Bang Hội Chiến để gọi pet. Vào game rồi bấm lại."}
-    cmd = taikhoan.cosmetic_command(perms, data, srv)
-    who = perms["name"]
-    con = f"pet summon target {who} {cmd.split()[-1]}" if cmd.startswith("pet summon") else f"pet remove target {who}"
-    out = re.sub(r"§.", "", rcon(srv, [con])[0][1]).strip()
-    where = PET_SERVERS[srv]
-    low = out.lower()
-    if "successfully summoned" in low:
-        res = {"ok": True, "message": f"Đã gọi pet ở {where}. Pet đi theo bạn (chỉ trang trí)."}
-    elif "successfully removed" in low:
-        n = re.search(r"removed (\d+)", low)
-        res = {"ok": True, "message": "Đã cất pet." if not n or n.group(1) != "0" else "Bạn chưa gọi pet nào."}
-    elif "player not found" in low:
-        res = {"ok": False, "message": "Server chưa thấy bạn online, thử lại sau vài giây."}
-    else:
-        res = {"ok": False, "message": f"Server không gọi được pet: {out[:120] or 'không có phản hồi'}."}
-    web_log({"viec": "trangtri", "nguoi": name, "lenh": con, "server": srv, "ok": res["ok"], "kq": out[:150], "ip": ip})
-    res["trangtri"] = taikhoan.cosmetics(perms, srv if srv in taikhoan.COSMETIC_SERVERS else "banghoi-1")
-    return res
-
-
 def web_cosmetic(data, ip):
     """Trang trí từ web: chạy lệnh THAY người chơi (/sudo của Essentials) ở server họ đang online (Bang Hội Chiến/Practice)."""
     name = str(data.get("ten", "")).strip()
@@ -1823,8 +1795,6 @@ def web_cosmetic(data, ip):
     if not perms:
         raise ValueError("Chưa có dữ liệu tài khoản.")
     srv = online_players(fresh=True).get(name.lower())
-    if data.get("viec") in ("pet", "pet_off"):
-        return web_pet(perms, data, srv, name, ip)
     cmd = taikhoan.cosmetic_command(perms, data, srv if srv in taikhoan.COSMETIC_SERVERS else "banghoi-1")
     # hạt (PlayerParticles), danh hiệu: chỉ Bang Hội Chiến (Practice không cài PlayerParticles); đổi tên: cả Practice
     need = ["banghoi-1"] if data.get("viec", "").startswith(("danhhieu", "pp")) else taikhoan.COSMETIC_SERVERS
@@ -1858,7 +1828,7 @@ def web_cosmetic(data, ip):
 
 def cosmetic_result(perms, srv, where, cmd, data):
     """Kiểm tra kết quả thật sau khi chạy lệnh thay người chơi (plugin chỉ báo lỗi trong chat game, RCON không thấy).
-    Đổi tên: hỏi /whois. Danh hiệu: đọc bxh.yml. Hạt, pet: không đọc được kết quả -> nói rõ là đã gửi."""
+    Đổi tên: hỏi /whois. Danh hiệu: đọc bxh.yml. Hạt: không đọc được kết quả -> nói rõ là đã gửi."""
     plain = lambda s: re.sub(r"(?i)[&§]#[0-9a-f]{6}|[&§][0-9a-fk-or]", "", s or "")
     if cmd.startswith("nick"):
         time.sleep(0.8)
@@ -1887,7 +1857,7 @@ def cosmetic_result(perms, srv, where, cmd, data):
             return {"ok": ok, "message": "Đã ẩn danh hiệu." if ok else "Server chưa ẩn danh hiệu, xem chat trong game."}
         ok = dh.get("dung") == data.get("ma")
         return {"ok": ok, "message": "Đã đổi danh hiệu, hiện sau tên trong chat." if ok else "Server chưa đổi danh hiệu, xem dòng báo lỗi trong chat game."}
-    what = {"pp add": "thêm hiệu ứng", "pp reset": "tắt mọi hiệu ứng", "pp remove": "gỡ hiệu ứng", "pet summon": "gọi pet", "pet remove": "cất pet"}
+    what = {"pp add": "thêm hiệu ứng", "pp reset": "tắt mọi hiệu ứng", "pp remove": "gỡ hiệu ứng"}
     act = next((v for k, v in what.items() if cmd.startswith(k)), "gửi lệnh")
     return {"ok": True, "pending": True,
             "message": f"Đã gửi lệnh {act} ở {where}. Plugin không báo kết quả về web: nếu không thấy thay đổi, xem dòng báo lỗi trong chat game "

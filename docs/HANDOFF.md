@@ -283,11 +283,28 @@
   ticks-per-particle). Ghi vào plugins/PlayerParticles/styles/<kiểu>.yml ở lobby + banghoi-1, CẦN khởi động lại 2 server mới có hiệu lực.
 - PlayerParticles có sẵn `locale: vi_VN`, EssentialsX có `messages_vi` — chưa bật (đã hỏi người dùng).
 
+### 17/10 tối: MyPet — mốc kỹ năng cấp 15–50, bay của Thú Cưỡi, cấm cưỡi pet ở Đấu Trường
+- Đọc mã MyPet 3.14.3 (giải nén CFR): khoá trong skilltree không phân biệt hoa/thường; quy tắc cấp "%5>10", "20", "1,5,9".
+  Có khoá "Notifications" theo cấp (tin báo cho chủ khi pet đạt mốc) — đã dùng.
+- Mốc mới (data/banghoi-1/plugins/MyPet/skilltrees, không trong repo; bản cũ ở scratchpad phiên này):
+  Chiến Binh: Hộ chủ (Shield) 15/40, Dậm đất (Stomp) 20/50, Chảy máu 25, hồi máu 30.
+  Đấu Sĩ: Héo mòn (Wither) 15, làm chậm 20, Chảy máu 25, Sét (Lightning) 30/50, đốt 40. Hào quang Sức mạnh GIỮ NGUYÊN (người dùng chốt).
+  Thú Cưỡi: bay cấp 10 (flylimit 40, regen 0,5), tốc độ 15/30/50, flylimit +40 (20), +70 (30), +100 (50); hào quang nhìn đêm/nhảy cao 25,
+  chạy nhanh/kháng lửa 40; Dậm đất 35.
+  Hậu Cần: nhặt kinh nghiệm 15, hào quang Đào nhanh I + nhìn đêm 20, máu 25, Đào nhanh II + may mắn 30, Hộ chủ 35, nhặt xa 40, kháng lửa + thở nước 50.
+  Nông Trại: bắn tên 15/40/50, độc 20, hào quang hồi máu + may mắn 25, nhặt kinh nghiệm 30, Dậm đất 45.
+- Bay (EntityMyPet.a_): đang ở trên không giữ phím nhảy → bay lên 0,2 khối/tick (4 khối/giây, giảm theo độ no nếu Affect-Ride-Speed).
+  flylimit = QUÃNG ĐƯỜNG (mét, cả ngang lẫn dọc) bay được mỗi lần; trừ dần khi bay (chỉ khi HungerSystem bật + HungerPerMeter > 0, hiện bật);
+  hồi flyregenrate mỗi tick khi pet chạm đất; bắt đầu từ 0 nên vừa gọi pet phải đứng đất chút mới bay. flylimit = 0 là bay vô hạn (trước đây đang như vậy).
+  Không có trần độ cao riêng. Đang bay pet không mất máu khi rơi. Chặn bay theo vùng: cờ WorldGuard `mypet-fly`. Towny không chặn.
+  Quyền MyPet.extended.ride.fly không cần (Permissions.Extended: false). Mọi loài cưỡi được (chuột phải bằng dây xích, cần hệ có Ride).
+- Arena.onMount: thế giới dautruong hủy EntityMountEvent khi vật cưỡi là pet MyPet (tránh bay ra ngoài sân).
+
 ### 17/10: pet trên web
 - Đã thử 38/38 loài trong PASSIVE_PETS gọi thật (`pet summon target b0ybn <loài>` → có thực thể quanh người chơi), cất lại hết.
-- Web gọi/cất pet bằng lệnh CONSOLE `pet summon|remove target <tên> <loài>` (`web_pet` trong panel/app.py) thay vì /sudo: đọc được kết quả
-  ("Successfully summoned/removed N"), chạy cả ở Sảnh. Quyền vẫn lọc ở `taikhoan.cosmetic_command`. Practice KHÔNG có SimplePets và
-  PlayerParticles → pet: Sảnh + Bang Hội Chiến; hạt: chỉ Bang Hội Chiến; đổi tên: Bang Hội Chiến + Practice.
+- 17/10 tối: BỎ gọi/cất pet trên web (người dùng quyết định). Trang tài khoản › Trang trí › Pet trang trí chỉ LIỆT KÊ tên loài rank được dùng
+  (không hình, không nút); gọi pet làm trong game bằng /pet. Đã xoá `web_pet`/`PET_SERVERS` (panel/app.py) và nhánh pet trong
+  `taikhoan.cosmetic_command`; `taikhoan.cosmetics()` vẫn trả `pet.loai` để hiện danh sách.
 - Pet theo rank (LuckPerms): Dân, Nam Tước, Tử Tước không có; Bá Tước 13 loài; Hầu Tước +14; Công Tước pet.type.passive (mọi pet hiền).
   Pet SimplePets chỉ là bản trang trí gọi ra, không bắt/thuần hoá.
 

@@ -120,7 +120,6 @@ footer{padding:30px 0;color:var(--dim);font-size:.85rem}
 .pv-sky{height:120px;background:linear-gradient(#5a8fd6,#9cc4f0 70%,#5a9e4a 70%);position:relative;display:grid;place-items:end center;padding-bottom:10px}
 .pv .tag{position:absolute;top:10px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.45);padding:2px 8px;font-family:ui-monospace,monospace;font-size:.85rem;white-space:nowrap;max-width:95%;overflow:hidden}
 .steve{width:22px;height:66px;background:linear-gradient(#c69c6d 0 33%,#3a6ea5 33% 66%,#2d4a7a 66%)}
-.steve.sm{width:16px;height:48px}
 .pv-chat,.pv-tab{background:rgba(0,0,0,.55);font-family:ui-monospace,monospace;font-size:.85rem;padding:7px 10px;overflow-wrap:anywhere}
 .pv-tab{background:#1a1f27;border-top:1px solid var(--line)}
 #ppCv{display:block;width:100%;max-width:300px;height:auto;margin:0 auto 10px;border-radius:12px;border:1px solid var(--line)}
@@ -131,10 +130,7 @@ footer{padding:30px 0;color:var(--dim);font-size:.85rem}
 .chip.cur{display:inline-flex;align-items:center;gap:4px;cursor:pointer}
 .chip .x{border:0;background:transparent;color:var(--muted);cursor:pointer;font-size:1rem;line-height:1;padding:0 0 0 4px}
 .chip .x:hover{color:#ff9d9b}
-.petpv{height:110px;border-radius:12px;background:linear-gradient(#5a8fd6,#9cc4f0 70%,#5a9e4a 70%);display:flex;align-items:flex-end;justify-content:center;gap:18px;padding-bottom:10px;margin-bottom:10px;border:1px solid var(--line)}
-.petbig{font-size:40px;line-height:1;animation:hop 1.2s ease-in-out infinite}
-@keyframes hop{50%{transform:translateY(-8px)}}
-@media (prefers-reduced-motion:reduce){.petbig{animation:none}}
+.chip.nopick{cursor:default}
 .ask-wrap{position:fixed;inset:0;z-index:100;background:rgba(5,8,12,.6);backdrop-filter:blur(3px);display:grid;place-items:center;padding:16px}
 .ask{width:min(440px,100%);background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px 22px 18px;box-shadow:0 20px 60px rgba(0,0,0,.5)}
 .ask h3{margin:0 0 8px;font-size:1.05rem}
@@ -458,13 +454,13 @@ const EFFECTS = {
 const STYLES = {normal: "Quanh người", halo: "Vòng hào quang", orbit: "Bay quanh", feet: "Dưới chân", overhead: "Trên đầu", point: "Một điểm",
   spin: "Xoay trên đầu", quadhelix: "Xoắn 4 dải", wings: "Đôi cánh", rings: "Vòng quanh", sphere: "Quả cầu", vortex: "Lốc xoáy",
   beam: "Vòng lên xuống", whirl: "Cuộn xoáy", celebration: "Pháo hoa", twins: "Song sinh", pulse: "Sóng toả"};
-const PETS = {cat: "🐱 Mèo", wolf: "🐺 Sói", chicken: "🐔 Gà", pig: "🐷 Lợn", rabbit: "🐰 Thỏ", parrot: "🦜 Vẹt", fox: "🦊 Cáo", bee: "🐝 Ong",
-  axolotl: "🦎 Kỳ giông", frog: "🐸 Ếch", turtle: "🐢 Rùa", sheep: "🐑 Cừu", cow: "🐄 Bò", panda: "🐼 Gấu trúc", polarbear: "🐻‍❄️ Gấu Bắc Cực",
-  goat: "🐐 Dê", allay: "🧚 Allay", armadillo: "🦔 Tatu", camel: "🐫 Lạc đà", sniffer: "🦕 Sniffer", mooshroom: "🍄 Bò nấm", ocelot: "🐆 Mèo rừng",
-  llama: "🦙 Lạc đà không bướu", tadpole: "🐟 Nòng nọc", copper_golem: "🤖 Người đồng", dolphin: "🐬 Cá heo", happy_ghast: "👻 Ghast vui vẻ",
-  horse: "🐴 Ngựa", donkey: "🫏 Lừa", mule: "🫏 La", squid: "🦑 Mực", glow_squid: "🦑 Mực phát sáng", cod: "🐟 Cá tuyết", salmon: "🐟 Cá hồi",
-  tropical_fish: "🐠 Cá nhiệt đới", trader_llama: "🦙 Lạc đà thương nhân", strider: "🦶 Strider", bat: "🦇 Dơi"};
-let TT = null, nickVal = null, ppE = null, ppS = null, petSel = null, ppAnim = 0;
+const PETS = {cat: "Mèo", wolf: "Sói", chicken: "Gà", pig: "Lợn", rabbit: "Thỏ", parrot: "Vẹt", fox: "Cáo", bee: "Ong",
+  axolotl: "Kỳ giông", frog: "Ếch", turtle: "Rùa", sheep: "Cừu", cow: "Bò", panda: "Gấu trúc", polarbear: "Gấu Bắc Cực",
+  goat: "Dê", allay: "Allay", armadillo: "Tatu", camel: "Lạc đà", sniffer: "Sniffer", mooshroom: "Bò nấm", ocelot: "Mèo rừng",
+  llama: "Lạc đà không bướu", tadpole: "Nòng nọc", copper_golem: "Người đồng", dolphin: "Cá heo", happy_ghast: "Ghast vui vẻ",
+  horse: "Ngựa", donkey: "Lừa", mule: "La", squid: "Mực", glow_squid: "Mực phát sáng", cod: "Cá tuyết", salmon: "Cá hồi",
+  tropical_fish: "Cá nhiệt đới", trader_llama: "Lạc đà thương nhân", strider: "Strider", bat: "Dơi"};
+let TT = null, nickVal = null, ppE = null, ppS = null, ppAnim = 0;
 const lock = (r) => `<span class="pill">🔒 Mở từ ${r}</span>`;
 
 function trangTriHtml(){
@@ -474,7 +470,7 @@ function trangTriHtml(){
   // chọn sẵn hiệu ứng đang bật trong game (đọc từ PlayerParticles), chưa có thì hiệu ứng đầu tiên rank có
   const cur0 = (pp.dang || [])[0];
   if (!ppE) ppE = (cur0 && EFFECTS[cur0.hieu_ung] ? cur0.hieu_ung : pp.hieu_ung[0]) || "flame";
-  if (!ppS) ppS = (cur0 && STYLES[cur0.kieu] ? cur0.kieu : pp.kieu[0]) || "halo"; if (!petSel) petSel = pet.loai[0] || null;
+  if (!ppS) ppS = (cur0 && STYLES[cur0.kieu] ? cur0.kieu : pp.kieu[0]) || "halo";
   const where = D.online === "banghoi-1" ? "Bang Hội Chiến" : D.online === "practice-1" ? "Practice" : null;
   let h = `<div class="card" style="margin-top:14px" id="trangtri"><h2>✨ Trang trí</h2>
     <p class="small ${where ? "muted" : ""}" ${where ? "" : 'style="color:var(--gold2)"'}>${where ? `Bạn đang ở <b>${where}</b>: bấm Áp dụng là đổi ngay trong game.`
@@ -502,12 +498,11 @@ function trangTriHtml(){
     <div class="small muted" style="margin-top:8px">Kiểu</div><div class="chips">${Object.keys(STYLES).map(s => `<button class="chip${s === ppS ? " on" : ""}${pp.kieu.includes(s) ? "" : " off"}" data-s="${s}">${STYLES[s]}</button>`).join("")}</div>
     <div class="small dim" style="margin:6px 0">Mờ = rank chưa có (vẫn xem thử được). Đánh nhau thì hiệu ứng tự ẩn.</div>
     ${pp.toi_da ? `<div class="tools"><button class="btn primary small" data-tt="pp_add">Thêm hiệu ứng này</button><button class="btn small" data-tt="pp_reset">Tắt hết</button></div>` : ""}</div>`;
-  // pet
-  h += `<div class="tt"><h3>🐾 Pet ${pet.loai.length ? `<span class="pill">${pet.loai.length} loài</span>` : lock("Bá Tước")}</h3>
-    <div class="petpv"><div class="steve sm"></div><div class="petbig" id="petBig">${petSel ? PETS[petSel].split(" ")[0] : "🐾"}</div></div>
-    <div class="chips">${(pet.loai.length ? pet.loai : ["cat", "wolf", "parrot", "fox", "panda", "axolotl"]).map(t => `<button class="chip${t === petSel ? " on" : ""}${pet.loai.length ? "" : " off"}" data-pet="${t}">${PETS[t] || t}</button>`).join("")}</div>
-    <div class="small dim" style="margin:6px 0">Pet chỉ để trang trí: không cưỡi, không bay, không đánh.</div>
-    ${pet.loai.length ? `<div class="tools"><button class="btn primary small" data-tt="pet">Gọi pet</button><button class="btn small" data-tt="pet_off">Cất pet</button></div>` : ""}</div>`;
+  // pet trang trí: chỉ liệt kê loài rank được dùng; gọi trong game bằng /pet
+  h += `<div class="tt"><h3>🐾 Pet trang trí ${pet.loai.length ? `<span class="pill">${pet.loai.length} loài</span>` : lock("Bá Tước")}</h3>
+    ${pet.loai.length ? `<div class="chips">${pet.loai.map(t => `<span class="chip nopick">${esc(PETS[t] || t)}</span>`).join("")}</div>
+    <div class="small dim" style="margin:6px 0">Gọi trong game: gõ <code>/pet</code> mở menu (Sảnh hoặc Bang Hội Chiến). Pet chỉ để trang trí: không cưỡi, không bay, không đánh.</div>`
+    : `<div class="small dim" style="margin:6px 0">Rank Bá Tước trở lên được gọi pet trang trí đi theo. Pet chiến đấu thì ai cũng bắt được trong game (xem thẻ Pet chiến đấu).</div>`}</div>`;
   // danh hiệu + mũ
   h += `<div class="tt"><h3>🎖️ Danh hiệu</h3>${dh.co.length ? `<div class="chips">${dh.co.map(t => `<button class="chip${t.id === dh.dung ? " on" : ""}" data-dh="${esc(t.id)}">${mc(t.chu)}</button>`).join("")}</div>
       <div class="small dim" style="margin:6px 0">Hiện sau tên trong chat. Bấm để chọn (chỉ ở Bang Hội Chiến).</div>
@@ -595,7 +590,6 @@ function bindTrangTri(){
   if ($("#hexPick")) $("#hexPick").onchange = e => insert("&" + e.target.value.toLowerCase());
   document.querySelectorAll("#trangtri [data-e]").forEach(b => b.onclick = () => { ppE = b.dataset.e; document.querySelectorAll("#trangtri [data-e]").forEach(x => x.classList.toggle("on", x === b)); if ($("#ppDesc")) $("#ppDesc").textContent = (EFFECTS[ppE] || [])[3] || ""; startPP(); });
   document.querySelectorAll("#trangtri [data-s]").forEach(b => b.onclick = () => { ppS = b.dataset.s; document.querySelectorAll("#trangtri [data-s]").forEach(x => x.classList.toggle("on", x === b)); startPP(); });
-  document.querySelectorAll("#trangtri [data-pet]").forEach(b => b.onclick = () => { petSel = b.dataset.pet; document.querySelectorAll("#trangtri [data-pet]").forEach(x => x.classList.toggle("on", x === b)); $("#petBig").textContent = (PETS[petSel] || "🐾").split(" ")[0]; });
   document.querySelectorAll("#trangtri [data-cur]").forEach(b => b.onclick = (e) => { if (e.target.dataset.ppdel) return; [ppE, ppS] = b.dataset.cur.split("|");
     document.querySelectorAll("#trangtri [data-e]").forEach(x => x.classList.toggle("on", x.dataset.e === ppE)); document.querySelectorAll("#trangtri [data-s]").forEach(x => x.classList.toggle("on", x.dataset.s === ppS)); if ($("#ppDesc")) $("#ppDesc").textContent = (EFFECTS[ppE] || [])[3] || ""; startPP(); });
   document.querySelectorAll("#trangtri [data-ppdel]").forEach(b => b.onclick = () => { lastTT = '[data-tt="pp_add"]'; doTT({viec: "pp_remove", id: +b.dataset.ppdel}); });
@@ -605,7 +599,6 @@ function bindTrangTri(){
     lastTT = `[data-tt="${v}"]`;
     if (v === "nick") return doTT({viec: "nick", gia_tri: (nickVal || "").trim()});
     if (v === "pp_add") return doTT({viec: "pp_add", hieu_ung: ppE, kieu: ppS});
-    if (v === "pet") return doTT({viec: "pet", loai: petSel});
     if (v === "pp_reset") return ask("Tắt mọi hiệu ứng hạt đang bật?", {title: "Tắt hiệu ứng", ok: "Tắt hết"}).then(y => y && doTT({viec: v}));
     doTT({viec: v});
   });

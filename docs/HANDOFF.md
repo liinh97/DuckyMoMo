@@ -296,6 +296,8 @@
 - Cài đặt (PvP & combat › Pet chiến đấu): petc_nofly / petc_nofly_h → pet-combat.siege-no-fly(-height), có hiệu lực bằng dmm reload;
   mypet_ride_hunger → MyPet.Skill.Ride.HungerPerMeter (0 = quãng bay vô hạn, cần khởi động lại). Trang tài khoản: tên Việt + nhóm loài
   từng pet lấy từ DmmNhom.loai_vi trong cây kỹ năng (taikhoan.combat_pets).
+- locale/MyPet_vi.properties (data, không trong repo): tên kỹ năng khớp mô tả (Hộ chủ, Dậm đất, Héo mòn, Sét đánh) + thêm Chảy máu
+  (bản gốc MyPet thiếu cả tiếng Anh). Có hiệu lực ở lần khởi động lại banghoi-1 tiếp theo.
 - Cân bằng (chưa thử): cấp 100 Thú lớn +72 máu +4,5 sát thương, Thú săn +27 máu +13,5 sát thương (trước: mọi loài +36/+9).
 
 ### 17/10 tối: MyPet — mốc kỹ năng cấp 15–50, bay của Thú Cưỡi, cấm cưỡi pet ở Đấu Trường

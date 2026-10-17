@@ -349,6 +349,8 @@ footer .fbrand img{width:44px}
       <a href="#muavu">Mùa &amp; câu cá</a>
       <a href="#hangngay">Hằng ngày</a>
       <a href="#boss">Boss</a>
+      <a href="#pet">Pet</a>
+      <a href="#dautruong">Đấu Trường</a>
       <a href="#bantron">Hội Bàn Tròn</a>
       <a href="#xephang">Xếp hạng</a>
       <a href="#vote">Vote</a>
@@ -548,7 +550,10 @@ footer .fbrand img{width:44px}
       </div>
       <div class="grid">
         <div class="card hl"><h3>Lịch công thành</h3><div id="siegeTable" class="muted">Đang tải…</div>
-          <p class="dim" style="font-size:.85rem;margin-top:10px" id="siegeState"></p></div>
+          <p class="dim" style="font-size:.85rem;margin-top:10px" id="siegeState"></p>
+          <h3 style="margin-top:14px">Phiên sắp tới &amp; pet tham chiến</h3>
+          <div id="siegeNext" class="muted">Đang tải…</div>
+          <p class="dim" style="font-size:.85rem;margin-top:8px">Mỗi phiên bốc thăm trước: khoảng <b data-k="siege.pet_chance">30</b>% phiên <b>cho pet chiến đấu tham chiến</b>. Phiên không cho thì pet không gây sát thương cho người chơi trong vùng vây. Trong game: <span class="kbd">/lichcongthanh</span>.</p></div>
         <div class="card"><h3>Quân hàm</h3><p class="muted">Vua phong quân hàm từ <b>Binh nhì</b> tới <b>Tướng</b> bằng <span class="kbd">/n rank add</span>. Chỉ người có quân hàm mới được tính điểm giữ cờ. Muốn có quân hàm phải chơi thật đủ <b data-k="player.rank_hours">5</b> giờ và ở thị trấn đủ 3 ngày: tài khoản phụ không làm lính được.</p></div>
         <div class="card"><h3>Luật chống gian</h3><ul class="clean"><li>Không xây tường obsidian/băng, không đổ nham thạch ở đất hoang</li><li>Thành đang bị vây không mời thêm dân, không mua bán đất</li><li>Người ngoài vào vùng vây bị "bệnh chiến tranh"</li><li>Mỗi quốc gia vây tối đa <span data-k="siege.max_attacks">2</span> thành cùng lúc</li></ul></div>
       </div>
@@ -680,6 +685,51 @@ footer .fbrand img{width:44px}
   </div>
 </section>
 
+<!-- ============ PET CHIẾN ĐẤU ============ -->
+<section id="pet" class="alt">
+  <div class="wrap">
+    <div class="kicker v">Bạn đồng hành</div>
+    <h2>Pet chiến đấu: tự tay bắt, tự tay nuôi</h2>
+    <p class="intro">Không mua được bằng tiền thật. Ai cũng bắt được: đánh một con thú hoặc quái tới khi <b>yếu máu</b> (thanh máu hiện trên đầu khi đánh) rồi cầm <b>dây xích</b> bấm chuột phải. Pet theo bạn, đánh quái, lên cấp tới <b data-k="pet.level_cap">100</b> và mở kỹ năng. Sức mạnh theo <b>cấp</b>, không theo loài: sói cấp 20 mạnh hơn zombie cấp 5.</p>
+    <div class="grid g2">
+      <div class="card hl"><h3>Chọn hướng phát triển</h3><div id="petTrees" class="muted">Đang tải…</div>
+        <p class="dim" style="font-size:.85rem;margin-top:8px">Chọn bằng <span class="kbd">/petchooseskilltree</span>. Mỗi 5 cấp sau cấp 10: thêm sát thương và máu.</p></div>
+      <div class="grid">
+        <div class="card"><h3>Luật pet trong chiến tranh</h3><ul class="clean">
+          <li>Pet đánh người chơi bị <b>giảm <span data-k="pet.reduce">50</span>%</b> sát thương</li>
+          <li>Công thành: chỉ một số phiên cho pet tham chiến, <b>báo trước</b> (xem lịch ở mục Công thành)</li>
+          <li>Pet giết người thì <b>tính cho chủ</b>: án Hoà Bình, treo thưởng, điểm Chiến Thần</li>
+          <li>Mỗi lúc chỉ dẫn <b>1 pet</b>; pet chết tự hồi sinh sau khoảng <span data-k="pet.respawn_per_level">5</span> giây × cấp</li>
+          <li>Không bắt được: <span id="petNoCatch"></span></li></ul></div>
+        <div class="card"><h3>Giữ được bao nhiêu pet</h3><div id="petSlots" class="muted">Đang tải…</div>
+          <p class="dim" style="font-size:.85rem;margin-top:8px">Cất bằng <span class="kbd">/petstore</span>, đổi bằng <span class="kbd">/petswitch</span>. Pet trang trí của rank (tên có ✿) là thứ khác, chỉ để ngắm.</p></div>
+        <div class="card"><h3>Lệnh hay dùng</h3><p class="muted"><span class="kbd">/petinfo</span> <span class="kbd">/petcall</span> <span class="kbd">/petsendaway</span> <span class="kbd">/petname</span> <span class="kbd">/petinventory</span> <span class="kbd">/petcapturehelper</span> <span class="kbd">/petlist</span></p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ĐẤU TRƯỜNG ============ -->
+<section id="dautruong">
+  <div class="wrap">
+    <div class="kicker r">Người + pet</div>
+    <h2>Đấu Trường: 1v1, 2v2, không mất đồ</h2>
+    <p class="intro">Gõ <span class="kbd">/warp pvp</span> (hoặc bấm NPC Đấu Trường ở spawn) tới sảnh có <b>3 cổng</b>. Bước vào cổng là vào thẳng sân chờ đối thủ. Dùng đồ của mình, <b>chết không rơi đồ</b>, bị loại thì chuyển sang xem.</p>
+    <div class="grid g2">
+      <div class="card hl"><h3>Sân đang thế nào <span class="pill" id="dtLive" style="margin-left:6px">…</span></h3><div id="dtSans" class="muted">Đang tải…</div></div>
+      <div class="grid">
+        <div class="card"><h3>Luật trận</h3><ul class="clean">
+          <li>Đếm ngược <span data-k="arena.countdown">5</span> giây, đánh <span data-k="arena.fight">180</span> giây; hết giờ đội còn nhiều máu hơn thắng</li>
+          <li>Trong sân pet đánh người bị giảm <span data-k="arena.pet_reduce">50</span>%</li>
+          <li>Cược tuỳ chọn (tối đa <span data-k="arena.max_stake">10000</span> xu), server thu <span data-k="arena.fee">5</span>%, chỉ ghép người cùng mức cược</li>
+          <li>Thắng thưởng <span data-k="arena.reward">50</span> xu, tối đa <span data-k="arena.cap">5</span> trận/ngày</li>
+          <li>Cùng IP = giao hữu: không cược, không điểm, không thưởng</li></ul></div>
+        <div class="card"><h3>Top Đấu Trường</h3><div id="dtTop" class="muted">Chưa có trận nào.</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- ============ HỘI BÀN TRÒN ============ -->
 <section id="bantron">
   <div class="wrap">
@@ -796,6 +846,8 @@ footer .fbrand img{width:44px}
         <li>Không chửi bới, quấy rối, phân biệt; không spam, không quảng cáo server khác.</li>
         <li>Lời hứa giữa người chơi không được bảo đảm: giao dịch an toàn bằng <span class="kbd">/trade</span>, chợ, shop.</li>
         <li>Vi phạm nặng (hack, nhân đồ, giấu tài khoản phụ): cấm 7 ngày, tái phạm cấm hết mùa.</li>
+        <li><b>Dịch chuyển phải đứng yên <span data-k="player.tp_delay">3</span> giây</b> (<span class="kbd">/home</span>, <span class="kbd">/spawn</span>, <span class="kbd">/warp</span>, <span class="kbd">/tpa</span>, <span class="kbd">/tpr</span>): di chuyển hoặc bị đánh là huỷ, không dùng để chạy trốn khi đánh nhau.</li>
+        <li><b>Pet giết người tính cho chủ</b>: giết dân Hoà Bình bằng pet vẫn bị đưa ra Hội Bàn Tròn.</li>
       </ul></div>
     </div>
   </div>
@@ -826,6 +878,8 @@ footer .fbrand img{width:44px}
     <details><summary>Lỡ chơi hỏng, muốn làm lại từ đầu?</summary><div>Gõ <span class="kbd">/choilai</span>: mất đồ, tiền, nhà, nghề, thị trấn; giữ rank và danh hiệu. Lần đầu trong mùa còn được nhận lại quà tân thủ.</div></details>
     <details><summary>Mùa mưa, mùa khô là gì?</summary><div>Bang Hội Chiến đổi mùa theo ngày thật, mỗi mùa vài ngày, xen kẽ nhau. Mùa mưa lúa, mía, tre lớn nhanh và trời hay mưa; mùa khô khoai, cà rốt, dưa, bí lớn nhanh, ít mưa. Đúng mùa, gặt cây chín còn có cơ hội rơi thêm. Nhiều loài cá chỉ câu được trong một mùa. Xem mùa hiện tại ở mục <a href="#muavu">Mùa &amp; câu cá</a> hoặc gõ <span class="kbd">/mua</span>.</div></details>
     <details><summary>Có voice chat không?</summary><div><b>Sắp có</b> cho người chơi máy tính (Java, cài thêm mod Simple Voice Chat): nghe nhau trong khoảng 40 block, lập nhóm để cả thị trấn nói chuyện ở mọi nơi. Điện thoại (Bedrock) chưa dùng được voice trong game. Trong lúc chờ, hãy dùng Discord hoặc Zalo để nói chuyện với đồng đội.</div></details>
+    <details><summary>Có pet chiến đấu không? Có phải mua không?</summary><div>Có, và <b>không bán</b>. Đánh một con thú hoặc quái tới khi yếu máu (thanh máu hiện trên đầu khi đánh) rồi quăng dây xích vào là bắt được. Pet lên cấp, chọn hướng Chiến Binh, Hậu Cần, Đấu Sĩ, Thú Cưỡi hoặc Nông Trại. Rank ủng hộ chỉ được giữ thêm vài con trong kho, mỗi lúc ai cũng chỉ dẫn 1 con. Xem mục <a href="#pet">Pet</a>.</div></details>
+    <details><summary>Đấu Trường là gì?</summary><div>Khu đấu riêng người + pet, 1v1 hoặc 2v2. Gõ <span class="kbd">/warp pvp</span> hoặc bấm NPC ở spawn, bước vào một trong 3 cổng là vào sân chờ đối thủ. Dùng đồ của mình, chết không rơi đồ, có cược tuỳ chọn và bảng xếp hạng. Xem mục <a href="#dautruong">Đấu Trường</a>.</div></details>
     <details><summary>Hết mùa thì sao?</summary><div>Sau 10 tuần mùa đóng lại, trao danh hiệu, thế giới cũ được giữ làm bảo tàng để xem lại. Mùa mới mở vùng đất mới, mọi người bắt đầu ngang nhau; danh hiệu và rank ủng hộ được giữ.</div></details>
   </div>
 </section>
@@ -934,6 +988,14 @@ async function loadInfo(){
   $("#siegeTable").innerHTML = days.length ? `<table><tbody>${days.map(d=>`<tr><td><b>${esc(d.day)}</b></td><td>${d.times.map(t=>`<span class="pill" style="margin:2px">${esc(t)}</span>`).join("")}</td></tr>`).join("")}</tbody></table>` : "Chưa đặt lịch.";
   $("#stSiege").textContent = days.length ? days.map(d=>d.day.replace("Thứ ","T").replace("Chủ nhật","CN")).join("+") + " " + (days[0].times[0]||"") : "–";
   $("#siegeState").textContent = info.siege.enabled ? "Vây thành đang mở." : "Đang thời kỳ hoà bình: chưa cho cắm cờ vây.";
+  const up = info.siege.upcoming || [];
+  $("#siegeNext").innerHTML = up.length ? `<table><tbody>${up.slice(0, 8).map(u => `<tr><td><b>${esc(u.day)}</b> ${esc(u.date)}</td><td>${esc(u.time)}</td><td>${u.pet
+      ? '<span class="pill" style="background:rgba(62,207,142,.15);color:#7ee2b0">🐾 Có pet</span>' : '<span class="pill">Không pet</span>'}</td></tr>`).join("")}</tbody></table>` : "Chưa có phiên nào trong 2 tuần tới.";
+  const pet = info.pet || {};
+  $("#petTrees").innerHTML = (pet.trees || []).map(t => `<div style="margin-bottom:10px"><b>${esc(t.ten)}</b><div class="muted" style="font-size:.9rem">${t.mo_ta.filter(x => !x.startsWith("Mỗi 5 cấp")).map(esc).join("<br>")}</div></div>`).join("") || "Chưa có.";
+  $("#petNoCatch").textContent = (pet.no_catch || []).join(", ");
+  const sl = pet.slots || {};
+  $("#petSlots").innerHTML = Object.keys(sl).length ? `<table><tbody>${Object.entries(sl).map(([k, v]) => `<tr><td>${esc(k)}</td><td><b>${esc(v)}</b> pet</td></tr>`).join("")}</tbody></table>` : "Chưa đặt.";
   $("#pvpWild").textContent = info.player.pvp_wild ? "bật" : "tắt (chỉ đánh trong trận công thành)";
   $("#ahOnly").textContent = info.peace.auction_only ? "chỉ mở trong đất hoà bình" : "ở đâu cũng dùng được";
   $("#zoneList").innerHTML = info.player.tpr_zones.map(z => `<span title="${esc(z.desc)}">${esc(z.name)}</span>`).join("");
@@ -946,6 +1008,18 @@ async function loadInfo(){
       <ul class="clean">${t.perks.map(p=>`<li>${esc(p)}</li>`).join("")}</ul>
       <p class="price">${t.prices.map(esc).join(" · ")}</p></div>`).join("");
   $("#donateHow").textContent = info.donate.how || "";
+}
+
+async function loadArena(){
+  try {
+    const d = await j("api/dautruong");
+    $("#dtLive").textContent = d.ok ? "trực tiếp" : "server đang tắt";
+    $("#dtSans").innerHTML = (d.san || []).length ? d.san.map(x => `<div style="padding:8px 0;border-bottom:1px solid rgba(255,255,255,.06)">
+        <b>${esc(x.ten)}</b> ${x.dangdau ? '<span class="pill" style="color:#ff9a8a">⚔ đang đấu</span>' : '<span class="pill" style="color:#7ee2b0">trống</span>'}
+        <div class="muted" style="font-size:.9rem">${esc(x.trangthai)}</div>
+        <div class="dim" style="font-size:.85rem">Chờ: ${x.cho} · Xem: ${x.xem}</div></div>`).join("") : "Chưa có sân.";
+    $("#dtTop").innerHTML = (d.top || []).length ? `<table><tbody>${d.top.map((t, i) => `<tr><td>#${i + 1}</td><td><b>${esc(t.ten)}</b></td><td>${t.elo} điểm</td><td class="dim">${t.thang}T/${t.thua}B</td></tr>`).join("")}</tbody></table>` : "Chưa có trận nào.";
+  } catch (e) { $("#dtSans").textContent = "Không tải được."; }
 }
 
 async function loadStatus(){
@@ -1169,7 +1243,7 @@ j("api/toi").then(t => {
   if (t.dang_nhap && t.ten) { a.textContent = t.ten; a.title = "Tài khoản của tôi"; }
   if (t.bat) a.hidden = false;
 }).catch(() => {});
-loadInfo().catch(()=>{}); loadStatus(); loadBantron(); loadBxh(); loadVote(); loadMua(); loadDaily();
+loadInfo().catch(()=>{}); loadStatus(); loadArena(); setInterval(loadArena, 10000); loadBantron(); loadBxh(); loadVote(); loadMua(); loadDaily();
 setInterval(loadStatus, 30000); setInterval(loadBantron, 60000); setInterval(loadBxh, 60000); setInterval(loadVote, 60000); setInterval(loadMua, 300000);
 </script>
 </body>

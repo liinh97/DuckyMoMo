@@ -255,6 +255,57 @@ def season_now(cfg):
     return {"id": cur, "ten": name, "con": None if forced in order else per - since % per}
 
 
+def pet_level(exp):
+    """Cấp MyPet từ kinh nghiệm (công thức mặc định, giống exp.js: 17 XP/cấp tới 17, +3 tới 31, +7 từ 32)."""
+    def need(lv):
+        if lv <= 1:
+            return 0
+        if lv <= 17:
+            return (lv - 1) * 17
+        if lv <= 31:
+            n = lv - 17
+            return 272 + n * (3 * lv - 14) / 2
+        n = lv - 32
+        return 887 + n * (7 * lv - 93) / 2
+    lv = 1
+    while lv < 1000 and need(lv + 1) <= (exp or 0):
+        lv += 1
+    return lv
+
+
+def combat_pets(uuid, perms):
+    """Pet chiến đấu (MyPet, Bang Hội Chiến) của người chơi: đọc pets.db (chỉ đọc) + số pet được giữ theo quyền."""
+    import sqlite3
+    db = DATA_DIR / SRV / "plugins" / "MyPet" / "pets.db"
+    trees = {}
+    for f in (DATA_DIR / SRV / "plugins" / "MyPet" / "skilltrees").glob("*.st.json"):
+        try:
+            d = json.loads(f.read_text(encoding="utf-8"))
+            trees[d.get("ID")] = d.get("Name")
+        except (OSError, ValueError):
+            pass
+    pets = []
+    try:
+        con = sqlite3.connect(f"file:{db}?mode=ro", uri=True, timeout=2)
+        try:
+            rows = con.execute("SELECT p.name, p.type, p.exp, p.skilltree, p.wants_to_spawn, p.respawn_time FROM pets p "
+                               "JOIN players pl ON pl.internal_uuid = p.owner_uuid WHERE pl.mojang_uuid = ? ORDER BY p.last_used DESC",
+                               (uuid,)).fetchall()
+        finally:
+            con.close()
+        for name, typ, exp, tree, spawn, respawn in rows:
+            pets.append({"ten": re.sub(r"<[^>]+>|[&§][0-9a-fk-or]", "", str(name or "")), "loai": typ, "cap": pet_level(exp),
+                         "huong": trees.get(tree, tree) if tree else None, "dang_dan": bool(spawn), "dang_hoi_sinh": int(respawn or 0) > 0})
+    except Exception:
+        pets = None
+    limit = 0
+    for n in range(45, 0, -1):
+        if has(perms, f"mypet.petstorage.limit.{n}", SRV):
+            limit = n
+            break
+    return {"pets": pets, "giu_toi_da": limit + 1}
+
+
 def profile(perms):
     """Số liệu Bang Hội Chiến của người chơi: giờ chơi, điểm danh, nhiệm vụ, vé quay, vote, xếp hạng, án."""
     uuid, name = perms["uuid"], perms["name"]
@@ -330,6 +381,12 @@ def profile(perms):
     placed = [{"ten": v.get("ten"), "xu": float(((v.get("nguoi") or {}).get(uuid) or {}).get("xu", 0) or 0)}
               for v in tt.values() if isinstance(v, dict) and uuid in (v.get("nguoi") or {}) and float(v.get("het", 0) or 0) > time.time() * 1000]
     out["treothuong"] = {"tren_ban": on_me, "da_treo": placed}
+    out["mypet"] = combat_pets(uuid, perms)
+    st = (safe_yaml(DMM / "dautruong.yml").get("stats") or {}).get(uuid) or {}
+    ar = core.get("arena") or {}
+    out["dautruong"] = {"elo": int(st.get("elo", 1000)), "thang": int(st.get("thang", 0)), "thua": int(st.get("thua", 0)),
+                        "thuong_hom_nay": int((st.get("ngay") or {}).get(date.today().isoformat(), 0)), "toi_da": int(ar.get("daily-reward-cap", 5)),
+                        "bat": bool(ar.get("enabled", False))}
     tiers = (core.get("donate-ranks") or {}).get("tiers") or []
     out["donate"] = {"tiers": [{"group": t.get("group"), "ten": t.get("name"), "mau": t.get("color", "&f"), "quyen_loi": t.get("perks") or [],
                                 "gia": t.get("prices") or []} for t in tiers],

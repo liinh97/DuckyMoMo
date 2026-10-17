@@ -189,6 +189,78 @@ def ping():
 
 # ---------------------------------------------------------------- API
 
+def _i32(v):
+    v &= 0xFFFFFFFF
+    return v - (1 << 32) if v & 0x80000000 else v
+
+
+def java_objects_hash(seed, minute):
+    """Như Java Objects.hash(String seed, Long minute) trong PetCombat.allowedFor (bốc thăm phiên có pet)."""
+    hs = 0
+    b = seed.encode("utf-16-be")
+    for i in range(0, len(b), 2):
+        hs = _i32(31 * hs + int.from_bytes(b[i:i + 2], "big"))
+    hl = _i32(minute ^ (minute >> 32))
+    return _i32(31 * _i32(31 * 1 + hs) + hl)
+
+
+def pet_allowed(start_ms, seed, chance):
+    if chance >= 100:
+        return True
+    if chance <= 0:
+        return False
+    return java_objects_hash(seed, start_ms // 60000) % 100 < chance
+
+
+def siege_upcoming(sw, core, days=14, limit=12):
+    """Các phiên công thành sắp tới theo lịch SiegeWar + có cho pet tham chiến không (cùng cách bốc thăm với plugin)."""
+    sched = get(sw, "battle_session_scheduler.start_times", {}) or {}
+    pc = get(core, "pet-combat", {}) or {}
+    seed, chance = str(pc.get("seed", "mua1")), int(pc.get("siege-pet-chance", 30))
+    names = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"]
+    now = datetime.now(VN)
+    out = []
+    for d in range(days + 1):
+        day = (now + timedelta(days=d)).date()
+        key = names[day.weekday()]
+        times = next((str(v) for k, v in sched.items() if k.upper() == key), "")
+        for t in [x.strip() for x in times.split(",") if x.strip()]:
+            try:
+                hh, mm = (int(x) for x in t.split(":")[:2])
+            except ValueError:
+                continue
+            start = datetime(day.year, day.month, day.day, hh, mm, tzinfo=VN)
+            if start < now:
+                continue
+            ms = int(start.timestamp() * 1000)
+            out.append({"time": start.strftime("%H:%M"), "day": DAYS_VI.get(key, key), "date": start.strftime("%d/%m"),
+                        "ts": ms // 1000, "pet": pet_allowed(ms, seed, chance) if pc.get("enabled", False) else False})
+    out.sort(key=lambda x: x["ts"])
+    return out[:limit]
+
+
+def pet_trees():
+    out = []
+    for f in sorted(plugin("MyPet", "skilltrees").glob("*.st.json")):
+        try:
+            d = json.loads(f.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            continue
+        desc = [re.sub(r"<[^>]+>", "", str(x)).strip() for x in d.get("Description") or []]
+        out.append({"id": d.get("ID"), "ten": d.get("Name"), "thu_tu": d.get("Order", 9), "mo_ta": [x for x in desc if x]})
+    return sorted(out, key=lambda t: t["thu_tu"])
+
+
+def api_dautruong():
+    """Đấu Trường trực tiếp: plugin ghi dautruong-live.json mỗi 5 giây; cũ hơn 60 giây = server đang tắt."""
+    try:
+        d = json.loads(plugin("DuckyMoMoCore", "dautruong-live.json").read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return {"ok": False, "san": [], "top": []}
+    d["ok"] = time.time() - d.get("updated", 0) < 60
+    return d
+
+
 def api_info():
     core = load_yaml(plugin("DuckyMoMoCore", "config.yml"))
     st = load_yaml(MODES / "banghoi" / "settings.yml")
@@ -221,6 +293,29 @@ def api_info():
             "enabled": str(get(sw, "war.siege.switches.enabled", "true")) == "true",
             "max_attacks": int(get(sw, "war.siege.quantities.max_active_siege_attacks_per_nation", 2)),
             "min_towns": get(core, "town-rules.siege-min-towns", 2),
+            "upcoming": siege_upcoming(sw, core),
+            "pet_chance": int(get(core, "pet-combat.siege-pet-chance", 30)) if get(core, "pet-combat.enabled", False) else 0,
+        },
+        "pet": {
+            "enabled": bool(get(core, "pet-combat.enabled", False)),
+            "reduce": get(core, "pet-combat.player-damage-reduce-percent", 50),
+            "announce": get(core, "pet-combat.announce-minutes", [60, 10]),
+            "slots": {k: st.get(f"petc_slots_{g}") for k, g in [("Dân", "default"), ("Nam Tước", "namtuoc"), ("Tử Tước", "tutuoc"),
+                      ("Bá Tước", "batuoc"), ("Hầu Tước", "hautuoc"), ("Công Tước", "congtuoc")] if st.get(f"petc_slots_{g}")},
+            "trees": pet_trees(),
+            "level_cap": get(load_yaml(plugin("MyPet", "config.yml")), "MyPet.Exp.LevelCap", 100),
+            "respawn_per_level": get(load_yaml(plugin("MyPet", "config.yml")), "MyPet.Respawn.Time.Default.Factor", 5),
+            "no_catch": ["Warden", "Wither", "Rồng Ender", "Elder Guardian", "Ravager", "Golem sắt", "Ghast"],
+        },
+        "arena": {
+            "enabled": bool(get(core, "arena.enabled", False)),
+            "fight": get(core, "arena.fight-seconds", 180),
+            "countdown": get(core, "arena.countdown-seconds", 5),
+            "pet_reduce": get(core, "arena.pet-damage-reduce-percent", 50),
+            "fee": get(core, "arena.fee-percent", 5),
+            "max_stake": get(core, "arena.max-stake", 10000),
+            "reward": get(core, "arena.win-reward", 50),
+            "cap": get(core, "arena.daily-reward-cap", 5),
         },
         "town": {
             "price": float(get(towny, "economy.new_expand.price_new_town", 500)),
@@ -243,6 +338,8 @@ def api_info():
             "rank_hours": get(core, "pvp-rules.min-rank-hours", 5),
             "max_accounts": get(core, "pvp-rules.max-accounts", 2),
             "tpr_cooldown": int(get(core, "rtp.cooldown-seconds", 300)) // 60,
+            "tpr_warmup": get(core, "rtp.warmup-seconds", 3),
+            "tp_delay": get(load_yaml(plugin("Essentials", "config.yml")), "teleport-delay", 0),
             "tpr_zones": zones,
             "reset_days": get(core, "player-reset.cooldown-days", 7),
             "reset_max": get(core, "player-reset.max-per-season", 3),
@@ -753,6 +850,7 @@ ROUTES = {
     "/api/bxh": lambda: cached("bxh", 30, api_bxh),
     "/api/vote": lambda: cached("vote", 30, api_vote),
     "/api/mua": lambda: cached("mua", 60, api_mua),
+    "/api/dautruong": lambda: cached("dautruong", 5, api_dautruong),
     "/api/hangngay": lambda: cached("hangngay", 60, api_hangngay),
 }
 TYPES = {".html": "text/html; charset=utf-8", ".css": "text/css; charset=utf-8", ".js": "application/javascript; charset=utf-8",

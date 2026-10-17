@@ -34,6 +34,7 @@ p{margin:0 0 .8em}
 .g2{grid-template-columns:repeat(2,minmax(0,1fr))}.g3{grid-template-columns:repeat(3,minmax(0,1fr))}.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
 @media (max-width:900px){.g4{grid-template-columns:repeat(2,minmax(0,1fr))}.g2,.g3{grid-template-columns:1fr}}
 p.red{color:#ff9d9b}
+.green{color:#7ee2b0} span.red{color:#ff9d9b}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 16px;border-radius:10px;border:1px solid var(--line);background:var(--card2);color:var(--text);font:inherit;font-weight:700;cursor:pointer}
 .btn:hover{border-color:var(--gold);text-decoration:none}
 .btn.primary{background:linear-gradient(135deg,var(--gold),#d98b25);color:#1d1203;border:none}
@@ -308,6 +309,22 @@ function render(){
     <div class="card"><h2>☠ Treo thưởng</h2>${tt.tren_ban ? `<p class="red">Đầu bạn đang bị treo <b>${nf.format(Math.round(tt.tren_ban))} xu</b>. Cẩn thận ngoài đất hoang!</p>` : `<p class="muted">Không ai treo thưởng lên bạn.</p>`}
       ${(tt.da_treo || []).length ? `<p class="small">Bạn đang treo: ${tt.da_treo.map(x => esc(x.ten) + " (" + nf.format(Math.round(x.xu)) + " xu)").join(", ")}</p>` : ""}
       <p class="small muted"><code>/treothuong</code> xem danh sách · <code>/treothuong dat &lt;người&gt; &lt;xu&gt;</code></p></div>
+  </div>`;
+
+  // pet chiến đấu + Đấu Trường (Bang Hội Chiến)
+  const mp = h.mypet || {}, dt = h.dautruong || {};
+  const PET_VI = {WOLF: "Sói", CAT: "Mèo", FOX: "Cáo", SPIDER: "Nhện", ZOMBIE: "Zombie", SKELETON: "Bộ xương", CREEPER: "Creeper", HORSE: "Ngựa", PARROT: "Vẹt",
+    BEE: "Ong", PIG: "Lợn", COW: "Bò", SHEEP: "Cừu", CHICKEN: "Gà", RABBIT: "Thỏ", PANDA: "Gấu trúc", POLARBEAR: "Gấu Bắc Cực", GOAT: "Dê", BLAZE: "Blaze",
+    ENDERMAN: "Enderman", AXOLOTL: "Kỳ giông", FROG: "Ếch", CAMEL: "Lạc đà", LLAMA: "Lạc đà không bướu", DONKEY: "Lừa", MULE: "La", WITCH: "Phù thuỷ",
+    VILLAGER: "Dân làng", HUSK: "Husk", DROWNED: "Drowned", STRAY: "Stray", PILLAGER: "Pillager", VINDICATOR: "Vindicator", EVOKER: "Evoker", SNOWMAN: "Người tuyết"};
+  html += `<div class="grid g2" style="margin-top:14px">
+    <div class="card"><h2>🐾 Pet chiến đấu</h2>${mp.pets === null ? `<p class="small dim">Chưa đọc được dữ liệu pet.</p>`
+      : (mp.pets || []).length ? `<table><tbody>${mp.pets.map(p => `<tr><td><b>⚔ ${esc(p.ten || PET_VI[String(p.loai).toUpperCase()] || p.loai)}</b><div class="small muted">${esc(PET_VI[String(p.loai).toUpperCase()] || p.loai)}${p.huong ? " · " + esc(p.huong) : " · chưa chọn hướng"}</div></td>
+          <td>Cấp <b>${p.cap}</b></td><td class="small">${p.dang_hoi_sinh ? "đang hồi sinh" : p.dang_dan ? '<span class="green">đang dẫn</span>' : "trong kho"}</td></tr>`).join("")}</tbody></table>`
+      : `<p class="muted">Chưa có pet. Đánh một con thú/quái tới khi yếu máu rồi quăng <b>dây xích</b> vào để bắt (Bang Hội Chiến).</p>`}
+      <p class="small muted">Bạn được giữ tối đa <b>${mp.giu_toi_da || 1}</b> pet, mỗi lúc dẫn 1 con. <code>/petinfo</code> · <code>/petswitch</code> · <code>/petchooseskilltree</code></p></div>
+    <div class="card"><h2>⚔ Đấu Trường</h2><p>Điểm <b>${dt.elo || 1000}</b> · <span class="green">${dt.thang || 0} thắng</span> · <span class="red">${dt.thua || 0} thua</span></p>
+      <p class="small muted">Thưởng hôm nay ${dt.thuong_hom_nay || 0}/${dt.toi_da || 5} trận. Vào sảnh: <code>/warp pvp</code> hoặc bấm NPC ở spawn; người + pet, chết không rơi đồ.</p></div>
   </div>`;
 
   // nhiệm vụ + rank

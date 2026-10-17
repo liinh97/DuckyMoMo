@@ -370,6 +370,17 @@
 - Cài đặt > PvP & combat > "Pet chiến đấu - lên cấp, hồi sinh, đói (MyPet)": Exp.Modifier.Global, LevelCap, Exp.Loss.Percent, Respawn.Time.Default
   Factor/Fixed, Respawn.EconomyCost Fixed/Factor, HungerSystem Active/Time, Skilltree.SwitchFee.Percent, Leash.Consume. Cần khởi động lại banghoi-1.
 
+### 17/10 tối: web cho pet, Đấu Trường, lịch có pet
+- Plugin: Arena ghi plugins/DuckyMoMoCore/dautruong-live.json mỗi 5 giây (sân: tên, trạng thái, đang đấu, cho, xem; top 10 ELO).
+- Site (site/app.py): /api/dautruong (cache 5s, cũ >60s = ok:false); /api/info thêm siege.upcoming (12 phiên trong 14 ngày theo lịch
+  SiegeWar + cờ pet, `java_objects_hash` khớp Java Objects.hash(seed, phút) — đã đối chiếu bằng javac), siege.pet_chance, pet (reduce, slots theo
+  petc_slots_* của settings.yml, trees từ skilltrees, level_cap, respawn), arena (luật), player.tp_delay/tpr_warmup. Bỏ qua tuần chẵn/lẻ
+  (allowed_siege_battle_session_weeks) khi tính phiên sắp tới.
+- Trang công khai: mục #pet, #dautruong (trực tiếp, 10 giây/lần), bảng "Phiên sắp tới & pet tham chiến" trong #congthanh, luật dịch chuyển
+  3 giây + pet tính cho chủ, 2 hỏi đáp. Thanh menu trên cùng đã dài (Hỏi đáp bị che ở 1300px) — cân nhắc gom bớt.
+- Trang tài khoản: thẻ "Pet chiến đấu" (taikhoan.combat_pets: pets.db chỉ đọc, JOIN players theo mojang_uuid, cấp = pet_level(exp) theo công
+  thức exp.js; giữ tối đa = quyền MyPet.petstorage.limit.N lớn nhất + 1) và "Đấu Trường" (ELO, thắng/thua, thưởng hôm nay).
+
 ### DANH SÁCH CẦN THỬ (người dùng chốt 15/10: làm xong hết rồi thử một lượt; mục 16–25)
 Triển khai một lần: `git stash && git pull && git stash pop` → `./ops/build-core.sh` (lỗi biên dịch thì gửi ảnh, Java viết ở cloud CHƯA biên
 dịch) → kiểm tra không ai online → `docker compose up -d --no-deps lobby banghoi-1 practice-1` → `docker compose up -d --build panel site`.

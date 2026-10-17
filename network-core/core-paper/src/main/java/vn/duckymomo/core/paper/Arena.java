@@ -156,6 +156,7 @@ final class Arena implements Listener {
                         + " &7· Thoát: &f/dautruong roi"));
             }
         }, 40L, 40L);
+        Bukkit.getScheduler().runTaskTimer(plugin, this::writeLive, 60L, 100L);
     }
 
     String describe() {
@@ -1519,6 +1520,60 @@ final class Arena implements Listener {
                 return out == null ? null : LegacyComponentSerializer.legacySection().serialize(c(out));
             }
         };
+    }
+
+    // ------------------------------------------------------------------ xuất cho trang web
+
+    /** plugins/DuckyMoMoCore/dautruong-live.json (mỗi 5 giây): trạng thái từng sân + top, trang web công khai đọc. */
+    private void writeLive() {
+        com.google.gson.JsonObject root = new com.google.gson.JsonObject();
+        root.addProperty("updated", System.currentTimeMillis() / 1000L);
+        com.google.gson.JsonArray sans = new com.google.gson.JsonArray();
+        for (String id : sanIds()) {
+            com.google.gson.JsonObject o = new com.google.gson.JsonObject();
+            o.addProperty("id", id);
+            o.addProperty("ten", plainText(sanName(id)));
+            o.addProperty("trangthai", plainText(status(id)));
+            Match m = sanBusy.get(id);
+            o.addProperty("dangdau", m != null);
+            if (m != null) {
+                o.addProperty("kieu", m.size + "v" + m.size);
+                o.addProperty("a", names(m.a));
+                o.addProperty("b", names(m.b));
+                o.addProperty("conlai", m.state == State.FIGHT ? Math.max(0, (m.fightEnd - System.currentTimeMillis()) / 1000L) : -1);
+                o.addProperty("cuoc", m.stake);
+            }
+            o.addProperty("cho", queued(id));
+            o.addProperty("xem", watchers(id));
+            sans.add(o);
+        }
+        root.add("san", sans);
+        com.google.gson.JsonArray top = new com.google.gson.JsonArray();
+        ConfigurationSection st = data.getConfigurationSection("stats");
+        if (st != null) {
+            List<String> ids = new ArrayList<>(st.getKeys(false));
+            ids.removeIf(k -> st.getInt(k + ".thang", 0) + st.getInt(k + ".thua", 0) == 0);
+            ids.sort(Comparator.comparingInt((String k) -> st.getInt(k + ".elo", 1000)).reversed());
+            for (String k : ids.subList(0, Math.min(10, ids.size()))) {
+                com.google.gson.JsonObject o = new com.google.gson.JsonObject();
+                o.addProperty("ten", st.getString(k + ".ten", "?"));
+                o.addProperty("elo", st.getInt(k + ".elo", 1000));
+                o.addProperty("thang", st.getInt(k + ".thang", 0));
+                o.addProperty("thua", st.getInt(k + ".thua", 0));
+                top.add(o);
+            }
+        }
+        root.add("top", top);
+        try {
+            java.nio.file.Files.writeString(new File(plugin.getDataFolder(), "dautruong-live.json").toPath(), root.toString(),
+                    java.nio.charset.StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            plugin.getLogger().warning("Không ghi được dautruong-live.json: " + e.getMessage());
+        }
+    }
+
+    private static String plainText(String legacy) {
+        return legacy.replaceAll("&[0-9a-fk-orA-FK-OR]", "");
     }
 
     // ------------------------------------------------------------------ tiện ích

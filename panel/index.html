@@ -529,7 +529,7 @@ function lib() {
   if (!libCache) libCache = fetch("api/thuvien").then(r => r.json()).catch(() => ({ items: [], meta: null }));
   return libCache;
 }
-const RW_KINDS = [["xu", "Xu"], ["do", "Đồ thư viện"], ["vat", "Đồ thường"], ["lenh", "Lệnh console"], ["manh", "Mảnh sự kiện"]];
+const RW_KINDS = [["xu", "Xu"], ["do", "Đồ thư viện"], ["vat", "Đồ thường"], ["lenh", "Lệnh console"], ["manh", "Mảnh sự kiện"], ["petexp", "Kinh nghiệm pet"]];
 function rewardsEditor(list, onChange) {
   const box = document.createElement("div"); box.className = "rw";
   const rows = [];
@@ -547,8 +547,9 @@ function rewardsEditor(list, onChange) {
     function build(init) {
       mid.innerHTML = ""; amt.style.visibility = "visible";
       const k = kind.value, a = init ? parts.slice(1) : [];
-      if (k === "xu") {
+      if (k === "xu" || k === "petexp") {
         main = document.createElement("input"); main.type = "number"; main.min = "1"; main.value = a[0] || "100"; amt.style.visibility = "hidden";
+        if (k === "petexp") main.title = "Kinh nghiệm cộng cho pet đang dẫn (người chơi phải gọi pet ra mới đổi được)";
       } else if (k === "do") {
         main = document.createElement("select");
         main.innerHTML = '<option value="">(đang tải thư viện…)</option>';
@@ -583,6 +584,7 @@ function rewardsEditor(list, onChange) {
         const k = kind.value, v = String(main.value || "").trim(), n = parseInt(amt.value || "0", 10);
         if (!v) return "";
         if (k === "xu") return "xu " + v;
+        if (k === "petexp") return "petexp " + parseInt(v, 10);
         if (k === "lenh") return "lenh " + v;
         if (k === "vat") return "vat " + v.toUpperCase() + " " + (n > 0 ? n : 1);
         if (k === "manh") return "manh " + v.toLowerCase() + " " + (n > 0 ? n : 1);
@@ -745,7 +747,7 @@ function fragShopEditor(value, onChange) {
   const emit = () => onChange(os.map(o => {
     const cost = {};
     for (const part of o.cost.value.split(",")) {
-      const m = part.trim().match(/^([a-z0-9_]+)\s+(\d+)$/i) || part.trim().match(/^(\d+)\s+([a-z0-9_]+)$/i);
+      const m = part.trim().match(/^([a-z0-9_]+|ca:[a-z]+)\s+(\d+)$/i) || part.trim().match(/^(\d+)\s+([a-z0-9_]+|ca:[a-z]+)$/i);
       if (m) { const [k, n] = /^\d+$/.test(m[1]) ? [m[2], m[1]] : [m[1], m[2]]; cost[k.toLowerCase()] = parseInt(n, 10); }
     }
     return { label: o.label.value.trim(), cost, limit: parseInt(o.limit.value || "0", 10), rewards: o.rewards };
@@ -754,7 +756,7 @@ function fragShopEditor(value, onChange) {
   function addO(d) {
     const wrap = document.createElement("div"); wrap.className = "ms";
     const head = document.createElement("div"); head.className = "fs-head";
-    head.innerHTML = '<input placeholder="Tên món, vd 16 kim cương"><input placeholder="Giá: loại số, vd lamnguy 40 (nhiều loại cách dấu phẩy)"><input type="number" min="0" max="1000" title="Mỗi người đổi tối đa (0 = không giới hạn)"><button type="button" class="x" title="Bỏ">×</button>';
+    head.innerHTML = '<input placeholder="Tên món, vd 16 kim cương"><input placeholder="Giá: loại số, vd lamnguy 40 · cá: ca:rare 3 (common, rare, epic, legendary)"><input type="number" min="0" max="1000" title="Mỗi người đổi tối đa (0 = không giới hạn)"><button type="button" class="x" title="Bỏ">×</button>';
     const [label, cost, limit] = head.querySelectorAll("input");
     const o = { label, cost, limit, rewards: (d.rewards || []).slice() };
     label.value = d.label || ""; limit.value = d.limit || 0;

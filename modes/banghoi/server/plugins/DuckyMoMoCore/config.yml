@@ -537,6 +537,13 @@ event-fragments:
     - {label: "5000 xu", cost: {lamnguy: 25}, limit: 0, rewards: ["xu 5000"]}
     - {label: "16 kim cương", cost: {lamnguy: 40}, limit: 0, rewards: ["vat DIAMOND 16"]}
     - {label: "Đĩa nhạc Pigstep (trang trí)", cost: {lamnguy: 20}, limit: 1, rewards: ["vat MUSIC_DISC_PIGSTEP 1"]}
+    # đổi bằng CÁ CÂU (ca:<Common|Rare|Epic|Legendary>): cá có ích ngoài bán lấy xu
+    - {label: "8 dây xích (bắt pet)", cost: {"ca:Rare": 3}, limit: 0, rewards: ["vat LEAD 8"]}
+    - {label: "Yên ngựa", cost: {"ca:Rare": 4}, limit: 0, rewards: ["vat SADDLE 1"]}
+    - {label: "Bữa tiệc cho pet: +120 kinh nghiệm", cost: {"ca:Epic": 2}, limit: 0, rewards: ["petexp 120"]}
+    - {label: "2 táo vàng", cost: {"ca:Epic": 1}, limit: 0, rewards: ["vat GOLDEN_APPLE 2"]}
+    - {label: "Táo vàng phù phép", cost: {"ca:Legendary": 1}, limit: 0, rewards: ["vat ENCHANTED_GOLDEN_APPLE 1"]}
+    - {label: "Đại tiệc cho pet: +500 kinh nghiệm", cost: {"ca:Legendary": 2}, limit: 0, rewards: ["petexp 500"]}
 
 # Mùa mưa / mùa khô (/mua). Đổi theo NGÀY THẬT giờ Việt Nam: start-date = ngày bắt đầu mùa đầu tiên trong order, mỗi mùa days-per-season ngày, lặp vòng.
 # growth: hệ số lớn của cây theo khối mọc ra (WHEAT lúa mì, CARROTS, POTATOES, BEETROOTS, SUGAR_CANE, BAMBOO, CACTUS, MELON/PUMPKIN = quả,
@@ -582,6 +589,15 @@ donate-qr:
   web: "https://app.goc6.io.vn/mc/web/taikhoan.html"
 
 # Pet chiến đấu MyPet (PetCombat): trang Cài đặt > PvP & combat > Pet chiến đấu
+pet-fish:
+  enabled: true
+  daily-exp-cap: 300                   # kinh nghiệm tối đa mỗi người/ngày từ cho pet ăn cá (chống máy câu tự động)
+  rarity:                              # food = điểm no (tối đa 100), exp = kinh nghiệm, heal = % máu tối đa hồi lại
+    Common: {food: 15, exp: 3, heal: 10}
+    Rare: {food: 30, exp: 10, heal: 25}
+    Epic: {food: 50, exp: 30, heal: 50}
+    Legendary: {food: 100, exp: 100, heal: 100}
+
 pet-capture:
   enabled: true
   chance-percent: 30                   # xác suất bắt mặc định (%) mỗi lần quăng dây xích vào con yếu máu
@@ -598,6 +614,9 @@ pet-capture:
     bay: 20
     thulon: 15
     phuthuy: 10
+  season-bonus:                        # cộng thêm % bắt trong mùa (mã mùa trong seasons.order, mã nhóm như group-chance)
+    mua: {thuytoc: 15, nhay: 10}
+    kho: {bay: 10, thusan: 5}
 
 pet-combat:
   enabled: true
@@ -607,6 +626,20 @@ pet-combat:
   announce-minutes: [60, 10]          # báo cả server trước phiên (phút)
   siege-no-fly: true                  # lúc có phiên đánh, trong vùng vây: không bay bằng pet (bị đẩy xuống, Rơi chậm)
   siege-no-fly-height: 3              # pet cưỡi cao hơn ngần này khối so với mặt đất thì tính là bay
+  siege-weather:                       # lúc có phiên đánh, trong vùng vây: trời đất ảnh hưởng trận, pet có đất diễn
+    enabled: true
+    pet-range: 24                      # pet phải ở trong ngần này khối quanh chủ mới tính
+    night-darkness: true               # đêm: không có pet mắt đêm ở gần thì bị Bóng tối; có thì được Nhìn đêm
+    night-pet-bonus: 20                # % sát thương thêm cho pet mắt đêm ban đêm
+    night-eyes: [Bat, Phantom, Cat, Ocelot, Fox, Wolf, Spider, CaveSpider, Enderman, Endermite, Vex, Warden]
+    rain-slowness: true                # mưa: người đi bộ bị Chậm (cưỡi pet thì không)
+    rain-water-bonus: 20               # % sát thương thêm cho pet nước khi mưa
+    rain-fire-malus: 25                # % sát thương bị giảm của pet lửa khi mưa
+    water-pets: [Axolotl, Cod, Salmon, Pufferfish, TropicalFish, Squid, GlowSquid, Dolphin, Guardian, ElderGuardian, Tadpole, Frog, Turtle, Drowned]
+    heat-season: kho                   # mùa nắng gắt (ban ngày, không mưa)
+    heat-hunger: true                  # nắng gắt: ai không dẫn pet lửa thì bị Đói
+    heat-bonus: 15                     # % sát thương thêm cho pet lửa lúc nắng gắt
+    fire-pets: [Blaze, MagmaCube, Strider, WitherSkeleton, Hoglin, Zoglin, Piglin, PiglinBrute, ZombifiedPiglin, Ghast]
 
 # Đấu Trường /dautruong (Arena): trang Cài đặt > PvP & combat > Đấu Trường
 arena:

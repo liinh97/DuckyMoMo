@@ -283,6 +283,25 @@
   ticks-per-particle). Ghi vào plugins/PlayerParticles/styles/<kiểu>.yml ở lobby + banghoi-1, CẦN khởi động lại 2 server mới có hiệu lực.
 - PlayerParticles có sẵn `locale: vi_VN`, EssentialsX có `messages_vi` — chưa bật (đã hỏi người dùng).
 
+### 17/10 khuya: mùa + câu cá gắn với pet và công thành
+- MyPetBridge.java: gọi MyPet qua phản chiếu (active/of/type/entity/addExp/saturation), setAccessible vì lớp cài đặt có thể không public.
+  Arena.addPetExp dùng bridge. Seasons.INSTANCE + Seasons.now()/nowName() cho module khác hỏi mùa.
+- PetFish.java (pet-fish): chuột phải pet của mình bằng cá EvenMoreFish (PDC evenmorefish:emf-fish-rarity = Common/Rare/Epic/Legendary)
+  → điểm no, % máu, kinh nghiệm; kinh nghiệm giới hạn/người/ngày (petfish.yml, chỉ giữ hôm nay). Huỷ PlayerInteractEntityEvent để MyPet
+  không xử lý cú bấm. Không no/không đau/hết giới hạn thì không ăn.
+- PetCapture: season-bonus.<mùa>.<nhóm> cộng % (mùa mưa thuytoc 15, nhay 10; mùa khô bay 10, thusan 5); /bxhpet tyle + web hiện.
+- PetCombat siege-weather (mỗi 20 tick, chỉ lúc battleActive, người trong vùng vây, bỏ qua spectator/creative): đêm = giờ game
+  13000–23000 → DARKNESS trừ ai có pet night-eyes trong pet-range (được NIGHT_VISION); mưa (world.hasStorm) → SLOWNESS nếu không
+  ngồi trên vật cưỡi; nắng = ban ngày, không mưa, đúng heat-season → HUNGER trừ ai dẫn fire-pets. onPetWeather (NORMAL): pet đánh
+  trong vùng vây lúc đánh: mắt đêm +night-pet-bonus ban đêm, nước +rain-water-bonus / lửa −rain-fire-malus khi mưa, lửa +heat-bonus
+  nắng gắt. Báo người chơi bằng chat khi điều kiện đổi.
+- FragmentShop /doimanh: giá "ca:<độ hiếm>" (cá câu), quà Rewards "petexp N" (món có petexp phải đang dẫn pet). 6 món đổi bằng cá
+  (dây xích, yên, táo vàng, táo vàng phù phép, tiệc kinh nghiệm pet). Panel: FISH_COST_RE, REWARD_RES petexp, RW_KINDS "Kinh nghiệm
+  pet"; settings.yml fm_shop đã có 6 món (nguồn khi lưu trang Cài đặt).
+- Cài đặt: nhóm "Bắt pet theo mùa", "Cho pet ăn cá câu", các ô sw_* trong Pet chiến đấu. Web: thẻ "Trời đất trong trận công thành",
+  công dụng cá ở mục Câu cá, % theo mùa ở bảng bắt pet. site/app.py season_id() (KHÔNG đặt tên season_now: trùng hàm cũ).
+- Chưa thử trong game (người dùng để test sau).
+
 ### 17/10 tối: bắt pet theo xác suất, trao đổi pet, kinh nghiệm pet ở Đấu Trường, bảng xếp hạng pet
 - PetCapture.java (pet-capture): MyPet bắt ở EntityDamageByEntityEvent MONITOR KHÔNG ignoreCancelled, cờ ChanceFlag có sẵn quay mỗi
   cú đánh (spam = chắc bắt) nên tự làm: pet-config.yml mọi loài thêm "Permission:duckymomo.pet.batduoc" (PermissionFlag), module ở

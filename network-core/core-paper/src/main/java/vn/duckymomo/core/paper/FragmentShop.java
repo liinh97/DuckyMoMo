@@ -38,6 +38,8 @@ import java.util.Map;
  * until (hạn đổi yyyy-MM-dd, trống = không hạn). Nhận qua phần thưởng "manh <loại> <số>" bị giới hạn daily-cap mảnh/người/ngày
  * (chống tài khoản phụ cày); admin/boss phát bằng /doimanh give (không tính giới hạn).
  * Cửa hàng: shop [{label, cost {loại: số}, rewards [quà], limit (lần/người, 0 = không giới hạn)}]. Lưu: doimanh.yml
+ * Giá còn nhận CÁ CÂU (EvenMoreFish) theo độ hiếm: cost {"ca:Legendary": 1} (Common/Rare/Epic/Legendary), luôn mở (không hạn).
+ * Món có quà "petexp" chỉ đổi được khi đang dẫn pet.
  */
 final class FragmentShop implements Listener, Rewards.FragmentGiver {
     private static final LegacyComponentSerializer LEGACY = LegacyComponentSerializer.legacyAmpersand();
@@ -190,10 +192,33 @@ final class FragmentShop implements Listener, Rewards.FragmentGiver {
         return grant(p, type, amount, false);
     }
 
+    private static final Map<String, String> FISH_VI = Map.of("common", "Thường", "rare", "Hiếm", "epic", "Quý", "legendary", "Huyền thoại");
+
+    /** Giá "ca:<độ hiếm>" = cá câu EvenMoreFish độ hiếm đó. */
+    private static boolean isFishCost(String typeId) {
+        return typeId.regionMatches(true, 0, "ca:", 0, 3);
+    }
+
+    private static boolean matches(String typeId, ItemStack it) {
+        if (isFishCost(typeId)) {
+            String r = PetFish.rarity(it);
+            return r != null && r.equalsIgnoreCase(typeId.substring(3));
+        }
+        return false;
+    }
+
+    private String costName(String typeId) {
+        if (isFishCost(typeId)) {
+            return "cá " + FISH_VI.getOrDefault(typeId.substring(3).toLowerCase(Locale.ROOT), typeId.substring(3));
+        }
+        Type t = types.get(typeId);
+        return t == null ? typeId : t.name();
+    }
+
     private int count(Player p, String typeId) {
         int n = 0;
         for (ItemStack it : p.getInventory().getStorageContents()) {
-            if (typeId.equals(typeOf(it))) {
+            if (typeId.equals(typeOf(it)) || matches(typeId, it)) {
                 n += it.getAmount();
             }
         }
@@ -203,7 +228,7 @@ final class FragmentShop implements Listener, Rewards.FragmentGiver {
     private void take(Player p, String typeId, int amount) {
         ItemStack[] inv = p.getInventory().getStorageContents();
         for (int i = 0; i < inv.length && amount > 0; i++) {
-            if (typeId.equals(typeOf(inv[i]))) {
+            if (typeId.equals(typeOf(inv[i])) || matches(typeId, inv[i])) {
                 int n = Math.min(amount, inv[i].getAmount());
                 inv[i].setAmount(inv[i].getAmount() - n);
                 amount -= n;
@@ -214,6 +239,9 @@ final class FragmentShop implements Listener, Rewards.FragmentGiver {
 
     private boolean available(Offer o) {
         for (String t : o.cost().keySet()) {
+            if (isFishCost(t)) {
+                continue;
+            }
             Type ty = types.get(t);
             if (ty == null || !ty.open()) {
                 return false;
@@ -246,15 +274,14 @@ final class FragmentShop implements Listener, Rewards.FragmentGiver {
         lore.add(c("&7Giá:"));
         boolean enough = true;
         for (Map.Entry<String, Integer> e : o.cost().entrySet()) {
-            Type t = types.get(e.getKey());
             int have = count(p, e.getKey());
             enough &= have >= e.getValue();
-            lore.add(c("  " + (have >= e.getValue() ? "&a" : "&c") + e.getValue() + " " + (t == null ? e.getKey() : t.name()) + " &8(có " + have + ")"));
+            lore.add(c("  " + (have >= e.getValue() ? "&a" : "&c") + e.getValue() + " " + costName(e.getKey()) + " &8(có " + have + ")"));
         }
         if (o.limit() > 0) {
             lore.add(c("&7Đã đổi &f" + used(p, o) + "/" + o.limit() + " &7lần"));
         }
-        lore.add(c(enough ? "&a» Bấm để đổi" : "&c» Chưa đủ mảnh"));
+        lore.add(c(enough ? "&a» Bấm để đổi" : "&c» Chưa đủ"));
         meta.lore(lore);
         it.setItemMeta(meta);
         return it;
@@ -262,7 +289,7 @@ final class FragmentShop implements Listener, Rewards.FragmentGiver {
 
     void open(Player p) {
         Holder h = new Holder();
-        h.inv = Bukkit.createInventory(h, 54, c("&5&lĐỔI MẢNH SỰ KIỆN"));
+        h.inv = Bukkit.createInventory(h, 54, c("&5&lĐỔI MẢNH & CÁ"));
         int slot = 10;
         for (Offer o : offers) {
             if (!available(o) || slot >= 44) {
@@ -299,9 +326,13 @@ final class FragmentShop implements Listener, Rewards.FragmentGiver {
         }
         for (Map.Entry<String, Integer> cost : o.cost().entrySet()) {
             if (count(p, cost.getKey()) < cost.getValue()) {
-                p.sendMessage(c("&cChưa đủ mảnh."));
+                p.sendMessage(c("&cChưa đủ " + costName(cost.getKey()) + "."));
                 return;
             }
+        }
+        if (o.rewards().stream().anyMatch(r -> r.trim().toLowerCase(Locale.ROOT).startsWith("petexp")) && MyPetBridge.active(p) == null) {
+            p.sendMessage(c("&cGọi pet ra trước (&f/petcall&c) rồi mới đổi được món cho pet."));
+            return;
         }
         for (Map.Entry<String, Integer> cost : o.cost().entrySet()) {
             take(p, cost.getKey(), cost.getValue());

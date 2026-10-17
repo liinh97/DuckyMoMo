@@ -73,7 +73,8 @@ ACTIVITY_TAIL_BYTES = 4_000_000
 # Quà (DuckyMoMoCore Rewards): xu <số> | do <mã thư viện> [số] | vat <VẬT_LIỆU> [số] | lenh <lệnh> | manh <loại> <số>
 REWARD_RES = [re.compile(r"^xu \d{1,9}(\.\d{1,2})?$"), re.compile(r"^do [a-z0-9_]{1,32}( \d{1,2})?$"),
               re.compile(r"^vat [A-Za-z0-9_]{1,64}( \d{1,4})?$"), re.compile(r"^lenh \S.{0,199}$"),
-              re.compile(r"^manh [a-z0-9_]{1,32} \d{1,4}$")]
+              re.compile(r"^manh [a-z0-9_]{1,32} \d{1,4}$"), re.compile(r"^petexp \d{1,6}$")]
+FISH_COST_RE = re.compile(r"^ca:(common|rare|epic|legendary)$")   # giá đổi bằng cá câu (EvenMoreFish) theo độ hiếm
 
 
 def check_rewards(label, v):
@@ -238,7 +239,7 @@ def validate(s, v):
                     n = int(n)
                 except (TypeError, ValueError):
                     raise ValueError(f"{label}: giá phải là số")
-                if not LIB_ID_RE.match(k) or not 1 <= n <= 100000:
+                if not (LIB_ID_RE.match(k) or FISH_COST_RE.match(k)) or not 1 <= n <= 100000:
                     raise ValueError(f"{label}: giá sai ({k} {n})")
                 cost[k] = n
             rw = check_rewards(label, o.get("rewards"))

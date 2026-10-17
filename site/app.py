@@ -269,9 +269,20 @@ def pet_capture(core):
         return {"enabled": False}
     names = {g["ma"]: g["ten"] for g in pet_trees()[1]}
     gc = get(core, "pet-capture.group-chance", {}) or {}
-    groups = sorted(({"ten": names.get(k, k), "tyle": int(v)} for k, v in gc.items()), key=lambda g: -g["tyle"])
+    now = season_id(core)
+    bonus = (get(core, "pet-capture.season-bonus", {}) or {}).get(now or "", {}) or {}
+    groups = sorted(({"ten": names.get(k, k), "tyle": int(v), "mua_nay": int(bonus.get(k, 0))} for k, v in gc.items()),
+                    key=lambda g: -(g["tyle"] + g["mua_nay"]))
+    sname = strip_colors(get(core, f"seasons.list.{now}.name", "") or "") if now else ""
     return {"enabled": True, "default": get(core, "pet-capture.chance-percent", 30), "attempts": get(core, "pet-capture.attempts-per-mob", 3),
-            "cooldown": get(core, "pet-capture.cooldown-seconds", 2), "groups": groups}
+            "cooldown": get(core, "pet-capture.cooldown-seconds", 2), "groups": groups, "season": sname.strip()}
+
+
+def season_id(core):
+    """Mã mùa hiện tại (cùng cách tính với plugin, season_now), mùa tắt thì None."""
+    cfg = core.get("seasons") or {}
+    st = season_now(cfg) if cfg.get("enabled") else None
+    return st["cur"] if st else None
 
 
 def mypet_level(exp):
@@ -378,6 +389,10 @@ def api_info():
             "respawn_per_level": get(load_yaml(plugin("MyPet", "config.yml")), "MyPet.Respawn.Time.Default.Factor", 5),
             "no_catch": ["Warden", "Wither", "Rồng Ender", "Elder Guardian", "Ravager", "Golem sắt", "Ghast"],
             "capture": pet_capture(core),
+            "fish_cap": get(core, "pet-fish.daily-exp-cap", 300),
+            "weather": {k: get(core, f"pet-combat.siege-weather.{p}", d) for k, p, d in [
+                ("enabled", "enabled", True), ("night_bonus", "night-pet-bonus", 20), ("water_bonus", "rain-water-bonus", 20),
+                ("fire_malus", "rain-fire-malus", 25), ("heat_bonus", "heat-bonus", 15), ("eyes", "night-eyes", [])]},
             "top": pet_top(),
         },
         "arena": {

@@ -946,31 +946,10 @@ final class Arena implements Listener {
         return PetCombat.isPet(d) ? petOwner(d) : null;
     }
 
-    /** Cộng kinh nghiệm cho pet MyPet đang dẫn (qua phản chiếu, không cần jar MyPet khi build). */
+    /** Cộng kinh nghiệm cho pet MyPet đang dẫn. */
     static boolean addPetExp(Player p, double exp) {
-        try {
-            org.bukkit.plugin.Plugin mp = Bukkit.getPluginManager().getPlugin("MyPet");
-            if (mp == null || !mp.isEnabled()) {
-                return false;
-            }
-            ClassLoader cl = mp.getClass().getClassLoader();
-            Object mgr = Class.forName("de.Keyle.MyPet.MyPetApi", true, cl).getMethod("getMyPetManager").invoke(null);
-            if (!(Boolean) mgr.getClass().getMethod("hasActiveMyPet", Player.class).invoke(mgr, p)) {
-                return false;
-            }
-            Object pet = mgr.getClass().getMethod("getMyPet", Player.class).invoke(mgr, p);
-            if (pet instanceof java.util.Optional<?> o) {
-                pet = o.orElse(null);
-            }
-            if (pet == null) {
-                return false;
-            }
-            Object xp = pet.getClass().getMethod("getExperience").invoke(pet);
-            xp.getClass().getMethod("addExp", double.class).invoke(xp, exp);
-            return true;
-        } catch (ReflectiveOperationException | RuntimeException e) {
-            return false;
-        }
+        Object pet = MyPetBridge.active(p);
+        return pet != null && MyPetBridge.addExp(pet, exp);
     }
 
     private static String fmtNum(double v) {

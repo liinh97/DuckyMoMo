@@ -418,6 +418,12 @@ public final class DuckyMoMoCore extends JavaPlugin {
         } else {
             petCapture = null;
         }
+        // Cho pet ăn cá câu (EvenMoreFish): no, hồi máu, kinh nghiệm (pet-fish.enabled)
+        if (myPetOn && getConfig().getBoolean("pet-fish.enabled") && getConfig().isConfigurationSection("pet-fish")) {
+            PetFish petFish = new PetFish(this, getConfig().getConfigurationSection("pet-fish"));
+            getServer().getPluginManager().registerEvents(petFish, this);
+            getLogger().info("Pet ăn cá: " + petFish.describe());
+        }
         PetTop petTop = myPetOn ? new PetTop(this, petCapture) : null;
         bind("bxhpet", petTop == null ? null : petTop::command, "Bảng xếp hạng pet");
 
@@ -558,6 +564,7 @@ public final class DuckyMoMoCore extends JavaPlugin {
             getLogger().warning("Mùa: seasons.order trống hoặc sai, tắt");
             seasons = null;
         }
+        Seasons.INSTANCE = seasons;
         if (seasons != null) {
             getServer().getPluginManager().registerEvents(seasons, this);
             seasons.start();

@@ -571,6 +571,13 @@ footer .fbrand img{width:44px}
         <div class="card"><h3>Luật chống gian</h3><ul class="clean"><li>Không xây tường obsidian/băng, không đổ nham thạch ở đất hoang</li><li>Thành đang bị vây không mời thêm dân, không mua bán đất</li><li>Người ngoài vào vùng vây bị "bệnh chiến tranh"</li><li>Mỗi quốc gia vây tối đa <span data-k="siege.max_attacks">2</span> thành cùng lúc</li></ul></div>
       </div>
     </div>
+    <div class="card" style="margin-top:16px" id="swCard"><h3>🌦 Trời đất trong trận công thành</h3>
+      <p class="muted">Lúc đang đánh, trong vùng vây, thời tiết và ngày đêm (theo giờ trong game) làm trận nặng nề hơn, và pet đúng loài thành lợi thế:</p>
+      <ul class="clean">
+        <li>🌙 <b>Đêm</b>: tầm nhìn giảm (Bóng tối). Dẫn pet <b>mắt đêm</b> ở gần (<span id="swEyes">dơi, mèo, cáo, sói, nhện…</span>) thì được Nhìn đêm, pet đó đánh mạnh hơn <b data-k="pet.weather.night_bonus">20</b>%.</li>
+        <li>☔ <b>Mưa</b>: đường lầy, đi bộ chậm; <b>cưỡi pet</b> thì không sao. Pet nước mạnh hơn <b data-k="pet.weather.water_bonus">20</b>%, pet lửa yếu đi <b data-k="pet.weather.fire_malus">25</b>%. Mùa mưa hay mưa hơn.</li>
+        <li>☀ <b>Nắng gắt mùa khô</b> (ban ngày, không mưa): mau đói, trừ ai dẫn <b>pet lửa</b> (blaze, khối magma, strider, hoglin…); pet lửa mạnh hơn <b data-k="pet.weather.heat_bonus">15</b>%.</li>
+      </ul></div>
   </div>
 </section>
 
@@ -650,6 +657,8 @@ footer .fbrand img{width:44px}
         <li><span class="kbd">/emf</span> menu câu cá · <span class="kbd">/emf journal</span> nhật ký loài đã câu · <span class="kbd">/emf shop</span> bán cá lấy xu (cá càng dài càng đắt).</li>
         <li>Mồi rơi ngẫu nhiên khi câu, gắn vào cần bằng <span class="kbd">/emf applybaits</span> để tăng cơ hội cá hiếm.</li>
         <li>Cá vẫn ăn, nướng được. Câu treo máy bị chặn.</li>
+        <li>🐾 <b>Cho pet ăn cá</b>: cầm cá, chuột phải vào pet: no lại, hồi máu, thêm kinh nghiệm (cá càng hiếm càng bổ, tối đa <span data-k="pet.fish_cap">300</span> kinh nghiệm/ngày).</li>
+        <li>🔁 <b>Đổi cá lấy đồ</b>: <span class="kbd">/doimanh</span> nhận cá Hiếm, Quý, Huyền thoại để đổi dây xích, yên ngựa, táo vàng, tiệc kinh nghiệm cho pet. Cá cũng mua bán, trao đổi với người khác được.</li>
       </ul></div>
     </div>
   </div>
@@ -1017,9 +1026,11 @@ async function loadInfo(){
     <div style="font-size:.9rem;margin:6px 0 4px 14px"><div><b>Loài:</b> ${g.loai.map(esc).join(", ")}</div><div><b>Lớn lên:</b> ${esc(g.tang)}</div>
     ${g.them.length ? `<div><b>Có thêm:</b> ${g.them.map(esc).join("; ")}</div>` : ""}${g.dac_tinh.length ? `<div><b>Đặc tính riêng:</b><br>${g.dac_tinh.map(esc).join("<br>")}</div>` : ""}</div></details>`).join("") || "Chưa có.";
   const cp = pet.capture || {};
-  $("#petCapture").innerHTML = cp.enabled ? `<table><tbody>${(cp.groups || []).map(g => `<tr><td>${esc(g.ten)}</td><td><b>${g.tyle}%</b> mỗi lần</td></tr>`).join("")}</tbody></table>
+  $("#petCapture").innerHTML = cp.enabled ? `${cp.season ? `<p class="dim" style="font-size:.85rem">Đang ${esc(cp.season)}: nhóm có dấu <b style="color:#7ee2b0">+</b> dễ bắt hơn.</p>` : ""}<table><tbody>${(cp.groups || []).map(g => `<tr><td>${esc(g.ten)}</td><td><b>${Math.min(100, g.tyle + (g.mua_nay || 0))}%</b> mỗi lần${g.mua_nay ? ` <span style="color:#7ee2b0">(+${g.mua_nay}% mùa này)</span>` : ""}</td></tr>`).join("")}</tbody></table>
     <p class="dim" style="font-size:.85rem;margin-top:8px">Mỗi con thử được <b>${cp.attempts}</b> lần, cách nhau ${cp.cooldown} giây; trượt hết thì con đó hoảng, phải tìm con khác. Thú tự thuần hoá (sói, mèo, ngựa, vẹt…) thì bắt chắc chắn. Loài khác: ${cp.default}%. Trong game: <span class="kbd">/bxhpet tyle</span>.</p>`
     : "Đánh yếu máu rồi quăng dây xích là bắt được.";
+  const sw = pet.weather || {};
+  if (sw.eyes && sw.eyes.length) $("#swEyes").textContent = sw.eyes.join(", ");
   const tp = pet.top || [];
   $("#petTop").innerHTML = tp.length ? `<table><tbody>${tp.map((t, i) => `<tr><td>${i + 1}</td><td><b>${esc(t.ten)}</b><div class="dim" style="font-size:.8rem">${esc(t.loai || "")}${t.he ? " · " + esc(t.he) : ""}${t.nhom ? " · " + esc(t.nhom) : ""}</div></td><td>Cấp <b>${t.cap}</b></td><td>${esc(t.chu || "?")}</td></tr>`).join("")}</tbody></table>` : "Chưa có pet nào. Bắt con đầu tiên để lên bảng!";
   $("#petNoCatch").textContent = (pet.no_catch || []).join(", ");

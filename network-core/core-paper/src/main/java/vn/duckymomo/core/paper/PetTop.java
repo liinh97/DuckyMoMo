@@ -47,8 +47,11 @@ final class PetTop {
                 return true;
             }
             s.sendMessage(c("&6&l🐾 Xác suất bắt pet &7(mỗi lần quăng dây xích vào con yếu máu)"));
+            String season = Seasons.nowName();
             for (Object[] g : capture.table().values()) {
-                s.sendMessage(c("&e" + g[0] + "&7: &f" + g[1] + "%"));
+                int bonus = (Integer) g[2];
+                s.sendMessage(c("&e" + g[0] + "&7: &f" + Math.min(100, (Integer) g[1] + bonus) + "%"
+                        + (bonus != 0 ? " &a(" + (bonus > 0 ? "+" : "") + bonus + "% nhờ " + season + "&a)" : "")));
             }
             s.sendMessage(c("&7Loài khác: &f" + capture.defaultChance() + "%&7. Trượt nhiều lần con vật sẽ hoảng, phải tìm con khác."));
             return true;

@@ -44,6 +44,7 @@ import org.bukkit.plugin.Plugin;
  *  - chance-percent: xác suất mặc định; group-chance.<nhóm loài>: riêng từng nhóm (nhóm lấy từ cây kỹ năng, khoá DmmNhom).
  *  - attempts-per-mob: mỗi con chỉ thử được ngần ấy lần, hết thì con vật "hoảng" không bắt được nữa (lưu trên con vật).
  *  - cooldown-seconds: chờ giữa 2 lần thử của một người (chống bấm liên tục).
+ *  - season-bonus.<mùa>.<nhóm>: cộng thêm % trong mùa đó (vd mùa mưa Thủy tộc +15), mùa lấy từ module Mùa (Seasons.now()).
  * Loài bắt bằng "Tamed" (sói, mèo, ngựa, lạc đà...: phải tự thuần hoá trước) không quay xác suất: con của mình thì cấp quyền luôn.
  * Loài không có LowHp/Tamed (golem, Creaking...) để MyPet tự xét, không cấp quyền.
  */
@@ -57,6 +58,7 @@ final class PetCapture implements Listener {
     private final int attempts;
     private final long cooldownMs;
     private final Map<String, Integer> groupChance = new HashMap<>();
+    private final Map<String, Map<String, Integer>> seasonBonus = new HashMap<>();   // mùa -> nhóm -> % cộng thêm
     private final Map<String, String> typeGroup = new HashMap<>();      // loài MyPet (vd PolarBear) -> mã nhóm (thulon)
     private final Map<String, String> groupName = new HashMap<>();      // mã nhóm -> tên Việt
     private final Map<UUID, Long> lastTry = new HashMap<>();
@@ -76,6 +78,20 @@ final class PetCapture implements Listener {
         if (g != null) {
             for (String k : g.getKeys(false)) {
                 groupChance.put(k.toLowerCase(Locale.ROOT), clamp(g.getInt(k)));
+            }
+        }
+        ConfigurationSection sb = c.getConfigurationSection("season-bonus");
+        if (sb != null) {
+            for (String season : sb.getKeys(false)) {
+                ConfigurationSection one = sb.getConfigurationSection(season);
+                if (one == null) {
+                    continue;
+                }
+                Map<String, Integer> m = new HashMap<>();
+                for (String g2 : one.getKeys(false)) {
+                    m.put(g2.toLowerCase(Locale.ROOT), one.getInt(g2));
+                }
+                seasonBonus.put(season, m);
             }
         }
         this.triesKey = new NamespacedKey(plugin, "batpet_lanthu");
@@ -148,7 +164,14 @@ final class PetCapture implements Listener {
     /** Xác suất bắt (%) của một loài MyPet. */
     int chanceFor(String petType) {
         String g = typeGroup.get(petType.toLowerCase(Locale.ROOT));
-        return g != null && groupChance.containsKey(g) ? groupChance.get(g) : chance;
+        int base = g != null && groupChance.containsKey(g) ? groupChance.get(g) : chance;
+        return clamp(base + bonusNow(g));
+    }
+
+    /** % cộng thêm của nhóm trong mùa hiện tại. */
+    int bonusNow(String group) {
+        Map<String, Integer> m = seasonBonus.get(Seasons.now());
+        return group == null || m == null ? 0 : m.getOrDefault(group, 0);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -235,10 +258,11 @@ final class PetCapture implements Listener {
     }
 
     /** Bảng xác suất cho /bxhpet tyle và web: mã nhóm -> (tên, %). */
+    /** mã nhóm -> (tên, % gốc, % cộng thêm mùa này). */
     Map<String, Object[]> table() {
         Map<String, Object[]> out = new java.util.TreeMap<>();
         for (Map.Entry<String, String> e : groupName.entrySet()) {
-            out.put(e.getKey(), new Object[] {e.getValue(), groupChance.getOrDefault(e.getKey(), chance)});
+            out.put(e.getKey(), new Object[] {e.getValue(), groupChance.getOrDefault(e.getKey(), chance), bonusNow(e.getKey())});
         }
         return out;
     }

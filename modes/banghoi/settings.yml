@@ -859,6 +859,12 @@ fm_shop:
   - {label: "5000 xu", cost: {lamnguy: 25}, limit: 0, rewards: [xu 5000]}
   - {label: "16 kim cương", cost: {lamnguy: 40}, limit: 0, rewards: [vat DIAMOND 16]}
   - {label: "Đĩa nhạc Pigstep (trang trí)", cost: {lamnguy: 20}, limit: 1, rewards: [vat MUSIC_DISC_PIGSTEP 1]}
+  - {label: "8 dây xích (bắt pet)", cost: {"ca:rare": 3}, limit: 0, rewards: [vat LEAD 8]}
+  - {label: "Yên ngựa", cost: {"ca:rare": 4}, limit: 0, rewards: [vat SADDLE 1]}
+  - {label: "Bữa tiệc cho pet: +120 kinh nghiệm", cost: {"ca:epic": 2}, limit: 0, rewards: [petexp 120]}
+  - {label: "2 táo vàng", cost: {"ca:epic": 1}, limit: 0, rewards: [vat GOLDEN_APPLE 2]}
+  - {label: "Táo vàng phù phép", cost: {"ca:legendary": 1}, limit: 0, rewards: [vat ENCHANTED_GOLDEN_APPLE 1]}
+  - {label: "Đại tiệc cho pet: +500 kinh nghiệm", cost: {"ca:legendary": 2}, limit: 0, rewards: [petexp 500]}
 decor_materials:
   - {material: DIRT, amount: 64, price: 100}
   - {material: COBBLESTONE, amount: 64, price: 100}
@@ -1027,6 +1033,40 @@ petc_announce:
   - 10
 petc_nofly: true
 petc_nofly_h: 3
+sw_on: true
+sw_range: 24
+sw_night: true
+sw_night_bonus: 20
+sw_eyes: [Bat, Phantom, Cat, Ocelot, Fox, Wolf, Spider, CaveSpider, Enderman, Endermite, Vex,
+  Warden]
+sw_rain: true
+sw_water_bonus: 20
+sw_fire_malus: 25
+sw_water: [Axolotl, Cod, Salmon, Pufferfish, TropicalFish, Squid, GlowSquid, Dolphin, Guardian,
+  ElderGuardian, Tadpole, Frog, Turtle, Drowned]
+sw_heat: true
+sw_heat_season: kho
+sw_heat_bonus: 15
+sw_fire: [Blaze, MagmaCube, Strider, WitherSkeleton, Hoglin, Zoglin, Piglin, PiglinBrute, ZombifiedPiglin,
+  Ghast]
+petfish_on: true
+petfish_cap: 300
+petfish_common_food: 15
+petfish_common_exp: 3
+petfish_common_heal: 10
+petfish_rare_food: 30
+petfish_rare_exp: 10
+petfish_rare_heal: 25
+petfish_epic_food: 50
+petfish_epic_exp: 30
+petfish_epic_heal: 50
+petfish_legendary_food: 100
+petfish_legendary_exp: 100
+petfish_legendary_heal: 100
+petcap_mua_thuytoc: 15
+petcap_mua_nhay: 10
+petcap_kho_bay: 10
+petcap_kho_thusan: 5
 petc_slots_default: 2
 petc_slots_namtuoc: 3
 petc_slots_tutuoc: 3

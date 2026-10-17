@@ -422,6 +422,18 @@ chapters:
         &0Pet chiến đấu tên có &c⚔&0,
         pet trang trí có &d✿&0.
       - |-
+        &6&lTRỜI ĐẤT CÔNG THÀNH
+        &8Đêm&0: tối mù, trừ ai
+        dẫn pet &lmắt đêm&r&0 (dơi,
+        mèo, cáo, sói, nhện).
+        &9Mưa&0: đi bộ chậm, cưỡi
+        pet thì không; pet nước
+        mạnh, pet lửa yếu.
+        &6Nắng gắt&0 mùa khô: mau
+        đói, trừ ai dẫn pet lửa.
+        &0Mùa ảnh hưởng tỉ lệ
+        bắt pet: &1/bxhpet tyle
+      - |-
         &6&lĐẤU TRƯỜNG
         &0Người + pet đấu &l1v1&r&0
         hoặc &l2v2&r&0, đồ của mình,
@@ -592,6 +604,18 @@ chapters:
         &1/emf shop &0bán cá.
         &0Thi câu &lT7, CN
         &l20h&r&0, có thưởng xu.
+      - |-
+        &3&lCÁ ĐỂ LÀM GÌ
+        &0Bán: &1/emf shop
+        &0Cho &lpet ăn&r&0: cầm cá,
+        chuột phải vào pet:
+        no, hồi máu, thêm
+        kinh nghiệm (cá hiếm
+        bổ hơn).
+        &0Đổi đồ: &1/doimanh
+        &0nhận cá Hiếm, Quý,
+        Huyền thoại (dây xích,
+        táo vàng, tiệc pet).
       - |-
         &5&lMẢNH SỰ KIỆN
         &0Sự kiện, boss, mốc

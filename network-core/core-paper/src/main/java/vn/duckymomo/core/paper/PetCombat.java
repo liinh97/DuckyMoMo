@@ -17,6 +17,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
@@ -35,6 +36,10 @@ import org.bukkit.potion.PotionEffectType;
  *  - announce-minutes: báo cả server trước phiên bao nhiêu phút (kèm có/không pet); /lichcongthanh xem bất cứ lúc nào.
  *  - siege-no-fly / siege-no-fly-height: lúc có phiên đánh, trong vùng vây không bay bằng pet (loài bay, hệ Thú Cưỡi). Pet cưỡi cao hơn
  *    ngần ấy khối so với mặt đất thì người cưỡi bị đẩy xuống, kèm Rơi chậm 6 giây (không mất máu). Chạy dưới đất và nhảy vẫn được.
+ *  - siege-weather: lúc có phiên đánh, trong vùng vây, trời đất ảnh hưởng trận và cho pet "đất diễn":
+ *      đêm: ai không có pet mắt đêm (night-eyes) ở gần thì bị Bóng tối; có thì được Nhìn đêm, pet mắt đêm +night-pet-bonus% sát thương.
+ *      mưa: người đi bộ bị Chậm (cưỡi pet thì không), pet nước (water-pets) +rain-water-bonus%, pet lửa (fire-pets) -rain-fire-malus%.
+ *      nắng gắt (mùa heat-season ban ngày, không mưa): ai không dẫn pet lửa thì bị Đói, pet lửa +heat-bonus%.
  * Nhận pet MyPet qua interface de.Keyle.MyPet.api.entity.MyPetBukkitEntity (so tên lớp, không cần jar MyPet khi build).
  */
 final class PetCombat implements Listener {
@@ -56,6 +61,20 @@ final class PetCombat implements Listener {
     private boolean wasActive;
     private boolean currentAllowed = true;
     private final Map<UUID, Long> flyWarned = new HashMap<>();
+    private final Map<UUID, String> weatherShown = new HashMap<>();
+    private final boolean weather;
+    private final boolean nightDark;
+    private final boolean rainSlow;
+    private final boolean heatHunger;
+    private final Set<String> eyes = new HashSet<>();
+    private final Set<String> waterPets = new HashSet<>();
+    private final Set<String> firePets = new HashSet<>();
+    private final double eyesRange;
+    private final double nightBonus;
+    private final double waterBonus;
+    private final double fireMalus;
+    private final double heatBonus;
+    private final String heatSeason;
 
     PetCombat(DuckyMoMoCore plugin, ConfigurationSection c) {
         this.plugin = plugin;
@@ -65,17 +84,37 @@ final class PetCombat implements Listener {
         this.announce = c.getIntegerList("announce-minutes");
         this.noFly = c.getBoolean("siege-no-fly", true);
         this.noFlyHeight = Math.max(2, Math.min(20, c.getInt("siege-no-fly-height", 3)));
+        ConfigurationSection w = c.getConfigurationSection("siege-weather");
+        this.weather = w != null && w.getBoolean("enabled", true);
+        this.nightDark = w != null && w.getBoolean("night-darkness", true);
+        this.rainSlow = w != null && w.getBoolean("rain-slowness", true);
+        this.heatHunger = w != null && w.getBoolean("heat-hunger", true);
+        this.eyesRange = w == null ? 24 : w.getDouble("pet-range", 24);
+        this.nightBonus = w == null ? 0 : w.getDouble("night-pet-bonus", 20);
+        this.waterBonus = w == null ? 0 : w.getDouble("rain-water-bonus", 20);
+        this.fireMalus = w == null ? 0 : w.getDouble("rain-fire-malus", 25);
+        this.heatBonus = w == null ? 0 : w.getDouble("heat-bonus", 15);
+        this.heatSeason = w == null ? "kho" : w.getString("heat-season", "kho");
+        if (w != null) {
+            w.getStringList("night-eyes").forEach(t -> eyes.add(t.toLowerCase(java.util.Locale.ROOT)));
+            w.getStringList("water-pets").forEach(t -> waterPets.add(t.toLowerCase(java.util.Locale.ROOT)));
+            w.getStringList("fire-pets").forEach(t -> firePets.add(t.toLowerCase(java.util.Locale.ROOT)));
+        }
     }
 
     String describe() {
         return "giảm " + fmt(reduce) + "% sát thương lên người chơi, " + chance + "% phiên công thành cho pet"
-                + (noFly ? ", cấm bay bằng pet trong vùng vây (cao hơn " + noFlyHeight + " khối)" : "");
+                + (noFly ? ", cấm bay bằng pet trong vùng vây (cao hơn " + noFlyHeight + " khối)" : "")
+                + (weather ? ", thời tiết công thành (" + eyes.size() + " loài mắt đêm, " + waterPets.size() + " loài nước, " + firePets.size() + " loài lửa)" : "");
     }
 
     void start() {
         Bukkit.getScheduler().runTaskTimer(plugin, this::tick, 100L, 200L);
         if (noFly) {
             Bukkit.getScheduler().runTaskTimer(plugin, this::noSiegeFlight, 100L, 5L);
+        }
+        if (weather) {
+            Bukkit.getScheduler().runTaskTimer(plugin, this::siegeWeather, 100L, 20L);
         }
     }
 
@@ -97,6 +136,118 @@ final class PetCombat implements Listener {
                 flyWarned.put(p.getUniqueId(), now);
                 p.sendMessage(c("&c⚔ Đang công thành: không được bay bằng pet trong vùng vây."));
             }
+        }
+    }
+
+    /** Trời lúc này ở chỗ người chơi (đang có phiên đánh, trong vùng vây): "dem", "mua", "nang" (có thể nhiều). */
+    private Set<String> conditions(org.bukkit.Location l) {
+        Set<String> out = new HashSet<>();
+        long t = l.getWorld().getTime();
+        if (t >= 13000 && t < 23000) {
+            out.add("dem");
+        }
+        if (l.getWorld().hasStorm()) {
+            out.add("mua");
+        } else if (t < 12000 && heatSeason.equals(Seasons.now())) {
+            out.add("nang");
+        }
+        return out;
+    }
+
+    /** Pet đang dẫn ở gần người chơi: loài (chữ thường) hoặc null. */
+    private String petNear(Player p) {
+        Object pet = MyPetBridge.active(p);
+        LivingEntity e = pet == null ? null : MyPetBridge.entity(pet);
+        if (e == null || e.getWorld() != p.getWorld() || e.getLocation().distanceSquared(p.getLocation()) > eyesRange * eyesRange) {
+            return null;
+        }
+        String t = MyPetBridge.type(pet);
+        return t == null ? null : t.toLowerCase(java.util.Locale.ROOT);
+    }
+
+    /** Mỗi giây lúc có phiên đánh: hiệu ứng thời tiết cho người trong vùng vây. */
+    private void siegeWeather() {
+        if (!SiegeWarHook.battleActive()) {
+            weatherShown.clear();
+            return;
+        }
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            if (p.getGameMode() == org.bukkit.GameMode.SPECTATOR || p.getGameMode() == org.bukkit.GameMode.CREATIVE
+                    || !SiegeWarHook.inActiveSiegeZone(p.getLocation())) {
+                weatherShown.remove(p.getUniqueId());
+                continue;
+            }
+            Set<String> cond = conditions(p.getLocation());
+            String pet = cond.isEmpty() ? null : petNear(p);
+            StringBuilder msg = new StringBuilder();
+            if (cond.contains("dem") && nightDark) {
+                if (pet != null && eyes.contains(pet)) {
+                    p.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, 260, 0, true, false, true));
+                    msg.append("&b🌙 Đêm: pet mắt đêm soi đường cho bạn. ");
+                } else {
+                    p.addPotionEffect(new PotionEffect(PotionEffectType.DARKNESS, 60, 0, true, false, true));
+                    msg.append("&8🌙 Đêm: tầm nhìn giảm. &7Pet mắt đêm (dơi, mèo, cáo, sói, nhện…) soi đường được. ");
+                }
+            }
+            if (cond.contains("mua") && rainSlow) {
+                if (p.getVehicle() == null) {
+                    p.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 40, 0, true, false, true));
+                    msg.append("&9☔ Mưa: đường lầy, đi bộ chậm (cưỡi pet thì không). ");
+                } else {
+                    msg.append("&9☔ Mưa: cưỡi pet không bị lầy. ");
+                }
+            }
+            if (cond.contains("nang") && heatHunger) {
+                if (pet != null && firePets.contains(pet)) {
+                    msg.append("&6☀ Nắng gắt: pet lửa giúp bạn chịu nóng. ");
+                } else {
+                    p.addPotionEffect(new PotionEffect(PotionEffectType.HUNGER, 40, 0, true, false, true));
+                    msg.append("&6☀ Nắng gắt mùa khô: mau đói. ");
+                }
+            }
+            String m = msg.toString().trim();
+            if (!m.equals(weatherShown.getOrDefault(p.getUniqueId(), ""))) {
+                weatherShown.put(p.getUniqueId(), m);
+                if (!m.isEmpty()) {
+                    p.sendMessage(c(m));
+                }
+            }
+        }
+    }
+
+    /** Sát thương của pet trong vùng vây lúc có phiên đánh, theo thời tiết + loài. */
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+    public void onPetWeather(EntityDamageByEntityEvent event) {
+        if (!weather || !SiegeWarHook.battleActive()) {
+            return;
+        }
+        Entity d = event.getDamager();
+        if (d instanceof Projectile pr && pr.getShooter() instanceof Entity shooter) {
+            d = shooter;
+        }
+        if (!isPet(d) || !SiegeWarHook.inActiveSiegeZone(d.getLocation())) {
+            return;
+        }
+        Object pet = MyPetBridge.of(d);
+        String t = pet == null ? null : MyPetBridge.type(pet);
+        if (t == null) {
+            return;
+        }
+        t = t.toLowerCase(java.util.Locale.ROOT);
+        Set<String> cond = conditions(d.getLocation());
+        double pct = 0;
+        if (cond.contains("dem") && eyes.contains(t)) {
+            pct += nightBonus;
+        }
+        if (cond.contains("mua")) {
+            pct += waterPets.contains(t) ? waterBonus : 0;
+            pct -= firePets.contains(t) ? fireMalus : 0;
+        }
+        if (cond.contains("nang") && firePets.contains(t)) {
+            pct += heatBonus;
+        }
+        if (pct != 0) {
+            event.setDamage(Math.max(0, event.getDamage() * (100 + pct) / 100.0));
         }
     }
 

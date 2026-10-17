@@ -78,6 +78,9 @@ final class Seasons implements Listener {
         NAMES.put(Material.KELP, "Tảo bẹ");
     }
 
+    /** Module đang chạy (null nếu tắt): module khác hỏi mùa qua Seasons.now() / nowName(). */
+    static volatile Seasons INSTANCE;
+
     private final JavaPlugin plugin;
     private final ConfigurationSection cfg;
     private final List<String> order = new ArrayList<>();
@@ -137,6 +140,17 @@ final class Seasons implements Listener {
 
     private long daysSinceStart() {
         return ChronoUnit.DAYS.between(start, LocalDate.now(VN));
+    }
+
+    /** Mùa hiện tại (id, vd "mua"/"kho") hoặc "" khi module mùa tắt. */
+    static String now() {
+        Seasons s = INSTANCE;
+        return s == null ? "" : s.current();
+    }
+
+    static String nowName() {
+        Seasons s = INSTANCE;
+        return s == null ? "" : s.name(s.current());
     }
 
     /** Mùa hiện tại (id), tính ghi đè của admin nếu có. */

@@ -146,7 +146,7 @@ groups:
       - { key: fm_types, label: Các loại mảnh, type: fragtypes, file: plugins/DuckyMoMoCore/config.yml, path: event-fragments.types,
           note: "Hạn đổi: hết ngày đó thì cửa hàng không nhận loại mảnh này nữa (để trống = không hạn)." }
       - { key: fm_shop, label: Cửa hàng đổi mảnh, type: fragshop, file: plugins/DuckyMoMoCore/config.yml, path: event-fragments.shop,
-          note: "Giá: mã loại mảnh + số, nhiều loại cách dấu phẩy (vd lamnguy 40). Chỉ nên đặt tài nguyên, xu, đồ trang trí." }
+          note: "Giá: mã loại mảnh + số, nhiều loại cách dấu phẩy (vd lamnguy 40). Đổi bằng cá câu: ca:common / ca:rare / ca:epic / ca:legendary + số (vd ca:epic 2). Quà Kinh nghiệm pet: người chơi phải gọi pet ra mới đổi được. Không đặt đồ bán bằng tiền thật." }
 
   - title: Liên minh Hoà Bình
     info: "Là gì: một quốc gia duy nhất do server quản lý, thủ đô ở kinh đô (spawn).\nQuyền lợi: thị trấn vào liên minh không bị vây (sau thời gian chờ).\nĐổi lại: trả phí bảo hộ, không đánh ai.\nLưu ý: vùng vây vẫn có thể trùm lên đất hoà bình, dân được báo trước để di tản."
@@ -427,6 +427,25 @@ groups:
           info: "Là gì: lúc ĐANG có phiên đánh, trong vùng vây, người cưỡi pet bay (loài bay chọn hệ Thú Cưỡi) lên cao quá mức dưới thì bị đẩy xuống khỏi pet, được Rơi chậm 6 giây nên không mất máu.\nVẫn được: cưỡi chạy dưới đất, nhảy, bơi.\nNgoài vùng vây hoặc ngoài giờ đánh: bay bình thường.\nLưu xong: có hiệu lực ngay (dmm reload)." }
       - { key: petc_nofly_h, label: Tính là bay khi cao hơn mặt đất (khối), type: int, min: 2, max: 20, file: plugins/DuckyMoMoCore/config.yml, path: pet-combat.siege-no-fly-height,
           info: "Là gì: pet cưỡi cao hơn ngần này khối so với mặt đất thì tính là đang bay.\nGợi ý: 3. Nhảy thường cao khoảng 2 khối (ngựa nhảy cao tới khoảng 3-4), đặt thấp quá thì nhảy cũng bị đẩy xuống." }
+      - { key: sw_on, label: "Thời tiết công thành", type: select, file: plugins/DuckyMoMoCore/config.yml, path: pet-combat.siege-weather.enabled,
+          options: [ { value: true, label: "Bật (mặc định)" }, { value: false, label: Tắt } ],
+          info: "Là gì: lúc ĐANG có phiên đánh, trong vùng vây, trời đất ảnh hưởng trận và cho pet đất diễn:\nĐêm: ai không có pet mắt đêm ở gần thì bị Bóng tối (tầm nhìn giảm); có thì được Nhìn đêm, pet mắt đêm đánh mạnh hơn.\nMưa: người đi bộ bị Chậm (đường lầy), cưỡi pet thì không; pet nước mạnh hơn, pet lửa yếu đi. Mùa mưa thì hay mưa hơn (/mua).\nNắng gắt (mùa khô, ban ngày, không mưa): ai không dẫn pet lửa thì mau đói; pet lửa mạnh hơn.\nĐêm/ngày theo giờ trong game (1 ngày = 20 phút), không theo giờ thật.\nLưu xong: có hiệu lực ngay (dmm reload)." }
+      - { key: sw_range, label: "Thời tiết: pet phải ở gần chủ (khối)", type: number, min: 4, max: 64, file: plugins/DuckyMoMoCore/config.yml, path: pet-combat.siege-weather.pet-range }
+      - { key: sw_night, label: "Đêm: Bóng tối cho ai không có pet mắt đêm", type: select, file: plugins/DuckyMoMoCore/config.yml, path: pet-combat.siege-weather.night-darkness,
+          options: [ { value: true, label: Bật }, { value: false, label: Tắt } ] }
+      - { key: sw_night_bonus, label: "Đêm: pet mắt đêm đánh mạnh hơn (%)", type: number, min: 0, max: 200, file: plugins/DuckyMoMoCore/config.yml, path: pet-combat.siege-weather.night-pet-bonus }
+      - { key: sw_eyes, label: "Loài pet mắt đêm", type: list, file: plugins/DuckyMoMoCore/config.yml, path: pet-combat.siege-weather.night-eyes,
+          note: "Tên loài MyPet tiếng Anh, vd Bat, Cat, Fox, Wolf, Spider (bảng tên Việt ở trang chủ mục Pet)." }
+      - { key: sw_rain, label: "Mưa: người đi bộ bị Chậm", type: select, file: plugins/DuckyMoMoCore/config.yml, path: pet-combat.siege-weather.rain-slowness,
+          options: [ { value: true, label: Bật }, { value: false, label: Tắt } ] }
+      - { key: sw_water_bonus, label: "Mưa: pet nước đánh mạnh hơn (%)", type: number, min: 0, max: 200, file: plugins/DuckyMoMoCore/config.yml, path: pet-combat.siege-weather.rain-water-bonus }
+      - { key: sw_fire_malus, label: "Mưa: pet lửa đánh yếu đi (%)", type: number, min: 0, max: 100, file: plugins/DuckyMoMoCore/config.yml, path: pet-combat.siege-weather.rain-fire-malus }
+      - { key: sw_water, label: "Loài pet nước", type: list, file: plugins/DuckyMoMoCore/config.yml, path: pet-combat.siege-weather.water-pets }
+      - { key: sw_heat, label: "Nắng gắt: ai không dẫn pet lửa thì mau đói", type: select, file: plugins/DuckyMoMoCore/config.yml, path: pet-combat.siege-weather.heat-hunger,
+          options: [ { value: true, label: Bật }, { value: false, label: Tắt } ] }
+      - { key: sw_heat_season, label: "Nắng gắt vào mùa", type: text, file: plugins/DuckyMoMoCore/config.yml, path: pet-combat.siege-weather.heat-season, note: "Mã mùa trong /mua: mua hoặc kho" }
+      - { key: sw_heat_bonus, label: "Nắng gắt: pet lửa đánh mạnh hơn (%)", type: number, min: 0, max: 200, file: plugins/DuckyMoMoCore/config.yml, path: pet-combat.siege-weather.heat-bonus }
+      - { key: sw_fire, label: "Loài pet lửa", type: list, file: plugins/DuckyMoMoCore/config.yml, path: pet-combat.siege-weather.fire-pets }
       - { key: petc_slots_default, label: "Số pet giữ được: Dân (mọi người chơi)", type: int, min: 1, max: 20, servers: [banghoi-1],
           info: "Là gì: tổng số pet chiến đấu một người được giữ (1 con đang dẫn + số còn lại cất trong kho /petstore, đổi bằng /petswitch). Mỗi lúc vẫn chỉ gọi ra 1 con.\nRank: người có rank cao lấy số LỚN NHẤT trong rank của mình, các bậc dưới và nhóm Dân, nên đặt rank cao lớn hơn hoặc bằng rank thấp.\nKhi lưu: gỡ mức cũ rồi cấp quyền MyPet.petstorage.limit.<số - 1> cho nhóm này ở Bang Hội Chiến.",
           commands: [ "lp group default permission unset MyPet.petstorage.limit.1 server=banghoi-1", "lp group default permission unset MyPet.petstorage.limit.2 server=banghoi-1", "lp group default permission unset MyPet.petstorage.limit.3 server=banghoi-1", "lp group default permission unset MyPet.petstorage.limit.4 server=banghoi-1", "lp group default permission unset MyPet.petstorage.limit.5 server=banghoi-1", "lp group default permission unset MyPet.petstorage.limit.6 server=banghoi-1", "lp group default permission unset MyPet.petstorage.limit.7 server=banghoi-1", "lp group default permission unset MyPet.petstorage.limit.8 server=banghoi-1", "lp group default permission unset MyPet.petstorage.limit.9 server=banghoi-1", "lp group default permission unset MyPet.petstorage.limit.10 server=banghoi-1", "lp group default permission unset MyPet.petstorage.limit.11 server=banghoi-1", "lp group default permission unset MyPet.petstorage.limit.12 server=banghoi-1", "lp group default permission unset MyPet.petstorage.limit.13 server=banghoi-1", "lp group default permission unset MyPet.petstorage.limit.14 server=banghoi-1", "lp group default permission unset MyPet.petstorage.limit.15 server=banghoi-1", "lp group default permission unset MyPet.petstorage.limit.16 server=banghoi-1", "lp group default permission unset MyPet.petstorage.limit.17 server=banghoi-1", "lp group default permission unset MyPet.petstorage.limit.18 server=banghoi-1", "lp group default permission unset MyPet.petstorage.limit.19 server=banghoi-1", "lp group default permission set MyPet.petstorage.limit.{minus1} true server=banghoi-1" ] }
@@ -471,6 +490,40 @@ groups:
       - { key: petcap_bay, label: "Xác suất bắt: Loài bay (%)", type: int, min: 0, max: 100, file: plugins/DuckyMoMoCore/config.yml, path: pet-capture.group-chance.bay }
       - { key: petcap_thulon, label: "Xác suất bắt: Thú lớn (%)", type: int, min: 0, max: 100, file: plugins/DuckyMoMoCore/config.yml, path: pet-capture.group-chance.thulon }
       - { key: petcap_phuthuy, label: "Xác suất bắt: Phù thủy (%)", type: int, min: 0, max: 100, file: plugins/DuckyMoMoCore/config.yml, path: pet-capture.group-chance.phuthuy }
+
+  - title: Bắt pet theo mùa (MyPet)
+    category: PvP & combat
+    description: "Mùa nào dễ bắt nhóm loài nào: cộng thêm vào xác suất bắt ở nhóm Bắt pet theo xác suất. Người chơi thấy trong /bxhpet tyle."
+    info: "Là gì: theo mùa của /mua, một số nhóm loài dễ bắt hơn (vd mùa mưa cá, ếch, kỳ giông dễ bắt).\nSố âm = khó bắt hơn trong mùa đó.\nThêm nhóm/mùa khác: sửa pet-capture.season-bonus trong plugins/DuckyMoMoCore/config.yml (mã nhóm như group-chance).\nLưu xong: có hiệu lực ngay (dmm reload)."
+    apply: [dmm reload]
+    settings:
+      - { key: petcap_mua_thuytoc, label: "Mùa mưa: cộng thêm cho Thủy tộc (%)", type: int, min: -100, max: 100, file: plugins/DuckyMoMoCore/config.yml, path: pet-capture.season-bonus.mua.thuytoc }
+      - { key: petcap_mua_nhay, label: "Mùa mưa: cộng thêm cho Quái nhầy & nổ (%)", type: int, min: -100, max: 100, file: plugins/DuckyMoMoCore/config.yml, path: pet-capture.season-bonus.mua.nhay }
+      - { key: petcap_kho_bay, label: "Mùa khô: cộng thêm cho Loài bay (%)", type: int, min: -100, max: 100, file: plugins/DuckyMoMoCore/config.yml, path: pet-capture.season-bonus.kho.bay }
+      - { key: petcap_kho_thusan, label: "Mùa khô: cộng thêm cho Thú săn (%)", type: int, min: -100, max: 100, file: plugins/DuckyMoMoCore/config.yml, path: pet-capture.season-bonus.kho.thusan }
+
+  - title: Cho pet ăn cá câu (MyPet + EvenMoreFish)
+    category: PvP & combat
+    description: "Cầm cá câu được, chuột phải vào pet của mình: pet no lại, hồi máu, được kinh nghiệm. Cá càng hiếm càng bổ."
+    info: "Là gì: cá câu (/emf) thành thức ăn cho pet chiến đấu, nối câu cá với nuôi pet.\nChỉ cá của EvenMoreFish; cá thường của Minecraft không tính.\nKinh nghiệm có giới hạn mỗi ngày (chống máy câu tự động cày cấp pet); quá giới hạn thì cá vẫn cho no và hồi máu.\nPet no rồi, đủ máu, hết giới hạn: không ăn (không mất cá).\nLưu xong: có hiệu lực ngay (dmm reload)."
+    apply: [dmm reload]
+    settings:
+      - { key: petfish_on, label: Cho pet ăn cá, type: select, file: plugins/DuckyMoMoCore/config.yml, path: pet-fish.enabled,
+          options: [ { value: true, label: "Bật (mặc định)" }, { value: false, label: Tắt } ] }
+      - { key: petfish_cap, label: Kinh nghiệm tối đa mỗi người mỗi ngày từ cá, type: number, min: 0, max: 100000, file: plugins/DuckyMoMoCore/config.yml, path: pet-fish.daily-exp-cap,
+          info: "Gợi ý: lên cấp 10 cần khoảng 150 kinh nghiệm, cấp 30 khoảng 770, cấp 50 khoảng 3.200. 0 = cá không cho kinh nghiệm." }
+      - { key: petfish_common_food, label: "Cá Thường: điểm no", type: number, min: 0, max: 100, file: plugins/DuckyMoMoCore/config.yml, path: pet-fish.rarity.Common.food }
+      - { key: petfish_common_exp, label: "Cá Thường: kinh nghiệm", type: number, min: 0, max: 10000, file: plugins/DuckyMoMoCore/config.yml, path: pet-fish.rarity.Common.exp }
+      - { key: petfish_common_heal, label: "Cá Thường: % máu hồi", type: number, min: 0, max: 100, file: plugins/DuckyMoMoCore/config.yml, path: pet-fish.rarity.Common.heal }
+      - { key: petfish_rare_food, label: "Cá Hiếm: điểm no", type: number, min: 0, max: 100, file: plugins/DuckyMoMoCore/config.yml, path: pet-fish.rarity.Rare.food }
+      - { key: petfish_rare_exp, label: "Cá Hiếm: kinh nghiệm", type: number, min: 0, max: 10000, file: plugins/DuckyMoMoCore/config.yml, path: pet-fish.rarity.Rare.exp }
+      - { key: petfish_rare_heal, label: "Cá Hiếm: % máu hồi", type: number, min: 0, max: 100, file: plugins/DuckyMoMoCore/config.yml, path: pet-fish.rarity.Rare.heal }
+      - { key: petfish_epic_food, label: "Cá Quý: điểm no", type: number, min: 0, max: 100, file: plugins/DuckyMoMoCore/config.yml, path: pet-fish.rarity.Epic.food }
+      - { key: petfish_epic_exp, label: "Cá Quý: kinh nghiệm", type: number, min: 0, max: 10000, file: plugins/DuckyMoMoCore/config.yml, path: pet-fish.rarity.Epic.exp }
+      - { key: petfish_epic_heal, label: "Cá Quý: % máu hồi", type: number, min: 0, max: 100, file: plugins/DuckyMoMoCore/config.yml, path: pet-fish.rarity.Epic.heal }
+      - { key: petfish_legendary_food, label: "Cá Huyền thoại: điểm no", type: number, min: 0, max: 100, file: plugins/DuckyMoMoCore/config.yml, path: pet-fish.rarity.Legendary.food }
+      - { key: petfish_legendary_exp, label: "Cá Huyền thoại: kinh nghiệm", type: number, min: 0, max: 10000, file: plugins/DuckyMoMoCore/config.yml, path: pet-fish.rarity.Legendary.exp }
+      - { key: petfish_legendary_heal, label: "Cá Huyền thoại: % máu hồi", type: number, min: 0, max: 100, file: plugins/DuckyMoMoCore/config.yml, path: pet-fish.rarity.Legendary.heal }
 
   - title: Pet chiến đấu - lên cấp, hồi sinh, đói (MyPet)
     category: PvP & combat

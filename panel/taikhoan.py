@@ -378,6 +378,12 @@ def active_particles(uuid, srv="banghoi-1"):
     return [{"id": int(i), "hieu_ung": str(e).lower(), "kieu": str(s).lower()} for i, e, s in rows]
 
 
+def amp_codes(text):
+    """Mã màu Essentials lưu bằng § (hex: §x§r§r§g§g§b§b) -> dạng & mà ô nhập và xem trước trên web dùng (&6, &#rrggbb)."""
+    text = re.sub(r"§x((?:§[0-9a-fA-F]){6})", lambda m: "&#" + m.group(1).replace("§", ""), str(text))
+    return text.replace("§", "&")
+
+
 def cosmetics(perms, srv="banghoi-1"):
     h = lambda n: has(perms, n, srv)
     ess = safe_yaml(DATA_DIR / srv / "plugins" / "Essentials" / "userdata" / f"{perms['uuid']}.yml")
@@ -394,7 +400,7 @@ def cosmetics(perms, srv="banghoi-1"):
         return str(titles.get(t, titles.get(base, f"&7[{t}]"))).replace("{mua}", season)
     return {
         "nick": {"duoc": h("essentials.nick"), "mau": h("essentials.nick.color"), "dinhdang": h("essentials.nick.format"),
-                 "rgb": h("essentials.nick.rgb"), "hien_tai": ess.get("nickname") or "",
+                 "rgb": h("essentials.nick.rgb"), "hien_tai": amp_codes(ess.get("nickname") or ""),
                  # giới hạn của Essentials: mặc định 15 ký tự và TÍNH CẢ mã màu (&6 = 2 ký tự)
                  "toi_da": int(esscfg.get("max-nick-length", 15) or 15), "bo_mau": bool(esscfg.get("ignore-colors-in-max-nick-length", False)),
                  "dau": str(esscfg.get("nickname-prefix", "~") if esscfg.get("nickname-prefix") is not None else "~")},

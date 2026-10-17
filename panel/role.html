@@ -105,9 +105,11 @@ const esc = (s) => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<":
 const fold = (s) => String(s || "").normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/đ/g, "d").toLowerCase();
 const prefixText = (g) => (g.prefix || "").trim() || "&7(không prefix)";
 // người đang xem làm được gì (staff đăng nhập bằng tài khoản game bị giới hạn; máy chủ vẫn kiểm tra lại)
-let me = { full: true, role: true, quyen: true, khoa: new Set() };
-const canMembers = (g) => g.kind !== "default" && (me.full || (me.role && !me.khoa.has(g.name)));
-const canPerms = (g) => me.full || (me.quyen && !me.khoa.has(g.name));
+// rq: {nhóm: {nguoi, quyen}} do máy chủ tính (role chức vụ cấp dưới mình, rank theo quyền riêng); null = toàn quyền
+let rq = null;
+const canMembers = (g) => g.kind !== "default" && (!rq || !!(rq[g.name] || {}).nguoi);
+const canPerms = (g) => !rq || !!(rq[g.name] || {}).quyen;
+const isFull = () => !rq;
 
 // chỉ hiện role/rank người đang xem cấp/gỡ người hoặc sửa quyền được
 const visible = () => data.groups.filter(g => canMembers(g) || canPerms(g));
@@ -161,7 +163,7 @@ function renderDetail() {
       ${parents ? `<span class="badge">kế thừa: ${parents}</span>` : ""}</div></div></div>
     ${isDonate ? '<div class="warnbox">Rank donate chỉ được có quyền <b>trang trí</b>. Cấp lợi thế khi chơi (bay, kit, đồ mạnh…) là pay-to-win, vi phạm luật Mojang.</div>' : ""}
     ${!g.exists ? `<div class="warnbox" style="background:rgba(217,48,37,.12);color:var(--err)">Role này <b>chưa có trong LuckPerms</b>${g.preset ? ": bấm nút bên dưới để tạo kèm bộ quyền khuyên dùng." : "."}</div>` : ""}
-    ${g.preset && me.full ? `<div class="preset"><button class="primary" id="preset">${g.exists ? "Áp bộ quyền khuyên dùng" : "Tạo role + bộ quyền khuyên dùng"}</button>
+    ${g.preset && isFull() ? `<div class="preset"><button class="primary" id="preset">${g.exists ? "Áp bộ quyền khuyên dùng" : "Tạo role + bộ quyền khuyên dùng"}</button>
       <span class="hint">Chạy <code>tools/${g.name === "quanly" ? "quanly" : "builder"}-role.cmds</code> (chỉ Admin). Chạy lại được: bật lại quyền trong file, không gỡ quyền bạn tự thêm.</span></div>` : ""}
     <p class="hint">Sửa prefix: trang Cài đặt › Toàn mạng › ${isDonate ? "Rank donate" : "Role"}.</p>
     ${(g.prefixes || []).length > 1 ? `<p class="hint">⚠ Role này đang có ${g.prefixes.length} prefix trong LuckPerms (${g.prefixes.map(p => esc(p.trim())).join(" | ")}); game hiện cái priority cao nhất. Lưu lại prefix ở Cài đặt sẽ xoá hết và đặt lại một cái.</p>` : ""}</section>`;
@@ -274,10 +276,7 @@ async function post(body) {
 }
 Promise.all([fetch("api/roles").then(r => r.json()), fetch("api/toi").then(r => r.json()).catch(() => null)]).then(([d, t]) => {
   if (d.error) throw d.error;
-  if (t && t.game && !t.toan_quyen) {
-    const f = new Set(t.tinh_nang || []);
-    me = { full: false, role: f.has("role"), quyen: f.has("role-quyen"), khoa: new Set(t.role_khoa || []) };
-  }
+  if (t && t.game && !t.toan_quyen) rq = t.role_quyen || {};
   data = d; render();
 })
   .catch(e => { $("list").innerHTML = `<p class="empty">${esc(e)}</p>`; });

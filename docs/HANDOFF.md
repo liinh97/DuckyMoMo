@@ -217,11 +217,15 @@
 - Sau MỖI lần build: xem log cả 3 server (`docker compose logs <srv> --since 5m | grep -iE "Could not load|Exception|DuckyMoMoCore"`),
   không chỉ banghoi-1. Chỉ đổi jar → `docker compose restart <srv>`; đổi compose (env, MODRINTH_PROJECTS, PLUGINS) → `up -d --no-deps <srv>`.
 
-### 17/10: trang Role và trang tài khoản theo quyền
-- Trang Role chỉ hiện role/rank người xem quản lý được: cấp/gỡ người (`duckymomo.web.role`, trừ nhóm khoá) hoặc sửa quyền
-  (`duckymomo.web.role.quyen`). Không có quyền sửa quyền thì ẩn cả phần Quyền; không có quyền cấp/gỡ thì ẩn ô thêm và nút gỡ; nhóm Dân chỉ hiện khi sửa
-  được quyền; nút bộ quyền khuyên dùng chỉ toàn quyền. `/api/toi` trả thêm `role_khoa` (Manager: admin, quanly; staff khác: admin, quanly, mod; toàn quyền: rỗng)
-  — cùng bộ `PROTECTED_*` mà `scoped_post_ok` dùng để chặn phía máy chủ. Manager hiện thấy: Mod, Helper, Builder, 5 rank donate, không thấy phần Quyền.
+### 17/10: trang Role theo quyền + cấp dưới; tách role / rank
+- 4 quyền web (web-quyen.yml, quyen.yml): `duckymomo.web.role` (cấp/gỡ role chức vụ), `.role.quyen` (sửa quyền role chức vụ + nhóm Dân),
+  `duckymomo.web.rank` (cấp/gỡ rank donate), `.rank.quyen` (sửa quyền rank). Staff đăng nhập bằng tài khoản game chỉ thao tác role chức vụ
+  CẤP DƯỚI: weight nhỏ hơn role chức vụ cao nhất của mình (`staff_weight`, `group_weights` đọc meta weight trong DB; Admin 100, Manager 90,
+  Mod 70, Helper 50, Builder 40, Dân 0). Bật quyền: chỉ quyền chính mình đang có, không bao giờ `*`/web/admin/luckperms (PROTECTED_PERM_RE).
+  Toàn quyền (`*` hoặc duckymomo.web.toanquyen) làm được hết. Máy chủ kiểm ở `Handler.role_rights` + `scoped_post_ok`; `/api/toi` trả `role_quyen`
+  {nhóm: {nguoi, quyen}} để trang Role chỉ hiện role/rank quản lý được và ẩn phần không có quyền (bỏ PROTECTED_GROUPS cũ "trừ admin, mod").
+- Manager (17/10): đã chạy `lp group quanly permission set duckymomo.web.rank true` (giữ quyền cấp rank như trước khi tách), `.rank.quyen false`
+  (cũng có trong tools/quanly-role.cmds). Manager thấy Mod, Helper, Builder, 5 rank; không thấy phần Quyền (role.quyen false).
 - Trang tài khoản (site): khung Quản trị chỉ còn một nút "Mở trang quản trị" (mở mục đầu tiên được phép; thanh trái panel tự ẩn mục không có quyền).
 
 ### DANH SÁCH CẦN THỬ (người dùng chốt 15/10: làm xong hết rồi thử một lượt; mục 16–25)

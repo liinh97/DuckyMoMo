@@ -664,6 +664,29 @@ def huongdan_save(data):
     return f"Đã lưu {len(clean)} chương, {n_pages} trang và chép sang {len(done)} chỗ. Người chơi mở /huongdan là thấy ngay."
 
 
+def group_weights():
+    """weight của từng nhóm LuckPerms (meta weight.N; không có = 0)."""
+    con = lp_db()
+    try:
+        cur = con.cursor()
+        cur.execute("SELECT name, permission FROM luckperms_group_permissions WHERE permission LIKE 'weight.%%' AND value = 1")
+        out = {}
+        for name, perm in cur.fetchall():
+            try:
+                out[name] = max(out.get(name, 0), int(perm.split(".", 1)[1]))
+            except ValueError:
+                pass
+        return out
+    finally:
+        con.close()
+
+
+def staff_weight(perms):
+    """weight của role chức vụ cao nhất người chơi đang có (kể cả kế thừa); 0 nếu chỉ là Dân."""
+    w = group_weights()
+    return max([w.get(g, 0) for g in perms["groups"] if g in STAFF_GROUPS and g != "default"] or [0])
+
+
 def lp_db():
     import pymysql
     return pymysql.connect(host="mariadb", user=os.environ["DB_USER"], password=os.environ["DB_PASSWORD"],
@@ -1836,16 +1859,14 @@ def web_profile(name, by_code):
 
 
 # Trang/API -> tính năng cần có (staff đăng nhập bằng tài khoản game)
-PAGE_FEATURES = {"/": ("caidat",), "/thuvien": ("thuvien", "thuvien-dua"), "/boss": ("boss",), "/role": ("role", "role-quyen"),
+PAGE_FEATURES = {"/": ("caidat",), "/thuvien": ("thuvien", "thuvien-dua"), "/boss": ("boss",), "/role": ("role", "role-quyen", "rank", "rank-quyen"),
                  "/hoatdong": ("hoatdong",), "/camnang": ("camnang",), "/huongdan": ("huongdan",),
                  "/donate": ("donate",)}
-API_GET_FEATURES = {"/api/modes": ("caidat",), "/api/camnang": ("camnang",), "/api/huongdan": ("huongdan",), "/api/roles": ("role", "role-quyen"),
+API_GET_FEATURES = {"/api/modes": ("caidat",), "/api/camnang": ("camnang",), "/api/huongdan": ("huongdan",), "/api/roles": ("role", "role-quyen", "rank", "rank-quyen"),
                     "/api/boss": ("boss",), "/api/activity": ("hoatdong",), "/api/donate": ("donate",), "/api/thuvien": None, "/api/toi": None}
-# Không ai ngoài admin toàn quyền đụng được: role admin/mod, quyền nguy hiểm
-# Role cấp/gỡ được tuỳ người làm: Manager (quanly) xếp được Mod, Helper, Builder, rank donate; người khác (có quyền web role) chỉ dưới Mod.
-# Không ai ngoài Admin đụng được Admin và Manager.
-PROTECTED_GROUPS = {"admin", "quanly", "mod"}
-PROTECTED_FOR_QUANLY = {"admin", "quanly"}
+# Staff đăng nhập bằng tài khoản game chỉ thao tác được CẤP DƯỚI: role chức vụ có weight nhỏ hơn role chức vụ cao nhất của mình
+# (Manager 90: Mod, Helper, Builder, Dân; Mod 70: Helper, Builder, Dân…). Rank donate theo quyền riêng (web.rank / web.rank.quyen).
+# Không ai ngoài toàn quyền cấp được * hay quyền web/admin/LuckPerms, và chỉ cấp được quyền chính mình đang có.
 PROTECTED_PERM_RE = re.compile(r"^(\*|duckymomo\.web.*|duckymomo\.admin.*|luckperms.*)$")
 
 
@@ -1897,7 +1918,7 @@ class Handler(BaseHTTPRequestHandler):
             if not acc or not (acc["features"] or acc["toan_quyen"]):
                 self.send_json(403, {"ok": False, "message": "Tài khoản này không có quyền quản trị."})
                 return False
-            self.who = {"name": name, "acc": acc, "quanly": "quanly" in perms["groups"]}
+            self.who = {"name": name, "acc": acc, "perms": perms, "weight": staff_weight(perms)}
             return True
         if self.authorized():
             return True
@@ -1905,6 +1926,16 @@ class Handler(BaseHTTPRequestHandler):
         self.send_header("WWW-Authenticate", 'Basic realm="DuckyMoMo", charset="UTF-8"')
         self.end_headers()
         return False
+
+    def role_rights(self, group):
+        """(cấp/gỡ người, sửa quyền) với một role/rank. Staff: chỉ role có weight nhỏ hơn mình; rank donate: quyền riêng."""
+        if self.who is None or self.who["acc"]["toan_quyen"]:
+            return True, True
+        if group in DONATE_GROUPS:
+            return self.can("rank"), self.can("rank-quyen")
+        if group not in STAFF_GROUPS or group_weights().get(group, 0) >= self.who["weight"]:
+            return False, False
+        return self.can("role") and group != "default", self.can("role-quyen")
 
     def can(self, *features):
         if self.who is None:
@@ -1971,8 +2002,10 @@ class Handler(BaseHTTPRequestHandler):
                                         "toan_quyen": acc["toan_quyen"] if acc else True,
                                         "tinh_nang": list(acc["features"]) if acc else None,
                                         # role không được cấp/gỡ/sửa quyền (trang Role ẩn nút, máy chủ vẫn chặn ở scoped_post_ok)
-                                        "role_khoa": [] if not acc or acc["toan_quyen"] else
-                                        sorted(PROTECTED_FOR_QUANLY if self.who.get("quanly") else PROTECTED_GROUPS)})
+                                        # role/rank nào được cấp/gỡ người, sửa quyền (None = tất cả); trang Role ẩn phần còn lại
+                                        "role_quyen": None if not acc or acc["toan_quyen"] else
+                                        {g: {"nguoi": self.role_rights(g)[0], "quyen": self.role_rights(g)[1]}
+                                         for g in STAFF_GROUPS + DONATE_GROUPS}})
         if path in ("/", "/hoatdong", "/camnang", "/huongdan", "/role", "/thuvien", "/boss", "/donate"):
             dozzle = DOZZLE_PROXY_URL if self.headers.get("X-Forwarded-Prefix") else DOZZLE_URL
             page = {"/": INDEX_HTML, "/hoatdong": ACTIVITY_HTML, "/camnang": CAMNANG_HTML, "/huongdan": HUONGDAN_HTML, "/role": ROLE_HTML,
@@ -2019,16 +2052,18 @@ class Handler(BaseHTTPRequestHandler):
         """Staff đăng nhập bằng tài khoản game: kiểm tra quyền từng thao tác ghi, ghi nhật ký web-thaotac.jsonl."""
         acc, p, b = self.who["acc"], self.path, self.body
         full = acc["toan_quyen"]
-        protected = PROTECTED_FOR_QUANLY if self.who.get("quanly") else PROTECTED_GROUPS
         if p == "/api/roles":
             grp = str(b.get("group", ""))
+            nguoi, quyen = self.role_rights(grp)
             if b.get("action") == "preset":
                 ok = full
             elif b.get("action") in ("perm_set", "perm_unset", "perm_deny"):
                 node = str(b.get("node", "")).strip().lower()
-                ok = self.can("role-quyen") and (full or (grp not in protected and not PROTECTED_PERM_RE.match(node)))
+                # bật quyền: chỉ quyền chính mình có (không tự nâng cấp dưới hơn mình)
+                ok = full or (quyen and not PROTECTED_PERM_RE.match(node) and
+                              (b.get("action") != "perm_set" or taikhoan.has(self.who["perms"], node)))
             else:
-                ok = self.can("role") and (full or grp not in protected)
+                ok = full or nguoi
         elif p == "/api/say":
             ok = self.can("hoatdong")
         elif p == "/api/boss":

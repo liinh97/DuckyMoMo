@@ -192,7 +192,7 @@ window.toast = function (msg, kind) {
   fetch("api/toi").then(r => r.json()).then(t => {
     if (!t.game) return;
     const can = new Set(t.tinh_nang || []);
-    const page = { caidat: ["caidat"], thuvien: ["thuvien", "thuvien-dua"], boss: ["boss"], role: ["role", "role-quyen"], donate: ["donate"], hoatdong: ["hoatdong"],
+    const page = { caidat: ["caidat"], thuvien: ["thuvien", "thuvien-dua"], boss: ["boss"], role: ["role", "role-quyen", "rank", "rank-quyen"], donate: ["donate"], hoatdong: ["hoatdong"],
       camnang: ["camnang"], huongdan: ["huongdan"] };
     nav.querySelectorAll("a.item[data-page]").forEach(a => {
       if (!t.toan_quyen && !(page[a.dataset.page] || []).some(f => can.has(f))) a.remove();

@@ -28,16 +28,27 @@ tinh-nang:
     mo-ta: Xem chat, lệnh, vào/ra; gửi thông báo vào game
     trang: hoatdong
     quyen: [duckymomo.web.hoatdong]
+  # Role chức vụ: chỉ thao tác được role CẤP DƯỚI (weight nhỏ hơn role chức vụ cao nhất của mình, vd Manager: Mod, Helper, Builder).
   - id: role
-    ten: Role & rank
-    mo-ta: Cấp, gỡ role và rank donate (Manager xếp được tới Mod; không ai ngoài Admin đụng Admin, Manager)
+    ten: Cấp/gỡ role chức vụ
+    mo-ta: Thêm, gỡ người ở role chức vụ cấp dưới mình
     trang: role
     quyen: [duckymomo.web.role]
   - id: role-quyen
-    ten: Sửa quyền của role
-    mo-ta: Tick/bỏ quyền của từng role trên trang Role
+    ten: Sửa quyền role chức vụ
+    mo-ta: Bật/tắt quyền của role chức vụ cấp dưới (và nhóm Dân); chỉ bật được quyền mình đang có
     trang: role
     quyen: [duckymomo.web.role.quyen]
+  - id: rank
+    ten: Cấp/gỡ rank donate
+    mo-ta: Thêm, gỡ người ở rank donate (cấp tay, không qua trang Donate)
+    trang: role
+    quyen: [duckymomo.web.rank]
+  - id: rank-quyen
+    ten: Sửa quyền rank donate
+    mo-ta: Bật/tắt quyền của rank donate (chỉ đồ trang trí, luật Mojang); chỉ bật được quyền mình đang có
+    trang: role
+    quyen: [duckymomo.web.rank.quyen]
   - id: donate
     ten: Donate
     mo-ta: Xem yêu cầu donate người chơi báo đã chuyển khoản, cấp rank hoặc huỷ

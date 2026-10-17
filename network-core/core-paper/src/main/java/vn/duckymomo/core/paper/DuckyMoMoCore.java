@@ -24,6 +24,8 @@ public final class DuckyMoMoCore extends JavaPlugin {
     private RegionSpecialty specialty;
     private WarBalance warBalance;
     private HallOfFameDisplay hallDisplay;
+    private Mercenary mercenary;
+    private Achievements achievements;
     private Activity activity;
     private PeaceAlliance peace;
     private DecorShop decorShop;
@@ -57,6 +59,8 @@ public final class DuckyMoMoCore extends JavaPlugin {
     }
 
     private void teardown() {
+        Frontier.INSTANCE = null;
+        Leaderboard.INSTANCE = null;
         if (supply != null) {
             supply.stop();
             supply = null;
@@ -72,6 +76,14 @@ public final class DuckyMoMoCore extends JavaPlugin {
         if (hallDisplay != null) {
             hallDisplay.stop();
             hallDisplay = null;
+        }
+        if (mercenary != null) {
+            mercenary.stop();
+            mercenary = null;
+        }
+        if (achievements != null) {
+            achievements.stop();
+            achievements = null;
         }
         if (arenaPapi != null) {
             arenaPapi.unregister();
@@ -265,6 +277,7 @@ public final class DuckyMoMoCore extends JavaPlugin {
 
         // Giờ chơi thật (không tính AFK) cho dân hoạt động, quân hàm, lập thị trấn (banghoi): active-play.enabled
         activity = getConfig().getBoolean("active-play.enabled") ? new Activity(this, getConfig().getConfigurationSection("active-play")) : null;
+        LowPop.init(activity, getConfig().getConfigurationSection("low-population"));
         if (activity != null) {
             getServer().getPluginManager().registerEvents(activity, this);
             activity.start();
@@ -558,6 +571,19 @@ public final class DuckyMoMoCore extends JavaPlugin {
             getServer().getScheduler().runTaskLater(this, itemLibrary::exportMeta, 40L);
         }
         rewards = new Rewards(this, itemLibrary);
+        if (frontier != null) {
+            frontier.setRewards(rewards);
+        }
+        // Sổ thành tích (achievements): mục tiêu chơi một mình, tự đếm, đạt là nhận quà
+        achievements = getConfig().getBoolean("achievements.enabled") && getConfig().isConfigurationSection("achievements")
+                ? new Achievements(this, activity, rewards, getConfig().getConfigurationSection("achievements")) : null;
+        if (achievements != null) {
+            getServer().getPluginManager().registerEvents(achievements, this);
+            achievements.start();
+            getLogger().info("Sổ thành tích: " + achievements.describe());
+        }
+        Achievements ach = achievements;
+        bind("thanhtich", ach == null ? null : ach::command, "Sổ thành tích");
 
         // Mảnh sự kiện + cửa hàng đổi mảnh (Bang Hội Chiến: event-fragments.enabled); phần thưởng "manh" dùng module này
         FragmentShop fragments = getConfig().getBoolean("event-fragments.enabled")
@@ -646,6 +672,20 @@ public final class DuckyMoMoCore extends JavaPlugin {
         }
         WarBalance wbl = warBalance;
         bind("canbang", wbl == null ? null : wbl::command, "Cân bằng chiến tranh");
+        // Lính đánh thuê (mercenary): người không thuộc nước nào được các nước thuê ra trận (cần Towny)
+        mercenary = towny && getConfig().getBoolean("mercenary.enabled") && getConfig().isConfigurationSection("mercenary")
+                ? new Mercenary(this, activity, warRules, getConfig().getConfigurationSection("mercenary")) : null;
+        if (mercenary != null) {
+            getServer().getPluginManager().registerEvents(mercenary, this);
+            mercenary.start();
+            getLogger().info("Lính đánh thuê: " + mercenary.describe());
+        }
+        Mercenary mc = mercenary;
+        bind("linhdanhthue", mc == null ? null : mc::command, "Lính đánh thuê");
+        org.bukkit.command.PluginCommand ldtCmd = getCommand("linhdanhthue");
+        if (ldtCmd != null) {
+            ldtCmd.setTabCompleter(mc == null ? null : (sender, cmd, label, a) -> mc.tab(a));
+        }
 
         Seasons.INSTANCE = seasons;
         if (seasons != null) {

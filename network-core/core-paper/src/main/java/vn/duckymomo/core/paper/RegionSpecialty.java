@@ -36,7 +36,11 @@ final class RegionSpecialty {
 
     private static final LegacyComponentSerializer LEGACY = LegacyComponentSerializer.legacyAmpersand();
 
-    private record Region(String id, String name, String label, double x, double z, double r, Map<Material, Double> crops) { }
+    private record Region(String id, String name, String label, double x, double z, double r, Map<Material, Double> crops, String requires) {
+        boolean open() {
+            return Frontier.isUnlocked(requires);   // vùng mở bằng khai hoang: chưa mở thì chưa có đặc sản
+        }
+    }
 
     private final DuckyMoMoCore plugin;
     private final List<Region> regions = new ArrayList<>();
@@ -68,7 +72,8 @@ final class RegionSpecialty {
                     }
                 }
             }
-            regions.add(new Region(id, String.valueOf(z.get("name")), one.getString("label", ""), num(z.get("center-x")), num(z.get("center-z")), r, crops));
+            regions.add(new Region(id, String.valueOf(z.get("name")), one.getString("label", ""), num(z.get("center-x")), num(z.get("center-z")), r, crops,
+                    z.get("requires") == null ? "" : String.valueOf(z.get("requires"))));
         }
     }
 
@@ -95,6 +100,9 @@ final class RegionSpecialty {
 
     private Region regionAt(double x, double z) {
         for (Region r : regions) {
+            if (!r.open()) {
+                continue;
+            }
             double dx = x - r.x(), dz = z - r.z();
             if (dx * dx + dz * dz <= r.r() * r.r()) {
                 return r;
@@ -196,6 +204,10 @@ final class RegionSpecialty {
         }
         s.sendMessage(c("&6&l🌾 Đặc sản vùng &7(phe có nhiều thị trấn nhất trong vùng được mùa thêm khi gặt đặc sản, gặt ở đâu cũng được)"));
         for (Region r : regions) {
+            if (!r.open()) {
+                s.sendMessage(c(r.name() + " &8(chưa khai hoang: góp quỹ /khaihoang để mở)"));
+                continue;
+            }
             String o = owner.get(r.id());
             List<String> crops = new ArrayList<>();
             r.crops().forEach((m, v) -> crops.add(Seasons.cropLabel(m) + " +" + Math.round(v) + "%"));
@@ -212,6 +224,7 @@ final class RegionSpecialty {
         JsonArray arr = new JsonArray();
         for (Region r : regions) {
             JsonObject o = new JsonObject();
+            o.addProperty("mo", r.open());
             o.addProperty("id", r.id());
             o.addProperty("ten", r.name().replaceAll("&[0-9a-fk-or]", ""));
             o.addProperty("dac_san", r.label());

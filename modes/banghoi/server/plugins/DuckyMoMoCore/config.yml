@@ -153,6 +153,11 @@ rtp:
     - { id: thailan,   name: "&6Thái Lan",               icon: GOLD_BLOCK,        center-x: 12007, center-z: -1792, radius: 230, description: "Đồng bằng sông Chao Phraya" }
     - { id: myanmar,   name: "&6Myanmar",                icon: BAMBOO,            center-x: 11529, center-z: -2389, radius: 230, description: "Xa spawn nhất về phía tây" }
     - { id: namtq,     name: "&cNam Trung Quốc",         icon: RED_SAND,          center-x: 13142, center-z: -2808, radius: 230, description: "Phía bắc vùng mùa" }
+    # vùng mở bằng khai hoang (requires: id mốc frontier.goals): chỉ hiện ở /tpr, có đặc sản, Người Tiên Phong khi mốc đã mở
+    - { id: malai,     name: "&eBán đảo Mã Lai, Singapore", icon: JUNGLE_LOG,   center-x: 12250, center-z: -350,  radius: 230, requires: malaysia,    description: "Rừng mưa nhiệt đới, eo biển" }
+    - { id: philippines, name: "&bQuần đảo Philippines",  icon: SUGAR_CANE,   center-x: 14575, center-z: -1434, radius: 260, requires: philippines, description: "Nghìn đảo, ruộng bậc thang" }
+    - { id: borneo,    name: "&2Đảo Borneo",              icon: COCOA_BEANS,  center-x: 13620, center-z: -120,  radius: 260, requires: indonesia,   description: "Rừng già, ca cao" }
+    - { id: java,      name: "&dĐảo Java",                icon: WHEAT,        center-x: 13142, center-z: 896,   radius: 230, requires: indonesia,   description: "Núi lửa, ruộng lúa" }
     - { id: ngaunhien, name: "&dNgẫu nhiên toàn vùng",   icon: ENDER_PEARL,       center-x: 0,     center-z: 0,     radius: 0,   description: "Bất kỳ đâu trong vùng mùa 1" }
 
 # Luật chiến tranh (docs/banghoi-luat-mua1.md). Trang Cài đặt > Chiến tranh.
@@ -249,6 +254,9 @@ frontier:
   enabled: true
   sell-percent: 100
   min-donate: 10
+  pioneer:                             # Người Tiên Phong: N người đầu tiên đặt chân tới vùng vừa mở (vùng rtp.zones có requires)
+    count: 10
+    rewards: ["xu 2000", "danhhieu tienphong"]
   goals:
     - id: malaysia
       name: "&eMở bán đảo Mã Lai và Singapore"
@@ -387,6 +395,14 @@ leaderboard:
     phuho: "&a[Phú Hộ S{mua}]"
     kientrucsu: "&b[Kiến Trúc Sư S{mua}]"
     mua: "&7[Mùa {mua}]"
+    tienphong: "&a[Tiên Phong]"
+    thamhiem: "&b[Nhà Thám Hiểm]"
+    nguong: "&3[Ngư Ông]"
+    diequai: "&c[Diệt Quái]"
+    thuanthusu: "&d[Thuần Thú Sư]"
+    batbai: "&6[Bất Bại]"
+    daubep: "&e[Đầu Bếp]"
+    laolang: "&7[Lão Làng]"
     luukhach: "&7[Lữ Khách]"
     nghenhan: "&d[Nghệ Nhân]"
     phuthuong: "&6[Phú Thương]"
@@ -601,6 +617,49 @@ seasons:
       supply-multiplier: 1.5
       capture-bonus: {bay: 5, nhay: 10}
 
+# Lính đánh thuê (/linhdanhthue): người không thuộc nước nào đăng ký kèm giá, vua/tướng thuê bằng ngân khố nước (Trang Cài đặt > Chiến tranh)
+mercenary:
+  enabled: true
+  min-hours: 5                 # phải chơi ít nhất ngần này giờ thật
+  contract-hours: 48           # mỗi hợp đồng kéo dài (giờ)
+  fee-percent: 10              # server giữ % giá thuê (rút tiền khỏi kinh tế)
+  min-price: 100
+  max-price: 100000
+  hire-ranks: [general, colonel, co-king]   # ngoài vua, chức nước nào được thuê lính
+
+# Server vắng thì tự nhẹ đi: quy mô = số người có chơi trong 7 ngày (chốt mỗi ngày). Dưới threshold thì nhiệm vụ dễ hơn, bắt pet dễ hơn,
+# phe phòng thủ vắng hết thì bên tấn công chỉ ăn một phần điểm giữ cờ.
+low-population:
+  enabled: true
+  threshold: 15
+  quest-scale: 0.6                       # chỉ tiêu nhiệm vụ hằng ngày × ngần này
+  capture-bonus: 10                      # % cộng thêm xác suất bắt pet
+  absent-defender-attack-percent: 50     # % điểm giữ cờ bên tấn công còn lại khi phe phòng thủ không ai online
+
+# Sổ thành tích (/thanhtich): mục tiêu chơi một mình, đạt là tự nhận quà. type: khampha, cauca, loaica, quai, petcap, batpet, dautruong,
+# nauan, kholuong, giochoi. Quà như phần thưởng chung (xu, vat, do, lenh, danhhieu <mã>, petexp).
+achievements:
+  enabled: true
+  list:
+    kp1: {name: "Lữ khách", desc: "Đặt chân tới 3 vùng của /tpr", type: khampha, target: 3, rewards: ["xu 500"]}
+    kp2: {name: "Nhà thám hiểm", desc: "Đặt chân tới 7 vùng", type: khampha, target: 7, rewards: ["xu 2000", "danhhieu thamhiem"]}
+    ca1: {name: "Cần thủ tập sự", desc: "Câu được 50 con cá", type: cauca, target: 50, rewards: ["xu 300"]}
+    ca2: {name: "Ngư dân", desc: "Câu được 500 con cá", type: cauca, target: 500, rewards: ["xu 2000"]}
+    lc1: {name: "Nhà sưu tầm cá", desc: "Câu được 12 loài cá khác nhau", type: loaica, target: 12, rewards: ["xu 1000"]}
+    lc2: {name: "Ngư Ông", desc: "Câu được đủ 24 loài cá", type: loaica, target: 24, rewards: ["xu 3000", "danhhieu nguong"]}
+    q1: {name: "Thợ săn quái", desc: "Hạ 200 quái", type: quai, target: 200, rewards: ["xu 500"]}
+    q2: {name: "Diệt quái", desc: "Hạ 2000 quái", type: quai, target: 2000, rewards: ["xu 3000", "danhhieu diequai"]}
+    bp1: {name: "Người bắt thú", desc: "Có 3 pet chiến đấu", type: batpet, target: 3, rewards: ["xu 500"]}
+    pet1: {name: "Bạn đồng hành", desc: "Nuôi pet tới cấp 10", type: petcap, target: 10, rewards: ["lenh buabatpet give {player} 1"]}
+    pet2: {name: "Thuần Thú Sư", desc: "Nuôi pet tới cấp 50", type: petcap, target: 50, rewards: ["xu 3000", "danhhieu thuanthusu"]}
+    dt1: {name: "Võ sĩ", desc: "Thắng 10 trận Đấu Trường", type: dautruong, target: 10, rewards: ["xu 1000"]}
+    dt2: {name: "Bất Bại", desc: "Thắng 100 trận Đấu Trường", type: dautruong, target: 100, rewards: ["xu 5000", "danhhieu batbai"]}
+    na1: {name: "Bếp phó", desc: "Nấu 10 món ăn ra trận (/nauan)", type: nauan, target: 10, rewards: ["xu 500"]}
+    na2: {name: "Đầu Bếp", desc: "Nấu 100 món ăn ra trận", type: nauan, target: 100, rewards: ["xu 3000", "danhhieu daubep"]}
+    kl1: {name: "Hậu cần", desc: "Nộp 1000 điểm vào kho lương", type: kholuong, target: 1000, rewards: ["xu 1000"]}
+    gc1: {name: "Người quen", desc: "Chơi thật 10 giờ", type: giochoi, target: 10, rewards: ["xu 500"]}
+    gc2: {name: "Lão Làng", desc: "Chơi thật 100 giờ", type: giochoi, target: 100, rewards: ["xu 3000", "danhhieu laolang"]}
+
 # Cân bằng chiến tranh (/canbang): chống "nước to nuốt hết". Trang Cài đặt > Chiến tranh > Cân bằng chiến tranh
 war-balance:
   enabled: true
@@ -678,6 +737,10 @@ region-specialty:
     thailan: {label: "lúa Thái, ca cao", crops: {WHEAT: 20, COCOA: 10}}
     myanmar: {label: "củ dền", crops: {BEETROOTS: 25}}
     namtq: {label: "khoai, củ", crops: {POTATOES: 15, BEETROOTS: 15}}
+    malai: {label: "ca cao, cà rốt", crops: {COCOA: 20, CARROTS: 15}}
+    philippines: {label: "lúa bậc thang", crops: {WHEAT: 25}}
+    borneo: {label: "ca cao rừng già", crops: {COCOA: 30}}
+    java: {label: "lúa, khoai núi lửa", crops: {WHEAT: 20, POTATOES: 20}}
 
 # Ủng hộ bằng QR ngay trong game (/rank mua): chọn gói -> panel tạo yêu cầu (chung hàng chờ trang quản trị > Donate) -> QR VietQR vẽ trên tấm bản đồ,
 # hết hạn sau minutes phút. Cần PANEL_URL + PANEL_SITE_KEY (compose) và tài khoản ngân hàng trong site/config/site.yml (donate). Thiếu thì chỉ hiện link web.

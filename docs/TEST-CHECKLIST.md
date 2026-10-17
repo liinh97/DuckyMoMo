@@ -54,6 +54,14 @@ bật công tắc vây thành, rút lịch phiên còn vài phút (Cài đặt �
 - [ ] Trang Cài đặt › Món ăn ra trận › Các món: thêm/sửa món, chọn nguyên liệu (vật phẩm / cá), chọn hiệu ứng → Lưu → `/nauan` thấy ngay.
 - [ ] `/dacsan`: chủ vùng sau khi có thị trấn; người phe chủ vùng gặt đặc sản ở đâu cũng thỉnh thoảng rơi thêm.
 
+## 4b. Khai hoang, lính đánh thuê, thành tích, server vắng
+- [ ] `/tpr` chưa hiện Mã Lai/Philippines/Borneo/Java; admin cộng quỹ đủ mốc (hoặc sửa need nhỏ để thử) → vùng hiện, thông báo, 10 người đầu
+      tới nhận 2000 xu + danh hiệu [Tiên Phong]; `/dacsan` vùng mới có đặc sản.
+- [ ] `/linhdanhthue dangky 500` (người không thuộc nước); vua `/linhdanhthue thue <tên>` → lính `/linhdanhthue nhan`: trừ ngân khố, lính nhận 450.
+      Lính vào vùng vây không bị ốm, không đánh được người nước thuê, được ăn kho lương thủ đô nước thuê; hết 48 giờ thì hết quyền.
+- [ ] `/thanhtich`: đếm đúng (câu cá, loài cá, quái, vùng, cấp pet, nấu món, nộp kho lương); đạt mốc nhận quà, mốc có danh hiệu báo cả server.
+- [ ] Server dưới 15 người chơi/7 ngày: chỉ tiêu `/nhiemvu` còn 60%, `/bxhpet tyle` +10%.
+
 ## 5. Quảng trường Vinh danh (sảnh)
 - [ ] Chọn chỗ trống ở sảnh (map sakura). Đứng, quay mặt về phía người xem: `/vinhdanh dat moinhat tieude`, rồi `bachu`, `chienthan`, `phuho`,
       `kientrucsu`, `dautruong`, `pet` ở các chỗ khác. Bảng chữ nổi + đầu người chơi đúng hướng, không đè nhau.

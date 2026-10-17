@@ -374,6 +374,13 @@ function render(){
       ${t.canbang ? `<p>⚖ Nước <b>${esc(t.quocgia)}</b>: ${t.canbang.thi_tran} thị trấn · ${t.canbang.thuoc_dia}/${t.canbang.toi_da ?? "?"} thuộc địa${t.canbang.ba_chu ? ' · <span class="red">Bá chủ</span>' : ""}${t.canbang.no > 0 ? ` · <span class="red">nợ phí thuộc địa ${nf.format(t.canbang.no)} xu (chưa trả thì không cắm cờ vây được)</span>` : ""}</p>
         <p class="small muted">Đi vây tốn thêm ${t.canbang.quy_them}% quỹ chiến tranh. Chi tiết: <code>/canbang</code></p>` : ""}
     </div>` : ""}
+    ${(h.thanhtich || []).length ? `<div class="card"><h2>🏅 Sổ thành tích <span class="pill">${h.thanhtich.filter(x => x.xong).length}/${h.thanhtich.length}</span></h2>
+      <table><tbody>${h.thanhtich.map(x => `<tr><td>${x.xong ? "✅" : "▫️"}</td><td><b>${esc(x.ten)}</b>${x.danh_hieu ? ' <span class="pill">danh hiệu</span>' : ""}<div class="small dim">${esc(x.mo_ta)}</div></td>
+        <td class="small">${x.xong ? '<span class="green">Đã đạt</span>' : `${nf.format(Math.min(x.co, x.can))}/${nf.format(x.can)}<div style="height:5px;border-radius:4px;background:var(--line);overflow:hidden;margin-top:3px;width:90px"><div style="height:100%;width:${Math.min(100, x.co * 100 / x.can)}%;background:var(--gold)"></div></div>`}</td></tr>`).join("")}</tbody></table>
+      <p class="small muted">Trong game: <code>/thanhtich</code>. Đạt mốc là tự nhận quà.</p></div>` : ""}
+    ${h.linhdanhthue ? `<div class="card"><h2>⚔ Lính đánh thuê</h2>
+      <p>${h.linhdanhthue.nuoc ? `Đang làm cho nước <b>${esc(h.linhdanhthue.nuoc)}</b> tới ${day(h.linhdanhthue.het * 1000)}` : "Đang rảnh, chờ các nước thuê."}</p>
+      <p class="small muted">Giá của bạn: ${nf.format(h.linhdanhthue.gia || 0)} xu · đã làm ${h.linhdanhthue.xong || 0} hợp đồng. Đổi giá: <code>/linhdanhthue dangky &lt;giá&gt;</code> · rút tên: <code>/linhdanhthue huy</code></p></div>` : ""}
     <div class="card"><h2>⚔ Đấu Trường</h2><p>Điểm <b>${dt.elo || 1000}</b> · <span class="green">${dt.thang || 0} thắng</span> · <span class="red">${dt.thua || 0} thua</span></p>
       <p class="small muted">Thưởng hôm nay ${dt.thuong_hom_nay || 0}/${dt.toi_da || 5} trận. Vào sảnh: <code>/warp pvp</code> hoặc bấm NPC ở spawn; người + pet, chết không rơi đồ.</p></div>
   </div>`;

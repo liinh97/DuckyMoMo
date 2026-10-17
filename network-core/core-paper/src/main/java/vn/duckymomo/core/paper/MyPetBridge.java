@@ -86,6 +86,16 @@ final class MyPetBridge {
         }
     }
 
+    /** Cấp hiện tại của pet (0 = không đọc được). */
+    static int level(Object myPet) {
+        try {
+            Object xp = call(myPet, "getExperience");
+            return ((Number) call(xp, "getLevel")).intValue();
+        } catch (ReflectiveOperationException | RuntimeException e) {
+            return 0;
+        }
+    }
+
     static double saturation(Object myPet) {
         try {
             return ((Number) call(myPet, "getSaturation")).doubleValue();

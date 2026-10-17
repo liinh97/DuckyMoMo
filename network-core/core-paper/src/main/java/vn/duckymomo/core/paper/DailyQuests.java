@@ -111,6 +111,11 @@ final class DailyQuests implements Listener {
         return data.getStringList(key + ".quests");
     }
 
+    /** Chỉ tiêu thật: server vắng (LowPop) thì giảm. */
+    private static int need(Quest q) {
+        return Math.max(1, (int) Math.round(q.amount() * LowPop.questScale()));
+    }
+
     private static boolean matches(List<String> targets, String name) {
         for (String t : targets) {
             if (t.equals("*") || t.equals(name)
@@ -133,14 +138,14 @@ final class DailyQuests implements Listener {
                 continue;
             }
             int done = data.getInt(key + ".progress." + qid, 0);
-            if (done >= q.amount()) {
+            if (done >= need(q)) {
                 continue;
             }
-            done = Math.min(q.amount(), done + n);
+            done = Math.min(need(q), done + n);
             data.set(key + ".progress." + qid, done);
             dirty = true;
-            p.sendActionBar(c("&e" + q.name() + " &f" + done + "&7/&f" + q.amount()));
-            if (done >= q.amount()) {
+            p.sendActionBar(c("&e" + q.name() + " &f" + done + "&7/&f" + need(q)));
+            if (done >= need(q)) {
                 complete(p, q);
             }
         }
@@ -153,7 +158,7 @@ final class DailyQuests implements Listener {
         boolean all = true;
         for (String qid : todays(p.getUniqueId())) {
             Quest x = pool.get(qid);
-            if (x != null && data.getInt(key + ".progress." + qid, 0) < x.amount()) {
+            if (x != null && data.getInt(key + ".progress." + qid, 0) < need(x)) {
                 all = false;
             }
         }
@@ -214,9 +219,9 @@ final class DailyQuests implements Listener {
                 continue;
             }
             int done = data.getInt(key + ".progress." + qid, 0);
-            int bars = 10 * Math.min(done, q.amount()) / q.amount();
+            int bars = 10 * Math.min(done, need(q)) / need(q);
             String bar = "&a" + "▮".repeat(bars) + "&8" + "▮".repeat(10 - bars);
-            p.sendMessage(c((done >= q.amount() ? "&a✔ " : "&7• ") + "&f" + q.name() + " " + bar + " &7" + done + "/" + q.amount()
+            p.sendMessage(c((done >= need(q) ? "&a✔ " : "&7• ") + "&f" + q.name() + " " + bar + " &7" + done + "/" + need(q)
                     + (q.rewards().isEmpty() ? "" : " &8→ &7" + String.join("&7, ", rewards.describe(q.rewards())))));
         }
         List<String> bonus = rewards.describe(cfg.getStringList("complete-all-rewards"));

@@ -311,11 +311,31 @@ final class WarBalance implements Listener {
         if (isHegemon(otherNation)) {
             pct += hegemonPointsPct;   // phe đang giành điểm đánh vào Bá chủ
         }
+        if (!defending) {
+            // server vắng: phe phòng thủ không ai online thì bên tấn công chỉ ăn một phần điểm (không mất trắng vì vắng nhà)
+            double keep = LowPop.absentDefenderAttackPct();
+            if (keep < 100 && onlineOf(dn != null ? dn : def) == 0) {
+                pct -= 100 - keep;
+            }
+        }
         int bonus = (int) Math.round(pts * pct / 100.0);
-        if (bonus <= 0) {
+        if (bonus == 0) {
             return;
         }
         Bukkit.getScheduler().runTask(plugin, () -> call(siege, defending ? "adjustDefenderBattlePoints" : "adjustAttackerBattlePoints", int.class, bonus));
+    }
+
+    private static int onlineOf(Object gov) {
+        if (!(gov instanceof Government g)) {
+            return 0;
+        }
+        int n = 0;
+        for (var r : g.getResidents()) {
+            if (r.isOnline()) {
+                n++;
+            }
+        }
+        return n;
     }
 
     private static Nation govNation(Object gov) {

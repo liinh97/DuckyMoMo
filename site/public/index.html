@@ -589,6 +589,9 @@ footer .fbrand img{width:44px}
         <li><b>Bá chủ</b> (nắm từ <span data-k="balance.heg">30</span>% thị trấn cả server): ai đánh vào được hoàn <span data-k="balance.heg_disc">30</span>% quỹ và +<span data-k="balance.heg_pts">15</span>% điểm; Bá chủ chỉ hưởng đặc sản <span data-k="balance.heg_reg">2</span> vùng.</li>
       </ul>
       <div id="wbNations" class="muted"></div></div>
+    <div class="card" style="margin-top:16px"><h3>⚔ Lính đánh thuê <span class="kbd">/linhdanhthue</span></h3>
+      <p class="muted">Chơi một mình, không thuộc nước nào vẫn ra trận được: đăng ký kèm giá (<span class="kbd">/linhdanhthue dangky &lt;giá&gt;</span>), vua hoặc tướng các nước thuê bằng ngân khố nước, mỗi hợp đồng <b data-k="mercenary.hours">48</b> giờ (server giữ <span data-k="mercenary.fee">10</span>% phí). Trong hợp đồng: vào vùng vây không bị ốm, ăn kho lương của nước thuê, không đánh nhầm người nước thuê. Lính không giữ cờ được, chỉ chiến đấu. Cần chơi ít nhất <span data-k="mercenary.min_hours">5</span> giờ.</p>
+      <div id="ldtList" class="muted"></div></div>
     <div class="card" style="margin-top:16px" id="swCard"><h3>🌦 Trời đất trong trận công thành</h3>
       <p class="muted">Lúc đang đánh, trong vùng vây, thời tiết và ngày đêm (theo giờ trong game) làm trận nặng nề hơn, và pet đúng loài thành lợi thế:</p>
       <ul class="clean">
@@ -693,6 +696,10 @@ footer .fbrand img{width:44px}
     <h2>Hằng ngày &amp; kinh tế: quà miễn phí, chợ, xưởng</h2>
     <p class="intro">Không cần nạp tiền: chỉ cần vào chơi thật. Treo máy không được tính, tài khoản phụ không ăn gian được. Cả server cùng góp quỹ mở đất mới, đặt mua hàng của nhau, chế đồ đặc biệt ở xưởng.</p>
     <div class="grid g2" id="dailyGrid"><div class="card muted">Đang tải…</div></div>
+    <div class="card" style="margin-top:16px"><h3>🏅 Sổ thành tích <span class="kbd">/thanhtich</span></h3>
+      <p class="muted">Mục tiêu cho người thích chơi một mình: tự đếm, đạt là nhận quà ngay, mốc khó có danh hiệu giữ qua mọi mùa.</p>
+      <div id="ttList" class="muted">Đang tải…</div>
+      <p class="dim" style="font-size:.85rem;margin-top:8px" id="lowpopNote"></p></div>
   </div>
 </section>
 
@@ -1072,6 +1079,12 @@ async function loadInfo(){
   $("#dishList").innerHTML = ds.enabled && (ds.list || []).length ? `<table><tbody>${ds.list.map(d => `<tr><td><b>${esc(d.ten)}</b><div class="dim" style="font-size:.8rem">${Object.entries(d.can || {}).map(([k, n]) => n + " " + esc(NEED_VI[k] || NEED_VI[k.toUpperCase()] || k.toLowerCase())).join(" + ")}</div></td><td style="font-size:.85rem">${(d.hieu_ung || []).map(e => { const a = String(e).split(/\s+/); return esc(EFF_VI[a[0]] || a[0]) + " " + (ROMAN[+a[1] || 0] || "") + " " + (a[2] || "") + "s"; }).join("<br>")}</td></tr>`).join("")}</tbody></table>` : "Đang tắt.";
   const sv = info.specialty || [];
   $("#dacsan").innerHTML = sv.length ? `<table><tbody>${sv.map(v => `<tr><td><b>${esc(v.ten)}</b><div class="dim" style="font-size:.8rem">${esc(v.dac_san)}</div></td><td>${(v.cay || []).map(esc).join(", ")}</td><td>${v.chu ? esc(v.chu) + ` <span class="dim">(${v.so_thi_tran} thị trấn)</span>` : '<span class="dim">chưa có chủ</span>'}</td></tr>`).join("")}</tbody></table>` : "Đang tắt hoặc chưa tính (vài phút sau khi server bật).";
+  const ldt = (info.mercenary || {}).list || [];
+  $("#ldtList").innerHTML = ldt.length ? `<table><tbody>${ldt.map(m => `<tr><td><b>${esc(m.ten)}</b></td><td>${nf.format(m.gia || 0)} xu</td><td class="dim">${m.xong || 0} hợp đồng đã làm</td></tr>`).join("")}</tbody></table>` : "Chưa ai đăng ký.";
+  const tts = info.achievements || [];
+  $("#ttList").innerHTML = tts.length ? `<table><tbody>${tts.map(t => `<tr><td><b>${esc(t.ten)}</b></td><td class="dim">${esc(t.mo_ta)}</td><td>${t.danh_hieu ? esc(t.danh_hieu) : ""}</td></tr>`).join("")}</tbody></table>` : "Đang tắt.";
+  const lp = info.lowpop || {};
+  $("#lowpopNote").textContent = lp.enabled ? `Lúc server còn ít người (dưới ${lp.threshold} người chơi trong 7 ngày): chỉ tiêu nhiệm vụ còn ${Math.round(lp.quest * 100)}%, bắt pet +${lp.capture}%, thị trấn bị vây mà vắng nhà thì bên tấn công chỉ ăn ${lp.absent}% điểm giữ cờ.` : "";
   const wbn = (info.balance || {}).nations || [];
   $("#wbNations").innerHTML = wbn.length ? `<table><tbody>${wbn.map(n => `<tr><td><b>${esc(n.ten)}</b>${n.ba_chu ? ' <span class="pill" style="background:rgba(255,107,107,.15);color:#ff9d9b">Bá chủ</span>' : ""}</td><td>${n.thi_tran} thị trấn</td><td>${n.thuoc_dia} thuộc địa</td></tr>`).join("")}</tbody></table>` : "";
   const sw = pet.weather || {};
@@ -1260,7 +1273,7 @@ async function loadDaily(){
     if (k && k.bat && k.moc.length) {
       const next = k.moc.find(g => !g.mo);
       cards.unshift(`<div class="card hl" style="grid-column:1/-1"><h3>🗺️ Khai hoang vùng mới <span class="kbd">/khaihoang</span></h3>
-        <p class="muted">Cả server góp chung một quỹ để mở rộng bản đồ: mỗi lần bán đồ bằng <span class="kbd">/sell</span> được tính ${k.ban}% vào quỹ (bạn không mất gì), hoặc góp thẳng <span class="kbd">/khaihoang gop &lt;xu&gt;</span>. Đủ mốc là viền bản đồ tự nới ra vùng mới.</p>
+        <p class="muted">Cả server góp chung một quỹ để mở rộng bản đồ: mỗi lần bán đồ bằng <span class="kbd">/sell</span> được tính ${k.ban}% vào quỹ (bạn không mất gì), hoặc góp thẳng <span class="kbd">/khaihoang gop &lt;xu&gt;</span>. Đủ mốc là viền bản đồ tự nới ra vùng mới: vùng đó hiện ở <span class="kbd">/tpr</span>, có đặc sản riêng, và <b>10 người đặt chân tới đầu tiên</b> là Người Tiên Phong (2000 xu + danh hiệu [Tiên Phong]).</p>
         <div style="font-size:1.4rem;font-weight:800;margin:6px 0 12px">Quỹ: <span class="gold">${nf.format(Math.round(k.quy))} xu</span></div>
         ${k.moc.map(g => { const p = g.mo ? 100 : Math.min(100, k.quy * 100 / g.can);
           return `<div class="prize${g === next ? "" : g.mo ? "" : " rare"}"><b>${g.mo ? "✔ " : g === next ? "➤ " : ""}${esc(g.ten)}</b><span class="muted">${g.mo ? "Đã mở" : nf.format(g.can) + " xu · " + p.toFixed(1) + "%"}</span><div class="bar"><i style="width:${p}%"></i></div></div>`; }).join("")}

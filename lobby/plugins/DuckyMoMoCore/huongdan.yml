@@ -436,6 +436,25 @@ chapters:
         &0tại sảnh, giữ mãi.
         &1/vinhdanh tp
       - |-
+        &6&lLÍNH ĐÁNH THUÊ
+        &0Không thuộc nước nào
+        vẫn ra trận được:
+        &1/linhdanhthue dangky
+        &1<giá>&0. Vua/tướng thuê
+        bằng ngân khố nước.
+        &0Trong hợp đồng: vào
+        vùng vây không ốm, ăn
+        kho lương nước thuê.
+      - |-
+        &6&lSỔ THÀNH TÍCH
+        &0Chơi một mình cũng có
+        mục tiêu: khám phá,
+        câu cá, săn quái, nuôi
+        pet, Đấu Trường, nấu
+        ăn… Đạt là nhận quà,
+        mốc khó có &6danh hiệu&0.
+        &1/thanhtich
+      - |-
         &6&lCÂN BẰNG
         &0Nước to đi vây tốn
         quỹ hơn, thuộc địa tốn
@@ -629,7 +648,8 @@ chapters:
         khác, ai hạ được là
         nhận. &1/khaihoang
         &0góp quỹ mở vùng
-        đất mới.
+        đất mới: 10 người tới
+        đầu tiên là &aTiên Phong&0.
       - |-
         &3&lCÂU CÁ
         &0Có &l24 loại cá Việt

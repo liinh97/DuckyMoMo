@@ -105,6 +105,12 @@ commands:
   lichcongthanh:
     description: "Lịch công thành: phiên tới, phiên đó có cho pet chiến đấu tham chiến không"
     aliases: [congthanh, lichvay]
+  thanhtich:
+    description: "Sổ thành tích: mục tiêu chơi một mình (khám phá, câu cá, pet, Đấu Trường, nấu ăn…), đạt là nhận quà"
+    aliases: [achievements, sothanhtich]
+  linhdanhthue:
+    description: "Lính đánh thuê: người không thuộc nước nào đăng ký, các nước thuê ra trận công thành"
+    aliases: [ldt, danhthue]
   vinhdanh:
     description: "Quảng trường Vinh danh: người thắng các mùa; admin: /vinhdanh chot|tam (Bang Hội Chiến), /vinhdanh dat|xoa|lammoi (sảnh)"
     aliases: [dentvinhdanh, halloffame]

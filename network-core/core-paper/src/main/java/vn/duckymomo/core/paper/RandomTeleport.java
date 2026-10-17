@@ -53,7 +53,12 @@ final class RandomTeleport implements Listener {
     // Giữ qua /dmm reload (đối tượng mới được tạo lại khi nạp config)
     private static final Map<UUID, Long> LAST_USE = new HashMap<>();
 
-    record Zone(String id, String name, Material icon, String description, int centerX, int centerZ, int radius) {
+    record Zone(String id, String name, Material icon, String description, int centerX, int centerZ, int radius, String requires) {
+        /** Vùng gắn mốc khai hoang (requires) chỉ hiện khi mốc đã mở. */
+        boolean open() {
+            return Frontier.isUnlocked(requires);
+        }
+
         boolean whole() {
             return radius <= 0;
         }
@@ -114,7 +119,8 @@ final class RandomTeleport implements Listener {
             zones.add(new Zone(id.toLowerCase(Locale.ROOT), String.valueOf(m.containsKey("name") ? m.get("name") : id),
                     icon == null || !icon.isItem() ? Material.GRASS_BLOCK : icon,
                     m.containsKey("description") ? String.valueOf(m.get("description")) : "",
-                    num(m.get("center-x")), num(m.get("center-z")), num(m.get("radius"))));
+                    num(m.get("center-x")), num(m.get("center-z")), num(m.get("radius")),
+                    m.containsKey("requires") ? String.valueOf(m.get("requires")) : ""));
         }
         this.npcName = cfg.getString("npc.name", "&6&lDịch chuyển ngẫu nhiên");
         this.npcLines = cfg.getStringList("npc.lines");
@@ -149,7 +155,7 @@ final class RandomTeleport implements Listener {
         Zone z = find(args[0]);
         if (z == null) {
             p.sendMessage(c("&cKhông có khu &f" + args[0] + "&c. Các khu: &f"
-                    + String.join("&7, &f", zones.stream().map(Zone::id).toList())));
+                    + String.join("&7, &f", zones.stream().filter(Zone::open).map(Zone::id).toList())));
             return true;
         }
         start(p, z);
@@ -161,12 +167,12 @@ final class RandomTeleport implements Listener {
             return List.of();
         }
         String pre = args[0].toLowerCase(Locale.ROOT);
-        return zones.stream().map(Zone::id).filter(id -> id.startsWith(pre)).toList();
+        return zones.stream().filter(Zone::open).map(Zone::id).filter(id -> id.startsWith(pre)).toList();
     }
 
     private Zone find(String id) {
         String key = id.toLowerCase(Locale.ROOT);
-        return zones.stream().filter(z -> z.id().equals(key)).findFirst().orElse(null);
+        return zones.stream().filter(z -> z.id().equals(key) && z.open()).findFirst().orElse(null);
     }
 
     // ------------------------------------------------------------------ menu
@@ -185,6 +191,9 @@ final class RandomTeleport implements Listener {
         if (BedrockMenu.available() && BedrockMenu.isBedrock(p.getUniqueId())) {
             List<BedrockMenu.Entry> entries = new ArrayList<>();
             for (Zone z : zones) {
+                if (!z.open()) {
+                    continue;
+                }
                 entries.add(new BedrockMenu.Entry(plain(z.name()) + (z.description().isBlank() ? "" : "\n" + plain(z.description())), z.id()));
             }
             BedrockMenu.open(p.getUniqueId(), "Dịch chuyển ngẫu nhiên",
@@ -203,6 +212,9 @@ final class RandomTeleport implements Listener {
         holder.inventory = inv;
         int slot = 10;
         for (Zone z : zones) {
+            if (!z.open()) {
+                continue;
+            }
             if (slot % 9 == 8) {
                 slot += 2;
             }

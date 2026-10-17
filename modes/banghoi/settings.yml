@@ -16,6 +16,19 @@ siege_warchest_per_plot: 20.0
 siege_plunder_per_plot: 40.0
 siege_plunder_over_time: true
 siege_plunder_days: 7
+ldt_on: true
+ldt_hours: 5
+ldt_contract: 48
+ldt_fee: 10
+ldt_min: 100
+ldt_max: 100000
+ldt_ranks: [general, colonel, co-king]
+lp_on: true
+lp_threshold: 15
+lp_quest: 0.6
+lp_capture: 10
+lp_absent: 50
+tt_on: true
 wb_on: true
 wb_chest: 10
 wb_upkeep: 50
@@ -982,6 +995,8 @@ kh_on: true
 kh_sell: 100
 kh_g1: 300000
 kh_g2: 800000
+kh_pioneer: 10
+kh_pioneer_rw: [xu 2000, danhhieu tienphong]
 kh_g3: 2000000
 tt_on: true
 tt_min: 100

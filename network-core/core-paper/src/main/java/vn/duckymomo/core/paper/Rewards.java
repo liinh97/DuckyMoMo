@@ -18,6 +18,7 @@ import java.util.Locale;
  *   vat <VẬT_LIỆU> [số]   đồ thường
  *   lenh <lệnh>           lệnh console, {player} = tên người chơi
  *   manh <loại> <số>      mảnh sự kiện (FragmentShop, khi có)
+ *   danhhieu <mã>         trao danh hiệu (Leaderboard, mã trong leaderboard.titles), giữ qua các mùa
  *   petexp <số>           kinh nghiệm cho pet MyPet đang dẫn (không dẫn pet thì mất: nơi phát nên kiểm tra trước)
  * Túi đầy thì đồ rơi xuống chân người chơi.
  */
@@ -108,6 +109,15 @@ final class Rewards {
                     }
                     return fragments.give(p, b[0], Integer.parseInt(b[1]));
                 }
+                case "danhhieu" -> {
+                    Leaderboard lb = Leaderboard.INSTANCE;
+                    String t = rest.trim().toLowerCase(Locale.ROOT);
+                    if (lb == null || t.isEmpty()) {
+                        return null;
+                    }
+                    lb.grant(p.getUniqueId(), p.getName(), t);
+                    return "danh hiệu " + lb.titleText(t);
+                }
                 case "petexp" -> {
                     double n = Double.parseDouble(rest.trim());
                     return Arena.addPetExp(p, n) ? (long) n + " kinh nghiệm pet" : null;
@@ -138,6 +148,7 @@ final class Rewards {
                     case "vat" -> out.add((a.length > 2 ? a[2] : "1") + " " + pretty(a[1]));
                     case "manh" -> out.add(a[2] + " mảnh " + a[1]);
                     case "petexp" -> out.add(a[1] + " kinh nghiệm cho pet đang dẫn");
+                    case "danhhieu" -> out.add("danh hiệu " + (Leaderboard.INSTANCE == null ? a[1] : Leaderboard.INSTANCE.titleText(a[1])));
                     default -> { }
                 }
             } catch (RuntimeException ignored) {

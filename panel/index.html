@@ -531,7 +531,7 @@ function lib() {
   if (!libCache) libCache = fetch("api/thuvien").then(r => r.json()).catch(() => ({ items: [], meta: null }));
   return libCache;
 }
-const RW_KINDS = [["xu", "Xu"], ["do", "Đồ thư viện"], ["vat", "Đồ thường"], ["lenh", "Lệnh console"], ["manh", "Mảnh sự kiện"], ["petexp", "Kinh nghiệm pet"]];
+const RW_KINDS = [["xu", "Xu"], ["do", "Đồ thư viện"], ["vat", "Đồ thường"], ["lenh", "Lệnh console"], ["manh", "Mảnh sự kiện"], ["petexp", "Kinh nghiệm pet"], ["danhhieu", "Danh hiệu"]];
 function rewardsEditor(list, onChange) {
   const box = document.createElement("div"); box.className = "rw";
   const rows = [];
@@ -569,6 +569,8 @@ function rewardsEditor(list, onChange) {
         amt.value = a[1] || "1"; amt.title = "Số lượng (0 = theo thư viện)";
       } else if (k === "vat") {
         main = document.createElement("input"); main.placeholder = "Chọn vật phẩm…"; main.value = a[0] || ""; amt.value = a[1] || "1"; amt.title = "Số lượng";
+      } else if (k === "danhhieu") {
+        main = document.createElement("input"); main.placeholder = "mã danh hiệu, vd tienphong (leaderboard.titles)"; main.value = a[0] || ""; amt.style.visibility = "hidden";
       } else if (k === "manh") {
         main = document.createElement("input"); main.placeholder = "loại mảnh, vd lamnguy"; main.value = a[0] || ""; amt.value = a[1] || "1"; amt.title = "Số mảnh";
       } else {
@@ -587,6 +589,7 @@ function rewardsEditor(list, onChange) {
         if (!v) return "";
         if (k === "xu") return "xu " + v;
         if (k === "petexp") return "petexp " + parseInt(v, 10);
+        if (k === "danhhieu") return "danhhieu " + v.toLowerCase();
         if (k === "lenh") return "lenh " + v;
         if (k === "vat") return "vat " + v.toUpperCase() + " " + (n > 0 ? n : 1);
         if (k === "manh") return "manh " + v.toLowerCase() + " " + (n > 0 ? n : 1);

@@ -426,6 +426,22 @@ def profile(perms):
     out["donate"] = {"tiers": [{"group": t.get("group"), "ten": t.get("name"), "mau": t.get("color", "&f"), "quyen_loi": t.get("perks") or [],
                                 "gia": t.get("prices") or []} for t in tiers],
                      "cach_mua": (core.get("donate-ranks") or {}).get("how-to-buy", "")}
+    # Sổ thành tích (achievements, thanhtich.yml) + hợp đồng lính đánh thuê (linhdanhthue.yml)
+    ach = core.get("achievements") or {}
+    if ach.get("enabled"):
+        tt = safe_yaml(DMM / "thanhtich.yml")
+        dem = (tt.get("dem") or {}).get(uuid) or {}
+        xong = set((tt.get("xong") or {}).get(uuid) or [])
+        out["thanhtich"] = [{"ten": g.get("name", k), "mo_ta": g.get("desc", ""), "co": float(dem.get(g.get("type"), 0) or 0),
+                             "can": float(g.get("target", 1) or 1), "xong": k in xong, "danh_hieu": any(str(r).startswith("danhhieu") for r in g.get("rewards") or [])}
+                            for k, g in (ach.get("list") or {}).items()]
+    ldt = safe_yaml(DMM / "linhdanhthue.yml")
+    reg = (ldt.get("dangky") or {}).get(uuid)
+    hd = (ldt.get("hopdong") or {}).get(uuid)
+    if reg or hd:
+        out["linhdanhthue"] = {"gia": (reg or {}).get("gia"), "xong": (reg or {}).get("xong", 0),
+                               "nuoc": (hd or {}).get("ten-nuoc") if hd and (hd.get("het") or 0) / 1000 > time.time() else None,
+                               "het": int((hd or {}).get("het", 0) / 1000) if hd else None}
     return out
 
 

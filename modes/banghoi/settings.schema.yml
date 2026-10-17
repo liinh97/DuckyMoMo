@@ -321,6 +321,20 @@ groups:
       - { key: wb_heg_pts, label: "Đánh vào Bá chủ: cộng thêm điểm giữ cờ (%)", type: number, min: 0, file: plugins/DuckyMoMoCore/config.yml, path: war-balance.hegemon-points-percent }
       - { key: wb_heg_reg, label: "Bá chủ hưởng đặc sản tối đa (vùng)", type: int, min: 0, file: plugins/DuckyMoMoCore/config.yml, path: war-balance.hegemon-max-regions }
 
+  - title: Lính đánh thuê (/linhdanhthue)
+    category: Chiến tranh
+    description: "Người chơi một mình (không thuộc nước nào) đăng ký kèm giá; vua hoặc tướng thuê ra trận công thành bằng ngân khố nước."
+    info: "Là gì: cầu nối người chơi một mình với chiến tranh.\nTrong hợp đồng: vào vùng vây không bị ốm (SiegeWar), ăn kho lương thủ đô nước thuê, không đánh được người nước thuê (và ngược lại).\nKhông giữ cờ được (SiegeWar chỉ tính người có quân hàm), không có điểm Chiến Thần.\nKhông đăng ký được: người đã thuộc nước, dân Liên minh Hoà Bình, tài khoản phụ, người chơi chưa đủ giờ.\nLưu xong: có hiệu lực ngay (dmm reload)."
+    apply: [dmm reload]
+    settings:
+      - { key: ldt_on, label: Bật lính đánh thuê, type: select, file: plugins/DuckyMoMoCore/config.yml, path: mercenary.enabled, options: [ { value: true, label: Bật }, { value: false, label: Tắt } ] }
+      - { key: ldt_hours, label: Phải chơi ít nhất (giờ), type: number, min: 0, max: 1000, file: plugins/DuckyMoMoCore/config.yml, path: mercenary.min-hours }
+      - { key: ldt_contract, label: Mỗi hợp đồng kéo dài (giờ), type: number, min: 1, max: 720, file: plugins/DuckyMoMoCore/config.yml, path: mercenary.contract-hours, info: "Gợi ý 48: đủ một cuối tuần công thành." }
+      - { key: ldt_fee, label: Server giữ (% giá thuê), type: number, min: 0, max: 90, file: plugins/DuckyMoMoCore/config.yml, path: mercenary.fee-percent }
+      - { key: ldt_min, label: Giá thấp nhất (xu), type: number, min: 0, file: plugins/DuckyMoMoCore/config.yml, path: mercenary.min-price }
+      - { key: ldt_max, label: Giá cao nhất (xu), type: number, min: 0, file: plugins/DuckyMoMoCore/config.yml, path: mercenary.max-price }
+      - { key: ldt_ranks, label: Chức nước được thuê lính (ngoài vua), type: list, file: plugins/DuckyMoMoCore/config.yml, path: mercenary.hire-ranks, note: "Mã chức Towny: general (Tướng), colonel (Đại tá), co-king (Phó vương)…" }
+
   - title: Thị trấn và quốc gia
     category: Thị trấn
     apply: [ta reload config]
@@ -422,6 +436,10 @@ groups:
           note: "Sau khi mở: Tâm viền 13150 / -1650, bán kính 1950 x 1550." }
       - { key: kh_g3, label: "Mốc 3: Borneo + Java (xu)", type: number, min: 1, file: plugins/DuckyMoMoCore/config.yml, path: frontier.goals.2.need,
           note: "Sau khi mở: Tâm viền 13150 / -1050, bán kính 1950 x 2150." }
+      - { key: kh_pioneer, label: "Người Tiên Phong: số người đầu tiên được thưởng mỗi vùng mới", type: int, min: 0, max: 100, file: plugins/DuckyMoMoCore/config.yml, path: frontier.pioneer.count,
+          info: "Là gì: khi mốc khai hoang mở, vùng mới hiện ở /tpr (Mã Lai, Philippines, Borneo, Java) kèm đặc sản riêng. Ngần này người ĐẦU TIÊN đặt chân tới vùng đó nhận quà ở dưới, cả server được báo.\n0 = tắt." }
+      - { key: kh_pioneer_rw, label: "Người Tiên Phong: quà", type: rewards, file: plugins/DuckyMoMoCore/config.yml, path: frontier.pioneer.rewards,
+          note: "Mặc định: 2000 xu + danh hiệu [Tiên Phong] (giữ qua các mùa)." }
 
   - title: Treo thưởng (/treothuong)
     category: PvP & combat
@@ -748,6 +766,26 @@ groups:
       - { key: mua_kho_melon, label: "Mùa khô: Dưa hấu (quả)", type: number, min: 0, max: 5, file: plugins/DuckyMoMoCore/config.yml, path: seasons.list.kho.growth.MELON }
       - { key: mua_kho_pumpkin, label: "Mùa khô: Bí ngô (quả)", type: number, min: 0, max: 5, file: plugins/DuckyMoMoCore/config.yml, path: seasons.list.kho.growth.PUMPKIN }
       - { key: mua_kho_cactus, label: "Mùa khô: Xương rồng", type: number, min: 0, max: 5, file: plugins/DuckyMoMoCore/config.yml, path: seasons.list.kho.growth.CACTUS }
+
+  - title: Server vắng thì nhẹ đi
+    category: Thế giới
+    description: "Lúc server còn ít người: nhiệm vụ dễ hơn, bắt pet dễ hơn, thị trấn vắng nhà không bị mất trắng khi công thành."
+    info: "Quy mô server = số người có chơi trong 7 ngày gần nhất, chốt mỗi ngày (giờ Việt Nam).\nDưới ngưỡng thì: chỉ tiêu nhiệm vụ hằng ngày nhân hệ số; bắt pet cộng thêm %; lúc công thành, nếu phe phòng thủ không ai online thì bên tấn công chỉ nhận một phần điểm giữ cờ.\nĐông người (từ ngưỡng trở lên): mọi thứ như bình thường.\nLưu xong: có hiệu lực ngay (dmm reload)."
+    apply: [dmm reload]
+    settings:
+      - { key: lp_on, label: Bật, type: select, file: plugins/DuckyMoMoCore/config.yml, path: low-population.enabled, options: [ { value: true, label: Bật }, { value: false, label: Tắt } ] }
+      - { key: lp_threshold, label: Coi là vắng khi số người chơi trong 7 ngày dưới, type: int, min: 1, max: 1000, file: plugins/DuckyMoMoCore/config.yml, path: low-population.threshold }
+      - { key: lp_quest, label: Chỉ tiêu nhiệm vụ nhân (0,1–1), type: number, min: 0.1, max: 1, file: plugins/DuckyMoMoCore/config.yml, path: low-population.quest-scale, note: "0.6 = còn 60% chỉ tiêu" }
+      - { key: lp_capture, label: Bắt pet cộng thêm (%), type: int, min: 0, max: 100, file: plugins/DuckyMoMoCore/config.yml, path: low-population.capture-bonus }
+      - { key: lp_absent, label: "Phe phòng thủ vắng: bên tấn công còn (% điểm giữ cờ)", type: number, min: 0, max: 100, file: plugins/DuckyMoMoCore/config.yml, path: low-population.absent-defender-attack-percent }
+
+  - title: Sổ thành tích (/thanhtich)
+    category: Thế giới
+    description: "Mục tiêu cho người chơi một mình: khám phá vùng, câu cá, săn quái, nuôi pet, Đấu Trường, nấu ăn, nộp kho lương, giờ chơi. Đạt là tự nhận quà."
+    info: "Là gì: tự đếm, không cần bấm nhận. Mốc khó có danh hiệu (giữ qua các mùa) và báo cả server.\nSửa mốc, chỉ tiêu, quà: achievements.list trong plugins/DuckyMoMoCore/config.yml (type: khampha, cauca, loaica, quai, petcap, batpet, dautruong, nauan, kholuong, giochoi; quà: xu, vat, do, lenh, danhhieu <mã>, petexp).\nNgười chơi xem: /thanhtich, trang tài khoản trên web.\nLưu xong: có hiệu lực ngay (dmm reload)."
+    apply: [dmm reload]
+    settings:
+      - { key: tt_on, label: Bật sổ thành tích, type: select, file: plugins/DuckyMoMoCore/config.yml, path: achievements.enabled, options: [ { value: true, label: Bật }, { value: false, label: Tắt } ] }
 
   - title: Sự kiện mùa (Lũ, Hạn hán)
     category: Thế giới

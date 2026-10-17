@@ -241,6 +241,7 @@ final class Dishes implements Listener {
         }
         d.need().forEach((k, v) -> take(p, k, v));
         Rewards.hand(p, make(d, 1));
+        Achievements.add(p, "nauan", 1);
         p.playSound(p.getLocation(), Sound.BLOCK_SMOKER_SMOKE, 0.8f, 1f);
         p.sendMessage(c("&a🍲 Đã nấu " + d.name() + "&a."));
         h.inv.setItem(e.getRawSlot(), icon(p, d));

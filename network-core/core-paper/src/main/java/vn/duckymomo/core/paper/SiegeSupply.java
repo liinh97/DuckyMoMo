@@ -98,6 +98,10 @@ final class SiegeSupply {
     }
 
     private static Town townOf(Player p) {
+        Town merc = Mercenary.supplyTown(p);   // lính đánh thuê: ăn kho lương thủ đô nước thuê
+        if (merc != null) {
+            return merc;
+        }
         Resident r = TownyAPI.getInstance().getResident(p);
         return r == null ? null : r.getTownOrNull();
     }
@@ -243,6 +247,7 @@ final class SiegeSupply {
                 return true;
             }
             setStock(t, stock(t) + gained);
+            Achievements.add(p, "kholuong", gained);
             p.playSound(p.getLocation(), Sound.BLOCK_BARREL_CLOSE, 0.8f, 1f);
             ConfigurationSection ev = Seasons.eventNow();
             p.sendMessage(c("&a🍚 Đã nộp " + items + " món vào kho lương " + t.getName() + ": &f+" + fmt(gained) + " điểm &7(kho: "

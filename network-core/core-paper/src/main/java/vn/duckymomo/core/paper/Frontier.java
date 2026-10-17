@@ -34,11 +34,30 @@ import java.util.Map;
  * Quỹ tăng khi: bán đồ cho server bằng /sell (sell-percent % số tiền bán, người bán KHÔNG mất gì) và góp thẳng /khaihoang gop <xu>
  * (tiền bị rút = rút bớt tiền khỏi kinh tế). Mốc theo thứ tự trong goals: {id, name, need, commands, message}.
  * Lưu: khaihoang.yml (quy, gop.<uuid>.{ten,xu}, dat: [id đã mở]). Placeholder %dmmkh_*% cho hologram ở spawn.
+ * Vùng mới: rtp.zones có "requires: <id mốc>" chỉ hiện ở /tpr và tính đặc sản khi mốc đã mở (Frontier.isUnlocked).
+ * Người Tiên Phong (pioneer): pioneer.count người ĐẦU TIÊN đặt chân vào vùng mới (bán kính zone) nhận pioneer.rewards (quà chung Rewards,
+ * vd "xu 2000", "danhhieu tienphong") — lưu tienphong.<mốc>: [uuid].
  */
 final class Frontier implements Listener {
     private static final LegacyComponentSerializer LEGACY = LegacyComponentSerializer.legacyAmpersand();
 
     record Goal(String id, String name, double need, List<String> commands, String message) { }
+
+    static volatile Frontier INSTANCE;
+
+    /** Mốc khai hoang đã mở chưa (trống = không cần mốc). */
+    static boolean isUnlocked(String goalId) {
+        if (goalId == null || goalId.isBlank()) {
+            return true;
+        }
+        Frontier f = INSTANCE;
+        return f != null && f.reached().contains(goalId);
+    }
+
+    private record Area(String goal, String name, int x, int z, int r) { }
+
+    private final List<Area> areas = new ArrayList<>();
+    private Rewards rewards;
 
     private final JavaPlugin plugin;
     private final ConfigurationSection cfg;
@@ -67,12 +86,60 @@ final class Frontier implements Listener {
         }
         this.file = new File(plugin.getDataFolder(), "khaihoang.yml");
         this.data = YamlConfiguration.loadConfiguration(file);
+        for (Map<?, ?> z : plugin.getConfig().getMapList("rtp.zones")) {
+            if (z.get("requires") != null && z.get("radius") instanceof Number r && r.intValue() > 0) {
+                areas.add(new Area(String.valueOf(z.get("requires")), String.valueOf(z.get("name")), ((Number) z.get("center-x")).intValue(),
+                        ((Number) z.get("center-z")).intValue(), r.intValue()));
+            }
+        }
+    }
+
+    void setRewards(Rewards r) {
+        this.rewards = r;
+    }
+
+    /** Mỗi 5 giây: ai đặt chân vào vùng mới đã mở, còn suất Tiên Phong thì nhận quà. */
+    private void pioneerTick() {
+        int count = cfg.getInt("pioneer.count", 10);
+        List<String> gifts = cfg.getStringList("pioneer.rewards");
+        if (count <= 0 || areas.isEmpty()) {
+            return;
+        }
+        for (Area a : areas) {
+            if (!isUnlocked(a.goal())) {
+                continue;
+            }
+            List<String> got = new ArrayList<>(data.getStringList("tienphong." + a.goal()));
+            if (got.size() >= count) {
+                continue;
+            }
+            for (Player p : Bukkit.getOnlinePlayers()) {
+                if (p.getGameMode() != org.bukkit.GameMode.SURVIVAL || got.contains(p.getUniqueId().toString())) {
+                    continue;
+                }
+                double dx = p.getLocation().getX() - a.x(), dz = p.getLocation().getZ() - a.z();
+                if (dx * dx + dz * dz > (double) a.r() * a.r()) {
+                    continue;
+                }
+                got.add(p.getUniqueId().toString());
+                data.set("tienphong." + a.goal(), got);
+                dirty = true;
+                List<String> desc = rewards == null ? List.of() : rewards.give(p, gifts);
+                Bukkit.broadcast(c("&a⚑ &f" + p.getName() + " &alà Người Tiên Phong thứ " + got.size() + "/" + count + " đặt chân tới " + a.name()
+                        + (desc.isEmpty() ? "" : " &7(" + String.join(", ", desc) + ")")));
+                if (got.size() >= count) {
+                    break;
+                }
+            }
+        }
     }
 
     void start() {
         hookSell();
         // lưu gộp mỗi 30 giây (bán /sell rất nhiều lần)
         Bukkit.getScheduler().runTaskTimer(plugin, this::flush, 600L, 600L);
+        Bukkit.getScheduler().runTaskTimer(plugin, this::pioneerTick, 200L, 100L);
+        INSTANCE = this;
     }
 
     void flush() {
@@ -158,6 +225,12 @@ final class Frontier implements Listener {
         }
         Bukkit.broadcast(c("&6[Khai hoang] &fCả server đã góp đủ &a" + money(g.need()) + "&f: " + g.name()
                 + (g.message().isBlank() ? "" : "&f. " + g.message())));
+        for (Area a : areas) {
+            if (a.goal().equals(g.id())) {
+                Bukkit.broadcast(c("&a⚑ Vùng mới " + a.name() + " &ađã có ở &f/tpr&a. " + cfg.getInt("pioneer.count", 10)
+                        + " người đặt chân tới đầu tiên là &lNgười Tiên Phong&r&a, có quà!"));
+            }
+        }
     }
 
     /** /sell của Essentials: cộng sell-percent % số tiền bán vào quỹ (không trừ người bán). Gọi qua reflection như PeaceAlliance. */
@@ -257,6 +330,10 @@ final class Frontier implements Listener {
         s.sendMessage(c("&7Cả server góp chung: bán đồ bằng &f/sell &7(được tính " + Math.round(cfg.getDouble("sell-percent", 100))
                 + "% tiền bán, bạn không mất gì) hoặc &f/khaihoang gop <xu>&7."));
         s.sendMessage(c("&7Quỹ hiện có: &a" + money(fund())));
+        if (!areas.isEmpty()) {
+            s.sendMessage(c("&7Mỗi mốc mở: vùng mới ở &f/tpr&7, đặc sản riêng (&f/dacsan&7), &a" + cfg.getInt("pioneer.count", 10)
+                    + " người đặt chân tới đầu tiên &7là &aNgười Tiên Phong &7(có quà, danh hiệu)."));
+        }
         List<String> done = reached();
         for (Goal x : goals) {
             boolean ok = done.contains(x.id());

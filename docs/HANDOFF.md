@@ -283,6 +283,23 @@
   ticks-per-particle). Ghi vào plugins/PlayerParticles/styles/<kiểu>.yml ở lobby + banghoi-1, CẦN khởi động lại 2 server mới có hiệu lực.
 - PlayerParticles có sẵn `locale: vi_VN`, EssentialsX có `messages_vi` — chưa bật (đã hỏi người dùng).
 
+### 18/10 03:30: khai hoang có nội dung, lính đánh thuê, sổ thành tích, server vắng
+- Khai hoang: rtp.zones thêm malai/philippines/borneo/java có "requires: <mốc>" (toạ độ tính từ 1° ≈ 119,47 khối; X = kinh × 119,47,
+  Z = −vĩ × 119,47) → /tpr ẩn tới khi mốc mở (RandomTeleport.Zone.open → Frontier.isUnlocked), đặc sản (region-specialty) chỉ tính khi mở,
+  /dacsan ghi "chưa khai hoang". Người Tiên Phong: frontier.pioneer {count 10, rewards [xu 2000, danhhieu tienphong]}, quét mỗi 5 giây,
+  lưu tienphong.<mốc>. Quà mới "danhhieu <mã>" (Rewards → Leaderboard.INSTANCE.grant; panel REWARD_RES + RW_KINDS). Giá mốc vẫn 300k/800k/2M
+  (CHƯA đổi, chờ cân kinh tế). Dungeon: chờ người dùng tải map EliteMobs, muốn dungeon cấp tăng dần + chìa khoá cấp trước mở cấp sau.
+- Mercenary.java /linhdanhthue (mercenary): đăng ký (không thuộc nước, không Liên minh, không acc phụ, >= min-hours), thuê (vua/hire-ranks,
+  lính online, nhan|tuchoi, ngân khố trả, fee %), hợp đồng contract-hours: attachment siegewar.immune.to.war.nausea, SiegeSupply ăn kho thủ đô
+  nước thuê (Mercenary.supplyTown), chặn đánh nhau với nước thuê (Culprit). Lưu linhdanhthue.yml. Không giữ cờ, không điểm Chiến Thần.
+- Achievements.java /thanhtich (achievements.list, 18 mốc, 7 danh hiệu mới trong leaderboard.titles): khampha (vùng rtp, quét 5 giây),
+  cauca/loaica (PlayerFishEvent, tên cá EMF đọc tick sau — CHƯA chắc EMF gắn PDC trước lúc đó), quai (Monster), petcap (MyPetBridge.level),
+  batpet (pets.db), dautruong (dautruong.yml thắng), nauan (Dishes), kholuong (SiegeSupply), giochoi (Activity). thanhtich.yml.
+- LowPop.java (low-population): quy mô = người có weekHours > 0, chốt theo ngày; dưới threshold: DailyQuests need() × quest-scale,
+  PetCapture +capture-bonus, WarBalance: bên tấn công được điểm mà phe phòng thủ 0 người online → trừ (100 − absent%) %.
+- Web: thẻ Lính đánh thuê (Công thành), Sổ thành tích + ghi chú server vắng (Hằng ngày), khai hoang có Người Tiên Phong; tài khoản: thẻ
+  Sổ thành tích (tiến độ) + Lính đánh thuê (hợp đồng). Cài đặt: Lính đánh thuê, Server vắng, Sổ thành tích, ô Người Tiên Phong.
+
 ### 18/10 03:10: rà soát cẩm nang/web + sửa logic
 - Rà 19 tính năng mới trên camnang, /huongdan, Cài đặt, web chưa/đã đăng nhập (script đối chiếu từ khoá); bổ sung chỗ thiếu: bùa trong
   /huongdan, trả nợ dần (camnang, /huongdan, web), mùa 3 tháng (camnang), lồng quái không cho exp (web). Mọi lệnh có mô tả tiếng Việt

@@ -172,7 +172,7 @@ final class PetCapture implements Listener {
     int chanceFor(String petType) {
         String g = typeGroup.get(petType.toLowerCase(Locale.ROOT));
         int base = g != null && groupChance.containsKey(g) ? groupChance.get(g) : chance;
-        return clamp(base + bonusNow(g));
+        return clamp(base + bonusNow(g) + LowPop.captureBonus());
     }
 
     /** % cộng thêm của nhóm trong mùa hiện tại. */

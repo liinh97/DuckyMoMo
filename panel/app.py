@@ -73,7 +73,7 @@ ACTIVITY_TAIL_BYTES = 4_000_000
 # Quà (DuckyMoMoCore Rewards): xu <số> | do <mã thư viện> [số] | vat <VẬT_LIỆU> [số] | lenh <lệnh> | manh <loại> <số>
 REWARD_RES = [re.compile(r"^xu \d{1,9}(\.\d{1,2})?$"), re.compile(r"^do [a-z0-9_]{1,32}( \d{1,2})?$"),
               re.compile(r"^vat [A-Za-z0-9_]{1,64}( \d{1,4})?$"), re.compile(r"^lenh \S.{0,199}$"),
-              re.compile(r"^manh [a-z0-9_]{1,32} \d{1,4}$"), re.compile(r"^petexp \d{1,6}$")]
+              re.compile(r"^manh [a-z0-9_]{1,32} \d{1,4}$"), re.compile(r"^petexp \d{1,6}$"), re.compile(r"^danhhieu [a-z0-9_]{1,32}$")]
 FISH_COST_RE = re.compile(r"^ca:(common|rare|epic|legendary)$")   # giá đổi bằng cá câu (EvenMoreFish) theo độ hiếm
 DISH_FOODS = {"BREAD", "COOKED_COD", "COOKED_SALMON", "BEETROOT_SOUP", "RABBIT_STEW", "MUSHROOM_STEW", "SUSPICIOUS_STEW", "BAKED_POTATO",
               "PUMPKIN_PIE", "COOKIE", "GOLDEN_CARROT", "COOKED_BEEF", "COOKED_PORKCHOP", "COOKED_CHICKEN", "COOKED_MUTTON", "COOKED_RABBIT",

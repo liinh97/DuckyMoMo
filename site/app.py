@@ -423,6 +423,15 @@ def api_info():
                    "list": [{"ten": strip_colors(d.get("name", k)).strip(), "can": d.get("need", {}), "hieu_ung": d.get("effects", [])}
                             for k, d in (get(core, "dishes.list", {}) or {}).items()]},
         "specialty": core_json("dacsan.json").get("vung", []) if get(core, "region-specialty.enabled", False) else [],
+        "mercenary": {"enabled": bool(get(core, "mercenary.enabled", False)), "hours": get(core, "mercenary.contract-hours", 48),
+                      "fee": get(core, "mercenary.fee-percent", 10), "min_hours": get(core, "mercenary.min-hours", 5),
+                      "list": [{"ten": v.get("ten"), "gia": v.get("gia"), "xong": v.get("xong", 0)}
+                               for v in (load_yaml(plugin("DuckyMoMoCore", "linhdanhthue.yml")).get("dangky") or {}).values()][:20]},
+        "achievements": [{"ten": g.get("name", k), "mo_ta": g.get("desc", ""), "danh_hieu": strip_colors(get(core, "leaderboard.titles." + next(
+                              (str(r).split()[1] for r in g.get("rewards") or [] if str(r).startswith("danhhieu ")), ""), "") or "")}
+                         for k, g in (get(core, "achievements.list", {}) or {}).items()] if get(core, "achievements.enabled", False) else [],
+        "lowpop": {k: get(core, f"low-population.{p}", d) for k, p, d in [("enabled", "enabled", False), ("threshold", "threshold", 15),
+                   ("quest", "quest-scale", 0.6), ("capture", "capture-bonus", 10), ("absent", "absent-defender-attack-percent", 50)]},
         "balance": {"enabled": bool(get(core, "war-balance.enabled", False)),
                     **{k: get(core, f"war-balance.{p}", d) for k, p, d in [
                         ("chest", "war-chest-extra-percent-per-town", 10), ("upkeep", "colony-upkeep-per-day", 50), ("max_col", "max-colonies", 3),

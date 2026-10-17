@@ -228,6 +228,14 @@
   (cũng có trong tools/quanly-role.cmds). Manager thấy Mod, Helper, Builder, 5 rank; không thấy phần Quyền (role.quyen false).
 - Trang tài khoản (site): khung Quản trị chỉ còn một nút "Mở trang quản trị" (mở mục đầu tiên được phép; thanh trái panel tự ẩn mục không có quyền).
 
+### 17/10: nút ⓘ giải thích chi tiết (trang quản trị)
+- `shell.js` `infoBtn(text, label)` trả nút i; bấm hiện hộp giải thích (đóng khi bấm ngoài / Esc / cuộn); nằm trong `<label>` vẫn không bật công tắc.
+  CSS `.ib`, `.ib-pop` trong `ui.css`. Văn bản xuống dòng bằng `\n`.
+- Danh mục quyền `modes/_network/quyen.yml`: phần tử thứ 3 = giải thích (94/102 quyền có, trừ pet từng loại). Trang Role: nút i cạnh từng quyền,
+  weight, kế thừa, Thành viên, Quyền, Toàn mạng/server, Quyền khác.
+- Trang Cài đặt: khoá `info:` cho mục và nhóm trong `settings.schema.yml` (đã viết ~44 mục + 9 nhóm dễ hiểu nhầm: rank donate, prefix role, đất đai,
+  hoà bình, bảng xếp hạng, án, công thành, PvPManager, dọn rác, GrimAC). Thêm dần khi người dùng thấy chỗ nào mơ hồ.
+
 ### DANH SÁCH CẦN THỬ (người dùng chốt 15/10: làm xong hết rồi thử một lượt; mục 16–25)
 Triển khai một lần: `git stash && git pull && git stash pop` → `./ops/build-core.sh` (lỗi biên dịch thì gửi ảnh, Java viết ở cloud CHƯA biên
 dịch) → kiểm tra không ai online → `docker compose up -d --no-deps lobby banghoi-1 practice-1` → `docker compose up -d --build panel site`.

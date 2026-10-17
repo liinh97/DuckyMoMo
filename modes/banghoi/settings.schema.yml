@@ -9,7 +9,8 @@
 #   file     file cấu hình plugin, tính từ data/<server>/  (bỏ trống = chỉ lưu, không ghi vào plugin)
 #   path     đường dẫn trong file YAML, nối bằng dấu chấm
 #   commands lệnh RCON chạy khi giá trị đổi ({value}, {double} = giá trị x2, {tên_mục} = giá trị của mục khác)
-#   note     ghi chú hiện dưới ô nhập
+#   note     ghi chú ngắn hiện dưới ô nhập
+#   info     giải thích chi tiết, hiện khi bấm nút i cạnh tên mục (nhóm cũng có info: cạnh tiêu đề nhóm)
 # Mỗi nhóm: category = loại (thanh chọn loại trên trang Cài đặt); apply = lệnh RCON chạy sau khi có mục trong nhóm đổi (nạp lại cấu hình plugin).
 title: Bang Hội Chiến
 server: banghoi-1
@@ -54,11 +55,12 @@ groups:
           note: "Tính giờ chơi ở Bang Hội Chiến. Chống dùng tài khoản phụ làm quân. Tài khoản phụ (admin ghi bằng /dmm phu) không bao giờ được phong." }
 
   - title: Đất đai và người chơi thật
+    info: "\"Giờ chơi thật\" chỉ tính lúc thật sự chơi (di chuyển, đào, đánh…), đứng AFK không tính. Người chơi xem giờ của mình bằng /hoatdong.\nCác luật ở đây chống lập thị trấn ảo bằng tài khoản phụ hoặc người bỏ chơi."
     category: Thị trấn
     description: "Chốt 14/10 (docs/banghoi-luat-mua1.md mục 11D, 11E). Giờ chơi thật không tính lúc đứng yên/AFK; người chơi xem bằng /hoatdong. Dân hoạt động = đủ giờ chơi thật trong 7 ngày và đã ở thị trấn đủ số ngày."
     apply: [dmm reload]
     settings:
-      - { key: act_week_hours, label: Dân hoạt động - giờ chơi thật trong 7 ngày, type: number, min: 0, max: 100, file: plugins/DuckyMoMoCore/config.yml, path: active-play.active-hours-per-week }
+      - { key: act_week_hours, info: "Giờ chơi THẬT trong 7 ngày gần nhất (không tính đứng yên/AFK) để được tính là dân hoạt động.\nDân hoạt động mới mang lại đất cho thị trấn, mới được tính khi lập quốc gia.", label: Dân hoạt động - giờ chơi thật trong 7 ngày, type: number, min: 0, max: 100, file: plugins/DuckyMoMoCore/config.yml, path: active-play.active-hours-per-week }
       - { key: act_new_member_days, label: Dân mới vào thị trấn - số ngày chưa được tính, type: int, min: 0, max: 30, file: plugins/DuckyMoMoCore/config.yml, path: active-play.new-member-days,
           note: "Trong thời gian này chưa mang lại đất, chưa được phong quân hàm." }
       - { key: town_min_hours, label: Giờ chơi thật tối thiểu để lập thị trấn, type: number, min: 0, max: 100, file: plugins/DuckyMoMoCore/config.yml, path: town-rules.town-min-hours }
@@ -66,11 +68,11 @@ groups:
       - { key: siege_min_towns, label: Số thị trấn tối thiểu của quốc gia để cắm cờ vây, type: int, min: 1, max: 20, file: plugins/DuckyMoMoCore/config.yml, path: town-rules.siege-min-towns,
           note: "Chỉ áp dụng khi đi chinh phục; phòng thủ, khởi nghĩa thì không cần." }
       - { key: town_join_cooldown, label: Rời thị trấn bao nhiêu ngày mới vào thị trấn khác, type: int, min: 0, max: 30, file: plugins/DuckyMoMoCore/config.yml, path: town-rules.join-cooldown-days }
-      - { key: land_by_active, label: Đất chỉ tính dân hoạt động, type: select, file: plugins/DuckyMoMoCore/config.yml, path: town-rules.land-per-active-resident,
+      - { key: land_by_active, info: "Có: số ô đất tối đa của thị trấn tính theo dân HOẠT ĐỘNG (dân bỏ chơi không giữ đất cho thị trấn).\nĐất đã chiếm không bị lấy lại, chỉ là không mua thêm được khi vượt giới hạn.", label: Đất chỉ tính dân hoạt động, type: select, file: plugins/DuckyMoMoCore/config.yml, path: town-rules.land-per-active-resident,
           options: [ { value: true, label: "Có: dân không hoạt động không mang lại ô đất" }, { value: false, label: "Không: tính mọi dân" } ],
           note: "Đất đã chiếm không bị lấy lại, chỉ không mua thêm được khi vượt giới hạn." }
-      - { key: spawn_reserved_radius, label: Vòng quanh kinh đô dành cho Liên minh Hoà Bình (block), type: int, min: 0, max: 2000, file: plugins/DuckyMoMoCore/config.yml, path: town-rules.reserved-spawn-radius }
-      - { key: max_accounts, label: Số tài khoản tối đa mỗi người, type: int, min: 1, max: 5, file: plugins/DuckyMoMoCore/config.yml, path: pvp-rules.max-accounts,
+      - { key: spawn_reserved_radius, info: "Bán kính quanh kinh đô (spawn) chỉ dành cho Liên minh Hoà Bình; thị trấn thường không lập/chiếm đất trong vòng này.", label: Vòng quanh kinh đô dành cho Liên minh Hoà Bình (block), type: int, min: 0, max: 2000, file: plugins/DuckyMoMoCore/config.yml, path: town-rules.reserved-spawn-radius }
+      - { key: max_accounts, info: "Một người được giữ tối đa mấy tài khoản. Tài khoản phụ khai bằng /taikhoanphu hoặc admin ghi bằng /dmm phu: không được phong quân hàm, không gây sát thương trong vùng vây lúc có phiên.", label: Số tài khoản tối đa mỗi người, type: int, min: 1, max: 5, file: plugins/DuckyMoMoCore/config.yml, path: pvp-rules.max-accounts,
           note: "Tạm 2 để kéo người chơi, đông thì đổi về 1. Người chơi khai bằng /taikhoanphu." }
 
   - title: Boss & Dungeon (EliteMobs)
@@ -147,6 +149,7 @@ groups:
           note: "Giá: mã loại mảnh + số, nhiều loại cách dấu phẩy (vd lamnguy 40). Chỉ nên đặt tài nguyên, xu, đồ trang trí." }
 
   - title: Liên minh Hoà Bình
+    info: "Một quốc gia duy nhất do server quản lý, thủ đô ở kinh đô (spawn). Thị trấn vào liên minh thì không bị vây (sau thời gian chờ), đổi lại trả phí bảo hộ và không đánh ai.\nVùng vây vẫn có thể trùm lên đất hoà bình: dân được báo trước để di tản."
     category: Thị trấn
     description: "Quốc gia duy nhất được hoà bình, do server quản lý, thủ đô là kinh đô ở spawn. Thị trưởng vào/rời bằng /hoabinh. Lập lần đầu: admin đứng giữa spawn gõ /dmm hoabinh setup rồi /dmm hoabinh claim 14."
     apply: [dmm reload]
@@ -155,13 +158,13 @@ groups:
           note: "Trong lúc chờ vẫn có thể bị vây." }
       - { key: peace_rejoin, label: Rời liên minh bao nhiêu ngày mới vào lại, type: int, min: 0, max: 90, file: plugins/DuckyMoMoCore/config.yml, path: peace-alliance.rejoin-cooldown-days }
       - { key: peace_plot_base, label: Giá mua ô đất hoà bình - giá gốc, type: number, min: 0, file: plugins/DuckyMoMoCore/config.yml, path: peace-alliance.plot-base-price }
-      - { key: peace_plot_step, label: Giá mua ô đất hoà bình - cộng thêm mỗi ô liên minh đang có, type: number, min: 0, file: plugins/DuckyMoMoCore/config.yml, path: peace-alliance.plot-price-per-plot,
+      - { key: peace_plot_step, info: "Giá tăng dần khi liên minh càng rộng, để đất hoà bình không lan quá nhanh.\nVí dụ giá gốc 100, số này 2, liên minh đang có 50 ô: giá 1 ô = 100 + 2×50 = 200.", label: Giá mua ô đất hoà bình - cộng thêm mỗi ô liên minh đang có, type: number, min: 0, file: plugins/DuckyMoMoCore/config.yml, path: peace-alliance.plot-price-per-plot,
           note: "Giá 1 ô = giá gốc + số này × tổng ô của các thị trấn hoà bình (không tính kinh đô)." }
       - { key: peace_fee, label: Phí bảo hộ mỗi ô mỗi ngày, type: number, min: 0, file: plugins/DuckyMoMoCore/config.yml, path: peace-alliance.protection-fee-per-plot,
           note: "Cộng vào phí duy trì thị trấn của Towny." }
       - { key: peace_sell_bonus, label: Bán cho server (/sell) trong kinh đô được thêm (%), type: number, min: 0, max: 200, file: plugins/DuckyMoMoCore/config.yml, path: peace-alliance.sell-bonus-percent }
-      - { key: peace_tax_inside, label: Thuế shop rương trong đất hoà bình (0,05 = 5%), type: number, min: 0, max: 1, file: plugins/DuckyMoMoCore/config.yml, path: peace-alliance.shop-tax-inside }
-      - { key: peace_tax_outside, label: Thuế shop rương ngoài đất hoà bình (0,05 = 5%), type: number, min: 0, max: 1, file: plugins/DuckyMoMoCore/config.yml, path: peace-alliance.shop-tax-outside }
+      - { key: peace_tax_inside, info: "Thuế QuickShop (0–1, vd 0.02 = 2%) với shop rương đặt trong đất hoà bình. Để thấp hơn bên ngoài nếu muốn kéo buôn bán về kinh đô.", label: Thuế shop rương trong đất hoà bình (0,05 = 5%), type: number, min: 0, max: 1, file: plugins/DuckyMoMoCore/config.yml, path: peace-alliance.shop-tax-inside }
+      - { key: peace_tax_outside, info: "Thuế QuickShop (0–1) với shop rương ngoài đất hoà bình.", label: Thuế shop rương ngoài đất hoà bình (0,05 = 5%), type: number, min: 0, max: 1, file: plugins/DuckyMoMoCore/config.yml, path: peace-alliance.shop-tax-outside }
       - { key: peace_auction_only, label: Chợ đấu giá /ah chỉ mở trong đất hoà bình, type: select, file: plugins/DuckyMoMoCore/config.yml, path: peace-alliance.auction-only-in-peace,
           options: [ { value: true, label: Có }, { value: false, label: "Không (mở ở mọi nơi)" } ] }
       - { key: peace_warn_days, label: Báo dân hoà bình di tản trước ngày công thành (ngày), type: number, min: 0, max: 7, file: plugins/DuckyMoMoCore/config.yml, path: peace-alliance.siege-warn-days-before }
@@ -192,41 +195,43 @@ groups:
       - { key: org_event_hours, label: "Điểm dịch chuyển sự kiện giữ trong (giờ)", type: int, min: 1, max: 168, file: plugins/DuckyMoMoCore/config.yml, path: organizations.event-teleport-hours }
 
   - title: Bảng xếp hạng mùa
+    info: "4 bảng: Bá Chủ (quốc gia, điểm lãnh thổ + công thành), Chiến Thần (cá nhân, hạ người có quân hàm, chiếm cờ), Đại Phú Hộ (tiền), Kiến Trúc Sư (bình chọn công trình).\nĐiểm lãnh thổ chụp mỗi tuần vào ngày/giờ đặt bên dưới."
     category: Chiến tranh
     description: "Bá Chủ, Chiến Thần, Đại Phú Hộ, Kiến Trúc Sư (/bxh). Đóng mùa: /bxh dongmua, sau 3 ngày khiếu nại: /bxh traothuong. Đổi mã mùa = xoá điểm (giữ danh hiệu)."
     apply: [dmm reload]
     settings:
-      - { key: lb_season, label: "Mã mùa", type: text, file: plugins/DuckyMoMoCore/config.yml, path: leaderboard.season }
+      - { key: lb_season, info: "Tên/mã mùa đang chạy (vd mua1). ĐỔI MÃ = điểm xếp hạng về 0 cho mùa mới (danh hiệu đã trao vẫn giữ). Chỉ đổi khi mở mùa mới.", label: "Mã mùa", type: text, file: plugins/DuckyMoMoCore/config.yml, path: leaderboard.season }
       - { key: lb_season_start, label: "Ngày bắt đầu mùa (yyyy-mm-dd)", type: text, file: plugins/DuckyMoMoCore/config.yml, path: leaderboard.season-start,
           note: "Trống = chưa mở mùa (không tính tuần đại chiến, đăng ký Kiến Trúc Sư)." }
-      - { key: lb_double_week, label: "Tuần đại chiến (điểm lãnh thổ ×2)", type: int, min: 0, max: 52, file: plugins/DuckyMoMoCore/config.yml, path: leaderboard.double-week }
+      - { key: lb_double_week, info: "Tuần thứ mấy của mùa (tính từ ngày bắt đầu) là tuần đại chiến: điểm lãnh thổ nhân đôi.", label: "Tuần đại chiến (điểm lãnh thổ ×2)", type: int, min: 0, max: 52, file: plugins/DuckyMoMoCore/config.yml, path: leaderboard.double-week }
       - { key: lb_register_week, label: "Kiến Trúc Sư: tuần mở đăng ký", type: int, min: 0, max: 52, file: plugins/DuckyMoMoCore/config.yml, path: leaderboard.register-week }
       - { key: lb_vote_week, label: "Kiến Trúc Sư: tuần bình chọn", type: int, min: 0, max: 52, file: plugins/DuckyMoMoCore/config.yml, path: leaderboard.vote-week }
       - { key: lb_snapshot_day, label: "Ngày chụp điểm lãnh thổ hằng tuần", type: select, file: plugins/DuckyMoMoCore/config.yml, path: leaderboard.snapshot-day,
           options: [ { value: MONDAY, label: Thứ 2 }, { value: TUESDAY, label: Thứ 3 }, { value: WEDNESDAY, label: Thứ 4 }, { value: THURSDAY, label: Thứ 5 }, { value: FRIDAY, label: Thứ 6 }, { value: SATURDAY, label: Thứ 7 }, { value: SUNDAY, label: Chủ nhật } ] }
       - { key: lb_snapshot_time, label: "Giờ chụp điểm (HH:mm)", type: text, file: plugins/DuckyMoMoCore/config.yml, path: leaderboard.snapshot-time }
       - { key: lb_pts_town, label: "Điểm mỗi thị trấn kiểm soát mỗi tuần", type: int, min: 0, file: plugins/DuckyMoMoCore/config.yml, path: leaderboard.points.town }
-      - { key: lb_plots_per_point, label: "Bao nhiêu ô đất được 1 điểm", type: int, min: 1, file: plugins/DuckyMoMoCore/config.yml, path: leaderboard.plots-per-point }
+      - { key: lb_plots_per_point, info: "Điểm lãnh thổ Bá Chủ: mỗi lần chụp điểm hằng tuần, quốc gia được 1 điểm cho mỗi ngần này ô đất đang giữ (cộng điểm theo số thị trấn).", label: "Bao nhiêu ô đất được 1 điểm", type: int, min: 1, file: plugins/DuckyMoMoCore/config.yml, path: leaderboard.plots-per-point }
       - { key: lb_pts_attack, label: "Điểm tấn công thắng", type: int, min: 0, file: plugins/DuckyMoMoCore/config.yml, path: leaderboard.points.attack-win }
       - { key: lb_pts_defend, label: "Điểm phòng thủ thắng", type: int, min: 0, file: plugins/DuckyMoMoCore/config.yml, path: leaderboard.points.defend-win }
       - { key: lb_pts_revolt, label: "Điểm khởi nghĩa thắng", type: int, min: 0, file: plugins/DuckyMoMoCore/config.yml, path: leaderboard.points.revolt-win }
       - { key: lb_pts_kill, label: "Chiến Thần: điểm mỗi lần hạ người có quân hàm", type: int, min: 0, file: plugins/DuckyMoMoCore/config.yml, path: leaderboard.points.kill }
       - { key: lb_pts_banner, label: "Chiến Thần: điểm chiếm cờ", type: int, min: 0, file: plugins/DuckyMoMoCore/config.yml, path: leaderboard.points.banner }
-      - { key: lb_kill_cap, label: "Hạ cùng một người tối đa mấy lần mỗi phiên", type: int, min: 1, max: 20, file: plugins/DuckyMoMoCore/config.yml, path: leaderboard.kill-cap }
+      - { key: lb_kill_cap, info: "Chống cày điểm: hạ đi hạ lại cùng một người trong một phiên công thành chỉ tính tối đa ngần này lần.", label: "Hạ cùng một người tối đa mấy lần mỗi phiên", type: int, min: 1, max: 20, file: plugins/DuckyMoMoCore/config.yml, path: leaderboard.kill-cap }
       - { key: lb_title_hours, label: "Danh hiệu: giờ chơi thật tối thiểu trong mùa", type: number, min: 0, file: plugins/DuckyMoMoCore/config.yml, path: leaderboard.title-min-hours }
       - { key: lb_title_week, label: "Danh hiệu cả quốc gia: phải là thành viên trước tuần", type: int, min: 0, max: 52, file: plugins/DuckyMoMoCore/config.yml, path: leaderboard.title-member-before-week }
 
   - title: Án và Hội Bàn Tròn
+    info: "Giết dân hoà bình thì tự mở án. Hội Bàn Tròn (vua các quốc gia top Bá Chủ) họp TRỰC TIẾP tại chỗ trong đất hoà bình vào giờ họp, bỏ phiếu mức phạt: bồi thường, truy nã, tù, lưu đày.\nKhông có án thì không họp. Admin chỉ quan sát."
     category: Chiến tranh
     description: "Giết dân hoà bình trong đất hoà bình + dải đệm thì mở án; Hội Bàn Tròn họp tại chỗ để xử (/bantron). Không có việc thì không họp. Nhà tù: admin gõ /setjail nhatu ở nhà tù kinh đô."
     apply: [dmm reload]
     settings:
-      - { key: jus_buffer, label: "Dải đệm quanh đất hoà bình (block)", type: int, min: 0, max: 1000, file: plugins/DuckyMoMoCore/config.yml, path: justice.buffer-blocks }
-      - { key: jus_self_defense, label: "Tự vệ: nạn nhân đánh trước trong (giây)", type: int, min: 0, max: 600, file: plugins/DuckyMoMoCore/config.yml, path: justice.self-defense-seconds }
+      - { key: jus_buffer, info: "Giết dân hoà bình trong đất hoà bình HOẶC trong dải ngần này block quanh đó thì tự mở án cho Hội Bàn Tròn xử.", label: "Dải đệm quanh đất hoà bình (block)", type: int, min: 0, max: 1000, file: plugins/DuckyMoMoCore/config.yml, path: justice.buffer-blocks }
+      - { key: jus_self_defense, info: "Nếu nạn nhân (dân hoà bình) đánh trước trong ngần này giây thì coi là tự vệ, không mở án.", label: "Tự vệ: nạn nhân đánh trước trong (giây)", type: int, min: 0, max: 600, file: plugins/DuckyMoMoCore/config.yml, path: justice.self-defense-seconds }
       - { key: jus_floor, label: "Mức sàn: tiền bồi thường (xu)", type: number, min: 0, file: plugins/DuckyMoMoCore/config.yml, path: justice.floor-fine,
           note: "Chưa cân kinh tế nên để chỉnh ở đây." }
       - { key: jus_repeat, label: "Tái phạm: mức sàn nhân", type: number, min: 1, file: plugins/DuckyMoMoCore/config.yml, path: justice.repeat-multiplier }
-      - { key: jus_heavy, label: "Phạt nặng: tổng bồi thường gấp", type: number, min: 1, file: plugins/DuckyMoMoCore/config.yml, path: justice.heavy-multiplier }
+      - { key: jus_heavy, info: "Mức phạt nặng: bồi thường = mức sàn × số này (Hội Bàn Tròn chọn mức khi bỏ phiếu).", label: "Phạt nặng: tổng bồi thường gấp", type: number, min: 1, file: plugins/DuckyMoMoCore/config.yml, path: justice.heavy-multiplier }
       - { key: jus_bounty_days, label: "Truy nã (ngày)", type: int, min: 1, max: 30, file: plugins/DuckyMoMoCore/config.yml, path: justice.bounty-days }
       - { key: jus_jail, label: "Tù (phút, chỉ tính lúc online)", type: int, min: 1, max: 1440, file: plugins/DuckyMoMoCore/config.yml, path: justice.jail-minutes }
       - { key: jus_exile, label: "Lưu đày: cấm vào đất hoà bình (ngày)", type: int, min: 1, max: 90, file: plugins/DuckyMoMoCore/config.yml, path: justice.exile-days }
@@ -235,8 +240,8 @@ groups:
       - { key: jus_rt_day, label: "Hội Bàn Tròn họp ngày", type: select, file: plugins/DuckyMoMoCore/config.yml, path: justice.roundtable.day,
           options: [ { value: MONDAY, label: Thứ 2 }, { value: TUESDAY, label: Thứ 3 }, { value: WEDNESDAY, label: Thứ 4 }, { value: THURSDAY, label: Thứ 5 }, { value: FRIDAY, label: Thứ 6 }, { value: SATURDAY, label: Thứ 7 }, { value: SUNDAY, label: Chủ nhật } ] }
       - { key: jus_rt_time, label: "Giờ họp (HH:mm)", type: text, file: plugins/DuckyMoMoCore/config.yml, path: justice.roundtable.time }
-      - { key: jus_rt_seats, label: "Số ghế quốc gia (top Bá Chủ)", type: int, min: 1, max: 20, file: plugins/DuckyMoMoCore/config.yml, path: justice.roundtable.seats }
-      - { key: jus_rt_min, label: "Số ghế tối thiểu để họp", type: int, min: 1, max: 20, file: plugins/DuckyMoMoCore/config.yml, path: justice.roundtable.min-seats }
+      - { key: jus_rt_seats, info: "Số quốc gia đứng đầu bảng Bá Chủ được ghế ở Hội Bàn Tròn (đại diện là vua quốc gia đó).", label: "Số ghế quốc gia (top Bá Chủ)", type: int, min: 1, max: 20, file: plugins/DuckyMoMoCore/config.yml, path: justice.roundtable.seats }
+      - { key: jus_rt_min, info: "Họp chỉ diễn ra khi có đủ ngần này ghế có mặt tại chỗ; thiếu thì án dời sang lần họp sau.", label: "Số ghế tối thiểu để họp", type: int, min: 1, max: 20, file: plugins/DuckyMoMoCore/config.yml, path: justice.roundtable.min-seats }
       - { key: jus_rt_radius, label: "Phải đứng cách bàn tròn tối đa (block)", type: int, min: 2, max: 100, file: plugins/DuckyMoMoCore/config.yml, path: justice.roundtable.table-radius }
       - { key: jus_rt_notp_radius, label: "Cấm dịch chuyển tới gần nơi họp (block)", type: int, min: 0, max: 2000, file: plugins/DuckyMoMoCore/config.yml, path: justice.roundtable.no-teleport-radius }
       - { key: jus_rt_notp_min, label: "Cấm dịch chuyển từ trước giờ họp (phút)", type: int, min: 0, max: 1440, file: plugins/DuckyMoMoCore/config.yml, path: justice.roundtable.no-teleport-minutes }
@@ -278,9 +283,9 @@ groups:
     settings:
       - { key: siege_max_attacks, label: Số cuộc vây tấn công tối đa mỗi quốc gia, type: int, min: 1, max: 10,
           file: plugins/SiegeWar/config.yml, path: war.siege.quantities.max_active_siege_attacks_per_nation }
-      - { key: siege_warchest_per_plot, label: Quỹ chiến tranh (tiền / ô đất của thị trấn bị vây), type: number, min: 0,
+      - { key: siege_warchest_per_plot, info: "Bên tấn công phải đặt cọc: số tiền này × số ô đất của thị trấn bị vây. Thắng thì lấy lại + chiến lợi phẩm, thua thì mất cho bên thủ.", label: Quỹ chiến tranh (tiền / ô đất của thị trấn bị vây), type: number, min: 0,
           file: plugins/SiegeWar/config.yml, path: war.siege.money.warchest_cost_per_plot }
-      - { key: siege_immunity_hours, label: Miễn vây sau một cuộc vây (giờ), type: int, min: 0,
+      - { key: siege_immunity_hours, info: "Sau khi một cuộc vây kết thúc, thị trấn đó không bị vây lại trong ngần này giờ (thủ đô gấp đôi).", label: Miễn vây sau một cuộc vây (giờ), type: int, min: 0,
           file: plugins/SiegeWar/config.yml, path: war.siege.times.siege_immunity_post_siege_hours,
           note: "Thủ đô được gấp đôi." }
       - { key: siege_immunity_new_town_hours, label: Miễn vây cho thị trấn mới lập (giờ), type: int, min: 0,
@@ -295,7 +300,7 @@ groups:
       - { key: towny_price_claim,      label: Giá mua 1 ô đất,     type: number, min: 0, file: plugins/Towny/settings/config.yml, path: economy.new_expand.price_claim_townblock }
       - { key: towny_homeblock_distance, label: Khoảng cách tối thiểu giữa nhà chính hai thị trấn (ô), type: int, min: 0, max: 100, file: plugins/Towny/settings/config.yml, path: claiming.distance_rules.min_distance_between_homeblocks,
           note: "1 ô = 16 block. 10 ô = 160 block (chốt 14/10)." }
-      - { key: towny_town_upkeep,      label: Phí duy trì thị trấn mỗi ngày,  type: number, min: 0, file: plugins/Towny/settings/config.yml, path: economy.daily_taxes.price_town_upkeep }
+      - { key: towny_town_upkeep, info: "Mỗi ngày mới (giờ Towny, xem /towny time) thị trấn bị trừ ngần này từ ngân khố. Hết tiền trả thì thị trấn bị giải tán.",      label: Phí duy trì thị trấn mỗi ngày,  type: number, min: 0, file: plugins/Towny/settings/config.yml, path: economy.daily_taxes.price_town_upkeep }
       - { key: towny_nation_upkeep,    label: Phí duy trì quốc gia mỗi ngày,  type: number, min: 0, file: plugins/Towny/settings/config.yml, path: economy.daily_taxes.price_nation_upkeep }
 
   - title: Kinh tế
@@ -416,16 +421,17 @@ groups:
       - { key: boom_tntcart, label: "Xe goòng TNT: hệ số sát thương", type: number, min: 0, max: 1, file: plugins/DuckyMoMoCore/config.yml, path: explosive-pvp.tnt-minecart }
 
   - title: Chống thoát game khi đánh nhau (PvPManager)
+    info: "\"Cờ giao tranh\" (combat tag): đang đánh nhau mà thoát game để né chết thì vẫn chết và rơi đồ. Kèm bảo vệ người mới khỏi PvP vài phút đầu."
     category: PvP & combat
     description: Bị đánh thì gắn cờ giao tranh; thoát game lúc đó thì chết và rơi đồ. Người mới được bảo vệ khỏi PvP một thời gian.
     apply: [pmr reload]
     settings:
-      - { key: pvp_tag_seconds, label: Thời gian gắn cờ giao tranh (giây), type: int, min: 5, max: 120, file: plugins/PvPManager/config.yml, path: Combat Tag.Time }
+      - { key: pvp_tag_seconds, info: "Bị đánh hoặc đánh người khác thì bị \"gắn cờ\" ngần này giây. Trong lúc đó thoát game thì chết rơi đồ (nếu bật), không dịch chuyển được (nếu cấm).", label: Thời gian gắn cờ giao tranh (giây), type: int, min: 5, max: 120, file: plugins/PvPManager/config.yml, path: Combat Tag.Time }
       - { key: pvp_kill_on_logout, label: Thoát game khi đang giao tranh thì chết, type: select, file: plugins/PvPManager/config.yml, path: Combat Log Punishments.Kill on Logout.Enabled,
           options: [ { value: true, label: "Có (rơi đồ)" }, { value: false, label: Không } ] }
       - { key: pvp_block_teleport, label: Cấm dịch chuyển (/spawn, /home, /warp...) khi đang giao tranh, type: select, file: plugins/PvPManager/config.yml, path: Combat Tag.Actions Blocked.Teleport,
           options: [ { value: true, label: Cấm }, { value: false, label: Cho phép } ] }
-      - { key: pvp_newbie_enabled, label: Bảo vệ người mới, type: select, file: plugins/PvPManager/config.yml, path: Newbie Protection.Enabled,
+      - { key: pvp_newbie_enabled, info: "Người mới vào lần đầu không bị người khác đánh trong thời gian bảo vệ (và cũng không đánh được ai). Người mới tự bỏ sớm bằng /newbie disable.", label: Bảo vệ người mới, type: select, file: plugins/PvPManager/config.yml, path: Newbie Protection.Enabled,
           options: [ { value: true, label: Bật }, { value: false, label: Tắt } ] }
       - { key: pvp_newbie_seconds, label: Thời gian bảo vệ người mới (giây), type: int, min: 0, max: 86400, file: plugins/PvPManager/config.yml, path: Newbie Protection.Time,
           note: "900 = 15 phút. Người mới tự tắt được bằng /newbie disable." }
@@ -438,6 +444,7 @@ groups:
                      { value: PURPLE, label: Tím }, { value: RED, label: Đỏ }, { value: WHITE, label: Trắng } ] }
 
   - title: Dọn rác
+    info: "Định kỳ xoá vật phẩm nằm dưới đất để giảm lag, có đếm ngược trong chat. Không xoá: đồ đã đổi tên bằng đe, đồ quanh chỗ người chơi vừa chết, vùng loại trừ."
     category: Hệ thống
     description: Xoá vật phẩm rơi dưới đất định kỳ, báo trước trong chat. Admin dọn ngay bằng /dmm clean.
     apply: [dmm reload]
@@ -447,13 +454,13 @@ groups:
       - { key: cleaner_interval, label: Dọn mỗi (phút), type: int, min: 1, max: 120, file: plugins/DuckyMoMoCore/config.yml, path: item-cleaner.interval-minutes }
       - { key: cleaner_warn, label: Báo trước ở các mốc (giây), type: list, items: int, file: plugins/DuckyMoMoCore/config.yml, path: item-cleaner.warn-seconds,
           note: "Ví dụ: 60, 30, 10, 5, 3, 2, 1" }
-      - { key: cleaner_min_age, label: Không xoá vật phẩm vừa rơi dưới (giây), type: int, min: 0, max: 600, file: plugins/DuckyMoMoCore/config.yml, path: item-cleaner.min-age-seconds,
+      - { key: cleaner_min_age, info: "Vật phẩm mới rơi chưa đủ ngần này giây thì lượt dọn bỏ qua (kịp nhặt đồ vừa vứt, vừa đào ra).", label: Không xoá vật phẩm vừa rơi dưới (giây), type: int, min: 0, max: 600, file: plugins/DuckyMoMoCore/config.yml, path: item-cleaner.min-age-seconds,
           note: "Để đồ rơi khi chết còn kịp nhặt. Vật phẩm đã đổi tên bằng đe không bao giờ bị xoá." }
       - { key: cleaner_arrows, label: Xoá cả mũi tên cắm đất, type: select, file: plugins/DuckyMoMoCore/config.yml, path: item-cleaner.arrows,
           options: [ { value: true, label: Có }, { value: false, label: Không } ] }
       - { key: cleaner_death_minutes, label: Giữ đồ rơi khi chết (phút), type: int, min: 0, max: 60, file: plugins/DuckyMoMoCore/config.yml, path: item-cleaner.death-protect-minutes,
           note: "Đồ trong bán kính 8 block quanh chỗ chết không bị dọn trong chừng này phút, bất kể lượt dọn rơi vào lúc nào. 0 = tắt." }
-      - { key: cleaner_pause_battle, label: Không dọn trong giờ công thành, type: select, file: plugins/DuckyMoMoCore/config.yml, path: item-cleaner.pause-during-battle,
+      - { key: cleaner_pause_battle, info: "Có: trong giờ phiên công thành (theo lịch) không dọn để đồ rơi khi đánh nhau còn nhặt được.", label: Không dọn trong giờ công thành, type: select, file: plugins/DuckyMoMoCore/config.yml, path: item-cleaner.pause-during-battle,
           options: [ { value: true, label: Có }, { value: false, label: Không } ],
           note: "Theo lịch phiên đánh ở nhóm Lịch công thành (kể cả tuần không có cuộc vây nào)." }
       - { key: cleaner_skip_towns, label: Không dọn trong đất thị trấn, type: select, file: plugins/DuckyMoMoCore/config.yml, path: item-cleaner.skip-towns,
@@ -940,11 +947,13 @@ groups:
 
   # ---- Chống hack (GrimAC, bản alpha 2.3.74): ghi cho cả banghoi-1 và practice-1 ----
   - title: Chống hack - cách xử lý từng nhóm kiểm tra
+    info: "GrimAC chia kiểm tra thành nhóm; mỗi nhóm chọn: chỉ báo, hay báo + kick khi đủ số vi phạm.\nBản 26.2 còn ALPHA nên dễ bắt nhầm người ping cao / chơi điện thoại: để \"Chỉ báo admin\" vài tuần, xem cảnh báo rồi mới bật kick."
     category: Chống hack
     description: "GrimAC bản ALPHA cho 26.2, có thể bắt nhầm (nhất là người ping cao, người chơi điện thoại). Nên để Chỉ báo admin vài tuần, xem cảnh báo (Mod/Admin thấy trong game) rồi mới bật kick. Số vi phạm tự quên sau thời gian ở nhóm dưới."
     apply: [grim reload]
     settings:
       - key: grim_simulation
+        info: "Mỗi lần kiểm tra phát hiện bất thường = 1 vi phạm. Chỉ báo admin: Mod/Admin thấy tin trong game, không ai bị kick.\nKick khi đủ N vi phạm: cộng dồn trong khoảng \"Quên vi phạm sau\" (nhóm cài đặt chung). Kick sớm = ngưỡng thấp hơn, bắt nhanh hơn nhưng dễ bắt nhầm người lag.\nCác nhóm khác bên dưới chọn giống hệt."
         label: "Di chuyển (bay, tốc độ, Timer, NoFall)"
         type: select
         servers: [banghoi-1, practice-1]
@@ -1042,9 +1051,9 @@ groups:
       - { key: grim_forget_seconds, label: Quên vi phạm sau (giây) - nhóm Di chuyển, type: int, min: 30, max: 86400, servers: [banghoi-1, practice-1], file: plugins/GrimAC/punishments.yml, path: Punishments.Simulation.remove-violations-after,
           note: "Số vi phạm chỉ cộng dồn trong khoảng này. Mặc định 300 (5 phút)." }
       - { key: grim_forget_combat, label: Quên vi phạm sau (giây) - nhóm Đánh xa, type: int, min: 30, max: 86400, servers: [banghoi-1, practice-1], file: plugins/GrimAC/punishments.yml, path: Punishments.Reach.remove-violations-after }
-      - { key: grim_block_reach, label: Chặn luôn cú đánh không thể xảy ra (quá xa), type: select, servers: [banghoi-1, practice-1], file: plugins/GrimAC/config.yml, path: Reach.block-impossible-hits,
+      - { key: grim_block_reach, info: "Có: cú đánh xa quá mức có thể (hack Reach) bị huỷ luôn, kể cả khi chưa đủ vi phạm để kick. Ít khi bắt nhầm.", label: Chặn luôn cú đánh không thể xảy ra (quá xa), type: select, servers: [banghoi-1, practice-1], file: plugins/GrimAC/config.yml, path: Reach.block-impossible-hits,
           options: [ { value: true, label: Có }, { value: false, label: Không } ] }
-      - { key: grim_experimental, label: Bật các kiểm tra thử nghiệm, type: select, servers: [banghoi-1, practice-1], file: plugins/GrimAC/config.yml, path: experimental-checks,
+      - { key: grim_experimental, info: "Kiểm tra đang thử nghiệm của GrimAC, dễ bắt nhầm. Chỉ bật khi muốn thử và đang ở chế độ Chỉ báo admin.", label: Bật các kiểm tra thử nghiệm, type: select, servers: [banghoi-1, practice-1], file: plugins/GrimAC/config.yml, path: experimental-checks,
           options: [ { value: false, label: "Không (nên để tắt, dễ bắt nhầm)" }, { value: true, label: Có } ] }
       - { key: grim_alert_console, label: Ghi cảnh báo vào log server, type: select, servers: [banghoi-1, practice-1], file: plugins/GrimAC/config.yml, path: alerts.print-to-console,
           options: [ { value: true, label: "Có (xem ở trang Log)" }, { value: false, label: Không } ] }

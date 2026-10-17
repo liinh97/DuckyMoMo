@@ -156,6 +156,37 @@ window.ask = function (message, opts) {
 };
 
 // Thông báo nổi góc dưới: toast("Đã lưu", "ok" | "err" | ""); kind "" = đang xử lý (không tự tắt).
+// Nút ⓘ: bấm hiện giải thích chi tiết (dùng chung mọi trang). infoBtn(text) trả HTML; text xuống dòng bằng \n.
+window.infoBtn = function (text, label) {
+  if (!text) return "";
+  const a = String(text).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
+  return `<button type="button" class="ib" aria-label="${label ? "Giải thích: " + String(label).replace(/"/g, "&quot;") : "Giải thích"}" data-info="${a}">i</button>`;
+};
+(function () {
+  let pop = null, from = null;
+  const close = () => { if (pop) { pop.remove(); pop = null; from = null; } };
+  document.addEventListener("click", (e) => {
+    const b = e.target.closest && e.target.closest(".ib");
+    if (!b) { if (pop && !pop.contains(e.target)) close(); return; }
+    e.preventDefault(); e.stopPropagation();   // nút nằm trong <label> công tắc: không bật/tắt công tắc
+    if (from === b) return close();
+    close();
+    pop = document.createElement("div");
+    pop.className = "ib-pop"; pop.setAttribute("role", "dialog");
+    pop.textContent = b.dataset.info;
+    document.body.appendChild(pop);
+    from = b;
+    const r = b.getBoundingClientRect(), w = pop.offsetWidth, h = pop.offsetHeight;
+    let left = Math.min(Math.max(8, r.left + r.width / 2 - w / 2), innerWidth - w - 8);
+    let top = r.bottom + 8;
+    if (top + h > innerHeight - 8 && r.top - h - 8 > 8) top = r.top - h - 8;
+    pop.style.left = left + "px"; pop.style.top = top + "px";
+  }, true);
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape") close(); });
+  addEventListener("scroll", close, true);
+  addEventListener("resize", close);
+})();
+
 window.toast = function (msg, kind) {
   let t = document.getElementById("toast");
   if (!t) { t = document.createElement("div"); t.id = "toast"; t.className = "toast"; document.body.appendChild(t); }

@@ -159,8 +159,8 @@ function renderDetail() {
   const vis = new Set(visible().map(x => x.name));
   const parents = g.parents.map(p => vis.has(p) ? `<a data-go="${esc(p)}">${esc(name(p))}</a>` : esc(name(p))).join(", ");
   let h = `<section class="card"><div class="hero"><span class="mc">${mcHtml(prefixText(g))}</span><div><h1>${esc(name(g.name))}</h1><div class="badges">
-      <span class="badge accent">${KIND[g.kind]}</span><span class="badge">nhóm <code>${esc(g.name)}</code></span><span class="badge" title="Số lớn hơn = ưu tiên hơn (prefix, quyền)">weight ${g.weight}</span>
-      ${parents ? `<span class="badge">kế thừa: ${parents}</span>` : ""}</div></div></div>
+      <span class="badge accent">${KIND[g.kind]}</span><span class="badge">nhóm <code>${esc(g.name)}</code></span><span class="badge">weight ${g.weight}${infoBtn("Weight = cấp bậc. Số lớn hơn là cấp cao hơn: Admin 100, Manager 90, Mod 70, Helper 50, Builder 40, Dân 0; rank donate 5–9.\nNgười giữ nhiều role: prefix và quyền mâu thuẫn lấy theo role weight cao nhất.\nStaff vào web chỉ thao tác được role có weight nhỏ hơn role chức vụ cao nhất của mình.", "weight")}</span>
+      ${parents ? `<span class="badge">kế thừa: ${parents}${infoBtn("Kế thừa = tự có mọi quyền của role cha (và role cha của role cha).\nVí dụ Mod kế thừa Helper: ai là Mod tự có quyền của Helper, không cần bật lại. Quyền kế thừa hiện \"có sẵn từ …\" (công tắc bật mờ).\nNgười giữ Mod KHÔNG tự được thêm vào nhóm Helper; chỉ có quyền.", "kế thừa")}</span>` : ""}</div></div></div>
     ${isDonate ? '<div class="warnbox">Rank donate chỉ được có quyền <b>trang trí</b>. Cấp lợi thế khi chơi (bay, kit, đồ mạnh…) là pay-to-win, vi phạm luật Mojang.</div>' : ""}
     ${!g.exists ? `<div class="warnbox" style="background:rgba(217,48,37,.12);color:var(--err)">Role này <b>chưa có trong LuckPerms</b>${g.preset ? ": bấm nút bên dưới để tạo kèm bộ quyền khuyên dùng." : "."}</div>` : ""}
     ${g.preset && isFull() ? `<div class="preset"><button class="primary" id="preset">${g.exists ? "Áp bộ quyền khuyên dùng" : "Tạo role + bộ quyền khuyên dùng"}</button>
@@ -168,7 +168,10 @@ function renderDetail() {
     <p class="hint">Sửa prefix: trang Cài đặt › Toàn mạng › ${isDonate ? "Rank donate" : "Role"}.</p>
     ${(g.prefixes || []).length > 1 ? `<p class="hint">⚠ Role này đang có ${g.prefixes.length} prefix trong LuckPerms (${g.prefixes.map(p => esc(p.trim())).join(" | ")}); game hiện cái priority cao nhất. Lưu lại prefix ở Cài đặt sẽ xoá hết và đặt lại một cái.</p>` : ""}</section>`;
   // --- thành viên
-  h += `<section class="card"><h2>👥 Thành viên ${g.kind !== "default" ? `<span class="badge">${g.count}</span>` : ""}</h2>`;
+  h += `<section class="card"><h2>👥 Thành viên ${g.kind !== "default" ? `<span class="badge">${g.count}</span>` : ""}${infoBtn(isDonate
+    ? "Người chơi đang giữ rank donate này, kèm số ngày còn lại.\nThêm: nhập tên + số tháng (cấp tay, vd đã nhận tiền ngoài web). Cùng bậc thì cộng dồn ngày; đổi bậc thì bỏ bậc cũ.\nGỡ (nút ×): rank mất ngay, không hoàn tiền.\nNgười chuyển khoản qua web thì duyệt ở trang Donate."
+    : g.kind === "default" ? "Nhóm Dân là MỌI người chơi, không thêm hay gỡ ai được. Quyền bật ở đây áp dụng cho tất cả."
+    : "Người chơi đang giữ role chức vụ này.\nThêm: nhập tên người chơi (Bedrock có dấu chấm đầu). Role giữ vĩnh viễn tới khi gỡ.\nGỡ (nút ×): mất role ngay; quyền trạng thái như bay, tàng hình, bất tử tự tắt.\nNgười được thêm/gỡ nhận tin trong game nếu đang online.", "Thành viên")}</h2>`;
   const cm = canMembers(g), cp = canPerms(g);
   if (g.kind === "default") {
     h += `<p class="hint">Mọi người chơi đều thuộc nhóm này (${g.count} người đã từng vào). Không cần thêm tay.</p>`;
@@ -188,11 +191,11 @@ function renderDetail() {
   const cats = data.catalog.filter(c => isDonate ? (c.donate || c.title.startsWith("Chat")) : !c.donate);
   const nOn = g.perms.filter(p => p.value && p.server === server).length;
   const nOther = g.perms.filter(p => p.value && p.server !== server).length;
-  h += `<section class="card"><div class="ph"><div><h2>🔑 Quyền</h2><p class="hint">Bật công tắc là cấp quyền ngay. Quyền <span class="badge inh">có sẵn</span> đến từ role cha, không cần bật lại.</p></div>
+  h += `<section class="card"><div class="ph"><div><h2>🔑 Quyền${infoBtn("Quyền = việc người giữ role được làm (gõ lệnh, xây vùng cấm…).\nBật công tắc: cấp ngay cho mọi người đang giữ role, toàn mạng hoặc server đang chọn.\nTắt công tắc: gỡ quyền; nếu là quyền trạng thái (bay, tàng hình, bất tử, tốc độ, chế độ chơi) thì người đang dùng bị tắt luôn.\nCông tắc bật MỜ, khoá = đã có sẵn nhờ kế thừa role cha hoặc quyền *, không cần bật.\nBấm nút i cạnh từng quyền để xem chi tiết.", "Quyền")}</h2><p class="hint">Bật công tắc là cấp quyền ngay. Quyền <span class="badge inh">có sẵn</span> đến từ role cha, không cần bật lại.</p></div>
       <div class="sum"><span class="badge accent">${nOn} quyền riêng bật ở ${server === "global" ? "toàn mạng" : esc(server)}</span>${nOther ? `<span class="badge">+${nOther} ở server khác</span>` : ""}<span class="badge inh">${Object.keys(inh).length} có sẵn từ role cha</span></div></div>
     <div class="tools"><div class="seg" title="Quyền áp dụng ở đâu">${data.servers.map(sv => `<button data-sv="${esc(sv)}" class="${sv === server ? "on" : ""}">${sv === "global" ? "Toàn mạng" : esc(sv)}</button>`).join("")}</div>
       <input type="search" id="pf" placeholder="Lọc quyền… (vd bay, kick, worldedit)" value="${esc(filter)}">
-      <label class="switch"><input type="checkbox" id="onlyon" ${onlyOn ? "checked" : ""}><span class="track"></span><span class="txt">Chỉ quyền đang có</span></label></div>`;
+      <label class="switch"><input type="checkbox" id="onlyon" ${onlyOn ? "checked" : ""}><span class="track"></span><span class="txt">Chỉ quyền đang có</span></label>${infoBtn("Toàn mạng = quyền có hiệu lực ở mọi server (sảnh, Bang Hội Chiến, Practice).\nChọn một server (vd banghoi-1) = bật/tắt quyền CHỈ ở server đó; quyền toàn mạng vẫn có hiệu lực ở đó (hiện \"bật ở toàn mạng\").\nVí dụ cho Builder WorldEdit chỉ ở sảnh: chọn lobby rồi bật.\n\"Chỉ quyền đang có\": ẩn quyền chưa bật để xem nhanh role đang có gì.", "Toàn mạng / server")}</div>`;
   if (g.perms.some(p => p.node === "*" && p.value)) h += `<div class="warnbox">Role này có quyền <code>*</code> (tất cả quyền): mọi công tắc bên dưới đều đang có hiệu lực (hiện bật mờ).</div>`;
   h += `<p class="hint">Lệnh của EssentialsX (/fly, /kick, /ban, /tp, /gamemode…) chỉ có ở <b>Bang Hội Chiến</b> và <b>Practice</b>. Sảnh không cài Essentials nên gõ ở sảnh sẽ báo "Unknown command" dù có quyền.</p>`;
   h += `<div class="pcats" id="pcats"></div>`;
@@ -203,7 +206,7 @@ function renderDetail() {
   const p2w = isDonate ? others.filter(p => p.value) : [];
   if (p2w.length) h += `<div class="warnbox" style="background:rgba(217,48,37,.12);color:var(--err)">⚠️ Rank donate đang có quyền không phải trang trí: ${p2w.map(p => `<code>${esc(p.node)}</code>`).join(", ")}.
     Bán rank kèm lợi thế chơi (bay, đồ, tiền…) là <b>trái luật Mojang</b> (EULA), có thể bị chặn server. Bấm × bên dưới để gỡ.</div>`;
-  h += `<div class="others"><h3>Quyền khác của role này <span class="hint" style="font-weight:400">(không có trong danh mục, mọi server)</span></h3>${others.length ? `<div class="members" style="margin-top:0">${others.map(p => `<span class="mem">${p.value ? "" : '<span class="badge deny">CẤM</span>'}<code>${esc(p.node)}</code>${p.server !== "global" ? `<span class="exp">@${esc(p.server)}</span>` : ""}<button class="x" title="Gỡ quyền" data-unset="${esc(p.node)}" data-srv="${esc(p.server)}">×</button></span>`).join("")}</div>` : '<p class="hint" style="margin:0">Không có.</p>'}
+  h += `<div class="others"><h3>Quyền khác của role này <span class="hint" style="font-weight:400">(không có trong danh mục, mọi server)</span>${infoBtn("Quyền đã cấp cho role nhưng không nằm trong danh mục ở trên (thêm bằng lệnh lp hoặc ô bên dưới), ở mọi server.\nCẤM = quyền bị đặt false (chặn hẳn, kể cả khi role cha có).\nNút × gỡ quyền đó (trả về như chưa từng cấp, không phải cấm).\nÔ Thêm quyền: gõ đúng tên quyền của plugin, vd essentials.workbench; áp dụng ở toàn mạng/server đang chọn.", "Quyền khác")}</h3>${others.length ? `<div class="members" style="margin-top:0">${others.map(p => `<span class="mem">${p.value ? "" : '<span class="badge deny">CẤM</span>'}<code>${esc(p.node)}</code>${p.server !== "global" ? `<span class="exp">@${esc(p.server)}</span>` : ""}<button class="x" title="Gỡ quyền" data-unset="${esc(p.node)}" data-srv="${esc(p.server)}">×</button></span>`).join("")}</div>` : '<p class="hint" style="margin:0">Không có.</p>'}
     <div class="addp"><input id="newp" placeholder="Thêm quyền theo tên, vd essentials.workbench (áp dụng: ${server === "global" ? "toàn mạng" : esc(server)})"><button class="ghost" id="addp">Thêm quyền</button></div></div></section>`;
   d.innerHTML = h;
   bindTop(g);
@@ -245,14 +248,14 @@ function renderPerms(g, cats, own, inh) {
     const on = c.perms.filter(([node]) => { const o = own(node); return (o && o.value) || inh[node] || star ||
       (server !== "global" && g.perms.some(p => p.node === node && p.server === "global" && p.value)); }).length;
     h += `<div class="pcat"><h3><span>${esc(c.title)}</span><span class="badge">${on}/${c.perms.length}</span></h3>`;
-    for (const [node, label] of rows) {
+    for (const [node, label, info] of rows) {
       const o = own(node), from = inh[node];
       // đang xem 1 server: quyền bật "toàn mạng" cũng có hiệu lực ở đây
       const glob = server !== "global" && g.perms.find(p => p.node === node && p.server === "global" && p.value);
       // có sẵn (kế thừa từ role cha, qua *, hoặc bật toàn mạng): công tắc hiện BẬT nhưng khoá, khỏi tưởng role không có quyền
       const via = !o && (from || star || glob);
       h += `<label class="pr${via ? " via" : ""}" ${via ? `title="Đã có ${from ? "từ " + esc(name(from)) : star ? "qua quyền *" : "vì bật toàn mạng"}, không cần bật riêng"` : ""}><span class="switch"><input type="checkbox" data-node="${esc(node)}" ${(o && o.value) || via ? "checked" : ""} ${via ? "disabled" : ""}><span class="track"></span></span>
-        <span class="lb">${esc(label)}</span><span class="nd"><code>${esc(node)}</code>${o && !o.value ? '<span class="badge deny">đang CẤM</span>' : ""}${!o && from ? `<span class="badge inh">✓ có sẵn từ ${esc(name(from))}</span>` : ""}${!o && !from && star ? '<span class="badge inh">✓ có qua quyền *</span>' : ""}${g.perms.filter(p => p.node === node && p.server !== server).map(p =>
+        <span class="lb">${esc(label)}${infoBtn(info, label)}</span><span class="nd"><code>${esc(node)}</code>${o && !o.value ? '<span class="badge deny">đang CẤM</span>' : ""}${!o && from ? `<span class="badge inh">✓ có sẵn từ ${esc(name(from))}</span>` : ""}${!o && !from && star ? '<span class="badge inh">✓ có qua quyền *</span>' : ""}${g.perms.filter(p => p.node === node && p.server !== server).map(p =>
           `<button type="button" class="badge srv${p.value ? "" : " deny"}" data-gosv="${esc(p.server)}" title="Bấm để xem ở ${p.server === "global" ? "toàn mạng" : esc(p.server)}">${p.value ? "✓ bật" : "cấm"} ở ${p.server === "global" ? "toàn mạng" : esc(p.server)}</button>`).join("")}</span></label>`;
     }
     h += `</div>`;

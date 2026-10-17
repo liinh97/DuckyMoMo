@@ -221,6 +221,7 @@ function render() {
     box.innerHTML = `<div class="ghead">${query || category[mode.id] === "*" ? '<div class="gcat"></div>' : ""}<h2></h2>${g.description ? '<p class="desc"></p>' : ""}</div><div class="gbody"></div>`;
     if (box.querySelector(".gcat")) box.querySelector(".gcat").textContent = (CAT_ICON[g.category || "Khác"] || "") + " " + (g.category || "Khác");
     highlight(box.querySelector("h2"), g.title);
+    if (g.info) box.querySelector("h2").insertAdjacentHTML("beforeend", infoBtn(g.info, g.title));
     if (g.description) box.querySelector(".desc").textContent = g.description;
     for (const s of settings) box.querySelector(".gbody").appendChild(row(mode, s));
     main.appendChild(box);
@@ -260,6 +261,8 @@ function row(mode, s) {
   const label = document.createElement("label"); label.htmlFor = id;
   highlight(label, s.label);
   const pill = document.createElement("span"); pill.className = "pill"; pill.textContent = "đã sửa";
+  // giải thích dài (info: trong schema): nút i ngay sau tên (bấm không nhảy vào ô nhập, shell.js chặn)
+  if (s.info) label.insertAdjacentHTML("beforeend", infoBtn(s.info, s.label));
   label.appendChild(pill);
   lab.appendChild(label);
   if (s.note) { const n = document.createElement("div"); n.className = "note"; highlight(n, s.note); lab.appendChild(n); }

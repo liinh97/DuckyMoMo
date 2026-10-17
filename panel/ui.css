@@ -127,3 +127,10 @@ button.ghost:hover:not(:disabled) { background: var(--chip); }
 @keyframes askfade { from { opacity: 0; } }
 @keyframes askpop { from { transform: translateY(6px) scale(.98); opacity: 0; } }
 @media (prefers-reduced-motion: reduce) { .ask-wrap, .ask { animation: none; } }
+
+/* nút ⓘ giải thích (shell.js infoBtn) */
+.ib { display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; margin-left: 6px; padding: 0; vertical-align: middle;
+  border-radius: 50%; border: 1px solid var(--line); background: var(--chip); color: var(--muted); font: italic 700 11px/1 Georgia, serif; cursor: pointer; flex: none; }
+.ib:hover, .ib:focus-visible { color: var(--accent); border-color: var(--accent); outline: none; }
+.ib-pop { position: fixed; z-index: 1000; max-width: min(380px, calc(100vw - 16px)); padding: 10px 12px; border-radius: 10px; border: 1px solid var(--line);
+  background: var(--card); color: var(--text); font-size: 13.5px; line-height: 1.5; white-space: pre-line; box-shadow: 0 8px 24px rgba(0,0,0,.25); }

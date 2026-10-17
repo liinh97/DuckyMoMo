@@ -268,6 +268,13 @@
 - LỖI ĐÃ SỬA: khoá cài đặt mới `tp_delay/tp_cooldown/tp_invuln` trùng tiền tố `tp_` của TradePro (tp_cooldown trùng hẳn) → đổi thành
   `tele_delay/tele_cooldown/tele_invuln`. Thêm khoá mới: kiểm tra trùng trong settings.schema.yml và settings.yml trước khi commit.
 
+### 17/10: Thư viện đồ — ký tự đặc biệt, dòng mẫu, hướng dẫn lấy đồ
+- `panel/thuvien.html`: dưới bảng màu có bảng ký tự 10 nhóm (chiến đấu, sao, vương giả, thiên nhiên, tim/nhạc, mũi tên, dấu/khung,
+  đường kẻ, số/tiền, đồ vật) + "Dòng mẫu" (đường kẻ, độ hiếm, dòng chỉ số, tên kiểu…), bấm là chèn vào ô đang gõ; thêm &m gạch ngang, &k chữ nhảy.
+  Chỉ ký tự trong BMP (font Minecraft có), KHÔNG dùng emoji ngoài BMP (🔥🏹…) vì game hiện ô vuông. Bedrock có thể thiếu vài ký tự hiếm.
+- Khung "Lấy đồ trong game": lệnh điền sẵn mã đang xem + nút Chép: /dmm laydo <mã>, /dmm laydo <mã> <người> [số], /dmm luudo <mã>,
+  dòng quà `do <mã> [số]`.
+
 ### DANH SÁCH CẦN THỬ (người dùng chốt 15/10: làm xong hết rồi thử một lượt; mục 16–25)
 Triển khai một lần: `git stash && git pull && git stash pop` → `./ops/build-core.sh` (lỗi biên dịch thì gửi ảnh, Java viết ở cloud CHƯA biên
 dịch) → kiểm tra không ai online → `docker compose up -d --no-deps lobby banghoi-1 practice-1` → `docker compose up -d --build panel site`.

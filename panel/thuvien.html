@@ -55,6 +55,20 @@
   .warn { color: var(--warn); font-size: 13px; margin: 6px 0 0; }
   .palette { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 5px; }
   .palette button { width: 24px; height: 22px; padding: 0; border-radius: 4px; font-size: 11px; font-weight: 700; }
+  /* bảng ký tự đặc biệt + dòng mẫu */
+  .symbar { margin-top: 8px; border: 1px solid var(--line); border-radius: 8px; padding: 8px; background: var(--card-2); }
+  .symtabs { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 6px; }
+  .symtabs button { font-size: 12.5px; padding: 3px 9px; border-radius: 999px; }
+  .symtabs button.on { background: var(--accent); color: var(--accent-text); border-color: var(--accent); }
+  .syms { display: flex; flex-wrap: wrap; gap: 3px; max-height: 132px; overflow-y: auto; }
+  .syms button { min-width: 30px; height: 30px; padding: 0 4px; font-size: 17px; line-height: 1; border-radius: 6px; }
+  .syms button.pre { font-size: 13px; height: auto; min-height: 30px; padding: 4px 8px; text-align: left; font-family: ui-monospace, Consolas, monospace; }
+  .howto { display: grid; gap: 6px; }
+  .howto .hrow { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; align-items: center; padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--card-2); }
+  .howto .hrow b { display: block; font-size: 13.5px; }
+  .howto .hrow code { font-size: 13px; overflow-wrap: anywhere; }
+  .howto .hrow small { display: block; color: var(--muted); font-size: 12.5px; margin-top: 2px; }
+  .symnote { font-size: 12px; color: var(--muted); margin-top: 6px; }
   .ench { display: grid; grid-template-columns: 1fr 80px 30px; gap: 4px 6px; margin-top: 8px; align-items: center; }
   .ench .d { grid-column: 1 / -1; font-size: 12.5px; color: var(--muted); }
   .ench .d b { color: var(--text); font-weight: 600; }
@@ -111,6 +125,8 @@
       <label class="f" for="name">Tên hiển thị <span class="hint">mã màu &amp;: &amp;6 vàng, &amp;l đậm, &amp;o nghiêng… hoặc bấm ô màu</span></label>
       <input id="name" placeholder="&6&lKiếm Rồng" maxlength="150">
       <div class="palette" id="palette"></div>
+      <div class="symbar"><div class="symtabs" id="symtabs"></div><div class="syms" id="syms"></div>
+        <div class="symnote">Bấm để chèn vào ô đang gõ (tên hoặc mô tả). Xem trước ở khung bên phải. Người chơi Bedrock có thể thấy vài ký tự hiếm thành ô vuông.</div></div>
       <label class="f" for="lore">Mô tả (lore) <span class="hint">mỗi dòng ở đây là một dòng trong game</span></label>
       <textarea id="lore" placeholder="&7Rèn từ vảy rồng phương Bắc&#10;&8Quà mốc điểm danh 30 ngày"></textarea>
     </div>
@@ -155,6 +171,12 @@
         <button id="give" class="ghost">Đưa</button>
       </div>
       <p class="note">Số lượng 0 = theo số lượng ghi trong thư viện. Phải lưu đồ trước khi đưa.</p>
+    </div>
+
+    <div class="sec">
+      <h3>Lấy đồ trong game</h3>
+      <div class="howto" id="howto"></div>
+      <p class="note">Lệnh <code>/dmm</code> cần quyền <code>duckymomo.admin</code> (Admin). Đồ lưu bằng web hay bằng <code>/dmm luudo</code> đều dùng chung mã.</p>
     </div>
     <datalist id="online"></datalist>
     <div class="status" id="status"></div>
@@ -369,7 +391,7 @@ function setEditable(on) {
 }
 function load(it) {
   cur = it; isNew = !it;
-  $("id").value = it ? it.id : ""; $("id").disabled = !!it;
+  $("id").value = it ? it.id : ""; $("id").disabled = !!it; if (typeof renderHowto === "function") renderHowto();
   $("tengoi").value = it ? it.ten_goi : ""; $("material").value = it ? it.material : "DIAMOND_SWORD";
   $("amount").value = it ? it.amount : 1; $("name").value = it ? it.name : ""; $("lore").value = it ? (it.lore || []).join("\n") : "";
   $("unbreakable").checked = !!(it && it.unbreakable); $("hide").checked = !!(it && it.hide_enchants);
@@ -412,14 +434,88 @@ async function post(body) {
 for (const [k, c] of Object.entries(COLORS)) {
   const b = document.createElement("button"); b.style.background = c; b.title = "&" + k; $("palette").appendChild(b);
 }
-for (const [k, t, s] of [["l", "B", "font-weight:900"], ["o", "I", "font-style:italic"], ["n", "U", "text-decoration:underline"], ["r", "↺", ""]]) {
+for (const [k, t, s] of [["l", "B", "font-weight:900"], ["o", "I", "font-style:italic"], ["n", "U", "text-decoration:underline"], ["m", "S", "text-decoration:line-through"], ["k", "?", ""], ["r", "↺", ""]]) {
   const b = document.createElement("button"); b.textContent = t; b.title = "&" + k; b.style.cssText = s; $("palette").appendChild(b);
 }
-$("palette").querySelectorAll("button").forEach(b => b.onclick = (e) => {
-  e.preventDefault();
-  const el = $(lastField), code = b.title, p = el.selectionStart ?? el.value.length;
+// chèn chữ vào ô đang gõ, tại con trỏ
+function insertText(code, line) {
+  const el = $(lastField);
+  let p = el.selectionStart ?? el.value.length;
+  // dòng mẫu vào mô tả: tách thành dòng riêng
+  if (line && lastField === "lore") {
+    const before = el.value.slice(0, p);
+    if (before && !before.endsWith("\n")) code = "\n" + code;
+  } else if (line) code = code.split("\n")[0];
   el.value = el.value.slice(0, p) + code + el.value.slice(el.selectionEnd ?? p); el.focus(); el.selectionStart = el.selectionEnd = p + code.length; render();
+}
+$("palette").querySelectorAll("button").forEach(b => {
+  const titles = { l: "Đậm (&l)", o: "Nghiêng (&o)", n: "Gạch chân (&n)", m: "Gạch ngang (&m)", k: "Chữ nhảy loạn (&k)", r: "Về mặc định (&r)" };
+  if (titles[b.title.slice(1)] && b.textContent) b.setAttribute("aria-label", titles[b.title.slice(1)]);
+  b.onclick = (e) => { e.preventDefault(); insertText(b.title); };
 });
+// ký tự đặc biệt (font Minecraft có sẵn) và dòng mẫu
+const SYMS = {
+  "⚔ Chiến đấu": "⚔ ⚒ ⛏ ⚓ ☠ ☢ ☣ ⚡ ✠ ⛨ ♆ ⚜ ⚚ ⚕ ⚖ ⛓ ⚗ ⚙ ☄ ✇",
+  "★ Sao, lấp lánh": "★ ☆ ✦ ✧ ✩ ✪ ✫ ✬ ✭ ✮ ✯ ✰ ✱ ✲ ✳ ✴ ✵ ✶ ✷ ✸ ✹ ✺ ❂ ❃ ❉ ❈ ❇ ❊ ❋ ⁂ ✨ ✺",
+  "♛ Vương giả": "♔ ♕ ♖ ♗ ♘ ♙ ♚ ♛ ♜ ♝ ♞ ♟ ⚜ ✠ ☩ ✝ ☥ ☯ ☮ ✡ ☸ ⚚ ♰ ♱",
+  "❀ Thiên nhiên": "☀ ☼ ☁ ☂ ☔ ☃ ⛄ ❄ ❅ ❆ ☽ ☾ ✿ ❀ ❁ ✾ ❦ ❧ ☘ ♣ ⚘ ♨ ⛈ ☄ ⛰",
+  "❤ Trái tim, nhạc": "❤ ♥ ♡ ❥ ❣ ღ ☺ ☻ ✌ ☝ ✍ ♪ ♫ ♬ ♩ ♭ ♯",
+  "➤ Mũi tên": "➤ ➜ ➔ ➽ ➵ ➳ ➸ ➻ ➼ ➺ ⇒ ⇨ ⇾ → ← ↑ ↓ ↔ ↕ ↗ ↘ ↻ ↺ » « › ‹ ⟫ ⟪ ⮞ ⮜",
+  "◆ Dấu, khung": "✔ ✓ ✘ ✖ ✚ ✜ ✛ ✙ • ◆ ◇ ❖ ■ □ ▪ ▫ ● ○ ◉ ◎ ▲ △ ▼ ▽ ► ◄ ♦ ♢ 『 』 【 】 「 」 〔 〕 ❰ ❱ ❮ ❯ ⟦ ⟧ ❴ ❵",
+  "━ Đường kẻ": "━ ─ ═ ┃ │ ║ ▬ ▭ ┈ ┄ ╍ ⋯ … · ∙ ° ˚ ʚ ɞ ⊱ ⊰ ꒰ ꒱ ┏ ┓ ┗ ┛ ╔ ╗ ╚ ╝ ╭ ╮ ╰ ╯",
+  "① Số, tiền": "① ② ③ ④ ⑤ ⑥ ⑦ ⑧ ⑨ ⑩ Ⅰ Ⅱ Ⅲ Ⅳ Ⅴ Ⅵ Ⅶ Ⅷ Ⅸ Ⅹ ₫ $ € ¥ £ ¢ ％ ∞ ±",
+  "✉ Đồ vật": "✉ ☎ ⌛ ⏳ ⌚ ✂ ✏ ✒ ⚐ ⚑ ⚱ ⚰ ☕ ⌘ ☤ ⚛ ⚝ ⛩ ⛺ ⛵ ✈ ⚽ ⚾ ☗ ☖",
+};
+const PRESETS = [
+  ["&8&m━━━━━━━━━━━━━━━━━━", "Đường kẻ ngang"],
+  ["&6&l✦ &e&lHUYỀN THOẠI &6&l✦", "Độ hiếm Huyền thoại"],
+  ["&d&l❖ SỬ THI ❖", "Độ hiếm Sử thi"],
+  ["&9&l◆ HIẾM ◆", "Độ hiếm Hiếm"],
+  ["&7◇ Thường", "Độ hiếm Thường"],
+  ["&c⚔ Sát thương: &f+10", "Dòng chỉ số sát thương"],
+  ["&a❤ Máu: &f+4", "Dòng chỉ số máu"],
+  ["&b⛨ Giáp: &f+3", "Dòng chỉ số giáp"],
+  ["&e⚡ Tốc độ: &f+10%", "Dòng chỉ số tốc độ"],
+  ["&6★★★★★", "5 sao"],
+  ["&7» &fChuột phải để dùng", "Hướng dẫn dùng"],
+  ["&8➤ &7Quà sự kiện mùa 1", "Nguồn gốc món đồ"],
+  ["&8✎ &7&oRèn từ vảy rồng phương Bắc", "Câu chuyện in nghiêng"],
+  ["&6&l⚔ &e&lKiếm Rồng &6&l⚔", "Tên kiểu kiếm (dùng cho ô tên)"],
+  ["&b❄ &f&lBăng Giá &b❄", "Tên kiểu băng"],
+  ["&c✹ &6&lHoả Long &c✹", "Tên kiểu lửa"],
+];
+let symTab = localStorage.getItem("dmm-symtab") || Object.keys(SYMS)[0];
+function renderSyms() {
+  const tabs = [...Object.keys(SYMS), "✎ Dòng mẫu"];
+  if (!tabs.includes(symTab)) symTab = tabs[0];
+  $("symtabs").innerHTML = tabs.map(t => `<button type="button" class="${t === symTab ? "on" : ""}" data-t="${esc(t)}">${esc(t)}</button>`).join("");
+  $("symtabs").querySelectorAll("button").forEach(b => b.onclick = () => { symTab = b.dataset.t; try { localStorage.setItem("dmm-symtab", symTab); } catch (e) {} renderSyms();
+// hướng dẫn lấy đồ: lệnh điền sẵn mã đang xem
+function renderHowto() {
+  const id = ($("id").value || "").trim() || "<mã>";
+  const rows = [
+    ["Lấy cho chính mình", `/dmm laydo ${id}`, "Gõ trong game ở Bang Hội Chiến. Muốn nhiều cái: /dmm laydo " + id + " <tên bạn> <số>."],
+    ["Đưa cho người khác", `/dmm laydo ${id} <người> [số]`, "Người nhận phải đang online ở server bạn gõ lệnh. Túi đầy thì đồ rơi xuống đất. Hoặc dùng ô Đưa ở trên."],
+    ["Lưu đồ đang cầm vào thư viện", `/dmm luudo ${id} [tên gợi nhớ]`, "Cầm đồ trên tay rồi gõ. Giữ nguyên vẹn mọi thứ (kể cả phù phép CrazyEnchantments). Trùng mã thì ghi đè."],
+    ["Làm phần thưởng", `do ${id} 1`, "Ghi dòng này vào ô quà ở trang Cài đặt (Điểm danh, Nhiệm vụ, Vòng quay, Đổi mảnh…): do <mã> [số]."],
+  ];
+  $("howto").innerHTML = rows.map(([t, c, d]) => `<div class="hrow"><div><b>${esc(t)}</b><code>${esc(c)}</code><small>${esc(d)}</small></div>
+    <button type="button" class="ghost small" data-copy="${esc(c)}">Chép</button></div>`).join("");
+  $("howto").querySelectorAll("[data-copy]").forEach(b => b.onclick = async () => {
+    try { await navigator.clipboard.writeText(b.dataset.copy); toast("Đã chép: " + b.dataset.copy, "ok"); } catch (e) { toast("Không chép được, bôi đen để chép tay.", "err"); }
+  });
+}
+$("id").addEventListener("input", renderHowto);
+renderHowto(); });
+  if (symTab === "✎ Dòng mẫu") {
+    $("syms").innerHTML = PRESETS.map(([t, d], i) => `<button type="button" class="pre" data-p="${i}" title="${esc(d)}">${mcHtml(t)}</button>`).join("");
+    $("syms").querySelectorAll("[data-p]").forEach(b => b.onclick = (e) => { e.preventDefault(); insertText(PRESETS[b.dataset.p][0], true); });
+  } else {
+    $("syms").innerHTML = SYMS[symTab].split(" ").filter(Boolean).map(c => `<button type="button" data-c="${esc(c)}" title="${esc(c)}">${esc(c)}</button>`).join("");
+    $("syms").querySelectorAll("[data-c]").forEach(b => b.onclick = (e) => { e.preventDefault(); insertText(b.dataset.c); });
+  }
+}
+renderSyms();
 $("name").onfocus = () => lastField = "name"; $("lore").onfocus = () => lastField = "lore";
 for (const id of ["material", "amount", "name", "lore", "unbreakable", "hide", "glint", "tengoi"]) $(id).addEventListener("input", render);
 $("material").addEventListener("input", () => enchRows.forEach(enchDesc));

@@ -313,6 +313,15 @@
   tối đa 3 pet SimplePets cùng lúc (`pet-spawn-limit: 3`).
 - CHƯA thử trong game: bắt pet, pet đánh người, giảm sát thương, tin báo phiên.
 
+### 17/10: số pet giữ được theo rank; thanh máu quái
+- MyPet `getMaxPetCount` = quyền `MyPet.petstorage.limit.N` LỚN NHẤT người chơi có (N = số pet CẤT trong kho, không tính con đang dẫn;
+  không có quyền = 0). Cài đặt > Bang Hội Chiến > PvP & combat > Pet chiến đấu: "Số pet giữ được" cho Dân + 5 rank (tổng số pet);
+  lưu = gỡ limit.1..19 rồi set limit.{minus1} cho nhóm, server=banghoi-1 (panel thêm biến {minus1} cho lệnh cài đặt).
+  Giá trị tạm 17/10: Dân 2, Nam/Tử 3, Bá/Hầu 4, Công 5. Mỗi lúc chỉ 1 pet ra ngoài (MyPet 3 không cho nhiều).
+- Thanh máu: PacketEvents 2.14.0 + HoloMobHealth 2026.1.3 + HoloMobHealth-PacketEvents 1.1.1 (banghoi). Chỉ hiện khi bị đánh (5 giây),
+  tầm 20, chữ "tên máu/tối đa ❤ (%)"; số sát thương bay lên. Cài đặt > Hiển thị > Thanh máu. Boss EliteMobs: thanh máu riêng của EliteMobs
+  (displayVisualHealthBars, displayBossBarForHighMultiplier đang bật). CHƯA xem trong game (có thể chồng chữ với tên boss EliteMobs).
+
 ### DANH SÁCH CẦN THỬ (người dùng chốt 15/10: làm xong hết rồi thử một lượt; mục 16–25)
 Triển khai một lần: `git stash && git pull && git stash pop` → `./ops/build-core.sh` (lỗi biên dịch thì gửi ảnh, Java viết ở cloud CHƯA biên
 dịch) → kiểm tra không ai online → `docker compose up -d --no-deps lobby banghoi-1 practice-1` → `docker compose up -d --build panel site`.

@@ -441,13 +441,14 @@ def save_and_apply(mode_id, incoming, apply_all=False):
         yaml_rt().dump(values, f)
 
     # 3) Áp dụng qua RCON: lệnh riêng của từng mục, rồi lệnh nạp lại của từng nhóm (mỗi lệnh 1 lần)
-    # Lệnh dùng được {value}, {double} (giá trị x2) và {tên_mục_khác} (giá trị hiện tại của mục đó)
+    # Lệnh dùng được {value}, {double} (giá trị x2), {minus1} (giá trị - 1, tối thiểu 0) và {tên_mục_khác} (giá trị hiện tại của mục đó)
     # Lệnh nhóm (apply) chạy trên mọi server có mục đổi trong nhóm đó.
     current = {k: plain(v) for k, v in values.items()}
     per_server = {}
     for group, s, v in changed:
         for c in s.get("commands", []):
-            cmd = c.format(**current, value=v, double=int(v) * 2 if s["type"] in ("int", "number") else v)
+            num = s["type"] in ("int", "number")
+            cmd = c.format(**current, value=v, double=int(v) * 2 if num else v, minus1=max(0, int(v) - 1) if num else v)
             for srv in servers_of(s):
                 lst = per_server.setdefault(srv, [])
                 if cmd not in lst:

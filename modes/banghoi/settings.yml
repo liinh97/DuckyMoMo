@@ -1011,3 +1011,14 @@ petc_seed: mua1
 petc_announce:
 - 60
 - 10
+petc_slots_default: 2
+petc_slots_namtuoc: 3
+petc_slots_tutuoc: 3
+petc_slots_batuoc: 4
+petc_slots_hautuoc: 4
+petc_slots_congtuoc: 5
+hmh_dynamic: true
+hmh_timeout: 5
+hmh_range: 20
+hmh_text: "&f{Mob_Type_Or_Name} {DynamicColor}{Health_0}&7/{MaxHealth_0} ❤ &8({PercentageHealth_0}%)"
+hmh_damage: true

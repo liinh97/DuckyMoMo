@@ -490,6 +490,19 @@ plugins:
       - ["/mypetadmin remove <người>", "Xoá pet đang dùng của người chơi"]
     settings: "data/banghoi-1/plugins/MyPet/config.yml (KHÔNG có lệnh nạp lại: phải khởi động lại banghoi-1); pet-config.yml (máu, tốc độ, cách bắt từng loài); skilltrees/"
     notes: "Pet đánh được người chơi nhưng bị giảm % sát thương (Cài đặt > PvP & combat > Pet chiến đấu, mặc định 50%). Mỗi phiên công thành bốc thăm cho/không cho pet tham chiến (mặc định 30% phiên cho), báo trước 60 và 10 phút, xem bằng /lichcongthanh. Sức mạnh theo cấp, không theo loài (mọi loài 20 máu; mỗi 5 cấp sau cấp 10 +0,5 sát thương, +2 máu, sửa ở skilltrees/). Tên pet chiến đấu có ⚔ đỏ; pet trang trí SimplePets có ✿. Tiếng Việt (OverwriteLanguages: vi). Quyền bắt: tools/mypet.cmds (không cho bắt Warden, Wither, Rồng Ender, Elder Guardian, Ravager, Golem sắt, Ghast)."
+  - name: HoloMobHealth (thanh máu quái)
+    jar: HoloMobHealth
+    kind: Bang Hội Chiến
+    purpose: "Hiện tên, máu, % máu trên đầu quái/thú khi bị đánh (giữ 5 giây) và số sát thương bay lên. Chỉ gửi cho người chơi, không thêm thực thể. Cần PacketEvents + HoloMobHealth-PacketEvents. Boss EliteMobs dùng thanh máu riêng của EliteMobs."
+    player:
+      - ["/hmh toggle", "Bật/tắt thanh máu cho riêng mình"]
+    admin:
+      - ["/hmh reload", "Nạp lại cấu hình"]
+    settings: "Trang Cài đặt > Bang Hội Chiến > Hiển thị > Thanh máu quái và thú"
+  - name: PacketEvents
+    jar: packetevents
+    kind: Hệ thống
+    purpose: "Thư viện gói tin cho HoloMobHealth (không có lệnh cho người chơi). GrimAC có bản PacketEvents riêng bên trong, hai cái chạy song song được."
   - name: SimplePets
     jar: SimplePets
     kind: Rank donate

@@ -480,6 +480,9 @@ groups:
       - { key: mypet_exp, label: Tốc độ lên cấp (nhân kinh nghiệm), type: number, min: 0.1, max: 10, file: plugins/MyPet/config.yml, path: MyPet.Exp.Modifier.Global,
           info: "Là gì: kinh nghiệm pet nhận được nhân với số này. 1 = mặc định, 2 = lên cấp nhanh gấp đôi." }
       - { key: mypet_levelcap, label: Cấp tối đa của pet, type: int, min: 10, max: 1000, file: plugins/MyPet/config.yml, path: MyPet.Exp.LevelCap }
+      - { key: mypet_exp_nofarm, label: Quái không cho pet kinh nghiệm (cách sinh ra), type: list, file: plugins/MyPet/config.yml, path: MyPet.Exp.Gain.PreventFromSpawnReason,
+          note: "Cách nhau dấu phẩy. Mặc định: SPAWNER, TRIAL_SPAWNER, SPAWNER_EGG, DISPENSE_EGG",
+          info: "Là gì: quái sinh ra theo những cách này bị pet giết thì pet KHÔNG nhận kinh nghiệm (chống cày cấp pet ở máy farm).\nSPAWNER = lồng quái (máy farm), TRIAL_SPAWNER = lồng thử thách, SPAWNER_EGG / DISPENSE_EGG = trứng sinh quái (tay hoặc máy phân phát).\nCó thể thêm: VILLAGE_DEFENSE (golem sắt ở máy farm sắt), RAID (máy farm cướp làng), NETHER_PORTAL (máy farm vàng piglin).\nĐể trống = quái nào cũng cho kinh nghiệm.\nLưu ý: MyPet chỉ đánh dấu quái lúc sinh ra; quái có trước lần khởi động lại gần nhất thì không biết nguồn, vẫn cho kinh nghiệm." }
       - { key: mypet_exp_loss, label: Mất kinh nghiệm khi pet chết (%), type: int, min: 0, max: 100, file: plugins/MyPet/config.yml, path: MyPet.Exp.Loss.Percent,
           info: "Là gì: pet chết mất bao nhiêu % kinh nghiệm của cấp hiện tại (không tụt cấp)." }
       - { key: mypet_respawn_factor, label: Thời gian hồi sinh - giây theo cấp, type: int, min: 0, max: 600, file: plugins/MyPet/config.yml, path: MyPet.Respawn.Time.Default.Factor,

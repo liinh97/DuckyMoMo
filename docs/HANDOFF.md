@@ -298,7 +298,8 @@
   Đã thử câu SQL bằng driver đó trong container. Web: site/app.py pet_capture(), pet_top(), mypet_level(); trang chủ mục Pet có
   bảng xác suất + top 10; trang tài khoản hiện hạng từng pet (taikhoan.combat_pets "hang").
 - Cài đặt: nhóm "Bắt pet theo xác suất (MyPet)" (petcap_*), arena_pet_exp.
-- CHƯA quyết: chặn kinh nghiệm pet từ quái lồng (MyPet.Exp.Gain.PreventFromSpawnReason đang []).
+- Chặn kinh nghiệm pet từ quái lồng (người dùng chốt): MyPet.Exp.Gain.PreventFromSpawnReason = SPAWNER, TRIAL_SPAWNER,
+  SPAWNER_EGG, DISPENSE_EGG (data, ô mypet_exp_nofarm). MyPet đánh dấu bằng metadata lúc sinh: quái có trước lần khởi động lại vẫn cho.
 
 ### 17/10 tối: pet lớn theo bản tính loài (hệ × nhóm loài)
 - Người dùng chốt: lúc bắt mọi loài như nhau, lớn lên phải theo bản tính loài (tank trâu đánh yếu, loài bay mới cưỡi bay...).

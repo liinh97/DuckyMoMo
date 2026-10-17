@@ -75,6 +75,11 @@ REWARD_RES = [re.compile(r"^xu \d{1,9}(\.\d{1,2})?$"), re.compile(r"^do [a-z0-9_
               re.compile(r"^vat [A-Za-z0-9_]{1,64}( \d{1,4})?$"), re.compile(r"^lenh \S.{0,199}$"),
               re.compile(r"^manh [a-z0-9_]{1,32} \d{1,4}$"), re.compile(r"^petexp \d{1,6}$")]
 FISH_COST_RE = re.compile(r"^ca:(common|rare|epic|legendary)$")   # giá đổi bằng cá câu (EvenMoreFish) theo độ hiếm
+DISH_FOODS = {"BREAD", "COOKED_COD", "COOKED_SALMON", "BEETROOT_SOUP", "RABBIT_STEW", "MUSHROOM_STEW", "SUSPICIOUS_STEW", "BAKED_POTATO",
+              "PUMPKIN_PIE", "COOKIE", "GOLDEN_CARROT", "COOKED_BEEF", "COOKED_PORKCHOP", "COOKED_CHICKEN", "COOKED_MUTTON", "COOKED_RABBIT",
+              "DRIED_KELP", "HONEY_BOTTLE", "APPLE", "SWEET_BERRIES", "GLOW_BERRIES"}   # khớp DISH_FOODS trong index.html
+DISH_EFFECTS = {"REGENERATION", "RESISTANCE", "ABSORPTION", "STRENGTH", "SPEED", "FIRE_RESISTANCE", "NIGHT_VISION", "WATER_BREATHING",
+                "JUMP_BOOST", "HASTE", "SATURATION", "HEALTH_BOOST"}
 
 
 def check_rewards(label, v):
@@ -250,6 +255,41 @@ def validate(s, v):
             except (TypeError, ValueError):
                 raise ValueError(f"{label}: giới hạn phải là số")
             out.append({"label": str(o.get("label", "")).strip()[:40] or rw[0], "cost": cost, "limit": max(0, limit), "rewards": rw})
+        return out
+    if t == "dishes":
+        # món ăn ra trận: {mã: {name, material (ăn được), lore[], need {VẬT_LIỆU|ca:<độ hiếm>: số}, effects ["TÊN cấp giây"]}}
+        out = {}
+        for did, d in (v or {}).items():
+            did = str(did).strip().lower()
+            d = d or {}
+            if not LIB_ID_RE.match(did):
+                raise ValueError(f"{label}: mã món sai ({did})")
+            name = str(d.get("name", "")).strip()[:60] or did
+            mat = str(d.get("material", "")).strip().upper()
+            if mat not in DISH_FOODS:
+                raise ValueError(f"{label} ({name}): vật phẩm hiển thị phải là đồ ăn được")
+            need = {}
+            for k, n in (d.get("need") or {}).items():
+                k = str(k).strip()
+                k = k.lower() if FISH_COST_RE.match(k.lower()) else k.upper()
+                try:
+                    n = int(n)
+                except (TypeError, ValueError):
+                    raise ValueError(f"{label} ({name}): số lượng nguyên liệu phải là số")
+                if not (FISH_COST_RE.match(k) or MATERIAL_RE.match(k)) or not 1 <= n <= 640:
+                    raise ValueError(f"{label} ({name}): nguyên liệu sai ({k} {n})")
+                need[k] = n
+            effects = []
+            for e in (d.get("effects") or []):
+                m = re.match(r"^([A-Z_]+) ([0-3]) (\d{1,4})$", " ".join(str(e).upper().split()))
+                if not m or m.group(1) not in DISH_EFFECTS or not 1 <= int(m.group(3)) <= 3600:
+                    raise ValueError(f"{label} ({name}): hiệu ứng sai \"{e}\"")
+                effects.append(f"{m.group(1)} {m.group(2)} {int(m.group(3))}")
+            if not need or not effects:
+                raise ValueError(f"{label} ({name}): mỗi món cần ít nhất 1 nguyên liệu và 1 hiệu ứng")
+            out[did] = {"name": name, "material": mat, "lore": [str(x)[:80] for x in (d.get("lore") or [])][:3], "need": need, "effects": effects}
+        if len(out) > 7:
+            raise ValueError(f"{label}: tối đa 7 món (bếp chỉ có 7 ô)")
         return out
     if t == "spin":
         out = []

@@ -38,6 +38,7 @@ import org.bukkit.potion.PotionEffectType;
  *  - points.<VẬT_LIỆU>: điểm mỗi cái; fish.<độ hiếm>: điểm mỗi con cá câu; dish-points: điểm mỗi món ăn.
  *  - max-per-town: kho tối đa; cost-per-player-minute: mỗi người đang đánh ăn bao nhiêu điểm/phút.
  * Sự kiện mùa (events.<id>.supply-multiplier, vd Hạn hán) nhân điểm NÔNG SẢN khi nộp (lương khan thì quý).
+ * spoil-percent-per-day: kho hao hụt % mỗi ngày (lương để lâu hư), tính dần mỗi 10 phút theo thời gian thật; 0 = không hao.
  * Lưu: kholuong.yml (theo UUID thị trấn); ghi kholuong.json cho web.
  */
 final class SiegeSupply {
@@ -50,6 +51,7 @@ final class SiegeSupply {
     private final double dishPoints;
     private final double max;
     private final double costPerMinute;
+    private final double spoil;
     private final File file;
     private final YamlConfiguration data;
     private final Map<UUID, Boolean> fedState = new HashMap<>();
@@ -75,6 +77,7 @@ final class SiegeSupply {
         this.dishPoints = c.getDouble("dish-points", 15);
         this.max = Math.max(1, c.getDouble("max-per-town", 5000));
         this.costPerMinute = Math.max(0, c.getDouble("cost-per-player-minute", 2));
+        this.spoil = Math.max(0, Math.min(100, c.getDouble("spoil-percent-per-day", 0)));
         this.file = new File(plugin.getDataFolder(), "kholuong.yml");
         this.data = YamlConfiguration.loadConfiguration(file);
     }
@@ -86,6 +89,7 @@ final class SiegeSupply {
     void start() {
         Bukkit.getScheduler().runTaskTimer(plugin, this::feedTick, 300L, 300L);   // 15 giây
         Bukkit.getScheduler().runTaskTimer(plugin, this::flush, 1200L, 1200L);
+        Bukkit.getScheduler().runTaskTimer(plugin, this::spoilTick, 600L, 12000L);   // 10 phút
         writeJson();
     }
 
@@ -126,6 +130,24 @@ final class SiegeSupply {
         double v = points.getOrDefault(it.getType(), 0.0);
         ConfigurationSection ev = Seasons.eventNow();
         return v * (ev == null ? 1.0 : ev.getDouble("supply-multiplier", 1.0));
+    }
+
+    /** Hao hụt theo thời gian thật kể từ lần tính trước (lưu hao-hut-luc, qua khởi động lại vẫn đúng). */
+    private void spoilTick() {
+        long now = System.currentTimeMillis();
+        long last = data.getLong("hao-hut-luc", now);
+        data.set("hao-hut-luc", now);
+        dirty = true;
+        if (spoil <= 0 || now <= last) {
+            return;
+        }
+        double factor = Math.pow(1 - spoil / 100.0, (now - last) / 86_400_000.0);
+        ConfigurationSection kho = data.getConfigurationSection("kho");
+        if (kho != null) {
+            for (String id : kho.getKeys(false)) {
+                kho.set(id + ".diem", kho.getDouble(id + ".diem", 0) * factor);
+            }
+        }
     }
 
     private void feedTick() {
@@ -231,6 +253,9 @@ final class SiegeSupply {
         double perHour = costPerMinute * 60;
         p.sendMessage(c("&7Mỗi người đánh trong vùng vây ăn &f" + fmt(costPerMinute) + " điểm/phút &7(≈ " + (long) perHour
                 + "/giờ). Kho này nuôi được khoảng &f" + (costPerMinute > 0 ? (long) (v / costPerMinute) : 0) + " phút-người&7."));
+        if (spoil > 0) {
+            p.sendMessage(c("&7Lương để lâu hư: kho hao &f" + fmt(spoil) + "%/ngày&7, nên nộp gần ngày công thành."));
+        }
         p.sendMessage(c("&7Nộp: cầm trên tay &f/kholuong nop &7· cả túi &f/kholuong noptat &7· các kho &f/kholuong top"));
         p.sendMessage(c("&7Giá trị: cá câu và món ăn (/nauan) đáng nhiều điểm nhất; bánh mì, khoai nướng, thịt chín hơn đồ sống."));
         return true;

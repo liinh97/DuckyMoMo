@@ -1030,6 +1030,7 @@ rs_refresh: 10
 kl_on: true
 kl_max: 5000
 kl_cost: 2
+kl_spoil: 0
 kl_dish: 15
 kl_fish_common: 2
 kl_fish_rare: 5
@@ -1037,6 +1038,12 @@ kl_fish_epic: 12
 kl_fish_legendary: 40
 mon_on: true
 mon_cd: 20
+mon_list:
+  com_nam: {effects: [ABSORPTION 0 120], lore: ['Gọn nhẹ, mang theo ra trận'], material: BREAD, name: '&fCơm nắm', need: {WHEAT: 6}}
+  canh_chua: {effects: [REGENERATION 0 45], lore: ['Chua chua, ăn là khoẻ'], material: BEETROOT_SOUP, name: '&6Canh chua cá', need: {BEETROOT: 2, WHEAT: 2, 'ca:common': 2}}
+  ca_kho: {effects: [RESISTANCE 0 90], lore: ['Đậm đà, chắc bụng'], material: COOKED_COD, name: '&6Cá kho tộ', need: {SUGAR_CANE: 2, WHEAT: 3, 'ca:rare': 1}}
+  lau_ca: {effects: [REGENERATION 0 60, RESISTANCE 0 60], lore: [Cả đội ăn chung trước giờ đánh], material: RABBIT_STEW, name: '&cLẩu cá', need: {BROWN_MUSHROOM: 1, CARROT: 3, POTATO: 3, 'ca:epic': 1}}
+  goi_ca: {effects: [REGENERATION 1 30, RESISTANCE 0 120, ABSORPTION 1 120], lore: [Món của tướng], material: COOKED_SALMON, name: '&6&lGỏi cá huyền thoại', need: {BEETROOT: 3, CARROT: 3, 'ca:legendary': 1}}
 petcap_charm: 25
 petc_reduce: 50
 petc_chance: 30

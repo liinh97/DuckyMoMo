@@ -119,7 +119,7 @@ final class Dishes implements Listener {
             Map.entry("REGENERATION", "Hồi máu"), Map.entry("RESISTANCE", "Kháng sát thương"), Map.entry("ABSORPTION", "Máu ảo"),
             Map.entry("STRENGTH", "Sức mạnh"), Map.entry("SPEED", "Nhanh nhẹn"), Map.entry("FIRE_RESISTANCE", "Kháng lửa"),
             Map.entry("NIGHT_VISION", "Nhìn đêm"), Map.entry("SATURATION", "No bụng"), Map.entry("HASTE", "Đào nhanh"),
-            Map.entry("WATER_BREATHING", "Thở dưới nước"), Map.entry("JUMP_BOOST", "Nhảy cao"));
+            Map.entry("WATER_BREATHING", "Thở dưới nước"), Map.entry("JUMP_BOOST", "Nhảy cao"), Map.entry("HEALTH_BOOST", "Thêm máu tối đa"));
 
     private static String effectText(String spec) {
         String[] a = spec.trim().split("\\s+");

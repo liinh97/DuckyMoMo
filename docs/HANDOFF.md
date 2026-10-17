@@ -301,6 +301,9 @@
   capture-bonus của sự kiện mùa cộng vào bonusNow.
 - Cài đặt: nhóm Kho lương, Món ăn ra trận (PvP & combat), Sự kiện mùa, Đặc sản vùng (Thế giới), ô Bùa bắt pet. Web: thẻ Kho lương,
   Món ăn ra trận (mục Công thành), banner sự kiện + Đặc sản vùng (mục Mùa); site/app.py season_event(), core_json().
+- 18/10: siege-supply.spoil-percent-per-day (hao hụt theo giờ thật, mốc hao-hut-luc trong kholuong.yml; mặc định 0). Panel kiểu
+  cài đặt "dishes" (dishesEditor trong panel/index.html + validate t == "dishes", DISH_FOODS/DISH_EFFECTS trong app.py phải khớp JS),
+  ô mon_list → dishes.list. Đã thử bảng trong trình duyệt và hàm validate trong container panel.
 - Chưa thử trong game.
 
 ### 17/10 khuya: mùa + câu cá gắn với pet và công thành

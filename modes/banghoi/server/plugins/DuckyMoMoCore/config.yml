@@ -600,6 +600,7 @@ siege-supply:
   enabled: true
   max-per-town: 5000                   # kho tối đa (điểm)
   cost-per-player-minute: 2            # mỗi người đang đánh trong vùng vây ăn bao nhiêu điểm/phút (kho cạn thì bị Đói)
+  spoil-percent-per-day: 0             # kho hao hụt % mỗi ngày (lương để lâu hư); 0 = không hao
   dish-points: 15                      # mỗi món ăn ra trận (/nauan)
   fish: {Common: 2, Rare: 5, Epic: 12, Legendary: 40}   # cá câu (EvenMoreFish) theo độ hiếm
   points:                              # nông sản, đồ ăn thường (điểm mỗi cái)

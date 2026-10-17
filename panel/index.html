@@ -161,7 +161,7 @@ const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
 const CAT_ICON = { "Chiến tranh": "⚔️", "Thị trấn": "🏘️", "Thế giới": "🌍", "Thưởng & sự kiện": "🎁", "Shop": "🛒", "Hệ thống": "⚙️",
   "Kinh tế": "💰", "PvP & combat": "🗡️", "Hiển thị": "🎨", "Nghề": "⛏️", "Chống hack": "🛡️", "Phù phép": "✨", "Người mới": "🐣",
   "Chat": "💬", "Rank donate": "👑", "Sảnh": "🏰", "Role": "🎭", "Khác": "📁" };
-const WIDE = new Set(["rewards", "milestones", "quests", "spin", "fragtypes", "fragshop", "shopitems", "shoptitles"]);
+const WIDE = new Set(["rewards", "milestones", "quests", "spin", "fragtypes", "fragshop", "shopitems", "shoptitles", "dishes"]);
 const fold = (s) => String(s || "").normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/đ/g, "d").replace(/Đ/g, "D").toLowerCase();
 
 async function load() {
@@ -307,6 +307,8 @@ function row(mode, s) {
     input = fragTypesEditor(value || {}, v => change(mode, s, v, div));
   } else if (s.type === "fragshop") {
     input = fragShopEditor(value || [], v => change(mode, s, v, div));
+  } else if (s.type === "dishes") {
+    input = dishesEditor(value || {}, v => change(mode, s, v, div));
   } else if (s.type === "spin") {
     input = spinEditor(value || [], v => change(mode, s, v, div));
   } else if (s.type === "quests") {
@@ -772,6 +774,94 @@ function fragShopEditor(value, onChange) {
   return box;
 }
 
+
+// ---- Món ăn ra trận (/nauan): {mã: {name, material, lore[], need {VẬT_LIỆU|ca:<độ hiếm>: số}, effects ["TÊN cấp giây"]}}
+const DISH_FOODS = [["BREAD", "Bánh mì"], ["COOKED_COD", "Cá tuyết chín"], ["COOKED_SALMON", "Cá hồi chín"], ["BEETROOT_SOUP", "Súp củ dền"],
+  ["RABBIT_STEW", "Thịt thỏ hầm"], ["MUSHROOM_STEW", "Súp nấm"], ["SUSPICIOUS_STEW", "Súp lạ"], ["BAKED_POTATO", "Khoai nướng"],
+  ["PUMPKIN_PIE", "Bánh bí ngô"], ["COOKIE", "Bánh quy"], ["GOLDEN_CARROT", "Cà rốt vàng"], ["COOKED_BEEF", "Bò bít tết"],
+  ["COOKED_PORKCHOP", "Thịt heo chín"], ["COOKED_CHICKEN", "Gà chín"], ["COOKED_MUTTON", "Cừu chín"], ["COOKED_RABBIT", "Thỏ chín"],
+  ["DRIED_KELP", "Tảo khô"], ["HONEY_BOTTLE", "Chai mật ong"], ["APPLE", "Táo"], ["SWEET_BERRIES", "Dâu rừng"], ["GLOW_BERRIES", "Dâu phát sáng"]];
+const DISH_EFFECTS = [["REGENERATION", "Hồi máu"], ["RESISTANCE", "Kháng sát thương"], ["ABSORPTION", "Máu ảo"], ["STRENGTH", "Sức mạnh"],
+  ["SPEED", "Nhanh nhẹn"], ["FIRE_RESISTANCE", "Kháng lửa"], ["NIGHT_VISION", "Nhìn đêm"], ["WATER_BREATHING", "Thở dưới nước"],
+  ["JUMP_BOOST", "Nhảy cao"], ["HASTE", "Đào nhanh"], ["SATURATION", "No bụng"], ["HEALTH_BOOST", "Thêm máu tối đa"]];
+const DISH_FISH = [["ca:common", "Cá Thường"], ["ca:rare", "Cá Hiếm"], ["ca:epic", "Cá Quý"], ["ca:legendary", "Cá Huyền thoại"]];
+function dishesEditor(value, onChange) {
+  const box = document.createElement("div"); box.className = "rw";
+  const ds = [];
+  const opt = (list, cur) => list.map(([v, t]) => `<option value="${v}"${v === cur ? " selected" : ""}>${t}</option>`).join("");
+  const emit = () => {
+    const out = {};
+    ds.forEach((d, i) => {
+      const need = {};
+      for (const r of d.needs) {
+        const k = r.kind.value === "vat" ? String(r.mat.value || "").trim().toUpperCase() : r.kind.value;
+        const n = parseInt(r.qty.value || "0", 10);
+        if (k && n > 0) need[k] = (need[k] || 0) + n;
+      }
+      const effects = d.effs.map(r => r.eff.value + " " + r.lv.value + " " + (parseInt(r.sec.value || "0", 10) || 30));
+      let id = d.id || ("mon_" + (i + 1));
+      while (out[id]) id += "_";
+      out[id] = { name: d.name.value.trim() || id, material: d.mat.value, lore: d.lore.value.trim() ? [d.lore.value.trim()] : [], need, effects };
+    });
+    onChange(out);
+  };
+  const add = document.createElement("button"); add.type = "button"; add.className = "rw-add"; add.textContent = "+ Thêm món";
+  function addDish(id, d) {
+    const wrap = document.createElement("div"); wrap.className = "ms"; wrap.style.width = "100%"; wrap.style.boxSizing = "border-box";
+    const head = document.createElement("div"); head.className = "fs-head";
+    head.style.cssText = "display:grid;grid-template-columns:minmax(160px,1.3fr) minmax(140px,1fr) minmax(140px,1.3fr) 32px;gap:8px;align-items:center";
+    head.innerHTML = `<input placeholder="Tên món (có mã màu &), vd &6Cá kho tộ"><select title="Món trông như vật phẩm nào (phải ăn được)">${opt(DISH_FOODS, d.material || "BREAD")}</select><input placeholder="Mô tả ngắn (tuỳ chọn)"><button type="button" class="x" title="Bỏ món">×</button>`;
+    const [name, mat, lore] = [head.children[0], head.children[1], head.children[2]];
+    name.value = d.name || ""; lore.value = (d.lore || [])[0] || "";
+    const o = { id, name, mat, lore, needs: [], effs: [] };
+    const needBox = document.createElement("div"); needBox.className = "rw";
+    const needT = document.createElement("div"); needT.className = "small"; needT.textContent = "Nguyên liệu (cần để nấu):";
+    const addNeed = document.createElement("button"); addNeed.type = "button"; addNeed.className = "rw-add"; addNeed.textContent = "+ Nguyên liệu";
+    function needRow(k, n) {
+      const row = document.createElement("div"); row.className = "rw-row"; row.style.gridTemplateColumns = "150px minmax(160px,1fr) 90px 32px";
+      const isFish = /^ca:/i.test(k || "");
+      row.innerHTML = `<select><option value="vat">Vật phẩm</option>${opt(DISH_FISH, isFish ? k.toLowerCase() : "")}</select><span></span><input type="number" min="1" max="640" title="Số lượng"><button type="button" class="x" title="Bỏ">×</button>`;
+      const [kind, mid, qty, x] = row.children;
+      const mInput = document.createElement("input"); mInput.placeholder = "Chọn vật phẩm…"; mInput.value = isFish ? "" : (k || "");
+      const r = { kind, mat: mInput, qty };
+      kind.value = isFish ? k.toLowerCase() : "vat"; qty.value = n || 1;
+      const sync = () => { mid.innerHTML = ""; if (kind.value === "vat") { mid.appendChild(mInput); matPick(mInput, emit); } };
+      sync();
+      kind.onchange = () => { sync(); emit(); }; mInput.oninput = emit; qty.oninput = emit;
+      x.onclick = () => { o.needs.splice(o.needs.indexOf(r), 1); row.remove(); emit(); };
+      o.needs.push(r); needBox.insertBefore(row, addNeed);
+    }
+    needBox.append(needT, addNeed);
+    addNeed.onclick = () => { needRow("WHEAT", 1); emit(); };
+    const effBox = document.createElement("div"); effBox.className = "rw";
+    const effT = document.createElement("div"); effT.className = "small"; effT.textContent = "Hiệu ứng khi ăn (loại · cấp · số giây):";
+    const addEff = document.createElement("button"); addEff.type = "button"; addEff.className = "rw-add"; addEff.textContent = "+ Hiệu ứng";
+    function effRow(spec) {
+      const a = String(spec || "REGENERATION 0 30").split(/\s+/);
+      const row = document.createElement("div"); row.className = "rw-row"; row.style.gridTemplateColumns = "minmax(160px,1fr) 80px 120px 32px";
+      row.innerHTML = `<select>${opt(DISH_EFFECTS, a[0])}</select><select title="Cấp">${opt([["0", "I"], ["1", "II"], ["2", "III"], ["3", "IV"]], a[1] || "0")}</select><input type="number" min="1" max="3600" title="Thời gian (giây)" placeholder="giây"><button type="button" class="x" title="Bỏ">×</button>`;
+      const [eff, lv, sec, x] = row.children;
+      sec.value = a[2] || 30;
+      const r = { eff, lv, sec };
+      for (const el of [eff, lv]) el.onchange = emit;
+      sec.oninput = emit;
+      x.onclick = () => { o.effs.splice(o.effs.indexOf(r), 1); row.remove(); emit(); };
+      o.effs.push(r); effBox.insertBefore(row, addEff);
+    }
+    effBox.append(effT, addEff);
+    addEff.onclick = () => { effRow(); emit(); };
+    for (const [k, n] of Object.entries(d.need || {})) needRow(k, n);
+    for (const e of d.effects || []) effRow(e);
+    name.oninput = emit; mat.onchange = emit; lore.oninput = emit;
+    head.querySelector(".x").onclick = () => { ds.splice(ds.indexOf(o), 1); wrap.remove(); emit(); };
+    wrap.append(head, needBox, effBox);
+    ds.push(o); box.insertBefore(wrap, add);
+  }
+  box.appendChild(add);
+  add.onclick = () => { addDish(null, { name: "", material: "BREAD", need: { WHEAT: 3 }, effects: ["REGENERATION 0 30"] }); emit(); };
+  for (const [id, d] of Object.entries(value || {})) addDish(id, d || {});
+  return box;
+}
 
 // ---- Cửa hàng Kinh Đô: món [{material|library, amount, price}] và danh hiệu [{id, text, price}]
 function shopItemsEditor(value, onChange) {

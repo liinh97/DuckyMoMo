@@ -13,6 +13,9 @@ siege_sessions_per_siege: 4
 siege_weeks: weekly
 siege_max_attacks: 2
 siege_warchest_per_plot: 20.0
+siege_plunder_per_plot: 40.0
+siege_plunder_over_time: true
+siege_plunder_days: 7
 siege_immunity_hours: 168
 siege_immunity_new_town_hours: 168
 towny_price_new_town: 500.0

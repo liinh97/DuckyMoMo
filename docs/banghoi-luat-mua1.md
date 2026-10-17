@@ -94,7 +94,8 @@ Bán kính vùng vây 200 block ≈ 185 km ngoài đời (cỡ một tỉnh lớ
    - Giành lại cờ từ tay địch thì điểm nhân 3.
 5. **Chết trong vùng vây: KHÔNG rơi đồ**, đồ chỉ mất 5% độ bền **[đang chạy]**. Không ai mất trắng vì một trận thua.
 6. Hết 4 phiên, bên nhiều điểm hơn thắng:
-   - **Tấn công thắng**: lấy lại quỹ chiến tranh. Được **cướp 40 xu × số ô** từ ngân khố thị trấn thua, và/hoặc **chiếm đóng**
+   - **Tấn công thắng**: lấy lại quỹ chiến tranh. Được **cướp 40 xu × số ô** từ ngân khố thị trấn thua (không đủ tiền thì
+     bên thắng vẫn nhận đủ, thị trấn thua **trả nợ dần trong 7 ngày**, không bị phá sản vì một trận) **[đang chạy 18/10]**, và/hoặc **chiếm đóng**
      (thị trấn thành thuộc địa, nộp thuế chiếm đóng tối đa 1 xu/ô/ngày). **Thủ đô không bị chiếm** **[đang chạy]**.
    - **Phòng thủ thắng**: nhận quỹ chiến tranh của bên tấn công.
 7. Sau trận: thị trấn được **miễn vây 7 ngày**. Thuộc địa được **khởi nghĩa** (revolt) để giành lại tự do sau 72 giờ.

@@ -290,6 +290,15 @@ groups:
           note: "Thủ đô được gấp đôi." }
       - { key: siege_immunity_new_town_hours, label: Miễn vây cho thị trấn mới lập (giờ), type: int, min: 0,
           file: plugins/SiegeWar/config.yml, path: war.siege.times.siege_immunity_time_new_town_hours }
+      - { key: siege_plunder_per_plot, label: Tiền cướp khi thắng (xu mỗi ô đất), type: number, min: 0,
+          file: plugins/SiegeWar/config.yml, path: war.siege.money.plunder.amount_per_plot,
+          info: "Là gì: bên tấn công thắng thì được cướp số này × số ô đất từ ngân khố thị trấn thua." }
+      - { key: siege_plunder_over_time, label: Thị trấn không đủ tiền bị cướp thì trả dần, type: select,
+          file: plugins/SiegeWar/config.yml, path: war.siege.money.plunder.plunder_paid_over_time,
+          options: [ { value: true, label: "Bật: bên thắng nhận đủ ngay, thị trấn thua trả nợ dần" }, { value: false, label: "Tắt: không đủ tiền thì thị trấn có thể phá sản" } ],
+          info: "Là gì: ngân khố thị trấn thua không đủ tiền bị cướp.\nBật: bên thắng nhận đủ ngay (server ứng trước), thị trấn thua trả lại mỗi ngày trong số ngày ở dưới, không bị xoá sổ vì một trận thua.\nTắt: theo SiegeWar, thị trấn không trả nổi có thể phá sản." }
+      - { key: siege_plunder_days, label: Trả dần trong (ngày), type: int, min: 1, max: 60,
+          file: plugins/SiegeWar/config.yml, path: war.siege.money.plunder.number_of_payments }
 
   - title: Thị trấn và quốc gia
     category: Thị trấn

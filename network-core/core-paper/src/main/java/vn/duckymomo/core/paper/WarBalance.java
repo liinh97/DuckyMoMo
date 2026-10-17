@@ -67,6 +67,7 @@ final class WarBalance implements Listener {
     private final File file;
     private final YamlConfiguration data;
     private final Set<String> hegemons = new HashSet<>();
+    private final String peaceNation;   // Liên minh Hoà Bình: không tính Bá chủ, không phí thuộc địa
     private ClassLoader swLoader;
     private Method occupiedForeignTowns;
     private Method setRevoltEnd;
@@ -86,6 +87,7 @@ final class WarBalance implements Listener {
         this.hegemonDiscount = Math.max(0, Math.min(100, c.getDouble("hegemon-warchest-discount", 30)));
         this.hegemonPointsPct = Math.max(0, c.getDouble("hegemon-points-percent", 15));
         this.hegemonMaxRegions = Math.max(0, c.getInt("hegemon-max-regions", 2));
+        this.peaceNation = plugin.getConfig().getBoolean("peace-alliance.enabled") ? plugin.getConfig().getString("peace-alliance.nation", "") : "";
         this.file = new File(plugin.getDataFolder(), "canbang.yml");
         this.data = YamlConfiguration.loadConfiguration(file);
     }
@@ -297,8 +299,11 @@ final class WarBalance implements Listener {
         Object att = get(siege, "getAttacker");
         Object def = get(siege, "getDefender");
         double pct = 0;
-        int a = residents(att);
-        int d = residents(def);
+        // so cả phe: thị trấn bị vây thuộc nước nào thì tính dân cả nước đó (không so nước với một thị trấn lẻ)
+        Nation an = govNation(att);
+        Nation dn = govNation(def);
+        int a = an != null ? residents(an) : residents(att);
+        int d = dn != null ? residents(dn) : residents(def);
         if (defending && d > 0 && a >= underdogRatio * d) {
             pct += underdogPct;   // bên phòng thủ nhỏ hơn hẳn
         }
@@ -322,11 +327,25 @@ final class WarBalance implements Listener {
 
     // ---------------------------------------------------------------- định kỳ: Bá chủ, phí thuộc địa
 
+    /** Thị trấn/nước thuộc phe chiến tranh (không phải Liên minh Hoà Bình, không trung lập). */
+    private boolean atWar(Town t) {
+        Nation n = t.getNationOrNull();
+        return !t.isNeutral() && !(n != null && n.getName().equalsIgnoreCase(peaceNation));
+    }
+
+    private boolean isPeace(Nation n) {
+        return n != null && n.getName().equalsIgnoreCase(peaceNation);
+    }
+
     private void tick() {
         List<Town> towns = new ArrayList<>(TownyAPI.getInstance().getTowns());
+        towns.removeIf(t -> !atWar(t));   // mẫu số Bá chủ: chỉ thị trấn tham gia chiến tranh
         Set<String> now = new HashSet<>();
         if (!towns.isEmpty()) {
             for (Nation n : TownyAPI.getInstance().getNations()) {
+                if (isPeace(n)) {
+                    continue;
+                }
                 int k = n.getTowns().size();
                 if (k >= hegemonMinTowns && k * 100.0 / towns.size() >= hegemonPct) {
                     now.add(n.getName().toLowerCase(Locale.ROOT));
@@ -350,6 +369,9 @@ final class WarBalance implements Listener {
         if (!today.equals(data.getString("phi-ngay", "")) && colonyUpkeep > 0) {
             data.set("phi-ngay", today);
             for (Nation n : TownyAPI.getInstance().getNations()) {
+                if (isPeace(n)) {
+                    continue;
+                }
                 double owe = debt(n) + colonyUpkeep * colonies(n);
                 if (owe <= 0) {
                     continue;

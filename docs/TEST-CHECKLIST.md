@@ -10,7 +10,7 @@ bật công tắc vây thành, rút lịch phiên còn vài phút (Cài đặt �
 
 ## 1. Pet chiến đấu (MyPet)
 - [ ] Bắt pet: đánh con vật còn ≤ 10% máu bằng dây xích → thông báo trượt (khói, "còn N lần thử") hoặc bắt được. Hết 3 lần thì "con vật hoảng".
-- [ ] Chờ 2 giây giữa 2 lần thử (đánh liền thì báo chờ, không tính lần thử).
+- [ ] Chờ 2 giây giữa 2 lần thử (đánh liền thì báo chờ, không tính lần thử). Lần thử trượt / đang chờ: con vật KHÔNG mất máu.
 - [ ] Sói/mèo/ngựa ĐÃ thuần hoá của mình: bắt chắc chắn, không quay xác suất.
 - [ ] Bùa bắt pet: `/buabatpet give <tên> 3` → cầm tay trái khi bắt: "+25%", mất 1 bùa mỗi lần thử.
 - [ ] `/bxhpet tyle`: tỉ lệ đúng theo mùa/sự kiện (Lũ: Thủy tộc 70%). `/bxhpet`, `/bxhpet chienbinh` hiện pet.
@@ -37,11 +37,12 @@ bật công tắc vây thành, rút lịch phiên còn vài phút (Cài đặt �
 - [ ] Cấm bay bằng pet trong vùng vây (cao hơn 3 khối → bị đẩy xuống, Rơi chậm).
 - [ ] Thời tiết: đêm (giờ game) → Bóng tối trừ ai dẫn pet mắt đêm (được Nhìn đêm); mưa → đi bộ Chậm, cưỡi pet thì không;
       nắng gắt mùa khô → Đói trừ ai dẫn pet lửa. Tin nhắc khi trời đổi.
-- [ ] Kho lương: nộp `/kholuong nop|noptat`; trong trận được nuôi no (thanh đói đầy), kho trừ 2 điểm/phút/người; kho cạn → Đói.
+- [ ] Kho lương: `/kholuong noptat` chỉ nộp nông sản/đồ ăn (không lấy cá câu, món ăn); cầm cá/món rồi `/kholuong nop` thì nộp được; trong trận được nuôi no (thanh đói đầy), kho trừ 2 điểm/phút/người; kho cạn → Đói.
 - [ ] Bên phòng thủ ít dân (bên kia gấp 2): điểm giữ cờ +15% (so số điểm SiegeWar báo với số mong đợi).
 - [ ] Thắng → cướp tiền; thị trấn thua không đủ tiền → nợ trả dần 7 ngày (không phá sản).
 - [ ] Chiếm thuộc địa: quá 3 thuộc địa thì không chiếm được; thông báo hạn khởi nghĩa (72 giờ trừ 12 giờ/thuộc địa khác).
 - [ ] Phí thuộc địa trừ ngân khố nước mỗi ngày; thiếu thì ghi nợ (`/canbang`).
+- [ ] Liên minh Hoà Bình không bao giờ thành Bá chủ, không làm chủ vùng đặc sản, không bị tính phí thuộc địa.
 - [ ] Bá chủ: nước ≥ 30% thị trấn (≥ 5) → thông báo; đánh vào được hoàn 30% quỹ, +15% điểm; chỉ hưởng đặc sản 2 vùng.
 - [ ] Điểm bảng xếp hạng: tấn công thắng +30, phòng thủ +20; Chiến Thần +3/hạ người có quân hàm, +5 chiếm cờ.
 
@@ -62,6 +63,7 @@ bật công tắc vây thành, rút lịch phiên còn vài phút (Cài đặt �
 
 ## 6. Web
 - [ ] Trang chủ (máy tính + điện thoại): thanh trên cùng, menu, mọi mục tải dữ liệu (Pet, Đấu Trường, Công thành, Mùa, Vinh danh).
+- [ ] Trang tài khoản: thẻ "<thị trấn>: hậu cần & chiến tranh" (kho lương, thuộc địa, nợ, Bá chủ) đúng số liệu; chức vụ tiếng Việt.
 - [ ] Trang tài khoản: đăng nhập `/web`, thẻ pet, Đấu Trường, trang trí (pet trang trí chỉ liệt kê loài), nút quản trị.
 - [ ] Trang quản trị: Role (chỉ thấy role/rank được quản), nút ⓘ, Cài đặt (các nhóm mới), Thư viện đồ.
 

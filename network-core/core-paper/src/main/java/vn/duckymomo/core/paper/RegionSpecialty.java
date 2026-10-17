@@ -28,7 +28,7 @@ import org.bukkit.entity.Player;
 
 /**
  * Đặc sản vùng (/dacsan). Vùng = các vùng trong rtp.zones (tâm + bán kính). Nước (hoặc thị trấn chưa vào nước) có NHIỀU thị trấn
- * nhất trong vùng (đếm theo nhà chính / spawn của thị trấn) là chủ vùng; dân của chủ vùng gặt đặc sản của vùng ở BẤT KỲ đâu thì
+ * nhất trong vùng (đếm theo nhà chính / spawn của thị trấn; KHÔNG tính Liên minh Hoà Bình và thị trấn trung lập) là chủ vùng; dân của chủ vùng gặt đặc sản của vùng ở BẤT KỲ đâu thì
  * được mùa thêm % (cộng vào được mùa của /mua). Hoà nhau = vùng chưa có chủ. Chiếm thành trong vùng = giành đặc sản.
  * Config region-specialty: refresh-minutes, regions.<mã vùng>: {label, crops {CÂY: %}}. Ghi dacsan.json cho web mỗi lần tính lại.
  */
@@ -44,10 +44,12 @@ final class RegionSpecialty {
     private final Map<String, String> owner = new HashMap<>();        // mã vùng -> khoá chủ ("n:<nước>" / "t:<thị trấn>")
     private final Map<String, String> ownerName = new HashMap<>();
     private final Map<String, Integer> ownerTowns = new HashMap<>();
+    private final String peaceNation;   // Liên minh Hoà Bình + thị trấn trung lập không tranh vùng (không bị vây nên không ai giành lại được)
 
     RegionSpecialty(DuckyMoMoCore plugin, ConfigurationSection c, List<Map<?, ?>> zones) {
         this.plugin = plugin;
         this.refreshTicks = Math.max(1, c.getLong("refresh-minutes", 10)) * 1200L;
+        this.peaceNation = plugin.getConfig().getBoolean("peace-alliance.enabled") ? plugin.getConfig().getString("peace-alliance.nation", "") : "";
         ConfigurationSection rs = c.getConfigurationSection("regions");
         for (Map<?, ?> z : zones) {
             String id = String.valueOf(z.get("id"));
@@ -110,6 +112,10 @@ final class RegionSpecialty {
     private void refresh() {
         Map<String, Map<String, Integer>> count = new HashMap<>();
         for (Town t : TownyAPI.getInstance().getTowns()) {
+            Nation tn = t.getNationOrNull();
+            if (t.isNeutral() || (tn != null && tn.getName().equalsIgnoreCase(peaceNation))) {
+                continue;
+            }
             double x;
             double z;
             Location sp = t.getSpawnOrNull();

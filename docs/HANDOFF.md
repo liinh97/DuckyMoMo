@@ -283,6 +283,16 @@
   ticks-per-particle). Ghi vào plugins/PlayerParticles/styles/<kiểu>.yml ở lobby + banghoi-1, CẦN khởi động lại 2 server mới có hiệu lực.
 - PlayerParticles có sẵn `locale: vi_VN`, EssentialsX có `messages_vi` — chưa bật (đã hỏi người dùng).
 
+### 18/10 03:10: rà soát cẩm nang/web + sửa logic
+- Rà 19 tính năng mới trên camnang, /huongdan, Cài đặt, web chưa/đã đăng nhập (script đối chiếu từ khoá); bổ sung chỗ thiếu: bùa trong
+  /huongdan, trả nợ dần (camnang, /huongdan, web), mùa 3 tháng (camnang), lồng quái không cho exp (web). Mọi lệnh có mô tả tiếng Việt
+  (all_commands: 0 thiếu ở 4 server).
+- Sửa logic: Liên minh Hoà Bình + thị trấn trung lập KHÔNG tính Bá chủ (cả mẫu số), không phí thuộc địa, không làm chủ vùng đặc sản;
+  "bên yếu" so dân cả nước với cả nước (trước so nước với 1 thị trấn); /kholuong noptat bỏ qua cá câu và món ăn (chỉ nộp khi cầm tay);
+  bắt pet trượt hoặc đang chờ → setDamage(0) (con vật đã ≤10% máu không chết oan vì cú quăng dây xích).
+- Trang tài khoản: thẻ "<thị trấn>: hậu cần & chiến tranh" (kho lương + thanh, nước: thị trấn, thuộc địa/tối đa, Bá chủ, nợ, % quỹ thêm),
+  chức vụ Towny dịch tiếng Việt (taikhoan.ROLE_VI), dòng cho pet ăn cá. Đã thử bằng dữ liệu giả lập + Playwright.
+
 ### 18/10: mùa 3 tháng + Quảng trường Vinh danh
 - Mùa = 3 tháng (13 tuần): leaderboard double-week 13, register-week 12, vote-week 13, title-member-before-week 12 (config + settings.yml).
   leaderboard.season-start vẫn TRỐNG (chưa mở mùa chính thức): đặt ngày khi mở server cho người chơi.

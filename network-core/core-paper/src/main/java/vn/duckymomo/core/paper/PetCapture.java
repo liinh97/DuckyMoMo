@@ -228,6 +228,7 @@ final class PetCapture implements Listener {
         long now = System.currentTimeMillis();
         long wait = lastTry.getOrDefault(p.getUniqueId(), 0L) + cooldownMs - now;
         if (wait > 0) {
+            event.setDamage(0);   // đang chờ: cú đánh bằng dây xích không làm con vật (đã yếu) chết oan
             p.sendActionBar(c("&eChờ &f" + String.format(Locale.ROOT, "%.1f", wait / 1000.0) + " giây &erồi quăng dây xích tiếp."));
             return;
         }
@@ -244,6 +245,7 @@ final class PetCapture implements Listener {
             grant(p);
             return;
         }
+        event.setDamage(0);   // trượt: con vật vùng ra, không chết vì cú quăng dây xích (còn lần thử thì thử tiếp được)
         int left = attempts - used - 1;
         target.getWorld().spawnParticle(Particle.SMOKE, target.getLocation().add(0, target.getHeight() / 2, 0), 12, 0.3, 0.3, 0.3, 0.02);
         p.playSound(target.getLocation(), Sound.ENTITY_ITEM_BREAK, 0.7f, 1.4f);

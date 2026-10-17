@@ -559,7 +559,7 @@ footer .fbrand img{width:44px}
         <div class="f"><b class="when" id="flowStart">Thứ 5</b><div><b>Cắm cờ vây</b><br><span class="muted">Vua hoặc Tướng cắm cờ (banner không trắng) sát rìa thành địch, nộp quỹ chiến tranh <span data-k="siege.warchest_per_plot">20</span> xu × số ô của thành bị vây.</span></div></div>
         <div class="f"><b class="when" id="flowDays">T7, CN</b><div><b>Các phiên đánh</b><br><span class="muted"><span data-k="siege.sessions">4</span> phiên, mỗi phiên <span data-k="siege.session_minutes">60</span> phút. PvP mở trong bán kính <span data-k="siege.zone_radius">200</span> block quanh cờ.</span></div></div>
         <div class="f"><b class="when">Trong trận</b><div><b>Giữ cờ và hạ quân địch</b><br><span class="muted">Đứng gần cờ đủ 7 phút để chiếm, giữ cờ được điểm mỗi phút; hạ người có quân hàm được 150 điểm. Giành lại cờ: điểm ×3.</span></div></div>
-        <div class="f"><b class="when">Kết thúc</b><div><b>Thắng thua</b><br><span class="muted">Tấn công thắng: lấy lại quỹ, cướp <span data-k="siege.plunder_per_plot">40</span> xu × số ô, có thể chiếm làm thuộc địa (thủ đô không bị chiếm). Phòng thủ thắng: nhận quỹ chiến tranh.</span></div></div>
+        <div class="f"><b class="when">Kết thúc</b><div><b>Thắng thua</b><br><span class="muted">Tấn công thắng: lấy lại quỹ, cướp <span data-k="siege.plunder_per_plot">40</span> xu × số ô (thị trấn thua thiếu tiền thì trả nợ dần 7 ngày, không phá sản), có thể chiếm làm thuộc địa (thủ đô không bị chiếm, mỗi nước tối đa vài thuộc địa). Phòng thủ thắng: nhận quỹ chiến tranh.</span></div></div>
         <div class="f"><b class="when">Sau trận</b><div><b>Miễn vây và khởi nghĩa</b><br><span class="muted">Thành vừa bị vây được miễn <span data-k="siege.immunity_days">7</span> ngày. Thuộc địa có thể khởi nghĩa giành lại tự do.</span></div></div>
       </div>
       <div class="grid">
@@ -575,7 +575,7 @@ footer .fbrand img{width:44px}
     <div class="grid g2" style="margin-top:16px">
       <div class="card"><h3>🍚 Kho lương <span class="kbd">/kholuong</span></h3>
         <p class="muted">Mỗi thị trấn có kho lương. Lúc đánh, quân trong vùng vây ăn từ kho của <b>thị trấn mình</b>: còn lương thì luôn no (tự hồi máu), kho cạn thì mau đói. Mỗi người ăn <b data-k="supply.cost">2</b> điểm/phút.</p>
-        <p class="dim" style="font-size:.85rem">Nộp nông sản, đồ ăn, cá câu, món ăn: <span class="kbd">/kholuong nop</span> (trên tay) · <span class="kbd">/kholuong noptat</span> (cả túi). Kho tối đa <span data-k="supply.max">5000</span> điểm. Người hoà bình bán lương cho các phe cũng là nghề.</p>
+        <p class="dim" style="font-size:.85rem">Nộp: <span class="kbd">/kholuong nop</span> (đồ đang cầm, kể cả cá câu và món ăn) · <span class="kbd">/kholuong noptat</span> (nông sản, đồ ăn cả túi; bỏ qua cá câu và món ăn). Kho tối đa <span data-k="supply.max">5000</span> điểm. Người hoà bình bán lương cho các phe cũng là nghề.</p>
         <div id="khoTop" class="muted"></div></div>
       <div class="card"><h3>🍲 Món ăn ra trận <span class="kbd">/nauan</span></h3>
         <p class="muted">Nấu cá câu + nông sản thành món có hiệu ứng ngắn. Ăn xong chờ <b data-k="dishes.cooldown">20</b> phút mới ăn món khác.</p>
@@ -734,7 +734,7 @@ footer .fbrand img{width:44px}
   <div class="wrap">
     <div class="kicker v">Bạn đồng hành</div>
     <h2>Pet chiến đấu: tự tay bắt, tự tay nuôi</h2>
-    <p class="intro">Không mua được bằng tiền thật. Ai cũng bắt được: đánh một con thú hoặc quái tới khi <b>yếu máu</b> (thanh máu hiện trên đầu khi đánh) rồi cầm <b>dây xích</b> đánh tiếp. Mỗi lần chỉ có <b>xác suất</b> bắt được, trượt mấy lần con vật hoảng chạy mất, nên pet tốt là của hiếm. Pet theo bạn, đánh quái, lên cấp tới <b data-k="pet.level_cap">100</b> và mở kỹ năng. Lúc mới bắt mọi loài như nhau; lớn lên thì đi theo <b>bản tính loài</b>: thú lớn trâu nhưng đánh yếu, thú săn đánh đau nhưng mỏng, chỉ loài biết bay mới cưỡi bay được. Bạn chọn <b>hệ</b>, loài quyết định cách pet lớn.</p>
+    <p class="intro">Không mua được bằng tiền thật. Ai cũng bắt được: đánh một con thú hoặc quái tới khi <b>yếu máu</b> (thanh máu hiện trên đầu khi đánh) rồi cầm <b>dây xích</b> đánh tiếp. Mỗi lần chỉ có <b>xác suất</b> bắt được (trượt thì con vật không mất máu), trượt mấy lần con vật hoảng chạy mất, nên pet tốt là của hiếm. Quái sinh ra từ lồng quái (máy farm) không cho pet kinh nghiệm. Pet theo bạn, đánh quái, lên cấp tới <b data-k="pet.level_cap">100</b> và mở kỹ năng. Lúc mới bắt mọi loài như nhau; lớn lên thì đi theo <b>bản tính loài</b>: thú lớn trâu nhưng đánh yếu, thú săn đánh đau nhưng mỏng, chỉ loài biết bay mới cưỡi bay được. Bạn chọn <b>hệ</b>, loài quyết định cách pet lớn.</p>
     <div class="grid g2">
       <div class="card hl"><h3>Chọn hướng phát triển</h3><div id="petTrees" class="muted">Đang tải…</div>
         <p class="dim" style="font-size:.85rem;margin-top:8px">Chọn bằng <span class="kbd">/petchooseskilltree</span>. Cấp 15 tới 50 mở thêm kỹ năng riêng của từng hệ; máu và sát thương tăng theo nhóm loài (bảng bên dưới). Loài biết bay chọn Thú Cưỡi thì bay được từ cấp 5 (quãng bay mỗi lần dài dần theo cấp). Đấu Trường không cho cưỡi pet; đang công thành thì không được bay bằng pet trong vùng vây.</p></div>

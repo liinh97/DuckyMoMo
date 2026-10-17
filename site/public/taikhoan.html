@@ -363,9 +363,17 @@ function render(){
       : (mp.pets || []).length ? `<table><tbody>${mp.pets.map(p => `<tr><td><b>⚔ ${esc(p.ten || p.loai_vi || PET_VI[String(p.loai).toUpperCase()] || p.loai)}</b><div class="small muted">${esc(p.loai_vi || PET_VI[String(p.loai).toUpperCase()] || p.loai)}${p.huong ? " · " + esc(p.huong) : " · chưa chọn hệ"}</div>${p.nhom ? `<div class="small dim">Nhóm loài: ${esc(p.nhom)}</div>` : ""}</td>
           <td>Cấp <b>${p.cap}</b>${p.hang ? `<div class="small dim">Hạng #${p.hang}</div>` : ""}</td><td class="small">${p.dang_hoi_sinh ? "đang hồi sinh" : p.dang_dan ? '<span class="green">đang dẫn</span>' : "trong kho"}</td></tr>`).join("")}</tbody></table>`
       : `<p class="muted">Chưa có pet. Đánh một con thú/quái tới khi yếu máu rồi quăng <b>dây xích</b> vào để bắt (Bang Hội Chiến).</p>`}
+      <p class="small muted">Cho pet ăn: cầm <b>cá câu được</b>, chuột phải vào pet: no lại, hồi máu, thêm kinh nghiệm (cá càng hiếm càng bổ).</p>
       <p class="small muted">Pet lớn theo <b>hệ</b> bạn chọn và <b>bản tính loài</b> (thú lớn trâu, thú săn đánh đau, chỉ loài bay mới cưỡi bay). Xem bảng nhóm loài ở <a href="./#pet">trang chủ, mục Pet</a>.</p>
       <p class="small muted">Bạn được giữ tối đa <b>${mp.giu_toi_da || 1}</b> pet, mỗi lúc dẫn 1 con. <code>/petinfo</code> · <code>/petswitch</code> · <code>/petchooseskilltree</code> · <code>/bxhpet</code></p>
       <p class="small muted">Bán/tặng pet: <code>/pettrade &lt;người&gt; [giá xu]</code>, người nhận <code>/pettrade accept</code>.</p></div>
+    ${t && t.thitran ? `<div class="card"><h2>🏰 ${esc(t.thitran)}: hậu cần &amp; chiến tranh</h2>
+      ${t.kholuong ? `<p>🍚 Kho lương: <b>${nf.format(t.kholuong.diem)}</b>/${nf.format(t.kholuong.max)} điểm${t.kholuong.phut_nguoi != null ? ` <span class="small dim">(nuôi được khoảng ${nf.format(t.kholuong.phut_nguoi)} phút-người trong trận)</span>` : ""}</p>
+        <div style="height:8px;border-radius:6px;background:var(--line);overflow:hidden;margin:4px 0 8px"><div style="height:100%;width:${Math.min(100, t.kholuong.max ? t.kholuong.diem * 100 / t.kholuong.max : 0)}%;background:var(--gold)"></div></div>
+        <p class="small muted">Nộp: <code>/kholuong nop</code> (đồ cầm tay, kể cả cá câu và món ăn) · <code>/kholuong noptat</code> (nông sản, đồ ăn trong túi). Lúc đánh, ai trong vùng vây ăn từ kho thị trấn mình.</p>` : ""}
+      ${t.canbang ? `<p>⚖ Nước <b>${esc(t.quocgia)}</b>: ${t.canbang.thi_tran} thị trấn · ${t.canbang.thuoc_dia}/${t.canbang.toi_da ?? "?"} thuộc địa${t.canbang.ba_chu ? ' · <span class="red">Bá chủ</span>' : ""}${t.canbang.no > 0 ? ` · <span class="red">nợ phí thuộc địa ${nf.format(t.canbang.no)} xu (chưa trả thì không cắm cờ vây được)</span>` : ""}</p>
+        <p class="small muted">Đi vây tốn thêm ${t.canbang.quy_them}% quỹ chiến tranh. Chi tiết: <code>/canbang</code></p>` : ""}
+    </div>` : ""}
     <div class="card"><h2>⚔ Đấu Trường</h2><p>Điểm <b>${dt.elo || 1000}</b> · <span class="green">${dt.thang || 0} thắng</span> · <span class="red">${dt.thua || 0} thua</span></p>
       <p class="small muted">Thưởng hôm nay ${dt.thuong_hom_nay || 0}/${dt.toi_da || 5} trận. Vào sảnh: <code>/warp pvp</code> hoặc bấm NPC ở spawn; người + pet, chết không rơi đồ.</p></div>
   </div>`;

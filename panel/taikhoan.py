@@ -222,8 +222,36 @@ def towny(name):
             out["chuc"].append("Thị trưởng")
             if out["quocgia"] and towny_kv(base / "nations" / f"{out['quocgia']}.txt").get("capital", "") == town:
                 out["chuc"].append("Vua")
-    out["chuc"] += [x for x in r.get("town-ranks", "").split(",") + r.get("nation-ranks", "").split(",") if x.strip()]
+    out["chuc"] += [ROLE_VI.get(x.strip().lower(), x.strip()) for x in r.get("town-ranks", "").split(",") + r.get("nation-ranks", "").split(",") if x.strip()]
+    # kho lương thị trấn + cân bằng chiến tranh của nước (DuckyMoMoCore ghi kholuong.json, canbang.json)
+    dmm = DATA_DIR / SRV / "plugins" / "DuckyMoMoCore"
+    if town:
+        kl = core_json(dmm / "kholuong.json")
+        k = next((x for x in kl.get("kho", []) if str(x.get("ten", "")).lower() == town.lower()), None)
+        cost = float(kl.get("cost_per_minute") or 0)
+        out["kholuong"] = {"diem": int(k.get("diem", 0)) if k else 0, "max": int(kl.get("max") or 0),
+                           "phut_nguoi": int((k.get("diem", 0) if k else 0) / cost) if cost > 0 else None} if kl else None
+    if out["quocgia"]:
+        cb = core_json(dmm / "canbang.json")
+        n = next((x for x in cb.get("nuoc", []) if str(x.get("ten", "")).lower() == out["quocgia"].lower()), None)
+        wb = (safe_yaml(dmm / "config.yml").get("war-balance") or {})
+        out["canbang"] = {"thi_tran": n.get("thi_tran"), "thuoc_dia": n.get("thuoc_dia"), "toi_da": wb.get("max-colonies"),
+                          "ba_chu": bool(n.get("ba_chu")), "no": n.get("no", 0),
+                          "quy_them": float(wb.get("war-chest-extra-percent-per-town") or 0) * max(0, int(n.get("thi_tran") or 1) - 1)} if n else None
     return out
+
+
+# Chức vụ Towny (rank) -> tiếng Việt, khớp HallOfFameSnapshot.ROLE_VI
+ROLE_VI = {"assistant": "Phó thị trưởng", "helper": "Trợ lý", "sheriff": "Cảnh sát trưởng", "guard": "Vệ binh", "private": "Binh nhì",
+           "sergeant": "Trung sĩ", "lieutenant": "Trung uý", "captain": "Đại uý", "major": "Thiếu tá", "colonel": "Đại tá", "general": "Tướng",
+           "co-king": "Phó vương", "diplomat": "Ngoại giao", "recruiter": "Tuyển quân"}
+
+
+def core_json(f):
+    try:
+        return json.loads(f.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return {}
 
 
 def money(uuid):

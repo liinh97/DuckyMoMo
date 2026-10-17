@@ -349,6 +349,8 @@ chapters:
         nhiều điểm thắng:
         lấy quỹ, cướp tiền
         hoặc chiếm thị trấn.
+        Thua mà thiếu tiền thì
+        &ltrả nợ dần 7 ngày&r&0.
         &2Chết trong vùng vây
         &2không rơi đồ.
       - |-
@@ -394,6 +396,8 @@ chapters:
         &0Xem tỉ lệ: &1/bxhpet tyle
         &0Thú tự thuần hoá (sói,
         mèo, ngựa): bắt chắc.
+        &bBùa bắt pet&0 (giải thi
+        câu) cầm tay trái: +%.
       - |-
         &6&lLệnh pet
         &1/petinfo &0thông tin
@@ -450,8 +454,9 @@ chapters:
         lương thì no, cạn thì
         mau đói.
         &1/kholuong nop &0nộp đồ
-        ăn đang cầm, &1noptat
-        &0nộp cả túi.
+        đang cầm (cả cá, món),
+        &1noptat &0nộp nông sản
+        cả túi.
         &1/nauan &0nấu cá + nông
         sản thành món ra trận.
       - |-

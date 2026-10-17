@@ -219,6 +219,9 @@ final class SiegeSupply {
                     continue;
                 }
                 ItemStack it = inv[i];
+                if (all && (Dishes.isDish(it) || PetFish.rarity(it) != null)) {
+                    continue;   // cá câu, món ăn là đồ quý: chỉ nộp khi cầm trên tay (/kholuong nop)
+                }
                 double v = value(it);
                 if (v <= 0) {
                     continue;
@@ -235,7 +238,7 @@ final class SiegeSupply {
             p.getInventory().setStorageContents(inv);
             if (items == 0) {
                 p.sendMessage(c(room <= 0 ? "&eKho lương " + t.getName() + " đã đầy (" + (long) max + " điểm)."
-                        : all ? "&cTrong túi không có gì nộp được (nông sản, đồ ăn, cá câu, món ăn /nauan)."
+                        : all ? "&cTrong túi không có nông sản/đồ ăn nộp được. Cá câu, món ăn: cầm trên tay rồi /kholuong nop."
                                 : "&cCầm nông sản, đồ ăn, cá câu hoặc món ăn trên tay rồi gõ lại (hoặc /kholuong noptat)."));
                 return true;
             }
@@ -256,7 +259,7 @@ final class SiegeSupply {
         if (spoil > 0) {
             p.sendMessage(c("&7Lương để lâu hư: kho hao &f" + fmt(spoil) + "%/ngày&7, nên nộp gần ngày công thành."));
         }
-        p.sendMessage(c("&7Nộp: cầm trên tay &f/kholuong nop &7· cả túi &f/kholuong noptat &7· các kho &f/kholuong top"));
+        p.sendMessage(c("&7Nộp: cầm trên tay &f/kholuong nop &7· cả túi (trừ cá câu, món ăn) &f/kholuong noptat &7· các kho &f/kholuong top"));
         p.sendMessage(c("&7Giá trị: cá câu và món ăn (/nauan) đáng nhiều điểm nhất; bánh mì, khoai nướng, thịt chín hơn đồ sống."));
         return true;
     }

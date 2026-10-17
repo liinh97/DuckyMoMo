@@ -1,0 +1,92 @@
+{
+  "ID": "Ride_thusan_CaveSpider",
+  "Name": "Ride_thusan_CaveSpider",
+  "Display": "Thú Cưỡi",
+  "Order": 3,
+  "Icon": {
+    "Material": "saddle",
+    "Glowing": true
+  },
+  "MobTypes": [
+    "CaveSpider"
+  ],
+  "Inheritance": {
+    "Skilltree": "Ride"
+  },
+  "Description": [
+    "<gray>Pet để cưỡi đi đường xa:",
+    "- <yellow><bold>Cưỡi</bold></yellow> được từ cấp 1 (chuột phải bằng dây xích)",
+    "- <red><bold>Bắn cầu tuyết</bold></red>",
+    "- Túi đồ nhỏ + <yellow><bold>nhặt đồ</bold></yellow>",
+    "- <aqua><bold>Chạy nhanh</bold></aqua>, gai",
+    "- <yellow><bold>Hào quang</bold></yellow> hồi máu, thở dưới nước",
+    "<gold>Cấp 15/30/50: cưỡi nhanh hơn · cấp 35: <gray>Dậm đất</gray> (sát thương quanh pet)",
+    "<gold>Cấp 25/40: hào quang nhìn đêm, nhảy cao, chạy nhanh, kháng lửa",
+    "<gold>Nhóm loài: Thú săn</gold> <gray>(đánh đau, nhanh, máu mỏng)</gray>",
+    "<gold>Cấp 5: Chạy nhanh · cấp 20: Chảy máu",
+    "<gold>Nhện hang: độc mạnh (cấp 10)",
+    "<dark_gray>Mỗi 5 cấp sau cấp 10: +1,5 máu, +0,75 sát thương"
+  ],
+  "Skills": {
+    "Life": {
+      "Upgrades": {
+        "%5>10": {
+          "health": "+1.5"
+        }
+      }
+    },
+    "Damage": {
+      "Upgrades": {
+        "%5>10": {
+          "damage": "+0.75"
+        }
+      }
+    },
+    "Sprint": {
+      "Upgrades": {
+        "5": {
+          "active": true
+        }
+      }
+    },
+    "Bleed": {
+      "Upgrades": {
+        "20": {
+          "chance": "+8",
+          "damage": "+1",
+          "duration": "+3"
+        }
+      }
+    },
+    "Poison": {
+      "Upgrades": {
+        "10": {
+          "chance": "+15",
+          "duration": "+4"
+        }
+      }
+    }
+  },
+  "Notifications": {
+    "15": "<gold>⬆ Pet đạt cấp 15: <yellow>Cưỡi nhanh hơn",
+    "25": "<gold>⬆ Pet đạt cấp 25: <yellow>Hào quang nhìn đêm + nhảy cao",
+    "30": "<gold>⬆ Pet đạt cấp 30: <yellow>Cưỡi nhanh hơn, nhảy cao hơn",
+    "35": "<gold>⬆ Pet đạt cấp 35: <yellow>Dậm đất",
+    "40": "<gold>⬆ Pet đạt cấp 40: <yellow>Hào quang chạy nhanh + kháng lửa",
+    "50": "<gold>⬆ Pet đạt cấp 50: <yellow>Cưỡi nhanh hơn"
+  },
+  "DmmNhom": {
+    "ma": "thusan",
+    "ten": "Thú săn",
+    "vai": "đánh đau, nhanh, máu mỏng",
+    "he": "Ride",
+    "mo_ta": [
+      "Cấp 5: Chạy nhanh · cấp 20: Chảy máu"
+    ],
+    "tang": "+1,5 máu, +0,75 sát thương mỗi 5 cấp sau cấp 10",
+    "dac_tinh": "Nhện hang: độc mạnh (cấp 10)",
+    "loai_vi": [
+      "Nhện hang"
+    ]
+  }
+}

@@ -1,0 +1,154 @@
+{
+  "Order": 3,
+  "Description": [
+    "<gray>Pet để cưỡi đi đường xa:",
+    "- <yellow><bold>Cưỡi</bold></yellow> được từ cấp 1 (chuột phải bằng dây xích)",
+    "- <red><bold>Bắn cầu tuyết</bold></red>",
+    "- Túi đồ nhỏ + <yellow><bold>nhặt đồ</bold></yellow>",
+    "- <aqua><bold>Chạy nhanh</bold></aqua>, gai",
+    "- <yellow><bold>Hào quang</bold></yellow> hồi máu, thở dưới nước",
+    "<gold>Cấp 15/30/50: cưỡi nhanh hơn · cấp 35: <gray>Dậm đất</gray> (sát thương quanh pet)",
+    "<gold>Cấp 25/40: hào quang nhìn đêm, nhảy cao, chạy nhanh, kháng lửa"
+  ],
+  "Skills": {
+    "Ranged": {
+      "Upgrades": {
+        "2": {
+          "Rate": "+35",
+          "Damage": "+2",
+          "Projectile": "Snowball"
+        }
+      }
+    },
+    "Backpack": {
+      "Upgrades": {
+        "3": {
+          "drop": false,
+          "rows": "+2"
+        },
+        "5": {
+          "drop": false,
+          "rows": "+1"
+        }
+      }
+    },
+    "Control": {
+      "Upgrades": {
+        "6": {
+          "Active": true
+        }
+      }
+    },
+    "Pickup": {
+      "Upgrades": {
+        "4": {
+          "Range": "+1",
+          "Exp": false
+        }
+      }
+    },
+    "Beacon": {
+      "Upgrades": {
+        "10": {
+          "Buffs": {
+            "Regeneration": "+2",
+            "WaterBreathing": true
+          },
+          "Duration": "+8",
+          "Count": "+1",
+          "Range": "+10"
+        },
+        "25": {
+          "buffs": {
+            "nightvision": true,
+            "jumpboost": "+1"
+          },
+          "count": "+1"
+        },
+        "40": {
+          "buffs": {
+            "speed": "+1",
+            "fireresistance": true
+          },
+          "count": "+1"
+        }
+      }
+    },
+    "Thorns": {
+      "Upgrades": {
+        "9": {
+          "Reflection": "+20",
+          "Chance": "+50"
+        }
+      }
+    },
+    "Behavior": {
+      "Upgrades": {
+        "2": {
+          "Friend": false,
+          "Farm": false,
+          "Duel": true,
+          "Aggro": false,
+          "Raid": false
+        },
+        "7": {
+          "Friend": true,
+          "Farm": false,
+          "Duel": true,
+          "Aggro": false,
+          "Raid": false
+        }
+      }
+    },
+    "Sprint": {
+      "Upgrades": {
+        "8": {
+          "Active": true
+        }
+      }
+    },
+    "Ride": {
+      "Upgrades": {
+        "1": {
+          "Speed": "+5",
+          "Active": true,
+          "JumpHeight": "+1.25"
+        },
+        "15": {
+          "speed": "+5"
+        },
+        "30": {
+          "speed": "+5",
+          "jumpheight": "+0.5"
+        },
+        "50": {
+          "speed": "+5"
+        }
+      }
+    },
+    "Stomp": {
+      "Upgrades": {
+        "35": {
+          "chance": "+10",
+          "damage": "+2"
+        }
+      }
+    }
+  },
+  "MobTypes": [],
+  "ID": "Ride",
+  "Icon": {
+    "Material": "saddle",
+    "Glowing": true
+  },
+  "Name": "Ride",
+  "Display": "Thú Cưỡi",
+  "Notifications": {
+    "15": "<gold>⬆ Pet đạt cấp 15: <yellow>Cưỡi nhanh hơn",
+    "25": "<gold>⬆ Pet đạt cấp 25: <yellow>Hào quang nhìn đêm + nhảy cao",
+    "30": "<gold>⬆ Pet đạt cấp 30: <yellow>Cưỡi nhanh hơn, nhảy cao hơn",
+    "35": "<gold>⬆ Pet đạt cấp 35: <yellow>Dậm đất",
+    "40": "<gold>⬆ Pet đạt cấp 40: <yellow>Hào quang chạy nhanh + kháng lửa",
+    "50": "<gold>⬆ Pet đạt cấp 50: <yellow>Cưỡi nhanh hơn"
+  }
+}

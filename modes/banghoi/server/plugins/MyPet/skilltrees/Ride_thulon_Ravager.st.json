@@ -1,0 +1,94 @@
+{
+  "ID": "Ride_thulon_Ravager",
+  "Name": "Ride_thulon_Ravager",
+  "Display": "Thú Cưỡi",
+  "Order": 3,
+  "Icon": {
+    "Material": "saddle",
+    "Glowing": true
+  },
+  "MobTypes": [
+    "Ravager"
+  ],
+  "Inheritance": {
+    "Skilltree": "Ride"
+  },
+  "Description": [
+    "<gray>Pet để cưỡi đi đường xa:",
+    "- <yellow><bold>Cưỡi</bold></yellow> được từ cấp 1 (chuột phải bằng dây xích)",
+    "- <red><bold>Bắn cầu tuyết</bold></red>",
+    "- Túi đồ nhỏ + <yellow><bold>nhặt đồ</bold></yellow>",
+    "- <aqua><bold>Chạy nhanh</bold></aqua>, gai",
+    "- <yellow><bold>Hào quang</bold></yellow> hồi máu, thở dưới nước",
+    "<gold>Cấp 15/30/50: cưỡi nhanh hơn · cấp 35: <gray>Dậm đất</gray> (sát thương quanh pet)",
+    "<gold>Cấp 25/40: hào quang nhìn đêm, nhảy cao, chạy nhanh, kháng lửa",
+    "<gold>Nhóm loài: Thú lớn</gold> <gray>(trâu, đỡ đòn, đánh yếu)</gray>",
+    "<gold>Cấp 5: +3 máu · cấp 20: Hộ chủ · cấp 30: Gai",
+    "<gold>Ravager: húc văng (cấp 10)",
+    "<dark_gray>Mỗi 5 cấp sau cấp 10: +4 máu, +0,25 sát thương"
+  ],
+  "Skills": {
+    "Life": {
+      "Upgrades": {
+        "%5>10": {
+          "health": "+4"
+        },
+        "5": {
+          "health": "+3"
+        }
+      }
+    },
+    "Damage": {
+      "Upgrades": {
+        "%5>10": {
+          "damage": "+0.25"
+        }
+      }
+    },
+    "Shield": {
+      "Upgrades": {
+        "20": {
+          "chance": "+10",
+          "redirect": "+15"
+        }
+      }
+    },
+    "Thorns": {
+      "Upgrades": {
+        "30": {
+          "chance": "+10",
+          "reflection": "+10"
+        }
+      }
+    },
+    "Knockback": {
+      "Upgrades": {
+        "10": {
+          "chance": "+25"
+        }
+      }
+    }
+  },
+  "Notifications": {
+    "15": "<gold>⬆ Pet đạt cấp 15: <yellow>Cưỡi nhanh hơn",
+    "25": "<gold>⬆ Pet đạt cấp 25: <yellow>Hào quang nhìn đêm + nhảy cao",
+    "30": "<gold>⬆ Pet đạt cấp 30: <yellow>Cưỡi nhanh hơn, nhảy cao hơn",
+    "35": "<gold>⬆ Pet đạt cấp 35: <yellow>Dậm đất",
+    "40": "<gold>⬆ Pet đạt cấp 40: <yellow>Hào quang chạy nhanh + kháng lửa",
+    "50": "<gold>⬆ Pet đạt cấp 50: <yellow>Cưỡi nhanh hơn"
+  },
+  "DmmNhom": {
+    "ma": "thulon",
+    "ten": "Thú lớn",
+    "vai": "trâu, đỡ đòn, đánh yếu",
+    "he": "Ride",
+    "mo_ta": [
+      "Cấp 5: +3 máu · cấp 20: Hộ chủ · cấp 30: Gai"
+    ],
+    "tang": "+4 máu, +0,25 sát thương mỗi 5 cấp sau cấp 10",
+    "dac_tinh": "Ravager: húc văng (cấp 10)",
+    "loai_vi": [
+      "Ravager"
+    ]
+  }
+}

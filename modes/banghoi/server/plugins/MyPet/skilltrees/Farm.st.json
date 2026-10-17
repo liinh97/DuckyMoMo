@@ -1,0 +1,148 @@
+{
+  "Order": 4,
+  "Description": [
+    "<gray>Pet giữ vườn, đánh xa:",
+    "- <red><bold>Cận chiến</bold></red> + <red><bold>bắn tên</bold></red> (cấp 7)",
+    "- <yellow><bold>Túi đồ</bold></yellow>, <yellow><bold>nhặt đồ</bold></yellow>",
+    "- <red><bold>Gai</bold></red>, <dark_green><bold>độc</bold></dark_green>",
+    "- Hành vi <green><bold>làm nông</bold></green>, điều khiển",
+    "<gold>Cấp 15/40/50: <red>bắn tên</red> nhanh và mạnh hơn",
+    "<gold>Cấp 20: độc mạnh hơn · cấp 25: hào quang <green>hồi máu</green> + may mắn",
+    "<gold>Cấp 30: nhặt kinh nghiệm · cấp 45: <gray>Dậm đất</gray>"
+  ],
+  "Skills": {
+    "Ranged": {
+      "Upgrades": {
+        "7": {
+          "Rate": "+35",
+          "Damage": "+2",
+          "Projectile": "Arrow"
+        },
+        "15": {
+          "rate": "+10",
+          "damage": "+1"
+        },
+        "40": {
+          "rate": "+10",
+          "damage": "+1.5"
+        },
+        "50": {
+          "damage": "+1.5"
+        }
+      }
+    },
+    "Backpack": {
+      "Upgrades": {
+        "1": {
+          "drop": false,
+          "rows": "+1"
+        },
+        "5": {
+          "drop": false,
+          "rows": "+1"
+        }
+      }
+    },
+    "Control": {
+      "Upgrades": {
+        "8": {
+          "Active": true
+        }
+      }
+    },
+    "Pickup": {
+      "Upgrades": {
+        "2": {
+          "Range": "+1",
+          "Exp": false
+        },
+        "10": {
+          "Range": "+5",
+          "Exp": false
+        },
+        "30": {
+          "exp": true,
+          "range": "+1"
+        }
+      }
+    },
+    "Thorns": {
+      "Upgrades": {
+        "6": {
+          "Reflection": "+10",
+          "Chance": "+20"
+        }
+      }
+    },
+    "Poison": {
+      "Upgrades": {
+        "9": {
+          "Duration": "+2",
+          "Chance": "+20"
+        },
+        "20": {
+          "chance": "+10",
+          "duration": "+2"
+        }
+      }
+    },
+    "Behavior": {
+      "Upgrades": {
+        "4": {
+          "Friend": true,
+          "Farm": true,
+          "Duel": true,
+          "Aggro": true,
+          "Raid": true
+        }
+      }
+    },
+    "Damage": {
+      "Upgrades": {
+        "3": {
+          "Damage": "+2"
+        },
+        "5": {
+          "Damage": "+0.5"
+        }
+      }
+    },
+    "Beacon": {
+      "Upgrades": {
+        "25": {
+          "buffs": {
+            "regeneration": "+1",
+            "luck": true
+          },
+          "count": "+1",
+          "duration": "+8",
+          "range": "+8"
+        }
+      }
+    },
+    "Stomp": {
+      "Upgrades": {
+        "45": {
+          "chance": "+10",
+          "damage": "+2"
+        }
+      }
+    }
+  },
+  "MobTypes": [],
+  "ID": "Farm",
+  "Icon": {
+    "Material": "writable_book"
+  },
+  "Name": "Farm",
+  "Display": "Nông Trại",
+  "Notifications": {
+    "15": "<gold>⬆ Pet đạt cấp 15: <yellow>Bắn tên mạnh hơn",
+    "20": "<gold>⬆ Pet đạt cấp 20: <yellow>Độc mạnh hơn",
+    "25": "<gold>⬆ Pet đạt cấp 25: <yellow>Hào quang hồi máu + may mắn",
+    "30": "<gold>⬆ Pet đạt cấp 30: <yellow>Nhặt cả kinh nghiệm",
+    "40": "<gold>⬆ Pet đạt cấp 40: <yellow>Bắn tên mạnh hơn",
+    "45": "<gold>⬆ Pet đạt cấp 45: <yellow>Dậm đất",
+    "50": "<gold>⬆ Pet đạt cấp 50: <yellow>Bắn tên mạnh hơn"
+  }
+}

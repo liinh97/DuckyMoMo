@@ -1,0 +1,88 @@
+{
+  "ID": "Ride_thuytoc_Guardian",
+  "Name": "Ride_thuytoc_Guardian",
+  "Display": "Thú Cưỡi",
+  "Order": 3,
+  "Icon": {
+    "Material": "saddle",
+    "Glowing": true
+  },
+  "MobTypes": [
+    "Guardian"
+  ],
+  "Inheritance": {
+    "Skilltree": "Ride"
+  },
+  "Description": [
+    "<gray>Pet để cưỡi đi đường xa:",
+    "- <yellow><bold>Cưỡi</bold></yellow> được từ cấp 1 (chuột phải bằng dây xích)",
+    "- <red><bold>Bắn cầu tuyết</bold></red>",
+    "- Túi đồ nhỏ + <yellow><bold>nhặt đồ</bold></yellow>",
+    "- <aqua><bold>Chạy nhanh</bold></aqua>, gai",
+    "- <yellow><bold>Hào quang</bold></yellow> hồi máu, thở dưới nước",
+    "<gold>Cấp 15/30/50: cưỡi nhanh hơn · cấp 35: <gray>Dậm đất</gray> (sát thương quanh pet)",
+    "<gold>Cấp 25/40: hào quang nhìn đêm, nhảy cao, chạy nhanh, kháng lửa",
+    "<gold>Nhóm loài: Thủy tộc</gold> <gray>(dưới nước, hào quang thở dưới nước)</gray>",
+    "<gold>Cấp 15: hào quang thở dưới nước cho chủ",
+    "<gold>Guardian: gai (cấp 10)",
+    "<dark_gray>Mỗi 5 cấp sau cấp 10: +2 máu, +0,5 sát thương"
+  ],
+  "Skills": {
+    "Life": {
+      "Upgrades": {
+        "%5>10": {
+          "health": "+2"
+        }
+      }
+    },
+    "Damage": {
+      "Upgrades": {
+        "%5>10": {
+          "damage": "+0.5"
+        }
+      }
+    },
+    "Beacon": {
+      "Upgrades": {
+        "15": {
+          "buffs": {
+            "waterbreathing": true
+          },
+          "count": "+1",
+          "duration": "+8",
+          "range": "+8"
+        }
+      }
+    },
+    "Thorns": {
+      "Upgrades": {
+        "10": {
+          "chance": "+15",
+          "reflection": "+15"
+        }
+      }
+    }
+  },
+  "Notifications": {
+    "15": "<gold>⬆ Pet đạt cấp 15: <yellow>Cưỡi nhanh hơn",
+    "25": "<gold>⬆ Pet đạt cấp 25: <yellow>Hào quang nhìn đêm + nhảy cao",
+    "30": "<gold>⬆ Pet đạt cấp 30: <yellow>Cưỡi nhanh hơn, nhảy cao hơn",
+    "35": "<gold>⬆ Pet đạt cấp 35: <yellow>Dậm đất",
+    "40": "<gold>⬆ Pet đạt cấp 40: <yellow>Hào quang chạy nhanh + kháng lửa",
+    "50": "<gold>⬆ Pet đạt cấp 50: <yellow>Cưỡi nhanh hơn"
+  },
+  "DmmNhom": {
+    "ma": "thuytoc",
+    "ten": "Thủy tộc",
+    "vai": "dưới nước, hào quang thở dưới nước",
+    "he": "Ride",
+    "mo_ta": [
+      "Cấp 15: hào quang thở dưới nước cho chủ"
+    ],
+    "tang": "+2 máu, +0,5 sát thương mỗi 5 cấp sau cấp 10",
+    "dac_tinh": "Guardian: gai (cấp 10)",
+    "loai_vi": [
+      "Guardian"
+    ]
+  }
+}

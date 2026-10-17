@@ -240,15 +240,27 @@ def siege_upcoming(sw, core, days=14, limit=12):
 
 
 def pet_trees():
-    out = []
+    """5 hệ gốc (MobTypes rỗng, không kế thừa) + nhóm loài (cây "<Hệ>_<nhóm>[_<loài>]" có khoá DmmNhom, xem tools/mypet/)."""
+    out, groups = [], {}
     for f in sorted(plugin("MyPet", "skilltrees").glob("*.st.json")):
         try:
             d = json.loads(f.read_text(encoding="utf-8"))
         except (OSError, ValueError):
             continue
         desc = [re.sub(r"<[^>]+>", "", str(x)).strip() for x in d.get("Description") or []]
-        out.append({"id": d.get("ID"), "ten": d.get("Name"), "thu_tu": d.get("Order", 9), "mo_ta": [x for x in desc if x]})
-    return sorted(out, key=lambda t: t["thu_tu"])
+        g = d.get("DmmNhom")
+        if g:
+            e = groups.setdefault(g["ma"], {"ma": g["ma"], "ten": g["ten"], "vai": g["vai"], "tang": g.get("tang", ""),
+                                            "them": g.get("mo_ta") or [], "loai": set(), "dac_tinh": set()})
+            e["loai"].update(g.get("loai_vi") or d.get("MobTypes") or [])
+            if g.get("dac_tinh"):
+                e["dac_tinh"].add(g["dac_tinh"])
+            continue
+        if d.get("Inheritance"):
+            continue
+        out.append({"id": d.get("ID"), "ten": d.get("Display") or d.get("Name"), "thu_tu": d.get("Order", 9), "mo_ta": [x for x in desc if x]})
+    nhom = [{**e, "loai": sorted(e["loai"]), "dac_tinh": sorted(e["dac_tinh"])} for e in groups.values()]
+    return sorted(out, key=lambda t: t["thu_tu"]), sorted(nhom, key=lambda e: e["ten"])
 
 
 def api_dautruong():
@@ -302,7 +314,7 @@ def api_info():
             "announce": get(core, "pet-combat.announce-minutes", [60, 10]),
             "slots": {k: st.get(f"petc_slots_{g}") for k, g in [("Dân", "default"), ("Nam Tước", "namtuoc"), ("Tử Tước", "tutuoc"),
                       ("Bá Tước", "batuoc"), ("Hầu Tước", "hautuoc"), ("Công Tước", "congtuoc")] if st.get(f"petc_slots_{g}")},
-            "trees": pet_trees(),
+            **dict(zip(("trees", "groups"), pet_trees())),
             "level_cap": get(load_yaml(plugin("MyPet", "config.yml")), "MyPet.Exp.LevelCap", 100),
             "respawn_per_level": get(load_yaml(plugin("MyPet", "config.yml")), "MyPet.Respawn.Time.Default.Factor", 5),
             "no_catch": ["Warden", "Wither", "Rồng Ender", "Elder Guardian", "Ravager", "Golem sắt", "Ghast"],

@@ -1,0 +1,160 @@
+{
+  "Order": 1,
+  "Description": [
+    "<gray>Pet mang đồ, đi đào đi khai thác:",
+    "- <yellow><bold>Túi đồ</bold></yellow> lớn dần tới 6 hàng",
+    "- <green><bold>Nhiều máu</bold></green> hơn",
+    "- <yellow><bold>Nhặt đồ</bold></yellow> quanh chủ",
+    "- <dark_green><bold>Độc</bold></dark_green> lên kẻ địch",
+    "<gold>Cấp 15: nhặt cả <green>kinh nghiệm</green> · cấp 40: nhặt xa hơn",
+    "<gold>Cấp 20/30: hào quang <yellow>Đào nhanh</yellow> I→II, nhìn đêm, may mắn",
+    "<gold>Cấp 35: Hộ chủ · cấp 50: kháng lửa, thở dưới nước"
+  ],
+  "Skills": {
+    "Backpack": {
+      "Upgrades": {
+        "1": {
+          "drop": true,
+          "rows": "+1"
+        },
+        "3": {
+          "drop": false,
+          "rows": "+1"
+        },
+        "5": {
+          "drop": false,
+          "rows": "+1"
+        },
+        "7": {
+          "drop": false,
+          "rows": "+1"
+        },
+        "10": {
+          "drop": false,
+          "rows": "+2"
+        }
+      }
+    },
+    "Pickup": {
+      "Upgrades": {
+        "6": {
+          "Range": "+1",
+          "Exp": false
+        },
+        "9": {
+          "Range": "+1",
+          "Exp": false
+        },
+        "15": {
+          "range": "+1",
+          "exp": true
+        },
+        "40": {
+          "range": "+2"
+        }
+      }
+    },
+    "Life": {
+      "Upgrades": {
+        "2": {
+          "Health": "+1.5"
+        },
+        "5": {
+          "Health": "+3"
+        },
+        "8": {
+          "Health": "+5"
+        },
+        "25": {
+          "health": "+5"
+        }
+      }
+    },
+    "Poison": {
+      "Upgrades": {
+        "4": {
+          "Duration": "+3",
+          "Chance": "+15"
+        }
+      }
+    },
+    "Heal": {
+      "Upgrades": {
+        "2": {
+          "Timer": "+45",
+          "Health": "+2"
+        }
+      }
+    },
+    "Behavior": {
+      "Upgrades": {
+        "4": {
+          "Friend": false,
+          "Farm": false,
+          "Duel": true,
+          "Aggro": false,
+          "Raid": false
+        }
+      }
+    },
+    "Damage": {
+      "Upgrades": {
+        "4": {
+          "Damage": "+1.5"
+        }
+      }
+    },
+    "Beacon": {
+      "Upgrades": {
+        "20": {
+          "buffs": {
+            "haste": "+1",
+            "nightvision": true
+          },
+          "count": "+2",
+          "duration": "+10",
+          "range": "+8"
+        },
+        "30": {
+          "buffs": {
+            "haste": "+1",
+            "luck": true
+          },
+          "count": "+1"
+        },
+        "50": {
+          "buffs": {
+            "fireresistance": true,
+            "waterbreathing": true
+          },
+          "count": "+1",
+          "range": "+4"
+        }
+      }
+    },
+    "Shield": {
+      "Upgrades": {
+        "35": {
+          "chance": "+10",
+          "redirect": "+15"
+        }
+      }
+    }
+  },
+  "MobTypes": [],
+  "ID": "Utility",
+  "Icon": {
+    "Material": "trapped_chest"
+  },
+  "Name": "Utility",
+  "Display": "Hậu Cần",
+  "Notifications": {
+    "15": "<gold>⬆ Pet đạt cấp 15: <yellow>Nhặt cả kinh nghiệm",
+    "20": "<gold>⬆ Pet đạt cấp 20: <yellow>Hào quang Đào nhanh + nhìn đêm",
+    "25": "<gold>⬆ Pet đạt cấp 25: <yellow>Thêm máu",
+    "30": "<gold>⬆ Pet đạt cấp 30: <yellow>Đào nhanh II + may mắn",
+    "35": "<gold>⬆ Pet đạt cấp 35: <yellow>Hộ chủ",
+    "40": "<gold>⬆ Pet đạt cấp 40: <yellow>Nhặt đồ xa hơn",
+    "50": "<gold>⬆ Pet đạt cấp 50: <yellow>Hào quang kháng lửa + thở dưới nước"
+  }
+}

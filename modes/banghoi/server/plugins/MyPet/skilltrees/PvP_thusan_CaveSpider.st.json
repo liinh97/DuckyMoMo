@@ -1,0 +1,92 @@
+{
+  "ID": "PvP_thusan_CaveSpider",
+  "Name": "PvP_thusan_CaveSpider",
+  "Display": "Đấu Sĩ",
+  "Order": 2,
+  "Icon": {
+    "Material": "diamond_sword"
+  },
+  "MobTypes": [
+    "CaveSpider"
+  ],
+  "Inheritance": {
+    "Skilltree": "PvP"
+  },
+  "Description": [
+    "<gray>Pet chuyên đánh người:",
+    "- <red><bold>Sát thương</bold></red> cao từ sớm",
+    "- <aqua><bold>Chạy nhanh</bold></aqua>, <gray><bold>làm chậm</bold></gray> kẻ địch",
+    "- <gold><bold>Đốt lửa</bold></gold> kẻ địch",
+    "- <yellow><bold>Hào quang</bold></yellow> tăng sức cho chủ (cấp 7, 10)",
+    "- Hồi máu, túi đồ 1 hàng",
+    "<gold>Cấp 15: <dark_gray>Héo mòn</dark_gray> · cấp 20: làm chậm lâu hơn",
+    "<gold>Cấp 25: <dark_red>Chảy máu</dark_red> · cấp 30/50: <yellow>Sét đánh</yellow>",
+    "<gold>Cấp 40: đốt lửa thường hơn",
+    "<gold>Nhóm loài: Thú săn</gold> <gray>(đánh đau, nhanh, máu mỏng)</gray>",
+    "<gold>Cấp 5: Chạy nhanh · cấp 20: Chảy máu",
+    "<gold>Nhện hang: độc mạnh (cấp 10)",
+    "<dark_gray>Mỗi 5 cấp sau cấp 10: +1,5 máu, +0,75 sát thương"
+  ],
+  "Skills": {
+    "Life": {
+      "Upgrades": {
+        "%5>10": {
+          "health": "+1.5"
+        }
+      }
+    },
+    "Damage": {
+      "Upgrades": {
+        "%5>10": {
+          "damage": "+0.75"
+        }
+      }
+    },
+    "Sprint": {
+      "Upgrades": {
+        "5": {
+          "active": true
+        }
+      }
+    },
+    "Bleed": {
+      "Upgrades": {
+        "20": {
+          "chance": "+8",
+          "damage": "+1",
+          "duration": "+3"
+        }
+      }
+    },
+    "Poison": {
+      "Upgrades": {
+        "10": {
+          "chance": "+15",
+          "duration": "+4"
+        }
+      }
+    }
+  },
+  "Notifications": {
+    "15": "<gold>⬆ Pet đạt cấp 15: <yellow>Héo mòn",
+    "20": "<gold>⬆ Pet đạt cấp 20: <yellow>Làm chậm mạnh hơn",
+    "25": "<gold>⬆ Pet đạt cấp 25: <yellow>Chảy máu",
+    "30": "<gold>⬆ Pet đạt cấp 30: <yellow>Sét đánh",
+    "40": "<gold>⬆ Pet đạt cấp 40: <yellow>Đốt lửa mạnh hơn",
+    "50": "<gold>⬆ Pet đạt cấp 50: <yellow>Sét đánh mạnh hơn"
+  },
+  "DmmNhom": {
+    "ma": "thusan",
+    "ten": "Thú săn",
+    "vai": "đánh đau, nhanh, máu mỏng",
+    "he": "PvP",
+    "mo_ta": [
+      "Cấp 5: Chạy nhanh · cấp 20: Chảy máu"
+    ],
+    "tang": "+1,5 máu, +0,75 sát thương mỗi 5 cấp sau cấp 10",
+    "dac_tinh": "Nhện hang: độc mạnh (cấp 10)",
+    "loai_vi": [
+      "Nhện hang"
+    ]
+  }
+}

@@ -1,0 +1,794 @@
+{
+ "Combat": {
+  "Order": 0,
+  "Description": [
+   "<gray>Pet đánh cận chiến, trâu dần theo cấp:",
+   "- <red><bold>Sát thương</bold></red> tăng ở cấp 1, 3, 6, 8",
+   "- <green><bold>Hồi máu</bold></green> cho pet (cấp 2)",
+   "- <red><bold>Gai</bold></red> phản sát thương (cấp 5, 9)",
+   "- <blue><bold>Đẩy lùi</bold></blue> kẻ địch (cấp 10)",
+   "- Túi đồ 1 hàng, điều khiển bằng dây xích",
+   "<gold>Cấp 15/40: <aqua>Hộ chủ</aqua> (15→25% lần chủ bị đánh, pet gánh 20→30% sát thương)",
+   "<gold>Cấp 20/50: <gray>Dậm đất</gray> gây sát thương xung quanh",
+   "<gold>Cấp 25: <dark_red>Chảy máu</dark_red> · cấp 30: hồi máu thêm"
+  ],
+  "Skills": {
+   "Backpack": {
+    "Upgrades": {
+     "6": {
+      "drop": false,
+      "rows": "+1"
+     }
+    }
+   },
+   "Control": {
+    "Upgrades": {
+     "7": {
+      "Active": true
+     }
+    }
+   },
+   "Life": {
+    "Upgrades": {
+     "4": {
+      "Health": "+2"
+     }
+    }
+   },
+   "Knockback": {
+    "Upgrades": {
+     "10": {
+      "Chance": "+15"
+     }
+    }
+   },
+   "Thorns": {
+    "Upgrades": {
+     "5": {
+      "Reflection": "+15",
+      "Chance": "+10"
+     },
+     "9": {
+      "Chance": "+8"
+     }
+    }
+   },
+   "Heal": {
+    "Upgrades": {
+     "2": {
+      "Health": "+1"
+     },
+     "30": {
+      "health": "+1",
+      "timer": "+20"
+     }
+    }
+   },
+   "Behavior": {
+    "Upgrades": {
+     "1": {
+      "Friend": false,
+      "Farm": false,
+      "Duel": true,
+      "Aggro": false,
+      "Raid": false
+     },
+     "3": {
+      "Friend": true,
+      "Farm": false,
+      "Duel": true,
+      "Aggro": true,
+      "Raid": false
+     }
+    }
+   },
+   "Damage": {
+    "Upgrades": {
+     "1": {
+      "Damage": "+1.5"
+     },
+     "3": {
+      "Damage": "+1.5"
+     },
+     "6": {
+      "Damage": "+1.5"
+     },
+     "8": {
+      "Damage": "+1.5"
+     }
+    }
+   },
+   "Shield": {
+    "Upgrades": {
+     "15": {
+      "chance": "+15",
+      "redirect": "+20"
+     },
+     "40": {
+      "chance": "+10",
+      "redirect": "+10"
+     }
+    }
+   },
+   "Stomp": {
+    "Upgrades": {
+     "20": {
+      "chance": "+10",
+      "damage": "+2"
+     },
+     "50": {
+      "chance": "+10",
+      "damage": "+2"
+     }
+    }
+   },
+   "Bleed": {
+    "Upgrades": {
+     "25": {
+      "chance": "+10",
+      "damage": "+1",
+      "duration": "+3"
+     }
+    }
+   }
+  },
+  "MobTypes": [
+   "*"
+  ],
+  "ID": "Combat",
+  "Icon": {
+   "Material": "stone_axe"
+  },
+  "Name": "Chiến Binh",
+  "Display": "Chiến Binh",
+  "Notifications": {
+   "15": "<gold>⬆ Pet đạt cấp 15: <yellow>Hộ chủ — gánh bớt đòn cho bạn",
+   "20": "<gold>⬆ Pet đạt cấp 20: <yellow>Dậm đất",
+   "25": "<gold>⬆ Pet đạt cấp 25: <yellow>Chảy máu",
+   "30": "<gold>⬆ Pet đạt cấp 30: <yellow>Hồi máu mạnh hơn",
+   "40": "<gold>⬆ Pet đạt cấp 40: <yellow>Hộ chủ mạnh hơn",
+   "50": "<gold>⬆ Pet đạt cấp 50: <yellow>Dậm đất mạnh hơn"
+  }
+ },
+ "Utility": {
+  "Order": 1,
+  "Description": [
+   "<gray>Pet mang đồ, đi đào đi khai thác:",
+   "- <yellow><bold>Túi đồ</bold></yellow> lớn dần tới 6 hàng",
+   "- <green><bold>Nhiều máu</bold></green> hơn",
+   "- <yellow><bold>Nhặt đồ</bold></yellow> quanh chủ",
+   "- <dark_green><bold>Độc</bold></dark_green> lên kẻ địch",
+   "<gold>Cấp 15: nhặt cả <green>kinh nghiệm</green> · cấp 40: nhặt xa hơn",
+   "<gold>Cấp 20/30: hào quang <yellow>Đào nhanh</yellow> I→II, nhìn đêm, may mắn",
+   "<gold>Cấp 35: Hộ chủ · cấp 50: kháng lửa, thở dưới nước"
+  ],
+  "Skills": {
+   "Backpack": {
+    "Upgrades": {
+     "1": {
+      "drop": true,
+      "rows": "+1"
+     },
+     "3": {
+      "drop": false,
+      "rows": "+1"
+     },
+     "5": {
+      "drop": false,
+      "rows": "+1"
+     },
+     "7": {
+      "drop": false,
+      "rows": "+1"
+     },
+     "10": {
+      "drop": false,
+      "rows": "+2"
+     }
+    }
+   },
+   "Pickup": {
+    "Upgrades": {
+     "6": {
+      "Range": "+1",
+      "Exp": false
+     },
+     "9": {
+      "Range": "+1",
+      "Exp": false
+     },
+     "15": {
+      "range": "+1",
+      "exp": true
+     },
+     "40": {
+      "range": "+2"
+     }
+    }
+   },
+   "Life": {
+    "Upgrades": {
+     "2": {
+      "Health": "+1.5"
+     },
+     "5": {
+      "Health": "+3"
+     },
+     "8": {
+      "Health": "+5"
+     },
+     "25": {
+      "health": "+5"
+     }
+    }
+   },
+   "Poison": {
+    "Upgrades": {
+     "4": {
+      "Duration": "+3",
+      "Chance": "+15"
+     }
+    }
+   },
+   "Heal": {
+    "Upgrades": {
+     "2": {
+      "Timer": "+45",
+      "Health": "+2"
+     }
+    }
+   },
+   "Behavior": {
+    "Upgrades": {
+     "4": {
+      "Friend": false,
+      "Farm": false,
+      "Duel": true,
+      "Aggro": false,
+      "Raid": false
+     }
+    }
+   },
+   "Damage": {
+    "Upgrades": {
+     "4": {
+      "Damage": "+1.5"
+     }
+    }
+   },
+   "Beacon": {
+    "Upgrades": {
+     "20": {
+      "buffs": {
+       "haste": "+1",
+       "nightvision": true
+      },
+      "count": "+2",
+      "duration": "+10",
+      "range": "+8"
+     },
+     "30": {
+      "buffs": {
+       "haste": "+1",
+       "luck": true
+      },
+      "count": "+1"
+     },
+     "50": {
+      "buffs": {
+       "fireresistance": true,
+       "waterbreathing": true
+      },
+      "count": "+1",
+      "range": "+4"
+     }
+    }
+   },
+   "Shield": {
+    "Upgrades": {
+     "35": {
+      "chance": "+10",
+      "redirect": "+15"
+     }
+    }
+   }
+  },
+  "MobTypes": [
+   "*"
+  ],
+  "ID": "Utility",
+  "Icon": {
+   "Material": "trapped_chest"
+  },
+  "Name": "Hậu Cần",
+  "Display": "Hậu Cần",
+  "Notifications": {
+   "15": "<gold>⬆ Pet đạt cấp 15: <yellow>Nhặt cả kinh nghiệm",
+   "20": "<gold>⬆ Pet đạt cấp 20: <yellow>Hào quang Đào nhanh + nhìn đêm",
+   "25": "<gold>⬆ Pet đạt cấp 25: <yellow>Thêm máu",
+   "30": "<gold>⬆ Pet đạt cấp 30: <yellow>Đào nhanh II + may mắn",
+   "35": "<gold>⬆ Pet đạt cấp 35: <yellow>Hộ chủ",
+   "40": "<gold>⬆ Pet đạt cấp 40: <yellow>Nhặt đồ xa hơn",
+   "50": "<gold>⬆ Pet đạt cấp 50: <yellow>Hào quang kháng lửa + thở dưới nước"
+  }
+ },
+ "PvP": {
+  "Order": 2,
+  "Description": [
+   "<gray>Pet chuyên đánh người:",
+   "- <red><bold>Sát thương</bold></red> cao từ sớm",
+   "- <aqua><bold>Chạy nhanh</bold></aqua>, <gray><bold>làm chậm</bold></gray> kẻ địch",
+   "- <gold><bold>Đốt lửa</bold></gold> kẻ địch",
+   "- <yellow><bold>Hào quang</bold></yellow> tăng sức cho chủ (cấp 7, 10)",
+   "- Hồi máu, túi đồ 1 hàng",
+   "<gold>Cấp 15: <dark_gray>Héo mòn</dark_gray> · cấp 20: làm chậm lâu hơn",
+   "<gold>Cấp 25: <dark_red>Chảy máu</dark_red> · cấp 30/50: <yellow>Sét đánh</yellow>",
+   "<gold>Cấp 40: đốt lửa thường hơn"
+  ],
+  "Skills": {
+   "Backpack": {
+    "Upgrades": {
+     "6": {
+      "drop": false,
+      "rows": "+1"
+     }
+    }
+   },
+   "Control": {
+    "Upgrades": {
+     "3": {
+      "Active": true
+     }
+    }
+   },
+   "Slow": {
+    "Upgrades": {
+     "4": {
+      "Duration": "+2",
+      "Chance": "+10"
+     },
+     "9": {
+      "Duration": "+1",
+      "Chance": "+5"
+     },
+     "20": {
+      "chance": "+5",
+      "duration": "+1"
+     }
+    }
+   },
+   "Fire": {
+    "Upgrades": {
+     "5": {
+      "Duration": "+3",
+      "Chance": "+15"
+     },
+     "40": {
+      "chance": "+10",
+      "duration": "+1"
+     }
+    }
+   },
+   "Beacon": {
+    "Upgrades": {
+     "7": {
+      "Buffs": {
+       "Resistance": "+1",
+       "Strength": "+1"
+      },
+      "Duration": "+8",
+      "Count": "+1",
+      "Range": "+5"
+     },
+     "10": {
+      "Buffs": {
+       "Resistance": "+2",
+       "Strength": "+2"
+      },
+      "Duration": "+2",
+      "Count": "+1",
+      "Range": "+5"
+     }
+    }
+   },
+   "Life": {
+    "Upgrades": {
+     "9": {
+      "Health": "+5"
+     }
+    }
+   },
+   "Heal": {
+    "Upgrades": {
+     "8": {
+      "Timer": "+60",
+      "Health": "+4"
+     }
+    }
+   },
+   "Behavior": {
+    "Upgrades": {
+     "3": {
+      "Friend": true,
+      "Farm": false,
+      "Duel": true,
+      "Aggro": false,
+      "Raid": false
+     }
+    }
+   },
+   "Sprint": {
+    "Upgrades": {
+     "4": {
+      "Active": true
+     }
+    }
+   },
+   "Damage": {
+    "Upgrades": {
+     "1": {
+      "Damage": "+1.5"
+     },
+     "2": {
+      "Damage": "+1.5"
+     },
+     "5": {
+      "Damage": "+0.5"
+     }
+    }
+   },
+   "Wither": {
+    "Upgrades": {
+     "15": {
+      "chance": "+8",
+      "duration": "+3"
+     }
+    }
+   },
+   "Bleed": {
+    "Upgrades": {
+     "25": {
+      "chance": "+8",
+      "damage": "+1",
+      "duration": "+3"
+     }
+    }
+   },
+   "Lightning": {
+    "Upgrades": {
+     "30": {
+      "chance": "+5",
+      "damage": "+3"
+     },
+     "50": {
+      "chance": "+5",
+      "damage": "+2"
+     }
+    }
+   }
+  },
+  "MobTypes": [
+   "*"
+  ],
+  "ID": "PvP",
+  "Icon": {
+   "Material": "diamond_sword"
+  },
+  "Name": "Đấu Sĩ",
+  "Display": "Đấu Sĩ",
+  "Notifications": {
+   "15": "<gold>⬆ Pet đạt cấp 15: <yellow>Héo mòn",
+   "20": "<gold>⬆ Pet đạt cấp 20: <yellow>Làm chậm mạnh hơn",
+   "25": "<gold>⬆ Pet đạt cấp 25: <yellow>Chảy máu",
+   "30": "<gold>⬆ Pet đạt cấp 30: <yellow>Sét đánh",
+   "40": "<gold>⬆ Pet đạt cấp 40: <yellow>Đốt lửa mạnh hơn",
+   "50": "<gold>⬆ Pet đạt cấp 50: <yellow>Sét đánh mạnh hơn"
+  }
+ },
+ "Ride": {
+  "Order": 3,
+  "Description": [
+   "<gray>Pet để cưỡi đi đường xa:",
+   "- <yellow><bold>Cưỡi</bold></yellow> được từ cấp 1 (chuột phải bằng dây xích)",
+   "- <red><bold>Bắn cầu tuyết</bold></red>",
+   "- Túi đồ nhỏ + <yellow><bold>nhặt đồ</bold></yellow>",
+   "- <aqua><bold>Chạy nhanh</bold></aqua>, gai",
+   "- <yellow><bold>Hào quang</bold></yellow> hồi máu, thở dưới nước",
+   "<gold>Cấp 15/30/50: cưỡi nhanh hơn · cấp 35: <gray>Dậm đất</gray> (sát thương quanh pet)",
+   "<gold>Cấp 25/40: hào quang nhìn đêm, nhảy cao, chạy nhanh, kháng lửa"
+  ],
+  "Skills": {
+   "Ranged": {
+    "Upgrades": {
+     "2": {
+      "Rate": "+35",
+      "Damage": "+2",
+      "Projectile": "Snowball"
+     }
+    }
+   },
+   "Backpack": {
+    "Upgrades": {
+     "3": {
+      "drop": false,
+      "rows": "+2"
+     },
+     "5": {
+      "drop": false,
+      "rows": "+1"
+     }
+    }
+   },
+   "Control": {
+    "Upgrades": {
+     "6": {
+      "Active": true
+     }
+    }
+   },
+   "Pickup": {
+    "Upgrades": {
+     "4": {
+      "Range": "+1",
+      "Exp": false
+     }
+    }
+   },
+   "Beacon": {
+    "Upgrades": {
+     "10": {
+      "Buffs": {
+       "Regeneration": "+2",
+       "WaterBreathing": true
+      },
+      "Duration": "+8",
+      "Count": "+1",
+      "Range": "+10"
+     },
+     "25": {
+      "buffs": {
+       "nightvision": true,
+       "jumpboost": "+1"
+      },
+      "count": "+1"
+     },
+     "40": {
+      "buffs": {
+       "speed": "+1",
+       "fireresistance": true
+      },
+      "count": "+1"
+     }
+    }
+   },
+   "Thorns": {
+    "Upgrades": {
+     "9": {
+      "Reflection": "+20",
+      "Chance": "+50"
+     }
+    }
+   },
+   "Behavior": {
+    "Upgrades": {
+     "2": {
+      "Friend": false,
+      "Farm": false,
+      "Duel": true,
+      "Aggro": false,
+      "Raid": false
+     },
+     "7": {
+      "Friend": true,
+      "Farm": false,
+      "Duel": true,
+      "Aggro": false,
+      "Raid": false
+     }
+    }
+   },
+   "Sprint": {
+    "Upgrades": {
+     "8": {
+      "Active": true
+     }
+    }
+   },
+   "Ride": {
+    "Upgrades": {
+     "1": {
+      "Speed": "+5",
+      "Active": true,
+      "JumpHeight": "+1.25"
+     },
+     "15": {
+      "speed": "+5"
+     },
+     "30": {
+      "speed": "+5",
+      "jumpheight": "+0.5"
+     },
+     "50": {
+      "speed": "+5"
+     }
+    }
+   },
+   "Stomp": {
+    "Upgrades": {
+     "35": {
+      "chance": "+10",
+      "damage": "+2"
+     }
+    }
+   }
+  },
+  "MobTypes": [
+   "*"
+  ],
+  "ID": "Ride",
+  "Icon": {
+   "Material": "saddle",
+   "Glowing": true
+  },
+  "Name": "Thú Cưỡi",
+  "Display": "Thú Cưỡi",
+  "Notifications": {
+   "15": "<gold>⬆ Pet đạt cấp 15: <yellow>Cưỡi nhanh hơn",
+   "25": "<gold>⬆ Pet đạt cấp 25: <yellow>Hào quang nhìn đêm + nhảy cao",
+   "30": "<gold>⬆ Pet đạt cấp 30: <yellow>Cưỡi nhanh hơn, nhảy cao hơn",
+   "35": "<gold>⬆ Pet đạt cấp 35: <yellow>Dậm đất",
+   "40": "<gold>⬆ Pet đạt cấp 40: <yellow>Hào quang chạy nhanh + kháng lửa",
+   "50": "<gold>⬆ Pet đạt cấp 50: <yellow>Cưỡi nhanh hơn"
+  }
+ },
+ "Farm": {
+  "Order": 4,
+  "Description": [
+   "<gray>Pet giữ vườn, đánh xa:",
+   "- <red><bold>Cận chiến</bold></red> + <red><bold>bắn tên</bold></red> (cấp 7)",
+   "- <yellow><bold>Túi đồ</bold></yellow>, <yellow><bold>nhặt đồ</bold></yellow>",
+   "- <red><bold>Gai</bold></red>, <dark_green><bold>độc</bold></dark_green>",
+   "- Hành vi <green><bold>làm nông</bold></green>, điều khiển",
+   "<gold>Cấp 15/40/50: <red>bắn tên</red> nhanh và mạnh hơn",
+   "<gold>Cấp 20: độc mạnh hơn · cấp 25: hào quang <green>hồi máu</green> + may mắn",
+   "<gold>Cấp 30: nhặt kinh nghiệm · cấp 45: <gray>Dậm đất</gray>"
+  ],
+  "Skills": {
+   "Ranged": {
+    "Upgrades": {
+     "7": {
+      "Rate": "+35",
+      "Damage": "+2",
+      "Projectile": "Arrow"
+     },
+     "15": {
+      "rate": "+10",
+      "damage": "+1"
+     },
+     "40": {
+      "rate": "+10",
+      "damage": "+1.5"
+     },
+     "50": {
+      "damage": "+1.5"
+     }
+    }
+   },
+   "Backpack": {
+    "Upgrades": {
+     "1": {
+      "drop": false,
+      "rows": "+1"
+     },
+     "5": {
+      "drop": false,
+      "rows": "+1"
+     }
+    }
+   },
+   "Control": {
+    "Upgrades": {
+     "8": {
+      "Active": true
+     }
+    }
+   },
+   "Pickup": {
+    "Upgrades": {
+     "2": {
+      "Range": "+1",
+      "Exp": false
+     },
+     "10": {
+      "Range": "+5",
+      "Exp": false
+     },
+     "30": {
+      "exp": true,
+      "range": "+1"
+     }
+    }
+   },
+   "Thorns": {
+    "Upgrades": {
+     "6": {
+      "Reflection": "+10",
+      "Chance": "+20"
+     }
+    }
+   },
+   "Poison": {
+    "Upgrades": {
+     "9": {
+      "Duration": "+2",
+      "Chance": "+20"
+     },
+     "20": {
+      "chance": "+10",
+      "duration": "+2"
+     }
+    }
+   },
+   "Behavior": {
+    "Upgrades": {
+     "4": {
+      "Friend": true,
+      "Farm": true,
+      "Duel": true,
+      "Aggro": true,
+      "Raid": true
+     }
+    }
+   },
+   "Damage": {
+    "Upgrades": {
+     "3": {
+      "Damage": "+2"
+     },
+     "5": {
+      "Damage": "+0.5"
+     }
+    }
+   },
+   "Beacon": {
+    "Upgrades": {
+     "25": {
+      "buffs": {
+       "regeneration": "+1",
+       "luck": true
+      },
+      "count": "+1",
+      "duration": "+8",
+      "range": "+8"
+     }
+    }
+   },
+   "Stomp": {
+    "Upgrades": {
+     "45": {
+      "chance": "+10",
+      "damage": "+2"
+     }
+    }
+   }
+  },
+  "MobTypes": [
+   "*"
+  ],
+  "ID": "Farm",
+  "Icon": {
+   "Material": "writable_book"
+  },
+  "Name": "Nông Trại",
+  "Display": "Nông Trại",
+  "Notifications": {
+   "15": "<gold>⬆ Pet đạt cấp 15: <yellow>Bắn tên mạnh hơn",
+   "20": "<gold>⬆ Pet đạt cấp 20: <yellow>Độc mạnh hơn",
+   "25": "<gold>⬆ Pet đạt cấp 25: <yellow>Hào quang hồi máu + may mắn",
+   "30": "<gold>⬆ Pet đạt cấp 30: <yellow>Nhặt cả kinh nghiệm",
+   "40": "<gold>⬆ Pet đạt cấp 40: <yellow>Bắn tên mạnh hơn",
+   "45": "<gold>⬆ Pet đạt cấp 45: <yellow>Dậm đất",
+   "50": "<gold>⬆ Pet đạt cấp 50: <yellow>Bắn tên mạnh hơn"
+  }
+ }
+}

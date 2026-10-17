@@ -690,10 +690,10 @@ footer .fbrand img{width:44px}
   <div class="wrap">
     <div class="kicker v">Bạn đồng hành</div>
     <h2>Pet chiến đấu: tự tay bắt, tự tay nuôi</h2>
-    <p class="intro">Không mua được bằng tiền thật. Ai cũng bắt được: đánh một con thú hoặc quái tới khi <b>yếu máu</b> (thanh máu hiện trên đầu khi đánh) rồi cầm <b>dây xích</b> bấm chuột phải. Pet theo bạn, đánh quái, lên cấp tới <b data-k="pet.level_cap">100</b> và mở kỹ năng. Sức mạnh theo <b>cấp</b>, không theo loài: sói cấp 20 mạnh hơn zombie cấp 5.</p>
+    <p class="intro">Không mua được bằng tiền thật. Ai cũng bắt được: đánh một con thú hoặc quái tới khi <b>yếu máu</b> (thanh máu hiện trên đầu khi đánh) rồi cầm <b>dây xích</b> bấm chuột phải. Pet theo bạn, đánh quái, lên cấp tới <b data-k="pet.level_cap">100</b> và mở kỹ năng. Lúc mới bắt mọi loài như nhau; lớn lên thì đi theo <b>bản tính loài</b>: thú lớn trâu nhưng đánh yếu, thú săn đánh đau nhưng mỏng, chỉ loài biết bay mới cưỡi bay được. Bạn chọn <b>hệ</b>, loài quyết định cách pet lớn.</p>
     <div class="grid g2">
       <div class="card hl"><h3>Chọn hướng phát triển</h3><div id="petTrees" class="muted">Đang tải…</div>
-        <p class="dim" style="font-size:.85rem;margin-top:8px">Chọn bằng <span class="kbd">/petchooseskilltree</span>. Mỗi 5 cấp sau cấp 10: thêm sát thương và máu; cấp 15 tới 50 mở thêm kỹ năng riêng của từng hệ. Thú Cưỡi bay được từ cấp 10 (quãng bay mỗi lần dài dần theo cấp), Đấu Trường không cho cưỡi pet; đang công thành thì không được bay bằng pet trong vùng vây.</p></div>
+        <p class="dim" style="font-size:.85rem;margin-top:8px">Chọn bằng <span class="kbd">/petchooseskilltree</span>. Cấp 15 tới 50 mở thêm kỹ năng riêng của từng hệ; máu và sát thương tăng theo nhóm loài (bảng bên dưới). Loài biết bay chọn Thú Cưỡi thì bay được từ cấp 5 (quãng bay mỗi lần dài dần theo cấp). Đấu Trường không cho cưỡi pet; đang công thành thì không được bay bằng pet trong vùng vây.</p></div>
       <div class="grid">
         <div class="card"><h3>Luật pet trong chiến tranh</h3><ul class="clean">
           <li>Pet đánh người chơi bị <b>giảm <span data-k="pet.reduce">50</span>%</b> sát thương</li>
@@ -706,6 +706,7 @@ footer .fbrand img{width:44px}
         <div class="card"><h3>Lệnh hay dùng</h3><p class="muted"><span class="kbd">/petinfo</span> <span class="kbd">/petcall</span> <span class="kbd">/petsendaway</span> <span class="kbd">/petname</span> <span class="kbd">/petinventory</span> <span class="kbd">/petcapturehelper</span> <span class="kbd">/petlist</span></p></div>
       </div>
     </div>
+    <div class="card" style="margin-top:16px"><h3>Pet lớn theo bản tính loài</h3><p class="dim" style="font-size:.85rem">Bấm vào từng nhóm để xem loài nào thuộc nhóm đó và đặc tính riêng.</p><div id="petGroups" class="muted">Đang tải…</div></div>
   </div>
 </section>
 
@@ -993,6 +994,9 @@ async function loadInfo(){
       ? '<span class="pill" style="background:rgba(62,207,142,.15);color:#7ee2b0">🐾 Có pet</span>' : '<span class="pill">Không pet</span>'}</td></tr>`).join("")}</tbody></table>` : "Chưa có phiên nào trong 2 tuần tới.";
   const pet = info.pet || {};
   $("#petTrees").innerHTML = (pet.trees || []).map(t => `<div style="margin-bottom:10px"><b>${esc(t.ten)}</b><div class="muted" style="font-size:.9rem">${t.mo_ta.filter(x => !x.startsWith("Mỗi 5 cấp")).map(esc).join("<br>")}</div></div>`).join("") || "Chưa có.";
+  $("#petGroups").innerHTML = (pet.groups || []).map(g => `<details style="margin-bottom:6px"><summary><b>${esc(g.ten)}</b> <span class="dim">· ${esc(g.vai)}</span></summary>
+    <div style="font-size:.9rem;margin:6px 0 4px 14px"><div><b>Loài:</b> ${g.loai.map(esc).join(", ")}</div><div><b>Lớn lên:</b> ${esc(g.tang)}</div>
+    ${g.them.length ? `<div><b>Có thêm:</b> ${g.them.map(esc).join("; ")}</div>` : ""}${g.dac_tinh.length ? `<div><b>Đặc tính riêng:</b><br>${g.dac_tinh.map(esc).join("<br>")}</div>` : ""}</div></details>`).join("") || "Chưa có.";
   $("#petNoCatch").textContent = (pet.no_catch || []).join(", ");
   const sl = pet.slots || {};
   $("#petSlots").innerHTML = Object.keys(sl).length ? `<table><tbody>${Object.entries(sl).map(([k, v]) => `<tr><td>${esc(k)}</td><td><b>${esc(v)}</b> pet</td></tr>`).join("")}</tbody></table>` : "Chưa đặt.";

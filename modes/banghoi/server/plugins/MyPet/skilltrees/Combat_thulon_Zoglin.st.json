@@ -1,0 +1,94 @@
+{
+  "ID": "Combat_thulon_Zoglin",
+  "Name": "Combat_thulon_Zoglin",
+  "Display": "Chiến Binh",
+  "Order": 0,
+  "Icon": {
+    "Material": "stone_axe"
+  },
+  "MobTypes": [
+    "Zoglin"
+  ],
+  "Inheritance": {
+    "Skilltree": "Combat"
+  },
+  "Description": [
+    "<gray>Pet đánh cận chiến, trâu dần theo cấp:",
+    "- <red><bold>Sát thương</bold></red> tăng ở cấp 1, 3, 6, 8",
+    "- <green><bold>Hồi máu</bold></green> cho pet (cấp 2)",
+    "- <red><bold>Gai</bold></red> phản sát thương (cấp 5, 9)",
+    "- <blue><bold>Đẩy lùi</bold></blue> kẻ địch (cấp 10)",
+    "- Túi đồ 1 hàng, điều khiển bằng dây xích",
+    "<gold>Cấp 15/40: <aqua>Hộ chủ</aqua> (15→25% lần chủ bị đánh, pet gánh 20→30% sát thương)",
+    "<gold>Cấp 20/50: <gray>Dậm đất</gray> gây sát thương xung quanh",
+    "<gold>Cấp 25: <dark_red>Chảy máu</dark_red> · cấp 30: hồi máu thêm",
+    "<gold>Nhóm loài: Thú lớn</gold> <gray>(trâu, đỡ đòn, đánh yếu)</gray>",
+    "<gold>Cấp 5: +3 máu · cấp 20: Hộ chủ · cấp 30: Gai",
+    "<gold>Zoglin: húc văng (cấp 10)",
+    "<dark_gray>Mỗi 5 cấp sau cấp 10: +4 máu, +0,25 sát thương"
+  ],
+  "Skills": {
+    "Life": {
+      "Upgrades": {
+        "%5>10": {
+          "health": "+4"
+        },
+        "5": {
+          "health": "+3"
+        }
+      }
+    },
+    "Damage": {
+      "Upgrades": {
+        "%5>10": {
+          "damage": "+0.25"
+        }
+      }
+    },
+    "Shield": {
+      "Upgrades": {
+        "20": {
+          "chance": "+10",
+          "redirect": "+15"
+        }
+      }
+    },
+    "Thorns": {
+      "Upgrades": {
+        "30": {
+          "chance": "+10",
+          "reflection": "+10"
+        }
+      }
+    },
+    "Knockback": {
+      "Upgrades": {
+        "10": {
+          "chance": "+20"
+        }
+      }
+    }
+  },
+  "Notifications": {
+    "15": "<gold>⬆ Pet đạt cấp 15: <yellow>Hộ chủ — gánh bớt đòn cho bạn",
+    "20": "<gold>⬆ Pet đạt cấp 20: <yellow>Dậm đất",
+    "25": "<gold>⬆ Pet đạt cấp 25: <yellow>Chảy máu",
+    "30": "<gold>⬆ Pet đạt cấp 30: <yellow>Hồi máu mạnh hơn",
+    "40": "<gold>⬆ Pet đạt cấp 40: <yellow>Hộ chủ mạnh hơn",
+    "50": "<gold>⬆ Pet đạt cấp 50: <yellow>Dậm đất mạnh hơn"
+  },
+  "DmmNhom": {
+    "ma": "thulon",
+    "ten": "Thú lớn",
+    "vai": "trâu, đỡ đòn, đánh yếu",
+    "he": "Combat",
+    "mo_ta": [
+      "Cấp 5: +3 máu · cấp 20: Hộ chủ · cấp 30: Gai"
+    ],
+    "tang": "+4 máu, +0,25 sát thương mỗi 5 cấp sau cấp 10",
+    "dac_tinh": "Zoglin: húc văng (cấp 10)",
+    "loai_vi": [
+      "Zoglin"
+    ]
+  }
+}

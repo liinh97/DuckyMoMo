@@ -281,7 +281,8 @@ def combat_pets(uuid, perms):
     for f in (DATA_DIR / SRV / "plugins" / "MyPet" / "skilltrees").glob("*.st.json"):
         try:
             d = json.loads(f.read_text(encoding="utf-8"))
-            trees[d.get("ID")] = d.get("Name")
+            g = d.get("DmmNhom")   # cây theo nhóm loài (tools/mypet/): "Chiến Binh · Thú săn"
+            trees[d.get("ID")] = (d.get("Display") or d.get("Name")) + (f" · {g['ten']}" if g else "")
         except (OSError, ValueError):
             pass
     pets = []

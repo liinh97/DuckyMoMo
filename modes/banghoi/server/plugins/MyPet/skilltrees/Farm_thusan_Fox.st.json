@@ -1,0 +1,91 @@
+{
+  "ID": "Farm_thusan_Fox",
+  "Name": "Farm_thusan_Fox",
+  "Display": "Nông Trại",
+  "Order": 4,
+  "Icon": {
+    "Material": "writable_book"
+  },
+  "MobTypes": [
+    "Fox"
+  ],
+  "Inheritance": {
+    "Skilltree": "Farm"
+  },
+  "Description": [
+    "<gray>Pet giữ vườn, đánh xa:",
+    "- <red><bold>Cận chiến</bold></red> + <red><bold>bắn tên</bold></red> (cấp 7)",
+    "- <yellow><bold>Túi đồ</bold></yellow>, <yellow><bold>nhặt đồ</bold></yellow>",
+    "- <red><bold>Gai</bold></red>, <dark_green><bold>độc</bold></dark_green>",
+    "- Hành vi <green><bold>làm nông</bold></green>, điều khiển",
+    "<gold>Cấp 15/40/50: <red>bắn tên</red> nhanh và mạnh hơn",
+    "<gold>Cấp 20: độc mạnh hơn · cấp 25: hào quang <green>hồi máu</green> + may mắn",
+    "<gold>Cấp 30: nhặt kinh nghiệm · cấp 45: <gray>Dậm đất</gray>",
+    "<gold>Nhóm loài: Thú săn</gold> <gray>(đánh đau, nhanh, máu mỏng)</gray>",
+    "<gold>Cấp 5: Chạy nhanh · cấp 20: Chảy máu",
+    "<gold>Cáo: nhặt đồ (cấp 10)",
+    "<dark_gray>Mỗi 5 cấp sau cấp 10: +1,5 máu, +0,75 sát thương"
+  ],
+  "Skills": {
+    "Life": {
+      "Upgrades": {
+        "%5>10": {
+          "health": "+1.5"
+        }
+      }
+    },
+    "Damage": {
+      "Upgrades": {
+        "%5>10": {
+          "damage": "+0.75"
+        }
+      }
+    },
+    "Sprint": {
+      "Upgrades": {
+        "5": {
+          "active": true
+        }
+      }
+    },
+    "Bleed": {
+      "Upgrades": {
+        "20": {
+          "chance": "+8",
+          "damage": "+1",
+          "duration": "+3"
+        }
+      }
+    },
+    "Pickup": {
+      "Upgrades": {
+        "10": {
+          "range": "+1"
+        }
+      }
+    }
+  },
+  "Notifications": {
+    "15": "<gold>⬆ Pet đạt cấp 15: <yellow>Bắn tên mạnh hơn",
+    "20": "<gold>⬆ Pet đạt cấp 20: <yellow>Độc mạnh hơn",
+    "25": "<gold>⬆ Pet đạt cấp 25: <yellow>Hào quang hồi máu + may mắn",
+    "30": "<gold>⬆ Pet đạt cấp 30: <yellow>Nhặt cả kinh nghiệm",
+    "40": "<gold>⬆ Pet đạt cấp 40: <yellow>Bắn tên mạnh hơn",
+    "45": "<gold>⬆ Pet đạt cấp 45: <yellow>Dậm đất",
+    "50": "<gold>⬆ Pet đạt cấp 50: <yellow>Bắn tên mạnh hơn"
+  },
+  "DmmNhom": {
+    "ma": "thusan",
+    "ten": "Thú săn",
+    "vai": "đánh đau, nhanh, máu mỏng",
+    "he": "Farm",
+    "mo_ta": [
+      "Cấp 5: Chạy nhanh · cấp 20: Chảy máu"
+    ],
+    "tang": "+1,5 máu, +0,75 sát thương mỗi 5 cấp sau cấp 10",
+    "dac_tinh": "Cáo: nhặt đồ (cấp 10)",
+    "loai_vi": [
+      "Cáo"
+    ]
+  }
+}

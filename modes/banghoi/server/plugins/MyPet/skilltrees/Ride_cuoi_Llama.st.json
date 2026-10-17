@@ -1,0 +1,100 @@
+{
+  "ID": "Ride_cuoi_Llama",
+  "Name": "Ride_cuoi_Llama",
+  "Display": "Thú Cưỡi",
+  "Order": 3,
+  "Icon": {
+    "Material": "saddle",
+    "Glowing": true
+  },
+  "MobTypes": [
+    "Llama"
+  ],
+  "Inheritance": {
+    "Skilltree": "Ride"
+  },
+  "Description": [
+    "<gray>Pet để cưỡi đi đường xa:",
+    "- <yellow><bold>Cưỡi</bold></yellow> được từ cấp 1 (chuột phải bằng dây xích)",
+    "- <red><bold>Bắn cầu tuyết</bold></red>",
+    "- Túi đồ nhỏ + <yellow><bold>nhặt đồ</bold></yellow>",
+    "- <aqua><bold>Chạy nhanh</bold></aqua>, gai",
+    "- <yellow><bold>Hào quang</bold></yellow> hồi máu, thở dưới nước",
+    "<gold>Cấp 15/30/50: cưỡi nhanh hơn · cấp 35: <gray>Dậm đất</gray> (sát thương quanh pet)",
+    "<gold>Cấp 25/40: hào quang nhìn đêm, nhảy cao, chạy nhanh, kháng lửa",
+    "<gold>Nhóm loài: Thú cưỡi</gold> <gray>(chạy nhanh, nhảy cao, thồ hàng)</gray>",
+    "<gold>Cấp 15: túi đồ +1 hàng · hệ Thú Cưỡi: chạy nhanh hơn (cấp 10, 20, 40), nhảy cao hơn (cấp 20, 40)",
+    "<gold>Lạc đà không bướu: phun nước bọt (cấp 10)",
+    "<dark_gray>Mỗi 5 cấp sau cấp 10: +2,5 máu, +0,4 sát thương"
+  ],
+  "Skills": {
+    "Life": {
+      "Upgrades": {
+        "%5>10": {
+          "health": "+2.5"
+        }
+      }
+    },
+    "Damage": {
+      "Upgrades": {
+        "%5>10": {
+          "damage": "+0.4"
+        }
+      }
+    },
+    "Backpack": {
+      "Upgrades": {
+        "15": {
+          "rows": "+1",
+          "drop": false
+        }
+      }
+    },
+    "Ride": {
+      "Upgrades": {
+        "10": {
+          "speed": "+5"
+        },
+        "20": {
+          "speed": "+5",
+          "jumpheight": "+0.5"
+        },
+        "40": {
+          "speed": "+5",
+          "jumpheight": "+0.5"
+        }
+      }
+    },
+    "Ranged": {
+      "Upgrades": {
+        "10": {
+          "projectile": "LlamaSpit",
+          "rate": "+25",
+          "damage": "+1.5"
+        }
+      }
+    }
+  },
+  "Notifications": {
+    "15": "<gold>⬆ Pet đạt cấp 15: <yellow>Cưỡi nhanh hơn",
+    "25": "<gold>⬆ Pet đạt cấp 25: <yellow>Hào quang nhìn đêm + nhảy cao",
+    "30": "<gold>⬆ Pet đạt cấp 30: <yellow>Cưỡi nhanh hơn, nhảy cao hơn",
+    "35": "<gold>⬆ Pet đạt cấp 35: <yellow>Dậm đất",
+    "40": "<gold>⬆ Pet đạt cấp 40: <yellow>Hào quang chạy nhanh + kháng lửa",
+    "50": "<gold>⬆ Pet đạt cấp 50: <yellow>Cưỡi nhanh hơn"
+  },
+  "DmmNhom": {
+    "ma": "cuoi",
+    "ten": "Thú cưỡi",
+    "vai": "chạy nhanh, nhảy cao, thồ hàng",
+    "he": "Ride",
+    "mo_ta": [
+      "Cấp 15: túi đồ +1 hàng · hệ Thú Cưỡi: chạy nhanh hơn (cấp 10, 20, 40), nhảy cao hơn (cấp 20, 40)"
+    ],
+    "tang": "+2,5 máu, +0,4 sát thương mỗi 5 cấp sau cấp 10",
+    "dac_tinh": "Lạc đà không bướu: phun nước bọt (cấp 10)",
+    "loai_vi": [
+      "Lạc đà không bướu"
+    ]
+  }
+}

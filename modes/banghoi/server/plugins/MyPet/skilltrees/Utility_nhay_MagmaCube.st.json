@@ -1,0 +1,88 @@
+{
+  "ID": "Utility_nhay_MagmaCube",
+  "Name": "Utility_nhay_MagmaCube",
+  "Display": "Hậu Cần",
+  "Order": 1,
+  "Icon": {
+    "Material": "trapped_chest"
+  },
+  "MobTypes": [
+    "MagmaCube"
+  ],
+  "Inheritance": {
+    "Skilltree": "Utility"
+  },
+  "Description": [
+    "<gray>Pet mang đồ, đi đào đi khai thác:",
+    "- <yellow><bold>Túi đồ</bold></yellow> lớn dần tới 6 hàng",
+    "- <green><bold>Nhiều máu</bold></green> hơn",
+    "- <yellow><bold>Nhặt đồ</bold></yellow> quanh chủ",
+    "- <dark_green><bold>Độc</bold></dark_green> lên kẻ địch",
+    "<gold>Cấp 15: nhặt cả <green>kinh nghiệm</green> · cấp 40: nhặt xa hơn",
+    "<gold>Cấp 20/30: hào quang <yellow>Đào nhanh</yellow> I→II, nhìn đêm, may mắn",
+    "<gold>Cấp 35: Hộ chủ · cấp 50: kháng lửa, thở dưới nước",
+    "<gold>Nhóm loài: Quái nhầy & nổ</gold> <gray>(dậm đất gây sát thương xung quanh)</gray>",
+    "<gold>Cấp 10, 30: Dậm đất",
+    "<gold>Khối magma: đốt lửa (cấp 15)",
+    "<dark_gray>Mỗi 5 cấp sau cấp 10: +2,5 máu, +0,4 sát thương"
+  ],
+  "Skills": {
+    "Life": {
+      "Upgrades": {
+        "%5>10": {
+          "health": "+2.5"
+        }
+      }
+    },
+    "Damage": {
+      "Upgrades": {
+        "%5>10": {
+          "damage": "+0.4"
+        }
+      }
+    },
+    "Stomp": {
+      "Upgrades": {
+        "10": {
+          "chance": "+10",
+          "damage": "+2"
+        },
+        "30": {
+          "chance": "+5",
+          "damage": "+2"
+        }
+      }
+    },
+    "Fire": {
+      "Upgrades": {
+        "15": {
+          "chance": "+15",
+          "duration": "+3"
+        }
+      }
+    }
+  },
+  "Notifications": {
+    "15": "<gold>⬆ Pet đạt cấp 15: <yellow>Nhặt cả kinh nghiệm",
+    "20": "<gold>⬆ Pet đạt cấp 20: <yellow>Hào quang Đào nhanh + nhìn đêm",
+    "25": "<gold>⬆ Pet đạt cấp 25: <yellow>Thêm máu",
+    "30": "<gold>⬆ Pet đạt cấp 30: <yellow>Đào nhanh II + may mắn",
+    "35": "<gold>⬆ Pet đạt cấp 35: <yellow>Hộ chủ",
+    "40": "<gold>⬆ Pet đạt cấp 40: <yellow>Nhặt đồ xa hơn",
+    "50": "<gold>⬆ Pet đạt cấp 50: <yellow>Hào quang kháng lửa + thở dưới nước"
+  },
+  "DmmNhom": {
+    "ma": "nhay",
+    "ten": "Quái nhầy & nổ",
+    "vai": "dậm đất gây sát thương xung quanh",
+    "he": "Utility",
+    "mo_ta": [
+      "Cấp 10, 30: Dậm đất"
+    ],
+    "tang": "+2,5 máu, +0,4 sát thương mỗi 5 cấp sau cấp 10",
+    "dac_tinh": "Khối magma: đốt lửa (cấp 15)",
+    "loai_vi": [
+      "Khối magma"
+    ]
+  }
+}

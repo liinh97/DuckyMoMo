@@ -1,0 +1,108 @@
+{
+  "ID": "Utility_giasuc_Snowman",
+  "Name": "Utility_giasuc_Snowman",
+  "Display": "Hậu Cần",
+  "Order": 1,
+  "Icon": {
+    "Material": "trapped_chest"
+  },
+  "MobTypes": [
+    "Snowman"
+  ],
+  "Inheritance": {
+    "Skilltree": "Utility"
+  },
+  "Description": [
+    "<gray>Pet mang đồ, đi đào đi khai thác:",
+    "- <yellow><bold>Túi đồ</bold></yellow> lớn dần tới 6 hàng",
+    "- <green><bold>Nhiều máu</bold></green> hơn",
+    "- <yellow><bold>Nhặt đồ</bold></yellow> quanh chủ",
+    "- <dark_green><bold>Độc</bold></dark_green> lên kẻ địch",
+    "<gold>Cấp 15: nhặt cả <green>kinh nghiệm</green> · cấp 40: nhặt xa hơn",
+    "<gold>Cấp 20/30: hào quang <yellow>Đào nhanh</yellow> I→II, nhìn đêm, may mắn",
+    "<gold>Cấp 35: Hộ chủ · cấp 50: kháng lửa, thở dưới nước",
+    "<gold>Nhóm loài: Gia súc</gold> <gray>(hiền, trâu, mang đồ, đánh rất yếu)</gray>",
+    "<gold>Cấp 10: túi đồ +1 hàng · cấp 15: nhặt đồ xa hơn · cấp 20: tự hồi máu",
+    "<gold>Người tuyết: ném cầu tuyết làm chậm (cấp 5, 15)",
+    "<dark_gray>Mỗi 5 cấp sau cấp 10: +3 máu, +0,2 sát thương"
+  ],
+  "Skills": {
+    "Life": {
+      "Upgrades": {
+        "%5>10": {
+          "health": "+3"
+        }
+      }
+    },
+    "Damage": {
+      "Upgrades": {
+        "%5>10": {
+          "damage": "+0.2"
+        }
+      }
+    },
+    "Backpack": {
+      "Upgrades": {
+        "10": {
+          "rows": "+1",
+          "drop": false
+        }
+      }
+    },
+    "Pickup": {
+      "Upgrades": {
+        "15": {
+          "range": "+1"
+        }
+      }
+    },
+    "Heal": {
+      "Upgrades": {
+        "20": {
+          "health": "+1",
+          "timer": "+40"
+        }
+      }
+    },
+    "Ranged": {
+      "Upgrades": {
+        "5": {
+          "projectile": "Snowball",
+          "rate": "+30",
+          "damage": "+1"
+        }
+      }
+    },
+    "Slow": {
+      "Upgrades": {
+        "15": {
+          "chance": "+15",
+          "duration": "+2"
+        }
+      }
+    }
+  },
+  "Notifications": {
+    "15": "<gold>⬆ Pet đạt cấp 15: <yellow>Nhặt cả kinh nghiệm",
+    "20": "<gold>⬆ Pet đạt cấp 20: <yellow>Hào quang Đào nhanh + nhìn đêm",
+    "25": "<gold>⬆ Pet đạt cấp 25: <yellow>Thêm máu",
+    "30": "<gold>⬆ Pet đạt cấp 30: <yellow>Đào nhanh II + may mắn",
+    "35": "<gold>⬆ Pet đạt cấp 35: <yellow>Hộ chủ",
+    "40": "<gold>⬆ Pet đạt cấp 40: <yellow>Nhặt đồ xa hơn",
+    "50": "<gold>⬆ Pet đạt cấp 50: <yellow>Hào quang kháng lửa + thở dưới nước"
+  },
+  "DmmNhom": {
+    "ma": "giasuc",
+    "ten": "Gia súc",
+    "vai": "hiền, trâu, mang đồ, đánh rất yếu",
+    "he": "Utility",
+    "mo_ta": [
+      "Cấp 10: túi đồ +1 hàng · cấp 15: nhặt đồ xa hơn · cấp 20: tự hồi máu"
+    ],
+    "tang": "+3 máu, +0,2 sát thương mỗi 5 cấp sau cấp 10",
+    "dac_tinh": "Người tuyết: ném cầu tuyết làm chậm (cấp 5, 15)",
+    "loai_vi": [
+      "Người tuyết"
+    ]
+  }
+}

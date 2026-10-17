@@ -1,0 +1,84 @@
+{
+  "ID": "Combat_cuoi_TraderLlama",
+  "Name": "Combat_cuoi_TraderLlama",
+  "Display": "Chiến Binh",
+  "Order": 0,
+  "Icon": {
+    "Material": "stone_axe"
+  },
+  "MobTypes": [
+    "TraderLlama"
+  ],
+  "Inheritance": {
+    "Skilltree": "Combat"
+  },
+  "Description": [
+    "<gray>Pet đánh cận chiến, trâu dần theo cấp:",
+    "- <red><bold>Sát thương</bold></red> tăng ở cấp 1, 3, 6, 8",
+    "- <green><bold>Hồi máu</bold></green> cho pet (cấp 2)",
+    "- <red><bold>Gai</bold></red> phản sát thương (cấp 5, 9)",
+    "- <blue><bold>Đẩy lùi</bold></blue> kẻ địch (cấp 10)",
+    "- Túi đồ 1 hàng, điều khiển bằng dây xích",
+    "<gold>Cấp 15/40: <aqua>Hộ chủ</aqua> (15→25% lần chủ bị đánh, pet gánh 20→30% sát thương)",
+    "<gold>Cấp 20/50: <gray>Dậm đất</gray> gây sát thương xung quanh",
+    "<gold>Cấp 25: <dark_red>Chảy máu</dark_red> · cấp 30: hồi máu thêm",
+    "<gold>Nhóm loài: Thú cưỡi</gold> <gray>(chạy nhanh, nhảy cao, thồ hàng)</gray>",
+    "<gold>Lạc đà thương nhân: phun nước bọt (cấp 10)",
+    "<dark_gray>Mỗi 5 cấp sau cấp 10: +2,5 máu, +0,4 sát thương"
+  ],
+  "Skills": {
+    "Life": {
+      "Upgrades": {
+        "%5>10": {
+          "health": "+2.5"
+        }
+      }
+    },
+    "Damage": {
+      "Upgrades": {
+        "%5>10": {
+          "damage": "+0.4"
+        }
+      }
+    },
+    "Backpack": {
+      "Upgrades": {
+        "15": {
+          "rows": "+1",
+          "drop": false
+        }
+      }
+    },
+    "Ranged": {
+      "Upgrades": {
+        "10": {
+          "projectile": "LlamaSpit",
+          "rate": "+25",
+          "damage": "+1.5"
+        }
+      }
+    }
+  },
+  "Notifications": {
+    "15": "<gold>⬆ Pet đạt cấp 15: <yellow>Hộ chủ — gánh bớt đòn cho bạn",
+    "20": "<gold>⬆ Pet đạt cấp 20: <yellow>Dậm đất",
+    "25": "<gold>⬆ Pet đạt cấp 25: <yellow>Chảy máu",
+    "30": "<gold>⬆ Pet đạt cấp 30: <yellow>Hồi máu mạnh hơn",
+    "40": "<gold>⬆ Pet đạt cấp 40: <yellow>Hộ chủ mạnh hơn",
+    "50": "<gold>⬆ Pet đạt cấp 50: <yellow>Dậm đất mạnh hơn"
+  },
+  "DmmNhom": {
+    "ma": "cuoi",
+    "ten": "Thú cưỡi",
+    "vai": "chạy nhanh, nhảy cao, thồ hàng",
+    "he": "Combat",
+    "mo_ta": [
+      "Cấp 15: túi đồ +1 hàng · hệ Thú Cưỡi: chạy nhanh hơn (cấp 10, 20, 40), nhảy cao hơn (cấp 20, 40)"
+    ],
+    "tang": "+2,5 máu, +0,4 sát thương mỗi 5 cấp sau cấp 10",
+    "dac_tinh": "Lạc đà thương nhân: phun nước bọt (cấp 10)",
+    "loai_vi": [
+      "Lạc đà thương nhân"
+    ]
+  }
+}

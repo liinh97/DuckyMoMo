@@ -283,13 +283,25 @@
   ticks-per-particle). Ghi vào plugins/PlayerParticles/styles/<kiểu>.yml ở lobby + banghoi-1, CẦN khởi động lại 2 server mới có hiệu lực.
 - PlayerParticles có sẵn `locale: vi_VN`, EssentialsX có `messages_vi` — chưa bật (đã hỏi người dùng).
 
+### 17/10 tối: pet lớn theo bản tính loài (hệ × nhóm loài)
+- Người dùng chốt: lúc bắt mọi loài như nhau, lớn lên phải theo bản tính loài (tank trâu đánh yếu, loài bay mới cưỡi bay...).
+- MyPet: cây có "Inheritance": {"Skilltree": X} thì cộng toàn bộ nâng cấp của X (Skilltree.getUpgrades đệ quy); MobTypes [] = không
+  loài nào chọn được. Khoá lạ trong JSON bị bỏ qua (dùng "DmmNhom" để web đọc). Notifications KHÔNG kế thừa (script tự gộp).
+- tools/mypet/he.json = 5 hệ gốc (đã bỏ "%5>10" máu/sát thương chung và bay). tools/mypet/sinh-cay-ky-nang.py: NHOM (10 nhóm, tăng
+  máu/sát thương mỗi 5 cấp sau cấp 10, kỹ năng thêm, bay), LOAI (đặc tính ~35 loài), TEN (tên Việt). Ghi 230 file vào
+  modes/banghoi/server/plugins/MyPet/skilltrees/ (itzg chép sang data khi khởi động); script báo lỗi nếu loài trong pet-config.yml
+  chưa thuộc nhóm nào. ID cây "<Hệ>_<nhóm>[_<Loài>]", Display = tên hệ → trong game mỗi loài chỉ thấy 5 hệ.
+- Đổi nhóm/đặc tính: sửa script, chạy lại, khởi động lại banghoi-1. Pet đang dùng cây bị đổi ID sẽ mất hệ. 17/10 chưa có pet nào.
+- Web: site/app.py pet_trees() trả (5 hệ, nhóm loài); index.html thẻ "Pet lớn theo bản tính loài"; panel/taikhoan.py hiện "Hệ · Nhóm".
+- Cân bằng (chưa thử): cấp 100 Thú lớn +72 máu +4,5 sát thương, Thú săn +27 máu +13,5 sát thương (trước: mọi loài +36/+9).
+
 ### 17/10 tối: MyPet — mốc kỹ năng cấp 15–50, bay của Thú Cưỡi, cấm cưỡi pet ở Đấu Trường
 - Đọc mã MyPet 3.14.3 (giải nén CFR): khoá trong skilltree không phân biệt hoa/thường; quy tắc cấp "%5>10", "20", "1,5,9".
   Có khoá "Notifications" theo cấp (tin báo cho chủ khi pet đạt mốc) — đã dùng.
 - Mốc mới (data/banghoi-1/plugins/MyPet/skilltrees, không trong repo; bản cũ ở scratchpad phiên này):
   Chiến Binh: Hộ chủ (Shield) 15/40, Dậm đất (Stomp) 20/50, Chảy máu 25, hồi máu 30.
   Đấu Sĩ: Héo mòn (Wither) 15, làm chậm 20, Chảy máu 25, Sét (Lightning) 30/50, đốt 40. Hào quang Sức mạnh GIỮ NGUYÊN (người dùng chốt).
-  Thú Cưỡi: bay cấp 10 (flylimit 40, regen 0,5), tốc độ 15/30/50, flylimit +40 (20), +70 (30), +100 (50); hào quang nhìn đêm/nhảy cao 25,
+  Thú Cưỡi: (sau đó chuyển bay sang nhóm Loài bay, từ cấp 5) bay cấp 10 (flylimit 40, regen 0,5), tốc độ 15/30/50, flylimit +40 (20), +70 (30), +100 (50); hào quang nhìn đêm/nhảy cao 25,
   chạy nhanh/kháng lửa 40; Dậm đất 35.
   Hậu Cần: nhặt kinh nghiệm 15, hào quang Đào nhanh I + nhìn đêm 20, máu 25, Đào nhanh II + may mắn 30, Hộ chủ 35, nhặt xa 40, kháng lửa + thở nước 50.
   Nông Trại: bắn tên 15/40/50, độc 20, hào quang hồi máu + may mắn 25, nhặt kinh nghiệm 30, Dậm đất 45.

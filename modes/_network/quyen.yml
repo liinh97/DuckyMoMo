@@ -17,6 +17,11 @@ groups:
       - [essentials.back, "Quay lại chỗ cũ (/back)", "Cho gõ /back quay lại chỗ đứng trước lần dịch chuyển gần nhất (hoặc chỗ chết)."]
       - [essentials.top, "Lên mặt đất (/top)", "Cho gõ /top: dịch chuyển lên khối cao nhất ngay trên đầu (thoát hang)."]
       - [essentials.jump, "Nhảy tới chỗ đang nhìn (/jump)", "Cho gõ /jump: dịch chuyển tới khối đang nhìn."]
+      - [essentials.teleport.timer.bypass, "Dịch chuyển ngay, không phải đứng chờ 3 giây", "Làm gì: /home, /spawn, /warp, /back, /tpa, /tpr đi ngay, không đếm ngược.\nMặc định: chỉ Admin (có qua *). Thời gian chờ chỉnh ở Cài đặt › Bang Hội Chiến › Thế giới › Dịch chuyển bằng lệnh."]
+      - [essentials.teleport.timer.move, "Được di chuyển trong lúc chờ dịch chuyển", "Làm gì: đang đếm ngược mà bước đi thì KHÔNG bị huỷ (vẫn phải chờ đủ giây). Chỉ áp dụng lệnh Essentials, không áp dụng /tpr."]
+      - [essentials.teleport.cooldown.bypass, "Không phải nghỉ giữa hai lần dịch chuyển", "Làm gì: bỏ qua \"Phải chờ giữa hai lần dịch chuyển\" (teleport-cooldown, hiện đang 0 = không giới hạn)."]
+      - [duckymomo.rtp.bypass, "/tpr không phải chờ 5 phút giữa hai lần", "Làm gì: dùng /tpr liên tục, không bị thời gian chờ (mặc định 300 giây) và không phải đứng chờ 3 giây."]
+      - [duckymomo.rtp.free, "/tpr miễn phí", "Làm gì: không bị trừ phí /tpr (hiện phí đang 0 nên chưa có tác dụng)."]
   - title: Quản lý người chơi
     perms:
       - [essentials.kick, "Kick (/kick)", "Cho gõ /kick <người> [lý do]: đá người chơi ra khỏi server, họ vào lại được ngay."]

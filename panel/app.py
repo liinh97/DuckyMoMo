@@ -587,7 +587,7 @@ def all_commands(doc):
                 w = "Mọi người" if name in VANILLA_PLAYER else "Chỉ admin"
             else:
                 w = who(perm, default, srv)
-            rows.append({"plugin": plugin, "name": name, "aliases": c.get("aliases", []), "desc_vi": vi.get(name.lower(), ""),
+            rows.append({"plugin": plugin, "name": name, "aliases": c.get("aliases", []), "desc_vi": vi.get(f"{c['ns']}:{name}".lower()) or vi.get(name.lower(), ""),
                          "desc": c.get("description", ""), "usage": c.get("usage", ""), "perm": perm, "who": w})
         # bỏ dòng trùng: tên đã là tên gọi tắt của lệnh khác cùng plugin (uJobs đăng ký /job, /ujob… riêng)
         alias_of = {(r["plugin"], a) for r in rows for a in r["aliases"]}
@@ -755,6 +755,22 @@ def roles_json():
 
 
 SRV_VI = {"lobby": "Sảnh", "banghoi-1": "Bang Hội Chiến", "practice-1": "Practice"}
+USAGE_VI = {"player": "người", "playername": "người", "players": "người", "target": "người", "targets": "người", "amount": "số", "message": "tin",
+            "msg": "tin", "reason": "lý do", "world": "thế giới", "name": "tên", "kit": "kit", "kitname": "kit", "item": "đồ", "itemname": "đồ",
+            "datediff": "thời gian", "duration": "thời gian", "time": "thời gian", "delay": "giây", "price": "giá", "text": "chữ", "mob": "quái",
+            "address": "IP", "jailname": "tên tù", "warp": "warp", "count": "số", "radius": "bán kính", "block": "khối", "pattern": "khối",
+            "size": "cỡ", "command": "lệnh"}
+
+
+def vi_usage(u, name):
+    """Cách dùng của plugin (tiếng Anh) -> gọn, dịch tên tham số hay gặp. Bỏ cách dùng không có tham số."""
+    u = str(u).strip().replace("<command>", name).replace("<alias>", name)
+    if not u or u in ("/", "/" + name) or u.lower().startswith("usage: /") and len(u) < 10:
+        return ""
+    u = re.sub(r"^Usage:\s*", "", u)
+    if not u.startswith("/"):
+        u = f"/{name} {u}"
+    return re.sub(r"(?<=[<\[|])([a-z]+)(?=[>\]|])", lambda m: USAGE_VI.get(m.group(1).lower(), m.group(1)), u)[:140]
 
 
 def command_catalog(known):
@@ -773,18 +789,21 @@ def command_catalog(known):
             for a in c.get("aliases") or []:
                 if a not in e["cmds"] and len(e["cmds"]) < 12:
                     e["cmds"].append(a)
-            e["desc"] = e["desc"] or c.get("desc_vi") or c.get("desc") or ""
+            e["desc"] = e["desc"] or c.get("desc_vi") or ""   # chỉ tiếng Việt (lenh-vi.yml), không lấy mô tả tiếng Anh của plugin
+            e["usage"] = e.get("usage") or vi_usage(c.get("usage") or "", c["name"])
             if srv not in e["servers"]:
                 e["servers"].append(srv)
     plugins = {}
     for perm, e in sorted(by_perm.items()):
         main, alias = e["cmds"][0], e["cmds"][1:]
         label = f"/{main}" + (f" (/{', /'.join(alias[:4])}{'…' if len(alias) > 4 else ''})" if alias else "") + (f" — {e['desc']}" if e["desc"] else "")
-        info = (f"Lệnh /{main}" + (f", gọi tắt: /{', /'.join(alias)}" if alias else "") + ".\n"
-                + (f"{e['desc']}\n" if e["desc"] else "")
-                + f"Có ở: {', '.join(SRV_VI.get(x, x) for x in e['servers'])}.\n"
-                + "Danh sách tự động từ lệnh đang có trên server (quyền suy ra từ lệnh, Essentials: essentials.<lệnh>). "
-                  "Lệnh có lệnh con (vd /co rollback) có thể cần thêm quyền con: xem Cẩm nang admin.").replace("\\n", "\n")
+        lines = [f"Làm gì: {e['desc'] or 'chưa có mô tả (xem Cẩm nang admin)'}"]
+        if e["usage"]:
+            lines.append(f"Cách dùng: {e['usage']}")
+        if alias:
+            lines.append(f"Gọi tắt: /{', /'.join(alias)}")
+        lines.append(f"Có ở: {', '.join(SRV_VI.get(x, x) for x in e['servers'])}")
+        info = "\n".join(lines)
         plugins.setdefault(e["plugin"], []).append([perm, label[:160], info])
     order = sorted(plugins, key=lambda p: (p.startswith("Minecraft"), p.lower()))
     return [{"title": f"Lệnh {p} (tự động)", "auto": True, "perms": plugins[p]} for p in order]
@@ -1883,7 +1902,7 @@ def web_profile(name, by_code):
                 continue
             seen.add((r["plugin"], r["name"]))
             row = {"plugin": r["plugin"], "ten": r["name"], "goi_tat": r.get("aliases", [])[:4],
-                   "mo_ta": r.get("desc_vi") or r.get("desc", ""), "nhan": tag}
+                   "mo_ta": r.get("desc_vi") or "", "nhan": tag}
             hit = common.get(cmd_key(r["name"])) or next((common[a.lower()] for a in r.get("aliases", []) if a.lower() in common), None)
             if hit:
                 row["hay"] = hit  # [nhóm, thứ tự]

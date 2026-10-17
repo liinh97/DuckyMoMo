@@ -173,7 +173,12 @@ window.infoBtn = function (text, label) {
     close();
     pop = document.createElement("div");
     pop.className = "ib-pop"; pop.setAttribute("role", "dialog");
-    pop.textContent = b.dataset.info;
+    // mỗi dòng "Nhãn: nội dung" -> nhãn in đậm (Làm gì, Cách dùng, Gọi tắt, Có ở, Ví dụ…)
+    const escIb = (t) => t.replace(/[&<>]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
+    pop.innerHTML = String(b.dataset.info).split("\n").map(line => {
+      const m = line.match(/^([^:]{1,22}):\s(.*)$/);
+      return `<div class="ib-l">${m ? `<b>${escIb(m[1])}:</b> ${escIb(m[2])}` : escIb(line)}</div>`;
+    }).join("");
     document.body.appendChild(pop);
     from = b;
     const r = b.getBoundingClientRect(), w = pop.offsetWidth, h = pop.offsetHeight;

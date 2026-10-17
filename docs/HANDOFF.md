@@ -249,6 +249,14 @@
   bỏ qua nếu có essentials.teleport.timer.bypass hoặc duckymomo.rtp.bypass. Đã build + khởi động lại banghoi-1 (0 người online), CHƯA thử trong game.
 - Trang Cài đặt › Thế giới: ô chờ của /tpr + nhóm mới "Dịch chuyển bằng lệnh" (teleport-delay, teleport-cooldown, teleport-invulnerability).
 
+### 17/10: mô tả lệnh chỉ tiếng Việt
+- `modes/_network/lenh-vi.yml` có ~460 mô tả: khoá thường = tên lệnh; khoá `<namespace>:<lệnh>` (vd `worldedit:/set`, `minecraft:fill`,
+  `essentials:tree`) khi trùng tên giữa plugin — panel tra khoá có namespace trước. 17/10: MỌI lệnh trên lobby/banghoi/practice đều có tiếng Việt.
+- Không còn hiện mô tả tiếng Anh của plugin ở đâu (Cẩm nang › Tất cả lệnh, trang tài khoản, danh mục quyền tự động): thiếu thì để trống.
+  Plugin mới cài thêm lệnh → thêm dòng vào lenh-vi.yml (trang Cẩm nang sẽ hiện ô mô tả trống).
+- Nút i: mỗi dòng "Nhãn: nội dung" in đậm nhãn (shell.js). Danh mục quyền tự động: Làm gì / Cách dùng (tên tham số dịch: <người>, <số>…) / Gọi tắt / Có ở.
+- quyen.yml thêm nhóm Di chuyển: essentials.teleport.timer.bypass, .timer.move, .cooldown.bypass, duckymomo.rtp.bypass, duckymomo.rtp.free.
+
 ### DANH SÁCH CẦN THỬ (người dùng chốt 15/10: làm xong hết rồi thử một lượt; mục 16–25)
 Triển khai một lần: `git stash && git pull && git stash pop` → `./ops/build-core.sh` (lỗi biên dịch thì gửi ảnh, Java viết ở cloud CHƯA biên
 dịch) → kiểm tra không ai online → `docker compose up -d --no-deps lobby banghoi-1 practice-1` → `docker compose up -d --build panel site`.

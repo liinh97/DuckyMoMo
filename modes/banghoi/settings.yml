@@ -1029,3 +1029,14 @@ arena_max_stake: 10000
 arena_reward: 50
 arena_cap: 5
 arena_countdown: 5
+mypet_exp: 1.0
+mypet_levelcap: 100
+mypet_exp_loss: 0
+mypet_respawn_factor: 5
+mypet_respawn_fixed: 0
+mypet_respawn_cost_fixed: 0.0
+mypet_respawn_cost_factor: 1.0
+mypet_hunger: true
+mypet_hunger_time: 60
+mypet_switch_fee: 5
+mypet_leash_consume: false

@@ -441,6 +441,29 @@ groups:
           info: "Là gì: tổng số pet chiến đấu một người được giữ (1 con đang dẫn + số còn lại cất trong kho /petstore, đổi bằng /petswitch). Mỗi lúc vẫn chỉ gọi ra 1 con.\nRank: người có rank cao lấy số LỚN NHẤT trong rank của mình, các bậc dưới và nhóm Dân, nên đặt rank cao lớn hơn hoặc bằng rank thấp.\nKhi lưu: gỡ mức cũ rồi cấp quyền MyPet.petstorage.limit.<số - 1> cho nhóm này ở Bang Hội Chiến.",
           commands: [ "lp group congtuoc permission unset MyPet.petstorage.limit.1 server=banghoi-1", "lp group congtuoc permission unset MyPet.petstorage.limit.2 server=banghoi-1", "lp group congtuoc permission unset MyPet.petstorage.limit.3 server=banghoi-1", "lp group congtuoc permission unset MyPet.petstorage.limit.4 server=banghoi-1", "lp group congtuoc permission unset MyPet.petstorage.limit.5 server=banghoi-1", "lp group congtuoc permission unset MyPet.petstorage.limit.6 server=banghoi-1", "lp group congtuoc permission unset MyPet.petstorage.limit.7 server=banghoi-1", "lp group congtuoc permission unset MyPet.petstorage.limit.8 server=banghoi-1", "lp group congtuoc permission unset MyPet.petstorage.limit.9 server=banghoi-1", "lp group congtuoc permission unset MyPet.petstorage.limit.10 server=banghoi-1", "lp group congtuoc permission unset MyPet.petstorage.limit.11 server=banghoi-1", "lp group congtuoc permission unset MyPet.petstorage.limit.12 server=banghoi-1", "lp group congtuoc permission unset MyPet.petstorage.limit.13 server=banghoi-1", "lp group congtuoc permission unset MyPet.petstorage.limit.14 server=banghoi-1", "lp group congtuoc permission unset MyPet.petstorage.limit.15 server=banghoi-1", "lp group congtuoc permission unset MyPet.petstorage.limit.16 server=banghoi-1", "lp group congtuoc permission unset MyPet.petstorage.limit.17 server=banghoi-1", "lp group congtuoc permission unset MyPet.petstorage.limit.18 server=banghoi-1", "lp group congtuoc permission unset MyPet.petstorage.limit.19 server=banghoi-1", "lp group congtuoc permission set MyPet.petstorage.limit.{minus1} true server=banghoi-1" ] }
 
+  - title: Pet chiến đấu - lên cấp, hồi sinh, đói (MyPet)
+    category: PvP & combat
+    description: "Đổi xong phải KHỞI ĐỘNG LẠI Bang Hội Chiến (MyPet không có lệnh nạp lại cấu hình)."
+    info: "Là gì: các con số của plugin MyPet (pet bắt bằng dây xích).\nLưu ý: lưu xong chưa có hiệu lực ngay; cần khởi động lại Bang Hội Chiến lúc vắng người."
+    settings:
+      - { key: mypet_exp, label: Tốc độ lên cấp (nhân kinh nghiệm), type: number, min: 0.1, max: 10, file: plugins/MyPet/config.yml, path: MyPet.Exp.Modifier.Global,
+          info: "Là gì: kinh nghiệm pet nhận được nhân với số này. 1 = mặc định, 2 = lên cấp nhanh gấp đôi." }
+      - { key: mypet_levelcap, label: Cấp tối đa của pet, type: int, min: 10, max: 1000, file: plugins/MyPet/config.yml, path: MyPet.Exp.LevelCap }
+      - { key: mypet_exp_loss, label: Mất kinh nghiệm khi pet chết (%), type: int, min: 0, max: 100, file: plugins/MyPet/config.yml, path: MyPet.Exp.Loss.Percent,
+          info: "Là gì: pet chết mất bao nhiêu % kinh nghiệm của cấp hiện tại (không tụt cấp)." }
+      - { key: mypet_respawn_factor, label: Thời gian hồi sinh - giây theo cấp, type: int, min: 0, max: 600, file: plugins/MyPet/config.yml, path: MyPet.Respawn.Time.Default.Factor,
+          info: "Công thức: chờ hồi sinh = số này × cấp của pet + số giây cố định (ô dưới).\nVí dụ: 5 giây/cấp, pet cấp 20 chờ 100 giây." }
+      - { key: mypet_respawn_fixed, label: Thời gian hồi sinh - giây cố định, type: int, min: 0, max: 3600, file: plugins/MyPet/config.yml, path: MyPet.Respawn.Time.Default.Fixed }
+      - { key: mypet_respawn_cost_fixed, label: Hồi sinh ngay (/petrespawn) - tiền cố định, type: number, min: 0, file: plugins/MyPet/config.yml, path: MyPet.Respawn.EconomyCost.Fixed,
+          info: "Là gì: trả tiền để hồi sinh pet ngay thay vì chờ. Tổng = cố định + hệ số × số giây còn phải chờ." }
+      - { key: mypet_respawn_cost_factor, label: Hồi sinh ngay - tiền mỗi giây còn chờ, type: number, min: 0, file: plugins/MyPet/config.yml, path: MyPet.Respawn.EconomyCost.Factor }
+      - { key: mypet_hunger, label: Pet bị đói, type: select, file: plugins/MyPet/config.yml, path: MyPet.HungerSystem.Active,
+          options: [ { value: true, label: "Bật: phải cho ăn (đồ ăn trong túi tự cho)" }, { value: false, label: Tắt } ] }
+      - { key: mypet_hunger_time, label: Mất 1 điểm no sau (giây), type: int, min: 5, max: 3600, file: plugins/MyPet/config.yml, path: MyPet.HungerSystem.Time }
+      - { key: mypet_switch_fee, label: Phí đổi hướng kỹ năng (% tiền đang có), type: int, min: 0, max: 100, file: plugins/MyPet/config.yml, path: MyPet.Skilltree.SwitchFee.Percent }
+      - { key: mypet_leash_consume, label: Mất dây xích khi bắt pet, type: select, file: plugins/MyPet/config.yml, path: MyPet.Leash.Consume,
+          options: [ { value: false, label: "Không (mặc định)" }, { value: true, label: Có } ] }
+
   - title: Đấu Trường (người + pet)
     category: PvP & combat
     info: "Là gì: /dautruong, người + pet MyPet đấu 1v1 hoặc 2v2 trong thế giới riêng.\nĐồ: đồ của mình, chết trong sân không rơi đồ, bị loại thì chuyển sang xem.\nCược: hai bên cùng mức (hàng chờ ghép theo mức cược), server thu phí %, đội thắng chia phần còn lại; hoà/huỷ trả lại.\nGiao hữu: đối thủ cùng IP thì không cược, không điểm, không thưởng.\nSân: admin /dautruong admin den, dán map, /dautruong admin dat <sân> a1|a2|b1|b2|xem."

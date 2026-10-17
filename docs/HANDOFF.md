@@ -358,6 +358,18 @@
   Trận khác bắt đầu trên sân → người chờ chuyển xem, xong trận về lại chỗ chờ. Thế giới đấu trường cấm phá/đặt khối (trừ admin).
 - CHƯA thử trong game: đi qua cổng, bảng chữ, trận thật, góc nhìn điểm xem.
 
+### 17/10 tối: pet — luật giết, Việt hoá, cài đặt
+- `Culprit.of(damager)` / `Culprit.killer(victim)`: người chơi, mũi tên, mây thuốc, TNT, thú thuần hoá, pet MyPet (kể cả mũi tên pet) → chủ.
+  Dùng ở Justice (đòn đánh tự vệ + giết dân Hoà Bình), Bounty, Leaderboard (Chiến Thần), WarRules (tài khoản phụ). Trước đó pet giết = không ai.
+- MyPet có 21 kỹ năng (Backpack Beacon Behavior Bleed Control Damage Fire Heal Knockback Life Lightning Pickup Poison Ranged Ride Shield Slow
+  Sprint Stomp Thorns Wither); Mining/Lumberjack/Fishing/Toolbox… chỉ có ở MyPet 4 (trả phí). 5 cây (data/.../skilltrees/*.st.json) đã Việt hoá
+  Name/Display/Description: Combat=Chiến Binh, Utility=Hậu Cần, PvP=Đấu Sĩ, Ride=Thú Cưỡi, Farm=Nông Trại (ID giữ nguyên). Chưa dùng: Bleed,
+  Lightning, Shield, Stomp, Wither (khoá: chance/damage/duration/interval/redirect). Đáng lo: Ride cấp 10 CanFly (bay qua tường thành), PvP Beacon
+  Strength +2 cho chủ — chờ người dùng quyết.
+- data/banghoi-1/plugins/MyPet/locale/MyPet_vi.properties: bản vi gốc + 130 dòng tự dịch (thiếu/còn tiếng Anh).
+- Cài đặt > PvP & combat > "Pet chiến đấu - lên cấp, hồi sinh, đói (MyPet)": Exp.Modifier.Global, LevelCap, Exp.Loss.Percent, Respawn.Time.Default
+  Factor/Fixed, Respawn.EconomyCost Fixed/Factor, HungerSystem Active/Time, Skilltree.SwitchFee.Percent, Leash.Consume. Cần khởi động lại banghoi-1.
+
 ### DANH SÁCH CẦN THỬ (người dùng chốt 15/10: làm xong hết rồi thử một lượt; mục 16–25)
 Triển khai một lần: `git stash && git pull && git stash pop` → `./ops/build-core.sh` (lỗi biên dịch thì gửi ảnh, Java viết ở cloud CHƯA biên
 dịch) → kiểm tra không ai online → `docker compose up -d --no-deps lobby banghoi-1 practice-1` → `docker compose up -d --build panel site`.

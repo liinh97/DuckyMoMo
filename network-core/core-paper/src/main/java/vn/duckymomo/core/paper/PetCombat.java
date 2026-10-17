@@ -124,8 +124,8 @@ final class PetCombat implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onDamage(EntityDamageByEntityEvent event) {
-        if (!(event.getEntity() instanceof Player victim)) {
-            return;
+        if (!(event.getEntity() instanceof Player victim) || victim.getWorld().getName().equals(Arena.WORLD)) {
+            return;   // trong Đấu Trường: module Arena tự tính (mức giảm riêng)
         }
         Entity d = event.getDamager();
         if (d instanceof Projectile pr && pr.getShooter() instanceof Entity shooter) {

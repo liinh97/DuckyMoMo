@@ -503,6 +503,23 @@ plugins:
     jar: packetevents
     kind: Hệ thống
     purpose: "Thư viện gói tin cho HoloMobHealth (không có lệnh cho người chơi). GrimAC có bản PacketEvents riêng bên trong, hai cái chạy song song được."
+  - name: Đấu Trường (DuckyMoMoCore)
+    jar: DuckyMoMoCore
+    kind: Bang Hội Chiến
+    purpose: "Người + pet MyPet đấu 1v1 / 2v2 trong thế giới riêng 'dautruong' (Towny tắt). Đồ của mình, chết không rơi đồ. Hàng chờ ghép theo mức cược, thách đấu 1v1, xem trận, ELO + top. Cùng IP = giao hữu (không cược, không điểm)."
+    player:
+      - ["/dautruong", "Hướng dẫn Đấu Trường"]
+      - ["/dautruong vao <1v1|2v2> [cược]", "Vào hàng chờ"]
+      - ["/dautruong thachdau <người> [cược] · /dautruong dongy · tuchoi", "Thách đấu 1v1 / nhận / từ chối"]
+      - ["/dautruong roi", "Rời hàng chờ hoặc thôi xem"]
+      - ["/dautruong xem [người]", "Danh sách trận / xem một trận"]
+      - ["/dautruong top · /dautruong toi", "Bảng xếp hạng / thành tích của mình"]
+    admin:
+      - ["/dautruong admin den", "Tới thế giới đấu trường (có sàn kính tạm ở 0 100 0)"]
+      - ["/dautruong admin dat <sân> <a1|a2|b1|b2|xem>", "Đặt điểm xuất phát (đứng tại chỗ, nhìn về phía đối thủ); 1v1 cần a1+b1, 2v2 cần thêm a2+b2"]
+      - ["/dautruong admin ds · xoa <sân> · huy", "Danh sách sân / xoá sân / huỷ mọi trận (trả cược)"]
+    settings: "Trang Cài đặt > Bang Hội Chiến > PvP & combat > Đấu Trường. Dữ liệu: plugins/DuckyMoMoCore/dautruong.yml"
+    notes: "Map: tải .schem (vd BuiltByBit), đặt vào plugins/WorldEdit/schematics/ rồi //schem load + //paste trong thế giới dautruong. Mọi sát thương trong thế giới này do module quyết định (ghi đè PvPManager/WorldGuard). Đang trận chỉ dùng được /dautruong, /petinfo, /msg."
   - name: SimplePets
     jar: SimplePets
     kind: Rank donate

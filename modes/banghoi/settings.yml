@@ -1022,3 +1022,10 @@ hmh_timeout: 5
 hmh_range: 20
 hmh_text: "&f{Mob_Type_Or_Name} {DynamicColor}{Health_0}&7/{MaxHealth_0} ❤ &8({PercentageHealth_0}%)"
 hmh_damage: true
+arena_fight: 180
+arena_pet_reduce: 50
+arena_fee: 5
+arena_max_stake: 10000
+arena_reward: 50
+arena_cap: 5
+arena_countdown: 5

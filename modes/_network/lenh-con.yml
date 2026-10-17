@@ -426,3 +426,8 @@ groups:
     servers: [banghoi-1]
     commands:
       - ["lichcongthanh", "Lịch công thành: phiên tới có cho pet chiến đấu tham chiến không", Mọi người]
+      - ["dautruong vao <1v1|2v2> [cược]", "Đấu Trường: vào hàng chờ người + pet", Mọi người]
+      - ["dautruong thachdau <người> [cược]", "Đấu Trường: thách đấu 1v1", Mọi người]
+      - ["dautruong xem [người]", "Đấu Trường: xem trận", Mọi người]
+      - ["dautruong top", "Đấu Trường: bảng xếp hạng", Mọi người]
+      - ["dautruong admin dat <sân> <điểm>", "Đấu Trường: đặt điểm xuất phát sân", Chỉ admin]

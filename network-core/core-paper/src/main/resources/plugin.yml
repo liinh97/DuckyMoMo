@@ -105,6 +105,9 @@ commands:
   lichcongthanh:
     description: "Lịch công thành: phiên tới, phiên đó có cho pet chiến đấu tham chiến không"
     aliases: [congthanh, lichvay]
+  dautruong:
+    description: "Đấu Trường: người + pet đấu 1v1, 2v2 (hàng chờ, thách đấu, cược, xếp hạng)"
+    aliases: [dt, arena]
 permissions:
   duckymomo.mua.admin:
     description: Đổi mùa bằng tay để thử (/mua dat <mua|kho|tudong>)

@@ -588,3 +588,16 @@ pet-combat:
   siege-pet-chance: 30               # % phiên công thành cho pet tham chiến (bốc thăm cố định theo giờ phiên, báo trước)
   seed: mua1                          # đổi chuỗi này là bốc thăm lại toàn bộ lịch
   announce-minutes: [60, 10]          # báo cả server trước phiên (phút)
+
+# Đấu Trường /dautruong (Arena): trang Cài đặt > PvP & combat > Đấu Trường
+arena:
+  enabled: true
+  world: dautruong                  # thế giới trống riêng, plugin tự tạo; dán map bằng WorldEdit
+  countdown-seconds: 5
+  fight-seconds: 180                # hết giờ: đội còn nhiều % máu hơn thắng
+  pet-damage-reduce-percent: 50     # trong sân: pet đánh người bị giảm bao nhiêu %
+  fee-percent: 5                    # server thu % tổng tiền cược
+  max-stake: 10000
+  win-reward: 50                    # thưởng mỗi trận thắng (không tính giao hữu cùng IP)
+  daily-reward-cap: 5               # số trận được thưởng mỗi ngày
+  elo-k: 32

@@ -322,6 +322,20 @@
   tầm 20, chữ "tên máu/tối đa ❤ (%)"; số sát thương bay lên. Cài đặt > Hiển thị > Thanh máu. Boss EliteMobs: thanh máu riêng của EliteMobs
   (displayVisualHealthBars, displayBossBarForHighMultiplier đang bật). CHƯA xem trong game (có thể chồng chữ với tên boss EliteMobs).
 
+### 17/10: Đấu Trường người + pet (/dautruong)
+- DuckyMoMoCore `Arena` (config `arena`, dữ liệu `dautruong.yml`): thế giới trống "dautruong" plugin tự tạo mỗi lần khởi động
+  (ChunkGenerator rỗng; keepInventory, không quái, giờ cố định). Towny ĐÃ TẮT ở thế giới này (`townyworld dautruong toggle claimable`
+  + `toggle usingtowny`, lưu trong data Towny). MyPet worldgroups.yml: thêm dautruong vào nhóm default (pet theo người qua thế giới).
+- Luồng: hàng chờ theo `<cỡ>:<cược>` (1v1/2v2), thách đấu 1v1 (/dautruong thachdau, dongy); khi đủ người và có sân trống: trừ cược,
+  dịch chuyển a1/a2 vs b1/b2, petcall, đếm ngược (đứng yên), đánh fight-seconds; đòn chí mạng bị huỷ → loại (chuyển SPECTATOR);
+  hết giờ: so % máu. Kết thúc: chia cược (trừ fee-percent), thưởng win-reward (tối đa daily-reward-cap/ngày), ELO k=32, trả về chỗ cũ.
+  Cùng IP = giao hữu. Thoát giữa trận = loại + về chỗ cũ; khôi phục lưu `khoiphuc.<uuid>` để đưa về khi vào lại. /dmm reload, tắt
+  server: huỷ trận + trả cược.
+- Sát thương trong thế giới đấu trường: Arena quyết định hết (HIGHEST, setCancelled(false) ghi đè PvPManager/WorldGuard), pet bị giảm
+  `pet-damage-reduce-percent`; PetCombat bỏ qua thế giới này. Đang trận/xem chỉ dùng /dautruong, /petinfo, /petskill, /msg.
+- CHƯA có sân: chờ người dùng tải map (.schem, BuiltByBit) → plugins/WorldEdit/schematics/ → /dautruong admin den, //schem load, //paste,
+  /dautruong admin dat <sân> a1|a2|b1|b2|xem. CHƯA thử trận thật (cần 2-4 người).
+
 ### DANH SÁCH CẦN THỬ (người dùng chốt 15/10: làm xong hết rồi thử một lượt; mục 16–25)
 Triển khai một lần: `git stash && git pull && git stash pop` → `./ops/build-core.sh` (lỗi biên dịch thì gửi ảnh, Java viết ở cloud CHƯA biên
 dịch) → kiểm tra không ai online → `docker compose up -d --no-deps lobby banghoi-1 practice-1` → `docker compose up -d --build panel site`.

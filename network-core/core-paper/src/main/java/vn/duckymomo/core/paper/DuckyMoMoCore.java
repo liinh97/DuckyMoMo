@@ -19,6 +19,7 @@ public final class DuckyMoMoCore extends JavaPlugin {
     private final java.util.Set<String> offCommands = java.util.concurrent.ConcurrentHashMap.newKeySet();
     private RandomTeleport rtp;
     private WarRules warRules;
+    private Arena arena;
     private Activity activity;
     private PeaceAlliance peace;
     private DecorShop decorShop;
@@ -51,6 +52,10 @@ public final class DuckyMoMoCore extends JavaPlugin {
     }
 
     private void teardown() {
+        if (arena != null) {
+            arena.shutdown();
+            arena = null;
+        }
         if (quests != null) {
             quests.flush();
             quests = null;
@@ -397,6 +402,16 @@ public final class DuckyMoMoCore extends JavaPlugin {
             getLogger().info("Pet chiến đấu: " + petCombat.describe());
         }
         bind("lichcongthanh", petCombat == null ? null : petCombat::command, "Lịch công thành");
+
+        // Đấu Trường /dautruong: người + pet MyPet 1v1, 2v2 trong thế giới riêng (Bang Hội Chiến: arena.enabled)
+        arena = getConfig().getBoolean("arena.enabled") && getConfig().isConfigurationSection("arena")
+                ? new Arena(this, getConfig().getConfigurationSection("arena")) : null;
+        if (arena != null) {
+            getServer().getPluginManager().registerEvents(arena, this);
+            getLogger().info("Đấu Trường: " + arena.describe());
+        }
+        Arena ar = arena;
+        bind("dautruong", ar == null ? null : ar::command, "Đấu Trường");
 
         // Thưởng vote server (Votifier ở banghoi-1; vote từ VPS qua relay socat 8192)
         VoteRewards vote = getConfig().getBoolean("vote.enabled") ? new VoteRewards(this, getConfig().getConfigurationSection("vote")) : null;

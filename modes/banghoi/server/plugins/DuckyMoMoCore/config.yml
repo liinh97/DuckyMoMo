@@ -537,13 +537,6 @@ event-fragments:
     - {label: "5000 xu", cost: {lamnguy: 25}, limit: 0, rewards: ["xu 5000"]}
     - {label: "16 kim cương", cost: {lamnguy: 40}, limit: 0, rewards: ["vat DIAMOND 16"]}
     - {label: "Đĩa nhạc Pigstep (trang trí)", cost: {lamnguy: 20}, limit: 1, rewards: ["vat MUSIC_DISC_PIGSTEP 1"]}
-    # đổi bằng CÁ CÂU (ca:<Common|Rare|Epic|Legendary>): cá có ích ngoài bán lấy xu
-    - {label: "8 dây xích (bắt pet)", cost: {"ca:Rare": 3}, limit: 0, rewards: ["vat LEAD 8"]}
-    - {label: "Yên ngựa", cost: {"ca:Rare": 4}, limit: 0, rewards: ["vat SADDLE 1"]}
-    - {label: "Bữa tiệc cho pet: +120 kinh nghiệm", cost: {"ca:Epic": 2}, limit: 0, rewards: ["petexp 120"]}
-    - {label: "2 táo vàng", cost: {"ca:Epic": 1}, limit: 0, rewards: ["vat GOLDEN_APPLE 2"]}
-    - {label: "Táo vàng phù phép", cost: {"ca:Legendary": 1}, limit: 0, rewards: ["vat ENCHANTED_GOLDEN_APPLE 1"]}
-    - {label: "Đại tiệc cho pet: +500 kinh nghiệm", cost: {"ca:Legendary": 2}, limit: 0, rewards: ["petexp 500"]}
 
 # Mùa mưa / mùa khô (/mua). Đổi theo NGÀY THẬT giờ Việt Nam: start-date = ngày bắt đầu mùa đầu tiên trong order, mỗi mùa days-per-season ngày, lặp vòng.
 # growth: hệ số lớn của cây theo khối mọc ra (WHEAT lúa mì, CARROTS, POTATOES, BEETROOTS, SUGAR_CANE, BAMBOO, CACTUS, MELON/PUMPKIN = quả,
@@ -580,6 +573,87 @@ seasons:
       hints:
         - "&6≈ Cá mùa này: &fcá cơm, cá bống, cá kèo, mực ống, cá mú, cá hô (huyền thoại)"
         - "&7Câu cá: &f/emf &7(nhật ký cá, bán cá: &f/emf shop&7)"
+  # Sự kiện trong mùa: from-day/to-day = ngày thứ mấy của mùa (số âm đếm từ cuối, -1 = ngày cuối). /mua sukien <id|tudong> để thử.
+  events:
+    lu:
+      season: mua
+      from-day: -1
+      to-day: -1
+      name: "&9🌊 Lũ cuối mùa"
+      subtitle: "&7Mưa suốt ngày · Thủy tộc dễ bắt · lúa ngập chậm lớn"
+      rain: "on"
+      growth: {WHEAT: 0.7, POTATOES: 0.7, CARROTS: 0.7, BEETROOTS: 0.7, KELP: 1.5, SUGAR_CANE: 1.3}
+      capture-bonus: {thuytoc: 15}
+    han:
+      season: kho
+      from-day: 3
+      to-day: 4
+      name: "&6🔥 Hạn hán"
+      subtitle: "&7Không mưa · cây lớn chậm · lương thực quý (kho lương x1,5)"
+      rain: "off"
+      growth: {WHEAT: 0.7, POTATOES: 0.7, CARROTS: 0.7, BEETROOTS: 0.7, MELON: 0.7, PUMPKIN: 0.7, SUGAR_CANE: 0.5, CACTUS: 1.3}
+      supply-multiplier: 1.5
+      capture-bonus: {bay: 5, nhay: 10}
+
+# Kho lương công thành (/kholuong): thị trấn nộp lương, lúc có phiên đánh quân trong vùng vây ăn từ kho thị trấn mình
+siege-supply:
+  enabled: true
+  max-per-town: 5000                   # kho tối đa (điểm)
+  cost-per-player-minute: 2            # mỗi người đang đánh trong vùng vây ăn bao nhiêu điểm/phút (kho cạn thì bị Đói)
+  dish-points: 15                      # mỗi món ăn ra trận (/nauan)
+  fish: {Common: 2, Rare: 5, Epic: 12, Legendary: 40}   # cá câu (EvenMoreFish) theo độ hiếm
+  points:                              # nông sản, đồ ăn thường (điểm mỗi cái)
+    WHEAT: 1
+    HAY_BLOCK: 9
+    BREAD: 3
+    POTATO: 1
+    BAKED_POTATO: 2
+    CARROT: 1
+    GOLDEN_CARROT: 4
+    BEETROOT: 1
+    BEETROOT_SOUP: 4
+    MELON_SLICE: 0.5
+    PUMPKIN: 2
+    PUMPKIN_PIE: 5
+    APPLE: 2
+    SWEET_BERRIES: 0.5
+    COCOA_BEANS: 1
+    COOKIE: 1
+    MUSHROOM_STEW: 4
+    RABBIT_STEW: 6
+    COOKED_BEEF: 4
+    COOKED_PORKCHOP: 4
+    COOKED_MUTTON: 3
+    COOKED_CHICKEN: 3
+    COOKED_RABBIT: 3
+    COOKED_COD: 2
+    COOKED_SALMON: 3
+    DRIED_KELP: 0.5
+
+# Món ăn ra trận (/nauan): cá câu + nông sản -> món có hiệu ứng ngắn. "ca:<độ hiếm>" = cá câu EvenMoreFish. Hiệu ứng: "TÊN cấp giây" (cấp 0 = I)
+dishes:
+  enabled: true
+  cooldown-minutes: 20                 # ăn 1 món rồi phải chờ ngần này phút mới ăn món khác
+  list:
+    com_nam: {name: "&fCơm nắm", material: BREAD, lore: ["Gọn nhẹ, mang theo ra trận"], need: {WHEAT: 6}, effects: ["ABSORPTION 0 120"]}
+    canh_chua: {name: "&6Canh chua cá", material: BEETROOT_SOUP, lore: ["Chua chua, ăn là khoẻ"], need: {"ca:common": 2, BEETROOT: 2, WHEAT: 2}, effects: ["REGENERATION 0 45"]}
+    ca_kho: {name: "&6Cá kho tộ", material: COOKED_COD, lore: ["Đậm đà, chắc bụng"], need: {"ca:rare": 1, SUGAR_CANE: 2, WHEAT: 3}, effects: ["RESISTANCE 0 90"]}
+    lau_ca: {name: "&cLẩu cá", material: RABBIT_STEW, lore: ["Cả đội ăn chung trước giờ đánh"], need: {"ca:epic": 1, POTATO: 3, CARROT: 3, BROWN_MUSHROOM: 1}, effects: ["REGENERATION 0 60", "RESISTANCE 0 60"]}
+    goi_ca: {name: "&6&lGỏi cá huyền thoại", material: COOKED_SALMON, lore: ["Món của tướng"], need: {"ca:legendary": 1, CARROT: 3, BEETROOT: 3}, effects: ["REGENERATION 1 30", "RESISTANCE 0 120", "ABSORPTION 1 120"]}
+
+# Đặc sản vùng (/dacsan): vùng = rtp.zones. Phe (nước, hoặc thị trấn chưa vào nước) có nhiều thị trấn nhất trong vùng thì dân phe đó gặt
+# đặc sản (WHEAT, CARROTS, POTATOES, BEETROOTS, COCOA) ở bất kỳ đâu được mùa thêm %.
+region-specialty:
+  enabled: true
+  refresh-minutes: 10
+  regions:
+    taybac: {label: "khoai núi", crops: {POTATOES: 25}}
+    lao: {label: "rau củ vùng núi", crops: {CARROTS: 25}}
+    trungbo: {label: "ca cao Tây Nguyên", crops: {COCOA: 30}}
+    nambo: {label: "vựa lúa", crops: {WHEAT: 30}}
+    thailan: {label: "lúa Thái, ca cao", crops: {WHEAT: 20, COCOA: 10}}
+    myanmar: {label: "củ dền", crops: {BEETROOTS: 25}}
+    namtq: {label: "khoai, củ", crops: {POTATOES: 15, BEETROOTS: 15}}
 
 # Ủng hộ bằng QR ngay trong game (/rank mua): chọn gói -> panel tạo yêu cầu (chung hàng chờ trang quản trị > Donate) -> QR VietQR vẽ trên tấm bản đồ,
 # hết hạn sau minutes phút. Cần PANEL_URL + PANEL_SITE_KEY (compose) và tài khoản ngân hàng trong site/config/site.yml (donate). Thiếu thì chỉ hiện link web.
@@ -603,6 +677,7 @@ pet-capture:
   chance-percent: 30                   # xác suất bắt mặc định (%) mỗi lần quăng dây xích vào con yếu máu
   attempts-per-mob: 3                  # mỗi con chỉ thử được ngần này lần, hết thì con vật hoảng, không bắt được nữa
   cooldown-seconds: 2                  # chờ giữa 2 lần thử của một người
+  charm-bonus: 25                      # Bùa bắt pet (/buabatpet) cầm tay trái: +% mỗi lần thử, mất 1 bùa
   group-chance:                        # riêng từng nhóm loài (mã nhóm trong tools/mypet/sinh-cay-ky-nang.py)
     giasuc: 50
     thuytoc: 40

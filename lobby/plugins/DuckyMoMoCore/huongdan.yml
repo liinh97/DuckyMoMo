@@ -422,6 +422,18 @@ chapters:
         &0Pet chiến đấu tên có &c⚔&0,
         pet trang trí có &d✿&0.
       - |-
+        &6&lKHO LƯƠNG
+        &0Quân đánh trong vùng
+        vây ăn từ kho lương
+        &lthị trấn mình&r&0: còn
+        lương thì no, cạn thì
+        mau đói.
+        &1/kholuong nop &0nộp đồ
+        ăn đang cầm, &1noptat
+        &0nộp cả túi.
+        &1/nauan &0nấu cá + nông
+        sản thành món ra trận.
+      - |-
         &6&lTRỜI ĐẤT CÔNG THÀNH
         &8Đêm&0: tối mù, trừ ai
         dẫn pet &lmắt đêm&r&0 (dơi,
@@ -605,6 +617,18 @@ chapters:
         &0Thi câu &lT7, CN
         &l20h&r&0, có thưởng xu.
       - |-
+        &2&lĐẶC SẢN VÙNG
+        &0Phe có nhiều thị trấn
+        nhất trong một vùng
+        được mùa đặc sản vùng
+        đó (lúa Nam Bộ, ca cao
+        Tây Nguyên…).
+        &1/dacsan &0xem vùng nào
+        của ai.
+        &0Sự kiện mùa: &9Lũ&0 cuối
+        mùa mưa, &6Hạn hán&0 giữa
+        mùa khô.
+      - |-
         &3&lCÁ ĐỂ LÀM GÌ
         &0Bán: &1/emf shop
         &0Cho &lpet ăn&r&0: cầm cá,
@@ -612,10 +636,9 @@ chapters:
         no, hồi máu, thêm
         kinh nghiệm (cá hiếm
         bổ hơn).
-        &0Đổi đồ: &1/doimanh
-        &0nhận cá Hiếm, Quý,
-        Huyền thoại (dây xích,
-        táo vàng, tiệc pet).
+        &0Nấu món: &1/nauan
+        &0Nộp kho lương:
+        &1/kholuong nop
       - |-
         &5&lMẢNH SỰ KIỆN
         &0Sự kiện, boss, mốc

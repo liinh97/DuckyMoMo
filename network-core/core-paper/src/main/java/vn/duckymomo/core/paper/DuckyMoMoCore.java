@@ -20,6 +20,8 @@ public final class DuckyMoMoCore extends JavaPlugin {
     private RandomTeleport rtp;
     private WarRules warRules;
     private Arena arena;
+    private SiegeSupply supply;
+    private RegionSpecialty specialty;
     private Activity activity;
     private PeaceAlliance peace;
     private DecorShop decorShop;
@@ -53,6 +55,14 @@ public final class DuckyMoMoCore extends JavaPlugin {
     }
 
     private void teardown() {
+        if (supply != null) {
+            supply.stop();
+            supply = null;
+        }
+        if (specialty != null) {
+            specialty.stop();
+            specialty = null;
+        }
         if (arenaPapi != null) {
             arenaPapi.unregister();
             arenaPapi = null;
@@ -424,6 +434,8 @@ public final class DuckyMoMoCore extends JavaPlugin {
             getServer().getPluginManager().registerEvents(petFish, this);
             getLogger().info("Pet ăn cá: " + petFish.describe());
         }
+        PetCapture charmOwner = petCapture;
+        bind("buabatpet", charmOwner == null ? null : charmOwner::charmCommand, "Bùa bắt pet");
         PetTop petTop = myPetOn ? new PetTop(this, petCapture) : null;
         bind("bxhpet", petTop == null ? null : petTop::command, "Bảng xếp hạng pet");
 
@@ -564,6 +576,40 @@ public final class DuckyMoMoCore extends JavaPlugin {
             getLogger().warning("Mùa: seasons.order trống hoặc sai, tắt");
             seasons = null;
         }
+        // Kho lương công thành (siege-supply), món ăn ra trận (dishes), đặc sản vùng (region-specialty): Bang Hội Chiến, cần Towny
+        boolean towny = getServer().getPluginManager().isPluginEnabled("Towny");
+        Dishes dishes = getConfig().getBoolean("dishes.enabled") && getConfig().isConfigurationSection("dishes")
+                ? new Dishes(this, getConfig().getConfigurationSection("dishes")) : null;
+        if (dishes != null && dishes.ready()) {
+            getServer().getPluginManager().registerEvents(dishes, this);
+            getLogger().info("Món ăn ra trận: " + dishes.describe());
+        } else {
+            dishes = null;
+        }
+        bind("nauan", dishes == null ? null : dishes::command, "Nấu món ăn ra trận");
+        supply = towny && getConfig().getBoolean("siege-supply.enabled") && getConfig().isConfigurationSection("siege-supply")
+                ? new SiegeSupply(this, getConfig().getConfigurationSection("siege-supply")) : null;
+        if (supply != null) {
+            supply.start();
+            getLogger().info("Kho lương công thành: " + supply.describe());
+        }
+        SiegeSupply klSupply = supply;
+        bind("kholuong", klSupply == null ? null : klSupply::command, "Kho lương công thành");
+        org.bukkit.command.PluginCommand klCmd = getCommand("kholuong");
+        if (klCmd != null) {
+            klCmd.setTabCompleter(klSupply == null ? null : (sender, cmd, label, a) -> klSupply.tab(a));
+        }
+        specialty = towny && getConfig().getBoolean("region-specialty.enabled") && getConfig().isConfigurationSection("region-specialty")
+                ? new RegionSpecialty(this, getConfig().getConfigurationSection("region-specialty"), getConfig().getMapList("rtp.zones")) : null;
+        if (specialty != null && specialty.ready()) {
+            specialty.start();
+            getLogger().info("Đặc sản vùng: " + specialty.describe());
+        } else {
+            specialty = null;
+        }
+        RegionSpecialty rsp = specialty;
+        bind("dacsan", rsp == null ? null : rsp::command, "Đặc sản vùng");
+
         Seasons.INSTANCE = seasons;
         if (seasons != null) {
             getServer().getPluginManager().registerEvents(seasons, this);

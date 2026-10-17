@@ -48,7 +48,11 @@ import java.util.concurrent.ThreadLocalRandom;
  *   harvest-bonus % rơi thêm 1 nông sản khi phá cây đã chín (WHEAT, CARROTS, POTATOES, BEETROOTS, COCOA).
  *   rain-start-chance / rain-stop-chance  % mỗi 5 phút: trời đang tạnh thì đổ mưa / đang mưa thì tạnh (cộng thêm thời tiết gốc).
  * Placeholder (cho EvenMoreFish cá theo mùa, TAB…): %dmmmua_id%, %dmmmua_ten%, %dmmmua_con% (số ngày còn lại), %dmmmua_sau% (mùa tới).
- * Admin thử: /mua dat <id> (ghi đè, lưu ở mua.yml) · /mua dat tudong (trả về theo lịch).
+ * Sự kiện trong mùa (events.<id>): season, from-day..to-day (ngày thứ mấy của mùa, 1 = ngày đầu, số âm = đếm từ cuối: -1 = ngày cuối),
+ *   name, subtitle, rain (on/off/không ghi), growth (nhân thêm), harvest-bonus (cộng thêm %), capture-bonus.<nhóm> (% bắt pet),
+ *   supply-multiplier (nhân điểm nông sản khi nộp kho lương). Vd Lũ cuối mùa mưa, Hạn hán giữa mùa khô.
+ * Đặc sản vùng (RegionSpecialty) cộng thêm % được mùa qua Seasons.extraHarvest.
+ * Admin thử: /mua dat <id> (ghi đè, lưu ở mua.yml) · /mua dat tudong (trả về theo lịch) · /mua sukien <id|tudong>.
  */
 final class Seasons implements Listener {
     private static final LegacyComponentSerializer LEGACY = LegacyComponentSerializer.legacyAmpersand();
@@ -148,6 +152,48 @@ final class Seasons implements Listener {
         return s == null ? "" : s.current();
     }
 
+    /** Sự kiện mùa đang diễn ra (cấu hình events.<id>) hoặc null. */
+    static ConfigurationSection eventNow() {
+        Seasons s = INSTANCE;
+        return s == null ? null : s.event();
+    }
+
+    /** Thêm % được mùa từ nơi khác (đặc sản vùng): (người gặt, cây) -> %. */
+    static volatile java.util.function.BiFunction<Player, Material, Double> extraHarvest;
+
+    /** Ngày thứ mấy của mùa (1..daysPer). */
+    long dayOfSeason() {
+        return Math.floorMod(daysSinceStart(), (long) daysPer()) + 1;
+    }
+
+    ConfigurationSection event() {
+        ConfigurationSection ev = cfg.getConfigurationSection("events");
+        if (ev == null) {
+            return null;
+        }
+        String forcedEv = data.getString("ghi-de-sukien", "");
+        if (!forcedEv.isEmpty()) {
+            return ev.getConfigurationSection(forcedEv);
+        }
+        String cur = current();
+        long day = dayOfSeason();
+        int per = daysPer();
+        for (String id : ev.getKeys(false)) {
+            ConfigurationSection e = ev.getConfigurationSection(id);
+            if (e == null || !cur.equals(e.getString("season"))) {
+                continue;
+            }
+            int from = e.getInt("from-day", 1);
+            int to = e.getInt("to-day", from);
+            from = from < 0 ? per + from + 1 : from;
+            to = to < 0 ? per + to + 1 : to;
+            if (day >= from && day <= to) {
+                return e;
+            }
+        }
+        return null;
+    }
+
     static String nowName() {
         Seasons s = INSTANCE;
         return s == null ? "" : s.name(s.current());
@@ -191,10 +237,38 @@ final class Seasons implements Listener {
 
     private double growth(Material m) {
         ConfigurationSection s = season(current());
-        return s == null ? 1.0 : s.getDouble("growth." + m.name(), 1.0);
+        ConfigurationSection e = event();
+        return (s == null ? 1.0 : s.getDouble("growth." + m.name(), 1.0)) * (e == null ? 1.0 : e.getDouble("growth." + m.name(), 1.0));
+    }
+
+    private String lastEvent = null;
+
+    /** Báo khi sự kiện mùa bắt đầu / kết thúc. */
+    private void checkEvent() {
+        ConfigurationSection e = event();
+        String id = e == null ? "" : e.getName();
+        if (lastEvent == null) {
+            lastEvent = id;
+            return;
+        }
+        if (id.equals(lastEvent)) {
+            return;
+        }
+        lastEvent = id;
+        if (e == null) {
+            Bukkit.broadcast(c("&6[Mùa] &fSự kiện mùa đã qua, trời đất trở lại bình thường."));
+            return;
+        }
+        Title t = Title.title(c(e.getString("name", id)), c(e.getString("subtitle", "")),
+                Title.Times.times(Duration.ofMillis(500), Duration.ofSeconds(4), Duration.ofSeconds(1)));
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            p.showTitle(t);
+        }
+        Bukkit.broadcast(c("&6[Mùa] &fBắt đầu " + e.getString("name", id) + "&f: " + e.getString("subtitle", "") + " &7(/mua xem chi tiết)"));
     }
 
     private void checkChange() {
+        checkEvent();
         String now = current();
         if (now.equals(last)) {
             return;
@@ -216,9 +290,24 @@ final class Seasons implements Listener {
             return;
         }
         ThreadLocalRandom r = ThreadLocalRandom.current();
+        ConfigurationSection ev = event();
+        String rain = ev == null ? "" : ev.getString("rain", "");
         for (String wn : cfg.getStringList("worlds")) {
             World w = Bukkit.getWorld(wn);
             if (w == null) {
+                continue;
+            }
+            if (rain.equalsIgnoreCase("on")) {        // sự kiện ép mưa (lũ)
+                if (!w.hasStorm()) {
+                    w.setStorm(true);
+                }
+                w.setWeatherDuration(12000);
+                continue;
+            }
+            if (rain.equalsIgnoreCase("off")) {       // sự kiện ép nắng (hạn)
+                w.setStorm(false);
+                w.setThundering(false);
+                w.setClearWeatherDuration(12000);
                 continue;
             }
             if (!w.hasStorm()) {
@@ -274,7 +363,14 @@ final class Seasons implements Listener {
             return;
         }
         ConfigurationSection s = season(current());
-        double pct = s == null ? 0 : s.getDouble("harvest-bonus." + b.getType().name(), 0);
+        ConfigurationSection ev = event();
+        double pct = (s == null ? 0 : s.getDouble("harvest-bonus." + b.getType().name(), 0))
+                + (ev == null ? 0 : ev.getDouble("harvest-bonus." + b.getType().name(), 0));
+        java.util.function.BiFunction<Player, Material, Double> extra = extraHarvest;
+        if (extra != null) {
+            Double x = extra.apply(e.getPlayer(), b.getType());
+            pct += x == null ? 0 : x;
+        }
         if (pct > 0 && ThreadLocalRandom.current().nextDouble(100) < pct) {
             b.getWorld().dropItemNaturally(b.getLocation().add(0.5, 0.5, 0.5), new ItemStack(produce, 1));
         }
@@ -294,6 +390,11 @@ final class Seasons implements Listener {
         }, 60L);
     }
 
+    /** Tên Việt của cây/nông sản (vd WHEAT -> lúa). */
+    static String cropLabel(Material m) {
+        return NAMES.getOrDefault(m, m.name().toLowerCase(Locale.ROOT));
+    }
+
     private static String cropName(String key) {
         try {
             Material m = Material.valueOf(key.toUpperCase(Locale.ROOT));
@@ -309,6 +410,27 @@ final class Seasons implements Listener {
     }
 
     boolean command(CommandSender sender, String[] args) {
+        if (args.length >= 2 && args[0].equalsIgnoreCase("sukien")) {
+            if (!sender.hasPermission("duckymomo.mua.admin")) {
+                sender.sendMessage(c("&cBạn không có quyền."));
+                return true;
+            }
+            ConfigurationSection evs = cfg.getConfigurationSection("events");
+            boolean auto = args[1].equalsIgnoreCase("tudong");
+            if (!auto && (evs == null || !evs.isConfigurationSection(args[1]))) {
+                sender.sendMessage(c("&e/mua sukien <" + (evs == null ? "" : String.join("|", evs.getKeys(false))) + "|tudong>"));
+                return true;
+            }
+            data.set("ghi-de-sukien", auto ? null : args[1]);
+            try {
+                data.save(file);
+            } catch (IOException ex) {
+                plugin.getLogger().warning("Không lưu được mua.yml: " + ex.getMessage());
+            }
+            checkChange();
+            sender.sendMessage(c(auto ? "&aSự kiện mùa: theo lịch." : "&aĐã bật sự kiện " + args[1] + " &7(/mua sukien tudong để theo lịch)"));
+            return true;
+        }
         if (args.length >= 1 && args[0].equalsIgnoreCase("dat")) {
             if (!sender.hasPermission("duckymomo.mua.admin")) {
                 sender.sendMessage(c("&cBạn không có quyền đổi mùa."));
@@ -331,15 +453,29 @@ final class Seasons implements Listener {
         String id = current();
         ConfigurationSection s = season(id);
         sender.sendMessage(c("&6&l━━ " + name(id) + " &6&l━━"));
+        ConfigurationSection evNow = event();
+        if (evNow != null) {
+            sender.sendMessage(c("&d⚡ Sự kiện: " + evNow.getString("name", evNow.getName()) + " &7— " + evNow.getString("subtitle", "")));
+        }
         sender.sendMessage(c(forced() ? "&7Admin đang ghi đè mùa (thử nghiệm)."
                 : "&7Còn &f" + daysLeft() + " ngày&7, sau đó sang " + name(next()) + "&7. Mỗi mùa " + daysPer() + " ngày."));
         if (s != null) {
             List<String> up = new ArrayList<>();
             List<String> down = new ArrayList<>();
+            // gộp tốc độ lớn của mùa và sự kiện mùa đang diễn ra
+            java.util.Set<String> keys = new java.util.LinkedHashSet<>();
             ConfigurationSection gr = s.getConfigurationSection("growth");
             if (gr != null) {
-                for (String k : gr.getKeys(false)) {
-                    double v = gr.getDouble(k, 1.0);
+                keys.addAll(gr.getKeys(false));
+            }
+            ConfigurationSection evg = evNow == null ? null : evNow.getConfigurationSection("growth");
+            if (evg != null) {
+                keys.addAll(evg.getKeys(false));
+            }
+            if (!keys.isEmpty()) {
+                for (String k : keys) {
+                    Material gm = Material.matchMaterial(k);
+                    double v = gm == null ? 1.0 : growth(gm);
                     if (v > 1.0) {
                         up.add(cropName(k) + " " + pct(v));
                     } else if (v < 1.0) {
@@ -379,8 +515,15 @@ final class Seasons implements Listener {
         }
         if (a.length == 1) {
             out.add("dat");
+            out.add("sukien");
         } else if (a.length == 2 && a[0].equalsIgnoreCase("dat")) {
             out.addAll(order);
+            out.add("tudong");
+        } else if (a.length == 2 && a[0].equalsIgnoreCase("sukien")) {
+            ConfigurationSection evs = cfg.getConfigurationSection("events");
+            if (evs != null) {
+                out.addAll(evs.getKeys(false));
+            }
             out.add("tudong");
         }
         String typed = a[a.length - 1].toLowerCase(Locale.ROOT);
@@ -417,6 +560,10 @@ final class Seasons implements Listener {
                     case "ten_tron" -> plain(name(current()));
                     case "con" -> String.valueOf(daysLeft());
                     case "sau" -> plain(name(next()));
+                    case "sukien" -> {
+                        ConfigurationSection ev = event();
+                        yield ev == null ? "" : plain(ev.getString("name", ev.getName()));
+                    }
                     default -> null;
                 };
             }

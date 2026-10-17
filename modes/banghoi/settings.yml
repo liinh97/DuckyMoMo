@@ -859,12 +859,6 @@ fm_shop:
   - {label: "5000 xu", cost: {lamnguy: 25}, limit: 0, rewards: [xu 5000]}
   - {label: "16 kim cương", cost: {lamnguy: 40}, limit: 0, rewards: [vat DIAMOND 16]}
   - {label: "Đĩa nhạc Pigstep (trang trí)", cost: {lamnguy: 20}, limit: 1, rewards: [vat MUSIC_DISC_PIGSTEP 1]}
-  - {label: "8 dây xích (bắt pet)", cost: {"ca:rare": 3}, limit: 0, rewards: [vat LEAD 8]}
-  - {label: "Yên ngựa", cost: {"ca:rare": 4}, limit: 0, rewards: [vat SADDLE 1]}
-  - {label: "Bữa tiệc cho pet: +120 kinh nghiệm", cost: {"ca:epic": 2}, limit: 0, rewards: [petexp 120]}
-  - {label: "2 táo vàng", cost: {"ca:epic": 1}, limit: 0, rewards: [vat GOLDEN_APPLE 2]}
-  - {label: "Táo vàng phù phép", cost: {"ca:legendary": 1}, limit: 0, rewards: [vat ENCHANTED_GOLDEN_APPLE 1]}
-  - {label: "Đại tiệc cho pet: +500 kinh nghiệm", cost: {"ca:legendary": 2}, limit: 0, rewards: [petexp 500]}
 decor_materials:
   - {material: DIRT, amount: 64, price: 100}
   - {material: COBBLESTONE, amount: 64, price: 100}
@@ -1025,6 +1019,25 @@ petcap_nhay: 25
 petcap_bay: 20
 petcap_thulon: 15
 petcap_phuthuy: 10
+ev_lu_from: -1
+ev_lu_to: -1
+ev_lu_cap: 15
+ev_han_from: 3
+ev_han_to: 4
+ev_han_supply: 1.5
+rs_on: true
+rs_refresh: 10
+kl_on: true
+kl_max: 5000
+kl_cost: 2
+kl_dish: 15
+kl_fish_common: 2
+kl_fish_rare: 5
+kl_fish_epic: 12
+kl_fish_legendary: 40
+mon_on: true
+mon_cd: 20
+petcap_charm: 25
 petc_reduce: 50
 petc_chance: 30
 petc_seed: mua1

@@ -105,6 +105,18 @@ commands:
   lichcongthanh:
     description: "Lịch công thành: phiên tới, phiên đó có cho pet chiến đấu tham chiến không"
     aliases: [congthanh, lichvay]
+  kholuong:
+    description: "Kho lương công thành của thị trấn: xem, nộp nông sản/cá/món ăn (/kholuong nop|noptat|top)"
+    aliases: [kl, luongthuc]
+  dacsan:
+    description: "Đặc sản vùng: vùng nào thuộc phe nào, phe chủ vùng được mùa đặc sản"
+    aliases: [dacsanvung]
+  nauan:
+    description: "Bếp ra trận: nấu cá câu + nông sản thành món ăn có hiệu ứng"
+    aliases: [bep, monan]
+  buabatpet:
+    description: "Bùa bắt pet (tăng xác suất bắt); admin: /buabatpet give <người> [số]"
+    aliases: [bua]
   bxhpet:
     description: "Bảng xếp hạng pet chiến đấu (theo kinh nghiệm, lọc theo hệ) và xác suất bắt pet: /bxhpet [hệ|tyle]"
     aliases: [toppet, petbxh]
@@ -112,6 +124,9 @@ commands:
     description: "Đấu Trường: người + pet đấu 1v1, 2v2 (hàng chờ, thách đấu, cược, xếp hạng)"
     aliases: [dt, arena]
 permissions:
+  duckymomo.pet.admin:
+    description: "Phát Bùa bắt pet (/buabatpet give)"
+    default: op
   duckymomo.pet.batduoc:
     description: "Quyền tạm do module bắt pet cấp đúng lúc quay trúng xác suất; KHÔNG cấp tay (cấp tay = bắt phát nào cũng được)"
     default: false

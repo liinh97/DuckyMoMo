@@ -478,6 +478,8 @@ groups:
           info: "Là gì: dùng cho loài không thuộc nhóm nào ở dưới (hiếm, vd loài mới của bản Minecraft sau)." }
       - { key: petcap_attempts, label: Số lần thử mỗi con, type: int, min: 1, max: 50, file: plugins/DuckyMoMoCore/config.yml, path: pet-capture.attempts-per-mob,
           info: "Là gì: mỗi con vật chỉ thử bắt được ngần này lần (cộng dồn mọi người chơi), hết thì con đó hoảng sợ, không bắt được nữa.\nVí dụ: 3 lần, xác suất 20% → bắt được một con cụ thể khoảng 49%." }
+      - { key: petcap_charm, label: "Bùa bắt pet: cộng thêm (%)", type: int, min: 0, max: 100, file: plugins/DuckyMoMoCore/config.yml, path: pet-capture.charm-bonus,
+          info: "Là gì: Bùa bắt pet cầm tay trái khi thử bắt: cộng ngần này %, mất 1 bùa mỗi lần thử.\nCó từ: giải nhất/nhì/ba thi câu cá cuối tuần (3/2/1 bùa, sửa ở plugins/EvenMoreFish/competitions/thicau.yml), admin phát bằng /buabatpet give <người> [số]." }
       - { key: petcap_cooldown, label: Chờ giữa 2 lần thử (giây), type: number, min: 0, max: 30, file: plugins/DuckyMoMoCore/config.yml, path: pet-capture.cooldown-seconds,
           info: "Là gì: chống bấm liên tục. Trong lúc chờ, đánh bằng dây xích không tính lần thử." }
       - { key: petcap_giasuc, label: "Xác suất bắt: Gia súc (%)", type: int, min: 0, max: 100, file: plugins/DuckyMoMoCore/config.yml, path: pet-capture.group-chance.giasuc }
@@ -490,6 +492,31 @@ groups:
       - { key: petcap_bay, label: "Xác suất bắt: Loài bay (%)", type: int, min: 0, max: 100, file: plugins/DuckyMoMoCore/config.yml, path: pet-capture.group-chance.bay }
       - { key: petcap_thulon, label: "Xác suất bắt: Thú lớn (%)", type: int, min: 0, max: 100, file: plugins/DuckyMoMoCore/config.yml, path: pet-capture.group-chance.thulon }
       - { key: petcap_phuthuy, label: "Xác suất bắt: Phù thủy (%)", type: int, min: 0, max: 100, file: plugins/DuckyMoMoCore/config.yml, path: pet-capture.group-chance.phuthuy }
+
+  - title: Kho lương công thành (/kholuong)
+    category: PvP & combat
+    description: "Thị trấn nộp nông sản, đồ ăn, cá câu, món ăn vào kho. Lúc đánh, quân trong vùng vây ăn từ kho thị trấn mình: còn lương thì no (tự hồi máu), cạn thì mau đói."
+    info: "Là gì: nối nông dân, ngư dân với chiến tranh (hậu cần). Mỗi 15 giây lúc có phiên đánh, mỗi người trong vùng vây trừ 1/4 số điểm/phút ở dưới khỏi kho thị trấn của họ.\nNộp: /kholuong nop (đồ trên tay), /kholuong noptat (cả túi), xem các kho: /kholuong top.\nĐiểm từng loại nông sản/đồ ăn: siege-supply.points trong plugins/DuckyMoMoCore/config.yml.\nHạn hán (sự kiện mùa) nhân điểm nông sản.\nLưu xong: có hiệu lực ngay (dmm reload)."
+    apply: [dmm reload]
+    settings:
+      - { key: kl_on, label: Bật kho lương, type: select, file: plugins/DuckyMoMoCore/config.yml, path: siege-supply.enabled, options: [ { value: true, label: Bật }, { value: false, label: Tắt } ] }
+      - { key: kl_max, label: Kho tối đa mỗi thị trấn (điểm), type: int, min: 10, max: 1000000, file: plugins/DuckyMoMoCore/config.yml, path: siege-supply.max-per-town }
+      - { key: kl_cost, label: Mỗi người đánh ăn (điểm/phút), type: number, min: 0, max: 1000, file: plugins/DuckyMoMoCore/config.yml, path: siege-supply.cost-per-player-minute,
+          info: "Ví dụ 2 điểm/phút: 10 người đánh 1 giờ ăn 1.200 điểm ≈ 1.200 lúa, 400 bánh mì, 30 cá Huyền thoại." }
+      - { key: kl_dish, label: Điểm mỗi món ăn ra trận, type: number, min: 0, max: 1000, file: plugins/DuckyMoMoCore/config.yml, path: siege-supply.dish-points }
+      - { key: kl_fish_common, label: "Điểm mỗi cá Thường", type: number, min: 0, max: 1000, file: plugins/DuckyMoMoCore/config.yml, path: siege-supply.fish.Common }
+      - { key: kl_fish_rare, label: "Điểm mỗi cá Hiếm", type: number, min: 0, max: 1000, file: plugins/DuckyMoMoCore/config.yml, path: siege-supply.fish.Rare }
+      - { key: kl_fish_epic, label: "Điểm mỗi cá Quý", type: number, min: 0, max: 1000, file: plugins/DuckyMoMoCore/config.yml, path: siege-supply.fish.Epic }
+      - { key: kl_fish_legendary, label: "Điểm mỗi cá Huyền thoại", type: number, min: 0, max: 1000, file: plugins/DuckyMoMoCore/config.yml, path: siege-supply.fish.Legendary }
+
+  - title: Món ăn ra trận (/nauan)
+    category: PvP & combat
+    description: "Nấu cá câu + nông sản thành món ăn có hiệu ứng ngắn (hồi máu, kháng sát thương, máu ảo). Ăn xong phải chờ mới ăn món khác."
+    info: "Là gì: câu cá, làm nông có vai trò trực tiếp trong đánh nhau, không bán bằng tiền thật.\nMặc định: Cơm nắm (máu ảo), Canh chua cá (hồi máu), Cá kho tộ (kháng sát thương), Lẩu cá (hồi máu + kháng), Gỏi cá huyền thoại (mạnh nhất).\nSửa món, nguyên liệu, hiệu ứng: dishes.list trong plugins/DuckyMoMoCore/config.yml (\"ca:rare\" = cá Hiếm; hiệu ứng \"TÊN cấp giây\", cấp 0 = I).\nMón là đồ vật: trao đổi, bán, nộp kho lương được.\nLưu xong: có hiệu lực ngay (dmm reload)."
+    apply: [dmm reload]
+    settings:
+      - { key: mon_on, label: Bật món ăn ra trận, type: select, file: plugins/DuckyMoMoCore/config.yml, path: dishes.enabled, options: [ { value: true, label: Bật }, { value: false, label: Tắt } ] }
+      - { key: mon_cd, label: Chờ giữa 2 món (phút), type: int, min: 0, max: 600, file: plugins/DuckyMoMoCore/config.yml, path: dishes.cooldown-minutes }
 
   - title: Bắt pet theo mùa (MyPet)
     category: PvP & combat
@@ -687,6 +714,28 @@ groups:
       - { key: mua_kho_melon, label: "Mùa khô: Dưa hấu (quả)", type: number, min: 0, max: 5, file: plugins/DuckyMoMoCore/config.yml, path: seasons.list.kho.growth.MELON }
       - { key: mua_kho_pumpkin, label: "Mùa khô: Bí ngô (quả)", type: number, min: 0, max: 5, file: plugins/DuckyMoMoCore/config.yml, path: seasons.list.kho.growth.PUMPKIN }
       - { key: mua_kho_cactus, label: "Mùa khô: Xương rồng", type: number, min: 0, max: 5, file: plugins/DuckyMoMoCore/config.yml, path: seasons.list.kho.growth.CACTUS }
+
+  - title: Sự kiện mùa (Lũ, Hạn hán)
+    category: Thế giới
+    description: "Vài ngày đặc biệt trong mùa: Lũ cuối mùa mưa (mưa suốt, Thủy tộc dễ bắt), Hạn hán giữa mùa khô (không mưa, cây chậm, lương thực quý)."
+    info: "Là gì: sự kiện theo ngày của mùa (/mua). Ngày thứ mấy của mùa: 1 = ngày đầu; số âm đếm từ cuối (-1 = ngày cuối).\nLũ: ép mưa, lúa/khoai/cà rốt/củ dền lớn chậm, tảo bẹ và mía nhanh, bắt Thủy tộc dễ hơn.\nHạn hán: ép nắng, cây lớn chậm, nộp nông sản vào kho lương được nhân điểm.\nThử ngay: /mua sukien lu (hoặc han), trả về lịch: /mua sukien tudong.\nSửa sâu hơn (cây nào, % nào): seasons.events trong plugins/DuckyMoMoCore/config.yml.\nLưu xong: có hiệu lực ngay (dmm reload)."
+    apply: [dmm reload]
+    settings:
+      - { key: ev_lu_from, label: "Lũ: từ ngày thứ (của mùa mưa)", type: int, min: -30, max: 30, file: plugins/DuckyMoMoCore/config.yml, path: seasons.events.lu.from-day }
+      - { key: ev_lu_to, label: "Lũ: tới ngày thứ", type: int, min: -30, max: 30, file: plugins/DuckyMoMoCore/config.yml, path: seasons.events.lu.to-day }
+      - { key: ev_lu_cap, label: "Lũ: bắt Thủy tộc dễ hơn (%)", type: int, min: -100, max: 100, file: plugins/DuckyMoMoCore/config.yml, path: seasons.events.lu.capture-bonus.thuytoc }
+      - { key: ev_han_from, label: "Hạn hán: từ ngày thứ (của mùa khô)", type: int, min: -30, max: 30, file: plugins/DuckyMoMoCore/config.yml, path: seasons.events.han.from-day }
+      - { key: ev_han_to, label: "Hạn hán: tới ngày thứ", type: int, min: -30, max: 30, file: plugins/DuckyMoMoCore/config.yml, path: seasons.events.han.to-day }
+      - { key: ev_han_supply, label: "Hạn hán: nhân điểm nông sản nộp kho lương", type: number, min: 0.1, max: 10, file: plugins/DuckyMoMoCore/config.yml, path: seasons.events.han.supply-multiplier }
+
+  - title: Đặc sản vùng (/dacsan)
+    category: Thế giới
+    description: "Phe có nhiều thị trấn nhất trong một vùng (vùng của /rtp) thì dân phe đó gặt đặc sản vùng ở đâu cũng được mùa thêm %."
+    info: "Là gì: lý do kinh tế để chiếm đất. Phe = nước, hoặc thị trấn chưa vào nước. Đếm theo nhà chính/spawn của thị trấn. Hoà nhau = vùng chưa có chủ.\nĐặc sản mặc định: Tây Bắc khoai, Lào cà rốt, Trung Bộ ca cao, Nam Bộ lúa, Thái Lan lúa + ca cao, Myanmar củ dền, Nam Trung Quốc khoai + củ dền.\nĐổi đặc sản: region-specialty.regions trong plugins/DuckyMoMoCore/config.yml (chỉ cây WHEAT, CARROTS, POTATOES, BEETROOTS, COCOA).\nNgười chơi xem: /dacsan, trang chủ web mục Mùa.\nLưu xong: có hiệu lực ngay (dmm reload)."
+    apply: [dmm reload]
+    settings:
+      - { key: rs_on, label: Bật đặc sản vùng, type: select, file: plugins/DuckyMoMoCore/config.yml, path: region-specialty.enabled, options: [ { value: true, label: Bật }, { value: false, label: Tắt } ] }
+      - { key: rs_refresh, label: Tính lại chủ vùng mỗi (phút), type: int, min: 1, max: 1440, file: plugins/DuckyMoMoCore/config.yml, path: region-specialty.refresh-minutes }
 
   - title: Sàn thu mua (/donhang)
     category: Shop

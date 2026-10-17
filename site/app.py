@@ -389,12 +389,20 @@ def api_info():
             "respawn_per_level": get(load_yaml(plugin("MyPet", "config.yml")), "MyPet.Respawn.Time.Default.Factor", 5),
             "no_catch": ["Warden", "Wither", "Rồng Ender", "Elder Guardian", "Ravager", "Golem sắt", "Ghast"],
             "capture": pet_capture(core),
+            "charm_bonus": get(core, "pet-capture.charm-bonus", 25),
             "fish_cap": get(core, "pet-fish.daily-exp-cap", 300),
             "weather": {k: get(core, f"pet-combat.siege-weather.{p}", d) for k, p, d in [
                 ("enabled", "enabled", True), ("night_bonus", "night-pet-bonus", 20), ("water_bonus", "rain-water-bonus", 20),
                 ("fire_malus", "rain-fire-malus", 25), ("heat_bonus", "heat-bonus", 15), ("eyes", "night-eyes", [])]},
             "top": pet_top(),
         },
+        "supply": {"enabled": bool(get(core, "siege-supply.enabled", False)), "max": get(core, "siege-supply.max-per-town", 5000),
+                   "cost": get(core, "siege-supply.cost-per-player-minute", 2),
+                   "top": sorted(core_json("kholuong.json").get("kho", []), key=lambda k: -k.get("diem", 0))[:10]},
+        "dishes": {"enabled": bool(get(core, "dishes.enabled", False)), "cooldown": get(core, "dishes.cooldown-minutes", 20),
+                   "list": [{"ten": strip_colors(d.get("name", k)).strip(), "can": d.get("need", {}), "hieu_ung": d.get("effects", [])}
+                            for k, d in (get(core, "dishes.list", {}) or {}).items()]},
+        "specialty": core_json("dacsan.json").get("vung", []) if get(core, "region-specialty.enabled", False) else [],
         "arena": {
             "enabled": bool(get(core, "arena.enabled", False)),
             "fight": get(core, "arena.fight-seconds", 180),
@@ -624,6 +632,39 @@ def season_now(cfg):
             "left": None if forced in order else left, "day": per - left + 1, "forced": forced in order}
 
 
+def season_event(cfg, st):
+    """Sự kiện mùa đang diễn ra (giống Seasons.event()): seasons.events.<id> theo ngày thứ mấy của mùa; ghi đè ở mua.yml."""
+    evs = cfg.get("events") or {}
+    forced = str(load_yaml(plugin("DuckyMoMoCore", "mua.yml")).get("ghi-de-sukien") or "")
+    pick = None
+    if forced and forced in evs:
+        pick = forced
+    elif st:
+        per = st["per"]
+        for eid, e in evs.items():
+            if (e or {}).get("season") != st["cur"]:
+                continue
+            a = int(e.get("from-day", 1))
+            b = int(e.get("to-day", a))
+            a = per + a + 1 if a < 0 else a
+            b = per + b + 1 if b < 0 else b
+            if a <= st["day"] <= b:
+                pick = eid
+                break
+    if not pick:
+        return None
+    e = evs[pick] or {}
+    return {"id": pick, "ten": strip_colors(e.get("name", pick)).strip(), "mo_ta": strip_colors(e.get("subtitle", "")).strip()}
+
+
+def core_json(name):
+    """File JSON DuckyMoMoCore ghi cho web (kholuong.json, dacsan.json); lỗi thì {}."""
+    try:
+        return json.loads(plugin("DuckyMoMoCore", name).read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return {}
+
+
 def season_view(sid, sc):
     up, down = [], []
     for k, v in (sc.get("growth") or {}).items():
@@ -735,6 +776,7 @@ def api_mua():
     st = season_now(cfg) if cfg.get("enabled") else None
     if st:
         lst = cfg.get("list") or {}
+        out["su_kien"] = season_event(cfg, st)
         out.update({"bat": True, "hien_tai": season_view(st["cur"], lst[st["cur"]]), "tiep": season_view(st["next"], lst[st["next"]]),
                     "con": st["left"], "ngay_thu": st["day"], "moi_mua": st["per"], "ghi_de": st["forced"],
                     "cac_mua": [season_view(o, lst[o]) for o in st["order"]]})

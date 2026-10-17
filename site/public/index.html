@@ -571,6 +571,15 @@ footer .fbrand img{width:44px}
         <div class="card"><h3>Luật chống gian</h3><ul class="clean"><li>Không xây tường obsidian/băng, không đổ nham thạch ở đất hoang</li><li>Thành đang bị vây không mời thêm dân, không mua bán đất</li><li>Người ngoài vào vùng vây bị "bệnh chiến tranh"</li><li>Mỗi quốc gia vây tối đa <span data-k="siege.max_attacks">2</span> thành cùng lúc</li></ul></div>
       </div>
     </div>
+    <div class="grid g2" style="margin-top:16px">
+      <div class="card"><h3>🍚 Kho lương <span class="kbd">/kholuong</span></h3>
+        <p class="muted">Mỗi thị trấn có kho lương. Lúc đánh, quân trong vùng vây ăn từ kho của <b>thị trấn mình</b>: còn lương thì luôn no (tự hồi máu), kho cạn thì mau đói. Mỗi người ăn <b data-k="supply.cost">2</b> điểm/phút.</p>
+        <p class="dim" style="font-size:.85rem">Nộp nông sản, đồ ăn, cá câu, món ăn: <span class="kbd">/kholuong nop</span> (trên tay) · <span class="kbd">/kholuong noptat</span> (cả túi). Kho tối đa <span data-k="supply.max">5000</span> điểm. Người hoà bình bán lương cho các phe cũng là nghề.</p>
+        <div id="khoTop" class="muted"></div></div>
+      <div class="card"><h3>🍲 Món ăn ra trận <span class="kbd">/nauan</span></h3>
+        <p class="muted">Nấu cá câu + nông sản thành món có hiệu ứng ngắn. Ăn xong chờ <b data-k="dishes.cooldown">20</b> phút mới ăn món khác.</p>
+        <div id="dishList" class="muted">Đang tải…</div></div>
+    </div>
     <div class="card" style="margin-top:16px" id="swCard"><h3>🌦 Trời đất trong trận công thành</h3>
       <p class="muted">Lúc đang đánh, trong vùng vây, thời tiết và ngày đêm (theo giờ trong game) làm trận nặng nề hơn, và pet đúng loài thành lợi thế:</p>
       <ul class="clean">
@@ -637,6 +646,7 @@ footer .fbrand img{width:44px}
     <div class="kicker s">Thế giới sống theo mùa</div>
     <h2>Mùa mưa, mùa khô &amp; câu cá</h2>
     <p class="intro">Bang Hội Chiến có hai mùa xen kẽ theo ngày thật. Mỗi mùa có cây lớn nhanh, cây lớn chậm, mưa nhiều hay ít, và những loài cá chỉ xuất hiện trong mùa đó. Nông dân và ngư dân nên tính trước. Gõ <span class="kbd">/mua</span> trong game để xem.</p>
+    <div id="seaEvent"></div>
     <div class="grid g2" id="seaGrid">
       <div class="sea" id="seaNow"><div class="fx"></div><div class="muted">Đang tải mùa…</div></div>
       <div class="card" id="seaCrops"><h3>🌾 Nông sản mùa này</h3><div class="muted">Đang tải…</div></div>
@@ -649,6 +659,9 @@ footer .fbrand img{width:44px}
       <button class="tab" data-f="bien">🌊 Cá biển</button>
     </div>
     <div id="fishList"><div class="empty">Đang tải danh sách cá…</div></div>
+    <div class="card" style="margin-top:20px"><h3>🌾 Đặc sản vùng <span class="kbd">/dacsan</span></h3>
+      <p class="dim" style="font-size:.85rem">Phe (nước, hoặc thị trấn chưa vào nước) có <b>nhiều thị trấn nhất</b> trong một vùng thì dân phe đó gặt đặc sản vùng ở đâu cũng được mùa thêm. Chiếm thành trong vùng = giành đặc sản.</p>
+      <div id="dacsan" class="muted">Đang tải…</div></div>
     <div class="grid g2" style="margin-top:20px">
       <div class="card hl" id="contest"><h3>🏆 Thi câu cá</h3><div class="muted">Đang tải…</div></div>
       <div class="card"><h3>🎣 Câu cá thế nào?</h3><ul class="clean s">
@@ -658,7 +671,7 @@ footer .fbrand img{width:44px}
         <li>Mồi rơi ngẫu nhiên khi câu, gắn vào cần bằng <span class="kbd">/emf applybaits</span> để tăng cơ hội cá hiếm.</li>
         <li>Cá vẫn ăn, nướng được. Câu treo máy bị chặn.</li>
         <li>🐾 <b>Cho pet ăn cá</b>: cầm cá, chuột phải vào pet: no lại, hồi máu, thêm kinh nghiệm (cá càng hiếm càng bổ, tối đa <span data-k="pet.fish_cap">300</span> kinh nghiệm/ngày).</li>
-        <li>🔁 <b>Đổi cá lấy đồ</b>: <span class="kbd">/doimanh</span> nhận cá Hiếm, Quý, Huyền thoại để đổi dây xích, yên ngựa, táo vàng, tiệc kinh nghiệm cho pet. Cá cũng mua bán, trao đổi với người khác được.</li>
+        <li>🔁 Cá là đồ vật: mua bán, trao đổi với người khác được.</li>
       </ul></div>
     </div>
   </div>
@@ -1027,8 +1040,18 @@ async function loadInfo(){
     ${g.them.length ? `<div><b>Có thêm:</b> ${g.them.map(esc).join("; ")}</div>` : ""}${g.dac_tinh.length ? `<div><b>Đặc tính riêng:</b><br>${g.dac_tinh.map(esc).join("<br>")}</div>` : ""}</div></details>`).join("") || "Chưa có.";
   const cp = pet.capture || {};
   $("#petCapture").innerHTML = cp.enabled ? `${cp.season ? `<p class="dim" style="font-size:.85rem">Đang ${esc(cp.season)}: nhóm có dấu <b style="color:#7ee2b0">+</b> dễ bắt hơn.</p>` : ""}<table><tbody>${(cp.groups || []).map(g => `<tr><td>${esc(g.ten)}</td><td><b>${Math.min(100, g.tyle + (g.mua_nay || 0))}%</b> mỗi lần${g.mua_nay ? ` <span style="color:#7ee2b0">(+${g.mua_nay}% mùa này)</span>` : ""}</td></tr>`).join("")}</tbody></table>
-    <p class="dim" style="font-size:.85rem;margin-top:8px">Mỗi con thử được <b>${cp.attempts}</b> lần, cách nhau ${cp.cooldown} giây; trượt hết thì con đó hoảng, phải tìm con khác. Thú tự thuần hoá (sói, mèo, ngựa, vẹt…) thì bắt chắc chắn. Loài khác: ${cp.default}%. Trong game: <span class="kbd">/bxhpet tyle</span>.</p>`
+    <p class="dim" style="font-size:.85rem;margin-top:8px">Mỗi con thử được <b>${cp.attempts}</b> lần, cách nhau ${cp.cooldown} giây; trượt hết thì con đó hoảng, phải tìm con khác. Thú tự thuần hoá (sói, mèo, ngựa, vẹt…) thì bắt chắc chắn. Loài khác: ${cp.default}%. <b>Bùa bắt pet</b> (giải thi câu cá) cầm tay trái: +${pet.charm_bonus || 25}%. Trong game: <span class="kbd">/bxhpet tyle</span>.</p>`
     : "Đánh yếu máu rồi quăng dây xích là bắt được.";
+  const sup = info.supply || {};
+  $("#khoTop").innerHTML = (sup.top || []).length ? `<table><tbody>${sup.top.map((k, i) => `<tr><td>${i + 1}</td><td><b>${esc(k.ten)}</b></td><td>${nf.format(k.diem)} điểm</td></tr>`).join("")}</tbody></table>` : "Chưa thị trấn nào nộp lương.";
+  const NEED_VI = {"ca:common": "cá Thường", "ca:rare": "cá Hiếm", "ca:epic": "cá Quý", "ca:legendary": "cá Huyền thoại", WHEAT: "lúa", BEETROOT: "củ dền",
+    SUGAR_CANE: "mía", POTATO: "khoai", CARROT: "cà rốt", BROWN_MUSHROOM: "nấm nâu", RED_MUSHROOM: "nấm đỏ", COCOA_BEANS: "ca cao"};
+  const EFF_VI = {REGENERATION: "Hồi máu", RESISTANCE: "Kháng sát thương", ABSORPTION: "Máu ảo", STRENGTH: "Sức mạnh", SPEED: "Nhanh nhẹn", FIRE_RESISTANCE: "Kháng lửa", NIGHT_VISION: "Nhìn đêm"};
+  const ROMAN = ["I", "II", "III", "IV"];
+  const ds = info.dishes || {};
+  $("#dishList").innerHTML = ds.enabled && (ds.list || []).length ? `<table><tbody>${ds.list.map(d => `<tr><td><b>${esc(d.ten)}</b><div class="dim" style="font-size:.8rem">${Object.entries(d.can || {}).map(([k, n]) => n + " " + esc(NEED_VI[k] || NEED_VI[k.toUpperCase()] || k.toLowerCase())).join(" + ")}</div></td><td style="font-size:.85rem">${(d.hieu_ung || []).map(e => { const a = String(e).split(/\s+/); return esc(EFF_VI[a[0]] || a[0]) + " " + (ROMAN[+a[1] || 0] || "") + " " + (a[2] || "") + "s"; }).join("<br>")}</td></tr>`).join("")}</tbody></table>` : "Đang tắt.";
+  const sv = info.specialty || [];
+  $("#dacsan").innerHTML = sv.length ? `<table><tbody>${sv.map(v => `<tr><td><b>${esc(v.ten)}</b><div class="dim" style="font-size:.8rem">${esc(v.dac_san)}</div></td><td>${(v.cay || []).map(esc).join(", ")}</td><td>${v.chu ? esc(v.chu) + ` <span class="dim">(${v.so_thi_tran} thị trấn)</span>` : '<span class="dim">chưa có chủ</span>'}</td></tr>`).join("")}</tbody></table>` : "Đang tắt hoặc chưa tính (vài phút sau khi server bật).";
   const sw = pet.weather || {};
   if (sw.eyes && sw.eyes.length) $("#swEyes").textContent = sw.eyes.join(", ");
   const tp = pet.top || [];
@@ -1191,6 +1214,7 @@ async function loadMua(){
   try {
     const m = await j("api/mua"); MUA = m;
     if (m.bat) seaCard(m);
+    $("#seaEvent").innerHTML = m.su_kien ? `<div class="card hl" style="margin-bottom:14px"><b>⚡ Sự kiện mùa: ${esc(m.su_kien.ten)}</b> <span class="muted">— ${esc(m.su_kien.mo_ta)}</span></div>` : "";
     else { $("#seaGrid").innerHTML = `<div class="card muted">Mùa mưa / mùa khô đang tắt.</div>`; if (fishFilter === "now") fishFilter = "all"; }
     fishList(); contestCard(m.thicau || []);
   } catch (e) { $("#fishList").innerHTML = `<div class="empty">Không tải được thông tin mùa.</div>`; }

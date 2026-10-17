@@ -28,6 +28,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -45,6 +46,8 @@ import org.bukkit.plugin.Plugin;
  *  - attempts-per-mob: mỗi con chỉ thử được ngần ấy lần, hết thì con vật "hoảng" không bắt được nữa (lưu trên con vật).
  *  - cooldown-seconds: chờ giữa 2 lần thử của một người (chống bấm liên tục).
  *  - season-bonus.<mùa>.<nhóm>: cộng thêm % trong mùa đó (vd mùa mưa Thủy tộc +15), mùa lấy từ module Mùa (Seasons.now()).
+ *  - charm-bonus: Bùa bắt pet (/buabatpet, dấu PDC dmm_bua) cầm TAY TRÁI lúc thử bắt: +% và mất 1 bùa mỗi lần thử.
+ *    Có từ giải thi câu cá (EvenMoreFish COMMAND:buabatpet give {player} N) hoặc admin phát.
  * Loài bắt bằng "Tamed" (sói, mèo, ngựa, lạc đà...: phải tự thuần hoá trước) không quay xác suất: con của mình thì cấp quyền luôn.
  * Loài không có LowHp/Tamed (golem, Creaking...) để MyPet tự xét, không cấp quyền.
  */
@@ -65,6 +68,8 @@ final class PetCapture implements Listener {
     private final java.util.Set<String> lowHp = new java.util.HashSet<>();   // loài bắt kiểu "đánh yếu máu" (pet-config.yml)
     private final java.util.Set<String> tamed = new java.util.HashSet<>();   // loài bắt kiểu "đã thuần hoá"
     private final NamespacedKey triesKey;
+    private final NamespacedKey charmKey;
+    private final int charmBonus;
     private Method byEntityTypeName;
     private Method hasActive;
     private Object petManager;
@@ -95,6 +100,8 @@ final class PetCapture implements Listener {
             }
         }
         this.triesKey = new NamespacedKey(plugin, "batpet_lanthu");
+        this.charmKey = new NamespacedKey(plugin, "dmm_bua");
+        this.charmBonus = Math.max(0, c.getInt("charm-bonus", 25));
         loadGroups();
         loadRequirements();
         Plugin mp = Bukkit.getPluginManager().getPlugin("MyPet");
@@ -170,8 +177,12 @@ final class PetCapture implements Listener {
 
     /** % cộng thêm của nhóm trong mùa hiện tại. */
     int bonusNow(String group) {
+        if (group == null) {
+            return 0;
+        }
         Map<String, Integer> m = seasonBonus.get(Seasons.now());
-        return group == null || m == null ? 0 : m.getOrDefault(group, 0);
+        ConfigurationSection ev = Seasons.eventNow();   // sự kiện mùa (Lũ…) cộng thêm
+        return (m == null ? 0 : m.getOrDefault(group, 0)) + (ev == null ? 0 : ev.getInt("capture-bonus." + group, 0));
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -223,6 +234,12 @@ final class PetCapture implements Listener {
         lastTry.put(p.getUniqueId(), now);
         target.getPersistentDataContainer().set(triesKey, PersistentDataType.INTEGER, used + 1);
         int ch = chanceFor(type);
+        ItemStack off = p.getInventory().getItemInOffHand();
+        if (isCharm(off)) {
+            off.setAmount(off.getAmount() - 1);
+            ch = clamp(ch + charmBonus);
+            p.sendMessage(c("&b✦ Bùa bắt pet: &f+" + charmBonus + "% &7lần này (còn " + off.getAmount() + " bùa)."));
+        }
         if (ThreadLocalRandom.current().nextInt(100) < ch) {
             grant(p);
             return;
@@ -232,6 +249,50 @@ final class PetCapture implements Listener {
         p.playSound(target.getLocation(), Sound.ENTITY_ITEM_BREAK, 0.7f, 1.4f);
         p.sendActionBar(c("&c✘ Trượt! &7Con vật vùng ra (xác suất &f" + ch + "%&7). "
                 + (left > 0 ? "Còn &f" + left + " &7lần thử với con này." : "&cCon này đã hoảng, hết lần thử.")));
+    }
+
+    boolean isCharm(ItemStack it) {
+        return it != null && it.hasItemMeta() && "batpet".equals(it.getItemMeta().getPersistentDataContainer().get(charmKey, PersistentDataType.STRING));
+    }
+
+    ItemStack charm(int amount) {
+        ItemStack it = new ItemStack(Material.NAUTILUS_SHELL, amount);
+        org.bukkit.inventory.meta.ItemMeta m = it.getItemMeta();
+        m.displayName(c("&b&l✦ Bùa bắt pet"));
+        m.lore(java.util.List.of(c("&7Cầm ở &ftay trái &7khi quăng dây xích bắt pet:"), c("&a+" + charmBonus + "% &7xác suất, mất 1 bùa mỗi lần thử."),
+                c("&8Phần thưởng thi câu cá")));
+        m.setEnchantmentGlintOverride(true);
+        m.getPersistentDataContainer().set(charmKey, PersistentDataType.STRING, "batpet");
+        it.setItemMeta(m);
+        return it;
+    }
+
+    /** /buabatpet: xem cách dùng; admin: /buabatpet give <người> [số]. */
+    boolean charmCommand(org.bukkit.command.CommandSender s, String[] args) {
+        if (args.length >= 2 && args[0].equalsIgnoreCase("give")) {
+            if (!s.hasPermission("duckymomo.pet.admin")) {
+                s.sendMessage(c("&cBạn không có quyền phát bùa."));
+                return true;
+            }
+            Player t = Bukkit.getPlayerExact(args[1]);
+            int n = 1;
+            try {
+                n = args.length > 2 ? Math.max(1, Math.min(64, Integer.parseInt(args[2]))) : 1;
+            } catch (NumberFormatException ignored) {
+                // số sai: phát 1
+            }
+            if (t == null) {
+                s.sendMessage(c("&cKhông thấy " + args[1] + " online."));
+                return true;
+            }
+            Rewards.hand(t, charm(n));
+            t.sendMessage(c("&b✦ Bạn nhận " + n + " Bùa bắt pet. &7Cầm tay trái khi bắt pet: +" + charmBonus + "%."));
+            s.sendMessage(c("&aĐã phát " + n + " bùa cho " + t.getName() + "."));
+            return true;
+        }
+        s.sendMessage(c("&b&l✦ Bùa bắt pet: &7cầm ở &ftay trái &7khi quăng dây xích bắt pet: &a+" + charmBonus
+                + "% &7xác suất, mất 1 bùa mỗi lần thử. Có từ giải thi câu cá cuối tuần."));
+        return true;
     }
 
     /** Quyền tạm cho đúng cú đánh này: MyPet xét ở MONITOR cùng sự kiện, tick sau gỡ. */

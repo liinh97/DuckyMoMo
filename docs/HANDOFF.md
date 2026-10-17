@@ -283,6 +283,26 @@
   ticks-per-particle). Ghi vào plugins/PlayerParticles/styles/<kiểu>.yml ở lobby + banghoi-1, CẦN khởi động lại 2 server mới có hiệu lực.
 - PlayerParticles có sẵn `locale: vi_VN`, EssentialsX có `messages_vi` — chưa bật (đã hỏi người dùng).
 
+### 18/10 rạng sáng: kho lương, món ăn ra trận, đặc sản vùng, bùa bắt pet, sự kiện mùa (bỏ món đổi cá mặc định)
+- Người dùng tự đặt món đổi bằng cá ở /doimanh: đã BỎ 6 món mặc định; vẫn giữ giá ca:<độ hiếm> + quà petexp để họ tự thêm.
+- SiegeSupply.java /kholuong [nop|noptat|top] (config siege-supply): kho điểm theo UUID thị trấn (kholuong.yml, kholuong.json cho web).
+  Mỗi 15 giây lúc battleActive, người SURVIVAL trong vùng vây: kho thị trấn mình >= cost/4 → trừ, +3 đói +2 no; không → HUNGER.
+  Điểm: points.<VẬT_LIỆU>, fish.<độ hiếm>, dish-points; đồ có CustomModelData không nộp; sự kiện mùa supply-multiplier nhân.
+- Dishes.java /nauan (bep, monan) (config dishes): GUI bếp, nguyên liệu {VẬT_LIỆU|ca:<độ hiếm>: số}, món PDC duckymomocore:dmm_mon,
+  ăn (PlayerItemConsumeEvent) → hiệu ứng "TÊN cấp giây", cooldown-minutes giữa 2 món (bộ nhớ, mất khi khởi động lại).
+- RegionSpecialty.java /dacsan (config region-specialty, vùng = rtp.zones): chủ vùng = phe ("n:<nước>"/"t:<thị trấn>") nhiều thị trấn
+  nhất (spawn hoặc homeblock) trong bán kính; hoà = không chủ. Seasons.extraHarvest cộng % được mùa đặc sản cho dân phe chủ (gặt ở đâu
+  cũng được, chỉ WHEAT/CARROTS/POTATOES/BEETROOTS/COCOA). Ghi dacsan.json.
+- Seasons: events.<id> (season, from-day/to-day âm = từ cuối, rain on/off, growth nhân, harvest-bonus, capture-bonus.<nhóm>,
+  supply-multiplier); Seasons.eventNow(); /mua sukien <id|tudong> (mua.yml ghi-de-sukien); %dmmmua_sukien%; /mua hiện tốc độ lớn gộp.
+  Mặc định: lu (ngày cuối mùa mưa), han (ngày 3–4 mùa khô). 18/10 đang là Lũ (mùa mưa còn 1 ngày).
+- PetCapture: Bùa bắt pet (NAUTILUS_SHELL, PDC dmm_bua=batpet) tay trái +charm-bonus%, mất 1/lần thử; /buabatpet [give <người> [số]]
+  (duckymomo.pet.admin). EvenMoreFish thicau.yml: COMMAND:buabatpet give {player} 3/2/1 cho hạng 1/2/3 (chưa thử phát thật).
+  capture-bonus của sự kiện mùa cộng vào bonusNow.
+- Cài đặt: nhóm Kho lương, Món ăn ra trận (PvP & combat), Sự kiện mùa, Đặc sản vùng (Thế giới), ô Bùa bắt pet. Web: thẻ Kho lương,
+  Món ăn ra trận (mục Công thành), banner sự kiện + Đặc sản vùng (mục Mùa); site/app.py season_event(), core_json().
+- Chưa thử trong game.
+
 ### 17/10 khuya: mùa + câu cá gắn với pet và công thành
 - MyPetBridge.java: gọi MyPet qua phản chiếu (active/of/type/entity/addExp/saturation), setAccessible vì lớp cài đặt có thể không public.
   Arena.addPetExp dùng bridge. Seasons.INSTANCE + Seasons.now()/nowName() cho module khác hỏi mùa.
@@ -295,8 +315,7 @@
   ngồi trên vật cưỡi; nắng = ban ngày, không mưa, đúng heat-season → HUNGER trừ ai dẫn fire-pets. onPetWeather (NORMAL): pet đánh
   trong vùng vây lúc đánh: mắt đêm +night-pet-bonus ban đêm, nước +rain-water-bonus / lửa −rain-fire-malus khi mưa, lửa +heat-bonus
   nắng gắt. Báo người chơi bằng chat khi điều kiện đổi.
-- FragmentShop /doimanh: giá "ca:<độ hiếm>" (cá câu), quà Rewards "petexp N" (món có petexp phải đang dẫn pet). 6 món đổi bằng cá
-  (dây xích, yên, táo vàng, táo vàng phù phép, tiệc kinh nghiệm pet). Panel: FISH_COST_RE, REWARD_RES petexp, RW_KINDS "Kinh nghiệm
+- FragmentShop /doimanh: giá "ca:<độ hiếm>" (cá câu), quà Rewards "petexp N" (món có petexp phải đang dẫn pet). (6 món mẫu đã bỏ 18/10.) Panel: FISH_COST_RE, REWARD_RES petexp, RW_KINDS "Kinh nghiệm
   pet"; settings.yml fm_shop đã có 6 món (nguồn khi lưu trang Cài đặt).
 - Cài đặt: nhóm "Bắt pet theo mùa", "Cho pet ăn cá câu", các ô sw_* trong Pet chiến đấu. Web: thẻ "Trời đất trong trận công thành",
   công dụng cá ở mục Câu cá, % theo mùa ở bảng bắt pet. site/app.py season_id() (KHÔNG đặt tên season_now: trùng hàm cũ).

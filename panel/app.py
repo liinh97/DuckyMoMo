@@ -745,8 +745,49 @@ def roles_json():
                     "count": total if g == "default" else len(members.get(g, [])),
                     "perms": sorted(perms.get(g, []), key=lambda x: x["node"]), "parents": parents.get(g, []),
                     "exists": g in existing or g == "default", "preset": g in ROLE_PRESETS})
-    catalog = YAML(typ="safe").load(QUYEN_FILE.read_text(encoding="utf-8")) if QUYEN_FILE.exists() else {}
-    return {"groups": out, "players": total, "catalog": (catalog or {}).get("groups", []), "servers": SERVER_CTX}
+    catalog = (YAML(typ="safe").load(QUYEN_FILE.read_text(encoding="utf-8")) if QUYEN_FILE.exists() else {}) or {}
+    groups = catalog.get("groups", [])
+    try:
+        groups = groups + command_catalog({p[0] for g in groups for p in g.get("perms", [])})
+    except Exception as e:  # thiếu commands.json: chỉ có danh mục ghi tay
+        print("command_catalog:", e)
+    return {"groups": out, "players": total, "catalog": groups, "servers": SERVER_CTX}
+
+
+SRV_VI = {"lobby": "Sảnh", "banghoi-1": "Bang Hội Chiến", "practice-1": "Practice"}
+
+
+def command_catalog(known):
+    """Danh mục quyền TỰ ĐỘNG từ danh sách lệnh các server tự xuất (commands.json): mỗi quyền một dòng, gom theo plugin.
+    Bỏ quyền đã có trong quyen.yml (known). Trang Role hiện các nhóm này thu gọn (auto: true)."""
+    doc = YAML(typ="safe").load(CAMNANG_FILE.read_text(encoding="utf-8")) or {}
+    by_perm = {}
+    for srv, d in all_commands(doc).items():
+        for c in d["commands"]:
+            perm = (c.get("perm") or "").split(";")[0].strip()
+            if c.get("manual") or not perm or perm in known or perm.startswith("group."):
+                continue
+            e = by_perm.setdefault(perm, {"plugin": c["plugin"], "cmds": [], "desc": "", "servers": []})
+            if c["name"] not in e["cmds"]:
+                e["cmds"].append(c["name"])
+            for a in c.get("aliases") or []:
+                if a not in e["cmds"] and len(e["cmds"]) < 12:
+                    e["cmds"].append(a)
+            e["desc"] = e["desc"] or c.get("desc_vi") or c.get("desc") or ""
+            if srv not in e["servers"]:
+                e["servers"].append(srv)
+    plugins = {}
+    for perm, e in sorted(by_perm.items()):
+        main, alias = e["cmds"][0], e["cmds"][1:]
+        label = f"/{main}" + (f" (/{', /'.join(alias[:4])}{'…' if len(alias) > 4 else ''})" if alias else "") + (f" — {e['desc']}" if e["desc"] else "")
+        info = (f"Lệnh /{main}" + (f", gọi tắt: /{', /'.join(alias)}" if alias else "") + ".\n"
+                + (f"{e['desc']}\n" if e["desc"] else "")
+                + f"Có ở: {', '.join(SRV_VI.get(x, x) for x in e['servers'])}.\n"
+                + "Danh sách tự động từ lệnh đang có trên server (quyền suy ra từ lệnh, Essentials: essentials.<lệnh>). "
+                  "Lệnh có lệnh con (vd /co rollback) có thể cần thêm quyền con: xem Cẩm nang admin.").replace("\\n", "\n")
+        plugins.setdefault(e["plugin"], []).append([perm, label[:160], info])
+    order = sorted(plugins, key=lambda p: (p.startswith("Minecraft"), p.lower()))
+    return [{"title": f"Lệnh {p} (tự động)", "auto": True, "perms": plugins[p]} for p in order]
 
 
 # Bộ quyền khuyên dùng cho role (tools/<file>, mount ro vào /repo/tools): nút trên trang Role chạy từng dòng "lp ..." qua RCON ở lobby

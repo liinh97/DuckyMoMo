@@ -236,6 +236,13 @@
 - Trang Cài đặt: khoá `info:` cho mục và nhóm trong `settings.schema.yml` (đã viết ~44 mục + 9 nhóm dễ hiểu nhầm: rank donate, prefix role, đất đai,
   hoà bình, bảng xếp hạng, án, công thành, PvPManager, dọn rác, GrimAC). Thêm dần khi người dùng thấy chỗ nào mơ hồ.
 
+### 17/10: danh mục quyền tự động trên trang Role
+- `panel/app.py` `command_catalog()`: thêm vào catalog các nhóm "Lệnh <plugin> (tự động)" (`auto: true`) từ commands.json của 3 server
+  (qua `all_commands`): mỗi quyền một dòng `/lệnh (/gọi tắt…) — mô tả`, nút i ghi đủ tên gọi tắt + server. Bỏ quyền đã có trong quyen.yml.
+  17/10: 24 nhóm, 382 quyền (Essentials 129, WorldEdit 114, Minecraft gốc 85…). Plugin không khai quyền cho lệnh (Towny, SimplePets, zAuctionHouse…)
+  KHÔNG có ở đây (quyền của chúng xem Cẩm nang hoặc thêm tay ở "Quyền khác"). Rank donate không thấy nhóm tự động (chỉ trang trí).
+- Trang Role: nhóm tự động thu gọn, bấm tiêu đề mở; ô Lọc quyền tìm cả tên gọi tắt (vd "sun" → essentials.weather).
+
 ### DANH SÁCH CẦN THỬ (người dùng chốt 15/10: làm xong hết rồi thử một lượt; mục 16–25)
 Triển khai một lần: `git stash && git pull && git stash pop` → `./ops/build-core.sh` (lỗi biên dịch thì gửi ảnh, Java viết ở cloud CHƯA biên
 dịch) → kiểm tra không ai online → `docker compose up -d --no-deps lobby banghoi-1 practice-1` → `docker compose up -d --build panel site`.

@@ -84,6 +84,7 @@
     .pcats { grid-template-columns: 1fr; }
   }
   @media (max-width: 600px) { .addm, .addm.no-months { grid-template-columns: 1fr; } .rd .card { padding: 16px; } }
+.autoh { all: unset; cursor: pointer; font: inherit; color: inherit; } .autoh:hover { color: var(--accent); }
 </style>
 </head>
 <body data-dozzle="__DOZZLE_URL__" data-title="Role & rank" data-sub="Chọn một role bên trái: xem ai đang giữ, thêm/gỡ người, bật/tắt quyền. Mọi thay đổi có hiệu lực ngay toàn mạng.">
@@ -197,7 +198,7 @@ function renderDetail() {
       <input type="search" id="pf" placeholder="Lọc quyền… (vd bay, kick, worldedit)" value="${esc(filter)}">
       <label class="switch"><input type="checkbox" id="onlyon" ${onlyOn ? "checked" : ""}><span class="track"></span><span class="txt">Chỉ quyền đang có</span></label>${infoBtn("Toàn mạng = quyền có hiệu lực ở mọi server (sảnh, Bang Hội Chiến, Practice).\nChọn một server (vd banghoi-1) = bật/tắt quyền CHỈ ở server đó; quyền toàn mạng vẫn có hiệu lực ở đó (hiện \"bật ở toàn mạng\").\nVí dụ cho Builder WorldEdit chỉ ở sảnh: chọn lobby rồi bật.\n\"Chỉ quyền đang có\": ẩn quyền chưa bật để xem nhanh role đang có gì.", "Toàn mạng / server")}</div>`;
   if (g.perms.some(p => p.node === "*" && p.value)) h += `<div class="warnbox">Role này có quyền <code>*</code> (tất cả quyền): mọi công tắc bên dưới đều đang có hiệu lực (hiện bật mờ).</div>`;
-  h += `<p class="hint">Lệnh của EssentialsX (/fly, /kick, /ban, /tp, /gamemode…) chỉ có ở <b>Bang Hội Chiến</b> và <b>Practice</b>. Sảnh không cài Essentials nên gõ ở sảnh sẽ báo "Unknown command" dù có quyền.</p>`;
+  h += `<p class="hint">Lệnh của EssentialsX (/fly, /kick, /ban, /tp, /gamemode…) chỉ có ở <b>Bang Hội Chiến</b> và <b>Practice</b>. Sảnh không cài Essentials nên gõ ở sảnh sẽ báo "Unknown command" dù có quyền. Các nhóm <b>"(tự động)"</b> ở cuối liệt kê MỌI lệnh đang có trên server (bấm tiêu đề để mở, hoặc gõ ô Lọc quyền, vd "sun").</p>`;
   h += `<div class="pcats" id="pcats"></div>`;
   const known = new Set(cats.flatMap(c => c.perms.map(p => p[0])));
   // quyền trong danh mục mà bật ở server khác: hiện thành nhãn "bật ở …" ngay trên công tắc, không lặp ở đây
@@ -234,20 +235,26 @@ function bindTop(g) {
   }
 }
 
+// nhóm lệnh tự động (từ danh sách lệnh của server) thu gọn mặc định; bấm tiêu đề để mở; tìm kiếm / "chỉ quyền đang có" thì tự mở
+const openAuto = new Set();
 function renderPerms(g, cats, own, inh) {
   const q = fold(filter.trim());
   const so = own("*"), star = (so && so.value) || inh["*"];
   let h = "";
   for (const c of cats) {
-    const rows = c.perms.filter(([node, label]) => {
-      if (q && !fold(label + " " + node).includes(q)) return false;
+    const rows = c.perms.filter(([node, label, info]) => {
+      if (q && !fold(label + " " + node + " " + (info || "")).includes(q)) return false;
       const o = own(node);
       return !onlyOn || (o && o.value) || inh[node] || star || (server !== "global" && g.perms.some(p => p.node === node && p.server === "global" && p.value));
     });
     if (!rows.length) continue;
     const on = c.perms.filter(([node]) => { const o = own(node); return (o && o.value) || inh[node] || star ||
       (server !== "global" && g.perms.some(p => p.node === node && p.server === "global" && p.value)); }).length;
-    h += `<div class="pcat"><h3><span>${esc(c.title)}</span><span class="badge">${on}/${c.perms.length}</span></h3>`;
+    if (c.auto && !q && !onlyOn && !openAuto.has(c.title)) {
+      h += `<div class="pcat"><h3><button type="button" class="autoh" data-auto="${esc(c.title)}">▸ ${esc(c.title)}</button><span class="badge">${on}/${c.perms.length}</span></h3></div>`;
+      continue;
+    }
+    h += `<div class="pcat"><h3>${c.auto ? `<button type="button" class="autoh" data-auto="${esc(c.title)}">▾ ${esc(c.title)}</button>` : `<span>${esc(c.title)}</span>`}<span class="badge">${on}/${c.perms.length}</span></h3>`;
     for (const [node, label, info] of rows) {
       const o = own(node), from = inh[node];
       // đang xem 1 server: quyền bật "toàn mạng" cũng có hiệu lực ở đây
@@ -261,6 +268,7 @@ function renderPerms(g, cats, own, inh) {
     h += `</div>`;
   }
   $("pcats").innerHTML = h || `<div class="noresult">Không có quyền nào khớp.</div>`;
+  $("pcats").querySelectorAll("[data-auto]").forEach(b => b.onclick = () => { const t = b.dataset.auto; openAuto.has(t) ? openAuto.delete(t) : openAuto.add(t); renderPerms(g, cats, own, inh); });
   $("pcats").querySelectorAll("[data-gosv]").forEach(b => b.onclick = (e) => { e.preventDefault(); e.stopPropagation(); server = b.dataset.gosv; renderDetail(); });
   $("pcats").querySelectorAll("input[data-node]").forEach(cb => cb.onchange = () => {
     cb.closest(".pr").classList.add("busy");

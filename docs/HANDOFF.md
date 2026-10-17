@@ -299,6 +299,10 @@
   Không có trần độ cao riêng. Đang bay pet không mất máu khi rơi. Chặn bay theo vùng: cờ WorldGuard `mypet-fly`. Towny không chặn.
   Quyền MyPet.extended.ride.fly không cần (Permissions.Extended: false). Mọi loài cưỡi được (chuột phải bằng dây xích, cần hệ có Ride).
 - Arena.onMount: thế giới dautruong hủy EntityMountEvent khi vật cưỡi là pet MyPet (tránh bay ra ngoài sân).
+- PetCombat.noSiegeFlight (mỗi 5 tick, chỉ lúc battleActive): người cưỡi pet trong vùng vây, pet không chạm đất, không ở trong nước,
+  3 khối dưới trống → leaveVehicle + Rơi chậm 6 giây + nhắc (5 giây/lần). Không chặn được bằng cờ mypet-fly vì vùng vây không phải vùng WorldGuard.
+- Mọi loài MyPet cùng 20 máu, tốc độ 0.3 (pet-config.yml): sức mạnh chỉ theo cấp + hệ. Khác nhau theo loài: hình dáng/kích thước, 12 loài
+  tự bay theo chủ (CanGlide), vài tiện ích sẵn (cừu xén lông, bò cho sữa, bò nấm cho súp, gà đẻ trứng, người đồng bị oxy hoá...), đồ ăn.
 
 ### 17/10: pet trên web
 - Đã thử 38/38 loài trong PASSIVE_PETS gọi thật (`pet summon target b0ybn <loài>` → có thực thể quanh người chơi), cất lại hết.

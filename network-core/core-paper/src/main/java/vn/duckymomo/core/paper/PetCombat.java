@@ -3,10 +3,13 @@ package vn.duckymomo.core.paper;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.UUID;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
@@ -21,6 +24,8 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 /**
  * Pet chiến đấu (MyPet) đánh người chơi, Bang Hội Chiến. Config pet-combat:
@@ -28,6 +33,8 @@ import org.bukkit.event.player.PlayerJoinEvent;
  *  - siege-pet-chance: % phiên công thành CHO pet tham chiến. Mỗi phiên bốc thăm cố định theo giờ bắt đầu (seed + giờ),
  *    nên biết trước để báo cùng lịch. Phiên không cho: pet không gây sát thương cho người chơi trong vùng vây lúc đang đánh.
  *  - announce-minutes: báo cả server trước phiên bao nhiêu phút (kèm có/không pet); /lichcongthanh xem bất cứ lúc nào.
+ * Lúc có phiên đánh, trong vùng vây: không bay bằng pet (Thú Cưỡi cấp 10+). Pet cưỡi cao hơn 3 khối so với mặt đất thì người cưỡi
+ * bị đẩy xuống, kèm Rơi chậm 6 giây (không mất máu). Cưỡi chạy dưới đất và nhảy vẫn được.
  * Nhận pet MyPet qua interface de.Keyle.MyPet.api.entity.MyPetBukkitEntity (so tên lớp, không cần jar MyPet khi build).
  */
 final class PetCombat implements Listener {
@@ -46,6 +53,7 @@ final class PetCombat implements Listener {
     private Long upcoming;
     private boolean wasActive;
     private boolean currentAllowed = true;
+    private final Map<UUID, Long> flyWarned = new HashMap<>();
 
     PetCombat(DuckyMoMoCore plugin, ConfigurationSection c) {
         this.plugin = plugin;
@@ -61,6 +69,39 @@ final class PetCombat implements Listener {
 
     void start() {
         Bukkit.getScheduler().runTaskTimer(plugin, this::tick, 100L, 200L);
+        Bukkit.getScheduler().runTaskTimer(plugin, this::noSiegeFlight, 100L, 5L);
+    }
+
+    /** Đang có phiên đánh: cưỡi pet bay trong vùng vây -> đẩy người xuống (Rơi chậm), pet vẫn ở lại. */
+    private void noSiegeFlight() {
+        if (!SiegeWarHook.battleActive()) {
+            return;
+        }
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            Entity v = p.getVehicle();
+            Entity pet = isPet(v) ? v : v != null && isPet(v.getVehicle()) ? v.getVehicle() : null;   // MyPet có khi cho ngồi qua "ghế"
+            if (pet == null || pet.isOnGround() || pet.isInWater() || !highAboveGround(pet) || !SiegeWarHook.inActiveSiegeZone(pet.getLocation())) {
+                continue;
+            }
+            p.leaveVehicle();
+            p.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_FALLING, 120, 0, false, false, true));
+            long now = System.currentTimeMillis();
+            if (now - flyWarned.getOrDefault(p.getUniqueId(), 0L) > 5000L) {
+                flyWarned.put(p.getUniqueId(), now);
+                p.sendMessage(c("&c⚔ Đang công thành: không được bay bằng pet trong vùng vây."));
+            }
+        }
+    }
+
+    /** 3 khối ngay dưới pet đều trống (nhảy thường chỉ cao khoảng 2 khối nên không bị tính). */
+    private static boolean highAboveGround(Entity e) {
+        org.bukkit.block.Block b = e.getLocation().getBlock();
+        for (int i = 1; i <= 3; i++) {
+            if (!b.getRelative(0, -i, 0).isPassable()) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /** Phiên bắt đầu lúc startMillis có cho pet tham chiến không (cố định, tính trước được). */

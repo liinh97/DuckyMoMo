@@ -51,7 +51,7 @@ import org.bukkit.scheduler.BukkitTask;
  *  - Vào: hàng chờ theo kiểu + mức cược (chỉ ghép người cùng mức), hoặc thách đấu 1v1.
  *  - Đồ của mình, chết trong sân không rơi đồ (huỷ đòn chí mạng, chuyển sang xem). Hết giờ: đội còn nhiều % máu hơn thắng.
  *  - Cược: trừ khi bắt đầu, server thu fee-percent, đội thắng chia phần còn lại; hoà/huỷ trả lại. Cùng IP = giao hữu (không cược, không điểm).
- *  - Thưởng thắng win-reward xu, tối đa daily-reward-cap trận/ngày. Điểm ELO + /dautruong top.
+ *  - Thưởng thắng win-reward xu + pet-exp-win kinh nghiệm cho pet đang dẫn, tối đa daily-reward-cap trận/ngày. Điểm ELO + /dautruong top.
  *  - Mọi sát thương trong thế giới đấu trường do module này quyết định (ghi đè Towny/PvPManager/WorldGuard ở HIGHEST).
  * Dữ liệu: dautruong.yml (sân, thống kê, người chờ khôi phục khi thoát giữa trận).
  */
@@ -116,6 +116,7 @@ final class Arena implements Listener {
     private final double maxStake;
     private final double winReward;
     private final int dailyCap;
+    private final double petExpWin;
     private final int eloK;
     private final Map<String, List<UUID>> queues = new LinkedHashMap<>();
     private final Map<UUID, String> queuedIn = new HashMap<>();
@@ -140,6 +141,7 @@ final class Arena implements Listener {
         this.maxStake = Math.max(0, c.getDouble("max-stake", 10000));
         this.winReward = Math.max(0, c.getDouble("win-reward", 50));
         this.dailyCap = Math.max(0, c.getInt("daily-reward-cap", 5));
+        this.petExpWin = Math.max(0, c.getDouble("pet-exp-win", 30));
         this.eloK = Math.max(1, c.getInt("elo-k", 32));
         this.file = new File(plugin.getDataFolder(), "dautruong.yml");
         this.data = YamlConfiguration.loadConfiguration(file);
@@ -264,7 +266,8 @@ final class Arena implements Listener {
         p.sendMessage(c("&e/dautruong xem [người] &7xem trận đang đấu"));
         p.sendMessage(c("&e/dautruong top &7bảng xếp hạng · &e/dautruong toi &7thành tích của bạn"));
         p.sendMessage(c("&7Cược tối đa " + money(maxStake) + ", server thu " + fmt(feePercent) + "%. Trận " + fightSeconds
-                + " giây, hết giờ đội còn nhiều máu hơn thắng. Thắng thưởng " + money(winReward) + " (tối đa " + dailyCap + " trận/ngày)."));
+                + " giây, hết giờ đội còn nhiều máu hơn thắng. Thắng thưởng " + money(winReward)
+                + (petExpWin > 0 ? " + " + fmtNum(petExpWin) + " kinh nghiệm cho pet đang dẫn" : "") + " (tối đa " + dailyCap + " trận/ngày)."));
     }
 
     private boolean busy(Player p) {
@@ -645,9 +648,12 @@ final class Arena implements Listener {
                 if (p != null && share + reward > 0 && VaultEconomy.available()) {
                     VaultEconomy.deposit(p, share + reward);
                 }
+                // kinh nghiệm cho pet đang dẫn: chung giới hạn trận thưởng mỗi ngày (không thưởng thì cũng không có)
+                boolean petExp = p != null && reward > 0 && petExpWin > 0 && addPetExp(p, petExpWin);
                 if (p != null) {
                     p.sendMessage(c("&a&lTHẮNG! " + (share > 0 ? "&aNhận cược &f" + money(share) + " " : "")
-                            + (reward > 0 ? "&a+ thưởng &f" + money(reward) : m.friendly ? "&7(giao hữu, không thưởng)" : "&7(đã đủ " + dailyCap + " trận thưởng hôm nay)")));
+                            + (reward > 0 ? "&a+ thưởng &f" + money(reward) : m.friendly ? "&7(giao hữu, không thưởng)" : "&7(đã đủ " + dailyCap + " trận thưởng hôm nay)")
+                            + (petExp ? " &a+ pet &f" + fmtNum(petExpWin) + " kinh nghiệm" : "")));
                 }
             }
             broadcastMatch(m, "&6🏆 Đội &f" + names(winners) + " &6thắng!");
@@ -938,6 +944,37 @@ final class Arena implements Listener {
             }
         }
         return PetCombat.isPet(d) ? petOwner(d) : null;
+    }
+
+    /** Cộng kinh nghiệm cho pet MyPet đang dẫn (qua phản chiếu, không cần jar MyPet khi build). */
+    static boolean addPetExp(Player p, double exp) {
+        try {
+            org.bukkit.plugin.Plugin mp = Bukkit.getPluginManager().getPlugin("MyPet");
+            if (mp == null || !mp.isEnabled()) {
+                return false;
+            }
+            ClassLoader cl = mp.getClass().getClassLoader();
+            Object mgr = Class.forName("de.Keyle.MyPet.MyPetApi", true, cl).getMethod("getMyPetManager").invoke(null);
+            if (!(Boolean) mgr.getClass().getMethod("hasActiveMyPet", Player.class).invoke(mgr, p)) {
+                return false;
+            }
+            Object pet = mgr.getClass().getMethod("getMyPet", Player.class).invoke(mgr, p);
+            if (pet instanceof java.util.Optional<?> o) {
+                pet = o.orElse(null);
+            }
+            if (pet == null) {
+                return false;
+            }
+            Object xp = pet.getClass().getMethod("getExperience").invoke(pet);
+            xp.getClass().getMethod("addExp", double.class).invoke(xp, exp);
+            return true;
+        } catch (ReflectiveOperationException | RuntimeException e) {
+            return false;
+        }
+    }
+
+    private static String fmtNum(double v) {
+        return v == Math.floor(v) ? String.valueOf((long) v) : String.valueOf(v);
     }
 
     static Player petOwner(Entity pet) {

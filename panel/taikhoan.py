@@ -295,11 +295,13 @@ def combat_pets(uuid, perms):
             rows = con.execute("SELECT p.name, p.type, p.exp, p.skilltree, p.wants_to_spawn, p.respawn_time FROM pets p "
                                "JOIN players pl ON pl.internal_uuid = p.owner_uuid WHERE pl.mojang_uuid = ? ORDER BY p.last_used DESC",
                                (uuid,)).fetchall()
+            # hạng trên bảng xếp hạng pet (theo kinh nghiệm, như /bxhpet)
+            ranks = [con.execute("SELECT COUNT(*) + 1 FROM pets WHERE exp > ?", (r[2] or 0,)).fetchone()[0] for r in rows]
         finally:
             con.close()
-        for name, typ, exp, tree, spawn, respawn in rows:
+        for (name, typ, exp, tree, spawn, respawn), hang in zip(rows, ranks):
             vi, nhom = kinds.get(str(typ).lower(), (typ, None))
-            pets.append({"ten": re.sub(r"<[^>]+>|[&§][0-9a-fk-or]", "", str(name or "")), "loai": typ, "loai_vi": vi, "nhom": nhom, "cap": pet_level(exp),
+            pets.append({"ten": re.sub(r"<[^>]+>|[&§][0-9a-fk-or]", "", str(name or "")), "loai": typ, "loai_vi": vi, "nhom": nhom, "cap": pet_level(exp), "hang": hang,
                          "huong": trees.get(tree, tree) if tree else None, "dang_dan": bool(spawn), "dang_hoi_sinh": int(respawn or 0) > 0})
     except Exception:
         pets = None

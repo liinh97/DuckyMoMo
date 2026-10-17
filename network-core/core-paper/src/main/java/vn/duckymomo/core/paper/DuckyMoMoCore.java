@@ -408,6 +408,19 @@ public final class DuckyMoMoCore extends JavaPlugin {
         }
         bind("lichcongthanh", petCombat == null ? null : petCombat::command, "Lịch công thành");
 
+        // Bắt pet theo xác suất (pet-capture.enabled) + /bxhpet bảng xếp hạng pet (cần MyPet)
+        boolean myPetOn = getServer().getPluginManager().isPluginEnabled("MyPet");
+        PetCapture petCapture = myPetOn && getConfig().getBoolean("pet-capture.enabled") && getConfig().isConfigurationSection("pet-capture")
+                ? new PetCapture(this, getConfig().getConfigurationSection("pet-capture")) : null;
+        if (petCapture != null && petCapture.ready()) {
+            getServer().getPluginManager().registerEvents(petCapture, this);
+            getLogger().info("Bắt pet theo xác suất: " + petCapture.describe());
+        } else {
+            petCapture = null;
+        }
+        PetTop petTop = myPetOn ? new PetTop(this, petCapture) : null;
+        bind("bxhpet", petTop == null ? null : petTop::command, "Bảng xếp hạng pet");
+
         // Đấu Trường /dautruong: người + pet MyPet 1v1, 2v2 trong thế giới riêng (Bang Hội Chiến: arena.enabled)
         arena = getConfig().getBoolean("arena.enabled") && getConfig().isConfigurationSection("arena")
                 ? new Arena(this, getConfig().getConfigurationSection("arena")) : null;

@@ -582,6 +582,23 @@ donate-qr:
   web: "https://app.goc6.io.vn/mc/web/taikhoan.html"
 
 # Pet chiến đấu MyPet (PetCombat): trang Cài đặt > PvP & combat > Pet chiến đấu
+pet-capture:
+  enabled: true
+  chance-percent: 30                   # xác suất bắt mặc định (%) mỗi lần quăng dây xích vào con yếu máu
+  attempts-per-mob: 3                  # mỗi con chỉ thử được ngần này lần, hết thì con vật hoảng, không bắt được nữa
+  cooldown-seconds: 2                  # chờ giữa 2 lần thử của một người
+  group-chance:                        # riêng từng nhóm loài (mã nhóm trong tools/mypet/sinh-cay-ky-nang.py)
+    giasuc: 50
+    thuytoc: 40
+    cuoi: 35
+    xacsong: 35
+    thusan: 25
+    cungthu: 25
+    nhay: 25
+    bay: 20
+    thulon: 15
+    phuthuy: 10
+
 pet-combat:
   enabled: true
   player-damage-reduce-percent: 50   # pet đánh người chơi bị giảm bao nhiêu % sát thương (0 = không giảm, 100 = không đau)
@@ -602,4 +619,5 @@ arena:
   max-stake: 10000
   win-reward: 50                    # thưởng mỗi trận thắng (không tính giao hữu cùng IP)
   daily-reward-cap: 5               # số trận được thưởng mỗi ngày
+  pet-exp-win: 30                     # kinh nghiệm cho pet đang dẫn khi thắng (chung giới hạn trận thưởng/ngày)
   elo-k: 32

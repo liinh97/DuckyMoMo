@@ -105,10 +105,16 @@ commands:
   lichcongthanh:
     description: "Lịch công thành: phiên tới, phiên đó có cho pet chiến đấu tham chiến không"
     aliases: [congthanh, lichvay]
+  bxhpet:
+    description: "Bảng xếp hạng pet chiến đấu (theo kinh nghiệm, lọc theo hệ) và xác suất bắt pet: /bxhpet [hệ|tyle]"
+    aliases: [toppet, petbxh]
   dautruong:
     description: "Đấu Trường: người + pet đấu 1v1, 2v2 (hàng chờ, thách đấu, cược, xếp hạng)"
     aliases: [dt, arena]
 permissions:
+  duckymomo.pet.batduoc:
+    description: "Quyền tạm do module bắt pet cấp đúng lúc quay trúng xác suất; KHÔNG cấp tay (cấp tay = bắt phát nào cũng được)"
+    default: false
   duckymomo.mua.admin:
     description: Đổi mùa bằng tay để thử (/mua dat <mua|kho|tudong>)
     default: op

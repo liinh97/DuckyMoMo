@@ -387,12 +387,13 @@ chapters:
         &0Bắt thú, quái làm pet:
         đánh tới khi &cyếu máu&0
         rồi cầm &ldây xích&r&0
-        bấm chuột phải.
-        &0Pet theo bạn, đánh
-        quái, &llên cấp&r&0 mở
-        kỹ năng: túi đồ, nhặt
-        đồ, cưỡi, hồi máu.
-        &0Không bắt được boss.
+        đánh tiếp.
+        &0Chỉ có &lxác suất&r&0 trúng,
+        trượt mấy lần con vật
+        &choảng&0, tìm con khác.
+        &0Xem tỉ lệ: &1/bxhpet tyle
+        &0Thú tự thuần hoá (sói,
+        mèo, ngựa): bắt chắc.
       - |-
         &6&lLệnh pet
         &1/petinfo &0thông tin
@@ -403,8 +404,9 @@ chapters:
         &0chọn kỹ năng
         &1/petinventory &0túi đồ
         &1/petlist &0danh sách
-        &0Pet chết thì tự hồi
-        sinh sau một lúc.
+        &1/bxhpet &0xếp hạng pet
+        &1/pettrade &0<người> [giá]
+        &0bán/tặng pet (xu).
       - |-
         &6&lPet đánh người
         &0Pet đánh người chơi bị

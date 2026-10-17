@@ -283,6 +283,23 @@
   ticks-per-particle). Ghi vào plugins/PlayerParticles/styles/<kiểu>.yml ở lobby + banghoi-1, CẦN khởi động lại 2 server mới có hiệu lực.
 - PlayerParticles có sẵn `locale: vi_VN`, EssentialsX có `messages_vi` — chưa bật (đã hỏi người dùng).
 
+### 17/10 tối: bắt pet theo xác suất, trao đổi pet, kinh nghiệm pet ở Đấu Trường, bảng xếp hạng pet
+- PetCapture.java (pet-capture): MyPet bắt ở EntityDamageByEntityEvent MONITOR KHÔNG ignoreCancelled, cờ ChanceFlag có sẵn quay mỗi
+  cú đánh (spam = chắc bắt) nên tự làm: pet-config.yml mọi loài thêm "Permission:duckymomo.pet.batduoc" (PermissionFlag), module ở
+  HIGHEST xét đủ điều kiện (dây xích, MyPet.leash.<Loài>, không đang dẫn pet, ≤10% máu sau cú đánh như LowHpFlag) = 1 lần thử, trúng
+  thì addAttachment quyền tạm, tick sau gỡ. Loài "Tamed" (Camel, Cat, Donkey, Horse, Llama, Mule, Parrot, Sniffer, TraderLlama, Wolf):
+  con mình đã thuần hoá thì cấp luôn. Số lần thử lưu PDC duckymomocore:batpet_lanthu trên con vật; chờ giữa 2 lần theo người.
+  % theo nhóm loài đọc MobTypes + DmmNhom từ skilltrees. plugin.yml: quyền default false (op không tự có; ai có * vẫn luôn trúng).
+  pet-config.yml giờ nằm trong repo modes/banghoi/server/plugins/MyPet/ (bản cũ: scratchpad phiên này).
+- Trao đổi: /pettrade <người> [giá] (Vault, xu game), accept/reject/cancel; quyền MyPet.command.trade.offer(.*)/receive(.*) cho default
+  (tools/mypet.cmds, đã chạy 17/10).
+- Arena.addPetExp: thắng trận còn được thưởng (daily-reward-cap, không giao hữu) → arena.pet-exp-win (30) cho pet đang dẫn.
+- PetTop.java /bxhpet [hệ|tyle] (aliases toppet, petbxh): đọc pets.db bằng sqlite-jdbc có sẵn của Paper (chạy nền, open_mode=1).
+  Đã thử câu SQL bằng driver đó trong container. Web: site/app.py pet_capture(), pet_top(), mypet_level(); trang chủ mục Pet có
+  bảng xác suất + top 10; trang tài khoản hiện hạng từng pet (taikhoan.combat_pets "hang").
+- Cài đặt: nhóm "Bắt pet theo xác suất (MyPet)" (petcap_*), arena_pet_exp.
+- CHƯA quyết: chặn kinh nghiệm pet từ quái lồng (MyPet.Exp.Gain.PreventFromSpawnReason đang []).
+
 ### 17/10 tối: pet lớn theo bản tính loài (hệ × nhóm loài)
 - Người dùng chốt: lúc bắt mọi loài như nhau, lớn lên phải theo bản tính loài (tank trâu đánh yếu, loài bay mới cưỡi bay...).
 - MyPet: cây có "Inheritance": {"Skilltree": X} thì cộng toàn bộ nâng cấp của X (Skilltree.getUpgrades đệ quy); MobTypes [] = không

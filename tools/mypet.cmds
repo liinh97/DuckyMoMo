@@ -80,3 +80,7 @@ lp group default permission set MyPet.command.name true server=banghoi-1
 lp group default permission set MyPet.command.options true server=banghoi-1
 lp group default permission set MyPet.command.switch true server=banghoi-1
 lp group default permission set MyPet.command.store true server=banghoi-1
+lp group default permission set MyPet.command.trade.offer true server=banghoi-1
+lp group default permission set MyPet.command.trade.offer.* true server=banghoi-1
+lp group default permission set MyPet.command.trade.receive true server=banghoi-1
+lp group default permission set MyPet.command.trade.receive.* true server=banghoi-1

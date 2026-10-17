@@ -703,7 +703,7 @@ footer .fbrand img{width:44px}
   <div class="wrap">
     <div class="kicker v">Bạn đồng hành</div>
     <h2>Pet chiến đấu: tự tay bắt, tự tay nuôi</h2>
-    <p class="intro">Không mua được bằng tiền thật. Ai cũng bắt được: đánh một con thú hoặc quái tới khi <b>yếu máu</b> (thanh máu hiện trên đầu khi đánh) rồi cầm <b>dây xích</b> bấm chuột phải. Pet theo bạn, đánh quái, lên cấp tới <b data-k="pet.level_cap">100</b> và mở kỹ năng. Lúc mới bắt mọi loài như nhau; lớn lên thì đi theo <b>bản tính loài</b>: thú lớn trâu nhưng đánh yếu, thú săn đánh đau nhưng mỏng, chỉ loài biết bay mới cưỡi bay được. Bạn chọn <b>hệ</b>, loài quyết định cách pet lớn.</p>
+    <p class="intro">Không mua được bằng tiền thật. Ai cũng bắt được: đánh một con thú hoặc quái tới khi <b>yếu máu</b> (thanh máu hiện trên đầu khi đánh) rồi cầm <b>dây xích</b> đánh tiếp. Mỗi lần chỉ có <b>xác suất</b> bắt được, trượt mấy lần con vật hoảng chạy mất, nên pet tốt là của hiếm. Pet theo bạn, đánh quái, lên cấp tới <b data-k="pet.level_cap">100</b> và mở kỹ năng. Lúc mới bắt mọi loài như nhau; lớn lên thì đi theo <b>bản tính loài</b>: thú lớn trâu nhưng đánh yếu, thú săn đánh đau nhưng mỏng, chỉ loài biết bay mới cưỡi bay được. Bạn chọn <b>hệ</b>, loài quyết định cách pet lớn.</p>
     <div class="grid g2">
       <div class="card hl"><h3>Chọn hướng phát triển</h3><div id="petTrees" class="muted">Đang tải…</div>
         <p class="dim" style="font-size:.85rem;margin-top:8px">Chọn bằng <span class="kbd">/petchooseskilltree</span>. Cấp 15 tới 50 mở thêm kỹ năng riêng của từng hệ; máu và sát thương tăng theo nhóm loài (bảng bên dưới). Loài biết bay chọn Thú Cưỡi thì bay được từ cấp 5 (quãng bay mỗi lần dài dần theo cấp). Đấu Trường không cho cưỡi pet; đang công thành thì không được bay bằng pet trong vùng vây.</p></div>
@@ -716,8 +716,14 @@ footer .fbrand img{width:44px}
           <li>Không bắt được: <span id="petNoCatch"></span></li></ul></div>
         <div class="card"><h3>Giữ được bao nhiêu pet</h3><div id="petSlots" class="muted">Đang tải…</div>
           <p class="dim" style="font-size:.85rem;margin-top:8px">Cất bằng <span class="kbd">/petstore</span>, đổi bằng <span class="kbd">/petswitch</span>. Pet trang trí của rank (tên có ✿) là thứ khác, chỉ để ngắm.</p></div>
-        <div class="card"><h3>Lệnh hay dùng</h3><p class="muted"><span class="kbd">/petinfo</span> <span class="kbd">/petcall</span> <span class="kbd">/petsendaway</span> <span class="kbd">/petname</span> <span class="kbd">/petinventory</span> <span class="kbd">/petcapturehelper</span> <span class="kbd">/petlist</span></p></div>
+        <div class="card"><h3>Lệnh hay dùng</h3><p class="muted"><span class="kbd">/petinfo</span> <span class="kbd">/petcall</span> <span class="kbd">/petsendaway</span> <span class="kbd">/petname</span> <span class="kbd">/petinventory</span> <span class="kbd">/petcapturehelper</span> <span class="kbd">/petlist</span> <span class="kbd">/bxhpet</span></p>
+          <p class="dim" style="font-size:.85rem;margin-top:6px">Bán hoặc tặng pet: <span class="kbd">/pettrade &lt;người&gt; [giá xu]</span>, người nhận gõ <span class="kbd">/pettrade accept</span> (đứng gần nhau, trả bằng xu trong game).</p></div>
       </div>
+    </div>
+    <div class="grid g2" style="margin-top:16px">
+      <div class="card"><h3>Bắt pet: xác suất</h3><div id="petCapture" class="muted">Đang tải…</div></div>
+      <div class="card"><h3>🏆 Bảng xếp hạng pet</h3><div id="petTop" class="muted">Đang tải…</div>
+        <p class="dim" style="font-size:.85rem;margin-top:8px">Trong game: <span class="kbd">/bxhpet</span>, theo hệ: <span class="kbd">/bxhpet chienbinh</span> (haucan, dausi, thucuoi, nongtrai).</p></div>
     </div>
     <div class="card" style="margin-top:16px"><h3>Pet lớn theo bản tính loài</h3><p class="dim" style="font-size:.85rem">Bấm vào từng nhóm để xem loài nào thuộc nhóm đó và đặc tính riêng.</p><div id="petGroups" class="muted">Đang tải…</div></div>
   </div>
@@ -736,7 +742,7 @@ footer .fbrand img{width:44px}
           <li>Đếm ngược <span data-k="arena.countdown">5</span> giây, đánh <span data-k="arena.fight">180</span> giây; hết giờ đội còn nhiều máu hơn thắng</li>
           <li>Trong sân pet đánh người bị giảm <span data-k="arena.pet_reduce">50</span>%</li>
           <li>Cược tuỳ chọn (tối đa <span data-k="arena.max_stake">10000</span> xu), server thu <span data-k="arena.fee">5</span>%, chỉ ghép người cùng mức cược</li>
-          <li>Thắng thưởng <span data-k="arena.reward">50</span> xu, tối đa <span data-k="arena.cap">5</span> trận/ngày</li>
+          <li>Thắng thưởng <span data-k="arena.reward">50</span> xu + <span data-k="arena.pet_exp">30</span> kinh nghiệm cho pet đang dẫn, tối đa <span data-k="arena.cap">5</span> trận/ngày</li>
           <li>Cùng IP = giao hữu: không cược, không điểm, không thưởng</li></ul></div>
         <div class="card"><h3>Top Đấu Trường</h3><div id="dtTop" class="muted">Chưa có trận nào.</div></div>
       </div>
@@ -1010,6 +1016,12 @@ async function loadInfo(){
   $("#petGroups").innerHTML = (pet.groups || []).map(g => `<details style="margin-bottom:6px"><summary><b>${esc(g.ten)}</b> <span class="dim">· ${esc(g.vai)}</span></summary>
     <div style="font-size:.9rem;margin:6px 0 4px 14px"><div><b>Loài:</b> ${g.loai.map(esc).join(", ")}</div><div><b>Lớn lên:</b> ${esc(g.tang)}</div>
     ${g.them.length ? `<div><b>Có thêm:</b> ${g.them.map(esc).join("; ")}</div>` : ""}${g.dac_tinh.length ? `<div><b>Đặc tính riêng:</b><br>${g.dac_tinh.map(esc).join("<br>")}</div>` : ""}</div></details>`).join("") || "Chưa có.";
+  const cp = pet.capture || {};
+  $("#petCapture").innerHTML = cp.enabled ? `<table><tbody>${(cp.groups || []).map(g => `<tr><td>${esc(g.ten)}</td><td><b>${g.tyle}%</b> mỗi lần</td></tr>`).join("")}</tbody></table>
+    <p class="dim" style="font-size:.85rem;margin-top:8px">Mỗi con thử được <b>${cp.attempts}</b> lần, cách nhau ${cp.cooldown} giây; trượt hết thì con đó hoảng, phải tìm con khác. Thú tự thuần hoá (sói, mèo, ngựa, vẹt…) thì bắt chắc chắn. Loài khác: ${cp.default}%. Trong game: <span class="kbd">/bxhpet tyle</span>.</p>`
+    : "Đánh yếu máu rồi quăng dây xích là bắt được.";
+  const tp = pet.top || [];
+  $("#petTop").innerHTML = tp.length ? `<table><tbody>${tp.map((t, i) => `<tr><td>${i + 1}</td><td><b>${esc(t.ten)}</b><div class="dim" style="font-size:.8rem">${esc(t.loai || "")}${t.he ? " · " + esc(t.he) : ""}${t.nhom ? " · " + esc(t.nhom) : ""}</div></td><td>Cấp <b>${t.cap}</b></td><td>${esc(t.chu || "?")}</td></tr>`).join("")}</tbody></table>` : "Chưa có pet nào. Bắt con đầu tiên để lên bảng!";
   $("#petNoCatch").textContent = (pet.no_catch || []).join(", ");
   const sl = pet.slots || {};
   $("#petSlots").innerHTML = Object.keys(sl).length ? `<table><tbody>${Object.entries(sl).map(([k, v]) => `<tr><td>${esc(k)}</td><td><b>${esc(v)}</b> pet</td></tr>`).join("")}</tbody></table>` : "Chưa đặt.";

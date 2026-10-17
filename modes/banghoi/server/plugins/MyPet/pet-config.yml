@@ -1,0 +1,1170 @@
+# #####################################################################
+#               This is the pet configuration of MyPet                #
+#                 You can find more info on the wiki:                 #
+#   https://wiki.mypet-plugin.de/setup/configurations/pet-config.yml  #
+# #####################################################################
+
+MyPet:
+  Pets:
+    Axolotl:
+      HP: 20.0
+      Speed: 0.3
+      Food:
+      - tropical_fish
+      LeashRequirements:
+      - Permission:duckymomo.pet.batduoc
+      - LowHp
+      CustomRespawnTimeFactor: 0
+      CustomRespawnTimeFixed: 0
+      LeashItem: lead
+      ReleaseOnDeath: false
+      RemoveAfterRelease: false
+      GrowUpItem: experience_bottle
+    Allay:
+      HP: 20.0
+      Speed: 0.3
+      Food:
+      - apple
+      LeashRequirements:
+      - Permission:duckymomo.pet.batduoc
+      - LowHp
+      CustomRespawnTimeFactor: 0
+      CustomRespawnTimeFixed: 0
+      LeashItem: lead
+      ReleaseOnDeath: false
+      RemoveAfterRelease: false
+      CanGlide: true
+    Armadillo:
+      HP: 20.0
+      Speed: 0.3
+      Food:
+      - spider_eye
+      LeashRequirements:
+      - Permission:duckymomo.pet.batduoc
+      - LowHp
+      CustomRespawnTimeFactor: 0
+      CustomRespawnTimeFixed: 0
+      LeashItem: lead
+      ReleaseOnDeath: false
+      RemoveAfterRelease: false
+      GrowUpItem: experience_bottle
+    Bat:
+      HP: 20.0
+      Speed: 0.3
+      Food:
+      - spider_eye
+      LeashRequirements:
+      - Permission:duckymomo.pet.batduoc
+      - LowHp
+      CustomRespawnTimeFactor: 0
+      CustomRespawnTimeFixed: 0
+      LeashItem: lead
+      ReleaseOnDeath: false
+      RemoveAfterRelease: false
+      CanGlide: true
+    Bee:
+      HP: 20.0
+      Speed: 0.3
+      Food:
+      - poppy
+      - dandelion
+      - blue_orchid
+      - allium
+      - azure_bluet
+      - red_tulip
+      - orange_tulip
+      - white_tulip
+      - pink_tulip
+      - oxeye_daisy
+      - cornflower
+      - lily_of_the_valley
+      - wither_rose
+      LeashRequirements:
+      - Permission:duckymomo.pet.batduoc
+      - LowHp
+      CustomRespawnTimeFactor: 0
+      CustomRespawnTimeFixed: 0
+      LeashItem: lead
+      ReleaseOnDeath: false
+      RemoveAfterRelease: false
+      GrowUpItem: experience_bottle
+      CanGlide: true
+    Blaze:
+      HP: 20.0
+      Speed: 0.3
+      Food:
+      - gunpowder
+      LeashRequirements:
+      - Permission:duckymomo.pet.batduoc
+      - LowHp
+      CustomRespawnTimeFactor: 0
+      CustomRespawnTimeFixed: 0
+      LeashItem: lead
+      ReleaseOnDeath: false
+      RemoveAfterRelease: false
+      CanGlide: true
+    Bogged:
+      HP: 20.0
+      Speed: 0.3
+      Food:
+      - bone
+      LeashRequirements:
+      - Permission:duckymomo.pet.batduoc
+      - LowHp
+      CustomRespawnTimeFactor: 0
+      CustomRespawnTimeFixed: 0
+      LeashItem: lead
+      ReleaseOnDeath: false
+      RemoveAfterRelease: false
+    Breeze:
+      HP: 20.0
+      Speed: 0.3
+      Food:
+      - gunpowder
+      LeashRequirements:
+      - Permission:duckymomo.pet.batduoc
+      - LowHp
+      CustomRespawnTimeFactor: 0
+      CustomRespawnTimeFixed: 0
+      LeashItem: lead
+      ReleaseOnDeath: false
+      RemoveAfterRelease: false
+      CanGlide: true
+    Camel:
+      HP: 20.0
+      Speed: 0.3
+      Food:
+      - cod
+      LeashRequirements:
+      - Permission:duckymomo.pet.batduoc
+      - Tamed
+      CustomRespawnTimeFactor: 0
+      CustomRespawnTimeFixed: 0
+      LeashItem: lead
+      ReleaseOnDeath: false
+      RemoveAfterRelease: false
+      GrowUpItem: experience_bottle
+    Cat:
+      HP: 20.0
+      Speed: 0.3
+      Food:
+      - cod
+      LeashRequirements:
+      - Permission:duckymomo.pet.batduoc
+      - Tamed
+      CustomRespawnTimeFactor: 0
+      CustomRespawnTimeFixed: 0
+      LeashItem: lead
+      ReleaseOnDeath: false
+      RemoveAfterRelease: false
+      GrowUpItem: experience_bottle
+    CaveSpider:
+      HP: 20.0
+      Speed: 0.3
+      Food:
+      - rotten_flesh
+      LeashRequirements:
+      - Permission:duckymomo.pet.batduoc
+      - LowHp
+      CustomRespawnTimeFactor: 0
+      CustomRespawnTimeFixed: 0
+      LeashItem: lead
+      ReleaseOnDeath: false
+      RemoveAfterRelease: false
+    Chicken:
+      HP: 20.0
+      Speed: 0.3
+      Food:
+      - wheat_seeds
+      LeashRequirements:
+      - Permission:duckymomo.pet.batduoc
+      - LowHp
+      CustomRespawnTimeFactor: 0
+      CustomRespawnTimeFixed: 0
+      LeashItem: lead
+      ReleaseOnDeath: false
+      RemoveAfterRelease: false
+      CanGlide: true
+      CanLayEggs: true
+      GrowUpItem: experience_bottle
+    Cod:
+      HP: 20.0
+      Speed: 0.3
+      Food:
+      - seagrass
+      LeashRequirements:
+      - Permission:duckymomo.pet.batduoc
+      - LowHp
+      CustomRespawnTimeFactor: 0
+      CustomRespawnTimeFixed: 0
+      LeashItem: lead
+      ReleaseOnDeath: false
+      RemoveAfterRelease: false
+    CopperGolem:
+      HP: 20.0
+      Speed: 0.3
+      Food:
+      - copper_ingot
+      LeashRequirements:
+      - Permission:duckymomo.pet.batduoc
+      - UserCreated
+      CustomRespawnTimeFactor: 0
+      CustomRespawnTimeFixed: 0
+      LeashItem: lead
+      ReleaseOnDeath: false
+      RemoveAfterRelease: false
+      CanOxidize: true
+      OxidationTime: 24000
+    Cow:
+      HP: 20.0
+      Speed: 0.3
+      Food:
+      - wheat
+      LeashRequirements:
+      - Permission:duckymomo.pet.batduoc
+      - LowHp
+      CustomRespawnTimeFactor: 0
+      CustomRespawnTimeFixed: 0
+      LeashItem: lead
+      ReleaseOnDeath: false
+      RemoveAfterRelease: false
+      CanGiveMilk: true
+      GrowUpItem: experience_bottle
+    Creeper:
+      HP: 20.0
+      Speed: 0.3
+      Food:
+      - gunpowder
+      LeashRequirements:
+      - Permission:duckymomo.pet.batduoc
+      - LowHp
+      CustomRespawnTimeFactor: 0
+      CustomRespawnTimeFixed: 0
+      LeashItem: lead
+      ReleaseOnDeath: false
+      RemoveAfterRelease: false
+    Creaking:
+      HP: 20.0
+      Speed: 0.3
+      Food:
+      - resin_clump
+      LeashRequirements:
+      - Permission:duckymomo.pet.batduoc
+      - HeartLinked
+      CustomRespawnTimeFactor: 0
+      CustomRespawnTimeFixed: 0
+      LeashItem: lead
+      ReleaseOnDeath: false
+      RemoveAfterRelease: false
+    Dolphin:
+      HP: 20.0
+      Speed: 0.3
+      Food:
+      - cod
+      LeashRequirements:
+      - Permission:duckymomo.pet.batduoc
+      - LowHp
+      CustomRespawnTimeFactor: 0
+      CustomRespawnTimeFixed: 0
+      LeashItem: lead
+      ReleaseOnDeath: false
+      RemoveAfterRelease: false
+    Donkey:
+      HP: 20.0
+      Speed: 0.3
+      Food:
+      - sugar
+      - wheat
+      - apple
+      LeashRequirements:
+      - Permission:duckymomo.pet.batduoc
+      - Tamed
+      CustomRespawnTimeFactor: 0
+      CustomRespawnTimeFixed: 0
+      LeashItem: lead
+      ReleaseOnDeath: false
+      RemoveAfterRelease: false
+      GrowUpItem: experience_bottle
+    Drowned:
+      HP: 20.0
+      Speed: 0.3
+      Food:
+      - rotten_flesh
+      LeashRequirements:
+      - Permission:duckymomo.pet.batduoc
+      - LowHp
+      CustomRespawnTimeFactor: 0
+      CustomRespawnTimeFixed: 0
+      LeashItem: lead
+      ReleaseOnDeath: false
+      RemoveAfterRelease: false
+      GrowUpItem: experience_bottle
+    ElderGuardian:
+      HP: 20.0
+      Speed: 0.3
+      Food:
+      - sugar
+      LeashRequirements:
+      - Permission:duckymomo.pet.batduoc
+      - LowHp
+      CustomRespawnTimeFactor: 0
+      CustomRespawnTimeFixed: 0
+      LeashItem: lead
+      ReleaseOnDeath: false
+      RemoveAfterRelease: false
+    EnderDragon:
+      HP: 20.0
+      Speed: 0.3
+      Food:
+      - end_stone
+      LeashRequirements:
+      - Permission:duckymomo.pet.batduoc
+      - Impossible
+      CustomRespawnTimeFactor: 0
+      CustomRespawnTimeFixed: 0
+      LeashItem: lead
+      ReleaseOnDeath: false
+      RemoveAfterRelease: false
+      CanGlide: true
+    Enderman:
+      HP: 20.0
+      Speed: 0.3
+      Food:
+      - soul_sand
+      LeashRequirements:
+      - Permission:duckymomo.pet.batduoc
+      - LowHp
+      CustomRespawnTimeFactor: 0
+      CustomRespawnTimeFixed: 0
+      LeashItem: lead
+      ReleaseOnDeath: false
+      RemoveAfterRelease: false
+    Endermite:
+      HP: 20.0
+      Speed: 0.3
+      Food:
+      - sugar
+      LeashRequirements:
+      - Permission:duckymomo.pet.batduoc
+      - LowHp
+      CustomRespawnTimeFactor: 0
+      CustomRespawnTimeFixed: 0
+      LeashItem: lead
+      ReleaseOnDeath: false
+      RemoveAfterRelease: false
+    Evoker:
+      HP: 20.0
+      Speed: 0.3
+      Food:
+      - apple
+      LeashRequirements:
+      - Permission:duckymomo.pet.batduoc
+      - LowHp
+      CustomRespawnTimeFactor: 0
+      CustomRespawnTimeFixed: 0
+      LeashItem: lead
+      ReleaseOnDeath: false
+      RemoveAfterRelease: false
+    Fox:
+      HP: 20.0
+      Speed: 0.3
+      Food:
+      - sweet_berries
+      LeashRequirements:
+      - Permission:duckymomo.pet.batduoc
+      - LowHp
+      CustomRespawnTimeFactor: 0
+      CustomRespawnTimeFixed: 0
+      LeashItem: lead
+      ReleaseOnDeath: false
+      RemoveAfterRelease: false
+    Frog:
+      HP: 20.0
+      Speed: 0.3
+      Food:
+      - slime_ball
+      LeashRequirements:
+      - Permission:duckymomo.pet.batduoc
+      - LowHp
+      CustomRespawnTimeFactor: 0
+      CustomRespawnTimeFixed: 0
+      LeashItem: lead
+      ReleaseOnDeath: false
+      RemoveAfterRelease: false
+    Ghast:
+      HP: 20.0
+      Speed: 0.3
+      Food:
+      - gunpowder
+      LeashRequirements:
+      - Permission:duckymomo.pet.batduoc
+      - Impossible
+      CustomRespawnTimeFactor: 0
+      CustomRespawnTimeFixed: 0
+      LeashItem: lead
+      ReleaseOnDeath: false
+      RemoveAfterRelease: false
+      CanGlide: true
+    Goat:
+      HP: 20.0
+      Speed: 0.3
+      Food:
+      - wheat
+      LeashRequirements:
+      - Permission:duckymomo.pet.batduoc
+      - LowHp
+      CustomRespawnTimeFactor: 0
+      CustomRespawnTimeFixed: 0
+      LeashItem: lead
+      ReleaseOnDeath: false
+      RemoveAfterRelease: false
+    Giant:
+      HP: 20.0
+      Speed: 0.3
+      Food:
+      - rotten_flesh
+      LeashRequirements:
+      - Permission:duckymomo.pet.batduoc
+      - LowHp
+      CustomRespawnTimeFactor: 0
+      CustomRespawnTimeFixed: 0
+      LeashItem: lead
+      ReleaseOnDeath: false
+      RemoveAfterRelease: false
+    GlowSquid:
+      HP: 20.0
+      Speed: 0.3
+      Food:
+      - cod
+      LeashRequirements:
+      - Permission:duckymomo.pet.batduoc
+      - LowHp
+      CustomRespawnTimeFactor: 0
+      CustomRespawnTimeFixed: 0
+      LeashItem: lead
+      ReleaseOnDeath: false
+      RemoveAfterRelease: false
+    Guardian:
+      HP: 20.0
+      Speed: 0.3
+      Food:
+      - sugar
+      LeashRequirements:
+      - Permission:duckymomo.pet.batduoc
+      - LowHp
+      CustomRespawnTimeFactor: 0
+      CustomRespawnTimeFixed: 0
+      LeashItem: lead
+      ReleaseOnDeath: false
+      RemoveAfterRelease: false
+    Horse:
+      HP: 20.0
+      Speed: 0.3
+      Food:
+      - sugar
+      - wheat
+      - apple
+      LeashRequirements:
+      - Permission:duckymomo.pet.batduoc
+      - Tamed
+      CustomRespawnTimeFactor: 0
+      CustomRespawnTimeFixed: 0
+      LeashItem: lead
+      ReleaseOnDeath: false
+      RemoveAfterRelease: false
+      GrowUpItem: bread
+    Hoglin:
+      HP: 20.0
+      Speed: 0.3
+      Food:
+      - crimson_fungus
+      LeashRequirements:
+      - Permission:duckymomo.pet.batduoc
+      - LowHp
+      CustomRespawnTimeFactor: 0
+      CustomRespawnTimeFixed: 0
+      LeashItem: lead
+      ReleaseOnDeath: false
+      RemoveAfterRelease: false
+      WillShake: false
+      GrowUpItem: experience_bottle
+    Husk:
+      HP: 20.0
+      Speed: 0.3
+      Food:
+      - rotten_flesh
+      LeashRequirements:
+      - Permission:duckymomo.pet.batduoc
+      - LowHp
+      CustomRespawnTimeFactor: 0
+      CustomRespawnTimeFixed: 0
+      LeashItem: lead
+      ReleaseOnDeath: false
+      RemoveAfterRelease: false
+      GrowUpItem: experience_bottle
+    Illusioner:
+      HP: 20.0
+      Speed: 0.3
+      Food:
+      - apple
+      LeashRequirements:
+      - Permission:duckymomo.pet.batduoc
+      - LowHp
+      CustomRespawnTimeFactor: 0
+      CustomRespawnTimeFixed: 0
+      LeashItem: lead
+      ReleaseOnDeath: false
+      RemoveAfterRelease: false
+    IronGolem:
+      HP: 20.0
+      Speed: 0.3
+      Food:
+      - iron_ingot
+      LeashRequirements:
+      - Permission:duckymomo.pet.batduoc
+      - UserCreated
+      CustomRespawnTimeFactor: 0
+      CustomRespawnTimeFixed: 0
+      LeashItem: lead
+      ReleaseOnDeath: false
+      RemoveAfterRelease: false
+      CanTossUp: true
+    Llama:
+      HP: 20.0
+      Speed: 0.3
+      Food:
+      - wheat
+      LeashRequirements:
+      - Permission:duckymomo.pet.batduoc
+      - Tamed
+      CustomRespawnTimeFactor: 0
+      CustomRespawnTimeFixed: 0
+      LeashItem: lead
+      ReleaseOnDeath: false
+      RemoveAfterRelease: false
+      GrowUpItem: experience_bottle
+    MagmaCube:
+      HP: 20.0
+      Speed: 0.3
+      Food:
+      - redstone
+      LeashRequirements:
+      - Permission:duckymomo.pet.batduoc
+      - LowHp
+      CustomRespawnTimeFactor: 0
+      CustomRespawnTimeFixed: 0
+      LeashItem: lead
+      ReleaseOnDeath: false
+      RemoveAfterRelease: false
+    Mooshroom:
+      HP: 20.0
+      Speed: 0.3
+      Food:
+      - wheat
+      LeashRequirements:
+      - Permission:duckymomo.pet.batduoc
+      - LowHp
+      CustomRespawnTimeFactor: 0
+      CustomRespawnTimeFixed: 0
+      LeashItem: lead
+      ReleaseOnDeath: false
+      RemoveAfterRelease: false
+      GrowUpItem: experience_bottle
+      CanGiveStew: false
+    Mule:
+      HP: 20.0
+      Speed: 0.3
+      Food:
+      - sugar
+      - wheat
+      - apple
+      LeashRequirements:
+      - Permission:duckymomo.pet.batduoc
+      - Tamed
+      CustomRespawnTimeFactor: 0
+      CustomRespawnTimeFixed: 0
+      LeashItem: lead
+      ReleaseOnDeath: false
+      RemoveAfterRelease: false
+      GrowUpItem: experience_bottle
+    Ocelot:
+      HP: 20.0
+      Speed: 0.3
+      Food:
+      - cod
+      - salmon
+      LeashRequirements:
+      - Permission:duckymomo.pet.batduoc
+      - LowHp
+      CustomRespawnTimeFactor: 0
+      CustomRespawnTimeFixed: 0
+      LeashItem: lead
+      ReleaseOnDeath: false
+      RemoveAfterRelease: false
+      GrowUpItem: experience_bottle
+    Panda:
+      HP: 20.0
+      Speed: 0.3
+      Food:
+      - bamboo
+      LeashRequirements:
+      - Permission:duckymomo.pet.batduoc
+      - LowHp
+      CustomRespawnTimeFactor: 0
+      CustomRespawnTimeFixed: 0
+      LeashItem: lead
+      ReleaseOnDeath: false
+      RemoveAfterRelease: false
+      GrowUpItem: experience_bottle
+    Parrot:
+      HP: 20.0
+      Speed: 0.3
+      Food:
+      - cookie
+      - sweet_berries
+      LeashRequirements:
+      - Permission:duckymomo.pet.batduoc
+      - Tamed
+      CustomRespawnTimeFactor: 0
+      CustomRespawnTimeFixed: 0
+      LeashItem: lead
+      ReleaseOnDeath: false
+      RemoveAfterRelease: false
+      CanGlide: true
+    Phantom:
+      HP: 20.0
+      Speed: 0.3
+      Food:
+      - rotten_flesh
+      LeashRequirements:
+      - Permission:duckymomo.pet.batduoc
+      - LowHp
+      CustomRespawnTimeFactor: 0
+      CustomRespawnTimeFixed: 0
+      LeashItem: lead
+      ReleaseOnDeath: false
+      RemoveAfterRelease: false
+      CanGlide: true
+    Pig:
+      HP: 20.0
+      Speed: 0.3
+      Food:
+      - carrot
+      LeashRequirements:
+      - Permission:duckymomo.pet.batduoc
+      - LowHp
+      CustomRespawnTimeFactor: 0
+      CustomRespawnTimeFixed: 0
+      LeashItem: lead
+      ReleaseOnDeath: false
+      RemoveAfterRelease: false
+      GrowUpItem: experience_bottle
+    Piglin:
+      HP: 20.0
+      Speed: 0.3
+      Food:
+      - gold_nugget
+      LeashRequirements:
+      - Permission:duckymomo.pet.batduoc
+      - LowHp
+      CustomRespawnTimeFactor: 0
+      CustomRespawnTimeFixed: 0
+      LeashItem: lead
+      ReleaseOnDeath: false
+      RemoveAfterRelease: false
+      WillShake: false
+      GrowUpItem: experience_bottle
+    PiglinBrute:
+      HP: 20.0
+      Speed: 0.3
+      Food:
+      - gold_nugget
+      LeashRequirements:
+      - Permission:duckymomo.pet.batduoc
+      - LowHp
+      CustomRespawnTimeFactor: 0
+      CustomRespawnTimeFixed: 0
+      LeashItem: lead
+      ReleaseOnDeath: false
+      RemoveAfterRelease: false
+      WillShake: false
+      GrowUpItem: experience_bottle
+    Pillager:
+      HP: 20.0
+      Speed: 0.3
+      Food:
+      - apple
+      LeashRequirements:
+      - Permission:duckymomo.pet.batduoc
+      - LowHp
+      CustomRespawnTimeFactor: 0
+      CustomRespawnTimeFixed: 0
+      LeashItem: lead
+      ReleaseOnDeath: false
+      RemoveAfterRelease: false
+    PolarBear:
+      HP: 20.0
+      Speed: 0.3
+      Food:
+      - cod
+      LeashRequirements:
+      - Permission:duckymomo.pet.batduoc
+      - LowHp
+      CustomRespawnTimeFactor: 0
+      CustomRespawnTimeFixed: 0
+      LeashItem: lead
+      ReleaseOnDeath: false
+      RemoveAfterRelease: false
+      GrowUpItem: experience_bottle
+    Pufferfish:
+      HP: 20.0
+      Speed: 0.3
+      Food:
+      - seagrass
+      LeashRequirements:
+      - Permission:duckymomo.pet.batduoc
+      - LowHp
+      CustomRespawnTimeFactor: 0
+      CustomRespawnTimeFixed: 0
+      LeashItem: lead
+      ReleaseOnDeath: false
+      RemoveAfterRelease: false
+    Rabbit:
+      HP: 20.0
+      Speed: 0.3
+      Food:
+      - carrot
+      LeashRequirements:
+      - Permission:duckymomo.pet.batduoc
+      - LowHp
+      CustomRespawnTimeFactor: 0
+      CustomRespawnTimeFixed: 0
+      LeashItem: lead
+      ReleaseOnDeath: false
+      RemoveAfterRelease: false
+      GrowUpItem: experience_bottle
+    Ravager:
+      HP: 20.0
+      Speed: 0.3
+      Food:
+      - beef
+      - mutton
+      LeashRequirements:
+      - Permission:duckymomo.pet.batduoc
+      - LowHp
+      CustomRespawnTimeFactor: 0
+      CustomRespawnTimeFixed: 0
+      LeashItem: lead
+      ReleaseOnDeath: false
+      RemoveAfterRelease: false
+    Salmon:
+      HP: 20.0
+      Speed: 0.3
+      Food:
+      - seagrass
+      LeashRequirements:
+      - Permission:duckymomo.pet.batduoc
+      - LowHp
+      CustomRespawnTimeFactor: 0
+      CustomRespawnTimeFixed: 0
+      LeashItem: lead
+      ReleaseOnDeath: false
+      RemoveAfterRelease: false
+    Sheep:
+      HP: 20.0
+      Speed: 0.3
+      Food:
+      - wheat
+      LeashRequirements:
+      - Permission:duckymomo.pet.batduoc
+      - LowHp
+      CustomRespawnTimeFactor: 0
+      CustomRespawnTimeFixed: 0
+      LeashItem: lead
+      ReleaseOnDeath: false
+      RemoveAfterRelease: false
+      CanBeSheared: true
+      CanRegrowWool: true
+      GrowUpItem: experience_bottle
+    Silverfish:
+      HP: 20.0
+      Speed: 0.3
+      Food:
+      - sugar
+      LeashRequirements:
+      - Permission:duckymomo.pet.batduoc
+      - LowHp
+      CustomRespawnTimeFactor: 0
+      CustomRespawnTimeFixed: 0
+      LeashItem: lead
+      ReleaseOnDeath: false
+      RemoveAfterRelease: false
+    Skeleton:
+      HP: 20.0
+      Speed: 0.3
+      Food:
+      - bone
+      LeashRequirements:
+      - Permission:duckymomo.pet.batduoc
+      - LowHp
+      CustomRespawnTimeFactor: 0
+      CustomRespawnTimeFixed: 0
+      LeashItem: lead
+      ReleaseOnDeath: false
+      RemoveAfterRelease: false
+    SkeletonHorse:
+      HP: 20.0
+      Speed: 0.3
+      Food:
+      - bone
+      LeashRequirements:
+      - Permission:duckymomo.pet.batduoc
+      - LowHp
+      CustomRespawnTimeFactor: 0
+      CustomRespawnTimeFixed: 0
+      LeashItem: lead
+      ReleaseOnDeath: false
+      RemoveAfterRelease: false
+      GrowUpItem: experience_bottle
+    Slime:
+      HP: 20.0
+      Speed: 0.3
+      Food:
+      - sugar
+      LeashRequirements:
+      - Permission:duckymomo.pet.batduoc
+      - LowHp
+      CustomRespawnTimeFactor: 0
+      CustomRespawnTimeFixed: 0
+      LeashItem: lead
+      ReleaseOnDeath: false
+      RemoveAfterRelease: false
+    Sniffer:
+      HP: 20.0
+      Speed: 0.3
+      Food:
+      - torchflower_seeds
+      LeashRequirements:
+      - Permission:duckymomo.pet.batduoc
+      - Tamed
+      CustomRespawnTimeFactor: 0
+      CustomRespawnTimeFixed: 0
+      LeashItem: lead
+      ReleaseOnDeath: false
+      RemoveAfterRelease: false
+      GrowUpItem: experience_bottle
+    Snowman:
+      HP: 20.0
+      Speed: 0.3
+      Food:
+      - carrot
+      - snowball
+      LeashRequirements:
+      - Permission:duckymomo.pet.batduoc
+      - LowHp
+      CustomRespawnTimeFactor: 0
+      CustomRespawnTimeFixed: 0
+      LeashItem: lead
+      ReleaseOnDeath: false
+      RemoveAfterRelease: false
+      FixSnowTrack: true
+    Spider:
+      HP: 20.0
+      Speed: 0.3
+      Food:
+      - rotten_flesh
+      LeashRequirements:
+      - Permission:duckymomo.pet.batduoc
+      - LowHp
+      CustomRespawnTimeFactor: 0
+      CustomRespawnTimeFixed: 0
+      LeashItem: lead
+      ReleaseOnDeath: false
+      RemoveAfterRelease: false
+    Squid:
+      HP: 20.0
+      Speed: 0.3
+      Food:
+      - cod
+      LeashRequirements:
+      - Permission:duckymomo.pet.batduoc
+      - LowHp
+      CustomRespawnTimeFactor: 0
+      CustomRespawnTimeFixed: 0
+      LeashItem: lead
+      ReleaseOnDeath: false
+      RemoveAfterRelease: false
+    Stray:
+      HP: 20.0
+      Speed: 0.3
+      Food:
+      - bone
+      LeashRequirements:
+      - Permission:duckymomo.pet.batduoc
+      - LowHp
+      CustomRespawnTimeFactor: 0
+      CustomRespawnTimeFixed: 0
+      LeashItem: lead
+      ReleaseOnDeath: false
+      RemoveAfterRelease: false
+    Strider:
+      HP: 20.0
+      Speed: 0.3
+      Food:
+      - bone
+      LeashRequirements:
+      - Permission:duckymomo.pet.batduoc
+      - LowHp
+      CustomRespawnTimeFactor: 0
+      CustomRespawnTimeFixed: 0
+      LeashItem: lead
+      ReleaseOnDeath: false
+      RemoveAfterRelease: false
+      GrowUpItem: experience_bottle
+    Tadpole:
+      HP: 20.0
+      Speed: 0.3
+      Food:
+      - slime_ball
+      LeashRequirements:
+      - Permission:duckymomo.pet.batduoc
+      - LowHp
+      CustomRespawnTimeFactor: 0
+      CustomRespawnTimeFixed: 0
+      LeashItem: lead
+      ReleaseOnDeath: false
+      RemoveAfterRelease: false
+    TraderLlama:
+      HP: 20.0
+      Speed: 0.3
+      Food:
+      - wheat
+      LeashRequirements:
+      - Permission:duckymomo.pet.batduoc
+      - Tamed
+      CustomRespawnTimeFactor: 0
+      CustomRespawnTimeFixed: 0
+      LeashItem: lead
+      ReleaseOnDeath: false
+      RemoveAfterRelease: false
+    TropicalFish:
+      HP: 20.0
+      Speed: 0.3
+      Food:
+      - seagrass
+      LeashRequirements:
+      - Permission:duckymomo.pet.batduoc
+      - LowHp
+      CustomRespawnTimeFactor: 0
+      CustomRespawnTimeFixed: 0
+      LeashItem: lead
+      ReleaseOnDeath: false
+      RemoveAfterRelease: false
+    Turtle:
+      HP: 20.0
+      Speed: 0.3
+      Food:
+      - seagrass
+      LeashRequirements:
+      - Permission:duckymomo.pet.batduoc
+      - LowHp
+      CustomRespawnTimeFactor: 0
+      CustomRespawnTimeFixed: 0
+      LeashItem: lead
+      ReleaseOnDeath: false
+      RemoveAfterRelease: false
+      GrowUpItem: experience_bottle
+    Vex:
+      HP: 20.0
+      Speed: 0.3
+      Food:
+      - apple
+      LeashRequirements:
+      - Permission:duckymomo.pet.batduoc
+      - LowHp
+      CustomRespawnTimeFactor: 0
+      CustomRespawnTimeFixed: 0
+      LeashItem: lead
+      ReleaseOnDeath: false
+      RemoveAfterRelease: false
+      CanGlide: true
+    Villager:
+      HP: 20.0
+      Speed: 0.3
+      Food:
+      - apple
+      LeashRequirements:
+      - Permission:duckymomo.pet.batduoc
+      - LowHp
+      CustomRespawnTimeFactor: 0
+      CustomRespawnTimeFixed: 0
+      LeashItem: lead
+      ReleaseOnDeath: false
+      RemoveAfterRelease: false
+      GrowUpItem: experience_bottle
+    Vindicator:
+      HP: 20.0
+      Speed: 0.3
+      Food:
+      - apple
+      LeashRequirements:
+      - Permission:duckymomo.pet.batduoc
+      - LowHp
+      CustomRespawnTimeFactor: 0
+      CustomRespawnTimeFixed: 0
+      LeashItem: lead
+      ReleaseOnDeath: false
+      RemoveAfterRelease: false
+    Warden:
+      HP: 20.0
+      Speed: 0.3
+      Food:
+      - bone
+      LeashRequirements:
+      - Permission:duckymomo.pet.batduoc
+      - LowHp
+      CustomRespawnTimeFactor: 0
+      CustomRespawnTimeFixed: 0
+      LeashItem: lead
+      ReleaseOnDeath: false
+      RemoveAfterRelease: false
+    WanderingTrader:
+      HP: 20.0
+      Speed: 0.3
+      Food:
+      - apple
+      LeashRequirements:
+      - Permission:duckymomo.pet.batduoc
+      - LowHp
+      CustomRespawnTimeFactor: 0
+      CustomRespawnTimeFixed: 0
+      LeashItem: lead
+      ReleaseOnDeath: false
+      RemoveAfterRelease: false
+    Witch:
+      HP: 20.0
+      Speed: 0.3
+      Food:
+      - mushroom_stew
+      LeashRequirements:
+      - Permission:duckymomo.pet.batduoc
+      - LowHp
+      CustomRespawnTimeFactor: 0
+      CustomRespawnTimeFixed: 0
+      LeashItem: lead
+      ReleaseOnDeath: false
+      RemoveAfterRelease: false
+    Wither:
+      HP: 20.0
+      Speed: 0.3
+      Food:
+      - bone
+      LeashRequirements:
+      - Permission:duckymomo.pet.batduoc
+      - Impossible
+      CustomRespawnTimeFactor: 0
+      CustomRespawnTimeFixed: 0
+      LeashItem: lead
+      ReleaseOnDeath: false
+      RemoveAfterRelease: false
+      CanGlide: true
+    WitherSkeleton:
+      HP: 20.0
+      Speed: 0.3
+      Food:
+      - bone
+      LeashRequirements:
+      - Permission:duckymomo.pet.batduoc
+      - LowHp
+      CustomRespawnTimeFactor: 0
+      CustomRespawnTimeFixed: 0
+      LeashItem: lead
+      ReleaseOnDeath: false
+      RemoveAfterRelease: false
+    Wolf:
+      HP: 20.0
+      Speed: 0.3
+      Food:
+      - beef
+      - mutton
+      LeashRequirements:
+      - Permission:duckymomo.pet.batduoc
+      - Tamed
+      CustomRespawnTimeFactor: 0
+      CustomRespawnTimeFixed: 0
+      LeashItem: lead
+      ReleaseOnDeath: false
+      RemoveAfterRelease: false
+      GrowUpItem: experience_bottle
+    Zoglin:
+      HP: 20.0
+      Speed: 0.3
+      Food:
+      - crimson_fungus
+      LeashRequirements:
+      - Permission:duckymomo.pet.batduoc
+      - LowHp
+      CustomRespawnTimeFactor: 0
+      CustomRespawnTimeFixed: 0
+      LeashItem: lead
+      ReleaseOnDeath: false
+      RemoveAfterRelease: false
+      GrowUpItem: experience_bottle
+    Zombie:
+      HP: 20.0
+      Speed: 0.3
+      Food:
+      - rotten_flesh
+      LeashRequirements:
+      - Permission:duckymomo.pet.batduoc
+      - LowHp
+      CustomRespawnTimeFactor: 0
+      CustomRespawnTimeFixed: 0
+      LeashItem: lead
+      ReleaseOnDeath: false
+      RemoveAfterRelease: false
+      GrowUpItem: experience_bottle
+    ZombieHorse:
+      HP: 20.0
+      Speed: 0.3
+      Food:
+      - rotten_flesh
+      LeashRequirements:
+      - Permission:duckymomo.pet.batduoc
+      - LowHp
+      CustomRespawnTimeFactor: 0
+      CustomRespawnTimeFixed: 0
+      LeashItem: lead
+      ReleaseOnDeath: false
+      RemoveAfterRelease: false
+      GrowUpItem: experience_bottle
+    ZombifiedPiglin:
+      HP: 20.0
+      Speed: 0.3
+      Food:
+      - rotten_flesh
+      LeashRequirements:
+      - Permission:duckymomo.pet.batduoc
+      - LowHp
+      CustomRespawnTimeFactor: 0
+      CustomRespawnTimeFixed: 0
+      LeashItem: lead
+      ReleaseOnDeath: false
+      RemoveAfterRelease: false
+      GrowUpItem: experience_bottle
+    ZombieVillager:
+      HP: 20.0
+      Speed: 0.3
+      Food:
+      - rotten_flesh
+      LeashRequirements:
+      - Permission:duckymomo.pet.batduoc
+      - LowHp
+      CustomRespawnTimeFactor: 0
+      CustomRespawnTimeFixed: 0
+      LeashItem: lead
+      ReleaseOnDeath: false
+      RemoveAfterRelease: false
+      GrowUpItem: experience_bottle
+    PigZombie:
+      GrowUpItem: experience_bottle

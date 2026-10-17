@@ -263,6 +263,65 @@ def pet_trees():
     return sorted(out, key=lambda t: t["thu_tu"]), sorted(nhom, key=lambda e: e["ten"])
 
 
+def pet_capture(core):
+    """Bắt pet theo xác suất (DuckyMoMoCore pet-capture): % mặc định, số lần thử, % từng nhóm loài (tên nhóm lấy từ cây kỹ năng)."""
+    if not get(core, "pet-capture.enabled", False):
+        return {"enabled": False}
+    names = {g["ma"]: g["ten"] for g in pet_trees()[1]}
+    gc = get(core, "pet-capture.group-chance", {}) or {}
+    groups = sorted(({"ten": names.get(k, k), "tyle": int(v)} for k, v in gc.items()), key=lambda g: -g["tyle"])
+    return {"enabled": True, "default": get(core, "pet-capture.chance-percent", 30), "attempts": get(core, "pet-capture.attempts-per-mob", 3),
+            "cooldown": get(core, "pet-capture.cooldown-seconds", 2), "groups": groups}
+
+
+def mypet_level(exp):
+    """Cấp MyPet từ kinh nghiệm (công thức mặc định, giống panel/taikhoan.py pet_level và PetTop.java)."""
+    def need(lv):
+        if lv <= 1:
+            return 0
+        if lv <= 17:
+            return (lv - 1) * 17
+        if lv <= 31:
+            return 272 + (lv - 17) * (3 * lv - 14) / 2
+        return 887 + (lv - 32) * (7 * lv - 93) / 2
+    lv = 1
+    while lv < 1000 and need(lv + 1) <= (exp or 0):
+        lv += 1
+    return lv
+
+
+HE_TEN = {"Combat": "Chiến Binh", "Utility": "Hậu Cần", "PvP": "Đấu Sĩ", "Ride": "Thú Cưỡi", "Farm": "Nông Trại"}
+
+
+def pet_top(limit=10):
+    """Top pet theo kinh nghiệm (đọc pets.db chỉ đọc). Tên loài/nhóm lấy từ cây kỹ năng (DmmNhom.loai_vi)."""
+    import sqlite3
+    vi, nhom = {}, {}
+    for f in plugin("MyPet", "skilltrees").glob("*_*.st.json"):
+        try:
+            d = json.loads(f.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            continue
+        g = d.get("DmmNhom") or {}
+        for t, v in zip(d.get("MobTypes") or [], g.get("loai_vi") or []):
+            vi[t.lower()], nhom[t.lower()] = v, g.get("ten")
+    try:
+        con = sqlite3.connect(f"file:{plugin('MyPet', 'pets.db')}?mode=ro", uri=True, timeout=2)
+        try:
+            rows = con.execute("SELECT p.name, p.type, p.exp, p.skilltree, pl.name FROM pets p LEFT JOIN players pl "
+                               "ON pl.internal_uuid = p.owner_uuid ORDER BY p.exp DESC LIMIT ?", (limit,)).fetchall()
+        finally:
+            con.close()
+    except Exception:
+        return []
+    out = []
+    for name, typ, exp, tree, owner in rows:
+        t = str(typ or "").lower()
+        out.append({"ten": re.sub(r"<[^>]+>|[&§][0-9a-fk-or]", "", str(name or "")) or vi.get(t, typ), "loai": vi.get(t, typ),
+                    "nhom": nhom.get(t), "cap": mypet_level(exp), "he": HE_TEN.get(str(tree or "").split("_")[0]), "chu": owner})
+    return out
+
+
 def api_dautruong():
     """Đấu Trường trực tiếp: plugin ghi dautruong-live.json mỗi 5 giây; cũ hơn 60 giây = server đang tắt."""
     try:
@@ -318,6 +377,8 @@ def api_info():
             "level_cap": get(load_yaml(plugin("MyPet", "config.yml")), "MyPet.Exp.LevelCap", 100),
             "respawn_per_level": get(load_yaml(plugin("MyPet", "config.yml")), "MyPet.Respawn.Time.Default.Factor", 5),
             "no_catch": ["Warden", "Wither", "Rồng Ender", "Elder Guardian", "Ravager", "Golem sắt", "Ghast"],
+            "capture": pet_capture(core),
+            "top": pet_top(),
         },
         "arena": {
             "enabled": bool(get(core, "arena.enabled", False)),
@@ -328,6 +389,7 @@ def api_info():
             "max_stake": get(core, "arena.max-stake", 10000),
             "reward": get(core, "arena.win-reward", 50),
             "cap": get(core, "arena.daily-reward-cap", 5),
+            "pet_exp": get(core, "arena.pet-exp-win", 30),
         },
         "town": {
             "price": float(get(towny, "economy.new_expand.price_new_town", 500)),

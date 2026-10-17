@@ -446,6 +446,32 @@ groups:
           info: "Là gì: tổng số pet chiến đấu một người được giữ (1 con đang dẫn + số còn lại cất trong kho /petstore, đổi bằng /petswitch). Mỗi lúc vẫn chỉ gọi ra 1 con.\nRank: người có rank cao lấy số LỚN NHẤT trong rank của mình, các bậc dưới và nhóm Dân, nên đặt rank cao lớn hơn hoặc bằng rank thấp.\nKhi lưu: gỡ mức cũ rồi cấp quyền MyPet.petstorage.limit.<số - 1> cho nhóm này ở Bang Hội Chiến.",
           commands: [ "lp group congtuoc permission unset MyPet.petstorage.limit.1 server=banghoi-1", "lp group congtuoc permission unset MyPet.petstorage.limit.2 server=banghoi-1", "lp group congtuoc permission unset MyPet.petstorage.limit.3 server=banghoi-1", "lp group congtuoc permission unset MyPet.petstorage.limit.4 server=banghoi-1", "lp group congtuoc permission unset MyPet.petstorage.limit.5 server=banghoi-1", "lp group congtuoc permission unset MyPet.petstorage.limit.6 server=banghoi-1", "lp group congtuoc permission unset MyPet.petstorage.limit.7 server=banghoi-1", "lp group congtuoc permission unset MyPet.petstorage.limit.8 server=banghoi-1", "lp group congtuoc permission unset MyPet.petstorage.limit.9 server=banghoi-1", "lp group congtuoc permission unset MyPet.petstorage.limit.10 server=banghoi-1", "lp group congtuoc permission unset MyPet.petstorage.limit.11 server=banghoi-1", "lp group congtuoc permission unset MyPet.petstorage.limit.12 server=banghoi-1", "lp group congtuoc permission unset MyPet.petstorage.limit.13 server=banghoi-1", "lp group congtuoc permission unset MyPet.petstorage.limit.14 server=banghoi-1", "lp group congtuoc permission unset MyPet.petstorage.limit.15 server=banghoi-1", "lp group congtuoc permission unset MyPet.petstorage.limit.16 server=banghoi-1", "lp group congtuoc permission unset MyPet.petstorage.limit.17 server=banghoi-1", "lp group congtuoc permission unset MyPet.petstorage.limit.18 server=banghoi-1", "lp group congtuoc permission unset MyPet.petstorage.limit.19 server=banghoi-1", "lp group congtuoc permission set MyPet.petstorage.limit.{minus1} true server=banghoi-1" ] }
 
+  - title: Bắt pet theo xác suất (MyPet)
+    category: PvP & combat
+    description: "Mỗi lần quăng dây xích vào con yếu máu chỉ có xác suất bắt được; trượt nhiều lần con vật hoảng, phải tìm con khác. Người chơi xem tỉ lệ: /bxhpet tyle."
+    info: "Là gì: làm pet hiếm hơn. Đánh con vật còn ≤ 10% máu bằng dây xích = 1 lần thử, quay xác suất của nhóm loài đó.\nTrượt: khói + thông báo; mỗi con chỉ thử được số lần ở dưới, hết thì con vật hoảng (không bắt được con đó nữa).\nThú phải tự thuần hoá (sói, mèo, ngựa, lừa, la, lạc đà, vẹt, Sniffer): không quay xác suất, con mình đã thuần hoá thì bắt luôn.\nNhóm loài theo cây kỹ năng (trang chủ mục Pet có bảng loài nào thuộc nhóm nào).\nLưu ý: tài khoản có quyền * (admin) luôn bắt trúng.\nLưu xong: có hiệu lực ngay (dmm reload)."
+    apply: [dmm reload]
+    settings:
+      - { key: petcap_on, label: Bắt pet theo xác suất, type: select, file: plugins/DuckyMoMoCore/config.yml, path: pet-capture.enabled,
+          options: [ { value: true, label: "Bật (mặc định)" }, { value: false, label: "Tắt: đánh yếu máu là bắt được ngay" } ],
+          info: "Tắt: quay về như MyPet gốc, phát nào đủ điều kiện cũng bắt được.\nLưu ý: tắt thì cũng phải bỏ dòng Permission:duckymomo.pet.batduoc trong plugins/MyPet/pet-config.yml, nếu không sẽ KHÔNG ai bắt được (trừ thú đã thuần hoá cũng không)." }
+      - { key: petcap_chance, label: Xác suất bắt mặc định (%), type: int, min: 0, max: 100, file: plugins/DuckyMoMoCore/config.yml, path: pet-capture.chance-percent,
+          info: "Là gì: dùng cho loài không thuộc nhóm nào ở dưới (hiếm, vd loài mới của bản Minecraft sau)." }
+      - { key: petcap_attempts, label: Số lần thử mỗi con, type: int, min: 1, max: 50, file: plugins/DuckyMoMoCore/config.yml, path: pet-capture.attempts-per-mob,
+          info: "Là gì: mỗi con vật chỉ thử bắt được ngần này lần (cộng dồn mọi người chơi), hết thì con đó hoảng sợ, không bắt được nữa.\nVí dụ: 3 lần, xác suất 20% → bắt được một con cụ thể khoảng 49%." }
+      - { key: petcap_cooldown, label: Chờ giữa 2 lần thử (giây), type: number, min: 0, max: 30, file: plugins/DuckyMoMoCore/config.yml, path: pet-capture.cooldown-seconds,
+          info: "Là gì: chống bấm liên tục. Trong lúc chờ, đánh bằng dây xích không tính lần thử." }
+      - { key: petcap_giasuc, label: "Xác suất bắt: Gia súc (%)", type: int, min: 0, max: 100, file: plugins/DuckyMoMoCore/config.yml, path: pet-capture.group-chance.giasuc }
+      - { key: petcap_thuytoc, label: "Xác suất bắt: Thủy tộc (%)", type: int, min: 0, max: 100, file: plugins/DuckyMoMoCore/config.yml, path: pet-capture.group-chance.thuytoc }
+      - { key: petcap_cuoi, label: "Xác suất bắt: Thú cưỡi (%)", type: int, min: 0, max: 100, file: plugins/DuckyMoMoCore/config.yml, path: pet-capture.group-chance.cuoi }
+      - { key: petcap_xacsong, label: "Xác suất bắt: Xác sống (%)", type: int, min: 0, max: 100, file: plugins/DuckyMoMoCore/config.yml, path: pet-capture.group-chance.xacsong }
+      - { key: petcap_thusan, label: "Xác suất bắt: Thú săn (%)", type: int, min: 0, max: 100, file: plugins/DuckyMoMoCore/config.yml, path: pet-capture.group-chance.thusan }
+      - { key: petcap_cungthu, label: "Xác suất bắt: Cung thủ (%)", type: int, min: 0, max: 100, file: plugins/DuckyMoMoCore/config.yml, path: pet-capture.group-chance.cungthu }
+      - { key: petcap_nhay, label: "Xác suất bắt: Quái nhầy & nổ (%)", type: int, min: 0, max: 100, file: plugins/DuckyMoMoCore/config.yml, path: pet-capture.group-chance.nhay }
+      - { key: petcap_bay, label: "Xác suất bắt: Loài bay (%)", type: int, min: 0, max: 100, file: plugins/DuckyMoMoCore/config.yml, path: pet-capture.group-chance.bay }
+      - { key: petcap_thulon, label: "Xác suất bắt: Thú lớn (%)", type: int, min: 0, max: 100, file: plugins/DuckyMoMoCore/config.yml, path: pet-capture.group-chance.thulon }
+      - { key: petcap_phuthuy, label: "Xác suất bắt: Phù thủy (%)", type: int, min: 0, max: 100, file: plugins/DuckyMoMoCore/config.yml, path: pet-capture.group-chance.phuthuy }
+
   - title: Pet chiến đấu - lên cấp, hồi sinh, đói (MyPet)
     category: PvP & combat
     description: "Đổi xong phải KHỞI ĐỘNG LẠI Bang Hội Chiến (MyPet không có lệnh nạp lại cấu hình)."
@@ -483,6 +509,8 @@ groups:
       - { key: arena_max_stake, label: Cược tối đa mỗi người (xu), type: number, min: 0, file: plugins/DuckyMoMoCore/config.yml, path: arena.max-stake }
       - { key: arena_reward, label: Thưởng mỗi trận thắng (xu), type: number, min: 0, file: plugins/DuckyMoMoCore/config.yml, path: arena.win-reward }
       - { key: arena_cap, label: Số trận được thưởng mỗi ngày, type: int, min: 0, max: 100, file: plugins/DuckyMoMoCore/config.yml, path: arena.daily-reward-cap }
+      - { key: arena_pet_exp, label: Kinh nghiệm cho pet khi thắng, type: number, min: 0, max: 10000, file: plugins/DuckyMoMoCore/config.yml, path: arena.pet-exp-win,
+          info: "Là gì: thắng trận thì pet đang dẫn được cộng ngần này kinh nghiệm.\nGiới hạn: chỉ những trận còn được thưởng xu (chung số trận được thưởng mỗi ngày); trận giao hữu (cùng IP) không có.\nGợi ý: lên cấp 10 cần khoảng 150 kinh nghiệm, cấp 30 khoảng 770, cấp 50 khoảng 3.200.\n0 = tắt." }
       - { key: arena_countdown, label: Đếm ngược trước khi đánh (giây), type: int, min: 1, max: 30, file: plugins/DuckyMoMoCore/config.yml, path: arena.countdown-seconds }
 
   - title: Vũ khí nổ (crystal, anchor, giường, xe goòng TNT)

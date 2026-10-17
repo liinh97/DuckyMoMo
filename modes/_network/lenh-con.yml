@@ -421,11 +421,15 @@ groups:
       - ["petpickup", "Bật/tắt pet tự nhặt đồ", Mọi người]
       - ["petbehavior", "Đổi hành vi pet", Mọi người]
       - ["petrelease <tên>", "Thả pet (mất vĩnh viễn)", Mọi người]
+      - ["pettrade <người> [giá]", "Bán (giá xu) hoặc tặng pet đang dẫn", Mọi người]
+      - ["pettrade accept|reject|cancel", "Nhận / từ chối / huỷ đề nghị trao đổi pet", Mọi người]
       - ["mypetadmin info <người>", "Xem pet của người chơi", Chỉ admin]
   - plugin: DuckyMoMoCore
     servers: [banghoi-1]
     commands:
       - ["lichcongthanh", "Lịch công thành: phiên tới có cho pet chiến đấu tham chiến không", Mọi người]
+      - ["bxhpet [chienbinh|haucan|dausi|thucuoi|nongtrai]", "Bảng xếp hạng pet, lọc theo hệ", Mọi người]
+      - ["bxhpet tyle", "Xác suất bắt pet từng nhóm loài", Mọi người]
       - ["dautruong vao <1v1|2v2> [cược]", "Đấu Trường: vào hàng chờ người + pet", Mọi người]
       - ["dautruong thachdau <người> [cược]", "Đấu Trường: thách đấu 1v1", Mọi người]
       - ["dautruong xem [người]", "Đấu Trường: xem trận", Mọi người]

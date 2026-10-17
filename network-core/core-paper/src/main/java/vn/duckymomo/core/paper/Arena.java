@@ -858,6 +858,7 @@ final class Arena implements Listener {
                 save();
                 s.sendMessage("Đã đặt cổng của sân " + args[2] + ".");
             }
+            case "npc" -> npc(s, args);
             case "ten" -> {
                 if (args.length < 4) {
                     s.sendMessage("/dautruong admin ten <sân> <tên hiển thị, có mã màu &>");
@@ -867,7 +868,7 @@ final class Arena implements Listener {
                 save();
                 s.sendMessage("Đã đặt tên sân " + args[2] + ".");
             }
-            default -> s.sendMessage("/dautruong admin den | sanh | dat <sân> <a1|a2|b1|b2|xem> | cong <sân> x1 y1 z1 x2 y2 z2 | ten <sân> <tên> | xoa <sân> | ds | huy");
+            default -> s.sendMessage("/dautruong admin npc [x y z hướng] | npc xoa | den | sanh | dat <sân> <a1|a2|b1|b2|xem> | cong <sân> x1 y1 z1 x2 y2 z2 | ten <sân> <tên> | xoa <sân> | ds | huy");
         }
         return true;
     }
@@ -1075,6 +1076,117 @@ final class Arena implements Listener {
         inMatch.clear();
         watching.clear();
         // KHÔNG save() ở đây: mọi thay đổi đã lưu ngay khi đổi; lưu lúc tắt sẽ ghi đè file admin vừa sửa tay rồi /dmm reload
+    }
+
+    // ------------------------------------------------------------------ NPC ở spawn
+
+    private static final List<String> NPC_LINES = List.of("&6&l⚔ ĐẤU TRƯỜNG ⚔", "&fNgười + pet · 1v1 · 2v2", "&7Chết không rơi đồ · có cược", "&e▶ Bấm để tới sảnh PvP");
+
+    private org.bukkit.NamespacedKey npcKey() {
+        return new org.bukkit.NamespacedKey(plugin, "dautruong_npc");
+    }
+
+    private boolean isNpc(Entity e) {
+        return e.getPersistentDataContainer().has(npcKey(), org.bukkit.persistence.PersistentDataType.BYTE);
+    }
+
+    /** /dautruong admin npc [x y z hướng] (console: phải có toạ độ, ở thế giới chính) | npc xoa */
+    private void npc(CommandSender s, String[] args) {
+        World main = Bukkit.getWorlds().get(0);
+        int removed = 0;
+        for (World w : Bukkit.getWorlds()) {
+            for (Entity e : w.getEntities()) {
+                if (isNpc(e)) {
+                    e.remove();
+                    removed++;
+                }
+            }
+        }
+        if (args.length >= 3 && args[2].equalsIgnoreCase("xoa")) {
+            s.sendMessage("Đã xoá " + removed + " thực thể NPC Đấu Trường (chunk đang nạp).");
+            return;
+        }
+        Location loc;
+        if (args.length >= 6) {
+            loc = new Location(main, Double.parseDouble(args[2]), Double.parseDouble(args[3]), Double.parseDouble(args[4]),
+                    args.length >= 6 ? Float.parseFloat(args[5]) : 0f, 0f);
+        } else if (s instanceof Player p) {
+            loc = p.getLocation().getBlock().getLocation().add(0.5, 0, 0.5);
+            loc.setYaw(p.getLocation().getYaw());
+            loc.setPitch(0);
+        } else {
+            s.sendMessage("/dautruong admin npc <x> <y> <z> <hướng> (console) hoặc đứng tại chỗ trong game");
+            return;
+        }
+        loc.getChunk().load();
+        org.bukkit.entity.Villager v = loc.getWorld().spawn(loc, org.bukkit.entity.Villager.class, e -> {
+            e.setAI(false);
+            e.setSilent(true);
+            e.setInvulnerable(true);
+            e.setCollidable(false);
+            e.setPersistent(true);
+            e.setRemoveWhenFarAway(false);
+            e.setProfession(org.bukkit.entity.Villager.Profession.WEAPONSMITH);
+            e.setVillagerLevel(5);
+            e.getPersistentDataContainer().set(npcKey(), org.bukkit.persistence.PersistentDataType.BYTE, (byte) 1);
+        });
+        if (!v.isValid()) {
+            s.sendMessage("Không đặt được dân làng ở đây (WorldGuard chặn sinh mob?).");
+            return;
+        }
+        double y = 1.6 + (NPC_LINES.size() - 1) * 0.28;
+        for (String line : NPC_LINES) {
+            loc.getWorld().spawn(loc.clone().add(0, y, 0), org.bukkit.entity.ArmorStand.class, st -> {
+                st.setMarker(true);
+                st.setInvisible(true);
+                st.setGravity(false);
+                st.setInvulnerable(true);
+                st.setPersistent(true);
+                st.customName(c(line));
+                st.setCustomNameVisible(true);
+                st.getPersistentDataContainer().set(npcKey(), org.bukkit.persistence.PersistentDataType.BYTE, (byte) 2);
+            });
+            y -= 0.28;
+        }
+        s.sendMessage("Đã đặt NPC Đấu Trường tại " + loc.getBlockX() + " " + loc.getBlockY() + " " + loc.getBlockZ()
+                + (removed > 0 ? " (xoá " + removed + " thực thể cũ)" : "") + ". Xoá: /dautruong admin npc xoa");
+    }
+
+    @EventHandler
+    public void onNpcClick(org.bukkit.event.player.PlayerInteractEntityEvent event) {
+        if (!isNpc(event.getRightClicked())) {
+            return;
+        }
+        event.setCancelled(true); // không mở bảng mua bán của dân làng
+        if (event.getHand() == org.bukkit.inventory.EquipmentSlot.HAND) {
+            Player p = event.getPlayer();
+            if (inMatch.containsKey(p.getUniqueId())) {
+                return;
+            }
+            p.sendMessage(c("&6⚔ Tới sảnh Đấu Trường… &7(hoặc gõ &f/warp pvp&7)"));
+            p.performCommand("warp pvp");   // qua Essentials: có chờ 3 giây như mọi lệnh dịch chuyển
+        }
+    }
+
+    @EventHandler
+    public void onNpcClickAt(org.bukkit.event.player.PlayerInteractAtEntityEvent event) {
+        if (isNpc(event.getRightClicked())) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onNpcHurt(EntityDamageEvent event) {
+        if (isNpc(event.getEntity())) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onNpcTransform(org.bukkit.event.entity.EntityTransformEvent event) {
+        if (isNpc(event.getEntity())) {
+            event.setCancelled(true); // sét đánh không biến thành phù thuỷ
+        }
     }
 
     // ------------------------------------------------------------------ sảnh PvP + cổng

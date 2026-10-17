@@ -350,6 +350,9 @@
   placeholder %dmmdt_<sân>_trangthai|cho|xem|ten%). Rơi khỏi sảnh → về sảnh. Warp Essentials `pvp` (data/.../warps/pvp.yml,
   world uid 0ec3615c-3436-4f3c-b530-1a87a3dc883a).
 - LỖI ĐÃ SỬA: Arena.shutdown() từng save() ghi đè dautruong.yml (sửa tay rồi /dmm reload thì mất). Giờ không lưu lúc tắt.
+- NPC Đấu Trường ở spawn Kinh Đô: (12704.5, 65, -2522.5) nhìn về spawn (hướng 90), dân làng WEAPONSMITH + 4 armor stand chữ, PDC
+  `duckymomo:dautruong_npc`; bấm = `performCommand("warp pvp")` (có chờ 3 giây). Đặt/xoá: /dautruong admin npc [x y z hướng] | npc xoa.
+  Phía tây đối xứng (12694, 65, -2523) để trống cho NPC /tpr (/dmm rtpnpc) nếu đặt.
 - CHƯA thử trong game: đi qua cổng, bảng chữ, trận thật, góc nhìn điểm xem.
 
 ### DANH SÁCH CẦN THỬ (người dùng chốt 15/10: làm xong hết rồi thử một lượt; mục 16–25)

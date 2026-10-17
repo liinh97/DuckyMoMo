@@ -1005,3 +1005,9 @@ emf_tc_phut: 20
 emf_tc_nguoi: 2
 emf_tc_t7: ["20:00"]
 emf_tc_cn: ["20:00"]
+petc_reduce: 50
+petc_chance: 30
+petc_seed: mua1
+petc_announce:
+- 60
+- 10

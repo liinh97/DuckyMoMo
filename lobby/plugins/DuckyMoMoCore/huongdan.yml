@@ -405,6 +405,19 @@ chapters:
         &1/petlist &0danh sách
         &0Pet chết thì tự hồi
         sinh sau một lúc.
+      - |-
+        &6&lPet đánh người
+        &0Pet đánh người chơi bị
+        &lgiảm sát thương&r&0.
+        &0Công thành: có phiên
+        &acho&0, có phiên &ckhông
+        &0cho pet tham chiến.
+        &0Xem trước: &1/lichcongthanh
+        &0Mạnh theo &lcấp&r&0, không
+        theo loài: Sói cấp 5
+        yếu hơn Zombie cấp 20.
+        &0Pet chiến đấu tên có &c⚔&0,
+        pet trang trí có &d✿&0.
   - id: practice
     name: Practice (luyện PvP)
     pages:

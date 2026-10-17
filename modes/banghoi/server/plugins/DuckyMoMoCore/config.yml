@@ -580,3 +580,11 @@ donate-qr:
   enabled: true
   minutes: 10
   web: "https://app.goc6.io.vn/mc/web/taikhoan.html"
+
+# Pet chiến đấu MyPet (PetCombat): trang Cài đặt > PvP & combat > Pet chiến đấu
+pet-combat:
+  enabled: true
+  player-damage-reduce-percent: 50   # pet đánh người chơi bị giảm bao nhiêu % sát thương (0 = không giảm, 100 = không đau)
+  siege-pet-chance: 30               # % phiên công thành cho pet tham chiến (bốc thăm cố định theo giờ phiên, báo trước)
+  seed: mua1                          # đổi chuỗi này là bốc thăm lại toàn bộ lịch
+  announce-minutes: [60, 10]          # báo cả server trước phiên (phút)

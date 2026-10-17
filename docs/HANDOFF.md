@@ -301,6 +301,18 @@
 - Cẩm nang (camnang, lenh-con, lenh-vi), sách /huongdan chương banghoi thêm 2 trang. CHƯA thử bắt pet trong game.
 - KHÔNG bán MyPet qua rank donate (pet chiến đấu = lợi thế chơi).
 
+### 17/10: pet chiến đấu đánh người + công thành; phân biệt 2 loại pet
+- MyPet config: `DisablePetVersusPlayer: false`, tên pet `Name.Tag.Prefix: <red>⚔ <aqua>`. Mọi loài sẵn 20 máu / tốc 0.3 (pet-config.yml) →
+  sức mạnh do cây kỹ năng: thêm vào cả 5 skilltrees/*.st.json luật `"%5>10"` (mỗi 5 cấp sau cấp 10: Damage +0.5, Life +2). Chỉ ở data/.
+- DuckyMoMoCore `PetCombat` (config `pet-combat`, softdepend MyPet): pet (lớp có interface de.Keyle.MyPet.api.entity.MyPetBukkitEntity,
+  kể cả mũi tên pet bắn) đánh người chơi bị giảm `player-damage-reduce-percent` (50). Mỗi phiên công thành bốc thăm cố định
+  `floorMod(hash(seed, phút bắt đầu), 100) < siege-pet-chance` (30) → biết trước; phiên không cho: huỷ sát thương pet lên người trong vùng vây
+  lúc đang đánh. Báo cả server trước `announce-minutes` (60, 10), lúc bắt đầu phiên, khi vào game; lệnh `/lichcongthanh` (congthanh, lichvay).
+  Cài đặt > Bang Hội Chiến > PvP & combat > Pet chiến đấu. Đã chạy: log "Pet chiến đấu: giảm 50%…", /lichcongthanh trả phiên 20:00 17/10.
+- SimplePets display_name đổi thành "&d✿ &f<tên loài tiếng Việt> &7(%player%)" (repo + data, lobby + banghoi). Một người: 1 pet MyPet +
+  tối đa 3 pet SimplePets cùng lúc (`pet-spawn-limit: 3`).
+- CHƯA thử trong game: bắt pet, pet đánh người, giảm sát thương, tin báo phiên.
+
 ### DANH SÁCH CẦN THỬ (người dùng chốt 15/10: làm xong hết rồi thử một lượt; mục 16–25)
 Triển khai một lần: `git stash && git pull && git stash pop` → `./ops/build-core.sh` (lỗi biên dịch thì gửi ảnh, Java viết ở cloud CHƯA biên
 dịch) → kiểm tra không ai online → `docker compose up -d --no-deps lobby banghoi-1 practice-1` → `docker compose up -d --build panel site`.

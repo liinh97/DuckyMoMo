@@ -16,6 +16,7 @@ softdepend:
   - SiegeWar
   - Essentials
   - Votifier
+  - MyPet
 commands:
   doimanh:
     description: "Đổi mảnh sự kiện lấy quà. Admin: /doimanh give <người> <loại> <số>"
@@ -101,6 +102,9 @@ commands:
   cuahang:
     description: "Cửa hàng Kinh Đô (vật liệu, trang trí, danh hiệu): rank ủng hộ mở khi đứng trong kinh đô; mọi người bấm NPC ở spawn"
     aliases: [trangtri]
+  lichcongthanh:
+    description: "Lịch công thành: phiên tới, phiên đó có cho pet chiến đấu tham chiến không"
+    aliases: [congthanh, lichvay]
 permissions:
   duckymomo.mua.admin:
     description: Đổi mùa bằng tay để thử (/mua dat <mua|kho|tudong>)

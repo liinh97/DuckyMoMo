@@ -18,7 +18,7 @@
   "water_speed": 0.15,
   "fly": false,
   "float_down": false,
-  "display_name": "&a&l%player%'s Chicken Pet",
+  "display_name": "&d✿ &fGà &7(%player%)",
   "item": {
     "components": {
       "minecraft:custom_name": "&#C8F792Chicken",

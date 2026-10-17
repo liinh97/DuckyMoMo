@@ -408,6 +408,21 @@ groups:
       - { key: tt_streak_xu, label: "Hệ thống treo lần đầu (xu, 0 = tắt)", type: number, min: 0, file: plugins/DuckyMoMoCore/config.yml, path: bounty.streak.reward }
       - { key: tt_streak_them, label: Mỗi mạng thêm sau đó (xu), type: number, min: 0, file: plugins/DuckyMoMoCore/config.yml, path: bounty.streak.per-kill }
 
+  - title: Pet chiến đấu (MyPet)
+    category: PvP & combat
+    info: "Là gì: pet bắt bằng dây xích (MyPet), đánh quái và người chơi, mạnh theo cấp (không theo loài).\nGiảm sát thương: pet đánh người chơi bị giảm %, áp dụng mọi nơi.\nCông thành: mỗi phiên bốc thăm có cho pet tham chiến không; phiên không cho thì pet không gây sát thương cho người chơi trong vùng vây.\nNgười chơi xem: /lichcongthanh, có báo trước khi phiên bắt đầu."
+    description: "Người chơi biết trước phiên nào có pet: /lichcongthanh, tin báo trước 60 và 10 phút, tin lúc vào game."
+    apply: [dmm reload]
+    settings:
+      - { key: petc_reduce, label: Pet đánh người chơi bị giảm (%), type: int, min: 0, max: 100, file: plugins/DuckyMoMoCore/config.yml, path: pet-combat.player-damage-reduce-percent,
+          info: "Là gì: pet gây sát thương lên NGƯỜI CHƠI bị giảm ngần này %. Đánh quái không bị giảm.\nVí dụ: 50 = pet đánh người chỉ còn một nửa; 100 = pet không làm người chơi mất máu.", note: "0 = không giảm." }
+      - { key: petc_chance, label: Phiên công thành cho pet tham chiến (%), type: int, min: 0, max: 100, file: plugins/DuckyMoMoCore/config.yml, path: pet-combat.siege-pet-chance,
+          info: "Là gì: tỉ lệ phiên công thành được bốc thăm CHO pet tham chiến.\nCách bốc: cố định theo giờ bắt đầu từng phiên nên biết trước và báo trước được.\n0 = không bao giờ, 100 = luôn cho." }
+      - { key: petc_seed, label: Mã bốc thăm, type: text, file: plugins/DuckyMoMoCore/config.yml, path: pet-combat.seed,
+          info: "Là gì: chuỗi dùng để bốc thăm. Đổi chuỗi này = bốc thăm lại toàn bộ lịch (vd mỗi mùa một mã).\nLưu ý: đổi gần giờ công thành thì phiên đã báo có thể đổi kết quả." }
+      - { key: petc_announce, label: Báo trước phiên (phút), type: list, items: int, file: plugins/DuckyMoMoCore/config.yml, path: pet-combat.announce-minutes,
+          note: "Cách nhau dấu phẩy, ví dụ: 60, 10" }
+
   - title: Vũ khí nổ (crystal, anchor, giường, xe goòng TNT)
     category: PvP & combat
     description: "Sát thương của vũ khí nổ lên NGƯỜI CHƠI. 0 = cấm (không gây sát thương, không hất), 0.3 = còn 30%, 1 = như gốc. Quái, rồng Ender, phá khối không đổi. Crystal/anchor/nổ giường giết người trong 1 giây, đè hết lối chơi khác khi công thành."

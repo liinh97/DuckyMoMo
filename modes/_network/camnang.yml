@@ -483,12 +483,13 @@ plugins:
       - ["/petswitch · /petstore · /petlist", "Đổi pet đang dùng / cất pet vào kho / danh sách pet"]
       - ["/petrelease <tên>", "Thả pet (mất vĩnh viễn)"]
       - ["/petcapturehelper", "Hiện cách bắt con đang nhìn (cần làm gì)"]
+      - ["/lichcongthanh", "Phiên công thành tới và phiên đó có cho pet tham chiến không"]
     admin:
       - ["/mypetadmin info <người>", "Xem pet của người chơi"]
       - ["/mypetadmin exp <người> <số>", "Cộng kinh nghiệm cho pet"]
       - ["/mypetadmin remove <người>", "Xoá pet đang dùng của người chơi"]
     settings: "data/banghoi-1/plugins/MyPet/config.yml (KHÔNG có lệnh nạp lại: phải khởi động lại banghoi-1); pet-config.yml (máu, tốc độ, cách bắt từng loài); skilltrees/"
-    notes: "17/10: pet KHÔNG đánh người chơi (DisablePetVersusPlayer: true, chờ người dùng quyết); tiếng Việt (OverwriteLanguages: vi). Quyền bắt cho nhóm default ở banghoi-1: tools/mypet.cmds (không cho bắt Warden, Wither, Rồng Ender, Elder Guardian, Ravager, Golem sắt, Ghast)."
+    notes: "Pet đánh được người chơi nhưng bị giảm % sát thương (Cài đặt > PvP & combat > Pet chiến đấu, mặc định 50%). Mỗi phiên công thành bốc thăm cho/không cho pet tham chiến (mặc định 30% phiên cho), báo trước 60 và 10 phút, xem bằng /lichcongthanh. Sức mạnh theo cấp, không theo loài (mọi loài 20 máu; mỗi 5 cấp sau cấp 10 +0,5 sát thương, +2 máu, sửa ở skilltrees/). Tên pet chiến đấu có ⚔ đỏ; pet trang trí SimplePets có ✿. Tiếng Việt (OverwriteLanguages: vi). Quyền bắt: tools/mypet.cmds (không cho bắt Warden, Wither, Rồng Ender, Elder Guardian, Ravager, Golem sắt, Ghast)."
   - name: SimplePets
     jar: SimplePets
     kind: Rank donate

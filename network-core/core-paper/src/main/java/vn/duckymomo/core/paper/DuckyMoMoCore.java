@@ -387,6 +387,17 @@ public final class DuckyMoMoCore extends JavaPlugin {
         }
         bind("cuahang", shop == null ? null : shop::command, "Cửa hàng trang trí");
 
+        // Pet chiến đấu MyPet: giảm sát thương lên người chơi, bốc thăm phiên công thành cho pet (Bang Hội Chiến: pet-combat.enabled)
+        PetCombat petCombat = getConfig().getBoolean("pet-combat.enabled") && getConfig().isConfigurationSection("pet-combat")
+                && getServer().getPluginManager().isPluginEnabled("MyPet")
+                ? new PetCombat(this, getConfig().getConfigurationSection("pet-combat")) : null;
+        if (petCombat != null) {
+            getServer().getPluginManager().registerEvents(petCombat, this);
+            petCombat.start();
+            getLogger().info("Pet chiến đấu: " + petCombat.describe());
+        }
+        bind("lichcongthanh", petCombat == null ? null : petCombat::command, "Lịch công thành");
+
         // Thưởng vote server (Votifier ở banghoi-1; vote từ VPS qua relay socat 8192)
         VoteRewards vote = getConfig().getBoolean("vote.enabled") ? new VoteRewards(this, getConfig().getConfigurationSection("vote")) : null;
         if (vote != null && !vote.hook()) {

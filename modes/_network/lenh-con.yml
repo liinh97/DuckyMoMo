@@ -422,3 +422,7 @@ groups:
       - ["petbehavior", "Đổi hành vi pet", Mọi người]
       - ["petrelease <tên>", "Thả pet (mất vĩnh viễn)", Mọi người]
       - ["mypetadmin info <người>", "Xem pet của người chơi", Chỉ admin]
+  - plugin: DuckyMoMoCore
+    servers: [banghoi-1]
+    commands:
+      - ["lichcongthanh", "Lịch công thành: phiên tới có cho pet chiến đấu tham chiến không", Mọi người]

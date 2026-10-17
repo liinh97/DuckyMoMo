@@ -898,7 +898,7 @@ def role_action(data):
     rcon("lobby", cmds)
     time.sleep(2)  # lệnh chạy bất đồng bộ (tải người chơi, ghi DB)
     threading.Thread(target=tell_role_change, args=(player, group, act, data.get("months")), daemon=True).start()
-    shown = {"admin": "Admin", "quanly": "Manager", "mod": "Mod", "helper": "Helper", "builder": "Builder"}.get(group, group)
+    shown = {"admin": "Admin", "quanly": "Manager", "mod": "Mod", "helper": "Helper", "builder": "Builder", "congtuoc": "Công Tước", "hautuoc": "Hầu Tước", "batuoc": "Bá Tước", "tutuoc": "Tử Tước", "namtuoc": "Nam Tước"}.get(group, group)
     if group in DONATE_GROUPS:
         msg = f"Đã cấp {shown} cho {player} ({data.get('months') or 1} tháng)." if act == "add" else f"Đã gỡ rank của {player}."
     else:

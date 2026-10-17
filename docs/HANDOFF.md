@@ -293,6 +293,9 @@
   chưa thuộc nhóm nào. ID cây "<Hệ>_<nhóm>[_<Loài>]", Display = tên hệ → trong game mỗi loài chỉ thấy 5 hệ.
 - Đổi nhóm/đặc tính: sửa script, chạy lại, khởi động lại banghoi-1. Pet đang dùng cây bị đổi ID sẽ mất hệ. 17/10 chưa có pet nào.
 - Web: site/app.py pet_trees() trả (5 hệ, nhóm loài); index.html thẻ "Pet lớn theo bản tính loài"; panel/taikhoan.py hiện "Hệ · Nhóm".
+- Cài đặt (PvP & combat › Pet chiến đấu): petc_nofly / petc_nofly_h → pet-combat.siege-no-fly(-height), có hiệu lực bằng dmm reload;
+  mypet_ride_hunger → MyPet.Skill.Ride.HungerPerMeter (0 = quãng bay vô hạn, cần khởi động lại). Trang tài khoản: tên Việt + nhóm loài
+  từng pet lấy từ DmmNhom.loai_vi trong cây kỹ năng (taikhoan.combat_pets).
 - Cân bằng (chưa thử): cấp 100 Thú lớn +72 máu +4,5 sát thương, Thú săn +27 máu +13,5 sát thương (trước: mọi loài +36/+9).
 
 ### 17/10 tối: MyPet — mốc kỹ năng cấp 15–50, bay của Thú Cưỡi, cấm cưỡi pet ở Đấu Trường

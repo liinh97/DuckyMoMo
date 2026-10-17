@@ -33,8 +33,8 @@ import org.bukkit.potion.PotionEffectType;
  *  - siege-pet-chance: % phiên công thành CHO pet tham chiến. Mỗi phiên bốc thăm cố định theo giờ bắt đầu (seed + giờ),
  *    nên biết trước để báo cùng lịch. Phiên không cho: pet không gây sát thương cho người chơi trong vùng vây lúc đang đánh.
  *  - announce-minutes: báo cả server trước phiên bao nhiêu phút (kèm có/không pet); /lichcongthanh xem bất cứ lúc nào.
- * Lúc có phiên đánh, trong vùng vây: không bay bằng pet (Thú Cưỡi cấp 10+). Pet cưỡi cao hơn 3 khối so với mặt đất thì người cưỡi
- * bị đẩy xuống, kèm Rơi chậm 6 giây (không mất máu). Cưỡi chạy dưới đất và nhảy vẫn được.
+ *  - siege-no-fly / siege-no-fly-height: lúc có phiên đánh, trong vùng vây không bay bằng pet (loài bay, hệ Thú Cưỡi). Pet cưỡi cao hơn
+ *    ngần ấy khối so với mặt đất thì người cưỡi bị đẩy xuống, kèm Rơi chậm 6 giây (không mất máu). Chạy dưới đất và nhảy vẫn được.
  * Nhận pet MyPet qua interface de.Keyle.MyPet.api.entity.MyPetBukkitEntity (so tên lớp, không cần jar MyPet khi build).
  */
 final class PetCombat implements Listener {
@@ -49,6 +49,8 @@ final class PetCombat implements Listener {
     private final int chance;
     private final String seed;
     private final List<Integer> announce;
+    private final boolean noFly;
+    private final int noFlyHeight;
     private final Set<String> announced = new HashSet<>();
     private Long upcoming;
     private boolean wasActive;
@@ -61,15 +63,20 @@ final class PetCombat implements Listener {
         this.chance = Math.max(0, Math.min(100, c.getInt("siege-pet-chance", 30)));
         this.seed = c.getString("seed", "mua1");
         this.announce = c.getIntegerList("announce-minutes");
+        this.noFly = c.getBoolean("siege-no-fly", true);
+        this.noFlyHeight = Math.max(2, Math.min(20, c.getInt("siege-no-fly-height", 3)));
     }
 
     String describe() {
-        return "giảm " + fmt(reduce) + "% sát thương lên người chơi, " + chance + "% phiên công thành cho pet";
+        return "giảm " + fmt(reduce) + "% sát thương lên người chơi, " + chance + "% phiên công thành cho pet"
+                + (noFly ? ", cấm bay bằng pet trong vùng vây (cao hơn " + noFlyHeight + " khối)" : "");
     }
 
     void start() {
         Bukkit.getScheduler().runTaskTimer(plugin, this::tick, 100L, 200L);
-        Bukkit.getScheduler().runTaskTimer(plugin, this::noSiegeFlight, 100L, 5L);
+        if (noFly) {
+            Bukkit.getScheduler().runTaskTimer(plugin, this::noSiegeFlight, 100L, 5L);
+        }
     }
 
     /** Đang có phiên đánh: cưỡi pet bay trong vùng vây -> đẩy người xuống (Rơi chậm), pet vẫn ở lại. */
@@ -93,10 +100,10 @@ final class PetCombat implements Listener {
         }
     }
 
-    /** 3 khối ngay dưới pet đều trống (nhảy thường chỉ cao khoảng 2 khối nên không bị tính). */
-    private static boolean highAboveGround(Entity e) {
+    /** noFlyHeight khối ngay dưới pet đều trống (nhảy thường chỉ cao khoảng 2 khối nên không bị tính). */
+    private boolean highAboveGround(Entity e) {
         org.bukkit.block.Block b = e.getLocation().getBlock();
-        for (int i = 1; i <= 3; i++) {
+        for (int i = 1; i <= noFlyHeight; i++) {
             if (!b.getRelative(0, -i, 0).isPassable()) {
                 return false;
             }

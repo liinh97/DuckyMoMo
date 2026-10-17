@@ -588,6 +588,8 @@ pet-combat:
   siege-pet-chance: 30               # % phiên công thành cho pet tham chiến (bốc thăm cố định theo giờ phiên, báo trước)
   seed: mua1                          # đổi chuỗi này là bốc thăm lại toàn bộ lịch
   announce-minutes: [60, 10]          # báo cả server trước phiên (phút)
+  siege-no-fly: true                  # lúc có phiên đánh, trong vùng vây: không bay bằng pet (bị đẩy xuống, Rơi chậm)
+  siege-no-fly-height: 3              # pet cưỡi cao hơn ngần này khối so với mặt đất thì tính là bay
 
 # Đấu Trường /dautruong (Arena): trang Cài đặt > PvP & combat > Đấu Trường
 arena:

@@ -277,12 +277,15 @@ def combat_pets(uuid, perms):
     """Pet chiến đấu (MyPet, Bang Hội Chiến) của người chơi: đọc pets.db (chỉ đọc) + số pet được giữ theo quyền."""
     import sqlite3
     db = DATA_DIR / SRV / "plugins" / "MyPet" / "pets.db"
-    trees = {}
+    trees, kinds = {}, {}   # kinds: loài -> (tên Việt, nhóm loài)
     for f in (DATA_DIR / SRV / "plugins" / "MyPet" / "skilltrees").glob("*.st.json"):
         try:
             d = json.loads(f.read_text(encoding="utf-8"))
             g = d.get("DmmNhom")   # cây theo nhóm loài (tools/mypet/): "Chiến Binh · Thú săn"
             trees[d.get("ID")] = (d.get("Display") or d.get("Name")) + (f" · {g['ten']}" if g else "")
+            if g:
+                for t, vi in zip(d.get("MobTypes") or [], g.get("loai_vi") or []):
+                    kinds[t.lower()] = (vi, f"{g['ten']} ({g['vai']})")
         except (OSError, ValueError):
             pass
     pets = []
@@ -295,7 +298,8 @@ def combat_pets(uuid, perms):
         finally:
             con.close()
         for name, typ, exp, tree, spawn, respawn in rows:
-            pets.append({"ten": re.sub(r"<[^>]+>|[&§][0-9a-fk-or]", "", str(name or "")), "loai": typ, "cap": pet_level(exp),
+            vi, nhom = kinds.get(str(typ).lower(), (typ, None))
+            pets.append({"ten": re.sub(r"<[^>]+>|[&§][0-9a-fk-or]", "", str(name or "")), "loai": typ, "loai_vi": vi, "nhom": nhom, "cap": pet_level(exp),
                          "huong": trees.get(tree, tree) if tree else None, "dang_dan": bool(spawn), "dang_hoi_sinh": int(respawn or 0) > 0})
     except Exception:
         pets = None

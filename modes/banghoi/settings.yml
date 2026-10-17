@@ -1011,6 +1011,8 @@ petc_seed: mua1
 petc_announce:
 - 60
 - 10
+petc_nofly: true
+petc_nofly_h: 3
 petc_slots_default: 2
 petc_slots_namtuoc: 3
 petc_slots_tutuoc: 3
@@ -1038,5 +1040,6 @@ mypet_respawn_cost_fixed: 0.0
 mypet_respawn_cost_factor: 1.0
 mypet_hunger: true
 mypet_hunger_time: 60
+mypet_ride_hunger: 0.01
 mypet_switch_fee: 5
 mypet_leash_consume: false

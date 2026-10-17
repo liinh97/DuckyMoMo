@@ -566,10 +566,11 @@ function bindTrangTri(){
   document.querySelectorAll("#trangtri [data-pet]").forEach(b => b.onclick = () => { petSel = b.dataset.pet; document.querySelectorAll("#trangtri [data-pet]").forEach(x => x.classList.toggle("on", x === b)); $("#petBig").textContent = (PETS[petSel] || "🐾").split(" ")[0]; });
   document.querySelectorAll("#trangtri [data-cur]").forEach(b => b.onclick = (e) => { if (e.target.dataset.ppdel) return; [ppE, ppS] = b.dataset.cur.split("|");
     document.querySelectorAll("#trangtri [data-e]").forEach(x => x.classList.toggle("on", x.dataset.e === ppE)); document.querySelectorAll("#trangtri [data-s]").forEach(x => x.classList.toggle("on", x.dataset.s === ppS)); startPP(); });
-  document.querySelectorAll("#trangtri [data-ppdel]").forEach(b => b.onclick = () => doTT({viec: "pp_remove", id: +b.dataset.ppdel}));
-  document.querySelectorAll("#trangtri [data-dh]").forEach(b => b.onclick = () => doTT({viec: "danhhieu", ma: b.dataset.dh}));
+  document.querySelectorAll("#trangtri [data-ppdel]").forEach(b => b.onclick = () => { lastTT = '[data-tt="pp_add"]'; doTT({viec: "pp_remove", id: +b.dataset.ppdel}); });
+  document.querySelectorAll("#trangtri [data-dh]").forEach(b => b.onclick = () => { lastTT = "#trangtri [data-dh]"; doTT({viec: "danhhieu", ma: b.dataset.dh}); });
   document.querySelectorAll("#trangtri [data-tt]").forEach(b => b.onclick = () => {
     const v = b.dataset.tt;
+    lastTT = `[data-tt="${v}"]`;
     if (v === "nick") return doTT({viec: "nick", gia_tri: (nickVal || "").trim()});
     if (v === "pp_add") return doTT({viec: "pp_add", hieu_ung: ppE, kieu: ppS});
     if (v === "pet") return doTT({viec: "pet", loai: petSel});
@@ -578,11 +579,20 @@ function bindTrangTri(){
   });
 }
 
+// thông báo kết quả hiện ngay dưới hàng nút vừa bấm (trước: cuối khung Trang trí, người dùng không thấy)
+let lastTT = "";   // bộ chọn của nút vừa bấm
+function placeTT(){
+  const m = $("#ttMsg"), b = lastTT && document.querySelector(lastTT);
+  if (!m || !b) return;
+  b.parentElement.after(m);
+  const r = m.getBoundingClientRect();
+  if (r.bottom > innerHeight || r.top < 0) m.scrollIntoView({block: "nearest", behavior: "smooth"});
+}
 async function doTT(body){
-  const m = $("#ttMsg"); m.className = "ttmsg wait"; m.textContent = "⏳ Đang gửi tới server…";
+  const m = $("#ttMsg"); m.className = "ttmsg wait"; m.textContent = "⏳ Đang gửi tới server…"; placeTT();
   const d = await api("api/trangtri", body).catch(() => ({message: "Không kết nối được."}));
   const show = () => { const e = $("#ttMsg"); e.className = "ttmsg " + (d.ok ? (d.pending ? "wait" : "ok") : "bad");
-    e.textContent = (d.ok ? (d.pending ? "⏳ " : "✓ ") : "✕ ") + (d.message || (d.ok ? "Xong." : "Không áp dụng được.")); };
+    e.textContent = (d.ok ? (d.pending ? "⏳ " : "✓ ") : "✕ ") + (d.message || (d.ok ? "Xong." : "Không áp dụng được.")); placeTT(); };
   show();
   // vẽ lại thẻ theo trạng thái mới từ server (tên, danh sách hiệu ứng đang bật, danh hiệu), giữ lựa chọn đang xem
   if (d.trangtri) { D.trangtri = d.trangtri; if (body.viec === "nick_off" && d.ok) nickVal = ""; const y = scrollY; render(); scrollTo(0, y); show(); }

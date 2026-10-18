@@ -62,13 +62,19 @@ final class DonateRanks implements Listener {
     private final String joinMsg;
     private final String quitMsg;
     private final String rankJoinMsg;
+    /** Skin độc quyền theo bậc (tên custom skin của SkinsRestorer, tạo bằng /sr createcustom <tên> <link>). */
+    private final java.util.Map<String, List<String>> skins = new java.util.LinkedHashMap<>();
+    private final boolean skinSync;
 
     DonateRanks(JavaPlugin plugin, ConfigurationSection c) {
         this.plugin = plugin;
         for (var m : c.getMapList("tiers")) {
             tiers.add(new Tier(String.valueOf(m.get("group")), String.valueOf(m.get("name")), String.valueOf(m.get("color")),
                     asList(m.get("perks")), asList(m.get("prices"))));
+            skins.put(String.valueOf(m.get("group")), asList(m.get("skins")).stream()
+                    .map(x -> x.trim().toLowerCase(java.util.Locale.ROOT)).filter(x -> !x.isEmpty()).toList());
         }
+        this.skinSync = c.getBoolean("skin-sync", false);
         this.howToBuy = c.getString("how-to-buy", "&7Liên hệ admin để mua rank.");
         this.joinMsg = c.getString("join-message", "&8[&a+&8] {prefix}&f{player}");
         this.quitMsg = c.getString("quit-message", "&8[&c-&8] {prefix}&f{player}");
@@ -87,6 +93,67 @@ final class DonateRanks implements Listener {
 
     private static Component c(String s) {
         return LEGACY.deserialize(s);
+    }
+
+    /**
+     * Đồng bộ quyền skin độc quyền vào LuckPerms (chỉ chạy ở server có donate-ranks.skin-sync: true, thường là sảnh; LuckPerms
+     * dùng chung MariaDB nên proxy, nơi SkinsRestorer kiểm quyền, cũng thấy). default: skinsrestorer.skin.* + ownskin = mọi skin
+     * thường vẫn miễn phí; mỗi skin độc quyền: default false, bậc được gán true (bậc cao kế thừa bậc thấp). Skin bỏ khỏi danh sách
+     * thì gỡ quyền (nhớ ở rank-skins.yml).
+     */
+    void syncSkins(java.io.File dataFolder) {
+        if (!skinSync) {
+            return;
+        }
+        var gm = lp().getGroupManager();
+        java.io.File f = new java.io.File(dataFolder, "rank-skins.yml");
+        var old = org.bukkit.configuration.file.YamlConfiguration.loadConfiguration(f);
+        java.util.Set<String> all = new java.util.LinkedHashSet<>();
+        skins.values().forEach(all::addAll);
+        java.util.function.BiConsumer<String, java.util.function.Consumer<net.luckperms.api.model.group.Group>> edit = (g, fn) ->
+                gm.loadGroup(g).thenAccept(o -> o.ifPresent(grp -> {
+                    fn.accept(grp);
+                    gm.saveGroup(grp);
+                }));
+        java.util.function.BiConsumer<net.luckperms.api.model.group.Group, String> unset = (grp, perm) -> {
+            grp.data().remove(net.luckperms.api.node.types.PermissionNode.builder(perm).value(true).build());
+            grp.data().remove(net.luckperms.api.node.types.PermissionNode.builder(perm).value(false).build());
+        };
+        edit.accept("default", grp -> {
+            grp.data().add(net.luckperms.api.node.types.PermissionNode.builder("skinsrestorer.skin.*").value(true).build());
+            grp.data().add(net.luckperms.api.node.types.PermissionNode.builder("skinsrestorer.ownskin").value(true).build());
+            for (String sk : old.getStringList("tat-ca")) {
+                if (!all.contains(sk)) {
+                    unset.accept(grp, "skinsrestorer.skin." + sk);
+                }
+            }
+            for (String sk : all) {
+                unset.accept(grp, "skinsrestorer.skin." + sk);
+                grp.data().add(net.luckperms.api.node.types.PermissionNode.builder("skinsrestorer.skin." + sk).value(false).build());
+            }
+        });
+        for (Tier t : tiers) {
+            List<String> want = skins.getOrDefault(t.group(), List.of());
+            List<String> had = old.getStringList("bac." + t.group());
+            edit.accept(t.group(), grp -> {
+                for (String sk : had) {
+                    if (!want.contains(sk)) {
+                        unset.accept(grp, "skinsrestorer.skin." + sk);
+                    }
+                }
+                for (String sk : want) {
+                    grp.data().add(net.luckperms.api.node.types.PermissionNode.builder("skinsrestorer.skin." + sk).value(true).build());
+                }
+            });
+            old.set("bac." + t.group(), want);
+        }
+        old.set("tat-ca", new ArrayList<>(all));
+        try {
+            old.save(f);
+        } catch (java.io.IOException e) {
+            plugin.getLogger().warning("Không lưu được rank-skins.yml: " + e.getMessage());
+        }
+        plugin.getLogger().info("Skin theo rank: " + all.size() + " skin độc quyền đã đồng bộ vào LuckPerms");
     }
 
     private static LuckPerms lp() {
@@ -195,6 +262,10 @@ final class DonateRanks implements Listener {
         s.sendMessage(c("&6&l✦ RANK DONATE (tước vị) ✦ &7chỉ trang trí, không lợi thế khi chơi"));
         for (Tier t : tiers) {
             s.sendMessage(c(t.color() + "&l" + t.name() + "&7: " + String.join("&7, ", t.perks().stream().map(x -> "&f" + x).toList())));
+            List<String> sk = skins.getOrDefault(t.group(), List.of());
+            if (!sk.isEmpty()) {
+                s.sendMessage(c("   &7Skin độc quyền (/skins): &f" + String.join(", ", sk) + " &8(+ skin của bậc dưới)"));
+            }
             if (!t.prices().isEmpty()) {
                 s.sendMessage(c("   &8Giá: &e" + String.join("&8 | &e", t.prices())));
             }

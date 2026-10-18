@@ -145,8 +145,8 @@ SbDong2:
 SbDong3:
   change-interval: 8000
   texts:
-    - '&#5FD3F3☂ &7Mùa: %dmmmua_ten%'
-    - '&#FF6B6B⚔ &7Giết: &f%dmmtoi_giet% &8· &7Chết: &f%dmmtoi_chet%'
+    - '&#5FD3F3☂ %dmmmua_ten% &8· &7còn &f%dmmmua_con%&7 ngày'
+    - '&#FF6B6B⚔ &f%dmmtoi_giet%&7 giết &8· &f%dmmtoi_chet%&7 chết &8· &7KDA &f%dmmtoi_kda%'
 SbDong4:
   change-interval: 8000
   texts:

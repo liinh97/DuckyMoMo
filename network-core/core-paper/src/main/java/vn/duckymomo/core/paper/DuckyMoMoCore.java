@@ -208,6 +208,7 @@ public final class DuckyMoMoCore extends JavaPlugin {
         if (getConfig().getBoolean("donate-ranks.enabled") && getServer().getPluginManager().isPluginEnabled("LuckPerms")) {
             DonateRanks ranks = new DonateRanks(this, getConfig().getConfigurationSection("donate-ranks"));
             getServer().getPluginManager().registerEvents(ranks, this);
+            ranks.syncSkins(getDataFolder());
             // Ủng hộ bằng QR trong game: /rank mua (donate-qr.enabled, cần PANEL_URL + PANEL_SITE_KEY trong môi trường)
             if (getConfig().getBoolean("donate-qr.enabled")) {
                 DonateQr qr = new DonateQr(this, getConfig().getConfigurationSection("donate-qr"), ranks.tiers());

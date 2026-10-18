@@ -1,0 +1,15 @@
+# LuckPerms trên proxy (Velocity). Nằm trong proxy/config vì mc-proxy chỉ điền biến ${CFG_...} cho file trong /config.
+# Dùng CHUNG database + Redis với sảnh và các server con: quyền cấp cho role/rank ở trang Role cũng có hiệu lực ở proxy
+# (SkinsRestorer kiểm quyền skin ở proxy: skinsrestorer.skin.<tên>).
+server: proxy
+storage-method: MariaDB
+data:
+  address: mariadb:3306
+  database: luckperms
+  username: ${CFG_DB_USER}
+  password: ${CFG_DB_PASSWORD}
+messaging-service: redis
+redis:
+  enabled: true
+  address: redis:6379
+  password: ${CFG_REDIS_PASSWORD}

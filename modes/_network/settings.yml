@@ -159,3 +159,8 @@ pp_speed_pulse: 25
 pp_speed_wings: 5
 pp_speed_celebration: 25
 pp_ticks_per_particle: 3
+tier0_skins: []
+tier1_skins: []
+tier2_skins: []
+tier3_skins: []
+tier4_skins: []

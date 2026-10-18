@@ -122,13 +122,16 @@ plugins:
   - name: SkinsRestorer
     jar: SkinsRestorer
     kind: Đăng nhập & kết nối
-    purpose: Hiện skin cho người chơi offline mode (lấy skin theo tên tài khoản Mojang).
+    purpose: "Hiện skin cho người chơi offline mode (tự lấy skin theo tên tài khoản Mojang; trùng tên người khác thì mặc skin người đó, đổi bằng /skin). Menu /skins: 93 skin gợi ý + skin riêng của server. Skin theo rank (18/10): perSkinPermissions BẬT (proxy/config/plugins/skinsrestorer/config.yml, đã đồng ý luật: chỉ bán skin server tự làm, không bắt trả tiền để dùng skin của chính mình). Nhóm default có skinsrestorer.skin.* + skinsrestorer.ownskin (mọi skin thường miễn phí); skin độc quyền: Cài đặt › Rank donate › Bậc N: skin độc quyền (donate-ranks.tiers[].skins), sảnh (skin-sync: true) tự đồng bộ vào LuckPerms lúc khởi động: default false, bậc được gán true, bậc cao kế thừa. Người thiếu bậc thấy ô khoá trong /skins. Đổi skin chờ 30 giây (skinsrestorer.bypasscooldown để bỏ)."
     player:
       - ["/skin set <tên Mojang>", "Đổi skin theo tên"]
       - ["/skin clear", "Bỏ skin"]
       - ["/skins", "Mở kho skin (menu chọn skin)"]
+      - ["/skin url <link .png>", "Đổi skin bằng ảnh (minecraftskins.com, namemc.com, planetminecraft.com, novaskin.me)"]
+      - ["/skin update", "Lấy lại skin mới nhất của tài khoản Mojang (sau khi đổi trên minecraft.net)"]
     admin:
       - ["/sr reload", "Nạp lại"]
+      - ["/sr createcustom <tên> <link .png>", "Tạo skin riêng của server (hiện ở mục custom của /skins); gán cho rank ở Cài đặt › Rank donate"]
     notes: "Cài ở proxy VÀ mọi server con (cùng bản 15.12.6, link ghim trong PLUGINS của từng compose). Thiếu ở server con thì /skins chỉ báo 'Opening the skins menu' mà không mở menu (menu là kho đồ, chỉ server con mở được). Server con tự nhận chế độ proxy (proxyMode AUTO)."
   - name: Sonar (chống bot)
     jar: Sonar
@@ -154,7 +157,7 @@ plugins:
   - name: LuckPerms
     jar: LuckPerms
     kind: Quản lý
-    purpose: Quyền và nhóm (role, rank donate), dùng chung toàn network (lưu MariaDB).
+    purpose: Quyền và nhóm (role, rank donate), dùng chung toàn network (lưu MariaDB, đồng bộ Redis). Cài cả ở PROXY (18/10, LuckPerms-Velocity 5.5.71, proxy/config/plugins/luckperms/config.yml, server context "proxy") để plugin proxy (SkinsRestorer) đọc quyền rank.
     admin:
       - ["/lp user <tên> info", "Xem nhóm, quyền của người chơi"]
       - ["/lp user <tên> parent add <nhóm>", "Thêm vào nhóm (helper, mod, admin, builder)"]

@@ -182,21 +182,14 @@ tab_bossbar_enabled: true
 tab_sb_enabled: true
 tab_sb_title: '<#FFC23D>⚔ BANG HỘI CHIẾN ⚔</#FF6A00>'
 tab_sb_lines:
-  - '&8%date% &7· &6Mùa 1 &7Đông Nam Á'
-  - '&r'
-  - '&#FFD966❤ &f%player%'
-  - '&#B0B8C8  %luckperms-prefix%'
+  - '&#FFD966❤ &f%player% %luckperms-prefix%'
   - '&r'
   - '%animation:SbTieuDe%'
   - '%animation:SbDong1%'
   - '%animation:SbDong2%'
   - '%animation:SbDong3%'
-  - '%animation:SbDong4%'
   - '&r'
-  - '&#5FD3F3☺ &7Online: &b%online%'
-  - '&#5FD3F3⚡ &7Ping: %condition:pingmau%'
-  - '&r'
-  - '&#FFB000» &e/huongdan &8· &e/sb &7ẩn bảng'
+  - '&#5FD3F3☺ &b%online% &7online &8· &7%condition:pingmau%'
 tab_header:
   - '&r'
   - <#FFC23D>&l✦ DUCKYMOMO ✦</#FF6A00>

@@ -59,7 +59,8 @@ import org.bukkit.persistence.PersistentDataType;
  *  - chain:  chuỗi cấp. requires: <mã> = trùm cuối dungeon đó rơi CHÌA KHOÁ thật (TRIAL_KEY, PDC dmm_chiatang) cho từng người; dùng chìa
  *            (/dungeon vao hoặc bấm chuột phải) thì mất chìa, mở VĨNH VIỄN tầng đó cho người dùng (mo.<uuid>). key-tradeable: false = chìa
  *            ghi tên người nhận, người khác không dùng được. Không requires = mở sẵn.
- *  - hidden: dungeon ẩn. Lối vào giấu trên bản đồ (admin /dungeon datan <mã>); đi tới gần (hidden-radius khối) là tìm ra, giữ cả mùa.
+ *  - hidden: dungeon ẩn. Lối vào giấu trên bản đồ: chưa đặt thì server TỰ chọn chỗ đất hoang ngẫu nhiên (luật chọn chỗ của Cổng Hoang);
+ *            admin đổi: /dungeon datan <mã> (chỗ đang đứng) hoặc /dungeon datan <mã> ngaunhien. Tới gần (hidden-radius khối) là tìm ra, giữ cả mùa.
  *            night-only: true = chỉ lộ ra ban đêm. hint: gợi ý hiện trong /dungeon.
  *  - luck:   may mắn. Vé Vận Mệnh rơi hiếm khi hạ quái / câu cá (luck.*); dùng vé có roll-chance % cổng mở (trượt thì mất vé).
  *  - ticket: vé cá nhân mua bằng xu (price/lượt, tối đa max-tickets vé trong túi).
@@ -279,6 +280,7 @@ final class DungeonGate implements Listener {
                 }
             }, plugin, true);
             hooked = true;
+            Bukkit.getScheduler().runTaskLater(plugin, this::autoHide, 200L);   // sau khi Cổng Hoang bật
             applyPermissions();
             Bukkit.getOnlinePlayers().forEach(this::refresh);
             writeJson();
@@ -477,6 +479,9 @@ final class DungeonGate implements Listener {
         if (hooked && tickCount % 12 == 0) {
             applyPermissions();
         }
+        if (hooked && tickCount % 720 == 0) {
+            autoHide();   // mỗi giờ thử lại nếu còn dungeon ẩn chưa có chỗ (vd chưa có vùng nào mở)
+        }
         long now = System.currentTimeMillis();
         boolean dirty = false;
         // hết giờ chờ mà chưa vào: hoàn vé
@@ -535,6 +540,29 @@ final class DungeonGate implements Listener {
         if (dirty) {
             save();
         }
+    }
+
+    /** Dungeon ẩn chưa có chỗ giấu: server tự chọn chỗ đất hoang ngẫu nhiên (không báo ai, admin xem bằng /dungeon datan… hoặc log). */
+    private void autoHide() {
+        for (Dg d : dungeons.values()) {
+            if (d.type().equals("hidden") && !data.contains("an." + d.id())) {
+                String r = hideRandom(d);
+                if (r != null) {
+                    plugin.getLogger().info("Cổng Dungeon: tự giấu lối vào " + d.name() + " tại " + r);
+                }
+            }
+        }
+    }
+
+    private String hideRandom(Dg d) {
+        WildGates wg = Shared.wildGates;
+        Location l = wg == null ? null : wg.randomSpot(false);
+        if (l == null) {
+            return null;
+        }
+        data.set("an." + d.id(), l.getWorld().getName() + ";" + l.getBlockX() + ";" + l.getBlockY() + ";" + l.getBlockZ());
+        save();
+        return l.getBlockX() + " " + l.getBlockY() + " " + l.getBlockZ();
     }
 
     private static boolean night(World w) {
@@ -1010,8 +1038,14 @@ final class DungeonGate implements Listener {
                 return true;
             }
             case "datan" -> {
+                if (s.hasPermission("duckymomo.admin") && d != null && d.type().equals("hidden") && args.length > 2 && args[2].equalsIgnoreCase("ngaunhien")) {
+                    data.set("an." + d.id(), null);
+                    String r = hideRandom(d);
+                    s.sendMessage(r == null ? "Không tìm được chỗ (cần Cổng Hoang bật và vùng /tpr đã mở)." : "Đã giấu ngẫu nhiên " + d.name() + " tại " + r);
+                    return true;
+                }
                 if (!s.hasPermission("duckymomo.admin") || !(s instanceof Player p) || d == null || !d.type().equals("hidden")) {
-                    s.sendMessage("/dungeon datan <mã dungeon ẩn> (đứng tại chỗ muốn giấu lối vào)");
+                    s.sendMessage("/dungeon datan <mã dungeon ẩn> [ngaunhien]  (đứng tại chỗ muốn giấu lối vào, hoặc để server chọn ngẫu nhiên)");
                     return true;
                 }
                 Location l = p.getLocation();

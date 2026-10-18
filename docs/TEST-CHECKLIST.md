@@ -76,7 +76,7 @@ bật công tắc vây thành, rút lịch phiên còn vài phút (Cài đặt �
 - [ ] Người thường (không op): menu /em vào dungeon bị báo không có quyền; /dungeon vao the_climb_dungeon vào được.
 - [ ] Vượt Đỉnh Vách Đá → báo cả server người đầu tiên (chìa khoá: xem mục 4d+).
 - [ ] Nhóm (party EliteMobs): người chưa có chìa không vào theo được.
-- [ ] CẦN LÀM TRƯỚC KHI MỞ MÙA: /dungeon datan dark_cathedral_lair ở chỗ muốn giấu (Thánh Đường Bóng Tối là dungeon ẩn duy nhất; chưa đặt = không ai tìm được). Ban đêm người khác tới gần thấy hạt tím, tìm ra.
+- [ ] Thánh Đường Bóng Tối: server tự giấu lối vào (log "tự giấu lối vào … tại x y z"). Ban đêm tới gần thấy hạt tím, tìm ra. Đổi chỗ: /dungeon datan dark_cathedral_lair ngaunhien.
 - [ ] /dungeon mua knights_castle_lair → vào mất 1 vé; mở cổng mà không vào 2 phút → hoàn vé.
 - [ ] Cống Ngầm, Bắc Cực: /dungeon vao báo "chỉ qua Cổng Hoang"; /conghoang tao here rồi Shift ở ô giữa → vào được. (Vé Vận Mệnh: chưa có dungeon kiểu luck, bỏ qua.)
 - [ ] /dungeon gop fireworks_lair → đủ quỹ mở 7 ngày; /dungeon mo (admin).

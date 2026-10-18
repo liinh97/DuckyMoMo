@@ -289,6 +289,20 @@ final class WildGates implements Listener {
         return "phía " + (ew + (ns.isEmpty() || ew.isEmpty() ? "" : " ") + ns).trim();   // tây bắc, đông nam…
     }
 
+    /** Chỗ đất hoang ngẫu nhiên (cùng luật chọn chỗ của Cổng Hoang) cho module khác, vd lối vào dungeon ẩn. Trả chỗ ĐỨNG (trên mặt đất). */
+    Location randomSpot(boolean allowWater) {
+        double keep = underwaterChanceOverride;
+        underwaterChanceOverride = allowWater ? -1 : 0;
+        try {
+            Location l = pickSpot();
+            return l == null ? null : l.clone().add(0, 1, 0);
+        } finally {
+            underwaterChanceOverride = keep;
+        }
+    }
+
+    private double underwaterChanceOverride = -1;   // -1 = theo cấu hình
+
     private Location pickSpot() {
         World w = Bukkit.getWorld(world);
         List<Zone> open = zones.stream().filter(z -> Shared.unlocked(z.requires())).toList();
@@ -304,7 +318,7 @@ final class WildGates implements Listener {
             Block top = w.getHighestBlockAt(x, zz);
             if (top.getType() == Material.WATER) {
                 // dưới nước: chỉ nhận đáy sâu 2–24 khối, tỉ lệ underwater-chance %
-                if (r.nextDouble(100) >= underwaterChance) {
+                if (r.nextDouble(100) >= (underwaterChanceOverride >= 0 ? underwaterChanceOverride : underwaterChance)) {
                     continue;
                 }
                 Block b = top;

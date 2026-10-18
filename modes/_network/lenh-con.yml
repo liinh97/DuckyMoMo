@@ -449,7 +449,7 @@ groups:
       - ["dungeon vao <mã>", "Mở cổng và chọn độ khó để vào dungeon", Mọi người]
       - ["dungeon mua <mã> [số]", "Mua vé cá nhân vào dungeon (trừ khi vào)", Mọi người]
       - ["dungeon gop <mã> <xu>", "Góp quỹ chung mở dungeon cho cả server", Mọi người]
-      - ["dungeon datan <mã>", "Giấu lối vào dungeon ẩn tại chỗ đang đứng", Chỉ admin]
+      - ["dungeon datan <mã> [ngaunhien]", "Giấu lối vào dungeon ẩn tại chỗ đang đứng / chọn lại chỗ ngẫu nhiên", Chỉ admin]
       - ["dungeon cho <mã> <người> [số]", "Tặng vé / Vé Vận Mệnh / Mảnh Chìa", Chỉ admin]
       - ["dungeon mo <mã>", "Mở ngay dungeon quỹ chung (không cần góp)", Chỉ admin]
       - ["conghoang", "Danh sách Cổng Hoang, tin đồn, chủ cổng, phí", Mọi người]

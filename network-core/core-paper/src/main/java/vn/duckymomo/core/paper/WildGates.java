@@ -430,7 +430,7 @@ final class WildGates implements Listener {
                         set(c.getRelative(o[0], y, o[1]), Material.MANGROVE_ROOTS, placed);
                     }
                 }
-                if (keep >= 0.5) {
+                if (keep >= 0.6) {
                     set(c.getRelative(1, 1, 1), Material.MOSS_CARPET, placed);
                 }
             }
@@ -444,7 +444,7 @@ final class WildGates implements Listener {
                     }
                     set(c.getRelative(o[0], h + 1, o[1]), Material.MOSS_CARPET, placed);
                 }
-                if (keep >= 0.5) {
+                if (keep >= 0.6) {
                     for (int x = -1; x <= 1; x++) {
                         set(c.getRelative(x, 1, 2), Material.STRIPPED_OAK_LOG, placed);
                     }

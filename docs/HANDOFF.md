@@ -303,6 +303,14 @@
   vé vận mệnh rơi hiếm, tung xúc xắc lúc vào), (4) mua vé cá nhân bằng xu (lượt / 7 ngày), (5) mở chung toàn server bằng quỹ như khai hoang.
   Điều kiện phụ: cấp pet, thành tích, nhóm 2–4 người, cuối tuần, chỉ nước Bá chủ. Chống lạm phát: lượt/ngày, lockout boss của EliteMobs.
 
+### 18/10 23:30: EliteMobs 10.9.10 + tiếng Việt
+- Nâng EliteMobs 10.9.8 → 10.9.10: itzg (MODRINTH_PROJECTS elitemobs) KHÔNG tự nâng vì file mới cùng tên EliteMobs.jar → tải jar Modrinth (sha512 khớp),
+  kiểm tra bằng javap: EMPackage.getEmPackages/getContentPackagesConfigFields/isInstalled, ContentPackagesConfigFields.permission, các sự kiện,
+  PartyManager.getDungeonEntryMemberIds, lệnh dungeontp vẫn còn → thay jar, khởi động lại. Lỗi NoClassDefFoundError chỉ lúc TẮT bản cũ
+  (jar bị thay khi đang chạy), sau khi bật: 0 lỗi, 18/18 gói. Bản cũ lưu ở scratchpad phiên (không giữ lâu): muốn lùi thì tải 10.9.8 từ Modrinth.
+- /em language vietnamese: translations/vietnamese.csv (35.303 dòng, 50 chưa dịch). config.yml language: vietnamese.
+- Dọn dẹp bản ẩn: Thánh Đường Bóng Tối tự giấu tại 12723 63 -1229 (xem /dungeon ds).
+
 ### 18/10 tối: Chìa khoá tầng thật + NOTE dungeon (người dùng: "cho vào note")
 - Đã cài 11 gói EliteMobs miễn phí (18/18 dungeon). Primis, Oasis PHẢI MUA (ô vàng chỉ là "bấm để kiểm tra quyền").
 - Chìa khoá tầng (chain): trùm cuối rơi chìa thật cho từng người, dùng 1 lần mở vĩnh viễn tầng sau (theo NGƯỜI, không phải cả server),

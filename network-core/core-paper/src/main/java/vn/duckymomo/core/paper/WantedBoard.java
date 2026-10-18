@@ -186,7 +186,7 @@ final class WantedBoard implements Listener {
             Post p = new Post(t, l, z.name(), System.currentTimeMillis() + expireMs);
             posts.add(p);
             List<String> d2 = rewards == null ? t.rewards() : rewards.describe(t.rewards());
-            Bukkit.broadcast(c("&4☠ TRUY NÃ: &c" + t.name() + " &7ở &f" + z.name() + " &7quanh &f~" + Math.round(l.getX() / 50) * 50 + ", ~"
+            Bukkit.broadcast(c("&4☠ TRUY NÃ: &c" + t.name() + " &7ở &f" + z.name() + " &7quanh &fX " + Math.round(l.getX() / 50) * 50 + " Z "
                     + Math.round(l.getZ() / 50) * 50 + " &7— thưởng: &e" + String.join(", ", d2) + " &7(" + expireMs / 60_000 + " phút). &f/truyna"));
             return;
         }
@@ -284,7 +284,7 @@ final class WantedBoard implements Listener {
         long now = System.currentTimeMillis();
         for (Post p : posts) {
             List<String> d = rewards == null ? p.target.rewards() : rewards.describe(p.target.rewards());
-            s.sendMessage(c("&c" + p.target.name() + " &7ở &f" + p.zone + " &7quanh &f~" + Math.round(p.loc.getX() / 50) * 50 + ", ~" + Math.round(p.loc.getZ() / 50) * 50
+            s.sendMessage(c("&c" + p.target.name() + " &7ở &f" + p.zone + " &7quanh &fX " + Math.round(p.loc.getX() / 50) * 50 + " Z " + Math.round(p.loc.getZ() / 50) * 50
                     + " &7· còn " + (p.until - now) / 60_000 + " phút · thưởng &e" + String.join(", ", d)));
         }
         s.sendMessage(c("&7Người gây nhiều sát thương nhất (kể cả qua pet) nhận thưởng. Tới vùng bằng &f/tpr&7."));

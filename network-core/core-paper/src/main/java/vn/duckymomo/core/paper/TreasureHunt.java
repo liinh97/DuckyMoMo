@@ -205,7 +205,7 @@ final class TreasureHunt implements Listener {
         ItemMeta m = it.getItemMeta();
         m.displayName(c("&6&l🗺 Bản đồ kho báu &7(" + t.name() + "&7)"));
         int rx = (int) Math.round(l.getX() / 50.0) * 50, rz = (int) Math.round(l.getZ() / 50.0) * 50;
-        m.lore(List.of(c("&7Vùng: &f" + z.name()), c("&7Quanh toạ độ: &f~" + rx + ", ~" + rz + " &8(±50)"),
+        m.lore(List.of(c("&7Vùng: &f" + z.name()), c("&7Quanh toạ độ: &fX " + rx + " Z " + rz + " &8(±50)"),
                 c("&7Cầm trên tay để dò: lạnh → ấm → nóng"), c("&eTới nơi: ngồi xuống (Shift) để đào"), c("&8Lính canh sẽ xuất hiện!")));
         m.setEnchantmentGlintOverride(true);
         m.getPersistentDataContainer().set(key, PersistentDataType.STRING,
@@ -345,7 +345,7 @@ final class TreasureHunt implements Listener {
         p.sendMessage(c("&6⛏ Đang đào kho báu " + t.name() + "&6! " + (t.guards() > 0 ? "&cHạ hết " + t.guards() + " lính canh trong "
                 + guardMs / 60_000 + " phút &6(đứng trong 40 khối) để mở rương." : "")));
         if (t.broadcast()) {
-            Bukkit.broadcast(c("&6🗺 &f" + p.getName() + " &6đang đào &e" + t.name() + " &6quanh &f~" + ground.getBlockX() / 50 * 50 + ", ~"
+            Bukkit.broadcast(c("&6🗺 &f" + p.getName() + " &6đang đào &e" + t.name() + " &6quanh &fX " + ground.getBlockX() / 50 * 50 + " Z "
                     + ground.getBlockZ() / 50 * 50 + "&6! Ai nhanh chân thì tới tranh."));
         }
     }

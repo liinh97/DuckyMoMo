@@ -29,6 +29,19 @@ lp_quest: 0.6
 lp_capture: 10
 lp_absent: 50
 tt_on: true
+kbo_on: true
+kbo_fish: 3
+kbo_mob: 0.5
+kbo_day: 5
+kbo_guard: 5
+tna_on: true
+tna_every: 45
+tna_expire: 60
+tna_max: 2
+tap_on: true
+tap_prices: [5000, 8000, 15000]
+tap_trust: 5
+tap_kitchen: 50
 wb_on: true
 wb_chest: 10
 wb_upkeep: 50

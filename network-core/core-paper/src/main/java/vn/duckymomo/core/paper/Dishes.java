@@ -41,6 +41,10 @@ final class Dishes implements Listener {
 
     private static final LegacyComponentSerializer LEGACY = LegacyComponentSerializer.legacyAmpersand();
     static NamespacedKey KEY;
+    static NamespacedKey KITCHEN;
+    /** Thái Ấp (ThaiAp): người đang ở bếp riêng thì món nấu ra được kéo dài hiệu ứng kitchenBonus %. */
+    static volatile java.util.function.Predicate<Player> kitchenHere;
+    static volatile double kitchenBonus;
 
     private record Dish(String id, String name, Material material, List<String> lore, Map<String, Integer> need, List<String> effects) { }
 
@@ -60,6 +64,7 @@ final class Dishes implements Listener {
 
     Dishes(DuckyMoMoCore plugin, ConfigurationSection c) {
         KEY = new NamespacedKey(plugin, "dmm_mon");
+        KITCHEN = new NamespacedKey(plugin, "dmm_bep");
         this.cooldownMs = Math.max(0, c.getLong("cooldown-minutes", 20)) * 60_000L;
         ConfigurationSection l = c.getConfigurationSection("list");
         if (l != null) {
@@ -240,7 +245,18 @@ final class Dishes implements Listener {
             }
         }
         d.need().forEach((k, v) -> take(p, k, v));
-        Rewards.hand(p, make(d, 1));
+        ItemStack dish = make(d, 1);
+        var kh = kitchenHere;
+        boolean home = kh != null && kitchenBonus > 0 && kh.test(p);
+        if (home) {
+            ItemMeta dm = dish.getItemMeta();
+            dm.getPersistentDataContainer().set(KITCHEN, PersistentDataType.BYTE, (byte) 1);
+            List<Component> lore = dm.lore() == null ? new ArrayList<>() : new ArrayList<>(dm.lore());
+            lore.add(c("&d🏡 Nấu ở bếp Thái Ấp: hiệu ứng +" + (long) kitchenBonus + "%"));
+            dm.lore(lore);
+            dish.setItemMeta(dm);
+        }
+        Rewards.hand(p, dish);
         Achievements.add(p, "nauan", 1);
         p.playSound(p.getLocation(), Sound.BLOCK_SMOKER_SMOKE, 0.8f, 1f);
         p.sendMessage(c("&a🍲 Đã nấu " + d.name() + "&a."));
@@ -277,6 +293,9 @@ final class Dishes implements Listener {
             }
             int lv = a.length > 1 ? Integer.parseInt(a[1]) : 0;
             int sec = a.length > 2 ? Integer.parseInt(a[2]) : 30;
+            if (e.getItem().getItemMeta().getPersistentDataContainer().has(KITCHEN)) {
+                sec = (int) Math.round(sec * (1 + kitchenBonus / 100.0));   // món nấu ở bếp Thái Ấp
+            }
             p.addPotionEffect(new PotionEffect(t, sec * 20, lv, false, true, true));
         }
         p.sendMessage(c("&a🍲 " + d.name() + "&a: " + String.join(", ", d.effects().stream().map(Dishes::effectText).toList())));

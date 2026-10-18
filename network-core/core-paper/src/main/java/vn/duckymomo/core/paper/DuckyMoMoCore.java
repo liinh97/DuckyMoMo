@@ -26,6 +26,9 @@ public final class DuckyMoMoCore extends JavaPlugin {
     private HallOfFameDisplay hallDisplay;
     private Mercenary mercenary;
     private Achievements achievements;
+    private TreasureHunt treasure;
+    private WantedBoard wanted;
+    private ThaiAp thaiAp;
     private Activity activity;
     private PeaceAlliance peace;
     private DecorShop decorShop;
@@ -83,6 +86,18 @@ public final class DuckyMoMoCore extends JavaPlugin {
         if (achievements != null) {
             achievements.stop();
             achievements = null;
+        }
+        if (treasure != null) {
+            treasure.stop();
+            treasure = null;
+        }
+        if (wanted != null) {
+            wanted.stop();
+            wanted = null;
+        }
+        if (thaiAp != null) {
+            thaiAp.stop();
+            thaiAp = null;
         }
         if (arenaPapi != null) {
             arenaPapi.unregister();
@@ -583,6 +598,38 @@ public final class DuckyMoMoCore extends JavaPlugin {
         }
         Achievements ach = achievements;
         bind("thanhtich", ach == null ? null : ach::command, "Sổ thành tích");
+        // Chơi một mình: bản đồ kho báu (treasure), bảng truy nã quái (wanted), Thái Ấp đất riêng (thai-ap) — Bang Hội Chiến
+        treasure = getConfig().getBoolean("treasure.enabled") && getConfig().isConfigurationSection("treasure")
+                ? new TreasureHunt(this, rewards, getConfig().getConfigurationSection("treasure")) : null;
+        if (treasure != null && treasure.ready()) {
+            getServer().getPluginManager().registerEvents(treasure, this);
+            treasure.start();
+            getLogger().info("Kho báu: " + treasure.describe());
+        } else {
+            treasure = null;
+        }
+        TreasureHunt th = treasure;
+        bind("khobau", th == null ? null : th::command, "Bản đồ kho báu");
+        wanted = getConfig().getBoolean("wanted.enabled") && getConfig().isConfigurationSection("wanted")
+                ? new WantedBoard(this, rewards, getConfig().getConfigurationSection("wanted")) : null;
+        if (wanted != null && wanted.ready()) {
+            getServer().getPluginManager().registerEvents(wanted, this);
+            wanted.start();
+            getLogger().info("Truy nã: " + wanted.describe());
+        } else {
+            wanted = null;
+        }
+        WantedBoard wbd = wanted;
+        bind("truyna", wbd == null ? null : wbd::command, "Bảng truy nã quái");
+        thaiAp = getConfig().getBoolean("thai-ap.enabled") && getConfig().isConfigurationSection("thai-ap")
+                ? new ThaiAp(this, getConfig().getConfigurationSection("thai-ap")) : null;
+        if (thaiAp != null) {
+            getServer().getPluginManager().registerEvents(thaiAp, this);
+            thaiAp.start();
+            getLogger().info("Thái Ấp: " + thaiAp.describe());
+        }
+        ThaiAp ta = thaiAp;
+        bind("thaiap", ta == null ? null : ta::command, "Thái Ấp");
 
         // Mảnh sự kiện + cửa hàng đổi mảnh (Bang Hội Chiến: event-fragments.enabled); phần thưởng "manh" dùng module này
         FragmentShop fragments = getConfig().getBoolean("event-fragments.enabled")

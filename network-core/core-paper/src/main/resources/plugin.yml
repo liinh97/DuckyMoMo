@@ -105,6 +105,15 @@ commands:
   lichcongthanh:
     description: "Lịch công thành: phiên tới, phiên đó có cho pet chiến đấu tham chiến không"
     aliases: [congthanh, lichvay]
+  khobau:
+    description: "Bản đồ kho báu: cách dò, các bậc kho báu; admin: /khobau give <người>"
+    aliases: [kho-bau, treasure]
+  truyna:
+    description: "Bảng truy nã quái: quái mạnh đang bị truy nã ở đâu, thưởng gì"
+    aliases: [truy-na, wanted]
+  thaiap:
+    description: "Thái Ấp: đất riêng an toàn mua bằng xu (mua, morong, moi, duoi, ghe, thich, top, ten, datspawn)"
+    aliases: [thai-ap, datrieng]
   thanhtich:
     description: "Sổ thành tích: mục tiêu chơi một mình (khám phá, câu cá, pet, Đấu Trường, nấu ăn…), đạt là nhận quà"
     aliases: [achievements, sothanhtich]

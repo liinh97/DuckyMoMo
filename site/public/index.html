@@ -696,6 +696,17 @@ footer .fbrand img{width:44px}
     <h2>Hằng ngày &amp; kinh tế: quà miễn phí, chợ, xưởng</h2>
     <p class="intro">Không cần nạp tiền: chỉ cần vào chơi thật. Treo máy không được tính, tài khoản phụ không ăn gian được. Cả server cùng góp quỹ mở đất mới, đặt mua hàng của nhau, chế đồ đặc biệt ở xưởng.</p>
     <div class="grid g2" id="dailyGrid"><div class="card muted">Đang tải…</div></div>
+    <div class="grid g3" style="margin-top:16px">
+      <div class="card"><h3>🗺 Bản đồ kho báu <span class="kbd">/khobau</span></h3>
+        <p class="muted">Câu cá hoặc hạ quái có thể nhặt <b>bản đồ kho báu</b>. Cầm trên tay: dưới màn hình báo lạnh, ấm, nóng. Tới nơi thì ngồi xuống (Shift) để đào, hạ hết lính canh để mở rương.</p>
+        <div id="kbTiers" class="muted"></div></div>
+      <div class="card"><h3>☠ Bảng truy nã <span class="kbd">/truyna</span></h3>
+        <p class="muted">Mỗi <span data-k="wanted.every">45</span> phút có lệnh truy nã một quái mạnh ở một vùng của <span class="kbd">/tpr</span>. Ai đánh nhiều nhất (kể cả pet) nhận thưởng; <span data-k="wanted.expire">60</span> phút không ai hạ thì quái trốn mất.</p>
+        <div id="tnList" class="muted"></div></div>
+      <div class="card"><h3>🏡 Thái Ấp <span class="kbd">/thaiap</span></h3>
+        <p class="muted">Đất riêng mua bằng xu, an toàn tuyệt đối: không PvP, không bị vây, không quái. Không có quặng, chỉ để xây, làm nông, nuôi pet. Mời bạn xây cùng, ghé thăm, bấm thích; món ăn nấu ở bếp Thái Ấp kéo dài hiệu ứng thêm <span data-k="thaiap.kitchen">50</span>%.</p>
+        <div id="taInfo" class="muted"></div></div>
+    </div>
     <div class="card" style="margin-top:16px"><h3>🏅 Sổ thành tích <span class="kbd">/thanhtich</span></h3>
       <p class="muted">Mục tiêu cho người thích chơi một mình: tự đếm, đạt là nhận quà ngay, mốc khó có danh hiệu giữ qua mọi mùa.</p>
       <div id="ttList" class="muted">Đang tải…</div>
@@ -1079,6 +1090,12 @@ async function loadInfo(){
   $("#dishList").innerHTML = ds.enabled && (ds.list || []).length ? `<table><tbody>${ds.list.map(d => `<tr><td><b>${esc(d.ten)}</b><div class="dim" style="font-size:.8rem">${Object.entries(d.can || {}).map(([k, n]) => n + " " + esc(NEED_VI[k] || NEED_VI[k.toUpperCase()] || k.toLowerCase())).join(" + ")}</div></td><td style="font-size:.85rem">${(d.hieu_ung || []).map(e => { const a = String(e).split(/\s+/); return esc(EFF_VI[a[0]] || a[0]) + " " + (ROMAN[+a[1] || 0] || "") + " " + (a[2] || "") + "s"; }).join("<br>")}</td></tr>`).join("")}</tbody></table>` : "Đang tắt.";
   const sv = info.specialty || [];
   $("#dacsan").innerHTML = sv.length ? `<table><tbody>${sv.map(v => `<tr><td><b>${esc(v.ten)}</b><div class="dim" style="font-size:.8rem">${esc(v.dac_san)}</div></td><td>${(v.cay || []).map(esc).join(", ")}</td><td>${v.chu ? esc(v.chu) + ` <span class="dim">(${v.so_thi_tran} thị trấn)</span>` : '<span class="dim">chưa có chủ</span>'}</td></tr>`).join("")}</tbody></table>` : "Đang tắt hoặc chưa tính (vài phút sau khi server bật).";
+  const kb = info.treasure || {};
+  $("#kbTiers").innerHTML = kb.enabled ? `<p class="dim" style="font-size:.85rem">Câu cá ${kb.fish}% · hạ quái ${kb.mob}% · tối đa ${kb.day} bản đồ/ngày</p>${(kb.tiers || []).map(t => `<div><b>${esc(t.ten)}</b> <span class="dim">· ${t.linh} lính canh${t.bao ? " · báo cả server" : ""}</span></div>`).join("")}` : "Đang tắt.";
+  const tn = info.wanted || {};
+  $("#tnList").innerHTML = tn.enabled ? `<p class="dim" style="font-size:.85rem">Quái có thể bị truy nã: ${(tn.targets || []).map(esc).join(", ")}</p>` : "Đang tắt.";
+  const ta = info.thaiap || {};
+  $("#taInfo").innerHTML = ta.enabled ? `<p class="dim" style="font-size:.85rem">Cạnh ${(ta.sizes || []).join(" → ")} khối · giá ${(ta.prices || []).map(x => nf.format(x)).join(" → ")} xu</p>${(ta.top || []).length ? `<table><tbody>${ta.top.map((t, i) => `<tr><td>${i + 1}</td><td><b>${esc(t.ten)}</b><div class="dim" style="font-size:.8rem">${esc(t.chu || "")} · ${t.canh}×${t.canh}</div></td><td>❤ ${t.thich}</td></tr>`).join("")}</tbody></table>` : '<p class="dim">Chưa ai mua.</p>'}` : "Đang tắt.";
   const ldt = (info.mercenary || {}).list || [];
   $("#ldtList").innerHTML = ldt.length ? `<table><tbody>${ldt.map(m => `<tr><td><b>${esc(m.ten)}</b></td><td>${nf.format(m.gia || 0)} xu</td><td class="dim">${m.xong || 0} hợp đồng đã làm</td></tr>`).join("")}</tbody></table>` : "Chưa ai đăng ký.";
   const tts = info.achievements || [];

@@ -435,6 +435,12 @@ def profile(perms):
         out["thanhtich"] = [{"ten": g.get("name", k), "mo_ta": g.get("desc", ""), "co": float(dem.get(g.get("type"), 0) or 0),
                              "can": float(g.get("target", 1) or 1), "xong": k in xong, "danh_hieu": any(str(r).startswith("danhhieu") for r in g.get("rewards") or [])}
                             for k, g in (ach.get("list") or {}).items()]
+    ta = ((safe_yaml(DMM / "thaiap.yml").get("dat") or {}).get(uuid)) if (core.get("thai-ap") or {}).get("enabled") else None
+    if ta:
+        sizes = (core.get("thai-ap") or {}).get("sizes") or [50, 70, 90]
+        lv = int(ta.get("cap", 0) or 0)
+        out["thaiap"] = {"ten": ta.get("ten"), "canh": sizes[min(lv, len(sizes) - 1)], "thich": len(ta.get("thich") or []),
+                         "moi": len(ta.get("tin") or []), "to_nhat": lv + 1 >= len(sizes)}
     ldt = safe_yaml(DMM / "linhdanhthue.yml")
     reg = (ldt.get("dangky") or {}).get(uuid)
     hd = (ldt.get("hopdong") or {}).get(uuid)

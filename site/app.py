@@ -430,6 +430,15 @@ def api_info():
         "achievements": [{"ten": g.get("name", k), "mo_ta": g.get("desc", ""), "danh_hieu": strip_colors(get(core, "leaderboard.titles." + next(
                               (str(r).split()[1] for r in g.get("rewards") or [] if str(r).startswith("danhhieu ")), ""), "") or "")}
                          for k, g in (get(core, "achievements.list", {}) or {}).items()] if get(core, "achievements.enabled", False) else [],
+        "treasure": {"enabled": bool(get(core, "treasure.enabled", False)), "fish": get(core, "treasure.fish-chance", 3), "mob": get(core, "treasure.mob-chance", 0.5),
+                     "day": get(core, "treasure.max-per-day", 5),
+                     "tiers": [{"ten": strip_colors(t.get("name", k)).strip(), "linh": t.get("guards", 0), "bao": bool(t.get("broadcast"))}
+                               for k, t in (get(core, "treasure.tiers", {}) or {}).items()]},
+        "wanted": {"enabled": bool(get(core, "wanted.enabled", False)), "every": get(core, "wanted.interval-minutes", 45),
+                   "expire": get(core, "wanted.expire-minutes", 60), "targets": [strip_colors(str(t.get("name", ""))) for t in (get(core, "wanted.targets", []) or [])]},
+        "thaiap": {"enabled": bool(get(core, "thai-ap.enabled", False)), "sizes": get(core, "thai-ap.sizes", [50, 70, 90]),
+                   "prices": get(core, "thai-ap.prices", [5000, 8000, 15000]), "kitchen": get(core, "thai-ap.kitchen-bonus", 50),
+                   **core_json("thaiap.json")},
         "lowpop": {k: get(core, f"low-population.{p}", d) for k, p, d in [("enabled", "enabled", False), ("threshold", "threshold", 15),
                    ("quest", "quest-scale", 0.6), ("capture", "capture-bonus", 10), ("absent", "absent-defender-attack-percent", 50)]},
         "balance": {"enabled": bool(get(core, "war-balance.enabled", False)),

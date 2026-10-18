@@ -403,6 +403,8 @@ leaderboard:
     batbai: "&6[Bất Bại]"
     daubep: "&e[Đầu Bếp]"
     laolang: "&7[Lão Làng]"
+    sankhobau: "&6[Săn Kho Báu]"
+    sandau: "&4[Kẻ Săn Đầu]"
     luukhach: "&7[Lữ Khách]"
     nghenhan: "&d[Nghệ Nhân]"
     phuthuong: "&6[Phú Thương]"
@@ -617,6 +619,44 @@ seasons:
       supply-multiplier: 1.5
       capture-bonus: {bay: 5, nhay: 10}
 
+# Bản đồ kho báu (/khobau): rơi khi câu cá / hạ quái; cầm để dò nóng-lạnh, tới nơi Shift để đào, hạ lính canh để mở rương.
+treasure:
+  enabled: true
+  fish-chance: 3          # % mỗi con cá câu được
+  mob-chance: 0.5         # % mỗi quái thù địch bị hạ
+  max-per-day: 5          # tối đa bản đồ mỗi người mỗi ngày (từ câu cá + quái)
+  dig-radius: 4           # đứng trong ngần này khối quanh chỗ kho báu mới đào được
+  guard-minutes: 5        # phải hạ hết lính canh trong ngần này phút (đứng trong 40 khối), không thì trả lại bản đồ
+  tiers:
+    thuong: {name: "&fKho báu thường", weight: 70, guards: 2, guard-types: [ZOMBIE, SKELETON], guard-health: 1.5, rewards: ["xu 300", "vat IRON_INGOT 8"]}
+    hiem: {name: "&bKho báu hiếm", weight: 25, guards: 3, guard-types: [VINDICATOR, SKELETON, SPIDER], guard-health: 2, rewards: ["xu 1000", "vat DIAMOND 2", "vat GOLDEN_APPLE 1"]}
+    huyenthoai: {name: "&6&lKho báu huyền thoại", weight: 5, guards: 4, guard-types: [WITHER_SKELETON, VINDICATOR, EVOKER], guard-health: 3, broadcast: true, rewards: ["xu 5000", "vat DIAMOND 6", "vat ENCHANTED_GOLDEN_APPLE 1", "lenh buabatpet give {player} 2"]}
+
+# Bảng truy nã quái (/truyna): mỗi interval-minutes phút dán lệnh truy nã một quái mạnh ở vùng /tpr đã mở; ai gây nhiều sát thương nhất nhận thưởng.
+wanted:
+  enabled: true
+  interval-minutes: 45
+  expire-minutes: 60
+  max-active: 2
+  spawn-distance: 64      # quái chỉ xuất hiện khi có người tới gần ngần này khối
+  targets:
+    - {name: "Đồ Tể Rừng Già", type: VINDICATOR, health: 120, damage: 1.5, armor: iron, rewards: ["xu 1500", "vat EMERALD 8"]}
+    - {name: "Xác Sống Đầu Đàn", type: ZOMBIE, health: 150, damage: 2, armor: diamond, rewards: ["xu 1500", "vat IRON_INGOT 16"]}
+    - {name: "Cung Thủ Bóng Đêm", type: SKELETON, health: 100, damage: 2, armor: iron, rewards: ["xu 1500", "vat ARROW 64"]}
+    - {name: "Phù Thuỷ Đầm Lầy", type: WITCH, health: 120, damage: 1, armor: none, rewards: ["xu 1500", "vat EXPERIENCE_BOTTLE 16"]}
+    - {name: "Kỵ Sĩ Địa Ngục", type: WITHER_SKELETON, health: 200, damage: 1.5, armor: netherite, rewards: ["xu 3000", "vat DIAMOND 3", "lenh buabatpet give {player} 1"]}
+    - {name: "Kẻ Tàn Phá", type: RAVAGER, health: 250, damage: 1.2, armor: none, rewards: ["xu 4000", "vat DIAMOND 4"]}
+
+# Thái Ấp (/thaiap): đất riêng an toàn trong thế giới phẳng riêng (không PvP, không quái, không quặng). sizes: cạnh theo cấp, prices: giá mua + mở rộng.
+thai-ap:
+  enabled: true
+  world: thaiap
+  sizes: [50, 70, 90]
+  prices: [5000, 8000, 15000]
+  cell: 110               # khoảng cách tâm các mảnh (phần thừa là đường đi chung)
+  max-trusted: 5          # số người được mời cùng xây
+  kitchen-bonus: 50       # % kéo dài hiệu ứng món /nauan nấu trong Thái Ấp của mình
+
 # Lính đánh thuê (/linhdanhthue): người không thuộc nước nào đăng ký kèm giá, vua/tướng thuê bằng ngân khố nước (Trang Cài đặt > Chiến tranh)
 mercenary:
   enabled: true
@@ -659,6 +699,10 @@ achievements:
     kl1: {name: "Hậu cần", desc: "Nộp 1000 điểm vào kho lương", type: kholuong, target: 1000, rewards: ["xu 1000"]}
     gc1: {name: "Người quen", desc: "Chơi thật 10 giờ", type: giochoi, target: 10, rewards: ["xu 500"]}
     gc2: {name: "Lão Làng", desc: "Chơi thật 100 giờ", type: giochoi, target: 100, rewards: ["xu 3000", "danhhieu laolang"]}
+    kb1: {name: "Thợ săn kho báu", desc: "Mở 5 rương kho báu", type: khobau, target: 5, rewards: ["xu 1500"]}
+    kb2: {name: "Đại Phú Kho Báu", desc: "Mở 30 rương kho báu", type: khobau, target: 30, rewards: ["xu 5000", "danhhieu sankhobau"]}
+    tn1: {name: "Thợ săn truy nã", desc: "Hạ 3 quái bị truy nã", type: truyna, target: 3, rewards: ["xu 1500"]}
+    tn2: {name: "Kẻ Săn Đầu", desc: "Hạ 20 quái bị truy nã", type: truyna, target: 20, rewards: ["xu 5000", "danhhieu sandau"]}
 
 # Cân bằng chiến tranh (/canbang): chống "nước to nuốt hết". Trang Cài đặt > Chiến tranh > Cân bằng chiến tranh
 war-balance:

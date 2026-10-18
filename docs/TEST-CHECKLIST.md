@@ -62,8 +62,17 @@ bật công tắc vây thành, rút lịch phiên còn vài phút (Cài đặt �
 - [ ] `/thanhtich`: đếm đúng (câu cá, loài cá, quái, vùng, cấp pet, nấu món, nộp kho lương); đạt mốc nhận quà, mốc có danh hiệu báo cả server.
 - [ ] Server dưới 15 người chơi/7 ngày: chỉ tiêu `/nhiemvu` còn 60%, `/bxhpet tyle` +10%.
 
+## 4c. Kho báu, truy nã, Thái Ấp
+- [ ] `/khobau give <tên>` → cầm bản đồ: lạnh/ấm/nóng; tới nơi Shift: lính canh ra; hạ hết → quà; rời xa/hết 5 phút → trả bản đồ.
+- [ ] Câu cá / hạ quái thỉnh thoảng rơi bản đồ (tối đa 5/ngày). Kho báu huyền thoại báo cả server.
+- [ ] `/truyna`: sau ~2 phút có lệnh đầu; tới gần thì quái phát sáng xuất hiện; người đánh nhiều nhất (kể cả pet) nhận thưởng; hết 60 phút thì trốn.
+- [ ] `/thaiap mua` (5000 xu) → dịch tới mảnh 50×50 có viền lối mòn; người khác không phá/đặt/mở rương/đánh thú được; không PvP; không quái sinh ra.
+- [ ] `/thaiap moi <tên>` → người đó xây được; `/thaiap ghe`, `/thaiap thich`, `/thaiap top`; `/thaiap morong` → viền to ra.
+- [ ] Nấu `/nauan` trong Thái Ấp của mình: món có dòng "bếp Thái Ấp", ăn được hiệu ứng lâu hơn 50%.
+- [ ] Không lập được thị trấn ở thế giới thaiap; pet MyPet gọi ra được ở đó.
+
 ## 5. Quảng trường Vinh danh (sảnh)
-- [ ] Chọn chỗ trống ở sảnh (map sakura). Đứng, quay mặt về phía người xem: `/vinhdanh dat moinhat tieude`, rồi `bachu`, `chienthan`, `phuho`,
+- [ ] (CHƯA CẦN, làm khi gần mở server) Chọn chỗ trống ở sảnh (map sakura). Đứng, quay mặt về phía người xem: `/vinhdanh dat moinhat tieude`, rồi `bachu`, `chienthan`, `phuho`,
       `kientrucsu`, `dautruong`, `pet` ở các chỗ khác. Bảng chữ nổi + đầu người chơi đúng hướng, không đè nhau.
 - [ ] `/vinhdanh xoa` bỏ đúng điểm gần nhất; `/vinhdanh tp` tới quảng trường.
 - [ ] Bang Hội Chiến `/vinhdanh tam` → sảnh tự cập nhật trong 1 phút. Web mục Vinh danh khớp.

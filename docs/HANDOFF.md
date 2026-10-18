@@ -309,7 +309,7 @@
   PartyManager.getDungeonEntryMemberIds, lệnh dungeontp vẫn còn → thay jar, khởi động lại. Lỗi NoClassDefFoundError chỉ lúc TẮT bản cũ
   (jar bị thay khi đang chạy), sau khi bật: 0 lỗi, 18/18 gói. Bản cũ lưu ở scratchpad phiên (không giữ lâu): muốn lùi thì tải 10.9.8 từ Modrinth.
 - /em language vietnamese: translations/vietnamese.csv (35.303 dòng, 50 chưa dịch). config.yml language: vietnamese.
-- Dọn dẹp bản ẩn: Thánh Đường Bóng Tối tự giấu tại 12723 63 -1229 (xem /dungeon ds).
+- Dungeon ẩn: Thánh Đường Bóng Tối tự giấu tại 12723 63 -1229 (xem /dungeon ds).
 
 ### 18/10 tối: Chìa khoá tầng thật + NOTE dungeon (người dùng: "cho vào note")
 - Đã cài 11 gói EliteMobs miễn phí (18/18 dungeon). Primis, Oasis PHẢI MUA (ô vàng chỉ là "bấm để kiểm tra quyền").

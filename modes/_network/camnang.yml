@@ -158,7 +158,7 @@ plugins:
   - name: LuckPerms
     jar: LuckPerms
     kind: Quản lý
-    purpose: Quyền và nhóm (role, rank donate), dùng chung toàn network (lưu MariaDB, đồng bộ Redis). Cài cả ở PROXY (18/10, LuckPerms-Velocity 5.5.71, proxy/config/plugins/luckperms/config.yml, server context "proxy") để plugin proxy (SkinsRestorer) đọc quyền rank.
+    purpose: "Quyền và nhóm (role, rank donate), dùng chung toàn network (lưu MariaDB, đồng bộ Redis). Cài cả ở PROXY (18/10, LuckPerms-Velocity 5.5.71, proxy/config/plugins/luckperms/config.yml, server context \"proxy\") để plugin proxy (SkinsRestorer) đọc quyền rank. LƯU Ý mc-proxy: thêm plugin vào PLUGINS hoặc thêm biến CFG_ thì phải \"docker compose up -d proxy\" (restart không nhận biến mới); file trong proxy/config có ${CFG_...} chỉ được điền khi chép sang data/proxy, mà file đích đã có và mới hơn thì KHÔNG chép lại → lỡ chép thiếu biến thì xoá file trong data/proxy/plugins/... rồi up -d --force-recreate proxy."
     admin:
       - ["/lp user <tên> info", "Xem nhóm, quyền của người chơi"]
       - ["/lp user <tên> parent add <nhóm>", "Thêm vào nhóm (helper, mod, admin, builder)"]

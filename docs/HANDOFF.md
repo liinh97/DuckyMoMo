@@ -311,6 +311,18 @@
   và "enchantio:<tên>" (NamespacedKey.fromString).
 - Phác đã đưa: Cuốc Thợ Mỏ (VeinMiner + AutoSmelt), Rìu Tiều Phu (TreeFeller), Cuốc Nhà Nông (Harvester/Tiller/Planter),
   Cuốc Kinh Nghiệm (Experience + Haste), Telepathy thay Dây Hút Đồ.
+- 19/10 người dùng chụp ĐỦ menu UniMC (chỉ lấy LOGIC "hiệu ứng + độ bền + thời hạn", không làm y hệt). 20 món + cách làm bên mình:
+  Khoan Đào (3x3, CE Blast) · Đào Hầm (5x5, tự viết; chặn vùng vây) · Xẻng Đất (xúc 3x3, tự viết: Blast chỉ cho cuốc chim) ·
+  Rìu Tiều (cả cây, CE TreeFeller) · Tự Nung (quặng → thỏi 100%, tự viết; CE AutoSmelt chỉ có tỉ lệ) · Đa Năng (3 trong 1, tự đổi
+  cuốc/rìu/xẻng theo khối) · Gặt Lúa (thu 3x3 + gieo lại: CE Harvester + tự viết gieo) · Hút Đồ (bán kính 16, tự viết; không hút đồ
+  người khác/quanh chỗ chết) · Rìu Bán (đánh vào rương là bán cả rương theo giá /sell, tự viết) · Túi Hư (CÓ) · Nước Nguồn (CÓ) ·
+  Dung Nham vô tận (tự viết; chỉ đổ ở đất mình/đất hoang, không vùng vây) · Bắt Thú (trứng sinh vật; đề xuất chỉ thú hiền, tránh va
+  hệ bắt pet MyPet) · Cờ Lê (lấy lồng quái 100%; ảnh hưởng kinh tế, đề xuất độ bền thấp + giá cao hoặc bỏ) · Móc Bay (móc câu kéo bay;
+  chặn vùng vây) · Khiên Thần (phản đòn, giảm 50% sát thương; tự viết) · Cung Máu (CÓ, chỉnh +1 tim) · Nỏ Tỏa (3 mũi: Multishot gốc /
+  CE MultiArrow) · Búa Tạ (CÓ: Wind Burst + Density) · Kiếm Nhật (lướt chém xuyên; tự viết hoặc giáo + Lunge) · Rìu Chiến (chí mạng +
+  chảy máu; tự viết). Món đánh nhau: không tác dụng trong vùng vây (cờ pvp sẵn có).
+- Cân nhắc: CE mở cho người chơi qua /ce (sách vĩnh viễn) → nếu lấy được Blast/TreeFeller… vĩnh viễn thì món Xưởng có hạn mất giá;
+  chọn: tắt các hiệu ứng công cụ đó trong sách CE, hoặc để CE đắt/hiếm. Chưa kiểm tra /ce đang bán gì.
 - Còn hỏi người dùng: (1) danh sách/ảnh phù phép của UniMC để tìm tương đương; (2) giữ lượt dùng + hạn 7 ngày hay vĩnh viễn;
   (3) bỏ hết hay giữ vài món tự chế cũ.
 

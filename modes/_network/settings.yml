@@ -164,3 +164,5 @@ tier1_skins: []
 tier2_skins: []
 tier3_skins: []
 tier4_skins: []
+authme_session_on: true
+authme_session_min: 1440

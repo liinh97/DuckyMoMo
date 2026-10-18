@@ -3,7 +3,7 @@
 #   1. Cổng publish "chết" (container vẫn Up nhưng Windows không kết nối được): khởi động lại đúng container đó.
 #      Áp dụng cho MỌI dự án đang chạy (DuckyMoMo, tram6, be_goc6...): cổng 80 chết là goc6 (qua cloudflared) cũng chết.
 #   2. Thư mục bind mount bị "treo" (container thấy thư mục cũ/rỗng): tạo lại đúng container đó bằng compose của dự án.
-#   3. Proxy Minecraft vừa khởi động lại/tạo lại thì tạo lại playit (network_mode: service:proxy).
+#   3. Proxy Minecraft vừa khởi động lại/tạo lại thì tạo lại relay (cổng VPS, network_mode: service:proxy). playit đã bỏ 19/10.
 # Không khởi động lại server Minecraft đang có người chơi (chỉ ghi cảnh báo).
 #
 # Dùng:  ./ops/tu-sua-sau-khoi-dong.sh            sửa
@@ -49,7 +49,7 @@ FIXED=()
 PROXY_TOUCHED=0
 
 # Service compose đang có người chơi không (return 0 = có). Proxy: có người ở bất kỳ server nào là bận
-# (khởi động lại proxy là văng hết, kể cả người vào qua playit).
+# (khởi động lại proxy là văng hết).
 mc_busy() {
   local svc=$1 s out
   if [ "$svc" = proxy ]; then
@@ -154,8 +154,8 @@ for c in $(docker ps --format '{{.Names}}'); do
 done
 [ $STALE = 0 ] && log "  Đã thử $TESTED thư mục gắn, không có thư mục nào bị treo."
 
-# ---------------------------------------------------------------- 3. playit + relay (cổng VPS) theo proxy
-for t in playit relay; do
+# ---------------------------------------------------------------- 3. relay (cổng VPS) theo proxy
+for t in relay; do
   docker ps -a --format '{{.Names}}' | grep -qx "duckymomo-$t-1" || continue
   state=$(docker inspect -f '{{.State.Running}}' "duckymomo-$t-1" 2>/dev/null)
   # relay: wg0 phải còn trong mạng proxy (proxy khởi động lại là mất)

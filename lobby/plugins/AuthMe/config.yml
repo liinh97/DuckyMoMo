@@ -20,8 +20,13 @@ settings:
     perPlayerLocale: false
     # Người có bản quyền gõ /premium để lần sau vào thẳng, không cần mật khẩu (proxy xác minh với Mojang)
     enablePremium: true
+    # Phiên đăng nhập (19/10): đăng nhập rồi thì vào lại từ CÙNG IP trong timeout phút khỏi gõ mật khẩu; đổi IP là phải đăng nhập lại.
+    # Chỉ an toàn khi server thấy IP thật (cổng VPS, playit đã bỏ). Sửa ở Cài đặt › Toàn mạng › Đăng nhập.
+    sessions:
+        enabled: true
+        timeout: 1440
     restrictions:
-        # 0 = không giới hạn. Chơi trong mạng nhà (và qua playit.gg) nhiều người chung 1 IP,
+        # 0 = không giới hạn. Chơi trong mạng nhà nhiều người chung 1 IP,
         # để 1 như mặc định thì người thứ hai không đăng ký được. Xem lại khi mở công khai.
         maxRegPerIp: 0
         # Cho phép dấu chấm ở đầu: tiền tố tên người chơi Bedrock của Floodgate (ví dụ .TenNguoiChoi)

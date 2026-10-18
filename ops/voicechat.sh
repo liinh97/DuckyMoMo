@@ -4,7 +4,7 @@
 #   ./ops/voicechat.sh vps      mở UDP 24454 trên VPS Vinahost (DNAT + ufw), KHÔNG khởi động lại WireGuard (người đang chơi không bị văng)
 # Server con (lobby, banghoi-1, practice-1) tự tải plugin qua MODRINTH_PROJECTS: simple-voice-chat.
 # Sau đó (kiểm tra không ai online, khởi động lại proxy làm MỌI người văng):
-#   docker compose up -d --no-deps proxy && docker compose --profile tunnel up -d --build --force-recreate playit relay   (relay có luật mới cho UDP 24454)
+#   docker compose up -d --no-deps proxy && docker compose --profile tunnel up -d --build --force-recreate relay   (relay có luật mới cho UDP 24454)
 #   docker compose up -d --no-deps lobby banghoi-1 practice-1
 set -euo pipefail
 cd "$(dirname "$0")/.."

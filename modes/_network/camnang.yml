@@ -83,7 +83,7 @@ guide:
     items:
       - ["Máy tính (Java)", "mc.goc6.io.vn (không cần cổng) — bản 1.13 tới mới nhất"]
       - ["Điện thoại (Bedrock)", "mc.goc6.io.vn cổng 19132 (mặc định)"]
-      - ["Dự phòng (playit, khi VPS hỏng)", "Java pgsql-youths.tun.ply.gg · Bedrock pgsql-mississauga.tun.ply.gg cổng 21185"]
+      - ["playit (đã bỏ 19/10)", "Chủ server bỏ playit: mọi người vào qua cổng VPS (giữ IP thật). Container playit + playit-watchdog đã xoá, tunnel/compose.yaml đã gỡ. Muốn dùng lại: lấy tunnel/ từ git (trước commit bỏ playit) và TẮT phiên đăng nhập AuthMe (playit làm mọi người chung 1 IP)."]
 
 plugins:
   # ---------------------------------------------------------------- Đăng nhập & kết nối

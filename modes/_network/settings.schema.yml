@@ -107,6 +107,15 @@ groups:
       - { key: dqr_minutes, label: Mã QR hết hạn sau (phút), type: int, min: 1, max: 60, servers: [lobby, banghoi-1, practice-1], file: plugins/DuckyMoMoCore/config.yml, path: donate-qr.minutes }
       - { key: dqr_web, label: Link trang tài khoản (khi không tạo được QR), type: text, servers: [lobby, banghoi-1, practice-1], file: plugins/DuckyMoMoCore/config.yml, path: donate-qr.web }
 
+  - title: Đăng nhập (AuthMe)
+    category: Sảnh
+    description: "Phiên đăng nhập: đăng nhập rồi thì vào lại từ cùng IP trong thời hạn khỏi gõ mật khẩu."
+    info: "Phiên hết khi quá hạn hoặc khi IP người chơi đổi (đổi mạng, dùng 4G…).\nChỉ an toàn khi server thấy IP thật của người chơi: mọi người vào qua cổng VPS (playit đã bỏ 19/10). Nếu sau này mở lại đường vào chung một IP (như playit) thì PHẢI tắt, không người khác đặt trùng tên sẽ vào được tài khoản.\nNgười có Minecraft bản quyền còn có thể gõ /premium để lần sau vào thẳng, không cần mật khẩu (proxy hỏi Mojang).\nLưu xong: có hiệu lực ngay (authme reload)."
+    apply: [authme reload]
+    settings:
+      - { key: authme_session_on, label: Bật phiên đăng nhập, type: select, servers: [lobby], file: plugins/AuthMe/config.yml, path: settings.sessions.enabled, options: [ { value: true, label: Bật }, { value: false, label: Tắt } ] }
+      - { key: authme_session_min, label: Thời hạn phiên (phút), type: int, min: 1, max: 43200, servers: [lobby], file: plugins/AuthMe/config.yml, path: settings.sessions.timeout, note: "1440 = 1 ngày, 10080 = 7 ngày" }
+
   - title: Sảnh (lobby)
     category: Sảnh
     apply: [dmm reload]

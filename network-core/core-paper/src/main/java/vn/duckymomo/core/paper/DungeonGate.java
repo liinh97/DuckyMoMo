@@ -1055,6 +1055,35 @@ final class DungeonGate implements Listener {
                         + " &7(người chơi tới trong " + hiddenRadius + " khối là tìm ra" + (d.nightOnly() ? ", chỉ ban đêm" : "") + ")"));
                 return true;
             }
+            case "ds" -> {
+                if (!s.hasPermission("duckymomo.admin")) {
+                    list(s);
+                    return true;
+                }
+                s.sendMessage(c("&5&l━━ Chỗ giấu dungeon ẩn (chỉ admin thấy) ━━"));
+                for (Dg h : dungeons.values()) {
+                    if (!h.type().equals("hidden")) {
+                        continue;
+                    }
+                    Location l = spot(h.id());
+                    if (l == null) {
+                        s.sendMessage(c("  &d" + h.name() + " &8— &cchưa có chỗ &7(/dungeon datan " + h.id() + " ngaunhien)"));
+                        continue;
+                    }
+                    String xyz = l.getBlockX() + " " + l.getBlockY() + " " + l.getBlockZ();
+                    int n = 0;
+                    ConfigurationSection tim = data.getConfigurationSection("tim");
+                    if (tim != null) {
+                        for (String k : tim.getKeys(false)) {
+                            n += data.getStringList("tim." + k).contains(h.id()) ? 1 : 0;
+                        }
+                    }
+                    s.sendMessage(c("  &d" + h.name() + " &8— &f" + l.getWorld().getName() + " " + xyz + " &7· " + n + " người đã tìm ra" + (h.nightOnly() ? " · chỉ lộ ban đêm" : ""))
+                            .append(c(" &a[Tới]").clickEvent(ClickEvent.runCommand("/minecraft:tp @s " + xyz))
+                                    .hoverEvent(HoverEvent.showText(c("&7Dịch chuyển tới " + xyz)))));
+                }
+                return true;
+            }
             case "cho" -> {
                 if (!s.hasPermission("duckymomo.admin") || args.length < 3) {
                     s.sendMessage("/dungeon cho <mã> <người> [số]  (vé cá nhân, Vé Vận Mệnh, Mảnh Chìa, Chìa khoá tầng)");

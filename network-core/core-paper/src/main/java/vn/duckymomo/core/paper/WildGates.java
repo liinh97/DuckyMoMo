@@ -1000,9 +1000,15 @@ final class WildGates implements Listener {
                 for (String gid : gateIds()) {
                     Location c = center(gid);
                     Town t = owner(gid);
-                    s.sendMessage(gid + ": " + (c == null ? "?" : c.getBlockX() + " " + c.getBlockY() + " " + c.getBlockZ()) + " · " + data.getString(g(gid) + "kieu")
+                    String xyz = c == null ? "?" : c.getBlockX() + " " + c.getBlockY() + " " + c.getBlockZ();
+                    Component line = c("&d" + gid + " &8— &f" + xyz + " &7· " + data.getString(g(gid) + "kieu") + " · ★" + data.getInt(g(gid) + "bac", 1)
                             + " · " + data.getString(g(gid) + "dungeon") + " · " + (found(gid) ? "tìm bởi " + data.getString(g(gid) + "tim-boi") : "chưa ai tìm")
                             + (t == null ? "" : " · chủ " + t.getName()));
+                    if (c != null) {
+                        line = line.append(c(" &a[Tới]").clickEvent(ClickEvent.runCommand("/minecraft:tp @s " + xyz))
+                                .hoverEvent(HoverEvent.showText(c("&7Dịch chuyển tới " + xyz))));
+                    }
+                    s.sendMessage(line);
                 }
                 return true;
             }

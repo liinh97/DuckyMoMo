@@ -785,7 +785,7 @@ groups:
     info: "Là gì: tự đếm, không cần bấm nhận. Mốc khó có danh hiệu (giữ qua các mùa) và báo cả server.\nSửa mốc, chỉ tiêu, quà: achievements.list trong plugins/DuckyMoMoCore/config.yml (type: khampha, cauca, loaica, quai, petcap, batpet, dautruong, nauan, kholuong, giochoi; quà: xu, vat, do, lenh, danhhieu <mã>, petexp).\nNgười chơi xem: /thanhtich, trang tài khoản trên web.\nLưu xong: có hiệu lực ngay (dmm reload)."
     apply: [dmm reload]
     settings:
-      - { key: tt_on, label: Bật sổ thành tích, type: select, file: plugins/DuckyMoMoCore/config.yml, path: achievements.enabled, options: [ { value: true, label: Bật }, { value: false, label: Tắt } ] }
+      - { key: ach_on, label: Bật sổ thành tích, type: select, file: plugins/DuckyMoMoCore/config.yml, path: achievements.enabled, options: [ { value: true, label: Bật }, { value: false, label: Tắt } ] }
 
   - title: Sự kiện mùa (Lũ, Hạn hán)
     category: Thế giới

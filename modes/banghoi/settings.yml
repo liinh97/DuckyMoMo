@@ -998,7 +998,7 @@ kh_g2: 800000
 kh_pioneer: 10
 kh_pioneer_rw: [xu 2000, danhhieu tienphong]
 kh_g3: 2000000
-tt_on: true
+ach_on: true
 tt_min: 100
 tt_max: 100000
 tt_fee: 5

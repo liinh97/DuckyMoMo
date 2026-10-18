@@ -925,28 +925,12 @@ groups:
 
   - title: Xưởng chế tạo (/xuong)
     category: Shop
-    description: "Đồ đặc biệt chế bằng xu + nguyên liệu, có lượt dùng và thời hạn, hết là biến mất (rút tiền khỏi kinh tế). Nguyên liệu, phù phép, tính năng: plugins/DuckyMoMoCore/config.yml (workshop.items). Món đã chế giữ lượt/hạn lúc chế."
+    description: "Đồ đặc biệt theo logic HIỆU ỨNG + ĐỘ BỀN + THỜI HẠN, chế bằng xu + nguyên liệu xếp trên bàn chế 3×3. Hết độ bền hoặc hết hạn là biến mất (rút tiền và tài nguyên khỏi kinh tế)."
+    info: "Mỗi món: tên, vật phẩm, hiệu ứng (chọn trong danh sách) + chỉ số, độ bền (số khối đào / đòn đánh / lần dùng; -1 = độ bền gốc của Minecraft), thời hạn (ngày), giá xu, 9 ô nguyên liệu bàn chế 3×3, phù phép.\nPhù phép ghi dạng: efficiency:4, sharpness:3 (gốc), enchantio:telepathy:1 (Enchantio), ce:Blast:1 (CrazyEnchantments).\n\"Mất tác dụng khi công thành\": món không có tác dụng trong vùng vây khi đang đánh (nên bật cho món đánh nhau, đào hầm, móc bay, dung nham).\nMón đã chế giữ độ bền / hạn lúc chế; đổi hiệu ứng thì món cũ cũng đổi theo (theo mã món).\nCờ Lê (lấy lồng quái) ảnh hưởng kinh tế: mặc định tắt.\nLưu xong: có hiệu lực ngay (dmm reload)."
     apply: [dmm reload]
     settings:
-      - { key: xw_tui_hu_on, label: "Túi Hư: bán", type: select, file: plugins/DuckyMoMoCore/config.yml, path: workshop.items.tui_hu.enabled, options: [ { value: true, label: Có }, { value: false, label: Ẩn } ] }
-      - { key: xw_tui_hu_cost, label: "Túi Hư: giá (xu)", type: number, min: 0, file: plugins/DuckyMoMoCore/config.yml, path: workshop.items.tui_hu.cost }
-      - { key: xw_tui_hu_days, label: "Túi Hư: dùng được (ngày)", type: int, min: 1, max: 60, file: plugins/DuckyMoMoCore/config.yml, path: workshop.items.tui_hu.days }
-      - { key: xw_tui_hu_uses, label: "Túi Hư: số lượt", type: int, min: 1, max: 1000000, file: plugins/DuckyMoMoCore/config.yml, path: workshop.items.tui_hu.uses }
-      - { key: xw_nuoc_on, label: "Nước Nguồn: bán", type: select, file: plugins/DuckyMoMoCore/config.yml, path: workshop.items.nuoc.enabled, options: [ { value: true, label: Có }, { value: false, label: Ẩn } ] }
-      - { key: xw_nuoc_cost, label: "Nước Nguồn: giá (xu)", type: number, min: 0, file: plugins/DuckyMoMoCore/config.yml, path: workshop.items.nuoc.cost }
-      - { key: xw_nuoc_days, label: "Nước Nguồn: dùng được (ngày)", type: int, min: 1, max: 60, file: plugins/DuckyMoMoCore/config.yml, path: workshop.items.nuoc.days }
-      - { key: xw_nuoc_uses, label: "Nước Nguồn: số lượt", type: int, min: 1, max: 1000000, file: plugins/DuckyMoMoCore/config.yml, path: workshop.items.nuoc.uses }
-      - { key: xw_hut_do_on, label: "Dây Hút Đồ: bán", type: select, file: plugins/DuckyMoMoCore/config.yml, path: workshop.items.hut_do.enabled, options: [ { value: true, label: Có }, { value: false, label: Ẩn } ] }
-      - { key: xw_hut_do_cost, label: "Dây Hút Đồ: giá (xu)", type: number, min: 0, file: plugins/DuckyMoMoCore/config.yml, path: workshop.items.hut_do.cost }
-      - { key: xw_hut_do_days, label: "Dây Hút Đồ: dùng được (ngày)", type: int, min: 1, max: 60, file: plugins/DuckyMoMoCore/config.yml, path: workshop.items.hut_do.days }
-      - { key: xw_hut_do_uses, label: "Dây Hút Đồ: số lượt", type: int, min: 1, max: 1000000, file: plugins/DuckyMoMoCore/config.yml, path: workshop.items.hut_do.uses }
-      - { key: xw_cung_mau_on, label: "Cung Máu: bán", type: select, file: plugins/DuckyMoMoCore/config.yml, path: workshop.items.cung_mau.enabled, options: [ { value: true, label: Có }, { value: false, label: Ẩn } ] }
-      - { key: xw_cung_mau_cost, label: "Cung Máu: giá (xu)", type: number, min: 0, file: plugins/DuckyMoMoCore/config.yml, path: workshop.items.cung_mau.cost }
-      - { key: xw_cung_mau_days, label: "Cung Máu: dùng được (ngày)", type: int, min: 1, max: 60, file: plugins/DuckyMoMoCore/config.yml, path: workshop.items.cung_mau.days }
-      - { key: xw_cung_mau_uses, label: "Cung Máu: số lượt", type: int, min: 1, max: 1000000, file: plugins/DuckyMoMoCore/config.yml, path: workshop.items.cung_mau.uses }
-      - { key: xw_bua_ta_on, label: "Búa Tạ: bán", type: select, file: plugins/DuckyMoMoCore/config.yml, path: workshop.items.bua_ta.enabled, options: [ { value: true, label: Có }, { value: false, label: Ẩn } ] }
-      - { key: xw_bua_ta_cost, label: "Búa Tạ: giá (xu)", type: number, min: 0, file: plugins/DuckyMoMoCore/config.yml, path: workshop.items.bua_ta.cost }
-      - { key: xw_bua_ta_days, label: "Búa Tạ: dùng được (ngày)", type: int, min: 1, max: 60, file: plugins/DuckyMoMoCore/config.yml, path: workshop.items.bua_ta.days }
+      - { key: xw_on, label: Bật Xưởng chế tạo, type: select, file: plugins/DuckyMoMoCore/config.yml, path: workshop.enabled, options: [ { value: true, label: Bật }, { value: false, label: Tắt } ] }
+      - { key: xw_items, label: Các món, type: workshop, file: plugins/DuckyMoMoCore/config.yml, path: workshop.items }
 
   - title: Câu cá (EvenMoreFish)
     category: Thế giới

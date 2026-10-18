@@ -179,6 +179,14 @@ final class Frontier implements Listener {
         return null;
     }
 
+    /** Bán đồ cho server ngoài /sell (vd Rìu Bán của Xưởng): cộng sell-percent % như /sell. */
+    void addSale(Player p, double sold) {
+        double pct = cfg.getDouble("sell-percent", 100);
+        if (pct > 0 && sold > 0) {
+            add(p, sold * pct / 100.0);
+        }
+    }
+
     private void add(OfflinePlayer p, double amount) {
         if (amount <= 0) {
             return;

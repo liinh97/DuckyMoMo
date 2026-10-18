@@ -89,6 +89,10 @@
   .sp-rare { font-size: 13px; display: flex; gap: 6px; align-items: center; white-space: nowrap; }
   .sp-rare input { width: auto; }
   .fm-head { display: grid; grid-template-columns: 120px 1fr 160px 150px 32px; gap: 8px; margin-bottom: 8px; }
+  .ws-grid { display: grid; grid-template-columns: repeat(3, minmax(190px, 1fr)); gap: 6px; max-width: 760px; }
+  .ws-cell { display: grid; grid-template-columns: 1fr 56px; gap: 4px; border: 1px dashed var(--line); border-radius: 8px; padding: 4px; }
+  .ws-row { display: grid; gap: 8px; align-items: center; margin-bottom: 8px; }
+  .ws-row label { font-size: 12.5px; color: var(--muted); display: flex; flex-direction: column; gap: 3px; }
   .fs-head { display: grid; grid-template-columns: 1fr 1fr 90px 32px; gap: 8px; margin-bottom: 8px; }
   .ms textarea { width: 100%; margin-bottom: 8px; }
   .sh-row { display: grid; grid-template-columns: 130px 1fr 100px 120px 32px; gap: 8px; align-items: center; }
@@ -161,7 +165,7 @@ const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
 const CAT_ICON = { "Chiến tranh": "⚔️", "Thị trấn": "🏘️", "Thế giới": "🌍", "Thưởng & sự kiện": "🎁", "Shop": "🛒", "Hệ thống": "⚙️",
   "Kinh tế": "💰", "PvP & combat": "🗡️", "Hiển thị": "🎨", "Nghề": "⛏️", "Chống hack": "🛡️", "Phù phép": "✨", "Người mới": "🐣",
   "Chat": "💬", "Rank donate": "👑", "Sảnh": "🏰", "Role": "🎭", "Khác": "📁" };
-const WIDE = new Set(["rewards", "milestones", "quests", "spin", "fragtypes", "fragshop", "shopitems", "shoptitles", "dishes"]);
+const WIDE = new Set(["rewards", "milestones", "quests", "spin", "fragtypes", "fragshop", "shopitems", "shoptitles", "dishes", "workshop"]);
 const fold = (s) => String(s || "").normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/đ/g, "d").replace(/Đ/g, "D").toLowerCase();
 
 async function load() {
@@ -309,6 +313,8 @@ function row(mode, s) {
     input = fragShopEditor(value || [], v => change(mode, s, v, div));
   } else if (s.type === "dishes") {
     input = dishesEditor(value || {}, v => change(mode, s, v, div));
+  } else if (s.type === "workshop") {
+    input = workshopEditor(value || {}, v => change(mode, s, v, div));
   } else if (s.type === "spin") {
     input = spinEditor(value || [], v => change(mode, s, v, div));
   } else if (s.type === "quests") {
@@ -863,6 +869,103 @@ function dishesEditor(value, onChange) {
   box.appendChild(add);
   add.onclick = () => { addDish(null, { name: "", material: "BREAD", need: { WHEAT: 3 }, effects: ["REGENERATION 0 30"] }); emit(); };
   for (const [id, d] of Object.entries(value || {})) addDish(id, d || {});
+  return box;
+}
+
+// ---- Xưởng chế tạo: {mã: {name, material, feature, value, text, uses, days, cost, grid[9], enchants{}, pvp, enabled, description[]}}
+const WS_FEATURES = [["", "Không (chỉ phù phép)", ""], ["dao_vung", "Đào vùng", "1 = 3×3, 2 = 5×5"], ["chat_cay", "Chặt cả cây", "số khối gỗ tối đa"],
+  ["tu_nung", "Tự nung (quặng ra thỏi)", ""], ["da_nang", "3 trong 1 (cuốc/rìu/xẻng)", ""], ["gat_lua", "Gặt 3×3 + gieo lại", ""],
+  ["hut_do", "Đồ đào/săn bay vào túi", ""], ["nam_cham", "Hút đồ quanh người", "bán kính (khối)"], ["ban_ruong", "Bán cả rương", ""],
+  ["tui_hu", "Rương ender từ xa", ""], ["nuoc", "Nước vô tận", ""], ["dung_nham", "Dung nham vô tận", ""], ["bat_thu", "Bắt thú thành trứng", ""],
+  ["co_le", "Lấy lồng quái", ""], ["moc_bay", "Móc câu bay", "lực kéo (1–3)"], ["hut_mau", "Hút máu (cung/nỏ)", "máu hồi/phát (2 = 1 tim)"],
+  ["khien_than", "Giảm sát thương + phản đòn (khiên)", "% giảm"], ["kiem_nhat", "Lướt chém (chuột phải)", "sát thương"], ["riu_chien", "Chí mạng + chảy máu", "% chí mạng"]];
+function workshopEditor(value, onChange) {
+  const box = document.createElement("div"); box.className = "rw";
+  const items = [];
+  const emit = () => {
+    const out = {};
+    items.forEach((o, i) => {
+      let id = (o.id.value || "").trim().toLowerCase().replace(/[^a-z0-9_]/g, "_") || ("mon_" + (i + 1));
+      while (out[id]) id += "_";
+      const ench = {};
+      for (const part of o.ench.value.split(",")) {
+        const p = part.trim(); if (!p) continue;
+        const m = p.match(/^(.+?)[:\s]+(\d+)$/);
+        if (m) ench[m[1].trim()] = +m[2]; else ench[p] = 1;
+      }
+      const d = { name: o.name.value.trim() || id, material: o.mat.value.trim().toUpperCase(), feature: o.feat.value,
+        uses: o.uses.value === "" ? -1 : +o.uses.value, days: +o.days.value || 7, cost: +o.cost.value || 0,
+        grid: o.cells.map(c => c.m.value.trim() ? c.m.value.trim().toUpperCase() + " " + (+c.n.value || 1) : "") };
+      const f = WS_FEATURES.find(x => x[0] === o.feat.value);
+      if (f && f[2]) d.value = +o.val.value || 0;
+      if (o.text.value.trim()) d.text = o.text.value.trim();
+      if (Object.keys(ench).length) d.enchants = ench;
+      if (o.pvp.checked) d.pvp = true;
+      if (!o.on.checked) d.enabled = false;
+      if (o.desc.value.trim()) d.description = [o.desc.value.trim()];
+      out[id] = d;
+    });
+    onChange(out);
+  };
+  const add = document.createElement("button"); add.type = "button"; add.className = "rw-add"; add.textContent = "+ Thêm món";
+  function addItem(id, d) {
+    const wrap = document.createElement("div"); wrap.className = "ms";
+    const fopt = WS_FEATURES.map(([v, t]) => `<option value="${v}"${v === (d.feature || "") ? " selected" : ""}>${t}</option>`).join("");
+    wrap.innerHTML = `
+      <div class="ws-row" style="grid-template-columns:minmax(110px,.7fr) minmax(160px,1.3fr) minmax(150px,1fr) 70px 32px">
+        <label>Mã<input class="i-id" placeholder="vd khoan_dao"></label>
+        <label>Tên (mã màu &)<input class="i-name" placeholder="&b&lKhoan Đào"></label>
+        <label>Vật phẩm<input class="i-mat" placeholder="DIAMOND_PICKAXE"></label>
+        <label>Bán<input type="checkbox" class="i-on"></label>
+        <button type="button" class="x" title="Bỏ món">×</button></div>
+      <div class="ws-row" style="grid-template-columns:minmax(200px,1.4fr) minmax(110px,.7fr) minmax(180px,1.2fr)">
+        <label>Hiệu ứng<select class="i-feat">${fopt}</select></label>
+        <label class="l-val">Chỉ số<input type="number" step="0.5" class="i-val"></label>
+        <label>Chữ "Tính năng" (tuỳ chọn)<input class="i-text" placeholder="để trống = tự ghi theo hiệu ứng"></label></div>
+      <div class="ws-row" style="grid-template-columns:repeat(4,minmax(110px,1fr))">
+        <label>Độ bền (-1 = gốc)<input type="number" min="-1" class="i-uses"></label>
+        <label>Thời hạn (ngày)<input type="number" min="1" max="365" class="i-days"></label>
+        <label>Giá (xu)<input type="number" min="0" class="i-cost"></label>
+        <label>Mất tác dụng khi công thành<input type="checkbox" class="i-pvp"></label></div>
+      <div class="small" style="margin:4px 0">Bàn chế 3×3 (vật phẩm + số lượng, để trống = ô trống):</div>
+      <div class="ws-grid"></div>
+      <div class="ws-row" style="grid-template-columns:1fr 1fr;margin-top:8px">
+        <label>Phù phép (cách nhau dấu phẩy)<input class="i-ench" placeholder="efficiency:4, enchantio:telepathy:1, ce:Blast:1"></label>
+        <label>Mô tả thêm (tuỳ chọn)<input class="i-desc" placeholder="vd Không hút đồ người khác"></label></div>`;
+    const q = c => wrap.querySelector(c);
+    const o = { id: q(".i-id"), name: q(".i-name"), mat: q(".i-mat"), on: q(".i-on"), feat: q(".i-feat"), val: q(".i-val"), text: q(".i-text"),
+      uses: q(".i-uses"), days: q(".i-days"), cost: q(".i-cost"), pvp: q(".i-pvp"), ench: q(".i-ench"), desc: q(".i-desc"), cells: [] };
+    o.id.value = id || ""; o.name.value = d.name || ""; o.mat.value = d.material || ""; o.on.checked = d.enabled !== false;
+    o.val.value = d.value ?? ""; o.text.value = d.text || ""; o.uses.value = d.uses ?? -1; o.days.value = d.days || 7; o.cost.value = d.cost || 0;
+    o.pvp.checked = !!d.pvp; o.desc.value = (d.description || [])[0] || "";
+    o.ench.value = Object.entries(d.enchants || {}).map(([k, v]) => k + ":" + v).join(", ");
+    const gridBox = q(".ws-grid");
+    const grid = (d.grid && d.grid.length) ? d.grid : Object.entries(d.ingredients || {}).map(([k, v]) => k + " " + v);
+    for (let k = 0; k < 9; k++) {
+      const cell = document.createElement("div"); cell.className = "ws-cell";
+      cell.innerHTML = '<input placeholder="trống"><input type="number" min="1" max="640" placeholder="số">';
+      const [m, n] = cell.children;
+      const a = String(grid[k] || "").trim().split(/[\s:]+/);
+      m.value = a[0] || ""; n.value = a[0] ? (a[1] || 1) : "";
+      matPick(m, emit); m.oninput = emit; n.oninput = emit;
+      o.cells.push({ m, n }); gridBox.appendChild(cell);
+    }
+    matPick(o.mat, emit);
+    const syncVal = () => {
+      const f = WS_FEATURES.find(x => x[0] === o.feat.value);
+      q(".l-val").style.visibility = f && f[2] ? "visible" : "hidden";
+      q(".l-val").firstChild.textContent = f && f[2] ? "Chỉ số: " + f[2] : "Chỉ số";
+    };
+    syncVal();
+    o.feat.onchange = () => { syncVal(); emit(); };
+    for (const el of [o.id, o.name, o.mat, o.val, o.text, o.uses, o.days, o.cost, o.ench, o.desc]) el.oninput = emit;
+    o.on.onchange = emit; o.pvp.onchange = emit;
+    q(".x").onclick = () => { items.splice(items.indexOf(o), 1); wrap.remove(); emit(); };
+    items.push(o); box.insertBefore(wrap, add);
+  }
+  box.appendChild(add);
+  add.onclick = () => { addItem("", { name: "", material: "DIAMOND_PICKAXE", feature: "", uses: 3000, days: 7, cost: 5000, grid: ["DIAMOND 3", "", "", "", "STICK 2"] }); emit(); };
+  for (const [id, d] of Object.entries(value || {})) addItem(id, d || {});
   return box;
 }
 

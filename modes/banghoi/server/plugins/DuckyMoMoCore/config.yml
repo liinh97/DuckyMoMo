@@ -185,56 +185,221 @@ pvp-rules:
 # pvp: true = không gây sát thương / không hồi máu trong vùng vây đang có phiên đánh. enabled: false = ẩn món đó. Admin tặng: /xuong tang <id> [người]
 workshop:
   enabled: true
+  # Mỗi món: hiệu ứng (feature + value) · độ bền (uses) · thời hạn (days). Công thức: grid = 9 ô bàn chế 3×3 ("VẬT_LIỆU số", "" = trống)
+  # + cost (xu). Sửa trên trang Cài đặt › Kinh tế › Xưởng chế tạo. Món enabled: false thì không hiện.
   items:
+    khoan_dao:
+      name: "&b&lKhoan Đào"
+      material: DIAMOND_PICKAXE
+      feature: dao_vung
+      value: 1
+      uses: 8000
+      days: 7
+      cost: 8000
+      grid: ["DIAMOND 2", "IRON_BLOCK 2", "DIAMOND 2", "", "STICK 1", "", "", "STICK 1", ""]
+      enchants: {efficiency: 4}
+    dao_ham:
+      name: "&5&lĐào Hầm"
+      material: NETHERITE_PICKAXE
+      feature: dao_vung
+      value: 2
+      uses: 3500
+      days: 5
+      cost: 20000
+      pvp: true
+      grid: ["DIAMOND_BLOCK 1", "TNT 8", "DIAMOND_BLOCK 1", "OBSIDIAN 8", "NETHERITE_INGOT 1", "OBSIDIAN 8", "", "BLAZE_ROD 2", ""]
+      enchants: {efficiency: 5}
+      description: ["Không đào được trong vùng vây đang đánh"]
+    xeng_dat:
+      name: "&6&lXẻng Đất"
+      material: DIAMOND_SHOVEL
+      feature: dao_vung
+      value: 1
+      uses: 8000
+      days: 7
+      cost: 4000
+      grid: ["", "DIAMOND 2", "", "", "IRON_BLOCK 1", "", "", "STICK 2", ""]
+      enchants: {efficiency: 4}
+    riu_tieu:
+      name: "&a&lRìu Tiều"
+      material: DIAMOND_AXE
+      feature: chat_cay
+      value: 150
+      uses: 5000
+      days: 7
+      cost: 5000
+      grid: ["DIAMOND 2", "IRON_BLOCK 1", "", "DIAMOND 1", "STICK 1", "", "", "STICK 1", ""]
+      enchants: {efficiency: 4}
+    tu_nung:
+      name: "&c&lTự Nung"
+      material: IRON_PICKAXE
+      feature: tu_nung
+      uses: 7500
+      days: 7
+      cost: 6000
+      grid: ["BLAST_FURNACE 1", "LAVA_BUCKET 1", "BLAST_FURNACE 1", "", "IRON_PICKAXE 1", "", "", "COAL_BLOCK 4", ""]
+      description: ["Quặng sắt, vàng, đồng ra thỏi; mảnh vụn cổ ra mảnh netherite"]
+    da_nang:
+      name: "&d&lĐa Năng"
+      material: DIAMOND_PICKAXE
+      feature: da_nang
+      uses: 10000
+      days: 7
+      cost: 12000
+      grid: ["DIAMOND_PICKAXE 1", "DIAMOND_AXE 1", "DIAMOND_SHOVEL 1", "", "DIAMOND_BLOCK 1", "", "", "STICK 2", ""]
+      enchants: {efficiency: 4}
+      description: ["Tự thành cuốc chim, rìu hoặc xẻng theo khối đang đào"]
+    gat_lua:
+      name: "&e&lGặt Lúa"
+      material: DIAMOND_HOE
+      feature: gat_lua
+      uses: 8000
+      days: 7
+      cost: 3000
+      grid: ["DIAMOND 2", "HAY_BLOCK 4", "", "", "STICK 1", "", "", "STICK 1", ""]
+      description: ["Gặt cây chín 3×3, tự gieo lại bằng hạt trong túi"]
+    nam_cham:
+      name: "&b&lHút Đồ"
+      material: LEAD
+      feature: nam_cham
+      value: 16
+      uses: 5000
+      days: 7
+      cost: 4000
+      grid: ["IRON_INGOT 4", "REDSTONE 8", "IRON_INGOT 4", "", "LODESTONE 1", "", "", "", ""]
+      description: ["Để trong túi. Không hút đồ người khác vứt, đồ quanh chỗ có người chết"]
+    ban_ruong:
+      name: "&a&lRìu Bán"
+      material: GOLDEN_AXE
+      feature: ban_ruong
+      uses: 3000
+      days: 7
+      cost: 6000
+      grid: ["GOLD_BLOCK 2", "EMERALD 8", "", "GOLD_BLOCK 1", "STICK 1", "", "", "STICK 1", ""]
+      description: ["Đánh vào rương / thùng: bán hết theo giá /sell"]
     tui_hu:
       name: "&5&lTúi Hư"
       material: ENDER_CHEST
       feature: tui_hu
-      uses: 300
+      uses: 3000
       days: 7
       cost: 2000
-      ingredients: {OBSIDIAN: 8, ENDER_EYE: 1}
-      description: ["Chuột phải để mở rương ender ở bất cứ đâu"]
+      grid: ["OBSIDIAN 4", "ENDER_EYE 1", "OBSIDIAN 4", "", "", "", "", "", ""]
     nuoc:
       name: "&b&lNước Nguồn"
       material: WATER_BUCKET
       feature: nuoc
-      uses: 1000
+      uses: 10000
       days: 7
       cost: 500
-      ingredients: {IRON_INGOT: 3}
-      description: ["Đổ nước không bao giờ cạn"]
-    hut_do:
-      name: "&e&lDây Hút Đồ"
-      material: LEAD
-      feature: hut_do
+      grid: ["", "IRON_INGOT 3", "", "", "WATER_BUCKET 1", "", "", "", ""]
+    dung_nham:
+      name: "&6&lDung Nham"
+      material: LAVA_BUCKET
+      feature: dung_nham
       uses: 5000
       days: 7
-      cost: 1500
-      ingredients: {IRON_INGOT: 4, REDSTONE: 8}
-      description: ["Chỉ cần để trong túi, không hút đồ người khác"]
+      cost: 3000
+      pvp: true
+      grid: ["", "MAGMA_BLOCK 8", "", "", "LAVA_BUCKET 1", "", "", "", ""]
+      description: ["Chỉ đổ được ở chỗ bạn có quyền xây"]
+    bat_thu:
+      name: "&a&lBắt Thú"
+      material: SHEARS
+      feature: bat_thu
+      uses: 80
+      days: 7
+      cost: 5000
+      grid: ["", "LEAD 4", "", "WHEAT 16", "EGG 16", "CARROT 16", "", "", ""]
+      description: ["Chuột phải vào thú hiền (bò, cừu, gà…) thành trứng; không bắt quái, thú có chủ, pet"]
+    co_le:
+      enabled: false
+      name: "&7&lCờ Lê"
+      material: IRON_PICKAXE
+      feature: co_le
+      uses: 3
+      days: 7
+      cost: 50000
+      grid: ["NETHERITE_INGOT 1", "", "", "", "IRON_BLOCK 4", "", "", "", "IRON_BLOCK 4"]
+      description: ["Phá lồng quái rơi ra nguyên lồng (quái từ lồng không cho kinh nghiệm)"]
+    moc_bay:
+      name: "&3&lMóc Bay"
+      material: FISHING_ROD
+      feature: moc_bay
+      value: 1.5
+      uses: 3000
+      days: 7
+      cost: 4000
+      pvp: true
+      grid: ["", "", "TRIPWIRE_HOOK 4", "", "STICK 1", "STRING 8", "STICK 1", "", "SLIME_BALL 4"]
+    khien_than:
+      name: "&e&lKhiên Thần"
+      material: SHIELD
+      feature: khien_than
+      value: 50
+      uses: 3000
+      days: 7
+      cost: 8000
+      pvp: true
+      grid: ["IRON_BLOCK 1", "DIAMOND 2", "IRON_BLOCK 1", "IRON_BLOCK 1", "TOTEM_OF_UNDYING 1", "IRON_BLOCK 1", "", "IRON_BLOCK 1", ""]
     cung_mau:
       name: "&c&lCung Máu"
       material: BOW
       feature: hut_mau
-      value: 1
-      uses: 1500
+      value: 2
+      uses: 3000
+      days: 7
+      cost: 6000
+      pvp: true
+      grid: ["", "GHAST_TEAR 2", "STRING 8", "BLAZE_ROD 1", "", "STRING 8", "", "GHAST_TEAR 2", "STRING 8"]
+      enchants: {power: 3}
+    no_toa:
+      name: "&6&lNỏ Tỏa"
+      material: CROSSBOW
+      feature: ""
+      text: "Bắn tỏa &e[3 mũi tên]"
+      uses: 3000
       days: 7
       cost: 5000
       pvp: true
-      ingredients: {GHAST_TEAR: 2, STRING: 8}
-      enchants: {power: 3}
-      description: ["Mỗi phát trúng hồi nửa tim"]
+      grid: ["STICK 2", "IRON_INGOT 4", "STICK 2", "STRING 8", "TRIPWIRE_HOOK 1", "STRING 8", "", "STICK 2", ""]
+      enchants: {multishot: 1, quick_charge: 2}
     bua_ta:
       name: "&6&lBúa Tạ"
       material: MACE
-      uses: -1
+      feature: ""
+      text: "Nện đất &e[hất tung]"
+      uses: 2500
       days: 7
       cost: 15000
       pvp: true
-      ingredients: {BREEZE_ROD: 4, IRON_BLOCK: 2}
+      grid: ["", "BREEZE_ROD 2", "", "IRON_BLOCK 1", "HEAVY_CORE 1", "IRON_BLOCK 1", "", "BREEZE_ROD 2", ""]
       enchants: {wind_burst: 1, density: 2}
-      description: ["Nện đất: rơi càng cao đánh càng đau,", "trúng đòn thì bật lên cao để nện tiếp"]
+    kiem_nhat:
+      name: "&b&lKiếm Nhật"
+      material: DIAMOND_SWORD
+      feature: kiem_nhat
+      value: 6
+      uses: 3000
+      days: 7
+      cost: 8000
+      pvp: true
+      grid: ["", "", "DIAMOND 3", "", "IRON_BLOCK 1", "", "STICK 1", "", ""]
+      enchants: {sharpness: 3}
+      description: ["Chuột phải: lướt tới, chém mọi thứ trên đường (hồi 4 giây)"]
+    riu_chien:
+      name: "&4&lRìu Chiến"
+      material: DIAMOND_AXE
+      feature: riu_chien
+      value: 20
+      uses: 3000
+      days: 7
+      cost: 8000
+      pvp: true
+      grid: ["DIAMOND 2", "REDSTONE_BLOCK 2", "", "DIAMOND 1", "STICK 1", "", "", "STICK 1", ""]
+      enchants: {sharpness: 3}
+      description: ["20% chí mạng ×1,5 và gây chảy máu 3 giây"]
+
 
 # Treo thưởng (/treothuong, ý từ UniMC "Bounty"; khác "truy nã" là án của Hội Bàn Tròn). Người chơi treo tiền (phí fee-percent % không hoàn),
 # ai hạ được người đó nhận hết. streak: giết liền kills mạng chưa chết thì hệ thống tự treo reward, mỗi mạng thêm per-kill (tiền hệ thống tạo ra).

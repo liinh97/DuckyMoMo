@@ -76,6 +76,10 @@ REWARD_RES = [re.compile(r"^xu \d{1,9}(\.\d{1,2})?$"), re.compile(r"^do [a-z0-9_
               re.compile(r"^vat [A-Za-z0-9_]{1,64}( \d{1,4})?$"), re.compile(r"^lenh \S.{0,199}$"),
               re.compile(r"^manh [a-z0-9_]{1,32} \d{1,4}$"), re.compile(r"^petexp \d{1,6}$"), re.compile(r"^danhhieu [a-z0-9_]{1,32}$")]
 FISH_COST_RE = re.compile(r"^ca:(common|rare|epic|legendary)$")   # giá đổi bằng cá câu (EvenMoreFish) theo độ hiếm
+# Hiệu ứng Xưởng chế tạo: mã -> có dùng "value" không (khớp Workshop.FEATURES trong DuckyMoMoCore)
+WORKSHOP_FEATURES = {"": False, "dao_vung": True, "chat_cay": True, "tu_nung": False, "da_nang": False, "gat_lua": False, "hut_do": False,
+                     "nam_cham": True, "ban_ruong": False, "tui_hu": False, "nuoc": False, "dung_nham": False, "bat_thu": False, "co_le": False,
+                     "moc_bay": True, "hut_mau": True, "khien_than": True, "kiem_nhat": True, "riu_chien": True}
 DISH_FOODS = {"BREAD", "COOKED_COD", "COOKED_SALMON", "BEETROOT_SOUP", "RABBIT_STEW", "MUSHROOM_STEW", "SUSPICIOUS_STEW", "BAKED_POTATO",
               "PUMPKIN_PIE", "COOKIE", "GOLDEN_CARROT", "COOKED_BEEF", "COOKED_PORKCHOP", "COOKED_CHICKEN", "COOKED_MUTTON", "COOKED_RABBIT",
               "DRIED_KELP", "HONEY_BOTTLE", "APPLE", "SWEET_BERRIES", "GLOW_BERRIES"}   # khớp DISH_FOODS trong index.html
@@ -291,6 +295,74 @@ def validate(s, v):
             out[did] = {"name": name, "material": mat, "lore": [str(x)[:80] for x in (d.get("lore") or [])][:3], "need": need, "effects": effects}
         if len(out) > 7:
             raise ValueError(f"{label}: tối đa 7 món (bếp chỉ có 7 ô)")
+        return out
+    if t == "workshop":
+        # Xưởng: {mã: {name, material, feature, value, text, uses, days, cost, grid [9 ô "VẬT_LIỆU số"|""], enchants {tên: cấp}, pvp, enabled, description[]}}
+        out = {}
+        for wid, d in (v or {}).items():
+            wid = str(wid).strip().lower()
+            d = d or {}
+            if not LIB_ID_RE.match(wid):
+                raise ValueError(f"{label}: mã món sai ({wid})")
+            name = str(d.get("name", "")).strip()[:60] or wid
+            mat = str(d.get("material", "")).strip().upper()
+            if not MATERIAL_RE.match(mat):
+                raise ValueError(f"{label} ({name}): vật phẩm sai")
+            feat = str(d.get("feature", "") or "")
+            if feat not in WORKSHOP_FEATURES:
+                raise ValueError(f"{label} ({name}): hiệu ứng lạ \"{feat}\"")
+            def num(k, lo, hi, dflt, integer=True):
+                try:
+                    x = (int if integer else float)(d.get(k, dflt) if d.get(k, dflt) not in ("", None) else dflt)
+                except (TypeError, ValueError):
+                    raise ValueError(f"{label} ({name}): {k} phải là số")
+                if not lo <= x <= hi:
+                    raise ValueError(f"{label} ({name}): {k} phải từ {lo} đến {hi}")
+                return x
+            grid = []
+            for g in list(d.get("grid") or [])[:9]:
+                g = " ".join(str(g or "").split()).upper()
+                if g:
+                    m = re.match(r"^([A-Z0-9_]+)(?:[ :X×]+(\d{1,3}))?$", g)
+                    if not m or not 1 <= int(m.group(2) or 1) <= 640:
+                        raise ValueError(f"{label} ({name}): ô nguyên liệu sai \"{g}\" (dạng VẬT_LIỆU số)")
+                    g = f"{m.group(1)} {int(m.group(2) or 1)}"
+                grid.append(g)
+            grid += [""] * (9 - len(grid))
+            ench = {}
+            for k, lv in (d.get("enchants") or {}).items():
+                k = str(k).strip()
+                if not re.match(r"^(ce:[A-Za-z0-9_-]{2,32}|[a-z0-9_]{2,40}(:[a-z0-9_]{2,40})?)$", k):
+                    raise ValueError(f"{label} ({name}): phù phép sai \"{k}\" (vd efficiency, enchantio:telepathy, ce:Blast)")
+                try:
+                    lv = int(lv)
+                except (TypeError, ValueError):
+                    raise ValueError(f"{label} ({name}): cấp phù phép phải là số")
+                if not 1 <= lv <= 255:
+                    raise ValueError(f"{label} ({name}): cấp phù phép 1–255")
+                ench[k] = lv
+            if not any(grid) and num("cost", 0, 1_000_000_000, 0) <= 0:
+                raise ValueError(f"{label} ({name}): cần ít nhất nguyên liệu hoặc giá xu")
+            o = {"name": name, "material": mat, "feature": feat}
+            if WORKSHOP_FEATURES[feat]:
+                o["value"] = num("value", 0, 1000, 0, integer=False)
+            text = str(d.get("text", "") or "").strip()[:80]
+            if text:
+                o["text"] = text
+            o.update({"uses": num("uses", -1, 10_000_000, -1), "days": num("days", 1, 365, 7), "cost": num("cost", 0, 1_000_000_000, 0),
+                      "grid": grid})
+            if ench:
+                o["enchants"] = ench
+            if d.get("pvp"):
+                o["pvp"] = True
+            if d.get("enabled") is False:
+                o["enabled"] = False
+            desc = [str(x).strip()[:90] for x in (d.get("description") or []) if str(x).strip()][:3]
+            if desc:
+                o["description"] = desc
+            out[wid] = o
+        if len(out) > 28:
+            raise ValueError(f"{label}: tối đa 28 món (menu có 28 ô)")
         return out
     if t == "spin":
         out = []

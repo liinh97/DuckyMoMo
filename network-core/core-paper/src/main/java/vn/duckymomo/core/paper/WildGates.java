@@ -304,7 +304,7 @@ final class WildGates implements Listener {
         data.set(p + "dungeon", dungeon);
         data.set(p + "luc", System.currentTimeMillis());
         Zone z = zoneAt(ground.getX(), ground.getZ());
-        data.set(p + "vung", z == null ? "?" : z.name());
+        data.set(p + "vung", z == null ? "?" : z.name().replaceAll("[&§][0-9a-fk-orA-FK-OR]", ""));
         data.set(p + "huong", z == null ? "" : direction(z, ground.getX(), ground.getZ()));
         data.set(p + "khoi", placed);
         data.set("lan-cuoi", System.currentTimeMillis());

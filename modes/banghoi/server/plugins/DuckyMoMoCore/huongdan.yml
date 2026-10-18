@@ -457,6 +457,26 @@ chapters:
         nhất nhận thưởng.
         &1/truyna
       - |-
+        &5&lCỔNG DUNGEON
+        &0Dungeon cày đồ hiếm.
+        &1/dungeon &0xem danh sách,
+        bấm tên để vào.
+        &0Chuỗi 10 tầng: vượt
+        tầng trước nhận &6chìa
+        &6khoá&0 mở tầng sau.
+        &0Có dungeon &5ẩn&0 (tìm
+        lối vào trên bản đồ).
+      - |-
+        &5&lVÉ VÀO DUNGEON
+        &5Vé Vận Mệnh&0: rơi rất
+        hiếm khi hạ quái, câu cá.
+        &0Vé thường: &1/dungeon
+        &1mua <mã>
+        &0Dungeon lớn: cả server
+        góp &1/dungeon gop
+        &0Vé chỉ trừ khi vào,
+        không vào kịp thì hoàn.
+      - |-
         &2&lTHÁI ẤP
         &0Đất riêng an toàn, mua
         bằng xu: &1/thaiap mua

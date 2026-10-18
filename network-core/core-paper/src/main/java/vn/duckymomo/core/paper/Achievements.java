@@ -44,7 +44,7 @@ final class Achievements implements Listener {
 
     private static final LegacyComponentSerializer LEGACY = LegacyComponentSerializer.legacyAmpersand();
     static volatile Achievements INSTANCE;
-    static final Map<String, String> TYPE_VI = Map.ofEntries(Map.entry("khampha", "vùng đã tới"), Map.entry("cauca", "cá câu được"), Map.entry("loaica", "loài cá"), Map.entry("quai", "quái đã hạ"), Map.entry("petcap", "cấp pet"), Map.entry("batpet", "pet đã bắt"), Map.entry("dautruong", "trận thắng"), Map.entry("nauan", "món đã nấu"), Map.entry("kholuong", "điểm kho lương"), Map.entry("giochoi", "giờ chơi"), Map.entry("khobau", "kho báu đã mở"), Map.entry("truyna", "quái truy nã đã hạ"), Map.entry("thaiap", "lượt thích Thái Ấp"));
+    static final Map<String, String> TYPE_VI = Map.ofEntries(Map.entry("khampha", "vùng đã tới"), Map.entry("cauca", "cá câu được"), Map.entry("loaica", "loài cá"), Map.entry("quai", "quái đã hạ"), Map.entry("petcap", "cấp pet"), Map.entry("batpet", "pet đã bắt"), Map.entry("dautruong", "trận thắng"), Map.entry("nauan", "món đã nấu"), Map.entry("kholuong", "điểm kho lương"), Map.entry("giochoi", "giờ chơi"), Map.entry("khobau", "kho báu đã mở"), Map.entry("truyna", "quái truy nã đã hạ"), Map.entry("thaiap", "lượt thích Thái Ấp"), Map.entry("dungeon", "lượt vượt dungeon"), Map.entry("dungeonan", "dungeon ẩn đã tìm"));
 
     private record Goal(String id, String name, String desc, String type, double target, List<String> rewards) { }
     private record Zone(String id, String requires, int x, int z, int r) { }

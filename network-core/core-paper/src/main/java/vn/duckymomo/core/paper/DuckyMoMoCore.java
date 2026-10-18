@@ -29,6 +29,7 @@ public final class DuckyMoMoCore extends JavaPlugin {
     private TreasureHunt treasure;
     private WantedBoard wanted;
     private ThaiAp thaiAp;
+    private DungeonGate dungeonGate;
     private Activity activity;
     private PeaceAlliance peace;
     private DecorShop decorShop;
@@ -94,6 +95,10 @@ public final class DuckyMoMoCore extends JavaPlugin {
         if (wanted != null) {
             wanted.stop();
             wanted = null;
+        }
+        if (dungeonGate != null) {
+            dungeonGate.stop();
+            dungeonGate = null;
         }
         if (thaiAp != null) {
             thaiAp.stop();
@@ -631,6 +636,18 @@ public final class DuckyMoMoCore extends JavaPlugin {
         }
         ThaiAp ta = thaiAp;
         bind("thaiap", ta == null ? null : ta::command, "Thái Ấp");
+        // Cổng Dungeon (dungeon-gate): khoá từng gói EliteMobs bằng quyền riêng, mở theo chuỗi chìa khoá / ẩn / may mắn / vé / quỹ chung
+        dungeonGate = getConfig().getBoolean("dungeon-gate.enabled") && getConfig().isConfigurationSection("dungeon-gate")
+                ? new DungeonGate(this, rewards, getConfig().getConfigurationSection("dungeon-gate")) : null;
+        if (dungeonGate != null && dungeonGate.ready()) {
+            getServer().getPluginManager().registerEvents(dungeonGate, this);
+            dungeonGate.start();
+            getLogger().info("Cổng Dungeon: " + dungeonGate.describe());
+        } else {
+            dungeonGate = null;
+        }
+        DungeonGate dgt = dungeonGate;
+        bind("dungeon", dgt == null ? null : dgt::command, "Cổng Dungeon");
 
         // Mảnh sự kiện + cửa hàng đổi mảnh (Bang Hội Chiến: event-fragments.enabled); phần thưởng "manh" dùng module này
         FragmentShop fragments = getConfig().getBoolean("event-fragments.enabled")

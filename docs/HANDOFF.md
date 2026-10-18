@@ -303,6 +303,18 @@
   vé vận mệnh rơi hiếm, tung xúc xắc lúc vào), (4) mua vé cá nhân bằng xu (lượt / 7 ngày), (5) mở chung toàn server bằng quỹ như khai hoang.
   Điều kiện phụ: cấp pet, thành tích, nhóm 2–4 người, cuối tuần, chỉ nước Bá chủ. Chống lạm phát: lượt/ngày, lockout boss của EliteMobs.
 
+### 18/10 tối: Cổng Dungeon (/dungeon) — ĐÃ LÀM, CHƯA THỬ TRONG GAME
+- EliteMobs: preset Content-Only (không quái elite tự sinh). Người dùng đang chọn gói miễn phí trong /em setup.
+- SỬA nhận định cũ: EliteMobs 10.9.8 CÓ quyền theo từng gói (trường "permission" của content package, hỏi ở setupDynamicDungeon,
+  setupInstancedDungeon, vào nhóm). DungeonGate.java đặt trường này = duckymomo.dungeon.<mã> bằng reflection (mỗi phút, tắt module thì trả lại)
+  + PermissionAttachment cho người qua cổng; vào bằng /dungeon vao → p.performCommand("em dungeontp <mã>.yml") (menu chọn độ khó/cấp của EliteMobs).
+- 5 kiểu: chain (10 tầng Story Mode, requires), hidden (Cống Ngầm, Thánh Đường Bóng Tối night-only; CHƯA đặt lối vào: admin /dungeon datan <mã>),
+  luck (Bắc Cực, Vé Vận Mệnh 0,05% quái / 0,3% cá, 1/ngày, roll 70%), ticket (Lâu Đài Hiệp Sĩ 3000, Xưởng Hơi Nước 5000), server (Pháo Hoa 100k/7 ngày,
+  Đấu Trường Ma 150k/7 ngày, Kẻ Trói Buộc Thế Giới 1M tới hết mùa). Giá là ĐỀ XUẤT, sửa ở Cài đặt › Thế giới › Cổng Dungeon (dgt_*).
+- Story Mode trong bản này là Dynamic Dungeon (người chơi tự chọn cấp lúc vào) → "cấp" trong /dungeon chỉ là gợi ý; chuỗi chỉ ép THỨ TỰ.
+- Thành tích dg1, dg2 (danh hiệu chinhphuc), dga (timan). Web: thẻ Cổng Dungeon (trang chủ), thẻ Dungeon (tài khoản). dungeon.yml, dungeon.json.
+- CHƯA chắc: khoá trong EMPackage.getEmPackages() là "<mã>.yml" (log "đã gắn EliteMobs (x/18 gói đã cài)" sẽ cho biết; 0 dù đã cài = sai khoá).
+
 ### 18/10 (sửa): tham chiếu dùng chung qua Shared.java
 - Lỗi: teardown gán Frontier.INSTANCE/Leaderboard.INSTANCE = null làm nạp lớp Frontier (có PlaceholderExpansion) ở sảnh/practice →
   NoClassDefFoundError LÚC TẮT, phần dọn dẹp dừng giữa chừng (dữ liệu có thể không lưu, /dmm reload hỏng). Sửa: Shared.java (không phụ

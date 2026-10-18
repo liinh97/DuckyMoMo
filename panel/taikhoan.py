@@ -441,6 +441,16 @@ def profile(perms):
         lv = int(ta.get("cap", 0) or 0)
         out["thaiap"] = {"ten": ta.get("ten"), "canh": sizes[min(lv, len(sizes) - 1)], "thich": len(ta.get("thich") or []),
                          "moi": len(ta.get("tin") or []), "to_nhat": lv + 1 >= len(sizes)}
+    dgc = core.get("dungeon-gate") or {}
+    if dgc.get("enabled"):
+        dg = safe_yaml(DMM / "dungeon.yml")
+        names = {k: (v or {}).get("name", k) for k, v in (dgc.get("dungeons") or {}).items()}
+        qua = (dg.get("qua") or {}).get(uuid) or []
+        ve = (dg.get("ve") or {}).get(uuid) or {}
+        out["dungeon"] = {"da_vuot": [names.get(x, x) for x in qua], "tim_an": len((dg.get("tim") or {}).get(uuid) or []),
+                          "an_tong": sum(1 for v in (dgc.get("dungeons") or {}).values() if (v or {}).get("type") == "hidden"),
+                          "chuoi": [names[k] for k, v in (dgc.get("dungeons") or {}).items() if (v or {}).get("type") == "chain"],
+                          "ve": {names.get(k, k): n for k, n in ve.items() if n}}
     ldt = safe_yaml(DMM / "linhdanhthue.yml")
     reg = (ldt.get("dangky") or {}).get(uuid)
     hd = (ldt.get("hopdong") or {}).get(uuid)

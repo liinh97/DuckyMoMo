@@ -71,6 +71,17 @@ bật công tắc vây thành, rút lịch phiên còn vài phút (Cài đặt �
 - [ ] Nấu `/nauan` trong Thái Ấp của mình: món có dòng "bếp Thái Ấp", ăn được hiệu ứng lâu hơn 50%.
 - [ ] Không lập được thị trấn ở thế giới thaiap; pet MyPet gọi ra được ở đó.
 
+## 4d. Cổng Dungeon (/dungeon), sau khi cài gói bằng /em setup
+- [ ] Log banghoi-1: "Cổng Dungeon: đã gắn EliteMobs (x/18 gói đã cài)", x khớp số gói đã cài.
+- [ ] Người thường (không op): menu /em vào dungeon bị báo không có quyền; /dungeon vao the_climb_dungeon vào được.
+- [ ] Vượt Đỉnh Vách Đá → nhận "Chìa khoá Hang Thánh Địa", tầng sau mở; báo cả server người đầu tiên.
+- [ ] Nhóm (party EliteMobs): người chưa có chìa không vào theo được.
+- [ ] /dungeon datan sewers_minidungeon ở chỗ giấu; người khác tới gần thấy hạt tím, tìm ra, vào được.
+- [ ] /dungeon mua knights_castle_lair → vào mất 1 vé; mở cổng mà không vào 2 phút → hoàn vé.
+- [ ] /dungeon cho north_pole_minidungeon <người> → Vé Vận Mệnh; dùng: 70% mở, trượt mất vé.
+- [ ] /dungeon gop fireworks_lair → đủ quỹ mở 7 ngày; /dungeon mo (admin).
+- [ ] Đồ EliteMobs mang vào công thành có lệch cân bằng không (xem lại khi có người chơi).
+
 ## 5. Quảng trường Vinh danh (sảnh)
 - [ ] (CHƯA CẦN, làm khi gần mở server) Chọn chỗ trống ở sảnh (map sakura). Đứng, quay mặt về phía người xem: `/vinhdanh dat moinhat tieude`, rồi `bachu`, `chienthan`, `phuho`,
       `kientrucsu`, `dautruong`, `pet` ở các chỗ khác. Bảng chữ nổi + đầu người chơi đúng hướng, không đè nhau.

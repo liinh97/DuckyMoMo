@@ -405,6 +405,8 @@ leaderboard:
     laolang: "&7[Lão Làng]"
     sankhobau: "&6[Săn Kho Báu]"
     sandau: "&4[Kẻ Săn Đầu]"
+    chinhphuc: "&5[Kẻ Chinh Phục]"
+    timan: "&d[Kẻ Tìm Lối]"
     luukhach: "&7[Lữ Khách]"
     nghenhan: "&d[Nghệ Nhân]"
     phuthuong: "&6[Phú Thương]"
@@ -703,6 +705,41 @@ achievements:
     kb2: {name: "Đại Phú Kho Báu", desc: "Mở 30 rương kho báu", type: khobau, target: 30, rewards: ["xu 5000", "danhhieu sankhobau"]}
     tn1: {name: "Thợ săn truy nã", desc: "Hạ 3 quái bị truy nã", type: truyna, target: 3, rewards: ["xu 1500"]}
     tn2: {name: "Kẻ Săn Đầu", desc: "Hạ 20 quái bị truy nã", type: truyna, target: 20, rewards: ["xu 5000", "danhhieu sandau"]}
+    dg1: {name: "Bước vào bóng tối", desc: "Vượt 1 dungeon", type: dungeon, target: 1, rewards: ["xu 500"]}
+    dg2: {name: "Kẻ Chinh Phục", desc: "Vượt dungeon 30 lần", type: dungeon, target: 30, rewards: ["xu 5000", "danhhieu chinhphuc"]}
+    dga: {name: "Kẻ Tìm Lối", desc: "Tìm ra 2 dungeon ẩn", type: dungeonan, target: 2, rewards: ["xu 3000", "danhhieu timan"]}
+
+# Cổng Dungeon (/dungeon): khoá từng dungeon EliteMobs, mở theo 5 kiểu. Mã = tên file gói EliteMobs (bỏ .yml).
+# Trang Cài đặt > Thế giới > Cổng Dungeon. Dungeon chưa cài thì hiện "chưa cài", cài sau là tự dùng được.
+#  chain: chuỗi chìa khoá (requires = phải vượt dungeon trước) · hidden: ẩn (admin đứng tại chỗ gõ /dungeon datan <mã>)
+#  luck: Vé Vận Mệnh rơi hiếm · ticket: vé cá nhân mua bằng xu · server: cả server góp quỹ mở (open-days 0 = tới hết mùa)
+dungeon-gate:
+  enabled: true
+  window-seconds: 120      # mở cổng xong có ngần này giây để chọn độ khó và vào; không vào thì hoàn vé
+  hidden-radius: 4         # tới gần lối vào ẩn trong ngần này khối là tìm ra
+  luck:
+    mob-chance: 0.05       # % mỗi quái thù địch bị hạ rơi Vé Vận Mệnh (0.05% ≈ 1/2000)
+    fish-chance: 0.3       # % mỗi con cá câu được
+    max-per-day: 1         # tối đa vé/người/ngày
+  dungeons:
+    the_climb_dungeon: {name: "Đỉnh Vách Đá", type: chain, level: "10", first-rewards: ["xu 500"]}
+    the_cave_sanctum: {name: "Hang Thánh Địa", type: chain, level: "15", requires: the_climb_dungeon, first-rewards: ["xu 800"]}
+    the_mines_dungeon: {name: "Mỏ Hoang", type: chain, level: "20", requires: the_cave_sanctum, first-rewards: ["xu 1000"]}
+    the_bridge_sanctum: {name: "Cây Cầu Cổ", type: chain, level: "25", requires: the_mines_dungeon, first-rewards: ["xu 1200"]}
+    the_city_dungeon: {name: "Thành Phố Đổ Nát", type: chain, level: "30", requires: the_bridge_sanctum, first-rewards: ["xu 1500"]}
+    the_palace_sanctum: {name: "Cung Điện", type: chain, level: "35", requires: the_city_dungeon, first-rewards: ["xu 2000"]}
+    the_quarry_dungeon: {name: "Mỏ Đá", type: chain, level: "40", requires: the_palace_sanctum, first-rewards: ["xu 2500"]}
+    the_deep_mines_dungeon: {name: "Mỏ Sâu", type: chain, level: "45", requires: the_quarry_dungeon, first-rewards: ["xu 3000"]}
+    the_nether_wastes_dungeon: {name: "Hoang Mạc Địa Ngục", type: chain, level: "50", requires: the_deep_mines_dungeon, first-rewards: ["xu 4000"]}
+    the_nether_bell_sanctum: {name: "Chuông Địa Ngục", type: chain, level: "55", requires: the_nether_wastes_dungeon, first-rewards: ["xu 6000"]}
+    sewers_minidungeon: {name: "Cống Ngầm", type: hidden, level: "25", hint: "dưới chân một thành cổ", first-rewards: ["xu 2000"]}
+    dark_cathedral_lair: {name: "Thánh Đường Bóng Tối", type: hidden, level: "40", night-only: true, hint: "chỉ hiện ra lúc nửa đêm", first-rewards: ["xu 3000"]}
+    north_pole_minidungeon: {name: "Bắc Cực", type: luck, level: "55", roll-chance: 70, first-rewards: ["xu 4000"]}
+    knights_castle_lair: {name: "Lâu Đài Hiệp Sĩ", type: ticket, level: "95", price: 3000, max-tickets: 5}
+    steamworks_lair: {name: "Xưởng Hơi Nước", type: ticket, level: "140", price: 5000, max-tickets: 5}
+    fireworks_lair: {name: "Lễ Hội Pháo Hoa", type: server, level: "20", goal: 100000, open-days: 7}
+    hallosseum_lair: {name: "Đấu Trường Ma", type: server, level: "30", goal: 150000, open-days: 7}
+    binder_of_worlds_sanctum: {name: "Kẻ Trói Buộc Thế Giới", type: server, level: "200", goal: 1000000, open-days: 0, first-rewards: ["xu 20000"]}
 
 # Cân bằng chiến tranh (/canbang): chống "nước to nuốt hết". Trang Cài đặt > Chiến tranh > Cân bằng chiến tranh
 war-balance:

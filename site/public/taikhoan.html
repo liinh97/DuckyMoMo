@@ -378,6 +378,11 @@ function render(){
       <table><tbody>${h.thanhtich.map(x => `<tr><td>${x.xong ? "✅" : "▫️"}</td><td><b>${esc(x.ten)}</b>${x.danh_hieu ? ' <span class="pill">danh hiệu</span>' : ""}<div class="small dim">${esc(x.mo_ta)}</div></td>
         <td class="small">${x.xong ? '<span class="green">Đã đạt</span>' : `${nf.format(Math.min(x.co, x.can))}/${nf.format(x.can)}<div style="height:5px;border-radius:4px;background:var(--line);overflow:hidden;margin-top:3px;width:90px"><div style="height:100%;width:${Math.min(100, x.co * 100 / x.can)}%;background:var(--gold)"></div></div>`}</td></tr>`).join("")}</tbody></table>
       <p class="small muted">Trong game: <code>/thanhtich</code>. Đạt mốc là tự nhận quà.</p></div>` : ""}
+    ${h.dungeon ? `<div class="card"><h2>⛩ Dungeon</h2>
+      <p>Chuỗi chìa khoá: <b>${h.dungeon.chuoi.filter(n => h.dungeon.da_vuot.includes(n)).length}/${h.dungeon.chuoi.length}</b> tầng${h.dungeon.an_tong ? ` · dungeon ẩn đã tìm: <b>${h.dungeon.tim_an}/${h.dungeon.an_tong}</b>` : ""}</p>
+      ${h.dungeon.da_vuot.length ? `<p class="small">Đã vượt: ${h.dungeon.da_vuot.map(esc).join(", ")}</p>` : '<p class="small muted">Chưa vượt dungeon nào.</p>'}
+      ${Object.keys(h.dungeon.ve).length ? `<p class="small">Vé đang có: ${Object.entries(h.dungeon.ve).map(([k, n]) => esc(k) + " ×" + n).join(", ")}</p>` : ""}
+      <p class="small muted">Xem tất cả và vào: <code>/dungeon</code> (bấm tên trong khung chat).</p></div>` : ""}
     ${h.thaiap ? `<div class="card"><h2>🏡 Thái Ấp: ${esc(h.thaiap.ten || "")}</h2>
       <p>${h.thaiap.canh}×${h.thaiap.canh} khối · ❤ ${h.thaiap.thich} lượt thích · ${h.thaiap.moi} người được mời</p>
       <p class="small muted">Về: <code>/thaiap</code>${h.thaiap.to_nhat ? "" : " · mở rộng: <code>/thaiap morong</code>"} · mời: <code>/thaiap moi &lt;tên&gt;</code> · bếp riêng: món <code>/nauan</code> nấu ở đây kéo dài hiệu ứng.</p></div>` : ""}

@@ -59,8 +59,7 @@ public final class DuckyMoMoCore extends JavaPlugin {
     }
 
     private void teardown() {
-        Frontier.INSTANCE = null;
-        Leaderboard.INSTANCE = null;
+        Shared.clear();
         if (supply != null) {
             supply.stop();
             supply = null;

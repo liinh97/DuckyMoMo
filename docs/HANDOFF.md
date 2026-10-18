@@ -283,6 +283,11 @@
   ticks-per-particle). Ghi vào plugins/PlayerParticles/styles/<kiểu>.yml ở lobby + banghoi-1, CẦN khởi động lại 2 server mới có hiệu lực.
 - PlayerParticles có sẵn `locale: vi_VN`, EssentialsX có `messages_vi` — chưa bật (đã hỏi người dùng).
 
+### 18/10 (sửa): tham chiếu dùng chung qua Shared.java
+- Lỗi: teardown gán Frontier.INSTANCE/Leaderboard.INSTANCE = null làm nạp lớp Frontier (có PlaceholderExpansion) ở sảnh/practice →
+  NoClassDefFoundError LÚC TẮT, phần dọn dẹp dừng giữa chừng (dữ liệu có thể không lưu, /dmm reload hỏng). Sửa: Shared.java (không phụ
+  thuộc gì) giữ frontier/leaderboard, Shared.unlocked(), Shared.clear(). Đã thử: khởi động lại 3 server + /dmm reload ở sảnh, practice: 0 lỗi.
+
 ### 18/10 03:30: khai hoang có nội dung, lính đánh thuê, sổ thành tích, server vắng
 - Khai hoang: rtp.zones thêm malai/philippines/borneo/java có "requires: <mốc>" (toạ độ tính từ 1° ≈ 119,47 khối; X = kinh × 119,47,
   Z = −vĩ × 119,47) → /tpr ẩn tới khi mốc mở (RandomTeleport.Zone.open → Frontier.isUnlocked), đặc sản (region-specialty) chỉ tính khi mở,

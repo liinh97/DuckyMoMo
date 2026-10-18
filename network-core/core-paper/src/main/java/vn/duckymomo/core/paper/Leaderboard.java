@@ -90,10 +90,8 @@ final class Leaderboard implements Listener {
         }
     }
 
-    static volatile Leaderboard INSTANCE;
-
     void start() {
-        INSTANCE = this;
+        Shared.leaderboard = this;
         Bukkit.getScheduler().runTaskTimer(plugin, this::tick, 1200L, 1200L);
         hookSiegeEnd();
         hookBanner();

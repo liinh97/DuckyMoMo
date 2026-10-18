@@ -56,7 +56,7 @@ final class RandomTeleport implements Listener {
     record Zone(String id, String name, Material icon, String description, int centerX, int centerZ, int radius, String requires) {
         /** Vùng gắn mốc khai hoang (requires) chỉ hiện khi mốc đã mở. */
         boolean open() {
-            return Frontier.isUnlocked(requires);
+            return Shared.unlocked(requires);
         }
 
         boolean whole() {

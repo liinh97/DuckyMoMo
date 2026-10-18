@@ -148,7 +148,7 @@ final class Achievements implements Listener {
             }
             List<String> seen = data.getStringList("vung." + p.getUniqueId());
             for (Zone z : zones) {
-                if (seen.contains(z.id()) || !Frontier.isUnlocked(z.requires())) {
+                if (seen.contains(z.id()) || !Shared.unlocked(z.requires())) {
                     continue;
                 }
                 double dx = p.getLocation().getX() - z.x(), dz = p.getLocation().getZ() - z.z();

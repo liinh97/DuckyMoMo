@@ -38,7 +38,7 @@ final class RegionSpecialty {
 
     private record Region(String id, String name, String label, double x, double z, double r, Map<Material, Double> crops, String requires) {
         boolean open() {
-            return Frontier.isUnlocked(requires);   // vùng mở bằng khai hoang: chưa mở thì chưa có đặc sản
+            return Shared.unlocked(requires);   // vùng mở bằng khai hoang: chưa mở thì chưa có đặc sản
         }
     }
 

@@ -110,7 +110,7 @@ final class Rewards {
                     return fragments.give(p, b[0], Integer.parseInt(b[1]));
                 }
                 case "danhhieu" -> {
-                    Leaderboard lb = Leaderboard.INSTANCE;
+                    Leaderboard lb = Shared.leaderboard;
                     String t = rest.trim().toLowerCase(Locale.ROOT);
                     if (lb == null || t.isEmpty()) {
                         return null;
@@ -148,7 +148,7 @@ final class Rewards {
                     case "vat" -> out.add((a.length > 2 ? a[2] : "1") + " " + pretty(a[1]));
                     case "manh" -> out.add(a[2] + " mảnh " + a[1]);
                     case "petexp" -> out.add(a[1] + " kinh nghiệm cho pet đang dẫn");
-                    case "danhhieu" -> out.add("danh hiệu " + (Leaderboard.INSTANCE == null ? a[1] : Leaderboard.INSTANCE.titleText(a[1])));
+                    case "danhhieu" -> out.add("danh hiệu " + (Shared.leaderboard == null ? a[1] : Shared.leaderboard.titleText(a[1])));
                     default -> { }
                 }
             } catch (RuntimeException ignored) {

@@ -43,15 +43,13 @@ final class Frontier implements Listener {
 
     record Goal(String id, String name, double need, List<String> commands, String message) { }
 
-    static volatile Frontier INSTANCE;
-
-    /** Mốc khai hoang đã mở chưa (trống = không cần mốc). */
+    /** Mốc khai hoang đã mở chưa (trống = không cần mốc). Gọi qua Shared.unlocked để server không có khai hoang khỏi nạp lớp này. */
     static boolean isUnlocked(String goalId) {
-        if (goalId == null || goalId.isBlank()) {
-            return true;
-        }
-        Frontier f = INSTANCE;
-        return f != null && f.reached().contains(goalId);
+        return Shared.unlocked(goalId);
+    }
+
+    boolean isReached(String goalId) {
+        return reached().contains(goalId);
     }
 
     private record Area(String goal, String name, int x, int z, int r) { }
@@ -139,7 +137,7 @@ final class Frontier implements Listener {
         // lưu gộp mỗi 30 giây (bán /sell rất nhiều lần)
         Bukkit.getScheduler().runTaskTimer(plugin, this::flush, 600L, 600L);
         Bukkit.getScheduler().runTaskTimer(plugin, this::pioneerTick, 200L, 100L);
-        INSTANCE = this;
+        Shared.frontier = this;
     }
 
     void flush() {

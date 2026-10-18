@@ -42,6 +42,21 @@ import java.util.UUID;
  * Lưu: plugins/DuckyMoMoCore/nhiemvu.yml (ghi mỗi phút + khi thoát).
  */
 final class DailyQuests implements Listener {
+    static volatile DailyQuests INSTANCE;
+
+    /** Số nhiệm vụ hôm nay chưa xong (PlayerSettings nhắc). */
+    int remaining(UUID id) {
+        String key = "players." + id;
+        int n = 0;
+        for (String qid : todays(id)) {
+            Quest q = pool.get(qid);
+            if (q != null && data.getInt(key + ".progress." + qid, 0) < need(q)) {
+                n++;
+            }
+        }
+        return n;
+    }
+
     private static final LegacyComponentSerializer LEGACY = LegacyComponentSerializer.legacyAmpersand();
     private static final ZoneId VN = ZoneId.of("Asia/Ho_Chi_Minh");
 
@@ -56,6 +71,7 @@ final class DailyQuests implements Listener {
     private boolean dirty;
 
     DailyQuests(JavaPlugin plugin, ConfigurationSection cfg, Rewards rewards) {
+        INSTANCE = this;
         this.plugin = plugin;
         this.cfg = cfg;
         this.rewards = rewards;

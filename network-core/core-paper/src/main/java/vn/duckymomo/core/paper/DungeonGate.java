@@ -506,7 +506,7 @@ final class DungeonGate implements Listener {
             if (d.type().equals("server") && until > 0 && until < now) {
                 data.set("quy." + d.id() + ".mo", null);
                 dirty = true;
-                Bukkit.broadcast(c("&5⛩ Cổng &d" + d.name() + " &5đã đóng lại. Góp quỹ để mở lần sau: &f/dungeon gop " + d.id() + " <xu>"));
+                PlayerSettings.broadcast("sukien", c("&5⛩ Cổng &d" + d.name() + " &5đã đóng lại. Góp quỹ để mở lần sau: &f/dungeon gop " + d.id() + " <xu>"));
                 Bukkit.getOnlinePlayers().forEach(this::refresh);
             }
         }
@@ -611,7 +611,7 @@ final class DungeonGate implements Listener {
             List<String> names = ps.stream().map(Player::getName).toList();
             data.set("dau." + id + ".ten", names);
             data.set("dau." + id + ".luc", System.currentTimeMillis());
-            Bukkit.broadcast(c("&6&l🏆 ĐẦU TIÊN! &e" + String.join(", ", names) + " &6là người đầu tiên của server vượt &f" + d.name() + "&6!"));
+            PlayerSettings.broadcast("sukien", c("&6&l🏆 ĐẦU TIÊN! &e" + String.join(", ", names) + " &6là người đầu tiên của server vượt &f" + d.name() + "&6!"));
         }
         data.set("dem." + id, data.getInt("dem." + id, 0) + 1);
         long start = ps.stream().map(p -> enteredAt.get(p.getUniqueId())).filter(java.util.Objects::nonNull).min(Long::compare).orElse(0L);
@@ -699,7 +699,7 @@ final class DungeonGate implements Listener {
         Dg d = l.get(ThreadLocalRandom.current().nextInt(l.size()));
         Rewards.hand(p, luckTicket(d));
         p.playSound(p.getLocation(), Sound.BLOCK_AMETHYST_BLOCK_CHIME, 1f, 1.2f);
-        Bukkit.broadcast(c("&d✦ " + p.getName() + " &5vừa nhặt được &dVé Vận Mệnh &5(" + d.name() + ")&5! Cực hiếm!"));
+        PlayerSettings.broadcast("sukien", c("&d✦ " + p.getName() + " &5vừa nhặt được &dVé Vận Mệnh &5(" + d.name() + ")&5! Cực hiếm!"));
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
@@ -910,7 +910,7 @@ final class DungeonGate implements Listener {
         data.set(k, id);
         data.set("tuan-truoc", id);
         save();
-        Bukkit.broadcast(c("&6★ Dungeon của tuần: &e" + name(id) + "&6! Vượt được thêm quà. &f/dungeon"));
+        PlayerSettings.broadcast("sukien", c("&6★ Dungeon của tuần: &e" + name(id) + "&6! Vượt được thêm quà. &f/dungeon"));
         return id;
     }
 
@@ -927,7 +927,7 @@ final class DungeonGate implements Listener {
         data.set(k, l.subList(0, Math.min(5, l.size())));
         String t = clock(secs);
         if (best) {
-            Bukkit.broadcast(c("&b⏱ KỶ LỤC MỚI! &f" + names + " &bvượt &f" + d.name() + " &btrong &e" + t + "&b!"));
+            PlayerSettings.broadcast("sukien", c("&b⏱ KỶ LỤC MỚI! &f" + names + " &bvượt &f" + d.name() + " &btrong &e" + t + "&b!"));
         } else {
             ps.forEach(p -> p.sendMessage(c("&7⏱ Thời gian vượt: &f" + t)));
         }
@@ -1131,7 +1131,7 @@ final class DungeonGate implements Listener {
             data.set(k + ".xu", 0);
             data.set(k + ".gop", null);
             data.set(k + ".mo", d.openDays() == 0 ? -1 : System.currentTimeMillis() + d.openDays() * 86_400_000L);
-            Bukkit.broadcast(c("&5&l⛩ CỔNG ĐÃ MỞ! &dQuỹ chung đã đủ, &f" + d.name() + " &dmở cho cả server "
+            PlayerSettings.broadcast("sukien", c("&5&l⛩ CỔNG ĐÃ MỞ! &dQuỹ chung đã đủ, &f" + d.name() + " &dmở cho cả server "
                     + (d.openDays() == 0 ? "tới hết mùa" : "trong " + d.openDays() + " ngày") + ". &f/dungeon vao " + d.id()));
             Bukkit.getOnlinePlayers().forEach(this::refresh);
         } else {

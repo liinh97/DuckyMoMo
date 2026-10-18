@@ -448,6 +448,8 @@ groups:
       - ["thanhtich", "Xem sổ thành tích", Mọi người]
       - ["khobau", "Cách dò và đào kho báu, các bậc kho báu", Mọi người]
       - ["khobau give <người>", "Phát một bản đồ kho báu", Chỉ admin]
+      - ["caidat", "Mở menu cài đặt cá nhân (bật/tắt chat, thông báo, TPA, nhắc nhở…)", Mọi người]
+      - ["caidat <mã> bat|tat", "Bật/tắt nhanh một mục (vd /caidat chat tat)", Mọi người]
       - ["dungeon", "Danh sách dungeon: chìa khoá, vé, quỹ chung (bấm tên để vào)", Mọi người]
       - ["dungeon vao <mã>", "Mở cổng và chọn độ khó để vào dungeon", Mọi người]
       - ["dungeon mua <mã> [số]", "Mua vé cá nhân vào dungeon (trừ khi vào)", Mọi người]

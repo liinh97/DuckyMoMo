@@ -123,6 +123,43 @@ def load_perms(name):
     return {"uuid": uuid, "name": row[1], "direct": direct, "groups": groups, "meta": meta, "nodes": nodes}
 
 
+# Cài đặt cá nhân (/caidat trong game; khớp PlayerSettings.OPTS của DuckyMoMoCore): mã, tên, mặc định, mô tả, có ở đâu.
+# Lưu: LuckPerms meta của người chơi "dmmcaidat.<mã>" = bat|tat (không có = mặc định).
+CAIDAT = [
+    ("chat", "Kênh chat chung", True, "Tắt: không thấy chat của người khác (vẫn thấy tin nhắn riêng, thông báo)", ""),
+    ("msg", "Tin nhắn riêng (/msg)", True, "Tắt: không ai nhắn riêng cho bạn được", ""),
+    ("goiten", "Kêu khi bị gọi tên", True, "Có tiếng \"ting\" khi ai đó nhắc tên bạn trong chat", ""),
+    ("loctuc", "Lọc từ tục", True, "Tắt: bạn thấy chat nguyên văn (người khác vẫn thấy bản đã lọc)", ""),
+    ("vaora", "Thông báo vào / rời", True, "Dòng \"… đã vào / đã rời server\"", ""),
+    ("tuvong", "Thông báo tử vong", True, "Dòng \"… đã chết\" của người khác", ""),
+    ("donrac", "Thông báo dọn rác", True, "Đếm ngược dọn đồ rơi trên đất", "Bang Hội Chiến"),
+    ("sukien", "Thông báo sự kiện", True, "Truy nã, kho báu, tin đồn Cổng Hoang, kỷ lục dungeon…", "Bang Hội Chiến"),
+    ("khungnhac", "Khung nhắc lúc vào game", True, "Khung gom hướng dẫn, mùa, công thành, điểm danh… lúc vào", ""),
+    ("bangphai", "Bảng bên phải", True, "Bảng thông tin bên phải màn hình", ""),
+    ("bossbar", "Thanh mẹo trên cùng", True, "Thanh chữ mẹo xoay vòng ở đầu màn hình", ""),
+    ("hat", "Hiệu ứng hạt người khác", True, "Tắt: không thấy hạt trang trí của người khác (máy yếu đỡ giật)", ""),
+    ("maumob", "Máu quái trên đầu", True, "Tên, máu, sát thương bay lên khi đánh quái", "Bang Hội Chiến"),
+    ("tpa", "Nhận yêu cầu TPA", True, "Người khác xin dịch chuyển tới bạn (/tpa)", "Bang Hội Chiến, Practice"),
+    ("tpahere", "Nhận yêu cầu TPAHere", True, "Người khác xin kéo bạn tới chỗ họ (/tpahere)", "Bang Hội Chiến, Practice"),
+    ("loimoi", "Lời mời đấu / nhóm", True, "Lời mời đấu tay đôi (/duel) và vào nhóm (/party invite)", "Practice"),
+    ("nhacvay", "Nhắc giờ công thành", True, "Báo trước 15 phút khi thị trấn / nước bạn có trận vây", "Bang Hội Chiến"),
+    ("nhacngay", "Nhắc điểm danh, nhiệm vụ", True, "Mỗi giờ nhắc nếu chưa điểm danh / còn nhiệm vụ hằng ngày", "Bang Hội Chiến"),
+    ("goipet", "Tự gọi pet khi vào", False, "Vào Bang Hội Chiến là pet chiến đấu tự ra đi theo", "Bang Hội Chiến"),
+]
+CAIDAT_IDS = {c[0]: c for c in CAIDAT}
+_CAIDAT_RE = re.compile(r"^meta\.dmmcaidat\\?\.([a-z]+)\.(bat|tat)$")
+
+
+def player_settings(perms):
+    """Trạng thái cài đặt cá nhân: [{ma, ten, bat, mo_ta, o}] (đọc meta LuckPerms của chính người chơi)."""
+    got = {}
+    for p, v, _s, prio in (perms or {}).get("nodes", []):
+        m = _CAIDAT_RE.match(p)
+        if m and v and prio == USER_PRIO:
+            got[m.group(1)] = m.group(2) == "bat"
+    return [{"ma": i, "ten": n, "bat": got.get(i, d), "mo_ta": desc, "o": where} for i, n, d, desc, where in CAIDAT]
+
+
 def has(perms, node, server=None):
     """Như LuckPerms: khớp đúng tên trước, rồi a.b.*, a.*, *. Cùng mức: quyền gán thẳng / nhóm nặng hơn thắng.
     server=None: tính quyền ở bất kỳ server nào (dùng cho trang web); server='banghoi-1': chỉ global + server đó."""

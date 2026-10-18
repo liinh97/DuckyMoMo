@@ -36,6 +36,9 @@ final class JoinNotes {
 
     /** Thêm một dòng (order nhỏ đứng trước). Gửi gộp sau DELAY tick kể từ dòng đầu tiên. */
     static void add(Player p, int order, Component line) {
+        if (!PlayerSettings.on(p, "khungnhac")) {
+            return;   // người chơi tắt khung nhắc (/caidat)
+        }
         if (plugin == null) {
             p.sendMessage(line);
             return;

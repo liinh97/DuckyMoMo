@@ -347,7 +347,7 @@ final class TreasureHunt implements Listener {
         p.sendMessage(c("&6⛏ Đang đào kho báu " + t.name() + "&6! " + (t.guards() > 0 ? "&cHạ hết " + t.guards() + " lính canh trong "
                 + guardMs / 60_000 + " phút &6(đứng trong 40 khối) để mở rương." : "")));
         if (t.broadcast()) {
-            Bukkit.broadcast(c("&6🗺 &f" + p.getName() + " &6đang đào &e" + t.name() + " &6quanh &fX " + ground.getBlockX() / 50 * 50 + " Z "
+            PlayerSettings.broadcast("sukien", c("&6🗺 &f" + p.getName() + " &6đang đào &e" + t.name() + " &6quanh &fX " + ground.getBlockX() / 50 * 50 + " Z "
                     + ground.getBlockZ() / 50 * 50 + "&6! Ai nhanh chân thì tới tranh."));
         }
     }
@@ -372,7 +372,7 @@ final class TreasureHunt implements Listener {
             }
         }
         if (d.tier.broadcast()) {
-            Bukkit.broadcast(c("&6🗺 &f" + p.getName() + " &6đã mở được &e" + d.tier.name() + "&6!"));
+            PlayerSettings.broadcast("sukien", c("&6🗺 &f" + p.getName() + " &6đã mở được &e" + d.tier.name() + "&6!"));
         }
     }
 

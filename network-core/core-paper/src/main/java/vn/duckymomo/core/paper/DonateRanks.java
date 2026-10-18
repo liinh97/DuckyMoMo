@@ -309,7 +309,7 @@ final class DonateRanks implements Listener {
         if (t == null) {
             return;
         }
-        Bukkit.broadcast(c(rankJoinMsg.replace("{tiercolor}", t.color()).replace("{tier}", t.name()).replace("{player}", p.getName())));
+        PlayerSettings.broadcast("vaora", c(rankJoinMsg.replace("{tiercolor}", t.color()).replace("{tier}", t.name()).replace("{player}", p.getName())));
         if (p.hasPermission("duckymomo.rank.join.special")) {
             for (Player o : Bukkit.getOnlinePlayers()) {
                 o.playSound(o.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 0.6f, 1.2f);

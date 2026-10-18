@@ -102,19 +102,19 @@ final class ItemCleaner implements Listener {
     private void tick() {
         left--;
         if (warnAt.contains(left) && !inBattle()) {
-            Bukkit.broadcast(LEGACY.deserialize(warnMsg.replace("{s}", Integer.toString(left))));
+            PlayerSettings.broadcast("donrac", LEGACY.deserialize(warnMsg.replace("{s}", Integer.toString(left))));
         }
         if (left <= 0) {
             left = intervalSeconds;
             if (inBattle()) {
                 if (!skipMsg.isBlank()) {
-                    Bukkit.broadcast(LEGACY.deserialize(skipMsg));
+                    PlayerSettings.broadcast("donrac", LEGACY.deserialize(skipMsg));
                 }
                 return;
             }
             int n = clean();
             if (n > 0) {   // không dọn được gì thì im lặng, đỡ rác chat
-                Bukkit.broadcast(LEGACY.deserialize(doneMsg.replace("{n}", Integer.toString(n))));
+                PlayerSettings.broadcast("donrac", LEGACY.deserialize(doneMsg.replace("{n}", Integer.toString(n))));
             }
         }
     }

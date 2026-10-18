@@ -33,6 +33,13 @@ import java.util.UUID;
  * Lưu: plugins/DuckyMoMoCore/diemdanh.yml
  */
 final class DailyCheckin implements Listener {
+    static volatile DailyCheckin INSTANCE;
+
+    /** Hôm nay đã điểm danh chưa (PlayerSettings nhắc). */
+    boolean checkedToday(java.util.UUID id) {
+        return today().equals(data.getString("players." + id + ".last"));
+    }
+
     private static final LegacyComponentSerializer LEGACY = LegacyComponentSerializer.legacyAmpersand();
     private static final ZoneId VN = ZoneId.of("Asia/Ho_Chi_Minh");
 
@@ -44,6 +51,7 @@ final class DailyCheckin implements Listener {
     private final Map<UUID, Long> joined = new HashMap<>();
 
     DailyCheckin(JavaPlugin plugin, ConfigurationSection cfg, Rewards rewards) {
+        INSTANCE = this;
         this.plugin = plugin;
         this.cfg = cfg;
         this.rewards = rewards;

@@ -2023,6 +2023,30 @@ def donate_admin(data, actor):
 
 
 _cos_last = {}
+_set_last = {}
+
+
+def web_settings(data, ip):
+    """Cài đặt cá nhân từ web: lp user <tên> meta set/unset dmmcaidat.<mã> qua RCON ở sảnh (LuckPerms đồng bộ mọi server + proxy)."""
+    name = str(data.get("ten", "")).strip()
+    if not PLAYER_RE.match(name):
+        raise ValueError("Tên không hợp lệ")
+    ma = str(data.get("ma", ""))
+    if ma not in taikhoan.CAIDAT_IDS:
+        raise ValueError("Cài đặt không có")
+    now = time.time()
+    if now - _set_last.get(name.lower(), 0) < 1:
+        raise ValueError("Bấm chậm lại một chút.")
+    _set_last[name.lower()] = now
+    bat = bool(data.get("bat"))
+    default = taikhoan.CAIDAT_IDS[ma][2]
+    cmd = f"lp user {name} meta unset dmmcaidat.{ma}" if bat == default else f"lp user {name} meta set dmmcaidat.{ma} {'bat' if bat else 'tat'}"
+    try:
+        rcon("lobby", [cmd])
+    except Exception:
+        raise ValueError("Sảnh đang tắt, thử lại sau ít phút.")
+    web_log({"viec": "caidat", "nguoi": name, "lenh": cmd, "ok": True, "ip": ip})
+    return {"ok": True, "ma": ma, "bat": bat, "message": f"{taikhoan.CAIDAT_IDS[ma][1]}: {'Bật' if bat else 'Tắt'} (áp dụng ở mọi server)."}
 
 
 def web_cosmetic(data, ip):
@@ -2184,6 +2208,7 @@ def web_profile(name, by_code):
             "roles": roles, "nhom": sorted(g for g in perms["groups"] if g != "default"),
             "hoso": hoso, "lenh": lenh,
             "trangtri": taikhoan.cosmetics(perms, online_players().get(name.lower()) if online_players().get(name.lower()) in taikhoan.COSMETIC_SERVERS else "banghoi-1"),
+            "caidat": taikhoan.player_settings(perms),
             "quantri": {"la_staff": is_staff, "toan_quyen": acc["toan_quyen"], "qua_game": by_code,
                         "tinh_nang": list(acc["features"].values()), "loai_caidat": acc["categories"]}}
 
@@ -2292,6 +2317,8 @@ class Handler(BaseHTTPRequestHandler):
                 self.send_json(200, web_login(self.read_body(4096), self.headers.get("X-DMM-Ip", "")))
             elif method == "POST" and path == "/api/web/donate":
                 self.send_json(200, web_donate(self.read_body(4096), self.headers.get("X-DMM-Ip", "")))
+            elif method == "POST" and path == "/api/web/caidat":
+                self.send_json(200, web_settings(self.read_body(4096), self.headers.get("X-DMM-Ip", "")))
             elif method == "POST" and path == "/api/web/trangtri":
                 self.send_json(200, web_cosmetic(self.read_body(4096), self.headers.get("X-DMM-Ip", "")))
             elif method == "POST" and path == "/api/web/choilai":

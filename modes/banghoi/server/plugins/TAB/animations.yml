@@ -124,6 +124,7 @@ MeoChoi:
     - "&5✦ &fCổng Hoang giấu trên bản đồ: thấy &dhạt tím&f thì Shift &7(/conghoang) &5✦"
     - "&6✦ &fChơi một mình: &e/khobau &f• &e/truyna &f• &e/thanhtich &6✦"
     - "&a✦ &fĐất riêng an toàn để xây, trồng trọt: &e/thaiap &a✦"
+    - "&a✦ &fTắt chat, thông báo, TPA… theo ý mình: &e/caidat &a✦"
 
 # Bảng bên phải 2 trang tự đổi, dòng NGẮN (dòng dài nhất quyết định bề ngang bảng) (config.yml scoreboard: %animation:SbTieuDe%, %animation:SbDong1..4%). Cùng change-interval để đổi trang đồng thời.
 # Trang 1 kinh tế & mùa, trang 2 chiến tranh. %dmmtoi_*% (giết/chết/KDA) và %dmmmua_*% (mùa) do DuckyMoMoCore cung cấp.

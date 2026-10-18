@@ -27,6 +27,10 @@ import org.bukkit.event.player.PlayerQuitEvent;
  */
 final class ChatFilter implements Listener {
 
+    /** Tin gốc trước khi lọc, theo sự kiện chat (PlayerSettings lấy ra để hiển thị cho người tắt lọc). */
+    static final java.util.Map<AsyncChatEvent, net.kyori.adventure.text.Component> ORIGINAL =
+            java.util.Collections.synchronizedMap(new java.util.WeakHashMap<>());
+
     private static final PlainTextComponentSerializer PLAIN = PlainTextComponentSerializer.plainText();
     private static final LegacyComponentSerializer LEGACY = LegacyComponentSerializer.legacyAmpersand();
 
@@ -110,6 +114,7 @@ final class ChatFilter implements Listener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     public void onChat(AsyncChatEvent e) {
         Player p = e.getPlayer();
+        ORIGINAL.put(e, e.message());   // bản chưa lọc: người tắt "Lọc từ tục" (/caidat) thấy bản này
         String text = PLAIN.serialize(e.message());
         if (!p.hasPermission("duckymomo.chat.bypass")) {
             long now = System.currentTimeMillis();

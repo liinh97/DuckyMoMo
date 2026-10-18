@@ -90,6 +90,7 @@ groups:
       - [playerparticles.particles.max.2, "Tối đa 2 hiệu ứng", "Làm gì: Bật cùng lúc tối đa 2 hiệu ứng.\nCó ở: Mọi server"]
       - [playerparticles.particles.max.3, "Tối đa 3 hiệu ứng", "Làm gì: Bật cùng lúc tối đa 3 hiệu ứng.\nCó ở: Mọi server"]
       - [playerparticles.particles.max.6, "Tối đa 6 hiệu ứng", "Làm gì: Bật cùng lúc tối đa 6 hiệu ứng.\nCó ở: Mọi server"]
+      - [duckymomo.caidat.bypass, "Nhắn riêng / TPA / mời được cả người đã tắt", "Làm gì: Người chơi tắt Tin nhắn riêng, TPA hay Lời mời trong /caidat vẫn nhận được từ người có quyền này.\nCó ở: Mọi server\nLưu ý: Chỉ cấp cho staff cần liên lạc với người chơi."]
       - [skinsrestorer.bypasscooldown, "Đổi skin không phải chờ 30 giây", "Làm gì: Đổi skin liên tục, bỏ thời gian chờ 30 giây giữa hai lần.\nCách dùng: /skin set <tên>, /skins\nCó ở: Mọi server (kiểm ở proxy)"]
       - [skinsrestorer.command.set.url, "Đổi skin bằng link ảnh (/skin url)", "Làm gì: Dùng /skin url <link ảnh .png>.\nCó ở: Mọi server\nLưu ý: Mặc định ai cũng có (SkinsRestorer cấp sẵn). Chỉ cần tick khi muốn tắt cho người thường rồi để riêng rank."]
       - [pet.type.passive, "Mọi pet hiền (/pet)", "Làm gì: Gọi mọi pet hiền đi theo (trang trí).\nCách dùng: /pet hoặc /pets\nCó ở: Sảnh, Bang Hội Chiến\nLưu ý: Pet không đánh, không cưỡi, không bay."]

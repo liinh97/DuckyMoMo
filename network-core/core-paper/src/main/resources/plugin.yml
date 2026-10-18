@@ -108,6 +108,9 @@ commands:
   khobau:
     description: "Bản đồ kho báu: cách dò, các bậc kho báu; admin: /khobau give <người>"
     aliases: [kho-bau, treasure]
+  caidat:
+    description: "Cài đặt cá nhân: bật/tắt chat chung, tin nhắn riêng, thông báo, bảng bên phải, TPA, nhắc nhở…"
+    aliases: [settings, tuychon]
   dungeon:
     description: "Cổng Dungeon: danh sách dungeon, chìa khoá, vé; /dungeon vao|mua|gop <mã>; admin: datan|cho|mo"
     aliases: [dg, hamnguc]
@@ -151,6 +154,9 @@ commands:
     description: "Đấu Trường: người + pet đấu 1v1, 2v2 (hàng chờ, thách đấu, cược, xếp hạng)"
     aliases: [dt, arena]
 permissions:
+  duckymomo.caidat.bypass:
+    description: "Nhắn riêng / TPA / mời được cả người đã tắt (staff)"
+    default: op
   duckymomo.vinhdanh.admin:
     description: "Chốt vinh danh mùa, đặt bảng/tượng ở Quảng trường Vinh danh"
     default: op

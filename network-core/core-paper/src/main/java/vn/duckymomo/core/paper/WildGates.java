@@ -671,7 +671,7 @@ final class WildGates implements Listener {
             return null;
         }
         String id = place(l);
-        Bukkit.broadcast(c("&5&l🌀 TIN ĐỒN: &d" + data.getString(g(id) + "tin-don") + " &7(Cổng Hoang: /conghoang)"));
+        PlayerSettings.broadcast("sukien", c("&5&l🌀 TIN ĐỒN: &d" + data.getString(g(id) + "tin-don") + " &7(Cổng Hoang: /conghoang)"));
         return id;
     }
 
@@ -770,7 +770,7 @@ final class WildGates implements Listener {
                 p.sendMessage(c("&7Trong &f" + graceMs / 60_000 + " phút &7tới, chỉ bạn (hoặc thị trấn của bạn) được lập/mở rộng thị trấn trong "
                         + graceRadius + " khối quanh đây. Thị trấn giữ cổng: dân mình vào miễn phí, người ngoài trả phí vào ngân khố."));
             }
-            Bukkit.broadcast(c("&5🌀 &f" + p.getName() + " &dđã tìm ra một Cổng Hoang ở vùng &f" + data.getString(pfx + "vung") + "&d!"));
+            PlayerSettings.broadcast("sukien", c("&5🌀 &f" + p.getName() + " &dđã tìm ra một Cổng Hoang ở vùng &f" + data.getString(pfx + "vung") + "&d!"));
             Achievements.add(p, "conghoang", 1);
         }
         Town t = owner(id);

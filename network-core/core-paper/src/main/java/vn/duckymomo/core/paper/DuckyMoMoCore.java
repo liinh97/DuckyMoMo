@@ -30,6 +30,7 @@ public final class DuckyMoMoCore extends JavaPlugin {
     private WantedBoard wanted;
     private ThaiAp thaiAp;
     private DungeonGate dungeonGate;
+    private PlayerSettings playerSettings;
     private WildGates wildGates;
     private Activity activity;
     private PeaceAlliance peace;
@@ -65,6 +66,12 @@ public final class DuckyMoMoCore extends JavaPlugin {
 
     private void teardown() {
         Shared.clear();
+        DailyCheckin.INSTANCE = null;
+        DailyQuests.INSTANCE = null;
+        if (playerSettings != null) {
+            playerSettings.stop();
+            playerSettings = null;
+        }
         if (supply != null) {
             supply.stop();
             supply = null;
@@ -203,6 +210,18 @@ public final class DuckyMoMoCore extends JavaPlugin {
             getLogger().info("Lọc chat: bật");
         }
 
+        // Cài đặt cá nhân /caidat (mọi server, lưu ở LuckPerms meta): player-settings.enabled (mặc định bật)
+        PluginCommand caidatCmd = getCommand("caidat");
+        if (getConfig().getBoolean("player-settings.enabled", true) && getServer().getPluginManager().isPluginEnabled("LuckPerms")) {
+            playerSettings = new PlayerSettings(this, getConfig().getString("join-notes-title", ""));
+            getServer().getPluginManager().registerEvents(playerSettings, this);
+            playerSettings.start();
+            if (caidatCmd != null) {
+                PlayerSettings ps = playerSettings;
+                caidatCmd.setExecutor((sender, cmd, label, args) -> ps.command(sender, args));
+            }
+            getLogger().info("Cài đặt cá nhân: " + PlayerSettings.OPTS.size() + " công tắc");
+        }
         // Rank donate (tước vị) + thông báo vào/ra: donate-ranks.enabled
         PluginCommand rankCmd = getCommand("rank");
         if (getConfig().getBoolean("donate-ranks.enabled") && getServer().getPluginManager().isPluginEnabled("LuckPerms")) {

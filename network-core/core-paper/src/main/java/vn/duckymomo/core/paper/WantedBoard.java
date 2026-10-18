@@ -141,7 +141,7 @@ final class WantedBoard implements Listener {
                     e.remove();
                 }
                 posts.remove(p);
-                Bukkit.broadcast(c("&8☠ " + p.target.name() + " &7đã trốn khỏi " + p.zone + "&7. Lệnh truy nã hết hạn."));
+                PlayerSettings.broadcast("sukien", c("&8☠ " + p.target.name() + " &7đã trốn khỏi " + p.zone + "&7. Lệnh truy nã hết hạn."));
                 continue;
             }
             if (p.entity == null && p.loc.isChunkLoaded() && nearby(p.loc)) {
@@ -186,7 +186,7 @@ final class WantedBoard implements Listener {
             Post p = new Post(t, l, z.name(), System.currentTimeMillis() + expireMs);
             posts.add(p);
             List<String> d2 = rewards == null ? t.rewards() : rewards.describe(t.rewards());
-            Bukkit.broadcast(c("&4☠ TRUY NÃ: &c" + t.name() + " &7ở &f" + z.name() + " &7quanh &fX " + Math.round(l.getX() / 50) * 50 + " Z "
+            PlayerSettings.broadcast("sukien", c("&4☠ TRUY NÃ: &c" + t.name() + " &7ở &f" + z.name() + " &7quanh &fX " + Math.round(l.getX() / 50) * 50 + " Z "
                     + Math.round(l.getZ() / 50) * 50 + " &7— thưởng: &e" + String.join(", ", d2) + " &7(" + expireMs / 60_000 + " phút). &f/truyna"));
             return;
         }
@@ -258,12 +258,12 @@ final class WantedBoard implements Listener {
         UUID best = p.damage.entrySet().stream().max(Map.Entry.comparingByValue()).map(Map.Entry::getKey).orElse(null);
         Player w = best == null ? null : Bukkit.getPlayer(best);
         if (w == null) {
-            Bukkit.broadcast(c("&8☠ " + p.target.name() + " &7đã bị hạ nhưng không ai nhận thưởng."));
+            PlayerSettings.broadcast("sukien", c("&8☠ " + p.target.name() + " &7đã bị hạ nhưng không ai nhận thưởng."));
             return;
         }
         List<String> got = rewards == null ? List.of() : rewards.give(w, p.target.rewards());
         Achievements.add(w, "truyna", 1);
-        Bukkit.broadcast(c("&6☠ &f" + w.getName() + " &6đã hạ &c" + p.target.name() + " &6ở " + p.zone + "&6! " + (got.isEmpty() ? "" : "&7(" + String.join(", ", got) + "&7)")));
+        PlayerSettings.broadcast("sukien", c("&6☠ &f" + w.getName() + " &6đã hạ &c" + p.target.name() + " &6ở " + p.zone + "&6! " + (got.isEmpty() ? "" : "&7(" + String.join(", ", got) + "&7)")));
     }
 
     /** Quái truy nã còn sót (lệnh đã hết / server khởi động lại) khi vùng nạp lại: xoá. */

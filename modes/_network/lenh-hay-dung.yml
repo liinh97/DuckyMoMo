@@ -4,7 +4,7 @@
 # panel/app.py đọc file này mỗi lần (sửa xong không cần build lại).
 nhom:
   - ten: Người chơi
-    lenh: [huongdan, menu, server, web, tpr, warp, spawn, home, sethome, back, tpa, tpaccept, msg, r,
+    lenh: [huongdan, caidat, menu, server, web, tpr, warp, spawn, home, sethome, back, tpa, tpaccept, msg, r,
            diemdanh, nhiemvu, vongquay, vote, doimanh, hoatdong, mua, emf, emf shop, donhang, donhang cuatoi, khaihoang,
            treothuong, xuong, rank mua, bal, pay, sell, ah, trade, jobs, ce,
            t, t spawn, t new, t claim, t add, n, hoabinh, bxh, danhhieu, cuahang, choilai,

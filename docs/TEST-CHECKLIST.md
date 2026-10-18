@@ -74,18 +74,18 @@ bật công tắc vây thành, rút lịch phiên còn vài phút (Cài đặt �
 ## 4d. Cổng Dungeon (/dungeon), sau khi cài gói bằng /em setup
 - [ ] Log banghoi-1: "Cổng Dungeon: đã gắn EliteMobs (x/18 gói đã cài)", x khớp số gói đã cài.
 - [ ] Người thường (không op): menu /em vào dungeon bị báo không có quyền; /dungeon vao the_climb_dungeon vào được.
-- [ ] Vượt Đỉnh Vách Đá → nhận "Chìa khoá Hang Thánh Địa", tầng sau mở; báo cả server người đầu tiên.
+- [ ] Vượt Đỉnh Vách Đá → báo cả server người đầu tiên (chìa khoá: xem mục 4d+).
 - [ ] Nhóm (party EliteMobs): người chưa có chìa không vào theo được.
-- [ ] /dungeon datan sewers_minidungeon ở chỗ giấu; người khác tới gần thấy hạt tím, tìm ra, vào được.
+- [ ] CẦN LÀM TRƯỚC KHI MỞ MÙA: /dungeon datan dark_cathedral_lair ở chỗ muốn giấu (Thánh Đường Bóng Tối là dungeon ẩn duy nhất; chưa đặt = không ai tìm được). Ban đêm người khác tới gần thấy hạt tím, tìm ra.
 - [ ] /dungeon mua knights_castle_lair → vào mất 1 vé; mở cổng mà không vào 2 phút → hoàn vé.
-- [ ] /dungeon cho north_pole_minidungeon <người> → Vé Vận Mệnh; dùng: 70% mở, trượt mất vé.
+- [ ] Cống Ngầm, Bắc Cực: /dungeon vao báo "chỉ qua Cổng Hoang"; /conghoang tao here rồi Shift ở ô giữa → vào được. (Vé Vận Mệnh: chưa có dungeon kiểu luck, bỏ qua.)
 - [ ] /dungeon gop fireworks_lair → đủ quỹ mở 7 ngày; /dungeon mo (admin).
 - [ ] Điều kiện: Chuông Địa Ngục đi 1 mình bị chặn (cần nhóm 2–4, /em party); Hoang Mạc Địa Ngục không dẫn pet cấp 10 bị chặn; Lâu Đài Hiệp Sĩ ngày thường bị chặn.
 - [ ] Nhóm 2 người mở dungeon vé: trừ vé cả hai; người kia nhận thông báo và vào theo được.
 - [ ] Thánh Đường Bóng Tối: tìm ra (ban đêm) → nhặt Mảnh Chìa (/dungeon cho dark_cathedral_lair <người> 3) → /dungeon vao ghép, vào được.
 - [ ] /dungeon hiện ★ Dungeon của tuần; vượt nó nhận thêm 1500 xu (tối đa 3 lần/tuần).
 - [ ] Vượt xong báo thời gian; phá kỷ lục báo cả server; web hiện kỷ lục.
-- [ ] Kho báu huyền thoại (/khobau give, tới khi ra bậc huyền thoại): 40% có mảnh giấy chỉ đường tới dungeon ẩn.
+- [ ] Kho báu huyền thoại (/khobau give, tới khi ra bậc huyền thoại): 40% có mảnh giấy chỉ đường tới dungeon ẩn hoặc Cổng Hoang chưa ai tìm.
 
 ## 4d+. Dungeon: chìa khoá, kỹ năng class, tiền
 - [ ] Vượt Đỉnh Vách Đá → trùm cuối rơi "Chìa khoá Hang Thánh Địa" cho từng người; chuột phải / /dungeon vao: mất chìa, mở vĩnh viễn.

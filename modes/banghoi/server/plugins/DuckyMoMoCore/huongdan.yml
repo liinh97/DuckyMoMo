@@ -468,10 +468,9 @@ chapters:
         lối vào trên bản đồ).
       - |-
         &5&lVÉ VÀO DUNGEON
-        &5Vé Vận Mệnh&0: rơi rất
-        hiếm khi hạ quái, câu cá.
-        &0Vé thường: &1/dungeon
-        &1mua <mã>
+        &0Vé: &1/dungeon mua <mã>
+        &0Cống Ngầm, Bắc Cực:
+        chỉ vào qua &5Cổng Hoang&0.
         &0Dungeon lớn: cả server
         góp &1/dungeon gop
         &0Vé chỉ trừ khi vào,

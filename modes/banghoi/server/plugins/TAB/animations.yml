@@ -120,6 +120,10 @@ MeoChoi:
     - "&c✦ &fĐang đánh nhau mà thoát game sẽ chết và rơi đồ &c✦"
     - "&e✦ &fCông thành: tối thứ 7, Chủ nhật 20:00 và 21:00 &e✦"
     - "&e✦ &fBản đồ thế giới online: Trạm 6 &e✦"
+    - "&5✦ &fDungeon cày đồ hiếm: &d/dungeon &f(trùm cuối rơi Chìa khoá tầng sau) &5✦"
+    - "&5✦ &fCổng Hoang giấu trên bản đồ: thấy &dhạt tím&f thì Shift &7(/conghoang) &5✦"
+    - "&6✦ &fChơi một mình: &e/khobau &f• &e/truyna &f• &e/thanhtich &6✦"
+    - "&a✦ &fĐất riêng an toàn để xây, trồng trọt: &e/thaiap &a✦"
 
 # Bảng bên phải 2 trang tự đổi (config.yml scoreboard: %animation:SbTieuDe%, %animation:SbDong1..4%). Cùng change-interval để đổi trang đồng thời.
 # Trang 1 kinh tế & mùa, trang 2 chiến tranh. %dmmtoi_*% (giết/chết/KDA) và %dmmmua_*% (mùa) do DuckyMoMoCore cung cấp.

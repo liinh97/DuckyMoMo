@@ -379,10 +379,13 @@ function render(){
         <td class="small">${x.xong ? '<span class="green">Đã đạt</span>' : `${nf.format(Math.min(x.co, x.can))}/${nf.format(x.can)}<div style="height:5px;border-radius:4px;background:var(--line);overflow:hidden;margin-top:3px;width:90px"><div style="height:100%;width:${Math.min(100, x.co * 100 / x.can)}%;background:var(--gold)"></div></div>`}</td></tr>`).join("")}</tbody></table>
       <p class="small muted">Trong game: <code>/thanhtich</code>. Đạt mốc là tự nhận quà.</p></div>` : ""}
     ${h.dungeon ? `<div class="card"><h2>⛩ Dungeon</h2>
-      <p>Chuỗi chìa khoá: <b>${h.dungeon.chuoi.filter(n => h.dungeon.da_vuot.includes(n)).length}/${h.dungeon.chuoi.length}</b> tầng${h.dungeon.an_tong ? ` · dungeon ẩn đã tìm: <b>${h.dungeon.tim_an}/${h.dungeon.an_tong}</b>` : ""}</p>
+      <p>Chuỗi chìa khoá: đã mở <b>${(h.dungeon.da_mo || []).length}/${h.dungeon.chuoi.length}</b> tầng, đã vượt <b>${h.dungeon.chuoi.filter(n => h.dungeon.da_vuot.includes(n)).length}</b>${h.dungeon.an_tong ? ` · dungeon ẩn đã tìm: <b>${h.dungeon.tim_an}/${h.dungeon.an_tong}</b>` : ""}</p>
       ${h.dungeon.da_vuot.length ? `<p class="small">Đã vượt: ${h.dungeon.da_vuot.map(esc).join(", ")}</p>` : '<p class="small muted">Chưa vượt dungeon nào.</p>'}
       ${Object.keys(h.dungeon.ve).length ? `<p class="small">Vé đang có: ${Object.entries(h.dungeon.ve).map(([k, n]) => esc(k) + " ×" + n).join(", ")}</p>` : ""}
-      <p class="small muted">Xem tất cả và vào: <code>/dungeon</code> (bấm tên trong khung chat).</p></div>` : ""}
+      <p class="small muted">Xem tất cả và vào: <code>/dungeon</code> (bấm tên trong khung chat). Trùm cuối mỗi tầng rơi Chìa khoá tầng sau: chuột phải để mở.</p></div>` : ""}
+    ${h.conghoang ? `<div class="card"><h2>🌀 Cổng Hoang của thị trấn</h2>
+      ${h.conghoang.map(g => `<p><b>${esc(g.ma)}</b> → ${esc(g.dungeon || "?")} · ${g.dong ? "đóng với người ngoài" : g.phi ? "phí " + Number(g.phi).toLocaleString("vi-VN") + " xu" : "miễn phí"} · ${g.luot} lượt qua</p>`).join("")}
+      <p class="small muted">Thị trưởng (hoặc vua nước đang chiếm): <code>/conghoang phi &lt;mã&gt; &lt;xu&gt;</code>, <code>/conghoang dong|mo &lt;mã&gt;</code>. Bị chiếm thị trấn là mất cổng.</p></div>` : ""}
     ${h.thaiap ? `<div class="card"><h2>🏡 Thái Ấp: ${esc(h.thaiap.ten || "")}</h2>
       <p>${h.thaiap.canh}×${h.thaiap.canh} khối · ❤ ${h.thaiap.thich} lượt thích · ${h.thaiap.moi} người được mời</p>
       <p class="small muted">Về: <code>/thaiap</code>${h.thaiap.to_nhat ? "" : " · mở rộng: <code>/thaiap morong</code>"} · mời: <code>/thaiap moi &lt;tên&gt;</code> · bếp riêng: món <code>/nauan</code> nấu ở đây kéo dài hiệu ứng.</p></div>` : ""}

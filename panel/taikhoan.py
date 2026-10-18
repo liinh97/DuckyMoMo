@@ -450,7 +450,21 @@ def profile(perms):
         out["dungeon"] = {"da_vuot": [names.get(x, x) for x in qua], "tim_an": len((dg.get("tim") or {}).get(uuid) or []),
                           "an_tong": sum(1 for v in (dgc.get("dungeons") or {}).values() if (v or {}).get("type") == "hidden"),
                           "chuoi": [names[k] for k, v in (dgc.get("dungeons") or {}).items() if (v or {}).get("type") == "chain"],
-                          "ve": {names.get(k, k): n for k, n in ve.items() if n}}
+                          "ve": {names.get(k, k): n for k, n in ve.items() if n},
+                          # tầng chuỗi đã mở: tầng đầu (không requires) + tầng mở bằng Chìa khoá (mo.<uuid>)
+                          "da_mo": [names[k] for k, v in (dgc.get("dungeons") or {}).items() if (v or {}).get("type") == "chain"
+                                    and (not (v or {}).get("requires") or k in ((dg.get("mo") or {}).get(uuid) or []))]}
+    wgc = core.get("wild-gates") or {}
+    mytown = (out.get("towny") or {}).get("thitran")
+    if wgc.get("enabled") and mytown:
+        try:
+            gates = json.loads((DMM / "conghoang.json").read_text(encoding="utf-8")).get("cong") or []
+        except (OSError, ValueError):
+            gates = []
+        mine = [g for g in gates if g.get("tim") and str(g.get("chu") or "").lower() == mytown.lower()]
+        if mine:
+            out["conghoang"] = [{"ma": g.get("ma"), "dungeon": g.get("dungeon"), "phi": g.get("phi", 0), "dong": g.get("dong", False),
+                                 "luot": g.get("luot", 0)} for g in mine]
     ldt = safe_yaml(DMM / "linhdanhthue.yml")
     reg = (ldt.get("dangky") or {}).get(uuid)
     hd = (ldt.get("hopdong") or {}).get(uuid)

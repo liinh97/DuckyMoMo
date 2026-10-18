@@ -1237,8 +1237,9 @@ final class Workshop implements Listener {
             p.sendMessage(c("&cTúi đầy, dọn 1 ô rồi chế."));
             return;
         }
-        if (r.cost() > 0 && (!VaultEconomy.available() || !VaultEconomy.withdraw(p, r.cost()))) {
-            p.sendMessage(c("&cKhông đủ " + money(r.cost()) + "."));
+        double cost = p.hasPermission("duckymomo.xuong.giam") ? Math.round(r.cost() * 0.95) : r.cost();   // đặc quyền Thăng Cấp: giảm 5%
+        if (cost > 0 && (!VaultEconomy.available() || !VaultEconomy.withdraw(p, cost))) {
+            p.sendMessage(c("&cKhông đủ " + money(cost) + "."));
             return;
         }
         for (Map.Entry<Material, Integer> in : r.ingredients().entrySet()) {

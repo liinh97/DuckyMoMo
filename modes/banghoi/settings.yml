@@ -1619,3 +1619,34 @@ xw_items:
       sharpness: 3
     description:
     - 20% chí mạng ×1,5 và gây chảy máu 3 giây
+lvu_on: true
+lvu_keep: false
+lvu_max: 100
+lvu_money: 500
+lvu_exp: 1.25
+lvu_hours: 0.5
+lvu_kills: 20
+lvu_mob: 1
+lvu_player: 10
+lvu_cd: 10
+lvu_pts: 1
+lvu_every: 10
+lvu_milestone:
+- xu 5000
+- vat EXPERIENCE_BOTTLE 16
+lvu_craft_on: true
+lvu_craft_cost: 3
+lvu_disposal_on: true
+lvu_disposal_cost: 2
+lvu_anvil_on: true
+lvu_anvil_cost: 5
+lvu_hat_on: true
+lvu_hat_cost: 3
+lvu_hat2_on: true
+lvu_hat2_cost: 6
+lvu_meo_on: true
+lvu_meo_cost: 5
+lvu_giamxuong_on: true
+lvu_giamxuong_cost: 8
+lvu_laoluyen_on: true
+lvu_laoluyen_cost: 15

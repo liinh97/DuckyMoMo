@@ -578,6 +578,7 @@ leaderboard:
     sandau: "&4[Kẻ Săn Đầu]"
     chinhphuc: "&5[Kẻ Chinh Phục]"
     timan: "&d[Kẻ Tìm Lối]"
+    laoluyen: "&6[Lão Luyện]"
     mocong: "&5[Người Mở Cổng]"
     luukhach: "&7[Lữ Khách]"
     nghenhan: "&d[Nghệ Nhân]"
@@ -881,6 +882,34 @@ achievements:
     dg2: {name: "Kẻ Chinh Phục", desc: "Vượt dungeon 30 lần", type: dungeon, target: 30, rewards: ["xu 5000", "danhhieu chinhphuc"]}
     cgh: {name: "Người Mở Cổng", desc: "Là người đầu tiên tìm ra một Cổng Hoang", type: conghoang, target: 1, rewards: ["xu 3000", "danhhieu mocong"]}
     dga: {name: "Kẻ Tìm Lối", desc: "Tìm ra dungeon ẩn", type: dungeonan, target: 1, rewards: ["xu 3000", "danhhieu timan"]}
+
+# Thăng Cấp (/capdo; ý từ Prestige của UniMC): cấp riêng của server. Lên cấp N cần: xu (trả khi lên) = money-base × N^money-exponent,
+# giờ chơi thật của mùa >= hours-per-level × N, điểm hạ gục >= kill-points-per-level × N (quái +mob-points, người +player-points).
+# Mỗi cấp +points-per-level điểm đổi đặc quyền (CHỈ tiện ích / trang trí). keep-on-new-season: false = mùa mới làm lại từ cấp 0.
+# Trang Cài đặt › Kinh tế › Thăng Cấp.
+level-up:
+  enabled: true
+  max-level: 100
+  money-base: 500
+  money-exponent: 1.25
+  hours-per-level: 0.5
+  kill-points-per-level: 20
+  mob-points: 1
+  player-points: 10
+  player-cooldown-minutes: 10   # giết lại cùng một người trong ngần này phút không tính điểm
+  points-per-level: 1
+  milestone-every: 10
+  milestone-rewards: ["xu 5000", "vat EXPERIENCE_BOTTLE 16"]
+  keep-on-new-season: false
+  shop:
+    craft: {name: "Bàn chế tạo mang theo (/craft)", icon: CRAFTING_TABLE, cost: 3, perms: [essentials.workbench], description: ["Mở bàn chế tạo ở bất cứ đâu"]}
+    disposal: {name: "Thùng rác (/disposal)", icon: CAULDRON, cost: 2, perms: [essentials.disposal], description: ["Vứt đồ không cần nhanh gọn"]}
+    anvil: {name: "Đe mang theo (/anvil)", icon: ANVIL, cost: 5, perms: [essentials.anvil], description: ["Mở đe ở bất cứ đâu"]}
+    hat: {name: "Đội đồ lên đầu (/hat)", icon: LEATHER_HELMET, cost: 3, perms: [essentials.hat], description: ["Đội khối / đồ bất kỳ lên đầu (trang trí)"]}
+    hat2: {name: "Thêm 1 hiệu ứng hạt", icon: BLAZE_POWDER, cost: 6, perms: [playerparticles.particles.max.2], description: ["Bật cùng lúc 2 hiệu ứng hạt (/pp)"]}
+    meo: {name: "Pet mèo trang trí", icon: COD, cost: 5, perms: ["pet.type.cat.*"], description: ["Gọi mèo đi theo (/pet), chỉ trang trí"]}
+    giamxuong: {name: "Giảm 5% giá Xưởng", icon: SMITHING_TABLE, cost: 8, perms: [duckymomo.xuong.giam], description: ["Chế đồ ở /xuong rẻ hơn 5%"]}
+    laoluyen: {name: "Danh hiệu Lão Luyện", icon: NAME_TAG, cost: 15, rewards: ["danhhieu laoluyen"], description: ["Danh hiệu riêng cho người cấp cao"]}
 
 # Cổng Hoang (/conghoang): cổng dungeon ngụy trang xuất hiện dần trên bản đồ. Chỉ tự đặt khi đã mở mùa (leaderboard.season-start).
 # Trang Cài đặt > Thế giới > Cổng Hoang. Thị trấn có ô đất chứa cổng là chủ; chiếm được thị trấn là có cổng.

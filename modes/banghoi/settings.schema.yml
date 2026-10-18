@@ -923,6 +923,42 @@ groups:
       - { key: dh_minprice, label: Đơn giá thấp nhất, type: number, min: 0, file: plugins/DuckyMoMoCore/config.yml, path: orders.min-price }
       - { key: dh_maxprice, label: Đơn giá cao nhất, type: number, min: 0, file: plugins/DuckyMoMoCore/config.yml, path: orders.max-price }
 
+  - title: Thăng Cấp (/capdo)
+    category: Kinh tế
+    description: "Cấp riêng của server (ý từ Prestige của UniMC): lên cấp cần xu (trả khi lên), giờ chơi thật và điểm hạ gục; mỗi cấp được điểm đổi đặc quyền (chỉ tiện ích, trang trí)."
+    info: "Lên cấp N cần: xu = Xu gốc × N^Số mũ (trả khi lên, rút tiền khỏi kinh tế), giờ chơi thật của mùa ≥ Giờ mỗi cấp × N, điểm hạ gục ≥ Điểm hạ gục mỗi cấp × N.\nĐiểm hạ gục: hạ quái + Điểm quái, hạ người + Điểm người (quái từ lồng không tính; giết lại cùng một người trong thời gian chờ không tính).\nVí dụ mặc định: cấp 1 = 500 xu, cấp 10 ≈ 8.900 xu, cấp 50 ≈ 66.500 xu, cấp 100 ≈ 158.000 xu.\nĐặc quyền: mua 1 lần bằng điểm, cấp quyền LuckPerms vĩnh viễn (mùa mới làm lại thì gỡ). Thêm / sửa đặc quyền khác: level-up.shop trong plugins/DuckyMoMoCore/config.yml.\nCấp hiện cạnh tên trên Tab (%dmmcap_cap%).\nLưu xong: có hiệu lực ngay (dmm reload)."
+    apply: [dmm reload]
+    settings:
+      - { key: lvu_on, label: Bật Thăng Cấp, type: select, file: plugins/DuckyMoMoCore/config.yml, path: level-up.enabled, options: [ { value: true, label: Bật }, { value: false, label: Tắt } ] }
+      - { key: lvu_keep, label: Sang mùa mới (đổi map), type: select, file: plugins/DuckyMoMoCore/config.yml, path: level-up.keep-on-new-season, options: [ { value: false, label: "Làm lại từ cấp 0 (mặc định)" }, { value: true, label: "Giữ cấp và đặc quyền" } ] }
+      - { key: lvu_max, label: "Cấp tối đa", type: int, min: 1, max: 1000, file: plugins/DuckyMoMoCore/config.yml, path: level-up.max-level }
+      - { key: lvu_money, label: "Xu gốc (cấp 1)", type: number, min: 0, max: 100000000, file: plugins/DuckyMoMoCore/config.yml, path: level-up.money-base }
+      - { key: lvu_exp, label: "Số mũ tăng xu theo cấp", type: number, min: 0, max: 3, file: plugins/DuckyMoMoCore/config.yml, path: level-up.money-exponent, note: "1 = tăng đều; 1,25 = tăng nhanh dần" }
+      - { key: lvu_hours, label: "Giờ chơi thật mỗi cấp", type: number, min: 0, max: 100, file: plugins/DuckyMoMoCore/config.yml, path: level-up.hours-per-level }
+      - { key: lvu_kills, label: "Điểm hạ gục mỗi cấp", type: int, min: 0, max: 100000, file: plugins/DuckyMoMoCore/config.yml, path: level-up.kill-points-per-level }
+      - { key: lvu_mob, label: "Điểm mỗi quái hạ gục", type: int, min: 0, max: 1000, file: plugins/DuckyMoMoCore/config.yml, path: level-up.mob-points }
+      - { key: lvu_player, label: "Điểm mỗi người hạ gục", type: int, min: 0, max: 10000, file: plugins/DuckyMoMoCore/config.yml, path: level-up.player-points }
+      - { key: lvu_cd, label: "Giết lại cùng một người: chờ (phút) mới tính tiếp", type: int, min: 0, max: 1440, file: plugins/DuckyMoMoCore/config.yml, path: level-up.player-cooldown-minutes }
+      - { key: lvu_pts, label: "Điểm đặc quyền mỗi cấp", type: int, min: 0, max: 100, file: plugins/DuckyMoMoCore/config.yml, path: level-up.points-per-level }
+      - { key: lvu_every, label: "Quà mốc mỗi bao nhiêu cấp (0 = không)", type: int, min: 0, max: 100, file: plugins/DuckyMoMoCore/config.yml, path: level-up.milestone-every }
+      - { key: lvu_milestone, label: "Quà mốc", type: rewards, file: plugins/DuckyMoMoCore/config.yml, path: level-up.milestone-rewards }
+      - { key: lvu_craft_on, label: "Bàn chế tạo mang theo (/craft): bán", type: select, file: plugins/DuckyMoMoCore/config.yml, path: level-up.shop.craft.enabled, options: [ { value: true, label: Có }, { value: false, label: Ẩn } ] }
+      - { key: lvu_craft_cost, label: "Bàn chế tạo mang theo (/craft): giá (điểm)", type: int, min: 0, max: 1000, file: plugins/DuckyMoMoCore/config.yml, path: level-up.shop.craft.cost }
+      - { key: lvu_disposal_on, label: "Thùng rác (/disposal): bán", type: select, file: plugins/DuckyMoMoCore/config.yml, path: level-up.shop.disposal.enabled, options: [ { value: true, label: Có }, { value: false, label: Ẩn } ] }
+      - { key: lvu_disposal_cost, label: "Thùng rác (/disposal): giá (điểm)", type: int, min: 0, max: 1000, file: plugins/DuckyMoMoCore/config.yml, path: level-up.shop.disposal.cost }
+      - { key: lvu_anvil_on, label: "Đe mang theo (/anvil): bán", type: select, file: plugins/DuckyMoMoCore/config.yml, path: level-up.shop.anvil.enabled, options: [ { value: true, label: Có }, { value: false, label: Ẩn } ] }
+      - { key: lvu_anvil_cost, label: "Đe mang theo (/anvil): giá (điểm)", type: int, min: 0, max: 1000, file: plugins/DuckyMoMoCore/config.yml, path: level-up.shop.anvil.cost }
+      - { key: lvu_hat_on, label: "Đội đồ lên đầu (/hat): bán", type: select, file: plugins/DuckyMoMoCore/config.yml, path: level-up.shop.hat.enabled, options: [ { value: true, label: Có }, { value: false, label: Ẩn } ] }
+      - { key: lvu_hat_cost, label: "Đội đồ lên đầu (/hat): giá (điểm)", type: int, min: 0, max: 1000, file: plugins/DuckyMoMoCore/config.yml, path: level-up.shop.hat.cost }
+      - { key: lvu_hat2_on, label: "Thêm 1 hiệu ứng hạt: bán", type: select, file: plugins/DuckyMoMoCore/config.yml, path: level-up.shop.hat2.enabled, options: [ { value: true, label: Có }, { value: false, label: Ẩn } ] }
+      - { key: lvu_hat2_cost, label: "Thêm 1 hiệu ứng hạt: giá (điểm)", type: int, min: 0, max: 1000, file: plugins/DuckyMoMoCore/config.yml, path: level-up.shop.hat2.cost }
+      - { key: lvu_meo_on, label: "Pet mèo trang trí: bán", type: select, file: plugins/DuckyMoMoCore/config.yml, path: level-up.shop.meo.enabled, options: [ { value: true, label: Có }, { value: false, label: Ẩn } ] }
+      - { key: lvu_meo_cost, label: "Pet mèo trang trí: giá (điểm)", type: int, min: 0, max: 1000, file: plugins/DuckyMoMoCore/config.yml, path: level-up.shop.meo.cost }
+      - { key: lvu_giamxuong_on, label: "Giảm 5% giá Xưởng: bán", type: select, file: plugins/DuckyMoMoCore/config.yml, path: level-up.shop.giamxuong.enabled, options: [ { value: true, label: Có }, { value: false, label: Ẩn } ] }
+      - { key: lvu_giamxuong_cost, label: "Giảm 5% giá Xưởng: giá (điểm)", type: int, min: 0, max: 1000, file: plugins/DuckyMoMoCore/config.yml, path: level-up.shop.giamxuong.cost }
+      - { key: lvu_laoluyen_on, label: "Danh hiệu Lão Luyện: bán", type: select, file: plugins/DuckyMoMoCore/config.yml, path: level-up.shop.laoluyen.enabled, options: [ { value: true, label: Có }, { value: false, label: Ẩn } ] }
+      - { key: lvu_laoluyen_cost, label: "Danh hiệu Lão Luyện: giá (điểm)", type: int, min: 0, max: 1000, file: plugins/DuckyMoMoCore/config.yml, path: level-up.shop.laoluyen.cost }
+
   - title: Xưởng chế tạo (/xuong)
     category: Shop
     description: "Đồ đặc biệt theo logic HIỆU ỨNG + ĐỘ BỀN + THỜI HẠN, chế bằng xu + nguyên liệu xếp trên bàn chế 3×3. Hết độ bền hoặc hết hạn là biến mất (rút tiền và tài nguyên khỏi kinh tế)."

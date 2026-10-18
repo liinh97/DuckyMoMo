@@ -31,6 +31,8 @@ public final class DuckyMoMoCore extends JavaPlugin {
     private ThaiAp thaiAp;
     private DungeonGate dungeonGate;
     private PlayerSettings playerSettings;
+    private LevelUp levelUp;
+    private Object levelPapi;
     private WildGates wildGates;
     private Activity activity;
     private PeaceAlliance peace;
@@ -135,6 +137,14 @@ public final class DuckyMoMoCore extends JavaPlugin {
         if (spinPapi != null) {
             spinPapi.unregister();
             spinPapi = null;
+        }
+        if (levelPapi != null) {
+            LevelUpPapi.unregister(levelPapi);
+            levelPapi = null;
+        }
+        if (levelUp != null) {
+            levelUp.stop();
+            levelUp = null;
         }
         if (seasonPapi != null) {
             seasonPapi.unregister();
@@ -629,6 +639,19 @@ public final class DuckyMoMoCore extends JavaPlugin {
         }
         Achievements ach = achievements;
         bind("thanhtich", ach == null ? null : ach::command, "Sổ thành tích");
+        // Thăng Cấp (level-up, Bang Hội Chiến): cấp riêng của server, xu + giờ chơi + hạ gục, điểm đổi đặc quyền
+        levelUp = getConfig().getBoolean("level-up.enabled") && getConfig().isConfigurationSection("level-up")
+                ? new LevelUp(this, activity, rewards, getConfig().getConfigurationSection("level-up")) : null;
+        if (levelUp != null) {
+            getServer().getPluginManager().registerEvents(levelUp, this);
+            levelUp.start();
+            if (getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+                levelPapi = LevelUpPapi.register();
+            }
+            getLogger().info("Thăng Cấp: " + levelUp.describe());
+        }
+        LevelUp lvu = levelUp;
+        bind("capdo", lvu == null ? null : lvu::command, "Thăng Cấp");
         // Chơi một mình: bản đồ kho báu (treasure), bảng truy nã quái (wanted), Thái Ấp đất riêng (thai-ap) — Bang Hội Chiến
         treasure = getConfig().getBoolean("treasure.enabled") && getConfig().isConfigurationSection("treasure")
                 ? new TreasureHunt(this, rewards, getConfig().getConfigurationSection("treasure")) : null;

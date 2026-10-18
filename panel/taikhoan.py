@@ -478,6 +478,11 @@ def profile(perms):
         lv = int(ta.get("cap", 0) or 0)
         out["thaiap"] = {"ten": ta.get("ten"), "canh": sizes[min(lv, len(sizes) - 1)], "thich": len(ta.get("thich") or []),
                          "moi": len(ta.get("tin") or []), "to_nhat": lv + 1 >= len(sizes)}
+    luc = core.get("level-up") or {}
+    if luc.get("enabled"):
+        lv = (safe_yaml(DMM / "capdo.yml").get("nguoi") or {}).get(uuid) or {}
+        out["capdo"] = {"cap": int(lv.get("cap", 0) or 0), "toi_da": int(luc.get("max-level", 100) or 100), "diem": int(lv.get("diem", 0) or 0),
+                        "ha": int(lv.get("ha", 0) or 0), "da_mua": len(lv.get("mua") or [])}
     dgc = core.get("dungeon-gate") or {}
     if dgc.get("enabled"):
         dg = safe_yaml(DMM / "dungeon.yml")

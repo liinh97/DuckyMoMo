@@ -713,6 +713,9 @@ footer .fbrand img{width:44px}
     <div class="card" style="margin-top:16px"><h3>🌀 Cổng Hoang <span class="kbd">/conghoang</span></h3>
       <p class="muted">Cổng dungeon giấu trên bản đồ, trông như cảnh vật cũ (vòng đá rêu, giếng cát, cột băng, gốc cây rêu…). Thấy hạt tím thì đứng lên ô giữa và ngồi xuống (Shift). Dungeon sau cổng càng khó (★ nhiều) thì cổng càng khó nhận ra: ít dấu hiệu, có cổng chỉ lộ ban đêm, tin đồn mơ hồ hơn. Ai tìm ra trước được ưu tiên <span data-k="wildgates.grace">30</span> phút để lập thị trấn ở đó. Thị trấn giữ cổng: dân mình vào miễn phí, người ngoài trả phí vào ngân khố. <b>Chiếm được thị trấn là có cổng.</b></p>
       <div id="wgList" class="muted">Đang tải…</div></div>
+    <div class="card" style="margin-top:16px"><h3>⬆️ Thăng Cấp <span class="kbd">/capdo</span></h3>
+      <p class="muted">Cấp riêng của server: lên cấp cần xu (trả khi lên), giờ chơi thật và điểm hạ gục (hạ quái +<span data-k="capdo.mob">1</span>, hạ người +<span data-k="capdo.player">10</span>). Mỗi cấp được điểm đổi đặc quyền: chỉ tiện ích và trang trí, không cộng sức mạnh.</p>
+      <div id="cdList" class="muted">Đang tải…</div></div>
     <div class="card" style="margin-top:16px"><h3>🏅 Sổ thành tích <span class="kbd">/thanhtich</span></h3>
       <p class="muted">Mục tiêu cho người thích chơi một mình: tự đếm, đạt là nhận quà ngay, mốc khó có danh hiệu giữ qua mọi mùa.</p>
       <div id="ttList" class="muted">Đang tải…</div>
@@ -1102,6 +1105,9 @@ async function loadInfo(){
   $("#tnList").innerHTML = tn.enabled ? `<p class="dim" style="font-size:.85rem">Quái có thể bị truy nã: ${(tn.targets || []).map(esc).join(", ")}</p>` : "Đang tắt.";
   const ta = info.thaiap || {};
   $("#taInfo").innerHTML = ta.enabled ? `<p class="dim" style="font-size:.85rem">Cạnh ${(ta.sizes || []).join(" → ")} khối · giá ${(ta.prices || []).map(x => nf.format(x)).join(" → ")} xu</p>${(ta.top || []).length ? `<table><tbody>${ta.top.map((t, i) => `<tr><td>${i + 1}</td><td><b>${esc(t.ten)}</b><div class="dim" style="font-size:.8rem">${esc(t.chu || "")} · ${t.canh}×${t.canh}</div></td><td>❤ ${t.thich}</td></tr>`).join("")}</tbody></table>` : '<p class="dim">Chưa ai mua.</p>'}` : "Đang tắt.";
+  const cdi = info.capdo || {};
+  $("#cdList").innerHTML = !cdi.enabled ? "Đang tắt." : `<p class="dim" style="font-size:.85rem">Tối đa cấp ${cdi.max} · ${cdi.giu ? "giữ qua các mùa" : "mùa mới làm lại từ cấp 0"}. Đặc quyền: ${(cdi.shop || []).map(esc).join(", ")}.</p>`
+    + ((cdi.top || []).length ? `<table><tbody>${cdi.top.map((t, i) => `<tr><td>${i + 1}</td><td><b>${esc(t.ten)}</b></td><td>Cấp <b>${t.cap}</b></td></tr>`).join("")}</tbody></table>` : '<p class="dim">Chưa ai lên cấp.</p>');
   const wg = info.wildgates || {};
   $("#wgList").innerHTML = !wg.enabled ? "Đang tắt." : `<p class="dim" style="font-size:.85rem">Mỗi ${wg.days} ngày thêm 1 cổng, tối đa ${wg.max} cổng mỗi mùa${wg.da_xuat_hien != null ? ` · đã xuất hiện ${wg.da_xuat_hien}` : ""}.</p>` + ((wg.cong || []).length ? `<table><tbody>${wg.cong.map(g => g.tim
     ? `<tr><td><b>${esc(g.ma)}</b> <span class="dim">${esc(g.vung)}</span><div class="dim" style="font-size:.8rem">dẫn tới ${esc(g.dungeon || "?")}</div></td><td>${g.chu ? "Thị trấn <b>" + esc(g.chu) + "</b>" + (g.dong ? ' <span class="dim">(đóng với người ngoài)</span>' : g.phi ? ` · phí ${nf.format(g.phi)} xu` : " · miễn phí") : "Đất hoang, vào tự do"}</td><td class="dim" style="font-size:.8rem">tìm bởi ${esc(g.tim_boi || "")}${g.luot ? `<div>${g.luot} lượt qua</div>` : ""}</td></tr>`

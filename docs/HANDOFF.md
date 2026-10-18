@@ -303,6 +303,17 @@
   vé vận mệnh rơi hiếm, tung xúc xắc lúc vào), (4) mua vé cá nhân bằng xu (lượt / 7 ngày), (5) mở chung toàn server bằng quỹ như khai hoang.
   Điều kiện phụ: cấp pet, thành tích, nhóm 2–4 người, cuối tuần, chỉ nước Bá chủ. Chống lạm phát: lượt/ngày, lockout boss của EliteMobs.
 
+### 19/10: NOTE Xưởng chế tạo (CHƯA LÀM, chờ người dùng vào lại server UniMC xem menu "Server Tools")
+- Người dùng: Xưởng hiện "sai logic": muốn đồ mang PHÙ PHÉP kiểu UniMC (Server Tools), không phải món tính năng tự chế
+  (Túi Hư, Nước Nguồn, Dây Hút Đồ, Cung Máu, Búa Tạ). Chỉ lấy ý tưởng, không chép chữ/hình của họ.
+- Server có sẵn CrazyEnchantments (94 phù phép bật: VeinMiner, AutoSmelt, TreeFeller, Harvester/Tiller/Planter, Experience, Haste…)
+  và Enchantio (telepathy, smelting…). Workshop.java hiện chỉ gắn phù phép gốc (Registry minecraft:) → cần thêm "ce:<Tên>" (CeBridge)
+  và "enchantio:<tên>" (NamespacedKey.fromString).
+- Phác đã đưa: Cuốc Thợ Mỏ (VeinMiner + AutoSmelt), Rìu Tiều Phu (TreeFeller), Cuốc Nhà Nông (Harvester/Tiller/Planter),
+  Cuốc Kinh Nghiệm (Experience + Haste), Telepathy thay Dây Hút Đồ.
+- Còn hỏi người dùng: (1) danh sách/ảnh phù phép của UniMC để tìm tương đương; (2) giữ lượt dùng + hạn 7 ngày hay vĩnh viễn;
+  (3) bỏ hết hay giữ vài món tự chế cũ.
+
 ### 18/10 23:30: EliteMobs 10.9.10 + tiếng Việt
 - Nâng EliteMobs 10.9.8 → 10.9.10: itzg (MODRINTH_PROJECTS elitemobs) KHÔNG tự nâng vì file mới cùng tên EliteMobs.jar → tải jar Modrinth (sha512 khớp),
   kiểm tra bằng javap: EMPackage.getEmPackages/getContentPackagesConfigFields/isInstalled, ContentPackagesConfigFields.permission, các sự kiện,

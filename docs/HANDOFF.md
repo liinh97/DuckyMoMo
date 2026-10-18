@@ -288,7 +288,7 @@
   tạo bằng ChunkGenerator phẳng (y 64) + BiomeProvider PLAINS, gamerule không quái, Towny tắt bằng TownyWorld.setUsingTowny(false) (100 tick
   sau khi bật), MyPet worldgroups default thêm thaiap (data). Dishes.kitchenHere/kitchenBonus (PDC dmm_bep). Achievements thêm khobau, truyna,
   thaiap (4 mốc mới, danh hiệu sankhobau, sandau). Cài đặt: nhóm Bản đồ kho báu (kbo_*), Bảng truy nã (tna_*), Thái Ấp (tap_*).
-- Đoàn buôn: người dùng thấy "chạy một mình quá dễ" → mình đề xuất làm lại (hàng nặng, đường đi cố định, phục kích) — CHỜ người dùng.
+- Đoàn buôn: BỎ (người dùng chốt 18/10, không làm).
 - Chưa có ngày mở mùa (server chưa mở cho người chơi). Quảng trường Vinh danh: chưa cần đặt, nhớ làm khi gần mở.
 - Dungeon: người dùng tự tải (nightbreak.io, /nightbreaklogin <token>, /em setup). Sau đó: dungeon cấp tăng dần + chìa khoá cấp trước.
 

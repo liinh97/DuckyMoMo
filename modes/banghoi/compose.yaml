@@ -11,6 +11,7 @@ services:
       # Aikar giữ sẵn cả heap (Xms = Xmx = MEMORY, AlwaysPreTouch) nên container luôn dùng ~MEMORY + 1-1,5 GB.
       # Map Trái Đất rộng, nhiều người bay khắp nơi tốn chunk: 6G đủ cho vài chục người. Đông hơn thì tăng (và mem_limit).
       MEMORY: 6G
+      MAX_PLAYERS: 100        # tối đa người trong server này (theo RAM 6G; muốn hơn thì tăng MEMORY). Mặc định Minecraft là 20; proxy hiện 500 cho cả mạng
       USE_AIKAR_FLAGS: "true"
       TZ: Asia/Ho_Chi_Minh
       RCON_PASSWORD: ${RCON_PASSWORD:?Chưa đặt RCON_PASSWORD trong .env (chạy lại ./ops/init.sh)}   # dùng chung với dịch vụ sao lưu, trang Cài đặt

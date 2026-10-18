@@ -10,6 +10,7 @@ services:
       VERSION: ${MC_VERSION:-26.2}
       INIT_MEMORY: 1G
       MAX_MEMORY: 3G              # world nhỏ (sảnh + đấu trường); đông người thì tăng (và mem_limit)
+      MAX_PLAYERS: 100        # tối đa người trong server này (đấu trường nhỏ). Mặc định Minecraft là 20; proxy hiện 500 cho cả mạng
       # World hư không: sảnh và đấu trường xây bằng lệnh (tools/build-practice.py). Không quái, không phá block ngoài trận.
       LEVEL_TYPE: minecraft:flat
       GENERATOR_SETTINGS: '{"layers":[{"block":"minecraft:air","height":1}],"biome":"minecraft:plains"}'

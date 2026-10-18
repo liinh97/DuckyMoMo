@@ -11,6 +11,7 @@ services:
       # INIT_MEMORY nhỏ: Java bắt đầu ít RAM, chỉ lấy thêm khi cần, tối đa MAX_MEMORY.
       INIT_MEMORY: 512M
       MAX_MEMORY: 2G              # lobby phẳng; 2G đủ cho đông người chờ ở sảnh (11/10: 1G -> 2G khi máy lên 64 GB)
+      MAX_PLAYERS: 200        # tối đa người trong server này (sảnh chỉ chờ, nhẹ). Mặc định Minecraft là 20; proxy hiện 500 cho cả mạng
       TZ: Asia/Ho_Chi_Minh
       RCON_PASSWORD: ${RCON_PASSWORD:?Chưa đặt RCON_PASSWORD trong .env (chạy lại ./ops/init.sh)}   # dùng chung với dịch vụ sao lưu, trang Cài đặt
       ONLINE_MODE: "FALSE"        # proxy lo xác thực; server con không mở cổng ra ngoài

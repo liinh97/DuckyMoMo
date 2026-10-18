@@ -775,13 +775,13 @@ dungeon-gate:
     the_nether_wastes_dungeon: {name: "Hoang Mạc Địa Ngục", type: chain, level: "50", requires: the_deep_mines_dungeon, min-pet-level: 10, first-rewards: ["xu 4000"]}
     the_nether_bell_sanctum: {name: "Chuông Địa Ngục", type: chain, level: "55", requires: the_nether_wastes_dungeon, party: "2-4", first-rewards: ["xu 6000"]}
     sewers_minidungeon: {name: "Cống Ngầm", type: gate, level: "25", first-rewards: ["xu 2000"]}
-    dark_cathedral_lair: {name: "Thánh Đường Bóng Tối", type: hidden, level: "40", night-only: true, fragments: 3, hint: "chỉ hiện ra lúc nửa đêm", first-rewards: ["xu 3000"]}
+    dark_cathedral_lair: {name: "Thánh Đường Bóng Tối", type: hidden, level: "15", night-only: true, fragments: 3, hint: "chỉ hiện ra lúc nửa đêm", first-rewards: ["xu 3000"]}
     north_pole_minidungeon: {name: "Bắc Cực", type: gate, level: "55", first-rewards: ["xu 4000"]}
     knights_castle_lair: {name: "Lâu Đài Hiệp Sĩ", type: ticket, level: "95", price: 3000, max-tickets: 5, days: [t7, cn]}
     steamworks_lair: {name: "Xưởng Hơi Nước", type: ticket, level: "140", price: 5000, max-tickets: 5, min-achievements: 8}
     fireworks_lair: {name: "Lễ Hội Pháo Hoa", type: server, level: "20", goal: 100000, open-days: 7}
     hallosseum_lair: {name: "Đấu Trường Ma", type: server, level: "30", goal: 150000, open-days: 7, party: "2-5", hours: "19-23"}
-    binder_of_worlds_sanctum: {name: "Kẻ Trói Buộc Thế Giới", type: server, level: "200", goal: 1000000, open-days: 0, party: "3-6", min-pet-level: 20, first-rewards: ["xu 20000"]}
+    binder_of_worlds_sanctum: {name: "Kẻ Trói Buộc Thế Giới", type: server, level: "100", goal: 1000000, open-days: 0, party: "3-6", min-pet-level: 20, first-rewards: ["xu 20000"]}
 
 # Cân bằng chiến tranh (/canbang): chống "nước to nuốt hết". Trang Cài đặt > Chiến tranh > Cân bằng chiến tranh
 war-balance:

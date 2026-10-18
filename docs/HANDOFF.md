@@ -304,7 +304,7 @@
   Điều kiện phụ: cấp pet, thành tích, nhóm 2–4 người, cuối tuần, chỉ nước Bá chủ. Chống lạm phát: lượt/ngày, lockout boss của EliteMobs.
 
 ### 19/10: NOTE chờ quyết
-- Bảng xếp hạng dán TƯỜNG kiểu UniMC (TextDisplay áp sát mặt tường, dòng cuối riêng cho từng người nhìn: "Số lần bạn chết: Linh 0 (#175)")
+- (Người dùng 19/10: bảng này thuộc hệ thống VINH DANH, cứ note, làm cùng Quảng trường Vinh danh) Bảng xếp hạng dán TƯỜNG kiểu UniMC (TextDisplay áp sát mặt tường, dòng cuối riêng cho từng người nhìn: "Số lần bạn chết: Linh 0 (#175)")
   → làm được (TextDisplay + showEntity riêng từng người); chờ chọn bảng nào (giết, chết, giàu, câu cá…) và đặt ở đâu.
 - "Cấp" cạnh tên trên bảng Tab (UniMC: "Linh [Cấp 0]"): chưa hiện; đề xuất dùng cấp chiến đấu EliteMobs %elitemobs_player_combat_level%
   (TAB groups.yml tabsuffix), chờ người dùng chọn loại cấp.

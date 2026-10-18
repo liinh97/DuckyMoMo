@@ -731,7 +731,7 @@ wild-gates:
     t1: {particle-range: 16, night-only: false, hint-range: 6, rumor: chi-tiet, treasure-radius: 40, structure-percent: 100}
     t2: {particle-range: 8, night-only: false, hint-range: 3, rumor: vung, treasure-radius: 80, structure-percent: 55}
     t3: {particle-range: 4, night-only: true, hint-range: 0, rumor: mo-ho, treasure-radius: 150, structure-percent: 25}
-  underwater-chance: 30    # % mỗi lần thử chọn chỗ được phép đặt cổng dưới đáy nước (biển, sông sâu 3–15 khối)
+  underwater-chance: 30    # % mỗi lần thử chọn chỗ được phép đặt cổng dưới đáy nước (biển, sông sâu 2–24 khối)
   # Cổng dẫn tới (ngẫu nhiên, ưu tiên gói đã cài): bậc theo độ khó dungeon + dấu hiệu riêng đưa vào tin đồn
   dungeons:
     sewers_minidungeon: {tier: 1, rumor: "dưới đất bốc lên mùi ẩm mốc và tiếng nước nhỏ giọt"}

@@ -286,7 +286,7 @@ final class WildGates implements Listener {
         }
         String ns = dz < -Math.abs(dx) * 0.4 ? "bắc" : dz > Math.abs(dx) * 0.4 ? "nam" : "";
         String ew = dx > Math.abs(dz) * 0.4 ? "đông" : dx < -Math.abs(dz) * 0.4 ? "tây" : "";
-        return "phía " + (ns + (ns.isEmpty() || ew.isEmpty() ? "" : " ") + ew).trim();
+        return "phía " + (ew + (ns.isEmpty() || ew.isEmpty() ? "" : " ") + ns).trim();   // tây bắc, đông nam…
     }
 
     private Location pickSpot() {
@@ -303,17 +303,17 @@ final class WildGates implements Listener {
             int x = z.x() + (int) (Math.cos(a) * d), zz = z.z() + (int) (Math.sin(a) * d);
             Block top = w.getHighestBlockAt(x, zz);
             if (top.getType() == Material.WATER) {
-                // dưới nước: chỉ nhận đáy sâu 3–15 khối, tỉ lệ underwater-chance %
+                // dưới nước: chỉ nhận đáy sâu 2–24 khối, tỉ lệ underwater-chance %
                 if (r.nextDouble(100) >= underwaterChance) {
                     continue;
                 }
                 Block b = top;
                 int depth = 0;
-                while (b.getType() == Material.WATER && depth < 20) {
+                while (b.getType() == Material.WATER && depth < 30) {
                     b = b.getRelative(0, -1, 0);
                     depth++;
                 }
-                if (depth < 3 || depth > 15 || !b.getType().isSolid()) {
+                if (depth < 2 || depth > 24 || !b.getType().isSolid()) {
                     continue;
                 }
                 top = b;

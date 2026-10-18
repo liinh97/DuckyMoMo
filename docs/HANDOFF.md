@@ -290,7 +290,12 @@
   thaiap (4 mốc mới, danh hiệu sankhobau, sandau). Cài đặt: nhóm Bản đồ kho báu (kbo_*), Bảng truy nã (tna_*), Thái Ấp (tap_*).
 - Đoàn buôn: BỎ (người dùng chốt 18/10, không làm).
 - Chưa có ngày mở mùa (server chưa mở cho người chơi). Quảng trường Vinh danh: chưa cần đặt, nhớ làm khi gần mở.
-- Dungeon: người dùng tự tải (nightbreak.io, /nightbreaklogin <token>, /em setup). Sau đó: dungeon cấp tăng dần + chìa khoá cấp trước.
+- Dungeon: ĐÃ đăng nhập Nightbreak trên banghoi-1 (18/10 16:14, token lưu trong data, không trong repo; "Account token loaded successfully").
+  CHỜ người dùng vào game /em setup cài gói miễn phí. Thiết kế đã đề xuất (chờ duyệt): "Cổng Dungeon" /dungeon của DuckyMoMoCore thay lối vào
+  gốc của EliteMobs (EliteMobs không có quyền theo từng dungeon; sự kiện PlayerJoinDungeonEvent/DungeonCompleteEvent không huỷ được) với 5 kiểu:
+  (1) chuỗi cấp + chìa khoá, (2) dungeon ẩn (bản đồ hầm ẩn, theo giờ/mùa/sự kiện, ghép mảnh chìa), (3) may mắn (cổng thời không ngẫu nhiên,
+  vé vận mệnh rơi hiếm, tung xúc xắc lúc vào), (4) mua vé cá nhân bằng xu (lượt / 7 ngày), (5) mở chung toàn server bằng quỹ như khai hoang.
+  Điều kiện phụ: cấp pet, thành tích, nhóm 2–4 người, cuối tuần, chỉ nước Bá chủ. Chống lạm phát: lượt/ngày, lockout boss của EliteMobs.
 
 ### 18/10 (sửa): tham chiếu dùng chung qua Shared.java
 - Lỗi: teardown gán Frontier.INSTANCE/Leaderboard.INSTANCE = null làm nạp lớp Frontier (có PlaceholderExpansion) ở sảnh/practice →

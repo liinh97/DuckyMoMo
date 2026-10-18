@@ -102,6 +102,19 @@ bật công tắc vây thành, rút lịch phiên còn vài phút (Cài đặt �
 - [ ] Bị chiếm (SiegeWar): vua nước chiếm chỉnh được phí, dân nước chiếm vào miễn phí.
 - [ ] /conghoang datlai gỡ sạch khối, trả lại địa hình cũ.
 
+## 4f. Xưởng chế tạo (/xuong) — làm lại 19/10
+- [ ] /xuong: menu 20 món; bấm món → bảng chế 3×3 đúng nguyên liệu; đủ đồ + xu thì chế được, thiếu thì báo.
+- [ ] Lấy nhanh để thử: /xuong tang <mã> [người] (khoan_dao, dao_ham, xeng_dat, riu_tieu, tu_nung, da_nang, gat_lua, nam_cham, ban_ruong,
+      tui_hu, nuoc, dung_nham, bat_thu, moc_bay, khien_than, cung_mau, no_toa, bua_ta, kiem_nhat, riu_chien).
+- [ ] Khoan Đào 3×3 / Đào Hầm 5×5 / Xẻng 3×3: đào đúng mặt; không đào được trong thị trấn người khác (Towny); độ bền trừ theo số khối.
+- [ ] Rìu Tiều chặt cả cây; Tự Nung ra thỏi; Đa Năng tự đổi cuốc/rìu/xẻng; Gặt Lúa gặt 3×3 + gieo lại bằng hạt trong túi.
+- [ ] Hút Đồ (để trong túi) hút đồ quanh 16 khối, không hút đồ người khác vứt / quanh chỗ người chết.
+- [ ] Rìu Bán: đánh vào rương của mình → bán theo giá /sell, tiền vào ví; rương người khác (không quyền) → bị chặn.
+- [ ] Bắt Thú: bò/cừu thành trứng; không bắt được thú có chủ, pet, quái.
+- [ ] Móc Bay kéo bay; Khiên Thần giảm 50% + phản đòn; Kiếm Nhật lướt chém (hồi 4 giây); Rìu Chiến chí mạng + chảy máu; Cung Máu hồi 1 tim.
+- [ ] Món "mất tác dụng khi công thành" không dùng được trong vùng vây đang đánh.
+- [ ] Phù phép CE (thử thêm ce:Blast:1 cho một món trên trang Cài đặt): món chế ra có dòng CE và dùng được.
+
 ## 5. Quảng trường Vinh danh (sảnh)
 - [ ] (CHƯA CẦN, làm khi gần mở server) Chọn chỗ trống ở sảnh (map sakura). Đứng, quay mặt về phía người xem: `/vinhdanh dat moinhat tieude`, rồi `bachu`, `chienthan`, `phuho`,
       `kientrucsu`, `dautruong`, `pet` ở các chỗ khác. Bảng chữ nổi + đầu người chơi đúng hướng, không đè nhau.

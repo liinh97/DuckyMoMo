@@ -303,6 +303,13 @@
   vé vận mệnh rơi hiếm, tung xúc xắc lúc vào), (4) mua vé cá nhân bằng xu (lượt / 7 ngày), (5) mở chung toàn server bằng quỹ như khai hoang.
   Điều kiện phụ: cấp pet, thành tích, nhóm 2–4 người, cuối tuần, chỉ nước Bá chủ. Chống lạm phát: lượt/ngày, lockout boss của EliteMobs.
 
+### 19/10: NOTE chờ quyết
+- Bảng xếp hạng dán TƯỜNG kiểu UniMC (TextDisplay áp sát mặt tường, dòng cuối riêng cho từng người nhìn: "Số lần bạn chết: Linh 0 (#175)")
+  → làm được (TextDisplay + showEntity riêng từng người); chờ chọn bảng nào (giết, chết, giàu, câu cá…) và đặt ở đâu.
+- "Cấp" cạnh tên trên bảng Tab (UniMC: "Linh [Cấp 0]"): chưa hiện; đề xuất dùng cấp chiến đấu EliteMobs %elitemobs_player_combat_level%
+  (TAB groups.yml tabsuffix), chờ người dùng chọn loại cấp.
+- Xưởng chế tạo: ĐÃ LÀM LẠI (commit 1d92c14), xem mục 4f trong TEST-CHECKLIST.
+
 ### 19/10: NOTE Xưởng chế tạo (CHƯA LÀM, chờ người dùng vào lại server UniMC xem menu "Server Tools")
 - Người dùng: Xưởng hiện "sai logic": muốn đồ mang PHÙ PHÉP kiểu UniMC (Server Tools), không phải món tính năng tự chế
   (Túi Hư, Nước Nguồn, Dây Hút Đồ, Cung Máu, Búa Tạ). Chỉ lấy ý tưởng, không chép chữ/hình của họ.

@@ -860,3 +860,6 @@ arena:
   daily-reward-cap: 5               # số trận được thưởng mỗi ngày
   pet-exp-win: 30                     # kinh nghiệm cho pet đang dẫn khi thắng (chung giới hạn trận thưởng/ngày)
   elo-k: 32
+
+# Tiêu đề khung nhắc lúc vào game (gom hướng dẫn, mùa, công thành, điểm danh… thành một khung)
+join-notes-title: "Bang Hội Chiến"

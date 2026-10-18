@@ -283,6 +283,12 @@
   ticks-per-particle). Ghi vào plugins/PlayerParticles/styles/<kiểu>.yml ở lobby + banghoi-1, CẦN khởi động lại 2 server mới có hiệu lực.
 - PlayerParticles có sẵn `locale: vi_VN`, EssentialsX có `messages_vi` — chưa bật (đã hỏi người dùng).
 
+### 18/10: gom tin nhắn lúc vào game (JoinNotes)
+- JoinNotes.java (không phụ thuộc gì): Guide (hướng dẫn), Seasons (mùa + sự kiện), PetCombat (phiên công thành), DailyCheckin (điểm danh),
+  Orders (đơn hàng) gọi JoinNotes.add(p, thứ tự, dòng) thay vì tự gửi; gửi gộp 1 khung 5 giây sau khi vào. Tiêu đề: join-notes-title
+  (banghoi "Bang Hội Chiến", lobby "DuckyMoMo"). Tắt Updater của HoloMobHealth, Debug của HoloMobHealth-PacketEvents (data).
+- Thông báo chỉ admin thấy: EliteMobs (cập nhật plugin, tin tác giả, "Setup required" — hết sau /em initialize; dòng Language có Tiếng Việt).
+
 ### 18/10: kho báu, truy nã, Thái Ấp + việc chờ
 - TreasureHunt.java /khobau (treasure): xem camnang. WantedBoard.java /truyna (wanted). ThaiAp.java /thaiap (thai-ap): thế giới "thaiap"
   tạo bằng ChunkGenerator phẳng (y 64) + BiomeProvider PLAINS, gamerule không quái, Towny tắt bằng TownyWorld.setUsingTowny(false) (100 tick

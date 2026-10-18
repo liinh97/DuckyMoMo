@@ -91,14 +91,12 @@ final class DailyCheckin implements Listener {
         if (!cfg.getBoolean("remind-on-join", true)) {
             return;
         }
-        Bukkit.getScheduler().runTaskLater(plugin, () -> {
-            if (p.isOnline() && !today().equals(data.getString("players." + p.getUniqueId() + ".last"))) {
-                int mins = cfg.getInt("min-online-minutes", 5);
-                p.sendMessage(c("&e📅 Hôm nay bạn chưa điểm danh. ").append(c("&a&n[Bấm để điểm danh]")
-                        .clickEvent(ClickEvent.runCommand("/diemdanh"))
-                        .hoverEvent(HoverEvent.showText(c("&7/diemdanh" + (mins > 0 ? " (cần online đủ " + mins + " phút)" : ""))))));
-            }
-        }, 20L * cfg.getInt("remind-delay-seconds", 8));
+        if (!today().equals(data.getString("players." + p.getUniqueId() + ".last"))) {
+            int mins = cfg.getInt("min-online-minutes", 5);
+            JoinNotes.add(p, 30, c("&e📅 Hôm nay bạn chưa điểm danh. ").append(c("&a&n[Bấm để điểm danh]")
+                    .clickEvent(ClickEvent.runCommand("/diemdanh"))
+                    .hoverEvent(HoverEvent.showText(c("&7/diemdanh" + (mins > 0 ? " (cần online đủ " + mins + " phút)" : ""))))));
+        }
     }
 
     @EventHandler

@@ -52,13 +52,8 @@ final class Guide implements Listener {
         if (joinHint == null || joinHint.isBlank()) {
             return;
         }
-        Player p = e.getPlayer();
-        plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
-            if (p.isOnline()) {
-                p.sendMessage(LEGACY.deserialize(joinHint).clickEvent(ClickEvent.runCommand("/huongdan"))
-                        .hoverEvent(HoverEvent.showText(Component.text("Bấm để mở cẩm nang"))));
-            }
-        }, 60L);
+        JoinNotes.add(e.getPlayer(), 0, LEGACY.deserialize(joinHint).clickEvent(ClickEvent.runCommand("/huongdan"))
+                .hoverEvent(HoverEvent.showText(Component.text("Bấm để mở cẩm nang"))));
     }
 
     private YamlConfiguration load() {

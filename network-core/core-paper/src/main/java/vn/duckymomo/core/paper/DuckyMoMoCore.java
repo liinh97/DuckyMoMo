@@ -292,6 +292,7 @@ public final class DuckyMoMoCore extends JavaPlugin {
         // Giờ chơi thật (không tính AFK) cho dân hoạt động, quân hàm, lập thị trấn (banghoi): active-play.enabled
         activity = getConfig().getBoolean("active-play.enabled") ? new Activity(this, getConfig().getConfigurationSection("active-play")) : null;
         LowPop.init(activity, getConfig().getConfigurationSection("low-population"));
+        JoinNotes.init(this, getConfig().getString("join-notes-title", "DuckyMoMo"));
         if (activity != null) {
             getServer().getPluginManager().registerEvents(activity, this);
             activity.start();

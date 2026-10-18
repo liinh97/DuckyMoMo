@@ -90,3 +90,6 @@ donate-qr:
 hall-of-fame:
   display: true
   dir: /shared/vinhdanh
+
+# Tiêu đề khung nhắc lúc vào game (gom hướng dẫn, mùa, công thành, điểm danh… thành một khung)
+join-notes-title: "DuckyMoMo"

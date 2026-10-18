@@ -370,8 +370,7 @@ final class Orders implements Listener {
         }
         if (waiting > 0) {
             int w = waiting;
-            Bukkit.getScheduler().runTaskLater(plugin, () -> e.getPlayer().sendMessage(
-                    c("&6[Đơn hàng] &fCó &a" + w + " &fmón đã giao chờ bạn nhận: &e/donhang cuatoi")), 80L);
+            JoinNotes.add(e.getPlayer(), 40, c("&6[Đơn hàng] &fCó &a" + w + " &fmón đã giao chờ bạn nhận: &e/donhang cuatoi"));
         }
     }
 

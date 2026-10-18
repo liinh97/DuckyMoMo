@@ -380,13 +380,9 @@ final class Seasons implements Listener {
         if (!cfg.getBoolean("join-message", true)) {
             return;
         }
-        Player p = e.getPlayer();
-        Bukkit.getScheduler().runTaskLater(plugin, () -> {
-            if (p.isOnline()) {
-                p.sendMessage(c("&6[Mùa] &fĐang là " + name(current()) + (forced() ? "" : " &7(còn " + daysLeft() + " ngày)")
-                        + "&f. Gõ &e/mua &fđể xem chi tiết."));
-            }
-        }, 60L);
+        ConfigurationSection ev = event();
+        JoinNotes.add(e.getPlayer(), 10, c("&6[Mùa] &fĐang là " + name(current()) + (forced() ? "" : " &7(còn " + daysLeft() + " ngày)")
+                + (ev == null ? "" : " &f· " + ev.getString("name", ev.getName())) + "&f. Gõ &e/mua &fđể xem chi tiết."));
     }
 
     /** Tên Việt của cây/nông sản (vd WHEAT -> lúa). */

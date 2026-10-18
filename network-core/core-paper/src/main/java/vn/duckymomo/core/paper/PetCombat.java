@@ -346,9 +346,8 @@ final class PetCombat implements Listener {
     public void onJoin(PlayerJoinEvent event) {
         Long next = upcoming;
         if (next != null && next > System.currentTimeMillis()) {
-            Player p = event.getPlayer();
-            Bukkit.getScheduler().runTaskLater(plugin, () -> p.sendMessage(c("&6⚔ Phiên công thành tới (" + WHEN.format(Instant.ofEpochMilli(next))
-                    + "): " + petText(allowedFor(next)) + "&6.")), 80L);
+            JoinNotes.add(event.getPlayer(), 20, c("&6⚔ Phiên công thành tới (" + WHEN.format(Instant.ofEpochMilli(next))
+                    + "): " + petText(allowedFor(next)) + "&6."));
         }
     }
 

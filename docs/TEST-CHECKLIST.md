@@ -115,6 +115,20 @@ bật công tắc vây thành, rút lịch phiên còn vài phút (Cài đặt �
 - [ ] Món "mất tác dụng khi công thành" không dùng được trong vùng vây đang đánh.
 - [ ] Phù phép CE (thử thêm ce:Blast:1 cho một món trên trang Cài đặt): món chế ra có dòng CE và dùng được.
 
+## 4g. Cài đặt cá nhân (/caidat) — 19/10, cần 2 người
+- [ ] /caidat mở menu 19 ô; bấm đổi Bật/Tắt; /caidat chat tat chạy.
+- [ ] Tắt "Kênh chat chung": không thấy chat người khác, vẫn thấy tin nhắn riêng và thông báo.
+- [ ] Tắt "Tin nhắn riêng" / "Nhận TPA" / "Nhận TPAHere": người kia /msg, /tpa, /tpahere bị chặn kèm câu báo; staff (duckymomo.caidat.bypass) vẫn gửi được.
+- [ ] "Kêu khi bị gọi tên": người kia nhắc tên trong chat → có tiếng ting.
+- [ ] Tắt "Lọc từ tục": mình thấy bản gốc, người khác vẫn thấy bản đã lọc (thử ở sảnh và Bang Hội Chiến: hai kiểu định dạng chat khác nhau).
+- [ ] Tắt "Vào / rời", "Tử vong", "Dọn rác", "Sự kiện", "Khung nhắc lúc vào": không còn thấy các dòng đó.
+- [ ] Tắt "Bảng bên phải", "Thanh mẹo trên cùng": ẩn ngay; vào lại vẫn giữ.
+- [ ] Tắt "Hiệu ứng hạt người khác", "Máu quái trên đầu" (CHƯA CHẮC nhất: điều khiển PlayerParticles / HoloMobHealth qua reflection).
+- [ ] Practice: tắt "Lời mời đấu / nhóm" → /duel <tên>, /party invite <tên> bị chặn.
+- [ ] Bật "Tự gọi pet": vào Bang Hội Chiến pet tự ra; "Nhắc điểm danh": sau ~1 giờ có nhắc nếu chưa điểm danh.
+- [ ] "Nhắc giờ công thành": còn 15 phút tới phiên đánh thì người có thị trấn bị vây / nước đi vây nhận nhắc.
+- [ ] Trang tài khoản (web): thẻ "Cài đặt cá nhân" bấm đổi → áp dụng ngay trong game (đang online).
+
 ## 5. Quảng trường Vinh danh (sảnh)
 - [ ] (CHƯA CẦN, làm khi gần mở server) Chọn chỗ trống ở sảnh (map sakura). Đứng, quay mặt về phía người xem: `/vinhdanh dat moinhat tieude`, rồi `bachu`, `chienthan`, `phuho`,
       `kientrucsu`, `dautruong`, `pet` ở các chỗ khác. Bảng chữ nổi + đầu người chơi đúng hướng, không đè nhau.

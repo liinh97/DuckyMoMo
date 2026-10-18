@@ -156,6 +156,119 @@ final class DonateRanks implements Listener {
         plugin.getLogger().info("Skin theo rank: " + all.size() + " skin độc quyền đã đồng bộ vào LuckPerms");
     }
 
+    /** Skin độc quyền của bậc, đọc thẳng từ LuckPerms (nguồn thật; thêm bằng /rank skin them hoặc Cài đặt). */
+    private List<String> tierSkins(String group) {
+        var g = lp().getGroupManager().getGroup(group);
+        if (g == null) {
+            return skins.getOrDefault(group, List.of());
+        }
+        return g.getNodes(net.luckperms.api.node.NodeType.PERMISSION).stream()
+                .filter(n -> n.getValue() && n.getPermission().startsWith("skinsrestorer.skin.") && !n.getPermission().endsWith(".*"))
+                .map(n -> n.getPermission().substring("skinsrestorer.skin.".length())).sorted().toList();
+    }
+
+    private Tier findTier(String q) {
+        String k = java.text.Normalizer.normalize(q, java.text.Normalizer.Form.NFD).replaceAll("\\p{M}", "").replace("đ", "d").replace("Đ", "d")
+                .replace(" ", "").toLowerCase(java.util.Locale.ROOT);
+        for (Tier t : tiers) {
+            String n = java.text.Normalizer.normalize(t.name(), java.text.Normalizer.Form.NFD).replaceAll("\\p{M}", "").replace("đ", "d").replace("Đ", "d")
+                    .replace(" ", "").toLowerCase(java.util.Locale.ROOT);
+            if (t.group().equalsIgnoreCase(k) || n.equals(k)) {
+                return t;
+            }
+        }
+        return null;
+    }
+
+    private static net.luckperms.api.node.types.PermissionNode perm(String p, boolean v) {
+        return net.luckperms.api.node.types.PermissionNode.builder(p).value(v).build();
+    }
+
+    /**
+     * /rank skin                          xem skin độc quyền từng bậc
+     * /rank skin them <bậc> <tên> <link>  khoá skin cho bậc (LuckPerms ngay, không cần khởi động lại) + nút tạo skin (/sr createcustom chạy ở proxy)
+     * /rank skin xoa <tên>                mở khoá lại cho mọi người (skin vẫn còn trong /skins)
+     */
+    private void skinCommand(CommandSender s, String[] a, boolean admin) {
+        String sub = a.length > 1 ? a[1].toLowerCase(java.util.Locale.ROOT) : "";
+        if (sub.isEmpty() || !admin) {
+            s.sendMessage(c("&6&lSkin độc quyền theo rank &7(menu /skins; bậc cao có luôn skin bậc dưới)"));
+            for (Tier t : tiers) {
+                List<String> sk = tierSkins(t.group());
+                s.sendMessage(c("  " + t.color() + t.name() + "&7: " + (sk.isEmpty() ? "&8chưa có" : "&f" + String.join(", ", sk))));
+            }
+            if (admin) {
+                s.sendMessage(c("&7Thêm: &f/rank skin them <bậc> <tên> <link ảnh .png> &7· Bỏ khoá: &f/rank skin xoa <tên>"));
+            }
+            return;
+        }
+        var gm = lp().getGroupManager();
+        if (sub.equals("them")) {
+            if (a.length < 5) {
+                s.sendMessage(c("&eDùng: /rank skin them <bậc> <tên> <link ảnh .png>  &7(vd /rank skin them congtuoc tuongquan https://…/skin.png)"));
+                return;
+            }
+            Tier t = findTier(a[2]);
+            String name = a[3].toLowerCase(java.util.Locale.ROOT);
+            String url = a[4];
+            if (t == null) {
+                s.sendMessage(c("&cKhông có bậc \"" + a[2] + "\". Bậc: " + String.join(", ", tiers.stream().map(Tier::group).toList())));
+                return;
+            }
+            if (!name.matches("[a-z0-9_-]{2,32}")) {
+                s.sendMessage(c("&cTên skin chỉ gồm chữ thường không dấu, số, _ hoặc - (2–32 ký tự)."));
+                return;
+            }
+            if (!url.matches("https?://\\S+")) {
+                s.sendMessage(c("&cLink ảnh phải bắt đầu bằng http:// hoặc https://"));
+                return;
+            }
+            String node = "skinsrestorer.skin." + name;
+            for (Tier o : tiers) {   // một skin chỉ thuộc một bậc
+                gm.modifyGroup(o.group(), g -> {
+                    g.data().remove(perm(node, true));
+                    g.data().remove(perm(node, false));
+                    if (o == t) {
+                        g.data().add(perm(node, true));
+                    }
+                });
+            }
+            gm.modifyGroup("default", g -> {
+                g.data().remove(perm(node, true));
+                g.data().add(perm(node, false));
+            });
+            s.sendMessage(c("&a✔ Đã khoá skin &f" + name + " &acho " + t.color() + t.name() + " &a(và bậc cao hơn)."));
+            s.sendMessage(c("&eBước cuối: ").append(c("&a&l[Bấm để tạo skin]")
+                    .clickEvent(net.kyori.adventure.text.event.ClickEvent.runCommand("/sr createcustom " + name + " " + url))
+                    .hoverEvent(net.kyori.adventure.text.event.HoverEvent.showText(c("&7Chạy /sr createcustom " + name + " " + url
+                            + "\n&8(lệnh của proxy nên phải bấm từ trong game)")))));
+            if (!(s instanceof Player)) {
+                s.sendMessage(c("&7(Đang gõ từ console: vào game gõ &f/sr createcustom " + name + " " + url + "&7)"));
+            }
+            return;
+        }
+        if (sub.equals("xoa")) {
+            if (a.length < 3) {
+                s.sendMessage(c("&eDùng: /rank skin xoa <tên>"));
+                return;
+            }
+            String node = "skinsrestorer.skin." + a[2].toLowerCase(java.util.Locale.ROOT);
+            for (Tier o : tiers) {
+                gm.modifyGroup(o.group(), g -> {
+                    g.data().remove(perm(node, true));
+                    g.data().remove(perm(node, false));
+                });
+            }
+            gm.modifyGroup("default", g -> {
+                g.data().remove(perm(node, true));
+                g.data().remove(perm(node, false));
+            });
+            s.sendMessage(c("&a✔ Đã bỏ khoá skin &f" + a[2] + "&a: ai cũng dùng được (skin vẫn nằm trong /skins)."));
+            return;
+        }
+        s.sendMessage(c("&e/rank skin &7· &e/rank skin them <bậc> <tên> <link> &7· &e/rank skin xoa <tên>"));
+    }
+
     private static LuckPerms lp() {
         return LuckPermsProvider.get();
     }
@@ -229,6 +342,7 @@ final class DonateRanks implements Listener {
                     qr.cancel(p);
                 }
             }
+            case "skin" -> skinCommand(s, a, admin);
             case "give" -> {
                 if (!admin || a.length < 4) {
                     s.sendMessage(c(admin ? "&cDùng: /rank give <tên> <bậc> <số tháng: 1|3|6|12>" : "&cBạn không có quyền."));
@@ -262,7 +376,7 @@ final class DonateRanks implements Listener {
         s.sendMessage(c("&6&l✦ RANK DONATE (tước vị) ✦ &7chỉ trang trí, không lợi thế khi chơi"));
         for (Tier t : tiers) {
             s.sendMessage(c(t.color() + "&l" + t.name() + "&7: " + String.join("&7, ", t.perks().stream().map(x -> "&f" + x).toList())));
-            List<String> sk = skins.getOrDefault(t.group(), List.of());
+            List<String> sk = tierSkins(t.group());
             if (!sk.isEmpty()) {
                 s.sendMessage(c("   &7Skin độc quyền (/skins): &f" + String.join(", ", sk) + " &8(+ skin của bậc dưới)"));
             }

@@ -15,4 +15,4 @@ nhom:
     lenh: [co i, co lookup, co rollback, co restore, kick, mute, tempban, ban, unban, seen, invsee, vanish, socialspy,
            tp, tphere, fly, heal, grim alerts]
   - ten: Admin
-    lenh: [dmm, dmm laydo, dmm luudo, dungeon ds, dungeon cho, dungeon datan, dungeon mo, conghoang tao, conghoang ds, em setup, rank give, rank check, mua dat, khaihoang them, xuong tang, emfa competition start, emfa reload, eco give, eco take, gamemode, give, lp editor, lp user, em, ta, swa]
+    lenh: [dmm, dmm laydo, dmm luudo, rank skin them, dungeon ds, dungeon cho, dungeon datan, dungeon mo, conghoang tao, conghoang ds, em setup, rank give, rank check, mua dat, khaihoang them, xuong tang, emfa competition start, emfa reload, eco give, eco take, gamemode, give, lp editor, lp user, em, ta, swa]

@@ -87,6 +87,13 @@ bật công tắc vây thành, rút lịch phiên còn vài phút (Cài đặt �
 - [ ] Vượt xong báo thời gian; phá kỷ lục báo cả server; web hiện kỷ lục.
 - [ ] Kho báu huyền thoại (/khobau give, tới khi ra bậc huyền thoại): 40% có mảnh giấy chỉ đường tới dungeon ẩn.
 
+## 4d+. Dungeon: chìa khoá, kỹ năng class, tiền
+- [ ] Vượt Đỉnh Vách Đá → trùm cuối rơi "Chìa khoá Hang Thánh Địa" cho từng người; chuột phải / /dungeon vao: mất chìa, mở vĩnh viễn.
+- [ ] key-tradeable false: đưa chìa cho người khác → họ không dùng được. Bật true → dùng được.
+- [ ] Kỹ năng class EliteMobs ngoài dungeon (Shift + F hai lần ở world chính): có dùng được trong PvP/công thành không → quyết tắt
+      allowClassAbilitiesOutsideEliteMobsWorlds.
+- [ ] Đo xu rơi một lượt dungeon (trước/sau /bal) để xem có in tiền quá tay không (EconomySettings currencyShowerTierMultiplier 0.3).
+
 ## 4e. Cổng Hoang (/conghoang)
 - [ ] /conghoang tao here: cổng dựng đúng kiểu biome, không phá được khối; /conghoang ds thấy toạ độ.
 - [ ] Người thường tới gần thấy hạt tím + dòng nhắc; Shift ở ô giữa: tìm ra (báo server), mở menu dungeon.

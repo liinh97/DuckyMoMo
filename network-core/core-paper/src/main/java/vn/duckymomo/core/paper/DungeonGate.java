@@ -56,7 +56,9 @@ import org.bukkit.persistence.PersistentDataType;
  * Cổng Dungeon (/dungeon, Bang Hội Chiến). Đặt quyền riêng "duckymomo.dungeon.<mã>" cho từng gói EliteMobs (trường permission của
  * content package, đặt bằng reflection mỗi phút nên /em reload hay cập nhật gói cũng không mất) rồi chỉ cấp quyền cho người qua được cổng.
  * Mọi lối vào của EliteMobs (menu /em, NPC dịch chuyển, nhóm) đều hỏi quyền này. Config dungeon-gate.dungeons.<mã gói (tên file bỏ .yml)>:
- *  - chain:  chuỗi cấp. requires: <mã> = phải vượt dungeon đó trước (nhận "chìa khoá"); không requires = mở sẵn.
+ *  - chain:  chuỗi cấp. requires: <mã> = trùm cuối dungeon đó rơi CHÌA KHOÁ thật (TRIAL_KEY, PDC dmm_chiatang) cho từng người; dùng chìa
+ *            (/dungeon vao hoặc bấm chuột phải) thì mất chìa, mở VĨNH VIỄN tầng đó cho người dùng (mo.<uuid>). key-tradeable: false = chìa
+ *            ghi tên người nhận, người khác không dùng được. Không requires = mở sẵn.
  *  - hidden: dungeon ẩn. Lối vào giấu trên bản đồ (admin /dungeon datan <mã>); đi tới gần (hidden-radius khối) là tìm ra, giữ cả mùa.
  *            night-only: true = chỉ lộ ra ban đêm. hint: gợi ý hiện trong /dungeon.
  *  - luck:   may mắn. Vé Vận Mệnh rơi hiếm khi hạ quái / câu cá (luck.*); dùng vé có roll-chance % cổng mở (trượt thì mất vé).
@@ -104,6 +106,9 @@ final class DungeonGate implements Listener {
     private final int luckPerDay;
     private final NamespacedKey ticketKey;
     private final NamespacedKey fragKey;
+    private final NamespacedKey keyKey;
+    private final NamespacedKey keyOwner;
+    private final boolean keyTradeable;
     private final double fragMob;
     private final double fragFish;
     private final int fragPerDay;
@@ -165,6 +170,9 @@ final class DungeonGate implements Listener {
         }
         this.ticketKey = new NamespacedKey(plugin, "dmm_vevanmenh");
         this.fragKey = new NamespacedKey(plugin, "dmm_manhchia");
+        this.keyKey = new NamespacedKey(plugin, "dmm_chiatang");
+        this.keyOwner = new NamespacedKey(plugin, "dmm_chiatang_chu");
+        this.keyTradeable = c.getBoolean("key-tradeable", false);
         this.file = new File(plugin.getDataFolder(), "dungeon.yml");
         this.data = YamlConfiguration.loadConfiguration(file);
     }
@@ -417,7 +425,7 @@ final class DungeonGate implements Listener {
             return false;
         }
         return switch (d.type()) {
-            case "chain" -> d.requires().isBlank() || cleared(u, d.requires());
+            case "chain" -> d.requires().isBlank() || unlocked(u, d.id());
             case "hidden" -> found(u, d.id()) && (d.fragments() == 0 || assembled(u, d.id()));
             case "server" -> serverOpen(d.id());
             default -> false;
@@ -597,6 +605,7 @@ final class DungeonGate implements Listener {
                     }
                 }
             }
+            giveKeys(p, id);
             if (cleared(u, id)) {
                 continue;
             }
@@ -608,12 +617,6 @@ final class DungeonGate implements Listener {
                 List<String> got = rewards.give(p, d.firstRewards());
                 if (!got.isEmpty()) {
                     p.sendMessage(c("&7Quà lần đầu: &e" + String.join(", ", got)));
-                }
-            }
-            for (Dg next : dungeons.values()) {
-                if (next.type().equals("chain") && id.equals(next.requires())) {
-                    p.sendMessage(c("&6🗝 Bạn nhận được &eChìa khoá " + next.name() + "&6. Tầng tiếp theo đã mở: "));
-                    p.sendMessage(button("&e[Vào " + next.name() + "]", "/dungeon vao " + next.id(), "Mở cổng " + next.name()));
                 }
             }
             refresh(p);
@@ -706,6 +709,93 @@ final class DungeonGate implements Listener {
             }
         }
         return false;
+    }
+
+    // ---------------------------------------------------------------- Chìa khoá tầng (chuỗi chain)
+
+    private boolean unlocked(UUID u, String id) {
+        return data.getStringList("mo." + uk(u)).contains(id);
+    }
+
+    private ItemStack keyItem(Dg d, Player owner) {
+        ItemStack it = new ItemStack(Material.TRIAL_KEY);
+        ItemMeta m = it.getItemMeta();
+        m.displayName(c("&6&l🗝 Chìa khoá " + d.name()));
+        List<Component> lore = new ArrayList<>(List.of(c("&7Mở vĩnh viễn tầng &f" + d.name() + (d.level().isBlank() ? "" : " &8[cấp " + d.level() + "]")),
+                c("&7Dùng: &f/dungeon vao " + d.id() + " &7(chìa mất khi dùng)")));
+        if (!keyTradeable) {
+            lore.add(c("&cChỉ " + owner.getName() + " dùng được"));
+            m.getPersistentDataContainer().set(keyOwner, PersistentDataType.STRING, owner.getUniqueId().toString());
+        }
+        m.lore(lore);
+        m.setEnchantmentGlintOverride(true);
+        m.getPersistentDataContainer().set(keyKey, PersistentDataType.STRING, d.id());
+        it.setItemMeta(m);
+        return it;
+    }
+
+    /** Ô chứa chìa của tầng id mà người này dùng được (null nếu không có). */
+    private ItemStack keySlot(Player p, String id) {
+        for (ItemStack it : p.getInventory().getContents()) {
+            if (it == null || !it.hasItemMeta()) {
+                continue;
+            }
+            var pdc = it.getItemMeta().getPersistentDataContainer();
+            String owner = pdc.get(keyOwner, PersistentDataType.STRING);
+            if (id.equals(pdc.get(keyKey, PersistentDataType.STRING)) && (keyTradeable || owner == null || owner.equals(p.getUniqueId().toString()))) {
+                return it;
+            }
+        }
+        return null;
+    }
+
+    /** Có chìa thì dùng: mất chìa, mở vĩnh viễn tầng cho người này. */
+    private boolean useKey(Player p, Dg d) {
+        ItemStack k = keySlot(p, d.id());
+        if (k == null) {
+            return false;
+        }
+        k.setAmount(k.getAmount() - 1);
+        List<String> l = new ArrayList<>(data.getStringList("mo." + uk(p.getUniqueId())));
+        l.add(d.id());
+        data.set("mo." + uk(p.getUniqueId()), l);
+        save();
+        p.playSound(p.getLocation(), Sound.BLOCK_VAULT_OPEN_SHUTTER, 1f, 1f);
+        p.sendMessage(c("&6🗝 Đã dùng Chìa khoá: tầng &e" + d.name() + " &6mở vĩnh viễn cho bạn!"));
+        refresh(p);
+        return true;
+    }
+
+    /** Vượt tầng id: rơi chìa tầng sau (nếu chưa mở và chưa có chìa trong túi). */
+    private void giveKeys(Player p, String id) {
+        for (Dg next : dungeons.values()) {
+            if (!next.type().equals("chain") || !id.equals(next.requires()) || unlocked(p.getUniqueId(), next.id()) || keySlot(p, next.id()) != null) {
+                continue;
+            }
+            Rewards.hand(p, keyItem(next, p));
+            p.sendMessage(c("&6🗝 Trùm cuối rơi &eChìa khoá " + next.name() + "&6! Dùng để mở tầng sau: ")
+                    .append(button(" &e[Mở " + next.name() + "]", "/dungeon vao " + next.id(), "Dùng chìa, mở vĩnh viễn tầng " + next.name())));
+        }
+    }
+
+    @EventHandler
+    public void onKeyUse(org.bukkit.event.player.PlayerInteractEvent e) {
+        if (e.getHand() != org.bukkit.inventory.EquipmentSlot.HAND || !e.getAction().isRightClick()) {
+            return;
+        }
+        ItemStack it = e.getItem();
+        String id = it == null || !it.hasItemMeta() ? null : it.getItemMeta().getPersistentDataContainer().get(keyKey, PersistentDataType.STRING);
+        Dg d = id == null ? null : dungeons.get(id);
+        if (d == null) {
+            return;
+        }
+        e.setCancelled(true);   // chìa là TRIAL_KEY: không cho mở kho thử thách bằng nó
+        Player p = e.getPlayer();
+        if (unlocked(p.getUniqueId(), id)) {
+            p.sendMessage(c("&7Tầng " + d.name() + " đã mở cho bạn rồi. Giữ chìa (hoặc cho người khác nếu được trao đổi)."));
+        } else if (!useKey(p, d)) {
+            p.sendMessage(c("&cChìa này không phải của bạn."));
+        }
     }
 
     // ---------------------------------------------------------------- Mảnh Chìa (dungeon ẩn có fragments)
@@ -933,7 +1023,7 @@ final class DungeonGate implements Listener {
             }
             case "cho" -> {
                 if (!s.hasPermission("duckymomo.admin") || args.length < 3) {
-                    s.sendMessage("/dungeon cho <mã> <người> [số]  (vé cá nhân hoặc Vé Vận Mệnh)");
+                    s.sendMessage("/dungeon cho <mã> <người> [số]  (vé cá nhân, Vé Vận Mệnh, Mảnh Chìa, Chìa khoá tầng)");
                     return true;
                 }
                 Player t = Bukkit.getPlayerExact(args[2]);
@@ -942,9 +1032,9 @@ final class DungeonGate implements Listener {
                     return true;
                 }
                 int n = args.length > 3 ? Math.max(1, Integer.parseInt(args[3])) : 1;
-                if (d.type().equals("luck") || d.type().equals("hidden")) {
+                if (d.type().equals("luck") || d.type().equals("hidden") || d.type().equals("chain")) {
                     for (int i = 0; i < n; i++) {
-                        Rewards.hand(t, d.type().equals("luck") ? luckTicket(d) : fragment(d));
+                        Rewards.hand(t, d.type().equals("luck") ? luckTicket(d) : d.type().equals("chain") ? keyItem(d, t) : fragment(d));
                     }
                 } else {
                     addTickets(t.getUniqueId(), d.id(), n);
@@ -1106,7 +1196,9 @@ final class DungeonGate implements Listener {
         switch (d.type()) {
             case "chain" -> {
                 if (!freeAccess(u, d)) {
-                    return "cần Chìa khoá (vượt " + name(d.requires()) + " trước)";
+                    if (!useKey(m, d)) {
+                        return "cần Chìa khoá " + d.name() + " (trùm cuối " + name(d.requires()) + " rơi ra)";
+                    }
                 }
             }
             case "hidden" -> {
@@ -1295,7 +1387,8 @@ final class DungeonGate implements Listener {
                 state = "";
             } else {
                 state = switch (d.type()) {
-                    case "chain" -> cleared(u, d.id()) ? "&a✔ đã vượt" : freeAccess(u, d) ? "&e🗝 đã có chìa" : "&c🔒 cần vượt " + name(d.requires());
+                    case "chain" -> cleared(u, d.id()) ? "&a✔ đã vượt" : freeAccess(u, d) ? "&e🗝 đã mở"
+                            : s instanceof Player pl && keySlot(pl, d.id()) != null ? "&6🗝 có chìa trong túi, bấm để mở" : "&c🔒 cần Chìa khoá (từ trùm " + name(d.requires()) + ")";
                     case "hidden" -> found(u, d.id()) ? "&a✔ đã tìm ra" : "&7??? " + (d.hint().isBlank() ? "" : d.hint());
                     case "luck" -> "&7Vé Vận Mệnh rơi hiếm" + (d.rollChance() < 100 ? ", " + Math.round(d.rollChance()) + "% mở" : "");
                     case "ticket" -> "&7" + money(d.price()) + "/vé · đang có &f" + tickets(u, d.id());

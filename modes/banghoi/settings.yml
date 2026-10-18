@@ -30,6 +30,7 @@ lp_capture: 10
 lp_absent: 50
 tt_on: true
 dgt_on: true
+dgt_key_trade: false
 dgt_window: 120
 dgt_radius: 4
 dgt_luck_mob: 0.05

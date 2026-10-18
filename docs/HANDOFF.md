@@ -303,6 +303,20 @@
   vé vận mệnh rơi hiếm, tung xúc xắc lúc vào), (4) mua vé cá nhân bằng xu (lượt / 7 ngày), (5) mở chung toàn server bằng quỹ như khai hoang.
   Điều kiện phụ: cấp pet, thành tích, nhóm 2–4 người, cuối tuần, chỉ nước Bá chủ. Chống lạm phát: lượt/ngày, lockout boss của EliteMobs.
 
+### 18/10 tối: Chìa khoá tầng thật + NOTE dungeon (người dùng: "cho vào note")
+- Đã cài 11 gói EliteMobs miễn phí (18/18 dungeon). Primis, Oasis PHẢI MUA (ô vàng chỉ là "bấm để kiểm tra quyền").
+- Chìa khoá tầng (chain): trùm cuối rơi chìa thật cho từng người, dùng 1 lần mở vĩnh viễn tầng sau (theo NGƯỜI, không phải cả server),
+  key-tradeable (Cài đặt, mặc định false = chìa ghi tên). Thay chìa "ảo" cũ (dữ liệu qua.<uuid> vẫn dùng cho lần đầu vượt/thống kê).
+- NOTE TEST: (1) EliteMobs AdvancedCombatSystem.yml allowClassAbilitiesOutsideEliteMobsWorlds: true → kỹ năng class dùng được ngoài dungeon
+  (công thành, PvP). Đề xuất tắt, chờ người dùng thử rồi quyết. (2) Xu rơi trong dungeon (EconomySettings: useVault true, currencyShowerTierMultiplier
+  0.3) cộng thẳng vào xu chung → đo lượng thật khi thử, có thể thành nguồn in tiền.
+- NOTE Ý TƯỞNG (CHƯA LÀM, người dùng mới hỏi có làm được không): quái trong dungeon rơi MẢNH (đồ vật, trao đổi được) → đổi đồ hoàn chỉnh.
+  Làm được trên FragmentShop (/doimanh, event-fragments: types + shop). Phác: Mảnh Đá Cổ (tầng 1–3), Bạc Rỉ (4–6), Hắc Thiết (7–10 + ẩn),
+  Tinh Hồn (vé/quỹ/cổng); quái thường ~15%, trùm nhỏ 1–2, trùm cuối 3–5 + "Lõi" hiếm; Hard ×1,5, Mythic ×2. Đồ đổi: đề xuất đồ vanilla có
+  phù phép + tên/lore riêng (bộ theo dungeon); EliteMobs KHÔNG có lệnh phát custom item theo tên (đã dò 84 lệnh) → đồ EliteMobs phải qua API.
+- EliteMobs hiện tại: mỗi dungeon toàn quái custom (Mỏ Hoang 38, Cống Ngầm 29…), trùm rơi đồ class riêng theo độ khó (Đỉnh Vách Đá 37 món),
+  đồ ngẫu nhiên flatDropRateV3 0.2, khoá nhận đồ mỗi trùm 3 ngày (dungeonLockoutMinutes 4320).
+
 ### 18/10 tối: Cổng Hoang (/conghoang) — ĐÃ LÀM, CHƯA THỬ VỚI NGƯỜI CHƠI
 - Người dùng chốt: thị trấn giữ cổng thu phí người ngoài; 6 cổng/mùa, 7 ngày thêm 1; chiếm được thị trấn là SỞ HỮU cổng (không giới hạn
   số cổng mỗi nước, Bá chủ vẫn giữ được); phí duy trì + khởi nghĩa sớm hơn đưa vào Cài đặt, mặc định 0; ngụy trang KHÔNG làm khó quá

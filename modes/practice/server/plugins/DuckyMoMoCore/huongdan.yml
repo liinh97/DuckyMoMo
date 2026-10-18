@@ -461,9 +461,9 @@ chapters:
         &0Dungeon cày đồ hiếm.
         &1/dungeon &0xem danh sách,
         bấm tên để vào.
-        &0Chuỗi 10 tầng: vượt
-        tầng trước nhận &6chìa
-        &6khoá&0 mở tầng sau.
+        &0Chuỗi 10 tầng: trùm
+        cuối rơi &6Chìa khoá&0,
+        dùng là mở tầng sau.
         &0Có dungeon &5ẩn&0 (tìm
         lối vào trên bản đồ).
       - |-

@@ -746,6 +746,7 @@ wild-gates:
 #  gate: chỉ vào được qua Cổng Hoang (/conghoang). Chưa có dungeon kiểu luck nào thì Vé Vận Mệnh không rơi.
 dungeon-gate:
   enabled: true
+  key-tradeable: false     # Chìa khoá tầng (trùm cuối rơi) có cho người khác dùng không: false = ghi tên người nhận, chỉ người đó dùng được
   window-seconds: 120      # mở cổng xong có ngần này giây để chọn độ khó và vào; không vào thì hoàn vé
   hidden-radius: 4         # tới gần lối vào ẩn trong ngần này khối là tìm ra
   luck:

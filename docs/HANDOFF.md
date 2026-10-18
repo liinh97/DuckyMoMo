@@ -313,6 +313,10 @@
   Đấu Trường Ma 150k/7 ngày, Kẻ Trói Buộc Thế Giới 1M tới hết mùa). Giá là ĐỀ XUẤT, sửa ở Cài đặt › Thế giới › Cổng Dungeon (dgt_*).
 - Story Mode trong bản này là Dynamic Dungeon (người chơi tự chọn cấp lúc vào) → "cấp" trong /dungeon chỉ là gợi ý; chuỗi chỉ ép THỨ TỰ.
 - Thành tích dg1, dg2 (danh hiệu chinhphuc), dga (timan). Web: thẻ Cổng Dungeon (trang chủ), thẻ Dungeon (tài khoản). dungeon.yml, dungeon.json.
+- Thêm (theo người dùng): điều kiện phụ từng dungeon (min-pet-level, party "a-b" theo nhóm /em party, days, hours, seasons, hegemon-only,
+  min-achievements; dungeon có điều kiện thì không cấp quyền sẵn, mỗi lần vào phải qua /dungeon vao, kiểm từng người trong nhóm),
+  Mảnh Chìa cho dungeon ẩn (fragments; Thánh Đường Bóng Tối cần 3), Dungeon của tuần (weekly, +1500 xu, 3 lần/tuần), Kỷ lục tốc độ
+  (top 5, web top 3), kho báu huyền thoại reveal-hidden 40% chỉ đường tới lối vào ẩn. BỎ ý giới hạn đồ EliteMobs khi công thành (người dùng chốt).
 - CHƯA chắc: khoá trong EMPackage.getEmPackages() là "<mã>.yml" (log "đã gắn EliteMobs (x/18 gói đã cài)" sẽ cho biết; 0 dù đã cài = sai khoá).
 
 ### 18/10 (sửa): tham chiếu dùng chung qua Shared.java

@@ -51,6 +51,7 @@ import org.bukkit.persistence.PersistentDataType;
  *  - Cầm bản đồ: thanh hành động báo lạnh / ấm / nóng theo khoảng cách. Tới nơi (<= dig-radius khối), ngồi xuống (Shift) để đào:
  *    lính canh xuất hiện; hạ hết (trong guard-minutes phút, người đào ở gần) thì nhận quà. Thất bại thì trả lại bản đồ.
  *  - Bậc có broadcast: true thì báo cả server vùng đang đào (người khác có thể tới tranh).
+ *  - Bậc có reveal-hidden: <%> thì mở rương có thể kèm mảnh giấy chỉ đường tới lối vào một dungeon ẩn (Cổng Dungeon) chưa tìm ra.
  * Lưu: khobau.yml (ngay.<uuid>.<ngày> = số bản đồ đã nhận).
  */
 final class TreasureHunt implements Listener {
@@ -58,7 +59,7 @@ final class TreasureHunt implements Listener {
     private static final LegacyComponentSerializer LEGACY = LegacyComponentSerializer.legacyAmpersand();
     private static final ZoneId VN = ZoneId.of("Asia/Ho_Chi_Minh");
 
-    private record Tier(String id, String name, int weight, int guards, List<EntityType> types, double guardHealth, boolean broadcast, List<String> rewards) { }
+    private record Tier(String id, String name, int weight, int guards, List<EntityType> types, double guardHealth, boolean broadcast, List<String> rewards, double revealHidden) { }
     private record Zone(String name, String requires, int x, int z, int r) { }
 
     private static final class Dig {
@@ -118,7 +119,8 @@ final class TreasureHunt implements Listener {
                     types.add(EntityType.ZOMBIE);
                 }
                 tiers.add(new Tier(id, t.getString("name", id), Math.max(1, t.getInt("weight", 1)), Math.max(0, t.getInt("guards", 2)), types,
-                        Math.max(1, t.getDouble("guard-health", 1)), t.getBoolean("broadcast", false), t.getStringList("rewards")));
+                        Math.max(1, t.getDouble("guard-health", 1)), t.getBoolean("broadcast", false), t.getStringList("rewards"),
+                        Math.max(0, t.getDouble("reveal-hidden", 0))));
             }
         }
         for (Map<?, ?> z : plugin.getConfig().getMapList("rtp.zones")) {
@@ -357,6 +359,10 @@ final class TreasureHunt implements Listener {
         p.playSound(p.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 0.8f, 1f);
         p.sendMessage(c("&a&l✔ Mở rương kho báu " + d.tier.name() + "&a: " + (got.isEmpty() ? "" : String.join("&a, ", got))));
         Achievements.add(p, "khobau", 1);
+        DungeonGate dg = Shared.dungeonGate;
+        if (dg != null && d.tier.revealHidden() > 0 && ThreadLocalRandom.current().nextDouble(100) < d.tier.revealHidden()) {
+            dg.revealHidden(p);
+        }
         if (d.tier.broadcast()) {
             Bukkit.broadcast(c("&6🗺 &f" + p.getName() + " &6đã mở được &e" + d.tier.name() + "&6!"));
         }

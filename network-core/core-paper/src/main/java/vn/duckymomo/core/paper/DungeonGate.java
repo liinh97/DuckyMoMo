@@ -63,6 +63,12 @@ import org.bukkit.persistence.PersistentDataType;
  *  - ticket: vé cá nhân mua bằng xu (price/lượt, tối đa max-tickets vé trong túi).
  *  - server: cả server góp quỹ (goal xu); đủ thì mở cho mọi người open-days ngày (0 = tới hết mùa), hết hạn thì góp lại.
  *  Chung: name, level (nhãn cấp), requires-frontier (mốc khai hoang phải mở), first-rewards (quà lần đầu vượt, mỗi người một lần).
+ *  Dungeon ẩn có fragments: N = tìm ra lối vào rồi còn phải ghép N Mảnh Chìa (rơi khi hạ quái / câu cá, chỉ cho người đã tìm ra).
+ *  Điều kiện phụ (tuỳ dungeon, kiểm cho TỪNG người trong nhóm /em party; có điều kiện thì mỗi lần vào đều phải qua /dungeon vao):
+ *   min-pet-level (pet đang dẫn), party: "2-4" (số người trong nhóm EliteMobs), days: [t2..t7, cn], hours: "19-23" (giờ VN),
+ *   seasons: [mua, kho], hegemon-only (nước Bá chủ), min-achievements (số mốc Sổ thành tích).
+ * Dungeon của tuần (weekly): mỗi tuần một dungeon, vượt được thêm weekly.rewards (tối đa weekly.max-per-week lần/người/tuần).
+ * Kỷ lục tốc độ: thời gian từ lúc vào tới lúc vượt, top 5 mỗi dungeon (dungeon.json). Kho báu bậc có reveal-hidden: chỉ đường tới lối vào ẩn.
  * Vé (ticket/luck) chỉ trừ khi thật sự vào: /dungeon vao mở cửa window-seconds giây, không vào kịp thì hoàn vé.
  * Lưu: dungeon.yml; ghi dungeon.json cho web.
  */
@@ -75,9 +81,17 @@ final class DungeonGate implements Listener {
             "ticket", "Vé cá nhân", "server", "Mở chung cả server");
 
     private record Dg(String id, String name, String type, String level, String requires, String frontier, String hint, boolean nightOnly,
-                      double rollChance, double price, int maxTickets, double goal, int openDays, List<String> firstRewards) { }
+                      double rollChance, double price, int maxTickets, double goal, int openDays, List<String> firstRewards,
+                      int fragments, int minPet, int partyMin, int partyMax, List<String> days, int hourFrom, int hourTo, List<String> seasons,
+                      boolean hegemonOnly, int minAch) {
+        boolean hasCond() {
+            return minPet > 0 || partyMin > 1 || partyMax > 0 || !days.isEmpty() || hourFrom >= 0 || !seasons.isEmpty() || hegemonOnly || minAch > 0;
+        }
+    }
 
-    private record Pass(String id, long until) { }
+    private record Pass(String id, long until, boolean ticket) { }
+
+    private static final List<String> DAY_CODES = List.of("t2", "t3", "t4", "t5", "t6", "t7", "cn");
 
     private final DuckyMoMoCore plugin;
     private final Rewards rewards;
@@ -88,6 +102,16 @@ final class DungeonGate implements Listener {
     private final double luckFish;
     private final int luckPerDay;
     private final NamespacedKey ticketKey;
+    private final NamespacedKey fragKey;
+    private final double fragMob;
+    private final double fragFish;
+    private final int fragPerDay;
+    private final boolean weeklyOn;
+    private final List<String> weeklyRewards;
+    private final int weeklyMax;
+    private final List<String> weeklyTypes;
+    private final Map<UUID, Long> enteredAt = new HashMap<>();
+    private Method partyIds;
     private final File file;
     private final YamlConfiguration data;
     private final Map<UUID, PermissionAttachment> attach = new HashMap<>();
@@ -108,6 +132,13 @@ final class DungeonGate implements Listener {
         this.luckMob = c.getDouble("luck.mob-chance", 0.05);
         this.luckFish = c.getDouble("luck.fish-chance", 0.3);
         this.luckPerDay = c.getInt("luck.max-per-day", 1);
+        this.fragMob = c.getDouble("fragment.mob-chance", 1);
+        this.fragFish = c.getDouble("fragment.fish-chance", 3);
+        this.fragPerDay = c.getInt("fragment.max-per-day", 3);
+        this.weeklyOn = c.getBoolean("weekly.enabled", true);
+        this.weeklyRewards = c.getStringList("weekly.rewards");
+        this.weeklyMax = Math.max(1, c.getInt("weekly.max-per-week", 3));
+        this.weeklyTypes = c.isList("weekly.types") ? c.getStringList("weekly.types") : List.of("chain", "ticket", "server");
         ConfigurationSection ds = c.getConfigurationSection("dungeons");
         if (ds != null) {
             for (String id : ds.getKeys(false)) {
@@ -124,12 +155,30 @@ final class DungeonGate implements Listener {
                         d.getString("requires-frontier", ""), d.getString("hint", ""), d.getBoolean("night-only", false),
                         Math.max(1, Math.min(100, d.getDouble("roll-chance", 100))), Math.max(0, d.getDouble("price", 0)),
                         Math.max(1, d.getInt("max-tickets", 5)), Math.max(1, d.getDouble("goal", 100000)), Math.max(0, d.getInt("open-days", 7)),
-                        d.getStringList("first-rewards")));
+                        d.getStringList("first-rewards"), Math.max(0, d.getInt("fragments", 0)), Math.max(0, d.getInt("min-pet-level", 0)),
+                        range(d.getString("party", ""), 0, 1), range(d.getString("party", ""), 1, 0),
+                        d.getStringList("days").stream().map(x -> x.toLowerCase(Locale.ROOT)).toList(),
+                        range(d.getString("hours", ""), 0, -1), range(d.getString("hours", ""), 1, -1),
+                        d.getStringList("seasons"), d.getBoolean("hegemon-only", false), Math.max(0, d.getInt("min-achievements", 0))));
             }
         }
         this.ticketKey = new NamespacedKey(plugin, "dmm_vevanmenh");
+        this.fragKey = new NamespacedKey(plugin, "dmm_manhchia");
         this.file = new File(plugin.getDataFolder(), "dungeon.yml");
         this.data = YamlConfiguration.loadConfiguration(file);
+    }
+
+    /** "2-4" → phần tử i (một số "3" = cả hai đầu); trống/sai → def. */
+    private static int range(String v, int i, int def) {
+        if (v == null || v.isBlank()) {
+            return def;
+        }
+        String[] a = v.trim().split("\\s*-\\s*");
+        try {
+            return Integer.parseInt(a[Math.min(i, a.length - 1)]);
+        } catch (NumberFormatException e) {
+            return def;
+        }
     }
 
     boolean ready() {
@@ -144,11 +193,13 @@ final class DungeonGate implements Listener {
 
     void start() {
         // EliteMobs nạp sau DuckyMoMoCore → đợi 5 giây mới gắn
+        Shared.dungeonGate = this;
         Bukkit.getScheduler().runTaskLater(plugin, this::hook, 100L);
         Bukkit.getScheduler().runTaskTimer(plugin, this::tick, 120L, 100L);
     }
 
     void stop() {
+        Shared.dungeonGate = null;
         HandlerList.unregisterAll(this);
         // trả quyền gốc cho các gói (không để gói bị khoá khi tắt module)
         for (Map.Entry<Object, Object> e : originalPerm.entrySet()) {
@@ -165,7 +216,9 @@ final class DungeonGate implements Listener {
         attach.clear();
         // vé đang chờ: hoàn lại
         for (Map.Entry<UUID, Pass> e : pending.entrySet()) {
-            refund(e.getKey(), e.getValue().id());
+            if (e.getValue().ticket()) {
+                refund(e.getKey(), e.getValue().id());
+            }
         }
         pending.clear();
         save();
@@ -186,6 +239,11 @@ final class DungeonGate implements Listener {
             getEmPackages = pkg.getMethod("getEmPackages");
             getFields = pkg.getMethod("getContentPackagesConfigFields");
             isInstalled = pkg.getMethod("isInstalled");
+            try {
+                partyIds = Class.forName("com.magmaguy.elitemobs.parties.PartyManager", true, cl).getMethod("getDungeonEntryMemberIds", Player.class);
+            } catch (ReflectiveOperationException e) {
+                plugin.getLogger().warning("Cổng Dungeon: không đọc được nhóm EliteMobs, điều kiện nhóm coi như chỉ có 1 người.");
+            }
             Class<? extends Event> join = (Class<? extends Event>) Class.forName("com.magmaguy.elitemobs.api.PlayerJoinDungeonEvent", true, cl);
             Class<? extends Event> leave = (Class<? extends Event>) Class.forName("com.magmaguy.elitemobs.api.PlayerLeaveDungeonEvent", true, cl);
             Class<? extends Event> done = (Class<? extends Event>) Class.forName("com.magmaguy.elitemobs.api.DungeonCompleteEvent", true, cl);
@@ -201,6 +259,7 @@ final class DungeonGate implements Listener {
                 if (leave.isInstance(ev)) {
                     for (Player p : players(ev, leavePlayer, leaveInst)) {
                         inside.remove(p.getUniqueId());
+                        enteredAt.remove(p.getUniqueId());
                         refresh(p);
                     }
                 }
@@ -358,17 +417,21 @@ final class DungeonGate implements Listener {
         }
         return switch (d.type()) {
             case "chain" -> d.requires().isBlank() || cleared(u, d.requires());
-            case "hidden" -> found(u, d.id());
+            case "hidden" -> found(u, d.id()) && (d.fragments() == 0 || assembled(u, d.id()));
             case "server" -> serverOpen(d.id());
             default -> false;
         };
+    }
+
+    private boolean assembled(UUID u, String id) {
+        return data.getStringList("ghep." + uk(u)).contains(id);
     }
 
     private void refresh(Player p) {
         UUID u = p.getUniqueId();
         Set<String> allow = new HashSet<>();
         for (Dg d : dungeons.values()) {
-            if (freeAccess(u, d)) {
+            if (!d.hasCond() && freeAccess(u, d)) {
                 allow.add(d.id());
             }
         }
@@ -412,11 +475,13 @@ final class DungeonGate implements Listener {
             var e = it.next();
             if (e.getValue().until() < now) {
                 it.remove();
-                refund(e.getKey(), e.getValue().id());
-                dirty = true;
+                if (e.getValue().ticket()) {
+                    refund(e.getKey(), e.getValue().id());
+                    dirty = true;
+                }
                 Player p = Bukkit.getPlayer(e.getKey());
                 if (p != null) {
-                    p.sendMessage(c("&7⌛ Cổng &f" + name(e.getValue().id()) + " &7đã đóng (chưa vào). Vé đã được hoàn lại."));
+                    p.sendMessage(c("&7⌛ Cổng &f" + name(e.getValue().id()) + " &7đã đóng (chưa vào)." + (e.getValue().ticket() ? " Vé đã được hoàn lại." : "")));
                     refresh(p);
                 }
             }
@@ -491,6 +556,7 @@ final class DungeonGate implements Listener {
         }
         for (Player p : ps) {
             inside.put(p.getUniqueId(), id);
+            enteredAt.putIfAbsent(p.getUniqueId(), System.currentTimeMillis());
             Pass pass = pending.get(p.getUniqueId());
             if (pass != null && pass.id().equals(id)) {
                 pending.remove(p.getUniqueId());   // vé đã dùng (đã trừ lúc mở cổng)
@@ -511,9 +577,25 @@ final class DungeonGate implements Listener {
             Bukkit.broadcast(c("&6&l🏆 ĐẦU TIÊN! &e" + String.join(", ", names) + " &6là người đầu tiên của server vượt &f" + d.name() + "&6!"));
         }
         data.set("dem." + id, data.getInt("dem." + id, 0) + 1);
+        long start = ps.stream().map(p -> enteredAt.get(p.getUniqueId())).filter(java.util.Objects::nonNull).min(Long::compare).orElse(0L);
+        if (start > 0) {
+            record(d, ps, (System.currentTimeMillis() - start) / 1000);
+        }
+        boolean weekly = id.equals(weeklyId());
         for (Player p : ps) {
             UUID u = p.getUniqueId();
+            enteredAt.remove(u);
             Achievements.add(p, "dungeon", 1);
+            if (weekly && !weeklyRewards.isEmpty() && rewards != null) {
+                String wk = "tuanthuong." + weekKey() + "." + uk(u);
+                if (data.getInt(wk, 0) < weeklyMax) {
+                    data.set(wk, data.getInt(wk, 0) + 1);
+                    List<String> got = rewards.give(p, weeklyRewards);
+                    if (!got.isEmpty()) {
+                        p.sendMessage(c("&6★ Dungeon của tuần: thưởng thêm &e" + String.join(", ", got) + " &7(" + data.getInt(wk, 0) + "/" + weeklyMax + " tuần này)"));
+                    }
+                }
+            }
             if (cleared(u, id)) {
                 continue;
             }
@@ -591,16 +673,26 @@ final class DungeonGate implements Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     public void onKill(EntityDeathEvent e) {
         Player k = e.getEntity().getKiller();
-        if (k != null && e.getEntity() instanceof Monster && inside.get(k.getUniqueId()) == null
-                && ThreadLocalRandom.current().nextDouble(100) < luckMob) {
-            maybeLuck(k);
+        if (k != null && e.getEntity() instanceof Monster && inside.get(k.getUniqueId()) == null) {
+            if (ThreadLocalRandom.current().nextDouble(100) < luckMob) {
+                maybeLuck(k);
+            }
+            if (ThreadLocalRandom.current().nextDouble(100) < fragMob) {
+                maybeFragment(k);
+            }
         }
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onFish(PlayerFishEvent e) {
-        if (e.getState() == PlayerFishEvent.State.CAUGHT_FISH && ThreadLocalRandom.current().nextDouble(100) < luckFish) {
+        if (e.getState() != PlayerFishEvent.State.CAUGHT_FISH) {
+            return;
+        }
+        if (ThreadLocalRandom.current().nextDouble(100) < luckFish) {
             maybeLuck(e.getPlayer());
+        }
+        if (ThreadLocalRandom.current().nextDouble(100) < fragFish) {
+            maybeFragment(e.getPlayer());
         }
     }
 
@@ -613,6 +705,135 @@ final class DungeonGate implements Listener {
             }
         }
         return false;
+    }
+
+    // ---------------------------------------------------------------- Mảnh Chìa (dungeon ẩn có fragments)
+
+    private ItemStack fragment(Dg d) {
+        ItemStack it = new ItemStack(Material.ECHO_SHARD);
+        ItemMeta m = it.getItemMeta();
+        m.displayName(c("&5&l✧ Mảnh Chìa &7(" + d.name() + "&7)"));
+        m.lore(List.of(c("&7Ghép đủ &f" + d.fragments() + " &7mảnh để mở lối vào &f" + d.name()), c("&7Ghép: &f/dungeon vao " + d.id())));
+        m.setEnchantmentGlintOverride(true);
+        m.getPersistentDataContainer().set(fragKey, PersistentDataType.STRING, d.id());
+        it.setItemMeta(m);
+        return it;
+    }
+
+    private int countFragments(Player p, String id) {
+        int n = 0;
+        for (ItemStack it : p.getInventory().getContents()) {
+            if (it != null && it.hasItemMeta() && id.equals(it.getItemMeta().getPersistentDataContainer().get(fragKey, PersistentDataType.STRING))) {
+                n += it.getAmount();
+            }
+        }
+        return n;
+    }
+
+    private void takeFragments(Player p, String id, int n) {
+        for (ItemStack it : p.getInventory().getContents()) {
+            if (n > 0 && it != null && it.hasItemMeta() && id.equals(it.getItemMeta().getPersistentDataContainer().get(fragKey, PersistentDataType.STRING))) {
+                int t = Math.min(n, it.getAmount());
+                it.setAmount(it.getAmount() - t);
+                n -= t;
+            }
+        }
+    }
+
+    /** Rơi Mảnh Chìa cho người đã tìm ra dungeon ẩn mà chưa ghép đủ. */
+    private void maybeFragment(Player p) {
+        UUID u = p.getUniqueId();
+        List<Dg> l = dungeons.values().stream().filter(d -> d.type().equals("hidden") && d.fragments() > 0 && found(u, d.id())
+                && !assembled(u, d.id()) && countFragments(p, d.id()) < d.fragments()).toList();
+        if (l.isEmpty()) {
+            return;
+        }
+        String k = "manhngay." + uk(u) + "." + LocalDate.now(VN);
+        if (data.getInt(k, 0) >= fragPerDay) {
+            return;
+        }
+        data.set(k, data.getInt(k, 0) + 1);
+        save();
+        Dg d = l.get(ThreadLocalRandom.current().nextInt(l.size()));
+        Rewards.hand(p, fragment(d));
+        p.playSound(p.getLocation(), Sound.BLOCK_AMETHYST_CLUSTER_BREAK, 1f, 0.8f);
+        p.sendMessage(c("&5✧ Nhặt được &dMảnh Chìa &5(" + d.name() + "&5): &f" + countFragments(p, d.id()) + "/" + d.fragments()));
+    }
+
+    // ---------------------------------------------------------------- Dungeon của tuần + kỷ lục
+
+    private static String weekKey() {
+        LocalDate d = LocalDate.now(VN);
+        return d.get(java.time.temporal.IsoFields.WEEK_BASED_YEAR) + "w" + d.get(java.time.temporal.IsoFields.WEEK_OF_WEEK_BASED_YEAR);
+    }
+
+    /** Dungeon của tuần (chốt lần đầu hỏi trong tuần, lưu lại để không đổi giữa tuần). */
+    String weeklyId() {
+        if (!weeklyOn) {
+            return null;
+        }
+        String k = "tuan." + weekKey();
+        String v = data.getString(k);
+        if (v != null && dungeons.containsKey(v)) {
+            return v;
+        }
+        if (!hooked) {
+            return null;
+        }
+        List<Dg> l = dungeons.values().stream().filter(d -> weeklyTypes.contains(d.type()) && installed(d.id())).toList();
+        if (l.isEmpty()) {
+            return null;
+        }
+        String last = data.getString("tuan-truoc", "");
+        List<Dg> pick = l.size() > 1 ? l.stream().filter(d -> !d.id().equals(last)).toList() : l;
+        String id = pick.get(ThreadLocalRandom.current().nextInt(pick.size())).id();
+        data.set("tuan", null);
+        data.set(k, id);
+        data.set("tuan-truoc", id);
+        save();
+        Bukkit.broadcast(c("&6★ Dungeon của tuần: &e" + name(id) + "&6! Vượt được thêm quà. &f/dungeon"));
+        return id;
+    }
+
+    private void record(Dg d, Collection<Player> ps, long secs) {
+        if (secs < 10) {
+            return;
+        }
+        String k = "kyluc." + d.id();
+        List<String> l = new ArrayList<>(data.getStringList(k));
+        String names = String.join(", ", ps.stream().map(Player::getName).sorted().toList());
+        boolean best = l.isEmpty() || secs < Long.parseLong(l.get(0).split(";", 2)[0]);
+        l.add(secs + ";" + names);
+        l.sort(java.util.Comparator.comparingLong(x -> Long.parseLong(x.split(";", 2)[0])));
+        data.set(k, l.subList(0, Math.min(5, l.size())));
+        String t = clock(secs);
+        if (best) {
+            Bukkit.broadcast(c("&b⏱ KỶ LỤC MỚI! &f" + names + " &bvượt &f" + d.name() + " &btrong &e" + t + "&b!"));
+        } else {
+            ps.forEach(p -> p.sendMessage(c("&7⏱ Thời gian vượt: &f" + t)));
+        }
+    }
+
+    private static String clock(long secs) {
+        return secs >= 3600 ? String.format(Locale.ROOT, "%d:%02d:%02d", secs / 3600, secs / 60 % 60, secs % 60)
+                : String.format(Locale.ROOT, "%d:%02d", secs / 60, secs % 60);
+    }
+
+    /** Kho báu bậc hiếm: chỉ đường tới một lối vào ẩn người này chưa tìm ra (true nếu có). */
+    boolean revealHidden(Player p) {
+        List<Dg> l = dungeons.values().stream().filter(d -> d.type().equals("hidden") && baseOk(d) && !found(p.getUniqueId(), d.id())
+                && spot(d.id()) != null).toList();
+        if (l.isEmpty()) {
+            return false;
+        }
+        Dg d = l.get(ThreadLocalRandom.current().nextInt(l.size()));
+        Location s = spot(d.id());
+        ThreadLocalRandom r = ThreadLocalRandom.current();
+        int x = s.getBlockX() + r.nextInt(-40, 41), z = s.getBlockZ() + r.nextInt(-40, 41);
+        p.playSound(p.getLocation(), Sound.BLOCK_END_PORTAL_FRAME_FILL, 1f, 0.6f);
+        p.sendMessage(c("&5&l🗺 Dưới đáy rương có mảnh giấy cũ: &d\"Lối vào " + d.name() + " ở quanh X " + x + " Z " + z
+                + (d.nightOnly() ? ", chỉ hiện lúc đêm" : "") + "\"&5. &7(trong khoảng 40 khối, tìm hạt tím)"));
+        return true;
     }
 
     // ---------------------------------------------------------------- lệnh
@@ -720,9 +941,9 @@ final class DungeonGate implements Listener {
                     return true;
                 }
                 int n = args.length > 3 ? Math.max(1, Integer.parseInt(args[3])) : 1;
-                if (d.type().equals("luck")) {
+                if (d.type().equals("luck") || d.type().equals("hidden")) {
                     for (int i = 0; i < n; i++) {
-                        Rewards.hand(t, luckTicket(d));
+                        Rewards.hand(t, d.type().equals("luck") ? luckTicket(d) : fragment(d));
                     }
                 } else {
                     addTickets(t.getUniqueId(), d.id(), n);
@@ -776,10 +997,6 @@ final class DungeonGate implements Listener {
             p.sendMessage(c("&c" + d.name() + " chưa được cài trên server."));
             return;
         }
-        if (inside.containsKey(u)) {
-            p.sendMessage(c("&cBạn đang ở trong một dungeon."));
-            return;
-        }
         if (!baseOk(d)) {
             p.sendMessage(c("&cVùng của dungeon này chưa khai hoang (cần mốc khai hoang mở trước)."));
             return;
@@ -789,36 +1006,230 @@ final class DungeonGate implements Listener {
             open(p, d);   // cổng vẫn đang mở: mở lại menu
             return;
         }
-        if (freeAccess(u, d)) {
-            open(p, d);
+        String tp = timeProblem(d);
+        if (tp != null) {
+            p.sendMessage(c("&c" + d.name() + " chỉ mở " + tp + "."));
             return;
         }
-        switch (d.type()) {
-            case "chain" -> p.sendMessage(c("&cCần &eChìa khoá " + d.name() + "&c: vượt &f" + name(d.requires()) + " &ctrước."));
-            case "hidden" -> p.sendMessage(c("&cBạn chưa tìm ra lối vào dungeon ẩn này." + (d.hint().isBlank() ? "" : " &7Gợi ý: &f" + d.hint())));
-            case "server" -> p.sendMessage(c("&cCổng đang đóng. Cả server góp quỹ để mở: &f/dungeon gop " + d.id() + " <xu> &7(còn thiếu "
-                    + money(d.goal() - data.getDouble("quy." + d.id() + ".xu", 0)) + ")"));
-            default -> {
-                if (tickets(u, d.id()) <= 0 && !(d.type().equals("luck") && takeLuckTicket(p, d.id()))) {
-                    p.sendMessage(c(d.type().equals("luck") ? "&cCần &dVé Vận Mệnh &c(" + d.name() + "&c): rơi rất hiếm khi hạ quái hoặc câu cá."
-                            : "&cCần vé. Mua: &f/dungeon mua " + d.id() + " &7(" + money(d.price()) + "/vé)"));
-                    return;
-                }
-                if (tickets(u, d.id()) > 0) {
-                    addTickets(u, d.id(), -1);
-                } else if (ThreadLocalRandom.current().nextDouble(100) >= d.rollChance()) {
-                    // vé vận mệnh vừa lấy từ túi: tung xúc xắc
-                    p.playSound(p.getLocation(), Sound.ENTITY_ITEM_BREAK, 1f, 0.6f);
-                    p.sendMessage(c("&5✦ Vận mệnh không mỉm cười… Vé tan biến &7(" + Math.round(d.rollChance()) + "% cổng mở)."));
-                    return;
-                }
-                save();
-                pending.put(u, new Pass(d.id(), System.currentTimeMillis() + windowMs));
-                p.sendMessage(c("&a⛩ Cổng &f" + d.name() + " &ađã mở cho bạn trong " + windowMs / 1000
-                        + " giây (đã dùng 1 vé; không vào kịp thì được hoàn vé)."));
-                open(p, d);
+        List<Player> roster = roster(p);
+        if (d.partyMin() > 1 && roster.size() < d.partyMin() || d.partyMax() > 0 && roster.size() > d.partyMax()) {
+            p.sendMessage(c("&c" + d.name() + " cần nhóm &f" + partyText(d) + " &cngười (nhóm của bạn: " + roster.size()
+                    + "). Lập nhóm: &f/em party create&c, mời: &f/em party invite <tên>"));
+            return;
+        }
+        List<String> problems = new ArrayList<>();
+        for (Player m : roster) {
+            String pr = memberProblem(m, d);
+            if (pr != null) {
+                problems.add((m == p ? "Bạn" : m.getName()) + ": " + pr);
             }
         }
+        if (!problems.isEmpty()) {
+            p.sendMessage(c("&cChưa vào được &f" + d.name() + "&c:"));
+            problems.forEach(x -> p.sendMessage(c("  &8• &7" + x)));
+            return;
+        }
+        boolean ticketType = d.type().equals("ticket") || d.type().equals("luck");
+        boolean rolled = false;
+        for (Player m : roster) {
+            if (ticketType) {
+                if (tickets(m.getUniqueId(), d.id()) > 0) {
+                    addTickets(m.getUniqueId(), d.id(), -1);
+                } else if (d.type().equals("luck") && takeLuckTicket(m, d.id())) {
+                    rolled = true;   // vừa dùng Vé Vận Mệnh trong túi → tung xúc xắc
+                }
+            }
+        }
+        if (rolled && ThreadLocalRandom.current().nextDouble(100) >= d.rollChance()) {
+            save();
+            roster.forEach(m -> {
+                m.playSound(m.getLocation(), Sound.ENTITY_ITEM_BREAK, 1f, 0.6f);
+                m.sendMessage(c("&5✦ Vận mệnh không mỉm cười… Vé tan biến &7(" + Math.round(d.rollChance()) + "% cổng mở)."));
+            });
+            return;
+        }
+        long until = System.currentTimeMillis() + windowMs;
+        for (Player m : roster) {
+            if (ticketType || d.hasCond() || !freeAccess(m.getUniqueId(), d)) {
+                Pass old = pending.get(m.getUniqueId());
+                if (old != null && old.ticket() && !old.id().equals(d.id())) {
+                    refund(m.getUniqueId(), old.id());
+                }
+                pending.put(m.getUniqueId(), new Pass(d.id(), until, ticketType));
+                refresh(m);
+            }
+            if (m != p) {
+                m.sendMessage(c("&a⛩ " + p.getName() + " đã mở cổng &f" + d.name() + " &acho cả nhóm" + (ticketType ? " (trừ 1 vé của bạn)" : "")
+                        + ". Chờ trưởng nhóm chọn độ khó."));
+            }
+        }
+        save();
+        if (ticketType) {
+            p.sendMessage(c("&a⛩ Cổng &f" + d.name() + " &ađã mở trong " + windowMs / 1000 + " giây (đã dùng vé; không vào kịp thì được hoàn vé)."));
+        }
+        open(p, d);
+    }
+
+    /** Người trong nhóm EliteMobs đang online (không có nhóm = chỉ mình). */
+    private List<Player> roster(Player p) {
+        if (partyIds != null) {
+            try {
+                List<Player> l = new ArrayList<>();
+                for (Object o : (Collection<?>) partyIds.invoke(null, p)) {
+                    Player m = o instanceof UUID id ? Bukkit.getPlayer(id) : null;
+                    if (m != null && !l.contains(m)) {
+                        l.add(m);
+                    }
+                }
+                if (!l.contains(p)) {
+                    l.add(0, p);
+                }
+                return l;
+            } catch (ReflectiveOperationException | RuntimeException ignored) {
+                // coi như đi một mình
+            }
+        }
+        return List.of(p);
+    }
+
+    /** Lý do một người chưa vào được (null = được). Dungeon ẩn đủ Mảnh Chìa thì ghép luôn ở đây. */
+    private String memberProblem(Player m, Dg d) {
+        UUID u = m.getUniqueId();
+        if (inside.containsKey(u)) {
+            return "đang ở trong một dungeon";
+        }
+        switch (d.type()) {
+            case "chain" -> {
+                if (!freeAccess(u, d)) {
+                    return "cần Chìa khoá (vượt " + name(d.requires()) + " trước)";
+                }
+            }
+            case "hidden" -> {
+                if (!found(u, d.id())) {
+                    return "chưa tìm ra lối vào" + (d.hint().isBlank() ? "" : " (gợi ý: " + d.hint() + ")");
+                }
+                if (d.fragments() > 0 && !assembled(u, d.id())) {
+                    int have = countFragments(m, d.id());
+                    if (have < d.fragments()) {
+                        return "cần ghép " + d.fragments() + " Mảnh Chìa (đang có " + have + "; rơi khi hạ quái, câu cá)";
+                    }
+                    takeFragments(m, d.id(), d.fragments());
+                    List<String> l = new ArrayList<>(data.getStringList("ghep." + uk(u)));
+                    l.add(d.id());
+                    data.set("ghep." + uk(u), l);
+                    save();
+                    m.playSound(m.getLocation(), Sound.BLOCK_END_PORTAL_SPAWN, 0.7f, 1.2f);
+                    m.sendMessage(c("&5✧ Đã ghép đủ Mảnh Chìa: lối vào &d" + d.name() + " &5mở cho bạn cả mùa!"));
+                }
+            }
+            case "server" -> {
+                if (!serverOpen(d.id())) {
+                    return "cổng đang đóng, cả server góp quỹ: /dungeon gop " + d.id() + " <xu> (còn thiếu "
+                            + money(d.goal() - data.getDouble("quy." + d.id() + ".xu", 0)) + ")";
+                }
+            }
+            case "ticket" -> {
+                if (tickets(u, d.id()) <= 0) {
+                    return "cần vé: /dungeon mua " + d.id() + " (" + money(d.price()) + "/vé)";
+                }
+            }
+            case "luck" -> {
+                if (tickets(u, d.id()) <= 0 && !hasLuckTicket(m, d.id())) {
+                    return "cần Vé Vận Mệnh (" + d.name() + "): rơi rất hiếm khi hạ quái hoặc câu cá";
+                }
+            }
+            default -> { }
+        }
+        if (d.minPet() > 0) {
+            Object pet = MyPetBridge.active(m);
+            int lv = pet == null ? 0 : MyPetBridge.level(pet);
+            if (lv < d.minPet()) {
+                return "cần dẫn theo pet cấp " + d.minPet() + " trở lên" + (pet == null ? " (chưa gọi pet)" : " (pet đang cấp " + lv + ")");
+            }
+        }
+        if (d.minAch() > 0) {
+            int n = Achievements.doneCount(u);
+            if (n >= 0 && n < d.minAch()) {
+                return "cần " + d.minAch() + " mốc Sổ thành tích (đang có " + n + ", /thanhtich)";
+            }
+        }
+        if (d.hegemonOnly()) {
+            WarBalance wb = WarBalance.INSTANCE;
+            com.palmergames.bukkit.towny.object.Resident r = com.palmergames.bukkit.towny.TownyAPI.getInstance().getResident(m);
+            com.palmergames.bukkit.towny.object.Nation n = r == null ? null : r.getNationOrNull();
+            if (wb == null || n == null || !wb.isHegemon(n)) {
+                return "chỉ dân của nước Bá chủ (/canbang)";
+            }
+        }
+        return null;
+    }
+
+    private boolean hasLuckTicket(Player p, String id) {
+        for (ItemStack it : p.getInventory().getContents()) {
+            if (it != null && it.hasItemMeta() && id.equals(it.getItemMeta().getPersistentDataContainer().get(ticketKey, PersistentDataType.STRING))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /** Điều kiện theo thời gian chưa đạt → mô tả lúc mở; đạt → null. */
+    private String timeProblem(Dg d) {
+        java.time.ZonedDateTime now = java.time.ZonedDateTime.now(VN);
+        boolean ok = true;
+        if (!d.days().isEmpty() && !d.days().contains(DAY_CODES.get(now.getDayOfWeek().getValue() - 1))) {
+            ok = false;
+        }
+        if (d.hourFrom() >= 0) {
+            int h = now.getHour(), a = d.hourFrom(), b = d.hourTo() < 0 ? a : d.hourTo();
+            if (a <= b ? h < a || h > b : h < a && h > b) {
+                ok = false;
+            }
+        }
+        if (!d.seasons().isEmpty() && !d.seasons().contains(Seasons.now())) {
+            ok = false;
+        }
+        return ok ? null : String.join(", ", timeText(d));
+    }
+
+    private static List<String> timeText(Dg d) {
+        List<String> l = new ArrayList<>();
+        if (!d.days().isEmpty()) {
+            l.add(d.days().stream().map(x -> x.equals("cn") ? "Chủ nhật" : "Thứ " + x.substring(1)).collect(java.util.stream.Collectors.joining(", ")));
+        }
+        if (d.hourFrom() >= 0) {
+            l.add("từ " + d.hourFrom() + "h tới " + ((d.hourTo() < 0 ? d.hourFrom() : d.hourTo()) + 1) + "h");
+        }
+        if (!d.seasons().isEmpty()) {
+            l.add("mùa " + String.join("/", d.seasons().stream().map(x -> x.equals("mua") ? "mưa" : x.equals("kho") ? "khô" : x).toList()));
+        }
+        return l;
+    }
+
+    private static String partyText(Dg d) {
+        int a = Math.max(1, d.partyMin()), b = d.partyMax();
+        return b <= 0 ? "từ " + a : a == b ? String.valueOf(a) : a + "–" + b;
+    }
+
+    /** Các điều kiện phụ, dạng chữ cho /dungeon và web. */
+    private List<String> condText(Dg d) {
+        List<String> l = new ArrayList<>(timeText(d));
+        if (d.partyMin() > 1 || d.partyMax() > 0) {
+            l.add("nhóm " + partyText(d) + " người");
+        }
+        if (d.minPet() > 0) {
+            l.add("pet cấp " + d.minPet() + "+");
+        }
+        if (d.minAch() > 0) {
+            l.add(d.minAch() + " thành tích");
+        }
+        if (d.hegemonOnly()) {
+            l.add("chỉ nước Bá chủ");
+        }
+        if (d.type().equals("hidden") && d.fragments() > 0) {
+            l.add("ghép " + d.fragments() + " Mảnh Chìa");
+        }
+        return l;
     }
 
     /** Cấp quyền rồi mở menu chọn độ khó của EliteMobs. */
@@ -832,6 +1243,11 @@ final class DungeonGate implements Listener {
         UUID u = s instanceof Player p ? p.getUniqueId() : null;
         s.sendMessage(c("&5&l━━ ⛩ CỔNG DUNGEON ━━"));
         s.sendMessage(c("&7Bấm vào tên để vào. Đồ trong dungeon chỉ có ở đây; mỗi boss có thời gian chờ nhận lại đồ."));
+        String weekly = weeklyId();
+        if (weekly != null) {
+            s.sendMessage(c("&6★ Dungeon của tuần: &e" + name(weekly) + (weeklyRewards.isEmpty() || rewards == null ? ""
+                    : " &7(vượt được thêm " + String.join(", ", rewards.describe(weeklyRewards)) + ", tối đa " + weeklyMax + " lần/tuần)")));
+        }
         String lastType = "";
         int hiddenLeft = 0;
         for (Dg d : dungeons.values()) {
@@ -864,19 +1280,24 @@ final class DungeonGate implements Listener {
                 s.sendMessage(c("  &8• &7??? " + lv + " &8— " + state));
                 continue;
             }
-            Component line = c("  &8• &f" + d.name() + lv + " &8— " + state);
+            List<String> dk = condText(d);
+            String star = d.id().equals(weekly) ? " &6★ tuần này" : "";
+            List<String> rec = data.getStringList("kyluc." + d.id());
+            String hover = (dk.isEmpty() ? "" : "\n&eĐiều kiện: &f" + String.join(", ", dk))
+                    + (rec.isEmpty() ? "" : "\n&b⏱ Kỷ lục: &f" + clock(Long.parseLong(rec.get(0).split(";", 2)[0])) + " &7(" + rec.get(0).split(";", 2)[1] + ")");
+            Component line = c("  &8• &f" + d.name() + lv + star + " &8— " + state + (dk.isEmpty() ? "" : " &e⚠"));
             if (inst) {
                 String cmd = d.type().equals("ticket") && u != null && tickets(u, d.id()) == 0 ? "/dungeon mua " + d.id()
                         : d.type().equals("server") && !serverOpen(d.id()) ? "/dungeon gop " + d.id() + " " : "/dungeon vao " + d.id();
                 line = line.clickEvent(cmd.endsWith(" ") ? ClickEvent.suggestCommand(cmd) : ClickEvent.runCommand(cmd))
-                        .hoverEvent(HoverEvent.showText(c("&7" + cmd + "\n&8mã: " + d.id())));
+                        .hoverEvent(HoverEvent.showText(c("&7" + cmd + hover + "\n&8mã: " + d.id())));
             }
             s.sendMessage(line);
         }
         if (hiddenLeft > 0) {
             s.sendMessage(c("&7Còn &d" + hiddenLeft + " &7dungeon ẩn chưa tìm ra: lối vào giấu đâu đó trên bản đồ, để ý hạt tím lấp lánh."));
         }
-        s.sendMessage(c("&8Lệnh: /dungeon vao|mua|gop <mã>"));
+        s.sendMessage(c("&8Rê chuột lên tên: điều kiện (&e⚠&8) và kỷ lục tốc độ. Lệnh: /dungeon vao|mua|gop <mã>"));
     }
 
     private String until(String id) {
@@ -935,6 +1356,21 @@ final class DungeonGate implements Listener {
                 o.addProperty("dau_tien", String.join(", ", data.getStringList("dau." + d.id() + ".ten")));
             }
             o.addProperty("luot", data.getInt("dem." + d.id(), 0));
+            JsonArray dk = new JsonArray();
+            condText(d).forEach(dk::add);
+            o.add("dk", dk);
+            o.addProperty("tuan", d.id().equals(data.getString("tuan." + weekKey())));
+            JsonArray rec = new JsonArray();
+            if (!hidden) {
+                for (String r : data.getStringList("kyluc." + d.id())) {
+                    String[] a = r.split(";", 2);
+                    JsonObject x = new JsonObject();
+                    x.addProperty("giay", Long.parseLong(a[0]));
+                    x.addProperty("ten", a.length > 1 ? a[1] : "");
+                    rec.add(x);
+                }
+            }
+            o.add("ky_luc", rec);
             arr.add(o);
         }
         root.add("dungeons", arr);

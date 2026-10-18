@@ -632,7 +632,7 @@ treasure:
   tiers:
     thuong: {name: "&fKho báu thường", weight: 70, guards: 2, guard-types: [ZOMBIE, SKELETON], guard-health: 1.5, rewards: ["xu 300", "vat IRON_INGOT 8"]}
     hiem: {name: "&bKho báu hiếm", weight: 25, guards: 3, guard-types: [VINDICATOR, SKELETON, SPIDER], guard-health: 2, rewards: ["xu 1000", "vat DIAMOND 2", "vat GOLDEN_APPLE 1"]}
-    huyenthoai: {name: "&6&lKho báu huyền thoại", weight: 5, guards: 4, guard-types: [WITHER_SKELETON, VINDICATOR, EVOKER], guard-health: 3, broadcast: true, rewards: ["xu 5000", "vat DIAMOND 6", "vat ENCHANTED_GOLDEN_APPLE 1", "lenh buabatpet give {player} 2"]}
+    huyenthoai: {name: "&6&lKho báu huyền thoại", weight: 5, guards: 4, guard-types: [WITHER_SKELETON, VINDICATOR, EVOKER], guard-health: 3, broadcast: true, reveal-hidden: 40, rewards: ["xu 5000", "vat DIAMOND 6", "vat ENCHANTED_GOLDEN_APPLE 1", "lenh buabatpet give {player} 2"]}
 
 # Bảng truy nã quái (/truyna): mỗi interval-minutes phút dán lệnh truy nã một quái mạnh ở vùng /tpr đã mở; ai gây nhiều sát thương nhất nhận thưởng.
 wanted:
@@ -721,6 +721,17 @@ dungeon-gate:
     mob-chance: 0.05       # % mỗi quái thù địch bị hạ rơi Vé Vận Mệnh (0.05% ≈ 1/2000)
     fish-chance: 0.3       # % mỗi con cá câu được
     max-per-day: 1         # tối đa vé/người/ngày
+  fragment:                # Mảnh Chìa: chỉ rơi cho người đã tìm ra dungeon ẩn có fragments mà chưa ghép đủ
+    mob-chance: 1          # % mỗi quái bị hạ
+    fish-chance: 3         # % mỗi con cá
+    max-per-day: 3
+  weekly:                  # Dungeon của tuần: mỗi tuần chọn ngẫu nhiên 1 dungeon (kiểu trong types, đã cài), vượt được thêm quà
+    enabled: true
+    types: [chain, ticket, server]
+    rewards: ["xu 1500"]
+    max-per-week: 3        # tối đa lần nhận quà tuần / người
+  # Điều kiện phụ (tuỳ dungeon, kiểm từng người trong nhóm /em party): min-pet-level, party: "2-4", days: [t2..t7, cn],
+  # hours: "19-23" (giờ VN), seasons: [mua, kho], hegemon-only: true, min-achievements. Dungeon ẩn: fragments: <số Mảnh Chìa>.
   dungeons:
     the_climb_dungeon: {name: "Đỉnh Vách Đá", type: chain, level: "10", first-rewards: ["xu 500"]}
     the_cave_sanctum: {name: "Hang Thánh Địa", type: chain, level: "15", requires: the_climb_dungeon, first-rewards: ["xu 800"]}
@@ -730,16 +741,16 @@ dungeon-gate:
     the_palace_sanctum: {name: "Cung Điện", type: chain, level: "35", requires: the_city_dungeon, first-rewards: ["xu 2000"]}
     the_quarry_dungeon: {name: "Mỏ Đá", type: chain, level: "40", requires: the_palace_sanctum, first-rewards: ["xu 2500"]}
     the_deep_mines_dungeon: {name: "Mỏ Sâu", type: chain, level: "45", requires: the_quarry_dungeon, first-rewards: ["xu 3000"]}
-    the_nether_wastes_dungeon: {name: "Hoang Mạc Địa Ngục", type: chain, level: "50", requires: the_deep_mines_dungeon, first-rewards: ["xu 4000"]}
-    the_nether_bell_sanctum: {name: "Chuông Địa Ngục", type: chain, level: "55", requires: the_nether_wastes_dungeon, first-rewards: ["xu 6000"]}
+    the_nether_wastes_dungeon: {name: "Hoang Mạc Địa Ngục", type: chain, level: "50", requires: the_deep_mines_dungeon, min-pet-level: 10, first-rewards: ["xu 4000"]}
+    the_nether_bell_sanctum: {name: "Chuông Địa Ngục", type: chain, level: "55", requires: the_nether_wastes_dungeon, party: "2-4", first-rewards: ["xu 6000"]}
     sewers_minidungeon: {name: "Cống Ngầm", type: hidden, level: "25", hint: "dưới chân một thành cổ", first-rewards: ["xu 2000"]}
-    dark_cathedral_lair: {name: "Thánh Đường Bóng Tối", type: hidden, level: "40", night-only: true, hint: "chỉ hiện ra lúc nửa đêm", first-rewards: ["xu 3000"]}
+    dark_cathedral_lair: {name: "Thánh Đường Bóng Tối", type: hidden, level: "40", night-only: true, fragments: 3, hint: "chỉ hiện ra lúc nửa đêm", first-rewards: ["xu 3000"]}
     north_pole_minidungeon: {name: "Bắc Cực", type: luck, level: "55", roll-chance: 70, first-rewards: ["xu 4000"]}
-    knights_castle_lair: {name: "Lâu Đài Hiệp Sĩ", type: ticket, level: "95", price: 3000, max-tickets: 5}
-    steamworks_lair: {name: "Xưởng Hơi Nước", type: ticket, level: "140", price: 5000, max-tickets: 5}
+    knights_castle_lair: {name: "Lâu Đài Hiệp Sĩ", type: ticket, level: "95", price: 3000, max-tickets: 5, days: [t7, cn]}
+    steamworks_lair: {name: "Xưởng Hơi Nước", type: ticket, level: "140", price: 5000, max-tickets: 5, min-achievements: 8}
     fireworks_lair: {name: "Lễ Hội Pháo Hoa", type: server, level: "20", goal: 100000, open-days: 7}
-    hallosseum_lair: {name: "Đấu Trường Ma", type: server, level: "30", goal: 150000, open-days: 7}
-    binder_of_worlds_sanctum: {name: "Kẻ Trói Buộc Thế Giới", type: server, level: "200", goal: 1000000, open-days: 0, first-rewards: ["xu 20000"]}
+    hallosseum_lair: {name: "Đấu Trường Ma", type: server, level: "30", goal: 150000, open-days: 7, party: "2-5", hours: "19-23"}
+    binder_of_worlds_sanctum: {name: "Kẻ Trói Buộc Thế Giới", type: server, level: "200", goal: 1000000, open-days: 0, party: "3-6", min-pet-level: 20, first-rewards: ["xu 20000"]}
 
 # Cân bằng chiến tranh (/canbang): chống "nước to nuốt hết". Trang Cài đặt > Chiến tranh > Cân bằng chiến tranh
 war-balance:

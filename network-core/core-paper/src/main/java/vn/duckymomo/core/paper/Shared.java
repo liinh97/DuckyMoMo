@@ -9,6 +9,7 @@ final class Shared {
 
     static volatile Frontier frontier;
     static volatile Leaderboard leaderboard;
+    static volatile DungeonGate dungeonGate;
 
     private Shared() {
     }
@@ -25,5 +26,6 @@ final class Shared {
     static void clear() {
         frontier = null;
         leaderboard = null;
+        dungeonGate = null;
     }
 }

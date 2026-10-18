@@ -36,6 +36,14 @@ dgt_luck_mob: 0.05
 dgt_luck_fish: 0.3
 dgt_luck_day: 1
 dgt_np_roll: 70
+dgt_frag_mob: 1
+dgt_frag_fish: 3
+dgt_frag_day: 3
+dgt_week_on: true
+dgt_week_rw:
+- xu 1500
+dgt_week_max: 3
+dgt_reveal: 40
 dgt_kc_price: 3000
 dgt_sw_price: 5000
 dgt_fw_goal: 100000

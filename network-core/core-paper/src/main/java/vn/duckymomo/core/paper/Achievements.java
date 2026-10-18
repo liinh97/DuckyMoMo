@@ -101,6 +101,12 @@ final class Achievements implements Listener {
     // ---------------------------------------------------------------- đếm
 
     /** Cộng dồn một loại (module khác gọi). */
+    /** Số mốc thành tích đã đạt (-1 nếu module tắt). */
+    static int doneCount(UUID u) {
+        Achievements a = INSTANCE;
+        return a == null ? -1 : a.data.getStringList("xong." + u).size();
+    }
+
     static void add(Player p, String type, double amount) {
         Achievements a = INSTANCE;
         if (a != null && p != null && amount > 0) {

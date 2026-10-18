@@ -80,7 +80,12 @@ bật công tắc vây thành, rút lịch phiên còn vài phút (Cài đặt �
 - [ ] /dungeon mua knights_castle_lair → vào mất 1 vé; mở cổng mà không vào 2 phút → hoàn vé.
 - [ ] /dungeon cho north_pole_minidungeon <người> → Vé Vận Mệnh; dùng: 70% mở, trượt mất vé.
 - [ ] /dungeon gop fireworks_lair → đủ quỹ mở 7 ngày; /dungeon mo (admin).
-- [ ] Đồ EliteMobs mang vào công thành có lệch cân bằng không (xem lại khi có người chơi).
+- [ ] Điều kiện: Chuông Địa Ngục đi 1 mình bị chặn (cần nhóm 2–4, /em party); Hoang Mạc Địa Ngục không dẫn pet cấp 10 bị chặn; Lâu Đài Hiệp Sĩ ngày thường bị chặn.
+- [ ] Nhóm 2 người mở dungeon vé: trừ vé cả hai; người kia nhận thông báo và vào theo được.
+- [ ] Thánh Đường Bóng Tối: tìm ra (ban đêm) → nhặt Mảnh Chìa (/dungeon cho dark_cathedral_lair <người> 3) → /dungeon vao ghép, vào được.
+- [ ] /dungeon hiện ★ Dungeon của tuần; vượt nó nhận thêm 1500 xu (tối đa 3 lần/tuần).
+- [ ] Vượt xong báo thời gian; phá kỷ lục báo cả server; web hiện kỷ lục.
+- [ ] Kho báu huyền thoại (/khobau give, tới khi ra bậc huyền thoại): 40% có mảnh giấy chỉ đường tới dungeon ẩn.
 
 ## 5. Quảng trường Vinh danh (sảnh)
 - [ ] (CHƯA CẦN, làm khi gần mở server) Chọn chỗ trống ở sảnh (map sakura). Đứng, quay mặt về phía người xem: `/vinhdanh dat moinhat tieude`, rồi `bachu`, `chienthan`, `phuho`,

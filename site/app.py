@@ -444,7 +444,7 @@ def api_info():
                     "list": core_json("dungeon.json").get("dungeons") or [
                         {"ten": "???" if d.get("type") == "hidden" else d.get("name", k), "kieu": d.get("type", "chain"), "cap": d.get("level", ""),
                          "can": ((get(core, "dungeon-gate.dungeons", {}) or {}).get(d.get("requires") or "") or {}).get("name"),
-                         "ti_le": d.get("roll-chance"), "gia": d.get("price"), "muc_tieu": d.get("goal"), "quy": 0, "so_ngay": d.get("open-days"), "luot": 0}
+                         "ti_le": d.get("roll-chance"), "gia": d.get("price"), "dk": [], "ky_luc": [], "muc_tieu": d.get("goal"), "quy": 0, "so_ngay": d.get("open-days"), "luot": 0}
                         for k, d in (get(core, "dungeon-gate.dungeons", {}) or {}).items()]},
         "lowpop": {k: get(core, f"low-population.{p}", d) for k, p, d in [("enabled", "enabled", False), ("threshold", "threshold", 15),
                    ("quest", "quest-scale", 0.6), ("capture", "capture-bonus", 10), ("absent", "absent-defender-attack-percent", 50)]},

@@ -450,7 +450,7 @@ groups:
       - ["dungeon mua <mã> [số]", "Mua vé cá nhân vào dungeon (trừ khi vào)", Mọi người]
       - ["dungeon gop <mã> <xu>", "Góp quỹ chung mở dungeon cho cả server", Mọi người]
       - ["dungeon datan <mã>", "Giấu lối vào dungeon ẩn tại chỗ đang đứng", Chỉ admin]
-      - ["dungeon cho <mã> <người> [số]", "Tặng vé / Vé Vận Mệnh", Chỉ admin]
+      - ["dungeon cho <mã> <người> [số]", "Tặng vé / Vé Vận Mệnh / Mảnh Chìa", Chỉ admin]
       - ["dungeon mo <mã>", "Mở ngay dungeon quỹ chung (không cần góp)", Chỉ admin]
       - ["truyna", "Các lệnh truy nã quái đang mở", Mọi người]
       - ["thaiap", "Về Thái Ấp của mình (chưa có thì xem hướng dẫn)", Mọi người]

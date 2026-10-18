@@ -52,7 +52,7 @@ dgt_hs_days: 7
 dgt_bw_goal: 1000000
 dgt_bw_days: 0
 wg_on: true
-wg_max: 6
+wg_max: 4
 wg_days: 7
 wg_town: 300
 wg_gap: 800

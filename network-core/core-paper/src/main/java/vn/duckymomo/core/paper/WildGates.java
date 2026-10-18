@@ -386,7 +386,12 @@ final class WildGates implements Listener {
         DungeonGate dg = Shared.dungeonGate;
         List<String> ok = dg == null ? pool : pool.stream().filter(dg::isInstalled).toList();
         List<String> from = ok.isEmpty() ? pool : ok;
-        return from.get(ThreadLocalRandom.current().nextInt(from.size()));
+        // ưu tiên dungeon đang ít cổng dẫn tới nhất (đủ đích thì mỗi cổng một nơi khác nhau)
+        Map<String, Integer> used = new HashMap<>();
+        gateIds().forEach(id -> used.merge(data.getString(g(id) + "dungeon", ""), 1, Integer::sum));
+        int least = from.stream().mapToInt(d -> used.getOrDefault(d, 0)).min().orElse(0);
+        List<String> best = from.stream().filter(d -> used.getOrDefault(d, 0) == least).toList();
+        return best.get(ThreadLocalRandom.current().nextInt(best.size()));
     }
 
     private static String biomeKind(Block ground) {

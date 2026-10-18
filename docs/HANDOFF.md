@@ -307,6 +307,7 @@
 - Người dùng chốt: thị trấn giữ cổng thu phí người ngoài; 6 cổng/mùa, 7 ngày thêm 1; chiếm được thị trấn là SỞ HỮU cổng (không giới hạn
   số cổng mỗi nước, Bá chủ vẫn giữ được); phí duy trì + khởi nghĩa sớm hơn đưa vào Cài đặt, mặc định 0; ngụy trang KHÔNG làm khó quá
   (hạt tím 16 khối + dòng nhắc khi đứng gần 6 khối, ngày đêm đều thấy).
+- 18/10 tối: người dùng chốt TẠM 4 cổng/mùa (= 4 đích: Cống Ngầm, Bắc Cực chỉ qua cổng; Lâu Đài Hiệp Sĩ, Xưởng Hơi Nước lối tắt); đích ưu tiên dungeon ít cổng nhất nên 4 cổng 4 nơi. Thêm đích (mua gói / Đảo Hỗn Mang) thì tăng max-gates.
 - Chỉ tự đặt cổng khi leaderboard.season-start có ngày (chưa mở mùa → không đặt). Cổng dẫn tới wild-gates.dungeons (tạm thời là các dungeon
   EliteMobs: Lâu Đài Hiệp Sĩ, Xưởng Hơi Nước, Bắc Cực, Cống Ngầm).
 - NOTE (người dùng: "cứ ghi note lại"): sau này đổi đích Cổng Hoang sang "Đảo Hỗn Mang" — khu boss riêng (world riêng ~400×400, kiểu ảnh

@@ -715,7 +715,7 @@ achievements:
 # Trang Cài đặt > Thế giới > Cổng Hoang. Thị trấn có ô đất chứa cổng là chủ; chiếm được thị trấn là có cổng.
 wild-gates:
   enabled: true
-  max-gates: 6             # tối đa cổng mỗi mùa
+  max-gates: 4             # tối đa cổng mỗi mùa (= số dungeon đích thì mỗi cổng một nơi khác nhau)
   interval-days: 7         # mỗi ngần này ngày thêm 1 cổng
   min-town-distance: 300   # cổng cách điểm spawn thị trấn gần nhất ít nhất ngần này khối
   min-gate-distance: 800   # các cổng cách nhau

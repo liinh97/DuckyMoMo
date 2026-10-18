@@ -209,8 +209,13 @@ final class DonateRanks implements Listener {
                 return;
             }
             Tier t = findTier(a[2]);
-            String name = a[3].toLowerCase(java.util.Locale.ROOT);
-            String url = a[4];
+            int i = 3;
+            if (t == null && a.length >= 6) {   // tên bậc 2 từ: "Công Tước"
+                t = findTier(a[2] + a[3]);
+                i = 4;
+            }
+            String name = a[i].toLowerCase(java.util.Locale.ROOT);
+            String url = a[i + 1];
             if (t == null) {
                 s.sendMessage(c("&cKhông có bậc \"" + a[2] + "\". Bậc: " + String.join(", ", tiers.stream().map(Tier::group).toList())));
                 return;
@@ -224,11 +229,12 @@ final class DonateRanks implements Listener {
                 return;
             }
             String node = "skinsrestorer.skin." + name;
+            final Tier tt = t;
             for (Tier o : tiers) {   // một skin chỉ thuộc một bậc
                 gm.modifyGroup(o.group(), g -> {
                     g.data().remove(perm(node, true));
                     g.data().remove(perm(node, false));
-                    if (o == t) {
+                    if (o == tt) {
                         g.data().add(perm(node, true));
                     }
                 });

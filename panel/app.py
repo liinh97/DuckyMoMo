@@ -45,6 +45,7 @@ ROLE_HTML = (Path(__file__).parent / "role.html").read_text(encoding="utf-8")
 THUVIEN_HTML = (Path(__file__).parent / "thuvien.html").read_text(encoding="utf-8")
 BOSS_HTML = (Path(__file__).parent / "boss.html").read_text(encoding="utf-8")
 DONATE_HTML = (Path(__file__).parent / "donate.html").read_text(encoding="utf-8")
+HETHONG_HTML = (Path(__file__).parent / "hethong.html").read_text(encoding="utf-8")
 # Khung chung mọi trang (thanh điều hướng trái, màu, nút): ui.css, shell.js
 STATIC = {"/ui.css": ("text/css; charset=utf-8", (Path(__file__).parent / "ui.css").read_bytes()),
           "/shell.js": ("application/javascript; charset=utf-8", (Path(__file__).parent / "shell.js").read_bytes())}
@@ -1584,6 +1585,135 @@ def web_cached(key, ttl, fn):
     return val
 
 
+# ---------------------------------------------------------------- Hệ thống: trạng thái, lệnh bảo trì, khởi động lại server
+# Khởi động lại = lưu thế giới rồi "stop" qua RCON; container có restart: unless-stopped nên Docker tự bật lại (~1 phút).
+# Proxy (Velocity) không có RCON nên không điều khiển từ đây.
+
+HETHONG_ACTIONS = {
+    "luu": (["save-all flush"], "Lưu thế giới"),
+    "donrac": (["dmm clean"], "Dọn rác (đồ rơi, mũi tên; giữ đồ quanh chỗ chết, đồ có tên, đất thị trấn)"),
+    "napdmm": (["dmm reload"], "Nạp lại DuckyMoMoCore"),
+    "naptab": (["tab reload"], "Nạp lại bảng TAB/scoreboard"),
+    "napem": (["em reload"], "Nạp lại EliteMobs"),
+}
+RESTART_PENDING = {}   # server -> {"luc": epoch giây sẽ tắt, "nguoi": ai bấm, "huy": threading.Event}
+COLOR_RE = re.compile(r"§.|\x1b\[[0-9;]*m")
+
+
+def _num(x):
+    try:
+        return float(x.replace(",", "").replace("*", ""))
+    except ValueError:
+        return None
+
+
+def hethong_status():
+    out = []
+    for srv in GAME_SERVERS:
+        d = {"server": srv, "online": False}
+        try:
+            res = dict(rcon(srv, ["minecraft:list", "tps", "mspt", "essentials:gc"]))
+            d["online"] = True
+        except Exception as e:
+            d["loi"] = str(e)
+            out.append(d)
+            continue
+        lst = COLOR_RE.sub("", res.get("minecraft:list", ""))
+        m = re.search(r"There are (\d+) of a max of (\d+) players online:?\s*(.*)", lst)
+        if m:
+            d["nguoi_so"], d["nguoi_max"] = int(m.group(1)), int(m.group(2))
+            d["nguoi"] = [x.strip() for x in m.group(3).split(",") if x.strip()]
+        m = re.search(r":\s*([\d.*]+),\s*([\d.*]+),\s*([\d.*]+)", COLOR_RE.sub("", res.get("tps", "")))
+        if m:
+            d["tps"] = [_num(m.group(i)) for i in (1, 2, 3)]
+        m = re.search(r"([\d.]+)/([\d.]+)/([\d.]+)", COLOR_RE.sub("", res.get("mspt", "")))
+        if m:
+            d["mspt"] = _num(m.group(1))
+        gc = COLOR_RE.sub("", res.get("essentials:gc", ""))
+        mx, fr = re.search(r"Maximum memory: ([\d,]+)", gc), re.search(r"Free memory: ([\d,]+)", gc)
+        al = re.search(r"Allocated memory: ([\d,]+)", gc)
+        if mx and fr and al:
+            d["ram_max"], d["ram_dung"] = int(_num(mx.group(1))), int(_num(al.group(1)) - _num(fr.group(1)))
+        up = re.search(r"Uptime: (.+)", gc)
+        if up:
+            d["uptime"] = up.group(1).strip()
+        worlds = re.findall(r'"([^"]+)": ([\d,]+) chunks, ([\d,]+) entities', gc)
+        if worlds:
+            d["chunks"] = sum(int(_num(w[1])) for w in worlds)
+            d["entities"] = sum(int(_num(w[2])) for w in worlds)
+        p = RESTART_PENDING.get(srv)
+        if p:
+            d["restart_con"] = max(0, int(p["luc"] - time.time()))
+            d["restart_nguoi"] = p["nguoi"]
+        out.append(d)
+    return {"servers": out, "lenh": {k: v[1] for k, v in HETHONG_ACTIONS.items()}}
+
+
+def _restart_worker(srv, ev):
+    p = RESTART_PENDING.get(srv)
+    marks = {300, 120, 60, 30, 10, 5, 4, 3, 2, 1}
+    while p and not ev.is_set():
+        left = int(round(p["luc"] - time.time()))
+        if left <= 0:
+            break
+        if left in marks:
+            msg = f"⚠ Server khởi động lại sau {left} giây" if left < 60 else f"⚠ Server khởi động lại sau {left // 60} phút"
+            raw = {"text": msg + ". Tìm chỗ an toàn và đừng giao dịch lúc này!", "color": "gold", "bold": left <= 10}
+            try:
+                rcon(srv, ["tellraw @a " + json.dumps(raw, ensure_ascii=False)]
+                     + ([f'title @a title {json.dumps({"text": str(left), "color": "red"})}'] if left <= 5 else []))
+            except Exception:
+                pass
+        ev.wait(1)
+    if ev.is_set():
+        try:
+            rcon(srv, ["tellraw @a " + json.dumps({"text": "✔ Đã huỷ khởi động lại server.", "color": "green"}, ensure_ascii=False)])
+        except Exception:
+            pass
+        RESTART_PENDING.pop(srv, None)
+        return
+    try:
+        rcon(srv, ["save-all flush", "stop"])
+    except Exception:
+        pass   # "stop" đóng kết nối RCON giữa chừng là bình thường
+    RESTART_PENDING.pop(srv, None)
+
+
+def hethong_action(body, who):
+    srv, act = str(body.get("server", "")), str(body.get("action", ""))
+    if srv not in GAME_SERVERS:
+        raise ValueError("Server không hợp lệ")
+    if act in HETHONG_ACTIONS:
+        cmds, label = HETHONG_ACTIONS[act]
+        res = rcon(srv, cmds)
+        text = "\n".join(COLOR_RE.sub("", o).strip() for _, o in res if o.strip()) or "(không có phản hồi)"
+        web_log({"viec": "/api/hethong", "nguoi": who or PANEL_USER, "hanh_dong": act, "doi_tuong": srv, "ok": True})
+        return {"ok": True, "message": f"{label} ({srv}): {text[:600]}"}
+    if act == "huy":
+        p = RESTART_PENDING.get(srv)
+        if not p:
+            raise ValueError("Không có lần khởi động lại nào đang chờ")
+        p["huy"].set()
+        web_log({"viec": "/api/hethong", "nguoi": who or PANEL_USER, "hanh_dong": "huy-restart", "doi_tuong": srv, "ok": True})
+        return {"ok": True, "message": f"Đã huỷ khởi động lại {srv}"}
+    if act == "restart":
+        if srv in RESTART_PENDING:
+            raise ValueError("Server này đang đếm ngược khởi động lại")
+        giay = max(0, min(600, int(body.get("giay", 60) or 0)))
+        lst = COLOR_RE.sub("", rcon(srv, ["minecraft:list"])[0][1])
+        m = re.search(r"There are (\d+) of a max of \d+ players online:?\s*(.*)", lst)
+        so = int(m.group(1)) if m else 0
+        if so > 0 and not body.get("ep"):
+            return {"ok": False, "can_xac_nhan": True, "nguoi": [x.strip() for x in (m.group(2) if m else "").split(",") if x.strip()],
+                    "message": f"Đang có {so} người online ở {srv}. Xác nhận để vẫn khởi động lại (họ được báo trước {giay} giây)."}
+        ev = threading.Event()
+        RESTART_PENDING[srv] = {"luc": time.time() + giay, "nguoi": who or PANEL_USER, "huy": ev}
+        threading.Thread(target=_restart_worker, args=(srv, ev), daemon=True).start()
+        web_log({"viec": "/api/hethong", "nguoi": who or PANEL_USER, "hanh_dong": f"restart {giay}s", "doi_tuong": srv, "ok": True})
+        return {"ok": True, "message": f"{srv}: khởi động lại sau {giay} giây (có báo trong game). Docker tự bật lại sau khoảng 1–2 phút."}
+    raise ValueError("Lệnh không hợp lệ")
+
+
 def web_log(event):
     from datetime import datetime, timezone
     event = {"ts": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")} | event
@@ -1989,9 +2119,9 @@ def web_profile(name, by_code):
 # Trang/API -> tính năng cần có (staff đăng nhập bằng tài khoản game)
 PAGE_FEATURES = {"/": ("caidat",), "/thuvien": ("thuvien", "thuvien-dua"), "/boss": ("boss",), "/role": ("role", "role-quyen", "rank", "rank-quyen"),
                  "/hoatdong": ("hoatdong",), "/camnang": ("camnang",), "/huongdan": ("huongdan",),
-                 "/donate": ("donate",)}
+                 "/donate": ("donate",), "/hethong": ("hethong",)}
 API_GET_FEATURES = {"/api/modes": ("caidat",), "/api/camnang": ("camnang",), "/api/huongdan": ("huongdan",), "/api/roles": ("role", "role-quyen", "rank", "rank-quyen"),
-                    "/api/boss": ("boss",), "/api/activity": ("hoatdong",), "/api/donate": ("donate",), "/api/thuvien": None, "/api/toi": None}
+                    "/api/boss": ("boss",), "/api/activity": ("hoatdong",), "/api/donate": ("donate",), "/api/hethong": ("hethong",), "/api/thuvien": None, "/api/toi": None}
 # Staff đăng nhập bằng tài khoản game chỉ thao tác được CẤP DƯỚI: role chức vụ có weight nhỏ hơn role chức vụ cao nhất của mình
 # (Manager 90: Mod, Helper, Builder, Dân; Mod 70: Helper, Builder, Dân…). Rank donate theo quyền riêng (web.rank / web.rank.quyen).
 # Không ai ngoài toàn quyền cấp được * hay quyền web/admin/LuckPerms, và chỉ cấp được quyền chính mình đang có.
@@ -2134,10 +2264,10 @@ class Handler(BaseHTTPRequestHandler):
                                         "role_quyen": None if not acc or acc["toan_quyen"] else
                                         {g: {"nguoi": self.role_rights(g)[0], "quyen": self.role_rights(g)[1]}
                                          for g in STAFF_GROUPS + DONATE_GROUPS}})
-        if path in ("/", "/hoatdong", "/camnang", "/huongdan", "/role", "/thuvien", "/boss", "/donate"):
+        if path in ("/", "/hoatdong", "/camnang", "/huongdan", "/role", "/thuvien", "/boss", "/donate", "/hethong"):
             dozzle = DOZZLE_PROXY_URL if self.headers.get("X-Forwarded-Prefix") else DOZZLE_URL
             page = {"/": INDEX_HTML, "/hoatdong": ACTIVITY_HTML, "/camnang": CAMNANG_HTML, "/huongdan": HUONGDAN_HTML, "/role": ROLE_HTML,
-                    "/thuvien": THUVIEN_HTML, "/boss": BOSS_HTML, "/donate": DONATE_HTML}[path]
+                    "/thuvien": THUVIEN_HTML, "/boss": BOSS_HTML, "/donate": DONATE_HTML, "/hethong": HETHONG_HTML}[path]
             body = page.replace("__DOZZLE_URL__", "" if self.who else dozzle).encode("utf-8")
             self.send_response(200)
             self.send_header("Content-Type", "text/html; charset=utf-8")
@@ -2170,6 +2300,8 @@ class Handler(BaseHTTPRequestHandler):
             self.send_json(200, boss_json())
         elif path == "/api/donate":
             self.send_json(200, {"rows": donate_load()[::-1]})
+        elif path == "/api/hethong":
+            self.send_json(200, hethong_status())
         elif path == "/api/activity":
             params = {k: v[-1] for k, v in urllib.parse.parse_qs(query).items()}
             self.send_json(200, read_activity(params))
@@ -2202,6 +2334,8 @@ class Handler(BaseHTTPRequestHandler):
             ok = self.can("huongdan")
         elif p == "/api/donate":
             ok = self.can("donate")
+        elif p == "/api/hethong":
+            ok = self.can("hethong")
         else:
             m = re.fullmatch(r"/api/modes/([a-z0-9_-]+)/(save|apply-all)", p)
             if m and m.group(2) == "save":
@@ -2261,6 +2395,14 @@ class Handler(BaseHTTPRequestHandler):
         if self.path == "/api/donate":
             try:
                 self.send_json(200, donate_admin(self.body, self.who["name"] if self.who else None))
+            except ValueError as e:
+                self.send_json(400, {"ok": False, "message": str(e)})
+            except Exception as e:
+                self.send_json(500, {"ok": False, "message": f"Lỗi: {e}"})
+            return
+        if self.path == "/api/hethong":
+            try:
+                self.send_json(200, hethong_action(self.body, self.who["name"] if self.who else None))
             except ValueError as e:
                 self.send_json(400, {"ok": False, "message": str(e)})
             except Exception as e:

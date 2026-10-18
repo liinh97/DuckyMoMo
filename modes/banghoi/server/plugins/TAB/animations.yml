@@ -125,28 +125,28 @@ MeoChoi:
     - "&6✦ &fChơi một mình: &e/khobau &f• &e/truyna &f• &e/thanhtich &6✦"
     - "&a✦ &fĐất riêng an toàn để xây, trồng trọt: &e/thaiap &a✦"
 
-# Bảng bên phải 2 trang tự đổi (config.yml scoreboard: %animation:SbTieuDe%, %animation:SbDong1..4%). Cùng change-interval để đổi trang đồng thời.
+# Bảng bên phải 2 trang tự đổi, dòng NGẮN (dòng dài nhất quyết định bề ngang bảng) (config.yml scoreboard: %animation:SbTieuDe%, %animation:SbDong1..4%). Cùng change-interval để đổi trang đồng thời.
 # Trang 1 kinh tế & mùa, trang 2 chiến tranh. %dmmtoi_*% (giết/chết/KDA) và %dmmmua_*% (mùa) do DuckyMoMoCore cung cấp.
 SbTieuDe:
   change-interval: 8000
   texts:
-    - '&e&lKINH TẾ & MÙA &8● &7○'
-    - '&c&lCHIẾN TRANH &7○ &8●'
+    - '&e&lKINH TẾ &8●&7○'
+    - '&c&lCHIẾN TRANH &7○&8●'
 SbDong1:
   change-interval: 8000
   texts:
-    - '&#7CFC9A⛃ &7Tiền: &a%vault_eco_balance_formatted% &2xu'
-    - '&#FF9F43⚑ &7Thị trấn: &#FFD580%townyadvanced_town_unformatted%'
+    - '&#7CFC9A⛃ &a%vault_eco_balance_formatted% &2xu'
+    - '&#FF9F43⚑ &#FFD580%townyadvanced_town_unformatted%'
 SbDong2:
   change-interval: 8000
   texts:
-    - '&#FFCC33🔑 &7Vé quay: &e%dmmvq_ve% &8(%dmmvq_con%)'
-    - '&#C77DFF♛ &7Quốc gia: &#E0B0FF%townyadvanced_nation_unformatted%'
+    - '&#FFCC33🔑 &e%dmmvq_ve% &7vé quay'
+    - '&#C77DFF♛ &#E0B0FF%townyadvanced_nation_unformatted%'
 SbDong3:
   change-interval: 8000
   texts:
-    - '&#5FD3F3☂ %dmmmua_ten% &8· &7còn &f%dmmmua_con%&7 ngày'
-    - '&#FF6B6B⚔ &f%dmmtoi_giet%&7 giết &8· &f%dmmtoi_chet%&7 chết &8· &7KDA &f%dmmtoi_kda%'
+    - '%dmmmua_ten% &8%dmmmua_con%n'
+    - '&#FF6B6B⚔ &f%dmmtoi_giet%&7/&f%dmmtoi_chet% &8· &7KDA &f%dmmtoi_kda%'
 SbDong4:
   change-interval: 8000
   texts:

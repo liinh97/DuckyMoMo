@@ -28,6 +28,11 @@ tinh-nang:
     mo-ta: Xem chat, lệnh, vào/ra; gửi thông báo vào game
     trang: hoatdong
     quyen: [duckymomo.web.hoatdong]
+  - id: hethong
+    ten: Hệ thống
+    mo-ta: Xem tình trạng server (online, TPS, RAM); lưu thế giới, dọn rác, nạp lại plugin, khởi động lại server (có báo trước)
+    trang: hethong
+    quyen: [duckymomo.web.hethong]
   # Role chức vụ: chỉ thao tác được role CẤP DƯỚI (weight nhỏ hơn role chức vụ cao nhất của mình, vd Manager: Mod, Helper, Builder).
   - id: role
     ten: Cấp/gỡ role chức vụ

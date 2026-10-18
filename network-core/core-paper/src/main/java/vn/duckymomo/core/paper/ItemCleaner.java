@@ -113,7 +113,9 @@ final class ItemCleaner implements Listener {
                 return;
             }
             int n = clean();
-            Bukkit.broadcast(LEGACY.deserialize(doneMsg.replace("{n}", Integer.toString(n))));
+            if (n > 0) {   // không dọn được gì thì im lặng, đỡ rác chat
+                Bukkit.broadcast(LEGACY.deserialize(doneMsg.replace("{n}", Integer.toString(n))));
+            }
         }
     }
 

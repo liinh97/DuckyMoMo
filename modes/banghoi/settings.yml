@@ -136,13 +136,8 @@ pvp_newbie_seconds: 900
 cleaner_enabled: true
 cleaner_interval: 10
 cleaner_warn:
-  - 60
   - 30
-  - 10
   - 5
-  - 3
-  - 2
-  - 1
 cleaner_min_age: 30
 cleaner_arrows: true
 cleaner_warn_msg: '&c[⚠] &7Dọn vật phẩm dưới đất sau &e{s}s&7.'
@@ -180,16 +175,16 @@ tab_bossbar_tips:
 tab_bossbar_interval: 8000
 tab_bossbar_enabled: true
 tab_sb_enabled: true
-tab_sb_title: '<#FFC23D>⚔ BANG HỘI CHIẾN ⚔</#FF6A00>'
+tab_sb_title: '<#FFC23D>⚔ BANG HỘI CHIẾN</#FF6A00>'
 tab_sb_lines:
-  - '&#FFD966❤ &f%player% %luckperms-prefix%'
+  - '&#FFD966❤ &f%player%'
   - '&r'
   - '%animation:SbTieuDe%'
   - '%animation:SbDong1%'
   - '%animation:SbDong2%'
   - '%animation:SbDong3%'
   - '&r'
-  - '&#5FD3F3☺ &b%online% &7online &8· &7%condition:pingmau%'
+  - '&#5FD3F3☺ &b%online% &8· &7%condition:pingmau%'
 tab_header:
   - '&r'
   - <#FFC23D>&l✦ DUCKYMOMO ✦</#FF6A00>

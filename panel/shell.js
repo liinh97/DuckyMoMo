@@ -202,12 +202,12 @@ window.toast = function (msg, kind) {
 (function () {
   const NAV = [
     ["Cấu hình", [["", "⚙️", "Cài đặt"], ["thuvien", "🗡️", "Thư viện đồ"], ["boss", "🐉", "Boss"], ["role", "👑", "Role & rank"], ["donate", "💳", "Donate"]]],
-    ["Theo dõi", [["hoatdong", "📈", "Hoạt động người chơi"], ["@log", "📜", "Xem log ↗"]]],
+    ["Theo dõi", [["hoatdong", "📈", "Hoạt động người chơi"], ["hethong", "🖥️", "Hệ thống"], ["@log", "📜", "Xem log ↗"]]],
     ["Tài liệu", [["camnang", "📘", "Cẩm nang admin"], ["huongdan", "📖", "Cẩm nang trong game"]]],
   ];
   const body = document.body;
   const here = location.pathname.replace(/\/+$/, "").split("/").pop();
-  const page = ["thuvien", "boss", "role", "donate", "hoatdong", "camnang", "huongdan"].includes(here) ? here : "";
+  const page = ["thuvien", "boss", "role", "donate", "hoatdong", "hethong", "camnang", "huongdan"].includes(here) ? here : "";
   const dozzle = body.dataset.dozzle && !body.dataset.dozzle.startsWith("__") ? body.dataset.dozzle : "";
   const nav = document.createElement("aside");
   nav.className = "sidenav";
@@ -228,7 +228,7 @@ window.toast = function (msg, kind) {
   fetch("api/toi").then(r => r.json()).then(t => {
     if (!t.game) return;
     const can = new Set(t.tinh_nang || []);
-    const page = { caidat: ["caidat"], thuvien: ["thuvien", "thuvien-dua"], boss: ["boss"], role: ["role", "role-quyen", "rank", "rank-quyen"], donate: ["donate"], hoatdong: ["hoatdong"],
+    const page = { caidat: ["caidat"], thuvien: ["thuvien", "thuvien-dua"], boss: ["boss"], role: ["role", "role-quyen", "rank", "rank-quyen"], donate: ["donate"], hoatdong: ["hoatdong"], hethong: ["hethong"],
       camnang: ["camnang"], huongdan: ["huongdan"] };
     nav.querySelectorAll("a.item[data-page]").forEach(a => {
       if (!t.toan_quyen && !(page[a.dataset.page] || []).some(f => can.has(f))) a.remove();

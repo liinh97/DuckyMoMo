@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DuckyMoMo · Hệ thống</title>
+<link rel="stylesheet" href="ui.css">
+<style>
+  main { padding: 0 0 80px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 14px; }
+  .srv { padding: 16px 18px; display: flex; flex-direction: column; gap: 10px; }
+  .srv h3 { margin: 0; font-size: 17px; display: flex; gap: 8px; align-items: center; justify-content: space-between; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; background: var(--muted); }
+  .dot.on { background: var(--ok); }
+  .dot.off { background: var(--err, #d33); }
+  .stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px 14px; font-size: 14px; }
+  .stats b { font-variant-numeric: tabular-nums; }
+  .muted { color: var(--muted); font-size: 13.5px; }
+  .bar { height: 6px; border-radius: 4px; background: var(--chip); overflow: hidden; }
+  .bar i { display: block; height: 100%; background: var(--accent); }
+  .acts { display: flex; gap: 8px; flex-wrap: wrap; }
+  .acts button { font-size: 13.5px; }
+  .warn { color: var(--warn); font-weight: 600; }
+  .restart { border-top: 1px solid var(--line); padding-top: 10px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .restart button.danger { background: var(--err); }
+  .restart select { padding: 5px 8px; border-radius: 8px; border: 1px solid var(--line); background: var(--card); color: inherit; }
+  .hint { color: var(--muted); font-size: 13.5px; margin: 0 0 12px; }
+  pre.out { white-space: pre-wrap; background: var(--chip); border-radius: 8px; padding: 8px 10px; font-size: 12.5px; margin: 0; max-height: 160px; overflow: auto; }
+</style>
+</head>
+<body data-dozzle="__DOZZLE_URL__" data-title="Hệ thống" data-sub="Tình trạng từng server (người online, TPS, RAM) và các lệnh bảo trì: lưu thế giới, dọn rác, nạp lại plugin, khởi động lại có báo trước trong game.">
+<script src="shell.js"></script>
+<main>
+  <p class="hint">TPS 20 là mượt; dưới 18 là bắt đầu giật. MSPT dưới 50 ms là ổn. Số liệu tự làm mới mỗi 15 giây.
+    Khởi động lại: server lưu thế giới rồi tắt, Docker tự bật lại sau khoảng 1–2 phút. Proxy (cổng vào chung) không điều khiển được từ đây.</p>
+  <div class="grid" id="grid"><div class="card srv muted">Đang tải…</div></div>
+</main>
+<script>
+const NAME = {"lobby": "Sảnh", "banghoi-1": "Bang Hội Chiến", "practice-1": "Practice"};
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
+let LENH = {};
+const out = {};
+
+async function post(body) {
+  const r = await fetch("api/hethong", {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify(body)});
+  return r.json();
+}
+
+function card(d) {
+  const nm = NAME[d.server] || d.server;
+  if (!d.online) {
+    return `<div class="card srv"><h3><span><span class="dot off"></span> ${esc(nm)}</span><span class="muted">${esc(d.server)}</span></h3>
+      <div class="warn">Không kết nối được (đang tắt hoặc đang khởi động).</div><div class="muted">${esc(d.loi || "")}</div></div>`;
+  }
+  const tps = d.tps ? d.tps.map(x => x == null ? "?" : x.toFixed(1)).join(" / ") : "?";
+  const ram = d.ram_max ? `${(d.ram_dung / 1024).toFixed(1)} / ${(d.ram_max / 1024).toFixed(1)} GB` : "—";
+  const ramPct = d.ram_max ? Math.round(d.ram_dung * 100 / d.ram_max) : 0;
+  const pend = d.restart_con != null;
+  const acts = Object.entries(LENH).filter(([k]) => !(k === "donrac" && d.server !== "banghoi-1") && !(k === "napem" && d.server !== "banghoi-1"))
+    .map(([k, v]) => `<button class="ghost" data-srv="${d.server}" data-act="${k}" title="${esc(v)}">${{luu: "💾 Lưu thế giới", donrac: "🧹 Dọn rác", napdmm: "🔄 Nạp DuckyMoMoCore", naptab: "📋 Nạp TAB", napem: "🐉 Nạp EliteMobs"}[k] || k}</button>`).join("");
+  return `<div class="card srv">
+    <h3><span><span class="dot on"></span> ${esc(nm)}</span><span class="muted">${esc(d.server)}</span></h3>
+    <div class="stats">
+      <span>👥 Online: <b>${d.nguoi_so ?? "?"}</b>/${d.nguoi_max ?? "?"}</span>
+      <span>⚡ TPS: <b>${tps}</b></span>
+      <span>⏱ MSPT: <b>${d.mspt != null ? d.mspt.toFixed(1) + " ms" : "?"}</b></span>
+      <span>🧠 RAM: <b>${ram}</b></span>
+      ${d.chunks != null ? `<span>🗺 Chunk: <b>${d.chunks}</b></span><span>🐄 Thực thể: <b>${d.entities}</b></span>` : ""}
+    </div>
+    ${d.ram_max ? `<div class="bar" title="RAM đang dùng ${ramPct}%"><i style="width:${ramPct}%"></i></div>` : ""}
+    ${(d.nguoi || []).length ? `<div class="muted">Đang chơi: ${d.nguoi.map(esc).join(", ")}</div>` : ""}
+    ${d.uptime ? `<div class="muted">Đã chạy: ${esc(d.uptime)}</div>` : ""}
+    <div class="acts">${acts}</div>
+    <div class="restart">
+      ${pend ? `<span class="warn">⏳ Khởi động lại sau ${d.restart_con} giây (${esc(d.restart_nguoi)})</span>
+                <button class="ghost" data-srv="${d.server}" data-act="huy">Huỷ</button>`
+             : `<span>🔁 Khởi động lại sau</span>
+                <select id="delay-${d.server}"><option value="30">30 giây</option><option value="60" selected>1 phút</option><option value="120">2 phút</option><option value="300">5 phút</option><option value="0">Ngay</option></select>
+                <button class="primary danger" data-srv="${d.server}" data-act="restart">Khởi động lại</button>`}
+    </div>
+    ${out[d.server] ? `<pre class="out">${esc(out[d.server])}</pre>` : ""}
+  </div>`;
+}
+
+async function load() {
+  try {
+    const r = await fetch("api/hethong", {cache: "no-store"});
+    const j = await r.json();
+    LENH = j.lenh || {};
+    $("#grid").innerHTML = (j.servers || []).map(card).join("");
+  } catch (e) {
+    $("#grid").innerHTML = `<div class="card srv warn">Không tải được: ${esc(e.message)}</div>`;
+  }
+}
+
+document.addEventListener("click", async e => {
+  const b = e.target.closest("button[data-act]");
+  if (!b) return;
+  const srv = b.dataset.srv, act = b.dataset.act, nm = NAME[srv] || srv;
+  const body = {server: srv, action: act};
+  if (act === "restart") {
+    body.giay = +($("#delay-" + srv)?.value || 60);
+    if (!await ask(`Khởi động lại ${nm} sau ${body.giay} giây? Người chơi trong server được báo trước trong chat.`, {title: "Khởi động lại", ok: "Khởi động lại", danger: true})) return;
+  }
+  b.disabled = true;
+  try {
+    let j = await post(body);
+    if (j.can_xac_nhan) {
+      if (!await ask(j.message + " Đang chơi: " + (j.nguoi || []).join(", "), {title: "Có người đang online", ok: "Vẫn khởi động lại", danger: true})) { b.disabled = false; return; }
+      body.ep = true;
+      j = await post(body);
+    }
+    out[srv] = j.message || "";
+    window.toast?.(j.message || (j.ok ? "Xong" : "Lỗi"), j.ok ? "ok" : "err");
+  } catch (err) {
+    window.toast?.("Lỗi: " + err.message, "err");
+  }
+  b.disabled = false;
+  load();
+});
+
+load();
+setInterval(load, 15000);
+</script>
+</body>
+</html>

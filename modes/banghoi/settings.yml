@@ -35,7 +35,6 @@ dgt_radius: 4
 dgt_luck_mob: 0.05
 dgt_luck_fish: 0.3
 dgt_luck_day: 1
-dgt_np_roll: 70
 dgt_frag_mob: 1
 dgt_frag_fish: 3
 dgt_frag_day: 3
@@ -78,6 +77,7 @@ wg_t3_rumor: mo-ho
 wg_t3_treasure: 150
 wg_t3_build: 25
 wg_toll: 10000
+wg_underwater: 30
 wg_upkeep: 0
 wg_revolt: 0
 kbo_on: true

@@ -62,6 +62,7 @@ import org.bukkit.persistence.PersistentDataType;
  *  - luck:   may mắn. Vé Vận Mệnh rơi hiếm khi hạ quái / câu cá (luck.*); dùng vé có roll-chance % cổng mở (trượt thì mất vé).
  *  - ticket: vé cá nhân mua bằng xu (price/lượt, tối đa max-tickets vé trong túi).
  *  - server: cả server góp quỹ (goal xu); đủ thì mở cho mọi người open-days ngày (0 = tới hết mùa), hết hạn thì góp lại.
+ *  - gate:   chỉ vào được qua Cổng Hoang (WildGates.passThrough); /dungeon vao báo đi tìm cổng.
  *  Chung: name, level (nhãn cấp), requires-frontier (mốc khai hoang phải mở), first-rewards (quà lần đầu vượt, mỗi người một lần).
  *  Dungeon ẩn có fragments: N = tìm ra lối vào rồi còn phải ghép N Mảnh Chìa (rơi khi hạ quái / câu cá, chỉ cho người đã tìm ra).
  *  Điều kiện phụ (tuỳ dungeon, kiểm cho TỪNG người trong nhóm /em party; có điều kiện thì mỗi lần vào đều phải qua /dungeon vao):
@@ -78,7 +79,7 @@ final class DungeonGate implements Listener {
     private static final ZoneId VN = ZoneId.of("Asia/Ho_Chi_Minh");
     static final String PERM = "duckymomo.dungeon.";
     static final Map<String, String> TYPE_VI = Map.of("chain", "Chuỗi chìa khoá", "hidden", "Dungeon ẩn", "luck", "May mắn",
-            "ticket", "Vé cá nhân", "server", "Mở chung cả server");
+            "ticket", "Vé cá nhân", "server", "Mở chung cả server", "gate", "Chỉ qua Cổng Hoang");
 
     private record Dg(String id, String name, String type, String level, String requires, String frontier, String hint, boolean nightOnly,
                       double rollChance, double price, int maxTickets, double goal, int openDays, List<String> firstRewards,
@@ -148,7 +149,7 @@ final class DungeonGate implements Listener {
                 }
                 String type = d.getString("type", "chain").toLowerCase(Locale.ROOT);
                 if (!TYPE_VI.containsKey(type)) {
-                    plugin.getLogger().warning("Cổng Dungeon: kiểu lạ '" + type + "' ở " + id + " (chain|hidden|luck|ticket|server)");
+                    plugin.getLogger().warning("Cổng Dungeon: kiểu lạ '" + type + "' ở " + id + " (chain|hidden|luck|ticket|server|gate)");
                     continue;
                 }
                 dungeons.put(id, new Dg(id, d.getString("name", id), type, d.getString("level", ""), d.getString("requires", ""),
@@ -1006,6 +1007,10 @@ final class DungeonGate implements Listener {
             open(p, d);   // cổng vẫn đang mở: mở lại menu
             return;
         }
+        if (d.type().equals("gate")) {
+            p.sendMessage(c("&5🌀 " + d.name() + " chỉ vào được qua &dCổng Hoang&5: tìm cổng ngụy trang trên bản đồ (/conghoang xem tin đồn)."));
+            return;
+        }
         String tp = timeProblem(d);
         if (tp != null) {
             p.sendMessage(c("&c" + d.name() + " chỉ mở " + tp + "."));
@@ -1294,6 +1299,7 @@ final class DungeonGate implements Listener {
                     case "hidden" -> found(u, d.id()) ? "&a✔ đã tìm ra" : "&7??? " + (d.hint().isBlank() ? "" : d.hint());
                     case "luck" -> "&7Vé Vận Mệnh rơi hiếm" + (d.rollChance() < 100 ? ", " + Math.round(d.rollChance()) + "% mở" : "");
                     case "ticket" -> "&7" + money(d.price()) + "/vé · đang có &f" + tickets(u, d.id());
+                    case "gate" -> "&5🌀 tìm Cổng Hoang để vào";
                     case "server" -> serverOpen(d.id()) ? "&a⛩ đang mở" + until(d.id())
                             : "&7quỹ " + money(data.getDouble("quy." + d.id() + ".xu", 0)) + "/" + money(d.goal());
                     default -> "";
@@ -1310,7 +1316,7 @@ final class DungeonGate implements Listener {
             String hover = (dk.isEmpty() ? "" : "\n&eĐiều kiện: &f" + String.join(", ", dk))
                     + (rec.isEmpty() ? "" : "\n&b⏱ Kỷ lục: &f" + clock(Long.parseLong(rec.get(0).split(";", 2)[0])) + " &7(" + rec.get(0).split(";", 2)[1] + ")");
             Component line = c("  &8• &f" + d.name() + lv + star + " &8— " + state + (dk.isEmpty() ? "" : " &e⚠"));
-            if (inst) {
+            if (inst && !d.type().equals("gate")) {
                 String cmd = d.type().equals("ticket") && u != null && tickets(u, d.id()) == 0 ? "/dungeon mua " + d.id()
                         : d.type().equals("server") && !serverOpen(d.id()) ? "/dungeon gop " + d.id() + " " : "/dungeon vao " + d.id();
                 line = line.clickEvent(cmd.endsWith(" ") ? ClickEvent.suggestCommand(cmd) : ClickEvent.runCommand(cmd))

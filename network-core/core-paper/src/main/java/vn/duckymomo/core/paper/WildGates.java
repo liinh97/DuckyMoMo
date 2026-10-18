@@ -75,10 +75,14 @@ final class WildGates implements Listener {
 
     private record Target(int tier, String flavor) { }
 
-    private static final Map<String, String> STYLE_DESC = Map.of("vongda", "một vòng đá phủ rêu", "giengcat", "một cái giếng cạn vùi trong cát",
-            "cotbang", "mấy cột băng mọc lệch", "gocrieu", "một gốc cây già phủ đầy rêu", "reduoc", "đám rễ đước chằng chịt");
-    private static final Map<String, String> STYLE_PLACE = Map.of("vongda", "giữa một đồng cỏ", "giengcat", "giữa vùng cát nóng",
-            "cotbang", "trên một vùng tuyết", "gocrieu", "trong một khu rừng", "reduoc", "trong một đầm lầy");
+    private static final Map<String, String> STYLE_DESC = Map.ofEntries(
+            Map.entry("vongda", "một vòng đá phủ rêu"), Map.entry("vongnam", "một vòng nấm mọc tròn trịa"),
+            Map.entry("tuongdo", "một pho tượng đá đổ nằm lăn lóc"), Map.entry("datang", "mấy tảng đá xám chụm lại"),
+            Map.entry("gocrieu", "một gốc cây già phủ đầy rêu"), Map.entry("giengcat", "một cái giếng cạn vùi trong cát"),
+            Map.entry("cotdo", "mấy cột đá đổ dở dang"), Map.entry("hoathach", "bộ xương khổng lồ nhô lên khỏi cát"),
+            Map.entry("cotbang", "mấy cột băng mọc lệch"), Map.entry("dongtuyet", "một gò tuyết có gốc cây cụt"),
+            Map.entry("reduoc", "đám rễ đước chằng chịt"), Map.entry("thuyenmuc", "xác một con thuyền gỗ mục"),
+            Map.entry("sanho", "một vòng san hô dưới đáy nước"), Map.entry("cotchim", "mấy cột đá chìm dưới đáy nước"));
 
     private final DuckyMoMoCore plugin;
     private final String world;
@@ -92,6 +96,7 @@ final class WildGates implements Listener {
     private final double upkeep;
     private final double revoltLess;
     private final List<String> pool;
+    private final double underwaterChance;
     private final Map<String, Target> targets = new HashMap<>();
     private final Map<Integer, Tier> tiers = new HashMap<>();
     private final List<Zone> zones = new ArrayList<>();
@@ -122,6 +127,7 @@ final class WildGates implements Listener {
             c.getStringList("dungeons").forEach(k -> targets.put(k, new Target(1, "")));
         }
         this.pool = new ArrayList<>(targets.keySet());
+        this.underwaterChance = Math.max(0, Math.min(100, c.getDouble("underwater-chance", 30)));
         int[][] def = {{16, 0, 6, 0, 40, 100}, {8, 0, 3, 1, 80, 55}, {4, 1, 0, 2, 150, 25}};
         String[] rumorDef = {"chi-tiet", "vung", "mo-ho"};
         for (int i = 1; i <= 3; i++) {
@@ -296,7 +302,22 @@ final class WildGates implements Listener {
             double a = r.nextDouble(Math.PI * 2), d = Math.sqrt(r.nextDouble()) * z.r() * 0.85;
             int x = z.x() + (int) (Math.cos(a) * d), zz = z.z() + (int) (Math.sin(a) * d);
             Block top = w.getHighestBlockAt(x, zz);
-            if (top.isLiquid() || top.getType() == Material.ICE || top.getY() < w.getSeaLevel() - 2 || !top.getType().isSolid()) {
+            if (top.getType() == Material.WATER) {
+                // dưới nước: chỉ nhận đáy sâu 3–15 khối, tỉ lệ underwater-chance %
+                if (r.nextDouble(100) >= underwaterChance) {
+                    continue;
+                }
+                Block b = top;
+                int depth = 0;
+                while (b.getType() == Material.WATER && depth < 20) {
+                    b = b.getRelative(0, -1, 0);
+                    depth++;
+                }
+                if (depth < 3 || depth > 15 || !b.getType().isSolid()) {
+                    continue;
+                }
+                top = b;
+            } else if (top.isLiquid() || top.getType() == Material.ICE || top.getY() < w.getSeaLevel() - 2 || !top.getType().isSolid()) {
                 continue;
             }
             Location l = top.getLocation();
@@ -326,10 +347,11 @@ final class WildGates implements Listener {
         String id = "c" + n;
         data.set("dem", n);
         String dungeon = pickDungeon();
-        String style = style(ground.getBlock());
+        boolean underwater = ground.getBlock().getRelative(0, 1, 0).getType() == Material.WATER;
+        String style = style(ground.getBlock(), underwater);
         List<String> placed = new ArrayList<>();
         Target tg = targets.getOrDefault(dungeon, new Target(1, ""));
-        build(ground, style, placed, tiers.get(tg.tier()).keep());
+        build(ground, style, placed, tiers.get(tg.tier()).keep(), underwater);
         String p = g(id);
         data.set(p + "world", ground.getWorld().getName());
         data.set(p + "x", ground.getBlockX());
@@ -343,7 +365,7 @@ final class WildGates implements Listener {
         data.set(p + "huong", z == null ? "" : direction(z, ground.getX(), ground.getZ()));
         data.set(p + "khoi", placed);
         data.set(p + "bac", tg.tier());
-        data.set(p + "tin-don", rumor(tiers.get(tg.tier()), style, tg.flavor(), data.getString(p + "vung"), data.getString(p + "huong")));
+        data.set(p + "tin-don", rumor(tiers.get(tg.tier()), style, tg.flavor(), data.getString(p + "vung"), data.getString(p + "huong"), placePhrase(ground.getBlock(), underwater)));
         data.set("lan-cuoi", System.currentTimeMillis());
         save();
         writeJson();
@@ -351,12 +373,12 @@ final class WildGates implements Listener {
     }
 
     /** Tin đồn hợp ngữ cảnh: cảnh vật ngụy trang + dấu hiệu riêng của dungeon; bậc càng cao càng mơ hồ. */
-    private static String rumor(Tier t, String style, String flavor, String zone, String dir) {
+    private static String rumor(Tier t, String style, String flavor, String zone, String dir, String place) {
         String sign = flavor == null || flavor.isBlank() ? "có luồng khí lạ" : flavor;
         return switch (t.rumor()) {
             case "chi-tiet" -> "Dân quanh " + zone + " kể: " + dir + " có " + STYLE_DESC.getOrDefault(style, "một nơi cũ kỹ") + ", " + sign + ".";
             case "vung" -> "Có lữ khách ở " + zone + " nói thấy " + STYLE_DESC.getOrDefault(style, "một nơi cũ kỹ") + ", " + sign + ". Không rõ chỗ nào.";
-            default -> "Lời đồn mơ hồ: đâu đó " + STYLE_PLACE.getOrDefault(style, "trên bản đồ") + ", " + sign + "… không ai biết ở vùng nào.";
+            default -> "Lời đồn mơ hồ: đâu đó " + place + ", " + sign + "… không ai biết ở vùng nào.";
         };
     }
 
@@ -367,21 +389,84 @@ final class WildGates implements Listener {
         return from.get(ThreadLocalRandom.current().nextInt(from.size()));
     }
 
-    private static String style(Block ground) {
+    private static String biomeKind(Block ground) {
         String b = ground.getBiome().getKey().getKey();
-        if (b.contains("desert") || b.contains("badlands") || b.contains("savanna")) {
-            return "giengcat";
+        if (b.contains("ocean") || b.contains("river")) {
+            return "nuoc";
+        }
+        if (b.contains("desert") || b.contains("badlands")) {
+            return "cat";
         }
         if (b.contains("snow") || b.contains("frozen") || b.contains("ice") || b.contains("peaks") || b.contains("grove")) {
-            return "cotbang";
+            return "tuyet";
         }
         if (b.contains("swamp") || b.contains("mangrove")) {
-            return "reduoc";
+            return "dam";
+        }
+        if (b.contains("beach") || b.contains("shore")) {
+            return "bien";
         }
         if (b.contains("forest") || b.contains("jungle") || b.contains("taiga") || b.contains("birch")) {
-            return "gocrieu";
+            return "rung";
         }
-        return "vongda";
+        if (b.contains("stony") || b.contains("windswept") || b.contains("hill") || b.contains("mountain") || b.contains("slope")) {
+            return "nui";
+        }
+        return "dong";
+    }
+
+    /** Chọn ngẫu nhiên một kiểu ngụy trang hợp địa hình. */
+    private static String style(Block ground, boolean underwater) {
+        List<String> l = underwater ? List.of("sanho", "cotchim", "thuyenmuc") : switch (biomeKind(ground)) {
+            case "cat" -> List.of("giengcat", "cotdo", "hoathach");
+            case "tuyet" -> List.of("cotbang", "dongtuyet", "datang");
+            case "dam" -> List.of("reduoc", "thuyenmuc", "vongnam");
+            case "bien" -> List.of("thuyenmuc", "vongda", "datang");
+            case "rung" -> List.of("gocrieu", "tuongdo", "vongnam", "datang");
+            case "nui" -> List.of("datang", "vongda", "tuongdo");
+            default -> List.of("vongda", "tuongdo", "vongnam", "datang");
+        };
+        return l.get(ThreadLocalRandom.current().nextInt(l.size()));
+    }
+
+    private static String placePhrase(Block ground, boolean underwater) {
+        if (underwater) {
+            return "dưới đáy nước";
+        }
+        return switch (biomeKind(ground)) {
+            case "cat" -> "giữa vùng cát nóng";
+            case "tuyet" -> "trên một vùng tuyết";
+            case "dam" -> "trong một đầm lầy";
+            case "bien" -> "trên một bãi biển";
+            case "rung" -> "trong một khu rừng";
+            case "nui" -> "trên vùng đồi núi";
+            default -> "giữa một đồng cỏ";
+        };
+    }
+
+    /** Khối mặt (đất hoặc đáy nước) tại cột lệch (dx, dz) so với c, không lệch quá 2 khối độ cao; null nếu không hợp. */
+    private static Block surf(Block c, int dx, int dz, boolean water) {
+        Block b = c.getRelative(dx, 3, dz);
+        for (int i = 0; i < 7; i++, b = b.getRelative(0, -1, 0)) {
+            Block up = b.getRelative(0, 1, 0);
+            boolean free = water ? up.getType() == Material.WATER : up.isEmpty() || up.isReplaceable();
+            if (b.getType().isSolid() && free) {
+                return b;
+            }
+        }
+        return null;
+    }
+
+    /** Đặt một chồng khối cao h trên mặt tại (dx, dz). */
+    private static void pile(Block c, int dx, int dz, int h, boolean water, List<String> placed, Material... ms) {
+        Block g = surf(c, dx, dz, water);
+        if (g == null) {
+            return;
+        }
+        ThreadLocalRandom r = ThreadLocalRandom.current();
+        for (int y = 1; y <= h; y++) {
+            set(g.getRelative(0, y, 0), ms[r.nextInt(ms.length)], placed);
+        }
     }
 
     private static void set(Block b, Material m, List<String> placed) {
@@ -395,7 +480,7 @@ final class WildGates implements Listener {
     }
 
     /** keep (0–1): bậc khó thì dựng ít chi tiết, gần như chỉ còn ô giữa trông như khối tự nhiên. */
-    private static void build(Location ground, String style, List<String> placed, double keep) {
+    private static void build(Location ground, String style, List<String> placed, double keep, boolean water) {
         Block c = ground.getBlock();
         ThreadLocalRandom r = ThreadLocalRandom.current();
         int[][] ring = {{2, 0}, {-2, 0}, {0, 2}, {0, -2}, {2, 2}, {-2, -2}, {2, -2}, {-2, 2}};
@@ -448,6 +533,86 @@ final class WildGates implements Listener {
                     for (int x = -1; x <= 1; x++) {
                         set(c.getRelative(x, 1, 2), Material.STRIPPED_OAK_LOG, placed);
                     }
+                }
+            }
+            case "vongnam" -> {
+                set(c, Material.PODZOL, placed);
+                int n = count(10, keep);
+                for (int i = 0; i < n; i++) {
+                    double a = Math.PI * 2 * i / n;
+                    Block g = surf(c, (int) Math.round(Math.cos(a) * 2.5), (int) Math.round(Math.sin(a) * 2.5), false);
+                    if (g != null) {
+                        set(g, Material.PODZOL, placed);
+                        set(g.getRelative(0, 1, 0), r.nextBoolean() ? Material.RED_MUSHROOM : Material.BROWN_MUSHROOM, placed);
+                    }
+                }
+            }
+            case "tuongdo" -> {
+                set(c, Material.CRACKED_STONE_BRICKS, placed);
+                pile(c, 1, 1, 1, false, placed, Material.CHISELED_STONE_BRICKS);
+                if (keep >= 0.4) {
+                    pile(c, 2, 1, 1, false, placed, Material.MOSSY_STONE_BRICKS, Material.CRACKED_STONE_BRICKS);
+                    pile(c, 3, 1, 1, false, placed, Material.MOSSY_STONE_BRICK_SLAB);
+                }
+                if (keep >= 0.8) {
+                    pile(c, -2, -1, 2, false, placed, Material.MOSSY_STONE_BRICK_WALL);
+                }
+            }
+            case "datang" -> {
+                set(c, Material.COARSE_DIRT, placed);
+                for (int i = 0; i < count(4, keep); i++) {
+                    int[] o = ring[r.nextInt(ring.length)];
+                    pile(c, o[0], o[1], 1 + r.nextInt(2), false, placed, Material.ANDESITE, Material.COBBLESTONE, Material.MOSSY_COBBLESTONE, Material.STONE);
+                }
+            }
+            case "cotdo" -> {
+                set(c, Material.SMOOTH_SANDSTONE, placed);
+                for (int i = 0; i < count(4, keep); i++) {
+                    int[] o = ring[r.nextInt(ring.length)];
+                    int h = 1 + r.nextInt(3);
+                    pile(c, o[0], o[1], h, false, placed, Material.CUT_SANDSTONE, Material.SANDSTONE);
+                }
+            }
+            case "hoathach" -> {
+                set(c, Material.BONE_BLOCK, placed);
+                int n = count(5, keep);
+                for (int i = 0; i < n; i++) {
+                    pile(c, -2 + i, (i % 2 == 0) ? 1 : -1, 1 + (i == n / 2 ? 1 : 0), false, placed, Material.BONE_BLOCK);
+                }
+            }
+            case "dongtuyet" -> {
+                set(c, Material.SNOW_BLOCK, placed);
+                for (int i = 0; i < count(4, keep); i++) {
+                    int[] o = ring[r.nextInt(ring.length)];
+                    pile(c, o[0], o[1], 1, false, placed, Material.SNOW_BLOCK, Material.PACKED_ICE);
+                }
+                pile(c, 1, -1, keep >= 0.5 ? 2 : 1, false, placed, Material.SPRUCE_LOG);
+            }
+            case "thuyenmuc" -> {
+                set(c, Material.DARK_OAK_PLANKS, placed);
+                int n = count(5, keep);
+                for (int i = 1; i <= n; i++) {
+                    pile(c, i % 2 == 0 ? -1 : 1, i - 3, 1, water, placed, Material.DARK_OAK_PLANKS, Material.DARK_OAK_SLAB, Material.STRIPPED_DARK_OAK_LOG);
+                }
+                if (keep >= 0.5) {
+                    pile(c, 0, 2, 2, water, placed, Material.DARK_OAK_FENCE);
+                }
+            }
+            case "sanho" -> {
+                set(c, Material.MOSSY_COBBLESTONE, placed);
+                Material[] coral = {Material.TUBE_CORAL_BLOCK, Material.BRAIN_CORAL_BLOCK, Material.BUBBLE_CORAL_BLOCK, Material.FIRE_CORAL_BLOCK,
+                        Material.HORN_CORAL_BLOCK};
+                for (int[] o : ring) {
+                    if (r.nextDouble() < 0.8 * keep) {
+                        pile(c, o[0], o[1], 1 + r.nextInt(2), true, placed, coral);
+                    }
+                }
+            }
+            case "cotchim" -> {
+                set(c, Material.DARK_PRISMARINE, placed);
+                for (int i = 0; i < count(4, keep); i++) {
+                    int[] o = ring[r.nextInt(ring.length)];
+                    pile(c, o[0], o[1], 1 + r.nextInt(3), true, placed, Material.PRISMARINE_BRICKS, Material.PRISMARINE, Material.MOSSY_STONE_BRICKS);
                 }
             }
             default -> {

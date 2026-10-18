@@ -52,7 +52,9 @@ import org.bukkit.event.player.PlayerToggleSneakEvent;
  *  - Mỗi interval-days ngày server đặt 1 cổng (tối đa max-gates cổng/mùa) ở đất hoang của một vùng /tpr đã mở, cách thị trấn gần nhất
  *    >= min-town-distance khối, cách cổng khác >= min-gate-distance. Báo cả server "tin đồn" (chỉ tên vùng + hướng, không toạ độ).
  *  - Cổng ngụy trang theo biome (vòng đá rêu, giếng sa thạch, cột băng, gốc cây rêu, rễ đước), không hiện trên bản đồ web.
- *    Dấu hiệu: hạt tím trong particle-range khối; đứng gần thì thanh hành động nhắc "luồng khí lạ". Đứng lên ô giữa + Shift để vào.
+ *    Độ khó nhận ra theo bậc của dungeon (dungeons.<mã>.tier 1–3, tiers.t<bậc>): hạt tím trong particle-range khối (bậc 3 chỉ ban đêm),
+ *    dòng nhắc trong hint-range khối, dựng ít chi tiết hơn (structure-percent), tin đồn chi-tiet | vung | mo-ho, kho báu chỉ đường sai số
+ *    treasure-radius khối. Tin đồn ghép cảnh vật ngụy trang + dấu hiệu riêng của dungeon (dungeons.<mã>.rumor). Ô giữa + Shift để vào.
  *  - Người tìm ra đầu tiên được grace-minutes phút ưu tiên: người khác không lập/mở rộng thị trấn trong grace-radius khối quanh cổng.
  *  - Thị trấn có ô đất chứa cổng là chủ cổng: dân thị trấn, dân cùng nước, dân nước đang chiếm (SiegeWar) vào miễn phí; người ngoài trả
  *    phí do người quản lý đặt (/conghoang phi), tiền vào ngân khố thị trấn, hoặc bị chặn (/conghoang dong). Người quản lý: vua nước chiếm
@@ -68,6 +70,16 @@ final class WildGates implements Listener {
 
     private record Zone(String name, String requires, int x, int z, int r) { }
 
+    /** Bậc ngụy trang: dungeon càng khó, cổng càng khó nhận ra. */
+    private record Tier(int particleRange, boolean nightOnly, int hintRange, String rumor, int treasureRadius, double keep) { }
+
+    private record Target(int tier, String flavor) { }
+
+    private static final Map<String, String> STYLE_DESC = Map.of("vongda", "một vòng đá phủ rêu", "giengcat", "một cái giếng cạn vùi trong cát",
+            "cotbang", "mấy cột băng mọc lệch", "gocrieu", "một gốc cây già phủ đầy rêu", "reduoc", "đám rễ đước chằng chịt");
+    private static final Map<String, String> STYLE_PLACE = Map.of("vongda", "giữa một đồng cỏ", "giengcat", "giữa vùng cát nóng",
+            "cotbang", "trên một vùng tuyết", "gocrieu", "trong một khu rừng", "reduoc", "trong một đầm lầy");
+
     private final DuckyMoMoCore plugin;
     private final String world;
     private final int maxGates;
@@ -76,11 +88,12 @@ final class WildGates implements Listener {
     private final int minGateDist;
     private final long graceMs;
     private final int graceRadius;
-    private final int particleRange;
     private final double maxToll;
     private final double upkeep;
     private final double revoltLess;
     private final List<String> pool;
+    private final Map<String, Target> targets = new HashMap<>();
+    private final Map<Integer, Tier> tiers = new HashMap<>();
     private final List<Zone> zones = new ArrayList<>();
     private final File file;
     private final YamlConfiguration data;
@@ -96,11 +109,28 @@ final class WildGates implements Listener {
         this.minGateDist = Math.max(0, c.getInt("min-gate-distance", 800));
         this.graceMs = Math.max(0, c.getLong("grace-minutes", 30)) * 60_000L;
         this.graceRadius = Math.max(16, c.getInt("grace-radius", 64));
-        this.particleRange = Math.max(4, c.getInt("particle-range", 16));
         this.maxToll = Math.max(0, c.getDouble("max-toll", 10000));
         this.upkeep = Math.max(0, c.getDouble("upkeep-per-day", 0));
         this.revoltLess = Math.max(0, c.getDouble("revolt-hours-less", 0));
-        this.pool = c.getStringList("dungeons");
+        // dungeons: danh sách mã, hoặc <mã>: {tier: 1-3, rumor: "dấu hiệu riêng"}
+        if (c.isConfigurationSection("dungeons")) {
+            ConfigurationSection ds = c.getConfigurationSection("dungeons");
+            for (String k : ds.getKeys(false)) {
+                targets.put(k, new Target(Math.max(1, Math.min(3, ds.getInt(k + ".tier", 1))), ds.getString(k + ".rumor", "")));
+            }
+        } else {
+            c.getStringList("dungeons").forEach(k -> targets.put(k, new Target(1, "")));
+        }
+        this.pool = new ArrayList<>(targets.keySet());
+        int[][] def = {{16, 0, 6, 0, 40, 100}, {8, 0, 3, 1, 80, 55}, {4, 1, 0, 2, 150, 25}};
+        String[] rumorDef = {"chi-tiet", "vung", "mo-ho"};
+        for (int i = 1; i <= 3; i++) {
+            String b = "tiers.t" + i + ".";
+            int[] d = def[i - 1];
+            tiers.put(i, new Tier(Math.max(0, c.getInt(b + "particle-range", d[0])), c.getBoolean(b + "night-only", d[1] == 1),
+                    Math.max(0, c.getInt(b + "hint-range", d[2])), c.getString(b + "rumor", rumorDef[i - 1]),
+                    Math.max(0, c.getInt(b + "treasure-radius", d[4])), Math.max(0, Math.min(100, c.getDouble(b + "structure-percent", d[5]))) / 100.0));
+        }
         for (Map<?, ?> z : plugin.getConfig().getMapList("rtp.zones")) {
             if (z.get("radius") instanceof Number r && r.intValue() > 0) {
                 zones.add(new Zone(String.valueOf(z.get("name")), z.get("requires") == null ? "" : String.valueOf(z.get("requires")),
@@ -152,6 +182,10 @@ final class WildGates implements Listener {
     private Location center(String id) {
         World w = Bukkit.getWorld(data.getString(g(id) + "world", world));
         return w == null ? null : new Location(w, data.getInt(g(id) + "x") + 0.5, data.getInt(g(id) + "y"), data.getInt(g(id) + "z") + 0.5);
+    }
+
+    private Tier tier(String id) {
+        return tiers.getOrDefault(data.getInt(g(id) + "bac", 1), tiers.get(1));
     }
 
     private boolean found(String id) {
@@ -294,7 +328,8 @@ final class WildGates implements Listener {
         String dungeon = pickDungeon();
         String style = style(ground.getBlock());
         List<String> placed = new ArrayList<>();
-        build(ground, style, placed);
+        Target tg = targets.getOrDefault(dungeon, new Target(1, ""));
+        build(ground, style, placed, tiers.get(tg.tier()).keep());
         String p = g(id);
         data.set(p + "world", ground.getWorld().getName());
         data.set(p + "x", ground.getBlockX());
@@ -307,10 +342,22 @@ final class WildGates implements Listener {
         data.set(p + "vung", z == null ? "?" : z.name().replaceAll("[&§][0-9a-fk-orA-FK-OR]", ""));
         data.set(p + "huong", z == null ? "" : direction(z, ground.getX(), ground.getZ()));
         data.set(p + "khoi", placed);
+        data.set(p + "bac", tg.tier());
+        data.set(p + "tin-don", rumor(tiers.get(tg.tier()), style, tg.flavor(), data.getString(p + "vung"), data.getString(p + "huong")));
         data.set("lan-cuoi", System.currentTimeMillis());
         save();
         writeJson();
         return id;
+    }
+
+    /** Tin đồn hợp ngữ cảnh: cảnh vật ngụy trang + dấu hiệu riêng của dungeon; bậc càng cao càng mơ hồ. */
+    private static String rumor(Tier t, String style, String flavor, String zone, String dir) {
+        String sign = flavor == null || flavor.isBlank() ? "có luồng khí lạ" : flavor;
+        return switch (t.rumor()) {
+            case "chi-tiet" -> "Dân quanh " + zone + " kể: " + dir + " có " + STYLE_DESC.getOrDefault(style, "một nơi cũ kỹ") + ", " + sign + ".";
+            case "vung" -> "Có lữ khách ở " + zone + " nói thấy " + STYLE_DESC.getOrDefault(style, "một nơi cũ kỹ") + ", " + sign + ". Không rõ chỗ nào.";
+            default -> "Lời đồn mơ hồ: đâu đó " + STYLE_PLACE.getOrDefault(style, "trên bản đồ") + ", " + sign + "… không ai biết ở vùng nào.";
+        };
     }
 
     private String pickDungeon() {
@@ -343,7 +390,12 @@ final class WildGates implements Listener {
     }
 
     /** Dựng cổng nhỏ, trông như tự nhiên. Ô giữa (mặt đất) là chỗ đứng + Shift. */
-    private static void build(Location ground, String style, List<String> placed) {
+    private static int count(int n, double keep) {
+        return Math.max(1, (int) Math.round(n * keep));
+    }
+
+    /** keep (0–1): bậc khó thì dựng ít chi tiết, gần như chỉ còn ô giữa trông như khối tự nhiên. */
+    private static void build(Location ground, String style, List<String> placed, double keep) {
         Block c = ground.getBlock();
         ThreadLocalRandom r = ThreadLocalRandom.current();
         int[][] ring = {{2, 0}, {-2, 0}, {0, 2}, {0, -2}, {2, 2}, {-2, -2}, {2, -2}, {-2, 2}};
@@ -351,16 +403,18 @@ final class WildGates implements Listener {
             case "giengcat" -> {
                 set(c, Material.CHISELED_SANDSTONE, placed);
                 for (int[] o : new int[][] {{1, 0}, {-1, 0}, {0, 1}, {0, -1}, {1, 1}, {-1, -1}, {1, -1}, {-1, 1}}) {
-                    if (r.nextInt(4) != 0) {
+                    if (r.nextDouble() < 0.75 * keep) {
                         set(c.getRelative(o[0], 1, o[1]), r.nextBoolean() ? Material.SANDSTONE_SLAB : Material.CUT_SANDSTONE_SLAB, placed);
                     }
                 }
-                set(c.getRelative(2, 1, 0), Material.SANDSTONE_WALL, placed);
-                set(c.getRelative(-2, 1, 0), Material.SANDSTONE_WALL, placed);
+                if (keep >= 0.9) {
+                    set(c.getRelative(2, 1, 0), Material.SANDSTONE_WALL, placed);
+                    set(c.getRelative(-2, 1, 0), Material.SANDSTONE_WALL, placed);
+                }
             }
             case "cotbang" -> {
                 set(c, Material.PACKED_ICE, placed);
-                for (int i = 0; i < 4; i++) {
+                for (int i = 0; i < count(4, keep); i++) {
                     int[] o = ring[r.nextInt(ring.length)];
                     int h = 1 + r.nextInt(3);
                     for (int y = 1; y <= h; y++) {
@@ -370,17 +424,19 @@ final class WildGates implements Listener {
             }
             case "reduoc" -> {
                 set(c, Material.MUDDY_MANGROVE_ROOTS, placed);
-                for (int i = 0; i < 4; i++) {
+                for (int i = 0; i < count(4, keep); i++) {
                     int[] o = ring[r.nextInt(ring.length)];
                     for (int y = 1; y <= 1 + r.nextInt(2); y++) {
                         set(c.getRelative(o[0], y, o[1]), Material.MANGROVE_ROOTS, placed);
                     }
                 }
-                set(c.getRelative(1, 1, 1), Material.MOSS_CARPET, placed);
+                if (keep >= 0.5) {
+                    set(c.getRelative(1, 1, 1), Material.MOSS_CARPET, placed);
+                }
             }
             case "gocrieu" -> {
                 set(c, Material.MOSS_BLOCK, placed);
-                for (int i = 0; i < 3; i++) {
+                for (int i = 0; i < count(3, keep); i++) {
                     int[] o = ring[r.nextInt(ring.length)];
                     int h = 1 + r.nextInt(2);
                     for (int y = 1; y <= h; y++) {
@@ -388,14 +444,16 @@ final class WildGates implements Listener {
                     }
                     set(c.getRelative(o[0], h + 1, o[1]), Material.MOSS_CARPET, placed);
                 }
-                for (int x = -1; x <= 1; x++) {
-                    set(c.getRelative(x, 1, 2), Material.STRIPPED_OAK_LOG, placed);
+                if (keep >= 0.5) {
+                    for (int x = -1; x <= 1; x++) {
+                        set(c.getRelative(x, 1, 2), Material.STRIPPED_OAK_LOG, placed);
+                    }
                 }
             }
             default -> {
                 set(c, Material.CHISELED_STONE_BRICKS, placed);
                 for (int[] o : ring) {
-                    if (r.nextInt(5) != 0) {
+                    if (r.nextDouble() < 0.8 * keep) {
                         int h = 1 + r.nextInt(2);
                         for (int y = 1; y <= h; y++) {
                             set(c.getRelative(o[0], y, o[1]), r.nextBoolean() ? Material.MOSSY_COBBLESTONE : Material.MOSSY_STONE_BRICKS, placed);
@@ -429,8 +487,7 @@ final class WildGates implements Listener {
             return null;
         }
         String id = place(l);
-        Bukkit.broadcast(c("&5&l🌀 TIN ĐỒN: &dCó luồng khí lạ ở vùng &f" + data.getString(g(id) + "vung") + "&d, "
-                + data.getString(g(id) + "huong") + ". &7Ai đó nói thấy một nơi trông rất cũ kỹ… (Cổng Hoang: /conghoang)"));
+        Bukkit.broadcast(c("&5&l🌀 TIN ĐỒN: &d" + data.getString(g(id) + "tin-don") + " &7(Cổng Hoang: /conghoang)"));
         return id;
     }
 
@@ -463,16 +520,23 @@ final class WildGates implements Listener {
             if (c == null || !c.isChunkLoaded()) {
                 continue;
             }
+            Tier t = tier(id);
+            boolean show = !t.nightOnly() || night(c.getWorld());
             for (Player p : c.getWorld().getPlayers()) {
                 double d = p.getLocation().distanceSquared(c);
-                if (d < particleRange * particleRange) {
-                    p.spawnParticle(Particle.PORTAL, c.clone().add(0, 0.6, 0), 12, 0.3, 0.4, 0.3, 0.3);
+                if (show && d < t.particleRange() * t.particleRange()) {
+                    p.spawnParticle(Particle.PORTAL, c.clone().add(0, 0.6, 0), t.particleRange() >= 12 ? 12 : 5, 0.3, 0.4, 0.3, 0.3);
                 }
-                if (d < 36) {
+                if (d < t.hintRange() * t.hintRange()) {
                     p.sendActionBar(c(d < 3 ? "&5🌀 Luồng khí lạ ngay dưới chân… &dngồi xuống (Shift) thử xem" : "&5🌀 Bạn cảm thấy một luồng khí lạ quanh đây…"));
                 }
             }
         }
+    }
+
+    private static boolean night(World w) {
+        long t = w.getTime();
+        return t >= 13000 && t <= 23000;
     }
 
     // ---------------------------------------------------------------- vào cổng
@@ -644,7 +708,7 @@ final class WildGates implements Listener {
 
     /** Kho báu huyền thoại: chỉ đường tới một Cổng Hoang chưa ai tìm ra (true nếu có). */
     boolean hint(Player p) {
-        List<String> l = gateIds().stream().filter(id -> !found(id)).toList();
+        List<String> l = gateIds().stream().filter(id -> !found(id) && tier(id).treasureRadius() > 0).toList();
         if (l.isEmpty()) {
             return false;
         }
@@ -652,8 +716,9 @@ final class WildGates implements Listener {
         Location s = center(id);
         ThreadLocalRandom r = ThreadLocalRandom.current();
         p.playSound(p.getLocation(), Sound.BLOCK_END_PORTAL_FRAME_FILL, 1f, 0.6f);
-        p.sendMessage(c("&5&l🗺 Dưới đáy rương có mảnh giấy cũ: &d\"Cổng Hoang ở quanh X " + (s.getBlockX() + r.nextInt(-40, 41)) + " Z "
-                + (s.getBlockZ() + r.nextInt(-40, 41)) + "\"&5. &7(trong khoảng 40 khối, tìm hạt tím)"));
+        int rad = tier(id).treasureRadius();
+        p.sendMessage(c("&5&l🗺 Dưới đáy rương có mảnh giấy cũ: &d\"Cổng Hoang ở quanh X " + (s.getBlockX() + r.nextInt(-rad, rad + 1)) + " Z "
+                + (s.getBlockZ() + r.nextInt(-rad, rad + 1)) + "\"&5. &7(sai số khoảng " + rad + " khối" + (tier(id).nightOnly() ? ", chỉ lộ dấu hiệu ban đêm" : "") + ")"));
         return true;
     }
 
@@ -766,7 +831,7 @@ final class WildGates implements Listener {
         s.sendMessage(c("&7Thị trấn có ô đất chứa cổng là chủ: dân mình vào miễn phí, người ngoài trả phí vào ngân khố. Chiếm được thị trấn là có cổng."));
         for (String gid : gateIds()) {
             Town t = owner(gid);
-            String state = !found(gid) ? "&8chưa ai tìm ra · tin đồn: vùng " + data.getString(g(gid) + "vung") + ", " + data.getString(g(gid) + "huong")
+            String state = !found(gid) ? "&8chưa ai tìm ra · " + "★".repeat(Math.max(1, data.getInt(g(gid) + "bac", 1))) + " &7" + data.getString(g(gid) + "tin-don", "")
                     : "&7tìm bởi &f" + data.getString(g(gid) + "tim-boi") + " &7· " + (t == null ? "&ađất hoang, vào tự do"
                     : "&fthị trấn " + t.getName() + (data.getBoolean(g(gid) + "dong") ? " &c(đóng)" : " &7· phí " + money(data.getDouble(g(gid) + "phi", 0))));
             s.sendMessage(c("  &d" + gid + " &8— &7" + (found(gid) ? dungeonName(gid) + " &8· " : "") + state));
@@ -801,7 +866,8 @@ final class WildGates implements Listener {
         for (String id : gateIds()) {
             JsonObject o = new JsonObject();
             o.addProperty("ma", id);
-            o.addProperty("vung", data.getString(g(id) + "vung", "?"));
+            o.addProperty("bac", data.getInt(g(id) + "bac", 1));
+            o.addProperty("vung", tier(id).rumor().equals("mo-ho") && !found(id) ? "?" : data.getString(g(id) + "vung", "?"));
             o.addProperty("tim", found(id));
             if (found(id)) {
                 o.addProperty("tim_boi", data.getString(g(id) + "tim-boi"));
@@ -812,7 +878,7 @@ final class WildGates implements Listener {
                 o.addProperty("dong", data.getBoolean(g(id) + "dong", false));
                 o.addProperty("luot", data.getInt(g(id) + "luot", 0));
             } else {
-                o.addProperty("huong", data.getString(g(id) + "huong", ""));
+                o.addProperty("tin_don", data.getString(g(id) + "tin-don", ""));
             }
             arr.add(o);
         }

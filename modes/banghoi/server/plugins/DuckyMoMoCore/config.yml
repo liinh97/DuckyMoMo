@@ -721,11 +721,22 @@ wild-gates:
   min-gate-distance: 800   # các cổng cách nhau
   grace-minutes: 30        # người tìm ra được ưu tiên lập/mở rộng thị trấn quanh cổng trong ngần này phút
   grace-radius: 64         # bán kính ưu tiên (khối)
-  particle-range: 16       # hạt tím thấy được trong ngần này khối (dấu hiệu, đừng để quá nhỏ kẻo khó tìm)
   max-toll: 10000          # phí qua cổng tối đa chủ cổng được đặt
   upkeep-per-day: 0        # xu/ngày trừ ngân khố thị trấn giữ cổng (0 = không)
   revolt-hours-less: 0     # thị trấn giữ cổng bị chiếm thì được khởi nghĩa sớm hơn ngần này giờ (0 = không)
-  dungeons: [knights_castle_lair, steamworks_lair, north_pole_minidungeon, sewers_minidungeon]   # cổng dẫn tới (ngẫu nhiên, ưu tiên gói đã cài)
+  # Bậc ngụy trang: dungeon càng khó, cổng càng khó nhận ra. particle-range: hạt tím thấy trong (khối); night-only: hạt chỉ hiện ban đêm;
+  # hint-range: dòng nhắc "luồng khí lạ" khi đứng gần (0 = không); rumor: chi-tiet (vùng + hướng) | vung (chỉ vùng) | mo-ho (chỉ loại địa hình);
+  # treasure-radius: kho báu huyền thoại chỉ đường sai số (khối, 0 = không chỉ); structure-percent: dựng bao nhiêu % chi tiết ngụy trang.
+  tiers:
+    t1: {particle-range: 16, night-only: false, hint-range: 6, rumor: chi-tiet, treasure-radius: 40, structure-percent: 100}
+    t2: {particle-range: 8, night-only: false, hint-range: 3, rumor: vung, treasure-radius: 80, structure-percent: 55}
+    t3: {particle-range: 4, night-only: true, hint-range: 0, rumor: mo-ho, treasure-radius: 150, structure-percent: 25}
+  # Cổng dẫn tới (ngẫu nhiên, ưu tiên gói đã cài): bậc theo độ khó dungeon + dấu hiệu riêng đưa vào tin đồn
+  dungeons:
+    sewers_minidungeon: {tier: 1, rumor: "dưới đất bốc lên mùi ẩm mốc và tiếng nước nhỏ giọt"}
+    north_pole_minidungeon: {tier: 2, rumor: "giữa trời nắng mà gió lạnh buốt, thoảng tiếng chuông xe tuần lộc"}
+    knights_castle_lair: {tier: 2, rumor: "đêm nào cũng nghe tiếng giáp sắt va nhau"}
+    steamworks_lair: {tier: 3, rumor: "có tiếng máy hơi nước rít lên từ lòng đất"}
 
 # Cổng Dungeon (/dungeon): khoá từng dungeon EliteMobs, mở theo 5 kiểu. Mã = tên file gói EliteMobs (bỏ .yml).
 # Trang Cài đặt > Thế giới > Cổng Dungeon. Dungeon chưa cài thì hiện "chưa cài", cài sau là tự dùng được.

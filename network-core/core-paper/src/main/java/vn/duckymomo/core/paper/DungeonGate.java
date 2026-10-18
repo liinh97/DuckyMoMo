@@ -1232,6 +1232,30 @@ final class DungeonGate implements Listener {
         return l;
     }
 
+    String displayName(String id) {
+        return name(id);
+    }
+
+    boolean isInstalled(String id) {
+        return hooked && installed(id);
+    }
+
+    /** Vào thẳng dungeon id (Cổng Hoang): bỏ qua kiểu cổng và điều kiện của dungeon đó. */
+    boolean passThrough(Player p, String id) {
+        Dg d = dungeons.get(id);
+        if (d == null || !hooked || !installed(id)) {
+            p.sendMessage(c("&5🌀 Cổng còn đang ngủ (dungeon " + (d == null ? id : d.name()) + " chưa sẵn sàng). Quay lại sau."));
+            return false;
+        }
+        if (inside.containsKey(p.getUniqueId())) {
+            p.sendMessage(c("&cBạn đang ở trong một dungeon."));
+            return false;
+        }
+        pending.put(p.getUniqueId(), new Pass(id, System.currentTimeMillis() + windowMs, false));
+        open(p, d);
+        return true;
+    }
+
     /** Cấp quyền rồi mở menu chọn độ khó của EliteMobs. */
     private void open(Player p, Dg d) {
         refresh(p);

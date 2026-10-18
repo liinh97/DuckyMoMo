@@ -360,8 +360,16 @@ final class TreasureHunt implements Listener {
         p.sendMessage(c("&a&l✔ Mở rương kho báu " + d.tier.name() + "&a: " + (got.isEmpty() ? "" : String.join("&a, ", got))));
         Achievements.add(p, "khobau", 1);
         DungeonGate dg = Shared.dungeonGate;
-        if (dg != null && d.tier.revealHidden() > 0 && ThreadLocalRandom.current().nextDouble(100) < d.tier.revealHidden()) {
-            dg.revealHidden(p);
+        if (d.tier.revealHidden() > 0 && ThreadLocalRandom.current().nextDouble(100) < d.tier.revealHidden()) {
+            WildGates wg = Shared.wildGates;
+            boolean gateFirst = ThreadLocalRandom.current().nextBoolean();   // chỉ Cổng Hoang hoặc dungeon ẩn, cái nào còn thì chỉ cái đó
+            boolean done = gateFirst && wg != null && wg.hint(p);
+            if (!done) {
+                done = dg != null && dg.revealHidden(p);
+            }
+            if (!done && !gateFirst && wg != null) {
+                wg.hint(p);
+            }
         }
         if (d.tier.broadcast()) {
             Bukkit.broadcast(c("&6🗺 &f" + p.getName() + " &6đã mở được &e" + d.tier.name() + "&6!"));

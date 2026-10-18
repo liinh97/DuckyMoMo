@@ -839,6 +839,24 @@ groups:
       - { key: dgt_bw_goal, label: "Kẻ Trói Buộc Thế Giới: quỹ chung cần góp (xu)", type: int, min: 1, max: 100000000, file: plugins/DuckyMoMoCore/config.yml, path: dungeon-gate.dungeons.binder_of_worlds_sanctum.goal }
       - { key: dgt_bw_days, label: "Kẻ Trói Buộc Thế Giới: mở bao nhiêu ngày (0 = hết mùa)", type: int, min: 0, max: 120, file: plugins/DuckyMoMoCore/config.yml, path: dungeon-gate.dungeons.binder_of_worlds_sanctum.open-days }
 
+  - title: Cổng Hoang (/conghoang)
+    category: Thế giới
+    description: "Cổng dungeon ngụy trang như cảnh vật, xuất hiện dần trên bản đồ. Ai tìm ra được ưu tiên lập thị trấn; thị trấn giữ cổng thu phí người ngoài, chiếm được thị trấn là có cổng."
+    info: "Là gì: điểm chiến lược trên bản đồ, đáng tranh giành và công thành.\nChỉ tự đặt cổng khi đã mở mùa (leaderboard.season-start có ngày). Admin: /conghoang tao (ngẫu nhiên) hoặc /conghoang tao here (tại chỗ đứng), /conghoang ds (toạ độ mọi cổng), /conghoang xoa <mã>, /conghoang datlai (gỡ hết, đếm lại).\nNgụy trang theo biome: vòng đá rêu, giếng sa thạch, cột băng, gốc cây rêu, rễ đước. Dấu hiệu: hạt tím + dòng nhắc khi đứng gần. Vào: đứng ô giữa, ngồi xuống (Shift).\nCổng dẫn tới đâu: wild-gates.dungeons (mã gói EliteMobs, bỏ qua điều kiện của dungeon đó).\nLưu xong: có hiệu lực ngay (dmm reload)."
+    apply: [dmm reload]
+    settings:
+      - { key: wg_on, label: Bật Cổng Hoang, type: select, file: plugins/DuckyMoMoCore/config.yml, path: wild-gates.enabled, options: [ { value: true, label: Bật }, { value: false, label: Tắt } ] }
+      - { key: wg_max, label: "Số cổng tối đa mỗi mùa", type: int, min: 0, max: 50, file: plugins/DuckyMoMoCore/config.yml, path: wild-gates.max-gates }
+      - { key: wg_days, label: "Mỗi bao nhiêu ngày thêm 1 cổng", type: int, min: 1, max: 90, file: plugins/DuckyMoMoCore/config.yml, path: wild-gates.interval-days }
+      - { key: wg_town, label: "Cổng cách thị trấn gần nhất ít nhất (khối)", type: int, min: 0, max: 5000, file: plugins/DuckyMoMoCore/config.yml, path: wild-gates.min-town-distance }
+      - { key: wg_gap, label: "Các cổng cách nhau ít nhất (khối)", type: int, min: 0, max: 10000, file: plugins/DuckyMoMoCore/config.yml, path: wild-gates.min-gate-distance }
+      - { key: wg_grace, label: "Người tìm ra được ưu tiên lập thị trấn (phút)", type: int, min: 0, max: 1440, file: plugins/DuckyMoMoCore/config.yml, path: wild-gates.grace-minutes }
+      - { key: wg_grace_r, label: "Bán kính ưu tiên (khối)", type: int, min: 16, max: 512, file: plugins/DuckyMoMoCore/config.yml, path: wild-gates.grace-radius }
+      - { key: wg_particle, label: "Hạt tím thấy được trong (khối)", type: int, min: 4, max: 64, file: plugins/DuckyMoMoCore/config.yml, path: wild-gates.particle-range }
+      - { key: wg_toll, label: "Phí qua cổng tối đa chủ cổng được đặt (xu)", type: int, min: 0, max: 10000000, file: plugins/DuckyMoMoCore/config.yml, path: wild-gates.max-toll }
+      - { key: wg_upkeep, label: "Phí duy trì mỗi ngày của thị trấn giữ cổng (xu, 0 = không)", type: int, min: 0, max: 1000000, file: plugins/DuckyMoMoCore/config.yml, path: wild-gates.upkeep-per-day }
+      - { key: wg_revolt, label: "Thị trấn giữ cổng bị chiếm: khởi nghĩa sớm hơn (giờ, 0 = không)", type: number, min: 0, max: 72, file: plugins/DuckyMoMoCore/config.yml, path: wild-gates.revolt-hours-less }
+
   - title: Thái Ấp (/thaiap)
     category: Thế giới
     description: "Đất riêng mua bằng xu trong thế giới phẳng riêng: không PvP, không bị vây, không quái, không quặng. Để xây, làm nông, nuôi pet một mình."

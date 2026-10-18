@@ -439,6 +439,9 @@ def api_info():
         "thaiap": {"enabled": bool(get(core, "thai-ap.enabled", False)), "sizes": get(core, "thai-ap.sizes", [50, 70, 90]),
                    "prices": get(core, "thai-ap.prices", [5000, 8000, 15000]), "kitchen": get(core, "thai-ap.kitchen-bonus", 50),
                    **core_json("thaiap.json")},
+        "wildgates": {"enabled": bool(get(core, "wild-gates.enabled", False)), "max": get(core, "wild-gates.max-gates", 6),
+                      "days": get(core, "wild-gates.interval-days", 7), "grace": get(core, "wild-gates.grace-minutes", 30),
+                      **core_json("conghoang.json")},
         "dungeon": {"enabled": bool(get(core, "dungeon-gate.enabled", False)), "luck_mob": get(core, "dungeon-gate.luck.mob-chance", 0.05),
                     "luck_fish": get(core, "dungeon-gate.luck.fish-chance", 0.3), "window": get(core, "dungeon-gate.window-seconds", 120),
                     "list": core_json("dungeon.json").get("dungeons") or [

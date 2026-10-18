@@ -407,6 +407,7 @@ leaderboard:
     sandau: "&4[Kẻ Săn Đầu]"
     chinhphuc: "&5[Kẻ Chinh Phục]"
     timan: "&d[Kẻ Tìm Lối]"
+    mocong: "&5[Người Mở Cổng]"
     luukhach: "&7[Lữ Khách]"
     nghenhan: "&d[Nghệ Nhân]"
     phuthuong: "&6[Phú Thương]"
@@ -707,7 +708,24 @@ achievements:
     tn2: {name: "Kẻ Săn Đầu", desc: "Hạ 20 quái bị truy nã", type: truyna, target: 20, rewards: ["xu 5000", "danhhieu sandau"]}
     dg1: {name: "Bước vào bóng tối", desc: "Vượt 1 dungeon", type: dungeon, target: 1, rewards: ["xu 500"]}
     dg2: {name: "Kẻ Chinh Phục", desc: "Vượt dungeon 30 lần", type: dungeon, target: 30, rewards: ["xu 5000", "danhhieu chinhphuc"]}
+    cgh: {name: "Người Mở Cổng", desc: "Là người đầu tiên tìm ra một Cổng Hoang", type: conghoang, target: 1, rewards: ["xu 3000", "danhhieu mocong"]}
     dga: {name: "Kẻ Tìm Lối", desc: "Tìm ra 2 dungeon ẩn", type: dungeonan, target: 2, rewards: ["xu 3000", "danhhieu timan"]}
+
+# Cổng Hoang (/conghoang): cổng dungeon ngụy trang xuất hiện dần trên bản đồ. Chỉ tự đặt khi đã mở mùa (leaderboard.season-start).
+# Trang Cài đặt > Thế giới > Cổng Hoang. Thị trấn có ô đất chứa cổng là chủ; chiếm được thị trấn là có cổng.
+wild-gates:
+  enabled: true
+  max-gates: 6             # tối đa cổng mỗi mùa
+  interval-days: 7         # mỗi ngần này ngày thêm 1 cổng
+  min-town-distance: 300   # cổng cách điểm spawn thị trấn gần nhất ít nhất ngần này khối
+  min-gate-distance: 800   # các cổng cách nhau
+  grace-minutes: 30        # người tìm ra được ưu tiên lập/mở rộng thị trấn quanh cổng trong ngần này phút
+  grace-radius: 64         # bán kính ưu tiên (khối)
+  particle-range: 16       # hạt tím thấy được trong ngần này khối (dấu hiệu, đừng để quá nhỏ kẻo khó tìm)
+  max-toll: 10000          # phí qua cổng tối đa chủ cổng được đặt
+  upkeep-per-day: 0        # xu/ngày trừ ngân khố thị trấn giữ cổng (0 = không)
+  revolt-hours-less: 0     # thị trấn giữ cổng bị chiếm thì được khởi nghĩa sớm hơn ngần này giờ (0 = không)
+  dungeons: [knights_castle_lair, steamworks_lair, north_pole_minidungeon, sewers_minidungeon]   # cổng dẫn tới (ngẫu nhiên, ưu tiên gói đã cài)
 
 # Cổng Dungeon (/dungeon): khoá từng dungeon EliteMobs, mở theo 5 kiểu. Mã = tên file gói EliteMobs (bỏ .yml).
 # Trang Cài đặt > Thế giới > Cổng Dungeon. Dungeon chưa cài thì hiện "chưa cài", cài sau là tự dùng được.

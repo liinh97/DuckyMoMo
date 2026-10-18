@@ -274,7 +274,8 @@ final class WarBalance implements Listener {
         }
         // sau khi SiegeWar chiếm xong: đặt lại hạn khởi nghĩa theo số thuộc địa của nước chiếm
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
-            double h = revoltHours(colonies(n));
+            WildGates wg = Shared.wildGates;
+            double h = Math.max(revoltMin, revoltHours(colonies(n)) - (wg == null ? 0 : wg.revoltLess(town)));
             try {
                 setRevoltEnd.invoke(null, town, System.currentTimeMillis() + (long) (h * 3_600_000L));
                 Bukkit.broadcast(c("&6⚖ " + town.getName() + " thành thuộc địa của " + n.getName() + ": được khởi nghĩa sau &f" + fmt(h) + " giờ&6."));

@@ -87,6 +87,14 @@ bật công tắc vây thành, rút lịch phiên còn vài phút (Cài đặt �
 - [ ] Vượt xong báo thời gian; phá kỷ lục báo cả server; web hiện kỷ lục.
 - [ ] Kho báu huyền thoại (/khobau give, tới khi ra bậc huyền thoại): 40% có mảnh giấy chỉ đường tới dungeon ẩn.
 
+## 4e. Cổng Hoang (/conghoang)
+- [ ] /conghoang tao here: cổng dựng đúng kiểu biome, không phá được khối; /conghoang ds thấy toạ độ.
+- [ ] Người thường tới gần thấy hạt tím + dòng nhắc; Shift ở ô giữa: tìm ra (báo server), mở menu dungeon.
+- [ ] Trong 30 phút ưu tiên: người khác không lập/mở rộng thị trấn gần cổng; người tìm ra lập được.
+- [ ] Thị trấn giữ cổng: dân vào miễn phí; người ngoài thấy nút trả phí, tiền vào ngân khố; /conghoang dong chặn được.
+- [ ] Bị chiếm (SiegeWar): vua nước chiếm chỉnh được phí, dân nước chiếm vào miễn phí.
+- [ ] /conghoang datlai gỡ sạch khối, trả lại địa hình cũ.
+
 ## 5. Quảng trường Vinh danh (sảnh)
 - [ ] (CHƯA CẦN, làm khi gần mở server) Chọn chỗ trống ở sảnh (map sakura). Đứng, quay mặt về phía người xem: `/vinhdanh dat moinhat tieude`, rồi `bachu`, `chienthan`, `phuho`,
       `kientrucsu`, `dautruong`, `pet` ở các chỗ khác. Bảng chữ nổi + đầu người chơi đúng hướng, không đè nhau.

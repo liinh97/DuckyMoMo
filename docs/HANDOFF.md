@@ -303,6 +303,17 @@
   vé vận mệnh rơi hiếm, tung xúc xắc lúc vào), (4) mua vé cá nhân bằng xu (lượt / 7 ngày), (5) mở chung toàn server bằng quỹ như khai hoang.
   Điều kiện phụ: cấp pet, thành tích, nhóm 2–4 người, cuối tuần, chỉ nước Bá chủ. Chống lạm phát: lượt/ngày, lockout boss của EliteMobs.
 
+### 18/10 tối: Cổng Hoang (/conghoang) — ĐÃ LÀM, CHƯA THỬ VỚI NGƯỜI CHƠI
+- Người dùng chốt: thị trấn giữ cổng thu phí người ngoài; 6 cổng/mùa, 7 ngày thêm 1; chiếm được thị trấn là SỞ HỮU cổng (không giới hạn
+  số cổng mỗi nước, Bá chủ vẫn giữ được); phí duy trì + khởi nghĩa sớm hơn đưa vào Cài đặt, mặc định 0; ngụy trang KHÔNG làm khó quá
+  (hạt tím 16 khối + dòng nhắc khi đứng gần 6 khối, ngày đêm đều thấy).
+- Chỉ tự đặt cổng khi leaderboard.season-start có ngày (chưa mở mùa → không đặt). Cổng dẫn tới wild-gates.dungeons (tạm thời là các dungeon
+  EliteMobs: Lâu Đài Hiệp Sĩ, Xưởng Hơi Nước, Bắc Cực, Cống Ngầm).
+- NOTE (người dùng: "cứ ghi note lại"): sau này đổi đích Cổng Hoang sang "Đảo Hỗn Mang" — khu boss riêng (world riêng ~400×400, kiểu ảnh
+  đảo nhiều mảng: rừng nấm, pha lê, nghĩa địa, sa mạc, tuyết, núi lửa…), mỗi mảng 1 boss (trang Boss của panel) + đồ rơi riêng, đường mòn
+  theo độ khó, núi lửa là trùm cuối; mỗi Cổng Hoang dẫn tới 1 mảng. Cần người xây đảo (WorldPainter + schematic) trước. Ảnh map người dùng
+  gửi là để làm VÙNG dungeon/boss, KHÔNG phải map thế giới.
+
 ### 18/10 tối: Cổng Dungeon (/dungeon) — ĐÃ LÀM, CHƯA THỬ TRONG GAME
 - EliteMobs: preset Content-Only (không quái elite tự sinh). Người dùng đang chọn gói miễn phí trong /em setup.
 - SỬA nhận định cũ: EliteMobs 10.9.8 CÓ quyền theo từng gói (trường "permission" của content package, hỏi ở setupDynamicDungeon,

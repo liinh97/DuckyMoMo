@@ -111,6 +111,9 @@ commands:
   dungeon:
     description: "Cổng Dungeon: danh sách dungeon, chìa khoá, vé; /dungeon vao|mua|gop <mã>; admin: datan|cho|mo"
     aliases: [dg, hamnguc]
+  conghoang:
+    description: "Cổng Hoang: cổng dungeon ẩn trên bản đồ; chủ cổng: phi|dong|mo; admin: tao [here]|xoa|ds|datlai"
+    aliases: [cong-hoang, rift]
   truyna:
     description: "Bảng truy nã quái: quái mạnh đang bị truy nã ở đâu, thưởng gì"
     aliases: [truy-na, wanted]

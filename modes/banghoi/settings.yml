@@ -52,6 +52,17 @@ dgt_hs_goal: 150000
 dgt_hs_days: 7
 dgt_bw_goal: 1000000
 dgt_bw_days: 0
+wg_on: true
+wg_max: 6
+wg_days: 7
+wg_town: 300
+wg_gap: 800
+wg_grace: 30
+wg_grace_r: 64
+wg_particle: 16
+wg_toll: 10000
+wg_upkeep: 0
+wg_revolt: 0
 kbo_on: true
 kbo_fish: 3
 kbo_mob: 0.5

@@ -30,6 +30,7 @@ public final class DuckyMoMoCore extends JavaPlugin {
     private WantedBoard wanted;
     private ThaiAp thaiAp;
     private DungeonGate dungeonGate;
+    private WildGates wildGates;
     private Activity activity;
     private PeaceAlliance peace;
     private DecorShop decorShop;
@@ -95,6 +96,10 @@ public final class DuckyMoMoCore extends JavaPlugin {
         if (wanted != null) {
             wanted.stop();
             wanted = null;
+        }
+        if (wildGates != null) {
+            wildGates.stop();
+            wildGates = null;
         }
         if (dungeonGate != null) {
             dungeonGate.stop();
@@ -648,6 +653,19 @@ public final class DuckyMoMoCore extends JavaPlugin {
         }
         DungeonGate dgt = dungeonGate;
         bind("dungeon", dgt == null ? null : dgt::command, "Cổng Dungeon");
+        // Cổng Hoang (wild-gates): cổng dungeon ngụy trang xuất hiện dần trên bản đồ, thị trấn giữ cổng thu phí
+        wildGates = dungeonGate != null && getConfig().getBoolean("wild-gates.enabled") && getConfig().isConfigurationSection("wild-gates")
+                && getServer().getPluginManager().isPluginEnabled("Towny")
+                ? new WildGates(this, getConfig().getConfigurationSection("wild-gates")) : null;
+        if (wildGates != null && wildGates.ready()) {
+            getServer().getPluginManager().registerEvents(wildGates, this);
+            wildGates.start();
+            getLogger().info("Cổng Hoang: " + wildGates.describe());
+        } else {
+            wildGates = null;
+        }
+        WildGates wgs = wildGates;
+        bind("conghoang", wgs == null ? null : wgs::command, "Cổng Hoang");
 
         // Mảnh sự kiện + cửa hàng đổi mảnh (Bang Hội Chiến: event-fragments.enabled); phần thưởng "manh" dùng module này
         FragmentShop fragments = getConfig().getBoolean("event-fragments.enabled")

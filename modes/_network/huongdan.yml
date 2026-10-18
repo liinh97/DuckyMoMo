@@ -489,6 +489,26 @@ chapters:
         huyền thoại có thể chỉ
         lối vào ẩn!
       - |-
+        &5&lCỔNG HOANG
+        &0Cổng dungeon giấu trên
+        bản đồ, trông như cảnh
+        vật cũ (vòng đá rêu,
+        giếng cát, cột băng…).
+        &0Thấy &5hạt tím&0: đứng
+        ô giữa, &1Shift &0để vào.
+        &0Tìm ra trước được ưu
+        tiên lập thị trấn ở đó.
+      - |-
+        &5&lGIỮ CỔNG HOANG
+        &0Thị trấn có cổng: dân
+        mình vào miễn phí,
+        người ngoài trả phí
+        vào ngân khố.
+        &1/conghoang phi <mã>
+        &1<xu>
+        &0Chiếm được thị trấn
+        là có cổng!
+      - |-
         &2&lTHÁI ẤP
         &0Đất riêng an toàn, mua
         bằng xu: &1/thaiap mua

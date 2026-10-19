@@ -382,6 +382,20 @@
   vé vận mệnh rơi hiếm, tung xúc xắc lúc vào), (4) mua vé cá nhân bằng xu (lượt / 7 ngày), (5) mở chung toàn server bằng quỹ như khai hoang.
   Điều kiện phụ: cấp pet, thành tích, nhóm 2–4 người, cuối tuần, chỉ nước Bá chủ. Chống lạm phát: lượt/ngày, lockout boss của EliteMobs.
 
+### 19/10 khuya: Tinh Luyện (/tinhluyen) — ĐÃ TRIỂN KHAI banghoi-1 22:23, CHƯA thử trong game
+- Người dùng chụp menu "Danh mục nguyên liệu" của server khác (Tinh Luyện Đá/Than/Đồng/Sắt/Đá Đỏ/Lapis/Vàng/Kim Cương/Lục Bảo/Netherite, Địa Linh,
+  Xu Quái 2) để làm trade đa dạng. Chốt: Xu Quái rơi từ quái theo tỉ lệ; KHÔNG đổi ngược; dùng cho trade + nguyên liệu Xưởng + bán /sell.
+- Refining.java (config tinh-luyen, Cài đặt › Shop › Tinh Luyện): món = mảnh gốm/hạt vàng (không đặt được, không có giá trong worth.yml) + PDC
+  dmm_tinhluyen; chặn chế tạo/rèn/đe/đặt. Menu bấm=1, Shift=tối đa (64). Bán: /tinhluyen ban [tatca] và chặn trước /sell hand|all của Essentials
+  (giá riêng ~70% giá trị nguyên liệu theo worth.yml, góp quỹ khai hoang, không +20% kinh đô). Xu Quái: Enemy do người chơi giết, không từ SPAWNER,
+  5% / EliteMobs (PDC namespace elitemobs) 40% ×1–3. Admin: /tinhluyen give <mã> [số] [người], /tinhluyen ds.
+- Xưởng: workshop.items.<mã>.tinh-luyen {sat: 1} (Workshop.Recipe.refined, kiểm + trừ qua Shared.refining); panel giữ khoá này + ô nhập
+  "Món Tinh Luyện cần thêm". Chưa gắn cho món nào (đồ 7 ngày, để người dùng quyết).
+- Web: thẻ 🔮 Tinh Luyện (api/hangngay → tinhluyen). Cẩm nang game: 2 trang ở chương Tiền & buôn bán. camnang/lenh-con/lenh-hay-dung.
+- Chưa chắc: Shopkeepers nhận món (so khớp đồ) — thử đặt trade; Bedrock menu rương; /sell all có in "không bán được" cho mảnh gốm không.
+- Locator Bar (vạch chấm màu dưới máu/thức ăn = hướng người chơi khác): tính năng gốc Minecraft 1.21.6+, gamerule locator_bar ĐANG BẬT cả 4 server
+  (mặc định). Chưa đổi gì; chờ người dùng quyết có giới hạn ở Bang Hội Chiến không.
+
 ### 19/10 tối: Rà hiệu năng + bảo mật (người dùng: "tối ưu hệ thống và chống bị hack… trong game lẫn website")
 - ĐÃ SỬA:
   1. Web (site/app.py): IP lấy từ CF-Connecting-IP. Trước đó qua Cloudflare→tunnel→Traefik mọi người chung IP 172.20.0.1 → 20 lần sai mã

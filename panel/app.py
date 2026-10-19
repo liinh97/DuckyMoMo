@@ -358,6 +358,20 @@ def validate(s, v):
                 o["pvp"] = True
             if d.get("enabled") is False:
                 o["enabled"] = False
+            tl = {}
+            for k, n in (d.get("tinh-luyen") or {}).items():
+                k = str(k).strip().lower()
+                if not re.match(r"^[a-z0-9_]{1,32}$", k):
+                    raise ValueError(f"{label} ({name}): mã món tinh luyện sai \"{k}\" (xem /tinhluyen ds)")
+                try:
+                    n = int(n)
+                except (TypeError, ValueError):
+                    raise ValueError(f"{label} ({name}): số món tinh luyện phải là số")
+                if not 1 <= n <= 64:
+                    raise ValueError(f"{label} ({name}): số món tinh luyện 1–64")
+                tl[k] = n
+            if tl:
+                o["tinh-luyen"] = tl
             desc = [str(x).strip()[:90] for x in (d.get("description") or []) if str(x).strip()][:3]
             if desc:
                 o["description"] = desc

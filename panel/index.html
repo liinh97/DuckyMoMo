@@ -903,6 +903,12 @@ function workshopEditor(value, onChange) {
       if (o.pvp.checked) d.pvp = true;
       if (!o.on.checked) d.enabled = false;
       if (o.desc.value.trim()) d.description = [o.desc.value.trim()];
+      const tl = {};
+      for (const part of o.tl.value.split(",")) {
+        const m = part.trim().toLowerCase().match(/^([a-z0-9_]+)(?:[:\s]+(\d+))?$/);
+        if (m) tl[m[1]] = +(m[2] || 1);
+      }
+      if (Object.keys(tl).length) d["tinh-luyen"] = tl;
       out[id] = d;
     });
     onChange(out);
@@ -931,14 +937,17 @@ function workshopEditor(value, onChange) {
       <div class="ws-grid"></div>
       <div class="ws-row" style="grid-template-columns:1fr 1fr;margin-top:8px">
         <label>Phù phép (cách nhau dấu phẩy)<input class="i-ench" placeholder="efficiency:4, enchantio:telepathy:1, ce:Blast:1"></label>
-        <label>Mô tả thêm (tuỳ chọn)<input class="i-desc" placeholder="vd Không hút đồ người khác"></label></div>`;
+        <label>Mô tả thêm (tuỳ chọn)<input class="i-desc" placeholder="vd Không hút đồ người khác"></label></div>
+      <div class="ws-row" style="grid-template-columns:1fr;margin-top:8px">
+        <label>Món Tinh Luyện cần thêm (mã:số, cách nhau dấu phẩy; xem /tinhluyen ds)<input class="i-tl" placeholder="vd sat:1, kimcuong:1 (để trống = không cần)"></label></div>`;
     const q = c => wrap.querySelector(c);
     const o = { id: q(".i-id"), name: q(".i-name"), mat: q(".i-mat"), on: q(".i-on"), feat: q(".i-feat"), val: q(".i-val"), text: q(".i-text"),
-      uses: q(".i-uses"), days: q(".i-days"), cost: q(".i-cost"), pvp: q(".i-pvp"), ench: q(".i-ench"), desc: q(".i-desc"), cells: [] };
+      uses: q(".i-uses"), days: q(".i-days"), cost: q(".i-cost"), pvp: q(".i-pvp"), ench: q(".i-ench"), desc: q(".i-desc"), tl: q(".i-tl"), cells: [] };
     o.id.value = id || ""; o.name.value = d.name || ""; o.mat.value = d.material || ""; o.on.checked = d.enabled !== false;
     o.val.value = d.value ?? ""; o.text.value = d.text || ""; o.uses.value = d.uses ?? -1; o.days.value = d.days || 7; o.cost.value = d.cost || 0;
     o.pvp.checked = !!d.pvp; o.desc.value = (d.description || [])[0] || "";
     o.ench.value = Object.entries(d.enchants || {}).map(([k, v]) => k + ":" + v).join(", ");
+    o.tl.value = Object.entries(d["tinh-luyen"] || {}).map(([k, v]) => k + ":" + v).join(", ");
     const gridBox = q(".ws-grid");
     const grid = (d.grid && d.grid.length) ? d.grid : Object.entries(d.ingredients || {}).map(([k, v]) => k + " " + v);
     for (let k = 0; k < 9; k++) {
@@ -958,7 +967,7 @@ function workshopEditor(value, onChange) {
     };
     syncVal();
     o.feat.onchange = () => { syncVal(); emit(); };
-    for (const el of [o.id, o.name, o.mat, o.val, o.text, o.uses, o.days, o.cost, o.ench, o.desc]) el.oninput = emit;
+    for (const el of [o.id, o.name, o.mat, o.val, o.text, o.uses, o.days, o.cost, o.ench, o.desc, o.tl]) el.oninput = emit;
     o.on.onchange = emit; o.pvp.onchange = emit;
     q(".x").onclick = () => { items.splice(items.indexOf(o), 1); wrap.remove(); emit(); };
     items.push(o); box.insertBefore(wrap, add);

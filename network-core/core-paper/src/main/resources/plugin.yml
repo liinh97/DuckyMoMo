@@ -151,6 +151,9 @@ commands:
   nauan:
     description: "Bếp ra trận: nấu cá câu + nông sản thành món ăn có hiệu ứng"
     aliases: [bep, monan]
+  tinhluyen:
+    description: "Tinh Luyện: đổi một chiều khối thường thành món tinh luyện (trade dân làng, nguyên liệu Xưởng, bán /sell); /tinhluyen ban [tatca] · ds · admin: give <mã> [số] [người]"
+    aliases: [tl, nguyenlieu]
   buabatpet:
     description: "Bùa bắt pet (tăng xác suất bắt); admin: /buabatpet give <người> [số]"
     aliases: [bua]

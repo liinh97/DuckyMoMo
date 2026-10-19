@@ -1172,3 +1172,31 @@ join-notes-title: "Bang Hội Chiến"
 # Đăng nhập trang web bằng mã /web (19/10: 5 → 60 phút). Sửa ở Cài đặt › Đăng nhập trang web (ghi cả 4 server).
 web-login:
   code-minutes: 60
+
+# Tinh Luyện (/tinhluyen, 19/10): đổi MỘT CHIỀU lượng lớn khối thường → món tinh luyện (đồ có dấu riêng, đổi tên bằng đe không giả được).
+# Dùng: hàng trao đổi ở shop dân làng (admin lấy món: /tinhluyen give <mã> [số], kéo vào trình sửa Shopkeepers), nguyên liệu Xưởng
+# (workshop.items.<mã>.tinh-luyen: {sat: 1}), bán cho server (/sell hand|all hoặc /tinhluyen ban). Không đổi ngược: rút khoáng sản khỏi kinh tế.
+# recipe: VẬT_LIỆU (đồ trơn) hoặc mã món khác: số. sell: giá bán 1 món (đặt ~70% giá trị nguyên liệu theo worth.yml để không lời vô hạn;
+# đá cuội không có giá /sell + máy tạo đá vô hạn nên Tinh Luyện Đá để rất thấp). material: mảnh gốm / hạt vàng (không đặt được, không có
+# giá trong worth.yml). Đổi tên/mô tả thì món CŨ vẫn dùng được (nhận theo mã), nhưng shop Shopkeepers đã đặt phải đặt lại món mới.
+tinh-luyen:
+  enabled: true
+  xu-quai:
+    item: xuquai            # mã món rơi từ quái
+    chance: 5               # % mỗi con quái thù địch người chơi giết (quái từ lồng quái không rơi)
+    elite-chance: 40        # % quái EliteMobs (tinh nhuệ, boss)
+    elite-max: 3            # quái EliteMobs rơi 1..elite-max
+  items:
+    xuquai:     {name: "&6Xu Quái", material: GOLD_NUGGET, lore: ["Rơi khi hạ quái thù địch.", "Gom 64 đổi Xu Quái 2."], sell: 2}
+    xuquai2:    {name: "&cXu Quái 2", material: PLENTY_POTTERY_SHERD, lore: ["64 Xu Quái tinh luyện lại."], recipe: {xuquai: 64}, sell: 100}
+    da:         {name: "&fTinh Luyện &7Đá", material: SHELTER_POTTERY_SHERD, recipe: {COBBLESTONE: 256, COBBLED_DEEPSLATE: 256}, sell: 30}
+    than:       {name: "&fTinh Luyện &8Than", material: BURN_POTTERY_SHERD, recipe: {COAL_BLOCK: 64}, sell: 400}
+    dong:       {name: "&fTinh Luyện &6Đồng", material: ARMS_UP_POTTERY_SHERD, recipe: {RAW_COPPER_BLOCK: 64}, sell: 400}
+    sat:        {name: "&fTinh Luyện &7Sắt", material: MINER_POTTERY_SHERD, recipe: {RAW_IRON_BLOCK: 64}, sell: 1600}
+    dado:       {name: "&fTinh Luyện &cĐá Đỏ", material: DANGER_POTTERY_SHERD, recipe: {REDSTONE_BLOCK: 64}, sell: 200}
+    lapis:      {name: "&fTinh Luyện &9Lapis", material: HOWL_POTTERY_SHERD, recipe: {LAPIS_BLOCK: 64}, sell: 400}
+    vang:       {name: "&fTinh Luyện &eVàng", material: PRIZE_POTTERY_SHERD, recipe: {RAW_GOLD_BLOCK: 64}, sell: 2400}
+    kimcuong:   {name: "&fTinh Luyện &bKim Cương", material: HEART_POTTERY_SHERD, recipe: {DIAMOND_BLOCK: 64}, sell: 24000}
+    lucbao:     {name: "&fTinh Luyện &aLục Bảo", material: FRIEND_POTTERY_SHERD, recipe: {EMERALD_BLOCK: 32}, sell: 4000}
+    netherite:  {name: "&fTinh Luyện &5Netherite", material: SKULL_POTTERY_SHERD, recipe: {NETHERITE_BLOCK: 32}, sell: 125000}
+    dialinh:    {name: "&aĐịa Linh", material: SHEAF_POTTERY_SHERD, lore: ["Tinh hoa mùa màng."], recipe: {HAY_BLOCK: 64}, sell: 300}

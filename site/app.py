@@ -955,6 +955,28 @@ def xuong(core):
     return {"bat": bool(w.get("enabled")), "mon": items}
 
 
+TL_MAT = {"COBBLESTONE": "đá cuội", "COBBLED_DEEPSLATE": "đá sâu cuội", "COAL_BLOCK": "khối than", "RAW_COPPER_BLOCK": "khối đồng thô",
+          "RAW_IRON_BLOCK": "khối sắt thô", "REDSTONE_BLOCK": "khối đá đỏ", "LAPIS_BLOCK": "khối lapis", "RAW_GOLD_BLOCK": "khối vàng thô",
+          "DIAMOND_BLOCK": "khối kim cương", "EMERALD_BLOCK": "khối lục bảo", "NETHERITE_BLOCK": "khối netherite", "HAY_BLOCK": "kiện rơm"}
+
+
+def tinhluyen(core):
+    """Tinh Luyện (tinh-luyen): món, công thức, giá bán, tỉ lệ Xu Quái."""
+    t = get(core, "tinh-luyen", {}) or {}
+    its = t.get("items") or {}
+    out = []
+    for k, r in its.items():
+        if not isinstance(r, dict):
+            continue
+        rec = []
+        for m, n in (r.get("recipe") or {}).items():
+            ref = its.get(str(m).lower())
+            rec.append(f"{n} {strip_colors(ref.get('name', m)) if isinstance(ref, dict) else TL_MAT.get(str(m).upper(), MAT_VI.get(str(m).upper(), str(m).lower().replace('_', ' ')))}")
+        out.append({"ma": k, "ten": strip_colors(r.get("name", k)), "can": rec, "ban": r.get("sell", 0)})
+    x = t.get("xu-quai") or {}
+    return {"bat": bool(t.get("enabled")), "mon": out, "xu_quai": x.get("chance", 5), "xu_quai_tinh_nhue": x.get("elite-chance", 40)}
+
+
 def api_hangngay():
     core = load_yaml(plugin("DuckyMoMoCore", "config.yml"))
     # tên món trong Thư viện đồ (quà "do <mã>"): tên hiện trong game, không có thì tên gợi nhớ
@@ -992,6 +1014,7 @@ def api_hangngay():
                               "hiem": bool(p.get("rare"))} for p in prizes]},
         "khaihoang": khaihoang(core),
         "xuong": xuong(core),
+        "tinhluyen": tinhluyen(core),
         "donhang": {"bat": bool(oc.get("enabled")), "phi": oc.get("fee-percent", 2), "ngay": days, "ds": don[:12], "tong": len(don)},
         "manh": {"bat": bool(ef.get("enabled")), "toi_da_ngay": ef.get("daily-cap", 20),
                  "doi": [{"ten": strip_colors(x.get("label", "")), "gia": sum(int(v) for v in (x.get("cost") or {}).values())}

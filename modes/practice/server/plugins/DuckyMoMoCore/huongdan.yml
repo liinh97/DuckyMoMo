@@ -480,6 +480,18 @@ chapters:
     &1/xuong &0chế đồ có &lhiệu ứng&r&0, độ bền, hạn 7 ngày: khoan 3×3, rìu chặt cả cây, hút đồ, móc bay, xô nước vô tận…
     &4Lưu ý: &0hết hạn hoặc hết lượt thì đồ biến mất.
   - |-
+    &5&lTINH LUYỆN
+    &1/tinhluyen &0đổi khối thành món tinh luyện, vd 64 khối kim cương → 1 Tinh Luyện Kim Cương.
+    &0Dùng để &lđổi đồ ở dân làng&r&0, chế đồ Xưởng, hoặc bán.
+    &0Bấm = 1 lần, Shift+bấm = hết.
+    &1/tinhluyen ban &0bán món đang cầm
+  - |-
+    &5&lTINH LUYỆN: lưu ý
+    &4Đổi một chiều&0, không đổi lại thành khối được.
+    &0Khối phải là đồ trơn (không đổi tên).
+    &6Xu Quái&0 rơi khi hạ quái (quái lồng không rơi), gom 64 đổi Xu Quái 2.
+    &1/tinhluyen ds &0xem giá, công thức.
+  - |-
     &6&lKHAI HOANG
     &1/khaihoang &0xem quỹ mở vùng mới.
     &1/khaihoang gop <xu>

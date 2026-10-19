@@ -229,6 +229,15 @@ Triển khai: kiểm tra không ai online (lệnh riêng) → `docker compose up
 - [ ] Sao lưu ngoài máy: sau khi cấu hình ./ops/saoluu-ngoai.sh, `./ops/saoluu-ngoai.sh xem` thấy dung lượng trên mây ≈ kho ở F:.
 - [ ] Lúc đông người: `/spark tps` (mspt < 50), nếu lag thì chạy profiler (hỏi trước khi tải báo cáo lên spark).
 
+## 4q. Tinh Luyện (/tinhluyen) — 19/10
+- [ ] /tinhluyen: menu hiện 12 món, đủ/thiếu tô xanh/đỏ; mang 64 khối than → bấm → nhận 1 Tinh Luyện Than; Shift+bấm với 128 khối → 2.
+- [ ] Không đặt / không bỏ vào bàn chế, đe, bàn rèn được món tinh luyện; đổi tên bằng đe không được.
+- [ ] /sell hand cầm món → bán đúng giá (bảng /tinhluyen ds); /sell all bán cả món tinh luyện lẫn đồ thường; /tinhluyen ban tatca.
+- [ ] Giết quái thường ~20 con → vài Xu Quái; quái từ lồng quái không rơi; quái EliteMobs rơi nhiều hơn.
+- [ ] Shopkeepers: /tinhluyen give kimcuong 1 → đặt trade (vd 1 Tinh Luyện Kim Cương → đồ X) → người chơi khác đổi được bằng món tự tinh luyện.
+- [ ] Xưởng: thêm "sat:1" ở 1 món trên Cài đặt → lưu → /xuong thấy "Cần thêm 1x Tinh Luyện Sắt", thiếu thì không chế được.
+- [ ] Điện thoại (Bedrock): menu /tinhluyen bấm được.
+
 ## 5. Quảng trường Vinh danh (sảnh)
 - [ ] (CHƯA CẦN, làm khi gần mở server) Chọn chỗ trống ở sảnh (map sakura). Đứng, quay mặt về phía người xem: `/vinhdanh dat moinhat tieude`, rồi `bachu`, `chienthan`, `phuho`,
       `kientrucsu`, `dautruong`, `pet` ở các chỗ khác. Bảng chữ nổi + đầu người chơi đúng hướng, không đè nhau.

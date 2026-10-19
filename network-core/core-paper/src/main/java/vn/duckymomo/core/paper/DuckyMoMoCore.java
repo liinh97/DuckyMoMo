@@ -724,6 +724,19 @@ public final class DuckyMoMoCore extends JavaPlugin {
         }
         ThaiAp ta = thaiAp;
         bind("thaiap", ta == null ? null : ta::command, "Thái Ấp");
+        // Tinh Luyện (tinh-luyen, Bang Hội Chiến): đổi một chiều khối thường → món tinh luyện (trade, Xưởng, bán); Xu Quái rơi từ quái
+        Refining refining = getConfig().getBoolean("tinh-luyen.enabled") && getConfig().isConfigurationSection("tinh-luyen")
+                ? new Refining(this, getConfig().getConfigurationSection("tinh-luyen")) : null;
+        Shared.refining = refining;
+        if (refining != null) {
+            getServer().getPluginManager().registerEvents(refining, this);
+            getLogger().info("Tinh luyện: " + refining.describe());
+        }
+        bind("tinhluyen", refining == null ? null : refining::command, "Tinh Luyện");
+        PluginCommand tlCmd = getCommand("tinhluyen");
+        if (tlCmd != null) {
+            tlCmd.setTabCompleter(refining == null ? null : (sender, cmd, label, args) -> refining.tab(sender, args));
+        }
         // Cổng Dungeon (dungeon-gate): khoá từng gói EliteMobs bằng quyền riêng, mở theo chuỗi chìa khoá / ẩn / may mắn / vé / quỹ chung
         dungeonGate = getConfig().getBoolean("dungeon-gate.enabled") && getConfig().isConfigurationSection("dungeon-gate")
                 ? new DungeonGate(this, rewards, getConfig().getConfigurationSection("dungeon-gate")) : null;

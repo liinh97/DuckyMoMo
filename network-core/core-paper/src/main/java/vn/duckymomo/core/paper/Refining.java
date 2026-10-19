@@ -1,0 +1,490 @@
+package vn.duckymomo.core.paper;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.concurrent.ThreadLocalRandom;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.Sound;
+import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.Enemy;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
+import org.bukkit.event.inventory.PrepareAnvilEvent;
+import org.bukkit.event.inventory.PrepareItemCraftEvent;
+import org.bukkit.event.inventory.PrepareSmithingEvent;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.inventory.ItemFlag;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataType;
+
+/**
+ * Tinh Luyện (/tinhluyen, Bang Hội Chiến, 19/10): đổi MỘT CHIỀU lượng lớn khối thường thành "món tinh luyện" — đồ thật gắn dấu PDC
+ * "dmm_tinhluyen" = mã món (đổi tên bằng đe không làm giả được), dùng làm hàng trao đổi ở shop dân làng (Shopkeepers), nguyên liệu Xưởng
+ * (workshop.items.<mã>.tinh-luyen: {sat: 1}) và bán cho server (/sell hand|all hoặc /tinhluyen ban). Mục đích kinh tế: rút khoáng sản khỏi
+ * nền kinh tế (không đổi ngược), giá bán ~70% giá trị nguyên liệu theo bảng /sell nên tinh luyện rồi bán không bao giờ lời hơn bán thẳng.
+ * Xu Quái: quái thù địch người chơi giết rơi theo tỉ lệ (quái từ lồng không rơi), quái EliteMobs rơi nhiều hơn.
+ * Món nền là mảnh gốm / hạt vàng: không đặt xuống được, không có giá trong worth.yml (Essentials không bán nhầm theo vật liệu gốc);
+ * dùng để chế tạo / rèn / sửa đồ bị chặn. Config tinh-luyen: items.<mã>{name, material, lore, recipe {VẬT_LIỆU|mã món: số}, sell},
+ * xu-quai{item, chance, elite-chance, elite-max}.
+ */
+final class Refining implements Listener {
+
+    private static final LegacyComponentSerializer LEGACY = LegacyComponentSerializer.legacyAmpersand();
+    private static final List<String> SELL_CMDS = List.of("sell", "esell", "essentials:sell", "essentials:esell");
+
+    record Item(String id, String name, Material material, List<String> lore, Map<String, Integer> recipe, double sell) { }
+
+    private final DuckyMoMoCore plugin;
+    private final NamespacedKey key;
+    private final Map<String, Item> items = new LinkedHashMap<>();
+    private final String coinId;
+    private final double chance;
+    private final double eliteChance;
+    private final int eliteMax;
+
+    Refining(DuckyMoMoCore plugin, ConfigurationSection c) {
+        this.plugin = plugin;
+        this.key = new NamespacedKey(plugin, "dmm_tinhluyen");
+        ConfigurationSection is = c.getConfigurationSection("items");
+        if (is != null) {
+            for (String id : is.getKeys(false)) {
+                ConfigurationSection i = is.getConfigurationSection(id);
+                Material m = i == null ? null : Material.matchMaterial(i.getString("material", ""));
+                if (m == null || !m.isItem()) {
+                    plugin.getLogger().warning("Tinh luyện: " + id + " có material sai, bỏ qua");
+                    continue;
+                }
+                Map<String, Integer> rec = new LinkedHashMap<>();
+                ConfigurationSection rs = i.getConfigurationSection("recipe");
+                if (rs != null) {
+                    for (String k : rs.getKeys(false)) {
+                        if (rs.getInt(k) > 0) {
+                            rec.put(k, rs.getInt(k));
+                        }
+                    }
+                }
+                items.put(id.toLowerCase(Locale.ROOT), new Item(id.toLowerCase(Locale.ROOT), i.getString("name", id), m, i.getStringList("lore"),
+                        rec, Math.max(0, i.getDouble("sell", 0))));
+            }
+        }
+        // nguyên liệu phải là vật liệu thật hoặc mã món khác
+        for (Item it : items.values()) {
+            for (String k : it.recipe().keySet()) {
+                if (!items.containsKey(k.toLowerCase(Locale.ROOT)) && Material.matchMaterial(k) == null) {
+                    plugin.getLogger().warning("Tinh luyện: " + it.id() + " cần '" + k + "' không phải vật liệu hay món nào");
+                }
+            }
+        }
+        ConfigurationSection x = c.getConfigurationSection("xu-quai");
+        this.coinId = x == null ? "xuquai" : x.getString("item", "xuquai").toLowerCase(Locale.ROOT);
+        this.chance = x == null ? 5 : x.getDouble("chance", 5);
+        this.eliteChance = x == null ? 40 : x.getDouble("elite-chance", 40);
+        this.eliteMax = x == null ? 3 : Math.max(1, x.getInt("elite-max", 3));
+    }
+
+    String describe() {
+        return items.size() + " món, Xu Quái " + chance + "% (tinh nhuệ " + eliteChance + "%)";
+    }
+
+    // ---------------------------------------------------------------- món đồ
+
+    ItemStack build(String id, int amount) {
+        Item d = items.get(id);
+        ItemStack it = new ItemStack(d.material(), Math.max(1, amount));
+        ItemMeta meta = it.getItemMeta();
+        meta.displayName(c(d.name()));
+        List<Component> lore = new ArrayList<>();
+        for (String l : d.lore()) {
+            lore.add(c("&7" + l));
+        }
+        lore.add(c("&8Nguyên liệu tinh luyện · /tinhluyen"));
+        meta.lore(lore);
+        meta.setEnchantmentGlintOverride(true);
+        meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
+        meta.getPersistentDataContainer().set(key, PersistentDataType.STRING, d.id());
+        it.setItemMeta(meta);
+        return it;
+    }
+
+    /** Mã món tinh luyện của vật phẩm (null = đồ thường). */
+    String idOf(ItemStack it) {
+        if (it == null || !it.hasItemMeta()) {
+            return null;
+        }
+        String id = it.getItemMeta().getPersistentDataContainer().get(key, PersistentDataType.STRING);
+        return id != null && items.containsKey(id) ? id : null;
+    }
+
+    boolean exists(String id) {
+        return items.containsKey(id.toLowerCase(Locale.ROOT));
+    }
+
+    String name(String id) {
+        Item d = items.get(id.toLowerCase(Locale.ROOT));
+        return d == null ? id : d.name();
+    }
+
+    /** Số lượng trong túi: mã món tinh luyện, hoặc vật liệu thường (đồ trơn, không tên/phù phép). */
+    int count(Player p, String ingredient) {
+        String low = ingredient.toLowerCase(Locale.ROOT);
+        int n = 0;
+        if (items.containsKey(low)) {
+            for (ItemStack it : p.getInventory().getStorageContents()) {
+                if (low.equals(idOf(it))) {
+                    n += it.getAmount();
+                }
+            }
+            return n;
+        }
+        Material m = Material.matchMaterial(ingredient);
+        if (m == null) {
+            return 0;
+        }
+        ItemStack plain = new ItemStack(m);
+        for (ItemStack it : p.getInventory().getStorageContents()) {
+            if (it != null && it.getType() == m && it.isSimilar(plain)) {
+                n += it.getAmount();
+            }
+        }
+        return n;
+    }
+
+    void take(Player p, String ingredient, int amount) {
+        String low = ingredient.toLowerCase(Locale.ROOT);
+        Material m = items.containsKey(low) ? null : Material.matchMaterial(ingredient);
+        ItemStack plain = m == null ? null : new ItemStack(m);
+        ItemStack[] inv = p.getInventory().getStorageContents();
+        for (int i = 0; i < inv.length && amount > 0; i++) {
+            ItemStack it = inv[i];
+            boolean match = plain != null ? it != null && it.getType() == m && it.isSimilar(plain) : low.equals(idOf(it));
+            if (match) {
+                int t = Math.min(amount, it.getAmount());
+                it.setAmount(it.getAmount() - t);
+                amount -= t;
+                if (it.getAmount() <= 0) {
+                    inv[i] = null;
+                }
+            }
+        }
+        p.getInventory().setStorageContents(inv);
+    }
+
+    private Component ingredientName(String k) {
+        String low = k.toLowerCase(Locale.ROOT);
+        if (items.containsKey(low)) {
+            return c(items.get(low).name());
+        }
+        Material m = Material.matchMaterial(k);
+        return m == null ? Component.text(k) : Component.translatable(m.translationKey());
+    }
+
+    // ---------------------------------------------------------------- menu
+
+    private static final class Holder implements InventoryHolder {
+        Inventory inv;
+        final Map<Integer, Item> slots = new HashMap<>();
+
+        @Override
+        public Inventory getInventory() {
+            return inv;
+        }
+    }
+
+    void open(Player p) {
+        Holder h = new Holder();
+        int rows = Math.min(6, Math.max(3, (int) Math.ceil(items.size() / 7.0) + 2));
+        h.inv = Bukkit.createInventory(h, rows * 9, c("&5&lTINH LUYỆN &8(đổi một chiều)"));
+        int i = 0;
+        for (Item d : items.values()) {
+            if (d.recipe().isEmpty()) {
+                continue;   // món nền (Xu Quái): không chế được
+            }
+            int row = 1 + i / 7, col = 1 + i % 7;
+            if (row >= rows - 1) {
+                break;
+            }
+            int slot = row * 9 + col;
+            h.inv.setItem(slot, icon(p, d));
+            h.slots.put(slot, d);
+            i++;
+        }
+        p.openInventory(h.inv);
+    }
+
+    private ItemStack icon(Player p, Item d) {
+        ItemStack it = build(d.id(), 1);
+        ItemMeta meta = it.getItemMeta();
+        List<Component> lore = new ArrayList<>();
+        lore.add(Component.empty());
+        lore.add(c("&e&lNguyên liệu cần:"));
+        boolean ok = true;
+        for (Map.Entry<String, Integer> in : d.recipe().entrySet()) {
+            int have = count(p, in.getKey());
+            boolean enough = have >= in.getValue();
+            ok &= enough;
+            lore.add(c(enough ? "&a✔ " : "&c✘ ").append(ingredientName(in.getKey()).color(null).decoration(TextDecoration.ITALIC, false))
+                    .append(c("&7: " + (enough ? "&a" : "&c") + have + "&7/" + in.getValue())));
+        }
+        lore.add(Component.empty());
+        if (d.sell() > 0) {
+            lore.add(c("&7Bán cho server: &6" + money(d.sell()) + " &8(/sell hoặc /tinhluyen ban)"));
+        }
+        lore.add(ok ? c("&a▶ Bấm: tinh luyện 1 · Shift+bấm: tinh luyện hết") : c("&c✘ Bạn còn thiếu nguyên liệu."));
+        meta.lore(lore);
+        it.setItemMeta(meta);
+        return it;
+    }
+
+    @EventHandler
+    public void onClick(InventoryClickEvent e) {
+        if (!(e.getInventory().getHolder() instanceof Holder h)) {
+            return;
+        }
+        e.setCancelled(true);
+        if (!(e.getWhoClicked() instanceof Player p) || e.getClickedInventory() != e.getInventory()) {
+            return;
+        }
+        Item d = h.slots.get(e.getRawSlot());
+        if (d == null) {
+            return;
+        }
+        int times = 0;
+        int max = e.isShiftClick() ? 64 : 1;
+        while (times < max && canCraft(p, d)) {
+            for (Map.Entry<String, Integer> in : d.recipe().entrySet()) {
+                take(p, in.getKey(), in.getValue());
+            }
+            times++;
+        }
+        if (times == 0) {
+            p.sendMessage(c("&cBạn còn thiếu nguyên liệu cho ").append(c(d.name())).append(c("&c.")));
+            p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 0.6f, 1f);
+            return;
+        }
+        give(p, d.id(), times);
+        p.playSound(p.getLocation(), Sound.BLOCK_SMITHING_TABLE_USE, 0.7f, 1.1f);
+        p.sendMessage(c("&a✔ Đã tinh luyện " + times + " ").append(c(d.name())).append(c("&a.")));
+        plugin.getLogger().info("Tinh luyện: " + p.getName() + " → " + times + " " + d.id());
+        open(p);
+    }
+
+    @EventHandler
+    public void onDrag(InventoryDragEvent e) {
+        if (e.getInventory().getHolder() instanceof Holder) {
+            e.setCancelled(true);
+        }
+    }
+
+    private boolean canCraft(Player p, Item d) {
+        for (Map.Entry<String, Integer> in : d.recipe().entrySet()) {
+            if (count(p, in.getKey()) < in.getValue()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private void give(Player p, String id, int amount) {
+        while (amount > 0) {
+            int n = Math.min(amount, items.get(id).material().getMaxStackSize());
+            p.getInventory().addItem(build(id, n)).values().forEach(left -> p.getWorld().dropItemNaturally(p.getLocation(), left));
+            amount -= n;
+        }
+    }
+
+    // ---------------------------------------------------------------- bán
+
+    /** Bán món tinh luyện: hand = chỉ món đang cầm, ngược lại cả túi. Trả số món đã bán. */
+    private int sell(Player p, boolean handOnly) {
+        double total = 0;
+        int count = 0;
+        ItemStack[] inv = p.getInventory().getStorageContents();
+        int held = p.getInventory().getHeldItemSlot();
+        for (int i = 0; i < inv.length; i++) {
+            if (handOnly && i != held) {
+                continue;
+            }
+            String id = idOf(inv[i]);
+            if (id == null || items.get(id).sell() <= 0) {
+                continue;
+            }
+            total += items.get(id).sell() * inv[i].getAmount();
+            count += inv[i].getAmount();
+            inv[i] = null;
+        }
+        if (count == 0 || !VaultEconomy.available()) {
+            return 0;
+        }
+        p.getInventory().setStorageContents(inv);
+        VaultEconomy.deposit(p, total);
+        Frontier f = Shared.frontier;
+        if (f != null) {
+            f.addSale(p, total);   // như /sell: góp % vào quỹ khai hoang
+        }
+        p.sendMessage(c("&a[Tinh luyện] Đã bán " + count + " món: &e+" + money(total)));
+        p.playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.8f, 1.2f);
+        return count;
+    }
+
+    /** /sell hand|all của Essentials: món tinh luyện bán theo giá riêng (vật liệu nền không có giá trong worth.yml). */
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    public void onSellCommand(PlayerCommandPreprocessEvent e) {
+        String[] a = e.getMessage().substring(1).trim().split("\\s+");
+        if (a.length < 2 || !SELL_CMDS.contains(a[0].toLowerCase(Locale.ROOT))) {
+            return;
+        }
+        String what = a[1].toLowerCase(Locale.ROOT);
+        Player p = e.getPlayer();
+        if (what.equals("hand") && idOf(p.getInventory().getItemInMainHand()) != null) {
+            sell(p, true);
+            e.setCancelled(true);
+        } else if (what.equals("all") || what.equals("inventory") || what.equals("invent")) {
+            sell(p, false);   // phần còn lại để Essentials bán như thường
+        }
+    }
+
+    // ---------------------------------------------------------------- Xu Quái
+
+    @EventHandler(ignoreCancelled = true)
+    public void onDeath(EntityDeathEvent e) {
+        LivingEntity en = e.getEntity();
+        if (!(en instanceof Enemy) || en.getKiller() == null || !items.containsKey(coinId)
+                || en.getEntitySpawnReason() == CreatureSpawnEvent.SpawnReason.SPAWNER) {
+            return;
+        }
+        boolean elite = en.getPersistentDataContainer().getKeys().stream().anyMatch(k -> k.getNamespace().equals("elitemobs"));
+        double roll = ThreadLocalRandom.current().nextDouble(100);
+        if (roll >= (elite ? eliteChance : chance)) {
+            return;
+        }
+        int n = elite ? 1 + ThreadLocalRandom.current().nextInt(eliteMax) : 1;
+        e.getDrops().add(build(coinId, n));
+    }
+
+    // ---------------------------------------------------------------- chặn dùng sai
+
+    @EventHandler(ignoreCancelled = true)
+    public void onPlace(BlockPlaceEvent e) {
+        if (idOf(e.getItemInHand()) != null) {
+            e.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onCraft(PrepareItemCraftEvent e) {
+        for (ItemStack it : e.getInventory().getMatrix()) {
+            if (idOf(it) != null) {
+                e.getInventory().setResult(null);
+                return;
+            }
+        }
+    }
+
+    @EventHandler
+    public void onSmith(PrepareSmithingEvent e) {
+        for (ItemStack it : e.getInventory().getContents()) {
+            if (idOf(it) != null) {
+                e.setResult(null);
+                return;
+            }
+        }
+    }
+
+    @EventHandler
+    public void onAnvil(PrepareAnvilEvent e) {
+        for (ItemStack it : e.getInventory().getContents()) {
+            if (idOf(it) != null) {
+                e.setResult(null);
+                return;
+            }
+        }
+    }
+
+    // ---------------------------------------------------------------- lệnh
+
+    boolean command(CommandSender s, String[] args) {
+        String sub = args.length > 0 ? args[0].toLowerCase(Locale.ROOT) : "";
+        if (sub.equals("give") && s.hasPermission("duckymomo.admin")) {
+            String id = args.length > 1 ? args[1].toLowerCase(Locale.ROOT) : "";
+            int n = 1;
+            try {
+                n = args.length > 2 ? Math.max(1, Math.min(2304, Integer.parseInt(args[2]))) : 1;
+            } catch (NumberFormatException ignored) {
+                // mặc định 1
+            }
+            Player t = args.length > 3 ? Bukkit.getPlayerExact(args[3]) : s instanceof Player sp ? sp : null;
+            if (!items.containsKey(id) || t == null) {
+                s.sendMessage("/tinhluyen give <" + String.join("|", items.keySet()) + "> [số] [người]");
+                return true;
+            }
+            give(t, id, n);
+            s.sendMessage(LEGACY.serialize(c("&aĐã đưa " + n + " ").append(c(items.get(id).name()))) + " cho " + t.getName());
+            return true;
+        }
+        if (sub.equals("ds")) {
+            s.sendMessage(c("&5&lTinh luyện &7— mã món (cho admin, Shopkeepers, Xưởng):"));
+            for (Item d : items.values()) {
+                StringBuilder r = new StringBuilder();
+                d.recipe().forEach((k, v) -> r.append(r.length() > 0 ? " + " : "").append(v).append(' ').append(k));
+                s.sendMessage(c("&f" + d.id() + " &7= ").append(c(d.name())).append(c("&7 ← " + (r.length() == 0 ? "quái rơi" : r)
+                        + (d.sell() > 0 ? " · bán " + money(d.sell()) : ""))));
+            }
+            return true;
+        }
+        if (!(s instanceof Player p)) {
+            s.sendMessage("/tinhluyen give <mã> [số] <người> · /tinhluyen ds");
+            return true;
+        }
+        if (sub.equals("ban")) {
+            boolean all = args.length > 1 && (args[1].equalsIgnoreCase("tatca") || args[1].equalsIgnoreCase("all"));
+            if (sell(p, !all) == 0) {
+                p.sendMessage(c("&7" + (all ? "Túi" : "Tay") + " không có món tinh luyện nào bán được. &f/tinhluyen ban tatca &7để bán cả túi."));
+            }
+            return true;
+        }
+        open(p);
+        return true;
+    }
+
+    List<String> tab(CommandSender s, String[] args) {
+        if (args.length == 1) {
+            return s.hasPermission("duckymomo.admin") ? List.of("ban", "ds", "give") : List.of("ban", "ds");
+        }
+        if (args.length == 2 && args[0].equalsIgnoreCase("give")) {
+            return new ArrayList<>(items.keySet());
+        }
+        if (args.length == 2 && args[0].equalsIgnoreCase("ban")) {
+            return List.of("tatca");
+        }
+        return List.of();
+    }
+
+    private static String money(double v) {
+        return VaultEconomy.available() ? VaultEconomy.format(v) : (long) v + " xu";
+    }
+
+    private static Component c(String s) {
+        return LEGACY.deserialize(s).decoration(TextDecoration.ITALIC, false);
+    }
+}

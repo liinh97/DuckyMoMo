@@ -148,7 +148,8 @@ final class Workshop implements Listener {
     }
 
     record Recipe(String id, String name, Material material, String feature, double value, String text, int uses, int days, double cost,
-                  List<String> grid, Map<Material, Integer> ingredients, Map<String, Integer> enchants, boolean pvp, List<String> desc) { }
+                  List<String> grid, Map<Material, Integer> ingredients, Map<String, Integer> enchants, boolean pvp, List<String> desc,
+                  Map<String, Integer> refined) { }
 
     private static final class Holder implements InventoryHolder {
         Inventory inv;
@@ -239,9 +240,19 @@ final class Workshop implements Listener {
                         ench.put(k, es.getInt(k));
                     }
                 }
+                // món Tinh Luyện cần thêm (tinh-luyen: {sat: 1, kimcuong: 1}), kiểm/trừ qua Shared.refining
+                Map<String, Integer> refined = new LinkedHashMap<>();
+                ConfigurationSection rf = r.getConfigurationSection("tinh-luyen");
+                if (rf != null) {
+                    for (String k : rf.getKeys(false)) {
+                        if (rf.getInt(k) > 0) {
+                            refined.put(k.toLowerCase(java.util.Locale.ROOT), rf.getInt(k));
+                        }
+                    }
+                }
                 recipes.put(id, new Recipe(id, r.getString("name", id), m, feature, r.getDouble("value", 0), r.getString("text", ""),
                         r.getInt("uses", -1), r.getInt("days", 7), r.getDouble("cost", 0), grid.subList(0, 9), ing, ench,
-                        r.getBoolean("pvp", false), r.getStringList("description")));
+                        r.getBoolean("pvp", false), r.getStringList("description"), refined));
             }
         }
         loadWorth();
@@ -1132,6 +1143,12 @@ final class Workshop implements Listener {
         }
         lore.add(Component.empty());
         if (craftView) {
+            Refining rf = Shared.refining;
+            for (Map.Entry<String, Integer> in : r.refined().entrySet()) {
+                int have = rf == null ? 0 : rf.count(p, in.getKey());
+                lore.add(c("&7Cần thêm: " + (have >= in.getValue() ? "&a" : "&c") + in.getValue() + "x ")
+                        .append(c(rf == null ? in.getKey() : rf.name(in.getKey()))).append(c(" &8(có " + have + ")")));
+            }
             if (r.cost() > 0) {
                 boolean ok = VaultEconomy.available() && VaultEconomy.has(p, r.cost());
                 lore.add(c("&7Giá: " + (ok ? "&a" : "&c") + money(r.cost())));
@@ -1233,6 +1250,14 @@ final class Workshop implements Listener {
                 return;
             }
         }
+        Refining rf = Shared.refining;
+        for (Map.Entry<String, Integer> in : r.refined().entrySet()) {
+            if (rf == null || rf.count(p, in.getKey()) < in.getValue()) {
+                p.sendMessage(c("&cThiếu nguyên liệu: cần " + in.getValue() + "x ").append(c(rf == null ? in.getKey() : rf.name(in.getKey())))
+                        .append(c(" &7(/tinhluyen)")));
+                return;
+            }
+        }
         if (p.getInventory().firstEmpty() < 0) {
             p.sendMessage(c("&cTúi đầy, dọn 1 ô rồi chế."));
             return;
@@ -1244,6 +1269,9 @@ final class Workshop implements Listener {
         }
         for (Map.Entry<Material, Integer> in : r.ingredients().entrySet()) {
             takePlain(p, in.getKey(), in.getValue());
+        }
+        for (Map.Entry<String, Integer> in : r.refined().entrySet()) {
+            rf.take(p, in.getKey(), in.getValue());
         }
         p.getInventory().addItem(build(r));
         p.playSound(p.getLocation(), Sound.BLOCK_ANVIL_USE, 0.6f, 1.2f);

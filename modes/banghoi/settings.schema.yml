@@ -961,6 +961,30 @@ groups:
       - { key: lvu_laoluyen_on, label: "Danh hiệu Lão Luyện: bán", type: select, file: plugins/DuckyMoMoCore/config.yml, path: level-up.shop.laoluyen.enabled, options: [ { value: true, label: Có }, { value: false, label: Ẩn } ] }
       - { key: lvu_laoluyen_cost, label: "Danh hiệu Lão Luyện: giá (điểm)", type: int, min: 0, max: 1000, file: plugins/DuckyMoMoCore/config.yml, path: level-up.shop.laoluyen.cost }
 
+  - title: Tinh Luyện (/tinhluyen)
+    category: Shop
+    description: "Đổi MỘT CHIỀU lượng lớn khối thường thành món tinh luyện (đồ có dấu riêng): hàng trao đổi ở shop dân làng, nguyên liệu Xưởng, bán cho server. Xu Quái rơi từ quái."
+    info: "Món: Tinh Luyện Đá (256 đá cuội + 256 đá sâu cuội), Than / Đồng thô / Sắt thô / Đá Đỏ / Lapis / Vàng thô / Kim Cương (64 khối), Lục Bảo / Netherite (32 khối), Địa Linh (64 kiện rơm), Xu Quái 2 (64 Xu Quái).\nCông thức (số khối) sửa trong config tinh-luyen.items.<mã>.recipe.\nGiá bán: đặt ≤ khoảng 70% giá trị nguyên liệu theo bảng /sell, KHÔNG thì người chơi tinh luyện rồi bán để lời (in tiền). Tinh Luyện Đá để rất thấp vì máy tạo đá cuội ra vô hạn.\nXu Quái: chỉ quái thù địch do người chơi giết, quái từ lồng quái không rơi.\nShop dân làng: admin lấy món bằng /tinhluyen give <mã> [số] rồi kéo vào trình sửa Shopkeepers. Xưởng: ô \"Món Tinh Luyện cần thêm\" ở từng món.\nLưu xong: có hiệu lực ngay (dmm reload)."
+    apply: [dmm reload]
+    settings:
+      - { key: tl_on, label: Bật Tinh Luyện, type: select, file: plugins/DuckyMoMoCore/config.yml, path: tinh-luyen.enabled, options: [ { value: true, label: Bật }, { value: false, label: Tắt } ] }
+      - { key: tl_chance, label: "Xu Quái: tỉ lệ rơi từ quái thường (%)", type: number, min: 0, max: 100, file: plugins/DuckyMoMoCore/config.yml, path: tinh-luyen.xu-quai.chance }
+      - { key: tl_elite, label: "Xu Quái: tỉ lệ rơi từ quái EliteMobs (%)", type: number, min: 0, max: 100, file: plugins/DuckyMoMoCore/config.yml, path: tinh-luyen.xu-quai.elite-chance }
+      - { key: tl_elite_max, label: "Xu Quái: quái EliteMobs rơi tối đa", type: int, min: 1, max: 64, file: plugins/DuckyMoMoCore/config.yml, path: tinh-luyen.xu-quai.elite-max }
+      - { key: tl_sell_xuquai, label: "Giá bán: Xu Quái (xu, 0 = không bán)", type: int, min: 0, max: 10000000, file: plugins/DuckyMoMoCore/config.yml, path: tinh-luyen.items.xuquai.sell }
+      - { key: tl_sell_xuquai2, label: "Giá bán: Xu Quái 2 (xu, 0 = không bán)", type: int, min: 0, max: 10000000, file: plugins/DuckyMoMoCore/config.yml, path: tinh-luyen.items.xuquai2.sell }
+      - { key: tl_sell_da, label: "Giá bán: Tinh Luyện Đá (xu, 0 = không bán)", type: int, min: 0, max: 10000000, file: plugins/DuckyMoMoCore/config.yml, path: tinh-luyen.items.da.sell }
+      - { key: tl_sell_than, label: "Giá bán: Tinh Luyện Than (xu, 0 = không bán)", type: int, min: 0, max: 10000000, file: plugins/DuckyMoMoCore/config.yml, path: tinh-luyen.items.than.sell }
+      - { key: tl_sell_dong, label: "Giá bán: Tinh Luyện Đồng (xu, 0 = không bán)", type: int, min: 0, max: 10000000, file: plugins/DuckyMoMoCore/config.yml, path: tinh-luyen.items.dong.sell }
+      - { key: tl_sell_sat, label: "Giá bán: Tinh Luyện Sắt (xu, 0 = không bán)", type: int, min: 0, max: 10000000, file: plugins/DuckyMoMoCore/config.yml, path: tinh-luyen.items.sat.sell }
+      - { key: tl_sell_dado, label: "Giá bán: Tinh Luyện Đá Đỏ (xu, 0 = không bán)", type: int, min: 0, max: 10000000, file: plugins/DuckyMoMoCore/config.yml, path: tinh-luyen.items.dado.sell }
+      - { key: tl_sell_lapis, label: "Giá bán: Tinh Luyện Lapis (xu, 0 = không bán)", type: int, min: 0, max: 10000000, file: plugins/DuckyMoMoCore/config.yml, path: tinh-luyen.items.lapis.sell }
+      - { key: tl_sell_vang, label: "Giá bán: Tinh Luyện Vàng (xu, 0 = không bán)", type: int, min: 0, max: 10000000, file: plugins/DuckyMoMoCore/config.yml, path: tinh-luyen.items.vang.sell }
+      - { key: tl_sell_kimcuong, label: "Giá bán: Tinh Luyện Kim Cương (xu, 0 = không bán)", type: int, min: 0, max: 10000000, file: plugins/DuckyMoMoCore/config.yml, path: tinh-luyen.items.kimcuong.sell }
+      - { key: tl_sell_lucbao, label: "Giá bán: Tinh Luyện Lục Bảo (xu, 0 = không bán)", type: int, min: 0, max: 10000000, file: plugins/DuckyMoMoCore/config.yml, path: tinh-luyen.items.lucbao.sell }
+      - { key: tl_sell_netherite, label: "Giá bán: Tinh Luyện Netherite (xu, 0 = không bán)", type: int, min: 0, max: 10000000, file: plugins/DuckyMoMoCore/config.yml, path: tinh-luyen.items.netherite.sell }
+      - { key: tl_sell_dialinh, label: "Giá bán: Địa Linh (xu, 0 = không bán)", type: int, min: 0, max: 10000000, file: plugins/DuckyMoMoCore/config.yml, path: tinh-luyen.items.dialinh.sell }
+
   - title: Xưởng chế tạo (/xuong)
     category: Shop
     description: "Đồ đặc biệt theo logic HIỆU ỨNG + ĐỘ BỀN + THỜI HẠN, chế bằng xu + nguyên liệu xếp trên bàn chế 3×3. Hết độ bền hoặc hết hạn là biến mất (rút tiền và tài nguyên khỏi kinh tế)."

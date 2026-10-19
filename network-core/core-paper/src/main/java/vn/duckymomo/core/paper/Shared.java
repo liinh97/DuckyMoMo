@@ -12,6 +12,7 @@ final class Shared {
     static volatile DungeonGate dungeonGate;
     static volatile WildGates wildGates;
     static volatile Wanderers wanderers;
+    static volatile Refining refining;
 
     private Shared() {
     }
@@ -31,5 +32,6 @@ final class Shared {
         dungeonGate = null;
         wildGates = null;
         wanderers = null;
+        refining = null;
     }
 }

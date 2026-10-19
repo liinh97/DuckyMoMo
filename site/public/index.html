@@ -1421,6 +1421,13 @@ async function loadDaily(){
       <p class="muted">Đồ đặc biệt chế bằng xu + nguyên liệu, dùng được <b>7 ngày</b> rồi tự biến mất (không ai giữ đồ mạnh mãi). Không bán bằng tiền thật.</p>
       <div class="fishes">${xw.mon.map(m => `<div class="fish" style="--c:#f2b84b"><b>${esc(m.ten)}</b><div class="d">${esc(m.tinh_nang)}${m.mo_ta ? ". " + esc(m.mo_ta) : ""}</div><div class="m">
         ${m.luot > 0 ? `<span>${nf.format(m.luot)} lượt</span>` : ""}<span>${m.ngay} ngày</span><span>${nf.format(m.gia)} xu</span>${m.nguyen_lieu.map(x => `<span>${esc(x)}</span>`).join("")}${m.pvp ? `<span class="s-mua">không dùng khi vây thành</span>` : ""}</div></div>`).join("")}</div></div>`);
+    const tl = d.tinhluyen;
+    if (tl && tl.bat && tl.mon.length) cards.push(`<div class="card" style="grid-column:1/-1"><h3>🔮 Tinh Luyện <span class="kbd">/tinhluyen</span></h3>
+      <p class="muted">Đổi <b>một chiều</b> thật nhiều khối thường thành một món tinh luyện quý: dùng để <b>đổi đồ ở dân làng</b>, chế đồ Xưởng hoặc bán cho server
+        (<span class="kbd">/tinhluyen ban</span>, <span class="kbd">/sell hand</span>). Bấm trong menu = 1 lần, Shift+bấm = tinh luyện hết.
+        <b>Xu Quái</b> rơi khi hạ quái thù địch (${tl.xu_quai}%, quái tinh nhuệ ${tl.xu_quai_tinh_nhue}%), quái từ lồng không rơi.</p>
+      <div class="fishes">${tl.mon.map(m => `<div class="fish" style="--c:#b07cff"><b>${esc(m.ten)}</b><div class="d">${m.can.length ? "Cần: " + m.can.map(esc).join(" + ") : "Rơi khi hạ quái"}</div>
+        <div class="m">${m.ban > 0 ? `<span>bán ${nf.format(m.ban)} xu</span>` : ""}</div></div>`).join("")}</div></div>`);
     if (d.manh.bat) cards.push(`<div class="card"><h3>💎 Mảnh sự kiện <span class="kbd">/doimanh</span></h3>
       <p class="muted">Rơi từ boss, sự kiện, mốc điểm danh. Là đồ thật, trao đổi được (tối đa ${d.manh.toi_da_ngay} mảnh/ngày từ quà thường). Đổi lấy:</p>
       <div class="votes">${d.manh.doi.map(x => `<span>${esc(x.ten)} · ${x.gia} mảnh</span>`).join("")}</div></div>`);

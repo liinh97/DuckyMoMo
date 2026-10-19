@@ -1706,14 +1706,14 @@ def hethong_status():
         if m:
             d["mspt"] = _num(m.group(1))
         gc = COLOR_RE.sub("", res.get("essentials:gc", ""))
-        mx, fr = re.search(r"Maximum memory: ([\d,]+)", gc), re.search(r"Free memory: ([\d,]+)", gc)
-        al = re.search(r"Allocated memory: ([\d,]+)", gc)
+        mx, fr = re.search(r"(?:Maximum memory|Bộ nhớ tối đa): ([\d,]+)", gc), re.search(r"(?:Free memory|Bộ nhớ trống): ([\d,]+)", gc)   # Essentials tiếng Anh hoặc tiếng Việt
+        al = re.search(r"(?:Allocated memory|Bộ nhớ có sẵn): ([\d,]+)", gc)
         if mx and fr and al:
             d["ram_max"], d["ram_dung"] = int(_num(mx.group(1))), int(_num(al.group(1)) - _num(fr.group(1)))
-        up = re.search(r"Uptime: (.+)", gc)
+        up = re.search(r"(?:Uptime|Thời gian hoạt động): (.+)", gc)
         if up:
             d["uptime"] = up.group(1).strip()
-        worlds = re.findall(r'"([^"]+)": ([\d,]+) chunks, ([\d,]+) entities', gc)
+        worlds = re.findall(r'"([^"]+)": ([\d,]+) (?:chunks|mảnh), ([\d,]+) (?:entities|thực thể)', gc)
         if worlds:
             d["chunks"] = sum(int(_num(w[1])) for w in worlds)
             d["entities"] = sum(int(_num(w[2])) for w in worlds)
@@ -2107,7 +2107,7 @@ def cosmetic_result(perms, srv, where, cmd, data):
             who = rcon(srv, [f"whois {perms['name']}"])[0][1]
         except Exception:
             who = ""
-        line = next((l for l in who.splitlines() if "nick" in l.lower()), "")
+        line = next((l for l in who.splitlines() if "nick" in l.lower() or "biệt danh" in l.lower()), "")   # Essentials tiếng Anh hoặc tiếng Việt
         now = plain(line.split(":", 1)[1]).strip() if ":" in line else ""
         if cmd == "nick off":
             if not now or now.lstrip("~").lower() == perms["name"].lower():

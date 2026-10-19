@@ -75,7 +75,7 @@ services:
       RESTIC_HOSTNAME: sangtao-1
       PRUNE_RESTIC_RETENTION: "--keep-within ${BACKUP_KEEP_DAYS:-7}d --keep-daily 30"
       EXCLUDES: "*.jar,cache,logs,*.tmp,world-*"
-      PAUSE_IF_NO_PLAYERS: "true"
+      PAUSE_IF_NO_PLAYERS: "false"     # 19/10: LUÔN sao lưu theo giờ (trước bật "true": không ai online là chờ mãi → mất cả ngày cấu hình). restic chỉ lưu phần đổi nên nhẹ
       INITIAL_DELAY: 5m
       TZ: Asia/Ho_Chi_Minh
     volumes:

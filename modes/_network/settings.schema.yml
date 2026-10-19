@@ -114,7 +114,15 @@ groups:
     apply: [authme reload]
     settings:
       - { key: authme_session_on, label: Bật phiên đăng nhập, type: select, servers: [lobby], file: plugins/AuthMe/config.yml, path: settings.sessions.enabled, options: [ { value: true, label: Bật }, { value: false, label: Tắt } ] }
-      - { key: authme_session_min, label: Thời hạn phiên (phút), type: int, min: 1, max: 43200, servers: [lobby], file: plugins/AuthMe/config.yml, path: settings.sessions.timeout, note: "1440 = 1 ngày, 10080 = 7 ngày" }
+      - { key: authme_session_min, label: Thời hạn phiên (phút), type: int, min: 1, max: 43200, servers: [lobby], file: plugins/AuthMe/config.yml, path: settings.sessions.timeout, note: "Đề xuất 60. 4G/quán net nhiều người chung 1 IP: phiên càng dài, người khác cùng mạng gõ đúng tên càng dễ vào ké (cả admin)" }
+
+  - title: Đăng nhập trang web (mã /web)
+    category: Sảnh
+    description: "Thời hạn mã 6 số người chơi lấy bằng /web trong game để đăng nhập trang web."
+    info: "Mã dùng 1 lần; sai 5 lần thì tên đó bị khoá đăng nhập web 15 phút, 20 lần từ cùng IP cũng khoá 15 phút, nên mã sống lâu vẫn không dò ra được.\nLưu xong: có hiệu lực ngay (dmm reload ở mọi server; mã đang chờ bị huỷ, người chơi gõ /web lại)."
+    apply: [dmm reload]
+    settings:
+      - { key: web_code_min, label: Mã /web hết hạn sau (phút), type: int, min: 1, max: 1440, servers: [lobby, banghoi-1, practice-1, sangtao-1], file: plugins/DuckyMoMoCore/config.yml, path: web-login.code-minutes, note: "Mặc định 60" }
 
   - title: Sảnh (lobby)
     category: Sảnh

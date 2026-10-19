@@ -1078,7 +1078,7 @@ def login(data, ip):
             return 502, {"ok": False, "message": "Máy chủ đang bận, thử lại sau."}, None
         msg = {
             "KHAC": f"Mã này được tạo cho tài khoản khác, không phải {name}. Nhập đúng tên nhân vật bạn đã gõ /web trong game.",
-            "HET": "Mã đã hết hạn (5 phút). Vào game gõ /web để lấy mã mới.",
+            "HET": "Mã đã hết hạn. Vào game gõ /web để lấy mã mới.",
             "KHONG": f"Tài khoản {name} chưa có mã (hoặc mã đã dùng rồi). Vào game bằng nhân vật này, gõ /web để lấy mã.",
             "TAT": "Server game đang tắt hoặc khởi động lại, thử lại sau ít phút.",
         }.get(res.get("ly_do"), "Sai mã. Kiểm tra lại 6 số trong chat game (mã dùng 1 lần).")

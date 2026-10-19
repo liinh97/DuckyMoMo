@@ -47,7 +47,7 @@ services:
       PRUNE_RESTIC_RETENTION: "--keep-within ${BACKUP_KEEP_DAYS:-7}d --keep-daily 30"
       # Không sao lưu file tải lại được (*.jar), log, cache, và các world cũ đã cất bằng ops/doi-map-banghoi.sh
       EXCLUDES: "*.jar,cache,logs,*.tmp,world-*"   # world-* = các world cũ đã cất (world_nether, world_the_end dùng dấu gạch dưới nên vẫn được sao lưu)
-      PAUSE_IF_NO_PLAYERS: "true"      # không ai vào kể từ lần trước thì bỏ qua, đỡ tốn ổ
+      PAUSE_IF_NO_PLAYERS: "false"     # 19/10: LUÔN sao lưu theo giờ (trước bật "true": không ai online là chờ mãi → mất cả ngày cấu hình). restic chỉ lưu phần đổi nên nhẹ
       INITIAL_DELAY: 5m
       TZ: Asia/Ho_Chi_Minh
     volumes:

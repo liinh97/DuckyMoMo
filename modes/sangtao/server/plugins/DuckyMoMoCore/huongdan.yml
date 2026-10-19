@@ -30,7 +30,7 @@ chapters:
     &0/login <mk>
   - |-
     &6&lChào mừng! (tiếp)
-    &0Mỗi lần vào đều phải &1/login&0 (máy tính).
+    &0Vào lại trong &l1 giờ&r&0 từ cùng mạng thì khỏi /login; quá 1 giờ hoặc đổi mạng phải /login lại.
     &0Sai mật khẩu 3 lần: gõ &1/captcha <mã>&0 theo mã hiện trong chat. Sai 10 lần: chờ 30 phút.
   - |-
     &6&lMật khẩu
@@ -752,7 +752,7 @@ chapters:
   - |-
     &6&lTRANG WEB
     &0Xem rank, tiền, giờ chơi, cấp, kỹ năng, cốt truyện, lệnh của bạn trên web.
-    &0Gõ &1/web&0 lấy mã 6 số (5 phút), vào web bấm &lĐăng nhập&r&0.
+    &0Gõ &1/web&0 lấy mã 6 số (1 giờ), vào web bấm &lĐăng nhập&r&0.
     &4Đừng đưa mã cho ai, admin không hỏi mã.
   - |-
     &1&lVOICE CHAT

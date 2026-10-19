@@ -70,3 +70,7 @@ donate-qr:
   enabled: true
   minutes: 10
   web: "https://app.goc6.io.vn/mc/web/taikhoan.html"
+
+# Đăng nhập trang web bằng mã /web (19/10: 5 → 60 phút). Sửa ở Cài đặt › Đăng nhập trang web (ghi cả 4 server).
+web-login:
+  code-minutes: 60

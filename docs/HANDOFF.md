@@ -386,7 +386,8 @@
 - ĐÃ SỬA:
   1. Web (site/app.py): IP lấy từ CF-Connecting-IP. Trước đó qua Cloudflare→tunnel→Traefik mọi người chung IP 172.20.0.1 → 20 lần sai mã
      /web là KHOÁ ĐĂNG NHẬP WEB CỦA CẢ SERVER 15 phút, nhật ký mất IP thật. Đã thử: log ghi IP thật. Lỗi 500 không trả chi tiết cho trình duyệt nữa.
-  2. AuthMe (lobby, repo + data + settings.yml authme_session_on false): TẮT phiên (CGNAT 4G/quán net chung IP + offline mode → gõ đúng tên
+  2. (Sau đó người dùng chốt: GIỮ phiên nhưng 60 phút thay vì 1 ngày; mã /web 60 phút thay vì 5 — Cài đặt › Đăng nhập trang web, web-login.code-minutes
+     ở cả 4 server.) AuthMe (lobby, repo + data + settings.yml): ban đầu TẮT phiên (CGNAT 4G/quán net chung IP + offline mode → gõ đúng tên
      admin là vào thẳng), captcha sau 3 lần sai, cấm IP 30 phút sau 10 lần sai, danh sách mật khẩu cấm dài hơn. Đã `authme reload`.
   3. Bỏ OP của Linh ở sảnh (thừa: Linh có nhóm admin `*` toàn mạng; OP + phiên = chiếm được là toàn quyền).
   4. Sáng Tạo: ThaiAp lọc InventoryCreativeEvent (chỉ số tự chế, phù phép vượt cấp, trứng có dữ liệu sinh vật, thuốc tự chế, unbreakable,
@@ -401,7 +402,9 @@
 - CÒN LẠI (chưa làm, cần người dùng): (a) Trạm 6 Traefik `--api.insecure=true` + cổng 8091 mở 0.0.0.0 trên máy (dự án tram6, chỉ trong LAN nếu
   router không mở cổng) → nên tắt khi live; (b) PLAYIT_SECRET_KEY còn trong .env (playit đã bỏ) → thu hồi trên trang playit rồi xoá;
   (c) proxySharedSecret AuthMe đã hiện trong log phiên Claude (chỉ lưu ở máy) → muốn chắc thì đổi AUTHME_SECRET (khởi động lại proxy+lobby+relay);
-  (d) chưa có sao lưu ngoài máy (restic chỉ ở máy nhà) → bị phá máy/ổ là mất; (e) đo lag thật cần spark profiler LÚC ĐÔNG NGƯỜI
+  (d) SAO LƯU: phát hiện PAUSE_IF_NO_PLAYERS "true" → server vắng là KHÔNG sao lưu (bản mới nhất 07:06, cả chiều 19/10 chưa lưu) → đổi "false" ở
+  mọi compose, đã `backup now` cả 4 server 21:57. Ngoài máy: dịch vụ backup-offsite (rclone, profile offsite, infra/backup-offsite.sh) + ./ops/saoluu-ngoai.sh;
+  CHƯA cấu hình tài khoản đám mây (chờ người dùng chọn: Google Drive / OneDrive / B2 / MEGA); (e) đo lag thật cần spark profiler LÚC ĐÔNG NGƯỜI
   (`/spark profiler start --timeout 300`, link tải lên spark.lucko.me — hỏi người dùng trước khi gửi); (f) tối ưu mạnh hơn nhưng đổi lối chơi
   (entity-activation-range, villager không hoạt động, despawn gần hơn, giảm view-distance) chờ quyết; (g) khoá 5 lần sai theo TÊN trên web cho phép
   người khác cố tình khoá web của một người 15 phút (chấp nhận).

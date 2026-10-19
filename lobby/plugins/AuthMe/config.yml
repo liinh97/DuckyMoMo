@@ -22,11 +22,11 @@ settings:
     enablePremium: true
     # Phiên đăng nhập (19/10): đăng nhập rồi thì vào lại từ CÙNG IP trong timeout phút khỏi gõ mật khẩu; đổi IP là phải đăng nhập lại.
     # Chỉ an toàn khi server thấy IP thật (cổng VPS, playit đã bỏ). Sửa ở Cài đặt › Toàn mạng › Đăng nhập.
-    # TẮT 19/10 (rà bảo mật): 4G Viettel/Vina, quán net dùng chung IP công khai (CGNAT) → người khác cùng IP gõ đúng TÊN trong thời hạn
-    # là vào thẳng không cần mật khẩu (cả tài khoản admin). Muốn bật lại thì để timeout ngắn (≤ 10 phút).
+    # 19/10 (rà bảo mật): 4G Viettel/Vina, quán net dùng chung IP công khai (CGNAT) → người khác cùng IP gõ đúng TÊN trong thời hạn
+    # là vào thẳng không cần mật khẩu (cả tài khoản admin). Chủ server chốt: giữ phiên nhưng chỉ 60 phút (trước là 1440 = 1 ngày).
     sessions:
-        enabled: false
-        timeout: 1440
+        enabled: true
+        timeout: 60
     restrictions:
         # 0 = không giới hạn. Chơi trong mạng nhà nhiều người chung 1 IP,
         # để 1 như mặc định thì người thứ hai không đăng ký được. Xem lại khi mở công khai.

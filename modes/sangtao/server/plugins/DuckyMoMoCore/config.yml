@@ -67,3 +67,7 @@ thai-ap:
     ticket-file: /banghoi-dmm/sangtao-ve.yml   # vé do cổng ở Bang Hội Chiến ghi
     home-server: banghoi-1                     # /thaiap ve
     max-entities: 40                           # tối đa sinh vật (không tính người) trong bán kính 48 khối
+
+# Đăng nhập trang web bằng mã /web (19/10: 5 → 60 phút). Sửa ở Cài đặt › Đăng nhập trang web (ghi cả 4 server).
+web-login:
+  code-minutes: 60

@@ -1168,3 +1168,7 @@ arena:
 
 # Tiêu đề khung nhắc lúc vào game (gom hướng dẫn, mùa, công thành, điểm danh… thành một khung)
 join-notes-title: "Bang Hội Chiến"
+
+# Đăng nhập trang web bằng mã /web (19/10: 5 → 60 phút). Sửa ở Cài đặt › Đăng nhập trang web (ghi cả 4 server).
+web-login:
+  code-minutes: 60

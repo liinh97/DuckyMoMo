@@ -38,6 +38,23 @@ services:
     environment:
       REDIS_PASSWORD: ${REDIS_PASSWORD}
 
+  # Sao lưu NGOÀI MÁY (19/10): mỗi OFFSITE_INTERVAL đẩy cả BACKUP_DIR (kho restic đã mã hoá + dump DB) lên đám mây bằng rclone.
+  # Chỉ chạy với --profile offsite, sau khi cấu hình bằng ./ops/saoluu-ngoai.sh (rclone.conf ở data/rclone, không commit).
+  backup-offsite:
+    image: rclone/rclone:1.68.2
+    profiles: ["offsite"]
+    restart: unless-stopped
+    entrypoint: ["sh", "/infra/backup-offsite.sh"]
+    environment:
+      OFFSITE_REMOTE: ${OFFSITE_REMOTE:-}            # vd gdrive:DuckyMoMo-saoluu
+      OFFSITE_INTERVAL: ${OFFSITE_INTERVAL:-24h}
+      OFFSITE_KEEP_DAYS: ${OFFSITE_KEEP_DAYS:-30}    # file bị xoá/ghi đè ở máy nhà còn giữ trên mây ngần này ngày
+      TZ: Asia/Ho_Chi_Minh
+    volumes:
+      - ./:/infra:ro
+      - ${BACKUP_DIR:-../backups}:/backups
+      - ../data/rclone:/config/rclone
+
   # Sao lưu toàn bộ MariaDB theo chu kỳ (script: infra/backup-db.sh). File: backups/db/db-*.sql.gz
   backup-db:
     image: mariadb:11.4

@@ -244,11 +244,26 @@ header.nav .wrap{max-width:none}
 @media (max-width:1760px){.links{gap:0}.links a{padding:6px 6px;font-size:.84rem}}
 @media (max-width:1600px){header.nav .wrap{padding:0 20px;gap:8px}.nav-login,.nav-cta{padding:7px 10px;font-size:.85rem}}
 @media (max-width:480px){.brand span{display:none}}
-@media (max-width:1480px){
+html{scroll-padding-top:70px}   /* bấm mục trên menu: đầu phần không bị thanh menu dính trên che */
+/* menu gom nhóm (20/10): 5 mục, nhóm mở menu con khi rê chuột / bấm */
+.links{overflow:visible}
+.dd{position:relative}
+.dd-btn{background:none;border:0;color:var(--muted);padding:6px 10px;border-radius:8px;font:inherit;font-size:.9rem;font-weight:600;white-space:nowrap;cursor:pointer}
+.dd-btn:hover,.dd.open .dd-btn{color:var(--text);background:var(--card)}
+.dd-btn .caret{font-size:.75em;opacity:.7}
+.dd-menu{display:none;position:absolute;top:calc(100% + 6px);left:0;min-width:230px;flex-direction:column;background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:6px;box-shadow:0 14px 40px rgba(0,0,0,.45)}
+.dd-menu::before{content:"";position:absolute;top:-8px;left:0;right:0;height:8px}
+.dd-menu a{padding:9px 12px!important;font-size:.9rem!important;border-radius:8px}
+.dd:hover .dd-menu,.dd.open .dd-menu{display:flex}
+@media (max-width:900px){
   .links{display:none;position:absolute;top:64px;left:0;right:0;flex-direction:column;background:var(--bg2);border-bottom:1px solid var(--line);padding:8px clamp(16px,4vw,56px) 14px;max-height:calc(100svh - 64px);overflow-y:auto}
   .links.open{display:flex}
   .links a{padding:10px 8px;font-size:.95rem}
   .menu-btn{display:block}
+  .dd-btn{width:100%;text-align:left;padding:12px 8px 4px;color:var(--gold);font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;cursor:default;background:none!important}
+  .dd-btn .caret{display:none}
+  .dd-menu{display:flex;position:static;box-shadow:none;border:0;background:none;padding:0 0 4px 6px;min-width:0}
+  .dd-menu::before{display:none}
 }
 
 .hero{min-height:calc(100svh - 64px);display:flex;flex-direction:column;justify-content:center;padding:56px 0 40px}
@@ -356,21 +371,34 @@ footer .fbrand img{width:44px}
     <a class="brand" href="#top"><img src="logo.png" alt="Logo DuckyMoMo"><span>DuckyMoMo</span></a>
     <nav class="links" id="links">
       <a href="#vao">Cách vào</a>
-      <a href="#banghoi">Bang Hội Chiến</a>
-      <a href="#congthanh">Công thành</a>
-      <a href="#hoabinh">Hoà Bình</a>
-      <a href="#muavu">Mùa &amp; câu cá</a>
-      <a href="#hangngay">Hằng ngày</a>
-      <a href="#boss">Boss</a>
-      <a href="#pet">Pet</a>
-      <a href="#dautruong">Đấu Trường</a>
-      <a href="#bantron">Hội Bàn Tròn</a>
-      <a href="#xephang">Xếp hạng</a>
-      <a href="#vinhdanh">Vinh danh</a>
-      <a href="#vote">Vote</a>
-      <a href="#lenh">Lệnh</a>
-      <a href="#luat">Luật</a>
-      <a href="#hoidap">Hỏi đáp</a>
+      <div class="dd"><button class="dd-btn" type="button" aria-haspopup="true">Bang Hội Chiến <span class="caret">▾</span></button>
+        <div class="dd-menu">
+          <a href="#banghoi">⚔️ Tổng quan &amp; danh phận</a>
+          <a href="#congthanh">🏰 Công thành</a>
+          <a href="#hoabinh">🕊️ Liên minh Hoà Bình</a>
+          <a href="#bantron">⚖️ Hội Bàn Tròn</a>
+        </div></div>
+      <div class="dd"><button class="dd-btn" type="button" aria-haspopup="true">Chơi gì <span class="caret">▾</span></button>
+        <div class="dd-menu">
+          <a href="#hangngay">🎁 Hằng ngày &amp; kinh tế</a>
+          <a href="#muavu">🎣 Mùa &amp; câu cá</a>
+          <a href="#boss">🐉 Dungeon &amp; Boss</a>
+          <a href="#pet">🐾 Pet chiến đấu</a>
+          <a href="#dautruong">🏟️ Đấu Trường</a>
+        </div></div>
+      <div class="dd"><button class="dd-btn" type="button" aria-haspopup="true">Xếp hạng <span class="caret">▾</span></button>
+        <div class="dd-menu">
+          <a href="#xephang">🏆 Bảng xếp hạng</a>
+          <a href="#vinhdanh">🗿 Quảng trường Vinh danh</a>
+          <a href="#vote">🗳️ Vote nhận xu</a>
+        </div></div>
+      <div class="dd"><button class="dd-btn" type="button" aria-haspopup="true">Hỗ trợ <span class="caret">▾</span></button>
+        <div class="dd-menu">
+          <a href="#lenh">⌨️ Lệnh hay dùng</a>
+          <a href="#luat">📜 Luật server</a>
+          <a href="#hoidap">❓ Hỏi đáp</a>
+          <a href="#ungho">💛 Ủng hộ server</a>
+        </div></div>
     </nav>
     <div class="nav-right">
       <a class="nav-login" id="navLogin" href="taikhoan.html" hidden>Đăng nhập</a>
@@ -1068,7 +1096,12 @@ const MC = {"&0":"#555","&1":"#3b5bdb","&2":"#2f9e44","&3":"#1098ad","&4":"#c92a
 
 // menu, tab, copy
 $("#menuBtn").onclick = () => $("#links").classList.toggle("open");
-document.querySelectorAll("#links a").forEach(a => a.onclick = () => $("#links").classList.remove("open"));
+const closeDd = except => document.querySelectorAll(".dd.open").forEach(d => d !== except && d.classList.remove("open"));
+document.querySelectorAll(".dd-btn").forEach(b => b.onclick = e => {   // điện thoại / màn hình cảm ứng: bấm để mở menu con
+  e.stopPropagation(); const d = b.parentElement; closeDd(d); d.classList.toggle("open");
+});
+document.addEventListener("click", () => closeDd());
+document.querySelectorAll("#links a").forEach(a => a.onclick = () => { $("#links").classList.remove("open"); closeDd(); });
 document.querySelectorAll(".tab").forEach(t => t.onclick = () => {
   document.querySelectorAll(".tab").forEach(x => x.classList.toggle("on", x === t));
   document.querySelectorAll(".pane").forEach(p => p.classList.toggle("on", p.id === t.dataset.pane));

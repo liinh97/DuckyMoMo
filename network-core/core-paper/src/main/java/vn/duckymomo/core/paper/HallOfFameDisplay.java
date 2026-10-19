@@ -390,7 +390,7 @@ final class HallOfFameDisplay {
             s.sendMessage(c("&eMùa " + e.getKey() + ("tam".equals(str(e.getValue(), "trang_thai")) ? " &7(đang diễn ra)" : "") + "&7: Bá Chủ &f"
                     + (ns.isEmpty() ? "chưa có" : str(ns.get(0).getAsJsonObject(), "ten"))));
         }
-        s.sendMessage(c("&7Tới quảng trường: &f/vinhdanh tp" + (admin ? " &8· Admin: /vinhdanh dat <mùa|moinhat> <" + String.join("|", CATS)
+        s.sendMessage(c("&7Tới quảng trường: &f/danhvong tp" + (admin ? " &8· Admin: /vinhdanh dat <mùa|moinhat> <" + String.join("|", CATS)
                 + "> · xoa · lammoi" : "")));
         return true;
     }

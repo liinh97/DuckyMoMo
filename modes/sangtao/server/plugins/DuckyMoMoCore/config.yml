@@ -1,0 +1,69 @@
+# DuckyMoMoCore ở Thái Ấp Sáng Tạo (sangtao-1). Chỉ bật: chat (định dạng + lọc), rank (prefix), cẩm nang, Thái Ấp ở chế độ bản sao.
+# thai-ap.sizes / cell / world PHẢI giống Bang Hội Chiến (modes/banghoi/server/plugins/DuckyMoMoCore/config.yml) để mảnh đất trùng chỗ.
+chat-format:
+  enabled: true
+chat-filter:
+  enabled: true
+  words-accented: [lồn, cặc, buồi, đéo, đĩ, đụ, đụ má, đụ mẹ, mẹ mày, má mày, con mẹ mày, óc chó, chó má, thằng chó, con chó,
+                   ngu như chó, lìn, cứt]
+  words-plain: [dm, dmm, dmmm, dcm, dkm, dcmm, dcmn, dit, dit me, dit ma, djt, vcl, vkl, vcc, vklm, vl, vloz, vlon, clm, clmm, cmm,
+                cmn, cmnr, ccmm, dmcs, dmvl, cl, cc, loz, l0n, lon me, cak, cac lon, du ma, du me, ditconme, dcmvl, dmml, fuck,
+                fucking, shit, bitch, dick, pussy, motherfucker]
+  min-interval-seconds: 1.5
+  repeat-seconds: 30
+  caps-ratio: 0.7
+  too-fast-message: "&cChat chậm lại một chút!"
+  repeat-message: "&cĐừng gửi lặp lại cùng một câu!"
+donate-ranks:
+  enabled: true
+  skin-sync: false         # đồng bộ quyền skin theo rank vào LuckPerms (chỉ BẬT ở một server: sảnh)
+  how-to-buy: "&7Mua rank: nhắn admin qua Discord/Zalo, chuyển khoản ghi &fTÊN NHÂN VẬT + GÓI&7. Admin cấp trong ngày."
+  join-message: "&8[&a+&8] {prefix}&f{player}"
+  quit-message: "&8[&c-&8] {prefix}&f{player}"
+  rank-join-message: "&e✦ {tiercolor}{tier} &f{player} &evừa giá lâm!"
+  tiers:
+    - group: namtuoc
+      name: Nam Tước
+      color: "&a"
+      perks: [prefix, chat màu, /hat, chào khi vào server, /cuahang khi ở kinh đô]
+      prices: [1 tháng 20k, 3 tháng 50k, 6 tháng 90k, 1 năm 160k]
+      skins: []          # skin độc quyền (tên custom skin SkinsRestorer: /sr createcustom <tên> <link>), bậc cao kế thừa bậc thấp
+    - group: tutuoc
+      name: Tử Tước
+      color: "&b"
+      perks: [/nick, 1 hiệu ứng hạt (/pp)]
+      prices: [1 tháng 40k, 3 tháng 100k, 6 tháng 180k, 1 năm 320k]
+      skins: []          # skin độc quyền (tên custom skin SkinsRestorer: /sr createcustom <tên> <link>), bậc cao kế thừa bậc thấp
+    - group: batuoc
+      name: Bá Tước
+      color: "&9"
+      perks: [nick có màu, 2 hiệu ứng hạt, 1 pet (/pet)]
+      prices: [1 tháng 70k, 3 tháng 180k, 6 tháng 320k, 1 năm 560k]
+      skins: []          # skin độc quyền (tên custom skin SkinsRestorer: /sr createcustom <tên> <link>), bậc cao kế thừa bậc thấp
+    - group: hautuoc
+      name: Hầu Tước
+      color: "&d"
+      perks: [chat đậm/nghiêng, 3 hiệu ứng hạt, pet hiếm]
+      prices: [1 tháng 100k, 3 tháng 260k, 6 tháng 460k, 1 năm 800k]
+      skins: []          # skin độc quyền (tên custom skin SkinsRestorer: /sr createcustom <tên> <link>), bậc cao kế thừa bậc thấp
+    - group: congtuoc
+      name: Công Tước
+      color: "&6"
+      perks: [chat/nick màu tuỳ chọn (hex), 6 hiệu ứng hạt, mọi pet, chuông khi vào server]
+      prices: [1 tháng 150k, 3 tháng 390k, 6 tháng 690k, 1 năm 1.200k]
+      skins: []          # skin độc quyền (tên custom skin SkinsRestorer: /sr createcustom <tên> <link>), bậc cao kế thừa bậc thấp
+
+# Cẩm nang trong game (/huongdan): nội dung plugins/DuckyMoMoCore/huongdan.yml (bản gốc modes/_network/huongdan.yml, chép bằng ./ops/huongdan.sh)
+guide:
+  default-chapter: khampha
+  join-hint: "&6✦ &fGõ &e/thaiap &fđể xem lệnh Thái Ấp Sáng Tạo, &e/huongdan &fđể xem cẩm nang."
+thai-ap:
+  enabled: true
+  world: thaiap
+  sizes: [50, 70, 90]
+  cell: 110
+  sang-tao:
+    mirror-file: /banghoi-dmm/thaiap.yml       # đọc chủ đất của Bang Hội Chiến (mount chỉ đọc), đọc lại mỗi 30 giây
+    ticket-file: /banghoi-dmm/sangtao-ve.yml   # vé do cổng ở Bang Hội Chiến ghi
+    home-server: banghoi-1                     # /thaiap ve
+    max-entities: 40                           # tối đa sinh vật (không tính người) trong bán kính 48 khối

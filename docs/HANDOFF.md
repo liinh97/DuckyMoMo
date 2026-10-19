@@ -382,6 +382,20 @@
   vé vận mệnh rơi hiếm, tung xúc xắc lúc vào), (4) mua vé cá nhân bằng xu (lượt / 7 ngày), (5) mở chung toàn server bằng quỹ như khai hoang.
   Điều kiện phụ: cấp pet, thành tích, nhóm 2–4 người, cuối tuần, chỉ nước Bá chủ. Chống lạm phát: lượt/ngày, lockout boss của EliteMobs.
 
+### 19/10 tối: Thái Ấp Sáng Tạo — server sangtao-1, chỉ vào qua cổng trong Thái Ấp (ĐÃ TRIỂN KHAI 16:38, CHƯA THỬ BẰNG NGƯỜI)
+- Người dùng: Thái Ấp cho creative để giải trí → mình khuyên KHÔNG bật creative trong thế giới sinh tồn (chung túi đồ/rương ender/kinh tế = đường
+  đưa đồ ra), làm server riêng. Người dùng chốt: "vào thái ấp thì sẽ cổng chuyển tới server sáng tạo, chỉ ở thái ấp mới có".
+- modes/sangtao (compose include, backup-sangtao-1, Paper 2 GB, creative + force-gamemode, không Vault/Essentials/WorldEdit), mode.yml status closed
+  = ẩn khỏi menu sảnh. velocity.toml thêm sangtao-1 (repo + data/proxy). Panel: GAME_SERVERS/SRV_VI/… thêm sangtao-1. ops: build-core, huongdan, tu-sua.
+- DuckyMoMoCore ThaiAp: thai-ap.sang-tao ở Bang Hội Chiến → cổng tự dựng (0,64,6) thế giới thaiap, /thaiap sangtao, /thaiap congsangtao (admin),
+  vé sangtao-ve.yml; ở sangtao-1 có sang-tao.mirror-file → chế độ bản sao (đọc thaiap.yml qua mount :ro /banghoi-dmm, không ghi, kiểm vé lúc vào,
+  không vé → về sảnh; chặn ném đồ, kích nổ, wither/rồng, giới hạn 40 sinh vật/48 khối; /thaiap ve). Đã khởi động lại banghoi-1 + proxy + relay
+  (không ai online), kiểm: cổng có khối + chữ nổi, sangtao-1 "BẢN SAO SÁNG TẠO", panel thấy sangtao-1.
+- Chưa chắc: Bedrock qua cổng (BungeeCord Connect) chạy đúng không; LuckPerms prefix ở sangtao-1; 4 server cùng DuckyMoMoCore mới chỉ khởi động lại
+  banghoi-1 + sangtao-1 (lobby/practice vẫn chạy jar cũ tới lần khởi động lại sau — không ảnh hưởng). Để sau: WorldEdit giới hạn, "bản vẽ".
+- **GẤP (thấy trong log proxy 19/10):** Geyser 2.12.0 cảnh báo "NetherNet support is NOT enabled… Players will not be able to connect starting
+  October 27th" → người chơi Bedrock (điện thoại) sẽ KHÔNG vào được từ 27/10 nếu chưa bật NetherNet (geysermc.org/blog/preparing-for-nethernet). Chưa làm.
+
 ### 19/10 tối: Rà soát toàn bộ + cẩm nang chi tiết (người dùng: "check lại toàn bộ tính năng rồi bổ sung, chỉnh sửa web, cẩm nang hướng dẫn thật chi tiết cho admin lẫn người chơi", "lệnh có ví dụ")
 - Cẩm nang trong game (modes/_network/huongdan.yml, đã ./ops/huongdan.sh): viết lại thành 11 chương (mục lục chỉ 1 trang, tối đa ~11):
   batdau, luat, banghoi (cơ bản), thitran (thị trấn, quốc gia, hoà bình, Hội đồng, Tổ chức, /quangcao, /sukien, Bàn Tròn, Kiến Trúc Sư), congthanh,

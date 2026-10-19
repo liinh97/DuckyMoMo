@@ -1,0 +1,13 @@
+id: sangtao
+display_name: "Thái Ấp Sáng Tạo"
+description: "Bản sao Thái Ấp ở chế độ sáng tạo: chỉ vào qua cổng trong Thái Ấp (Bang Hội Chiến), túi đồ riêng"
+icon: "minecraft:amethyst_block"
+status: closed          # "closed" = ẩn khỏi menu chọn chế độ ở sảnh (GameMode.hidden). Server vẫn chạy: chỉ vào qua cổng ở Thái Ấp
+platform: paper
+minecraft_version: "26.2"
+clients: [java, bedrock]
+servers:
+  - name: sangtao-1
+    address: sangtao-1:25565
+economy: none
+cosmetics: [chat_tag, name_color]

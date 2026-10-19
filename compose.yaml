@@ -13,3 +13,4 @@ include:
   - panel/compose.yaml          # Trang Cài đặt: chỉnh setting các chế độ, http://localhost:8889
   - site/compose.yaml           # Trang giới thiệu công khai cho người chơi, http://localhost:8892
   - modes/practice/compose.yaml
+  - modes/sangtao/compose.yaml  # Thái Ấp Sáng Tạo (ẩn khỏi menu, vào qua cổng trong Thái Ấp)

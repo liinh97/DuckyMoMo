@@ -30,6 +30,8 @@ enable-player-address-logging = true
 lobby = "lobby:25565"
 banghoi-1 = "banghoi-1:25565"
 practice-1 = "practice-1:25565"
+# Thái Ấp Sáng Tạo: chỉ vào qua cổng trong Thái Ấp (DuckyMoMoCore kiểm vé, vào bằng /server thì bị đưa về sảnh)
+sangtao-1 = "sangtao-1:25565"
 # Bật khi chạy chế độ Pokémon (docker compose --profile pokemon up -d):
 # pokemon-1 = "pokemon-1:25565"
 

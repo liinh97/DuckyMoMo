@@ -18,4 +18,5 @@ docker run --rm \
 cp network-core/core-paper/build/libs/DuckyMoMoCore.jar lobby/plugins/DuckyMoMoCore.jar
 cp network-core/core-paper/build/libs/DuckyMoMoCore.jar modes/banghoi/server/plugins/DuckyMoMoCore.jar
 cp network-core/core-paper/build/libs/DuckyMoMoCore.jar modes/practice/server/plugins/DuckyMoMoCore.jar
-echo "Xong: lobby, banghoi, practice. Áp dụng:  docker compose restart lobby banghoi-1 practice-1"
+cp network-core/core-paper/build/libs/DuckyMoMoCore.jar modes/sangtao/server/plugins/DuckyMoMoCore.jar
+echo "Xong: lobby, banghoi, practice, sangtao. Áp dụng (kiểm ai online trước):  docker compose restart lobby banghoi-1 practice-1 sangtao-1"

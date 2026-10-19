@@ -203,6 +203,15 @@ Triển khai: kiểm tra không ai online (lệnh riêng) → `docker compose up
 - [ ] Web: thanh lịch mùa 13 ô; mục "Lệnh hay dùng" trên điện thoại; thẻ Tổ chức có "Sự kiện sắp diễn ra" (thử `/sukien tao 5 Thử` khi có tổ chức có giấy phép).
 - [ ] (HOÃN, người dùng 19/10: "từ từ bổ sung sau") Voice chat: máy tính cài mod Simple Voice Chat, vào mc.goc6.io.vn, phím V báo đã kết nối → sửa camnang mục Simple Voice Chat (bỏ "CHƯA BẬT").
 
+## 4n. Thái Ấp Sáng Tạo (sangtao-1) — 19/10, đã triển khai, CHƯA thử bằng người
+- [ ] Có Thái Ấp: `/thaiap sangtao` → đứng trước cổng tím; bước vào → sang sangtao-1, chế độ sáng tạo, đứng đúng mảnh đất của mình (cùng cỡ).
+- [ ] Người được mời (`/thaiap moi`) qua cổng → vào mảnh đất của chủ, xây được; người lạ bước vào cổng → bị chặn, đẩy ra trước cổng.
+- [ ] `/server sangtao-1` không qua cổng → báo và về sảnh. Sảnh: menu la bàn KHÔNG có Thái Ấp Sáng Tạo.
+- [ ] Ở sangtao-1: không phá được đất người khác, không ném đồ, TNT không nổ, trứng sinh vật dừng ở 40 con; chat có prefix rank.
+- [ ] `/thaiap ve` → về Bang Hội Chiến, đứng trước cổng (không bị chuyển ngược), túi đồ sinh tồn còn nguyên, không có đồ sáng tạo.
+- [ ] Điện thoại (Bedrock) qua cổng và về được.
+- [ ] Mở rộng / đặt tên ở Bang Hội Chiến → bên sáng tạo đổi theo trong 30 giây.
+
 ## 5. Quảng trường Vinh danh (sảnh)
 - [ ] (CHƯA CẦN, làm khi gần mở server) Chọn chỗ trống ở sảnh (map sakura). Đứng, quay mặt về phía người xem: `/vinhdanh dat moinhat tieude`, rồi `bachu`, `chienthan`, `phuho`,
       `kientrucsu`, `dautruong`, `pet` ở các chỗ khác. Bảng chữ nổi + đầu người chơi đúng hướng, không đè nhau.

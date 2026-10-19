@@ -28,7 +28,7 @@ trap 'rm -f "$PIDF"' EXIT
 
 log() { echo "$(date '+%F %T') $*" | tee -a "$LOG"; }
 WIN_CURL=/mnt/c/Windows/System32/curl.exe
-MC_SERVERS="lobby banghoi-1 practice-1 pokemon-1"
+MC_SERVERS="lobby banghoi-1 practice-1 sangtao-1 pokemon-1"
 
 log "===== Bắt đầu$([ $CHECK_ONLY = 1 ] && echo ' (chỉ kiểm tra)') ====="
 

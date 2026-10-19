@@ -1,0 +1,85 @@
+# Thái Ấp Sáng Tạo (19/10): server sáng tạo riêng, KHÔNG có trong menu sảnh. Lối vào duy nhất: cổng trong thế giới Thái Ấp của Bang Hội Chiến
+# (DuckyMoMoCore ThaiAp, thai-ap.sang-tao). Server này chạy DuckyMoMoCore ở "chế độ bản sao": đọc thaiap.yml của Bang Hội Chiến (mount chỉ đọc)
+# nên mỗi người có mảnh đất cùng số, cùng cỡ, cùng người được mời. Túi đồ, tiền tách hẳn Bang Hội Chiến (không có Vault/kinh tế ở đây).
+# Vào bằng /server mà không có vé từ cổng → bị đưa về sảnh.
+services:
+  sangtao-1:
+    image: itzg/minecraft-server
+    restart: unless-stopped
+    stop_grace_period: 1m
+    environment:
+      EULA: "TRUE"
+      TYPE: PAPER
+      VERSION: ${MC_VERSION:-26.2}
+      INIT_MEMORY: 512M
+      MAX_MEMORY: 2G              # đất phẳng, ít người; đông thì tăng (và mem_limit)
+      MAX_PLAYERS: 100
+      LEVEL_TYPE: minecraft:flat  # thế giới chính chỉ là chỗ đứng tạm; người chơi được đưa sang thế giới "thaiap" (plugin tự tạo)
+      GENERATE_STRUCTURES: "FALSE"
+      MODE: creative
+      FORCE_GAMEMODE: "TRUE"
+      DIFFICULTY: peaceful
+      SPAWN_MONSTERS: "FALSE"
+      SPAWN_ANIMALS: "FALSE"
+      SPAWN_NPCS: "FALSE"
+      ALLOW_NETHER: "FALSE"
+      PVP: "FALSE"
+      VIEW_DISTANCE: "8"
+      SIMULATION_DISTANCE: "4"
+      TZ: Asia/Ho_Chi_Minh
+      RCON_PASSWORD: ${RCON_PASSWORD:?Chưa đặt RCON_PASSWORD trong .env (chạy lại ./ops/init.sh)}
+      ONLINE_MODE: "FALSE"
+      RESOURCE_PACK: ${FONT_PACK_URL:-}
+      RESOURCE_PACK_SHA1: ${FONT_PACK_SHA1:-}
+      RESOURCE_PACK_ENFORCE: "FALSE"
+      RESOURCE_PACK_PROMPT: '{"text":"Tải font tiếng Việt dễ đọc (khoảng 60 KB)? Bấm Có để chữ có dấu rõ hơn.","color":"gold"}'
+      # Lưu ý: dòng bắt đầu bằng # BÊN TRONG khối '|' không phải comment, image itzg sẽ đọc thành tên plugin.
+      MODRINTH_PROJECTS: |
+        luckperms
+        viaversion
+        viabackwards
+        viarewind
+      PLUGINS: |
+        https://download.geysermc.org/v2/projects/floodgate/versions/latest/builds/latest/downloads/spigot
+        https://cdn.modrinth.com/data/TsLS8Py5/versions/ziIzW16f/SkinsRestorer.jar
+      CFG_SERVER_NAME: sangtao-1
+      CFG_VELOCITY_SECRET: ${VELOCITY_SECRET}
+      CFG_DB_USER: ${DB_USER}
+      CFG_DB_PASSWORD: ${DB_PASSWORD}
+      CFG_REDIS_PASSWORD: ${REDIS_PASSWORD}
+    mem_limit: 3g
+    volumes:
+      - ../../data/sangtao-1:/data
+      - ../../data/proxy/plugins/floodgate/key.pem:/run/floodgate/key.pem:ro   # khoá Floodgate chung với proxy
+      - ../../data/banghoi-1/plugins/DuckyMoMoCore:/banghoi-dmm:ro             # thaiap.yml (chủ đất) + sangtao-ve.yml (vé qua cổng)
+      - ./server/config:/config:ro
+      - ./server/plugins:/plugins:ro
+    depends_on:
+      mariadb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  # Sao lưu sangtao-1 (itzg/mc-backup + restic), như practice-1.
+  backup-sangtao-1:
+    image: itzg/mc-backup
+    restart: unless-stopped
+    environment:
+      RCON_HOST: sangtao-1
+      RCON_PASSWORD: ${RCON_PASSWORD}
+      BACKUP_NAME: sangtao-1
+      BACKUP_INTERVAL: ${BACKUP_INTERVAL:-6h}
+      BACKUP_METHOD: restic
+      RESTIC_REPOSITORY: /backups/restic
+      RESTIC_PASSWORD: ${RESTIC_PASSWORD:?Chưa đặt RESTIC_PASSWORD trong .env (chạy lại ./ops/init.sh)}
+      RESTIC_HOSTNAME: sangtao-1
+      PRUNE_RESTIC_RETENTION: "--keep-within ${BACKUP_KEEP_DAYS:-7}d --keep-daily 30"
+      EXCLUDES: "*.jar,cache,logs,*.tmp,world-*"
+      PAUSE_IF_NO_PLAYERS: "true"
+      INITIAL_DELAY: 5m
+      TZ: Asia/Ho_Chi_Minh
+    volumes:
+      - ../../data/sangtao-1:/data:ro
+      - ${BACKUP_DIR:-../../backups}/sangtao-1:/backups
+    depends_on:
+      - sangtao-1

@@ -598,6 +598,21 @@ chapters:
     &1/thaiap ghe <tên> &0tham quan
     &1/thaiap thich &0thích nơi đang đứng
     &1/thaiap top
+  - |-
+    &5&lTHÁI ẤP SÁNG TẠO
+    &0Bản sao mảnh đất của bạn ở &lchế độ sáng tạo&r&0: lấy khối thoải mái, bay, xây thử nhà trước khi xây thật.
+    &1/thaiap sangtao &0tới cổng tím, bước vào cổng để sang.
+    &0Cần có Thái Ấp hoặc được mời xây cùng.
+  - |-
+    &5&lSÁNG TẠO: lưu ý
+    &0Túi đồ bên đó &lriêng&r&0: đồ sáng tạo &4không mang về&0 Bang Hội Chiến.
+    &1/thaiap &0về mảnh đất
+    &1/thaiap ghe <tên> &0tham quan
+    &1/thaiap ve &0về Bang Hội Chiến
+  - |-
+    &5&lSÁNG TẠO: lưu ý (tiếp)
+    &0Không ném đồ, không nổ, tối đa 40 sinh vật quanh mình.
+    &0Mời/đuổi, mở rộng, đặt tên làm ở Bang Hội Chiến, bên sáng tạo tự cập nhật sau 30 giây.
 - id: pet
   name: Pet & Đấu Trường
   pages:

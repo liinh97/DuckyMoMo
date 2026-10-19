@@ -36,7 +36,7 @@ RCON_PORT = 25575
 PANEL_SITE_KEY = os.environ.get("PANEL_SITE_KEY", "")
 # Nhật ký đăng nhập web + mọi thao tác của staff đăng nhập bằng tài khoản game
 WEB_LOG_FILE = DATA_DIR / "panel" / "web-thaotac.jsonl"
-GAME_SERVERS = ["lobby", "banghoi-1", "practice-1"]
+GAME_SERVERS = ["lobby", "banghoi-1", "practice-1", "sangtao-1"]
 INDEX_HTML = (Path(__file__).parent / "index.html").read_text(encoding="utf-8")
 ACTIVITY_HTML = (Path(__file__).parent / "activity.html").read_text(encoding="utf-8")
 CAMNANG_HTML = (Path(__file__).parent / "camnang.html").read_text(encoding="utf-8")
@@ -54,18 +54,19 @@ STAFF_GROUPS = ["admin", "quanly", "mod", "helper", "builder", "default"]
 DONATE_GROUPS = ["congtuoc", "hautuoc", "batuoc", "tutuoc", "namtuoc"]
 PLAYER_RE = re.compile(r"^\.?[A-Za-z0-9_]{1,17}$")
 PERM_RE = re.compile(r"^[A-Za-z0-9_.*-]{1,120}$")
-SERVER_CTX = ["global", "lobby", "banghoi-1", "practice-1"]
+SERVER_CTX = ["global", "lobby", "banghoi-1", "practice-1", "sangtao-1"]
 QUYEN_FILE = MODES_DIR / "_network" / "quyen.yml"
 # Cẩm nang trong game (/huongdan): bản gốc + các bản chép (repo của từng server, data/ để có hiệu lực ngay)
 HUONGDAN_FILE = MODES_DIR / "_network" / "huongdan.yml"
 HUONGDAN_COPIES = [MODES_DIR / "banghoi/server/plugins/DuckyMoMoCore/huongdan.yml",
                    MODES_DIR / "practice/server/plugins/DuckyMoMoCore/huongdan.yml",
+                   MODES_DIR / "sangtao/server/plugins/DuckyMoMoCore/huongdan.yml",
                    Path("/repo/lobby-dmm/huongdan.yml")] + \
-                  [DATA_DIR / srv / "plugins/DuckyMoMoCore/huongdan.yml" for srv in ("lobby", "banghoi-1", "practice-1")]
+                  [DATA_DIR / srv / "plugins/DuckyMoMoCore/huongdan.yml" for srv in ("lobby", "banghoi-1", "practice-1", "sangtao-1")]
 ID_RE = re.compile(r"^[a-z0-9_-]{1,32}$")
 # Cẩm nang: nội dung ở modes/_network/camnang.yml (sửa không cần build lại); server quét plugin thật đang cài
 CAMNANG_FILE = MODES_DIR / "_network" / "camnang.yml"
-CAMNANG_SERVERS = ["proxy", "lobby", "banghoi-1", "practice-1", "pokemon-1"]
+CAMNANG_SERVERS = ["proxy", "lobby", "banghoi-1", "practice-1", "sangtao-1", "pokemon-1"]
 # Do service "activity" (dashboard/log-feed.sh, JSONL=…) ghi ra
 ACTIVITY_FILE = DATA_DIR / "activity" / "activity.jsonl"
 # Tin admin gửi từ trang Hoạt động: file riêng (activity.jsonl thuộc service activity, panel không ghi được), gộp khi đọc
@@ -681,7 +682,7 @@ def all_commands(doc):
     out = {}
     # lệnh đang chạy thật của từng plugin ở từng server (tên + tên gọi khác), để lọc lệnh ghi tay bên dưới
     active = {}
-    for srv in ("lobby", "banghoi-1", "practice-1"):
+    for srv in ("lobby", "banghoi-1", "practice-1", "sangtao-1"):
         f = DATA_DIR / srv / "plugins" / "DuckyMoMoCore" / "commands.json"
         if not f.exists():
             continue
@@ -889,7 +890,7 @@ def roles_json():
     return {"groups": out, "players": total, "catalog": groups, "servers": SERVER_CTX}
 
 
-SRV_VI = {"lobby": "Sảnh", "banghoi-1": "Bang Hội Chiến", "practice-1": "Practice"}
+SRV_VI = {"lobby": "Sảnh", "banghoi-1": "Bang Hội Chiến", "practice-1": "Practice", "sangtao-1": "Thái Ấp Sáng Tạo"}
 USAGE_VI = {"player": "người", "playername": "người", "players": "người", "target": "người", "targets": "người", "amount": "số", "message": "tin",
             "msg": "tin", "reason": "lý do", "world": "thế giới", "name": "tên", "kit": "kit", "kitname": "kit", "item": "đồ", "itemname": "đồ",
             "datediff": "thời gian", "duration": "thời gian", "time": "thời gian", "delay": "giây", "price": "giá", "text": "chữ", "mob": "quái",
@@ -1034,7 +1035,7 @@ STATE_REVOKE = {
     "essentials.speed": ["speed walk 1 {p}", "speed fly 1 {p}"],
     "essentials.gamemode": ["gamemode {mode} {p}"],
 }
-DEFAULT_MODE = {"lobby": "adventure", "banghoi-1": "survival", "practice-1": "adventure"}
+DEFAULT_MODE = {"lobby": "adventure", "banghoi-1": "survival", "practice-1": "adventure", "sangtao-1": "creative"}
 
 
 def perm_label(node):
@@ -1236,7 +1237,7 @@ def read_activity(params):
 # ---------------------------------------------------------------- gửi tin vào game (trang Hoạt động)
 
 # Server Paper nhận tin (proxy Velocity không có RCON). Server đang tắt thì bỏ qua, báo lại.
-SAY_SERVERS = {"lobby": "Sảnh", "banghoi-1": "Bang Hội Chiến", "practice-1": "Practice", "pokemon-1": "Pokémon"}
+SAY_SERVERS = {"lobby": "Sảnh", "banghoi-1": "Bang Hội Chiến", "practice-1": "Practice", "sangtao-1": "Thái Ấp Sáng Tạo", "pokemon-1": "Pokémon"}
 SAY_KINDS = {"chat": "Chat admin", "broadcast": "Thông báo", "title": "Thông báo giữa màn hình"}
 
 

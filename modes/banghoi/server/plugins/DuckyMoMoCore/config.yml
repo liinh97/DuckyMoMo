@@ -831,6 +831,12 @@ thai-ap:
   cell: 110               # khoảng cách tâm các mảnh (phần thừa là đường đi chung)
   max-trusted: 5          # số người được mời cùng xây
   kitchen-bonus: 50       # % kéo dài hiệu ứng món /nauan nấu trong Thái Ấp của mình
+  # Thái Ấp Sáng Tạo (19/10): cổng ở chỗ xuất hiện của thế giới Thái Ấp (admin dời: /thaiap congsangtao) chuyển sang server sáng tạo riêng.
+  # Chỉ ai có Thái Ấp hoặc được mời xây cùng mới qua được; vé ghi ở plugins/DuckyMoMoCore/sangtao-ve.yml (server sangtao-1 đọc qua mount chỉ đọc).
+  sang-tao:
+    enabled: true
+    server: sangtao-1        # tên server trong velocity.toml
+    ticket-seconds: 60       # vé có hạn: không vào kịp thì bước lại vào cổng
 
 # Lính đánh thuê (/linhdanhthue): người không thuộc nước nào đăng ký kèm giá, vua/tướng thuê bằng ngân khố nước (Trang Cài đặt > Chiến tranh)
 mercenary:

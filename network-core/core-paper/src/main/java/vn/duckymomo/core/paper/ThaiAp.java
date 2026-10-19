@@ -19,6 +19,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.GameRule;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
@@ -48,6 +49,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.generator.BiomeProvider;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.generator.WorldInfo;
+import org.bukkit.persistence.PersistentDataType;
 
 /**
  * Thái Ấp (/thaiap, Bang Hội Chiến): đất riêng mua bằng xu trong một thế giới phẳng riêng (world, mặc định "thaiap"), cho người thích
@@ -58,6 +60,15 @@ import org.bukkit.generator.WorldInfo;
  *  - max-trusted: số người được mời cùng xây.
  * Lệnh: mua, morong, moi/duoi <người>, ghe <người>, thich, top, ten <tên>, datspawn, (không tham số) = về Thái Ấp của mình.
  * Lưu: thaiap.yml (dat.<uuid>{so,cap,ten,tin[],thich[],spawn}); ghi thaiap.json cho web (top thích).
+ *
+ * Thái Ấp Sáng Tạo (thai-ap.sang-tao, 19/10): server riêng sangtao-1 chế độ sáng tạo, CHỈ vào được qua cổng trong thế giới Thái Ấp.
+ *  - Bang Hội Chiến: cổng (khung thạch anh tím, hạt tím, chữ nổi) ở chỗ xuất hiện của thế giới Thái Ấp (tự dựng; admin dời: /thaiap congsangtao).
+ *    Bước vào: phải có Thái Ấp hoặc được mời xây cùng → ghi vé sangtao-ve.yml (uuid: hạn ms, ticket-seconds) rồi chuyển server (BungeeCord Connect).
+ *    /thaiap sangtao: tới trước cổng.
+ *  - sangtao-1 (sang-tao.mirror-file có giá trị): chạy cùng lớp này ở "chế độ bản sao": đọc thaiap.yml của Bang Hội Chiến (mount chỉ đọc)
+ *    nên mỗi người có mảnh đất cùng số, cùng cỡ, cùng người được mời; không mua/mở rộng/mời/thích ở đây. Vào không có vé (gõ /server) → đưa về sảnh.
+ *    Túi đồ, tiền là của server sangtao-1 (tách hẳn Bang Hội Chiến): không có đường mang đồ sáng tạo về. Chặn ném đồ, kích nổ, triệu hồi wither,
+ *    giới hạn sinh vật quanh mỗi người (max-entities). /thaiap ve: về Bang Hội Chiến.
  */
 final class ThaiAp implements Listener {
 
@@ -74,6 +85,18 @@ final class ThaiAp implements Listener {
     private final File file;
     private final YamlConfiguration data;
     private World world;
+    // Thái Ấp Sáng Tạo
+    private static final String CHANNEL = "BungeeCord";
+    private final boolean creativeLink;      // Bang Hội Chiến: có cổng sang server sáng tạo
+    private final boolean mirror;            // sangtao-1: bản sao chỉ đọc
+    private final String creativeServer;
+    private final String homeServer;
+    private final File ticketFile;
+    private final File mirrorFile;
+    private final long ticketMillis;
+    private final int maxEntities;
+    private final NamespacedKey portalKey;
+    private final java.util.Map<UUID, Long> portalCooldown = new java.util.HashMap<>();
 
     ThaiAp(DuckyMoMoCore plugin, ConfigurationSection c) {
         this.plugin = plugin;
@@ -84,13 +107,26 @@ final class ThaiAp implements Listener {
         this.prices = pr.isEmpty() ? List.of(5000.0, 8000.0, 15000.0) : pr;
         this.cell = Math.max(sizes.get(sizes.size() - 1) + 10, c.getInt("cell", 110));
         this.maxTrusted = Math.max(0, c.getInt("max-trusted", 5));
-        this.file = new File(plugin.getDataFolder(), "thaiap.yml");
+        ConfigurationSection st = c.getConfigurationSection("sang-tao");
+        String mf = st == null ? "" : st.getString("mirror-file", "");
+        this.mirror = mf != null && !mf.isBlank();
+        this.creativeLink = !mirror && st != null && st.getBoolean("enabled", false);
+        this.creativeServer = st == null ? "sangtao-1" : st.getString("server", "sangtao-1");
+        this.homeServer = st == null ? "banghoi-1" : st.getString("home-server", "banghoi-1");
+        this.ticketMillis = (st == null ? 60 : Math.max(10, st.getInt("ticket-seconds", 60))) * 1000L;
+        this.maxEntities = st == null ? 40 : Math.max(5, st.getInt("max-entities", 40));
+        this.mirrorFile = mirror ? new File(mf) : null;
+        this.ticketFile = mirror ? new File(st.getString("ticket-file", "/banghoi-dmm/sangtao-ve.yml"))
+                : new File(plugin.getDataFolder(), "sangtao-ve.yml");
+        this.portalKey = new NamespacedKey(plugin, "cong_sangtao");
+        this.file = mirror ? mirrorFile : new File(plugin.getDataFolder(), "thaiap.yml");
         this.data = YamlConfiguration.loadConfiguration(file);
         Dishes.kitchenBonus = Math.max(0, c.getDouble("kitchen-bonus", 50));
     }
 
     String describe() {
-        return "thế giới " + worldName + ", cạnh " + sizes + ", giá " + prices + " xu";
+        return "thế giới " + worldName + ", cạnh " + sizes + (mirror ? ", BẢN SAO SÁNG TẠO đọc " + mirrorFile : ", giá " + prices + " xu")
+                + (creativeLink ? ", cổng sang " + creativeServer : "");
     }
 
     void start() {
@@ -111,13 +147,32 @@ final class ThaiAp implements Listener {
         world.setGameRule(GameRule.DO_TRADER_SPAWNING, false);
         world.setPVP(false);
         disableTowny();
+        if (mirror) {
+            world.setGameRule(GameRule.DO_DAYLIGHT_CYCLE, false);
+            world.setGameRule(GameRule.DO_WEATHER_CYCLE, false);
+            world.setTime(6000);
+            world.setStorm(false);
+            plugin.getServer().getMessenger().registerOutgoingPluginChannel(plugin, CHANNEL);
+            // dữ liệu chủ đất do Bang Hội Chiến ghi: đọc lại mỗi 30 giây
+            Bukkit.getScheduler().runTaskTimer(plugin, this::reloadMirror, 600L, 600L);
+            return;
+        }
         Dishes.kitchenHere = this::inOwnPlot;
         writeJson();
+        if (creativeLink) {
+            plugin.getServer().getMessenger().registerOutgoingPluginChannel(plugin, CHANNEL);
+            if (!data.isString("cong-sangtao")) {
+                buildPortal(new Location(world, 0, GROUND + 1, 6));
+            }
+            Bukkit.getScheduler().runTaskTimer(plugin, this::portalParticles, 40L, 20L);
+        }
     }
 
     void stop() {
-        Dishes.kitchenHere = null;
-        save();
+        if (!mirror) {
+            Dishes.kitchenHere = null;
+            save();
+        }
     }
 
     /** Towny không quản thế giới này (không lập thị trấn, không chặn xây đất hoang): module tự bảo vệ từng mảnh. */
@@ -405,7 +460,28 @@ final class ThaiAp implements Listener {
             return true;
         }
         UUID u = p.getUniqueId();
+        if (mirror) {
+            mirrorCommand(p, sub, args);
+            return true;
+        }
         switch (sub) {
+            case "sangtao" -> {
+                Location front = portalFront();
+                if (!creativeLink || front == null) {
+                    p.sendMessage(c("&cChưa có cổng Thái Ấp Sáng Tạo."));
+                } else {
+                    p.teleport(front);
+                    p.sendMessage(c("&d✦ Cổng Thái Ấp Sáng Tạo ở trước mặt: bước vào để sang server sáng tạo (cần có Thái Ấp hoặc được mời xây cùng)."));
+                }
+            }
+            case "congsangtao" -> {
+                if (!p.hasPermission("duckymomo.admin") || p.getWorld() != world) {
+                    p.sendMessage(c("&cAdmin đứng trong thế giới Thái Ấp, chỗ muốn đặt cổng (khung dựng về phía trước, dọc trục X)."));
+                    return true;
+                }
+                buildPortal(p.getLocation().getBlock().getLocation());
+                p.sendMessage(c("&aĐã dựng cổng Thái Ấp Sáng Tạo tại đây (cổng cũ đã gỡ)."));
+            }
             case "mua" -> buy(p);
             case "morong" -> expand(p);
             case "moi", "duoi" -> trust(p, args, sub.equals("moi"));
@@ -450,6 +526,9 @@ final class ThaiAp implements Listener {
         p.sendMessage(c("&7Về: &f/thaiap &7· mời bạn xây cùng: &f/thaiap moi <tên> &7(bỏ: duoi) · đặt tên: &f/thaiap ten <tên> &7· chỗ xuất hiện: &f/thaiap datspawn"));
         p.sendMessage(c("&7Tham quan: &f/thaiap ghe <tên> &7· thích Thái Ấp đang đứng: &f/thaiap thich &7· đẹp nhất: &f/thaiap top"));
         p.sendMessage(c("&7Bếp riêng: món &f/nauan &7nấu trong Thái Ấp của mình kéo dài hiệu ứng thêm &f" + (long) Dishes.kitchenBonus + "%&7."));
+        if (creativeLink) {
+            p.sendMessage(c("&d✦ Thái Ấp Sáng Tạo: &7bản sao mảnh đất của bạn ở chế độ sáng tạo (xây thoả thích, đồ không mang về được). Tới cổng: &f/thaiap sangtao"));
+        }
     }
 
     private static String money(double v) {
@@ -575,6 +654,279 @@ final class ThaiAp implements Listener {
         writeJson();
     }
 
+    // ---------------------------------------------------------------- Thái Ấp Sáng Tạo
+
+    private void connect(Player p, String server) {
+        com.google.common.io.ByteArrayDataOutput out = com.google.common.io.ByteStreams.newDataOutput();
+        out.writeUTF("Connect");
+        out.writeUTF(server);
+        p.sendPluginMessage(plugin, CHANNEL, out.toByteArray());
+    }
+
+    /** Được mời xây cùng ở Thái Ấp của ai (null = không). */
+    private UUID trustedBy(UUID u) {
+        ConfigurationSection d = data.getConfigurationSection("dat");
+        if (d == null) {
+            return null;
+        }
+        for (String id : d.getKeys(false)) {
+            if (data.getStringList("dat." + id + ".tin").contains(u.toString())) {
+                return UUID.fromString(id);
+            }
+        }
+        return null;
+    }
+
+    /** Ô dưới chân cổng (góc trái khung). */
+    private int[] portalBase() {
+        String s = data.getString("cong-sangtao");
+        if (s == null) {
+            return null;
+        }
+        String[] a = s.split(",");
+        return new int[] {Integer.parseInt(a[0]), Integer.parseInt(a[1]), Integer.parseInt(a[2])};
+    }
+
+    private Location portalFront() {
+        int[] b = portalBase();
+        return b == null || world == null ? null : new Location(world, b[0] + 1.0, b[1] + 1, b[2] - 2.5, 0, 0);
+    }
+
+    private boolean inPortal(Location l) {
+        int[] b = portalBase();
+        if (b == null || l.getWorld() != world) {
+            return false;
+        }
+        int x = l.getBlockX(), y = l.getBlockY(), z = l.getBlockZ();
+        return z == b[2] && x >= b[0] && x <= b[0] + 1 && y >= b[1] + 1 && y <= b[1] + 3;
+    }
+
+    /** Khung 4×5 thạch anh tím dọc trục X, lòng 2×3 trống; base = ô dưới chân lòng cổng bên trái. */
+    private void buildPortal(Location base) {
+        int[] old = portalBase();
+        if (old != null) {
+            for (int dx = -1; dx <= 2; dx++) {
+                for (int dy = 0; dy <= 4; dy++) {
+                    Block b = world.getBlockAt(old[0] + dx, old[1] + dy, old[2]);
+                    if (b.getType() == Material.AMETHYST_BLOCK || b.getType() == Material.PURPUR_PILLAR) {
+                        b.setType(dy == 0 ? Material.GRASS_BLOCK : Material.AIR, false);
+                    }
+                }
+            }
+        }
+        world.getNearbyEntities(base, 64, 16, 64).stream()
+                .filter(e -> e.getPersistentDataContainer().has(portalKey, PersistentDataType.BYTE)).forEach(org.bukkit.entity.Entity::remove);
+        if (old != null) {
+            world.getNearbyEntities(new Location(world, old[0], old[1], old[2]), 8, 8, 8).stream()
+                    .filter(e -> e.getPersistentDataContainer().has(portalKey, PersistentDataType.BYTE)).forEach(org.bukkit.entity.Entity::remove);
+        }
+        int bx = base.getBlockX(), by = base.getBlockY() - 1, bz = base.getBlockZ();
+        for (int dx = -1; dx <= 2; dx++) {
+            for (int dy = 0; dy <= 4; dy++) {
+                boolean frame = dx == -1 || dx == 2 || dy == 0 || dy == 4;
+                Block b = world.getBlockAt(bx + dx, by + dy, bz);
+                b.setType(frame ? ((dx == -1 || dx == 2) && dy > 0 && dy < 4 ? Material.PURPUR_PILLAR : Material.AMETHYST_BLOCK) : Material.AIR, false);
+            }
+        }
+        data.set("cong-sangtao", bx + "," + by + "," + bz);
+        save();
+        world.spawn(new Location(world, bx + 1.0, by + 5.6, bz + 0.5), org.bukkit.entity.TextDisplay.class, t -> {
+            t.text(c("&d&l✦ THÁI ẤP SÁNG TẠO ✦\n&fBước vào cổng để sang chế độ sáng tạo\n&7Cần có Thái Ấp hoặc được mời xây cùng"));
+            t.setBillboard(org.bukkit.entity.Display.Billboard.CENTER);
+            t.setPersistent(true);
+            t.getPersistentDataContainer().set(portalKey, PersistentDataType.BYTE, (byte) 1);
+        });
+    }
+
+    private void portalParticles() {
+        int[] b = portalBase();
+        if (b == null || world == null || world.getPlayers().isEmpty()) {
+            return;
+        }
+        Location mid = new Location(world, b[0] + 1.0, b[1] + 2.5, b[2] + 0.5);
+        if (!mid.isChunkLoaded()) {
+            return;
+        }
+        world.spawnParticle(org.bukkit.Particle.PORTAL, mid, 40, 0.5, 1.0, 0.1, 0.2);
+    }
+
+    /** Ghi vé (Bang Hội Chiến → sangtao-1 đọc qua mount chỉ đọc). */
+    private void writeTicket(UUID u) {
+        YamlConfiguration t = YamlConfiguration.loadConfiguration(ticketFile);
+        long now = System.currentTimeMillis();
+        for (String k : t.getKeys(false)) {
+            if (t.getLong(k) < now) {
+                t.set(k, null);
+            }
+        }
+        t.set(u.toString(), now + ticketMillis);
+        try {
+            t.save(ticketFile);
+        } catch (IOException e) {
+            plugin.getLogger().warning("Không ghi được sangtao-ve.yml: " + e.getMessage());
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onPortalMove(org.bukkit.event.player.PlayerMoveEvent e) {
+        if (!creativeLink || e.getTo().getWorld() != world || e.getFrom().getBlock().equals(e.getTo().getBlock()) || !inPortal(e.getTo())) {
+            return;
+        }
+        Player p = e.getPlayer();
+        long now = System.currentTimeMillis();
+        if (now < portalCooldown.getOrDefault(p.getUniqueId(), 0L)) {
+            return;
+        }
+        portalCooldown.put(p.getUniqueId(), now + 5000);
+        UUID u = p.getUniqueId();
+        if (!has(u) && trustedBy(u) == null && !p.hasPermission("duckymomo.admin")) {
+            p.sendMessage(c("&cCần có Thái Ấp (&f/thaiap mua&c) hoặc được chủ Thái Ấp mời xây cùng (&f/thaiap moi <tên>&c) mới sang Thái Ấp Sáng Tạo được."));
+            Location f = portalFront();
+            if (f != null) {
+                Bukkit.getScheduler().runTask(plugin, () -> p.teleport(f));
+            }
+            return;
+        }
+        writeTicket(u);
+        p.sendMessage(c("&d✦ Đang sang Thái Ấp Sáng Tạo… &7(túi đồ bên đó riêng, đồ không mang về được; về lại: &f/thaiap ve&7)"));
+        connect(p, creativeServer);
+    }
+
+    /** Về lại từ server sáng tạo: đang đứng trong lòng cổng thì đẩy ra trước cổng (không bị chuyển ngược ngay). */
+    @EventHandler
+    public void onLinkJoin(org.bukkit.event.player.PlayerJoinEvent e) {
+        if (creativeLink && inPortal(e.getPlayer().getLocation())) {
+            portalCooldown.put(e.getPlayer().getUniqueId(), System.currentTimeMillis() + 5000);
+            Location f = portalFront();
+            Bukkit.getScheduler().runTaskLater(plugin, () -> e.getPlayer().teleport(f), 2L);
+        }
+    }
+
+    // ---- phía sangtao-1 (bản sao)
+
+    private void reloadMirror() {
+        try {
+            data.load(mirrorFile);
+        } catch (Exception ex) {
+            plugin.getLogger().warning("Thái Ấp Sáng Tạo: không đọc được " + mirrorFile + " (" + ex.getMessage() + ")");
+        }
+    }
+
+    private boolean hasTicket(UUID u) {
+        return YamlConfiguration.loadConfiguration(ticketFile).getLong(u.toString()) > System.currentTimeMillis();
+    }
+
+    /** Mảnh đất người này dùng ở bản sao: của mình, không có thì của người mời. */
+    private UUID plotFor(UUID u) {
+        return has(u) ? u : trustedBy(u);
+    }
+
+    @EventHandler
+    public void onMirrorJoin(org.bukkit.event.player.PlayerJoinEvent e) {
+        if (!mirror) {
+            return;
+        }
+        Player p = e.getPlayer();
+        reloadMirror();
+        UUID u = p.getUniqueId();
+        UUID plot = plotFor(u);
+        boolean admin = p.hasPermission("duckymomo.admin");
+        if (!admin && (!hasTicket(u) || plot == null)) {
+            p.setGameMode(org.bukkit.GameMode.ADVENTURE);
+            p.sendMessage(c("&cThái Ấp Sáng Tạo chỉ vào được qua &dcổng trong Thái Ấp&c ở Bang Hội Chiến (&f/thaiap sangtao&c). Đang đưa về sảnh…"));
+            Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                if (p.isOnline()) {
+                    connect(p, "lobby");
+                }
+            }, 40L);
+            return;
+        }
+        Bukkit.getScheduler().runTaskLater(plugin, () -> {
+            if (!p.isOnline()) {
+                return;
+            }
+            p.setGameMode(org.bukkit.GameMode.CREATIVE);
+            p.teleport(plot != null ? home(plot) : world.getSpawnLocation());
+            p.sendMessage(c("&d&l✦ THÁI ẤP SÁNG TẠO &7— bản sao mảnh đất " + (plot != null && plot.equals(u) ? "của bạn" : "bạn được mời")
+                    + ", xây thoả thích ở chế độ sáng tạo."));
+            p.sendMessage(c("&7Túi đồ ở đây riêng, đồ không mang về Bang Hội Chiến. Lệnh: &f/thaiap &7(về mảnh đất) · &f/thaiap ghe <tên> &7· &f/thaiap ve &7(về Bang Hội Chiến)"));
+        }, 5L);
+    }
+
+    @EventHandler
+    public void onMirrorRespawn(org.bukkit.event.player.PlayerRespawnEvent e) {
+        if (mirror && world != null) {
+            UUID plot = plotFor(e.getPlayer().getUniqueId());
+            e.setRespawnLocation(plot != null ? home(plot) : world.getSpawnLocation());
+        }
+    }
+
+    private void mirrorCommand(Player p, String sub, String[] args) {
+        UUID u = p.getUniqueId();
+        switch (sub) {
+            case "ve", "banghoi" -> {
+                p.sendMessage(c("&aĐang về Bang Hội Chiến…"));
+                connect(p, homeServer);
+            }
+            case "ghe" -> visit(p, args);
+            case "" -> {
+                UUID plot = plotFor(u);
+                if (plot == null) {
+                    p.sendMessage(c("&cBạn chưa có Thái Ấp ở Bang Hội Chiến."));
+                } else {
+                    p.teleport(home(plot));
+                }
+            }
+            case "mua", "morong", "moi", "duoi", "ten", "datspawn", "thich" ->
+                    p.sendMessage(c("&eLàm ở Bang Hội Chiến (&f/thaiap " + sub + "&e): Thái Ấp Sáng Tạo tự cập nhật theo trong 30 giây."));
+            default -> {
+                p.sendMessage(c("&d&l✦ Thái Ấp Sáng Tạo &7— bản sao mảnh đất ở chế độ sáng tạo, túi đồ riêng."));
+                p.sendMessage(c("&7&f/thaiap &7về mảnh đất · &f/thaiap ghe <tên> &7tham quan · &f/thaiap ve &7về Bang Hội Chiến"));
+            }
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onMirrorDrop(org.bukkit.event.player.PlayerDropItemEvent e) {
+        if (mirror) {
+            e.setCancelled(true);
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onMirrorPrime(org.bukkit.event.entity.ExplosionPrimeEvent e) {
+        if (mirror) {
+            e.setCancelled(true);
+            e.getEntity().remove();
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onMirrorSpawn(org.bukkit.event.entity.CreatureSpawnEvent e) {
+        if (!mirror) {
+            return;
+        }
+        switch (e.getSpawnReason()) {
+            case BUILD_WITHER, BUILD_IRONGOLEM, BUILD_SNOWMAN, NATURAL, RAID, PATROL, REINFORCEMENTS, VILLAGE_INVASION, JOCKEY, MOUNT -> {
+                if (e.getSpawnReason() != org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.BUILD_IRONGOLEM
+                        && e.getSpawnReason() != org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.BUILD_SNOWMAN) {
+                    e.setCancelled(true);
+                    return;
+                }
+            }
+            default -> { }
+        }
+        if (e.getEntityType() == org.bukkit.entity.EntityType.WITHER || e.getEntityType() == org.bukkit.entity.EntityType.ENDER_DRAGON) {
+            e.setCancelled(true);
+            return;
+        }
+        long near = e.getLocation().getNearbyLivingEntities(48).stream().filter(x -> !(x instanceof Player)).count();
+        if (near >= maxEntities) {
+            e.setCancelled(true);
+            e.getLocation().getNearbyPlayers(16).forEach(pl -> pl.sendActionBar(c("&cĐã đủ " + maxEntities + " sinh vật quanh đây.")));
+        }
+    }
+
     private List<String> ranked() {
         ConfigurationSection d = data.getConfigurationSection("dat");
         List<String> ids = d == null ? new ArrayList<>() : new ArrayList<>(d.getKeys(false));
@@ -597,6 +949,9 @@ final class ThaiAp implements Listener {
     }
 
     private void save() {
+        if (mirror) {
+            return;
+        }
         try {
             data.save(file);
         } catch (IOException e) {
@@ -605,6 +960,9 @@ final class ThaiAp implements Listener {
     }
 
     private void writeJson() {
+        if (mirror) {
+            return;
+        }
         JsonObject root = new JsonObject();
         root.addProperty("so_luong", ranked().size());
         JsonArray arr = new JsonArray();

@@ -1,0 +1,329 @@
+################################################################################################################################
+#
+#   zAuctionHouse V4 - Main Auction Inventory
+#
+#   This is the main auction house inventory that displays all items for sale.
+#   Players access this via /ah or by clicking the auction house NPC.
+#
+#   This inventory shows:
+#   - All items currently listed for sale
+#   - Navigation to categories, expired items, purchased items
+#   - Sorting options
+#   - Pagination for browsing multiple pages
+#
+#   Documentation: https://docs.groupez.dev/zauctionhouse/introduction
+#   Discord: https://discord.groupez.dev/
+#
+################################################################################################################################
+
+#=============================================================================
+# INVENTORY SETTINGS
+#=============================================================================
+
+# Inventory title displayed at the top of the GUI.
+# Supports placeholders and MiniMessage formatting.
+# Available placeholders:
+#   %page%                        - Current page number
+#   %max-page%                    - Total number of pages
+#   %zauctionhouse_category_name% - Current category name
+name: "%zauctionhouse_category_name% (%page%/%max-page%)"
+
+# Inventory size in slots (must be multiple of 9).
+# Options: 9, 18, 27, 36, 45, 54 (1-6 rows)
+# 54 slots (6 rows) is recommended for auction house.
+size: 54
+
+#=============================================================================
+# PATTERNS
+#=============================================================================
+# Patterns are reusable templates that add common elements.
+# They are applied in order; later patterns can override earlier ones.
+
+patterns:
+  # Adds decorative glass pane borders (top and bottom rows)
+- 'zauctionhouse-decoration'
+  # Adds pagination buttons (previous/next page)
+- 'zauctionhouse-pagination'
+
+#=============================================================================
+# ITEMS
+#=============================================================================
+# Items define the buttons and displays in this inventory.
+# Each item has a unique key (e.g., 'display-items', 'categories').
+
+items:
+
+  #---------------------------------------------------------------------------
+  # MAIN AUCTION ITEMS DISPLAY
+  #---------------------------------------------------------------------------
+  # This is the core display showing all items for sale.
+  # Items are paginated and can be filtered by category.
+
+  display-items:
+    # Button type - ZAUCTIONHOUSE_LISTED_ITEMS is a plugin-specific type.
+    # It automatically handles:
+    # - Loading and displaying auction items
+    # - Category filtering
+    # - Sorting
+    # - Click actions (buy/remove)
+    type: ZAUCTIONHOUSE_LISTED_ITEMS
+
+    # Slot to display the "empty" item when no items are found.
+    # This slot is used when the auction house has no items.
+    empty-slot: 22
+
+    # Slots where auction items are displayed.
+    # These should be the middle rows (leaving top/bottom for UI).
+    # Slot ranges: '9-17' means slots 9 through 17 (9 items per row).
+    # Total: 36 item slots (4 rows × 9 columns)
+    slots:
+    - 9-17      # Row 2
+    - 18-26     # Row 3
+    - 27-35     # Row 4
+    - 36-44     # Row 5
+
+    # Item shown when no items are listed (empty auction house).
+    item:
+      material: BARRIER
+      # &n creates underlined text (legacy formatting)
+      name: '#ff0000&nKhông có món nào'
+
+  #---------------------------------------------------------------------------
+  # CATEGORIES BUTTON
+  #---------------------------------------------------------------------------
+  # Opens the category selection inventory for filtering items.
+
+  categories:
+    # Slot position - center of top row.
+    slot: 4
+
+    # Button type - 'inventory' opens another zMenu inventory.
+    type: inventory
+
+    # Plugin that owns the target inventory.
+    plugin: "zAuctionHouse"
+
+    # Inventory file to open (inventories/categories.yml).
+    inventory: "categories"
+    is-permanent: true
+
+    # Button appearance
+    item:
+      material: CHEST
+      name: "#2CCED2<bold>DANH MỤC"
+      lore:
+      - ""
+      - "#8c8c8c• #2CCED2Bấm #92ffffđể mở"
+
+  #---------------------------------------------------------------------------
+  # EXPIRED ITEMS BUTTON
+  #---------------------------------------------------------------------------
+  # Shows the player's items that have expired (not sold in time).
+  # Button changes appearance based on whether items exist.
+
+  expired-items:
+    # Button type - opens the expired items inventory if items exist.
+    type: ZAUCTIONHOUSE_EXPIRED_INVENTORY
+
+    # Slot position - far left of bottom row.
+    slot: 45
+
+    # Item shown when player HAS expired items.
+    item:
+      # Custom player head texture (hourglass/clock icon).
+      url: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjdhYWRmZjlkZGM1NDZmZGNlYzZlZDU5MTljYzM5ZGZhOGQwYzA3ZmY0YmM2MTNhMTlmMmU2ZDdmMjU5MyJ9fX0="
+      name: "#2CCED2<bold>ĐỒ HẾT HẠN"
+      lore:
+        # %expired-items% = number of expired items
+        # %s% = pluralization suffix ("" for 1, "s" for 2+)
+      - "#92ffffBạn có #2CCED2%expired-items% #92ffffmón hết hạn."
+      - ""
+      - "#8c8c8c• #2CCED2Bấm #92ffffđể mở"
+
+    # Item shown when player has NO expired items.
+    else:
+      item:
+        url: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjdhYWRmZjlkZGM1NDZmZGNlYzZlZDU5MTljYzM5ZGZhOGQwYzA3ZmY0YmM2MTNhMTlmMmU2ZDdmMjU5MyJ9fX0="
+        name: "#2CCED2<bold>ĐỒ HẾT HẠN"
+        lore:
+        - "#ff3535Bạn không có món nào hết hạn."
+
+  #---------------------------------------------------------------------------
+  # PURCHASED ITEMS BUTTON
+  #---------------------------------------------------------------------------
+  # Shows items the player has bought but not yet retrieved.
+
+  purchased-items:
+    # Button type - opens the purchased items inventory if items exist.
+    type: ZAUCTIONHOUSE_PURCHASED_INVENTORY
+
+    # Slot position - second from left in bottom row.
+    slot: 46
+
+    # Item shown when player HAS purchased items to retrieve.
+    item:
+      # Chest icon texture.
+      url: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjM3Y2FlNWM1MWViMTU1OGVhODI4ZjU4ZTBkZmY4ZTZiN2IwYjFhMTgzZDczN2VlY2Y3MTQ2NjE3NjEifX19"
+      name: "#2CCED2<bold>ĐỒ ĐÃ MUA"
+      lore:
+      - "#92ffffBạn có #2CCED2%purchased-items% #92ffffmón đã mua."
+      - ""
+      - "#8c8c8c• #2CCED2Bấm #92ffffđể mở"
+
+    # Item shown when player has NO purchased items.
+    else:
+      item:
+        url: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjM3Y2FlNWM1MWViMTU1OGVhODI4ZjU4ZTBkZmY4ZTZiN2IwYjFhMTgzZDczN2VlY2Y3MTQ2NjE3NjEifX19"
+        name: "#2CCED2<bold>ĐỒ ĐÃ MUA"
+        lore:
+        - "#ff3535Bạn chưa mua món nào."
+
+  #---------------------------------------------------------------------------
+  # YOUR ITEMS (SELLING) BUTTON
+  #---------------------------------------------------------------------------
+  # Shows items the player currently has listed for sale.
+
+  selling-items:
+    # Button type - opens the selling items inventory if items exist.
+    type: ZAUCTIONHOUSE_SELLING_INVENTORY
+
+    # Slot position - far right of bottom row.
+    slot: 53
+
+    # Item shown when player HAS items listed for sale.
+    item:
+      # Player icon texture.
+      url: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjU4MDdjYzRjM2I2OTU4YWVhNjE1NmU4NDUxOGQ5MWE0OWM1ZjMyOTcxZTZlYjI2OWEyM2EyNWEyNzE0NSJ9fX0="
+      name: "#2CCED2<bold>ĐỒ CỦA BẠN"
+      lore:
+      - "#92ffffBạn có #2CCED2%selling-items% #92ffffmón đang bán."
+      - ""
+      - "#8c8c8c• #2CCED2Bấm #92ffffđể mở"
+
+    # Item shown when player has NO items listed.
+    else:
+      item:
+        url: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjU4MDdjYzRjM2I2OTU4YWVhNjE1NmU4NDUxOGQ5MWE0OWM1ZjMyOTcxZTZlYjI2OWEyM2EyNWEyNzE0NSJ9fX0="
+        name: "#2CCED2<bold>ĐỒ CỦA BẠN"
+        lore:
+        - "#ff3535Bạn không có món nào đang bán."
+
+  #---------------------------------------------------------------------------
+  # SEARCH BUTTON
+  #---------------------------------------------------------------------------
+  # Opens the chat search input for filtering items.
+
+  search:
+    type: ZAUCTIONHOUSE_SEARCH
+    slot: 47
+    is-permanent: true
+    # Value shown in %search_query% when no search is active.
+    none-value: "None"
+    # Value shown in %search_active% when a search is active.
+    active-value: "true"
+    # Value shown in %search_active% when no search is active.
+    inactive-value: "false"
+    item:
+      material: COMPASS
+      name: "#2CCED2<bold>TÌM KIẾM"
+      lore:
+      - ""
+      - "#92ffffĐang tìm#8c8c8c: #2CCED2%search_query%"
+      - ""
+      - "#92ffffCách lọc#8c8c8c:"
+      - "#8c8c8c  name #76CDCD~ #8c8c8cgiá trị    #555555(có chứa)"
+      - "#8c8c8c  name #76CDCD= #8c8c8cgiá trị    #555555(đúng y)"
+      - "#8c8c8c  name #76CDCD~= #8c8c8cgiá trị   #555555(có chứa, không phân biệt hoa thường)"
+      - "#8c8c8c  name #76CDCD== #8c8c8cgiá trị   #555555(đúng y, không phân biệt hoa thường)"
+      - ""
+      - "#92ffffTìm theo#8c8c8c: #76CDCDname#8c8c8c (tên), #76CDCDmaterial#8c8c8c (loại), #76CDCDlore#8c8c8c (mô tả), #76CDCDseller#8c8c8c (người bán)"
+      - ""
+      - "#92ffffVí dụ#8c8c8c:"
+      - "#8c8c8c  seller #76CDCD= #8c8c8cNotch"
+      - "#8c8c8c  name #76CDCD~ #8c8c8cDiamond"
+      - ""
+      - "#8c8c8c- #2CCED2Chuột trái #92ffffđể tìm"
+      - "#8c8c8c- #2CCED2Chuột phải #92ffffđể xoá tìm kiếm"
+  #---------------------------------------------------------------------------
+  # REFRESH BUTTON
+  #---------------------------------------------------------------------------
+  # Displays auction house information and refreshes the item list.
+
+  refresh:
+    # Button type - ZAUCTIONHOUSE_REFRESH handles async refresh.
+    type: ZAUCTIONHOUSE_REFRESH
+
+    # Slot position - center of bottom row.
+    slot: 49
+
+    # Item shown while loading/refreshing (prevents spam clicks).
+    loading-item:
+      material: CLOCK
+      name: "#2CCED2<bold>ĐANG TẢI LẠI..."
+      lore:
+      - "#8c8c8c• #ff3535Đang tải, đợi chút..."
+
+    # Normal refresh button display.
+    item:
+      material: BELL
+      name: "#2CCED2<bold>THÔNG TIN CHỢ"
+      lore:
+      - "#92ffffChào mừng tới chợ đấu giá."
+      - "#92ffffMua bán đồ với người chơi khác."
+      - ""
+      - "#92ffffCách đăng bán#8c8c8c:"
+      - "#2CCED2/ah sell #92ffff<giá> [<số lượng>]"
+      - ""
+        # PlaceholderAPI placeholders for dynamic stats.
+      - "#92ffffSố món đang bán#8c8c8c: #2CCED2%zauctionhouse_listed_items%"
+      - "#92ffffSắp xếp#8c8c8c: #2CCED2%zauctionhouse_sorting_name%"
+      - ""
+      - "#8c8c8c• #2CCED2Bấm #92ffffđể tải lại"
+
+  #---------------------------------------------------------------------------
+  # SORT TYPE BUTTON
+  #---------------------------------------------------------------------------
+  # Changes the sort order of displayed items.
+
+  change-sort:
+    # Button type - handles sort cycling.
+    type: ZAUCTIONHOUSE_CHANGE_SORT
+
+    # Available sort options (cycled in this order).
+    # Options: DECREASING_DATE, DECREASING_PRICE, ASCENDING_DATE, ASCENDING_PRICE
+    sorts:
+    - DECREASING_DATE     # Newest first (default)
+    - DECREASING_PRICE    # Most expensive first
+    - ASCENDING_DATE      # Oldest first
+    - ASCENDING_PRICE     # Cheapest first
+
+    # Format for currently SELECTED sort option in lore.
+    # %sorting% is replaced with the sort name from config.yml.
+    enable-text: ' #F27438➜ %sorting%'
+
+    # Format for NOT selected sort options in lore.
+    disable-text: ' #76CDCD➜ %sorting%'
+
+    # Item shown while loading/sorting (prevents spam clicks).
+    loading-item:
+      material: HOPPER
+      name: "#2CCED2<bold>SẮP XẾP"
+      lore:
+      - "#8c8c8c• #ff3535Đang tải, đợi chút"
+
+    # Slot position - right side of bottom row.
+    slot: 52
+
+    # Normal sort button display.
+    item:
+      material: HOPPER
+      name: "#2CCED2<bold>SẮP XẾP"
+      lore:
+      - "#92ffffCác kiểu sắp xếp:"
+        # Placeholders for each sort option (formatted by enable/disable-text).
+      - "%DECREASING_DATE%"
+      - "%DECREASING_PRICE%"
+      - "%ASCENDING_DATE%"
+      - "%ASCENDING_PRICE%"
+      - ""
+      - "#8c8c8c• #2CCED2Bấm #92ffffđể đổi kiểu sắp xếp"

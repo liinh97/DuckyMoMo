@@ -1,0 +1,79 @@
+################################################################################################################################
+#
+#   zAuctionHouse V4 - Combined Items Inventory
+#
+#   This inventory combines multiple item views (selling, expired, purchased)
+#   into a single paginated list. You can configure which storage types to include.
+#
+#   FEATURES:
+#   - Combine selling, expired, and purchased items in one view
+#   - Each item type uses its own lore configuration (from config.yml item-lore)
+#   - Click action adapts to the item's storage type:
+#     - Selling items: removes/cancels the listing
+#     - Expired items: claims the item back
+#     - Purchased items: claims the purchased item
+#
+#   CONFIGURATION:
+#   - include-selling: true/false - include items currently listed for sale
+#   - include-expired: true/false - include expired items
+#   - include-purchased: true/false - include purchased items
+#
+#   ACCESS:
+#   - Assign this inventory to a command or button in your configuration
+#
+#   Documentation: https://docs.groupez.dev/zauctionhouse/introduction
+#   Discord: https://discord.groupez.dev/
+#
+################################################################################################################################
+
+#=============================================================================
+# INVENTORY SETTINGS
+#=============================================================================
+
+name: '#0c1719Đồ của tôi (%page%/%max-page%)'
+
+size: 54
+
+#=============================================================================
+# PATTERNS
+#=============================================================================
+
+patterns:
+- 'zauctionhouse-decoration'
+- 'zauctionhouse-pagination'
+- 'zauctionhouse-back'
+
+#=============================================================================
+# ITEMS
+#=============================================================================
+
+items:
+
+  #---------------------------------------------------------------------------
+  # COMBINED ITEMS DISPLAY
+  #---------------------------------------------------------------------------
+  # Shows selling, expired, and purchased items in a single list.
+  # Click action adapts based on the item's actual storage type.
+
+  items:
+    type: ZAUCTIONHOUSE_COMBINED_ITEMS
+
+    # Slot for empty state placeholder.
+    empty-slot: 22
+
+    # Configure which item types to include.
+    include-selling: true
+    include-expired: true
+    include-purchased: true
+
+    # Slots for displaying items (4 rows x 9 columns = 36 slots).
+    slots:
+    - 9-17      # Row 2
+    - 18-26     # Row 3
+    - 27-35     # Row 4
+    - 36-44     # Row 5
+
+    # Placeholder item when no items are found.
+    item:
+      material: BARRIER
+      name: '#ff0000&nKhông có món nào'

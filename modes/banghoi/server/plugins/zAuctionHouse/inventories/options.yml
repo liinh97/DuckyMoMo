@@ -1,0 +1,82 @@
+################################################################################################################################
+#
+#   zAuctionHouse V4 - Player Options Inventory
+#
+#   This inventory allows players to toggle their personal preferences.
+#   Currently supports broadcast notification opt-in/opt-out.
+#
+#   ACCESS:
+#   - /ah option
+#   - /ah options
+#
+#   Documentation: https://docs.groupez.dev/zauctionhouse/introduction
+#   Discord: https://discord.groupez.dev/
+#
+################################################################################################################################
+
+#=============================================================================
+# INVENTORY SETTINGS
+#=============================================================================
+
+name: '#0c1719Tuỳ chọn'
+size: 27
+
+#=============================================================================
+# PATTERNS
+#=============================================================================
+
+patterns:
+- 'zauctionhouse-decoration'
+- 'zauctionhouse-back'
+
+#=============================================================================
+# ITEMS
+#=============================================================================
+
+items:
+
+  #---------------------------------------------------------------------------
+  # BROADCAST SELL TOGGLE
+  #---------------------------------------------------------------------------
+
+  broadcast-sell:
+    type: ZAUCTIONHOUSE_OPTION_TOGGLE
+    slot: 11
+    option-name: broadcast_sell
+    enable-text: '<green>Enabled'
+    disable-text: '<red>Disabled'
+    item:
+      material: OAK_SIGN
+      name: '#2CCED2<bold>Thông báo đăng bán'
+      lore:
+      - ''
+      - '#92ffffBật/tắt thông báo có người đăng bán.'
+      - '#92ffffKhi bật, bạn sẽ thấy thông báo'
+      - '#92ffffmỗi khi có người đăng bán.'
+      - ''
+      - '#8c8c8cTrạng thái: %option_status%'
+      - ''
+      - '#8c8c8c• #2CCED2Bấm #92ffffđể bật/tắt'
+
+  #---------------------------------------------------------------------------
+  # BROADCAST PURCHASE TOGGLE
+  #---------------------------------------------------------------------------
+
+  broadcast-purchase:
+    type: ZAUCTIONHOUSE_OPTION_TOGGLE
+    slot: 15
+    option-name: broadcast_purchase
+    enable-text: '<green>Enabled'
+    disable-text: '<red>Disabled'
+    item:
+      material: GOLD_INGOT
+      name: '#2CCED2<bold>Thông báo có người mua'
+      lore:
+      - ''
+      - '#92ffffBật/tắt thông báo có người mua.'
+      - '#92ffffKhi bật, bạn sẽ thấy thông báo'
+      - '#92ffffmỗi khi có người mua.'
+      - ''
+      - '#8c8c8cTrạng thái: %option_status%'
+      - ''
+      - '#8c8c8c• #2CCED2Bấm #92ffffđể bật/tắt'

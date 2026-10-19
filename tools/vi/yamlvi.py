@@ -1,6 +1,9 @@
 """Công cụ Việt hoá file YAML của plugin, giữ nguyên chú thích/thứ tự (ruamel; chạy trong image panel).
   xuất câu cần dịch:  python3 yamlvi.py dump  <file.yml>                 -> in JSON [đường dẫn, câu] mỗi dòng
   ghi bản dịch:       python3 yamlvi.py apply <file.yml> <bandich.json>   -> sửa tại chỗ
+  thay câu khớp nguyên văn (menu lặp nhiều câu giống nhau):
+                      python3 yamlvi.py replace <file.yml> <cau.json> [regex khoá hiển thị] [regex khoá bỏ qua]
+                      cau.json: {"câu gốc": "câu Việt"}; chỉ thay ở khoá khớp regex (mặc định: name/title/lore/display-name/description).
 bandich.json: {"đường.dẫn": "câu Việt", "đường.dẫn.0": "dòng 1 của danh sách", ...}; đường dẫn nối bằng dấu chấm, số = chỉ số danh sách.
 Lúc ghi: kiểm câu dịch giữ đủ biến ({x}, %x%, <x>, {0}), sai thì báo và bỏ qua câu đó.
   --no-angle: không coi <x> là biến (plugin dùng %x% làm biến, <x> chỉ là chữ trong cú pháp lệnh, vd Duels)."""
@@ -40,9 +43,38 @@ def get_parent(doc, parts):
     return node
 
 
+def replace_exact(doc, f):
+    tr = json.load(open(sys.argv[3], encoding="utf-8"))
+    ok = re.compile(sys.argv[4] if len(sys.argv) > 4 and sys.argv[4] else r"(^|\.)(name|title|display-name|description)$|\.lore\.\d+$")
+    skip = re.compile(sys.argv[5]) if len(sys.argv) > 5 and sys.argv[5] else None
+    n, bad = 0, set()
+
+    def walk2(node, path):
+        nonlocal n
+        items = node.items() if hasattr(node, "items") else enumerate(node) if isinstance(node, list) else []
+        for k, v in list(items):
+            p = ".".join(path + [str(k)])
+            if isinstance(v, str) and v in tr and ok.search(p) and not (skip and skip.search(p)):
+                a, b = VARS.findall(v), VARS.findall(tr[v])
+                if sorted(a) != sorted(b):
+                    bad.add(v)
+                    continue
+                node[k] = type(v)(tr[v])
+                n += 1
+            elif not isinstance(v, str):
+                walk2(v, path + [str(k)])
+    walk2(doc, [])
+    with open(f, "w", encoding="utf-8") as fh:
+        y.dump(doc, fh)
+    print(f"{f}: thay {n} chỗ; lệch biến (bỏ qua): {sorted(bad)}")
+
+
 def main():
     cmd, f = sys.argv[1], sys.argv[2]
     doc = y.load(open(f, encoding="utf-8").read())
+    if cmd == "replace":
+        replace_exact(doc, f)
+        return
     if cmd == "dump":
         out = []
         walk(doc, [], out)

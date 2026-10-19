@@ -32,6 +32,12 @@ p{margin:0 0 .9em}
 .muted{color:var(--muted)}.dim{color:var(--dim)}
 .gold{color:var(--gold)}.jade{color:var(--jade)}.red{color:var(--red)}.sky{color:var(--sky)}
 .pill{display:inline-flex;align-items:center;gap:.4em;padding:.25em .75em;border-radius:999px;font-size:.82rem;font-weight:600;background:var(--card2);border:1px solid var(--line);color:var(--muted)}
+.modes .mode{display:flex;gap:12px;align-items:flex-start;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+.modes .mode i{font-style:normal;font-size:1.5rem;line-height:1.2}
+.modes .mode b{font-size:1rem}.modes .mode .pill{margin-left:4px;font-size:.75rem;padding:.15em .6em}
+.modes .mode p{margin:4px 0 0;color:var(--muted);font-size:.9rem}
+.modes .mode.on{border-color:rgba(62,207,142,.4)}.modes .mode.on .pill{color:var(--jade2);border-color:rgba(62,207,142,.4)}
+.modes .mode.soon{border-style:dashed}
 .pill.soon{color:var(--violet);border-color:rgba(167,139,250,.4);background:rgba(167,139,250,.08)}
 .dot{width:.55em;height:.55em;border-radius:50%;background:var(--dim);display:inline-block}
 .dot.on{background:var(--jade);box-shadow:0 0 0 0 rgba(62,207,142,.6);animation:pulse 2s infinite}
@@ -533,7 +539,7 @@ footer .fbrand img{width:44px}
           </div>
         </div>
       </div>
-      <div class="grid">
+      <div class="grid" style="align-content:start">
         <div class="card hl"><h3>🎁 Người mới được gì?</h3>
           <ul class="clean">
             <li><b data-k="player.start_money">200</b> xu khởi đầu và <b>bộ quà tân thủ</b></li>
@@ -541,17 +547,25 @@ footer .fbrand img{width:44px}
             <li>Sách cẩm nang tiếng Việt: gõ <span class="kbd">/huongdan</span></li>
             <li>Dịch chuyển tới vùng đất trống: <span class="kbd">/tpr</span> hoặc bấm NPC ở spawn</li>
           </ul></div>
-        <div class="card"><h3>Các chế độ</h3>
+        <div class="card"><h3>🧭 10 phút đầu nên làm gì?</h3>
           <ul class="clean s">
-            <li><b>Bang Hội Chiến</b> <span class="pill" style="margin-left:6px">Đang mở</span><br><span class="muted">Chiến lược, thị trấn, công thành trên bản đồ Trái Đất.</span></li>
-            <li><b>Practice / Duels</b> <span class="pill" style="margin-left:6px">Thử nghiệm</span><br><span class="muted">Đấu 1v1 luyện PvP, không mất đồ.</span></li>
-            <li><b>Thái Ấp Sáng Tạo</b> <span class="pill" style="margin-left:6px">Đang mở</span><br><span class="muted">Chế độ sáng tạo trên bản sao mảnh đất của bạn, vào qua cổng tím trong Thái Ấp.</span></li>
-            <li><b>Skyblock</b> <span class="pill soon" style="margin-left:6px">Sắp có</span><br><span class="muted">Bắt đầu trên hòn đảo nhỏ giữa trời, mở rộng đảo, nâng cấp, đua top cùng bạn bè.</span></li>
-            <li><b>Lifesteal</b> <span class="pill soon" style="margin-left:6px">Sắp có</span><br><span class="muted">Hạ một người là lấy được một tim của họ, chết thì mất tim. Dành cho dân PvP thích cảm giác mạnh.</span></li>
-            <li><b>Pokémon</b> <span class="pill soon" style="margin-left:6px">Dự kiến</span><br><span class="muted">Bắt, nuôi, đấu Pokémon (Cobblemon). Chỉ bản Java, cần cài modpack.</span></li>
-          </ul>
-          <p class="dim" style="font-size:.85rem;margin:8px 0 0">Chế độ mới mở dần khi server đông người. Tài khoản và rank dùng chung, nhưng tiền và đồ riêng từng chế độ.</p></div>
+            <li>Tìm <b>Già Làng</b>, chuột phải để nghe chuyện và làm chương 1 cốt truyện (một bước để lên <b>Dân</b>)</li>
+            <li>Dùng <span class="kbd">/tpr</span> tìm đất, đào, chặt, câu cá: việc gì cũng ra xu, bán bằng <span class="kbd">/sell</span></li>
+            <li>Xem bậc danh phận và cách lên rank: <span class="kbd">/danhphan</span></li>
+            <li>Rủ bạn bè, đủ giờ chơi thì lập thị trấn: <span class="kbd">/t new &lt;tên&gt;</span></li>
+          </ul></div>
       </div>
+    </div>
+
+    <h3 style="margin:36px 0 4px">Các chế độ</h3>
+    <p class="dim" style="font-size:.9rem;margin:0 0 14px">Chế độ mới mở dần khi server đông người. Tài khoản và rank dùng chung, còn tiền và đồ riêng từng chế độ.</p>
+    <div class="grid g3 modes">
+      <div class="mode on"><i>⚔️</i><div><b>Bang Hội Chiến</b> <span class="pill">Đang mở</span><p>Chiến lược, thị trấn, công thành trên bản đồ Trái Đất.</p></div></div>
+      <div class="mode on"><i>🏗️</i><div><b>Thái Ấp Sáng Tạo</b> <span class="pill">Đang mở</span><p>Sáng tạo trên bản sao mảnh đất của bạn, vào qua cổng tím trong Thái Ấp.</p></div></div>
+      <div class="mode"><i>🥊</i><div><b>Practice / Duels</b> <span class="pill">Thử nghiệm</span><p>Đấu 1v1 luyện PvP, không mất đồ.</p></div></div>
+      <div class="mode soon"><i>🏝️</i><div><b>Skyblock</b> <span class="pill soon">Sắp có</span><p>Bắt đầu trên hòn đảo nhỏ giữa trời, mở rộng đảo, nâng cấp, đua top cùng bạn bè.</p></div></div>
+      <div class="mode soon"><i>❤️</i><div><b>Lifesteal</b> <span class="pill soon">Sắp có</span><p>Hạ một người là lấy được một tim của họ, chết thì mất tim. Cho dân PvP thích cảm giác mạnh.</p></div></div>
+      <div class="mode soon"><i>🔴</i><div><b>Pokémon</b> <span class="pill soon">Dự kiến</span><p>Bắt, nuôi, đấu Pokémon (Cobblemon). Chỉ bản Java, cần cài modpack.</p></div></div>
     </div>
   </div>
 </section>

@@ -886,6 +886,67 @@ final class ThaiAp implements Listener {
         }
     }
 
+    /**
+     * Client sáng tạo tự gửi được món đồ với dữ liệu tuỳ ý (chế đồ "hack": thuộc tính +1000 sát thương, phù phép cấp 32767, trứng chứa
+     * dữ liệu sinh vật lạ, rương lồng rương hàng trăm KB làm sập/lag server khi lưu). Chỉ giữ đồ bình thường; món lạ đổi thành bản trơn.
+     */
+    @EventHandler(ignoreCancelled = true)
+    public void onMirrorCreative(org.bukkit.event.inventory.InventoryCreativeEvent e) {
+        if (!mirror) {
+            return;
+        }
+        org.bukkit.inventory.ItemStack it = e.getCursor();
+        if (it == null || it.getType().isAir() || !it.hasItemMeta()) {
+            return;
+        }
+        String why = suspicious(it);
+        if (why != null) {
+            e.setCursor(new org.bukkit.inventory.ItemStack(it.getType(), Math.max(1, Math.min(it.getAmount(), it.getType().getMaxStackSize()))));
+            if (e.getWhoClicked() instanceof Player p) {
+                p.sendActionBar(c("&eĐã bỏ dữ liệu lạ khỏi món đồ (" + why + ")."));
+                plugin.getLogger().info("Sáng tạo: " + p.getName() + " gửi món " + it.getType() + " có " + why + " → đổi thành bản trơn");
+            }
+        }
+    }
+
+    private static String suspicious(org.bukkit.inventory.ItemStack it) {
+        byte[] raw;
+        try {
+            raw = it.serializeAsBytes();
+        } catch (RuntimeException ex) {
+            return "dữ liệu hỏng";
+        }
+        if (raw.length > 8192) {
+            return "dữ liệu quá lớn " + raw.length / 1024 + " KB";
+        }
+        org.bukkit.inventory.meta.ItemMeta m = it.getItemMeta();
+        if (m.hasAttributeModifiers()) {
+            return "chỉ số tự chế";
+        }
+        for (var en : m.getEnchants().entrySet()) {
+            if (en.getValue() > en.getKey().getMaxLevel()) {
+                return "phù phép vượt cấp";
+            }
+        }
+        if (m instanceof org.bukkit.inventory.meta.EnchantmentStorageMeta es) {
+            for (var en : es.getStoredEnchants().entrySet()) {
+                if (en.getValue() > en.getKey().getMaxLevel()) {
+                    return "sách phù phép vượt cấp";
+                }
+            }
+        }
+        if (m instanceof org.bukkit.inventory.meta.SpawnEggMeta egg && egg.getSpawnedEntity() != null) {
+            return "trứng chứa dữ liệu sinh vật";
+        }
+        if (m instanceof org.bukkit.inventory.meta.PotionMeta pm && pm.hasCustomEffects()) {
+            return "thuốc tự chế";
+        }
+        if (m.isUnbreakable()) {
+            return "không bao giờ hỏng";
+        }
+        return null;
+    }
+
     @EventHandler(ignoreCancelled = true)
     public void onMirrorDrop(org.bukkit.event.player.PlayerDropItemEvent e) {
         if (mirror) {

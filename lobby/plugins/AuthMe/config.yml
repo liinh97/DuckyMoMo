@@ -22,8 +22,10 @@ settings:
     enablePremium: true
     # Phiên đăng nhập (19/10): đăng nhập rồi thì vào lại từ CÙNG IP trong timeout phút khỏi gõ mật khẩu; đổi IP là phải đăng nhập lại.
     # Chỉ an toàn khi server thấy IP thật (cổng VPS, playit đã bỏ). Sửa ở Cài đặt › Toàn mạng › Đăng nhập.
+    # TẮT 19/10 (rà bảo mật): 4G Viettel/Vina, quán net dùng chung IP công khai (CGNAT) → người khác cùng IP gõ đúng TÊN trong thời hạn
+    # là vào thẳng không cần mật khẩu (cả tài khoản admin). Muốn bật lại thì để timeout ngắn (≤ 10 phút).
     sessions:
-        enabled: true
+        enabled: false
         timeout: 1440
     restrictions:
         # 0 = không giới hạn. Chơi trong mạng nhà nhiều người chung 1 IP,
@@ -42,7 +44,43 @@ settings:
     security:
         minPasswordLength: 6
         passwordHash: BCRYPT
+        unsafePasswords:
+            -   '123456'
+            -   password
+            -   qwerty
+            -   '12345'
+            -   '54321'
+            -   '123456789'
+            -   help
+            -   '12345678'
+            -   '1234567'
+            -   '111111'
+            -   '000000'
+            -   '123123'
+            -   abc123
+            -   matkhau
+            -   minecraft
+            -   iloveyou
+            -   admin
+            -   '666666'
+            -   '888888'
+            -   '112233'
+            -   qwerty123
+            -   '1234567890'
+            -   asdfgh
 Hooks:
     bungeecord: true
     # Lấy từ AUTHME_SECRET trong .env, phải trùng proxySharedSecret trên proxy
     proxySharedSecret: '${CFG_AUTHME_SECRET}'
+# Chống dò mật khẩu (19/10): sai 3 lần phải gõ captcha (/captcha <mã>), sai 10 lần trong 30 phút thì cấm IP đó 30 phút
+# (ngắn vì nhiều người chung IP 4G/quán net). Sai mật khẩu còn bị kick (kickOnWrongPassword mặc định), Sonar ở proxy hãm tốc độ vào lại.
+Security:
+    captcha:
+        useCaptcha: true
+        maxLoginTry: 3
+        captchaLength: 5
+    tempban:
+        enableTempban: true
+        maxLoginTries: 10
+        tempbanLength: 30
+        minutesBeforeCounterReset: 30

@@ -1155,8 +1155,11 @@ class Handler(BaseHTTPRequestHandler):
         self._send(code, json.dumps(obj, ensure_ascii=False).encode("utf-8"), "application/json; charset=utf-8", "no-store", extra)
 
     def client_ip(self):
-        # Trạm 6 (Traefik) ghi X-Real-Ip; chạy thẳng thì lấy địa chỉ kết nối
-        return (self.headers.get("X-Real-Ip") or self.client_address[0])[:64]
+        # Đi qua Cloudflare → tunnel → Trạm 6 (Traefik): X-Real-Ip luôn là cổng Docker (172.20.0.1), mọi người chung 1 IP
+        # (19/10: 20 lần sai mã là khoá đăng nhập web của CẢ server). IP thật nằm ở CF-Connecting-IP (Cloudflare tự ghi đè,
+        # người dùng không giả được; cổng 8892 chỉ mở 127.0.0.1 nên không ai gọi thẳng). Chạy thẳng thì lấy địa chỉ kết nối.
+        ip = self.headers.get("CF-Connecting-IP") or self.headers.get("X-Real-Ip") or self.client_address[0]
+        return ip.strip()[:64]
 
     def token(self):
         for part in self.headers.get("Cookie", "").split(";"):
@@ -1277,7 +1280,8 @@ class Handler(BaseHTTPRequestHandler):
                 body = json.dumps(ROUTES[path](), ensure_ascii=False).encode("utf-8")
                 self._send(200, body, "application/json; charset=utf-8")
             except Exception as e:  # noqa: BLE001 - trang vẫn chạy khi một nguồn dữ liệu lỗi
-                self._send(500, json.dumps({"error": str(e)}).encode(), "application/json")
+                print(f"Lỗi {path}: {e!r}", flush=True)   # chi tiết chỉ ghi log, không trả cho trình duyệt (trang công khai)
+                self._send(500, json.dumps({"error": "Không tải được dữ liệu"}).encode(), "application/json")
             return
         rel = "index.html" if path in ("", "/") else path.lstrip("/")
         target = (PUBLIC / rel).resolve()

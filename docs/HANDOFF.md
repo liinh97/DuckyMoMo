@@ -382,6 +382,30 @@
   vé vận mệnh rơi hiếm, tung xúc xắc lúc vào), (4) mua vé cá nhân bằng xu (lượt / 7 ngày), (5) mở chung toàn server bằng quỹ như khai hoang.
   Điều kiện phụ: cấp pet, thành tích, nhóm 2–4 người, cuối tuần, chỉ nước Bá chủ. Chống lạm phát: lượt/ngày, lockout boss của EliteMobs.
 
+### 19/10 tối: Rà hiệu năng + bảo mật (người dùng: "tối ưu hệ thống và chống bị hack… trong game lẫn website")
+- ĐÃ SỬA:
+  1. Web (site/app.py): IP lấy từ CF-Connecting-IP. Trước đó qua Cloudflare→tunnel→Traefik mọi người chung IP 172.20.0.1 → 20 lần sai mã
+     /web là KHOÁ ĐĂNG NHẬP WEB CỦA CẢ SERVER 15 phút, nhật ký mất IP thật. Đã thử: log ghi IP thật. Lỗi 500 không trả chi tiết cho trình duyệt nữa.
+  2. AuthMe (lobby, repo + data + settings.yml authme_session_on false): TẮT phiên (CGNAT 4G/quán net chung IP + offline mode → gõ đúng tên
+     admin là vào thẳng), captcha sau 3 lần sai, cấm IP 30 phút sau 10 lần sai, danh sách mật khẩu cấm dài hơn. Đã `authme reload`.
+  3. Bỏ OP của Linh ở sảnh (thừa: Linh có nhóm admin `*` toàn mạng; OP + phiên = chiếm được là toàn quyền).
+  4. Sáng Tạo: ThaiAp lọc InventoryCreativeEvent (chỉ số tự chế, phù phép vượt cấp, trứng có dữ liệu sinh vật, thuốc tự chế, unbreakable,
+     > 8 KB → bản trơn + log).
+  5. Hiệu năng Bang Hội Chiến: paper-world-defaults (optimize-explosions, giới hạn mũi tên/kinh nghiệm/ngọc ender mỗi chunk,
+     ALTERNATE_CURRENT, grass-spread 4, tắt dò mèo trên rương, chặn đi vào chunk chưa tải), SYNC_CHUNK_WRITES false, spigot merge-radius
+     item 2 / exp 3 (sửa data/banghoi-1/spigot.yml, file này KHÔNG có trong repo). Khởi động lại 4 server lúc không ai online.
+- ĐÃ KIỂM, ỔN: /quantri chuyển nguyên đường dẫn sang panel nhưng panel chặn /api/web/* khi có X-DMM-Player và chặn người không có quyền;
+  tên luôn lấy từ phiên phía server; giá donate server tự tính; CSRF (Origin/Sec-Fetch-Site); cookie HttpOnly/SameSite; đường dẫn file tĩnh không
+  thoát được thư mục; mã /web SecureRandom; mọi chỗ HTML chèn dữ liệu người chơi đều esc(); mật khẩu .env mạnh, chưa từng commit; server con chỉ
+  nghe trong Docker; DuckyMoMoCore không có xử lý nặng mỗi tick (PlayerMove đều thoát sớm). Lúc rảnh: TPS 20, 0,4 ms/tick.
+- CÒN LẠI (chưa làm, cần người dùng): (a) Trạm 6 Traefik `--api.insecure=true` + cổng 8091 mở 0.0.0.0 trên máy (dự án tram6, chỉ trong LAN nếu
+  router không mở cổng) → nên tắt khi live; (b) PLAYIT_SECRET_KEY còn trong .env (playit đã bỏ) → thu hồi trên trang playit rồi xoá;
+  (c) proxySharedSecret AuthMe đã hiện trong log phiên Claude (chỉ lưu ở máy) → muốn chắc thì đổi AUTHME_SECRET (khởi động lại proxy+lobby+relay);
+  (d) chưa có sao lưu ngoài máy (restic chỉ ở máy nhà) → bị phá máy/ổ là mất; (e) đo lag thật cần spark profiler LÚC ĐÔNG NGƯỜI
+  (`/spark profiler start --timeout 300`, link tải lên spark.lucko.me — hỏi người dùng trước khi gửi); (f) tối ưu mạnh hơn nhưng đổi lối chơi
+  (entity-activation-range, villager không hoạt động, despawn gần hơn, giảm view-distance) chờ quyết; (g) khoá 5 lần sai theo TÊN trên web cho phép
+  người khác cố tình khoá web của một người 15 phút (chấp nhận).
+
 ### 19/10 tối: Thái Ấp Sáng Tạo — server sangtao-1, chỉ vào qua cổng trong Thái Ấp (ĐÃ TRIỂN KHAI 16:38, CHƯA THỬ BẰNG NGƯỜI)
 - Người dùng: Thái Ấp cho creative để giải trí → mình khuyên KHÔNG bật creative trong thế giới sinh tồn (chung túi đồ/rương ender/kinh tế = đường
   đưa đồ ra), làm server riêng. Người dùng chốt: "vào thái ấp thì sẽ cổng chuyển tới server sáng tạo, chỉ ở thái ấp mới có".

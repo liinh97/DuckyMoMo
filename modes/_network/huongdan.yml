@@ -30,7 +30,12 @@ chapters:
     &0/login <mk>
   - |-
     &6&lChào mừng! (tiếp)
-    &4Lưu ý: &0không dùng mật khẩu giống tài khoản khác, không đưa cho ai.
+    &0Mỗi lần vào đều phải &1/login&0 (máy tính).
+    &0Sai mật khẩu 3 lần: gõ &1/captcha <mã>&0 theo mã hiện trong chat. Sai 10 lần: chờ 30 phút.
+  - |-
+    &6&lMật khẩu
+    &4Lưu ý: &0mật khẩu ít nhất 6 ký tự, không dùng 123456, matkhau…, không giống tài khoản khác, không đưa cho ai.
+    &0Đổi: &1/changepassword <cũ> <mới>
   - |-
     &6&lChọn chế độ
     &0Bấm &lla bàn&r&0 trên tay hoặc gõ &1/menu&0.

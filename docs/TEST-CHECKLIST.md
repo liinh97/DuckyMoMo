@@ -217,6 +217,15 @@ Triển khai: kiểm tra không ai online (lệnh riêng) → `docker compose up
 - [ ] Điện thoại bản cũ hơn vẫn vào (RakNet) tới khi cập nhật. Sau 27/10 thử lại với bản 26.60.
 - [ ] Log proxy khi người Bedrock vào: không lỗi signaling/WebRTC (`docker logs duckymomo-proxy-1 | grep -i -E "nethernet|webrtc|signal"`).
 
+## 4p. Bảo mật + hiệu năng — 19/10
+- [ ] Vào lại server (máy tính): luôn phải /login (không còn tự đăng nhập). Sai 3 lần → hiện yêu cầu /captcha <mã>, gõ đúng thì login tiếp được.
+- [ ] /changepassword sang mật khẩu "123456" → bị từ chối (mật khẩu cấm).
+- [ ] Điện thoại (Bedrock) vẫn tự đăng nhập như cũ.
+- [ ] Linh vẫn dùng được lệnh admin ở sảnh sau khi bỏ OP (/lp, /dmm, /gamemode…).
+- [ ] Sáng Tạo: lấy đồ thường trong túi sáng tạo bình thường; đồ chế (lệnh /give của client mod, NBT editor) bị đổi thành bản trơn.
+- [ ] Bang Hội Chiến: mạch redstone thường (cửa, đèn, máy gặt) chạy đúng; TNT nổ phá như cũ; đồ rơi gần nhau gộp lại.
+- [ ] Lúc đông người: `/spark tps` (mspt < 50), nếu lag thì chạy profiler (hỏi trước khi tải báo cáo lên spark).
+
 ## 5. Quảng trường Vinh danh (sảnh)
 - [ ] (CHƯA CẦN, làm khi gần mở server) Chọn chỗ trống ở sảnh (map sakura). Đứng, quay mặt về phía người xem: `/vinhdanh dat moinhat tieude`, rồi `bachu`, `chienthan`, `phuho`,
       `kientrucsu`, `dautruong`, `pet` ở các chỗ khác. Bảng chữ nổi + đầu người chơi đúng hướng, không đè nhau.

@@ -41,3 +41,23 @@ anticheat:
       - stone
       - oak_planks
       - deepslate
+
+# Tối ưu (19/10, rà hiệu năng): chỉ các chỉnh an toàn, không đổi lối chơi đáng kể. Đổi cần khởi động lại server.
+environment:
+  optimize-explosions: true          # gộp tính toán vụ nổ (TNT, creeper) — kết quả như cũ, nhẹ hơn nhiều
+chunks:
+  prevent-moving-into-unloaded-chunks: true   # chạy/bay nhanh vào chunk chưa tải thì dừng lại thay vì ép server tải gấp
+  entity-per-chunk-save-limit:       # tối đa mỗi loại lưu trong 1 chunk (chống "bom mũi tên / cục kinh nghiệm" làm chunk nặng)
+    arrow: 16
+    ender_pearl: 8
+    experience_orb: 16
+    fireball: 8
+    small_fireball: 8
+    snowball: 8
+entities:
+  behavior:
+    disable-chest-cat-detection: true   # bỏ dò mèo ngồi trên rương mỗi lần mở rương
+misc:
+  redstone-implementation: ALTERNATE_CURRENT   # redstone tính nhanh hơn nhiều lần (máy redstone phá lag hết tác dụng), mạch thường chạy như cũ
+tick-rates:
+  grass-spread: 4                    # cỏ/nấm lan mỗi 4 tick thay vì mỗi tick

@@ -13,6 +13,7 @@ services:
       MEMORY: 6G
       MAX_PLAYERS: 100        # tối đa người trong server này (theo RAM 6G; muốn hơn thì tăng MEMORY). Mặc định Minecraft là 20; proxy hiện 500 cho cả mạng
       USE_AIKAR_FLAGS: "true"
+      SYNC_CHUNK_WRITES: "FALSE"   # 19/10: ghi chunk không chờ ổ đĩa (Paper tự ghi an toàn), bớt khựng khi lưu
       TZ: Asia/Ho_Chi_Minh
       RCON_PASSWORD: ${RCON_PASSWORD:?Chưa đặt RCON_PASSWORD trong .env (chạy lại ./ops/init.sh)}   # dùng chung với dịch vụ sao lưu, trang Cài đặt
       ONLINE_MODE: "FALSE"

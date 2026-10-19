@@ -810,7 +810,9 @@ footer .fbrand img{width:44px}
         <div id="taInfo" class="muted"></div></div>
     </div>
     <div class="card" style="margin-top:16px"><h3>⛩ Cổng Dungeon <span class="kbd">/dungeon</span></h3>
-      <p class="muted">Dungeon cày đồ hiếm, quái mạnh chỉ có ở đây (ngoài thế giới không có quái tinh anh). Mỗi dungeon một cách vào: <b>chuỗi chìa khoá</b> (trùm cuối mỗi tầng rơi Chìa khoá, dùng chìa là mở vĩnh viễn tầng sau), <b>dungeon ẩn</b> (tự tìm lối vào trên bản đồ), <b>vé mua bằng xu</b>, <b>cả server góp quỹ</b> mở cửa, hoặc chỉ vào được qua <b>Cổng Hoang</b> giấu trên bản đồ. Vé chỉ bị trừ khi thật sự vào. Một số dungeon có thêm điều kiện (đi theo nhóm, dẫn pet đủ cấp, chỉ mở cuối tuần hoặc buổi tối…). Mỗi tuần có một <b>Dungeon của tuần</b> được thưởng thêm; bảng dưới có kỷ lục vượt nhanh nhất.</p>
+      <p class="muted">Dungeon cày đồ hiếm, quái mạnh chỉ có ở đây (ngoài thế giới không có quái tinh anh). Mỗi loại một cách vào: bấm từng loại bên dưới để xem.
+        Vé chỉ bị trừ khi thật sự vào. Một số dungeon có thêm điều kiện (đi theo nhóm, dẫn pet đủ cấp, chỉ mở cuối tuần hoặc buổi tối…).
+        Mỗi tuần có một <b>Dungeon của tuần</b> được thưởng thêm; bảng có kỷ lục vượt nhanh nhất.</p>
       <div id="dgList" class="muted">Đang tải…</div></div>
     <div class="card" style="margin-top:16px"><h3>🌀 Cổng Hoang <span class="kbd">/conghoang</span></h3>
       <p class="muted">Cổng dungeon giấu trên bản đồ, trông như cảnh vật cũ (vòng đá rêu, giếng cát, cột băng, gốc cây rêu…). Thấy hạt tím thì đứng lên ô giữa và ngồi xuống (Shift). Dungeon sau cổng càng khó (★ nhiều) thì cổng càng khó nhận ra: ít dấu hiệu, có cổng chỉ lộ ban đêm, tin đồn mơ hồ hơn. Ai tìm ra trước được ưu tiên <span data-k="wildgates.grace">30</span> phút để lập thị trấn ở đó. Thị trấn giữ cổng: dân mình vào miễn phí, người ngoài trả phí vào ngân khố. <b>Chiếm được thị trấn là có cổng.</b></p>
@@ -1169,8 +1171,8 @@ document.querySelectorAll(".dd-btn").forEach(b => b.onclick = e => {   // điệ
 });
 document.addEventListener("click", () => closeDd());
 document.querySelectorAll("#links a").forEach(a => a.onclick = () => { $("#links").classList.remove("open"); closeDd(); });
-document.querySelectorAll(".tab").forEach(t => t.onclick = () => {
-  document.querySelectorAll(".tab").forEach(x => x.classList.toggle("on", x === t));
+document.querySelectorAll(".tab[data-pane]").forEach(t => t.onclick = () => {
+  document.querySelectorAll(".tab[data-pane]").forEach(x => x.classList.toggle("on", x === t));
   document.querySelectorAll(".pane").forEach(p => p.classList.toggle("on", p.id === t.dataset.pane));
 });
 if (/android|iphone|ipad/i.test(navigator.userAgent)) document.querySelector('[data-pane="pBedrock"]').click();
@@ -1326,7 +1328,11 @@ async function loadInfo(){
     : `<tr><td><b>${esc(g.ma)}</b> <span title="Độ khó tìm" style="color:#c9a2ff">${"★".repeat(g.bac || 1)}</span></td><td colspan="2" class="dim">Chưa ai tìm ra · <i>${esc(g.tin_don || "")}</i></td></tr>`).join("")}</tbody></table>` : '<p class="dim">Chưa có cổng nào xuất hiện.</p>');
   const dgi = info.dungeon || {};
   const DG_KIEU = {chain: "🗝 Chuỗi chìa khoá", hidden: "🌀 Dungeon ẩn", luck: "✦ May mắn", ticket: "🎟 Vé cá nhân", server: "⛩ Cả server góp quỹ", gate: "🌀 Chỉ qua Cổng Hoang"};
-  $("#dgList").innerHTML = dgi.enabled && (dgi.list || []).length ? `<table><tbody>${dgi.list.map(d => {
+  const DG_MO = {chain: "Đi lần lượt: trùm cuối mỗi tầng rơi Chìa khoá, dùng chìa là mở vĩnh viễn tầng sau.",
+    hidden: "Không có trong menu: tự tìm lối vào giấu trên bản đồ.", gate: "Chỉ vào được qua Cổng Hoang ngụy trang trên bản đồ (xem bảng Cổng Hoang bên dưới).",
+    luck: "Cần Vé Vận Mệnh rơi ngẫu nhiên khi hạ quái hoặc câu cá.", ticket: "Mua vé bằng xu, mỗi vé một lượt; chỉ trừ vé khi thật sự vào.",
+    server: "Cả server góp xu vào quỹ (/dungeon gop &lt;mã&gt; &lt;xu&gt;), đủ mục tiêu thì cổng mở cho mọi người."};
+  const dgRow = d => {
     let how = "";
     if (d.kieu === "chain") how = d.can ? "🗝 Chìa khoá: trùm cuối " + esc(d.can) + " rơi" : "Mở sẵn";
     else if (d.kieu === "hidden") how = "Lối vào giấu trên bản đồ";
@@ -1337,8 +1343,21 @@ async function loadInfo(){
       : `Quỹ ${nf.format(d.quy || 0)}/${nf.format(d.muc_tieu || 0)} xu · mở ${d.so_ngay ? d.so_ngay + " ngày" : "tới hết mùa"}`;
     const clk = x => x >= 3600 ? `${Math.floor(x / 3600)}:${String(Math.floor(x / 60) % 60).padStart(2, "0")}:${String(x % 60).padStart(2, "0")}` : `${Math.floor(x / 60)}:${String(x % 60).padStart(2, "0")}`;
     const rec = (d.ky_luc || []).slice(0, 3).map((r, i) => `<div>${["🥇", "🥈", "🥉"][i]} ${clk(r.giay)} <span class="dim">${esc(r.ten)}</span></div>`).join("");
-    return `<tr><td><b>${esc(d.ten)}</b>${d.cap ? ` <span class="dim">cấp ${esc(d.cap)}</span>` : ""}${d.tuan ? ' <span class="pill" style="background:rgba(255,200,80,.15);color:#ffd27a">★ Dungeon của tuần</span>' : ""}<div class="dim" style="font-size:.8rem">${DG_KIEU[d.kieu] || ""}</div></td><td style="font-size:.85rem">${how}${(d.dk || []).length ? `<div style="color:#ffd27a;font-size:.8rem">⚠ ${d.dk.map(esc).join(" · ")}</div>` : ""}</td><td class="dim" style="font-size:.8rem">${d.dau_tien ? "Đầu tiên: " + esc(d.dau_tien) : ""}${d.luot ? `<div>${d.luot} lượt vượt</div>` : ""}${rec ? `<div style="margin-top:4px">⏱ Kỷ lục:</div>${rec}` : ""}</td></tr>`;
-  }).join("")}</tbody></table>` : "Đang tắt.";
+    return `<tr><td><b>${esc(d.ten)}</b>${d.cap ? ` <span class="dim">cấp ${esc(d.cap)}</span>` : ""}${d.tuan ? ' <span class="pill" style="background:rgba(255,200,80,.15);color:#ffd27a">★ Dungeon của tuần</span>' : ""}</td><td style="font-size:.85rem">${how}${(d.dk || []).length ? `<div style="color:#ffd27a;font-size:.8rem">⚠ ${d.dk.map(esc).join(" · ")}</div>` : ""}</td><td class="dim" style="font-size:.8rem">${d.dau_tien ? "Đầu tiên: " + esc(d.dau_tien) : ""}${d.luot ? `<div>${d.luot} lượt vượt</div>` : ""}${rec ? `<div style="margin-top:4px">⏱ Kỷ lục:</div>${rec}` : ""}</td></tr>`;
+  };
+  const dgGroups = Object.keys(DG_KIEU).map(k => [k, (dgi.list || []).filter(d => d.kieu === k)]).filter(([, a]) => a.length);
+  const dgOther = (dgi.list || []).filter(d => !DG_KIEU[d.kieu]);
+  if (dgOther.length) dgGroups.push(["khac", dgOther]);
+  const dgShow = k => {
+    document.querySelectorAll("#dgTabs .tab").forEach(t => t.classList.toggle("on", t.dataset.k === k));
+    const g = dgGroups.find(x => x[0] === k);
+    $("#dgPane").innerHTML = g ? `<p class="dim" style="font-size:.88rem;margin:4px 0 8px">${DG_MO[k] || ""}</p><table><tbody>${g[1].map(dgRow).join("")}</tbody></table>` : "";
+  };
+  $("#dgList").innerHTML = dgi.enabled && dgGroups.length
+    ? `<div class="fishbar" id="dgTabs" style="margin:14px 0 6px">${dgGroups.map(([k, a]) => `<button class="tab" data-k="${k}">${DG_KIEU[k] || "Khác"} <span class="dim">(${a.length})</span></button>`).join("")}</div><div id="dgPane"></div>`
+    : "Đang tắt.";
+  document.querySelectorAll("#dgTabs .tab").forEach(t => t.onclick = () => dgShow(t.dataset.k));
+  if (dgGroups.length) dgShow((dgGroups.find(([, a]) => a.some(d => d.tuan)) || dgGroups[0])[0]);
   const ldt = (info.mercenary || {}).list || [];
   $("#ldtList").innerHTML = ldt.length ? `<table><tbody>${ldt.map(m => `<tr><td><b>${esc(m.ten)}</b></td><td>${nf.format(m.gia || 0)} xu</td><td class="dim">${m.xong || 0} hợp đồng đã làm</td></tr>`).join("")}</tbody></table>` : "Chưa ai đăng ký.";
   const tts = info.achievements || [];
@@ -1462,7 +1481,7 @@ function seaCard(m){
     <p class="dim" style="margin:12px 0 0;font-size:.85rem">${n.mua_bat >= 15 ? "🌧️ Trời hay đổ mưa" : n.mua_tanh >= 30 ? "🌤️ Mưa hiếm, nhanh tạnh" : "⛅ Thời tiết bình thường"}</p>`;
   const chips = (a, c) => a.map(x => `<span class="chip ${c}">${esc(x.ten)} ${x.pct > 0 ? "+" : ""}${x.pct}%</span>`).join("");
   $("#seaCrops").innerHTML = `<h3>🌾 Nông sản ${esc(n.ten.replace(/^\S+\s/, "").toLowerCase())}</h3>
-    ${n.nhanh.length ? `<div class="cropcol"><h4>▲ Lớn nhanh</h4><div class="chips">${chips(n.nhanh, "up")}</div></div>` : ""}
+    ${n.nhanh.length ? `<div class="cropcol"><h4>▲ Lớn nhanh</h4><div class="chips">${chips(n.nhanh, "up")}</div>${n.nhanh.some(x => /^(Dưa hấu|Bí ngô)$/.test(x.ten)) ? `<p class="dim" style="font-size:.8rem;margin:6px 0 0">Dưa hấu, bí ngô: dây lớn nhanh hơn, gặt quả mọc từ dây có cơ hội rơi gấp đôi.</p>` : ""}</div>` : ""}
     ${n.cham.length ? `<div class="cropcol"><h4>▼ Lớn chậm</h4><div class="chips">${chips(n.cham, "down")}</div></div>` : ""}
     ${n.duoc_mua.length ? `<div class="cropcol"><h4>✦ Được mùa: gặt cây chín có cơ hội rơi thêm</h4><div class="chips">${n.duoc_mua.map(x => `<span class="chip bonus">${esc(x.ten)} ${x.pct}%</span>`).join("")}</div></div>` : ""}
     <p class="dim" style="margin:14px 0 0;font-size:.85rem">Sang ${esc(m.tiep.ten)}: lớn nhanh ${m.tiep.nhanh.map(x => esc(x.ten.toLowerCase())).join(", ") || "không có"}.</p>`;

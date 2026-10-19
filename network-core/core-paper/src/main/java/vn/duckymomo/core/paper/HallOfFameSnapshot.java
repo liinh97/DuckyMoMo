@@ -33,7 +33,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 /**
  * Vinh danh mùa (Bang Hội Chiến): chụp người/nước thắng ra file JSON dùng chung (hall-of-fame.dir, mặc định /shared/vinhdanh) để
- * sảnh dựng Quảng trường Vinh danh (HallOfFameDisplay) và web hiện Đền Vinh Danh. Mỗi mùa một file S<mùa>.json:
+ * sảnh dựng Quảng trường Danh vọng (HallOfFameDisplay) và web hiện Quảng trường Danh vọng. Mỗi mùa một file S<mùa>.json:
  *  - tạm tính: tự ghi mỗi 30 phút trong mùa ("trang_thai": "tam");
  *  - chốt: /vinhdanh chot (admin, sau /bxh traothuong) -> "trang_thai": "chot", không ghi đè nữa.
  * Nội dung: Công thành chiến (Bá Chủ: nước, vua, từng thị trấn với thị trưởng và thành viên kèm chức vụ; Á Chủ hạng 2–3), Chiến Thần, Đại Phú Hộ,
@@ -103,7 +103,7 @@ final class HallOfFameSnapshot {
                 s.sendMessage(c("&cChiến Thần: &f" + war.get(0).getKey() + " &7(" + war.get(0).getValue() + " điểm)"));
             }
         }
-        s.sendMessage(c("&7Xem tượng và bảng vàng ở &fQuảng trường Vinh danh &7tại sảnh, hoặc trang web mục Đền Vinh Danh."
+        s.sendMessage(c("&7Xem tượng và bảng vàng ở &fQuảng trường Danh vọng &7tại sảnh, hoặc trang web mục Quảng trường Danh vọng."
                 + (s.hasPermission("duckymomo.vinhdanh.admin") ? " &8Admin: /vinhdanh chot | tam" : "")));
         return true;
     }

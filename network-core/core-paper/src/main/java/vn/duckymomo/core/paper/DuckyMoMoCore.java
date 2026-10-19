@@ -483,7 +483,7 @@ public final class DuckyMoMoCore extends JavaPlugin {
             getServer().getPluginManager().registerEvents(board, this);
             board.start();
         }
-        // Vinh danh mùa: Bang Hội Chiến chụp người thắng ra thư mục dùng chung (hall-of-fame.snapshot), sảnh dựng Quảng trường Vinh danh (hall-of-fame.display)
+        // Vinh danh mùa: Bang Hội Chiến chụp người thắng ra thư mục dùng chung (hall-of-fame.snapshot), sảnh dựng Quảng trường Danh vọng (hall-of-fame.display)
         org.bukkit.configuration.ConfigurationSection hof = getConfig().getConfigurationSection("hall-of-fame");
         HallOfFameSnapshot hofSnap = hof != null && hof.getBoolean("snapshot") && board != null
                 ? new HallOfFameSnapshot(this, board, hof, getConfig().getString("leaderboard.season", "1")) : null;
@@ -495,7 +495,7 @@ public final class DuckyMoMoCore extends JavaPlugin {
             hallDisplay.start();
         }
         HallOfFameDisplay hd = hallDisplay;
-        bind("vinhdanh", hd != null ? hd::command : hofSnap != null ? hofSnap::command : null, "Quảng trường Vinh danh");
+        bind("vinhdanh", hd != null ? hd::command : hofSnap != null ? hofSnap::command : null, "Quảng trường Danh vọng");
         org.bukkit.command.PluginCommand vdCmd = getCommand("vinhdanh");
         if (vdCmd != null) {
             vdCmd.setTabCompleter(hd == null ? null : (sender, cmd, label, a) -> hd.tab(sender, a));

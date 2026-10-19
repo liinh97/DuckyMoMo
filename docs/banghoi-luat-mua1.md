@@ -24,8 +24,8 @@ Bán kính vùng vây 200 block ≈ 185 km ngoài đời (cỡ một tỉnh lớ
 | Tuần 1–2 | **Hoà bình** | Lập thị trấn, chiếm đất, làm kinh tế. **Chưa cho vây thành** (tắt công tắc SiegeWar). PvP đất hoang vẫn bật như mọi tuần. |
 | Tuần 3–12 | **Chiến tranh** | Vây thành theo lịch (mục 4). Tuần 12: Kiến Trúc Sư đăng ký. |
 | Tuần 13 | **Đại chiến** | Mỗi quốc gia được vây 3 thành cùng lúc (thường 2), thêm phiên tối thứ 6 20:00, điểm lãnh thổ ×2, Kiến Trúc Sư bình chọn. Đóng mùa Chủ nhật 22:00. |
-| Sau đóng mùa | **Tổng kết** | Chốt bảng xếp hạng, trao danh hiệu, khắc tên + dựng tượng ở **Quảng trường Vinh danh** (sảnh), lưu world làm "bảo tàng" (chỉ xem). |
-| Mùa sau | **Làm lại từ đầu** | **Bản đồ mới**, xoá thị trấn/nước/đất/tiền/đồ/pet. Giữ: tài khoản, rank donate, đồ trang trí, danh hiệu mùa, Quảng trường Vinh danh. |
+| Sau đóng mùa | **Tổng kết** | Chốt bảng xếp hạng, trao danh hiệu, khắc tên + dựng tượng ở **Quảng trường Danh vọng** (sảnh), lưu world làm "bảo tàng" (chỉ xem). |
+| Mùa sau | **Làm lại từ đầu** | **Bản đồ mới**, xoá thị trấn/nước/đất/tiền/đồ/pet. Giữ: tài khoản, rank donate, đồ trang trí, danh hiệu mùa, Quảng trường Danh vọng. |
 
 - Lý do có 2 tuần hoà bình: miễn vây cho thị trấn mới hiện chỉ 7 ngày **[đang chạy]**; ai lập sớm sẽ bị đánh khi người
   vào muộn còn chưa có gì. Tắt hẳn vây thành 2 tuần đầu thì công bằng hơn.
@@ -237,7 +237,7 @@ ai cũng xem được điểm của mình bất cứ lúc nào, không có giả
 - **Tối Chủ nhật** sau khi chụp điểm: tin tổng kết tuần trong game (và Discord khi có bot): quốc gia lên/xuống hạng, trận nổi bật.
 - Trang web (Trạm 6) có thể làm sau.
 
-### 8.5b Quảng trường Vinh danh **[đã code 18/10]**
+### 8.5b Quảng trường Danh vọng **[đã code 18/10]**
 - Ở **sảnh** (giữ qua mọi mùa), `/vinhdanh tp`. Mỗi mùa: Công thành chiến (nước Bá Chủ, vua, từng thị trấn với thị trưởng, thành viên và
   chức vụ: Vua, Thị trưởng, Phó thị trưởng, quân hàm Tướng/Đại tá…; Á Chủ hạng 2–3), Chiến Thần, Đại Phú Hộ, Kiến Trúc Sư (thị trấn +
   thành viên), Đấu Trường, Pet mạnh nhất. Bảng chữ nổi + tượng đầu người chơi (top 3), web mục Vinh danh.
@@ -247,10 +247,10 @@ ai cũng xem được điểm của mình bất cứ lúc nào, không có giả
 
 | Giải | Hạng 1 | Hạng 2–3 |
 |---|---|---|
-| Bá Chủ | Danh hiệu vàng `[Bá Chủ S1]` cho cả quốc gia, tượng ở Quảng trường Vinh danh, mẫu cờ riêng dùng ở mùa 2 | `[Á Chủ S1]`, tên khắc ở Quảng trường Vinh danh |
+| Bá Chủ | Danh hiệu vàng `[Bá Chủ S1]` cho cả quốc gia, tượng ở Quảng trường Danh vọng, mẫu cờ riêng dùng ở mùa 2 | `[Á Chủ S1]`, tên khắc ở Quảng trường Danh vọng |
 | Chiến Thần | `[Chiến Thần S1]` + hiệu ứng hạt khi hạ địch (mùa sau) | `[Dũng Tướng S1]` |
-| Đại Phú Hộ | `[Phú Hộ S1]` | tên khắc ở Quảng trường Vinh danh |
-| Kiến Trúc Sư | `[Kiến Trúc Sư S1]` cho cả thị trấn; công trình được dựng lại ở spawn mùa 2 (nếu chủ đồng ý) | tên khắc ở Quảng trường Vinh danh |
+| Đại Phú Hộ | `[Phú Hộ S1]` | tên khắc ở Quảng trường Danh vọng |
+| Kiến Trúc Sư | `[Kiến Trúc Sư S1]` cho cả thị trấn; công trình được dựng lại ở spawn mùa 2 (nếu chủ đồng ý) | tên khắc ở Quảng trường Danh vọng |
 | Mọi người chơi ≥ 10 giờ | huy hiệu `[Mùa 1]` | |
 
 - **Danh hiệu cả quốc gia/thị trấn** chỉ cho người là thành viên từ **trước tuần 9** và chơi ≥ 10 giờ trong mùa (không vào quốc gia đứng đầu ngày

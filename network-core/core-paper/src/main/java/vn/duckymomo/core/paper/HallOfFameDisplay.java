@@ -38,7 +38,7 @@ import org.joml.AxisAngle4f;
 import org.joml.Vector3f;
 
 /**
- * Quảng trường Vinh danh ở SẢNH (giữ qua mọi mùa). Đọc S<mùa>.json do Bang Hội Chiến ghi (HallOfFameSnapshot) trong hall-of-fame.dir
+ * Quảng trường Danh vọng ở SẢNH (giữ qua mọi mùa). Đọc S<mùa>.json do Bang Hội Chiến ghi (HallOfFameSnapshot) trong hall-of-fame.dir
  * (thư mục dùng chung data/shared/vinhdanh). Admin đứng đúng chỗ rồi /vinhdanh dat <mùa|moinhat> <hạng mục>: dựng bảng chữ nổi (TextDisplay)
  * + tượng đầu người chơi (ItemDisplay đầu người) quay theo hướng admin đang nhìn. Hạng mục: tieude, bachu, chienthan, phuho, kientrucsu,
  * dautruong, pet. Điểm đặt lưu vinhdanh.yml; tự làm mới mỗi phút khi file đổi. Thực thể không lưu vào world (tạo lại khi bật),
@@ -168,7 +168,7 @@ final class HallOfFameDisplay {
         List<String[]> heads = new ArrayList<>();   // {tên, uuid}
         switch (a.cat()) {
             case "tieude" -> {
-                lines.add("&6&l🏛 QUẢNG TRƯỜNG VINH DANH");
+                lines.add("&6&l🏛 QUẢNG TRƯỜNG DANH VỌNG");
                 lines.add("&eMùa " + season + (tam ? " &7— đang diễn ra" : " &7— đã khép lại"));
                 lines.add("&7Danh hiệu, tượng và tên khắc ở đây giữ mãi qua mọi mùa.");
             }
@@ -338,7 +338,7 @@ final class HallOfFameDisplay {
         if (sub.equals("tp") && s instanceof Player p) {
             Anchor t = anchors.stream().filter(a -> a.cat().equals("tieude")).findFirst().orElse(anchors.isEmpty() ? null : anchors.get(0));
             if (t == null) {
-                p.sendMessage(c("&7Quảng trường Vinh danh chưa dựng."));
+                p.sendMessage(c("&7Quảng trường Danh vọng chưa dựng."));
             } else {
                 Location l = t.loc().clone().add(Math.cos(Math.toRadians(t.loc().getYaw() + 90)) * 5, 0, Math.sin(Math.toRadians(t.loc().getYaw() + 90)) * 5);
                 l.setYaw(t.loc().getYaw() + 180);
@@ -384,7 +384,7 @@ final class HallOfFameDisplay {
             return true;
         }
         TreeMap<Integer, JsonObject> all = seasons();
-        s.sendMessage(c("&6&l🏛 Quảng trường Vinh danh &7— " + (all.isEmpty() ? "chưa có mùa nào" : all.size() + " mùa")));
+        s.sendMessage(c("&6&l🏛 Quảng trường Danh vọng &7— " + (all.isEmpty() ? "chưa có mùa nào" : all.size() + " mùa")));
         for (Map.Entry<Integer, JsonObject> e : all.descendingMap().entrySet()) {
             JsonArray ns = arr(e.getValue(), "ba_chu");
             s.sendMessage(c("&eMùa " + e.getKey() + ("tam".equals(str(e.getValue(), "trang_thai")) ? " &7(đang diễn ra)" : "") + "&7: Bá Chủ &f"

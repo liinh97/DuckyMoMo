@@ -255,7 +255,7 @@ Triển khai: kiểm tra không ai online (lệnh riêng) → `docker compose up
 - [ ] Bấm Duyệt → người đó có tiền tố ◆ Media + quyền lợi; /lp user <tên> parent info thấy media có thời hạn 14 ngày. Gia hạn / Gỡ chạy đúng.
 - [ ] Đứng AFK trong lúc live → phút không tăng. Thoát game → buổi kết thúc. /media baocao hiện ở cuối trang Media.
 
-## 5. Quảng trường Vinh danh (sảnh)
+## 5. Quảng trường Danh vọng (sảnh)
 - [ ] (CHƯA CẦN, làm khi gần mở server) Chọn chỗ trống ở sảnh (map sakura). Đứng, quay mặt về phía người xem: `/vinhdanh dat moinhat tieude`, rồi `bachu`, `chienthan`, `phuho`,
       `kientrucsu`, `dautruong`, `pet` ở các chỗ khác. Bảng chữ nổi + đầu người chơi đúng hướng, không đè nhau.
 - [ ] `/vinhdanh xoa` bỏ đúng điểm gần nhất; `/vinhdanh tp` tới quảng trường.

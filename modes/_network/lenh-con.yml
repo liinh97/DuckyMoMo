@@ -263,7 +263,7 @@ groups:
       - ["huongdan [chương]", "Mở cẩm nang trong game (/hd). Chương: batdau, luat, banghoi, thitran, congthanh, kinhte, khampha, pet, hangngay, practice, hotro. Vd: /hd pet", Mọi người]
       - ["menu", "Menu chọn chế độ (ở sảnh; điện thoại: bảng nút). Tên khác: /chedo, /modes", Mọi người]
       - ["web", "Lấy mã 6 số đăng nhập trang web (dùng 1 lần, hết hạn sau 1 giờ). Staff: mở trang quản trị trên web theo quyền", Mọi người]
-      - ["vinhdanh tp", "Tới Quảng trường Vinh danh (sảnh)", Mọi người]
+      - ["vinhdanh tp", "Tới Quảng trường Danh vọng (sảnh)", Mọi người]
       - ["vinhdanh dat <mùa|moinhat> <hạng mục>", "Đặt bảng/tượng vinh danh ở chỗ đang đứng (sảnh)", Chỉ admin]
       - ["vinhdanh xoa", "Bỏ bảng/tượng vinh danh gần nhất (sảnh)", Chỉ admin]
       - ["vinhdanh lammoi", "Dựng lại quảng trường (sảnh)", Chỉ admin]

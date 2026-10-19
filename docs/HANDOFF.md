@@ -374,7 +374,7 @@
   sau khi bật), MyPet worldgroups default thêm thaiap (data). Dishes.kitchenHere/kitchenBonus (PDC dmm_bep). Achievements thêm khobau, truyna,
   thaiap (4 mốc mới, danh hiệu sankhobau, sandau). Cài đặt: nhóm Bản đồ kho báu (kbo_*), Bảng truy nã (tna_*), Thái Ấp (tap_*).
 - Đoàn buôn: BỎ (người dùng chốt 18/10, không làm).
-- Chưa có ngày mở mùa (server chưa mở cho người chơi). Quảng trường Vinh danh: chưa cần đặt, nhớ làm khi gần mở.
+- Chưa có ngày mở mùa (server chưa mở cho người chơi). Quảng trường Danh vọng: chưa cần đặt, nhớ làm khi gần mở.
 - Dungeon: ĐÃ đăng nhập Nightbreak trên banghoi-1 (18/10 16:14, token lưu trong data, không trong repo; "Account token loaded successfully").
   CHỜ người dùng vào game /em setup cài gói miễn phí. Thiết kế đã đề xuất (chờ duyệt): "Cổng Dungeon" /dungeon của DuckyMoMoCore thay lối vào
   gốc của EliteMobs (EliteMobs không có quyền theo từng dungeon; sự kiện PlayerJoinDungeonEvent/DungeonCompleteEvent không huỷ được) với 5 kiểu:
@@ -580,7 +580,7 @@
 - Phần phụ chưa làm: làm lại theo mùa (Cổng Hoang đặt lại mỗi mùa nhưng tag lk_*_xong giữ mãi), thêm lữ khách cho dungeon khác, skin, hologram "?" trên đầu.
 
 ### 19/10: NOTE chờ quyết
-- (Người dùng 19/10: bảng này thuộc hệ thống VINH DANH, cứ note, làm cùng Quảng trường Vinh danh) Bảng xếp hạng dán TƯỜNG kiểu UniMC (TextDisplay áp sát mặt tường, dòng cuối riêng cho từng người nhìn: "Số lần bạn chết: Linh 0 (#175)")
+- (Người dùng 19/10: bảng này thuộc hệ thống VINH DANH, cứ note, làm cùng Quảng trường Danh vọng) Bảng xếp hạng dán TƯỜNG kiểu UniMC (TextDisplay áp sát mặt tường, dòng cuối riêng cho từng người nhìn: "Số lần bạn chết: Linh 0 (#175)")
   → làm được (TextDisplay + showEntity riêng từng người); chờ chọn bảng nào (giết, chết, giàu, câu cá…) và đặt ở đâu.
 - "Cấp" cạnh tên trên bảng Tab (UniMC: "Linh [Cấp 0]"): chưa hiện; đề xuất dùng cấp chiến đấu EliteMobs %elitemobs_player_combat_level%
   (TAB groups.yml tabsuffix), chờ người dùng chọn loại cấp.
@@ -691,10 +691,10 @@
 - Trang tài khoản: thẻ "<thị trấn>: hậu cần & chiến tranh" (kho lương + thanh, nước: thị trấn, thuộc địa/tối đa, Bá chủ, nợ, % quỹ thêm),
   chức vụ Towny dịch tiếng Việt (taikhoan.ROLE_VI), dòng cho pet ăn cá. Đã thử bằng dữ liệu giả lập + Playwright.
 
-### 18/10: mùa 3 tháng + Quảng trường Vinh danh
+### 18/10: mùa 3 tháng + Quảng trường Danh vọng
 - Mùa = 3 tháng (13 tuần): leaderboard double-week 13, register-week 12, vote-week 13, title-member-before-week 12 (config + settings.yml).
   leaderboard.season-start vẫn TRỐNG (chưa mở mùa chính thức): đặt ngày khi mở server cho người chơi.
-- Hết mùa: làm lại từ đầu với BẢN ĐỒ MỚI (người dùng chốt 18/10). Giữ: tài khoản, rank donate, đồ trang trí, danh hiệu, Quảng trường Vinh danh.
+- Hết mùa: làm lại từ đầu với BẢN ĐỒ MỚI (người dùng chốt 18/10). Giữ: tài khoản, rank donate, đồ trang trí, danh hiệu, Quảng trường Danh vọng.
 - Thư mục dùng chung data/shared (mount /shared: banghoi-1 ghi, lobby đọc ro, site đọc qua ../data). ops/init.sh tạo data/shared/vinhdanh.
 - HallOfFameSnapshot (banghoi, hall-of-fame.snapshot): /shared/vinhdanh/S<leaderboard.season>.json, tạm tính 30 phút/lần, /vinhdanh tam (ghi ngay),
   /vinhdanh chot [ghide] (khoá). Bá Chủ: nước + vua + thị trấn + thị trưởng + thành viên với chức vụ (Vua, Thị trưởng, rank nation/town dịch

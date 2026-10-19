@@ -534,7 +534,7 @@ organizations:
   ad-cooldown-minutes: 60
   event-teleport-hours: 24
 
-# Vinh danh mùa: chụp người thắng ra thư mục dùng chung (data/shared/vinhdanh, mount /shared) cho Quảng trường Vinh danh ở sảnh + web.
+# Vinh danh mùa: chụp người thắng ra thư mục dùng chung (data/shared/vinhdanh, mount /shared) cho Quảng trường Danh vọng ở sảnh + web.
 # Tự ghi bản tạm tính 30 phút/lần; hết mùa: /bxh dongmua -> /bxh traothuong -> /vinhdanh chot.
 hall-of-fame:
   snapshot: true

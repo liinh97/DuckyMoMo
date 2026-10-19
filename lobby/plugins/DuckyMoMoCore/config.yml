@@ -91,7 +91,7 @@ donate-qr:
   minutes: 10
   web: "https://app.goc6.io.vn/mc/web/taikhoan.html"
 
-# Quảng trường Vinh danh (/vinhdanh): đọc S<mùa>.json do Bang Hội Chiến ghi trong thư mục dùng chung (data/shared/vinhdanh, mount /shared).
+# Quảng trường Danh vọng (/vinhdanh): đọc S<mùa>.json do Bang Hội Chiến ghi trong thư mục dùng chung (data/shared/vinhdanh, mount /shared).
 # Admin đứng đúng chỗ: /vinhdanh dat <mùa|moinhat> <tieude|bachu|chienthan|phuho|kientrucsu|dautruong|pet>
 hall-of-fame:
   display: true

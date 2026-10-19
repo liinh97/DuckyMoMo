@@ -42,12 +42,13 @@ playerlist-objective:
   disable-condition: '%world%=disabledworld'
 
 # https://github.com/NEZNAMY/TAB/wiki/Feature-guide:-Belowname
+# 19/10: BẬT máu dưới tên (vd "20 ❤"), người chơi trong 10 khối mới thấy. Client 1.20.3+ hiện fancy-value, client cũ hiện số + title.
 belowname-objective:
-  enabled: false
+  enabled: true
   value: "%health%"
-  fancy-value: "&c%health%"
+  fancy-value: "&c%health% ❤"
   fancy-value-default: "NPC"
-  title: "&cHealth"
+  title: "&c❤"
   disable-condition: '%world%=disabledworld'
   view-distance: 10
 

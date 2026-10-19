@@ -382,6 +382,15 @@
   vé vận mệnh rơi hiếm, tung xúc xắc lúc vào), (4) mua vé cá nhân bằng xu (lượt / 7 ngày), (5) mở chung toàn server bằng quỹ như khai hoang.
   Điều kiện phụ: cấp pet, thành tích, nhóm 2–4 người, cuối tuần, chỉ nước Bá chủ. Chống lạm phát: lượt/ngày, lockout boss của EliteMobs.
 
+### 19/10 khuya: Máu dưới tên + dòng chỉ số; bot dò quét
+- TAB (banghoi-1, repo modes/banghoi/server/plugins/TAB/config.yml): belowname-objective BẬT ("20 ❤" dưới tên, trong 10 khối). `tab reload` OK.
+- AuraSkills messages/global.yml (MỚI đưa vào repo): thanh trạng thái lúc rảnh "❤ [máu/tối đa] | ⚔ [Cấp %dmmcap_cap%] | ✦ [mana/tối đa]"
+  (⚔ = cấp Thăng Cấp; dùng ✦ vì font gốc không có emoji 💎). `skills reload`. Chỉ Bang Hội Chiến (AuraSkills chỉ có ở đó). CHƯA nhìn trong game.
+- Người dùng hỏi "chưa public mà có người vào": là BOT DÒ QUÉT (máy quét cả Internet tìm cổng 25565, IP VPS bị phát hiện trong vài giờ):
+  1 IP 176.65.148.253, ~33 lần, tên ngẫu nhiên Tính-từ+Con-vật+4 số, đứng ~30 giây rồi bị AuthMe đá; đăng ký được 2 tài khoản (SwiftWolf2464,
+  GrandElk8200) rồi bị giới hạn 2 đăng ký/IP/ngày chặn; KHÔNG gõ lệnh, không chat, không sang server khác. Đã `authme unregister` 2 tài khoản,
+  `ban-ip` ở sảnh (data/lobby/banned-ips.json). Đề xuất: bật whitelist tới ngày mở (chờ người dùng).
+
 ### 19/10 khuya: Tinh Luyện (/tinhluyen) — ĐÃ TRIỂN KHAI banghoi-1 22:23, CHƯA thử trong game
 - Người dùng chụp menu "Danh mục nguyên liệu" của server khác (Tinh Luyện Đá/Than/Đồng/Sắt/Đá Đỏ/Lapis/Vàng/Kim Cương/Lục Bảo/Netherite, Địa Linh,
   Xu Quái 2) để làm trade đa dạng. Chốt: Xu Quái rơi từ quái theo tỉ lệ; KHÔNG đổi ngược; dùng cho trade + nguyên liệu Xưởng + bán /sell.

@@ -46,24 +46,24 @@ expinfo:
     jobitem:
       name: "<job>"
       lore:
-        - " <primary><1_action_value> <secondary><1_exp><gray><symbol_exp> <primary><1_money><gray><symbol_money> "
-        - " <primary><2_action_value> <secondary><2_exp><gray><symbol_exp> <primary><2_money><gray><symbol_money> "
-        - " <primary><3_action_value> <secondary><3_exp><gray><symbol_exp> <primary><3_money><gray><symbol_money> "
-        - " <primary><4_action_value> <secondary><4_exp><gray><symbol_exp> <primary><4_money><gray><symbol_money> "
-        - " <primary><5_action_value> <secondary><5_exp><gray><symbol_exp> <primary><5_money><gray><symbol_money> "
-        - " <primary><6_action_value> <secondary><6_exp><gray><symbol_exp> <primary><6_money><gray><symbol_money> "
-        - " <primary><7_action_value> <secondary><7_exp><gray><symbol_exp> <primary><7_money><gray><symbol_money> "
-        - " <primary><8_action_value> <secondary><8_exp><gray><symbol_exp> <primary><8_money><gray><symbol_money> "
-        - " <primary><9_action_value> <secondary><9_exp><gray><symbol_exp> <primary><9_money><gray><symbol_money> "
-        - " <primary><10_action_value> <secondary><10_exp><gray><symbol_exp> <primary><10_money><gray><symbol_money> "
-        - " <primary><11_action_value> <secondary><11_exp><gray><symbol_exp> <primary><11_money><gray><symbol_money> "
-        - " <primary><12_action_value> <secondary><12_exp><gray><symbol_exp> <primary><12_money><gray><symbol_money> "
-        - " <primary><13_action_value> <secondary><13_exp><gray><symbol_exp> <primary><13_money><gray><symbol_money> "
-        - " <primary><14_action_value> <secondary><14_exp><gray><symbol_exp> <primary><14_money><gray><symbol_money> "
-        - " <primary><15_action_value> <secondary><15_exp><gray><symbol_exp> <primary><15_money><gray><symbol_money> "
-        - ""
-        - " <primary>TRÁI ↓ <dark_gray>| <secondary>PHẢI ↑ "
-        - " <gold>ℹ <primary>SHIFT <gray>bấm nhân 5."
+      - " <primary><1_action_value> <secondary><1_exp><gray><symbol_exp> <primary><1_money><gray><symbol_money> "
+      - " <primary><2_action_value> <secondary><2_exp><gray><symbol_exp> <primary><2_money><gray><symbol_money> "
+      - " <primary><3_action_value> <secondary><3_exp><gray><symbol_exp> <primary><3_money><gray><symbol_money> "
+      - " <primary><4_action_value> <secondary><4_exp><gray><symbol_exp> <primary><4_money><gray><symbol_money> "
+      - " <primary><5_action_value> <secondary><5_exp><gray><symbol_exp> <primary><5_money><gray><symbol_money> "
+      - " <primary><6_action_value> <secondary><6_exp><gray><symbol_exp> <primary><6_money><gray><symbol_money> "
+      - " <primary><7_action_value> <secondary><7_exp><gray><symbol_exp> <primary><7_money><gray><symbol_money> "
+      - " <primary><8_action_value> <secondary><8_exp><gray><symbol_exp> <primary><8_money><gray><symbol_money> "
+      - " <primary><9_action_value> <secondary><9_exp><gray><symbol_exp> <primary><9_money><gray><symbol_money> "
+      - " <primary><10_action_value> <secondary><10_exp><gray><symbol_exp> <primary><10_money><gray><symbol_money> "
+      - " <primary><11_action_value> <secondary><11_exp><gray><symbol_exp> <primary><11_money><gray><symbol_money> "
+      - " <primary><12_action_value> <secondary><12_exp><gray><symbol_exp> <primary><12_money><gray><symbol_money> "
+      - " <primary><13_action_value> <secondary><13_exp><gray><symbol_exp> <primary><13_money><gray><symbol_money> "
+      - " <primary><14_action_value> <secondary><14_exp><gray><symbol_exp> <primary><14_money><gray><symbol_money> "
+      - " <primary><15_action_value> <secondary><15_exp><gray><symbol_exp> <primary><15_money><gray><symbol_money> "
+      - ""
+      - " <primary>TRÁI ↓ <dark_gray>| <secondary>PHẢI ↑ "
+      - " <gold>ℹ <primary>SHIFT <gray>bấm nhân 5."
 leaderboard:
   calculate_top: 100
   list_in_lore: 10
@@ -73,21 +73,21 @@ leaderboard:
     jobitem:
       name: "<job> <dark_gray>(<primary><min> <gray>to <secondary><max><dark_gray>)"
       lore:
-        - " <primary><bold><1_position>.</bold> <1_displayname> <gray>cấp <secondary><1_level> "
-        - " <primary><bold><2_position>.</bold> <2_displayname> <gray>cấp <secondary><2_level> "
-        - " <primary><bold><3_position>.</bold> <3_displayname> <gray>cấp <secondary><3_level> "
-        - " <primary><bold><4_position>.</bold> <4_displayname> <gray>cấp <secondary><4_level> "
-        - " <primary><bold><5_position>.</bold> <5_displayname> <gray>cấp <secondary><5_level> "
-        - " <primary><bold><6_position>.</bold> <6_displayname> <gray>cấp <secondary><6_level> "
-        - " <primary><bold><7_position>.</bold> <7_displayname> <gray>cấp <secondary><7_level> "
-        - " <primary><bold><8_position>.</bold> <8_displayname> <gray>cấp <secondary><8_level> "
-        - " <primary><bold><9_position>.</bold> <9_displayname> <gray>cấp <secondary><9_level> "
-        - " <primary><bold><10_position>.</bold> <10_displayname> <gray>cấp <secondary><10_level> "
-        - " <gray>You are <primary><level> <gray>level and ranked <secondary><position><gray>."
-        - ""
-        - ""
-        - " <primary>TRÁI ↓ <dark_gray>| <secondary>PHẢI ↑ "
-        - " <gold>ℹ <primary>SHIFT <gray>bấm nhân 5."
+      - " <primary><bold><1_position>.</bold> <1_displayname> <gray>cấp <secondary><1_level> "
+      - " <primary><bold><2_position>.</bold> <2_displayname> <gray>cấp <secondary><2_level> "
+      - " <primary><bold><3_position>.</bold> <3_displayname> <gray>cấp <secondary><3_level> "
+      - " <primary><bold><4_position>.</bold> <4_displayname> <gray>cấp <secondary><4_level> "
+      - " <primary><bold><5_position>.</bold> <5_displayname> <gray>cấp <secondary><5_level> "
+      - " <primary><bold><6_position>.</bold> <6_displayname> <gray>cấp <secondary><6_level> "
+      - " <primary><bold><7_position>.</bold> <7_displayname> <gray>cấp <secondary><7_level> "
+      - " <primary><bold><8_position>.</bold> <8_displayname> <gray>cấp <secondary><8_level> "
+      - " <primary><bold><9_position>.</bold> <9_displayname> <gray>cấp <secondary><9_level> "
+      - " <primary><bold><10_position>.</bold> <10_displayname> <gray>cấp <secondary><10_level> "
+      - " <gray>Bạn đang cấp <primary><level> <gray>và xếp hạng <secondary><position><gray>."
+      - ""
+      - ""
+      - " <primary>TRÁI ↓ <dark_gray>| <secondary>PHẢI ↑ "
+      - " <gold>ℹ <primary>SHIFT <gray>bấm nhân 5."
 gui:
   change_page_cooldown: 40
   title: "<gradient:#FF4600:#e93442>Nghề <gradient:#51282d:#431d56>➢ Xếp hạng ➣ Cách kiếm"
@@ -95,15 +95,15 @@ gui:
   jobitem:
     name: "<job>"
     lore:
-      - " <gradient:#6D6666:#938B8B:#777676><exp>/<next_exp> "
-      - " <primary><level> <progress> <secondary><next_level> "
-      - ""
-      - " <gray>Nghề <job><gray>: "
-      - "  <gray>bạn đứng thứ <primary><position> <gray>bảng xếp hạng."
-      - "  <gray>đã kiếm được <primary><total_money><money_symbol><gray>."
-      - ""
-      - " <gray>Bấm <primary>TRÁI <gray>xem bảng xếp hạng."
-      - " <gray>Bấm <primary>PHẢI <gray>xem cách kiếm tiền."
+    - " <gradient:#6D6666:#938B8B:#777676><exp>/<next_exp> "
+    - " <primary><level> <progress> <secondary><next_level> "
+    - ""
+    - " <gray>Nghề <job><gray>: "
+    - "  <gray>bạn đứng thứ <primary><position> <gray>bảng xếp hạng."
+    - "  <gray>đã kiếm được <primary><total_money><money_symbol><gray>."
+    - ""
+    - " <gray>Bấm <primary>TRÁI <gray>xem bảng xếp hạng."
+    - " <gray>Bấm <primary>PHẢI <gray>xem cách kiếm tiền."
   navigation:
     left:
       material: ARROW
@@ -114,31 +114,31 @@ gui:
 
 # players with these gamemodes will not gain exp/money from jobs
 ignored_gamemodes:
-  - SPECTATOR
+- SPECTATOR
   #- CREATIVE
 
 # materials that will not count when mined with a tool with silk touch.
 silktouch_blacklist:
-  - COAL_ORE
-  - DEEPSLATE_COAL_ORE
-  - IRON_ORE
-  - DEEPSLATE_IRON_ORE
-  - COPPER_ORE
-  - DEEPSLATE_COPPER_ORE
-  - GOLD_ORE
-  - DEEPSLATE_GOLD_ORE
-  - REDSTONE_ORE
-  - DEEPSLATE_REDSTONE_ORE
-  - EMERALD_ORE
-  - DEEPSLATE_EMERALD_ORE
-  - LAPIS_ORE
-  - DEEPSLATE_LAPIS_ORE
-  - DIAMOND_ORE
-  - DEEPSLATE_DIAMOND_ORE
-  - NETHER_GOLD_ORE
-  - NETHER_QUARTZ_ORE
-  - GILDED_BLACKSTONE
-  - AMETHYST_CLUSTER
+- COAL_ORE
+- DEEPSLATE_COAL_ORE
+- IRON_ORE
+- DEEPSLATE_IRON_ORE
+- COPPER_ORE
+- DEEPSLATE_COPPER_ORE
+- GOLD_ORE
+- DEEPSLATE_GOLD_ORE
+- REDSTONE_ORE
+- DEEPSLATE_REDSTONE_ORE
+- EMERALD_ORE
+- DEEPSLATE_EMERALD_ORE
+- LAPIS_ORE
+- DEEPSLATE_LAPIS_ORE
+- DIAMOND_ORE
+- DEEPSLATE_DIAMOND_ORE
+- NETHER_GOLD_ORE
+- NETHER_QUARTZ_ORE
+- GILDED_BLACKSTONE
+- AMETHYST_CLUSTER
 
 command:
   name: "jobs"
@@ -146,11 +146,11 @@ command:
   #permission: "ujobs.command"
   description: "Nghề nghiệp (tự động, không cần tham gia)"
   aliases:
-    - "job"
-    - "ujob"
-    - "ujobs"
-    - "skill"
-    - "skills"
+  - "job"
+  - "ujob"
+  - "ujobs"
+  - "skill"
+  - "skills"
 
 messages:
   reload: "<green>Đã tải lại!"

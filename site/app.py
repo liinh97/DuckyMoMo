@@ -312,6 +312,33 @@ def mypet_level(exp):
 HE_TEN = {"Combat": "Chiến Binh", "Utility": "Hậu Cần", "PvP": "Đấu Sĩ", "Ride": "Thú Cưỡi", "Farm": "Nông Trại"}
 
 
+def story_info():
+    """Cốt truyện (BetonQuest) cho trang chủ: các chương trong modes/banghoi/cotruyen.yml, số lượng/thưởng lấy từ constants
+    của gói (bản đang chạy, chưa có thì bản trong repo), số người đã xong mỗi chương (đọc database.db chỉ đọc)."""
+    import sqlite3
+    spec = load_yaml(MODES / "banghoi" / "cotruyen.yml").get("chuong") or []
+    installed = plugin("BetonQuest", "QuestPackages", "cotruyen", "package.yml")
+    consts = load_yaml(installed).get("constants") or load_yaml(
+        MODES / "banghoi" / "server" / "plugins" / "BetonQuest" / "QuestPackages" / "cotruyen" / "package.yml").get("constants") or {}
+    fill = lambda t: re.sub(r"\{(\w+)\}", lambda m: str(consts.get(m.group(1), m.group(0))), str(t or ""))
+    done = {}
+    try:
+        con = sqlite3.connect(f"file:{plugin('BetonQuest', 'database.db')}?mode=ro", uri=True, timeout=2)
+        try:
+            for c in spec:
+                done[c.get("ma")] = con.execute("SELECT COUNT(DISTINCT profileID) FROM betonquest_tags WHERE tag = ? OR tag LIKE ? OR tag LIKE ?",
+                                                (c.get("xong"), "%." + str(c.get("xong")), "%>" + str(c.get("xong")))).fetchone()[0]
+        finally:
+            con.close()
+    except sqlite3.Error:
+        pass
+    return {"enabled": installed.exists(), "chuong": [{
+        "ten": c.get("ten"), "gioi_thieu": c.get("gioi_thieu", ""), "bat_dau": c.get("bat_dau", ""), "npc": c.get("npc") or [],
+        "thuong": sum(int(consts.get(k, 0) or 0) for k in c.get("thuong") or []),
+        "buoc": [{"ten": b.get("ten", ""), "viec": fill(b.get("viec"))} for b in c.get("buoc") or []],
+        "so_xong": done.get(c.get("ma"), 0)} for c in spec]}
+
+
 def pet_top(limit=10):
     """Top pet theo kinh nghiệm (đọc pets.db chỉ đọc). Tên loài/nhóm lấy từ cây kỹ năng (DmmNhom.loai_vi)."""
     import sqlite3
@@ -439,6 +466,7 @@ def api_info():
         "thaiap": {"enabled": bool(get(core, "thai-ap.enabled", False)), "sizes": get(core, "thai-ap.sizes", [50, 70, 90]),
                    "prices": get(core, "thai-ap.prices", [5000, 8000, 15000]), "kitchen": get(core, "thai-ap.kitchen-bonus", 50),
                    **core_json("thaiap.json")},
+        "cotruyen": story_info(),
         "capdo": {"enabled": bool(get(core, "level-up.enabled", False)), "max": get(core, "level-up.max-level", 100),
                   "mob": get(core, "level-up.mob-points", 1), "player": get(core, "level-up.player-points", 10),
                   "giu": bool(get(core, "level-up.keep-on-new-season", False)), "top": core_json("capdo.json").get("top") or [],

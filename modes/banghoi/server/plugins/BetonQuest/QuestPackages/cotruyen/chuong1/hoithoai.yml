@@ -1,0 +1,131 @@
+# Chương 1 «Điềm Báo»: hội thoại. NPC chọn câu ĐẦU TIÊN trong "first" có đủ điều kiện (dấu ! = KHÔNG).
+# text: chữ NPC/người chơi nói; pointers: câu trả lời tiếp theo; actions: hành động (logic.yml); conditions: điều kiện (logic.yml).
+
+conversations:
+  gia_lang:
+    quester: "&6Già Làng"
+    first: "xong,ket,cho_b4,cho_b3,cho_b2,tra_b1,cho_b1,chao"
+    NPC_options:
+      chao:
+        text: "Lại thêm một người lạ… Ngồi xuống đây đã. Mấy đêm nay ta không ngủ được."
+        conditions: "!c1_b1"
+        pointers: "hoi_vi_sao,di_thoi"
+      ke_chuyen:
+        text: "Đêm rằm vừa rồi có một ngôi sao rơi về phía bắc, sáng rực cả trời. Từ hôm đó, đêm nào quái cũng kéo về đông gấp đôi."
+        pointers: "hoi_giup,khong_tin"
+      giao_b1:
+        text: "Trước hết hãy dọn bớt lũ quái quanh đây. Hạ %constant.c1_so_quai% con rồi quay lại, ta sẽ kể tiếp."
+        pointers: "nhan_b1,de_sau"
+      da_nhan_b1:
+        text: "Cẩn thận. Đêm xuống thì đừng đi một mình."
+        actions: "c1_nhan_b1"
+      khong_tin_dap:
+        text: "Không tin thì cứ đợi trời tối mà xem. Lúc đó quay lại tìm ta."
+      cho_b1:
+        text: "Còn %objective.c1_sanquai.left% con nữa. Đêm nay chắc lại có thêm."
+        conditions: "c1_b1,!c1_b1x"
+      tra_b1:
+        text: "Giỏi lắm, đêm nay dân làng ngủ yên được rồi. Nhưng chừng đó chưa đủ. Ta cần một chiếc chuông thật to trên tháp canh, quái đến là cả làng biết."
+        conditions: "c1_b1x,!c1_b2"
+        pointers: "hoi_chuong"
+      giao_b2:
+        text: "Bác Thợ Rèn đúc được chuông, nhưng thiếu sắt. Mang cho bác ấy %constant.c1_so_sat% thỏi sắt nhé. Đây là chút tiền công."
+        actions: "c1_tra_b1"
+      cho_b2:
+        text: "Bác Thợ Rèn còn đợi %constant.c1_so_sat% thỏi sắt đấy."
+        conditions: "c1_b2,!c1_b2x"
+      cho_b3:
+        text: "Thợ mỏ kể dưới lòng đất có đá phát sáng lạ? Ừ… cứ đào thử xem. Có gì báo ta ngay."
+        conditions: "c1_b3,!c1_b3x"
+      cho_b4:
+        text: "Thứ này… lạnh như băng. Ta không biết nó là gì. Mang tới Người Gác Cổng, ông ấy đi nhiều biết rộng."
+        conditions: "c1_b4,!c1_b4x"
+      ket:
+        text: "Mảnh sao giống ánh sáng trong cổng dungeon à? Vậy là ta đoán đúng. Trời đang nứt ra, và thứ gì đó bên kia đang nhìn sang đây."
+        conditions: "c1_b4x,!c1_xong"
+        pointers: "hoi_lam_gi"
+      ket_2:
+        text: "Từ giờ hãy luyện cho thật mạnh, kết bạn, lập bang hội. Khi vết nứt mở ra, một mình không ai chống nổi. Nhận lấy cái này, coi như quà của làng."
+        actions: "c1_ket"
+      xong:
+        text: "Ta vẫn đang dõi lên trời. Có tin gì mới ta sẽ gọi. Trong lúc chờ, đừng lơ là luyện tập."
+        conditions: "c1_xong"
+    player_options:
+      hoi_vi_sao:
+        text: "Có chuyện gì vậy, cụ?"
+        pointers: "ke_chuyen"
+      di_thoi:
+        text: "Cháu đang bận, để lúc khác ạ."
+      hoi_giup:
+        text: "Cháu giúp được gì không?"
+        pointers: "giao_b1"
+      khong_tin:
+        text: "Sao rơi thì liên quan gì tới quái?"
+        pointers: "khong_tin_dap"
+      nhan_b1:
+        text: "Cứ để cháu."
+        pointers: "da_nhan_b1"
+      de_sau:
+        text: "Để cháu chuẩn bị đồ đã."
+      hoi_chuong:
+        text: "Chuông lấy đâu ra ạ?"
+        pointers: "giao_b2"
+      hoi_lam_gi:
+        text: "Vậy giờ chúng ta phải làm gì?"
+        pointers: "ket_2"
+
+  tho_ren:
+    quester: "&6Bác Thợ Rèn"
+    first: "sau,nhan_sat,thieu_sat,chua"
+    NPC_options:
+      chua:
+        text: "Lò đang nóng, đứng xa ra kẻo bỏng! Cần gì thì hỏi Già Làng trước."
+      thieu_sat:
+        text: "Già Làng bảo cháu mang sắt tới hả? Chưa đủ đâu, bác cần %constant.c1_so_sat% thỏi."
+        conditions: "c1_b2,!c1_b2x,!c1_du_sat"
+      nhan_sat:
+        text: "Ồ, đủ sắt rồi! Đưa đây, bác đúc chuông ngay trong đêm."
+        conditions: "c1_b2,!c1_b2x,c1_du_sat"
+        pointers: "dua_sat,chua_dua"
+      cam_on:
+        text: "Cảm ơn nhé. À, hôm qua mấy thợ mỏ kể dưới sâu có thứ đá phát sáng mờ mờ, lạnh buốt. Cháu đào thử %constant.c1_so_quang% quặng xem có gặp không."
+        actions: "c1_tra_b2"
+      sau:
+        text: "Chuông treo lên tháp rồi đấy, nghe vang cả cánh đồng. Cần sửa đồ thì cứ ghé."
+        conditions: "c1_b2x"
+    player_options:
+      dua_sat:
+        text: "Bác cầm lấy ạ."
+        pointers: "cam_on"
+      chua_dua:
+        text: "Cháu còn cần dùng sắt, lát nữa cháu quay lại."
+
+  gac_cong:
+    quester: "&6Người Gác Cổng"
+    first: "sau,nhan_manh,mat_manh,chua"
+    NPC_options:
+      chua:
+        text: "Phía sau ta là lối tới các dungeon. Đủ sức thì gõ /dungeon mà chọn. Ngoài hoang dã còn có những cổng lạ, gõ /conghoang nghe tin đồn."
+      nhan_manh:
+        text: "Cho ta xem thứ cháu cầm… Ánh sáng này giống hệt ánh sáng trong các cổng dungeon. Nó không thuộc về thế giới này."
+        conditions: "c1_b4,!c1_b4x,c1_co_manh"
+        pointers: "dua_manh"
+      giu_manh:
+        text: "Để ta giữ nó, ở chỗ cháu nguy hiểm lắm. Về báo cho Già Làng biết đi."
+        actions: "c1_tra_b4"
+      mat_manh:
+        text: "Già Làng nhắn cháu có mảnh sao? Đâu, ta không thấy gì cả."
+        conditions: "c1_b4,!c1_b4x,!c1_co_manh"
+        pointers: "mat_roi"
+      tim_lai:
+        text: "Đồ của nhiệm vụ không mất được đâu: gõ /backpack mà xem, nó nằm trong balô nhiệm vụ."
+      sau:
+        text: "Mảnh sao ta cất kỹ rồi. Đi dungeon thì để ý xem còn mảnh nào khác không."
+        conditions: "c1_b4x"
+    player_options:
+      dua_manh:
+        text: "Ông nói vậy là sao?"
+        pointers: "giu_manh"
+      mat_roi:
+        text: "Hình như cháu làm rơi đâu mất rồi."
+        pointers: "tim_lai"

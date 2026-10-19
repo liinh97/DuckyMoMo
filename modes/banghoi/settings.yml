@@ -1650,3 +1650,13 @@ lvu_giamxuong_on: true
 lvu_giamxuong_cost: 8
 lvu_laoluyen_on: true
 lvu_laoluyen_cost: 15
+bq_io: dialog
+bq_c1_quai: 20
+bq_c1_sat: 16
+bq_c1_quang: 24
+bq_c1_t1: 300
+bq_c1_t2: 300
+bq_c1_t3: 400
+bq_c1_t4: 300
+bq_c1_tket: 1500
+bq_c1_kn: 200

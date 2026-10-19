@@ -1793,3 +1793,24 @@ groups:
       - { key: newbie_kit_on, label: Phát kit quà khi vào lần đầu, type: select, file: plugins/Essentials/config.yml, path: newbies.kit,
           options: [ { value: tanthu, label: "Có (kit tanthu)" }, { value: "", label: Không phát } ] }
       - { key: newbie_announce, label: "Dòng chào cả server ({DISPLAYNAME} = tên; để trống = tắt)", type: text, file: plugins/Essentials/config.yml, path: newbies.announce-format }
+
+  - title: Cốt truyện (NPC + nhiệm vụ BetonQuest)
+    category: Cốt truyện
+    description: "Chương 1 «Điềm Báo»: Già Làng → săn quái → mang sắt cho Bác Thợ Rèn → đào quặng ra Mảnh Sao Rơi → Người Gác Cổng → kết chương. Mỗi người làm được 1 lần."
+    info: "Là gì: cốt truyện có NPC nói chuyện (bảng hội thoại, bấm chọn câu trả lời), nhiệm vụ nhiều bước, nhật ký /journal.\nNPC: Citizens. Admin đứng chỗ muốn đặt rồi gõ ĐÚNG tên: /npc create Già Làng, /npc create Bác Thợ Rèn, /npc create Người Gác Cổng (thêm /npc lookclose cho NPC quay mặt theo người chơi, /npc skin <tên> đổi skin). BetonQuest tìm NPC theo tên, không cần số ID.\nNội dung lời thoại: plugins/BetonQuest/QuestPackages/cotruyen/ (trong repo: modes/banghoi/server/plugins/BetonQuest/QuestPackages/cotruyen/).\nThử lại từ đầu cho một người: /bq tag <tên> del c1_b1 (và các tag c1_… khác), /bq objective <tên> del c1_sanquai.\nLưu xong: có hiệu lực ngay (bq reload)."
+    apply: [bq reload]
+    settings:
+      - { key: bq_io, label: Kiểu bảng hội thoại, type: select, file: plugins/BetonQuest/config.yml, path: conversation.default_io,
+          options: [ { value: dialog, label: "Bảng hội thoại (khuyên dùng; Bedrock hiện thành form)" }, { value: chest, label: "Rương bấm chọn (chắc chắn chạy mọi máy)" },
+                     { value: "menu,tellraw", label: "Chữ trên màn hình, cuộn chuột chọn (chỉ Java)" }, { value: tellraw, label: "Trong khung chat, bấm số" } ],
+          note: "Người chơi Bedrock hoặc Java bản cũ thấy lỗi thì đổi sang Rương bấm chọn." }
+      - { key: bq_c1_quai, label: "Chương 1: số quái phải hạ", type: int, min: 1, max: 500, file: plugins/BetonQuest/QuestPackages/cotruyen/package.yml, path: constants.c1_so_quai }
+      - { key: bq_c1_sat, label: "Chương 1: số thỏi sắt mang cho Thợ Rèn", type: int, min: 1, max: 640, file: plugins/BetonQuest/QuestPackages/cotruyen/package.yml, path: constants.c1_so_sat }
+      - { key: bq_c1_quang, label: "Chương 1: số quặng phải đào", type: int, min: 1, max: 640, file: plugins/BetonQuest/QuestPackages/cotruyen/package.yml, path: constants.c1_so_quang,
+          note: "Quặng tự đặt rồi đào lại không tính." }
+      - { key: bq_c1_t1, label: "Chương 1: thưởng bước 1 (xu)", type: int, min: 0, max: 1000000, file: plugins/BetonQuest/QuestPackages/cotruyen/package.yml, path: constants.c1_thuong_b1 }
+      - { key: bq_c1_t2, label: "Chương 1: thưởng bước 2 (xu)", type: int, min: 0, max: 1000000, file: plugins/BetonQuest/QuestPackages/cotruyen/package.yml, path: constants.c1_thuong_b2 }
+      - { key: bq_c1_t3, label: "Chương 1: thưởng bước 3 (xu)", type: int, min: 0, max: 1000000, file: plugins/BetonQuest/QuestPackages/cotruyen/package.yml, path: constants.c1_thuong_b3 }
+      - { key: bq_c1_t4, label: "Chương 1: thưởng bước 4 (xu)", type: int, min: 0, max: 1000000, file: plugins/BetonQuest/QuestPackages/cotruyen/package.yml, path: constants.c1_thuong_b4 }
+      - { key: bq_c1_tket, label: "Chương 1: thưởng kết chương (xu)", type: int, min: 0, max: 1000000, file: plugins/BetonQuest/QuestPackages/cotruyen/package.yml, path: constants.c1_thuong_ket }
+      - { key: bq_c1_kn, label: "Chương 1: điểm kinh nghiệm khi kết chương", type: int, min: 0, max: 100000, file: plugins/BetonQuest/QuestPackages/cotruyen/package.yml, path: constants.c1_thuong_kn }

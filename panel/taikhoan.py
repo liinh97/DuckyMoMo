@@ -507,6 +507,9 @@ def profile(perms):
         if mine:
             out["conghoang"] = [{"ma": g.get("ma"), "dungeon": g.get("dungeon"), "phi": g.get("phi", 0), "dong": g.get("dong", False),
                                  "luot": g.get("luot", 0)} for g in mine]
+    ct = story(uuid)
+    if ct:
+        out["cotruyen"] = ct
     ldt = safe_yaml(DMM / "linhdanhthue.yml")
     reg = (ldt.get("dangky") or {}).get(uuid)
     hd = (ldt.get("hopdong") or {}).get(uuid)
@@ -531,6 +534,50 @@ PASSIVE_PETS = ["cat", "wolf", "chicken", "pig", "rabbit", "parrot", "fox", "bee
                 "dolphin", "happy_ghast", "horse", "donkey", "mule", "squid", "glow_squid", "cod", "salmon", "tropical_fish",
                 "trader_llama", "strider", "bat"]
 COSMETIC_SERVERS = ["banghoi-1", "practice-1"]  # có Essentials (/sudo)
+
+
+def story_tags(uuid):
+    """Tag BetonQuest của người chơi (hồ sơ đang dùng), bỏ tiền tố gói ("cotruyen." / "cotruyen>"). None nếu chưa có dữ liệu."""
+    import sqlite3
+    f = DATA_DIR / SRV / "plugins" / "BetonQuest" / "database.db"
+    if not f.exists():
+        return None
+    try:
+        con = sqlite3.connect(f"file:{f}?mode=ro", uri=True, timeout=2)
+        try:
+            rows = con.execute("SELECT t.tag FROM betonquest_tags t JOIN betonquest_player p ON t.profileID = p.active_profile "
+                               "WHERE p.playerID = ?", (uuid,)).fetchall()
+        finally:
+            con.close()
+    except sqlite3.Error:
+        return None
+    return {re.split(r"[.>]", str(r[0]))[-1] for r in rows}
+
+
+def story(uuid):
+    """Cốt truyện (BetonQuest) trên trang tài khoản: mỗi chương đang ở bước nào. Mô tả chương: modes/banghoi/cotruyen.yml."""
+    spec = safe_yaml(MODES_DIR / "banghoi" / "cotruyen.yml").get("chuong") or []
+    tags = story_tags(uuid)
+    if not spec or tags is None:
+        return None
+    pkg = DATA_DIR / SRV / "plugins" / "BetonQuest" / "QuestPackages" / "cotruyen" / "package.yml"
+    consts = safe_yaml(pkg).get("constants") or safe_yaml(MODES_DIR / "banghoi" / "server" / "plugins" / "BetonQuest" / "QuestPackages"
+                                                           / "cotruyen" / "package.yml").get("constants") or {}
+    fill = lambda t: re.sub(r"\{(\w+)\}", lambda m: str(consts.get(m.group(1), m.group(0))), str(t or ""))
+    out = []
+    for c in spec:
+        steps = c.get("buoc") or []
+        if c.get("xong") in tags:
+            out.append({"ten": c.get("ten"), "xong": True, "buoc": len(steps), "tong": len(steps), "viec": ""})
+            continue
+        cur, viec = 0, fill(c.get("bat_dau"))
+        for i, b in enumerate(steps):
+            if b.get("tag") in tags and b.get("xong") not in tags:
+                cur, viec = i + 1, fill(b.get("viec"))
+            elif b.get("xong") in tags:
+                cur, viec = i + 1, "Quay lại gặp NPC để nhận việc tiếp theo."
+        out.append({"ten": c.get("ten"), "xong": False, "buoc": cur, "tong": len(steps), "viec": viec})
+    return out
 
 
 def active_particles(uuid, srv="banghoi-1"):

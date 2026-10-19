@@ -1,0 +1,76 @@
+# Chương 1 «Điềm Báo»: tag, mục tiêu, hành động, điều kiện, nhật ký.
+# Tiến trình (tag của người chơi): c1_b1 nhận việc 1 → c1_b1x xong → c1_b2 → c1_b2x → c1_b3 → c1_b3x → c1_b4 → c1_b4x → c1_xong.
+# Xoá tiến trình một người để thử lại: /bq tag <tên> del c1_b1 (… từng tag), /bq objective <tên> del c1_sanquai …
+
+items:
+  c1_sat: "simple IRON_INGOT"
+  c1_manh_sao: 'simple AMETHYST_SHARD "name:&dMảnh Sao Rơi" "lore:&7Lạnh buốt, phát sáng mờ trong bóng tối." quest-item'
+
+objectives:
+  c1_sanquai: "mobkill ZOMBIE,ZOMBIE_VILLAGER,HUSK,DROWNED,SKELETON,STRAY,SPIDER,CAVE_SPIDER,CREEPER,WITCH,PHANTOM,SLIME %constant.c1_so_quai% notify:5 actions:c1_b1_xong"
+  c1_daoquang: "block .*_ORE -%constant.c1_so_quang% notify:6 actions:c1_b3_xong"
+
+conditions:
+  c1_b1: "tag c1_b1"
+  c1_b1x: "tag c1_b1x"
+  c1_b2: "tag c1_b2"
+  c1_b2x: "tag c1_b2x"
+  c1_b3: "tag c1_b3"
+  c1_b3x: "tag c1_b3x"
+  c1_b4: "tag c1_b4"
+  c1_b4x: "tag c1_b4x"
+  c1_xong: "tag c1_xong"
+  c1_du_sat: "item c1_sat:%constant.c1_so_sat%"
+  c1_co_manh: "item c1_manh_sao:1"
+
+actions:
+  # Bước 1: săn quái
+  c1_nhan_b1: "folder c1_tag_b1,c1_obj_b1,c1_nk_b1"
+  c1_tag_b1: "tag add c1_b1"
+  c1_obj_b1: "objective add c1_sanquai"
+  c1_nk_b1: "journal add c1_nk_b1"
+  c1_b1_xong: "folder c1_tag_b1x,c1_bao_b1x"
+  c1_tag_b1x: "tag add c1_b1x"
+  c1_bao_b1x: "notify &eĐủ rồi. Quay về kể cho &6Già Làng&e nghe. io:title"
+  c1_tra_b1: "folder c1_tien_b1,c1_tag_b2,c1_nk_b2"
+  c1_tien_b1: "money +%constant.c1_thuong_b1% notify"
+  # Bước 2: mang sắt cho Bác Thợ Rèn
+  c1_tag_b2: "tag add c1_b2"
+  c1_nk_b2: "journal add c1_nk_b2"
+  c1_tra_b2: "folder c1_lay_sat,c1_tien_b2,c1_tag_b2x,c1_tag_b3,c1_obj_b3,c1_nk_b3"
+  c1_lay_sat: "take c1_sat:%constant.c1_so_sat% notify"
+  c1_tien_b2: "money +%constant.c1_thuong_b2% notify"
+  c1_tag_b2x: "tag add c1_b2x"
+  # Bước 3: đào quặng tìm mảnh sao
+  c1_tag_b3: "tag add c1_b3"
+  c1_obj_b3: "objective add c1_daoquang"
+  c1_nk_b3: "journal add c1_nk_b3"
+  c1_b3_xong: "folder c1_tag_b3x,c1_tien_b3,c1_cho_manh,c1_tag_b4,c1_nk_b4,c1_bao_b3x"
+  c1_tag_b3x: "tag add c1_b3x"
+  c1_tien_b3: "money +%constant.c1_thuong_b3% notify"
+  c1_cho_manh: "give c1_manh_sao notify"
+  c1_tag_b4: "tag add c1_b4"
+  c1_nk_b4: "journal add c1_nk_b4"
+  c1_bao_b3x: "notify &dCuốc vừa chạm vào thứ gì lạnh buốt… &7Mang nó tới &6Người Gác Cổng&7. io:title"
+  # Bước 4: đưa mảnh sao cho Người Gác Cổng
+  c1_tra_b4: "folder c1_lay_manh,c1_tien_b4,c1_tag_b4x,c1_nk_b5"
+  c1_lay_manh: "take c1_manh_sao:1"
+  c1_tien_b4: "money +%constant.c1_thuong_b4% notify"
+  c1_tag_b4x: "tag add c1_b4x"
+  c1_nk_b5: "journal add c1_nk_b5"
+  # Kết chương
+  c1_ket: "folder c1_tien_ket,c1_kn_ket,c1_tag_xong,c1_nk_xong,c1_baotoan"
+  c1_tien_ket: "money +%constant.c1_thuong_ket% notify"
+  c1_kn_ket: "experience %constant.c1_thuong_kn% action:addExperience"
+  c1_tag_xong: "tag add c1_xong"
+  c1_nk_xong: "journal add c1_nk_xong"
+  # notifyall điền %player% theo từng người nhận nên dùng broadcast của Essentials (chạy từ console, %player% = người hoàn thành)
+  c1_baotoan: "command broadcast &6%player% &eđã hoàn thành &6Chương 1 «Điềm Báo»&e của cốt truyện!"
+
+journal:
+  c1_nk_b1: "&6Chương 1 «Điềm Báo»&0\nGià Làng kể có sao rơi ở phương bắc, từ đó đêm nào quái cũng kéo đến đông hơn.\n&2Việc: hạ %constant.c1_so_quai% quái vật rồi quay về gặp Già Làng."
+  c1_nk_b2: "&6Chương 1&0\nGià Làng muốn treo một chiếc chuông báo động trên tháp canh.\n&2Việc: mang %constant.c1_so_sat% thỏi sắt cho Bác Thợ Rèn."
+  c1_nk_b3: "&6Chương 1&0\nBác Thợ Rèn nghe thợ mỏ kể dưới lòng đất có thứ đá phát sáng lạ.\n&2Việc: đào %constant.c1_so_quang% quặng bất kỳ, để ý thứ gì khác thường."
+  c1_nk_b4: "&6Chương 1&0\nBạn đào được một Mảnh Sao Rơi, lạnh buốt và phát sáng.\n&2Việc: mang mảnh sao tới Người Gác Cổng."
+  c1_nk_b5: "&6Chương 1&0\nNgười Gác Cổng nói mảnh sao giống thứ ánh sáng trong các cổng dungeon.\n&2Việc: về báo tin cho Già Làng."
+  c1_nk_xong: "&6Chương 1 «Điềm Báo»: &2HOÀN THÀNH&0\nGià Làng tin rằng những vết nứt trên trời chỉ mới bắt đầu. Hãy chờ chương tiếp theo."

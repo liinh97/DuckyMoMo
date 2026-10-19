@@ -323,6 +323,7 @@ function render(){
     ${stat("🎡 Vé vòng quay", vq.ve || 0, `Đã quay ${vq.da_quay || 0} lần${vq.phut_moi_ve ? ` · ${vq.phut_moi_ve} phút chơi = 1 vé` : ""}`)}
     ${stat("🏰 Thị trấn", t && t.thitran ? esc(t.thitran) : "Chưa có", t && t.quocgia ? "Quốc gia " + esc(t.quocgia) + (t.chuc.length ? " · " + esc(t.chuc.join(", ")) : "") : (t && t.chuc.length ? esc(t.chuc.join(", ")) : "Lập hoặc vào thị trấn trong game"))}
     ${stat("🗳️ Vote tháng này", vt.thang || 0, `Tổng ${vt.tong || 0} lượt · chuỗi ${vt.chuoi || 0} ngày`)}
+    ${(h.cotruyen || []).map(c => stat("📜 " + esc(c.ten), c.xong ? "Hoàn thành ✓" : c.buoc ? "Bước " + c.buoc + "/" + c.tong : "Chưa bắt đầu", esc(c.viec || "Chờ chương tiếp theo"))).join("")}
     ${h.capdo ? stat("⬆️ Thăng Cấp", "Cấp " + h.capdo.cap + "/" + h.capdo.toi_da, h.capdo.diem + " điểm đặc quyền · " + h.capdo.ha + " điểm hạ gục · /capdo") : ""}
     ${stat("⚔️ Chiến Thần", ct.diem || 0, ct.hang ? "Hạng " + ct.hang + " mùa này" : "Chưa có điểm")}
     ${stat("⚔️ Giết / Chết", ((h.pvp || {}).giet || 0) + " / " + ((h.pvp || {}).chet || 0), "KDA " + ((h.pvp || {}).kda || 0) + " · Bang Hội Chiến")}

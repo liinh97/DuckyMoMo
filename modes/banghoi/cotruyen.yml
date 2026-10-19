@@ -1,0 +1,19 @@
+# Mô tả cốt truyện cho WEB (trang chủ + trang tài khoản). Nội dung nhiệm vụ thật nằm ở
+# server/plugins/BetonQuest/QuestPackages/cotruyen/ (BetonQuest). Thêm chương mới thì thêm một mục ở đây.
+# Mỗi bước: tag = tag BetonQuest khi NHẬN bước đó, xong = tag khi làm XONG; viec = câu hiện cho người đang ở bước đó.
+# Tiến trình đọc thẳng plugins/BetonQuest/database.db (SQLite, chỉ đọc). Số lượng/thưởng lấy từ constants của package.yml
+# (viết {c1_so_quai} trong chữ để điền số đang cài).
+chuong:
+  - ma: c1
+    ten: "Chương 1 «Điềm Báo»"
+    gioi_thieu: "Một ngôi sao rơi về phương bắc, từ đó đêm nào quái cũng kéo về đông gấp đôi. Già Làng cần người giúp tìm hiểu chuyện gì đang xảy ra."
+    bat_dau: "Tìm Già Làng ở Bang Hội Chiến, chuột phải để nói chuyện."
+    npc: [Già Làng, Bác Thợ Rèn, Người Gác Cổng]
+    thuong: [c1_thuong_b1, c1_thuong_b2, c1_thuong_b3, c1_thuong_b4, c1_thuong_ket]
+    xong: c1_xong
+    buoc:
+      - { tag: c1_b1, xong: c1_b1x, ten: "Đêm không yên", viec: "Hạ {c1_so_quai} quái vật rồi quay về gặp Già Làng." }
+      - { tag: c1_b2, xong: c1_b2x, ten: "Chuông báo động", viec: "Mang {c1_so_sat} thỏi sắt cho Bác Thợ Rèn." }
+      - { tag: c1_b3, xong: c1_b3x, ten: "Đá phát sáng", viec: "Đào {c1_so_quang} quặng bất kỳ, để ý thứ gì khác thường." }
+      - { tag: c1_b4, xong: c1_b4x, ten: "Mảnh Sao Rơi", viec: "Mang Mảnh Sao Rơi tới Người Gác Cổng." }
+      - { tag: c1_b4x, xong: c1_xong, ten: "Lời của Già Làng", viec: "Về báo tin cho Già Làng." }

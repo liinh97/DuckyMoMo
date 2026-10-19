@@ -396,6 +396,36 @@ plugins:
       - ["/em reload", "Nạp lại cấu hình (trang Cài đặt tự gọi)"]
     settings: "Trang Cài đặt: Bang Hội Chiến > Thế giới > Boss & Dungeon (EliteMobs). File: plugins/EliteMobs/"
     notes: "Cần FreeMinecraftModels cho gậy phép và lớp pháp sư (tuỳ chọn, chưa cài). Không cài ResourcePackManager để khỏi đụng gói font tiếng Việt."
+  - name: BetonQuest (cốt truyện)
+    jar: BetonQuest
+    kind: Boss & Dungeon
+    purpose: "Cốt truyện có NPC biết nói chuyện (cài 19/10, bản 3.2.0 ghim, GPL): bảng hội thoại bấm chọn câu trả lời, nhiệm vụ nhiều bước, nhật ký. Chương 1 «Điềm Báo» (gói cotruyen/chuong1): Già Làng kể chuyện sao rơi → hạ 20 quái → mang 16 thỏi sắt cho Bác Thợ Rèn → đào 24 quặng ra Mảnh Sao Rơi → đưa Người Gác Cổng (dẫn tới /dungeon, /conghoang) → về Già Làng kết chương (thưởng xu + kinh nghiệm, báo cả server). Mỗi người làm 1 lần. Ý tưởng cho chương sau: chuỗi 'Trái Đất lâm nguy'."
+    player:
+      - ["Chuột phải NPC", "Mở hội thoại, bấm chọn câu trả lời"]
+      - ["/journal", "Nhật ký nhiệm vụ (sách, gõ /bj cũng được)"]
+      - ["/backpack", "Balô nhiệm vụ: đồ nhiệm vụ (Mảnh Sao Rơi, nhật ký) lỡ vứt thì nằm ở đây"]
+    admin:
+      - ["/bq reload", "Nạp lại nhiệm vụ sau khi sửa file (trang Cài đặt tự gọi)"]
+      - ["/bq tag <tên> list", "Xem người chơi đang ở bước nào (tag c1_b1 … c1_xong)"]
+      - ["/bq tag <tên> del <tag>", "Xoá một bước (cho làm lại); mục tiêu đang chạy: /bq objective <tên> del c1_sanquai"]
+      - ["/bq objective <tên> list", "Xem mục tiêu đang chạy của người chơi"]
+    settings: "Trang Cài đặt: Bang Hội Chiến > Cốt truyện (kiểu bảng hội thoại, số lượng, thưởng). Lời thoại: plugins/BetonQuest/QuestPackages/cotruyen/ (repo: modes/banghoi/server/plugins/BetonQuest/QuestPackages/cotruyen/)"
+    notes: "Chỉ ở Bang Hội Chiến. NPC là Citizens, tìm theo TÊN (byName): đặt đúng tên Già Làng / Bác Thợ Rèn / Người Gác Cổng. Tự cập nhật của plugin đã tắt (itzg ghim bản). Kiểu bảng 'dialog' cần Java 1.21.6+; Bedrock qua Geyser hiện thành form: lỗi thì đổi sang 'Rương bấm chọn' trên Cài đặt."
+  - name: Citizens (NPC)
+    jar: Citizens
+    kind: Boss & Dungeon
+    purpose: "NPC hình người đứng một chỗ (cài 19/10, build 4265 từ Jenkins chính chủ, có hỗ trợ 26.2). Dùng cho NPC cốt truyện BetonQuest."
+    player: []
+    admin:
+      - ["/npc create <tên>", "Tạo NPC ở chỗ đang đứng. Cốt truyện cần đúng tên: Già Làng, Bác Thợ Rèn, Người Gác Cổng"]
+      - ["/npc select", "Chọn NPC gần nhất (các lệnh sau áp vào NPC đang chọn)"]
+      - ["/npc lookclose", "NPC quay mặt theo người chơi ở gần"]
+      - ["/npc skin <tên người chơi>", "Đổi skin theo skin của người chơi đó"]
+      - ["/npc tphere", "Kéo NPC đang chọn tới chỗ mình"]
+      - ["/npc rename <tên mới>", "Đổi tên (đổi tên NPC cốt truyện thì sửa luôn package.yml)"]
+      - ["/npc remove", "Xoá NPC đang chọn"]
+    settings: "plugins/Citizens/ (mặc định)"
+    notes: "Chỉ cài ở Bang Hội Chiến. Không có trên Modrinth: link ghim trong modes/banghoi/compose.yaml (PLUGINS), nâng cấp thì thay số build. Shopkeepers vẫn là dân làng bán hàng, Citizens chỉ cho NPC nói chuyện."
   - name: Shopkeepers (+ ShopkeepersAddon)
     jar: Shopkeepers
     kind: Kinh tế & buôn bán

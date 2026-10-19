@@ -752,6 +752,9 @@ footer .fbrand img{width:44px}
         </ul>
       </div>
     </div>
+    <div class="card" style="margin-top:16px"><h3>📜 Cốt truyện <span class="kbd">/journal</span></h3>
+      <p class="muted">Gặp NPC ở Bang Hội Chiến, <b>chuột phải</b> để nói chuyện và bấm chọn câu trả lời. Mỗi chương là một chuỗi nhiệm vụ có thưởng, làm được một lần. Nhật ký nhiệm vụ: <span class="kbd">/journal</span>; đồ nhiệm vụ lỡ vứt nằm trong <span class="kbd">/backpack</span>.</p>
+      <div id="ctList" class="muted">Đang tải…</div></div>
     <p class="dim" style="margin-top:14px">Quái elite không tự sinh ngoài thế giới, nên đồ từ dungeon và boss là phần thưởng của người dám đi săn, không làm hỏng thế cân bằng chiến tranh.</p>
   </div>
 </section>
@@ -1105,6 +1108,11 @@ async function loadInfo(){
   $("#tnList").innerHTML = tn.enabled ? `<p class="dim" style="font-size:.85rem">Quái có thể bị truy nã: ${(tn.targets || []).map(esc).join(", ")}</p>` : "Đang tắt.";
   const ta = info.thaiap || {};
   $("#taInfo").innerHTML = ta.enabled ? `<p class="dim" style="font-size:.85rem">Cạnh ${(ta.sizes || []).join(" → ")} khối · giá ${(ta.prices || []).map(x => nf.format(x)).join(" → ")} xu</p>${(ta.top || []).length ? `<table><tbody>${ta.top.map((t, i) => `<tr><td>${i + 1}</td><td><b>${esc(t.ten)}</b><div class="dim" style="font-size:.8rem">${esc(t.chu || "")} · ${t.canh}×${t.canh}</div></td><td>❤ ${t.thich}</td></tr>`).join("")}</tbody></table>` : '<p class="dim">Chưa ai mua.</p>'}` : "Đang tắt.";
+  const cti = info.cotruyen || {};
+  $("#ctList").innerHTML = !cti.enabled || !(cti.chuong || []).length ? "Sắp mở." : cti.chuong.map(c => `<div style="margin-top:10px"><b>${esc(c.ten)}</b>${c.so_xong ? ` <span class="dim">· ${nf.format(c.so_xong)} người đã hoàn thành</span>` : ""}
+    <p class="dim" style="font-size:.9rem;margin:4px 0">${esc(c.gioi_thieu)}</p>
+    <ol style="margin:4px 0 4px 18px;font-size:.9rem">${(c.buoc || []).map(b => `<li><b>${esc(b.ten)}</b>: ${esc(b.viec)}</li>`).join("")}</ol>
+    <p class="dim" style="font-size:.85rem">${esc(c.bat_dau)} NPC: ${(c.npc || []).map(esc).join(", ")}. Thưởng tổng ${nf.format(c.thuong || 0)} xu.</p></div>`).join("");
   const cdi = info.capdo || {};
   $("#cdList").innerHTML = !cdi.enabled ? "Đang tắt." : `<p class="dim" style="font-size:.85rem">Tối đa cấp ${cdi.max} · ${cdi.giu ? "giữ qua các mùa" : "mùa mới làm lại từ cấp 0"}. Đặc quyền: ${(cdi.shop || []).map(esc).join(", ")}.</p>`
     + ((cdi.top || []).length ? `<table><tbody>${cdi.top.map((t, i) => `<tr><td>${i + 1}</td><td><b>${esc(t.ten)}</b></td><td>Cấp <b>${t.cap}</b></td></tr>`).join("")}</tbody></table>` : '<p class="dim">Chưa ai lên cấp.</p>');

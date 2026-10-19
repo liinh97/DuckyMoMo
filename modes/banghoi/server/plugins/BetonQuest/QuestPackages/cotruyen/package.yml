@@ -1,0 +1,33 @@
+# Cốt truyện DuckyMoMo (BetonQuest). Mỗi chương một thư mục con (chuong1/, chuong2/…), cùng một gói "cotruyen".
+# NPC là Citizens, gọi theo TÊN (byName): admin đứng chỗ muốn đặt rồi gõ đúng tên, ví dụ
+#   /npc create Già Làng      /npc create Bác Thợ Rèn      /npc create Người Gác Cổng
+#   (thêm /npc lookclose để NPC quay mặt theo người chơi; /npc skin <tên người chơi> để đổi skin)
+# Đổi tên NPC thì sửa cả dòng tương ứng dưới đây. Nạp lại: /bq reload.
+# Số lượng và phần thưởng nằm ở constants (sửa trên trang Cài đặt › Cốt truyện).
+
+# Phiên bản cú pháp gói (BetonQuest 3.2.0). Thiếu dòng này thì plugin tự ghi thêm và lưu đè cả gói.
+package:
+  version: "3.2.0-QUEST-2"
+
+npcs:
+  gia_lang: 'citizens "Già Làng" byName'
+  tho_ren: 'citizens "Bác Thợ Rèn" byName'
+  gac_cong: 'citizens "Người Gác Cổng" byName'
+
+npc_conversations:
+  gia_lang: gia_lang
+  tho_ren: tho_ren
+  gac_cong: gac_cong
+
+constants:
+  # Chương 1: số lượng
+  c1_so_quai: 20
+  c1_so_sat: 16
+  c1_so_quang: 24
+  # Chương 1: thưởng (xu) từng bước và thưởng kết chương
+  c1_thuong_b1: 300
+  c1_thuong_b2: 300
+  c1_thuong_b3: 400
+  c1_thuong_b4: 300
+  c1_thuong_ket: 1500
+  c1_thuong_kn: 200

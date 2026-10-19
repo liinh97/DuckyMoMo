@@ -416,6 +416,22 @@ groups:
       - ["discordsrv reload", "Nạp lại DiscordSRV", Chỉ admin]
       - ["chunky start", "Tạo trước địa hình (đã giới hạn viền mùa 1)", Chỉ admin]
       - ["chunky pause · chunky continue", "Dừng / chạy tiếp tạo địa hình", Chỉ admin]
+  - plugin: BetonQuest + Citizens (cốt truyện)
+    servers: [banghoi-1]
+    commands:
+      - ["journal", "Nhật ký nhiệm vụ cốt truyện (/bj)", Mọi người]
+      - ["backpack", "Balô nhiệm vụ: đồ nhiệm vụ lỡ vứt nằm ở đây", Mọi người]
+      - ["bq reload", "Nạp lại nhiệm vụ sau khi sửa file", Chỉ admin]
+      - ["bq tag <tên> list", "Xem người chơi đang ở bước nào của cốt truyện", Chỉ admin]
+      - ["bq tag <tên> del <tag>", "Xoá một bước cốt truyện để làm lại", Chỉ admin]
+      - ["bq objective <tên> list", "Xem mục tiêu nhiệm vụ đang chạy", Chỉ admin]
+      - ["bq objective <tên> del <mục tiêu>", "Xoá mục tiêu nhiệm vụ đang chạy", Chỉ admin]
+      - ["npc create <tên>", "Tạo NPC tại chỗ đứng (cốt truyện: Già Làng, Bác Thợ Rèn, Người Gác Cổng)", Chỉ admin]
+      - ["npc select", "Chọn NPC gần nhất", Chỉ admin]
+      - ["npc lookclose", "NPC quay mặt theo người chơi", Chỉ admin]
+      - ["npc skin <tên>", "Đổi skin NPC theo skin người chơi", Chỉ admin]
+      - ["npc tphere", "Kéo NPC đang chọn tới chỗ mình", Chỉ admin]
+      - ["npc remove", "Xoá NPC đang chọn", Chỉ admin]
   - plugin: MyPet
     servers: [banghoi-1]
     commands:

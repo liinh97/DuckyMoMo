@@ -11,6 +11,7 @@ final class Shared {
     static volatile Leaderboard leaderboard;
     static volatile DungeonGate dungeonGate;
     static volatile WildGates wildGates;
+    static volatile Wanderers wanderers;
 
     private Shared() {
     }
@@ -29,5 +30,6 @@ final class Shared {
         leaderboard = null;
         dungeonGate = null;
         wildGates = null;
+        wanderers = null;
     }
 }

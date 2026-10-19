@@ -303,6 +303,37 @@ final class WildGates implements Listener {
 
     private double underwaterChanceOverride = -1;   // -1 = theo cấu hình
 
+    /** Tên vùng /tpr gần nhất + hướng so với tâm vùng (vd {"Đông Á", "phía tây bắc"}), cho tin đồn của module khác (Lữ khách). */
+    String[] zoneLabel(Location l) {
+        Zone z = zoneAt(l.getX(), l.getZ());
+        return z == null ? new String[] {"?", ""} : new String[] {z.name().replaceAll("[&§][0-9a-fk-orA-FK-OR]", ""), direction(z, l.getX(), l.getZ())};
+    }
+
+    /** Cổng mới nhất dẫn tới dungeon (null = chưa có cổng nào): tin đồn, vùng, hướng, đã có người tìm ra chưa, thị trấn giữ cổng. */
+    Map<String, String> gateInfo(String dungeon) {
+        String best = null;
+        long bestAt = -1;
+        for (String id : gateIds()) {
+            if (dungeon.equals(data.getString(g(id) + "dungeon")) && data.getLong(g(id) + "luc", 0) > bestAt) {
+                best = id;
+                bestAt = data.getLong(g(id) + "luc", 0);
+            }
+        }
+        if (best == null) {
+            return null;
+        }
+        Map<String, String> m = new HashMap<>();
+        m.put("ma", best);
+        m.put("tindon", data.getString(g(best) + "tin-don", ""));
+        m.put("vung", data.getString(g(best) + "vung", ""));
+        m.put("huong", data.getString(g(best) + "huong", ""));
+        m.put("tim", found(best) ? "co" : "khong");
+        m.put("timboi", data.getString(g(best) + "tim-boi", ""));
+        Town t = owner(best);
+        m.put("chu", t == null ? "" : t.getName());
+        return m;
+    }
+
     private Location pickSpot() {
         World w = Bukkit.getWorld(world);
         List<Zone> open = zones.stream().filter(z -> Shared.unlocked(z.requires())).toList();
@@ -812,6 +843,10 @@ final class WildGates implements Listener {
         }
         data.set(pfx + "luot", data.getInt(pfx + "luot", 0) + 1);
         save();
+        Wanderers wd = Shared.wanderers;
+        if (wd != null) {
+            wd.onGatePass(p, dungeon);
+        }
     }
 
     private boolean sameTownAsFinder(Player p, String id) {

@@ -149,9 +149,21 @@ Triển khai: kiểm tra không ai online (lệnh riêng) → `docker compose up
       → đào 24 quặng (quặng tự đặt không tính) → nhận Mảnh Sao Rơi → Người Gác Cổng lấy mảnh → về Già Làng: thưởng 1500 xu + 200 kinh nghiệm, cả server thấy thông báo.
 - [ ] Số lấy từ cài đặt (`%constant…%`) hiện đúng trong lời thoại và nhật ký; đổi số trên Cài đặt › Cốt truyện → `bq reload` → NPC nói số mới.
 - [ ] `/journal` ra sách nhật ký tiếng Việt; vứt Mảnh Sao Rơi → nằm trong `/backpack`; Người Gác Cổng nhắc /backpack khi không có mảnh.
-- [ ] Làm lại cho một người: `/bq tag <tên> list`, `/bq tag <tên> del c1_…`.
+- [ ] Làm lại cho một người: `/bq tag <tên> list`, `/bq tag <tên> del cotruyen>c1_…` (tag ghi kèm tên gói, dấu >).
 - [ ] Web: trang chủ mục Dungeon & Boss có thẻ Cốt truyện (các bước, số người hoàn thành); trang tài khoản có thẻ "Chương 1" đúng bước đang làm.
 - [ ] `/huongdan` chương Bang Hội Chiến có trang CỐT TRUYỆN.
+
+## 4j. Lữ khách (/lukhach) — 19/10, đã triển khai, CHƯA thử trong game
+- [ ] Log banghoi-1: "Lữ khách: 4 lữ khách…"; khoảng 30 giây sau khi bật có 4 dòng "Lữ khách <tên> -> x y z (vùng)"; cả server thấy tin đồn 📜.
+      Sảnh + practice vẫn có "Enabling DuckyMoMoCore", không NoClassDefFoundError (lớp Citizens chỉ ở CitizensBridge).
+- [ ] `/lukhach` (người chơi): 4 người, đang ở vùng nào. `/lukhach ds` (admin): toạ độ + [Tới] → tới nơi thấy NPC đúng tên, quay mặt theo mình.
+- [ ] Chuột phải lữ khách → hội thoại (cùng kiểu bảng với chương 1). Chưa mở mùa: hỏi "Nơi đó ở đâu?" → "Cánh cổng … chưa mở ra".
+- [ ] Có cổng (thử: `/conghoang tao` đặt cổng; kiểm `/papi parse me %dmmlk_cong_cong%` = co, `%dmmlk_cong_tindon%`): lữ khách của đúng nơi đó đọc tin đồn;
+      có người tìm ra → nói ai tìm, ở vùng nào; thị trấn giữ cổng → nói tên thị trấn.
+- [ ] Đi qua Cổng Hoang → chat "… hẳn sẽ muốn nghe chuyện …", `/bq tag <tên> list` có `cotruyen>lk_<mã>_qua` → về lữ khách kể → +1000 xu, nhật ký "ĐÃ KỂ"; nói lại thì chỉ câu kết.
+- [ ] `/lukhach doi all` dời ngay + tin đồn mới; NPC cũ biến mất khỏi chỗ cũ (không bị nhân đôi). Restart server: NPC vẫn đúng chỗ, không tạo thêm.
+- [ ] Cài đặt › Cốt truyện › Lữ khách: đổi giờ dời/thưởng → lưu không lỗi. Web: trang chủ (Cốt truyện › Lữ khách), trang tài khoản thẻ 🧭 Lữ khách.
+- [ ] (Lưu ý) Người Gác Cổng (chương 1) giờ nhắc /lukhach.
 
 ## 5. Quảng trường Vinh danh (sảnh)
 - [ ] (CHƯA CẦN, làm khi gần mở server) Chọn chỗ trống ở sảnh (map sakura). Đứng, quay mặt về phía người xem: `/vinhdanh dat moinhat tieude`, rồi `bachu`, `chienthan`, `phuho`,

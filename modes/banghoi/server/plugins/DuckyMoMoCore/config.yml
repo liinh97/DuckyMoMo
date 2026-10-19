@@ -944,6 +944,20 @@ wild-gates:
 #  chain: chuỗi chìa khoá (requires = phải vượt dungeon trước) · hidden: ẩn (admin đứng tại chỗ gõ /dungeon datan <mã>)
 #  luck: Vé Vận Mệnh rơi hiếm · ticket: vé cá nhân mua bằng xu · server: cả server góp quỹ mở (open-days 0 = tới hết mùa)
 #  gate: chỉ vào được qua Cổng Hoang (/conghoang). Chưa có dungeon kiểu luck nào thì Vé Vận Mệnh không rơi.
+# Lữ khách (/lukhach, cần Citizens + BetonQuest): mỗi lữ khách kể chuyện về một nơi phía sau Cổng Hoang (dungeon: mã trong wild-gates.dungeons).
+# NPC Citizens đứng ở đất hoang ngẫu nhiên (luật chọn chỗ của Cổng Hoang), mỗi move-hours giờ dời đi chỗ khác, báo tin đồn (vùng + hướng).
+# Tên NPC phải trùng tên trong BetonQuest (plugins/BetonQuest/QuestPackages/cotruyen/lukhach/), đổi tên thì sửa cả hai chỗ.
+# skin: tên một người chơi bản quyền để mượn skin (trống = mặc định). Admin: /lukhach ds | doi <mã|all> | xoa.
+wander-npcs:
+  enabled: true
+  move-hours: 72
+  announce: true
+  npcs:
+    cong: {dungeon: sewers_minidungeon, name: "Thợ Cống Già", skin: "", rumor: "có một ông già người ướt sũng, cứ lẩm bẩm về những đường cống dưới lòng đất"}
+    bacuc: {dungeon: north_pole_minidungeon, name: "Người Kéo Xe Tuần Lộc", skin: "", rumor: "có một người mặc áo lông dày giữa trời nắng, run cầm cập"}
+    hiepsi: {dungeon: knights_castle_lair, name: "Hiệp Sĩ Lạc Đàn", skin: "", rumor: "có một hiệp sĩ giáp sứt mẻ ngồi một mình bên đống lửa"}
+    hoinuoc: {dungeon: steamworks_lair, name: "Kỹ Sư Bỏ Trốn", skin: "", rumor: "có một người mặt đầy muội than, tay ôm chặt chiếc cờ lê"}
+
 dungeon-gate:
   enabled: true
   key-tradeable: false     # Chìa khoá tầng (trùm cuối rơi) có cho người khác dùng không: false = ghi tên người nhận, chỉ người đó dùng được

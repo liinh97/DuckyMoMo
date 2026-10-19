@@ -105,7 +105,7 @@ conversations:
     first: "sau,nhan_manh,mat_manh,chua"
     NPC_options:
       chua:
-        text: "Phía sau ta là lối tới các dungeon. Đủ sức thì gõ /dungeon mà chọn. Ngoài hoang dã còn có những cổng lạ, gõ /conghoang nghe tin đồn."
+        text: "Phía sau ta là lối tới các dungeon. Đủ sức thì gõ /dungeon mà chọn. Ngoài hoang dã còn có những cổng lạ (/conghoang) và mấy lữ khách biết chuyện về chúng (/lukhach)."
       nhan_manh:
         text: "Cho ta xem thứ cháu cầm… Ánh sáng này giống hệt ánh sáng trong các cổng dungeon. Nó không thuộc về thế giới này."
         conditions: "c1_b4,!c1_b4x,c1_co_manh"
@@ -120,7 +120,7 @@ conversations:
       tim_lai:
         text: "Đồ của nhiệm vụ không mất được đâu: gõ /backpack mà xem, nó nằm trong balô nhiệm vụ."
       sau:
-        text: "Mảnh sao ta cất kỹ rồi. Đi dungeon thì để ý xem còn mảnh nào khác không."
+        text: "Mảnh sao ta cất kỹ rồi. Ngoài đất hoang có mấy lữ khách lạ, mỗi người biết chuyện về một nơi phía sau các Cổng Hoang. Gõ /lukhach xem tin đồn họ đang ở đâu."
         conditions: "c1_b4x"
     player_options:
       dua_manh:

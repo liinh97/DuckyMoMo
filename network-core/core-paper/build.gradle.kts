@@ -20,6 +20,8 @@ dependencies {
     compileOnly("com.github.MilkBowl:VaultAPI:1.7.1") { isTransitive = false }
     // Placeholder %dmm_bachu_1_ten%… cho hologram bảng xếp hạng (PlaceholderAPI 2.12.3 đang chạy ở banghoi)
     compileOnly("me.clip:placeholderapi:2.12.3") { isTransitive = false }
+    // Lữ khách (wander-npcs, banghoi): NPC Citizens tự dời chỗ trên bản đồ, nói chuyện bằng BetonQuest
+    compileOnly("net.citizensnpcs:citizensapi:2.0.44-SNAPSHOT") { isTransitive = false }
 }
 
 tasks.withType<JavaCompile>().configureEach {

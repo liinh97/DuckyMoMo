@@ -1797,7 +1797,7 @@ groups:
   - title: Cốt truyện (NPC + nhiệm vụ BetonQuest)
     category: Cốt truyện
     description: "Chương 1 «Điềm Báo»: Già Làng → săn quái → mang sắt cho Bác Thợ Rèn → đào quặng ra Mảnh Sao Rơi → Người Gác Cổng → kết chương. Mỗi người làm được 1 lần."
-    info: "Là gì: cốt truyện có NPC nói chuyện (bảng hội thoại, bấm chọn câu trả lời), nhiệm vụ nhiều bước, nhật ký /journal.\nNPC: Citizens. Admin đứng chỗ muốn đặt rồi gõ ĐÚNG tên: /npc create Già Làng, /npc create Bác Thợ Rèn, /npc create Người Gác Cổng (thêm /npc lookclose cho NPC quay mặt theo người chơi, /npc skin <tên> đổi skin). BetonQuest tìm NPC theo tên, không cần số ID.\nNội dung lời thoại: plugins/BetonQuest/QuestPackages/cotruyen/ (trong repo: modes/banghoi/server/plugins/BetonQuest/QuestPackages/cotruyen/).\nThử lại từ đầu cho một người: /bq tag <tên> del c1_b1 (và các tag c1_… khác), /bq objective <tên> del c1_sanquai.\nLưu xong: có hiệu lực ngay (bq reload)."
+    info: "Là gì: cốt truyện có NPC nói chuyện (bảng hội thoại, bấm chọn câu trả lời), nhiệm vụ nhiều bước, nhật ký /journal.\nNPC: Citizens. Admin đứng chỗ muốn đặt rồi gõ ĐÚNG tên: /npc create Già Làng, /npc create Bác Thợ Rèn, /npc create Người Gác Cổng (thêm /npc lookclose cho NPC quay mặt theo người chơi, /npc skin <tên> đổi skin). BetonQuest tìm NPC theo tên, không cần số ID.\nNội dung lời thoại: plugins/BetonQuest/QuestPackages/cotruyen/ (trong repo: modes/banghoi/server/plugins/BetonQuest/QuestPackages/cotruyen/).\nThử lại từ đầu cho một người: /bq tag <tên> del cotruyen>c1_b1 (và các tag cotruyen>c1_… khác; xem bằng /bq tag <tên> list), /bq objective <tên> del cotruyen>c1_sanquai.\nLưu xong: có hiệu lực ngay (bq reload)."
     apply: [bq reload]
     settings:
       - { key: bq_io, label: Kiểu bảng hội thoại, type: select, file: plugins/BetonQuest/config.yml, path: conversation.default_io,
@@ -1814,3 +1814,16 @@ groups:
       - { key: bq_c1_t4, label: "Chương 1: thưởng bước 4 (xu)", type: int, min: 0, max: 1000000, file: plugins/BetonQuest/QuestPackages/cotruyen/package.yml, path: constants.c1_thuong_b4 }
       - { key: bq_c1_tket, label: "Chương 1: thưởng kết chương (xu)", type: int, min: 0, max: 1000000, file: plugins/BetonQuest/QuestPackages/cotruyen/package.yml, path: constants.c1_thuong_ket }
       - { key: bq_c1_kn, label: "Chương 1: điểm kinh nghiệm khi kết chương", type: int, min: 0, max: 100000, file: plugins/BetonQuest/QuestPackages/cotruyen/package.yml, path: constants.c1_thuong_kn }
+
+  - title: Lữ khách (/lukhach)
+    category: Cốt truyện
+    description: "4 NPC lang thang ngoài đất hoang, mỗi người kể về một nơi phía sau Cổng Hoang (Cống Ngầm, Bắc Cực, Lâu Đài Hiệp Sĩ, Xưởng Hơi Nước), chỉ đường tới cổng, đi qua cổng rồi về kể thì được thưởng."
+    info: "Là gì: NPC Citizens do DuckyMoMoCore tự đặt ở chỗ đất hoang ngẫu nhiên (luật chọn chỗ của Cổng Hoang: vùng /tpr đã mở, xa thị trấn), cứ mấy giờ lại dời đi chỗ khác và báo tin đồn (vùng + hướng, không toạ độ).\nChưa mở mùa (chưa có Cổng Hoang): lữ khách chỉ kể truyền thuyết, nói cổng chưa mở. Có cổng: chỉ đường theo tin đồn của cổng; cổng đã có người tìm ra thì nói ai tìm, ở đâu; thị trấn giữ cổng thì nói tên thị trấn.\nĐi qua Cổng Hoang dẫn tới nơi đó (kể cả trước khi gặp lữ khách) rồi về kể: nhận thưởng, mỗi lữ khách 1 lần.\nTên NPC, skin, câu tin đồn: wander-npcs.npcs trong plugins/DuckyMoMoCore/config.yml; lời thoại: plugins/BetonQuest/QuestPackages/cotruyen/lukhach/ (đổi tên thì sửa cả hai).\nAdmin: /lukhach ds (chỗ đứng + nút [Tới]), /lukhach doi <mã|all> (dời ngay), /lukhach xoa (xoá NPC).\nLưu xong: có hiệu lực ngay (dmm reload, bq reload)."
+    apply: [dmm reload, bq reload]
+    settings:
+      - { key: lk_on, label: Bật lữ khách, type: select, file: plugins/DuckyMoMoCore/config.yml, path: wander-npcs.enabled,
+          options: [ { value: true, label: Bật }, { value: false, label: "Tắt (NPC đã đặt vẫn đứng đó: /lukhach xoa trước khi tắt)" } ] }
+      - { key: lk_move, label: "Mấy giờ dời chỗ một lần", type: int, min: 1, max: 720, file: plugins/DuckyMoMoCore/config.yml, path: wander-npcs.move-hours }
+      - { key: lk_announce, label: Báo tin đồn khi lữ khách dời chỗ, type: select, file: plugins/DuckyMoMoCore/config.yml, path: wander-npcs.announce,
+          options: [ { value: true, label: Có }, { value: false, label: "Không (chỉ xem bằng /lukhach)" } ] }
+      - { key: lk_thuong, label: "Thưởng khi về kể (xu, mỗi lữ khách)", type: int, min: 0, max: 1000000, file: plugins/BetonQuest/QuestPackages/cotruyen/package.yml, path: constants.lk_thuong }

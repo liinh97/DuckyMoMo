@@ -1,0 +1,328 @@
+# Lữ khách: mỗi người kể về một nơi phía sau Cổng Hoang (DuckyMoMoCore wander-npcs tạo NPC Citizens đúng TÊN dưới đây, tự dời chỗ).
+# Tình trạng cổng lấy qua PlaceholderAPI: %ph.dmmlk_<mã>_cong|tim|tindon|vung|huong|chu|timboi% (forceSync: đọc trên luồng chính).
+# Đi qua Cổng Hoang dẫn tới nơi đó -> DuckyMoMoCore gắn tag lk_<mã>_qua -> về kể cho lữ khách nhận thưởng (constants.lk_thuong). Mỗi người 1 lần.
+npcs:
+  lk_cong: citizens "Thợ Cống Già" byName
+  lk_bacuc: citizens "Người Kéo Xe Tuần Lộc" byName
+  lk_hiepsi: citizens "Hiệp Sĩ Lạc Đàn" byName
+  lk_hoinuoc: citizens "Kỹ Sư Bỏ Trốn" byName
+npc_conversations:
+  lk_cong: lk_cong
+  lk_bacuc: lk_bacuc
+  lk_hiepsi: lk_hiepsi
+  lk_hoinuoc: lk_hoinuoc
+conditions:
+  lk_cong_cocong: variable %ph.dmmlk_cong_cong% co forceSync
+  lk_cong_datim: variable %ph.dmmlk_cong_tim% co forceSync
+  lk_cong_cochu: variable %ph.dmmlk_cong_chu% .+ forceSync
+  lk_cong_nghe: tag lk_cong_nghe
+  lk_cong_qua: tag lk_cong_qua
+  lk_cong_xong: tag lk_cong_xong
+  lk_bacuc_cocong: variable %ph.dmmlk_bacuc_cong% co forceSync
+  lk_bacuc_datim: variable %ph.dmmlk_bacuc_tim% co forceSync
+  lk_bacuc_cochu: variable %ph.dmmlk_bacuc_chu% .+ forceSync
+  lk_bacuc_nghe: tag lk_bacuc_nghe
+  lk_bacuc_qua: tag lk_bacuc_qua
+  lk_bacuc_xong: tag lk_bacuc_xong
+  lk_hiepsi_cocong: variable %ph.dmmlk_hiepsi_cong% co forceSync
+  lk_hiepsi_datim: variable %ph.dmmlk_hiepsi_tim% co forceSync
+  lk_hiepsi_cochu: variable %ph.dmmlk_hiepsi_chu% .+ forceSync
+  lk_hiepsi_nghe: tag lk_hiepsi_nghe
+  lk_hiepsi_qua: tag lk_hiepsi_qua
+  lk_hiepsi_xong: tag lk_hiepsi_xong
+  lk_hoinuoc_cocong: variable %ph.dmmlk_hoinuoc_cong% co forceSync
+  lk_hoinuoc_datim: variable %ph.dmmlk_hoinuoc_tim% co forceSync
+  lk_hoinuoc_cochu: variable %ph.dmmlk_hoinuoc_chu% .+ forceSync
+  lk_hoinuoc_nghe: tag lk_hoinuoc_nghe
+  lk_hoinuoc_qua: tag lk_hoinuoc_qua
+  lk_hoinuoc_xong: tag lk_hoinuoc_xong
+actions:
+  lk_cong_danghe: folder lk_cong_tagnghe,lk_cong_nknghe
+  lk_cong_tagnghe: tag add lk_cong_nghe
+  lk_cong_nknghe: journal add lk_cong_nk
+  lk_cong_tra: folder lk_cong_tien,lk_cong_tagxong,lk_cong_nkxoa,lk_cong_nkxong
+  lk_cong_tien: money +%constant.lk_thuong% notify
+  lk_cong_tagxong: tag add lk_cong_xong
+  lk_cong_nkxoa: journal delete lk_cong_nk
+  lk_cong_nkxong: journal add lk_cong_nkxong
+  lk_bacuc_danghe: folder lk_bacuc_tagnghe,lk_bacuc_nknghe
+  lk_bacuc_tagnghe: tag add lk_bacuc_nghe
+  lk_bacuc_nknghe: journal add lk_bacuc_nk
+  lk_bacuc_tra: folder lk_bacuc_tien,lk_bacuc_tagxong,lk_bacuc_nkxoa,lk_bacuc_nkxong
+  lk_bacuc_tien: money +%constant.lk_thuong% notify
+  lk_bacuc_tagxong: tag add lk_bacuc_xong
+  lk_bacuc_nkxoa: journal delete lk_bacuc_nk
+  lk_bacuc_nkxong: journal add lk_bacuc_nkxong
+  lk_hiepsi_danghe: folder lk_hiepsi_tagnghe,lk_hiepsi_nknghe
+  lk_hiepsi_tagnghe: tag add lk_hiepsi_nghe
+  lk_hiepsi_nknghe: journal add lk_hiepsi_nk
+  lk_hiepsi_tra: folder lk_hiepsi_tien,lk_hiepsi_tagxong,lk_hiepsi_nkxoa,lk_hiepsi_nkxong
+  lk_hiepsi_tien: money +%constant.lk_thuong% notify
+  lk_hiepsi_tagxong: tag add lk_hiepsi_xong
+  lk_hiepsi_nkxoa: journal delete lk_hiepsi_nk
+  lk_hiepsi_nkxong: journal add lk_hiepsi_nkxong
+  lk_hoinuoc_danghe: folder lk_hoinuoc_tagnghe,lk_hoinuoc_nknghe
+  lk_hoinuoc_tagnghe: tag add lk_hoinuoc_nghe
+  lk_hoinuoc_nknghe: journal add lk_hoinuoc_nk
+  lk_hoinuoc_tra: folder lk_hoinuoc_tien,lk_hoinuoc_tagxong,lk_hoinuoc_nkxoa,lk_hoinuoc_nkxong
+  lk_hoinuoc_tien: money +%constant.lk_thuong% notify
+  lk_hoinuoc_tagxong: tag add lk_hoinuoc_xong
+  lk_hoinuoc_nkxoa: journal delete lk_hoinuoc_nk
+  lk_hoinuoc_nkxong: journal add lk_hoinuoc_nkxong
+journal:
+  lk_cong_nk: '&6Lữ khách: Thợ Cống Già&0
+
+    Bên dưới thành phố ấy là cả một mê cung đường cống. Một đêm nước dâng, đội thợ của ta xuống sửa… chỉ mình ta trèo lên được. Từ dưới đó vọng lên tiếng gì như đang gặm đá.
+
+    &2Việc: tìm Cổng Hoang dẫn tới Cống Ngầm, đi qua rồi tìm lữ khách mà kể (/lukhach xem họ đang ở đâu).'
+  lk_cong_nkxong: '&6Lữ khách: Thợ Cống Già: &2ĐÃ KỂ&0
+
+    Bạn đã tới Cống Ngầm và kể lại cho Thợ Cống Già.'
+  lk_bacuc_nk: '&6Lữ khách: Người Kéo Xe Tuần Lộc&0
+
+    Ta kéo xe hàng cho một xưởng làm quà ở tận cùng phương bắc. Một sáng tuyết rơi giữa trời nắng, cả đàn tuần lộc chạy mất. Người trong xưởng cứ đứng cười… mà mắt thì không cười.
+
+    &2Việc: tìm Cổng Hoang dẫn tới Bắc Cực, đi qua rồi tìm lữ khách mà kể (/lukhach xem họ đang ở đâu).'
+  lk_bacuc_nkxong: '&6Lữ khách: Người Kéo Xe Tuần Lộc: &2ĐÃ KỂ&0
+
+    Bạn đã tới Bắc Cực và kể lại cho Người Kéo Xe Tuần Lộc.'
+  lk_hiepsi_nk: '&6Lữ khách: Hiệp Sĩ Lạc Đàn&0
+
+    Bọn ta nhận lệnh giữ một toà lâu đài. Một đêm cổng tự mở, và những kẻ mặc đúng bộ giáp của bọn ta bước vào. Ta là người duy nhất chạy thoát. Đêm nào trong mơ cũng nghe tiếng giáp sắt va nhau.
+
+    &2Việc: tìm Cổng Hoang dẫn tới Lâu Đài Hiệp Sĩ, đi qua rồi tìm lữ khách mà kể (/lukhach xem họ đang ở đâu).'
+  lk_hiepsi_nkxong: '&6Lữ khách: Hiệp Sĩ Lạc Đàn: &2ĐÃ KỂ&0
+
+    Bạn đã tới Lâu Đài Hiệp Sĩ và kể lại cho Hiệp Sĩ Lạc Đàn.'
+  lk_hoinuoc_nk: '&6Lữ khách: Kỹ Sư Bỏ Trốn&0
+
+    Ta từng đứng máy trong một xưởng hơi nước dưới lòng đất. Bọn ta chế ra những cỗ máy tự chạy, rồi một ngày chúng không chịu dừng nữa. Ta bỏ trốn, mang theo đúng cái cờ lê này.
+
+    &2Việc: tìm Cổng Hoang dẫn tới Xưởng Hơi Nước, đi qua rồi tìm lữ khách mà kể (/lukhach xem họ đang ở đâu).'
+  lk_hoinuoc_nkxong: '&6Lữ khách: Kỹ Sư Bỏ Trốn: &2ĐÃ KỂ&0
+
+    Bạn đã tới Xưởng Hơi Nước và kể lại cho Kỹ Sư Bỏ Trốn.'
+conversations:
+  lk_cong:
+    quester: '&6Thợ Cống Già'
+    first: xong,tra,chao_lai,chao
+    NPC_options:
+      chao:
+        text: Đừng đứng gần quá, người ta toàn mùi bùn. Cả đời ta đào cống cho một thành phố mà giờ chẳng còn ai nhớ tên.
+        conditions: '!lk_cong_nghe'
+        pointers: hoi,di
+      ke1:
+        text: Bên dưới thành phố ấy là cả một mê cung đường cống. Một đêm nước dâng, đội thợ của ta xuống sửa… chỉ mình ta trèo lên được. Từ dưới đó vọng lên tiếng gì như đang gặm đá.
+        pointers: hoi_dau,di
+      dau_chu:
+        text: Cổng dẫn tới Cống Ngầm đã có người tìm ra, giờ thị trấn %ph.dmmlk_cong_chu% đang giữ. Muốn vào thì phải qua mặt họ, hoặc trả phí. Đi qua rồi quay lại kể ta nghe.
+        conditions: lk_cong_cocong,lk_cong_cochu
+        actions: lk_cong_danghe
+      dau_tim:
+        text: '%ph.dmmlk_cong_timboi% đã tìm ra cổng rồi, ở %ph.dmmlk_cong_vung% (%ph.dmmlk_cong_huong%), đất hoang, ai vào cũng được. Đứng giữa cổng rồi ngồi xuống (Shift). Đi qua rồi quay lại kể ta nghe.'
+        conditions: lk_cong_cocong,lk_cong_datim
+        actions: lk_cong_danghe
+      dau_don:
+        text: 'Người ta đồn thế này: %ph.dmmlk_cong_tindon% Tìm được cổng thì đứng giữa rồi ngồi xuống (Shift). Đi qua rồi quay lại kể ta nghe.'
+        conditions: lk_cong_cocong
+        actions: lk_cong_danghe
+      dau_chua:
+        text: Cánh cổng dẫn tới Cống Ngầm chưa mở ra. Khi nó mở, cả vùng sẽ xôn xao tin đồn (/conghoang). Lúc ấy hãy đi tìm, rồi quay lại kể ta nghe. Mà ta thì chẳng ở yên một chỗ đâu.
+        actions: lk_cong_danghe
+      chao_lai:
+        text: Lại là cháu à? Đã tìm ra đường tới đó chưa?
+        conditions: lk_cong_nghe,!lk_cong_qua
+        pointers: hoi_dau,hoi_lai,di
+      tra:
+        text: Cháu xuống tận đó thật à? Kể ta nghe, dưới ấy giờ ra sao?
+        conditions: lk_cong_qua,!lk_cong_xong
+        pointers: ke
+      camon:
+        text: Ta biết mà, ta không bị điên. Cầm lấy, coi như tiền công của một thợ cống già.
+        actions: lk_cong_tra
+      xong:
+        text: Vậy là dưới đó vẫn còn thứ ấy… Cảm ơn cháu. Đêm nay ta ngủ được rồi.
+        conditions: lk_cong_xong
+    player_options:
+      hoi:
+        text: Có chuyện gì vậy?
+        pointers: ke1
+      hoi_lai:
+        text: Kể lại chuyện hôm trước đi.
+        pointers: ke1
+      hoi_dau:
+        text: Nơi đó ở đâu?
+        pointers: dau_chu,dau_tim,dau_don,dau_chua
+      ke:
+        text: Dưới đó tối và ẩm, nước nhỏ giọt khắp nơi… và đúng là có thứ đang gặm đá.
+        pointers: camon
+      di:
+        text: Tôi đi đây.
+  lk_bacuc:
+    quester: '&6Người Kéo Xe Tuần Lộc'
+    first: xong,tra,chao_lai,chao
+    NPC_options:
+      chao:
+        text: Brr… Cháu không thấy lạnh à? Từ hôm ở chỗ đó về, người ta cứ lạnh mãi không thôi.
+        conditions: '!lk_bacuc_nghe'
+        pointers: hoi,di
+      ke1:
+        text: Ta kéo xe hàng cho một xưởng làm quà ở tận cùng phương bắc. Một sáng tuyết rơi giữa trời nắng, cả đàn tuần lộc chạy mất. Người trong xưởng cứ đứng cười… mà mắt thì không cười.
+        pointers: hoi_dau,di
+      dau_chu:
+        text: Cổng dẫn tới Bắc Cực đã có người tìm ra, giờ thị trấn %ph.dmmlk_bacuc_chu% đang giữ. Muốn vào thì phải qua mặt họ, hoặc trả phí. Đi qua rồi quay lại kể ta nghe.
+        conditions: lk_bacuc_cocong,lk_bacuc_cochu
+        actions: lk_bacuc_danghe
+      dau_tim:
+        text: '%ph.dmmlk_bacuc_timboi% đã tìm ra cổng rồi, ở %ph.dmmlk_bacuc_vung% (%ph.dmmlk_bacuc_huong%), đất hoang, ai vào cũng được. Đứng giữa cổng rồi ngồi xuống (Shift). Đi qua rồi quay lại kể ta
+          nghe.'
+        conditions: lk_bacuc_cocong,lk_bacuc_datim
+        actions: lk_bacuc_danghe
+      dau_don:
+        text: 'Người ta đồn thế này: %ph.dmmlk_bacuc_tindon% Tìm được cổng thì đứng giữa rồi ngồi xuống (Shift). Đi qua rồi quay lại kể ta nghe.'
+        conditions: lk_bacuc_cocong
+        actions: lk_bacuc_danghe
+      dau_chua:
+        text: Cánh cổng dẫn tới Bắc Cực chưa mở ra. Khi nó mở, cả vùng sẽ xôn xao tin đồn (/conghoang). Lúc ấy hãy đi tìm, rồi quay lại kể ta nghe. Mà ta thì chẳng ở yên một chỗ đâu.
+        actions: lk_bacuc_danghe
+      chao_lai:
+        text: Lại là cháu à? Đã tìm ra đường tới đó chưa?
+        conditions: lk_bacuc_nghe,!lk_bacuc_qua
+        pointers: hoi_dau,hoi_lai,di
+      tra:
+        text: Cháu tới được cái xưởng ấy rồi? Đàn tuần lộc của ta còn đó không?
+        conditions: lk_bacuc_qua,!lk_bacuc_xong
+        pointers: ke
+      camon:
+        text: Vậy là ta không nằm mơ. Cầm lấy, và tránh xa cái xưởng đó ra.
+        actions: lk_bacuc_tra
+      xong:
+        text: Đêm qua ta lại nghe tiếng chuông xe… Chắc chỉ là gió thôi.
+        conditions: lk_bacuc_xong
+    player_options:
+      hoi:
+        text: Có chuyện gì vậy?
+        pointers: ke1
+      hoi_lai:
+        text: Kể lại chuyện hôm trước đi.
+        pointers: ke1
+      hoi_dau:
+        text: Nơi đó ở đâu?
+        pointers: dau_chu,dau_tim,dau_don,dau_chua
+      ke:
+        text: Tuyết phủ kín, tiếng chuông vang khắp nơi, và mấy kẻ trong xưởng chẳng thân thiện chút nào.
+        pointers: camon
+      di:
+        text: Tôi đi đây.
+  lk_hiepsi:
+    quester: '&6Hiệp Sĩ Lạc Đàn'
+    first: xong,tra,chao_lai,chao
+    NPC_options:
+      chao:
+        text: Đừng nhìn bộ giáp này. Nó từng sáng loáng, khi ta còn thuộc về một đội hiệp sĩ.
+        conditions: '!lk_hiepsi_nghe'
+        pointers: hoi,di
+      ke1:
+        text: Bọn ta nhận lệnh giữ một toà lâu đài. Một đêm cổng tự mở, và những kẻ mặc đúng bộ giáp của bọn ta bước vào. Ta là người duy nhất chạy thoát. Đêm nào trong mơ cũng nghe tiếng giáp sắt va nhau.
+        pointers: hoi_dau,di
+      dau_chu:
+        text: Cổng dẫn tới Lâu Đài Hiệp Sĩ đã có người tìm ra, giờ thị trấn %ph.dmmlk_hiepsi_chu% đang giữ. Muốn vào thì phải qua mặt họ, hoặc trả phí. Đi qua rồi quay lại kể ta nghe.
+        conditions: lk_hiepsi_cocong,lk_hiepsi_cochu
+        actions: lk_hiepsi_danghe
+      dau_tim:
+        text: '%ph.dmmlk_hiepsi_timboi% đã tìm ra cổng rồi, ở %ph.dmmlk_hiepsi_vung% (%ph.dmmlk_hiepsi_huong%), đất hoang, ai vào cũng được. Đứng giữa cổng rồi ngồi xuống (Shift). Đi qua rồi quay lại kể
+          ta nghe.'
+        conditions: lk_hiepsi_cocong,lk_hiepsi_datim
+        actions: lk_hiepsi_danghe
+      dau_don:
+        text: 'Người ta đồn thế này: %ph.dmmlk_hiepsi_tindon% Tìm được cổng thì đứng giữa rồi ngồi xuống (Shift). Đi qua rồi quay lại kể ta nghe.'
+        conditions: lk_hiepsi_cocong
+        actions: lk_hiepsi_danghe
+      dau_chua:
+        text: Cánh cổng dẫn tới Lâu Đài Hiệp Sĩ chưa mở ra. Khi nó mở, cả vùng sẽ xôn xao tin đồn (/conghoang). Lúc ấy hãy đi tìm, rồi quay lại kể ta nghe. Mà ta thì chẳng ở yên một chỗ đâu.
+        actions: lk_hiepsi_danghe
+      chao_lai:
+        text: Lại là cháu à? Đã tìm ra đường tới đó chưa?
+        conditions: lk_hiepsi_nghe,!lk_hiepsi_qua
+        pointers: hoi_dau,hoi_lai,di
+      tra:
+        text: Cháu đã vào lâu đài ấy? Những kẻ mặc giáp… họ vẫn còn đó chứ?
+        conditions: lk_hiepsi_qua,!lk_hiepsi_xong
+        pointers: ke
+      camon:
+        text: Vậy là họ vẫn giữ lời thề. Cầm lấy, đây là tiền lương cuối cùng ta còn giữ.
+        actions: lk_hiepsi_tra
+      xong:
+        text: Một ngày nào đó ta sẽ quay lại lâu đài. Không phải hôm nay.
+        conditions: lk_hiepsi_xong
+    player_options:
+      hoi:
+        text: Có chuyện gì vậy?
+        pointers: ke1
+      hoi_lai:
+        text: Kể lại chuyện hôm trước đi.
+        pointers: ke1
+      hoi_dau:
+        text: Nơi đó ở đâu?
+        pointers: dau_chu,dau_tim,dau_don,dau_chua
+      ke:
+        text: Họ vẫn canh từng hành lang, như thể chưa hề biết trận chiến đã kết thúc.
+        pointers: camon
+      di:
+        text: Tôi đi đây.
+  lk_hoinuoc:
+    quester: '&6Kỹ Sư Bỏ Trốn'
+    first: xong,tra,chao_lai,chao
+    NPC_options:
+      chao:
+        text: Suỵt! Đừng nói to. Cháu không nghe tiếng máy rít à? Không à… chắc chỉ trong đầu ta.
+        conditions: '!lk_hoinuoc_nghe'
+        pointers: hoi,di
+      ke1:
+        text: Ta từng đứng máy trong một xưởng hơi nước dưới lòng đất. Bọn ta chế ra những cỗ máy tự chạy, rồi một ngày chúng không chịu dừng nữa. Ta bỏ trốn, mang theo đúng cái cờ lê này.
+        pointers: hoi_dau,di
+      dau_chu:
+        text: Cổng dẫn tới Xưởng Hơi Nước đã có người tìm ra, giờ thị trấn %ph.dmmlk_hoinuoc_chu% đang giữ. Muốn vào thì phải qua mặt họ, hoặc trả phí. Đi qua rồi quay lại kể ta nghe.
+        conditions: lk_hoinuoc_cocong,lk_hoinuoc_cochu
+        actions: lk_hoinuoc_danghe
+      dau_tim:
+        text: '%ph.dmmlk_hoinuoc_timboi% đã tìm ra cổng rồi, ở %ph.dmmlk_hoinuoc_vung% (%ph.dmmlk_hoinuoc_huong%), đất hoang, ai vào cũng được. Đứng giữa cổng rồi ngồi xuống (Shift). Đi qua rồi quay lại
+          kể ta nghe.'
+        conditions: lk_hoinuoc_cocong,lk_hoinuoc_datim
+        actions: lk_hoinuoc_danghe
+      dau_don:
+        text: 'Người ta đồn thế này: %ph.dmmlk_hoinuoc_tindon% Tìm được cổng thì đứng giữa rồi ngồi xuống (Shift). Đi qua rồi quay lại kể ta nghe.'
+        conditions: lk_hoinuoc_cocong
+        actions: lk_hoinuoc_danghe
+      dau_chua:
+        text: Cánh cổng dẫn tới Xưởng Hơi Nước chưa mở ra. Khi nó mở, cả vùng sẽ xôn xao tin đồn (/conghoang). Lúc ấy hãy đi tìm, rồi quay lại kể ta nghe. Mà ta thì chẳng ở yên một chỗ đâu.
+        actions: lk_hoinuoc_danghe
+      chao_lai:
+        text: Lại là cháu à? Đã tìm ra đường tới đó chưa?
+        conditions: lk_hoinuoc_nghe,!lk_hoinuoc_qua
+        pointers: hoi_dau,hoi_lai,di
+      tra:
+        text: Cháu xuống tận xưởng rồi? Lò hơi còn cháy không?
+        conditions: lk_hoinuoc_qua,!lk_hoinuoc_xong
+        pointers: ke
+      camon:
+        text: Đúng như ta sợ… Cầm lấy, và đừng bao giờ vặn cái van đỏ.
+        actions: lk_hoinuoc_tra
+      xong:
+        text: Ta vẫn giữ cái cờ lê. Biết đâu một ngày cần đến.
+        conditions: lk_hoinuoc_xong
+    player_options:
+      hoi:
+        text: Có chuyện gì vậy?
+        pointers: ke1
+      hoi_lai:
+        text: Kể lại chuyện hôm trước đi.
+        pointers: ke1
+      hoi_dau:
+        text: Nơi đó ở đâu?
+        pointers: dau_chu,dau_tim,dau_don,dau_chua
+      ke:
+        text: Lò vẫn cháy, máy vẫn chạy, và chẳng còn bóng người nào điều khiển chúng.
+        pointers: camon
+      di:
+        text: Tôi đi đây.

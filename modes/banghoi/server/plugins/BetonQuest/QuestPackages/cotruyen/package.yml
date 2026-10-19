@@ -31,3 +31,5 @@ constants:
   c1_thuong_b4: 300
   c1_thuong_ket: 1500
   c1_thuong_kn: 200
+  # Lữ khách (lukhach/): thưởng (xu) khi đi qua Cổng Hoang rồi về kể, mỗi lữ khách 1 lần
+  lk_thuong: 1000

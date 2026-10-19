@@ -1660,3 +1660,7 @@ bq_c1_t3: 400
 bq_c1_t4: 300
 bq_c1_tket: 1500
 bq_c1_kn: 200
+lk_on: true
+lk_move: 72
+lk_announce: true
+lk_thuong: 1000

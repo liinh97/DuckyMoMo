@@ -11,5 +11,6 @@ subprojects {
         maven("https://repo.opencollab.dev/main/") // Floodgate API (form cho Bedrock)
         maven("https://jitpack.io") // Vault API (thu phí /tpr)
         maven("https://repo.extendedclip.com/releases/") // PlaceholderAPI (hologram bảng xếp hạng)
+        maven("https://maven.citizensnpcs.co/repo") // Citizens API (lữ khách cốt truyện)
     }
 }

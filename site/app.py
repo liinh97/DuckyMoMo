@@ -321,13 +321,15 @@ def story_info():
     consts = load_yaml(installed).get("constants") or load_yaml(
         MODES / "banghoi" / "server" / "plugins" / "BetonQuest" / "QuestPackages" / "cotruyen" / "package.yml").get("constants") or {}
     fill = lambda t: re.sub(r"\{(\w+)\}", lambda m: str(consts.get(m.group(1), m.group(0))), str(t or ""))
+    lk = core_json("lukhach.json").get("lu_khach") or []
+    tags = {c.get("ma"): c.get("xong") for c in spec} | {"lk_" + str(v.get("ma")): f"lk_{v.get('ma')}_xong" for v in lk}
     done = {}
     try:
         con = sqlite3.connect(f"file:{plugin('BetonQuest', 'database.db')}?mode=ro", uri=True, timeout=2)
         try:
-            for c in spec:
-                done[c.get("ma")] = con.execute("SELECT COUNT(DISTINCT profileID) FROM betonquest_tags WHERE tag = ? OR tag LIKE ? OR tag LIKE ?",
-                                                (c.get("xong"), "%." + str(c.get("xong")), "%>" + str(c.get("xong")))).fetchone()[0]
+            for ma, tag in tags.items():
+                done[ma] = con.execute("SELECT COUNT(DISTINCT profileID) FROM betonquest_tags WHERE tag = ? OR tag LIKE ? OR tag LIKE ?",
+                                       (tag, "%." + str(tag), "%>" + str(tag))).fetchone()[0]
         finally:
             con.close()
     except sqlite3.Error:
@@ -336,7 +338,10 @@ def story_info():
         "ten": c.get("ten"), "gioi_thieu": c.get("gioi_thieu", ""), "bat_dau": c.get("bat_dau", ""), "npc": c.get("npc") or [],
         "thuong": sum(int(consts.get(k, 0) or 0) for k in c.get("thuong") or []),
         "buoc": [{"ten": b.get("ten", ""), "viec": fill(b.get("viec"))} for b in c.get("buoc") or []],
-        "so_xong": done.get(c.get("ma"), 0)} for c in spec]}
+        "so_xong": done.get(c.get("ma"), 0)} for c in spec],
+        "lu_khach": [{"ten": v.get("ten"), "noi": v.get("noi"), "vung": v.get("vung"), "huong": v.get("huong"), "cong": bool(v.get("cong")),
+                      "so_xong": done.get("lk_" + str(v.get("ma")), 0)} for v in lk],
+        "gio_doi": core_json("lukhach.json").get("gio_doi")}
 
 
 def pet_top(limit=10):

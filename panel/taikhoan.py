@@ -510,6 +510,9 @@ def profile(perms):
     ct = story(uuid)
     if ct:
         out["cotruyen"] = ct
+    lk = wanderers(uuid)
+    if lk:
+        out["lukhach"] = lk
     ldt = safe_yaml(DMM / "linhdanhthue.yml")
     reg = (ldt.get("dangky") or {}).get(uuid)
     hd = (ldt.get("hopdong") or {}).get(uuid)
@@ -578,6 +581,20 @@ def story(uuid):
                 cur, viec = i + 1, "Quay lại gặp NPC để nhận việc tiếp theo."
         out.append({"ten": c.get("ten"), "xong": False, "buoc": cur, "tong": len(steps), "viec": viec})
     return out
+
+
+def wanderers(uuid):
+    """Lữ khách (DuckyMoMoCore wander-npcs + BetonQuest): với từng lữ khách, người chơi đã nghe chuyện / đã qua cổng / đã kể chưa."""
+    try:
+        lk = json.loads((DMM / "lukhach.json").read_text(encoding="utf-8")).get("lu_khach") or []
+    except (OSError, ValueError):
+        return None
+    tags = story_tags(uuid)
+    if not lk or tags is None:
+        return None
+    def state(m):
+        return "xong" if f"lk_{m}_xong" in tags else "qua" if f"lk_{m}_qua" in tags else "nghe" if f"lk_{m}_nghe" in tags else ""
+    return [{"ten": v.get("ten"), "noi": v.get("noi"), "trang_thai": state(v.get("ma"))} for v in lk]
 
 
 def active_particles(uuid, srv="banghoi-1"):

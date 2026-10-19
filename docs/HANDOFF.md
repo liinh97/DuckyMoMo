@@ -61,6 +61,8 @@
 - **Thăng Cấp `/capdo`** (LevelUp, LevelUpPapi): 100 cấp, xu + giờ chơi + điểm hạ gục (quái +1, người +10), điểm đổi đặc quyền tiện ích,
   `[Cấp N]` trên Tab, mặc định làm lại mỗi mùa.
 - Nhỏ: bảng bên phải gọn 8 dòng ngắn; dọn rác báo 2 lần, im khi 0 món; mẹo boss bar mới; giới hạn người mỗi server; lệnh hay dùng.
+- **Lữ khách `/lukhach` (19/10, đã triển khai, chưa thử)**: 4 NPC Citizens lang thang ở đất hoang, mỗi người kể về một nơi phía sau Cổng Hoang,
+  chỉ đường theo tình trạng cổng, đi qua cổng rồi về kể có thưởng. Chi tiết: mục "### 19/10: Lữ khách"; thử: TEST-CHECKLIST 4j.
 - **Cốt truyện (19/10, đã triển khai, chờ đặt NPC + thử)**: Citizens (NPC) + BetonQuest (hội thoại, nhiệm vụ) ở Bang Hội Chiến; chương 1 «Điềm Báo».
   Chi tiết ở mục "### 19/10: Cốt truyện" bên dưới; cần thử: TEST-CHECKLIST mục 4i.
 
@@ -394,6 +396,17 @@
   huongdan.yml (trang CỐT TRUYỆN trong chương Bang Hội Chiến; CHƯA chạy ./ops/huongdan.sh).
 - Chưa chắc: NPC tên có dấu cách theo byName (cú pháp ngoặc kép của BetonQuest 2.1+); kiểu dialog trên Bedrock/Geyser và Java cũ; objective `fish`
   không dùng vì EvenMoreFish có thể đổi cá. Chương sau: nối vào sự kiện "Trái Đất lâm nguy".
+
+### 19/10: Lữ khách — NPC lang thang kể chuyện theo Cổng Hoang (ĐÃ TRIỂN KHAI, CHƯA THỬ)
+- Người dùng: "các npc xuất hiện ngẫu nhiên trên bản đồ và lấy nội dung câu chuyện dựa trên tên các cổng" → mỗi NPC gắn một dungeon đích
+  của Cổng Hoang. Chốt: tên = nơi phía sau cổng; chưa mở mùa vẫn xuất hiện, chỉ kể truyền thuyết; giữ chương 1 làm mở đầu. "Phần phụ nghiên cứu sau".
+- DuckyMoMoCore: `Wanderers` (config wander-npcs, lukhach.yml/json, lệnh /lukhach), `CitizensBridge` (MỌI tham chiếu API Citizens, chỉ gọi khi
+  Citizens bật; LookClose/SkinTrait qua reflection vì nằm ở jar chính), `WanderersPapi` (%dmmlk_<mã>_<trường>%). WildGates thêm `zoneLabel`, `gateInfo`,
+  và gọi `Shared.wanderers.onGatePass` sau passThrough. gradle: `net.citizensnpcs:citizensapi:2.0.44-SNAPSHOT` (maven.citizensnpcs.co); plugin.yml softdepend Citizens.
+- BetonQuest: gói cotruyen/lukhach/lukhach.yml (sinh bằng script Python từ bảng lời thoại 4 người; sửa tay được). NPC byName. Tình trạng cổng qua
+  `%ph.dmmlk_…%` + `variable … forceSync`. **Tag BetonQuest 3.x có tiền tố gói bằng dấu `>`**: `cotruyen>lk_cong_qua` (lệnh /bq tag phải ghi đủ;
+  đã sửa các hướng dẫn cũ ghi thiếu). Thưởng: constants.lk_thuong.
+- Phần phụ chưa làm: làm lại theo mùa (Cổng Hoang đặt lại mỗi mùa nhưng tag lk_*_xong giữ mãi), thêm lữ khách cho dungeon khác, skin, hologram "?" trên đầu.
 
 ### 19/10: NOTE chờ quyết
 - (Người dùng 19/10: bảng này thuộc hệ thống VINH DANH, cứ note, làm cùng Quảng trường Vinh danh) Bảng xếp hạng dán TƯỜNG kiểu UniMC (TextDisplay áp sát mặt tường, dòng cuối riêng cho từng người nhìn: "Số lần bạn chết: Linh 0 (#175)")

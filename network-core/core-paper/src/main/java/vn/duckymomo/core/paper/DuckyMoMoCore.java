@@ -34,6 +34,8 @@ public final class DuckyMoMoCore extends JavaPlugin {
     private LevelUp levelUp;
     private Object levelPapi;
     private WildGates wildGates;
+    private Wanderers wanderers;
+    private Object wanderPapi;
     private Activity activity;
     private PeaceAlliance peace;
     private DecorShop decorShop;
@@ -105,6 +107,14 @@ public final class DuckyMoMoCore extends JavaPlugin {
         if (wanted != null) {
             wanted.stop();
             wanted = null;
+        }
+        if (wanderPapi != null) {
+            WanderersPapi.unregister(wanderPapi);
+            wanderPapi = null;
+        }
+        if (wanderers != null) {
+            wanderers.stop();
+            wanderers = null;
         }
         if (wildGates != null) {
             wildGates.stop();
@@ -709,6 +719,21 @@ public final class DuckyMoMoCore extends JavaPlugin {
         }
         WildGates wgs = wildGates;
         bind("conghoang", wgs == null ? null : wgs::command, "Cổng Hoang");
+        // Lữ khách (wander-npcs): NPC Citizens lang thang ngoài đất hoang, kể chuyện về nơi phía sau Cổng Hoang (lời thoại: BetonQuest)
+        wanderers = wildGates != null && getConfig().getBoolean("wander-npcs.enabled") && getConfig().isConfigurationSection("wander-npcs")
+                && getServer().getPluginManager().isPluginEnabled("Citizens")
+                ? new Wanderers(this, getConfig().getConfigurationSection("wander-npcs")) : null;
+        if (wanderers != null && wanderers.ready()) {
+            wanderers.start();
+            if (getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+                wanderPapi = WanderersPapi.register();
+            }
+            getLogger().info("Lữ khách: " + wanderers.describe());
+        } else {
+            wanderers = null;
+        }
+        Wanderers wds = wanderers;
+        bind("lukhach", wds == null ? null : wds::command, "Lữ khách");
 
         // Mảnh sự kiện + cửa hàng đổi mảnh (Bang Hội Chiến: event-fragments.enabled); phần thưởng "manh" dùng module này
         FragmentShop fragments = getConfig().getBoolean("event-fragments.enabled")

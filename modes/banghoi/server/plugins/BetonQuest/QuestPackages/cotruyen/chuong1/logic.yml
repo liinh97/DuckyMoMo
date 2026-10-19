@@ -1,6 +1,6 @@
 # Chương 1 «Điềm Báo»: tag, mục tiêu, hành động, điều kiện, nhật ký.
 # Tiến trình (tag của người chơi): c1_b1 nhận việc 1 → c1_b1x xong → c1_b2 → c1_b2x → c1_b3 → c1_b3x → c1_b4 → c1_b4x → c1_xong.
-# Xoá tiến trình một người để thử lại: /bq tag <tên> del c1_b1 (… từng tag), /bq objective <tên> del c1_sanquai …
+# Xoá tiến trình một người để thử lại: /bq tag <tên> del cotruyen>c1_b1 (… từng tag, ghi kèm tên gói), /bq objective <tên> del cotruyen>c1_sanquai …
 
 items:
   c1_sat: "simple IRON_INGOT"

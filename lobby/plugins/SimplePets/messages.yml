@@ -1,0 +1,159 @@
+
+##############################################################################
+#  NOTICE: All the messages in this file can be customized with color codes  #
+#              That includes the HEX color codes added in 1.16              #
+#                     Example HEX color: &#ff0000 = RED                     #
+##############################################################################
+
+# Will replace the {prefix} placeholder
+prefix: '&eThú cưng &6>>'
+
+# Message will be sent when the player does not have permission for when a permission is required
+no_permission: '{prefix} &cBạn không có quyền.'
+
+# This message will only be used if the player does not have any pets unlocked and 'Needs-Pet-Permission-for-GUI' is TRUE
+no_pets_unlocked: '{prefix} &cBạn chưa mở khoá thú cưng nào.'
+summon:
+  # Message that will be sent when pets are spawned via '/pet summon all' (Mostly for OPs to show off)
+  all_pets: '{prefix} &7Đã gọi {count} thú cưng!'
+  # Message that will be sent when a pet is spawned via '/pet summon'
+  pet: '{prefix} &7Đã gọi thú cưng {type}!'
+  # Message that will be sent when a pet fails to spawn
+  failed: '{prefix} &cXin lỗi, chưa gọi được thú cưng {type} lúc này.'
+  # Message that will be sent if a player attempts to spawn more pets than they are allowed.
+  cant_spawn_more_pets: '{prefix} &cBạn không gọi thêm thú cưng được nữa!'
+purchased:
+  # Message that will be sent when a pet is added to the players purchased list (via '/pets purchased add')
+  added: '{prefix} &7{type} was added to the purchased pets of &c{player}'
+  # Message that will be sent when a pet is removed from the players purchased list (via '/pets purchased remove')
+  removed: '{prefix} &7{type} was removed from the purchased pets of &c{player}'
+  # Is what is sent before the pets are listed (via '/pets purchased list')
+  list_prefix: '{prefix} &7Thú cưng đang có: '
+pet_type:
+  # The pet type is missing
+  missing: '{prefix} &cThiếu loại thú cưng.'
+  # The input is not a valid pet (spelling?)
+  invalid: '{prefix} &cXin lỗi, &7''{arg}'' &ckhông phải loại thú cưng hợp lệ.'
+  # The selected pet is not supported for the servers version
+  # (Or is missing in the jar file [in case it is modified])
+  not_registered: '{prefix} &cXin lỗi, {type} chưa được đăng ký.'
+  not_registered_lore: '&cCHƯA ĐĂNG KÝ'
+  # The selected pet is in development for your version of SimplePets
+  # AKA we are still working on it expect issues
+  in_development: '{prefix} &cXin lỗi, {type} đang phát triển, chưa dùng được.'
+  not_supported: '{prefix} &cXin lỗi, {type} chưa hỗ trợ phiên bản này.'
+  not_supported_lore: '&cCHƯA HỖ TRỢ'
+nbt:
+  # Message that will show before the 'nbt error message'
+  invalid: '{prefix} &cInvalid nbt has been entered.'
+  # The error message sent alongside the invalid nbt message
+  error: '{prefix} &c{message}'
+
+# Message that will be sent when the target player is not online
+player_not_online: '{prefix} &c{player} không online (gõ đúng tên chưa?)'
+remove:
+  # Message that will be sent when a pet is removed
+  removed_pet: '{prefix} &7Đã cất thú cưng {type}!'
+  # Message that will be sent when all pets are removed
+  all_pets: '{prefix} &7Đã cất {count} thú cưng!'
+  # Message that will be sent when attempting to remove a pet that is not spawned
+  not_spawned: '{prefix} &cXin lỗi, {type} chưa được gọi ra.'
+modify:
+  # Message contains what the player has set the pets data to
+  # Set this as an empty string "" to prevent it from being sent
+  compound: '{prefix} &7NBT compound: &e{compound}'
+  # Message that will be sent when the compound is applied to the entity
+  applied: '{prefix} &7Đã áp dữ liệu cho thú cưng {type}!'
+rename:
+  # Message that will be sent when the player is renaming the pet via chat
+  via_chat: '{prefix} &7Gõ tên mới của thú cưng vào chat:'
+  # Message that will be sent when the player canceled renaming the pet
+  cancel: '{prefix} &cĐã huỷ đổi tên thú cưng'
+  anvil:
+    # The title for the pet rename Anvil GUI
+    title: '&#de9790[] &#b35349Đổi tên thú cưng'
+    # The name for the NAME_TAG in the Anvil GUI
+    tag_name: '&#de9790TÊN MỚI'
+  dialog:
+    # The title shown in the rename Dialog GUI
+    title: Đổi tên thú cưng
+    # The body text shown in the rename Dialog GUI
+    #   - {type} will be replaced with the pet type name
+    body: |-
+      Nhập tên mới cho thú cưng {type}.
+      Gõ 'reset' để bỏ tên.
+    # The label shown above the text input in the rename Dialog GUI
+    input_label: Tên thú cưng
+    # The label for the submit button in the rename Dialog GUI
+    submit_button: Đổi tên
+  sign:
+    # The text that will be set for the sign
+    #   - One line MUST have {input} to mark what line the player types the pets name
+    #   - Hex colors can NOT be used for this
+    #   - MUST have 4 lines
+    lines:
+    - '{input}'
+    - '&l^^^^^^^^'
+    - '&9&lHãy nhập'
+    - '&9&ltên thú cưng'
+pet-saves:
+  # Message that will be sent when the player has reached their global limit for any pet type
+  limit-reached: '{prefix} &cBạn đã lưu đủ số thú cưng tối đa'
+  # Message that will be sent when the player has reached their per-pet-type limit
+  limit-reached-per-type: '{prefix} &cBạn đã lưu đủ số thú cưng {type} tối đa'
+admin:
+  regenerate:
+    # Message will be sent when the pets folder has been reset
+    pets: '{prefix} &7The Pets folder has been regenerated to the default files.'
+    # Message will be sent when the inventories folder has been reset
+    inventories: '{prefix} &7The Inventories folder has been regenerated to the default
+      files.'
+    # Message will be sent when the items folder has been reset
+    items: '{prefix} &7The Items folder has been regenerated to the default files.'
+    # Message will be sent when the particles folder has been reset
+    particles: '{prefix} &7The Particles folder has been regenerated to the default
+      files.'
+    # Message will be sent when the selected pet file has been reset
+    pet_type: '{prefix} &7The file for the {type} pet has been reset to the default
+      file.'
+  reload:
+    # Message that will be sent when the main config has been reloaded.
+    config: '{prefix} &7The plugin configuration has been reloaded!'
+    # Message that will be sent when the messages config has been reloaded.
+    messages: '{prefix} &7The plugin''s message configuration has been reloaded!'
+    # Message that will be sent when the inventories manager has been reloaded.
+    inventories: '{prefix} &7Items and inventories have been reloaded!'
+    # Message that will be sent when the particles manager has been reloaded.
+    particles: '{prefix} &7Particles have been reloaded!'
+    # Message that will be sent when the pets manager has been reloaded.
+    pets: '{prefix} &7Pets have been reloaded!'
+    # Message that will be sent when all plugin elements have been reloaded.
+    all: '{prefix} &7All plugin elements have been reloaded!'
+  pet-config:
+    # The key entered is not in the selected pets json file
+    unknown-key: '{prefix} &7{key} &cis not a key for the pets json file.'
+    # The value entered is not a boolean (aka it is not true or false)
+    invalid-boolean: '{prefix} &7{value} &cis not a valid boolean, please use true/false'
+    # The value entered is not a valid integer (1,2,3)
+    invalid-integer: '{prefix} &7{value} &cis not a valid integer.'
+    # The value entered is not a valid double (0.1, 0.02, 0.003)
+    invalid-double: '{prefix} &7{value} &cis not a valid double.'
+    # The key entered is not able to be updated via the command (probably is an array or an object)
+    unable-to-update: '{prefix} &cUnable to update this key.'
+    # The key has been updated with the new value
+    # 
+    # Placeholders:
+    # {key} - The target key
+    # {value} - The new value
+    # {type} - The type of pet selected
+    value-set: '{prefix} &a{key} &7has been set to &e{value}'
+    # The key has been reset with the default value
+    # 
+    # Placeholders:
+    # {key} - The target key
+    # {value} - The new value
+    # {type} - The type of pet selected
+    value-reset: '{prefix} &a{key} &7has been reset to the default value'
+cooldown:
+  # Sent when a player tries to spawn a pet while on cooldown. {seconds} = remaining seconds.
+  on_cooldown: '{prefix} &cĐợi &e{seconds} &cgiây nữa mới đổi thú cưng được.'

@@ -1,0 +1,4 @@
+{
+"disconnect.error": "<red>Có lỗi khi xử lý dữ liệu kết nối. Vui lòng báo admin.",
+"disconnect.blacklisted-forge": "<red>Bản Forge của bạn bị chặn vì có lỗi cho đánh xa hơn bình thường.<newline><gold>Các bản bị ảnh hưởng: 1.18.2-1.19.3<newline><newline><red>Xem https://github.com/MinecraftForge/MinecraftForge/issues/9309."
+}

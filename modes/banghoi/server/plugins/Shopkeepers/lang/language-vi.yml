@@ -1,0 +1,959 @@
+# *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*
+# Shopkeepers Default Language File
+# This file acts as a template for custom language files and is not meant to be
+# modified. It gets overwritten on every plugin startup.
+# Community translations: https://github.com/Shopkeepers/Language-Files
+# *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*
+# Language: en-default
+
+date-time-format: "yyyy-MM-dd HH:mm:ss"
+
+shop-type-admin-regular: "Shop của server"
+shop-type-selling: "Shop bán"
+shop-type-buying: "Shop thu mua"
+shop-type-trading: "Shop đổi đồ"
+shop-type-book: "Shop sách"
+
+shop-type-desc-admin-regular: "hàng không giới hạn"
+shop-type-desc-selling: "bán đồ cho người chơi"
+shop-type-desc-buying: "mua đồ của người chơi"
+shop-type-desc-trading: "đổi đồ với người chơi"
+shop-type-desc-book: "bán bản sao sách"
+
+shop-object-type-entity: "{type}"
+shop-object-type-sign: "biển"
+shop-object-type-hanging-sign: "biển treo"
+shop-object-type-npc: "NPC"
+
+selected-shop-type: "&aĐã chọn loại shop: &6{type} &7({description})"
+selected-shop-object-type: "&aĐã chọn hình dạng: &6{type}"
+
+creation-item-selected: |-
+  &aTạo shop:
+  &e  Đừng nhìn vào khối nào. Sau đó:{shopTypeSelection}{objectTypeSelection}
+  &e  Chuột phải vào rương để chọn rương hàng.
+  &e  Rồi chuột phải vào một khối để đặt người bán.
+
+creation-item-shop-type-selection: "\n&e  Chuột trái/phải để chọn loại shop."
+creation-item-object-type-selection: "\n&e  Ngồi (Shift) + chuột trái/phải để chọn hình dạng."
+
+state-enabled: "&2Bật"
+state-disabled: "&4Tắt"
+
+editor-title: "Sửa shop"
+
+button-previous-page: "&6<- Trang trước ({prev_page}/{max_page})"
+button-previous-page-lore: []
+button-next-page: "&6Trang sau ({next_page}/{max_page}) ->"
+button-next-page-lore: []
+button-current-page: "&6Trang {page}/{max_page}"
+button-current-page-lore: []
+
+button-shop-open: "&aĐóng shop"
+button-shop-open-lore:
+- "Tạm đóng cửa shop."
+- "Hiện tại: &2Mở"
+- "&2Người chơi mua bán được."
+button-shop-closed: "&aMở shop"
+button-shop-closed-lore:
+- "Mở cửa lại."
+- "Hiện tại: &4Đóng"
+- "&4Người chơi không mua bán được."
+button-name: "&aĐặt tên shop"
+button-name-lore:
+- Đổi tên
+- người bán của bạn
+button-equipment: "&aTrang bị"
+button-equipment-lore:
+- "Mặc đồ cho người bán."
+- "Lưu ý: không phải con nào"
+- "cũng mặc được mọi ô."
+button-move: "&aDời người bán"
+button-move-lore:
+- Dời người bán
+- sang chỗ khác
+button-members: "&aThành viên shop"
+button-members-lore:
+- "Quản lý thành viên shop."
+- "Hiện có: &e{memberCount}"
+button-containers: "&aRương của shop"
+button-containers-lore:
+- "Quản lý rương của shop."
+- "Hiện có: &e{containerCount}"
+button-trade-notifications: "&aBáo khi có giao dịch"
+button-trade-notifications-lore:
+- "Bật/tắt báo giao dịch"
+- "của người bán này."
+- "Hiện tại: {state}"
+button-delete: "&4Xoá"
+button-delete-lore:
+- Đóng và xoá
+- người bán này
+button-restore-for-hire: "&4Cho thuê lại"
+button-restore-for-hire-lore:
+- Lấy shop này khỏi bạn
+- và đem cho thuê lại
+
+button-sign-variant: "&aChọn loại biển"
+button-sign-variant-lore:
+- "Đổi loại gỗ"
+- "của biển"
+button-sign-glowing-text: "&aBật/tắt chữ phát sáng"
+button-sign-glowing-text-lore:
+- "Bật/tắt chữ"
+- "phát sáng"
+button-baby: "&aĐổi con non / trưởng thành"
+button-baby-lore:
+- "Đổi giữa dạng"
+- "con non và trưởng thành"
+button-sitting: "&aBật/tắt tư thế ngồi"
+button-sitting-lore:
+- "Bật/tắt tư thế"
+- "ngồi"
+button-cat-variant: "&aChọn kiểu mèo"
+button-cat-variant-lore:
+- "Đổi ngoại hình con mèo"
+button-rabbit-variant: "&aChọn kiểu thỏ"
+button-rabbit-variant-lore:
+- "Đổi ngoại hình con thỏ"
+button-collar-color: "&aChọn màu vòng cổ"
+button-collar-color-lore:
+- "Đổi màu"
+- "vòng cổ"
+button-wolf-angry: "&aBật/tắt sói giận"
+button-wolf-angry-lore:
+- "Bật/tắt trạng thái"
+- "giận dữ của sói"
+button-carrying-chest: "&aBật/tắt chở rương"
+button-carrying-chest-lore:
+- "Bật/tắt việc con vật"
+- "chở rương"
+button-horse-color: "&aChọn màu ngựa"
+button-horse-color-lore:
+- "Đổi màu"
+- "của ngựa"
+button-horse-style: "&aChọn hoa văn ngựa"
+button-horse-style-lore:
+- "Đổi hoa văn lông"
+- "của ngựa"
+button-horse-armor: "&aChọn giáp ngựa"
+button-horse-armor-lore:
+- "Đổi giáp"
+- "của ngựa"
+button-llama-variant: "&aChọn kiểu lạc đà"
+button-llama-variant-lore:
+- "Đổi ngoại hình lạc đà"
+button-llama-carpet-color: "&aMàu thảm lạc đà"
+button-llama-carpet-color-lore:
+- "Đổi màu thảm"
+- "của lạc đà"
+button-creeper-charged: "&aBật/tắt creeper tích điện"
+button-creeper-charged-lore:
+- "Bật/tắt trạng thái"
+- "tích điện của creeper"
+button-fox-variant: "&aChọn kiểu cáo"
+button-fox-variant-lore:
+- "Đổi ngoại hình con cáo"
+button-fox-crouching: "&aBật/tắt tư thế khom"
+button-fox-crouching-lore:
+- "Bật/tắt tư thế"
+- "khom của cáo"
+button-fox-sleeping: "&aBật/tắt tư thế ngủ"
+button-fox-sleeping-lore:
+- "Bật/tắt tư thế"
+- "ngủ của cáo"
+button-cow-variant: "&aChọn kiểu bò"
+button-cow-variant-lore:
+- "Đổi ngoại hình con bò"
+button-mooshroom-variant: "&aChọn kiểu bò nấm"
+button-mooshroom-variant-lore:
+- "Đổi ngoại hình"
+- "của bò nấm"
+button-panda-variant: "&aChọn kiểu gấu trúc"
+button-panda-variant-lore:
+- "Đổi ngoại hình gấu trúc"
+button-parrot-variant: "&aChọn kiểu vẹt"
+button-parrot-variant-lore:
+- "Đổi ngoại hình con vẹt"
+button-pig-variant: "&aChọn kiểu lợn"
+button-pig-variant-lore:
+- "Đổi ngoại hình con lợn"
+button-chicken-variant: "&aChọn kiểu gà"
+button-chicken-variant-lore:
+- "Đổi ngoại hình con gà"
+button-sheep-color: "&aChọn màu cừu"
+button-sheep-color-lore:
+- "Đổi màu lông"
+- "của cừu"
+button-sheep-sheared: "&aBật/tắt cừu đã xén"
+button-sheep-sheared-lore:
+- "Bật/tắt trạng thái"
+- "đã xén lông của cừu"
+button-villager-profession: "&aChọn nghề dân làng"
+button-villager-profession-lore:
+- "Đổi nghề"
+- "của dân làng"
+button-villager-variant: "&aChọn kiểu dân làng"
+button-villager-variant-lore:
+- "Đổi ngoại hình"
+- "của dân làng"
+button-villager-level: "&aChọn màu huy hiệu"
+button-villager-level-lore:
+- "Đổi màu huy hiệu"
+- "của dân làng"
+button-zombie-villager-profession: "&aChọn nghề dân làng"
+button-zombie-villager-profession-lore:
+- "Đổi nghề"
+- "của dân làng zombie"
+button-slime-size: "&aChọn cỡ slime"
+button-slime-size-lore:
+- "Đổi lần lượt cỡ slime."
+- "Cỡ hiện tại: &e{size}"
+button-magma-cube-size: "&aChọn cỡ khối magma"
+button-magma-cube-size-lore:
+- "Đổi lần lượt cỡ khối magma."
+- "Cỡ hiện tại: &e{size}"
+button-sulfur-cube-size: "&aChọn cỡ khối lưu huỳnh"
+button-sulfur-cube-size-lore:
+- "Đổi lần lượt cỡ khối lưu huỳnh."
+- "Cỡ hiện tại: &e{size}"
+button-snowman-pumpkin-head: "&aBật/tắt đầu bí ngô"
+button-snowman-pumpkin-head-lore:
+- "Bật/tắt đầu bí ngô"
+- "của người tuyết"
+button-shulker-color: "&aChọn màu shulker"
+button-shulker-color-lore:
+- "Đổi màu"
+- "của shulker"
+button-axolotl-variant: "&aChọn kiểu kỳ giông"
+button-axolotl-variant-lore:
+- "Đổi ngoại hình kỳ giông"
+button-glow-squid-dark: "&aBật/tắt phát sáng"
+button-glow-squid-dark-lore:
+- "Bật/tắt phát sáng"
+- "của mực phát sáng"
+button-goat-screaming: "&aBật/tắt dê la hét"
+button-goat-screaming-lore:
+- "Đổi giữa dê thường"
+- "và dê la hét"
+button-goat-left-horn: "&aBật/tắt sừng trái"
+button-goat-left-horn-lore:
+- "Bật/tắt sừng trái"
+- "của dê"
+button-goat-right-horn: "&aBật/tắt sừng phải"
+button-goat-right-horn-lore:
+- "Bật/tắt sừng phải"
+- "của dê"
+button-tropical-fish-pattern: "&aChọn kiểu"
+button-tropical-fish-pattern-lore:
+- "Đổi dáng và hoa văn"
+- "của cá nhiệt đới."
+- "Hiện tại: &e{pattern}"
+button-tropical-fish-body-color: "&aChọn màu thân"
+button-tropical-fish-body-color-lore:
+- "Đổi màu thân"
+- "của cá nhiệt đới"
+button-tropical-fish-pattern-color: "&aChọn màu hoa văn"
+button-tropical-fish-pattern-color-lore:
+- "Đổi màu hoa văn"
+- "của cá nhiệt đới"
+button-puffer-fish-puff-state: "&aChọn độ phình"
+button-puffer-fish-puff-state-lore:
+- "Đổi độ phình"
+- "của cá nóc."
+- "Hiện tại: &e{puffState}"
+button-salmon-variant: "&aChọn kiểu"
+button-salmon-variant-lore:
+- "Đổi kích cỡ"
+- "của cá hồi."
+button-frog-variant: "&aChọn kiểu ếch"
+button-frog-variant-lore:
+- "Đổi ngoại hình con ếch"
+button-wolf-variant: "&aChọn kiểu sói"
+button-wolf-variant-lore:
+- "Đổi ngoại hình con sói"
+button-saddle: "&aBật/tắt yên"
+button-saddle-lore:
+- "Bật/tắt yên của con vật"
+button-copper-golem-weather-state: "&aChọn độ gỉ"
+button-copper-golem-weather-state-lore:
+- "Đổi độ gỉ"
+- "của golem đồng"
+button-armor-stand-base-plate: "&aBật/tắt đế"
+button-armor-stand-base-plate-lore:
+- "Bật/tắt đế"
+- "của giá treo giáp"
+button-armor-stand-show-arms: "&aBật/tắt tay"
+button-armor-stand-show-arms-lore:
+- "Bật/tắt tay"
+- "của giá treo giáp"
+button-armor-stand-small: "&aĐổi cỡ"
+button-armor-stand-small-lore:
+- "Đổi cỡ"
+- "của giá treo giáp"
+button-mannequin-main-hand: "&aĐổi tay thuận"
+button-mannequin-main-hand-lore:
+- "Đổi tay thuận"
+- "của ma-nơ-canh"
+button-mannequin-pose: "&aĐổi tư thế"
+button-mannequin-pose-lore:
+- "Đổi tư thế"
+- "của ma-nơ-canh"
+button-mannequin-profile: "&aĐổi skin"
+button-mannequin-profile-lore:
+- "Đổi skin"
+- "của ma-nơ-canh"
+button-nautilus-armor: "&aChọn giáp"
+button-nautilus-armor-lore:
+- "Đổi giáp"
+- "của ốc anh vũ"
+button-zombie-nautilus-variant: "&aChọn kiểu"
+button-zombie-nautilus-variant-lore:
+- "Đổi ngoại hình"
+- "của ốc anh vũ zombie."
+button-end-crystal-bottom-slab: "&aBật/tắt đế dưới"
+button-end-crystal-bottom-slab-lore:
+- "Bật/tắt đế dưới"
+- "của pha lê End"
+
+mannequin-enter-profile: |-
+  &aGõ vào chat tên hoặc mã của người chơi muốn lấy skin cho ma-nơ-canh.
+  &a  Gõ dấu gạch (-) để bỏ skin hiện tại.
+  &a  Gõ dấu chấm than (!) để giữ nguyên.
+mannequin-enter-profile-canceled: "&7Đã huỷ: skin ma-nơ-canh không đổi."
+mannequin-profile-set: "&aĐã đặt skin ma-nơ-canh thành '&e{profileName}&a'!"
+mannequin-profile-cleared: "&aĐã bỏ skin ma-nơ-canh!"
+mannequin-profile-invalid: "&cKhông lấy được skin của '&e{input}&c'!"
+
+equipment-editor-title: "Sửa trang bị"
+equipment-slot-lore:
+- "Đặt vật phẩm vào để mặc."
+- "Chuột phải để làm trống"
+- "ô trang bị."
+
+equipment-slot-mainhand: "&aTay chính"
+equipment-slot-offhand: "&aTay trái"
+equipment-slot-feet: "&aChân"
+equipment-slot-legs: "&aQuần"
+equipment-slot-chest: "&aÁo"
+equipment-slot-head: "&aĐầu"
+equipment-slot-body: "&aThân"
+equipment-slot-saddle: "&aYên"
+
+shop-members-editor-title: "Thành viên shop"
+
+shop-member-title: "{memberName}"
+shop-member-lore:
+- "Quyền: &e{accessLevel}"
+- "{accessLevelDescription}"
+- "Chuột trái/phải để đổi"
+- "quyền."
+- "Shift + bấm để xoá."
+
+button-add-shop-member: "&aThêm thành viên"
+button-add-shop-member-lore: []
+
+enter-new-shop-member: |-
+  &aGõ tên hoặc mã người chơi muốn cho vào shop.
+  &a  Sau đó chỉnh quyền của họ trong trang sửa shop.
+  &a  Gõ dấu chấm than (!) để huỷ.
+cannot-add-shop-member-already-owner: "&7&e{player_name}&7 đã là chủ shop!"
+cannot-add-shop-member-already-member: "&7&e{player_name}&7 đã là thành viên shop!"
+shop-member-added: "&aĐã thêm thành viên: &e{member_name}"
+
+cannot-edit-shop-member-self: "&7Không sửa quyền của chính mình được!"
+cannot-edit-shop-member-no-longer-a-member: "&7Người này không còn là thành viên shop!"
+your-shop-membership-has-changed: "&7Quyền của bạn trong shop đã thay đổi!"
+
+confirmation-ui-remove-shop-member-title: "&cXoá thành viên?"
+confirmation-ui-remove-shop-member-lore:
+- "{member_name} sẽ mất quyền"
+- "vào shop này!"
+
+shop-member-removed: "&aĐã xoá thành viên: &e{member_name}"
+
+player-shop-access-level-none: "Không có quyền"
+player-shop-access-level-container: "Rương hàng"
+player-shop-access-level-edit: "Sửa"
+player-shop-access-level-full: "Toàn quyền"
+
+player-shop-access-level-description-none: "Không có quyền."
+player-shop-access-level-description-container: "Mở được rương hàng."
+player-shop-access-level-description-edit: "Mở được rương hàng\nvà sửa shop."
+player-shop-access-level-description-full: "Toàn quyền sửa,\ngồm cả thành viên\nvà xoá shop."
+
+shop-container-type-stock: "Hàng"
+shop-container-type-earnings: "Tiền thu"
+shop-container-type-stock-and-earnings: "Hàng và tiền thu"
+
+shop-container-type-description-stock: "Shop lấy hàng\ntừ rương này."
+shop-container-type-description-earnings: "Shop bỏ tiền thu\nvào rương này."
+shop-container-type-description-stock-and-earnings: "Shop lấy hàng từ rương này\nvà bỏ tiền thu\nvào rương này."
+
+shop-containers-editor-title: "Rương của shop"
+
+shop-container-title: "&aRương shop"
+shop-container-none-lore:
+- "&4Chưa có rương."
+shop-container-lore:
+- "Vị trí: &e{container_world}, {container_x}, {container_y}, {container_z}"
+- "{container_state}"
+- "Loại: &e{container_type}"
+- "{container_type_description}"
+- "{container_action_change_type}"
+- "{container_action_open}"
+- "{container_action_remove}"
+single-shop-container-lore:
+- "Vị trí: &e{container_world}, {container_x}, {container_y}, {container_z}"
+- "{container_state}"
+- "{container_action_open}"
+
+shop-container-action-change-type: "Chuột trái/phải để đổi loại."
+shop-container-action-open: "Shift + chuột phải để mở."
+single-shop-container-action-open: "Bấm để mở rương."
+shop-container-action-remove: "Shift + chuột trái để bỏ."
+
+shop-container-state-missing: "Trạng thái: &4Mất"
+shop-container-state-double-chest: "Trạng thái: &eRương đôi"
+
+button-add-shop-container: "&aThêm rương"
+button-add-shop-container-lore: []
+
+shop-container-missing: "&7Rương hiện không còn."
+click-shop-container-to-add: "&aChuột phải vào rương để thêm vào shop.\n  &aChuột trái để huỷ."
+container-selection-aborted: "&7Đã huỷ chọn rương."
+shop-container-added: "&aĐã thêm rương: &e{container_x}, {container_y}, {container_z}"
+shop-container-removed: "&aĐã bỏ rương: &e{container_x}, {container_y}, {container_z}"
+
+confirmation-ui-remove-shop-container-title: "&cBỏ rương?"
+confirmation-ui-remove-shop-container-lore:
+- "Bạn sắp bỏ"
+- "rương ở &e({container_x}, {container_y}, {container_z})."
+
+admin-sign-shop-line1: "&2[SHOP]"
+admin-sign-shop-line2: "&7{shopName}"
+admin-sign-shop-line3: ""
+admin-sign-shop-line4: "&eChuột phải!"
+
+player-sign-shop-line1: "&2[SHOP]"
+player-sign-shop-line2: "&7{shopName}"
+player-sign-shop-line3: "&7{owner}"
+player-sign-shop-line4: "&eChuột phải!"
+
+for-hire-title: "Cho thuê"
+button-hire: "&aThuê"
+button-hire-lore:
+- Thuê người bán này
+
+trading-title-prefix: "&2"
+trading-title-default: "Người bán"
+
+must-target-block: "&7Phải nhìn vào một khối để đặt người bán."
+missing-spawn-location: "&7Loại shop này cần chọn chỗ đặt."
+spawn-block-not-empty: "&7Chỗ đặt phải trống."
+cannot-spawn-midair: "&7Không đặt hình dạng này lơ lửng được."
+invalid-spawn-block-face: "&7Không đặt người bán ở mặt này của khối được."
+mob-cannot-spawn-on-peaceful-difficulty: "&7Loài này không xuất hiện được ở độ khó hoà bình."
+restricted-area: "&7Không đặt người bán ở khu này được."
+location-already-in-use: "&7Chỗ này đã có người bán khác."
+end-crystal-disabled-in-the-end: "&7Không đặt shop pha lê End ở thế giới End được."
+cannot-spawn: "&7Người bán không xuất hiện ở đây được."
+
+container-selected: "&aĐã chọn rương! Chuột phải vào một khối để đặt người bán."
+unsupported-container: "&7Loại rương này không dùng làm shop được."
+must-select-container: "&7Phải chuột phải vào rương trước khi đặt người bán."
+must-target-container: "&7Loại shop này phải nhìn vào rương."
+invalid-container: "&7Khối đã chọn không phải rương hợp lệ!"
+container-too-far-away: "&7Rương của người bán ở quá xa!"
+container-not-placed: "&7Phải chọn rương bạn vừa đặt!"
+container-already-in-use: "&7Rương này đang được người bán khác dùng!"
+no-container-access: "&7Bạn không mở được rương đã chọn!"
+too-many-shops: "&7Bạn đã có đủ số shop tối đa!"
+
+type-new-name: "&aGõ tên mới của shop vào chat.\n  &aGõ dấu gạch (-) để bỏ tên."
+name-set: "&aĐã đặt tên shop thành '&e{name}&a'!"
+name-has-not-changed: "&aTên shop không đổi."
+name-invalid: "&cTên shop không hợp lệ: '&e{name}&c'"
+nameplate-prefix: "&2"
+
+click-new-shop-location: "&aChuột phải vào chỗ mới của shop.\n  &aChuột trái để huỷ."
+shopkeeper-moved: "&aĐã dời người bán!"
+shopkeeper-move-aborted: "&7Đã huỷ dời người bán."
+
+shop-type-disabled: "&7Loại shop '&6{type}&7' đang tắt."
+shop-object-type-disabled: "&7Hình dạng shop '&6{type}&7' đang tắt."
+
+must-target-shop: "&7Phải nhìn vào một người bán."
+must-target-admin-shop: "&7Phải nhìn vào người bán của server."
+must-target-player-shop: "&7Phải nhìn vào shop của người chơi."
+target-entity-is-no-shop: "&7Thứ đang nhìn không phải người bán."
+target-shop-is-no-admin-shop: "&7Người bán này không phải shop của server."
+target-shop-is-no-player-shop: "&7Người bán này không phải shop của người chơi."
+unused-container: "&7Không người bán nào dùng rương này."
+missing-access-level: "&7Bạn không đủ quyền!"
+owner-set: "&aChủ mới là &e{owner}"
+shop-received: "&aBạn đã thành chủ shop &e{shopName}&r&a ở &e({location})&a."
+shop-creation-items-given: "&a&e{player}&a đã nhận &e{amount}&a vật phẩm tạo shop!"
+shop-creation-items-received: "&aBạn nhận &e{amount}&a vật phẩm tạo shop!"
+unknown-currency: "&cKhông có loại tiền: '&e{currency}&c'"
+currency-items-given: "&a&e{player}&a đã nhận &6{amount}x&a vật phẩm tiền '&e{currency}&a'!"
+currency-items-received: "&aBạn nhận &6{amount}x&a vật phẩm tiền '&e{currency}&a'!"
+must-hold-item-in-main-hand: "&7Phải cầm một món trên tay chính."
+currency-item-set-to-main-hand-item: "&aĐã đặt vật phẩm tiền '&e{currencyId}&a' thành &emón đang cầm&a!"
+items-updated: "&aĐã cập nhật &e{count}&a món!"
+unknown-book-author: "Không rõ"
+
+trade-perm-set: "&aĐã đặt quyền mua bán của shop thành '&e{perm}&a'!"
+trade-perm-removed: "&aĐã bỏ quyền mua bán '&e{perm}&a' của shop!"
+trade-perm-view: "&aQuyền mua bán hiện tại của shop: '&e{perm}&a'."
+
+traded-command-set: "&aĐã đặt lệnh khi mua món này thành '&e{command}&a'!"
+traded-command-removed: "&aĐã bỏ lệnh khi mua của món này!"
+traded-command-view: "&aLệnh khi mua hiện tại của món này: '&e{command}&a'."
+traded-command-view-unset: "&aMón này chưa có lệnh khi mua."
+
+zombie-villager-curing-disabled: "&7Không được chữa dân làng zombie."
+must-hold-hire-item: "&7Phải cầm vật phẩm thuê trên tay."
+set-for-hire: "&aNgười bán này giờ cho thuê được."
+set-not-for-hire: "&aNgười bán này thôi cho thuê."
+hired: "&aBạn đã thuê người bán này!"
+missing-hire-perm: "&7Bạn không có quyền thuê người bán."
+cannot-hire: "&7Bạn không đủ tiền thuê người bán này."
+cannot-hire-shop-type: "&7Bạn không có quyền thuê loại người bán này."
+villager-for-hire: "&aDân làng nhận làm người bán với giá &6{costs}x {hire-item}&a."
+
+missing-trade-perm: "&7Bạn không có quyền mua bán với shop này."
+missing-custom-trade-perm: "&7Bạn không có quyền mua bán với shop này."
+shop-currently-closed: "&7Shop đang đóng cửa. Quay lại sau nhé!"
+cannot-trade-shop-for-hire: "&7Shop đang cho thuê nên không mua bán được."
+cannot-trade-no-offers: "&7Shop chưa bày món nào. Quay lại sau nhé!"
+no-offers-open-editor-description: "&eNgồi (Shift) + chuột phải vào shop để sửa."
+cannot-trade-with-own-shop: "&7Không mua bán với shop của chính mình được."
+cannot-trade-while-member-online: "&7Không mua bán được khi thành viên shop ('&e{member}&7') đang online."
+cannot-trade-unexpected-trade: "&7Đã huỷ: món đưa ra không khớp với món người bán cần."
+cannot-trade-items-not-strictly-matching: "&7Đã huỷ: món đưa ra không giống hệt món cần."
+cannot-trade-insufficient-storage-space: "&7Đã huỷ: rương của shop hết chỗ."
+cannot-trade-insufficient-currency: "&7Đã huỷ: shop không đủ tiền."
+cannot-trade-insufficient-stock: "&7Đã huỷ: shop hết hàng."
+cannot-trade-insufficient-writable-books: "&7Đã huỷ: shop sách hết sách trắng để chép."
+
+trade-notification-one-item: "&7Giao dịch: &e{player}&7 [&6{item1Amount}x &a{item1}&7] ➞ [&6{resultItemAmount}x &a{resultItem}&7] {shop}{trade_count}"
+trade-notification-two-items: "&7Giao dịch: &e{player}&7 [&6{item1Amount}x &a{item1}&7] [&6{item2Amount}x &a{item2}&7] ➞ [&6{resultItemAmount}x &a{resultItem}&7] {shop}{trade_count}"
+buy-notification-one-item: "&7Giao dịch: &e{player}&7 [&6{item1Amount}x &a{item1}&7] ➞ [&6{resultItemAmount}x &a{resultItem}&7] {shop}{trade_count}"
+buy-notification-two-items: "&7Giao dịch: &e{player}&7 [&6{item1Amount}x &a{item1}&7] [&6{item2Amount}x &a{item2}&7] ➞ [&6{resultItemAmount}x &a{resultItem}&7] {shop}{trade_count}"
+trade-notification-player-shop: "&e{shop_owner_name}"
+trade-notification-named-player-shop: "&e{shop_owner_name}"
+trade-notification-admin-shop: "&eShop của server"
+trade-notification-named-admin-shop: '&e"{shop_name}"'
+trade-notification-trade-count: "&7 (&6{count}x&7)"
+
+owner-trade-notification-one-item: "&e{player}&7 đã mua &6{resultItemAmount}x &a{resultItem}&7 ở {shop}{trade_count}"
+owner-trade-notification-two-items: "&e{player}&7 đã mua &6{resultItemAmount}x &a{resultItem}&7 ở {shop}{trade_count}"
+owner-buy-notification-one-item: "&e{player}&7 đã bán &6{item1Amount}x &a{item1}&7 cho {shop}{trade_count}"
+owner-buy-notification-two-items: "&e{player}&7 đã bán &6{item1Amount}x &a{item1}&7 và &6{item2Amount}x &a{item2}&7 cho {shop}{trade_count}"
+owner-trade-notification-shop: "một shop của bạn"
+owner-trade-notification-named-shop: 'shop &e"{shop_name}"&r của bạn'
+owner-buy-notification-shop: "một shop của bạn"
+owner-buy-notification-named-shop: 'shop &e"{shop_name}"&r của bạn'
+owner-trade-notification-trade-count: "&7 (&6{count}x&7)"
+
+disable-trade-notifications-hint: "&7Tắt thông báo giao dịch bằng lệnh &e{command}"
+disable-trade-notifications-hint-command: "/shopkeeper notify trades"
+trade-notifications-disabled: "&aBạn sẽ không nhận thông báo giao dịch nữa (tới lần vào game sau)."
+trade-notifications-enabled: "&aBạn sẽ nhận lại thông báo giao dịch."
+
+shopkeeper-created: "&aĐã tạo người bán: &6{type} &7({description})\n{setupDesc}"
+
+shop-setup-desc-selling: |-
+  &e  Bỏ đồ muốn bán vào rương, rồi
+  &e  ngồi (Shift) + chuột phải vào shop để đặt giá.
+shop-setup-desc-buying: |-
+  &e  Bỏ vào rương mỗi loại đồ muốn mua một cái,
+  &e  rồi ngồi (Shift) + chuột phải vào shop để đặt giá.
+shop-setup-desc-trading: |-
+  &e  Bỏ đồ muốn bán vào rương, rồi
+  &e  ngồi (Shift) + chuột phải vào shop để đặt giá.
+shop-setup-desc-book: |-
+  &e  Bỏ sách đã viết và sách trắng vào rương, rồi
+  &e  ngồi (Shift) + chuột phải vào shop để đặt giá.
+shop-setup-desc-admin-regular: |-
+  &e  Ngồi (Shift) + chuột phải vào shop để sửa món bán.
+
+trade-setup-desc-header: '&6{shopType}'
+trade-setup-desc-admin-regular:
+- Hàng không giới hạn.
+- Đặt đồ từ túi vào.
+- 'Hàng trên: món bán ra'
+- 'Hàng dưới: món phải trả'
+trade-setup-desc-selling:
+- Bán đồ cho người chơi.
+- Bỏ đồ muốn bán vào rương.
+- Chuột trái/phải để chỉnh số lượng.
+- 'Hàng trên: món đang bán'
+- 'Hàng dưới: món phải trả'
+trade-setup-desc-buying:
+- Mua đồ của người chơi.
+- Bỏ vào rương mỗi loại đồ muốn
+- mua một cái và thật nhiều
+- vật phẩm tiền.
+- Chuột trái/phải để chỉnh số lượng.
+- 'Hàng trên: món phải trả'
+- 'Hàng dưới: món đang mua'
+trade-setup-desc-trading:
+- Đổi đồ với người chơi.
+- Nhấc một món trong túi đồ
+- rồi bấm vào ô để đặt.
+- Chuột trái/phải để chỉnh số lượng.
+- 'Hàng trên: món bán ra'
+- 'Hàng dưới: món phải trả'
+trade-setup-desc-book:
+- Bán bản sao sách.
+- Bỏ sách đã viết và sách trắng
+- vào rương.
+- Chuột trái/phải để chỉnh giá.
+- 'Hàng trên: sách đang bán'
+- 'Hàng dưới: món phải trả'
+
+selling-shop.empty-trade.result-item: "&dMón bán"
+selling-shop.empty-trade.result-item-lore:
+- "Món bạn muốn bán."
+- "Bỏ đồ vào rương của shop."
+- "Chuột trái/phải để chỉnh số lượng."
+selling-shop.empty-trade.item1: "&dMón nhận"
+selling-shop.empty-trade.item1-lore:
+- "Món bạn muốn nhận về."
+- "Chuột trái/phải để chỉnh số lượng."
+selling-shop.empty-trade.item2: "&dMón nhận 2"
+selling-shop.empty-trade.item2-lore:
+- "Món thứ hai bạn muốn nhận về."
+- "Chuột trái/phải để chỉnh số lượng."
+selling-shop.empty-item1: "&dMón nhận"
+selling-shop.empty-item1-lore:
+- "Món bạn muốn nhận về."
+- "Chuột trái/phải để chỉnh số lượng."
+selling-shop.empty-item2: "&dMón nhận 2"
+selling-shop.empty-item2-lore:
+- "Món thứ hai bạn muốn nhận về."
+- "Chuột trái/phải để chỉnh số lượng."
+
+buying-shop.empty-trade.result-item: "&dMón bán"
+buying-shop.empty-trade.result-item-lore:
+- "Món bạn muốn bán."
+- "Chuột trái/phải để chỉnh số lượng."
+buying-shop.empty-trade.item1: "&dMón nhận"
+buying-shop.empty-trade.item1-lore:
+- "Món bạn muốn nhận về."
+- "Bỏ đồ vào rương của shop."
+- "Chuột trái/phải để chỉnh số lượng."
+buying-shop.empty-result-item: "&dMón bán"
+buying-shop.empty-result-item-lore:
+- "Món bạn muốn bán."
+- "Chuột trái/phải để chỉnh số lượng."
+
+trading-shop.empty-trade.result-item: "&dMón bán"
+trading-shop.empty-trade.result-item-lore:
+- "Món bạn muốn bán."
+- "Bỏ đồ vào rương của shop,"
+- "hoặc đặt một món từ túi đồ vào."
+- "Chuột trái/phải để chỉnh số lượng."
+trading-shop.empty-trade.item1: "&dMón nhận"
+trading-shop.empty-trade.item1-lore:
+- "Món bạn muốn nhận về."
+- "Đặt một món từ túi đồ vào."
+- "Chuột trái/phải để chỉnh số lượng."
+trading-shop.empty-trade.item2: "&dMón nhận 2"
+trading-shop.empty-trade.item2-lore:
+- "Món thứ hai bạn muốn nhận về."
+- "Đặt một món từ túi đồ vào."
+- "Chuột trái/phải để chỉnh số lượng."
+trading-shop.empty-result-item: "&dMón bán"
+trading-shop.empty-result-item-lore:
+- "Món bạn muốn bán."
+- "Đặt một món từ túi đồ vào."
+- "Chuột trái/phải để chỉnh số lượng."
+trading-shop.empty-item1: "&dMón nhận"
+trading-shop.empty-item1-lore:
+- "Món bạn muốn nhận về."
+- "Đặt một món từ túi đồ vào."
+- "Chuột trái/phải để chỉnh số lượng."
+trading-shop.empty-item2: "&dMón nhận 2"
+trading-shop.empty-item2-lore:
+- "Món thứ hai bạn muốn nhận về."
+- "Đặt một món từ túi đồ vào."
+- "Chuột trái/phải để chỉnh số lượng."
+
+book-shop.empty-trade.result-item: "&dMón bán"
+book-shop.empty-trade.result-item-lore:
+- "Món bạn muốn bán."
+- "Bỏ sách đã viết vào rương của shop."
+book-shop.empty-trade.item1: "&dMón nhận"
+book-shop.empty-trade.item1-lore:
+- "Món bạn muốn nhận về."
+- "Chuột trái/phải để chỉnh số lượng."
+book-shop.empty-trade.item2: "&dMón nhận 2"
+book-shop.empty-trade.item2-lore:
+- "Món thứ hai bạn muốn nhận về."
+- "Chuột trái/phải để chỉnh số lượng."
+book-shop.empty-item1: "&dMón nhận"
+book-shop.empty-item1-lore:
+- "Món bạn muốn nhận về."
+- "Chuột trái/phải để chỉnh số lượng."
+book-shop.empty-item2: "&dMón nhận 2"
+book-shop.empty-item2-lore:
+- "Món thứ hai bạn muốn nhận về."
+- "Chuột trái/phải để chỉnh số lượng."
+
+shop-information-header: "&6Chi tiết"
+shop-information:
+- "Id: &e{shop_id}"
+- "Mã: &e{shop_uuid}"
+- "Tên: &e{shop_name}"
+- "Loại: &e{shop_type}"
+- "Hình dạng: &e{shop_object_type}"
+- "Vị trí: &e{shop_location}"
+player-shop-information:
+- "Chủ: &e{shop_owner_name} &8({shop_owner_uuid})"
+
+missing-edit-villagers-perm: "&7Bạn không có quyền sửa dân làng."
+missing-edit-wandering-traders-perm: "&7Bạn không có quyền sửa thương nhân lang thang."
+must-target-entity: "&7Phải nhìn vào một sinh vật."
+must-target-villager: "&7Phải nhìn vào một dân làng."
+target-entity-is-no-villager: "&7Sinh vật đang nhìn không phải dân làng thường."
+villager-no-longer-exists: "&7Dân làng không còn nữa."
+
+villager-editor-title: "&2Sửa dân làng: &e{villagerName}"
+villager-editor-description-header: "&6Sửa dân làng"
+villager-editor-description:
+- 'Hàng trên: món bán ra'
+- 'Hàng dưới: món phải trả'
+- 'Giao dịch đã sửa dùng được'
+- 'mãi mãi và không cho kinh nghiệm.'
+
+villager-editor-information-header: "&6Chi tiết"
+villager-editor-information:
+- "Id: &e{entity_id}"
+- "Mã: &e{entity_uuid}"
+- "Tên: &e{entity_name}"
+- "Vị trí: &e{entity_location}"
+
+button-delete-villager: "&4Xoá"
+button-delete-villager-lore:
+- Xoá dân làng này
+button-name-villager: "&aĐặt tên dân làng"
+button-name-villager-lore:
+- "Đổi tên"
+- "dân làng"
+button-villager-inventory: "&aXem túi đồ dân làng"
+button-villager-inventory-lore:
+- Xem bản sao
+- túi đồ của dân làng
+button-mob-ai: "&aBật/tắt AI"
+button-mob-ai-lore:
+- "Bật/tắt AI của con vật"
+button-invulnerability: "&aBật/tắt bất tử"
+button-invulnerability-lore:
+- "Bật/tắt bất tử"
+- "của con vật."
+- "Người ở chế độ sáng tạo"
+- "vẫn đánh được."
+
+villager-inventory-title: "Túi đồ dân làng (bản sao)"
+set-villager-xp: "&aĐã đặt kinh nghiệm dân làng thành &e{xp}"
+no-villager-trades-changed: "&aKhông có giao dịch nào thay đổi."
+villager-trades-changed: "&aĐã đổi &e{changedTrades}&a giao dịch."
+
+type-new-villager-name: "&aGõ tên dân làng vào chat.\n  &aGõ dấu gạch (-) để bỏ tên."
+villager-name-set: "&aĐã đặt tên dân làng!"
+villager-name-invalid: "&aTên không hợp lệ!"
+
+no-shops-found: "&7Không tìm thấy shop nào."
+
+teleport-virtual-shopkeeper: "&7Không dịch chuyển tới người bán ảo được!"
+teleport-shopkeeper-world-not-loaded: "&7Không dịch chuyển tới người bán ở thế giới chưa tải được!"
+teleport-no-safe-location-found: "&7Không tìm thấy chỗ an toàn để dịch chuyển!"
+teleport-failed: "&7Dịch chuyển thất bại!"
+teleport-success: "&aĐã dịch chuyển '&e{player}&a' tới người bán '&e{shop}&a'!"
+
+list-admin-shops-header: "&9Có &e{shopsCount} &9shop của server: &e(Trang {page}/{maxPage})"
+list-all-shops-header: "&9Có tổng cộng &e{shopsCount} &9shop: &e(Trang {page}/{maxPage})"
+list-player-shops-header: "&9'&e{player}&9' có &e{shopsCount} &9shop: &e(Trang {page}/{maxPage})"
+list-shops-entry: "  &e{shopId}) &7{shopName}&r&8 ở &7({location})&8, loại: &7{shopType}&8, hình dạng: &7{objectType}{expiration}"
+list-shops-entry-expiration: "&8, hết hạn: {timeLeft}"
+
+list-expiring-shops-header: "&9'&e{player}&9' có &e{shopsCount} &9shop sắp hết hạn:"
+no-expiring-shops: "&9'&e{player}&9' không có shop nào sắp hết hạn."
+
+shop-expiration-notification-header: "&eMột số shop của bạn sắp hết hạn:"
+shop-expiration-notification-entry: "  &e{shopId}) &7{shopName}&r&8 ở &7({location})&8, hết hạn sau {timeLeft}"
+shop-expiration-notification-more: "  &7Và &e{count}&7 shop nữa."
+shop-expiration-notification-hint: "&7Gõ &e/shopkeeper expiration&7 để xem shop sắp hết hạn."
+shop-expired: "&7Shop {shopName}&7 ở &7({location})&7 của bạn đã hết hạn!"
+shop-expiration-info: "&7Shop này hết hạn sau {timeLeft}&7."
+
+shop-removed: "&aĐã xoá người bán."
+shop-already-removed: "&7Người bán đã bị xoá rồi."
+shop-no-longer-exists: "&7Người bán không còn nữa."
+shop-removal-cancelled: "&cMột plugin đã chặn việc xoá người bán."
+
+cannot-delete-hired-shop: "&7Không xoá được shop đang được thuê."
+cannot-move-hired-shop: "&7Không dời được shop đang được thuê."
+shop-restored-for-hire: "&aShop này lại cho thuê được."
+shop-already-for-hire: "&7Shop này đang cho thuê rồi."
+set-not-for-hire-to-delete-hint: "&7Muốn xoá shop này: gõ &e/shopkeeper setNotForHire&7 trước."
+cannot-interact-shop-container: "&7Không dùng được rương của shop này."
+cannot-break-shop-container: "&7Không phá được rương shop của người khác."
+cannot-break-hired-shop-container: "&7Không phá được rương của shop đang được thuê."
+cannot-place-block-near-shop-container: "&7Không đặt khối này cạnh rương shop của người khác được."
+cannot-place-block-near-hired-shop-container: "&7Không đặt khối này cạnh rương shop đang được thuê được."
+
+shops-already-removed: "&e{shopsCount}&7 shop đã bị xoá từ trước."
+shop-removals-cancelled: "&cPlugin khác đã chặn việc xoá &e{shopsCount}&c shop."
+hired-shops-not-removed: "&e{shopsCount}&7 shop đang được thuê không bị xoá."
+admin-shops-removed: "&aĐã xoá &e{shopsCount} &ashop của server."
+shops-of-player-removed: "&aĐã xoá &e{shopsCount} &ashop của '&e{player}&a'."
+player-shops-removed: "&aĐã xoá &e{shopsCount} &ashop của người chơi."
+
+confirm-remove-shop: "&cBạn sắp xoá hẳn người bán này!"
+confirm-remove-all-admin-shops: "&cBạn sắp xoá hẳn mọi shop của server (&6{shopsCount}&c)!"
+confirm-remove-all-own-shops: "&cBạn sắp xoá hẳn mọi shop của bạn (&6{shopsCount}&c)!"
+confirm-remove-all-shops-of-player: "&cBạn sắp xoá hẳn mọi shop của &6{player}&c (&6{shopsCount}&c)!"
+confirm-remove-all-player-shops: "&cBạn sắp xoá hẳn mọi shop của mọi người chơi (&6{shopsCount}&c)!"
+
+confirm-replace-all-shops-with-vanilla-villagers: |-
+  &cYou are about to irrevocably delete all shops (&6{shopsCount}&c) and replace them with vanilla villagers without AI!
+  Consider creating a backup of your world and shopkeeper data before you proceed.
+all-shops-replaced-with-vanilla-villagers: |-
+  &e{adminShopsCount}&a admin shops and &e{playerShopsCount}&a player shops have been replaced with vanilla villagers!
+  &e{skippedShopsCount}&a shops have been skipped.
+
+confirmation-required: "&7Xác nhận bằng lệnh &6/shopkeepers confirm"
+confirmation-expired: "&cHết hạn xác nhận."
+nothing-to-confirm: "&cHiện không có gì để xác nhận."
+
+confirmation-ui-delete-shop-title: "&cXoá hẳn shop này?"
+confirmation-ui-delete-shop-confirm-lore:
+- "Việc này sẽ xoá hẳn"
+- "shop này!"
+
+confirmation-ui-restore-shop-for-hire-title: "&cCho thuê lại shop này?"
+confirmation-ui-restore-shop-for-hire-confirm-lore:
+- "Shop sẽ bị lấy khỏi bạn"
+- "và đem"
+- "cho thuê lại!"
+
+confirmation-ui-delete-villager-title: "&cXoá hẳn dân làng này?"
+confirmation-ui-delete-villager-confirm-lore:
+- "Việc này sẽ xoá hẳn"
+- "dân làng này!"
+villager-removed: "&aĐã xoá dân làng."
+
+confirmation-ui-confirm: "&2Đồng ý"
+confirmation-ui-cancel: "&4Huỷ"
+confirmation-ui-cancel-lore:
+- "Huỷ việc"
+- "đang làm."
+confirmation-ui-aborted: "&7Đã huỷ xác nhận."
+
+text-input-aborted: "&7Đã huỷ nhập chữ."
+
+snapshot-list-header: "&9Shop &e{shop_id} &9has &e{snapshotsCount} &9snapshots: &e(Page {page} of {maxPage})"
+snapshot-list-entry: "  &e{id}) &2{name}&8 (&7{timestamp}&8)"
+invalid-snapshot-id: "&cInvalid snapshot id: &e{argument}"
+invalid-snapshot-name: "&cNo snapshot found with name '&e{argument}&c'."
+snapshot-name-too-long: "&cThe snapshot name can be a maximum of &e{maxLength}&c characters long: &e{name}"
+snapshot-name-invalid: "&cInvalid snapshot name: &e{name}"
+snapshot-name-already-exists: "&cThere already exists another snapshot with this name: &e{name}"
+snapshot-created: "&aNew snapshot created: &e({id}) &2{name} &8(&7{timestamp}&8)"
+confirm-remove-snapshot: "&cYou are about to irrevocably delete the specified snapshot!"
+confirm-remove-all-snapshots: "&cYou are about to irrevocably delete all snapshots of the specified shopkeeper (&6{snapshotsCount}&c)!"
+action-aborted-snapshots-changed: "&cAction aborted! The snapshots have changed in the meantime. Try again."
+snapshot-removed: "&aSnapshot deleted: &e({id}) &2{name} &8(&7{timestamp}&8)"
+snapshot-removed-all: "&aAll &e{snapshotsCount} &asnapshots of shop &e{shop_id}&a have been deleted."
+snapshot-restore-failed: "&cFailed to restore snapshot: &e({id}) &2{name} &8(&7{timestamp}&8)"
+snapshot-restored: "&aSnapshot restored: &e({id}) &2{name} &8(&7{timestamp}&8)"
+
+history-header: "&9Giao dịch của {players}&9 với {shops}&9: &e{tradesCount} &e(Trang {page}/{maxPage})"
+history-header-all-players: "&emọi người chơi"
+history-header-specific-player: "&e{player}"
+history-header-all-shops: "&emọi shop"
+history-header-admin-shops: "mọi &eshop của server"
+history-header-player-shops: "mọi &eshop người chơi"
+history-header-all-owned-shops: "các shop của &e{owner}"
+history-header-specific-shop: 'shop &e"{shop}"'
+history-header-specific-owned-shop: 'shop &e"{shop}"&9 của &e{owner}'
+
+history-disabled: "&7Lịch sử giao dịch đang tắt."
+history-no-trades-found: "&7Không có giao dịch nào."
+
+history-entry-one-item: "  &f{index}) &e{player}&7 [&6{item1Amount}x &a{item1}&7] ➞ [&6{resultItemAmount}x &a{resultItem}&7] {shop}{trade_count} &7(&f{timeAgo} trước&7)"
+history-entry-two-items: "  &f{index}) &e{player}&7 [&6{item1Amount}x &a{item1}&7] [&6{item2Amount}x &a{item2}&7] ➞ [&6{resultItemAmount}x &a{resultItem}&7] {shop}{trade_count} &7(&f{timeAgo} trước&7)"
+history-entry-player-shop: "&e{owner}"
+history-entry-admin-shop: "&eShop của server"
+history-entry-trade-count: "&7 (&6{count}x&7)"
+
+no-permission: "&cBạn không có quyền làm việc này."
+command-create-no-permission: |-
+  &cBạn không có quyền làm việc này.
+  &eMuốn mở shop của mình thì dùng vật phẩm tạo shop.
+
+command-unknown: "&cKhông có lệnh '&e{command}&c'!"
+command-argument-unexpected: "&cThừa tham số '&e{argument}&c'."
+command-argument-requires-player: "&cTham số '&e{argumentFormat}&c' cần người chơi chạy lệnh."
+command-argument-missing: "&cThiếu tham số '&e{argumentFormat}&c'."
+command-argument-invalid: "&cTham số không hợp lệ '&e{argument}&c'."
+command-player-argument-missing: "&cChưa ghi người chơi cho '&e{argumentFormat}&c'."
+command-player-argument-invalid: "&cKhông tìm thấy người chơi '&e{argument}&c'."
+command-shop-type-argument-invalid: "&cKhông có loại shop '&e{argument}&c'."
+command-shop-type-argument-no-admin-shop: "&cLoại shop '&e{argument}&c' không phải shop của server."
+command-shop-type-argument-no-player-shop: "&cLoại shop '&e{argument}&c' không phải shop người chơi."
+command-shop-object-type-argument-invalid: "&cKhông có hình dạng shop '&e{argument}&c'."
+command-shopkeeper-argument-invalid: "&cKhông tìm thấy người bán '&e{argument}&c'."
+command-shopkeeper-argument-no-admin-shop: "&cNgười bán '&e{argument}&c' không phải shop của server."
+command-shopkeeper-argument-no-player-shop: "&cNgười bán '&e{argument}&c' không phải shop người chơi."
+command-shopkeeper-argument-no-access: "&cBạn không có quyền với người bán '&e{argument}&c'."
+command-entity-argument-no-villager: "&cSinh vật '&e{argument}&c' không phải dân làng thường."
+
+ambiguous-player-name: "&cCó nhiều người chơi tên '&e{name}&c'!"
+ambiguous-player-name-entry: "&c  - '&e{name}&r&c' (&6{uuid}&c)"
+ambiguous-player-name-more: "&c  - ...."
+
+ambiguous-shopkeeper-name: "&cCó nhiều người bán tên '&e{name}&c'!"
+ambiguous-shopkeeper-name-entry: "&c  - &e{id})&c '&e{name}&r&c' (&6{uuid}&c)"
+ambiguous-shopkeeper-name-more: "&c  - ...."
+
+ambiguous-target-shopkeeper: "&cĐang nhìn vào nhiều người bán cùng lúc!"
+ambiguous-target-shopkeeper-entry: "&c  - &e{id})&c '&e{name}&r&c' (&6{uuid}&c)"
+ambiguous-target-shopkeeper-more: "&c  - ...."
+
+command-help-title: "&9***** &8[&6Shopkeepers v{version}&8] &9*****"
+command-help-usage-format: "&e{usage}"
+command-help-description-format: "&8 - &3{description}"
+
+command-description-shopkeeper: "Tạo người bán."
+command-description-help: "Xem trang trợ giúp này."
+command-description-reload: "Nạp lại plugin."
+command-description-debug: "Toggles debug mode on and off."
+command-description-notify: "Bật/tắt thông báo giao dịch của bạn."
+command-description-list: "Liệt kê shop của một người hoặc shop của server."
+command-description-history: "Xem lịch sử giao dịch."
+command-description-remove: "Xoá một shop."
+command-description-remove-all: "Xoá mọi shop của một người, mọi người, hoặc shop của server."
+command-description-give: "Đưa vật phẩm tạo shop cho người chơi."
+command-description-give-currency: "Đưa vật phẩm tiền cho người chơi."
+command-description-set-currency: "Đặt vật phẩm tiền là món đang cầm."
+command-description-update-items: "Cập nhật vật phẩm của plugin khác (nếu hỗ trợ)."
+command-description-remote: "Mở shop từ xa (có thể cho người khác)."
+command-description-remote-edit: "Sửa shop từ xa."
+command-description-transfer: "Chuyển quyền chủ shop."
+command-description-teleport: "Dịch chuyển tới shop."
+command-description-settradeperm: "Đặt, bỏ (-) hoặc xem (?) quyền mua bán."
+command-description-settradedcommand: "Đặt, bỏ (-) hoặc xem (?) lệnh khi mua của món đang cầm."
+command-description-setforhire: "Cho thuê một shop của bạn."
+command-description-setnotforhire: "Thôi cho thuê một shop của bạn."
+command-description-expiration: "Liệt kê shop sắp hết hạn của một người."
+command-description-snapshot-list: "Lists the snapshots of a shop."
+command-description-snapshot-create: "Creates a new shop snapshot."
+command-description-snapshot-remove: "Removes a specific or all snapshots of a shop."
+command-description-snapshot-restore: "Restores a specific shop snapshot."
+command-description-edit-villager: "Mở trang sửa dân làng đang nhìn."
+command-description-replace-all-with-vanilla-villagers: "Replaces all shopkeepers with vanilla villagers without AI."

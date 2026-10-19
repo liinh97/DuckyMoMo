@@ -36,6 +36,28 @@ def walk(node, path, out):
         out.append([".".join(path), str(node)])
 
 
+def resolve(node, parts):
+    """Tìm (cha, khoá) cho đường dẫn; khoá có thể chứa dấu chấm (thử ghép dài nhất trước). None nếu không thấy."""
+    for n in range(len(parts), 0, -1):
+        key = ".".join(parts[:n])
+        if isinstance(node, list):
+            if n != 1 or not key.isdigit() or int(key) >= len(node):
+                continue
+            k = int(key)
+        elif hasattr(node, "items"):
+            k = key if key in node else (int(key) if key.isdigit() and int(key) in node else None)
+            if k is None:
+                continue
+        else:
+            return None
+        if n == len(parts):
+            return node, k
+        r = resolve(node[k], parts[n:])
+        if r is not None:
+            return r
+    return None
+
+
 def get_parent(doc, parts):
     node = doc
     for p in parts[:-1]:
@@ -84,18 +106,12 @@ def main():
     tr = json.load(open(sys.argv[3], encoding="utf-8"))
     done, bad, miss = 0, [], []
     for path, vi in tr.items():
-        parts = path.split(".")
-        try:
-            parent = get_parent(doc, parts)
-            last = parts[-1]
-            if isinstance(parent, list):
-                last = int(last)
-            elif last not in parent and last.isdigit() and int(last) in parent:
-                last = int(last)
-            old = parent[last]
-        except (KeyError, IndexError, ValueError, TypeError):
+        found = resolve(doc, path.split("."))
+        if found is None:
             miss.append(path)
             continue
+        parent, last = found
+        old = parent[last]
         va, vb = VARS.findall(str(old)), VARS.findall(vi)
         if "--no-angle" in sys.argv:
             va, vb = [x for x in va if not x.startswith("<")], [x for x in vb if not x.startswith("<")]

@@ -397,6 +397,24 @@ plugins:
       - ["/em reload", "Nạp lại cấu hình (trang Cài đặt tự gọi)"]
     settings: "Trang Cài đặt: Bang Hội Chiến > Thế giới > Boss & Dungeon (EliteMobs). File: plugins/EliteMobs/"
     notes: "Cần FreeMinecraftModels cho gậy phép và lớp pháp sư (tuỳ chọn, chưa cài). Không cài ResourcePackManager để khỏi đụng gói font tiếng Việt."
+  - name: AuraSkills (kỹ năng nghề)
+    jar: AuraSkills
+    kind: Kinh tế & buôn bán
+    purpose: "Kỹ năng nghề ở «mức cơ bản» (cài 19/10, bản 2.4.0 ghim, GPL): làm việc nào lên cấp kỹ năng đó. Bật 6 kỹ năng: Trồng trọt, Đốn gỗ, Đào mỏ, Câu cá, Đào đất, Pha chế; trần 20. Khả năng nội tại tối đa bậc 4 (rơi thêm đồ tối đa 8 may mắn, +20% kinh nghiệm kỹ năng, cây lớn nhanh quanh mình, thuốc kéo dài, no lâu). Khả năng mana bậc 1, mở ở cấp 10, hiệu lực 5 giây, hồi chiêu 300 giây: Đào nhanh (cuốc), Đốn cả cây (rìu), Xúc đất (xẻng), Tự gieo (cuốc đất) — chuột phải cầm công cụ rồi đào. Chỉ số chiến đấu: cả 6 kỹ năng max = +1 tim, +2% sát thương. Mốc 5/10/15/20 thưởng 200/400/700/1200 xu mỗi kỹ năng. Làm lại mỗi mùa (DuckyMoMoCore SkillSeason). Chạy song song uJobs (uJobs ra tiền, AuraSkills ra cấp + khả năng)."
+    player:
+      - ["/skills", "Menu kỹ năng: cấp, kinh nghiệm, khả năng, mốc thưởng (/sk)"]
+      - ["/skills top", "Bảng xếp hạng kỹ năng (/skilltop)"]
+      - ["/skills rank", "Hạng của mình (/skillrank)"]
+      - ["/stats", "Chỉ số của mình (máu, sức mạnh, may mắn, thông thái)"]
+      - ["/skills toggle", "Bật/tắt thanh kinh nghiệm trên màn hình (/abtoggle)"]
+      - ["/mining, /farming, /foraging, /fishing, /excavation, /alchemy", "Mở thẳng trang của một kỹ năng"]
+    admin:
+      - ["/skills reload", "Nạp lại cấu hình (trang Cài đặt tự gọi)"]
+      - ["/skills skill setlevel <tên> <kỹ năng> <cấp>", "Đặt cấp (vd auraskills/mining hoặc mining)"]
+      - ["/skills skill reset <tên> [kỹ năng]", "Xoá cấp (người đang online); mùa mới DuckyMoMoCore tự làm lúc người chơi vào game"]
+      - ["/skills xp add <tên> <kỹ năng> <số>", "Cộng kinh nghiệm kỹ năng"]
+    settings: "Trang Cài đặt: Bang Hội Chiến > Nghề > Kỹ năng nghề (trần cấp, khả năng mana, rơi thêm đồ, thưởng xu mốc, làm lại mỗi mùa). File: plugins/AuraSkills/ (repo: modes/banghoi/server/plugins/AuraSkills/)."
+    notes: "Chỉ ở Bang Hội Chiến. ĐÃ TẮT: kỹ năng Chiến đấu/Bắn cung/Phòng thủ/Nhanh nhẹn/Phù phép, khả năng đánh nhau, chí mạng, chỉ số hồi máu/giảm sát thương/tốc độ, bảng đồ rơi riêng (EvenMoreFish + kho báu lo), ra tiền theo kinh nghiệm. Đấu Trường (dautruong) tắt hẳn AuraSkills; Thái Ấp và vùng spawn không cộng kinh nghiệm; chống AFK + chống đặt-phá bật. Không bán tăng tốc cày cho rank donate. Lưu: plugins/AuraSkills/userdata/<uuid>.yml (web đọc)."
   - name: BetonQuest (cốt truyện)
     jar: BetonQuest
     kind: Boss & Dungeon

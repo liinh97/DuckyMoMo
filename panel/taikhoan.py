@@ -510,6 +510,9 @@ def profile(perms):
     ct = story(uuid)
     if ct:
         out["cotruyen"] = ct
+    kn = skill_levels(uuid)
+    if kn:
+        out["kynang"] = kn
     lk = wanderers(uuid)
     if lk:
         out["lukhach"] = lk
@@ -581,6 +584,20 @@ def story(uuid):
                 cur, viec = i + 1, "Quay lại gặp NPC để nhận việc tiếp theo."
         out.append({"ten": c.get("ten"), "xong": False, "buoc": cur, "tong": len(steps), "viec": viec})
     return out
+
+
+SKILL_VI = {"farming": "Trồng trọt", "foraging": "Đốn gỗ", "mining": "Đào mỏ", "fishing": "Câu cá", "excavation": "Đào đất", "alchemy": "Pha chế"}
+
+
+def skill_levels(uuid):
+    """Cấp kỹ năng nghề AuraSkills (plugins/AuraSkills/userdata/<uuid>.yml) của các kỹ năng đang bật, kèm trần cấp."""
+    base = DATA_DIR / SRV / "plugins" / "AuraSkills"
+    sk = safe_yaml(base / "skills.yml").get("skills") or {}
+    on = {k.split("/")[-1]: (v.get("options") or {}).get("max_level", 100) for k, v in sk.items() if (v.get("options") or {}).get("enabled", True)}
+    if not on:
+        return None
+    mine = {k.split("/")[-1]: (v or {}).get("level", 0) for k, v in (safe_yaml(base / "userdata" / f"{uuid}.yml").get("skills") or {}).items()}
+    return [{"ten": SKILL_VI.get(k, k), "cap": int(mine.get(k, 0) or 0), "tran": int(t)} for k, t in on.items()]
 
 
 def wanderers(uuid):

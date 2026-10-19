@@ -734,6 +734,13 @@ public final class DuckyMoMoCore extends JavaPlugin {
         }
         Wanderers wds = wanderers;
         bind("lukhach", wds == null ? null : wds::command, "Lữ khách");
+        // Kỹ năng nghề AuraSkills làm lại mỗi mùa (aura-skills.reset-each-season): xoá cấp khi từng người vào game trong mùa mới
+        if (getConfig().getBoolean("aura-skills.reset-each-season", false) && getServer().getPluginManager().getPlugin("AuraSkills") != null) {
+            SkillSeason skillSeason = new SkillSeason(this);
+            getServer().getPluginManager().registerEvents(skillSeason, this);
+            skillSeason.start();
+            getLogger().info("Kỹ năng nghề: làm lại mỗi mùa");
+        }
 
         // Mảnh sự kiện + cửa hàng đổi mảnh (Bang Hội Chiến: event-fragments.enabled); phần thưởng "manh" dùng module này
         FragmentShop fragments = getConfig().getBoolean("event-fragments.enabled")

@@ -530,11 +530,15 @@ def save_and_apply(mode_id, incoming, apply_all=False):
         return s.get("servers") or [server]
 
     # 1) Ghi vào file cấu hình plugin (gom theo server + file)
+    # targets: [{file, path}] = ghi cùng giá trị vào nhiều chỗ (vd trần cấp cho mọi kỹ năng AuraSkills);
+    # template: chuỗi có {value} để ghép giá trị (vd "eco give {player} {value}"; chỉ {value} được thay)
     by_file = {}
     for _, s, v in changed:
-        if s.get("file"):
+        out = s["template"].replace("{value}", str(v)) if s.get("template") else v
+        spots = ([(s["file"], s["path"])] if s.get("file") else []) + [(t["file"], t["path"]) for t in s.get("targets", [])]
+        for rel, dotted in spots:
             for srv in servers_of(s):
-                by_file.setdefault((srv, s["file"]), []).append((s["path"], v))
+                by_file.setdefault((srv, rel), []).append((dotted, out))
     for (srv, rel), items in by_file.items():
         path = DATA_DIR / srv / rel
         if not path.exists():
@@ -578,7 +582,7 @@ def save_and_apply(mode_id, incoming, apply_all=False):
                 if c not in lst:
                     lst.append(c)
 
-    stored_only = [s["label"] for _, s, _ in changed if not s.get("file") and not s.get("commands")]
+    stored_only = [s["label"] for _, s, _ in changed if not s.get("file") and not s.get("targets") and not s.get("commands")]
     results, failed = [], []
     for srv, cmds in per_server.items():
         try:

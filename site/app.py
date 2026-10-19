@@ -312,6 +312,44 @@ def mypet_level(exp):
 HE_TEN = {"Combat": "Chiến Binh", "Utility": "Hậu Cần", "PvP": "Đấu Sĩ", "Ride": "Thú Cưỡi", "Farm": "Nông Trại"}
 
 
+SKILL_VI = {"farming": "Trồng trọt", "foraging": "Đốn gỗ", "mining": "Đào mỏ", "fishing": "Câu cá", "excavation": "Đào đất",
+            "alchemy": "Pha chế", "archery": "Bắn cung", "defense": "Phòng thủ", "fighting": "Chiến đấu", "agility": "Nhanh nhẹn",
+            "enchanting": "Phù phép"}
+
+
+def skills_info():
+    """Kỹ năng nghề AuraSkills cho trang chủ: kỹ năng đang bật + trần, khả năng mana, thưởng xu mốc cấp, top 10 tổng cấp
+    (đọc plugins/AuraSkills/userdata/<uuid>.yml, tên lấy từ usercache.json của server)."""
+    base = plugin("AuraSkills")
+    sk = load_yaml(base / "skills.yml").get("skills") or {}
+    on = {k.split("/")[-1]: (v.get("options") or {}).get("max_level", 100) for k, v in sk.items()
+          if (v.get("options") or {}).get("enabled", True)}
+    if not on:
+        return {"enabled": False}
+    ma = load_yaml(base / "mana_abilities.yml").get("mana_abilities") or {}
+    mana = [v for v in ma.values() if v.get("enabled")]
+    xu = {}
+    for lv, rw in ((load_yaml(base / "rewards" / f"{next(iter(on))}.yml").get("levels")) or {}).items():
+        for r in rw or []:
+            m = re.match(r"eco give \S+ (\d+)", str(r.get("command", "")))
+            if r.get("type") == "command" and m:
+                xu[int(lv)] = int(m.group(1))
+    try:
+        cache = {e["uuid"]: e["name"] for e in json.loads((DATA / SRV / "usercache.json").read_text(encoding="utf-8"))}
+    except (OSError, ValueError, KeyError, TypeError):
+        cache = {}
+    top = []
+    for f in (base / "userdata").glob("*.yml"):
+        lv = {k.split("/")[-1]: int((v or {}).get("level", 0) or 0) for k, v in ((load_yaml(f).get("skills")) or {}).items()}
+        tong = sum(lv.get(k, 0) for k in on)
+        if tong > 0:
+            top.append({"ten": cache.get(f.stem, "?"), "tong": tong})
+    top.sort(key=lambda t: -t["tong"])
+    return {"enabled": True, "kynang": [{"ten": SKILL_VI.get(k, k), "tran": v} for k, v in on.items()],
+            "mana_cap": mana[0].get("unlock") if mana else None, "mana_hoi": mana[0].get("base_cooldown") if mana else None,
+            "xu": dict(sorted(xu.items())), "top": top[:10]}
+
+
 def story_info():
     """Cốt truyện (BetonQuest) cho trang chủ: các chương trong modes/banghoi/cotruyen.yml, số lượng/thưởng lấy từ constants
     của gói (bản đang chạy, chưa có thì bản trong repo), số người đã xong mỗi chương (đọc database.db chỉ đọc)."""
@@ -472,6 +510,7 @@ def api_info():
                    "prices": get(core, "thai-ap.prices", [5000, 8000, 15000]), "kitchen": get(core, "thai-ap.kitchen-bonus", 50),
                    **core_json("thaiap.json")},
         "cotruyen": story_info(),
+        "kynang": skills_info(),
         "capdo": {"enabled": bool(get(core, "level-up.enabled", False)), "max": get(core, "level-up.max-level", 100),
                   "mob": get(core, "level-up.mob-points", 1), "player": get(core, "level-up.player-points", 10),
                   "giu": bool(get(core, "level-up.keep-on-new-season", False)), "top": core_json("capdo.json").get("top") or [],

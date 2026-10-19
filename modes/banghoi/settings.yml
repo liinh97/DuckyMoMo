@@ -1664,3 +1664,13 @@ lk_on: true
 lk_move: 72
 lk_announce: true
 lk_thuong: 1000
+as_cap: 20
+as_mana_unlock: 10
+as_mana_cd: 300
+as_mana_dur: 5.0
+as_luck: 2.0
+as_xu5: 200
+as_xu10: 400
+as_xu15: 700
+as_xu20: 1200
+as_reset: true

@@ -716,6 +716,9 @@ footer .fbrand img{width:44px}
     <div class="card" style="margin-top:16px"><h3>⬆️ Thăng Cấp <span class="kbd">/capdo</span></h3>
       <p class="muted">Cấp riêng của server: lên cấp cần xu (trả khi lên), giờ chơi thật và điểm hạ gục (hạ quái +<span data-k="capdo.mob">1</span>, hạ người +<span data-k="capdo.player">10</span>). Mỗi cấp được điểm đổi đặc quyền: chỉ tiện ích và trang trí, không cộng sức mạnh.</p>
       <div id="cdList" class="muted">Đang tải…</div></div>
+    <div class="card" style="margin-top:16px"><h3>⚒ Kỹ năng nghề <span class="kbd">/skills</span></h3>
+      <p class="muted">Làm việc nào thì kỹ năng đó lên cấp: trồng trọt, đốn gỗ, đào mỏ, câu cá, đào đất, pha chế. Lên cấp được rơi thêm đồ, thêm kinh nghiệm, cây lớn nhanh, thuốc kéo dài, và một khả năng đặc biệt (đào nhanh, đốn cả cây…). Chỉ là kỹ năng nghề: gần như không cộng sức mạnh đánh nhau, làm lại mỗi mùa.</p>
+      <div id="knList" class="muted">Đang tải…</div></div>
     <div class="card" style="margin-top:16px"><h3>🏅 Sổ thành tích <span class="kbd">/thanhtich</span></h3>
       <p class="muted">Mục tiêu cho người thích chơi một mình: tự đếm, đạt là nhận quà ngay, mốc khó có danh hiệu giữ qua mọi mùa.</p>
       <div id="ttList" class="muted">Đang tải…</div>
@@ -1116,6 +1119,9 @@ async function loadInfo(){
     <ol style="margin:4px 0 4px 18px;font-size:.9rem">${(c.buoc || []).map(b => `<li><b>${esc(b.ten)}</b>: ${esc(b.viec)}</li>`).join("")}</ol>
     <p class="dim" style="font-size:.85rem">${esc(c.bat_dau)} NPC: ${(c.npc || []).map(esc).join(", ")}. Thưởng tổng ${nf.format(c.thuong || 0)} xu.</p></div>`).join("");
   $("#lkList").innerHTML = (cti.lu_khach || []).length ? `<p class="dim" style="font-size:.85rem">Đổi chỗ mỗi ${cti.gio_doi || "?"} giờ. Đi qua Cổng Hoang dẫn tới nơi họ kể rồi tìm họ mà kể lại để nhận thưởng.</p><table><tbody>${cti.lu_khach.map(v => `<tr><td><b>${esc(v.ten)}</b><div class="dim" style="font-size:.8rem">kể về ${esc(v.noi)}${v.cong ? " · cổng đã xuất hiện" : " · cổng chưa mở"}</div></td><td>${v.vung ? esc(v.vung) + ` <span class="dim">(${esc(v.huong || "")})</span>` : '<span class="dim">chưa xuất hiện</span>'}</td><td class="dim" style="font-size:.8rem">${v.so_xong ? nf.format(v.so_xong) + " người đã kể" : ""}</td></tr>`).join("")}</tbody></table>` : "";
+  const kni = info.kynang || {};
+  $("#knList").innerHTML = !kni.enabled ? "Sắp mở." : `<p class="dim" style="font-size:.85rem">${(kni.kynang || []).map(k => esc(k.ten) + " (tối đa " + k.tran + ")").join(" · ")}${kni.mana_cap ? ` · khả năng đặc biệt mở ở cấp ${kni.mana_cap}, hồi chiêu ${Math.round((kni.mana_hoi || 0) / 60)} phút` : ""}${Object.keys(kni.xu || {}).length ? " · thưởng " + Object.entries(kni.xu).map(([lv, x]) => "cấp " + lv + ": " + nf.format(x) + " xu").join(", ") + " (mỗi kỹ năng)" : ""}.</p>`
+    + ((kni.top || []).length ? `<table><tbody>${kni.top.map((t, i) => `<tr><td>${i + 1}</td><td><b>${esc(t.ten)}</b></td><td>Tổng cấp <b>${t.tong}</b></td></tr>`).join("")}</tbody></table>` : '<p class="dim">Chưa ai lên cấp.</p>');
   const cdi = info.capdo || {};
   $("#cdList").innerHTML = !cdi.enabled ? "Đang tắt." : `<p class="dim" style="font-size:.85rem">Tối đa cấp ${cdi.max} · ${cdi.giu ? "giữ qua các mùa" : "mùa mới làm lại từ cấp 0"}. Đặc quyền: ${(cdi.shop || []).map(esc).join(", ")}.</p>`
     + ((cdi.top || []).length ? `<table><tbody>${cdi.top.map((t, i) => `<tr><td>${i + 1}</td><td><b>${esc(t.ten)}</b></td><td>Cấp <b>${t.cap}</b></td></tr>`).join("")}</tbody></table>` : '<p class="dim">Chưa ai lên cấp.</p>');

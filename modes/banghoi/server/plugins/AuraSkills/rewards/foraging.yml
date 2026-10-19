@@ -1,0 +1,30 @@
+# DuckyMoMo: bản gốc AuraSkills 2.4.0 đã chỉnh theo «mức cơ bản» (docs/HANDOFF.md, mục 19/10: Kỹ năng nghề). Sửa trên trang Cài đặt › Kỹ năng.
+# Mốc 5/10/15/20: thưởng xu (lệnh eco, phần tử đầu tiên mỗi mốc; sửa trên Cài đặt). Chỉ số chỉ ở mốc ghi dưới đây.
+patterns: []
+levels:
+  5:
+  - type: command
+    executor: console
+    command: eco give {player} 200
+    menu_message: '&aThưởng xu mốc cấp'
+  10:
+  - type: command
+    executor: console
+    command: eco give {player} 400
+    menu_message: '&aThưởng xu mốc cấp'
+  - type: stat
+    stat: strength
+    value: 1
+  15:
+  - type: command
+    executor: console
+    command: eco give {player} 700
+    menu_message: '&aThưởng xu mốc cấp'
+  20:
+  - type: command
+    executor: console
+    command: eco give {player} 1200
+    menu_message: '&aThưởng xu mốc cấp'
+  - type: stat
+    stat: strength
+    value: 1

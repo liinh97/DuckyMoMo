@@ -165,6 +165,20 @@ Triển khai: kiểm tra không ai online (lệnh riêng) → `docker compose up
 - [ ] Cài đặt › Cốt truyện › Lữ khách: đổi giờ dời/thưởng → lưu không lỗi. Web: trang chủ (Cốt truyện › Lữ khách), trang tài khoản thẻ 🧭 Lữ khách.
 - [ ] (Lưu ý) Người Gác Cổng (chương 1) giờ nhắc /lukhach.
 
+## 4k. Kỹ năng nghề AuraSkills (/skills) — 19/10
+- [ ] Log banghoi-1: AuraSkills 2.4.0 bật, không lỗi đọc file (skills/abilities/mana_abilities/stats/rewards/loot); "Kỹ năng nghề: làm lại mỗi mùa".
+      `/skills` chỉ có 6 kỹ năng (Trồng trọt, Đốn gỗ, Đào mỏ, Câu cá, Đào đất, Pha chế), chữ tiếng Việt (còn sót tiếng Anh thì ghi lại), trần 20.
+- [ ] Đào quặng/chặt gỗ/trồng/câu cá lên kinh nghiệm; đặt rồi phá lại khối không lên; trong vùng spawn và Thái Ấp không lên; AFK máy câu không lên.
+- [ ] Thử nhanh: `/skills skill setlevel <tên> mining 20` → nhận đủ thưởng 200/400/700/1200 xu? (setlevel có phát thưởng mốc không: kiểm), `/stats` Sức mạnh +1.
+      Max cả 6: máu thêm đúng 1 tim, sát thương +2%. Không có chí mạng.
+- [ ] Khả năng mana (cấp ≥10): chuột phải cầm rìu rồi chặt gỗ → đốn cả cây ~5 giây, hồi chiêu 5 phút; cuốc → đào nhanh; xẻng → xúc đất; cuốc đất → tự gieo.
+      Bedrock dùng được không (chạm giữ?). Không có khả năng mana đánh nhau.
+- [ ] Đấu Trường (`dautruong`): vào trận máu đúng 10 tim, sát thương không cộng; ra khỏi Đấu Trường máu trở lại như cũ.
+- [ ] Câu cá: vẫn ra cá EvenMoreFish, không ra thêm đồ "rare/epic" của AuraSkills; đào đất không rơi đồ lạ.
+- [ ] Cài đặt › Bang Hội Chiến › Nghề › Kỹ năng nghề: đổi trần (vd 25), thưởng cấp 5 → lưu không lỗi, `/skills` thấy số mới (thưởng: xem file rewards/*.yml đổi đủ 6 file).
+- [ ] Mùa mới (đổi leaderboard.season-start): người vào game được báo "kỹ năng nghề đã làm lại", `/skills` về 0, máu/sát thương cộng thêm biến mất.
+- [ ] Web: trang chủ thẻ ⚒ Kỹ năng nghề (danh sách, thưởng, top 10); trang tài khoản thẻ Kỹ năng nghề đúng cấp.
+
 ## 5. Quảng trường Vinh danh (sảnh)
 - [ ] (CHƯA CẦN, làm khi gần mở server) Chọn chỗ trống ở sảnh (map sakura). Đứng, quay mặt về phía người xem: `/vinhdanh dat moinhat tieude`, rồi `bachu`, `chienthan`, `phuho`,
       `kientrucsu`, `dautruong`, `pet` ở các chỗ khác. Bảng chữ nổi + đầu người chơi đúng hướng, không đè nhau.

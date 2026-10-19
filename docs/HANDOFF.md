@@ -61,6 +61,7 @@
 - **Thăng Cấp `/capdo`** (LevelUp, LevelUpPapi): 100 cấp, xu + giờ chơi + điểm hạ gục (quái +1, người +10), điểm đổi đặc quyền tiện ích,
   `[Cấp N]` trên Tab, mặc định làm lại mỗi mùa.
 - Nhỏ: bảng bên phải gọn 8 dòng ngắn; dọn rác báo 2 lần, im khi 0 món; mẹo boss bar mới; giới hạn người mỗi server; lệnh hay dùng.
+- **Kỹ năng nghề AuraSkills `/skills` (19/10)**: mức cơ bản, chạy song song uJobs, làm lại mỗi mùa. Chi tiết: mục "### 19/10: Kỹ năng nghề"; thử: TEST-CHECKLIST 4k.
 - **Lữ khách `/lukhach` (19/10, đã triển khai, chưa thử)**: 4 NPC Citizens lang thang ở đất hoang, mỗi người kể về một nơi phía sau Cổng Hoang,
   chỉ đường theo tình trạng cổng, đi qua cổng rồi về kể có thưởng. Chi tiết: mục "### 19/10: Lữ khách"; thử: TEST-CHECKLIST 4j.
 - **Cốt truyện (19/10, đã triển khai, chờ đặt NPC + thử)**: Citizens (NPC) + BetonQuest (hội thoại, nhiệm vụ) ở Bang Hội Chiến; chương 1 «Điềm Báo».
@@ -396,6 +397,24 @@
   huongdan.yml (trang CỐT TRUYỆN trong chương Bang Hội Chiến; CHƯA chạy ./ops/huongdan.sh).
 - Chưa chắc: NPC tên có dấu cách theo byName (cú pháp ngoặc kép của BetonQuest 2.1+); kiểu dialog trên Bedrock/Geyser và Java cũ; objective `fish`
   không dùng vì EvenMoreFish có thể đổi cá. Chương sau: nối vào sự kiện "Trái Đất lâm nguy".
+
+### 19/10: Kỹ năng nghề — AuraSkills «mức cơ bản»
+- Từ bài tuyển người Hydronic ("Phát triển kỹ năng"). Đã so: AuraSkills (chọn), mcMMO (Spigot trả phí, không có Modrinth), StormMMO/orbit/rpgskills (mới, ít người),
+  ValhallaMMO/Fabled (không có 26.x). Người dùng chốt: trần 20 có Cài đặt; khả năng mana trùng Xưởng chỉ bậc 1; chỉ số chiến đấu rất ít có trần;
+  chạy song song uJobs; làm lại mỗi mùa; Đấu Trường tắt chỉ số; không trả tiền theo kinh nghiệm; không bán tăng tốc cày.
+- LƯU Ý đã phát hiện: mặc định kỹ năng NGHỀ cũng cộng chỉ số chiến đấu (Trồng trọt: Máu + Sức mạnh…) → đã viết lại toàn bộ rewards/*.yml.
+- File repo `modes/banghoi/server/plugins/AuraSkills/` (sinh từ bản gốc 2.4.0 bằng script, pyyaml nên mất comment gốc): config.yml (vi, anti_afk bật,
+  jobs tắt, crit tắt, disabled_worlds [dautruong] = gỡ máu/sát thương cộng thêm (đã đọc HpTrait/DamageListener), blocked_worlds [thaiap],
+  WorldGuard blocked_regions [spawn], update_loot_tables false, check_for_updates false), skills.yml (6 kỹ năng, max_level 20), abilities.yml
+  (tắt 15 khả năng đánh nhau/đồ rơi; còn lại max_level 4: may mắn 2/bậc, kinh nghiệm 5%/bậc…), mana_abilities.yml (replenish/treecapitator/
+  speed_mine/terraform: unlock 10, max_level 1, 5 giây, hồi 300 giây; tắt 4 cái đánh nhau), stats.yml (tắt regeneration/toughness/crit/speed +
+  trait tương ứng, hp health_scaling false), rewards/*.yml (mốc 5/10/15/20 lệnh `eco give {player} N` ở phần tử 0; chỉ số: Máu +1 ở Trồng trọt 20
+  và Câu cá 20; Sức mạnh +1 ở Đốn gỗ 10 & 20, Đào mỏ 20, Đào đất 20, Pha chế 20 → tổng +1 tim, +2% sát thương), loot/*.yml base_chance 0.
+- Panel: mục cài đặt có thêm `targets` (ghi một giá trị vào nhiều file/đường dẫn) và `template` ("eco give {player} {value}"). Nhóm Nghề › Kỹ năng nghề.
+- DuckyMoMoCore `SkillSeason` (config aura-skills.reset-each-season, kynang-mua.yml): AuraSkills chỉ reset được người ONLINE (`skills skill reset <tên>`),
+  nên mùa mới thì reset lúc từng người vào game. Web: site `skills_info()` (/api/info → kynang, trang chủ thẻ ⚒), panel `skill_levels()` (tài khoản);
+  dữ liệu đọc plugins/AuraSkills/userdata/<uuid>.yml (không có tên → usercache.json).
+- Chưa chắc: setlevel có phát thưởng mốc không; khả năng mana trên Bedrock; bản tiếng Việt (~82% số dòng so với tiếng Anh).
 
 ### 19/10: Lữ khách — NPC lang thang kể chuyện theo Cổng Hoang (ĐÃ TRIỂN KHAI, CHƯA THỬ)
 - Người dùng: "các npc xuất hiện ngẫu nhiên trên bản đồ và lấy nội dung câu chuyện dựa trên tên các cổng" → mỗi NPC gắn một dungeon đích

@@ -944,6 +944,11 @@ wild-gates:
 #  chain: chuỗi chìa khoá (requires = phải vượt dungeon trước) · hidden: ẩn (admin đứng tại chỗ gõ /dungeon datan <mã>)
 #  luck: Vé Vận Mệnh rơi hiếm · ticket: vé cá nhân mua bằng xu · server: cả server góp quỹ mở (open-days 0 = tới hết mùa)
 #  gate: chỉ vào được qua Cổng Hoang (/conghoang). Chưa có dungeon kiểu luck nào thì Vé Vận Mệnh không rơi.
+# Kỹ năng nghề AuraSkills (/skills): làm lại từ cấp 0 mỗi mùa (khi leaderboard.season-start đổi). AuraSkills chỉ xoá được người đang online,
+# nên DuckyMoMoCore xoá lúc từng người vào game lần đầu trong mùa mới (kynang-mua.yml). Cấu hình kỹ năng: plugins/AuraSkills/.
+aura-skills:
+  reset-each-season: true
+
 # Lữ khách (/lukhach, cần Citizens + BetonQuest): mỗi lữ khách kể chuyện về một nơi phía sau Cổng Hoang (dungeon: mã trong wild-gates.dungeons).
 # NPC Citizens đứng ở đất hoang ngẫu nhiên (luật chọn chỗ của Cổng Hoang), mỗi move-hours giờ dời đi chỗ khác, báo tin đồn (vùng + hướng).
 # Tên NPC phải trùng tên trong BetonQuest (plugins/BetonQuest/QuestPackages/cotruyen/lukhach/), đổi tên thì sửa cả hai chỗ.

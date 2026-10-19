@@ -51,6 +51,8 @@ services:
       # simple-voice-chat (15/10): voice theo khoảng cách cho người chơi Java có cài mod; cấu hình ở plugins/voicechat/, đi qua proxy (UDP 24454).
       # betonquest (19/10, GPL, ghim bản 3.2.0) = cốt truyện + hội thoại NPC + nhiệm vụ nhiều bước; NPC là Citizens (link ghim ở PLUGINS).
       #   Nhiệm vụ: server/plugins/BetonQuest/QuestPackages/ (mỗi chương một thư mục). Tắt tự cập nhật trong config.yml (itzg quản lý jar).
+      # auraskills (19/10, GPL, ghim bản 2.4.0) = kỹ năng nghề /skills ở «mức cơ bản»: 6 kỹ năng (trồng, đốn gỗ, đào mỏ, câu cá, đào đất, pha chế),
+      #   trần 20, chỉ số chiến đấu rất nhỏ (tổng +1 tim, +2% sát thương), khả năng mana bậc 1; config server/plugins/AuraSkills/; reset mỗi mùa (DuckyMoMoCore).
       MODRINTH_PROJECTS: |
         luckperms
         worldedit
@@ -88,6 +90,7 @@ services:
         holomobhealth:2uTDD4QT
         holomobhealth-packetevents:ZobuhUo8
         betonquest:Sfp4oOVr
+        auraskills:9rSJ3THD
       # Plugin không có (hoặc chưa có bản 26.2) trên Modrinth: ghim link tải cụ thể. Nâng cấp: thay link.
       #   Shopkeepers 2.28.1 (dev.bukkit / forgecdn, Spigot ghi đã thử 26.2), SiegeWar 3.7.0 (GitHub), OldCombatMechanics 2.7.0 (GitHub, combat kiểu 1.8),
       #   EssentialsX bản dev #1832 (bản chính thức 2.22.0 mới tới 26.1.2): lõi + Chat + Spawn

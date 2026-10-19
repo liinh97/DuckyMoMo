@@ -1,9 +1,77 @@
 # Bàn giao dự án DuckyMoMo Network
 
-> Dùng file này để tiếp tục ở session hoặc Project Claude khác. Cập nhật: 16/10/2026 rạng sáng (mục 16–25 + DANH SÁCH CẦN THỬ) (đọc mục 00 rồi mục 0).
+> Dùng file này để tiếp tục ở session hoặc tài khoản Claude khác. Cập nhật: 19/10/2026 sáng. ĐỌC MỤC 000 TRƯỚC, rồi mục 00, rồi mục 0.
 > Đọc kèm: `README.md`, `docs/minecraft-server-plan.md` (kế hoạch, quyết định), `docs/network-architecture.md` (kiến trúc).
 
 ---
+
+## 000. BẮT ĐẦU Ở ĐÂY — tình trạng 19/10/2026 sáng (chuyển sang tài khoản Claude khác)
+
+### Người dùng và cách làm việc (giữ nguyên)
+- Chủ server: Linh (admin trong game). Trả lời **tiếng Việt**, ngắn gọn, nói rõ chỗ chưa chắc. Người dùng hay gửi ảnh chụp server khác
+  (UniMC, CherryMC) để lấy Ý TƯỞNG / LOGIC: chỉ học logic, KHÔNG chép y hệt chữ, hình, tên của họ.
+- Người dùng thích: cái gì cũng chỉnh được trên **trang Cài đặt** (panel); có gì mới thì ghi vào **cẩm nang** (`modes/_network/camnang.yml`),
+  lệnh vào `lenh-con.yml` + `lenh-vi.yml` (+ `lenh-hay-dung.yml`), người chơi cần biết thì `huongdan.yml` + `./ops/huongdan.sh`,
+  và có mặt trên **web** (trang chủ khi chưa đăng nhập + trang tài khoản khi đăng nhập). Việc chưa thử ghi vào `docs/TEST-CHECKLIST.md`.
+- Commit theo từng việc (kèm dòng Co-Authored-By theo hệ thống), **push chỉ khi người dùng bảo**. `site/config/site.yml` (số tài khoản ngân hàng)
+  KHÔNG commit. Nhánh: `claude/happy-ritchie-2p60v7`. Lúc ghi mục này còn ~18 commit CHƯA push (người dùng chưa bảo push).
+- Mọi việc (build, khởi động lại, RCON, Docker) làm trên máy nhà: WSL Ubuntu-22.04, repo `/home/developer/works/DuckyMoMo`.
+
+### BÀI HỌC (đã gây sự cố thật — làm đúng)
+1. **Kiểm tra người online TRƯỚC khi khởi động lại, bằng một lệnh RIÊNG** (`for s in lobby banghoi-1 practice-1; do docker compose exec -T $s
+   rcon-cli minecraft:list; done`), đọc kết quả, có người thì hỏi người dùng. KHÔNG gộp lệnh kiểm tra với lệnh restart (18/10 đã đá Linh ra).
+2. **Proxy (Velocity, itzg mc-proxy):** thêm plugin vào `PLUGINS` hoặc thêm biến `CFG_*` thì phải `docker compose up -d --force-recreate proxy`
+   (restart KHÔNG nhận env mới). File trong `proxy/config/` có `${CFG_…}` chỉ được điền khi chép sang `data/proxy`; bản chép cũ mới hơn thì KHÔNG
+   chép lại → lỡ chép thiếu biến thì xoá file trong `data/proxy/plugins/…` rồi force-recreate.
+3. **Tạo lại proxy thì PHẢI tạo lại relay** (cổng VPS dùng chung mạng với proxy): `docker compose --profile tunnel up -d --force-recreate relay`,
+   rồi kiểm `docker exec duckymomo-relay-1 wg show` có "latest handshake". Quên là người ngoài KHÔNG vào được server (19/10 đã bị).
+4. **Sảnh và Practice không có PlaceholderAPI / Towny / MyPet:** lớp nào có thể nạp ở đó thì KHÔNG được tham chiếu PlaceholderExpansion hay Towny
+   (tách lớp *Papi riêng như SeasonsPapi, LevelUpPapi; tham chiếu chéo qua `Shared.java`). Sau khi sửa DuckyMoMoCore, khởi động lại sảnh và
+   xem log có "Enabling DuckyMoMoCore" mà không NoClassDefFoundError.
+5. **Trang Cài đặt:** thêm khoá cài đặt thì kiểm trùng khoá bằng ruamel trong container panel (`docker exec -i duckymomo-panel-1 python3` +
+   `ruamel.yaml.YAML().load`); trùng khoá là hỏng cả trang. Chuỗi trong YAML có dấu " hay ": " thì dùng «» hoặc đặt trong ngoặc kép.
+6. **Sửa JS của site/panel:** tách khối <script> chạy `node --check`, rồi mở bằng Playwright (`/usr/bin/google-chrome`) bắt `pageerror`.
+   Site và panel là image build: sửa `site/` hoặc `panel/` xong phải `docker compose up -d --build site panel`.
+7. **Lệnh kiểm tra trên server thật chỉ dùng loại ĐỌC** (`execute if block`…), không `fill`/`setblock` (19/10 lỡ chạy một lệnh fill, may không mất gì).
+8. **Không chạy hai lệnh nối nhau bằng `;` khi lệnh sau phụ thuộc lệnh trước thành công** (19/10 commit lỡ một file YAML hỏng vì kiểm tra lỗi
+   nhưng commit vẫn chạy): dùng `&&`.
+
+### Hạ tầng hiện tại (19/10)
+- Người chơi (cả chủ server) vào qua **VPS** 125.212.218.74 / `mc.goc6.io.vn` (Java 25565, Bedrock 19132), relay WireGuard giữ IP thật.
+  **playit ĐÃ BỎ** (19/10: container + `tunnel/` đã xoá; `PLAYIT_SECRET_KEY` trong .env không còn dùng).
+- Server: proxy (Velocity + Geyser/Floodgate, AuthMe-Velocity, SkinsRestorer, **LuckPerms-Velocity** mới 19/10), lobby (tối đa 200 người),
+  banghoi-1 (100, RAM 6G), practice-1 (100). MariaDB + Redis dùng chung (LuckPerms, AuthMe…).
+- AuthMe: **phiên đăng nhập BẬT 1 ngày** (cùng IP vào lại khỏi gõ mật khẩu; Cài đặt › Sảnh › Đăng nhập). Chỉ an toàn vì mọi người vào qua VPS
+  (IP thật); mở lại đường vào chung IP (như playit) thì PHẢI tắt. Người có bản quyền: `/premium` vào thẳng.
+- EliteMobs **10.9.10**, tiếng Việt (`/em language vietnamese`), preset Content-Only, đã cài 11 gói miễn phí (18 dungeon). itzg KHÔNG tự nâng
+  EliteMobs (tên file không đổi): nâng tay bằng jar Modrinth và kiểm lại các chỗ DungeonGate đọc bằng reflection (javap) trước khi thay.
+
+### Làm trong 18–19/10 (chi tiết ở các mục ### bên dưới; tên lớp trong network-core/core-paper/src/main/java/vn/duckymomo/core/paper/)
+- **Cổng Dungeon `/dungeon`** (DungeonGate): khoá từng gói EliteMobs bằng quyền riêng; kiểu chain (10 tầng, **chìa khoá thật** do trùm cuối rơi,
+  dùng 1 lần mở vĩnh viễn, cài đặt cho trao đổi hay không), hidden (Thánh Đường Bóng Tối: **server tự giấu lối vào ngẫu nhiên**, admin xem
+  `/dungeon ds` có nút [Tới]), gate (Cống Ngầm, Bắc Cực chỉ vào qua Cổng Hoang), ticket, server (quỹ chung); điều kiện phụ (nhóm, pet, ngày,
+  giờ, mùa, Bá chủ, thành tích), Mảnh Chìa, Dungeon của tuần, kỷ lục tốc độ. Kiểu luck hiện KHÔNG có dungeon nào (Vé Vận Mệnh không rơi).
+- **Cổng Hoang `/conghoang`** (WildGates): 4 cổng/mùa (= 4 đích), 7 ngày thêm 1, chỉ khi đã có `leaderboard.season-start`; 14 kiểu ngụy trang
+  (cả dưới nước), độ khó nhận ra theo bậc dungeon, tin đồn theo ngữ cảnh; thị trấn giữ cổng thu phí, chiếm thị trấn là có cổng.
+- **Skin theo rank**: LuckPerms trên proxy; SkinsRestorer bật quyền từng skin; `/rank skin them <bậc> <tên> <link>` khoá skin + nút tạo skin.
+- **Trang quản trị › Hệ thống** (`panel/hethong.html`): TPS/RAM/online từng server, lưu, dọn rác, nạp plugin, khởi động lại có đếm ngược + huỷ.
+  Proxy KHÔNG có nút (người dùng chưa quyết thêm docker-socket-proxy).
+- **Xưởng chế tạo `/xuong` làm lại** (Workshop): logic hiệu ứng + độ bền + thời hạn, 20 món, 19 hiệu ứng, bảng chế 3×3, bảng sửa từng món trên Cài đặt.
+- **Cài đặt cá nhân `/caidat`** (PlayerSettings): 19 công tắc, lưu LuckPerms meta `dmmcaidat.<mã>`, đổi được trên trang tài khoản (web).
+- **Thăng Cấp `/capdo`** (LevelUp, LevelUpPapi): 100 cấp, xu + giờ chơi + điểm hạ gục (quái +1, người +10), điểm đổi đặc quyền tiện ích,
+  `[Cấp N]` trên Tab, mặc định làm lại mỗi mùa.
+- Nhỏ: bảng bên phải gọn 8 dòng ngắn; dọn rác báo 2 lần, im khi 0 món; mẹo boss bar mới; giới hạn người mỗi server; lệnh hay dùng.
+
+### Việc tiếp theo
+1. **Push** khi người dùng bảo (kiểm tra trước khi push trong worktree tạm: xem mục "Kiểm tra trước khi push" của CLAUDE.md; KHÔNG chạy
+   `./ops/init.sh` trong repo thật vì `.env` và `data/` thật đang dùng).
+2. **Người dùng test trong game** theo `docs/TEST-CHECKLIST.md` mục 4d, 4d+, 4e, 4f, 4g, 4h → sửa lỗi theo ảnh họ gửi.
+3. **Chờ quyết (đã note):** bảng xếp hạng dán tường (thuộc hệ thống vinh danh); mảnh dungeon → đổi đồ + bảng đồ rơi/tỉ lệ trên Cài đặt
+   (đồ EliteMobs lấy vào thư viện bằng `/dmm luudo`); Đảo Hỗn Mang (khu boss) làm đích Cổng Hoang; mua thêm gói dungeon; sách CE trong `/ce`
+   có làm Xưởng mất giá không; tắt kỹ năng class EliteMobs ngoài dungeon (`allowClassAbilitiesOutsideEliteMobsWorlds`); bảng sửa đặc quyền
+   Thăng Cấp trên web; nút khởi động lại proxy trên trang Hệ thống.
+4. **Hoãn từ trước:** ngày mở mùa 1 (`leaderboard.season-start`; đặt ngày thì Cổng Hoang tự chạy và Thăng Cấp làm lại), đặt Quảng trường
+   Vinh danh ở sảnh, đặc quyền top, voice chat.
 
 ## 00. Đọc trước nhất — tình trạng 15/10/2026 tối (chuyển sang session cloud)
 
@@ -26,7 +94,7 @@
 ### Đang chạy (15/10 tối)
 - Mọi container chạy bình thường; 3 server Paper khởi động lại lúc 19:26 (không ai online) với plugin mới nhất.
 - Người chơi vào qua VPS **Vinahost CheapSSD 1** (Viettel TP.HCM, IP 125.212.218.74, `mc.goc6.io.vn`, Java 25565 / Bedrock 19132, vote 8192).
-  Relay WireGuard nhà → VPS, giữ IP thật; BBR trên đường về. Dự phòng: playit. Chi tiết: `relay/`, `relay/vps/README.md`, mục 0.
+  Relay WireGuard nhà → VPS, giữ IP thật; BBR trên đường về. (playit đã bỏ 19/10.) Chi tiết: `relay/`, `relay/vps/README.md`, mục 0.
 - Ping giật khi chạy: nguyên nhân là mất gói trên đường Viettel nhà; Viettel khởi động lại modem từ xa thì hết (0% loss).
 
 ### Làm trong 14–15/10 (theo thứ tự commit)

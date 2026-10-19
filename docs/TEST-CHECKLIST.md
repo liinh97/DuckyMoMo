@@ -181,6 +181,20 @@ Triển khai: kiểm tra không ai online (lệnh riêng) → `docker compose up
 - [ ] Mùa mới (đổi leaderboard.season-start): người vào game được báo "kỹ năng nghề đã làm lại", `/skills` về 0, máu/sát thương cộng thêm biến mất.
 - [ ] Web: trang chủ thẻ ⚒ Kỹ năng nghề (danh sách, thưởng, top 10); trang tài khoản thẻ Kỹ năng nghề đúng cấp.
 
+## 4l. Việt hoá toàn server — 19/10
+Đổi ngôn ngữ máy sang English rồi thử, vẫn phải thấy tiếng Việt (Towny, SiegeWar, QuickShop, SkinsRestorer, Essentials đều ép tiếng Việt).
+- [ ] Essentials: /tpa, /home, /warp, /bal, /pay, /msg, /kit, bị cấm chat… tiếng Việt; Bang Hội Chiến + Practice.
+- [ ] Towny/SiegeWar: /t, /n, /res, /plot, thông báo vây thành, Ốm Chiến Tranh; trang quản trị › Hệ thống vẫn hiện RAM/uptime (panel đọc gc tiếng Việt).
+- [ ] QuickShop: tạo shop rương, mua bán, menu /qs browse (nếu tiếng Anh: khởi động lại banghoi-1 rồi thử lại).
+- [ ] zAuctionHouse /ah: chợ, đăng bán, xác nhận, đồ hết hạn, lịch sử, tuỳ chọn; mô tả món (Người bán, Giá, Hết hạn sau…).
+- [ ] Shopkeepers: mua bán với người bán ở spawn; tự mở shop (vật phẩm tạo shop) → trình sửa tiếng Việt; ShopkeepersAddon menu tìm shop.
+- [ ] EvenMoreFish /emf: menu chính, bán cá, nhật ký, thi câu; CrazyEnchantments /ce: tên phù phép trên đồ MỚI tiếng Việt (đồ cũ có thể còn dòng
+      tiếng Anh tới khi CE vẽ lại), cuộn giấy, bụi, thợ rèn, thợ tái chế. TradePro /trade. AuraSkills /skills.
+- [ ] Practice: Duels (/duel, /party, hàng chờ, /kit, bộ đồ tự tạo, xem lại trận) tiếng Việt, Bedrock dùng menu form tiếng Việt.
+- [ ] Sau khi khởi động lại proxy (nhớ tạo lại relay): màn kiểm tra chống bot Sonar, /skin (SkinsRestorer), tin Geyser cho Bedrock.
+- [ ] Sau khởi động lại: SimplePets (/pet), PlayerParticles (/pp).
+- [ ] WorldGuard: phá khối ở spawn → "Khu an toàn! Ở spawn không làm việc này được."
+
 ## 5. Quảng trường Vinh danh (sảnh)
 - [ ] (CHƯA CẦN, làm khi gần mở server) Chọn chỗ trống ở sảnh (map sakura). Đứng, quay mặt về phía người xem: `/vinhdanh dat moinhat tieude`, rồi `bachu`, `chienthan`, `phuho`,
       `kientrucsu`, `dautruong`, `pet` ở các chỗ khác. Bảng chữ nổi + đầu người chơi đúng hướng, không đè nhau.

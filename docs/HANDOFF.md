@@ -64,6 +64,8 @@
 - **Thăng Cấp `/capdo`** (LevelUp, LevelUpPapi): 100 cấp, xu + giờ chơi + điểm hạ gục (quái +1, người +10), điểm đổi đặc quyền tiện ích,
   `[Cấp N]` trên Tab, mặc định làm lại mỗi mùa.
 - Nhỏ: bảng bên phải gọn 8 dòng ngắn; dọn rác báo 2 lần, im khi 0 món; mẹo boss bar mới; giới hạn người mỗi server; lệnh hay dùng.
+- **Việt hoá toàn server (19/10 tối)**: mọi plugin người chơi gặp đã tiếng Việt (ép cho cả người để máy tiếng Anh). Chi tiết: mục
+  "### 19/10: Việt hoá toàn server"; thử: TEST-CHECKLIST 4l. Vài chỗ chỉ có hiệu lực sau khi khởi động lại (proxy, QuickShop, SimplePets…).
 - **Kỹ năng nghề AuraSkills `/skills` (19/10)**: mức cơ bản, chạy song song uJobs, làm lại mỗi mùa. Chi tiết: mục "### 19/10: Kỹ năng nghề"; thử: TEST-CHECKLIST 4k.
 - **Lữ khách `/lukhach` (19/10, đã triển khai, chưa thử)**: 4 NPC Citizens lang thang ở đất hoang, mỗi người kể về một nơi phía sau Cổng Hoang,
   chỉ đường theo tình trạng cổng, đi qua cổng rồi về kể có thưởng. Chi tiết: mục "### 19/10: Lữ khách"; thử: TEST-CHECKLIST 4j.
@@ -400,6 +402,31 @@
   huongdan.yml (trang CỐT TRUYỆN trong chương Bang Hội Chiến; CHƯA chạy ./ops/huongdan.sh).
 - Chưa chắc: NPC tên có dấu cách theo byName (cú pháp ngoặc kép của BetonQuest 2.1+); kiểu dialog trên Bedrock/Geyser và Java cũ; objective `fish`
   không dùng vì EvenMoreFish có thể đổi cá. Chương sau: nối vào sự kiện "Trái Đất lâm nguy".
+
+### 19/10: Việt hoá toàn server
+- Người dùng: "toàn server có mục nào chưa việt hoá thì làm nốt". Nguyên tắc: dịch mọi thứ NGƯỜI CHƠI gặp; lệnh/thông báo CHỈ ADMIN thấy
+  (Citizens, /bq, /duels admin, zMenu admin, Sonar thống kê, GrimAC cảnh báo, nhật ký console Towny flatfile_*) giữ tiếng Anh.
+- Công cụ `tools/vi/`: `yamlvi.py` (dump / apply theo đường dẫn / replace câu khớp nguyên văn; giữ chú thích bằng ruamel; kiểm biến
+  {x} %x% <x>, `--no-angle` khi <x> chỉ là chữ cú pháp; khớp được khoá có dấu chấm), bản dịch JSON ở `tools/vi/bandich/`, script riêng:
+  essentials.py, towny.py (Towny + SiegeWar), quickshop.py, evenmorefish.py, crazyenchantments.py (tên/mô tả 105 phù phép từ ce-vi.yml),
+  auraskills-vi.py. Chạy trong image panel (có ruamel): `docker run --rm -e PANEL_PASSWORD=x -v "$PWD/tools":/t:ro -v <thư mục>:/f
+  --entrypoint python3 duckymomo-panel /t/vi/yamlvi.py apply /f/<file> /t/vi/bandich/<x>.json`. Nâng plugin: dump lại, dịch câu mới.
+- Đã làm (repo = file bản dịch; file do trang Cài đặt sửa thì chỉ sửa ở data, không đưa vào repo):
+  EssentialsX (messages/messages_vi.properties đủ 1634 câu, config locale: vi — banghoi + practice; panel đọc whois/gc cả tiếng Việt),
+  Towny 1842 câu + SiegeWar 412 câu (lang/override/global.yml đè MỌI ngôn ngữ, Towny language: vi-VN.yml; bỏ msg_ptw_warning_* vì Towny cấm),
+  QuickShop-Hikari (overrides/vi_vn 238 câu, game-language vi_vn + enabled-languages [vi_vn]), EvenMoreFish (+80 câu + mọi menu gui/),
+  Duels 772 câu (Practice), zAuctionHouse (messages + mọi menu + mô tả món + kiểu sắp xếp; config.yml chỉ ở data vì Cài đặt quản lý),
+  Shopkeepers (lang/language-vi.yml 657 câu, language: vi; người chơi CÓ quyền tự mở shop nên dịch cả trình sửa), ShopkeepersAddon,
+  TradePro, CrazyEnchantments (Messages + tên/mô tả phù phép trên đồ + menu /ce, cuộn giấy, bụi, pha lê, thợ rèn/tái chế; CE lưu phù phép
+  bằng PDC nên đổi tên an toàn; Enchantments.yml/config.yml chỉ ở data), SimplePets (sảnh + banghoi), Sonar (proxy, màn kiểm tra chống bot),
+  SkinsRestorer (locale vi, perIssuerLocale false, proxy + 3 server), PlayerParticles vi_VN, Geyser default-locale vi_vn, Chunky vi,
+  OldCombatMechanics, GrimAC (câu đá người chơi), zMenu (câu người chơi gặp), uJobs (1 dòng sót), WorldGuard (deny-message vùng spawn).
+  AuraSkills, BetonQuest đã làm trước đó. HoloMobHealth tự lấy tên quái theo ngôn ngữ máy (không cần), squaremap đã lang-vi.
+- CHƯA CÓ HIỆU LỰC tới khi khởi động lại: proxy (Sonar, SkinsRestorer proxy, Geyser; tạo lại proxy thì PHẢI tạo lại relay), QuickShop
+  (có thể), SimplePets (chỉ đọc thông báo lúc bật), PlayerParticles + SkinsRestorer ở server con (lệnh nạp lại không chạy từ console).
+- Không dịch: DiscordSRV (đang tự tắt vì chưa có token bot), voicechat (chữ nằm ở mod phía người chơi).
+- Lưu ý: bản Việt có sẵn của vài plugin có lỗi đã sửa: Towny (3 câu sai %s, trong đó 1 câu thừa %s dễ lỗi), Essentials (2 câu thiếu {1}),
+  AuraSkills (viết cho cấu trúc cũ, khoảng chục mục bị bỏ qua).
 
 ### 19/10: Kỹ năng nghề — AuraSkills «mức cơ bản»
 - Từ bài tuyển người Hydronic ("Phát triển kỹ năng"). Đã so: AuraSkills (chọn), mcMMO (Spigot trả phí, không có Modrinth), StormMMO/orbit/rpgskills (mới, ít người),

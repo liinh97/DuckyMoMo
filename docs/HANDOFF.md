@@ -1172,7 +1172,7 @@ Log: `docker compose logs banghoi-1 --since 5m | grep -iE "DuckyMoMoCore|Mùa:|V
 - `modes/banghoi/compose.yaml`. Modrinth: `towny` (0.103.2.0), `vaultunlocked` (hiện tên Vault 2.20.3), `coreprotect` (24.1), `worldguard` (7.0.19). `PLUGINS` (ghim link): SiegeWar 3.7.0 (GitHub), OldCombatMechanics 2.7.0 (GitHub), EssentialsX + Chat + Spawn bản dev #1832 `2.22.1-dev+27` (ci.ender.zone, vì bản chính thức 2.22.0 mới tới 26.1.2; dấu `+` trong link phải viết `%2B`).
 - Đã chạy `/swa install`, `/ta reload all`. Công thành: bật ở `world`, tắt ở `world_nether`, `world_the_end` (`/townyworld <world> toggle warallowed on|off`).
 - Towny đang lưu **flatfile** (chưa chuyển sang MariaDB `mode_banghoi`). CoreProtect đang dùng SQLite mặc định. Cân nhắc chuyển trước khi mở công khai.
-- Towny không có bản dịch tiếng Việt.
+- Towny CÓ bản vi-VN (19/10 đã bật, ép cho mọi người qua lang/override/global.yml; xem mục Việt hoá toàn server).
 - OldCombatMechanics dùng "modeset": `old` (1.8), `new`. `worlds.__default__` quyết định ai được dùng kiểu nào; người chơi tự đổi bằng `/ocm mode` nếu danh sách có nhiều kiểu.
 
 ### Sao lưu tự động (08/10/2026)

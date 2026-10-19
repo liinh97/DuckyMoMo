@@ -399,8 +399,8 @@
   tên luôn lấy từ phiên phía server; giá donate server tự tính; CSRF (Origin/Sec-Fetch-Site); cookie HttpOnly/SameSite; đường dẫn file tĩnh không
   thoát được thư mục; mã /web SecureRandom; mọi chỗ HTML chèn dữ liệu người chơi đều esc(); mật khẩu .env mạnh, chưa từng commit; server con chỉ
   nghe trong Docker; DuckyMoMoCore không có xử lý nặng mỗi tick (PlayerMove đều thoát sớm). Lúc rảnh: TPS 20, 0,4 ms/tick.
-- CÒN LẠI (chưa làm, cần người dùng): (a) Trạm 6 Traefik `--api.insecure=true` + cổng 8091 mở 0.0.0.0 trên máy (dự án tram6, chỉ trong LAN nếu
-  router không mở cổng) → nên tắt khi live; (b) PLAYIT_SECRET_KEY còn trong .env (playit đã bỏ) → thu hồi trên trang playit rồi xoá;
+- CÒN LẠI (chưa làm, cần người dùng): (a) ĐÃ LÀM: cổng bảng Traefik 8091 của Trạm 6 chỉ mở 127.0.0.1 (sửa ~/works/tram6/docker-compose.yml,
+  tạo lại gateway; CHƯA commit bên tram6 vì repo đó có thay đổi dở của phiên khác); (b) ĐÃ LÀM: người dùng xoá khoá trên playit, mình xoá PLAYIT_SECRET_KEY khỏi .env;
   (c) proxySharedSecret AuthMe đã hiện trong log phiên Claude (chỉ lưu ở máy) → muốn chắc thì đổi AUTHME_SECRET (khởi động lại proxy+lobby+relay);
   (d) SAO LƯU: phát hiện PAUSE_IF_NO_PLAYERS "true" → server vắng là KHÔNG sao lưu (bản mới nhất 07:06, cả chiều 19/10 chưa lưu) → đổi "false" ở
   mọi compose, đã `backup now` cả 4 server 21:57. Ngoài máy: dịch vụ backup-offsite (rclone, profile offsite, infra/backup-offsite.sh) + ./ops/saoluu-ngoai.sh;

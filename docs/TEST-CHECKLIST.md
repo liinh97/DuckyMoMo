@@ -129,6 +129,14 @@ bật công tắc vây thành, rút lịch phiên còn vài phút (Cài đặt �
 - [ ] "Nhắc giờ công thành": còn 15 phút tới phiên đánh thì người có thị trấn bị vây / nước đi vây nhận nhắc.
 - [ ] Trang tài khoản (web): thẻ "Cài đặt cá nhân" bấm đổi → áp dụng ngay trong game (đang online).
 
+## 4h. Thăng Cấp (/capdo) — 19/10
+- [ ] /capdo mở menu: cấp hiện tại, điều kiện cấp sau (xu / hạ gục / giờ chơi) đỏ-xanh đúng; đủ thì bấm lên cấp, trừ xu, +1 điểm.
+- [ ] Hạ quái +1, hạ người +10; quái từ lồng không tính; giết lại cùng một người trong 10 phút không tính.
+- [ ] Cửa hàng: đổi /craft, /disposal, /anvil, /hat dùng được ngay; "Giảm 5% Xưởng" làm giá /xuong rẻ hơn; danh hiệu Lão Luyện nhận được.
+- [ ] Cấp 10: quà mốc + báo cả server. Tab hiện "[Cấp N]". Web: top 10 trang chủ, thẻ Thăng Cấp ở trang tài khoản.
+- [ ] Admin thử nhanh: /capdo dat <tên> <cấp>.
+- [ ] Mùa mới (đổi leaderboard.season-start, keep-on-new-season false): cấp, điểm về 0, quyền đã mua bị gỡ.
+
 ## 5. Quảng trường Vinh danh (sảnh)
 - [ ] (CHƯA CẦN, làm khi gần mở server) Chọn chỗ trống ở sảnh (map sakura). Đứng, quay mặt về phía người xem: `/vinhdanh dat moinhat tieude`, rồi `bachu`, `chienthan`, `phuho`,
       `kientrucsu`, `dautruong`, `pet` ở các chỗ khác. Bảng chữ nổi + đầu người chơi đúng hướng, không đè nhau.

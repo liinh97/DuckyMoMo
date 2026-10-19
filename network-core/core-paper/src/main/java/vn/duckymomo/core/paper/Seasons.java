@@ -328,28 +328,137 @@ final class Seasons implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onGrow(BlockGrowEvent e) {
+        grow(e);
+    }
+
+    /** Tre, tảo bẹ mọc lên bằng BlockSpreadEvent (danh sách listener riêng, không vào onGrow). */
+    @EventHandler(ignoreCancelled = true)
+    public void onSpread(org.bukkit.event.block.BlockSpreadEvent e) {
+        Material m = e.getNewState().getType();
+        if (m == Material.BAMBOO || m == Material.KELP) {
+            grow(e);
+        }
+    }
+
+    private void grow(BlockGrowEvent e) {
         if (!inWorld(e.getBlock().getWorld())) {
             return;
         }
         BlockData nd = e.getNewState().getBlockData();
         Material m = nd.getMaterial();
         double g = growth(m);
+        if (m == Material.MELON_STEM || m == Material.PUMPKIN_STEM) {
+            // hệ số "quả" (MELON/PUMPKIN) > 1 cũng làm dây lớn nhanh; quả thì thêm sản lượng lúc gặt (onFruit)
+            g = Math.max(g, growth(m == Material.MELON_STEM ? Material.MELON : Material.PUMPKIN));
+        }
         ThreadLocalRandom r = ThreadLocalRandom.current();
         if (g < 1.0) {
             if (r.nextDouble() >= g) {
                 e.setCancelled(true);
+                if (m == Material.CACTUS || m == Material.SUGAR_CANE) {
+                    // khối dưới (đang đếm tuổi) vẫn ở tuổi 15 thì lần random tick sau thử mọc lại ngay -> chậm gần như không có.
+                    // Đặt lại tuổi 0 = phải đếm lại cả chu kỳ: chặn với xác suất 1 - g thì trung bình chậm đúng g lần.
+                    Block below = e.getBlock().getRelative(org.bukkit.block.BlockFace.DOWN);
+                    Bukkit.getScheduler().runTask(plugin, () -> {
+                        if (below.getType() == m && below.getBlockData() instanceof Ageable a && a.getAge() > 0) {
+                            a.setAge(0);
+                            below.setBlockData(a, false);
+                        }
+                    });
+                }
             }
             return;
         }
-        if (g > 1.0 && nd instanceof Ageable && r.nextDouble() < g - 1.0) {
-            Block b = e.getBlock();
-            // lên thêm 1 bậc ở tick sau (sau khi bậc của sự kiện này đã được đặt)
-            Bukkit.getScheduler().runTask(plugin, () -> {
-                if (b.getType() == m && b.getBlockData() instanceof Ageable a && a.getAge() < a.getMaximumAge()) {
-                    a.setAge(a.getAge() + 1);
-                    b.setBlockData(a);
+        if (g <= 1.0) {
+            return;
+        }
+        Block b = e.getBlock();
+        switch (m) {
+            case CACTUS, SUGAR_CANE -> {
+                // gốc: khối trên cùng đếm tuổi 0..15 rồi mới mọc khối mới -> cho khối mới bắt đầu ở tuổi 16 - 16/g = nhanh g lần
+                double start = 16 - 16 / g;
+                int age = (int) start + (r.nextDouble() < start - (int) start ? 1 : 0);
+                if (age > 0) {
+                    Bukkit.getScheduler().runTask(plugin, () -> {
+                        if (b.getType() == m && b.getBlockData() instanceof Ageable a) {
+                            a.setAge(Math.min(age, a.getMaximumAge()));
+                            b.setBlockData(a, false);
+                        }
+                    });
                 }
-            });
+            }
+            case BAMBOO, KELP -> {
+                // tuổi của tre là độ to thân, của tảo bẹ là giới hạn chiều cao: không cộng tuổi mà mọc thêm 1 khối (xác suất g - 1)
+                if (r.nextDouble() < g - 1.0) {
+                    Bukkit.getScheduler().runTask(plugin, () -> growColumn(b, m));
+                }
+            }
+            default -> {
+                if (nd instanceof Ageable && r.nextDouble() < g - 1.0) {
+                    // lên thêm 1 bậc ở tick sau (sau khi bậc của sự kiện này đã được đặt)
+                    Bukkit.getScheduler().runTask(plugin, () -> {
+                        if (b.getType() == m && b.getBlockData() instanceof Ageable a && a.getAge() < a.getMaximumAge()) {
+                            a.setAge(a.getAge() + 1);
+                            b.setBlockData(a);
+                        }
+                    });
+                }
+            }
+        }
+    }
+
+    /** Tre / tảo bẹ mọc thêm 1 khối trên ngọn vừa mọc (giữ giới hạn chiều cao như gốc). */
+    private static void growColumn(Block top, Material m) {
+        if (top.getType() != m) {
+            return;
+        }
+        Block up = top.getRelative(org.bukkit.block.BlockFace.UP);
+        if (m == Material.BAMBOO) {
+            int h = 1;
+            for (Block d = top.getRelative(org.bukkit.block.BlockFace.DOWN); d.getType() == Material.BAMBOO && h < 16; d = d.getRelative(org.bukkit.block.BlockFace.DOWN)) {
+                h++;
+            }
+            if (h < 16 && up.getType() == Material.AIR) {
+                up.setBlockData(top.getBlockData(), false);
+            }
+            return;
+        }
+        if (!(top.getBlockData() instanceof Ageable a) || a.getAge() >= a.getMaximumAge()
+                || up.getType() != Material.WATER || !(up.getBlockData() instanceof org.bukkit.block.data.Levelled l) || l.getLevel() != 0) {
+            return;
+        }
+        Ageable head = (Ageable) Material.KELP.createBlockData();
+        head.setAge(a.getAge() + 1);
+        up.setBlockData(head, false);
+        top.setType(Material.KELP_PLANT, false);
+    }
+
+    /** Dưa hấu / bí ngô mọc từ dây (không phải khối người đặt): hệ số mùa > 1 = thêm sản lượng khi gặt (xác suất g - 1 rơi gấp đôi). */
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onFruit(BlockBreakEvent e) {
+        Block b = e.getBlock();
+        Material m = b.getType();
+        if ((m != Material.MELON && m != Material.PUMPKIN) || e.getPlayer().getGameMode() != GameMode.SURVIVAL
+                || !inWorld(b.getWorld()) || !e.isDropItems()) {
+            return;
+        }
+        double g = growth(m);
+        if (g <= 1.0 || ThreadLocalRandom.current().nextDouble() >= g - 1.0) {
+            return;
+        }
+        Material stem = m == Material.MELON ? Material.ATTACHED_MELON_STEM : Material.ATTACHED_PUMPKIN_STEM;
+        boolean grown = false;
+        for (org.bukkit.block.BlockFace f : new org.bukkit.block.BlockFace[]{org.bukkit.block.BlockFace.NORTH,
+                org.bukkit.block.BlockFace.SOUTH, org.bukkit.block.BlockFace.EAST, org.bukkit.block.BlockFace.WEST}) {
+            Block n = b.getRelative(f);
+            if (n.getType() == stem && n.getBlockData() instanceof org.bukkit.block.data.Directional d && d.getFacing() == f.getOppositeFace()) {
+                grown = true;
+                break;
+            }
+        }
+        if (grown) {
+            ItemStack bonus = m == Material.MELON ? new ItemStack(Material.MELON_SLICE, 3 + ThreadLocalRandom.current().nextInt(5)) : new ItemStack(Material.PUMPKIN, 1);
+            b.getWorld().dropItemNaturally(b.getLocation().add(0.5, 0.5, 0.5), bonus);
         }
     }
 

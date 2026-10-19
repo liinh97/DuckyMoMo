@@ -387,6 +387,8 @@
 - MediaProgram.java + panel/media.html (trang quản trị › Media, quyền duckymomo.web.media; web-quyen.yml, quyen.yml) + Cài đặt › Người mới ›
   Chương trình Media (md_*). Chi tiết: camnang "Chương trình Media". TikTok api-live thử 19/10: gọi được từ máy nhà, kênh không live trả status 4;
   CHƯA bắt được kênh đang live để xác nhận status 2 → thử với streamer thật (TEST 4s). YouTube cần YOUTUBE_KEY trong .env (chưa có).
+- SỰ CỐ 23:30: panel sập vòng lặp vài phút vì panel/Dockerfile COPY liệt kê TỪNG file mà quên media.html → thêm trang HTML mới cho panel
+  thì PHẢI thêm vào dòng COPY, build xong kiểm `docker ps` (Up, không Restarting) + tải trang.
 - Thuật ngữ: "Auction House" = chợ đấu giá /ah (đã ghi thống nhất "chợ đấu giá /ah" ở menu, cẩm nang, Cài đặt, web).
 
 ### 19/10 khuya: Danh phận (/danhphan) + Balo (/balo) — CODE + CONFIG XONG, CHỜ KHỞI ĐỘNG LẠI banghoi-1 (người dùng đang online)

@@ -137,7 +137,7 @@ bật công tắc vây thành, rút lịch phiên còn vài phút (Cài đặt �
 - [ ] Admin thử nhanh: /capdo dat <tên> <cấp>.
 - [ ] Mùa mới (đổi leaderboard.season-start, keep-on-new-season false): cấp, điểm về 0, quyền đã mua bị gỡ.
 
-## 4i. Cốt truyện (BetonQuest + Citizens) — 19/10, CHƯA triển khai
+## 4i. Cốt truyện (BetonQuest + Citizens) — 19/10, đã triển khai (log sạch: 36 actions, 3 conversations, 3 npcs), CHƯA đặt NPC
 Triển khai: kiểm tra không ai online (lệnh riêng) → `docker compose up -d --no-deps banghoi-1` (tải Citizens + BetonQuest mới) → `./ops/huongdan.sh`
 → `docker compose up -d --build panel site`. Log: `docker compose logs banghoi-1 --since 5m | grep -iE "Citizens|BetonQuest|cotruyen|ERROR|Exception"`.
 - [ ] Log: Citizens và BetonQuest bật, không lỗi gói `cotruyen` (sai cú pháp thì BetonQuest ghi rõ dòng nào). `/bq reload` không báo lỗi.

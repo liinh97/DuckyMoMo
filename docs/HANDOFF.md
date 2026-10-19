@@ -61,7 +61,7 @@
 - **Thăng Cấp `/capdo`** (LevelUp, LevelUpPapi): 100 cấp, xu + giờ chơi + điểm hạ gục (quái +1, người +10), điểm đổi đặc quyền tiện ích,
   `[Cấp N]` trên Tab, mặc định làm lại mỗi mùa.
 - Nhỏ: bảng bên phải gọn 8 dòng ngắn; dọn rác báo 2 lần, im khi 0 món; mẹo boss bar mới; giới hạn người mỗi server; lệnh hay dùng.
-- **Cốt truyện (19/10 chiều, CHƯA triển khai)**: Citizens (NPC) + BetonQuest (hội thoại, nhiệm vụ) ở Bang Hội Chiến; chương 1 «Điềm Báo».
+- **Cốt truyện (19/10, đã triển khai, chờ đặt NPC + thử)**: Citizens (NPC) + BetonQuest (hội thoại, nhiệm vụ) ở Bang Hội Chiến; chương 1 «Điềm Báo».
   Chi tiết ở mục "### 19/10: Cốt truyện" bên dưới; cần thử: TEST-CHECKLIST mục 4i.
 
 ### Việc tiếp theo
@@ -374,7 +374,7 @@
   vé vận mệnh rơi hiếm, tung xúc xắc lúc vào), (4) mua vé cá nhân bằng xu (lượt / 7 ngày), (5) mở chung toàn server bằng quỹ như khai hoang.
   Điều kiện phụ: cấp pet, thành tích, nhóm 2–4 người, cuối tuần, chỉ nước Bá chủ. Chống lạm phát: lượt/ngày, lockout boss của EliteMobs.
 
-### 19/10: Cốt truyện — Citizens + BetonQuest (ĐÃ LÀM, CHƯA TRIỂN KHAI, CHƯA THỬ)
+### 19/10: Cốt truyện — Citizens + BetonQuest (ĐÃ TRIỂN KHAI 19/10 11:10, CHƯA THỬ TRONG GAME, CHƯA ĐẶT NPC)
 - Nguồn ý tưởng: bài tuyển người Hydronic KSMP (NPC + nhiệm vụ). Người dùng chọn "cách A" = plugin có sẵn (không tự viết trong DuckyMoMoCore);
   bỏ ý quặng mới; vũ khí có skin tính sau; bài tuyển người chưa làm (server chưa xong).
 - Plugin (chỉ banghoi-1): `betonquest:Sfp4oOVr` (3.2.0, MODRINTH_PROJECTS) + Citizens 2.0.44 build 4265 (Jenkins chính chủ, link ghim ở PLUGINS;

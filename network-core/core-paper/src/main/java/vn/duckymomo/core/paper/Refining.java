@@ -53,7 +53,15 @@ final class Refining implements Listener {
     private static final LegacyComponentSerializer LEGACY = LegacyComponentSerializer.legacyAmpersand();
     private static final List<String> SELL_CMDS = List.of("sell", "esell", "essentials:sell", "essentials:esell");
 
-    record Item(String id, String name, Material material, List<String> lore, Map<String, Integer> recipe, double sell) { }
+    record Item(String id, String name, Material material, List<String> lore, Map<String, Integer> recipe, double sell, NamespacedKey model) { }
+
+    /** Tên tiếng Việt của nguyên liệu (client tiếng Anh hiện "Block of Diamond" nếu dùng tên gốc). */
+    private static final Map<String, String> VI = Map.ofEntries(Map.entry("COBBLESTONE", "Đá cuội"), Map.entry("COBBLED_DEEPSLATE", "Đá sâu cuội"),
+            Map.entry("COAL_BLOCK", "Khối than"), Map.entry("RAW_COPPER_BLOCK", "Khối đồng thô"), Map.entry("RAW_IRON_BLOCK", "Khối sắt thô"),
+            Map.entry("REDSTONE_BLOCK", "Khối đá đỏ"), Map.entry("LAPIS_BLOCK", "Khối lapis"), Map.entry("RAW_GOLD_BLOCK", "Khối vàng thô"),
+            Map.entry("DIAMOND_BLOCK", "Khối kim cương"), Map.entry("EMERALD_BLOCK", "Khối lục bảo"), Map.entry("NETHERITE_BLOCK", "Khối netherite"),
+            Map.entry("HAY_BLOCK", "Kiện rơm"), Map.entry("IRON_BLOCK", "Khối sắt"), Map.entry("GOLD_BLOCK", "Khối vàng"),
+            Map.entry("COPPER_BLOCK", "Khối đồng"), Map.entry("QUARTZ_BLOCK", "Khối thạch anh"), Map.entry("BONE_BLOCK", "Khối xương"));
 
     private final DuckyMoMoCore plugin;
     private final NamespacedKey key;
@@ -84,8 +92,10 @@ final class Refining implements Listener {
                         }
                     }
                 }
+                String mk = i.getString("model", "");
+                NamespacedKey model = mk == null || mk.isBlank() ? null : NamespacedKey.fromString(mk);
                 items.put(id.toLowerCase(Locale.ROOT), new Item(id.toLowerCase(Locale.ROOT), i.getString("name", id), m, i.getStringList("lore"),
-                        rec, Math.max(0, i.getDouble("sell", 0))));
+                        rec, Math.max(0, i.getDouble("sell", 0)), model));
             }
         }
         // nguyên liệu phải là vật liệu thật hoặc mã món khác
@@ -120,7 +130,11 @@ final class Refining implements Listener {
         }
         lore.add(c("&8Nguyên liệu tinh luyện · /tinhluyen"));
         meta.lore(lore);
-        meta.setEnchantmentGlintOverride(true);
+        if (d.model() != null) {
+            meta.setItemModel(d.model());   // hình riêng trong gói tài nguyên DuckyMoMo (không tải gói: thấy vật phẩm gốc)
+        } else {
+            meta.setEnchantmentGlintOverride(true);
+        }
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
         meta.getPersistentDataContainer().set(key, PersistentDataType.STRING, d.id());
         it.setItemMeta(meta);
@@ -196,6 +210,9 @@ final class Refining implements Listener {
             return c(items.get(low).name());
         }
         Material m = Material.matchMaterial(k);
+        if (m != null && VI.containsKey(m.name())) {
+            return Component.text(VI.get(m.name()));
+        }
         return m == null ? Component.text(k) : Component.translatable(m.translationKey());
     }
 
@@ -215,6 +232,18 @@ final class Refining implements Listener {
         Holder h = new Holder();
         int rows = Math.min(6, Math.max(3, (int) Math.ceil(items.size() / 7.0) + 2));
         h.inv = Bukkit.createInventory(h, rows * 9, c("&5&lTINH LUYỆN &8(đổi một chiều)"));
+        ItemStack edge = pane(Material.LIGHT_BLUE_STAINED_GLASS_PANE), inner = pane(Material.WHITE_STAINED_GLASS_PANE);
+        for (int s = 0; s < rows * 9; s++) {
+            int r = s / 9, col = s % 9;
+            h.inv.setItem(s, r == 0 || r == rows - 1 || col == 0 || col == 8 ? edge : inner);
+        }
+        ItemStack info = new ItemStack(Material.NETHER_STAR);
+        ItemMeta im = info.getItemMeta();
+        im.displayName(c("&d&lTINH LUYỆN"));
+        im.lore(List.of(c("&7Đổi khối thường thành món quý: đổi đồ ở"), c("&7dân làng, chế Xưởng, bán cho server."),
+                c("&eBấm&7: 1 lần · &eShift+bấm&7: tinh luyện hết"), c("&cĐổi một chiều, không đổi lại được."), c("&8/tinhluyen ban · /tinhluyen ds")));
+        info.setItemMeta(im);
+        h.inv.setItem(4, info);
         int i = 0;
         for (Item d : items.values()) {
             if (d.recipe().isEmpty()) {
@@ -230,6 +259,15 @@ final class Refining implements Listener {
             i++;
         }
         p.openInventory(h.inv);
+    }
+
+    private static ItemStack pane(Material m) {
+        ItemStack it = new ItemStack(m);
+        ItemMeta meta = it.getItemMeta();
+        meta.displayName(Component.text(" "));
+        meta.setHideTooltip(true);
+        it.setItemMeta(meta);
+        return it;
     }
 
     private ItemStack icon(Player p, Item d) {

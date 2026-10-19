@@ -59,10 +59,12 @@ actions:
   c1_tag_b4x: "tag add c1_b4x"
   c1_nk_b5: "journal add c1_nk_b5"
   # Kết chương
-  c1_ket: "folder c1_tien_ket,c1_kn_ket,c1_tag_xong,c1_nk_xong,c1_baotoan"
+  c1_ket: "folder c1_tien_ket,c1_kn_ket,c1_tag_xong,c1_nk_xong,c1_baotoan,c1_quyen"
   c1_tien_ket: "money +%constant.c1_thuong_ket% notify"
   c1_kn_ket: "experience %constant.c1_thuong_kn% action:addExperience"
   c1_tag_xong: "tag add c1_xong"
+  # Danh phận (19/10): xong chương 1 là điều kiện lên "Dân" (/danhphan) — quyền LuckPerms, DuckyMoMoCore PlayRanks kiểm
+  c1_quyen: "command lp user %player% permission set duckymomo.cotruyen.c1 true"
   c1_nk_xong: "journal add c1_nk_xong"
   # notifyall điền %player% theo từng người nhận nên dùng broadcast của Essentials (chạy từ console, %player% = người hoàn thành)
   c1_baotoan: "command broadcast &6%player% &eđã hoàn thành &6Chương 1 «Điềm Báo»&e của cốt truyện!"

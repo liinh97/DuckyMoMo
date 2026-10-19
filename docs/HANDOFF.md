@@ -382,6 +382,21 @@
   vé vận mệnh rơi hiếm, tung xúc xắc lúc vào), (4) mua vé cá nhân bằng xu (lượt / 7 ngày), (5) mở chung toàn server bằng quỹ như khai hoang.
   Điều kiện phụ: cấp pet, thành tích, nhóm 2–4 người, cuối tuần, chỉ nước Bá chủ. Chống lạm phát: lượt/ngày, lockout boss của EliteMobs.
 
+### 19/10 khuya: Danh phận (/danhphan) + Balo (/balo) — CODE + CONFIG XONG, CHỜ KHỞI ĐỘNG LẠI banghoi-1 (người dùng đang online)
+- Người dùng gửi ảnh "Cửa hàng rank" server khác (Rank Member: 2 nhà, 2 balo, 2 slot chợ, miễn phí, cần mở khoá + online 6 giờ, bấm nhận):
+  "mới vào là dân tị nạn, member tương ứng là dân", "cho cài đặt mục này ở rank". Chốt: 4 bậc, Dân = 6 giờ + xong chương 1, bấm nhận, mức cân bằng.
+- PlayRanks.java (play-ranks.tiers.<mã> map: tinan=default, dan, luongdan, haokiet; Cài đặt › Người mới › Danh phận): menu /danhphan
+  (capbac, rankchoi, member), chỉ nhận bậc kế tiếp, kiểm giờ chơi thật (Activity.totalHours), Thăng Cấp (LevelUp.levelOf), quyền perm.
+  sync() lúc bật/dmm reload: LuckPerms API tạo nhóm, xoá node PREFIX/WEIGHT + quyền quản lý (essentials.sethome.multiple.dmm*, zauctionhouse.max.*,
+  duckymomo.balo.*) rồi đặt lại theo config (ngữ cảnh server=banghoi-1). Nhóm default đổi tiền tố [Dân] → &8[Tị Nạn], zauctionhouse.max.5 global → 2.
+- Essentials (data) sethome-multiple: default 1 (trước 3), thêm dmm1..dmm20. zAuctionHouse (data) permissions.auction/rent/bid: max.20 → max.1
+  (giảm dần). Bỏ mục Cài đặt ah_max_listings (lệnh lp cho default, đá nhau với sync).
+- BetonQuest chương 1: c1_ket thêm c1_quyen "command lp user %player% permission set duckymomo.cotruyen.c1 true".
+- Backpack.java (backpack.*): /balo [số] (backpack, bp), 27 ô, 1 Inventory dùng chung mỗi balo, lưu file sau mỗi thao tác, chặn khi vừa đánh người
+  15 giây / vùng vây giờ đánh, saveAll + đóng khi dmm reload/tắt; PlayerReset gọi wipe. Admin /balo xem <tên> [số].
+- Sau khi khởi động lại banghoi-1: xem log "Danh phận: đã đồng bộ 4 nhóm", thử mục 4r TEST-CHECKLIST. Cần kiểm: tiền tố hiện đúng (meta stack
+  highest_not_on_track_donate), Essentials nhận dmmN, zAH nhận max.N.
+
 ### 19/10 khuya: Máu dưới tên + dòng chỉ số; bot dò quét
 - TAB (banghoi-1, repo modes/banghoi/server/plugins/TAB/config.yml): belowname-objective BẬT ("20 ❤" dưới tên, trong 10 khối). `tab reload` OK.
 - AuraSkills messages/global.yml (MỚI đưa vào repo): thanh trạng thái lúc rảnh "❤ [máu/tối đa] | ⚔ [Cấp %dmmcap_cap%] | ✦ [mana/tối đa]"

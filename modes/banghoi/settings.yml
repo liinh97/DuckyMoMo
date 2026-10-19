@@ -710,7 +710,6 @@ tp_money_on: true
 tp_money_tax: 0.0
 tp_xp_on: true
 tp_same_ip: true
-ah_max_listings: 5
 over_enchant_on: true
 over_enchant_max: 50
 sk_player_shops: false
@@ -1691,3 +1690,31 @@ tl_sell_kimcuong: 24000
 tl_sell_lucbao: 4000
 tl_sell_netherite: 125000
 tl_sell_dialinh: 300
+dp_on: true
+dp_announce: true
+dp_tinan_name: "Dân Tị Nạn"
+dp_tinan_prefix: "&8[Tị Nạn] "
+dp_tinan_homes: 1
+dp_tinan_balo: 0
+dp_tinan_ah: 2
+dp_dan_name: "Dân"
+dp_dan_prefix: "&7[Dân] "
+dp_dan_hours: 6.0
+dp_dan_level: 0
+dp_dan_homes: 2
+dp_dan_balo: 1
+dp_dan_ah: 4
+dp_luongdan_name: "Lương Dân"
+dp_luongdan_prefix: "&a[Lương Dân] "
+dp_luongdan_hours: 24.0
+dp_luongdan_level: 10
+dp_luongdan_homes: 3
+dp_luongdan_balo: 2
+dp_luongdan_ah: 6
+dp_haokiet_name: "Hào Kiệt"
+dp_haokiet_prefix: "&6[Hào Kiệt] "
+dp_haokiet_hours: 72.0
+dp_haokiet_level: 25
+dp_haokiet_homes: 5
+dp_haokiet_balo: 3
+dp_haokiet_ah: 8

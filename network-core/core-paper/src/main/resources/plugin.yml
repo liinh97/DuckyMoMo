@@ -151,6 +151,12 @@ commands:
   nauan:
     description: "Bếp ra trận: nấu cá câu + nông sản thành món ăn có hiệu ứng"
     aliases: [bep, monan]
+  danhphan:
+    description: "Danh phận (rank chơi miễn phí): Dân Tị Nạn → Dân → Lương Dân → Hào Kiệt, đủ giờ chơi/cấp/cốt truyện thì bấm nhận; admin: dat <người> <mã> · dongbo"
+    aliases: [capbac, rankchoi, member]
+  balo:
+    description: "Balo cá nhân 27 ô (/balo [số]); số balo theo danh phận; admin: /balo xem <tên> [số]"
+    aliases: [backpack, bp]
   tinhluyen:
     description: "Tinh Luyện: đổi một chiều khối thường thành món tinh luyện (trade dân làng, nguyên liệu Xưởng, bán /sell); /tinhluyen ban [tatca] · ds · admin: give <mã> [số] [người]"
     aliases: [tl, nguyenlieu]

@@ -13,6 +13,7 @@ final class Shared {
     static volatile WildGates wildGates;
     static volatile Wanderers wanderers;
     static volatile Refining refining;
+    static volatile Backpack backpack;
 
     private Shared() {
     }
@@ -33,5 +34,6 @@ final class Shared {
         wildGates = null;
         wanderers = null;
         refining = null;
+        backpack = null;
     }
 }

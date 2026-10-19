@@ -208,6 +208,10 @@ final class PlayerReset implements Listener {
         p.closeInventory();
         p.getInventory().clear();
         p.getEnderChest().clear();
+        Backpack bp = Shared.backpack;
+        if (bp != null) {
+            bp.wipe(id);   // balo cũng là đồ: chơi lại thì mất
+        }
         p.setItemOnCursor(null);
         p.setLevel(0);
         p.setExp(0);

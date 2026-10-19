@@ -160,6 +160,24 @@ chapters:
     &0Đổi được cả trên web (trang tài khoản).
     &1/sb &0ẩn/hiện bảng bên phải.
   - |-
+    &6&lDANH PHẬN
+    &0Rank chơi &lmiễn phí&r&0, bấm nhận trong &1/danhphan&0:
+    &8Tị Nạn&0 (mới vào) → &7Dân&0 → &2Lương Dân&0 → &6Hào Kiệt&0.
+    &0Dân: chơi thật 6 giờ + xong chương 1 (Già Làng).
+    &0Lương Dân: 24 giờ + cấp 10. Hào Kiệt: 72 giờ + cấp 25.
+  - |-
+    &6&lDANH PHẬN: quyền lợi
+    &0Tị Nạn: 1 nhà, 2 món chợ.
+    &0Dân: 2 nhà, 1 balo, 4 món chợ.
+    &0Lương Dân: 3 nhà, 2 balo, 6 món.
+    &0Hào Kiệt: 5 nhà, 3 balo, 8 món.
+    &8Giữ danh phận khi /choilai.
+  - |-
+    &6&lBALO
+    &1/balo &0mở balo 27 ô (&1/balo 2&0 balo thứ 2).
+    &0Số balo theo danh phận.
+    &4Lưu ý: &0không mở được lúc đang đánh nhau, trong vùng công thành giờ đánh; &1/choilai&0 là mất đồ trong balo.
+  - |-
     &6&lTHĂNG CẤP
     &1/capdo &0xem điều kiện, bấm lên cấp khi đủ:
     &0xu (trả lúc lên), giờ chơi, điểm hạ gục (quái +1, người +10).

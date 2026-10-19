@@ -99,6 +99,10 @@ public final class DuckyMoMoCore extends JavaPlugin {
     }
 
     private void teardown() {
+        Backpack bp = Shared.backpack;
+        if (bp != null) {
+            bp.saveAll();
+        }
         Shared.clear();
         DailyCheckin.INSTANCE = null;
         DailyQuests.INSTANCE = null;
@@ -733,6 +737,31 @@ public final class DuckyMoMoCore extends JavaPlugin {
             getLogger().info("Tinh luyện: " + refining.describe());
         }
         bind("tinhluyen", refining == null ? null : refining::command, "Tinh Luyện");
+        // Danh phận (play-ranks): rank chơi miễn phí Dân Tị Nạn → Dân → Lương Dân → Hào Kiệt, bấm nhận; tự đồng bộ nhóm LuckPerms
+        PlayRanks playRanks = getConfig().getBoolean("play-ranks.enabled") && getConfig().isConfigurationSection("play-ranks")
+                ? new PlayRanks(this, activity, getConfig().getConfigurationSection("play-ranks")) : null;
+        if (playRanks != null) {
+            getServer().getPluginManager().registerEvents(playRanks, this);
+            getServer().getScheduler().runTaskLater(this, playRanks::sync, 60L);
+            getLogger().info("Danh phận: " + playRanks.describe());
+        }
+        bind("danhphan", playRanks == null ? null : playRanks::command, "Danh phận");
+        PluginCommand dpCmd = getCommand("danhphan");
+        if (dpCmd != null) {
+            dpCmd.setTabCompleter(playRanks == null ? null : (sender, cmd, label, args) -> playRanks.tab(sender, args));
+        }
+        // Balo cá nhân (/balo): số balo theo quyền duckymomo.balo.<N> (danh phận cấp)
+        Backpack backpack = getConfig().getBoolean("backpack.enabled")
+                ? new Backpack(this, getConfig().getConfigurationSection("backpack")) : null;
+        Shared.backpack = backpack;
+        if (backpack != null) {
+            getServer().getPluginManager().registerEvents(backpack, this);
+        }
+        bind("balo", backpack == null ? null : backpack::command, "Balo");
+        PluginCommand baloCmd = getCommand("balo");
+        if (baloCmd != null) {
+            baloCmd.setTabCompleter(backpack == null ? null : (sender, cmd, label, args) -> backpack.tab(sender, args));
+        }
         PluginCommand tlCmd = getCommand("tinhluyen");
         if (tlCmd != null) {
             tlCmd.setTabCompleter(refining == null ? null : (sender, cmd, label, args) -> refining.tab(sender, args));

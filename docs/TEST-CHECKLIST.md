@@ -238,6 +238,14 @@ Triển khai: kiểm tra không ai online (lệnh riêng) → `docker compose up
 - [ ] Xưởng: thêm "sat:1" ở 1 món trên Cài đặt → lưu → /xuong thấy "Cần thêm 1x Tinh Luyện Sắt", thiếu thì không chế được.
 - [ ] Điện thoại (Bedrock): menu /tinhluyen bấm được.
 
+## 4r. Danh phận + Balo — 19/10
+- [ ] Người mới vào Bang Hội Chiến: tiền tố [Tị Nạn]; /sethome cái thứ 2 bị từ chối (1 nhà); /ah sell được 2 món, món thứ 3 bị chặn; /balo báo chưa có.
+- [ ] /danhphan: 4 thẻ, yêu cầu ✔/✘ đúng (giờ /hoatdong, cấp /capdo, chương 1). Thử nhanh: /danhphan dat <tên> dan → tiền tố [Dân], 2 nhà, 1 balo, 4 món.
+- [ ] Xong chương 1 (Già Làng) → có quyền duckymomo.cotruyen.c1 (/lp user <tên> permission check duckymomo.cotruyen.c1).
+- [ ] Đủ 6 giờ + chương 1 → bấm Dân trong menu → cả server được báo.
+- [ ] /balo: để đồ, thoát game, vào lại còn nguyên; đang đánh người không mở được; /choilai mất đồ balo; admin /balo xem <tên>.
+- [ ] Trang Cài đặt › Người mới › Danh phận: đổi số nhà Dân thành 3 → Lưu → người bậc Dân đặt được nhà thứ 3 (không gõ lệnh lp).
+
 ## 5. Quảng trường Vinh danh (sảnh)
 - [ ] (CHƯA CẦN, làm khi gần mở server) Chọn chỗ trống ở sảnh (map sakura). Đứng, quay mặt về phía người xem: `/vinhdanh dat moinhat tieude`, rồi `bachu`, `chienthan`, `phuho`,
       `kientrucsu`, `dautruong`, `pet` ở các chỗ khác. Bảng chữ nổi + đầu người chơi đúng hướng, không đè nhau.

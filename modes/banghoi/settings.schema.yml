@@ -961,6 +961,41 @@ groups:
       - { key: lvu_laoluyen_on, label: "Danh hiệu Lão Luyện: bán", type: select, file: plugins/DuckyMoMoCore/config.yml, path: level-up.shop.laoluyen.enabled, options: [ { value: true, label: Có }, { value: false, label: Ẩn } ] }
       - { key: lvu_laoluyen_cost, label: "Danh hiệu Lão Luyện: giá (điểm)", type: int, min: 0, max: 1000, file: plugins/DuckyMoMoCore/config.yml, path: level-up.shop.laoluyen.cost }
 
+  - title: Danh phận (/danhphan) — rank chơi miễn phí
+    category: Người mới
+    description: "Rank kiếm bằng cách chơi: Dân Tị Nạn (mới vào) → Dân → Lương Dân → Hào Kiệt. Đủ yêu cầu thì người chơi bấm nhận trong /danhphan. Mỗi bậc có tiền tố riêng và quyền lợi: số nhà, số balo, số món treo chợ."
+    info: "Yêu cầu: giờ chơi THẬT (không tính AFK, /hoatdong) + cấp Thăng Cấp (/capdo); riêng Dân còn cần xong chương 1 cốt truyện (Già Làng).\nQuyền lợi áp ở Bang Hội Chiến: nhà /sethome (1–20), balo /balo (0–9, mỗi balo 27 ô), món treo chợ /ah (1–20; Thương Hội vẫn 15).\nLưu xong: có hiệu lực ngay (dmm reload): plugin tự sửa nhóm LuckPerms (tiền tố, quyền), không cần gõ lệnh lp. Người đã nhận bậc giữ bậc khi đổi số.\nTiền tố: mã màu & (vd &a[Lương Dân] ), nhớ để 1 dấu cách cuối. Admin đặt bậc tay: /danhphan dat <người> <mã>."
+    apply: [dmm reload]
+    settings:
+      - { key: dp_on, label: Bật Danh phận, type: select, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.enabled, options: [ { value: true, label: Bật }, { value: false, label: Tắt } ] }
+      - { key: dp_announce, label: Báo cả server khi có người lên bậc, type: select, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.announce, options: [ { value: true, label: Bật }, { value: false, label: Tắt } ] }
+      - { key: dp_tinan_name, label: "Dân Tị Nạn (mới vào): tên", type: text, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.tiers.tinan.name }
+      - { key: dp_tinan_prefix, label: "Dân Tị Nạn (mới vào): tiền tố (mã màu &)", type: text, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.tiers.tinan.prefix }
+      - { key: dp_tinan_homes, label: "Dân Tị Nạn (mới vào): số nhà /sethome", type: int, min: 1, max: 20, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.tiers.tinan.homes }
+      - { key: dp_tinan_balo, label: "Dân Tị Nạn (mới vào): số balo /balo", type: int, min: 0, max: 9, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.tiers.tinan.balo }
+      - { key: dp_tinan_ah, label: "Dân Tị Nạn (mới vào): số món treo chợ /ah", type: int, min: 1, max: 20, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.tiers.tinan.ah }
+      - { key: dp_dan_name, label: "Dân: tên", type: text, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.tiers.dan.name }
+      - { key: dp_dan_prefix, label: "Dân: tiền tố (mã màu &)", type: text, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.tiers.dan.prefix }
+      - { key: dp_dan_hours, label: "Dân: giờ chơi thật cần", type: number, min: 0, max: 10000, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.tiers.dan.hours }
+      - { key: dp_dan_level, label: "Dân: cấp Thăng Cấp cần", type: int, min: 0, max: 100, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.tiers.dan.level }
+      - { key: dp_dan_homes, label: "Dân: số nhà /sethome", type: int, min: 1, max: 20, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.tiers.dan.homes }
+      - { key: dp_dan_balo, label: "Dân: số balo /balo", type: int, min: 0, max: 9, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.tiers.dan.balo }
+      - { key: dp_dan_ah, label: "Dân: số món treo chợ /ah", type: int, min: 1, max: 20, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.tiers.dan.ah }
+      - { key: dp_luongdan_name, label: "Lương Dân: tên", type: text, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.tiers.luongdan.name }
+      - { key: dp_luongdan_prefix, label: "Lương Dân: tiền tố (mã màu &)", type: text, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.tiers.luongdan.prefix }
+      - { key: dp_luongdan_hours, label: "Lương Dân: giờ chơi thật cần", type: number, min: 0, max: 10000, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.tiers.luongdan.hours }
+      - { key: dp_luongdan_level, label: "Lương Dân: cấp Thăng Cấp cần", type: int, min: 0, max: 100, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.tiers.luongdan.level }
+      - { key: dp_luongdan_homes, label: "Lương Dân: số nhà /sethome", type: int, min: 1, max: 20, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.tiers.luongdan.homes }
+      - { key: dp_luongdan_balo, label: "Lương Dân: số balo /balo", type: int, min: 0, max: 9, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.tiers.luongdan.balo }
+      - { key: dp_luongdan_ah, label: "Lương Dân: số món treo chợ /ah", type: int, min: 1, max: 20, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.tiers.luongdan.ah }
+      - { key: dp_haokiet_name, label: "Hào Kiệt: tên", type: text, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.tiers.haokiet.name }
+      - { key: dp_haokiet_prefix, label: "Hào Kiệt: tiền tố (mã màu &)", type: text, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.tiers.haokiet.prefix }
+      - { key: dp_haokiet_hours, label: "Hào Kiệt: giờ chơi thật cần", type: number, min: 0, max: 10000, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.tiers.haokiet.hours }
+      - { key: dp_haokiet_level, label: "Hào Kiệt: cấp Thăng Cấp cần", type: int, min: 0, max: 100, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.tiers.haokiet.level }
+      - { key: dp_haokiet_homes, label: "Hào Kiệt: số nhà /sethome", type: int, min: 1, max: 20, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.tiers.haokiet.homes }
+      - { key: dp_haokiet_balo, label: "Hào Kiệt: số balo /balo", type: int, min: 0, max: 9, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.tiers.haokiet.balo }
+      - { key: dp_haokiet_ah, label: "Hào Kiệt: số món treo chợ /ah", type: int, min: 1, max: 20, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.tiers.haokiet.ah }
+
   - title: Tinh Luyện (/tinhluyen)
     category: Shop
     description: "Đổi MỘT CHIỀU lượng lớn khối thường thành món tinh luyện (đồ có dấu riêng): hàng trao đổi ở shop dân làng, nguyên liệu Xưởng, bán cho server. Xu Quái rơi từ quái."
@@ -1746,16 +1781,9 @@ groups:
 
   - title: Chợ đấu giá /ah (zAuctionHouse)
     category: Shop
-    description: "Người chơi đăng bán đồ đang cầm bằng /ah sell <giá>, người khác mua trong /ah."
+    description: "Người chơi đăng bán đồ đang cầm bằng /ah sell <giá>, người khác mua trong /ah. Số món mỗi người đăng cùng lúc: theo Danh phận (Người mới › Danh phận), Thương Hội 15."
     apply: [zauctionhouse admin reload]
     settings:
-      - key: ah_max_listings
-        label: Số món mỗi người được đăng cùng lúc
-        type: select
-        options: [ { value: 5, label: "5 món" }, { value: 10, label: "10 món" }, { value: 15, label: "15 món" } ]
-        commands: ["lp group default permission unset zauctionhouse.max.5", "lp group default permission unset zauctionhouse.max.10",
-                   "lp group default permission unset zauctionhouse.max.15", "lp group default permission set zauctionhouse.max.{value} true"]
-        note: "Đặt quyền trong LuckPerms (dùng chung toàn mạng), có hiệu lực ngay."
       - { key: ah_expire, label: "Thời gian đăng bán (giây; 172800 = 2 ngày)", type: int, min: 600, max: 31536000, file: plugins/zAuctionHouse/config.yml, path: expiration.auction.default-expiration,
           note: "Hết hạn chưa ai mua thì món đồ vào mục hết hạn, người bán vào /ah lấy lại." }
       - { key: ah_expired_keep, label: "Giữ đồ hết hạn chờ lấy lại (giây; 604800 = 7 ngày)", type: int, min: 3600, max: 31536000, file: plugins/zAuctionHouse/config.yml, path: expiration.expire.default-expiration }

@@ -1178,7 +1178,7 @@ web-login:
 # (workshop.items.<mã>.tinh-luyen: {sat: 1}), bán cho server (/sell hand|all hoặc /tinhluyen ban). Không đổi ngược: rút khoáng sản khỏi kinh tế.
 # recipe: VẬT_LIỆU (đồ trơn) hoặc mã món khác: số. sell: giá bán 1 món (đặt ~70% giá trị nguyên liệu theo worth.yml để không lời vô hạn;
 # đá cuội không có giá /sell + máy tạo đá vô hạn nên Tinh Luyện Đá để rất thấp). material: mảnh gốm / hạt vàng (không đặt được, không có
-# giá trong worth.yml). Đổi tên/mô tả thì món CŨ vẫn dùng được (nhận theo mã), nhưng shop Shopkeepers đã đặt phải đặt lại món mới.
+# giá trong worth.yml); model: hình riêng trong gói tài nguyên (tools/itempack/gen.py, ./ops/build-font-pack.sh). Đổi tên/mô tả thì món CŨ vẫn dùng được (nhận theo mã), nhưng shop Shopkeepers đã đặt phải đặt lại món mới.
 tinh-luyen:
   enabled: true
   xu-quai:
@@ -1187,16 +1187,39 @@ tinh-luyen:
     elite-chance: 40        # % quái EliteMobs (tinh nhuệ, boss)
     elite-max: 3            # quái EliteMobs rơi 1..elite-max
   items:
-    xuquai:     {name: "&6Xu Quái", material: GOLD_NUGGET, lore: ["Rơi khi hạ quái thù địch.", "Gom 64 đổi Xu Quái 2."], sell: 2}
-    xuquai2:    {name: "&cXu Quái 2", material: PLENTY_POTTERY_SHERD, lore: ["64 Xu Quái tinh luyện lại."], recipe: {xuquai: 64}, sell: 100}
-    da:         {name: "&fTinh Luyện &7Đá", material: SHELTER_POTTERY_SHERD, recipe: {COBBLESTONE: 256, COBBLED_DEEPSLATE: 256}, sell: 30}
-    than:       {name: "&fTinh Luyện &8Than", material: BURN_POTTERY_SHERD, recipe: {COAL_BLOCK: 64}, sell: 400}
-    dong:       {name: "&fTinh Luyện &6Đồng", material: ARMS_UP_POTTERY_SHERD, recipe: {RAW_COPPER_BLOCK: 64}, sell: 400}
-    sat:        {name: "&fTinh Luyện &7Sắt", material: MINER_POTTERY_SHERD, recipe: {RAW_IRON_BLOCK: 64}, sell: 1600}
-    dado:       {name: "&fTinh Luyện &cĐá Đỏ", material: DANGER_POTTERY_SHERD, recipe: {REDSTONE_BLOCK: 64}, sell: 200}
-    lapis:      {name: "&fTinh Luyện &9Lapis", material: HOWL_POTTERY_SHERD, recipe: {LAPIS_BLOCK: 64}, sell: 400}
-    vang:       {name: "&fTinh Luyện &eVàng", material: PRIZE_POTTERY_SHERD, recipe: {RAW_GOLD_BLOCK: 64}, sell: 2400}
-    kimcuong:   {name: "&fTinh Luyện &bKim Cương", material: HEART_POTTERY_SHERD, recipe: {DIAMOND_BLOCK: 64}, sell: 24000}
-    lucbao:     {name: "&fTinh Luyện &aLục Bảo", material: FRIEND_POTTERY_SHERD, recipe: {EMERALD_BLOCK: 32}, sell: 4000}
-    netherite:  {name: "&fTinh Luyện &5Netherite", material: SKULL_POTTERY_SHERD, recipe: {NETHERITE_BLOCK: 32}, sell: 125000}
-    dialinh:    {name: "&aĐịa Linh", material: SHEAF_POTTERY_SHERD, lore: ["Tinh hoa mùa màng."], recipe: {HAY_BLOCK: 64}, sell: 300}
+    xuquai:     {name: "&6Xu Quái", material: GOLD_NUGGET, model: "duckymomo:tl_xuquai", lore: ["Rơi khi hạ quái thù địch.", "Gom 64 đổi Xu Quái 2."], sell: 2}
+    xuquai2:    {name: "&cXu Quái 2", material: PLENTY_POTTERY_SHERD, model: "duckymomo:tl_xuquai2", lore: ["64 Xu Quái tinh luyện lại."], recipe: {xuquai: 64}, sell: 100}
+    da:         {name: "&fTinh Luyện &7Đá", material: SHELTER_POTTERY_SHERD, model: "duckymomo:tl_da", recipe: {COBBLESTONE: 256, COBBLED_DEEPSLATE: 256}, sell: 30}
+    than:       {name: "&fTinh Luyện &8Than", material: BURN_POTTERY_SHERD, model: "duckymomo:tl_than", recipe: {COAL_BLOCK: 64}, sell: 400}
+    dong:       {name: "&fTinh Luyện &6Đồng", material: ARMS_UP_POTTERY_SHERD, model: "duckymomo:tl_dong", recipe: {RAW_COPPER_BLOCK: 64}, sell: 400}
+    sat:        {name: "&fTinh Luyện &7Sắt", material: MINER_POTTERY_SHERD, model: "duckymomo:tl_sat", recipe: {RAW_IRON_BLOCK: 64}, sell: 1600}
+    dado:       {name: "&fTinh Luyện &cĐá Đỏ", material: DANGER_POTTERY_SHERD, model: "duckymomo:tl_dado", recipe: {REDSTONE_BLOCK: 64}, sell: 200}
+    lapis:      {name: "&fTinh Luyện &9Lapis", material: HOWL_POTTERY_SHERD, model: "duckymomo:tl_lapis", recipe: {LAPIS_BLOCK: 64}, sell: 400}
+    vang:       {name: "&fTinh Luyện &eVàng", material: PRIZE_POTTERY_SHERD, model: "duckymomo:tl_vang", recipe: {RAW_GOLD_BLOCK: 64}, sell: 2400}
+    kimcuong:   {name: "&fTinh Luyện &bKim Cương", material: HEART_POTTERY_SHERD, model: "duckymomo:tl_kimcuong", recipe: {DIAMOND_BLOCK: 64}, sell: 24000}
+    lucbao:     {name: "&fTinh Luyện &aLục Bảo", material: FRIEND_POTTERY_SHERD, model: "duckymomo:tl_lucbao", recipe: {EMERALD_BLOCK: 32}, sell: 4000}
+    netherite:  {name: "&fTinh Luyện &5Netherite", material: SKULL_POTTERY_SHERD, model: "duckymomo:tl_netherite", recipe: {NETHERITE_BLOCK: 32}, sell: 125000}
+    dialinh:    {name: "&aĐịa Linh", material: SHEAF_POTTERY_SHERD, model: "duckymomo:tl_dialinh", lore: ["Tinh hoa mùa màng."], recipe: {HAY_BLOCK: 64}, sell: 300}
+
+# Danh phận (/danhphan, 19/10): rank CHƠI miễn phí, đủ yêu cầu thì bấm nhận trong menu. Sửa ở Cài đặt › Người mới › Danh phận.
+# Mỗi bậc: group (nhóm LuckPerms; bậc đầu PHẢI là default), name, prefix (tiền tố chat/Tab, priority càng cao càng ưu tiên, dưới staff),
+# hours (giờ chơi thật, /hoatdong), level (Thăng Cấp), perm + perm-text (quyền cần có, vd xong chương 1 cốt truyện), homes (số nhà /sethome),
+# balo (số balo /balo), ah (số món treo chợ /ah), icon. Lúc bật / dmm reload plugin TỰ ĐỒNG BỘ nhóm LuckPerms (tiền tố, weight, quyền
+# essentials.sethome.multiple.dmm<N> / zauctionhouse.max.<N> / duckymomo.balo.<N> theo server). Essentials sethome-multiple có sẵn dmm1..dmm20,
+# zAuctionHouse permissions.auction có zauctionhouse.max.1..20 (số lớn hơn 20 thì thêm vào 2 file đó).
+play-ranks:
+  enabled: true
+  server: banghoi-1
+  announce: true
+  tiers:
+    tinan:    {group: default, name: "Dân Tị Nạn", prefix: "&8[Tị Nạn] ", priority: 0, hours: 0, level: 0, homes: 1, balo: 0, ah: 2, icon: DEAD_BUSH}
+    dan:      {group: dan, name: "Dân", prefix: "&7[Dân] ", priority: 1, hours: 6, level: 0, perm: duckymomo.cotruyen.c1,
+               perm-text: "Xong chương 1 cốt truyện (Già Làng)", homes: 2, balo: 1, ah: 4, icon: WHEAT}
+    luongdan: {group: luongdan, name: "Lương Dân", prefix: "&a[Lương Dân] ", priority: 2, hours: 24, level: 10, homes: 3, balo: 2, ah: 6, icon: IRON_HOE}
+    haokiet:  {group: haokiet, name: "Hào Kiệt", prefix: "&6[Hào Kiệt] ", priority: 3, hours: 72, level: 25, homes: 5, balo: 3, ah: 8, icon: GOLDEN_HELMET}
+
+# Balo cá nhân (/balo): 27 ô mỗi balo, số balo theo danh phận. Không mở khi vừa đánh người (combat-seconds) hay trong vùng vây đang đánh.
+backpack:
+  enabled: true
+  combat-seconds: 15
+  max: 9

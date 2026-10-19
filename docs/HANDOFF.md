@@ -417,7 +417,9 @@
 - DuckyMoMoCore `SkillSeason` (config aura-skills.reset-each-season, kynang-mua.yml): AuraSkills chỉ reset được người ONLINE (`skills skill reset <tên>`),
   nên mùa mới thì reset lúc từng người vào game. Web: site `skills_info()` (/api/info → kynang, trang chủ thẻ ⚒), panel `skill_levels()` (tài khoản);
   dữ liệu đọc plugins/AuraSkills/userdata/<uuid>.yml (không có tên → usercache.json).
-- Chưa chắc: setlevel có phát thưởng mốc không; khả năng mana trên Bedrock; bản tiếng Việt (~82% số dòng so với tiếng Anh).
+- Tiếng Việt: messages/messages_vi.yml dựng lại theo cấu trúc bản tiếng Anh 2.4.0 (bản Việt có sẵn viết cho cấu trúc cũ, vài mục bị bỏ qua) + dịch 187 câu
+  còn thiếu, 777/777 câu; tên kỹ năng thống nhất cẩm nang. Nâng AuraSkills: chạy tools/auraskills-vi.py (xem đầu file) rồi dịch câu mới.
+- Chưa chắc: setlevel có phát thưởng mốc không; khả năng mana trên Bedrock.
 
 ### 19/10: Lữ khách — NPC lang thang kể chuyện theo Cổng Hoang (ĐÃ TRIỂN KHAI, CHƯA THỬ)
 - Người dùng: "các npc xuất hiện ngẫu nhiên trên bản đồ và lấy nội dung câu chuyện dựa trên tên các cổng" → mỗi NPC gắn một dungeon đích

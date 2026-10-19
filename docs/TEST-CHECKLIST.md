@@ -169,7 +169,7 @@ Triển khai: kiểm tra không ai online (lệnh riêng) → `docker compose up
 
 ## 4k. Kỹ năng nghề AuraSkills (/skills) — 19/10
 - [ ] Log banghoi-1: AuraSkills 2.4.0 bật, không lỗi đọc file (skills/abilities/mana_abilities/stats/rewards/loot); "Kỹ năng nghề: làm lại mỗi mùa".
-      `/skills` chỉ có 6 kỹ năng (Trồng trọt, Đốn gỗ, Đào mỏ, Câu cá, Đào đất, Pha chế), chữ tiếng Việt (còn sót tiếng Anh thì ghi lại), trần 20.
+      `/skills` chỉ có 6 kỹ năng (Trồng trọt, Đốn gỗ, Đào mỏ, Câu cá, Đào đất, Pha chế), chữ tiếng Việt hết (menu, khả năng, /skills top, thông báo lên cấp; còn sót tiếng Anh thì chụp lại), trần 20.
 - [ ] Đào quặng/chặt gỗ/trồng/câu cá lên kinh nghiệm; đặt rồi phá lại khối không lên; trong vùng spawn và Thái Ấp không lên; AFK máy câu không lên.
 - [ ] Thử nhanh: `/skills skill setlevel <tên> mining 20` → nhận đủ thưởng 200/400/700/1200 xu? (setlevel có phát thưởng mốc không: kiểm), `/stats` Sức mạnh +1.
       Max cả 6: máu thêm đúng 1 tim, sát thương +2%. Không có chí mạng.

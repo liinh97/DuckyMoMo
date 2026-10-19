@@ -137,6 +137,22 @@ bật công tắc vây thành, rút lịch phiên còn vài phút (Cài đặt �
 - [ ] Admin thử nhanh: /capdo dat <tên> <cấp>.
 - [ ] Mùa mới (đổi leaderboard.season-start, keep-on-new-season false): cấp, điểm về 0, quyền đã mua bị gỡ.
 
+## 4i. Cốt truyện (BetonQuest + Citizens) — 19/10, CHƯA triển khai
+Triển khai: kiểm tra không ai online (lệnh riêng) → `docker compose up -d --no-deps banghoi-1` (tải Citizens + BetonQuest mới) → `./ops/huongdan.sh`
+→ `docker compose up -d --build panel site`. Log: `docker compose logs banghoi-1 --since 5m | grep -iE "Citizens|BetonQuest|cotruyen|ERROR|Exception"`.
+- [ ] Log: Citizens và BetonQuest bật, không lỗi gói `cotruyen` (sai cú pháp thì BetonQuest ghi rõ dòng nào). `/bq reload` không báo lỗi.
+- [ ] Đặt NPC ở spawn Bang Hội Chiến, gõ ĐÚNG tên: `/npc create Già Làng`, `/npc create Bác Thợ Rèn`, `/npc create Người Gác Cổng` (+ `/npc lookclose`).
+      Chuột phải từng NPC → mở hội thoại (NPC tìm theo tên có dấu cách: nếu không mở, xem log, có thể phải đổi sang số ID: `citizens <id>` trong package.yml).
+- [ ] Bảng hội thoại kiểu "dialog": Java 1.21.6+ hiện bảng có nút; **Bedrock** (Geyser) hiện form bấm được; Java bản cũ (ViaBackwards) ra sao?
+      Lỗi thì Cài đặt › Cốt truyện đổi sang "Rương bấm chọn".
+- [ ] Đi hết chương 1: nhận việc → hạ 20 quái (thông báo tiến độ mỗi 5 con) → về Già Làng nhận 300 xu → mang 16 sắt cho Thợ Rèn (thiếu sắt thì NPC báo thiếu)
+      → đào 24 quặng (quặng tự đặt không tính) → nhận Mảnh Sao Rơi → Người Gác Cổng lấy mảnh → về Già Làng: thưởng 1500 xu + 200 kinh nghiệm, cả server thấy thông báo.
+- [ ] Số lấy từ cài đặt (`%constant…%`) hiện đúng trong lời thoại và nhật ký; đổi số trên Cài đặt › Cốt truyện → `bq reload` → NPC nói số mới.
+- [ ] `/journal` ra sách nhật ký tiếng Việt; vứt Mảnh Sao Rơi → nằm trong `/backpack`; Người Gác Cổng nhắc /backpack khi không có mảnh.
+- [ ] Làm lại cho một người: `/bq tag <tên> list`, `/bq tag <tên> del c1_…`.
+- [ ] Web: trang chủ mục Dungeon & Boss có thẻ Cốt truyện (các bước, số người hoàn thành); trang tài khoản có thẻ "Chương 1" đúng bước đang làm.
+- [ ] `/huongdan` chương Bang Hội Chiến có trang CỐT TRUYỆN.
+
 ## 5. Quảng trường Vinh danh (sảnh)
 - [ ] (CHƯA CẦN, làm khi gần mở server) Chọn chỗ trống ở sảnh (map sakura). Đứng, quay mặt về phía người xem: `/vinhdanh dat moinhat tieude`, rồi `bachu`, `chienthan`, `phuho`,
       `kientrucsu`, `dautruong`, `pet` ở các chỗ khác. Bảng chữ nổi + đầu người chơi đúng hướng, không đè nhau.

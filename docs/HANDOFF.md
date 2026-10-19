@@ -1,6 +1,6 @@
 # Bàn giao dự án DuckyMoMo Network
 
-> Dùng file này để tiếp tục ở session hoặc tài khoản Claude khác. Cập nhật: 19/10/2026 sáng. ĐỌC MỤC 000 TRƯỚC, rồi mục 00, rồi mục 0.
+> Dùng file này để tiếp tục ở session hoặc tài khoản Claude khác. Cập nhật: 19/10/2026 chiều. ĐỌC MỤC 000 TRƯỚC, rồi mục 00, rồi mục 0.
 > Đọc kèm: `README.md`, `docs/minecraft-server-plan.md` (kế hoạch, quyết định), `docs/network-architecture.md` (kiến trúc).
 
 ---
@@ -61,11 +61,14 @@
 - **Thăng Cấp `/capdo`** (LevelUp, LevelUpPapi): 100 cấp, xu + giờ chơi + điểm hạ gục (quái +1, người +10), điểm đổi đặc quyền tiện ích,
   `[Cấp N]` trên Tab, mặc định làm lại mỗi mùa.
 - Nhỏ: bảng bên phải gọn 8 dòng ngắn; dọn rác báo 2 lần, im khi 0 món; mẹo boss bar mới; giới hạn người mỗi server; lệnh hay dùng.
+- **Cốt truyện (19/10 chiều, CHƯA triển khai)**: Citizens (NPC) + BetonQuest (hội thoại, nhiệm vụ) ở Bang Hội Chiến; chương 1 «Điềm Báo».
+  Chi tiết ở mục "### 19/10: Cốt truyện" bên dưới; cần thử: TEST-CHECKLIST mục 4i.
 
 ### Việc tiếp theo
 1. **Push** khi người dùng bảo (kiểm tra trước khi push trong worktree tạm: xem mục "Kiểm tra trước khi push" của CLAUDE.md; KHÔNG chạy
    `./ops/init.sh` trong repo thật vì `.env` và `data/` thật đang dùng).
-2. **Người dùng test trong game** theo `docs/TEST-CHECKLIST.md` mục 4d, 4d+, 4e, 4f, 4g, 4h → sửa lỗi theo ảnh họ gửi.
+2. **Người dùng test trong game** theo `docs/TEST-CHECKLIST.md` mục 4d, 4d+, 4e, 4f, 4g, 4h, 4i → sửa lỗi theo ảnh họ gửi.
+   Người dùng 19/10: "cứ làm tính năng mới trước, phần thử/kiểm tra cho vào test sau" → làm xong ghi vào TEST-CHECKLIST, chưa triển khai.
 3. **Chờ quyết (đã note):** bảng xếp hạng dán tường (thuộc hệ thống vinh danh); mảnh dungeon → đổi đồ + bảng đồ rơi/tỉ lệ trên Cài đặt
    (đồ EliteMobs lấy vào thư viện bằng `/dmm luudo`); Đảo Hỗn Mang (khu boss) làm đích Cổng Hoang; mua thêm gói dungeon; sách CE trong `/ce`
    có làm Xưởng mất giá không; tắt kỹ năng class EliteMobs ngoài dungeon (`allowClassAbilitiesOutsideEliteMobsWorlds`); bảng sửa đặc quyền
@@ -370,6 +373,27 @@
   (1) chuỗi cấp + chìa khoá, (2) dungeon ẩn (bản đồ hầm ẩn, theo giờ/mùa/sự kiện, ghép mảnh chìa), (3) may mắn (cổng thời không ngẫu nhiên,
   vé vận mệnh rơi hiếm, tung xúc xắc lúc vào), (4) mua vé cá nhân bằng xu (lượt / 7 ngày), (5) mở chung toàn server bằng quỹ như khai hoang.
   Điều kiện phụ: cấp pet, thành tích, nhóm 2–4 người, cuối tuần, chỉ nước Bá chủ. Chống lạm phát: lượt/ngày, lockout boss của EliteMobs.
+
+### 19/10: Cốt truyện — Citizens + BetonQuest (ĐÃ LÀM, CHƯA TRIỂN KHAI, CHƯA THỬ)
+- Nguồn ý tưởng: bài tuyển người Hydronic KSMP (NPC + nhiệm vụ). Người dùng chọn "cách A" = plugin có sẵn (không tự viết trong DuckyMoMoCore);
+  bỏ ý quặng mới; vũ khí có skin tính sau; bài tuyển người chưa làm (server chưa xong).
+- Plugin (chỉ banghoi-1): `betonquest:Sfp4oOVr` (3.2.0, MODRINTH_PROJECTS) + Citizens 2.0.44 build 4265 (Jenkins chính chủ, link ghim ở PLUGINS;
+  Jenkins chặn /api/json nhưng tải artifact được; jar có nms v26_2_R1). BetonQuest `config.yml` trong repo: tắt updater (itzg ghim bản),
+  ngôn ngữ vi-VN (lang/vi-VN.yml đã dịch nốt phần tiếng Anh), `conversation.default_io: dialog`, chặn /home /tpa /warp /rtp khi đang hội thoại.
+- Gói `QuestPackages/cotruyen/`: package.yml (NPC theo TÊN `citizens "Già Làng" byName`, constants số lượng + thưởng,
+  `package.version: 3.2.0-QUEST-2` — thiếu thì BetonQuest tự ghi và LƯU ĐÈ cả gói), chuong1/logic.yml (tag c1_b1 → c1_b1x → … → c1_xong,
+  mục tiêu mobkill/block, thưởng money + experience, nhật ký), chuong1/hoithoai.yml (Già Làng, Bác Thợ Rèn, Người Gác Cổng).
+  Placeholder `%constant.x%` được thay vào chuỗi TRƯỚC khi đọc số (đã đọc mã DefaultArgument) nên `-%constant…%`, `+%constant…%` chạy.
+  Báo cả server dùng `command broadcast` (notifyall điền %player% theo từng người nhận).
+- Cài đặt › Cốt truyện (category mới): kiểu bảng hội thoại, số quái/sắt/quặng, thưởng từng bước; apply `bq reload`.
+- Web: `modes/banghoi/cotruyen.yml` mô tả chương cho web (thêm chương mới thì thêm ở đây). Site `story_info()` (/api/info → cotruyen; trang chủ thẻ
+  📜 Cốt truyện trong mục Dungeon & Boss), panel `story()` (hồ sơ → cotruyen; trang tài khoản thẻ "Chương 1" bước N/5). Cả hai đọc
+  `plugins/BetonQuest/database.db` chỉ đọc (bảng betonquest_player.active_profile + betonquest_tags, tag có tiền tố gói `cotruyen.` hoặc `cotruyen>`).
+  Đã chạy thử site bản mới trên cổng tạm + Playwright (không lỗi JS), panel story() thử với database giả.
+- Cẩm nang: camnang.yml (BetonQuest, Citizens), lenh-con.yml, lenh-vi.yml (bỏ khoá `compass` vì trùng Essentials), lenh-hay-dung.yml (journal),
+  huongdan.yml (trang CỐT TRUYỆN trong chương Bang Hội Chiến; CHƯA chạy ./ops/huongdan.sh).
+- Chưa chắc: NPC tên có dấu cách theo byName (cú pháp ngoặc kép của BetonQuest 2.1+); kiểu dialog trên Bedrock/Geyser và Java cũ; objective `fish`
+  không dùng vì EvenMoreFish có thể đổi cá. Chương sau: nối vào sự kiện "Trái Đất lâm nguy".
 
 ### 19/10: NOTE chờ quyết
 - (Người dùng 19/10: bảng này thuộc hệ thống VINH DANH, cứ note, làm cùng Quảng trường Vinh danh) Bảng xếp hạng dán TƯỜNG kiểu UniMC (TextDisplay áp sát mặt tường, dòng cuối riêng cho từng người nhìn: "Số lần bạn chết: Linh 0 (#175)")

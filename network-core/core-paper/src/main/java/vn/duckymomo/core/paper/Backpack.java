@@ -32,7 +32,9 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
 /**
- * Balo cá nhân (/balo [số], Bang Hội Chiến, 19/10): túi 27 ô mang theo người, số balo theo quyền duckymomo.balo.<N> (Danh phận cấp).
+ * Balo cá nhân (/balo [số], Bang Hội Chiến, 19/10): túi mang theo người. Số balo theo quyền duckymomo.balo.<N>, số ô mỗi balo theo
+ * duckymomo.balo.o.<9|18|27|36|45|54> (cao nhất; không có thì backpack.default-slots) — Danh phận cấp cho các bậc và rank khác (other-ranks).
+ * Rank giảm số ô: đồ ở ô bị khoá vẫn giữ trong file, báo người chơi, lên rank nhiều ô hơn là thấy lại.
  * Lưu plugins/DuckyMoMoCore/balo/<uuid>.yml (mỗi ô = ItemStack.serializeAsBytes base64), ghi ngay sau mỗi thao tác (tick sau) để
  * server sập giữa chừng không nhân đồ; mỗi balo chỉ có MỘT Inventory dùng chung (admin xem cùng lúc người chơi cũng chung một bản).
  * Không mở được khi vừa đánh nhau với người (combat-seconds) hoặc trong vùng vây đang có phiên đánh. /choilai xoá balo (wipe).
@@ -41,7 +43,8 @@ import org.bukkit.inventory.ItemStack;
 final class Backpack implements Listener {
 
     private static final LegacyComponentSerializer LEGACY = LegacyComponentSerializer.legacyAmpersand();
-    private static final int SIZE = 27;
+    private static final int[] SIZES = {54, 45, 36, 27, 18, 9};
+    private final int defaultSlots;
 
     private final DuckyMoMoCore plugin;
     private final File dir;
@@ -55,12 +58,14 @@ final class Backpack implements Listener {
         this.dir = new File(plugin.getDataFolder(), "balo");
         this.combatMillis = Math.max(0, c == null ? 15 : c.getInt("combat-seconds", 15)) * 1000L;
         this.maxBags = Math.max(1, c == null ? 9 : c.getInt("max", 9));
+        this.defaultSlots = PlayRanks.slots(c == null ? 27 : c.getInt("default-slots", 27));
         dir.mkdirs();
     }
 
     private static final class Holder implements InventoryHolder {
         UUID owner;
         int index;
+        int hidden;   // số món nằm ở ô bị khoá (rank giảm số ô): vẫn giữ trong file
         Inventory inv;
 
         @Override
@@ -79,11 +84,21 @@ final class Backpack implements Listener {
         return 0;
     }
 
+    /** Số ô mỗi balo: quyền duckymomo.balo.o.<9..54> cao nhất (danh phận / rank khác), không có thì default-slots. */
+    int slotsOf(Player p) {
+        for (int n : SIZES) {
+            if (p.hasPermission("duckymomo.balo.o." + n)) {
+                return n;
+            }
+        }
+        return defaultSlots;
+    }
+
     private File file(UUID u) {
         return new File(dir, u + ".yml");
     }
 
-    private Inventory get(UUID owner, int index, String ownerName) {
+    private Inventory get(UUID owner, int index, String ownerName, int size) {
         String key = owner + "#" + index;
         Inventory inv = open.get(key);
         if (inv != null) {
@@ -92,10 +107,24 @@ final class Backpack implements Listener {
         Holder h = new Holder();
         h.owner = owner;
         h.index = index;
-        h.inv = Bukkit.createInventory(h, SIZE, c("&6&lBALO " + index + " &8· " + ownerName));
         YamlConfiguration y = YamlConfiguration.loadConfiguration(file(owner));
         List<String> slots = y.getStringList("balo" + index);
-        for (int i = 0; i < Math.min(SIZE, slots.size()); i++) {
+        if (size <= 0) {   // admin xem balo người offline: đủ ô để thấy hết đồ đã lưu
+            int last = 0;
+            for (int i = 0; i < slots.size(); i++) {
+                if (!slots.get(i).isEmpty()) {
+                    last = i + 1;
+                }
+            }
+            size = PlayRanks.slots(Math.max(defaultSlots, last));
+        }
+        h.inv = Bukkit.createInventory(h, size, c("&6&lBALO " + index + " &8· " + ownerName + " &8(" + size + " ô)"));
+        int hidden = 0;
+        for (int i = size; i < slots.size(); i++) {
+            hidden += slots.get(i).isEmpty() ? 0 : 1;
+        }
+        h.hidden = hidden;
+        for (int i = 0; i < Math.min(size, slots.size()); i++) {
             String b64 = slots.get(i);
             if (b64 != null && !b64.isEmpty()) {
                 try {
@@ -112,9 +141,14 @@ final class Backpack implements Listener {
     private void save(Holder h) {
         File f = file(h.owner);
         YamlConfiguration y = YamlConfiguration.loadConfiguration(f);
+        List<String> old = y.getStringList("balo" + h.index);
         List<String> slots = new ArrayList<>();
         for (ItemStack it : h.inv.getContents()) {
             slots.add(it == null || it.getType().isAir() ? "" : Base64.getEncoder().encodeToString(it.serializeAsBytes()));
+        }
+        // ô vượt số ô hiện tại (rank giảm): giữ nguyên đồ cũ, không xoá
+        for (int i = slots.size(); i < old.size(); i++) {
+            slots.add(old.get(i));
         }
         y.set("balo" + h.index, slots);
         try {
@@ -235,7 +269,8 @@ final class Backpack implements Listener {
                 p.sendMessage(c("&cSố balo 1–" + maxBags));
                 return true;
             }
-            p.openInventory(get(t.getUniqueId(), n, t.getName()));
+            Player on = t.getPlayer();
+            p.openInventory(get(t.getUniqueId(), n, t.getName(), on == null ? 0 : slotsOf(on)));
             return true;
         }
         int have = allowed(p);
@@ -253,7 +288,11 @@ final class Backpack implements Listener {
             p.sendMessage(c("&c" + why));
             return true;
         }
-        p.openInventory(get(p.getUniqueId(), n, p.getName()));
+        Inventory inv = get(p.getUniqueId(), n, p.getName(), slotsOf(p));
+        p.openInventory(inv);
+        if (inv.getHolder() instanceof Holder h && h.hidden > 0) {
+            p.sendMessage(c("&eCòn " + h.hidden + " món ở các ô balo đã khoá (rank hiện chỉ " + inv.getSize() + " ô). Đồ vẫn giữ, lên rank nhiều ô hơn để lấy."));
+        }
         p.playSound(p.getLocation(), Sound.ITEM_ARMOR_EQUIP_LEATHER, 0.6f, 1.1f);
         return true;
     }

@@ -1212,14 +1212,28 @@ play-ranks:
   server: banghoi-1
   announce: true
   tiers:
-    tinan:    {group: default, name: "Dân Tị Nạn", prefix: "&8[Tị Nạn] ", priority: 0, hours: 0, level: 0, homes: 1, balo: 0, ah: 2, icon: DEAD_BUSH}
+    tinan:    {group: default, name: "Dân Tị Nạn", prefix: "&8[Tị Nạn] ", priority: 0, hours: 0, level: 0, homes: 1, balo: 0, balo-slots: 27, ah: 2, icon: DEAD_BUSH}
     dan:      {group: dan, name: "Dân", prefix: "&7[Dân] ", priority: 1, hours: 6, level: 0, perm: duckymomo.cotruyen.c1,
-               perm-text: "Xong chương 1 cốt truyện (Già Làng)", homes: 2, balo: 1, ah: 4, icon: WHEAT}
-    luongdan: {group: luongdan, name: "Lương Dân", prefix: "&a[Lương Dân] ", priority: 2, hours: 24, level: 10, homes: 3, balo: 2, ah: 6, icon: IRON_HOE}
-    haokiet:  {group: haokiet, name: "Hào Kiệt", prefix: "&6[Hào Kiệt] ", priority: 3, hours: 72, level: 25, homes: 5, balo: 3, ah: 8, icon: GOLDEN_HELMET}
+               perm-text: "Xong chương 1 cốt truyện (Già Làng)", homes: 2, balo: 1, balo-slots: 27, ah: 4, icon: WHEAT}
+    luongdan: {group: luongdan, name: "Lương Dân", prefix: "&a[Lương Dân] ", priority: 2, hours: 24, level: 10, homes: 3, balo: 2, balo-slots: 36, ah: 6, icon: IRON_HOE}
+    haokiet:  {group: haokiet, name: "Hào Kiệt", prefix: "&6[Hào Kiệt] ", priority: 3, hours: 72, level: 25, homes: 5, balo: 3, balo-slots: 45, ah: 8, icon: GOLDEN_HELMET}
+  # Balo cho rank KHÁC (ủng hộ, staff): balo = số balo, balo-slots = số ô mỗi balo (9/18/27/36/45/54); 0 = không cấp (theo danh phận).
+  # Người có nhiều rank lấy mức cao nhất. RANK ỦNG HỘ: thêm balo/ô là LỢI THẾ CHƠI → trái luật Mojang (không pay-to-win), để 0.
+  other-ranks:
+    namtuoc: {balo: 0, balo-slots: 0}
+    tutuoc: {balo: 0, balo-slots: 0}
+    batuoc: {balo: 0, balo-slots: 0}
+    hautuoc: {balo: 0, balo-slots: 0}
+    congtuoc: {balo: 0, balo-slots: 0}
+    builder: {balo: 0, balo-slots: 0}
+    helper: {balo: 0, balo-slots: 0}
+    mod: {balo: 0, balo-slots: 0}
+    quanly: {balo: 0, balo-slots: 0}
+    admin: {balo: 0, balo-slots: 0}
 
-# Balo cá nhân (/balo): 27 ô mỗi balo, số balo theo danh phận. Không mở khi vừa đánh người (combat-seconds) hay trong vùng vây đang đánh.
+# Balo cá nhân (/balo): số balo và số ô mỗi balo theo danh phận (play-ranks.tiers.*.balo / balo-slots) và rank khác (play-ranks.other-ranks). Không mở khi vừa đánh người (combat-seconds) hay trong vùng vây đang đánh.
 backpack:
   enabled: true
+  default-slots: 27        # số ô khi người chơi không có quyền duckymomo.balo.o.<N> nào
   combat-seconds: 15
   max: 9

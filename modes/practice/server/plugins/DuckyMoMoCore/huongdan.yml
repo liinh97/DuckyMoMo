@@ -168,14 +168,14 @@ chapters:
   - |-
     &6&lDANH PHẬN: quyền lợi
     &0Tị Nạn: 1 nhà, 2 món chợ.
-    &0Dân: 2 nhà, 1 balo, 4 món chợ.
-    &0Lương Dân: 3 nhà, 2 balo, 6 món.
-    &0Hào Kiệt: 5 nhà, 3 balo, 8 món.
+    &0Dân: 2 nhà, 1 balo 27 ô, 4 món chợ.
+    &0Lương Dân: 3 nhà, 2 balo 36 ô, 6 món.
+    &0Hào Kiệt: 5 nhà, 3 balo 45 ô, 8 món.
     &8Giữ danh phận khi /choilai.
   - |-
     &6&lBALO
-    &1/balo &0mở balo 27 ô (&1/balo 2&0 balo thứ 2).
-    &0Số balo theo danh phận.
+    &1/balo &0mở balo (&1/balo 2&0 balo thứ 2).
+    &0Số balo và số ô theo danh phận. Rank giảm ô: đồ ở ô khoá vẫn giữ.
     &4Lưu ý: &0không mở được lúc đang đánh nhau, trong vùng công thành giờ đánh; &1/choilai&0 là mất đồ trong balo.
   - |-
     &6&lTHĂNG CẤP

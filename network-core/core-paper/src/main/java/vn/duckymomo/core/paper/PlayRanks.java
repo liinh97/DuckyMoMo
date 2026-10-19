@@ -49,13 +49,17 @@ final class PlayRanks implements Listener {
     private static final List<String> MANAGED = List.of("essentials.sethome.multiple.dmm", "zauctionhouse.max.", "duckymomo.balo.");
 
     record Tier(String id, String group, String name, String prefix, int priority, double hours, int level, String perm, String permText,
-                int homes, int balo, int ah, Material icon) { }
+                int homes, int balo, int slots, int ah, Material icon) { }
+
+    /** Rank khác (ủng hộ, staff): chỉ quyền balo — số balo, số ô mỗi balo (0 = không cấp, theo danh phận). */
+    record Extra(String group, int balo, int slots) { }
 
     private final DuckyMoMoCore plugin;
     private final Activity activity;
     private final List<Tier> tiers = new ArrayList<>();
     private final String server;
     private final boolean announce;
+    private final List<Extra> extras = new ArrayList<>();
 
     PlayRanks(DuckyMoMoCore plugin, Activity activity, ConfigurationSection c) {
         this.plugin = plugin;
@@ -74,10 +78,25 @@ final class PlayRanks implements Listener {
                 tiers.add(new Tier(id, t.getString("group", i == 0 ? "default" : id).toLowerCase(Locale.ROOT), t.getString("name", id),
                         t.getString("prefix", ""), t.getInt("priority", i), t.getDouble("hours", 0), t.getInt("level", 0),
                         t.getString("perm", ""), t.getString("perm-text", "Mở khoá"), Math.max(1, t.getInt("homes", 1)),
-                        Math.max(0, t.getInt("balo", 0)), Math.max(1, t.getInt("ah", 1)), icon == null ? Material.PAPER : icon));
+                        Math.max(0, t.getInt("balo", 0)), slots(t.getInt("balo-slots", 27)), Math.max(1, t.getInt("ah", 1)),
+                        icon == null ? Material.PAPER : icon));
                 i++;
             }
         }
+        ConfigurationSection es = c.getConfigurationSection("other-ranks");
+        if (es != null) {
+            for (String g : es.getKeys(false)) {
+                ConfigurationSection e = es.getConfigurationSection(g);
+                if (e != null) {
+                    extras.add(new Extra(g.toLowerCase(Locale.ROOT), Math.max(0, e.getInt("balo", 0)), e.getInt("balo-slots", 0) <= 0 ? 0 : slots(e.getInt("balo-slots"))));
+                }
+            }
+        }
+    }
+
+    /** Số ô balo hợp lệ: 9, 18, 27, 36, 45, 54. */
+    static int slots(int n) {
+        return Math.max(1, Math.min(6, (n + 8) / 9)) * 9;
     }
 
     String describe() {
@@ -111,9 +130,23 @@ final class PlayRanks implements Listener {
                 g.data().add(PermissionNode.builder("zauctionhouse.max." + t.ah()).context(ctx).build());
                 if (t.balo() > 0) {
                     g.data().add(PermissionNode.builder("duckymomo.balo." + t.balo()).context(ctx).build());
+                    g.data().add(PermissionNode.builder("duckymomo.balo.o." + t.slots()).context(ctx).build());
                 }
                 lp.getGroupManager().saveGroup(g);
             });
+        }
+        // rank ủng hộ / staff: chỉ đụng quyền balo (không đổi tiền tố, weight của họ); nhóm chưa có thì bỏ qua
+        for (Extra e : extras) {
+            lp.getGroupManager().loadGroup(e.group()).thenAccept(og -> og.ifPresent(g -> {
+                g.data().clear(n -> n.getType() == NodeType.PERMISSION && n.getKey().startsWith("duckymomo.balo."));
+                if (e.balo() > 0) {
+                    g.data().add(PermissionNode.builder("duckymomo.balo." + e.balo()).context(ctx).build());
+                }
+                if (e.slots() > 0) {
+                    g.data().add(PermissionNode.builder("duckymomo.balo.o." + e.slots()).context(ctx).build());
+                }
+                lp.getGroupManager().saveGroup(g);
+            }));
         }
         plugin.getLogger().info("Danh phận: đã đồng bộ " + tiers.size() + " nhóm LuckPerms (" + describe() + ")");
     }
@@ -217,7 +250,7 @@ final class PlayRanks implements Listener {
         lore.add(Component.empty());
         lore.add(c("&e&lQUYỀN LỢI:"));
         lore.add(c("&7• Đặt &a" + t.homes() + "&7 nhà &d(/sethome)"));
-        lore.add(c("&7• " + (t.balo() > 0 ? "Có &a" + t.balo() + "&7 balo cá nhân &d(/balo)" : "Chưa có balo &d(/balo)")));
+        lore.add(c("&7• " + (t.balo() > 0 ? "Có &a" + t.balo() + "&7 balo &a" + t.slots() + "&7 ô &d(/balo)" : "Chưa có balo &d(/balo)")));
         lore.add(c("&7• &a" + t.ah() + "&7 món treo chợ &d(/ah)"));
         lore.add(Component.empty());
         if (i > 0) {

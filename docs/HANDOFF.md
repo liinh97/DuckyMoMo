@@ -392,7 +392,10 @@
 - Essentials (data) sethome-multiple: default 1 (trước 3), thêm dmm1..dmm20. zAuctionHouse (data) permissions.auction/rent/bid: max.20 → max.1
   (giảm dần). Bỏ mục Cài đặt ah_max_listings (lệnh lp cho default, đá nhau với sync).
 - BetonQuest chương 1: c1_ket thêm c1_quyen "command lp user %player% permission set duckymomo.cotruyen.c1 true".
-- Backpack.java (backpack.*): /balo [số] (backpack, bp), 27 ô, 1 Inventory dùng chung mỗi balo, lưu file sau mỗi thao tác, chặn khi vừa đánh người
+- Số ô balo (người dùng: "cài đặt số ô balo trong toàn bộ rank"): quyền duckymomo.balo.o.<9..54> cao nhất; play-ranks.tiers.*.balo-slots
+  (Tị Nạn/Dân 27, Lương Dân 36, Hào Kiệt 45) + play-ranks.other-ranks.<nhóm> {balo, balo-slots} cho rank ủng hộ & staff (mặc định 0 = theo
+  danh phận; rank ủng hộ để 0 vì luật Mojang), backpack.default-slots 27. Cài đặt › Người mới › Balo theo rank khác. Giảm ô không mất đồ.
+- Backpack.java (backpack.*): /balo [số] (backpack, bp), số ô theo quyền, 1 Inventory dùng chung mỗi balo, lưu file sau mỗi thao tác, chặn khi vừa đánh người
   15 giây / vùng vây giờ đánh, saveAll + đóng khi dmm reload/tắt; PlayerReset gọi wipe. Admin /balo xem <tên> [số].
 - Sau khi khởi động lại banghoi-1: xem log "Danh phận: đã đồng bộ 4 nhóm", thử mục 4r TEST-CHECKLIST. Cần kiểm: tiền tố hiện đúng (meta stack
   highest_not_on_track_donate), Essentials nhận dmmN, zAH nhận max.N.

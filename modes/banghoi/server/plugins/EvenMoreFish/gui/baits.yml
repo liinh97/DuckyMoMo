@@ -1,0 +1,91 @@
+# Configuration for the Baits GUI, shown after clicking the baits button in /emf gui.
+
+title: <#006F86>Câu cá - Mồi
+layout:
+- '  23232  '
+- 23 4 4 32
+- 4 bbbbb 4
+- 23 4 4 32
+- p 23x32 n
+filler: black_stained_glass_pane
+# The character to use for the bait items.
+bait-character: b
+
+# How to sort the baits. Valid options are: alphabetical, index. (Default: alphabetical)
+sort-type: alphabetical
+
+# The lore to use when a bait can be purchased.
+# Supported variables: {quantity}, {price}, {bait}
+purchase-lore:
+- Click to purchase {quantity}x {bait} for {price}
+
+exit:
+  item:
+    material: pufferfish
+    displayname: <red>Thoát
+    lore:
+    - <yellow>Về menu
+  glowing: true
+  character: x
+  click-action: open-main-menu
+
+# Page Buttons
+next-page:
+  item:
+    material: paper
+    displayname: <aqua>Trang sau
+    lore:
+    - <yellow>Sang trang sau
+  fallback-item:
+    material: barrier
+    displayname: <aqua>Trang sau
+    lore:
+    - <yellow>Đang ở trang cuối
+  character: n
+  page-action: next
+
+last-page:
+  item:
+    material: arrow
+    displayname: <aqua>Trang cuối
+    lore:
+    - <yellow>Tới trang cuối
+  fallback-item:
+    material: barrier
+    displayname: <aqua>Trang cuối
+    lore:
+    - <yellow>Đang ở trang cuối
+  character: l
+  page-action: last
+
+previous-page:
+  item:
+    material: paper
+    displayname: <aqua>Trang trước
+    lore:
+    - <yellow>Về trang trước
+  fallback-item:
+    material: barrier
+    displayname: <aqua>Trang trước
+    lore:
+    - <yellow>Đang ở trang đầu
+  character: p
+  page-action: previous
+
+first-page:
+  item:
+    material: arrow
+    displayname: <aqua>Trang đầu
+    lore:
+    - <yellow>Về trang đầu
+  fallback-item:
+    material: barrier
+    displayname: <aqua>Trang đầu
+    lore:
+    - <yellow>Đang ở trang đầu
+  character: f
+  page-action: first
+
+# ATTENTION ATTENTION ATTENTION
+# DO NOT EDIT THIS VALUE OR THINGS WILL BREAK!!!
+version: 1

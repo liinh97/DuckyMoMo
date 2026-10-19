@@ -1,0 +1,248 @@
+#If a message contains EvenMoreFish placeholders, e.g. {player} or {rarity} it also supports placeholderapi placeholders.
+#Sent to players when they fish an EvenMoreFish fish
+fish-caught: <bold>{player} <reset>đã câu được con {fish} dài {length}cm {rarity} !
+#By setting a fish's minimum-length to less than 0, you can create a lengthless fish. This is used when a player fishes a lengthless fish.
+lengthless-fish-caught: <bold>{player} <reset>đã câu được con {fish} dài {length} cm {rarity}!
+#Sent to a player when they don't have permission to execute a command.
+no-permission: <red>bạn không có quyền để chạy lệnh này.
+#The message to be sent when a competition starts and ends
+contest-start: <reset>Cuộc thi câu cá xếp hạng {type} đã bắt đầu.
+contest-end: <reset>Cuộc thi câu cá đã kết thúc.
+#The message to be sent when a player joins whilst a competition is going on
+contest-join: <reset>Cuộc thi câu cá hạng {type} đang diễn ra.
+#Shown to players when a new player takes #1 spot, remove this value or set it to "" to disable this message
+new-first: '<reset>{player} đang TOP #1'
+#Should this message appear in chat (false) or above the exp bar (true)
+action-bar-message: true
+#What competition types should the action bar be used for? (recommended: MOST_FISH)
+action-bar-types:
+- MOST_FISH
+#What should replace the {type} variable for each competition type?
+competition-types:
+  #MOST_FISH
+  most: nhiều cá nhất
+  #LARGEST_FISH
+  largest: cá to nhất
+  #LARGEST_TOTAL_FISH
+  largest-total: tổng chiều dài cá lớn nhất
+  #SPECIFIC_FISH
+  specific: '{amount} {rarity} {fish}<reset>'
+  #SPECIFIC_RARITY
+  specific-rarity: '{amount} {rarity_colour}<bold>{rarity}<reset> cá'
+#Segments shown in the bossbar when competitions run
+  shortest: con cá ngắn nhất
+  shortest-total: tổng chiều dài cá ngắn nhất
+bossbar:
+  layout: '{prefix}<reset>{time-formatted}<reset>{remaining}'
+  #The abbreviations used for different units of time
+  hour: <reset>{hour}h
+  minute: <reset>{minute}m
+  second: <reset>{second}s
+  #For translating the "left" at the end e.g. "5s left" -> "5s kvar"
+  remaining: còn lại
+
+#The colour of the [EvenMoreFish] prefix in commands (for when your prefix doesn't have colours)
+prefix-regular: '<green>[EvenMoreFish] '
+#The colour of the [EvenMoreFish] prefix in admin commands (for when your prefix doesn't have colours)
+prefix-admin: '<red>[EvenMoreFish] '
+#The colour of the [EvenMoreFish] prefix when errors occur e.g. no permission to run a command (for when your prefix doesn't have colours)
+prefix-error: '<red>[EvenMoreFish] '
+
+#This is the format of the lore given to fish when they're caught.
+#{custom-lore} is specified in the fish.yml under the lore: section, if the fish has a lore, the lore's lines will
+#replace the {fish_lore}, however if it's empty the line will be removed. DO NOT ADD ANYTHING OTHER THAN THIS VARIABLE
+#TO THAT LINE.
+fish-lore:
+- <white>Bắt bởi {player}
+- <white>Dài {length} cm
+- ''
+- '{fish_lore}'
+- '{rarity_colour}<bold>{rarity}'
+#The format of commands in /emf help (this message doesn't support papi placeholders)
+help: /{command} - {description}
+#The format of the leaderboard after a competition is over (this message doesn't support papi placeholders)
+leaderboard-largest-fish: <reset>#{position} | {player} <reset>({rarity} {fish}<reset>, {length}cm<reset>)
+leaderboard-largest-total: <reset>#{position} | {player} <reset>({amount} cm<reset>)
+leaderboard-most-fish: <reset>#{position} | {player} <reset>({amount} <reset>fish)
+#If you're running a competition where there's no leaderboard, this message is sent when there's a winner
+single-winner: <reset>{player} đã thắng cuộc thi câu cá xếp hạng {type}. Chúc mừng!
+#This shows the number of players currently in the competition, set to "" to disable.
+total-players: <reset>Có tổng cộng {amount} người chơi trên top
+#The number of positions shown in the leaderboard - can't be less than 1.
+leaderboard-count: 5
+#If the player doesn't appear on /emf top, should their position be displayed at the bottom?
+always-show-pos: true
+#Sent to players when nobody got a record during a competition
+no-winners: <reset>Không ai có TOP trong cuộc thi câu cá.
+#When an individual player didn't get a record
+no-record: <reset>Bạn chưa câu con cá nào cả.
+#Sent when an admin tries to start a competition where the type doesn't exist e.g. /emf admin competition start 600 ABCDEFGH
+invalid-type: '<reset>Đó không phải xếp hạng cuộc thi đúng, các xếp hạng có sẵn: MOST_FISH, LARGEST_FISH, SPECIFIC_FISH'
+#Sent to all online players when not enough players are on to start a competition
+not-enough-players: <reset>Không có đủ người chơi online để bắt đầu cuộc thi câu cá.
+#Sent to all players at specific times to show the remaining time left
+#{time_formatted} shows the time (e.g. 5m left, 10m 30s left)
+#{time_raw} is what you input in competitions.yml
+time-alert: <reset>Còn {time_formatted} cho cuộc thi câu cá xếp hạng {type}
+#The message sent to players when they've sold their fish in the /emf shop
+fish-sale: <white>Bạn đã bán </white><green>{amount} </green><white>cá với giá </white><green>{sell-price}</green><white>.
+#Help messages
+#General help (/emf help) - permission node dependant commands will only show if they are formatted with the forward-slash.
+help-general:
+  top: '[noPrefix]Xem bảng xếp hạng cuộc thi đang diễn ra.'
+  help: '[noPrefix]Xem trang này.'
+  shop: '[noPrefix]Mở cửa hàng bán cá.'
+  toggle: '[noPrefix]Bật/tắt các tính năng của plugin.'
+  gui: '[noPrefix]Mở menu chính.'
+  admin: '[noPrefix]Trợ giúp lệnh admin.'
+  sellall: '[noPrefix]Bán hết cá trong túi.'
+  next: '[noPrefix]Xem khi nào có cuộc thi tiếp theo.'
+  applybaits: '[noPrefix]Lắp mồi vào cần câu.'
+  journal: '[noPrefix]Xem nhật ký các loại cá đã câu.'
+help-competition:
+  start: '[noPrefix]Bắt đầu một cuộc thi đã cài.'
+  end: '[noPrefix]Kết thúc cuộc thi hiện tại.'
+  test: '[noPrefix]Thử một cuộc thi theo kiểu đã chọn.'
+  extend: '[noPrefix]Kéo dài cuộc thi đang diễn ra.'
+help-admin:
+  bait: '[noPrefix]Đưa mồi cho người chơi.'
+  competition: '[noPrefix]Bắt đầu hoặc dừng cuộc thi'
+  clearbaits: '[noPrefix]Gỡ hết mồi đã lắp khỏi cần câu.'
+  fish: '[noPrefix]Đưa cá cho người chơi.'
+  nbt-rod: '[noPrefix]Đưa cần câu NBT riêng (cần để câu cá EMF) cho người chơi.'
+  custom-rod: '[noPrefix]Đưa cần câu riêng cho người chơi.'
+  reload: '[noPrefix]Nạp lại cấu hình plugin.'
+  migrate: '[noPrefix]Chuyển cơ sở dữ liệu từ bản cũ (V2) sang V3'
+  addons: '[noPrefix]Liệt kê addon.'
+  version: '[noPrefix]Xem thông tin plugin.'
+  rawitem: '[noPrefix]Xem NBT gốc của vật phẩm trên tay.'
+  database: '[noPrefix]Quản lý cơ sở dữ liệu của plugin.'
+no-player-in-place: Hãy câu cá và chiếm lấy vị trí này đi!
+#Shown when the emf competition placeholders are used when there's no competition running
+no-competition-running: Không có cuộc thi câu cá nào đang diễn ra.
+#How should the %emf_competition_place_fish_*% be formatted?
+emf-competition-fish-format: '{length}cm <bold>{rarity}</bold> {fish}'
+#How should the %emf_competition_place_fish_*% be formatted when there's no length on the fish?
+emf-lengthless-fish-format: '{rarity_colour}<bold>{rarity}{fish}'
+#How should %emf_competition_place_fish_*% be formatted during MOST/SPECIFIC_FISH competitions?
+emf-most-fish-format: '{amount} con cá'
+#What should be displayed for %emf_competition_place_size_*% during the MOST_FISH competition?
+emf-size-during-most-fish: Không tồn tại
+#How the %emf_competition_time_left% variable should be formatted.
+emf-time-remaining:
+#Replaces the %emf_competition_time_left% variable when there's a competition already running.
+  inactive: <white>Còn {days} ngày {hours} giờ {minutes} phút tới cuộc thi tiếp theo.
+  active: '<white>Cuộc thi còn: {time-left}'
+emf-time-remaining-during-comp: Đang có cuộc thi câu cá diễn ra.
+#Sent when a player tries to apply too many types of baits to a fishing rod, set in the general section of baits.yml
+max-baits-reached: <reset>Bạn đã đạt đến mức độ tối đa của mồi câu cho cần câu này.
+#Not to be confused with the above, this is sent when the maximum of a specific bait is reached. Define this in baits.yml using "max-baits".
+max-bait-reached: <reset>Bạn đã đạt đến mức tối đa của mồi cầu {bait}<reset> để có thể áp dụng vào cần câu.
+#Sent when a player catches a bait from fishing (this can be disabled by setting catch-percentage to 0 in baits.yml
+bait-catch: <reset><bold>{player}<reset> đã bắt được mồi câu <bold>{bait}<reset>!
+#Sent when a bait is applied and a fish is caught.
+bait-use: <reset>Bạn đã dùng mồi <bold>{bait}.
+#Sent when someone tries to use a bait in creative
+bait-survival-limited: <reset>Bạn phải ở <underlined>Sinh tồn<reset> để có thể áp dụng mồi câu.
+#Shown when /emf toggle is run, to turn off and on respectively.
+toggle-off: <reset>Bạn sẽ không bắt được cá nữa (Cá được custom).
+toggle-on: <reset>Bạn sẽ bắt được cá (Cá được custom).
+#When trying to place a skull-fish when this is blocked in config.yml
+place-fish-blocked: <reset>Bạn không thể đặt loại cá này.
+admin:
+  #Opens an /emf shop for another player
+  open-fish-shop: <reset>Mở shop cho {player}.
+  #When a fish is given to a player
+  given-player-fish: <reset>Bạn đã đưa người chơi {player} con cá {fish}.
+  #When a bait is given to a player
+  given-player-bait: <reset>Bạn đã đưa người chơi {player} bait {bait}.
+  #When an admin runs /emf admin bait without a bait name.
+  no-bait-specified: <reset>Tên loại mồi không tồi tại.
+  #When the admin tries the command /emf admin clearbaits whe not holding a fishing rod.
+  must-be-holding-rod: <reset>Bạn cần phải cầm cần câu trên tay.
+  #When /emf admin clearbaits command is run.
+  all-baits-cleared: <reset>Bạn đã loại bỏ {amount} mồi khỏi cần câu.
+  #/emf admin clearbaits is run, but there are no baits on the rod.
+  no-baits-on-rod: <reset>Cần câu này không có mồi.
+  #When economy is disabled for the plugin
+  economy-disabled: <reset>Tính năng tiền bạc của EvenMoreFish đã bị tắt.
+  #When the specified player can't be found when using -p: parameter.
+  player-not-found: <reset>{player} không tồn tại.
+  #When the specified number in -q: is not a number.
+  number-format-error: <reset>{amount} không phải là con số.
+  #When the specified number in -q: is not within the minecraft stack range (1-64)
+  number-range-error: <reset>{amount} phải là số từ 1-64.
+  #When a command cannot be run from the console
+  cannot-run-on-console: <reset>Lệnh này không thể gửi từ console.
+  #Sent when a competition is already running when using /emf admin competition start
+  competition-already-running: <reset>Đang có cuộc thi khác đang khởi động.
+  #When an invalid competition type is tried to be started
+  competition-type-invalid: '<reset>Đó không phải xếp hạng cuộc thi đúng, các xếp hạng có sẵn: MOST_FISH, LARGEST_FISH, SPECIFIC_FISH'
+  #When there's a modrinth update available, don't translate the URL otherwise it won't direct to the correct page.
+  update-available: <reset>Đã có cập nhật mới tại https://modrinth.com/plugin/evenmorefish/versions?l=paper
+  #When the plugin is reloaded
+  reload: <reset>Đã tải lại plugin hoàn tất.
+
+# ATTENTION ATTENTION ATTENTION
+# DO NOT EDIT THIS VALUE OR THINGS WILL BREAK!!!
+  competition-id-invalid: <white>Mã cuộc thi không hợp lệ.
+  custom-rod-given: <white>Đã đưa cần câu riêng cho {player}.
+  list-addons: '<white>{addon-type} đã đăng ký: '
+version: 1
+fish-hunted: <white><b>{player}</b> vừa săn được <b>{rarity}</b> {fish} dài {length}cm!
+lengthless-fish-hunted: <white><b>{player}</b> vừa săn được <b>{rarity}</b> {fish}!
+fisherman-lore: '<white>Người câu: {player}'
+length-lore: <white>Dài {length}cm.
+leaderboard:
+  most-fish: <white>#{position} | {player} <white>({amount} <white>con)
+  single-winner: <white>{player} thắng cuộc thi {type}. Chúc mừng!
+  total-players: <white>Có tổng cộng {amount} người trên bảng xếp hạng.
+  no-winners: <white>Không ai có thành tích câu cá.
+  no-record: <white>Bạn chưa câu được con nào.
+no-sellable-fish: <white>Bạn không có gì để bán!
+help-format: '[noPrefix]<aqua>{command} <yellow>- <white>{description}'
+help-list:
+  fish: '[noPrefix]Liệt kê cá của một độ hiếm.'
+  rarities: '[noPrefix]Liệt kê các độ hiếm.'
+no-fish-in-place: <white>Câu cá để giành vị trí này
+no-size-in-place: <white>Câu cá để giành vị trí này
+no-competition-running-fish: <white>Hiện không có cuộc thi nào.
+no-competition-running-size: <white>Hiện không có cuộc thi nào.
+no-competitions-scheduled: <white>Chưa có lịch cuộc thi nào.
+competition-time-extended: <white>Cuộc thi được kéo dài thêm {duration}!
+custom-fishing-enabled: <green>Bật
+custom-fishing-disabled: <red>Tắt
+bait-rod-protection: <white>Đã bảo vệ cần câu có mồi. Muốn sửa cần thì đặt nó vào ô đầu tiên.
+bait-invalid-rod: <white>Không lắp mồi vào cần câu này được!
+bait-purchased: <white>Bạn đã mua {amount}x {bait} với giá {price}.
+bait-confirm-purchase: <white>Bấm lại trong 5 giây để xác nhận mua mồi.
+bait-cannot-afford: <white>Không đủ tiền mua mồi này. Cần {price}.
+bait-not-for-sale: <white>Mồi này không bán.
+toggle:
+  fishing:
+    no-permission: <white>Bạn không bật/tắt được cá đặc biệt.
+    'False': <white>Bạn sẽ không câu ra cá đặc biệt nữa.
+    'True': <white>Bạn sẽ câu ra cá đặc biệt.
+  bossbar:
+    no-permission: <white>Bạn không bật/tắt được thanh cuộc thi.
+    'False': <white>Bạn sẽ không thấy thanh cuộc thi nữa.
+    'True': <white>Bạn sẽ thấy thanh cuộc thi.
+  catch-message:
+    no-permission: <white>Bạn không bật/tắt được tin câu cá.
+    'False': <white>Bạn sẽ không thấy tin câu cá nữa.
+    'True': <white>Bạn sẽ thấy tin câu cá.
+rarity-invalid: <white>Độ hiếm không hợp lệ!
+journal-disabled: <white>Nhật ký câu cá đang tắt. Hãy bật cơ sở dữ liệu của plugin.
+reward:
+  catch-up: <white>Bạn có phần thưởng nhận lúc offline, đang trao ngay.
+bait:
+  rod-lore: "<white>\n<gray>Ô mồi: <yellow>({current_baits}/{max_baits})\n<white>\n{baits}\n<white>"
+  bait-lore: "<white>\nTăng tỉ lệ câu được:\n{boosts}\n{lore}\n<white>\n<#dadada>Thả lên cần câu để lắp,\n<#dadada>hoặc giữ <u>SHIFT</u> để lắp hết.\n<white>"
+  boosts-rarity: ► <white>1 độ hiếm
+  boosts-rarities: ► <white>{amount} độ hiếm
+  boosts-fish: ► <white>{amount} loại cá
+  unused-slot: <gray>► ? <i>Ô trống
+exploits:
+  afk-fishing:
+    detected: <white>Chỗ này hết cá rồi. Thử thả câu xa ra ít nhất {range} khối.
+    blocked: <white>Chỗ này hết cá rồi. Thử thả câu xa ra ít nhất {range} khối.

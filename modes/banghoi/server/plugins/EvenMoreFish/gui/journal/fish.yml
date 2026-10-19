@@ -1,0 +1,132 @@
+# Configuration for the Journal GUI, shown after clicking the journal button in /emf gui, after selecting a rarity.
+
+title: <#006F86>Câu cá - Nhật ký
+layout:
+- '    a    '
+- ' fffffff '
+- ' fffffff '
+- ' fffffff '
+- ' fffffff '
+- p   x   n
+filler: gray_stained_glass_pane
+# The character to use for fish items
+fish-character: f
+
+# How to sort the fish. Valid options are: alphabetical, weight, index. (Default: alphabetical)
+sort-type: alphabetical
+
+# Whether to show the undiscovered-fish config below when a fish has not been caught by the player.
+hide-undiscovered-fish: false
+
+# The message to display when a fish has no data.
+# This does not support formatting.
+unknown-message: Unknown
+
+# How undiscovered fish should look
+undiscovered-fish:
+  item:
+    material: iron_bars
+    displayname: <dark_gray>Cá chưa câu được
+  lore:
+  - ''
+  - <white>Câu được loại cá này
+  - <white>để mở khoá ở đây.
+
+# How caught fish should look. Changing the material will not work, as it always uses the fish item as a base
+fish-item:
+  item:
+    displayname: <white>{fishname}
+    lore:
+    - ''
+    - '<white>Đã câu: {times-caught} lần'
+    - '<white>Dài nhất: {largest-size}cm'
+    - '<white>Ngắn nhất: {smallest-size}cm'
+    - '<white>Câu lần đầu: {discover-date}'
+    - ''
+    - '<white>Người câu đầu tiên: {discoverer}'
+    - '<white>Dài nhất server: {server-largest}cm'
+    - '<white>Ngắn nhất server: {server-smallest}cm'
+    - '<white>Cả server đã câu: {server-caught} lần'
+
+rarity-item:
+  item:
+    displayname: <white>{rarityname}
+
+info:
+  item:
+    material: book
+    displayname: <red>Thông tin
+    lore:
+    - <yellow>Trang này hiện mọi cá {rarity} bạn đã câu.
+  character: a
+
+exit:
+  item:
+    material: pufferfish
+    displayname: <red>Thoát
+    lore:
+    - <yellow>Về menu
+  glowing: true
+  character: x
+  click-action: open-journal-menu
+
+# Page Buttons
+next-page:
+  item:
+    material: paper
+    displayname: <aqua>Trang sau
+    lore:
+    - <yellow>Sang trang sau
+  fallback-item:
+    material: barrier
+    displayname: <aqua>Trang sau
+    lore:
+    - <yellow>Đang ở trang cuối
+  character: n
+  page-action: next
+
+last-page:
+  item:
+    material: arrow
+    displayname: <aqua>Trang cuối
+    lore:
+    - <yellow>Tới trang cuối
+  fallback-item:
+    material: barrier
+    displayname: <aqua>Trang cuối
+    lore:
+    - <yellow>Đang ở trang cuối
+  character: l
+  page-action: last
+
+previous-page:
+  item:
+    material: paper
+    displayname: <aqua>Trang trước
+    lore:
+    - <yellow>Về trang trước
+  fallback-item:
+    material: barrier
+    displayname: <aqua>Trang trước
+    lore:
+    - <yellow>Đang ở trang đầu
+  character: p
+  page-action: previous
+
+first-page:
+  item:
+    material: arrow
+    displayname: <aqua>Trang đầu
+    lore:
+    - <yellow>Về trang đầu
+  fallback-item:
+    material: barrier
+    displayname: <aqua>Trang đầu
+    lore:
+    - <yellow>Đang ở trang đầu
+  character: f
+  page-action: first
+
+# ATTENTION ATTENTION ATTENTION
+# DO NOT EDIT THIS VALUE OR THINGS WILL BREAK!!!
+version: 1

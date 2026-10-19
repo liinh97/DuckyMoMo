@@ -1,0 +1,85 @@
+# Configuration for the Main Menu GUI, shown when /emf gui is used.
+
+title: <#006F86>Câu cá - Menu chính
+layout:
+- '126515621'
+- 23     32
+- 4 t s h 4
+- 4  j b  4
+- 23     32
+- 1265x5621
+# This should be the most used filler item.
+filler: black_stained_glass_pane
+
+fish-toggle:
+  item:
+    material: tropical_fish
+    displayname: <gold>» Bật/tắt cá đặc biệt
+    lore:
+    - ''
+    - <gray>Bấm nút này để
+    - <gray>bật/tắt cá đặc biệt.
+    - ''
+  character: t
+  click-action: fish-toggle
+
+open-shop:
+  item:
+    material: gold_ingot
+    displayname: <gold>» Mở cửa hàng cá
+    lore:
+    - ''
+    - <gray>Bán cá câu được
+    - <gray>để kiếm thêm chút tiền.
+    - ''
+  character: s
+  click-action: open-shop
+
+help-button:
+  item:
+    material: COMPASS
+    displayname: <gold>» Trợ giúp lệnh
+    lore:
+    - ''
+    - <gray>Xem danh sách lệnh
+    - <gray>dùng được của câu cá.
+    - ''
+  character: h
+  click-action: show-command-help
+
+open-baits:
+  item:
+    material: nautilus_shell
+    displayname: <gold>» Xem mồi
+    lore:
+    - ''
+    - <gray>Xem mọi loại mồi
+    - ''
+  character: b
+  click-action: open-baits-menu
+
+open-journal:
+  item:
+    material: writable_book
+    displayname: <gold>» Nhật ký câu cá
+    lore:
+    - ''
+    - <gray>Theo dõi mọi loại
+    - <gray>cá bạn đã câu.
+    - ''
+  character: j
+  click-action: open-journal-menu
+
+exit:
+  item:
+    material: pufferfish
+    displayname: <red>Thoát
+    lore:
+    - <yellow>Về menu
+  glowing: true
+  character: x
+  click-action: full-exit
+
+# ATTENTION ATTENTION ATTENTION
+# DO NOT EDIT THIS VALUE OR THINGS WILL BREAK!!!
+version: 1

@@ -1,0 +1,109 @@
+# Configuration for the Journal GUI, shown after clicking the journal button in /emf gui, before selecting a rarity.
+
+title: <#006F86>Câu cá - Nhật ký
+layout:
+- '232323232'
+- 3rrrrrrr3
+- 2rrrrrrr2
+- 3rrrrrrr3
+- 2rrrrrrr2
+- p323x323n
+filler: gray_stained_glass_pane
+# The character to use for rarity items
+rarity-character: r
+
+# How to sort the rarities. Valid options are: alphabetical, weight, index. (Default: index)
+sort-type: index
+
+# Whether to show the undiscovered-rarity config below when a rarity has not been discovered by the player.
+hide-undiscovered-rarity: false
+
+# How undiscovered rarities should look
+undiscovered-rarity:
+  item:
+    material: iron_bars
+    displayname: <dark_gray>Độ hiếm chưa mở
+    lore:
+    - ''
+    - <white>Câu một con cá thuộc
+    - <white>độ hiếm này để mở khoá.
+
+rarity-item:
+  item:
+    # This will be overwritten by the rarity's material.
+    material: cod
+    displayname: '{rarity}'
+    lore:
+    - ''
+    - <aqua>→ Bấm để xem cá đã câu
+
+exit:
+  item:
+    material: pufferfish
+    displayname: <red>Thoát
+    lore:
+    - <yellow>Về menu
+  glowing: true
+  character: x
+  click-action: full-exit
+
+# Page Buttons
+next-page:
+  item:
+    material: paper
+    displayname: <aqua>Trang sau
+    lore:
+    - <yellow>Sang trang sau
+  fallback-item:
+    material: barrier
+    displayname: <aqua>Trang sau
+    lore:
+    - <yellow>Đang ở trang cuối
+  character: n
+  page-action: next
+
+last-page:
+  item:
+    material: arrow
+    displayname: <aqua>Trang cuối
+    lore:
+    - <yellow>Tới trang cuối
+  fallback-item:
+    material: barrier
+    displayname: <aqua>Trang cuối
+    lore:
+    - <yellow>Đang ở trang cuối
+  character: l
+  page-action: last
+
+previous-page:
+  item:
+    material: paper
+    displayname: <aqua>Trang trước
+    lore:
+    - <yellow>Về trang trước
+  fallback-item:
+    material: barrier
+    displayname: <aqua>Trang trước
+    lore:
+    - <yellow>Đang ở trang đầu
+  character: p
+  page-action: previous
+
+first-page:
+  item:
+    material: arrow
+    displayname: <aqua>Trang đầu
+    lore:
+    - <yellow>Về trang đầu
+  fallback-item:
+    material: barrier
+    displayname: <aqua>Trang đầu
+    lore:
+    - <yellow>Đang ở trang đầu
+  character: f
+  page-action: first
+
+# ATTENTION ATTENTION ATTENTION
+# DO NOT EDIT THIS VALUE OR THINGS WILL BREAK!!!
+version: 1

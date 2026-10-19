@@ -1,0 +1,416 @@
+# DuckyMoMo: ghi đè tiếng Việt cho QuickShop-Hikari (chỉ khoá đã dịch; sinh bằng tools/vi/quickshop.py)
+tabcomplete:
+  amount: '[số lượng]'
+  item: '[vật phẩm]'
+  price: '[giá]'
+  name: '[tên]'
+  range: '[phạm vi]'
+  page: '[trang]'
+  shop-id: '[mã shop]'
+  currency: '[loại tiền]'
+  percentage: '[phần trăm%]'
+  tag: '[nhãn]'
+quick-fill:
+  entry-own: ' <yellow>- <red>[của bạn] <aqua>{0} <light_purple>{1}'
+3rd-plugin-build-check-failed-admin: <gray>(Chỉ admin) <light_purple>{0}<dark_gray> đã chặn kiểm tra quyền. Nếu không mong muốn, thử thêm <light_purple>{1} <gray>vào danh sách bỏ qua listener. Hướng dẫn:https://quickshop-community.github.io/QuickShop-Hikari-Documents/docs/modules/shops/protection-checker
+shop-owner-self-trade-denied: <red>Không mua bán với shop của chính mình được.
+tags:
+  commands:
+    tag: <yellow>Quản lý nhãn shop của bạn.
+    favorite: <yellow>Bật/tắt yêu thích shop đang nhìn.
+    watch: <yellow>Bật/tắt theo dõi shop đang nhìn.
+    avoid: <yellow>Bật/tắt né shop đang nhìn.
+  general:
+    database-error: <red>Có lỗi khi xử lý nhãn.
+    invalid: '<red>Nhãn không hợp lệ. Chỉ dùng chữ, gạch ngang (-) và gạch dưới (_). Dài tối đa: <yellow>{0}</yellow>'
+    list-entry: <green>{0}.</green> <aqua>{1}</aqua> <light_purple>[<click:run_command:"{2}"><hover:show_text:"<gray>Xem mọi shop có nhãn này">Xem shop</hover></click>]</light_purple> <red>[<click:run_command:"{3}"><hover:show_text:"<gray>Gỡ nhãn này khỏi shop">Gỡ</hover></click>]</red>
+  avoid:
+    added: <green>Đã thêm shop này vào danh sách né.
+    removed: <green>Đã bỏ shop này khỏi danh sách né.
+    unable: <red>Không đổi được trạng thái né của shop này.
+    none: <red>Bạn chưa né shop nào.
+    label: <yellow>Né
+  favorite:
+    added: <green>Đã thêm shop này vào danh sách yêu thích.
+    removed: <green>Đã bỏ shop này khỏi danh sách yêu thích.
+    unable: <red>Không đổi được trạng thái yêu thích của shop này.
+    none: <red>Bạn chưa yêu thích shop nào.
+    label: <yellow>Yêu thích
+  watch:
+    added: <green>Bạn đang theo dõi shop này.
+    removed: <green>Bạn đã thôi theo dõi shop này.
+    unable: <red>Không đổi được trạng thái theo dõi của shop này.
+    none: <red>Bạn không theo dõi shop nào.
+    label: <yellow>Đang theo dõi
+  tag:
+    title-avoided-shops: <green>Shop đang né</green> <gray>(Tổng <yellow>{0}</yellow>)</gray>
+    title-favorited-shops: <green>Shop yêu thích</green> <gray>(Tổng <yellow>{0}</yellow>)</gray>
+    title-watched-shops: <green>Shop đang theo dõi</green> <gray>(Tổng <yellow>{0}</yellow>)</gray>
+    list-player-shops-title: <green>Shop có nhãn của bạn</green> <gray>(<yellow>{0}</yellow> shop, <yellow>{1}</yellow> nhãn)</gray>
+    list-player-shop-title: <green>Nhãn của shop</green> <gray>(Tổng <yellow>{0}</yellow>)</gray>
+    list-tag-title: <green>Nhãn <aqua>{0}</aqua> đang dùng</green> <gray>(<yellow>{1}</yellow> shop)</gray>
+    list-tag-shop-entry-tp: <light_purple>[<click:run_command:"{0}"><hover:show_text:"<gray>Dịch chuyển tới shop này">Dịch chuyển</hover></click>]</light_purple>
+    added: <green>Đã gắn nhãn <aqua>{0}</aqua> cho shop này.
+    duplicate: <red>Shop này đã có nhãn <aqua>{0}</aqua>.
+    failed-add: <red>Có lỗi khi gắn nhãn <aqua>{0}</aqua> cho shop này.
+    failed-remove: <red>Có lỗi khi gỡ nhãn <aqua>{0}</aqua> khỏi shop này.
+    removed: <green>Đã gỡ nhãn <aqua>{0}</aqua> khỏi shop này.
+    does-not-exist: <red>Shop này không có nhãn <aqua>{0}</aqua>.
+    cleared: <green>Đã gỡ mọi nhãn của shop này.
+    cleared-all: <green>Đã gỡ mọi nhãn của mọi shop.
+    cleared-tag: <green>Đã gỡ nhãn <aqua>{0}</aqua> khỏi mọi shop có nhãn của bạn.
+    no-tags-all: <red>Chưa shop nào có nhãn.
+    no-tags: <red>Shop này chưa có nhãn.
+    no-tagged-shops-player: <red>Bạn chưa gắn nhãn nào cho shop này.
+    no-tagged-shops: <red>Bạn chưa có shop nào có nhãn.
+    no-tagged-shops-tag: <red>Bạn không có shop nào mang nhãn <aqua>{0}</aqua>.
+    shops-entry: <yellow><hover:show_text:"<yellow>{1}</yellow><br><gray>{2} {3}</gray><br><aqua>Giá <yellow>{4}</yellow> - <light_purple>x{5}</light_purple> <yellow>{6}</yellow><br><green>{7}<br><green>{8}">{0}. <aqua>{1}</hover> <gray>-</gray> <light_purple>[<click:run_command:"{9}"><hover:show_text:"<gray>Xem mọi nhãn của shop">Xem {10} nhãn</hover></click>]</light_purple>
+    entry: <yellow><hover:show_text:"<yellow>{1}</yellow><br><gray>{2} {3}</gray><br><aqua>Giá <yellow>{4}</yellow> - <light_purple>x{5}</light_purple> <yellow>{6}</yellow><br><green>{7}<br><green>{8}">{0}. <aqua>{1}</hover> <gray>-</gray> <red>[<click:run_command:"{9}"><hover:show_text:"<gray>Gỡ nhãn này khỏi shop">Gỡ nhãn</hover></click>]</red>
+menu:
+  this-shop-is-frozen: <blue>ĐÓNG BĂNG</blue>
+  this-shop-is-active: <aqua>ĐANG BÁN</aqua>
+  this-shop-is-state: '<green>Trạng thái hiện tại của shop: {0}<green>.'
+shop-transaction-failed: '<red>Xin lỗi, có lỗi nội bộ khi xử lý giao dịch. Giao dịch đã huỷ và mọi thay đổi đã hoàn lại. Lý do: {0}'
+metric:
+  amount-stack-hover: <yellow>{0}x chồng
+shop-type:
+  frozen: ĐÓNG BĂNG
+shop-state:
+  frozen: ĐÓNG BĂNG
+  unfrozen: MỞ
+  freeze: Đóng băng
+  unfreeze: Mở lại
+shop-display:
+  enabled: Bật
+  disabled: Tắt
+restricted-price-max: '<red>Giá của {0} bị giới hạn: tối đa {1}'
+restricted-price-min: '<red>Giá của {0} bị giới hạn: tối thiểu {1}'
+shop-type-change-price-restricted: '<red>Giá hiện tại không hợp lệ cho shop {0}. Khoảng cho phép: {1} - {2}. Đổi giá trước rồi mới đổi loại shop.'
+signs:
+  item-duration: 'Thời lượng: {0}'
+  item-level: 'Cấp: {0}'
+  splash-potion: Ném
+  linger-potion: Lưu cữu
+display-turn-on-owned: <green>Đã bật vật phẩm trưng bày cho mọi shop của bạn.
+display-turn-off-owned: <green>Đã tắt vật phẩm trưng bày cho mọi shop của bạn.
+display-turn-on-all: <green>Đã bật vật phẩm trưng bày cho mọi shop trên server.
+display-turn-off-all: <green>Đã tắt vật phẩm trưng bày cho mọi shop trên server.
+player-sold-to-your-store: <green>{0} đã bán {1} {2} cho shop của bạn, được {3}.
+controlpanel:
+  freeze: '<green>Đóng băng: <aqua>{0} <yellow>[<bold><light_purple>Đổi</light_purple></bold>]'
+  inventory: '<green>Kho: </green><yellow>[<bold><light_purple>Xem kho</light_purple></bold>]'
+  inventory-hover: <yellow>Mở kho của shop.
+command:
+  description:
+    staffall: <yellow>Quản lý nhân viên ở mọi shop của bạn.
+    toggledisplayall: <yellow>Bật/tắt vật phẩm trưng bày ở mọi shop của bạn (hoặc cả server).
+    benefitall: <yellow>Chia lợi nhuận giữa chủ shop và người khác cho mọi shop của bạn.
+    browse: <yellow>Xem các shop trên server.
+admin-shop: Shop của server
+display-fallback: '<red>Do lỗi nội bộ, đang hiện thông báo dự phòng.
+
+  Giá trị của vật phẩm này có thể chưa được dịch hoặc xử lý đúng.
+
+  Vui lòng báo admin.'
+invalid-past-time: <red>Không chọn được thời điểm trong quá khứ.
+transfer-single-request: <yellow>Người chơi <aqua>{0}</aqua> muốn chuyển một shop cho bạn. Bạn có nhận không?
+transferall-ask: '<gold>Gõ <red>/quickshop transferall accept</red> để nhận hoặc <red>/quickshop transferall deny</red> để từ chối.
+
+  Yêu cầu hết hạn sau <red>{0}</red> giây.'
+transfer-single-ask: '<gold>Gõ <red>/quickshop transferownership accept</red> để nhận hoặc <red>/quickshop transferownership deny</red> để từ chối.
+
+  Yêu cầu hết hạn sau <red>{0}</red> giây.'
+transfer-no-self: <red>Không chuyển shop cho chính mình được.
+transfer-no-buy: <red>Không chuyển được shop thu mua.
+transfer-failed-some: <red>Một số shop không chuyển được vì không đủ điều kiện.
+benefit-overflow: <red>Tổng phần chia lợi nhuận phải nhỏ hơn 100%.
+benefit-exists: <red>Người này đã có trong danh sách chia lợi nhuận của shop.
+benefit-removed: <red>Đã bỏ người này khỏi danh sách chia lợi nhuận.
+benefit-added: <green>Đã thêm <aqua>{0}</aqua> vào danh sách chia lợi nhuận!
+benefit-updated: <green>Đã cập nhật phần chia lợi nhuận của <aqua>{0}</aqua>!
+benefit-query: <green>Shop này có <yellow>{0}</yellow> người được chia lợi nhuận!
+batch-operations-based-on-tags-no-failure: <green>Đã xử lý hàng loạt <yellow>{0}</yellow> shop.
+batch-operations-based-on-tags-have-failure-error-messages-may-appears-above: <gray>Thông báo lỗi (nếu có) nằm phía trên dòng này trong chat.
+compat:
+  advancedchests:
+    created: <green>Đã tạo shop trên rương AdvancedChests!
+    permission-denied: <red>Bạn không có quyền tạo shop trên rương AdvancedChests!
+suite:
+  dynmap:
+    description: 'Vật phẩm: {0}
+
+      Chủ: {1}
+
+      Loại: {2} {3}
+
+      Giá: {4}
+
+      Vị trí: {5} {6}, {7}, {8}
+
+      Chỗ trống: {9}
+
+      Còn hàng: {10}'
+  limited:
+    command-description: <yellow>Giới hạn số lượng mỗi người được mua trong một khoảng thời gian.
+    reach-the-quota-limit: <red>Bạn đã mua hết hạn mức ở shop này ({0}/{1}).
+    quota-reset-countdown: <yellow>Hạn mức ở shop này làm mới sau {0}.
+    quota-reset-player-successfully: <green>Đã làm mới hạn mức của {0} ở shop này.
+    quota-reset-everybody-successfully: <green>Đã làm mới hạn mức của mọi người ở shop này.
+    quota-setup: <green>Đã áp giới hạn mua cho shop này!
+    quota-remove: <green>Đã bỏ giới hạn mua của shop này!
+    subtitles:
+      title: <green>Mua thành công
+      subtitle: <aqua>Bạn còn mua được <yellow>{0}</yellow> ở shop này
+  list:
+    command-description: <yellow>Liệt kê shop của bạn hoặc của người khác.
+    table-prefix: <yellow>Bạn có tổng cộng <aqua>{0}</aqua> shop trên server.
+    entry-syntax-fallback-name: '<yellow>Vật phẩm:{0} X:{1}, Y:{2}, Z:{3}, Thế giới: {4}'
+  shopitemonly:
+    message: <red>Không bỏ được đồ không phải hàng của shop vào rương shop, đồ đó sẽ rơi ra chỗ bạn đứng.
+compatibility:
+  elitemobs:
+    soulbound-disallowed: Không mua bán được đồ có phù phép Soulbound của EliteMobs.
+internet-paste-forbidden-privacy-reason: <red>Không được! Theo cài đặt riêng tư, QuickShop-Hikari không được tải bản ghi lên Internet. Bật quyền DIAGNOSTIC trong cài đặt riêng tư ở config.yml hoặc dùng <aqua>/quickshop paste --file</aqua>.
+no-sign-type-given: '<red>Phải ghi loại biển; các loại biển có trên server: {0}'
+sign-type-invalid: <red><yellow>{0}</yellow> không phải loại biển hợp lệ.
+delete-controlpanel-button-confirm: <red>Thật sự muốn xoá shop này? Bấm lại nút <bold>[Xoá shop]</bold> trong {0} giây để xác nhận.
+cannot-suggest-price: <red>Hiện chưa có ai bán cùng mặt hàng nên chưa đủ dữ liệu để gợi ý giá.
+price-suggest: '<green>Theo dữ liệu từ <aqua>{0}</aqua> shop: giá cao nhất <light_purple>{1}</light_purple>, thấp nhất <light_purple>{2}</light_purple>, trung bình <light_purple>{3}</light_purple>, trung vị <light_purple>{4}</light_purple>. <newline><yellow>Nên đặt giá quanh <gold>{5}</gold>.</yellow>'
+price-suggest-multi: <green>Gợi ý cho loại {0}.</green>{1}
+suggest-wait: <green>Đợi chút... Đang tính giá gợi ý.
+gui:
+  trade:
+    title: <dark_aqua>Shop</dark_aqua>
+    info-stock:
+      display: <yellow>Hàng còn</yellow>
+      lore:
+      - '<gray>Còn: <white>{0}</white></gray>'
+    info-price:
+      display: <gold>Giá</gold>
+      lore:
+      - '<gray>Giá: <white>{0}</white></gray>'
+      - '<gray>Cho: <white>{1} món</white></gray>'
+    info-seller:
+      display: <aqua>Người bán</aqua>
+      lore:
+      - '<gray>Chủ: <white>{0}</white></gray>'
+    custom-amount:
+      display: <bold><blue>Tự nhập số lượng</blue></bold>
+    quantity-button:
+      display-buy: <green>Mua x{0}</green>
+      display-sell: <gold>Bán x{0}</gold>
+  keeper:
+    title: <dark_aqua>Quản lý shop</dark_aqua>
+    change-price:
+      display: <bold><green>Đổi giá</green></bold>
+      lore:
+      - '<gray>Giá hiện tại: <white>{0}</white></gray>'
+      - ''
+      - <yellow>Bấm để đổi giá</yellow>
+    display-toggle:
+      display: <bold><green>Bật/tắt trưng bày</green></bold>
+      lore:
+      - <gray>Bật/tắt vật phẩm trưng bày trên shop</gray>
+      - '<gray>Trạng thái: <white>{0}</white>. Bấm để đổi.</gray>'
+    freeze-toggle:
+      display: <bold><green>Đóng băng / mở lại</green></bold>
+      lore:
+      - <gray>Hiện đang <white>{0}</white></gray>
+      - <gray>Bấm để <white>{1}</white></gray>
+    mode-toggle:
+      display: <bold><green>Đổi chế độ</green></bold>
+      lore:
+      - '<gray>Hiện tại: <white>{0}</white></gray>'
+      - '<gray>Bấm để đổi sang: <white>{1}</white></gray>'
+    inventory:
+      display: <bold><green>Xem kho</green></bold>
+      lore:
+      - <gray>Bấm để xem</gray>
+      - <gray>rương hàng của shop.</gray>
+    staff:
+      display: <bold><aqua>Nhân viên</aqua></bold>
+      lore:
+      - <gray>Bấm để quản lý</gray>
+      - <gray>nhân viên của shop.</gray>
+    history:
+      display: <bold><light_purple>Lịch sử giao dịch</light_purple></bold>
+      lore:
+      - <gray>Bấm để xem</gray>
+      - <gray>lịch sử giao dịch của shop.</gray>
+    remove:
+      display: <bold><red>Xoá shop</red></bold>
+      lore:
+      - <gray>Bấm để xoá shop.</gray>
+      - <dark_gray>Phá biển/rương cũng được.</dark_gray>
+  staff:
+    title: <dark_aqua>Quản lý nhân viên</dark_aqua>
+    search:
+      display: '<yellow>Tìm: {0}</yellow>'
+      lore:
+      - <gray>Chuột trái để tìm người chơi</gray>
+      - <gray>Chuột phải để xoá tìm kiếm</gray>
+    add-staff:
+      display: <green>Thêm nhân viên</green>
+      lore:
+      - <gray>Bấm để thêm</gray>
+      - <gray>nhân viên cho shop.</gray>
+    back:
+      display: <white>Về shop</white>
+  browse:
+    title: <dark_aqua>Chợ</dark_aqua>
+    shop-list:
+      buying-label: <#FFA500>Thu mua</#FFA500>
+      selling-label: <green>Đang bán</green>
+      price-indicator:
+        average: ● Trung bình
+        selling:
+          great: ▼▼ Rất rẻ!
+          good: ▼ Rẻ hơn trung bình
+          bad: ▲▲ Đắt
+          worst: ▲ Đắt hơn trung bình
+        buying:
+          great: ▲▲ Giá thu rất tốt!
+          good: ▲ Cao hơn trung bình
+          bad: ▼▼ Thu giá thấp
+          worst: ▼▼ Thấp hơn trung bình
+      lore:
+      - '<gray>Chủ: <white>{0}</white></gray>'
+      - '<gray>Loại: {1}</gray>'
+      - '<gray>Giá: {2}</gray>'
+      - <gray><aqua>{3}</aqua></gray>
+      - '<gray>Vị trí: <white>{4}</white></gray>'
+      - <dark_gray>{5}</dark_gray>
+      teleport: <newline><yellow>Bấm để dịch chuyển</yellow>
+    shop-item:
+      lore:
+      - '<green>Chủ: </green><yellow>{0}</yellow>'
+      - '<green>Vị trí: </green><yellow>{1}</yellow>'
+      - '<green>Loại: </green><yellow>{2}</yellow>'
+      - '<green>Giá: </green><yellow>{3}</yellow>'
+      - '<green>Còn hàng: </green><yellow>{4}</yellow>'
+    grouped-item:
+      lore-title:
+      - '<gray>Số shop: <white>{0}</white></gray>'
+      lore-selling:
+      - <green>▼ Đang bán ({0} shop)</green>
+      - '<gray> Giá: <white>{1} - {2}</white></gray>'
+      - '<gray> Trung bình: <yellow>{3}</yellow></gray>'
+      - '<gray> Trung vị: <gold>{4}</gold></gray>'
+      - '<gray> Còn hàng: <aqua>{5}</aqua></gray>'
+      lore-buying:
+      - <#FFA500>▲ Thu mua ({0} shop)</#FFA500>
+      - '<gray> Giá: <white>{1} - {2}</white></gray>'
+      - '<gray> Trung bình: <yellow>{3}</yellow></gray>'
+      - '<gray> Trung vị: <gold>{4}</gold></gray>'
+      lore-footer:
+      - <yellow>Bấm để xem mọi shop</yellow>
+    search:
+      display: '<yellow>Tìm: {0}</yellow>'
+      lore:
+      - <gray>Chuột trái để tìm vật phẩm</gray>
+      - <gray>Chuột phải để xoá tìm kiếm</gray>
+    search-item:
+      lore:
+      - '<gray>Đang xem: {0}</gray>'
+      - '<gray>Số shop: <white>{1}</white></gray>'
+      - '<gray>Giá trung bình: <gold>{2}</gold></gray>'
+    sort:
+      display: '<green>Sắp xếp: {0}</green>'
+      lore:
+      - <gray>Bấm để đổi</gray>
+      price-asc: Giá ↑
+      price-desc: Giá ↓
+      stock: Còn hàng
+      name: Tên
+    filter:
+      display: '<aqua>Lọc: {0}</aqua>'
+      lore:
+      - <gray>Bấm để đổi</gray>
+      all: Tất cả
+      selling: Đang bán
+      buying: Thu mua
+      all-indicator: <white>Mọi shop</white>
+      selling-indicator: <green>Shop bán</green>
+      buying-indicator: <#FFA500>Shop thu mua</#FFA500>
+    stock-filter:
+      display: '<gold>Chỉ còn hàng: {0}</gold>'
+      lore:
+      - <gray>Bấm để bật/tắt</gray>
+    back:
+      display: <white>Về chợ</white>
+  shared:
+    next-page:
+      display: <white>Trang sau >></white>
+    page-info:
+      display: <yellow>Trang {0}/{1}</yellow>
+    back:
+      display: <white>Quay lại</white>
+    close:
+      display: <red>Đóng</red>
+  messages:
+    keeper:
+      enter-price: <yellow>Nhập giá mới vào chat.</yellow>
+      confirm-delete: <yellow>Gõ '<white>confirm</white>' vào chat để xoá shop. Gõ chữ khác để huỷ.</yellow>
+    staff:
+      enter-search: <yellow>Nhập tên người chơi để tìm. Gõ '<white>clear</white>' để xoá, hoặc chuột phải nút tìm.</yellow>
+      confirm-remove: <yellow>Gõ '<white>confirm</white>' để bỏ <red>{0}</red> khỏi nhân viên. Gõ chữ khác để huỷ.</yellow>
+      confirm-transfer: <yellow>Gõ '<white>confirm</white>' để chuyển quyền chủ cho <green>{0}</green>. Gõ chữ khác để huỷ.</yellow>
+    trade:
+      enter-buy: <yellow>Nhập số lượng muốn mua, phải là bội số của <white>{0}</white>. Nhập <white>0</white> để huỷ.</yellow>
+      enter-sell: <yellow>Nhập số lượng muốn bán, phải là bội số của <white>{0}</white>. Nhập <white>0</white> để huỷ.</yellow>
+      invalid-multiple: <red>Số lượng không hợp lệ! Phải là bội số của <white>{0}</white>. Nhập <white>0</white> để huỷ.</red>
+      invalid-stock: <red>Số lượng không hợp lệ! Không đủ hàng. Nhập <white>0</white> để huỷ.</red>
+    browse:
+      enter-search: <yellow>Nhập tên vật phẩm để tìm. Gõ '<white>clear</white>' để xoá, hoặc chuột phải nút tìm.</yellow>
+history:
+  shop:
+    gui-title: Lịch sử mua bán
+    header-icon-multiple-shop: <white>Kết quả của {0} shop</white>
+    header-icon-shop-name: <yellow>Shop {0}</yellow>
+    header-icon-shop-empty-name: '<yellow>Shop ở thế giới ''{0}'' tại x: {1}, y: {2}, z: {3}</yellow>'
+    header-icon-description:
+    - '<white>Loại: <yellow>{0}</yellow></white>'
+    - '<white>Chủ: <yellow>{1}</yellow></white>'
+    - '<white>Vật phẩm: <yellow>{2}</yellow></white>'
+    - '<white>Giá: <yellow>{3} <aqua>x{4}</aqua></yellow></white>'
+    - '<white>Vị trí: <yellow>{5}</yellow></white>'
+    log-icon-title: '<reset><green>Thời gian: {0}</green>'
+    log-icon-description:
+    - '<white>Người mua: <yellow>{0}</yellow></white>'
+    - '<white>Vật phẩm: <yellow>{1} <aqua>x{2}</aqua></yellow></white>'
+    - '<white>Số dư: <yellow>{3}</yellow></white>'
+    - '<white>Thuế: <yellow>{4}</yellow></white>'
+    log-icon-description-with-store-name:
+    - '<white>Shop: <yellow>{0}</yellow></white>'
+    - '<white>Người mua: <yellow>{1}</yellow></white>'
+    - '<white>Vật phẩm: <yellow>{2} <aqua>x{3}</aqua></yellow></white>'
+    - '<white>Số lượng: <yellow>{4}</yellow></white>'
+    - '<white>Tổng: <yellow>{5}</yellow></white>'
+    - '<white>Thuế: <yellow>{5}</yellow></white>'
+    - '<white>Thực nhận: <yellow>{6}</yellow></white>'
+    query-icon: <gray>Đợi chút, đang tra...</gray>
+    current-page: <white>Trang {0}</white>
+    multi-shops-icon-title: <yellow>Nhiều shop</yellow>
+    summary-icon-title: <yellow>Tổng hợp</yellow>
+    total-unique-purchasers: '<white>Số người mua khác nhau: <yellow>{0}</yellow></white>'
+    top-n-valuable-customers-title: <gold>Top {0} khách hàng</gold>
+    no-result: <white>Không có kết quả</white>
+    summary-icon-description:
+    - '<white>Số người mua khác nhau: <yellow>{0}</yellow></white>'
+    - '<white>Gần đây <aqua>{2}</aqua> lượt mua: <yellow>{3}</yellow></white>'
+    - '<white>Gần đây <aqua>{4}</aqua> lượt mua: <yellow>{5}</yellow></white>'
+    - '<white>Gần đây <aqua>{6}</aqua> lượt mua: <yellow>{7}</yellow></white>'
+    - '<white>Gần đây <aqua>{8}</aqua> lượt mua: <yellow>{9}</yellow></white>'
+    - '<white>Tổng lượt mua: <yellow>{10}</yellow></white>'
+    - '<white>Gần đây <aqua>{11}</aqua> doanh thu: <yellow>{12}</yellow></white>'
+    - '<white>Gần đây <aqua>{13}</aqua> doanh thu: <yellow>{14}</yellow></white>'
+    - '<white>Gần đây <aqua>{15}</aqua> doanh thu: <yellow>{16}</yellow></white>'
+    - '<white>Gần đây <aqua>{17}</aqua> doanh thu: <yellow>{18}</yellow></white>'
+    - '<white>Tổng doanh thu: <yellow>{19}</yellow></white>'
+about:
+  valid-donation-key: <color:#00AFF1>Gắn với <color:#F9C23C>{0}</color></color>
+  invalid-donation-key: <gray>Mã ủng hộ không hợp lệ</gray>
+  kofi-thanks: <gold>Cảm ơn những người ủng hộ QuickShop trên Ko-fi :)</gold>
+shop-information-not-shown-due-an-internal-error: <red>Có lỗi nội bộ, bảng thông tin shop có thể hiện thiếu. Vui lòng báo admin.
+pagination:
+  footer: <light_purple>[<click:run_command:"{0}"><hover:show_text:"<gray>Trang trước"><white><</white></hover></click>]</light_purple> <gray>{1}/{2}</gray> <light_purple>[<click:run_command:"{3}"><hover:show_text:"<gray>Trang sau"><white>></white></hover></click>]</light_purple>

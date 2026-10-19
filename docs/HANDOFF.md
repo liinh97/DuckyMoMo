@@ -382,6 +382,13 @@
   vé vận mệnh rơi hiếm, tung xúc xắc lúc vào), (4) mua vé cá nhân bằng xu (lượt / 7 ngày), (5) mở chung toàn server bằng quỹ như khai hoang.
   Điều kiện phụ: cấp pet, thành tích, nhóm 2–4 người, cuối tuần, chỉ nước Bá chủ. Chống lạm phát: lượt/ngày, lockout boss của EliteMobs.
 
+### 19/10 khuya: Chương trình Media (/media) — kiểm soát rank livestream (code xong, CHƯA thử với streamer thật)
+- Người dùng: "làm như nào để kiểm soát người chơi xứng đáng cấp rank", "có cách nào tự kiểm tra", chỉ tiêu "cả hai" (buổi + giờ), "chủ yếu TikTok".
+- MediaProgram.java + panel/media.html (trang quản trị › Media, quyền duckymomo.web.media; web-quyen.yml, quyen.yml) + Cài đặt › Người mới ›
+  Chương trình Media (md_*). Chi tiết: camnang "Chương trình Media". TikTok api-live thử 19/10: gọi được từ máy nhà, kênh không live trả status 4;
+  CHƯA bắt được kênh đang live để xác nhận status 2 → thử với streamer thật (TEST 4s). YouTube cần YOUTUBE_KEY trong .env (chưa có).
+- Thuật ngữ: "Auction House" = chợ đấu giá /ah (đã ghi thống nhất "chợ đấu giá /ah" ở menu, cẩm nang, Cài đặt, web).
+
 ### 19/10 khuya: Danh phận (/danhphan) + Balo (/balo) — CODE + CONFIG XONG, CHỜ KHỞI ĐỘNG LẠI banghoi-1 (người dùng đang online)
 - Người dùng gửi ảnh "Cửa hàng rank" server khác (Rank Member: 2 nhà, 2 balo, 2 slot chợ, miễn phí, cần mở khoá + online 6 giờ, bấm nhận):
   "mới vào là dân tị nạn, member tương ứng là dân", "cho cài đặt mục này ở rank". Chốt: 4 bậc, Dân = 6 giờ + xong chương 1, bấm nhận, mức cân bằng.

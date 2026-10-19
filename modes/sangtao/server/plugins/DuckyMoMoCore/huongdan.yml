@@ -167,16 +167,30 @@ chapters:
     &0Lương Dân: 24 giờ + cấp 10. Hào Kiệt: 72 giờ + cấp 25.
   - |-
     &6&lDANH PHẬN: quyền lợi
-    &0Tị Nạn: 1 nhà, 2 món chợ.
-    &0Dân: 2 nhà, 1 balo 27 ô, 4 món chợ.
-    &0Lương Dân: 3 nhà, 2 balo 36 ô, 6 món.
-    &0Hào Kiệt: 5 nhà, 3 balo 45 ô, 8 món.
+    &0Tị Nạn: 1 nhà, 2 món chợ đấu giá.
+    &0Dân: 2 nhà, 1 balo 27 ô, 4 món chợ đấu giá.
+    &0Lương Dân: 3 nhà, 2 balo 36 ô, 6 món chợ đấu giá.
+    &0Hào Kiệt: 5 nhà, 3 balo 45 ô, 8 món chợ đấu giá.
+  - |-
+    &6&lDANH PHẬN (tiếp)
     &8Giữ danh phận khi /choilai. Số liệu có thể đổi: xem /danhphan.
   - |-
     &c&l◆ RANK MEDIA
     &0Cho người &llivestream&r&0 về server (TikTok, YouTube…), miễn phí, admin xét duyệt.
-    &0Có thêm nhà, balo, món chợ, đơn thu mua, vé vòng quay nhanh hơn, gói quà &1/kit media&0.
+    &0Có thêm nhà, balo, món chợ đấu giá, đơn thu mua, vé vòng quay nhanh hơn, gói quà &1/kit media&0.
     &0Xem yêu cầu: thẻ Media trong &1/danhphan&0.
+  - |-
+    &c&lMEDIA: cách làm
+    &1/media dangky <link kênh>
+    &8Vd: /media dangky https://www.tiktok.com/@tenban
+    &0Mỗi lần live: &1/media live&0 (cả server được báo), xong &1/media tat&0.
+    &0Server tự đếm giờ khi bạn &lonline thật&r&0 và kênh &lđang live&r&0.
+  - |-
+    &c&lMEDIA: chỉ tiêu
+    &0Mỗi 7 ngày: 4 buổi (≥ 30 phút) và 6 giờ live.
+    &0Rank có hạn, đạt chỉ tiêu thì được gia hạn.
+    &1/media &0xem tiến độ.
+    &8Thấy Media gian lận: /media baocao <tên> <lý do>
   - |-
     &6&lBALO
     &1/balo &0mở balo (&1/balo 2&0 balo thứ 2).

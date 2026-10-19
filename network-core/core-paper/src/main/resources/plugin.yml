@@ -154,6 +154,9 @@ commands:
   danhphan:
     description: "Danh phận (rank chơi miễn phí): Dân Tị Nạn → Dân → Lương Dân → Hào Kiệt, đủ giờ chơi/cấp/cốt truyện thì bấm nhận; admin: dat <người> <mã> · dongbo"
     aliases: [capbac, rankchoi, member]
+  media:
+    description: "Rank Media (người livestream server): /media dangky <link kênh> · live [link] · tat · baocao <tên> <lý do>; admin: ds · duyet|tuchoi|go <tên> · giahan <tên> <ngày> · xem <tên>"
+    aliases: [streamer, livestream]
   balo:
     description: "Balo cá nhân 27 ô (/balo [số]); số balo theo danh phận; admin: /balo xem <tên> [số]"
     aliases: [backpack, bp]

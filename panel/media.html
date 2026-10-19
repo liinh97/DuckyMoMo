@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DuckyMoMo · Media</title>
+<link rel="stylesheet" href="ui.css">
+<style>
+  main { padding: 0 0 80px; }
+  .tabs { display: flex; gap: 6px; flex-wrap: wrap; margin: 4px 0 14px; }
+  .tabs button { border: 1px solid var(--line); background: var(--card); color: var(--muted); border-radius: 999px; padding: 6px 14px; cursor: pointer; font-weight: 600; }
+  .tabs button.on { background: var(--accent); color: var(--accent-text); border-color: var(--accent); }
+  .list { display: flex; flex-direction: column; gap: 10px; }
+  .p { padding: 14px 18px; }
+  .p h3 { margin: 0 0 6px; font-size: 16px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .meta { color: var(--muted); font-size: 13.5px; overflow-wrap: anywhere; }
+  .meta a { color: var(--accent); }
+  .bar { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px; margin: 10px 0; }
+  .bar div { background: var(--chip); border-radius: 10px; padding: 8px 10px; font-size: 13px; }
+  .bar b { display: block; font-size: 17px; }
+  .ok { color: var(--ok); } .bad { color: var(--err, #c62828); } .warn { color: var(--warn); }
+  .acts { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+  details { margin-top: 6px; } summary { cursor: pointer; color: var(--muted); font-size: 13.5px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 6px; }
+  td, th { text-align: left; padding: 4px 6px; border-bottom: 1px solid var(--line); overflow-wrap: anywhere; }
+  .empty { color: var(--muted); padding: 18px 0; }
+  .hint { color: var(--muted); font-size: 13.5px; margin: 0 0 12px; }
+  .live { background: #e53935; color: #fff; border-radius: 6px; padding: 1px 7px; font-size: 12px; font-weight: 700; }
+</style>
+</head>
+<body data-dozzle="__DOZZLE_URL__" data-title="Media" data-sub="Rank Media cho người livestream server. Server tự đếm: chỉ tính lúc người đó ONLINE THẬT trong server và kênh ĐANG LIVE (kiểm tự động). Duyệt = rank có hạn (thử việc), hết hạn tự mất nếu không gia hạn.">
+<script src="shell.js"></script>
+<main>
+  <p class="hint" id="rule"></p>
+  <div class="tabs" id="tabs"></div>
+  <div class="list" id="list"><div class="empty">Đang tải…</div></div>
+  <h3 style="margin-top:24px">Tố cáo từ người chơi</h3>
+  <div id="reports" class="meta"></div>
+</main>
+<script>
+const ST = { CHO: "Chờ duyệt", DUYET: "Đang là Media", TUCHOI: "Đã từ chối", HET: "Đã gỡ / hết" };
+let D = { nguoi: [], bao_cao: [], chi_tieu: {} }, tab = "CHO";
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const when = ms => ms ? new Date(ms).toLocaleString("vi-VN", { hour: "2-digit", minute: "2-digit", day: "2-digit", month: "2-digit" }) : "–";
+const safeUrl = u => /^https:\/\/([a-z0-9-]+\.)*(tiktok\.com|youtube\.com|youtu\.be)\//i.test(u || "") ? u : "";
+const hrs = m => (m / 60).toFixed(1);
+function draw() {
+  const c = D.chi_tieu || {};
+  document.getElementById("rule").innerHTML = `Chỉ tiêu 7 ngày: <b>${c.buoi ?? "?"} buổi</b> (mỗi buổi ≥ ${c.phut_buoi ?? "?"} phút) và <b>${c.gio ?? "?"} giờ</b> live.
+    Server kiểm mỗi ${c.kiem_phut ?? "?"} phút. "Chưa xác minh" = không kiểm được trạng thái live (TikTok chặn/lỗi): bấm link xem lại.
+    Duyệt = thử ${c.thu_viec ?? "?"} ngày, gia hạn mặc định ${c.gia_han ?? "?"} ngày. Chỉ tiêu, quyền lợi: trang Cài đặt › Người mới.`;
+  const rows = D.nguoi || [];
+  document.getElementById("tabs").innerHTML = Object.keys(ST).map(k =>
+    `<button class="${k === tab ? "on" : ""}" data-k="${k}">${ST[k]} (${rows.filter(r => r.trang_thai === k).length})</button>`).join("");
+  document.querySelectorAll("#tabs button").forEach(b => b.onclick = () => { tab = b.dataset.k; draw(); });
+  const list = rows.filter(r => r.trang_thai === tab);
+  document.getElementById("list").innerHTML = list.length ? list.map(r => {
+    const kenh = safeUrl(r.kenh);
+    const tong = r.phut_xm_7 + r.phut_cxm_7;
+    const buoi = (r.buoi || []).slice().reverse().map(b => `<tr><td>${when(b.bd)}</td><td>${b.kt ? Math.round((b.kt - b.bd) / 60000) + " phút" : "đang mở"}</td>
+      <td class="ok">${b.xm}p</td><td class="warn">${b.cxm}p</td><td>${safeUrl(b.link) ? `<a href="${esc(b.link)}" target="_blank" rel="noopener">xem</a>` : esc(b.link)}</td></tr>`).join("");
+    return `<div class="card p">
+      <h3>${esc(r.ten)} <span class="badge">${esc(r.nen_tang)}</span>${r.dang_live ? ' <span class="live">● ĐANG LIVE</span>' : ""}
+        ${r.trang_thai === "DUYET" ? `<span class="badge ${r.dat ? "ok" : "bad"}">${r.dat ? "Đạt chỉ tiêu" : "Chưa đạt"}</span>` : ""}
+        ${r.thieu_lien >= 2 ? `<span class="badge bad">Thiếu ${r.thieu_lien} tuần liền</span>` : ""}</h3>
+      <div class="meta">Kênh: ${kenh ? `<a href="${esc(kenh)}" target="_blank" rel="noopener">${esc(r.kenh)}</a>` : esc(r.kenh) || "–"} · đăng ký ${when(r.dang_ky)}
+        · giờ chơi thật ${r.gio_choi} giờ${r.het ? " · rank hết hạn " + when(r.het) : ""}${r.tuan_truoc ? " · tuần trước: " + esc(r.tuan_truoc) : ""}</div>
+      <div class="bar"><div>Buổi (7 ngày)<b class="${r.buoi_7 >= (D.chi_tieu.buoi || 0) ? "ok" : "bad"}">${r.buoi_7}/${D.chi_tieu.buoi}</b></div>
+        <div>Giờ live (7 ngày)<b class="${tong / 60 >= (D.chi_tieu.gio || 0) ? "ok" : "bad"}">${hrs(tong)}/${D.chi_tieu.gio}</b></div>
+        <div>Đã xác minh<b class="ok">${hrs(r.phut_xm_7)} giờ</b></div><div>Chưa xác minh<b class="warn">${hrs(r.phut_cxm_7)} giờ</b></div></div>
+      <details><summary>15 buổi gần nhất</summary><table><tr><th>Bắt đầu</th><th>Dài</th><th>Xác minh</th><th>Chưa XM</th><th>Link</th></tr>${buoi || '<tr><td colspan="5">Chưa có buổi nào</td></tr>'}</table></details>
+      <div class="acts">
+        ${r.trang_thai !== "DUYET" ? `<button class="btn primary small" data-a="duyet" data-t="${esc(r.ten)}">Duyệt (thử ${D.chi_tieu.thu_viec} ngày)</button>` : ""}
+        ${r.trang_thai === "DUYET" ? `<button class="btn primary small" data-a="giahan" data-t="${esc(r.ten)}">Gia hạn ${D.chi_tieu.gia_han} ngày</button>
+          <button class="btn small" data-a="go" data-t="${esc(r.ten)}">Gỡ rank</button>` : ""}
+        ${r.trang_thai === "CHO" ? `<button class="btn small" data-a="tuchoi" data-t="${esc(r.ten)}">Từ chối</button>` : ""}
+      </div></div>`;
+  }).join("") : `<div class="empty">Không có ai.</div>`;
+  document.querySelectorAll("[data-a]").forEach(b => b.onclick = () => act(b.dataset.a, b.dataset.t));
+  const rep = D.bao_cao || [];
+  document.getElementById("reports").innerHTML = rep.length ? rep.slice().reverse().map(x => `<div>${esc(x)}</div>`).join("") : "Chưa có tố cáo.";
+}
+async function act(a, ten) {
+  const q = { duyet: `Duyệt ${ten} làm Media (rank có hạn)?`, giahan: `Gia hạn rank Media cho ${ten}?`, go: `Gỡ rank Media của ${ten}?`, tuchoi: `Từ chối đơn của ${ten}?` }[a];
+  if (!(await ask(q, { title: "Media", ok: "Đồng ý", cancel: "Quay lại", danger: a === "go" || a === "tuchoi" }))) return;
+  toast("Đang xử lý…");
+  const res = await fetch("api/media", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: a, ten }) });
+  const d = await res.json().catch(() => ({}));
+  toast(d.message || "Lỗi", d.ok ? "ok" : "err");
+  setTimeout(load, 1500);
+}
+function load() {
+  fetch("api/media", { cache: "no-store" }).then(r => r.json()).then(d => { D = d; draw(); })
+    .catch(() => { document.getElementById("list").innerHTML = '<div class="empty">Không tải được.</div>'; });
+}
+load();
+</script>
+</body>
+</html>

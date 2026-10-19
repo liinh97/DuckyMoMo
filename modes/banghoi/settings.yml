@@ -1812,3 +1812,13 @@ dp_luongdan_orders: 4
 dp_luongdan_spin: 0
 dp_haokiet_orders: 5
 dp_haokiet_spin: 0
+md_on: true
+md_sessions: 4
+md_session_min: 30
+md_hours: 6.0
+md_trial: 14
+md_extend: 30
+md_check: 5
+md_tiktok: true
+md_fail: 2
+md_cooldown: 60

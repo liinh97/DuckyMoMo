@@ -368,7 +368,7 @@ final class PlayRanks implements Listener {
         }
         lore.add(c("&7• " + (k.balo() > 0 ? "Có &a" + k.balo() + "&7 balo &a" + k.slots() + "&7 ô &d(/balo)" : "Chưa có balo &d(/balo)")));
         if (k.ah() > 0) {
-            lore.add(c("&7• &a" + k.ah() + "&7 món treo chợ &d(/ah)"));
+            lore.add(c("&7• &a" + k.ah() + "&7 món treo chợ đấu giá &d(/ah)"));
         }
         if (k.orders() > 0) {
             lore.add(c("&7• &a" + k.orders() + "&7 đơn thu mua &d(/donhang)"));
@@ -441,7 +441,7 @@ final class PlayRanks implements Listener {
         promote(p, t);
         p.closeInventory();
         p.playSound(p.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 0.7f, 1f);
-        p.sendMessage(c("&a&l✔ Bạn đã trở thành &f" + t.name() + "&a&l! &7Nhà: " + t.homes() + " · Balo: " + t.balo() + " · Chợ: " + t.ah() + " món."));
+        p.sendMessage(c("&a&l✔ Bạn đã trở thành &f" + t.name() + "&a&l! &7Nhà: " + t.homes() + " · Balo: " + t.balo() + " · Chợ đấu giá: " + t.ah() + " món chợ đấu giá."));
         if (announce) {
             Bukkit.broadcast(c("&6✦ &f" + p.getName() + " &7vừa trở thành ").append(c(t.prefix().isBlank() ? "&f" + t.name() : t.prefix().trim())).append(c("&7!")));
         }

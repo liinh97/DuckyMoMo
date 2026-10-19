@@ -14,6 +14,7 @@ final class Shared {
     static volatile Wanderers wanderers;
     static volatile Refining refining;
     static volatile Backpack backpack;
+    static volatile MediaProgram media;
 
     private Shared() {
     }
@@ -35,5 +36,6 @@ final class Shared {
         wanderers = null;
         refining = null;
         backpack = null;
+        media = null;
     }
 }

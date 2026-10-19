@@ -108,6 +108,7 @@ services:
         https://cdn.modrinth.com/data/YbRigZrU/versions/tlCVriD3/nuvotifier-bukkit-3.3.6-dist.jar
         https://ci.citizensnpcs.co/job/Citizens2/4265/artifact/dist/target/Citizens-2.0.44-b4265.jar
       CFG_SERVER_NAME: banghoi-1
+      CFG_YOUTUBE_KEY: ${YOUTUBE_KEY:-}   # Media: khoá YouTube Data API v3 (kiểm kênh YouTube có đang live), trống = không kiểm
       # /rank mua (QR ủng hộ trong game): plugin hỏi panel tạo yêu cầu donate, cùng khoá với trang web
       PANEL_URL: http://panel:8080
       PANEL_SITE_KEY: ${PANEL_SITE_KEY:-}

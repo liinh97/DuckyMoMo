@@ -460,7 +460,7 @@ function render(){
         <p class="small"><b style="color:#ff9d9b">Mất hết:</b> <span class="muted">đồ trên người, rương Ender, kinh nghiệm, tiền, nhà (/home), cấp nghề, thị trấn và quân hàm, giờ chơi thật. Đồ cất trong rương ngoài thế giới vẫn còn.</span></p>
         <p class="small"><b style="color:var(--jade2)">Giữ lại:</b> <span class="muted">rank ủng hộ, danh hiệu, án và lệnh cấm.</span></p>
         <p class="small muted">${cl.co_qua ? `Lần này <b style="color:var(--jade2)">có quà tân thủ + ${nf.format(cl.tien_dau)} xu</b>.` : "Lần này <b>không có</b> quà tân thủ và tiền khởi đầu (chỉ lần đầu trong mùa)."}
-          Phải dỡ shop rương và rút hàng trên chợ /ah trước; server kiểm tra lại khi bạn xác nhận.</p></div>
+          Phải dỡ shop rương và rút hàng trên chợ đấu giá /ah trước; server kiểm tra lại khi bạn xác nhận.</p></div>
       <div><p class="small muted">Đã chơi lại <b>${cl.da_lam}/${cl.toi_da}</b> lần trong mùa${cl.lan_cuoi ? ` · lần cuối ${when(cl.lan_cuoi)}` : ""}.</p>
         ${blocked.length ? `<div class="note red small">${blocked.map(esc).join("<br>")}</div>` :
           `<p class="small muted">Bấm nút khi đang <b>online ở Bang Hội Chiến</b>: server hỏi lại trong game, bạn gõ <code>/choilai xacnhan</code> trong 30 giây mới bắt đầu lại. Không xác nhận thì không mất gì.</p>

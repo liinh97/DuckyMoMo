@@ -248,6 +248,13 @@ Triển khai: kiểm tra không ai online (lệnh riêng) → `docker compose up
       5 món chợ, 5 đơn /donhang, vé vòng quay 48 phút, /kit media (3 ngày sau mới nhận lại).
 - [ ] Trang Cài đặt › Người mới › Danh phận: đổi số nhà Dân thành 3 → Lưu → người bậc Dân đặt được nhà thứ 3 (không gõ lệnh lp).
 
+## 4s. Chương trình Media (/media) — 19/10
+- [ ] Streamer: /media dangky https://www.tiktok.com/@<kênh> → trang quản trị › Media tab "Chờ duyệt" có đơn, admin online được báo.
+- [ ] Đang live TikTok thật: /media live → cả server thấy "🔴 LIVE … [Bấm để xem]"; sau 10–15 phút trang Media có phút "Xác minh" tăng
+      (nếu chỉ tăng "Chưa xác minh" = TikTok chặn/đổi API → báo Claude). Tắt live trên TikTok → ~30 phút sau buổi tự kết thúc.
+- [ ] Bấm Duyệt → người đó có tiền tố ◆ Media + quyền lợi; /lp user <tên> parent info thấy media có thời hạn 14 ngày. Gia hạn / Gỡ chạy đúng.
+- [ ] Đứng AFK trong lúc live → phút không tăng. Thoát game → buổi kết thúc. /media baocao hiện ở cuối trang Media.
+
 ## 5. Quảng trường Vinh danh (sảnh)
 - [ ] (CHƯA CẦN, làm khi gần mở server) Chọn chỗ trống ở sảnh (map sakura). Đứng, quay mặt về phía người xem: `/vinhdanh dat moinhat tieude`, rồi `bachu`, `chienthan`, `phuho`,
       `kientrucsu`, `dautruong`, `pet` ở các chỗ khác. Bảng chữ nổi + đầu người chơi đúng hướng, không đè nhau.

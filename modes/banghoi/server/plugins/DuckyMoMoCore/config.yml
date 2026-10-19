@@ -1257,3 +1257,23 @@ backpack:
   default-slots: 27        # số ô khi người chơi không có quyền duckymomo.balo.o.<N> nào
   combat-seconds: 15
   max: 9
+
+# Chương trình Media (/media, 19/10): kiểm soát rank Media bằng số liệu. Quyền lợi rank media: play-ranks.other-ranks.media.
+# Người chơi: /media dangky <link kênh TikTok/YouTube> → admin duyệt (trang quản trị › Media hoặc /media duyet <tên> [ngày]) = rank media CÓ HẠN
+# (trial-days), gia hạn /media giahan <tên> [ngày]. Mỗi lần live: /media live [link] → báo cả server; mỗi check-minutes phút server tự kiểm
+# người đó ONLINE THẬT (không AFK) + kênh ĐANG LIVE (TikTok: trang api-live không chính thức; YouTube: cần youtube-key, Google Cloud ›
+# YouTube Data API v3). Không kiểm được (TikTok chặn/lỗi) thì tính "chưa xác minh" để admin xem link. Chỉ tiêu 7 ngày: min-sessions buổi
+# (mỗi buổi ≥ min-session-minutes phút) VÀ min-hours giờ. Thứ 2 chấm tuần trước; thiếu fail-weeks-alert tuần liền → báo admin (không tự gỡ).
+media:
+  enabled: true
+  group: media
+  trial-days: 14
+  extend-days: 30
+  min-sessions: 4
+  min-session-minutes: 30
+  min-hours: 6
+  check-minutes: 5
+  tiktok-check: true
+  youtube-key: "${CFG_YOUTUBE_KEY}"   # BÍ MẬT: đặt YOUTUBE_KEY=... trong .env (không ghi thẳng vào đây), trống = YouTube tính "chưa xác minh"
+  announce-cooldown-minutes: 60   # báo "đang live" cho cả server tối đa 1 lần mỗi ngần này phút / người
+  fail-weeks-alert: 2

@@ -4,7 +4,7 @@
 # panel/app.py đọc file này mỗi lần (sửa xong không cần build lại).
 nhom:
   - ten: Người chơi
-    lenh: [huongdan, caidat, danhphan, balo, capdo, menu, server, web, tpr, warp, spawn, home, sethome, back, tpa, tpaccept, msg, r,
+    lenh: [huongdan, caidat, danhphan, balo, media, capdo, menu, server, web, tpr, warp, spawn, home, sethome, back, tpa, tpaccept, msg, r,
            diemdanh, nhiemvu, vongquay, vote, doimanh, hoatdong, mua, emf, emf shop, donhang, donhang cuatoi, khaihoang,
            treothuong, xuong, tinhluyen, rank mua, bal, pay, sell, ah, trade, jobs, ce,
            t, t spawn, t new, t claim, t add, n, hoabinh, hoidong, tochuc, quangcao, sukien, bantron, binhchon,
@@ -17,4 +17,4 @@ nhom:
     lenh: [co i, co lookup, co rollback, co restore, kick, mute, tempban, ban, unban, seen, invsee, vanish, socialspy,
            tp, tphere, fly, heal, grim alerts]
   - ten: Admin
-    lenh: [dmm, dmm laydo, dmm luudo, rank skin them, dungeon ds, dungeon cho, dungeon datan, dungeon mo, conghoang tao, conghoang ds, em setup, rank give, rank check, buabatpet give, tinhluyen give, doimanh give, vongquay give, lukhach ds, mua dat, khaihoang them, xuong tang, emfa competition start, emfa reload, eco give, eco take, gamemode, give, lp editor, lp user, em, ta, swa]
+    lenh: [dmm, dmm laydo, dmm luudo, rank skin them, dungeon ds, dungeon cho, dungeon datan, dungeon mo, conghoang tao, conghoang ds, em setup, rank give, rank check, buabatpet give, tinhluyen give, media ds, media duyet, doimanh give, vongquay give, lukhach ds, mua dat, khaihoang them, xuong tang, emfa competition start, emfa reload, eco give, eco take, gamemode, give, lp editor, lp user, em, ta, swa]

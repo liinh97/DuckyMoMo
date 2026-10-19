@@ -46,6 +46,7 @@ THUVIEN_HTML = (Path(__file__).parent / "thuvien.html").read_text(encoding="utf-
 BOSS_HTML = (Path(__file__).parent / "boss.html").read_text(encoding="utf-8")
 DONATE_HTML = (Path(__file__).parent / "donate.html").read_text(encoding="utf-8")
 HETHONG_HTML = (Path(__file__).parent / "hethong.html").read_text(encoding="utf-8")
+MEDIA_HTML = (Path(__file__).parent / "media.html").read_text(encoding="utf-8")
 # Khung chung mọi trang (thanh điều hướng trái, màu, nút): ui.css, shell.js
 STATIC = {"/ui.css": ("text/css; charset=utf-8", (Path(__file__).parent / "ui.css").read_bytes()),
           "/shell.js": ("application/javascript; charset=utf-8", (Path(__file__).parent / "shell.js").read_bytes())}
@@ -2016,6 +2017,27 @@ def web_donate(data, ip):
     return {"ok": True, "don": don, "message": "Đã báo admin. Admin kiểm tra tiền đã về rồi cấp rank (thường trong ngày)."}
 
 
+def media_json():
+    """Trang /media: đọc media.json do DuckyMoMoCore (MediaProgram) ghi ở Bang Hội Chiến."""
+    f = DATA_DIR / "banghoi-1" / "plugins" / "DuckyMoMoCore" / "media.json"
+    try:
+        return json.loads(f.read_text(encoding="utf-8"))
+    except Exception:
+        return {"nguoi": [], "bao_cao": [], "chi_tieu": {}, "loi": "Chưa có dữ liệu (Bang Hội Chiến chưa bật Media hoặc đang tắt)."}
+
+
+def media_admin(data, actor):
+    """duyet | giahan | go | tuchoi <tên>: chạy /media ... ở Bang Hội Chiến qua RCON (plugin cấp/gỡ rank LuckPerms có hạn)."""
+    act, ten = str(data.get("action", "")), str(data.get("ten", "")).strip()
+    if act not in ("duyet", "giahan", "go", "tuchoi"):
+        raise ValueError("Thao tác không hợp lệ")
+    if not PLAYER_RE.match(ten):
+        raise ValueError("Tên không hợp lệ")
+    res = rcon("banghoi-1", [f"media {act} {ten}"])[0][1]
+    web_log({"viec": "/api/media", "nguoi": actor or PANEL_USER, "hanh_dong": act, "doi_tuong": ten, "ok": True})
+    return {"ok": True, "message": re.sub(r"§.", "", res).strip() or "Đã gửi lệnh."}
+
+
 def donate_admin(data, actor):
     """Trang /donate: cap (chạy /rank give rồi đánh dấu đã cấp) | xong (đã cấp tay) | huy."""
     act, rid = data.get("action"), str(data.get("id", ""))
@@ -2235,9 +2257,9 @@ def web_profile(name, by_code):
 # Trang/API -> tính năng cần có (staff đăng nhập bằng tài khoản game)
 PAGE_FEATURES = {"/": ("caidat",), "/thuvien": ("thuvien", "thuvien-dua"), "/boss": ("boss",), "/role": ("role", "role-quyen", "rank", "rank-quyen"),
                  "/hoatdong": ("hoatdong",), "/camnang": ("camnang",), "/huongdan": ("huongdan",),
-                 "/donate": ("donate",), "/hethong": ("hethong",)}
+                 "/donate": ("donate",), "/hethong": ("hethong",), "/media": ("media",)}
 API_GET_FEATURES = {"/api/modes": ("caidat",), "/api/camnang": ("camnang",), "/api/huongdan": ("huongdan",), "/api/roles": ("role", "role-quyen", "rank", "rank-quyen"),
-                    "/api/boss": ("boss",), "/api/activity": ("hoatdong",), "/api/donate": ("donate",), "/api/hethong": ("hethong",), "/api/thuvien": None, "/api/toi": None}
+                    "/api/boss": ("boss",), "/api/activity": ("hoatdong",), "/api/donate": ("donate",), "/api/hethong": ("hethong",), "/api/media": ("media",), "/api/thuvien": None, "/api/toi": None}
 # Staff đăng nhập bằng tài khoản game chỉ thao tác được CẤP DƯỚI: role chức vụ có weight nhỏ hơn role chức vụ cao nhất của mình
 # (Manager 90: Mod, Helper, Builder, Dân; Mod 70: Helper, Builder, Dân…). Rank donate theo quyền riêng (web.rank / web.rank.quyen).
 # Không ai ngoài toàn quyền cấp được * hay quyền web/admin/LuckPerms, và chỉ cấp được quyền chính mình đang có.
@@ -2382,10 +2404,10 @@ class Handler(BaseHTTPRequestHandler):
                                         "role_quyen": None if not acc or acc["toan_quyen"] else
                                         {g: {"nguoi": self.role_rights(g)[0], "quyen": self.role_rights(g)[1]}
                                          for g in STAFF_GROUPS + DONATE_GROUPS}})
-        if path in ("/", "/hoatdong", "/camnang", "/huongdan", "/role", "/thuvien", "/boss", "/donate", "/hethong"):
+        if path in ("/", "/hoatdong", "/camnang", "/huongdan", "/role", "/thuvien", "/boss", "/donate", "/hethong", "/media"):
             dozzle = DOZZLE_PROXY_URL if self.headers.get("X-Forwarded-Prefix") else DOZZLE_URL
             page = {"/": INDEX_HTML, "/hoatdong": ACTIVITY_HTML, "/camnang": CAMNANG_HTML, "/huongdan": HUONGDAN_HTML, "/role": ROLE_HTML,
-                    "/thuvien": THUVIEN_HTML, "/boss": BOSS_HTML, "/donate": DONATE_HTML, "/hethong": HETHONG_HTML}[path]
+                    "/thuvien": THUVIEN_HTML, "/boss": BOSS_HTML, "/donate": DONATE_HTML, "/hethong": HETHONG_HTML, "/media": MEDIA_HTML}[path]
             body = page.replace("__DOZZLE_URL__", "" if self.who else dozzle).encode("utf-8")
             self.send_response(200)
             self.send_header("Content-Type", "text/html; charset=utf-8")
@@ -2420,6 +2442,8 @@ class Handler(BaseHTTPRequestHandler):
             self.send_json(200, {"rows": donate_load()[::-1]})
         elif path == "/api/hethong":
             self.send_json(200, hethong_status())
+        elif path == "/api/media":
+            self.send_json(200, media_json())
         elif path == "/api/activity":
             params = {k: v[-1] for k, v in urllib.parse.parse_qs(query).items()}
             self.send_json(200, read_activity(params))
@@ -2454,6 +2478,8 @@ class Handler(BaseHTTPRequestHandler):
             ok = self.can("donate")
         elif p == "/api/hethong":
             ok = self.can("hethong")
+        elif p == "/api/media":
+            ok = self.can("media")
         else:
             m = re.fullmatch(r"/api/modes/([a-z0-9_-]+)/(save|apply-all)", p)
             if m and m.group(2) == "save":
@@ -2513,6 +2539,14 @@ class Handler(BaseHTTPRequestHandler):
         if self.path == "/api/donate":
             try:
                 self.send_json(200, donate_admin(self.body, self.who["name"] if self.who else None))
+            except ValueError as e:
+                self.send_json(400, {"ok": False, "message": str(e)})
+            except Exception as e:
+                self.send_json(500, {"ok": False, "message": f"Lỗi: {e}"})
+            return
+        if self.path == "/api/media":
+            try:
+                self.send_json(200, media_admin(self.body, self.who["name"] if self.who else None))
             except ValueError as e:
                 self.send_json(400, {"ok": False, "message": str(e)})
             except Exception as e:

@@ -103,6 +103,10 @@ public final class DuckyMoMoCore extends JavaPlugin {
         if (bp != null) {
             bp.saveAll();
         }
+        MediaProgram mp = Shared.media;
+        if (mp != null) {
+            mp.stop();
+        }
         Shared.clear();
         DailyCheckin.INSTANCE = null;
         DailyQuests.INSTANCE = null;
@@ -749,6 +753,20 @@ public final class DuckyMoMoCore extends JavaPlugin {
         PluginCommand dpCmd = getCommand("danhphan");
         if (dpCmd != null) {
             dpCmd.setTabCompleter(playRanks == null ? null : (sender, cmd, label, args) -> playRanks.tab(sender, args));
+        }
+        // Chương trình Media (/media): đăng ký, báo live, server tự kiểm (online thật + kênh đang live), chỉ tiêu tuần, trang quản trị › Media
+        MediaProgram media = getConfig().getBoolean("media.enabled") && getConfig().isConfigurationSection("media")
+                ? new MediaProgram(this, activity, getConfig().getConfigurationSection("media")) : null;
+        if (media != null) {
+            getServer().getPluginManager().registerEvents(media, this);
+            media.start();
+            Shared.media = media;
+            getLogger().info("Media: " + media.describe());
+        }
+        bind("media", media == null ? null : media::command, "Media");
+        PluginCommand mediaCmd = getCommand("media");
+        if (mediaCmd != null) {
+            mediaCmd.setTabCompleter(media == null ? null : (sender, cmd, label, args) -> media.tab(sender, args));
         }
         // Balo cá nhân (/balo): số balo theo quyền duckymomo.balo.<N> (danh phận cấp)
         Backpack backpack = getConfig().getBoolean("backpack.enabled")

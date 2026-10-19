@@ -227,8 +227,8 @@ final class MediaProgram implements Listener {
                         data.set(path + ".tat", data.getInt(path + ".tat") + 1);
                         Player p = Bukkit.getPlayer(u);
                         if (p != null && data.getInt(path + ".tat") == 1) {
-                            p.sendMessage(c("&e[Media] Kênh của bạn đang KHÔNG live (theo " + platform(data.getString(k(u) + ".kenh", ""))
-                                    + "): thời gian này không được tính. Live xong gõ &f/media tat&e."));
+                            p.sendMessage(c("&e[Sứ Giả] Kênh của bạn đang KHÔNG live (theo " + platform(data.getString(k(u) + ".kenh", ""))
+                                    + "): thời gian này không được tính. Live xong gõ &f/sugia tat&e."));
                         }
                         if (data.getInt(path + ".tat") >= Math.max(3, 30 / checkMinutes)) {
                             endSession(u, "kênh không live");
@@ -312,7 +312,7 @@ final class MediaProgram implements Listener {
         Player p = Bukkit.getPlayer(u);
         if (p != null) {
             long xm = data.getLong(path + ".xm"), cx = data.getLong(path + ".cxm");
-            p.sendMessage(c("&d[Media] Kết thúc buổi live (" + why + "): tính &f" + (xm + cx) + " phút &7(xác minh " + xm + ", chưa xác minh " + cx + ")"
+            p.sendMessage(c("&d[Sứ Giả] Kết thúc buổi live (" + why + "): tính &f" + (xm + cx) + " phút &7(xác minh " + xm + ", chưa xác minh " + cx + ")"
                     + ((xm + cx) >= minSessionMinutes ? " &a✔ đủ 1 buổi" : " &c✘ chưa đủ " + minSessionMinutes + " phút")));
         }
         writeJson();
@@ -339,8 +339,8 @@ final class MediaProgram implements Listener {
                 n.set(id + ".thieu-lien", streak);
                 n.set(id + ".tuan-truoc", (ok ? "ĐẠT" : "THIẾU") + " " + s[0] + " buổi, " + String.format(Locale.ROOT, "%.1f", (s[1] + s[2]) / 60.0) + " giờ");
                 if (streak >= failWeeks) {
-                    String msg = "&c[Media] " + n.getString(id + ".ten") + " thiếu chỉ tiêu " + streak + " tuần liền (tuần trước: " + s[0] + " buổi, "
-                            + String.format(Locale.ROOT, "%.1f", (s[1] + s[2]) / 60.0) + " giờ). Xem trang quản trị › Media.";
+                    String msg = "&c[Sứ Giả] " + n.getString(id + ".ten") + " thiếu chỉ tiêu " + streak + " tuần liền (tuần trước: " + s[0] + " buổi, "
+                            + String.format(Locale.ROOT, "%.1f", (s[1] + s[2]) / 60.0) + " giờ). Xem trang quản trị › Sứ Giả.";
                     Bukkit.getOnlinePlayers().stream().filter(p -> p.hasPermission("duckymomo.admin")).forEach(p -> p.sendMessage(c(msg)));
                     plugin.getLogger().info(LEGACY.serialize(c(msg)).replaceAll("§.", ""));
                 }
@@ -382,9 +382,9 @@ final class MediaProgram implements Listener {
         long now = System.currentTimeMillis();
         long[] s = stats(u, now - 7 * DAY, now);
         long het = data.getLong(k(u) + ".het");
-        Bukkit.getScheduler().runTaskLater(plugin, () -> p.sendMessage(c("&d[Media] 7 ngày qua: &f" + s[0] + "/" + minSessions + " buổi&7, &f"
+        Bukkit.getScheduler().runTaskLater(plugin, () -> p.sendMessage(c("&d[Sứ Giả] 7 ngày qua: &f" + s[0] + "/" + minSessions + " buổi&7, &f"
                 + String.format(Locale.ROOT, "%.1f", (s[1] + s[2]) / 60.0) + "/" + fmt(minHours) + " giờ " + (meets(s) ? "&a✔ đạt" : "&e(chưa đạt)")
-                + (het > 0 ? " &7· rank hết hạn " + WHEN.format(Instant.ofEpochMilli(het)) : "") + " &8— live: /media live")), 60L);
+                + (het > 0 ? " &7· rank hết hạn " + WHEN.format(Instant.ofEpochMilli(het)) : "") + " &8— live: /sugia live")), 60L);
     }
 
     // ---------------------------------------------------------------- lệnh
@@ -396,18 +396,18 @@ final class MediaProgram implements Listener {
             return adminCommand(s, sub, args);
         }
         if (!(s instanceof Player p)) {
-            s.sendMessage("/media ds · duyet|tuchoi|go <tên> · giahan <tên> <ngày> · xem <tên>");
+            s.sendMessage("/sugia ds · duyet|tuchoi|go <tên> · giahan <tên> <ngày> · xem <tên>");
             return true;
         }
         UUID u = p.getUniqueId();
         switch (sub) {
             case "dangky" -> {
                 if (args.length < 2 || !(TIKTOK.matcher(args[1]).find() || YOUTUBE.matcher(args[1]).find())) {
-                    p.sendMessage(c("&cDùng: /media dangky <link kênh> &7(vd https://www.tiktok.com/@tenkenh hoặc https://www.youtube.com/@tenkenh)"));
+                    p.sendMessage(c("&cDùng: /sugia dangky <link kênh> &7(vd https://www.tiktok.com/@tenkenh hoặc https://www.youtube.com/@tenkenh)"));
                     return true;
                 }
                 if ("DUYET".equals(status(u))) {
-                    p.sendMessage(c("&eBạn đã là Media. Đổi kênh: nhắn admin."));
+                    p.sendMessage(c("&eBạn đã là Sứ Giả. Đổi kênh: nhắn admin."));
                     return true;
                 }
                 data.set(k(u) + ".ten", p.getName());
@@ -415,18 +415,18 @@ final class MediaProgram implements Listener {
                 data.set(k(u) + ".trangthai", "CHO");
                 data.set(k(u) + ".dangky-luc", System.currentTimeMillis());
                 save();
-                p.sendMessage(c("&a[Media] Đã gửi đơn. Trong lúc chờ duyệt, mỗi lần live gõ &f/media live &a để server ghi buổi live làm bằng chứng."));
+                p.sendMessage(c("&a[Sứ Giả] Đã gửi đơn. Trong lúc chờ duyệt, mỗi lần live gõ &f/sugia live &a để server ghi buổi live làm bằng chứng."));
                 Bukkit.getOnlinePlayers().stream().filter(a -> a.hasPermission("duckymomo.admin"))
-                        .forEach(a -> a.sendMessage(c("&d[Media] " + p.getName() + " đăng ký Media: &f" + args[1] + " &7(trang quản trị › Media)")));
+                        .forEach(a -> a.sendMessage(c("&d[Sứ Giả] " + p.getName() + " đăng ký Sứ Giả: &f" + args[1] + " &7(trang quản trị › Sứ Giả)")));
                 writeJson();
             }
             case "live" -> {
                 if (!registered(u) || "TUCHOI".equals(status(u))) {
-                    p.sendMessage(c("&cChỉ Media hoặc người đã đăng ký (/media dangky <link kênh>) mới báo live được."));
+                    p.sendMessage(c("&cChỉ Sứ Giả hoặc người đã đăng ký (/sugia dangky <link kênh>) mới báo live được."));
                     return true;
                 }
                 if (data.getString(k(u) + ".dang-live") != null) {
-                    p.sendMessage(c("&eĐang có buổi live mở. Kết thúc: &f/media tat"));
+                    p.sendMessage(c("&eĐang có buổi live mở. Kết thúc: &f/sugia tat"));
                     return true;
                 }
                 String link = args.length > 1 ? args[1] : data.getString(k(u) + ".kenh", "");
@@ -447,7 +447,7 @@ final class MediaProgram implements Listener {
                             .append(c("&b&n[Bấm để xem]").clickEvent(ClickEvent.openUrl(link)).hoverEvent(HoverEvent.showText(c("&7" + link))));
                     Bukkit.broadcast(msg);
                 }
-                p.sendMessage(c("&d[Media] Đã mở buổi live. Server kiểm mỗi " + checkMinutes + " phút (bạn online thật + kênh đang live). Xong gõ &f/media tat&d."));
+                p.sendMessage(c("&d[Sứ Giả] Đã mở buổi live. Server kiểm mỗi " + checkMinutes + " phút (bạn online thật + kênh đang live). Xong gõ &f/sugia tat&d."));
                 writeJson();
             }
             case "tat", "ket" -> {
@@ -459,7 +459,7 @@ final class MediaProgram implements Listener {
             }
             case "baocao" -> {
                 if (args.length < 3) {
-                    p.sendMessage(c("&cDùng: /media baocao <tên> <lý do>"));
+                    p.sendMessage(c("&cDùng: /sugia baocao <tên> <lý do>"));
                     return true;
                 }
                 List<String> list = new ArrayList<>(data.getStringList("baocao"));
@@ -468,7 +468,7 @@ final class MediaProgram implements Listener {
                 save();
                 p.sendMessage(c("&aĐã gửi tố cáo cho admin. Cảm ơn bạn!"));
                 Bukkit.getOnlinePlayers().stream().filter(a -> a.hasPermission("duckymomo.admin"))
-                        .forEach(a -> a.sendMessage(c("&c[Media] Tố cáo " + args[1] + " từ " + p.getName())));
+                        .forEach(a -> a.sendMessage(c("&c[Sứ Giả] Tố cáo " + args[1] + " từ " + p.getName())));
                 writeJson();
             }
             default -> info(p);
@@ -478,7 +478,7 @@ final class MediaProgram implements Listener {
 
     private void info(Player p) {
         UUID u = p.getUniqueId();
-        p.sendMessage(c("&c&l◆ MEDIA &7— rank cho người livestream server (miễn phí, admin duyệt)"));
+        p.sendMessage(c("&c&l◆ SỨ GIẢ &7— rank cho người livestream server (miễn phí, admin duyệt)"));
         p.sendMessage(c("&7Chỉ tiêu 7 ngày: &f" + minSessions + " buổi &7(mỗi buổi ≥ " + minSessionMinutes + " phút) &7và &f" + fmt(minHours)
                 + " giờ &7live, tính khi bạn ONLINE trong server và kênh ĐANG LIVE (server tự kiểm)."));
         if (registered(u)) {
@@ -493,14 +493,14 @@ final class MediaProgram implements Listener {
             p.sendMessage(c("&7Đơn: &f" + st + " &7· kênh &f" + data.getString(k(u) + ".kenh") + " &7· 7 ngày: &f" + s[0] + " buổi, "
                     + String.format(Locale.ROOT, "%.1f", (s[1] + s[2]) / 60.0) + " giờ"));
         }
-        p.sendMessage(c("&f/media dangky <link kênh> &7· &f/media live [link] &7· &f/media tat &7· &f/media baocao <tên> <lý do>"));
+        p.sendMessage(c("&f/sugia dangky <link kênh> &7· &f/sugia live [link] &7· &f/sugia tat &7· &f/sugia baocao <tên> <lý do>"));
     }
 
     private boolean adminCommand(CommandSender s, String sub, String[] args) {
         if (sub.equals("ds")) {
             ConfigurationSection n = data.getConfigurationSection("nguoi");
             long now = System.currentTimeMillis();
-            s.sendMessage(LEGACY.serialize(c("&c&lMedia &7(" + (n == null ? 0 : n.getKeys(false).size()) + " người)")));
+            s.sendMessage(LEGACY.serialize(c("&c&lSứ Giả &7(" + (n == null ? 0 : n.getKeys(false).size()) + " người)")));
             if (n != null) {
                 for (String id : n.getKeys(false)) {
                     long[] st = stats(UUID.fromString(id), now - 7 * DAY, now);
@@ -512,7 +512,7 @@ final class MediaProgram implements Listener {
             return true;
         }
         if (args.length < 2) {
-            s.sendMessage("/media " + sub + " <tên>" + (sub.equals("giahan") ? " <ngày>" : ""));
+            s.sendMessage("/sugia " + sub + " <tên>" + (sub.equals("giahan") ? " <ngày>" : ""));
             return true;
         }
         UUID u = byName(args[1]);
@@ -536,7 +536,7 @@ final class MediaProgram implements Listener {
                 data.set(k(u) + ".trangthai", "DUYET");
                 data.set(k(u) + ".thieu-lien", 0);
                 grant(u, now + days * DAY);
-                notify(u, "&a[Media] Đơn Media của bạn đã được DUYỆT (thử " + days + " ngày). Nhớ /media live mỗi lần livestream!");
+                notify(u, "&a[Sứ Giả] Đơn Sứ Giả của bạn đã được DUYỆT (thử " + days + " ngày). Nhớ /sugia live mỗi lần livestream!");
                 s.sendMessage("Đã duyệt " + name + " (" + days + " ngày).");
             }
             case "giahan" -> {
@@ -544,14 +544,14 @@ final class MediaProgram implements Listener {
                 long base = Math.max(now, data.getLong(k(u) + ".het"));
                 data.set(k(u) + ".trangthai", "DUYET");
                 grant(u, base + days * DAY);
-                notify(u, "&a[Media] Rank Media được gia hạn thêm " + days + " ngày.");
+                notify(u, "&a[Sứ Giả] Rank Sứ Giả được gia hạn thêm " + days + " ngày.");
                 s.sendMessage("Đã gia hạn " + name + " thêm " + days + " ngày.");
             }
             case "tuchoi", "go" -> {
                 data.set(k(u) + ".trangthai", sub.equals("go") ? "HET" : "TUCHOI");
                 grant(u, 0);
-                notify(u, sub.equals("go") ? "&e[Media] Rank Media của bạn đã bị gỡ." : "&e[Media] Đơn Media chưa được duyệt lần này.");
-                s.sendMessage((sub.equals("go") ? "Đã gỡ Media của " : "Đã từ chối ") + name + ".");
+                notify(u, sub.equals("go") ? "&e[Sứ Giả] Rank Sứ Giả của bạn đã bị gỡ." : "&e[Sứ Giả] Đơn Sứ Giả chưa được duyệt lần này.");
+                s.sendMessage((sub.equals("go") ? "Đã gỡ Sứ Giả của " : "Đã từ chối ") + name + ".");
             }
             case "xem" -> {
                 ConfigurationSection b = data.getConfigurationSection(k(u) + ".buoi");

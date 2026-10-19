@@ -761,9 +761,9 @@ public final class DuckyMoMoCore extends JavaPlugin {
             getServer().getPluginManager().registerEvents(media, this);
             media.start();
             Shared.media = media;
-            getLogger().info("Media: " + media.describe());
+            getLogger().info("Sứ Giả: " + media.describe());
         }
-        bind("media", media == null ? null : media::command, "Media");
+        bind("media", media == null ? null : media::command, "Sứ Giả");
         PluginCommand mediaCmd = getCommand("media");
         if (mediaCmd != null) {
             mediaCmd.setTabCompleter(media == null ? null : (sender, cmd, label, args) -> media.tab(sender, args));

@@ -34,8 +34,8 @@ tinh-nang:
     trang: hethong
     quyen: [duckymomo.web.hethong]
   - id: media
-    ten: Media (livestream)
-    mo-ta: Xem đơn và chỉ tiêu livestream của rank Media; duyệt, từ chối, gia hạn, gỡ rank Media
+    ten: Sứ Giả (livestream)
+    mo-ta: Xem đơn và chỉ tiêu livestream của rank Sứ Giả; duyệt, từ chối, gia hạn, gỡ rank Sứ Giả
     trang: media
     quyen: [duckymomo.web.media]
   # Role chức vụ: chỉ thao tác được role CẤP DƯỚI (weight nhỏ hơn role chức vụ cao nhất của mình, vd Manager: Mod, Helper, Builder).

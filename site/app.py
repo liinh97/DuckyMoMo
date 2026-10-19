@@ -449,7 +449,7 @@ def danhphan_info(core):
     mc = get(core, "media", {}) or {}
     media = None
     if md and mc.get("enabled"):
-        media = {"ten": md.get("name", "Media"), "tien_to": strip_colors(md.get("prefix", "")).strip(), "yeu_cau": md.get("info") or [],
+        media = {"ten": md.get("name", "Sứ Giả"), "tien_to": strip_colors(md.get("prefix", "")).strip(), "yeu_cau": md.get("info") or [],
                  "buoi": mc.get("min-sessions", 4), "phut": mc.get("min-session-minutes", 30), "gio": mc.get("min-hours", 6),
                  "thu": mc.get("trial-days", 14)} | perks(md)
     return {"bat": bool(pr.get("enabled")), "bac": tiers, "media": media,

@@ -202,7 +202,7 @@ window.toast = function (msg, kind) {
 (function () {
   const NAV = [
     ["Cấu hình", [["", "⚙️", "Cài đặt"], ["thuvien", "🗡️", "Thư viện đồ"], ["boss", "🐉", "Boss"], ["role", "👑", "Role & rank"], ["donate", "💳", "Donate"]]],
-    ["Theo dõi", [["hoatdong", "📈", "Hoạt động người chơi"], ["hethong", "🖥️", "Hệ thống"], ["media", "📺", "Media (livestream)"], ["@log", "📜", "Xem log ↗"]]],
+    ["Theo dõi", [["hoatdong", "📈", "Hoạt động người chơi"], ["hethong", "🖥️", "Hệ thống"], ["media", "📺", "Sứ Giả (livestream)"], ["@log", "📜", "Xem log ↗"]]],
     ["Tài liệu", [["camnang", "📘", "Cẩm nang admin"], ["huongdan", "📖", "Cẩm nang trong game"]]],
   ];
   const body = document.body;

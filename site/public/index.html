@@ -32,6 +32,7 @@ p{margin:0 0 .9em}
 .muted{color:var(--muted)}.dim{color:var(--dim)}
 .gold{color:var(--gold)}.jade{color:var(--jade)}.red{color:var(--red)}.sky{color:var(--sky)}
 .pill{display:inline-flex;align-items:center;gap:.4em;padding:.25em .75em;border-radius:999px;font-size:.82rem;font-weight:600;background:var(--card2);border:1px solid var(--line);color:var(--muted)}
+.pill.soon{color:var(--violet);border-color:rgba(167,139,250,.4);background:rgba(167,139,250,.08)}
 .dot{width:.55em;height:.55em;border-radius:50%;background:var(--dim);display:inline-block}
 .dot.on{background:var(--jade);box-shadow:0 0 0 0 rgba(62,207,142,.6);animation:pulse 2s infinite}
 @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(62,207,142,.5)}70%{box-shadow:0 0 0 8px rgba(62,207,142,0)}100%{box-shadow:0 0 0 0 rgba(62,207,142,0)}}
@@ -544,7 +545,12 @@ footer .fbrand img{width:44px}
           <ul class="clean s">
             <li><b>Bang Hội Chiến</b> <span class="pill" style="margin-left:6px">Đang mở</span><br><span class="muted">Chiến lược, thị trấn, công thành trên bản đồ Trái Đất.</span></li>
             <li><b>Practice / Duels</b> <span class="pill" style="margin-left:6px">Thử nghiệm</span><br><span class="muted">Đấu 1v1 luyện PvP, không mất đồ.</span></li>
-          </ul></div>
+            <li><b>Thái Ấp Sáng Tạo</b> <span class="pill" style="margin-left:6px">Đang mở</span><br><span class="muted">Chế độ sáng tạo trên bản sao mảnh đất của bạn, vào qua cổng tím trong Thái Ấp.</span></li>
+            <li><b>Skyblock</b> <span class="pill soon" style="margin-left:6px">Sắp có</span><br><span class="muted">Bắt đầu trên hòn đảo nhỏ giữa trời, mở rộng đảo, nâng cấp, đua top cùng bạn bè.</span></li>
+            <li><b>Lifesteal</b> <span class="pill soon" style="margin-left:6px">Sắp có</span><br><span class="muted">Hạ một người là lấy được một tim của họ, chết thì mất tim. Dành cho dân PvP thích cảm giác mạnh.</span></li>
+            <li><b>Pokémon</b> <span class="pill soon" style="margin-left:6px">Dự kiến</span><br><span class="muted">Bắt, nuôi, đấu Pokémon (Cobblemon). Chỉ bản Java, cần cài modpack.</span></li>
+          </ul>
+          <p class="dim" style="font-size:.85rem;margin:8px 0 0">Chế độ mới mở dần khi server đông người. Tài khoản và rank dùng chung, nhưng tiền và đồ riêng từng chế độ.</p></div>
       </div>
     </div>
   </div>
@@ -1215,8 +1221,8 @@ function danhPhan(info){
         <p class="dim" style="font-size:.85rem">Mỗi 7 ngày: <b>${m.buoi} buổi</b> (≥ ${m.phut} phút) và <b>${m.gio} giờ</b> live. Server tự đếm lúc bạn
         <b>online thật trong server</b> và <b>kênh đang live</b>. Duyệt xong thử ${m.thu} ngày, đạt chỉ tiêu thì được gia hạn.</p></div>
       <div><b>Quyền lợi</b><ul class="clean j">${perk(m).map(x => `<li>${x}</li>`).join("")}</ul>
-        <p class="dim" style="font-size:.85rem">Không bán. Đăng ký: <span class="kbd">/media dangky &lt;link kênh&gt;</span>, mỗi lần live gõ
-        <span class="kbd">/media live</span> (cả server được báo kèm link kênh của bạn).</p></div></div></div>`;
+        <p class="dim" style="font-size:.85rem">Không bán. Đăng ký: <span class="kbd">/sugia dangky &lt;link kênh&gt;</span>, mỗi lần live gõ
+        <span class="kbd">/sugia live</span> (cả server được báo kèm link kênh của bạn).</p></div></div></div>`;
   }
   box.innerHTML = h;
 }

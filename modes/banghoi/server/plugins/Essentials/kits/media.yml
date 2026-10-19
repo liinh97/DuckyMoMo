@@ -1,6 +1,6 @@
-# Gói quà rank Media (/kit media, 19/10): 3 ngày nhận 1 lần (delay giây). Quyền essentials.kits.media do Danh phận cấp cho nhóm media.
+# Gói quà rank Sứ Giả (/kit media, 19/10): 3 ngày nhận 1 lần (delay giây). Quyền essentials.kits.media do Danh phận cấp cho nhóm media.
 # Đổi đồ: sửa danh sách dưới (cú pháp Essentials "vật_phẩm số") hoặc trong game cầm đồ gõ /createkit media 259200 (ghi đè).
-# Đồ thường, không mạnh: rank Media miễn phí nhưng không nên hơn hẳn người chơi khác.
+# Đồ thường, không mạnh: rank Sứ Giả miễn phí nhưng không nên hơn hẳn người chơi khác.
 kits:
   media:
     delay: 259200
@@ -10,4 +10,4 @@ kits:
       - golden_apple 4
       - experience_bottle 16
       - torch 64
-      - /broadcast &c◆ Media &f{USERNAME} &7vừa nhận gói quà Media!
+      - /broadcast &c◆ Sứ Giả &f{USERNAME} &7vừa nhận gói quà Sứ Giả!

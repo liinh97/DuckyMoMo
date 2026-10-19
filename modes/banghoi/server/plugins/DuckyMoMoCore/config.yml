@@ -1219,14 +1219,14 @@ play-ranks:
     haokiet:  {group: haokiet, name: "Hào Kiệt", prefix: "&6[Hào Kiệt] ", priority: 3, hours: 72, level: 25, homes: 5, balo: 3, balo-slots: 45, ah: 8, orders: 5, icon: GOLDEN_HELMET}
   # Rank KHÁC: quyền lợi homes (nhà) · balo · balo-slots (9..54) · ah (món chợ) · orders (đơn /donhang) · spin-faster (% vé vòng quay nhanh hơn,
   # 5..50) · kit (kit Essentials). 0 / "" = không cấp (theo danh phận). Người có nhiều rank lấy mức cao nhất. Cài đặt › Người mới › Quyền lợi theo rank.
-  # create: true = plugin tạo nhóm + tiền tố (vd Media); false = nhóm có sẵn (ủng hộ, staff), chỉ đụng quyền lợi, giữ tiền tố của họ.
-  # card: true = hiện thẻ trong /danhphan (info = yêu cầu đăng ký, contact = bấm vào thì hiện). Cấp rank Media: /lp user <tên> parent add media
+  # create: true = plugin tạo nhóm + tiền tố (vd Sứ Giả); false = nhóm có sẵn (ủng hộ, staff), chỉ đụng quyền lợi, giữ tiền tố của họ.
+  # card: true = hiện thẻ trong /danhphan (info = yêu cầu đăng ký, contact = bấm vào thì hiện). Cấp rank Sứ Giả: /lp user <tên> parent add media
   # RANK ỦNG HỘ (mua bằng tiền): mọi quyền lợi trên là LỢI THẾ CHƠI → trái luật Mojang (không pay-to-win), để 0.
   other-ranks:
     media:
       create: true
-      name: "Media"
-      prefix: "&c◆ Media &r"
+      name: "Sứ Giả"
+      prefix: "&c◆ Sứ Giả &r"
       priority: 20
       icon: SPYGLASS
       card: true
@@ -1258,8 +1258,8 @@ backpack:
   combat-seconds: 15
   max: 9
 
-# Chương trình Media (/media, 19/10): kiểm soát rank Media bằng số liệu. Quyền lợi rank media: play-ranks.other-ranks.media.
-# Người chơi: /media dangky <link kênh TikTok/YouTube> → admin duyệt (trang quản trị › Media hoặc /media duyet <tên> [ngày]) = rank media CÓ HẠN
+# Chương trình Sứ Giả (/media, 19/10): kiểm soát rank Sứ Giả bằng số liệu. Quyền lợi rank media: play-ranks.other-ranks.media.
+# Người chơi: /media dangky <link kênh TikTok/YouTube> → admin duyệt (trang quản trị › Sứ Giả hoặc /media duyet <tên> [ngày]) = rank media CÓ HẠN
 # (trial-days), gia hạn /media giahan <tên> [ngày]. Mỗi lần live: /media live [link] → báo cả server; mỗi check-minutes phút server tự kiểm
 # người đó ONLINE THẬT (không AFK) + kênh ĐANG LIVE (TikTok: trang api-live không chính thức; YouTube: cần youtube-key, Google Cloud ›
 # YouTube Data API v3). Không kiểm được (TikTok chặn/lỗi) thì tính "chưa xác minh" để admin xem link. Chỉ tiêu 7 ngày: min-sessions buổi

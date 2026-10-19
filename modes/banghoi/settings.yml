@@ -1723,8 +1723,8 @@ dp_dan_slots: 27
 dp_luongdan_slots: 36
 dp_haokiet_slots: 45
 bo_default_slots: 27
-rk_media_name: "Media"
-rk_media_prefix: "&c◆ Media &r"
+rk_media_name: "Sứ Giả"
+rk_media_prefix: "&c◆ Sứ Giả &r"
 rk_media_contact: "&7Gửi link kênh cho admin: nhắn &f/msg Linh &7trong game hoặc qua Discord/Zalo của server."
 rk_media_info: ["Livestream TikTok/YouTube về server ít nhất 4 buổi mỗi tuần", "Livestream đều đặn, nội dung lành mạnh", "Tương tác và quảng bá server", "Muốn gắn bó lâu dài", "Nội dung: công thành, xây dựng, sinh tồn"]
 rk_media_homes: 5

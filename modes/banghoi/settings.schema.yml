@@ -1008,13 +1008,13 @@ groups:
       - { key: dp_haokiet_orders, label: "Hào Kiệt: số đơn thu mua /donhang", type: int, min: 0, max: 50, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.tiers.haokiet.orders }
       - { key: dp_haokiet_spin, label: "Hào Kiệt: vé vòng quay nhanh hơn (%)", type: int, min: 0, max: 50, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.tiers.haokiet.spin-faster }
 
-  - title: Chương trình Media (/media) — kiểm soát rank livestream
+  - title: Chương trình Sứ Giả (/media) — kiểm soát rank livestream
     category: Người mới
-    description: "Server tự kiểm người có rank Media có livestream đủ không: chỉ tính lúc người đó ONLINE THẬT trong server và kênh ĐANG LIVE. Duyệt đơn, xem số liệu ở trang quản trị › Media."
-    info: "Người chơi: /media dangky <link kênh> → admin duyệt (rank có hạn = thử việc) → mỗi lần live gõ /media live (cả server được báo, kèm link) → xong /media tat.\nTikTok: server tự đọc trạng thái live (cách không chính thức, có thể bị TikTok chặn → tính 'chưa xác minh', admin bấm link xem). YouTube: cần khoá YouTube Data API v3 đặt YOUTUBE_KEY=... trong .env (bí mật, không ghi ở đây) rồi khởi động lại Bang Hội Chiến.\nThiếu chỉ tiêu nhiều tuần liền: chỉ BÁO admin, không tự gỡ (admin gỡ ở trang Media).\nQuyền lợi rank Media: nhóm 'Quyền lợi theo rank khác'.\nLưu xong: có hiệu lực ngay (dmm reload)."
+    description: "Server tự kiểm người có rank Sứ Giả có livestream đủ không: chỉ tính lúc người đó ONLINE THẬT trong server và kênh ĐANG LIVE. Duyệt đơn, xem số liệu ở trang quản trị › Sứ Giả."
+    info: "Người chơi: /media dangky <link kênh> → admin duyệt (rank có hạn = thử việc) → mỗi lần live gõ /media live (cả server được báo, kèm link) → xong /media tat.\nTikTok: server tự đọc trạng thái live (cách không chính thức, có thể bị TikTok chặn → tính 'chưa xác minh', admin bấm link xem). YouTube: cần khoá YouTube Data API v3 đặt YOUTUBE_KEY=... trong .env (bí mật, không ghi ở đây) rồi khởi động lại Bang Hội Chiến.\nThiếu chỉ tiêu nhiều tuần liền: chỉ BÁO admin, không tự gỡ (admin gỡ ở trang Sứ Giả).\nQuyền lợi rank Sứ Giả: nhóm 'Quyền lợi theo rank khác'.\nLưu xong: có hiệu lực ngay (dmm reload)."
     apply: [dmm reload]
     settings:
-      - { key: md_on, label: Bật chương trình Media, type: select, file: plugins/DuckyMoMoCore/config.yml, path: media.enabled, options: [ { value: true, label: Bật }, { value: false, label: Tắt } ] }
+      - { key: md_on, label: Bật chương trình Sứ Giả, type: select, file: plugins/DuckyMoMoCore/config.yml, path: media.enabled, options: [ { value: true, label: Bật }, { value: false, label: Tắt } ] }
       - { key: md_sessions, label: "Chỉ tiêu: số buổi live trong 7 ngày", type: int, min: 0, max: 50, file: plugins/DuckyMoMoCore/config.yml, path: media.min-sessions }
       - { key: md_session_min, label: "Một buổi phải dài ít nhất (phút)", type: int, min: 5, max: 600, file: plugins/DuckyMoMoCore/config.yml, path: media.min-session-minutes }
       - { key: md_hours, label: "Chỉ tiêu: tổng giờ live trong 7 ngày", type: number, min: 0, max: 168, file: plugins/DuckyMoMoCore/config.yml, path: media.min-hours }
@@ -1025,23 +1025,23 @@ groups:
       - { key: md_fail, label: "Báo admin khi thiếu chỉ tiêu bao nhiêu tuần liền", type: int, min: 1, max: 10, file: plugins/DuckyMoMoCore/config.yml, path: media.fail-weeks-alert }
       - { key: md_cooldown, label: "Báo 'đang live' cho cả server tối đa 1 lần mỗi (phút)", type: int, min: 0, max: 1440, file: plugins/DuckyMoMoCore/config.yml, path: media.announce-cooldown-minutes }
 
-  - title: Quyền lợi theo rank khác (Media, ủng hộ, staff)
+  - title: Quyền lợi theo rank khác (Sứ Giả, ủng hộ, staff)
     category: Người mới
     description: "Quyền lợi cho rank KHÔNG phải danh phận: số nhà, balo, ô mỗi balo, món treo chợ đấu giá /ah, đơn thu mua /donhang, vé vòng quay nhanh hơn, gói quà /kit. 0 = không cấp (theo danh phận). Người nhiều rank lấy mức cao nhất."
-    info: "Rank Media: miễn phí, admin xét duyệt người livestream về server; hiện thẻ trong /danhphan (yêu cầu + cách liên hệ). Cấp: /lp user <tên> parent add media (gỡ: parent remove media). Plugin tự tạo nhóm media + tiền tố.\nGói quà /kit media: plugins/Essentials/kits/media.yml (3 ngày 1 lần), đổi đồ bằng /createkit media 259200.\n⚠ Rank ỦNG HỘ (mua bằng tiền): mọi quyền lợi ở đây là LỢI THẾ KHI CHƠI, trái luật Mojang và luật server (không pay-to-win). Để 0.\nGiảm ô balo: đồ ở ô khoá không mất.\nLưu xong: có hiệu lực ngay (dmm reload, plugin tự sửa quyền LuckPerms)."
+    info: "Rank Sứ Giả: miễn phí, admin xét duyệt người livestream về server; hiện thẻ trong /danhphan (yêu cầu + cách liên hệ). Cấp: /lp user <tên> parent add media (gỡ: parent remove media). Plugin tự tạo nhóm media + tiền tố.\nGói quà /kit media: plugins/Essentials/kits/media.yml (3 ngày 1 lần), đổi đồ bằng /createkit media 259200.\n⚠ Rank ỦNG HỘ (mua bằng tiền): mọi quyền lợi ở đây là LỢI THẾ KHI CHƠI, trái luật Mojang và luật server (không pay-to-win). Để 0.\nGiảm ô balo: đồ ở ô khoá không mất.\nLưu xong: có hiệu lực ngay (dmm reload, plugin tự sửa quyền LuckPerms)."
     apply: [dmm reload]
     settings:
-      - { key: rk_media_name, label: "Media: tên", type: text, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.media.name }
-      - { key: rk_media_prefix, label: "Media: tiền tố (mã màu &)", type: text, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.media.prefix }
-      - { key: rk_media_info, label: "Media: yêu cầu đăng ký (mỗi dòng 1 ý)", type: lines, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.media.info }
-      - { key: rk_media_contact, label: "Media: cách liên hệ (hiện khi bấm thẻ)", type: text, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.media.contact }
-      - { key: rk_media_homes, label: "Media: số nhà (0 = theo danh phận)", type: int, min: 0, max: 20, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.media.homes }
-      - { key: rk_media_balo, label: "Media: số balo", type: int, min: 0, max: 9, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.media.balo }
-      - { key: rk_media_slots, label: "Media: số ô mỗi balo", type: select, options: [ { value: 0, label: "Không cấp" }, { value: 9, label: "9 ô" }, { value: 18, label: "18 ô" }, { value: 27, label: "27 ô" }, { value: 36, label: "36 ô" }, { value: 45, label: "45 ô" }, { value: 54, label: "54 ô" } ], file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.media.balo-slots }
-      - { key: rk_media_ah, label: "Media: số món treo chợ đấu giá /ah (Auction House)", type: int, min: 0, max: 20, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.media.ah }
-      - { key: rk_media_orders, label: "Media: số đơn thu mua /donhang", type: int, min: 0, max: 50, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.media.orders }
-      - { key: rk_media_spin, label: "Media: vé vòng quay nhanh hơn (%)", type: int, min: 0, max: 50, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.media.spin-faster }
-      - { key: rk_media_kit, label: "Media: gói quà (tên kit Essentials, trống = không)", type: text, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.media.kit }
+      - { key: rk_media_name, label: "Sứ Giả: tên", type: text, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.media.name }
+      - { key: rk_media_prefix, label: "Sứ Giả: tiền tố (mã màu &)", type: text, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.media.prefix }
+      - { key: rk_media_info, label: "Sứ Giả: yêu cầu đăng ký (mỗi dòng 1 ý)", type: lines, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.media.info }
+      - { key: rk_media_contact, label: "Sứ Giả: cách liên hệ (hiện khi bấm thẻ)", type: text, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.media.contact }
+      - { key: rk_media_homes, label: "Sứ Giả: số nhà (0 = theo danh phận)", type: int, min: 0, max: 20, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.media.homes }
+      - { key: rk_media_balo, label: "Sứ Giả: số balo", type: int, min: 0, max: 9, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.media.balo }
+      - { key: rk_media_slots, label: "Sứ Giả: số ô mỗi balo", type: select, options: [ { value: 0, label: "Không cấp" }, { value: 9, label: "9 ô" }, { value: 18, label: "18 ô" }, { value: 27, label: "27 ô" }, { value: 36, label: "36 ô" }, { value: 45, label: "45 ô" }, { value: 54, label: "54 ô" } ], file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.media.balo-slots }
+      - { key: rk_media_ah, label: "Sứ Giả: số món treo chợ đấu giá /ah (Auction House)", type: int, min: 0, max: 20, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.media.ah }
+      - { key: rk_media_orders, label: "Sứ Giả: số đơn thu mua /donhang", type: int, min: 0, max: 50, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.media.orders }
+      - { key: rk_media_spin, label: "Sứ Giả: vé vòng quay nhanh hơn (%)", type: int, min: 0, max: 50, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.media.spin-faster }
+      - { key: rk_media_kit, label: "Sứ Giả: gói quà (tên kit Essentials, trống = không)", type: text, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.media.kit }
       - { key: rk_namtuoc_homes, label: "Nam Tước (ủng hộ): số nhà (0 = theo danh phận)", type: int, min: 0, max: 20, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.namtuoc.homes }
       - { key: rk_namtuoc_balo, label: "Nam Tước (ủng hộ): số balo", type: int, min: 0, max: 9, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.namtuoc.balo }
       - { key: rk_namtuoc_slots, label: "Nam Tước (ủng hộ): số ô mỗi balo", type: select, options: [ { value: 0, label: "Không cấp" }, { value: 9, label: "9 ô" }, { value: 18, label: "18 ô" }, { value: 27, label: "27 ô" }, { value: 36, label: "36 ô" }, { value: 45, label: "45 ô" }, { value: 54, label: "54 ô" } ], file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.namtuoc.balo-slots }

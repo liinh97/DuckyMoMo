@@ -244,16 +244,16 @@ Triển khai: kiểm tra không ai online (lệnh riêng) → `docker compose up
 - [ ] Xong chương 1 (Già Làng) → có quyền duckymomo.cotruyen.c1 (/lp user <tên> permission check duckymomo.cotruyen.c1).
 - [ ] Đủ 6 giờ + chương 1 → bấm Dân trong menu → cả server được báo.
 - [ ] /balo: để đồ, thoát game, vào lại còn nguyên; đang đánh người không mở được; /choilai mất đồ balo; admin /balo xem <tên>.
-- [ ] Rank Media: /danhphan có thẻ ◆ Media (yêu cầu + bấm hiện cách liên hệ); /lp user <tên> parent add media → tiền tố, 5 nhà, 5 balo,
+- [ ] Rank Sứ Giả: /danhphan có thẻ ◆ Sứ Giả (yêu cầu + bấm hiện cách liên hệ); /lp user <tên> parent add media → tiền tố, 5 nhà, 5 balo,
       5 món chợ, 5 đơn /donhang, vé vòng quay 48 phút, /kit media (3 ngày sau mới nhận lại).
 - [ ] Trang Cài đặt › Người mới › Danh phận: đổi số nhà Dân thành 3 → Lưu → người bậc Dân đặt được nhà thứ 3 (không gõ lệnh lp).
 
-## 4s. Chương trình Media (/media) — 19/10
-- [ ] Streamer: /media dangky https://www.tiktok.com/@<kênh> → trang quản trị › Media tab "Chờ duyệt" có đơn, admin online được báo.
-- [ ] Đang live TikTok thật: /media live → cả server thấy "🔴 LIVE … [Bấm để xem]"; sau 10–15 phút trang Media có phút "Xác minh" tăng
+## 4s. Chương trình Sứ Giả (/sugia) — 19/10
+- [ ] Streamer: /sugia dangky https://www.tiktok.com/@<kênh> → trang quản trị › Sứ Giả tab "Chờ duyệt" có đơn, admin online được báo.
+- [ ] Đang live TikTok thật: /sugia live → cả server thấy "🔴 LIVE … [Bấm để xem]"; sau 10–15 phút trang Sứ Giả có phút "Xác minh" tăng
       (nếu chỉ tăng "Chưa xác minh" = TikTok chặn/đổi API → báo Claude). Tắt live trên TikTok → ~30 phút sau buổi tự kết thúc.
-- [ ] Bấm Duyệt → người đó có tiền tố ◆ Media + quyền lợi; /lp user <tên> parent info thấy media có thời hạn 14 ngày. Gia hạn / Gỡ chạy đúng.
-- [ ] Đứng AFK trong lúc live → phút không tăng. Thoát game → buổi kết thúc. /media baocao hiện ở cuối trang Media.
+- [ ] Bấm Duyệt → người đó có tiền tố ◆ Sứ Giả + quyền lợi; /lp user <tên> parent info thấy media có thời hạn 14 ngày. Gia hạn / Gỡ chạy đúng.
+- [ ] Đứng AFK trong lúc live → phút không tăng. Thoát game → buổi kết thúc. /sugia baocao hiện ở cuối trang Sứ Giả.
 
 ## 5. Quảng trường Danh vọng (sảnh)
 - [ ] (CHƯA CẦN, làm khi gần mở server) Chọn chỗ trống ở sảnh (map sakura). Đứng, quay mặt về phía người xem: `/vinhdanh dat moinhat tieude`, rồi `bachu`, `chienthan`, `phuho`,

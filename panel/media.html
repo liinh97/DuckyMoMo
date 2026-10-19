@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>DuckyMoMo · Media</title>
+<title>DuckyMoMo · Sứ Giả</title>
 <link rel="stylesheet" href="ui.css">
 <style>
   main { padding: 0 0 80px; }
@@ -28,7 +28,7 @@
   .live { background: #e53935; color: #fff; border-radius: 6px; padding: 1px 7px; font-size: 12px; font-weight: 700; }
 </style>
 </head>
-<body data-dozzle="__DOZZLE_URL__" data-title="Media" data-sub="Rank Media cho người livestream server. Server tự đếm: chỉ tính lúc người đó ONLINE THẬT trong server và kênh ĐANG LIVE (kiểm tự động). Duyệt = rank có hạn (thử việc), hết hạn tự mất nếu không gia hạn.">
+<body data-dozzle="__DOZZLE_URL__" data-title="Sứ Giả" data-sub="Rank Sứ Giả cho người livestream server. Server tự đếm: chỉ tính lúc người đó ONLINE THẬT trong server và kênh ĐANG LIVE (kiểm tự động). Duyệt = rank có hạn (thử việc), hết hạn tự mất nếu không gia hạn.">
 <script src="shell.js"></script>
 <main>
   <p class="hint" id="rule"></p>
@@ -38,7 +38,7 @@
   <div id="reports" class="meta"></div>
 </main>
 <script>
-const ST = { CHO: "Chờ duyệt", DUYET: "Đang là Media", TUCHOI: "Đã từ chối", HET: "Đã gỡ / hết" };
+const ST = { CHO: "Chờ duyệt", DUYET: "Đang là Sứ Giả", TUCHOI: "Đã từ chối", HET: "Đã gỡ / hết" };
 let D = { nguoi: [], bao_cao: [], chi_tieu: {} }, tab = "CHO";
 const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const when = ms => ms ? new Date(ms).toLocaleString("vi-VN", { hour: "2-digit", minute: "2-digit", day: "2-digit", month: "2-digit" }) : "–";
@@ -81,8 +81,8 @@ function draw() {
   document.getElementById("reports").innerHTML = rep.length ? rep.slice().reverse().map(x => `<div>${esc(x)}</div>`).join("") : "Chưa có tố cáo.";
 }
 async function act(a, ten) {
-  const q = { duyet: `Duyệt ${ten} làm Media (rank có hạn)?`, giahan: `Gia hạn rank Media cho ${ten}?`, go: `Gỡ rank Media của ${ten}?`, tuchoi: `Từ chối đơn của ${ten}?` }[a];
-  if (!(await ask(q, { title: "Media", ok: "Đồng ý", cancel: "Quay lại", danger: a === "go" || a === "tuchoi" }))) return;
+  const q = { duyet: `Duyệt ${ten} làm Sứ Giả (rank có hạn)?`, giahan: `Gia hạn rank Sứ Giả cho ${ten}?`, go: `Gỡ rank Sứ Giả của ${ten}?`, tuchoi: `Từ chối đơn của ${ten}?` }[a];
+  if (!(await ask(q, { title: "Sứ Giả", ok: "Đồng ý", cancel: "Quay lại", danger: a === "go" || a === "tuchoi" }))) return;
   toast("Đang xử lý…");
   const res = await fetch("api/media", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: a, ten }) });
   const d = await res.json().catch(() => ({}));

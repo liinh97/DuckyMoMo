@@ -175,22 +175,22 @@ chapters:
     &6&lDANH PHẬN (tiếp)
     &8Giữ danh phận khi /choilai. Số liệu có thể đổi: xem /danhphan.
   - |-
-    &c&l◆ RANK MEDIA
+    &c&l◆ RANK SỨ GIẢ
     &0Cho người &llivestream&r&0 về server (TikTok, YouTube…), miễn phí, admin xét duyệt.
     &0Có thêm nhà, balo, món chợ đấu giá, đơn thu mua, vé vòng quay nhanh hơn, gói quà &1/kit media&0.
-    &0Xem yêu cầu: thẻ Media trong &1/danhphan&0.
+    &0Xem yêu cầu: thẻ Sứ Giả trong &1/danhphan&0.
   - |-
-    &c&lMEDIA: cách làm
-    &1/media dangky <link kênh>
-    &8Vd: /media dangky https://www.tiktok.com/@tenban
-    &0Mỗi lần live: &1/media live&0 (cả server được báo), xong &1/media tat&0.
+    &c&lSỨ GIẢ: cách làm
+    &1/sugia dangky <link kênh>
+    &8Vd: /sugia dangky https://www.tiktok.com/@tenban
+    &0Mỗi lần live: &1/sugia live&0 (cả server được báo), xong &1/sugia tat&0.
     &0Server tự đếm giờ khi bạn &lonline thật&r&0 và kênh &lđang live&r&0.
   - |-
-    &c&lMEDIA: chỉ tiêu
+    &c&lSỨ GIẢ: chỉ tiêu
     &0Mỗi 7 ngày: 4 buổi (≥ 30 phút) và 6 giờ live.
     &0Rank có hạn, đạt chỉ tiêu thì được gia hạn.
-    &1/media &0xem tiến độ.
-    &8Thấy Media gian lận: /media baocao <tên> <lý do>
+    &1/sugia &0xem tiến độ.
+    &8Thấy Sứ Giả gian lận: /sugia baocao <tên> <lý do>
   - |-
     &6&lBALO
     &1/balo &0mở balo (&1/balo 2&0 balo thứ 2).

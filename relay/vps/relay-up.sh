@@ -4,12 +4,15 @@
 #   Bedrock UDP 19132 (+ 19130 cũ thời BKNS) → 10.66.0.2:19132 (Geyser)
 #   Vote    TCP 8192 → 10.66.0.2:8192 (relay socat → banghoi-1 Votifier)
 #   Voice   UDP 24454 → 10.66.0.2:24454 (Simple Voice Chat ở Velocity)
+#   Bedrock NetherNet (19/10): signaling TCP 19132 → 10.66.0.2:19132, WebRTC UDP 19133 → 10.66.0.2:19133 (Geyser)
 H=10.66.0.2
 iptables -t nat -N MC_RELAY 2>/dev/null; iptables -t nat -F MC_RELAY
 iptables -t nat -A MC_RELAY -p tcp -m multiport --dports 25565,25570 -j DNAT --to-destination $H:25577
 iptables -t nat -A MC_RELAY -p udp -m multiport --dports 19132,19130 -j DNAT --to-destination $H:19132
 iptables -t nat -A MC_RELAY -p tcp --dport 8192 -j DNAT --to-destination $H:8192
 iptables -t nat -A MC_RELAY -p udp --dport 24454 -j DNAT --to-destination $H:24454
+iptables -t nat -A MC_RELAY -p tcp --dport 19132 -j DNAT --to-destination $H:19132
+iptables -t nat -A MC_RELAY -p udp --dport 19133 -j DNAT --to-destination $H:19133
 iptables -t nat -C PREROUTING -i eth0 -j MC_RELAY 2>/dev/null || iptables -t nat -A PREROUTING -i eth0 -j MC_RELAY
 iptables -t mangle -C FORWARD -o wg0 -p tcp --tcp-flags SYN,RST SYN -j TCPMSS --clamp-mss-to-pmtu 2>/dev/null \
   || iptables -t mangle -A FORWARD -o wg0 -p tcp --tcp-flags SYN,RST SYN -j TCPMSS --clamp-mss-to-pmtu

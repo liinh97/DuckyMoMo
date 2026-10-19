@@ -212,6 +212,11 @@ Triển khai: kiểm tra không ai online (lệnh riêng) → `docker compose up
 - [ ] Điện thoại (Bedrock) qua cổng và về được.
 - [ ] Mở rộng / đặt tên ở Bang Hội Chiến → bên sáng tạo đổi theo trong 30 giây.
 
+## 4o. Bedrock NetherNet (bắt buộc từ 27/10) — 19/10, đã bật, CHƯA thử bằng điện thoại
+- [ ] Điện thoại bản Bedrock 26.40+ vào mc.goc6.io.vn cổng 19132: hiện hỏi "tin tưởng máy chủ" lần đầu → đồng ý → vào được, chơi mượt (WebRTC UDP 19133).
+- [ ] Điện thoại bản cũ hơn vẫn vào (RakNet) tới khi cập nhật. Sau 27/10 thử lại với bản 26.60.
+- [ ] Log proxy khi người Bedrock vào: không lỗi signaling/WebRTC (`docker logs duckymomo-proxy-1 | grep -i -E "nethernet|webrtc|signal"`).
+
 ## 5. Quảng trường Vinh danh (sảnh)
 - [ ] (CHƯA CẦN, làm khi gần mở server) Chọn chỗ trống ở sảnh (map sakura). Đứng, quay mặt về phía người xem: `/vinhdanh dat moinhat tieude`, rồi `bachu`, `chienthan`, `phuho`,
       `kientrucsu`, `dautruong`, `pet` ở các chỗ khác. Bảng chữ nổi + đầu người chơi đúng hướng, không đè nhau.

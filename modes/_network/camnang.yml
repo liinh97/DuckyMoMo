@@ -136,6 +136,7 @@ plugins:
     admin:
       - ["/geyser reload", "Nạp lại Geyser (trên proxy)"]
     settings: "proxy/plugins/Geyser-Velocity, */plugins/floodgate/config.yml"
+    notes: "NetherNet (bật 19/10, BẮT BUỘC từ Bedrock 26.60 ngày 27/10/2026, RakNet bị bỏ): Geyser transport both, webrtc-port 19133 (UDP), signaling builtin TCP 19132, advertise-addresses = IP VPS 125.212.218.74 (đổi VPS thì sửa ở proxy/plugins/Geyser-Velocity/config.yml rồi tạo lại proxy + relay). VPS mở bằng ./ops/nethernet.sh vps. Người chơi vẫn nhập mc.goc6.io.vn cổng 19132; lần đầu hiện hỏi tin tưởng máy chủ (chưa có HTTPS). Lỗi điện thoại không vào được: xem docker logs duckymomo-proxy-1 | grep -i -E 'nethernet|webrtc|signal', kiểm VPS iptables -t nat -S MC_RELAY và relay ip rule (pref 304, 305)"
   - name: SkinsRestorer
     jar: SkinsRestorer
     kind: Đăng nhập & kết nối

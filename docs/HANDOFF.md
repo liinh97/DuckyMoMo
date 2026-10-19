@@ -394,7 +394,13 @@
 - Chưa chắc: Bedrock qua cổng (BungeeCord Connect) chạy đúng không; LuckPerms prefix ở sangtao-1; 4 server cùng DuckyMoMoCore mới chỉ khởi động lại
   banghoi-1 + sangtao-1 (lobby/practice vẫn chạy jar cũ tới lần khởi động lại sau — không ảnh hưởng). Để sau: WorldEdit giới hạn, "bản vẽ".
 - **GẤP (thấy trong log proxy 19/10):** Geyser 2.12.0 cảnh báo "NetherNet support is NOT enabled… Players will not be able to connect starting
-  October 27th" → người chơi Bedrock (điện thoại) sẽ KHÔNG vào được từ 27/10 nếu chưa bật NetherNet (geysermc.org/blog/preparing-for-nethernet). Chưa làm.
+  October 27th" → người chơi Bedrock (điện thoại) sẽ KHÔNG vào được từ 27/10 nếu chưa bật NetherNet (geysermc.org/blog/preparing-for-nethernet).
+  **ĐÃ XỬ LÝ 19/10 16:43:** Geyser `transport: both` (RakNet + NetherNet), `webrtc-port: 19133`, signaling builtin TCP 19132,
+  `advertise-addresses: ["125.212.218.74"]` (ĐỔI VPS THÌ SỬA Ở ĐÂY). VPS: `./ops/nethernet.sh vps` (DNAT + ufw TCP 19132, UDP 19133, relay-up.sh mới).
+  Relay: ip rule tcp sport 19132 (pref 304), udp sport 19133 (305). Proxy publish thêm 19132/tcp, 19133/udp (LAN). repo proxy/plugins/Geyser-Velocity/config.yml
+  = bản đang chạy (config-version 10). Kiểm: signaling qua VPS trả HTTP 404 (có phục vụ), Bedrock RakNet + Java qua VPS bình thường.
+  CHƯA thử bằng điện thoại thật (WebRTC UDP 19133 chỉ thử được bằng client 26.40+). Người chơi vẫn nhập mc.goc6.io.vn cổng 19132;
+  lần đầu vào bằng IP/tên miền không HTTPS sẽ hiện hỏi "tin tưởng máy chủ" (bấm đồng ý). Muốn bỏ hỏi: chứng chỉ HTTPS cho signaling (để sau).
 
 ### 19/10 tối: Rà soát toàn bộ + cẩm nang chi tiết (người dùng: "check lại toàn bộ tính năng rồi bổ sung, chỉnh sửa web, cẩm nang hướng dẫn thật chi tiết cho admin lẫn người chơi", "lệnh có ví dụ")
 - Cẩm nang trong game (modes/_network/huongdan.yml, đã ./ops/huongdan.sh): viết lại thành 11 chương (mục lục chỉ 1 trang, tối đa ~11):

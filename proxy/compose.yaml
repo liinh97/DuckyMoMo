@@ -28,7 +28,9 @@ services:
       REPLACE_ENV_SUFFIXES: yml,yaml,txt,cfg,conf,properties,hjson,json,tml,toml,secret
     ports:
       - "${JAVA_PORT:-25565}:25577"          # Java
-      - "${BEDROCK_PORT:-19132}:19132/udp"   # Bedrock (điện thoại) qua Geyser
+      - "${BEDROCK_PORT:-19132}:19132/udp"   # Bedrock (điện thoại) qua Geyser, kiểu cũ RakNet
+      - "${BEDROCK_PORT:-19132}:19132/tcp"   # Bedrock NetherNet: signaling (Geyser transport both, 19/10)
+      - "19133:19133/udp"                    # Bedrock NetherNet: WebRTC (Geyser webrtc-port)
       - "${VOICE_PORT:-24454}:24454/udp"     # Voice chat (Simple Voice Chat, mod Java). Người chơi ngoài vào qua VPS (relay), cổng này cho LAN
     volumes:
       - ./config:/config:ro        # velocity.toml, forwarding.secret (mẫu) - có trong Git

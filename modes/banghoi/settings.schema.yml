@@ -346,7 +346,7 @@ groups:
       - { key: towny_price_claim,      label: Giá mua 1 ô đất,     type: number, min: 0, file: plugins/Towny/settings/config.yml, path: economy.new_expand.price_claim_townblock }
       - { key: towny_homeblock_distance, label: Khoảng cách tối thiểu giữa nhà chính hai thị trấn (ô), type: int, min: 0, max: 100, file: plugins/Towny/settings/config.yml, path: claiming.distance_rules.min_distance_between_homeblocks,
           note: "1 ô = 16 block. 10 ô = 160 block (chốt 14/10)." }
-      - { key: towny_town_upkeep, info: "Là gì: phí thị trấn trả mỗi ngày mới (giờ Towny, xem /towny time), trừ từ ngân khố.\nLưu ý: hết tiền trả thì thị trấn bị giải tán.",      label: Phí duy trì thị trấn mỗi ngày,  type: number, min: 0, file: plugins/Towny/settings/config.yml, path: economy.daily_taxes.price_town_upkeep }
+      - { key: towny_town_upkeep, info: "Là gì: phí thị trấn trả mỗi ngày mới (giờ Towny, xem /towny time), trừ từ ngân khố.\nLưu ý: hết tiền trả thì thị trấn PHÁ SẢN (mắc nợ, không bị xoá: economy.bankruptcy bật, delete_towns_that_reach_debt_cap tắt). Nạp tiền vào ngân khố là trả nợ.",      label: Phí duy trì thị trấn mỗi ngày,  type: number, min: 0, file: plugins/Towny/settings/config.yml, path: economy.daily_taxes.price_town_upkeep }
       - { key: towny_nation_upkeep,    label: Phí duy trì quốc gia mỗi ngày,  type: number, min: 0, file: plugins/Towny/settings/config.yml, path: economy.daily_taxes.price_nation_upkeep }
 
   - title: Kinh tế

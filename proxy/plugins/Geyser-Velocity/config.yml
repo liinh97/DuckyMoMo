@@ -182,7 +182,7 @@ gameplay:
   custom-skull-render-distance: 32
 
 # The default locale if we don't have the one the client requested. If set to "system", the system's language will be used.
-default-locale: system
+default-locale: vi_vn
 
 # Whether player IP addresses will be logged by the server.
 log-player-ip-addresses: true

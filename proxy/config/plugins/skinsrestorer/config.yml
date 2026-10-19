@@ -35,7 +35,7 @@
 messages:
     # The default locale code for player messages and commands.
     # Use an underscore between the language and country codes. Example: en_US
-    locale: en
+    locale: vi
     # The locale code for console messages and commands.
     # This value can differ from the player locale.
     # Support is primarily available in English, so the default value is recommended.
@@ -45,7 +45,7 @@ messages:
     disablePrefix: false
     # Uses each player's client locale when a translation is available.
     # When disabled, all players use messages.locale.
-    perIssuerLocale: true
+    perIssuerLocale: false
     # The date format for plugin messages. Format reference:
     # https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/format/DateTimeFormatter.html
     dateFormat: dd MMMM yyyy

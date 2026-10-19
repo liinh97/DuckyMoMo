@@ -593,14 +593,23 @@ final class Seasons implements Listener {
             if (!down.isEmpty()) {
                 sender.sendMessage(c("&c▼ Lớn chậm: &f" + String.join(", ", down)));
             }
-            ConfigurationSection hb = s.getConfigurationSection("harvest-bonus");
-            if (hb != null) {
-                List<String> bonus = new ArrayList<>();
-                for (String k : hb.getKeys(false)) {
-                    if (hb.getDouble(k, 0) > 0) {
-                        bonus.add(cropName(k) + " " + Math.round(hb.getDouble(k)) + "%");
+            // được mùa: mùa + sự kiện cộng lại (giống onHarvest)
+            java.util.Map<String, Double> hbm = new java.util.LinkedHashMap<>();
+            for (ConfigurationSection hb : new ConfigurationSection[]{s.getConfigurationSection("harvest-bonus"),
+                    evNow == null ? null : evNow.getConfigurationSection("harvest-bonus")}) {
+                if (hb != null) {
+                    for (String k : hb.getKeys(false)) {
+                        hbm.merge(k.toUpperCase(Locale.ROOT), hb.getDouble(k, 0), Double::sum);
                     }
                 }
+            }
+            {
+                List<String> bonus = new ArrayList<>();
+                hbm.forEach((k, v) -> {
+                    if (v > 0) {
+                        bonus.add(cropName(k) + " " + Math.round(v) + "%");
+                    }
+                });
                 if (!bonus.isEmpty()) {
                     sender.sendMessage(c("&e✦ Được mùa (rơi thêm 1 khi gặt cây chín): &f" + String.join(", ", bonus)));
                 }

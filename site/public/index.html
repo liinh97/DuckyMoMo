@@ -801,8 +801,8 @@ footer .fbrand img{width:44px}
       <div class="card"><h3>🗺 Bản đồ kho báu <span class="kbd">/khobau</span></h3>
         <p class="muted">Câu cá hoặc hạ quái có thể nhặt <b>bản đồ kho báu</b>. Cầm trên tay: dưới màn hình báo lạnh, ấm, nóng. Tới nơi thì ngồi xuống (Shift) để đào, hạ hết lính canh để mở rương.</p>
         <div id="kbTiers" class="muted"></div></div>
-      <div class="card"><h3>☠ Bảng truy nã <span class="kbd">/truyna</span></h3>
-        <p class="muted">Mỗi <span data-k="wanted.every">45</span> phút có lệnh truy nã một quái mạnh ở một vùng của <span class="kbd">/tpr</span>. Ai đánh nhiều nhất (kể cả pet) nhận thưởng; <span data-k="wanted.expire">60</span> phút không ai hạ thì quái trốn mất.</p>
+      <div class="card"><h3>☠ Lệnh săn <span class="kbd">/lenhsan</span></h3>
+        <p class="muted">Mỗi <span data-k="wanted.every">45</span> phút có lệnh săn một quái mạnh ở một vùng của <span class="kbd">/tpr</span>. Ai đánh nhiều nhất (kể cả pet) nhận thưởng; <span data-k="wanted.expire">60</span> phút không ai hạ thì quái trốn mất.</p>
         <div id="tnList" class="muted"></div></div>
       <div class="card"><h3>🏡 Thái Ấp <span class="kbd">/thaiap</span></h3>
         <p class="muted">Đất riêng mua bằng xu, an toàn tuyệt đối: không PvP, không bị vây, không quái. Không có quặng, chỉ để xây, làm nông, nuôi pet. Mời bạn xây cùng, ghé thăm, bấm thích; món ăn nấu ở bếp Thái Ấp kéo dài hiệu ứng thêm <span data-k="thaiap.kitchen">50</span>%.</p>
@@ -1075,7 +1075,7 @@ footer .fbrand img{width:44px}
         <li><span class="kbd">/dautruong thachdau Linh</span> thách đấu người + pet</li>
         <li><span class="kbd">/dungeon</span> danh sách, <span class="kbd">/dungeon mua &lt;mã&gt;</span> mua vé</li>
         <li><span class="kbd">/lukhach</span> lữ khách đang ở vùng nào</li>
-        <li><span class="kbd">/journal</span> nhật ký cốt truyện · <span class="kbd">/khobau</span> · <span class="kbd">/truyna</span></li></ul></div>
+        <li><span class="kbd">/journal</span> nhật ký cốt truyện · <span class="kbd">/khobau</span> · <span class="kbd">/lenhsan</span></li></ul></div>
     </div>
     <div class="callout" style="margin-top:20px"><b>Nhớ kỹ:</b>
       thoát game khi đang bị đánh (cờ giao tranh 15 giây) là <b>chết, rơi đồ</b> ·
@@ -1307,7 +1307,7 @@ async function loadInfo(){
   const kb = info.treasure || {};
   $("#kbTiers").innerHTML = kb.enabled ? `<p class="dim" style="font-size:.85rem">Câu cá ${kb.fish}% · hạ quái ${kb.mob}% · tối đa ${kb.day} bản đồ/ngày</p>${(kb.tiers || []).map(t => `<div><b>${esc(t.ten)}</b> <span class="dim">· ${t.linh} lính canh${t.bao ? " · báo cả server" : ""}</span></div>`).join("")}` : "Đang tắt.";
   const tn = info.wanted || {};
-  $("#tnList").innerHTML = tn.enabled ? `<p class="dim" style="font-size:.85rem">Quái có thể bị truy nã: ${(tn.targets || []).map(esc).join(", ")}</p>` : "Đang tắt.";
+  $("#tnList").innerHTML = tn.enabled ? `<p class="dim" style="font-size:.85rem">Quái có thể bị săn: ${(tn.targets || []).map(esc).join(", ")}</p>` : "Đang tắt.";
   const ta = info.thaiap || {};
   $("#taInfo").innerHTML = ta.enabled ? `<p class="dim" style="font-size:.85rem">Cạnh ${(ta.sizes || []).join(" → ")} khối · giá ${(ta.prices || []).map(x => nf.format(x)).join(" → ")} xu</p>${(ta.top || []).length ? `<table><tbody>${ta.top.map((t, i) => `<tr><td>${i + 1}</td><td><b>${esc(t.ten)}</b><div class="dim" style="font-size:.8rem">${esc(t.chu || "")} · ${t.canh}×${t.canh}</div></td><td>❤ ${t.thich}</td></tr>`).join("")}</tbody></table>` : '<p class="dim">Chưa ai mua.</p>'}` : "Đang tắt.";
   const cti = info.cotruyen || {};

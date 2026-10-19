@@ -517,7 +517,7 @@ groups:
       - ["lukhach ds", "Toạ độ các lữ khách (bấm [Tới])", Chỉ admin]
       - ["lukhach doi <mã|all>", "Dời lữ khách sang chỗ ngẫu nhiên khác ngay", Chỉ admin]
       - ["lukhach xoa", "Xoá mọi NPC lữ khách (tự tạo lại sau 5 phút nếu còn bật)", Chỉ admin]
-      - ["truyna", "Các lệnh truy nã quái đang mở", Mọi người]
+      - ["lenhsan", "Lệnh săn quái đang mở (tên cũ /truyna)", Mọi người]
       - ["thaiap", "Về Thái Ấp của mình (chưa có thì xem hướng dẫn)", Mọi người]
       - ["thaiap mua", "Mua Thái Ấp", Mọi người]
       - ["thaiap morong", "Mở rộng Thái Ấp", Mọi người]

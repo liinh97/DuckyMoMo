@@ -801,13 +801,13 @@ groups:
       - { key: kbo_day, label: Tối đa bản đồ mỗi người mỗi ngày, type: int, min: 0, max: 100, file: plugins/DuckyMoMoCore/config.yml, path: treasure.max-per-day }
       - { key: kbo_guard, label: Thời gian hạ lính canh (phút), type: int, min: 1, max: 60, file: plugins/DuckyMoMoCore/config.yml, path: treasure.guard-minutes }
 
-  - title: Bảng truy nã quái (/truyna)
+  - title: Lệnh săn quái (/lenhsan)
     category: Thế giới
-    description: "Định kỳ có lệnh truy nã một quái mạnh ở một vùng /tpr; ai gây nhiều sát thương nhất (kể cả qua pet) nhận thưởng."
+    description: "Định kỳ có lệnh săn một quái mạnh ở một vùng /tpr; ai gây nhiều sát thương nhất (kể cả qua pet) nhận thưởng."
     info: "Là gì: mục tiêu săn quái cho người chơi một mình hoặc nhóm nhỏ. Quái chỉ xuất hiện khi có người tới gần (không tốn tài nguyên server), phát sáng, hết giờ thì trốn mất.\nDanh sách quái, máu, giáp, quà: wanted.targets trong plugins/DuckyMoMoCore/config.yml.\nLưu xong: có hiệu lực ngay (dmm reload)."
     apply: [dmm reload]
     settings:
-      - { key: tna_on, label: Bật truy nã, type: select, file: plugins/DuckyMoMoCore/config.yml, path: wanted.enabled, options: [ { value: true, label: Bật }, { value: false, label: Tắt } ] }
+      - { key: tna_on, label: Bật lệnh săn, type: select, file: plugins/DuckyMoMoCore/config.yml, path: wanted.enabled, options: [ { value: true, label: Bật }, { value: false, label: Tắt } ] }
       - { key: tna_every, label: Lệnh mới mỗi (phút), type: int, min: 5, max: 1440, file: plugins/DuckyMoMoCore/config.yml, path: wanted.interval-minutes }
       - { key: tna_expire, label: Quái trốn sau (phút), type: int, min: 5, max: 1440, file: plugins/DuckyMoMoCore/config.yml, path: wanted.expire-minutes }
       - { key: tna_max, label: Tối đa lệnh cùng lúc, type: int, min: 1, max: 10, file: plugins/DuckyMoMoCore/config.yml, path: wanted.max-active }

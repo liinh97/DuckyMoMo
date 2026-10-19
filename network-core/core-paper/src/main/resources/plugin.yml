@@ -124,9 +124,9 @@ commands:
   lukhach:
     description: "Lữ khách: người lạ lang thang kể chuyện về nơi phía sau Cổng Hoang; admin: ds|doi <mã|all>|xoa"
     aliases: [lu-khach, wanderers]
-  truyna:
-    description: "Bảng truy nã quái: quái mạnh đang bị truy nã ở đâu, thưởng gì"
-    aliases: [truy-na, wanted]
+  lenhsan:
+    description: "Lệnh săn: quái mạnh đang bị săn ở đâu, thưởng gì"
+    aliases: [lenh-san, truyna, truy-na, wanted]
   thaiap:
     description: "Thái Ấp: đất riêng an toàn mua bằng xu (mua, morong, moi, duoi, ghe, thich, top, ten, datspawn)"
     aliases: [thai-ap, datrieng]

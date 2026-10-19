@@ -943,7 +943,17 @@ def api_mua():
     if st:
         lst = cfg.get("list") or {}
         out["su_kien"] = season_event(cfg, st)
-        out.update({"bat": True, "hien_tai": season_view(st["cur"], lst[st["cur"]]), "tiep": season_view(st["next"], lst[st["next"]]),
+        cur = dict(lst[st["cur"]] or {})
+        ev = (cfg.get("events") or {}).get(out["su_kien"]["id"]) if out["su_kien"] else None
+        if ev:   # gộp sự kiện mùa đang diễn ra như trong game: tốc độ lớn nhân, được mùa cộng
+            g = {str(k).upper(): float(v) for k, v in (cur.get("growth") or {}).items()}
+            for k, v in (ev.get("growth") or {}).items():
+                g[str(k).upper()] = g.get(str(k).upper(), 1.0) * float(v)
+            hb = {str(k).upper(): float(v) for k, v in (cur.get("harvest-bonus") or {}).items()}
+            for k, v in (ev.get("harvest-bonus") or {}).items():
+                hb[str(k).upper()] = hb.get(str(k).upper(), 0.0) + float(v)
+            cur.update({"growth": g, "harvest-bonus": hb})
+        out.update({"bat": True, "hien_tai": season_view(st["cur"], cur), "tiep": season_view(st["next"], lst[st["next"]]),
                     "con": st["left"], "ngay_thu": st["day"], "moi_mua": st["per"], "ghi_de": st["forced"],
                     "cac_mua": [season_view(o, lst[o]) for o in st["order"]]})
     return out

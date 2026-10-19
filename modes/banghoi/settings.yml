@@ -170,7 +170,7 @@ tab_bossbar_tips:
   - '&e✦ &fBản đồ thế giới online: Trạm 6 &e✦'
   - '&5✦ &fDungeon cày đồ hiếm: &d/dungeon &f(trùm cuối rơi Chìa khoá tầng sau) &5✦'
   - '&5✦ &fCổng Hoang giấu trên bản đồ: thấy &dhạt tím&f thì Shift &7(/conghoang) &5✦'
-  - '&6✦ &fChơi một mình: &e/khobau &f• &e/truyna &f• &e/thanhtich &6✦'
+  - '&6✦ &fChơi một mình: &e/khobau &f• &e/lenhsan &f• &e/thanhtich &6✦'
   - '&a✦ &fĐất riêng an toàn để xây, trồng trọt: &e/thaiap &a✦'
   - '&a✦ &fTắt chat, thông báo, TPA… theo ý mình: &e/caidat &a✦'
 tab_bossbar_interval: 8000

@@ -760,7 +760,7 @@ seasons:
       growth: {WHEAT: 1.4, SUGAR_CANE: 1.5, BAMBOO: 1.5, KELP: 1.3, MELON_STEM: 1.2, CACTUS: 0.5, POTATOES: 0.8, BEETROOTS: 0.8}
       harvest-bonus: {WHEAT: 25}
       hints:
-        - "&b≈ Cá mùa này: &fcá linh, cá lóc đồng, cá rô phi, tôm càng, cá chình, cá tra dầu (huyền thoại)"
+        - "&b≈ Cá mùa này: &fcá linh, cá lóc đồng, cá rô phi, tôm càng, cua đồng, cá chình, cá tra dầu (huyền thoại)"
         - "&7Câu cá: &f/emf &7(nhật ký cá, bán cá: &f/emf shop&7)"
     kho:
       name: "&6☀ Mùa khô"
@@ -770,7 +770,7 @@ seasons:
       growth: {POTATOES: 1.4, CARROTS: 1.4, BEETROOTS: 1.3, MELON: 1.3, PUMPKIN: 1.3, COCOA: 1.3, CACTUS: 1.5, WHEAT: 0.8, SUGAR_CANE: 0.6, BAMBOO: 0.7}
       harvest-bonus: {POTATOES: 25, CARROTS: 25, BEETROOTS: 25}
       hints:
-        - "&6≈ Cá mùa này: &fcá cơm, cá bống, cá kèo, mực ống, cá mú, cá hô (huyền thoại)"
+        - "&6≈ Cá mùa này: &fcá bống, cá kèo, cá hô (huyền thoại); ngoài biển: cá cơm, mực ống, cá mú"
         - "&7Câu cá: &f/emf &7(nhật ký cá, bán cá: &f/emf shop&7)"
   # Sự kiện trong mùa: from-day/to-day = ngày thứ mấy của mùa (số âm đếm từ cuối, -1 = ngày cuối). /mua sukien <id|tudong> để thử.
   events:
@@ -781,7 +781,7 @@ seasons:
       name: "&9🌊 Lũ cuối mùa"
       subtitle: "&7Mưa suốt ngày · Thủy tộc dễ bắt · lúa ngập chậm lớn"
       rain: "on"
-      growth: {WHEAT: 0.7, POTATOES: 0.7, CARROTS: 0.7, BEETROOTS: 0.7, KELP: 1.5, SUGAR_CANE: 1.3}
+      growth: {WHEAT: 0.5, POTATOES: 0.7, CARROTS: 0.7, BEETROOTS: 0.7, KELP: 1.5, SUGAR_CANE: 1.3}   # nhân với mùa mưa: lúa 1,4×0,5 = chậm 30%
       capture-bonus: {thuytoc: 15}
     han:
       season: kho
@@ -807,7 +807,7 @@ treasure:
     hiem: {name: "&bKho báu hiếm", weight: 25, guards: 3, guard-types: [VINDICATOR, SKELETON, SPIDER], guard-health: 2, rewards: ["xu 1000", "vat DIAMOND 2", "vat GOLDEN_APPLE 1"]}
     huyenthoai: {name: "&6&lKho báu huyền thoại", weight: 5, guards: 4, guard-types: [WITHER_SKELETON, VINDICATOR, EVOKER], guard-health: 3, broadcast: true, reveal-hidden: 40, rewards: ["xu 5000", "vat DIAMOND 6", "vat ENCHANTED_GOLDEN_APPLE 1", "lenh buabatpet give {player} 2"]}
 
-# Bảng truy nã quái (/truyna): mỗi interval-minutes phút dán lệnh truy nã một quái mạnh ở vùng /tpr đã mở; ai gây nhiều sát thương nhất nhận thưởng.
+# Lệnh săn quái (/lenhsan, tên cũ /truyna): mỗi interval-minutes phút dán lệnh săn một quái mạnh ở vùng /tpr đã mở; ai gây nhiều sát thương nhất nhận thưởng.
 wanted:
   enabled: true
   interval-minutes: 45
@@ -882,8 +882,8 @@ achievements:
     gc2: {name: "Lão Làng", desc: "Chơi thật 100 giờ", type: giochoi, target: 100, rewards: ["xu 3000", "danhhieu laolang"]}
     kb1: {name: "Thợ săn kho báu", desc: "Mở 5 rương kho báu", type: khobau, target: 5, rewards: ["xu 1500"]}
     kb2: {name: "Đại Phú Kho Báu", desc: "Mở 30 rương kho báu", type: khobau, target: 30, rewards: ["xu 5000", "danhhieu sankhobau"]}
-    tn1: {name: "Thợ săn truy nã", desc: "Hạ 3 quái bị truy nã", type: truyna, target: 3, rewards: ["xu 1500"]}
-    tn2: {name: "Kẻ Săn Đầu", desc: "Hạ 20 quái bị truy nã", type: truyna, target: 20, rewards: ["xu 5000", "danhhieu sandau"]}
+    tn1: {name: "Thợ Săn", desc: "Hạ 3 quái của Lệnh săn", type: truyna, target: 3, rewards: ["xu 1500"]}
+    tn2: {name: "Kẻ Săn Đầu", desc: "Hạ 20 quái của Lệnh săn", type: truyna, target: 20, rewards: ["xu 5000", "danhhieu sandau"]}
     dg1: {name: "Bước vào bóng tối", desc: "Vượt 1 dungeon", type: dungeon, target: 1, rewards: ["xu 500"]}
     dg2: {name: "Kẻ Chinh Phục", desc: "Vượt dungeon 30 lần", type: dungeon, target: 30, rewards: ["xu 5000", "danhhieu chinhphuc"]}
     cgh: {name: "Người Mở Cổng", desc: "Là người đầu tiên tìm ra một Cổng Hoang", type: conghoang, target: 1, rewards: ["xu 3000", "danhhieu mocong"]}

@@ -34,8 +34,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 
 /**
- * Bảng truy nã quái (/truyna, Bang Hội Chiến). Config wanted:
- *  - Mỗi interval-minutes phút, nếu chưa đủ max-active lệnh truy nã thì dán một lệnh mới: chọn ngẫu nhiên một mục trong targets
+ * Lệnh săn quái (/lenhsan, tên cũ /truyna; Bang Hội Chiến). Config wanted:
+ *  - Mỗi interval-minutes phút, nếu chưa đủ max-active lệnh săn thì dán một lệnh mới: chọn ngẫu nhiên một mục trong targets
  *    {name, type, health (máu), damage (nhân sát thương), armor (none|iron|diamond|netherite), rewards} và một điểm đất hoang trong vùng /tpr đã mở.
  *  - Quái chỉ xuất hiện khi có người chơi tới gần (spawn-distance khối), phát sáng, không tự biến mất. Hết expire-minutes phút chưa ai hạ thì trốn mất.
  *  - Ai gây nhiều sát thương nhất (kể cả qua pet, tên…: Culprit) nhận rewards; báo cả server. Đếm vào Sổ thành tích (truyna).
@@ -93,7 +93,7 @@ final class WantedBoard implements Listener {
                 targets.add(new Target(String.valueOf(m.get("name")), EntityType.valueOf(String.valueOf(m.get("type")).toUpperCase(Locale.ROOT)),
                         num(m.get("health"), 100), num(m.get("damage"), 1.5), String.valueOf(m.containsKey("armor") ? m.get("armor") : "iron"), rw));
             } catch (IllegalArgumentException e) {
-                plugin.getLogger().warning("Truy nã: mục sai " + m + ": " + e.getMessage());
+                plugin.getLogger().warning("Lệnh săn: mục sai " + m + ": " + e.getMessage());
             }
         }
         for (Map<?, ?> z : plugin.getConfig().getMapList("rtp.zones")) {
@@ -141,7 +141,7 @@ final class WantedBoard implements Listener {
                     e.remove();
                 }
                 posts.remove(p);
-                PlayerSettings.broadcast("sukien", c("&8☠ " + p.target.name() + " &7đã trốn khỏi " + p.zone + "&7. Lệnh truy nã hết hạn."));
+                PlayerSettings.broadcast("sukien", c("&8☠ " + p.target.name() + " &7đã trốn khỏi " + p.zone + "&7. Lệnh săn hết hạn."));
                 continue;
             }
             if (p.entity == null && p.loc.isChunkLoaded() && nearby(p.loc)) {
@@ -186,7 +186,7 @@ final class WantedBoard implements Listener {
             Post p = new Post(t, l, z.name(), System.currentTimeMillis() + expireMs);
             posts.add(p);
             List<String> d2 = rewards == null ? t.rewards() : rewards.describe(t.rewards());
-            PlayerSettings.broadcast("sukien", c("&4☠ TRUY NÃ: &c" + t.name() + " &7ở &f" + z.name() + " &7quanh &fX " + Math.round(l.getX() / 50) * 50 + " Z "
+            PlayerSettings.broadcast("sukien", c("&4☠ LỆNH SĂN: &c" + t.name() + " &7ở &f" + z.name() + " &7quanh &fX " + Math.round(l.getX() / 50) * 50 + " Z "
                     + Math.round(l.getZ() / 50) * 50 + " &7— thưởng: &e" + String.join(", ", d2) + " &7(" + expireMs / 60_000 + " phút). &f/truyna"));
             return;
         }
@@ -266,7 +266,7 @@ final class WantedBoard implements Listener {
         PlayerSettings.broadcast("sukien", c("&6☠ &f" + w.getName() + " &6đã hạ &c" + p.target.name() + " &6ở " + p.zone + "&6! " + (got.isEmpty() ? "" : "&7(" + String.join(", ", got) + "&7)")));
     }
 
-    /** Quái truy nã còn sót (lệnh đã hết / server khởi động lại) khi vùng nạp lại: xoá. */
+    /** Quái của lệnh săn còn sót (lệnh đã hết / server khởi động lại) khi vùng nạp lại: xoá. */
     @EventHandler
     public void onLoad(org.bukkit.event.world.EntitiesLoadEvent e) {
         for (Entity en : e.getEntities()) {
@@ -277,9 +277,9 @@ final class WantedBoard implements Listener {
     }
 
     boolean command(CommandSender s, String[] args) {
-        s.sendMessage(c("&4&l☠ Bảng truy nã &7(lệnh mới mỗi " + intervalMs / 60_000 + " phút, quái xuất hiện khi có người tới gần)"));
+        s.sendMessage(c("&4&l☠ Lệnh săn &7(lệnh mới mỗi " + intervalMs / 60_000 + " phút, quái xuất hiện khi có người tới gần)"));
         if (posts.isEmpty()) {
-            s.sendMessage(c("&7Hiện chưa có lệnh truy nã nào."));
+            s.sendMessage(c("&7Hiện chưa có lệnh săn nào."));
         }
         long now = System.currentTimeMillis();
         for (Post p : posts) {

@@ -700,7 +700,7 @@ public final class DuckyMoMoCore extends JavaPlugin {
         }
         LevelUp lvu = levelUp;
         bind("capdo", lvu == null ? null : lvu::command, "Thăng Cấp");
-        // Chơi một mình: bản đồ kho báu (treasure), bảng truy nã quái (wanted), Thái Ấp đất riêng (thai-ap) — Bang Hội Chiến
+        // Chơi một mình: bản đồ kho báu (treasure), lệnh săn quái (wanted), Thái Ấp đất riêng (thai-ap) — Bang Hội Chiến
         treasure = getConfig().getBoolean("treasure.enabled") && getConfig().isConfigurationSection("treasure")
                 ? new TreasureHunt(this, rewards, getConfig().getConfigurationSection("treasure")) : null;
         if (treasure != null && treasure.ready()) {
@@ -717,12 +717,12 @@ public final class DuckyMoMoCore extends JavaPlugin {
         if (wanted != null && wanted.ready()) {
             getServer().getPluginManager().registerEvents(wanted, this);
             wanted.start();
-            getLogger().info("Truy nã: " + wanted.describe());
+            getLogger().info("Lệnh săn: " + wanted.describe());
         } else {
             wanted = null;
         }
         WantedBoard wbd = wanted;
-        bind("truyna", wbd == null ? null : wbd::command, "Bảng truy nã quái");
+        bind("lenhsan", wbd == null ? null : wbd::command, "Lệnh săn");
         thaiAp = getConfig().getBoolean("thai-ap.enabled") && getConfig().isConfigurationSection("thai-ap")
                 ? new ThaiAp(this, getConfig().getConfigurationSection("thai-ap")) : null;
         if (thaiAp != null) {

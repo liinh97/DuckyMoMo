@@ -133,7 +133,7 @@ CAIDAT = [
     ("vaora", "Thông báo vào / rời", True, "Dòng \"… đã vào / đã rời server\"", ""),
     ("tuvong", "Thông báo tử vong", True, "Dòng \"… đã chết\" của người khác", ""),
     ("donrac", "Thông báo dọn rác", True, "Đếm ngược dọn đồ rơi trên đất", "Bang Hội Chiến"),
-    ("sukien", "Thông báo sự kiện", True, "Truy nã, kho báu, tin đồn Cổng Hoang, kỷ lục dungeon…", "Bang Hội Chiến"),
+    ("sukien", "Thông báo sự kiện", True, "Lệnh săn, kho báu, tin đồn Cổng Hoang, kỷ lục dungeon…", "Bang Hội Chiến"),
     ("khungnhac", "Khung nhắc lúc vào game", True, "Khung gom hướng dẫn, mùa, công thành, điểm danh… lúc vào", ""),
     ("bangphai", "Bảng bên phải", True, "Bảng thông tin bên phải màn hình", ""),
     ("bossbar", "Thanh mẹo trên cùng", True, "Thanh chữ mẹo xoay vòng ở đầu màn hình", ""),

@@ -395,6 +395,7 @@
   sửa cẩm nang game, Hội đồng & Tổ chức (admin), Việt hoá tools/vi); mục người chơi mới thêm 4 dòng. lenh-con: menu, web; lenh-hay-dung bổ sung.
 - Chưa chắc: voice chat — proxy đã chạy voicechat (cổng 24454) và relay có ip rule, nhưng chưa ai thử bằng mod; cẩm nang game ghi "báo admin nếu
   không kết nối được"; camnang mục Simple Voice Chat vẫn ghi "CHƯA BẬT" (sửa sau khi thử).
+- Người dùng chốt 19/10 tối: voice chat "từ từ bổ sung sau"; giá, phí, lịch sẽ sửa trên Cài đặt rồi chỉnh cẩm nang (huongdan.yml + web) sau.
 
 ### 19/10: Cốt truyện — Citizens + BetonQuest (ĐÃ TRIỂN KHAI 19/10 11:10, CHƯA THỬ TRONG GAME, CHƯA ĐẶT NPC)
 - Nguồn ý tưởng: bài tuyển người Hydronic KSMP (NPC + nhiệm vụ). Người dùng chọn "cách A" = plugin có sẵn (không tự viết trong DuckyMoMoCore);

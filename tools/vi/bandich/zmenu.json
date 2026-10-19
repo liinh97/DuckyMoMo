@@ -1,0 +1,11 @@
+{
+"prefix": "&8(&6Menu&8) ",
+"and": "và",
+"vinventory-error": "&cKhông mở được menu, có lỗi nội bộ. &8(&7Mã menu: %id%&8)",
+"time-hour": "%02d %hour% %02d phút %02d %second%",
+"format-second": "giây", "format-seconds": "giây", "format-minute": "phút", "format-minutes": "phút", "format-hour": "giờ", "format-hours": "giờ",
+"format-days": "ngày", "format-months": "tháng", "format-years": "năm",
+"inventory-not-found": "&cKhông tìm thấy menu &f%toName% &ctrong menu &f%name%&c.",
+"dialog-not-supported": "&cPhiên bản Minecraft của bạn chưa hỗ trợ menu này, cần ít nhất &f%version%&c.",
+"bedrock-open-error-not-bedrock-player": "&cChỉ người chơi Bedrock mới mở được menu này."
+}

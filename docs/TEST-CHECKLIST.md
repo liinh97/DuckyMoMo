@@ -244,6 +244,8 @@ Triển khai: kiểm tra không ai online (lệnh riêng) → `docker compose up
 - [ ] Xong chương 1 (Già Làng) → có quyền duckymomo.cotruyen.c1 (/lp user <tên> permission check duckymomo.cotruyen.c1).
 - [ ] Đủ 6 giờ + chương 1 → bấm Dân trong menu → cả server được báo.
 - [ ] /balo: để đồ, thoát game, vào lại còn nguyên; đang đánh người không mở được; /choilai mất đồ balo; admin /balo xem <tên>.
+- [ ] Rank Media: /danhphan có thẻ ◆ Media (yêu cầu + bấm hiện cách liên hệ); /lp user <tên> parent add media → tiền tố, 5 nhà, 5 balo,
+      5 món chợ, 5 đơn /donhang, vé vòng quay 48 phút, /kit media (3 ngày sau mới nhận lại).
 - [ ] Trang Cài đặt › Người mới › Danh phận: đổi số nhà Dân thành 3 → Lưu → người bậc Dân đặt được nhà thứ 3 (không gõ lệnh lp).
 
 ## 5. Quảng trường Vinh danh (sảnh)

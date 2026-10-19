@@ -100,12 +100,27 @@ final class LuckySpin implements Listener {
         return Math.max(1, cfg.getInt("minutes-per-key", 60));
     }
 
+    /** Rank (vd Media) nhận vé nhanh hơn: quyền duckymomo.vongquay.nhanh.<5..50> (% bớt thời gian, cao nhất) — Danh phận cấp theo config. */
+    int minutesPerKey(OfflinePlayer o) {
+        Player p = o == null ? null : o.getPlayer();
+        int base = minutesPerKey();
+        if (p == null) {
+            return base;
+        }
+        for (int pct = 50; pct >= 5; pct -= 5) {
+            if (p.hasPermission("duckymomo.vongquay.nhanh." + pct)) {
+                return Math.max(1, (int) Math.round(base * (100 - pct) / 100.0));
+            }
+        }
+        return base;
+    }
+
     int keys(OfflinePlayer p) {
         return data.getInt(p.getUniqueId() + ".ve", 0);
     }
 
     int minutesToNext(OfflinePlayer p) {
-        return minutesPerKey() - data.getInt(p.getUniqueId() + ".phut", 0);
+        return Math.max(0, minutesPerKey(p) - data.getInt(p.getUniqueId() + ".phut", 0));
     }
 
     private void tickMinute() {
@@ -120,10 +135,10 @@ final class LuckySpin implements Listener {
                 continue; // đầy vé: không tích thêm phút
             }
             int phut = data.getInt(k + ".phut", 0) + 1;
-            if (phut >= minutesPerKey()) {
+            if (phut >= minutesPerKey(p)) {
                 phut = 0;
                 data.set(k + ".ve", ve + 1);
-                p.sendMessage(c("&6🔑 Bạn nhận 1 vé vòng quay (chơi đủ " + minutesPerKey() + " phút). Gõ &f/vongquay &6để quay!"));
+                p.sendMessage(c("&6🔑 Bạn nhận 1 vé vòng quay (chơi đủ " + minutesPerKey(p) + " phút). Gõ &f/vongquay &6để quay!"));
             }
             data.set(k + ".phut", phut);
             data.set(k + ".ten", p.getName());
@@ -179,7 +194,7 @@ final class LuckySpin implements Listener {
         ItemStack it = new ItemStack(keys(p) > 0 ? Material.LIME_CONCRETE : Material.GRAY_CONCRETE);
         ItemMeta meta = it.getItemMeta();
         meta.displayName(c(keys(p) > 0 ? "&a&lQUAY (&f" + keys(p) + " vé&a&l)" : "&7Hết vé"));
-        meta.lore(List.of(c("&7Chơi thật &f" + minutesPerKey() + " phút &7= 1 vé (tối đa " + cfg.getInt("max-keys", 5) + ")"),
+        meta.lore(List.of(c("&7Chơi thật &f" + minutesPerKey(p) + " phút &7= 1 vé (tối đa " + cfg.getInt("max-keys", 5) + ")"),
                 c("&7Vé tiếp theo sau &f" + minutesToNext(p) + " phút"), c("&8Vé miễn phí, không bán, không trao đổi")));
         it.setItemMeta(meta);
         return it;

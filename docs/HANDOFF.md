@@ -395,6 +395,11 @@
 - Số ô balo (người dùng: "cài đặt số ô balo trong toàn bộ rank"): quyền duckymomo.balo.o.<9..54> cao nhất; play-ranks.tiers.*.balo-slots
   (Tị Nạn/Dân 27, Lương Dân 36, Hào Kiệt 45) + play-ranks.other-ranks.<nhóm> {balo, balo-slots} cho rank ủng hộ & staff (mặc định 0 = theo
   danh phận; rank ủng hộ để 0 vì luật Mojang), backpack.default-slots 27. Cài đặt › Người mới › Balo theo rank khác. Giảm ô không mất đồ.
+- Rank Media (ảnh "Rank Media" server khác; người dùng: "quyền lợi chỉ là ví dụ, cứ cho vào cài đặt"): play-ranks.other-ranks.media
+  (create: tạo nhóm media + tiền tố; card: thẻ trong /danhphan, info + contact). Quyền lợi chung mọi rank (Perks): homes, balo, balo-slots, ah,
+  orders (duckymomo.donhang.<N>, Orders lấy cao nhất > max-per-player 2), spin-faster (duckymomo.vongquay.nhanh.<%>, LuckySpin.minutesPerKey(p)),
+  kit (essentials.kits.<kit>, chỉ kit ghi trong config bị quản). /kit media: Essentials kits/media.yml (3 ngày). Cài đặt › Người mới ›
+  Quyền lợi theo rank khác (rk_*), danh phận thêm dp_*_orders/_spin. dh_max (Sàn thu mua) = mức thấp nhất 2.
 - Backpack.java (backpack.*): /balo [số] (backpack, bp), số ô theo quyền, 1 Inventory dùng chung mỗi balo, lưu file sau mỗi thao tác, chặn khi vừa đánh người
   15 giây / vùng vây giờ đánh, saveAll + đóng khi dmm reload/tắt; PlayerReset gọi wipe. Admin /balo xem <tên> [số].
 - Sau khi khởi động lại banghoi-1: xem log "Danh phận: đã đồng bộ 4 nhóm", thử mục 4r TEST-CHECKLIST. Cần kiểm: tiền tố hiện đúng (meta stack

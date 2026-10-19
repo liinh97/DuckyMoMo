@@ -419,6 +419,12 @@ final class Orders implements Listener {
             }
         }
         int max = cfg.getInt("max-per-player", 5);
+        for (int n = 50; n >= 1; n--) {   // rank (danh phận, Media…) cấp duckymomo.donhang.<N>: lấy số cao nhất (không thấp hơn mặc định)
+            if (n > max && p.hasPermission("duckymomo.donhang." + n)) {
+                max = n;
+                break;
+            }
+        }
         if (mineCount >= max && !p.hasPermission("duckymomo.donhang.khonggioihan")) {
             p.sendMessage(c("&cBạn đang có " + mineCount + " đơn mở (tối đa " + max + "). Huỷ bớt ở &f/donhang cuatoi&c."));
             return;

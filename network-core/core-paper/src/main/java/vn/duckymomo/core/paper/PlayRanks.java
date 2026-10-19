@@ -46,13 +46,50 @@ import org.bukkit.inventory.meta.ItemMeta;
 final class PlayRanks implements Listener {
 
     private static final LegacyComponentSerializer LEGACY = LegacyComponentSerializer.legacyAmpersand();
-    private static final List<String> MANAGED = List.of("essentials.sethome.multiple.dmm", "zauctionhouse.max.", "duckymomo.balo.");
+    private static final List<String> MANAGED = List.of("essentials.sethome.multiple.dmm", "zauctionhouse.max.", "duckymomo.balo.",
+            "duckymomo.donhang.", "duckymomo.vongquay.nhanh.");
+
+    /** Quyền lợi: nhà /sethome, số balo + ô mỗi balo, món chợ /ah, đơn thu mua /donhang, % vé vòng quay nhanh hơn, kit Essentials. 0/"" = không cấp. */
+    record Perks(int homes, int balo, int slots, int ah, int orders, int spin, String kit) { }
 
     record Tier(String id, String group, String name, String prefix, int priority, double hours, int level, String perm, String permText,
-                int homes, int balo, int slots, int ah, Material icon) { }
+                Perks perks, Material icon) {
+        int homes() {
+            return perks.homes();
+        }
 
-    /** Rank khác (ủng hộ, staff): chỉ quyền balo — số balo, số ô mỗi balo (0 = không cấp, theo danh phận). */
-    record Extra(String group, int balo, int slots) { }
+        int balo() {
+            return perks.balo();
+        }
+
+        int slots() {
+            return perks.slots();
+        }
+
+        int ah() {
+            return perks.ah();
+        }
+    }
+
+    /**
+     * Rank khác: rank ủng hộ / staff (create false: chỉ đụng quyền lợi, giữ tiền tố của họ) hoặc rank đặc biệt như Media (create true:
+     * plugin tạo nhóm + tiền tố; card true: hiện thẻ trong /danhphan với yêu cầu đăng ký info, bấm hiện contact).
+     */
+    record Extra(String group, boolean create, String name, String prefix, int priority, Perks perks, boolean card, List<String> info,
+                 String contact, Material icon) { }
+
+    private final java.util.Set<String> kits = new java.util.HashSet<>();
+
+    private Perks perks(ConfigurationSection s, boolean tier) {
+        String kit = s.getString("kit", "").trim().toLowerCase(Locale.ROOT);
+        if (!kit.isEmpty()) {
+            kits.add(kit);
+        }
+        int slots = s.getInt("balo-slots", tier ? 27 : 0);
+        return new Perks(Math.max(tier ? 1 : 0, s.getInt("homes", tier ? 1 : 0)), Math.max(0, s.getInt("balo", 0)), slots <= 0 ? 0 : slots(slots),
+                Math.max(tier ? 1 : 0, s.getInt("ah", tier ? 1 : 0)), Math.max(0, s.getInt("orders", 0)),
+                Math.max(0, Math.min(50, s.getInt("spin-faster", 0) / 5 * 5)), kit);
+    }
 
     private final DuckyMoMoCore plugin;
     private final Activity activity;
@@ -77,9 +114,7 @@ final class PlayRanks implements Listener {
                 Material icon = Material.matchMaterial(t.getString("icon", "PAPER"));
                 tiers.add(new Tier(id, t.getString("group", i == 0 ? "default" : id).toLowerCase(Locale.ROOT), t.getString("name", id),
                         t.getString("prefix", ""), t.getInt("priority", i), t.getDouble("hours", 0), t.getInt("level", 0),
-                        t.getString("perm", ""), t.getString("perm-text", "Mở khoá"), Math.max(1, t.getInt("homes", 1)),
-                        Math.max(0, t.getInt("balo", 0)), slots(t.getInt("balo-slots", 27)), Math.max(1, t.getInt("ah", 1)),
-                        icon == null ? Material.PAPER : icon));
+                        t.getString("perm", ""), t.getString("perm-text", "Mở khoá"), perks(t, true), icon == null ? Material.PAPER : icon));
                 i++;
             }
         }
@@ -88,7 +123,10 @@ final class PlayRanks implements Listener {
             for (String g : es.getKeys(false)) {
                 ConfigurationSection e = es.getConfigurationSection(g);
                 if (e != null) {
-                    extras.add(new Extra(g.toLowerCase(Locale.ROOT), Math.max(0, e.getInt("balo", 0)), e.getInt("balo-slots", 0) <= 0 ? 0 : slots(e.getInt("balo-slots"))));
+                    Material icon = Material.matchMaterial(e.getString("icon", "NAME_TAG"));
+                    extras.add(new Extra(g.toLowerCase(Locale.ROOT), e.getBoolean("create", false), e.getString("name", g), e.getString("prefix", ""),
+                            e.getInt("priority", 20), perks(e, false), e.getBoolean("card", false), e.getStringList("info"),
+                            e.getString("contact", ""), icon == null ? Material.NAME_TAG : icon));
                 }
             }
         }
@@ -126,36 +164,66 @@ final class PlayRanks implements Listener {
                 if (!t.group().equals("default")) {
                     g.data().add(WeightNode.builder(t.priority()).build());
                 }
-                g.data().add(PermissionNode.builder("essentials.sethome.multiple.dmm" + t.homes()).context(ctx).build());
-                g.data().add(PermissionNode.builder("zauctionhouse.max." + t.ah()).context(ctx).build());
-                if (t.balo() > 0) {
-                    g.data().add(PermissionNode.builder("duckymomo.balo." + t.balo()).context(ctx).build());
-                    g.data().add(PermissionNode.builder("duckymomo.balo.o." + t.slots()).context(ctx).build());
-                }
+                addPerks(g, t.perks(), ctx);
                 lp.getGroupManager().saveGroup(g);
             });
         }
-        // rank ủng hộ / staff: chỉ đụng quyền balo (không đổi tiền tố, weight của họ); nhóm chưa có thì bỏ qua
+        // rank khác: ủng hộ / staff chỉ đụng quyền lợi (giữ tiền tố, weight của họ; nhóm chưa có thì bỏ qua); Media… (create) tạo nhóm + tiền tố
         for (Extra e : extras) {
-            lp.getGroupManager().loadGroup(e.group()).thenAccept(og -> og.ifPresent(g -> {
-                g.data().clear(n -> n.getType() == NodeType.PERMISSION && n.getKey().startsWith("duckymomo.balo."));
-                if (e.balo() > 0) {
-                    g.data().add(PermissionNode.builder("duckymomo.balo." + e.balo()).context(ctx).build());
+            java.util.function.Consumer<net.luckperms.api.model.group.Group> apply = g -> {
+                g.data().clear(n -> managedPerm(n) || e.create() && (n.getType() == NodeType.PREFIX || n.getType() == NodeType.WEIGHT));
+                if (e.create() && !e.prefix().isBlank()) {
+                    g.data().add(PrefixNode.builder(e.prefix(), e.priority()).build());
+                    g.data().add(WeightNode.builder(e.priority()).build());
                 }
-                if (e.slots() > 0) {
-                    g.data().add(PermissionNode.builder("duckymomo.balo.o." + e.slots()).context(ctx).build());
-                }
+                addPerks(g, e.perks(), ctx);
                 lp.getGroupManager().saveGroup(g);
-            }));
+            };
+            if (e.create()) {
+                lp.getGroupManager().createAndLoadGroup(e.group()).thenAccept(apply);
+            } else {
+                lp.getGroupManager().loadGroup(e.group()).thenAccept(og -> og.ifPresent(apply));
+            }
         }
         plugin.getLogger().info("Danh phận: đã đồng bộ " + tiers.size() + " nhóm LuckPerms (" + describe() + ")");
     }
 
-    private static boolean managed(Node n) {
-        if (n.getType() == NodeType.PREFIX || n.getType() == NodeType.WEIGHT) {
-            return true;
+    private boolean managed(Node n) {
+        return n.getType() == NodeType.PREFIX || n.getType() == NodeType.WEIGHT || managedPerm(n);
+    }
+
+    /** Quyền do Danh phận quản (bị xoá rồi đặt lại mỗi lần đồng bộ). Kit: chỉ các kit có ghi trong config (giữ kit khác như tanthu). */
+    private boolean managedPerm(Node n) {
+        if (n.getType() != NodeType.PERMISSION) {
+            return false;
         }
-        return n.getType() == NodeType.PERMISSION && MANAGED.stream().anyMatch(m -> n.getKey().startsWith(m));
+        String k = n.getKey();
+        return MANAGED.stream().anyMatch(k::startsWith) || k.startsWith("essentials.kits.") && kits.contains(k.substring(16));
+    }
+
+    private static void addPerks(net.luckperms.api.model.group.Group g, Perks p, ImmutableContextSet ctx) {
+        java.util.function.Consumer<String> add = k -> g.data().add(PermissionNode.builder(k).context(ctx).build());
+        if (p.homes() > 0) {
+            add.accept("essentials.sethome.multiple.dmm" + p.homes());
+        }
+        if (p.ah() > 0) {
+            add.accept("zauctionhouse.max." + p.ah());
+        }
+        if (p.balo() > 0) {
+            add.accept("duckymomo.balo." + p.balo());
+        }
+        if (p.slots() > 0) {
+            add.accept("duckymomo.balo.o." + p.slots());
+        }
+        if (p.orders() > 0) {
+            add.accept("duckymomo.donhang." + p.orders());
+        }
+        if (p.spin() > 0) {
+            add.accept("duckymomo.vongquay.nhanh." + p.spin());
+        }
+        if (!p.kit().isEmpty()) {
+            add.accept("essentials.kits." + p.kit());
+        }
     }
 
     // ---------------------------------------------------------------- bậc của người chơi
@@ -210,6 +278,7 @@ final class PlayRanks implements Listener {
     private static final class Holder implements InventoryHolder {
         Inventory inv;
         final Map<Integer, Integer> slots = new HashMap<>();
+        final Map<Integer, Extra> cards = new HashMap<>();
 
         @Override
         public Inventory getInventory() {
@@ -230,6 +299,15 @@ final class PlayRanks implements Listener {
             h.inv.setItem(at[i], icon(p, i, cur));
             h.slots.put(at[i], i);
         }
+        int[] cardAt = {22, 21, 23, 20, 24};
+        int ci = 0;
+        for (Extra e : extras) {
+            if (e.card() && ci < cardAt.length) {
+                h.inv.setItem(cardAt[ci], card(p, e));
+                h.cards.put(cardAt[ci], e);
+                ci++;
+            }
+        }
         ItemStack info = new ItemStack(Material.BOOK);
         ItemMeta m = info.getItemMeta();
         m.displayName(c("&6Bạn đang là: &f" + tiers.get(cur).name()));
@@ -249,9 +327,7 @@ final class PlayRanks implements Listener {
         lore.add(c(t.prefix().isBlank() ? "&8(không tiền tố)" : "&7Tiền tố: " + t.prefix()));
         lore.add(Component.empty());
         lore.add(c("&e&lQUYỀN LỢI:"));
-        lore.add(c("&7• Đặt &a" + t.homes() + "&7 nhà &d(/sethome)"));
-        lore.add(c("&7• " + (t.balo() > 0 ? "Có &a" + t.balo() + "&7 balo &a" + t.slots() + "&7 ô &d(/balo)" : "Chưa có balo &d(/balo)")));
-        lore.add(c("&7• &a" + t.ah() + "&7 món treo chợ &d(/ah)"));
+        perkLore(lore, t.perks());
         lore.add(Component.empty());
         if (i > 0) {
             lore.add(c("&7Giá nâng cấp: &aMiễn phí"));
@@ -285,6 +361,52 @@ final class PlayRanks implements Listener {
         return it;
     }
 
+    /** Dòng quyền lợi (dùng cho bậc danh phận và thẻ rank khác). */
+    private void perkLore(List<Component> lore, Perks k) {
+        if (k.homes() > 0) {
+            lore.add(c("&7• Đặt &a" + k.homes() + "&7 nhà &d(/sethome)"));
+        }
+        lore.add(c("&7• " + (k.balo() > 0 ? "Có &a" + k.balo() + "&7 balo &a" + k.slots() + "&7 ô &d(/balo)" : "Chưa có balo &d(/balo)")));
+        if (k.ah() > 0) {
+            lore.add(c("&7• &a" + k.ah() + "&7 món treo chợ &d(/ah)"));
+        }
+        if (k.orders() > 0) {
+            lore.add(c("&7• &a" + k.orders() + "&7 đơn thu mua &d(/donhang)"));
+        }
+        if (k.spin() > 0) {
+            lore.add(c("&7• Vé vòng quay nhanh hơn &a" + k.spin() + "% &d(/vongquay)"));
+        }
+        if (!k.kit().isEmpty()) {
+            lore.add(c("&7• Gói quà &a/kit " + k.kit()));
+        }
+    }
+
+    private ItemStack card(Player p, Extra e) {
+        ItemStack it = new ItemStack(e.icon());
+        ItemMeta m = it.getItemMeta();
+        m.displayName(c("&c&l◆ RANK " + e.name().toUpperCase(Locale.ROOT)));
+        List<Component> lore = new ArrayList<>();
+        if (!e.info().isEmpty()) {
+            lore.add(c("&c▍ Yêu cầu đăng ký"));
+            e.info().forEach(l -> lore.add(c("&7• " + l)));
+            lore.add(Component.empty());
+        }
+        lore.add(c("&b▍ Quyền lợi"));
+        perkLore(lore, e.perks());
+        lore.add(Component.empty());
+        if (p.hasPermission("group." + e.group())) {
+            lore.add(c("&a★ Bạn đang có rank này"));
+            m.setEnchantmentGlintOverride(true);
+        } else {
+            lore.add(c("&6Rank này không bán, admin xét duyệt."));
+            lore.add(c("&e▶ Bấm để xem cách liên hệ admin"));
+        }
+        m.lore(lore);
+        m.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
+        it.setItemMeta(m);
+        return it;
+    }
+
     @EventHandler
     public void onClick(InventoryClickEvent e) {
         if (!(e.getInventory().getHolder() instanceof Holder h)) {
@@ -292,6 +414,13 @@ final class PlayRanks implements Listener {
         }
         e.setCancelled(true);
         if (!(e.getWhoClicked() instanceof Player p) || e.getClickedInventory() != e.getInventory()) {
+            return;
+        }
+        Extra card = h.cards.get(e.getRawSlot());
+        if (card != null) {
+            p.closeInventory();
+            p.sendMessage(c("&c&l◆ RANK " + card.name().toUpperCase(Locale.ROOT) + " &7— không bán, admin xét duyệt."));
+            p.sendMessage(c(card.contact().isBlank() ? "&7Nhắn admin trong game hoặc qua Discord của server để đăng ký." : card.contact()));
             return;
         }
         Integer i = h.slots.get(e.getRawSlot());

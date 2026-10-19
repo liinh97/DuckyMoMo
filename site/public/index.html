@@ -497,6 +497,8 @@ footer .fbrand img{width:44px}
       <div class="jstep"><div class="n">BƯỚC 5</div><h3>Công thành</h3><p class="muted">Cắm cờ vây thành địch, đánh vào tối cuối tuần, cướp tiền hoặc chiếm làm thuộc địa.</p></div>
     </div>
 
+    <div id="dpBox"></div>
+
     <h3 style="margin-top:36px">Lịch một mùa (<span data-k="season.weeks">13</span> tuần)</h3>
     <div class="season" id="seasonBar"></div>
     <div class="legend"><span><i style="background:rgba(62,207,142,.5)"></i>Hoà bình: xây dựng, chưa cho công thành</span><span><i style="background:rgba(242,184,75,.5)"></i>Chiến tranh: công thành theo lịch</span><span><i style="background:rgba(239,83,80,.6)"></i>Đại chiến + đóng mùa</span></div>
@@ -1113,6 +1115,32 @@ function drawMap(zones){
   $("#mapSvg").innerHTML = s;
 }
 
+function danhPhan(info){
+  const d = info.danhphan; const box = $("#dpBox");
+  if (!d || !d.bat || !d.bac.length) { box.innerHTML = ""; return; }
+  const perk = t => [`${t.nha} nhà <span class="kbd">/sethome</span>`, t.balo ? `${t.balo} balo ${t.o} ô <span class="kbd">/balo</span>` : "chưa có balo",
+    `${t.cho} món chợ đấu giá <span class="kbd">/ah</span>`, t.don ? `${t.don} đơn thu mua <span class="kbd">/donhang</span>` : "",
+    t.quay ? `vé vòng quay nhanh hơn ${t.quay}%` : "", t.kit ? `gói quà <span class="kbd">/kit ${esc(t.kit)}</span>` : ""].filter(Boolean);
+  const req = t => [t.gio ? `chơi thật ${t.gio} giờ` : "", t.cap ? `Thăng Cấp ${t.cap}` : "", t.them ? esc(t.them) : ""].filter(Boolean);
+  let h = `<h3 style="margin-top:36px">Danh phận: rank chơi miễn phí</h3>
+    <p class="muted">Ai mới vào cũng là <b>${esc(d.bac[0].ten)}</b>. Đủ yêu cầu thì vào game gõ <span class="kbd">/danhphan</span> bấm nhận bậc tiếp theo.
+      Giờ đứng AFK không được tính. Giữ danh phận khi <span class="kbd">/choilai</span>.</p>
+    <div class="grid g4">${d.bac.map((t, i) => `<div class="card${i === d.bac.length - 1 ? " hl" : ""}"><h3>${esc(t.ten)}</h3>
+      <p class="dim" style="font-size:.85rem;margin:0 0 8px">${i === 0 ? "Mới vào" : "Cần: " + (req(t).join(" + ") || "—")}</p>
+      <ul class="clean">${perk(t).map(x => `<li>${x}</li>`).join("")}</ul></div>`).join("")}</div>`;
+  if (d.media) {
+    const m = d.media;
+    h += `<div class="card" style="margin-top:16px"><h3>◆ Rank ${esc(m.ten)}: cho người livestream server</h3>
+      <div class="grid g2"><div><b>Yêu cầu</b><ul class="clean r">${m.yeu_cau.map(x => `<li>${esc(x)}</li>`).join("")}</ul>
+        <p class="dim" style="font-size:.85rem">Mỗi 7 ngày: <b>${m.buoi} buổi</b> (≥ ${m.phut} phút) và <b>${m.gio} giờ</b> live. Server tự đếm lúc bạn
+        <b>online thật trong server</b> và <b>kênh đang live</b>. Duyệt xong thử ${m.thu} ngày, đạt chỉ tiêu thì được gia hạn.</p></div>
+      <div><b>Quyền lợi</b><ul class="clean j">${perk(m).map(x => `<li>${x}</li>`).join("")}</ul>
+        <p class="dim" style="font-size:.85rem">Không bán. Đăng ký: <span class="kbd">/media dangky &lt;link kênh&gt;</span>, mỗi lần live gõ
+        <span class="kbd">/media live</span> (cả server được báo kèm link kênh của bạn).</p></div></div></div>`;
+  }
+  box.innerHTML = h;
+}
+
 function seasonBar(info){
   const start = info.season.start ? new Date(info.season.start + "T00:00:00+07:00") : null;
   const week = start ? Math.floor((Date.now()-start)/604800000)+1 : 0;
@@ -1231,6 +1259,7 @@ async function loadInfo(){
   $("#zoneList").innerHTML = info.player.tpr_zones.map(z => `<span title="${esc(z.desc)}">${esc(z.name)}</span>`).join("");
   drawMap(info.player.tpr_zones);
   seasonBar(info);
+  danhPhan(info);
   const T = info.titles || {};
   $("#titles").innerHTML = Object.keys(T).filter(k=>!["luukhach","nghenhan","phuthuong"].includes(k)).map(k=>`<span>${esc(T[k].replace("{mua}", info.season.id))}</span>`).join("");
   $("#tiers").innerHTML = (info.donate.tiers||[]).map(t => `<div class="tier" style="border-top:3px solid ${MC[t.color]||"#f2b84b"}">

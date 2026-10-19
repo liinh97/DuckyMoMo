@@ -330,6 +330,10 @@ function render(){
     ${stat("⚔️ Chiến Thần", ct.diem || 0, ct.hang ? "Hạng " + ct.hang + " mùa này" : "Chưa có điểm")}
     ${stat("⚔️ Giết / Chết", ((h.pvp || {}).giet || 0) + " / " + ((h.pvp || {}).chet || 0), "KDA " + ((h.pvp || {}).kda || 0) + " · Bang Hội Chiến")}
     ${stat("🌦️ Mùa", h.mua ? esc(h.mua.ten) : "–", h.mua ? (h.mua.con != null ? "Còn " + h.mua.con + " ngày · gõ /mua xem cây, cá" : "Admin đang thử mùa") : "")}
+    ${h.danh_phan || D.danh_phan ? (dp => stat("🏷️ Danh phận", esc(dp.ten) + (dp.media ? " · ◆ Media" : ""),
+        `${dp.nha} nhà · ${dp.balo ? dp.balo + " balo " + dp.o + " ô" : "chưa có balo"} · ${dp.cho} món chợ đấu giá · ${dp.don} đơn thu mua`
+        + (dp.tiep ? `<br>Bậc sau: ${esc(dp.tiep.ten)} (${[dp.tiep.gio ? dp.tiep.gio + " giờ chơi thật" : "", dp.tiep.cap ? "Thăng Cấp " + dp.tiep.cap : "", esc(dp.tiep.them || "")].filter(Boolean).join(" + ")}) · /danhphan` : " · bậc cao nhất")
+        + (dp.media && dp.media.het ? `<br>Media hết hạn ${day(dp.media.het * 1000)}` : "")))(h.danh_phan || D.danh_phan) : ""}
     ${stat("👑 Rank ủng hộ", donateRoles.length ? donateRoles.map(r => esc(r.ten)).join(", ") : "Chưa có", donateRoles.length && donateRoles[0].het ? "Hết hạn " + day(donateRoles[0].het * 1000) : "Chỉ đồ trang trí, không bán sức mạnh")}
   </div>`;
 

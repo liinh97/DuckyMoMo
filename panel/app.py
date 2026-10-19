@@ -2210,6 +2210,28 @@ def common_commands():
     return out
 
 
+def play_rank(perms, roles):
+    """Danh phận (play-ranks ở Bang Hội Chiến): bậc cao nhất người chơi đang có + bậc kế tiếp; Media (nếu có) kèm hạn."""
+    core = taikhoan.safe_yaml(DATA_DIR / "banghoi-1" / "plugins" / "DuckyMoMoCore" / "config.yml")
+    pr = core.get("play-ranks") or {}
+    tiers = [(k, t) for k, t in (pr.get("tiers") or {}).items() if isinstance(t, dict)]
+    if not pr.get("enabled") or not tiers:
+        return None
+    groups = set(perms.get("groups") or [])
+    cur = 0
+    for i, (k, t) in enumerate(tiers):
+        if i > 0 and str(t.get("group", k)).lower() in groups:
+            cur = i
+    t = tiers[cur][1]
+    nxt = tiers[cur + 1][1] if cur + 1 < len(tiers) else None
+    md = next((r for r in roles if r["id"] == "media"), None)
+    return {"ten": t.get("name", tiers[cur][0]), "nha": t.get("homes", 0), "balo": t.get("balo", 0), "o": t.get("balo-slots", 0),
+            "cho": t.get("ah", 0), "don": t.get("orders", 0),
+            "tiep": {"ten": nxt.get("name"), "gio": nxt.get("hours", 0), "cap": nxt.get("level", 0),
+                     "them": nxt.get("perm-text", "") if nxt.get("perm") else ""} if nxt else None,
+            "media": {"het": md["het"]} if md else None}
+
+
 def web_profile(name, by_code):
     """Hồ sơ cho trang "Tài khoản của tôi": role, rank, số liệu chơi, lệnh dùng được, quyền quản trị."""
     perms = taikhoan.load_perms(name)
@@ -2246,7 +2268,7 @@ def web_profile(name, by_code):
     is_staff = bool(acc["features"]) or acc["toan_quyen"]
     return {"ok": True, "ten": perms["name"] if perms["name"].lower() == name.lower() else name, "bedrock": name.startswith("."),
             "taikhoan": account_times(name), "online": online_players().get(name.lower()),
-            "roles": roles, "nhom": sorted(g for g in perms["groups"] if g != "default"),
+            "roles": roles, "nhom": sorted(g for g in perms["groups"] if g != "default"), "danh_phan": play_rank(perms, roles),
             "hoso": hoso, "lenh": lenh,
             "trangtri": taikhoan.cosmetics(perms, online_players().get(name.lower()) if online_players().get(name.lower()) in taikhoan.COSMETIC_SERVERS else "banghoi-1"),
             "caidat": taikhoan.player_settings(perms),

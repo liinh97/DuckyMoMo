@@ -389,6 +389,9 @@
   CHƯA bắt được kênh đang live để xác nhận status 2 → thử với streamer thật (TEST 4s). YouTube cần YOUTUBE_KEY trong .env (chưa có).
 - SỰ CỐ 23:30: panel sập vòng lặp vài phút vì panel/Dockerfile COPY liệt kê TỪNG file mà quên media.html → thêm trang HTML mới cho panel
   thì PHẢI thêm vào dòng COPY, build xong kiểm `docker ps` (Up, không Restarting) + tải trang.
+- Web (20/10): trang chủ mục Bang Hội Chiến có "Danh phận: rank chơi miễn phí" (4 thẻ bậc: yêu cầu + quyền lợi) và thẻ "◆ Rank Media"
+  (yêu cầu, chỉ tiêu, quyền lợi) — site/app.py danhphan_info() đọc thẳng config (đổi Cài đặt là web đổi theo). Trang tài khoản: ô "🏷️ Danh phận"
+  (bậc hiện tại, quyền lợi, bậc sau cần gì, hạn Media) — panel play_rank() trong /api/web/hoso.
 - Thuật ngữ: "Auction House" = chợ đấu giá /ah (đã ghi thống nhất "chợ đấu giá /ah" ở menu, cẩm nang, Cài đặt, web).
 
 ### 19/10 khuya: Danh phận (/danhphan) + Balo (/balo) — CODE + CONFIG XONG, CHỜ KHỞI ĐỘNG LẠI banghoi-1 (người dùng đang online)

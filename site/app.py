@@ -433,6 +433,29 @@ def api_dautruong():
     return d
 
 
+def danhphan_info(core):
+    """Danh phận (play-ranks) + rank Media (other-ranks.media + media): đọc thẳng config nên đổi trên Cài đặt là web đổi theo."""
+    pr = get(core, "play-ranks", {}) or {}
+
+    def perks(t):
+        return {"nha": t.get("homes", 0), "balo": t.get("balo", 0), "o": t.get("balo-slots", 0), "cho": t.get("ah", 0),
+                "don": t.get("orders", 0), "quay": t.get("spin-faster", 0), "kit": t.get("kit", "")}
+    tiers = []
+    for k, t in (pr.get("tiers") or {}).items():
+        if isinstance(t, dict):
+            tiers.append({"ma": k, "ten": t.get("name", k), "tien_to": strip_colors(t.get("prefix", "")).strip(), "gio": t.get("hours", 0),
+                          "cap": t.get("level", 0), "them": t.get("perm-text", "") if t.get("perm") else ""} | perks(t))
+    md = (pr.get("other-ranks") or {}).get("media") or {}
+    mc = get(core, "media", {}) or {}
+    media = None
+    if md and mc.get("enabled"):
+        media = {"ten": md.get("name", "Media"), "tien_to": strip_colors(md.get("prefix", "")).strip(), "yeu_cau": md.get("info") or [],
+                 "buoi": mc.get("min-sessions", 4), "phut": mc.get("min-session-minutes", 30), "gio": mc.get("min-hours", 6),
+                 "thu": mc.get("trial-days", 14)} | perks(md)
+    return {"bat": bool(pr.get("enabled")), "bac": tiers, "media": media,
+            "balo": bool(get(core, "backpack.enabled", False)), "don_toi_thieu": get(core, "orders.max-per-player", 2)}
+
+
 def api_info():
     core = load_yaml(plugin("DuckyMoMoCore", "config.yml"))
     st = load_yaml(MODES / "banghoi" / "settings.yml")
@@ -511,6 +534,7 @@ def api_info():
         "thaiap": {"enabled": bool(get(core, "thai-ap.enabled", False)), "sizes": get(core, "thai-ap.sizes", [50, 70, 90]),
                    "prices": get(core, "thai-ap.prices", [5000, 8000, 15000]), "kitchen": get(core, "thai-ap.kitchen-bonus", 50),
                    **core_json("thaiap.json")},
+        "danhphan": danhphan_info(core),
         "cotruyen": story_info(),
         "kynang": skills_info(),
         "capdo": {"enabled": bool(get(core, "level-up.enabled", False)), "max": get(core, "level-up.max-level", 100),

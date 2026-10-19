@@ -50,6 +50,36 @@ public final class DuckyMoMoCore extends JavaPlugin {
     private me.clip.placeholderapi.expansion.PlaceholderExpansion arenaPapi;
     private Frontier frontier;
 
+    /**
+     * Sửa lỗi Citizens 2.0.44 b4265 trên 26.2: lưu kiểu NPC là "minecraft:player" nhưng lúc nạp chỉ hiểu "PLAYER" (SimpleNPCDataStore
+     * matchEntityType) → mọi NPC biến mất sau mỗi lần khởi động lại. onLoad chạy trước khi Citizens đọc saves.yml, nên đổi lại ở đây
+     * (chỉ dòng kiểu NPC "type: minecraft:<loài>" dưới traits, thụt 4–8 khoảng trắng: định dạng danh sách cũ và định dạng theo ID). Server không có Citizens: không có file, bỏ qua.
+     */
+    @Override
+    public void onLoad() {
+        File saves = new File(getDataFolder().getParentFile(), "Citizens/saves.yml");
+        if (!saves.isFile()) {
+            return;
+        }
+        try {
+            String text = java.nio.file.Files.readString(saves.toPath());
+            java.util.regex.Matcher m = java.util.regex.Pattern.compile("(?m)^( {4,8}type: )minecraft:([a-z_]+)\\s*$").matcher(text);
+            StringBuilder out = new StringBuilder();
+            int n = 0;
+            while (m.find()) {
+                m.appendReplacement(out, m.group(1) + m.group(2).toUpperCase(java.util.Locale.ROOT));
+                n++;
+            }
+            m.appendTail(out);
+            if (n > 0) {
+                java.nio.file.Files.writeString(saves.toPath(), out.toString());
+                getLogger().info("Citizens saves.yml: sửa kiểu NPC của " + n + " NPC (minecraft:player -> PLAYER) để Citizens nạp lại được.");
+            }
+        } catch (java.io.IOException e) {
+            getLogger().warning("Không sửa được Citizens/saves.yml: " + e.getMessage());
+        }
+    }
+
     @Override
     public void onEnable() {
         saveDefaultConfig();

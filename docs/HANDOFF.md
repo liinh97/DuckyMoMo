@@ -33,6 +33,9 @@
 6. **Sửa JS của site/panel:** tách khối <script> chạy `node --check`, rồi mở bằng Playwright (`/usr/bin/google-chrome`) bắt `pageerror`.
    Site và panel là image build: sửa `site/` hoặc `panel/` xong phải `docker compose up -d --build site panel`.
 7. **Lệnh kiểm tra trên server thật chỉ dùng loại ĐỌC** (`execute if block`…), không `fill`/`setblock` (19/10 lỡ chạy một lệnh fill, may không mất gì).
+9. **Citizens 2.0.44 b4265 (26.2) làm MẤT NPC sau mỗi lần khởi động lại**: lưu `type: minecraft:player` nhưng nạp chỉ hiểu `PLAYER`
+   (log "NPC type minecraft:player was not recognized", "Loaded 0 NPCs"). DuckyMoMoCore.onLoad sửa `plugins/Citizens/saves.yml` trước khi
+   Citizens đọc (log "Citizens saves.yml: sửa kiểu NPC…"). Nâng Citizens lên bản mới thì kiểm lại: nếu Citizens đã sửa thì bỏ đoạn onLoad.
 8. **Không chạy hai lệnh nối nhau bằng `;` khi lệnh sau phụ thuộc lệnh trước thành công** (19/10 commit lỡ một file YAML hỏng vì kiểm tra lỗi
    nhưng commit vẫn chạy): dùng `&&`.
 

@@ -161,6 +161,8 @@ Triển khai: kiểm tra không ai online (lệnh riêng) → `docker compose up
 - [ ] Có cổng (thử: `/conghoang tao` đặt cổng; kiểm `/papi parse me %dmmlk_cong_cong%` = co, `%dmmlk_cong_tindon%`): lữ khách của đúng nơi đó đọc tin đồn;
       có người tìm ra → nói ai tìm, ở vùng nào; thị trấn giữ cổng → nói tên thị trấn.
 - [ ] Đi qua Cổng Hoang → chat "… hẳn sẽ muốn nghe chuyện …", `/bq tag <tên> list` có `cotruyen>lk_<mã>_qua` → về lữ khách kể → +1000 xu, nhật ký "ĐÃ KỂ"; nói lại thì chỉ câu kết.
+- [ ] Khởi động lại Bang Hội Chiến: log có "Citizens saves.yml: sửa kiểu NPC của N NPC" và "[Citizens] Loaded N NPCs" (N > 0), KHÔNG có
+      "Lữ khách … ->" mới (lữ khách giữ chỗ cũ); NPC chương 1 tạo bằng /npc create vẫn còn.
 - [ ] `/lukhach doi all` dời ngay + tin đồn mới; NPC cũ biến mất khỏi chỗ cũ (không bị nhân đôi). Restart server: NPC vẫn đúng chỗ, không tạo thêm.
 - [ ] Cài đặt › Cốt truyện › Lữ khách: đổi giờ dời/thưởng → lưu không lỗi. Web: trang chủ (Cốt truyện › Lữ khách), trang tài khoản thẻ 🧭 Lữ khách.
 - [ ] (Lưu ý) Người Gác Cổng (chương 1) giờ nhắc /lukhach.

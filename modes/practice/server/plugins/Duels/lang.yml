@@ -1,0 +1,1438 @@
+# DO NOT EDIT THIS VALUE!
+config-version: 20
+
+# Define placeholders usable in any message below.
+# Example: Adding 'PREFIX: "[Cool]"' below and then putting '{PREFIX}' in a message will display '[Cool]' when the message is sent in game.
+STRINGS:
+  PREFIX: '&9[Duels]'
+  LINE: '&9&m------------------------------------&r'
+  HALF_LINE: '&9&m----------------&r'
+  FAIL_PREFIX: '&cKhông bắt đầu được trận:'
+
+
+GENERAL:
+  'true': '&acó'
+  'false': '&ckhông'
+  enabled: '&abật'
+  disabled: '&ctắt'
+  not-selected: Chưa chọn
+  random: Ngẫu nhiên
+  none: không có
+  unlimited: Không giới hạn
+  unknown: Không rõ
+  kit-selector: Chọn bộ đồ
+  arena-selector: Chọn sân
+  item-betting: Cược đồ
+  betting: Cược
+  cancelled: '{PREFIX} &eĐã huỷ.'
+
+
+ERROR:
+  no-permission: '{PREFIX} &cKhông được! Bạn thiếu quyền: ''%permission%'''
+  data:
+    load-failure: '{PREFIX} &cKhông tải được thống kê đấu của bạn. Thử thoát ra vào lại.'
+    not-loaded: '{PREFIX} &cĐang tải dữ liệu người chơi, thử lại sau nhé.'
+    not-found: '{PREFIX} &c%name% chưa có thống kê đấu.'
+  top:
+    no-data-available: '{PREFIX} &cChưa có dữ liệu.'
+  player:
+    not-found: '{PREFIX} &c%name% không online.'
+    no-longer-online: '{PREFIX} &cNgười đó không còn online.'
+  arena:
+    not-found: '{PREFIX} &cKhông có sân tên ''%name%''.'
+    already-exists: '{PREFIX} &cĐã có sân tên ''%name%''.'
+    delete-failure: '{PREFIX} &cKhông xoá được sân đang dùng. Tắt sân trước bằng lệnh ''/duels toggle %name%'''
+    invalid-position: '{PREFIX} &cVị trí phải là 1 hoặc 2.'
+    no-position-set: '{PREFIX} &cSân ''%name%'' chưa đặt vị trí.'
+    empty-hand: '{PREFIX} &cPhải cầm một vật phẩm mới dùng được lệnh này.'
+  kit:
+    not-found: '{PREFIX} &cKhông có bộ đồ tên ''%name%''.'
+    already-exists: '{PREFIX} &cĐã có bộ đồ tên ''%name%''.'
+    empty-hand: '{PREFIX} &cPhải cầm một vật phẩm mới dùng được lệnh này.'
+  customkits:
+    limit-reached: '{PREFIX} &cBạn đã đạt giới hạn &e%limit%&c bộ đồ tự tạo.'
+    name-empty: '{PREFIX} &cTên bộ đồ không được để trống.'
+    name-too-short: '{PREFIX} &cTên bộ đồ phải dài ít nhất &e%min% &cký tự.'
+    name-too-long: '{PREFIX} &cTên bộ đồ không quá &e%max% &cký tự.'
+    name-no-spaces: '{PREFIX} &cTên bộ đồ không được có dấu cách.'
+    name-invalid-chars: '{PREFIX} &cTên bộ đồ có ký tự không hợp lệ.'
+    name-duplicate: '{PREFIX} &cBạn đã có bộ đồ tên ''&e%name%&c''.'
+    not-found: '{PREFIX} &cKhông thấy bộ đồ ''&e%name%&c''.'
+    material-blocked: '{PREFIX} &cKhông được dùng ''&e%material%&c'' trong bộ đồ tự tạo.'
+    material-not-allowed: '{PREFIX} &cKhông được dùng ''&e%material%&c'' trong bộ đồ tự tạo.'
+    invalid-amount: '{PREFIX} &cSố lượng không hợp lệ.'
+    invalid-amount-stack: '{PREFIX} &cSố lượng ''&e%material%&c'' vượt quá một chồng gốc (&e%max%&c).'
+    item-data-disallowed: '{PREFIX} &cThuộc tính đặc biệt (chỉ số, không hỏng…) vượt ngoài luật gốc, cần có quyền.'
+    enchantment-blocked: '{PREFIX} &cKhông được dùng phù phép ''&e%enchantment%&c''.'
+    enchantment-incompatible: '{PREFIX} &cPhù phép ''&e%enchantment%&c'' không gắn được lên ''&e%item%&c''.'
+    enchantment-level-too-high: '{PREFIX} &cCấp phù phép ''&e%enchantment%&c'' vượt mức cho phép (&e%max%&c).'
+    too-many-attributes: '{PREFIX} &cVật phẩm có quá nhiều chỉ số (tối đa &e%max%&c).'
+    attribute-amount-invalid: '{PREFIX} &cGiá trị chỉ số &e%attribute% &cphải từ &e%min% &cđến &e%max%&c.'
+    kit-null: '{PREFIX} &cBộ đồ tự tạo không hợp lệ.'
+    invalid-armor-slot: '{PREFIX} &c''&e%material%&c'' không mặc được ở ô &e%slot%&c.'
+    potion-not-extendable: '{PREFIX} &cLoại thuốc này không kéo dài được.'
+    potion-not-upgradeable: '{PREFIX} &cLoại thuốc này không nâng lên cấp II được.'
+    item-betting-disabled: '{PREFIX} &cTrận dùng bộ đồ tự tạo chỉ cược tiền được, không cược đồ.'
+
+  player-only: '{PREFIX} &cLệnh này chỉ người chơi dùng được.'
+  duel:
+    is-self: '{PREFIX} &cKhông thách đấu chính mình được.'
+    inventory-not-empty: '{PREFIX} &cPhải dọn trống túi đồ mới dùng được lệnh này.'
+    in-creative-mode: '{PREFIX} &cKhông đấu được ở chế độ sáng tạo.'
+    in-blacklisted-world: '{PREFIX} &cKhông đấu được ở thế giới này.'
+    is-tagged: '{PREFIX} &cKhông đấu được khi đang trong giao tranh.'
+    in-cooldown: '{PREFIX} &c%name% phải chờ %time% nữa mới đấu tiếp được.'
+    not-in-duelzone: '{PREFIX} &cChỉ đấu được ở các khu: %regions%'
+    requests-disabled: '{PREFIX} &c%name% đang không nhận lời thách đấu.'
+    already-has-request: '{PREFIX} &cBạn đã gửi lời thách đấu cho %name% rồi.'
+    no-request: '{PREFIX} &cBạn không có lời thách đấu nào từ %name%.'
+    already-in-match:
+      sender: '{PREFIX} &cKhông làm được khi đang đấu.'
+      target: '{PREFIX} &c%name% đang đấu rồi.'
+    mode-unselected: '{PREFIX} &cPhải chọn bộ đồ hoặc bật chế độ dùng đồ của mình.'
+    mode-fixed: '{PREFIX} &cKhông được tắt chế độ dùng đồ của mình.'
+    already-spectating:
+      sender: '{PREFIX} &cKhông làm được khi đang xem trận.'
+      target: '{PREFIX} &c%name% đang xem trận.'
+    not-in-match: '{PREFIX} &c%name% không đang đấu.'
+    prevent-teleportation: '{PREFIX} &cKhông dịch chuyển tới người này được vì họ đang đấu.'
+  party-duel:
+    inventory-not-empty: '{PREFIX} &cBạn và cả nhóm phải dọn trống túi đồ mới dùng được lệnh này.'
+    in-creative-mode: '{PREFIX} &cBạn hoặc người trong nhóm đang ở chế độ sáng tạo.'
+    in-blacklisted-world: '{PREFIX} &cBạn hoặc người trong nhóm đang ở thế giới không cho đấu.'
+    is-tagged: '{PREFIX} &cBạn hoặc người trong nhóm đang trong giao tranh.'
+    not-in-duelzone: '{PREFIX} &cBạn hoặc người trong nhóm không ở trong các khu: %regions%'
+    already-has-request: '{PREFIX} &cBạn đã gửi lời thách đấu cho nhóm của %name% rồi.'
+    no-request: '{PREFIX} &cBạn không có lời thách đấu nào từ nhóm của %name%.'
+    already-in-match:
+      sender: '{PREFIX} &cKhông làm được khi nhóm đang đấu.'
+      target: '{PREFIX} &cNhóm của %name% đang đấu rồi.'
+    already-spectating:
+      sender: '{PREFIX} &cKhông làm được khi bạn hoặc người trong nhóm đang xem trận.'
+      target: '{PREFIX} &cMột người trong nhóm của %name% đang xem trận.'
+    option-unavailable: '{PREFIX} &cĐấu nhóm hiện chưa cho cược đồ/tiền.'
+  party:
+    is-self: '{PREFIX} &cKhông lập nhóm với chính mình được.'
+    is-not-owner: '{PREFIX} &cPhải là trưởng nhóm mới làm được.'
+    is-owner: '{PREFIX} &cBạn là trưởng nhóm nên không rời được. Chuyển quyền trưởng nhóm bằng ''/party transfer'' hoặc giải tán bằng ''/party disband''.'
+    requests-disabled: '{PREFIX} &c%name% đang không nhận lời mời vào nhóm.'
+    already-has-invite: '{PREFIX} &cBạn đã mời %name% rồi.'
+    no-invite: '{PREFIX} &cBạn không có lời mời nào từ %name%.'
+    not-found: '{PREFIX} &cNhóm đó không còn nữa.'
+    already-in-party:
+      sender: '{PREFIX} &cKhông làm được khi đang ở trong nhóm.'
+      target: '{PREFIX} &c%name% đã ở trong một nhóm.'
+    not-in-party:
+      sender: '{PREFIX} &cPhải ở trong nhóm mới làm được.'
+      target: '{PREFIX} &c%name% không ở trong nhóm nào.'
+    not-a-member: '{PREFIX} &c%name% không ở trong nhóm của bạn.'
+    in-same-party: '{PREFIX} &c%name% đang ở trong nhóm của bạn.'
+    kick-self: '{PREFIX} &cKhông tự đuổi mình khỏi nhóm được.'
+    is-not-same-size: '{PREFIX} &cHai nhóm phải bằng số người.'
+    is-not-online:
+      sender: '{PREFIX} &cMọi người trong nhóm bạn phải đang online!'
+      target: '{PREFIX} &cMọi người trong nhóm của %name% phải đang online!'
+    max-size-reached:
+      sender: '{PREFIX} &cNhóm bạn đã đủ số người tối đa!'
+      target: '{PREFIX} &cNhóm của %name% đã đủ số người tối đa!'
+    cannot-friendly-fire: '{PREFIX} &cKhông được đánh đồng đội.'
+  setting:
+    disabled-option: '{PREFIX} &c%option% đang tắt.'
+    arena-not-applicable: '{PREFIX} &cKhông dùng bộ đồ %kit% ở sân %arena% được.'
+  inventory-view:
+    not-a-uuid: '{PREFIX} &c%input% không phải UUID hợp lệ.'
+    not-found: '{PREFIX} &cKhông có túi đồ nào với UUID ''%uuid%''.'
+  queue:
+    not-found: '{PREFIX} &cKhông có hàng chờ với bộ đồ %kit% và cược $%bet_amount%.'
+    not-found-name: '{PREFIX} &cKhông có hàng chờ tên ''%name%''.'
+    already-exists: '{PREFIX} &cĐã có hàng chờ với bộ đồ ''%kit%'' và cược $%bet_amount%.'
+    already-in: '{PREFIX} &cBạn đang ở trong hàng chờ rồi!'
+    not-in-queue: '{PREFIX} &cBạn không ở trong hàng chờ nào.'
+    not-enough-money: '{PREFIX} &cCần $%bet_amount% để vào hàng chờ này.'
+    party-too-large: '{PREFIX} &cNhóm bạn có %party_size% người, nhưng hàng chờ này chỉ cho đội %team_size% người.'
+    no-queues-available: '{PREFIX} &cHiện không có hàng chờ nào.'
+  sign:
+    not-a-sign: '{PREFIX} &cKhối bạn đang nhìn không phải biển!'
+    not-found: '{PREFIX} &cBiển đó không phải biển hàng chờ!'
+    already-exists: '{PREFIX} &cBiển đó đã là biển hàng chờ! Muốn gỡ thì dùng ''/duels delsign'''
+    cancel-break: '{PREFIX} &cKhông phá tay biển hàng chờ được! Hãy dùng lệnh ''/duels delsign'''
+  sound:
+    not-found: '{PREFIX} &cKhông có âm thanh tên ''%name%''.'
+  command:
+    invalid-sub-command: '{PREFIX} &c''%argument%'' không phải lệnh con hợp lệ. Gõ ''/%command%'' để xem trợ giúp.'
+    invalid-option: '{PREFIX} &c''%option%'' không hợp lệ. Các lựa chọn: %available_options%'
+    invalid-action: '{PREFIX} &c''%action%'' không hợp lệ. Các hành động: %available_actions%'
+    not-enough-money: '{PREFIX} &cBạn không đủ tiền để cược!'
+    lobby-save-failure: '{PREFIX} &cKhông lưu được vị trí sảnh. Xem console để biết thêm.'
+    name-not-alphanumeric: '{PREFIX} &c''%name%'' chỉ được có chữ và số.'
+    invalid-argument: '{PREFIX} &cTham số không hợp lệ: {arg}. Không được dùng placeholder trong lệnh.'
+
+
+COMMAND:
+  kit:
+    usage: '{PREFIX} &cCách dùng: /kit [edit|save|reset] [người chơi] [tên bộ đồ]'
+    edit:
+      usage: '{PREFIX} &cCách dùng: /kit edit <tên bộ đồ>'
+    reset:
+      usage: '{PREFIX} &cCách dùng: /kit reset <tên bộ đồ> hoặc /kit reset <người chơi> <tên bộ đồ>'
+    unknown-subcommand: '{PREFIX} &cKhông có lệnh con: %subcommand%'
+  duel:
+    usage:
+    - '{LINE}'
+    - '&f/%command% [người chơi] &e- &7Gửi lời thách đấu.'
+    - '&f/%command% [người chơi] <số tiền> &e- &7Gửi lời thách đấu kèm tiền cược.'
+    - '&f/%command% [accept | deny] [người chơi] &e- &7Nhận hoặc từ chối lời thách đấu.'
+    - '&f/%command% stats <tên> &e- &7Xem thống kê đấu.'
+    - '&f/%command% toggle &e- &7Bật/tắt nhận lời thách đấu.'
+    - '&f/%command% top [-|wins|losses|kit] &e- &7Xem top thắng, thua hoặc điểm theo bộ đồ.'
+    - '{LINE}'
+    request:
+      send:
+        sender:
+        - '{LINE}'
+        - '&7Đã gửi lời thách đấu cho &f%name%&7.'
+        - '&6- &7Bộ đồ: &3%kit%'
+        - '&6- &7Dùng đồ của mình: &r%own_inventory%'
+        - '&6- &7Sân: &e%arena%'
+        - '&6- &7Cược: &6$%bet_amount%'
+        - '&6- &7Cược đồ: &r%item_betting%'
+        - '{LINE}'
+        receiver:
+        - '{LINE}'
+        - '&7Bạn nhận lời thách đấu từ &f%name%&7.'
+        - '&6- &7Bộ đồ: &3%kit%'
+        - '&6- &7Dùng đồ của mình: &r%own_inventory%'
+        - '&6- &7Sân: &e%arena%'
+        - '&6- &7Cược: &6$%bet_amount%'
+        - '&6- &7Cược đồ: &r%item_betting%'
+        - '{LINE}'
+        clickable-text:
+          info:
+            text: '&7Bấm để '
+            hover-text: ''
+          accept:
+            text: '&a&l[NHẬN] '
+            hover-text: '&7Bấm để &anhận &7lời thách đấu.'
+          deny:
+            text: '&c&l[TỪ CHỐI]'
+            hover-text: '&7Bấm để &ctừ chối &7lời thách đấu.'
+      accept:
+        sender: '{PREFIX} &f%name% &7đã nhận lời thách đấu của bạn.'
+        receiver: '{PREFIX} &7Đã nhận lời thách đấu của &f%name%&7.'
+      deny:
+        sender: '{PREFIX} &7Lời thách đấu gửi &f%name% &7đã bị từ chối.'
+        receiver: '{PREFIX} &7Đã từ chối lời thách đấu của &f%name%&7.'
+    party-request:
+      send:
+        sender-party:
+        - '{LINE}'
+        - '&f%owner% &7đã gửi lời thách đấu tới &fnhóm của %name%&7.'
+        - '&6- &7Bộ đồ: &3%kit%'
+        - '&6- &7Dùng đồ của mình: &r%own_inventory%'
+        - '&6- &7Sân: &e%arena%'
+        - '{LINE}'
+        receiver-party:
+        - '{LINE}'
+        - '&7Nhóm bạn nhận lời thách đấu từ &fnhóm của %name%&7.'
+        - '&6- &7Bộ đồ: &3%kit%'
+        - '&6- &7Dùng đồ của mình: &r%own_inventory%'
+        - '&6- &7Sân: &e%arena%'
+        clickable-text:
+          info:
+            text: '&7Bấm để '
+            hover-text: ''
+          accept:
+            text: '&a&l[NHẬN] '
+            hover-text: '&7Bấm để &anhận &7lời thách đấu.'
+          deny:
+            text: '&c&l[TỪ CHỐI]'
+            hover-text: '&7Bấm để &ctừ chối &7lời thách đấu.'
+          extra:
+            text: '{LINE}'
+            hover-text: ''
+      accept:
+        sender-party:
+        - '{LINE}'
+        - '{PREFIX} &fNhóm của %name% &7đã nhận lời thách đấu của &f%owner%&7.'
+        - '{LINE}'
+        receiver-party:
+        - '{LINE}'
+        - '{PREFIX} &f%owner% &7đã nhận lời thách đấu của &fnhóm %name%&7.'
+        - '{LINE}'
+      deny:
+        sender-party:
+        - '{LINE}'
+        - '{PREFIX} &fNhóm của %name% &7đã từ chối lời thách đấu của &f%owner%&7.'
+        - '{LINE}'
+        receiver-party:
+        - '{LINE}'
+        - '{PREFIX} &f%owner% &7đã từ chối lời thách đấu của &fnhóm %name%&7.'
+        - '{LINE}'
+      preview:
+        server-kit: '{PREFIX} &aTrận này dùng bộ đồ của server: &e%kit%'
+        own-inventory: '{PREFIX} &aTrận này dùng đồ của mỗi người.'
+    stats:
+      displayed:
+      - '{LINE}'
+      - '&7Thống kê của &f%name% &e-'
+      - '&7Thắng: &a%wins%'
+      - '&7Thua: &c%losses%'
+      - '&7Tỉ lệ thắng/thua: &b%wl_ratio%'
+      - '&7Nhận thách đấu: &r%requests_enabled%'
+      # NOTE: Ratings will only display if either 'display-kit-ratings' or 'display-nokit-rating' is enabled in the configuration.
+      rating:
+        header: '&7Điểm xếp hạng &e-'
+        format: '&f%type%&7: &b%rating%'
+        footer: ''
+      # NOTE: Past matches will only display if 'display-past-matches' is enabled in the configuration.
+      match:
+        header: '&7Trận gần đây &e-'
+        format: '&a%winner% &fđấu &c%loser% &6[Rê chuột xem]'
+        hover-text:
+        - '&7Bộ đồ: &3%kit%'
+        - '&7Thời lượng: &a%duration%'
+        - '&7Cách đây: &f%time%'
+        - '&7Máu còn: &d%health%❤'
+        footer: '{LINE}'
+    toggle:
+      enabled: '{PREFIX} &aBạn đang nhận lời thách đấu.'
+      disabled: '{PREFIX} &cBạn đã tắt nhận lời thách đấu.'
+    top:
+      next-update: '{PREFIX} &7Cập nhật lần sau: &f%remaining%'
+      header: '{HALF_LINE} &7Top &f10 &7%type% {HALF_LINE}'
+      display-format: '&e%rank%. &f%name% &e- &f%score% &7%identifier%'
+      footer: '{HALF_LINE} &7Top &f10 &7%type% {HALF_LINE}'
+
+  duels:
+    usage:
+    - '{LINE}'
+    - '&f/%command% help &e- &7Displays this page.'
+    - '&f/%command% help arena &e- &7Displays a list of arena commands.'
+    - '&f/%command% help kit &e- &7Displays a list of kit commands.'
+    - '&f/%command% help queue &e- &7Displays a list of queue commands.'
+    - '&f/%command% help sign &e- &7Displays a list of sign commands.'
+    - '&f/%command% help user &e- &7Displays a list of user edit commands.'
+    - '&f/%command% help extra &e- &7Displays a list of extra commands.'
+    - '{LINE}'
+    help:
+      arena:
+      - '{HALF_LINE} &fArena Commands {HALF_LINE}'
+      - '&f/%command% create [name] &e- &7Creates an arena with given name.'
+      - '&f/%command% set [name] [1|2] &e- &7Sets the teleport position of an arena.'
+      - '&f/%command% delete [name] &e- &7Deletes an arena.'
+      - '&f/%command% setarenaitem [name] &e- &7Sets the displayed item for selected arena.'
+      - '&f/%command% info [name] &e- &7Displays a list of information about the selected arena.'
+      - '&f/%command% toggle [name] &e- &7Enables or disables an arena.'
+      - '&f/%command% tp [name] <1|2> &e- &7Teleports to an arena.'
+      - '&f/%command% list &e- &7Displays the list of all arenas.'
+      - '{HALF_LINE} &fArena Commands {HALF_LINE}'
+      kit:
+      - '{HALF_LINE} &fKit Commands {HALF_LINE}'
+      - '&f/%command% savekit <-o> [name] &e- &7Saves a kit with given name.'
+      - '&f/%command% loadkit [name] &e- &7Loads the selected kit to your inventory.'
+      - '&f/%command% kitgive [kit] [player] &e- &7Gives a kit to a player.'
+      - '&f/%command% deletekit [name] &e- &7Deletes a kit.'
+      - '&f/%command% setitem [name] &e- &7Sets the displayed item for selected kit.'
+      - '&f/%command% options [kit] &e- &7Opens the options gui for selected kit.'
+      - '&f/%command% bind [kit] &e- &7Opens the arena bind gui for selected kit.'
+      - '&f/%command% list &e- &7Displays the list of all kits.'
+      - '{HALF_LINE} &fKit Commands {HALF_LINE}'
+      queue:
+      - '{HALF_LINE} &fQueue Sign Commands {HALF_LINE}'
+      - '&f/%command% createqueue [bet] [-|kit] &e- &7Creates a queue with bet and kit.'
+      - '&f/%command% deletequeue &e- &7Deletes the queue with bet and kit.'
+      - '&f/%command% list &e- &7Displays a list of available queues.'
+      - '{HALF_LINE} &fQueue Sign Commands {HALF_LINE}'
+      sign:
+      - '{HALF_LINE} &fQueue Sign Commands {HALF_LINE}'
+      - '&f/%command% addsign [bet] [-|kit] &e- &7Creates a queue sign with bet and kit.'
+      - '&f/%command% delsign &e- &7Deletes the queue sign you are looking at.'
+      - '&f/%command% list &e- &7Displays a list of queue signs.'
+      - '{HALF_LINE} &fQueue Sign Commands {HALF_LINE}'
+      user:
+      - '{HALF_LINE} &fUser Edit Commands {HALF_LINE}'
+      - '&f/%command% setrating [name] [-|kit] [amount] &e- &7Sets player''s rating for kit.'
+      - '&f/%command% edit [name] [add|remove|set] [wins|losses] [amount] &e- &7Edits player''s stats.'
+      - '&f/%command% resetrating [name] [-|kit|all] &e- &7Resets all or specified kit''s rating for player.'
+      - '&f/%command% reset [name] &e- &7Resets player''s stats.'
+      - '{HALF_LINE} &fUser Edit Commands {HALF_LINE}'
+      extra:
+      - '{HALF_LINE} &fExtra Commands {HALF_LINE}'
+      - '&f/%command% setlobby &e- &7Sets duel lobby location.'
+      - '&f/%command% lobby &e- &7Teleports to duel lobby.'
+      - '&f/%command% playsound [name] &e- &7Plays the selected sound if defined in config.'
+      - '&f/%command% reload <module> &e- &7Reloads the plugin or the specified module.'
+      - '&f/%command% start <player1> <player2> [kit] [arena] &e- &7Forcefully starts a duel between two players.'
+      - '{HALF_LINE} &fExtra Commands {HALF_LINE}'
+    start:
+      usage: '{PREFIX} &cUsage: /%command% [admin] start <player1> <player2> [kit] [arena]'
+      same-player: '{PREFIX} &cYou cannot start a duel between the same player!'
+      player-dead: '{PREFIX} &c%name% is currently dead!'
+      already-in-match: '{PREFIX} &c%name% is already in a match!'
+      no-arena-available: '{PREFIX} &cNo arenas are currently available for this duel.'
+      arena-in-use: '{PREFIX} &cArena ''%name%'' is currently in use.'
+      arena-disabled: '{PREFIX} &cArena ''%name%'' is currently disabled.'
+      target: '{PREFIX} &eAn administrator has forcefully started a duel between you and &f%opponent%&e.'
+      success: '{PREFIX} &aForcefully started a duel between &e%player1% &aand &e%player2% &aon arena &e%arena% &awith kit &e%kit%&a.'
+    create: '{PREFIX} &7Arena &e%name% &7was successfully created. To set spawnpoints for this arena, use the command &f/duels set %name% 1'
+    delete: '{PREFIX} &7Arena &e%name% &7was successfully removed.'
+    set: '{PREFIX} &7Set position &f%position% &7for arena &e%name% &7at &f%location%&7.'
+    toggle: '{PREFIX} &7Arena &e%name% &7is now &r%state%&7.'
+    disable: '{PREFIX} &7Arena &e%name% &7is now disabled.'
+    enable: '{PREFIX} &7Arena &e%name% &7is now enabled.'
+    already-disabled: '{PREFIX} &c%name% is already disabled.'
+    already-enabled: '{PREFIX} &c%name% is already enabled.'
+    teleport: '{PREFIX} &7You have been teleported to arena &e%name%&7''s position &f%position%&7.'
+    save-kit: '{PREFIX} &7Kit &3%name% &7was successfully saved.'
+    delete-kit: '{PREFIX} &7Kit &3%name% &7was successfully removed.'
+    load-kit: '{PREFIX} &7Kit &3%name% &7was loaded in your inventory.'
+    kit-give: '{PREFIX} &7Gave kit &3%kit% &7to &f%name%&7.'
+    kit-give-target: '{PREFIX} &7You were given kit &3%kit%&7.'
+    set-item: '{PREFIX} &7Kit &3%name%&7''s displayed item was changed to your held item.'
+    set-arena-item: '{PREFIX} &7Arena &e%name%&7''s displayed item was changed to your held item.'
+    create-queue: '{PREFIX} &7Created a queue with kit &3%kit% &7and bet &6$%bet_amount%&7.'
+    delete-queue: '{PREFIX} &7Deleted a queue with kit &3%kit% &7and bet &6$%bet_amount%&7.'
+    queue-options:
+      rated: '{PREFIX} &7Set rated to %rated% &7for queue &f%name%&7.'
+      max-difference: '{PREFIX} &7Set max rating difference to &a%max_difference% &7for queue &f%name%&7.'
+      max-difference-default: '{PREFIX} &7Queue &f%name% &7now uses the default max rating difference of &a%max_difference%&7.'
+    add-sign: '{PREFIX} &7Created queue sign at &f%location% &7with kit &3%kit% &7and bet &6$%bet_amount%&7.'
+    del-sign: '{PREFIX} &7Deleted queue sign at &f%location% &7with kit &3%kit% &7and bet &6$%bet_amount%&7.'
+    set-lobby: '{PREFIX} &7Duel lobby set at your current location.'
+    lobby: '{PREFIX} &7You have been teleported to lobby!'
+    edit: '{PREFIX} &7Following action has been executed for &f%name%&7: &f%action% %amount% %type%'
+    set-rating: '{PREFIX} &f%name%&7''s rating for kit &3%kit% &7was set to &a%rating%&7.'
+    reset-rating: '{PREFIX} &7Reset &f%name%&7''s rating for kit &3%kit%&7.'
+    reset: '{PREFIX} &7Reset &f%name%&7''s stats.'
+    info:
+    - '{HALF_LINE} &7Arena &e%name% {HALF_LINE}'
+    - '&7In Use: &r%in_use%'
+    - '&7Disabled: &r%disabled%'
+    - '&7Bound Kits: &3%kits%'
+    - '&7Positions: &f%positions%'
+    - '&7Players: &f%players%'
+    - '{HALF_LINE} &7Arena &e%name% {HALF_LINE}'
+    list:
+    - '{LINE}'
+    - '&4DARK RED&7: Disabled arena'
+    - '&9BLUE&7: Arena without spawn positions set'
+    - '&aGREEN&7: Available arena'
+    - '&cRED&7: Arena in use'
+    - '&7Arenas: &r%arenas%'
+    - '&7Kits: &f%kits%'
+    - '&7Queues: &b%queues%'
+    - '&7Queue Signs: &f%queue_signs%'
+    - '&7Duel lobby is located at &f%lobby%&7.'
+    - '{LINE}'
+
+  spectate:
+    usage:
+    - '{LINE}'
+    - '&f/spectate [người chơi] &e- &7Xem trận đấu của người chơi.'
+    - '{LINE}'
+    start-spectate: '{PREFIX} &7Đang xem &f%name%&7 đấu &f%opponent%&7 ở sân &e%arena%&7. Gõ &f/spectate &7để thôi xem.'
+    stop-spectate: '{PREFIX} &7Bạn đã thôi xem &f%name%&7.'
+  party:
+    usage:
+    - '{LINE}'
+    - '&f/%command% toggle &e- &7Bật/tắt nhận lời mời vào nhóm.'
+    - '&f/%command% [người chơi] &e- &7Mời người chơi vào nhóm.'
+    - '&f/%command% list &e- &7Xem thành viên nhóm.'
+    - '&f/%command% accept [người chơi] &e- &7Nhận lời mời vào nhóm.'
+    - '&f/%command% leave &e- &7Rời nhóm.'
+    - '&f/%command% kick [người chơi] &e- &7Đuổi người khỏi nhóm.'
+    - '&f/%command% friendlyfire &e- &7Bật/tắt đánh đồng đội.'
+    - '&f/%command% transfer [người chơi] &e- &7Chuyển quyền trưởng nhóm.'
+    - '&f/%command% disband &e- &7Giải tán nhóm.'
+    - '{LINE}'
+    toggle:
+      enabled: '{PREFIX} &aBạn đang nhận lời mời vào nhóm.'
+      disabled: '{PREFIX} &cBạn đã tắt nhận lời mời vào nhóm.'
+    list:
+    - '{LINE}'
+    - '&7Trưởng nhóm: &f%owner%'
+    - '&7Thành viên (&r%members_count%&7): &r%members%'
+    - '&7Đang online (&r%online_count%&7): &r%online_members%'
+    - '{LINE}'
+    invite:
+      send:
+        receiver:
+        - '{LINE}'
+        - '{PREFIX} &7&f%name% &7mời bạn vào nhóm. Gõ &f/party accept %name% &7để vào.'
+        - '{LINE}'
+        members:
+        - '{LINE}'
+        - '{PREFIX} &f%owner% &7đã mời &f%name% &7vào nhóm!'
+        - '{LINE}'
+      accept:
+        receiver:
+        - '{LINE}'
+        - '{PREFIX} &7Đã nhận lời mời vào nhóm của &f%name%&7.'
+        - '{LINE}'
+        members:
+        - '{LINE}'
+        - '{PREFIX} &f%name% &7đã vào nhóm!'
+        - '{LINE}'
+    leave:
+      sender:
+      - '{LINE}'
+      - '{PREFIX} &7Bạn đã rời &fnhóm của %name%&7.'
+      - '{LINE}'
+      members:
+      - '{LINE}'
+      - '{PREFIX} &f%name% &7đã rời nhóm!'
+      - '{LINE}'
+    kick:
+      receiver:
+      - '{LINE}'
+      - '{PREFIX} &f%owner% &7đã đuổi bạn khỏi nhóm!'
+      - '{LINE}'
+      members:
+      - '{LINE}'
+      - '{PREFIX} &f%owner% &7đã đuổi &f%name% &7khỏi nhóm!'
+      - '{LINE}'
+    friendly-fire:
+      enabled:
+      - '{LINE}'
+      - '{PREFIX} &cĐánh đồng đội &7đã &abật&7!'
+      - '{LINE}'
+      disabled:
+      - '{LINE}'
+      - '{PREFIX} &cĐánh đồng đội &7đã &ctắt&7!'
+      - '{LINE}'
+    transfer:
+    - '{LINE}'
+    - '{PREFIX} &f%owner% &7đã chuyển quyền trưởng nhóm cho &f%name%&7.'
+    - '{LINE}'
+    disband:
+    - '{LINE}'
+    - '{PREFIX} &f%owner% &7đã giải tán nhóm.'
+    - '{LINE}'
+
+  customkits:
+    created: '{PREFIX} &aĐã tạo bộ đồ ''&e%kit%&a''!'
+    saved: '{PREFIX} &aĐã lưu bộ đồ ''&e%kit%&a''!'
+    renamed: '{PREFIX} &aĐã đổi tên bộ đồ thành ''&e%kit%&a''.'
+    duplicated: '{PREFIX} &aĐã nhân bản bộ đồ thành ''&e%kit%&a''!'
+    deleted: '{PREFIX} &aĐã xoá bộ đồ ''&e%kit%&a''.'
+    enter-name: '{PREFIX} &aGõ tên bộ đồ mới vào chat (hoặc gõ &ccancel&a để huỷ):'
+    enter-new-name: '{PREFIX} &aGõ tên mới cho bộ đồ vào chat (hoặc gõ &ccancel&a để huỷ):'
+    enter-description: '{PREFIX} &aGõ mô tả bộ đồ vào chat (gõ &cclear&a để xoá, &ccancel&a để huỷ):'
+    description-updated: '{PREFIX} &aĐã cập nhật mô tả bộ đồ.'
+    icon-changed: '{PREFIX} &aĐã đổi biểu tượng bộ đồ thành &e%material%&a.'
+    no-item-in-hand: '{PREFIX} &cPhải cầm một vật phẩm trên tay chính để đặt làm biểu tượng.'
+    usage-create: '{PREFIX} &cCách dùng: /customkits create <tên>'
+    usage-edit: '{PREFIX} &cCách dùng: /customkits edit <tên>'
+    usage-delete: '{PREFIX} &cCách dùng: /customkits delete <tên>'
+    usage-duplicate: '{PREFIX} &cCách dùng: /customkits duplicate <tên cũ> <tên mới>'
+    usage-preview: '{PREFIX} &cCách dùng: /customkits preview <tên>'
+    list:
+      header: '{PREFIX} &aBộ đồ tự tạo của bạn (&e%count%&a):'
+      entry: '{PREFIX} &7%kits%'
+      empty: '{PREFIX} &cBạn chưa có bộ đồ tự tạo nào.'
+    replay:
+      usage: '{PREFIX} &cCách dùng: /%command% [play <id>|list [người chơi]|stop|delete <id>]'
+      unknown: '{PREFIX} &cKhông có bản xem lại hay người chơi ''&e%name%&c''. Cách dùng: /%command% [play <id>|list [người chơi]|stop|delete <id>]'
+      only-players: '{PREFIX} &cLệnh này chỉ người chơi trong game dùng được.'
+
+  sub-command-usage: '{PREFIX} &f/%command% %usage% &e- &7%description%'
+
+
+DUEL:
+  start-failure:
+    mode-unselected: '{FAIL_PREFIX} &cPhải chọn bộ đồ hoặc chế độ dùng đồ của mình mới bắt đầu được.'
+    player-is-dead: '{FAIL_PREFIX} Bạn hoặc đối thủ đang chết!'
+    in-blacklisted-world: '{FAIL_PREFIX} Bạn hoặc đối thủ đang ở thế giới không cho đấu!'
+    is-tagged: '{FAIL_PREFIX} Bạn hoặc đối thủ đang trong giao tranh!'
+    player-moved: '{FAIL_PREFIX} Bạn hoặc đối thủ đã di chuyển sau khi gửi/nhận lời thách đấu!'
+    not-in-duelzone: '{FAIL_PREFIX} Bạn hoặc đối thủ đã ra khỏi khu đấu sau khi gửi/nhận lời thách đấu!'
+    in-creative-mode: '{FAIL_PREFIX} Bạn hoặc đối thủ đang ở chế độ sáng tạo!'
+    no-arena-available: '{FAIL_PREFIX} Hiện hết sân trống. Thử lại sau nhé.'
+    arena-in-use: '{FAIL_PREFIX} Sân đã chọn đang có người đấu. Chọn sân khác nhé.'
+    arena-not-applicable: '{FAIL_PREFIX} Không dùng bộ đồ %kit% ở sân đã chọn được.'
+    not-enough-money: '{FAIL_PREFIX} Bạn hoặc đối thủ không có đủ $%bet_amount%.'
+  rounds:
+    round-end: '{PREFIX} &7Hết hiệp &e%round%&7! &f%winner% &7thắng hiệp này!'
+    round-status: '{PREFIX} &7Tỉ số: &f%player1% &7(&a%wins1%&7) - &f%player2% &7(&a%wins2%&7)'
+    round-start: '{PREFIX} &7Hiệp &e%round% &7sắp bắt đầu...'
+    match-point: '{PREFIX} &c&lĐiểm quyết định &7cho &f%player%&7!'
+  party-start-failure:
+    option-unavailable: '{FAIL_PREFIX} &cĐấu nhóm hiện chưa cho cược đồ/tiền.'
+    party-changed: '{FAIL_PREFIX} Bên gửi hoặc bên nhận lời thách đấu đã đổi nhóm.'
+    player-is-dead: '{FAIL_PREFIX} Có người đang chết!'
+    in-blacklisted-world: '{FAIL_PREFIX} Có người đang ở thế giới không cho đấu!'
+    is-tagged: '{FAIL_PREFIX} Có người đang trong giao tranh!'
+    player-moved: '{FAIL_PREFIX} Có người đã di chuyển sau khi gửi/nhận lời thách đấu!'
+    not-in-duelzone: '{FAIL_PREFIX} Có người đã ra khỏi khu đấu sau khi gửi/nhận lời thách đấu!'
+    in-creative-mode: '{FAIL_PREFIX} Có người đang ở chế độ sáng tạo!'
+    is-not-same-size: '{PREFIX} &cHai nhóm phải bằng số người.'
+    is-not-all-online: '{FAIL_PREFIX} Mọi người trong các nhóm phải đang online!'
+  prevent:
+    item-drop: '&cKhông vứt đồ được khi đang đấu.'
+    command: '&cKhông dùng ''%command%'' được khi đang đấu.'
+    teleportation: '&cKhông dịch chuyển được khi đang đấu.'
+    inventory-open: '&cKhông mở rương/kho được khi đang đấu.'
+  projectile-hit-message: '{PREFIX} &f%name% &7còn &d%health%❤&7!'
+  on-death:
+    with-killer: '{PREFIX} &a%killer% &7đã hạ &c%name%&7, còn &d%health%❤&7.'
+    no-killer: '{PREFIX} &c%name% &7đã chết.'
+  on-end:
+    tie: '{PREFIX} &7Hoà!'
+    plugin-disable: '{PREFIX} &cPlugin đang tắt! Tự kết thúc trận.'
+    opponent-defeat: '{PREFIX} &f%winner% &a(%winner_rating%) (+%change%) &7thắng &f%loser% &c(%loser_rating%) (-%change%) &7với bộ đồ &3%kit% &7ở sân &e%arena%&7.'
+    team-opponent-defeat: '{PREFIX} &f%winners% &7thắng &f%losers% &7với bộ đồ &3%kit% &7ở sân &e%arena%&7.'
+    party-opponent-defeat: '{PREFIX} &f%winners% &7thắng &f%losers% &7với bộ đồ &3%kit% &7ở sân &e%arena%&7.'
+  inventories:
+    message: '&7Túi đồ (bấm tên để xem): '
+    name-color: '&b'
+  reward:
+    money:
+      message: '{PREFIX} &7Bạn nhận &6$%money% &7vì thắng &f%name%&7!'
+      title: '&eBẠN THẮNG &6$%money%&e!'
+    items:
+      message: '{PREFIX} &7Bạn nhận đồ của &f%name%&7 vì thắng!'
+  leave:
+    countdown-active: '{PREFIX} &cKhông bỏ cuộc được khi đang đếm ngược.'
+
+PARTY:
+  auto-disband:
+  - '{LINE}'
+  - '{PREFIX} &7Nhóm tự giải tán vì lâu không hoạt động.'
+  - '{LINE}'
+
+
+QUEUE:
+  prevent:
+    command: '&cKhông dùng ''%command%'' được khi đang trong hàng chờ.'
+  add: '{PREFIX} &7Bạn đã vào hàng chờ bộ đồ &3%kit% &7cược &6$%bet_amount%&7. Bấm lại biển hoặc gõ &f/queue leave &7để rời hàng chờ.'
+  remove: '{PREFIX} &7Bạn đã rời hàng chờ.'
+  found-opponent: '{PREFIX} &7Đã tìm thấy đối thủ: &f%name%&7! Bắt đầu trận với bộ đồ &3%kit% &7cược &6$%bet_amount%&7...'
+
+
+SIGN:
+  format:
+  - '&a[Bấm để vào]'
+  - '&3%name%&f:&e$%bet_amount%'
+  - '&f&l%in_queue% ĐANG CHỜ'
+  - '&f&l%in_match% ĐANG ĐẤU'
+
+
+SPECTATE:
+  arena-broadcast: '{PREFIX} &f%name% &7đang xem trận này!'
+  match-end: '{PREFIX} &7Trận bạn đang xem đã kết thúc.'
+  prevent:
+    command: '&cKhông dùng ''%command%'' được khi đang xem trận.'
+    teleportation: '&cKhông dịch chuyển được khi đang xem trận.'
+
+
+REPLAY:
+  protocollib-missing: '{PREFIX} &cXem lại trận đang tắt vì server không có ProtocolLib.'
+  already-watching: '{PREFIX} &cBạn đang xem lại một trận rồi.'
+  not-watching: '{PREFIX} &cBạn không đang xem lại trận nào.'
+  not-found: '{PREFIX} &cKhông thấy bản xem lại ''&e%id%&c'' hoặc không tải được.'
+  deleted: '{PREFIX} &aĐã xoá bản xem lại ''&e%id%&a''.'
+  delete-no-permission: '{PREFIX} &cBạn không có quyền xoá bản xem lại.'
+  finished-watching: '{PREFIX} &7Đã xem xong.'
+  restored-after-restart: '{PREFIX} &aĐã trả lại túi đồ và vị trí của bạn từ lần xem lại trước.'
+  recording-started: '{PREFIX} &7Bắt đầu ghi lại trận.'
+  recording-saved: '{PREFIX} &7Đã lưu bản ghi trận, mã: &e%id%&7.'
+  world-not-found: '{PREFIX} &cKhông thấy thế giới ''&e%world%&c'' của bản xem lại này.'
+  prevent:
+    command: '&cKhông dùng ''%command%'' được khi đang xem lại. Gõ /replay stop để thoát.'
+    teleportation: '&cKhông dịch chuyển được khi đang xem lại.'
+    inventory-open: '&cKhông mở rương/kho được khi đang xem lại.'
+    item-drop: '&cKhông vứt đồ được khi đang xem lại.'
+    damage: '&cKhông đánh hay mất máu được khi đang xem lại.'
+    block-break: '&cKhông phá khối được khi đang xem lại.'
+    block-place: '&cKhông đặt khối được khi đang xem lại.'
+    interact: '&cKhông tương tác với khối được khi đang xem lại.'
+  items:
+    inspect: '&b&lXem góc nhìn'
+    teleport: '&b&lXem góc nhìn'
+    speed: '&e&lTốc độ: &6%speed%x'
+    pause: '&c&lTạm dừng'
+    play: '&a&lPhát'
+    forward: '&b&lTua tới (10 giây)'
+    backward: '&b&lTua lui (10 giây)'
+    leave: '&4&lThoát xem lại'
+
+
+GUI:
+  customkits-menu:
+    title: Bộ đồ của tôi
+    buttons:
+      kit:
+        name: '&e&l%name%'
+        lore:
+        - '%description%'
+        - '&7Số món: &f%items%'
+        - ' '
+        - '&a[Chuột trái] &7Sửa bộ đồ'
+        - '&b[Chuột phải] &7Xem trước'
+        - '&e[Shift + trái] &7Nhân bản'
+        - '&c[Shift + phải] &7Xoá'
+      limit:
+        name: '&e&lGiới hạn bộ đồ'
+        lore:
+        - '&7Bộ đồ: &a%count% &7/ &e%limit%'
+        - '&7Còn tạo được: &b%remaining%'
+      create:
+        name: '&a&l+ Tạo bộ đồ mới'
+        name-reached: '&c&lĐã đủ số bộ đồ'
+        lore:
+        - '&7Bấm để đặt tên và tạo bộ đồ mới.'
+        lore-reached:
+        - '&cBạn không tạo thêm bộ đồ được.'
+      close:
+        name: '&c&lĐóng'
+        lore:
+        - '&7Bấm để thoát.'
+    confirm-delete:
+      title: Xoá bộ đồ?
+      message: Chắc chắn xoá bộ đồ '%kit%'?
+  customkit-confirm:
+    buttons:
+      confirm:
+        name: '&a&lĐồng ý'
+        lore:
+        - '&7Bấm để thực hiện.'
+      cancel:
+        name: '&c&lHuỷ'
+        lore:
+        - '&7Bấm để huỷ và quay lại.'
+      info:
+        name: '&e&lThông tin'
+        lore:
+        - '&7%text%'
+  customkit-selector:
+    title: Chọn bộ đồ tự tạo
+    buttons:
+      empty:
+        name: '&c&lChưa có bộ đồ tự tạo'
+        lore:
+        - '&7Bạn chưa tạo bộ đồ nào.'
+        - '&7Gõ &e/customkits &7để tạo bộ đầu tiên!'
+      custom-kit:
+        name: '&d&l%name%'
+        lore:
+        - '%description%'
+        - '&7Số món: &e%items%'
+        - ' '
+        - '&aBấm để chọn bộ đồ này cho trận đấu'
+        - '&7Lưu ý: trận dùng bộ đồ tự tạo chỉ cược tiền được'
+      back:
+        name: '&c&lQuay lại'
+        lore:
+        - '&7Bấm để về chọn loại bộ đồ.'
+  kit-type-selector:
+    title: Chọn loại bộ đồ
+  customkit-editor:
+    title: 'Đang sửa: %kit%'
+    placeholders:
+      helmet: '&7(Bấm để đặt mũ)'
+      chestplate: '&7(Bấm để đặt áo giáp)'
+      leggings: '&7(Bấm để đặt quần giáp)'
+      boots: '&7(Bấm để đặt giày)'
+      offhand: '&7(Bấm để đặt tay trái)'
+      empty-slot: '&8(Ô trống %slot%)'
+      empty-hotbar: '&8(Ô thanh nhanh trống %slot%)'
+      choose-item-lore:
+      - '&aBấm để chọn vật phẩm'
+    buttons:
+      cancel:
+        name: '&c&lHuỷ / bỏ thay đổi'
+        lore:
+        - '&7Bấm để bỏ các thay đổi chưa lưu.'
+      clear:
+        name: '&c&lXoá hết đồ'
+        lore:
+        - '&7Bấm để làm trống mọi ô của bộ đồ.'
+      settings:
+        name: '&e&lCài đặt bộ đồ'
+        lore:
+        - '&7Tên: &f%name%'
+        - '&7Mô tả: &f%description%'
+        - ' '
+        - '&a[Chuột trái] &7Đổi tên'
+        - '&e[Chuột phải] &7Sửa mô tả'
+        - '&b[Shift + bấm] &7Đổi biểu tượng'
+      preview:
+        name: '&b&lXem trước'
+        lore:
+        - '&7Bấm để xem trước bộ đồ (chỉ xem).'
+      save:
+        name: '&a&lLưu bộ đồ'
+        lore:
+        - '&7Bấm để kiểm tra và lưu bộ đồ.'
+    confirm-discard:
+      title: Bỏ thay đổi?
+      message: Chắc chắn bỏ các thay đổi chưa lưu?
+    confirm-clear:
+      title: Xoá hết đồ?
+      message: Chắc chắn xoá hết đồ trong bộ này?
+  customkit-preview:
+    title: 'Xem trước: %kit%'
+    placeholders:
+      helmet: '&7(Chưa có mũ)'
+      chestplate: '&7(Chưa có áo giáp)'
+      leggings: '&7(Chưa có quần giáp)'
+      boots: '&7(Chưa có giày)'
+      offhand: '&7(Tay trái trống)'
+      empty-slot: '&8(Ô trống)'
+      empty-hotbar: '&8(Ô thanh nhanh trống)'
+    buttons:
+      info:
+        name: '&e&lBộ đồ: %kit%'
+        owner: '&7Chủ: &f%owner%'
+        description-header: '&7Mô tả:'
+        readonly-footer: '&8Chỉ xem'
+      close:
+        name: '&c&lĐóng xem trước'
+        lore:
+        - '&7Bấm để đóng.'
+  material-browser:
+    title: Chọn vật phẩm
+    categories:
+      weapons: Vũ khí
+      armor: Giáp
+      tools: Công cụ
+      food: Đồ ăn
+      blocks: Khối
+      combat: Chiến đấu
+      potions: Thuốc
+      utility: Tiện ích
+      misc: Khác
+    buttons:
+      armor-slot:
+        name: '&e&lÔ giáp: &b%slot%'
+        lore:
+        - '&7Chọn giáp hợp với ô này ở dưới.'
+      category-tab:
+        name: '&7%category%'
+        name-selected: '&a&l%category%'
+        lore:
+        - '&eBấm để xem nhóm này'
+        lore-selected:
+        - '&a▶ Đang xem'
+      item:
+        lore:
+        - '&aBấm để chọn vật phẩm này'
+        lore-icon:
+        - '&aBấm để chọn làm biểu tượng'
+      previous-page:
+        name: '&eTrang trước (%page%/%total%)'
+      next-page:
+        name: '&eTrang sau (%page%/%total%)'
+      back:
+        name: '&c&lVề sắp xếp bộ đồ'
+        lore:
+        - '&7Bấm để về trang sửa túi đồ.'
+  item-editor:
+    title: Sửa vật phẩm
+    enter-damage: '{PREFIX} &aGõ độ hao mòn vào chat (0 = còn nguyên):'
+    enter-model-data: '{PREFIX} &aGõ số custom model data vào chat (0 = bỏ):'
+    enter-rgb-color: '{PREFIX} &aGõ màu RGB vào chat (ví dụ &e255 0 0&a):'
+    buttons:
+      change-material:
+        name: '&e&lĐổi loại vật phẩm'
+        lore:
+        - '&7Hiện tại: &f%material%'
+        - ' '
+        - '&aBấm để chọn vật phẩm'
+      change-amount:
+        name: '&e&lĐổi số lượng: &a%amount%'
+        lore:
+        - '&a[Chuột trái] &7+1'
+        - '&e[Chuột phải] &7-1'
+        - '&b[Shift + trái] &7+16'
+        - '&c[Shift + phải] &7-16'
+      display-name-lore:
+        name: '&e&lTên và mô tả'
+        lore:
+        - '&7Bấm để sửa tên và các dòng mô tả.'
+      enchantments:
+        name: '&b&lPhù phép (&e%count%&b)'
+        lore:
+        - '&7Bấm để chỉnh phù phép.'
+      attributes:
+        name: '&b&lChỉ số (&e%count%&b)'
+        lore:
+        - '&7Bấm để chỉnh chỉ số.'
+      armor-trim:
+        name: '&b&lHoạ tiết giáp'
+        lore:
+        - '&7Bấm để chọn hoạ tiết và chất liệu.'
+      potion-settings:
+        name: '&d&lCài đặt thuốc'
+        lore:
+        - '&7Bấm để chọn loại thuốc và hiệu ứng riêng.'
+      durability-damage:
+        name: '&e&lĐộ hao mòn: &f%damage%'
+        lore:
+        - '&a[Chuột trái] &7Làm mới hoàn toàn (hao mòn 0)'
+        - '&e[Chuột phải] &7Nhập độ hao mòn'
+      unbreakable:
+        name: '&eKhông bao giờ hỏng: %status%'
+        lore:
+        - '&aBấm để bật/tắt'
+      item-flags:
+        name: '&e&lẨn thông tin'
+        lore:
+        - '&7Ẩn phù phép: %hide_enchants%'
+        - '&7Ẩn chỉ số: %hide_attributes%'
+        - '&7Ẩn không hỏng: %hide_unbreakable%'
+        - ' '
+        - '&a[Chuột trái] &7Bật/tắt ẩn phù phép'
+        - '&e[Chuột phải] &7Bật/tắt ẩn chỉ số'
+        - '&b[Shift + bấm] &7Bật/tắt ẩn không hỏng'
+      custom-model-data:
+        name: '&eCustom model data: &f%data%'
+        lore:
+        - '&aBấm để nhập số custom model data'
+      leather-color:
+        name: '&e&lMàu giáp da'
+        lore:
+        - '&7RGB: &f%r%, %g%, %b%'
+        - ' '
+        - '&aBấm để chọn màu'
+      remove-item:
+        name: '&c&lXoá vật phẩm'
+        lore:
+        - '&7Bấm để xoá vật phẩm này khỏi bộ đồ.'
+      back:
+        name: '&c&lVề sắp xếp bộ đồ'
+        lore:
+        - '&7Bấm để về trang sắp xếp bộ đồ.'
+  enchantment-editor:
+    title: Sửa phù phép
+    buttons:
+      add:
+        name: '&a&l+ Thêm phù phép'
+        lore:
+        - '&7Bấm để chọn và thêm phù phép.'
+      clear:
+        name: '&c&lXoá hết phù phép'
+        lore:
+        - '&7Bấm để xoá mọi phù phép.'
+      enchant-entry:
+        name: '&b%enchantment% %level%'
+        lore:
+        - '&7Cấp hiện tại: &e%level% &7/ &a%max%'
+        - ' '
+        - '&a[Chuột trái] &7+1 cấp'
+        - '&e[Chuột phải] &7-1 cấp'
+        - '&c[Shift + bấm / chuột giữa] &7Gỡ phù phép'
+      browse-entry:
+        name: '&b%enchantment%'
+        lore:
+        - '&7Cấp tối đa cho phép: &a%max%'
+        - ' '
+        - '&aBấm để thêm cấp 1'
+      previous-page:
+        name: '&eTrang trước (%page%/%total%)'
+      next-page:
+        name: '&eTrang sau (%page%/%total%)'
+      back-enchantments:
+        name: '&c&lVề danh sách phù phép'
+        lore:
+        - '&7Bấm để quay lại.'
+      back-item-editor:
+        name: '&c&lVề sửa vật phẩm'
+        lore:
+        - '&7Bấm để quay lại.'
+  attribute-editor:
+    title: Sửa chỉ số
+    enter-amount: '{PREFIX} &aGõ giá trị chỉ số vào chat:'
+    range-info: ' (Khoảng: %min% đến %max%)'
+    buttons:
+      add:
+        name: '&a&l+ Thêm chỉ số'
+        lore:
+        - '&7Bấm để chọn và thêm chỉ số.'
+      clear:
+        name: '&c&lXoá hết chỉ số'
+        lore:
+        - '&7Bấm để xoá mọi chỉ số.'
+      modifier-entry:
+        name: '&e%attribute%'
+        lore:
+        - '&7Giá trị: &f%amount%'
+        - '&7Phép tính: &f%operation%'
+        - '&7Ô: &f%slot%'
+        - ' '
+        - '&c[Bấm để gỡ]'
+      select-attribute:
+        name: '&b%attribute%'
+        lore:
+        - '&aBấm để chọn chỉ số'
+      select-slot:
+        name: '&eÔ: %slot%'
+        lore:
+        - '&aBấm để chọn ô trang bị'
+      select-operation:
+        name: '&aPhép tính: %operation%'
+        lore:
+        - '&7Bấm để sang bước nhập giá trị.'
+      back:
+        name-back: '&c&lQuay lại'
+        name-editor: '&c&lVề sửa vật phẩm'
+        lore:
+        - '&7Bấm để quay lại.'
+  armor-trim-editor:
+    title: Sửa hoạ tiết giáp
+    buttons:
+      remove:
+        name: '&c&lGỡ hoạ tiết'
+        lore:
+        - '&7Bấm để gỡ hoạ tiết giáp.'
+      pattern-entry:
+        name: '&bHoạ tiết %pattern%'
+        lore:
+        - '&aBấm để chọn hoạ tiết'
+      material-entry:
+        name: '&eChất liệu %material%'
+        lore:
+        - '&aBấm để gắn hoạ tiết'
+      back:
+        name-patterns: '&c&lVề danh sách hoạ tiết'
+        name-editor: '&c&lVề sửa vật phẩm'
+        lore:
+        - '&7Bấm để quay lại.'
+  potion-editor:
+    title: Cài đặt thuốc
+    enter-duration-amplifier: '{PREFIX} &aGõ thời lượng (giây) và cấp (ví dụ &e60 2&a) vào chat:'
+    buttons:
+      extended:
+        name: '&eKéo dài: %status%'
+        lore:
+        - '&aBấm để bật/tắt'
+      upgraded:
+        name: '&eNâng cấp (cấp II): %status%'
+        lore:
+        - '&aBấm để bật/tắt'
+      potion-type:
+        name: '&b%type%'
+        name-selected: '&a&l%type%'
+        lore:
+        - '&eBấm để chọn'
+        lore-selected:
+        - '&a▶ Đang chọn'
+      add-effect:
+        name: '&a&l+ Thêm hiệu ứng riêng'
+        lore:
+        - '&7Bấm để thêm hiệu ứng thuốc riêng.'
+      clear-effects:
+        name: '&c&lXoá hiệu ứng riêng'
+        lore:
+        - '&7Bấm để xoá mọi hiệu ứng thuốc riêng.'
+      effect-entry:
+        name: '&e%effect%'
+        lore:
+        - '&7Thời lượng: &f%duration% giây'
+        - '&7Cấp: &f%amplifier%'
+        - ' '
+        - '&c[Bấm để gỡ]'
+      browse-effect:
+        name: '&b%effect%'
+        lore:
+        - '&aBấm để đặt thời lượng và cấp'
+      previous-page:
+        name: '&eTrang trước (%page%/%total%)'
+      next-page:
+        name: '&eTrang sau (%page%/%total%)'
+      back:
+        name-settings: '&c&lVề cài đặt thuốc'
+        name-editor: '&c&lVề sửa vật phẩm'
+        lore:
+        - '&7Bấm để quay lại.'
+  lore-editor:
+    title: Sửa tên và mô tả
+    enter-display-name: '{PREFIX} &aGõ tên hiển thị vào chat:'
+    enter-lore-line: '{PREFIX} &aGõ dòng mô tả muốn thêm vào chat:'
+    enter-new-lore-line: '{PREFIX} &aGõ dòng mô tả thay thế vào chat:'
+    buttons:
+      set-name:
+        name: '&e&lĐặt tên hiển thị'
+        default-name: '&7(Mặc định)'
+        lore:
+        - '&7Hiện tại: %name%'
+        - ' '
+        - '&aBấm để đổi tên hiển thị.'
+      reset-name:
+        name: '&c&lTrả tên mặc định'
+        lore:
+        - '&7Bấm để dùng lại tên gốc của vật phẩm.'
+      add-lore:
+        name: '&a&l+ Thêm dòng mô tả'
+        lore:
+        - '&7Bấm để thêm một dòng mô tả.'
+      clear-lore:
+        name: '&c&lXoá hết mô tả'
+        lore:
+        - '&7Bấm để xoá mọi dòng mô tả.'
+      lore-entry:
+        name: '&eDòng %index%: %line%'
+        lore:
+        - '&a[Chuột trái] &7Sửa dòng'
+        - '&e[Shift + trái] &7Chuyển LÊN'
+        - '&b[Shift + phải] &7Chuyển XUỐNG'
+        - '&c[Chuột phải] &7Xoá dòng'
+      back:
+        name: '&c&lVề sửa vật phẩm'
+        lore:
+        - '&7Bấm để quay lại.'
+  bedrock-customkits:
+    main-menu:
+      title: Bộ đồ của tôi
+      content: '&7Quản lý bộ đồ tự tạo để đấu.\n&eBộ đồ: &a%count% &7/ &e%limit%\n'
+      create: '&a+ Tạo bộ đồ mới'
+      item-format: '&b%name%\n&7(%items% món)'
+    create-prompt:
+      title: Tạo bộ đồ
+      name-label: Tên bộ đồ
+      name-placeholder: Nhập tên (ví dụ KiemPvP)
+    duplicate-prompt:
+      title: Nhân bản bộ đồ
+      name-label: Tên bộ đồ mới
+      copy-suffix: ' (bản sao)'
+    actions:
+      title: 'Bộ đồ: %kit%'
+      content: '&eChọn việc muốn làm với bộ đồ này:'
+      edit-layout: '&e✏ Sắp xếp túi đồ'
+      edit-settings: '&b⚙ Sửa tên / mô tả'
+      preview: '&a👁 Xem trước'
+      duplicate: '&6❐ Nhân bản'
+      delete: '&c✘ Xoá'
+      back: '&7« Về danh sách bộ đồ'
+    layout:
+      title: 'Sắp xếp: %kit%'
+      content: '&7Chạm một ô để chọn vật phẩm:\n'
+      save: '&a✔ Lưu bộ đồ'
+      discard: '&c✘ Bỏ thay đổi / huỷ'
+      helmet: '&e[Mũ] &f%item%'
+      chestplate: '&e[Áo giáp] &f%item%'
+      leggings: '&e[Quần giáp] &f%item%'
+      boots: '&e[Giày] &f%item%'
+      offhand: '&6[Tay trái] &f%item%'
+      hotbar: '&b[Thanh nhanh %slot%] &f%item%'
+      inventory: '&7[Túi %slot%] &f%item%'
+    slot-options:
+      title-item: 'Vật phẩm: %material%'
+      title-empty: Ô trống
+      edit-properties: '&e✏ Sửa thuộc tính'
+      change-material: '&b🔄 Đổi loại vật phẩm'
+      clear-slot: '&c✘ Làm trống ô'
+      choose-material: '&a+ Chọn vật phẩm'
+      back: '&7« Quay lại'
+    properties:
+      title: 'Sửa: %material%'
+      display-name-label: Tên hiển thị
+      amount-label: Số lượng
+      unbreakable-label: Không bao giờ hỏng
+    settings:
+      title: 'Cài đặt: %kit%'
+      name-label: Tên bộ đồ
+      desc-line-1: Mô tả dòng 1
+      desc-line-2: Mô tả dòng 2
+    categories:
+      title: Chọn nhóm
+    material-picker:
+      title-armor: Chọn giáp (%slot%)
+      title-category: 'Chọn vật phẩm: %category%'
+    preview:
+      title: 'Xem trước: %kit%'
+      header: '&e=== Xem trước bộ đồ: &f%kit% &e===\n\n'
+      armor-header: '&6Giáp:\n'
+      armor-slot: '&7- %slot%: &f%item%\n'
+      offhand-slot: '&7- Tay trái: &f%item%\n\n'
+      hotbar-header: '&6Thanh nhanh:\n'
+      hotbar-item: '&7%slot%. &f%item%\n'
+      inventory-header: \n&6Túi đồ:\n
+      inventory-item: '&7%slot%. &f%item%\n'
+      back: '&a« Quay lại'
+      empty: Trống
+  bedrock-duel:
+    title: Thách đấu %target%
+    select-kit: Chọn bộ đồ
+    select-arena: Chọn sân
+    enable-bet: Bật cược
+    bet-amount: Số tiền cược
+    own-inventory: Dùng đồ của mình
+    custom-kit-prefix: '[Tự tạo] '
+    server-kit-prefix: '[Server] '
+  bedrock-accept:
+    title: Lời thách đấu
+    challenge: '&e%sender%&r thách đấu bạn!\n\n'
+    kit: '&7Bộ đồ: &f%kit%\n'
+    own-inventory: '&7Dùng đồ của mình: &aBật\n'
+    arena: '&7Sân: &f%arena%\n'
+    bet: '&7Cược: &6$%bet%\n'
+    item-betting: '&7Cược đồ: &aBật\n'
+    question: \n&fBạn có nhận không?
+    accept: '&a✔ Nhận'
+    deny: '&c✘ Từ chối'
+    preview-custom-kit: '&b👁 Xem bộ đồ tự tạo'
+  settings:
+    title: Cài đặt thách đấu
+    buttons:
+      details:
+        name: '&9Chi tiết'
+        lore:
+        - '&7Đối thủ: &f%opponent%'
+        - '&7Bộ đồ: &3%kit%'
+        - '&7Dùng đồ của mình: &r%own_inventory%'
+        - '&7Sân: &e%arena%'
+        - '&7Cược đồ: &r%item_betting%'
+        - '&7Cược: &6$%bet_amount%'
+        - ' '
+        - '&7Muốn đổi tiền cược'
+        - '&7thì gõ'
+        - '&b/duel %opponent% [số tiền]'
+      kit-selector:
+        name: '&9Chọn bộ đồ'
+        lore:
+        - '&7Bộ đồ đã chọn: &3%kit%'
+        - ' '
+        - '&aBấm để đổi bộ đồ!'
+        lore-no-permission:
+        - '&cBạn không có quyền'
+        - '&cdùng lựa chọn này.'
+      use-own-inventory:
+        name: '&9Dùng đồ của mình'
+        material: CHEST
+        lore:
+        - '&7Dùng đồ của mình: &r%own_inventory%'
+        - ' '
+        - '&aBấm để bật/tắt!'
+        lore-no-permission:
+        - '&cBạn không có quyền'
+        - '&cdùng lựa chọn này.'
+      arena-selector:
+        name: '&9Chọn sân'
+        lore:
+        - '&7Sân đã chọn: &e%arena%'
+        - ' '
+        - '&aBấm để đổi sân!'
+        lore-no-permission:
+        - '&cBạn không có quyền'
+        - '&cdùng lựa chọn này.'
+      item-betting:
+        name: '&9Cho cược đồ'
+        lore:
+        - '&7Cược đồ: &r%item_betting%'
+        - ' '
+        - '&aBấm để bật/tắt cược đồ!'
+        lore-no-permission:
+        - '&cBạn không có quyền'
+        - '&cdùng lựa chọn này.'
+      send:
+        name: '&a&lGỬI LỜI THÁCH ĐẤU'
+      cancel:
+        name: '&c&lHUỶ'
+  kit-selector:
+    title: Chọn bộ đồ
+    buttons:
+      previous-page:
+        name: '&aTrang trước'
+      next-page:
+        name: '&aTrang sau'
+      empty:
+        name: '&cTrang này trống.'
+  kit-edit-selector:
+    title: Chọn bộ đồ để sửa
+    buttons:
+      previous-page:
+        name: '&aTrang trước'
+      next-page:
+        name: '&aTrang sau'
+      empty:
+        name: '&cKhông có bộ đồ nào để sửa.'
+  arena-selector:
+    title: Chọn sân
+    buttons:
+      arena:
+        name: '&e%name%'
+        lore-default:
+        - '&eTrạng thái: &r{status}'
+        lore-available:
+        - '&aĐang trống'
+        lore-unavailable:
+        - '&cĐang bận'
+      previous-page:
+        name: '&aTrang trước'
+      next-page:
+        name: '&aTrang sau'
+      empty:
+        name: '&cTrang này trống.'
+  queues:
+    title: Hàng chờ đấu
+    buttons:
+      queue:
+        name: '&3%name%'
+        lore:
+        - '&7Cược: &6$%bet_amount%'
+        - '&7Đang chờ: &f%in_queue%'
+        - '&7Đang đấu: &f%in_match%'
+        - ' '
+        - '&a&lBấm để vào hàng chờ!'
+        rated: '&aCó'
+        unrated: '&cNo'
+      previous-page:
+        name: '&aTrang trước'
+      next-page:
+        name: '&aTrang sau'
+      empty:
+        name: '&cTrang này trống.'
+  item-betting:
+    title: Thắng ăn hết!
+    buttons:
+      head:
+        name: '&e%name%'
+      state:
+        name-ready: '&a&lSẴN SÀNG'
+        name-not-ready: '&7&lCHƯA SẴN SÀNG'
+      details:
+        name: '&9Chi tiết trận'
+        lore:
+        - '&7Bộ đồ: &3%kit%'
+        - '&7Sân: &e%arena%'
+        - '&7Cược: &6$%bet_amount%'
+      cancel:
+        name: '&c&lBẤM ĐỂ HUỶ'
+        lore:
+        - '&7Bấm hoặc đóng bảng'
+        - '&7để huỷ trận.'
+  inventory-view:
+    title: '&e%name%'
+    buttons:
+      head:
+        name: '&e%name%'
+      potion-counter:
+        name: '&d%potions% bình thuốc hồi máu'
+      effects:
+        name: '&bHiệu ứng thuốc'
+        lore-format: '&7%type% %amplifier% (%duration%s)'
+      hunger:
+        name: '&6%hunger% vạch no'
+      health:
+        name: '&c%health% ❤'
+  options:
+    title: 'Bộ đồ: %kit%'
+    buttons:
+      option:
+        name: '&b%name%'
+        lore:
+        - ' '
+        - '&7Trạng thái: &r%state%'
+        - ' '
+        - '&r&lBẤM ĐỂ BẬT/TẮT'
+  bind:
+    title: 'Bộ đồ: %kit%'
+    buttons:
+      arena:
+        name: '&e%arena%'
+        lore-bound:
+        - '&7Bộ đồ gắn với sân: &3%kits%'
+        - ' '
+        - '&a&lĐÃ GẮN'
+        - ' '
+        - '&r&lBẤM ĐỂ BẬT/TẮT'
+        lore-not-bound:
+        - '&7Bộ đồ gắn với sân: &3%kits%'
+        - ' '
+        - '&c&lCHƯA GẮN'
+        - ' '
+        - '&r&lBẤM ĐỂ BẬT/TẮT'
+  replay-browser:
+    title: Xem lại trận đấu
+    player-title: 'Xem lại: %player%'
+    end-reason:
+      OPPONENT_DEFEAT: Hạ đối thủ
+      TIE: Hoà
+      MAX_TIME_REACHED: Hết giờ
+      PLUGIN_DISABLE: Plugin tắt
+      OTHER: Khác
+    buttons:
+      entry:
+        name: '&eXem lại: &b%player1% &7đấu &b%player2%'
+        lore:
+        - '&7ID: &8%id%'
+        - '&7Thắng: &a%winner%'
+        - '&7Thua: &c%loser%'
+        - '&7Bộ đồ: &f%kit%'
+        - '&7Sân: &e%arena%'
+        - '&7Thời lượng: &e%duration%'
+        - '&7Kết thúc vì: &7%reason%'
+        - '&7Ngày: &8%date%'
+        - ' '
+        - '&e► Chuột trái để xem lựa chọn / xem lại'
+        lore-admin:
+        - '&c► Shift + chuột phải để xoá'
+      previous-page:
+        name: '&a« Trang trước'
+      next-page:
+        name: '&aTrang sau »'
+      empty:
+        name: '&cChưa có bản xem lại nào.'
+  replay-details:
+    title: 'Xem lại: %id%'
+    buttons:
+      summary:
+        name: '&e&lChi tiết trận'
+        lore:
+        - '&7Mã: &f%id%'
+        - '&7Người chơi 1: &b%player1%'
+        - '&7Người chơi 2: &b%player2%'
+        - '&7Thắng: &a%winner%'
+        - '&7Thua: &c%loser%'
+        - '&7Bộ đồ: &f%kit%'
+        - '&7Sân: &e%arena%'
+        - '&7Thời lượng: &e%duration%'
+        - '&7Cược: &6$%bet%'
+        - '&7Kết thúc vì: &7%reason%'
+        - '&7Ngày: &8%date%'
+        lore-bet: '&7Cược: &6$%bet%'
+      play:
+        name: '&a&l▶ Xem lại'
+        lore:
+        - '&7Bấm để vào chế độ xem lại.'
+        - '&eBạn sẽ xem bằng camera khán giả!'
+      delete:
+        name: '&c&l✖ Xoá bản xem lại'
+        lore:
+        - '&7Bấm để xoá hẳn bản xem lại này.'
+      back:
+        name: '&7« Về danh sách'
+    end-reason:
+      OPPONENT_DEFEAT: Hạ đối thủ
+      TIE: Hoà
+      MAX_TIME_REACHED: Hết giờ
+      PLUGIN_DISABLE: Plugin tắt
+      OTHER: Khác
+
+
+KIT:
+  EDIT:
+    started: '{PREFIX} &aBạn đang sửa bộ đồ &e%kit%&a. Xong thì gõ &e/%command% save&a.'
+    saved: '{PREFIX} &aĐã lưu bộ đồ &e%kit% &avà trả lại túi đồ của bạn.'
+    already-editing: '{PREFIX} &cBạn đang sửa một bộ đồ rồi. Gõ &e/%command% save &cđể lưu trước.'
+    not-editing: '{PREFIX} &cBạn không đang sửa bộ đồ nào.'
+    start-failed: '{PREFIX} &cKhông bắt đầu sửa bộ đồ được.'
+    save-failed: '{PREFIX} &cKhông lưu được bộ đồ. Thử lại nhé.'
+    in-queue: '{PREFIX} &cKhông sửa bộ đồ được khi đang trong hàng chờ. Rời hàng chờ trước.'
+    in-match: '{PREFIX} &cKhông sửa bộ đồ được khi đang đấu. Đợi trận kết thúc.'
+    session-aborted: '{PREFIX} &cĐã dừng sửa bộ đồ vì bạn vào hàng chờ hoặc vào trận.'
+    invalid-items: '{PREFIX} &cĐã dừng sửa bộ đồ! Chỉ được sắp xếp đồ có sẵn trong bộ gốc, không được thêm đồ từ ngoài.'
+    command-blocked: '{PREFIX} &cKhông dùng lệnh khác được khi đang sửa bộ đồ. Gõ &e/%command% save &cđể lưu.'
+    drop-blocked: '{PREFIX} &cKhông vứt đồ được khi đang sửa bộ đồ.'
+    inventory-blocked: '{PREFIX} &cKhông mở rương/kho được khi đang sửa bộ đồ.'
+    block-break-blocked: '{PREFIX} &cKhông phá khối được khi đang sửa bộ đồ.'
+    block-place-blocked: '{PREFIX} &cKhông đặt khối được khi đang sửa bộ đồ.'
+    interact-blocked: '{PREFIX} &cKhông tương tác với khối được khi đang sửa bộ đồ.'
+    cancelled: '{PREFIX} &aĐã huỷ sửa bộ đồ, trả lại túi đồ của bạn.'
+  RESET:
+    success: '{PREFIX} &aĐã đưa bộ đồ &e%kit% &acủa bạn về mặc định.'
+    success-other: '{PREFIX} &aĐã đưa bộ đồ &e%kit% &acủa &e%name% &avề mặc định.'
+    reset-by-admin: '{PREFIX} &aAdmin đã đưa bộ đồ &e%kit% &acủa bạn về mặc định.'
+    not-edited: '{PREFIX} &c%name% chưa sửa bộ đồ &e%kit%&c.'
+    failed: '{PREFIX} &cKhông đưa được bộ đồ &e%kit% &ccủa %name% về mặc định.'

@@ -2,7 +2,8 @@
   xuất câu cần dịch:  python3 yamlvi.py dump  <file.yml>                 -> in JSON [đường dẫn, câu] mỗi dòng
   ghi bản dịch:       python3 yamlvi.py apply <file.yml> <bandich.json>   -> sửa tại chỗ
 bandich.json: {"đường.dẫn": "câu Việt", "đường.dẫn.0": "dòng 1 của danh sách", ...}; đường dẫn nối bằng dấu chấm, số = chỉ số danh sách.
-Lúc ghi: kiểm câu dịch giữ đủ biến ({x}, %x%, <x>, {0}), sai thì báo và bỏ qua câu đó."""
+Lúc ghi: kiểm câu dịch giữ đủ biến ({x}, %x%, <x>, {0}), sai thì báo và bỏ qua câu đó.
+  --no-angle: không coi <x> là biến (plugin dùng %x% làm biến, <x> chỉ là chữ trong cú pháp lệnh, vd Duels)."""
 import json
 import re
 import sys
@@ -63,7 +64,10 @@ def main():
         except (KeyError, IndexError, ValueError, TypeError):
             miss.append(path)
             continue
-        if sorted(VARS.findall(str(old))) != sorted(VARS.findall(vi)):
+        va, vb = VARS.findall(str(old)), VARS.findall(vi)
+        if "--no-angle" in sys.argv:
+            va, vb = [x for x in va if not x.startswith("<")], [x for x in vb if not x.startswith("<")]
+        if sorted(va) != sorted(vb):
             bad.append(path)
             continue
         parent[last] = type(old)(vi) if isinstance(old, str) else vi

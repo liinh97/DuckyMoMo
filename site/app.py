@@ -452,7 +452,9 @@ def api_info():
     return {
         "site": site,
         "season": {"id": get(core, "leaderboard.season", "1"), "start": get(core, "leaderboard.season-start", "") or None,
-                   "weeks": 10, "double_week": get(core, "leaderboard.double-week", 10)},
+                   "weeks": 13, "double_week": get(core, "leaderboard.double-week", 13),
+                   "register_week": get(core, "leaderboard.register-week", 12), "vote_week": get(core, "leaderboard.vote-week", 13),
+                   "title_before_week": get(core, "leaderboard.title-member-before-week", 12)},
         "siege": {
             "days": siege_days,
             "session_minutes": int(get(sw, "battle_session_scheduler.session_duration_minutes", 60)),
@@ -649,6 +651,14 @@ def api_bantron():
                          "thanhvien": len(o.get("thanhvien") or [])})
     tt = []
     now_ms = time.time() * 1000
+    events = []
+    for sid, v in (tc.get("sk") or {}).items():
+        if not isinstance(v, dict) or float(v.get("het", 0) or 0) <= now_ms:
+            continue
+        org = ((tc.get("tc") or {}).get(v.get("tochuc")) or {}).get("ten") or v.get("tochuc")
+        events.append({"id": sid, "ten": v.get("ten"), "tochuc": org, "bd": fmt_ms(v.get("bd")), "het": fmt_ms(v.get("het")),
+                       "dang": float(v.get("bd", 0) or 0) <= now_ms, "ms": v.get("bd", 0)})
+    events.sort(key=lambda x: x["ms"])
     for v in ((load_yaml(plugin("DuckyMoMoCore", "treothuong.yml")).get("muc")) or {}).values():
         if not isinstance(v, dict) or float(v.get("het", 0) or 0) <= now_ms:
             continue
@@ -665,6 +675,7 @@ def api_bantron():
         "daidien": {"ten": rep.get("ten"), "den": fmt_ms(rep.get("den")), "tam": bool(rep.get("tam"))},
         "bau": {"mo": bool(bau.get("mo")), "dong": fmt_ms(bau.get("dong")), "ungvien": bau.get("ungvien") or []},
         "orgs": orgs,
+        "events": events,
     }
 
 

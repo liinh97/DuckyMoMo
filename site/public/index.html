@@ -368,6 +368,7 @@ footer .fbrand img{width:44px}
       <a href="#xephang">Xếp hạng</a>
       <a href="#vinhdanh">Vinh danh</a>
       <a href="#vote">Vote</a>
+      <a href="#lenh">Lệnh</a>
       <a href="#luat">Luật</a>
       <a href="#hoidap">Hỏi đáp</a>
     </nav>
@@ -486,7 +487,7 @@ footer .fbrand img{width:44px}
     <div class="kicker">Chế độ chính</div>
     <h2>Bang Hội Chiến: từ kẻ lang thang thành Bá Chủ</h2>
     <p class="intro">Bản đồ là Đông Nam Á thật, thu nhỏ 1:1000: từ Myanmar tới Nam Trung Quốc, từ Tây Bắc Việt Nam tới Nam Bộ. Spawn đặt ở Hà Nội, nơi có
-      kinh đô của Liên minh Hoà Bình. Mỗi mùa kéo dài 10 tuần rồi mở thế giới mới cho công bằng.</p>
+      kinh đô của Liên minh Hoà Bình. Mỗi mùa kéo dài 3 tháng (13 tuần) rồi mở thế giới mới cho công bằng.</p>
 
     <div class="journey">
       <div class="jstep"><div class="n">BƯỚC 1</div><h3>Đặt chân</h3><p class="muted">Nhận quà tân thủ, đọc <span class="kbd">/huongdan</span>, dùng <span class="kbd">/tpr</span> chọn vùng đất muốn tới.</p></div>
@@ -496,7 +497,7 @@ footer .fbrand img{width:44px}
       <div class="jstep"><div class="n">BƯỚC 5</div><h3>Công thành</h3><p class="muted">Cắm cờ vây thành địch, đánh vào tối cuối tuần, cướp tiền hoặc chiếm làm thuộc địa.</p></div>
     </div>
 
-    <h3 style="margin-top:36px">Lịch một mùa (10 tuần)</h3>
+    <h3 style="margin-top:36px">Lịch một mùa (<span data-k="season.weeks">13</span> tuần)</h3>
     <div class="season" id="seasonBar"></div>
     <div class="legend"><span><i style="background:rgba(62,207,142,.5)"></i>Hoà bình: xây dựng, chưa cho công thành</span><span><i style="background:rgba(242,184,75,.5)"></i>Chiến tranh: công thành theo lịch</span><span><i style="background:rgba(239,83,80,.6)"></i>Đại chiến + đóng mùa</span></div>
 
@@ -645,7 +646,10 @@ footer .fbrand img{width:44px}
         <p class="muted">Từ 3 dân hoà bình lập tổ chức (<span class="kbd">/tochuc</span>), Hội đồng Hoà Bình bỏ phiếu cấp giấy phép, phí <span data-k="peace.license_fee">100</span> xu/tuần từ quỹ tổ chức.</p>
         <ul class="clean j"><li><b>Thương Hội</b>: thêm shop rương, thêm món đấu giá, rao hàng toàn server <span class="kbd">/quangcao</span></li>
           <li><b>Tổ chức Sự kiện</b>: tạo sự kiện có điểm dịch chuyển, trao thưởng, mở đấu trường không mất đồ</li></ul>
-        <div id="orgList"></div></div>
+        <div id="orgList"></div>
+        <h3 style="margin-top:14px">✦ Sự kiện sắp diễn ra</h3>
+        <div id="eventList"><div class="empty">Đang tải…</div></div>
+        <p class="dim" style="font-size:.85rem;margin-top:6px">Trong game: <span class="kbd">/sukien</span> xem, <span class="kbd">/sukien den &lt;mã&gt;</span> tới nơi (vd <span class="kbd">/sukien den S2</span>). Điểm dịch chuyển mở 24 giờ.</p></div>
     </div>
     <div class="card" style="margin-top:16px"><div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px"><h3 style="margin:0">Thị trấn trong liên minh</h3><span class="live"><span class="dot on"></span>Trực tiếp từ server</span></div>
       <div id="peaceTowns" style="margin-top:10px"></div></div>
@@ -881,9 +885,9 @@ footer .fbrand img{width:44px}
     </div>
     <div class="grid g4 swipe" id="awards" style="margin-top:16px">
       <div class="card"><h3>💰 Đại Phú Hộ</h3><p class="muted">Giàu nhất lúc đóng mùa. Xem top 5 ở hologram tại spawn hoặc <span class="kbd">/bxh phuho</span>.</p></div>
-      <div class="card"><h3>🏯 Kiến Trúc Sư</h3><p class="muted">Tuần 9 thị trấn đăng ký, tuần 10 người chơi bình chọn (<span class="kbd">/binhchon</span>). Không bỏ phiếu cho thị trấn mình.</p></div>
+      <div class="card"><h3>🏯 Kiến Trúc Sư</h3><p class="muted">Tuần <b data-k="season.register_week">12</b> thị trưởng đăng ký (<span class="kbd">/binhchon dangky</span>), tuần <b data-k="season.vote_week">13</b> người chơi đủ 5 giờ đi tham quan (<span class="kbd">/binhchon xem &lt;thị trấn&gt;</span>) và bỏ 1 phiếu (<span class="kbd">/binhchon &lt;thị trấn&gt;</span>). Không bỏ phiếu cho thị trấn mình, tài khoản phụ không bầu.</p></div>
       <div class="card"><h3>🎖️ Danh hiệu</h3><div id="titles" class="votes"></div><p class="muted" style="margin-top:8px;font-size:.9rem">Chọn hiển thị bằng <span class="kbd">/danhhieu</span>.</p></div>
-      <div class="card"><h3>🛡️ Công bằng</h3><p class="muted">Danh hiệu cả quốc gia chỉ cho thành viên từ trước tuần 9 và chơi đủ 10 giờ. Đóng mùa có 3 ngày khiếu nại ở Hội Bàn Tròn.</p></div>
+      <div class="card"><h3>🛡️ Công bằng</h3><p class="muted">Danh hiệu cả quốc gia chỉ cho thành viên từ trước tuần <b data-k="season.title_before_week">12</b> và chơi đủ 10 giờ. Đóng mùa có 3 ngày khiếu nại ở Hội Bàn Tròn.</p></div>
     </div>
     <div class="dots" id="awardDots" aria-hidden="true"></div>
   </div>
@@ -922,6 +926,66 @@ footer .fbrand img{width:44px}
         <div class="tbl" style="margin-top:10px"><table><thead><tr><th>#</th><th>Người chơi</th><th>Lượt</th></tr></thead><tbody id="tVote"></tbody></table></div>
       </div>
     </div>
+  </div>
+</section>
+
+<!-- ============ LỆNH HAY DÙNG ============ -->
+<section id="lenh" class="alt">
+  <div class="wrap">
+    <div class="kicker">Tra nhanh</div>
+    <h2>Lệnh hay dùng, có ví dụ</h2>
+    <p class="intro">Gõ trong khung chat (phím <span class="kbd">T</span> trên máy tính, nút chat trên điện thoại). Chữ trong <span class="kbd">&lt; &gt;</span> là phần bạn tự điền, không gõ dấu ngoặc.
+      Trong game có cẩm nang đầy đủ: <span class="kbd">/huongdan</span> (hoặc <span class="kbd">/hd</span>), mở thẳng một chương: <span class="kbd">/hd pet</span>.</p>
+    <div class="grid g3">
+      <div class="card"><h3>🚪 Bắt đầu</h3><ul class="clean">
+        <li><span class="kbd">/register meo123 meo123</span> lần đầu vào</li>
+        <li><span class="kbd">/login meo123</span> những lần sau</li>
+        <li><span class="kbd">/menu</span> chọn chế độ (hoặc bấm la bàn)</li>
+        <li><span class="kbd">/server banghoi-1</span> đổi thẳng sang Bang Hội Chiến</li>
+        <li><span class="kbd">/caidat</span> bật/tắt chat, thông báo, nhắc nhở</li>
+        <li><span class="kbd">/web</span> lấy mã 6 số đăng nhập trang này</li></ul></div>
+      <div class="card"><h3>🧭 Đi lại</h3><ul class="clean">
+        <li><span class="kbd">/spawn</span> về spawn · <span class="kbd">/warp pvp</span> tới địa danh</li>
+        <li><span class="kbd">/tpr taybac</span> tới đất hoang ở Tây Bắc (chờ 5 phút giữa 2 lần)</li>
+        <li><span class="kbd">/sethome nha</span> rồi <span class="kbd">/home nha</span></li>
+        <li><span class="kbd">/tpa Linh</span> xin tới chỗ Linh, Linh gõ <span class="kbd">/tpaccept</span></li>
+        <li><span class="kbd">/t spawn</span> về thị trấn · <span class="kbd">/thaiap</span> về Thái Ấp</li></ul></div>
+      <div class="card"><h3>🏘️ Thị trấn &amp; quốc gia</h3><ul class="clean">
+        <li><span class="kbd">/t new HaNoi</span> lập thị trấn (cần 3 giờ chơi, 500 xu)</li>
+        <li><span class="kbd">/t claim</span> mua ô đất đang đứng (25 xu)</li>
+        <li><span class="kbd">/t add Linh</span> mời dân · <span class="kbd">/t deposit 300</span> nộp quỹ</li>
+        <li><span class="kbd">/n new DaiViet</span> lập quốc gia (1.000 xu)</li>
+        <li><span class="kbd">/hoabinh vao</span> thị trưởng đưa thị trấn vào Liên minh Hoà Bình</li>
+        <li><span class="kbd">/tochuc lap thuonghoi BanMai</span> lập Thương Hội (dân hoà bình)</li></ul></div>
+      <div class="card"><h3>💰 Tiền &amp; buôn bán</h3><ul class="clean">
+        <li><span class="kbd">/bal</span> xem tiền · <span class="kbd">/pay Linh 100</span> chuyển tiền</li>
+        <li><span class="kbd">/sell hand</span> bán đồ đang cầm · <span class="kbd">/worth</span> xem giá</li>
+        <li><span class="kbd">/ah sell 250</span> đăng chợ (chỉ trong đất hoà bình)</li>
+        <li><span class="kbd">/trade Linh</span> đổi đồ an toàn, hai bên cùng bấm đồng ý</li>
+        <li><span class="kbd">/donhang tao 1000 1</span> cần mua 1.000 món đang cầm, 1 xu/món</li>
+        <li><span class="kbd">/jobs</span> nghề · <span class="kbd">/skills</span> kỹ năng · <span class="kbd">/capdo</span> thăng cấp</li></ul></div>
+      <div class="card"><h3>🎁 Mỗi ngày</h3><ul class="clean">
+        <li><span class="kbd">/diemdanh</span> nhận xu (online đủ 5 phút)</li>
+        <li><span class="kbd">/nhiemvu</span> 3 nhiệm vụ ngày, đổi lúc 0h</li>
+        <li><span class="kbd">/vongquay</span> vé miễn phí mỗi 60 phút chơi thật</li>
+        <li><span class="kbd">/vote</span> mỗi lượt 100 xu, nhớ nhập đúng tên</li>
+        <li><span class="kbd">/doimanh</span> đổi mảnh sự kiện trước khi hết hạn</li></ul></div>
+      <div class="card"><h3>🐾 Pet, dungeon, khám phá</h3><ul class="clean">
+        <li><span class="kbd">/petcall</span> gọi pet · <span class="kbd">/bxhpet tyle</span> tỉ lệ bắt</li>
+        <li><span class="kbd">/dautruong thachdau Linh</span> thách đấu người + pet</li>
+        <li><span class="kbd">/dungeon</span> danh sách, <span class="kbd">/dungeon mua &lt;mã&gt;</span> mua vé</li>
+        <li><span class="kbd">/lukhach</span> lữ khách đang ở vùng nào</li>
+        <li><span class="kbd">/journal</span> nhật ký cốt truyện · <span class="kbd">/khobau</span> · <span class="kbd">/truyna</span></li></ul></div>
+    </div>
+    <div class="callout" style="margin-top:20px"><b>Nhớ kỹ:</b>
+      thoát game khi đang bị đánh (cờ giao tranh 15 giây) là <b>chết, rơi đồ</b> ·
+      đồ dưới đất bị dọn mỗi 10 phút (chết thì đồ quanh chỗ chết được giữ 10 phút) ·
+      thị trấn hết quỹ là <b>tan</b> (phí 10 xu/ngày) ·
+      chuyển tiền, treo thưởng không lấy lại được ·
+      mua bán đồ thì dùng <span class="kbd">/trade</span>, admin không trả đồ bị lừa ngoài /trade ·
+      tối đa 2 tài khoản, acc phụ phải khai <span class="kbd">/taikhoanphu</span> ·
+      <span class="kbd">/choilai</span> mất hết, dỡ shop và rút hàng <span class="kbd">/ah</span> trước ·
+      không đưa mã <span class="kbd">/web</span> hay mật khẩu cho ai, admin không bao giờ hỏi.</div>
   </div>
 </section>
 
@@ -977,7 +1041,7 @@ footer .fbrand img{width:44px}
     <details><summary>Có voice chat không?</summary><div><b>Sắp có</b> cho người chơi máy tính (Java, cài thêm mod Simple Voice Chat): nghe nhau trong khoảng 40 block, lập nhóm để cả thị trấn nói chuyện ở mọi nơi. Điện thoại (Bedrock) chưa dùng được voice trong game. Trong lúc chờ, hãy dùng Discord hoặc Zalo để nói chuyện với đồng đội.</div></details>
     <details><summary>Có pet chiến đấu không? Có phải mua không?</summary><div>Có, và <b>không bán</b>. Đánh một con thú hoặc quái tới khi yếu máu (thanh máu hiện trên đầu khi đánh) rồi quăng dây xích vào là bắt được. Pet lên cấp, chọn hệ Chiến Binh, Hậu Cần, Đấu Sĩ, Thú Cưỡi hoặc Nông Trại; lớn lên thế nào còn theo bản tính loài (thú lớn trâu, thú săn đánh đau, chỉ loài bay mới cưỡi bay được). Rank ủng hộ chỉ được giữ thêm vài con trong kho, mỗi lúc ai cũng chỉ dẫn 1 con. Xem mục <a href="#pet">Pet</a>.</div></details>
     <details><summary>Đấu Trường là gì?</summary><div>Khu đấu riêng người + pet, 1v1 hoặc 2v2. Gõ <span class="kbd">/warp pvp</span> hoặc bấm NPC ở spawn, bước vào một trong 3 cổng là vào sân chờ đối thủ. Dùng đồ của mình, chết không rơi đồ, có cược tuỳ chọn và bảng xếp hạng. Xem mục <a href="#dautruong">Đấu Trường</a>.</div></details>
-    <details><summary>Hết mùa thì sao?</summary><div>Sau 10 tuần mùa đóng lại, trao danh hiệu, thế giới cũ được giữ làm bảo tàng để xem lại. Mùa mới mở vùng đất mới, mọi người bắt đầu ngang nhau; danh hiệu và rank ủng hộ được giữ.</div></details>
+    <details><summary>Hết mùa thì sao?</summary><div>Sau 3 tháng (13 tuần) mùa đóng lại, trao danh hiệu, thế giới cũ được giữ làm bảo tàng để xem lại. Mùa mới mở vùng đất mới, mọi người bắt đầu ngang nhau; danh hiệu và rank ủng hộ được giữ.</div></details>
   </div>
 </section>
 
@@ -1051,8 +1115,9 @@ function seasonBar(info){
   const start = info.season.start ? new Date(info.season.start + "T00:00:00+07:00") : null;
   const week = start ? Math.floor((Date.now()-start)/604800000)+1 : 0;
   let h = "";
-  for (let w=1; w<=10; w++){
-    const cls = w<=2 ? "peace" : w===10 ? "big" : "war";
+  const n = info.season.weeks || 13, big = info.season.double_week || n;
+  for (let w=1; w<=n; w++){
+    const cls = w<=2 ? "peace" : w>=big ? "big" : "war";
     h += `<div class="wk ${cls} ${w===week?'now':''}" title="Tuần ${w}">T${w}</div>`;
   }
   $("#seasonBar").innerHTML = h;
@@ -1222,6 +1287,7 @@ async function loadBantron(){
       : `<div class="empty">Chưa có kiến nghị.</div>`;
     $("#bounties").innerHTML = (b.treothuong || []).length ? `<div class="tbl"><table><thead><tr><th>Bị treo</th><th>Tiền thưởng</th><th>Người treo</th><th>Hết hạn</th></tr></thead><tbody>${b.treothuong.map(t => `<tr><td><b class="red">${esc(t.ten)}</b></td><td><b>${nf.format(Math.round(t.tong))} xu</b></td><td class="muted">${esc(t.boi.join(", "))}</td><td class="muted">${esc(t.het || "")}</td></tr>`).join("")}</tbody></table></div>`
       : `<div class="empty">Chưa có ai bị treo thưởng.</div>`;
+    $("#eventList").innerHTML = (b.events || []).length ? `<div class="votes">${b.events.map(e=>`<span><b>${esc(e.id)}</b> · ${esc(e.ten)} · ${esc(e.tochuc||"")} · ${e.dang?"đang diễn ra, tới " + esc(e.het):"bắt đầu " + esc(e.bd)}</span>`).join("")}</div>` : `<div class="empty">Chưa có sự kiện nào.</div>`;
     $("#orgList").innerHTML = b.orgs.length ? `<div class="votes">${b.orgs.map(o=>`<span>${esc(o.ten)} · ${esc(o.loai)} · ${esc(o.giayphep)}</span>`).join("")}</div>` : `<div class="empty">Chưa có tổ chức nào.</div>`;
   } catch (e) { $("#cases").innerHTML = `<div class="empty">Không tải được hồ sơ.</div>`; }
 }

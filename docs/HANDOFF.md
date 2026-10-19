@@ -382,6 +382,20 @@
   vé vận mệnh rơi hiếm, tung xúc xắc lúc vào), (4) mua vé cá nhân bằng xu (lượt / 7 ngày), (5) mở chung toàn server bằng quỹ như khai hoang.
   Điều kiện phụ: cấp pet, thành tích, nhóm 2–4 người, cuối tuần, chỉ nước Bá chủ. Chống lạm phát: lượt/ngày, lockout boss của EliteMobs.
 
+### 19/10 tối: Rà soát toàn bộ + cẩm nang chi tiết (người dùng: "check lại toàn bộ tính năng rồi bổ sung, chỉnh sửa web, cẩm nang hướng dẫn thật chi tiết cho admin lẫn người chơi", "lệnh có ví dụ")
+- Cẩm nang trong game (modes/_network/huongdan.yml, đã ./ops/huongdan.sh): viết lại thành 11 chương (mục lục chỉ 1 trang, tối đa ~11):
+  batdau, luat, banghoi (cơ bản), thitran (thị trấn, quốc gia, hoà bình, Hội đồng, Tổ chức, /quangcao, /sukien, Bàn Tròn, Kiến Trúc Sư), congthanh,
+  kinhte, khampha, pet, hangngay (quà hằng ngày + rank), practice, hotro. Bỏ chương rank/pokemon (gộp). Mỗi lệnh có "Vd:" và "Lưu ý:".
+  Guide.java TỰ ngắt dòng + sang trang 13 dòng: trang dài đã tách thành "X (tiếp)" (script mô phỏng font, 124 trang). Mã batdau/banghoi/practice giữ nguyên.
+- Đối chiếu số liệu với config thật: SỬA sai Kiến Trúc Sư (tuần 12 đăng ký / 13 bình chọn, cẩm nang + web ghi 9/10), web còn ghi mùa 10 tuần
+  → 13 tuần (site/app.py season.weeks/register_week/vote_week/title_before_week; thanh lịch mùa vẽ 13 ô, tuần nhân đôi = double-week).
+  /back KHÔNG có cho người chơi (chỉ nhóm quanly) → không đưa vào cẩm nang.
+- Web: mục mới "Lệnh hay dùng, có ví dụ" (#lenh, 6 thẻ + khung Nhớ kỹ), danh sách sự kiện của Tổ chức Sự kiện (api/bantron → events, thẻ Tổ chức).
+- camnang.yml: thêm quy trình admin (Trước khi khởi động lại, Mở Mùa 1, mất đồ/phá nhà với CoreProtect, nghi hack, phát quà nhanh,
+  sửa cẩm nang game, Hội đồng & Tổ chức (admin), Việt hoá tools/vi); mục người chơi mới thêm 4 dòng. lenh-con: menu, web; lenh-hay-dung bổ sung.
+- Chưa chắc: voice chat — proxy đã chạy voicechat (cổng 24454) và relay có ip rule, nhưng chưa ai thử bằng mod; cẩm nang game ghi "báo admin nếu
+  không kết nối được"; camnang mục Simple Voice Chat vẫn ghi "CHƯA BẬT" (sửa sau khi thử).
+
 ### 19/10: Cốt truyện — Citizens + BetonQuest (ĐÃ TRIỂN KHAI 19/10 11:10, CHƯA THỬ TRONG GAME, CHƯA ĐẶT NPC)
 - Nguồn ý tưởng: bài tuyển người Hydronic KSMP (NPC + nhiệm vụ). Người dùng chọn "cách A" = plugin có sẵn (không tự viết trong DuckyMoMoCore);
   bỏ ý quặng mới; vũ khí có skin tính sau; bài tuyển người chưa làm (server chưa xong).

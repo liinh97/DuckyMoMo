@@ -195,6 +195,14 @@ Triển khai: kiểm tra không ai online (lệnh riêng) → `docker compose up
 - [ ] Sau khởi động lại: SimplePets (/pet), PlayerParticles (/pp).
 - [ ] WorldGuard: phá khối ở spawn → "Khu an toàn! Ở spawn không làm việc này được."
 
+## 4m. Cẩm nang mới (/hd) + web mục Lệnh — 19/10 tối
+- [ ] Máy tính: `/hd` mục lục vừa 1 trang (11 chương, dòng "Bấm tên chương" không bị cắt), bấm từng chương nhảy đúng trang; trang "(tiếp)" đọc liền mạch.
+- [ ] `/hd pet` báo đúng số trang; sảnh mở mặc định chương Bắt đầu, Bang Hội Chiến chương Bang Hội: cơ bản, Practice chương Practice.
+- [ ] Điện thoại (Bedrock): bảng 11 nút, nội dung từng chương không lỗi màu.
+- [ ] Đọc lướt số liệu trong sách có khớp thực tế không (giá thị trấn, lịch công thành T7/CN 20:00–21:00, phí tổ chức, Thái Ấp…).
+- [ ] Web: thanh lịch mùa 13 ô; mục "Lệnh hay dùng" trên điện thoại; thẻ Tổ chức có "Sự kiện sắp diễn ra" (thử `/sukien tao 5 Thử` khi có tổ chức có giấy phép).
+- [ ] Voice chat: máy tính cài mod Simple Voice Chat, vào mc.goc6.io.vn, phím V báo đã kết nối → sửa camnang mục Simple Voice Chat (bỏ "CHƯA BẬT").
+
 ## 5. Quảng trường Vinh danh (sảnh)
 - [ ] (CHƯA CẦN, làm khi gần mở server) Chọn chỗ trống ở sảnh (map sakura). Đứng, quay mặt về phía người xem: `/vinhdanh dat moinhat tieude`, rồi `bachu`, `chienthan`, `phuho`,
       `kientrucsu`, `dautruong`, `pet` ở các chỗ khác. Bảng chữ nổi + đầu người chơi đúng hướng, không đè nhau.

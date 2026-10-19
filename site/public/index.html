@@ -335,6 +335,16 @@ h2{font-size:clamp(1.8rem,3.4vw,2.8rem);letter-spacing:-.01em}
 .jstep .n{display:inline-block;padding:2px 8px;border-radius:6px;background:rgba(242,184,75,.12)}
 @media (min-width:1300px){.journey{gap:18px}}
 
+/* giới thiệu */
+.story{max-width:46em;font-size:1.08rem;line-height:1.75}
+.story p{margin:0 0 16px;color:var(--text)}
+.story p.dim2{color:var(--muted)}
+.story .first::first-letter{float:left;font-size:3.2em;line-height:.9;font-weight:800;color:var(--gold);margin:6px 10px 0 0}
+.paths{margin-top:28px}
+.paths .card h3{margin:0 0 6px;font-size:1.05rem}
+.paths .card p{margin:0;color:var(--muted);font-size:.95rem}
+.oath{margin:32px 0 0;padding:20px 24px;border-left:3px solid var(--gold);background:linear-gradient(90deg,rgba(242,184,75,.08),transparent);border-radius:0 14px 14px 0;font-size:1.12rem;font-weight:700}
+.oath .muted{display:block;font-weight:400;font-size:.95rem;margin-top:6px}
 .reveal{opacity:0;transform:translateY(26px);transition:opacity .7s ease,transform .7s ease}
 .reveal.in{opacity:1;transform:none}
 
@@ -370,6 +380,7 @@ footer .fbrand img{width:44px}
   <div class="wrap">
     <a class="brand" href="#top"><img src="logo.png" alt="Logo DuckyMoMo"><span>DuckyMoMo</span></a>
     <nav class="links" id="links">
+      <a href="#gioithieu">Giới thiệu</a>
       <a href="#vao">Cách vào</a>
       <div class="dd"><button class="dd-btn" type="button" aria-haspopup="true">Bang Hội Chiến <span class="caret">▾</span></button>
         <div class="dd-menu">
@@ -450,6 +461,42 @@ footer .fbrand img{width:44px}
 </div>
 
 <div class="marquee" aria-hidden="true"><div class="track" id="marq"></div></div>
+
+<!-- ============ GIỚI THIỆU ============ -->
+<section id="gioithieu">
+  <div class="wrap">
+    <div class="kicker">Câu chuyện của bạn bắt đầu từ đây</div>
+    <h2>Bạn đến tay trắng. Bạn sẽ rời đi với tên tuổi.</h2>
+    <div class="story">
+      <p class="first">Bạn đặt chân xuống Hà Nội với vài trăm xu trong túi, một tấm áo mỏng và cái danh phận chẳng ai muốn: <b>Dân Tị Nạn</b>.
+        Trước mặt là cả bán đảo Đông Nam Á, dựng lại theo bản đồ thật: núi Tây Bắc, đồng bằng sông Hồng, dải đất miền Trung, châu thổ Cửu Long.
+        Đất ấy chưa thuộc về ai. Chỉ là <i>chưa</i>.</p>
+      <p>Già Làng đầu làng có chuyện muốn kể. Nghe xong, bạn cầm rìu đi chặt cây, cầm cần ra sông câu cá, xuống hầm tìm quặng, và từng việc nhỏ ấy đều ra tiền.
+        Rồi một ngày bạn có đủ xu, đủ giờ chơi, cắm cọc lập <b>thị trấn</b> đầu tiên, gọi bạn bè về ở, và đặt cho nó một cái tên.</p>
+      <p>Thị trấn đông lên thì thành <b>quốc gia</b>. Quốc gia có láng giềng, có đồng minh, có kẻ thù. Và mỗi tối cuối tuần, khi cờ vây thành cắm xuống,
+        những gì bạn xây bằng mồ hôi sẽ được thử lửa: giữ <b>kho lương</b>, chờ đúng cơn mưa, đánh vào lúc địch sơ hở.
+        Thắng thì mở rộng bờ cõi. Thua thì không mất trắng, còn nguyên đường gây dựng lại.</p>
+      <p class="dim2">Không thích binh đao? Cũng chẳng sao. Vào <b class="jade">Liên minh Hoà Bình</b>, làm thương nhân, nông dân, kiến trúc sư, và yên tâm
+        rằng không ai được phép chiếm đất bạn. Kẻ nào dám ra tay với dân lành sẽ phải đứng trước <b>Hội Bàn Tròn</b>.</p>
+    </div>
+
+    <div class="grid g3 paths">
+      <div class="card hl"><h3>⚔️ Lãnh chúa</h3><p>Lập thị trấn, kết minh, vẽ lại biên giới. Mỗi mùa 3 tháng là một cuộc chiến mới; người đứng cuối được khắc tên ở Quảng trường Vinh danh.</p></div>
+      <div class="card jade"><h3>💰 Thương nhân</h3><p>Buôn đặc sản từng vùng, treo hàng ở chợ đấu giá <span class="kbd">/ah</span>, mở xưởng, luyện nguyên liệu Tinh Luyện. Ai cũng cần tiền, và tiền cần người khéo tay.</p></div>
+      <div class="card"><h3>🎣 Ngư dân &amp; nông dân</h3><p>Hai mùa mưa, khô đổi theo ngày thật. 24 loài cá Việt, có con chỉ cắn câu đúng mùa. Biết trồng gì lúc nào là biết làm giàu.</p></div>
+      <div class="card redc"><h3>🗝️ Kẻ săn tìm</h3><p>Lần theo lời Lữ khách tới những Cổng Hoang ngụy trang trên bản đồ, đi dungeon cùng đồng đội, chờ ngày boss lớn thức giấc.</p></div>
+      <div class="card"><h3>🐾 Người thuần thú</h3><p>Tự tay bắt pet, không mua được bằng tiền thật. Nuôi tới cấp 100, chọn hệ, cưỡi loài biết bay. Rồi mang ra Đấu Trường xem pet ai mạnh hơn.</p></div>
+      <div class="card"><h3>🏡 Người xây dựng</h3><p>Có Thái Ấp riêng để làm nhà, và cổng sang Thái Ấp Sáng Tạo: bay lượn, lấy khối thoải mái, xây thử thoả thích trước khi xây thật.</p></div>
+    </div>
+
+    <p class="oath">Từ Dân Tị Nạn lên Dân, Lương Dân, rồi Hào Kiệt: mọi bậc đều kiếm bằng chính giờ chơi của bạn.
+      <span class="muted">Không pay-to-win, không bán sức mạnh. Tiền thật chỉ mua được đồ trang trí. Chơi trên máy tính hay điện thoại đều chung một thế giới.</span></p>
+    <div class="cta" style="margin-top:20px">
+      <a class="btn primary" href="#vao">Viết chương đầu của bạn</a>
+      <a class="btn" href="#banghoi">Xem chi tiết cách chơi</a>
+    </div>
+  </div>
+</section>
 
 <!-- ============ CÁCH VÀO ============ -->
 <section id="vao">

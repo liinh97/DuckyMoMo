@@ -50,7 +50,7 @@ commands:
     description: "Vote cho server trên các trang xếp hạng, nhận xu. /vote top: bảng vote tháng"
     aliases: [bauchon]
   menu:
-    description: Mở menu chọn chế độ (ở lobby)
+    description: "Ở sảnh: menu chọn chế độ. Ở Bang Hội Chiến: menu chính (cũng mở bằng Shift + F)"
     aliases: [chedo, modes]
   dmm:
     description: "Lệnh admin của DuckyMoMo: phù phép vượt cấp, thư viện đồ, dọn rác, NPC… (bấm Tab để gợi ý)"

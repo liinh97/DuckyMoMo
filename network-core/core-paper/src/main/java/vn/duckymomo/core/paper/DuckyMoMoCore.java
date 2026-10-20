@@ -254,6 +254,17 @@ public final class DuckyMoMoCore extends JavaPlugin {
                 });
             }
             getLogger().info("Menu chọn chế độ: bật, đọc chế độ từ " + modesDir);
+        } else if (menuCommand != null && getConfig().getBoolean("player-menu.enabled")) {
+            // Server chế độ: /menu (và Shift+F) mở menu chính: điểm danh, chợ, xưởng, balo, tủ skin, rank… (player-menu)
+            PlayerMenu pm = new PlayerMenu(this, getConfig().getConfigurationSection("player-menu"));
+            getServer().getPluginManager().registerEvents(pm, this);
+            menuCommand.setExecutor((sender, cmd, label, args) -> {
+                if (sender instanceof Player p) {
+                    pm.open(p);
+                }
+                return true;
+            });
+            getLogger().info("Menu chính (/menu, Shift+F): bật, " + pm.size() + " nút");
         } else if (menuCommand != null) {
             offCommands.add("menu");
             menuCommand.setExecutor((sender, cmd, label, args) -> {

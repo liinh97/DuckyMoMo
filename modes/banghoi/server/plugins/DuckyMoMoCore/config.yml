@@ -1288,3 +1288,41 @@ resource-pack:
   item-sha1: "${CFG_ITEM_PACK_SHA1}"
   font-prompt: "&6Tải font tiếng Việt dễ đọc (khoảng 70 KB)? Bấm Có để chữ có dấu rõ hơn. Không thích: /caidat tắt Font tiếng Việt."
   item-prompt: "&6Tải hình vật phẩm riêng của server (khoảng 12 KB)?"
+
+# Menu chính cho người chơi (20/10): /menu hoặc Shift + F. Mỗi nút: slot (0..rows*9-1), icon, name, lore, và MỘT trong:
+#   cmd (chạy lệnh thay người chơi, không cần /), suggest (điền sẵn vào ô chat), proxy (lệnh của proxy: tuskin, skin), server (chuyển server).
+# Sảnh không có menu này (ở sảnh /menu = chọn chế độ). Không dùng mã chữ đậm: font tiếng Việt bị nhòe.
+player-menu:
+  enabled: true
+  title: "&6✦ Menu Bang Hội Chiến"
+  rows: 5
+  shift-f: true
+  filler: GRAY_STAINED_GLASS_PANE
+  buttons:
+    - {slot: 10, icon: CLOCK, name: "&eĐiểm danh", lore: ["&7Quà mỗi ngày"], cmd: diemdanh}
+    - {slot: 11, icon: WRITABLE_BOOK, name: "&eNhiệm vụ hôm nay", lore: ["&7Làm xong có thưởng"], cmd: nhiemvu}
+    - {slot: 12, icon: NETHER_STAR, name: "&eVòng quay", lore: ["&7Vé miễn phí theo giờ chơi"], cmd: vongquay}
+    - {slot: 13, icon: EXPERIENCE_BOTTLE, name: "&eThăng Cấp", lore: ["&7Lên cấp, đổi quyền lợi"], cmd: capdo}
+    - {slot: 14, icon: NAME_TAG, name: "&eDanh phận", lore: ["&7Tị Nạn → Dân → Lương Dân → Hào Kiệt"], cmd: danhphan}
+    - {slot: 15, icon: GOLDEN_APPLE, name: "&eSổ thành tích", lore: ["&7Mốc thành tích và danh hiệu"], cmd: thanhtich}
+    - {slot: 16, icon: BOOK, name: "&eCẩm nang", lore: ["&7Hướng dẫn cách chơi"], cmd: huongdan}
+    - {slot: 19, icon: GOLD_INGOT, name: "&aChợ đấu giá", lore: ["&7Mua bán với người chơi (/ah)"], cmd: ah}
+    - {slot: 20, icon: EMERALD, name: "&aBán đồ đang cầm", lore: ["&7Bán cho server (/sell hand)"], cmd: "sell hand"}
+    - {slot: 21, icon: SMITHING_TABLE, name: "&aXưởng chế tạo", lore: ["&7Đồ có kỹ năng riêng"], cmd: xuong}
+    - {slot: 22, icon: BLAST_FURNACE, name: "&aTinh Luyện", lore: ["&7Đổi khối thường thành nguyên liệu quý"], cmd: tinhluyen}
+    - {slot: 23, icon: CHEST, name: "&aSàn thu mua", lore: ["&7Đặt đơn mua hàng của người chơi"], cmd: donhang}
+    - {slot: 24, icon: HOPPER, name: "&aĐổi đồ với người khác", lore: ["&7Bấm rồi gõ tên người muốn đổi"], suggest: "/trade "}
+    - {slot: 25, icon: PAINTING, name: "&aCửa hàng trang trí", lore: ["&7Đồ trang trí bằng xu"], cmd: cuahang}
+    - {slot: 28, icon: ENDER_PEARL, name: "&bDịch chuyển tới vùng", lore: ["&7Tìm đất trống (/tpr)"], cmd: tpr}
+    - {slot: 29, icon: RED_BED, name: "&bVề nhà", lore: ["&7/home"], cmd: home}
+    - {slot: 30, icon: BELL, name: "&bThị trấn", lore: ["&7Thông tin thị trấn của bạn (/t)"], cmd: t}
+    - {slot: 31, icon: WHEAT, name: "&bMùa mưa / mùa khô", lore: ["&7Cây lớn nhanh, cá theo mùa"], cmd: mua}
+    - {slot: 32, icon: CROSSBOW, name: "&bLệnh săn", lore: ["&7Quái mạnh có thưởng"], cmd: lenhsan}
+    - {slot: 33, icon: IRON_BARS, name: "&bDungeon", lore: ["&7Cày đồ hiếm"], cmd: dungeon}
+    - {slot: 34, icon: GRASS_BLOCK, name: "&bThái Ấp", lore: ["&7Đất riêng của bạn"], cmd: thaiap}
+    - {slot: 37, icon: CHEST_MINECART, name: "&dBalo", lore: ["&7Túi đồ thêm theo danh phận"], cmd: balo}
+    - {slot: 38, icon: LEATHER_CHESTPLATE, name: "&dTủ skin", lore: ["&7Lưu và đổi skin"], proxy: tuskin}
+    - {slot: 39, icon: COMPARATOR, name: "&dCài đặt cá nhân", lore: ["&7Bật/tắt chat, thông báo, font…"], cmd: caidat}
+    - {slot: 40, icon: DIAMOND, name: "&dRank ủng hộ", lore: ["&7Chỉ đồ trang trí, không pay-to-win"], cmd: rank}
+    - {slot: 41, icon: IRON_SWORD, name: "&dĐấu Trường", lore: ["&7PvP không mất đồ"], cmd: "warp pvp"}
+    - {slot: 43, icon: COMPASS, name: "&7Về sảnh", lore: ["&7Chọn chế độ khác"], server: lobby}

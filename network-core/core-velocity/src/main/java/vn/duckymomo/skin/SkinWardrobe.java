@@ -13,6 +13,9 @@ import com.velocitypowered.api.command.SimpleCommand;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
+import com.velocitypowered.api.event.connection.PluginMessageEvent;
+import com.velocitypowered.api.proxy.ServerConnection;
+import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
@@ -78,6 +81,9 @@ public final class SkinWardrobe {
     private final Map<String, List<Entry>> data = new ConcurrentHashMap<>();
     private final Map<String, Long> busy = new ConcurrentHashMap<>();
     private HttpServer http;
+    /** Menu ở server game nhờ proxy chạy lệnh của proxy (vd /tuskin) cho người chơi: kênh duckymomo:cmd, CHỈ các lệnh dưới đây. */
+    private static final MinecraftChannelIdentifier CMD = MinecraftChannelIdentifier.from("duckymomo:cmd");
+    private static final java.util.Set<String> PROXY_CMDS = java.util.Set.of("tuskin", "wardrobe", "skin", "skins");
 
     /** Một skin trong tủ: tên gợi nhớ, mã SkinsRestorer (id + kiểu + dáng), mã ảnh texture để web vẽ đầu. */
     static final class Entry {
@@ -111,8 +117,35 @@ public final class SkinWardrobe {
         load();
         CommandManager cm = proxy.getCommandManager();
         cm.register(cm.metaBuilder("tuskin").aliases("wardrobe").plugin(this).build(), new Cmd());
+        proxy.getChannelRegistrar().register(CMD);
         startHttp();
         log.info("Tủ skin: bật, {} người có tủ", data.size());
+    }
+
+    @Subscribe
+    public void onPluginMessage(PluginMessageEvent e) {
+        if (!e.getIdentifier().equals(CMD)) {
+            return;
+        }
+        e.setResult(PluginMessageEvent.ForwardResult.handled());   // không chuyển tiếp cho client
+        if (!(e.getSource() instanceof ServerConnection sc)) {
+            return;   // chỉ nhận từ server game, không nhận từ người chơi
+        }
+        String cmd;
+        try {
+            cmd = new java.io.DataInputStream(new java.io.ByteArrayInputStream(e.getData())).readUTF().trim();
+        } catch (IOException ex) {
+            return;
+        }
+        if (cmd.startsWith("/")) {
+            cmd = cmd.substring(1);
+        }
+        String root = cmd.split(" ", 2)[0].toLowerCase(Locale.ROOT);
+        if (!PROXY_CMDS.contains(root)) {
+            log.warn("Lệnh từ menu không được phép chạy ở proxy: {}", cmd);
+            return;
+        }
+        proxy.getCommandManager().executeAsync(sc.getPlayer(), cmd);
     }
 
     @Subscribe

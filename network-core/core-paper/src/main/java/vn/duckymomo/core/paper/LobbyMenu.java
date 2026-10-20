@@ -56,7 +56,7 @@ final class LobbyMenu implements Listener {
     private ItemStack menuItem() {
         ItemStack item = new ItemStack(Material.COMPASS);
         ItemMeta meta = item.getItemMeta();
-        meta.displayName(text("Chọn chế độ", NamedTextColor.GOLD).decoration(TextDecoration.BOLD, true));
+        meta.displayName(text("Chọn chế độ", NamedTextColor.GOLD).decoration(TextDecoration.ITALIC, false));
         meta.lore(List.of(text("Chuột phải (điện thoại: chạm giữ) để mở", NamedTextColor.GRAY)));
         meta.getPersistentDataContainer().set(menuItemKey, PersistentDataType.BYTE, (byte) 1);
         item.setItemMeta(meta);
@@ -215,7 +215,7 @@ final class LobbyMenu implements Listener {
         } else {
             lore.add(text("» Bấm để vào", NamedTextColor.AQUA));
         }
-        return button(icon, text(mode.displayName(), NamedTextColor.GOLD).decoration(TextDecoration.BOLD, true), lore, server);
+        return button(icon, text(mode.displayName(), NamedTextColor.GOLD).decoration(TextDecoration.ITALIC, false), lore, server);
     }
 
     private ItemStack button(Material material, Component name, List<Component> lore, String server) {

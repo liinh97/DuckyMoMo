@@ -117,6 +117,9 @@
   .bo-sug:empty { display: none; }
   .bo-sug button { border: 1px dashed var(--line); background: none; color: var(--muted); border-radius: 999px; padding: 2px 10px; font-size: 12.5px; cursor: pointer; }
   .bo-sug button:hover { border-color: var(--accent); color: var(--accent); }
+  .bo-sug button.used { border-style: solid; color: var(--text); }
+  .bo-sug button small { color: var(--muted); margin-left: 3px; }
+  .bo-sug .lab { font-size: 12px; color: var(--muted); align-self: center; margin-right: 2px; }
   .li .bo { color: var(--accent); font-size: 11.5px; margin-left: 4px; }
   .status { margin-top: 8px; font-size: 14px; color: var(--muted); min-height: 21px; }
   .status.ok { color: var(--ok); } .status.err { color: var(--err); }
@@ -217,8 +220,8 @@
         <div><label class="f" for="id">Mã <span class="hint">không dấu, dùng trong quà/cửa hàng</span></label><input id="id" placeholder="kiem_rong" maxlength="32"></div>
         <div><label class="f" for="tengoi">Tên gợi nhớ <span class="hint">chỉ admin thấy</span></label><input id="tengoi" placeholder="Kiếm rồng (quà mốc 30 ngày)" maxlength="60"></div>
       </div>
-      <label class="f" for="boIn">Bộ <span class="hint">nhóm món để lọc và thêm nhanh cả bộ vào quà / gói quà, vd Tân thủ, Hào Kiệt; một món thuộc được nhiều bộ</span></label>
-      <div class="bo-edit"><div class="bo-chips" id="boChips"></div><input id="boIn" placeholder="Gõ tên bộ rồi Enter…" maxlength="30" autocomplete="off"></div>
+      <label class="f" for="boIn">Bộ (tag) <span class="hint">để lọc và thêm nhanh cả bộ vào quà / gói quà; một món gắn được nhiều tag</span></label>
+      <div class="bo-edit"><div class="bo-chips" id="boChips"></div><input id="boIn" placeholder="Bấm tag bên dưới, hoặc gõ tag mới rồi Enter…" maxlength="30" autocomplete="off"></div>
       <div class="bo-sug" id="boSug"></div>
       <div class="bar">
         <button class="primary" id="save">Lưu</button>
@@ -572,12 +575,26 @@ function drawBo() {
     c.firstChild.textContent = b; c.querySelector("button").onclick = () => { boList.splice(i, 1); drawBo(); };
     $("boChips").appendChild(c);
   });
-  const have = new Set(boList.map(b => b.toLowerCase()));
-  $("boSug").innerHTML = "";
-  for (const [b] of allSets()) if (!have.has(b.toLowerCase())) {
-    const x = document.createElement("button"); x.type = "button"; x.textContent = "+ " + b; x.title = "Thêm món vào bộ này";
-    x.onclick = () => { boList.push(b); drawBo(); }; $("boSug").appendChild(x);
+  drawSug();
+}
+// tag để bấm: tag đã dùng (kèm số món) + tag gợi ý sẵn; gõ chữ thì lọc theo chữ đang gõ
+const BO_PRESET = ["Tân thủ", "Tị Nạn", "Dân", "Lương Dân", "Hào Kiệt", "Sứ Giả", "Sự kiện", "Boss", "Quà mốc"];
+function drawSug() {
+  const have = new Set(boList.map(b => b.toLowerCase())), q = fold($("boIn").value.trim());
+  const used = allSets(), usedKeys = new Set(used.map(([b]) => b.toLowerCase()));
+  const list = used.map(([b, n]) => [b, n]).concat(BO_PRESET.filter(b => !usedKeys.has(b.toLowerCase())).map(b => [b, 0]));
+  $("boSug").innerHTML = '<span class="lab">Tag:</span>';
+  let shown = 0;
+  for (const [b, n] of list) {
+    if (have.has(b.toLowerCase()) || (q && !fold(b).includes(q))) continue;
+    const x = document.createElement("button"); x.type = "button"; x.className = n ? "used" : "";
+    x.innerHTML = "<span></span>" + (n ? `<small>${n}</small>` : ""); x.firstChild.textContent = "+ " + b;
+    x.title = n ? `Tag đang dùng ở ${n} món` : "Tag gợi ý (chưa món nào dùng)";
+    x.onmousedown = (e) => e.preventDefault();   // không làm mất chữ đang gõ
+    x.onclick = () => { boList.push(b); $("boIn").value = ""; drawBo(); };
+    $("boSug").appendChild(x); shown++;
   }
+  if (!shown) $("boSug").insertAdjacentHTML("beforeend", q ? '<span class="lab">Không có tag khớp: nhấn Enter để tạo tag mới.</span>' : '<span class="lab">Đã gắn hết các tag có sẵn.</span>');
 }
 function addBo(raw) {
   for (let t of String(raw).split(",")) {
@@ -587,6 +604,7 @@ function addBo(raw) {
   $("boIn").value = ""; drawBo();
 }
 $("boIn").onkeydown = (e) => { if (e.key === "Enter" || e.key === ",") { e.preventDefault(); addBo($("boIn").value); } };
+$("boIn").oninput = drawSug;
 $("boIn").onblur = () => { if ($("boIn").value.trim()) addBo($("boIn").value); };
 function drawSets() {
   const sets = allSets(), box = $("sets");

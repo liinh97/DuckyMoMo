@@ -576,11 +576,11 @@ msg_plot_for_sale: '&b%s đã rao bán lô đất (%s)!'
 msg_plot_for_sale_amount: '&b%s đã rao bán lô đất (%s) với giá %s!'
 msg_plot_set_type: '&bKiểu lô đất được đặt thành %s'
 msg_cache_block_error: '&cBạn chưa đăng ký với Towny. Hãy thử đăng nhập lại.'
-msg_cache_block_error_wild: '&cKhông được phép đưa %s vào tự nhiên.'
-msg_cache_block_error_plot: '&cChủ sở hữu không cho phép %s đến %s ở đây.'
-msg_cache_block_error_town_resident: '&cCư dân không được phép đến %s đây.'
-msg_cache_block_error_town_allies: '&cĐồng minh không được phép %s.'
-msg_cache_block_error_town_outsider: '&cNgười ngoài không được phép %s.'
+msg_cache_block_error_wild: '&cĐất hoang: không được %s khối này &7(chỉ chặt cây, đào quặng, hái cây cỏ). Muốn xây, đào tự do: lập thị trấn &f/t new&7 hoặc vào thị trấn có sẵn.'
+msg_cache_block_error_plot: '&cChủ ô đất không cho %s %s ở đây.'
+msg_cache_block_error_town_resident: '&cDân thị trấn không được %s ở đây.'
+msg_cache_block_error_town_allies: '&cĐồng minh không được %s ở đây.'
+msg_cache_block_error_town_outsider: '&cNgười ngoài không được %s ở đây.'
 msg_err_cant_afford_tp_town: '&cKhông đủ khả năng dịch chuyển đến %s.'
 msg_err_not_public: '&cThị trấn đó không phải là công cộng.'
 msg_err_not_open: '&cThị trấn %s không mở cửa cho tất cả mọi người. Hãy yêu cầu thị trưởng hoặc trợ lý tham gia.'
@@ -949,10 +949,10 @@ msg_nation_changed_public: '&cTình trạng công khai của quốc gia hiện n
 status_plot_type: 'Loại lô đất:'
 msg_no_self_jailing: Bạn không thể tự giam mình được.
 online2: ' &a(Trực tuyến)'
-build: Xây dựng
-destroy: Phá hủy
-switch: Bật_tắt
-item_use: Sử_dụng_vật_phẩm
+build: xây
+destroy: phá
+switch: bật/mở
+item_use: dùng đồ
 owner_status: Chủ sở hữu
 towny_map_header: 'Bản đồ thị trấn '
 towny_map_unclaimed: Chưa nhận
@@ -1018,7 +1018,7 @@ msg_err_nation_homeblock_in_another_world: '&cÔ trung tâm thị trấn của b
 status_bank_town_penalty_upkeep: 'Yêu cầu bảo trì quá mức:'
 msg_error_cannot_town_spawn_youre_an_outlaw_in_town: Bạn không thể xuất hiện ở %s vì bạn sẽ bị đánh dấu là kẻ ngoài vòng pháp luật ở đó.
 msg_you_cannot_use_that_command_while_jailed: '&4Bạn không thể sử dụng lệnh đó khi bị giam giữ.'
-msg_cache_block_error_town_nation: '&cThành viên quốc gia không được phép %s.'
+msg_cache_block_error_town_nation: '&cThành viên quốc gia không được %s ở đây.'
 msg_err_already_res2: '&c%s đã thuộc về một thị trấn.'
 msg_err_cannot_afford_plot_set_type_cost: '&cBạn không thể thiết lập biểu đồ theo kiểu %s với chi phí %s'
 msg_plot_set_cost: '&bBạn đã bị tính phí %s để thiết lập lô đất thành loại: %s'

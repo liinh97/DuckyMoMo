@@ -142,7 +142,7 @@ rtp:
   cooldown-seconds: 300         # trang Cài đặt sửa được; người có duckymomo.rtp.bypass không phải chờ
   warmup-seconds: 3             # đứng yên N giây rồi mới đi (di chuyển/bị đánh = huỷ); 0 = đi ngay; staff có essentials.teleport.timer.bypass đi ngay
   cost: 0                       # phí mỗi lần (0 = miễn phí); duckymomo.rtp.free không mất phí
-  max-attempts: 15
+  max-attempts: 30
   town-buffer: 32
   border: [11200, -3200, 13800, -800]       # viền mùa 1 (tâm 12500/-2000, 1300x1200), thả cách viền >= 16 block
   exclude:

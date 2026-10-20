@@ -435,6 +435,11 @@ final class RandomTeleport implements Listener {
                 || UNSAFE.contains(ground.getType())) {
             return null;
         }
+        // 21/10: không thả dưới tán cây / trên ngọn thân cây (người chơi bị kẹt trong lá, phải phá ra thì dính luật đất hoang)
+        if (w.getHighestBlockYAt(x, z, HeightMap.MOTION_BLOCKING) != ground.getY()
+                || org.bukkit.Tag.LOGS.isTagged(ground.getType()) || org.bukkit.Tag.LEAVES.isTagged(ground.getType())) {
+            return null;
+        }
         Block feet = ground.getRelative(0, 1, 0);
         Block head = ground.getRelative(0, 2, 0);
         if (!feet.isPassable() || !head.isPassable() || feet.isLiquid() || head.isLiquid()

@@ -386,10 +386,10 @@ final class PlayRanks implements Listener {
         }
         t.item(k.balo() > 0 ? "&a" + k.balo() + "&f balo, &a" + k.slots() + "&f ô &8(/balo)" : "&7Chưa có balo");
         if (k.ah() > 0) {
-            t.item("&a" + k.ah() + "&f món treo chợ &8(/ah)");
+            t.item("&a" + k.ah() + "&f món treo Chợ đen &8(/choden)");
         }
         if (k.orders() > 0) {
-            t.item("&a" + k.orders() + "&f đơn thu mua &8(/donhang)");
+            t.item("&a" + k.orders() + "&f đơn thu mua &8(/choden dat)");
         }
         if (k.skins() > 0) {
             t.item("Tủ skin &a" + k.skins() + "&f ô &8(/tuskin)");

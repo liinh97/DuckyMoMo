@@ -12,7 +12,7 @@ header-footer:
       footer:
         - '&r'
         - '&7☺ Online &f%online% &8· &7⚡ Ping %condition:pingmau%'
-        - '&e/huongdan &8· &e/warp &8· &e/ah &8· &e/jobs &8· &e/rank'
+        - '&e/huongdan &8· &e/warp &8· &e/choden &8· &e/jobs &8· &e/rank'
         - '&8⚔ Công thành: tối T7, CN 20:00 & 21:00'
         - '&r'
 tablist-name-formatting:

@@ -659,19 +659,18 @@ public final class DuckyMoMoCore extends JavaPlugin {
         }
         bind("xuong", workshop == null ? null : workshop::command, "Xưởng chế tạo");
 
-        // Chợ đen (thu mua) /donhang (Bang Hội Chiến: orders.enabled, cần Vault)
+        // Chợ đen /choden (thu mua + chợ người chơi /ah) (Bang Hội Chiến: orders.enabled, cần Vault)
         Orders orders = getConfig().getBoolean("orders.enabled") && getConfig().isConfigurationSection("orders")
                 ? new Orders(this, getConfig().getConfigurationSection("orders")) : null;
         if (orders != null) {
             getServer().getPluginManager().registerEvents(orders, this);
             orders.start();
         }
-        bind("donhang", orders == null ? null : orders::command, "Chợ đen · thu mua");
-        bind("choden", orders == null ? null : orders::hubCommand, "Chợ đen");
-        PluginCommand dhCmd = getCommand("donhang");
-        if (dhCmd != null) {
+        bind("choden", orders == null ? null : orders::hubCommand, "Chợ đen");   // 21/10: một lệnh cho cả chợ (bỏ /donhang)
+        PluginCommand chCmd = getCommand("choden");
+        if (chCmd != null) {
             Orders oo = orders;
-            dhCmd.setTabCompleter(oo == null ? null : (sender, cmd, label, args) -> oo.tab(args));
+            chCmd.setTabCompleter(oo == null ? null : (sender, cmd, label, args) -> oo.hubTab(args));
         }
         // Đăng nhập trang web bằng tài khoản game: /web cấp mã, trang web kiểm tra qua RCON (/dmm webma)
         WebLogin webLogin = new WebLogin(getConfig().getConfigurationSection("web-login"));

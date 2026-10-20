@@ -180,7 +180,7 @@ groups:
       - { key: peace_sell_bonus, label: Bán cho server (/sell) trong kinh đô được thêm (%), type: number, min: 0, max: 200, file: plugins/DuckyMoMoCore/config.yml, path: peace-alliance.sell-bonus-percent }
       - { key: peace_tax_inside, info: "Là gì: thuế shop rương (QuickShop) đặt trong đất hoà bình.\nCách ghi: số từ 0 đến 1, vd 0.02 = 2%.\nGợi ý: để thấp hơn bên ngoài nếu muốn kéo buôn bán về kinh đô.", label: Thuế shop rương trong đất hoà bình (0,05 = 5%), type: number, min: 0, max: 1, file: plugins/DuckyMoMoCore/config.yml, path: peace-alliance.shop-tax-inside }
       - { key: peace_tax_outside, info: "Là gì: thuế shop rương ngoài đất hoà bình.\nCách ghi: số từ 0 đến 1, vd 0.05 = 5%.", label: Thuế shop rương ngoài đất hoà bình (0,05 = 5%), type: number, min: 0, max: 1, file: plugins/DuckyMoMoCore/config.yml, path: peace-alliance.shop-tax-outside }
-      - { key: peace_auction_only, label: Chợ đen /ah chỉ mở trong đất hoà bình, type: select, file: plugins/DuckyMoMoCore/config.yml, path: peace-alliance.auction-only-in-peace,
+      - { key: peace_auction_only, label: Chợ đen /choden chỉ mở trong đất hoà bình, type: select, file: plugins/DuckyMoMoCore/config.yml, path: peace-alliance.auction-only-in-peace,
           options: [ { value: true, label: Có }, { value: false, label: "Không (mở ở mọi nơi)" } ] }
       - { key: peace_warn_days, label: Báo dân hoà bình di tản trước ngày công thành (ngày), type: number, min: 0, max: 7, file: plugins/DuckyMoMoCore/config.yml, path: peace-alliance.siege-warn-days-before }
       - { key: peace_remind, label: Nhắc trước mỗi phiên công thành (phút), type: list, items: int, file: plugins/DuckyMoMoCore/config.yml, path: peace-alliance.siege-remind-minutes,
@@ -936,7 +936,7 @@ groups:
       - { key: rs_on, label: Bật đặc sản vùng, type: select, file: plugins/DuckyMoMoCore/config.yml, path: region-specialty.enabled, options: [ { value: true, label: Bật }, { value: false, label: Tắt } ] }
       - { key: rs_refresh, label: Tính lại chủ vùng mỗi (phút), type: int, min: 1, max: 1440, file: plugins/DuckyMoMoCore/config.yml, path: region-specialty.refresh-minutes }
 
-  - title: Chợ đen (thu mua) (/donhang)
+  - title: Chợ đen · thu mua (/choden thumua)
     category: Shop
     description: "Người chơi đặt đơn \"cần N món, giá P/món\": tiền bị giữ trước, người khác giao hàng nhận tiền ngay, hàng chờ người mua nhận cả khi offline. Phí đăng đơn không hoàn (rút tiền khỏi kinh tế). Chỉ nhận đồ thường (không tên riêng, không phù phép). Vật cấm đặt: plugins/DuckyMoMoCore/config.yml (orders.blacklist)."
     apply: [dmm reload]
@@ -990,7 +990,7 @@ groups:
   - title: Danh phận (/danhphan) — rank chơi miễn phí
     category: Người mới
     description: "Rank kiếm bằng cách chơi: Dân Tị Nạn (mới vào) → Dân → Lương Dân → Hào Kiệt. Đủ yêu cầu thì người chơi bấm nhận trong /danhphan. Mỗi bậc có tiền tố riêng và quyền lợi: số nhà, số balo, số món treo chợ."
-    info: "Yêu cầu: giờ chơi THẬT (không tính AFK, /hoatdong) + cấp Thăng Cấp (/capdo); riêng Dân còn cần xong chương 1 cốt truyện (Già Làng).\nQuyền lợi áp ở Bang Hội Chiến: nhà /sethome (1–20), balo /balo (0–9) và số ô mỗi balo (9–54), món treo chợ /ah (1–20; Thương Hội vẫn 15). Balo cho rank ủng hộ / staff: nhóm \"Balo theo rank khác\" ngay dưới.\nLưu xong: có hiệu lực ngay (dmm reload): plugin tự sửa nhóm LuckPerms (tiền tố, quyền), không cần gõ lệnh lp. Người đã nhận bậc giữ bậc khi đổi số.\nTiền tố: mã màu & (vd &a[Lương Dân] ), nhớ để 1 dấu cách cuối. Admin đặt bậc tay: /danhphan dat <người> <mã>."
+    info: "Yêu cầu: giờ chơi THẬT (không tính AFK, /hoatdong) + cấp Thăng Cấp (/capdo); riêng Dân còn cần xong chương 1 cốt truyện (Già Làng).\nQuyền lợi áp ở Bang Hội Chiến: nhà /sethome (1–20), balo /balo (0–9) và số ô mỗi balo (9–54), món treo Chợ đen (1–20; Thương Hội vẫn 15). Balo cho rank ủng hộ / staff: nhóm \"Balo theo rank khác\" ngay dưới.\nLưu xong: có hiệu lực ngay (dmm reload): plugin tự sửa nhóm LuckPerms (tiền tố, quyền), không cần gõ lệnh lp. Người đã nhận bậc giữ bậc khi đổi số.\nTiền tố: mã màu & (vd &a[Lương Dân] ), nhớ để 1 dấu cách cuối. Admin đặt bậc tay: /danhphan dat <người> <mã>."
     apply: [dmm reload]
     settings:
       - { key: dp_on, label: Bật Danh phận, type: select, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.enabled, options: [ { value: true, label: Bật }, { value: false, label: Tắt } ] }
@@ -1000,8 +1000,8 @@ groups:
       - { key: dp_tinan_homes, label: "Dân Tị Nạn (mới vào): số nhà /sethome", type: int, min: 1, max: 20, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.tiers.tinan.homes }
       - { key: dp_tinan_balo, label: "Dân Tị Nạn (mới vào): số balo /balo", type: int, min: 0, max: 9, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.tiers.tinan.balo }
       - { key: dp_tinan_slots, label: "Dân Tị Nạn (mới vào): số ô mỗi balo", type: select, options: [ { value: 9, label: "9 ô (1 hàng)" }, { value: 18, label: "18 ô" }, { value: 27, label: "27 ô" }, { value: 36, label: "36 ô" }, { value: 45, label: "45 ô" }, { value: 54, label: "54 ô (6 hàng)" } ], file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.tiers.tinan.balo-slots }
-      - { key: dp_tinan_ah, label: "Dân Tị Nạn (mới vào): số món treo Chợ đen /ah (Auction House)", type: int, min: 1, max: 20, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.tiers.tinan.ah }
-      - { key: dp_tinan_orders, label: "Dân Tị Nạn (mới vào): số đơn thu mua /donhang", type: int, min: 0, max: 50, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.tiers.tinan.orders }
+      - { key: dp_tinan_ah, label: "Dân Tị Nạn (mới vào): số món treo Chợ đen (bên Đang bán)", type: int, min: 1, max: 20, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.tiers.tinan.ah }
+      - { key: dp_tinan_orders, label: "Dân Tị Nạn (mới vào): số đơn thu mua Chợ đen", type: int, min: 0, max: 50, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.tiers.tinan.orders }
       - { key: dp_tinan_tuskin, label: "Dân Tị Nạn (mới vào): số skin lưu trong tủ /tuskin", type: int, min: 0, max: 50, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.tiers.tinan.tu-skin }
       - { key: dp_tinan_spin, label: "Dân Tị Nạn (mới vào): vé vòng quay nhanh hơn (%)", type: int, min: 0, max: 50, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.tiers.tinan.spin-faster }
       - { key: dp_dan_name, label: "Dân: tên", type: text, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.tiers.dan.name }
@@ -1011,8 +1011,8 @@ groups:
       - { key: dp_dan_homes, label: "Dân: số nhà /sethome", type: int, min: 1, max: 20, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.tiers.dan.homes }
       - { key: dp_dan_balo, label: "Dân: số balo /balo", type: int, min: 0, max: 9, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.tiers.dan.balo }
       - { key: dp_dan_slots, label: "Dân: số ô mỗi balo", type: select, options: [ { value: 9, label: "9 ô (1 hàng)" }, { value: 18, label: "18 ô" }, { value: 27, label: "27 ô" }, { value: 36, label: "36 ô" }, { value: 45, label: "45 ô" }, { value: 54, label: "54 ô (6 hàng)" } ], file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.tiers.dan.balo-slots }
-      - { key: dp_dan_ah, label: "Dân: số món treo Chợ đen /ah (Auction House)", type: int, min: 1, max: 20, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.tiers.dan.ah }
-      - { key: dp_dan_orders, label: "Dân: số đơn thu mua /donhang", type: int, min: 0, max: 50, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.tiers.dan.orders }
+      - { key: dp_dan_ah, label: "Dân: số món treo Chợ đen (bên Đang bán)", type: int, min: 1, max: 20, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.tiers.dan.ah }
+      - { key: dp_dan_orders, label: "Dân: số đơn thu mua Chợ đen", type: int, min: 0, max: 50, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.tiers.dan.orders }
       - { key: dp_dan_tuskin, label: "Dân: số skin lưu trong tủ /tuskin", type: int, min: 0, max: 50, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.tiers.dan.tu-skin }
       - { key: dp_dan_spin, label: "Dân: vé vòng quay nhanh hơn (%)", type: int, min: 0, max: 50, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.tiers.dan.spin-faster }
       - { key: dp_luongdan_name, label: "Lương Dân: tên", type: text, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.tiers.luongdan.name }
@@ -1022,8 +1022,8 @@ groups:
       - { key: dp_luongdan_homes, label: "Lương Dân: số nhà /sethome", type: int, min: 1, max: 20, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.tiers.luongdan.homes }
       - { key: dp_luongdan_balo, label: "Lương Dân: số balo /balo", type: int, min: 0, max: 9, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.tiers.luongdan.balo }
       - { key: dp_luongdan_slots, label: "Lương Dân: số ô mỗi balo", type: select, options: [ { value: 9, label: "9 ô (1 hàng)" }, { value: 18, label: "18 ô" }, { value: 27, label: "27 ô" }, { value: 36, label: "36 ô" }, { value: 45, label: "45 ô" }, { value: 54, label: "54 ô (6 hàng)" } ], file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.tiers.luongdan.balo-slots }
-      - { key: dp_luongdan_ah, label: "Lương Dân: số món treo Chợ đen /ah (Auction House)", type: int, min: 1, max: 20, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.tiers.luongdan.ah }
-      - { key: dp_luongdan_orders, label: "Lương Dân: số đơn thu mua /donhang", type: int, min: 0, max: 50, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.tiers.luongdan.orders }
+      - { key: dp_luongdan_ah, label: "Lương Dân: số món treo Chợ đen (bên Đang bán)", type: int, min: 1, max: 20, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.tiers.luongdan.ah }
+      - { key: dp_luongdan_orders, label: "Lương Dân: số đơn thu mua Chợ đen", type: int, min: 0, max: 50, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.tiers.luongdan.orders }
       - { key: dp_luongdan_tuskin, label: "Lương Dân: số skin lưu trong tủ /tuskin", type: int, min: 0, max: 50, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.tiers.luongdan.tu-skin }
       - { key: dp_luongdan_spin, label: "Lương Dân: vé vòng quay nhanh hơn (%)", type: int, min: 0, max: 50, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.tiers.luongdan.spin-faster }
       - { key: dp_haokiet_name, label: "Hào Kiệt: tên", type: text, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.tiers.haokiet.name }
@@ -1033,8 +1033,8 @@ groups:
       - { key: dp_haokiet_homes, label: "Hào Kiệt: số nhà /sethome", type: int, min: 1, max: 20, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.tiers.haokiet.homes }
       - { key: dp_haokiet_balo, label: "Hào Kiệt: số balo /balo", type: int, min: 0, max: 9, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.tiers.haokiet.balo }
       - { key: dp_haokiet_slots, label: "Hào Kiệt: số ô mỗi balo", type: select, options: [ { value: 9, label: "9 ô (1 hàng)" }, { value: 18, label: "18 ô" }, { value: 27, label: "27 ô" }, { value: 36, label: "36 ô" }, { value: 45, label: "45 ô" }, { value: 54, label: "54 ô (6 hàng)" } ], file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.tiers.haokiet.balo-slots }
-      - { key: dp_haokiet_ah, label: "Hào Kiệt: số món treo Chợ đen /ah (Auction House)", type: int, min: 1, max: 20, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.tiers.haokiet.ah }
-      - { key: dp_haokiet_orders, label: "Hào Kiệt: số đơn thu mua /donhang", type: int, min: 0, max: 50, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.tiers.haokiet.orders }
+      - { key: dp_haokiet_ah, label: "Hào Kiệt: số món treo Chợ đen (bên Đang bán)", type: int, min: 1, max: 20, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.tiers.haokiet.ah }
+      - { key: dp_haokiet_orders, label: "Hào Kiệt: số đơn thu mua Chợ đen", type: int, min: 0, max: 50, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.tiers.haokiet.orders }
       - { key: dp_haokiet_tuskin, label: "Hào Kiệt: số skin lưu trong tủ /tuskin", type: int, min: 0, max: 50, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.tiers.haokiet.tu-skin }
       - { key: dp_haokiet_spin, label: "Hào Kiệt: vé vòng quay nhanh hơn (%)", type: int, min: 0, max: 50, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.tiers.haokiet.spin-faster }
 
@@ -1057,7 +1057,7 @@ groups:
 
   - title: Quyền lợi theo rank khác (Sứ Giả, ủng hộ, staff)
     category: Người mới
-    description: "Quyền lợi cho rank KHÔNG phải danh phận: số nhà, balo, ô mỗi balo, món treo Chợ đen /ah, đơn thu mua /donhang, vé vòng quay nhanh hơn, gói quà /kit. 0 = không cấp (theo danh phận). Người nhiều rank lấy mức cao nhất."
+    description: "Quyền lợi cho rank KHÔNG phải danh phận: số nhà, balo, ô mỗi balo, món treo Chợ đen, đơn thu mua Chợ đen, vé vòng quay nhanh hơn, gói quà /kit. 0 = không cấp (theo danh phận). Người nhiều rank lấy mức cao nhất."
     info: "Rank Sứ Giả: miễn phí, admin xét duyệt người livestream về server; hiện thẻ trong /danhphan (yêu cầu + cách liên hệ). Cấp: /lp user <tên> parent add media (gỡ: parent remove media). Plugin tự tạo nhóm media + tiền tố.\nGói quà /kit media: plugins/Essentials/kits/media.yml (3 ngày 1 lần), đổi đồ bằng /createkit media 259200.\n⚠ Rank ỦNG HỘ (mua bằng tiền): mọi quyền lợi ở đây là LỢI THẾ KHI CHƠI, trái luật Mojang và luật server (không pay-to-win). Để 0.\nGiảm ô balo: đồ ở ô khoá không mất.\nLưu xong: có hiệu lực ngay (dmm reload, plugin tự sửa quyền LuckPerms)."
     apply: [dmm reload]
     settings:
@@ -1068,88 +1068,88 @@ groups:
       - { key: rk_media_homes, label: "Sứ Giả: số nhà (0 = theo danh phận)", type: int, min: 0, max: 20, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.media.homes }
       - { key: rk_media_balo, label: "Sứ Giả: số balo", type: int, min: 0, max: 9, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.media.balo }
       - { key: rk_media_slots, label: "Sứ Giả: số ô mỗi balo", type: select, options: [ { value: 0, label: "Không cấp" }, { value: 9, label: "9 ô" }, { value: 18, label: "18 ô" }, { value: 27, label: "27 ô" }, { value: 36, label: "36 ô" }, { value: 45, label: "45 ô" }, { value: 54, label: "54 ô" } ], file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.media.balo-slots }
-      - { key: rk_media_ah, label: "Sứ Giả: số món treo Chợ đen /ah (Auction House)", type: int, min: 0, max: 20, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.media.ah }
-      - { key: rk_media_orders, label: "Sứ Giả: số đơn thu mua /donhang", type: int, min: 0, max: 50, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.media.orders }
+      - { key: rk_media_ah, label: "Sứ Giả: số món treo Chợ đen (bên Đang bán)", type: int, min: 0, max: 20, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.media.ah }
+      - { key: rk_media_orders, label: "Sứ Giả: số đơn thu mua Chợ đen", type: int, min: 0, max: 50, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.media.orders }
       - { key: rk_media_tuskin, label: "Sứ Giả: số skin lưu trong tủ /tuskin", type: int, min: 0, max: 50, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.media.tu-skin }
       - { key: rk_media_spin, label: "Sứ Giả: vé vòng quay nhanh hơn (%)", type: int, min: 0, max: 50, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.media.spin-faster }
       - { key: rk_media_kit, label: "Sứ Giả: gói quà (mã ở Người mới › Gói quà, trống = không)", type: text, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.media.kit }
       - { key: rk_namtuoc_homes, label: "Nam Tước (ủng hộ): số nhà (0 = theo danh phận)", type: int, min: 0, max: 20, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.namtuoc.homes }
       - { key: rk_namtuoc_balo, label: "Nam Tước (ủng hộ): số balo", type: int, min: 0, max: 9, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.namtuoc.balo }
       - { key: rk_namtuoc_slots, label: "Nam Tước (ủng hộ): số ô mỗi balo", type: select, options: [ { value: 0, label: "Không cấp" }, { value: 9, label: "9 ô" }, { value: 18, label: "18 ô" }, { value: 27, label: "27 ô" }, { value: 36, label: "36 ô" }, { value: 45, label: "45 ô" }, { value: 54, label: "54 ô" } ], file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.namtuoc.balo-slots }
-      - { key: rk_namtuoc_ah, label: "Nam Tước (ủng hộ): số món treo Chợ đen /ah (Auction House)", type: int, min: 0, max: 20, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.namtuoc.ah }
-      - { key: rk_namtuoc_orders, label: "Nam Tước (ủng hộ): số đơn thu mua /donhang", type: int, min: 0, max: 50, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.namtuoc.orders }
+      - { key: rk_namtuoc_ah, label: "Nam Tước (ủng hộ): số món treo Chợ đen (bên Đang bán)", type: int, min: 0, max: 20, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.namtuoc.ah }
+      - { key: rk_namtuoc_orders, label: "Nam Tước (ủng hộ): số đơn thu mua Chợ đen", type: int, min: 0, max: 50, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.namtuoc.orders }
       - { key: rk_namtuoc_tuskin, label: "Nam Tước (ủng hộ): số skin lưu trong tủ /tuskin", type: int, min: 0, max: 50, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.namtuoc.tu-skin }
       - { key: rk_namtuoc_spin, label: "Nam Tước (ủng hộ): vé vòng quay nhanh hơn (%)", type: int, min: 0, max: 50, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.namtuoc.spin-faster }
       - { key: rk_namtuoc_kit, label: "Nam Tước (ủng hộ): gói quà (mã ở Người mới › Gói quà, trống = không)", type: text, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.namtuoc.kit }
       - { key: rk_tutuoc_homes, label: "Tử Tước (ủng hộ): số nhà (0 = theo danh phận)", type: int, min: 0, max: 20, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.tutuoc.homes }
       - { key: rk_tutuoc_balo, label: "Tử Tước (ủng hộ): số balo", type: int, min: 0, max: 9, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.tutuoc.balo }
       - { key: rk_tutuoc_slots, label: "Tử Tước (ủng hộ): số ô mỗi balo", type: select, options: [ { value: 0, label: "Không cấp" }, { value: 9, label: "9 ô" }, { value: 18, label: "18 ô" }, { value: 27, label: "27 ô" }, { value: 36, label: "36 ô" }, { value: 45, label: "45 ô" }, { value: 54, label: "54 ô" } ], file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.tutuoc.balo-slots }
-      - { key: rk_tutuoc_ah, label: "Tử Tước (ủng hộ): số món treo Chợ đen /ah (Auction House)", type: int, min: 0, max: 20, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.tutuoc.ah }
-      - { key: rk_tutuoc_orders, label: "Tử Tước (ủng hộ): số đơn thu mua /donhang", type: int, min: 0, max: 50, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.tutuoc.orders }
+      - { key: rk_tutuoc_ah, label: "Tử Tước (ủng hộ): số món treo Chợ đen (bên Đang bán)", type: int, min: 0, max: 20, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.tutuoc.ah }
+      - { key: rk_tutuoc_orders, label: "Tử Tước (ủng hộ): số đơn thu mua Chợ đen", type: int, min: 0, max: 50, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.tutuoc.orders }
       - { key: rk_tutuoc_tuskin, label: "Tử Tước (ủng hộ): số skin lưu trong tủ /tuskin", type: int, min: 0, max: 50, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.tutuoc.tu-skin }
       - { key: rk_tutuoc_spin, label: "Tử Tước (ủng hộ): vé vòng quay nhanh hơn (%)", type: int, min: 0, max: 50, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.tutuoc.spin-faster }
       - { key: rk_tutuoc_kit, label: "Tử Tước (ủng hộ): gói quà (mã ở Người mới › Gói quà, trống = không)", type: text, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.tutuoc.kit }
       - { key: rk_batuoc_homes, label: "Bá Tước (ủng hộ): số nhà (0 = theo danh phận)", type: int, min: 0, max: 20, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.batuoc.homes }
       - { key: rk_batuoc_balo, label: "Bá Tước (ủng hộ): số balo", type: int, min: 0, max: 9, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.batuoc.balo }
       - { key: rk_batuoc_slots, label: "Bá Tước (ủng hộ): số ô mỗi balo", type: select, options: [ { value: 0, label: "Không cấp" }, { value: 9, label: "9 ô" }, { value: 18, label: "18 ô" }, { value: 27, label: "27 ô" }, { value: 36, label: "36 ô" }, { value: 45, label: "45 ô" }, { value: 54, label: "54 ô" } ], file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.batuoc.balo-slots }
-      - { key: rk_batuoc_ah, label: "Bá Tước (ủng hộ): số món treo Chợ đen /ah (Auction House)", type: int, min: 0, max: 20, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.batuoc.ah }
-      - { key: rk_batuoc_orders, label: "Bá Tước (ủng hộ): số đơn thu mua /donhang", type: int, min: 0, max: 50, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.batuoc.orders }
+      - { key: rk_batuoc_ah, label: "Bá Tước (ủng hộ): số món treo Chợ đen (bên Đang bán)", type: int, min: 0, max: 20, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.batuoc.ah }
+      - { key: rk_batuoc_orders, label: "Bá Tước (ủng hộ): số đơn thu mua Chợ đen", type: int, min: 0, max: 50, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.batuoc.orders }
       - { key: rk_batuoc_tuskin, label: "Bá Tước (ủng hộ): số skin lưu trong tủ /tuskin", type: int, min: 0, max: 50, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.batuoc.tu-skin }
       - { key: rk_batuoc_spin, label: "Bá Tước (ủng hộ): vé vòng quay nhanh hơn (%)", type: int, min: 0, max: 50, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.batuoc.spin-faster }
       - { key: rk_batuoc_kit, label: "Bá Tước (ủng hộ): gói quà (mã ở Người mới › Gói quà, trống = không)", type: text, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.batuoc.kit }
       - { key: rk_hautuoc_homes, label: "Hầu Tước (ủng hộ): số nhà (0 = theo danh phận)", type: int, min: 0, max: 20, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.hautuoc.homes }
       - { key: rk_hautuoc_balo, label: "Hầu Tước (ủng hộ): số balo", type: int, min: 0, max: 9, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.hautuoc.balo }
       - { key: rk_hautuoc_slots, label: "Hầu Tước (ủng hộ): số ô mỗi balo", type: select, options: [ { value: 0, label: "Không cấp" }, { value: 9, label: "9 ô" }, { value: 18, label: "18 ô" }, { value: 27, label: "27 ô" }, { value: 36, label: "36 ô" }, { value: 45, label: "45 ô" }, { value: 54, label: "54 ô" } ], file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.hautuoc.balo-slots }
-      - { key: rk_hautuoc_ah, label: "Hầu Tước (ủng hộ): số món treo Chợ đen /ah (Auction House)", type: int, min: 0, max: 20, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.hautuoc.ah }
-      - { key: rk_hautuoc_orders, label: "Hầu Tước (ủng hộ): số đơn thu mua /donhang", type: int, min: 0, max: 50, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.hautuoc.orders }
+      - { key: rk_hautuoc_ah, label: "Hầu Tước (ủng hộ): số món treo Chợ đen (bên Đang bán)", type: int, min: 0, max: 20, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.hautuoc.ah }
+      - { key: rk_hautuoc_orders, label: "Hầu Tước (ủng hộ): số đơn thu mua Chợ đen", type: int, min: 0, max: 50, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.hautuoc.orders }
       - { key: rk_hautuoc_tuskin, label: "Hầu Tước (ủng hộ): số skin lưu trong tủ /tuskin", type: int, min: 0, max: 50, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.hautuoc.tu-skin }
       - { key: rk_hautuoc_spin, label: "Hầu Tước (ủng hộ): vé vòng quay nhanh hơn (%)", type: int, min: 0, max: 50, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.hautuoc.spin-faster }
       - { key: rk_hautuoc_kit, label: "Hầu Tước (ủng hộ): gói quà (mã ở Người mới › Gói quà, trống = không)", type: text, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.hautuoc.kit }
       - { key: rk_congtuoc_homes, label: "Công Tước (ủng hộ): số nhà (0 = theo danh phận)", type: int, min: 0, max: 20, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.congtuoc.homes }
       - { key: rk_congtuoc_balo, label: "Công Tước (ủng hộ): số balo", type: int, min: 0, max: 9, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.congtuoc.balo }
       - { key: rk_congtuoc_slots, label: "Công Tước (ủng hộ): số ô mỗi balo", type: select, options: [ { value: 0, label: "Không cấp" }, { value: 9, label: "9 ô" }, { value: 18, label: "18 ô" }, { value: 27, label: "27 ô" }, { value: 36, label: "36 ô" }, { value: 45, label: "45 ô" }, { value: 54, label: "54 ô" } ], file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.congtuoc.balo-slots }
-      - { key: rk_congtuoc_ah, label: "Công Tước (ủng hộ): số món treo Chợ đen /ah (Auction House)", type: int, min: 0, max: 20, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.congtuoc.ah }
-      - { key: rk_congtuoc_orders, label: "Công Tước (ủng hộ): số đơn thu mua /donhang", type: int, min: 0, max: 50, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.congtuoc.orders }
+      - { key: rk_congtuoc_ah, label: "Công Tước (ủng hộ): số món treo Chợ đen (bên Đang bán)", type: int, min: 0, max: 20, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.congtuoc.ah }
+      - { key: rk_congtuoc_orders, label: "Công Tước (ủng hộ): số đơn thu mua Chợ đen", type: int, min: 0, max: 50, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.congtuoc.orders }
       - { key: rk_congtuoc_tuskin, label: "Công Tước (ủng hộ): số skin lưu trong tủ /tuskin", type: int, min: 0, max: 50, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.congtuoc.tu-skin }
       - { key: rk_congtuoc_spin, label: "Công Tước (ủng hộ): vé vòng quay nhanh hơn (%)", type: int, min: 0, max: 50, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.congtuoc.spin-faster }
       - { key: rk_congtuoc_kit, label: "Công Tước (ủng hộ): gói quà (mã ở Người mới › Gói quà, trống = không)", type: text, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.congtuoc.kit }
       - { key: rk_builder_homes, label: "Builder: số nhà (0 = theo danh phận)", type: int, min: 0, max: 20, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.builder.homes }
       - { key: rk_builder_balo, label: "Builder: số balo", type: int, min: 0, max: 9, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.builder.balo }
       - { key: rk_builder_slots, label: "Builder: số ô mỗi balo", type: select, options: [ { value: 0, label: "Không cấp" }, { value: 9, label: "9 ô" }, { value: 18, label: "18 ô" }, { value: 27, label: "27 ô" }, { value: 36, label: "36 ô" }, { value: 45, label: "45 ô" }, { value: 54, label: "54 ô" } ], file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.builder.balo-slots }
-      - { key: rk_builder_ah, label: "Builder: số món treo Chợ đen /ah (Auction House)", type: int, min: 0, max: 20, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.builder.ah }
-      - { key: rk_builder_orders, label: "Builder: số đơn thu mua /donhang", type: int, min: 0, max: 50, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.builder.orders }
+      - { key: rk_builder_ah, label: "Builder: số món treo Chợ đen (bên Đang bán)", type: int, min: 0, max: 20, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.builder.ah }
+      - { key: rk_builder_orders, label: "Builder: số đơn thu mua Chợ đen", type: int, min: 0, max: 50, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.builder.orders }
       - { key: rk_builder_tuskin, label: "Builder: số skin lưu trong tủ /tuskin", type: int, min: 0, max: 50, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.builder.tu-skin }
       - { key: rk_builder_spin, label: "Builder: vé vòng quay nhanh hơn (%)", type: int, min: 0, max: 50, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.builder.spin-faster }
       - { key: rk_builder_kit, label: "Builder: gói quà (mã ở Người mới › Gói quà, trống = không)", type: text, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.builder.kit }
       - { key: rk_helper_homes, label: "Helper: số nhà (0 = theo danh phận)", type: int, min: 0, max: 20, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.helper.homes }
       - { key: rk_helper_balo, label: "Helper: số balo", type: int, min: 0, max: 9, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.helper.balo }
       - { key: rk_helper_slots, label: "Helper: số ô mỗi balo", type: select, options: [ { value: 0, label: "Không cấp" }, { value: 9, label: "9 ô" }, { value: 18, label: "18 ô" }, { value: 27, label: "27 ô" }, { value: 36, label: "36 ô" }, { value: 45, label: "45 ô" }, { value: 54, label: "54 ô" } ], file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.helper.balo-slots }
-      - { key: rk_helper_ah, label: "Helper: số món treo Chợ đen /ah (Auction House)", type: int, min: 0, max: 20, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.helper.ah }
-      - { key: rk_helper_orders, label: "Helper: số đơn thu mua /donhang", type: int, min: 0, max: 50, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.helper.orders }
+      - { key: rk_helper_ah, label: "Helper: số món treo Chợ đen (bên Đang bán)", type: int, min: 0, max: 20, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.helper.ah }
+      - { key: rk_helper_orders, label: "Helper: số đơn thu mua Chợ đen", type: int, min: 0, max: 50, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.helper.orders }
       - { key: rk_helper_tuskin, label: "Helper: số skin lưu trong tủ /tuskin", type: int, min: 0, max: 50, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.helper.tu-skin }
       - { key: rk_helper_spin, label: "Helper: vé vòng quay nhanh hơn (%)", type: int, min: 0, max: 50, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.helper.spin-faster }
       - { key: rk_helper_kit, label: "Helper: gói quà (mã ở Người mới › Gói quà, trống = không)", type: text, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.helper.kit }
       - { key: rk_mod_homes, label: "Mod: số nhà (0 = theo danh phận)", type: int, min: 0, max: 20, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.mod.homes }
       - { key: rk_mod_balo, label: "Mod: số balo", type: int, min: 0, max: 9, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.mod.balo }
       - { key: rk_mod_slots, label: "Mod: số ô mỗi balo", type: select, options: [ { value: 0, label: "Không cấp" }, { value: 9, label: "9 ô" }, { value: 18, label: "18 ô" }, { value: 27, label: "27 ô" }, { value: 36, label: "36 ô" }, { value: 45, label: "45 ô" }, { value: 54, label: "54 ô" } ], file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.mod.balo-slots }
-      - { key: rk_mod_ah, label: "Mod: số món treo Chợ đen /ah (Auction House)", type: int, min: 0, max: 20, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.mod.ah }
-      - { key: rk_mod_orders, label: "Mod: số đơn thu mua /donhang", type: int, min: 0, max: 50, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.mod.orders }
+      - { key: rk_mod_ah, label: "Mod: số món treo Chợ đen (bên Đang bán)", type: int, min: 0, max: 20, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.mod.ah }
+      - { key: rk_mod_orders, label: "Mod: số đơn thu mua Chợ đen", type: int, min: 0, max: 50, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.mod.orders }
       - { key: rk_mod_tuskin, label: "Mod: số skin lưu trong tủ /tuskin", type: int, min: 0, max: 50, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.mod.tu-skin }
       - { key: rk_mod_spin, label: "Mod: vé vòng quay nhanh hơn (%)", type: int, min: 0, max: 50, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.mod.spin-faster }
       - { key: rk_mod_kit, label: "Mod: gói quà (mã ở Người mới › Gói quà, trống = không)", type: text, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.mod.kit }
       - { key: rk_quanly_homes, label: "Quản lý: số nhà (0 = theo danh phận)", type: int, min: 0, max: 20, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.quanly.homes }
       - { key: rk_quanly_balo, label: "Quản lý: số balo", type: int, min: 0, max: 9, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.quanly.balo }
       - { key: rk_quanly_slots, label: "Quản lý: số ô mỗi balo", type: select, options: [ { value: 0, label: "Không cấp" }, { value: 9, label: "9 ô" }, { value: 18, label: "18 ô" }, { value: 27, label: "27 ô" }, { value: 36, label: "36 ô" }, { value: 45, label: "45 ô" }, { value: 54, label: "54 ô" } ], file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.quanly.balo-slots }
-      - { key: rk_quanly_ah, label: "Quản lý: số món treo Chợ đen /ah (Auction House)", type: int, min: 0, max: 20, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.quanly.ah }
-      - { key: rk_quanly_orders, label: "Quản lý: số đơn thu mua /donhang", type: int, min: 0, max: 50, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.quanly.orders }
+      - { key: rk_quanly_ah, label: "Quản lý: số món treo Chợ đen (bên Đang bán)", type: int, min: 0, max: 20, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.quanly.ah }
+      - { key: rk_quanly_orders, label: "Quản lý: số đơn thu mua Chợ đen", type: int, min: 0, max: 50, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.quanly.orders }
       - { key: rk_quanly_tuskin, label: "Quản lý: số skin lưu trong tủ /tuskin", type: int, min: 0, max: 50, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.quanly.tu-skin }
       - { key: rk_quanly_spin, label: "Quản lý: vé vòng quay nhanh hơn (%)", type: int, min: 0, max: 50, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.quanly.spin-faster }
       - { key: rk_quanly_kit, label: "Quản lý: gói quà (mã ở Người mới › Gói quà, trống = không)", type: text, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.quanly.kit }
       - { key: rk_admin_homes, label: "Admin: số nhà (0 = theo danh phận)", type: int, min: 0, max: 20, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.admin.homes }
       - { key: rk_admin_balo, label: "Admin: số balo", type: int, min: 0, max: 9, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.admin.balo }
       - { key: rk_admin_slots, label: "Admin: số ô mỗi balo", type: select, options: [ { value: 0, label: "Không cấp" }, { value: 9, label: "9 ô" }, { value: 18, label: "18 ô" }, { value: 27, label: "27 ô" }, { value: 36, label: "36 ô" }, { value: 45, label: "45 ô" }, { value: 54, label: "54 ô" } ], file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.admin.balo-slots }
-      - { key: rk_admin_ah, label: "Admin: số món treo Chợ đen /ah (Auction House)", type: int, min: 0, max: 20, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.admin.ah }
-      - { key: rk_admin_orders, label: "Admin: số đơn thu mua /donhang", type: int, min: 0, max: 50, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.admin.orders }
+      - { key: rk_admin_ah, label: "Admin: số món treo Chợ đen (bên Đang bán)", type: int, min: 0, max: 20, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.admin.ah }
+      - { key: rk_admin_orders, label: "Admin: số đơn thu mua Chợ đen", type: int, min: 0, max: 50, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.admin.orders }
       - { key: rk_admin_tuskin, label: "Admin: số skin lưu trong tủ /tuskin", type: int, min: 0, max: 50, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.admin.tu-skin }
       - { key: rk_admin_spin, label: "Admin: vé vòng quay nhanh hơn (%)", type: int, min: 0, max: 50, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.admin.spin-faster }
       - { key: rk_admin_kit, label: "Admin: gói quà (mã ở Người mới › Gói quà, trống = không)", type: text, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.other-ranks.admin.kit }
@@ -1939,13 +1939,13 @@ groups:
       - { key: qs_sell_min, label: Giá bán thấp nhất (xu), type: number, min: 0, file: plugins/QuickShop-Hikari/price-restriction.yml, path: global.selling.min }
       - { key: qs_sell_max, label: Giá bán cao nhất (xu), type: number, min: 0, file: plugins/QuickShop-Hikari/price-restriction.yml, path: global.selling.max }
 
-  - title: Chợ đen /ah (zAuctionHouse)
+  - title: Chợ đen · đang bán (zAuctionHouse)
     category: Shop
-    description: "Người chơi đăng bán đồ đang cầm bằng /ah sell <giá>, người khác mua trong /ah. Số món mỗi người đăng cùng lúc: theo Danh phận (Người mới › Danh phận), Thương Hội 15."
+    description: "Người chơi đăng bán đồ đang cầm bằng /choden ban <giá>, người khác mua trong /choden mua. Số món mỗi người đăng cùng lúc: theo Danh phận (Người mới › Danh phận), Thương Hội 15."
     apply: [zauctionhouse admin reload]
     settings:
       - { key: ah_expire, label: "Thời gian đăng bán (giây; 172800 = 2 ngày)", type: int, min: 600, max: 31536000, file: plugins/zAuctionHouse/config.yml, path: expiration.auction.default-expiration,
-          note: "Hết hạn chưa ai mua thì món đồ vào mục hết hạn, người bán vào /ah lấy lại." }
+          note: "Hết hạn chưa ai mua thì món đồ vào mục hết hạn, người bán lấy lại ở /choden hethan." }
       - { key: ah_expired_keep, label: "Giữ đồ hết hạn chờ lấy lại (giây; 604800 = 7 ngày)", type: int, min: 3600, max: 31536000, file: plugins/zAuctionHouse/config.yml, path: expiration.expire.default-expiration }
       - { key: ah_min_price, label: Giá đăng bán thấp nhất (xu), type: number, min: 0, file: plugins/zAuctionHouse/economies.yml, path: economies.0.min-prices.auction }
       - { key: ah_max_price, label: Giá đăng bán cao nhất (xu), type: number, min: 1, file: plugins/zAuctionHouse/economies.yml, path: economies.0.max-prices }

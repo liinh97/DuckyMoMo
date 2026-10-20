@@ -239,7 +239,7 @@ chapters:
     &6Chơi lại từ đầu
     &1/choilai&0 rồi &1/choilai xacnhan&0: mất hết đồ, tiền, nhà, nghề, thị trấn. Giữ rank, danh hiệu, án phạt.
     &07 ngày/lần, 3 lần/mùa. Quà tân thủ chỉ lần đầu.
-    &4Trước khi chơi lại: &0dỡ shop rương, rút hàng &1/ah&0 (không thì mất).
+    &4Trước khi chơi lại: &0dỡ shop rương, rút hàng &1/choden cuatoi&0 (không thì mất).
   - |-
     &6Tài khoản phụ
     &0Tối đa 2 tài khoản/người. Acc phụ phải khai:
@@ -304,7 +304,7 @@ chapters:
     &0- Rời: mất bảo vệ ngay, 14 ngày&r&0 mới vào lại.
   - |-
     &2Quyền lợi hoà bình
-    &0Chợ &1/ah&0 chỉ dùng trong đất hoà bình.
+    &0Chợ đen &1/choden&0 chỉ dùng trong đất hoà bình.
     &0Bán &1/sell&0 ở kinh đô được +20%&r&0.
     &0Shop rương trong đất hoà bình miễn thuế&r&0 (ngoài: 5%).
     &0Có công thành gần nhà sẽ được báo trước 2 ngày: hãy di tản khỏi vùng vây.
@@ -328,7 +328,7 @@ chapters:
   - |-
     &2TỔ CHỨC
     &0Dân hoà bình lập tổ chức, xin giấy phép:
-    &2Thương Hội&0: thêm shop rương, đăng 15 món &1/ah&0, rao hàng.
+    &2Thương Hội&0: thêm shop rương, treo 15 món Chợ đen, rao hàng.
     &2Sự kiện&0: tổ chức sự kiện cho cả server.
     &1/tochuc lap thuonghoi <tên>
     &8Vd: /tochuc lap sukien LeHoiXuan
@@ -494,13 +494,14 @@ chapters:
     &6Shop rương (tiếp)
     &0Tối đa 10 shop (Thương Hội nhiều hơn). Người khác mua được khi bạn offline.
   - |-
-    &6Chợ đen /ah
-    &1/ah &0mở chợ
-    &1/ah sell <giá> &0bán món đang cầm
-    &8Vd: /ah sell 250
-    &0Tối đa 5 món (Thương Hội 15).
+    &6CHỢ ĐEN /choden
+    &0Một lệnh cho cả chợ giữa người chơi.
+    &1/choden mua &0xem hàng, bấm là mua
+    &1/choden ban <giá> &0bán món đang cầm
+    &8Vd: /choden ban 250
+    &1/choden cuatoi &0đồ đang treo
+    &1/choden hethan &0lấy lại đồ hết hạn
     &4Chỉ mở trong đất hoà bình&0 (kinh đô, thị trấn hoà bình).
-    &8Món hết hạn: vào /ah lấy lại.
   - |-
     &6Dân làng bán hàng
     &0NPC dân làng ở spawn: bấm chuột phải để mua/bán như dân làng thường.
@@ -512,16 +513,16 @@ chapters:
     &0Rank ủng hộ: gõ &1/cuahang&0 khi đứng trong kinh đô.
     &8Không bán gì tăng sức mạnh.
   - |-
-    &6SÀN THU MUA
+    &6CHỢ ĐEN: THU MUA
     &0Cần nhiều gỗ, đá…? Cầm 1 món làm mẫu:
-    &1/donhang tao <số> <giá/món>
-    &8Vd: /donhang tao 1000 1
+    &1/choden dat <số> <giá/món>
+    &8Vd: /choden dat 1000 1
     &0(tiền 1000 xu được giữ trước).
-    &0Người khác &1/donhang&0 bấm đơn để giao, nhận tiền ngay.
+    &0Người khác &1/choden thumua&0 bấm đơn để giao, nhận tiền ngay.
   - |-
-    &6SÀN THU MUA (tiếp)
-    &1/donhang cuatoi &0nhận hàng
-    &1/donhang huy <số> &0huỷ, hoàn tiền phần chưa giao
+    &6THU MUA (tiếp)
+    &1/choden don &0nhận hàng
+    &1/choden huy <số> &0huỷ, hoàn tiền phần chưa giao
     &8Phí đăng đơn 2% (không hoàn), đơn hạn 7 ngày, tối đa 5 đơn. Chỉ nhận đồ trơn (không tên, không phù phép).
   - |-
     &6XƯỞNG CHẾ TẠO

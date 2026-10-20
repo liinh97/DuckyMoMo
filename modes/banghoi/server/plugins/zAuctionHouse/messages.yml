@@ -453,7 +453,7 @@ claim-economy-success: "<success>Bạn nhận <white>%amount%<success> từ <whi
 # Notification shown when player has pending money (on join).
 # Available placeholders:
 #   %amount% - Total pending amount
-claim-pending-notify: "#e6fff3Bạn có tiền bán hàng chưa nhận! Gõ <white>/ah claim<#e6fff3> để nhận <white>%amount%<#e6fff3>."
+claim-pending-notify: "#e6fff3Bạn có tiền bán hàng chưa nhận: <white>%amount%<#e6fff3>. <click:run_command:/ah claim><#2CCED2>[Bấm để nhận]</click>"
 
 #=============================================================================
 # SALES NOTIFICATION

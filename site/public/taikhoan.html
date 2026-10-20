@@ -370,8 +370,8 @@ function render(){
   const dh = h.donhang || {}, kh = h.khaihoang || {}, tt = h.treothuong || {};
   html += `<div class="grid g3" style="margin-top:14px">
     <div class="card"><h2>🧾 Chợ đen (thu mua)</h2>${dh.mo || dh.cho_nhan
-        ? `<p>Bạn có <b>${dh.mo || 0}</b> đơn đang mở${dh.cho_nhan ? `, <b>${nf.format(dh.cho_nhan)}</b> món đã giao <b>chờ nhận</b>` : ""}.</p><p class="small muted">Nhận hàng: <code>/donhang cuatoi</code></p>`
-        : `<p class="muted">Chưa có đơn nào. Cầm món cần mua, gõ <code>/donhang tao &lt;số lượng&gt; &lt;đơn giá&gt;</code>; người khác giao là bạn nhận cả khi offline.</p>`}</div>
+        ? `<p>Bạn có <b>${dh.mo || 0}</b> đơn đang mở${dh.cho_nhan ? `, <b>${nf.format(dh.cho_nhan)}</b> món đã giao <b>chờ nhận</b>` : ""}.</p><p class="small muted">Nhận hàng: <code>/choden don</code></p>`
+        : `<p class="muted">Chưa có đơn nào. Cầm món cần mua, gõ <code>/choden dat &lt;số lượng&gt; &lt;đơn giá&gt;</code>; người khác giao là bạn nhận cả khi offline.</p>`}</div>
     <div class="card"><h2>🗺️ Khai hoang</h2><p>Bạn đã góp <b>${nf.format(Math.round(kh.gop || 0))} xu</b> vào quỹ chung (quỹ: ${nf.format(Math.round(kh.quy || 0))} xu).</p>
       <p class="small muted">Bán đồ bằng <code>/sell</code> là tự góp (bạn không mất gì), hoặc <code>/khaihoang gop &lt;xu&gt;</code>. Đủ mốc thì mở vùng đất mới.</p></div>
     <div class="card"><h2>☠ Treo thưởng</h2>${tt.tren_ban ? `<p class="red">Đầu bạn đang bị treo <b>${nf.format(Math.round(tt.tren_ban))} xu</b>. Cẩn thận ngoài đất hoang!</p>` : `<p class="muted">Không ai treo thưởng lên bạn.</p>`}
@@ -507,7 +507,7 @@ function render(){
         <p class="small"><b style="color:#ff9d9b">Mất hết:</b> <span class="muted">đồ trên người, rương Ender, kinh nghiệm, tiền, nhà (/home), cấp nghề, thị trấn và quân hàm, giờ chơi thật. Đồ cất trong rương ngoài thế giới vẫn còn.</span></p>
         <p class="small"><b style="color:var(--jade2)">Giữ lại:</b> <span class="muted">rank ủng hộ, danh hiệu, án và lệnh cấm.</span></p>
         <p class="small muted">${cl.co_qua ? `Lần này <b style="color:var(--jade2)">có quà tân thủ + ${nf.format(cl.tien_dau)} xu</b>.` : "Lần này <b>không có</b> quà tân thủ và tiền khởi đầu (chỉ lần đầu trong mùa)."}
-          Phải dỡ shop rương và rút hàng trên Chợ đen /ah trước; server kiểm tra lại khi bạn xác nhận.</p></div>
+          Phải dỡ shop rương và rút hàng trên Chợ đen (/choden cuatoi) trước; server kiểm tra lại khi bạn xác nhận.</p></div>
       <div><p class="small muted">Đã chơi lại <b>${cl.da_lam}/${cl.toi_da}</b> lần trong mùa${cl.lan_cuoi ? ` · lần cuối ${when(cl.lan_cuoi)}` : ""}.</p>
         ${blocked.length ? `<div class="note red small">${blocked.map(esc).join("<br>")}</div>` :
           `<p class="small muted">Bấm nút khi đang <b>online ở Bang Hội Chiến</b>: server hỏi lại trong game, bạn gõ <code>/choilai xacnhan</code> trong 30 giây mới bắt đầu lại. Không xác nhận thì không mất gì.</p>

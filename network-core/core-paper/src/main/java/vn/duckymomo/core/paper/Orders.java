@@ -16,6 +16,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.event.player.PlayerCommandSendEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
@@ -41,7 +44,7 @@ import java.util.UUID;
 /**
  * Chợ đen (thu mua) (/donhang, ý từ UniMC "Orders"). Người mua đặt "cần N món X, giá P/món": tiền N*P bị GIỮ trước (cộng phí đăng đơn,
  * phí không hoàn = rút tiền khỏi nền kinh tế). Người khác mở sàn, bấm đơn để giao hàng từ túi, nhận tiền NGAY; hàng nằm trong kho của đơn
- * chờ người mua nhận (/donhang cuatoi), kể cả khi người mua offline. Hết hạn hoặc huỷ: trả lại tiền của phần chưa giao.
+ * chờ người mua nhận (/choden don), kể cả khi người mua offline. Hết hạn hoặc huỷ: trả lại tiền của phần chưa giao.
  * Chỉ nhận đồ "trơn" (không tên riêng, không phù phép, không hỏng, không chứa đồ) để không ai giao đồ khác loại.
  * Lưu: plugins/DuckyMoMoCore/donhang.yml
  */
@@ -239,7 +242,7 @@ final class Orders implements Listener {
                 t.note("Chưa có hàng giao tới");
             }
             if (!o.getBoolean("dong")) {
-                t.click("Chuột phải", "huỷ đơn &8(/donhang huy " + id + ")");
+                t.click("Chuột phải", "huỷ đơn &8(/choden huy " + id + ")");
             }
         } else {
             t.click("Bấm để giao hàng").note("Chỉ nhận đồ thường, không tên, không phù phép");
@@ -280,7 +283,7 @@ final class Orders implements Listener {
             }
         }
         if (list.isEmpty()) {
-            p.sendMessage(c("&7Bạn chưa có đơn nào. Tạo: cầm món cần mua, gõ &e/donhang tao <số lượng> <đơn giá>"));
+            p.sendMessage(c("&7Bạn chưa có đơn nào. Tạo: cầm món cần mua, gõ &e/choden dat <số lượng> <đơn giá>"));
             return;
         }
         render(p, list, true, 0, "&0☠ Chợ đen · Đơn của tôi");
@@ -302,7 +305,7 @@ final class Orders implements Listener {
         h.inv.setItem(47, button(Material.BOOK, "&6☠ &fVề Chợ đen", "&7Đang bán · Thu mua · Đơn của tôi"));
         h.inv.setItem(49, mine ? button(Material.EMERALD, "&b✉ &fĐang thu mua", "&7Xem đơn của mọi người")
                 : button(Material.CHEST, "&6✉ &fĐơn của tôi", "&7Nhận hàng, huỷ đơn"));
-        h.inv.setItem(48, button(Material.BOOK, "&e✚ &fTạo đơn mới", "&7Cầm món cần mua, gõ &f/donhang tao <số> <giá>"));
+        h.inv.setItem(48, button(Material.BOOK, "&e✚ &fTạo đơn mới", "&7Cầm món cần mua, gõ &f/choden dat <số> <giá>"));
         if (page < pages - 1) {
             h.inv.setItem(53, button(Material.ARROW, "&fTrang sau &e→", null));
         }
@@ -378,7 +381,7 @@ final class Orders implements Listener {
         }
         if (waiting > 0) {
             int w = waiting;
-            JoinNotes.add(e.getPlayer(), 40, c("&6[Đơn hàng] &fCó &a" + w + " &fmón đã giao chờ bạn nhận: &e/donhang cuatoi"));
+            JoinNotes.add(e.getPlayer(), 40, c("&6[Đơn hàng] &fCó &a" + w + " &fmón đã giao chờ bạn nhận: &e/choden don"));
         }
     }
 
@@ -386,7 +389,7 @@ final class Orders implements Listener {
 
     private void create(Player p, String[] args) {
         if (args.length < 3) {
-            p.sendMessage(c("&eCầm món cần mua rồi gõ: &f/donhang tao <số lượng> <đơn giá>"));
+            p.sendMessage(c("&eCầm món cần mua rồi gõ: &f/choden dat <số lượng> <đơn giá>"));
             return;
         }
         ItemStack hand = p.getInventory().getItemInMainHand();
@@ -405,7 +408,7 @@ final class Orders implements Listener {
             amount = Integer.parseInt(args[1]);
             price = Math.round(Double.parseDouble(args[2].replace(",", ".")) * 100) / 100.0;
         } catch (NumberFormatException ex) {
-            p.sendMessage(c("&cSố lượng và giá phải là số. Ví dụ: &f/donhang tao 1000 0.5"));
+            p.sendMessage(c("&cSố lượng và giá phải là số. Ví dụ: &f/choden dat 1000 0.5"));
             return;
         }
         int maxAmount = cfg.getInt("max-amount", 6400);
@@ -434,7 +437,7 @@ final class Orders implements Listener {
             }
         }
         if (mineCount >= max && !p.hasPermission("duckymomo.donhang.khonggioihan")) {
-            p.sendMessage(c("&cBạn đang có " + mineCount + " đơn mở (tối đa " + max + "). Huỷ bớt ở &f/donhang cuatoi&c."));
+            p.sendMessage(c("&cBạn đang có " + mineCount + " đơn mở (tối đa " + max + "). Huỷ bớt ở &f/choden don&c."));
             return;
         }
         double total = amount * price;
@@ -459,7 +462,7 @@ final class Orders implements Listener {
         p.playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.7f, 1.2f);
         p.sendMessage(c("&a✔ Đã đăng đơn &e#" + id + "&a: cần " + amount + "x ").append(name(m))
                 .append(c(" &agiá " + money(price) + "/món. Đã giữ " + money(total) + " (phí " + money(fee) + ")."
-                        + " Hàng giao tới nhận ở &f/donhang cuatoi&a.")));
+                        + " Hàng giao tới nhận ở &f/choden don&a.")));
         plugin.getLogger().info("Đơn #" + id + ": " + p.getName() + " mua " + amount + " " + m + " giá " + price);
     }
 
@@ -497,7 +500,7 @@ final class Orders implements Listener {
         Player owner = Bukkit.getPlayer(UUID.fromString(o.getString("owner")));
         if (owner != null) {
             owner.sendMessage(c("&6[Đơn hàng] &f" + p.getName() + " vừa giao &a" + n + "x ").append(name(m))
-                    .append(c(" &fcho đơn &e#" + id + (done ? " &a(đủ hàng)" : "") + "&f. Nhận: &e/donhang cuatoi")));
+                    .append(c(" &fcho đơn &e#" + id + (done ? " &a(đủ hàng)" : "") + "&f. Nhận: &e/choden don")));
         }
     }
 
@@ -598,14 +601,14 @@ final class Orders implements Listener {
                 .desc("Xem đồ người khác đang bán, bấm là mua").line().click("Bấm để xem hàng"), "ah"));
         h.inv.setItem(11, hubButton(Material.GOLD_INGOT, Tip.of("&a✚ &fTreo bán món đang cầm").accent("&a")
                 .desc("Cầm món muốn bán trên tay rồi bấm", "Gõ giá vào khung chat").line()
-                .kv("Lệnh", "&e/ah sell <giá> [số lượng]").click("Bấm để điền lệnh"), "ah-sell"));
+                .kv("Lệnh", "&e/choden ban <giá> [số lượng]").click("Bấm để điền lệnh"), "ah-sell"));
         h.inv.setItem(12, hubButton(Material.ENDER_CHEST, Tip.of("&a▣ &fĐồ tôi đang bán").accent("&a")
                 .desc("Xem, rút lại đồ đang treo bán").line().click("Bấm để mở"), "ah-selling"));
         h.inv.setItem(14, hubButton(Material.HOPPER, Tip.of("&b✉ &fĐang thu mua").sub(openOrders + " đơn").accent("&b")
                 .desc("Đơn người chơi cần mua, giá đã giữ sẵn", "Có hàng thì giao vào, nhận tiền ngay").line().click("Bấm để xem đơn"), "orders"));
         h.inv.setItem(15, hubButton(Material.WRITABLE_BOOK, Tip.of("&b✚ &fĐặt đơn mua").accent("&b")
                 .desc("Cầm món cần mua trên tay rồi bấm", "Tiền được giữ trước, phí " + cfg.getDouble("fee-percent", 2) + "%").line()
-                .kv("Lệnh", "&e/donhang tao <số lượng> <đơn giá>").click("Bấm để điền lệnh"), "order-new"));
+                .kv("Lệnh", "&e/choden dat <số lượng> <đơn giá>").click("Bấm để điền lệnh"), "order-new"));
         h.inv.setItem(16, hubButton(Material.BARREL, Tip.of("&b▣ &fĐơn của tôi").sub(myOrders + " đơn").accent("&b")
                 .desc("Nhận hàng đã giao, huỷ đơn").line().click("Bấm để mở"), "orders-mine"));
         h.inv.setItem(22, hubButton(Material.BARRIER, Tip.of("&c✘ &fĐóng"), "close"));
@@ -616,16 +619,16 @@ final class Orders implements Listener {
         switch (action) {
             case "ah" -> {
                 p.closeInventory();
-                p.chat("/ah");   // qua chat để vẫn kiểm luật mở chợ (vùng kinh đô / đất hoà bình)
+                market(p, "/ah");   // qua chat để vẫn kiểm luật mở chợ (vùng kinh đô / đất hoà bình)
             }
             case "ah-selling" -> {
                 p.closeInventory();
-                p.chat("/ah selling");
+                market(p, "/ah selling");
             }
-            case "ah-sell" -> suggest(p, "/ah sell ", "Gõ giá rồi Enter (cầm món muốn bán trên tay).");
+            case "ah-sell" -> suggest(p, "/choden ban ", "Gõ giá rồi Enter (cầm món muốn bán trên tay).");
             case "orders" -> openMarket(p, 0);
             case "orders-mine" -> openMine(p);
-            case "order-new" -> suggest(p, "/donhang tao ", "Gõ số lượng và đơn giá rồi Enter (cầm món cần mua trên tay).");
+            case "order-new" -> suggest(p, "/choden dat ", "Gõ số lượng và đơn giá rồi Enter (cầm món cần mua trên tay).");
             case "close" -> p.closeInventory();
             default -> { }
         }
@@ -652,13 +655,88 @@ final class Orders implements Listener {
     }
 
     /** /choden */
+    /** /choden [mua | ban <giá> [số] | cuatoi | thumua | dat <số> <giá> | don | nhan | huy <số> | giup]: MỘT lệnh cho cả chợ (21/10). */
     boolean hubCommand(CommandSender s, String[] args) {
-        if (s instanceof Player p) {
-            openHub(p);
-        } else {
+        if (!(s instanceof Player p)) {
             s.sendMessage("Chỉ dùng trong game.");
+            return true;
+        }
+        String sub = args.length == 0 ? "" : args[0].toLowerCase(Locale.ROOT);
+        switch (sub) {
+            case "" -> openHub(p);
+            case "mua", "xem" -> market(p, "/ah");
+            case "ban" -> {
+                if (args.length < 2) {
+                    suggest(p, "/choden ban ", "Gõ giá rồi Enter (cầm món muốn bán trên tay).");
+                } else {
+                    market(p, "/ah sell " + String.join(" ", java.util.Arrays.copyOfRange(args, 1, args.length)));
+                }
+            }
+            case "cuatoi" -> market(p, "/ah selling");
+            case "hethan" -> market(p, "/ah expired");
+            case "lichsu" -> market(p, "/ah history");
+            case "nhantien" -> market(p, "/ah claim");
+            case "thumua" -> command(s, new String[0]);
+            case "dat" -> {
+                if (args.length < 3) {
+                    suggest(p, "/choden dat ", "Gõ số lượng và đơn giá rồi Enter (cầm món cần mua trên tay).");
+                } else {
+                    command(s, args);
+                }
+            }
+            case "don" -> command(s, new String[] {"cuatoi"});
+            case "nhan", "huy" -> command(s, args);
+            default -> command(s, new String[] {"giup"});
         }
         return true;
+    }
+
+    List<String> hubTab(String[] a) {
+        if (a.length == 1) {
+            String t = a[0].toLowerCase(Locale.ROOT);
+            return List.of("mua", "ban", "cuatoi", "hethan", "lichsu", "nhantien", "thumua", "dat", "don", "nhan", "huy", "giup").stream().filter(x -> x.startsWith(t)).toList();
+        }
+        if (a.length == 2 && (a[0].equalsIgnoreCase("ban") || a[0].equalsIgnoreCase("dat"))) {
+            return a[0].equalsIgnoreCase("ban") ? List.of("100", "500", "1000") : List.of("64", "320", "1000");
+        }
+        return List.of();
+    }
+
+    // Chợ người chơi chạy trên zAuctionHouse (/ah). Người chơi chỉ cần biết /choden: lệnh /ah ẩn khỏi Tab, gõ /ah trống thì mở Chợ đen.
+    private static final Set<String> AH_LABELS = Set.of("ah", "zauctionhouse", "hdv", "auction", "zauction");
+    private final Set<UUID> passAh = new HashSet<>();
+
+    /** Chạy lệnh zAuctionHouse qua chat (để luật mở chợ vẫn kiểm) mà không bị chuyển về /choden. */
+    private void market(Player p, String cmd) {
+        p.closeInventory();
+        passAh.add(p.getUniqueId());
+        try {
+            p.chat(cmd);
+        } finally {
+            passAh.remove(p.getUniqueId());
+        }
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onAhTyped(PlayerCommandPreprocessEvent e) {
+        String[] parts = e.getMessage().substring(1).trim().split("\\s+");
+        String label = parts[0].toLowerCase(Locale.ROOT);
+        label = label.substring(label.indexOf(':') + 1);
+        if (parts.length == 1 && AH_LABELS.contains(label) && !passAh.contains(e.getPlayer().getUniqueId())) {
+            e.setCancelled(true);
+            openHub(e.getPlayer());
+        }
+    }
+
+    @EventHandler
+    public void onCommandList(PlayerCommandSendEvent e) {
+        if (e.getPlayer().hasPermission("duckymomo.admin")) {
+            return;
+        }
+        e.getCommands().removeIf(c -> {
+            String l = c.toLowerCase(Locale.ROOT);
+            return AH_LABELS.contains(l.substring(l.indexOf(':') + 1));
+        });
     }
 
     boolean command(CommandSender s, String[] args) {
@@ -684,7 +762,7 @@ final class Orders implements Listener {
             }
             case "huy" -> {
                 if (args.length < 2) {
-                    p.sendMessage(c("&e/donhang huy <số đơn>"));
+                    p.sendMessage(c("&e/choden huy <số đơn>"));
                 } else {
                     try {
                         cancel(p, Integer.parseInt(args[1].replace("#", "")));
@@ -694,12 +772,16 @@ final class Orders implements Listener {
                 }
             }
             case "giup", "help" -> {
-                p.sendMessage(c("&6━━ CHỢ ĐEN · THU MUA ━━ &7(/choden: cả hai bên chợ)"));
-                p.sendMessage(c("&e/donhang &7mở sàn, bấm đơn để giao hàng nhận tiền ngay"));
-                p.sendMessage(c("&e/donhang tao <số lượng> <đơn giá> &7(cầm món cần mua) đặt đơn; tiền được giữ trước, phí "
+                p.sendMessage(c("&6━━ CHỢ ĐEN ━━ &7(/choden mở trang chung)"));
+                p.sendMessage(c("&a/choden mua &7xem hàng người chơi đang bán, bấm là mua"));
+                p.sendMessage(c("&a/choden ban <giá> [số lượng] &7treo bán món đang cầm"));
+                p.sendMessage(c("&a/choden cuatoi &7đồ tôi đang treo bán, rút lại · &a/choden hethan &7lấy lại đồ hết hạn"));
+                p.sendMessage(c("&a/choden lichsu &7lịch sử mua bán · &a/choden nhantien &7nhận tiền bán hàng còn chờ"));
+                p.sendMessage(c("&b/choden thumua &7xem đơn thu mua, bấm đơn để giao hàng nhận tiền ngay"));
+                p.sendMessage(c("&e/choden dat <số lượng> <đơn giá> &7(cầm món cần mua) đặt đơn; tiền được giữ trước, phí "
                         + cfg.getDouble("fee-percent", 2) + "%"));
-                p.sendMessage(c("&e/donhang cuatoi &7nhận hàng (chuột trái), huỷ đơn (chuột phải)"));
-                p.sendMessage(c("&e/donhang nhan &7nhận hết hàng · &e/donhang huy <số> &7huỷ đơn, trả lại tiền phần chưa giao"));
+                p.sendMessage(c("&e/choden don &7nhận hàng (chuột trái), huỷ đơn (chuột phải)"));
+                p.sendMessage(c("&e/choden nhan &7nhận hết hàng · &e/choden huy <số> &7huỷ đơn, trả lại tiền phần chưa giao"));
                 p.sendMessage(c("&7Đơn tự đóng sau " + cfg.getInt("days", 7) + " ngày. Chỉ nhận đồ thường (không tên riêng, không phù phép)."));
             }
             default -> openMarket(p, 0);

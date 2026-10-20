@@ -204,7 +204,7 @@ final class PlayerReset implements Listener {
         }
         int ah = Integrations.auctionCount(p);
         if (ah > 0) {
-            out.add("Bạn còn " + ah + " món trên Chợ đen (/ah): rút về hoặc nhận lại món hết hạn/đã mua trước.");
+            out.add("Bạn còn " + ah + " món trên Chợ đen: rút về (/choden cuatoi) hoặc nhận lại món hết hạn (/choden hethan) trước.");
         }
         return out;
     }

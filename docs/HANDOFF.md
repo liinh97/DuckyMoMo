@@ -1575,3 +1575,7 @@ Log: `docker compose logs banghoi-1 --since 5m | grep -iE "DuckyMoMoCore|Mùa:|V
   {<file boss>: [{do, ti-le, so, cho: top1|top3|tat-ca|ngau-nhien}]}, sửa ở trang Boss › 6. Trang Thư viện: chia đầu mục, tìm, "Đang dùng ở";
   món đang dùng không xoá / không đổi công dụng được (panel lib_usage). Cài đặt: ô chọn món (libSelect) thay ô tự tạo đồ; kiểu mới `libitem`.
   NGOÀI phạm vi: loot riêng của EliteMobs, kit tân thủ Essentials. Shopkeepers đã đặt món Tinh Luyện cũ: món vẫn nhận theo mã (dmm_tinhluyen).
+- 20/10 tối: tiền tố CHỈ HIỆN MỘT (người dùng báo lỗi hiện cả [Dân] lẫn rank): LuckPerms `meta-formatting.prefix.format: ["highest"]`
+  ở lobby/banghoi/practice/sangtao/template (+ data). Thứ tự theo weight: Admin 100 > Manager 90 > Mod 70 > Helper 50 > Builder 40 >
+  Sứ Giả 20 > rank ủng hộ 5–9 > Hào Kiệt 3 > Lương Dân 2 > Dân 1 > Tị Nạn 0. Ghi chú cũ "prefix ghép role + rank donate" (mục Role 12/10) KHÔNG còn đúng.
+  Bỏ &l khỏi tiền tố 5 rank ủng hộ (DB + Cài đặt tier*_prefix); namtuoc trước đó mất prefix, đã đặt lại.

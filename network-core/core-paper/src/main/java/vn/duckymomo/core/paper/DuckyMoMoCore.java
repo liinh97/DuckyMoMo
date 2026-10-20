@@ -344,7 +344,7 @@ public final class DuckyMoMoCore extends JavaPlugin {
             guideCmd.setExecutor((sender, cmd, label, args) -> guide.command(sender, args));
         }
 
-        // Chat có prefix role + rank donate (lobby không có EssentialsX Chat): chat-format.enabled
+        // Chat có prefix LuckPerms (lobby không có EssentialsX Chat): chat-format.enabled
         if (getConfig().getBoolean("chat-format.enabled") && getServer().getPluginManager().isPluginEnabled("LuckPerms")) {
             getServer().getPluginManager().registerEvents(new ChatFormat(), this);
             getLogger().info("Chat có prefix LuckPerms: bật");

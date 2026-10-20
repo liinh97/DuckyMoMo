@@ -11,7 +11,7 @@ import org.bukkit.event.Listener;
 
 /**
  * Chat dạng "[Admin] [VIP] Linh: nội dung", giống format EssentialsX Chat ở banghoi/practice
- * ('{PREFIX}{DISPLAYNAME}&7: &f{MESSAGE}'). Prefix lấy từ LuckPerms, đã ghép role + rank donate theo
+ * ('{PREFIX}{DISPLAYNAME}&7: &f{MESSAGE}'). Prefix lấy từ LuckPerms, chỉ một tiền tố (nhóm weight cao nhất) theo
  * meta-formatting trong LuckPerms/config.yml.
  */
 final class ChatFormat implements Listener {

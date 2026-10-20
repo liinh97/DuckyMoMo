@@ -19,14 +19,14 @@ redis:
   address: redis:6379
   password: ${CFG_REDIS_PASSWORD}
 
-# Prefix trong chat = role + rank donate, ví dụ "[Admin] [VIP] Linh".
+# Prefix trong chat / Tab: CHỈ MỘT tiền tố, của nhóm có trọng số (weight) cao nhất (20/10, người dùng: không hiện cả Dân lẫn rank).
+#   Thứ tự: Admin 100 > Manager 90 > Mod 70 > Helper 50 > Builder 40 > Sứ Giả 20 > rank ủng hộ 5–9 > Hào Kiệt 3 > Lương Dân 2 > Dân 1 > Tị Nạn 0.
 #   Role (chức vụ): Dân (default), Builder, Helper, Mod, Admin; đường thăng chức "staff": helper -> mod -> admin.
 #   Rank donate: đường "donate" (hiện có vip), CHỈ trang trí (màu chat, nick, mũ), không lợi thế khi chơi (luật Mojang).
 meta-formatting:
   prefix:
     format:
-      - "highest_not_on_track_donate"
-      - "highest_on_track_donate"
+      - "highest"
     duplicates: first-only
     start-spacer: ""
     middle-spacer: ""

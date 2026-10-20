@@ -26,7 +26,7 @@ void-teleport:
   below-y: 0
   spawn-on-join: true      # mỗi lần vào sảnh đều đứng giữa ô spawn (0, 89, 0)
 
-# Chat có prefix role + rank donate từ LuckPerms ("[Admin] [VIP] Linh: ..."), vì lobby không có EssentialsX Chat
+# Chat có prefix từ LuckPerms (chỉ một: nhóm cao nhất, vd "[Công Tước] Linh: ..."), vì lobby không có EssentialsX Chat
 chat-format:
   enabled: true
 

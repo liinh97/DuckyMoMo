@@ -168,5 +168,6 @@ authme_session_on: true
 authme_session_min: 60
 web_code_min: 60
 reg_per_ip_total: 2
-reg_whitelist:
-- 171.255.251.82
+reg_whitelist_players:
+- vanlinh
+reg_whitelist: []

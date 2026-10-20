@@ -37,6 +37,9 @@ final class RegisterLimit implements Listener {
     private final int perTotal;
     /** IP miễn giới hạn (register-limit.whitelist): đúng IP, hoặc tiền tố kết thúc bằng "." / ":" (vd "171.255.251." = cả dải). */
     private final java.util.List<String> whitelist;
+    /** Tên thành viên được miễn (register-limit.whitelist-players): IP lần đăng nhập GẦN NHẤT của họ (AuthMe) được miễn giới hạn.
+     *  Admin chỉ cần nhập tên một người trong nhóm (quán net, nhà đông người); họ đổi mạng thì miễn trừ tự đi theo. */
+    private final java.util.List<String> whitelistPlayers;
     private final File file;
     private final YamlConfiguration data;
 
@@ -47,6 +50,8 @@ final class RegisterLimit implements Listener {
         this.perTotal = cfg == null ? 2 : cfg.getInt("per-ip-total", 2);
         this.whitelist = cfg == null ? java.util.List.of()
                 : cfg.getStringList("whitelist").stream().map(String::trim).filter(x -> !x.isEmpty()).toList();
+        this.whitelistPlayers = cfg == null ? java.util.List.of()
+                : cfg.getStringList("whitelist-players").stream().map(String::trim).filter(x -> !x.isEmpty()).toList();
         this.file = new File(plugin.getDataFolder(), "dangky-ip.yml");
         this.data = YamlConfiguration.loadConfiguration(file);
     }
@@ -77,6 +82,7 @@ final class RegisterLimit implements Listener {
             Class<?> apiClass = Class.forName("fr.xephi.authme.api.v3.AuthMeApi", true, cl);
             Method apiInstance = apiClass.getMethod("getInstance");
             Method namesByIp = apiClass.getMethod("getNamesByIp", String.class);
+            Method lastIp = apiClass.getMethod("getLastIp", String.class);
             Bukkit.getPluginManager().registerEvent(pre, this, EventPriority.HIGH, (l, ev) -> {
                 if (!pre.isInstance(ev)) {
                     return;
@@ -86,6 +92,17 @@ final class RegisterLimit implements Listener {
                     String ip = ipOf(p);
                     if (ip == null || whitelisted(ip)) {
                         return;
+                    }
+                    // miễn theo tên thành viên: IP đăng nhập gần nhất của họ
+                    if (!whitelistPlayers.isEmpty()) {
+                        Object api0 = apiInstance.invoke(null);
+                        for (String wn : whitelistPlayers) {
+                            Object last = api0 == null ? null : lastIp.invoke(api0, wn);
+                            if (last != null && ip.equals(String.valueOf(last))) {
+                                plugin.getLogger().info("Đăng ký: " + p.getName() + " từ " + ip + " được miễn giới hạn (cùng mạng với " + wn + ")");
+                                return;
+                            }
+                        }
                     }
                     int used = recent(ip, DAY).size();
                     int usedMonth = recent(ip, MONTH).size();

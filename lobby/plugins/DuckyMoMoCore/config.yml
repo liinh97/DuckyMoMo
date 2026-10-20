@@ -14,8 +14,12 @@ register-limit:
   per-ip-per-30-days: 0     # giới hạn phụ theo 30 ngày (0 = tắt)
   # IP không bị giới hạn (chủ server, admin test, quán net quen): mỗi dòng 1 IP; kết thúc bằng "." = cả dải (vd "171.255.251.").
   # Sửa ở Cài đặt › Toàn mạng › Sảnh › Giới hạn đăng ký tài khoản.
-  whitelist:
-    - "171.255.251.82"
+  # Miễn theo TÊN thành viên (dễ dùng nhất): IP lần đăng nhập gần nhất của người đó được miễn, đổi mạng thì tự đi theo.
+  # Quán net: nhập tên 1 người trong nhóm, người đó đăng nhập ở quán một lần là cả nhóm ở quán đăng ký được.
+  whitelist-players:
+    - vanlinh
+  # Miễn theo IP (khi cần cố định một IP / dải IP)
+  whitelist: []
 
 # World sảnh là đảo bay (Sakura Spawn): rơi xuống dưới y này thì về spawn, không chết vì hư không
 void-teleport:

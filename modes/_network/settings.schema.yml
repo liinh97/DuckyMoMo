@@ -119,11 +119,12 @@ groups:
   - title: Giới hạn đăng ký tài khoản
     category: Sảnh
     description: "Mỗi IP (mạng) chỉ có tối đa số tài khoản này, tính tổng mãi mãi (chống tạo tài khoản ảo lấy quà tân thủ, nuôi bot). IP trong danh sách miễn thì không bị giới hạn."
-    info: "Đếm: tài khoản AuthMe đang gắn với IP đó (gồm cả tài khoản tạo từ trước) + mọi lần đăng ký từ IP đó server đã ghi.\nQuán net / nhà đông người: thêm IP vào danh sách miễn, mỗi dòng 1 IP, ví dụ 171.255.251.82. Kết thúc bằng dấu chấm (171.255.251.) = miễn cả dải, dùng khi mạng nhà hay đổi IP (cẩn thận: cả dải có thể gồm người lạ cùng nhà mạng).\nXem IP của ai: log sảnh dòng \"Chặn đăng ký: <tên> từ <IP>\" hoặc /authme getip <tên>.\nLưu xong: có hiệu lực ngay (dmm reload ở sảnh)."
+    info: "Đếm: tài khoản AuthMe đang gắn với IP đó (gồm cả tài khoản tạo từ trước) + mọi lần đăng ký từ IP đó server đã ghi.\nQuán net / nhà đông người: dễ nhất là nhập TÊN một thành viên trong nhóm vào ô Thành viên được miễn; server tự lấy mạng người đó đăng nhập gần nhất. Hoặc nhập IP vào ô IP (nâng cao), mỗi dòng 1 IP, ví dụ 171.255.251.82. Kết thúc bằng dấu chấm (171.255.251.) = miễn cả dải, dùng khi mạng nhà hay đổi IP (cẩn thận: cả dải có thể gồm người lạ cùng nhà mạng).\nXem IP của ai: log sảnh dòng \"Chặn đăng ký: <tên> từ <IP>\" hoặc /authme getip <tên>.\nLưu xong: có hiệu lực ngay (dmm reload ở sảnh)."
     apply: [dmm reload]
     settings:
       - { key: reg_per_ip_total, label: Tối đa tài khoản mỗi IP (tổng), type: int, min: 0, max: 50, servers: [lobby], file: plugins/DuckyMoMoCore/config.yml, path: register-limit.per-ip-total, note: "0 = không giới hạn" }
-      - { key: reg_whitelist, label: IP miễn giới hạn (mỗi dòng 1 IP), type: lines, servers: [lobby], file: plugins/DuckyMoMoCore/config.yml, path: register-limit.whitelist }
+      - { key: reg_whitelist_players, label: Thành viên được miễn (mỗi dòng 1 tên), type: lines, servers: [lobby], file: plugins/DuckyMoMoCore/config.yml, path: register-limit.whitelist-players, note: "Mạng người đó đăng nhập gần nhất được đăng ký thoải mái. Quán net: nhập tên 1 người trong nhóm, người đó đăng nhập ở quán 1 lần là xong" }
+      - { key: reg_whitelist, label: IP miễn giới hạn (nâng cao, mỗi dòng 1 IP), type: lines, servers: [lobby], file: plugins/DuckyMoMoCore/config.yml, path: register-limit.whitelist }
 
   - title: Đăng nhập trang web (mã /web)
     category: Sảnh

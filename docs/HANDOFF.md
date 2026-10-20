@@ -1451,3 +1451,6 @@ Log: `docker compose logs banghoi-1 --since 5m | grep -iE "DuckyMoMoCore|Mùa:|V
   Path theo X-Forwarded-Prefix = /mc/caidat, 12 giờ, giữ trong bộ nhớ: restart panel là đăng nhập lại). Sai 5 lần/10 phút/IP -> 429.
   POST /dangxuat; shell.js có nút Đăng xuất và tự tải lại trang khi API trả 401. Basic auth (curl -u) vẫn nhận cho script.
   Vẫn còn lớp đăng nhập Trạm 6 (require-login) phía trước: hai lần đăng nhập là cố ý (Cài đặt đổi được server qua RCON).
+- 20/10: tắt `showCombatLevelDisplay` của EliteMobs (data/banghoi-1/plugins/EliteMobs/skills.yml, KHÔNG có trong repo/Cài đặt): dòng "Cấp Chiến Đấu N"
+  trên đầu người chơi đè bảng tên và dễ nhầm với [Cấp N] của Thăng Cấp. Tiền trong tin nhắn DuckyMoMoCore dùng "4.000 xu" (VaultEconomy.format -> Rewards.xu),
+  quà "vat" có tên Việt (Rewards.vi). Essentials vẫn để ký hiệu $ (chỉ cho 1 ký tự) nên /bal, /pay của Essentials còn hiện $.

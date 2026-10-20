@@ -52,7 +52,8 @@ final class VaultEconomy {
         }
     }
 
+    /** Tiền trong tin nhắn của DuckyMoMoCore: "4.000 xu" (Essentials để ký hiệu $ một ký tự, không ghi được "xu"). */
     static String format(double amount) {
-        return economy().format(amount);
+        return Rewards.xu(amount);
     }
 }

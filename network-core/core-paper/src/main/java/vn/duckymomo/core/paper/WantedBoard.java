@@ -187,7 +187,7 @@ final class WantedBoard implements Listener {
             posts.add(p);
             List<String> d2 = rewards == null ? t.rewards() : rewards.describe(t.rewards());
             PlayerSettings.broadcast("sukien", c("&4☠ LỆNH SĂN: &c" + t.name() + " &7ở &f" + z.name() + " &7quanh &fX " + Math.round(l.getX() / 50) * 50 + " Z "
-                    + Math.round(l.getZ() / 50) * 50 + " &7— thưởng: &e" + String.join(", ", d2) + " &7(" + expireMs / 60_000 + " phút). &f/truyna"));
+                    + Math.round(l.getZ() / 50) * 50 + " &7— thưởng: &e" + String.join(", ", d2) + " &7(" + expireMs / 60_000 + " phút). &f/lenhsan"));
             return;
         }
     }

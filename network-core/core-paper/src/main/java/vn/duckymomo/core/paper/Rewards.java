@@ -140,12 +140,12 @@ final class Rewards {
             String[] a = spec.trim().split("\\s+");
             try {
                 switch (a[0].toLowerCase(Locale.ROOT)) {
-                    case "xu" -> out.add(VaultEconomy.available() ? VaultEconomy.format(Double.parseDouble(a[1])) : a[1] + " xu");
+                    case "xu" -> out.add(xu(Double.parseDouble(a[1])));
                     case "do" -> {
                         ItemStack item = library.build(a[1], a.length > 2 ? Integer.parseInt(a[2]) : 0);
                         out.add(item == null ? a[1] : nameOf(item) + " x" + item.getAmount());
                     }
-                    case "vat" -> out.add((a.length > 2 ? a[2] : "1") + " " + pretty(a[1]));
+                    case "vat" -> out.add((a.length > 2 ? a[2] : "1") + " " + vi(a[1]));
                     case "manh" -> out.add(a[2] + " mảnh " + a[1]);
                     case "petexp" -> out.add(a[1] + " kinh nghiệm cho pet đang dẫn");
                     case "danhhieu" -> out.add("danh hiệu " + (Shared.leaderboard == null ? a[1] : Shared.leaderboard.titleText(a[1])));
@@ -170,6 +170,29 @@ final class Rewards {
             return net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacyAmpersand().serialize(meta.displayName()) + "&r";
         }
         return pretty(item.getType().name());
+    }
+
+    /** Tiền kiểu Việt: 4.000 xu (Essentials đang để ký hiệu $, chỉ được 1 ký tự nên không ghi "xu" được ở đó). */
+    static String xu(double v) {
+        java.text.NumberFormat nf = java.text.NumberFormat.getNumberInstance(Locale.forLanguageTag("vi-VN"));
+        nf.setMaximumFractionDigits(2);   // phí lẻ như 0,5 xu/ô vẫn hiện đúng
+        return nf.format(v) + " xu";
+    }
+
+    private static final java.util.Map<String, String> VI = java.util.Map.ofEntries(
+            java.util.Map.entry("DIAMOND", "kim cương"), java.util.Map.entry("DIAMOND_BLOCK", "khối kim cương"),
+            java.util.Map.entry("IRON_INGOT", "thỏi sắt"), java.util.Map.entry("GOLD_INGOT", "thỏi vàng"),
+            java.util.Map.entry("EMERALD", "ngọc lục bảo"), java.util.Map.entry("NETHERITE_INGOT", "thỏi netherite"),
+            java.util.Map.entry("GOLDEN_APPLE", "táo vàng"), java.util.Map.entry("ENCHANTED_GOLDEN_APPLE", "táo vàng phù phép"),
+            java.util.Map.entry("EXPERIENCE_BOTTLE", "bình kinh nghiệm"), java.util.Map.entry("BREAD", "bánh mì"),
+            java.util.Map.entry("ARROW", "mũi tên"), java.util.Map.entry("MUSIC_DISC_PIGSTEP", "đĩa nhạc Pigstep"),
+            java.util.Map.entry("MUSIC_DISC_CAT", "đĩa nhạc Cat"), java.util.Map.entry("TOTEM_OF_UNDYING", "vật tổ bất tử"),
+            java.util.Map.entry("ENDER_PEARL", "ngọc ender"), java.util.Map.entry("NAME_TAG", "bảng tên"));
+
+    /** Tên Việt của vật phẩm thường dùng làm quà; không có thì giữ tên gốc cho dễ tra. */
+    static String vi(String material) {
+        String k = material.toUpperCase(Locale.ROOT);
+        return VI.getOrDefault(k, pretty(k));
     }
 
     static String pretty(String material) {

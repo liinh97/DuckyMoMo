@@ -35,6 +35,13 @@ của phiên tài khoản cũ khuya 20/10 tóm ở đây (chi tiết: các dòng
    Towny config (price_*), SiegeWar, Essentials (starting-balance, sell-multipliers), EliteMobs EconomySettings, QuickShop, zAuctionHouse,
    EvenMoreFish (rarities worth-multiplier, competitions MONEY), BetonQuest package constants, UJobs jobs.yml, MyPet EconomyCost (0), PvPManager (0).
    Áp dụng: sửa settings.yml + data configs (panel apply-all) và cấu hình repo; kiểm lại bằng script quét như trên để không sót.
+   **20/10 khuya (tài khoản mới): quét lại + đăng TRANG DUYỆT https://claude.ai/artifact/SeZHthvXRXHusvgPqknXsh** (nguồn `docs/dinh-gia-xu.html`,
+   db collection `duyet`, mỗi dòng {tt: ok|sua|bo, gia, ghi_chu, luc}; 70 dòng t01–t28 thu nhập, c01–c30 chi phí, l01–l12 Tinh Luyện 70%).
+   So với bảng cũ: BỎ kho lương (siege-supply là điểm lương thực, không phải xu); THÊM AuraSkills as_xu5–20, giới hạn Shopkeepers 1.000/ngày,
+   sách/cuộn/Lost Book /ce, MyPet hồi sinh 1 xu/giây, Towny reclaim/takeover/neutrality/spawn travel/bail, /ah min 10; sửa ô đất 25→125
+   (bảng cũ 100), đất Hoà Bình 125 (+2,5). Lệch: settings reset_money = 0 nhưng data player-reset.starting-money = 200.
+   Bước sau: đọc `duyet` → áp dụng vào settings.yml (mục có key) + data/repo config (mục không có key: thành tích, kho báu, Lệnh săn,
+   dungeon first-rewards, vote, EMF thicau, Towny chuỗi, CE LostBook) → dmm reload / khởi động lại banghoi-1 (kiểm online trước).
 2. Người dùng đang thử trên trang lộ trình test CŨ (HFv53…, tài khoản claude.ai cũ). Kết quả mới nhất đã gộp vào `docs/lo-trinh-test-ketqua.json`
    (cụm Danh phận r1–r10): nạp lại vào trang của tài khoản mới (YY55… hoặc đăng lại). r4 đã sửa ("lai"). **r10 LỖI "Phong quân hàm như nào"**:
    cần hướng dẫn / làm cách phong quân hàm dễ hiểu (Towny nation rank: `/n rank add <tên> <quân hàm>`, quân hàm trong town-rules.military-ranks,

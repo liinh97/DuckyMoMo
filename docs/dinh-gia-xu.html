@@ -3,7 +3,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap">
 <style>
-/* Sổ cái duyệt giá: tóm tắt trên cùng, rồi từng nhóm là một bảng dòng "hiện tại → đề xuất" có nút Duyệt / Sửa / Bỏ. */
+/* Sổ cái duyệt giá: cách tính (giờ công) → máy tính một tuần → bảng quy đổi → các nhóm dòng "hiện tại → đề xuất" có Duyệt / Sửa / Bỏ. */
 :root{
   --bg:#f3f1ea; --panel:#fffdf7; --ink:#1d1a14; --muted:#6b6455; --line:#ddd6c6;
   --brass:#9a6a12; --brass-soft:#f4e6c6;
@@ -26,15 +26,17 @@
 *{box-sizing:border-box}
 body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.55;
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 64px}
-.wrap{max-width:1040px;margin:0 auto;display:grid;gap:26px}
+.wrap{max-width:1060px;margin:0 auto;display:grid;gap:28px}
 h1,h2,h3{margin:0;text-wrap:balance}
 p{margin:0}
-button{font:inherit;cursor:pointer}
-button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
+code{font-family:var(--f-mono);font-size:.86em}
+button,select,input{font:inherit}
+button{cursor:pointer}
+button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
 .top{display:grid;gap:10px}
 .eyebrow{font-family:var(--f-mono);font-size:.76rem;letter-spacing:.06em;text-transform:uppercase;color:var(--brass)}
 .top h1{font-size:clamp(1.6rem,3.6vw,2.3rem);font-weight:800;letter-spacing:-.02em}
-.top p{max-width:68ch;color:var(--muted)}
+.top p{max-width:70ch;color:var(--muted)}
 .sum{display:flex;flex-wrap:wrap;gap:10px;align-items:center;position:sticky;top:env(safe-area-inset-top,0px);z-index:5;
   background:var(--bg);padding-block:10px;border-bottom:1px solid var(--line)}
 .pill{display:inline-flex;align-items:baseline;gap:6px;border-radius:99px;padding:4px 12px;font-size:.85rem;font-weight:600;border:1px solid var(--line);background:var(--panel);font-variant-numeric:tabular-nums}
@@ -47,15 +49,33 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px soli
 .btn:hover{border-color:var(--brass)}
 .btn.main{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .status{font-size:.8rem;color:var(--muted)}
-.basis{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
-.basis div{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;font-size:.92rem;min-width:0}
-.basis h3{font-size:.76rem;text-transform:uppercase;letter-spacing:.08em;color:var(--brass);margin-bottom:4px}
+.sec{display:grid;gap:12px}
+.sec>header{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:baseline}
+.sec h2{font-size:1.3rem;font-weight:800}
+.sec>header p{color:var(--muted);font-size:.92rem;flex:1 1 320px;max-width:75ch}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:16px 18px;min-width:0}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+.cards h3{font-size:.76rem;text-transform:uppercase;letter-spacing:.08em;color:var(--brass);margin-bottom:6px}
+.cards p,.cards li{font-size:.92rem}
+.cards ul{margin:0;padding-left:18px;display:grid;gap:4px}
+.big{font-family:var(--f-mono);font-size:1.6rem;font-weight:600;font-variant-numeric:tabular-nums;color:var(--ink)}
+.scroll{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r);background:var(--panel)}
+table{border-collapse:collapse;width:100%;font-size:.88rem}
+th,td{padding:8px 12px;text-align:left;border-top:1px solid var(--line);vertical-align:top}
+thead th{border-top:0;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:700;background:var(--bg)}
+td.n,th.n{text-align:right;font-family:var(--f-mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+td small{display:block;color:var(--muted);font-size:.78rem}
+tr.hl td{background:var(--brass-soft)}
+.up{color:var(--ok)} .down{color:var(--bo)}
+.calc{display:grid;gap:14px}
+.ctl{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:end}
+.ctl label{display:grid;gap:4px;font-size:.8rem;color:var(--muted);font-weight:600}
+.ctl select,.ctl input[type=number]{border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:8px;padding:6px 10px;min-width:0}
+.ctl .chk{display:flex;gap:6px;align-items:center;color:var(--ink);font-weight:500}
+.split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:14px}
 .grp{display:grid;gap:10px}
-.grp header{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:baseline}
-.grp h2{font-size:1.25rem;font-weight:800}
-.grp header p{color:var(--muted);font-size:.9rem;flex:1 1 300px}
 .rows{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
-.row{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1.3fr) auto;gap:6px 16px;padding:12px 16px;border-top:1px solid var(--line);align-items:center}
+.row{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,1.35fr) auto;gap:6px 16px;padding:12px 16px;border-top:1px solid var(--line);align-items:center}
 .row:first-child{border-top:0}
 .row.ok{background:linear-gradient(90deg,var(--ok-soft),transparent 40%)}
 .row.sua{background:linear-gradient(90deg,var(--sua-soft),transparent 40%)}
@@ -66,42 +86,41 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px soli
 .chip{display:inline-block;font-size:.68rem;font-weight:700;letter-spacing:.03em;border-radius:99px;padding:0 8px;margin-left:6px;vertical-align:2px;white-space:nowrap;border:1px solid}
 .chip.moi{color:var(--new);background:var(--new-soft);border-color:var(--new)}
 .chip.khac{color:var(--brass);background:var(--brass-soft);border-color:var(--brass)}
+.chip.code{color:var(--sua);background:var(--sua-soft);border-color:var(--sua)}
 .val{font-family:var(--f-mono);font-size:.84rem;font-variant-numeric:tabular-nums;display:grid;gap:2px;min-width:0}
+.val .lb{font-family:var(--f-body);font-size:.68rem;text-transform:uppercase;letter-spacing:.06em;font-weight:700;margin-right:6px}
 .val .cur{color:var(--muted)}
-.val .cur::before{content:"Hiện tại  ";font-family:var(--f-body);font-size:.7rem;text-transform:uppercase;letter-spacing:.06em}
 .val .pro{color:var(--ink);font-weight:600}
-.val .pro::before{content:"Đề xuất  ";font-family:var(--f-body);font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;color:var(--brass);font-weight:700}
+.val .pro .lb{color:var(--brass)}
 .val .k{font-family:var(--f-body);font-size:.72rem;color:var(--brass);font-weight:700;margin-left:6px}
+.val .hr{font-family:var(--f-body);font-size:.76rem;color:var(--muted)}
 .val .mine{color:var(--sua);font-weight:600}
-.val .mine::before{content:"Bạn sửa  ";font-family:var(--f-body);font-size:.7rem;text-transform:uppercase;letter-spacing:.06em}
 .act{display:flex;gap:4px;justify-self:end}
 .act button{border:1px solid var(--line);background:var(--bg);color:var(--muted);border-radius:8px;padding:4px 10px;font-size:.8rem;font-weight:600}
 .act button.on.ok{background:var(--ok);border-color:var(--ok);color:var(--panel)}
 .act button.on.sua{background:var(--sua);border-color:var(--sua);color:var(--panel)}
 .act button.on.bo{background:var(--bo);border-color:var(--bo);color:var(--panel)}
 .edit{grid-column:1/-1;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr) auto;gap:8px;align-items:start}
-.edit input,.edit textarea{width:100%;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:8px;padding:6px 10px;font:inherit;font-size:.88rem}
+.edit input,.edit textarea{width:100%;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:8px;padding:6px 10px;font-size:.88rem}
 .edit textarea{min-height:36px;resize:vertical}
-.keep{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:14px 18px}
 .keep ul{margin:0;padding-left:18px;display:grid;gap:5px;font-size:.92rem}
-.keep b{font-weight:700}
-.empty{color:var(--muted);font-size:.85rem}
-@media (max-width:720px){
+@media (max-width:760px){
   .row{grid-template-columns:minmax(0,1fr)}
   .act{justify-self:start}
   .edit{grid-template-columns:minmax(0,1fr)}
+  .split{grid-template-columns:minmax(0,1fr)}
 }
 @media (prefers-reduced-motion:no-preference){.row{transition:background .2s}}
 </style>
 
 <div class="wrap">
   <section class="top">
-    <span class="eyebrow">DuckyMoMo · Bang Hội Chiến · bảng chờ duyệt</span>
+    <span class="eyebrow">DuckyMoMo · Bang Hội Chiến · bảng chờ duyệt · bản 2 (21/10)</span>
     <h1>Định lại xu toàn server</h1>
-    <p>Cửa hàng Kinh Đô và bảng <code>/sell</code> vừa đổi giá mới (64 khúc gỗ giá 512 xu), nên mọi khoản thưởng và phí cũ đều quá thấp. Mỗi dòng dưới đây là một chỗ dùng xu với số đang chạy thật trên server và số đề xuất. Bấm <b>Duyệt</b>, <b>Sửa</b> (ghi số bạn muốn) hoặc <b>Bỏ</b> (giữ nguyên). Chưa có gì được áp dụng; Claude đọc kết quả ở đây rồi mới sửa cấu hình.</p>
+    <p>Mọi con số được quy ra <b>giờ công</b>: số xu một người chơi chăm kiếm được trong 1 giờ. Giá đúng là giá khiến một việc tốn đúng số giờ chơi mình muốn. Chưa có gì được áp dụng; bấm <b>Duyệt</b>, <b>Sửa</b> (ghi số bạn muốn) hoặc <b>Bỏ</b> (giữ nguyên) ở từng dòng, Claude đọc kết quả rồi mới sửa cấu hình.</p>
   </section>
 
-  <div class="sum" id="sum">
+  <div class="sum">
     <span class="pill"><b id="nAll">0</b> dòng</span>
     <span class="pill ok"><b id="nOk">0</b> duyệt</span>
     <span class="pill sua"><b id="nSua">0</b> sửa</span>
@@ -112,95 +131,197 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px soli
     <button class="btn main" id="okAll" type="button">Duyệt mọi dòng chưa xem</button>
   </div>
 
-  <section class="basis">
-    <div><h3>Mốc tính</h3>Chơi chăm 1 giờ (nghề + bán đồ) ≈ <b>1.500–2.000 xu</b>. Chặt gỗ 1 giờ bán cho server được khoảng 1.200 xu theo giá mới; nghề hiện chỉ trả thêm 100–200 xu/giờ. Nền cũ khoảng 400–500 xu/giờ, nên phần lớn nhân <b>×5</b>. Đây là ước lượng, chưa đo trong game.</div>
-    <div><h3>Ngoại lệ</h3>EliteMobs ×3 (cửa hàng EliteMobs giá cố định), giá cá ×3, Thái Ấp ×4, mốc quỹ khai hoang ×4, Xưởng ×2 (đồ Xưởng hết hạn sau 7 ngày). Tinh Luyện tính lại theo nguyên liệu.</div>
-    <div><h3>So với bảng lần trước</h3><span class="chip moi" style="margin:0">Mới</span> là chỗ bảng trước sót. <span class="chip khac" style="margin:0">Khác</span> là chỗ số lần này khác bảng trước, có ghi lý do. Kho lương công thành đã bỏ khỏi bảng vì tính bằng điểm lương thực, không phải xu.</div>
+  <section class="sec">
+    <header><h2>Cách tính</h2><p>Số đo bằng giá thật trên server (bảng /sell, tiền nghề UJobs). Số lượng mỗi giờ là ước lượng của Claude cho người chơi có đồ sắt/kim cương, chưa đo trong game.</p></header>
+    <div class="scroll"><table>
+      <thead><tr><th>Kiểu chơi 1 giờ</th><th>Làm được</th><th class="n">Bán /sell</th><th class="n">Tiền nghề</th><th class="n">Tổng hiện tại</th><th class="n">Tổng đề xuất</th></tr></thead>
+      <tbody id="actTbl"></tbody>
+    </table></div>
+    <div class="cards">
+      <div class="card"><h3>Giờ công = 1.400 xu</h3><p>Người chơi chăm trộn chặt gỗ, đào mỏ, làm nông (40/40/20, trừ thời gian đi lại và cất đồ). Chuẩn này dùng để quy mọi giá trên trang ra số giờ chơi.</p></div>
+      <div class="card"><h3>Điều chính đã xảy ra</h3><p>Bảng /sell mới đã đẩy thu nhập lên khoảng 1.400–1.600 xu/giờ <b>ngay bây giờ</b>, trong khi các khoản phí vẫn theo nền cũ: lập thị trấn 500 xu chỉ bằng 21 phút chơi, mua 1 ô đất bằng 1 phút. Bảng trước đề xuất nhân ×5 cả tiền nghề, sẽ đẩy chặt gỗ lên 2.650 xu/giờ: quá dễ.</p></div>
+      <div class="card"><h3>Nguyên tắc chống lạm phát</h3><ul>
+        <li><b>Phí và giá dịch vụ ×3</b>, để giữ đúng số giờ chơi như khi đặt giá.</li>
+        <li><b>Quà định kỳ</b> (điểm danh, nhiệm vụ, vote…) <b>×1,5</b>, chiếm phần nhỏ hơn trong thu nhập so với trước: tiền chủ yếu phải đến từ chơi.</li>
+        <li><b>Quà một lần</b> (thành tích, dungeon lần đầu…) ×1,5: có giới hạn số lần nên không in tiền mãi.</li>
+        <li><b>Tiền nghề theo từng nghề</b>: nghề đã bán đồ được nhiều thì giữ, nghề kiếm ít thì nhân nhiều.</li>
+        <li><b>Giới hạn bán /sell mỗi ngày</b> chặn farm tự động (mía, sắt, vàng) in tiền khi người chơi AFK.</li>
+      </ul></div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <header><h2>Một tuần chơi: ra bao nhiêu, tiêu được gì</h2><p>Đổi số giờ, kiểu chơi, danh phận để xem thu nhập một tuần và số tiền đó mua được gì, theo giá hiện tại và giá đề xuất.</p></header>
+    <div class="card calc">
+      <div class="ctl">
+        <label for="cH">Giờ chơi mỗi ngày<input id="cH" type="number" min="0.5" max="10" step="0.5" value="2"></label>
+        <label for="cA">Kiểu chơi<select id="cA"></select></label>
+        <label for="cR">Danh phận<select id="cR"><option value="0">Tị Nạn</option><option value="1">Dân</option><option value="2" selected>Lương Dân</option><option value="3">Hào Kiệt</option></select></label>
+        <label class="chk" for="cV"><input id="cV" type="checkbox" checked> Vote mỗi ngày</label>
+        <label class="chk" for="cQ"><input id="cQ" type="checkbox" checked> Làm hết nhiệm vụ ngày</label>
+      </div>
+      <div class="split">
+        <div class="scroll"><table>
+          <thead><tr><th>Nguồn xu / tuần</th><th class="n">Hiện tại</th><th class="n">Đề xuất</th></tr></thead>
+          <tbody id="incTbl"></tbody>
+        </table></div>
+        <div class="scroll"><table>
+          <thead><tr><th>Tiền một tuần mua được</th><th class="n">Hiện tại</th><th class="n">Đề xuất</th></tr></thead>
+          <tbody id="buyTbl"></tbody>
+        </table></div>
+      </div>
+      <p class="note">Gacha chỉ tính phần xu: vé Chăm Chỉ (1 vé mỗi giờ chơi) trung bình 76 xu, vé Điểm Danh (1 vé mỗi ngày) 105 xu. Đồ trong Gacha (sắt, vàng, kim cương…) đáng thêm khoảng 111 và 27 xu mỗi vé nếu bán. Không tính tiền rơi EliteMobs, Lệnh săn, dungeon, Đấu Trường.</p>
+    </div>
+  </section>
+
+  <section class="sec">
+    <header><h2>Bảng giá quy ra giờ chơi</h2><p>Mỗi thứ tốn bao lâu để đủ tiền, với giờ công 1.400 xu. Dòng tô màu là chỗ giá hiện tại rẻ hoặc đắt bất thường.</p></header>
+    <div class="scroll"><table>
+      <thead><tr><th>Mua / trả</th><th class="n">Giá hiện tại</th><th class="n">= giờ chơi</th><th class="n">Giá đề xuất</th><th class="n">= giờ chơi</th></tr></thead>
+      <tbody id="hrTbl"></tbody>
+    </table></div>
   </section>
 
   <div id="groups"></div>
 
-  <section class="grp">
+  <section class="sec keep">
     <header><h2>Không đổi</h2><p>Đã quét, cố ý giữ nguyên.</p></header>
-    <div class="keep"><ul>
-      <li><b>Cửa hàng Kinh Đô và bảng <code>/sell</code></b>: vừa định giá mới, là mốc để tính mọi thứ khác.</li>
-      <li><b>Các phí tính theo %</b>: phí treo thưởng 5%, lính đánh thuê 10%, đăng đơn thu mua 2%, cược Đấu Trường 5%, đổi hướng kỹ năng pet 5%, thuế /ah (đang tắt). Tự tăng theo giá.</li>
-      <li><b>Giá người chơi tự đặt</b>: chợ /ah, sàn thu mua, shop rương, /trade.</li>
-      <li><b>Kho lương công thành</b> (2 điểm mỗi người mỗi phút): là điểm lương thực từ nông sản và món ăn, không phải xu.</li>
-      <li><b>Cửa hàng Thăng Cấp</b> (/craft, /anvil, /hat…): trả bằng điểm cấp, không phải xu.</li>
-      <li><b>Sách phù phép Huyền thoại, Thần thoại</b>: trả bằng cấp kinh nghiệm.</li>
+    <div class="card"><ul>
+      <li><b>Cửa hàng Kinh Đô và bảng /sell</b>: vừa định giá mới, là mốc tính mọi thứ khác.</li>
+      <li><b>Gacha</b> (thay vòng quay từ 21/10): ô xu giữ nguyên. Vé Chăm Chỉ trung bình đáng 187 xu tính cả đồ (≈ 8 phút chơi mỗi giờ), vé Điểm Danh 132 xu. Đồ trong Gacha đã tự tăng giá theo bảng /sell mới.</li>
+      <li><b>Đã tắt 21/10</b>: đổi mảnh /doimanh (mảnh sự kiện).</li>
+      <li><b>Các phí tính theo %</b>: treo thưởng 5%, lính đánh thuê 10%, đăng đơn 2%, cược Đấu Trường 5%, đổi hướng kỹ năng pet 5%, thuế /ah (đang tắt). Tự tăng theo giá.</li>
+      <li><b>Giá người chơi tự đặt</b>: Chợ đen /choden (đồ đang bán giá sàn 10 xu, đơn thu mua), shop rương, /trade.</li>
+      <li><b>Kho lương công thành</b> (2 điểm mỗi người mỗi phút): là điểm lương thực, không phải xu.</li>
+      <li><b>Cửa hàng Thăng Cấp</b> (/craft, /anvil, /hat…) trả bằng điểm cấp; sách phù phép Huyền thoại, Thần thoại trả bằng cấp kinh nghiệm.</li>
       <li><b>Đang là 0</b>: phí /tpr, phí mở shop rương, phí duy trì Cổng Hoang, hồi sinh pet giá cố định.</li>
-      <li><b>Vàng và giá rank ủng hộ</b> (tiền thật), và Sảnh, Practice, Sáng Tạo (không dùng xu).</li>
+      <li><b>Vàng, giá rank ủng hộ</b> (tiền thật); Sảnh, Practice, Sáng Tạo không dùng xu.</li>
     </ul></div>
   </section>
 </div>
 
 <script>
-/* Số "hiện tại" lấy từ cấu hình đang chạy (data/banghoi-1) lúc 20/10 khuya. id cố định để kết quả duyệt không lệch khi sửa chữ. */
+const H = 1400;   // giờ công: xu / 1 giờ chơi chăm
+
+/* Thu nhập 1 giờ theo kiểu chơi (tính từ worth.yml + UJobs jobs.yml ngày 21/10; đề xuất = tiền nghề mới ở nhóm Nghề, Xu Quái 4, giá cá ×2). */
+const ACTS = [
+  {id:"tron", t:"Trộn (chuẩn giờ công)", c:"40% gỗ, 40% mỏ, 20% nông", now:1400, nw:1450, sell:null, job:null},
+  {id:"go", t:"Chặt gỗ", c:"700 khúc gỗ", sell:1400, job:[210,210], now:1610, nw:1610},
+  {id:"mo", t:"Đào mỏ tầng đá sâu", c:"1.500 đá sâu, 30 than, 20 sắt, 6 vàng, 12 đá đỏ, 5 lapis, 8 kim cương", sell:1480, job:[86,171], now:1566, nw:1651},
+  {id:"nong", t:"Làm nông", c:"800 lúa mì (ruộng 20×20, 2 lượt)", sell:600, job:[40,120], now:640, nw:720},
+  {id:"ca", t:"Câu cá", c:"120 cá, giá EvenMoreFish theo độ hiếm", sell:[243,486], job:[60,180], now:303, nw:666},
+  {id:"quai", t:"Đánh quái bằng tay", c:"120 quái, rơi đồ + Xu Quái", sell:[53,101], job:[30,150], now:83, nw:251}
+];
+
+/* Quà định kỳ cho máy tính tuần: [hiện tại, đề xuất] */
+const P = {
+  checkin:[100,150], m7:[500,750], m14:[1000,1500], m30:[3000,4500],
+  quest:[125,187.5], questAll:[300,450], gachaHour:[76,76], gachaDay:[105,105],
+  vote:[100,150], voteStreak:[500,750],
+  kit:[[0,0],[50,75],[100,150],[200,300]]
+};
+
+/* Món để quy đổi: [hiện tại, đề xuất], đơn vị */
+const BUY = [
+  {t:"Khúc gỗ (cửa hàng)", p:[8,8], u:"chồng 64", per:64},
+  {t:"Kính", p:[5,5], u:"chồng 64", per:64},
+  {t:"Bánh mì", p:[8,8], u:"chồng 64", per:64},
+  {t:"Ô đất thị trấn", p:[25,75], u:"ô"},
+  {t:"Ngày duy trì thị trấn", p:[10,30], u:"ngày"},
+  {t:"Sách phù phép Thường /ce", p:[300,900], u:"cuốn"},
+  {t:"Vé Lâu Đài Hiệp Sĩ", p:[3000,4500], u:"vé"},
+  {t:"Món Xưởng: Khoan đào (dùng 7 ngày)", p:[8000,8000], u:"tuần dùng"},
+  {t:"Thái Ấp (mua đất riêng)", p:[5000,15000], u:"Thái Ấp", frac:true},
+  {t:"Thăng Cấp từ cấp 0", lv:true, u:"cấp"}
+];
+
+/* Bảng quy ra giờ chơi: [tên, hiện tại, đề xuất, tô màu?] */
+const HR = [
+  ["Mua 1 ô đất thị trấn", 25, 75, true],
+  ["Lập thị trấn", 500, 1500, true],
+  ["Lập quốc gia", 1000, 3000],
+  ["Duy trì thị trấn 1 tuần", 70, 210],
+  ["Sách phù phép Thường /ce", 300, 900, true],
+  ["Cuộn giấy trắng /ce (giữ đồ khi ghép hỏng)", 2000, 6000],
+  ["Danh hiệu Phú Thương", 8000, 24000],
+  ["Vé Lâu Đài Hiệp Sĩ", 3000, 4500],
+  ["Thái Ấp", 5000, 15000],
+  ["Khoan đào Xưởng (7 ngày)", 8000, 8000],
+  ["Lên cấp 10 Thăng Cấp (tổng từ cấp 0)", 44031, 44031, true],
+  ["Lên cấp 20 Thăng Cấp (tổng)", 198637, 198637],
+  ["Quỹ chung mở dungeon Pháo Hoa", 100000, 300000],
+  ["Điểm danh 1 ngày (nhận)", 100, 150],
+  ["Làm hết nhiệm vụ 1 ngày (nhận)", 675, 1012],
+  ["Cả bộ thành tích (nhận, 26 mục)", 54300, 81450]
+];
+
+/* Nhóm dòng duyệt. h:[số hiện tại…], hp:[số đề xuất…] để quy ra giờ chơi. id cố định. */
 const GROUPS = [
-{id:"thu", ten:"Thu nhập", mo:"Tiền người chơi nhận được. Phần lớn ×5.", rows:[
- {id:"t01",t:"Nghề /jobs: mọi việc (253 việc, 13 nghề)",w:"UJobs jobs.yml · Cài đặt › Nghề",cur:"zombie 0,25 · quặng kim cương 0,85 · đá 0,02 · bò 0,025",pro:"zombie 1,25 · quặng kim cương 4,25 · đá 0,1 · bò 0,125",k:"×5"},
- {id:"t02",t:"Tiền khởi đầu người mới",w:"Essentials starting-balance · Cài đặt › Kinh tế",cur:"200",pro:"1.000",k:"×5"},
- {id:"t03",t:"Tiền khi /choilai lần đầu trong mùa",w:"player-reset.starting-money · Cài đặt › Chơi lại",cur:"200 (Cài đặt ghi 0, plugin vẫn dùng 200)",pro:"1.000",k:"×5",flag:"khac",n:"Trang Cài đặt và plugin đang lệch nhau; áp dụng sẽ ghi cùng một số vào cả hai."},
- {id:"t04",t:"Điểm danh mỗi ngày",w:"daily-checkin · Cài đặt › Điểm danh",cur:"100",pro:"500",k:"×5"},
- {id:"t05",t:"Điểm danh mốc 7 · 14 · 30 ngày",w:"daily-checkin.milestones",cur:"500 · 1.000 · 3.000",pro:"2.500 · 5.000 · 15.000",k:"×5",n:"Quà đồ đi kèm (táo vàng, kim cương) giữ nguyên."},
- {id:"t06",t:"Nhiệm vụ hằng ngày: mỗi nhiệm vụ",w:"daily-quests.pool",cur:"100 – 150",pro:"500 – 750",k:"×5"},
- {id:"t07",t:"Thưởng thêm khi xong hết nhiệm vụ trong ngày",w:"daily-quests.complete-all-rewards",cur:"300",pro:"1.500",k:"×5"},
- {id:"t08",t:"Vòng quay: các ô xu",w:"lucky-spin.prizes",cur:"200 · 500 · 2.000",pro:"1.000 · 2.500 · 10.000",k:"×5",n:"Ô đồ (sắt, bánh mì, kim cương…) và tỉ lệ giữ nguyên."},
- {id:"t09",t:"Gói quà /kit: Dân · Lương Dân · Hào Kiệt",w:"goi-qua.goi · Cài đặt › Người mới › Gói quà",cur:"50 · 100 · 200",pro:"250 · 500 · 1.000",k:"×5",n:"Gói Tị Nạn và Sứ Giả không có xu."},
- {id:"t10",t:"Thành tích (25 mục)",w:"achievements.list",cur:"300 – 5.000",pro:"1.500 – 25.000",k:"×5"},
- {id:"t11",t:"Kho báu thường · hiếm · huyền thoại",w:"treasure.tiers",cur:"300 · 1.000 · 5.000",pro:"1.500 · 5.000 · 25.000",k:"×5"},
- {id:"t12",t:"Lệnh săn (6 mục tiêu)",w:"wanted.targets",cur:"1.500 (4 mục) · 3.000 · 4.000",pro:"7.500 (4 mục) · 15.000 · 20.000",k:"×5"},
- {id:"t13",t:"Dungeon: thưởng vượt lần đầu (13 dungeon)",w:"dungeon-gate.dungeons.*.first-rewards",cur:"500 – 20.000",pro:"2.500 – 100.000",k:"×5"},
- {id:"t14",t:"Dungeon của tuần: quà mỗi lần vượt",w:"dungeon-gate.weekly.rewards",cur:"1.500",pro:"7.500",k:"×5"},
- {id:"t15",t:"Vote: mỗi lần · chuỗi 7 ngày · tiệc vote",w:"vote",cur:"100 · 500 · 200",pro:"500 · 2.500 · 1.000",k:"×5"},
- {id:"t16",t:"Thi câu cá: hạng 1 · 2 · 3 · tham gia",w:"EvenMoreFish competitions/thicau.yml",cur:"1.000 · 500 · 300 · 50",pro:"5.000 · 2.500 · 1.500 · 250",k:"×5"},
- {id:"t17",t:"Cốt truyện chương 1: bước 1 · 2 · 3 · 4 · kết chương",w:"BetonQuest cotruyen constants",cur:"300 · 300 · 400 · 300 · 1.500",pro:"1.500 · 1.500 · 2.000 · 1.500 · 7.500",k:"×5"},
- {id:"t18",t:"Lữ khách: thưởng khi về kể",w:"BetonQuest lk_thuong",cur:"1.000",pro:"5.000",k:"×5"},
- {id:"t19",t:"Thăng Cấp: quà mốc",w:"level-up.milestone-rewards",cur:"5.000",pro:"25.000",k:"×5"},
- {id:"t20",t:"Người Tiên Phong (khai hoang)",w:"frontier.pioneer.rewards",cur:"2.000",pro:"10.000",k:"×5"},
- {id:"t21",t:"Đổi mảnh: 25 mảnh Lâm Nguy lấy xu",w:"event-fragments.shop",cur:"5.000",pro:"25.000",k:"×5"},
- {id:"t22",t:"Đấu Trường: thưởng mỗi trận thắng",w:"arena.win-reward",cur:"50",pro:"250",k:"×5",n:"Vẫn tối đa 5 trận có thưởng mỗi ngày."},
- {id:"t23",t:"Treo thưởng tự động: lần đầu · mỗi mạng thêm",w:"bounty.streak",cur:"500 · 100",pro:"2.500 · 500",k:"×5"},
- {id:"t24",t:"Kỹ năng AuraSkills: thưởng cấp 5 · 10 · 15 · 20",w:"AuraSkills rewards · Cài đặt › Kỹ năng nghề",cur:"200 · 400 · 700 · 1.200",pro:"1.000 · 2.000 · 3.500 · 6.000",k:"×5",flag:"moi"},
- {id:"t25",t:"Xu Quái (rơi từ quái): giá bán mỗi cái",w:"tinh-luyen.items.xuquai.sell",cur:"2",pro:"10",k:"×5",flag:"khac",n:"Là thu nhập từ đánh quái nên nhân như nghề. Bảng trước gộp vào phần Tinh Luyện."},
- {id:"t26",t:"Tiền rơi EliteMobs (hệ số)",w:"EliteMobs currencyShowerTierMultiplier",cur:"0,3",pro:"0,9",k:"×3",n:"Cửa hàng EliteMobs giá cố định; tăng nhiều quá thì đồ ở đó thành rẻ."},
- {id:"t27",t:"Giá cá mỗi cm: thường · hiếm · quý · huyền thoại",w:"EvenMoreFish rarities worth-multiplier",cur:"0,03 · 0,08 · 0,15 · 0,3",pro:"0,09 · 0,24 · 0,45 · 0,9",k:"×3"},
- {id:"t28",t:"Giới hạn tiền bán cho shop dân làng mỗi ngày",w:"ShopkeepersAddon daily-earning-limit",cur:"1.000",pro:"5.000",k:"×5",flag:"moi"}
+{id:"nghe", ten:"Tiền nghề /jobs", mo:"Mỗi nghề một hệ số. Nghề đã bán đồ ra nhiều tiền thì giữ; nghề kiếm ít thì nhân nhiều để các kiểu chơi gần nhau hơn.", rows:[
+ {id:"j1",t:"Tiều phu, Nhà thám hiểm, Thương nhân: giữ nguyên",w:"UJobs lumberjack, traveler, trader",cur:"khúc gỗ 0,3 · rương đền sa mạc 10 · đổi 1 ngọc lục bảo 0,2",pro:"giữ nguyên",k:"×1",flag:"khac",n:"Gỗ bán 2 xu/khúc nên chặt gỗ đã ≈ 1.600 xu/giờ, cao nhất bảng. Đổi ngọc lục bảo với dân làng dễ bị farm. Bảng trước nhân ×5 cả ba."},
+ {id:"j2",t:"Thợ mỏ, Thợ chế tạo, Phù thuỷ",w:"UJobs miner, producer, witcher",cur:"đá 0,02 · quặng kim cương sâu 0,9 · đèn đá đỏ 0,1 · phù phép mỗi cấp 0,1",pro:"đá 0,04 · quặng kim cương sâu 1,8 · đèn đá đỏ 0,2 · phù phép mỗi cấp 0,2",k:"×2",flag:"khac",n:"Đào mỏ chủ yếu ăn tiền bán kim cương, sắt; tiền nghề chỉ phụ."},
+ {id:"j3",t:"Nông dân, Ngư dân, Thợ đào đất, Chăn nuôi, Hộ vệ làng",w:"UJobs farmer, fisher, digger, husbandry, guardian",cur:"lúa mì 0,05 · cá 0,5 · cát 0,02 · cho thú đẻ 0,03 · thắng raid 0,2",pro:"lúa mì 0,15 · cá 1,5 · cát 0,06 · cho thú đẻ 0,09 · thắng raid 0,6",k:"×3",flag:"khac",n:"Làm nông 1 giờ: 640 → 720 xu. Câu cá: 303 → 666 xu (cùng giá cá ×2)."},
+ {id:"j4",t:"Thợ săn (giết quái)",w:"UJobs hunter",cur:"zombie 0,25 · bò 0,025 · piglin brute 17,5",pro:"zombie 1,25 · bò 0,125 · piglin brute 87,5",k:"×5",n:"Đánh quái tay 1 giờ chỉ ≈ 83 xu, sau đổi ≈ 250 xu. Người đánh quái kiếm thêm ở tiền rơi EliteMobs, Lệnh săn, dungeon."}
 ]},
-{id:"chi", ten:"Chi phí", mo:"Tiền người chơi phải trả. Phần lớn ×5 để giữ sức mua như cũ.", rows:[
- {id:"c01",t:"Lập thị trấn · lập quốc gia",w:"Towny new_expand",cur:"500 · 1.000",pro:"2.500 · 5.000",k:"×5"},
- {id:"c02",t:"Lập tiền đồn · khôi phục thị trấn đổ nát",w:"Towny price_outpost, price_reclaim_ruined_town",cur:"500 · 500",pro:"2.500 · 2.500",k:"×5",flag:"moi",n:"Bảng trước có tiền đồn, sót khôi phục thị trấn."},
- {id:"c03",t:"Mua 1 ô đất · ô thưởng mua thêm",w:"Towny price_claim_townblock, price_purchased_bonus_townblock",cur:"25 · 25",pro:"125 · 125",k:"×5",flag:"khac",n:"Bảng trước ghi 100 (+5). Hệ số tăng giá mỗi ô của Towny đang là 1,0 (không tăng), giữ nguyên."},
- {id:"c04",t:"Chiếm ô đất của thị trấn khác (takeover)",w:"Towny takeoverclaim.price",cur:"100",pro:"500",k:"×5",flag:"moi"},
- {id:"c05",t:"Duy trì mỗi ngày: thị trấn · quốc gia",w:"Towny daily_taxes",cur:"10 · 100",pro:"50 · 500",k:"×5"},
- {id:"c06",t:"Đăng ký trung lập: thị trấn · quốc gia",w:"Towny price_town_neutrality, price_nation_neutrality",cur:"25 · 100",pro:"125 · 500",k:"×5",flag:"moi"},
- {id:"c07",t:"Dịch chuyển tới spawn thị trấn: cùng quốc gia · đồng minh · công khai",w:"Towny spawn_travel",cur:"5 · 10 · 10",pro:"25 · 50 · 50",k:"×5",flag:"moi"},
- {id:"c08",t:"Tiền bảo lãnh ra tù (Towny)",w:"Towny jail bail",cur:"10 (tối đa 100)",pro:"50 (tối đa 500)",k:"×5",flag:"moi"},
- {id:"c09",t:"Phí duy trì mỗi thuộc địa mỗi ngày",w:"war-balance.colony-upkeep-per-day",cur:"50",pro:"250",k:"×5"},
- {id:"c10",t:"Công thành: quỹ chiến tranh · tiền cướp (mỗi ô)",w:"SiegeWar money",cur:"20 · 40",pro:"100 · 200",k:"×5"},
- {id:"c11",t:"Đất Hoà Bình: giá ô (+ mỗi ô liên minh) · phí bảo hộ mỗi ô mỗi ngày",w:"peace-alliance",cur:"25 (+0,5) · 0,5",pro:"125 (+2,5) · 2,5",k:"×5",flag:"khac",n:"Bảng trước ghi 100 (+2); ×5 đúng là 125 (+2,5)."},
- {id:"c12",t:"Thái Ấp: mua · mở rộng lần 1 · lần 2",w:"thai-ap.prices",cur:"5.000 · 8.000 · 15.000",pro:"20.000 · 32.000 · 60.000",k:"×4"},
- {id:"c13",t:"Xưởng chế tạo (21 món)",w:"workshop.items.*.cost",cur:"500 – 50.000",pro:"1.000 – 100.000",k:"×2",n:"Đồ Xưởng hết hạn sau 7 ngày, ×5 thì quá đắt."},
- {id:"c14",t:"Thăng Cấp: xu gốc cấp 1",w:"level-up.money-base",cur:"500",pro:"2.500",k:"×5",n:"Số mũ tăng theo cấp (1,25) giữ nguyên."},
- {id:"c15",t:"Vé dungeon: Lâu Đài Hiệp Sĩ · Xưởng Hơi Nước",w:"dungeon-gate.dungeons.*.price",cur:"3.000 · 5.000",pro:"15.000 · 25.000",k:"×5"},
- {id:"c16",t:"Quỹ góp mở dungeon: Pháo Hoa · Đấu Trường Ma · Kẻ Trói Buộc",w:"dungeon-gate.dungeons.*.goal",cur:"100.000 · 150.000 · 1.000.000",pro:"500.000 · 750.000 · 5.000.000",k:"×5"},
- {id:"c17",t:"Mốc quỹ khai hoang 1 · 2 · 3",w:"frontier.goals",cur:"300.000 · 800.000 · 2.000.000",pro:"1.200.000 · 3.200.000 · 8.000.000",k:"×4",n:"Quỹ góp từ tiền bán /sell, mà tiền bán giờ đã lớn hơn."},
- {id:"c18",t:"Danh hiệu ở cửa hàng: Lữ Khách · Nghệ Nhân · Phú Thương",w:"decor-shop.titles",cur:"1.000 · 3.000 · 8.000",pro:"5.000 · 15.000 · 40.000",k:"×5"},
- {id:"c19",t:"Treo thưởng: ít nhất · tổng tối đa lên một người",w:"bounty.min, bounty.max-total",cur:"100 · 100.000",pro:"500 · 500.000",k:"×5"},
- {id:"c20",t:"Lính đánh thuê: giá thấp nhất · cao nhất",w:"mercenary",cur:"100 · 100.000",pro:"500 · 500.000",k:"×5"},
- {id:"c21",t:"Phí giấy phép tổ chức mỗi tuần",w:"organizations.weekly-fee",cur:"100",pro:"500",k:"×5"},
- {id:"c22",t:"Án: tiền bồi thường mức sàn",w:"justice.floor-fine",cur:"100",pro:"500",k:"×5"},
- {id:"c23",t:"Cổng Hoang: phí qua cổng tối đa chủ cổng được đặt",w:"wild-gates.max-toll",cur:"10.000",pro:"50.000",k:"×5"},
- {id:"c24",t:"Đấu Trường: cược tối đa mỗi người",w:"arena.max-stake",cur:"10.000",pro:"50.000",k:"×5"},
- {id:"c25",t:"Shop rương: phí đổi giá · phí duy trì (đang tắt)",w:"QuickShop-Hikari",cur:"50 · 2",pro:"250 · 10",k:"×5"},
- {id:"c26",t:"Phù phép /ce: sách Thường · Hiếm",w:"CrazyEnchantments Categories.*.Cost",cur:"300 · 800",pro:"1.500 · 4.000",k:"×5",flag:"moi"},
- {id:"c27",t:"Phù phép /ce: cuộn và bụi (7 món)",w:"CrazyEnchantments Settings.Costs",cur:"cuộn trắng 2.000 · đen 1.000 · đổi tên 200 · bụi 500 · pha lê 500 · đảo 800",pro:"10.000 · 5.000 · 1.000 · 2.500 · 2.500 · 4.000",k:"×5",flag:"moi"},
- {id:"c28",t:"Phù phép /ce: sách mất Thường · Hiếm · Huyền thoại · Thần thoại",w:"CrazyEnchantments LostBook.Cost",cur:"1.000 · 2.000 · 3.000 · 10.000",pro:"5.000 · 10.000 · 15.000 · 50.000",k:"×5",flag:"moi"},
- {id:"c29",t:"Hồi sinh pet ngay (/petrespawn): xu mỗi giây còn chờ",w:"MyPet Respawn.EconomyCost.Factor",cur:"1",pro:"5",k:"×5",flag:"moi"},
- {id:"c30",t:"Chợ /ah: giá đăng bán thấp nhất",w:"zAuctionHouse min-prices.auction",cur:"10",pro:"50",k:"×5",flag:"moi",n:"Chỉ là sàn chống đăng đồ 1 xu; bỏ cũng được."}
+{id:"thu", ten:"Quà và thưởng", mo:"Quà định kỳ ×1,5, quà một lần ×1,5. Riêng tiền khởi đầu ×2,5 để người mới đủ mua đồ ăn, đuốc trong giờ đầu.", rows:[
+ {id:"t02",t:"Tiền khởi đầu người mới",w:"Essentials starting-balance",cur:"200",pro:"500",k:"×2,5",h:[200],hp:[500],flag:"khac",n:"Đủ 64 bánh mì hoặc 1 chồng đuốc + ít đất. Bảng trước 1.000: dễ bị tài khoản phụ lấy rồi chuyển."},
+ {id:"t03",t:"Tiền khi /choilai lần đầu trong mùa",w:"player-reset.starting-money",cur:"200 (Cài đặt ghi 0, plugin vẫn dùng 200)",pro:"500",k:"×2,5",h:[200],hp:[500],n:"Trang Cài đặt và plugin đang lệch; áp dụng sẽ ghi cùng một số vào cả hai."},
+ {id:"t04",t:"Điểm danh mỗi ngày",w:"daily-checkin.daily-rewards",cur:"100",pro:"150",k:"×1,5",h:[100],hp:[150],flag:"khac"},
+ {id:"t05",t:"Điểm danh mốc 7 · 14 · 30 ngày",w:"daily-checkin.milestones",cur:"500 · 1.000 · 3.000",pro:"750 · 1.500 · 4.500",k:"×1,5",h:[500,3000],hp:[750,4500],flag:"khac",n:"Đồ đi kèm (táo vàng, kim cương) giữ nguyên."},
+ {id:"t06",t:"Nhiệm vụ ngày: mỗi nhiệm vụ (3 nhiệm vụ/ngày)",w:"daily-quests.pool",cur:"100 – 150",pro:"150 – 225",k:"×1,5",h:[100,150],hp:[150,225],flag:"khac"},
+ {id:"t07",t:"Thưởng thêm khi xong hết nhiệm vụ trong ngày",w:"daily-quests.complete-all-rewards",cur:"300",pro:"450",k:"×1,5",h:[300],hp:[450],flag:"khac"},
+ {id:"t09",t:"Gói quà /kit mỗi ngày: Dân · Lương Dân · Hào Kiệt",w:"goi-qua.goi",cur:"50 · 100 · 200",pro:"75 · 150 · 300",k:"×1,5",h:[50,200],hp:[75,300],flag:"khac",n:"Gói nhận lại sau 1 ngày; đồ đi kèm (sắt, thịt) giữ nguyên."},
+ {id:"t15",t:"Vote: mỗi lần · thưởng chuỗi 7 ngày · tiệc vote",w:"vote",cur:"100 · 500 · 200",pro:"150 · 750 · 300",k:"×1,5",h:[100,500],hp:[150,750],flag:"khac"},
+ {id:"t22",t:"Đấu Trường: thưởng mỗi trận thắng (tối đa 5 trận/ngày)",w:"arena.win-reward",cur:"50",pro:"75",k:"×1,5",h:[50],hp:[75],flag:"khac"},
+ {id:"t23",t:"Treo thưởng tự động: lần đầu · mỗi mạng thêm",w:"bounty.streak",cur:"500 · 100",pro:"750 · 150",k:"×1,5",h:[500,100],hp:[750,150],flag:"khac"},
+ {id:"t14",t:"Dungeon của tuần: quà mỗi lần vượt (tối đa 3 lần/tuần)",w:"dungeon-gate.weekly.rewards",cur:"1.500",pro:"2.250",k:"×1,5",h:[1500],hp:[2250],flag:"khac"},
+ {id:"t10",t:"Thành tích (26 mục, tổng 54.300)",w:"achievements.list",cur:"300 – 5.000",pro:"450 – 7.500 (tổng 81.450)",k:"×1,5",h:[300,5000],hp:[450,7500],flag:"khac"},
+ {id:"t11",t:"Kho báu thường · hiếm · huyền thoại",w:"treasure.tiers",cur:"300 · 1.000 · 5.000",pro:"450 · 1.500 · 7.500",k:"×1,5",h:[300,5000],hp:[450,7500],flag:"khac"},
+ {id:"t12",t:"Lệnh săn (6 mục tiêu)",w:"wanted.targets",cur:"1.500 (4 mục) · 3.000 · 4.000",pro:"2.250 (4 mục) · 4.500 · 6.000",k:"×1,5",h:[1500,4000],hp:[2250,6000],flag:"khac"},
+ {id:"t13",t:"Dungeon: thưởng vượt lần đầu (13 dungeon)",w:"dungeon-gate.dungeons.*.first-rewards",cur:"500 – 20.000",pro:"750 – 30.000",k:"×1,5",h:[500,20000],hp:[750,30000],flag:"khac"},
+ {id:"t16",t:"Thi câu cá: hạng 1 · 2 · 3 · tham gia",w:"EvenMoreFish competitions/thicau.yml",cur:"1.000 · 500 · 300 · 50",pro:"1.500 · 750 · 450 · 75",k:"×1,5",h:[1000],hp:[1500],flag:"khac"},
+ {id:"t17",t:"Cốt truyện chương 1: bước 1 · 2 · 3 · 4 · kết chương",w:"BetonQuest cotruyen constants",cur:"300 · 300 · 400 · 300 · 1.500",pro:"450 · 450 · 600 · 450 · 2.250",k:"×1,5",h:[2800],hp:[4200],flag:"khac",n:"Giờ chơi tính cho cả chương."},
+ {id:"t18",t:"Lữ khách: thưởng khi về kể",w:"BetonQuest lk_thuong",cur:"1.000",pro:"1.500",k:"×1,5",h:[1000],hp:[1500],flag:"khac"},
+ {id:"t20",t:"Người Tiên Phong (khai hoang)",w:"frontier.pioneer.rewards",cur:"2.000",pro:"3.000",k:"×1,5",h:[2000],hp:[3000],flag:"khac"},
+ {id:"t24",t:"Kỹ năng AuraSkills: thưởng cấp 5 · 10 · 15 · 20 (mỗi kỹ năng)",w:"AuraSkills rewards",cur:"200 · 400 · 700 · 1.200",pro:"300 · 600 · 1.050 · 1.800",k:"×1,5",h:[200,1200],hp:[300,1800],flag:"moi"},
+ {id:"t19",t:"Thăng Cấp: quà mốc mỗi 10 cấp",w:"level-up.milestone-rewards",cur:"5.000",pro:"giữ 5.000",k:"×1",h:[5000],hp:[5000],flag:"khac",n:"Lên đủ 10 cấp đã tốn 44.000 xu; quà mốc chỉ là phần hoàn lại."},
+ {id:"t25",t:"Xu Quái (rơi từ quái): giá bán mỗi cái",w:"tinh-luyen.items.xuquai.sell",cur:"2",pro:"4",k:"×2",flag:"khac"},
+ {id:"t26",t:"Tiền rơi EliteMobs (hệ số)",w:"EliteMobs currencyShowerTierMultiplier",cur:"0,3",pro:"0,6",k:"×2",flag:"khac",n:"Bù cho đánh quái kiếm ít; cửa hàng EliteMobs giá cố định nên không nhân nhiều hơn."},
+ {id:"t27",t:"Giá cá mỗi cm: thường · hiếm · quý · huyền thoại",w:"EvenMoreFish rarities worth-multiplier",cur:"0,03 · 0,08 · 0,15 · 0,3",pro:"0,06 · 0,16 · 0,3 · 0,6",k:"×2",flag:"khac",n:"Một con cá trung bình 2 xu → 4 xu."},
+ {id:"t28",t:"Giới hạn tiền bán cho shop dân làng mỗi ngày",w:"ShopkeepersAddon daily-earning-limit",cur:"1.000",pro:"1.500",k:"×1,5",h:[1000],hp:[1500],flag:"moi"}
 ]},
-{id:"tl", ten:"Tinh Luyện: tính lại", mo:"Giá bán món Tinh Luyện = 70% giá trị nguyên liệu theo bảng /sell mới, làm tròn. Tinh luyện rồi bán không bao giờ lời hơn bán thẳng.", rows:[
+{id:"chi", ten:"Phí và giá dịch vụ", mo:"Phần lớn ×3 để giữ số giờ chơi như lúc đặt giá. Ngoại lệ có ghi lý do.", rows:[
+ {id:"c01",t:"Lập thị trấn · lập quốc gia",w:"Towny new_expand",cur:"500 · 1.000",pro:"1.500 · 3.000",k:"×3",h:[500,1000],hp:[1500,3000],flag:"khac"},
+ {id:"c02",t:"Lập tiền đồn · khôi phục thị trấn đổ nát",w:"Towny price_outpost, price_reclaim_ruined_town",cur:"500 · 500",pro:"1.500 · 1.500",k:"×3",h:[500],hp:[1500],flag:"moi"},
+ {id:"c03",t:"Mua 1 ô đất · ô thưởng mua thêm",w:"Towny price_claim_townblock, price_purchased_bonus_townblock",cur:"25 · 25",pro:"75 · 75",k:"×3",h:[25],hp:[75],flag:"khac",n:"Thị trấn 40 ô: 1.000 → 3.000 xu. Hệ số tăng giá mỗi ô của Towny (1,0) giữ nguyên."},
+ {id:"c04",t:"Chiếm ô đất của thị trấn khác (takeover)",w:"Towny takeoverclaim.price",cur:"100",pro:"300",k:"×3",h:[100],hp:[300],flag:"moi"},
+ {id:"c05",t:"Duy trì mỗi ngày: thị trấn · quốc gia",w:"Towny daily_taxes",cur:"10 · 100",pro:"30 · 300",k:"×3",h:[10,100],hp:[30,300],flag:"khac"},
+ {id:"c06",t:"Đăng ký trung lập: thị trấn · quốc gia",w:"Towny neutrality",cur:"25 · 100",pro:"75 · 300",k:"×3",h:[25,100],hp:[75,300],flag:"moi"},
+ {id:"c07",t:"Dịch chuyển tới spawn thị trấn: cùng quốc gia · đồng minh · công khai",w:"Towny spawn_travel",cur:"5 · 10 · 10",pro:"15 · 30 · 30",k:"×3",flag:"moi"},
+ {id:"c08",t:"Tiền bảo lãnh ra tù (Towny)",w:"Towny jail bail",cur:"10 (tối đa 100)",pro:"30 (tối đa 300)",k:"×3",flag:"moi"},
+ {id:"c09",t:"Phí duy trì mỗi thuộc địa mỗi ngày",w:"war-balance.colony-upkeep-per-day",cur:"50",pro:"150",k:"×3",h:[50],hp:[150],flag:"khac"},
+ {id:"c10",t:"Công thành: quỹ chiến tranh · tiền cướp (mỗi ô)",w:"SiegeWar money",cur:"20 · 40",pro:"60 · 120",k:"×3",h:[800,1600],hp:[2400,4800],flag:"khac",n:"Giờ chơi tính cho thị trấn 40 ô."},
+ {id:"c11",t:"Đất Hoà Bình: giá ô (+ mỗi ô liên minh) · phí bảo hộ mỗi ô mỗi ngày",w:"peace-alliance",cur:"25 (+0,5) · 0,5",pro:"75 (+1,5) · 1,5",k:"×3",flag:"khac"},
+ {id:"c12",t:"Thái Ấp: mua · mở rộng lần 1 · lần 2",w:"thai-ap.prices",cur:"5.000 · 8.000 · 15.000",pro:"15.000 · 24.000 · 45.000",k:"×3",h:[5000,15000],hp:[15000,45000],flag:"khac",n:"Đất riêng không bị chiếm, giữ cả mùa: khoảng 11 giờ chơi là hợp lý. Bảng trước ×4."},
+ {id:"c13",t:"Xưởng chế tạo (21 món, dùng 7 ngày)",w:"workshop.items.*.cost",cur:"500 – 50.000",pro:"giữ nguyên",k:"×1",h:[8000],hp:[8000],flag:"khac",n:"Món phổ biến (khoan đào 8.000) đã bằng 5,7 giờ chơi cho 7 ngày dùng. Bảng trước ×2."},
+ {id:"c14",t:"Thăng Cấp: xu gốc mỗi cấp",w:"level-up.money-base (cấp N tốn 500 × N^1,25)",cur:"500 (cấp 10 tốn 8.891; tổng tới cấp 10: 44.031)",pro:"giữ 500",k:"×1",h:[44031],hp:[44031],flag:"khac",n:"Đây là chỗ hút tiền lớn nhất: lên cấp 10 đã bằng 31 giờ chơi, cấp 20 bằng 142 giờ. Bảng trước ×5 thì cấp 10 thành 157 giờ."},
+ {id:"c15",t:"Vé dungeon: Lâu Đài Hiệp Sĩ · Xưởng Hơi Nước",w:"dungeon-gate.dungeons.*.price",cur:"3.000 · 5.000",pro:"4.500 · 7.500",k:"×1,5",h:[3000,5000],hp:[4500,7500],flag:"khac",n:"Mỗi lượt boss khoảng 3–5 giờ chơi."},
+ {id:"c16",t:"Quỹ góp mở dungeon: Pháo Hoa · Đấu Trường Ma · Kẻ Trói Buộc",w:"dungeon-gate.dungeons.*.goal",cur:"100.000 · 150.000 · 1.000.000",pro:"300.000 · 450.000 · 3.000.000",k:"×3",h:[100000],hp:[300000],flag:"khac",n:"Cả server góp; 20 người góp thì mỗi người khoảng 11 giờ cho Pháo Hoa."},
+ {id:"c17",t:"Mốc quỹ khai hoang 1 · 2 · 3",w:"frontier.goals",cur:"300.000 · 800.000 · 2.000.000",pro:"900.000 · 2.400.000 · 6.000.000",k:"×3",h:[300000],hp:[900000],flag:"khac",n:"Quỹ cộng 100% tiền bán /sell. 20 người, 2 giờ/ngày: mốc 1 hiện đạt sau khoảng 6 ngày, đề xuất khoảng 19 ngày. Bảng trước ×4."},
+ {id:"c18",t:"Danh hiệu ở cửa hàng: Lữ Khách · Nghệ Nhân · Phú Thương",w:"decor-shop.titles",cur:"1.000 · 3.000 · 8.000",pro:"3.000 · 9.000 · 24.000",k:"×3",h:[1000,8000],hp:[3000,24000],flag:"khac",n:"Đồ trang trí thuần, hút tiền tốt cho người giàu."},
+ {id:"c19",t:"Treo thưởng: ít nhất · tổng tối đa lên một người",w:"bounty.min, bounty.max-total",cur:"100 · 100.000",pro:"300 · 300.000",k:"×3",flag:"khac"},
+ {id:"c20",t:"Lính đánh thuê: giá thấp nhất · cao nhất",w:"mercenary",cur:"100 · 100.000",pro:"300 · 300.000",k:"×3",flag:"khac"},
+ {id:"c21",t:"Phí giấy phép tổ chức mỗi tuần",w:"organizations.weekly-fee",cur:"100",pro:"300",k:"×3",h:[100],hp:[300],flag:"khac"},
+ {id:"c22",t:"Án: tiền bồi thường mức sàn",w:"justice.floor-fine",cur:"100",pro:"300",k:"×3",h:[100],hp:[300],flag:"khac"},
+ {id:"c23",t:"Cổng Hoang: phí qua cổng tối đa chủ cổng được đặt",w:"wild-gates.max-toll",cur:"10.000",pro:"30.000",k:"×3",flag:"khac"},
+ {id:"c24",t:"Đấu Trường: cược tối đa mỗi người",w:"arena.max-stake",cur:"10.000",pro:"30.000",k:"×3",flag:"khac"},
+ {id:"c25",t:"Shop rương: phí đổi giá · phí duy trì (đang tắt)",w:"QuickShop-Hikari",cur:"50 · 2",pro:"150 · 6",k:"×3",flag:"khac"},
+ {id:"c26",t:"Phù phép /ce: sách Thường · Hiếm",w:"CrazyEnchantments Categories.*.Cost",cur:"300 · 800",pro:"900 · 2.400",k:"×3",h:[300,800],hp:[900,2400],flag:"moi"},
+ {id:"c27",t:"Phù phép /ce: cuộn, bụi, pha lê (8 món)",w:"CrazyEnchantments Settings.Costs",cur:"cuộn trắng 2.000 · đen 1.000 · đổi tên 200 · bụi 500 ×2 · pha lê bảo vệ 500 · đảo 800 · pha lê ô 500",pro:"6.000 · 3.000 · 600 · 1.500 ×2 · 1.500 · 2.400 · 1.500",k:"×3",h:[2000],hp:[6000],flag:"moi"},
+ {id:"c28",t:"Phù phép /ce: sách mất Thường · Hiếm · Huyền thoại · Thần thoại",w:"CrazyEnchantments LostBook.Cost",cur:"1.000 · 2.000 · 3.000 · 10.000",pro:"3.000 · 6.000 · 9.000 · 30.000",k:"×3",h:[1000,10000],hp:[3000,30000],flag:"moi"},
+ {id:"c29",t:"Hồi sinh pet ngay (/petrespawn): xu mỗi giây còn chờ",w:"MyPet Respawn.EconomyCost.Factor",cur:"1",pro:"3",k:"×3",flag:"moi"}
+]},
+{id:"tl", ten:"Tinh Luyện: tính lại", mo:"Giá bán = 70% giá trị nguyên liệu theo bảng /sell mới, làm tròn: tinh luyện rồi bán không bao giờ lời hơn bán thẳng.", rows:[
  {id:"l01",t:"Tinh Luyện Đá",w:"256 đá cuội + 256 đá sâu = 10 xu",cur:"30",pro:"7",k:"70%",n:"Đang lời gấp 3 bán thẳng."},
  {id:"l02",t:"Tinh Luyện Than",w:"64 khối than = 1.728 xu",cur:"400",pro:"1.200",k:"70%"},
  {id:"l03",t:"Tinh Luyện Đồng",w:"64 khối đồng thô = 864 xu",cur:"400",pro:"600",k:"70%"},
@@ -212,28 +333,92 @@ const GROUPS = [
  {id:"l09",t:"Tinh Luyện Lục Bảo",w:"32 khối lục bảo = 11.520 xu",cur:"4.000",pro:"8.000",k:"70%"},
  {id:"l10",t:"Tinh Luyện Netherite",w:"32 khối netherite = 374.400 xu",cur:"125.000",pro:"262.000",k:"70%"},
  {id:"l11",t:"Địa Linh",w:"64 kiện rơm = 384 xu",cur:"300",pro:"270",k:"70%"},
- {id:"l12",t:"Xu Quái 2",w:"64 Xu Quái = 640 xu (theo giá mới ở dòng t25)",cur:"100",pro:"450",k:"70%"}
+ {id:"l12",t:"Xu Quái 2",w:"64 Xu Quái = 256 xu (giá mới 4 ở dòng t25)",cur:"100",pro:"180",k:"70%"}
+]},
+{id:"lp", ten:"Chống lạm phát", mo:"Hai việc chặn tiền in ra không cần chơi. Dòng có nhãn Cần code phải viết thêm vào plugin.", rows:[
+ {id:"a01",t:"Giới hạn tiền bán /sell mỗi người mỗi ngày",w:"mới: DuckyMoMoCore bắt sự kiện bán của Essentials (như thưởng chợ kinh đô)",cur:"không giới hạn",pro:"8.000 xu/ngày",k:"mới",h:[8000],hp:[8000],flag:"code",n:"Bằng khoảng 5–6 giờ chơi chăm. Chặn farm tự động: trang trại mía 1 xu/cây, máy sắt, máy vàng chạy cả đêm ra vài nghìn xu mỗi giờ. Quá mức thì không bán cho server được nữa, vẫn bán cho người chơi qua /ah, shop rương."},
+ {id:"a02",t:"Thưởng khi bán /sell trong kinh đô",w:"peace-alliance.sell-bonus-percent",cur:"+20%",pro:"+10%",k:"½",flag:"moi",n:"Với giá /sell mới, +20% của 1.400 xu/giờ là thêm 280 xu mỗi giờ, gần bằng 2 ngày điểm danh."}
 ]}
 ];
 
 const ALL = GROUPS.flatMap(g => g.rows);
-let state = {};            // id -> {tt, gia, ghi_chu, luc}
+let state = {};
 let db = null;
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const fmt = (n) => {
+  const r = Math.abs(n) >= 100 ? Math.round(n) : Math.round(n * 10) / 10;
+  return r.toLocaleString("vi-VN");
+};
+const hrs = (x) => {
+  const h = x / H;
+  if (h < 1) { const m = Math.max(1, Math.round(h * 60)); return m + " phút"; }
+  return (h < 10 ? (Math.round(h * 10) / 10).toLocaleString("vi-VN") : Math.round(h).toLocaleString("vi-VN")) + " giờ";
+};
+const hrsList = (a) => !a || !a.length ? "" : a.length === 1 ? "≈ " + hrs(a[0]) : "≈ " + hrs(a[0]) + " – " + hrs(a[a.length - 1]);
+
+/* Thăng Cấp: số cấp lên được từ cấp 0 với số xu x (cấp N tốn 500 × N^1,25) */
+function levels(x) { let n = 0, acc = 0; while (n < 100) { const c = 500 * Math.pow(n + 1, 1.25); if (acc + c > x) break; acc += c; n++; } return n; }
+
+function drawStatic() {
+  $("actTbl").innerHTML = ACTS.map(a => {
+    const s = a.sell == null ? "—" : Array.isArray(a.sell) ? fmt(a.sell[0]) + " → " + fmt(a.sell[1]) : fmt(a.sell);
+    const j = a.job == null ? "—" : a.job[0] === a.job[1] ? fmt(a.job[0]) : fmt(a.job[0]) + " → " + fmt(a.job[1]);
+    const cls = a.nw > a.now ? "up" : "";
+    return `<tr${a.id === "tron" ? ' class="hl"' : ""}><td><b>${esc(a.t)}</b></td><td>${esc(a.c)}</td><td class="n">${s}</td><td class="n">${j}</td><td class="n">${fmt(a.now)}</td><td class="n ${cls}">${fmt(a.nw)}</td></tr>`;
+  }).join("");
+  $("cA").innerHTML = ACTS.map(a => `<option value="${a.id}">${esc(a.t)}</option>`).join("");
+  $("hrTbl").innerHTML = HR.map(([t, a, b, hl]) => `<tr${hl ? ' class="hl"' : ""}><td>${esc(t)}</td><td class="n">${fmt(a)}</td><td class="n">${hrs(a)}</td><td class="n">${fmt(b)}</td><td class="n">${hrs(b)}</td></tr>`).join("");
+}
+
+function calc() {
+  const h = Math.max(0, parseFloat($("cH").value) || 0);
+  const act = ACTS.find(a => a.id === $("cA").value) || ACTS[0];
+  const rank = +$("cR").value, vote = $("cV").checked, quest = $("cQ").checked;
+  const lines = [];
+  const col = (i) => {
+    const work = h * 7 * (i ? act.nw : act.now);
+    const daily = 7 * P.checkin[i] + (P.m7[i] + P.m14[i] + P.m30[i]) / 30 * 7;
+    const q = quest ? 7 * (3 * P.quest[i] + P.questAll[i]) : 0;
+    const spin = Math.min(h, 24) * 7 * P.gachaHour[i] + 7 * P.gachaDay[i];
+    const v = vote ? 7 * P.vote[i] + P.voteStreak[i] : 0;
+    const kit = 7 * P.kit[rank][i];
+    return {work, daily, q, spin, v, kit, total: work + daily + q + spin + v + kit};
+  };
+  const a = col(0), b = col(1);
+  const row = (t, x, y, strong) => `<tr${strong ? ' class="hl"' : ""}><td>${strong ? "<b>" + t + "</b>" : t}</td><td class="n">${fmt(x)}</td><td class="n">${fmt(y)}</td></tr>`;
+  const share = (o) => o.total ? Math.round(o.work / o.total * 100) : 0;
+  $("incTbl").innerHTML =
+    row(`Chơi (${esc(act.t.toLowerCase())}, ${fmt(h * 7)} giờ)`, a.work, b.work) +
+    row("Điểm danh + mốc (chia đều theo tuần)", a.daily, b.daily) +
+    row("Nhiệm vụ ngày", a.q, b.q) +
+    row("Gacha (phần xu)", a.spin, b.spin) +
+    row("Vote", a.v, b.v) +
+    row("Gói quà /kit", a.kit, b.kit) +
+    row("Tổng một tuần", a.total, b.total, true) +
+    `<tr><td><small>Phần đến từ chơi</small></td><td class="n">${share(a)}%</td><td class="n">${share(b)}%</td></tr>`;
+  const cnt = (it, i, total) => {
+    if (it.lv) return levels(total) + " cấp";
+    const n = total / it.p[i] / (it.per || 1);
+    if (it.frac) return n >= 1 ? fmt(Math.floor(n * 10) / 10) + " " + it.u : Math.round(n * 100) + "% " + it.u;
+    return fmt(Math.floor(n)) + " " + it.u;
+  };
+  $("buyTbl").innerHTML = BUY.map(it => `<tr><td>${esc(it.t)}${it.p ? `<small>${fmt(it.p[0])}${it.p[0] !== it.p[1] ? " → " + fmt(it.p[1]) : ""} xu${it.per ? " mỗi cái" : ""}</small>` : "<small>500 × cấp^1,25 mỗi cấp, giữ nguyên</small>"}</td><td class="n">${cnt(it, 0, a.total)}</td><td class="n">${cnt(it, 1, b.total)}</td></tr>`).join("");
+}
 
 function rowHtml(r) {
   const s = state[r.id] || {};
   const tt = s.tt || "";
-  const flag = r.flag === "moi" ? '<span class="chip moi">Mới</span>' : r.flag === "khac" ? '<span class="chip khac">Khác</span>' : "";
-  const mine = tt === "sua" && s.gia ? `<span class="mine">${esc(s.gia)}</span>` : "";
+  const flag = r.flag === "moi" ? '<span class="chip moi">Mới</span>' : r.flag === "khac" ? '<span class="chip khac">Khác bảng trước</span>' : r.flag === "code" ? '<span class="chip code">Cần code</span>' : "";
+  const hline = r.hp ? `<span class="hr">${hrsList(r.h)} → ${hrsList(r.hp)} chơi</span>` : "";
+  const mine = tt === "sua" && s.gia ? `<span class="mine"><span class="lb">Bạn sửa</span>${esc(s.gia)}</span>` : "";
   const edit = tt === "sua" ? `<div class="edit">
       <input id="gia-${r.id}" data-id="${r.id}" data-f="gia" placeholder="Số bạn muốn, vd 2.000" value="${esc(s.gia)}">
       <textarea id="gc-${r.id}" data-id="${r.id}" data-f="ghi_chu" placeholder="Ghi chú (tuỳ chọn)">${esc(s.ghi_chu)}</textarea>
       <button class="btn" type="button" data-save="${r.id}">Lưu</button></div>` : (s.ghi_chu ? `<div class="note" style="grid-column:1/-1">Ghi chú: ${esc(s.ghi_chu)}</div>` : "");
   return `<div class="row ${tt}" id="r-${r.id}">
     <div style="min-width:0"><div class="nm">${esc(r.t)}${flag}</div><div class="where">${esc(r.id)} · ${esc(r.w)}</div>${r.n ? `<div class="note">${esc(r.n)}</div>` : ""}</div>
-    <div class="val"><span class="cur">${esc(r.cur)}</span><span class="pro">${esc(r.pro)}<span class="k">${esc(r.k)}</span></span>${mine}</div>
+    <div class="val"><span class="cur"><span class="lb">Hiện tại</span>${esc(r.cur)}</span><span class="pro"><span class="lb">Đề xuất</span>${esc(r.pro)}<span class="k">${esc(r.k)}</span></span>${hline}${mine}</div>
     <div class="act" role="group" aria-label="Quyết định cho ${esc(r.t)}">
       <button type="button" class="ok ${tt === "ok" ? "on" : ""}" data-id="${r.id}" data-tt="ok">Duyệt</button>
       <button type="button" class="sua ${tt === "sua" ? "on" : ""}" data-id="${r.id}" data-tt="sua">Sửa</button>
@@ -242,7 +427,7 @@ function rowHtml(r) {
 }
 
 function render() {
-  $("groups").innerHTML = GROUPS.map(g => `<section class="grp" id="g-${g.id}">
+  $("groups").innerHTML = GROUPS.map(g => `<section class="sec grp" id="g-${g.id}">
     <header><h2>${esc(g.ten)}</h2><p>${esc(g.mo)}</p></header>
     <div class="rows">${g.rows.map(rowHtml).join("")}</div></section>`).join("");
   const c = {ok: 0, sua: 0, bo: 0};
@@ -257,7 +442,7 @@ async function save(id, patch) {
   state[id] = next;
   render();
   if (!db) { $("status").textContent = "Chưa lưu được: trang chưa kết nối nơi lưu. Tải lại trang rồi thử lại."; return; }
-  try { await db.collection("duyet").doc(id).set(next); $("status").textContent = "Đã lưu " + id; }
+  try { await db.collection("duyet2").doc(id).set(next); $("status").textContent = "Đã lưu " + id; }
   catch (e) { $("status").textContent = "Lưu " + id + " không được: " + (e?.message || e); }
 }
 
@@ -285,22 +470,22 @@ $("okAll").addEventListener("click", async () => {
   for (const r of left) await save(r.id, {tt: "ok"});
   $("status").textContent = "Đã duyệt " + left.length + " dòng còn lại.";
 });
+for (const id of ["cH", "cA", "cR", "cV", "cQ"]) { $(id).addEventListener("input", calc); $(id).addEventListener("change", calc); }
 
+drawStatic();
+calc();
 render();
 (async () => {
   try { db = await window.claude?.use?.("db"); } catch (e) { db = null; }
   if (!db) { $("status").textContent = "Không kết nối được nơi lưu: lựa chọn sẽ không được ghi lại."; return; }
   $("status").textContent = "Đã kết nối. Lựa chọn được lưu ngay.";
-  db.collection("duyet").onSnapshot((snap) => {
-    const docs = snap.docs || [];
-    for (const d of docs) {
+  db.collection("duyet2").onSnapshot((snap) => {
+    for (const d of snap.docs || []) {
       const v = typeof d.data === "function" ? d.data() : d.data;
-      const id = d.id;
-      if (v && (!state[id] || (v.luc || 0) >= (state[id].luc || 0))) state[id] = v;
+      if (v && (!state[d.id] || (v.luc || 0) >= (state[d.id].luc || 0))) state[d.id] = v;
     }
-    const focus = document.activeElement?.id;
-    const editing = focus && /^(gia|gc)-/.test(focus);
-    if (!editing) render();
+    const f = document.activeElement?.id;
+    if (!(f && /^(gia|gc)-/.test(f))) render();
   });
 })();
 </script>

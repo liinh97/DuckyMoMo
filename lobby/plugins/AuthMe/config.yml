@@ -36,6 +36,9 @@ settings:
         # 20/10: KHÔNG hiện "Bạn sở hữu N tài khoản: …" cho người chơi (lộ tên tài khoản của người dùng chung IP: quán net, 4G).
         # Admin xem bằng /authme accounts <tên>.
         displayOtherAccounts: false
+        # 20/10: gõ sai mật khẩu KHÔNG bị đá ra (người dùng: sai 1 lần đã bị kick là quá gắt). Gõ lại tại chỗ;
+        # sai 3 lần phải /captcha, sai 10 lần/30 phút cấm IP 30 phút (Security bên dưới), hết registerTimeout/timeout thì vẫn bị đá.
+        kickOnWrongPassword: false
         # 20/10: mật khẩu phải có cả CHỮ và SỐ (chặn 123455, 000000, abcdef… mà danh sách cấm không bắt hết). Chỉ ký tự ASCII thấy được.
         # Câu báo lỗi: messages_vn.yml › password.forbidden_characters (repo: lobby/plugins/AuthMe/messages/).
         allowedPasswordCharacters: '(?=.*[A-Za-z])(?=.*[0-9])[!-~]*'

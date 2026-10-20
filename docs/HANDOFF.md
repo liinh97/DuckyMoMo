@@ -1611,3 +1611,6 @@ Log: `docker compose logs banghoi-1 --since 5m | grep -iE "DuckyMoMoCore|Mùa:|V
   dòng mẫu "*_WOOL" mở ra mọi vật phẩm khớp trừ đồ đặc thù (DecorShop.DENY). 764 món. GOLD_NUGGET và *_POTTERY_SHERD KHÔNG có giá /sell
   (vật liệu nền Xu Quái / Tinh Luyện). Đổi giá: sửa bảng trong script rồi chạy lại, hoặc sửa trên Cài đặt › Shop (mỗi danh mục một khung).
   VIỆC CÒN: định lại xu toàn server theo bảng giá này (nghề, điểm danh, nhiệm vụ, vòng quay, gói quà, phí thị trấn, công thành…), chờ người dùng duyệt mốc.
+- 20/10 khuya: sửa cửa hàng: (1) món sinh từ dòng mẫu trùng mã (offers.size() chưa tăng) -> bấm món nào cũng mua món đầu danh mục; nay bộ
+  đếm nextKey. (2) Admin bán ×3: Essentials sell-multipliers double/triple + admin có "*" (essentials.sell.multiplier.triple); đã bỏ
+  double/triple trong data/banghoi-1/plugins/Essentials/config.yml (file chỉ ở data). Essentials currency-symbol chỉ nhận 1 ký tự: giữ "$".

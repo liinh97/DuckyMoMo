@@ -75,6 +75,7 @@ final class DecorShop implements Listener {
     private final String rankPermission;
     private final String npcName;
     private final List<Offer> offers = new ArrayList<>();
+    private int nextKey;
     private final NamespacedKey offerKey;
     private final NamespacedKey catKey;
     private final NamespacedKey npcKey;
@@ -177,7 +178,7 @@ final class DecorShop implements Listener {
         String cat = m.get("cat") == null ? defCat : String.valueOf(m.get("cat"));
         int amount = m.get("amount") instanceof Number n ? Math.max(1, n.intValue()) : 1;
         double price = m.get("price") instanceof Number n ? n.doubleValue() : 0;
-        String key = (defCat.equals("vatlieu") ? "v" : "i") + offers.size();
+        String key = (defCat.equals("vatlieu") ? "v" : "i") + (nextKey++);   // bộ đếm riêng: món từ dòng mẫu chưa vào offers nên offers.size() bị trùng
         if (m.get("library") != null) {
             String id = String.valueOf(m.get("library"));
             ItemStack sample = library == null ? null : library.build(id, 1);

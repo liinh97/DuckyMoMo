@@ -1060,7 +1060,7 @@ footer .fbrand img{width:44px}
       <div class="card"><h3>💰 Tiền &amp; buôn bán</h3><ul class="clean">
         <li><span class="kbd">/bal</span> xem tiền · <span class="kbd">/pay Linh 100</span> chuyển tiền</li>
         <li><span class="kbd">/sell hand</span> bán đồ đang cầm · <span class="kbd">/worth</span> xem giá</li>
-        <li><span class="kbd">/choden</span> Chợ đen: mua, bán, thu mua giữa người chơi (chỉ trong đất hoà bình) · <span class="kbd">/choden ban 250</span> bán món đang cầm</li>
+        <li><span class="kbd">/choden</span> Chợ đen: mua, bán, thu mua giữa người chơi (chỉ trong đất hoà bình) · <span class="kbd">/choden ban 16 5</span> bán 16 món đang cầm, 5 xu/món</li>
         <li><span class="kbd">/trade Linh</span> đổi đồ an toàn, hai bên cùng bấm đồng ý</li>
         <li><span class="kbd">/choden dat 1000 1</span> cần mua 1.000 món đang cầm, 1 xu/món</li>
         <li><span class="kbd">/jobs</span> nghề · <span class="kbd">/skills</span> kỹ năng · <span class="kbd">/capdo</span> thăng cấp</li></ul></div>
@@ -1563,7 +1563,7 @@ async function loadDaily(){
         ${k.top.length ? `<div class="votes" style="margin-top:12px"><span style="border:0;background:none;padding-left:0">Góp nhiều nhất:</span>${k.top.map(t => `<span>${esc(t.ten)} · ${nf.format(Math.round(t.xu))} xu</span>`).join("")}</div>` : ""}</div>`);
     }
     if (d.donhang && d.donhang.bat) cards.push(`<div class="card jade"><h3>🧾 Chợ đen · thu mua <span class="kbd">/choden thumua</span></h3>
-      <p class="muted">Cần nhiều gỗ, đá, lương thực? Cầm một món làm mẫu, gõ <span class="kbd">/choden dat &lt;số lượng&gt; &lt;đơn giá&gt;</span>: tiền được giữ trước, người khác giao hàng là nhận tiền ngay, bạn nhận hàng cả khi offline. Phí đăng đơn ${d.donhang.phi}%, đơn mở ${d.donhang.ngay} ngày.</p>
+      <p class="muted">Cần nhiều gỗ, đá, lương thực? Cầm một món làm mẫu, gõ <span class="kbd">/choden dat &lt;số món&gt; &lt;giá mỗi món&gt;</span>: tiền được giữ trước, người khác giao hàng là nhận tiền ngay, bạn nhận hàng cả khi offline. Phí đăng đơn ${d.donhang.phi}%, đơn mở ${d.donhang.ngay} ngày.</p>
       ${d.donhang.ds.length ? `<div class="tbl"><table><thead><tr><th>Cần mua</th><th>Đơn giá</th><th>Tiến độ</th><th>Người đặt</th></tr></thead><tbody>${d.donhang.ds.map(o => `<tr><td><b>${esc(o.vat)}</b></td><td>${nf.format(o.gia)} xu</td><td>${o.da}/${o.can}</td><td class="muted">${esc(o.ten)}</td></tr>`).join("")}</tbody></table></div>
         ${d.donhang.tong > d.donhang.ds.length ? `<p class="dim" style="margin-top:8px">… và ${d.donhang.tong - d.donhang.ds.length} đơn khác trong game.</p>` : ""}`
       : `<div class="empty">Chưa có đơn nào đang mở. Đặt đơn đầu tiên trong game!</div>`}</div>`);

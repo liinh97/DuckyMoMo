@@ -497,8 +497,8 @@ chapters:
     &6CHỢ ĐEN /choden
     &0Một lệnh cho cả chợ giữa người chơi.
     &1/choden mua &0xem hàng, bấm là mua
-    &1/choden ban <giá> &0bán món đang cầm
-    &8Vd: /choden ban 250
+    &1/choden ban [số] <giá/món> &0bán món đang cầm
+    &8Vd: /choden ban 16 5 (16 món, 5 xu/món); bỏ số = cả chồng
     &1/choden cuatoi &0đồ đang treo
     &1/choden hethan &0lấy lại đồ hết hạn
     &4Chỉ mở trong đất hoà bình&0 (kinh đô, thị trấn hoà bình).

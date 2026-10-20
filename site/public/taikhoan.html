@@ -371,7 +371,7 @@ function render(){
   html += `<div class="grid g3" style="margin-top:14px">
     <div class="card"><h2>🧾 Chợ đen (thu mua)</h2>${dh.mo || dh.cho_nhan
         ? `<p>Bạn có <b>${dh.mo || 0}</b> đơn đang mở${dh.cho_nhan ? `, <b>${nf.format(dh.cho_nhan)}</b> món đã giao <b>chờ nhận</b>` : ""}.</p><p class="small muted">Nhận hàng: <code>/choden don</code></p>`
-        : `<p class="muted">Chưa có đơn nào. Cầm món cần mua, gõ <code>/choden dat &lt;số lượng&gt; &lt;đơn giá&gt;</code>; người khác giao là bạn nhận cả khi offline.</p>`}</div>
+        : `<p class="muted">Chưa có đơn nào. Cầm món cần mua, gõ <code>/choden dat &lt;số món&gt; &lt;giá mỗi món&gt;</code>; người khác giao là bạn nhận cả khi offline.</p>`}</div>
     <div class="card"><h2>🗺️ Khai hoang</h2><p>Bạn đã góp <b>${nf.format(Math.round(kh.gop || 0))} xu</b> vào quỹ chung (quỹ: ${nf.format(Math.round(kh.quy || 0))} xu).</p>
       <p class="small muted">Bán đồ bằng <code>/sell</code> là tự góp (bạn không mất gì), hoặc <code>/khaihoang gop &lt;xu&gt;</code>. Đủ mốc thì mở vùng đất mới.</p></div>
     <div class="card"><h2>☠ Treo thưởng</h2>${tt.tren_ban ? `<p class="red">Đầu bạn đang bị treo <b>${nf.format(Math.round(tt.tren_ban))} xu</b>. Cẩn thận ngoài đất hoang!</p>` : `<p class="muted">Không ai treo thưởng lên bạn.</p>`}

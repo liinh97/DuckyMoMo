@@ -1941,7 +1941,7 @@ groups:
 
   - title: Chợ đen · đang bán (zAuctionHouse)
     category: Shop
-    description: "Người chơi đăng bán đồ đang cầm bằng /choden ban <giá>, người khác mua trong /choden mua. Số món mỗi người đăng cùng lúc: theo Danh phận (Người mới › Danh phận), Thương Hội 15."
+    description: "Người chơi đăng bán đồ đang cầm bằng /choden ban [số món] <giá mỗi món>, người khác mua trong /choden mua. Số món mỗi người đăng cùng lúc: theo Danh phận (Người mới › Danh phận), Thương Hội 15."
     apply: [zauctionhouse admin reload]
     settings:
       - { key: ah_expire, label: "Thời gian đăng bán (giây; 172800 = 2 ngày)", type: int, min: 600, max: 31536000, file: plugins/zAuctionHouse/config.yml, path: expiration.auction.default-expiration,

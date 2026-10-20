@@ -283,7 +283,7 @@ final class Orders implements Listener {
             }
         }
         if (list.isEmpty()) {
-            p.sendMessage(c("&7Bạn chưa có đơn nào. Tạo: cầm món cần mua, gõ &e/choden dat <số lượng> <đơn giá>"));
+            p.sendMessage(c("&7Bạn chưa có đơn nào. Tạo: cầm món cần mua, gõ &e/choden dat <số món> <giá mỗi món>"));
             return;
         }
         render(p, list, true, 0, "&0☠ Chợ đen · Đơn của tôi");
@@ -305,7 +305,7 @@ final class Orders implements Listener {
         h.inv.setItem(47, button(Material.BOOK, "&6☠ &fVề Chợ đen", "&7Đang bán · Thu mua · Đơn của tôi"));
         h.inv.setItem(49, mine ? button(Material.EMERALD, "&b✉ &fĐang thu mua", "&7Xem đơn của mọi người")
                 : button(Material.CHEST, "&6✉ &fĐơn của tôi", "&7Nhận hàng, huỷ đơn"));
-        h.inv.setItem(48, button(Material.BOOK, "&e✚ &fTạo đơn mới", "&7Cầm món cần mua, gõ &f/choden dat <số> <giá>"));
+        h.inv.setItem(48, button(Material.BOOK, "&e✚ &fTạo đơn mới", "&7Cầm món cần mua, gõ &f/choden dat <số món> <giá mỗi món>"));
         if (page < pages - 1) {
             h.inv.setItem(53, button(Material.ARROW, "&fTrang sau &e→", null));
         }
@@ -389,7 +389,7 @@ final class Orders implements Listener {
 
     private void create(Player p, String[] args) {
         if (args.length < 3) {
-            p.sendMessage(c("&eCầm món cần mua rồi gõ: &f/choden dat <số lượng> <đơn giá>"));
+            p.sendMessage(c("&eCầm món cần mua rồi gõ: &f/choden dat <số món> <giá mỗi món>"));
             return;
         }
         ItemStack hand = p.getInventory().getItemInMainHand();
@@ -600,15 +600,15 @@ final class Orders implements Listener {
         h.inv.setItem(10, hubButton(Material.CHEST, Tip.of("&a⛃ &fĐang bán").sub("hàng người chơi treo").accent("&a")
                 .desc("Xem đồ người khác đang bán, bấm là mua").line().click("Bấm để xem hàng"), "ah"));
         h.inv.setItem(11, hubButton(Material.GOLD_INGOT, Tip.of("&a✚ &fTreo bán món đang cầm").accent("&a")
-                .desc("Cầm món muốn bán trên tay rồi bấm", "Gõ giá vào khung chat").line()
-                .kv("Lệnh", "&e/choden ban <giá> [số lượng]").click("Bấm để điền lệnh"), "ah-sell"));
+                .desc("Cầm món muốn bán trên tay rồi bấm", "Gõ số món và giá mỗi món vào khung chat", "Bỏ số món = bán cả chồng").line()
+                .kv("Lệnh", "&e/choden ban [số món] <giá mỗi món>").click("Bấm để điền lệnh"), "ah-sell"));
         h.inv.setItem(12, hubButton(Material.ENDER_CHEST, Tip.of("&a▣ &fĐồ tôi đang bán").accent("&a")
                 .desc("Xem, rút lại đồ đang treo bán").line().click("Bấm để mở"), "ah-selling"));
         h.inv.setItem(14, hubButton(Material.HOPPER, Tip.of("&b✉ &fĐang thu mua").sub(openOrders + " đơn").accent("&b")
                 .desc("Đơn người chơi cần mua, giá đã giữ sẵn", "Có hàng thì giao vào, nhận tiền ngay").line().click("Bấm để xem đơn"), "orders"));
         h.inv.setItem(15, hubButton(Material.WRITABLE_BOOK, Tip.of("&b✚ &fĐặt đơn mua").accent("&b")
                 .desc("Cầm món cần mua trên tay rồi bấm", "Tiền được giữ trước, phí " + cfg.getDouble("fee-percent", 2) + "%").line()
-                .kv("Lệnh", "&e/choden dat <số lượng> <đơn giá>").click("Bấm để điền lệnh"), "order-new"));
+                .kv("Lệnh", "&e/choden dat <số món> <giá mỗi món>").click("Bấm để điền lệnh"), "order-new"));
         h.inv.setItem(16, hubButton(Material.BARREL, Tip.of("&b▣ &fĐơn của tôi").sub(myOrders + " đơn").accent("&b")
                 .desc("Nhận hàng đã giao, huỷ đơn").line().click("Bấm để mở"), "orders-mine"));
         h.inv.setItem(22, hubButton(Material.BARRIER, Tip.of("&c✘ &fĐóng"), "close"));
@@ -625,10 +625,10 @@ final class Orders implements Listener {
                 p.closeInventory();
                 market(p, "/ah selling");
             }
-            case "ah-sell" -> suggest(p, "/choden ban ", "Gõ giá rồi Enter (cầm món muốn bán trên tay).");
+            case "ah-sell" -> suggest(p, "/choden ban ", "Gõ [số món] <giá mỗi món> rồi Enter (cầm món trên tay). Bỏ số món = cả chồng.");
             case "orders" -> openMarket(p, 0);
             case "orders-mine" -> openMine(p);
-            case "order-new" -> suggest(p, "/choden dat ", "Gõ số lượng và đơn giá rồi Enter (cầm món cần mua trên tay).");
+            case "order-new" -> suggest(p, "/choden dat ", "Gõ <số món> <giá mỗi món> rồi Enter (cầm món cần mua trên tay). Vd: /choden dat 64 2");
             case "close" -> p.closeInventory();
             default -> { }
         }
@@ -665,13 +665,7 @@ final class Orders implements Listener {
         switch (sub) {
             case "" -> openHub(p);
             case "mua", "xem" -> market(p, "/ah");
-            case "ban" -> {
-                if (args.length < 2) {
-                    suggest(p, "/choden ban ", "Gõ giá rồi Enter (cầm món muốn bán trên tay).");
-                } else {
-                    market(p, "/ah sell " + String.join(" ", java.util.Arrays.copyOfRange(args, 1, args.length)));
-                }
-            }
+            case "ban" -> sell(p, args);
             case "cuatoi" -> market(p, "/ah selling");
             case "hethan" -> market(p, "/ah expired");
             case "lichsu" -> market(p, "/ah history");
@@ -679,7 +673,7 @@ final class Orders implements Listener {
             case "thumua" -> command(s, new String[0]);
             case "dat" -> {
                 if (args.length < 3) {
-                    suggest(p, "/choden dat ", "Gõ số lượng và đơn giá rồi Enter (cầm món cần mua trên tay).");
+                    suggest(p, "/choden dat ", "Gõ <số món> <giá mỗi món> rồi Enter (cầm món cần mua trên tay). Vd: /choden dat 64 2");
                 } else {
                     command(s, args);
                 }
@@ -691,13 +685,48 @@ final class Orders implements Listener {
         return true;
     }
 
+    /** /choden ban [số món] <giá mỗi món>: cùng thứ tự với /choden dat. Bỏ số món = bán cả chồng đang cầm.
+     *  zAuctionHouse nhận GIÁ CẢ LÔ nên ở đây nhân giá mỗi món × số món rồi gọi /ah sell <cả lô> <số>. */
+    private void sell(Player p, String[] args) {
+        ItemStack hand = p.getInventory().getItemInMainHand();
+        if (args.length < 2) {
+            suggest(p, "/choden ban ", "Gõ [số món] <giá mỗi món> rồi Enter (cầm món muốn bán trên tay). Vd: /choden ban 16 5");
+            return;
+        }
+        if (hand.getType().isAir()) {
+            p.sendMessage(c("&cCầm món muốn bán trên tay trước."));
+            return;
+        }
+        int n;
+        double each;
+        try {
+            n = args.length >= 3 ? Integer.parseInt(args[1]) : hand.getAmount();
+            each = Double.parseDouble(args[args.length >= 3 ? 2 : 1].replace(",", "."));
+        } catch (NumberFormatException e) {
+            p.sendMessage(c("&cSai số. Ví dụ: &f/choden ban 16 5 &7(16 món, 5 xu mỗi món) hoặc &f/choden ban 5 &7(cả chồng, 5 xu mỗi món)"));
+            return;
+        }
+        if (n < 1 || n > hand.getAmount()) {
+            p.sendMessage(c("&cSố món phải từ 1 tới " + hand.getAmount() + " (số đang cầm)."));
+            return;
+        }
+        if (each <= 0) {
+            p.sendMessage(c("&cGiá mỗi món phải lớn hơn 0."));
+            return;
+        }
+        double total = Math.round(each * n * 100) / 100.0;
+        String t = total == Math.floor(total) ? String.valueOf((long) total) : String.valueOf(total);
+        p.sendMessage(c("&7Treo bán &f" + n + " món &7× &f" + money(each) + " &7= &e" + money(total) + "&7 cả lô."));
+        market(p, "/ah sell " + t + " " + n);
+    }
+
     List<String> hubTab(String[] a) {
         if (a.length == 1) {
             String t = a[0].toLowerCase(Locale.ROOT);
             return List.of("mua", "ban", "cuatoi", "hethan", "lichsu", "nhantien", "thumua", "dat", "don", "nhan", "huy", "giup").stream().filter(x -> x.startsWith(t)).toList();
         }
         if (a.length == 2 && (a[0].equalsIgnoreCase("ban") || a[0].equalsIgnoreCase("dat"))) {
-            return a[0].equalsIgnoreCase("ban") ? List.of("100", "500", "1000") : List.of("64", "320", "1000");
+            return List.of("1", "16", "64");
         }
         return List.of();
     }
@@ -774,11 +803,11 @@ final class Orders implements Listener {
             case "giup", "help" -> {
                 p.sendMessage(c("&6━━ CHỢ ĐEN ━━ &7(/choden mở trang chung)"));
                 p.sendMessage(c("&a/choden mua &7xem hàng người chơi đang bán, bấm là mua"));
-                p.sendMessage(c("&a/choden ban <giá> [số lượng] &7treo bán món đang cầm"));
+                p.sendMessage(c("&a/choden ban [số món] <giá mỗi món> &7treo bán món đang cầm (bỏ số món = cả chồng)"));
                 p.sendMessage(c("&a/choden cuatoi &7đồ tôi đang treo bán, rút lại · &a/choden hethan &7lấy lại đồ hết hạn"));
                 p.sendMessage(c("&a/choden lichsu &7lịch sử mua bán · &a/choden nhantien &7nhận tiền bán hàng còn chờ"));
                 p.sendMessage(c("&b/choden thumua &7xem đơn thu mua, bấm đơn để giao hàng nhận tiền ngay"));
-                p.sendMessage(c("&e/choden dat <số lượng> <đơn giá> &7(cầm món cần mua) đặt đơn; tiền được giữ trước, phí "
+                p.sendMessage(c("&e/choden dat <số món> <giá mỗi món> &7(cầm món cần mua) đặt đơn; tiền được giữ trước, phí "
                         + cfg.getDouble("fee-percent", 2) + "%"));
                 p.sendMessage(c("&e/choden don &7nhận hàng (chuột trái), huỷ đơn (chuột phải)"));
                 p.sendMessage(c("&e/choden nhan &7nhận hết hàng · &e/choden huy <số> &7huỷ đơn, trả lại tiền phần chưa giao"));

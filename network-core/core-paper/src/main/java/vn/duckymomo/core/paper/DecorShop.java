@@ -241,7 +241,7 @@ final class DecorShop implements Listener {
             ItemStack s = library.build(o.lib(), 1);
             return "&f" + o.amount() + " × " + (s == null ? o.lib() : Rewards.nameOf(s));
         }
-        return "&f" + o.amount() + " × " + o.icon().name().toLowerCase(Locale.ROOT).replace('_', ' ');
+        return "&f" + o.amount() + " × " + Rewards.vi(o.icon().name());
     }
 
     private void buy(Player p, String key) {

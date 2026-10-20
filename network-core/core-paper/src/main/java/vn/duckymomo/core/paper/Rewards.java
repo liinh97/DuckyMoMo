@@ -92,7 +92,7 @@ final class Rewards {
                         hand(p, new ItemStack(m, take));
                         left -= take;
                     }
-                    return n + " " + pretty(m.name());
+                    return n + " " + vi(m.name());
                 }
                 case "lenh" -> {
                     if (rest.isEmpty()) {
@@ -169,7 +169,8 @@ final class Rewards {
         if (meta != null && meta.hasDisplayName() && meta.displayName() != null) {
             return net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacyAmpersand().serialize(meta.displayName()) + "&r";
         }
-        return pretty(item.getType().name());
+        String n = vi(item.getType().name());   // tên món đứng riêng: viết hoa chữ đầu
+        return n.isEmpty() ? n : n.substring(0, 1).toUpperCase(Locale.forLanguageTag("vi")) + n.substring(1);
     }
 
     /** Tiền kiểu Việt: 4.000 xu (Essentials đang để ký hiệu $, chỉ được 1 ký tự nên không ghi "xu" được ở đó). */
@@ -189,10 +190,35 @@ final class Rewards {
             java.util.Map.entry("MUSIC_DISC_CAT", "đĩa nhạc Cat"), java.util.Map.entry("TOTEM_OF_UNDYING", "vật tổ bất tử"),
             java.util.Map.entry("ENDER_PEARL", "ngọc ender"), java.util.Map.entry("NAME_TAG", "bảng tên"));
 
-    /** Tên Việt của vật phẩm thường dùng làm quà; không có thì giữ tên gốc cho dễ tra. */
+    /** Tên tiếng Việt chính thức của Minecraft cho mọi vật phẩm/khối (ten-vat-pham-vi.properties, tạo bằng tools/ten-vat-pham-vi.py). */
+    private static final java.util.Map<String, String> VANILLA_VI = loadVanilla();
+
+    private static java.util.Map<String, String> loadVanilla() {
+        java.util.Map<String, String> m = new java.util.HashMap<>();
+        try (java.io.InputStream in = Rewards.class.getResourceAsStream("/ten-vat-pham-vi.properties")) {
+            if (in != null) {
+                java.util.Properties p = new java.util.Properties();
+                p.load(new java.io.InputStreamReader(in, java.nio.charset.StandardCharsets.UTF_8));
+                p.forEach((k, v) -> m.put(String.valueOf(k), String.valueOf(v)));
+            }
+        } catch (java.io.IOException ignored) {
+            // không có bảng: dùng tên gốc
+        }
+        return m;
+    }
+
+    /** Tên Việt của vật phẩm: tên gọi riêng (VI), rồi tên tiếng Việt chính thức của Minecraft, cuối cùng mới tới tên gốc. */
     static String vi(String material) {
         String k = material.toUpperCase(Locale.ROOT);
-        return VI.getOrDefault(k, pretty(k));
+        String v = VI.get(k);
+        if (v == null) {
+            v = VANILLA_VI.get(k);
+            // ghép sau số lượng ("1 mũ da") nên viết thường chữ đầu, như các tên trong VI
+            if (v != null && !v.isEmpty()) {
+                v = v.substring(0, 1).toLowerCase(Locale.forLanguageTag("vi")) + v.substring(1);
+            }
+        }
+        return v != null ? v : pretty(k);
     }
 
     static String pretty(String material) {

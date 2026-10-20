@@ -1672,66 +1672,57 @@ petcap_charm_item: bua_bat_pet
 goiqua_on: true
 goiqua_landau: ''
 goiqua_list:
-  tanthu:
-    ten: "Quà tân thủ"
-    icon: CHEST
-    cho: -1
-    rank: []
+  tinan:
+    ten: '&8Quà tị nạn'
+    icon: BREAD
+    cho: 259200
+    rank:
+      - default
     qua:
-      - vat STONE_SWORD 1
-      - vat STONE_PICKAXE 1
-      - vat STONE_AXE 1
-      - vat STONE_SHOVEL 1
+      - vat BREAD 32
       - vat LEATHER_HELMET 1
       - vat LEATHER_CHESTPLATE 1
       - vat LEATHER_LEGGINGS 1
       - vat LEATHER_BOOTS 1
-      - vat BREAD 16
-      - vat TORCH 16
-      - vat WHITE_BED 1
-      - vat OAK_LOG 32
-      - vat CRAFTING_TABLE 1
-  tinan:
-    ten: "Gói Tị Nạn"
-    icon: DEAD_BUSH
-    cho: 86400
-    rank: [default]
-    qua:
-      - vat BREAD 8
-      - vat TORCH 16
+      - vat STONE_AXE 1
+      - vat STONE_PICKAXE 1
   dan:
-    ten: "Gói Dân"
+    ten: Gói Dân
     icon: BREAD
     cho: 86400
-    rank: [dan]
+    rank:
+      - dan
     qua:
       - vat BREAD 16
       - vat TORCH 32
       - xu 50
   luongdan:
-    ten: "Gói Lương Dân"
+    ten: Gói Lương Dân
     icon: IRON_HOE
     cho: 86400
-    rank: [luongdan]
+    rank:
+      - luongdan
     qua:
       - vat COOKED_BEEF 16
       - vat IRON_INGOT 8
       - xu 100
   haokiet:
-    ten: "Gói Hào Kiệt"
+    ten: Gói Hào Kiệt
     icon: GOLDEN_HELMET
     cho: 86400
-    rank: [haokiet]
+    rank:
+      - haokiet
     qua:
       - vat COOKED_BEEF 32
       - vat GOLDEN_CARROT 16
       - vat IRON_INGOT 16
       - xu 200
   media:
-    ten: "Gói quà Sứ Giả"
+    ten: Gói quà Sứ Giả
     icon: BEACON
     cho: 259200
-    rank: [media]
+    rank:
+      - media
     qua:
       - vat COOKED_BEEF 32
       - vat GOLDEN_CARROT 16

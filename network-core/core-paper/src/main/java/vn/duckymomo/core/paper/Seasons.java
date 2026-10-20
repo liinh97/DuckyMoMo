@@ -496,7 +496,7 @@ final class Seasons implements Listener {
 
     /** Tên Việt của cây/nông sản (vd WHEAT -> lúa). */
     static String cropLabel(Material m) {
-        return NAMES.getOrDefault(m, m.name().toLowerCase(Locale.ROOT));
+        return NAMES.getOrDefault(m, Rewards.vi(m.name()));
     }
 
     private static String cropName(String key) {

@@ -42,7 +42,7 @@ denied:
   you: '&4(!) &r&4Đã từ chối các lời mời trao đổi gần đây.'
 spectate:
   text: '&6(!) &e%PLAYER1% &6và &e%PLAYER2% &6đang trao đổi %NEWLINE%&6(!) &6Gõ
-    &e/tradeplus spectate %PLAYER1% %PLAYER2% &6để xem'
+    &e/tradepro spectate %PLAYER1% %PLAYER2% &6để xem'
   hover: '&6Bấm để xem cuộc trao đổi này'
 antiscam:
   discrepancy: '&4(!) &r&4Đồ trao đổi bị thay đổi bất thường.%NEWLINE%&4(!) &4Đã

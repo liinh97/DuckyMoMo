@@ -1,0 +1,206 @@
+# DuckyMoMo 21/10: giao diện /trade tiếng Việt, nút đồng ý cam (chưa) / xanh lá (đã), vị trí ô giữ nguyên.
+title: '&2⬅ Đồ của bạn          &4Đồ của họ ➡'
+spectator-title: '&2⬅ Người 1          &4Người 2 ➡'
+my-slots:
+- '1'
+- '2'
+- '3'
+- '9'
+- '10'
+- '11'
+- '12'
+- '18'
+- '19'
+- '20'
+- '21'
+- '27'
+- '28'
+- '29'
+- '30'
+- '36'
+- '37'
+- '38'
+- '39'
+- '45'
+- '46'
+- '47'
+- '48'
+their-slots:
+- '5'
+- '6'
+- '7'
+- '14'
+- '15'
+- '16'
+- '17'
+- '23'
+- '24'
+- '25'
+- '26'
+- '32'
+- '33'
+- '34'
+- '35'
+- '41'
+- '42'
+- '43'
+- '44'
+- '50'
+- '51'
+- '52'
+- '53'
+my-extra-slots:
+- '45'
+- '46'
+- '47'
+- '48'
+- '39'
+- '38'
+- '37'
+- '36'
+- '27'
+- '28'
+- '29'
+- '30'
+their-extra-slots:
+- '50'
+- '51'
+- '52'
+- '53'
+- '44'
+- '43'
+- '42'
+- '41'
+- '32'
+- '33'
+- '34'
+- '35'
+head:
+  enabled: true
+  display-name: '&7Đang trao đổi với: &b%PLAYER%'
+force:
+  enabled: true
+  slot: 49
+  icon:
+    legacy_serializer: org.bukkit.inventory.ItemStack
+    v: 2860
+    type: CLOCK
+    meta:
+      legacy_serializer: ItemMeta
+      meta-type: UNSPECIFIC
+      display-name: '{"text": "", "extra": [{"text": "⏱ ", "color": "red", "italic": false}, {"text": "Ép trao đổi", "color": "white", "italic": false}], "italic": false}'
+      lore:
+      - '{"text": "", "extra": [{"text": "▍ ", "color": "red", "italic": false}, {"text": "Đếm ngược rồi chốt luôn", "color": "white", "italic": false}], "italic": false}'
+      - '{"text": "", "extra": [{"text": "▍ ", "color": "dark_gray", "italic": false}, {"text": "theo đồ đang bày lúc này", "color": "gray", "italic": false}], "italic": false}'
+      - '{"text": "", "extra": [{"text": "                              ", "color": "dark_gray", "italic": false, "strikethrough": true}], "italic": false}'
+      - '{"text": "", "extra": [{"text": "➜ Bấm để ép trao đổi", "color": "green", "italic": false}], "italic": false}'
+      ItemFlags:
+      - HIDE_ATTRIBUTES
+accept:
+  enabled: true
+  my-slot: 0
+  their-slot: 8
+  my-icon:
+    legacy_serializer: org.bukkit.inventory.ItemStack
+    v: 2860
+    type: ORANGE_STAINED_GLASS_PANE
+    meta:
+      legacy_serializer: ItemMeta
+      meta-type: UNSPECIFIC
+      display-name: '{"text": "", "extra": [{"text": "◯ ", "color": "gold", "italic": false}, {"text": "Bạn chưa đồng ý", "color": "white", "italic": false}], "italic": false}'
+      lore:
+      - '{"text": "", "extra": [{"text": "▍ ", "color": "gold", "italic": false}, {"text": "Xem kỹ đồ hai bên rồi bấm đồng ý", "color": "white", "italic": false}], "italic": false}'
+      - '{"text": "", "extra": [{"text": "▍ ", "color": "dark_gray", "italic": false}, {"text": "Ai đổi đồ trong lúc đếm ngược", "color": "gray", "italic": false}], "italic": false}'
+      - '{"text": "", "extra": [{"text": "▍ ", "color": "dark_gray", "italic": false}, {"text": "thì cả hai phải đồng ý lại", "color": "gray", "italic": false}], "italic": false}'
+      - '{"text": "", "extra": [{"text": "                              ", "color": "dark_gray", "italic": false, "strikethrough": true}], "italic": false}'
+      - '{"text": "", "extra": [{"text": "➜ Bấm để đồng ý", "color": "green", "italic": false}], "italic": false}'
+      ItemFlags:
+      - HIDE_ATTRIBUTES
+  my-cancel:
+    legacy_serializer: org.bukkit.inventory.ItemStack
+    v: 2860
+    type: LIME_STAINED_GLASS_PANE
+    meta:
+      legacy_serializer: ItemMeta
+      meta-type: UNSPECIFIC
+      display-name: '{"text": "", "extra": [{"text": "✔ ", "color": "green", "italic": false}, {"text": "Bạn đã đồng ý", "color": "white", "italic": false}], "italic": false}'
+      lore:
+      - '{"text": "", "extra": [{"text": "▍ ", "color": "green", "italic": false}, {"text": "Chờ người kia đồng ý", "color": "white", "italic": false}], "italic": false}'
+      - '{"text": "", "extra": [{"text": "                              ", "color": "dark_gray", "italic": false, "strikethrough": true}], "italic": false}'
+      - '{"text": "", "extra": [{"text": "➜ Bấm để rút lại", "color": "yellow", "italic": false}], "italic": false}'
+      ItemFlags:
+      - HIDE_ATTRIBUTES
+  their-icon:
+    legacy_serializer: org.bukkit.inventory.ItemStack
+    v: 2860
+    type: LIME_STAINED_GLASS_PANE
+    meta:
+      legacy_serializer: ItemMeta
+      meta-type: UNSPECIFIC
+      display-name: '{"text": "", "extra": [{"text": "✔ ", "color": "green", "italic": false}, {"text": "Họ đã đồng ý", "color": "white", "italic": false}], "italic": false}'
+      lore:
+      - '{"text": "", "extra": [{"text": "▍ ", "color": "green", "italic": false}, {"text": "Họ chấp nhận đồ đang bày", "color": "white", "italic": false}], "italic": false}'
+      - '{"text": "", "extra": [{"text": "▍ ", "color": "dark_gray", "italic": false}, {"text": "Ưng thì bấm ô đồng ý của bạn (góc trái)", "color": "gray", "italic": false}], "italic": false}'
+      ItemFlags:
+      - HIDE_ATTRIBUTES
+  their-cancel:
+    legacy_serializer: org.bukkit.inventory.ItemStack
+    v: 2860
+    type: ORANGE_STAINED_GLASS_PANE
+    meta:
+      legacy_serializer: ItemMeta
+      meta-type: UNSPECIFIC
+      display-name: '{"text": "", "extra": [{"text": "◯ ", "color": "gold", "italic": false}, {"text": "Họ đang cân nhắc", "color": "white", "italic": false}], "italic": false}'
+      lore:
+      - '{"text": "", "extra": [{"text": "▍ ", "color": "gold", "italic": false}, {"text": "Chờ họ đồng ý", "color": "white", "italic": false}], "italic": false}'
+      - '{"text": "", "extra": [{"text": "▍ ", "color": "dark_gray", "italic": false}, {"text": "hoặc chờ họ bày thêm đồ", "color": "gray", "italic": false}], "italic": false}'
+      ItemFlags:
+      - HIDE_ATTRIBUTES
+complete:
+  legacy_serializer: org.bukkit.inventory.ItemStack
+  v: 2860
+  type: LIME_STAINED_GLASS_PANE
+  meta:
+    legacy_serializer: ItemMeta
+    meta-type: UNSPECIFIC
+    display-name: '{"text": "", "extra": [{"text": "✔ ", "color": "green", "italic": false}, {"text": "Trao đổi xong!", "color": "white", "italic": false}], "italic": false}'
+    lore:
+    - '{"text": "", "extra": [{"text": "▍ ", "color": "green", "italic": false}, {"text": "Xem lại đồ đã đổi", "color": "white", "italic": false}], "italic": false}'
+    - '{"text": "", "extra": [{"text": "▍ ", "color": "dark_gray", "italic": false}, {"text": "Đóng cửa sổ để nhận đồ", "color": "gray", "italic": false}], "italic": false}'
+    ItemFlags:
+    - HIDE_ATTRIBUTES
+cancelled:
+  legacy_serializer: org.bukkit.inventory.ItemStack
+  v: 2860
+  type: RED_STAINED_GLASS_PANE
+  meta:
+    legacy_serializer: ItemMeta
+    meta-type: UNSPECIFIC
+    display-name: '{"text": "", "extra": [{"text": "✘ ", "color": "red", "italic": false}, {"text": "Đã huỷ trao đổi", "color": "white", "italic": false}], "italic": false}'
+    lore:
+    - '{"text": "", "extra": [{"text": "▍ ", "color": "red", "italic": false}, {"text": "Người kia đã huỷ", "color": "white", "italic": false}], "italic": false}'
+    - '{"text": "", "extra": [{"text": "▍ ", "color": "dark_gray", "italic": false}, {"text": "Đóng cửa sổ để lấy lại đồ của bạn", "color": "gray", "italic": false}], "italic": false}'
+    ItemFlags:
+    - HIDE_ATTRIBUTES
+separator:
+  legacy_serializer: org.bukkit.inventory.ItemStack
+  v: 2860
+  type: GRAY_STAINED_GLASS_PANE
+  meta:
+    legacy_serializer: ItemMeta
+    meta-type: UNSPECIFIC
+    display-name: '{"text": "", "extra": [{"text": " ", "color": "white", "italic": false}], "italic": false}'
+    ItemFlags:
+    - HIDE_ATTRIBUTES
+placeholder:
+  legacy_serializer: org.bukkit.inventory.ItemStack
+  v: 2860
+  type: LIGHT_GRAY_STAINED_GLASS_PANE
+  meta:
+    legacy_serializer: ItemMeta
+    meta-type: UNSPECIFIC
+    display-name: '{"text": "", "extra": [{"text": "▣ ", "color": "gray", "italic": false}, {"text": "Ô khoá", "color": "white", "italic": false}], "italic": false}'
+    lore:
+    - '{"text": "", "extra": [{"text": "▍ ", "color": "dark_gray", "italic": false}, {"text": "Rank cao hơn được thêm ô trao đổi", "color": "gray", "italic": false}], "italic": false}'
+    ItemFlags:
+    - HIDE_ATTRIBUTES

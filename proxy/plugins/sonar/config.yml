@@ -1,8 +1,9 @@
 # DuckyMoMo: cấu hình Sonar (chống bot, proxy Velocity). Bản gốc trong Git, chép vào data/proxy khi proxy khởi động.
 # Đã đổi so với mặc định:
 #  - max-online-per-ip 3 -> 20: qua playit người chơi có thể hiện chung một IP (127.x), giới hạn 3 sẽ chặn nhầm.
-#  - verification.timing ALWAYS -> DURING_ATTACK: bình thường người mới vào thẳng; khi Sonar thấy dồn dập
-#    người mới (bị nhồi bot) thì mới bắt kiểm tra rơi/va chạm (đạt thì bị kick 1 lần, vào lại là xong).
+#  - 20/10 (chủ server muốn captcha kiểu ảnh như server khác): verification.timing ALWAYS + map-captcha ALWAYS:
+#    người MỚI (chưa xác minh) vào lần đầu: rơi xuống + gõ chữ vẽ trên tấm bản đồ (không chép được như captcha chat của AuthMe),
+#    đạt thì bị kick 1 lần, vào lại là chơi. Đã xác minh thì lưu database H2 (verified_players, giữ 30 ngày), khởi động lại proxy không phải làm lại.
 #  Bedrock (Geyser) không bị kiểm tra (check-geyser-players: false).
 #
 #   /$$$$$$
@@ -50,7 +51,7 @@ attack-tracker:
 database:
   # Type of database Sonar uses to store verified players
   # Possible types: NONE, MYSQL, MARIADB, POSTGRESQL, H2
-  type: NONE
+  type: H2
   # File in Sonar's plugin directory used for the H2 database
   filename: verified_players
   # Host address for authenticating with the SQL database
@@ -64,7 +65,7 @@ database:
   # Password for authenticating with the SQL database
   password: ''
   # How many days should Sonar keep verified players in the database?
-  maximum-age: 5
+  maximum-age: 30
 
 # Every new login request will be queued to avoid spam join attacks
 # The queue is updated every 1 second (20 ticks)
@@ -79,7 +80,7 @@ verification:
   # Possible types: ALWAYS, DURING_ATTACK
   # - ALWAYS: New players will always be checked (Recommended)
   # - DURING_ATTACK: New players will only be checked during an attack
-  timing: DURING_ATTACK
+  timing: ALWAYS
   checks:
     # Checks if the players' falling motion is following Minecraft's gravity formula
     # All predicted motions are precalculated to save performance
@@ -110,7 +111,7 @@ verification:
       # - ALWAYS: New players will always receive a CAPTCHA
       # - DURING_ATTACK: New players will only receive a CAPTCHA during an attack
       # - NEVER: New players will never receive a CAPTCHA (Recommended)
-      timing: NEVER
+      timing: ALWAYS
       # Path to the background image Sonar uses for the CAPTCHA
       # If the image isn't found, a noise will be used as the default background.
       # You can put the name of the file here if the file is in Sonar's plugin directory

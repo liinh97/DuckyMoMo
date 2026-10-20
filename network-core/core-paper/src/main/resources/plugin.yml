@@ -70,7 +70,7 @@ commands:
     aliases: [hd, guide, camnang, cn]
   tpr:
     description: "Dịch chuyển ngẫu nhiên tới đất hoang trong vùng mùa: /tpr (menu) hoặc /tpr <khu>"
-    aliases: [rtp, ngaunhien]
+    aliases: [rtp, ngaunhien, tprandom, randomtp]
     permission: duckymomo.rtp
   hoatdong:
     description: "Xem giờ chơi thật (không tính AFK) của bạn"

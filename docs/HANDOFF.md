@@ -1585,3 +1585,9 @@ Log: `docker compose logs banghoi-1 --since 5m | grep -iE "DuckyMoMoCore|Mùa:|V
   /capdo (+ cửa hàng, xếp hạng), /caidat, /treothuong, /cuahang, /donhang, /vongquay, /tpr, /danhphan, /vang + QR, menu sảnh, chìa/vé/mảnh
   dungeon, bản đồ kho báu, lore đồ Xưởng và món ăn. Tiêu đề menu: "&0<ký hiệu> Tên" (không viết hoa cả câu). Menu mới: dùng Tip.
   CHƯA làm: GUI plugin ngoài (zAuctionHouse /ah, Jobs, MyPet, CrazyEnchantments /ce, QuickShop) vì là cấu hình riêng của từng plugin.
+- 20/10 tối: `/tphere` kéo người "ra chỗ khác": do admin dùng `/tprandom` = dịch chuyển ngẫu nhiên của ESSENTIALS (không giới hạn trong bản đồ,
+  đưa tới X -19 triệu; world border 60 triệu). Sửa: data/banghoi-1/plugins/Essentials/config.yml `disabled-commands` thêm tprandom, randomtp,
+  rtp, tpr (file chỉ có ở data, không có trong repo) + /tpr của DuckyMoMoCore nhận thêm alias tprandom, randomtp. Ngoài ra Essentials
+  teleport-delay 3 giây áp cho cả admin: gõ /spawn rồi /tphere ngay thì người kia bị kéo tới chỗ CŨ của admin (đã đề xuất cấp
+  essentials.teleport.timer.bypass cho staff, chờ người dùng đồng ý). Sự cố phụ: lỡ chạy `setworldspawn ~ ~ ~` qua RCON lúc 20:01:53,
+  spawn giữ nguyên ô (12699, 65, -2523) nhưng hướng nhìn về 0.

@@ -33,6 +33,12 @@ settings:
         maxRegPerIp: 0
         # Cho phép dấu chấm ở đầu: tiền tố tên người chơi Bedrock của Floodgate (ví dụ .TenNguoiChoi)
         allowedNicknameCharacters: '\.?[a-zA-Z0-9_]*'
+        # 20/10: KHÔNG hiện "Bạn sở hữu N tài khoản: …" cho người chơi (lộ tên tài khoản của người dùng chung IP: quán net, 4G).
+        # Admin xem bằng /authme accounts <tên>.
+        displayOtherAccounts: false
+        # 20/10: mật khẩu phải có cả CHỮ và SỐ (chặn 123455, 000000, abcdef… mà danh sách cấm không bắt hết). Chỉ ký tự ASCII thấy được.
+        # Câu báo lỗi: messages_vn.yml › password.forbidden_characters (repo: lobby/plugins/AuthMe/messages/).
+        allowedPasswordCharacters: '(?=.*[A-Za-z])(?=.*[0-9])[!-~]*'
     registration:
         dialog:
             # Không dùng hộp thoại mật khẩu (người dùng muốn vào game rồi gõ /login, /register trong chat).
@@ -68,6 +74,18 @@ settings:
             -   qwerty123
             -   '1234567890'
             -   asdfgh
+            -   matkhau1
+            -   matkhau123
+            -   abc123456
+            -   a123456
+            -   123456a
+            -   minecraft1
+            -   qwerty1
+            -   admin123
+            -   duckymomo1
+            -   duckymomo123
+            -   vietnam1
+            -   password1
 Hooks:
     bungeecord: true
     # Lấy từ AUTHME_SECRET trong .env, phải trùng proxySharedSecret trên proxy

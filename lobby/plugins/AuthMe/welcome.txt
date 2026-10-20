@@ -1,0 +1,2 @@
+&6Chào &f{PLAYER}&6, mừng bạn tới &e{SERVER}&6!
+&7Tài khoản được bảo vệ bằng mật khẩu. Đừng đưa mật khẩu cho ai, kể cả người tự nhận là admin.

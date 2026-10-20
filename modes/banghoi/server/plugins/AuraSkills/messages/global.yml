@@ -17,10 +17,10 @@ action_bar:
   xp: "{{action_bar.hp_display}}  <gold>{xp_gained} {skill} {{units.xp}} <gray>({current_xp}/{level_xp} {{units.xp}})  {{action_bar.mana_display}}"
   maxed: "{{action_bar.hp_display}}  <gold>{xp_gained} {skill} {{units.xp}} <gray>({{ui.maxed}})  {{action_bar.mana_display}}"
   ability: "{message}"
-  boss_bar_xp: "<gold>{xp_gained} {skill} {{units.xp}} <gray>({percent}%)"
-  boss_bar_maxed: "<gold>{xp_gained} {skill} {{units.xp}} <gray>({{ui.maxed}})"
-  boss_bar_income: "<gold>{xp_gained} {skill} {{units.xp}} <gray>({percent}%) <green>(+{income} xu)"
-  boss_bar_income_maxed: "<gold>{xp_gained} {skill} {{units.xp}} <gray>({{ui.maxed}}) <green>(+{income} xu)"
+  boss_bar_xp: "<aqua>Kỹ năng <dark_gray>· <gold>{xp_gained} {skill} {{units.xp}} <gray>({percent}%)"
+  boss_bar_maxed: "<aqua>Kỹ năng <dark_gray>· <gold>{xp_gained} {skill} {{units.xp}} <gray>({{ui.maxed}})"
+  boss_bar_income: "<aqua>Kỹ năng <dark_gray>· <gold>{xp_gained} {skill} {{units.xp}} <gray>({percent}%) <green>(+{income} xu)"
+  boss_bar_income_maxed: "<aqua>Kỹ năng <dark_gray>· <gold>{xp_gained} {skill} {{units.xp}} <gray>({{ui.maxed}}) <green>(+{income} xu)"
 acf:
   core:
     info_message: "{message}"

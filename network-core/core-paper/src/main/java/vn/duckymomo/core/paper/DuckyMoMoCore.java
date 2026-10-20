@@ -539,10 +539,7 @@ public final class DuckyMoMoCore extends JavaPlugin {
         java.util.List<Integer> sp = getConfig().getIntegerList("town-rules.spawn");
         int ring = getConfig().getInt("town-rules.reserved-spawn-radius", 300);
         PeaceAlliance pa = peace;
-        java.util.function.Predicate<org.bukkit.Location> inCapital = loc -> {
-            if (pa != null && pa.nation() != null) {
-                return pa.inCapital(loc);
-            }
+        java.util.function.Predicate<org.bukkit.Location> ringAt = loc -> {
             if (sp.size() < 2 || !loc.getWorld().getName().equals(getConfig().getString("town-rules.world", "world"))) {
                 return false;
             }
@@ -550,6 +547,10 @@ public final class DuckyMoMoCore extends JavaPlugin {
             double dz = loc.getZ() - sp.get(1);
             return dx * dx + dz * dz <= (double) ring * ring;
         };
+        java.util.function.Predicate<org.bukkit.Location> inCapital = loc -> pa != null && pa.nation() != null ? pa.inCapital(loc) : ringAt.test(loc);
+        if (pa != null) {
+            pa.spawnRing = ringAt;
+        }
         DecorShop shop = board != null && getConfig().getBoolean("decor-shop.enabled")
                 ? new DecorShop(this, board, inCapital, getConfig().getConfigurationSection("decor-shop"), itemLibrary) : null;
         if (shop != null) {

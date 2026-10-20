@@ -1591,3 +1591,7 @@ Log: `docker compose logs banghoi-1 --since 5m | grep -iE "DuckyMoMoCore|Mùa:|V
   teleport-delay 3 giây áp cho cả admin: gõ /spawn rồi /tphere ngay thì người kia bị kéo tới chỗ CŨ của admin (đã đề xuất cấp
   essentials.teleport.timer.bypass cho staff, chờ người dùng đồng ý). Sự cố phụ: lỡ chạy `setworldspawn ~ ~ ~` qua RCON lúc 20:01:53,
   spawn giữ nguyên ô (12699, 65, -2523) nhưng hướng nhìn về 0.
+- 20/10 tối (lộ trình test r4): `/ah` bị chặn cả ở spawn vì CHƯA lập Liên minh Hoà Bình / thị trấn KinhDo (Towny chưa có thị trấn nào) nên
+  không có "đất hoà bình". Sửa: PeaceAlliance.spawnRing = vòng town-rules.reserved-spawn-radius quanh town-rules.spawn, /ah luôn mở trong vòng
+  này. VIỆC CÒN: admin lập thị trấn KinhDo + quốc gia LienMinhHoaBinh ở spawn trước khi mở cửa (xem mục Liên minh Hoà Bình).
+  r2 (lên Dân bằng chơi thật) không phải lỗi: người dùng chưa đủ thời gian; thử nhanh = hạ giờ ở Cài đặt › Danh phận + cấp quyền chương 1.

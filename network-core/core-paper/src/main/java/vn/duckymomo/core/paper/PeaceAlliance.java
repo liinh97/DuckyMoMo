@@ -144,6 +144,10 @@ final class PeaceAlliance implements Listener {
         return isCapital(TownyAPI.getInstance().getTown(l));
     }
 
+    /** Vòng quanh spawn (town-rules.reserved-spawn-radius) = kinh đô tạm: chợ /ah luôn mở ở đây, kể cả khi CHƯA lập liên minh / thị trấn KinhDo
+     *  (20/10: chưa có thị trấn nào thì /ah bị chặn ở mọi nơi, kể cả spawn). DuckyMoMoCore gán sau khi tạo. */
+    volatile java.util.function.Predicate<Location> spawnRing;
+
     boolean inPeaceLand(Location l) {
         return isMember(TownyAPI.getInstance().getTown(l));
     }
@@ -385,7 +389,7 @@ final class PeaceAlliance implements Listener {
             label = label.substring(colon + 1);
         }
         if (auctionCommands.contains(label) && !e.getPlayer().hasPermission("duckymomo.peace.admin")
-                && !inPeaceLand(e.getPlayer().getLocation())) {
+                && !inPeaceLand(e.getPlayer().getLocation()) && !(spawnRing != null && spawnRing.test(e.getPlayer().getLocation()))) {
             e.setCancelled(true);
             e.getPlayer().sendMessage(c("&eChợ đấu giá chỉ mở trong đất của Liên minh Hoà Bình (kinh đô và các thị trấn hoà bình)."));
         }

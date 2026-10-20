@@ -1,0 +1,192 @@
+aliases:
+- tradepro
+trade-command-compatible-mode: false
+excess-chest:
+  enabled: true
+  title: '&7Túi đồ của bạn đã đầy!'
+trade-logs: false
+database:
+  enabled: false
+  host: localhost
+  port: 3306
+  database: tradepro
+  username: root
+  password: ''
+  table_prefix: tradepro_
+web-panel:
+  enabled: false
+  port: 8080
+allow-same-ip-trade: true
+permissions:
+  required: false
+  send: tradeplus.send
+  accept: tradeplus.accept
+requestcooldownseconds: 20
+allow-trade-in-creative: false
+allow-shift-right-click: true
+blocked:
+  blacklist:
+  - bedrock
+  - monster_egg
+  named-items: false
+  lore:
+  - EXAMPLE_BLOCKED_LORE
+  regex: ''
+action: crouchrightclick
+ranges:
+  sameworld: 10.0
+  crossworld: 0.0
+  allowcrossworld: false
+  blocked-worlds:
+  - ThisWorldDoesntExistButItsBlocked
+  - NeitherDoesThisOneButItIsToo
+antiscam:
+  countdown: 10
+  cancelonchange: true
+  preventchangeonaccept: true
+  discrepancy-detection: true
+end-display:
+  enabled: true
+  timer: 0
+spectate:
+  enabled: true
+  broadcast: true
+extras:
+  type:
+    prefix: '&6!!&6> '
+    empty: '&eGõ số %EXTRA% muốn đưa, hoặc gõ ''cancel'' để thôi.'
+    valid: '&aBấm ô kết quả (bên phải) để xác nhận.'
+    invalid: '&cSố không hợp lệ!'
+    maximum: '&cBạn chỉ có %BALANCE% %EXTRA%'
+  economy:
+    enabled: true
+    name: xu
+    material: gold_ingot
+    display: '&6⛃ &fBạn đưa: &e%AMOUNT% xu'
+    theirdisplay: '&6⛃ &fHọ đưa: &e%AMOUNT% xu'
+    lore:
+    - '&6▍ &fĐưa thêm xu vào trao đổi'
+    - '&8• &7Bạn đang có: &e%BALANCE% xu'
+    - '&8&m                              '
+    - '&a➜ Bấm để sửa số xu'
+    customModelData: 0
+    increment: 10.0
+    taxpercent: 0
+    mode: anvil
+  experience:
+    enabled: true
+    name: điểm kinh nghiệm
+    material: experience_bottle
+    display: '&a✦ &fBạn đưa: &a%AMOUNT% XP &8(%LEVELS% cấp)'
+    theirdisplay: '&a✦ &fHọ đưa: &a%AMOUNT% XP &8(+%LEVELS% cấp)'
+    lore:
+    - '&a▍ &fĐưa thêm kinh nghiệm vào trao đổi'
+    - '&8• &7Bạn đang có: &a%BALANCE% XP'
+    - '&8&m                              '
+    - '&a➜ Bấm để sửa số XP'
+    customModelData: 0
+    increment: 5
+    taxpercent: 0
+    mode: anvil
+    levelMode: false
+  playerpoints:
+    enabled: true
+    name: player points
+    material: diamond
+    display: '&bBạn đưa: &3%AMOUNT% PlayerPoints'
+    theirdisplay: '&bHọ đưa: &3%AMOUNT% PlayerPoints'
+    lore:
+    - '&a➜ Bấm để sửa số đưa'
+    - '&7Bạn đang có: &f%BALANCE% player points'
+    customModelData: 0
+    increment: 5
+    taxpercent: 0
+    mode: anvil
+  griefprevention:
+    enabled: true
+    name: claim blocks
+    material: golden_shovel
+    display: '&eBạn đưa: &6%AMOUNT% GriefPrevention'
+    theirdisplay: '&eHọ đưa: &6%AMOUNT% GriefPrevention'
+    lore:
+    - '&a➜ Bấm để sửa số đưa'
+    - '&7Bạn đang có: &f%BALANCE% protection blocks'
+    customModelData: 0
+    increment: 1
+    taxperecent: 0
+    mode: anvil
+  enjinpoints:
+    enabled: false
+    name: enjin points
+    material: emerald
+    display: '&eBạn đưa: &6%AMOUNT% EnjinPoints'
+    theirdisplay: '&eHọ đưa: &6%AMOUNT% EnjinPoints'
+    lore:
+    - '&a➜ Bấm để sửa số đưa'
+    - '&7Bạn đang có: &f%BALANCE% enjin points'
+    customModelData: 0
+    increment: 1
+    taxpercent: 0
+    mode: anvil
+  tokenenchant:
+    enabled: true
+    name: token enchant points
+    material: enchanted_book
+    display: '&eBạn đưa: &6%AMOUNT% TokenEnchant tokens'
+    theirdisplay: '&eHọ đưa: &6%AMOUNT% TokenEnchants tokens'
+    lore:
+    - '&a➜ Bấm để sửa số đưa'
+    - '&7Bạn đang có: &f%BALANCE% enchant tokens'
+    customModelData: 0
+    increment: 1
+    taxpercent: 0
+    mode: anvil
+  tokenmanager:
+    enabled: true
+    name: tokens
+    material: emerald
+    display: '&eBạn đưa: &6%AMOUNT% tokens'
+    theirdisplay: '&eHọ đưa: &6%AMOUNT% TokenManager tokens'
+    lore:
+    - '&a➜ Bấm để sửa số đưa'
+    - '&7Bạn đang có: &f%BALANCE% tokens'
+    customModelData: 0
+    increment: 1
+    taxpercent: 0
+    mode: anvil
+  beasttokens:
+    enabled: true
+    name: tokens
+    material: emerald
+    display: '&eBạn đưa: &6%AMOUNT% tokens'
+    theirdisplay: '&eHọ đưa: &6%AMOUNT% TokenManager tokens'
+    lore:
+    - '&a➜ Bấm để sửa số đưa'
+    - '&7Bạn đang có: &f%BALANCE% tokens'
+    customModelData: 0
+    increment: 1
+    taxpercent: 0
+    mode: anvil
+  votingplugin:
+    name: vote points
+    enabled: false
+    material: sunflower
+    display: '&7Bạn đưa: &b%AMOUNT% vote points'
+    theirdisplay: '&7Họ đưa: &b%AMOUNT% vote points'
+    lore:
+    - '&a➜ Bấm để sửa số đưa'
+    - '&7Bạn đang có: &f%BALANCE% vote points'
+    taxpercent: 0
+hooks:
+  factions:
+    allow-trades-in-enemy-territory: false
+  worldguard:
+    trading-flag: true
+soundeffects:
+  enabled: true
+  onchange: true
+  onaccept: true
+  oncomplete: true
+  oncountdown: true
+debug-mode: false
+configversion: 3.84

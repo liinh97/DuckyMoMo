@@ -1454,3 +1454,8 @@ Log: `docker compose logs banghoi-1 --since 5m | grep -iE "DuckyMoMoCore|Mùa:|V
 - 20/10: tắt `showCombatLevelDisplay` của EliteMobs (data/banghoi-1/plugins/EliteMobs/skills.yml, KHÔNG có trong repo/Cài đặt): dòng "Cấp Chiến Đấu N"
   trên đầu người chơi đè bảng tên và dễ nhầm với [Cấp N] của Thăng Cấp. Tiền trong tin nhắn DuckyMoMoCore dùng "4.000 xu" (VaultEconomy.format -> Rewards.xu),
   quà "vat" có tên Việt (Rewards.vi). Essentials vẫn để ký hiệu $ (chỉ cho 1 ký tự) nên /bal, /pay của Essentials còn hiện $.
+- 20/10: KHÔNG dùng chữ in đậm (&l, §l, <bold>, <b>) trong chữ hiện cho người chơi: font tiếng Việt (Be Vietnam Pro TTF trong gói tài nguyên)
+  vẽ đậm thành chữ nhòe như 3D. Đã bỏ toàn bộ bằng tools/bo-in-dam.py (repo + data/*/plugins + tiền tố LuckPerms; sao lưu trước khi sửa
+  ở scratchpad phiên 20/10). Plugin mới cài / file dịch mới: chạy `python3 tools/bo-in-dam.py --ghi` (+ thư mục data của plugin đó khi server dừng).
+  Guide.java giữ chuỗi "&l" (đo độ rộng chữ đậm). Nhấn mạnh bằng màu.
+- 20/10: Tủ skin /tuskin chạy thật (proxy plugin DuckyMoMoSkin, cổng nội bộ 8095). Đã thử: thêm bằng tên bản quyền, ảnh PNG tải lên qua MineSkin, mặc, xoá, khoá sai 403.

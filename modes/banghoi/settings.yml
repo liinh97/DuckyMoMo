@@ -116,7 +116,7 @@ towny_price_claim: 25.0
 towny_town_upkeep: 10.0
 towny_nation_upkeep: 100.0
 eco_starting_balance: 200
-eco_per_player_locale: true
+eco_per_player_locale: false
 combat_mode:
   - old
 border_center_x: 12500

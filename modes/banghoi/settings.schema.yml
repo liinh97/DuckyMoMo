@@ -362,7 +362,8 @@ groups:
         type: select
         file: plugins/Essentials/config.yml
         path: per-player-locale
-        options: [ { value: true, label: "Có (máy để tiếng Việt thì thấy tiếng Việt)" }, { value: false, label: Không (tiếng Anh) } ]
+        note: "Nên để Không: máy để English vẫn thấy tiếng Việt. Có = máy English thấy tiếng Anh (20/10 bị bật nhầm vì nhãn cũ ghi sai)."
+        options: [ { value: false, label: "Không: mọi người đều thấy tiếng Việt (khuyên dùng)" }, { value: true, label: "Có: theo ngôn ngữ máy (máy English thấy tiếng Anh)" } ]
 
   - title: Combat
     category: PvP & combat

@@ -222,12 +222,17 @@ final class DonateQr implements Listener {
 
     /** Tải ảnh QR, đổi về đen trắng 128x128 (điểm ảnh gần nhất) cho rõ trên bản đồ. */
     private static BufferedImage fetch(String url) throws Exception {
-        HttpURLConnection con = (HttpURLConnection) URI.create(url).toURL().openConnection();
-        con.setConnectTimeout(5000);
-        con.setReadTimeout(10000);
         BufferedImage src;
-        try (InputStream in = con.getInputStream()) {
-            src = ImageIO.read(in);
+        if (url.startsWith("data:image/")) {   // panel tự vẽ QR (PNG base64), không phải tải
+            src = ImageIO.read(new java.io.ByteArrayInputStream(java.util.Base64.getDecoder().decode(url.substring(url.indexOf(',') + 1))));
+        } else {
+            HttpURLConnection con = (HttpURLConnection) URI.create(url).toURL().openConnection();
+            con.setConnectTimeout(5000);
+            con.setReadTimeout(10000);
+            con.setInstanceFollowRedirects(true);
+            try (InputStream in = con.getInputStream()) {
+                src = ImageIO.read(in);
+            }
         }
         if (src == null) {
             throw new IllegalStateException("ảnh QR hỏng");

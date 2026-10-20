@@ -2007,6 +2007,39 @@ def notify_admins(text):
 SITE_CFG = Path(os.environ.get("SITE_CFG", "/repo/site-config/site.yml"))
 
 
+# Mã BIN ngân hàng (chuẩn VietQR/NAPAS 247). Ngân hàng khác: ghi "bin: <6 số>" trong site/config/site.yml › donate.
+BANK_BIN = {"VCB": "970436", "VIETCOMBANK": "970436", "TCB": "970407", "TECHCOMBANK": "970407", "MB": "970422", "MBBANK": "970422",
+            "ACB": "970416", "VPB": "970432", "VPBANK": "970432", "BIDV": "970418", "VTB": "970415", "ICB": "970415", "VIETINBANK": "970415",
+            "TPB": "970423", "TPBANK": "970423", "VBA": "970405", "AGRIBANK": "970405", "STB": "970403", "SACOMBANK": "970403",
+            "VIB": "970441", "HDB": "970437", "HDBANK": "970437", "SHB": "970443", "OCB": "970448", "MSB": "970426", "SEAB": "970440",
+            "LPB": "970449", "EIB": "970431", "EXIMBANK": "970431", "NAB": "970428", "BAB": "970409", "CAKE": "546034", "UBANK": "546035",
+            "TIMO": "963388", "SCB": "970429", "PVCB": "970412", "KLB": "970452", "VCCB": "970454", "ABB": "970425", "BVB": "970438"}
+
+
+def _crc16(data):
+    crc = 0xFFFF
+    for b in data:
+        crc ^= b << 8
+        for _ in range(8):
+            crc = ((crc << 1) ^ 0x1021) if crc & 0x8000 else crc << 1
+            crc &= 0xFFFF
+    return crc
+
+
+def vietqr_png(bin_, acct, amount, info):
+    """Ảnh QR PNG (data URI) theo chuẩn VietQR NAPAS 247, tự tạo (20/10: img.vietqr.io đổi sang SVG, Java trong game không đọc được)."""
+    import segno, io
+    f = lambda i, v: f"{i}{len(v):02d}{v}"
+    info = re.sub(r"[^A-Za-z0-9 ]", "", str(info))[:50]
+    mai = f("00", "A000000727") + f("01", f("00", bin_) + f("01", acct)) + f("02", "QRIBFTTA")
+    s = f("00", "01") + f("01", "12") + f("38", mai) + f("53", "704") + (f("54", str(int(amount))) if amount else "") \
+        + f("58", "VN") + (f("62", f("08", info)) if info else "") + "6304"
+    s += f"{_crc16(s.encode()):04X}"
+    buf = io.BytesIO()
+    segno.make(s, error="m").save(buf, kind="png", scale=8, border=2)
+    return "data:image/png;base64," + base64.b64encode(buf.getvalue()).decode()
+
+
 def donate_qr(don):
     """Link ảnh VietQR (chỉ mã, cho tấm bản đồ trong game) + thông tin ngân hàng từ site/config/site.yml (mount ro). Thiếu = không có QR."""
     try:
@@ -2016,8 +2049,13 @@ def donate_qr(don):
     nh, stk = str(bank.get("ngan-hang") or "").strip(), str(bank.get("so-tai-khoan") or "").strip()
     if not nh or not stk:
         return {"qr": "", "bank": {}}
-    q = urllib.parse.urlencode({"amount": don["tien"], "addInfo": don["noi_dung"], "accountName": bank.get("chu-tai-khoan") or ""}, quote_via=urllib.parse.quote)
-    return {"qr": f"https://img.vietqr.io/image/{urllib.parse.quote(nh)}-{urllib.parse.quote(stk)}-qr_only.png?{q}",
+    bin_ = str(bank.get("bin") or BANK_BIN.get(nh.upper().replace(" ", ""), "")).strip()
+    if bin_.isdigit() and re.fullmatch(r"[0-9A-Za-z]{4,19}", stk):
+        qr = vietqr_png(bin_, stk, don["tien"], don["noi_dung"])
+    else:   # ngân hàng chưa có mã BIN: dùng ảnh của VietQR (web xem được, trong game có thể không đọc được)
+        q = urllib.parse.urlencode({"amount": don["tien"], "addInfo": don["noi_dung"], "accountName": bank.get("chu-tai-khoan") or ""}, quote_via=urllib.parse.quote)
+        qr = f"https://img.vietqr.io/image/{urllib.parse.quote(nh)}-{urllib.parse.quote(stk)}-qr_only.png?{q}"
+    return {"qr": qr,
             "bank": {"ngan-hang": nh, "so-tai-khoan": stk, "chu-tai-khoan": bank.get("chu-tai-khoan") or ""}}
 
 

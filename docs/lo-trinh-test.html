@@ -198,6 +198,10 @@ const PLAN = [
  {id:"m7",t:"Lệnh nhà, warp, tpa",b:"<code>/sethome</code>, <code>/home</code>, <code>/spawn</code>, <code>/warp</code>, <code>/tpa B</code>, rồi <code>/back</code>; chết một lần rồi <code>/back</code>.",k:"Đều chạy, có thời gian chờ đứng yên. Người chơi thường (không phải staff) có <code>/back</code>: về chỗ trước lần dịch chuyển gần nhất, và về chỗ vừa chết.",c:"Thế giới › Dịch chuyển bằng lệnh; Thế giới › Lệnh /back cho người chơi."},
  {id:"m8",t:"Cài đặt cá nhân /caidat",b:"<code>/caidat</code>, tắt Kênh chat chung, Tin nhắn riêng, Nhận TPA; B thử /msg, /tpa A.",k:"Menu 19 ô. B (tài khoản THƯỜNG) bị chặn kèm câu \"A đang tắt Nhận yêu cầu TPA\", kể cả gõ một phần tên (<code>/tpa li</code>). Staff/admin vẫn gửi được nhưng thấy dòng xám báo người kia đang tắt. Tắt Bảng bên phải thì ẩn ngay, vào lại vẫn giữ.",w:"Lần test trước gửi /tpa bằng tài khoản Linh (admin, có quyền vượt) nên vẫn tới: đúng thiết kế, nay có thêm dòng báo cho rõ.",f:"Chi tiết từng ô: cụm Kiểm tra cũ 4g trong TEST-CHECKLIST.md."},
  {id:"m9",t:"Việt hoá khi máy để tiếng Anh",b:"Đổi ngôn ngữ game sang English, thử /t, /bal, /ah, /emf.",k:"Vẫn là tiếng Việt.",w:"Các plugin bị ép tiếng Việt, không theo ngôn ngữ máy."},
+ {id:"m10",t:"Gói quà /kit theo rank",b:"Tài khoản thường gõ <code>/kit</code>; đổi bậc bằng <code>/danhphan dat A dan</code> rồi <code>/kit</code> lại; nhận một gói rồi bấm lại.",k:"Menu chỉ cho nhận gói đúng bậc HIỆN TẠI (Tị Nạn, Dân, Lương Dân, Hào Kiệt mỗi bậc một gói riêng); gói của bậc khác xếp sau, ghi Cần rank. Nhận rồi báo Nhận lại sau…. Gõ <code>/kit </code> có gợi ý Tab. Admin không thấy mọi gói như nhận được.",c:"Người mới › Gói quà (quà, thời gian nhận lại, rank được nhận).",f:"Muốn nhận lại để thử: admin <code>/kit lamlai &lt;tên&gt;</code>. Practice: <code>/kit edit</code> vẫn là của Duels."},
+ {id:"m11",t:"Quà lần đầu vào",b:"Cài đặt › Người mới › Gói quà: ô Gói tự phát khi vào lần đầu điền mã (vd tinan). Tài khoản CHƯA từng vào (hoặc reset như người mới ở trang Hệ thống) vào Bang Hội Chiến.",k:"2 giây sau có gói quà trong túi kèm tin Đã nhận …. Ô để trống thì không phát gì.",w:"Ô này đang trống lúc 20/10 tối: muốn thử phải điền mã gói trước."},
+ {id:"m12",t:"Menu đọc rõ, tên đồ tiếng Việt",b:"Mở <code>/kit</code>, <code>/danhphan</code>, <code>/vongquay</code>, <code>/balo</code>, <code>/menu</code>, <code>/cuahang</code>; rê chuột lên món.",k:"Tiêu đề menu chữ đen/xám đậm đọc rõ trên nền xám (không còn chữ cam nhạt). Mô tả quà ghi tên tiếng Việt: 1 mũ da, 1 rìu đá, 32 thân cây sồi (không còn Leather Helmet). Tooltip kiểu mới thống nhất."},
+ {id:"m13",t:"/tprandom và /tphere",b:"Gõ <code>/tprandom</code>; admin <code>/tphere B</code>.",k:"/tprandom mở menu /tpr của server (không đưa ra ngoài bản đồ). /tphere kéo B tới đúng chỗ admin."},
  ]},
 
 {id:"rank", ten:"Danh phận, rank & role", mo:"Rank chơi miễn phí (danh phận), rank Sứ Giả cho streamer, rank ủng hộ chỉ trang trí, và role staff. Kiểm quyền lợi từng bậc có đúng như Cài đặt không.",
@@ -214,6 +218,7 @@ const PLAN = [
  {id:"r8",t:"Rank ủng hộ chỉ là trang trí",b:"Cấp rank ủng hộ cho A (theo trang Role & rank), xem quyền lợi.",k:"Có tiền tố, hiệu ứng hạt, đồ trang trí. Không có thêm giáp, sát thương, tiền.",w:"Luật Mojang cấm bán lợi thế chơi."},
  {id:"r9",t:"Role staff",b:"Trang quản trị › Role & rank: gán helper cho A.",k:"A có tiền tố staff và đúng quyền của role đó; trang Role chỉ cho người quản lý thấy role mình được quản.",f:"Ai không phải admin mà sửa được role cao hơn mình là lỗi bảo mật, báo ngay."},
  {id:"r10",t:"Quân hàm cần 5 giờ chơi",b:"Vua phong quân hàm cho người dưới 5 giờ chơi.",k:"Bị từ chối; đủ 5 giờ thì được."},
+ {id:"r11",t:"Chỉ một tiền tố",b:"Gán A rank ủng hộ (hoặc staff) khi đang là Dân; nhìn chat và Tab.",k:"Chỉ hiện MỘT tiền tố (rank ủng hộ thay [Dân], staff thay rank ủng hộ); không có chữ in đậm."},
  ]},
 
 {id:"kt", ten:"Kinh tế & thu nhập hằng ngày", mo:"Tiền vào (nghề, bán, quà hằng ngày) và tiền ra (chợ, shop, phí). Mục tiêu: không có chỗ in tiền vô hạn.",
@@ -232,6 +237,9 @@ const PLAN = [
  {id:"k10",t:"Vote nhận xu",b:"Vote trên trang danh sách server.",k:"Nhận xu trong game; tên lên bảng vote trên web."},
  {id:"k11",t:"Thăng Cấp /capdo",b:"<code>/capdo</code>; thử nhanh <code>/capdo dat A 9</code> rồi lên cấp 10.",k:"Điều kiện xu/hạ gục/giờ chơi tô đúng màu; lên cấp trừ xu, +1 điểm; cấp 10 báo cả server.",w:"Hạ quái lồng không tính để không cày bằng máy farm."},
  {id:"k12",t:"Cửa hàng trang trí /cuahang",b:"Mua một món trang trí bằng xu.",k:"Trừ xu, món dùng được, không cho sức mạnh."},
+ {id:"k13",t:"Cửa hàng Kinh Đô kiểu chợ",b:"<code>/cuahang</code> hoặc NPC ở spawn; bấm từng món; chuột phải bán 1, Shift + phải bán hết; mở danh mục nhiều trang.",k:"Trang chính 10 danh mục; bấm món nào mua đúng món đó (lỗi cũ: mua nhầm đá cuội), giá 1 món; bán theo bảng /sell, admin không còn ×3; đồ có tên/phù phép không bán được; phân trang chạy; Bedrock có form mua.",c:"Shop › Cửa hàng (mỗi danh mục một khung)."},
+ {id:"k14",t:"Khoáng sản chỉ bán",b:"Danh mục Khoáng sản: thử mua vàng, sắt, kim cương; mua than, đồng.",k:"Vàng, sắt, kim cương chỉ bán được (không có giá mua); than, đồng mua được."},
+ {id:"k15",t:"Menu plugin ngoài",b:"<code>/ah</code>, <code>/jobs</code>, <code>/ce</code>, shop rương, chọn hệ pet.",k:"/ah danh mục tiếng Việt, nút tăng giá; /jobs không có dòng ▸ thừa; tooltip kiểu mới."},
  ]},
 
 {id:"che", ten:"Chế đồ, Tinh Luyện & phù phép", mo:"Ba hệ chồng lên nhau: Xưởng (đồ có kỹ năng), Tinh Luyện (nguyên liệu quý), phù phép (CrazyEnchantments, Enchantio).",
@@ -379,6 +387,10 @@ const PLAN = [
  {id:"x9",t:"Duyệt nạp = cộng Vàng",b:"Bấm [Tôi đã chuyển khoản]; vào trang quản trị › Donate · Vàng bấm Duyệt.",k:"Người chơi được cộng Vàng theo tỉ giá + mốc thưởng, có tin báo trong game; lịch sử ghi lại. Bấm Duyệt lần nữa không cộng thêm.",c:"Toàn mạng › Rank donate › Vàng."},
  {id:"x10",t:"Mua bằng Vàng",b:"<code>/vang</code>, bấm một món 2 lần; thử món đắt hơn số dư; mua trên trang tài khoản web.",k:"Trừ đúng Vàng, quyền/rank có ngay ở mọi server, món có hạn cộng dồn thời hạn. Thiếu Vàng thì báo thiếu, không trừ.",f:"Mua mà không có quyền: xem lịch sử Vàng có dòng Hoàn không; kiểm <code>/lp user &lt;tên&gt; info</code>."},
  {id:"x11",t:"Vàng không chuyển, không đổi ra xu",b:"Tìm mọi cách chuyển Vàng cho người khác (lệnh, web).",k:"Không có cách nào. Không có món nào đổi Vàng ra xu hay đồ chơi game.",w:"Luật Mojang: tiền thật chỉ mua trang trí; chặn chợ đen bán Vàng."},
+ {id:"x12",t:"Thư viện đồ: Bộ (tag)",b:"Trang quản trị › Thư viện đồ: mở một món, mục 6 bấm tag gợi ý (Tân thủ…) hoặc gõ tag mới, Lưu; lọc danh sách theo tag. Sang Cài đặt › Gói quà: + Thêm cả bộ….",k:"Món có tag; nút lọc theo tag; Thêm cả bộ thêm một lần mọi món của tag; ô chọn đồ thư viện gõ tên tag cũng ra món."},
+ {id:"x13",t:"Trang Cài đặt xếp gọn",b:"Mở các danh mục Cài đặt (Người mới, Thế giới, Shop…), sửa một ô trong bảng Danh phận rồi Lưu.",k:"Mỗi cài đặt là thẻ nhỏ xếp lưới; nhóm dạng Bậc: mục thành bảng so sánh; Lưu ô trong bảng có hiệu lực như thẻ thường."},
+ {id:"x14",t:"Reset người chơi",b:"Trang quản trị › Hệ thống › Reset người chơi: tài khoản thử, chọn Chơi lại hoặc Như người mới.",k:"Chơi lại: như /choilai (không tính lượt). Như người mới: bị đá ra, vào lại là lần đầu (mất tiến trình, danh phận về Tị Nạn trừ khi giữ rank); có bản sao lưu.",w:"Chỉ dùng tài khoản thử: thao tác xoá tiến trình thật."},
+ {id:"x15",t:"Không còn hộp thoại trình duyệt",b:"Bấm các nút xoá / bỏ (gói quà, khởi động lại, bỏ thay đổi…).",k:"Mọi xác nhận hiện hộp thoại cùng giao diện trang, không có hộp \"app.goc6.io.vn says\"."},
  ]},
 
 {id:"hack", ten:"Thử phá: lỗ hổng & gian lận", mo:"Đóng vai người muốn phá server. Mỗi mục là một kiểu gian lận người chơi Việt hay thử. Kết quả đúng luôn là: bị chặn, không lợi được gì, và admin xem lại được.",

@@ -39,6 +39,10 @@ của phiên tài khoản cũ khuya 20/10 tóm ở đây (chi tiết: các dòng
    (cụm Danh phận r1–r10): nạp lại vào trang của tài khoản mới (YY55… hoặc đăng lại). r4 đã sửa ("lai"). **r10 LỖI "Phong quân hàm như nào"**:
    cần hướng dẫn / làm cách phong quân hàm dễ hiểu (Towny nation rank: `/n rank add <tên> <quân hàm>`, quân hàm trong town-rules.military-ranks,
    cần min-rank-hours giờ chơi, tài khoản phụ không được) — có thể thêm menu hoặc giải thích trong /hd + lộ trình test.
+   **ĐÃ GỘP (20/10 khuya, tài khoản mới):** r1–r10 đã nạp vào YY55 (Version 4); repo JSON nhận m1/m3/m7/m8 = ok từ YY55 → hai nơi khớp (30 mục).
+   Trang thêm 12 mục mới (mã mới, mã cũ giữ nguyên): m10 /kit theo rank, m11 quà lần đầu, m12 tiêu đề menu + tên đồ tiếng Việt, m13 /tprandom /tphere,
+   r11 một tiền tố, k13 chợ /cuahang, k14 khoáng sản chỉ bán, k15 menu plugin ngoài, x12 Bộ (tag) thư viện, x13 Cài đặt xếp gọn, x14 Reset người chơi,
+   x15 hết hộp thoại trình duyệt. Trang cũ HFv53 KHÔNG dùng nữa; phiên tài khoản cũ chỉ sửa `docs/lo-trinh-test*` rồi báo người dùng.
 3. Thử bằng người: cửa hàng mới (mua/bán đúng món, đúng giá, phân trang, Bedrock), tooltip mọi menu, /jobs dòng thừa khi nghề ít việc,
    tiền tố, /tprandom.
 

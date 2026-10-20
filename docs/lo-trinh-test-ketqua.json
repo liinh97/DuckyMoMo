@@ -11,9 +11,9 @@
  },
  "m1": {
   "ghi_chu": "Mặc định vào không có gì, phải nhận từ kits mới có (trong cài đặt có mục kits chưa, bao lâu thì nhận lại được. Mỗi rank lại có một bộ kits khác nhau)\nTrong kits sẽ có đồ mặc định, đồ trong thư viện, xu, ...",
-  "luc": 1792489400000,
-  "sua": "20/10: hệ Gói quà /kit (tân thủ tự phát lần đầu, gói theo rank, sửa trên Cài đặt › Người mới › Gói quà).",
-  "tt": "lai"
+  "luc": 1792492344612,
+  "sua": "20/10: Làm hệ Gói quà mới (/kit, /goiqua) thay kit Essentials. Quà tân thủ tự vào túi 2 giây sau khi vào Bang Hội Chiến lần đầu. Cài đặt › Người mới › Gói quà: mỗi gói có quà (đồ thường, đồ Thư viện, xu, lệnh), thời gian nhận lại (hoặc một lần), rank được nhận. Sẵn 5 gói: tanthu (mọi người, 1 lần), dan / luongdan / haokiet (theo danh phận, 1 ngày), media (Sứ Giả, 3 ngày). Thử lại: /goiqua lamlai <tên> rồi /kit.",
+  "tt": "ok"
  },
  "m2": {
   "ghi_chu": "",
@@ -22,9 +22,9 @@
  },
  "m3": {
   "ghi_chu": "Bỏ qua tính năng này",
-  "luc": 1792492000000,
-  "sua": "20/10: bỏ bảo vệ người mới (Cài đặt › PvP & combat, bật lại được); web và sách /hd đã sửa.",
-  "tt": "lai"
+  "luc": 1792492358072,
+  "sua": "20/10: Bỏ bảo vệ người mới theo ghi chú (tắt ở Cài đặt › PvP & combat › Bảo vệ người mới, bật lại được). Đã tắt cả thanh đếm ngược; trang chủ web bỏ dòng \"15 phút được bảo vệ\"; sách /hd trang Mới vào ghi ra khỏi spawn là có thể bị đánh. Test: tài khoản mới ra khỏi spawn, B đánh được ngay.",
+  "tt": "ok"
  },
  "m4": {
   "ghi_chu": "",
@@ -43,19 +43,65 @@
  },
  "m7": {
   "ghi_chu": "Bổ sung back cho người chơi",
-  "luc": 1792489400000,
-  "sua": "20/10: người chơi có /back và /back về chỗ chết (Cài đặt › Thế giới › Lệnh /back).",
+  "luc": 1792490673638,
+  "sua": "20/10: Người chơi mọi bậc danh phận có /back (về chỗ trước lần dịch chuyển gần nhất) và /back về chỗ vừa chết, ở Bang Hội Chiến. Bật/tắt: Cài đặt › Thế giới › Lệnh /back cho người chơi.",
   "tt": "ok"
  },
  "m8": {
   "ghi_chu": "Tắt nhận tpa nhưng vẫn nhận được",
-  "luc": 1792489400000,
-  "sua": "20/10: lần test gửi từ admin (vượt công tắc, đúng thiết kế); thêm dòng báo cho staff + tìm một phần tên. Test bằng 2 tài khoản thường.",
+  "luc": 1792490952196,
+  "sua": "20/10: Log cho thấy lần test gửi /tpa vanlinh từ tài khoản Linh (admin có quyền vượt công tắc) nên vẫn tới: đúng thiết kế. Đã sửa thêm: staff gửi tới người đang tắt thì thấy dòng xám báo, và gõ một phần tên (/tpa li) cũng bị chặn. Test lại bằng 2 tài khoản THƯỜNG.",
   "tt": "ok"
  },
  "m9": {
   "ghi_chu": "",
   "luc": 1792484371961,
+  "tt": "ok"
+ },
+ "r1": {
+  "ghi_chu": "",
+  "luc": 1792501831114,
+  "tt": "ok"
+ },
+ "r10": {
+  "ghi_chu": "Phong quân hàm như nào",
+  "luc": 1792503874817,
+  "tt": "err"
+ },
+ "r2": {
+  "ghi_chu": "Đang test thôi nên không có thời gian làm nhiệm vụ lẫn chơi 6h",
+  "luc": 1792502915929,
+  "tt": "ok"
+ },
+ "r3": {
+  "ghi_chu": "",
+  "luc": 1792500692576,
+  "tt": "ok"
+ },
+ "r4": {
+  "ghi_chu": "Đứng ở spawn (khu vực hoà bình) nhưng lại báo chợ đấu giá chỉ mở trong khu vực hoà bình",
+  "luc": 1792503809785,
+  "sua": "20/10: /ah luôn mở trong vòng kinh đô quanh spawn (chưa lập Liên minh Hoà Bình). Cần test lại.",
+  "tt": "lai"
+ },
+ "r5": {
+  "ghi_chu": "",
+  "luc": 1792501903288,
+  "tt": "ok"
+ },
+ "r7": {
+  "ghi_chu": "",
+  "luc": 1792503822662,
+  "tt": "ok"
+ },
+ "r8": {
+  "ghi_chu": "",
+  "luc": 1792503840404,
+  "tt": "ok"
+ },
+ "r9": {
+  "ghi_chu": "",
+  "luc": 1792503845775,
   "tt": "ok"
  },
  "v1": {
@@ -106,51 +152,6 @@
  "v9": {
   "ghi_chu": "",
   "luc": 1792467356035,
-  "tt": "ok"
- },
- "r1": {
-  "ghi_chu": "",
-  "luc": 1792501831114,
-  "tt": "ok"
- },
- "r10": {
-  "ghi_chu": "Phong quân hàm như nào",
-  "luc": 1792503874817,
-  "tt": "err"
- },
- "r2": {
-  "ghi_chu": "Đang test thôi nên không có thời gian làm nhiệm vụ lẫn chơi 6h",
-  "luc": 1792502915929,
-  "tt": "ok"
- },
- "r3": {
-  "ghi_chu": "",
-  "luc": 1792500692576,
-  "tt": "ok"
- },
- "r4": {
-  "ghi_chu": "Đứng ở spawn (khu vực hoà bình) nhưng lại báo chợ đấu giá chỉ mở trong khu vực hoà bình\n[Claude 20/10] Đã sửa: /ah luôn mở trong vòng kinh đô quanh spawn (chưa lập Liên minh Hoà Bình). Cần test lại.",
-  "luc": 1792503809785,
-  "tt": "lai"
- },
- "r5": {
-  "ghi_chu": "",
-  "luc": 1792501903288,
-  "tt": "ok"
- },
- "r7": {
-  "ghi_chu": "",
-  "luc": 1792503822662,
-  "tt": "ok"
- },
- "r8": {
-  "ghi_chu": "",
-  "luc": 1792503840404,
-  "tt": "ok"
- },
- "r9": {
-  "ghi_chu": "",
-  "luc": 1792503845775,
   "tt": "ok"
  }
 }

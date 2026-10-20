@@ -86,7 +86,9 @@ items:
   decoration:
     item:
       material: LIGHT_BLUE_STAINED_GLASS_PANE
-      name: "#2CCED2"
+      name: "&7Bấm khối &axanh lá &7bên trái để mua"
+      lore:
+      - "&7Khối &cđỏ &7bên phải: quay lại"
 
     # Middle column and surrounding slots.
     slots:

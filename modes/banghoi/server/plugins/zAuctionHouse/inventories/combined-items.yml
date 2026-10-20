@@ -76,4 +76,6 @@ items:
     # Placeholder item when no items are found.
     item:
       material: BARRIER
-      name: '#ff0000&nKhông có món nào'
+      name: "&c✘ &fChưa có món nào"
+      lore:
+      - "&c▍ &fBạn chưa có món nào ở đây"

@@ -21,6 +21,29 @@ ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT / "modes" / "banghoi" / "server" / "plugins" / "MyPet" / "skilltrees"
 HE = json.loads((ROOT / "tools" / "mypet" / "he.json").read_text(encoding="utf-8"))
 HE_TEN = {"Combat": "Chiến Binh", "Utility": "Hậu Cần", "PvP": "Đấu Sĩ", "Ride": "Thú Cưỡi", "Farm": "Nông Trại"}
+LINE = "<dark_gray><st>                              </st></dark_gray>"
+
+
+def khung(goc, nhom=None):
+    """Mô tả trong menu chọn hệ theo khung tooltip chung (Tip.java, 20/10): ▍ mô tả · • Kỹ năng ▸ … · • Mốc cấp ▸ … · • Nhóm loài ▸ …
+    goc: Description của hệ trong he.json (dòng đầu = mô tả, "- " = kỹ năng, "<gold>Cấp" = mốc cấp). nhom: dòng thêm của nhóm loài."""
+    out, ky, moc = [], [], []
+    for i, x in enumerate(goc):
+        if i == 0:
+            out.append("<gold>▍</gold> <white>" + re.sub(r"^<gray>", "", x).rstrip(":") + "</white>")
+        elif x.startswith("- "):
+            ky.append("<dark_gray>  ▸</dark_gray> <white>" + x[2:])
+        else:
+            moc.append("<dark_gray>  ▸</dark_gray> " + re.sub(r"^<gold>(Cấp [^:]+:)", r"<yellow>\1</yellow><white>", x))
+    out.append(LINE)
+    if ky:
+        out += ["<dark_gray>•</dark_gray> <gold>Kỹ năng:</gold>"] + ky
+    if moc:
+        out += ["<dark_gray>•</dark_gray> <gold>Mốc cấp:</gold>"] + moc
+    if nhom:
+        out.append(LINE)
+        out += nhom
+    return out
 
 # Tăng trưởng mỗi 5 cấp sau cấp 10 (cấp 15, 20, ... 100 = 18 lần). Trước đây mọi loài: +2 máu, +0,5 sát thương.
 # "bay": cưỡi bay được (chỉ ở hệ Thú Cưỡi). "them": kỹ năng thêm ở MỌI hệ của nhóm. "he": thêm chỉ ở một hệ.
@@ -199,7 +222,7 @@ def main():
     n = 0
     for he, goc in HE.items():
         base = dict(goc)
-        base.update({"ID": he, "Name": he, "Display": HE_TEN[he], "MobTypes": []})   # cây gốc: không loài nào chọn trực tiếp
+        base.update({"ID": he, "Name": he, "Display": HE_TEN[he], "MobTypes": [], "Description": khung(goc["Description"])})   # cây gốc: không loài nào chọn trực tiếp
         (OUT / f"{he}.st.json").write_text(json.dumps(base, ensure_ascii=False, indent=2), encoding="utf-8")
         for ma, g in NHOM.items():
             # loài có đặc tính riêng -> cây riêng; loài không có -> chung một cây của nhóm
@@ -212,22 +235,23 @@ def main():
                 them(skills, {"Life": {"%5>10": {"health": f"+{g['mau']}"}}, "Damage": {"%5>10": {"damage": f"+{g['dame']}"}}})
                 them(skills, g.get("them", {}))
                 them(skills, g.get("he", {}).get(he, {}))
-                desc = [f"<gold>Nhóm loài: {g['ten']}</gold> <gray>({g['vai']})</gray>"]
+                desc = [f"<dark_gray>•</dark_gray> <gold>Nhóm loài:</gold> <white>{g['ten']}</white> <gray>({g['vai']})</gray>"]
                 notes = dict(goc.get("Notifications", {}))
-                desc += [f"<gold>{x}" for x in g["mo_ta"] if "Thú Cưỡi" not in x or he == "Ride"]
+                desc += [f"<dark_gray>  ▸</dark_gray> <white>{x}" for x in g["mo_ta"] if "Thú Cưỡi" not in x or he == "Ride"]
                 if g.get("bay") and he == "Ride":
                     them(skills, {"Ride": BAY})
                     for lv, t in BAY_BAO.items():
                         notes[lv] = f"<gold>⬆ Pet đạt cấp {lv}: <yellow>{t}" + (" · " + notes[lv].split("<yellow>", 1)[1] if lv in notes else "")
                 if loai:
                     them(skills, LOAI[loai][1])
-                    desc.append(f"<gold>{LOAI[loai][0]}")
+                    desc.append(f"<dark_gray>  ▸</dark_gray> <white>{LOAI[loai][0]}")
                 desc.append(f"<dark_gray>Mỗi 5 cấp sau cấp 10: +{so(g['mau'])} máu, +{so(g['dame'])} sát thương")
+                desc += [LINE, "<green>➜ Bấm để chọn hệ này</green>"]
                 tid = f"{he}_{ma}" + (f"_{loai}" if loai else "")
                 tree = {
                     "ID": tid, "Name": tid, "Display": HE_TEN[he], "Order": goc.get("Order", 0),
                     "Icon": goc.get("Icon"), "MobTypes": mobs, "Inheritance": {"Skilltree": he},
-                    "Description": goc["Description"] + desc, "Skills": skills, "Notifications": notes,
+                    "Description": khung(goc["Description"], desc), "Skills": skills, "Notifications": notes,
                     "DmmNhom": {"ma": ma, "ten": g["ten"], "vai": g["vai"], "he": he, "mo_ta": g["mo_ta"],
                                 "tang": f"+{so(g['mau'])} máu, +{so(g['dame'])} sát thương mỗi 5 cấp sau cấp 10",
                                 "dac_tinh": LOAI[loai][0] if loai else None, "loai_vi": [TEN.get(m, m) for m in mobs]},   # cho web (site/app.py pet_trees), MyPet bỏ qua

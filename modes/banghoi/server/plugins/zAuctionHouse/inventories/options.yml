@@ -43,40 +43,29 @@ items:
     type: ZAUCTIONHOUSE_OPTION_TOGGLE
     slot: 11
     option-name: broadcast_sell
-    enable-text: '<green>Enabled'
-    disable-text: '<red>Disabled'
+    enable-text: '<green>Đang bật'
+    disable-text: '<red>Đang tắt'
     item:
       material: OAK_SIGN
-      name: '#2CCED2Thông báo đăng bán'
+      name: "&e✉ &fThông báo đăng bán"
       lore:
-      - ''
-      - '#92ffffBật/tắt thông báo có người đăng bán.'
-      - '#92ffffKhi bật, bạn sẽ thấy thông báo'
-      - '#92ffffmỗi khi có người đăng bán.'
-      - ''
-      - '#8c8c8cTrạng thái: %option_status%'
-      - ''
-      - '#8c8c8c• #2CCED2Bấm #92ffffđể bật/tắt'
-
-  #---------------------------------------------------------------------------
-  # BROADCAST PURCHASE TOGGLE
-  #---------------------------------------------------------------------------
-
+      - "&e▍ &fBáo trong chat khi có người đăng bán món mới"
+      - "&8&m                              "
+      - "&8• &7Trạng thái: %option_status%"
+      - "&8&m                              "
+      - "&a➜ Bấm để bật / tắt"
   broadcast-purchase:
     type: ZAUCTIONHOUSE_OPTION_TOGGLE
     slot: 15
     option-name: broadcast_purchase
-    enable-text: '<green>Enabled'
-    disable-text: '<red>Disabled'
+    enable-text: '<green>Đang bật'
+    disable-text: '<red>Đang tắt'
     item:
       material: GOLD_INGOT
-      name: '#2CCED2Thông báo có người mua'
+      name: "&e✉ &fThông báo có người mua"
       lore:
-      - ''
-      - '#92ffffBật/tắt thông báo có người mua.'
-      - '#92ffffKhi bật, bạn sẽ thấy thông báo'
-      - '#92ffffmỗi khi có người mua.'
-      - ''
-      - '#8c8c8cTrạng thái: %option_status%'
-      - ''
-      - '#8c8c8c• #2CCED2Bấm #92ffffđể bật/tắt'
+      - "&e▍ &fBáo trong chat khi có người mua đồ"
+      - "&8&m                              "
+      - "&8• &7Trạng thái: %option_status%"
+      - "&8&m                              "
+      - "&a➜ Bấm để bật / tắt"

@@ -502,25 +502,33 @@ grim_forge_kick: true
 ce_common_cost: 300
 ce_common_currency: Vault
 ce_common_lore:
-  - '&eGiá: &6300 xu'
-  - '&7Sách ngẫu nhiên một phù phép'
-  - '&7độ hiếm này (có tỉ lệ thành công)'
+  - '&a▍ &fSách ngẫu nhiên 1 phù phép độ hiếm Thường'
+  - '&8▍ &7Mỗi cuốn có tỉ lệ thành công riêng'
+  - '&8&m                              '
+  - '&8• &7Giá: &e300 xu'
+  - '&8&m                              '
+  - '&a➜ Bấm để mua'
 ce_rare_cost: 800
 ce_rare_currency: Vault
 ce_rare_lore:
-  - '&eGiá: &6800 xu'
-  - '&7Sách ngẫu nhiên một phù phép'
-  - '&7độ hiếm này (có tỉ lệ thành công)'
+  - '&9▍ &fSách ngẫu nhiên 1 phù phép độ hiếm Hiếm'
+  - '&8▍ &7Mỗi cuốn có tỉ lệ thành công riêng'
+  - '&8&m                              '
+  - '&8• &7Giá: &e800 xu'
+  - '&8&m                              '
+  - '&a➜ Bấm để mua'
 ce_legendary_ingui: false
 ce_legendary_cost: 60
 ce_legendary_currency: XP_Level
 ce_legendary_lore:
-  - '&7Không bán: chỉ admin phát làm thưởng'
+  - '&8▍ &7Không bán trong shop'
+  - '&8▍ &7Chỉ admin phát làm phần thưởng'
 ce_mythical_ingui: false
 ce_mythical_cost: 120
 ce_mythical_currency: XP_Level
 ce_mythical_lore:
-  - '&7Không bán: chỉ admin phát làm thưởng'
+  - '&8▍ &7Không bán trong shop'
+  - '&8▍ &7Chỉ admin phát làm phần thưởng'
 ce_common_successpercent_min: 40
 ce_common_successpercent_max: 90
 ce_common_destroypercent_min: 0
@@ -748,8 +756,8 @@ reset_enabled: true
 reset_cooldown: 7
 reset_max: 3
 reset_gift_first: true
-reset_money: 200
-reset_kit: tanthu
+reset_money: 0.0
+reset_kit: ''
 reset_season: '1'
 peace_join_wait: 2
 peace_rejoin: 14
@@ -1158,12 +1166,12 @@ petcap_mua_thuytoc: 15
 petcap_mua_nhay: 10
 petcap_kho_bay: 10
 petcap_kho_thusan: 5
-petc_slots_default: 2
-petc_slots_namtuoc: 3
+petc_slots_default: 1
+petc_slots_namtuoc: 2
 petc_slots_tutuoc: 3
 petc_slots_batuoc: 4
-petc_slots_hautuoc: 4
-petc_slots_congtuoc: 5
+petc_slots_hautuoc: 5
+petc_slots_congtuoc: 6
 hmh_dynamic: true
 hmh_timeout: 5
 hmh_range: 20
@@ -1537,14 +1545,14 @@ dp_dan_balo: 1
 dp_dan_ah: 4
 dp_luongdan_name: "Lương Dân"
 dp_luongdan_prefix: "&a[Lương Dân] "
-dp_luongdan_hours: 24.0
+dp_luongdan_hours: 48.0
 dp_luongdan_level: 10
 dp_luongdan_homes: 3
 dp_luongdan_balo: 2
 dp_luongdan_ah: 6
 dp_haokiet_name: "Hào Kiệt"
 dp_haokiet_prefix: "&6[Hào Kiệt] "
-dp_haokiet_hours: 72.0
+dp_haokiet_hours: 96.0
 dp_haokiet_level: 25
 dp_haokiet_homes: 5
 dp_haokiet_balo: 3

@@ -71,15 +71,9 @@ items:
     # Item displayed when the shulker box is empty.
     item:
       material: BARRIER
-      name: "#2CCED2HỘP TRỐNG"
+      name: "&7▣ &fHộp trống"
       lore:
-      - "#92ffffHộp shulker này không có gì."
-
-  #---------------------------------------------------------------------------
-  # SHULKER INFO DISPLAY
-  #---------------------------------------------------------------------------
-  # Shows information about the current shulker being viewed.
-
+      - "&7▍ &fHộp shulker này không có gì"
   shulker-info:
     # Button type - displays current shulker info.
     type: ZAUCTIONHOUSE_SHULKER_INFO
@@ -89,18 +83,12 @@ items:
 
     item:
       material: SHULKER_BOX
-      name: "#2CCED2HỘP SHULKER"
+      name: "&d▣ &fHộp shulker"
       lore:
         # Shows current position in the shulker list.
-      - "#92ffffĐang xem hộp #2CCED2%shulker_current% #92fffftrên #2CCED2%shulker_total%"
-      - ""
-      - "#8c8c8c• Dùng nút chuyển để đổi hộp"
-
-  #---------------------------------------------------------------------------
-  # PREVIOUS SHULKER BUTTON
-  #---------------------------------------------------------------------------
-  # Navigates to the previous shulker in bulk sales.
-
+      - "&d▍ &fĐang xem hộp %shulker_current% trên %shulker_total%"
+      - "&8&m                              "
+      - "&8Dùng nút hai bên để đổi hộp"
   previous:
     # Button type - handles shulker navigation.
     type: ZAUCTIONHOUSE_SHULKER_NAVIGATION
@@ -113,17 +101,10 @@ items:
 
     item:
       material: ARROW
-      name: "#2CCED2HỘP TRƯỚC"
+      name: "&d← &fHộp trước"
       lore:
-      - "#92ffffXem hộp shulker trước."
-      - ""
-      - "#8c8c8c• #2CCED2Bấm #92ffffđể xem hộp trước"
-
-  #---------------------------------------------------------------------------
-  # NEXT SHULKER BUTTON
-  #---------------------------------------------------------------------------
-  # Navigates to the next shulker in bulk sales.
-
+      - "&8&m                              "
+      - "&a➜ Bấm để xem hộp trước"
   next:
     # Button type - handles shulker navigation.
     type: ZAUCTIONHOUSE_SHULKER_NAVIGATION
@@ -136,8 +117,7 @@ items:
 
     item:
       material: ARROW
-      name: "#2CCED2HỘP SAU"
+      name: "&fHộp sau &d→"
       lore:
-      - "#92ffffXem hộp shulker sau."
-      - ""
-      - "#8c8c8c• #2CCED2Bấm #92ffffđể xem hộp sau"
+      - "&8&m                              "
+      - "&a➜ Bấm để xem hộp sau"

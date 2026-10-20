@@ -71,21 +71,23 @@ items:
     # Placeholder item when no items are listed.
     item:
       material: BARRIER
-      name: '#ff0000&nKhông có món nào'
+      name: "&c✘ &fKhông có món nào"
 
   #---------------------------------------------------------------------------
   # REMOVE ALL BUTTON
   #---------------------------------------------------------------------------
   # Retrieves all selling items at once (if inventory space allows).
 
+      lore:
+      - "&c▍ &fBạn chưa treo bán món nào"
   remove-all:
     type: ZAUCTIONHOUSE_REMOVE_ALL_SELLING
     is-permanent: true
     slot: 47
     item:
       material: CHEST
-      name: "#2CCED2Lấy hết"
+      name: "&e↩ &fRút hết"
       lore:
-      - "#92ffffRút mọi món đang bán."
-      - ""
-      - "#8c8c8c• #2CCED2Bấm #92ffffđể lấy hết"
+      - "&e▍ &fGỡ mọi món đang bán, đồ về túi"
+      - "&8&m                              "
+      - "&a➜ Bấm để rút hết"

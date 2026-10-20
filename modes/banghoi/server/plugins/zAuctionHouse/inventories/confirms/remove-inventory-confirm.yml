@@ -66,13 +66,11 @@ items:
 
     item:
       material: GREEN_STAINED_GLASS_PANE
-      name: "#2CCED2RÚT"
+      name: "&e↩ &fRút các món này"
       lore:
-      - "#92ffffRút món này."
-      - ""
-      - "#8c8c8c• #2CCED2Bấm #92ffffđể rút"
-
-    # Bottom-left area (3 slots).
+      - "&e▍ &fGỡ khỏi chợ, đồ về túi bạn"
+      - "&8&m                              "
+      - "&a➜ Bấm để rút"
     slots:
     - 46-48
 
@@ -86,13 +84,11 @@ items:
 
     item:
       material: RED_STAINED_GLASS_PANE
-      name: "#2CCED2QUAY LẠI"
+      name: "&c✘ &fQuay lại"
       lore:
-      - "#92ffffQuay lại."
-      - ""
-      - "#8c8c8c• #2CCED2Bấm #92ffffđể quay lại"
-
-    # Bottom-right area (3 slots).
+      - "&c▍ &fKhông làm nữa"
+      - "&8&m                              "
+      - "&a➜ Bấm để quay lại"
     slots:
     - 50-52
 
@@ -109,8 +105,8 @@ items:
 
     item:
       material: SHULKER_BOX
-      name: "#2CCED2XEM TRONG HỘP SHULKER"
+      name: "&d▣ &fXem trong hộp shulker"
       lore:
-      - "#92ffffXem đồ bên trong hộp shulker."
-      - ""
-      - "#8c8c8c• #2CCED2Bấm #92ffffđể xem"
+      - "&d▍ &fXem đồ chứa bên trong trước khi quyết định"
+      - "&8&m                              "
+      - "&a➜ Bấm để xem"

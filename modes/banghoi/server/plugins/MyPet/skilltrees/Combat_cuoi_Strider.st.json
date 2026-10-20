@@ -13,18 +13,24 @@
     "Skilltree": "Combat"
   },
   "Description": [
-    "<gray>Pet đánh cận chiến, trâu dần theo cấp:",
-    "- <red>Sát thương</red> tăng ở cấp 1, 3, 6, 8",
-    "- <green>Hồi máu</green> cho pet (cấp 2)",
-    "- <red>Gai</red> phản sát thương (cấp 5, 9)",
-    "- <blue>Đẩy lùi</blue> kẻ địch (cấp 10)",
-    "- Túi đồ 1 hàng, điều khiển bằng dây xích",
-    "<gold>Cấp 15/40: <aqua>Hộ chủ</aqua> (15→25% lần chủ bị đánh, pet gánh 20→30% sát thương)",
-    "<gold>Cấp 20/50: <gray>Dậm đất</gray> gây sát thương xung quanh",
-    "<gold>Cấp 25: <dark_red>Chảy máu</dark_red> · cấp 30: hồi máu thêm",
-    "<gold>Nhóm loài: Thú cưỡi</gold> <gray>(chạy nhanh, nhảy cao, thồ hàng)</gray>",
-    "<gold>Strider: kháng lửa cho chủ (cấp 15)",
-    "<dark_gray>Mỗi 5 cấp sau cấp 10: +2,5 máu, +0,4 sát thương"
+    "<gold>▍</gold> <white>Pet đánh cận chiến, trâu dần theo cấp</white>",
+    "<dark_gray><st>                              </st></dark_gray>",
+    "<dark_gray>•</dark_gray> <gold>Kỹ năng:</gold>",
+    "<dark_gray>  ▸</dark_gray> <white><red>Sát thương</red> tăng ở cấp 1, 3, 6, 8",
+    "<dark_gray>  ▸</dark_gray> <white><green>Hồi máu</green> cho pet (cấp 2)",
+    "<dark_gray>  ▸</dark_gray> <white><red>Gai</red> phản sát thương (cấp 5, 9)",
+    "<dark_gray>  ▸</dark_gray> <white><blue>Đẩy lùi</blue> kẻ địch (cấp 10)",
+    "<dark_gray>  ▸</dark_gray> <white>Túi đồ 1 hàng, điều khiển bằng dây xích",
+    "<dark_gray>•</dark_gray> <gold>Mốc cấp:</gold>",
+    "<dark_gray>  ▸</dark_gray> <yellow>Cấp 15/40:</yellow><white> <aqua>Hộ chủ</aqua> (15→25% lần chủ bị đánh, pet gánh 20→30% sát thương)",
+    "<dark_gray>  ▸</dark_gray> <yellow>Cấp 20/50:</yellow><white> <gray>Dậm đất</gray> gây sát thương xung quanh",
+    "<dark_gray>  ▸</dark_gray> <yellow>Cấp 25:</yellow><white> <dark_red>Chảy máu</dark_red> · cấp 30: hồi máu thêm",
+    "<dark_gray><st>                              </st></dark_gray>",
+    "<dark_gray>•</dark_gray> <gold>Nhóm loài:</gold> <white>Thú cưỡi</white> <gray>(chạy nhanh, nhảy cao, thồ hàng)</gray>",
+    "<dark_gray>  ▸</dark_gray> <white>Strider: kháng lửa cho chủ (cấp 15)",
+    "<dark_gray>Mỗi 5 cấp sau cấp 10: +2,5 máu, +0,4 sát thương",
+    "<dark_gray><st>                              </st></dark_gray>",
+    "<green>➜ Bấm để chọn hệ này</green>"
   ],
   "Skills": {
     "Life": {

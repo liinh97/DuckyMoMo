@@ -1595,3 +1595,9 @@ Log: `docker compose logs banghoi-1 --since 5m | grep -iE "DuckyMoMoCore|Mùa:|V
   không có "đất hoà bình". Sửa: PeaceAlliance.spawnRing = vòng town-rules.reserved-spawn-radius quanh town-rules.spawn, /ah luôn mở trong vòng
   này. VIỆC CÒN: admin lập thị trấn KinhDo + quốc gia LienMinhHoaBinh ở spawn trước khi mở cửa (xem mục Liên minh Hoà Bình).
   r2 (lên Dân bằng chơi thật) không phải lỗi: người dùng chưa đủ thời gian; thử nhanh = hạ giờ ở Cài đặt › Danh phận + cấp quyền chương 1.
+- 20/10 tối: KHUNG TOOLTIP cho GUI plugin ngoài (cùng kiểu Tip.java: ký hiệu + tên, ▍ mô tả, vạch &m, • nhãn, ▸ mục, ➜ bấm):
+  zAuctionHouse (repo inventories/*.yml + patterns/back, pagination; data config.yml item-lore + status, CHỈ có ở data), UJobs config.yml (gui,
+  expinfo, leaderboard), CrazyEnchantments config.yml (sửa bản data đã Việt hoá rồi chép đè repo; giá trong mô tả lấy đúng Costs; dòng mô tả
+  sách cũng ghi vào settings.yml ce_*_lore), QuickShop overrides/vi_vn/messages.yml (gui.*), MyPet mô tả hệ (tools/mypet/sinh-cay-ky-nang.py
+  hàm khung(), sinh lại 230 cây; site/app.py bỏ ký hiệu khung khi hiện web). Sửa kèm: nút tăng giá /ah ghi +5000 nhưng thật +500.
+  Script đã dùng (ruamel, chạy trong container panel): scratchpad phiên cũ, không giữ. Đổi giá shop /ce trên Cài đặt KHÔNG tự đổi số trong mô tả.

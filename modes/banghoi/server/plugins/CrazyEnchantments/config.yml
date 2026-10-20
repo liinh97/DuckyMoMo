@@ -9,20 +9,20 @@ Settings:
   Player-Info-Backup-Message: true #Toggle this on and off if you wish to see when the player's data gets backed up.
   Reset-Players-Max-Health: true #This is for some servers that get a health duplication glitch from plugins like CombatTagPlus(v1.2.3 down)
   Refresh-Potion-Effects-On-World-Change: false #In the odd chance potion effects disappear on world change.
-  InvName: '&4&nCrazy Enchanter' #The name of the /CE inventory
+  InvName: '&0✦ Phù phép'        #The name of the /CE inventory
   Enchantment-Book-Item: 'BOOK' #The item that the enchantment book is.
   Enchantment-Book-Glowing: true #Toggle on or off if the book will have an enchanted look.
   GUISize: 54 #The size of the GUI, must be a factor of 9
   CESuccessOverride: -1 #0-100, -1 for no override. Chance of success using a CE Book
   CEFailureOverride: -1 #0-100, -1 for no override. Chance of destroying a CE Book
   EnchantmentBookLore: #The lore on the enchantments books.
-  - '&7Drag book and drop on Item.'
-  - '&7Right click for more Info.'
-  - ''
   - '%description%'
-  - ''
-  - '&4%destroy_rate%% Destroy Chance'
-  - '&a%success_rate%% Success Chance'
+  - '&8&m                              '
+  - '&8• &7Thành công: &a%success_rate%%'
+  - '&8• &7Hỏng thì vỡ đồ: &c%destroy_rate%%'
+  - '&8&m                              '
+  - '&eKéo thả&7: &flên món đồ để gắn'
+  - '&eChuột phải&7: &fxem thêm'
   LostBook: #Lost book options.
     Item: 'BOOK' #The item the lost books are.
     # Item model settings
@@ -31,12 +31,12 @@ Settings:
       Namespace: ""
       # diamond_helmet
       Key: ""
-    Name: '&8&nA Lost %category%&8&n Book' #The name of the lost books.
+    Name: '&8&nSách thất lạc %category%&8&n' #The name of the lost books.
     Lore: #The lore of the lost books.
-    - '&7This book has been lost for centuries'
-    - '&7It is said to be an enchantment book from %category%'
-    - '&7But you must clean it off to find out what kind it is.'
-    - '&7(&6!&7) &7Right Click to clean off.'
+    - '&8▍ &7Sách cũ thất lạc, nhóm %category%'
+    - '&8▍ &7Lau sạch mới biết là phù phép gì'
+    - '&8&m                              '
+    - '&eChuột phải&7: &flau sạch sách'
   Scrambler:
     Item: 'SUNFLOWER' #The item it will be.
     # Item model settings
@@ -46,14 +46,14 @@ Settings:
       # diamond_helmet
       Key: ""
     Glowing: true #If it has a glowing effect.
-    Name: '&eThe Grand Scrambler' #The name of the item.
+    Name: '&eĐá Xáo Trộn'         #The name of the item.
     Lore: #The lore of the item.
-    - '&7The &eThe Grand Scrambler &7will allow'
-    - '&7you to re-roll the destroy and success rates.'
-    - '&7Drag and drop it on an enchantment book'
-    - '&7to get a new destroy and success rate.'
+    - '&e▍ &fQuay lại tỉ lệ của sách phù phép'
+    - '&8▍ &7Ra tỉ lệ thành công và vỡ đồ mới'
+    - '&8&m                              '
+    - '&eKéo thả&7: &flên sách phù phép'
     GUI: #Options for the GUI.
-      Name: '&8Rolling the &eScrambler' #Name of the GUI.
+      Name: '&8Đang quay &eĐá Xáo Trộn' #Name of the GUI.
       Toggle: true #If the GUI will show. Warning>> This may cause lag if a lot of players are using it all the time.
       Pointer: #The pointer in the middle of the GUI.
         Item: 'REDSTONE_TORCH' #The item the pointer is.
@@ -63,20 +63,20 @@ Settings:
           Namespace: ""
           # diamond_helmet
           Key: ""
-        Name: '&cPointer' #The name of the pointer.
+        Name: '&cKim chỉ' #The name of the pointer.
         Lore: #The lore on the pointer.
-        - '&7Whatever percents the item lands on'
-        - '&7will be the new percents on your book.'
+        - '&8▍ &7Kim dừng ở tỉ lệ nào'
+        - '&8▍ &7sách của bạn nhận tỉ lệ đó'
     InGUI: false #If you can buy it in the GUI.
     Slot: 1 #The slot the item will be in.
-    GUIName: '&eThe Grand Scrambler' #Name of the item in the GUI.
+    GUIName: '&eĐá Xáo Trộn'         #Name of the item in the GUI.
     GUILore: #The lore of the item in the GUI.
-    - '&7The &eThe Grand Scrambler &7will allow'
-    - '&7you to re-roll the destroy and success rates.'
-    - '&7Drag and drop it on an enchantment book'
-    - '&7to get a new destroy and success rate.'
-    - ''
-    - '&eCost: &e$800'
+    - '&e▍ &fQuay lại tỉ lệ của sách phù phép'
+    - '&8▍ &7Ra tỉ lệ thành công và vỡ đồ mới'
+    - '&8&m                              '
+    - '&8• &7Giá: &e800 xu'
+    - '&8&m                              '
+    - '&a➜ Bấm để mua'
   Slot_Crystal:
     InGUI: false #If it's in the GUI.
     Slot: 14 #Slot it is in
@@ -88,20 +88,18 @@ Settings:
       # diamond_helmet
       Key: ""
     Glowing: true #If it has a glowing effect.
-    Name: '&5Slot &bCrystal' #Name of the item
+    Name: '&5Pha Lê &bThêm Ô' #Name of the item
     Lore: #Lore of the item
-    - '&7A rare crystal that is said to'
-    - '&7increase the amount of enchants'
-    - '&7that can be added onto an item.'
-    - ''
-    - '&7(&6!&7) &7Drag and drop on an item.'
-    GUIName: '&5Slot &bCrystal'
+    - '&5▍ &fThêm 1 ô phù phép cho món đồ'
+    - '&8&m                              '
+    - '&eKéo thả&7: &flên món đồ'
+    GUIName: '&5Pha Lê &bThêm Ô'
     GUILore:
-    - '&7A rare crystal that is said to'
-    - '&7increase the amount of enchants'
-    - '&7that can be added onto an item.'
-    - ''
-    - '&eCost: &e$500'
+    - '&5▍ &fThêm 1 ô phù phép cho món đồ'
+    - '&8&m                              '
+    - '&8• &7Giá: &e500 xu'
+    - '&8&m                              '
+    - '&a➜ Bấm để mua'
   GKitz: #GKitz GUI option.
     InGUI: false #If you can open the GKitz GUI from the main /ce gui.
     Enabled: false #If the GKitz option is enabled on the server.
@@ -110,7 +108,7 @@ Settings:
     Glowing: true #If it has a glowing effect.
     Name: '&cGKitz' #The name of the item.
     Lore: #The lore of the item.
-    - '&b>>&7&nClick to open&b<<'
+    - '&a➜ Bấm để mở'
   ProtectionCrystal:
     InGUI: false #If it's in the GUI.
     Slot: 1 #Slot it is in
@@ -127,20 +125,20 @@ Settings:
     Chance: #The option to allow protection to fail.
       Toggle: false #Toggle if the protection has a chance of failing.
       Success-Chance: 75 #The chance that the protection will work.
-    Name: '&5Protection &bCrystal' #Name of the item
+    Name: '&5Pha Lê &bBảo Hộ'      #Name of the item
     Lore: #Lore of the item
-    - '&7A rare crystal that is said to'
-    - '&7protect items from getting lost'
-    - '&7while the owners away in the after life.'
-    - ''
-    - '&7(&6!&7) &7Drag and drop on an item.'
-    GUIName: '&5Protection &bCrystal'
+    - '&5▍ &fGiữ món đồ khi bạn chết'
+    - '&8▍ &7Đồ có pha lê không rơi ra khi chết'
+    - '&8&m                              '
+    - '&eKéo thả&7: &flên món đồ'
+    GUIName: '&5Pha Lê &bBảo Hộ'
     GUILore:
-    - '&7A rare crystal that is said to'
-    - '&7protect items from getting lost'
-    - '&7while the owners away in the after life.'
-    - ''
-    - '&eCost: &e$500'
+    - '&5▍ &fGiữ món đồ khi bạn chết'
+    - '&8▍ &7Đồ có pha lê không rơi ra khi chết'
+    - '&8&m                              '
+    - '&8• &7Giá: &e500 xu'
+    - '&8&m                              '
+    - '&a➜ Bấm để mua'
   BlackSmith: #Options for the Black Smith
     InGUI: true #In the GUI.
     Slot: 24 #Slot it is in.
@@ -152,10 +150,12 @@ Settings:
       # diamond_helmet
       Key: ""
     Glowing: false #If it has a glowing effect.
-    Name: '&7The &bBlack &9Smith' #Name of the Item in the GUI
+    Name: '&7Thợ &bRèn'             #Name of the Item in the GUI
     Lore: #Lore on the item.
-    - '&b>>&7&nClick to open&b<<'
-    GUIName: '&8The Black Smith' #Name of the Black Smith's GUI
+    - '&b▍ &fGhép 2 sách, hoặc gộp phù phép 2 món đồ'
+    - '&8&m                              '
+    - '&a➜ Bấm để mở'
+    GUIName: '&8Thợ Rèn'         #Name of the Black Smith's GUI
     Results:
       # Item customization
       Item:
@@ -166,14 +166,13 @@ Settings:
           Namespace: ""
           # diamond_helmet
           Key: ""
-      None: '&cNo Results' #Name of the item when there are no results in the Black Smith
+      None: '&cChưa có kết quả' #Name of the item when there are no results in the Black Smith
       Not-Found-Lore:
-      - '&7No results could be found.'
-      - '&7Please put in two books of'
-      - '&7the same enchantment and level.'
-      - '&7Or put in two items to combined'
-      - '&7the enchantments on them.'
-      Found: '&cCost: &6%cost%XP' #The lore at the bottom of the item
+      - '&8▍ &7Chưa ghép được gì'
+      - '&8&m                              '
+      - '&8• &7Đặt 2 sách cùng phù phép, cùng cấp'
+      - '&8• &7Hoặc 2 món đồ để gộp phù phép'
+      Found: '&8• &7Giá: &e%cost% cấp kinh nghiệm' #The lore at the bottom of the item
     Transaction: #Options for the pricing
       Currency: XP_Level
       Costs: #Cost options
@@ -191,9 +190,11 @@ Settings:
       # diamond_helmet
       Key: ""
     Glowing: false #If it has a glowing effect.
-    Name: '&7The &bCrazy &9Tinkerer' #Name of the Item
+    Name: '&7Thợ &bTái &9Chế'        #Name of the Item
     Lore: #Lore of the item
-    - '&b>>&7&nClick to open&b<<'
+    - '&9▍ &fĐổi sách, đồ phù phép lấy kinh nghiệm'
+    - '&8&m                              '
+    - '&a➜ Bấm để mở'
   Info: #Settings for Info item in the GUI
     InGUI: true #Toggle whether it is in the /CE GUI or not
     Slot: 23 #Slot it is in
@@ -205,9 +206,11 @@ Settings:
       # diamond_helmet
       Key: ""
     Glowing: true #If it has a glowing effect.
-    Name: '&eInfo on the Enchantments' #Name of the Item
+    Name: '&eThông tin phù phép'       #Name of the Item
     Lore: #Lore of the item
-    - '&b>>&7&nClick to view&b<<'
+    - '&e▍ &fXem mọi phù phép và tác dụng'
+    - '&8&m                              '
+    - '&a➜ Bấm để xem'
   Dust: #Settings for the Magical Dust
     MysteryDust:
       Item: 'GUNPOWDER' #Item mystery dust is
@@ -217,11 +220,12 @@ Settings:
         Namespace: ""
         # diamond_helmet
         Key: ""
-      Name: '&7Mystery Dust' #Name of the dust
+      Name: '&7Bụi Bí Ẩn'    #Name of the dust
       Lore: #Use %percent% to set the percent
-      - '&a1-%percent%% &7will be on a'
-      - '&aMagical AngelDust &7or &eMagical Fixing &7Dust'
-      - '&7(&6!&7) &7Right click'
+      - '&8▍ &7Mở ra Bụi Thành Công hoặc Bụi Chống Vỡ'
+      - '&8• &7Mức: &a1–%percent%%'
+      - '&8&m                              '
+      - '&eChuột phải&7: &fmở'
       Firework:
         Toggle: true #Toggle if the firework happens on open.
         Colors: 'Black, Gray, Lime' #The colors the firework will be.
@@ -234,11 +238,13 @@ Settings:
         #Min will always be 1.
     SuccessDust:
       InGUI: true #If you can buy it in the /CE GUI
-      GUIName: '&aMagical Angel Dust' #Name of the item in the GUI
+      GUIName: '&aBụi Thành Công'     #Name of the item in the GUI
       GUILore: #Lore in the GUI.
-      - '&eCost: &a$500'
-      - '&7Dust allows you to bring'
-      - '&7up your &aSuccess Rate&7.'
+      - '&a▍ &fTăng tỉ lệ thành công của sách'
+      - '&8&m                              '
+      - '&8• &7Giá: &e500 xu'
+      - '&8&m                              '
+      - '&a➜ Bấm để mua'
       Slot: 25 #Slot number it is on
       Item: 'SUGAR' #Item the dust is
       # Item model settings
@@ -247,21 +253,23 @@ Settings:
         Namespace: ""
         # diamond_helmet
         Key: ""
-      Name: '&aMagical Angel Dust' #Name of the dust
+      Name: '&aBụi Thành Công'     #Name of the dust
       Lore: #Lore for the dust
-      - '&a+%percent%% Success Rate'
-      - '&7Apply to an Enchantment Book to'
-      - '&7Increase the Success Rate by &e%percent%%'
+      - '&a▍ &f+%percent%% tỉ lệ thành công'
+      - '&8&m                              '
+      - '&eKéo thả&7: &flên sách phù phép'
       PercentRange: #Range the success rate will be.
         Max: 30 #Max percent
         Min: 2 #Minimum percent
     DestroyDust:
       InGUI: true #If you can buy it in the /CE GUI
-      GUIName: '&eMagical Fixing Dust' #Name of the item in the GUI
+      GUIName: '&eBụi Chống Vỡ'        #Name of the item in the GUI
       GUILore: #Lore in the GUI.
-      - '&eCost: &a$500'
-      - '&7Dust allows you to bring'
-      - '&7down your &4Destroy Rate&7.'
+      - '&e▍ &fGiảm tỉ lệ vỡ đồ của sách'
+      - '&8&m                              '
+      - '&8• &7Giá: &e500 xu'
+      - '&8&m                              '
+      - '&a➜ Bấm để mua'
       Slot: 34 #Slot number it is on
       Item: 'REDSTONE' #Item the dust is
       # Item model settings
@@ -270,11 +278,11 @@ Settings:
         Namespace: ""
         # diamond_helmet
         Key: ""
-      Name: '&eMagical Fixing Dust' #Name of the dust
+      Name: '&eBụi Chống Vỡ'        #Name of the dust
       Lore: #Lore for the dust
-      - '&c-%percent%% Destroy Rate'
-      - '&7Apply to an Enchantment Book to'
-      - '&7Decrease the Destroy Rate by &e%percent%%'
+      - '&e▍ &f−%percent%% tỉ lệ vỡ đồ'
+      - '&8&m                              '
+      - '&eKéo thả&7: &flên sách phù phép'
       PercentRange: #Range the destroy rate will be.
         Max: 10 #Max percent
         Min: 2 #Minimum percent
@@ -286,11 +294,10 @@ Settings:
         Namespace: ""
         # diamond_helmet
         Key: ""
-      Name: '&7Failed Dust' #Name of the dust
+      Name: '&7Bụi Hỏng'    #Name of the dust
       Lore: #Lore for the dust
-      - '&7This dust has failed.'
-      - '&7It is now useless unless you'
-      - '&7needed to make TNT or a throwable potion.'
+      - '&8▍ &7Bụi đã hỏng, không dùng được'
+      - '&8▍ &7Chỉ còn để chế TNT hay thuốc ném'
   BlackScroll: #Settings for the black scrolls
     Item: 'INK_SAC' #The item the black scroll can be
     # Item model settings
@@ -299,22 +306,24 @@ Settings:
       Namespace: ""
       # diamond_helmet
       Key: ""
-    Name: '&8&nBlack Scroll' #The name of the black scroll
+    Name: '&8&nCuộn Giấy Đen' #The name of the black scroll
     Item-Lore: #The lore that will be on the black scroll.
-    - '&7Have a custom enchantment you don''t want?'
-    - '&7Drag and drop this on an item with a custom enchantment'
-    - '&7and it will remove a random enchantment for you.'
-    - '&7(&6!&7) &7Only works on Custom Enchantments.'
+    - '&8▍ &7Gỡ ngẫu nhiên 1 phù phép đặc biệt khỏi đồ'
+    - '&8&m                              '
+    - '&eKéo thả&7: &flên món đồ'
+    - '&8Chỉ dùng cho phù phép đặc biệt'
     Chance-Toggle: false #Toggle on and off if the black scrolls have a chance of failing.
     Chance: 75 #The chance that the black scroll will work.
     InGUI: true #Toggle being able to buy in the /CE GUI. Cost is controlled in the SignOptions section
-    GUIName: '&7Black Scroll'
+    GUIName: '&7Cuộn Giấy Đen'
     Glowing: false #If it has a glowing effect.
     Slot: 21 #Slot you can buy the scroll at
     Lore: #Lore of the item in the GUI
-    - '&eCost: &a$1000'
-    - '&7Black Scrolls allow you to'
-    - '&7take off random enchantments.'
+    - '&8▍ &7Gỡ ngẫu nhiên 1 phù phép đặc biệt khỏi đồ'
+    - '&8&m                              '
+    - '&8• &7Giá: &e1.000 xu'
+    - '&8&m                              '
+    - '&a➜ Bấm để mua'
     SuccessChance: #Controls what the success chance will be when they get the book from the Black Scroll
       Max: 75 #The Max percent
       Min: 35 #The Minimum percent
@@ -329,20 +338,22 @@ Settings:
       Namespace: ""
       # diamond_helmet
       Key: ""
-    Name: '&eWhite Scroll' #The name of the white scrolls.
+    Name: '&eCuộn Giấy Trắng' #The name of the white scrolls.
     Item-Lore: #The lore that will be on the white scroll.
-    - '&7Want to protect an item from a book''s destroy rate?'
-    - '&7Drag and drop this on an enchant-able item'
-    - '&7and it will protect the item from the destroy rate.'
+    - '&f▍ &fGiữ đồ không vỡ khi gắn sách bị hỏng'
+    - '&8&m                              '
+    - '&eKéo thả&7: &flên món đồ'
     InGUI: true #Toggle being able to buy in the /CE GUI. Cost is controlled in the SignOptions section
-    GUIName: '&7White Scroll'
+    GUIName: '&7Cuộn Giấy Trắng'
     Glowing: false #If it has a glowing effect.
     Slot: 30 #Slot you can buy the scroll at
     Lore: #Lore of the scroll in the GUI
-    - '&eCost: &a$2000'
-    - '&7White Scrolls allow you to'
-    - '&7protect items from breaking.'
-    ProtectedName: '&bPROTECTED' #The lore that is added to protect an item.
+    - '&f▍ &fGiữ đồ không vỡ khi gắn sách bị hỏng'
+    - '&8&m                              '
+    - '&8• &7Giá: &e2.000 xu'
+    - '&8&m                              '
+    - '&a➜ Bấm để mua'
+    ProtectedName: '&bĐƯỢC BẢO VỆ' #The lore that is added to protect an item.
   TransmogScroll:
     Item: 'QUARTZ' #The item the scroll is.
     # Item model settings
@@ -351,20 +362,23 @@ Settings:
       Namespace: ""
       # diamond_helmet
       Key: ""
-    Name: '&dTransmog Scroll' #The name of the scroll.
+    Name: '&dCuộn Giấy Sắp Xếp' #The name of the scroll.
     Item-Lore: #The lore that will be on the scroll.
-    - '&7This scroll allows you to organize'
-    - '&7your enchantments and tell you how many'
-    - '&7enchantments you currently have on the item.'
+    - '&d▍ &fSắp xếp gọn các dòng phù phép'
+    - '&8▍ &7Ghi số phù phép đang có lên tên đồ'
+    - '&8&m                              '
+    - '&eKéo thả&7: &flên món đồ'
     InGUI: false #Toggle being able to buy in the /CE GUI. Cost is controlled in the SignOptions section
-    GUIName: '&dTransmog Scroll'
+    GUIName: '&dCuộn Giấy Sắp Xếp'
     Glowing: false #If it has a glowing effect.
     Slot: 30 #Slot you can buy the scroll at
     Lore: #Lore of the scroll in the GUI
-    - '&eCost: &a$200'
-    - '&7This scroll allows you to organize'
-    - '&7your enchantments and tell you how many'
-    - '&7enchantments you currently have on the item.'
+    - '&d▍ &fSắp xếp gọn các dòng phù phép'
+    - '&8▍ &7Ghi số phù phép đang có lên tên đồ'
+    - '&8&m                              '
+    - '&8• &7Giá: &e200 xu'
+    - '&8&m                              '
+    - '&a➜ Bấm để mua'
     Amount-of-Enchantments: ' &7[&6&n%amount%&7]' #The suffix that will be added at the end of the item's name.
     Amount-Toggle: true #If the amount is added to the suffix of the item's name.
     Count-Vanilla-Enchantments: true #If it counts the vanilla enchantments in the amount.
@@ -503,13 +517,16 @@ Settings:
   - 'Slot:44, Item:WHITE_STAINED_GLASS_PANE, Name: '
 Categories: #You can make as many different categories as you want
   Common: #Name of the category
-    Name: '&a&nCommon' #Name in the GUI
+    Name: '&a&nThường' #Name in the GUI
     Slot: 31 #The Slot number the item will be in
     InGUI: true #Toggle if it's in the GUI or not.
     Lore: #The lore of the Item
-    - '&eGiá: &6300 xu'
-    - '&7Sách ngẫu nhiên một phù phép'
-    - '&7độ hiếm này (có tỉ lệ thành công)'
+    - '&a▍ &fSách ngẫu nhiên 1 phù phép độ hiếm Thường'
+    - '&8▍ &7Mỗi cuốn có tỉ lệ thành công riêng'
+    - '&8&m                              '
+    - '&8• &7Giá: &e300 xu'
+    - '&8&m                              '
+    - '&a➜ Bấm để mua'
     Item: 'LIME_STAINED_GLASS_PANE' #The id for the item
     # Item model settings
     Model:
@@ -532,14 +549,14 @@ Categories: #You can make as many different categories as you want
         # diamond_helmet
         Key: ""
       Glowing: false #Is it enchanted
-      Name: '&8&nLost&c Tier1 &8&nBooks' #Name of the item
+      Name: '&8&nSách thất lạc&c bậc 1&8&n' #Name of the item
       Lore: #Lore on the item
-      - '&7These are lost books that are'
-      - '&7Said to be &cTier1 &7Enchantment books.'
-      - '&7But no one has tried to clean the books yet.'
-      - '&7Will you be the one to clean the books?'
-      - ''
-      - '&cCost: &6$1000'
+      - '&8▍ &7Sách thất lạc nhóm Thường, chưa ai lau'
+      - '&8▍ &7Lau sạch mới biết là phù phép gì'
+      - '&8&m                              '
+      - '&8• &7Giá: &e1.000 xu'
+      - '&8&m                              '
+      - '&a➜ Bấm để mua'
       Cost: 1000
       Currency: Vault
       FireworkToggle: true #Toggle on and off if when opening a lost book a firework effect happens
@@ -558,13 +575,16 @@ Categories: #You can make as many different categories as you want
         Max: 2
         Min: 1
   Rare:
-    Name: '&9&nRare'
+    Name: '&9&nHiếm'
     Slot: 32
     InGUI: true
     Lore:
-    - '&eGiá: &6800 xu'
-    - '&7Sách ngẫu nhiên một phù phép'
-    - '&7độ hiếm này (có tỉ lệ thành công)'
+    - '&9▍ &fSách ngẫu nhiên 1 phù phép độ hiếm Hiếm'
+    - '&8▍ &7Mỗi cuốn có tỉ lệ thành công riêng'
+    - '&8&m                              '
+    - '&8• &7Giá: &e800 xu'
+    - '&8&m                              '
+    - '&a➜ Bấm để mua'
     Item: 'BLUE_STAINED_GLASS_PANE'
     # Item model settings
     Model:
@@ -587,14 +607,14 @@ Categories: #You can make as many different categories as you want
         # diamond_helmet
         Key: ""
       Glowing: false
-      Name: '&8&nLost&c Tier2 &8&nBooks'
+      Name: '&8&nSách thất lạc&c bậc 2&8&n'
       Lore:
-      - '&7These are lost books that are'
-      - '&7Said to be &cTier2 &7Enchantment books.'
-      - '&7But no one has tried to clean the books yet.'
-      - '&7Will you be the one to clean the books?'
-      - ''
-      - '&cCost: &6$2000'
+      - '&8▍ &7Sách thất lạc nhóm Hiếm, chưa ai lau'
+      - '&8▍ &7Lau sạch mới biết là phù phép gì'
+      - '&8&m                              '
+      - '&8• &7Giá: &e2.000 xu'
+      - '&8&m                              '
+      - '&a➜ Bấm để mua'
       Cost: 2000
       Currency: Vault
       FireworkToggle: true
@@ -613,11 +633,12 @@ Categories: #You can make as many different categories as you want
         Max: 3
         Min: 2
   Legendary:
-    Name: '&4&nLegendary'
+    Name: '&4&nHuyền thoại'
     Slot: 33
     InGUI: false
     Lore:
-    - '&7Không bán: chỉ admin phát làm thưởng'
+    - '&8▍ &7Không bán trong shop'
+    - '&8▍ &7Chỉ admin phát làm phần thưởng'
     Item: 'RED_STAINED_GLASS_PANE'
     # Item model settings
     Model:
@@ -640,14 +661,14 @@ Categories: #You can make as many different categories as you want
         # diamond_helmet
         Key: ""
       Glowing: false
-      Name: '&8&nLost&c Tier3 &8&nBooks'
+      Name: '&8&nSách thất lạc&c bậc 3&8&n'
       Lore:
-      - '&7These are lost books that are'
-      - '&7Said to be &cTier3 &7Enchantment books.'
-      - '&7But no one has tried to clean the books yet.'
-      - '&7Will you be the one to clean the books?'
-      - ''
-      - '&cCost: &6$3000'
+      - '&8▍ &7Sách thất lạc nhóm Huyền thoại, chưa ai lau'
+      - '&8▍ &7Lau sạch mới biết là phù phép gì'
+      - '&8&m                              '
+      - '&8• &7Giá: &e3.000 xu'
+      - '&8&m                              '
+      - '&a➜ Bấm để mua'
       Cost: 3000
       Currency: Vault
       FireworkToggle: true
@@ -666,11 +687,12 @@ Categories: #You can make as many different categories as you want
         Max: 5
         Min: 3
   Mythical:
-    Name: '&5&nMythical'
+    Name: '&5&nThần thoại'
     Slot: 41
     InGUI: false
     Lore:
-    - '&7Không bán: chỉ admin phát làm thưởng'
+    - '&8▍ &7Không bán trong shop'
+    - '&8▍ &7Chỉ admin phát làm phần thưởng'
     Item: 'AMETHYST_CLUSTER'
     # Item model settings
     Model:
@@ -693,14 +715,14 @@ Categories: #You can make as many different categories as you want
         # diamond_helmet
         Key: ""
       Glowing: false
-      Name: '&8&nLost&c Tier 10 &8&nBooks'
+      Name: '&8&nSách thất lạc&c bậc 10&8&n'
       Lore:
-      - '&7These are lost books that are'
-      - '&7Said to be &cTier 10 &7Enchantment books.'
-      - '&7But no one has tried to clean the books yet.'
-      - '&7Will you be the one to clean the books?'
-      - ''
-      - '&cCost: &6$10000'
+      - '&8▍ &7Sách thất lạc nhóm Thần thoại, chưa ai lau'
+      - '&8▍ &7Lau sạch mới biết là phù phép gì'
+      - '&8&m                              '
+      - '&8• &7Giá: &e10.000 xu'
+      - '&8&m                              '
+      - '&a➜ Bấm để mua'
       Cost: 10000
       Currency: Vault
       FireworkToggle: true

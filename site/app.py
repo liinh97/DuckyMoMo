@@ -248,7 +248,7 @@ def pet_trees():
             d = json.loads(f.read_text(encoding="utf-8"))
         except (OSError, ValueError):
             continue
-        desc = [re.sub(r"<[^>]+>", "", str(x)).strip() for x in d.get("Description") or []]
+        desc = [re.sub(r"^[▍▸•\s]+", "", re.sub(r"<[^>]+>", "", str(x))).strip() for x in d.get("Description") or []]   # bỏ ký hiệu khung tooltip
         g = d.get("DmmNhom")
         if g:
             e = groups.setdefault(g["ma"], {"ma": g["ma"], "ten": g["ten"], "vai": g["vai"], "tang": g.get("tang", ""),

@@ -66,20 +66,13 @@ items:
 
     item:
       material: CHEST
-      name: "#2CCED2TẤT CẢ"
+      name: "&f☰ &fTất cả"
       lore:
-      - "#92ffffXem mọi món đang bán"
-      - ""
-        # %zauctionhouse_category_count_all% shows total items.
-      - "#92ffffTổng số món#8c8c8c: #2CCED2%zauctionhouse_category_count_all%"
-      - ""
-      - "#8c8c8c• #2CCED2Bấm #92ffffđể xem"
-
-  #---------------------------------------------------------------------------
-  # BLOCKS CATEGORY
-  #---------------------------------------------------------------------------
-  # Shows only placeable block items.
-
+      - "&f▍ &fMọi món đang bán"
+      - "&8&m                              "
+      - "&8• &7Số món: &f%zauctionhouse_category_count_all%"
+      - "&8&m                              "
+      - "&a➜ Bấm để xem"
   blocks:
     type: ZAUCTIONHOUSE_CATEGORY
     # Must match the key in categories.yml
@@ -89,20 +82,13 @@ items:
     item:
       # Representative material for this category.
       material: GRASS_BLOCK
-      name: "#7a7a7aʙʟᴏᴄᴋs"
+      name: "&7▣ &fKhối xây"
       lore:
-      - "#92ffffMọi loại khối xây"
-      - ""
-        # Dynamic item count for this category.
-      - "#92ffffSố món#8c8c8c: #2CCED2%zauctionhouse_category_count_blocks%"
-      - ""
-      - "#8c8c8c• #2CCED2Bấm #92ffffđể xem"
-
-  #---------------------------------------------------------------------------
-  # WEAPONS CATEGORY
-  #---------------------------------------------------------------------------
-  # Shows swords, bows, crossbows, and other weapons.
-
+      - "&7▍ &fĐá, gỗ, kính, khối trang trí…"
+      - "&8&m                              "
+      - "&8• &7Số món: &f%zauctionhouse_category_count_blocks%"
+      - "&8&m                              "
+      - "&a➜ Bấm để xem"
   weapons:
     type: ZAUCTIONHOUSE_CATEGORY
     category: weapons
@@ -110,20 +96,13 @@ items:
 
     item:
       material: DIAMOND_SWORD
-      name: "#ff5555ᴡᴇᴀᴘᴏɴs"
+      name: "&c⚔ &fVũ khí"
       lore:
-      - "#92ffffĐồ chiến đấu"
-      - "#92ffffKiếm, cung, nỏ..."
-      - ""
-      - "#92ffffSố món#8c8c8c: #2CCED2%zauctionhouse_category_count_weapons%"
-      - ""
-      - "#8c8c8c• #2CCED2Bấm #92ffffđể xem"
-
-  #---------------------------------------------------------------------------
-  # ARMOR CATEGORY
-  #---------------------------------------------------------------------------
-  # Shows helmets, chestplates, leggings, boots, and shields.
-
+      - "&c▍ &fKiếm, rìu, cung, nỏ, đinh ba…"
+      - "&8&m                              "
+      - "&8• &7Số món: &f%zauctionhouse_category_count_weapons%"
+      - "&8&m                              "
+      - "&a➜ Bấm để xem"
   armor:
     type: ZAUCTIONHOUSE_CATEGORY
     category: armor
@@ -131,19 +110,13 @@ items:
 
     item:
       material: DIAMOND_CHESTPLATE
-      name: "#55ffffGIÁP"
+      name: "&b◈ &fGiáp"
       lore:
-      - "#92ffffĐồ bảo vệ"
-      - ""
-      - "#92ffffSố món#8c8c8c: #2CCED2%zauctionhouse_category_count_armor%"
-      - ""
-      - "#8c8c8c• #2CCED2Bấm #92ffffđể xem"
-
-  #---------------------------------------------------------------------------
-  # TOOLS CATEGORY
-  #---------------------------------------------------------------------------
-  # Shows pickaxes, axes, shovels, hoes, and other tools.
-
+      - "&b▍ &fMũ, áo, quần, giày, khiên"
+      - "&8&m                              "
+      - "&8• &7Số món: &f%zauctionhouse_category_count_armor%"
+      - "&8&m                              "
+      - "&a➜ Bấm để xem"
   tools:
     type: ZAUCTIONHOUSE_CATEGORY
     category: tools
@@ -151,19 +124,13 @@ items:
 
     item:
       material: DIAMOND_PICKAXE
-      name: "#ffff55CÔNG CỤ"
+      name: "&e⛏ &fCông cụ"
       lore:
-      - "#92ffffĐồ đào mỏ và làm nông"
-      - ""
-      - "#92ffffSố món#8c8c8c: #2CCED2%zauctionhouse_category_count_tools%"
-      - ""
-      - "#8c8c8c• #2CCED2Bấm #92ffffđể xem"
-
-  #---------------------------------------------------------------------------
-  # CONSUMABLES CATEGORY
-  #---------------------------------------------------------------------------
-  # Shows potions, food, and other consumable items.
-
+      - "&e▍ &fCuốc, xẻng, cần câu, kéo…"
+      - "&8&m                              "
+      - "&8• &7Số món: &f%zauctionhouse_category_count_tools%"
+      - "&8&m                              "
+      - "&a➜ Bấm để xem"
   consumables:
     type: ZAUCTIONHOUSE_CATEGORY
     category: consumables
@@ -171,19 +138,13 @@ items:
 
     item:
       material: GOLDEN_APPLE
-      name: "#55ff55ᴄᴏɴsᴜᴍᴀʙʟᴇs"
+      name: "&a♨ &fĐồ ăn & thuốc"
       lore:
-      - "#92ffffĐồ ăn và thuốc"
-      - ""
-      - "#92ffffSố món#8c8c8c: #2CCED2%zauctionhouse_category_count_consumables%"
-      - ""
-      - "#8c8c8c• #2CCED2Bấm #92ffffđể xem"
-
-  #---------------------------------------------------------------------------
-  # RESOURCES CATEGORY
-  #---------------------------------------------------------------------------
-  # Shows ores, ingots, and crafting materials.
-
+      - "&a▍ &fThức ăn, bình thuốc"
+      - "&8&m                              "
+      - "&8• &7Số món: &f%zauctionhouse_category_count_consumables%"
+      - "&8&m                              "
+      - "&a➜ Bấm để xem"
   resources:
     type: ZAUCTIONHOUSE_CATEGORY
     category: resources
@@ -191,19 +152,13 @@ items:
 
     item:
       material: DIAMOND
-      name: "#ffaa00TÀI NGUYÊN"
+      name: "&6◆ &fTài nguyên"
       lore:
-      - "#92ffffQuặng và nguyên liệu"
-      - ""
-      - "#92ffffSố món#8c8c8c: #2CCED2%zauctionhouse_category_count_resources%"
-      - ""
-      - "#8c8c8c• #2CCED2Bấm #92ffffđể xem"
-
-  #---------------------------------------------------------------------------
-  # ENCHANTED BOOKS CATEGORY
-  #---------------------------------------------------------------------------
-  # Shows enchanted books only.
-
+      - "&6▍ &fQuặng, thỏi, nguyên liệu chế"
+      - "&8&m                              "
+      - "&8• &7Số món: &f%zauctionhouse_category_count_resources%"
+      - "&8&m                              "
+      - "&a➜ Bấm để xem"
   enchanted-books:
     type: ZAUCTIONHOUSE_CATEGORY
     category: enchanted-books
@@ -211,19 +166,13 @@ items:
 
     item:
       material: ENCHANTED_BOOK
-      name: "#ff55ffᴇɴᴄʜᴀɴᴛᴇᴅ ʙᴏᴏᴋs"
+      name: "&d✦ &fSách phù phép"
       lore:
-      - "#92ffffSách có phù phép"
-      - ""
-      - "#92ffffSố món#8c8c8c: #2CCED2%zauctionhouse_category_count_enchanted-books%"
-      - ""
-      - "#8c8c8c• #2CCED2Bấm #92ffffđể xem"
-
-  #---------------------------------------------------------------------------
-  # MISCELLANEOUS CATEGORY
-  #---------------------------------------------------------------------------
-  # Shows items that don't fit in other categories.
-
+      - "&d▍ &fSách có phù phép"
+      - "&8&m                              "
+      - "&8• &7Số món: &f%zauctionhouse_category_count_enchanted-books%"
+      - "&8&m                              "
+      - "&a➜ Bấm để xem"
   misc:
     type: ZAUCTIONHOUSE_CATEGORY
     category: misc
@@ -231,10 +180,10 @@ items:
 
     item:
       material: CHEST
-      name: "#555555ᴍɪsᴄᴇʟʟᴀɴᴇᴏᴜs"
+      name: "&8❖ &fĐồ khác"
       lore:
-      - "#92ffffĐồ khác"
-      - ""
-      - "#92ffffSố món#8c8c8c: #2CCED2%zauctionhouse_category_count_misc%"
-      - ""
-      - "#8c8c8c• #2CCED2Bấm #92ffffđể xem"
+      - "&8▍ &fMọi thứ còn lại"
+      - "&8&m                              "
+      - "&8• &7Số món: &f%zauctionhouse_category_count_misc%"
+      - "&8&m                              "
+      - "&a➜ Bấm để xem"

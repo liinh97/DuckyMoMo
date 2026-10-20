@@ -71,21 +71,23 @@ items:
     # Placeholder item when no expired items exist.
     item:
       material: BARRIER
-      name: '#ff0000&nKhông có món nào'
+      name: "&c✘ &fKhông có món nào"
 
   #---------------------------------------------------------------------------
   # REMOVE ALL BUTTON
   #---------------------------------------------------------------------------
   # Retrieves all expired items at once (if inventory space allows).
 
+      lore:
+      - "&c▍ &fKhông có đồ hết hạn"
   remove-all:
     type: ZAUCTIONHOUSE_REMOVE_ALL_EXPIRED
     is-permanent: true
     slot: 47
     item:
       material: CHEST
-      name: "#2CCED2Lấy hết"
+      name: "&e↩ &fLấy hết"
       lore:
-      - "#92ffffLấy lại mọi món hết hạn."
-      - ""
-      - "#8c8c8c• #2CCED2Bấm #92ffffđể lấy hết"
+      - "&e▍ &fLấy lại mọi món hết hạn về túi"
+      - "&8&m                              "
+      - "&a➜ Bấm để lấy hết"

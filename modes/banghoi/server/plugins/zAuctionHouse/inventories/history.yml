@@ -71,7 +71,7 @@ items:
     # Item shown while loading history from database.
     item:
       material: BARRIER
-      name: "#ff0000Đang tải..."
+      name: "&7⟳ &fĐang tải…"
 
     # Item shown when no sales exist.
     else:
@@ -79,16 +79,9 @@ items:
       - 22
       item:
         material: BARRIER
-        name: '#ff0000&nChưa bán được món nào'
+        name: "&7✘ &fChưa bán được món nào"
         lore:
-        - ''
-        - '&7Bạn chưa bán được món nào.'
-
-  #---------------------------------------------------------------------------
-  # SORT BUTTON
-  #---------------------------------------------------------------------------
-  # Changes the sort order of history entries.
-
+        - "&7▍ &fĐồ bán được sẽ hiện ở đây"
   sort:
     # Button type - handles sort cycling for history.
     type: ZAUCTIONHOUSE_HISTORY_SORT
@@ -122,15 +115,15 @@ items:
 
     item:
       material: HOPPER
-      name: "#2CCED2SẮP XẾP"
+      name: "&b⇅ &fSắp xếp"
       lore:
-      - "#92ffffCác kiểu sắp xếp:"
-        # Placeholders for each sort option (formatted by enable/disable-text).
+      - "&b▍ &fĐổi thứ tự lịch sử"
+      - "&8&m                              "
       - "%DATE_DESC%"
       - "%DATE_ASC%"
       - "%PRICE_DESC%"
       - "%PRICE_ASC%"
       - "%BUYER_ASC%"
       - "%BUYER_DESC%"
-      - ""
-      - "#8c8c8c• #2CCED2Bấm #92ffffđể đổi kiểu sắp xếp"
+      - "&8&m                              "
+      - "&a➜ Bấm để đổi kiểu"

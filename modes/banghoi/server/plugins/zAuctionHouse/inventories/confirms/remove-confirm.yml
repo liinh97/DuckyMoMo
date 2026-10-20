@@ -47,13 +47,11 @@ items:
     item:
       # Green glass pane for confirm action.
       material: GREEN_STAINED_GLASS_PANE
-      name: "#2CCED2RÚT"
+      name: "&e↩ &fRút món này"
       lore:
-      - "#92ffffRút món này."
-      - ""
-      - "#8c8c8c• #2CCED2Bấm #92ffffđể rút"
-
-    # Left side of the inventory (3×3 grid).
+      - "&e▍ &fGỡ khỏi chợ, đồ về túi bạn"
+      - "&8&m                              "
+      - "&a➜ Bấm để rút"
     slots:
     - 0-2       # Top-left row
     - 9-11      # Middle-left row
@@ -71,13 +69,11 @@ items:
     item:
       # Red glass pane for cancel action.
       material: RED_STAINED_GLASS_PANE
-      name: "#2CCED2QUAY LẠI"
+      name: "&c✘ &fQuay lại"
       lore:
-      - "#92ffffQuay lại."
-      - ""
-      - "#8c8c8c• #2CCED2Bấm #92ffffđể quay lại"
-
-    # Right side of the inventory (3×3 grid).
+      - "&c▍ &fKhông làm nữa"
+      - "&8&m                              "
+      - "&a➜ Bấm để quay lại"
     slots:
     - 6-8       # Top-right row
     - 15-17     # Middle-right row
@@ -125,8 +121,8 @@ items:
 
     item:
       material: SHULKER_BOX
-      name: "#2CCED2XEM TRONG HỘP SHULKER"
+      name: "&d▣ &fXem trong hộp shulker"
       lore:
-      - "#92ffffXem đồ bên trong hộp shulker."
-      - ""
-      - "#8c8c8c• #2CCED2Bấm #92ffffđể xem"
+      - "&d▍ &fXem đồ chứa bên trong trước khi quyết định"
+      - "&8&m                              "
+      - "&a➜ Bấm để xem"

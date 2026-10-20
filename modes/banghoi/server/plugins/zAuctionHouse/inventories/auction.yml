@@ -86,13 +86,17 @@ items:
     item:
       material: BARRIER
       # &n creates underlined text (legacy formatting)
-      name: '#ff0000&nKhông có món nào'
+      name: "&c✘ &fChưa có món nào"
 
   #---------------------------------------------------------------------------
   # CATEGORIES BUTTON
   #---------------------------------------------------------------------------
   # Opens the category selection inventory for filtering items.
 
+      lore:
+      - "&c▍ &fChợ đang trống, hãy là người bán đầu tiên!"
+      - "&8&m                              "
+      - "&8• &7Đăng bán: &e/ah sell <giá>"
   categories:
     # Slot position - center of top row.
     slot: 4
@@ -110,17 +114,12 @@ items:
     # Button appearance
     item:
       material: CHEST
-      name: "#2CCED2DANH MỤC"
+      name: "&b☰ &fDanh mục"
       lore:
-      - ""
-      - "#8c8c8c• #2CCED2Bấm #92ffffđể mở"
-
-  #---------------------------------------------------------------------------
-  # EXPIRED ITEMS BUTTON
-  #---------------------------------------------------------------------------
-  # Shows the player's items that have expired (not sold in time).
-  # Button changes appearance based on whether items exist.
-
+      - "&b▍ &fLọc đồ theo loại"
+      - "&8▍ &7Vũ khí, giáp, công cụ, tài nguyên…"
+      - "&8&m                              "
+      - "&a➜ Bấm để chọn danh mục"
   expired-items:
     # Button type - opens the expired items inventory if items exist.
     type: ZAUCTIONHOUSE_EXPIRED_INVENTORY
@@ -132,27 +131,19 @@ items:
     item:
       # Custom player head texture (hourglass/clock icon).
       url: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjdhYWRmZjlkZGM1NDZmZGNlYzZlZDU5MTljYzM5ZGZhOGQwYzA3ZmY0YmM2MTNhMTlmMmU2ZDdmMjU5MyJ9fX0="
-      name: "#2CCED2ĐỒ HẾT HẠN"
+      name: "&e⌛ &fĐồ hết hạn &8(%expired-items% món)"
       lore:
         # %expired-items% = number of expired items
         # %s% = pluralization suffix ("" for 1, "s" for 2+)
-      - "#92ffffBạn có #2CCED2%expired-items% #92ffffmón hết hạn."
-      - ""
-      - "#8c8c8c• #2CCED2Bấm #92ffffđể mở"
-
-    # Item shown when player has NO expired items.
+      - "&e▍ &fĐồ treo bán quá hạn mà chưa ai mua"
+      - "&8&m                              "
+      - "&a➜ Bấm để lấy lại"
     else:
       item:
         url: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjdhYWRmZjlkZGM1NDZmZGNlYzZlZDU5MTljYzM5ZGZhOGQwYzA3ZmY0YmM2MTNhMTlmMmU2ZDdmMjU5MyJ9fX0="
-        name: "#2CCED2ĐỒ HẾT HẠN"
+        name: "&7⌛ &fĐồ hết hạn"
         lore:
-        - "#ff3535Bạn không có món nào hết hạn."
-
-  #---------------------------------------------------------------------------
-  # PURCHASED ITEMS BUTTON
-  #---------------------------------------------------------------------------
-  # Shows items the player has bought but not yet retrieved.
-
+        - "&7▍ &fKhông có món nào hết hạn"
   purchased-items:
     # Button type - opens the purchased items inventory if items exist.
     type: ZAUCTIONHOUSE_PURCHASED_INVENTORY
@@ -164,25 +155,17 @@ items:
     item:
       # Chest icon texture.
       url: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjM3Y2FlNWM1MWViMTU1OGVhODI4ZjU4ZTBkZmY4ZTZiN2IwYjFhMTgzZDczN2VlY2Y3MTQ2NjE3NjEifX19"
-      name: "#2CCED2ĐỒ ĐÃ MUA"
+      name: "&a✔ &fĐồ đã mua &8(%purchased-items% món)"
       lore:
-      - "#92ffffBạn có #2CCED2%purchased-items% #92ffffmón đã mua."
-      - ""
-      - "#8c8c8c• #2CCED2Bấm #92ffffđể mở"
-
-    # Item shown when player has NO purchased items.
+      - "&a▍ &fĐồ bạn đã mua, chưa nhận vào túi"
+      - "&8&m                              "
+      - "&a➜ Bấm để nhận"
     else:
       item:
         url: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjM3Y2FlNWM1MWViMTU1OGVhODI4ZjU4ZTBkZmY4ZTZiN2IwYjFhMTgzZDczN2VlY2Y3MTQ2NjE3NjEifX19"
-        name: "#2CCED2ĐỒ ĐÃ MUA"
+        name: "&7✔ &fĐồ đã mua"
         lore:
-        - "#ff3535Bạn chưa mua món nào."
-
-  #---------------------------------------------------------------------------
-  # YOUR ITEMS (SELLING) BUTTON
-  #---------------------------------------------------------------------------
-  # Shows items the player currently has listed for sale.
-
+        - "&7▍ &fBạn chưa mua món nào"
   selling-items:
     # Button type - opens the selling items inventory if items exist.
     type: ZAUCTIONHOUSE_SELLING_INVENTORY
@@ -194,25 +177,19 @@ items:
     item:
       # Player icon texture.
       url: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjU4MDdjYzRjM2I2OTU4YWVhNjE1NmU4NDUxOGQ5MWE0OWM1ZjMyOTcxZTZlYjI2OWEyM2EyNWEyNzE0NSJ9fX0="
-      name: "#2CCED2ĐỒ CỦA BẠN"
+      name: "&6⛃ &fĐồ bạn đang bán &8(%selling-items% món)"
       lore:
-      - "#92ffffBạn có #2CCED2%selling-items% #92ffffmón đang bán."
-      - ""
-      - "#8c8c8c• #2CCED2Bấm #92ffffđể mở"
-
-    # Item shown when player has NO items listed.
+      - "&6▍ &fXem hoặc rút lại đồ đang treo bán"
+      - "&8&m                              "
+      - "&a➜ Bấm để mở"
     else:
       item:
         url: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjU4MDdjYzRjM2I2OTU4YWVhNjE1NmU4NDUxOGQ5MWE0OWM1ZjMyOTcxZTZlYjI2OWEyM2EyNWEyNzE0NSJ9fX0="
-        name: "#2CCED2ĐỒ CỦA BẠN"
+        name: "&7⛃ &fĐồ bạn đang bán"
         lore:
-        - "#ff3535Bạn không có món nào đang bán."
-
-  #---------------------------------------------------------------------------
-  # SEARCH BUTTON
-  #---------------------------------------------------------------------------
-  # Opens the chat search input for filtering items.
-
+        - "&7▍ &fBạn chưa treo bán món nào"
+        - "&8&m                              "
+        - "&8• &7Đăng bán: &e/ah sell <giá> [số lượng]"
   search:
     type: ZAUCTIONHOUSE_SEARCH
     slot: 47
@@ -225,30 +202,21 @@ items:
     inactive-value: "false"
     item:
       material: COMPASS
-      name: "#2CCED2TÌM KIẾM"
+      name: "&b⌕ &fTìm kiếm"
       lore:
+      - "&b▍ &fTìm món theo tên, loại đồ, người bán"
+      - "&8&m                              "
+      - "&8• &7Đang tìm: &f%search_query%"
       - ""
-      - "#92ffffĐang tìm#8c8c8c: #2CCED2%search_query%"
-      - ""
-      - "#92ffffCách lọc#8c8c8c:"
-      - "#8c8c8c  name #76CDCD~ #8c8c8cgiá trị    #555555(có chứa)"
-      - "#8c8c8c  name #76CDCD= #8c8c8cgiá trị    #555555(đúng y)"
-      - "#8c8c8c  name #76CDCD~= #8c8c8cgiá trị   #555555(có chứa, không phân biệt hoa thường)"
-      - "#8c8c8c  name #76CDCD== #8c8c8cgiá trị   #555555(đúng y, không phân biệt hoa thường)"
-      - ""
-      - "#92ffffTìm theo#8c8c8c: #76CDCDname#8c8c8c (tên), #76CDCDmaterial#8c8c8c (loại), #76CDCDlore#8c8c8c (mô tả), #76CDCDseller#8c8c8c (người bán)"
-      - ""
-      - "#92ffffVí dụ#8c8c8c:"
-      - "#8c8c8c  seller #76CDCD= #8c8c8cNotch"
-      - "#8c8c8c  name #76CDCD~ #8c8c8cDiamond"
-      - ""
-      - "#8c8c8c- #2CCED2Chuột trái #92ffffđể tìm"
-      - "#8c8c8c- #2CCED2Chuột phải #92ffffđể xoá tìm kiếm"
-  #---------------------------------------------------------------------------
-  # REFRESH BUTTON
-  #---------------------------------------------------------------------------
-  # Displays auction house information and refreshes the item list.
-
+      - "&8• &bCách gõ:"
+      - "  &8▸ &fname ~ kiếm &8(tên có chứa)"
+      - "  &8▸ &fseller = Linh &8(đúng người bán)"
+      - "  &8▸ &fmaterial ~ diamond &8(loại đồ)"
+      - "  &8▸ &flore ~ sắc bén &8(mô tả có chứa)"
+      - "&8Thêm dấu = hai lần (==) để không phân biệt hoa thường"
+      - "&8&m                              "
+      - "&a➜ Chuột trái để tìm"
+      - "&eChuột phải&7: &fxoá tìm kiếm"
   refresh:
     # Button type - ZAUCTIONHOUSE_REFRESH handles async refresh.
     type: ZAUCTIONHOUSE_REFRESH
@@ -259,32 +227,23 @@ items:
     # Item shown while loading/refreshing (prevents spam clicks).
     loading-item:
       material: CLOCK
-      name: "#2CCED2ĐANG TẢI LẠI..."
+      name: "&7⟳ &fĐang tải lại…"
       lore:
-      - "#8c8c8c• #ff3535Đang tải, đợi chút..."
-
-    # Normal refresh button display.
+      - "&7▍ &fĐợi một chút"
     item:
       material: BELL
-      name: "#2CCED2THÔNG TIN CHỢ"
+      name: "&6⛃ &fChợ đấu giá"
       lore:
-      - "#92ffffChào mừng tới chợ đấu giá."
-      - "#92ffffMua bán đồ với người chơi khác."
+      - "&6▍ &fMua bán đồ với người chơi khác"
+      - "&8&m                              "
+      - "&8• &7Đang bán: &f%zauctionhouse_listed_items% món"
+      - "&8• &7Sắp xếp: &f%zauctionhouse_sorting_name%"
       - ""
-      - "#92ffffCách đăng bán#8c8c8c:"
-      - "#2CCED2/ah sell #92ffff<giá> [<số lượng>]"
-      - ""
-        # PlaceholderAPI placeholders for dynamic stats.
-      - "#92ffffSố món đang bán#8c8c8c: #2CCED2%zauctionhouse_listed_items%"
-      - "#92ffffSắp xếp#8c8c8c: #2CCED2%zauctionhouse_sorting_name%"
-      - ""
-      - "#8c8c8c• #2CCED2Bấm #92ffffđể tải lại"
-
-  #---------------------------------------------------------------------------
-  # SORT TYPE BUTTON
-  #---------------------------------------------------------------------------
-  # Changes the sort order of displayed items.
-
+      - "&8• &6Cách đăng bán:"
+      - "  &8▸ &fCầm món muốn bán trên tay"
+      - "  &8▸ &fGõ &e/ah sell <giá> [số lượng]"
+      - "&8&m                              "
+      - "&a➜ Bấm để tải lại"
   change-sort:
     # Button type - handles sort cycling.
     type: ZAUCTIONHOUSE_CHANGE_SORT
@@ -307,23 +266,21 @@ items:
     # Item shown while loading/sorting (prevents spam clicks).
     loading-item:
       material: HOPPER
-      name: "#2CCED2SẮP XẾP"
+      name: "&7⇅ &fSắp xếp"
       lore:
-      - "#8c8c8c• #ff3535Đang tải, đợi chút"
-
-    # Slot position - right side of bottom row.
+      - "&7▍ &fĐang tải…"
     slot: 52
 
     # Normal sort button display.
     item:
       material: HOPPER
-      name: "#2CCED2SẮP XẾP"
+      name: "&b⇅ &fSắp xếp"
       lore:
-      - "#92ffffCác kiểu sắp xếp:"
-        # Placeholders for each sort option (formatted by enable/disable-text).
+      - "&b▍ &fĐổi thứ tự hiện đồ"
+      - "&8&m                              "
       - "%DECREASING_DATE%"
       - "%DECREASING_PRICE%"
       - "%ASCENDING_DATE%"
       - "%ASCENDING_PRICE%"
-      - ""
-      - "#8c8c8c• #2CCED2Bấm #92ffffđể đổi kiểu sắp xếp"
+      - "&8&m                              "
+      - "&a➜ Bấm để đổi kiểu"

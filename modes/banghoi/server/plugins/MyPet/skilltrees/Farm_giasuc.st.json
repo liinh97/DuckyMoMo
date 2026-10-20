@@ -16,17 +16,23 @@
     "Skilltree": "Farm"
   },
   "Description": [
-    "<gray>Pet giữ vườn, đánh xa:",
-    "- <red>Cận chiến</red> + <red>bắn tên</red> (cấp 7)",
-    "- <yellow>Túi đồ</yellow>, <yellow>nhặt đồ</yellow>",
-    "- <red>Gai</red>, <dark_green>độc</dark_green>",
-    "- Hành vi <green>làm nông</green>, điều khiển",
-    "<gold>Cấp 15/40/50: <red>bắn tên</red> nhanh và mạnh hơn",
-    "<gold>Cấp 20: độc mạnh hơn · cấp 25: hào quang <green>hồi máu</green> + may mắn",
-    "<gold>Cấp 30: nhặt kinh nghiệm · cấp 45: <gray>Dậm đất</gray>",
-    "<gold>Nhóm loài: Gia súc</gold> <gray>(hiền, trâu, mang đồ, đánh rất yếu)</gray>",
-    "<gold>Cấp 10: túi đồ +1 hàng · cấp 15: nhặt đồ xa hơn · cấp 20: tự hồi máu",
-    "<dark_gray>Mỗi 5 cấp sau cấp 10: +3 máu, +0,2 sát thương"
+    "<gold>▍</gold> <white>Pet giữ vườn, đánh xa</white>",
+    "<dark_gray><st>                              </st></dark_gray>",
+    "<dark_gray>•</dark_gray> <gold>Kỹ năng:</gold>",
+    "<dark_gray>  ▸</dark_gray> <white><red>Cận chiến</red> + <red>bắn tên</red> (cấp 7)",
+    "<dark_gray>  ▸</dark_gray> <white><yellow>Túi đồ</yellow>, <yellow>nhặt đồ</yellow>",
+    "<dark_gray>  ▸</dark_gray> <white><red>Gai</red>, <dark_green>độc</dark_green>",
+    "<dark_gray>  ▸</dark_gray> <white>Hành vi <green>làm nông</green>, điều khiển",
+    "<dark_gray>•</dark_gray> <gold>Mốc cấp:</gold>",
+    "<dark_gray>  ▸</dark_gray> <yellow>Cấp 15/40/50:</yellow><white> <red>bắn tên</red> nhanh và mạnh hơn",
+    "<dark_gray>  ▸</dark_gray> <yellow>Cấp 20:</yellow><white> độc mạnh hơn · cấp 25: hào quang <green>hồi máu</green> + may mắn",
+    "<dark_gray>  ▸</dark_gray> <yellow>Cấp 30:</yellow><white> nhặt kinh nghiệm · cấp 45: <gray>Dậm đất</gray>",
+    "<dark_gray><st>                              </st></dark_gray>",
+    "<dark_gray>•</dark_gray> <gold>Nhóm loài:</gold> <white>Gia súc</white> <gray>(hiền, trâu, mang đồ, đánh rất yếu)</gray>",
+    "<dark_gray>  ▸</dark_gray> <white>Cấp 10: túi đồ +1 hàng · cấp 15: nhặt đồ xa hơn · cấp 20: tự hồi máu",
+    "<dark_gray>Mỗi 5 cấp sau cấp 10: +3 máu, +0,2 sát thương",
+    "<dark_gray><st>                              </st></dark_gray>",
+    "<green>➜ Bấm để chọn hệ này</green>"
   ],
   "Skills": {
     "Life": {

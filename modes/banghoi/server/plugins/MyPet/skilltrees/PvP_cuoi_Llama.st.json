@@ -13,18 +13,24 @@
     "Skilltree": "PvP"
   },
   "Description": [
-    "<gray>Pet chuyên đánh người:",
-    "- <red>Sát thương</red> cao từ sớm",
-    "- <aqua>Chạy nhanh</aqua>, <gray>làm chậm</gray> kẻ địch",
-    "- <gold>Đốt lửa</gold> kẻ địch",
-    "- <yellow>Hào quang</yellow> tăng sức cho chủ (cấp 7, 10)",
-    "- Hồi máu, túi đồ 1 hàng",
-    "<gold>Cấp 15: <dark_gray>Héo mòn</dark_gray> · cấp 20: làm chậm lâu hơn",
-    "<gold>Cấp 25: <dark_red>Chảy máu</dark_red> · cấp 30/50: <yellow>Sét đánh</yellow>",
-    "<gold>Cấp 40: đốt lửa thường hơn",
-    "<gold>Nhóm loài: Thú cưỡi</gold> <gray>(chạy nhanh, nhảy cao, thồ hàng)</gray>",
-    "<gold>Lạc đà không bướu: phun nước bọt (cấp 10)",
-    "<dark_gray>Mỗi 5 cấp sau cấp 10: +2,5 máu, +0,4 sát thương"
+    "<gold>▍</gold> <white>Pet chuyên đánh người</white>",
+    "<dark_gray><st>                              </st></dark_gray>",
+    "<dark_gray>•</dark_gray> <gold>Kỹ năng:</gold>",
+    "<dark_gray>  ▸</dark_gray> <white><red>Sát thương</red> cao từ sớm",
+    "<dark_gray>  ▸</dark_gray> <white><aqua>Chạy nhanh</aqua>, <gray>làm chậm</gray> kẻ địch",
+    "<dark_gray>  ▸</dark_gray> <white><gold>Đốt lửa</gold> kẻ địch",
+    "<dark_gray>  ▸</dark_gray> <white><yellow>Hào quang</yellow> tăng sức cho chủ (cấp 7, 10)",
+    "<dark_gray>  ▸</dark_gray> <white>Hồi máu, túi đồ 1 hàng",
+    "<dark_gray>•</dark_gray> <gold>Mốc cấp:</gold>",
+    "<dark_gray>  ▸</dark_gray> <yellow>Cấp 15:</yellow><white> <dark_gray>Héo mòn</dark_gray> · cấp 20: làm chậm lâu hơn",
+    "<dark_gray>  ▸</dark_gray> <yellow>Cấp 25:</yellow><white> <dark_red>Chảy máu</dark_red> · cấp 30/50: <yellow>Sét đánh</yellow>",
+    "<dark_gray>  ▸</dark_gray> <yellow>Cấp 40:</yellow><white> đốt lửa thường hơn",
+    "<dark_gray><st>                              </st></dark_gray>",
+    "<dark_gray>•</dark_gray> <gold>Nhóm loài:</gold> <white>Thú cưỡi</white> <gray>(chạy nhanh, nhảy cao, thồ hàng)</gray>",
+    "<dark_gray>  ▸</dark_gray> <white>Lạc đà không bướu: phun nước bọt (cấp 10)",
+    "<dark_gray>Mỗi 5 cấp sau cấp 10: +2,5 máu, +0,4 sát thương",
+    "<dark_gray><st>                              </st></dark_gray>",
+    "<green>➜ Bấm để chọn hệ này</green>"
   ],
   "Skills": {
     "Life": {

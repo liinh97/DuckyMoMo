@@ -70,21 +70,23 @@ items:
     # Placeholder item when no purchased items exist.
     item:
       material: BARRIER
-      name: '#ff0000&nKhông có món nào'
+      name: "&c✘ &fKhông có món nào"
 
   #---------------------------------------------------------------------------
   # REMOVE ALL BUTTON
   #---------------------------------------------------------------------------
   # Retrieves all purchased items at once (if inventory space allows).
 
+      lore:
+      - "&c▍ &fChưa có đồ đã mua chờ nhận"
   remove-all:
     type: ZAUCTIONHOUSE_REMOVE_ALL_PURCHASED
     is-permanent: true
     slot: 47
     item:
       material: CHEST
-      name: "#2CCED2Lấy hết"
+      name: "&a↩ &fNhận hết"
       lore:
-      - "#92ffffLấy mọi món đã mua."
-      - ""
-      - "#8c8c8c• #2CCED2Bấm #92ffffđể lấy hết"
+      - "&a▍ &fNhận mọi món đã mua về túi"
+      - "&8&m                              "
+      - "&a➜ Bấm để nhận hết"

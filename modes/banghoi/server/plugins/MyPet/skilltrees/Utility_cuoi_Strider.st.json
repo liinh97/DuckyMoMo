@@ -13,17 +13,23 @@
     "Skilltree": "Utility"
   },
   "Description": [
-    "<gray>Pet mang đồ, đi đào đi khai thác:",
-    "- <yellow>Túi đồ</yellow> lớn dần tới 6 hàng",
-    "- <green>Nhiều máu</green> hơn",
-    "- <yellow>Nhặt đồ</yellow> quanh chủ",
-    "- <dark_green>Độc</dark_green> lên kẻ địch",
-    "<gold>Cấp 15: nhặt cả <green>kinh nghiệm</green> · cấp 40: nhặt xa hơn",
-    "<gold>Cấp 20/30: hào quang <yellow>Đào nhanh</yellow> I→II, nhìn đêm, may mắn",
-    "<gold>Cấp 35: Hộ chủ · cấp 50: kháng lửa, thở dưới nước",
-    "<gold>Nhóm loài: Thú cưỡi</gold> <gray>(chạy nhanh, nhảy cao, thồ hàng)</gray>",
-    "<gold>Strider: kháng lửa cho chủ (cấp 15)",
-    "<dark_gray>Mỗi 5 cấp sau cấp 10: +2,5 máu, +0,4 sát thương"
+    "<gold>▍</gold> <white>Pet mang đồ, đi đào đi khai thác</white>",
+    "<dark_gray><st>                              </st></dark_gray>",
+    "<dark_gray>•</dark_gray> <gold>Kỹ năng:</gold>",
+    "<dark_gray>  ▸</dark_gray> <white><yellow>Túi đồ</yellow> lớn dần tới 6 hàng",
+    "<dark_gray>  ▸</dark_gray> <white><green>Nhiều máu</green> hơn",
+    "<dark_gray>  ▸</dark_gray> <white><yellow>Nhặt đồ</yellow> quanh chủ",
+    "<dark_gray>  ▸</dark_gray> <white><dark_green>Độc</dark_green> lên kẻ địch",
+    "<dark_gray>•</dark_gray> <gold>Mốc cấp:</gold>",
+    "<dark_gray>  ▸</dark_gray> <yellow>Cấp 15:</yellow><white> nhặt cả <green>kinh nghiệm</green> · cấp 40: nhặt xa hơn",
+    "<dark_gray>  ▸</dark_gray> <yellow>Cấp 20/30:</yellow><white> hào quang <yellow>Đào nhanh</yellow> I→II, nhìn đêm, may mắn",
+    "<dark_gray>  ▸</dark_gray> <yellow>Cấp 35:</yellow><white> Hộ chủ · cấp 50: kháng lửa, thở dưới nước",
+    "<dark_gray><st>                              </st></dark_gray>",
+    "<dark_gray>•</dark_gray> <gold>Nhóm loài:</gold> <white>Thú cưỡi</white> <gray>(chạy nhanh, nhảy cao, thồ hàng)</gray>",
+    "<dark_gray>  ▸</dark_gray> <white>Strider: kháng lửa cho chủ (cấp 15)",
+    "<dark_gray>Mỗi 5 cấp sau cấp 10: +2,5 máu, +0,4 sát thương",
+    "<dark_gray><st>                              </st></dark_gray>",
+    "<green>➜ Bấm để chọn hệ này</green>"
   ],
   "Skills": {
     "Life": {

@@ -600,8 +600,8 @@ final class Orders implements Listener {
         h.inv.setItem(10, hubButton(Material.CHEST, Tip.of("&a⛃ &fĐang bán").sub("hàng người chơi treo").accent("&a")
                 .desc("Xem đồ người khác đang bán, bấm là mua").line().click("Bấm để xem hàng"), "ah"));
         h.inv.setItem(11, hubButton(Material.GOLD_INGOT, Tip.of("&a✚ &fTreo bán món đang cầm").accent("&a")
-                .desc("Cầm món muốn bán trên tay rồi bấm", "Gõ số món và giá mỗi món vào khung chat", "Bỏ số món = bán cả chồng").line()
-                .kv("Lệnh", "&e/choden ban [số món] <giá mỗi món>").click("Bấm để điền lệnh"), "ah-sell"));
+                .desc("Cầm món muốn bán trên tay rồi bấm", "Gõ số món và giá cả lô vào khung chat", "Bỏ số món = bán cả chồng").line()
+                .kv("Lệnh", "&e/choden ban [số món] <giá cả lô>").click("Bấm để điền lệnh"), "ah-sell"));
         h.inv.setItem(12, hubButton(Material.ENDER_CHEST, Tip.of("&a▣ &fĐồ tôi đang bán").accent("&a")
                 .desc("Xem, rút lại đồ đang treo bán").line().click("Bấm để mở"), "ah-selling"));
         h.inv.setItem(14, hubButton(Material.HOPPER, Tip.of("&b✉ &fĐang thu mua").sub(openOrders + " đơn").accent("&b")
@@ -625,7 +625,7 @@ final class Orders implements Listener {
                 p.closeInventory();
                 market(p, "/ah selling");
             }
-            case "ah-sell" -> suggest(p, "/choden ban ", "Gõ [số món] <giá mỗi món> rồi Enter (cầm món trên tay). Bỏ số món = cả chồng.");
+            case "ah-sell" -> suggest(p, "/choden ban ", "Gõ [số món] <giá cả lô> rồi Enter (cầm món trên tay). Bỏ số món = cả chồng.");
             case "orders" -> openMarket(p, 0);
             case "orders-mine" -> openMine(p);
             case "order-new" -> suggest(p, "/choden dat ", "Gõ <số món> <giá mỗi món> rồi Enter (cầm món cần mua trên tay). Vd: /choden dat 64 2");
@@ -685,12 +685,12 @@ final class Orders implements Listener {
         return true;
     }
 
-    /** /choden ban [số món] <giá mỗi món>: cùng thứ tự với /choden dat. Bỏ số món = bán cả chồng đang cầm.
-     *  zAuctionHouse nhận GIÁ CẢ LÔ nên ở đây nhân giá mỗi món × số món rồi gọi /ah sell <cả lô> <số>. */
+    /** /choden ban [số món] <giá cả lô>: số món đứng trước như /choden dat; bỏ số món = bán cả chồng đang cầm.
+     *  Giá là giá CẢ LÔ (người dùng 21/10: "ban 10" với 32 đuốc = cả lô 10 xu), đúng như zAuctionHouse nhận. */
     private void sell(Player p, String[] args) {
         ItemStack hand = p.getInventory().getItemInMainHand();
         if (args.length < 2) {
-            suggest(p, "/choden ban ", "Gõ [số món] <giá mỗi món> rồi Enter (cầm món muốn bán trên tay). Vd: /choden ban 16 5");
+            suggest(p, "/choden ban ", "Gõ [số món] <giá cả lô> rồi Enter (cầm món muốn bán trên tay). Vd: /choden ban 16 80");
             return;
         }
         if (hand.getType().isAir()) {
@@ -698,25 +698,23 @@ final class Orders implements Listener {
             return;
         }
         int n;
-        double each;
+        double total;
         try {
             n = args.length >= 3 ? Integer.parseInt(args[1]) : hand.getAmount();
-            each = Double.parseDouble(args[args.length >= 3 ? 2 : 1].replace(",", "."));
+            total = Double.parseDouble(args[args.length >= 3 ? 2 : 1].replace(",", "."));
         } catch (NumberFormatException e) {
-            p.sendMessage(c("&cSai số. Ví dụ: &f/choden ban 16 5 &7(16 món, 5 xu mỗi món) hoặc &f/choden ban 5 &7(cả chồng, 5 xu mỗi món)"));
+            p.sendMessage(c("&cSai số. Ví dụ: &f/choden ban 16 80 &7(16 món, cả lô 80 xu) hoặc &f/choden ban 80 &7(cả chồng, 80 xu)"));
             return;
         }
         if (n < 1 || n > hand.getAmount()) {
             p.sendMessage(c("&cSố món phải từ 1 tới " + hand.getAmount() + " (số đang cầm)."));
             return;
         }
-        if (each <= 0) {
-            p.sendMessage(c("&cGiá mỗi món phải lớn hơn 0."));
+        if (total <= 0) {
+            p.sendMessage(c("&cGiá phải lớn hơn 0."));
             return;
         }
-        double total = Math.round(each * n * 100) / 100.0;
         String t = total == Math.floor(total) ? String.valueOf((long) total) : String.valueOf(total);
-        p.sendMessage(c("&7Treo bán &f" + n + " món &7× &f" + money(each) + " &7= &e" + money(total) + "&7 cả lô."));
         market(p, "/ah sell " + t + " " + n);
     }
 
@@ -803,7 +801,7 @@ final class Orders implements Listener {
             case "giup", "help" -> {
                 p.sendMessage(c("&6━━ CHỢ ĐEN ━━ &7(/choden mở trang chung)"));
                 p.sendMessage(c("&a/choden mua &7xem hàng người chơi đang bán, bấm là mua"));
-                p.sendMessage(c("&a/choden ban [số món] <giá mỗi món> &7treo bán món đang cầm (bỏ số món = cả chồng)"));
+                p.sendMessage(c("&a/choden ban [số món] <giá cả lô> &7treo bán món đang cầm (bỏ số món = cả chồng)"));
                 p.sendMessage(c("&a/choden cuatoi &7đồ tôi đang treo bán, rút lại · &a/choden hethan &7lấy lại đồ hết hạn"));
                 p.sendMessage(c("&a/choden lichsu &7lịch sử mua bán · &a/choden nhantien &7nhận tiền bán hàng còn chờ"));
                 p.sendMessage(c("&b/choden thumua &7xem đơn thu mua, bấm đơn để giao hàng nhận tiền ngay"));

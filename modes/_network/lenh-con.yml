@@ -308,7 +308,7 @@ groups:
       - ["khaihoang them <xu>", "Cộng thẳng vào quỹ (sự kiện)", Chỉ admin]
       - ["choden", "Chợ đen: trang chung mua bán giữa người chơi (Bang Hội Chiến)", Mọi người]
       - ["choden mua", "Xem hàng người chơi đang bán, bấm là mua", Mọi người]
-      - ["choden ban [số món] <giá mỗi món>", "Treo bán món đang cầm (bỏ số món = cả chồng)", Mọi người]
+      - ["choden ban [số món] <giá cả lô>", "Treo bán món đang cầm (bỏ số món = cả chồng)", Mọi người]
       - ["choden cuatoi", "Đồ mình đang treo bán, rút lại", Mọi người]
       - ["choden hethan", "Lấy lại đồ hết hạn", Mọi người]
       - ["choden lichsu", "Lịch sử mua bán", Mọi người]

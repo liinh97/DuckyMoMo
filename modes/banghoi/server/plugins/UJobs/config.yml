@@ -174,7 +174,7 @@ messages:
     sound: entity.pillager.celebrate
 
 symbols:
-  money: '$'
+  money: ' xu'
   exp: xp
 
 actions:

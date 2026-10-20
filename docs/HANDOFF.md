@@ -26,6 +26,10 @@ của phiên tài khoản cũ khuya 20/10 tóm ở đây (chi tiết: các dòng
   Sau đó (21/10) chỉ còn MỘT lệnh /choden (+ /cho): lệnh con mua, ban, cuatoi, hethan, lichsu, nhantien, thumua, dat, don, nhan, huy.
   /donhang đã bỏ; /ah ẩn khỏi Tab (người chơi thường), gõ /ah trống mở Chợ đen (Orders.onAhTyped; Chợ đen gọi /ah nội bộ qua market()).
   zAuctionHouse config.yml (CHỈ có ở data/, không trong git): alias chính chỉ còn `ah`, sell chỉ `sell`.
+- 21/10: Tiền hiện "xu" thay "$" khắp server: Essentials config.yml (CHỈ ở data/) currency-symbol ' ' + suffix true +
+  currency-format "#,##0.##' xu'" (Essentials chỉ nhận ký hiệu 1 ký tự nên chữ xu nằm trong mẫu định dạng; Vault dùng chung → Towny,
+  SiegeWar, QuickShop… theo). zAuctionHouse economies.yml (data) format "%price% xu"; UJobs symbols.money ' xu'; AuraSkills, CE, Towny
+  sửa chữ $ viết cứng. /choden ban [số món] <giá CẢ LÔ> (người dùng chốt), /choden dat <số món> <giá MỖI MÓN>.
 - 21/10: /tpr không thả dưới tán cây (thử 30 chỗ); dịch lại thông báo Towny cấm xây/phá ở đất hoang. CHỜ người dùng: đất hoang hiện chỉ
   cho chặt cây / đào quặng / hái cây (unclaimed_zone_destroy false) — giữ hay mở cho đào đất đá?
 - 21/10: **Hòm quay** `/hom` (Crates.java, config `crates`, Cài đặt › Thưởng & sự kiện › Hòm quay): nhiều hòm, mỗi hòm một chìa = món

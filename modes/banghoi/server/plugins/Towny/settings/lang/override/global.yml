@@ -651,7 +651,7 @@ msg_err_not_enough_residents_join_nation: '&bThị trấn %s không có đủ c�
 msg_not_enough_residents_no_longer_capital: '&bThủ đô cũ của quốc gia không còn đủ cư dân để trở thành thủ đô của quốc gia. Thủ đô mới của quốc gia là %s.'
 msg_town_not_enough_residents_left_nation: '&bThị trấn %s không còn đủ cư dân để trở thành thành viên của một quốc gia và đã bị xóa khỏi quốc gia đó.'
 msg_nation_disbanded_town_not_enough_residents: Thị trấn %s không còn đủ cư dân để điều hành đất nước và đã buộc đất nước phải giải tán.
-msg_not_enough_residents_refunded: '&bBạn đã được hoàn lại $%s vì quốc gia của bạn bị giải thể do không đủ cư dân.'
+msg_not_enough_residents_refunded: '&bBạn đã được hoàn lại %s vì quốc gia của bạn bị giải thể do không đủ cư dân.'
 msg_not_enough_residents_capital: Thị trấn %s không có đủ cư dân để trở thành thủ đô của quốc gia.
 list_page: '&bTrang %s của %s'
 list_err_not_enough_pages: '&cChỉ có %s trang có sẵn'

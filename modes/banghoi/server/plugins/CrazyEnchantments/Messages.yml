@@ -6,7 +6,7 @@ Messages:
   Black-Scroll-Unsuccessful: '&cCuộn giấy đen không thành công. Thử lại với cuộn khác.'
   Need-More-XP-Lvls: '&cBạn cần thêm &6%xp% &ccấp kinh nghiệm.'
   Need-More-Total-XP: '&cBạn cần thêm &6%xp% &ctổng kinh nghiệm.'
-  Need-More-Money: '&cBạn cần &a$%money_needed%&c.'
+  Need-More-Money: '&cBạn cần &a%money_needed% xu&c.'
   Hit-Enchantment-Max:
   - '#ff0000Món này đã có số phù phép tối đa được thêm.'
   - '#880808Gõ &2/ce limit #880808để xem giới hạn của món đồ.'

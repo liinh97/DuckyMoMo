@@ -19,8 +19,8 @@ action_bar:
   ability: "{message}"
   boss_bar_xp: "<gold>{xp_gained} {skill} {{units.xp}} <gray>({percent}%)"
   boss_bar_maxed: "<gold>{xp_gained} {skill} {{units.xp}} <gray>({{ui.maxed}})"
-  boss_bar_income: "<gold>{xp_gained} {skill} {{units.xp}} <gray>({percent}%) <green>(+${income})"
-  boss_bar_income_maxed: "<gold>{xp_gained} {skill} {{units.xp}} <gray>({{ui.maxed}}) <green>(+${income})"
+  boss_bar_income: "<gold>{xp_gained} {skill} {{units.xp}} <gray>({percent}%) <green>(+{income} xu)"
+  boss_bar_income_maxed: "<gold>{xp_gained} {skill} {{units.xp}} <gray>({{ui.maxed}}) <green>(+{income} xu)"
 acf:
   core:
     info_message: "{message}"
@@ -86,7 +86,7 @@ leveler_format:
   ability_level_up: "\n  <green>{{leveler.ability_level_up}} <gold>{ability} <dark_gray>{previous}→<gold>{level}\n      <white>{desc}"
   mana_ability_unlock: "\n  <light_purple>{{leveler.mana_ability_unlock}} <blue>{mana_ability}\n      <white>{desc}"
   mana_ability_level_up: "\n  <light_purple>{{leveler.mana_ability_level_up}} <blue>{mana_ability} <dark_gray>{previous}→<gold>{level}\n      <white>{desc}"
-  money_reward: "\n  <green>${amount}"
+  money_reward: "\n  <green>{amount} xu"
   desc_upgrade_value: "<dark_gray>{current}→<white>{next}"
   desc_wrap: "<white>      "
 rewards:

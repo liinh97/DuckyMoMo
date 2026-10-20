@@ -1233,7 +1233,7 @@ player-menu:
     - {slot: 16, icon: BOOK, name: "&e❖ &fCẩm nang", lore: ["Hướng dẫn cách chơi từ đầu"],
        gom: ["11 chương: kinh tế, thị trấn, công thành…", "Có ví dụ lệnh cho từng việc"], bam: "Bấm để đọc", cmd: huongdan}
     - {slot: 19, icon: GOLD_INGOT, name: "&6☠ &fChợ đen", sub: "/choden", lore: ["Mua bán trực tiếp giữa người chơi"], gom: ["Đang bán: hàng người chơi treo, bấm là mua", "Đang thu mua: đơn cần mua, giao hàng lấy tiền", "Treo bán, đặt đơn, đồ của tôi"], bam: "Bấm để vào chợ", cmd: choden}
-    - {slot: 20, icon: EMERALD, name: "&a$ &fBán đồ đang cầm", sub: "/sell hand", lore: ["Bán món trên tay cho server theo bảng giá"],
+    - {slot: 20, icon: EMERALD, name: "&a⛃ &fBán đồ đang cầm", sub: "/sell hand", lore: ["Bán món trên tay cho server theo bảng giá"],
        gom: ["Bán hết loại đó trong túi: /sell all", "Xem giá: /worth"], bam: "Bấm để bán ngay", cmd: "sell hand"}
     - {slot: 21, icon: SMITHING_TABLE, name: "&a⚒ &fXưởng chế tạo", sub: "/xuong", lore: ["Đồ có kỹ năng riêng, độ bền và hạn dùng"],
        gom: ["Đào 3×3, chặt cả cây, gặt 3×3", "Kiếm lướt chém, khiên phản đòn, cung hút máu"], bam: "Bấm để vào xưởng", cmd: xuong}

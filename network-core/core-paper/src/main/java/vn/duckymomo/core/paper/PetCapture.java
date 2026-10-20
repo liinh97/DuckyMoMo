@@ -47,6 +47,7 @@ import org.bukkit.plugin.Plugin;
  *  - cooldown-seconds: chờ giữa 2 lần thử của một người (chống bấm liên tục).
  *  - season-bonus.<mùa>.<nhóm>: cộng thêm % trong mùa đó (vd mùa mưa Thủy tộc +15), mùa lấy từ module Mùa (Seasons.now()).
  *  - charm-bonus: Bùa bắt pet (/buabatpet, dấu PDC dmm_bua) cầm TAY TRÁI lúc thử bắt: +% và mất 1 bùa mỗi lần thử.
+ *    Hình dạng bùa ở THƯ VIỆN ĐỒ (công dụng "bua-bat-pet", mã charm-item, mặc định bua_bat_pet); món thư viện nào có công dụng này cũng là bùa.
  *    Có từ giải thi câu cá (EvenMoreFish COMMAND:buabatpet give {player} N) hoặc admin phát.
  * Loài bắt bằng "Tamed" (sói, mèo, ngựa, lạc đà...: phải tự thuần hoá trước) không quay xác suất: con của mình thì cấp quyền luôn.
  * Loài không có LowHp/Tamed (golem, Creaking...) để MyPet tự xét, không cấp quyền.
@@ -70,6 +71,7 @@ final class PetCapture implements Listener {
     private final NamespacedKey triesKey;
     private final NamespacedKey charmKey;
     private final int charmBonus;
+    private final String charmItem;
     private Method byEntityTypeName;
     private Method hasActive;
     private Object petManager;
@@ -102,6 +104,17 @@ final class PetCapture implements Listener {
         this.triesKey = new NamespacedKey(plugin, "batpet_lanthu");
         this.charmKey = new NamespacedKey(plugin, "dmm_bua");
         this.charmBonus = Math.max(0, c.getInt("charm-bonus", 25));
+        this.charmItem = c.getString("charm-item", "bua_bat_pet");
+        ItemLibrary.STAMPERS.put("bua-bat-pet", (it, id, sec) -> {
+            org.bukkit.inventory.meta.ItemMeta m = it.getItemMeta();
+            java.util.List<net.kyori.adventure.text.Component> lore = m.lore() == null ? new java.util.ArrayList<>() : new java.util.ArrayList<>(m.lore());
+            lore.add(c("&7Cầm ở &ftay trái &7khi quăng dây xích bắt pet:"));
+            lore.add(c("&a+" + charmBonus + "% &7xác suất, mất 1 bùa mỗi lần thử."));
+            m.lore(lore);
+            m.getPersistentDataContainer().set(charmKey, PersistentDataType.STRING, "batpet");
+            it.setItemMeta(m);
+            return it;
+        });
         loadGroups();
         loadRequirements();
         Plugin mp = Bukkit.getPluginManager().getPlugin("MyPet");
@@ -257,16 +270,11 @@ final class PetCapture implements Listener {
         return it != null && it.hasItemMeta() && "batpet".equals(it.getItemMeta().getPersistentDataContainer().get(charmKey, PersistentDataType.STRING));
     }
 
+    /** Bùa từ thư viện đồ (null nếu thư viện chưa có món charm-item hoặc món đó không phải bùa bắt pet). */
     ItemStack charm(int amount) {
-        ItemStack it = new ItemStack(Material.NAUTILUS_SHELL, amount);
-        org.bukkit.inventory.meta.ItemMeta m = it.getItemMeta();
-        m.displayName(c("&b✦ Bùa bắt pet"));
-        m.lore(java.util.List.of(c("&7Cầm ở &ftay trái &7khi quăng dây xích bắt pet:"), c("&a+" + charmBonus + "% &7xác suất, mất 1 bùa mỗi lần thử."),
-                c("&8Phần thưởng thi câu cá")));
-        m.setEnchantmentGlintOverride(true);
-        m.getPersistentDataContainer().set(charmKey, PersistentDataType.STRING, "batpet");
-        it.setItemMeta(m);
-        return it;
+        ItemLibrary lib = Shared.library;
+        ItemStack it = lib == null ? null : lib.build(charmItem, amount);
+        return isCharm(it) ? it : null;
     }
 
     /** /buabatpet: xem cách dùng; admin: /buabatpet give <người> [số]. */
@@ -287,7 +295,12 @@ final class PetCapture implements Listener {
                 s.sendMessage(c("&cKhông thấy " + args[1] + " online."));
                 return true;
             }
-            Rewards.hand(t, charm(n));
+            ItemStack bua = charm(n);
+            if (bua == null) {
+                s.sendMessage(c("&cThư viện đồ chưa có bùa \"" + charmItem + "\" (công dụng Bùa bắt pet)."));
+                return true;
+            }
+            Rewards.hand(t, bua);
             t.sendMessage(c("&b✦ Bạn nhận " + n + " Bùa bắt pet. &7Cầm tay trái khi bắt pet: +" + charmBonus + "%."));
             s.sendMessage(c("&aĐã phát " + n + " bùa cho " + t.getName() + "."));
             return true;

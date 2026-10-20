@@ -35,6 +35,22 @@
   .li.on { border-color: var(--accent); }
   .li .nm { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 13.5px; background: #1b1d22; padding: 1px 6px; border-radius: 4px; display: inline-block; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .li small { color: var(--muted); display: block; margin-top: 3px; }
+  .grp { margin-top: 6px; }
+  .grp > summary { cursor: pointer; font-size: 12.5px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); padding: 4px 2px; list-style: none; display: flex; gap: 6px; align-items: center; }
+  .grp > summary::before { content: "▸"; font-size: 11px; transition: transform .15s; }
+  .grp[open] > summary::before { transform: rotate(90deg); }
+  .grp > div { display: flex; flex-direction: column; gap: 6px; }
+  .use { font-size: 11px; padding: 1px 6px; border-radius: 999px; background: color-mix(in srgb, var(--accent) 16%, transparent); color: var(--accent); margin-left: 4px; }
+  #libq { margin-bottom: 4px; }
+  .g-use { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); gap: 12px; }
+  .g-skill { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr); gap: 10px; }
+  .fx { display: grid; grid-template-columns: minmax(0, 1fr) 80px 110px 30px; gap: 6px; margin-top: 6px; align-items: center; }
+  .fx > button { padding: 4px 0; color: var(--err); border: none; font-size: 17px; }
+  .usebox { margin-top: 8px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--card-2); font-size: 13.5px; }
+  .usebox p { margin: 0; }
+  .usedin { font-size: 13px; color: var(--muted); margin-top: 8px; }
+  .usedin b { color: var(--text); font-weight: 600; }
+  @media (max-width: 640px) { .g-use, .g-skill { grid-template-columns: minmax(0, 1fr); } }
   .badge { font-size: 11px; padding: 1px 6px; border-radius: 999px; background: var(--line); color: var(--muted); margin-left: 4px; }
   .empty { color: var(--muted); font-size: 13.5px; }
   .sec { border-top: 1px solid var(--line); padding: 16px 0 4px; margin-top: 14px; }
@@ -98,13 +114,15 @@
 </style>
 <link rel="stylesheet" href="ui.css">
 </head>
-<body data-dozzle="__DOZZLE_URL__" data-title="Thư viện đồ" data-sub="Đồ dùng làm phần thưởng, bán ở cửa hàng, hoặc admin phát cho người chơi.">
+<body data-dozzle="__DOZZLE_URL__" data-title="Thư viện đồ" data-sub="Nơi duy nhất tạo và sửa vật phẩm đặc biệt. Xưởng, bếp, Tinh Luyện, boss, phần thưởng chỉ chọn món từ đây.">
 <script src="shell.js"></script>
 <main>
   <section class="card">
     <h2><span>Đồ trong thư viện <span id="count" class="badge"></span></span><button class="primary" id="new">+ Tạo mới</button></h2>
+    <input type="search" id="libq" placeholder="Tìm món: tên, mã…">
     <div class="list" id="list"><p class="empty">Đang tải…</p></div>
-    <p class="note">Đồ ở đây dùng làm phần thưởng (điểm danh, nhiệm vụ, vòng quay, đổi mảnh, cửa hàng) hoặc admin phát.
+    <p class="note">Mọi vật phẩm đặc biệt của server nằm ở đây, chia theo đầu mục. Xưởng, bếp <code>/nauan</code>, Tinh Luyện, mảnh sự kiện, bùa bắt pet,
+      boss và mọi phần thưởng chỉ <b>chọn món</b> từ thư viện, rồi đặt thông số riêng của chỗ đó (giá, nguyên liệu, tỉ lệ rơi…).
       Lấy đồ đặc biệt từ game: cầm trên tay, gõ <code>/dmm luudo &lt;mã&gt;</code> (giữ nguyên vẹn, kể cả phù phép CrazyEnchantments).</p>
   </section>
 
@@ -147,11 +165,38 @@
         <label class="switch"><input type="checkbox" id="hide"><span class="track"></span><span class="txt">Ẩn dòng phù phép</span></label>
         <label class="glint">Ánh lấp lánh <select id="glint"><option value="">Mặc định</option><option value="true">Luôn có</option><option value="false">Không có</option></select></label>
       </div>
+      <label class="f" for="model">Hình riêng <span class="hint">model trong gói tài nguyên DuckyMoMo, vd duckymomo:tl_sat; để trống = hình gốc của loại đồ</span></label>
+      <input id="model" placeholder="duckymomo:tl_sat" maxlength="96">
       <div id="warns"></div>
     </div>
 
+    <div class="sec">
+      <h3>5 · Đầu mục và công dụng</h3>
+      <div class="g-use">
+        <div><label class="f" for="nhom">Đầu mục <span class="hint">để xếp nhóm trong thư viện</span></label><select id="nhom"></select></div>
+        <div><label class="f" for="cdung">Công dụng</label><select id="cdung"></select></div>
+      </div>
+      <div id="useSkill" class="usebox" hidden>
+        <div class="g-skill">
+          <div><label class="f" for="feat">Kỹ năng</label><select id="feat"></select></div>
+          <div id="valWrap"><label class="f" for="fval" id="valLab">Chỉ số</label><input id="fval" type="number" step="0.5" min="0" max="1000"></div>
+          <div><label class="f" for="uses">Độ bền <span class="hint">-1 = gốc</span></label><input id="uses" type="number" min="-1" max="10000000"></div>
+          <div><label class="f" for="days">Hạn (ngày)</label><input id="days" type="number" min="1" max="365"></div>
+        </div>
+        <label class="f" for="ftext">Chữ "Tính năng" <span class="hint">để trống = tự ghi theo kỹ năng</span></label><input id="ftext" maxlength="80" placeholder="vd Bắn tỏa &e[3 mũi tên]">
+        <div class="opts"><label class="switch"><input type="checkbox" id="pvp"><span class="track"></span><span class="txt">Mất tác dụng trong vùng vây đang đánh</span></label></div>
+        <p class="note">Độ bền riêng: mỗi khối đào / đòn đánh / lần dùng trừ 1, hết là món biến mất. Hạn tính từ lúc nhận. Giá và bàn chế đặt ở Cài đặt › Shop › Xưởng chế tạo.</p>
+      </div>
+      <div id="useFood" class="usebox" hidden>
+        <div id="fxs"></div>
+        <button id="addfx" class="rw-add" style="margin-top:8px">+ Thêm hiệu ứng</button>
+        <p class="note">Ăn món là nhận các hiệu ứng này (loại · cấp · giây); ăn xong phải chờ mới ăn được món khác. Loại đồ phải ăn được. Nguyên liệu nấu đặt ở Cài đặt › PvP &amp; combat › Món ăn ra trận.</p>
+      </div>
+      <div id="useNote" class="usebox" hidden><p id="useNoteText"></p></div>
+    </div>
+
     <div class="sec save">
-      <h3>5 · Lưu vào thư viện</h3>
+      <h3>6 · Lưu vào thư viện</h3>
       <div class="g-id">
         <div><label class="f" for="id">Mã <span class="hint">không dấu, dùng trong quà/cửa hàng</span></label><input id="id" placeholder="kiem_rong" maxlength="32"></div>
         <div><label class="f" for="tengoi">Tên gợi nhớ <span class="hint">chỉ admin thấy</span></label><input id="tengoi" placeholder="Kiếm rồng (quà mốc 30 ngày)" maxlength="60"></div>
@@ -161,6 +206,7 @@
         <button class="danger" id="del">Xoá</button>
         <span class="note">Lưu là server Bang Hội Chiến nạp lại thư viện ngay.</span>
       </div>
+      <div class="usedin" id="usedin"></div>
     </div>
 
     <div class="sec">
@@ -230,7 +276,29 @@ const DESC = {
   "enchantio:insomnia_curse": "Lời nguyền (giáp): theo tên là gây mất ngủ. Chưa kiểm chứng.",
 };
 const ROMAN = ["", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"];
-let data = null, cur = null, isNew = true, enchRows = [], lastField = "name";
+let data = null, cur = null, isNew = true, enchRows = [], lastField = "name", fxRows = [], nhomTouched = false;
+// Công dụng (khớp ItemLibrary.STAMPERS) và chỗ đặt thông số riêng của từng công dụng
+const USE_NOTE = {
+  "bua-bat-pet": "Cầm tay trái khi quăng dây xích bắt pet: cộng thêm % (Cài đặt › PvP & combat › Bắt pet theo xác suất › Bùa bắt pet), mất 1 bùa mỗi lần thử. Món bùa dùng cho /buabatpet chọn ở cùng chỗ.",
+  "tinh-luyen": "Món Tinh Luyện: có dấu riêng, không đặt xuống / chế / rèn được, bán cho server được. Công thức và giá bán: config tinh-luyen.items.<mã> (giá bán sửa ở Cài đặt › Shop › Tinh Luyện). Mã món = mã thư viện.",
+  "manh": "Mảnh sự kiện: phát bằng phần thưởng \"manh <mã> <số>\" hoặc /doimanh give, đổi quà ở /doimanh. Hạn đổi đặt ở Cài đặt › Thưởng & sự kiện › Mảnh sự kiện & đổi quà."
+};
+const EFFECT_VN = { REGENERATION: "Hồi máu", RESISTANCE: "Kháng sát thương", ABSORPTION: "Máu ảo", STRENGTH: "Sức mạnh", SPEED: "Nhanh nhẹn",
+  FIRE_RESISTANCE: "Kháng lửa", NIGHT_VISION: "Nhìn đêm", WATER_BREATHING: "Thở dưới nước", JUMP_BOOST: "Nhảy cao", HASTE: "Đào nhanh",
+  SATURATION: "No bụng", HEALTH_BOOST: "Thêm máu tối đa" };
+// đoán đầu mục theo loại đồ (món mới, chưa tự chọn)
+function guessNhom(mat, use) {
+  const m = String(mat || "").toUpperCase();
+  if (use === "mon-an") return "do-an";
+  if (use === "manh") return "manh";
+  if (use === "bua-bat-pet") return "bua";
+  if (use === "tinh-luyen") return "nguyen-lieu";
+  if (/(_SWORD|BOW|CROSSBOW|MACE|TRIDENT|SPEAR)$/.test(m)) return "vu-khi";
+  if (m === "SHIELD" || /(_HELMET|_CHESTPLATE|_LEGGINGS|_BOOTS)$/.test(m) || m === "ELYTRA") return "giap";
+  if (/(_PICKAXE|_AXE|_SHOVEL|_HOE|SHEARS|FISHING_ROD|BUCKET)$/.test(m)) return "cong-cu";
+  if ((data && data.foods || []).includes(m)) return "do-an";
+  return "khac";
+}
 
 function esc(s) { return String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
 function short(k) { return String(k).replace(/^minecraft:/, ""); }
@@ -284,7 +352,39 @@ function form() {
   const g = $("glint").value;
   return { ten_goi: $("tengoi").value.trim(), material: $("material").value.trim().toUpperCase(), amount: parseInt($("amount").value || "1", 10),
     name: $("name").value, lore: $("lore").value.replace(/\s+$/, "").split("\n").filter((l, i, a) => a.length > 1 || l !== ""),
-    enchants: ench, ce_enchants: cee, unbreakable: $("unbreakable").checked, hide_enchants: $("hide").checked, glint: g === "" ? null : g === "true" };
+    enchants: ench, ce_enchants: cee, unbreakable: $("unbreakable").checked, hide_enchants: $("hide").checked, glint: g === "" ? null : g === "true",
+    model: $("model").value.trim(), ...useForm() };
+}
+function useForm() {
+  const use = $("cdung").value;
+  const o = { nhom: $("nhom").value, cong_dung: use };
+  if (use === "ky-nang") o.ky_nang = { feature: $("feat").value, value: $("fval").value === "" ? 0 : parseFloat($("fval").value), text: $("ftext").value.trim(),
+    uses: $("uses").value === "" ? -1 : parseInt($("uses").value, 10), days: parseInt($("days").value || "7", 10), pvp: $("pvp").checked };
+  if (use === "mon-an") o.hieu_ung = fxRows.map(r => r.eff.value + " " + r.lv.value + " " + (parseInt(r.sec.value || "0", 10) || 30));
+  return o;
+}
+function featLabel(k) { const f = data && data.features ? data.features[k] : null; return f ? f[0] : k; }
+function syncUse() {
+  const use = $("cdung").value;
+  $("useSkill").hidden = use !== "ky-nang"; $("useFood").hidden = use !== "mon-an";
+  $("useNote").hidden = !USE_NOTE[use]; $("useNoteText").textContent = USE_NOTE[use] || "";
+  const f = data && data.features ? data.features[$("feat").value] : null;
+  $("valWrap").style.visibility = f && f[1] ? "visible" : "hidden";
+  $("valLab").textContent = f && f[1] ? "Chỉ số: " + f[1] : "Chỉ số";
+}
+function addFx(spec) {
+  const a = String(spec || "REGENERATION 0 30").split(/\s+/);
+  const row = document.createElement("div"); row.className = "fx";
+  const effs = (data && data.effects) || Object.keys(EFFECT_VN);
+  row.innerHTML = `<select>${effs.map(e => `<option value="${e}"${e === a[0] ? " selected" : ""}>${esc(EFFECT_VN[e] || e)}</option>`).join("")}</select>`
+    + `<select title="Cấp">${["I", "II", "III", "IV"].map((t, i) => `<option value="${i}"${String(i) === (a[1] || "0") ? " selected" : ""}>${t}</option>`).join("")}</select>`
+    + `<input type="number" min="1" max="3600" title="Số giây" placeholder="giây"><button title="Bỏ">×</button>`;
+  const [eff, lv, sec] = row.querySelectorAll("select, input");
+  sec.value = a[2] || 30;
+  const r = { el: row, eff, lv, sec };
+  for (const el of [eff, lv, sec]) el.addEventListener("input", render);
+  row.querySelector("button").onclick = () => { fxRows = fxRows.filter(x => x !== r); row.remove(); render(); };
+  fxRows.push(r); $("fxs").appendChild(row);
 }
 function render() {
   const f = cur && cur.nguon === "game" ? cur : form();
@@ -300,6 +400,22 @@ function render() {
   for (const [n, l] of Object.entries(f.ce_enchants || {})) { const c = ceInfo("ce:" + n); html += `<div>${mc((c ? c.display : "&7" + n) + " " + (ROMAN[l] || l), "#AAAAAA", false)}</div>`; }
   for (const line of f.lore || []) html += `<div>${line ? mc(line, "#AAAAAA", false) : "&nbsp;"}</div>`;
   if (f.unbreakable) html += `<div style="color:#5555FF">Không thể phá huỷ</div>`;
+  const u = useForm();
+  if (u.cong_dung === "ky-nang" && u.ky_nang) {
+    const k = u.ky_nang, fl = data && data.features ? data.features[k.feature] : null;
+    const txt = k.text || (featLabel(k.feature) + (fl && fl[1] && k.value ? " " + k.value : ""));
+    html += `<div>${mc("&7— Tính năng: &b" + txt, "#AAAAAA", false)}</div>`;
+    if (k.uses >= 0) html += `<div>${mc("&7— Độ bền: &6" + k.uses.toLocaleString("vi-VN"), "#AAAAAA", false)}</div>`;
+    html += `<div>${mc("&7— Hết hạn: &b" + k.days + " ngày sau khi nhận", "#AAAAAA", false)}</div>`;
+    if (k.pvp) html += `<div>${mc("&c✖ Mất tác dụng trong vùng vây khi đang đánh", "#AAAAAA", false)}</div>`;
+  } else if (u.cong_dung === "mon-an") {
+    html += `<div>${mc("&8Khi ăn:", "#AAAAAA", false)}</div>` + (u.hieu_ung || []).map(e => { const a = e.split(" "); return `<div>${mc("&a• " + (EFFECT_VN[a[0]] || a[0]) + " " + (ROMAN[+a[1] + 1] || "") + " (" + a[2] + " giây)", "#AAAAAA", false)}</div>`; }).join("")
+      + `<div>${mc("&8Món ăn ra trận · /nauan", "#AAAAAA", false)}</div>`;
+  } else if (u.cong_dung === "tinh-luyen") {
+    html += `<div>${mc("&8Nguyên liệu tinh luyện · /tinhluyen", "#AAAAAA", false)}</div>`;
+  } else if (u.cong_dung === "bua-bat-pet") {
+    html += `<div>${mc("&7Cầm ở &ftay trái &7khi quăng dây xích bắt pet:", "#AAAAAA", false)}</div><div>${mc("&a+…% &7xác suất, mất 1 bùa mỗi lần thử.", "#AAAAAA", false)}</div>`;
+  }
   html += `<div class="id">minecraft:${esc(mat.toLowerCase())}${(f.amount || 1) > 1 ? " ×" + f.amount : ""}</div>`;
   $("tip").innerHTML = html;
   // cảnh báo
@@ -312,6 +428,8 @@ function render() {
   }
   const mats = data && data.meta ? data.meta.materials : null;
   if (mats && f.material && !mats.includes(f.material)) w.push(`Không có loại đồ "${f.material}" trong server`);
+  if (u.cong_dung === "mon-an" && data && data.foods && !data.foods.includes(f.material)) w.push("Món ăn phải là đồ ăn được (bánh mì, cá chín, súp…)");
+  if (u.cong_dung === "mon-an" && !(u.hieu_ung || []).length) w.push("Món ăn cần ít nhất 1 hiệu ứng");
   if (w.length) w.push("Đồ phát cho người chơi: đồ quá mạnh làm lệch cân bằng chiến tranh.");
   $("warns").innerHTML = w.map(x => `<p class="warn">⚠ ${esc(x)}</p>`).join("");
 }
@@ -385,8 +503,9 @@ function addEnch(key = "", lvl = 1) {
   row.querySelector(":scope > button").onclick = () => { enchRows = enchRows.filter(x => x !== r); row.remove(); render(); };
   enchRows.push(r); $("enchs").appendChild(row);
 }
+// on = sửa được hình dạng (đồ web); đồ lấy từ game vẫn sửa được đầu mục, công dụng, tên gợi nhớ
 function setEditable(on) {
-  for (const id of ["tengoi", "material", "amount", "name", "lore", "unbreakable", "hide", "glint", "addench", "save"]) $(id).disabled = !on;
+  for (const id of ["material", "amount", "name", "lore", "unbreakable", "hide", "glint", "addench", "model"]) $(id).disabled = !on;
   enchRows.forEach(r => { r.sel.disabled = r.lvl.disabled = !on; r.el.querySelector(":scope > button").disabled = !on; });
 }
 function load(it) {
@@ -396,27 +515,57 @@ function load(it) {
   $("amount").value = it ? it.amount : 1; $("name").value = it ? it.name : ""; $("lore").value = it ? (it.lore || []).join("\n") : "";
   $("unbreakable").checked = !!(it && it.unbreakable); $("hide").checked = !!(it && it.hide_enchants);
   $("glint").value = it && it.glint !== null && it.glint !== undefined ? String(it.glint) : "";
+  $("model").value = it ? it.model || "" : "";
+  $("cdung").value = it ? it.cong_dung || "" : "";
+  nhomTouched = !!(it && it.nhom);
+  $("nhom").value = it && it.nhom ? it.nhom : guessNhom(it ? it.material : "DIAMOND_SWORD", $("cdung").value);
+  const kn = (it && it.ky_nang) || {};
+  $("feat").value = kn.feature || ""; $("fval").value = kn.value ?? ""; $("uses").value = kn.uses ?? -1; $("days").value = kn.days ?? 7;
+  $("ftext").value = kn.text || ""; $("pvp").checked = !!kn.pvp;
+  fxRows = []; $("fxs").innerHTML = "";
+  for (const e of (it && it.hieu_ung) || []) addFx(e);
+  syncUse();
+  const used = it && data.dung_o ? data.dung_o[it.id] : null;
+  $("usedin").innerHTML = it ? (used && used.length ? "Đang dùng ở: <b>" + used.map(esc).join("</b>, <b>") + "</b>" : "Chưa dùng ở đâu (chọn món này ở Xưởng, bếp, boss, phần thưởng…).") : "";
   enchRows = []; $("enchs").innerHTML = "";
   for (const [k, l] of Object.entries(it ? it.enchants : {})) addEnch(short(k), l);
   for (const [k, l] of Object.entries(it && it.nguon !== "game" ? (it.ce_enchants || {}) : {})) addEnch("ce:" + k.toLowerCase(), l);
   const game = it && it.nguon === "game";
   $("gamenote").hidden = !game;
-  $("gamenote").textContent = game ? `Đồ lấy từ game${it.nguoi_luu ? " (" + it.nguoi_luu + " lưu)" : ""}: giữ nguyên vẹn nên không sửa trên web. Muốn đổi: sửa trong game rồi /dmm luudo ${it.id} lại.` : "";
+  $("gamenote").textContent = game ? `Đồ lấy từ game${it.nguoi_luu ? " (" + it.nguoi_luu + " lưu)" : ""}: hình dạng giữ nguyên vẹn nên không sửa trên web (sửa trong game rồi /dmm luudo ${it.id} lại). Đầu mục, công dụng và tên gợi nhớ vẫn sửa ở đây được.` : "";
   setEditable(!game); $("del").disabled = !it; $("give").disabled = !it;
   document.querySelectorAll(".li").forEach(b => b.classList.toggle("on", !!it && b.dataset.id === it.id));
   render();
 }
 function renderList() {
-  const items = data.items;
+  const items = data.items, q = fold($("libq").value.trim());
   $("count").textContent = items.length;
   $("list").innerHTML = items.length ? "" : `<p class="empty">Chưa có món nào. Bấm "+ Tạo mới" hoặc dùng /dmm luudo trong game.</p>`;
+  const groups = {};
   for (const it of items) {
-    const b = document.createElement("button"); b.className = "li"; b.dataset.id = it.id;
-    b.innerHTML = `<span class="nm">${it.name ? mc(it.name, "#FFFFFF", false) : `<span style="color:#fff">${esc(prettyMat(it.material))}</span>`}</span>
-      <small><code>${esc(it.id)}</code>${it.nguon === "game" ? '<span class="badge">từ game</span>' : ""} ${esc(it.ten_goi && it.ten_goi !== it.id ? "· " + it.ten_goi : "")}</small>`;
-    b.onclick = () => load(it);
-    $("list").appendChild(b);
+    if (q && !fold(it.id + " " + (it.ten_goi || "") + " " + strip(it.name) + " " + (vnMat(it.material) || "")).includes(q)) continue;
+    const g = data.nhom && data.nhom[it.nhom] ? it.nhom : "khac";
+    (groups[g] = groups[g] || []).push(it);
   }
+  let open;
+  try { open = JSON.parse(localStorage.getItem("dmm-tv-open") || "null"); } catch (e) { open = null; }
+  for (const [g, title] of Object.entries(data.nhom || { khac: "Khác" })) {
+    if (!groups[g]) continue;
+    const det = document.createElement("details"); det.className = "grp"; det.dataset.g = g;
+    det.open = !!q || !open || open.includes(g) || (cur && groups[g].some(x => x.id === cur.id));
+    det.innerHTML = `<summary>${esc(title)} <span class="badge">${groups[g].length}</span></summary><div></div>`;
+    det.ontoggle = () => { try { const o = [...document.querySelectorAll(".grp")].filter(d => d.open).map(d => d.dataset.g); localStorage.setItem("dmm-tv-open", JSON.stringify(o)); } catch (e) {} };
+    for (const it of groups[g]) {
+      const b = document.createElement("button"); b.className = "li" + (cur && cur.id === it.id ? " on" : ""); b.dataset.id = it.id;
+      const use = it.cong_dung && data.cong_dung ? data.cong_dung[it.cong_dung] : "";
+      b.innerHTML = `<span class="nm">${it.name ? mc(it.name, "#FFFFFF", false) : `<span style="color:#fff">${esc(prettyMat(it.material))}</span>`}</span>
+        <small><code>${esc(it.id)}</code>${it.nguon === "game" ? '<span class="badge">từ game</span>' : ""}${use ? `<span class="use">${esc(use.replace(/ \(.*\)$/, ""))}</span>` : ""} ${esc(it.ten_goi && it.ten_goi !== it.id ? "· " + it.ten_goi : "")}</small>`;
+      b.onclick = () => load(it);
+      det.querySelector("div").appendChild(b);
+    }
+    $("list").appendChild(det);
+  }
+  if (items.length && !$("list").children.length) $("list").innerHTML = `<p class="empty">Không có món nào khớp.</p>`;
   $("online").innerHTML = (data.online || []).map(p => `<option value="${esc(p)}">`).join("");
 }
 function status(ok, msg) { $("status").className = "status " + (ok === null ? "" : ok ? "ok" : "err"); $("status").textContent = msg; }
@@ -517,7 +666,13 @@ renderHowto(); });
 }
 renderSyms();
 $("name").onfocus = () => lastField = "name"; $("lore").onfocus = () => lastField = "lore";
-for (const id of ["material", "amount", "name", "lore", "unbreakable", "hide", "glint", "tengoi"]) $(id).addEventListener("input", render);
+for (const id of ["material", "amount", "name", "lore", "unbreakable", "hide", "glint", "tengoi", "model", "fval", "uses", "days", "ftext", "pvp"]) $(id).addEventListener("input", render);
+$("cdung").addEventListener("change", () => { if (!nhomTouched) $("nhom").value = guessNhom(curMat(), $("cdung").value); syncUse(); render(); });
+$("feat").addEventListener("change", () => { syncUse(); render(); });
+$("nhom").addEventListener("change", () => { nhomTouched = true; });
+$("material").addEventListener("input", () => { if (!nhomTouched) $("nhom").value = guessNhom(curMat(), $("cdung").value); });
+$("addfx").onclick = (e) => { e.preventDefault(); addFx(); render(); };
+$("libq").addEventListener("input", renderList);
 $("material").addEventListener("input", () => enchRows.forEach(enchDesc));
 $("addench").onclick = (e) => { e.preventDefault(); addEnch(); render(); };
 $("new").onclick = () => load(null);
@@ -533,7 +688,11 @@ $("give").onclick = () => {
   post({ action: "give", id: cur.id, player: p, amount: parseInt($("gamount").value || "0", 10) });
 };
 fetch("api/thuvien").then(r => r.json()).then(d => {
-  data = d; buildEnchList(); renderList(); load(null);
+  data = d;
+  $("nhom").innerHTML = Object.entries(d.nhom || {}).map(([k, t]) => `<option value="${k}">${esc(t)}</option>`).join("");
+  $("cdung").innerHTML = Object.entries(d.cong_dung || {}).map(([k, t]) => `<option value="${k}">${esc(t)}</option>`).join("");
+  $("feat").innerHTML = Object.entries(d.features || {}).map(([k, t]) => `<option value="${k}">${esc(t[0])}</option>`).join("");
+  buildEnchList(); renderList(); load(null);
   if (!d.meta) status(false, "Chưa có danh sách phù phép/vật liệu từ server (thuvien-meta.json): khởi động lại Bang Hội Chiến với bản DuckyMoMoCore mới.");
 }).catch(e => { $("list").innerHTML = `<p class="empty">${esc(e)}</p>`; });
 </script>

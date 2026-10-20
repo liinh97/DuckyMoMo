@@ -146,7 +146,7 @@ groups:
       - { key: fm_cap, label: Mỗi người nhận tối đa (mảnh/ngày) từ phần thưởng, type: int, min: 0, max: 10000, file: plugins/DuckyMoMoCore/config.yml, path: event-fragments.daily-cap,
           note: "Chống tài khoản phụ cày mảnh. 0 = không giới hạn. Mảnh từ /doimanh give (boss, admin) không tính." }
       - { key: fm_types, label: Các loại mảnh, type: fragtypes, file: plugins/DuckyMoMoCore/config.yml, path: event-fragments.types,
-          note: "Hạn đổi: hết ngày đó thì cửa hàng không nhận loại mảnh này nữa (để trống = không hạn)." }
+          note: "Chọn món từ Thư viện đồ (công dụng Mảnh sự kiện: tên, vật phẩm, mô tả sửa ở đó). Hạn đổi: hết ngày đó thì cửa hàng không nhận loại mảnh này nữa (để trống = không hạn)." }
       - { key: fm_shop, label: Cửa hàng đổi mảnh, type: fragshop, file: plugins/DuckyMoMoCore/config.yml, path: event-fragments.shop,
           note: "Giá: mã loại mảnh + số, nhiều loại cách dấu phẩy (vd lamnguy 40). Đổi bằng cá câu: ca:common / ca:rare / ca:epic / ca:legendary + số (vd ca:epic 2). Quà Kinh nghiệm pet: người chơi phải gọi pet ra mới đổi được. Không đặt đồ bán bằng tiền thật." }
 
@@ -529,6 +529,8 @@ groups:
           info: "Là gì: dùng cho loài không thuộc nhóm nào ở dưới (hiếm, vd loài mới của bản Minecraft sau)." }
       - { key: petcap_attempts, label: Số lần thử mỗi con, type: int, min: 1, max: 50, file: plugins/DuckyMoMoCore/config.yml, path: pet-capture.attempts-per-mob,
           info: "Là gì: mỗi con vật chỉ thử bắt được ngần này lần (cộng dồn mọi người chơi), hết thì con đó hoảng sợ, không bắt được nữa.\nVí dụ: 3 lần, xác suất 20% → bắt được một con cụ thể khoảng 49%." }
+      - { key: petcap_charm_item, label: "Bùa bắt pet: món", type: libitem, use: bua-bat-pet, file: plugins/DuckyMoMoCore/config.yml, path: pet-capture.charm-item,
+          note: "Món trong Thư viện đồ (công dụng Bùa bắt pet) mà /buabatpet give phát. Món thư viện nào có công dụng Bùa bắt pet cũng dùng làm bùa được." }
       - { key: petcap_charm, label: "Bùa bắt pet: cộng thêm (%)", type: int, min: 0, max: 100, file: plugins/DuckyMoMoCore/config.yml, path: pet-capture.charm-bonus,
           info: "Là gì: Bùa bắt pet cầm tay trái khi thử bắt: cộng ngần này %, mất 1 bùa mỗi lần thử.\nCó từ: giải nhất/nhì/ba thi câu cá cuối tuần (3/2/1 bùa, sửa ở plugins/EvenMoreFish/competitions/thicau.yml), admin phát bằng /buabatpet give <người> [số]." }
       - { key: petcap_cooldown, label: Chờ giữa 2 lần thử (giây), type: number, min: 0, max: 30, file: plugins/DuckyMoMoCore/config.yml, path: pet-capture.cooldown-seconds,
@@ -571,7 +573,7 @@ groups:
       - { key: mon_on, label: Bật món ăn ra trận, type: select, file: plugins/DuckyMoMoCore/config.yml, path: dishes.enabled, options: [ { value: true, label: Bật }, { value: false, label: Tắt } ] }
       - { key: mon_cd, label: Chờ giữa 2 món (phút), type: int, min: 0, max: 600, file: plugins/DuckyMoMoCore/config.yml, path: dishes.cooldown-minutes }
       - { key: mon_list, label: Các món, type: dishes, file: plugins/DuckyMoMoCore/config.yml, path: dishes.list,
-          note: "Mỗi món: tên, vật phẩm hiển thị (đồ ăn được), nguyên liệu (vật phẩm hoặc cá câu theo độ hiếm) và hiệu ứng (loại, cấp, giây). Tối đa 7 món." }
+          note: "Chọn món từ Thư viện đồ (công dụng Món ăn: tên, vật phẩm, hiệu ứng khi ăn sửa ở đó). Ở đây chỉ đặt nguyên liệu (vật phẩm hoặc cá câu theo độ hiếm). Tối đa 7 món." }
 
   - title: Bắt pet theo mùa (MyPet)
     category: PvP & combat
@@ -1133,7 +1135,7 @@ groups:
   - title: Tinh Luyện (/tinhluyen)
     category: Shop
     description: "Đổi MỘT CHIỀU lượng lớn khối thường thành món tinh luyện (đồ có dấu riêng): hàng trao đổi ở shop dân làng, nguyên liệu Xưởng, bán cho server. Xu Quái rơi từ quái."
-    info: "Món: Tinh Luyện Đá (256 đá cuội + 256 đá sâu cuội), Than / Đồng thô / Sắt thô / Đá Đỏ / Lapis / Vàng thô / Kim Cương (64 khối), Lục Bảo / Netherite (32 khối), Địa Linh (64 kiện rơm), Xu Quái 2 (64 Xu Quái).\nCông thức (số khối) sửa trong config tinh-luyen.items.<mã>.recipe.\nGiá bán: đặt ≤ khoảng 70% giá trị nguyên liệu theo bảng /sell, KHÔNG thì người chơi tinh luyện rồi bán để lời (in tiền). Tinh Luyện Đá để rất thấp vì máy tạo đá cuội ra vô hạn.\nXu Quái: chỉ quái thù địch do người chơi giết, quái từ lồng quái không rơi.\nShop dân làng: admin lấy món bằng /tinhluyen give <mã> [số] rồi kéo vào trình sửa Shopkeepers. Xưởng: ô \"Món Tinh Luyện cần thêm\" ở từng món.\nLưu xong: có hiệu lực ngay (dmm reload)."
+    info: "Món: Tinh Luyện Đá (256 đá cuội + 256 đá sâu cuội), Than / Đồng thô / Sắt thô / Đá Đỏ / Lapis / Vàng thô / Kim Cương (64 khối), Lục Bảo / Netherite (32 khối), Địa Linh (64 kiện rơm), Xu Quái 2 (64 Xu Quái).\nCông thức (số khối) sửa trong config tinh-luyen.items.<mã>.recipe.\nGiá bán: đặt ≤ khoảng 70% giá trị nguyên liệu theo bảng /sell, KHÔNG thì người chơi tinh luyện rồi bán để lời (in tiền). Tinh Luyện Đá để rất thấp vì máy tạo đá cuội ra vô hạn.\nXu Quái: chỉ quái thù địch do người chơi giết, quái từ lồng quái không rơi.\nTên, vật phẩm nền, mô tả, hình riêng của từng món sửa ở trang Thư viện đồ (mã món = mã thư viện).\nShop dân làng: admin lấy món bằng /tinhluyen give <mã> [số] rồi kéo vào trình sửa Shopkeepers. Xưởng: ô \"Món Tinh Luyện cần thêm\" ở từng món.\nLưu xong: có hiệu lực ngay (dmm reload)."
     apply: [dmm reload]
     settings:
       - { key: tl_on, label: Bật Tinh Luyện, type: select, file: plugins/DuckyMoMoCore/config.yml, path: tinh-luyen.enabled, options: [ { value: true, label: Bật }, { value: false, label: Tắt } ] }
@@ -1161,7 +1163,8 @@ groups:
     apply: [dmm reload]
     settings:
       - { key: xw_on, label: Bật Xưởng chế tạo, type: select, file: plugins/DuckyMoMoCore/config.yml, path: workshop.enabled, options: [ { value: true, label: Bật }, { value: false, label: Tắt } ] }
-      - { key: xw_items, label: Các món, type: workshop, file: plugins/DuckyMoMoCore/config.yml, path: workshop.items }
+      - { key: xw_items, label: Các món, type: workshop, file: plugins/DuckyMoMoCore/config.yml, path: workshop.items,
+          note: "Chọn món từ Thư viện đồ (công dụng Kỹ năng đặc biệt: tên, phù phép, kỹ năng, độ bền, hạn sửa ở đó). Ở đây chỉ đặt giá, bàn chế 3×3 và món Tinh Luyện cần thêm." }
 
   - title: Câu cá (EvenMoreFish)
     category: Thế giới

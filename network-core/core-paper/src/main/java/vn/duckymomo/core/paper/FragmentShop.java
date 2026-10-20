@@ -34,8 +34,8 @@ import java.util.Map;
 
 /**
  * Mảnh sự kiện + cửa hàng đổi mảnh (/doimanh).
- * Mảnh là ĐỒ VẬT (trao đổi, bán được) gắn dấu PDC "dmm_manh" = loại (không làm giả bằng đổi tên). Mỗi loại: name, material, lore,
- * until (hạn đổi yyyy-MM-dd, trống = không hạn). Nhận qua phần thưởng "manh <loại> <số>" bị giới hạn daily-cap mảnh/người/ngày
+ * Mảnh là ĐỒ VẬT (trao đổi, bán được) gắn dấu PDC "dmm_manh" = loại (không làm giả bằng đổi tên). Loại = mã THƯ VIỆN ĐỒ (công dụng
+ * "manh": tên, vật phẩm, mô tả ở thư viện, 20/10); ở đây chỉ giữ types.<mã>.until (hạn đổi yyyy-MM-dd, trống = không hạn). Nhận qua phần thưởng "manh <loại> <số>" bị giới hạn daily-cap mảnh/người/ngày
  * (chống tài khoản phụ cày); admin/boss phát bằng /doimanh give (không tính giới hạn).
  * Cửa hàng: shop [{label, cost {loại: số}, rewards [quà], limit (lần/người, 0 = không giới hạn)}]. Lưu: doimanh.yml
  * Giá còn nhận CÁ CÂU (EvenMoreFish) theo độ hiếm: cost {"ca:Legendary": 1} (Common/Rare/Epic/Legendary), luôn mở (không hạn).
@@ -45,7 +45,12 @@ final class FragmentShop implements Listener, Rewards.FragmentGiver {
     private static final LegacyComponentSerializer LEGACY = LegacyComponentSerializer.legacyAmpersand();
     private static final ZoneId VN = ZoneId.of("Asia/Ho_Chi_Minh");
 
-    private record Type(String id, String name, Material material, List<String> lore, String until) {
+    private record Type(String id, String until) {
+        String name() {
+            ItemLibrary lib = Shared.library;
+            return lib == null ? id : lib.name(id);
+        }
+
         boolean open() {
             return until.isBlank() || !LocalDate.now(VN).isAfter(LocalDate.parse(until));
         }
@@ -86,7 +91,6 @@ final class FragmentShop implements Listener, Rewards.FragmentGiver {
                 if (t == null) {
                     continue;
                 }
-                Material m = Material.matchMaterial(t.getString("material", "AMETHYST_SHARD"));
                 String until = t.getString("until", "");
                 try {
                     if (!until.isBlank()) {
@@ -96,9 +100,27 @@ final class FragmentShop implements Listener, Rewards.FragmentGiver {
                     plugin.getLogger().warning("Mảnh " + id + ": hạn đổi sai (yyyy-MM-dd), coi như không hạn");
                     until = "";
                 }
-                types.put(id, new Type(id, t.getString("name", id), m == null ? Material.AMETHYST_SHARD : m, t.getStringList("lore"), until));
+                types.put(id, new Type(id, until));
             }
         }
+        ItemLibrary.STAMPERS.put("manh", (it, id, sec) -> {
+            Type t = types.get(id);
+            if (t == null) {
+                return it;
+            }
+            ItemMeta meta = it.getItemMeta();
+            List<Component> lore = meta.lore() == null ? new ArrayList<>() : new ArrayList<>(meta.lore());
+            if (!t.until().isBlank()) {
+                lore.add(c("&8Đổi được đến hết ngày " + t.until()));
+            }
+            meta.lore(lore);
+            if (!meta.hasEnchantmentGlintOverride()) {
+                meta.setEnchantmentGlintOverride(true);
+            }
+            meta.getPersistentDataContainer().set(key, PersistentDataType.STRING, id);
+            it.setItemMeta(meta);
+            return it;
+        });
         int i = 0;
         for (Map<?, ?> m : cfg.getMapList("shop")) {
             Map<String, Integer> cost = new LinkedHashMap<>();
@@ -127,22 +149,11 @@ final class FragmentShop implements Listener, Rewards.FragmentGiver {
         return LEGACY.deserialize(s).decorationIfAbsent(TextDecoration.ITALIC, TextDecoration.State.FALSE);
     }
 
+    /** Mảnh từ thư viện đồ (null nếu thư viện không có món này). */
     private ItemStack fragment(Type t, int amount) {
-        ItemStack it = new ItemStack(t.material(), amount);
-        ItemMeta meta = it.getItemMeta();
-        meta.displayName(c(t.name()));
-        List<Component> lore = new ArrayList<>();
-        for (String l : t.lore()) {
-            lore.add(c(l));
-        }
-        if (!t.until().isBlank()) {
-            lore.add(c("&8Đổi được đến hết ngày " + t.until()));
-        }
-        meta.lore(lore);
-        meta.setEnchantmentGlintOverride(true);
-        meta.getPersistentDataContainer().set(key, PersistentDataType.STRING, t.id());
-        it.setItemMeta(meta);
-        return it;
+        ItemLibrary lib = Shared.library;
+        ItemStack it = lib == null ? null : lib.build(t.id(), amount);
+        return it != null && t.id().equals(typeOf(it)) ? it : null;
     }
 
     private String typeOf(ItemStack it) {
@@ -180,9 +191,13 @@ final class FragmentShop implements Listener, Rewards.FragmentGiver {
         }
         int left = amount;
         while (left > 0) {
-            int n = Math.min(left, t.material().getMaxStackSize());
-            Rewards.hand(p, fragment(t, n));
-            left -= n;
+            ItemStack it = fragment(t, left);
+            if (it == null) {
+                plugin.getLogger().warning("Mảnh sự kiện: thư viện đồ không có món \"" + typeId + "\" (công dụng Mảnh sự kiện)");
+                break;
+            }
+            left -= it.getAmount();
+            Rewards.hand(p, it);
         }
         return amount + " " + t.name() + "&r";
     }
@@ -261,6 +276,8 @@ final class FragmentShop implements Listener, Rewards.FragmentGiver {
         if (a[0].equalsIgnoreCase("vat") && a.length > 1) {
             Material m = Material.matchMaterial(a[1]);
             it = m == null ? null : new ItemStack(m);
+        } else if (a[0].equalsIgnoreCase("do") && a.length > 1 && Shared.library != null) {
+            it = Shared.library.base(a[1], 1);   // hình món thư viện (chỉ để hiện, không phát)
         }
         if (it == null) {
             it = new ItemStack(a[0].equalsIgnoreCase("xu") ? Material.GOLD_INGOT : Material.CHEST);

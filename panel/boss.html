@@ -61,6 +61,13 @@
   .g.dm { align-items: stretch; } .g.dm .mc-box { max-height: 200px; overflow: auto; font-size: 12.5px; }
   .fm { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-top: 10px; font-size: 13.5px; color: var(--muted); }
   .fm input { width: 150px; } .fm input[type=number] { width: 80px; }
+  .drops { display: grid; gap: 6px; margin: 4px 0 8px; }
+  .drop { display: grid; grid-template-columns: minmax(180px, 2fr) 92px 78px minmax(150px, 1.4fr) 32px; gap: 6px; align-items: center; }
+  .drop .x { padding: 4px 0; color: var(--err, #c62828); border: none; background: none; font-size: 18px; cursor: pointer; }
+  .drop small { grid-column: 1 / -1; color: var(--muted); font-size: 12.5px; margin-top: -2px; }
+  .add-drop { align-self: flex-start; background: transparent; border: 1px dashed var(--line); color: var(--muted); border-radius: 8px; padding: 6px 12px; cursor: pointer; font-size: 13.5px; }
+  .add-drop:hover { border-color: var(--accent); color: var(--accent); }
+  @media (max-width: 700px) { .drop { grid-template-columns: minmax(0, 1fr) 80px 64px; } .drop select.to { grid-column: 1 / 3; } }
   .spawn { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
   .spawn #spPlayer { width: 220px; } .spawn .n { width: 74px; } .spawn .or { color: var(--muted); font-size: 13px; }
   .pv { position: relative; padding-top: 30px !important; }
@@ -167,6 +174,10 @@
 
     <div class="sec">
       <h3>6 · Phần thưởng khi bị hạ</h3>
+      <label class="f">Đồ rơi (chọn từ Thư viện đồ) <span class="hint">món sửa ở trang Thư viện đồ; ở đây chỉ đặt tỉ lệ, số lượng, ai nhận</span></label>
+      <div class="drops" id="drops"></div>
+      <button type="button" class="add-drop" id="addDrop">+ Thêm đồ rơi</button>
+      <p class="note">Đồ vào thẳng túi người nhận (túi đầy thì rơi dưới chân), đủ công dụng của thư viện (kỹ năng Xưởng, hiệu ứng món ăn…). Tỉ lệ tính riêng từng món; "mỗi người tung riêng" là mỗi người nhận một lần tung.</p>
       <label class="f" for="cmds">Lệnh console chạy khi boss chết <span class="hint">không có /, mỗi dòng một lệnh; $players = mọi người đã đánh boss</span></label>
       <textarea id="cmds" rows="3" placeholder="doimanh chia lamnguy 30 $players"></textarea>
       <div class="fm"><span>Thêm nhanh: chia mảnh sự kiện cho người tham gia</span><input id="fmType" placeholder="loại, vd lamnguy"><input id="fmTotal" type="number" min="1" value="30" title="Tổng số mảnh"><button id="addFm" class="ghost">+ Thêm lệnh</button></div>
@@ -208,7 +219,7 @@ const ETYPE_VN = { ZOMBIE: "Xác sống", HUSK: "Xác khô", DROWNED: "Xác ch�
   MAGMA_CUBE: "Khối dung nham", PHANTOM: "Phantom", GUARDIAN: "Guardian", ELDER_GUARDIAN: "Elder Guardian", BREEZE: "Breeze",
   WOLF: "Sói", POLAR_BEAR: "Gấu Bắc Cực", SILVERFISH: "Mọt bạc", ENDERMITE: "Endermite", VEX: "Vex", GHAST: "Ghast", SHULKER: "Shulker" };
 const SLOT_VN = { helmet: "Mũ", chestplate: "Áo", leggings: "Quần", boots: "Giày", mainHand: "Tay chính", offHand: "Tay phụ" };
-let data = null, cur = null, isNew = true, selPowers = [], orig = null;
+let data = null, cur = null, isNew = true, selPowers = [], orig = null, drops = [], origDrops = "[]";
 // boss có sẵn mà plugin dùng vào việc khác: sửa sẽ ảnh hưởng chỗ đó
 const SHIP_USE = { summonable_wolf: "Con này do phù phép Summon Wolf của EliteMobs gọi ra.", the_returned: "Đây là quân tiếp viện do kỹ năng summon_the_returned gọi ra.",
   transport_cannon_seat: "Theo tên là ghế ngồi kỹ thuật của pháo dịch chuyển, không nên sửa.", test_boss: "Boss thử nghiệm, dùng trong nhiệm vụ và rương mẫu của EliteMobs.",
@@ -233,6 +244,44 @@ function mc(text) {
   }
   return out;
 }
+// ---- Đồ rơi từ thư viện: [{do, ti-le, so, cho}]
+function libOptions(cur) {
+  const groups = {};
+  for (const it of data.lib || []) (groups[it.nhom] = groups[it.nhom] || []).push(it);
+  let html = '<option value="">Chọn món trong thư viện…</option>';
+  for (const [k, t] of Object.entries(data.nhom || {})) {
+    if (!groups[k]) continue;
+    html += `<optgroup label="${esc(t)}">` + groups[k].map(it => `<option value="${esc(it.id)}"${it.id === cur ? " selected" : ""}>${esc(it.ten)} · ${esc(it.id)}</option>`).join("") + "</optgroup>";
+  }
+  if (cur && !(data.lib || []).some(it => it.id === cur)) html += `<option value="${esc(cur)}" selected>${esc(cur)} (không còn trong thư viện!)</option>`;
+  return html;
+}
+function renderDrops() {
+  const box = $("drops");
+  box.innerHTML = drops.length ? "" : '<em class="note" style="margin:0">Chưa có đồ rơi từ thư viện.</em>';
+  drops.forEach((d, i) => {
+    const row = document.createElement("div"); row.className = "drop";
+    const to = Object.entries(data.drop_to || {}).map(([k, t]) => `<option value="${k}"${k === (d.cho || "top1") ? " selected" : ""}>${esc(t)}</option>`).join("");
+    row.innerHTML = `<select class="it" title="Món">${libOptions(d.do)}</select>`
+      + `<input type="number" class="rate" min="0.01" max="100" step="0.01" title="Tỉ lệ rơi (%)" placeholder="% rơi">`
+      + `<input type="number" class="n" min="1" max="64" title="Số lượng">`
+      + `<select class="to" title="Ai nhận">${to}</select><button type="button" class="x" title="Bỏ">×</button>`;
+    const [it, rate, n, toSel] = [row.querySelector(".it"), row.querySelector(".rate"), row.querySelector(".n"), row.querySelector(".to")];
+    rate.value = d["ti-le"] ?? 100; n.value = d.so ?? 1;
+    it.onchange = () => { d.do = it.value; };
+    rate.oninput = () => { d["ti-le"] = parseFloat(rate.value); };
+    n.oninput = () => { d.so = parseInt(n.value || "1", 10); };
+    toSel.onchange = () => { d.cho = toSel.value; };
+    row.querySelector(".x").onclick = () => { drops.splice(i, 1); renderDrops(); };
+    box.appendChild(row);
+  });
+}
+const dropsChanged = () => JSON.stringify(drops.filter(d => d.do)) !== origDrops;
+async function saveDrops(file) {
+  if (!dropsChanged()) return true;
+  const res = await post({ action: "drops", file, drops: drops.filter(d => d.do) });
+  return !!res.ok;
+}
 function form() {
   const b = { isEnabled: $("enabled").checked, entityType: $("etype").value, name: $("name").value, level: $("level").value.trim() || "dynamic",
     healthMultiplier: parseFloat($("hm").value || "1"), damageMultiplier: parseFloat($("dm").value || "1"),
@@ -252,7 +301,7 @@ function render() {
   const w = [];
   if ((b.healthMultiplier || 1) > 200) w.push("Máu rất cao: cần nhiều người đánh rất lâu.");
   if ((b.damageMultiplier || 1) > 5) w.push("Sát thương cao: có thể giết người chơi trong một đòn.");
-  if (!(b.onDeathCommands || []).length && (!cur || cur.web)) w.push("Chưa có phần thưởng: thêm lệnh chia mảnh hoặc bật rơi đồ EliteMobs.");
+  if (!(b.onDeathCommands || []).length && !drops.length && (!cur || cur.web)) w.push("Chưa có phần thưởng: thêm đồ rơi từ thư viện, lệnh chia mảnh hoặc bật rơi đồ EliteMobs.");
   $("warns").innerHTML = w.map(x => `<p class="warn">⚠ ${esc(x)}</p>`).join("");
   const pv = (t) => t ? `<span class="mc">${mc(t)}</span>` : "";
   $("pvSpawn").innerHTML = pv(b.spawnMessage); $("pvDeath").innerHTML = pv(b.deathMessage);
@@ -300,6 +349,9 @@ function load(bs) {
     $("restoreBoss").title = bs.backup ? "Trả file về như lúc trước lần sửa đầu tiên" : "Chưa sửa lần nào, đang là bản gốc";
   }
   document.querySelectorAll(".li").forEach(b => b.classList.toggle("on", !!bs && b.dataset.file === bs.file));
+  drops = bs ? (bs.drops || []).map(d => ({ ...d })) : [];
+  origDrops = JSON.stringify(drops);
+  renderDrops();
   renderPowers(); render();
   orig = form();
 }
@@ -331,6 +383,7 @@ async function post(body) {
   } catch (e) { status(false, "Không gửi được: " + e); return {}; }
 }
 $("new").onclick = () => load(null);
+$("addDrop").onclick = () => { drops.push({ do: "", "ti-le": 100, so: 1, cho: "top1" }); renderDrops(); };
 $("pwfilter").oninput = renderPowers;
 for (const id of ["name", "level", "hm", "dm", "timeout", "enabled", "emloot", "cmds", "spawnMsg", "deathMsg", "deathMsgs"]) $(id).addEventListener("input", render);
 $("addFm").onclick = (e) => {
@@ -340,19 +393,27 @@ $("addFm").onclick = (e) => {
   $("cmds").value = ($("cmds").value.trim() ? $("cmds").value.trim() + "\n" : "") + `doimanh chia ${t} ${n} $players`; render();
 };
 $("save").onclick = async () => {
+  if (drops.some(d => !d.do)) { status(false, "Có dòng đồ rơi chưa chọn món (chọn món hoặc bấm × để bỏ)."); return; }
   if (cur) {
     const diff = changedFields();
-    if (!Object.keys(diff).length) { status(false, "Chưa đổi gì."); return; }
-    if (!cur.web && SHIP_USE[cur.id] && !(await ask(`${SHIP_USE[cur.id]}\nVẫn sửa file gốc ${cur.file}?`, { title: "Sửa boss có sẵn", ok: "Vẫn sửa" }))) return;
+    if (!Object.keys(diff).length && !dropsChanged()) { status(false, "Chưa đổi gì."); return; }
     const file = cur.file;
-    const res = await post({ action: "save", file, id: cur.web ? cur.id : undefined, boss: diff });
-    if (res.ok) load(data.bosses.find(b => b.file === file));
+    if (Object.keys(diff).length) {
+      if (!cur.web && SHIP_USE[cur.id] && !(await ask(`${SHIP_USE[cur.id]}\nVẫn sửa file gốc ${cur.file}?`, { title: "Sửa boss có sẵn", ok: "Vẫn sửa" }))) return;
+      const res = await post({ action: "save", file, id: cur.web ? cur.id : undefined, boss: diff });
+      if (!res.ok) return;
+    }
+    await saveDrops(file);
+    load(data.bosses.find(b => b.file === file));
     return;
   }
   const id = $("id").value.trim();
   if (!/^[a-z0-9_]{1,32}$/.test(id)) { status(false, "Mã chỉ gồm chữ thường không dấu, số, _ (vd rong_lua)"); return; }
   const res = await post({ action: "save", id, is_new: true, boss: form() });
-  if (res.ok) load(data.bosses.find(b => b.file === "dmm_" + id + ".yml"));
+  if (!res.ok) return;
+  const file = "dmm_" + id + ".yml";
+  await saveDrops(file);
+  load(data.bosses.find(b => b.file === file));
 };
 $("copyBoss").onclick = async () => {
   if (!cur) return;

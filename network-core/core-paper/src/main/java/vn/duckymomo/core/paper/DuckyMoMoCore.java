@@ -30,6 +30,7 @@ public final class DuckyMoMoCore extends JavaPlugin {
     private WantedBoard wanted;
     private ThaiAp thaiAp;
     private DungeonGate dungeonGate;
+    private BossDrops bossDrops;
     private PlayerSettings playerSettings;
     private LevelUp levelUp;
     private Object levelPapi;
@@ -163,6 +164,10 @@ public final class DuckyMoMoCore extends JavaPlugin {
             dungeonGate.stop();
             dungeonGate = null;
         }
+        if (bossDrops != null) {
+            bossDrops.stop();
+            bossDrops = null;
+        }
         if (thaiAp != null) {
             thaiAp.stop();
             thaiAp = null;
@@ -233,6 +238,7 @@ public final class DuckyMoMoCore extends JavaPlugin {
         offCommands.clear();
         // Thư viện đồ (mọi server): dựng trước để cửa hàng, phần thưởng dùng; /dmm luudo|laydo|thuvien
         itemLibrary = new ItemLibrary(this);
+        Shared.library = itemLibrary;
         // Người chơi Bedrock (đã xác thực qua Xbox + Floodgate) không phải nhập mật khẩu AuthMe.
         // Chỉ bật trên server có AuthMe (hiện tại là lobby).
         if (getServer().getPluginManager().isPluginEnabled("AuthMe")) {
@@ -816,6 +822,11 @@ public final class DuckyMoMoCore extends JavaPlugin {
             getLogger().info("Cổng Dungeon: " + dungeonGate.describe());
         } else {
             dungeonGate = null;
+        }
+        // Đồ rơi boss EliteMobs chọn từ thư viện đồ (boss-roi.yml, trang Boss › Đồ rơi)
+        if (getServer().getPluginManager().getPlugin("EliteMobs") != null) {
+            bossDrops = new BossDrops(this);
+            bossDrops.start();
         }
         DungeonGate dgt = dungeonGate;
         bind("dungeon", dgt == null ? null : dgt::command, "Cổng Dungeon");

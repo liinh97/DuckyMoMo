@@ -45,15 +45,20 @@ import org.bukkit.persistence.PersistentDataType;
  * nền kinh tế (không đổi ngược), giá bán ~70% giá trị nguyên liệu theo bảng /sell nên tinh luyện rồi bán không bao giờ lời hơn bán thẳng.
  * Xu Quái: quái thù địch người chơi giết rơi theo tỉ lệ (quái từ lồng không rơi), quái EliteMobs rơi nhiều hơn.
  * Món nền là mảnh gốm / hạt vàng: không đặt xuống được, không có giá trong worth.yml (Essentials không bán nhầm theo vật liệu gốc);
- * dùng để chế tạo / rèn / sửa đồ bị chặn. Config tinh-luyen: items.<mã>{name, material, lore, recipe {VẬT_LIỆU|mã món: số}, sell},
- * xu-quai{item, chance, elite-chance, elite-max}.
+ * dùng để chế tạo / rèn / sửa đồ bị chặn. Config tinh-luyen: items.<mã thư viện>{recipe {VẬT_LIỆU|mã món: số}, sell},
+ * xu-quai{item, chance, elite-chance, elite-max}. Hình dạng (tên, vật phẩm nền, mô tả, model) ở THƯ VIỆN ĐỒ, công dụng "tinh-luyen" (20/10).
  */
 final class Refining implements Listener {
 
     private static final LegacyComponentSerializer LEGACY = LegacyComponentSerializer.legacyAmpersand();
     private static final List<String> SELL_CMDS = List.of("sell", "esell", "essentials:sell", "essentials:esell");
 
-    record Item(String id, String name, Material material, List<String> lore, Map<String, Integer> recipe, double sell, NamespacedKey model) { }
+    record Item(String id, Map<String, Integer> recipe, double sell) {
+        String name() {
+            ItemLibrary lib = Shared.library;
+            return lib == null ? id : lib.name(id);
+        }
+    }
 
     /** Tên tiếng Việt của nguyên liệu (client tiếng Anh hiện "Block of Diamond" nếu dùng tên gốc). */
     private static final Map<String, String> VI = Map.ofEntries(Map.entry("COBBLESTONE", "Đá cuội"), Map.entry("COBBLED_DEEPSLATE", "Đá sâu cuội"),
@@ -78,9 +83,7 @@ final class Refining implements Listener {
         if (is != null) {
             for (String id : is.getKeys(false)) {
                 ConfigurationSection i = is.getConfigurationSection(id);
-                Material m = i == null ? null : Material.matchMaterial(i.getString("material", ""));
-                if (m == null || !m.isItem()) {
-                    plugin.getLogger().warning("Tinh luyện: " + id + " có material sai, bỏ qua");
+                if (i == null) {
                     continue;
                 }
                 Map<String, Integer> rec = new LinkedHashMap<>();
@@ -92,10 +95,7 @@ final class Refining implements Listener {
                         }
                     }
                 }
-                String mk = i.getString("model", "");
-                NamespacedKey model = mk == null || mk.isBlank() ? null : NamespacedKey.fromString(mk);
-                items.put(id.toLowerCase(Locale.ROOT), new Item(id.toLowerCase(Locale.ROOT), i.getString("name", id), m, i.getStringList("lore"),
-                        rec, Math.max(0, i.getDouble("sell", 0)), model));
+                items.put(id.toLowerCase(Locale.ROOT), new Item(id.toLowerCase(Locale.ROOT), rec, Math.max(0, i.getDouble("sell", 0))));
             }
         }
         // nguyên liệu phải là vật liệu thật hoặc mã món khác
@@ -106,6 +106,7 @@ final class Refining implements Listener {
                 }
             }
         }
+        ItemLibrary.STAMPERS.put("tinh-luyen", (it, id, sec) -> items.containsKey(id) ? stamp(it, id) : it);
         ConfigurationSection x = c.getConfigurationSection("xu-quai");
         this.coinId = x == null ? "xuquai" : x.getString("item", "xuquai").toLowerCase(Locale.ROOT);
         this.chance = x == null ? 5 : x.getDouble("chance", 5);
@@ -119,24 +120,24 @@ final class Refining implements Listener {
 
     // ---------------------------------------------------------------- món đồ
 
+    /** Món từ thư viện đồ (null nếu thư viện không có món này hoặc món không mang công dụng Tinh Luyện). */
     ItemStack build(String id, int amount) {
-        Item d = items.get(id);
-        ItemStack it = new ItemStack(d.material(), Math.max(1, amount));
+        ItemLibrary lib = Shared.library;
+        ItemStack it = lib == null ? null : lib.build(id, Math.max(1, amount));
+        return it != null && id.equals(idOf(it)) ? it : null;
+    }
+
+    /** Đóng dấu Tinh Luyện lên đồ thư viện (ItemLibrary.STAMPERS "tinh-luyen"). */
+    private ItemStack stamp(ItemStack it, String id) {
         ItemMeta meta = it.getItemMeta();
-        meta.displayName(c(d.name()));
-        List<Component> lore = new ArrayList<>();
-        for (String l : d.lore()) {
-            lore.add(c("&7" + l));
-        }
+        List<Component> lore = meta.lore() == null ? new ArrayList<>() : new ArrayList<>(meta.lore());
         lore.add(c("&8Nguyên liệu tinh luyện · /tinhluyen"));
         meta.lore(lore);
-        if (d.model() != null) {
-            meta.setItemModel(d.model());   // hình riêng trong gói tài nguyên DuckyMoMo (không tải gói: thấy vật phẩm gốc)
-        } else {
+        if (!meta.hasItemModel() && !meta.hasEnchantmentGlintOverride()) {
             meta.setEnchantmentGlintOverride(true);
         }
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
-        meta.getPersistentDataContainer().set(key, PersistentDataType.STRING, d.id());
+        meta.getPersistentDataContainer().set(key, PersistentDataType.STRING, id);
         it.setItemMeta(meta);
         return it;
     }
@@ -254,7 +255,11 @@ final class Refining implements Listener {
                 break;
             }
             int slot = row * 9 + col;
-            h.inv.setItem(slot, icon(p, d));
+            ItemStack ic = icon(p, d);
+            if (ic == null) {
+                continue;
+            }
+            h.inv.setItem(slot, ic);
             h.slots.put(slot, d);
             i++;
         }
@@ -272,6 +277,9 @@ final class Refining implements Listener {
 
     private ItemStack icon(Player p, Item d) {
         ItemStack it = build(d.id(), 1);
+        if (it == null) {
+            return null;
+        }
         ItemMeta meta = it.getItemMeta();
         List<Component> lore = new ArrayList<>();
         lore.add(Component.empty());
@@ -345,9 +353,13 @@ final class Refining implements Listener {
 
     private void give(Player p, String id, int amount) {
         while (amount > 0) {
-            int n = Math.min(amount, items.get(id).material().getMaxStackSize());
-            p.getInventory().addItem(build(id, n)).values().forEach(left -> p.getWorld().dropItemNaturally(p.getLocation(), left));
-            amount -= n;
+            ItemStack it = build(id, amount);
+            if (it == null) {
+                plugin.getLogger().warning("Tinh luyện: thư viện đồ không có món " + id);
+                return;
+            }
+            amount -= it.getAmount();
+            p.getInventory().addItem(it).values().forEach(left -> p.getWorld().dropItemNaturally(p.getLocation(), left));
         }
     }
 
@@ -417,7 +429,10 @@ final class Refining implements Listener {
             return;
         }
         int n = elite ? 1 + ThreadLocalRandom.current().nextInt(eliteMax) : 1;
-        e.getDrops().add(build(coinId, n));
+        ItemStack coin = build(coinId, n);
+        if (coin != null) {
+            e.getDrops().add(coin);
+        }
     }
 
     // ---------------------------------------------------------------- chặn dùng sai

@@ -1465,3 +1465,15 @@ Log: `docker compose logs banghoi-1 --since 5m | grep -iE "DuckyMoMoCore|Mùa:|V
   QR tự vẽ ở panel (segno, NAPAS) vì img.vietqr.io đổi sang SVG. QR trong game đặt thẳng vào tay, món đang cầm giấu trong bản đồ (PDC), cất là trả.
   Đã thử: cộng tay, mua mũ (quyền 30 ngày thật), mua rank, thiếu Vàng bị chặn, tài khoản chưa vào server bị chặn trước khi trừ, nạp tạo QR.
   CHƯA thử bằng người: menu /vang, /rank mua QR trên tay, thẻ Vàng trên trang tài khoản (cần đăng nhập /web).
+- 20/10: THƯ VIỆN ĐỒ LÀ NƠI DUY NHẤT định nghĩa vật phẩm đặc biệt (người dùng: "boss thì chỉ cài số liệu boss, đồ drop chọn ở thư viện").
+  Món có `nhom` (đầu mục) + `cong-dung`: `ky-nang` {feature, value, text, uses, days, pvp} (Workshop), `mon-an` + `hieu-ung` (Dishes),
+  `bua-bat-pet` (PetCapture), `tinh-luyen` (Refining), `manh` (FragmentShop). ItemLibrary.build = hình dạng + dấu PDC `thuvien_id` + module
+  đóng dấu riêng qua `ItemLibrary.STAMPERS`, nên món thư viện phát ở đâu (boss, phần thưởng `do <mã>`) cũng đủ công dụng.
+  Mã Xưởng / món ăn / Tinh Luyện / loại mảnh = mã thư viện; config chỉ còn thông số riêng: workshop.items.<mã>{cost, grid, tinh-luyen, enabled},
+  dishes.list.<mã>{need}, tinh-luyen.items.<mã>{recipe, sell}, event-fragments.types.<mã>{until}, pet-capture.charm-item.
+  41 món cũ chuyển thành đồ mẫu `network-core/core-paper/src/main/resources/thuvien-mau.yml` (phien 1): banghoi bật lần đầu thì thêm món còn thiếu
+  (chỉ server có mục workshop). Đổi mẫu thì TĂNG `phien`. Thư viện đọc lại khi file đổi (không cần nạp lại).
+  Đồ rơi boss: module BossDrops (reflection EliteMobDeathEvent, CustomBossEntity -> tên file), file plugins/DuckyMoMoCore/boss-roi.yml
+  {<file boss>: [{do, ti-le, so, cho: top1|top3|tat-ca|ngau-nhien}]}, sửa ở trang Boss › 6. Trang Thư viện: chia đầu mục, tìm, "Đang dùng ở";
+  món đang dùng không xoá / không đổi công dụng được (panel lib_usage). Cài đặt: ô chọn món (libSelect) thay ô tự tạo đồ; kiểu mới `libitem`.
+  NGOÀI phạm vi: loot riêng của EliteMobs, kit tân thủ Essentials. Shopkeepers đã đặt món Tinh Luyện cũ: món vẫn nhận theo mã (dmm_tinhluyen).

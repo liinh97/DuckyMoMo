@@ -132,18 +132,31 @@ FISH_COST_RE = re.compile(r"^ca:(common|rare|epic|legendary)$")   # giá đổi 
 WORKSHOP_FEATURES = {"": False, "dao_vung": True, "chat_cay": True, "tu_nung": False, "da_nang": False, "gat_lua": False, "hut_do": False,
                      "nam_cham": True, "ban_ruong": False, "tui_hu": False, "nuoc": False, "dung_nham": False, "bat_thu": False, "co_le": False,
                      "moc_bay": True, "hut_mau": True, "khien_than": True, "kiem_nhat": True, "riu_chien": True}
+# tên + nghĩa của "value" từng kỹ năng (khớp Workshop.FEATURES), cho trang Thư viện đồ
+WORKSHOP_FEATURES_VI = {"": ["Không (chỉ phù phép)", ""], "dao_vung": ["Đào vùng", "1 = 3×3, 2 = 5×5"], "chat_cay": ["Chặt cả cây", "số khối gỗ tối đa"],
+                        "tu_nung": ["Tự nung (quặng ra thỏi)", ""], "da_nang": ["3 trong 1 (cuốc/rìu/xẻng)", ""], "gat_lua": ["Gặt 3×3 + gieo lại", ""],
+                        "hut_do": ["Đồ đào/săn bay vào túi", ""], "nam_cham": ["Hút đồ quanh người", "bán kính (khối)"], "ban_ruong": ["Bán cả rương", ""],
+                        "tui_hu": ["Rương ender từ xa", ""], "nuoc": ["Nước vô tận", ""], "dung_nham": ["Dung nham vô tận", ""],
+                        "bat_thu": ["Bắt thú thành trứng", ""], "co_le": ["Lấy lồng quái", ""], "moc_bay": ["Móc câu bay", "lực kéo (1–3)"],
+                        "hut_mau": ["Hút máu (cung/nỏ)", "máu hồi/phát (2 = 1 tim)"], "khien_than": ["Giảm sát thương + phản đòn (khiên)", "% giảm"],
+                        "kiem_nhat": ["Lướt chém (chuột phải)", "sát thương"], "riu_chien": ["Chí mạng + chảy máu", "% chí mạng"]}
 DISH_FOODS = {"BREAD", "COOKED_COD", "COOKED_SALMON", "BEETROOT_SOUP", "RABBIT_STEW", "MUSHROOM_STEW", "SUSPICIOUS_STEW", "BAKED_POTATO",
               "PUMPKIN_PIE", "COOKIE", "GOLDEN_CARROT", "COOKED_BEEF", "COOKED_PORKCHOP", "COOKED_CHICKEN", "COOKED_MUTTON", "COOKED_RABBIT",
-              "DRIED_KELP", "HONEY_BOTTLE", "APPLE", "SWEET_BERRIES", "GLOW_BERRIES"}   # khớp DISH_FOODS trong index.html
+              "DRIED_KELP", "HONEY_BOTTLE", "APPLE", "SWEET_BERRIES", "GLOW_BERRIES"}   # món ăn thư viện đồ phải là một trong số này
 DISH_EFFECTS = {"REGENERATION", "RESISTANCE", "ABSORPTION", "STRENGTH", "SPEED", "FIRE_RESISTANCE", "NIGHT_VISION", "WATER_BREATHING",
                 "JUMP_BOOST", "HASTE", "SATURATION", "HEALTH_BOOST"}
 
 
 def check_rewards(label, v):
     out = [" ".join(str(x).split()) for x in (v or []) if str(x).strip()]
+    lib = None
     for r in out:
         if not any(rx.match(r) for rx in REWARD_RES):
             raise ValueError(f"{label}: quà không hợp lệ \"{r}\"")
+        if r.startswith("do "):
+            lib = lib if lib is not None else lib_items()
+            if r.split()[1] not in lib:
+                raise ValueError(f"{label}: thư viện đồ không có \"{r.split()[1]}\"")
     return out
 
 
@@ -275,21 +288,18 @@ def validate(s, v):
             out.append({"id": tid, "text": DoubleQuotedScalarString(text), "price": int(price) if price == int(price) else price})
         return out
     if t == "fragtypes":
+        # loại mảnh = món thư viện đồ công dụng "manh": {mã: {until}}
         out = {}
         for fid, d in (v or {}).items():
-            fid = str(fid).strip().lower()
-            if not LIB_ID_RE.match(fid):
-                raise ValueError(f"{label}: mã loại mảnh \"{fid}\" chỉ gồm chữ thường không dấu, số, _")
-            d = d or {}
-            mat = str(d.get("material", "AMETHYST_SHARD")).strip().upper() or "AMETHYST_SHARD"
-            if not MATERIAL_RE.match(mat):
-                raise ValueError(f"{label} ({fid}): vật liệu sai")
-            until = str(d.get("until") or "").strip()
+            fid = lib_need(label, str(fid).strip().lower(), "manh")
+            until = str((d or {}).get("until") or "").strip()
             if until and not re.match(r"^\d{4}-\d{2}-\d{2}$", until):
                 raise ValueError(f"{label} ({fid}): hạn đổi dạng năm-tháng-ngày")
-            out[fid] = {"name": str(d.get("name", "")).strip()[:60] or fid, "material": mat,
-                        "lore": [str(x)[:100] for x in (d.get("lore") or [])][:8], "until": until}
+            out[fid] = {"until": until}
         return out
+    if t == "libitem":
+        # một món thư viện đồ (use: công dụng bắt buộc, vd bua-bat-pet)
+        return lib_need(label, str(v or "").strip().lower(), s.get("use"))
     if t == "fragshop":
         out = []
         for o in (v or []):
@@ -314,118 +324,69 @@ def validate(s, v):
             out.append({"label": str(o.get("label", "")).strip()[:40] or rw[0], "cost": cost, "limit": max(0, limit), "rewards": rw})
         return out
     if t == "dishes":
-        # món ăn ra trận: {mã: {name, material (ăn được), lore[], need {VẬT_LIỆU|ca:<độ hiếm>: số}, effects ["TÊN cấp giây"]}}
+        # món ăn ra trận: {mã thư viện (công dụng mon-an): {need {VẬT_LIỆU|ca:<độ hiếm>: số}}}; món + hiệu ứng ở thư viện đồ
         out = {}
         for did, d in (v or {}).items():
-            did = str(did).strip().lower()
-            d = d or {}
-            if not LIB_ID_RE.match(did):
-                raise ValueError(f"{label}: mã món sai ({did})")
-            name = str(d.get("name", "")).strip()[:60] or did
-            mat = str(d.get("material", "")).strip().upper()
-            if mat not in DISH_FOODS:
-                raise ValueError(f"{label} ({name}): vật phẩm hiển thị phải là đồ ăn được")
+            did = lib_need(label, str(did).strip().lower(), "mon-an")
             need = {}
-            for k, n in (d.get("need") or {}).items():
+            for k, n in ((d or {}).get("need") or {}).items():
                 k = str(k).strip()
                 k = k.lower() if FISH_COST_RE.match(k.lower()) else k.upper()
                 try:
                     n = int(n)
                 except (TypeError, ValueError):
-                    raise ValueError(f"{label} ({name}): số lượng nguyên liệu phải là số")
+                    raise ValueError(f"{label} ({did}): số lượng nguyên liệu phải là số")
                 if not (FISH_COST_RE.match(k) or MATERIAL_RE.match(k)) or not 1 <= n <= 640:
-                    raise ValueError(f"{label} ({name}): nguyên liệu sai ({k} {n})")
+                    raise ValueError(f"{label} ({did}): nguyên liệu sai ({k} {n})")
                 need[k] = n
-            effects = []
-            for e in (d.get("effects") or []):
-                m = re.match(r"^([A-Z_]+) ([0-3]) (\d{1,4})$", " ".join(str(e).upper().split()))
-                if not m or m.group(1) not in DISH_EFFECTS or not 1 <= int(m.group(3)) <= 3600:
-                    raise ValueError(f"{label} ({name}): hiệu ứng sai \"{e}\"")
-                effects.append(f"{m.group(1)} {m.group(2)} {int(m.group(3))}")
-            if not need or not effects:
-                raise ValueError(f"{label} ({name}): mỗi món cần ít nhất 1 nguyên liệu và 1 hiệu ứng")
-            out[did] = {"name": name, "material": mat, "lore": [str(x)[:80] for x in (d.get("lore") or [])][:3], "need": need, "effects": effects}
+            if not need:
+                raise ValueError(f"{label} ({did}): mỗi món cần ít nhất 1 nguyên liệu")
+            out[did] = {"need": need}
         if len(out) > 7:
             raise ValueError(f"{label}: tối đa 7 món (bếp chỉ có 7 ô)")
         return out
     if t == "workshop":
-        # Xưởng: {mã: {name, material, feature, value, text, uses, days, cost, grid [9 ô "VẬT_LIỆU số"|""], enchants {tên: cấp}, pvp, enabled, description[]}}
+        # Xưởng: {mã thư viện (công dụng ky-nang): {cost, grid [9 ô "VẬT_LIỆU số"|""], tinh-luyen {mã: số}, enabled}}; món + kỹ năng ở thư viện đồ
         out = {}
         for wid, d in (v or {}).items():
-            wid = str(wid).strip().lower()
+            wid = lib_need(label, str(wid).strip().lower(), "ky-nang")
             d = d or {}
-            if not LIB_ID_RE.match(wid):
-                raise ValueError(f"{label}: mã món sai ({wid})")
-            name = str(d.get("name", "")).strip()[:60] or wid
-            mat = str(d.get("material", "")).strip().upper()
-            if not MATERIAL_RE.match(mat):
-                raise ValueError(f"{label} ({name}): vật phẩm sai")
-            feat = str(d.get("feature", "") or "")
-            if feat not in WORKSHOP_FEATURES:
-                raise ValueError(f"{label} ({name}): hiệu ứng lạ \"{feat}\"")
-            def num(k, lo, hi, dflt, integer=True):
-                try:
-                    x = (int if integer else float)(d.get(k, dflt) if d.get(k, dflt) not in ("", None) else dflt)
-                except (TypeError, ValueError):
-                    raise ValueError(f"{label} ({name}): {k} phải là số")
-                if not lo <= x <= hi:
-                    raise ValueError(f"{label} ({name}): {k} phải từ {lo} đến {hi}")
-                return x
+            try:
+                cost = int(float(d.get("cost") or 0))
+            except (TypeError, ValueError):
+                raise ValueError(f"{label} ({wid}): giá phải là số")
+            if not 0 <= cost <= 1_000_000_000:
+                raise ValueError(f"{label} ({wid}): giá 0–1.000.000.000")
             grid = []
             for g in list(d.get("grid") or [])[:9]:
                 g = " ".join(str(g or "").split()).upper()
                 if g:
                     m = re.match(r"^([A-Z0-9_]+)(?:[ :X×]+(\d{1,3}))?$", g)
                     if not m or not 1 <= int(m.group(2) or 1) <= 640:
-                        raise ValueError(f"{label} ({name}): ô nguyên liệu sai \"{g}\" (dạng VẬT_LIỆU số)")
+                        raise ValueError(f"{label} ({wid}): ô nguyên liệu sai \"{g}\" (dạng VẬT_LIỆU số)")
                     g = f"{m.group(1)} {int(m.group(2) or 1)}"
                 grid.append(g)
             grid += [""] * (9 - len(grid))
-            ench = {}
-            for k, lv in (d.get("enchants") or {}).items():
-                k = str(k).strip()
-                if not re.match(r"^(ce:[A-Za-z0-9_-]{2,32}|[a-z0-9_]{2,40}(:[a-z0-9_]{2,40})?)$", k):
-                    raise ValueError(f"{label} ({name}): phù phép sai \"{k}\" (vd efficiency, enchantio:telepathy, ce:Blast)")
-                try:
-                    lv = int(lv)
-                except (TypeError, ValueError):
-                    raise ValueError(f"{label} ({name}): cấp phù phép phải là số")
-                if not 1 <= lv <= 255:
-                    raise ValueError(f"{label} ({name}): cấp phù phép 1–255")
-                ench[k] = lv
-            if not any(grid) and num("cost", 0, 1_000_000_000, 0) <= 0:
-                raise ValueError(f"{label} ({name}): cần ít nhất nguyên liệu hoặc giá xu")
-            o = {"name": name, "material": mat, "feature": feat}
-            if WORKSHOP_FEATURES[feat]:
-                o["value"] = num("value", 0, 1000, 0, integer=False)
-            text = str(d.get("text", "") or "").strip()[:80]
-            if text:
-                o["text"] = text
-            o.update({"uses": num("uses", -1, 10_000_000, -1), "days": num("days", 1, 365, 7), "cost": num("cost", 0, 1_000_000_000, 0),
-                      "grid": grid})
-            if ench:
-                o["enchants"] = ench
-            if d.get("pvp"):
-                o["pvp"] = True
+            if not any(grid) and cost <= 0:
+                raise ValueError(f"{label} ({wid}): cần ít nhất nguyên liệu hoặc giá xu")
+            o = {}
             if d.get("enabled") is False:
                 o["enabled"] = False
+            o.update({"cost": cost, "grid": grid})
             tl = {}
             for k, n in (d.get("tinh-luyen") or {}).items():
                 k = str(k).strip().lower()
                 if not re.match(r"^[a-z0-9_]{1,32}$", k):
-                    raise ValueError(f"{label} ({name}): mã món tinh luyện sai \"{k}\" (xem /tinhluyen ds)")
+                    raise ValueError(f"{label} ({wid}): mã món tinh luyện sai \"{k}\" (xem /tinhluyen ds)")
                 try:
                     n = int(n)
                 except (TypeError, ValueError):
-                    raise ValueError(f"{label} ({name}): số món tinh luyện phải là số")
+                    raise ValueError(f"{label} ({wid}): số món tinh luyện phải là số")
                 if not 1 <= n <= 64:
-                    raise ValueError(f"{label} ({name}): số món tinh luyện 1–64")
+                    raise ValueError(f"{label} ({wid}): số món tinh luyện 1–64")
                 tl[k] = n
             if tl:
                 o["tinh-luyen"] = tl
-            desc = [str(x).strip()[:90] for x in (d.get("description") or []) if str(x).strip()][:3]
-            if desc:
-                o["description"] = desc
             out[wid] = o
         if len(out) > 28:
             raise ValueError(f"{label}: tối đa 28 món (menu có 28 ô)")
@@ -1372,6 +1333,80 @@ def lib_load():
     return y, (doc if doc is not None else {})
 
 
+# Đầu mục (nhom) và công dụng (cong-dung) của món: khớp ItemLibrary.NHOM / STAMPERS (DuckyMoMoCore) và thuvien.html
+LIB_NHOM = {"vu-khi": "Vũ khí", "cong-cu": "Công cụ", "giap": "Giáp & khiên", "do-an": "Món ăn", "bua": "Bùa & tiêu hao",
+            "nguyen-lieu": "Nguyên liệu", "tien": "Tiền vật phẩm", "manh": "Mảnh sự kiện", "khac": "Khác"}
+LIB_USES = {"": "Đồ thường", "ky-nang": "Kỹ năng đặc biệt (Xưởng)", "mon-an": "Món ăn (hiệu ứng khi ăn)", "bua-bat-pet": "Bùa bắt pet",
+            "tinh-luyen": "Nguyên liệu Tinh Luyện", "manh": "Mảnh sự kiện"}
+LIB_MODEL_RE = re.compile(r"^[a-z0-9_.-]{1,32}:[a-z0-9_./-]{1,64}$")
+BOSS_DROPS_FILE = LIB_DIR / "boss-roi.yml"
+BOSS_DROP_TO = {"top1": "Người đánh nhiều nhất", "top3": "3 người đánh nhiều nhất (mỗi người tung riêng)",
+                "tat-ca": "Mọi người đã đánh (mỗi người tung riêng)", "ngau-nhien": "Một người đã đánh (ngẫu nhiên)"}
+
+
+def lib_items():
+    """{mã: mục} của thư viện đồ (đọc nhanh, không giữ comment)."""
+    try:
+        return (YAML(typ="safe").load(LIB_FILE.read_text(encoding="utf-8")) or {}).get("items") or {}
+    except (OSError, ValueError):
+        return {}
+
+
+def lib_need(label, iid, use=None):
+    """Mã phải có trong thư viện đồ (và đúng công dụng nếu use). Trả mã."""
+    it = lib_items().get(iid)
+    if not LIB_ID_RE.match(iid) or it is None:
+        raise ValueError(f"{label}: thư viện đồ không có \"{iid}\" (tạo ở trang Thư viện đồ trước)")
+    if use and (it or {}).get("cong-dung", "") != use:
+        raise ValueError(f"{label}: \"{iid}\" không phải món công dụng {LIB_USES.get(use, use)} (đặt công dụng ở trang Thư viện đồ)")
+    return iid
+
+
+def lib_usage():
+    """{mã: [chỗ dùng]} để trang Thư viện đồ biết món nào đang được dùng (chặn xoá nhầm)."""
+    out = {}
+    add = lambda iid, where: out.setdefault(str(iid), []).append(where) if where not in out.get(str(iid), []) else None
+    try:
+        core = YAML(typ="safe").load((LIB_DIR / "config.yml").read_text(encoding="utf-8")) or {}
+    except (OSError, ValueError):
+        core = {}
+    for k in ((core.get("workshop") or {}).get("items") or {}):
+        add(k, "Xưởng chế tạo")
+    for k in ((core.get("dishes") or {}).get("list") or {}):
+        add(k, "Bếp /nauan")
+    for k in ((core.get("tinh-luyen") or {}).get("items") or {}):
+        add(k, "Tinh Luyện")
+    for k in ((core.get("event-fragments") or {}).get("types") or {}):
+        add(k, "Mảnh sự kiện")
+    add((core.get("pet-capture") or {}).get("charm-item") or "bua_bat_pet", "Bùa bắt pet")
+    add((core.get("tinh-luyen") or {}).get("xu-quai", {}).get("item") or "xuquai", "Xu Quái rơi từ quái")
+
+    def walk(node, top):
+        if isinstance(node, dict):
+            if node.get("library"):
+                add(node["library"], "Cửa hàng Kinh Đô")
+            for v in node.values():
+                walk(v, top)
+        elif isinstance(node, list):
+            for v in node:
+                walk(v, top)
+        elif isinstance(node, str):
+            m = re.match(r"^do ([a-z0-9_]{1,32})\b", node)
+            if m:
+                add(m.group(1), f"Phần thưởng ({top})")
+    for top, v in core.items():
+        walk(v, top)
+    try:
+        drops = YAML(typ="safe").load(BOSS_DROPS_FILE.read_text(encoding="utf-8")) or {}
+    except (OSError, ValueError):
+        drops = {}
+    for f, lst in drops.items():
+        for d in lst or []:
+            if isinstance(d, dict) and d.get("do"):
+                add(d["do"], f"Boss {f}")
+    return out
+
+
 def lib_meta():
     try:
         return json.loads(LIB_META.read_text(encoding="utf-8"))
@@ -1399,7 +1434,9 @@ def thuvien_json():
                    "lore": list(src.get("lore") or []), "enchants": {str(k): int(v) for k, v in (src.get("enchants") or {}).items()},
                    "ce_enchants": {str(k): int(v) for k, v in (s.get("ce-enchants") or {}).items()},
                    "unbreakable": bool(src.get("unbreakable", False)), "hide_enchants": bool(s.get("hide-enchants", False)),
-                   "glint": s.get("glint"), "nguoi_luu": s.get("nguoi-luu", "")})
+                   "glint": s.get("glint"), "nguoi_luu": s.get("nguoi-luu", ""), "model": s.get("model", "") or "",
+                   "nhom": s.get("nhom", "") or "", "cong_dung": s.get("cong-dung", "") or "",
+                   "ky_nang": dict(s.get("ky-nang") or {}), "hieu_ung": [str(x) for x in (s.get("hieu-ung") or [])]})
         items.append(it)
     online = []
     try:
@@ -1415,7 +1452,61 @@ def thuvien_json():
             v = vi.get(str(c.get("name", "")).lower())
             if v:
                 c["vi"], c["vi_desc"] = str(v[0]), str(v[1])
-    return {"items": items, "meta": meta, "online": [n for n in online if PLAYER_RE.match(n)]}
+    return {"items": items, "meta": meta, "online": [n for n in online if PLAYER_RE.match(n)], "dung_o": lib_usage(),
+            "nhom": LIB_NHOM, "cong_dung": LIB_USES, "features": WORKSHOP_FEATURES_VI, "effects": sorted(DISH_EFFECTS), "foods": sorted(DISH_FOODS)}
+
+
+def lib_extra(it):
+    """Đầu mục + công dụng của món gửi từ trang Thư viện đồ -> mục YAML (nhom, cong-dung, ky-nang, hieu-ung)."""
+    out = {}
+    nhom = str(it.get("nhom") or "khac")
+    if nhom not in LIB_NHOM:
+        raise ValueError("Đầu mục không hợp lệ")
+    out["nhom"] = nhom
+    use = str(it.get("cong_dung") or "")
+    if use not in LIB_USES:
+        raise ValueError("Công dụng không hợp lệ")
+    if not use:
+        return out
+    out["cong-dung"] = use
+    if use == "ky-nang":
+        k = it.get("ky_nang") or {}
+        feat = str(k.get("feature") or "")
+        if feat not in WORKSHOP_FEATURES:
+            raise ValueError(f"Kỹ năng lạ \"{feat}\"")
+
+        def num(key, lo, hi, dflt, integer=True):
+            raw = k.get(key, dflt)
+            try:
+                x = (int if integer else float)(dflt if raw in ("", None) else raw)
+            except (TypeError, ValueError):
+                raise ValueError(f"Kỹ năng: {key} phải là số")
+            if not lo <= x <= hi:
+                raise ValueError(f"Kỹ năng: {key} phải từ {lo} đến {hi}")
+            return x
+        kn = {"feature": feat}
+        if WORKSHOP_FEATURES[feat]:
+            v = num("value", 0, 1000, 0, integer=False)
+            kn["value"] = int(v) if v == int(v) else v
+        text = str(k.get("text") or "").strip()[:80]
+        if text:
+            kn["text"] = DoubleQuotedScalarString(text)
+        kn["uses"] = num("uses", -1, 10_000_000, -1)
+        kn["days"] = num("days", 1, 365, 7)
+        if k.get("pvp"):
+            kn["pvp"] = True
+        out["ky-nang"] = kn
+    elif use == "mon-an":
+        effects = []
+        for e in it.get("hieu_ung") or []:
+            m = re.match(r"^([A-Z_]+) ([0-3]) (\d{1,4})$", " ".join(str(e).upper().split()))
+            if not m or m.group(1) not in DISH_EFFECTS or not 1 <= int(m.group(3)) <= 3600:
+                raise ValueError(f"Hiệu ứng sai \"{e}\" (loại, cấp 0–3, 1–3600 giây)")
+            effects.append(f"{m.group(1)} {m.group(2)} {int(m.group(3))}")
+        if not effects:
+            raise ValueError("Món ăn cần ít nhất 1 hiệu ứng khi ăn")
+        out["hieu-ung"] = effects
+    return out
 
 
 def thuvien_action(data, actor=None):
@@ -1435,14 +1526,32 @@ def thuvien_action(data, actor=None):
     if action == "delete":
         if iid not in items:
             raise ValueError("Không có món này")
+        used = lib_usage().get(iid)
+        if used:
+            raise ValueError("Món đang được dùng ở: " + ", ".join(used) + ". Bỏ chọn món ở những chỗ đó trước rồi mới xoá.")
         del items[iid]
     elif action == "save":
         it = data.get("item") or {}
         old = items.get(iid)
         if data.get("is_new") and old is not None:
             raise ValueError("Mã đã có trong thư viện, chọn mã khác")
+        extra = lib_extra(it)
+        need = {"Xưởng chế tạo": "ky-nang", "Bếp /nauan": "mon-an", "Tinh Luyện": "tinh-luyen", "Mảnh sự kiện": "manh", "Bùa bắt pet": "bua-bat-pet"}
+        for where in (lib_usage().get(iid) or []) if old is not None else []:
+            if where in need and extra.get("cong-dung", "") != need[where]:
+                raise ValueError(f"Món đang dùng ở {where} nên phải giữ công dụng {LIB_USES[need[where]]}. Bỏ chọn món ở đó trước nếu muốn đổi.")
         if old is not None and old.get("nguon") == "game":
-            raise ValueError("Mã này là đồ lấy từ game (giữ nguyên vẹn), không sửa trên web. Đổi mã khác, hoặc xoá món cũ trước.")
+            # đồ lấy từ game: hình dạng giữ nguyên vẹn, chỉ sửa đầu mục / công dụng / tên gợi nhớ
+            if extra.get("cong-dung") == "mon-an" and str((old.get("preview") or {}).get("material", "")).upper() not in DISH_FOODS:
+                raise ValueError("Món ăn phải là đồ ăn được")
+            for k in ("nhom", "cong-dung", "ky-nang", "hieu-ung"):
+                old.pop(k, None)
+            for k, v in extra.items():
+                old[k] = v
+            if it.get("ten_goi"):
+                old["ten-goi"] = DoubleQuotedScalarString(str(it["ten_goi"])[:60])
+            extra = None
+    if action == "save" and extra is not None:
         meta = lib_meta() or {}
         mat = str(it.get("material", "")).upper().strip()
         if not MATERIAL_RE.match(mat) or (meta.get("materials") and mat not in meta["materials"]):
@@ -1484,10 +1593,18 @@ def thuvien_action(data, actor=None):
             entry["hide-enchants"] = True
         if it.get("glint") in (True, False):
             entry["glint"] = it["glint"]
+        model = str(it.get("model") or "").strip().lower()
+        if model:
+            if not LIB_MODEL_RE.match(model):
+                raise ValueError("Hình riêng (model) dạng tên_gói:tên_hình, vd duckymomo:tl_sat")
+            entry["model"] = model
+        if extra.get("cong-dung") == "mon-an" and mat not in DISH_FOODS:
+            raise ValueError("Món ăn phải là đồ ăn được (bánh mì, cá chín, súp…)")
+        entry.update(extra)
         if actor:
             entry["nguoi-luu"] = actor
         items[iid] = entry
-    else:
+    elif action != "save":
         raise ValueError("Thao tác không hợp lệ")
     LIB_DIR.mkdir(parents=True, exist_ok=True)
     with LIB_FILE.open("w", encoding="utf-8") as f:
@@ -1539,7 +1656,57 @@ def boss_json():
             bosses.append({"file": f.name, "id": f.stem[4:] if web else f.stem, "web": web,
                            "backup": (BOSS_BACKUP_DIR / f.name).exists(), "extra": extra,
                            "data": {k: d.get(k) for k in BOSS_KEYS + BOSS_SLOTS if k in d}})
-    return {"bosses": bosses, "powers": boss_powers(), "entities": BOSS_ENTITIES, "slots": BOSS_SLOTS, "world": "world"}
+    try:
+        drops = YAML(typ="safe").load(BOSS_DROPS_FILE.read_text(encoding="utf-8")) or {}
+    except (OSError, ValueError):
+        drops = {}
+    for b in bosses:
+        b["drops"] = [d for d in (drops.get(b["file"]) or []) if isinstance(d, dict)]
+    lib = [{"id": str(k), "ten": str((v or {}).get("ten-goi") or k), "nhom": (v or {}).get("nhom") or "khac",
+            "name": str(((v or {}).get("preview") or {}).get("name", "") if (v or {}).get("nguon") == "game" else (v or {}).get("name", "") or "")}
+           for k, v in lib_items().items()]
+    return {"bosses": bosses, "powers": boss_powers(), "entities": BOSS_ENTITIES, "slots": BOSS_SLOTS, "world": "world",
+            "lib": lib, "nhom": LIB_NHOM, "drop_to": BOSS_DROP_TO}
+
+
+def boss_drops_save(fname, drops):
+    """Đồ rơi (chọn từ thư viện đồ) của một boss -> plugins/DuckyMoMoCore/boss-roi.yml; DuckyMoMoCore đọc lại khi file đổi."""
+    if not BOSS_FILE_RE.match(fname):
+        raise ValueError("Tên file boss không hợp lệ")
+    lib = lib_items()
+    out = []
+    for d in (drops or [])[:20]:
+        d = d or {}
+        iid = str(d.get("do") or "").strip().lower()
+        if iid not in lib:
+            raise ValueError(f"Đồ rơi: thư viện đồ không có \"{iid}\"")
+        try:
+            rate = float(d.get("ti-le"))
+            n = int(d.get("so") or 1)
+        except (TypeError, ValueError):
+            raise ValueError("Đồ rơi: tỉ lệ và số lượng phải là số")
+        if not 0.01 <= rate <= 100 or not 1 <= n <= 64:
+            raise ValueError("Đồ rơi: tỉ lệ 0,01–100%, số lượng 1–64")
+        to = str(d.get("cho") or "top1")
+        if to not in BOSS_DROP_TO:
+            raise ValueError("Đồ rơi: chọn người nhận không hợp lệ")
+        out.append({"do": iid, "ti-le": int(rate) if rate == int(rate) else rate, "so": n, "cho": to})
+    y = yaml_rt()
+    doc = y.load(BOSS_DROPS_FILE.read_text(encoding="utf-8")) if BOSS_DROPS_FILE.exists() else None
+    if doc is None:
+        doc = {}
+    if out:
+        doc[fname] = out
+    else:
+        doc.pop(fname, None)
+    LIB_DIR.mkdir(parents=True, exist_ok=True)
+    tmp = BOSS_DROPS_FILE.with_suffix(".yml.tmp")
+    with tmp.open("w", encoding="utf-8") as f:
+        f.write("# Đồ rơi boss chọn từ thư viện đồ (trang quản trị › Boss › Đồ rơi). Khoá = file boss EliteMobs.\n"
+                "# cho: top1 | top3 | tat-ca | ngau-nhien. DuckyMoMoCore đọc lại khi file đổi, không cần nạp lại.\n")
+        y.dump(doc, f)
+    tmp.replace(BOSS_DROPS_FILE)
+    return len(out)
 
 
 def boss_clean(b, partial, old_etype=None):
@@ -1628,6 +1795,12 @@ def boss_action(data):
         cmd = f"em spawn bossAt {fname} {world} {x:.1f} {y:.1f} {z:.1f}" + (f" {level}" if level else "")
         out = rcon(BOSS_SERVER, [cmd])[0][1]
         return {"ok": True, "message": f"Đã gọi {fname} tại {world} {x:.0f} {y:.0f} {z:.0f}. {out}".strip()}
+    if action == "drops":
+        fname = str(data.get("file") or "")
+        if not BOSS_FILE_RE.match(fname) or not (BOSS_DIR / fname).exists():
+            raise ValueError("Lưu boss trước rồi mới đặt đồ rơi")
+        n = boss_drops_save(fname, data.get("drops"))
+        return {"ok": True, "message": f"Đã lưu {n} món đồ rơi cho {fname} (có hiệu lực ngay, không cần nạp lại).", "data": boss_json()}
     fname = str(data.get("file") or "")
     shipped = bool(fname) and not fname.startswith("dmm_")
     if shipped:
@@ -1646,6 +1819,8 @@ def boss_action(data):
         if not path.exists():
             raise ValueError("Không có boss này")
         path.unlink()
+        if BOSS_DROPS_FILE.exists():
+            boss_drops_save(path.name, [])
     elif action == "restore":
         bak = BOSS_BACKUP_DIR / fname
         if not shipped or not bak.exists():

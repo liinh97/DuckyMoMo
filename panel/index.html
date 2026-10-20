@@ -79,6 +79,7 @@
   .rw-row .x:hover, .ms-head .x:hover, .qe-head .x:hover, .sp-head .x:hover, .fm-head .x:hover, .fs-head .x:hover, .sh-row .x:hover { background: rgba(217, 48, 37, .1); }
   .rw-add { align-self: flex-start; background: transparent; border: 1px dashed var(--line); color: var(--muted); border-radius: 8px; padding: 6px 12px; cursor: pointer; font-size: 13.5px; }
   .rw-add:hover { border-color: var(--accent); color: var(--accent); }
+  .small { font-size: 12.5px; color: var(--muted); }
   .ms { border: 1px solid var(--line); background: var(--card-2); border-radius: 10px; padding: 12px; margin-bottom: 10px; }
   .ms-head { display: flex; gap: 8px; align-items: center; margin-bottom: 10px; font-size: 14px; font-weight: 600; }
   .ms-head input { width: 90px; }
@@ -315,6 +316,10 @@ function row(mode, s) {
     input = dishesEditor(value || {}, v => change(mode, s, v, div));
   } else if (s.type === "workshop") {
     input = workshopEditor(value || {}, v => change(mode, s, v, div));
+  } else if (s.type === "libitem") {
+    input = document.createElement("div");
+    const sum = document.createElement("div"); sum.className = "small"; sum.style.marginTop = "4px";
+    input.append(libSelect(value || "", s.use || null, (v, init) => { libSummary(sum, v); if (!init && v) change(mode, s, v, div); }), sum);
   } else if (s.type === "spin") {
     input = spinEditor(value || [], v => change(mode, s, v, div));
   } else if (s.type === "quests") {
@@ -537,6 +542,45 @@ function lib() {
   if (!libCache) libCache = fetch("api/thuvien").then(r => r.json()).catch(() => ({ items: [], meta: null }));
   return libCache;
 }
+// Ô chọn món thư viện đồ, chia theo đầu mục; use = chỉ hiện món có công dụng đó (vd "ky-nang")
+const libEsc = (t) => String(t ?? "").replace(/[<>&"]/g, c => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;", '"': "&quot;" }[c]));
+function libSelect(cur, use, onChange) {
+  const sel = document.createElement("select");
+  sel.innerHTML = '<option value="">(đang tải thư viện…)</option>';
+  sel.dataset.v = cur || "";
+  lib().then(d => {
+    const v = sel.dataset.v, groups = {};
+    for (const it of d.items || []) if (!use || it.cong_dung === use) (groups[it.nhom || "khac"] = groups[it.nhom || "khac"] || []).push(it);
+    let html = '<option value="">Chọn món trong Thư viện đồ…</option>';
+    for (const [k, t] of Object.entries(d.nhom || { khac: "Khác" })) {
+      if (!groups[k]) continue;
+      html += `<optgroup label="${libEsc(t)}">` + groups[k].map(it => `<option value="${libEsc(it.id)}">${libEsc(it.ten_goi || it.id)} · ${libEsc(it.id)}</option>`).join("") + "</optgroup>";
+    }
+    if (v && !(d.items || []).some(it => it.id === v && (!use || it.cong_dung === use)))
+      html += `<option value="${libEsc(v)}">${libEsc(v)} (không có trong thư viện${use ? " với công dụng này" : ""}!)</option>`;
+    if (!Object.keys(groups).length) html += `<option value="" disabled>(chưa có món nào${use ? " công dụng này" : ""}: tạo ở trang Thư viện đồ)</option>`;
+    sel.innerHTML = html; sel.value = v; sel.dataset.v = sel.value;
+    if (onChange) onChange(sel.value, true);
+  });
+  sel.addEventListener("change", () => { sel.dataset.v = sel.value; if (onChange) onChange(sel.value, false); });
+  return sel;
+}
+// dòng tóm tắt món thư viện (kỹ năng, hiệu ứng…) dưới ô chọn
+function libSummary(el, id) {
+  lib().then(d => {
+    const it = (d.items || []).find(x => x.id === id);
+    if (!it) { el.textContent = id ? "Không có món này trong thư viện." : ""; return; }
+    const parts = [];
+    if (it.cong_dung === "ky-nang" && it.ky_nang) {
+      const f = (d.features || {})[it.ky_nang.feature];
+      parts.push("Kỹ năng: " + (it.ky_nang.text ? String(it.ky_nang.text).replace(/[&§][0-9a-fk-or]/gi, "") : (f ? f[0] : "phù phép")) + (f && f[1] && it.ky_nang.value ? " " + it.ky_nang.value : ""));
+      parts.push("độ bền " + (it.ky_nang.uses >= 0 ? Number(it.ky_nang.uses).toLocaleString("vi-VN") : "gốc"), "hạn " + (it.ky_nang.days || 7) + " ngày");
+      if (it.ky_nang.pvp) parts.push("mất tác dụng khi công thành");
+    }
+    if (it.cong_dung === "mon-an") parts.push("Hiệu ứng: " + (it.hieu_ung || []).map(e => { const a = e.split(" "); const n = (DISH_EFFECTS.find(x => x[0] === a[0]) || [a[0], a[0]])[1]; return n + " " + ["I", "II", "III", "IV"][+a[1]] + " " + a[2] + "s"; }).join(", "));
+    el.innerHTML = (parts.length ? libEsc(parts.join(" · ")) + " · " : "") + '<a href="thuvien" target="_blank">sửa món ở Thư viện đồ</a>';
+  });
+}
 const RW_KINDS = [["xu", "Xu"], ["do", "Đồ thư viện"], ["vat", "Đồ thường"], ["lenh", "Lệnh console"], ["manh", "Mảnh sự kiện"], ["petexp", "Kinh nghiệm pet"], ["danhhieu", "Danh hiệu"]];
 function rewardsEditor(list, onChange) {
   const box = document.createElement("div"); box.className = "rw";
@@ -559,26 +603,14 @@ function rewardsEditor(list, onChange) {
         main = document.createElement("input"); main.type = "number"; main.min = "1"; main.value = a[0] || "100"; amt.style.visibility = "hidden";
         if (k === "petexp") main.title = "Kinh nghiệm cộng cho pet đang dẫn (người chơi phải gọi pet ra mới đổi được)";
       } else if (k === "do") {
-        main = document.createElement("select");
-        main.innerHTML = '<option value="">(đang tải thư viện…)</option>';
-        main.dataset.v = a[0] || "";
-        lib().then(d => {
-          const cur = main.dataset.v;
-          const items = d.items || [];
-          main.innerHTML = items.map(it => '<option value="' + it.id + '">' + it.id + (it.ten_goi && it.ten_goi !== it.id ? " · " + String(it.ten_goi).replace(/[<>&"]/g, "") : "") + "</option>").join("")
-            || '<option value="">(thư viện trống: tạo ở trang Thư viện đồ)</option>';
-          if (cur && !items.some(it => it.id === cur)) main.insertAdjacentHTML("afterbegin", '<option value="' + cur + '">' + cur + " (không còn trong thư viện!)</option>");
-          if (cur) main.value = cur;
-          main.dataset.v = main.value;
-          emit();
-        });
+        main = libSelect(a[0] || "", null, () => emit());
         amt.value = a[1] || "1"; amt.title = "Số lượng (0 = theo thư viện)";
       } else if (k === "vat") {
         main = document.createElement("input"); main.placeholder = "Chọn vật phẩm…"; main.value = a[0] || ""; amt.value = a[1] || "1"; amt.title = "Số lượng";
       } else if (k === "danhhieu") {
         main = document.createElement("input"); main.placeholder = "mã danh hiệu, vd tienphong (leaderboard.titles)"; main.value = a[0] || ""; amt.style.visibility = "hidden";
       } else if (k === "manh") {
-        main = document.createElement("input"); main.placeholder = "loại mảnh, vd lamnguy"; main.value = a[0] || ""; amt.value = a[1] || "1"; amt.title = "Số mảnh";
+        main = libSelect(a[0] || "", "manh", () => emit()); amt.value = a[1] || "1"; amt.title = "Số mảnh";
       } else {
         main = document.createElement("input"); main.placeholder = "lệnh không có /, {player} = tên người chơi"; main.value = a.join(" "); amt.style.visibility = "hidden";
       }
@@ -719,35 +751,29 @@ function spinEditor(value, onChange) {
 
 // ---- Loại mảnh sự kiện: {mã: {name, material, lore[], until}}
 function fragTypesEditor(value, onChange) {
+  // loại mảnh = món thư viện đồ (công dụng Mảnh sự kiện); ở đây chỉ chọn món + hạn đổi
   const box = document.createElement("div");
   const ts = [];
   const emit = () => {
     const o = {};
-    for (const t of ts) {
-      const id = t.id.value.trim().toLowerCase();
-      if (!id) continue;
-      o[id] = { name: t.name.value, material: t.mat.value.trim().toUpperCase() || "AMETHYST_SHARD",
-        lore: t.lore.value.split("\n").map(x => x.trimEnd()).filter(Boolean), until: t.until.value };
-    }
+    for (const t of ts) if (t.sel.value) o[t.sel.value] = { until: t.until.value };
     onChange(o);
   };
   const add = document.createElement("button"); add.type = "button"; add.className = "rw-add"; add.textContent = "+ Thêm loại mảnh";
   function addT(id, d) {
     const wrap = document.createElement("div"); wrap.className = "ms";
-    wrap.innerHTML = '<div class="fm-head"><input placeholder="mã, vd lamnguy"><input placeholder="Tên (mã màu &), vd &c&lMảnh Lâm Nguy"><input placeholder="Chọn vật phẩm…"><input type="date" title="Hạn đổi (trống = không hạn)"><button type="button" class="x" title="Bỏ">×</button></div><textarea rows="2" placeholder="Mô tả (lore), mỗi dòng một dòng"></textarea>';
-    const [idEl, nameEl, matEl, untilEl] = wrap.querySelectorAll("input");
-    const t = { id: idEl, name: nameEl, mat: matEl, until: untilEl, lore: wrap.querySelector("textarea") };
-    idEl.value = id || ""; nameEl.value = d.name || ""; matEl.value = d.material || "AMETHYST_SHARD"; untilEl.value = d.until || "";
-    t.lore.value = (d.lore || []).join("\n");
-    for (const el of [idEl, nameEl, matEl, untilEl, t.lore]) el.oninput = emit;
+    wrap.innerHTML = '<div class="fm-head" style="grid-template-columns:minmax(200px,1fr) 170px 32px"><span></span><input type="date" title="Hạn đổi (trống = không hạn)"><button type="button" class="x" title="Bỏ">×</button></div><div class="small"></div>';
+    const t = { until: wrap.querySelector("input"), sel: null };
+    t.sel = libSelect(id || "", "manh", (v, init) => { libSummary(wrap.querySelector(".small"), v); if (!init) emit(); });
+    wrap.querySelector(".fm-head span").replaceWith(t.sel);
+    t.until.value = d.until || "";
+    t.until.oninput = emit;
     wrap.querySelector(".x").onclick = () => { ts.splice(ts.indexOf(t), 1); wrap.remove(); emit(); };
     ts.push(t); box.insertBefore(wrap, add);
-    matPick(matEl, emit);
   }
   box.appendChild(add);
-  add.onclick = () => { addT("", { material: "AMETHYST_SHARD" }); emit(); };
+  add.onclick = () => { addT("", {}); };
   for (const [id, d] of Object.entries(value || {})) addT(id, d || {});
-  if (!document.getElementById("rw-mats")) rewardsEditor([], () => {}); // tạo datalist vật liệu
   return box;
 }
 
@@ -784,45 +810,40 @@ function fragShopEditor(value, onChange) {
 }
 
 
-// ---- Món ăn ra trận (/nauan): {mã: {name, material, lore[], need {VẬT_LIỆU|ca:<độ hiếm>: số}, effects ["TÊN cấp giây"]}}
-const DISH_FOODS = [["BREAD", "Bánh mì"], ["COOKED_COD", "Cá tuyết chín"], ["COOKED_SALMON", "Cá hồi chín"], ["BEETROOT_SOUP", "Súp củ dền"],
-  ["RABBIT_STEW", "Thịt thỏ hầm"], ["MUSHROOM_STEW", "Súp nấm"], ["SUSPICIOUS_STEW", "Súp lạ"], ["BAKED_POTATO", "Khoai nướng"],
-  ["PUMPKIN_PIE", "Bánh bí ngô"], ["COOKIE", "Bánh quy"], ["GOLDEN_CARROT", "Cà rốt vàng"], ["COOKED_BEEF", "Bò bít tết"],
-  ["COOKED_PORKCHOP", "Thịt heo chín"], ["COOKED_CHICKEN", "Gà chín"], ["COOKED_MUTTON", "Cừu chín"], ["COOKED_RABBIT", "Thỏ chín"],
-  ["DRIED_KELP", "Tảo khô"], ["HONEY_BOTTLE", "Chai mật ong"], ["APPLE", "Táo"], ["SWEET_BERRIES", "Dâu rừng"], ["GLOW_BERRIES", "Dâu phát sáng"]];
+// ---- Món ăn ra trận (/nauan): {mã thư viện: {need {VẬT_LIỆU|ca:<độ hiếm>: số}}}
 const DISH_EFFECTS = [["REGENERATION", "Hồi máu"], ["RESISTANCE", "Kháng sát thương"], ["ABSORPTION", "Máu ảo"], ["STRENGTH", "Sức mạnh"],
   ["SPEED", "Nhanh nhẹn"], ["FIRE_RESISTANCE", "Kháng lửa"], ["NIGHT_VISION", "Nhìn đêm"], ["WATER_BREATHING", "Thở dưới nước"],
   ["JUMP_BOOST", "Nhảy cao"], ["HASTE", "Đào nhanh"], ["SATURATION", "No bụng"], ["HEALTH_BOOST", "Thêm máu tối đa"]];
 const DISH_FISH = [["ca:common", "Cá Thường"], ["ca:rare", "Cá Hiếm"], ["ca:epic", "Cá Quý"], ["ca:legendary", "Cá Huyền thoại"]];
 function dishesEditor(value, onChange) {
+  // món = món thư viện đồ (công dụng Món ăn: tên, vật phẩm, hiệu ứng ở thư viện); ở đây chỉ nguyên liệu
   const box = document.createElement("div"); box.className = "rw";
   const ds = [];
   const opt = (list, cur) => list.map(([v, t]) => `<option value="${v}"${v === cur ? " selected" : ""}>${t}</option>`).join("");
   const emit = () => {
     const out = {};
-    ds.forEach((d, i) => {
+    for (const d of ds) {
+      if (!d.sel.value) continue;
       const need = {};
       for (const r of d.needs) {
         const k = r.kind.value === "vat" ? String(r.mat.value || "").trim().toUpperCase() : r.kind.value;
         const n = parseInt(r.qty.value || "0", 10);
         if (k && n > 0) need[k] = (need[k] || 0) + n;
       }
-      const effects = d.effs.map(r => r.eff.value + " " + r.lv.value + " " + (parseInt(r.sec.value || "0", 10) || 30));
-      let id = d.id || ("mon_" + (i + 1));
-      while (out[id]) id += "_";
-      out[id] = { name: d.name.value.trim() || id, material: d.mat.value, lore: d.lore.value.trim() ? [d.lore.value.trim()] : [], need, effects };
-    });
+      out[d.sel.value] = { need };
+    }
     onChange(out);
   };
   const add = document.createElement("button"); add.type = "button"; add.className = "rw-add"; add.textContent = "+ Thêm món";
   function addDish(id, d) {
     const wrap = document.createElement("div"); wrap.className = "ms"; wrap.style.width = "100%"; wrap.style.boxSizing = "border-box";
     const head = document.createElement("div"); head.className = "fs-head";
-    head.style.cssText = "display:grid;grid-template-columns:minmax(160px,1.3fr) minmax(140px,1fr) minmax(140px,1.3fr) 32px;gap:8px;align-items:center";
-    head.innerHTML = `<input placeholder="Tên món (có mã màu &), vd &6Cá kho tộ"><select title="Món trông như vật phẩm nào (phải ăn được)">${opt(DISH_FOODS, d.material || "BREAD")}</select><input placeholder="Mô tả ngắn (tuỳ chọn)"><button type="button" class="x" title="Bỏ món">×</button>`;
-    const [name, mat, lore] = [head.children[0], head.children[1], head.children[2]];
-    name.value = d.name || ""; lore.value = (d.lore || [])[0] || "";
-    const o = { id, name, mat, lore, needs: [], effs: [] };
+    head.style.cssText = "display:grid;grid-template-columns:minmax(200px,1fr) 32px;gap:8px;align-items:center";
+    head.innerHTML = `<span></span><button type="button" class="x" title="Bỏ món">×</button>`;
+    const sum = document.createElement("div"); sum.className = "small"; sum.style.margin = "4px 0 8px";
+    const o = { sel: null, needs: [] };
+    o.sel = libSelect(id || "", "mon-an", (v, init) => { libSummary(sum, v); if (!init) emit(); });
+    head.firstChild.replaceWith(o.sel);
     const needBox = document.createElement("div"); needBox.className = "rw";
     const needT = document.createElement("div"); needT.className = "small"; needT.textContent = "Nguyên liệu (cần để nấu):";
     const addNeed = document.createElement("button"); addNeed.type = "button"; addNeed.className = "rw-add"; addNeed.textContent = "+ Nguyên liệu";
@@ -842,111 +863,59 @@ function dishesEditor(value, onChange) {
     }
     needBox.append(needT, addNeed);
     addNeed.onclick = () => { needRow("WHEAT", 1); emit(); };
-    const effBox = document.createElement("div"); effBox.className = "rw";
-    const effT = document.createElement("div"); effT.className = "small"; effT.textContent = "Hiệu ứng khi ăn (loại · cấp · số giây):";
-    const addEff = document.createElement("button"); addEff.type = "button"; addEff.className = "rw-add"; addEff.textContent = "+ Hiệu ứng";
-    function effRow(spec) {
-      const a = String(spec || "REGENERATION 0 30").split(/\s+/);
-      const row = document.createElement("div"); row.className = "rw-row"; row.style.gridTemplateColumns = "minmax(160px,1fr) 80px 120px 32px";
-      row.innerHTML = `<select>${opt(DISH_EFFECTS, a[0])}</select><select title="Cấp">${opt([["0", "I"], ["1", "II"], ["2", "III"], ["3", "IV"]], a[1] || "0")}</select><input type="number" min="1" max="3600" title="Thời gian (giây)" placeholder="giây"><button type="button" class="x" title="Bỏ">×</button>`;
-      const [eff, lv, sec, x] = row.children;
-      sec.value = a[2] || 30;
-      const r = { eff, lv, sec };
-      for (const el of [eff, lv]) el.onchange = emit;
-      sec.oninput = emit;
-      x.onclick = () => { o.effs.splice(o.effs.indexOf(r), 1); row.remove(); emit(); };
-      o.effs.push(r); effBox.insertBefore(row, addEff);
-    }
-    effBox.append(effT, addEff);
-    addEff.onclick = () => { effRow(); emit(); };
     for (const [k, n] of Object.entries(d.need || {})) needRow(k, n);
-    for (const e of d.effects || []) effRow(e);
-    name.oninput = emit; mat.onchange = emit; lore.oninput = emit;
     head.querySelector(".x").onclick = () => { ds.splice(ds.indexOf(o), 1); wrap.remove(); emit(); };
-    wrap.append(head, needBox, effBox);
+    wrap.append(head, sum, needBox);
     ds.push(o); box.insertBefore(wrap, add);
   }
   box.appendChild(add);
-  add.onclick = () => { addDish(null, { name: "", material: "BREAD", need: { WHEAT: 3 }, effects: ["REGENERATION 0 30"] }); emit(); };
+  add.onclick = () => { addDish("", { need: { WHEAT: 3 } }); };
   for (const [id, d] of Object.entries(value || {})) addDish(id, d || {});
   return box;
 }
 
-// ---- Xưởng chế tạo: {mã: {name, material, feature, value, text, uses, days, cost, grid[9], enchants{}, pvp, enabled, description[]}}
-const WS_FEATURES = [["", "Không (chỉ phù phép)", ""], ["dao_vung", "Đào vùng", "1 = 3×3, 2 = 5×5"], ["chat_cay", "Chặt cả cây", "số khối gỗ tối đa"],
-  ["tu_nung", "Tự nung (quặng ra thỏi)", ""], ["da_nang", "3 trong 1 (cuốc/rìu/xẻng)", ""], ["gat_lua", "Gặt 3×3 + gieo lại", ""],
-  ["hut_do", "Đồ đào/săn bay vào túi", ""], ["nam_cham", "Hút đồ quanh người", "bán kính (khối)"], ["ban_ruong", "Bán cả rương", ""],
-  ["tui_hu", "Rương ender từ xa", ""], ["nuoc", "Nước vô tận", ""], ["dung_nham", "Dung nham vô tận", ""], ["bat_thu", "Bắt thú thành trứng", ""],
-  ["co_le", "Lấy lồng quái", ""], ["moc_bay", "Móc câu bay", "lực kéo (1–3)"], ["hut_mau", "Hút máu (cung/nỏ)", "máu hồi/phát (2 = 1 tim)"],
-  ["khien_than", "Giảm sát thương + phản đòn (khiên)", "% giảm"], ["kiem_nhat", "Lướt chém (chuột phải)", "sát thương"], ["riu_chien", "Chí mạng + chảy máu", "% chí mạng"]];
+// ---- Xưởng chế tạo: {mã thư viện: {cost, grid[9], tinh-luyen{}, enabled}}
 function workshopEditor(value, onChange) {
+  // món = món thư viện đồ (công dụng Kỹ năng đặc biệt: tên, phù phép, kỹ năng, độ bền, hạn ở thư viện); ở đây chỉ công thức
   const box = document.createElement("div"); box.className = "rw";
   const items = [];
   const emit = () => {
     const out = {};
-    items.forEach((o, i) => {
-      let id = (o.id.value || "").trim().toLowerCase().replace(/[^a-z0-9_]/g, "_") || ("mon_" + (i + 1));
-      while (out[id]) id += "_";
-      const ench = {};
-      for (const part of o.ench.value.split(",")) {
-        const p = part.trim(); if (!p) continue;
-        const m = p.match(/^(.+?)[:\s]+(\d+)$/);
-        if (m) ench[m[1].trim()] = +m[2]; else ench[p] = 1;
-      }
-      const d = { name: o.name.value.trim() || id, material: o.mat.value.trim().toUpperCase(), feature: o.feat.value,
-        uses: o.uses.value === "" ? -1 : +o.uses.value, days: +o.days.value || 7, cost: +o.cost.value || 0,
-        grid: o.cells.map(c => c.m.value.trim() ? c.m.value.trim().toUpperCase() + " " + (+c.n.value || 1) : "") };
-      const f = WS_FEATURES.find(x => x[0] === o.feat.value);
-      if (f && f[2]) d.value = +o.val.value || 0;
-      if (o.text.value.trim()) d.text = o.text.value.trim();
-      if (Object.keys(ench).length) d.enchants = ench;
-      if (o.pvp.checked) d.pvp = true;
+    for (const o of items) {
+      if (!o.sel.value) continue;
+      const d = {};
       if (!o.on.checked) d.enabled = false;
-      if (o.desc.value.trim()) d.description = [o.desc.value.trim()];
+      d.cost = +o.cost.value || 0;
+      d.grid = o.cells.map(c => c.m.value.trim() ? c.m.value.trim().toUpperCase() + " " + (+c.n.value || 1) : "");
       const tl = {};
       for (const part of o.tl.value.split(",")) {
         const m = part.trim().toLowerCase().match(/^([a-z0-9_]+)(?:[:\s]+(\d+))?$/);
         if (m) tl[m[1]] = +(m[2] || 1);
       }
       if (Object.keys(tl).length) d["tinh-luyen"] = tl;
-      out[id] = d;
-    });
+      out[o.sel.value] = d;
+    }
     onChange(out);
   };
   const add = document.createElement("button"); add.type = "button"; add.className = "rw-add"; add.textContent = "+ Thêm món";
   function addItem(id, d) {
     const wrap = document.createElement("div"); wrap.className = "ms";
-    const fopt = WS_FEATURES.map(([v, t]) => `<option value="${v}"${v === (d.feature || "") ? " selected" : ""}>${t}</option>`).join("");
     wrap.innerHTML = `
-      <div class="ws-row" style="grid-template-columns:minmax(110px,.7fr) minmax(160px,1.3fr) minmax(150px,1fr) 70px 32px">
-        <label>Mã<input class="i-id" placeholder="vd khoan_dao"></label>
-        <label>Tên (mã màu &)<input class="i-name" placeholder="&b&lKhoan Đào"></label>
-        <label>Vật phẩm<input class="i-mat" placeholder="DIAMOND_PICKAXE"></label>
+      <div class="ws-row" style="grid-template-columns:minmax(220px,1.6fr) minmax(120px,.7fr) 70px 32px">
+        <label>Món (Thư viện đồ)<span class="i-sel"></span></label>
+        <label>Giá (xu)<input type="number" min="0" class="i-cost"></label>
         <label>Bán<input type="checkbox" class="i-on"></label>
         <button type="button" class="x" title="Bỏ món">×</button></div>
-      <div class="ws-row" style="grid-template-columns:minmax(200px,1.4fr) minmax(110px,.7fr) minmax(180px,1.2fr)">
-        <label>Hiệu ứng<select class="i-feat">${fopt}</select></label>
-        <label class="l-val">Chỉ số<input type="number" step="0.5" class="i-val"></label>
-        <label>Chữ "Tính năng" (tuỳ chọn)<input class="i-text" placeholder="để trống = tự ghi theo hiệu ứng"></label></div>
-      <div class="ws-row" style="grid-template-columns:repeat(4,minmax(110px,1fr))">
-        <label>Độ bền (-1 = gốc)<input type="number" min="-1" class="i-uses"></label>
-        <label>Thời hạn (ngày)<input type="number" min="1" max="365" class="i-days"></label>
-        <label>Giá (xu)<input type="number" min="0" class="i-cost"></label>
-        <label>Mất tác dụng khi công thành<input type="checkbox" class="i-pvp"></label></div>
+      <div class="small i-sum" style="margin:-2px 0 8px"></div>
       <div class="small" style="margin:4px 0">Bàn chế 3×3 (vật phẩm + số lượng, để trống = ô trống):</div>
       <div class="ws-grid"></div>
-      <div class="ws-row" style="grid-template-columns:1fr 1fr;margin-top:8px">
-        <label>Phù phép (cách nhau dấu phẩy)<input class="i-ench" placeholder="efficiency:4, enchantio:telepathy:1, ce:Blast:1"></label>
-        <label>Mô tả thêm (tuỳ chọn)<input class="i-desc" placeholder="vd Không hút đồ người khác"></label></div>
       <div class="ws-row" style="grid-template-columns:1fr;margin-top:8px">
         <label>Món Tinh Luyện cần thêm (mã:số, cách nhau dấu phẩy; xem /tinhluyen ds)<input class="i-tl" placeholder="vd sat:1, kimcuong:1 (để trống = không cần)"></label></div>`;
     const q = c => wrap.querySelector(c);
-    const o = { id: q(".i-id"), name: q(".i-name"), mat: q(".i-mat"), on: q(".i-on"), feat: q(".i-feat"), val: q(".i-val"), text: q(".i-text"),
-      uses: q(".i-uses"), days: q(".i-days"), cost: q(".i-cost"), pvp: q(".i-pvp"), ench: q(".i-ench"), desc: q(".i-desc"), tl: q(".i-tl"), cells: [] };
-    o.id.value = id || ""; o.name.value = d.name || ""; o.mat.value = d.material || ""; o.on.checked = d.enabled !== false;
-    o.val.value = d.value ?? ""; o.text.value = d.text || ""; o.uses.value = d.uses ?? -1; o.days.value = d.days || 7; o.cost.value = d.cost || 0;
-    o.pvp.checked = !!d.pvp; o.desc.value = (d.description || [])[0] || "";
-    o.ench.value = Object.entries(d.enchants || {}).map(([k, v]) => k + ":" + v).join(", ");
+    const o = { on: q(".i-on"), cost: q(".i-cost"), tl: q(".i-tl"), cells: [], sel: null };
+    o.sel = libSelect(id || "", "ky-nang", (v, init) => { libSummary(q(".i-sum"), v); if (!init) emit(); });
+    q(".i-sel").replaceWith(o.sel);
+    o.on.checked = d.enabled !== false; o.cost.value = d.cost || 0;
     o.tl.value = Object.entries(d["tinh-luyen"] || {}).map(([k, v]) => k + ":" + v).join(", ");
     const gridBox = q(".ws-grid");
     const grid = (d.grid && d.grid.length) ? d.grid : Object.entries(d.ingredients || {}).map(([k, v]) => k + " " + v);
@@ -959,21 +928,13 @@ function workshopEditor(value, onChange) {
       matPick(m, emit); m.oninput = emit; n.oninput = emit;
       o.cells.push({ m, n }); gridBox.appendChild(cell);
     }
-    matPick(o.mat, emit);
-    const syncVal = () => {
-      const f = WS_FEATURES.find(x => x[0] === o.feat.value);
-      q(".l-val").style.visibility = f && f[2] ? "visible" : "hidden";
-      q(".l-val").firstChild.textContent = f && f[2] ? "Chỉ số: " + f[2] : "Chỉ số";
-    };
-    syncVal();
-    o.feat.onchange = () => { syncVal(); emit(); };
-    for (const el of [o.id, o.name, o.mat, o.val, o.text, o.uses, o.days, o.cost, o.ench, o.desc, o.tl]) el.oninput = emit;
-    o.on.onchange = emit; o.pvp.onchange = emit;
+    for (const el of [o.cost, o.tl]) el.oninput = emit;
+    o.on.onchange = emit;
     q(".x").onclick = () => { items.splice(items.indexOf(o), 1); wrap.remove(); emit(); };
     items.push(o); box.insertBefore(wrap, add);
   }
   box.appendChild(add);
-  add.onclick = () => { addItem("", { name: "", material: "DIAMOND_PICKAXE", feature: "", uses: 3000, days: 7, cost: 5000, grid: ["DIAMOND 3", "", "", "", "STICK 2"] }); emit(); };
+  add.onclick = () => { addItem("", { cost: 5000, grid: ["DIAMOND 3", "", "", "", "STICK 2"] }); };
   for (const [id, d] of Object.entries(value || {})) addItem(id, d || {});
   return box;
 }

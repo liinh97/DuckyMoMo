@@ -33,9 +33,10 @@ import org.bukkit.potion.PotionEffectType;
 
 /**
  * Món ăn ra trận (/nauan): nấu cá câu (EvenMoreFish, theo độ hiếm) + nông sản thành món ăn cho hiệu ứng ngắn khi ăn.
- * Config dishes: cooldown-minutes (ăn món này xong phải chờ mới ăn được món khác), list.<mã>: {name, material, lore,
- * need {VẬT_LIỆU: số, "ca:<độ hiếm>": số}, effects ["HIỆU_ỨNG cấp giây"]} (cấp 0 = I). Món là đồ vật có dấu PDC dmm_mon
- * (trao đổi, bán, nộp kho lương được). Không bán bằng tiền thật.
+ * Config dishes: cooldown-minutes (ăn món này xong phải chờ mới ăn được món khác), list.<mã thư viện>: {need {VẬT_LIỆU: số,
+ * "ca:<độ hiếm>": số}}. Món (tên, vật phẩm ăn được, mô tả) và hiệu ứng khi ăn ["HIỆU_ỨNG cấp giây"] (cấp 0 = I) nằm ở THƯ VIỆN ĐỒ,
+ * công dụng "mon-an", mục hieu-ung (20/10). Món là đồ vật có dấu PDC dmm_mon = mã (trao đổi, bán, nộp kho lương được); món thư viện
+ * phát từ boss / phần thưởng cũng ăn được hiệu ứng. Không bán bằng tiền thật.
  */
 final class Dishes implements Listener {
 
@@ -46,7 +47,7 @@ final class Dishes implements Listener {
     static volatile java.util.function.Predicate<Player> kitchenHere;
     static volatile double kitchenBonus;
 
-    private record Dish(String id, String name, Material material, List<String> lore, Map<String, Integer> need, List<String> effects) { }
+    private record Dish(String id, Map<String, Integer> need) { }
 
     private static final class Holder implements InventoryHolder {
         Inventory inv;
@@ -70,9 +71,7 @@ final class Dishes implements Listener {
         if (l != null) {
             for (String id : l.getKeys(false)) {
                 ConfigurationSection d = l.getConfigurationSection(id);
-                Material m = d == null ? null : Material.matchMaterial(d.getString("material", "BREAD"));
-                if (m == null || !m.isEdible()) {
-                    plugin.getLogger().warning("Món " + id + ": vật liệu không ăn được, bỏ");
+                if (d == null) {
                     continue;
                 }
                 Map<String, Integer> need = new LinkedHashMap<>();
@@ -82,9 +81,40 @@ final class Dishes implements Listener {
                         need.put(k, n.getInt(k));
                     }
                 }
-                dishes.put(id, new Dish(id, d.getString("name", id), m, d.getStringList("lore"), need, d.getStringList("effects")));
+                dishes.put(id, new Dish(id, need));
             }
         }
+        ItemLibrary.STAMPERS.put("mon-an", Dishes::stamp);
+    }
+
+    /** Hiệu ứng khi ăn món thư viện này ([] nếu không phải món ăn). */
+    private static List<String> effects(String id) {
+        ItemLibrary lib = Shared.library;
+        ConfigurationSection s = lib == null ? null : lib.section(id);
+        return s == null || !"mon-an".equals(s.getString("cong-dung", "")) ? List.of() : s.getStringList("hieu-ung");
+    }
+
+    private static String dishName(String id) {
+        ItemLibrary lib = Shared.library;
+        return lib == null ? id : lib.name(id);
+    }
+
+    /** Đóng dấu món ăn lên đồ thư viện: dòng hiệu ứng + dấu dmm_mon. */
+    private static ItemStack stamp(ItemStack it, String id, ConfigurationSection s) {
+        if (KEY == null) {
+            return it;
+        }
+        ItemMeta meta = it.getItemMeta();
+        List<Component> lore = meta.lore() == null ? new ArrayList<>() : new ArrayList<>(meta.lore());
+        lore.add(c("&8Khi ăn:"));
+        for (String e : s.getStringList("hieu-ung")) {
+            lore.add(c("&a• " + effectText(e)));
+        }
+        lore.add(c("&8Món ăn ra trận · /nauan"));
+        meta.lore(lore);
+        meta.getPersistentDataContainer().set(KEY, PersistentDataType.STRING, id);
+        it.setItemMeta(meta);
+        return it;
     }
 
     boolean ready() {
@@ -103,21 +133,11 @@ final class Dishes implements Listener {
         return isDish(it) ? it.getItemMeta().getPersistentDataContainer().get(KEY, PersistentDataType.STRING) : null;
     }
 
+    /** Món từ thư viện (null nếu thư viện không còn món này hoặc không phải món ăn). */
     private ItemStack make(Dish d, int amount) {
-        ItemStack it = new ItemStack(d.material(), amount);
-        ItemMeta meta = it.getItemMeta();
-        meta.displayName(c(d.name()));
-        List<Component> lore = new ArrayList<>();
-        d.lore().forEach(x -> lore.add(c("&7" + x)));
-        lore.add(c("&8Khi ăn:"));
-        for (String e : d.effects()) {
-            lore.add(c("&a• " + effectText(e)));
-        }
-        lore.add(c("&8Món ăn ra trận · /nauan"));
-        meta.lore(lore);
-        meta.getPersistentDataContainer().set(KEY, PersistentDataType.STRING, d.id());
-        it.setItemMeta(meta);
-        return it;
+        ItemLibrary lib = Shared.library;
+        ItemStack it = lib == null ? null : lib.build(d.id(), amount);
+        return it != null && isDish(it) ? it : null;
     }
 
     private static final Map<String, String> EFFECT_VI = Map.ofEntries(
@@ -202,7 +222,11 @@ final class Dishes implements Listener {
             if (slot > 16) {
                 break;
             }
-            h.inv.setItem(slot, icon(p, d));
+            ItemStack ic = icon(p, d);
+            if (ic == null) {
+                continue;
+            }
+            h.inv.setItem(slot, ic);
             h.slots.put(slot, d);
             slot++;
         }
@@ -212,6 +236,9 @@ final class Dishes implements Listener {
 
     private ItemStack icon(Player p, Dish d) {
         ItemStack it = make(d, 1);
+        if (it == null) {
+            return null;
+        }
         ItemMeta meta = it.getItemMeta();
         List<Component> lore = meta.lore() == null ? new ArrayList<>() : new ArrayList<>(meta.lore());
         lore.add(c("&7Cần:"));
@@ -244,8 +271,12 @@ final class Dishes implements Listener {
                 return;
             }
         }
-        d.need().forEach((k, v) -> take(p, k, v));
         ItemStack dish = make(d, 1);
+        if (dish == null) {
+            p.sendMessage(c("&cMón này không còn trong thư viện đồ, báo admin."));
+            return;
+        }
+        d.need().forEach((k, v) -> take(p, k, v));
         var kh = kitchenHere;
         boolean home = kh != null && kitchenBonus > 0 && kh.test(p);
         if (home) {
@@ -259,7 +290,7 @@ final class Dishes implements Listener {
         Rewards.hand(p, dish);
         Achievements.add(p, "nauan", 1);
         p.playSound(p.getLocation(), Sound.BLOCK_SMOKER_SMOKE, 0.8f, 1f);
-        p.sendMessage(c("&a🍲 Đã nấu " + d.name() + "&a."));
+        p.sendMessage(c("&a🍲 Đã nấu " + dishName(d.id()) + "&a."));
         h.inv.setItem(e.getRawSlot(), icon(p, d));
     }
 
@@ -273,8 +304,8 @@ final class Dishes implements Listener {
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onEat(PlayerItemConsumeEvent e) {
         String id = dishId(e.getItem());
-        Dish d = id == null ? null : dishes.get(id);
-        if (d == null) {
+        List<String> fx = id == null ? List.of() : effects(id);
+        if (fx.isEmpty()) {
             return;
         }
         Player p = e.getPlayer();
@@ -285,7 +316,7 @@ final class Dishes implements Listener {
             return;
         }
         lastEat.put(p.getUniqueId(), System.currentTimeMillis());
-        for (String spec : d.effects()) {
+        for (String spec : fx) {
             String[] a = spec.trim().split("\\s+");
             PotionEffectType t = org.bukkit.Registry.EFFECT.get(org.bukkit.NamespacedKey.minecraft(a[0].toLowerCase(Locale.ROOT)));
             if (t == null) {
@@ -298,7 +329,7 @@ final class Dishes implements Listener {
             }
             p.addPotionEffect(new PotionEffect(t, sec * 20, lv, false, true, true));
         }
-        p.sendMessage(c("&a🍲 " + d.name() + "&a: " + String.join(", ", d.effects().stream().map(Dishes::effectText).toList())));
+        p.sendMessage(c("&a🍲 " + dishName(id) + "&a: " + String.join(", ", fx.stream().map(Dishes::effectText).toList())));
     }
 
     private static Component c(String s) {

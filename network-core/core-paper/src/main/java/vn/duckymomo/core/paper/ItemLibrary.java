@@ -33,28 +33,143 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
- * Thư viện đồ: đồ đặt sẵn để làm phần thưởng (điểm danh, nhiệm vụ, vòng quay, đổi mảnh, cửa hàng) hoặc admin phát.
+ * Thư viện đồ: NƠI DUY NHẤT định nghĩa vật phẩm đặc biệt (20/10). Chỗ khác chỉ chọn mã thư viện và giữ thông số của riêng mình:
+ * Xưởng (giá, bàn chế), món ăn /nauan (nguyên liệu), Tinh Luyện (công thức, giá bán), mảnh sự kiện (hạn đổi), bùa bắt pet (% cộng),
+ * boss (tỉ lệ rơi, cho ai: boss-roi.yml), phần thưởng "do <mã>". Mã của Xưởng / món ăn / Tinh Luyện / mảnh = mã thư viện.
  * Hai loại trong plugins/DuckyMoMoCore/thuvien-do.yml:
- *   nguon: web  – tạo/sửa trên trang Cài đặt (/thuvien): material, name, lore, enchants (cho phép vượt cấp), unbreakable…
+ *   nguon: web  – tạo/sửa trên trang Thư viện đồ (/thuvien): material, name, lore, enchants (cho phép vượt cấp), unbreakable, model…
  *   nguon: game – /dmm luudo <mã> khi cầm đồ: giữ nguyên vẹn (base64 của ItemStack), kèm "preview" để web hiển thị.
+ * Chung cho cả hai: nhom (đầu mục trên web), cong-dung (ky-nang | mon-an | bua-bat-pet | tinh-luyen | manh; trống = đồ thường),
+ *   ky-nang {feature, value, text, uses, days, pvp} (Workshop), hieu-ung ["HIỆU_ỨNG cấp giây"] (Dishes).
+ * Mọi món dựng ra mang dấu PDC thuvien_id = mã; module có công dụng đóng thêm dấu riêng (STAMPERS) nên đồ thư viện phát ở đâu cũng dùng được.
+ * Đồ mẫu (thuvien-mau.yml trong jar, có "phien"): lần bật đầu sau khi tăng phiên thì thêm món mẫu CHƯA có (không đè món admin đã sửa).
  * Lúc bật, ghi thuvien-meta.json (danh sách phù phép + vật liệu của server, kể cả phù phép plugin như Enchantio) cho trang web.
  */
 final class ItemLibrary {
     static final Pattern ID = Pattern.compile("[a-z0-9_]{1,32}");
     private static final LegacyComponentSerializer LEGACY = LegacyComponentSerializer.legacyAmpersand();
 
+    /** Công dụng -> module đóng dấu riêng lên đồ (Workshop, Dishes, PetCapture, Refining, FragmentShop đăng ký khi bật). */
+    interface Stamper {
+        ItemStack stamp(ItemStack item, String id, ConfigurationSection s);
+    }
+
+    static final Map<String, Stamper> STAMPERS = new java.util.concurrent.ConcurrentHashMap<>();
+    /** Đầu mục (nhom) -> tên hiện; khớp NHOM trong panel/thuvien.html. */
+    static final Map<String, String> NHOM = new LinkedHashMap<>();
+
+    static {
+        NHOM.put("vu-khi", "Vũ khí");
+        NHOM.put("cong-cu", "Công cụ");
+        NHOM.put("giap", "Giáp & khiên");
+        NHOM.put("do-an", "Món ăn");
+        NHOM.put("bua", "Bùa & tiêu hao");
+        NHOM.put("nguyen-lieu", "Nguyên liệu");
+        NHOM.put("tien", "Tiền vật phẩm");
+        NHOM.put("manh", "Mảnh sự kiện");
+        NHOM.put("khac", "Khác");
+    }
+
+    private static NamespacedKey idKey;
     private final JavaPlugin plugin;
     private final File file;
     private final CeBridge ce;
+    private YamlConfiguration cache;
+    private long cacheStamp = -1;
+    private int version;
 
     ItemLibrary(JavaPlugin plugin) {
         this.plugin = plugin;
         this.file = new File(plugin.getDataFolder(), "thuvien-do.yml");
         this.ce = new CeBridge(plugin.getLogger());
+        idKey = new NamespacedKey(plugin, "thuvien_id");
+        importTemplate();
     }
 
-    private YamlConfiguration load() {
-        return YamlConfiguration.loadConfiguration(file);
+    /** Đọc file (giữ bản đã đọc tới khi file đổi: web lưu là thấy ngay, không đọc lại mỗi lần phát đồ). */
+    private synchronized YamlConfiguration load() {
+        long stamp = file.lastModified() ^ file.length();
+        if (cache == null || stamp != cacheStamp) {
+            cache = YamlConfiguration.loadConfiguration(file);
+            cacheStamp = stamp;
+            version++;
+        }
+        return cache;
+    }
+
+    /** Tăng mỗi lần file thư viện đổi: module giữ bản tính sẵn (Workshop) so số này để tính lại. */
+    int version() {
+        load();
+        return version;
+    }
+
+    /** Mục của một món (null nếu không có). Đừng sửa: dùng chung bản đã đọc. */
+    ConfigurationSection section(String id) {
+        return id == null ? null : load().getConfigurationSection("items." + id);
+    }
+
+    /** Tên hiện của món (mã màu &), trống nếu chưa đặt tên. */
+    String name(String id) {
+        ConfigurationSection s = section(id);
+        if (s == null) {
+            return id;
+        }
+        String n = "game".equals(s.getString("nguon")) ? s.getString("preview.name", "") : s.getString("name", "");
+        return n == null || n.isBlank() ? s.getString("ten-goi", id) : n;
+    }
+
+    /** Mã thư viện trên đồ (null nếu không phải đồ thư viện). */
+    static String idOf(ItemStack it) {
+        if (idKey == null || it == null || !it.hasItemMeta()) {
+            return null;
+        }
+        return it.getItemMeta().getPersistentDataContainer().get(idKey, org.bukkit.persistence.PersistentDataType.STRING);
+    }
+
+    /** Các mã có công dụng này (vd "ky-nang"). */
+    List<String> idsWith(String use) {
+        List<String> out = new ArrayList<>();
+        ConfigurationSection s = load().getConfigurationSection("items");
+        if (s != null) {
+            for (String k : s.getKeys(false)) {
+                if (use.equals(s.getString(k + ".cong-dung", ""))) {
+                    out.add(k);
+                }
+            }
+        }
+        return out;
+    }
+
+    /** Thêm món mẫu (thuvien-mau.yml trong jar) còn thiếu khi phiên mẫu mới hơn phiên đã nạp. */
+    private void importTemplate() {
+        if (!plugin.getConfig().isConfigurationSection("workshop")) {
+            return;   // đồ mẫu là đồ Bang Hội Chiến (Xưởng, Tinh Luyện…): sảnh / practice / sáng tạo không cần
+        }
+        try (var in = plugin.getResource("thuvien-mau.yml")) {
+            if (in == null) {
+                return;
+            }
+            YamlConfiguration tpl = YamlConfiguration.loadConfiguration(new java.io.InputStreamReader(in, StandardCharsets.UTF_8));
+            YamlConfiguration y = YamlConfiguration.loadConfiguration(file);
+            int have = y.getInt("phien-mau", 0), want = tpl.getInt("phien", 0);
+            ConfigurationSection items = tpl.getConfigurationSection("items");
+            if (want <= have || items == null) {
+                return;
+            }
+            int added = 0;
+            for (String k : items.getKeys(false)) {
+                if (!y.isConfigurationSection("items." + k)) {
+                    y.set("items." + k, items.getConfigurationSection(k));
+                    added++;
+                }
+            }
+            y.set("phien-mau", want);
+            plugin.getDataFolder().mkdirs();
+            y.save(file);
+            plugin.getLogger().info("Thư viện đồ: nạp mẫu phiên " + want + ", thêm " + added + " món.");
+        } catch (IOException | RuntimeException e) {
+            plugin.getLogger().warning("Thư viện đồ: không nạp được đồ mẫu: " + e);
+        }
     }
 
     List<String> ids() {
@@ -62,9 +177,31 @@ final class ItemLibrary {
         return s == null ? List.of() : new ArrayList<>(s.getKeys(false));
     }
 
-    /** Dựng đồ theo mã; null nếu không có hoặc hỏng. amount <= 0: lấy số lượng ghi trong thư viện. */
+    /** Dựng đồ theo mã, ĐỦ công dụng (kỹ năng Xưởng, hiệu ứng món ăn, dấu Tinh Luyện…); null nếu không có hoặc hỏng.
+     *  amount <= 0: lấy số lượng ghi trong thư viện. */
     ItemStack build(String id, int amount) {
-        ConfigurationSection s = load().getConfigurationSection("items." + id);
+        ItemStack item = base(id, amount);
+        if (item == null) {
+            return null;
+        }
+        ConfigurationSection s = section(id);
+        Stamper st = STAMPERS.get(s.getString("cong-dung", ""));
+        if (st != null) {
+            try {
+                ItemStack done = st.stamp(item, id, s);
+                if (done != null) {
+                    item = done;
+                }
+            } catch (RuntimeException e) {
+                plugin.getLogger().warning("Thư viện đồ: gắn công dụng cho \"" + id + "\" lỗi: " + e);
+            }
+        }
+        return item;
+    }
+
+    /** Chỉ hình dạng (tên, mô tả, phù phép, hình riêng) + dấu thuvien_id, chưa gắn công dụng. */
+    ItemStack base(String id, int amount) {
+        ConfigurationSection s = id == null ? null : section(id);
         if (s == null) {
             return null;
         }
@@ -84,6 +221,11 @@ final class ItemLibrary {
         }
         if (amount > 0) {
             item.setAmount(Math.min(amount, item.getMaxStackSize()));
+        }
+        ItemMeta meta = item.getItemMeta();
+        if (meta != null) {
+            meta.getPersistentDataContainer().set(idKey, org.bukkit.persistence.PersistentDataType.STRING, id);
+            item.setItemMeta(meta);
         }
         return item;
     }
@@ -139,6 +281,13 @@ final class ItemLibrary {
         if (s.isBoolean("glint")) {
             meta.setEnchantmentGlintOverride(s.getBoolean("glint"));
         }
+        String model = s.getString("model", "");
+        if (model != null && !model.isBlank()) {
+            NamespacedKey mk = NamespacedKey.fromString(model.toLowerCase(Locale.ROOT));
+            if (mk != null) {
+                meta.setItemModel(mk);   // hình riêng trong gói tài nguyên DuckyMoMo (không tải gói: thấy vật phẩm gốc)
+            }
+        }
         item.setItemMeta(meta);
         // phù phép CrazyEnchantments (Boom, Lifesteal…): CE tự ghi dòng mô tả và dữ liệu lên đồ
         ConfigurationSection cee = s.getConfigurationSection("ce-enchants");
@@ -159,10 +308,18 @@ final class ItemLibrary {
         if (hand.getType().isAir()) {
             return "§cCầm món đồ cần lưu trên tay chính.";
         }
-        YamlConfiguration y = load();
+        YamlConfiguration y = YamlConfiguration.loadConfiguration(file);
         boolean existed = y.isConfigurationSection("items." + id);
         String base = "items." + id;
+        // ghi đè hình dạng nhưng GIỮ đầu mục + công dụng đã đặt trên web
+        Map<String, Object> keep = new LinkedHashMap<>();
+        for (String k : List.of("nhom", "cong-dung", "ky-nang", "hieu-ung")) {
+            if (y.contains(base + "." + k)) {
+                keep.put(k, y.get(base + "." + k));
+            }
+        }
         y.set(base, null);
+        keep.forEach((k, v) -> y.set(base + "." + k, v));
         y.set(base + ".nguon", "game");
         y.set(base + ".ten-goi", label.isBlank() ? id : label);
         y.set(base + ".data", Base64.getEncoder().encodeToString(hand.serializeAsBytes()));
@@ -263,7 +420,17 @@ final class ItemLibrary {
             return;
         }
         List<String> all = ids();
-        s.sendMessage("§eThư viện đồ (" + all.size() + "): §f" + (all.isEmpty() ? "trống" : String.join(", ", all)));
+        s.sendMessage("§eThư viện đồ (" + all.size() + ")" + (all.isEmpty() ? ": §ftrống" : ""));
+        Map<String, List<String>> groups = new LinkedHashMap<>();
+        for (String id : all) {
+            String g = section(id).getString("nhom", "khac");
+            groups.computeIfAbsent(NHOM.containsKey(g) ? g : "khac", k -> new ArrayList<>()).add(id);
+        }
+        for (String g : NHOM.keySet()) {
+            if (groups.containsKey(g)) {
+                s.sendMessage("§6" + NHOM.get(g) + ": §f" + String.join(", ", groups.get(g)));
+            }
+        }
         s.sendMessage("§7/dmm luudo <mã> · /dmm laydo <mã> [người] [số] · /dmm thuvien nap");
     }
 

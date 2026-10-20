@@ -77,9 +77,10 @@ import java.util.concurrent.ThreadLocalRandom;
  * Xưởng chế tạo (/xuong): đồ đặc biệt theo logic "HIỆU ỨNG + ĐỘ BỀN + THỜI HẠN" (ý từ Server Tools của UniMC, tự làm lại).
  * Hết độ bền hoặc hết hạn (mặc định 7 ngày) thì món biến mất -> tiền và tài nguyên liên tục rời nền kinh tế.
  * Chế bằng xu + nguyên liệu xếp trên lưới 3×3 (grid: 9 ô "VẬT_LIỆU số" hoặc ""), bấm thành phẩm để chế.
- * Cấu hình workshop.items.<mã>: name, material, feature, value, text (chữ "Tính năng"), uses (độ bền, -1 = độ bền gốc), days, cost,
- *   grid | ingredients, enchants {sharpness: 5, enchantio:telepathy: 1, ce:Blast: 1}, pvp (true = mất tác dụng trong vùng vây đang đánh),
- *   description [], enabled. Sửa trên trang Cài đặt › Kinh tế › Xưởng chế tạo.
+ * Món (20/10): hình dạng + kỹ năng nằm ở THƯ VIỆN ĐỒ (công dụng "ky-nang": {feature, value, text, uses (độ bền, -1 = độ bền gốc), days,
+ *   pvp (true = mất tác dụng trong vùng vây đang đánh)}; tên, phù phép kể cả CE, mô tả, hình riêng). Xưởng chỉ giữ công thức:
+ *   workshop.items.<mã thư viện>: cost, grid | ingredients, tinh-luyen, enabled. Sửa: trang Thư viện đồ (món) + Cài đặt › Shop › Xưởng (công thức).
+ *   Đồ kỹ năng phát từ chỗ khác (boss, phần thưởng "do <mã>") cũng chạy kỹ năng (đóng dấu qua ItemLibrary.STAMPERS).
  * Hiệu ứng (feature) và value:
  *   ""          công cụ / vũ khí thường (phù phép, kể cả CrazyEnchantments "ce:Tên" và Enchantio)
  *   dao_vung    đào theo vùng: value 1 = 3×3, 2 = 5×5 (cuốc chim, xẻng, cuốc đất)       -> 1 độ bền / khối
@@ -168,14 +169,18 @@ final class Workshop implements Listener {
     private static final int RESULT_SLOT = 25;
     private static final int BACK_SLOT = 45;
 
+    /** Công thức của Xưởng (mã = mã thư viện). */
+    private record Craft(double cost, List<String> grid, Map<Material, Integer> ingredients, Map<String, Integer> refined) { }
+
     private final JavaPlugin plugin;
-    private final Map<String, Recipe> recipes = new LinkedHashMap<>();
+    private final Map<String, Craft> crafts = new LinkedHashMap<>();
+    private final Map<String, Recipe> cache = new HashMap<>();   // mã -> món (thư viện + công thức), tính lại khi thư viện đổi
+    private int cacheVersion = -1;
     private final NamespacedKey kId;
     private final NamespacedKey kUses;
     private final NamespacedKey kUntil;
     private final NamespacedKey kArrow;
     private final NamespacedKey kCeLore;
-    private final CeBridge ce;
     private final Map<Material, Double> worth = new HashMap<>();
     private final Set<UUID> busy = new HashSet<>();                 // đang phá khối thay người chơi (chặn đệ quy)
     private final Map<UUID, Long> dashCd = new HashMap<>();
@@ -188,23 +193,12 @@ final class Workshop implements Listener {
         this.kUntil = new NamespacedKey(plugin, "xuong_het");
         this.kArrow = new NamespacedKey(plugin, "xuong_hutmau");
         this.kCeLore = new NamespacedKey(plugin, "xuong_celo");
-        this.ce = new CeBridge(plugin.getLogger());
         ConfigurationSection items = cfg.getConfigurationSection("items");
         if (items != null) {
             for (String id : items.getKeys(false)) {
                 ConfigurationSection r = items.getConfigurationSection(id);
                 if (r == null || !r.getBoolean("enabled", true)) {
                     continue;
-                }
-                Material m = Material.matchMaterial(r.getString("material", "STONE"));
-                if (m == null || !m.isItem()) {
-                    plugin.getLogger().warning("Xưởng: " + id + " có material sai, bỏ qua");
-                    continue;
-                }
-                String feature = r.getString("feature", "");
-                if (!FEATURES.containsKey(feature)) {
-                    plugin.getLogger().warning("Xưởng: " + id + " có hiệu ứng lạ '" + feature + "', coi như không hiệu ứng");
-                    feature = "";
                 }
                 List<String> grid = new ArrayList<>(r.getStringList("grid"));
                 Map<Material, Integer> ing = new LinkedHashMap<>();
@@ -233,13 +227,6 @@ final class Workshop implements Listener {
                         grid.add("");
                     }
                 }
-                Map<String, Integer> ench = new LinkedHashMap<>();
-                ConfigurationSection es = r.getConfigurationSection("enchants");
-                if (es != null) {
-                    for (String k : es.getKeys(false)) {
-                        ench.put(k, es.getInt(k));
-                    }
-                }
                 // món Tinh Luyện cần thêm (tinh-luyen: {sat: 1, kimcuong: 1}), kiểm/trừ qua Shared.refining
                 Map<String, Integer> refined = new LinkedHashMap<>();
                 ConfigurationSection rf = r.getConfigurationSection("tinh-luyen");
@@ -250,11 +237,13 @@ final class Workshop implements Listener {
                         }
                     }
                 }
-                recipes.put(id, new Recipe(id, r.getString("name", id), m, feature, r.getDouble("value", 0), r.getString("text", ""),
-                        r.getInt("uses", -1), r.getInt("days", 7), r.getDouble("cost", 0), grid.subList(0, 9), ing, ench,
-                        r.getBoolean("pvp", false), r.getStringList("description"), refined));
+                crafts.put(id, new Craft(r.getDouble("cost", 0), grid.subList(0, 9), ing, refined));
             }
         }
+        ItemLibrary.STAMPERS.put("ky-nang", (item, id, sec) -> {
+            Recipe r = recipe(id);
+            return r == null ? item : stamp(item, r);
+        });
         loadWorth();
     }
 
@@ -292,7 +281,65 @@ final class Workshop implements Listener {
     }
 
     int size() {
-        return recipes.size();
+        return crafts.size();
+    }
+
+    /** Món theo mã thư viện (kỹ năng lấy từ thư viện, công thức từ Xưởng nếu có); null nếu không phải đồ kỹ năng. */
+    private Recipe recipe(String id) {
+        ItemLibrary lib = Shared.library;
+        if (lib == null || id == null) {
+            return null;
+        }
+        int v = lib.version();
+        if (v != cacheVersion) {
+            cache.clear();
+            cacheVersion = v;
+        }
+        if (cache.containsKey(id)) {
+            return cache.get(id);
+        }
+        Recipe r = null;
+        ConfigurationSection s = lib.section(id);
+        if (s != null && "ky-nang".equals(s.getString("cong-dung", ""))) {
+            boolean game = "game".equals(s.getString("nguon"));
+            ConfigurationSection look = game ? s.getConfigurationSection("preview") : s;
+            Material m = look == null ? null : Material.matchMaterial(look.getString("material", ""));
+            ConfigurationSection k = s.getConfigurationSection("ky-nang");
+            String feature = k == null ? "" : k.getString("feature", "");
+            if (!FEATURES.containsKey(feature)) {
+                plugin.getLogger().warning("Xưởng: " + id + " có kỹ năng lạ '" + feature + "', coi như không kỹ năng");
+                feature = "";
+            }
+            Map<String, Integer> ench = new LinkedHashMap<>();
+            for (String sec : List.of("enchants", "ce-enchants")) {
+                ConfigurationSection es = look == null ? null : look.getConfigurationSection(sec);
+                if (es != null) {
+                    for (String e : es.getKeys(false)) {
+                        ench.put((sec.startsWith("ce") ? "ce:" : "") + e, es.getInt(e));
+                    }
+                }
+            }
+            Craft c = crafts.getOrDefault(id, new Craft(0, List.of("", "", "", "", "", "", "", "", ""), Map.of(), Map.of()));
+            if (m != null && m.isItem()) {
+                r = new Recipe(id, lib.name(id), m, feature, k == null ? 0 : k.getDouble("value", 0), k == null ? "" : k.getString("text", ""),
+                        k == null ? -1 : k.getInt("uses", -1), k == null ? 7 : Math.max(1, k.getInt("days", 7)), c.cost(), c.grid(), c.ingredients(),
+                        ench, k != null && k.getBoolean("pvp", false), look.getStringList("lore"), c.refined());
+            }
+        }
+        cache.put(id, r);
+        return r;
+    }
+
+    /** Món hiện trong menu /xuong: có công thức và còn là đồ kỹ năng trong thư viện. */
+    private List<Recipe> menu() {
+        List<Recipe> out = new ArrayList<>();
+        for (String id : crafts.keySet()) {
+            Recipe r = recipe(id);
+            if (r != null) {
+                out.add(r);
+            }
+        }
+        return out;
     }
 
     void start() {
@@ -338,7 +385,7 @@ final class Workshop implements Listener {
             return null;
         }
         String id = it.getItemMeta().getPersistentDataContainer().get(kId, PersistentDataType.STRING);
-        return id == null ? null : recipes.get(id);
+        return id == null ? null : recipe(id);
     }
 
     private boolean expired(ItemStack it) {
@@ -346,25 +393,16 @@ final class Workshop implements Listener {
         return until != null && System.currentTimeMillis() > until;
     }
 
+    /** Đồ mới: hình dạng từ thư viện + dấu Xưởng (độ bền, hạn). null nếu món không còn trong thư viện. */
     private ItemStack build(Recipe r) {
-        ItemStack it = new ItemStack(r.material());
+        ItemLibrary lib = Shared.library;
+        ItemStack it = lib == null ? null : lib.base(r.id(), 1);
+        return it == null ? null : stamp(it, r);
+    }
+
+    /** Gắn dấu Xưởng lên đồ đã dựng từ thư viện (giữ mọi dòng mô tả sẵn có, kể cả dòng phù phép CrazyEnchantments). */
+    private ItemStack stamp(ItemStack it, Recipe r) {
         ItemMeta meta = it.getItemMeta();
-        meta.displayName(c(r.name()));
-        List<String[]> ceList = new ArrayList<>();
-        for (Map.Entry<String, Integer> e : r.enchants().entrySet()) {
-            String k = e.getKey();
-            if (k.regionMatches(true, 0, "ce:", 0, 3)) {
-                ceList.add(new String[]{k.substring(3), String.valueOf(e.getValue())});
-                continue;
-            }
-            NamespacedKey nk = k.contains(":") ? NamespacedKey.fromString(k.toLowerCase(Locale.ROOT)) : NamespacedKey.minecraft(k.toLowerCase(Locale.ROOT));
-            Enchantment en = nk == null ? null : Registry.ENCHANTMENT.get(nk);
-            if (en != null && e.getValue() > 0) {
-                meta.addEnchant(en, e.getValue(), true);
-            } else {
-                plugin.getLogger().warning("Xưởng: " + r.id() + " phù phép lạ " + k);
-            }
-        }
         if (r.uses() >= 0) {
             meta.setUnbreakable(true);   // độ bền tính riêng (xuong_luot), không hỏng theo độ bền gốc
             meta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
@@ -373,16 +411,9 @@ final class Workshop implements Listener {
         pdc.set(kId, PersistentDataType.STRING, r.id());
         pdc.set(kUses, PersistentDataType.INTEGER, r.uses());
         pdc.set(kUntil, PersistentDataType.LONG, System.currentTimeMillis() + r.days() * 86_400_000L);
+        List<Component> lore = meta.lore();
+        pdc.set(kCeLore, PersistentDataType.INTEGER, lore == null ? 0 : lore.size());
         it.setItemMeta(meta);
-        for (String[] x : ceList) {
-            if (!ce.add(it, x[0], Integer.parseInt(x[1]))) {
-                plugin.getLogger().warning("Xưởng: " + r.id() + " không gắn được phù phép CrazyEnchantments " + x[0]);
-            }
-        }
-        ItemMeta m2 = it.getItemMeta();
-        List<Component> ceLore = m2.lore();
-        m2.getPersistentDataContainer().set(kCeLore, PersistentDataType.INTEGER, ceLore == null ? 0 : ceLore.size());
-        it.setItemMeta(m2);
         relore(it, r);
         return it;
     }
@@ -403,9 +434,6 @@ final class Workshop implements Listener {
             lore.add(c("&7— Độ bền: &6" + fmt(uses)));
         }
         lore.add(c("&7— Hết hạn: &b" + WHEN.format(Instant.ofEpochMilli(until))));
-        for (String d : r.desc()) {
-            lore.add(c("&8" + d));
-        }
         if (r.pvp()) {
             lore.add(c("&c✖ Mất tác dụng trong vùng vây khi đang đánh"));
         }
@@ -1179,7 +1207,7 @@ final class Workshop implements Listener {
         Holder h = new Holder();
         h.inv = Bukkit.createInventory(h, 54, c("&8XƯỞNG CHẾ TẠO &7(hiệu ứng · độ bền · thời hạn)"));
         int i = 0;
-        for (Recipe r : recipes.values()) {
+        for (Recipe r : menu()) {
             if (i >= MAIN_SLOTS.length) {
                 break;
             }
@@ -1262,6 +1290,11 @@ final class Workshop implements Listener {
             p.sendMessage(c("&cTúi đầy, dọn 1 ô rồi chế."));
             return;
         }
+        ItemStack made = build(r);
+        if (made == null) {
+            p.sendMessage(c("&cMón này không còn trong thư viện đồ, báo admin."));
+            return;
+        }
         double cost = p.hasPermission("duckymomo.xuong.giam") ? Math.round(r.cost() * 0.95) : r.cost();   // đặc quyền Thăng Cấp: giảm 5%
         if (cost > 0 && (!VaultEconomy.available() || !VaultEconomy.withdraw(p, cost))) {
             p.sendMessage(c("&cKhông đủ " + money(cost) + "."));
@@ -1273,7 +1306,7 @@ final class Workshop implements Listener {
         for (Map.Entry<String, Integer> in : r.refined().entrySet()) {
             rf.take(p, in.getKey(), in.getValue());
         }
-        p.getInventory().addItem(build(r));
+        p.getInventory().addItem(made);
         p.playSound(p.getLocation(), Sound.BLOCK_ANVIL_USE, 0.6f, 1.2f);
         p.sendMessage(c("&a✔ Đã chế " + r.name() + "&a. Dùng được " + r.days() + " ngày."));
         plugin.getLogger().info("Xưởng: " + p.getName() + " chế " + r.id());
@@ -1289,12 +1322,14 @@ final class Workshop implements Listener {
 
     boolean command(CommandSender s, String[] args) {
         if (args.length >= 2 && args[0].equalsIgnoreCase("tang") && s.hasPermission("duckymomo.admin")) {
-            Recipe r = recipes.get(args[1]);
+            Recipe r = recipe(args[1]);
             Player t = args.length >= 3 ? Bukkit.getPlayerExact(args[2]) : s instanceof Player sp ? sp : null;
-            if (r == null || t == null) {
-                s.sendMessage("/xuong tang <" + String.join("|", recipes.keySet()) + "> [người]");
+            ItemStack made = r == null ? null : build(r);
+            if (made == null || t == null) {
+                ItemLibrary lib = Shared.library;
+                s.sendMessage("/xuong tang <" + String.join("|", lib == null ? crafts.keySet() : lib.idsWith("ky-nang")) + "> [người]");
             } else {
-                t.getInventory().addItem(build(r));
+                Rewards.hand(t, made);
                 s.sendMessage("Đã tặng " + r.id() + " cho " + t.getName());
             }
             return true;

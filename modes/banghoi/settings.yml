@@ -41,7 +41,7 @@ dgt_frag_fish: 3
 dgt_frag_day: 3
 dgt_week_on: true
 dgt_week_rw:
-- xu 1500
+  - xu 1500
 dgt_week_max: 3
 dgt_reveal: 40
 dgt_kc_price: 3000
@@ -941,7 +941,8 @@ vq_prizes:
 fm_on: true
 fm_cap: 20
 fm_types:
-  lamnguy: {name: "&cMảnh Lâm Nguy", material: AMETHYST_SHARD, lore: ["&7Rơi từ sự kiện Trái Đất lâm nguy", "&7Đổi quà: &f/doimanh"], until: ""}
+  lamnguy:
+    until: ''
 fm_shop:
   - {label: "5000 xu", cost: {lamnguy: 25}, limit: 0, rewards: [xu 5000]}
   - {label: "16 kim cương", cost: {lamnguy: 40}, limit: 0, rewards: [vat DIAMOND 16]}
@@ -1109,11 +1110,30 @@ kl_fish_legendary: 40
 mon_on: true
 mon_cd: 20
 mon_list:
-  com_nam: {effects: [ABSORPTION 0 120], lore: ['Gọn nhẹ, mang theo ra trận'], material: BREAD, name: '&fCơm nắm', need: {WHEAT: 6}}
-  canh_chua: {effects: [REGENERATION 0 45], lore: ['Chua chua, ăn là khoẻ'], material: BEETROOT_SOUP, name: '&6Canh chua cá', need: {BEETROOT: 2, WHEAT: 2, 'ca:common': 2}}
-  ca_kho: {effects: [RESISTANCE 0 90], lore: ['Đậm đà, chắc bụng'], material: COOKED_COD, name: '&6Cá kho tộ', need: {SUGAR_CANE: 2, WHEAT: 3, 'ca:rare': 1}}
-  lau_ca: {effects: [REGENERATION 0 60, RESISTANCE 0 60], lore: [Cả đội ăn chung trước giờ đánh], material: RABBIT_STEW, name: '&cLẩu cá', need: {BROWN_MUSHROOM: 1, CARROT: 3, POTATO: 3, 'ca:epic': 1}}
-  goi_ca: {effects: [REGENERATION 1 30, RESISTANCE 0 120, ABSORPTION 1 120], lore: [Món của tướng], material: COOKED_SALMON, name: '&6Gỏi cá huyền thoại', need: {BEETROOT: 3, CARROT: 3, 'ca:legendary': 1}}
+  com_nam:
+    need:
+      WHEAT: 6
+  canh_chua:
+    need:
+      ca:common: 2
+      BEETROOT: 2
+      WHEAT: 2
+  ca_kho:
+    need:
+      ca:rare: 1
+      SUGAR_CANE: 2
+      WHEAT: 3
+  lau_ca:
+    need:
+      ca:epic: 1
+      POTATO: 3
+      CARROT: 3
+      BROWN_MUSHROOM: 1
+  goi_ca:
+    need:
+      ca:legendary: 1
+      CARROT: 3
+      BEETROOT: 3
 petcap_charm: 25
 petc_reduce: 50
 petc_chance: 30
@@ -1127,18 +1147,15 @@ sw_on: true
 sw_range: 24
 sw_night: true
 sw_night_bonus: 20
-sw_eyes: [Bat, Phantom, Cat, Ocelot, Fox, Wolf, Spider, CaveSpider, Enderman, Endermite, Vex,
-  Warden]
+sw_eyes: [Bat, Phantom, Cat, Ocelot, Fox, Wolf, Spider, CaveSpider, Enderman, Endermite, Vex, Warden]
 sw_rain: true
 sw_water_bonus: 20
 sw_fire_malus: 25
-sw_water: [Axolotl, Cod, Salmon, Pufferfish, TropicalFish, Squid, GlowSquid, Dolphin, Guardian,
-  ElderGuardian, Tadpole, Frog, Turtle, Drowned]
+sw_water: [Axolotl, Cod, Salmon, Pufferfish, TropicalFish, Squid, GlowSquid, Dolphin, Guardian, ElderGuardian, Tadpole, Frog, Turtle, Drowned]
 sw_heat: true
 sw_heat_season: kho
 sw_heat_bonus: 15
-sw_fire: [Blaze, MagmaCube, Strider, WitherSkeleton, Hoglin, Zoglin, Piglin, PiglinBrute, ZombifiedPiglin,
-  Ghast]
+sw_fire: [Blaze, MagmaCube, Strider, WitherSkeleton, Hoglin, Zoglin, Piglin, PiglinBrute, ZombifiedPiglin, Ghast]
 petfish_on: true
 petfish_cap: 300
 petfish_common_food: 15
@@ -1186,438 +1203,268 @@ mypet_respawn_cost_factor: 1.0
 mypet_hunger: true
 mypet_hunger_time: 60
 mypet_exp_nofarm:
-- SPAWNER
-- TRIAL_SPAWNER
-- SPAWNER_EGG
-- DISPENSE_EGG
+  - SPAWNER
+  - TRIAL_SPAWNER
+  - SPAWNER_EGG
+  - DISPENSE_EGG
 mypet_ride_hunger: 0.01
 mypet_switch_fee: 5
 mypet_leash_consume: false
 xw_on: true
 xw_items:
   khoan_dao:
-    name: '&bKhoan Đào'
-    material: DIAMOND_PICKAXE
-    feature: dao_vung
-    value: 1
-    uses: 8000
-    days: 7
     cost: 8000
     grid:
-    - DIAMOND 2
-    - IRON_BLOCK 2
-    - DIAMOND 2
-    - ''
-    - STICK 1
-    - ''
-    - ''
-    - STICK 1
-    - ''
-    enchants:
-      efficiency: 4
+      - DIAMOND 2
+      - IRON_BLOCK 2
+      - DIAMOND 2
+      - ''
+      - STICK 1
+      - ''
+      - ''
+      - STICK 1
+      - ''
   dao_ham:
-    name: '&5Đào Hầm'
-    material: NETHERITE_PICKAXE
-    feature: dao_vung
-    value: 2
-    uses: 3500
-    days: 5
     cost: 20000
-    pvp: true
     grid:
-    - DIAMOND_BLOCK 1
-    - TNT 8
-    - DIAMOND_BLOCK 1
-    - OBSIDIAN 8
-    - NETHERITE_INGOT 1
-    - OBSIDIAN 8
-    - ''
-    - BLAZE_ROD 2
-    - ''
-    enchants:
-      efficiency: 5
-    description:
-    - Không đào được trong vùng vây đang đánh
+      - DIAMOND_BLOCK 1
+      - TNT 8
+      - DIAMOND_BLOCK 1
+      - OBSIDIAN 8
+      - NETHERITE_INGOT 1
+      - OBSIDIAN 8
+      - ''
+      - BLAZE_ROD 2
+      - ''
   xeng_dat:
-    name: '&6Xẻng Đất'
-    material: DIAMOND_SHOVEL
-    feature: dao_vung
-    value: 1
-    uses: 8000
-    days: 7
     cost: 4000
     grid:
-    - ''
-    - DIAMOND 2
-    - ''
-    - ''
-    - IRON_BLOCK 1
-    - ''
-    - ''
-    - STICK 2
-    - ''
-    enchants:
-      efficiency: 4
+      - ''
+      - DIAMOND 2
+      - ''
+      - ''
+      - IRON_BLOCK 1
+      - ''
+      - ''
+      - STICK 2
+      - ''
   riu_tieu:
-    name: '&aRìu Tiều'
-    material: DIAMOND_AXE
-    feature: chat_cay
-    value: 150
-    uses: 5000
-    days: 7
     cost: 5000
     grid:
-    - DIAMOND 2
-    - IRON_BLOCK 1
-    - ''
-    - DIAMOND 1
-    - STICK 1
-    - ''
-    - ''
-    - STICK 1
-    - ''
-    enchants:
-      efficiency: 4
+      - DIAMOND 2
+      - IRON_BLOCK 1
+      - ''
+      - DIAMOND 1
+      - STICK 1
+      - ''
+      - ''
+      - STICK 1
+      - ''
   tu_nung:
-    name: '&cTự Nung'
-    material: IRON_PICKAXE
-    feature: tu_nung
-    uses: 7500
-    days: 7
     cost: 6000
     grid:
-    - BLAST_FURNACE 1
-    - LAVA_BUCKET 1
-    - BLAST_FURNACE 1
-    - ''
-    - IRON_PICKAXE 1
-    - ''
-    - ''
-    - COAL_BLOCK 4
-    - ''
-    description:
-    - Quặng sắt, vàng, đồng ra thỏi; mảnh vụn cổ ra mảnh netherite
+      - BLAST_FURNACE 1
+      - LAVA_BUCKET 1
+      - BLAST_FURNACE 1
+      - ''
+      - IRON_PICKAXE 1
+      - ''
+      - ''
+      - COAL_BLOCK 4
+      - ''
   da_nang:
-    name: '&dĐa Năng'
-    material: DIAMOND_PICKAXE
-    feature: da_nang
-    uses: 10000
-    days: 7
     cost: 12000
     grid:
-    - DIAMOND_PICKAXE 1
-    - DIAMOND_AXE 1
-    - DIAMOND_SHOVEL 1
-    - ''
-    - DIAMOND_BLOCK 1
-    - ''
-    - ''
-    - STICK 2
-    - ''
-    enchants:
-      efficiency: 4
-    description:
-    - Tự thành cuốc chim, rìu hoặc xẻng theo khối đang đào
+      - DIAMOND_PICKAXE 1
+      - DIAMOND_AXE 1
+      - DIAMOND_SHOVEL 1
+      - ''
+      - DIAMOND_BLOCK 1
+      - ''
+      - ''
+      - STICK 2
+      - ''
   gat_lua:
-    name: '&eGặt Lúa'
-    material: DIAMOND_HOE
-    feature: gat_lua
-    uses: 8000
-    days: 7
     cost: 3000
     grid:
-    - DIAMOND 2
-    - HAY_BLOCK 4
-    - ''
-    - ''
-    - STICK 1
-    - ''
-    - ''
-    - STICK 1
-    - ''
-    description:
-    - Gặt cây chín 3×3, tự gieo lại bằng hạt trong túi
+      - DIAMOND 2
+      - HAY_BLOCK 4
+      - ''
+      - ''
+      - STICK 1
+      - ''
+      - ''
+      - STICK 1
+      - ''
   nam_cham:
-    name: '&bHút Đồ'
-    material: LEAD
-    feature: nam_cham
-    value: 16
-    uses: 5000
-    days: 7
     cost: 4000
     grid:
-    - IRON_INGOT 4
-    - REDSTONE 8
-    - IRON_INGOT 4
-    - ''
-    - LODESTONE 1
-    - ''
-    - ''
-    - ''
-    - ''
-    description:
-    - Để trong túi. Không hút đồ người khác vứt, đồ quanh chỗ có người chết
+      - IRON_INGOT 4
+      - REDSTONE 8
+      - IRON_INGOT 4
+      - ''
+      - LODESTONE 1
+      - ''
+      - ''
+      - ''
+      - ''
   ban_ruong:
-    name: '&aRìu Bán'
-    material: GOLDEN_AXE
-    feature: ban_ruong
-    uses: 3000
-    days: 7
     cost: 6000
     grid:
-    - GOLD_BLOCK 2
-    - EMERALD 8
-    - ''
-    - GOLD_BLOCK 1
-    - STICK 1
-    - ''
-    - ''
-    - STICK 1
-    - ''
-    description:
-    - 'Đánh vào rương / thùng: bán hết theo giá /sell'
+      - GOLD_BLOCK 2
+      - EMERALD 8
+      - ''
+      - GOLD_BLOCK 1
+      - STICK 1
+      - ''
+      - ''
+      - STICK 1
+      - ''
   tui_hu:
-    name: '&5Túi Hư'
-    material: ENDER_CHEST
-    feature: tui_hu
-    uses: 3000
-    days: 7
     cost: 2000
     grid:
-    - OBSIDIAN 4
-    - ENDER_EYE 1
-    - OBSIDIAN 4
-    - ''
-    - ''
-    - ''
-    - ''
-    - ''
-    - ''
+      - OBSIDIAN 4
+      - ENDER_EYE 1
+      - OBSIDIAN 4
+      - ''
+      - ''
+      - ''
+      - ''
+      - ''
+      - ''
   nuoc:
-    name: '&bNước Nguồn'
-    material: WATER_BUCKET
-    feature: nuoc
-    uses: 10000
-    days: 7
     cost: 500
     grid:
-    - ''
-    - IRON_INGOT 3
-    - ''
-    - ''
-    - WATER_BUCKET 1
-    - ''
-    - ''
-    - ''
-    - ''
+      - ''
+      - IRON_INGOT 3
+      - ''
+      - ''
+      - WATER_BUCKET 1
+      - ''
+      - ''
+      - ''
+      - ''
   dung_nham:
-    name: '&6Dung Nham'
-    material: LAVA_BUCKET
-    feature: dung_nham
-    uses: 5000
-    days: 7
     cost: 3000
-    pvp: true
     grid:
-    - ''
-    - MAGMA_BLOCK 8
-    - ''
-    - ''
-    - LAVA_BUCKET 1
-    - ''
-    - ''
-    - ''
-    - ''
-    description:
-    - Chỉ đổ được ở chỗ bạn có quyền xây
+      - ''
+      - MAGMA_BLOCK 8
+      - ''
+      - ''
+      - LAVA_BUCKET 1
+      - ''
+      - ''
+      - ''
+      - ''
   bat_thu:
-    name: '&aBắt Thú'
-    material: SHEARS
-    feature: bat_thu
-    uses: 80
-    days: 7
     cost: 5000
     grid:
-    - ''
-    - LEAD 4
-    - ''
-    - WHEAT 16
-    - EGG 16
-    - CARROT 16
-    - ''
-    - ''
-    - ''
-    description:
-    - Chuột phải vào thú hiền (bò, cừu, gà…) thành trứng; không bắt quái, thú có chủ, pet
+      - ''
+      - LEAD 4
+      - ''
+      - WHEAT 16
+      - EGG 16
+      - CARROT 16
+      - ''
+      - ''
+      - ''
   co_le:
     enabled: false
-    name: '&7Cờ Lê'
-    material: IRON_PICKAXE
-    feature: co_le
-    uses: 3
-    days: 7
     cost: 50000
     grid:
-    - NETHERITE_INGOT 1
-    - ''
-    - ''
-    - ''
-    - IRON_BLOCK 4
-    - ''
-    - ''
-    - ''
-    - IRON_BLOCK 4
-    description:
-    - Phá lồng quái rơi ra nguyên lồng (quái từ lồng không cho kinh nghiệm)
+      - NETHERITE_INGOT 1
+      - ''
+      - ''
+      - ''
+      - IRON_BLOCK 4
+      - ''
+      - ''
+      - ''
+      - IRON_BLOCK 4
   moc_bay:
-    name: '&3Móc Bay'
-    material: FISHING_ROD
-    feature: moc_bay
-    value: 1.5
-    uses: 3000
-    days: 7
     cost: 4000
-    pvp: true
     grid:
-    - ''
-    - ''
-    - TRIPWIRE_HOOK 4
-    - ''
-    - STICK 1
-    - STRING 8
-    - STICK 1
-    - ''
-    - SLIME_BALL 4
+      - ''
+      - ''
+      - TRIPWIRE_HOOK 4
+      - ''
+      - STICK 1
+      - STRING 8
+      - STICK 1
+      - ''
+      - SLIME_BALL 4
   khien_than:
-    name: '&eKhiên Thần'
-    material: SHIELD
-    feature: khien_than
-    value: 50
-    uses: 3000
-    days: 7
     cost: 8000
-    pvp: true
     grid:
-    - IRON_BLOCK 1
-    - DIAMOND 2
-    - IRON_BLOCK 1
-    - IRON_BLOCK 1
-    - TOTEM_OF_UNDYING 1
-    - IRON_BLOCK 1
-    - ''
-    - IRON_BLOCK 1
-    - ''
+      - IRON_BLOCK 1
+      - DIAMOND 2
+      - IRON_BLOCK 1
+      - IRON_BLOCK 1
+      - TOTEM_OF_UNDYING 1
+      - IRON_BLOCK 1
+      - ''
+      - IRON_BLOCK 1
+      - ''
   cung_mau:
-    name: '&cCung Máu'
-    material: BOW
-    feature: hut_mau
-    value: 2
-    uses: 3000
-    days: 7
     cost: 6000
-    pvp: true
     grid:
-    - ''
-    - GHAST_TEAR 2
-    - STRING 8
-    - BLAZE_ROD 1
-    - ''
-    - STRING 8
-    - ''
-    - GHAST_TEAR 2
-    - STRING 8
-    enchants:
-      power: 3
+      - ''
+      - GHAST_TEAR 2
+      - STRING 8
+      - BLAZE_ROD 1
+      - ''
+      - STRING 8
+      - ''
+      - GHAST_TEAR 2
+      - STRING 8
   no_toa:
-    name: '&6Nỏ Tỏa'
-    material: CROSSBOW
-    feature: ''
-    text: Bắn tỏa &e[3 mũi tên]
-    uses: 3000
-    days: 7
     cost: 5000
-    pvp: true
     grid:
-    - STICK 2
-    - IRON_INGOT 4
-    - STICK 2
-    - STRING 8
-    - TRIPWIRE_HOOK 1
-    - STRING 8
-    - ''
-    - STICK 2
-    - ''
-    enchants:
-      multishot: 1
-      quick_charge: 2
+      - STICK 2
+      - IRON_INGOT 4
+      - STICK 2
+      - STRING 8
+      - TRIPWIRE_HOOK 1
+      - STRING 8
+      - ''
+      - STICK 2
+      - ''
   bua_ta:
-    name: '&6Búa Tạ'
-    material: MACE
-    feature: ''
-    text: Nện đất &e[hất tung]
-    uses: 2500
-    days: 7
     cost: 15000
-    pvp: true
     grid:
-    - ''
-    - BREEZE_ROD 2
-    - ''
-    - IRON_BLOCK 1
-    - HEAVY_CORE 1
-    - IRON_BLOCK 1
-    - ''
-    - BREEZE_ROD 2
-    - ''
-    enchants:
-      wind_burst: 1
-      density: 2
+      - ''
+      - BREEZE_ROD 2
+      - ''
+      - IRON_BLOCK 1
+      - HEAVY_CORE 1
+      - IRON_BLOCK 1
+      - ''
+      - BREEZE_ROD 2
+      - ''
   kiem_nhat:
-    name: '&bKiếm Nhật'
-    material: DIAMOND_SWORD
-    feature: kiem_nhat
-    value: 6
-    uses: 3000
-    days: 7
     cost: 8000
-    pvp: true
     grid:
-    - ''
-    - ''
-    - DIAMOND 3
-    - ''
-    - IRON_BLOCK 1
-    - ''
-    - STICK 1
-    - ''
-    - ''
-    enchants:
-      sharpness: 3
-    description:
-    - 'Chuột phải: lướt tới, chém mọi thứ trên đường (hồi 4 giây)'
+      - ''
+      - ''
+      - DIAMOND 3
+      - ''
+      - IRON_BLOCK 1
+      - ''
+      - STICK 1
+      - ''
+      - ''
   riu_chien:
-    name: '&4Rìu Chiến'
-    material: DIAMOND_AXE
-    feature: riu_chien
-    value: 20
-    uses: 3000
-    days: 7
     cost: 8000
-    pvp: true
     grid:
-    - DIAMOND 2
-    - REDSTONE_BLOCK 2
-    - ''
-    - DIAMOND 1
-    - STICK 1
-    - ''
-    - ''
-    - STICK 1
-    - ''
-    enchants:
-      sharpness: 3
-    description:
-    - 20% chí mạng ×1,5 và gây chảy máu 3 giây
+      - DIAMOND 2
+      - REDSTONE_BLOCK 2
+      - ''
+      - DIAMOND 1
+      - STICK 1
+      - ''
+      - ''
+      - STICK 1
+      - ''
 lvu_on: true
 lvu_keep: false
 lvu_max: 100
@@ -1631,8 +1478,8 @@ lvu_cd: 10
 lvu_pts: 1
 lvu_every: 10
 lvu_milestone:
-- xu 5000
-- vat EXPERIENCE_BOTTLE 16
+  - xu 5000
+  - vat EXPERIENCE_BOTTLE 16
 lvu_craft_on: true
 lvu_craft_cost: 3
 lvu_disposal_on: true
@@ -1837,3 +1684,4 @@ md_check: 5
 md_tiktok: true
 md_fail: 2
 md_cooldown: 60
+petcap_charm_item: bua_bat_pet

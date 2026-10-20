@@ -15,6 +15,8 @@ final class Shared {
     static volatile Refining refining;
     static volatile Backpack backpack;
     static volatile MediaProgram media;
+    /** Thư viện đồ: mọi module lấy vật phẩm đặc biệt từ đây (Xưởng, món ăn, Tinh Luyện, mảnh, bùa, boss). */
+    static volatile ItemLibrary library;
 
     private Shared() {
     }
@@ -37,5 +39,7 @@ final class Shared {
         refining = null;
         backpack = null;
         media = null;
+        library = null;
+        ItemLibrary.STAMPERS.clear();
     }
 }

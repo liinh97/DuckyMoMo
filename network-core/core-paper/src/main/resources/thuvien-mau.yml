@@ -1,0 +1,501 @@
+# Đồ mẫu của Thư viện đồ (DuckyMoMoCore). Lần bật đầu tiên sau khi "phien" tăng: thêm vào plugins/DuckyMoMoCore/thuvien-do.yml
+# những món CHƯA có (không đè món admin đã sửa / đã xoá thì thêm lại). Sửa món: trang quản trị › Thư viện đồ.
+# Sinh từ cấu hình cũ ngày 20/10 (Xưởng, món ăn /nauan, Tinh Luyện, mảnh sự kiện, bùa bắt pet) khi gom mọi đồ đặc biệt về thư viện.
+phien: 1
+items:
+  khoan_dao:
+    nguon: web
+    nhom: cong-cu
+    ten-goi: "Khoan Đào"
+    material: DIAMOND_PICKAXE
+    amount: 1
+    name: "&bKhoan Đào"
+    enchants:
+      efficiency: 4
+    cong-dung: ky-nang
+    ky-nang:
+      feature: dao_vung
+      value: 1
+      uses: 8000
+      days: 7
+  dao_ham:
+    nguon: web
+    nhom: cong-cu
+    ten-goi: "Đào Hầm"
+    material: NETHERITE_PICKAXE
+    amount: 1
+    name: "&5Đào Hầm"
+    lore: ["&8Không đào được trong vùng vây đang đánh"]
+    enchants:
+      efficiency: 5
+    cong-dung: ky-nang
+    ky-nang:
+      feature: dao_vung
+      value: 2
+      uses: 3500
+      days: 5
+      pvp: true
+  xeng_dat:
+    nguon: web
+    nhom: cong-cu
+    ten-goi: "Xẻng Đất"
+    material: DIAMOND_SHOVEL
+    amount: 1
+    name: "&6Xẻng Đất"
+    enchants:
+      efficiency: 4
+    cong-dung: ky-nang
+    ky-nang:
+      feature: dao_vung
+      value: 1
+      uses: 8000
+      days: 7
+  riu_tieu:
+    nguon: web
+    nhom: cong-cu
+    ten-goi: "Rìu Tiều"
+    material: DIAMOND_AXE
+    amount: 1
+    name: "&aRìu Tiều"
+    enchants:
+      efficiency: 4
+    cong-dung: ky-nang
+    ky-nang:
+      feature: chat_cay
+      value: 150
+      uses: 5000
+      days: 7
+  tu_nung:
+    nguon: web
+    nhom: cong-cu
+    ten-goi: "Tự Nung"
+    material: IRON_PICKAXE
+    amount: 1
+    name: "&cTự Nung"
+    lore: ["&8Quặng sắt, vàng, đồng ra thỏi; mảnh vụn cổ ra mảnh netherite"]
+    cong-dung: ky-nang
+    ky-nang:
+      feature: tu_nung
+      uses: 7500
+      days: 7
+  da_nang:
+    nguon: web
+    nhom: cong-cu
+    ten-goi: "Đa Năng"
+    material: DIAMOND_PICKAXE
+    amount: 1
+    name: "&dĐa Năng"
+    lore: ["&8Tự thành cuốc chim, rìu hoặc xẻng theo khối đang đào"]
+    enchants:
+      efficiency: 4
+    cong-dung: ky-nang
+    ky-nang:
+      feature: da_nang
+      uses: 10000
+      days: 7
+  gat_lua:
+    nguon: web
+    nhom: cong-cu
+    ten-goi: "Gặt Lúa"
+    material: DIAMOND_HOE
+    amount: 1
+    name: "&eGặt Lúa"
+    lore: ["&8Gặt cây chín 3×3, tự gieo lại bằng hạt trong túi"]
+    cong-dung: ky-nang
+    ky-nang:
+      feature: gat_lua
+      uses: 8000
+      days: 7
+  nam_cham:
+    nguon: web
+    nhom: cong-cu
+    ten-goi: "Hút Đồ"
+    material: LEAD
+    amount: 1
+    name: "&bHút Đồ"
+    lore: ["&8Để trong túi. Không hút đồ người khác vứt, đồ quanh chỗ có người chết"]
+    cong-dung: ky-nang
+    ky-nang:
+      feature: nam_cham
+      value: 16
+      uses: 5000
+      days: 7
+  ban_ruong:
+    nguon: web
+    nhom: cong-cu
+    ten-goi: "Rìu Bán"
+    material: GOLDEN_AXE
+    amount: 1
+    name: "&aRìu Bán"
+    lore: ["&8Đánh vào rương / thùng: bán hết theo giá /sell"]
+    cong-dung: ky-nang
+    ky-nang:
+      feature: ban_ruong
+      uses: 3000
+      days: 7
+  tui_hu:
+    nguon: web
+    nhom: cong-cu
+    ten-goi: "Túi Hư"
+    material: ENDER_CHEST
+    amount: 1
+    name: "&5Túi Hư"
+    cong-dung: ky-nang
+    ky-nang:
+      feature: tui_hu
+      uses: 3000
+      days: 7
+  nuoc:
+    nguon: web
+    nhom: cong-cu
+    ten-goi: "Nước Nguồn"
+    material: WATER_BUCKET
+    amount: 1
+    name: "&bNước Nguồn"
+    cong-dung: ky-nang
+    ky-nang:
+      feature: nuoc
+      uses: 10000
+      days: 7
+  dung_nham:
+    nguon: web
+    nhom: cong-cu
+    ten-goi: "Dung Nham"
+    material: LAVA_BUCKET
+    amount: 1
+    name: "&6Dung Nham"
+    lore: ["&8Chỉ đổ được ở chỗ bạn có quyền xây"]
+    cong-dung: ky-nang
+    ky-nang:
+      feature: dung_nham
+      uses: 5000
+      days: 7
+      pvp: true
+  bat_thu:
+    nguon: web
+    nhom: cong-cu
+    ten-goi: "Bắt Thú"
+    material: SHEARS
+    amount: 1
+    name: "&aBắt Thú"
+    lore: ["&8Chuột phải vào thú hiền (bò, cừu, gà…) thành trứng; không bắt quái, thú có chủ, pet"]
+    cong-dung: ky-nang
+    ky-nang:
+      feature: bat_thu
+      uses: 80
+      days: 7
+  co_le:
+    nguon: web
+    nhom: cong-cu
+    ten-goi: "Cờ Lê"
+    material: IRON_PICKAXE
+    amount: 1
+    name: "&7Cờ Lê"
+    lore: ["&8Phá lồng quái rơi ra nguyên lồng (quái từ lồng không cho kinh nghiệm)"]
+    cong-dung: ky-nang
+    ky-nang:
+      feature: co_le
+      uses: 3
+      days: 7
+  moc_bay:
+    nguon: web
+    nhom: cong-cu
+    ten-goi: "Móc Bay"
+    material: FISHING_ROD
+    amount: 1
+    name: "&3Móc Bay"
+    cong-dung: ky-nang
+    ky-nang:
+      feature: moc_bay
+      value: 1.5
+      uses: 3000
+      days: 7
+      pvp: true
+  khien_than:
+    nguon: web
+    nhom: giap
+    ten-goi: "Khiên Thần"
+    material: SHIELD
+    amount: 1
+    name: "&eKhiên Thần"
+    cong-dung: ky-nang
+    ky-nang:
+      feature: khien_than
+      value: 50
+      uses: 3000
+      days: 7
+      pvp: true
+  cung_mau:
+    nguon: web
+    nhom: vu-khi
+    ten-goi: "Cung Máu"
+    material: BOW
+    amount: 1
+    name: "&cCung Máu"
+    enchants:
+      power: 3
+    cong-dung: ky-nang
+    ky-nang:
+      feature: hut_mau
+      value: 2
+      uses: 3000
+      days: 7
+      pvp: true
+  no_toa:
+    nguon: web
+    nhom: vu-khi
+    ten-goi: "Nỏ Tỏa"
+    material: CROSSBOW
+    amount: 1
+    name: "&6Nỏ Tỏa"
+    enchants:
+      multishot: 1
+      quick_charge: 2
+    cong-dung: ky-nang
+    ky-nang:
+      feature: ""
+      text: "Bắn tỏa &e[3 mũi tên]"
+      uses: 3000
+      days: 7
+      pvp: true
+  bua_ta:
+    nguon: web
+    nhom: vu-khi
+    ten-goi: "Búa Tạ"
+    material: MACE
+    amount: 1
+    name: "&6Búa Tạ"
+    enchants:
+      wind_burst: 1
+      density: 2
+    cong-dung: ky-nang
+    ky-nang:
+      feature: ""
+      text: "Nện đất &e[hất tung]"
+      uses: 2500
+      days: 7
+      pvp: true
+  kiem_nhat:
+    nguon: web
+    nhom: vu-khi
+    ten-goi: "Kiếm Nhật"
+    material: DIAMOND_SWORD
+    amount: 1
+    name: "&bKiếm Nhật"
+    lore: ["&8Chuột phải: lướt tới, chém mọi thứ trên đường (hồi 4 giây)"]
+    enchants:
+      sharpness: 3
+    cong-dung: ky-nang
+    ky-nang:
+      feature: kiem_nhat
+      value: 6
+      uses: 3000
+      days: 7
+      pvp: true
+  riu_chien:
+    nguon: web
+    nhom: vu-khi
+    ten-goi: "Rìu Chiến"
+    material: DIAMOND_AXE
+    amount: 1
+    name: "&4Rìu Chiến"
+    lore: ["&820% chí mạng ×1,5 và gây chảy máu 3 giây"]
+    enchants:
+      sharpness: 3
+    cong-dung: ky-nang
+    ky-nang:
+      feature: riu_chien
+      value: 20
+      uses: 3000
+      days: 7
+      pvp: true
+  com_nam:
+    nguon: web
+    nhom: do-an
+    ten-goi: "Cơm nắm"
+    material: BREAD
+    amount: 1
+    name: "&fCơm nắm"
+    lore: ["&7Gọn nhẹ, mang theo ra trận"]
+    cong-dung: mon-an
+    hieu-ung: ["ABSORPTION 0 120"]
+  canh_chua:
+    nguon: web
+    nhom: do-an
+    ten-goi: "Canh chua cá"
+    material: BEETROOT_SOUP
+    amount: 1
+    name: "&6Canh chua cá"
+    lore: ["&7Chua chua, ăn là khoẻ"]
+    cong-dung: mon-an
+    hieu-ung: ["REGENERATION 0 45"]
+  ca_kho:
+    nguon: web
+    nhom: do-an
+    ten-goi: "Cá kho tộ"
+    material: COOKED_COD
+    amount: 1
+    name: "&6Cá kho tộ"
+    lore: ["&7Đậm đà, chắc bụng"]
+    cong-dung: mon-an
+    hieu-ung: ["RESISTANCE 0 90"]
+  lau_ca:
+    nguon: web
+    nhom: do-an
+    ten-goi: "Lẩu cá"
+    material: RABBIT_STEW
+    amount: 1
+    name: "&cLẩu cá"
+    lore: ["&7Cả đội ăn chung trước giờ đánh"]
+    cong-dung: mon-an
+    hieu-ung: ["REGENERATION 0 60", "RESISTANCE 0 60"]
+  goi_ca:
+    nguon: web
+    nhom: do-an
+    ten-goi: "Gỏi cá huyền thoại"
+    material: COOKED_SALMON
+    amount: 1
+    name: "&6Gỏi cá huyền thoại"
+    lore: ["&7Món của tướng"]
+    cong-dung: mon-an
+    hieu-ung: ["REGENERATION 1 30", "RESISTANCE 0 120", "ABSORPTION 1 120"]
+  xuquai:
+    nguon: web
+    nhom: tien
+    ten-goi: "Xu Quái"
+    material: GOLD_NUGGET
+    amount: 1
+    name: "&6Xu Quái"
+    lore: ["&7Rơi khi hạ quái thù địch.", "&7Gom 64 đổi Xu Quái 2."]
+    model: "duckymomo:tl_xuquai"
+    cong-dung: tinh-luyen
+  xuquai2:
+    nguon: web
+    nhom: tien
+    ten-goi: "Xu Quái 2"
+    material: PLENTY_POTTERY_SHERD
+    amount: 1
+    name: "&cXu Quái 2"
+    lore: ["&764 Xu Quái tinh luyện lại."]
+    model: "duckymomo:tl_xuquai2"
+    cong-dung: tinh-luyen
+  da:
+    nguon: web
+    nhom: nguyen-lieu
+    ten-goi: "Tinh Luyện Đá"
+    material: SHELTER_POTTERY_SHERD
+    amount: 1
+    name: "&fTinh Luyện &7Đá"
+    model: "duckymomo:tl_da"
+    cong-dung: tinh-luyen
+  than:
+    nguon: web
+    nhom: nguyen-lieu
+    ten-goi: "Tinh Luyện Than"
+    material: BURN_POTTERY_SHERD
+    amount: 1
+    name: "&fTinh Luyện &8Than"
+    model: "duckymomo:tl_than"
+    cong-dung: tinh-luyen
+  dong:
+    nguon: web
+    nhom: nguyen-lieu
+    ten-goi: "Tinh Luyện Đồng"
+    material: ARMS_UP_POTTERY_SHERD
+    amount: 1
+    name: "&fTinh Luyện &6Đồng"
+    model: "duckymomo:tl_dong"
+    cong-dung: tinh-luyen
+  sat:
+    nguon: web
+    nhom: nguyen-lieu
+    ten-goi: "Tinh Luyện Sắt"
+    material: MINER_POTTERY_SHERD
+    amount: 1
+    name: "&fTinh Luyện &7Sắt"
+    model: "duckymomo:tl_sat"
+    cong-dung: tinh-luyen
+  dado:
+    nguon: web
+    nhom: nguyen-lieu
+    ten-goi: "Tinh Luyện Đá Đỏ"
+    material: DANGER_POTTERY_SHERD
+    amount: 1
+    name: "&fTinh Luyện &cĐá Đỏ"
+    model: "duckymomo:tl_dado"
+    cong-dung: tinh-luyen
+  lapis:
+    nguon: web
+    nhom: nguyen-lieu
+    ten-goi: "Tinh Luyện Lapis"
+    material: HOWL_POTTERY_SHERD
+    amount: 1
+    name: "&fTinh Luyện &9Lapis"
+    model: "duckymomo:tl_lapis"
+    cong-dung: tinh-luyen
+  vang:
+    nguon: web
+    nhom: nguyen-lieu
+    ten-goi: "Tinh Luyện Vàng"
+    material: PRIZE_POTTERY_SHERD
+    amount: 1
+    name: "&fTinh Luyện &eVàng"
+    model: "duckymomo:tl_vang"
+    cong-dung: tinh-luyen
+  kimcuong:
+    nguon: web
+    nhom: nguyen-lieu
+    ten-goi: "Tinh Luyện Kim Cương"
+    material: HEART_POTTERY_SHERD
+    amount: 1
+    name: "&fTinh Luyện &bKim Cương"
+    model: "duckymomo:tl_kimcuong"
+    cong-dung: tinh-luyen
+  lucbao:
+    nguon: web
+    nhom: nguyen-lieu
+    ten-goi: "Tinh Luyện Lục Bảo"
+    material: FRIEND_POTTERY_SHERD
+    amount: 1
+    name: "&fTinh Luyện &aLục Bảo"
+    model: "duckymomo:tl_lucbao"
+    cong-dung: tinh-luyen
+  netherite:
+    nguon: web
+    nhom: nguyen-lieu
+    ten-goi: "Tinh Luyện Netherite"
+    material: SKULL_POTTERY_SHERD
+    amount: 1
+    name: "&fTinh Luyện &5Netherite"
+    model: "duckymomo:tl_netherite"
+    cong-dung: tinh-luyen
+  dialinh:
+    nguon: web
+    nhom: nguyen-lieu
+    ten-goi: "Địa Linh"
+    material: SHEAF_POTTERY_SHERD
+    amount: 1
+    name: "&aĐịa Linh"
+    lore: ["&7Tinh hoa mùa màng."]
+    model: "duckymomo:tl_dialinh"
+    cong-dung: tinh-luyen
+  lamnguy:
+    nguon: web
+    nhom: manh
+    ten-goi: "Mảnh Lâm Nguy"
+    material: AMETHYST_SHARD
+    amount: 1
+    name: "&cMảnh Lâm Nguy"
+    lore: ["&7Rơi từ sự kiện Trái Đất lâm nguy", "&7Đổi quà: &f/doimanh"]
+    glint: true
+    cong-dung: manh
+  bua_bat_pet:
+    nguon: web
+    nhom: bua
+    ten-goi: "Bùa bắt pet"
+    material: NAUTILUS_SHELL
+    amount: 1
+    name: "&b✦ Bùa bắt pet"
+    lore: ["&8Phần thưởng thi câu cá"]
+    glint: true
+    cong-dung: bua-bat-pet

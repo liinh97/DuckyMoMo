@@ -28,14 +28,27 @@ final class RegisterLimit implements Listener {
 
     private final JavaPlugin plugin;
     private final int perDay;
+    /** IP miễn giới hạn (register-limit.whitelist): đúng IP, hoặc tiền tố kết thúc bằng "." / ":" (vd "171.255.251." = cả dải). */
+    private final java.util.List<String> whitelist;
     private final File file;
     private final YamlConfiguration data;
 
     RegisterLimit(JavaPlugin plugin, ConfigurationSection cfg) {
         this.plugin = plugin;
         this.perDay = cfg == null ? 2 : cfg.getInt("per-ip-per-day", 2);
+        this.whitelist = cfg == null ? java.util.List.of()
+                : cfg.getStringList("whitelist").stream().map(String::trim).filter(x -> !x.isEmpty()).toList();
         this.file = new File(plugin.getDataFolder(), "dangky-ip.yml");
         this.data = YamlConfiguration.loadConfiguration(file);
+    }
+
+    boolean whitelisted(String ip) {
+        for (String w : whitelist) {
+            if (w.endsWith(".") || w.endsWith(":") ? ip.startsWith(w) : ip.equals(w)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /** Trả false nếu không có AuthMe trên server này. */
@@ -59,7 +72,7 @@ final class RegisterLimit implements Listener {
                 try {
                     Player p = (Player) prePlayer.invoke(ev);
                     String ip = ipOf(p);
-                    if (ip == null) {
+                    if (ip == null || whitelisted(ip)) {
                         return;
                     }
                     int used = recent(ip).size();

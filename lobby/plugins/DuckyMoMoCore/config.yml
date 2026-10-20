@@ -9,6 +9,10 @@ lobby-menu:
 register-limit:
   enabled: true
   per-ip-per-day: 2
+  # IP không bị giới hạn (chủ server, admin test, quán net quen): mỗi dòng 1 IP; kết thúc bằng "." = cả dải (vd "171.255.251.").
+  # Sửa ở Cài đặt › Toàn mạng › Sảnh › Giới hạn đăng ký tài khoản.
+  whitelist:
+    - "171.255.251.82"
 
 # World sảnh là đảo bay (Sakura Spawn): rơi xuống dưới y này thì về spawn, không chết vì hư không
 void-teleport:

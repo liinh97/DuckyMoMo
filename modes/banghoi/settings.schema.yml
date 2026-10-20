@@ -252,11 +252,13 @@ groups:
 
   - title: Cửa hàng trang trí (/cuahang)
     category: Shop
-    description: "Bán vật liệu cơ bản, đồ trang trí và danh hiệu bằng xu trong game, không bán gì tăng sức mạnh. Mọi người mua ở NPC tại spawn; rank ủng hộ mở /cuahang khi đứng trong kinh đô. Bán được cả đồ trong Thư viện đồ."
+    description: "Chợ server: chia danh mục, mua vật liệu cơ bản, đồ trang trí, danh hiệu bằng xu và bán nông sản, khoáng sản, đồ từ quái cho server (giá /sell). Không bán gì tăng sức mạnh. Mọi người mua ở NPC tại spawn; rank ủng hộ mở /cuahang khi đứng trong kinh đô. Bán được cả đồ trong Thư viện đồ."
     apply: [dmm reload]
     settings:
       - { key: decor_enabled, label: "Bật cửa hàng", type: select, file: plugins/DuckyMoMoCore/config.yml, path: decor-shop.enabled,
           options: [ { value: true, label: Bật }, { value: false, label: Tắt } ] }
+      - { key: decor_categories, label: "Danh mục cửa hàng", type: shopcats, file: plugins/DuckyMoMoCore/config.yml, path: decor-shop.categories,
+          note: "Trang chính /cuahang. Ô 0–44 trong menu 6 hàng. \"Server thu mua\": vật liệu hiện trong danh mục để người chơi bán (giá theo Bảng giá bán /sell; *_LOG = mọi khúc gỗ). Món server bán gắn danh mục ở cột \"danh mục\" bên dưới." }
       - { key: decor_materials, label: "Vật liệu cơ bản", type: shopitems, file: plugins/DuckyMoMoCore/config.yml, path: decor-shop.materials,
           note: "Giá mỗi cái phải CAO hơn giá thu mua /sell, không thì món tự bị bỏ (chống mua rồi bán lại lấy lời)." }
       - { key: decor_items, label: "Đồ trang trí", type: shopitems, file: plugins/DuckyMoMoCore/config.yml, path: decor-shop.items,

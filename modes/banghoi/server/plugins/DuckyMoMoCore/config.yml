@@ -428,36 +428,47 @@ decor-shop:
   # materials: vật liệu cơ bản server bán (không mua lại). Giá mỗi cái phải > giá thu mua /sell, không thì tự bị bỏ.
   rank-permission: duckymomo.cuahang
   npc-name: "&6Cửa hàng Kinh Đô"
+  # Danh mục (20/10): trang chính /cuahang. slot = ô trong menu 6 hàng (0-44), sell = vật liệu server THU MUA hiện trong danh mục
+  # (giá lấy từ Essentials worth.yml, "*_LOG" = mọi loại khúc gỗ). Món server bán gắn danh mục bằng "cat:". Sửa: Cài đặt › Shop › Cửa hàng.
+  categories:
+    - {id: tunhien, name: "Khối tự nhiên", icon: GRASS_BLOCK, slot: 11, desc: "Đất, đá, cát, sỏi, đất sét", sell: []}
+    - {id: xaydung, name: "Vật liệu xây", icon: BRICKS, slot: 13, desc: "Ván gỗ, kính, gạch đá, đuốc", sell: []}
+    - {id: go, name: "Gỗ", icon: OAK_LOG, slot: 15, desc: "Bán khúc gỗ các loại cho server", sell: ["*_LOG"]}
+    - {id: nongsan, name: "Nông nghiệp", icon: WHEAT, slot: 20, desc: "Nông sản, thịt, cá, trứng", sell: [WHEAT, CARROT, POTATO, BEETROOT, MELON_SLICE, PUMPKIN, SUGAR_CANE, COCOA_BEANS, SWEET_BERRIES, EGG, BEEF, PORKCHOP, CHICKEN, MUTTON, COD, SALMON]}
+    - {id: khoangsan, name: "Khoáng sản", icon: DIAMOND, slot: 22, desc: "Than, thỏi kim loại, đá quý", sell: [COAL, COPPER_INGOT, IRON_INGOT, GOLD_INGOT, DIAMOND, EMERALD, LAPIS_LAZULI, REDSTONE, QUARTZ, AMETHYST_SHARD, NETHERITE_SCRAP]}
+    - {id: quai, name: "Đồ từ quái", icon: BONE, slot: 24, desc: "Xương, tơ, thuốc súng, ngọc ender…", sell: [BONE, ROTTEN_FLESH, STRING, SPIDER_EYE, GUNPOWDER, ENDER_PEARL, BLAZE_ROD, GHAST_TEAR, SLIME_BALL, PHANTOM_MEMBRANE, LEATHER, FEATHER, WHITE_WOOL]}
+    - {id: trangtri, name: "Trang trí", icon: LANTERN, slot: 30, desc: "Đèn, gốm men, khung tranh, nến…", sell: []}
+    - {id: danhhieu, name: "Danh hiệu", icon: NAME_TAG, slot: 32, desc: "Chữ hiện cạnh tên, đổi bằng /danhhieu", sell: []}
   materials:
-    - {material: DIRT, amount: 64, price: 100}
-    - {material: COBBLESTONE, amount: 64, price: 100}
-    - {material: SAND, amount: 64, price: 120}
-    - {material: GRAVEL, amount: 64, price: 120}
-    - {material: OAK_PLANKS, amount: 64, price: 160}
-    - {material: STONE, amount: 64, price: 160}
-    - {material: CLAY, amount: 64, price: 200}
-    - {material: GLASS, amount: 64, price: 250}
-    - {material: STONE_BRICKS, amount: 64, price: 250}
-    - {material: TORCH, amount: 32, price: 80}
+    - {material: DIRT, amount: 64, price: 100, cat: tunhien}
+    - {material: COBBLESTONE, amount: 64, price: 100, cat: tunhien}
+    - {material: SAND, amount: 64, price: 120, cat: tunhien}
+    - {material: GRAVEL, amount: 64, price: 120, cat: tunhien}
+    - {material: OAK_PLANKS, amount: 64, price: 160, cat: xaydung}
+    - {material: STONE, amount: 64, price: 160, cat: tunhien}
+    - {material: CLAY, amount: 64, price: 200, cat: tunhien}
+    - {material: GLASS, amount: 64, price: 250, cat: xaydung}
+    - {material: STONE_BRICKS, amount: 64, price: 250, cat: xaydung}
+    - {material: TORCH, amount: 32, price: 80, cat: xaydung}
   items:
-    - {material: LANTERN, amount: 8, price: 40}
-    - {material: SEA_LANTERN, amount: 8, price: 80}
-    - {material: GLOWSTONE, amount: 16, price: 60}
-    - {material: PRISMARINE_BRICKS, amount: 32, price: 60}
-    - {material: PURPUR_BLOCK, amount: 32, price: 80}
-    - {material: WHITE_GLAZED_TERRACOTTA, amount: 16, price: 40}
-    - {material: CYAN_GLAZED_TERRACOTTA, amount: 16, price: 40}
-    - {material: TERRACOTTA, amount: 64, price: 50}
-    - {material: QUARTZ_BLOCK, amount: 32, price: 80}
-    - {material: AMETHYST_BLOCK, amount: 16, price: 60}
-    - {material: CANDLE, amount: 16, price: 30}
-    - {material: FLOWER_POT, amount: 16, price: 20}
-    - {material: ITEM_FRAME, amount: 16, price: 30}
-    - {material: ARMOR_STAND, amount: 4, price: 40}
-    - {material: PAINTING, amount: 8, price: 30}
-    - {material: FLOWER_BANNER_PATTERN, amount: 1, price: 100}
-    - {material: GLOBE_BANNER_PATTERN, amount: 1, price: 150}
-    - {material: GLOW_INK_SAC, amount: 16, price: 40}
+    - {material: LANTERN, amount: 8, price: 40, cat: trangtri}
+    - {material: SEA_LANTERN, amount: 8, price: 80, cat: trangtri}
+    - {material: GLOWSTONE, amount: 16, price: 60, cat: trangtri}
+    - {material: PRISMARINE_BRICKS, amount: 32, price: 60, cat: trangtri}
+    - {material: PURPUR_BLOCK, amount: 32, price: 80, cat: trangtri}
+    - {material: WHITE_GLAZED_TERRACOTTA, amount: 16, price: 40, cat: trangtri}
+    - {material: CYAN_GLAZED_TERRACOTTA, amount: 16, price: 40, cat: trangtri}
+    - {material: TERRACOTTA, amount: 64, price: 50, cat: trangtri}
+    - {material: QUARTZ_BLOCK, amount: 32, price: 80, cat: trangtri}
+    - {material: AMETHYST_BLOCK, amount: 16, price: 60, cat: trangtri}
+    - {material: CANDLE, amount: 16, price: 30, cat: trangtri}
+    - {material: FLOWER_POT, amount: 16, price: 20, cat: trangtri}
+    - {material: ITEM_FRAME, amount: 16, price: 30, cat: trangtri}
+    - {material: ARMOR_STAND, amount: 4, price: 40, cat: trangtri}
+    - {material: PAINTING, amount: 8, price: 30, cat: trangtri}
+    - {material: FLOWER_BANNER_PATTERN, amount: 1, price: 100, cat: trangtri}
+    - {material: GLOBE_BANNER_PATTERN, amount: 1, price: 150, cat: trangtri}
+    - {material: GLOW_INK_SAC, amount: 16, price: 40, cat: trangtri}
   titles:
     - {id: luukhach, text: "&7[Lữ Khách]", price: 1000}
     - {id: nghenhan, text: "&d[Nghệ Nhân]", price: 3000}

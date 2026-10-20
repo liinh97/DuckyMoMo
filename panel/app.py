@@ -259,17 +259,51 @@ def validate(s, v):
             if not (1 <= amount <= 2304 and 0 < price <= 100000000):
                 raise ValueError(f"{label}: số lượng 1–2304, giá lớn hơn 0")
             price = int(price) if price == int(price) else price
+            cat = str(d.get("cat") or "").strip().lower()
+            if cat and not re.match(r"^[a-z0-9_]{1,24}$", cat):
+                raise ValueError(f"{label}: mã danh mục sai \"{cat}\"")
             if d.get("library"):
                 lid = str(d["library"]).strip()
                 if not LIB_ID_RE.match(lid):
                     raise ValueError(f"{label}: mã thư viện sai \"{lid}\"")
-                out.append({"library": lid, "amount": amount, "price": price})
+                out.append({"library": lid, "amount": amount, "price": price, **({"cat": cat} if cat else {})})
             else:
                 mat = str(d.get("material", "")).strip().upper()
                 meta = lib_meta() or {}
                 if not MATERIAL_RE.match(mat) or (meta.get("materials") and mat not in meta["materials"]):
                     raise ValueError(f"{label}: vật liệu không có trong server \"{mat}\"")
-                out.append({"material": mat, "amount": amount, "price": price})
+                out.append({"material": mat, "amount": amount, "price": price, **({"cat": cat} if cat else {})})
+        return out
+    if t == "shopcats":
+        # danh mục cửa hàng: [{id, name, icon, slot 0-44, desc, sell [VẬT_LIỆU | *_ĐUÔI | ĐẦU_*]}]
+        out, seen = [], set()
+        for d in (v or []):
+            d = d or {}
+            cid = str(d.get("id", "")).strip().lower()
+            if not re.match(r"^[a-z0-9_]{1,24}$", cid) or cid in seen:
+                raise ValueError(f"{label}: mã danh mục sai hoặc trùng \"{cid}\"")
+            seen.add(cid)
+            icon = str(d.get("icon", "CHEST")).strip().upper() or "CHEST"
+            if not MATERIAL_RE.match(icon):
+                raise ValueError(f"{label} ({cid}): vật phẩm biểu tượng sai")
+            try:
+                slot = int(d.get("slot", -1))
+            except (TypeError, ValueError):
+                raise ValueError(f"{label} ({cid}): ô phải là số")
+            if not -1 <= slot <= 44:
+                raise ValueError(f"{label} ({cid}): ô 0–44 (-1 = tự xếp)")
+            sell = []
+            for x in d.get("sell") or []:
+                x = str(x).strip().upper()
+                if not x:
+                    continue
+                if not re.match(r"^\*?[A-Z0-9_]{1,64}\*?$", x):
+                    raise ValueError(f"{label} ({cid}): mẫu thu mua sai \"{x}\"")
+                sell.append(x)
+            out.append({"id": cid, "name": DoubleQuotedScalarString(str(d.get("name", "")).strip()[:40] or cid), "icon": icon, "slot": slot,
+                        "desc": DoubleQuotedScalarString(str(d.get("desc", "")).strip()[:80]), "sell": sell})
+        if not out:
+            raise ValueError(f"{label}: cần ít nhất một danh mục")
         return out
     if t == "shoptitles":
         out = []

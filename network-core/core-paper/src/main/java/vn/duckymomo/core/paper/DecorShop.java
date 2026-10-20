@@ -35,7 +35,11 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
 /**
- * Cửa hàng Kinh Đô (14/10): 3 mục Vật liệu cơ bản / Trang trí / Danh hiệu, trả bằng xu trong game, không bán gì tăng sức mạnh.
+ * Cửa hàng Kinh Đô (14/10, làm lại 20/10 theo kiểu "chợ server"): trang chính chia DANH MỤC (decor-shop.categories: id, name, icon, slot,
+ * desc, sell [mẫu vật liệu]); trong danh mục mỗi món ghi giá mua (server bán) và giá bán lại (Essentials worth.yml, /sell), số đang có.
+ * Chuột trái: mua 1 lô · Chuột phải: bán 1 lô · Shift + phải: bán hết loại đó (bán qua lệnh /sell của Essentials nên giữ thưởng kinh đô,
+ * quỹ khai hoang…). Món chỉ thu mua (không bán) lấy tự động từ worth.yml theo mẫu "sell" của danh mục (vd "*_LOG", "DIAMOND").
+ * Món server bán: materials / items (thêm "cat: <mã danh mục>"), titles = danh mục danhhieu. Trả bằng xu, không bán gì tăng sức mạnh.
  *  - Mọi người: bấm NPC cửa hàng ở khu shop tại spawn (admin đặt bằng /dmm shopnpc).
  *  - Rank ủng hộ (quyền rank-permission): gõ /cuahang, nhưng CHỈ khi đang đứng trong kinh đô (không mua từ xa được).
  *  - Vật liệu: chỉ server bán, không mua lại; món nào giá mỗi cái <= giá thu mua /sell (Essentials worth.yml) thì tự bỏ (chống lời vô hạn).
@@ -44,13 +48,10 @@ import org.bukkit.persistence.PersistentDataType;
 final class DecorShop implements Listener {
 
     private static final LegacyComponentSerializer LEGACY = LegacyComponentSerializer.legacyAmpersand();
-    private static final Map<String, String> CATS = new LinkedHashMap<>();
+    /** Danh mục: sell = mẫu vật liệu chỉ thu mua (lấy giá từ worth.yml), "*" ở đầu/cuối = khớp đuôi/đầu tên. */
+    record Cat(String id, String name, Material icon, int slot, String desc, List<String> sell) { }
 
-    static {
-        CATS.put("vatlieu", "Vật liệu cơ bản");
-        CATS.put("trangtri", "Trang trí");
-        CATS.put("danhhieu", "Danh hiệu");
-    }
+    private final Map<String, Cat> cats = new LinkedHashMap<>();
 
     /** lib: mã trong Thư viện đồ (bán đồ admin thiết kế), null = đồ thường theo icon. */
     record Offer(String key, String cat, Material icon, int amount, double price, String title, String titleText, String lib) {
@@ -65,6 +66,7 @@ final class DecorShop implements Listener {
     private final NamespacedKey offerKey;
     private final NamespacedKey catKey;
     private final NamespacedKey npcKey;
+    private final NamespacedKey sellKey;
     private final ItemLibrary library;
 
     DecorShop(DuckyMoMoCore plugin, Leaderboard board, Predicate<Location> inCapital, ConfigurationSection c, ItemLibrary library) {
@@ -77,6 +79,22 @@ final class DecorShop implements Listener {
         this.offerKey = new NamespacedKey(plugin, "cuahang");
         this.catKey = new NamespacedKey(plugin, "cuahang_muc");
         this.npcKey = new NamespacedKey(plugin, "shop_npc");
+        this.sellKey = new NamespacedKey(plugin, "cuahang_ban");
+        for (Map<?, ?> m : c.getMapList("categories")) {
+            String id = String.valueOf(m.get("id"));
+            Material ic = Material.matchMaterial(String.valueOf(m.get("icon")));
+            List<String> sell = new ArrayList<>();
+            if (m.get("sell") instanceof List<?> l) {
+                l.forEach(x -> sell.add(String.valueOf(x).toUpperCase(Locale.ROOT)));
+            }
+            cats.put(id, new Cat(id, String.valueOf(m.get("name") == null ? id : m.get("name")), ic == null ? Material.CHEST : ic,
+                    m.get("slot") instanceof Number n ? n.intValue() : -1, m.get("desc") == null ? "" : String.valueOf(m.get("desc")), sell));
+        }
+        if (cats.isEmpty()) {   // cấu hình cũ chưa có danh mục
+            cats.put("vatlieu", new Cat("vatlieu", "Vật liệu cơ bản", Material.BRICKS, 11, "", List.of()));
+            cats.put("trangtri", new Cat("trangtri", "Trang trí", Material.LANTERN, 13, "", List.of()));
+            cats.put("danhhieu", new Cat("danhhieu", "Danh hiệu", Material.NAME_TAG, 15, "", List.of()));
+        }
         YamlConfiguration worth = YamlConfiguration.loadConfiguration(new File(plugin.getDataFolder().getParentFile(), "Essentials/worth.yml"));
         int skipped = 0;
         for (Map<?, ?> m : c.getMapList("materials")) {
@@ -99,16 +117,17 @@ final class DecorShop implements Listener {
             }
         }
         for (Map<?, ?> m : c.getMapList("titles")) {
-            offers.add(new Offer("t" + offers.size(), "danhhieu", Material.NAME_TAG, 1,
+            offers.add(new Offer("t" + offers.size(), m.get("cat") == null ? "danhhieu" : String.valueOf(m.get("cat")), Material.NAME_TAG, 1,
                     m.get("price") instanceof Number n ? n.doubleValue() : 0, String.valueOf(m.get("id")), String.valueOf(m.get("text")), null));
         }
         plugin.getLogger().info("Cửa hàng Kinh Đô: " + offers.size() + " món" + (skipped > 0 ? " (bỏ " + skipped + " món rẻ hơn giá /sell)" : ""));
     }
 
-    private Offer item(Map<?, ?> m, String cat) {
+    private Offer item(Map<?, ?> m, String defCat) {
+        String cat = m.get("cat") == null ? defCat : String.valueOf(m.get("cat"));
         int amount = m.get("amount") instanceof Number n ? Math.max(1, n.intValue()) : 1;
         double price = m.get("price") instanceof Number n ? n.doubleValue() : 0;
-        String key = (cat.equals("vatlieu") ? "v" : "i") + offers.size();
+        String key = (defCat.equals("vatlieu") ? "v" : "i") + offers.size();
         if (m.get("library") != null) {
             String id = String.valueOf(m.get("library"));
             ItemStack sample = library == null ? null : library.build(id, 1);
@@ -135,6 +154,8 @@ final class DecorShop implements Listener {
 
     private static final class Holder implements InventoryHolder {
         private Inventory inv;
+        private String cat;   // null = trang chính
+        private int page;
 
         @Override
         public Inventory getInventory() {
@@ -161,77 +182,248 @@ final class DecorShop implements Listener {
         return true;
     }
 
+    private static String catOf(Offer o, Map<String, Cat> cats) {
+        if (cats.containsKey(o.cat())) {
+            return o.cat();
+        }
+        return cats.keySet().iterator().next();
+    }
+
+    /** Giá thu mua /sell (Essentials worth.yml), đọc lại mỗi lần mở để Cài đặt sửa giá là thấy ngay. */
+    private Map<Material, Double> worth() {
+        Map<Material, Double> out = new LinkedHashMap<>();
+        YamlConfiguration w = YamlConfiguration.loadConfiguration(new File(plugin.getDataFolder().getParentFile(), "Essentials/worth.yml"));
+        ConfigurationSection sec = w.getConfigurationSection("worth");
+        if (sec != null) {
+            for (String k : sec.getKeys(false)) {
+                Material m = Material.matchMaterial(k);
+                if (m != null && sec.getDouble(k) > 0) {
+                    out.put(m, sec.getDouble(k));
+                }
+            }
+        }
+        return out;
+    }
+
+    private static boolean matches(String pattern, Material m) {
+        String n = m.name();
+        if (pattern.startsWith("*")) {
+            return n.endsWith(pattern.substring(1));
+        }
+        if (pattern.endsWith("*")) {
+            return n.startsWith(pattern.substring(0, pattern.length() - 1));
+        }
+        return n.equals(pattern);
+    }
+
+    /** Một ô trong danh mục: món server bán (offer) và/hoặc vật liệu server thu mua (sellMat). */
+    private record Entry(Offer offer, Material sellMat) { }
+
+    private List<Entry> entries(String cat, Map<Material, Double> worth) {
+        List<Entry> out = new ArrayList<>();
+        java.util.Set<Material> seen = new java.util.HashSet<>();
+        for (Offer o : offers) {
+            if (catOf(o, cats).equals(cat)) {
+                Material sm = o.lib() == null && o.title() == null && worth.containsKey(o.icon()) ? o.icon() : null;
+                out.add(new Entry(o, sm));
+                if (sm != null) {
+                    seen.add(sm);
+                }
+            }
+        }
+        Cat c = cats.get(cat);
+        if (c != null) {
+            for (Material m : worth.keySet()) {
+                if (!seen.contains(m) && c.sell().stream().anyMatch(pt -> matches(pt, m))) {
+                    out.add(new Entry(null, m));
+                    seen.add(m);
+                }
+            }
+        }
+        return out;
+    }
+
+    private static int count(Player p, Material m) {
+        int n = 0;
+        for (ItemStack it : p.getInventory().getStorageContents()) {
+            if (it != null && it.getType() == m && !it.hasItemMeta()) {
+                n += it.getAmount();
+            }
+        }
+        return n;
+    }
+
     private void openMenu(Player p) {
         if (BedrockMenu.available() && BedrockMenu.isBedrock(p.getUniqueId())) {
             List<BedrockMenu.Entry> es = new ArrayList<>();
-            CATS.forEach((k, v) -> es.add(new BedrockMenu.Entry(v, k)));
+            cats.forEach((k, v) -> es.add(new BedrockMenu.Entry(v.name(), k)));
             BedrockMenu.open(p.getUniqueId(), "Cửa hàng Kinh Đô", "Trả bằng xu trong game. Chọn mục:", es,
-                    k -> plugin.getServer().getScheduler().runTask(plugin, () -> openCategory(p, k)));
+                    k -> plugin.getServer().getScheduler().runTask(plugin, () -> openCategory(p, k, 0)));
             return;
         }
         Holder h = new Holder();
-        Inventory inv = plugin.getServer().createInventory(h, 27, c("&0Cửa hàng Kinh Đô"));
+        Inventory inv = plugin.getServer().createInventory(h, 54, c("&0⛃ Cửa hàng Kinh Đô"));
         h.inv = inv;
-        Material[] icons = {Material.BRICKS, Material.LANTERN, Material.NAME_TAG};
-        int[] slots = {11, 13, 15};
-        int i = 0;
-        for (Map.Entry<String, String> e : CATS.entrySet()) {
-            String cat = e.getKey();
-            long n = offers.stream().filter(o -> o.cat().equals(cat)).count();
-            ItemStack it = Tip.of("&6✿ &f" + e.getValue()).sub(n + " món").line().click("Bấm để xem").apply(new ItemStack(icons[i]));
+        Map<Material, Double> worth = worth();
+        inv.setItem(4, Tip.of("&6⛃ &fCửa hàng Kinh Đô").desc("Mua vật liệu, đồ trang trí, danh hiệu", "Bán nông sản, khoáng sản, đồ từ quái")
+                .line().kv("Số dư", "&a" + money(VaultEconomy.available() ? VaultEconomy.balance(p) : 0))
+                .note("Trả bằng xu trong game, không bán gì tăng sức mạnh").apply(new ItemStack(Material.GOLD_INGOT)));
+        int[] auto = {11, 13, 15, 20, 22, 24, 29, 31, 33, 38, 40, 42};
+        int ai = 0;
+        for (Cat ct : cats.values()) {
+            List<Entry> es = entries(ct.id(), worth);
+            long buyN = es.stream().filter(x -> x.offer() != null).count(), sellN = es.stream().filter(x -> x.sellMat() != null).count();
+            Tip t = Tip.of("&e" + ct.name());
+            if (!ct.desc().isBlank()) {
+                t.raw("&8↳ &7" + ct.desc());
+            }
+            t.line();
+            if (buyN > 0) {
+                t.kv("Server bán", buyN + " món");
+            }
+            if (sellN > 0) {
+                t.kv("Server thu mua", sellN + " món");
+            }
+            t.click("Bấm để xem");
+            ItemStack it = t.apply(new ItemStack(ct.icon()));
             ItemMeta m = it.getItemMeta();
-            m.getPersistentDataContainer().set(catKey, PersistentDataType.STRING, cat);
+            m.getPersistentDataContainer().set(catKey, PersistentDataType.STRING, ct.id());
             it.setItemMeta(m);
-            inv.setItem(slots[i++], it);
+            int slot = ct.slot() >= 0 && ct.slot() < 45 && inv.getItem(ct.slot()) == null ? ct.slot() : -1;
+            while (slot < 0 && ai < auto.length) {
+                if (inv.getItem(auto[ai]) == null) {
+                    slot = auto[ai];
+                }
+                ai++;
+            }
+            if (slot >= 0) {
+                inv.setItem(slot, it);
+            }
+        }
+        ItemStack close = Tip.of("&c✘ &fĐóng").apply(new ItemStack(Material.BARRIER));
+        ItemMeta cm = close.getItemMeta();
+        cm.getPersistentDataContainer().set(catKey, PersistentDataType.STRING, "close");
+        close.setItemMeta(cm);
+        inv.setItem(49, close);
+        p.openInventory(inv);
+    }
+
+    private void openCategory(Player p, String cat, int page) {
+        Cat ct = cats.get(cat);
+        if (ct == null) {
+            return;
+        }
+        Map<Material, Double> worth = worth();
+        List<Entry> list = entries(cat, worth);
+        if (BedrockMenu.available() && BedrockMenu.isBedrock(p.getUniqueId())) {
+            List<BedrockMenu.Entry> es = new ArrayList<>();
+            for (Entry en : list) {
+                if (en.offer() != null) {
+                    es.add(new BedrockMenu.Entry(label(en.offer()).replaceAll("&.", "") + "\n" + money(en.offer().price()), en.offer().key()));
+                }
+            }
+            BedrockMenu.open(p.getUniqueId(), ct.name(), es.isEmpty() ? "Mục này chỉ thu mua: cầm đồ rồi gõ /sell hand." : "Bấm để mua:", es,
+                    k -> plugin.getServer().getScheduler().runTask(plugin, () -> buy(p, k)));
+            return;
+        }
+        int pages = Math.max(1, (list.size() + 44) / 45);
+        page = Math.max(0, Math.min(page, pages - 1));
+        Holder h = new Holder();
+        h.cat = cat;
+        h.page = page;
+        Inventory inv = plugin.getServer().createInventory(h, 54, c("&0" + ct.name() + (pages > 1 ? " &8(" + (page + 1) + "/" + pages + ")" : "")));
+        h.inv = inv;
+        for (int i = 0; i < 45 && page * 45 + i < list.size(); i++) {
+            inv.setItem(i, icon(p, list.get(page * 45 + i), worth));
+        }
+        if (page > 0) {
+            inv.setItem(45, nav(Material.ARROW, "&e← &fTrang trước", "trang:" + (page - 1)));
+        }
+        inv.setItem(48, Tip.of("&6⛃ &fSố dư").kv("Xu", "&a" + money(VaultEconomy.available() ? VaultEconomy.balance(p) : 0)).apply(new ItemStack(Material.GOLD_NUGGET)));
+        inv.setItem(49, nav(Material.PAPER, "&7← &fVề danh mục", "menu"));
+        if (page < pages - 1) {
+            inv.setItem(53, nav(Material.ARROW, "&fTrang sau &e→", "trang:" + (page + 1)));
         }
         p.openInventory(inv);
     }
 
-    private void openCategory(Player p, String cat) {
-        List<Offer> list = offers.stream().filter(o -> o.cat().equals(cat)).toList();
-        if (BedrockMenu.available() && BedrockMenu.isBedrock(p.getUniqueId())) {
-            List<BedrockMenu.Entry> es = new ArrayList<>();
-            for (Offer o : list) {
-                es.add(new BedrockMenu.Entry(label(o).replaceAll("&.", "") + "\n" + money(o.price()), o.key()));
+    private ItemStack nav(Material m, String name, String action) {
+        ItemStack it = Tip.of(name).apply(new ItemStack(m));
+        ItemMeta im = it.getItemMeta();
+        im.getPersistentDataContainer().set(catKey, PersistentDataType.STRING, action);
+        it.setItemMeta(im);
+        return it;
+    }
+
+    private ItemStack icon(Player p, Entry en, Map<Material, Double> worth) {
+        Offer o = en.offer();
+        ItemStack it = o != null && o.lib() != null ? library.build(o.lib(), 1) : null;
+        if (it == null) {
+            it = new ItemStack(o != null ? o.icon() : en.sellMat());
+        }
+        it.setAmount(Math.max(1, Math.min(o != null ? o.amount() : 1, it.getMaxStackSize())));
+        Tip t = Tip.of(o != null ? label(o) : "&f" + Rewards.vi(en.sellMat().name())).accent("&6");
+        if (o != null && o.title() != null) {
+            t.desc("Danh hiệu hiện cạnh tên", "Đổi danh hiệu: /danhhieu");
+        }
+        t.line();
+        if (o != null) {
+            t.kv("Giá mua", "&a" + money(o.price()) + (o.title() == null ? " &8/ " + o.amount() + " món" : ""));
+        }
+        Material sm = en.sellMat();
+        int have = sm == null ? 0 : count(p, sm);
+        if (sm != null) {
+            t.kv("Giá bán lại", "&e" + money(worth.get(sm)) + " &8/ món");
+            t.kv("Bạn đang có", have > 0 ? "&f" + have : "&80");
+        } else if (o != null && o.title() == null) {
+            t.kv("Giá bán lại", "&8server không thu mua");
+        }
+        t.line();
+        if (o != null) {
+            t.click("Chuột trái", o.title() != null ? "mua danh hiệu" : "mua " + o.amount() + " món");
+        }
+        if (sm != null) {
+            int lot = Math.min(have, o != null ? o.amount() : 64);
+            if (have > 0) {
+                t.click("Chuột phải", "bán " + lot + " món");
+                t.click("Shift + phải", "bán hết " + have + " món");
+            } else {
+                t.note("Có món này trong túi thì bán được ở đây");
             }
-            BedrockMenu.open(p.getUniqueId(), CATS.get(cat), list.isEmpty() ? "Chưa có món nào." : "Bấm để mua:", es,
-                    k -> plugin.getServer().getScheduler().runTask(plugin, () -> buy(p, k)));
+        }
+        if (o != null && o.title() == null && o.lib() == null) {
+            t.note("Chỉ trang trí / vật liệu, không thêm sức mạnh");
+        }
+        if (o != null && o.lib() != null) {
+            t.append(it);
+        } else {
+            t.apply(it);
+        }
+        ItemMeta m = it.getItemMeta();
+        m.displayName(t.name());
+        if (o != null) {
+            m.getPersistentDataContainer().set(offerKey, PersistentDataType.STRING, o.key());
+        }
+        if (sm != null) {
+            m.getPersistentDataContainer().set(sellKey, PersistentDataType.STRING, sm.name() + ":" + (o != null ? o.amount() : 64));
+        }
+        it.setItemMeta(m);
+        return it;
+    }
+
+    /** Bán qua lệnh /sell của Essentials (giữ thưởng kinh đô, quỹ khai hoang, chống bán đồ có tên/phù phép). */
+    private void sell(Player p, Material m, int lot, boolean all, Holder h) {
+        int have = count(p, m);
+        if (have <= 0) {
+            p.sendMessage(c("&cTrong túi không có " + Rewards.vi(m.name()) + " (đồ thường) để bán."));
             return;
         }
-        int rows = Math.max(2, Math.min(6, (list.size() + 8) / 9 + 1));
-        Holder h = new Holder();
-        Inventory inv = plugin.getServer().createInventory(h, rows * 9, c("&0" + CATS.get(cat)));
-        h.inv = inv;
-        for (int i = 0; i < list.size() && i < inv.getSize() - 9; i++) {
-            Offer o = list.get(i);
-            ItemStack it = o.lib() != null ? library.build(o.lib(), 1) : null;
-            if (it == null) {
-                it = new ItemStack(o.icon());
+        p.performCommand("sell " + m.name().toLowerCase(Locale.ROOT) + (all ? "" : " " + Math.min(lot, have)));
+        plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
+            if (p.isOnline() && p.getOpenInventory().getTopInventory().getHolder() == h) {
+                openCategory(p, h.cat, h.page);
             }
-            it.setAmount(Math.max(1, Math.min(o.amount(), it.getMaxStackSize())));
-            Tip t = Tip.of(label(o)).accent("&6");
-            if (o.title() != null) {
-                t.desc("Danh hiệu hiện cạnh tên", "Đổi danh hiệu: /danhhieu");
-            }
-            t.line().kv("Giá", "&e" + money(o.price())).raw("&8Chỉ trang trí, không thêm sức mạnh").click("Bấm để mua");
-            if (o.lib() != null) {
-                t.append(it);   // món thư viện: giữ mô tả gốc, thêm giá bên dưới
-            } else {
-                t.apply(it);
-            }
-            ItemMeta m = it.getItemMeta();
-            m.displayName(t.name());
-            m.getPersistentDataContainer().set(offerKey, PersistentDataType.STRING, o.key());
-            it.setItemMeta(m);
-            inv.setItem(i, it);
-        }
-        ItemStack back = new ItemStack(Material.ARROW);
-        ItemMeta bm = back.getItemMeta();
-        bm.displayName(Tip.c("&7← &fQuay lại"));
-        bm.getPersistentDataContainer().set(catKey, PersistentDataType.STRING, "menu");
-        back.setItemMeta(bm);
-        inv.setItem(inv.getSize() - 5, back);
-        p.openInventory(inv);
+        }, 2L);
     }
 
     private String label(Offer o) {
@@ -291,18 +483,41 @@ final class DecorShop implements Listener {
             return;
         }
         var pdc = e.getCurrentItem().getItemMeta().getPersistentDataContainer();
+        Holder h = (Holder) e.getInventory().getHolder();
         String cat = pdc.get(catKey, PersistentDataType.STRING);
         if (cat != null) {
-            if (cat.equals("menu")) {
+            if (cat.equals("close")) {
+                p.closeInventory();
+            } else if (cat.equals("menu")) {
                 openMenu(p);
+            } else if (cat.startsWith("trang:")) {
+                openCategory(p, h.cat, Integer.parseInt(cat.substring(6)));
             } else {
-                openCategory(p, cat);
+                openCategory(p, cat, 0);
             }
             return;
         }
         String key = pdc.get(offerKey, PersistentDataType.STRING);
-        if (key != null) {
+        String sellTag = pdc.get(sellKey, PersistentDataType.STRING);
+        org.bukkit.event.inventory.ClickType ct = e.getClick();
+        if (sellTag != null && ct.isRightClick()) {
+            String[] a = sellTag.split(":");
+            Material m = Material.matchMaterial(a[0]);
+            if (m != null) {
+                sell(p, m, Integer.parseInt(a[1]), ct.isShiftClick(), h);
+            }
+            return;
+        }
+        if (key != null && ct.isLeftClick()) {
             buy(p, key);
+            if (h.cat != null) {
+                Holder hh = h;
+                plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
+                    if (p.isOnline() && p.getOpenInventory().getTopInventory().getHolder() == hh) {
+                        openCategory(p, hh.cat, hh.page);
+                    }
+                }, 1L);
+            }
         }
     }
 
@@ -352,7 +567,7 @@ final class DecorShop implements Listener {
             p.sendMessage(c("&cKhông đặt được dân làng ở đây (có thể WorldGuard chặn sinh mob)."));
             return;
         }
-        String[] lines = {npcName, "&7Vật liệu · Trang trí · Danh hiệu", "&8(bấm vào để mua)"};
+        String[] lines = {npcName, "&7Mua vật liệu · Bán nông sản, khoáng sản", "&8(bấm vào để mở)"};
         double y = 1.6 + (lines.length - 1) * 0.28;
         for (String line : lines) {
             p.getWorld().spawn(loc.clone().add(0, y, 0), ArmorStand.class, a -> {

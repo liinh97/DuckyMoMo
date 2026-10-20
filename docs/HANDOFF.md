@@ -1601,3 +1601,7 @@ Log: `docker compose logs banghoi-1 --since 5m | grep -iE "DuckyMoMoCore|Mùa:|V
   sách cũng ghi vào settings.yml ce_*_lore), QuickShop overrides/vi_vn/messages.yml (gui.*), MyPet mô tả hệ (tools/mypet/sinh-cay-ky-nang.py
   hàm khung(), sinh lại 230 cây; site/app.py bỏ ký hiệu khung khi hiện web). Sửa kèm: nút tăng giá /ah ghi +5000 nhưng thật +500.
   Script đã dùng (ruamel, chạy trong container panel): scratchpad phiên cũ, không giữ. Đổi giá shop /ce trên Cài đặt KHÔNG tự đổi số trong mô tả.
+- 20/10 tối: /cuahang làm lại kiểu chợ server (người dùng gửi ảnh CherryMC): decor-shop.categories {id, name, icon, slot, desc, sell[mẫu]},
+  món bán có "cat:", danh mục thu mua lấy từ Essentials worth.yml (đọc lại mỗi lần mở). Trái mua / phải bán 1 lô / Shift+phải bán hết
+  (p.performCommand("sell <vật liệu> [số]") của Essentials). Cài đặt: kiểu mới shopcats (decor_categories) + cột danh mục ở shopitems.
+  CHƯA thử bằng người: bấm bán, phân trang, Bedrock (Bedrock vẫn chỉ mua như cũ).

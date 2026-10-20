@@ -35,7 +35,7 @@ final class Tip {
     private Tip() {
     }
 
-    /** title: tên có mã màu; nên có ký hiệu đầu (vd "&e⛃ &fChợ đấu giá"). */
+    /** title: tên có mã màu; nên có ký hiệu đầu (vd "&e⛃ &fChợ đen"). */
     static Tip of(String title) {
         Tip t = new Tip();
         t.name = c(title);

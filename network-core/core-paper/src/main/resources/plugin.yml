@@ -37,8 +37,11 @@ commands:
   khaihoang:
     description: "Khai hoang vùng mới: cả server góp quỹ (bán /sell, /khaihoang gop <xu>), đủ mốc thì mở rộng bản đồ"
     aliases: [khaimo, frontier]
+  choden:
+    description: "Chợ đen: mua bán giữa người chơi, hai bên Đang bán (/ah) và Đang thu mua (/donhang)"
+    aliases: [cho, chomuaban]
   donhang:
-    description: "Sàn thu mua: đặt đơn cần mua (tiền giữ trước), người khác giao hàng nhận tiền ngay. /donhang tao <số> <giá>, /donhang cuatoi"
+    description: "Chợ đen · thu mua: đặt đơn cần mua (tiền giữ trước), người khác giao hàng nhận tiền ngay. /donhang tao <số> <giá>, /donhang cuatoi"
     aliases: [order, orders, thumua]
   mua:
     description: "Mùa mưa / mùa khô: còn mấy ngày, cây nào lớn nhanh, cá nào xuất hiện. Admin: /mua dat <mua|kho|tudong>"

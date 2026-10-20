@@ -253,7 +253,7 @@ frontier:
       message: "Viền phía nam đã nới tới đảo Java."
       commands: ["chunky world world", "chunky shape rectangle", "chunky center 13150 -1050", "chunky radius 1950 2150", "chunky border add world"]
 
-# Sàn thu mua (/donhang, ý từ UniMC "Orders"): người mua đặt đơn, tiền (số lượng x đơn giá) bị giữ trước + phí fee-percent % (không hoàn,
+# Chợ đen (thu mua) (/donhang, ý từ UniMC "Orders"): người mua đặt đơn, tiền (số lượng x đơn giá) bị giữ trước + phí fee-percent % (không hoàn,
 # rút tiền khỏi kinh tế). Người giao nhận tiền ngay, hàng nằm trong kho đơn chờ người mua nhận. Hết days ngày: đóng, trả tiền phần chưa giao.
 # Chỉ đồ "trơn" (không tên, không phù phép, không hỏng). blacklist: vật không cho đặt. Lưu: donhang.yml
 orders:
@@ -1191,16 +1191,14 @@ player-menu:
        gom: ["Khám phá, câu cá, săn quái, bắt pet…", "Mở khoá danh hiệu hiện trên tên"], bam: "Bấm để mở sổ", cmd: thanhtich}
     - {slot: 16, icon: BOOK, name: "&e❖ &fCẩm nang", lore: ["Hướng dẫn cách chơi từ đầu"],
        gom: ["11 chương: kinh tế, thị trấn, công thành…", "Có ví dụ lệnh cho từng việc"], bam: "Bấm để đọc", cmd: huongdan}
-    - {slot: 19, icon: GOLD_INGOT, name: "&a⛃ &fChợ đấu giá", sub: "/ah", lore: ["Mua bán đồ với người chơi khác"],
-       gom: ["Treo bán, đấu giá, lấy lại đồ hết hạn", "Số món treo theo danh phận"], bam: "Bấm để mở chợ", cmd: ah}
+    - {slot: 19, icon: GOLD_INGOT, name: "&6☠ &fChợ đen", sub: "/choden", lore: ["Mua bán trực tiếp giữa người chơi"], gom: ["Đang bán: hàng người chơi treo, bấm là mua", "Đang thu mua: đơn cần mua, giao hàng lấy tiền", "Treo bán, đặt đơn, đồ của tôi"], bam: "Bấm để vào chợ", cmd: choden}
     - {slot: 20, icon: EMERALD, name: "&a$ &fBán đồ đang cầm", sub: "/sell hand", lore: ["Bán món trên tay cho server theo bảng giá"],
        gom: ["Bán hết loại đó trong túi: /sell all", "Xem giá: /worth"], bam: "Bấm để bán ngay", cmd: "sell hand"}
     - {slot: 21, icon: SMITHING_TABLE, name: "&a⚒ &fXưởng chế tạo", sub: "/xuong", lore: ["Đồ có kỹ năng riêng, độ bền và hạn dùng"],
        gom: ["Đào 3×3, chặt cả cây, gặt 3×3", "Kiếm lướt chém, khiên phản đòn, cung hút máu"], bam: "Bấm để vào xưởng", cmd: xuong}
     - {slot: 22, icon: BLAST_FURNACE, name: "&a♨ &fTinh Luyện", sub: "/tinhluyen", lore: ["Đổi khối thường thành nguyên liệu quý"],
        gom: ["Trao đổi ở shop dân làng", "Nguyên liệu Xưởng, bán cho server"], bam: "Bấm để tinh luyện", cmd: tinhluyen}
-    - {slot: 23, icon: CHEST, name: "&a✉ &fSàn thu mua", sub: "/donhang", lore: ["Đặt đơn mua hàng, người khác giao tới"],
-       gom: ["Tiền được giữ khi đặt, nhận hàng tự động", "Giao hàng cho đơn người khác để kiếm xu"], bam: "Bấm để xem các đơn", cmd: donhang}
+    - {slot: 23, icon: EMERALD_BLOCK, name: "&e⛃ &fCửa hàng Kinh Đô", sub: "/cuahang", lore: ["Mua vật liệu, bán nông sản, khoáng sản cho server"], gom: ["10 danh mục, giá theo từng món", "Mở ở NPC tại spawn; rank ủng hộ gõ /cuahang trong kinh đô"], bam: "Bấm để mở", cmd: cuahang}
     - {slot: 24, icon: HOPPER, name: "&a⇄ &fĐổi đồ với người khác", sub: "/trade", lore: ["Hai bên bỏ đồ rồi cùng xác nhận"],
        gom: ["Một bên huỷ thì đồ trả lại", "Không bị lừa giữa chừng"], bam: "Bấm rồi gõ tên người muốn đổi", suggest: "/trade "}
     - {slot: 25, icon: PAINTING, name: "&a✿ &fCửa hàng trang trí", sub: "/cuahang", lore: ["Đồ trang trí, danh hiệu mua bằng xu"],

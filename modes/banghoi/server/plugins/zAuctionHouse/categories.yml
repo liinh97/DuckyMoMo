@@ -51,7 +51,7 @@ settings:
   # Display name for the "All" category (shows all items regardless of type).
   # This category always exists and shows every listed item.
   # Supports MiniMessage formatting and hex colors.
-  all-category-name: "Chợ đấu giá"
+  all-category-name: "Chợ đen"
 
 #=============================================================================
 # CATEGORY DEFINITIONS

@@ -655,14 +655,15 @@ public final class DuckyMoMoCore extends JavaPlugin {
         }
         bind("xuong", workshop == null ? null : workshop::command, "Xưởng chế tạo");
 
-        // Sàn thu mua /donhang (Bang Hội Chiến: orders.enabled, cần Vault)
+        // Chợ đen (thu mua) /donhang (Bang Hội Chiến: orders.enabled, cần Vault)
         Orders orders = getConfig().getBoolean("orders.enabled") && getConfig().isConfigurationSection("orders")
                 ? new Orders(this, getConfig().getConfigurationSection("orders")) : null;
         if (orders != null) {
             getServer().getPluginManager().registerEvents(orders, this);
             orders.start();
         }
-        bind("donhang", orders == null ? null : orders::command, "Sàn thu mua");
+        bind("donhang", orders == null ? null : orders::command, "Chợ đen · thu mua");
+        bind("choden", orders == null ? null : orders::hubCommand, "Chợ đen");
         PluginCommand dhCmd = getCommand("donhang");
         if (dhCmd != null) {
             Orders oo = orders;

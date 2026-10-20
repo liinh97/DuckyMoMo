@@ -391,7 +391,7 @@ final class PeaceAlliance implements Listener {
         if (auctionCommands.contains(label) && !e.getPlayer().hasPermission("duckymomo.peace.admin")
                 && !inPeaceLand(e.getPlayer().getLocation()) && !(spawnRing != null && spawnRing.test(e.getPlayer().getLocation()))) {
             e.setCancelled(true);
-            e.getPlayer().sendMessage(c("&eChợ đấu giá chỉ mở trong đất của Liên minh Hoà Bình (kinh đô và các thị trấn hoà bình)."));
+            e.getPlayer().sendMessage(c("&eChợ đen chỉ mở trong đất của Liên minh Hoà Bình (kinh đô và các thị trấn hoà bình)."));
         }
     }
 

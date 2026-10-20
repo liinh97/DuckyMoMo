@@ -178,17 +178,17 @@ chapters:
     &0Lương Dân: 24 giờ + cấp 10. Hào Kiệt: 72 giờ + cấp 25.
   - |-
     &6DANH PHẬN: quyền lợi
-    &0Tị Nạn: 1 nhà, 2 món chợ đấu giá.
-    &0Dân: 2 nhà, 1 balo 27 ô, 4 món chợ đấu giá.
-    &0Lương Dân: 3 nhà, 2 balo 36 ô, 6 món chợ đấu giá.
-    &0Hào Kiệt: 5 nhà, 3 balo 45 ô, 8 món chợ đấu giá.
+    &0Tị Nạn: 1 nhà, 2 món Chợ đen.
+    &0Dân: 2 nhà, 1 balo 27 ô, 4 món Chợ đen.
+    &0Lương Dân: 3 nhà, 2 balo 36 ô, 6 món Chợ đen.
+    &0Hào Kiệt: 5 nhà, 3 balo 45 ô, 8 món Chợ đen.
   - |-
     &6DANH PHẬN (tiếp)
     &8Giữ danh phận khi /choilai. Số liệu có thể đổi: xem /danhphan.
   - |-
     &c◆ RANK SỨ GIẢ
     &0Cho người livestream&r&0 về server (TikTok, YouTube…), miễn phí, admin xét duyệt.
-    &0Có thêm nhà, balo, món chợ đấu giá, đơn thu mua, vé vòng quay nhanh hơn, gói quà Sứ Giả (&1/kit&0).
+    &0Có thêm nhà, balo, món Chợ đen, đơn thu mua, vé vòng quay nhanh hơn, gói quà Sứ Giả (&1/kit&0).
     &0Xem yêu cầu: thẻ Sứ Giả trong &1/danhphan&0.
   - |-
     &cSỨ GIẢ: cách làm
@@ -494,7 +494,7 @@ chapters:
     &6Shop rương (tiếp)
     &0Tối đa 10 shop (Thương Hội nhiều hơn). Người khác mua được khi bạn offline.
   - |-
-    &6Chợ đấu giá /ah
+    &6Chợ đen /ah
     &1/ah &0mở chợ
     &1/ah sell <giá> &0bán món đang cầm
     &8Vd: /ah sell 250

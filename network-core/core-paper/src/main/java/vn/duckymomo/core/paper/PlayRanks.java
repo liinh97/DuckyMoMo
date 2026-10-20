@@ -459,7 +459,7 @@ final class PlayRanks implements Listener {
         promote(p, t);
         p.closeInventory();
         p.playSound(p.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 0.7f, 1f);
-        p.sendMessage(c("&a✔ Bạn đã trở thành &f" + t.name() + "&a! &7Nhà: " + t.homes() + " · Balo: " + t.balo() + " · Chợ đấu giá: " + t.ah() + " món chợ đấu giá."));
+        p.sendMessage(c("&a✔ Bạn đã trở thành &f" + t.name() + "&a! &7Nhà: " + t.homes() + " · Balo: " + t.balo() + " · Chợ đen: " + t.ah() + " món Chợ đen."));
         if (announce) {
             Bukkit.broadcast(c("&6✦ &f" + p.getName() + " &7vừa trở thành ").append(c(t.prefix().isBlank() ? "&f" + t.name() : t.prefix().trim())).append(c("&7!")));
         }

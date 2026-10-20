@@ -48,7 +48,7 @@ WARP = [("Tây Bắc - Việt Bắc", ["sapa", "hagiang", "dienbienphu", "caoban
         ("Myanmar - Trung Quốc", ["yangon", "mandalay", "guangzhou", "hongkong"])]
 INFO = [("HƯỚNG DẪN", [["Thị trấn", "/t new <tên>", "/t claim", "/t add <tên>"], ["Quốc gia", "/n new <tên>", "/n add <tên>", "/n ally <tên>"],
                        ["Công thành", "/sw", "Thứ 7, Chủ nhật", "20:00 và 21:00"], ["Nhà", "/sethome", "/home", "/spawn"]]),
-        ("KINH TẾ", [["Tiền", "/bal  /baltop", "/pay <tên> <tiền>", "/sell hand"], ["Chợ đấu giá", "/ah", "/ah sell <giá>", "(cầm món đồ)"],
+        ("KINH TẾ", [["Tiền", "/bal  /baltop", "/pay <tên> <tiền>", "/sell hand"], ["Chợ đen", "/ah", "/ah sell <giá>", "(cầm món đồ)"],
                      ["Đổi đồ", "/trade <tên>", "hai bên cùng", "bấm đồng ý"], ["Cửa hàng rương", "cầm đồ, bấm", "chuột trái vào", "rương, nhập giá"]]),
         ("LUẬT", [["Không hack", "x-ray, fly,", "auto-click", ""], ["Lịch sự", "không chửi bới,", "không quấy rối", ""],
                   ["Không lợi dụng", "lỗi game,", "báo admin", ""], ["Đánh nhau", "theo luật", "công thành", ""]]),

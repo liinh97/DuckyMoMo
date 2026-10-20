@@ -49,7 +49,7 @@ final class Integrations {
         }
     }
 
-    /** Số món của người chơi trên chợ đấu giá: đang bán + hết hạn chưa rút + đã mua chưa nhận. */
+    /** Số món của người chơi trên Chợ đen: đang bán + hết hạn chưa rút + đã mua chưa nhận. */
     static int auctionCount(Player p) {
         Plugin zah = Bukkit.getPluginManager().getPlugin("zAuctionHouse");
         if (zah == null || !zah.isEnabled()) {

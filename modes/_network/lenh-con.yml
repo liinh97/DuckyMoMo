@@ -304,7 +304,7 @@ groups:
       - ["khaihoang", "Quỹ khai hoang: tiến độ mở vùng mới, người góp nhiều nhất (Bang Hội Chiến)", Mọi người]
       - ["khaihoang gop <xu>", "Góp xu vào quỹ khai hoang", Mọi người]
       - ["khaihoang them <xu>", "Cộng thẳng vào quỹ (sự kiện)", Chỉ admin]
-      - ["donhang", "Sàn thu mua: xem đơn, bấm để giao hàng nhận tiền (Bang Hội Chiến)", Mọi người]
+      - ["donhang", "Chợ đen (thu mua): xem đơn, bấm để giao hàng nhận tiền (Bang Hội Chiến)", Mọi người]
       - ["donhang tao <số lượng> <đơn giá>", "Đặt đơn mua món đang cầm (tiền giữ trước)", Mọi người]
       - ["donhang cuatoi", "Đơn của tôi: nhận hàng, huỷ đơn", Mọi người]
       - ["donhang nhan", "Nhận hết hàng đã giao", Mọi người]
@@ -375,7 +375,7 @@ groups:
   - plugin: Shop và chợ
     servers: [banghoi-1]
     commands:
-      - ["ah", "Mở chợ đấu giá", Mọi người]
+      - ["ah", "Mở Chợ đen", Mọi người]
       - ["ah sell <giá>", "Đăng bán đồ đang cầm (tối đa 5 món)", Mọi người]
       - ["ah selling", "Đồ mình đang bán", Mọi người]
       - ["ah expired", "Lấy lại đồ hết hạn", Mọi người]

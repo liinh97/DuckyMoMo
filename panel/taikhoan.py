@@ -441,7 +441,7 @@ def profile(perms):
     except (OSError, ValueError, AttributeError):
         out["pvp"] = {"giet": 0, "chet": 0, "kda": 0}
     out["mua"] = season_now(core.get("seasons") or {})
-    # Sàn thu mua: đơn của mình đang mở, hàng chờ nhận
+    # Chợ đen (thu mua): đơn của mình đang mở, hàng chờ nhận
     don = [v for v in (safe_yaml(DMM / "donhang.yml").get("don") or {}).values() if isinstance(v, dict) and v.get("owner") == uuid]
     out["donhang"] = {"mo": sum(1 for v in don if not v.get("dong")), "cho_nhan": sum(int(v.get("kho", 0) or 0) for v in don)}
     kh = safe_yaml(DMM / "khaihoang.yml")

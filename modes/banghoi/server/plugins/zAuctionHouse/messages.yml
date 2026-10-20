@@ -27,7 +27,7 @@
 # Prefix added before all plugin messages.
 # Set to empty string "" to disable the prefix.
 # Available placeholders: none
-prefix: "<primary>Đấu giá <secondary>• "
+prefix: "<primary>Chợ đen <secondary>• "
 
 #=============================================================================
 # VERSION & UPDATE MESSAGES
@@ -80,7 +80,7 @@ command-syntax-help: "<white>%syntax% <dark_gray>» <gray>%description%"
 # Descriptions shown in help menus and tab completion.
 # These should be short and descriptive.
 
-command-description-auction: "Mở chợ đấu giá"
+command-description-auction: "Mở Chợ đen"
 command-description-auction-sell: "Đăng bán món đang cầm"
 command-description-auction-rent: "Đăng cho thuê món đang cầm"
 command-description-auction-bid: "Đăng đấu giá món đang cầm"

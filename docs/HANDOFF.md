@@ -30,8 +30,11 @@ của phiên tài khoản cũ khuya 20/10 tóm ở đây (chi tiết: các dòng
   currency-format "#,##0.##' xu'" (Essentials chỉ nhận ký hiệu 1 ký tự nên chữ xu nằm trong mẫu định dạng; Vault dùng chung → Towny,
   SiegeWar, QuickShop… theo). zAuctionHouse economies.yml (data) format "%price% xu"; UJobs symbols.money ' xu'; AuraSkills, CE, Towny
   sửa chữ $ viết cứng. /choden ban [số món] <giá CẢ LÔ> (người dùng chốt), /choden dat <số món> <giá MỖI MÓN>.
-- 21/10: /tpr không thả dưới tán cây (thử 30 chỗ); dịch lại thông báo Towny cấm xây/phá ở đất hoang. CHỜ người dùng: đất hoang hiện chỉ
-  cho chặt cây / đào quặng / hái cây (unclaimed_zone_destroy false) — giữ hay mở cho đào đất đá?
+- 21/10: /tpr không thả dưới tán cây (thử 30 chỗ); dịch lại thông báo Towny cấm xây/phá ở đất hoang.
+- 21/10: ĐẤT HOANG MỞ (người dùng: "phải cho đào, không thì làm nhiệm vụ, jobs kiểu gì"): /townyworld <w> toggle wildernessuse on cho
+  world, world_nether, world_the_end (xây, phá, bật/mở, dùng đồ). Lưu ở data/.../Towny/data/worlds/*.txt (không trong git).
+  em_adventurers_guild, thaiap, dautruong giữ khoá. Mặc định config.yml unclaimed_zone_* vẫn false (thế giới mới tạo sau vẫn được khoá).
+  Spawn được bảo vệ riêng bằng vùng WorldGuard "spawn" (build deny), không dựa vào luật đất hoang.
 - 21/10: **Hòm quay** `/hom` (Crates.java, config `crates`, Cài đặt › Thưởng & sự kiện › Hòm quay): nhiều hòm, mỗi hòm một chìa = món
   Thư viện đồ công dụng `chia-khoa` (chọn chìa bằng ô chọn; quà chọn Vật phẩm thường hoặc Món thư viện). Mặc định Hòm Điểm Danh (chìa
   `chia_khoa_diemdanh`, nằm trong Quà mỗi ngày của /diemdanh) + Hòm Chăm Chỉ (chìa `chia_khoa_online`, chơi thật 90 phút = 1 chìa,

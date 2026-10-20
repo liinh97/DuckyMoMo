@@ -291,6 +291,8 @@ Triển khai: kiểm tra không ai online (lệnh riêng) → `docker compose up
 - [ ] /ah mở được khi đứng ở spawn.
 
 ## 4w. 21/10: Chợ đen, Hòm quay — đã triển khai, CHƯA thử bằng người
+- [ ] Gõ /choden ban 100 (cầm món) treo bán được; /choden dat 64 1 đặt đơn; Tab không hiện /ah, /donhang; gõ /ah mở trang Chợ đen; /choden giup.
+- [ ] /tpr vài lần ở vùng rừng: không bị kẹt trong tán lá.
 - [ ] /choden (/cho): 6 nút Đang bán, Treo bán, Đồ tôi đang bán, Đang thu mua, Đặt đơn, Đơn của tôi đều mở đúng; /menu có nút Chợ đen.
 - [ ] /ah bấm món → màn xác nhận: bấm bất kỳ ô xanh (kể cả ô giữa) là mua; cột phải đỏ quay lại.
 - [ ] /hom: 2 hòm (Điểm Danh, Chăm Chỉ), tooltip ghi số chìa đang có và chìa lấy từ đâu.

@@ -23,6 +23,11 @@ của phiên tài khoản cũ khuya 20/10 tóm ở đây (chi tiết: các dòng
 - 21/10: `/ah` màn xác nhận mua gần như cả màn là nút Mua (plugin không cho bỏ màn này); Vòng quay bố cục mới (4 hàng phần thưởng).
 - 21/10: **Chợ đen** `/choden` (/cho): gộp chợ người chơi `/ah` (giá cố định, không phải đấu giá) + thu mua `/donhang` vào một trang.
   Đấu giá thật (/daugia) để sau nếu người dùng muốn.
+  Sau đó (21/10) chỉ còn MỘT lệnh /choden (+ /cho): lệnh con mua, ban, cuatoi, hethan, lichsu, nhantien, thumua, dat, don, nhan, huy.
+  /donhang đã bỏ; /ah ẩn khỏi Tab (người chơi thường), gõ /ah trống mở Chợ đen (Orders.onAhTyped; Chợ đen gọi /ah nội bộ qua market()).
+  zAuctionHouse config.yml (CHỈ có ở data/, không trong git): alias chính chỉ còn `ah`, sell chỉ `sell`.
+- 21/10: /tpr không thả dưới tán cây (thử 30 chỗ); dịch lại thông báo Towny cấm xây/phá ở đất hoang. CHỜ người dùng: đất hoang hiện chỉ
+  cho chặt cây / đào quặng / hái cây (unclaimed_zone_destroy false) — giữ hay mở cho đào đất đá?
 - 21/10: **Hòm quay** `/hom` (Crates.java, config `crates`, Cài đặt › Thưởng & sự kiện › Hòm quay): nhiều hòm, mỗi hòm một chìa = món
   Thư viện đồ công dụng `chia-khoa` (chọn chìa bằng ô chọn; quà chọn Vật phẩm thường hoặc Món thư viện). Mặc định Hòm Điểm Danh (chìa
   `chia_khoa_diemdanh`, nằm trong Quà mỗi ngày của /diemdanh) + Hòm Chăm Chỉ (chìa `chia_khoa_online`, chơi thật 90 phút = 1 chìa,

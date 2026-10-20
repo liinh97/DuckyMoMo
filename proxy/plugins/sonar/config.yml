@@ -4,7 +4,8 @@
 #    chặn một IP dựng hàng loạt bot đã qua captcha.
 #  - 20/10 (chủ server muốn captcha kiểu ảnh như server khác): verification.timing ALWAYS + map-captcha ALWAYS:
 #    người MỚI (chưa xác minh) vào lần đầu: rơi xuống + gõ chữ vẽ trên tấm bản đồ (không chép được như captcha chat của AuthMe),
-#    đạt thì bị kick 1 lần, vào lại là chơi. Đã xác minh thì lưu database H2 (verified_players, giữ 30 ngày), khởi động lại proxy không phải làm lại.
+#    đạt thì bị kick 1 lần, vào lại là chơi. Đã xác minh thì lưu database H2 (verified_players, giữ 7 ngày), khởi động lại proxy không phải làm lại.
+#    Chữ trên bản đồ kiểu 'complex' (khó cho phần mềm đọc chữ); trượt xác minh 5 lần thì IP bị chặn 10 phút (20/10).
 #  Bedrock (Geyser) không bị kiểm tra (check-geyser-players: false).
 #
 #   /$$$$$$
@@ -66,7 +67,7 @@ database:
   # Password for authenticating with the SQL database
   password: ''
   # How many days should Sonar keep verified players in the database?
-  maximum-age: 30
+  maximum-age: 7
 
 # Every new login request will be queued to avoid spam join attacks
 # The queue is updated every 1 second (20 ticks)
@@ -120,7 +121,7 @@ verification:
       # Style of the map CAPTCHA (Default: 'modern').
       # To use the old design, set this to 'legacy'.
       # To use an experimental design, set this to 'complex'.
-      style: 'modern'
+      style: 'complex'
       # How many CAPTCHA answers should Sonar prepare?
       # This task happens asynchronously in the background
       precompute: 500
@@ -227,7 +228,7 @@ verification:
   blacklist-time: 600000
   # How often does a player have to fail the verification in order to be blacklisted?
   # (Set this value to 0 to disable the blacklist entirely)
-  blacklist-threshold: 2
+  blacklist-threshold: 5
   # List of protocol IDs which are unable to join the server at all
   # You can find the full list of all protocol IDs here:
   # https://wiki.vg/Protocol_version_numbers

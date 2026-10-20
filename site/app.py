@@ -20,6 +20,7 @@ import socket
 import struct
 import threading
 import time
+import urllib.parse
 from datetime import date, datetime, timedelta
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -439,7 +440,7 @@ def danhphan_info(core):
 
     def perks(t):
         return {"nha": t.get("homes", 0), "balo": t.get("balo", 0), "o": t.get("balo-slots", 0), "cho": t.get("ah", 0),
-                "don": t.get("orders", 0), "quay": t.get("spin-faster", 0), "kit": t.get("kit", "")}
+                "don": t.get("orders", 0), "quay": t.get("spin-faster", 0), "kit": t.get("kit", ""), "skin": t.get("tu-skin", 0)}
     tiers = []
     for k, t in (pr.get("tiers") or {}).items():
         if isinstance(t, dict):
@@ -1301,6 +1302,15 @@ class Handler(BaseHTTPRequestHandler):
                 st, _, raw = panel("POST", "/api/web/caidat", json.dumps(body).encode(), ip=self.client_ip())
                 return self._json(st if st in (200, 400) else 502, json.loads(raw or b"{}") if st in (200, 400) else
                                   {"ok": False, "message": "Máy chủ đang bận, thử lại sau."})
+            if path == "/api/skin":
+                ss = session_of(self.token())
+                if not ss:
+                    return self._json(401, {"ok": False, "message": "Phiên đăng nhập đã hết, đăng nhập lại."})
+                d = self.body_json(80_000)
+                body = {"ten": ss["ten"], "viec": d.get("viec"), "so": d.get("so"), "nguon": d.get("nguon"), "nhan": d.get("nhan"), "anh": d.get("anh")}
+                st, _, raw = panel("POST", "/api/web/skin", json.dumps(body).encode(), ip=self.client_ip())
+                return self._json(st if st in (200, 400) else 502, json.loads(raw or b"{}") if st in (200, 400) else
+                                  {"ok": False, "message": "Máy chủ đang bận, thử lại sau."})
             if path == "/api/trangtri":
                 s = session_of(self.token())
                 if not s:
@@ -1332,6 +1342,22 @@ class Handler(BaseHTTPRequestHandler):
                 return self._json(200, me(self.token(), self.client_ip()))
             except OSError:
                 return self._json(200, {"dang_nhap": True, "ok": False, "message": "Không tải được thông tin, thử lại sau."})
+        if path == "/api/skin":
+            ss = session_of(self.token())
+            if not ss:
+                return self._json(401, {"ok": False, "message": "Phiên đăng nhập đã hết, đăng nhập lại."})
+            try:
+                st, _, raw = panel("GET", "/api/web/skin?ten=" + urllib.parse.quote(ss["ten"]), ip=self.client_ip())
+                return self._json(st if st in (200, 400) else 502, json.loads(raw or b"{}") if st in (200, 400) else
+                                  {"ok": False, "message": "Máy chủ đang bận, thử lại sau."})
+            except (ValueError, OSError):
+                return self._json(502, {"ok": False, "message": "Không tải được tủ skin, thử lại sau."})
+        m = re.fullmatch(r"/skin/([0-9a-f]{40})\.png", path)
+        if m:   # ảnh skin người chơi tải lên (panel lưu), MineSkin tải từ đây để tạo skin
+            f = DATA / "shared" / "skins" / (m.group(1) + ".png")
+            if f.is_file():
+                return self._send(200, f.read_bytes(), "image/png", "public, max-age=31536000, immutable")
+            return self._send(404, "Không tìm thấy".encode(), "text/plain; charset=utf-8")
         if path in ROUTES:
             try:
                 body = json.dumps(ROUTES[path](), ensure_ascii=False).encode("utf-8")

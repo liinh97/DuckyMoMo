@@ -1222,7 +1222,7 @@ function danhPhan(info){
   if (!d || !d.bat || !d.bac.length) { box.innerHTML = ""; return; }
   const perk = t => [`${t.nha} nhà <span class="kbd">/sethome</span>`, t.balo ? `${t.balo} balo ${t.o} ô <span class="kbd">/balo</span>` : "chưa có balo",
     `${t.cho} món chợ đấu giá <span class="kbd">/ah</span>`, t.don ? `${t.don} đơn thu mua <span class="kbd">/donhang</span>` : "",
-    t.quay ? `vé vòng quay nhanh hơn ${t.quay}%` : "", t.kit ? `gói quà <span class="kbd">/kit ${esc(t.kit)}</span>` : ""].filter(Boolean);
+    t.skin ? `tủ ${t.skin} skin <span class="kbd">/tuskin</span>` : "", t.quay ? `vé vòng quay nhanh hơn ${t.quay}%` : "", t.kit ? `gói quà <span class="kbd">/kit ${esc(t.kit)}</span>` : ""].filter(Boolean);
   const req = t => [t.gio ? `chơi thật ${t.gio} giờ` : "", t.cap ? `Thăng Cấp ${t.cap}` : "", t.them ? esc(t.them) : ""].filter(Boolean);
   let h = `<h3 style="margin-top:36px">Danh phận: rank chơi miễn phí</h3>
     <p class="muted">Ai mới vào cũng là <b>${esc(d.bac[0].ten)}</b>. Đủ yêu cầu thì vào game gõ <span class="kbd">/danhphan</span> bấm nhận bậc tiếp theo.

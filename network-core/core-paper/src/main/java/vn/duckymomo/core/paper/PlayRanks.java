@@ -47,10 +47,10 @@ final class PlayRanks implements Listener {
 
     private static final LegacyComponentSerializer LEGACY = LegacyComponentSerializer.legacyAmpersand();
     private static final List<String> MANAGED = List.of("essentials.sethome.multiple.dmm", "zauctionhouse.max.", "duckymomo.balo.",
-            "duckymomo.donhang.", "duckymomo.vongquay.nhanh.");
+            "duckymomo.donhang.", "duckymomo.vongquay.nhanh.", "duckymomo.tuskin.");
 
     /** Quyền lợi: nhà /sethome, số balo + ô mỗi balo, món chợ /ah, đơn thu mua /donhang, % vé vòng quay nhanh hơn, kit Essentials. 0/"" = không cấp. */
-    record Perks(int homes, int balo, int slots, int ah, int orders, int spin, String kit) { }
+    record Perks(int homes, int balo, int slots, int ah, int orders, int spin, String kit, int skins) { }
 
     record Tier(String id, String group, String name, String prefix, int priority, double hours, int level, String perm, String permText,
                 Perks perks, Material icon) {
@@ -88,7 +88,7 @@ final class PlayRanks implements Listener {
         int slots = s.getInt("balo-slots", tier ? 27 : 0);
         return new Perks(Math.max(tier ? 1 : 0, s.getInt("homes", tier ? 1 : 0)), Math.max(0, s.getInt("balo", 0)), slots <= 0 ? 0 : slots(slots),
                 Math.max(tier ? 1 : 0, s.getInt("ah", tier ? 1 : 0)), Math.max(0, s.getInt("orders", 0)),
-                Math.max(0, Math.min(50, s.getInt("spin-faster", 0) / 5 * 5)), kit);
+                Math.max(0, Math.min(50, s.getInt("spin-faster", 0) / 5 * 5)), kit, Math.max(0, Math.min(50, s.getInt("tu-skin", tier ? 1 : 0))));
     }
 
     private final DuckyMoMoCore plugin;
@@ -223,6 +223,10 @@ final class PlayRanks implements Listener {
         }
         if (!p.kit().isEmpty()) {
             add.accept("essentials.kits." + p.kit());
+        }
+        // Tủ skin (/tuskin) chạy trên PROXY: quyền KHÔNG kèm context server, proxy và mọi server đều đọc được
+        if (p.skins() > 0) {
+            g.data().add(PermissionNode.builder("duckymomo.tuskin." + p.skins()).build());
         }
     }
 
@@ -372,6 +376,9 @@ final class PlayRanks implements Listener {
         }
         if (k.orders() > 0) {
             lore.add(c("&7• &a" + k.orders() + "&7 đơn thu mua &d(/donhang)"));
+        }
+        if (k.skins() > 0) {
+            lore.add(c("&7• Tủ skin &a" + k.skins() + "&7 ô &d(/tuskin)"));
         }
         if (k.spin() > 0) {
             lore.add(c("&7• Vé vòng quay nhanh hơn &a" + k.spin() + "% &d(/vongquay)"));

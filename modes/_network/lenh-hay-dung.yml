@@ -12,7 +12,7 @@ nhom:
            dungeon, dungeon vao, dungeon mua, dungeon gop, conghoang, lukhach, journal, skills, khobau, lenhsan, thaiap, thanhtich,
            kholuong, nauan, dacsan, canbang, linhdanhthue, lichcongthanh, vinhdanh,
            petcall, petinfo, bxhpet, buabatpet, dautruong,
-           duel, queue, party, skin, skins, pp, pet, rank, changepassword]
+           duel, queue, party, skin, skins, tuskin, tuskin them, pp, pet, rank, changepassword]
   - ten: Staff
     lenh: [co i, co lookup, co rollback, co restore, kick, mute, tempban, ban, unban, seen, invsee, vanish, socialspy,
            tp, tphere, fly, heal, grim alerts]

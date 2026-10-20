@@ -99,6 +99,13 @@ code,.kbd{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;background:
 .tier{border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:var(--card2);margin-bottom:8px}
 .tier.mine{border-color:rgba(242,184,75,.6);background:linear-gradient(180deg,rgba(242,184,75,.1),var(--card2))}
 .tier .perks{font-size:.85rem;color:var(--muted);margin-top:4px}
+.skins{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin:10px 0 14px}
+.skin{display:grid;justify-items:center;gap:4px;padding:10px;border:1px solid var(--line);border-radius:12px;background:var(--card2);text-align:center;min-width:0}
+.skin.on{border-color:var(--gold)}.skin.over{opacity:.55}
+.skin img{height:90px;image-rendering:pixelated}.skin .noimg{height:90px;display:grid;place-items:center;color:var(--dim);font-size:1.6rem}
+.skin b{font-size:.9rem;overflow-wrap:anywhere}.skin .acts{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+.skinRow{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr) auto;gap:8px;margin:8px 0}
+@media (max-width:620px){.skinRow{grid-template-columns:1fr}}
 .feat{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid rgba(42,58,79,.6)}
 .feat:last-child{border-bottom:none}
 .feat small{display:block;color:var(--muted)}
@@ -449,6 +456,22 @@ function render(){
       <small>Nội dung ${esc(r.noi_dung)} · ${when(r.tao_luc)}</small></div><span class="pill ${r.trang_thai === "da_cap" ? "on" : r.trang_thai === "huy" ? "" : "warn"}">${ST[r.trang_thai] || r.trang_thai}</span></div>`).join("")}</div>`;
   }
 
+  // tủ skin (proxy giữ tủ; tải riêng vì phải hỏi proxy)
+  html += `<div class="card" style="margin-top:14px" id="skinCard"><h2>👕 Tủ skin <span class="pill" id="skinCount">…</span></h2>
+    <p class="small muted">Lưu nhiều skin rồi đổi qua lại, ở mọi server. Lên bậc danh phận hoặc có rank ủng hộ để có thêm ô. Trong game: <code>/tuskin</code>.</p>
+    <div class="skins" id="skinList"><p class="muted small">Đang tải tủ skin…</p></div>
+    <div class="skinAdd">
+      <div class="tabs" id="skinTabs"><button class="tab on" data-k="link">Link ảnh</button><button class="tab" data-k="ten">Tên bản quyền</button><button class="tab" data-k="anh">Tải ảnh PNG</button></div>
+      <div class="skinRow">
+        <input id="skinSrc" placeholder="https://… link ảnh skin PNG (64×64)" autocomplete="off">
+        <input id="skinFile" type="file" accept="image/png" hidden>
+        <input id="skinName" placeholder="Tên gợi nhớ (không bắt buộc)" maxlength="24" autocomplete="off">
+        <button class="btn primary small" id="skinGo">Thêm và mặc</button>
+      </div>
+      <p class="small dim" id="skinHint">Lấy link: vào trang skin (vd namemc.com, minecraftskins.com), bấm tải skin, chuột phải ảnh → Sao chép địa chỉ hình ảnh.</p>
+      <div class="err" id="skinMsg"></div>
+    </div></div>`;
+
   // lệnh
   html += `<div class="card" style="margin-top:14px"><h2>⌨️ Lệnh bạn dùng được</h2>
     <div class="tabs" id="srvTabs">${Object.keys(SRV).filter(s => (D.lenh || {})[s]).map(s => `<button class="tab ${s === cmdSrv ? "on" : ""}" data-s="${s}">${SRV[s]} (${D.lenh[s].length})</button>`).join("")}</div>
@@ -522,6 +545,7 @@ function render(){
     $("#clMsg").textContent = d.message || (d.ok ? "Đã gửi." : "Không gửi được.");
   };
   drawCmds();
+  initSkin();
   bindTrangTri();
 }
 
@@ -617,6 +641,65 @@ function trangTriHtml(){
     <p class="small muted">${TT.hat ? "Cầm món đồ muốn đội trên tay trong game rồi gõ <code>/hat</code> (vd đội hoa, kính, khối trang trí)." : "Đội bất kỳ món đồ nào lên đầu bằng /hat."}</p></div>`;
   h += `</div><div class="ttmsg" id="ttMsg" role="status" aria-live="polite"></div></div>`;
   return h;
+}
+
+// ------------------------------------------------------------ tủ skin
+let skinKind = "link", SK = null;
+function drawSkin(){
+  const box = $("#skinList"); if (!box) return;
+  if (!SK || SK.ok === false && !SK.ds) { box.innerHTML = `<p class="small red">${esc((SK && SK.message) || "Không tải được tủ skin.")}</p>`; $("#skinCount").textContent = "?"; return; }
+  const ds = SK.ds || [];
+  $("#skinCount").textContent = `${ds.length}/${SK.gioi_han} ô`;
+  box.innerHTML = ds.length ? ds.map(x => `<div class="skin${x.dang_mac ? " on" : ""}${x.so > SK.gioi_han ? " over" : ""}">
+      ${x.tex ? `<img src="https://mc-heads.net/body/${encodeURIComponent(x.tex)}/90" alt="" loading="lazy">` : `<div class="noimg">?</div>`}
+      <b>${esc(x.ten)}</b><span class="small dim">Ô ${x.so}${x.dang_mac ? " · đang mặc" : ""}</span>
+      <div class="acts"><button class="btn small" data-mac="${x.so}" ${x.dang_mac ? "disabled" : ""}>Mặc</button><button class="btn small" data-xoa="${x.so}">Xoá</button></div></div>`).join("")
+    : `<p class="muted small">Tủ đang trống. Thêm skin đầu tiên ở dưới.</p>`;
+  box.querySelectorAll("[data-mac]").forEach(b => b.onclick = () => skinDo({viec: "mac", so: +b.dataset.mac}, b));
+  box.querySelectorAll("[data-xoa]").forEach(b => b.onclick = () => { if (b.dataset.ok) return skinDo({viec: "xoa", so: +b.dataset.xoa}, b); b.dataset.ok = 1; b.textContent = "Bấm lần nữa để xoá"; });
+  const full = ds.length >= SK.gioi_han;
+  $("#skinGo").disabled = full;
+  if (full) $("#skinMsg").innerHTML = `<span class="dim">Tủ đã đầy. Xoá bớt một skin, hoặc lên bậc danh phận để có thêm ô.</span>`;
+}
+async function skinDo(body, btn){
+  const msg = $("#skinMsg"); msg.textContent = body.viec === "them" ? "Đang tạo skin (có thể mất 10–20 giây)…" : "Đang xử lý…"; msg.className = "small dim";
+  if (btn) btn.disabled = true;
+  const d = await api("api/skin", body).catch(() => ({ok: false, message: "Không kết nối được."}));
+  if (d.ds) SK = d;
+  drawSkin();
+  msg.className = d.ok ? "small green" : "err"; msg.textContent = d.message || (d.ok ? "Xong." : "Không làm được.");
+  if (btn) btn.disabled = false;
+  return d;
+}
+function initSkin(){
+  if (!$("#skinCard")) return;
+  const hints = {link: ["https://… link ảnh skin PNG (64×64)", "Lấy link: vào trang skin (vd namemc.com, minecraftskins.com), bấm tải skin, chuột phải ảnh → Sao chép địa chỉ hình ảnh."],
+    ten: ["Tên một tài khoản Minecraft bản quyền (vd Dream)", "Lấy skin đúng như tài khoản bản quyền đó đang mặc."],
+    anh: ["", "Chọn file PNG skin (64×64) từ máy. Ảnh được lưu trên server để tạo skin."]};
+  document.querySelectorAll("#skinTabs .tab").forEach(t => t.onclick = () => {
+    skinKind = t.dataset.k;
+    document.querySelectorAll("#skinTabs .tab").forEach(x => x.classList.toggle("on", x === t));
+    $("#skinSrc").hidden = skinKind === "anh"; $("#skinFile").hidden = skinKind !== "anh";
+    $("#skinSrc").placeholder = hints[skinKind][0]; $("#skinHint").textContent = hints[skinKind][1]; $("#skinMsg").textContent = "";
+  });
+  $("#skinGo").onclick = async () => {
+    const nhan = $("#skinName").value.trim();
+    if (skinKind === "anh") {
+      const f = $("#skinFile").files[0];
+      if (!f) { $("#skinMsg").className = "err"; $("#skinMsg").textContent = "Chọn file ảnh PNG trước."; return; }
+      if (f.size > 48 * 1024) { $("#skinMsg").className = "err"; $("#skinMsg").textContent = "Ảnh quá lớn (tối đa 48 KB)."; return; }
+      const b64 = await new Promise((ok, no) => { const r = new FileReader(); r.onload = () => ok(r.result); r.onerror = no; r.readAsDataURL(f); });
+      const d = await skinDo({viec: "them", anh: b64, nhan}, $("#skinGo"));
+      if (d.ok) { $("#skinFile").value = ""; $("#skinName").value = ""; }
+      return;
+    }
+    const v = $("#skinSrc").value.trim();
+    if (!v) { $("#skinMsg").className = "err"; $("#skinMsg").textContent = skinKind === "ten" ? "Nhập tên tài khoản." : "Dán link ảnh skin."; return; }
+    const d = await skinDo({viec: "them", nguon: v, nhan}, $("#skinGo"));
+    if (d.ok) { $("#skinSrc").value = ""; $("#skinName").value = ""; }
+  };
+  if (SK) return drawSkin();
+  api("api/skin").then(d => { SK = d; drawSkin(); }).catch(() => { SK = {ok: false, message: "Không tải được tủ skin."}; drawSkin(); });
 }
 
 function drawNickPreview(){

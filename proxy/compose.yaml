@@ -24,6 +24,10 @@ services:
       CFG_DB_PASSWORD: ${DB_PASSWORD}
       CFG_REDIS_PASSWORD: ${REDIS_PASSWORD}
       CFG_AUTHME_SECRET: ${AUTHME_SECRET:?Chưa đặt AUTHME_SECRET trong .env (chạy lại ./ops/init.sh)}
+      # Tủ skin /tuskin (DuckyMoMoSkin: proxy/plugins/DuckyMoMoSkin.jar do ./ops/build-core.sh tạo, không commit).
+      # Cầu nối web cổng 8095 chỉ trong mạng Docker (KHÔNG mở ra ngoài), panel gọi kèm khoá này.
+      DMM_SKIN_KEY: ${PANEL_SITE_KEY:-}
+      DMM_SKIN_PORT: "8095"
       # Thêm đuôi "secret" để file forwarding.secret cũng được thay biến
       REPLACE_ENV_SUFFIXES: yml,yaml,txt,cfg,conf,properties,hjson,json,tml,toml,secret
     ports:

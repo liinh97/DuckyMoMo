@@ -17,6 +17,9 @@ import sys
 import threading
 import time
 import urllib.parse
+import urllib.request
+import urllib.error
+import hashlib
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
@@ -2136,6 +2139,70 @@ def web_settings(data, ip):
     return {"ok": True, "ma": ma, "bat": bat, "message": f"{taikhoan.CAIDAT_IDS[ma][1]}: {'Bật' if bat else 'Tắt'} (áp dụng ở mọi server)."}
 
 
+# Tủ skin: plugin DuckyMoMoSkin trên proxy (Velocity) giữ tủ và gọi SkinsRestorer; panel chỉ chuyển tiếp + nhận ảnh PNG tải lên
+# (lưu data/shared/skins/<sha1>.png, trang web công khai phục vụ ở /mc/web/skin/<sha1>.png để MineSkin tải về tạo skin).
+SKIN_BRIDGE_URL = os.environ.get("SKIN_BRIDGE_URL", "http://proxy:8095")
+SKIN_PUBLIC_BASE = os.environ.get("SKIN_PUBLIC_BASE", "https://app.goc6.io.vn/mc/web").rstrip("/")
+SKIN_DIR = DATA_DIR / "shared" / "skins"
+_skin_last = {}
+
+
+def skin_bridge(method, body=None, name=None):
+    url = SKIN_BRIDGE_URL + "/tuskin" + (f"?ten={urllib.parse.quote(name)}" if name else "")
+    req = urllib.request.Request(url, data=json.dumps(body).encode("utf-8") if body is not None else None, method=method,
+                                 headers={"X-DMM-Key": PANEL_SITE_KEY, "Content-Type": "application/json"})
+    try:
+        with urllib.request.urlopen(req, timeout=28) as r:   # trang web chờ panel 30 giây
+            return json.loads(r.read() or b"{}")
+    except urllib.error.HTTPError as e:
+        try:
+            return json.loads(e.read() or b"{}")
+        except ValueError:
+            raise ValueError("Máy chủ skin trả lỗi, thử lại sau.")
+    except (urllib.error.URLError, OSError, TimeoutError):
+        raise ValueError("Máy chủ skin (proxy) đang khởi động hoặc tắt, thử lại sau ít phút.")
+
+
+def skin_png(b64):
+    """Ảnh skin tải lên: PNG thật, đúng cỡ skin Minecraft (64x64 hoặc 64x32), tối đa 48 KB. Trả đường dẫn công khai."""
+    try:
+        raw = base64.b64decode(str(b64).split(",", 1)[-1], validate=True)
+    except Exception:
+        raise ValueError("Ảnh không đọc được.")
+    if len(raw) > 48 * 1024:
+        raise ValueError("Ảnh quá lớn (tối đa 48 KB). Skin chuẩn chỉ vài KB.")
+    if raw[:8] != b"\x89PNG\r\n\x1a\n" or raw[12:16] != b"IHDR":
+        raise ValueError("Chỉ nhận ảnh PNG.")
+    w, h = struct.unpack(">II", raw[16:24])
+    if (w, h) not in ((64, 64), (64, 32)):
+        raise ValueError(f"Ảnh skin phải 64x64 (hoặc 64x32 kiểu cũ), ảnh này {w}x{h}.")
+    sha = hashlib.sha1(raw).hexdigest()
+    SKIN_DIR.mkdir(parents=True, exist_ok=True)
+    f = SKIN_DIR / f"{sha}.png"
+    if not f.exists():
+        f.write_bytes(raw)
+    return f"{SKIN_PUBLIC_BASE}/skin/{sha}.png"
+
+
+def web_skin(data, ip):
+    name = str(data.get("ten", "")).strip()
+    if not PLAYER_RE.match(name):
+        raise ValueError("Tên không hợp lệ")
+    viec = str(data.get("viec", ""))
+    if viec not in ("them", "mac", "xoa"):
+        raise ValueError("Việc không hợp lệ")
+    now = time.time()
+    if now - _skin_last.get(name.lower(), 0) < 3:
+        raise ValueError("Bấm chậm lại một chút.")
+    _skin_last[name.lower()] = now
+    body = {"ten": name, "viec": viec, "so": int(data.get("so") or -1), "nhan": str(data.get("nhan", ""))[:24]}
+    if viec == "them":
+        body["nguon"] = skin_png(data["anh"]) if data.get("anh") else str(data.get("nguon", "")).strip()[:300]
+    res = skin_bridge("POST", body)
+    web_log({"viec": "skin-" + viec, "nguoi": name, "nguon": body.get("nguon", ""), "ok": bool(res.get("ok")), "ip": ip})
+    return res
+
+
 def web_cosmetic(data, ip):
     """Trang trí từ web: chạy lệnh THAY người chơi (/sudo của Essentials) ở server họ đang online (Bang Hội Chiến/Practice)."""
     name = str(data.get("ten", "")).strip()
@@ -2272,7 +2339,7 @@ def play_rank(perms, roles):
     nxt = tiers[cur + 1][1] if cur + 1 < len(tiers) else None
     md = next((r for r in roles if r["id"] == "media"), None)
     return {"ten": t.get("name", tiers[cur][0]), "nha": t.get("homes", 0), "balo": t.get("balo", 0), "o": t.get("balo-slots", 0),
-            "cho": t.get("ah", 0), "don": t.get("orders", 0),
+            "cho": t.get("ah", 0), "don": t.get("orders", 0), "skin": t.get("tu-skin", 0),
             "tiep": {"ten": nxt.get("name"), "gio": nxt.get("hours", 0), "cap": nxt.get("level", 0),
                      "them": nxt.get("perm-text", "") if nxt.get("perm") else ""} if nxt else None,
             "media": {"het": md["het"]} if md else None}
@@ -2505,6 +2572,13 @@ class Handler(BaseHTTPRequestHandler):
                 self.send_json(200, web_settings(self.read_body(4096), self.headers.get("X-DMM-Ip", "")))
             elif method == "POST" and path == "/api/web/trangtri":
                 self.send_json(200, web_cosmetic(self.read_body(4096), self.headers.get("X-DMM-Ip", "")))
+            elif method == "POST" and path == "/api/web/skin":
+                self.send_json(200, web_skin(self.read_body(80_000), self.headers.get("X-DMM-Ip", "")))
+            elif method == "GET" and path == "/api/web/skin":
+                q = {k: v[-1] for k, v in urllib.parse.parse_qs(query).items()}
+                if not PLAYER_RE.match(q.get("ten", "")):
+                    raise ValueError("Tên không hợp lệ")
+                self.send_json(200, skin_bridge("GET", name=q["ten"]))
             elif method == "POST" and path == "/api/web/choilai":
                 self.send_json(200, web_reset(self.read_body(4096), self.headers.get("X-DMM-Ip", "")))
             elif method == "GET" and path == "/api/web/hoso":

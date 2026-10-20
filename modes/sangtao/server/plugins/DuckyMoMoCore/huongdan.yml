@@ -64,6 +64,13 @@ chapters:
     &6&lLệnh chung (tiếp)
     &1/changepassword <cũ> <mới>
   - |-
+    &6&lSKIN & TỦ SKIN
+    &1/skin <tên> &0skin tài khoản bản quyền.
+    &1/skin url <link> &0skin từ ảnh PNG.
+    &1/tuskin &0tủ skin, bấm [Mặc] để đổi.
+    &1/tuskin luu &0lưu skin đang mặc.
+    &0Bậc danh phận cao có thêm ô tủ. Trên web tải ảnh lên được.
+  - |-
     &6&lĐiện thoại (Bedrock)
     &0Bấm la bàn: hiện &lbảng nút&r&0 thay cho menu rương.
     &0Cẩm nang hiện thành bảng, mỗi chương một nút.

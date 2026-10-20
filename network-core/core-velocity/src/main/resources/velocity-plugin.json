@@ -1,0 +1,12 @@
+{
+  "id": "duckymomoskin",
+  "name": "DuckyMoMoSkin",
+  "version": "0.1.0",
+  "description": "Tủ skin /tuskin của DuckyMoMo và cầu nối trang web -> SkinsRestorer",
+  "authors": ["DuckyMoMo"],
+  "main": "vn.duckymomo.skin.SkinWardrobe",
+  "dependencies": [
+    {"id": "skinsrestorer", "optional": false},
+    {"id": "luckperms", "optional": false}
+  ]
+}

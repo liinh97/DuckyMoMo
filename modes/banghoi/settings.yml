@@ -1732,6 +1732,7 @@ rk_media_balo: 5
 rk_media_slots: 27
 rk_media_ah: 5
 rk_media_orders: 5
+rk_media_tuskin: 5
 rk_media_spin: 20
 rk_media_kit: "media"
 rk_namtuoc_homes: 0
@@ -1739,6 +1740,7 @@ rk_namtuoc_balo: 0
 rk_namtuoc_slots: 0
 rk_namtuoc_ah: 0
 rk_namtuoc_orders: 0
+rk_namtuoc_tuskin: 3
 rk_namtuoc_spin: 0
 rk_namtuoc_kit: ""
 rk_tutuoc_homes: 0
@@ -1746,6 +1748,7 @@ rk_tutuoc_balo: 0
 rk_tutuoc_slots: 0
 rk_tutuoc_ah: 0
 rk_tutuoc_orders: 0
+rk_tutuoc_tuskin: 5
 rk_tutuoc_spin: 0
 rk_tutuoc_kit: ""
 rk_batuoc_homes: 0
@@ -1753,6 +1756,7 @@ rk_batuoc_balo: 0
 rk_batuoc_slots: 0
 rk_batuoc_ah: 0
 rk_batuoc_orders: 0
+rk_batuoc_tuskin: 8
 rk_batuoc_spin: 0
 rk_batuoc_kit: ""
 rk_hautuoc_homes: 0
@@ -1760,6 +1764,7 @@ rk_hautuoc_balo: 0
 rk_hautuoc_slots: 0
 rk_hautuoc_ah: 0
 rk_hautuoc_orders: 0
+rk_hautuoc_tuskin: 12
 rk_hautuoc_spin: 0
 rk_hautuoc_kit: ""
 rk_congtuoc_homes: 0
@@ -1767,6 +1772,7 @@ rk_congtuoc_balo: 0
 rk_congtuoc_slots: 0
 rk_congtuoc_ah: 0
 rk_congtuoc_orders: 0
+rk_congtuoc_tuskin: 20
 rk_congtuoc_spin: 0
 rk_congtuoc_kit: ""
 rk_builder_homes: 0
@@ -1774,6 +1780,7 @@ rk_builder_balo: 0
 rk_builder_slots: 0
 rk_builder_ah: 0
 rk_builder_orders: 0
+rk_builder_tuskin: 0
 rk_builder_spin: 0
 rk_builder_kit: ""
 rk_helper_homes: 0
@@ -1781,6 +1788,7 @@ rk_helper_balo: 0
 rk_helper_slots: 0
 rk_helper_ah: 0
 rk_helper_orders: 0
+rk_helper_tuskin: 0
 rk_helper_spin: 0
 rk_helper_kit: ""
 rk_mod_homes: 0
@@ -1788,6 +1796,7 @@ rk_mod_balo: 0
 rk_mod_slots: 0
 rk_mod_ah: 0
 rk_mod_orders: 0
+rk_mod_tuskin: 0
 rk_mod_spin: 0
 rk_mod_kit: ""
 rk_quanly_homes: 0
@@ -1795,6 +1804,7 @@ rk_quanly_balo: 0
 rk_quanly_slots: 0
 rk_quanly_ah: 0
 rk_quanly_orders: 0
+rk_quanly_tuskin: 0
 rk_quanly_spin: 0
 rk_quanly_kit: ""
 rk_admin_homes: 0
@@ -1802,15 +1812,20 @@ rk_admin_balo: 0
 rk_admin_slots: 0
 rk_admin_ah: 0
 rk_admin_orders: 0
+rk_admin_tuskin: 0
 rk_admin_spin: 0
 rk_admin_kit: ""
 dp_tinan_orders: 2
+dp_tinan_tuskin: 1
 dp_tinan_spin: 0
 dp_dan_orders: 3
+dp_dan_tuskin: 2
 dp_dan_spin: 0
 dp_luongdan_orders: 4
+dp_luongdan_tuskin: 3
 dp_luongdan_spin: 0
 dp_haokiet_orders: 5
+dp_haokiet_tuskin: 5
 dp_haokiet_spin: 0
 md_on: true
 md_sessions: 4

@@ -31,6 +31,14 @@ groups:
       - ["sr reload", "Nạp lại cấu hình SkinsRestorer", Chỉ admin]
       - ["sr status", "Kiểm tra kết nối tới máy chủ skin", Chỉ admin]
       - ["sr drop <người|skin>", "Xoá dữ liệu skin đã lưu", Chỉ admin]
+  - plugin: DuckyMoMoSkin (proxy, tủ skin)
+    servers: [proxy]
+    commands:
+      - ["tuskin", "Tủ skin: các skin đã lưu, bấm [Mặc] / [Xoá]. Tên khác: /wardrobe", Mọi người]
+      - ["tuskin them <link|tên bản quyền> [tên gợi nhớ]", "Thêm skin vào tủ rồi mặc luôn. Vd: /tuskin them Dream", Mọi người]
+      - ["tuskin luu [tên gợi nhớ]", "Lưu skin đang mặc (đổi bằng /skin) vào tủ", Mọi người]
+      - ["tuskin mac <số ô>", "Mặc skin ở ô đó", Mọi người]
+      - ["tuskin xoa <số ô>", "Xoá skin khỏi tủ (skin đang mặc giữ nguyên)", Mọi người]
   - plugin: Sonar (proxy)
     servers: [proxy]
     commands:

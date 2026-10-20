@@ -132,7 +132,7 @@ menu:
     chuong: kinhte
     lenh:
     - "/bal|xem tiền"
-    - "/jobs|nghề, việc gì ra bao nhiêu"
+    - "/jobs|chọn nghề (mỗi người 1 nghề)"
     - "/sell hand|bán mọi món giống món đang cầm"
     - "/sell all|bán hết túi"
     - "/worth|giá món đang cầm"
@@ -714,8 +714,8 @@ chapters:
   - |-
     &6Kiếm tiền
     &0Bắt đầu 500 xu&r&0. &1/bal &0xem tiền.
-    &2Nghề (tự động):&0 đào quặng, chặt cây, săn quái, trồng, câu cá đều có tiền.
-    &1/jobs &0cấp nghề, cách kiếm.
+    &2Nghề:&0 gõ &1/jobs&0 chọn 1 nghề&r&0 (thợ mỏ, tiều phu, nông dân, thợ săn, ngư dân…). Làm đúng việc của nghề mới có tiền.
+    &8Đổi nghề phải chờ 1 ngày, vào lại nghề cũ mất bớt cấp.
     &4Lưu ý: &0phá lại khối tự đặt không có tiền; nhiệm vụ ngày cũng không tính.
   - |-
     &6Bán đồ cho server

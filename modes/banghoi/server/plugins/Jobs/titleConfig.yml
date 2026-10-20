@@ -1,0 +1,32 @@
+# DuckyMoMo 21/10: danh hiệu nghề theo cấp (tối đa cấp 50).
+Titles:
+  TapSu:
+    Name: Tập sự
+    ShortName: TS
+    ChatColour: GRAY
+    levelReq: 0
+  HocViec:
+    Name: Học việc
+    ShortName: HV
+    ChatColour: WHITE
+    levelReq: 10
+  ThaoViec:
+    Name: Thạo việc
+    ShortName: TV
+    ChatColour: YELLOW
+    levelReq: 20
+  LanhNghe:
+    Name: Lành nghề
+    ShortName: LN
+    ChatColour: GREEN
+    levelReq: 30
+  BacThay:
+    Name: Bậc thầy
+    ShortName: BT
+    ChatColour: AQUA
+    levelReq: 40
+  DaiSu:
+    Name: Đại sư
+    ShortName: ĐS
+    ChatColour: GOLD
+    levelReq: 50

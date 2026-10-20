@@ -361,7 +361,12 @@ public final class DuckyMoMoCore extends JavaPlugin {
             getLogger().info("Rơi xuống hư không về spawn: bật (y < " + belowY + ")");
         }
 
-        // Chống đặt rồi phá block để lấy tiền nghề (uJobs): job-guard.enabled
+        // Nghề Jobs Reborn (21/10): gõ /jobs (không thêm gì) là mở menu chọn nghề thay vì danh sách lệnh
+        if (Integrations.jobsReborn()) {
+            getServer().getPluginManager().registerEvents(new JobsMenu(), this);
+        }
+
+        // Chống đặt rồi phá block để lấy tiền nghề (Jobs): job-guard.enabled
         if (getConfig().getBoolean("job-guard.enabled")) {
             getServer().getPluginManager().registerEvents(
                     new PlacedBlockGuard(this, getConfig().getStringList("job-guard.materials")), this);

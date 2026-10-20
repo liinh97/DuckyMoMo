@@ -98,13 +98,8 @@ final class Integrations {
         return homes == null ? Set.of() : homes.getKeys(false);
     }
 
-    /** Mã các nghề uJobs (khoá dưới "jobs:" trong plugins/UJobs/jobs.yml). */
-    static Set<String> ujobsJobs() {
-        File f = new File(Bukkit.getPluginsFolder(), "UJobs/jobs.yml");
-        if (!f.isFile() || !Bukkit.getPluginManager().isPluginEnabled("UJobs")) {
-            return Set.of();
-        }
-        ConfigurationSection jobs = YamlConfiguration.loadConfiguration(f).getConfigurationSection("jobs");
-        return jobs == null ? Set.of() : jobs.getKeys(false);
+    /** Có plugin nghề Jobs Reborn (21/10 thay uJobs: mỗi người chọn 1 nghề). */
+    static boolean jobsReborn() {
+        return Bukkit.getPluginManager().isPluginEnabled("Jobs");
     }
 }

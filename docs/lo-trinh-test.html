@@ -204,7 +204,7 @@ const PLAN = [
  {id:"m13",t:"/tprandom và /tphere",b:"Gõ <code>/tprandom</code>; admin <code>/tphere B</code>.",k:"/tprandom mở menu /tpr của server (không đưa ra ngoài bản đồ). /tphere kéo B tới đúng chỗ admin."},
  {id:"m14",t:"Đất hoang: đào, xây, phá tự do",b:"Ra ngoài thị trấn ở world, Nether, End: đào đất đá, đặt khối, mở rương. Thử ở spawn và trong thị trấn người khác.",k:"Đất hoang làm được hết; spawn vẫn cấm xây phá; thị trấn người khác vẫn cấm, có thông báo tiếng Việt."},
  {id:"m15",t:"/tpr không kẹt trong tán cây",b:"<code>/tpr</code> vài lần ở vùng rừng rậm.",k:"Luôn đứng trên mặt đất, không rơi vào giữa tán lá."},
- {id:"m16",t:"Thanh tiến độ Nghề / Kỹ năng",b:"Đào mỏ, chặt gỗ; xem thanh trên màn hình.",k:"Hai thanh ghi rõ \"Nghề · Cấp … Thợ mỏ …\" và \"Kỹ năng · +… Đào mỏ XP …\"."},
+ {id:"m16",t:"Thanh tiến độ nghề",b:"Vào một nghề, đào hoặc chặt; xem thanh trên màn hình.",k:"Thanh ghi \"Nghề · Cấp … <nghề>\" và số xu vừa nhận; tiền hiện \"xu\", không có $."},
  {id:"m17",t:"Cẩm nang /hd dạng menu",b:"Gõ <code>/hd</code>, rê chuột lên vài nhóm, bấm một nhóm; bấm ô quyển sách; thử <code>/hd sach</code> và trên điện thoại.",k:"Rương 18 nhóm, mỗi nhóm hiện lệnh + mô tả ngắn dễ đọc; bấm mở sách chỉ chương đó, cuối trang có « Về cẩm nang. Điện thoại là bảng nút, cùng nội dung.",w:"Người dùng 21/10: sách 140 trang dài quá, không ai đọc."},
  ]},
 
@@ -229,7 +229,7 @@ const PLAN = [
  prep:["Ghi lại số dư <code>/bal</code> trước mỗi thử để tính chênh lệch.","Cài đặt › Shop › Bảng giá bán (/sell), Nghề › từng nghề: biết giá trước khi thử."],
  warn:["Nghề (Jobs) trả tiền cho hành động, /sell trả tiền cho vật phẩm: một hành động có thể ăn 2 lần (chặt gỗ được tiền nghề, bán gỗ lại được tiền). Kiểm tổng thu nhập một giờ có hợp lý không.","Đồ từ lồng quái và máy farm: phần lớn hệ thống không tính (pet, Thăng Cấp, Xu Quái). Nếu thấy máy farm vẫn hái ra nhiều tiền, ghi lại.","Chợ /ah có thể chỉ mở trong đất hoà bình (tuỳ Cài đặt). Bị chặn ở chỗ khác là đúng."],
  items:[
- {id:"k1",t:"Nghề ra tiền",b:"Không cần chọn nghề: đào 20 quặng, chặt gỗ, giết quái; xem <code>/jobs</code>.",k:"Tiền và kinh nghiệm nghề tăng mỗi lần (thanh trên ghi \"Nghề · …\"); đặt rồi phá lại khối của mình không ra tiền.",c:"Bang Hội Chiến › Nghề."},
+ {id:"k1",t:"Chọn nghề và nghề ra tiền",b:"Gõ <code>/jobs</code>: menu chọn nghề; chuột phải vào Thợ mỏ; đào 20 quặng; thử vào nghề thứ hai; rời nghề rồi vào lại ngay.",k:"Chỉ được 1 nghề (vào nghề thứ hai bị báo). Làm đúng việc của nghề mới có tiền (Thợ mỏ chặt gỗ không có tiền). Rời nghề thì 1 ngày sau mới vào lại; đặt rồi phá lại khối của mình không ra tiền.",c:"Bang Hội Chiến › Nghề.",w:"21/10 đổi uJobs (tự tính mọi nghề) sang Jobs Reborn theo yêu cầu: mỗi người 1 nghề."},
  {id:"k2",t:"Bán cho server /sell",b:"<code>/sell hand</code>, <code>/sell all</code>.",k:"Giá khớp bảng Cài đặt. Đồ không có giá thì không bán được."},
  {id:"k3",t:"Chuyển tiền",b:"<code>/pay B 100</code>; thử số âm và số lẻ.",k:"B nhận đúng; số âm bị từ chối."},
  {id:"k4",t:"Chợ đen: treo bán và mua",b:"<code>/choden ban 3 30</code> (3 món, cả lô 30 xu); B mở <code>/choden</code> › Đang bán, mua; để một món hết hạn.",k:"Mua bán chạy, tiền về người bán, món hết hạn vào mục lấy lại. Tiếng Việt toàn bộ. Gõ <code>/ah</code> cũng mở Chợ đen.",c:"Shop › Chợ đấu giá /ah."},

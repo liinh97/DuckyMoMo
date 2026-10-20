@@ -326,16 +326,21 @@ plugins:
     settings: "Trang Cài đặt: Bang Hội Chiến > Hiển thị"
 
   # ---------------------------------------------------------------- Kinh tế & buôn bán
-  - name: uJobs
-    jar: UJobs
+  - name: Jobs Reborn (+ CMILib)
+    jar: Jobs
     kind: Kinh tế & buôn bán
-    purpose: Nghề kiếm tiền tự động (đào, chặt, săn, trồng, câu cá…), không cần tham gia nghề.
+    purpose: "Nghề kiếm tiền (21/10 thay uJobs): MỖI NGƯỜI CHỌN 1 NGHỀ trong 8: Thợ mỏ, Tiều phu, Thợ đào đất, Nông dân (gồm chăn nuôi), Thợ săn, Ngư dân, Phù thuỷ (phù phép + pha thuốc), Thợ chế tạo. Làm đúng việc của nghề mới có tiền; tiền +0,5% mỗi cấp, tối đa cấp 50."
     player:
-      - ["/jobs", "Xem cấp nghề, bảng xếp hạng, cách kiếm tiền"]
+      - ["/jobs", "Mở menu chọn nghề (DuckyMoMoCore đổi /jobs thành /jobs browse)"]
+      - ["/jobs join <nghề> · /jobs leave <nghề>", "Vào / rời nghề (đổi nghề chờ 1 ngày, vào lại nghề cũ mất 30% cấp)"]
+      - ["/jobs info <nghề>", "Việc gì được bao nhiêu"]
+      - ["/jobs stats · /jobs top <nghề>", "Cấp của mình, bảng xếp hạng"]
     admin:
-      - ["/jobs reload", "Nạp lại"]
-    settings: "Trang Cài đặt: Bang Hội Chiến > Nghề (tiền từng hành động)"
-    notes: "Phá lại block tự đặt và đào quặng bằng Mềm Mại không được tiền."
+      - ["/jobs reload", "Nạp lại cấu hình"]
+      - ["/jobs employ <người> <nghề> · /jobs fire <người> <nghề>", "Cho vào / cho thôi nghề"]
+      - ["/jobs level <người> <nghề> set <cấp>", "Đặt cấp"]
+    settings: "Trang Cài đặt: Bang Hội Chiến › Nghề (tiền từng việc, ghi vào plugins/Jobs/jobs/<nghề>.yml). Cấu hình chung: modes/banghoi/server/plugins/Jobs/generalConfig.yml (max-jobs 1, tiếng Việt, tắt điểm nghề/shop/nhiệm vụ nghề). Sinh lại cả bộ từ bảng giá: tools/jobs/chuyen-ujobs.py."
+    notes: "Tải qua Spiget (SPIGET_RESOURCES 87610 CMILib, 4216 Jobs; luôn bản mới nhất). Phá lại block tự đặt không được tiền (job-guard của DuckyMoMoCore + chống đặt-phá của Jobs). Reset người chơi: jobs fireall. Bỏ nghề Đấu sĩ, Hộ vệ làng, Thương nhân, Nhà thám hiểm của uJobs (ít tiền hoặc dễ farm)." 
   - name: QuickShop-Hikari
     jar: QuickShop
     kind: Kinh tế & buôn bán

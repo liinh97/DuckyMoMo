@@ -1,0 +1,75 @@
+# Nghề Thợ chế tạo (Jobs Reborn). SINH TỰ ĐỘNG bằng tools/jobs/chuyen-ujobs.py (21/10) từ bảng giá uJobs; sửa giá trên trang
+# Cài đặt › Nghề (ghi thẳng vào file này) hoặc sửa tay rồi /jobs reload. income = xu mỗi lần, +0,5%/cấp, tối đa cấp 50.
+Crafter:
+  fullname: Thợ chế tạo
+  shortname: Ch
+  FullDescription:
+  - Chế đồ đá đỏ, máy móc ra tiền.
+  ChatColour: DARK_AQUA
+  BossBarColour: WHITE
+  chat-display: none
+  max-level: 50
+  leveling-progression-equation: 10*(joblevel)+(joblevel*joblevel*4)
+  income-progression-equation: baseincome+(baseincome*(joblevel-1)*0.005)
+  points-progression-equation: '0'
+  experience-progression-equation: baseexperience
+  rejoinCooldown: 86400
+  Gui:
+    ItemStack: crafting_table;hideenchants
+  Craft:
+    piston:
+      income: 0.2
+      points: 0
+      experience: 1
+    sticky_piston:
+      income: 0.02
+      points: 0
+      experience: 0.1
+    lectern:
+      income: 0.2
+      points: 0
+      experience: 1
+    redstone_lamp:
+      income: 0.2
+      points: 0
+      experience: 1
+    tnt:
+      income: 0.1
+      points: 0
+      experience: 0.5
+    dispenser:
+      income: 0.1
+      points: 0
+      experience: 0.5
+    dropper:
+      income: 0.08
+      points: 0
+      experience: 0.4
+    target:
+      income: 0.2
+      points: 0
+      experience: 1
+    repeater:
+      income: 0.3
+      points: 0
+      experience: 1.5
+    comparator:
+      income: 0.6
+      points: 0
+      experience: 3
+    daylight_detector:
+      income: 1
+      points: 0
+      experience: 5
+    note_block:
+      income: 0.1
+      points: 0
+      experience: 0.5
+    observer:
+      income: 0.2
+      points: 0
+      experience: 1
+    minecart:
+      income: 0.04
+      points: 0
+      experience: 0.2

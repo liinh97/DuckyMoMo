@@ -377,8 +377,8 @@ final class PlayerReset implements Listener {
         for (String home : Integrations.essentialsHomes(id)) {
             console("delhome " + name + ":" + home);
         }
-        for (String job : Integrations.ujobsJobs()) {
-            console("ujobs setlevel " + name + " " + job + " 0");
+        if (Integrations.jobsReborn()) {
+            console("jobs fireall " + name);   // rời nghề (Jobs giữ cấp cũ trong lưu trữ, vào lại nghề đó bị trừ 30% cấp)
         }
         activity.reset(id);
         RandomTeleport.clearCooldown(id);

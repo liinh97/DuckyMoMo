@@ -1,0 +1,316 @@
+# Nghề Phù thuỷ (Jobs Reborn). SINH TỰ ĐỘNG bằng tools/jobs/chuyen-ujobs.py (21/10) từ bảng giá uJobs; sửa giá trên trang
+# Cài đặt › Nghề (ghi thẳng vào file này) hoặc sửa tay rồi /jobs reload. income = xu mỗi lần, +0,5%/cấp, tối đa cấp 50.
+Enchanter:
+  fullname: Phù thuỷ
+  shortname: Ph
+  FullDescription:
+  - Phù phép đồ và pha thuốc ra tiền.
+  ChatColour: LIGHT_PURPLE
+  BossBarColour: WHITE
+  chat-display: none
+  max-level: 50
+  leveling-progression-equation: 10*(joblevel)+(joblevel*joblevel*4)
+  income-progression-equation: baseincome+(baseincome*(joblevel-1)*0.005)
+  points-progression-equation: '0'
+  experience-progression-equation: baseexperience
+  rejoinCooldown: 86400
+  Gui:
+    ItemStack: enchanting_table;hideenchants
+  Enchant:
+    book:
+      income: 3
+      points: 0
+      experience: 6
+    leather_helmet:
+      income: 2.5
+      points: 0
+      experience: 5.0
+    leather_chestplate:
+      income: 2.5
+      points: 0
+      experience: 5.0
+    leather_leggings:
+      income: 2.5
+      points: 0
+      experience: 5.0
+    leather_boots:
+      income: 2.5
+      points: 0
+      experience: 5.0
+    golden_sword:
+      income: 2.5
+      points: 0
+      experience: 5.0
+    golden_pickaxe:
+      income: 2.5
+      points: 0
+      experience: 5.0
+    golden_axe:
+      income: 2.5
+      points: 0
+      experience: 5.0
+    golden_shovel:
+      income: 2.5
+      points: 0
+      experience: 5.0
+    golden_hoe:
+      income: 2.5
+      points: 0
+      experience: 5.0
+    golden_helmet:
+      income: 2.5
+      points: 0
+      experience: 5.0
+    golden_chestplate:
+      income: 2.5
+      points: 0
+      experience: 5.0
+    golden_leggings:
+      income: 2.5
+      points: 0
+      experience: 5.0
+    golden_boots:
+      income: 2.5
+      points: 0
+      experience: 5.0
+    stone_sword:
+      income: 2.5
+      points: 0
+      experience: 5.0
+    stone_pickaxe:
+      income: 2.5
+      points: 0
+      experience: 5.0
+    stone_axe:
+      income: 2.5
+      points: 0
+      experience: 5.0
+    stone_shovel:
+      income: 2.5
+      points: 0
+      experience: 5.0
+    stone_hoe:
+      income: 2.5
+      points: 0
+      experience: 5.0
+    chainmail_helmet:
+      income: 2.5
+      points: 0
+      experience: 5.0
+    chainmail_chestplate:
+      income: 2.5
+      points: 0
+      experience: 5.0
+    chainmail_leggings:
+      income: 2.5
+      points: 0
+      experience: 5.0
+    chainmail_boots:
+      income: 2.5
+      points: 0
+      experience: 5.0
+    iron_sword:
+      income: 2.5
+      points: 0
+      experience: 5.0
+    iron_pickaxe:
+      income: 2.5
+      points: 0
+      experience: 5.0
+    iron_axe:
+      income: 2.5
+      points: 0
+      experience: 5.0
+    iron_shovel:
+      income: 2.5
+      points: 0
+      experience: 5.0
+    iron_hoe:
+      income: 2.5
+      points: 0
+      experience: 5.0
+    iron_helmet:
+      income: 2.5
+      points: 0
+      experience: 5.0
+    iron_chestplate:
+      income: 2.5
+      points: 0
+      experience: 5.0
+    iron_leggings:
+      income: 2.5
+      points: 0
+      experience: 5.0
+    iron_boots:
+      income: 2.5
+      points: 0
+      experience: 5.0
+    bow:
+      income: 2.5
+      points: 0
+      experience: 5.0
+    crossbow:
+      income: 2.5
+      points: 0
+      experience: 5.0
+    fishing_rod:
+      income: 2.5
+      points: 0
+      experience: 5.0
+    shears:
+      income: 2.5
+      points: 0
+      experience: 5.0
+    shield:
+      income: 2.5
+      points: 0
+      experience: 5.0
+    diamond_sword:
+      income: 4
+      points: 0
+      experience: 8
+    diamond_pickaxe:
+      income: 4
+      points: 0
+      experience: 8
+    diamond_axe:
+      income: 4
+      points: 0
+      experience: 8
+    diamond_shovel:
+      income: 4
+      points: 0
+      experience: 8
+    diamond_hoe:
+      income: 4
+      points: 0
+      experience: 8
+    diamond_helmet:
+      income: 4
+      points: 0
+      experience: 8
+    diamond_chestplate:
+      income: 4
+      points: 0
+      experience: 8
+    diamond_leggings:
+      income: 4
+      points: 0
+      experience: 8
+    diamond_boots:
+      income: 4
+      points: 0
+      experience: 8
+    netherite_sword:
+      income: 4
+      points: 0
+      experience: 8
+    netherite_pickaxe:
+      income: 4
+      points: 0
+      experience: 8
+    netherite_axe:
+      income: 4
+      points: 0
+      experience: 8
+    netherite_shovel:
+      income: 4
+      points: 0
+      experience: 8
+    netherite_hoe:
+      income: 4
+      points: 0
+      experience: 8
+    netherite_helmet:
+      income: 4
+      points: 0
+      experience: 8
+    netherite_chestplate:
+      income: 4
+      points: 0
+      experience: 8
+    netherite_leggings:
+      income: 4
+      points: 0
+      experience: 8
+    netherite_boots:
+      income: 4
+      points: 0
+      experience: 8
+    trident:
+      income: 4
+      points: 0
+      experience: 8
+    mace:
+      income: 4
+      points: 0
+      experience: 8
+  Brew:
+    nether_wart:
+      income: 1.0
+      points: 0
+      experience: 2.0
+    redstone:
+      income: 1.0
+      points: 0
+      experience: 2.0
+    glowstone_dust:
+      income: 1.2
+      points: 0
+      experience: 2.4
+    fermented_spider_eye:
+      income: 1.5
+      points: 0
+      experience: 3.0
+    gunpowder:
+      income: 1.0
+      points: 0
+      experience: 2.0
+    dragon_breath:
+      income: 3.0
+      points: 0
+      experience: 6.0
+    sugar:
+      income: 1.0
+      points: 0
+      experience: 2.0
+    rabbit_foot:
+      income: 2.5
+      points: 0
+      experience: 5.0
+    glistering_melon_slice:
+      income: 1.5
+      points: 0
+      experience: 3.0
+    spider_eye:
+      income: 1.2
+      points: 0
+      experience: 2.4
+    blaze_powder:
+      income: 1.5
+      points: 0
+      experience: 3.0
+    golden_carrot:
+      income: 1.5
+      points: 0
+      experience: 3.0
+    magma_cream:
+      income: 1.5
+      points: 0
+      experience: 3.0
+    pufferfish:
+      income: 1.5
+      points: 0
+      experience: 3.0
+    ghast_tear:
+      income: 3.0
+      points: 0
+      experience: 6.0
+    phantom_membrane:
+      income: 2.0
+      points: 0
+      experience: 4.0
+    turtle_helmet:
+      income: 2.0
+      points: 0
+      experience: 4.0

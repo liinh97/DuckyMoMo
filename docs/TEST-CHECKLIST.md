@@ -337,6 +337,15 @@ Bảng giá đầy đủ: `docs/dinh-gia-xu.html` (artifact SeZHthvXRXHusvgPqknX
 - [ ] /hd sach (cả cuốn), /hd thitran (một chương), Tab gợi ý sach + mã chương. Không kéo/lấy được đồ trong menu.
 - [ ] Điện thoại: /hd hiện bảng nút các nhóm → bấm nhóm thấy lệnh → "Đọc chi tiết" hiện cả chương, "« Quay lại" về danh sách.
 
+## 4z. 21/10: nghề Jobs Reborn (mỗi người 1 nghề) thay uJobs — đã triển khai banghoi 04:28, CHƯA thử bằng người
+- [ ] /jobs mở menu chọn nghề (8 nghề, tiếng Việt); chuột trái xem việc được trả tiền, chuột phải vào nghề.
+- [ ] Vào nghề thứ hai bị báo "Mỗi người chỉ được 1 nghề"; /jobs leave rồi vào lại phải chờ 1 ngày.
+- [ ] Thợ mỏ đào quặng có tiền (zombie 1,25 cho Thợ săn, đá 0,04 cho Thợ mỏ…); làm việc của nghề khác KHÔNG có tiền.
+- [ ] Thanh tiến độ "Nghề · Cấp …", tiền ghi xu; đặt rồi phá lại khối của mình không có tiền; quái từ lồng sinh quái không có tiền.
+- [ ] Phù thuỷ: phù phép đồ ra tiền, pha thuốc (nguyên liệu tan) ra tiền. Nông dân: gặt cây chín, cho thú đẻ, thuần hoá ra tiền.
+- [ ] Cài đặt › Nghề: sửa một mức tiền, Lưu → /jobs info thấy số mới.
+- [ ] /choilai (hoặc reset ở trang Hệ thống): người chơi bị rời nghề.
+
 ## 5. Quảng trường Danh vọng (sảnh)
 - [ ] (CHƯA CẦN, làm khi gần mở server) Chọn chỗ trống ở sảnh (map sakura). Đứng, quay mặt về phía người xem: `/vinhdanh dat moinhat tieude`, rồi `bachu`, `chienthan`, `phuho`,
       `kientrucsu`, `dautruong`, `pet` ở các chỗ khác. Bảng chữ nổi + đầu người chơi đúng hướng, không đè nhau.

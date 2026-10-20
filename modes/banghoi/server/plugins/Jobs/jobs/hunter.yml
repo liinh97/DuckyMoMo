@@ -1,0 +1,212 @@
+# Nghề Thợ săn (Jobs Reborn). SINH TỰ ĐỘNG bằng tools/jobs/chuyen-ujobs.py (21/10) từ bảng giá uJobs; sửa giá trên trang
+# Cài đặt › Nghề (ghi thẳng vào file này) hoặc sửa tay rồi /jobs reload. income = xu mỗi lần, +0,5%/cấp, tối đa cấp 50.
+Hunter:
+  fullname: Thợ săn
+  shortname: Sa
+  FullDescription:
+  - Hạ quái ra tiền.
+  - Quái từ lồng sinh quái không tính.
+  ChatColour: RED
+  BossBarColour: WHITE
+  chat-display: none
+  max-level: 50
+  leveling-progression-equation: 10*(joblevel)+(joblevel*joblevel*4)
+  income-progression-equation: baseincome+(baseincome*(joblevel-1)*0.005)
+  points-progression-equation: '0'
+  experience-progression-equation: baseexperience
+  rejoinCooldown: 86400
+  Gui:
+    ItemStack: iron_sword;hideenchants
+  Kill:
+    ZOMBIE:
+      income: 1.25
+      points: 0
+      experience: 2
+    SKELETON:
+      income: 1.25
+      points: 0
+      experience: 2
+    SPIDER:
+      income: 1.25
+      points: 0
+      experience: 2
+    CREEPER:
+      income: 1.25
+      points: 0
+      experience: 2
+    CAVE_SPIDER:
+      income: 1.5
+      points: 0
+      experience: 2.1
+    HUSK:
+      income: 1.375
+      points: 0
+      experience: 2.05
+    STRAY:
+      income: 1.875
+      points: 0
+      experience: 2.2
+    DROWNED:
+      income: 1.625
+      points: 0
+      experience: 2.1
+    ENDERMAN:
+      income: 1.875
+      points: 0
+      experience: 2.5
+    BLAZE:
+      income: 1.875
+      points: 0
+      experience: 2.5
+    ELDER_GUARDIAN:
+      income: 62.5
+      points: 0
+      experience: 20
+    ENDERMITE:
+      income: 3.75
+      points: 0
+      experience: 3
+    EVOKER:
+      income: 12.5
+      points: 0
+      experience: 5
+    GUARDIAN:
+      income: 2.125
+      points: 0
+      experience: 2.3
+    VINDICATOR:
+      income: 1.75
+      points: 0
+      experience: 2.9
+    PIGLIN:
+      income: 1.5
+      points: 0
+      experience: 2.2
+    PIGLIN_BRUTE:
+      income: 87.5
+      points: 0
+      experience: 10
+    PILLAGER:
+      income: 1.375
+      points: 0
+      experience: 2.1
+    RAVAGER:
+      income: 31.25
+      points: 0
+      experience: 5
+    SILVERFISH:
+      income: 0.125
+      points: 0
+      experience: 1
+    VEX:
+      income: 1.25
+      points: 0
+      experience: 2
+    WARDEN:
+      income: 125
+      points: 0
+      experience: 100
+    WITCH:
+      income: 3.75
+      points: 0
+      experience: 3
+    WITHER:
+      income: 62.5
+      points: 0
+      experience: 50
+    WITHER_SKELETON:
+      income: 1.875
+      points: 0
+      experience: 2.5
+    ZOGLIN:
+      income: 1.625
+      points: 0
+      experience: 2.3
+    ZOMBIE_VILLAGER:
+      income: 1.625
+      points: 0
+      experience: 2.3
+    ENDER_DRAGON:
+      income: 312.5
+      points: 0
+      experience: 250
+    PIG:
+      income: 0.125
+      points: 0
+      experience: 1
+    CHICKEN:
+      income: 0.125
+      points: 0
+      experience: 1
+    SHEEP:
+      income: 0.125
+      points: 0
+      experience: 1
+    COW:
+      income: 0.125
+      points: 0
+      experience: 1
+    COD:
+      income: 2.25
+      points: 0
+      experience: 2.2
+    SALMON:
+      income: 2.25
+      points: 0
+      experience: 2.2
+    PUFFERFISH:
+      income: 3.625
+      points: 0
+      experience: 2.9
+    TROPICAL_FISH:
+      income: 3.375
+      points: 0
+      experience: 2.7
+    HORSE:
+      income: 1.5
+      points: 0
+      experience: 2.1
+    DONKEY:
+      income: 1.5
+      points: 0
+      experience: 2.1
+    WOLF:
+      income: 3
+      points: 0
+      experience: 2.4
+    FOX:
+      income: 5
+      points: 0
+      experience: 4
+    RABBIT:
+      income: 4.375
+      points: 0
+      experience: 3
+    IRON_GOLEM:
+      income: 6.25
+      points: 0
+      experience: 5
+    GOAT:
+      income: 3.75
+      points: 0
+      experience: 2.3
+    LLAMA:
+      income: 2.625
+      points: 0
+      experience: 2.1
+    SQUID:
+      income: 3.375
+      points: 0
+      experience: 2.7
+    GLOW_SQUID:
+      income: 3.5
+      points: 0
+      experience: 2.8
+    MOOSHROOM:
+      income: 6.25
+      points: 0
+      experience: 5
+    STRIDER:
+      income: 1.875
+      points: 0
+      experience: 2.5

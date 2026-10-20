@@ -1,0 +1,68 @@
+# Nghề Tiều phu (Jobs Reborn). SINH TỰ ĐỘNG bằng tools/jobs/chuyen-ujobs.py (21/10) từ bảng giá uJobs; sửa giá trên trang
+# Cài đặt › Nghề (ghi thẳng vào file này) hoặc sửa tay rồi /jobs reload. income = xu mỗi lần, +0,5%/cấp, tối đa cấp 50.
+Woodcutter:
+  fullname: Tiều phu
+  shortname: Ti
+  FullDescription:
+  - Chặt cây ra tiền.
+  - Gỗ bán cho server cũng được giá.
+  ChatColour: GOLD
+  BossBarColour: WHITE
+  chat-display: none
+  max-level: 50
+  leveling-progression-equation: 10*(joblevel)+(joblevel*joblevel*4)
+  income-progression-equation: baseincome+(baseincome*(joblevel-1)*0.005)
+  points-progression-equation: '0'
+  experience-progression-equation: baseexperience
+  rejoinCooldown: 86400
+  Gui:
+    ItemStack: iron_axe;hideenchants
+  Break:
+    oak_log:
+      income: 0.3
+      points: 0
+      experience: 1
+    birch_log:
+      income: 0.3
+      points: 0
+      experience: 1
+    spruce_log:
+      income: 0.3
+      points: 0
+      experience: 1
+    dark_oak_log:
+      income: 0.3
+      points: 0
+      experience: 1
+    jungle_log:
+      income: 0.3
+      points: 0
+      experience: 1
+    acacia_log:
+      income: 0.3
+      points: 0
+      experience: 1
+    mangrove_log:
+      income: 0.3
+      points: 0
+      experience: 1
+    mangrove_roots:
+      income: 0.21
+      points: 0
+      experience: 0.7
+    warped_stem:
+      income: 0.45
+      points: 0
+      experience: 1.5
+    crimson_stem:
+      income: 0.45
+      points: 0
+      experience: 1.5
+    cherry_log:
+      income: 0.3
+      points: 0
+      experience: 1
+    pale_oak_log:
+      income: 0.3
+      points: 0
+      experience: 1

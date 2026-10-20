@@ -41,7 +41,7 @@ services:
       #   tradepro = trao đổi trực tiếp /trade <tên> (hai bên cùng xác nhận). zauctionhouse cần zmenu + placeholderapi.
       # 12/10: grimac = chống hack (chỉ có bản ALPHA cho 26.2, ghim id bản 2.3.74; có bản chính thức thì bỏ ":id");
       #   pvpmanager = gắn cờ đánh nhau, thoát game khi đang đánh thì chết + rơi đồ (CombatLogX chưa có 26.2);
-      #   ujobs = nghề kiếm tiền (đào, chặt, giết quái… tự động, không cần /jobs join; Jobs Reborn chưa có 26.2);
+      #   (21/10: bỏ ujobs, nghề dùng Jobs Reborn ở SPIGET_RESOURCES bên dưới: mỗi người chọn 1 nghề);
       #   squaremap = bản đồ web (cổng 8080 trong container, mở ra máy ở SQUAREMAP_PORT, Trạm 6 /mc/map);
       #   tab-was-taken (TAB) = bảng bên phải, boss bar, đầu/cuối danh sách Tab, prefix trong Tab.
       #   playerparticles (/pp hiệu ứng hạt), simplepets (/pet): quyền lợi trang trí của rank donate (tools/donate-ranks.cmds).
@@ -79,7 +79,6 @@ services:
         tradepro
         grimac:nKI7MWZj
         pvpmanager
-        ujobs
         squaremap
         tab-was-taken
         discordsrv
@@ -101,6 +100,9 @@ services:
       #   Shopkeepers 2.28.1 (dev.bukkit / forgecdn, Spigot ghi đã thử 26.2), SiegeWar 3.7.0 (GitHub), OldCombatMechanics 2.7.0 (GitHub, combat kiểu 1.8),
       #   EssentialsX bản dev #1832 (bản chính thức 2.22.0 mới tới 26.1.2): lõi + Chat + Spawn
       #   Citizens 2.0.44 build 4265 (Jenkins chính chủ, có nms v26_2; không có trên Modrinth): NPC cho cốt truyện BetonQuest
+      # Spigot (qua Spiget, luôn lấy bản mới nhất): CMILib 87610 (thư viện bắt buộc của Jobs), Jobs Reborn 4216 (nghề, 21/10 thay uJobs:
+      #   mỗi người chọn 1 nghề; 5.2.6.7 ghi hỗ trợ 26.2). Cấu hình: server/plugins/Jobs/ (sinh bằng tools/jobs/chuyen-ujobs.py).
+      SPIGET_RESOURCES: "87610,4216"
       PLUGINS: |
         https://download.geysermc.org/v2/projects/floodgate/versions/latest/builds/latest/downloads/spigot
         https://cdn.modrinth.com/data/TsLS8Py5/versions/ziIzW16f/SkinsRestorer.jar

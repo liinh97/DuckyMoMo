@@ -1,0 +1,64 @@
+# Nghề Thợ đào đất (Jobs Reborn). SINH TỰ ĐỘNG bằng tools/jobs/chuyen-ujobs.py (21/10) từ bảng giá uJobs; sửa giá trên trang
+# Cài đặt › Nghề (ghi thẳng vào file này) hoặc sửa tay rồi /jobs reload. income = xu mỗi lần, +0,5%/cấp, tối đa cấp 50.
+Digger:
+  fullname: Thợ đào đất
+  shortname: Da
+  FullDescription:
+  - Đào đất, cát, sỏi, đất sét ra tiền.
+  - Hợp san đất, làm đường.
+  ChatColour: YELLOW
+  BossBarColour: WHITE
+  chat-display: none
+  max-level: 50
+  leveling-progression-equation: 10*(joblevel)+(joblevel*joblevel*4)
+  income-progression-equation: baseincome+(baseincome*(joblevel-1)*0.005)
+  points-progression-equation: '0'
+  experience-progression-equation: baseexperience
+  rejoinCooldown: 86400
+  Gui:
+    ItemStack: iron_shovel;hideenchants
+  Break:
+    sand:
+      income: 0.06
+      points: 0
+      experience: 1
+    red_sand:
+      income: 0.066
+      points: 0
+      experience: 1.1
+    clay:
+      income: 0.12
+      points: 0
+      experience: 2
+    mud:
+      income: 0.09
+      points: 0
+      experience: 1.5
+    gravel:
+      income: 0.075
+      points: 0
+      experience: 1.25
+    mycelium:
+      income: 0.12
+      points: 0
+      experience: 2
+    podzol:
+      income: 0.066
+      points: 0
+      experience: 1.1
+    coarse_dirt:
+      income: 0.066
+      points: 0
+      experience: 1.1
+    dirt:
+      income: 0.06
+      points: 0
+      experience: 1
+    grass_block:
+      income: 0.06
+      points: 0
+      experience: 1
+    soul_sand:
+      income: 0.12
+      points: 0
+      experience: 2

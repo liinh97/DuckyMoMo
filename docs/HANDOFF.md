@@ -46,6 +46,21 @@ Sảnh (lobby) chưa restart từ lâu nhưng không bật các module này; res
 - Gỡ /doimanh: event-fragments.enabled false, lệnh khỏi plugin.yml, nhóm Cài đặt, loại quà "manh" trong panel, nút chia mảnh trang Boss,
   hướng dẫn, web. FragmentShop.java còn nằm (không chạy).
 
+### 21/10 sáng (phiên tài khoản mới, sau mục trên)
+- **Định lại xu đã áp dụng** (xem mục 2 dưới) + **giới hạn bán cho server 8.000 xu/ngày** (SellLimit.java). Commit 27eefdd.
+- **/hd thành menu rương 18 nhóm** (Guide.java + huongdan.yml › menu): rê chuột thấy lệnh + mô tả ngắn, bấm mở sách chỉ chương đó;
+  /hd sach cả cuốn; Bedrock bảng nút. Người dùng: "dài như này ai mà muốn đọc", làm theo menu lệnh CherryMC. Commit 634a584.
+- **Nghề: uJobs → Jobs Reborn 5.2.6.7 + CMILib** (người dùng: "chỉ cho chọn 1 nghề, nếu không member quá lợi"; uJobs không có chọn
+  nghề, không có API chặn). SPIGET_RESOURCES 87610,4216 trong modes/banghoi/compose.yaml (bỏ ujobs ở MODRINTH). Cấu hình sinh bằng
+  `tools/jobs/chuyen-ujobs.py` (bản mặc định Jobs ở tools/jobs/goc/): 8 nghề Thợ mỏ, Tiều phu, Thợ đào đất, Nông dân (+chăn nuôi),
+  Thợ săn, Ngư dân, Phù thuỷ (phù phép theo món + pha thuốc), Thợ chế tạo; giá lấy đúng bảng uJobs đã định giá 21/10; max-jobs 1,
+  rejoinCooldown 1 ngày, +0,5%/cấp tối đa 50, tắt điểm nghề/shop/nhiệm vụ nghề, không trả gần lồng quái/sáng tạo, locale vi
+  (messages_vi.yml dịch phần người chơi thấy, còn lại tiếng Anh). Trang Cài đặt › Nghề (238 mục) trỏ vào plugins/Jobs/jobs/*.yml.
+  DuckyMoMoCore: JobsMenu (gõ /jobs trơn → /jobs browse), PlayerReset dùng `jobs fireall`. Jar uJobs đã cất ở
+  data/banghoi-1/plugins-da-go/ (thư mục dữ liệu UJobs còn). Cấp nghề cũ của uJobs KHÔNG chuyển (giai đoạn test). Thử trên server tạm
+  trước khi đưa lên (8 nghề nạp, không sinh nghề mặc định). CHƯA thử bằng người: TEST-CHECKLIST 4z, lộ trình test k1, m16.
+  Lưu ý: Spiget luôn lấy bản MỚI NHẤT (không ghim) — nếu một ngày Jobs/CMILib mới làm lỗi, ghim lại bằng link tải cụ thể.
+
 ### Việc tiếp theo / chờ người dùng
 1. Restart banghoi (xem trên) rồi người dùng test mục 4w.
 2. ~~Định lại xu toàn server~~ **ĐÃ ÁP DỤNG 21/10 ~03:40** (người dùng: "cứ làm như vậy, có người chơi rồi điều chỉnh sau; check mọi chỗ

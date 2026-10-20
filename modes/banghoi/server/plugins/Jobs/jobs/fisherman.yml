@@ -1,0 +1,36 @@
+# Nghề Ngư dân (Jobs Reborn). SINH TỰ ĐỘNG bằng tools/jobs/chuyen-ujobs.py (21/10) từ bảng giá uJobs; sửa giá trên trang
+# Cài đặt › Nghề (ghi thẳng vào file này) hoặc sửa tay rồi /jobs reload. income = xu mỗi lần, +0,5%/cấp, tối đa cấp 50.
+Fisherman:
+  fullname: Ngư dân
+  shortname: Ng
+  FullDescription:
+  - Câu cá ra tiền (cộng với tiền bán cá).
+  - Cá hiếm ra nhiều hơn.
+  ChatColour: AQUA
+  BossBarColour: WHITE
+  chat-display: none
+  max-level: 50
+  leveling-progression-equation: 10*(joblevel)+(joblevel*joblevel*4)
+  income-progression-equation: baseincome+(baseincome*(joblevel-1)*0.005)
+  points-progression-equation: '0'
+  experience-progression-equation: baseexperience
+  rejoinCooldown: 86400
+  Gui:
+    ItemStack: fishing_rod;hideenchants
+  Fish:
+    cod:
+      income: 1.5
+      points: 0
+      experience: 1
+    salmon:
+      income: 1.5
+      points: 0
+      experience: 1
+    tropical_fish:
+      income: 4.5
+      points: 0
+      experience: 3
+    pufferfish:
+      income: 3.75
+      points: 0
+      experience: 2.5

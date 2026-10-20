@@ -1,0 +1,191 @@
+# Nghề Nông dân (Jobs Reborn). SINH TỰ ĐỘNG bằng tools/jobs/chuyen-ujobs.py (21/10) từ bảng giá uJobs; sửa giá trên trang
+# Cài đặt › Nghề (ghi thẳng vào file này) hoặc sửa tay rồi /jobs reload. income = xu mỗi lần, +0,5%/cấp, tối đa cấp 50.
+Farmer:
+  fullname: Nông dân
+  shortname: 'No'
+  FullDescription:
+  - Gặt cây chín, hái quả, cho thú đẻ,
+  - thuần hoá thú ra tiền.
+  ChatColour: GREEN
+  BossBarColour: WHITE
+  chat-display: none
+  max-level: 50
+  leveling-progression-equation: 10*(joblevel)+(joblevel*joblevel*4)
+  income-progression-equation: baseincome+(baseincome*(joblevel-1)*0.005)
+  points-progression-equation: '0'
+  experience-progression-equation: baseexperience
+  rejoinCooldown: 86400
+  Gui:
+    ItemStack: iron_hoe;hideenchants
+  Break:
+    wheat-7:
+      income: 0.15
+      points: 0
+      experience: 1
+    potatoes-7:
+      income: 0.15
+      points: 0
+      experience: 1
+    carrots-7:
+      income: 0.15
+      points: 0
+      experience: 1
+    beetroots-3:
+      income: 0.165
+      points: 0
+      experience: 1.1
+    melon:
+      income: 0.15
+      points: 0
+      experience: 1
+  Collect:
+    glow_berries:
+      income: 0.15
+      points: 0
+      experience: 1
+    sweet_berries-2:
+      income: 0.15
+      points: 0
+      experience: 1
+    sweet_berries-3:
+      income: 0.15
+      points: 0
+      experience: 1
+  Breed:
+    PIG:
+      income: 0.09
+      points: 0
+      experience: 1
+    CHICKEN:
+      income: 0.09
+      points: 0
+      experience: 1
+    COW:
+      income: 0.09
+      points: 0
+      experience: 1
+    SHEEP:
+      income: 0.09
+      points: 0
+      experience: 1
+    HORSE:
+      income: 0.09
+      points: 0
+      experience: 1
+    DONKEY:
+      income: 0.09
+      points: 0
+      experience: 1
+    MULE:
+      income: 0.09
+      points: 0
+      experience: 1
+    LLAMA:
+      income: 0.09
+      points: 0
+      experience: 1
+    TRADER_LLAMA:
+      income: 0.09
+      points: 0
+      experience: 1
+    RABBIT:
+      income: 0.09
+      points: 0
+      experience: 1
+    FOX:
+      income: 0.09
+      points: 0
+      experience: 1
+    WOLF:
+      income: 0.09
+      points: 0
+      experience: 1
+    CAT:
+      income: 0.09
+      points: 0
+      experience: 1
+    TURTLE:
+      income: 0.09
+      points: 0
+      experience: 1
+    BEE:
+      income: 0.09
+      points: 0
+      experience: 1
+    CAMEL:
+      income: 0.09
+      points: 0
+      experience: 1
+    PANDA:
+      income: 0.09
+      points: 0
+      experience: 1
+    PARROT:
+      income: 0.09
+      points: 0
+      experience: 1
+    POLAR_BEAR:
+      income: 0.09
+      points: 0
+      experience: 1
+    FROG:
+      income: 0.09
+      points: 0
+      experience: 1
+    AXOLOTL:
+      income: 0.09
+      points: 0
+      experience: 1
+    MOOSHROOM:
+      income: 0.09
+      points: 0
+      experience: 1
+    OCELOT:
+      income: 0.09
+      points: 0
+      experience: 1
+    STRIDER:
+      income: 0.09
+      points: 0
+      experience: 1
+    SNIFFER:
+      income: 0.09
+      points: 0
+      experience: 1
+  Tame:
+    WOLF:
+      income: 0.09
+      points: 0
+      experience: 1
+    CAT:
+      income: 0.09
+      points: 0
+      experience: 1
+    CAMEL:
+      income: 0.09
+      points: 0
+      experience: 1
+    HORSE:
+      income: 0.09
+      points: 0
+      experience: 1
+    MULE:
+      income: 0.09
+      points: 0
+      experience: 1
+    DONKEY:
+      income: 0.09
+      points: 0
+      experience: 1
+    TRADER_LLAMA:
+      income: 0.09
+      points: 0
+      experience: 1
+    LLAMA:
+      income: 0.09
+      points: 0
+      experience: 1
+    PARROT:
+      income: 0.09
+      points: 0
+      experience: 1

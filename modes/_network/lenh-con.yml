@@ -354,10 +354,10 @@ groups:
       - ["pvpglobal <on|off>", "Bật/tắt PvP toàn server", Chỉ admin]
       - ["pvpo <người>", "Bật/tắt PvP của người khác", Chỉ admin]
       - ["pmr reload", "Nạp lại PvPManager", Chỉ admin]
-  - plugin: UJobs
+  - plugin: Jobs
     servers: [banghoi-1]
     commands:
-      - ["jobs", "Menu nghề", Mọi người]
+      - ["jobs", "Menu chọn nghề (mỗi người 1 nghề)", Mọi người]
       - ["jobs join <nghề>", "Vào nghề", Mọi người]
       - ["jobs leave <nghề>", "Bỏ nghề", Mọi người]
       - ["jobs info <nghề>", "Việc gì được trả bao nhiêu", Mọi người]

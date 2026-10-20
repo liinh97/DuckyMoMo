@@ -104,6 +104,7 @@ gui:
     lore:
     - "<gold>▍ <white>Cấp <primary><level> <progress> <secondary><next_level>"
     - "<dark_gray>▍ <gray>Kinh nghiệm <white><exp><gray>/<white><next_exp>"
+    - "<dark_gray>▍ <gray>Tự tính khi làm, không cần chọn nghề"
     - "<dark_gray><st>                              </st>"
     - "<dark_gray>• <gray>Xếp hạng: <white>#<position>"
     - "<dark_gray>• <gray>Đã kiếm: <yellow><total_money><money_symbol>"

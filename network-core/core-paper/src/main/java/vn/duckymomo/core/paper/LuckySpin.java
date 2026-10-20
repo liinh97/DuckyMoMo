@@ -201,18 +201,31 @@ final class LuckySpin implements Listener {
     }
 
     void open(Player p) {
+        // Bố cục (21/10, theo mẫu người dùng gửi): 4 hàng trên = mọi phần thưởng xếp liền, hàng 5 = vạch ngăn, hàng cuối: cách lấy vé · nút quay
         Holder h = new Holder();
         h.inv = Bukkit.createInventory(h, 54, c("&0✦ Vòng quay miễn phí"));
-        int slot = 10;
-        for (Prize pz : prizes) {
-            if (slot >= 44) {
-                break;
-            }
-            h.inv.setItem(slot, icon(pz));
-            slot += (slot % 9 == 7) ? 3 : 1;
+        ItemStack empty = pane(Material.LIGHT_GRAY_STAINED_GLASS_PANE), bar = pane(Material.GRAY_STAINED_GLASS_PANE);
+        for (int s = 0; s < 54; s++) {
+            h.inv.setItem(s, s < 36 ? empty : bar);
         }
+        for (int i = 0; i < prizes.size() && i < 36; i++) {
+            h.inv.setItem(i, icon(prizes.get(i)));
+        }
+        h.inv.setItem(45, Tip.of("&e❖ &fVé lấy từ đâu?").accent("&e").desc("Vé miễn phí, không bán, không trao đổi")
+                .line().kv("Chơi thật", "&f" + minutesPerKey(p) + " phút &7= 1 vé").kv("Giữ tối đa", "&f" + cfg.getInt("max-keys", 5) + " vé")
+                .note("Treo máy (AFK) không tính giờ").note("Danh phận cao nhận vé nhanh hơn")
+                .apply(new ItemStack(Material.BOOK)));
         h.inv.setItem(SPIN_SLOT, spinButton(p));
         p.openInventory(h.inv);
+    }
+
+    private static ItemStack pane(Material m) {
+        ItemStack it = new ItemStack(m);
+        ItemMeta meta = it.getItemMeta();
+        meta.displayName(Component.text(" "));
+        meta.setHideTooltip(true);
+        it.setItemMeta(meta);
+        return it;
     }
 
     private Prize pick() {

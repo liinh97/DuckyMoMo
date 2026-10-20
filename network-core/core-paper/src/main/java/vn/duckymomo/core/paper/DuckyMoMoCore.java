@@ -235,7 +235,7 @@ public final class DuckyMoMoCore extends JavaPlugin {
             getLogger().info("Bedrock auto-login: bật (AuthMe có trên server này)");
             if (getConfig().getBoolean("register-limit.enabled", true)) {
                 boolean ok = new RegisterLimit(this, getConfig().getConfigurationSection("register-limit")).hook();
-                getLogger().info("Giới hạn đăng ký theo IP mỗi 24 giờ: " + ok);
+                getLogger().info("Giới hạn đăng ký theo IP (tổng mỗi IP, có danh sách miễn): " + ok);
             }
         }
 

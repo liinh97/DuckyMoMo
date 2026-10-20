@@ -29,8 +29,12 @@ final class RegisterLimit implements Listener {
 
     private final JavaPlugin plugin;
     private final int perDay;
-    /** Tối đa N tài khoản mỗi IP trong 30 ngày (register-limit.per-ip-per-30-days, 0 = tắt): chặn "nuôi" tài khoản dần dần 2/ngày. */
+    /** Tối đa N tài khoản mỗi IP trong 30 ngày (register-limit.per-ip-per-30-days, 0 = tắt). */
     private final int perMonth;
+    /** TỔNG tối đa N tài khoản mỗi IP, mãi mãi (register-limit.per-ip-total, 0 = tắt; chủ server 20/10: "tối đa chỉ 2 tài khoản").
+     *  Đếm = tài khoản AuthMe đang gắn IP đó (AuthMeApi.getNamesByIp, có cả tài khoản tạo trước khi có tính năng này)
+     *  + mọi lần đăng ký từ IP đó server đã ghi (dangky-ip.yml, không xoá theo thời gian). */
+    private final int perTotal;
     /** IP miễn giới hạn (register-limit.whitelist): đúng IP, hoặc tiền tố kết thúc bằng "." / ":" (vd "171.255.251." = cả dải). */
     private final java.util.List<String> whitelist;
     private final File file;
@@ -39,7 +43,8 @@ final class RegisterLimit implements Listener {
     RegisterLimit(JavaPlugin plugin, ConfigurationSection cfg) {
         this.plugin = plugin;
         this.perDay = cfg == null ? 2 : cfg.getInt("per-ip-per-day", 2);
-        this.perMonth = cfg == null ? 6 : cfg.getInt("per-ip-per-30-days", 6);
+        this.perMonth = cfg == null ? 0 : cfg.getInt("per-ip-per-30-days", 0);
+        this.perTotal = cfg == null ? 2 : cfg.getInt("per-ip-total", 2);
         this.whitelist = cfg == null ? java.util.List.of()
                 : cfg.getStringList("whitelist").stream().map(String::trim).filter(x -> !x.isEmpty()).toList();
         this.file = new File(plugin.getDataFolder(), "dangky-ip.yml");
@@ -59,7 +64,7 @@ final class RegisterLimit implements Listener {
     @SuppressWarnings("unchecked")
     boolean hook() {
         Plugin am = Bukkit.getPluginManager().getPlugin("AuthMe");
-        if (am == null || !am.isEnabled() || perDay <= 0 && perMonth <= 0) {
+        if (am == null || !am.isEnabled() || perDay <= 0 && perMonth <= 0 && perTotal <= 0) {
             return false;
         }
         try {
@@ -69,6 +74,9 @@ final class RegisterLimit implements Listener {
             Method prePlayer = pre.getMethod("getPlayer");
             Method setCan = pre.getMethod("setCanRegister", boolean.class);
             Method donePlayer = done.getMethod("getPlayer");
+            Class<?> apiClass = Class.forName("fr.xephi.authme.api.v3.AuthMeApi", true, cl);
+            Method apiInstance = apiClass.getMethod("getInstance");
+            Method namesByIp = apiClass.getMethod("getNamesByIp", String.class);
             Bukkit.getPluginManager().registerEvent(pre, this, EventPriority.HIGH, (l, ev) -> {
                 if (!pre.isInstance(ev)) {
                     return;
@@ -81,7 +89,27 @@ final class RegisterLimit implements Listener {
                     }
                     int used = recent(ip, DAY).size();
                     int usedMonth = recent(ip, MONTH).size();
-                    if (perDay > 0 && used >= perDay) {
+                    java.util.Set<String> all = new java.util.HashSet<>();
+                    for (String s : recent(ip, Long.MAX_VALUE)) {
+                        all.add(s.substring(s.indexOf(' ') + 1).toLowerCase(java.util.Locale.ROOT));
+                    }
+                    try {
+                        Object api = apiInstance.invoke(null);
+                        if (api != null) {
+                            for (Object n : (List<?>) namesByIp.invoke(api, ip)) {
+                                all.add(String.valueOf(n).toLowerCase(java.util.Locale.ROOT));
+                            }
+                        }
+                    } catch (ReflectiveOperationException e) {
+                        plugin.getLogger().warning("Giới hạn đăng ký: không hỏi được AuthMe theo IP: " + e);
+                    }
+                    all.remove(p.getName().toLowerCase(java.util.Locale.ROOT));
+                    if (perTotal > 0 && all.size() >= perTotal) {
+                        setCan.invoke(ev, false);
+                        p.sendMessage("§cIP của bạn đã có " + all.size() + " tài khoản (mỗi mạng tối đa " + perTotal
+                                + "). Hãy đăng nhập tài khoản cũ, hoặc nhờ admin nếu bạn chơi ở quán net/mạng chung.");
+                        plugin.getLogger().info("Chặn đăng ký: " + p.getName() + " từ " + ip + " (đã có " + all.size() + "/" + perTotal + " tài khoản: " + all + ")");
+                    } else if (perDay > 0 && used >= perDay) {
                         setCan.invoke(ev, false);
                         p.sendMessage("§cIP của bạn đã đăng ký " + used + " tài khoản trong 24 giờ qua (tối đa " + perDay
                                 + "). Thử lại sau, hoặc nhờ admin nếu bạn chơi ở quán net/mạng chung.");
@@ -139,7 +167,7 @@ final class RegisterLimit implements Listener {
         for (String s : data.getStringList(key(ip))) {
             int i = s.indexOf(' ');
             try {
-                if (i > 0 && now - Long.parseLong(s.substring(0, i)) < window) {
+                if (i > 0 && (window == Long.MAX_VALUE || now - Long.parseLong(s.substring(0, i)) < window)) {
                     keep.add(s);
                 }
             } catch (NumberFormatException ignored) {
@@ -150,7 +178,7 @@ final class RegisterLimit implements Listener {
     }
 
     private synchronized void record(String ip, String name) {
-        List<String> list = recent(ip, MONTH);   // giữ 30 ngày để đếm cả giới hạn tháng
+        List<String> list = recent(ip, Long.MAX_VALUE);   // giữ mãi để đếm tổng số tài khoản mỗi IP
         list.add(System.currentTimeMillis() + " " + name);
         data.set(key(ip), list);
         try {

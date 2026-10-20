@@ -5,7 +5,7 @@
 #  - 20/10 (chủ server muốn captcha kiểu ảnh như server khác): verification.timing ALWAYS + map-captcha ALWAYS:
 #    người MỚI (chưa xác minh) vào lần đầu: rơi xuống + gõ chữ vẽ trên tấm bản đồ (không chép được như captcha chat của AuthMe),
 #    đạt thì bị kick 1 lần, vào lại là chơi. Đã xác minh thì lưu database H2 (verified_players, giữ 7 ngày), khởi động lại proxy không phải làm lại.
-#    Chữ trên bản đồ kiểu 'complex' (khó cho phần mềm đọc chữ); trượt xác minh 5 lần thì IP bị chặn 10 phút (20/10).
+#    Chữ trên bản đồ kiểu 'modern' (thử 'complex' 20/10 rồi đổi lại: khó đọc cho người thật, bot vốn không đọc được); trượt xác minh 5 lần thì IP bị chặn 10 phút (20/10).
 #  Bedrock (Geyser) không bị kiểm tra (check-geyser-players: false).
 #
 #   /$$$$$$
@@ -121,7 +121,7 @@ verification:
       # Style of the map CAPTCHA (Default: 'modern').
       # To use the old design, set this to 'legacy'.
       # To use an experimental design, set this to 'complex'.
-      style: 'complex'
+      style: 'modern'
       # How many CAPTCHA answers should Sonar prepare?
       # This task happens asynchronously in the background
       precompute: 500

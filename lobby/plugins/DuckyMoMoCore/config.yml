@@ -4,12 +4,14 @@ lobby-menu:
   modes-dir: /modes       # ../modes gắn vào đây (chỉ đọc), xem lobby/compose.yaml
   item-slot: 4
 
-# Giới hạn đăng ký AuthMe: tối đa N tài khoản mỗi IP trong 24 giờ (luật mùa 1, mục 37). Không tính IP 127.x (playit) và mạng nội bộ.
-# Không dùng maxRegPerIp của AuthMe: nó tính tổng vĩnh viễn, sẽ khoá cả quán net / mạng 4G dùng chung IP. Lưu: dangky-ip.yml
+# Giới hạn đăng ký AuthMe theo IP (luật mùa 1, mục 37). Không tính IP nội bộ. Lưu: dangky-ip.yml.
+# Không dùng maxRegPerIp của AuthMe vì không có danh sách IP miễn (whitelist) cho quán net / nhà đông người.
 register-limit:
   enabled: true
-  per-ip-per-day: 2
-  per-ip-per-30-days: 6     # 20/10: chặn tạo dồn 2/ngày thành 60/tháng; 0 = tắt
+  # 20/10 chủ server: mỗi IP TỔNG tối đa 2 tài khoản, mãi mãi (đếm cả tài khoản cũ AuthMe gắn IP đó). Quán net / nhà đông người: thêm IP vào whitelist.
+  per-ip-total: 2
+  per-ip-per-day: 0         # giới hạn phụ theo 24 giờ (0 = tắt, đã có per-ip-total)
+  per-ip-per-30-days: 0     # giới hạn phụ theo 30 ngày (0 = tắt)
   # IP không bị giới hạn (chủ server, admin test, quán net quen): mỗi dòng 1 IP; kết thúc bằng "." = cả dải (vd "171.255.251.").
   # Sửa ở Cài đặt › Toàn mạng › Sảnh › Giới hạn đăng ký tài khoản.
   whitelist:

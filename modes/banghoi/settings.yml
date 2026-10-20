@@ -965,7 +965,7 @@ hom_list:
     - {label: "1 bảng tên", weight: 5, rare: false, rewards: ["vat NAME_TAG 1"]}
     - {label: "1 mảnh netherite", weight: 2, rare: true, rewards: ["vat NETHERITE_SCRAP 1"]}
     - {label: "2000 xu", weight: 2, rare: true, rewards: ["xu 2000"]}
-fm_on: true
+fm_on: false
 fm_cap: 20
 fm_types:
   lamnguy:

@@ -878,7 +878,7 @@ public final class DuckyMoMoCore extends JavaPlugin {
             getServer().getPluginManager().registerEvents(fragments, this);
             rewards.setFragments(fragments);
         }
-        bind("doimanh", fragments == null ? null : fragments::command, "Đổi mảnh sự kiện");
+        bind("doimanh", fragments == null ? null : fragments::command, "Đổi mảnh sự kiện");   // 21/10: đã bỏ khỏi plugin.yml (tắt)
 
         // Điểm danh hằng ngày (Bang Hội Chiến: daily-checkin.enabled)
         DailyCheckin checkin = getConfig().getBoolean("daily-checkin.enabled")

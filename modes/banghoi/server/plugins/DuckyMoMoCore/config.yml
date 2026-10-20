@@ -635,7 +635,7 @@ crates:
 # Boss/dungeon/admin phát bằng: /doimanh give <người> <loại> <số> (không tính giới hạn). until: hạn đổi yyyy-MM-dd (trống = không hạn).
 # Loại = mã thư viện đồ (công dụng "Mảnh sự kiện"): tên, vật phẩm, mô tả sửa ở trang Thư viện đồ.
 event-fragments:
-  enabled: true
+  enabled: false   # 21/10: người dùng bỏ /doimanh (boss chỉ cần rơi đồ thư viện)
   daily-cap: 20
   types:
     lamnguy: {until: ""}

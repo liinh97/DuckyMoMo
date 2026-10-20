@@ -179,9 +179,7 @@
       <button type="button" class="add-drop" id="addDrop">+ Thêm đồ rơi</button>
       <p class="note">Đồ vào thẳng túi người nhận (túi đầy thì rơi dưới chân), đủ công dụng của thư viện (kỹ năng Xưởng, hiệu ứng món ăn…). Tỉ lệ tính riêng từng món; "mỗi người tung riêng" là mỗi người nhận một lần tung.</p>
       <label class="f" for="cmds">Lệnh console chạy khi boss chết <span class="hint">không có /, mỗi dòng một lệnh; $players = mọi người đã đánh boss</span></label>
-      <textarea id="cmds" rows="3" placeholder="doimanh chia lamnguy 30 $players"></textarea>
-      <div class="fm"><span>Thêm nhanh: chia mảnh sự kiện cho người tham gia</span><input id="fmType" placeholder="loại, vd lamnguy"><input id="fmTotal" type="number" min="1" value="30" title="Tổng số mảnh"><button id="addFm" class="ghost">+ Thêm lệnh</button></div>
-      <p class="note">Mảnh chia đều cho người tham gia đang online, không tính giới hạn ngày.</p>
+      <textarea id="cmds" rows="3" placeholder="vd: broadcast Boss đã bị hạ!"></textarea>
       <div id="warns"></div>
     </div>
 
@@ -320,7 +318,7 @@ function renderPowers() {
   });
 }
 function setEditable(on) {
-  for (const el of document.querySelectorAll("#name,#etype,#level,#hm,#dm,#timeout,#enabled,#emloot,#prio,#spawnMsg,#deathMsg,#deathMsgs,#cmds,#fmType,#fmTotal,#addFm,#save,[id^=slot_]"))
+  for (const el of document.querySelectorAll("#name,#etype,#level,#hm,#dm,#timeout,#enabled,#emloot,#prio,#spawnMsg,#deathMsg,#deathMsgs,#cmds,#save,[id^=slot_]"))
     el.disabled = !on;
 }
 function load(bs) {
@@ -386,12 +384,6 @@ $("new").onclick = () => load(null);
 $("addDrop").onclick = () => { drops.push({ do: "", "ti-le": 100, so: 1, cho: "top1" }); renderDrops(); };
 $("pwfilter").oninput = renderPowers;
 for (const id of ["name", "level", "hm", "dm", "timeout", "enabled", "emloot", "cmds", "spawnMsg", "deathMsg", "deathMsgs"]) $(id).addEventListener("input", render);
-$("addFm").onclick = (e) => {
-  e.preventDefault();
-  const t = $("fmType").value.trim().toLowerCase(), n = parseInt($("fmTotal").value || "0", 10);
-  if (!/^[a-z0-9_]+$/.test(t) || n < 1) { status(false, "Nhập loại mảnh (vd lamnguy) và tổng số"); return; }
-  $("cmds").value = ($("cmds").value.trim() ? $("cmds").value.trim() + "\n" : "") + `doimanh chia ${t} ${n} $players`; render();
-};
 $("save").onclick = async () => {
   if (drops.some(d => !d.do)) { status(false, "Có dòng đồ rơi chưa chọn món (chọn món hoặc bấm × để bỏ)."); return; }
   if (cur) {

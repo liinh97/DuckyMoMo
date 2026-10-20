@@ -149,20 +149,6 @@ groups:
       - { key: hom_list, label: Các hòm, type: crates, file: plugins/DuckyMoMoCore/config.yml, path: crates.list,
           note: "Mỗi hòm: tên, biểu tượng, chìa (chọn từ Thư viện đồ) và phần thưởng. Quà chọn được đồ thường (Vật phẩm) lẫn đồ Thư viện (Món thư viện). Trọng số càng lớn càng dễ trúng; % tự tính." }
 
-  - title: Mảnh sự kiện & đổi quà
-    category: Thưởng & sự kiện
-    description: "Mảnh là đồ vật (trao đổi, bán được), có dấu ẩn nên không làm giả được. /doimanh mở cửa hàng đổi quà. Phát từ phần thưởng (loại Mảnh sự kiện, có giới hạn mỗi ngày) hoặc admin/boss: /doimanh give <người> <loại> <số>."
-    apply: [dmm reload]
-    settings:
-      - { key: fm_on, label: Bật mảnh sự kiện, type: select, file: plugins/DuckyMoMoCore/config.yml, path: event-fragments.enabled,
-          options: [ { value: true, label: Bật }, { value: false, label: Tắt } ] }
-      - { key: fm_cap, label: Mỗi người nhận tối đa (mảnh/ngày) từ phần thưởng, type: int, min: 0, max: 10000, file: plugins/DuckyMoMoCore/config.yml, path: event-fragments.daily-cap,
-          note: "Chống tài khoản phụ cày mảnh. 0 = không giới hạn. Mảnh từ /doimanh give (boss, admin) không tính." }
-      - { key: fm_types, label: Các loại mảnh, type: fragtypes, file: plugins/DuckyMoMoCore/config.yml, path: event-fragments.types,
-          note: "Chọn món từ Thư viện đồ (công dụng Mảnh sự kiện: tên, vật phẩm, mô tả sửa ở đó). Hạn đổi: hết ngày đó thì cửa hàng không nhận loại mảnh này nữa (để trống = không hạn)." }
-      - { key: fm_shop, label: Cửa hàng đổi mảnh, type: fragshop, file: plugins/DuckyMoMoCore/config.yml, path: event-fragments.shop,
-          note: "Giá: mã loại mảnh + số, nhiều loại cách dấu phẩy (vd lamnguy 40). Đổi bằng cá câu: ca:common / ca:rare / ca:epic / ca:legendary + số (vd ca:epic 2). Quà Kinh nghiệm pet: người chơi phải gọi pet ra mới đổi được. Không đặt đồ bán bằng tiền thật." }
-
   - title: Liên minh Hoà Bình
     info: "Là gì: một quốc gia duy nhất do server quản lý, thủ đô ở kinh đô (spawn).\nQuyền lợi: thị trấn vào liên minh không bị vây (sau thời gian chờ).\nĐổi lại: trả phí bảo hộ, không đánh ai.\nLưu ý: vùng vây vẫn có thể trùm lên đất hoà bình, dân được báo trước để di tản."
     category: Thị trấn

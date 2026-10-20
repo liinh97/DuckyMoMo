@@ -29,6 +29,10 @@
     2. m7 Lệnh nhà/warp/tpa: "Bổ sung /back cho người chơi" (hiện người chơi không có /back).
     3. m8 /caidat: "Tắt nhận TPA nhưng vẫn nhận được" → lỗi, kiểm PlayerSettings chặn tpa (có thể Essentials /tpa đi đường khác, vd /tpahere, /etpa).
 - Danh sách tay: `docs/TEST-CHECKLIST.md` (mục 4t mới cho 20/10).
+- **Trang Cài đặt xếp gọn (20/10 tối, panel/index.html):** mỗi cài đặt là thẻ nhỏ trong lưới nhiều cột (`.gbody` grid auto-fill 290px);
+  công tắc chữ ngắn nằm cùng dòng tên; chữ dài/danh sách rộng gấp đôi; trình soạn lớn trải hết. Nhãn dạng "Chủ thể: mục" lặp ở ≥2 chủ thể và
+  ≥2 mục tự gộp thành BẢNG so sánh (`matrix()`/`matrixEl()`, ô dùng chung `fillCtl()`), vd Danh phận 4 bậc × 10 mục, rank khác, mùa, sách CE.
+  Muốn nhóm nào hiện thành bảng: đặt nhãn đúng dạng "Chủ thể: mục" trong schema.
 - **Sửa 20/10 tối (đã build + khởi động lại 4 server + panel):**
   - m1 → module **Gói quà** `Kits.java` (config `goi-qua`, dữ liệu `goiqua.yml`): lệnh chính `/goiqua`; ở server có module (Bang Hội Chiến)
     `/kit`, `/kits`, `/essentials:kit` (người chơi, console, RCON) được đổi hướng sang `/goiqua` bằng PlayerCommandPreprocess/ServerCommand/

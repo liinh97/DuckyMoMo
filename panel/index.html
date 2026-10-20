@@ -45,21 +45,43 @@
   .ghead .gcat { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin-bottom: 2px; }
   .ghead h2 { font-size: 17px; margin: 0; }
   .ghead p.desc { color: var(--muted); margin: 6px 0 0; font-size: 14px; max-width: 80ch; }
-  .row { display: grid; grid-template-columns: minmax(200px, 36%) minmax(0, 1fr); gap: 8px 28px; padding: 16px 22px; border-top: 1px solid var(--line-2); align-items: start; position: relative; }
-  .gbody .row:first-child { border-top: 0; }
-  .row.wide { grid-template-columns: 1fr; }
-  .row.changed { background: var(--changed); box-shadow: inset 3px 0 0 var(--accent); }
-  .row .lab label { font-weight: 600; font-size: 14.5px; display: block; }
-  .row .lab .note { color: var(--muted); font-size: 13px; margin-top: 4px; }
+  /* mỗi cài đặt là một thẻ nhỏ, xếp lưới nhiều cột; trình soạn lớn trải hết bề ngang */
+  .gbody { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 12px; padding: 16px 22px 20px; align-items: start; }
+  .row { display: flex; flex-direction: column; gap: 8px; min-width: 0; padding: 12px 14px; border: 1px solid var(--line-2); border-radius: 10px; background: var(--card-2); position: relative; }
+  .row.wide, .gbody > .mxwrap { grid-column: 1 / -1; }
+  .row.span2 { grid-column: span 2; }
+  .row.bool { flex-direction: row; align-items: center; justify-content: space-between; gap: 14px; }
+  .row.bool .lab { min-width: 0; }
+  .row.bool .ctl { flex: none; }
+  .row.changed { background: var(--changed); border-color: var(--accent); }
+  .row .lab label { font-weight: 600; font-size: 14px; display: block; line-height: 1.4; }
+  .row .lab .note { color: var(--muted); font-size: 12.5px; margin-top: 3px; line-height: 1.45; }
   .row .lab .pill { display: none; font-size: 11px; font-weight: 600; color: var(--accent); background: var(--accent-soft); border-radius: 999px; padding: 1px 8px; margin-left: 6px; vertical-align: 1px; }
   .row.changed .lab .pill { display: inline-block; }
   .row .ctl { min-width: 0; }
   .row .ctl > input, .row .ctl > select, .row .ctl > textarea { width: 100%; }
-  .row .ctl > input[type=number] { max-width: 220px; }
   .row .ctl > textarea { min-height: 110px; resize: vertical; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 13.5px; line-height: 1.5; }
   .row .count { font-size: 12px; color: var(--muted); margin-top: 4px; }
-  .row mark { background: rgba(255, 200, 0, .35); color: inherit; border-radius: 3px; padding: 0 1px; }
-  @media (max-width: 700px) { .row { grid-template-columns: 1fr; padding: 14px 16px; } .ghead { padding: 16px; } }
+  mark { background: rgba(255, 200, 0, .35); color: inherit; border-radius: 3px; padding: 0 1px; }
+  @media (max-width: 700px) { .gbody { grid-template-columns: minmax(0, 1fr); padding: 12px; } .row.span2 { grid-column: auto; } .ghead { padding: 16px; } }
+  /* bảng so sánh: các mục cùng dạng "Bậc: mục" (Danh phận, rank, mùa, sách CE…) */
+  .mxwrap { border: 1px solid var(--line-2); border-radius: 10px; overflow: auto; background: var(--card-2); max-width: 100%; }
+  table.mx { border-collapse: separate; border-spacing: 0; width: 100%; font-size: 13.5px; }
+  table.mx th, table.mx td { padding: 7px 10px; border-bottom: 1px solid var(--line-2); text-align: left; vertical-align: middle; }
+  table.mx thead th { position: sticky; top: 0; z-index: 2; background: var(--card); font-size: 12.5px; color: var(--muted); font-weight: 600; white-space: nowrap; border-bottom: 1px solid var(--line); }
+  table.mx tbody th { position: sticky; left: 0; z-index: 1; background: var(--card); font-weight: 600; font-size: 13.5px; min-width: 150px; max-width: 260px; border-right: 1px solid var(--line-2); }
+  table.mx thead th:first-child { left: 0; z-index: 3; }
+  table.mx tbody tr:last-child > * { border-bottom: 0; }
+  table.mx tbody tr:hover > td { background: rgba(127, 127, 127, .05); }
+  table.mx td { min-width: 120px; }
+  table.mx td input, table.mx td select { width: 100%; min-width: 90px; padding: 5px 8px; font-size: 13.5px; }
+  table.mx td input[type=number] { max-width: 130px; }
+  table.mx td.changed { background: var(--changed); box-shadow: inset 0 0 0 1px var(--accent); }
+  table.mx td.none { color: var(--muted); text-align: center; }
+  table.mx .switch .txt { font-size: 12.5px; }
+  table.mx .mcline { margin-top: 4px; }
+  table.mx .mcline .mc { font-size: 12px; padding: 2px 8px; }
+  .mxnote { font-size: 12px; color: var(--muted); padding: 8px 12px; border-top: 1px solid var(--line-2); }
   .empty { color: var(--muted); padding: 40px; text-align: center; background: var(--card); border: 1px dashed var(--line); border-radius: var(--radius); }
   /* thanh lưu */
   .savebar { position: fixed; bottom: 0; right: 0; left: 236px; z-index: 30; padding: 0 32px 16px; pointer-events: none; }
@@ -238,7 +260,14 @@ function render() {
     highlight(box.querySelector("h2"), g.title);
     if (g.info) box.querySelector("h2").insertAdjacentHTML("beforeend", infoBtn(g.info, g.title));
     if (g.description) box.querySelector(".desc").textContent = g.description;
-    for (const s of settings) box.querySelector(".gbody").appendChild(row(mode, s));
+    const mx = matrix(settings);
+    for (const s of settings) {
+      if (mx && mx.members.has(s.key)) {
+        if (s.key === mx.first) box.querySelector(".gbody").appendChild(matrixEl(mode, mx));
+        continue;
+      }
+      box.querySelector(".gbody").appendChild(row(mode, s));
+    }
     main.appendChild(box);
     shown += settings.length;
   }
@@ -265,12 +294,71 @@ function renderCats(mode, cats) {
 // select có đúng 2 lựa chọn true/false -> công tắc
 function isBool(s) { return s.type === "select" && s.options.length === 2 && s.options.every(o => o.value === true || o.value === false); }
 
+// ---- bảng so sánh: nhãn "Chủ thể: mục" (vd "Dân: số nhà /sethome") lặp ở ≥2 chủ thể và ≥2 mục -> một bảng
+const MX_TYPES = new Set(["select", "int", "number", "text", "times"]);
+function splitLabel(l) { const m = /^(.+?):\s+(.+)$/.exec(String(l || "")); return m ? [m[1].trim(), m[2].trim()] : null; }
+function matrix(settings) {
+  const items = [];
+  for (const s of settings) {
+    const sp = splitLabel(s.label);
+    if (sp && (!s.type || MX_TYPES.has(s.type))) items.push({ s, sub: sp[0], f: sp[1] });
+  }
+  const fieldSubs = new Map();
+  for (const it of items) { if (!fieldSubs.has(it.f)) fieldSubs.set(it.f, new Set()); fieldSubs.get(it.f).add(it.sub); }
+  const fields = [...fieldSubs].filter(([, subs]) => subs.size >= 2).map(([f]) => f);
+  const used = items.filter(it => fields.includes(it.f));
+  const subs = [...new Set(used.map(it => it.sub))];
+  if (subs.length < 2 || fields.length < 2) return null;
+  const cell = new Map(used.map(it => [it.sub + "\u0000" + it.f, it.s]));
+  return { subs, fields, cell, members: new Set(used.map(it => it.s.key)), first: used[0].s.key };
+}
+function matrixEl(mode, mx) {
+  // nhiều mục hơn chủ thể -> hàng là mục, cột là chủ thể (bảng so sánh các bậc); ngược lại hàng là chủ thể
+  const byField = mx.fields.length > mx.subs.length;
+  const rows = byField ? mx.fields : mx.subs, cols = byField ? mx.subs : mx.fields;
+  const get = (r, c) => mx.cell.get((byField ? c : r) + "\u0000" + (byField ? r : c));
+  const wrap = document.createElement("div"); wrap.className = "mxwrap";
+  const t = document.createElement("table"); t.className = "mx";
+  const thead = t.createTHead().insertRow();
+  thead.appendChild(document.createElement("th"));
+  for (const c of cols) {
+    const th = document.createElement("th"); highlight(th, c);
+    const withInfo = rows.map(r => get(r, c)).find(s => s && s.info);
+    if (!byField && withInfo) th.insertAdjacentHTML("beforeend", infoBtn(withInfo.info, c));
+    thead.appendChild(th);
+  }
+  const tb = t.createTBody();
+  for (const r of rows) {
+    const tr = tb.insertRow();
+    const th = document.createElement("th"); highlight(th, r);
+    const withInfo = cols.map(c => get(r, c)).find(s => s && s.info);
+    if (byField && withInfo) th.insertAdjacentHTML("beforeend", infoBtn(withInfo.info, r));
+    tr.appendChild(th);
+    for (const c of cols) {
+      const td = tr.insertCell();
+      const s = get(r, c);
+      if (!s) { td.className = "none"; td.textContent = "—"; continue; }
+      td.title = [s.label, s.note].filter(Boolean).join("\n");
+      fillCtl(mode, s, td, td, true);
+      if (s.key in edits) td.classList.add("changed");
+    }
+  }
+  wrap.appendChild(t);
+  wrap.insertAdjacentHTML("beforeend", '<div class="mxnote">Rê chuột vào một ô để xem giải thích đầy đủ. Ô đã sửa có viền cam.</div>');
+  return wrap;
+}
+
 function row(mode, s) {
   const div = document.createElement("div");
   const saved0 = s.key in edits ? edits[s.key] : mode.values[s.key];
   // dòng chữ có mã màu (bảng bên phải, Tab…): dàn hết bề ngang cho dễ đọc
   const colorLines = s.type === "lines" && s.style !== "tags" && (saved0 || []).some(v => /[&§][0-9a-fk-or#]/i.test(String(v)));
-  div.className = "row" + (WIDE.has(s.type) || colorLines ? " wide" : "");
+  const wide = WIDE.has(s.type) || colorLines || s.type === "list" || (s.type === "lines" && s.style === "tags");
+  // chữ dài (câu thông báo…), danh sách nhiều dòng: rộng gấp đôi
+  const long = !wide && (s.type === "lines" || s.type === "libitem" || ((s.type === "text" || !s.type) && String(saved0 ?? "").length > 34));
+  // công tắc chữ ngắn (Bật/Tắt, Có/Không): tên và công tắc trên một dòng; chữ dài thì xếp dọc như thẻ thường
+  const inline = isBool(s) && s.options.every(o => String(o.label).length <= 14);
+  div.className = "row" + (wide ? " wide" : long ? " span2" : "") + (inline ? " bool" : "");
   const id = "f_" + s.key;
   const lab = document.createElement("div"); lab.className = "lab";
   const label = document.createElement("label"); label.htmlFor = id;
@@ -283,6 +371,16 @@ function row(mode, s) {
   if (s.note) { const n = document.createElement("div"); n.className = "note"; highlight(n, s.note); lab.appendChild(n); }
   div.appendChild(lab);
   const ctl = document.createElement("div"); ctl.className = "ctl";
+  fillCtl(mode, s, div, ctl, false);
+  div.appendChild(ctl);
+  if (s.key in edits) div.classList.add("changed");
+  return div;
+}
+
+/** Ô nhập của một cài đặt vào ctl; holder là phần tử nhận lớp "changed" (thẻ hoặc ô bảng). compact: trong bảng (gợi ý khoảng số để ở title). */
+function fillCtl(mode, s, holder, ctl, compact) {
+  const div = holder;
+  const id = "f_" + s.key;
   const saved = mode.values[s.key];
   const value = s.key in edits ? edits[s.key] : saved;
   let input;
@@ -295,9 +393,7 @@ function row(mode, s) {
     cb.onchange = () => { txt.textContent = cb.checked ? on.label : off.label; change(mode, s, cb.checked, div); };
     cb.id = id;
     ctl.appendChild(input);
-    div.appendChild(ctl);
-    if (s.key in edits) div.classList.add("changed");
-    return div;
+    return;
   }
   if (s.type === "select") {
     input = document.createElement("select");
@@ -347,7 +443,7 @@ function row(mode, s) {
       if (s.min !== undefined) input.min = s.min;
       if (s.max !== undefined) input.max = s.max;
     } else if (s.type === "times") {
-      input.placeholder = "Ví dụ: 20:00,21:00 (để trống = không có phiên)";
+      input.placeholder = "vd 20:00,21:00 · trống = nghỉ"; input.title = "Giờ bắt đầu các phiên, cách nhau dấu phẩy. Để trống = ngày đó không có phiên.";
     }
     input.value = value ?? "";
     // chữ có mã màu: xem trước như trong game ngay dưới ô
@@ -367,14 +463,12 @@ function row(mode, s) {
   input.id = id;
   if (!ctl.contains(input)) ctl.appendChild(input);
   if ((s.type === "int" || s.type === "number") && (s.min !== undefined || s.max !== undefined)) {
-    const r = document.createElement("div"); r.className = "count";
-    r.textContent = "Trong khoảng " + (s.min ?? "…") + " – " + (s.max ?? "…");
-    ctl.appendChild(r);
+    const range = "Trong khoảng " + (s.min ?? "…") + " – " + (s.max ?? "…");
+    if (compact) input.title = range;
+    else { const r = document.createElement("div"); r.className = "count"; r.textContent = range; ctl.appendChild(r); }
   }
-  div.appendChild(ctl);
-  if (s.key in edits) div.classList.add("changed");
-  return div;
 }
+
 
 function change(mode, s, v, div) {
   if (same(v, mode.values[s.key])) delete edits[s.key]; else edits[s.key] = v;

@@ -71,6 +71,9 @@ của phiên tài khoản cũ khuya 20/10 tóm ở đây (chi tiết: các dòng
 - **Người dùng test lại 20/10 tối:** m7 (/back), m8 (TPA) ĐẠT. m3 người dùng ghi "Bỏ qua tính năng này" (bấm Lỗi) → đã TẮT bảo vệ người mới
   (pvp_newbie_enabled false qua API Lưu của panel, PvPManager reload), web trang chủ ẩn dòng "15 phút được bảo vệ" (`data-hide0`), sách /hd trang
   "Mới vào" sửa, m3 gắn "cần test lại". Mọi hộp thoại trong panel/site dùng `ask()` của shell.js, KHÔNG dùng confirm/alert/prompt (người dùng yêu cầu).
+- **Bộ (set) trong Thư viện đồ (20/10 khuya):** mục `bo: [..]` của món trong thuvien-do.yml (panel lib_extra, tối đa 8 bộ, sửa được cả đồ lấy
+  từ game; ItemLibrary bỏ qua). thuvien.html: ô Bộ (chip + gợi ý bộ có sẵn), nút lọc theo bộ trên danh sách (nhớ localStorage dmm-tv-set).
+  index.html: libSelect dùng combo (tìm theo tên/mã/đầu mục/bộ, vẫn có .value/.dataset.v như select), rewardsEditor có "+ Thêm cả bộ…".
 - **Reset người chơi (20/10 tối):** trang Hệ thống › Reset người chơi → API hethong action "reset" → RCON banghoi `choilai admin <tên> [moi] [giurank]`
   (PlayerReset.adminReset). Module có dữ liệu theo người chơi đăng ký `Shared.FORGET` (Shared.forget xoá mọi khoá = UUID trong file của module):
   DailyCheckin, DailyQuests, LuckySpin, Achievements, LevelUp, Kits. Online: doReset(admin) → quên module → LuckPerms (meta dmmcaidat.*, nhóm bậc

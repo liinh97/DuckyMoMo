@@ -103,6 +103,21 @@
   .bar .note { margin: 0 0 0 6px; }
   .bar .sp { flex: 1; }
   .card h2 button { white-space: nowrap; padding: 7px 14px; }
+  .sets { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0 4px; }
+  .sets:empty { display: none; }
+  .sets button { border: 1px solid var(--line); background: var(--chip); color: var(--text); border-radius: 999px; padding: 3px 11px; font-size: 13px; cursor: pointer; }
+  .sets button.on { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); font-weight: 600; }
+  .sets button small { color: var(--muted); margin-left: 4px; }
+  .bo-edit { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; border: 1px solid var(--line); border-radius: 8px; padding: 6px 8px; background: var(--input); }
+  .bo-edit input { flex: 1; min-width: 160px; border: 0 !important; box-shadow: none !important; background: transparent !important; padding: 3px 4px !important; }
+  .bo-chips { display: contents; }
+  .bo-chip { display: inline-flex; align-items: center; gap: 2px; background: var(--accent-soft); color: var(--accent); border: 1px solid var(--accent); border-radius: 999px; padding: 1px 3px 1px 10px; font-size: 13px; }
+  .bo-chip button { border: 0; background: none; color: inherit; cursor: pointer; padding: 0 5px; font-size: 14px; }
+  .bo-sug { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+  .bo-sug:empty { display: none; }
+  .bo-sug button { border: 1px dashed var(--line); background: none; color: var(--muted); border-radius: 999px; padding: 2px 10px; font-size: 12.5px; cursor: pointer; }
+  .bo-sug button:hover { border-color: var(--accent); color: var(--accent); }
+  .li .bo { color: var(--accent); font-size: 11.5px; margin-left: 4px; }
   .status { margin-top: 8px; font-size: 14px; color: var(--muted); min-height: 21px; }
   .status.ok { color: var(--ok); } .status.err { color: var(--err); }
   /* tooltip giống trong game */
@@ -119,7 +134,8 @@
 <main>
   <section class="card">
     <h2><span>Đồ trong thư viện <span id="count" class="badge"></span></span><button class="primary" id="new">+ Tạo mới</button></h2>
-    <input type="search" id="libq" placeholder="Tìm món: tên, mã…">
+    <input type="search" id="libq" placeholder="Tìm món: tên, mã, bộ…">
+    <div class="sets" id="sets"></div>
     <div class="list" id="list"><p class="empty">Đang tải…</p></div>
     <p class="note">Mọi vật phẩm đặc biệt của server nằm ở đây, chia theo đầu mục. Xưởng, bếp <code>/nauan</code>, Tinh Luyện, mảnh sự kiện, bùa bắt pet,
       boss và mọi phần thưởng chỉ <b>chọn món</b> từ thư viện, rồi đặt thông số riêng của chỗ đó (giá, nguyên liệu, tỉ lệ rơi…).
@@ -201,6 +217,9 @@
         <div><label class="f" for="id">Mã <span class="hint">không dấu, dùng trong quà/cửa hàng</span></label><input id="id" placeholder="kiem_rong" maxlength="32"></div>
         <div><label class="f" for="tengoi">Tên gợi nhớ <span class="hint">chỉ admin thấy</span></label><input id="tengoi" placeholder="Kiếm rồng (quà mốc 30 ngày)" maxlength="60"></div>
       </div>
+      <label class="f" for="boIn">Bộ <span class="hint">nhóm món để lọc và thêm nhanh cả bộ vào quà / gói quà, vd Tân thủ, Hào Kiệt; một món thuộc được nhiều bộ</span></label>
+      <div class="bo-edit"><div class="bo-chips" id="boChips"></div><input id="boIn" placeholder="Gõ tên bộ rồi Enter…" maxlength="30" autocomplete="off"></div>
+      <div class="bo-sug" id="boSug"></div>
       <div class="bar">
         <button class="primary" id="save">Lưu</button>
         <button class="danger" id="del">Xoá</button>
@@ -357,7 +376,7 @@ function form() {
 }
 function useForm() {
   const use = $("cdung").value;
-  const o = { nhom: $("nhom").value, cong_dung: use };
+  const o = { nhom: $("nhom").value, cong_dung: use, bo: boList.slice() };
   if (use === "ky-nang") o.ky_nang = { feature: $("feat").value, value: $("fval").value === "" ? 0 : parseFloat($("fval").value), text: $("ftext").value.trim(),
     uses: $("uses").value === "" ? -1 : parseInt($("uses").value, 10), days: parseInt($("days").value || "7", 10), pvp: $("pvp").checked };
   if (use === "mon-an") o.hieu_ung = fxRows.map(r => r.eff.value + " " + r.lv.value + " " + (parseInt(r.sec.value || "0", 10) || 30));
@@ -516,6 +535,7 @@ function load(it) {
   $("unbreakable").checked = !!(it && it.unbreakable); $("hide").checked = !!(it && it.hide_enchants);
   $("glint").value = it && it.glint !== null && it.glint !== undefined ? String(it.glint) : "";
   $("model").value = it ? it.model || "" : "";
+  boList = it ? (it.bo || []).slice() : (setFilter ? [setFilter] : []); drawBo();
   $("cdung").value = it ? it.cong_dung || "" : "";
   nhomTouched = !!(it && it.nhom);
   $("nhom").value = it && it.nhom ? it.nhom : guessNhom(it ? it.material : "DIAMOND_SWORD", $("cdung").value);
@@ -537,13 +557,61 @@ function load(it) {
   document.querySelectorAll(".li").forEach(b => b.classList.toggle("on", !!it && b.dataset.id === it.id));
   render();
 }
+// ---- Bộ (set): ô sửa bộ của món + lọc danh sách theo bộ
+let boList = [], setFilter = "";
+try { setFilter = localStorage.getItem("dmm-tv-set") || ""; } catch (e) {}
+function allSets() {
+  const m = new Map();
+  for (const it of (data && data.items) || []) for (const b of it.bo || []) { const k = b.toLowerCase(); if (!m.has(k)) m.set(k, [b, 0]); m.get(k)[1]++; }
+  return [...m.values()].sort((a, b) => a[0].localeCompare(b[0], "vi"));
+}
+function drawBo() {
+  $("boChips").innerHTML = "";
+  boList.forEach((b, i) => {
+    const c = document.createElement("span"); c.className = "bo-chip"; c.innerHTML = "<span></span><button type=\"button\" title=\"Bỏ khỏi bộ\">×</button>";
+    c.firstChild.textContent = b; c.querySelector("button").onclick = () => { boList.splice(i, 1); drawBo(); };
+    $("boChips").appendChild(c);
+  });
+  const have = new Set(boList.map(b => b.toLowerCase()));
+  $("boSug").innerHTML = "";
+  for (const [b] of allSets()) if (!have.has(b.toLowerCase())) {
+    const x = document.createElement("button"); x.type = "button"; x.textContent = "+ " + b; x.title = "Thêm món vào bộ này";
+    x.onclick = () => { boList.push(b); drawBo(); }; $("boSug").appendChild(x);
+  }
+}
+function addBo(raw) {
+  for (let t of String(raw).split(",")) {
+    t = t.replace(/\s+/g, " ").trim().slice(0, 30);
+    if (t && !boList.some(b => b.toLowerCase() === t.toLowerCase())) boList.push(t);
+  }
+  $("boIn").value = ""; drawBo();
+}
+$("boIn").onkeydown = (e) => { if (e.key === "Enter" || e.key === ",") { e.preventDefault(); addBo($("boIn").value); } };
+$("boIn").onblur = () => { if ($("boIn").value.trim()) addBo($("boIn").value); };
+function drawSets() {
+  const sets = allSets(), box = $("sets");
+  box.innerHTML = "";
+  if (!sets.length) return;
+  if (setFilter && !sets.some(([b]) => b.toLowerCase() === setFilter.toLowerCase())) setFilter = "";
+  const mk = (val, label, n) => {
+    const b = document.createElement("button"); b.type = "button";
+    b.className = (setFilter || "").toLowerCase() === val.toLowerCase() ? "on" : "";
+    b.innerHTML = "<span></span>" + (n !== null ? `<small>${n}</small>` : ""); b.firstChild.textContent = label;
+    b.onclick = () => { setFilter = val; try { localStorage.setItem("dmm-tv-set", val); } catch (e) {} renderList(); };
+    box.appendChild(b);
+  };
+  mk("", "Tất cả bộ", null);
+  for (const [b, n] of sets) mk(b, b, n);
+}
 function renderList() {
+  drawSets();
   const items = data.items, q = fold($("libq").value.trim());
   $("count").textContent = items.length;
   $("list").innerHTML = items.length ? "" : `<p class="empty">Chưa có món nào. Bấm "+ Tạo mới" hoặc dùng /dmm luudo trong game.</p>`;
   const groups = {};
   for (const it of items) {
-    if (q && !fold(it.id + " " + (it.ten_goi || "") + " " + strip(it.name) + " " + (vnMat(it.material) || "")).includes(q)) continue;
+    if (setFilter && !(it.bo || []).some(b => b.toLowerCase() === setFilter.toLowerCase())) continue;
+    if (q && !fold(it.id + " " + (it.ten_goi || "") + " " + strip(it.name) + " " + (vnMat(it.material) || "") + " " + (it.bo || []).join(" ")).includes(q)) continue;
     const g = data.nhom && data.nhom[it.nhom] ? it.nhom : "khac";
     (groups[g] = groups[g] || []).push(it);
   }
@@ -559,7 +627,7 @@ function renderList() {
       const b = document.createElement("button"); b.className = "li" + (cur && cur.id === it.id ? " on" : ""); b.dataset.id = it.id;
       const use = it.cong_dung && data.cong_dung ? data.cong_dung[it.cong_dung] : "";
       b.innerHTML = `<span class="nm">${it.name ? mc(it.name, "#FFFFFF", false) : `<span style="color:#fff">${esc(prettyMat(it.material))}</span>`}</span>
-        <small><code>${esc(it.id)}</code>${it.nguon === "game" ? '<span class="badge">từ game</span>' : ""}${use ? `<span class="use">${esc(use.replace(/ \(.*\)$/, ""))}</span>` : ""} ${esc(it.ten_goi && it.ten_goi !== it.id ? "· " + it.ten_goi : "")}</small>`;
+        <small><code>${esc(it.id)}</code>${it.nguon === "game" ? '<span class="badge">từ game</span>' : ""}${use ? `<span class="use">${esc(use.replace(/ \(.*\)$/, ""))}</span>` : ""} ${esc(it.ten_goi && it.ten_goi !== it.id ? "· " + it.ten_goi : "")}${(it.bo || []).length ? `<span class="bo">◆ ${esc(it.bo.join(", "))}</span>` : ""}</small>`;
       b.onclick = () => load(it);
       det.querySelector("div").appendChild(b);
     }

@@ -1500,7 +1500,7 @@ def thuvien_json():
                    "ce_enchants": {str(k): int(v) for k, v in (s.get("ce-enchants") or {}).items()},
                    "unbreakable": bool(src.get("unbreakable", False)), "hide_enchants": bool(s.get("hide-enchants", False)),
                    "glint": s.get("glint"), "nguoi_luu": s.get("nguoi-luu", ""), "model": s.get("model", "") or "",
-                   "nhom": s.get("nhom", "") or "", "cong_dung": s.get("cong-dung", "") or "",
+                   "nhom": s.get("nhom", "") or "", "cong_dung": s.get("cong-dung", "") or "", "bo": [str(x) for x in (s.get("bo") or [])],
                    "ky_nang": dict(s.get("ky-nang") or {}), "hieu_ung": [str(x) for x in (s.get("hieu-ung") or [])]})
         items.append(it)
     online = []
@@ -1528,6 +1528,16 @@ def lib_extra(it):
     if nhom not in LIB_NHOM:
         raise ValueError("Đầu mục không hợp lệ")
     out["nhom"] = nhom
+    # bộ (set) để lọc/chọn nhanh: vd "Tân thủ", "Hào Kiệt"; một món thuộc được nhiều bộ
+    bo = []
+    for x in it.get("bo") or []:
+        t = " ".join(str(x).replace("\n", " ").split())[:30]
+        if t and not any(ch in t for ch in "&§<>\"") and t.lower() not in [b.lower() for b in bo]:
+            bo.append(t)
+    if len(bo) > 8:
+        raise ValueError("Một món tối đa 8 bộ")
+    if bo:
+        out["bo"] = [DoubleQuotedScalarString(b) for b in bo]
     use = str(it.get("cong_dung") or "")
     if use not in LIB_USES:
         raise ValueError("Công dụng không hợp lệ")
@@ -1609,7 +1619,7 @@ def thuvien_action(data, actor=None):
             # đồ lấy từ game: hình dạng giữ nguyên vẹn, chỉ sửa đầu mục / công dụng / tên gợi nhớ
             if extra.get("cong-dung") == "mon-an" and str((old.get("preview") or {}).get("material", "")).upper() not in DISH_FOODS:
                 raise ValueError("Món ăn phải là đồ ăn được")
-            for k in ("nhom", "cong-dung", "ky-nang", "hieu-ung"):
+            for k in ("nhom", "cong-dung", "ky-nang", "hieu-ung", "bo"):
                 old.pop(k, None)
             for k, v in extra.items():
                 old[k] = v

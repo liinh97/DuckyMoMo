@@ -99,6 +99,9 @@
   .rw-row select, .rw-row input { width: 100%; }
   .kit-head .x, .rw-row .x, .ms-head .x, .qe-head .x, .sp-head .x, .fm-head .x, .fs-head .x, .sh-row .x { background: none; border: 0; color: var(--err); cursor: pointer; font-size: 18px; border-radius: 6px; }
   .rw-row .x:hover, .ms-head .x:hover, .qe-head .x:hover, .sp-head .x:hover, .fm-head .x:hover, .fs-head .x:hover, .sh-row .x:hover { background: rgba(217, 48, 37, .1); }
+  .rw-bar { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .rw-set { width: auto; padding: 5px 10px; font-size: 13.5px; border-style: dashed; }
+  .libpick { display: block; min-width: 0; }
   .rw-add { align-self: flex-start; background: transparent; border: 1px dashed var(--line); color: var(--muted); border-radius: 8px; padding: 6px 12px; cursor: pointer; font-size: 13.5px; }
   .rw-add:hover { border-color: var(--accent); color: var(--accent); }
   .small { font-size: 12.5px; color: var(--muted); }
@@ -655,25 +658,29 @@ function lib() {
 // Ô chọn món thư viện đồ, chia theo đầu mục; use = chỉ hiện món có công dụng đó (vd "ky-nang")
 const libEsc = (t) => String(t ?? "").replace(/[<>&"]/g, c => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;", '"': "&quot;" }[c]));
 function libSelect(cur, use, onChange) {
-  const sel = document.createElement("select");
-  sel.innerHTML = '<option value="">(đang tải thư viện…)</option>';
-  sel.dataset.v = cur || "";
+  // ô chọn có ô tìm (shell.js combo): gõ tên, mã, đầu mục hoặc TÊN BỘ (vd "tân thủ") để lọc
+  const wrap = document.createElement("span"); wrap.className = "libpick";
+  const inp = document.createElement("input"); inp.placeholder = "Chọn món trong Thư viện đồ…";
+  wrap.appendChild(inp);
+  let items = [], nhom = {};
+  const ok = (it) => !use || it.cong_dung === use;
+  const label = (it) => (it.ten_goi || it.id) + " · " + it.id;
+  combo(inp, (q) => {
+    const f = fold(q);
+    return items.filter(ok).filter(it => !f || fold(it.id + " " + (it.ten_goi || "") + " " + (nhom[it.nhom] || "") + " " + (it.bo || []).join(" ")).includes(f))
+      .map(it => ({ value: it.id, label: label(it), sub: (nhom[it.nhom || "khac"] || "Khác") + ((it.bo || []).length ? " · bộ: " + it.bo.join(", ") : "") }));
+  }, (v) => { wrap.dataset.v = v; if (onChange) onChange(v, false); }, {
+    label: (v) => { const it = items.find(x => x.id === v); return it ? [label(it), (it.bo || []).length ? "bộ: " + it.bo.join(", ") : ""] : [v ? v + " (không có trong thư viện!)" : "", ""]; },
+    search: "Tìm món: tên, mã, đầu mục hoặc tên bộ…" });
+  // giữ cách dùng cũ: .value / .dataset.v / onchange như ô select
+  Object.defineProperty(wrap, "value", { get: () => inp.value, set: (v) => { inp.value = v; } });
+  wrap.dataset.v = cur || ""; inp.value = cur || "";
   lib().then(d => {
-    const v = sel.dataset.v, groups = {};
-    for (const it of d.items || []) if (!use || it.cong_dung === use) (groups[it.nhom || "khac"] = groups[it.nhom || "khac"] || []).push(it);
-    let html = '<option value="">Chọn món trong Thư viện đồ…</option>';
-    for (const [k, t] of Object.entries(d.nhom || { khac: "Khác" })) {
-      if (!groups[k]) continue;
-      html += `<optgroup label="${libEsc(t)}">` + groups[k].map(it => `<option value="${libEsc(it.id)}">${libEsc(it.ten_goi || it.id)} · ${libEsc(it.id)}</option>`).join("") + "</optgroup>";
-    }
-    if (v && !(d.items || []).some(it => it.id === v && (!use || it.cong_dung === use)))
-      html += `<option value="${libEsc(v)}">${libEsc(v)} (không có trong thư viện${use ? " với công dụng này" : ""}!)</option>`;
-    if (!Object.keys(groups).length) html += `<option value="" disabled>(chưa có món nào${use ? " công dụng này" : ""}: tạo ở trang Thư viện đồ)</option>`;
-    sel.innerHTML = html; sel.value = v; sel.dataset.v = sel.value;
-    if (onChange) onChange(sel.value, true);
+    items = d.items || []; nhom = d.nhom || {};
+    inp.value = wrap.dataset.v;   // vẽ lại nhãn khi đã có dữ liệu
+    if (onChange) onChange(wrap.dataset.v, true);
   });
-  sel.addEventListener("change", () => { sel.dataset.v = sel.value; if (onChange) onChange(sel.value, false); });
-  return sel;
+  return wrap;
 }
 // dòng tóm tắt món thư viện (kỹ năng, hiệu ứng…) dưới ô chọn
 function libSummary(el, id) {
@@ -745,10 +752,30 @@ function rewardsEditor(list, onChange) {
       }
     };
     x.onclick = () => { rows.splice(rows.indexOf(r), 1); row.remove(); emit(); };
-    row.append(kind, mid, amt, x); rows.push(r); box.insertBefore(row, add);
+    row.append(kind, mid, amt, x); rows.push(r); box.insertBefore(row, add.parentNode === box ? add : add.parentNode);
   }
   box.appendChild(add);
   add.onclick = () => { addRow("xu 100"); emit(); };
+  // thêm một lần mọi món thuộc một bộ của Thư viện đồ (vd bộ Tân thủ)
+  const setSel = document.createElement("select"); setSel.className = "rw-set"; setSel.hidden = true;
+  const bar = document.createElement("div"); bar.className = "rw-bar"; box.insertBefore(bar, add); bar.append(add, setSel);
+  lib().then(d => {
+    const sets = new Map();
+    for (const it of d.items || []) for (const b of it.bo || []) { const k = b.toLowerCase(); if (!sets.has(k)) sets.set(k, [b, []]); sets.get(k)[1].push(it.id); }
+    if (!sets.size) return;
+    setSel.innerHTML = '<option value="">+ Thêm cả bộ…</option>' + [...sets.values()].sort((a, b) => a[0].localeCompare(b[0], "vi"))
+      .map(([b, ids]) => `<option value="${libEsc(b.toLowerCase())}">${libEsc(b)} (${ids.length} món)</option>`).join("");
+    setSel.hidden = false;
+    setSel.onchange = () => {
+      const g = sets.get(setSel.value); setSel.value = "";
+      if (!g) return;
+      const have = new Set(rows.map(r => r.val()).filter(v => v.startsWith("do ")).map(v => v.split(" ")[1]));
+      let n = 0;
+      for (const id of g[1]) if (!have.has(id)) { addRow("do " + id + " 0"); n++; }
+      emit();
+      if (window.toast) toast(n ? `Đã thêm ${n} món của bộ ${g[0]} (số lượng 0 = theo thư viện).` : `Mọi món của bộ ${g[0]} đã có trong danh sách.`, "ok");
+    };
+  });
   for (const sp of list || []) addRow(sp);
   if (!document.getElementById("rw-mats")) {
     const dl = document.createElement("datalist"); dl.id = "rw-mats"; document.body.appendChild(dl);

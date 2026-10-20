@@ -39,7 +39,10 @@ import java.util.Map;
  * Không khai lệnh "kit" trong plugin.yml vì Practice dùng /kit edit của Duels: chỉ đổi lệnh khi module bật (server này). Mỗi gói: tên, biểu tượng, thời gian chờ nhận lại (cho, giây; -1 = chỉ một lần,
  * 0 = không chờ), rank được nhận (nhóm LuckPerms; trống = mọi người) và quà dạng Rewards (vat / do / xu / lenh / manh…).
  * Gói "lan-dau" tự phát khi người chơi vào server LẦN ĐẦU (không cần rank, tính là đã nhận).
- * Người có quyền essentials.kits.<mã> (Danh phận cấp theo ô "gói quà" của từng rank) cũng nhận được gói đó.
+ * Ai nhận: so với NHÓM THẬT trong LuckPerms (không dùng hasPermission, vì admin có quyền * sẽ thành nhận mọi gói):
+ *   nhóm Danh phận (default = Tị Nạn, dan, luongdan, haokiet): chỉ đúng bậc HIỆN TẠI (Hào Kiệt không nhận gói Dân);
+ *   nhóm khác (media, rank ủng hộ, staff): người được gán trực tiếp nhóm đó.
+ * Ô "gói quà" của từng rank trong Danh phận (play-ranks … kit) cũng cho rank đó nhận gói có mã tương ứng.
  * Admin: /kit <mã> <người> phát thẳng (bỏ qua rank, thời gian chờ), /kit lamlai <người> [mã] xoá lượt đã nhận.
  * Lưu: plugins/DuckyMoMoCore/goiqua.yml (players.<uuid>.<mã> = lúc nhận, mili giây).
  * Cài đặt: Người mới › Gói quà (config goi-qua).
@@ -62,6 +65,10 @@ final class Kits implements Listener {
     private final Map<String, Kit> kits = new LinkedHashMap<>();
     private final File file;
     private final YamlConfiguration data;
+    /** Nhóm của các bậc Danh phận theo thứ tự (đầu = default / Tị Nạn). */
+    private final List<String> tiers = new ArrayList<>();
+    /** mã gói -> nhóm được nhận do ô "gói quà" của rank (play-ranks tiers / other-ranks … kit). */
+    private final Map<String, List<String>> rankKits = new java.util.HashMap<>();
 
     Kits(JavaPlugin plugin, ConfigurationSection cfg, Rewards rewards) {
         this.plugin = plugin;
@@ -86,6 +93,28 @@ final class Kits implements Listener {
                         g.getLong("cho", -1), ranks, g.getStringList("qua")));
             }
         }
+        ConfigurationSection pr = plugin.getConfig().getConfigurationSection("play-ranks");
+        if (pr != null) {
+            ConfigurationSection ts = pr.getConfigurationSection("tiers");
+            if (ts != null) {
+                int i = 0;
+                for (String id : ts.getKeys(false)) {
+                    String g = ts.getString(id + ".group", i == 0 ? "default" : id).toLowerCase(Locale.ROOT);
+                    tiers.add(g);
+                    linkKit(ts.getString(id + ".kit", ""), g);
+                    i++;
+                }
+            }
+            ConfigurationSection os = pr.getConfigurationSection("other-ranks");
+            if (os != null) {
+                for (String g : os.getKeys(false)) {
+                    linkKit(os.getString(g + ".kit", ""), g.toLowerCase(Locale.ROOT));
+                }
+            }
+        }
+        if (tiers.isEmpty()) {
+            tiers.add("default");
+        }
         this.file = new File(plugin.getDataFolder(), "goiqua.yml");
         this.data = YamlConfiguration.loadConfiguration(file);
     }
@@ -100,13 +129,67 @@ final class Kits implements Listener {
 
     // ---------------------------------------------------------------- điều kiện
 
-    /** Người chơi thuộc rank của gói (trống = ai cũng được), hoặc rank đó được Danh phận cấp gói này. */
+    private void linkKit(String kit, String group) {
+        String k = kit == null ? "" : kit.trim().toLowerCase(Locale.ROOT);
+        if (!k.isEmpty()) {
+            rankKits.computeIfAbsent(k, x -> new ArrayList<>()).add(group);
+        }
+    }
+
+    /** Nhóm gán trực tiếp + mọi nhóm kế thừa của người chơi (LuckPerms). */
+    private static java.util.Set<String>[] groups(Player p) {
+        java.util.Set<String> direct = new java.util.HashSet<>(), all = new java.util.HashSet<>();
+        try {
+            net.luckperms.api.model.user.User u = net.luckperms.api.LuckPermsProvider.get().getUserManager().getUser(p.getUniqueId());
+            if (u != null) {
+                for (net.luckperms.api.node.types.InheritanceNode n : u.getNodes(net.luckperms.api.node.NodeType.INHERITANCE)) {
+                    direct.add(n.getGroupName().toLowerCase(Locale.ROOT));
+                }
+                for (net.luckperms.api.model.group.Group g : u.getInheritedGroups(u.getQueryOptions())) {
+                    all.add(g.getName().toLowerCase(Locale.ROOT));
+                }
+            }
+        } catch (RuntimeException | LinkageError ignored) {
+            // không có LuckPerms: chỉ gói không giới hạn rank
+        }
+        all.addAll(direct);
+        all.add("default");
+        @SuppressWarnings("unchecked")
+        java.util.Set<String>[] r = new java.util.Set[]{direct, all};
+        return r;
+    }
+
+    /** Bậc Danh phận hiện tại: nhóm bậc cao nhất người chơi đang có (không có = bậc đầu, Tị Nạn). */
+    private String tier(java.util.Set<String> all) {
+        for (int i = tiers.size() - 1; i > 0; i--) {
+            if (all.contains(tiers.get(i))) {
+                return tiers.get(i);
+            }
+        }
+        return tiers.get(0);
+    }
+
+    /** Rank được nhận của gói: chọn trên trang Cài đặt + rank có ô "gói quà" trỏ tới gói này. */
+    private List<String> ranksOf(Kit k) {
+        List<String> r = new ArrayList<>(k.ranks());
+        for (String g : rankKits.getOrDefault(k.id(), List.of())) {
+            if (!r.contains(g)) {
+                r.add(g);
+            }
+        }
+        return r;
+    }
+
+    /** Gói không giới hạn rank: ai cũng nhận; gói theo rank: đúng bậc Danh phận hiện tại hoặc được gán thẳng nhóm đó. */
     boolean allowed(Player p, Kit k) {
-        if (k.ranks().isEmpty() || p.hasPermission("essentials.kits." + k.id())) {
+        List<String> ranks = ranksOf(k);
+        if (ranks.isEmpty()) {
             return true;
         }
-        for (String r : k.ranks()) {
-            if (r.equals("default") || p.hasPermission("group." + r)) {
+        java.util.Set<String>[] g = groups(p);
+        String t = tier(g[1]);
+        for (String r : ranks) {
+            if (tiers.contains(r) ? r.equals(t) : g[0].contains(r)) {
                 return true;
             }
         }
@@ -151,7 +234,7 @@ final class Kits implements Listener {
 
     private String rankText(Kit k) {
         List<String> n = new ArrayList<>();
-        for (String r : k.ranks()) {
+        for (String r : ranksOf(k)) {
             n.add(RANK_NAME.getOrDefault(r, r));
         }
         return String.join(", ", n);
@@ -324,8 +407,11 @@ final class Kits implements Listener {
     void open(Player p) {
         Holder h = new Holder();
         int size = Math.max(9, Math.min(54, (kits.size() + 8) / 9 * 9));
-        h.inv = Bukkit.createInventory(h, size, c("&6Gói quà &8(bấm để nhận)"));
-        for (Kit k : kits.values()) {
+        h.inv = Bukkit.createInventory(h, size, c("&0Gói quà &8(bấm để nhận)"));
+        // gói mình nhận được lên trước, gói của rank khác xếp sau (xám, ghi rank cần có)
+        List<Kit> order = new ArrayList<>(kits.values());
+        order.sort(java.util.Comparator.comparing(k -> !allowed(p, k)));
+        for (Kit k : order) {
             if (h.slots.size() >= size) {
                 break;
             }
@@ -336,7 +422,7 @@ final class Kits implements Listener {
             m.displayName(c((ok && w == 0 ? "&a" : "&7") + k.name()));
             List<Component> lore = new ArrayList<>();
             lore.add(c("&8" + cooldownText(k)));
-            if (!k.ranks().isEmpty()) {
+            if (!ranksOf(k).isEmpty()) {
                 lore.add(c("&8Dành cho: " + rankText(k)));
             }
             lore.add(Component.empty());

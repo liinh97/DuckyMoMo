@@ -309,7 +309,7 @@ final class PlayRanks implements Listener {
 
     void open(Player p) {
         Holder h = new Holder();
-        h.inv = Bukkit.createInventory(h, 27, c("&6DANH PHẬN &8(rank chơi, miễn phí)"));
+        h.inv = Bukkit.createInventory(h, 27, c("&0DANH PHẬN &8(rank chơi, miễn phí)"));
         ItemStack bg = pane();
         for (int s = 0; s < 27; s++) {
             h.inv.setItem(s, bg);

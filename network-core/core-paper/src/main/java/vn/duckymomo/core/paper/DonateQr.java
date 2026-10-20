@@ -224,7 +224,7 @@ final class DonateQr implements Listener {
         }
         async(p, () -> wallet(p.getName()), (pl, w) -> {
             Holder h = new Holder();
-            h.inv = Bukkit.createInventory(h, 27, c("&6Nạp Vàng &8(số dư: " + num(w, "so_du") + " Vàng)"));
+            h.inv = Bukkit.createInventory(h, 27, c("&0Nạp Vàng &8(số dư: " + num(w, "so_du") + " Vàng)"));
             int slot = 10;
             for (long t : AMOUNTS) {
                 ItemStack it = new ItemStack(Material.GOLD_NUGGET, (int) Math.min(64, Math.max(1, t / 100_000)));
@@ -273,7 +273,7 @@ final class DonateQr implements Listener {
             int rows = Math.min(6, Math.max(2, (mon.size() + 9) / 9 + 1));
             Holder h = new Holder();
             long bal = num(w, "so_du");
-            h.inv = Bukkit.createInventory(h, rows * 9, c("&6Cửa hàng Vàng &8(có " + bal + " Vàng)"));
+            h.inv = Bukkit.createInventory(h, rows * 9, c("&0Cửa hàng Vàng &8(có " + bal + " Vàng)"));
             int slot = 0;
             for (JsonElement e : mon) {
                 if (slot >= rows * 9 - 9) {

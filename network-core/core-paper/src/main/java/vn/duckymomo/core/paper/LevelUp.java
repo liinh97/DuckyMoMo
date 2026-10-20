@@ -344,7 +344,7 @@ final class LevelUp implements Listener {
         UUID u = p.getUniqueId();
         int lv = level(u), next = lv + 1;
         Holder h = new Holder();
-        h.inv = Bukkit.createInventory(h, 45, c("&8THĂNG CẤP &7(cấp " + lv + "/" + maxLevel + ")"));
+        h.inv = Bukkit.createInventory(h, 45, c("&0THĂNG CẤP &8(cấp " + lv + "/" + maxLevel + ")"));
         h.inv.setItem(4, item(Material.NETHER_STAR, "&6Cấp " + lv, List.of("&7Điểm thăng cấp: &e" + points(u),
                 "&7Điểm hạ gục: &f" + killPts(u) + " &8(quái +" + mobPoints + ", người +" + playerPoints + ")",
                 "&7Giờ chơi mùa này: &f" + String.format(Locale.ROOT, "%.1f", hours(u)) + " giờ")));
@@ -378,7 +378,7 @@ final class LevelUp implements Listener {
         UUID u = p.getUniqueId();
         Holder h = new Holder();
         h.view = "shop";
-        h.inv = Bukkit.createInventory(h, 54, c("&8CỬA HÀNG THĂNG CẤP &7(" + points(u) + " điểm)"));
+        h.inv = Bukkit.createInventory(h, 54, c("&0CỬA HÀNG THĂNG CẤP &8(" + points(u) + " điểm)"));
         List<String> owned = data.getStringList(k(u) + "mua");
         int slot = 10;
         for (Perk pk : shop.values()) {
@@ -423,7 +423,7 @@ final class LevelUp implements Listener {
     private void openTop(Player p) {
         Holder h = new Holder();
         h.view = "top";
-        h.inv = Bukkit.createInventory(h, 45, c("&8XẾP HẠNG THĂNG CẤP"));
+        h.inv = Bukkit.createInventory(h, 45, c("&0XẾP HẠNG THĂNG CẤP"));
         int[] slots = {4, 12, 14, 20, 21, 22, 23, 24, 30, 32};
         List<Map.Entry<String, int[]>> top = ranking();
         for (int i = 0; i < Math.min(slots.length, top.size()); i++) {

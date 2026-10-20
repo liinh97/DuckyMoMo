@@ -202,7 +202,7 @@ final class LuckySpin implements Listener {
 
     void open(Player p) {
         Holder h = new Holder();
-        h.inv = Bukkit.createInventory(h, 54, c("&6VÒNG QUAY MIỄN PHÍ"));
+        h.inv = Bukkit.createInventory(h, 54, c("&0VÒNG QUAY MIỄN PHÍ"));
         int slot = 10;
         for (Prize pz : prizes) {
             if (slot >= 44) {

@@ -1691,11 +1691,19 @@ goiqua_list:
       - vat WHITE_BED 1
       - vat OAK_LOG 32
       - vat CRAFTING_TABLE 1
+  tinan:
+    ten: "Gói Tị Nạn"
+    icon: DEAD_BUSH
+    cho: 86400
+    rank: [default]
+    qua:
+      - vat BREAD 8
+      - vat TORCH 16
   dan:
     ten: "Gói Dân"
     icon: BREAD
     cho: 86400
-    rank: [dan, luongdan, haokiet]
+    rank: [dan]
     qua:
       - vat BREAD 16
       - vat TORCH 32
@@ -1704,7 +1712,7 @@ goiqua_list:
     ten: "Gói Lương Dân"
     icon: IRON_HOE
     cho: 86400
-    rank: [luongdan, haokiet]
+    rank: [luongdan]
     qua:
       - vat COOKED_BEEF 16
       - vat IRON_INGOT 8

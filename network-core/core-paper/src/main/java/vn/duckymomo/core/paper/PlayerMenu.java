@@ -58,7 +58,7 @@ final class PlayerMenu implements Listener {
 
     PlayerMenu(JavaPlugin plugin, ConfigurationSection cfg) {
         this.plugin = plugin;
-        this.title = cfg.getString("title", "&6Menu");
+        this.title = cfg.getString("title", "&0Menu");
         this.rows = Math.max(1, Math.min(6, cfg.getInt("rows", 5)));
         this.swapHand = cfg.getBoolean("shift-f", true);
         Material f = Material.matchMaterial(cfg.getString("filler", "GRAY_STAINED_GLASS_PANE"));

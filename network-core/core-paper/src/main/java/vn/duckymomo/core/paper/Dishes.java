@@ -216,7 +216,7 @@ final class Dishes implements Listener {
             return true;
         }
         Holder h = new Holder();
-        h.inv = Bukkit.createInventory(h, 27, c("&6🍲 Bếp ra trận"));
+        h.inv = Bukkit.createInventory(h, 27, c("&0🍲 Bếp ra trận"));
         int slot = 10;
         for (Dish d : dishes.values()) {
             if (slot > 16) {

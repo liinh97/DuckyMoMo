@@ -170,7 +170,7 @@ final class DecorShop implements Listener {
             return;
         }
         Holder h = new Holder();
-        Inventory inv = plugin.getServer().createInventory(h, 27, c("&8Cửa hàng Kinh Đô"));
+        Inventory inv = plugin.getServer().createInventory(h, 27, c("&0Cửa hàng Kinh Đô"));
         h.inv = inv;
         Material[] icons = {Material.BRICKS, Material.LANTERN, Material.NAME_TAG};
         int[] slots = {11, 13, 15};
@@ -202,7 +202,7 @@ final class DecorShop implements Listener {
         }
         int rows = Math.max(2, Math.min(6, (list.size() + 8) / 9 + 1));
         Holder h = new Holder();
-        Inventory inv = plugin.getServer().createInventory(h, rows * 9, c("&8" + CATS.get(cat)));
+        Inventory inv = plugin.getServer().createInventory(h, rows * 9, c("&0" + CATS.get(cat)));
         h.inv = inv;
         for (int i = 0; i < list.size() && i < inv.getSize() - 9; i++) {
             Offer o = list.get(i);

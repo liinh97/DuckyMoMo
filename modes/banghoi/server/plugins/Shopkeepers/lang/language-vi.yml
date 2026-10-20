@@ -365,7 +365,7 @@ cannot-edit-shop-member-self: "&7Không sửa quyền của chính mình đượ
 cannot-edit-shop-member-no-longer-a-member: "&7Người này không còn là thành viên shop!"
 your-shop-membership-has-changed: "&7Quyền của bạn trong shop đã thay đổi!"
 
-confirmation-ui-remove-shop-member-title: "&cXoá thành viên?"
+confirmation-ui-remove-shop-member-title: "&4Xoá thành viên?"
 confirmation-ui-remove-shop-member-lore:
 - "{member_name} sẽ mất quyền"
 - "vào shop này!"
@@ -392,7 +392,7 @@ shop-container-type-description-stock-and-earnings: "Shop lấy hàng từ rươ
 
 shop-containers-editor-title: "Rương của shop"
 
-shop-container-title: "&aRương shop"
+shop-container-title: "&2Rương shop"
 shop-container-none-lore:
 - "&4Chưa có rương."
 shop-container-lore:
@@ -425,7 +425,7 @@ container-selection-aborted: "&7Đã huỷ chọn rương."
 shop-container-added: "&aĐã thêm rương: &e{container_x}, {container_y}, {container_z}"
 shop-container-removed: "&aĐã bỏ rương: &e{container_x}, {container_y}, {container_z}"
 
-confirmation-ui-remove-shop-container-title: "&cBỏ rương?"
+confirmation-ui-remove-shop-container-title: "&4Bỏ rương?"
 confirmation-ui-remove-shop-container-lore:
 - "Bạn sắp bỏ"
 - "rương ở &e({container_x}, {container_y}, {container_z})."
@@ -721,7 +721,7 @@ must-target-villager: "&7Phải nhìn vào một dân làng."
 target-entity-is-no-villager: "&7Sinh vật đang nhìn không phải dân làng thường."
 villager-no-longer-exists: "&7Dân làng không còn nữa."
 
-villager-editor-title: "&2Sửa dân làng: &e{villagerName}"
+villager-editor-title: "&2Sửa dân làng: &8{villagerName}"
 villager-editor-description-header: "&6Sửa dân làng"
 villager-editor-description:
 - 'Hàng trên: món bán ra'
@@ -830,18 +830,18 @@ confirmation-required: "&7Xác nhận bằng lệnh &6/shopkeepers confirm"
 confirmation-expired: "&cHết hạn xác nhận."
 nothing-to-confirm: "&cHiện không có gì để xác nhận."
 
-confirmation-ui-delete-shop-title: "&cXoá hẳn shop này?"
+confirmation-ui-delete-shop-title: "&4Xoá hẳn shop này?"
 confirmation-ui-delete-shop-confirm-lore:
 - "Việc này sẽ xoá hẳn"
 - "shop này!"
 
-confirmation-ui-restore-shop-for-hire-title: "&cCho thuê lại shop này?"
+confirmation-ui-restore-shop-for-hire-title: "&4Cho thuê lại shop này?"
 confirmation-ui-restore-shop-for-hire-confirm-lore:
 - "Shop sẽ bị lấy khỏi bạn"
 - "và đem"
 - "cho thuê lại!"
 
-confirmation-ui-delete-villager-title: "&cXoá hẳn dân làng này?"
+confirmation-ui-delete-villager-title: "&4Xoá hẳn dân làng này?"
 confirmation-ui-delete-villager-confirm-lore:
 - "Việc này sẽ xoá hẳn"
 - "dân làng này!"

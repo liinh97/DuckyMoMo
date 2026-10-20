@@ -208,7 +208,7 @@ final class RandomTeleport implements Listener {
         }
         int rows = Math.max(3, Math.min(6, (zones.size() + 6) / 7 + 2));
         MenuHolder holder = new MenuHolder();
-        Inventory inv = plugin.getServer().createInventory(holder, rows * 9, c("&8Dịch chuyển ngẫu nhiên"));
+        Inventory inv = plugin.getServer().createInventory(holder, rows * 9, c("&0Dịch chuyển ngẫu nhiên"));
         holder.inventory = inv;
         int slot = 10;
         for (Zone z : zones) {

@@ -504,7 +504,7 @@ final class PlayerSettings implements Listener {
 
     void open(Player p) {
         Holder h = new Holder();
-        h.inv = Bukkit.createInventory(h, 45, c("&8CÀI ĐẶT CÁ NHÂN"));
+        h.inv = Bukkit.createInventory(h, 45, c("&0CÀI ĐẶT CÁ NHÂN"));
         int i = 0;
         for (Opt o : OPTS.values()) {
             if (i >= SLOTS.length) {

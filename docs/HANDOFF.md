@@ -32,6 +32,13 @@
 - **Người dùng test lại 20/10 tối:** m7 (/back), m8 (TPA) ĐẠT. m3 người dùng ghi "Bỏ qua tính năng này" (bấm Lỗi) → đã TẮT bảo vệ người mới
   (pvp_newbie_enabled false qua API Lưu của panel, PvPManager reload), web trang chủ ẩn dòng "15 phút được bảo vệ" (`data-hide0`), sách /hd trang
   "Mới vào" sửa, m3 gắn "cần test lại". Mọi hộp thoại trong panel/site dùng `ask()` của shell.js, KHÔNG dùng confirm/alert/prompt (người dùng yêu cầu).
+- **Gói quà tách theo rank (20/10 tối):** Kits.allowed() xét NHÓM THẬT trong LuckPerms (getNodes(INHERITANCE) + getInheritedGroups),
+  không dùng hasPermission (admin có * từng thấy mọi gói nhận được). Nhóm Danh phận (default=Tị Nạn, dan, luongdan, haokiet; đọc từ
+  play-ranks.tiers) chỉ tính bậc HIỆN TẠI; nhóm khác phải gán trực tiếp. Ô "gói quà" của rank (play-ranks … kit) cũng trỏ gói. Thêm gói
+  `tinan`; dan/luongdan/haokiet mỗi gói đúng 1 rank. Menu xếp gói nhận được lên trước. Ô "lần đầu" (goiqua_landau) người dùng đã để TRỐNG
+  khi thử trang (17:xx) → người mới không tự nhận quà; đã báo, chưa tự đổi lại.
+- **Tiêu đề menu (GUI) chữ tối:** nền rương xám sáng nên tiêu đề dùng &0 (chính) + &8 (phụ), KHÔNG dùng &6/&e/&7/&a/&b. Đã sửa 20 tiêu đề trong
+  DuckyMoMoCore + menu chính (config player-menu.title) + tiêu đề menu Shopkeepers (lang/language-vi.yml).
 - **Trang Cài đặt xếp gọn (20/10 tối, panel/index.html):** mỗi cài đặt là thẻ nhỏ trong lưới nhiều cột (`.gbody` grid auto-fill 290px);
   công tắc chữ ngắn nằm cùng dòng tên; chữ dài/danh sách rộng gấp đôi; trình soạn lớn trải hết. Nhãn dạng "Chủ thể: mục" lặp ở ≥2 chủ thể và
   ≥2 mục tự gộp thành BẢNG so sánh (`matrix()`/`matrixEl()`, ô dùng chung `fillCtl()`), vd Danh phận 4 bậc × 10 mục, rank khác, mùa, sách CE.

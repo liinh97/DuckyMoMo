@@ -280,7 +280,7 @@ final class Orders implements Listener {
             p.sendMessage(c("&7Bạn chưa có đơn nào. Tạo: cầm món cần mua, gõ &e/donhang tao <số lượng> <đơn giá>"));
             return;
         }
-        render(p, list, true, 0, "&6ĐƠN CỦA TÔI");
+        render(p, list, true, 0, "&0ĐƠN CỦA TÔI");
     }
 
     private void render(Player p, List<Integer> list, boolean mine, int page, String title) {

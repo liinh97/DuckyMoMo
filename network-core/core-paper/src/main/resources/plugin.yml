@@ -20,7 +20,8 @@ softdepend:
   - Citizens
 commands:
   goiqua:
-    description: "Gói quà theo rank (/goiqua hoặc /kit ở Bang Hội Chiến). Admin: /goiqua <mã> <người>, /goiqua lamlai <người> [mã]"
+    description: "Gói quà theo rank (/kit, /kits, /goiqua). Admin: /kit <mã> <người>, /kit lamlai <người> [mã]"
+    aliases: [kit, kits]
   doimanh:
     description: "Đổi mảnh sự kiện lấy quà. Admin: /doimanh give <người> <loại> <số>"
     aliases: [manh]

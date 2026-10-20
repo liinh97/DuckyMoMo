@@ -44,9 +44,10 @@
   ≥2 mục tự gộp thành BẢNG so sánh (`matrix()`/`matrixEl()`, ô dùng chung `fillCtl()`), vd Danh phận 4 bậc × 10 mục, rank khác, mùa, sách CE.
   Muốn nhóm nào hiện thành bảng: đặt nhãn đúng dạng "Chủ thể: mục" trong schema.
 - **Sửa 20/10 tối (đã build + khởi động lại 4 server + panel):**
-  - m1 → module **Gói quà** `Kits.java` (config `goi-qua`, dữ liệu `goiqua.yml`): lệnh chính `/goiqua`; ở server có module (Bang Hội Chiến)
-    `/kit`, `/kits`, `/essentials:kit` (người chơi, console, RCON) được đổi hướng sang `/goiqua` bằng PlayerCommandPreprocess/ServerCommand/
-    RemoteServerCommand. KHÔNG khai lệnh "kit" trong plugin.yml vì Practice dùng `/kit edit` của Duels (đã thử: Practice /kit vẫn là Duels).
+  - m1 → module **Gói quà** `Kits.java` (config `goi-qua`, dữ liệu `goiqua.yml`): lệnh `goiqua`, alias `kit`, `kits` trong plugin.yml.
+    Server KHÔNG bật goi-qua thì DuckyMoMoCore.setup xoá kit/kits của mình khỏi CommandMap.getKnownCommands() (lệnh plugin.yml đăng ký trước
+    onEnable, DuckyMoMoCore bật trước Duels/Essentials) để Practice giữ `/kit edit` của Duels (đã thử RCON: banghoi /kit = Gói quà, practice = Duels).
+    Đổi hướng bằng PlayerCommandPreprocessEvent.setMessage KHÔNG ăn với người chơi trên Paper 26 (chỉ console) → đã bỏ.
     Gói: quà dạng Rewards, `cho` giây (-1 một lần), `rank` nhóm LuckPerms (trống = mọi người; quyền essentials.kits.<mã> từ ô "gói quà"
     của rank cũng được). Gói lan-dau (tanthu) phát khi `!hasPlayedBefore()` (Essentials newbies.kit đã tắt). Cài đặt: kiểu panel mới `kits`
     (trình soạn trong panel/index.html, kiểm ở app.py). /choilai gọi "kit tanthu <tên>" → đổi hướng sang gói. Admin: /goiqua <mã> <tên>, /goiqua lamlai.

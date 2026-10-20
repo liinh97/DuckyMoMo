@@ -14,11 +14,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.server.RemoteServerCommandEvent;
-import org.bukkit.event.server.ServerCommandEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemFlag;
@@ -35,8 +31,8 @@ import java.util.Locale;
 import java.util.Map;
 
 /**
- * Gói quà (/goiqua; ở server có module này /kit và /kits cũng chuyển sang đây): thay kit của Essentials.
- * Không khai lệnh "kit" trong plugin.yml vì Practice dùng /kit edit của Duels: chỉ đổi lệnh khi module bật (server này). Mỗi gói: tên, biểu tượng, thời gian chờ nhận lại (cho, giây; -1 = chỉ một lần,
+ * Gói quà (/kit, /kits, /goiqua): thay kit của Essentials. Server không bật module thì DuckyMoMoCore trả tên /kit cho plugin khác
+ * lúc khởi động (Practice dùng /kit edit của Duels). Mỗi gói: tên, biểu tượng, thời gian chờ nhận lại (cho, giây; -1 = chỉ một lần,
  * 0 = không chờ), rank được nhận (nhóm LuckPerms; trống = mọi người) và quà dạng Rewards (vat / do / xu / lenh / manh…).
  * Gói "lan-dau" tự phát khi người chơi vào server LẦN ĐẦU (không cần rank, tính là đã nhận).
  * Ai nhận: so với NHÓM THẬT trong LuckPerms (không dùng hasPermission, vì admin có quyền * sẽ thành nhận mọi gói):
@@ -292,42 +288,6 @@ final class Kits implements Listener {
 
     // ---------------------------------------------------------------- lệnh
 
-    /** "/kit …", "/kits …", "/essentials:kit …" -> "/goiqua …" (người chơi và console, vd /choilai phát lại gói tân thủ). */
-    private static String reroute(String line) {
-        String t = line.startsWith("/") ? line.substring(1) : line;
-        int sp = t.indexOf(' ');
-        String cmd = (sp < 0 ? t : t.substring(0, sp)).toLowerCase(Locale.ROOT);
-        if (cmd.startsWith("essentials:")) {
-            cmd = cmd.substring(11);
-        }
-        if (!cmd.equals("kit") && !cmd.equals("kits") && !cmd.equals("ekit") && !cmd.equals("ekits")) {
-            return null;
-        }
-        return "goiqua" + (sp < 0 ? "" : t.substring(sp));
-    }
-
-    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-    public void onPlayerCommand(PlayerCommandPreprocessEvent e) {
-        String r = reroute(e.getMessage());
-        if (r != null) {
-            e.setMessage("/" + r);
-        }
-    }
-
-    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-    public void onConsoleCommand(ServerCommandEvent e) {
-        String r = reroute(e.getCommand());
-        if (r != null) {
-            e.setCommand(r);
-        }
-    }
-
-    /** RCON (trang quản trị) là sự kiện riêng. */
-    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-    public void onRconCommand(RemoteServerCommandEvent e) {
-        onConsoleCommand(e);
-    }
-
     boolean command(CommandSender s, String[] a) {
         boolean admin = s.hasPermission("duckymomo.kit.admin");
         if (a.length >= 2 && admin && a[0].equalsIgnoreCase("lamlai")) {
@@ -357,7 +317,7 @@ final class Kits implements Listener {
             return true;
         }
         if (!(s instanceof Player p)) {
-            s.sendMessage("/goiqua <mã> <người> phát gói · /goiqua lamlai <người> [mã] · gói: " + String.join(", ", kits.keySet()));
+            s.sendMessage("/kit <mã> <người> phát gói · /kit lamlai <người> [mã] · gói: " + String.join(", ", kits.keySet()));
             return true;
         }
         if (a.length >= 1) {

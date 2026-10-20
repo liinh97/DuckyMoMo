@@ -895,6 +895,16 @@ public final class DuckyMoMoCore extends JavaPlugin {
         if (kitCmd != null) {
             kitCmd.setTabCompleter(kits == null ? null : (sender, cmd, label, args) -> kits.tab(sender, args));
         }
+        if (kits == null) {
+            // server không có Gói quà (Practice dùng /kit edit của Duels, sảnh…): trả tên /kit, /kits cho plugin khác.
+            // Lệnh trong plugin.yml được đăng ký TRƯỚC onEnable, plugin bật sau (Duels, Essentials) sẽ nhận lại tên này.
+            java.util.Map<String, org.bukkit.command.Command> known = getServer().getCommandMap().getKnownCommands();
+            for (String l : List.of("kit", "kits", "duckymomocore:kit", "duckymomocore:kits")) {
+                if (known.get(l) instanceof PluginCommand pc && pc.getPlugin() == this) {
+                    known.remove(l);
+                }
+            }
+        }
 
         // Nhiệm vụ hằng ngày (Bang Hội Chiến: daily-quests.enabled)
         quests = getConfig().getBoolean("daily-quests.enabled")

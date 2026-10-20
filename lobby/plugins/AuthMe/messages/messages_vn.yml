@@ -27,7 +27,7 @@ login:
     wrong_password: '&cSai mật khẩu!'
     success: '&2Đăng nhập thành công!'
     login_request: '&cXin vui lòng đăng nhập bằng lệnh "/login <mật khẩu>"'
-    timeout_error: '&4Thời gian đăng nhập đã hết, bạn đã bị văng khỏi máy chủ. Xin vui lòng thử lại!'
+    timeout_error: '&cHết thời gian đăng nhập (90 giây). Vào lại rồi gõ lệnh ngay nhé!'
 
 # Errors
 error:

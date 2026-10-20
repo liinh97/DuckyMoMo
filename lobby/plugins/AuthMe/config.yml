@@ -39,6 +39,9 @@ settings:
         # 20/10: gõ sai mật khẩu KHÔNG bị đá ra (người dùng: sai 1 lần đã bị kick là quá gắt). Gõ lại tại chỗ;
         # sai 3 lần phải /captcha, sai 10 lần/30 phút cấm IP 30 phút (Security bên dưới), hết registerTimeout/timeout thì vẫn bị đá.
         kickOnWrongPassword: false
+        # 20/10: 30 giây quá ngắn cho người mới (giải captcha bản đồ, đọc hướng dẫn, gõ mật khẩu 2 lần) -> 90 giây
+        loginTimeout: 90
+        registerTimeout: 90
         # 20/10: mật khẩu phải có cả CHỮ và SỐ (chặn 123455, 000000, abcdef… mà danh sách cấm không bắt hết). Chỉ ký tự ASCII thấy được.
         # Câu báo lỗi: messages_vn.yml › password.forbidden_characters (repo: lobby/plugins/AuthMe/messages/).
         allowedPasswordCharacters: '(?=.*[A-Za-z])(?=.*[0-9])[!-~]*'

@@ -1326,3 +1326,34 @@ player-menu:
     - {slot: 40, icon: DIAMOND, name: "&dRank ủng hộ", lore: ["&7Chỉ đồ trang trí, không pay-to-win"], cmd: rank}
     - {slot: 41, icon: IRON_SWORD, name: "&dĐấu Trường", lore: ["&7PvP không mất đồ"], cmd: "warp pvp"}
     - {slot: 43, icon: COMPASS, name: "&7Về sảnh", lore: ["&7Chọn chế độ khác"], server: lobby}
+
+# Vàng (20/10): tiền ủng hộ. Nạp tiền thật -> admin duyệt ở trang quản trị › Donate -> cộng Vàng (ví chung toàn mạng, MariaDB network.vang_vi).
+# Người chơi tiêu Vàng: /vang (trong game) hoặc trang tài khoản. KHÔNG chuyển cho nhau, KHÔNG đổi ra xu (luật Mojang: chỉ trang trí).
+# Rank ủng hộ tự có trong cửa hàng: giá tiền thật ở donate-ranks ('1 tháng 20k') quy ra Vàng theo ty-gia.
+# Panel đọc mục này (tỉ giá, mốc thưởng: Cài đặt › Toàn mạng › Rank donate). Món lẻ: ma (duy nhất), ten, mo-ta, gia (Vàng), ngay (0 = vĩnh viễn),
+# nhom, lenh (chạy ở sảnh qua RCON, {player} = tên). Quyền có hạn: "lp user {player} permission settemp <quyền> true <N>d accumulate".
+vang:
+  ty-gia: 1000             # bao nhiêu đồng = 1 Vàng
+  nap-toi-thieu: 10000     # nạp ít nhất (đồng)
+  thuong-nap:              # "từ số tiền:% thưởng thêm" (lấy mốc cao nhất đạt được)
+    - "200000:10"
+    - "500000:20"
+  mon:
+    - {ma: mu, nhom: "Trang trí", ten: "Đội mũ bất kỳ (/hat)", mo-ta: "Đội khối trên tay lên đầu. 30 ngày", gia: 15, ngay: 30,
+       lenh: ["lp user {player} permission settemp essentials.hat true 30d accumulate"]}
+    - {ma: chatmau, nhom: "Tên & chat", ten: "Chat có màu", mo-ta: "Dùng mã màu &a, &e… trong chat. 30 ngày", gia: 15, ngay: 30,
+       lenh: ["lp user {player} permission settemp essentials.chat.color true 30d accumulate"]}
+    - {ma: nick, nhom: "Tên & chat", ten: "Đổi biệt danh (/nick)", mo-ta: "Đặt tên hiển thị khác. 30 ngày", gia: 25, ngay: 30,
+       lenh: ["lp user {player} permission settemp essentials.nick true 30d accumulate"]}
+    - {ma: nickmau, nhom: "Tên & chat", ten: "Biệt danh có màu", mo-ta: "Đổi biệt danh và tô màu cho nó. 30 ngày", gia: 35, ngay: 30,
+       lenh: ["lp user {player} permission settemp essentials.nick true 30d accumulate", "lp user {player} permission settemp essentials.nick.color true 30d accumulate"]}
+    - {ma: hat1, nhom: "Trang trí", ten: "1 hiệu ứng hạt (/pp)", mo-ta: "Hạt bay quanh người, chọn kiểu tuỳ thích. 30 ngày", gia: 30, ngay: 30,
+       lenh: ["lp user {player} permission settemp playerparticles.particles.max.1 true 30d accumulate", "lp user {player} permission settemp playerparticles.effect.* true 30d accumulate", "lp user {player} permission settemp playerparticles.style.* true 30d accumulate"]}
+    - {ma: pet_meo, nhom: "Pet trang trí", ten: "Pet mèo (/pet)", mo-ta: "Mèo trang trí đi theo, không đánh nhau. Vĩnh viễn", gia: 40, ngay: 0,
+       lenh: ["lp user {player} permission set pet.type.cat.* true"]}
+    - {ma: pet_cho, nhom: "Pet trang trí", ten: "Pet chó (/pet)", mo-ta: "Chó trang trí đi theo, không đánh nhau. Vĩnh viễn", gia: 40, ngay: 0,
+       lenh: ["lp user {player} permission set pet.type.wolf.* true"]}
+    - {ma: pet_vet, nhom: "Pet trang trí", ten: "Pet vẹt (/pet)", mo-ta: "Vẹt trang trí đậu vai. Vĩnh viễn", gia: 50, ngay: 0,
+       lenh: ["lp user {player} permission set pet.type.parrot.* true"]}
+    - {ma: tuskin10, nhom: "Trang trí", ten: "Tủ skin 10 ô (/tuskin)", mo-ta: "Lưu tới 10 skin để đổi nhanh. 30 ngày", gia: 20, ngay: 30,
+       lenh: ["lp user {player} permission settemp duckymomo.tuskin.10 true 30d accumulate"]}

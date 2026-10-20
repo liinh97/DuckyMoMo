@@ -27,6 +27,7 @@ from ruamel.yaml import YAML
 from ruamel.yaml.scalarstring import DoubleQuotedScalarString, LiteralScalarString, SingleQuotedScalarString
 
 import taikhoan
+import vang
 
 MODES_DIR = Path(os.environ.get("MODES_DIR", "/repo/modes"))
 DATA_DIR = Path(os.environ.get("DATA_DIR", "/data"))
@@ -2071,6 +2072,29 @@ def web_donate(data, ip):
         mine = [r for r in rows if r["ten"].lower() == name.lower()]
         if act == "ds":
             return {"ok": True, "yeu_cau": mine[-10:][::-1], "bac": donate_tiers()}
+        if act == "tao" and data.get("tien") is not None:
+            # 20/10: nạp VÀNG theo số tiền (không chọn gói rank nữa); rank và đồ trang trí mua bằng Vàng (/vang, trang tài khoản)
+            vc = vang.cfg()
+            try:
+                tien = int(str(data.get("tien")).replace(".", "").replace(",", ""))
+            except ValueError:
+                raise ValueError("Số tiền không hợp lệ")
+            if tien < vc["nap_toi_thieu"] or tien > 20_000_000:
+                raise ValueError(f"Nạp từ {vc['nap_toi_thieu']:,}đ tới 20.000.000đ.".replace(",", "."))
+            tien = tien // 1000 * 1000
+            old = next((r for r in mine if r["trang_thai"] == "tao" and r.get("loai") == "vang" and r["tien"] == tien), None)
+            if old:
+                return {"ok": True, "don": old, **donate_qr(old)}
+            if sum(1 for r in mine if r["trang_thai"] in ("tao", "cho")) >= 5:
+                raise ValueError("Bạn đang có 5 yêu cầu chưa xong. Chờ admin duyệt hoặc nhắn admin.")
+            rid = "".join(secrets.choice("ABCDEFGHJKLMNPQRSTUVWXYZ23456789") for _ in range(4))
+            v, pct = vang.vang_for(tien, vc)
+            don = {"id": rid, "ten": name, "loai": "vang", "bac": "Nạp Vàng", "goi": f"{v} Vàng" + (f" (thưởng {pct}%)" if pct else ""),
+                   "thang": 0, "tien": tien, "vang": v, "noi_dung": f"DMM {re.sub(r'[^A-Za-z0-9]', '', name).upper()} V {rid}",
+                   "trang_thai": "tao", "tao_luc": int(time.time() * 1000), "ip": ip}
+            rows.append(don)
+            donate_save(rows)
+            return {"ok": True, "don": don, **donate_qr(don)}
         if act == "tao":
             tiers = donate_tiers()
             ti, gi = int(data.get("bac", -1)), int(data.get("goi", -1))
@@ -2098,10 +2122,10 @@ def web_donate(data, ip):
             donate_save(rows)
     if act != "bao":
         raise ValueError("Thao tác không hợp lệ")
-    msg = f"{name} báo đã chuyển {don['tien']:,}đ cho {don['bac']} {don['goi']} (nội dung: {don['noi_dung']}). Kiểm tra tài khoản rồi duyệt ở trang quản trị > Donate.".replace(",", ".")
+    msg = f"{name} báo đã chuyển {don['tien']:,}đ cho {don['bac']} {don['goi']} (nội dung: {don['noi_dung']}). Kiểm tra tài khoản rồi duyệt (cộng Vàng) ở trang quản trị > Donate.".replace(",", ".")
     threading.Thread(target=notify_admins, args=(msg,), daemon=True).start()
     web_log({"viec": "donate-bao", "nguoi": name, "don": don["id"], "ip": ip})
-    return {"ok": True, "don": don, "message": "Đã báo admin. Admin kiểm tra tiền đã về rồi cấp rank (thường trong ngày)."}
+    return {"ok": True, "don": don, "message": "Đã báo admin. Admin kiểm tra tiền đã về rồi cộng Vàng (thường trong ngày)."}
 
 
 def media_json():
@@ -2125,6 +2149,68 @@ def media_admin(data, actor):
     return {"ok": True, "message": re.sub(r"§.", "", res).strip() or "Đã gửi lệnh."}
 
 
+def vang_notify(name, text):
+    """Báo người chơi (nếu đang online) một dòng về Vàng."""
+    try:
+        srv = online_players().get(name.lower())
+        if srv:
+            raw = ["", {"text": "[Vàng] ", "color": "gold"}, {"text": text, "color": "yellow"}]
+            rcon(srv, [f"tellraw {name} " + json.dumps(raw, ensure_ascii=False)])
+    except Exception:
+        pass
+
+
+def vang_run(cmds):
+    """Chạy lệnh cấp đồ mua bằng Vàng ở sảnh (LuckPerms dùng chung cả mạng). Lỗi RCON -> ném lỗi để hoàn Vàng."""
+    res = rcon("lobby", cmds)
+    bad = [r for r in res if re.search(r"(?i)unknown command|không tìm thấy|could not|error", str(r[1]))]
+    if bad:
+        raise RuntimeError(re.sub(r"§.", "", str(bad[0][1]))[:120])
+
+
+_vang_last = {}
+
+
+def web_vang(data, ip):
+    """Mua bằng Vàng (trang tài khoản / lệnh /vang trong game, tên lấy từ phiên hoặc từ plugin)."""
+    name = str(data.get("ten", "")).strip()
+    if not PLAYER_RE.match(name):
+        raise ValueError("Tên không hợp lệ")
+    if data.get("viec") != "mua":
+        raise ValueError("Thao tác không hợp lệ")
+    now = time.time()
+    if now - _vang_last.get(name.lower(), 0) < 2:
+        raise ValueError("Bấm chậm lại một chút.")
+    _vang_last[name.lower()] = now
+    res = vang.buy(name, str(data.get("ma", "")), donate_tiers, vang_run)
+    web_log({"viec": "vang-mua", "nguoi": name, "ma": data.get("ma"), "ip": ip, "ok": True})
+    threading.Thread(target=vang_notify, args=(name, res["message"]), daemon=True).start()
+    return res
+
+
+def vang_info(name):
+    c = vang.cfg()
+    return {"ok": True, **vang.balance(name), "lich_su": vang.history(name, 15), "mon": vang.shop(donate_tiers),
+            "ty_gia": c["ty_gia"], "thuong": [{"tu": a, "pct": b} for a, b in c["thuong"]], "nap_toi_thieu": c["nap_toi_thieu"]}
+
+
+def vang_admin(data, actor):
+    """Trang /donate: tra ví (xem) | cộng/trừ Vàng tay (dieuchinh) kèm lý do."""
+    name = str(data.get("ten", "")).strip()
+    if not PLAYER_RE.match(name):
+        raise ValueError("Tên không hợp lệ")
+    if data.get("action") == "dieuchinh":
+        so = int(data.get("so", 0))
+        ly_do = str(data.get("ly_do", "")).strip()
+        if not so or not ly_do:
+            raise ValueError("Nhập số Vàng (âm = trừ) và lý do.")
+        after = vang.change(name, so, "admin", "Admin: " + ly_do, boi=actor or PANEL_USER)
+        web_log({"viec": "vang-dieuchinh", "nguoi": actor or PANEL_USER, "doi_tuong": name, "so": so, "ly_do": ly_do, "ok": True})
+        threading.Thread(target=vang_notify, args=(name, f"Admin {'cộng' if so > 0 else 'trừ'} {abs(so)} Vàng: {ly_do}"), daemon=True).start()
+        return {"ok": True, "message": f"Đã {'cộng' if so > 0 else 'trừ'} {abs(so)} Vàng cho {name}. Số dư: {after}.", **vang_info(name)}
+    return vang_info(name)
+
+
 def donate_admin(data, actor):
     """Trang /donate: cap (chạy /rank give rồi đánh dấu đã cấp) | xong (đã cấp tay) | huy."""
     act, rid = data.get("action"), str(data.get("id", ""))
@@ -2134,10 +2220,15 @@ def donate_admin(data, actor):
         if not don:
             raise ValueError("Không có yêu cầu này")
         if act == "cap":
+            # 20/10: duyệt = CỘNG VÀNG theo số tiền (cả yêu cầu kiểu cũ chọn gói rank); người chơi tự mua rank bằng Vàng
             if don["trang_thai"] == "da_cap":
-                raise ValueError("Yêu cầu này đã cấp rank rồi")
-            res = rcon("lobby", [f"rank give {don['ten']} {don['group']} {don['thang']}"])[0][1]
-            don.update(trang_thai="da_cap", ket_qua=res[:200])
+                raise ValueError("Yêu cầu này đã duyệt rồi")
+            v, pct = vang.vang_for(int(don["tien"]))
+            after = vang.change(don["ten"], v, "nap", f"Nạp {int(don['tien']):,}đ".replace(",", ".") + (f" (thưởng {pct}%)" if pct else ""),
+                                ref=f"nap:{rid}", boi=actor or PANEL_USER, nap=int(don["tien"]))
+            don.update(trang_thai="da_cap", vang=v, ket_qua=(f"+{v} Vàng, số dư {after}" if after is not None else "đã cộng trước đó"))
+            threading.Thread(target=vang_notify, args=(don["ten"], f"Đã cộng {v} Vàng vào tài khoản (nạp {int(don['tien']):,}đ). Gõ /vang để tiêu.".replace(",", ".")),
+                             daemon=True).start()
         elif act == "xong":
             don["trang_thai"] = "da_cap"
         elif act == "huy":
@@ -2146,7 +2237,7 @@ def donate_admin(data, actor):
             raise ValueError("Thao tác không hợp lệ")
         don.update(xu_ly_boi=actor or PANEL_USER, xu_ly_luc=int(time.time() * 1000))
         donate_save(rows)
-    return {"ok": True, "message": {"cap": "Đã gửi /rank give: " + don.get("ket_qua", ""), "xong": "Đã đánh dấu đã cấp.", "huy": "Đã huỷ yêu cầu."}[act],
+    return {"ok": True, "message": {"cap": "Đã duyệt: " + don.get("ket_qua", ""), "xong": "Đã đánh dấu xong (không cộng Vàng).", "huy": "Đã huỷ yêu cầu."}[act],
             "data": donate_load()[::-1]}
 
 
@@ -2610,6 +2701,13 @@ class Handler(BaseHTTPRequestHandler):
                 self.send_json(200, web_settings(self.read_body(4096), self.headers.get("X-DMM-Ip", "")))
             elif method == "POST" and path == "/api/web/trangtri":
                 self.send_json(200, web_cosmetic(self.read_body(4096), self.headers.get("X-DMM-Ip", "")))
+            elif method == "POST" and path == "/api/web/vang":
+                self.send_json(200, web_vang(self.read_body(4096), self.headers.get("X-DMM-Ip", "")))
+            elif method == "GET" and path == "/api/web/vang":
+                q = {k: v[-1] for k, v in urllib.parse.parse_qs(query).items()}
+                if not PLAYER_RE.match(q.get("ten", "")):
+                    raise ValueError("Tên không hợp lệ")
+                self.send_json(200, vang_info(q["ten"]))
             elif method == "POST" and path == "/api/web/skin":
                 self.send_json(200, web_skin(self.read_body(80_000), self.headers.get("X-DMM-Ip", "")))
             elif method == "GET" and path == "/api/web/skin":
@@ -2729,7 +2827,7 @@ class Handler(BaseHTTPRequestHandler):
             ok = self.can("thuvien-dua" if b.get("action") == "give" else "thuvien")
         elif p == "/api/huongdan":
             ok = self.can("huongdan")
-        elif p == "/api/donate":
+        elif p in ("/api/donate", "/api/vang"):
             ok = self.can("donate")
         elif p == "/api/hethong":
             ok = self.can("hethong")
@@ -2795,6 +2893,14 @@ class Handler(BaseHTTPRequestHandler):
             except Exception as e:
                 self.send_json(500, {"ok": False, "message": f"Lỗi: {e}"})
             return
+        if self.path == "/api/vang":
+            try:
+                self.send_json(200, vang_admin(self.body, self.who["name"] if self.who else None))
+            except ValueError as e:
+                self.send_json(400, {"ok": False, "message": str(e)})
+            except Exception as e:
+                self.send_json(500, {"ok": False, "message": f"Lỗi: {e}"})
+            return
         if self.path == "/api/donate":
             try:
                 self.send_json(200, donate_admin(self.body, self.who["name"] if self.who else None))
@@ -2843,4 +2949,8 @@ class Handler(BaseHTTPRequestHandler):
 
 if __name__ == "__main__":
     print("Trang Cài đặt chạy ở cổng 8080", flush=True)
+    try:
+        vang.ensure_tables()
+    except Exception as e:
+        print(f"Vàng: không tạo được bảng ({e})", flush=True)
     ThreadingHTTPServer(("0.0.0.0", 8080), Handler).serve_forever()

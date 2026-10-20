@@ -97,6 +97,15 @@ groups:
       - { key: tier4_perks, info: "Là gì: CHỮ mô tả quyền lợi, hiện trong /rank và trên web.\nLưu ý: quyền lợi THẬT (hạt, pet, màu chat…) bật ở trang Role › rank đó › Quyền. Chỉ sửa chữ mà không bật quyền thì người mua không có.", label: "Bậc 5 (congtuoc): quyền lợi (chữ hiện trong /rank)", type: list, servers: [lobby, banghoi-1, practice-1], file: plugins/DuckyMoMoCore/config.yml, path: donate-ranks.tiers.4.perks }
       - { key: tier4_skins, info: "Là gì: tên các skin độc quyền của bậc này trong menu /skins (người không đủ bậc thấy ô bị khoá).\nCách nhanh hơn (không cần trang này): trong game gõ /rank skin them <bậc> <tên> <link ảnh .png> rồi bấm nút tạo skin.\nHoặc: /sr createcustom <tên> <link ảnh skin .png> (tên viết thường, không dấu), rồi ghi tên đó vào đây.\nBậc cao tự có skin của bậc dưới (kế thừa). Skin thường (theo tên tài khoản, gợi ý, link ảnh) vẫn miễn phí cho mọi người.\nLuật SkinsRestorer: chỉ bán skin server tự làm/cung cấp; không bắt trả tiền để dùng skin của chính tài khoản họ.\nLưu xong: khởi động lại sảnh (đồng bộ quyền vào LuckPerms).", label: "Bậc 5 (congtuoc): skin độc quyền", type: list, servers: [lobby, banghoi-1, practice-1], file: plugins/DuckyMoMoCore/config.yml, path: donate-ranks.tiers.4.skins }
 
+  - title: Vàng (tiền ủng hộ)
+    category: Rank donate
+    description: "Nạp tiền thật được Vàng (admin duyệt ở trang Donate). Vàng mua rank ủng hộ, đồ trang trí, tên màu: /vang trong game hoặc trang tài khoản."
+    info: "Vàng = số tiền ÷ tỉ giá, cộng % thưởng của mốc cao nhất đạt được. Ví dụ tỉ giá 1000, mốc 200000:10 → nạp 200.000đ được 200 + 20 = 220 Vàng.\nGiá rank tính tự động: giá tiền thật của gói (nhóm Rank donate) ÷ tỉ giá. Đổi tỉ giá là giá rank bằng Vàng đổi theo.\nVàng KHÔNG chuyển cho nhau, KHÔNG đổi ra xu (luật Mojang). Món bán lẻ (mũ, chat màu, biệt danh, hạt, pet, tủ skin): sửa mục vang.mon trong config DuckyMoMoCore của Bang Hội Chiến.\nCó hiệu lực ngay (trang web và /vang đọc trực tiếp)."
+    settings:
+      - { key: vang_ty_gia, label: Tỉ giá (bao nhiêu đồng = 1 Vàng), type: int, min: 1, max: 1000000, servers: [banghoi-1], file: plugins/DuckyMoMoCore/config.yml, path: vang.ty-gia }
+      - { key: vang_nap_min, label: Nạp tối thiểu (đồng), type: int, min: 1000, max: 10000000, servers: [banghoi-1], file: plugins/DuckyMoMoCore/config.yml, path: vang.nap-toi-thieu }
+      - { key: vang_thuong, label: "Mốc thưởng nạp (mỗi dòng: số tiền:% thưởng)", type: lines, servers: [banghoi-1], file: plugins/DuckyMoMoCore/config.yml, path: vang.thuong-nap, note: "Vd 200000:10 = nạp từ 200.000đ thưởng thêm 10%. Để trống = không thưởng" }
+
   - title: Ủng hộ bằng QR trong game (/rank mua)
     category: Rank donate
     description: "Người chơi gõ /rank mua, chọn gói → mã VietQR hiện trên tấm bản đồ trong tay → bấm [Tôi đã chuyển khoản] → admin duyệt ở trang quản trị > Donate (chung hàng chờ với trang web). Tài khoản ngân hàng lấy từ site/config/site.yml (donate). Giá các gói lấy từ nhóm Rank donate ở trên."

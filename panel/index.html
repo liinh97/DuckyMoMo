@@ -75,7 +75,7 @@
   .rw { display: flex; flex-direction: column; gap: 8px; }
   .rw-row { display: grid; grid-template-columns: 150px 1fr 90px 32px; gap: 8px; align-items: center; }
   .rw-row select, .rw-row input { width: 100%; }
-  .rw-row .x, .ms-head .x, .qe-head .x, .sp-head .x, .fm-head .x, .fs-head .x, .sh-row .x { background: none; border: 0; color: var(--err); cursor: pointer; font-size: 18px; border-radius: 6px; }
+  .kit-head .x, .rw-row .x, .ms-head .x, .qe-head .x, .sp-head .x, .fm-head .x, .fs-head .x, .sh-row .x { background: none; border: 0; color: var(--err); cursor: pointer; font-size: 18px; border-radius: 6px; }
   .rw-row .x:hover, .ms-head .x:hover, .qe-head .x:hover, .sp-head .x:hover, .fm-head .x:hover, .fs-head .x:hover, .sh-row .x:hover { background: rgba(217, 48, 37, .1); }
   .rw-add { align-self: flex-start; background: transparent; border: 1px dashed var(--line); color: var(--muted); border-radius: 8px; padding: 6px 12px; cursor: pointer; font-size: 13.5px; }
   .rw-add:hover { border-color: var(--accent); color: var(--accent); }
@@ -83,6 +83,16 @@
   .ms { border: 1px solid var(--line); background: var(--card-2); border-radius: 10px; padding: 12px; margin-bottom: 10px; }
   .ms-head { display: flex; gap: 8px; align-items: center; margin-bottom: 10px; font-size: 14px; font-weight: 600; }
   .ms-head input { width: 90px; }
+  .kit-head { display: grid; grid-template-columns: 140px minmax(0, 1fr) minmax(0, 220px) 170px 32px; gap: 8px; align-items: center; margin-bottom: 10px; }
+  .kit-ranks { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-bottom: 8px; }
+  .kit-ranks .lab { font-size: 13px; color: var(--muted); margin-right: 4px; }
+  .kit-rank { border: 1px solid var(--line); background: var(--chip); color: var(--text); border-radius: 999px; padding: 3px 11px; font-size: 13px; cursor: pointer; }
+  .kit-rank.on { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
+  .kit-rank.donate { border-style: dashed; }
+  .kit-all { font-size: 12.5px; color: var(--muted); font-style: italic; }
+  .kit-warn { font-size: 13px; color: var(--warn); margin-bottom: 6px; }
+  .kit-warn:empty { display: none; }
+  @media (max-width: 700px) { .kit-head { grid-template-columns: 1fr 1fr; } }
   .qe-head { display: grid; grid-template-columns: 130px 1fr 170px 100px 32px; gap: 8px; margin-bottom: 8px; }
   .qe-tg { width: 100%; margin-bottom: 8px; }
   .sp-head { display: grid; grid-template-columns: 1fr 100px 64px auto 32px; gap: 8px; align-items: center; margin-bottom: 8px; }
@@ -166,7 +176,7 @@ const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
 const CAT_ICON = { "Chiến tranh": "⚔️", "Thị trấn": "🏘️", "Thế giới": "🌍", "Thưởng & sự kiện": "🎁", "Shop": "🛒", "Hệ thống": "⚙️",
   "Kinh tế": "💰", "PvP & combat": "🗡️", "Hiển thị": "🎨", "Nghề": "⛏️", "Chống hack": "🛡️", "Phù phép": "✨", "Người mới": "🐣",
   "Chat": "💬", "Rank donate": "👑", "Sảnh": "🏰", "Role": "🎭", "Khác": "📁" };
-const WIDE = new Set(["rewards", "milestones", "quests", "spin", "fragtypes", "fragshop", "shopitems", "shoptitles", "dishes", "workshop"]);
+const WIDE = new Set(["kits", "rewards", "milestones", "quests", "spin", "fragtypes", "fragshop", "shopitems", "shoptitles", "dishes", "workshop"]);
 const fold = (s) => String(s || "").normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/đ/g, "d").replace(/Đ/g, "D").toLowerCase();
 
 async function load() {
@@ -322,6 +332,8 @@ function row(mode, s) {
     input.append(libSelect(value || "", s.use || null, (v, init) => { libSummary(sum, v); if (!init && v) change(mode, s, v, div); }), sum);
   } else if (s.type === "spin") {
     input = spinEditor(value || [], v => change(mode, s, v, div));
+  } else if (s.type === "kits") {
+    input = kitsEditor(value || {}, v => change(mode, s, v, div));
   } else if (s.type === "quests") {
     input = questsEditor(value || {}, v => change(mode, s, v, div));
   } else if (s.type === "milestones") {
@@ -674,6 +686,71 @@ function milestonesEditor(value, onChange) {
   return box;
 }
 
+
+// ---- Gói quà /kit: {mã: {ten, icon, cho (giây, -1 = một lần), rank [nhóm], qua [quà]}}
+const KIT_RANKS = [["dan", "Dân"], ["luongdan", "Lương Dân"], ["haokiet", "Hào Kiệt"], ["media", "Sứ Giả"],
+  ["namtuoc", "Nam Tước"], ["tutuoc", "Tử Tước"], ["batuoc", "Bá Tước"], ["hautuoc", "Hầu Tước"], ["congtuoc", "Công Tước"],
+  ["builder", "Builder"], ["helper", "Helper"], ["mod", "Mod"], ["quanly", "Quản lý"], ["admin", "Admin"]];
+const KIT_DONATE = new Set(["namtuoc", "tutuoc", "batuoc", "hautuoc", "congtuoc"]);
+const KIT_CD = [[-1, "Một lần duy nhất"], [0, "Không chờ"], [3600, "1 giờ"], [21600, "6 giờ"], [43200, "12 giờ"], [86400, "1 ngày"],
+  [172800, "2 ngày"], [259200, "3 ngày"], [604800, "7 ngày"], [1209600, "14 ngày"], [2592000, "30 ngày"]];
+function kitsEditor(value, onChange) {
+  const box = document.createElement("div");
+  const ks = [];
+  const emit = () => {
+    const o = {};
+    for (const k of ks) {
+      const id = k.id.value.trim().toLowerCase();
+      if (!id) continue;
+      o[id] = { ten: k.ten.value.trim() || id, icon: (k.icon.value || "CHEST").toUpperCase(), cho: parseInt(k.cho.value, 10),
+        rank: [...k.ranks], qua: k.qua };
+    }
+    onChange(o);
+  };
+  const add = document.createElement("button"); add.type = "button"; add.className = "rw-add"; add.textContent = "+ Thêm gói quà";
+  function addK(id, d) {
+    const wrap = document.createElement("div"); wrap.className = "ms kit";
+    wrap.innerHTML = '<div class="kit-head"><input placeholder="mã, vd haokiet"><input placeholder="Tên gói, vd Gói Hào Kiệt"><input placeholder="Biểu tượng…"><select title="Bao lâu nhận lại"></select><button type="button" class="x" title="Bỏ gói">×</button></div>'
+      + '<div class="kit-ranks"><span class="lab">Ai nhận:</span></div><div class="kit-warn"></div>';
+    const [idEl, tenEl, iconEl] = wrap.querySelectorAll(".kit-head input");
+    const cdEl = wrap.querySelector(".kit-head select");
+    const opts = KIT_CD.slice();
+    if (d.cho !== undefined && !opts.some(o => o[0] === Number(d.cho))) opts.push([Number(d.cho), d.cho + " giây"]);
+    for (const [v, t] of opts) { const o = document.createElement("option"); o.value = v; o.textContent = t; cdEl.appendChild(o); }
+    const k = { id: idEl, ten: tenEl, icon: iconEl, cho: cdEl, ranks: new Set((d.rank || []).map(String)), qua: (d.qua || []).slice() };
+    idEl.value = id || ""; tenEl.value = d.ten || ""; iconEl.value = d.icon || "CHEST"; cdEl.value = String(d.cho ?? -1);
+    const rk = wrap.querySelector(".kit-ranks"), warn = wrap.querySelector(".kit-warn");
+    const all = document.createElement("span"); all.className = "kit-all";
+    rk.appendChild(all);
+    const drawWarn = () => {
+      all.textContent = k.ranks.size ? "" : "Mọi người chơi (chưa chọn rank nào)";
+      const don = [...k.ranks].filter(r => KIT_DONATE.has(r));
+      warn.textContent = don.length ? "⚠ Rank ủng hộ (mua bằng tiền) chỉ được quà trang trí. Đồ chơi game, xu, đồ mạnh cho rank ủng hộ là pay-to-win, trái luật Mojang." : "";
+    };
+    for (const [g, n] of KIT_RANKS) {
+      const b = document.createElement("button"); b.type = "button"; b.className = "kit-rank" + (k.ranks.has(g) ? " on" : "") + (KIT_DONATE.has(g) ? " donate" : "");
+      b.textContent = n; b.title = "nhóm " + g;
+      b.onclick = () => { if (k.ranks.has(g)) k.ranks.delete(g); else k.ranks.add(g); b.classList.toggle("on", k.ranks.has(g)); drawWarn(); emit(); };
+      rk.insertBefore(b, all);
+    }
+    for (const r of k.ranks) if (!KIT_RANKS.some(x => x[0] === r)) {
+      const b = document.createElement("button"); b.type = "button"; b.className = "kit-rank on"; b.textContent = r; b.title = "nhóm lạ";
+      b.onclick = () => { k.ranks.delete(r); b.remove(); drawWarn(); emit(); };
+      rk.insertBefore(b, all);
+    }
+    drawWarn();
+    for (const el of [idEl, tenEl]) el.oninput = emit;
+    cdEl.onchange = emit;
+    wrap.querySelector(".kit-head .x").onclick = () => { if (!confirm("Bỏ gói " + (idEl.value || "này") + "?")) return; ks.splice(ks.indexOf(k), 1); wrap.remove(); emit(); };
+    wrap.appendChild(rewardsEditor(k.qua, v => { k.qua = v; emit(); }));
+    ks.push(k); box.insertBefore(wrap, add);
+    matPick(iconEl, emit);
+  }
+  box.appendChild(add);
+  add.onclick = () => { addK("", { ten: "", icon: "CHEST", cho: 86400, rank: [], qua: ["vat BREAD 16"] }); emit(); };
+  for (const [id, d] of Object.entries(value || {})) addK(id, d || {});
+  return box;
+}
 
 // ---- Trình soạn nhiệm vụ hằng ngày: {mã: {name, type, targets[], amount, rewards[]}}
 const QUEST_TYPES = [["break", "Phá khối (đào, chặt)"], ["place", "Đặt khối (xây)"], ["kill", "Giết mob (săn)"], ["fish", "Câu cá"], ["harvest", "Thu hoạch cây chín"]];

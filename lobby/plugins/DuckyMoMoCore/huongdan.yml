@@ -119,6 +119,7 @@ chapters:
     &1/newbie checktime &0còn bao lâu
     &0Khu spawn an toàn: không PvP, không phá.
     &0Bắt đầu với 200 xu&r&0 + quà tân thủ.
+    &1/kit &0gói quà: tân thủ, quà theo danh phận
   - |-
     &6Đi lại
     &1/spawn &0về spawn
@@ -130,6 +131,7 @@ chapters:
     &1/tpaccept &0· &1/tpdeny
   - |-
     &6Đi lại (tiếp)
+    &1/back &0về chỗ trước khi dịch chuyển, hoặc chỗ vừa chết
     &4Lưu ý: &0đang giao tranh không dịch chuyển được.
   - |-
     &6Đi tìm đất
@@ -188,7 +190,7 @@ chapters:
   - |-
     &c◆ RANK SỨ GIẢ
     &0Cho người livestream&r&0 về server (TikTok, YouTube…), miễn phí, admin xét duyệt.
-    &0Có thêm nhà, balo, món chợ đấu giá, đơn thu mua, vé vòng quay nhanh hơn, gói quà &1/kit media&0.
+    &0Có thêm nhà, balo, món chợ đấu giá, đơn thu mua, vé vòng quay nhanh hơn, gói quà Sứ Giả (&1/kit&0).
     &0Xem yêu cầu: thẻ Sứ Giả trong &1/danhphan&0.
   - |-
     &cSỨ GIẢ: cách làm

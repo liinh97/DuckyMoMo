@@ -883,6 +883,19 @@ public final class DuckyMoMoCore extends JavaPlugin {
         }
         bind("diemdanh", checkin == null ? null : checkin::command, "Điểm danh");
 
+        // Gói quà /kit (Bang Hội Chiến: goi-qua.enabled): thay kit Essentials, quà theo rank + gói lần đầu vào
+        Kits kits = getConfig().getBoolean("goi-qua.enabled")
+                ? new Kits(this, getConfig().getConfigurationSection("goi-qua"), rewards) : null;
+        if (kits != null) {
+            getServer().getPluginManager().registerEvents(kits, this);
+            getLogger().info("Gói quà: " + kits.describe());
+        }
+        bind("goiqua", kits == null ? null : kits::command, "Gói quà");
+        PluginCommand kitCmd = getCommand("goiqua");
+        if (kitCmd != null) {
+            kitCmd.setTabCompleter(kits == null ? null : (sender, cmd, label, args) -> kits.tab(sender, args));
+        }
+
         // Nhiệm vụ hằng ngày (Bang Hội Chiến: daily-quests.enabled)
         quests = getConfig().getBoolean("daily-quests.enabled")
                 ? new DailyQuests(this, getConfig().getConfigurationSection("daily-quests"), rewards) : null;

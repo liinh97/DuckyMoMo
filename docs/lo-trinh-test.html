@@ -9,7 +9,7 @@
   --bg:#f1f4ef; --panel:#ffffff; --ink:#18211a; --muted:#5a6a5d; --line:#d5ddd3;
   --moss:#3f7a3a; --moss-soft:#e3eedf; --earth:#8a5a2b;
   --ok:#2f8a47; --ok-soft:#dff2e3; --err:#c23b31; --err-soft:#fbe3e0; --skip:#a87a12; --skip-soft:#f7edd2;
-  --code-bg:#eef2ec; --code-fg:#2d4a2b;
+  --code-bg:#eef2ec; --code-fg:#2d4a2b; --lai:#2f6fb0; --lai-soft:#e1ecf8;
   --f-body:"Be Vietnam Pro",system-ui,-apple-system,"Segoe UI",sans-serif;
   --f-mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Consolas,monospace;
   --r:12px;
@@ -18,12 +18,12 @@
   --bg:#111511; --panel:#181e18; --ink:#e4ebe2; --muted:#9aa99b; --line:#2a342a;
   --moss:#7cc06f; --moss-soft:#1f2c1e; --earth:#d29a5e;
   --ok:#5fcf7a; --ok-soft:#183020; --err:#f07a6e; --err-soft:#3a1c19; --skip:#e0b44a; --skip-soft:#352b12;
-  --code-bg:#1f271f; --code-fg:#b9e3a8; color-scheme:dark}}
+  --code-bg:#1f271f; --code-fg:#b9e3a8; --lai:#6aa8f0; --lai-soft:#16263a; color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#111511; --panel:#181e18; --ink:#e4ebe2; --muted:#9aa99b; --line:#2a342a;
   --moss:#7cc06f; --moss-soft:#1f2c1e; --earth:#d29a5e;
   --ok:#5fcf7a; --ok-soft:#183020; --err:#f07a6e; --err-soft:#3a1c19; --skip:#e0b44a; --skip-soft:#352b12;
-  --code-bg:#1f271f; --code-fg:#b9e3a8; color-scheme:dark}
+  --code-bg:#1f271f; --code-fg:#b9e3a8; --lai:#6aa8f0; --lai-soft:#16263a; color-scheme:dark}
 *{box-sizing:border-box}
 body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.6;
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 60px}
@@ -41,10 +41,10 @@ button{font:inherit;cursor:pointer}
 .meter{display:grid;gap:6px;min-width:240px}
 .meter .nums{display:flex;gap:14px;font-size:.85rem;font-variant-numeric:tabular-nums;flex-wrap:wrap}
 .meter .nums span b{font-size:1.25rem;margin-right:3px}
-.n-ok b{color:var(--ok)}.n-err b{color:var(--err)}.n-skip b{color:var(--skip)}.n-left b{color:var(--muted)}
+.n-ok b{color:var(--ok)}.n-err b{color:var(--err)}.n-skip b{color:var(--skip)}.n-lai b{color:var(--lai)}.n-left b{color:var(--muted)}
 .bar{height:10px;border-radius:99px;background:var(--line);display:flex;overflow:hidden}
 .bar i{display:block;height:100%}
-.bar .ok{background:var(--ok)}.bar .err{background:var(--err)}.bar .skip{background:var(--skip)}
+.bar .ok{background:var(--ok)}.bar .err{background:var(--err)}.bar .skip{background:var(--skip)}.bar .lai{background:var(--lai)}
 @media (max-width:720px){.top{grid-template-columns:1fr}.meter{min-width:0}}
 
 /* hướng dẫn chung */
@@ -68,6 +68,7 @@ nav.map{position:sticky;top:calc(env(safe-area-inset-top,0px) + 12px);display:gr
 .cl .mini{grid-column:2/4;height:4px;border-radius:9px;background:var(--line);display:flex;overflow:hidden}
 .cl .mini i{display:block;height:100%}
 .cl.has-err .ct{color:var(--err);font-weight:600}
+.cl.has-lai .ct{color:var(--lai);font-weight:600}
 
 /* cụm */
 section.cluster{display:grid;gap:16px;min-width:0}
@@ -96,7 +97,9 @@ section.cluster{display:grid;gap:16px;min-width:0}
 .items{display:grid;gap:10px}
 .it{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);display:grid;grid-template-columns:4px minmax(0,1fr);overflow:hidden}
 .it .stripe{background:var(--line)}
-.it.s-ok .stripe{background:var(--ok)}.it.s-err .stripe{background:var(--err)}.it.s-skip .stripe{background:var(--skip)}
+.it.s-ok .stripe{background:var(--ok)}.it.s-err .stripe{background:var(--err)}.it.s-skip .stripe{background:var(--skip)}.it.s-lai .stripe{background:var(--lai)}
+.tag-lai{display:inline-block;font-size:.72rem;font-weight:700;letter-spacing:.03em;color:var(--lai);background:var(--lai-soft);border:1px solid var(--lai);border-radius:99px;padding:1px 9px;margin-left:8px;vertical-align:2px;white-space:nowrap}
+dl.d dd.sua{color:var(--lai)}
 .it .body{padding:12px 16px;display:grid;gap:8px;min-width:0}
 .it .head{display:flex;gap:12px;align-items:flex-start;justify-content:space-between;flex-wrap:wrap}
 .it .title{display:flex;gap:10px;align-items:baseline;min-width:0;flex:1 1 300px}
@@ -128,7 +131,7 @@ dl.d dd.fix{color:var(--err)}
   <header class="top">
     <div>
       <h1>Lộ trình test DuckyMoMo</h1>
-      <p>Đi theo đúng thứ tự một người chơi trải nghiệm: vào server, lên rank, làm kinh tế, chế đồ, đánh quái, lập nước, công thành. Mỗi mục có cách làm, kết quả đúng, lý do và chỗ sửa khi sai. Bấm <b>Đạt</b>, <b>Lỗi</b> hoặc <b>Bỏ qua</b>; mục lỗi ghi chú lại để Claude đọc và sửa.</p>
+      <p>Đi theo đúng thứ tự một người chơi trải nghiệm: vào server, lên rank, làm kinh tế, chế đồ, đánh quái, lập nước, công thành. Mỗi mục có cách làm, kết quả đúng, lý do và chỗ sửa khi sai. Bấm <b>Đạt</b>, <b>Lỗi</b> hoặc <b>Bỏ qua</b>; mục lỗi ghi chú lại để Claude đọc và sửa. Mục Claude đã sửa có nhãn <span class="tag-lai" style="margin:0">Đã sửa · cần test lại</span> (bộ lọc "Cần test lại"): test lại rồi bấm Đạt hoặc Lỗi.</p>
     </div>
     <div class="meter" aria-live="polite">
       <div class="nums" id="totNums"></div>
@@ -186,14 +189,14 @@ const PLAN = [
  prep:["Dùng người chơi A chưa từng vào Bang Hội Chiến.","Có thể <code>/choilai</code> sau này để test lại từ đầu (xem cụm Vận hành)."],
  warn:["Bảo vệ người mới 15 phút: trong thời gian này người khác không đánh được A. Test PvP thì đợi hết hoặc dùng tài khoản cũ.","/tpr bắt đứng yên 3 giây: di chuyển là huỷ, đó là đúng chứ không phải lỗi."],
  items:[
- {id:"m1",t:"Quà tân thủ và xu khởi đầu",b:"Vào Bang Hội Chiến lần đầu, gõ <code>/bal</code>, xem túi đồ.",k:"Có 200 xu và bộ quà tân thủ; tin chào người mới.",c:"Bang Hội Chiến › Người mới › Quà tân thủ."},
+ {id:"m1",t:"Quà tân thủ và xu khởi đầu",b:"Vào Bang Hội Chiến lần đầu, gõ <code>/bal</code>, xem túi đồ.",k:"Có 200 xu; 2 giây sau khi vào, Quà tân thủ tự vào túi kèm tin \"Đã nhận Quà tân thủ\"; tin chào người mới. <code>/kit</code> mở menu Gói quà: Quà tân thủ ghi Đã nhận, gói rank khác ghi Cần rank / Bấm để nhận / Nhận lại sau….",c:"Bang Hội Chiến › Người mới › Gói quà (mỗi gói: quà, thời gian nhận lại, rank được nhận).",f:"Thử lại cho cùng tài khoản: admin gõ <code>/goiqua lamlai &lt;tên&gt;</code> (xoá lượt đã nhận) rồi <code>/kit</code>. Tài khoản đã từng vào Bang Hội Chiến thì không tự phát lại (chỉ lần đầu)."},
  {id:"m2",t:"Tiền tố Dân Tị Nạn",b:"Nhìn chat và danh sách Tab.",k:"Tên có tiền tố [Tị Nạn]. Đúng 1 nhà (/sethome thứ 2 bị từ chối)."},
  {id:"m3",t:"Bảo vệ người mới",b:"Người chơi B đánh A trong 15 phút đầu.",k:"Không gây sát thương, có thông báo A đang được bảo vệ."},
  {id:"m4",t:"Dịch chuyển ngẫu nhiên /tpr",b:"<code>/tpr</code> hoặc bấm NPC ở spawn, chọn vùng.",k:"Danh sách vùng đã mở (Mã Lai, Philippines, Borneo, Java chỉ hiện khi khai hoang xong). Đứng yên 3 giây thì bay tới đất trống.",c:"Thế giới › Dịch chuyển ngẫu nhiên."},
  {id:"m5",t:"Máu dưới tên và dòng chỉ số",b:"Đứng gần người khác; nhìn thanh trên hotbar.",k:"Dưới tên người khác có số máu ❤. Thanh hành động hiện ❤ máu | ⚔ Cấp | ✦ mana khi đứng yên."},
  {id:"m6",t:"Bảng bên phải, thanh mẹo, Tab",b:"Quan sát màn hình.",k:"Có bảng bên phải, dòng mẹo chạy trên cùng (có /khobau, /lenhsan…), Tab có rank và [Cấp N].",c:"Hiển thị › Bảng bên phải, boss bar, danh sách Tab."},
- {id:"m7",t:"Lệnh nhà, warp, tpa",b:"<code>/sethome</code>, <code>/home</code>, <code>/spawn</code>, <code>/warp</code>, <code>/tpa B</code>.",k:"Đều chạy, có thời gian chờ đứng yên. Người chơi không có <code>/back</code>.",c:"Thế giới › Dịch chuyển bằng lệnh."},
- {id:"m8",t:"Cài đặt cá nhân /caidat",b:"<code>/caidat</code>, tắt Kênh chat chung, Tin nhắn riêng, Nhận TPA; B thử /msg, /tpa A.",k:"Menu 19 ô. B bị chặn kèm câu báo. Staff vẫn gửi được. Tắt Bảng bên phải thì ẩn ngay, vào lại vẫn giữ.",f:"Chi tiết từng ô: cụm Kiểm tra cũ 4g trong TEST-CHECKLIST.md."},
+ {id:"m7",t:"Lệnh nhà, warp, tpa",b:"<code>/sethome</code>, <code>/home</code>, <code>/spawn</code>, <code>/warp</code>, <code>/tpa B</code>, rồi <code>/back</code>; chết một lần rồi <code>/back</code>.",k:"Đều chạy, có thời gian chờ đứng yên. Người chơi thường (không phải staff) có <code>/back</code>: về chỗ trước lần dịch chuyển gần nhất, và về chỗ vừa chết.",c:"Thế giới › Dịch chuyển bằng lệnh; Thế giới › Lệnh /back cho người chơi."},
+ {id:"m8",t:"Cài đặt cá nhân /caidat",b:"<code>/caidat</code>, tắt Kênh chat chung, Tin nhắn riêng, Nhận TPA; B thử /msg, /tpa A.",k:"Menu 19 ô. B (tài khoản THƯỜNG) bị chặn kèm câu \"A đang tắt Nhận yêu cầu TPA\", kể cả gõ một phần tên (<code>/tpa li</code>). Staff/admin vẫn gửi được nhưng thấy dòng xám báo người kia đang tắt. Tắt Bảng bên phải thì ẩn ngay, vào lại vẫn giữ.",w:"Lần test trước gửi /tpa bằng tài khoản Linh (admin, có quyền vượt) nên vẫn tới: đúng thiết kế, nay có thêm dòng báo cho rõ.",f:"Chi tiết từng ô: cụm Kiểm tra cũ 4g trong TEST-CHECKLIST.md."},
  {id:"m9",t:"Việt hoá khi máy để tiếng Anh",b:"Đổi ngôn ngữ game sang English, thử /t, /bal, /ah, /emf.",k:"Vẫn là tiếng Việt.",w:"Các plugin bị ép tiếng Việt, không theo ngôn ngữ máy."},
  ]},
 
@@ -438,25 +441,25 @@ function local(save){
 }
 
 function counts(items){
-  let ok = 0, err = 0, skip = 0;
-  for (const i of items) { const s = STATE[i.id]?.tt; if (s === "ok") ok++; else if (s === "err") err++; else if (s === "skip") skip++; }
-  return {ok, err, skip, left: items.length - ok - err - skip, n: items.length};
+  let ok = 0, err = 0, skip = 0, lai = 0;
+  for (const i of items) { const s = STATE[i.id]?.tt; if (s === "ok") ok++; else if (s === "err") err++; else if (s === "skip") skip++; else if (s === "lai") lai++; }
+  return {ok, err, skip, lai, left: items.length - ok - err - skip - lai, n: items.length};
 }
 const pct = (a, n) => n ? (a / n * 100).toFixed(2) + "%" : "0%";
 
 function drawTotals(){
   const c = counts(ALL);
-  $("#totNums").innerHTML = `<span class="n-ok"><b>${c.ok}</b>đạt</span><span class="n-err"><b>${c.err}</b>lỗi</span><span class="n-skip"><b>${c.skip}</b>bỏ qua</span><span class="n-left"><b>${c.left}</b>còn lại / ${c.n}</span>`;
-  $("#totBar").innerHTML = `<i class="ok" style="width:${pct(c.ok,c.n)}"></i><i class="err" style="width:${pct(c.err,c.n)}"></i><i class="skip" style="width:${pct(c.skip,c.n)}"></i>`;
+  $("#totNums").innerHTML = `<span class="n-ok"><b>${c.ok}</b>đạt</span><span class="n-err"><b>${c.err}</b>lỗi</span><span class="n-skip"><b>${c.skip}</b>bỏ qua</span>${c.lai ? `<span class="n-lai"><b>${c.lai}</b>cần test lại</span>` : ""}<span class="n-left"><b>${c.left}</b>còn lại / ${c.n}</span>`;
+  $("#totBar").innerHTML = `<i class="ok" style="width:${pct(c.ok,c.n)}"></i><i class="err" style="width:${pct(c.err,c.n)}"></i><i class="skip" style="width:${pct(c.skip,c.n)}"></i><i class="lai" style="width:${pct(c.lai,c.n)}"></i>`;
 }
 
 function drawMap(){
   $("#map").innerHTML = PLAN.map((c, i) => {
     const k = counts(c.items);
-    return `<button class="cl${c.id === cur ? " on" : ""}${k.err ? " has-err" : ""}" data-c="${c.id}">
+    return `<button class="cl${c.id === cur ? " on" : ""}${k.err ? " has-err" : k.lai ? " has-lai" : ""}" data-c="${c.id}">
       <span class="no">${String(i + 1).padStart(2, "0")}</span><span class="nm">${esc(c.ten)}</span>
-      <span class="ct">${k.err ? k.err + " lỗi · " : ""}${k.ok + k.skip}/${k.n}</span>
-      <span class="mini"><i style="width:${pct(k.ok,k.n)};background:var(--ok)"></i><i style="width:${pct(k.err,k.n)};background:var(--err)"></i><i style="width:${pct(k.skip,k.n)};background:var(--skip)"></i></span></button>`;
+      <span class="ct">${k.err ? k.err + " lỗi · " : ""}${k.lai ? k.lai + " test lại · " : ""}${k.ok + k.skip}/${k.n}</span>
+      <span class="mini"><i style="width:${pct(k.ok,k.n)};background:var(--ok)"></i><i style="width:${pct(k.err,k.n)};background:var(--err)"></i><i style="width:${pct(k.skip,k.n)};background:var(--skip)"></i><i style="width:${pct(k.lai,k.n)};background:var(--lai)"></i></span></button>`;
   }).join("");
   document.querySelectorAll("#map .cl").forEach(b => b.onclick = () => { cur = b.dataset.c; try { localStorage.setItem("lotrinh-cum", cur); } catch (e) {} drawAll(); window.scrollTo({top: $("#cluster").offsetTop - 12, behavior: "smooth"}); });
 }
@@ -468,15 +471,15 @@ function itemHtml(i){
     <div class="stripe"></div>
     <div class="body">
       <div class="head">
-        <div class="title"><span class="id">${i.id}</span><h4>${i.t}</h4></div>
+        <div class="title"><span class="id">${i.id}</span><h4>${i.t}${s.tt === "lai" ? '<span class="tag-lai">Đã sửa · cần test lại</span>' : ""}</h4></div>
         <div class="state" role="group" aria-label="Kết quả">
           <button data-i="${i.id}" data-v="ok" class="${s.tt === "ok" ? "on" : ""}">Đạt</button>
           <button data-i="${i.id}" data-v="err" class="${s.tt === "err" ? "on" : ""}">Lỗi</button>
           <button data-i="${i.id}" data-v="skip" class="${s.tt === "skip" ? "on" : ""}">Bỏ qua</button>
         </div>
       </div>
-      <dl class="d">${row("Cách làm", i.b)}${row("Đúng là", i.k, "exp")}${row("Vì sao", i.w)}${row("Nếu sai", i.f, "fix")}${row("Cài đặt", i.c)}</dl>
-      ${s.tt === "err" || s.ghi_chu ? `<div class="note"><textarea id="note-${i.id}" data-i="${i.id}" placeholder="Làm gì, thấy gì, giờ nào, tài khoản nào…">${esc(s.ghi_chu || "")}</textarea><span class="saved" id="sv-${i.id}">${s.luc ? "Lưu lúc " + new Date(s.luc).toLocaleString("vi-VN") : ""}</span></div>` : ""}
+      <dl class="d">${s.sua ? row("Đã sửa", esc(s.sua), "sua") : ""}${row("Cách làm", i.b)}${row("Đúng là", i.k, "exp")}${row("Vì sao", i.w)}${row("Nếu sai", i.f, "fix")}${row("Cài đặt", i.c)}</dl>
+      ${s.tt === "err" || s.tt === "lai" || s.ghi_chu ? `<div class="note"><textarea id="note-${i.id}" data-i="${i.id}" placeholder="Làm gì, thấy gì, giờ nào, tài khoản nào…">${esc(s.ghi_chu || "")}</textarea><span class="saved" id="sv-${i.id}">${s.luc ? "Lưu lúc " + new Date(s.luc).toLocaleString("vi-VN") : ""}</span></div>` : ""}
     </div></article>`;
 }
 
@@ -487,11 +490,12 @@ function drawCluster(){
     const s = STATE[i.id]?.tt;
     if (filter === "left" && s) return false;
     if (filter === "err" && s !== "err") return false;
+    if (filter === "lai" && s !== "lai") return false;
     if (q && !(i.t + " " + i.b + " " + i.k).toLowerCase().includes(q)) return false;
     return true;
   });
   $("#cluster").innerHTML = `
-    <div class="ch"><span class="eyebrow">Cụm ${PLAN.indexOf(c) + 1}/${PLAN.length} · ${k.ok} đạt · ${k.err} lỗi · ${k.left} chưa test</span>
+    <div class="ch"><span class="eyebrow">Cụm ${PLAN.indexOf(c) + 1}/${PLAN.length} · ${k.ok} đạt · ${k.err} lỗi${k.lai ? " · " + k.lai + " cần test lại" : ""} · ${k.left} chưa test</span>
       <h2>${esc(c.ten)}</h2><p>${c.mo}</p></div>
     <div class="boxes">
       <div class="box prep"><h3>Chuẩn bị</h3><ul>${c.prep.map(x => `<li>${x}</li>`).join("")}</ul></div>
@@ -502,6 +506,7 @@ function drawCluster(){
         <button data-f="all" class="${filter === "all" ? "on" : ""}">Tất cả</button>
         <button data-f="left" class="${filter === "left" ? "on" : ""}">Chưa test</button>
         <button data-f="err" class="${filter === "err" ? "on" : ""}">Lỗi</button>
+        <button data-f="lai" class="${filter === "lai" ? "on" : ""}">Cần test lại</button>
       </div>
       <input id="search" type="search" placeholder="Tìm trong cụm này…" value="${esc(q)}" aria-label="Tìm">
       <button class="btn" id="copyErr">Chép danh sách lỗi</button>
@@ -530,7 +535,7 @@ async function write(id){
 function setState(id, v){
   const s = STATE[id] || {};
   const nv = s.tt === v ? "" : v;   // bấm lại lần nữa là bỏ chọn
-  STATE[id] = {tt: nv, ghi_chu: s.ghi_chu || "", luc: Date.now()};
+  STATE[id] = {tt: nv, ghi_chu: s.ghi_chu || "", luc: Date.now(), ...(s.sua ? {sua: s.sua} : {})};
   write(id);
   drawAll();
   if (nv === "err") { const t = document.getElementById("note-" + id); if (t) t.focus(); }
@@ -539,7 +544,7 @@ function setState(id, v){
 function saveNote(id, text){
   const s = STATE[id] || {tt: ""};
   if ((s.ghi_chu || "") === text) return;
-  STATE[id] = {tt: s.tt || "", ghi_chu: text, luc: Date.now()};
+  STATE[id] = {tt: s.tt || "", ghi_chu: text, luc: Date.now(), ...(s.sua ? {sua: s.sua} : {})};
   write(id);
   const sv = document.getElementById("sv-" + id);
   if (sv) sv.textContent = "Lưu lúc " + new Date().toLocaleString("vi-VN");
@@ -576,7 +581,7 @@ drawAll();
     let changed = false;
     for (const d of snap.docs) {
       const v = d.data(); const old = STATE[d.id];
-      if (!old || (v.luc || 0) > (old.luc || 0)) { STATE[d.id] = {tt: v.tt || "", ghi_chu: v.ghi_chu || "", luc: v.luc || 0}; changed = true; }
+      if (!old || (v.luc || 0) > (old.luc || 0)) { STATE[d.id] = {tt: v.tt || "", ghi_chu: v.ghi_chu || "", luc: v.luc || 0, ...(v.sua ? {sua: v.sua} : {})}; changed = true; }
     }
     if (changed) {
       local(true);

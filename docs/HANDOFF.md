@@ -23,12 +23,25 @@
   - **Tài khoản mới: đăng lại trang** từ `docs/lo-trinh-test.html` (Artifact publish, capabilities {"db": {}}, icon "checklist") → được
     URL mới, rồi nạp lại kết quả cũ bằng ArtifactData batch (set `ketqua/<mã>` từ file json). Báo người dùng URL mới.
   - Sửa lộ trình (thêm mục cho tính năng mới): sửa mảng PLAN trong html (giữ nguyên id cũ để kết quả không lệch), đăng lại cùng URL.
-  - **3 mục LỖI người dùng ghi, CHƯA sửa** (việc tiếp theo nên làm trước):
+  - **3 mục LỖI người dùng ghi: ĐÃ SỬA 20/10 tối, gắn nhãn "Cần test lại" trên trang (chi tiết dưới, TEST-CHECKLIST 4u):**
     1. m1 Quà tân thủ: "Mặc định vào không có gì, phải nhận từ kits mới có. Cài đặt có mục kits chưa, bao lâu nhận lại được. Mỗi rank
        một bộ kits khác nhau. Trong kits có đồ mặc định, đồ trong thư viện, xu…" → làm hệ kit theo rank trên Cài đặt, chọn đồ từ Thư viện đồ.
     2. m7 Lệnh nhà/warp/tpa: "Bổ sung /back cho người chơi" (hiện người chơi không có /back).
     3. m8 /caidat: "Tắt nhận TPA nhưng vẫn nhận được" → lỗi, kiểm PlayerSettings chặn tpa (có thể Essentials /tpa đi đường khác, vd /tpahere, /etpa).
 - Danh sách tay: `docs/TEST-CHECKLIST.md` (mục 4t mới cho 20/10).
+- **Sửa 20/10 tối (đã build + khởi động lại 4 server + panel):**
+  - m1 → module **Gói quà** `Kits.java` (config `goi-qua`, dữ liệu `goiqua.yml`): lệnh chính `/goiqua`; ở server có module (Bang Hội Chiến)
+    `/kit`, `/kits`, `/essentials:kit` (người chơi, console, RCON) được đổi hướng sang `/goiqua` bằng PlayerCommandPreprocess/ServerCommand/
+    RemoteServerCommand. KHÔNG khai lệnh "kit" trong plugin.yml vì Practice dùng `/kit edit` của Duels (đã thử: Practice /kit vẫn là Duels).
+    Gói: quà dạng Rewards, `cho` giây (-1 một lần), `rank` nhóm LuckPerms (trống = mọi người; quyền essentials.kits.<mã> từ ô "gói quà"
+    của rank cũng được). Gói lan-dau (tanthu) phát khi `!hasPlayedBefore()` (Essentials newbies.kit đã tắt). Cài đặt: kiểu panel mới `kits`
+    (trình soạn trong panel/index.html, kiểm ở app.py). /choilai gọi "kit tanthu <tên>" → đổi hướng sang gói. Admin: /goiqua <mã> <tên>, /goiqua lamlai.
+  - m7 → PlayRanks `back`, `back-ondeath` (Cài đặt › Thế giới › Lệnh /back cho người chơi): đặt essentials.back(.ondeath) cho 4 nhóm Danh phận,
+    ngữ cảnh banghoi-1 (đã kiểm trong DB LuckPerms; quyền staff global giữ nguyên).
+  - m8 → KHÔNG phải lỗi: log 15:15 cho thấy /tpa gửi từ Linh (admin có duckymomo.caidat.bypass qua *). Đã thêm: staff vượt công tắc thì thấy
+    dòng xám báo; TPA tìm tên kiểu Essentials (một phần tên). Phải test bằng 2 tài khoản thường.
+  - Trang lộ trình test có trạng thái mới `lai` (nhãn "Đã sửa · cần test lại", bộ lọc, trường `sua` ghi đã sửa gì). Claude sửa xong mục nào thì
+    `ArtifactData update ketqua/<mã> {tt: "lai", sua: "...", luc: <ms hiện tại>}` (luc phải lớn hơn bản trên máy người dùng).
 
 ### Quy tắc mới 20/10 (người dùng yêu cầu, giữ)
 - **KHÔNG chữ in đậm** (&l, §l, <bold>, <b>) ở mọi chữ người chơi thấy: font tiếng Việt vẽ đậm bị nhòe như 3D. Thêm plugin/bản dịch:

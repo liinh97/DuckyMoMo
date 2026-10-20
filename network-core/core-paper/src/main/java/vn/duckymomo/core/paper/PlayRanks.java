@@ -96,6 +96,9 @@ final class PlayRanks implements Listener {
     private final List<Tier> tiers = new ArrayList<>();
     private final String server;
     private final boolean announce;
+    /** /back cho người chơi (essentials.back) và /back về chỗ vừa chết (essentials.back.ondeath): cấp cho mọi bậc Danh phận. */
+    private final boolean back;
+    private final boolean backOnDeath;
     private final List<Extra> extras = new ArrayList<>();
 
     PlayRanks(DuckyMoMoCore plugin, Activity activity, ConfigurationSection c) {
@@ -103,6 +106,8 @@ final class PlayRanks implements Listener {
         this.activity = activity;
         this.server = c.getString("server", "banghoi-1");
         this.announce = c.getBoolean("announce", true);
+        this.back = c.getBoolean("back", false);
+        this.backOnDeath = c.getBoolean("back-ondeath", false);
         ConfigurationSection ts = c.getConfigurationSection("tiers");
         if (ts != null) {
             int i = 0;
@@ -157,7 +162,13 @@ final class PlayRanks implements Listener {
         ImmutableContextSet ctx = ImmutableContextSet.of("server", server);
         for (Tier t : tiers) {
             lp.getGroupManager().createAndLoadGroup(t.group()).thenAccept(g -> {
-                g.data().clear(n -> managed(n));
+                g.data().clear(n -> managed(n) || isBack(n, ctx));
+                if (back) {
+                    g.data().add(PermissionNode.builder("essentials.back").context(ctx).build());
+                }
+                if (backOnDeath) {
+                    g.data().add(PermissionNode.builder("essentials.back.ondeath").context(ctx).build());
+                }
                 if (!t.prefix().isBlank()) {
                     g.data().add(PrefixNode.builder(t.prefix(), t.priority()).build());
                 }
@@ -199,6 +210,12 @@ final class PlayRanks implements Listener {
         }
         String k = n.getKey();
         return MANAGED.stream().anyMatch(k::startsWith) || k.startsWith("essentials.kits.") && kits.contains(k.substring(16));
+    }
+
+    /** Quyền /back do Danh phận đặt (chỉ ngữ cảnh server này; quyền /back staff tự đặt ở chỗ khác thì giữ). */
+    private static boolean isBack(Node n, ImmutableContextSet ctx) {
+        return n.getType() == NodeType.PERMISSION && (n.getKey().equals("essentials.back") || n.getKey().equals("essentials.back.ondeath"))
+                && n.getContexts().equals(ctx);
     }
 
     private static void addPerks(net.luckperms.api.model.group.Group g, Perks p, ImmutableContextSet ctx) {

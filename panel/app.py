@@ -409,6 +409,32 @@ def validate(s, v):
         if not out:
             raise ValueError(f"{label}: cần ít nhất một phần thưởng")
         return out
+    if t == "kits":
+        # Gói quà /kit: {mã: {ten, icon, cho (giây, -1 = một lần), rank [nhóm LuckPerms], qua [Rewards]}}
+        out = {}
+        for kid, k in (v or {}).items():
+            kid = str(kid).strip().lower()
+            if not LIB_ID_RE.match(kid):
+                raise ValueError(f"{label}: mã gói \"{kid}\" chỉ gồm chữ thường không dấu, số, _")
+            k = k or {}
+            icon = str(k.get("icon") or "CHEST").strip().upper()
+            if not MATERIAL_RE.match(icon):
+                raise ValueError(f"{label} ({kid}): biểu tượng sai \"{icon}\"")
+            try:
+                cho = int(k.get("cho", -1))
+            except (TypeError, ValueError):
+                raise ValueError(f"{label} ({kid}): thời gian chờ phải là số giây")
+            if not -1 <= cho <= 366 * 86400:
+                raise ValueError(f"{label} ({kid}): thời gian chờ -1 (một lần) đến 366 ngày")
+            ranks = [str(r).strip().lower() for r in (k.get("rank") or []) if str(r).strip()]
+            for r in ranks:
+                if not re.match(r"^[a-z0-9_\-]{1,32}$", r):
+                    raise ValueError(f"{label} ({kid}): tên rank sai \"{r}\"")
+            qua = check_rewards(f"{label} ({kid})", k.get("qua"))
+            if not qua:
+                raise ValueError(f"{label} ({kid}): cần ít nhất một món quà")
+            out[kid] = {"ten": str(k.get("ten") or kid).strip()[:40] or kid, "icon": icon, "cho": cho, "rank": ranks, "qua": qua}
+        return out
     if t == "quests":
         out = {}
         for qid, q in (v or {}).items():

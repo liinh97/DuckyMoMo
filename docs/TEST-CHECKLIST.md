@@ -269,6 +269,15 @@ Triển khai: kiểm tra không ai online (lệnh riêng) → `docker compose up
 - [ ] Đăng ký: tài khoản thứ 3 cùng IP bị chặn; tên trong whitelist thì không; captcha bản đồ Sonar khi vào lần đầu.
 - [ ] /caidat Font tiếng Việt bật/tắt đổi gói tài nguyên; /menu (Shift+F) đủ nút; không còn chữ đậm nhòe.
 
+
+## 4u. 20/10 tối: sửa 3 lỗi lộ trình test (m1, m7, m8) — đã triển khai, CHƯA thử bằng người
+- [ ] m1 Gói quà: tài khoản MỚI vào Bang Hội Chiến → 2 giây sau có Quà tân thủ trong túi + tin "Đã nhận Quà tân thủ". `/kit` mở menu (tân thủ ghi Đã nhận).
+- [ ] m1 Gói theo rank: `/danhphan dat A dan` → `/kit` thấy Gói Dân bấm nhận được; nhận lại báo "Còn … nữa". Gói Lương Dân/Hào Kiệt ghi "Cần rank".
+- [ ] m1 Cài đặt › Người mới › Gói quà: thêm gói mới, chọn đồ từ Thư viện, Lưu → `/kit` thấy ngay. `/goiqua lamlai <tên>` để thử lại.
+- [ ] m1 Practice: `/kit edit` của Duels vẫn chạy (Gói quà chỉ đổi hướng /kit ở Bang Hội Chiến).
+- [ ] m7 `/back` bằng tài khoản THƯỜNG: sau /home về chỗ cũ; chết rồi /back về chỗ chết. Tắt ở Cài đặt › Thế giới › Lệnh /back → hết quyền.
+- [ ] m8 `/caidat` tắt Nhận TPA (A), B thường gõ `/tpa A` và `/tpa <một phần tên>` → bị chặn. Admin gửi → tới nhưng thấy dòng xám báo A đang tắt.
+
 ## 5. Quảng trường Danh vọng (sảnh)
 - [ ] (CHƯA CẦN, làm khi gần mở server) Chọn chỗ trống ở sảnh (map sakura). Đứng, quay mặt về phía người xem: `/vinhdanh dat moinhat tieude`, rồi `bachu`, `chienthan`, `phuho`,
       `kientrucsu`, `dautruong`, `pet` ở các chỗ khác. Bảng chữ nổi + đầu người chơi đúng hướng, không đè nhau.

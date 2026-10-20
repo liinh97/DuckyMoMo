@@ -718,22 +718,6 @@ sk_daily_limit: 1000.0
 sk_tax: 0
 sk_max_shops: -1
 sk_towny: false
-newbie_kit_items:
-  - stone_sword 1
-  - stone_pickaxe 1
-  - stone_axe 1
-  - stone_shovel 1
-  - leather_helmet 1
-  - leather_chestplate 1
-  - leather_leggings 1
-  - leather_boots 1
-  - bread 16
-  - torch 16
-  - white_bed 1
-  - oak_log 32
-  - crafting_table 1
-  - /msg {USERNAME} Chào mừng tới Bang Hội Chiến! Gõ /huongdan để xem cách chơi.
-newbie_kit_on: tanthu
 newbie_announce: '&d✦ Chào mừng &f{DISPLAYNAME} &dlần đầu tới Bang Hội Chiến!'
 siege_enabled: true
 pvp_wild: true
@@ -1685,3 +1669,67 @@ md_tiktok: true
 md_fail: 2
 md_cooldown: 60
 petcap_charm_item: bua_bat_pet
+goiqua_on: true
+goiqua_landau: tanthu
+goiqua_list:
+  tanthu:
+    ten: "Quà tân thủ"
+    icon: CHEST
+    cho: -1
+    rank: []
+    qua:
+      - vat STONE_SWORD 1
+      - vat STONE_PICKAXE 1
+      - vat STONE_AXE 1
+      - vat STONE_SHOVEL 1
+      - vat LEATHER_HELMET 1
+      - vat LEATHER_CHESTPLATE 1
+      - vat LEATHER_LEGGINGS 1
+      - vat LEATHER_BOOTS 1
+      - vat BREAD 16
+      - vat TORCH 16
+      - vat WHITE_BED 1
+      - vat OAK_LOG 32
+      - vat CRAFTING_TABLE 1
+  dan:
+    ten: "Gói Dân"
+    icon: BREAD
+    cho: 86400
+    rank: [dan, luongdan, haokiet]
+    qua:
+      - vat BREAD 16
+      - vat TORCH 32
+      - xu 50
+  luongdan:
+    ten: "Gói Lương Dân"
+    icon: IRON_HOE
+    cho: 86400
+    rank: [luongdan, haokiet]
+    qua:
+      - vat COOKED_BEEF 16
+      - vat IRON_INGOT 8
+      - xu 100
+  haokiet:
+    ten: "Gói Hào Kiệt"
+    icon: GOLDEN_HELMET
+    cho: 86400
+    rank: [haokiet]
+    qua:
+      - vat COOKED_BEEF 32
+      - vat GOLDEN_CARROT 16
+      - vat IRON_INGOT 16
+      - xu 200
+  media:
+    ten: "Gói quà Sứ Giả"
+    icon: BEACON
+    cho: 259200
+    rank: [media]
+    qua:
+      - vat COOKED_BEEF 32
+      - vat GOLDEN_CARROT 16
+      - vat GOLDEN_APPLE 4
+      - vat EXPERIENCE_BOTTLE 16
+      - vat TORCH 64
+      - lenh broadcast &c◆ Sứ Giả &f{player} &7vừa nhận gói quà Sứ Giả!
+back_on: true
+back_death: true

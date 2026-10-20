@@ -371,9 +371,7 @@ final class PlayerSettings implements Listener {
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onCommand(PlayerCommandPreprocessEvent e) {
         Player s = e.getPlayer();
-        if (s.hasPermission("duckymomo.caidat.bypass")) {
-            return;
-        }
+        boolean bypass = s.hasPermission("duckymomo.caidat.bypass");
         String[] a = e.getMessage().substring(1).trim().split("\\s+");
         if (a.length < 2) {
             return;
@@ -400,8 +398,14 @@ final class PlayerSettings implements Listener {
         if (id == null) {
             return;
         }
-        Player t = Bukkit.getPlayerExact(target);
+        // TPA: Essentials nhận cả một phần tên (vd /tpa lin) nên tìm như vậy; tin nhắn/lệnh khác giữ đúng tên (tránh /t claim khớp nhầm)
+        Player t = id.startsWith("tpa") ? Bukkit.getPlayer(target) : Bukkit.getPlayerExact(target);
         if (t == null || t == s || on(t, id)) {
+            return;
+        }
+        if (bypass) {
+            // staff vẫn gửi được, nhưng báo rõ để không tưởng công tắc hỏng
+            s.sendMessage(c("&7(" + t.getName() + " đang tắt " + OPTS.get(id).name() + "; bạn vẫn gửi được vì có quyền staff.)"));
             return;
         }
         e.setCancelled(true);

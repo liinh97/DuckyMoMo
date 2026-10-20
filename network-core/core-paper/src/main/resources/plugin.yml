@@ -19,6 +19,8 @@ softdepend:
   - MyPet
   - Citizens
 commands:
+  goiqua:
+    description: "Gói quà theo rank (/goiqua hoặc /kit ở Bang Hội Chiến). Admin: /goiqua <mã> <người>, /goiqua lamlai <người> [mã]"
   doimanh:
     description: "Đổi mảnh sự kiện lấy quà. Admin: /doimanh give <người> <loại> <số>"
     aliases: [manh]
@@ -176,6 +178,9 @@ commands:
     description: "Đấu Trường: người + pet đấu 1v1, 2v2 (hàng chờ, thách đấu, cược, xếp hạng)"
     aliases: [dt, arena]
 permissions:
+  duckymomo.kit.admin:
+    description: "Phát gói quà cho người khác, xoá lượt đã nhận (/kit <mã> <người>, /kit lamlai)"
+    default: op
   duckymomo.caidat.bypass:
     description: "Nhắn riêng / TPA / mời được cả người đã tắt (staff)"
     default: op

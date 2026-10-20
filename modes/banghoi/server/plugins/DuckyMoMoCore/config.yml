@@ -480,6 +480,75 @@ vote:
 
 # Điểm danh hằng ngày (/diemdanh): đếm TỔNG số ngày (bỏ ngày không mất chuỗi). Lưu: diemdanh.yml
 # Quà, mỗi dòng một món: xu <số> | do <mã thư viện đồ> [số] | vat <VẬT_LIỆU> [số] | lenh <lệnh, {player}> | manh <loại> <số>
+
+# Gói quà /kit (Kits.java, 20/10): thay kit của Essentials. Sửa trên trang Cài đặt › Người mới › Gói quà.
+#   cho: giây chờ trước khi nhận lại (-1 = chỉ một lần, 0 = không chờ). rank: nhóm LuckPerms được nhận (trống = mọi người).
+#   qua: dạng Rewards (vat VẬT_LIỆU số, do <mã thư viện> [số], xu <số>, lenh <lệnh {player}>, manh <loại> <số>).
+#   lan-dau: gói tự phát khi vào Bang Hội Chiến lần đầu. Rank ủng hộ (mua bằng tiền) KHÔNG được có gói đồ chơi game (luật Mojang).
+goi-qua:
+  enabled: true
+  lan-dau: tanthu
+  goi:
+    tanthu:
+      ten: "Quà tân thủ"
+      icon: CHEST
+      cho: -1
+      rank: []
+      qua:
+        - vat STONE_SWORD 1
+        - vat STONE_PICKAXE 1
+        - vat STONE_AXE 1
+        - vat STONE_SHOVEL 1
+        - vat LEATHER_HELMET 1
+        - vat LEATHER_CHESTPLATE 1
+        - vat LEATHER_LEGGINGS 1
+        - vat LEATHER_BOOTS 1
+        - vat BREAD 16
+        - vat TORCH 16
+        - vat WHITE_BED 1
+        - vat OAK_LOG 32
+        - vat CRAFTING_TABLE 1
+    dan:
+      ten: "Gói Dân"
+      icon: BREAD
+      cho: 86400
+      rank: [dan, luongdan, haokiet]
+      qua:
+        - vat BREAD 16
+        - vat TORCH 32
+        - xu 50
+    luongdan:
+      ten: "Gói Lương Dân"
+      icon: IRON_HOE
+      cho: 86400
+      rank: [luongdan, haokiet]
+      qua:
+        - vat COOKED_BEEF 16
+        - vat IRON_INGOT 8
+        - xu 100
+    haokiet:
+      ten: "Gói Hào Kiệt"
+      icon: GOLDEN_HELMET
+      cho: 86400
+      rank: [haokiet]
+      qua:
+        - vat COOKED_BEEF 32
+        - vat GOLDEN_CARROT 16
+        - vat IRON_INGOT 16
+        - xu 200
+    media:
+      ten: "Gói quà Sứ Giả"
+      icon: BEACON
+      cho: 259200
+      rank: [media]
+      qua:
+        - vat COOKED_BEEF 32
+        - vat GOLDEN_CARROT 16
+        - vat GOLDEN_APPLE 4
+        - vat EXPERIENCE_BOTTLE 16
+        - vat TORCH 64
+        - lenh broadcast &c◆ Sứ Giả &f{player} &7vừa nhận gói quà Sứ Giả!
+
 daily-checkin:
   enabled: true
   min-online-minutes: 5       # phải online đủ trong phiên mới điểm danh được (chống tài khoản phụ)
@@ -1017,6 +1086,8 @@ tinh-luyen:
 # zAuctionHouse permissions.auction có zauctionhouse.max.1..20 (số lớn hơn 20 thì thêm vào 2 file đó).
 play-ranks:
   enabled: true
+  back: true            # /back cho người chơi mọi bậc (Cài đặt › Thế giới › Dịch chuyển bằng lệnh)
+  back-ondeath: true    # /back về chỗ vừa chết
   server: banghoi-1
   announce: true
   tiers:

@@ -11,8 +11,9 @@
  },
  "m1": {
   "ghi_chu": "Mặc định vào không có gì, phải nhận từ kits mới có (trong cài đặt có mục kits chưa, bao lâu thì nhận lại được. Mỗi rank lại có một bộ kits khác nhau)\nTrong kits sẽ có đồ mặc định, đồ trong thư viện, xu, ...",
-  "luc": 1792482660483,
-  "tt": "err"
+  "luc": 1792489400000,
+  "sua": "20/10: hệ Gói quà /kit (tân thủ tự phát lần đầu, gói theo rank, sửa trên Cài đặt › Người mới › Gói quà).",
+  "tt": "lai"
  },
  "m2": {
   "ghi_chu": "",
@@ -41,13 +42,15 @@
  },
  "m7": {
   "ghi_chu": "Bổ sung back cho người chơi",
-  "luc": 1792483603941,
-  "tt": "err"
+  "luc": 1792489400000,
+  "sua": "20/10: người chơi có /back và /back về chỗ chết (Cài đặt › Thế giới › Lệnh /back).",
+  "tt": "lai"
  },
  "m8": {
   "ghi_chu": "Tắt nhận tpa nhưng vẫn nhận được",
-  "luc": 1792484266730,
-  "tt": "err"
+  "luc": 1792489400000,
+  "sua": "20/10: lần test gửi từ admin (vượt công tắc, đúng thiết kế); thêm dòng báo cho staff + tìm một phần tên. Test bằng 2 tài khoản thường.",
+  "tt": "lai"
  },
  "m9": {
   "ghi_chu": "",

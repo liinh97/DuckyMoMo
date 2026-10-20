@@ -235,6 +235,7 @@ final class Orders implements Listener {
                 .kv("Tiến độ", da + "/" + can + " &8(" + pct + "%)").kv("Còn trả", "&a" + money((can - da) * gia))
                 .kv("Hết hạn", o.getBoolean("dong") ? "&8đã đóng" : left(expiresAt(o) - System.currentTimeMillis())).line();
         if (mine) {
+            t.raw("&eĐơn của bạn");
             int kho = o.getInt("kho");
             if (kho > 0) {
                 t.click("Chuột trái", "nhận " + kho + " món đã giao");
@@ -242,7 +243,7 @@ final class Orders implements Listener {
                 t.note("Chưa có hàng giao tới");
             }
             if (!o.getBoolean("dong")) {
-                t.click("Chuột phải", "huỷ đơn &8(/choden huy " + id + ")");
+                t.click("Chuột phải", "rút đơn, trả lại tiền phần chưa giao");
             }
         } else {
             t.click("Bấm để giao hàng").note("Chỉ nhận đồ thường, không tên, không phù phép");
@@ -296,7 +297,8 @@ final class Orders implements Listener {
         h.inv = Bukkit.createInventory(h, 54, c(title));
         for (int i = 0; i < PAGE && page * PAGE + i < list.size(); i++) {
             int id = list.get(page * PAGE + i);
-            h.inv.setItem(i, icon(id, order(id), mine));
+            // đơn của chính mình (kể cả ở màn Thu mua): hiện nút nhận hàng / huỷ thay vì giao hàng
+            h.inv.setItem(i, icon(id, order(id), mine || p.getUniqueId().toString().equals(order(id).getString("owner"))));
             h.slots.put(i, id);
         }
         if (page > 0) {
@@ -349,13 +351,19 @@ final class Orders implements Listener {
         if (id == null) {
             return;
         }
-        if (h.mine) {
+        ConfigurationSection oo = order(id);
+        boolean own = oo != null && p.getUniqueId().toString().equals(oo.getString("owner"));
+        if (h.mine || own) {
             if (e.getClick() == ClickType.RIGHT || e.getClick() == ClickType.SHIFT_RIGHT) {
                 cancel(p, id);
             } else {
                 collect(p, id);
             }
-            openMine(p);
+            if (h.mine) {
+                openMine(p);
+            } else {
+                openMarket(p, h.page);
+            }
         } else {
             deliver(p, id);
             openMarket(p, h.page);

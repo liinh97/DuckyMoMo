@@ -1,6 +1,7 @@
 # DuckyMoMo: cấu hình Sonar (chống bot, proxy Velocity). Bản gốc trong Git, chép vào data/proxy khi proxy khởi động.
 # Đã đổi so với mặc định:
-#  - max-online-per-ip 3 -> 20: qua playit người chơi có thể hiện chung một IP (127.x), giới hạn 3 sẽ chặn nhầm.
+#  - max-online-per-ip 3 -> 5 (20/10; trước đó 20 vì playit làm mọi người chung IP 127.x, playit đã bỏ 19/10): đủ cho gia đình/quán net,
+#    chặn một IP dựng hàng loạt bot đã qua captcha.
 #  - 20/10 (chủ server muốn captcha kiểu ảnh như server khác): verification.timing ALWAYS + map-captcha ALWAYS:
 #    người MỚI (chưa xác minh) vào lần đầu: rơi xuống + gõ chữ vẽ trên tấm bản đồ (không chép được như captcha chat của AuthMe),
 #    đạt thì bị kick 1 lần, vào lại là chơi. Đã xác minh thì lưu database H2 (verified_players, giữ 30 ngày), khởi động lại proxy không phải làm lại.
@@ -29,7 +30,7 @@ general:
   # Should Sonar log players' IP addresses in console?
   log-player-addresses: true
   # Maximum number of players online with the same IP address
-  max-online-per-ip: 20
+  max-online-per-ip: 5
 
 # Sensitivity settings for the attack tracker
 # Only edit this if you know what you're doing

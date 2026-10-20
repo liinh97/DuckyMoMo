@@ -6,9 +6,9 @@
 #   Customize these messages to match your server's language and style.
 #
 #   FORMATTING:
-#   - Supports MiniMessage format: <red>, <bold>, <gradient:red:blue>, etc.
+#   - Supports MiniMessage format: <red>, <gradient:red:blue>, etc.
 #   - Supports hex colors: #RRGGBB or #RGB
-#   - Supports legacy codes: &c, &l, etc. (not recommended, use MiniMessage)
+#   - Supports legacy codes: &c, etc. (not recommended, use MiniMessage)
 #   - Use custom color shortcuts defined in config.yml: <primary>, <secondary>, <error>, <success>
 #
 #   PLACEHOLDERS:

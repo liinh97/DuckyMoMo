@@ -521,7 +521,7 @@ final class ThaiAp implements Listener {
     }
 
     private void help(Player p) {
-        p.sendMessage(c("&6&l🏡 Thái Ấp &7— đất riêng an toàn: không PvP, không bị vây, không quái. Không có quặng: chỉ để xây, làm nông, nuôi pet."));
+        p.sendMessage(c("&6🏡 Thái Ấp &7— đất riêng an toàn: không PvP, không bị vây, không quái. Không có quặng: chỉ để xây, làm nông, nuôi pet."));
         p.sendMessage(c("&7Mua: &f/thaiap mua &7(" + money(prices.get(0)) + ", cạnh " + sizes.get(0) + " khối) · mở rộng: &f/thaiap morong"));
         p.sendMessage(c("&7Về: &f/thaiap &7· mời bạn xây cùng: &f/thaiap moi <tên> &7(bỏ: duoi) · đặt tên: &f/thaiap ten <tên> &7· chỗ xuất hiện: &f/thaiap datspawn"));
         p.sendMessage(c("&7Tham quan: &f/thaiap ghe <tên> &7· thích Thái Ấp đang đứng: &f/thaiap thich &7· đẹp nhất: &f/thaiap top"));
@@ -558,7 +558,7 @@ final class ThaiAp implements Listener {
         save();
         drawBorder(n, sizes.get(0));
         p.teleport(home(u));
-        p.sendMessage(c("&a&l🏡 Đã mua Thái Ấp " + sizes.get(0) + "×" + sizes.get(0) + "! &7Viền lối mòn là ranh giới. Gõ &f/thaiap &7để xem lệnh."));
+        p.sendMessage(c("&a🏡 Đã mua Thái Ấp " + sizes.get(0) + "×" + sizes.get(0) + "! &7Viền lối mòn là ranh giới. Gõ &f/thaiap &7để xem lệnh."));
         writeJson();
     }
 
@@ -731,7 +731,7 @@ final class ThaiAp implements Listener {
         data.set("cong-sangtao", bx + "," + by + "," + bz);
         save();
         world.spawn(new Location(world, bx + 1.0, by + 5.6, bz + 0.5), org.bukkit.entity.TextDisplay.class, t -> {
-            t.text(c("&d&l✦ THÁI ẤP SÁNG TẠO ✦\n&fBước vào cổng để sang chế độ sáng tạo\n&7Cần có Thái Ấp hoặc được mời xây cùng"));
+            t.text(c("&d✦ THÁI ẤP SÁNG TẠO ✦\n&fBước vào cổng để sang chế độ sáng tạo\n&7Cần có Thái Ấp hoặc được mời xây cùng"));
             t.setBillboard(org.bukkit.entity.Display.Billboard.CENTER);
             t.setPersistent(true);
             t.getPersistentDataContainer().set(portalKey, PersistentDataType.BYTE, (byte) 1);
@@ -847,7 +847,7 @@ final class ThaiAp implements Listener {
             }
             p.setGameMode(org.bukkit.GameMode.CREATIVE);
             p.teleport(plot != null ? home(plot) : world.getSpawnLocation());
-            p.sendMessage(c("&d&l✦ THÁI ẤP SÁNG TẠO &7— bản sao mảnh đất " + (plot != null && plot.equals(u) ? "của bạn" : "bạn được mời")
+            p.sendMessage(c("&d✦ THÁI ẤP SÁNG TẠO &7— bản sao mảnh đất " + (plot != null && plot.equals(u) ? "của bạn" : "bạn được mời")
                     + ", xây thoả thích ở chế độ sáng tạo."));
             p.sendMessage(c("&7Túi đồ ở đây riêng, đồ không mang về Bang Hội Chiến. Lệnh: &f/thaiap &7(về mảnh đất) · &f/thaiap ghe <tên> &7· &f/thaiap ve &7(về Bang Hội Chiến)"));
         }, 5L);
@@ -880,7 +880,7 @@ final class ThaiAp implements Listener {
             case "mua", "morong", "moi", "duoi", "ten", "datspawn", "thich" ->
                     p.sendMessage(c("&eLàm ở Bang Hội Chiến (&f/thaiap " + sub + "&e): Thái Ấp Sáng Tạo tự cập nhật theo trong 30 giây."));
             default -> {
-                p.sendMessage(c("&d&l✦ Thái Ấp Sáng Tạo &7— bản sao mảnh đất ở chế độ sáng tạo, túi đồ riêng."));
+                p.sendMessage(c("&d✦ Thái Ấp Sáng Tạo &7— bản sao mảnh đất ở chế độ sáng tạo, túi đồ riêng."));
                 p.sendMessage(c("&7&f/thaiap &7về mảnh đất · &f/thaiap ghe <tên> &7tham quan · &f/thaiap ve &7về Bang Hội Chiến"));
             }
         }
@@ -996,7 +996,7 @@ final class ThaiAp implements Listener {
     }
 
     private void top(CommandSender s) {
-        s.sendMessage(c("&6&l🏡 Thái Ấp được thích nhiều nhất"));
+        s.sendMessage(c("&6🏡 Thái Ấp được thích nhiều nhất"));
         List<String> ids = ranked();
         for (int i = 0; i < Math.min(10, ids.size()); i++) {
             String id = ids.get(i);

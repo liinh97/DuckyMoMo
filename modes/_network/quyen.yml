@@ -64,7 +64,7 @@ groups:
   - title: Chat và trang trí
     perms:
       - [essentials.chat.color, "Chat có màu", "Làm gì: Chat được dùng 16 màu cơ bản.\nCách dùng: Gõ &a, &c… trước chữ\nCó ở: Bang Hội Chiến, Practice (sảnh không cài Essentials)"]
-      - [essentials.chat.format, "Chat chữ đậm/nghiêng", "Làm gì: Chat được chữ đậm, nghiêng, gạch chân.\nCách dùng: Gõ &l, &o, &n trước chữ\nCó ở: Bang Hội Chiến, Practice (sảnh không cài Essentials)"]
+      - [essentials.chat.format, "Chat chữ đậm/nghiêng", "Làm gì: Chat được chữ đậm, nghiêng, gạch chân.\nCách dùng: Gõ &o (nghiêng), &n (gạch chân) trước chữ. Không dùng chữ đậm: với font tiếng Việt của server chữ đậm bị nhòe\nCó ở: Bang Hội Chiến, Practice (sảnh không cài Essentials)"]
       - [essentials.nick, "Đổi tên hiển thị (/nick)", "Làm gì: Đổi tên hiển thị trong chat và Tab (tên thật giữ nguyên, có dấu ~ phía trước).\nCách dùng: /nick <tên>, /nick off\nCó ở: Bang Hội Chiến, Practice (sảnh không cài Essentials)\nLưu ý: Tên có màu cần thêm quyền \"Nick có màu\"."]
       - [essentials.hat, "Đội đồ lên đầu (/hat)", "Làm gì: Đội món đang cầm lên đầu (trang trí).\nCách dùng: /hat\nCó ở: Bang Hội Chiến, Practice (sảnh không cài Essentials)"]
       - [duckymomo.chat.bypass, "Không bị chống spam chat", "Làm gì: Không bị chống spam/lặp tin chặn.\nCó ở: Mọi server\nLưu ý: Vẫn bị lọc từ cấm."]

@@ -205,7 +205,7 @@ final class TreasureHunt implements Listener {
     private ItemStack makeMap(Tier t, Location l, Zone z) {
         ItemStack it = new ItemStack(Material.PAPER);
         ItemMeta m = it.getItemMeta();
-        m.displayName(c("&6&l🗺 Bản đồ kho báu &7(" + t.name() + "&7)"));
+        m.displayName(c("&6🗺 Bản đồ kho báu &7(" + t.name() + "&7)"));
         int rx = (int) Math.round(l.getX() / 50.0) * 50, rz = (int) Math.round(l.getZ() / 50.0) * 50;
         m.lore(List.of(c("&7Vùng: &f" + z.name()), c("&7Quanh toạ độ: &fX " + rx + " Z " + rz + " &8(±50)"),
                 c("&7Cầm trên tay để dò: lạnh → ấm → nóng"), c("&eTới nơi: ngồi xuống (Shift) để đào"), c("&8Lính canh sẽ xuất hiện!")));
@@ -277,7 +277,7 @@ final class TreasureHunt implements Listener {
             }
             double dx = p.getLocation().getX() - Integer.parseInt(v[2]), dz = p.getLocation().getZ() - Integer.parseInt(v[4]);
             double d = Math.sqrt(dx * dx + dz * dz);
-            p.sendActionBar(c(d <= digRadius ? "&c&l🔥🔥 Ngay dưới chân! &eNgồi xuống (Shift) để đào" : d < 30 ? "&c🔥 Nóng lắm rồi (" + (int) d + " khối)"
+            p.sendActionBar(c(d <= digRadius ? "&c🔥🔥 Ngay dưới chân! &eNgồi xuống (Shift) để đào" : d < 30 ? "&c🔥 Nóng lắm rồi (" + (int) d + " khối)"
                     : d < 100 ? "&6☀ Ấm dần…" : d < 300 ? "&b❄ Lạnh" : "&9❄❄ Rất xa"));
         }
         long now = System.currentTimeMillis();
@@ -357,7 +357,7 @@ final class TreasureHunt implements Listener {
         List<String> got = rewards == null ? List.of() : rewards.give(p, d.tier.rewards());
         d.loc.getWorld().spawnParticle(Particle.TOTEM_OF_UNDYING, d.loc, 40, 0.5, 0.8, 0.5, 0.2);
         p.playSound(p.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 0.8f, 1f);
-        p.sendMessage(c("&a&l✔ Mở rương kho báu " + d.tier.name() + "&a: " + (got.isEmpty() ? "" : String.join("&a, ", got))));
+        p.sendMessage(c("&a✔ Mở rương kho báu " + d.tier.name() + "&a: " + (got.isEmpty() ? "" : String.join("&a, ", got))));
         Achievements.add(p, "khobau", 1);
         DungeonGate dg = Shared.dungeonGate;
         if (d.tier.revealHidden() > 0 && ThreadLocalRandom.current().nextDouble(100) < d.tier.revealHidden()) {
@@ -411,7 +411,7 @@ final class TreasureHunt implements Listener {
             }
             return true;
         }
-        s.sendMessage(c("&6&l🗺 Bản đồ kho báu"));
+        s.sendMessage(c("&6🗺 Bản đồ kho báu"));
         s.sendMessage(c("&7Nhặt được khi &fcâu cá &7(" + fishChance + "%) hoặc &fhạ quái &7(" + mobChance + "%), tối đa " + maxPerDay + " bản đồ/ngày."));
         s.sendMessage(c("&7Cầm bản đồ trên tay: thanh dưới màn hình báo lạnh/ấm/nóng. Tới nơi thì ngồi xuống (Shift) để đào, hạ hết lính canh để mở rương."));
         for (Tier t : tiers) {

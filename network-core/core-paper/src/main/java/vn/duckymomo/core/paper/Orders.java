@@ -265,7 +265,7 @@ final class Orders implements Listener {
                 list.add(id);
             }
         }
-        render(p, list, false, page, "&2&lSÀN THU MUA &8(" + list.size() + " đơn)");
+        render(p, list, false, page, "&2SÀN THU MUA &8(" + list.size() + " đơn)");
     }
 
     void openMine(Player p) {
@@ -280,7 +280,7 @@ final class Orders implements Listener {
             p.sendMessage(c("&7Bạn chưa có đơn nào. Tạo: cầm món cần mua, gõ &e/donhang tao <số lượng> <đơn giá>"));
             return;
         }
-        render(p, list, true, 0, "&6&lĐƠN CỦA TÔI");
+        render(p, list, true, 0, "&6ĐƠN CỦA TÔI");
     }
 
     private void render(Player p, List<Integer> list, boolean mine, int page, String title) {
@@ -570,7 +570,7 @@ final class Orders implements Listener {
                 }
             }
             case "giup", "help" -> {
-                p.sendMessage(c("&6&l━━ SÀN THU MUA ━━"));
+                p.sendMessage(c("&6━━ SÀN THU MUA ━━"));
                 p.sendMessage(c("&e/donhang &7mở sàn, bấm đơn để giao hàng nhận tiền ngay"));
                 p.sendMessage(c("&e/donhang tao <số lượng> <đơn giá> &7(cầm món cần mua) đặt đơn; tiền được giữ trước, phí "
                         + cfg.getDouble("fee-percent", 2) + "%"));

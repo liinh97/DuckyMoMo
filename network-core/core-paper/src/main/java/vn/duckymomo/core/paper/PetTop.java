@@ -46,7 +46,7 @@ final class PetTop {
                 s.sendMessage(c("&7Bắt pet đang không dùng xác suất: đánh yếu máu rồi quăng dây xích là bắt được."));
                 return true;
             }
-            s.sendMessage(c("&6&l🐾 Xác suất bắt pet &7(mỗi lần quăng dây xích vào con yếu máu)"));
+            s.sendMessage(c("&6🐾 Xác suất bắt pet &7(mỗi lần quăng dây xích vào con yếu máu)"));
             String season = Seasons.nowName();
             for (Object[] g : capture.table().values()) {
                 int bonus = (Integer) g[2];
@@ -90,7 +90,7 @@ final class PetTop {
                 lines.add("&cChưa đọc được dữ liệu pet: " + e.getMessage());
             }
             Bukkit.getScheduler().runTask(plugin, () -> {
-                s.sendMessage(c("&6&l🐾 Bảng xếp hạng pet" + (he != null ? " · " + he[1] : "")));
+                s.sendMessage(c("&6🐾 Bảng xếp hạng pet" + (he != null ? " · " + he[1] : "")));
                 if (lines.isEmpty()) {
                     s.sendMessage(c("&7Chưa có pet nào."));
                 }

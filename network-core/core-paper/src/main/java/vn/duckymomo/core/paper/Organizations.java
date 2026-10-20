@@ -405,7 +405,7 @@ final class Organizations implements Listener {
 
     private void list(CommandSender s) {
         ConfigurationSection os = data.getConfigurationSection("tc");
-        s.sendMessage(c("&a&lTổ chức hoà bình"));
+        s.sendMessage(c("&aTổ chức hoà bình"));
         if (os == null) {
             return;
         }
@@ -530,7 +530,7 @@ final class Organizations implements Listener {
     private boolean eventGo(CommandSender s, String[] args) {
         ConfigurationSection sk = data.getConfigurationSection("sk");
         if (args.length < 2 || !(s instanceof Player p)) {
-            s.sendMessage(c("&d&lSự kiện đang mở"));
+            s.sendMessage(c("&dSự kiện đang mở"));
             if (sk != null) {
                 for (String id : sk.getKeys(false)) {
                     s.sendMessage(c("&f" + id + "&7: " + sk.getString(id + ".ten") + " &7- /sukien den " + id));
@@ -550,7 +550,7 @@ final class Organizations implements Listener {
     }
 
     private void spawnHolo(String id, Location l, String name, String org) {
-        String[] lines = {"&d&l✦ " + name + " ✦", "&7" + data.getString("tc." + org + ".ten") + " · /sukien den " + id};
+        String[] lines = {"&d✦ " + name + " ✦", "&7" + data.getString("tc." + org + ".ten") + " · /sukien den " + id};
         double y = 2.3;
         for (String line : lines) {
             l.getWorld().spawn(l.clone().add(0, y, 0), ArmorStand.class, a -> {

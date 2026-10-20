@@ -14,12 +14,12 @@
 #
 
 # Placeholder for every '<prefix>' in this configuration file
-prefix: <b><yellow>Sonar</b> <gray>» <white>
+prefix: <yellow>Sonar <gray>» <white>
 # Placeholder for every '<support-url>' in this configuration file
 support-url: https://sonar.top/discord/
 # Placeholder for every '<header>' in this configuration file
 header:
-- <b><yellow>Sonar</b><reset>
+- <yellow>Sonar<reset>
 - ''
 # Placeholder for every '<footer>' in this configuration file
 footer:
@@ -49,7 +49,7 @@ commands:
   main:
     # Informational message that is shown above everything when running the main command
     header:
-    - <yellow>Running <b>Sonar</b> <version> on <platform>.
+    - <yellow>Running Sonar <version> on <platform>.
     - <gray><click:open_url:'https://github.com/jonesdevelopment/sonar'>(C) <copyright-year> Jones Development and Sonar Contributors</click>
     - ''
     - <gray>Cần giúp đỡ hay có câu hỏi?
@@ -266,9 +266,9 @@ verification:
 verbose:
   layout:
     # Layout for Sonar's actionbar verbose
-    normal: <prefix><gray>CPS <white><connections-per-second> <dark_aqua>╺ <gray>Logins/s <white><logins-per-second> <dark_aqua>╺ <gray>Verifying <white><verifying> <dark_aqua>| <green>⬆ <white><outgoing-traffic>/s <red>⬇ <white><incoming-traffic>/s  <green><bold><animation>
+    normal: <prefix><gray>CPS <white><connections-per-second> <dark_aqua>╺ <gray>Logins/s <white><logins-per-second> <dark_aqua>╺ <gray>Verifying <white><verifying> <dark_aqua>| <green>⬆ <white><outgoing-traffic>/s <red>⬇ <white><incoming-traffic>/s  <green><animation>
     # Layout for Sonar's actionbar verbose during an attack
-    attack: <prefix><gray>CPS <white><connections-per-second> <dark_aqua>╺ <gray>Logins/s <white><logins-per-second> <dark_aqua>╺ <gray>Queue <white><queued> <dark_aqua>╺ <gray>Verifying <white><verifying> <dark_aqua>╺ <gray>Duration <white><attack-duration> <dark_aqua>| <green>⬆ <white><outgoing-traffic>/s <red>⬇ <white><incoming-traffic>/s  <green><bold><animation>
+    attack: <prefix><gray>CPS <white><connections-per-second> <dark_aqua>╺ <gray>Logins/s <white><logins-per-second> <dark_aqua>╺ <gray>Queue <white><queued> <dark_aqua>╺ <gray>Verifying <white><verifying> <dark_aqua>╺ <gray>Duration <white><attack-duration> <dark_aqua>| <green>⬆ <white><outgoing-traffic>/s <red>⬇ <white><incoming-traffic>/s  <green><animation>
   # Animation for the action bar
   # Alternatives:
   # - ▙, ▛, ▜, ▟
@@ -282,13 +282,13 @@ verbose:
 # Translations for Sonar's attack notification messages
 notifications:
   # Layout for Sonar's attack notification title
-  title: <yellow><b>Sonar<reset>
+  title: <yellow>Sonar<reset>
   # Layout for Sonar's attack notification subtitle
   subtitle: <gray>Phát hiện tấn công bằng bot
   # Layout for Sonar's attack notification in chat
   chat:
   - ''
-  - <yellow><b>Sonar<reset>
+  - <yellow>Sonar<reset>
   - ''
   - <gray>Phát hiện tấn công bằng bot.
   - ' <dark_aqua>▪ <gray>Lượt đăng nhập mỗi giây: <white><logins-per-second>'

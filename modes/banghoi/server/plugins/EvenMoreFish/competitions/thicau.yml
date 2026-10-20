@@ -16,7 +16,7 @@ broadcast-range: -1
 broadcast-only-rods: true
 show-bossbar: true
 bossbar-colour: BLUE
-bossbar-prefix: '<bold><aqua>Thi câu cá: '
+bossbar-prefix: '<aqua>Thi câu cá: '
 required-worlds:
   - world
 alerts:

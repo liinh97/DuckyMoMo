@@ -404,7 +404,7 @@ final class PlayerSettings implements Listener {
                         boolean def = tn[0] != null && si.town().equalsIgnoreCase(tn[0]);
                         boolean att = tn[1] != null && si.attacker().toLowerCase(Locale.ROOT).contains(tn[1].toLowerCase(Locale.ROOT));
                         if (def || att) {
-                            p.sendMessage(c("&c&l⚔ Còn " + mins + " phút tới giờ công thành! &f" + (def ? "Thị trấn bạn (" + si.town() + ") đang bị vây."
+                            p.sendMessage(c("&c⚔ Còn " + mins + " phút tới giờ công thành! &f" + (def ? "Thị trấn bạn (" + si.town() + ") đang bị vây."
                                     : "Nước bạn đang vây " + si.town() + ".")));
                             p.playSound(p.getLocation(), Sound.EVENT_RAID_HORN, 0.7f, 1f);
                             break;
@@ -476,7 +476,7 @@ final class PlayerSettings implements Listener {
 
     void open(Player p) {
         Holder h = new Holder();
-        h.inv = Bukkit.createInventory(h, 45, c("&8&lCÀI ĐẶT CÁ NHÂN"));
+        h.inv = Bukkit.createInventory(h, 45, c("&8CÀI ĐẶT CÁ NHÂN"));
         int i = 0;
         for (Opt o : OPTS.values()) {
             if (i >= SLOTS.length) {

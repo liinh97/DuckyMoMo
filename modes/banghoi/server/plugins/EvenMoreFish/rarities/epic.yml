@@ -3,7 +3,7 @@
 id: Epic
 disabled: false
 displayname: '<light_purple>Quý'
-format: '<light_purple><bold>{name}'
+format: '<light_purple>{name}'
 weight: 6
 item:
   material: magenta_concrete_powder

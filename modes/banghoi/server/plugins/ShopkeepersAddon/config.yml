@@ -126,12 +126,12 @@ messages:
   # /shopsearch results
   search:
     # %query% = what was searched, %page% = e.g. 1/3
-    title: "§8§lTìm: %query% (%page%)"
+    title: "§8Tìm: %query% (%page%)"
     noResults: "§cKhông tìm thấy gì cho §f%query%§c."
   # /shopbrowser - a head per shop owner, then that owner's shopkeepers
   shopBrowser:
     # %page% = e.g. 1/3. Titles longer than 32 characters are cut off.
-    title: "§8§lChủ shop: %page%"
+    title: "§8Chủ shop: %page%"
     noShops: "§cChưa có shop người chơi nào."
     gone: "§cShop đó không còn nữa."
     ownerGone: "§cNgười đó không còn shop nào."
@@ -143,7 +143,7 @@ messages:
       - "§bBấm để xem các người bán của họ."
     shops:
       # %player_name% = the owner, %page% = e.g. 1/3
-      title: "§8§l%player_name%: %page%"
+      title: "§8%player_name%: %page%"
     shop:
       # %shop_name%, %shop_type%, %shop_id%, %player_name%, %world%, %x%, %y%, %z%
       title: "§b%shop_name%"
@@ -156,13 +156,13 @@ messages:
       - "§7At: §f%world% %x%, %y%, %z%"
       - "§bBấm để dịch chuyển tới."
   previousPage:
-    title: "§b§lTrang trước"
+    title: "§bTrang trước"
   nextPage:
-    title: "§b§lTrang sau"
+    title: "§bTrang sau"
   back:
-    title: "§b§lVề menu trước"
+    title: "§bVề menu trước"
   homePage:
-    title: "§8§lCác shop"
+    title: "§8Các shop"
     buttons:
       adminShops:
         title: "§bShop của server"
@@ -176,7 +176,7 @@ messages:
         - "§7Bấm để mở."
 
   adminShopsPage:
-    title: "§8§lShop của server"
+    title: "§8Shop của server"
     buttons:
       adminShops:
         title: "§bNgười bán của server"
@@ -190,7 +190,7 @@ messages:
         - "§7Bấm để mở."
 
   playerShopsPage:
-    title: "§8§lShop người chơi"
+    title: "§8Shop người chơi"
     noShops: "§cChưa có shop người chơi nào."
     buttons:
       playerShops:
@@ -205,7 +205,7 @@ messages:
         - "§7Bấm để mở."
 
   adminShops:
-    title: "§8§lShop của server: %page%" # %page% will be replaced with the current page number
+    title: "§8Shop của server: %page%" # %page% will be replaced with the current page number
     noRecipe: "§cShop này chưa có món nào."
     buttons:
       title: "%shop_name%"
@@ -222,16 +222,16 @@ messages:
       # Shown when adminShops.teleport.enabled is false.
       disabled: "§cServer đã tắt dịch chuyển tới shop của server."
   adminItems:
-    title: "§8§lHàng của server: %page%" # %page% will be replaced with the current page number
+    title: "§8Hàng của server: %page%" # %page% will be replaced with the current page number
     lore:
     - "§7Bấm để xem shop bán món này."
 
   playerShops:
-    title: "§8§lShop người chơi: %page%"
+    title: "§8Shop người chơi: %page%"
     buttons:
       title: "Shop của %player_name%"
-      right-click: "§c§lChuột phải để mở shop từ xa."
-      left-click: "§b§lChuột trái để dịch chuyển tới shop."
+      right-click: "§cChuột phải để mở shop từ xa."
+      left-click: "§bChuột trái để dịch chuyển tới shop."
       no-shop:
       - "§cNgười này chưa đặt shop."
       - "§cGõ §f/setshop §cđể đặt shop."
@@ -247,7 +247,7 @@ messages:
     setShop: "§aĐã đặt shop! Dịch chuyển tới shop của bạn bằng §f/visitShop"
 
   playerItems:
-    title: "§8§lHàng của người chơi: %page%"
+    title: "§8Hàng của người chơi: %page%"
     lore:
     - "§7Bấm để xem shop bán món này."
 

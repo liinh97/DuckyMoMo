@@ -92,11 +92,11 @@ final class HallOfFameSnapshot {
             write(sub.equals("chot"), s);
             return true;
         }
-        s.sendMessage(c("&6&l🏛 Vinh danh mùa " + season + (locked() ? " &a(đã chốt)" : " &7(tạm tính, cập nhật 30 phút/lần)")));
+        s.sendMessage(c("&6🏛 Vinh danh mùa " + season + (locked() ? " &a(đã chốt)" : " &7(tạm tính, cập nhật 30 phút/lần)")));
         if (board != null) {
             var top = board.topNations(3);
             for (int i = 0; i < top.size(); i++) {
-                s.sendMessage(c((i == 0 ? "&6&lBá Chủ: &f" : "&eÁ Chủ: &f") + top.get(i).getKey() + " &7(" + top.get(i).getValue() + " điểm)"));
+                s.sendMessage(c((i == 0 ? "&6Bá Chủ: &f" : "&eÁ Chủ: &f") + top.get(i).getKey() + " &7(" + top.get(i).getValue() + " điểm)"));
             }
             var war = board.topWarriors(1);
             if (!war.isEmpty()) {

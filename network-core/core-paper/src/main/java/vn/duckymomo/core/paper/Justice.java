@@ -1099,7 +1099,7 @@ final class Justice implements Listener {
 
     private void overview(CommandSender s) {
         long t = meetingTime();
-        s.sendMessage(c("&6&l⚖ HỘI BÀN TRÒN &7- họp " + when(t) + (agenda().isEmpty() ? " (chưa có việc: không họp)" : "") + " tại " + tableDesc()
+        s.sendMessage(c("&6⚖ HỘI BÀN TRÒN &7- họp " + when(t) + (agenda().isEmpty() ? " (chưa có việc: không họp)" : "") + " tại " + tableDesc()
                 + ("MO".equals(data.getString("hop.trangthai")) ? " &a(đang họp)" : "")));
         List<String> seatText = new ArrayList<>();
         for (Map.Entry<String, String> e : seats().entrySet()) {
@@ -1137,7 +1137,7 @@ final class Justice implements Listener {
     }
 
     private void history(CommandSender s) {
-        s.sendMessage(c("&6&lHồ sơ Hội Bàn Tròn (mới nhất)"));
+        s.sendMessage(c("&6Hồ sơ Hội Bàn Tròn (mới nhất)"));
         List<String> items = new ArrayList<>();
         for (String sec : List.of("vu", "kien")) {
             ConfigurationSection cs = data.getConfigurationSection(sec);

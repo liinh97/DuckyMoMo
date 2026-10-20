@@ -443,7 +443,7 @@ final class MediaProgram implements Listener {
                 long last = data.getLong(k(u) + ".bao-luc");
                 if (now - last >= announceCooldown * MIN) {
                     data.set(k(u) + ".bao-luc", now);
-                    Component msg = c("&c&l🔴 LIVE &f" + p.getName() + " &7đang livestream server! ")
+                    Component msg = c("&c🔴 LIVE &f" + p.getName() + " &7đang livestream server! ")
                             .append(c("&b&n[Bấm để xem]").clickEvent(ClickEvent.openUrl(link)).hoverEvent(HoverEvent.showText(c("&7" + link))));
                     Bukkit.broadcast(msg);
                 }
@@ -478,7 +478,7 @@ final class MediaProgram implements Listener {
 
     private void info(Player p) {
         UUID u = p.getUniqueId();
-        p.sendMessage(c("&c&l◆ SỨ GIẢ &7— rank cho người livestream server (miễn phí, admin duyệt)"));
+        p.sendMessage(c("&c◆ SỨ GIẢ &7— rank cho người livestream server (miễn phí, admin duyệt)"));
         p.sendMessage(c("&7Chỉ tiêu 7 ngày: &f" + minSessions + " buổi &7(mỗi buổi ≥ " + minSessionMinutes + " phút) &7và &f" + fmt(minHours)
                 + " giờ &7live, tính khi bạn ONLINE trong server và kênh ĐANG LIVE (server tự kiểm)."));
         if (registered(u)) {
@@ -500,7 +500,7 @@ final class MediaProgram implements Listener {
         if (sub.equals("ds")) {
             ConfigurationSection n = data.getConfigurationSection("nguoi");
             long now = System.currentTimeMillis();
-            s.sendMessage(LEGACY.serialize(c("&c&lSứ Giả &7(" + (n == null ? 0 : n.getKeys(false).size()) + " người)")));
+            s.sendMessage(LEGACY.serialize(c("&cSứ Giả &7(" + (n == null ? 0 : n.getKeys(false).size()) + " người)")));
             if (n != null) {
                 for (String id : n.getKeys(false)) {
                     long[] st = stats(UUID.fromString(id), now - 7 * DAY, now);

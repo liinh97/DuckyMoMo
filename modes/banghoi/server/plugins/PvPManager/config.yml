@@ -50,14 +50,14 @@ Combat Tag:
     Action Bar:
       Enabled: true
       # You can use any PlaceholderAPI placeholders here
-      Message: '&8[&c&lGIAO TRANH&8] &7<time>s &8• &a<barsLeft>&#AA5555<barsPassed> &8• &7%pvpmanager_current_enemy% &8(&c%pvpmanager_current_enemy_health%❤&8)'
+      Message: '&8[&cGIAO TRANH&8] &7<time>s &8• &a<barsLeft>&#AA5555<barsPassed> &8• &7%pvpmanager_current_enemy% &8(&c%pvpmanager_current_enemy_health%❤&8)'
       # Symbol to use for the progress bar and how many times to repeat it. Other symbols ▊,▮,▯,|
       Symbol: '▊'
       Total Bars: 20
     Boss Bar:
       Enabled: true
       # You can use any PlaceholderAPI placeholders here
-      Message: '&8&l[&c&lGIAO TRANH&8&l] &e&l<time> giây - đừng thoát game!'
+      Message: '&8[&cGIAO TRANH&8] &e<time> giây - đừng thoát game!'
       # See here for bar color options - https://hub.spigotmc.org/javadocs/spigot/org/bukkit/boss/BarColor.html
       BarColor: RED
       # See here for bar style options - https://hub.spigotmc.org/javadocs/spigot/org/bukkit/boss/BarStyle.html
@@ -203,7 +203,7 @@ Newbie Protection:
   Boss Bar:
     Enabled: true
     # Message to show in the boss bar. Use <time> placeholder for remaining time (auto-formatted as min:sec)
-    Message: '&6✦ &a&lBẢO VỆ NGƯỜI MỚI &6✦ &e&l<time>'
+    Message: '&6✦ &aBẢO VỆ NGƯỜI MỚI &6✦ &e<time>'
     # See here for bar color options - https://hub.spigotmc.org/javadocs/spigot/org/bukkit/boss/BarColor.html
     BarColor: GREEN
     # See here for bar style options - https://hub.spigotmc.org/javadocs/spigot/org/bukkit/boss/BarStyle.html

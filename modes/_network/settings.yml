@@ -120,7 +120,7 @@ tier3_perks:
   - 3 hiệu ứng hạt
   - pet hiếm
 tier4_name: Công Tước
-tier4_prefix: '&6&l[Công Tước]&r'
+tier4_prefix: '&6[Công Tước]&r'
 tier4_prices:
   - 1 tháng 150k
   - 3 tháng 390k
@@ -139,7 +139,7 @@ role_default_prefix: "&7[Dân]"
 role_builder_prefix: "&b[Builder]"
 role_helper_prefix: "&a[Helper]"
 role_mod_prefix: "&9[Mod]"
-role_quanly_prefix: "&e&l[Manager]&r"
+role_quanly_prefix: "&e[Manager]&r"
 role_admin_prefix: "&c[Admin]"
 dqr_on: true
 dqr_minutes: 10

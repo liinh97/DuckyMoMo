@@ -18,7 +18,7 @@
   "water_speed": 0.15,
   "fly": false,
   "float_down": false,
-  "display_name": "&a&l%player%'s Skeleton Horse Pet",
+  "display_name": "&a%player%'s Skeleton Horse Pet",
   "item": {
     "components": {
       "minecraft:custom_name": "&#C8F792Skeleton Horse",

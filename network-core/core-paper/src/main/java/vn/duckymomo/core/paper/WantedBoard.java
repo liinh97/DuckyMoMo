@@ -277,7 +277,7 @@ final class WantedBoard implements Listener {
     }
 
     boolean command(CommandSender s, String[] args) {
-        s.sendMessage(c("&4&l☠ Lệnh săn &7(lệnh mới mỗi " + intervalMs / 60_000 + " phút, quái xuất hiện khi có người tới gần)"));
+        s.sendMessage(c("&4☠ Lệnh săn &7(lệnh mới mỗi " + intervalMs / 60_000 + " phút, quái xuất hiện khi có người tới gần)"));
         if (posts.isEmpty()) {
             s.sendMessage(c("&7Hiện chưa có lệnh săn nào."));
         }

@@ -20,7 +20,7 @@ lp group namtuoc meta setprefix 5 "&a[Nam Tước] "
 lp group tutuoc meta setprefix 6 "&b[Tử Tước] "
 lp group batuoc meta setprefix 7 "&9[Bá Tước] "
 lp group hautuoc meta setprefix 8 "&d[Hầu Tước] "
-lp group congtuoc meta setprefix 9 "&6&l[Công Tước]&r "
+lp group congtuoc meta setprefix 9 "&6[Công Tước]&r "
 lp group tutuoc parent add namtuoc
 lp group batuoc parent add tutuoc
 lp group hautuoc parent add batuoc

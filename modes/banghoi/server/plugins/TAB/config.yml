@@ -5,7 +5,7 @@ header-footer:
     default:
       header:
         - '&r'
-        - <#FFC23D>&l✦ DUCKYMOMO ✦</#FF6A00>
+        - <#FFC23D>✦ DUCKYMOMO ✦</#FF6A00>
         - '&6⚔ &eBang Hội Chiến &6⚔'
         - '&7Chào &f%player%&7! Mùa 1: &aĐông Nam Á'
         - '&r'

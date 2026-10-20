@@ -122,7 +122,7 @@ final class RandomTeleport implements Listener {
                     num(m.get("center-x")), num(m.get("center-z")), num(m.get("radius")),
                     m.containsKey("requires") ? String.valueOf(m.get("requires")) : ""));
         }
-        this.npcName = cfg.getString("npc.name", "&6&lDịch chuyển ngẫu nhiên");
+        this.npcName = cfg.getString("npc.name", "&6Dịch chuyển ngẫu nhiên");
         this.npcLines = cfg.getStringList("npc.lines");
         this.npcKey = new NamespacedKey(plugin, "rtp_npc");
         this.zoneKey = new NamespacedKey(plugin, "rtp_zone");

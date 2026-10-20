@@ -93,9 +93,9 @@ rename:
     #   - MUST have 4 lines
     lines:
     - '{input}'
-    - '&l^^^^^^^^'
-    - '&9&lHãy nhập'
-    - '&9&ltên thú cưng'
+    - '^^^^^^^^'
+    - '&9Hãy nhập'
+    - '&9tên thú cưng'
 pet-saves:
   # Message that will be sent when the player has reached their global limit for any pet type
   limit-reached: '{prefix} &cBạn đã lưu đủ số thú cưng tối đa'

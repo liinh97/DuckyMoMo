@@ -353,7 +353,7 @@ final class PetCombat implements Listener {
 
     /** /lichcongthanh: phiên tới, có cho pet không, luật pet đánh người. */
     boolean command(CommandSender s, String[] args) {
-        s.sendMessage(c("&6&l⚔ Lịch công thành"));
+        s.sendMessage(c("&6⚔ Lịch công thành"));
         if (SiegeWarHook.battleActive()) {
             s.sendMessage(c("&cĐang có phiên đánh: " + petText(currentAllowed) + "&c."));
         }

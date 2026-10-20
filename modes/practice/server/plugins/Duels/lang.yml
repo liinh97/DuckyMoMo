@@ -211,10 +211,10 @@ COMMAND:
             text: '&7Bấm để '
             hover-text: ''
           accept:
-            text: '&a&l[NHẬN] '
+            text: '&a[NHẬN] '
             hover-text: '&7Bấm để &anhận &7lời thách đấu.'
           deny:
-            text: '&c&l[TỪ CHỐI]'
+            text: '&c[TỪ CHỐI]'
             hover-text: '&7Bấm để &ctừ chối &7lời thách đấu.'
       accept:
         sender: '{PREFIX} &f%name% &7đã nhận lời thách đấu của bạn.'
@@ -242,10 +242,10 @@ COMMAND:
             text: '&7Bấm để '
             hover-text: ''
           accept:
-            text: '&a&l[NHẬN] '
+            text: '&a[NHẬN] '
             hover-text: '&7Bấm để &anhận &7lời thách đấu.'
           deny:
-            text: '&c&l[TỪ CHỐI]'
+            text: '&c[TỪ CHỐI]'
             hover-text: '&7Bấm để &ctừ chối &7lời thách đấu.'
           extra:
             text: '{LINE}'
@@ -555,7 +555,7 @@ DUEL:
     round-end: '{PREFIX} &7Hết hiệp &e%round%&7! &f%winner% &7thắng hiệp này!'
     round-status: '{PREFIX} &7Tỉ số: &f%player1% &7(&a%wins1%&7) - &f%player2% &7(&a%wins2%&7)'
     round-start: '{PREFIX} &7Hiệp &e%round% &7sắp bắt đầu...'
-    match-point: '{PREFIX} &c&lĐiểm quyết định &7cho &f%player%&7!'
+    match-point: '{PREFIX} &cĐiểm quyết định &7cho &f%player%&7!'
   party-start-failure:
     option-unavailable: '{FAIL_PREFIX} &cĐấu nhóm hiện chưa cho cược đồ/tiền.'
     party-changed: '{FAIL_PREFIX} Bên gửi hoặc bên nhận lời thách đấu đã đổi nhóm.'
@@ -613,8 +613,8 @@ SIGN:
   format:
   - '&a[Bấm để vào]'
   - '&3%name%&f:&e$%bet_amount%'
-  - '&f&l%in_queue% ĐANG CHỜ'
-  - '&f&l%in_match% ĐANG ĐẤU'
+  - '&f%in_queue% ĐANG CHỜ'
+  - '&f%in_match% ĐANG ĐẤU'
 
 
 SPECTATE:
@@ -647,14 +647,14 @@ REPLAY:
     block-place: '&cKhông đặt khối được khi đang xem lại.'
     interact: '&cKhông tương tác với khối được khi đang xem lại.'
   items:
-    inspect: '&b&lXem góc nhìn'
-    teleport: '&b&lXem góc nhìn'
-    speed: '&e&lTốc độ: &6%speed%x'
-    pause: '&c&lTạm dừng'
-    play: '&a&lPhát'
-    forward: '&b&lTua tới (10 giây)'
-    backward: '&b&lTua lui (10 giây)'
-    leave: '&4&lThoát xem lại'
+    inspect: '&bXem góc nhìn'
+    teleport: '&bXem góc nhìn'
+    speed: '&eTốc độ: &6%speed%x'
+    pause: '&cTạm dừng'
+    play: '&aPhát'
+    forward: '&bTua tới (10 giây)'
+    backward: '&bTua lui (10 giây)'
+    leave: '&4Thoát xem lại'
 
 
 GUI:
@@ -662,7 +662,7 @@ GUI:
     title: Bộ đồ của tôi
     buttons:
       kit:
-        name: '&e&l%name%'
+        name: '&e%name%'
         lore:
         - '%description%'
         - '&7Số món: &f%items%'
@@ -672,19 +672,19 @@ GUI:
         - '&e[Shift + trái] &7Nhân bản'
         - '&c[Shift + phải] &7Xoá'
       limit:
-        name: '&e&lGiới hạn bộ đồ'
+        name: '&eGiới hạn bộ đồ'
         lore:
         - '&7Bộ đồ: &a%count% &7/ &e%limit%'
         - '&7Còn tạo được: &b%remaining%'
       create:
-        name: '&a&l+ Tạo bộ đồ mới'
-        name-reached: '&c&lĐã đủ số bộ đồ'
+        name: '&a+ Tạo bộ đồ mới'
+        name-reached: '&cĐã đủ số bộ đồ'
         lore:
         - '&7Bấm để đặt tên và tạo bộ đồ mới.'
         lore-reached:
         - '&cBạn không tạo thêm bộ đồ được.'
       close:
-        name: '&c&lĐóng'
+        name: '&cĐóng'
         lore:
         - '&7Bấm để thoát.'
     confirm-delete:
@@ -693,27 +693,27 @@ GUI:
   customkit-confirm:
     buttons:
       confirm:
-        name: '&a&lĐồng ý'
+        name: '&aĐồng ý'
         lore:
         - '&7Bấm để thực hiện.'
       cancel:
-        name: '&c&lHuỷ'
+        name: '&cHuỷ'
         lore:
         - '&7Bấm để huỷ và quay lại.'
       info:
-        name: '&e&lThông tin'
+        name: '&eThông tin'
         lore:
         - '&7%text%'
   customkit-selector:
     title: Chọn bộ đồ tự tạo
     buttons:
       empty:
-        name: '&c&lChưa có bộ đồ tự tạo'
+        name: '&cChưa có bộ đồ tự tạo'
         lore:
         - '&7Bạn chưa tạo bộ đồ nào.'
         - '&7Gõ &e/customkits &7để tạo bộ đầu tiên!'
       custom-kit:
-        name: '&d&l%name%'
+        name: '&d%name%'
         lore:
         - '%description%'
         - '&7Số món: &e%items%'
@@ -721,7 +721,7 @@ GUI:
         - '&aBấm để chọn bộ đồ này cho trận đấu'
         - '&7Lưu ý: trận dùng bộ đồ tự tạo chỉ cược tiền được'
       back:
-        name: '&c&lQuay lại'
+        name: '&cQuay lại'
         lore:
         - '&7Bấm để về chọn loại bộ đồ.'
   kit-type-selector:
@@ -740,15 +740,15 @@ GUI:
       - '&aBấm để chọn vật phẩm'
     buttons:
       cancel:
-        name: '&c&lHuỷ / bỏ thay đổi'
+        name: '&cHuỷ / bỏ thay đổi'
         lore:
         - '&7Bấm để bỏ các thay đổi chưa lưu.'
       clear:
-        name: '&c&lXoá hết đồ'
+        name: '&cXoá hết đồ'
         lore:
         - '&7Bấm để làm trống mọi ô của bộ đồ.'
       settings:
-        name: '&e&lCài đặt bộ đồ'
+        name: '&eCài đặt bộ đồ'
         lore:
         - '&7Tên: &f%name%'
         - '&7Mô tả: &f%description%'
@@ -757,11 +757,11 @@ GUI:
         - '&e[Chuột phải] &7Sửa mô tả'
         - '&b[Shift + bấm] &7Đổi biểu tượng'
       preview:
-        name: '&b&lXem trước'
+        name: '&bXem trước'
         lore:
         - '&7Bấm để xem trước bộ đồ (chỉ xem).'
       save:
-        name: '&a&lLưu bộ đồ'
+        name: '&aLưu bộ đồ'
         lore:
         - '&7Bấm để kiểm tra và lưu bộ đồ.'
     confirm-discard:
@@ -782,12 +782,12 @@ GUI:
       empty-hotbar: '&8(Ô thanh nhanh trống)'
     buttons:
       info:
-        name: '&e&lBộ đồ: %kit%'
+        name: '&eBộ đồ: %kit%'
         owner: '&7Chủ: &f%owner%'
         description-header: '&7Mô tả:'
         readonly-footer: '&8Chỉ xem'
       close:
-        name: '&c&lĐóng xem trước'
+        name: '&cĐóng xem trước'
         lore:
         - '&7Bấm để đóng.'
   material-browser:
@@ -804,12 +804,12 @@ GUI:
       misc: Khác
     buttons:
       armor-slot:
-        name: '&e&lÔ giáp: &b%slot%'
+        name: '&eÔ giáp: &b%slot%'
         lore:
         - '&7Chọn giáp hợp với ô này ở dưới.'
       category-tab:
         name: '&7%category%'
-        name-selected: '&a&l%category%'
+        name-selected: '&a%category%'
         lore:
         - '&eBấm để xem nhóm này'
         lore-selected:
@@ -824,7 +824,7 @@ GUI:
       next-page:
         name: '&eTrang sau (%page%/%total%)'
       back:
-        name: '&c&lVề sắp xếp bộ đồ'
+        name: '&cVề sắp xếp bộ đồ'
         lore:
         - '&7Bấm để về trang sửa túi đồ.'
   item-editor:
@@ -834,40 +834,40 @@ GUI:
     enter-rgb-color: '{PREFIX} &aGõ màu RGB vào chat (ví dụ &e255 0 0&a):'
     buttons:
       change-material:
-        name: '&e&lĐổi loại vật phẩm'
+        name: '&eĐổi loại vật phẩm'
         lore:
         - '&7Hiện tại: &f%material%'
         - ' '
         - '&aBấm để chọn vật phẩm'
       change-amount:
-        name: '&e&lĐổi số lượng: &a%amount%'
+        name: '&eĐổi số lượng: &a%amount%'
         lore:
         - '&a[Chuột trái] &7+1'
         - '&e[Chuột phải] &7-1'
         - '&b[Shift + trái] &7+16'
         - '&c[Shift + phải] &7-16'
       display-name-lore:
-        name: '&e&lTên và mô tả'
+        name: '&eTên và mô tả'
         lore:
         - '&7Bấm để sửa tên và các dòng mô tả.'
       enchantments:
-        name: '&b&lPhù phép (&e%count%&b)'
+        name: '&bPhù phép (&e%count%&b)'
         lore:
         - '&7Bấm để chỉnh phù phép.'
       attributes:
-        name: '&b&lChỉ số (&e%count%&b)'
+        name: '&bChỉ số (&e%count%&b)'
         lore:
         - '&7Bấm để chỉnh chỉ số.'
       armor-trim:
-        name: '&b&lHoạ tiết giáp'
+        name: '&bHoạ tiết giáp'
         lore:
         - '&7Bấm để chọn hoạ tiết và chất liệu.'
       potion-settings:
-        name: '&d&lCài đặt thuốc'
+        name: '&dCài đặt thuốc'
         lore:
         - '&7Bấm để chọn loại thuốc và hiệu ứng riêng.'
       durability-damage:
-        name: '&e&lĐộ hao mòn: &f%damage%'
+        name: '&eĐộ hao mòn: &f%damage%'
         lore:
         - '&a[Chuột trái] &7Làm mới hoàn toàn (hao mòn 0)'
         - '&e[Chuột phải] &7Nhập độ hao mòn'
@@ -876,7 +876,7 @@ GUI:
         lore:
         - '&aBấm để bật/tắt'
       item-flags:
-        name: '&e&lẨn thông tin'
+        name: '&eẨn thông tin'
         lore:
         - '&7Ẩn phù phép: %hide_enchants%'
         - '&7Ẩn chỉ số: %hide_attributes%'
@@ -890,28 +890,28 @@ GUI:
         lore:
         - '&aBấm để nhập số custom model data'
       leather-color:
-        name: '&e&lMàu giáp da'
+        name: '&eMàu giáp da'
         lore:
         - '&7RGB: &f%r%, %g%, %b%'
         - ' '
         - '&aBấm để chọn màu'
       remove-item:
-        name: '&c&lXoá vật phẩm'
+        name: '&cXoá vật phẩm'
         lore:
         - '&7Bấm để xoá vật phẩm này khỏi bộ đồ.'
       back:
-        name: '&c&lVề sắp xếp bộ đồ'
+        name: '&cVề sắp xếp bộ đồ'
         lore:
         - '&7Bấm để về trang sắp xếp bộ đồ.'
   enchantment-editor:
     title: Sửa phù phép
     buttons:
       add:
-        name: '&a&l+ Thêm phù phép'
+        name: '&a+ Thêm phù phép'
         lore:
         - '&7Bấm để chọn và thêm phù phép.'
       clear:
-        name: '&c&lXoá hết phù phép'
+        name: '&cXoá hết phù phép'
         lore:
         - '&7Bấm để xoá mọi phù phép.'
       enchant-entry:
@@ -933,11 +933,11 @@ GUI:
       next-page:
         name: '&eTrang sau (%page%/%total%)'
       back-enchantments:
-        name: '&c&lVề danh sách phù phép'
+        name: '&cVề danh sách phù phép'
         lore:
         - '&7Bấm để quay lại.'
       back-item-editor:
-        name: '&c&lVề sửa vật phẩm'
+        name: '&cVề sửa vật phẩm'
         lore:
         - '&7Bấm để quay lại.'
   attribute-editor:
@@ -946,11 +946,11 @@ GUI:
     range-info: ' (Khoảng: %min% đến %max%)'
     buttons:
       add:
-        name: '&a&l+ Thêm chỉ số'
+        name: '&a+ Thêm chỉ số'
         lore:
         - '&7Bấm để chọn và thêm chỉ số.'
       clear:
-        name: '&c&lXoá hết chỉ số'
+        name: '&cXoá hết chỉ số'
         lore:
         - '&7Bấm để xoá mọi chỉ số.'
       modifier-entry:
@@ -974,15 +974,15 @@ GUI:
         lore:
         - '&7Bấm để sang bước nhập giá trị.'
       back:
-        name-back: '&c&lQuay lại'
-        name-editor: '&c&lVề sửa vật phẩm'
+        name-back: '&cQuay lại'
+        name-editor: '&cVề sửa vật phẩm'
         lore:
         - '&7Bấm để quay lại.'
   armor-trim-editor:
     title: Sửa hoạ tiết giáp
     buttons:
       remove:
-        name: '&c&lGỡ hoạ tiết'
+        name: '&cGỡ hoạ tiết'
         lore:
         - '&7Bấm để gỡ hoạ tiết giáp.'
       pattern-entry:
@@ -994,8 +994,8 @@ GUI:
         lore:
         - '&aBấm để gắn hoạ tiết'
       back:
-        name-patterns: '&c&lVề danh sách hoạ tiết'
-        name-editor: '&c&lVề sửa vật phẩm'
+        name-patterns: '&cVề danh sách hoạ tiết'
+        name-editor: '&cVề sửa vật phẩm'
         lore:
         - '&7Bấm để quay lại.'
   potion-editor:
@@ -1012,17 +1012,17 @@ GUI:
         - '&aBấm để bật/tắt'
       potion-type:
         name: '&b%type%'
-        name-selected: '&a&l%type%'
+        name-selected: '&a%type%'
         lore:
         - '&eBấm để chọn'
         lore-selected:
         - '&a▶ Đang chọn'
       add-effect:
-        name: '&a&l+ Thêm hiệu ứng riêng'
+        name: '&a+ Thêm hiệu ứng riêng'
         lore:
         - '&7Bấm để thêm hiệu ứng thuốc riêng.'
       clear-effects:
-        name: '&c&lXoá hiệu ứng riêng'
+        name: '&cXoá hiệu ứng riêng'
         lore:
         - '&7Bấm để xoá mọi hiệu ứng thuốc riêng.'
       effect-entry:
@@ -1041,8 +1041,8 @@ GUI:
       next-page:
         name: '&eTrang sau (%page%/%total%)'
       back:
-        name-settings: '&c&lVề cài đặt thuốc'
-        name-editor: '&c&lVề sửa vật phẩm'
+        name-settings: '&cVề cài đặt thuốc'
+        name-editor: '&cVề sửa vật phẩm'
         lore:
         - '&7Bấm để quay lại.'
   lore-editor:
@@ -1052,22 +1052,22 @@ GUI:
     enter-new-lore-line: '{PREFIX} &aGõ dòng mô tả thay thế vào chat:'
     buttons:
       set-name:
-        name: '&e&lĐặt tên hiển thị'
+        name: '&eĐặt tên hiển thị'
         default-name: '&7(Mặc định)'
         lore:
         - '&7Hiện tại: %name%'
         - ' '
         - '&aBấm để đổi tên hiển thị.'
       reset-name:
-        name: '&c&lTrả tên mặc định'
+        name: '&cTrả tên mặc định'
         lore:
         - '&7Bấm để dùng lại tên gốc của vật phẩm.'
       add-lore:
-        name: '&a&l+ Thêm dòng mô tả'
+        name: '&a+ Thêm dòng mô tả'
         lore:
         - '&7Bấm để thêm một dòng mô tả.'
       clear-lore:
-        name: '&c&lXoá hết mô tả'
+        name: '&cXoá hết mô tả'
         lore:
         - '&7Bấm để xoá mọi dòng mô tả.'
       lore-entry:
@@ -1078,7 +1078,7 @@ GUI:
         - '&b[Shift + phải] &7Chuyển XUỐNG'
         - '&c[Chuột phải] &7Xoá dòng'
       back:
-        name: '&c&lVề sửa vật phẩm'
+        name: '&cVề sửa vật phẩm'
         lore:
         - '&7Bấm để quay lại.'
   bedrock-customkits:
@@ -1226,9 +1226,9 @@ GUI:
         - '&cBạn không có quyền'
         - '&cdùng lựa chọn này.'
       send:
-        name: '&a&lGỬI LỜI THÁCH ĐẤU'
+        name: '&aGỬI LỜI THÁCH ĐẤU'
       cancel:
-        name: '&c&lHUỶ'
+        name: '&cHUỶ'
   kit-selector:
     title: Chọn bộ đồ
     buttons:
@@ -1274,7 +1274,7 @@ GUI:
         - '&7Đang chờ: &f%in_queue%'
         - '&7Đang đấu: &f%in_match%'
         - ' '
-        - '&a&lBấm để vào hàng chờ!'
+        - '&aBấm để vào hàng chờ!'
         rated: '&aCó'
         unrated: '&cNo'
       previous-page:
@@ -1289,8 +1289,8 @@ GUI:
       head:
         name: '&e%name%'
       state:
-        name-ready: '&a&lSẴN SÀNG'
-        name-not-ready: '&7&lCHƯA SẴN SÀNG'
+        name-ready: '&aSẴN SÀNG'
+        name-not-ready: '&7CHƯA SẴN SÀNG'
       details:
         name: '&9Chi tiết trận'
         lore:
@@ -1298,7 +1298,7 @@ GUI:
         - '&7Sân: &e%arena%'
         - '&7Cược: &6$%bet_amount%'
       cancel:
-        name: '&c&lBẤM ĐỂ HUỶ'
+        name: '&cBẤM ĐỂ HUỶ'
         lore:
         - '&7Bấm hoặc đóng bảng'
         - '&7để huỷ trận.'
@@ -1325,7 +1325,7 @@ GUI:
         - ' '
         - '&7Trạng thái: &r%state%'
         - ' '
-        - '&r&lBẤM ĐỂ BẬT/TẮT'
+        - '&rBẤM ĐỂ BẬT/TẮT'
   bind:
     title: 'Bộ đồ: %kit%'
     buttons:
@@ -1334,15 +1334,15 @@ GUI:
         lore-bound:
         - '&7Bộ đồ gắn với sân: &3%kits%'
         - ' '
-        - '&a&lĐÃ GẮN'
+        - '&aĐÃ GẮN'
         - ' '
-        - '&r&lBẤM ĐỂ BẬT/TẮT'
+        - '&rBẤM ĐỂ BẬT/TẮT'
         lore-not-bound:
         - '&7Bộ đồ gắn với sân: &3%kits%'
         - ' '
-        - '&c&lCHƯA GẮN'
+        - '&cCHƯA GẮN'
         - ' '
-        - '&r&lBẤM ĐỂ BẬT/TẮT'
+        - '&rBẤM ĐỂ BẬT/TẮT'
   replay-browser:
     title: Xem lại trận đấu
     player-title: 'Xem lại: %player%'
@@ -1378,7 +1378,7 @@ GUI:
     title: 'Xem lại: %id%'
     buttons:
       summary:
-        name: '&e&lChi tiết trận'
+        name: '&eChi tiết trận'
         lore:
         - '&7Mã: &f%id%'
         - '&7Người chơi 1: &b%player1%'
@@ -1393,12 +1393,12 @@ GUI:
         - '&7Ngày: &8%date%'
         lore-bet: '&7Cược: &6$%bet%'
       play:
-        name: '&a&l▶ Xem lại'
+        name: '&a▶ Xem lại'
         lore:
         - '&7Bấm để vào chế độ xem lại.'
         - '&eBạn sẽ xem bằng camera khán giả!'
       delete:
-        name: '&c&l✖ Xoá bản xem lại'
+        name: '&c✖ Xoá bản xem lại'
         lore:
         - '&7Bấm để xoá hẳn bản xem lại này.'
       back:

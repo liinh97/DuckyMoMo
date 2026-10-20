@@ -13,7 +13,7 @@ deposit-character: i
 sell-item:
   item:
     material: GOLD_INGOT
-    displayname: <bold><gold>Bán
+    displayname: <gold>Bán
     lore:
     - <dark_gray>Cửa hàng cá
     - ''
@@ -30,7 +30,7 @@ sell-item:
 sell-all-item:
   item:
     material: COD_BUCKET
-    displayname: <bold><gold>Bán hết
+    displayname: <gold>Bán hết
     lore:
     - <dark_gray>Túi đồ
     - ''

@@ -292,7 +292,7 @@ final class PlayRanks implements Listener {
 
     void open(Player p) {
         Holder h = new Holder();
-        h.inv = Bukkit.createInventory(h, 27, c("&6&lDANH PHẬN &8(rank chơi, miễn phí)"));
+        h.inv = Bukkit.createInventory(h, 27, c("&6DANH PHẬN &8(rank chơi, miễn phí)"));
         ItemStack bg = pane();
         for (int s = 0; s < 27; s++) {
             h.inv.setItem(s, bg);
@@ -326,16 +326,16 @@ final class PlayRanks implements Listener {
         Tier t = tiers.get(i);
         ItemStack it = new ItemStack(t.icon());
         ItemMeta m = it.getItemMeta();
-        m.displayName(c("&f&lRANK " + t.name().toUpperCase(Locale.ROOT)));
+        m.displayName(c("&fRANK " + t.name().toUpperCase(Locale.ROOT)));
         List<Component> lore = new ArrayList<>();
         lore.add(c(t.prefix().isBlank() ? "&8(không tiền tố)" : "&7Tiền tố: " + t.prefix()));
         lore.add(Component.empty());
-        lore.add(c("&e&lQUYỀN LỢI:"));
+        lore.add(c("&eQUYỀN LỢI:"));
         perkLore(lore, t.perks());
         lore.add(Component.empty());
         if (i > 0) {
             lore.add(c("&7Giá nâng cấp: &aMiễn phí"));
-            lore.add(c("&e&lYÊU CẦU:"));
+            lore.add(c("&eYÊU CẦU:"));
             if (t.hours() > 0) {
                 boolean ok = hours(p) >= t.hours();
                 lore.add(c((ok ? "&a✔" : "&c✘") + " &7Chơi thật " + fmt(t.hours()) + " giờ &8(" + String.format(Locale.ROOT, "%.1f", hours(p)) + ")"));
@@ -391,7 +391,7 @@ final class PlayRanks implements Listener {
     private ItemStack card(Player p, Extra e) {
         ItemStack it = new ItemStack(e.icon());
         ItemMeta m = it.getItemMeta();
-        m.displayName(c("&c&l◆ RANK " + e.name().toUpperCase(Locale.ROOT)));
+        m.displayName(c("&c◆ RANK " + e.name().toUpperCase(Locale.ROOT)));
         List<Component> lore = new ArrayList<>();
         if (!e.info().isEmpty()) {
             lore.add(c("&c▍ Yêu cầu đăng ký"));
@@ -426,7 +426,7 @@ final class PlayRanks implements Listener {
         Extra card = h.cards.get(e.getRawSlot());
         if (card != null) {
             p.closeInventory();
-            p.sendMessage(c("&c&l◆ RANK " + card.name().toUpperCase(Locale.ROOT) + " &7— không bán, admin xét duyệt."));
+            p.sendMessage(c("&c◆ RANK " + card.name().toUpperCase(Locale.ROOT) + " &7— không bán, admin xét duyệt."));
             p.sendMessage(c(card.contact().isBlank() ? "&7Nhắn admin trong game hoặc qua Discord của server để đăng ký." : card.contact()));
             return;
         }
@@ -448,7 +448,7 @@ final class PlayRanks implements Listener {
         promote(p, t);
         p.closeInventory();
         p.playSound(p.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 0.7f, 1f);
-        p.sendMessage(c("&a&l✔ Bạn đã trở thành &f" + t.name() + "&a&l! &7Nhà: " + t.homes() + " · Balo: " + t.balo() + " · Chợ đấu giá: " + t.ah() + " món chợ đấu giá."));
+        p.sendMessage(c("&a✔ Bạn đã trở thành &f" + t.name() + "&a! &7Nhà: " + t.homes() + " · Balo: " + t.balo() + " · Chợ đấu giá: " + t.ah() + " món chợ đấu giá."));
         if (announce) {
             Bukkit.broadcast(c("&6✦ &f" + p.getName() + " &7vừa trở thành ").append(c(t.prefix().isBlank() ? "&f" + t.name() : t.prefix().trim())).append(c("&7!")));
         }

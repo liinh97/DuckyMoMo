@@ -260,7 +260,7 @@ final class PetCapture implements Listener {
     ItemStack charm(int amount) {
         ItemStack it = new ItemStack(Material.NAUTILUS_SHELL, amount);
         org.bukkit.inventory.meta.ItemMeta m = it.getItemMeta();
-        m.displayName(c("&b&l✦ Bùa bắt pet"));
+        m.displayName(c("&b✦ Bùa bắt pet"));
         m.lore(java.util.List.of(c("&7Cầm ở &ftay trái &7khi quăng dây xích bắt pet:"), c("&a+" + charmBonus + "% &7xác suất, mất 1 bùa mỗi lần thử."),
                 c("&8Phần thưởng thi câu cá")));
         m.setEnchantmentGlintOverride(true);
@@ -292,7 +292,7 @@ final class PetCapture implements Listener {
             s.sendMessage(c("&aĐã phát " + n + " bùa cho " + t.getName() + "."));
             return true;
         }
-        s.sendMessage(c("&b&l✦ Bùa bắt pet: &7cầm ở &ftay trái &7khi quăng dây xích bắt pet: &a+" + charmBonus
+        s.sendMessage(c("&b✦ Bùa bắt pet: &7cầm ở &ftay trái &7khi quăng dây xích bắt pet: &a+" + charmBonus
                 + "% &7xác suất, mất 1 bùa mỗi lần thử. Có từ giải thi câu cá cuối tuần."));
         return true;
     }

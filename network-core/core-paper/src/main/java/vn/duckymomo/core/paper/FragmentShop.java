@@ -289,7 +289,7 @@ final class FragmentShop implements Listener, Rewards.FragmentGiver {
 
     void open(Player p) {
         Holder h = new Holder();
-        h.inv = Bukkit.createInventory(h, 54, c("&5&lĐỔI MẢNH & CÁ"));
+        h.inv = Bukkit.createInventory(h, 54, c("&5ĐỔI MẢNH & CÁ"));
         int slot = 10;
         for (Offer o : offers) {
             if (!available(o) || slot >= 44) {

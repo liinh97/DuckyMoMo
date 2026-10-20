@@ -1219,7 +1219,7 @@ groups:
 
   - title: Bảng bên phải, boss bar, danh sách Tab
     category: Hiển thị
-    description: "Mã màu &a, &e, &l (đậm)... Biến: %player%, %online%, %ping%, %luckperms-prefix%, %vault_eco_balance_formatted%, %townyadvanced_town_unformatted%."
+    description: "Mã màu &a, &e... Biến: %player%, %online%, %ping%, %luckperms-prefix%, %vault_eco_balance_formatted%, %townyadvanced_town_unformatted%."
     apply: [tab reload]
     settings:
       - { key: tab_bossbar_tips, label: Boss bar trên cùng (mỗi dòng 1 mẹo, xoay vòng), type: lines, file: plugins/TAB/animations.yml, path: MeoChoi.texts }

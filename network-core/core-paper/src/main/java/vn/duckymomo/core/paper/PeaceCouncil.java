@@ -395,7 +395,7 @@ final class PeaceCouncil {
 
     private void info(CommandSender s) {
         String rep = representative();
-        s.sendMessage(c("&a&lHội đồng Hoà Bình &7- " + votingTowns().size() + " thị trấn có phiếu"));
+        s.sendMessage(c("&aHội đồng Hoà Bình &7- " + votingTowns().size() + " thị trấn có phiếu"));
         s.sendMessage(c("&7Đại diện: &f" + (rep == null ? "chưa có" : rep + (data.getBoolean("daidien.tam") ? " (tạm giữ)" : "")
                 + " &7tới " + WHEN.format(Instant.ofEpochMilli(data.getLong("daidien.den"))))));
         if (data.getBoolean("bau.mo")) {

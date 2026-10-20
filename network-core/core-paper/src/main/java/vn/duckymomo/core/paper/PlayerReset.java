@@ -106,7 +106,7 @@ final class PlayerReset implements Listener {
             }
             return true;
         }
-        p.sendMessage(c("&6&lCHƠI LẠI TỪ ĐẦU &7(Bang Hội Chiến)"));
+        p.sendMessage(c("&6CHƠI LẠI TỪ ĐẦU &7(Bang Hội Chiến)"));
         if (!problems.isEmpty()) {
             p.sendMessage(c("&cChưa chơi lại được:"));
             problems.forEach(x -> p.sendMessage(c("&c✖ " + x)));
@@ -256,7 +256,7 @@ final class PlayerReset implements Listener {
         }
         plugin.getLogger().info("/choilai: " + name + " đã chơi lại từ đầu (lần " + countThisSeason(id) + " mùa " + season
                 + (gift ? ", có quà" : ", không quà") + ")");
-        p.sendMessage(c("&a&lĐã bắt đầu lại từ đầu!" + (gift ? " &aĐã nhận quà tân thủ." : "") + " &7Gõ &f/huongdan &7để xem cẩm nang."));
+        p.sendMessage(c("&aĐã bắt đầu lại từ đầu!" + (gift ? " &aĐã nhận quà tân thủ." : "") + " &7Gõ &f/huongdan &7để xem cẩm nang."));
     }
 
     private void console(String cmd) {

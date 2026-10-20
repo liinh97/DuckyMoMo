@@ -98,7 +98,7 @@ website-disconnect-success: '&cYou have just deleted the link to the site.'
 website-disconnect-error: '&cYou are not connected to the site.'
 website-sync-pair-start: '&7Linking your server, please wait...'
 website-sync-pair-code:
-- '&aOpen &f<click:open_url:''%url%''>%url%</click>&a and enter the code &f&l<click:copy_to_clipboard:''%code%''>%code%</click>&a to authorize this server.'
+- '&aOpen &f<click:open_url:''%url%''>%url%</click>&a and enter the code &f<click:copy_to_clipboard:''%code%''>%code%</click>&a to authorize this server.'
 - '&7Once approved, run &f<hover:show_text:''&7Run this command''><click:run_command:''/zmenu website login''>/zmenu website login</click></hover>&7 to open the live link.'
 website-sync-pair-pending: '&7A pairing is already in progress, please wait.'
 website-sync-pair-success: '&aServer linked successfully!'

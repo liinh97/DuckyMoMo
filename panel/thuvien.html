@@ -123,7 +123,7 @@
     <div class="sec">
       <h3>2 · Tên và mô tả</h3>
       <label class="f" for="name">Tên hiển thị <span class="hint">mã màu &amp;: &amp;6 vàng, &amp;l đậm, &amp;o nghiêng… hoặc bấm ô màu</span></label>
-      <input id="name" placeholder="&6&lKiếm Rồng" maxlength="150">
+      <input id="name" placeholder="&6Kiếm Rồng" maxlength="150">
       <div class="palette" id="palette"></div>
       <div class="symbar"><div class="symtabs" id="symtabs"></div><div class="syms" id="syms"></div>
         <div class="symnote">Bấm để chèn vào ô đang gõ (tên hoặc mô tả). Xem trước ở khung bên phải. Người chơi Bedrock có thể thấy vài ký tự hiếm thành ô vuông.</div></div>
@@ -449,7 +449,7 @@ function insertText(code, line) {
   el.value = el.value.slice(0, p) + code + el.value.slice(el.selectionEnd ?? p); el.focus(); el.selectionStart = el.selectionEnd = p + code.length; render();
 }
 $("palette").querySelectorAll("button").forEach(b => {
-  const titles = { l: "Đậm (&l)", o: "Nghiêng (&o)", n: "Gạch chân (&n)", m: "Gạch ngang (&m)", k: "Chữ nhảy loạn (&k)", r: "Về mặc định (&r)" };
+  const titles = { l: "Đậm (&l, KHÔNG nên: font tiếng Việt bị nhòe)", o: "Nghiêng (&o)", n: "Gạch chân (&n)", m: "Gạch ngang (&m)", k: "Chữ nhảy loạn (&k)", r: "Về mặc định (&r)" };
   if (titles[b.title.slice(1)] && b.textContent) b.setAttribute("aria-label", titles[b.title.slice(1)]);
   b.onclick = (e) => { e.preventDefault(); insertText(b.title); };
 });
@@ -468,9 +468,9 @@ const SYMS = {
 };
 const PRESETS = [
   ["&8&m━━━━━━━━━━━━━━━━━━", "Đường kẻ ngang"],
-  ["&6&l✦ &e&lHUYỀN THOẠI &6&l✦", "Độ hiếm Huyền thoại"],
-  ["&d&l❖ SỬ THI ❖", "Độ hiếm Sử thi"],
-  ["&9&l◆ HIẾM ◆", "Độ hiếm Hiếm"],
+  ["&6✦ &eHUYỀN THOẠI &6✦", "Độ hiếm Huyền thoại"],
+  ["&d❖ SỬ THI ❖", "Độ hiếm Sử thi"],
+  ["&9◆ HIẾM ◆", "Độ hiếm Hiếm"],
   ["&7◇ Thường", "Độ hiếm Thường"],
   ["&c⚔ Sát thương: &f+10", "Dòng chỉ số sát thương"],
   ["&a❤ Máu: &f+4", "Dòng chỉ số máu"],
@@ -480,9 +480,9 @@ const PRESETS = [
   ["&7» &fChuột phải để dùng", "Hướng dẫn dùng"],
   ["&8➤ &7Quà sự kiện mùa 1", "Nguồn gốc món đồ"],
   ["&8✎ &7&oRèn từ vảy rồng phương Bắc", "Câu chuyện in nghiêng"],
-  ["&6&l⚔ &e&lKiếm Rồng &6&l⚔", "Tên kiểu kiếm (dùng cho ô tên)"],
-  ["&b❄ &f&lBăng Giá &b❄", "Tên kiểu băng"],
-  ["&c✹ &6&lHoả Long &c✹", "Tên kiểu lửa"],
+  ["&6⚔ &eKiếm Rồng &6⚔", "Tên kiểu kiếm (dùng cho ô tên)"],
+  ["&b❄ &fBăng Giá &b❄", "Tên kiểu băng"],
+  ["&c✹ &6Hoả Long &c✹", "Tên kiểu lửa"],
 ];
 let symTab = localStorage.getItem("dmm-symtab") || Object.keys(SYMS)[0];
 function renderSyms() {

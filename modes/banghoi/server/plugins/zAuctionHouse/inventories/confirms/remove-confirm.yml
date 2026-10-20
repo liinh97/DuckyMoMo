@@ -47,7 +47,7 @@ items:
     item:
       # Green glass pane for confirm action.
       material: GREEN_STAINED_GLASS_PANE
-      name: "#2CCED2<bold>RÚT"
+      name: "#2CCED2RÚT"
       lore:
       - "#92ffffRút món này."
       - ""
@@ -71,7 +71,7 @@ items:
     item:
       # Red glass pane for cancel action.
       material: RED_STAINED_GLASS_PANE
-      name: "#2CCED2<bold>QUAY LẠI"
+      name: "#2CCED2QUAY LẠI"
       lore:
       - "#92ffffQuay lại."
       - ""
@@ -125,7 +125,7 @@ items:
 
     item:
       material: SHULKER_BOX
-      name: "#2CCED2<bold>XEM TRONG HỘP SHULKER"
+      name: "#2CCED2XEM TRONG HỘP SHULKER"
       lore:
       - "#92ffffXem đồ bên trong hộp shulker."
       - ""

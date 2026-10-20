@@ -191,7 +191,7 @@ final class PeaceAlliance implements Listener {
             return true;
         }
         if (sub.equals("danhsach")) {
-            s.sendMessage(c("&a&lLiên minh Hoà Bình &7(" + n.getTowns().size() + " thị trấn, " + totalPlots() + " ô):"));
+            s.sendMessage(c("&aLiên minh Hoà Bình &7(" + n.getTowns().size() + " thị trấn, " + totalPlots() + " ô):"));
             for (Town t : n.getTowns()) {
                 s.sendMessage(c("&f" + t.getName() + " &7- " + t.getResidents().size() + " dân, " + t.getNumTownBlocks() + " ô"
                         + (t.isNeutral() ? " &a(đang hoà bình)" : " &e(chờ hiệu lực)")));
@@ -228,7 +228,7 @@ final class PeaceAlliance implements Listener {
             return true;
         }
         // thông tin
-        p.sendMessage(c("&a&lLiên minh Hoà Bình &7- " + n.getTowns().size() + " thị trấn, " + totalPlots() + " ô"));
+        p.sendMessage(c("&aLiên minh Hoà Bình &7- " + n.getTowns().size() + " thị trấn, " + totalPlots() + " ô"));
         p.sendMessage(c("&7Thị trấn trong liên minh: không bị vây, không bị chiếm, đất luôn tắt PvP. Đổi lại: dân không có quân hàm,"
                 + " không đánh trận, không tính điểm Bá Chủ, chỉ được tự vệ, phí bảo hộ " + feePerPlot + " xu/ô/ngày."));
         p.sendMessage(c(String.format(Locale.ROOT, "&7Mua thêm ô: &f%.1f xu&7/ô lúc này (tăng theo tổng đất liên minh). Đất mới phải liền sát đất cũ.",

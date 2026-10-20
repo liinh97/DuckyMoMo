@@ -424,7 +424,7 @@ final class Leaderboard implements Listener {
             }
             return true;
         }
-        s.sendMessage(c("&b&lKiến Trúc Sư &7(tuần " + w + "): đăng ký tuần " + cfg.getInt("register-week", 9) + ", bình chọn tuần " + cfg.getInt("vote-week", 10)));
+        s.sendMessage(c("&bKiến Trúc Sư &7(tuần " + w + "): đăng ký tuần " + cfg.getInt("register-week", 9) + ", bình chọn tuần " + cfg.getInt("vote-week", 10)));
         for (Map.Entry<String, Integer> e : architectVotes().entrySet()) {
             s.sendMessage(c("&f" + e.getKey() + " &7- " + e.getValue() + " phiếu"));
         }
@@ -491,7 +491,7 @@ final class Leaderboard implements Listener {
             return true;
         }
         int w = week();
-        String head = "&6&lBẢNG XẾP HẠNG MÙA " + data.getString("mua") + (w > 0 ? " &7(tuần " + w + ")" : "") + (locked() ? " &c(đã khoá)" : "");
+        String head = "&6BẢNG XẾP HẠNG MÙA " + data.getString("mua") + (w > 0 ? " &7(tuần " + w + ")" : "") + (locked() ? " &c(đã khoá)" : "");
         switch (sub) {
             case "chienthan" -> {
                 s.sendMessage(c(head + " &f- Chiến Thần"));
@@ -681,7 +681,7 @@ final class Leaderboard implements Listener {
                 p.sendMessage(c("&aĐã ẩn danh hiệu."));
             }
             default -> {
-                p.sendMessage(c("&6&lDanh hiệu của bạn &7(giữ qua các mùa, chỉ giành được trong game)"));
+                p.sendMessage(c("&6Danh hiệu của bạn &7(giữ qua các mùa, chỉ giành được trong game)"));
                 if (have.isEmpty()) {
                     p.sendMessage(c("&7Chưa có. Giành bằng bảng xếp hạng mùa (/bxh) hoặc mua bằng xu ở /cuahang."));
                 }

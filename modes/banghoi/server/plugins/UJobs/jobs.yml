@@ -3,7 +3,7 @@ jobs:
     name: "<gradient:#FF0000:#A20000>Thợ săn"
     bossbar:
       title: "<yellow>Cấp <level> <gray><job> <gradient:#6D6666:#938B8B:#777676>+<gained_exp><symbol_exp> <exp>/<next_exp>"
-      levelup: "<gradient:#5DFF00:#E8FF00:{phase}>Bạn đã lên cấp <bold><level></bold> nghề <job>!"
+      levelup: "<gradient:#5DFF00:#E8FF00:{phase}>Bạn đã lên cấp <level> nghề <job>!"
       overlay: NOTCHED_10
       color: RED
     icon: NETHERITE_SWORD
@@ -169,7 +169,7 @@ jobs:
     name: "<gradient:#9B9B9B:#646464>Thợ mỏ"
     bossbar:
       title: "<yellow>Cấp <level> <gray><job> <gradient:#6D6666:#938B8B:#777676>+<gained_exp><symbol_exp> <exp>/<next_exp>"
-      levelup: "<gradient:#5DFF00:#E8FF00:{phase}>Bạn đã lên cấp <bold><level></bold> nghề <job>!"
+      levelup: "<gradient:#5DFF00:#E8FF00:{phase}>Bạn đã lên cấp <level> nghề <job>!"
       overlay: NOTCHED_10
       color: WHITE
     icon: NETHERITE_PICKAXE
@@ -286,7 +286,7 @@ jobs:
     name: "<gradient:#FFD500:#FF9B00>Nông dân"
     bossbar:
       title: "<yellow>Cấp <level> <gray><job> <gradient:#6D6666:#938B8B:#777676>+<gained_exp><symbol_exp> <exp>/<next_exp>"
-      levelup: "<gradient:#5DFF00:#E8FF00:{phase}>Bạn đã lên cấp <bold><level></bold> nghề <job>!"
+      levelup: "<gradient:#5DFF00:#E8FF00:{phase}>Bạn đã lên cấp <level> nghề <job>!"
       overlay: NOTCHED_10
       color: YELLOW
     icon: NETHERITE_HOE
@@ -324,7 +324,7 @@ jobs:
     name: "<gradient:#FF00BD:#AA4B00>Chăn nuôi"
     bossbar:
       title: "<yellow>Cấp <level> <gray><job> <gradient:#6D6666:#938B8B:#777676>+<gained_exp><symbol_exp> <exp>/<next_exp>"
-      levelup: "<gradient:#5DFF00:#E8FF00:{phase}>Bạn đã lên cấp <bold><level></bold> nghề <job>!"
+      levelup: "<gradient:#5DFF00:#E8FF00:{phase}>Bạn đã lên cấp <level> nghề <job>!"
       overlay: NOTCHED_10
       color: PINK
     icon: LEAD
@@ -442,7 +442,7 @@ jobs:
     name: "<gradient:#00D8FF:#0A75C8>Ngư dân"
     bossbar:
       title: "<yellow>Cấp <level> <gray><job> <gradient:#6D6666:#938B8B:#777676>+<gained_exp><symbol_exp> <exp>/<next_exp>"
-      levelup: "<gradient:#5DFF00:#E8FF00:{phase}>Bạn đã lên cấp <bold><level></bold> nghề <job>!"
+      levelup: "<gradient:#5DFF00:#E8FF00:{phase}>Bạn đã lên cấp <level> nghề <job>!"
       overlay: NOTCHED_10
       color: BLUE
     icon: FISHING_ROD
@@ -469,7 +469,7 @@ jobs:
     name: "<gradient:#FF00FB:#9B00FF>Phù thuỷ"
     bossbar:
       title: "<yellow>Cấp <level> <gray><job> <gradient:#6D6666:#938B8B:#777676>+<gained_exp><symbol_exp> <exp>/<next_exp>"
-      levelup: "<gradient:#5DFF00:#E8FF00:{phase}>Bạn đã lên cấp <bold><level></bold> nghề <job>!"
+      levelup: "<gradient:#5DFF00:#E8FF00:{phase}>Bạn đã lên cấp <level> nghề <job>!"
       overlay: NOTCHED_10
       color: PURPLE
     icon: ENCHANTING_TABLE
@@ -578,7 +578,7 @@ jobs:
     name: "<gradient:#CB7800:#00B503>Tiều phu"
     bossbar:
       title: "<yellow>Cấp <level> <gray><job> <gradient:#6D6666:#938B8B:#777676>+<gained_exp><symbol_exp> <exp>/<next_exp>"
-      levelup: "<gradient:#5DFF00:#E8FF00:{phase}>Bạn đã lên cấp <bold><level></bold> nghề <job>!"
+      levelup: "<gradient:#5DFF00:#E8FF00:{phase}>Bạn đã lên cấp <level> nghề <job>!"
       overlay: NOTCHED_10
       color: GREEN
     icon: NETHERITE_AXE
@@ -629,7 +629,7 @@ jobs:
     name: "<gradient:#69A5E8:#AE69E8>Thợ đào đất"
     bossbar:
       title: "<yellow>Cấp <level> <gray><job> <gradient:#6D6666:#938B8B:#777676>+<gained_exp><symbol_exp> <exp>/<next_exp>"
-      levelup: "<gradient:#5DFF00:#E8FF00:{phase}>Bạn đã lên cấp <bold><level></bold> nghề <job>!"
+      levelup: "<gradient:#5DFF00:#E8FF00:{phase}>Bạn đã lên cấp <level> nghề <job>!"
       overlay: NOTCHED_10
       color: BLUE
     icon: NETHERITE_SHOVEL
@@ -677,7 +677,7 @@ jobs:
     name: "<gradient:#FF0000:#FFFF00>Đấu sĩ"
     bossbar:
       title: "<yellow>Cấp <level> <gray><job> <gradient:#6D6666:#938B8B:#777676>+<gained_exp><symbol_exp> <exp>/<next_exp>"
-      levelup: "<gradient:#5DFF00:#E8FF00:{phase}>Bạn đã lên cấp <bold><level></bold> nghề <job>!"
+      levelup: "<gradient:#5DFF00:#E8FF00:{phase}>Bạn đã lên cấp <level> nghề <job>!"
       overlay: NOTCHED_10
       color: RED
     icon: NETHERITE_HELMET
@@ -695,7 +695,7 @@ jobs:
     name: "<gradient:#1FFF00:#769072>Hộ vệ làng"
     bossbar:
       title: "<yellow>Cấp <level> <gray><job> <gradient:#6D6666:#938B8B:#777676>+<gained_exp><symbol_exp> <exp>/<next_exp>"
-      levelup: "<gradient:#5DFF00:#E8FF00:{phase}>Bạn đã lên cấp <bold><level></bold> nghề <job>!"
+      levelup: "<gradient:#5DFF00:#E8FF00:{phase}>Bạn đã lên cấp <level> nghề <job>!"
       overlay: NOTCHED_10
       color: GREEN
     icon: SHIELD
@@ -716,7 +716,7 @@ jobs:
     name: "<gradient:#A26238:#AF8D5B>Thợ chế tạo"
     bossbar:
       title: "<yellow>Cấp <level> <gray><job> <gradient:#6D6666:#938B8B:#777676>+<gained_exp><symbol_exp> <exp>/<next_exp>"
-      levelup: "<gradient:#5DFF00:#E8FF00:{phase}>Bạn đã lên cấp <bold><level></bold> nghề <job>!"
+      levelup: "<gradient:#5DFF00:#E8FF00:{phase}>Bạn đã lên cấp <level> nghề <job>!"
       overlay: NOTCHED_10
       color: WHITE
     icon: CRAFTING_TABLE
@@ -773,7 +773,7 @@ jobs:
     name: "<gradient:#0CFF00:#F7FF00>Thương nhân"
     bossbar:
       title: "<yellow>Cấp <level> <gray><job> <gradient:#6D6666:#938B8B:#777676>+<gained_exp><symbol_exp> <exp>/<next_exp>"
-      levelup: "<gradient:#5DFF00:#E8FF00:{phase}>Bạn đã lên cấp <bold><level></bold> nghề <job>!"
+      levelup: "<gradient:#5DFF00:#E8FF00:{phase}>Bạn đã lên cấp <level> nghề <job>!"
       overlay: NOTCHED_10
       color: BLUE
     icon: EMERALD
@@ -791,7 +791,7 @@ jobs:
     name: "<gradient:#00AAFF:#00FF13>Nhà thám hiểm"
     bossbar:
       title: "<yellow>Cấp <level> <gray><job> <gradient:#6D6666:#938B8B:#777676>+<gained_exp><symbol_exp> <exp>/<next_exp>"
-      levelup: "<gradient:#5DFF00:#E8FF00:{phase}>Bạn đã lên cấp <bold><level></bold> nghề <job>!"
+      levelup: "<gradient:#5DFF00:#E8FF00:{phase}>Bạn đã lên cấp <level> nghề <job>!"
       overlay: NOTCHED_10
       color: BLUE
     icon: SPYGLASS

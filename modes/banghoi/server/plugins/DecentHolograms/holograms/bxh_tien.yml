@@ -7,7 +7,7 @@ facing: 0.0
 down-origin: false
 pages:
 - lines:
-  - content: '&6&l✦ TOP GIÀU NHẤT ✦'
+  - content: '&6✦ TOP GIÀU NHẤT ✦'
     height: 0.3
   - content: '&e1. &f%essentials_baltop_player_0% &8- &a%essentials_baltop_balance_formatted_0%'
     height: 0.3

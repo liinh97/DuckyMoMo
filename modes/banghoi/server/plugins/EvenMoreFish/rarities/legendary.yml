@@ -3,7 +3,7 @@
 id: Legendary
 disabled: false
 displayname: '<gold>Huyền thoại'
-format: '<gold><bold>{name}'
+format: '<gold>{name}'
 weight: 1
 item:
   material: orange_concrete_powder

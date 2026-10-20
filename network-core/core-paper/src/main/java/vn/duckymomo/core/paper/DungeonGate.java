@@ -530,7 +530,7 @@ final class DungeonGate implements Listener {
                     data.set("tim." + uk(p.getUniqueId()), l);
                     dirty = true;
                     p.playSound(p.getLocation(), Sound.BLOCK_END_PORTAL_SPAWN, 0.6f, 1.4f);
-                    p.sendMessage(c("&5&l⛩ Bạn đã tìm ra dungeon ẩn: &d" + d.name() + "&5! &7Vào bất cứ lúc nào trong mùa này: "));
+                    p.sendMessage(c("&5⛩ Bạn đã tìm ra dungeon ẩn: &d" + d.name() + "&5! &7Vào bất cứ lúc nào trong mùa này: "));
                     p.sendMessage(button("&d[Vào ngay]", "/dungeon vao " + d.id(), "Mở cổng " + d.name()));
                     Achievements.add(p, "dungeonan", 1);
                     refresh(p);
@@ -611,7 +611,7 @@ final class DungeonGate implements Listener {
             List<String> names = ps.stream().map(Player::getName).toList();
             data.set("dau." + id + ".ten", names);
             data.set("dau." + id + ".luc", System.currentTimeMillis());
-            PlayerSettings.broadcast("sukien", c("&6&l🏆 ĐẦU TIÊN! &e" + String.join(", ", names) + " &6là người đầu tiên của server vượt &f" + d.name() + "&6!"));
+            PlayerSettings.broadcast("sukien", c("&6🏆 ĐẦU TIÊN! &e" + String.join(", ", names) + " &6là người đầu tiên của server vượt &f" + d.name() + "&6!"));
         }
         data.set("dem." + id, data.getInt("dem." + id, 0) + 1);
         long start = ps.stream().map(p -> enteredAt.get(p.getUniqueId())).filter(java.util.Objects::nonNull).min(Long::compare).orElse(0L);
@@ -676,7 +676,7 @@ final class DungeonGate implements Listener {
     private ItemStack luckTicket(Dg d) {
         ItemStack it = new ItemStack(Material.AMETHYST_SHARD);
         ItemMeta m = it.getItemMeta();
-        m.displayName(c("&d&l✦ Vé Vận Mệnh &7(" + d.name() + "&7)"));
+        m.displayName(c("&d✦ Vé Vận Mệnh &7(" + d.name() + "&7)"));
         m.lore(List.of(c("&7Mở cổng dungeon may mắn &f" + d.name()), c("&7Dùng: &f/dungeon vao " + d.id()),
                 c(d.rollChance() < 100 ? "&c" + Math.round(d.rollChance()) + "% cổng mở, trượt thì vé tan biến" : "&aChắc chắn mở cổng")));
         m.setEnchantmentGlintOverride(true);
@@ -748,7 +748,7 @@ final class DungeonGate implements Listener {
     private ItemStack keyItem(Dg d, Player owner) {
         ItemStack it = new ItemStack(Material.TRIAL_KEY);
         ItemMeta m = it.getItemMeta();
-        m.displayName(c("&6&l🗝 Chìa khoá " + d.name()));
+        m.displayName(c("&6🗝 Chìa khoá " + d.name()));
         List<Component> lore = new ArrayList<>(List.of(c("&7Mở vĩnh viễn tầng &f" + d.name() + (d.level().isBlank() ? "" : " &8[cấp " + d.level() + "]")),
                 c("&7Dùng: &f/dungeon vao " + d.id() + " &7(chìa mất khi dùng)")));
         if (!keyTradeable) {
@@ -831,7 +831,7 @@ final class DungeonGate implements Listener {
     private ItemStack fragment(Dg d) {
         ItemStack it = new ItemStack(Material.ECHO_SHARD);
         ItemMeta m = it.getItemMeta();
-        m.displayName(c("&5&l✧ Mảnh Chìa &7(" + d.name() + "&7)"));
+        m.displayName(c("&5✧ Mảnh Chìa &7(" + d.name() + "&7)"));
         m.lore(List.of(c("&7Ghép đủ &f" + d.fragments() + " &7mảnh để mở lối vào &f" + d.name()), c("&7Ghép: &f/dungeon vao " + d.id())));
         m.setEnchantmentGlintOverride(true);
         m.getPersistentDataContainer().set(fragKey, PersistentDataType.STRING, d.id());
@@ -950,7 +950,7 @@ final class DungeonGate implements Listener {
         ThreadLocalRandom r = ThreadLocalRandom.current();
         int x = s.getBlockX() + r.nextInt(-40, 41), z = s.getBlockZ() + r.nextInt(-40, 41);
         p.playSound(p.getLocation(), Sound.BLOCK_END_PORTAL_FRAME_FILL, 1f, 0.6f);
-        p.sendMessage(c("&5&l🗺 Dưới đáy rương có mảnh giấy cũ: &d\"Lối vào " + d.name() + " ở quanh X " + x + " Z " + z
+        p.sendMessage(c("&5🗺 Dưới đáy rương có mảnh giấy cũ: &d\"Lối vào " + d.name() + " ở quanh X " + x + " Z " + z
                 + (d.nightOnly() ? ", chỉ hiện lúc đêm" : "") + "\"&5. &7(trong khoảng 40 khối, tìm hạt tím)"));
         return true;
     }
@@ -1060,7 +1060,7 @@ final class DungeonGate implements Listener {
                     list(s);
                     return true;
                 }
-                s.sendMessage(c("&5&l━━ Chỗ giấu dungeon ẩn (chỉ admin thấy) ━━"));
+                s.sendMessage(c("&5━━ Chỗ giấu dungeon ẩn (chỉ admin thấy) ━━"));
                 for (Dg h : dungeons.values()) {
                     if (!h.type().equals("hidden")) {
                         continue;
@@ -1131,7 +1131,7 @@ final class DungeonGate implements Listener {
             data.set(k + ".xu", 0);
             data.set(k + ".gop", null);
             data.set(k + ".mo", d.openDays() == 0 ? -1 : System.currentTimeMillis() + d.openDays() * 86_400_000L);
-            PlayerSettings.broadcast("sukien", c("&5&l⛩ CỔNG ĐÃ MỞ! &dQuỹ chung đã đủ, &f" + d.name() + " &dmở cho cả server "
+            PlayerSettings.broadcast("sukien", c("&5⛩ CỔNG ĐÃ MỞ! &dQuỹ chung đã đủ, &f" + d.name() + " &dmở cho cả server "
                     + (d.openDays() == 0 ? "tới hết mùa" : "trong " + d.openDays() + " ngày") + ". &f/dungeon vao " + d.id()));
             Bukkit.getOnlinePlayers().forEach(this::refresh);
         } else {
@@ -1425,7 +1425,7 @@ final class DungeonGate implements Listener {
 
     private void list(CommandSender s) {
         UUID u = s instanceof Player p ? p.getUniqueId() : null;
-        s.sendMessage(c("&5&l━━ ⛩ CỔNG DUNGEON ━━"));
+        s.sendMessage(c("&5━━ ⛩ CỔNG DUNGEON ━━"));
         s.sendMessage(c("&7Bấm vào tên để vào. Đồ trong dungeon chỉ có ở đây; mỗi boss có thời gian chờ nhận lại đồ."));
         String weekly = weeklyId();
         if (weekly != null) {

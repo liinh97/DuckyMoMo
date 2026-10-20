@@ -103,13 +103,13 @@ final class DonateQr implements Listener {
             return;
         }
         Holder h = new Holder();
-        h.inv = Bukkit.createInventory(h, 54, c("&6&lỦNG HỘ SERVER &8(chỉ đồ trang trí)"));
+        h.inv = Bukkit.createInventory(h, 54, c("&6ỦNG HỘ SERVER &8(chỉ đồ trang trí)"));
         int row = 0;
         for (int ti = 0; ti < tiers.size() && row < 6; ti++) {
             DonateRanks.Tier t = tiers.get(ti);
             ItemStack head = new ItemStack(Material.NAME_TAG);
             ItemMeta hm = head.getItemMeta();
-            hm.displayName(c(t.color() + "&l" + t.name()));
+            hm.displayName(c(t.color() + t.name()));
             List<Component> lore = new ArrayList<>();
             for (String perk : t.perks()) {
                 lore.add(c("&7• &f" + perk));
@@ -273,7 +273,7 @@ final class DonateQr implements Listener {
         ItemStack map = new ItemStack(Material.FILLED_MAP);
         MapMeta meta = (MapMeta) map.getItemMeta();
         meta.setMapView(view);
-        meta.displayName(c("&6&lQR ủng hộ &7(" + minutes + " phút)"));
+        meta.displayName(c("&6QR ủng hộ &7(" + minutes + " phút)"));
         List<Component> lore = new ArrayList<>();
         lore.add(c("&7Gói: &f" + str(don, "bac") + " · " + str(don, "goi")));
         lore.add(c("&7Số tiền: &e" + money));

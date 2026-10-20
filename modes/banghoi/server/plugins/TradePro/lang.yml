@@ -1,60 +1,60 @@
 request:
-  sent: '&6&l(!) &r&6Bạn đã gửi lời mời trao đổi cho &e%PLAYER%'
+  sent: '&6(!) &r&6Bạn đã gửi lời mời trao đổi cho &e%PLAYER%'
   received:
-    text: '&6&l(!) &r&6&e%PLAYER% &6mời bạn trao đổi đồ%NEWLINE%&6&l(!) &r&6Gõ &e/trade
+    text: '&6(!) &r&6&e%PLAYER% &6mời bạn trao đổi đồ%NEWLINE%&6(!) &r&6Gõ &e/trade
       %PLAYER% &6để bắt đầu'
-    hover: '&6&lBấm để trao đổi với &e&l%PLAYER%'
-enabled: '&6&l(!) &r&6Bạn đã &abật &6nhận lời mời trao đổi!'
-disabled: '&6&l(!) &r&6Bạn đã &ctắt &6nhận lời mời trao đổi!'
+    hover: '&6Bấm để trao đổi với &e%PLAYER%'
+enabled: '&6(!) &r&6Bạn đã &abật &6nhận lời mời trao đổi!'
+disabled: '&6(!) &r&6Bạn đã &ctắt &6nhận lời mời trao đổi!'
 errors:
-  creative: '&4&l(!) &r&4Không trao đổi được ở chế độ sáng tạo!'
-  creative-them: '&4&l(!) &r&4Người đó đang ở chế độ sáng tạo!'
-  blacklisted-item: '&4&l(!) &r&4Món này bị cấm trao đổi!'
+  creative: '&4(!) &r&4Không trao đổi được ở chế độ sáng tạo!'
+  creative-them: '&4(!) &r&4Người đó đang ở chế độ sáng tạo!'
+  blacklisted-item: '&4(!) &r&4Món này bị cấm trao đổi!'
   within-range:
-    same-world: '&4&l(!) &r&4Phải đứng cách người đó trong %AMOUNT% khối mới trao
+    same-world: '&4(!) &r&4Phải đứng cách người đó trong %AMOUNT% khối mới trao
       đổi được'
-    cross-world: '&4&l(!) &r&4Phải đứng cách người đó trong %AMOUNT% khối%NEWLINE%&4&l(!)
+    cross-world: '&4(!) &r&4Phải đứng cách người đó trong %AMOUNT% khối%NEWLINE%&4(!)
       &r&4ở thế giới khác mới trao đổi được!'
-  no-cross-world: '&4&l(!) &r&4Phải ở cùng thế giới mới trao đổi được!'
-  same-ip: '&4&l(!) &4Không được trao đổi giữa hai người cùng IP!'
-  wait-for-expire: '&4&l(!) &r&4Bạn còn một lời mời trao đổi đang chờ%NEWLINE%&4&l(!)
+  no-cross-world: '&4(!) &r&4Phải ở cùng thế giới mới trao đổi được!'
+  same-ip: '&4(!) &4Không được trao đổi giữa hai người cùng IP!'
+  wait-for-expire: '&4(!) &r&4Bạn còn một lời mời trao đổi đang chờ%NEWLINE%&4(!)
     &r&4Nó sẽ hết hạn ngay thôi'
-  player-not-found: '&4&l(!) &r&4Không tìm thấy người chơi'
-  self-trade: '&4&l(!) &r&4Không trao đổi với chính mình được'
-  blocked-world: '&4&l(!) &r&4Không trao đổi được ở thế giới này.'
-  invalid-usage: '&4&l(!) &r&4Sai cách dùng. Cách dùng: %NEWLINE%    &c- /trade <tên
+  player-not-found: '&4(!) &r&4Không tìm thấy người chơi'
+  self-trade: '&4(!) &r&4Không trao đổi với chính mình được'
+  blocked-world: '&4(!) &r&4Không trao đổi được ở thế giới này.'
+  invalid-usage: '&4(!) &r&4Sai cách dùng. Cách dùng: %NEWLINE%    &c- /trade <tên
     người chơi>%NEWLINE%    &c- /trade deny'
-  trading-disabled: '&4&l(!) &r&4Người đó đang tắt nhận lời mời trao đổi.'
+  trading-disabled: '&4(!) &r&4Người đó đang tắt nhận lời mời trao đổi.'
   no-perms:
-    accept: '&4&l(!) &r&4Bạn không có quyền trao đổi'
-    send: '&4&l(!) &r&4Bạn không có quyền gửi lời mời trao đổi'
-    receive: '&4&l(!) &r&4Người đó không có quyền nhận trao đổi'
-    admin: '&4&l(!) &r&4Bạn không có quyền dùng lệnh này'
+    accept: '&4(!) &r&4Bạn không có quyền trao đổi'
+    send: '&4(!) &r&4Bạn không có quyền gửi lời mời trao đổi'
+    receive: '&4(!) &r&4Người đó không có quyền nhận trao đổi'
+    admin: '&4(!) &r&4Bạn không có quyền dùng lệnh này'
 accept:
-  sender: '&6&l(!) &r&e%PLAYER% &6đã nhận lời trao đổi của bạn'
-  receiver: '&6&l(!) &r&6Bạn đã nhận lời trao đổi của &e%PLAYER%'
-cancelled: '&4&l(!) &r&4Đã huỷ trao đổi'
-expired: '&4&l(!) &r&4Lời mời trao đổi gần nhất của bạn đã hết hạn'
-trade-complete: '&6&l(!) &r&6Trao đổi thành công!'
-forced-trade: '&6&l(!) &r&6Bạn bị đưa vào trao đổi với &e%PLAYER%'
+  sender: '&6(!) &r&e%PLAYER% &6đã nhận lời trao đổi của bạn'
+  receiver: '&6(!) &r&6Bạn đã nhận lời trao đổi của &e%PLAYER%'
+cancelled: '&4(!) &r&4Đã huỷ trao đổi'
+expired: '&4(!) &r&4Lời mời trao đổi gần nhất của bạn đã hết hạn'
+trade-complete: '&6(!) &r&6Trao đổi thành công!'
+forced-trade: '&6(!) &r&6Bạn bị đưa vào trao đổi với &e%PLAYER%'
 denied:
-  them: '&4&l(!) &r&4&c%PLAYER% &4đã từ chối lời mời trao đổi của bạn'
-  you: '&4&l(!) &r&4Đã từ chối các lời mời trao đổi gần đây.'
+  them: '&4(!) &r&4&c%PLAYER% &4đã từ chối lời mời trao đổi của bạn'
+  you: '&4(!) &r&4Đã từ chối các lời mời trao đổi gần đây.'
 spectate:
-  text: '&6&l(!) &e%PLAYER1% &6và &e%PLAYER2% &6đang trao đổi %NEWLINE%&6&l(!) &6Gõ
+  text: '&6(!) &e%PLAYER1% &6và &e%PLAYER2% &6đang trao đổi %NEWLINE%&6(!) &6Gõ
     &e/tradeplus spectate %PLAYER1% %PLAYER2% &6để xem'
-  hover: '&6&lBấm để xem cuộc trao đổi này'
+  hover: '&6Bấm để xem cuộc trao đổi này'
 antiscam:
-  discrepancy: '&4&l(!) &r&4Đồ trao đổi bị thay đổi bất thường.%NEWLINE%&4&l(!) &4Đã
+  discrepancy: '&4(!) &r&4Đồ trao đổi bị thay đổi bất thường.%NEWLINE%&4(!) &4Đã
     huỷ trao đổi.'
 admin:
-  configs-reloaded: '&6&l(!) &6Đã nạp lại cấu hình!'
-  invalid-players: '&4&l(!) &4Người chơi không hợp lệ!'
-  forced-trade: '&6&l(!) &6Đã ép &e%PLAYER1% &6và &e%PLAYER2% &6trao đổi'
-  players-only: '&4&l(!) &4Lệnh này chỉ người chơi dùng được.'
-  no-trade: '&4&l(!) &4Không thấy cuộc trao đổi nào như vậy.'
+  configs-reloaded: '&6(!) &6Đã nạp lại cấu hình!'
+  invalid-players: '&4(!) &4Người chơi không hợp lệ!'
+  forced-trade: '&6(!) &6Đã ép &e%PLAYER1% &6và &e%PLAYER2% &6trao đổi'
+  players-only: '&4(!) &4Lệnh này chỉ người chơi dùng được.'
+  no-trade: '&4(!) &4Không thấy cuộc trao đổi nào như vậy.'
 hooks:
   factions:
-    enemy-territory: '&4&l(!) &4Không trao đổi được trong lãnh thổ địch!'
+    enemy-territory: '&4(!) &4Không trao đổi được trong lãnh thổ địch!'
   worldguard:
-    trading-not-allowed: '&4&l(!) &4Không trao đổi được ở khu này.'
+    trading-not-allowed: '&4(!) &4Không trao đổi được ở khu này.'

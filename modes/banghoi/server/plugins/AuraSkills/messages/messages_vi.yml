@@ -608,7 +608,7 @@ commands:
       entry: "\n  <dark_aqua>{stat} <gray>- Tổng: <white>{total_level}<gray>, Gốc: <white>{base_level}<gray>, Cộng thêm: <white>{modified_level}"
       desc: Xem chỉ số của bất kỳ người chơi nào (cả khi offline).
   rank:
-    header: <aqua><bold>Xếp hạng Khả năng của bạn
+    header: <aqua>Xếp hạng Khả năng của bạn
     power: '<yellow>Sức mạnh <gray>(Tất cả Khả năng): <white>#{rank} trên {total}'
     entry: '<aqua>{skill}<gray>: <white>#{rank} trên {total}'
     desc: Xem thứ hạng kỹ năng của bạn.
@@ -647,12 +647,12 @@ commands:
     desc: Bật/tắt thanh kinh nghiệm kỹ năng trên màn hình.
   top:
     desc: Xem người đứng đầu một kỹ năng
-    power_header: <white>--==<aqua><bold>Bảng xếp hạng tất cả Khả năng</bold><white>==--
-    power_header_page: <white>--==<aqua><bold>Bảng xếp hạng tất cả Khả năng</bold><white>(Trang{page})==--
-    skill_header: <white>--==<aqua><bold>{skill} Bảng xếp hạng</bold><white>==--
-    skill_header_page: <white>--==<aqua><bold>{skill} Bảng xếp hạng</bold><white>(Trang {page})==--
-    average_header: <white>--==<aqua><bold>Bảng xếp hạng trung bình Khả năng</bold><white>==--
-    average_header_page: <white>--==<aqua><bold>Bảng xếp hạng trung bình Khả năng</bold><white>(Trang {page})==--
+    power_header: <white>--==<aqua>Bảng xếp hạng tất cả Khả năng<white>==--
+    power_header_page: <white>--==<aqua>Bảng xếp hạng tất cả Khả năng<white>(Trang{page})==--
+    skill_header: <white>--==<aqua>{skill} Bảng xếp hạng<white>==--
+    skill_header_page: <white>--==<aqua>{skill} Bảng xếp hạng<white>(Trang {page})==--
+    average_header: <white>--==<aqua>Bảng xếp hạng trung bình Khả năng<white>==--
+    average_header_page: <white>--==<aqua>Bảng xếp hạng trung bình Khả năng<white>(Trang {page})==--
     usage: '<yellow>Cách dùng: <green>/sk top <white><page> <gray>hoặc <green>/sk top <white>[skill] <page>'
   transfer:
     success: <green>Chuyển đổi dữ liệu người chơi từ <gray>{from} <green>to <gray>{to} thành công

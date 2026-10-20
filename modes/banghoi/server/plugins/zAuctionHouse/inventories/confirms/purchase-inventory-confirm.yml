@@ -67,7 +67,7 @@ items:
 
     item:
       material: GREEN_STAINED_GLASS_PANE
-      name: "#2CCED2<bold>MUA"
+      name: "#2CCED2MUA"
       lore:
       - "#92ffffMua món này."
       - ""
@@ -87,7 +87,7 @@ items:
 
     item:
       material: RED_STAINED_GLASS_PANE
-      name: "#2CCED2<bold>QUAY LẠI"
+      name: "#2CCED2QUAY LẠI"
       lore:
       - "#92ffffQuay lại."
       - ""
@@ -110,7 +110,7 @@ items:
 
     item:
       material: SHULKER_BOX
-      name: "#2CCED2<bold>XEM TRONG HỘP SHULKER"
+      name: "#2CCED2XEM TRONG HỘP SHULKER"
       lore:
       - "#92ffffXem đồ bên trong hộp shulker."
       - ""

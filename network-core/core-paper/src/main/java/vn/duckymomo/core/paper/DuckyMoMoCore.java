@@ -1046,7 +1046,7 @@ public final class DuckyMoMoCore extends JavaPlugin {
     }
 
     private static final List<String> DMM_HELP = List.of(
-            "§6§l/dmm §7(DuckyMoMo, gõ dài: /duckymomo) §8— bấm Tab để gợi ý",
+            "§6/dmm §7(DuckyMoMo, gõ dài: /duckymomo) §8— bấm Tab để gợi ý",
             "§e/dmm enchant <phù phép> <cấp> §7phù phép vượt cấp món đang cầm (0 = gỡ)",
             "§e/dmm sach <phù phép> <cấp> [người] §7tặng sách phù phép",
             "§e/dmm laydo <mã> [người] [số] §7lấy đồ trong Thư viện đồ",

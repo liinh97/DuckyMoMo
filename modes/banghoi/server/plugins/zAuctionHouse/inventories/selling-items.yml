@@ -84,7 +84,7 @@ items:
     slot: 47
     item:
       material: CHEST
-      name: "#2CCED2<bold>Lấy hết"
+      name: "#2CCED2Lấy hết"
       lore:
       - "#92ffffRút mọi món đang bán."
       - ""

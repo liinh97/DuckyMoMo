@@ -556,7 +556,7 @@ final class Seasons implements Listener {
         }
         String id = current();
         ConfigurationSection s = season(id);
-        sender.sendMessage(c("&6&l━━ " + name(id) + " &6&l━━"));
+        sender.sendMessage(c("&6━━ " + name(id) + " &6━━"));
         ConfigurationSection evNow = event();
         if (evNow != null) {
             sender.sendMessage(c("&d⚡ Sự kiện: " + evNow.getString("name", evNow.getName()) + " &7— " + evNow.getString("subtitle", "")));

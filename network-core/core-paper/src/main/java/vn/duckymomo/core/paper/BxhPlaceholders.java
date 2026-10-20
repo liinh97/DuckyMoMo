@@ -117,13 +117,13 @@ final class BxhPlaceholders extends PlaceholderExpansion {
 
     static String hologramHelp() {
         StringBuilder sb = new StringBuilder("Tạo hologram bảng xếp hạng (đứng tại chỗ muốn đặt, gõ lần lượt):\n");
-        sb.append("/dh create bxh_bachu &6&l⚑ BÁ CHỦ MÙA ⚑\n");
+        sb.append("/dh create bxh_bachu &6⚑ BÁ CHỦ MÙA ⚑\n");
         for (int i = 1; i <= 5; i++) {
             sb.append("/dh line add bxh_bachu 1 &e").append(i).append(". &f%dmm_bachu_").append(i).append("_ten% &8- &a%dmm_bachu_")
                     .append(i).append("_diem%\n");
         }
         sb.append("/dh line add bxh_bachu 1 &r\n/dh line add bxh_bachu 1 &7Quốc gia bạn: &f%dmm_toi_bachu%\n");
-        sb.append("/dh create bxh_chienthan &c&l⚔ CHIẾN THẦN ⚔\n");
+        sb.append("/dh create bxh_chienthan &c⚔ CHIẾN THẦN ⚔\n");
         for (int i = 1; i <= 5; i++) {
             sb.append("/dh line add bxh_chienthan 1 &e").append(i).append(". &f%dmm_chienthan_").append(i).append("_ten% &8- &a%dmm_chienthan_")
                     .append(i).append("_diem%\n");

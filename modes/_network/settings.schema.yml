@@ -36,7 +36,7 @@ groups:
           options: [ { value: false, label: "Tắt (khuyên dùng: định dạng chat đã có {PREFIX})" }, { value: true, label: "Bật (role/rank sẽ hiện 2 lần nếu định dạng có {PREFIX})" } ] }
       - { key: ess_nick_max, label: Tên hiển thị (/nick) dài tối đa, type: int, min: 3, max: 32, servers: [banghoi-1, practice-1], file: plugins/Essentials/config.yml, path: max-nick-length, default: 16 }
       - { key: ess_nick_ignore_colors, label: Không tính mã màu vào độ dài tên, type: select, servers: [banghoi-1, practice-1], file: plugins/Essentials/config.yml, path: ignore-colors-in-max-nick-length, default: true,
-          options: [ { value: true, label: "Bật (khuyên dùng: &6&lTên chỉ tính 3 chữ)" }, { value: false, label: "Tắt (mặc định Essentials: mã màu cũng tính)" } ] }
+          options: [ { value: true, label: "Bật (khuyên dùng: &6Tên chỉ tính 3 chữ)" }, { value: false, label: "Tắt (mặc định Essentials: mã màu cũng tính)" } ] }
       - { key: ess_nick_prefix, label: Ký tự đứng trước tên đã đổi, type: text, servers: [banghoi-1, practice-1], file: plugins/Essentials/config.yml, path: nickname-prefix, default: "~",
           note: "Mặc định ~ để người khác biết đây là tên đã đổi (chống giả làm admin). Để trống = không có." }
 
@@ -91,7 +91,7 @@ groups:
       - { key: tier4_name, label: "Bậc 5 (congtuoc): tên hiển thị", type: text, servers: [lobby, banghoi-1, practice-1], file: plugins/DuckyMoMoCore/config.yml, path: donate-ranks.tiers.4.name }
       - { key: tier4_prefix, info: "Là gì: chữ hiện trước tên trong chat và Tab, dùng mã màu &.\nLưu ý: người có cả role chức vụ và rank thấy cả hai, role chức vụ đứng trước.", label: "Bậc 5 (congtuoc): prefix trong chat/Tab", type: text,
           commands: ["lp group congtuoc meta removeprefix 9", "lp group congtuoc meta setprefix 9 \"{value} \""],
-          note: "Ví dụ &6&l[Công Tước]. Ghi vào LuckPerms (dùng chung toàn mạng), có hiệu lực ngay." }
+          note: "Ví dụ &6[Công Tước]. Ghi vào LuckPerms (dùng chung toàn mạng), có hiệu lực ngay." }
       - { key: tier4_prices, info: "Là gì: các gói giá hiện trong /rank, trang web và QR /rank mua.\nCách ghi: mỗi gói \"<số> tháng <giá>\" hoặc \"1 năm <giá>\", vd 3 tháng 50k.\nLưu ý: số tháng và số tiền chuyển khoản đọc từ chính chữ này, ghi sai dạng là sai tiền. Duyệt ở trang Donate cấp đúng số tháng của gói; cấp tay: /rank give <tên> <bậc> <số tháng>.", label: "Bậc 5 (congtuoc): giá các gói", type: list, servers: [lobby, banghoi-1, practice-1], file: plugins/DuckyMoMoCore/config.yml, path: donate-ranks.tiers.4.prices,
           note: "Cách nhau dấu phẩy, ví dụ: 1 tháng 20k, 3 tháng 50k, 6 tháng 90k, 1 năm 160k" }
       - { key: tier4_perks, info: "Là gì: CHỮ mô tả quyền lợi, hiện trong /rank và trên web.\nLưu ý: quyền lợi THẬT (hạt, pet, màu chat…) bật ở trang Role › rank đó › Quyền. Chỉ sửa chữ mà không bật quyền thì người mua không có.", label: "Bậc 5 (congtuoc): quyền lợi (chữ hiện trong /rank)", type: list, servers: [lobby, banghoi-1, practice-1], file: plugins/DuckyMoMoCore/config.yml, path: donate-ranks.tiers.4.perks }
@@ -175,9 +175,9 @@ groups:
   - title: Role chức vụ - prefix
     info: "Là gì: role staff (Admin, Manager, Mod, Helper, Builder) và Dân.\nSửa ở đây: chỉ prefix.\nThêm người, bật quyền: trang Role & rank."
     category: Role
-    description: "Prefix hiện trước tên trong chat và Tab (mã màu &a, &c, &l đậm...). Cấp / gỡ role cho người chơi: trang Role (link trên thanh đầu). Quyền của từng role: lệnh /lp trong game (xem cẩm nang LuckPerms)."
+    description: "Prefix hiện trước tên trong chat và Tab (mã màu &a, &c...). Cấp / gỡ role cho người chơi: trang Role (link trên thanh đầu). Quyền của từng role: lệnh /lp trong game (xem cẩm nang LuckPerms)."
     settings:
-      - { key: role_default_prefix, info: "Là gì: chữ hiện trước tên người chơi thường. Để trống = không có gì.\nMã màu: &a xanh lá, &c đỏ, &e vàng, &l đậm…\nKhi lưu: ghi vào LuckPerms, cả mạng thấy ngay.", label: "Dân (mặc định): prefix", type: text,
+      - { key: role_default_prefix, info: "Là gì: chữ hiện trước tên người chơi thường. Để trống = không có gì.\nMã màu: &a xanh lá, &c đỏ, &e vàng (không dùng chữ đậm: font tiếng Việt bị nhòe)…\nKhi lưu: ghi vào LuckPerms, cả mạng thấy ngay.", label: "Dân (mặc định): prefix", type: text,
           commands: ["lp group default meta removeprefix 0", "lp group default meta setprefix 0 \"{value} \""] }
       - { key: role_builder_prefix, label: "Builder: prefix", type: text,
           commands: ["lp group builder meta removeprefix 40", "lp group builder meta setprefix 40 \"{value} \""] }

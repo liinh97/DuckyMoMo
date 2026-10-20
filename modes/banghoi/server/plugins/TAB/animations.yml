@@ -33,12 +33,12 @@ MyAnimation1:
 ServerName:
   change-interval: 300
   texts:
-  - '&c&lServerName'
-  - '&c&n&lServerName'
-  - '&b&lServerName'
-  - '&b&l&nServerName'
-  - '&e&lServerName'
-  - '&e&n&lServerName'
+  - '&cServerName'
+  - '&c&nServerName'
+  - '&bServerName'
+  - '&b&nServerName'
+  - '&eServerName'
+  - '&e&nServerName'
 web:
   change-interval: 200
   texts:
@@ -78,24 +78,24 @@ vote:
 Welcome:
   change-interval: 400
   texts:
-  - '&7&lW_'
-  - '&7&lW_'
-  - '&7&lWe_'
-  - '&7&lWel_'
-  - '&7&lWelc_'
-  - '&7&lWelco_'
-  - '&7&lWelcom_'
-  - '&7&lWelcome_'
-  - '&7&lWelcome_'
-  - '&7&lWelcome_'
-  - '&7&lWelcome_'
-  - '&7&lWelcom_'
-  - '&7&lWelco_'
-  - '&7&lWelc_'
-  - '&7&lWel_'
-  - '&7&lWe_'
-  - '&7&lW_'
-  - '&7&lW_'
+  - '&7W_'
+  - '&7W_'
+  - '&7We_'
+  - '&7Wel_'
+  - '&7Welc_'
+  - '&7Welco_'
+  - '&7Welcom_'
+  - '&7Welcome_'
+  - '&7Welcome_'
+  - '&7Welcome_'
+  - '&7Welcome_'
+  - '&7Welcom_'
+  - '&7Welco_'
+  - '&7Welc_'
+  - '&7Wel_'
+  - '&7We_'
+  - '&7W_'
+  - '&7W_'
 time:
   change-interval: 3000
   texts:
@@ -131,8 +131,8 @@ MeoChoi:
 SbTieuDe:
   change-interval: 8000
   texts:
-    - '&e&lKINH TẾ &8●&7○'
-    - '&c&lCHIẾN TRANH &7○&8●'
+    - '&eKINH TẾ &8●&7○'
+    - '&cCHIẾN TRANH &7○&8●'
 SbDong1:
   change-interval: 8000
   texts:

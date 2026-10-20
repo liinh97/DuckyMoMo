@@ -47,7 +47,7 @@ items:
     disable-text: '<red>Disabled'
     item:
       material: OAK_SIGN
-      name: '#2CCED2<bold>Thông báo đăng bán'
+      name: '#2CCED2Thông báo đăng bán'
       lore:
       - ''
       - '#92ffffBật/tắt thông báo có người đăng bán.'
@@ -70,7 +70,7 @@ items:
     disable-text: '<red>Disabled'
     item:
       material: GOLD_INGOT
-      name: '#2CCED2<bold>Thông báo có người mua'
+      name: '#2CCED2Thông báo có người mua'
       lore:
       - ''
       - '#92ffffBật/tắt thông báo có người mua.'

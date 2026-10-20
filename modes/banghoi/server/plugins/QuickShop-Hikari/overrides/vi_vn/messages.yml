@@ -97,8 +97,8 @@ display-turn-on-all: <green>Đã bật vật phẩm trưng bày cho mọi shop t
 display-turn-off-all: <green>Đã tắt vật phẩm trưng bày cho mọi shop trên server.
 player-sold-to-your-store: <green>{0} đã bán {1} {2} cho shop của bạn, được {3}.
 controlpanel:
-  freeze: '<green>Đóng băng: <aqua>{0} <yellow>[<bold><light_purple>Đổi</light_purple></bold>]'
-  inventory: '<green>Kho: </green><yellow>[<bold><light_purple>Xem kho</light_purple></bold>]'
+  freeze: '<green>Đóng băng: <aqua>{0} <yellow>[<light_purple>Đổi</light_purple>]'
+  inventory: '<green>Kho: </green><yellow>[<light_purple>Xem kho</light_purple>]'
   inventory-hover: <yellow>Mở kho của shop.
 command:
   description:
@@ -173,7 +173,7 @@ compatibility:
 internet-paste-forbidden-privacy-reason: <red>Không được! Theo cài đặt riêng tư, QuickShop-Hikari không được tải bản ghi lên Internet. Bật quyền DIAGNOSTIC trong cài đặt riêng tư ở config.yml hoặc dùng <aqua>/quickshop paste --file</aqua>.
 no-sign-type-given: '<red>Phải ghi loại biển; các loại biển có trên server: {0}'
 sign-type-invalid: <red><yellow>{0}</yellow> không phải loại biển hợp lệ.
-delete-controlpanel-button-confirm: <red>Thật sự muốn xoá shop này? Bấm lại nút <bold>[Xoá shop]</bold> trong {0} giây để xác nhận.
+delete-controlpanel-button-confirm: <red>Thật sự muốn xoá shop này? Bấm lại nút [Xoá shop] trong {0} giây để xác nhận.
 cannot-suggest-price: <red>Hiện chưa có ai bán cùng mặt hàng nên chưa đủ dữ liệu để gợi ý giá.
 price-suggest: '<green>Theo dữ liệu từ <aqua>{0}</aqua> shop: giá cao nhất <light_purple>{1}</light_purple>, thấp nhất <light_purple>{2}</light_purple>, trung bình <light_purple>{3}</light_purple>, trung vị <light_purple>{4}</light_purple>. <newline><yellow>Nên đặt giá quanh <gold>{5}</gold>.</yellow>'
 price-suggest-multi: <green>Gợi ý cho loại {0}.</green>{1}
@@ -195,50 +195,50 @@ gui:
       lore:
       - '<gray>Chủ: <white>{0}</white></gray>'
     custom-amount:
-      display: <bold><blue>Tự nhập số lượng</blue></bold>
+      display: <blue>Tự nhập số lượng</blue>
     quantity-button:
       display-buy: <green>Mua x{0}</green>
       display-sell: <gold>Bán x{0}</gold>
   keeper:
     title: <dark_aqua>Quản lý shop</dark_aqua>
     change-price:
-      display: <bold><green>Đổi giá</green></bold>
+      display: <green>Đổi giá</green>
       lore:
       - '<gray>Giá hiện tại: <white>{0}</white></gray>'
       - ''
       - <yellow>Bấm để đổi giá</yellow>
     display-toggle:
-      display: <bold><green>Bật/tắt trưng bày</green></bold>
+      display: <green>Bật/tắt trưng bày</green>
       lore:
       - <gray>Bật/tắt vật phẩm trưng bày trên shop</gray>
       - '<gray>Trạng thái: <white>{0}</white>. Bấm để đổi.</gray>'
     freeze-toggle:
-      display: <bold><green>Đóng băng / mở lại</green></bold>
+      display: <green>Đóng băng / mở lại</green>
       lore:
       - <gray>Hiện đang <white>{0}</white></gray>
       - <gray>Bấm để <white>{1}</white></gray>
     mode-toggle:
-      display: <bold><green>Đổi chế độ</green></bold>
+      display: <green>Đổi chế độ</green>
       lore:
       - '<gray>Hiện tại: <white>{0}</white></gray>'
       - '<gray>Bấm để đổi sang: <white>{1}</white></gray>'
     inventory:
-      display: <bold><green>Xem kho</green></bold>
+      display: <green>Xem kho</green>
       lore:
       - <gray>Bấm để xem</gray>
       - <gray>rương hàng của shop.</gray>
     staff:
-      display: <bold><aqua>Nhân viên</aqua></bold>
+      display: <aqua>Nhân viên</aqua>
       lore:
       - <gray>Bấm để quản lý</gray>
       - <gray>nhân viên của shop.</gray>
     history:
-      display: <bold><light_purple>Lịch sử giao dịch</light_purple></bold>
+      display: <light_purple>Lịch sử giao dịch</light_purple>
       lore:
       - <gray>Bấm để xem</gray>
       - <gray>lịch sử giao dịch của shop.</gray>
     remove:
-      display: <bold><red>Xoá shop</red></bold>
+      display: <red>Xoá shop</red>
       lore:
       - <gray>Bấm để xoá shop.</gray>
       - <dark_gray>Phá biển/rương cũng được.</dark_gray>

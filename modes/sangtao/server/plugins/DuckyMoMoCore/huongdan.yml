@@ -4,7 +4,7 @@
 #   Nên giữ mỗi trang nguồn khoảng 12 dòng ngắn để không bị cắt giữa chừng (trang tiếp theo không có tiêu đề).
 # - MỤC LỤC chỉ có 1 trang (14 dòng): toc-title + mỗi chương 1 dòng + toc-footer. Tối đa khoảng 11 chương, tên chương ngắn (≤ 17 chữ).
 # - Mã chương batdau / banghoi / practice là chương mở mặc định ở sảnh / Bang Hội Chiến / Practice (guide.default-chapter): đừng đổi mã.
-# - Mã màu: &0 đen, &1 xanh đậm, &2 xanh lá đậm, &4 đỏ đậm, &5 tím, &6 vàng cam, &8 xám, &l đậm, &r bỏ định dạng.
+# - Mã màu: &0 đen, &1 xanh đậm, &2 xanh lá đậm, &4 đỏ đậm, &5 tím, &6 vàng cam, &8 xám, &r bỏ định dạng.
 #   Nền sách màu giấy: tránh &e/&f/&a (khó đọc).
 # - Người chơi điện thoại (Bedrock) thấy cả chương trong một bảng.
 # - SỐ LIỆU (phí thị trấn, lịch công thành, giá...) ghi tay: đổi trên trang Cài đặt thì sửa luôn ở đây.
@@ -12,7 +12,7 @@
 #   tổ chức 3 người, 100 xu/tuần; Kiến Trúc Sư đăng ký tuần 12, bình chọn tuần 13; bắt pet gốc 30%, bùa +25%; Thái Ấp 5.000/8.000/15.000.
 title: "&6Cẩm nang DuckyMoMo"
 author: "DuckyMoMo"
-toc-title: "&6&lCẨM NANG &r&8(/hd)\n"
+toc-title: "&6CẨM NANG &r&8(/hd)\n"
 toc-footer: "&8Bấm tên chương"
 
 chapters:
@@ -20,8 +20,8 @@ chapters:
   name: Bắt đầu
   pages:
   - |-
-    &6&lChào mừng!
-    &0DuckyMoMo có nhiều chế độ chơi, vào từ &lsảnh&r&0 (đảo hoa anh đào).
+    &6Chào mừng!
+    &0DuckyMoMo có nhiều chế độ chơi, vào từ sảnh&r&0 (đảo hoa anh đào).
 
     &1Lần đầu vào:
     &0/register <mk> <mk>
@@ -29,30 +29,30 @@ chapters:
     &1Lần sau:
     &0/login <mk>
   - |-
-    &6&lChào mừng! (tiếp)
-    &0Vào lại trong &l1 giờ&r&0 từ cùng mạng thì khỏi /login; quá 1 giờ hoặc đổi mạng phải /login lại.
+    &6Chào mừng! (tiếp)
+    &0Vào lại trong 1 giờ&r&0 từ cùng mạng thì khỏi /login; quá 1 giờ hoặc đổi mạng phải /login lại.
     &0Sai mật khẩu 3 lần: gõ &1/captcha <mã>&0 theo mã hiện trong chat. Sai 10 lần: chờ 30 phút.
   - |-
-    &6&lMật khẩu
+    &6Mật khẩu
     &4Lưu ý: &0mật khẩu ít nhất 6 ký tự, không dùng 123456, matkhau…, không giống tài khoản khác, không đưa cho ai.
     &0Đổi: &1/changepassword <cũ> <mới>
   - |-
-    &6&lChọn chế độ
-    &0Bấm &lla bàn&r&0 trên tay hoặc gõ &1/menu&0.
+    &6Chọn chế độ
+    &0Bấm la bàn&r&0 trên tay hoặc gõ &1/menu&0.
 
     &2Bang Hội Chiến&0: sinh tồn, thị trấn, công thành (chế độ chính).
     &2Practice&0: luyện PvP 1v1, không mất đồ.
     &8Pokémon: chưa mở.
   - |-
-    &6&lĐổi chế độ
+    &6Đổi chế độ
     &0Đổi bất cứ lúc nào:
     &1/server lobby
     &1/server banghoi-1
     &1/server practice-1
-    &0Đồ, tiền mỗi chế độ &lriêng&r&0, không mang qua lại.
+    &0Đồ, tiền mỗi chế độ riêng&r&0, không mang qua lại.
     &4Lưu ý: &0đang giao tranh mà đổi server = thoát game lúc đánh nhau (chết, rơi đồ).
   - |-
-    &6&lLệnh chung
+    &6Lệnh chung
     &1/msg <tên> <tin> &0nhắn riêng
     &8Vd: /msg Linh chào bạn
     &1/r <tin> &0trả lời
@@ -61,18 +61,18 @@ chapters:
     &1/web &0mã đăng nhập web
     &1/rank &0rank ủng hộ
   - |-
-    &6&lLệnh chung (tiếp)
+    &6Lệnh chung (tiếp)
     &1/changepassword <cũ> <mới>
   - |-
-    &6&lSKIN & TỦ SKIN
+    &6SKIN & TỦ SKIN
     &1/skin <tên> &0skin tài khoản bản quyền.
     &1/skin url <link> &0skin từ ảnh PNG.
     &1/tuskin &0tủ skin, bấm [Mặc] để đổi.
     &1/tuskin luu &0lưu skin đang mặc.
     &0Bậc danh phận cao có thêm ô tủ. Trên web tải ảnh lên được.
   - |-
-    &6&lĐiện thoại (Bedrock)
-    &0Bấm la bàn: hiện &lbảng nút&r&0 thay cho menu rương.
+    &6Điện thoại (Bedrock)
+    &0Bấm la bàn: hiện bảng nút&r&0 thay cho menu rương.
     &0Cẩm nang hiện thành bảng, mỗi chương một nút.
     &0Lệnh gõ giống máy tính.
     &8Voice chat chưa có cho điện thoại.
@@ -80,47 +80,47 @@ chapters:
   name: Luật server
   pages:
   - |-
-    &4&lLUẬT
+    &4LUẬT
     &01. Không hack, không x-ray, không auto-click, không mod nhìn xuyên.
     2. Không chửi bới, quấy rối, phân biệt. Từ tục bị che &8***&0.
     3. Không spam, không quảng cáo server khác.
   - |-
-    &4&lLUẬT (tiếp)
+    &4LUẬT (tiếp)
     &8Chống hack tự động: bị kick nhầm thì báo admin kèm giờ.
   - |-
-    &4&lLUẬT (tiếp)
+    &4LUẬT (tiếp)
     &04. Không lợi dụng lỗi game: thấy lỗi thì báo admin (có thể được thưởng).
     5. Đánh nhau theo luật công thành. Thoát game khi đang đánh = chết, rơi đồ.
     6. Không lừa đảo giao dịch: dùng &1/trade&0 cho an toàn.
   - |-
-    &4&lLUẬT (tiếp)
+    &4LUẬT (tiếp)
     &8Vi phạm: mute, kick, ban tuỳ mức độ.
   - |-
-    &4&lLUẬT (tiếp)
-    &07. Map là Trái Đất nhưng lãnh thổ trong game &lkhông&r&0 liên quan chủ quyền thật. Cấm tên, chat kích động biên giới, biển đảo, dân tộc.
-    8. Tối đa &l2 tài khoản&r&0. Acc phụ phải khai (&1/taikhoanphu&0), không được đánh trận.
+    &4LUẬT (tiếp)
+    &07. Map là Trái Đất nhưng lãnh thổ trong game không&r&0 liên quan chủ quyền thật. Cấm tên, chat kích động biên giới, biển đảo, dân tộc.
+    8. Tối đa 2 tài khoản&r&0. Acc phụ phải khai (&1/taikhoanphu&0), không được đánh trận.
   - |-
-    &4&lLUẬT (tiếp)
-    &09. Vũ khí nổ &lkhông giết người&r&0: end crystal, respawn anchor, nổ giường không trừ máu người chơi; xe goòng TNT chỉ còn 30%.
+    &4LUẬT (tiếp)
+    &09. Vũ khí nổ không giết người&r&0: end crystal, respawn anchor, nổ giường không trừ máu người chơi; xe goòng TNT chỉ còn 30%.
     &0Đánh bằng kiếm, cung, chuỳ cho công bằng.
     10. Giết dân hoà bình (không tự vệ) bị &4Hội Bàn Tròn&0 xử.
 - id: banghoi
   name: "Bang Hội: cơ bản"
   pages:
   - |-
-    &6&lBANG HỘI CHIẾN
-    &0Lập thị trấn, gom thành quốc gia, chiếm đất và &lcông thành&r&0 nước khác. Không thích đánh nhau: vào &2Liên minh Hoà Bình&0.
+    &6BANG HỘI CHIẾN
+    &0Lập thị trấn, gom thành quốc gia, chiếm đất và công thành&r&0 nước khác. Không thích đánh nhau: vào &2Liên minh Hoà Bình&0.
 
-    &0Bản đồ là &lTrái Đất 1:1000&r&0. Mùa 1: &lĐông Nam Á&r&0 (có viền, hết mùa mở vùng mới).
+    &0Bản đồ là Trái Đất 1:1000&r&0. Mùa 1: Đông Nam Á&r&0 (có viền, hết mùa mở vùng mới).
   - |-
-    &6&lMới vào
-    &0Có &l15 phút&r&0 bảo vệ: không ai đánh được bạn.
+    &6Mới vào
+    &0Có 15 phút&r&0 bảo vệ: không ai đánh được bạn.
     &1/newbie disable &0tắt sớm
     &1/newbie checktime &0còn bao lâu
     &0Khu spawn an toàn: không PvP, không phá.
-    &0Bắt đầu với &l200 xu&r&0 + quà tân thủ.
+    &0Bắt đầu với 200 xu&r&0 + quà tân thủ.
   - |-
-    &6&lĐi lại
+    &6Đi lại
     &1/spawn &0về spawn
     &1/warp &0danh sách địa danh
     &8Vd: /warp pvp
@@ -129,188 +129,188 @@ chapters:
     &1/tpa Linh &0xin tới chỗ Linh
     &1/tpaccept &0· &1/tpdeny
   - |-
-    &6&lĐi lại (tiếp)
+    &6Đi lại (tiếp)
     &4Lưu ý: &0đang giao tranh không dịch chuyển được.
   - |-
-    &6&lĐi tìm đất
-    &0Muốn lập thị trấn xa spawn: bấm &lNPC dịch chuyển&r&0 ở spawn hoặc gõ &1/tpr&0, chọn khu.
+    &6Đi tìm đất
+    &0Muốn lập thị trấn xa spawn: bấm NPC dịch chuyển&r&0 ở spawn hoặc gõ &1/tpr&0, chọn khu.
     &8Vd: /tpr taybac
     &0Khu: taybac, lao, trungbo, nambo, thailan, myanmar, namtq, ngaunhien.
   - |-
-    &6&lĐi tìm đất (tiếp)
+    &6Đi tìm đất (tiếp)
     &8Chờ 5 phút giữa 2 lần, đứng yên 3 giây. Không thả xuống nước, sát thị trấn.
   - |-
-    &6&lGiờ chơi thật
+    &6Giờ chơi thật
     &1/hoatdong &0xem giờ.
     &0Chỉ tính lúc thật sự chơi, đứng AFK không tính.
     &03 giờ: được lập thị trấn.
     &05 giờ: được phong quân hàm, ứng cử, bình chọn.
   - |-
-    &6&lGiờ chơi thật (tiếp)
-    &0Chơi &l3 giờ/tuần&r&0 là &ldân hoạt động&r&0: thị trấn được thêm đất nhờ bạn.
+    &6Giờ chơi thật (tiếp)
+    &0Chơi 3 giờ/tuần&r&0 là dân hoạt động&r&0: thị trấn được thêm đất nhờ bạn.
   - |-
-    &6&lĐánh nhau
-    &0Bị đánh thì bị &lgắn cờ giao tranh&r&0 15 giây:
+    &6Đánh nhau
+    &0Bị đánh thì bị gắn cờ giao tranh&r&0 15 giây:
     &4thoát game lúc này là chết, rơi đồ.
     &0Đang giao tranh không dịch chuyển được.
-    &0Combat kiểu &l1.8&r&0: bấm nhanh, không hồi chiêu.
+    &0Combat kiểu 1.8&r&0: bấm nhanh, không hồi chiêu.
     &1/pvpstatus &0xem trạng thái.
   - |-
-    &6&lĐồ rơi & dọn rác
-    &0Đồ dưới đất bị &ldọn mỗi 10 phút&r&0 (báo trước 30 và 5 giây).
-    &2Chết: &0đồ quanh chỗ chết (8 khối) được giữ &l10 phút&r&0, quay lại nhặt kịp.
+    &6Đồ rơi & dọn rác
+    &0Đồ dưới đất bị dọn mỗi 10 phút&r&0 (báo trước 30 và 5 giây).
+    &2Chết: &0đồ quanh chỗ chết (8 khối) được giữ 10 phút&r&0, quay lại nhặt kịp.
     &0Đồ đổi tên bằng đe không bị dọn.
     &0Giờ công thành tạm ngưng dọn.
   - |-
-    &6&lCÀI ĐẶT CÁ NHÂN
+    &6CÀI ĐẶT CÁ NHÂN
     &1/caidat &0tự bật/tắt: chat chung, tin nhắn riêng, thông báo vào/ra, tử vong, dọn rác, bảng bên phải, nhận TPA, nhắc giờ công thành…
     &0Đổi được cả trên web (trang tài khoản).
     &1/sb &0ẩn/hiện bảng bên phải.
   - |-
-    &6&lDANH PHẬN
-    &0Rank chơi &lmiễn phí&r&0, bấm nhận trong &1/danhphan&0:
+    &6DANH PHẬN
+    &0Rank chơi miễn phí&r&0, bấm nhận trong &1/danhphan&0:
     &8Tị Nạn&0 (mới vào) → &7Dân&0 → &2Lương Dân&0 → &6Hào Kiệt&0.
     &0Dân: chơi thật 6 giờ + xong chương 1 (Già Làng).
     &0Lương Dân: 24 giờ + cấp 10. Hào Kiệt: 72 giờ + cấp 25.
   - |-
-    &6&lDANH PHẬN: quyền lợi
+    &6DANH PHẬN: quyền lợi
     &0Tị Nạn: 1 nhà, 2 món chợ đấu giá.
     &0Dân: 2 nhà, 1 balo 27 ô, 4 món chợ đấu giá.
     &0Lương Dân: 3 nhà, 2 balo 36 ô, 6 món chợ đấu giá.
     &0Hào Kiệt: 5 nhà, 3 balo 45 ô, 8 món chợ đấu giá.
   - |-
-    &6&lDANH PHẬN (tiếp)
+    &6DANH PHẬN (tiếp)
     &8Giữ danh phận khi /choilai. Số liệu có thể đổi: xem /danhphan.
   - |-
-    &c&l◆ RANK SỨ GIẢ
-    &0Cho người &llivestream&r&0 về server (TikTok, YouTube…), miễn phí, admin xét duyệt.
+    &c◆ RANK SỨ GIẢ
+    &0Cho người livestream&r&0 về server (TikTok, YouTube…), miễn phí, admin xét duyệt.
     &0Có thêm nhà, balo, món chợ đấu giá, đơn thu mua, vé vòng quay nhanh hơn, gói quà &1/kit media&0.
     &0Xem yêu cầu: thẻ Sứ Giả trong &1/danhphan&0.
   - |-
-    &c&lSỨ GIẢ: cách làm
+    &cSỨ GIẢ: cách làm
     &1/sugia dangky <link kênh>
     &8Vd: /sugia dangky https://www.tiktok.com/@tenban
     &0Mỗi lần live: &1/sugia live&0 (cả server được báo), xong &1/sugia tat&0.
-    &0Server tự đếm giờ khi bạn &lonline thật&r&0 và kênh &lđang live&r&0.
+    &0Server tự đếm giờ khi bạn online thật&r&0 và kênh đang live&r&0.
   - |-
-    &c&lSỨ GIẢ: chỉ tiêu
+    &cSỨ GIẢ: chỉ tiêu
     &0Mỗi 7 ngày: 4 buổi (≥ 30 phút) và 6 giờ live.
     &0Rank có hạn, đạt chỉ tiêu thì được gia hạn.
     &1/sugia &0xem tiến độ.
     &8Thấy Sứ Giả gian lận: /sugia baocao <tên> <lý do>
   - |-
-    &6&lBALO
+    &6BALO
     &1/balo &0mở balo (&1/balo 2&0 balo thứ 2).
     &0Số balo và số ô theo danh phận. Rank giảm ô: đồ ở ô khoá vẫn giữ.
     &4Lưu ý: &0không mở được lúc đang đánh nhau, trong vùng công thành giờ đánh; &1/choilai&0 là mất đồ trong balo.
   - |-
-    &6&lTHĂNG CẤP
+    &6THĂNG CẤP
     &1/capdo &0xem điều kiện, bấm lên cấp khi đủ:
     &0xu (trả lúc lên), giờ chơi, điểm hạ gục (quái +1, người +10).
-    &0Mỗi cấp được &lđiểm&r&0 đổi đặc quyền: /craft, /anvil, /hat, /disposal, giảm 5% Xưởng…
+    &0Mỗi cấp được điểm&r&0 đổi đặc quyền: /craft, /anvil, /hat, /disposal, giảm 5% Xưởng…
     &0Mỗi 10 cấp có quà mốc. Cấp hiện cạnh tên ở Tab.
   - |-
-    &6&lTHĂNG CẤP (tiếp)
+    &6THĂNG CẤP (tiếp)
     &8Hạ cùng 1 người liên tục chỉ tính 1 lần mỗi 10 phút.
   - |-
-    &6&lBXH & DANH HIỆU
+    &6BXH & DANH HIỆU
     &1/bxh&0: Bá Chủ (quốc gia), Chiến Thần (đánh trận), Đại Phú Hộ, Kiến Trúc Sư.
     &8Vd: /bxh chienthan
-    &0Thưởng là &ldanh hiệu&r&0 giữ mãi:
+    &0Thưởng là danh hiệu&r&0 giữ mãi:
     &1/danhhieu &0xem
     &1/danhhieu chon <mã>
     &1/danhhieu tat &0bỏ
     &8Không bán sức mạnh.
   - |-
-    &6&lSỔ THÀNH TÍCH
+    &6SỔ THÀNH TÍCH
     &0Chơi một mình cũng có mục tiêu: khám phá, câu cá, săn quái, nuôi pet, Đấu Trường, nấu ăn…
     &0Đạt là nhận quà, mốc khó có &6danh hiệu&0.
     &1/thanhtich
   - |-
-    &6&lDANH VỌNG
-    &0Mỗi mùa &l3 tháng&r&0, hết mùa làm lại với bản đồ mới.
+    &6DANH VỌNG
+    &0Mỗi mùa 3 tháng&r&0, hết mùa làm lại với bản đồ mới.
     &0Người thắng được khắc tên, dựng tượng ở &6Quảng trường Danh vọng&0 tại sảnh, giữ mãi.
     &1/danhvong tp &0tới xem.
   - |-
-    &6&lChơi lại từ đầu
+    &6Chơi lại từ đầu
     &1/choilai&0 rồi &1/choilai xacnhan&0: mất hết đồ, tiền, nhà, nghề, thị trấn. Giữ rank, danh hiệu, án phạt.
     &07 ngày/lần, 3 lần/mùa. Quà tân thủ chỉ lần đầu.
     &4Trước khi chơi lại: &0dỡ shop rương, rút hàng &1/ah&0 (không thì mất).
   - |-
-    &6&lTài khoản phụ
+    &6Tài khoản phụ
     &0Tối đa 2 tài khoản/người. Acc phụ phải khai:
     &1/taikhoanphu khai <tên chính>
     &0rồi acc chính gõ
     &1/taikhoanphu xacnhan <tên phụ>
     &8Vd: /taikhoanphu khai Linh
   - |-
-    &6&lTài khoản phụ (tiếp)
+    &6Tài khoản phụ (tiếp)
     &0Acc phụ không nhận quân hàm, không gây sát thương trong vùng vây.
 - id: thitran
   name: Thị trấn, hoà bình
   pages:
   - |-
-    &6&lThị trấn
-    &0Cần &l3 giờ&r&0 chơi thật.
-    &1/t new <tên> &0lập (&l500 xu&r&0)
+    &6Thị trấn
+    &0Cần 3 giờ&r&0 chơi thật.
+    &1/t new <tên> &0lập (500 xu&r&0)
     &8Vd: /t new HaNoi
-    &1/t claim &0mua ô 16x16 đang đứng (&l25 xu&r&0)
+    &1/t claim &0mua ô 16x16 đang đứng (25 xu&r&0)
     &1/t add <tên> &0mời dân
     &1/t kick <tên> &0đuổi
     &1/t deposit <tiền> &0nộp quỹ
     &8Vd: /t deposit 300
   - |-
-    &6&lThị trấn (tiếp)
-    &0Phí duy trì &l10 xu mỗi ngày&r&0, trừ vào quỹ.
+    &6Thị trấn (tiếp)
+    &0Phí duy trì 10 xu mỗi ngày&r&0, trừ vào quỹ.
     &4Hết quỹ thì thị trấn tan, mất đất!
     &1/t &0thông tin · &1/res &0bạn
     &1/t spawn &0về thị trấn
     &1/t set spawn &0đặt chỗ về
     &1/plot claim &0nhận lô đất trong thị trấn
   - |-
-    &6&lThị trấn (tiếp)
+    &6Thị trấn (tiếp)
     &4Lưu ý: &0không được lập sát spawn (300 khối); đổi thị trấn phải chờ 3 ngày.
   - |-
-    &6&lThị trấn: đất
-    &0Số ô được mua tăng theo số &ldân hoạt động&r&0 (chơi 3 giờ/tuần).
+    &6Thị trấn: đất
+    &0Số ô được mua tăng theo số dân hoạt động&r&0 (chơi 3 giờ/tuần).
     &0Nhà, rương trong thị trấn được bảo vệ: người ngoài không phá, không mở được.
-    &0Có &lbản đồ web&r&0 xem ranh giới các thị trấn.
+    &0Có bản đồ web&r&0 xem ranh giới các thị trấn.
   - |-
-    &6&lQuốc gia
+    &6Quốc gia
     &0Gom nhiều thị trấn:
-    &1/n new <tên> &0(&l1000 xu&r&0, thị trấn bạn là thủ đô)
+    &1/n new <tên> &0(1000 xu&r&0, thị trấn bạn là thủ đô)
     &1/n add <thị trấn>
     &1/n ally add <nước> &0đồng minh
     &8Vd: /n new DaiViet
-    &0Phí &l100 xu/ngày&r&0.
+    &0Phí 100 xu/ngày&r&0.
     &4Chỉ quốc gia mới công thành được, cần ít nhất 2 thị trấn.
   - |-
-    &2&lLIÊN MINH HOÀ BÌNH
+    &2LIÊN MINH HOÀ BÌNH
     &0Thị trấn trong liên minh không bị vây, không bị chiếm, đất luôn tắt PvP.
     &0Đổi lại: không quân hàm, không đánh trận, chỉ được tự vệ.
     &1/hoabinh &0thông tin
     &1/hoabinh danhsach
   - |-
-    &2&lVào / rời hoà bình
+    &2Vào / rời hoà bình
     &0Thị trưởng gõ:
     &1/hoabinh vao&0 · &1/hoabinh roi
     &4Lưu ý:
-    &0- Thị trấn phải &lchạm đất&r&0 liên minh.
-    &0- Vào: chờ &l2 ngày&r&0 mới được bảo vệ.
-    &0- Rời: mất bảo vệ ngay, &l14 ngày&r&0 mới vào lại.
+    &0- Thị trấn phải chạm đất&r&0 liên minh.
+    &0- Vào: chờ 2 ngày&r&0 mới được bảo vệ.
+    &0- Rời: mất bảo vệ ngay, 14 ngày&r&0 mới vào lại.
   - |-
-    &2&lQuyền lợi hoà bình
+    &2Quyền lợi hoà bình
     &0Chợ &1/ah&0 chỉ dùng trong đất hoà bình.
-    &0Bán &1/sell&0 ở kinh đô được &l+20%&r&0.
-    &0Shop rương trong đất hoà bình &lmiễn thuế&r&0 (ngoài: 5%).
+    &0Bán &1/sell&0 ở kinh đô được +20%&r&0.
+    &0Shop rương trong đất hoà bình miễn thuế&r&0 (ngoài: 5%).
     &0Có công thành gần nhà sẽ được báo trước 2 ngày: hãy di tản khỏi vùng vây.
   - |-
-    &2&lHỘI ĐỒNG HOÀ BÌNH
-    &0Thị trưởng thị trấn hoà bình có &l≥3 dân hoạt động&r&0 có 1 phiếu.
-    &0Bầu &lĐại diện&r&0 (nhiệm kỳ 30 ngày, bầu trong 2 ngày cuối, tối đa 2 nhiệm kỳ liền).
+    &2HỘI ĐỒNG HOÀ BÌNH
+    &0Thị trưởng thị trấn hoà bình có ≥3 dân hoạt động&r&0 có 1 phiếu.
+    &0Bầu Đại diện&r&0 (nhiệm kỳ 30 ngày, bầu trong 2 ngày cuối, tối đa 2 nhiệm kỳ liền).
     &1/hoidong &0xem đại diện, kiến nghị đang mở.
   - |-
-    &2&lHội đồng: lệnh
+    &2Hội đồng: lệnh
     &1/hoidong ungcu &0ứng cử (dân hoà bình, ≥5 giờ)
     &1/hoidong bau <tên>
     &8Vd: /hoidong bau Linh
@@ -318,35 +318,35 @@ chapters:
     &8Vd: /hoidong phieu K3 co
     &1/hoidong baimien &0đề nghị bãi nhiệm
   - |-
-    &2&lHội đồng: lệnh (tiếp)
+    &2Hội đồng: lệnh (tiếp)
     &1/hoidong deuoi <thị trấn> <lý do>
     &8Phiếu công khai. Kiến nghị mở 3 ngày; bãi nhiệm cần 2/3.
   - |-
-    &2&lTỔ CHỨC
+    &2TỔ CHỨC
     &0Dân hoà bình lập tổ chức, xin giấy phép:
     &2Thương Hội&0: thêm shop rương, đăng 15 món &1/ah&0, rao hàng.
     &2Sự kiện&0: tổ chức sự kiện cho cả server.
     &1/tochuc lap thuonghoi <tên>
     &8Vd: /tochuc lap sukien LeHoiXuan
   - |-
-    &2&lTổ chức: lệnh
+    &2Tổ chức: lệnh
     &1/tochuc moi <tên> &0mời (người đó &1/tochuc vao&0 trong 10 phút)
     &1/tochuc gop <xu> &0góp quỹ
     &1/tochuc xinphep &0(đủ 3 người)
     &1/tochuc roi&0 · &1duoi <tên>
     &1/tochuc danhsach
   - |-
-    &2&lTổ chức: lệnh (tiếp)
+    &2Tổ chức: lệnh (tiếp)
     &4Lưu ý: &0phí giấy phép 100 xu/tuần trừ quỹ, hết quỹ thì giấy phép bị treo. Hết mùa hết hạn.
   - |-
-    &2&lRao hàng
+    &2Rao hàng
     &0Thành viên Thương Hội có giấy phép:
     &1/quangcao <nội dung>
     &8Vd: /quangcao Bán kim cương 50 xu ở HaNoi
     &01 lần mỗi giờ, cả server thấy.
     &4Không spam, không lừa: bị thu hồi giấy phép.
   - |-
-    &5&lSỰ KIỆN
+    &5SỰ KIỆN
     &1/sukien &0xem sự kiện đang có
     &1/sukien den <mã> &0tới nơi
     &8Vd: /sukien den S2
@@ -354,88 +354,88 @@ chapters:
     &1/sukien tao <phút> <tên>
     &8Vd: /sukien tao 30 Đua Thuyền
   - |-
-    &5&lSỰ KIỆN (tiếp)
+    &5SỰ KIỆN (tiếp)
     &1/sukien thuong <người> <xu>
     &1/sukien dautruong &0(ô đứng thành đấu trường, chết không rơi đồ)
     &1/sukien ket &0kết thúc
   - |-
-    &4&lHỘI BÀN TRÒN
+    &4HỘI BÀN TRÒN
     &0Giết dân hoà bình trong/gần đất hoà bình (không tự vệ) = &4vụ án&0: bồi thường, cấm vào đất hoà bình và cấm công thành tới khi xử.
-    &0Họp &ltối thứ 4, 21:00&r&0 tại bàn tròn ở kinh đô.
+    &0Họp tối thứ 4, 21:00&r&0 tại bàn tròn ở kinh đô.
     &1/bantron &0lịch, vụ án.
     &1/bantron toi &0án của bạn.
   - |-
-    &4&lBàn Tròn: lệnh
+    &4Bàn Tròn: lệnh
     &0Thành viên (thủ lĩnh quốc gia mạnh nhất) đứng gần bàn:
     &1/bantron xu <mã> <mức>
     &8Vd: /bantron xu V1 phatnang
     &0Mức: giu, phatnang, truyna, tu, luuday, camct1-3.
     &0Người bị xử, có bằng chứng mới:
   - |-
-    &4&lBàn Tròn: lệnh (tiếp)
+    &4Bàn Tròn: lệnh (tiếp)
     &1/bantron khangan <mã> <lý do>
     &8Kháng 1 lần mỗi vụ.
   - |-
-    &6&lKIẾN TRÚC SƯ
+    &6KIẾN TRÚC SƯ
     &0Cuộc thi thị trấn đẹp nhất mùa:
-    &1/binhchon dangky &0thị trưởng đăng ký (từ &ltuần 12&r&0 của mùa, phải đặt điểm về).
+    &1/binhchon dangky &0thị trưởng đăng ký (từ tuần 12&r&0 của mùa, phải đặt điểm về).
     &1/binhchon xem <thị trấn> &0tham quan
-    &1/binhchon <thị trấn> &0bỏ phiếu (&ltuần 13&r&0)
+    &1/binhchon <thị trấn> &0bỏ phiếu (tuần 13&r&0)
   - |-
-    &6&lKIẾN TRÚC SƯ (tiếp)
+    &6KIẾN TRÚC SƯ (tiếp)
     &4Lưu ý: &01 phiếu/người, ≥5 giờ chơi, không bầu thị trấn mình, acc phụ không bầu.
 - id: congthanh
   name: Công thành
   pages:
   - |-
-    &6&lCông thành (1)
-    &0Muốn đánh thị trấn địch: cắm &lbanner màu&r&0 (không trắng) sát rìa thị trấn đó.
-    &0Quốc gia trả &lquỹ chiến tranh&r&0 20 xu mỗi ô đất của thị trấn bị vây.
+    &6Công thành (1)
+    &0Muốn đánh thị trấn địch: cắm banner màu&r&0 (không trắng) sát rìa thị trấn đó.
+    &0Quốc gia trả quỹ chiến tranh&r&0 20 xu mỗi ô đất của thị trấn bị vây.
     &1/sw &0xem cuộc vây.
     &4Lưu ý: &0thị trấn mới lập, vừa bị vây, dân hoà bình không vây được.
   - |-
-    &6&lCông thành (2)
-    &0Đánh theo &lphiên&r&0:
-    &l&0Tối thứ 7 và CN, 20:00 và 21:00
+    &6Công thành (2)
+    &0Đánh theo phiên&r&0:
+    &0Tối thứ 7 và CN, 20:00 và 21:00
     &0(mỗi phiên 1 giờ, 4 phiên mỗi cuộc vây).
     &0Trong phiên, quanh cờ bật PvP.
     &1/lichcongthanh &0phiên tới, có cho pet không.
   - |-
-    &6&lCông thành (3)
+    &6Công thành (3)
     &0Ghi điểm: giữ khu vực quanh cờ và hạ lính địch.
     &0Hết các phiên, bên nhiều điểm thắng: lấy quỹ, cướp tiền hoặc chiếm thị trấn.
-    &0Thua mà thiếu tiền thì &ltrả nợ dần 7 ngày&r&0.
+    &0Thua mà thiếu tiền thì trả nợ dần 7 ngày&r&0.
     &2Chết trong vùng vây không rơi đồ.
   - |-
-    &6&lCông thành (4)
-    &0Thị trấn vừa bị vây được &lmiễn vây 7 ngày&r&0 (thủ đô 14 ngày), thị trấn mới lập cũng được 7 ngày.
+    &6Công thành (4)
+    &0Thị trấn vừa bị vây được miễn vây 7 ngày&r&0 (thủ đô 14 ngày), thị trấn mới lập cũng được 7 ngày.
     &0Thị trấn không bị phá hay trộm khi chủ offline.
     &8Chỉ người chơi ≥5 giờ, không phải acc phụ mới có quân hàm.
   - |-
-    &6&lCÂN BẰNG
-    &0Nước to đi vây tốn quỹ hơn, thuộc địa tốn phí, tối đa &l3&r&0 thuộc địa.
+    &6CÂN BẰNG
+    &0Nước to đi vây tốn quỹ hơn, thuộc địa tốn phí, tối đa 3&r&0 thuộc địa.
     &0Thủ nhà ít người được cộng điểm.
     &0Nước nắm nhiều thị trấn thành &4Bá chủ&0: đánh vào được lợi.
     &1/canbang
   - |-
-    &6&lKHO LƯƠNG
-    &0Quân đánh trong vùng vây ăn từ kho lương &lthị trấn mình&r&0: còn lương thì no, cạn thì mau đói.
+    &6KHO LƯƠNG
+    &0Quân đánh trong vùng vây ăn từ kho lương thị trấn mình&r&0: còn lương thì no, cạn thì mau đói.
     &1/kholuong &0xem kho
     &1/kholuong nop &0nộp đồ đang cầm (nông sản, cá, món)
     &1/kholuong noptat &0nộp nông sản cả túi
     &1/kholuong top
   - |-
-    &6&lMÓN ĂN RA TRẬN
+    &6MÓN ĂN RA TRẬN
     &1/nauan &0nấu cá câu + nông sản thành món có hiệu ứng (chạy nhanh, hồi máu…).
     &0Nấu trong Thái Ấp của mình: hiệu ứng lâu hơn 50%.
     &0Món cũng nộp được vào kho lương.
   - |-
-    &6&lTRỜI ĐẤT CÔNG THÀNH
-    &8Đêm&0: tối mù, trừ ai dẫn pet &lmắt đêm&r&0 (dơi, mèo, cáo, sói, nhện).
+    &6TRỜI ĐẤT CÔNG THÀNH
+    &8Đêm&0: tối mù, trừ ai dẫn pet mắt đêm&r&0 (dơi, mèo, cáo, sói, nhện).
     &1Mưa&0: đi bộ chậm, cưỡi pet thì không; pet nước mạnh, pet lửa yếu.
     &6Nắng gắt&0 mùa khô: mau đói, trừ ai dẫn pet lửa.
   - |-
-    &6&lLÍNH ĐÁNH THUÊ
+    &6LÍNH ĐÁNH THUÊ
     &0Không thuộc nước nào vẫn ra trận được (≥5 giờ chơi):
     &1/linhdanhthue dangky <giá>
     &8Vd: /linhdanhthue dangky 2000
@@ -443,10 +443,10 @@ chapters:
     &0Vua/tướng thuê bằng ngân khố:
     &1/linhdanhthue thue <tên>
   - |-
-    &6&lLÍNH ĐÁNH THUÊ (tiếp)
+    &6LÍNH ĐÁNH THUÊ (tiếp)
     &0Hợp đồng 48 giờ: vào vùng vây không ốm, ăn kho lương nước thuê. Server thu 10%.
   - |-
-    &4&lTREO THƯỞNG
+    &4TREO THƯỞNG
     &1/treothuong &0xem ai bị treo
     &1/treothuong dat <người> <xu>
     &8Vd: /treothuong dat Ga 500
@@ -456,41 +456,41 @@ chapters:
   name: Kiếm tiền, buôn bán
   pages:
   - |-
-    &6&lKiếm tiền
-    &0Bắt đầu &l200 xu&r&0. &1/bal &0xem tiền.
+    &6Kiếm tiền
+    &0Bắt đầu 200 xu&r&0. &1/bal &0xem tiền.
     &2Nghề (tự động):&0 đào quặng, chặt cây, săn quái, trồng, câu cá đều có tiền.
     &1/jobs &0cấp nghề, cách kiếm.
     &4Lưu ý: &0phá lại khối tự đặt không có tiền; nhiệm vụ ngày cũng không tính.
   - |-
-    &6&lBán đồ cho server
+    &6Bán đồ cho server
     &1/sell hand &0bán đồ đang cầm
     &1/sell all &0bán hết túi
     &1/worth &0xem giá món đang cầm
-    &0Biển &l[Sell]&r&0 ở spawn: bấm để bán.
+    &0Biển [Sell]&r&0 ở spawn: bấm để bán.
     &8Đá cuội, đất, cát không bán được. Bán ở kinh đô +20%.
   - |-
-    &6&lChuyển tiền
+    &6Chuyển tiền
     &1/pay <tên> <xu>
     &8Vd: /pay Linh 100
     &1/baltop &0top giàu
     &4Lưu ý: &0chuyển rồi không lấy lại được. Mua bán đồ thì dùng &1/trade&0.
   - |-
-    &6&lĐổi đồ an toàn
+    &6Đổi đồ an toàn
     &1/trade <tên> &0mời đổi đồ
     &8Vd: /trade Linh
-    &0Hai bên bỏ đồ/tiền vào bảng, &lcả hai cùng bấm đồng ý&r&0 mới đổi.
+    &0Hai bên bỏ đồ/tiền vào bảng, cả hai cùng bấm đồng ý&r&0 mới đổi.
     &4Đừng đưa đồ trước "tin tưởng": admin không trả lại đồ bị lừa ngoài /trade.
   - |-
-    &6&lShop rương
-    &0Đặt rương, cầm món muốn bán, &lbấm trái&r&0 vào rương, gõ giá vào chat.
+    &6Shop rương
+    &0Đặt rương, cầm món muốn bán, bấm trái&r&0 vào rương, gõ giá vào chat.
     &1/qs price <giá> &0đổi giá (nhìn rương)
     &1/qs buy&0 · &1/qs sell &0bán ra / thu mua
     &1/qs remove &0dỡ shop
   - |-
-    &6&lShop rương (tiếp)
+    &6Shop rương (tiếp)
     &0Tối đa 10 shop (Thương Hội nhiều hơn). Người khác mua được khi bạn offline.
   - |-
-    &6&lChợ đấu giá /ah
+    &6Chợ đấu giá /ah
     &1/ah &0mở chợ
     &1/ah sell <giá> &0bán món đang cầm
     &8Vd: /ah sell 250
@@ -498,160 +498,160 @@ chapters:
     &4Chỉ mở trong đất hoà bình&0 (kinh đô, thị trấn hoà bình).
     &8Món hết hạn: vào /ah lấy lại.
   - |-
-    &6&lDân làng bán hàng
+    &6Dân làng bán hàng
     &0NPC dân làng ở spawn: bấm chuột phải để mua/bán như dân làng thường.
     &1/shopsearch <món> &0tìm shop
     &8Bán đồ cho shop admin tối đa 1.000 xu/ngày.
   - |-
-    &6&lCửa hàng Kinh Đô
-    &0Bấm &lNPC cửa hàng&r&0 ở spawn: vật liệu (đất, đá, kính…), đồ trang trí, danh hiệu, trả bằng xu.
+    &6Cửa hàng Kinh Đô
+    &0Bấm NPC cửa hàng&r&0 ở spawn: vật liệu (đất, đá, kính…), đồ trang trí, danh hiệu, trả bằng xu.
     &0Rank ủng hộ: gõ &1/cuahang&0 khi đứng trong kinh đô.
     &8Không bán gì tăng sức mạnh.
   - |-
-    &6&lSÀN THU MUA
+    &6SÀN THU MUA
     &0Cần nhiều gỗ, đá…? Cầm 1 món làm mẫu:
     &1/donhang tao <số> <giá/món>
     &8Vd: /donhang tao 1000 1
     &0(tiền 1000 xu được giữ trước).
     &0Người khác &1/donhang&0 bấm đơn để giao, nhận tiền ngay.
   - |-
-    &6&lSÀN THU MUA (tiếp)
+    &6SÀN THU MUA (tiếp)
     &1/donhang cuatoi &0nhận hàng
     &1/donhang huy <số> &0huỷ, hoàn tiền phần chưa giao
     &8Phí đăng đơn 2% (không hoàn), đơn hạn 7 ngày, tối đa 5 đơn. Chỉ nhận đồ trơn (không tên, không phù phép).
   - |-
-    &6&lXƯỞNG CHẾ TẠO
-    &1/xuong &0chế đồ có &lhiệu ứng&r&0, độ bền, hạn 7 ngày: khoan 3×3, rìu chặt cả cây, hút đồ, móc bay, xô nước vô tận…
+    &6XƯỞNG CHẾ TẠO
+    &1/xuong &0chế đồ có hiệu ứng&r&0, độ bền, hạn 7 ngày: khoan 3×3, rìu chặt cả cây, hút đồ, móc bay, xô nước vô tận…
     &4Lưu ý: &0hết hạn hoặc hết lượt thì đồ biến mất.
   - |-
-    &5&lTINH LUYỆN
+    &5TINH LUYỆN
     &1/tinhluyen &0đổi khối thành món tinh luyện, vd 64 khối kim cương → 1 Tinh Luyện Kim Cương.
-    &0Dùng để &lđổi đồ ở dân làng&r&0, chế đồ Xưởng, hoặc bán.
+    &0Dùng để đổi đồ ở dân làng&r&0, chế đồ Xưởng, hoặc bán.
     &0Bấm = 1 lần, Shift+bấm = hết.
     &1/tinhluyen ban &0bán món đang cầm
   - |-
-    &5&lTINH LUYỆN: lưu ý
+    &5TINH LUYỆN: lưu ý
     &4Đổi một chiều&0, không đổi lại thành khối được.
     &0Khối phải là đồ trơn (không đổi tên).
     &6Xu Quái&0 rơi khi hạ quái (quái lồng không rơi), gom 64 đổi Xu Quái 2.
     &1/tinhluyen ds &0xem giá, công thức.
   - |-
-    &6&lKHAI HOANG
+    &6KHAI HOANG
     &1/khaihoang &0xem quỹ mở vùng mới.
     &1/khaihoang gop <xu>
     &8Vd: /khaihoang gop 200
     &0Đủ mốc thì mở rộng bản đồ. 10 người tới đầu tiên là &2Tiên Phong&0.
   - |-
-    &6&lPhù phép hiếm
-    &0Có phù phép mới, chỉ tìm được sách trong &lrương công trình&r&0, khi &lcâu cá&r&0 hoặc đổi với &ldân làng&r&0: Telepathy, Smelting, Tunnelling (đào 3x3), Replanting, Volley...
-    &0Ghép bằng &lđe&r&0. Hiếm nên bán được giá cao!
+    &6Phù phép hiếm
+    &0Có phù phép mới, chỉ tìm được sách trong rương công trình&r&0, khi câu cá&r&0 hoặc đổi với dân làng&r&0: Telepathy, Smelting, Tunnelling (đào 3x3), Replanting, Volley...
+    &0Ghép bằng đe&r&0. Hiếm nên bán được giá cao!
   - |-
-    &6&lShop phù phép /ce
+    &6Shop phù phép /ce
     &0Mua sách phù phép lạ: &2Thường 300 xu&0, &1Hiếm 800 xu&0. Kéo sách thả vào đồ để ghép.
     &4Sách ghi tỉ lệ thành công và tỉ lệ vỡ đồ!
-    &0Cuộn &lgiấy trắng&r&0 giữ đồ khi ghép hỏng.
+    &0Cuộn giấy trắng&r&0 giữ đồ khi ghép hỏng.
     &1/blacksmith &0gộp sách
     &1/ce info &0xem công dụng
   - |-
-    &2&lMÙA MƯA, MÙA KHÔ
-    &0Mỗi mùa &l7 ngày&r&0, xen kẽ. &1/mua&0 xem còn mấy ngày.
+    &2MÙA MƯA, MÙA KHÔ
+    &0Mỗi mùa 7 ngày&r&0, xen kẽ. &1/mua&0 xem còn mấy ngày.
     &1☔ Mưa&0: lúa, mía, tre lớn nhanh.
     &6☀ Khô&0: khoai, cà rốt, dưa, bí lớn nhanh.
-    &0Đúng mùa gặt cây chín còn &lrơi thêm&r&0.
+    &0Đúng mùa gặt cây chín còn rơi thêm&r&0.
     &0Lũ cuối mùa mưa, hạn hán giữa mùa khô.
   - |-
-    &2&lĐẶC SẢN VÙNG
+    &2ĐẶC SẢN VÙNG
     &0Phe có nhiều thị trấn nhất trong một vùng được mùa đặc sản vùng đó (lúa Nam Bộ, ca cao Tây Nguyên…).
     &1/dacsan &0xem vùng nào của ai.
   - |-
-    &1&lCÂU CÁ
-    &0Có &l24 loại cá Việt&r&0 (cá linh, cá lóc, cá kèo, cá anh vũ…), nhiều con &lchỉ có theo mùa&r&0. Cá biển câu ở biển.
+    &1CÂU CÁ
+    &0Có 24 loại cá Việt&r&0 (cá linh, cá lóc, cá kèo, cá anh vũ…), nhiều con chỉ có theo mùa&r&0. Cá biển câu ở biển.
     &1/emf &0menu câu cá
     &1/emf shop &0bán cá
-    &0Thi câu &lT7, CN 20h&r&0, có thưởng xu, &1Bùa bắt pet&0.
+    &0Thi câu T7, CN 20h&r&0, có thưởng xu, &1Bùa bắt pet&0.
   - |-
-    &1&lCÁ ĐỂ LÀM GÌ
+    &1CÁ ĐỂ LÀM GÌ
     &0Bán: &1/emf shop
-    &0Cho &lpet ăn&r&0: cầm cá, chuột phải vào pet: no, hồi máu, thêm kinh nghiệm (cá hiếm bổ hơn).
+    &0Cho pet ăn&r&0: cầm cá, chuột phải vào pet: no, hồi máu, thêm kinh nghiệm (cá hiếm bổ hơn).
     &0Nấu món: &1/nauan
     &0Nộp kho lương: &1/kholuong nop
 - id: khampha
   name: Khám phá, dungeon
   pages:
   - |-
-    &2&lKỸ NĂNG NGHỀ
+    &2KỸ NĂNG NGHỀ
     &1/skills &0xem 6 kỹ năng: trồng, đốn gỗ, đào mỏ, câu cá, đào đất, pha chế.
-    &0Làm nhiều thì lên cấp (tối đa &l20&r&0): rơi thêm đồ, cấp 5/10/15/20 có thưởng xu, vài cấp cộng máu/sức mạnh.
+    &0Làm nhiều thì lên cấp (tối đa 20&r&0): rơi thêm đồ, cấp 5/10/15/20 có thưởng xu, vài cấp cộng máu/sức mạnh.
   - |-
-    &2&lKỹ năng: dùng chiêu
-    &0Cấp 10 mở &lchiêu đặc biệt&r&0 mỗi kỹ năng: cầm công cụ, &lchuột phải&r&0 rồi đào/chặt ngay.
+    &2Kỹ năng: dùng chiêu
+    &0Cấp 10 mở chiêu đặc biệt&r&0 mỗi kỹ năng: cầm công cụ, chuột phải&r&0 rồi đào/chặt ngay.
     &0Chiêu chạy 5 giây, hồi 5 phút.
     &4Lưu ý: &0kỹ năng không dùng ở Thái Ấp, khu spawn; ở Đấu Trường không cộng máu. Mỗi mùa mới làm lại từ đầu.
   - |-
-    &6&lCỐT TRUYỆN
-    &0Tìm &6Già Làng&0 rồi &lchuột phải&r&0 để nói chuyện, bấm chọn câu trả lời.
+    &6CỐT TRUYỆN
+    &0Tìm &6Già Làng&0 rồi chuột phải&r&0 để nói chuyện, bấm chọn câu trả lời.
     &0Chương 1 «Điềm Báo»: săn quái, giúp Bác Thợ Rèn, đào tìm Mảnh Sao Rơi. Có thưởng xu.
     &1/journal &0nhật ký (việc đang làm)
     &1/backpack &0đồ nhiệm vụ
   - |-
-    &6&lLỮ KHÁCH
+    &6LỮ KHÁCH
     &0Người lạ lang thang ngoài đất hoang, mỗi người kể chuyện về một nơi sau &5Cổng Hoang&0.
     &1/lukhach &0xem họ ở vùng nào.
     &0Nghe chuyện, đi qua cổng tới nơi họ kể, rồi tìm họ kể lại: có thưởng.
   - |-
-    &6&lLỮ KHÁCH (tiếp)
+    &6LỮ KHÁCH (tiếp)
     &8Lữ khách đổi chỗ mỗi 3 ngày.
   - |-
-    &5&lCỔNG DUNGEON
+    &5CỔNG DUNGEON
     &0Dungeon cày đồ hiếm, đi theo nhóm.
     &1/dungeon &0danh sách, bấm tên để vào.
     &1/dungeon vao <mã>
     &0Chuỗi 10 tầng: trùm cuối rơi &6Chìa khoá&0, dùng là mở tầng sau.
     &0Có dungeon &5ẩn&0 (tìm lối vào trên bản đồ).
   - |-
-    &5&lVÉ VÀO DUNGEON
+    &5VÉ VÀO DUNGEON
     &1/dungeon mua <mã> &0mua vé
     &0Dungeon lớn: cả server góp &1/dungeon gop <mã> <xu>&0, đủ thì mở cho mọi người.
     &0Cống Ngầm, Bắc Cực: chỉ vào qua &5Cổng Hoang&0.
     &0Vé chỉ trừ khi vào, không vào kịp thì hoàn.
   - |-
-    &5&lDUNGEON: MẸO
+    &5DUNGEON: MẸO
     &0Vài dungeon cần &6nhóm&0 (&1/em party create&0), pet đủ cấp, hoặc chỉ mở cuối tuần, buổi tối.
     &6★ Dungeon của tuần&0: vượt được thêm quà.
     &5Mảnh Chìa&0: ghép đủ để mở dungeon ẩn.
     &1/em &0menu EliteMobs (đồ, cửa hàng).
   - |-
-    &5&lCỔNG HOANG
+    &5CỔNG HOANG
     &0Cổng dungeon giấu trên bản đồ, trông như cảnh vật cũ (vòng đá rêu, giếng cát, cột băng…).
     &0Thấy &5hạt tím&0: đứng ô giữa, &1Shift&0 để vào.
     &0Có cổng nằm dưới nước. Dungeon càng khó, cổng càng kín.
     &1/conghoang &0xem lời đồn.
   - |-
-    &5&lGIỮ CỔNG HOANG
+    &5GIỮ CỔNG HOANG
     &0Thị trấn có cổng: dân mình vào miễn phí, người ngoài trả phí vào ngân khố.
     &1/conghoang phi <mã> <xu>
     &8Vd: /conghoang phi c1 200
     &1/conghoang dong|mo <mã> &0đóng/mở cổng
   - |-
-    &5&lGIỮ CỔNG HOANG (tiếp)
+    &5GIỮ CỔNG HOANG (tiếp)
     &0Tìm ra trước được ưu tiên lập thị trấn ở đó. Chiếm được thị trấn là có cổng!
   - |-
-    &6&lKHO BÁU
-    &0Câu cá, hạ quái có thể nhặt &6bản đồ kho báu&0: cầm để dò &lnóng/lạnh&r&0, tới nơi &1Shift&0 để đào, hạ lính canh.
+    &6KHO BÁU
+    &0Câu cá, hạ quái có thể nhặt &6bản đồ kho báu&0: cầm để dò nóng/lạnh&r&0, tới nơi &1Shift&0 để đào, hạ lính canh.
     &1/khobau &0cách dò, các bậc.
     &0Kho báu huyền thoại có thể chỉ lối vào dungeon ẩn!
   - |-
-    &4&lLỆNH SĂN
+    &4LỆNH SĂN
     &0Quái mạnh xuất hiện ở các vùng, ai đánh nhiều nhất nhận thưởng.
     &1/lenhsan &0xem đang ở đâu, thưởng gì.
   - |-
-    &2&lTHÁI ẤP
+    &2THÁI ẤP
     &0Đất riêng an toàn ở thế giới riêng: không PvP, không quái, không quặng. Để xây, làm nông, nuôi pet.
     &1/thaiap mua &0(5.000 xu, cạnh 50 khối)
     &1/thaiap morong &0(8.000 → 70, 15.000 → 90)
     &1/thaiap &0về Thái Ấp
   - |-
-    &2&lThái Ấp: lệnh
+    &2Thái Ấp: lệnh
     &1/thaiap moi <tên> &0mời xây cùng (tối đa 5)
     &1/thaiap duoi <tên>
     &1/thaiap ten <tên> &0đặt tên
@@ -660,39 +660,39 @@ chapters:
     &1/thaiap thich &0thích nơi đang đứng
     &1/thaiap top
   - |-
-    &5&lTHÁI ẤP SÁNG TẠO
-    &0Bản sao mảnh đất của bạn ở &lchế độ sáng tạo&r&0: lấy khối thoải mái, bay, xây thử nhà trước khi xây thật.
+    &5THÁI ẤP SÁNG TẠO
+    &0Bản sao mảnh đất của bạn ở chế độ sáng tạo&r&0: lấy khối thoải mái, bay, xây thử nhà trước khi xây thật.
     &1/thaiap sangtao &0tới cổng tím, bước vào cổng để sang.
     &0Cần có Thái Ấp hoặc được mời xây cùng.
   - |-
-    &5&lSÁNG TẠO: lưu ý
-    &0Túi đồ bên đó &lriêng&r&0: đồ sáng tạo &4không mang về&0 Bang Hội Chiến.
+    &5SÁNG TẠO: lưu ý
+    &0Túi đồ bên đó riêng&r&0: đồ sáng tạo &4không mang về&0 Bang Hội Chiến.
     &1/thaiap &0về mảnh đất
     &1/thaiap ghe <tên> &0tham quan
     &1/thaiap ve &0về Bang Hội Chiến
   - |-
-    &5&lSÁNG TẠO: lưu ý (tiếp)
+    &5SÁNG TẠO: lưu ý (tiếp)
     &0Không ném đồ, không nổ, tối đa 40 sinh vật quanh mình.
     &0Mời/đuổi, mở rộng, đặt tên làm ở Bang Hội Chiến, bên sáng tạo tự cập nhật sau 30 giây.
 - id: pet
   name: Pet & Đấu Trường
   pages:
   - |-
-    &6&lPET CHIẾN ĐẤU
-    &0Bắt thú, quái làm pet: đánh tới khi &4yếu máu&0 rồi cầm &ldây xích&r&0 đánh tiếp.
-    &0Chỉ có &lxác suất&r&0 trúng (gốc khoảng 30%, tuỳ loài), mỗi con thử 3 lần, trượt hết con vật &4hoảng&0, tìm con khác.
+    &6PET CHIẾN ĐẤU
+    &0Bắt thú, quái làm pet: đánh tới khi &4yếu máu&0 rồi cầm dây xích&r&0 đánh tiếp.
+    &0Chỉ có xác suất&r&0 trúng (gốc khoảng 30%, tuỳ loài), mỗi con thử 3 lần, trượt hết con vật &4hoảng&0, tìm con khác.
     &1/bxhpet tyle &0xem tỉ lệ
   - |-
-    &6&lPET CHIẾN ĐẤU (tiếp)
+    &6PET CHIẾN ĐẤU (tiếp)
     &0Thú tự thuần hoá (sói, mèo, ngựa): bắt chắc.
   - |-
-    &1&lBÙA BẮT PET
-    &0Cầm &lBùa bắt pet&r&0 ở &ltay trái&r&0 khi quăng dây xích: &2+25%&0 tỉ lệ.
+    &1BÙA BẮT PET
+    &0Cầm Bùa bắt pet&r&0 ở tay trái&r&0 khi quăng dây xích: &2+25%&0 tỉ lệ.
     &0Mỗi lần thử mất 1 bùa (trúng hay trượt).
     &0Có từ giải thi câu cá.
     &1/buabatpet &0xem cách dùng
   - |-
-    &6&lLệnh pet
+    &6Lệnh pet
     &1/petinfo &0thông tin
     &1/petcall &0gọi ra
     &1/petsendaway &0cất đi
@@ -703,27 +703,27 @@ chapters:
     &1/pettrade <người> [giá] &0bán/tặng
     &1/bxhpet &0xếp hạng
   - |-
-    &6&lPet đánh người
-    &0Pet đánh người chơi bị &lgiảm 50% sát thương&r&0.
+    &6Pet đánh người
+    &0Pet đánh người chơi bị giảm 50% sát thương&r&0.
     &0Công thành: có phiên cho, có phiên không cho pet tham chiến. Xem: &1/lichcongthanh
-    &0Pet lớn theo &lhệ&r&0 bạn chọn và &lbản tính loài&r&0: thú lớn trâu, thú săn đánh đau, chỉ loài bay mới cưỡi bay.
+    &0Pet lớn theo hệ&r&0 bạn chọn và bản tính loài&r&0: thú lớn trâu, thú săn đánh đau, chỉ loài bay mới cưỡi bay.
   - |-
-    &6&lPet đánh người (tiếp)
+    &6Pet đánh người (tiếp)
     &0Pet chiến đấu tên có &4⚔&0, pet trang trí có &5✿&0.
   - |-
-    &6&lĐẤU TRƯỜNG
-    &0Người + pet đấu &l1v1&r&0 hoặc &l2v2&r&0, đồ của mình, &2chết không rơi đồ&0.
+    &6ĐẤU TRƯỜNG
+    &0Người + pet đấu 1v1&r&0 hoặc 2v2&r&0, đồ của mình, &2chết không rơi đồ&0.
     &1/warp pvp &0tới sảnh đấu: bước vào 1 trong 3 cổng để chọn sân, vào hàng chờ.
     &0Thắng +50 xu (5 trận có thưởng/ngày), trận tối đa 3 phút.
   - |-
-    &6&lĐấu Trường: lệnh
+    &6Đấu Trường: lệnh
     &1/dautruong thachdau <người>
     &8Vd: /dautruong thachdau Linh
     &1/dautruong dongy&0 · &1tuchoi
     &1/dautruong cuoc <xu> &0cược (tối đa 10.000, server thu 5%)
     &1/dautruong doi 2v2 &0đổi kiểu
   - |-
-    &6&lĐấu Trường: lệnh (tiếp)
+    &6Đấu Trường: lệnh (tiếp)
     &1/dautruong roi &0rời hàng chờ
     &1/dautruong xem &0xem trận
     &1/dautruong top&0 · &1toi
@@ -731,58 +731,58 @@ chapters:
   name: Quà & ủng hộ
   pages:
   - |-
-    &2&lĐIỂM DANH
+    &2ĐIỂM DANH
     &0Mỗi ngày gõ &1/diemdanh&0 (online đủ 5 phút) nhận 100 xu.
-    &0Đủ &l7, 14, 30 ngày&r&0 có quà mốc (kim cương, táo vàng…).
-    &0Bỏ một ngày &lkhông mất&r&0 chuỗi.
+    &0Đủ 7, 14, 30 ngày&r&0 có quà mốc (kim cương, táo vàng…).
+    &0Bỏ một ngày không mất&r&0 chuỗi.
     &1/diemdanh xem &0tiến độ
   - |-
-    &2&lNHIỆM VỤ NGÀY
+    &2NHIỆM VỤ NGÀY
     &1/nhiemvu&0: mỗi ngày 3 nhiệm vụ (đào, chặt, săn, xây, câu, thu hoạch).
     &0Xong mỗi cái nhận xu, xong hết &6thêm thưởng&0. Đổi lúc 0h.
     &8Khối tự đặt rồi phá không được tính.
   - |-
-    &6&lVÒNG QUAY
-    &0Chơi thật mỗi &l60 phút&r&0 được 1 vé (treo máy không tính, giữ tối đa 5 vé).
-    &1/vongquay &0quay, menu ghi rõ &ltỉ lệ từng món&r&0.
+    &6VÒNG QUAY
+    &0Chơi thật mỗi 60 phút&r&0 được 1 vé (treo máy không tính, giữ tối đa 5 vé).
+    &1/vongquay &0quay, menu ghi rõ tỉ lệ từng món&r&0.
     &0Vé miễn phí, không bán.
   - |-
-    &2&lVOTE MIỄN PHÍ
-    &0Gõ &1/vote&0, bấm link, nhập &lđúng tên&r&0 trong game.
+    &2VOTE MIỄN PHÍ
+    &0Gõ &1/vote&0, bấm link, nhập đúng tên&r&0 trong game.
     &0Mỗi lượt &6100 xu&0, 7 ngày liền thêm &6500 xu&0, mỗi 30 lượt cả server có &5Vote Party&0.
     &1/vote top &0bảng vote tháng
   - |-
-    &5&lMẢNH SỰ KIỆN
+    &5MẢNH SỰ KIỆN
     &0Sự kiện, boss, mốc điểm danh… cho &5mảnh sự kiện&0 (đồ thật, trao đổi được).
     &1/doimanh &0đổi mảnh lấy quà.
     &4Mỗi sự kiện có hạn đổi&0, nhớ đổi trước khi hết.
   - |-
-    &6&lRANK ỦNG HỘ
-    &0Ủng hộ server, nhận &ltước vị&r&0: chỉ để &ltrang trí&r&0, không mua được lợi thế.
-    &2Nam Tước &1Tử Tước &1Bá Tước &5Hầu Tước &6&lCông Tước
+    &6RANK ỦNG HỘ
+    &0Ủng hộ server, nhận tước vị&r&0: chỉ để trang trí&r&0, không mua được lợi thế.
+    &2Nam Tước &1Tử Tước &1Bá Tước &5Hầu Tước &6Công Tước
     &1/rank &0xem giá, quyền lợi.
   - |-
-    &6&lQuyền lợi rank
+    &6Quyền lợi rank
     &0Prefix màu, chat màu, &1/hat&0, &1/nick&0, hiệu ứng hạt &1/pp&0, pet trang trí &1/pet&0 (không cưỡi, không đánh), chào khi vào server, &1/cuahang&0 trong kinh đô.
     &8Không bán đồ, tiền, sức mạnh, cape hay gì liên quan Pokémon.
   - |-
-    &6&lỦNG HỘ BẰNG QR
-    &1/rank mua&0, chọn gói: mã QR hiện trên &ltấm bản đồ&r&0 trong tay (10 phút).
+    &6ỦNG HỘ BẰNG QR
+    &1/rank mua&0, chọn gói: mã QR hiện trên tấm bản đồ&r&0 trong tay (10 phút).
     &0Mở app ngân hàng quét mã, chuyển xong bấm &2[Tôi đã chuyển khoản]&0 trong chat.
     &0Admin cấp rank trong ngày. Cũng mua được trên web.
   - |-
-    &6&lỦNG HỘ BẰNG QR (tiếp)
+    &6ỦNG HỘ BẰNG QR (tiếp)
     &4Chỉ chuyển theo QR của server, admin không nhắn xin tiền riêng.
 - id: practice
   name: Practice (PvP)
   pages:
   - |-
-    &6&lPRACTICE
-    &0Đấu 1v1 với bộ đồ có sẵn, không mất đồ. Combat kiểu &l1.8&r&0.
+    &6PRACTICE
+    &0Đấu 1v1 với bộ đồ có sẵn, không mất đồ. Combat kiểu 1.8&r&0.
     &2Bộ đồ: &0NoDebuff, Gapple, Classic, Archer, Boxing, Combo, Sumo.
     &8Đồ, tiền ở đây không liên quan Bang Hội Chiến.
   - |-
-    &6&lTìm trận
+    &6Tìm trận
     &1/queue &0vào hàng chờ, tự ghép người cùng bộ đồ
     &1/queue leave &0rời
     &1/duel <tên> &0thách đấu
@@ -790,7 +790,7 @@ chapters:
     &1/duel accept <tên>
     &1/duel deny <tên>
   - |-
-    &6&lKhác
+    &6Khác
     &1/spectate <tên> &0xem người khác đấu
     &1/duel stats &0thành tích
     &1/duel top &0xếp hạng
@@ -801,20 +801,20 @@ chapters:
   name: Cần giúp đỡ
   pages:
   - |-
-    &6&lCẦN GIÚP?
+    &6CẦN GIÚP?
     &0Hỏi người có prefix &2[Helper]&0, &1[Mod]&0, &4[Admin]&0 trong chat.
     &0Quên mật khẩu: nhờ admin đặt lại.
-    &0Bị kick nhầm, mất đồ do lỗi: báo admin kèm &lgiờ, chỗ, ảnh chụp&r&0.
+    &0Bị kick nhầm, mất đồ do lỗi: báo admin kèm giờ, chỗ, ảnh chụp&r&0.
   - |-
-    &6&lTRANG WEB
+    &6TRANG WEB
     &0Xem rank, tiền, giờ chơi, cấp, kỹ năng, cốt truyện, lệnh của bạn trên web.
-    &0Gõ &1/web&0 lấy mã 6 số (1 giờ), vào web bấm &lĐăng nhập&r&0.
+    &0Gõ &1/web&0 lấy mã 6 số (1 giờ), vào web bấm Đăng nhập&r&0.
     &4Đừng đưa mã cho ai, admin không hỏi mã.
   - |-
-    &1&lVOICE CHAT
-    &0Máy tính (Java) cài mod &lSimple Voice Chat&r&0 (Fabric/Forge, đúng phiên bản game).
+    &1VOICE CHAT
+    &0Máy tính (Java) cài mod Simple Voice Chat&r&0 (Fabric/Forge, đúng phiên bản game).
     &0Nói với người đứng gần (40 khối), lập nhóm cho cả thị trấn.
     &1Phím V&0 menu, giữ &1Caps Lock&0 để nói, &1Phím G&0 nhóm.
   - |-
-    &1&lVOICE CHAT (tiếp)
+    &1VOICE CHAT (tiếp)
     &8Điện thoại chưa có voice. Báo admin nếu không kết nối được.

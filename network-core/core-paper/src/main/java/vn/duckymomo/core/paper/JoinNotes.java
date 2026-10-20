@@ -60,7 +60,7 @@ final class JoinNotes {
             return;
         }
         list.sort((a, b) -> Integer.compare((Integer) a[0], (Integer) b[0]));
-        p.sendMessage(c("&6&m          &r &6&l" + title + " &6&m          "));
+        p.sendMessage(c("&6&m          &r &6" + title + " &6&m          "));
         for (Object[] o : list) {
             p.sendMessage(c("&6▏ ").append((Component) o[1]));
         }

@@ -179,7 +179,7 @@ final class LuckySpin implements Listener {
             it = new ItemStack(Material.PAPER);
         }
         ItemMeta meta = it.getItemMeta();
-        meta.displayName(c((pz.rare() ? "&6&l✦ " : "&e") + pz.label()));
+        meta.displayName(c((pz.rare() ? "&6✦ " : "&e") + pz.label()));
         List<Component> lore = new ArrayList<>();
         lore.add(c(String.format(Locale.ROOT, "&7Tỉ lệ: &f%.1f%%", 100.0 * pz.weight() / total)));
         for (String d : rewards.describe(pz.rewards())) {
@@ -193,7 +193,7 @@ final class LuckySpin implements Listener {
     private ItemStack spinButton(Player p) {
         ItemStack it = new ItemStack(keys(p) > 0 ? Material.LIME_CONCRETE : Material.GRAY_CONCRETE);
         ItemMeta meta = it.getItemMeta();
-        meta.displayName(c(keys(p) > 0 ? "&a&lQUAY (&f" + keys(p) + " vé&a&l)" : "&7Hết vé"));
+        meta.displayName(c(keys(p) > 0 ? "&aQUAY (&f" + keys(p) + " vé&a)" : "&7Hết vé"));
         meta.lore(List.of(c("&7Chơi thật &f" + minutesPerKey(p) + " phút &7= 1 vé (tối đa " + cfg.getInt("max-keys", 5) + ")"),
                 c("&7Vé tiếp theo sau &f" + minutesToNext(p) + " phút"), c("&8Vé miễn phí, không bán, không trao đổi")));
         it.setItemMeta(meta);
@@ -202,7 +202,7 @@ final class LuckySpin implements Listener {
 
     void open(Player p) {
         Holder h = new Holder();
-        h.inv = Bukkit.createInventory(h, 54, c("&6&lVÒNG QUAY MIỄN PHÍ"));
+        h.inv = Bukkit.createInventory(h, 54, c("&6VÒNG QUAY MIỄN PHÍ"));
         int slot = 10;
         for (Prize pz : prizes) {
             if (slot >= 44) {

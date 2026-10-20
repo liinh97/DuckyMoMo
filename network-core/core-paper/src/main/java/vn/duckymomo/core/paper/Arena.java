@@ -259,7 +259,7 @@ final class Arena implements Listener {
     }
 
     private void help(Player p) {
-        p.sendMessage(c("&6&l⚔ ĐẤU TRƯỜNG &7(người + pet, đồ của mình, chết không rơi đồ)"));
+        p.sendMessage(c("&6⚔ ĐẤU TRƯỜNG &7(người + pet, đồ của mình, chết không rơi đồ)"));
         p.sendMessage(c("&e/dautruong vao <1v1|2v2> [cược] [sân] &7vào hàng chờ (ghép người cùng mức cược); &e/warp pvp &7tới sảnh có 3 cổng"));
         p.sendMessage(c("&e/dautruong thachdau <người> [cược] &7thách đấu 1v1; người kia &e/dautruong dongy"));
         p.sendMessage(c("&e/dautruong roi &7rời hàng chờ / thôi xem"));
@@ -525,7 +525,7 @@ final class Arena implements Listener {
                 } else {
                     m.state = State.FIGHT;
                     m.fightEnd = System.currentTimeMillis() + fightSeconds * 1000L;
-                    title(m, "&c&lĐÁNH!", "&7" + fightSeconds + " giây");
+                    title(m, "&cĐÁNH!", "&7" + fightSeconds + " giây");
                 }
             } else if (m.state == State.FIGHT) {
                 long rem = (m.fightEnd - System.currentTimeMillis()) / 1000L;
@@ -651,7 +651,7 @@ final class Arena implements Listener {
                 // kinh nghiệm cho pet đang dẫn: chung giới hạn trận thưởng mỗi ngày (không thưởng thì cũng không có)
                 boolean petExp = p != null && reward > 0 && petExpWin > 0 && addPetExp(p, petExpWin);
                 if (p != null) {
-                    p.sendMessage(c("&a&lTHẮNG! " + (share > 0 ? "&aNhận cược &f" + money(share) + " " : "")
+                    p.sendMessage(c("&aTHẮNG! " + (share > 0 ? "&aNhận cược &f" + money(share) + " " : "")
                             + (reward > 0 ? "&a+ thưởng &f" + money(reward) : m.friendly ? "&7(giao hữu, không thưởng)" : "&7(đã đủ " + dailyCap + " trận thưởng hôm nay)")
                             + (petExp ? " &a+ pet &f" + fmtNum(petExpWin) + " kinh nghiệm" : "")));
                 }
@@ -794,7 +794,7 @@ final class Arena implements Listener {
 
     private void top(Player p) {
         ConfigurationSection st = data.getConfigurationSection("stats");
-        p.sendMessage(c("&6&l🏆 TOP ĐẤU TRƯỜNG"));
+        p.sendMessage(c("&6🏆 TOP ĐẤU TRƯỜNG"));
         if (st == null) {
             p.sendMessage(c("&7Chưa có trận nào."));
             return;
@@ -1159,7 +1159,7 @@ final class Arena implements Listener {
 
     // ------------------------------------------------------------------ NPC ở spawn
 
-    private static final List<String> NPC_LINES = List.of("&6&l⚔ ĐẤU TRƯỜNG ⚔", "&fNgười + pet · 1v1 · 2v2", "&7Chết không rơi đồ · có cược", "&e▶ Bấm để tới sảnh PvP");
+    private static final List<String> NPC_LINES = List.of("&6⚔ ĐẤU TRƯỜNG ⚔", "&fNgười + pet · 1v1 · 2v2", "&7Chết không rơi đồ · có cược", "&e▶ Bấm để tới sảnh PvP");
 
     private org.bukkit.NamespacedKey npcKey() {
         return new org.bukkit.NamespacedKey(plugin, "dautruong_npc");
@@ -1416,7 +1416,7 @@ final class Arena implements Listener {
         String k = queuedIn.getOrDefault(p.getUniqueId(), "1:0:" + san);
         String[] kp = k.split(":");
         int size = Integer.parseInt(kp[0]);
-        p.sendMessage(c("&6&l⚔ " + sanName(san) + " &7— đang chờ đối thủ &f" + size + "v" + size + (kp[1].equals("0") ? " &7(không cược)" : " &ecược &f" + kp[1])));
+        p.sendMessage(c("&6⚔ " + sanName(san) + " &7— đang chờ đối thủ &f" + size + "v" + size + (kp[1].equals("0") ? " &7(không cược)" : " &ecược &f" + kp[1])));
         net.kyori.adventure.text.TextComponent.Builder row = Component.text();
         int other = size == 1 ? 2 : 1;
         if (sanReady(san, other)) {

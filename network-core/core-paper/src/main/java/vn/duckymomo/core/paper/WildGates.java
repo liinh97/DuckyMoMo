@@ -702,7 +702,7 @@ final class WildGates implements Listener {
             return null;
         }
         String id = place(l);
-        PlayerSettings.broadcast("sukien", c("&5&l🌀 TIN ĐỒN: &d" + data.getString(g(id) + "tin-don") + " &7(Cổng Hoang: /conghoang)"));
+        PlayerSettings.broadcast("sukien", c("&5🌀 TIN ĐỒN: &d" + data.getString(g(id) + "tin-don") + " &7(Cổng Hoang: /conghoang)"));
         return id;
     }
 
@@ -796,7 +796,7 @@ final class WildGates implements Listener {
             save();
             writeJson();
             p.playSound(p.getLocation(), Sound.BLOCK_END_PORTAL_SPAWN, 0.8f, 1.1f);
-            p.sendMessage(c("&5&l🌀 Bạn đã tìm ra một Cổng Hoang! &7Dẫn vào: &d" + dungeonName(id)));
+            p.sendMessage(c("&5🌀 Bạn đã tìm ra một Cổng Hoang! &7Dẫn vào: &d" + dungeonName(id)));
             if (graceMs > 0) {
                 p.sendMessage(c("&7Trong &f" + graceMs / 60_000 + " phút &7tới, chỉ bạn (hoặc thị trấn của bạn) được lập/mở rộng thị trấn trong "
                         + graceRadius + " khối quanh đây. Thị trấn giữ cổng: dân mình vào miễn phí, người ngoài trả phí vào ngân khố."));
@@ -936,7 +936,7 @@ final class WildGates implements Listener {
         ThreadLocalRandom r = ThreadLocalRandom.current();
         p.playSound(p.getLocation(), Sound.BLOCK_END_PORTAL_FRAME_FILL, 1f, 0.6f);
         int rad = tier(id).treasureRadius();
-        p.sendMessage(c("&5&l🗺 Dưới đáy rương có mảnh giấy cũ: &d\"Cổng Hoang ở quanh X " + (s.getBlockX() + r.nextInt(-rad, rad + 1)) + " Z "
+        p.sendMessage(c("&5🗺 Dưới đáy rương có mảnh giấy cũ: &d\"Cổng Hoang ở quanh X " + (s.getBlockX() + r.nextInt(-rad, rad + 1)) + " Z "
                 + (s.getBlockZ() + r.nextInt(-rad, rad + 1)) + "\"&5. &7(sai số khoảng " + rad + " khối" + (tier(id).nightOnly() ? ", chỉ lộ dấu hiệu ban đêm" : "") + ")"));
         return true;
     }
@@ -1050,7 +1050,7 @@ final class WildGates implements Listener {
             default -> { }
         }
         // danh sách công khai
-        s.sendMessage(c("&5&l━━ 🌀 CỔNG HOANG ━━"));
+        s.sendMessage(c("&5━━ 🌀 CỔNG HOANG ━━"));
         s.sendMessage(c("&7Cổng dungeon ẩn trên bản đồ, ngụy trang như cảnh vật (vòng đá rêu, giếng cát, cột băng, gốc cây rêu…). Gần cổng có hạt tím,"
                 + " đứng lên ô giữa rồi &fngồi xuống (Shift) &7để vào. Mỗi " + intervalMs / 86_400_000L + " ngày thêm 1 cổng, tối đa " + maxGates + " cổng/mùa."));
         s.sendMessage(c("&7Thị trấn có ô đất chứa cổng là chủ: dân mình vào miễn phí, người ngoài trả phí vào ngân khố. Chiếm được thị trấn là có cổng."));

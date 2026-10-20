@@ -244,7 +244,7 @@ final class Wanderers {
             s.sendMessage("Đã xoá mọi NPC lữ khách (5 phút sau tự tạo lại nếu module còn bật; tắt hẳn: wander-npcs.enabled false).");
             return true;
         }
-        s.sendMessage(c("&6&l━━ 📜 LỮ KHÁCH ━━"));
+        s.sendMessage(c("&6━━ 📜 LỮ KHÁCH ━━"));
         s.sendMessage(c("&7Những người lạ lang thang ngoài đất hoang, mỗi người biết chuyện về một nơi phía sau Cổng Hoang. Tìm họ, chuột phải để nói"
                 + " chuyện. Cứ " + moveMs / 3_600_000L + " giờ họ lại dời đi chỗ khác."));
         for (Npc v : npcs.values()) {

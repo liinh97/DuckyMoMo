@@ -223,7 +223,7 @@ final class Frontier implements Listener {
                 plugin.getLogger().warning("Khai hoang: lệnh lỗi \"" + cmd + "\": " + e.getMessage());
             }
         }
-        Title t = Title.title(c("&a&lKHAI HOANG THÀNH CÔNG"), c(g.name()),
+        Title t = Title.title(c("&aKHAI HOANG THÀNH CÔNG"), c(g.name()),
                 Title.Times.times(Duration.ofMillis(500), Duration.ofSeconds(5), Duration.ofSeconds(1)));
         for (Player p : Bukkit.getOnlinePlayers()) {
             p.showTitle(t);
@@ -234,7 +234,7 @@ final class Frontier implements Listener {
         for (Area a : areas) {
             if (a.goal().equals(g.id())) {
                 Bukkit.broadcast(c("&a⚑ Vùng mới " + a.name() + " &ađã có ở &f/tpr&a. " + cfg.getInt("pioneer.count", 10)
-                        + " người đặt chân tới đầu tiên là &lNgười Tiên Phong&r&a, có quà!"));
+                        + " người đặt chân tới đầu tiên là Người Tiên Phong&r&a, có quà!"));
             }
         }
     }
@@ -332,7 +332,7 @@ final class Frontier implements Listener {
             return true;
         }
         Goal g = next();
-        s.sendMessage(c("&6&l━━ KHAI HOANG VÙNG MỚI ━━"));
+        s.sendMessage(c("&6━━ KHAI HOANG VÙNG MỚI ━━"));
         s.sendMessage(c("&7Cả server góp chung: bán đồ bằng &f/sell &7(được tính " + Math.round(cfg.getDouble("sell-percent", 100))
                 + "% tiền bán, bạn không mất gì) hoặc &f/khaihoang gop <xu>&7."));
         s.sendMessage(c("&7Quỹ hiện có: &a" + money(fund())));

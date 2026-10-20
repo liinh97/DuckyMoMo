@@ -345,7 +345,7 @@ final class Mercenary implements Listener {
     }
 
     private void list(CommandSender s) {
-        s.sendMessage(c("&6&l⚔ Lính đánh thuê &7(người không thuộc nước nào, thuê bằng ngân khố nước, " + fmt(contractHours) + " giờ/hợp đồng)"));
+        s.sendMessage(c("&6⚔ Lính đánh thuê &7(người không thuộc nước nào, thuê bằng ngân khố nước, " + fmt(contractHours) + " giờ/hợp đồng)"));
         ConfigurationSection dk = data.getConfigurationSection("dangky");
         int shown = 0;
         if (dk != null) {

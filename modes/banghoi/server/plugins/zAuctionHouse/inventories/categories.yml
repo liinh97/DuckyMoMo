@@ -66,7 +66,7 @@ items:
 
     item:
       material: CHEST
-      name: "#2CCED2<bold>TẤT CẢ"
+      name: "#2CCED2TẤT CẢ"
       lore:
       - "#92ffffXem mọi món đang bán"
       - ""
@@ -89,7 +89,7 @@ items:
     item:
       # Representative material for this category.
       material: GRASS_BLOCK
-      name: "#7a7a7a<bold>ʙʟᴏᴄᴋs"
+      name: "#7a7a7aʙʟᴏᴄᴋs"
       lore:
       - "#92ffffMọi loại khối xây"
       - ""
@@ -110,7 +110,7 @@ items:
 
     item:
       material: DIAMOND_SWORD
-      name: "#ff5555<bold>ᴡᴇᴀᴘᴏɴs"
+      name: "#ff5555ᴡᴇᴀᴘᴏɴs"
       lore:
       - "#92ffffĐồ chiến đấu"
       - "#92ffffKiếm, cung, nỏ..."
@@ -131,7 +131,7 @@ items:
 
     item:
       material: DIAMOND_CHESTPLATE
-      name: "#55ffff<bold>GIÁP"
+      name: "#55ffffGIÁP"
       lore:
       - "#92ffffĐồ bảo vệ"
       - ""
@@ -151,7 +151,7 @@ items:
 
     item:
       material: DIAMOND_PICKAXE
-      name: "#ffff55<bold>CÔNG CỤ"
+      name: "#ffff55CÔNG CỤ"
       lore:
       - "#92ffffĐồ đào mỏ và làm nông"
       - ""
@@ -171,7 +171,7 @@ items:
 
     item:
       material: GOLDEN_APPLE
-      name: "#55ff55<bold>ᴄᴏɴsᴜᴍᴀʙʟᴇs"
+      name: "#55ff55ᴄᴏɴsᴜᴍᴀʙʟᴇs"
       lore:
       - "#92ffffĐồ ăn và thuốc"
       - ""
@@ -191,7 +191,7 @@ items:
 
     item:
       material: DIAMOND
-      name: "#ffaa00<bold>TÀI NGUYÊN"
+      name: "#ffaa00TÀI NGUYÊN"
       lore:
       - "#92ffffQuặng và nguyên liệu"
       - ""
@@ -211,7 +211,7 @@ items:
 
     item:
       material: ENCHANTED_BOOK
-      name: "#ff55ff<bold>ᴇɴᴄʜᴀɴᴛᴇᴅ ʙᴏᴏᴋs"
+      name: "#ff55ffᴇɴᴄʜᴀɴᴛᴇᴅ ʙᴏᴏᴋs"
       lore:
       - "#92ffffSách có phù phép"
       - ""
@@ -231,7 +231,7 @@ items:
 
     item:
       material: CHEST
-      name: "#555555<bold>ᴍɪsᴄᴇʟʟᴀɴᴇᴏᴜs"
+      name: "#555555ᴍɪsᴄᴇʟʟᴀɴᴇᴏᴜs"
       lore:
       - "#92ffffĐồ khác"
       - ""

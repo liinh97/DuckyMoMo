@@ -110,7 +110,7 @@ items:
     # Button appearance
     item:
       material: CHEST
-      name: "#2CCED2<bold>DANH MỤC"
+      name: "#2CCED2DANH MỤC"
       lore:
       - ""
       - "#8c8c8c• #2CCED2Bấm #92ffffđể mở"
@@ -132,7 +132,7 @@ items:
     item:
       # Custom player head texture (hourglass/clock icon).
       url: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjdhYWRmZjlkZGM1NDZmZGNlYzZlZDU5MTljYzM5ZGZhOGQwYzA3ZmY0YmM2MTNhMTlmMmU2ZDdmMjU5MyJ9fX0="
-      name: "#2CCED2<bold>ĐỒ HẾT HẠN"
+      name: "#2CCED2ĐỒ HẾT HẠN"
       lore:
         # %expired-items% = number of expired items
         # %s% = pluralization suffix ("" for 1, "s" for 2+)
@@ -144,7 +144,7 @@ items:
     else:
       item:
         url: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjdhYWRmZjlkZGM1NDZmZGNlYzZlZDU5MTljYzM5ZGZhOGQwYzA3ZmY0YmM2MTNhMTlmMmU2ZDdmMjU5MyJ9fX0="
-        name: "#2CCED2<bold>ĐỒ HẾT HẠN"
+        name: "#2CCED2ĐỒ HẾT HẠN"
         lore:
         - "#ff3535Bạn không có món nào hết hạn."
 
@@ -164,7 +164,7 @@ items:
     item:
       # Chest icon texture.
       url: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjM3Y2FlNWM1MWViMTU1OGVhODI4ZjU4ZTBkZmY4ZTZiN2IwYjFhMTgzZDczN2VlY2Y3MTQ2NjE3NjEifX19"
-      name: "#2CCED2<bold>ĐỒ ĐÃ MUA"
+      name: "#2CCED2ĐỒ ĐÃ MUA"
       lore:
       - "#92ffffBạn có #2CCED2%purchased-items% #92ffffmón đã mua."
       - ""
@@ -174,7 +174,7 @@ items:
     else:
       item:
         url: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjM3Y2FlNWM1MWViMTU1OGVhODI4ZjU4ZTBkZmY4ZTZiN2IwYjFhMTgzZDczN2VlY2Y3MTQ2NjE3NjEifX19"
-        name: "#2CCED2<bold>ĐỒ ĐÃ MUA"
+        name: "#2CCED2ĐỒ ĐÃ MUA"
         lore:
         - "#ff3535Bạn chưa mua món nào."
 
@@ -194,7 +194,7 @@ items:
     item:
       # Player icon texture.
       url: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjU4MDdjYzRjM2I2OTU4YWVhNjE1NmU4NDUxOGQ5MWE0OWM1ZjMyOTcxZTZlYjI2OWEyM2EyNWEyNzE0NSJ9fX0="
-      name: "#2CCED2<bold>ĐỒ CỦA BẠN"
+      name: "#2CCED2ĐỒ CỦA BẠN"
       lore:
       - "#92ffffBạn có #2CCED2%selling-items% #92ffffmón đang bán."
       - ""
@@ -204,7 +204,7 @@ items:
     else:
       item:
         url: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjU4MDdjYzRjM2I2OTU4YWVhNjE1NmU4NDUxOGQ5MWE0OWM1ZjMyOTcxZTZlYjI2OWEyM2EyNWEyNzE0NSJ9fX0="
-        name: "#2CCED2<bold>ĐỒ CỦA BẠN"
+        name: "#2CCED2ĐỒ CỦA BẠN"
         lore:
         - "#ff3535Bạn không có món nào đang bán."
 
@@ -225,7 +225,7 @@ items:
     inactive-value: "false"
     item:
       material: COMPASS
-      name: "#2CCED2<bold>TÌM KIẾM"
+      name: "#2CCED2TÌM KIẾM"
       lore:
       - ""
       - "#92ffffĐang tìm#8c8c8c: #2CCED2%search_query%"
@@ -259,14 +259,14 @@ items:
     # Item shown while loading/refreshing (prevents spam clicks).
     loading-item:
       material: CLOCK
-      name: "#2CCED2<bold>ĐANG TẢI LẠI..."
+      name: "#2CCED2ĐANG TẢI LẠI..."
       lore:
       - "#8c8c8c• #ff3535Đang tải, đợi chút..."
 
     # Normal refresh button display.
     item:
       material: BELL
-      name: "#2CCED2<bold>THÔNG TIN CHỢ"
+      name: "#2CCED2THÔNG TIN CHỢ"
       lore:
       - "#92ffffChào mừng tới chợ đấu giá."
       - "#92ffffMua bán đồ với người chơi khác."
@@ -307,7 +307,7 @@ items:
     # Item shown while loading/sorting (prevents spam clicks).
     loading-item:
       material: HOPPER
-      name: "#2CCED2<bold>SẮP XẾP"
+      name: "#2CCED2SẮP XẾP"
       lore:
       - "#8c8c8c• #ff3535Đang tải, đợi chút"
 
@@ -317,7 +317,7 @@ items:
     # Normal sort button display.
     item:
       material: HOPPER
-      name: "#2CCED2<bold>SẮP XẾP"
+      name: "#2CCED2SẮP XẾP"
       lore:
       - "#92ffffCác kiểu sắp xếp:"
         # Placeholders for each sort option (formatted by enable/disable-text).

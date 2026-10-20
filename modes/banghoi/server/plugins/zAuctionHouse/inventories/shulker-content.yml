@@ -71,7 +71,7 @@ items:
     # Item displayed when the shulker box is empty.
     item:
       material: BARRIER
-      name: "#2CCED2<bold>HỘP TRỐNG"
+      name: "#2CCED2HỘP TRỐNG"
       lore:
       - "#92ffffHộp shulker này không có gì."
 
@@ -89,7 +89,7 @@ items:
 
     item:
       material: SHULKER_BOX
-      name: "#2CCED2<bold>HỘP SHULKER"
+      name: "#2CCED2HỘP SHULKER"
       lore:
         # Shows current position in the shulker list.
       - "#92ffffĐang xem hộp #2CCED2%shulker_current% #92fffftrên #2CCED2%shulker_total%"
@@ -113,7 +113,7 @@ items:
 
     item:
       material: ARROW
-      name: "#2CCED2<bold>HỘP TRƯỚC"
+      name: "#2CCED2HỘP TRƯỚC"
       lore:
       - "#92ffffXem hộp shulker trước."
       - ""
@@ -136,7 +136,7 @@ items:
 
     item:
       material: ARROW
-      name: "#2CCED2<bold>HỘP SAU"
+      name: "#2CCED2HỘP SAU"
       lore:
       - "#92ffffXem hộp shulker sau."
       - ""

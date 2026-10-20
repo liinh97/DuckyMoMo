@@ -155,7 +155,7 @@ final class VoteRewards implements Listener {
             for (Player o : Bukkit.getOnlinePlayers()) {
                 VaultEconomy.deposit(o, each);
             }
-            Bukkit.broadcast(c("&d&l🎉 VOTE PARTY! &r&dServer đạt " + every + " lượt vote: mọi người đang online nhận &e"
+            Bukkit.broadcast(c("&d🎉 VOTE PARTY! &r&dServer đạt " + every + " lượt vote: mọi người đang online nhận &e"
                     + VaultEconomy.format(each) + "&d. Cảm ơn cả nhà!"));
         }
         data.set("party.count", count);
@@ -166,7 +166,7 @@ final class VoteRewards implements Listener {
         if (args.length >= 1 && args[0].equalsIgnoreCase("top")) {
             String month = LocalDate.now(VN).toString().substring(0, 7);
             List<Map.Entry<String, Integer>> rows = monthTop(month);
-            s.sendMessage(c("&6&l🏆 Bảng vote tháng " + month.substring(5) + "/" + month.substring(0, 4)));
+            s.sendMessage(c("&6🏆 Bảng vote tháng " + month.substring(5) + "/" + month.substring(0, 4)));
             if (rows.isEmpty()) {
                 s.sendMessage(c("&7Chưa ai vote tháng này. Gõ &f/vote &7để là người đầu tiên!"));
             }
@@ -175,7 +175,7 @@ final class VoteRewards implements Listener {
             }
             return true;
         }
-        s.sendMessage(c("&a&lVote cho DuckyMoMo &7(mỗi trang 1 lần/ngày, nhập đúng tên trong game)"));
+        s.sendMessage(c("&aVote cho DuckyMoMo &7(mỗi trang 1 lần/ngày, nhập đúng tên trong game)"));
         s.sendMessage(c("&7Mỗi lượt: &e" + VaultEconomy.format(cfg.getDouble("money-per-vote", 100))
                 + "&7 · vote " + cfg.getInt("streak-days", 7) + " ngày liền: thêm &e" + VaultEconomy.format(cfg.getDouble("streak-bonus", 500))
                 + "&7 · mỗi " + cfg.getInt("party-every", 30) + " lượt cả server: vote party"));

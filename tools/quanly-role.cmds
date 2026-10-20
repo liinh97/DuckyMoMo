@@ -10,7 +10,7 @@ lp group quanly setdisplayname "Manager"
 lp group quanly setweight 90
 # xoá MỌI prefix cũ (mọi priority, vd [Quản lý] từ bản trước) rồi đặt lại
 lp group quanly meta clear prefix
-lp group quanly meta setprefix 90 "&e&l[Manager]&r "
+lp group quanly meta setprefix 90 "&e[Manager]&r "
 lp group quanly parent add mod
 lp track staff insert quanly 3
 # ---- được làm: xử lý vi phạm, điều tra, khôi phục phá hoại

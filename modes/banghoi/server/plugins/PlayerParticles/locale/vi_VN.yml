@@ -175,7 +175,7 @@ fixed-create-success: '&aHiệu ứng cố định của bạn đã được t�
 # Fixed Edit Messages
 fixed-edit-missing-args: '&cKhông thể điều chỉnh Hiệu ứng cố định, bạn chưa nhập một vài đối số!'
 fixed-edit-invalid-id: '&cKhông thể điều chỉnh Hiệu ứng cố định, IDs bạn chỉ định không hợp lệ hoặc không tồn tại!'
-fixed-edit-invalid-property: '&cKhông thể điều chỉnh Hiệu ứng cố định, một property không hợp lệ đã được chỉ định! Chỉ có &blocation&c, &beffect&c, &bstyle&c, và &bdata &là hợp lệ.'
+fixed-edit-invalid-property: '&cKhông thể điều chỉnh Hiệu ứng cố định, một property không hợp lệ đã được chỉ định! Chỉ có &blocation&c, &beffect&c, &bstyle&c, và &bdata à hợp lệ.'
 fixed-edit-invalid-coords: '&cKhông thể điều chỉnh Hiệu ứng cố định, một hoặc nhiều tọa độ bạn đã nhập không hợp lệ!'
 fixed-edit-out-of-range: '&cKhông thể điều chỉnh Hiệu ứng cố định, Bạn phải ở trong bán kính &b%range% &ckhối tại vị trí mong muốn của bạn!'
 fixed-edit-looking-too-far: '&cKhông thể điều chỉnh Hiệu ứng cố định, Bạn đang đứng quá xa so với khối bạn nhìn!'

@@ -122,7 +122,7 @@ items:
 
     item:
       material: HOPPER
-      name: "#2CCED2<bold>SẮP XẾP"
+      name: "#2CCED2SẮP XẾP"
       lore:
       - "#92ffffCác kiểu sắp xếp:"
         # Placeholders for each sort option (formatted by enable/disable-text).

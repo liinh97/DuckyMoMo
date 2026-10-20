@@ -58,8 +58,8 @@ final class WebLogin {
         }
         String code = String.format(Locale.ROOT, "%06d", random.nextInt(1_000_000));
         codes.put(p.getName().toLowerCase(Locale.ROOT), new Entry(p.getName(), code, System.currentTimeMillis() + minutes * 60_000L));
-        p.sendMessage(c("&6&lĐăng nhập trang web DuckyMoMo"));
-        p.sendMessage(c("&7Mã của bạn: ").append(c("&e&l" + code)
+        p.sendMessage(c("&6Đăng nhập trang web DuckyMoMo"));
+        p.sendMessage(c("&7Mã của bạn: ").append(c("&e" + code)
                 .clickEvent(ClickEvent.copyToClipboard(code)).hoverEvent(HoverEvent.showText(c("&7Bấm để sao chép"))))
                 .append(c(" &8(dùng 1 lần, hết hạn sau " + minutes + " phút)")));
         p.sendMessage(c("&7Mở ").append(c("&f&n" + url).clickEvent(ClickEvent.openUrl(url)))

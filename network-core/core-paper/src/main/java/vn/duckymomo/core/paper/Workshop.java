@@ -1177,7 +1177,7 @@ final class Workshop implements Listener {
 
     void open(Player p) {
         Holder h = new Holder();
-        h.inv = Bukkit.createInventory(h, 54, c("&8&lXƯỞNG CHẾ TẠO &7(hiệu ứng · độ bền · thời hạn)"));
+        h.inv = Bukkit.createInventory(h, 54, c("&8XƯỞNG CHẾ TẠO &7(hiệu ứng · độ bền · thời hạn)"));
         int i = 0;
         for (Recipe r : recipes.values()) {
             if (i >= MAIN_SLOTS.length) {
@@ -1193,7 +1193,7 @@ final class Workshop implements Listener {
     private void openCraft(Player p, Recipe r) {
         Holder h = new Holder();
         h.view = r;
-        h.inv = Bukkit.createInventory(h, 54, c("&8&lCHẾ TẠO: " + LEGACY.serialize(c(r.name())).replaceAll("&.", "")));
+        h.inv = Bukkit.createInventory(h, 54, c("&8CHẾ TẠO: " + LEGACY.serialize(c(r.name())).replaceAll("&.", "")));
         ItemStack bg = pane(Material.GRAY_STAINED_GLASS_PANE, " ");
         for (int s = 0; s < 54; s++) {
             h.inv.setItem(s, bg);

@@ -168,12 +168,12 @@ final class HallOfFameDisplay {
         List<String[]> heads = new ArrayList<>();   // {tên, uuid}
         switch (a.cat()) {
             case "tieude" -> {
-                lines.add("&6&l🏛 QUẢNG TRƯỜNG DANH VỌNG");
+                lines.add("&6🏛 QUẢNG TRƯỜNG DANH VỌNG");
                 lines.add("&eMùa " + season + (tam ? " &7— đang diễn ra" : " &7— đã khép lại"));
                 lines.add("&7Danh hiệu, tượng và tên khắc ở đây giữ mãi qua mọi mùa.");
             }
             case "bachu" -> {
-                lines.add("&6&l⚔ CÔNG THÀNH CHIẾN" + tag);
+                lines.add("&6⚔ CÔNG THÀNH CHIẾN" + tag);
                 JsonArray ns = arr(s, "ba_chu");
                 if (ns.isEmpty()) {
                     lines.add("&7Chưa có quốc gia nào ghi điểm.");
@@ -181,7 +181,7 @@ final class HallOfFameDisplay {
                 for (int i = 0; i < ns.size(); i++) {
                     JsonObject n = ns.get(i).getAsJsonObject();
                     if (i == 0) {
-                        lines.add("&e&lBá Chủ: &f&l" + str(n, "ten") + " &7(" + str(n, "diem") + " điểm)");
+                        lines.add("&eBá Chủ: &f" + str(n, "ten") + " &7(" + str(n, "diem") + " điểm)");
                         lines.add("&7Vua &f" + str(n, "vua"));
                         heads.add(new String[] {str(n, "vua"), str(n, "vua_uuid")});
                         for (JsonElement te : arr(n, "thi_tran")) {
@@ -209,9 +209,9 @@ final class HallOfFameDisplay {
             }
             case "chienthan", "phuho", "dautruong" -> {
                 String title = switch (a.cat()) {
-                    case "chienthan" -> "&c&l⚔ CHIẾN THẦN";
-                    case "phuho" -> "&e&l💰 ĐẠI PHÚ HỘ";
-                    default -> "&b&l🏟 ĐẤU TRƯỜNG";
+                    case "chienthan" -> "&c⚔ CHIẾN THẦN";
+                    case "phuho" -> "&e💰 ĐẠI PHÚ HỘ";
+                    default -> "&b🏟 ĐẤU TRƯỜNG";
                 };
                 String unit = a.cat().equals("phuho") ? " xu" : " điểm";
                 lines.add(title + tag);
@@ -226,12 +226,12 @@ final class HallOfFameDisplay {
                 }
             }
             case "kientrucsu" -> {
-                lines.add("&b&l🏯 KIẾN TRÚC SƯ" + tag);
+                lines.add("&b🏯 KIẾN TRÚC SƯ" + tag);
                 JsonObject k = s != null && s.has("kien_truc_su") ? s.getAsJsonObject("kien_truc_su") : null;
                 if (k == null) {
                     lines.add("&7Chưa bình chọn.");
                 } else {
-                    lines.add("&f&l" + str(k, "ten") + " &7(" + str(k, "phieu") + " phiếu) — thị trưởng &f" + str(k, "thi_truong"));
+                    lines.add("&f" + str(k, "ten") + " &7(" + str(k, "phieu") + " phiếu) — thị trưởng &f" + str(k, "thi_truong"));
                     List<String> mem = new ArrayList<>();
                     arr(k, "thanh_vien").forEach(x -> mem.add("&f" + str(x.getAsJsonObject(), "ten")));
                     lines.addAll(wrap(mem, 6));
@@ -239,7 +239,7 @@ final class HallOfFameDisplay {
                 }
             }
             case "pet" -> {
-                lines.add("&d&l🐾 PET MẠNH NHẤT" + tag);
+                lines.add("&d🐾 PET MẠNH NHẤT" + tag);
                 JsonArray ps = arr(s, "pet");
                 if (ps.isEmpty()) {
                     lines.add("&7Chưa có pet nào.");
@@ -384,7 +384,7 @@ final class HallOfFameDisplay {
             return true;
         }
         TreeMap<Integer, JsonObject> all = seasons();
-        s.sendMessage(c("&6&l🏛 Quảng trường Danh vọng &7— " + (all.isEmpty() ? "chưa có mùa nào" : all.size() + " mùa")));
+        s.sendMessage(c("&6🏛 Quảng trường Danh vọng &7— " + (all.isEmpty() ? "chưa có mùa nào" : all.size() + " mùa")));
         for (Map.Entry<Integer, JsonObject> e : all.descendingMap().entrySet()) {
             JsonArray ns = arr(e.getValue(), "ba_chu");
             s.sendMessage(c("&eMùa " + e.getKey() + ("tam".equals(str(e.getValue(), "trang_thai")) ? " &7(đang diễn ra)" : "") + "&7: Bá Chủ &f"

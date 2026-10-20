@@ -73,7 +73,7 @@ final class DecorShop implements Listener {
         this.board = board;
         this.inCapital = inCapital;
         this.rankPermission = c.getString("rank-permission", "duckymomo.cuahang");
-        this.npcName = c.getString("npc-name", "&6&lCửa hàng Kinh Đô");
+        this.npcName = c.getString("npc-name", "&6Cửa hàng Kinh Đô");
         this.offerKey = new NamespacedKey(plugin, "cuahang");
         this.catKey = new NamespacedKey(plugin, "cuahang_muc");
         this.npcKey = new NamespacedKey(plugin, "shop_npc");
@@ -180,7 +180,7 @@ final class DecorShop implements Listener {
             long n = offers.stream().filter(o -> o.cat().equals(cat)).count();
             ItemStack it = new ItemStack(icons[i]);
             ItemMeta m = it.getItemMeta();
-            m.displayName(c("&6&l" + e.getValue()));
+            m.displayName(c("&6" + e.getValue()));
             m.lore(List.of(c("&7" + n + " món"), c("&b» Bấm để xem")));
             m.getPersistentDataContainer().set(catKey, PersistentDataType.STRING, cat);
             it.setItemMeta(m);

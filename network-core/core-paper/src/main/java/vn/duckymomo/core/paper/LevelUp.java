@@ -280,10 +280,10 @@ final class LevelUp implements Listener {
         save();
         writeJson();
         p.playSound(p.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 0.8f, 1.1f);
-        p.sendMessage(c("&a&l⬆ Lên cấp " + next + "! &7+" + pointsPerLevel + " điểm thăng cấp (đang có " + points(u) + "). Đổi đặc quyền: &f/capdo"));
+        p.sendMessage(c("&a⬆ Lên cấp " + next + "! &7+" + pointsPerLevel + " điểm thăng cấp (đang có " + points(u) + "). Đổi đặc quyền: &f/capdo"));
         if (milestoneEvery > 0 && next % milestoneEvery == 0) {
             List<String> got = rewards == null ? List.of() : rewards.give(p, milestoneRewards);
-            PlayerSettings.broadcast("sukien", c("&6&l⬆ " + p.getName() + " &eđã đạt &6Cấp " + next + "&e!" + (got.isEmpty() ? "" : " &7Quà mốc: &f" + String.join(", ", got))));
+            PlayerSettings.broadcast("sukien", c("&6⬆ " + p.getName() + " &eđã đạt &6Cấp " + next + "&e!" + (got.isEmpty() ? "" : " &7Quà mốc: &f" + String.join(", ", got))));
         }
     }
 
@@ -344,8 +344,8 @@ final class LevelUp implements Listener {
         UUID u = p.getUniqueId();
         int lv = level(u), next = lv + 1;
         Holder h = new Holder();
-        h.inv = Bukkit.createInventory(h, 45, c("&8&lTHĂNG CẤP &7(cấp " + lv + "/" + maxLevel + ")"));
-        h.inv.setItem(4, item(Material.NETHER_STAR, "&6&lCấp " + lv, List.of("&7Điểm thăng cấp: &e" + points(u),
+        h.inv = Bukkit.createInventory(h, 45, c("&8THĂNG CẤP &7(cấp " + lv + "/" + maxLevel + ")"));
+        h.inv.setItem(4, item(Material.NETHER_STAR, "&6Cấp " + lv, List.of("&7Điểm thăng cấp: &e" + points(u),
                 "&7Điểm hạ gục: &f" + killPts(u) + " &8(quái +" + mobPoints + ", người +" + playerPoints + ")",
                 "&7Giờ chơi mùa này: &f" + String.format(Locale.ROOT, "%.1f", hours(u)) + " giờ")));
         if (next <= maxLevel) {
@@ -358,14 +358,14 @@ final class LevelUp implements Listener {
                     "&7— Giờ chơi: " + mark(hOk) + String.format(Locale.ROOT, "%.1f", hours(u)) + "&7/" + fmtH(hoursFor(next)) + " giờ",
                     "&7— Thưởng: &e+" + pointsPerLevel + " điểm" + (milestoneEvery > 0 && next % milestoneEvery == 0 ? " &6+ quà mốc" : ""), ""));
             lore.add(all ? "&a→ Nhấn để lên cấp." : "&c— Chưa đủ điều kiện.");
-            h.inv.setItem(22, item(all ? Material.LIME_STAINED_GLASS_PANE : Material.RED_STAINED_GLASS_PANE, "&e&lLên cấp " + next, lore));
+            h.inv.setItem(22, item(all ? Material.LIME_STAINED_GLASS_PANE : Material.RED_STAINED_GLASS_PANE, "&eLên cấp " + next, lore));
             h.slots.put(22, "len");
         } else {
-            h.inv.setItem(22, item(Material.GOLD_BLOCK, "&6&lĐã đạt cấp tối đa", List.of()));
+            h.inv.setItem(22, item(Material.GOLD_BLOCK, "&6Đã đạt cấp tối đa", List.of()));
         }
-        h.inv.setItem(38, item(Material.CHEST, "&e&lCửa hàng thăng cấp", List.of("&7Dùng điểm thăng cấp đổi tiện ích, trang trí.", "&a→ Nhấn để mở.")));
+        h.inv.setItem(38, item(Material.CHEST, "&eCửa hàng thăng cấp", List.of("&7Dùng điểm thăng cấp đổi tiện ích, trang trí.", "&a→ Nhấn để mở.")));
         h.slots.put(38, "shop");
-        h.inv.setItem(42, item(Material.GOLD_INGOT, "&b&lXếp hạng", List.of("&7Những người cấp cao nhất server.", "&a→ Nhấn để xem.")));
+        h.inv.setItem(42, item(Material.GOLD_INGOT, "&bXếp hạng", List.of("&7Những người cấp cao nhất server.", "&a→ Nhấn để xem.")));
         h.slots.put(42, "top");
         p.openInventory(h.inv);
     }
@@ -378,7 +378,7 @@ final class LevelUp implements Listener {
         UUID u = p.getUniqueId();
         Holder h = new Holder();
         h.view = "shop";
-        h.inv = Bukkit.createInventory(h, 54, c("&8&lCỬA HÀNG THĂNG CẤP &7(" + points(u) + " điểm)"));
+        h.inv = Bukkit.createInventory(h, 54, c("&8CỬA HÀNG THĂNG CẤP &7(" + points(u) + " điểm)"));
         List<String> owned = data.getStringList(k(u) + "mua");
         int slot = 10;
         for (Perk pk : shop.values()) {
@@ -423,7 +423,7 @@ final class LevelUp implements Listener {
     private void openTop(Player p) {
         Holder h = new Holder();
         h.view = "top";
-        h.inv = Bukkit.createInventory(h, 45, c("&8&lXẾP HẠNG THĂNG CẤP"));
+        h.inv = Bukkit.createInventory(h, 45, c("&8XẾP HẠNG THĂNG CẤP"));
         int[] slots = {4, 12, 14, 20, 21, 22, 23, 24, 30, 32};
         List<Map.Entry<String, int[]>> top = ranking();
         for (int i = 0; i < Math.min(slots.length, top.size()); i++) {
@@ -495,7 +495,7 @@ final class LevelUp implements Listener {
             return true;
         }
         if (args.length >= 1 && args[0].equalsIgnoreCase("top")) {
-            s.sendMessage(c("&6&lXếp hạng Thăng Cấp"));
+            s.sendMessage(c("&6Xếp hạng Thăng Cấp"));
             List<Map.Entry<String, int[]>> top = ranking();
             for (int i = 0; i < Math.min(10, top.size()); i++) {
                 s.sendMessage(c("&e#" + (i + 1) + " &f" + data.getString("nguoi." + top.get(i).getKey() + ".ten", "?") + " &7— cấp &b" + top.get(i).getValue()[0]));

@@ -73,16 +73,16 @@ leaderboard:
     jobitem:
       name: "<job> <dark_gray>(<primary><min> <gray>to <secondary><max><dark_gray>)"
       lore:
-      - " <primary><bold><1_position>.</bold> <1_displayname> <gray>cấp <secondary><1_level> "
-      - " <primary><bold><2_position>.</bold> <2_displayname> <gray>cấp <secondary><2_level> "
-      - " <primary><bold><3_position>.</bold> <3_displayname> <gray>cấp <secondary><3_level> "
-      - " <primary><bold><4_position>.</bold> <4_displayname> <gray>cấp <secondary><4_level> "
-      - " <primary><bold><5_position>.</bold> <5_displayname> <gray>cấp <secondary><5_level> "
-      - " <primary><bold><6_position>.</bold> <6_displayname> <gray>cấp <secondary><6_level> "
-      - " <primary><bold><7_position>.</bold> <7_displayname> <gray>cấp <secondary><7_level> "
-      - " <primary><bold><8_position>.</bold> <8_displayname> <gray>cấp <secondary><8_level> "
-      - " <primary><bold><9_position>.</bold> <9_displayname> <gray>cấp <secondary><9_level> "
-      - " <primary><bold><10_position>.</bold> <10_displayname> <gray>cấp <secondary><10_level> "
+      - " <primary><1_position>. <1_displayname> <gray>cấp <secondary><1_level> "
+      - " <primary><2_position>. <2_displayname> <gray>cấp <secondary><2_level> "
+      - " <primary><3_position>. <3_displayname> <gray>cấp <secondary><3_level> "
+      - " <primary><4_position>. <4_displayname> <gray>cấp <secondary><4_level> "
+      - " <primary><5_position>. <5_displayname> <gray>cấp <secondary><5_level> "
+      - " <primary><6_position>. <6_displayname> <gray>cấp <secondary><6_level> "
+      - " <primary><7_position>. <7_displayname> <gray>cấp <secondary><7_level> "
+      - " <primary><8_position>. <8_displayname> <gray>cấp <secondary><8_level> "
+      - " <primary><9_position>. <9_displayname> <gray>cấp <secondary><9_level> "
+      - " <primary><10_position>. <10_displayname> <gray>cấp <secondary><10_level> "
       - " <gray>Bạn đang cấp <primary><level> <gray>và xếp hạng <secondary><position><gray>."
       - ""
       - ""
@@ -157,14 +157,14 @@ messages:
   page_turn:
     sound: item.book.page_turn
   leaderboard_take_lead:
-    chat: "<displayname> <gray>lên cấp <primary><level> <gray>nghề <job> <gray>và giành <secondary><bold>hạng 1</bold> <gray>từ <opponent_displayname><gray>."
+    chat: "<displayname> <gray>lên cấp <primary><level> <gray>nghề <job> <gray>và giành <secondary>hạng 1 <gray>từ <opponent_displayname><gray>."
     sound: entity.ravager.celebrate
   leaderboard_get_in_top_10:
-    chat: "<displayname> <gray>lên cấp <primary><level> <gray>nghề <job> <gray>và vào <secondary><bold>top 10</bold><gray>."
+    chat: "<displayname> <gray>lên cấp <primary><level> <gray>nghề <job> <gray>và vào <secondary>top 10<gray>."
     sound: entity.vindicator.celebrate
-  leaderboard_your_position_taken: "<displayname> <gray>lên cấp <primary><level> <gray>nghề <job> <gray>và chiếm <secondary><bold>hạng <position></bold> <gray>của bạn."
+  leaderboard_your_position_taken: "<displayname> <gray>lên cấp <primary><level> <gray>nghề <job> <gray>và chiếm <secondary>hạng <position> <gray>của bạn."
   leaderboard_take_someones_position:
-    chat: "<gray>Bạn vượt <opponent_displayname> <gray>nghề <job> <gray>và lên <secondary><bold>hạng <position></bold><gray>."
+    chat: "<gray>Bạn vượt <opponent_displayname> <gray>nghề <job> <gray>và lên <secondary>hạng <position><gray>."
     sound: entity.pillager.celebrate
 
 symbols:

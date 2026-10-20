@@ -1,8 +1,8 @@
 #If a message contains EvenMoreFish placeholders, e.g. {player} or {rarity} it also supports placeholderapi placeholders.
 #Sent to players when they fish an EvenMoreFish fish
-fish-caught: <bold>{player} <reset>đã câu được con {fish} dài {length}cm {rarity} !
+fish-caught: '{player} <reset>đã câu được con {fish} dài {length}cm {rarity} !'
 #By setting a fish's minimum-length to less than 0, you can create a lengthless fish. This is used when a player fishes a lengthless fish.
-lengthless-fish-caught: <bold>{player} <reset>đã câu được con {fish} dài {length} cm {rarity}!
+lengthless-fish-caught: '{player} <reset>đã câu được con {fish} dài {length} cm {rarity}!'
 #Sent to a player when they don't have permission to execute a command.
 no-permission: <red>bạn không có quyền để chạy lệnh này.
 #The message to be sent when a competition starts and ends
@@ -28,7 +28,7 @@ competition-types:
   #SPECIFIC_FISH
   specific: '{amount} {rarity} {fish}<reset>'
   #SPECIFIC_RARITY
-  specific-rarity: '{amount} {rarity_colour}<bold>{rarity}<reset> cá'
+  specific-rarity: '{amount} {rarity_colour}{rarity}<reset> cá'
 #Segments shown in the bossbar when competitions run
   shortest: con cá ngắn nhất
   shortest-total: tổng chiều dài cá ngắn nhất
@@ -57,7 +57,7 @@ fish-lore:
 - <white>Dài {length} cm
 - ''
 - '{fish_lore}'
-- '{rarity_colour}<bold>{rarity}'
+- '{rarity_colour}{rarity}'
 #The format of commands in /emf help (this message doesn't support papi placeholders)
 help: /{command} - {description}
 #The format of the leaderboard after a competition is over (this message doesn't support papi placeholders)
@@ -121,9 +121,9 @@ no-player-in-place: Hãy câu cá và chiếm lấy vị trí này đi!
 #Shown when the emf competition placeholders are used when there's no competition running
 no-competition-running: Không có cuộc thi câu cá nào đang diễn ra.
 #How should the %emf_competition_place_fish_*% be formatted?
-emf-competition-fish-format: '{length}cm <bold>{rarity}</bold> {fish}'
+emf-competition-fish-format: '{length}cm {rarity} {fish}'
 #How should the %emf_competition_place_fish_*% be formatted when there's no length on the fish?
-emf-lengthless-fish-format: '{rarity_colour}<bold>{rarity}{fish}'
+emf-lengthless-fish-format: '{rarity_colour}{rarity}{fish}'
 #How should %emf_competition_place_fish_*% be formatted during MOST/SPECIFIC_FISH competitions?
 emf-most-fish-format: '{amount} con cá'
 #What should be displayed for %emf_competition_place_size_*% during the MOST_FISH competition?
@@ -139,9 +139,9 @@ max-baits-reached: <reset>Bạn đã đạt đến mức độ tối đa của m
 #Not to be confused with the above, this is sent when the maximum of a specific bait is reached. Define this in baits.yml using "max-baits".
 max-bait-reached: <reset>Bạn đã đạt đến mức tối đa của mồi cầu {bait}<reset> để có thể áp dụng vào cần câu.
 #Sent when a player catches a bait from fishing (this can be disabled by setting catch-percentage to 0 in baits.yml
-bait-catch: <reset><bold>{player}<reset> đã bắt được mồi câu <bold>{bait}<reset>!
+bait-catch: <reset>{player}<reset> đã bắt được mồi câu {bait}<reset>!
 #Sent when a bait is applied and a fish is caught.
-bait-use: <reset>Bạn đã dùng mồi <bold>{bait}.
+bait-use: <reset>Bạn đã dùng mồi {bait}.
 #Sent when someone tries to use a bait in creative
 bait-survival-limited: <reset>Bạn phải ở <underlined>Sinh tồn<reset> để có thể áp dụng mồi câu.
 #Shown when /emf toggle is run, to turn off and on respectively.
@@ -189,8 +189,8 @@ admin:
   custom-rod-given: <white>Đã đưa cần câu riêng cho {player}.
   list-addons: '<white>{addon-type} đã đăng ký: '
 version: 1
-fish-hunted: <white><b>{player}</b> vừa săn được <b>{rarity}</b> {fish} dài {length}cm!
-lengthless-fish-hunted: <white><b>{player}</b> vừa săn được <b>{rarity}</b> {fish}!
+fish-hunted: <white>{player} vừa săn được {rarity} {fish} dài {length}cm!
+lengthless-fish-hunted: <white>{player} vừa săn được {rarity} {fish}!
 fisherman-lore: '<white>Người câu: {player}'
 length-lore: <white>Dài {length}cm.
 leaderboard:

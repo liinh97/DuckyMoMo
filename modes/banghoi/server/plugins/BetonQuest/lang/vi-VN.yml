@@ -62,14 +62,14 @@ objective:
   animals_to_tame: '@[legacy]&2Còn {absoluteleft} con cần thuần hoá'
   times_to_jump: '@[legacy]&2Còn {absoluteleft} lần nhảy'
 menu:
-  no_permission: '@[legacy]&7[&c&l!&7] Không có quyền!'
+  no_permission: '@[legacy]&7[&c!&7] Không có quyền!'
   command_usage: "@[legacy]&cCách dùng:\n&7{usage}"
   command_info_list: '@[legacy]&bmở menu [cho một người chơi]'
   command_info_open: '@[legacy]&bliệt kê các menu đã nạp'
-  command_invalid_menu: '@[legacy]&7[&c&l!&7] &c{menu}&7 không phải menu đã nạp!'
-  command_no_player: '@[legacy]&7[&c&l!&7] Hãy ghi tên người chơi!'
-  command_invalid_player: '@[legacy]&7[&c&l!&7] Không có người chơi tên &c{player}&7!'
-  command_no_menu: '@[legacy]&7[&c&l!&7] Hãy ghi tên menu!'
-  command_open_successful: '@[legacy]&7[&a&li&7]&a Đã mở &7{menu}&a!'
+  command_invalid_menu: '@[legacy]&7[&c!&7] &c{menu}&7 không phải menu đã nạp!'
+  command_no_player: '@[legacy]&7[&c!&7] Hãy ghi tên người chơi!'
+  command_invalid_player: '@[legacy]&7[&c!&7] Không có người chơi tên &c{player}&7!'
+  command_no_menu: '@[legacy]&7[&c!&7] Hãy ghi tên menu!'
+  command_open_successful: '@[legacy]&7[&ai&7]&a Đã mở &7{menu}&a!'
   command_list: "@[legacy]&e----- &aRPGMenu &e-----\n&aMenu đã nạp:&e "
   click_to_open: '@[legacy]&bbấm để mở menu'

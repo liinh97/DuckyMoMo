@@ -231,7 +231,7 @@ final class Refining implements Listener {
     void open(Player p) {
         Holder h = new Holder();
         int rows = Math.min(6, Math.max(3, (int) Math.ceil(items.size() / 7.0) + 2));
-        h.inv = Bukkit.createInventory(h, rows * 9, c("&5&lTINH LUYỆN &8(đổi một chiều)"));
+        h.inv = Bukkit.createInventory(h, rows * 9, c("&5TINH LUYỆN &8(đổi một chiều)"));
         ItemStack edge = pane(Material.LIGHT_BLUE_STAINED_GLASS_PANE), inner = pane(Material.WHITE_STAINED_GLASS_PANE);
         for (int s = 0; s < rows * 9; s++) {
             int r = s / 9, col = s % 9;
@@ -239,7 +239,7 @@ final class Refining implements Listener {
         }
         ItemStack info = new ItemStack(Material.NETHER_STAR);
         ItemMeta im = info.getItemMeta();
-        im.displayName(c("&d&lTINH LUYỆN"));
+        im.displayName(c("&dTINH LUYỆN"));
         im.lore(List.of(c("&7Đổi khối thường thành món quý: đổi đồ ở"), c("&7dân làng, chế Xưởng, bán cho server."),
                 c("&eBấm&7: 1 lần · &eShift+bấm&7: tinh luyện hết"), c("&cĐổi một chiều, không đổi lại được."), c("&8/tinhluyen ban · /tinhluyen ds")));
         info.setItemMeta(im);
@@ -275,7 +275,7 @@ final class Refining implements Listener {
         ItemMeta meta = it.getItemMeta();
         List<Component> lore = new ArrayList<>();
         lore.add(Component.empty());
-        lore.add(c("&e&lNguyên liệu cần:"));
+        lore.add(c("&eNguyên liệu cần:"));
         boolean ok = true;
         for (Map.Entry<String, Integer> in : d.recipe().entrySet()) {
             int have = count(p, in.getKey());
@@ -481,7 +481,7 @@ final class Refining implements Listener {
             return true;
         }
         if (sub.equals("ds")) {
-            s.sendMessage(c("&5&lTinh luyện &7— mã món (cho admin, Shopkeepers, Xưởng):"));
+            s.sendMessage(c("&5Tinh luyện &7— mã món (cho admin, Shopkeepers, Xưởng):"));
             for (Item d : items.values()) {
                 StringBuilder r = new StringBuilder();
                 d.recipe().forEach((k, v) -> r.append(r.length() > 0 ? " + " : "").append(v).append(' ').append(k));

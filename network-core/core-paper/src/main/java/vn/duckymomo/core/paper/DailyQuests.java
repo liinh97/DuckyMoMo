@@ -228,7 +228,7 @@ final class DailyQuests implements Listener {
         }
         String key = "players." + p.getUniqueId();
         List<String> qs = todays(p.getUniqueId());
-        p.sendMessage(c("&6&lNhiệm vụ hôm nay &7(đổi lúc 0 giờ)"));
+        p.sendMessage(c("&6Nhiệm vụ hôm nay &7(đổi lúc 0 giờ)"));
         for (String qid : qs) {
             Quest q = pool.get(qid);
             if (q == null) {

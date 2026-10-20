@@ -609,7 +609,7 @@ function trangTriHtml(){
   h += `<div class="tt"><h3>🏷️ Tên hiển thị ${n.duoc ? "" : lock("Tử Tước")}</h3>
     <div class="tools"><input id="nickIn" maxlength="80" placeholder="Tên mới, vd &amp;bDucky&amp;eMoMo" value="${esc(nickVal)}" ${n.duoc ? "" : "disabled"}></div>
     <div class="pal">${n.mau ? Object.keys(MC).map(k => `<button class="sw" data-code="&${k}" title="&${k}" style="background:${MC[k]}"></button>`).join("") : `<span class="small dim">Tô màu tên: ${n.duoc ? lock("Bá Tước") : "từ Bá Tước"}</span>`}
-      ${n.dinhdang ? `<button class="fmt" data-code="&l"><b>B</b></button><button class="fmt" data-code="&o"><i>I</i></button><button class="fmt" data-code="&n"><u>U</u></button><button class="fmt" data-code="&r" title="Bỏ định dạng">↺</button>` : ""}
+      ${n.dinhdang ? `<button class="fmt" data-code="&o"><i>I</i></button><button class="fmt" data-code="&n"><u>U</u></button><button class="fmt" data-code="&r" title="Bỏ định dạng">↺</button>` : ""}
       ${n.rgb ? `<label class="hex" title="Màu tuỳ chọn">🎨<input type="color" id="hexPick" value="#ffaa33"></label>` : ""}</div>
     <div class="pv"><div class="pv-sky"><div class="tag" id="pvTag"></div><div class="steve"></div></div>
       <div class="pv-chat" id="pvChat"></div><div class="pv-tab" id="pvTab"></div></div>

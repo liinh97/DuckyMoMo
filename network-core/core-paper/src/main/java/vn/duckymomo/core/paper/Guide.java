@@ -114,7 +114,7 @@ final class Guide implements Listener {
             start[i] = next;
             next += laid.get(i).size();
         }
-        Component toc = LEGACY.deserialize(y.getString("toc-title", "&6&lCẨM NANG\n&8DuckyMoMo Network\n\n"));
+        Component toc = LEGACY.deserialize(y.getString("toc-title", "&6CẨM NANG\n&8DuckyMoMo Network\n\n"));
         for (int i = 0; i < chs.size(); i++) {
             Chapter c = chs.get(i);
             toc = toc.append(Component.text("» " + c.name() + "\n", NamedTextColor.DARK_BLUE)

@@ -27,8 +27,8 @@
 "rename.dialog.body": "Nhập tên mới cho thú cưng {type}.\nGõ 'reset' để bỏ tên.",
 "rename.dialog.input_label": "Tên thú cưng",
 "rename.dialog.submit_button": "Đổi tên",
-"rename.sign.lines.2": "&9&lHãy nhập",
-"rename.sign.lines.3": "&9&ltên thú cưng",
+"rename.sign.lines.2": "&9Hãy nhập",
+"rename.sign.lines.3": "&9tên thú cưng",
 "pet-saves.limit-reached": "{prefix} &cBạn đã lưu đủ số thú cưng tối đa",
 "pet-saves.limit-reached-per-type": "{prefix} &cBạn đã lưu đủ số thú cưng {type} tối đa",
 "cooldown.on_cooldown": "{prefix} &cĐợi &e{seconds} &cgiây nữa mới đổi thú cưng được."

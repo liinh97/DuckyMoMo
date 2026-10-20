@@ -194,7 +194,7 @@ final class SiegeSupply {
                 }
             }
             rows.sort((a, b) -> Double.compare((Double) b[1], (Double) a[1]));
-            s.sendMessage(c("&6&l🍚 Kho lương các thị trấn"));
+            s.sendMessage(c("&6🍚 Kho lương các thị trấn"));
             for (int i = 0; i < Math.min(10, rows.size()); i++) {
                 s.sendMessage(c("&6" + (i + 1) + ". &f" + rows.get(i)[0] + " &7— &e" + (long) (double) (Double) rows.get(i)[1] + " điểm"));
             }
@@ -257,7 +257,7 @@ final class SiegeSupply {
             return true;
         }
         double v = stock(t);
-        p.sendMessage(c("&6&l🍚 Kho lương " + t.getName() + ": &e" + (long) v + "&7/" + (long) max + " điểm"));
+        p.sendMessage(c("&6🍚 Kho lương " + t.getName() + ": &e" + (long) v + "&7/" + (long) max + " điểm"));
         double perHour = costPerMinute * 60;
         p.sendMessage(c("&7Mỗi người đánh trong vùng vây ăn &f" + fmt(costPerMinute) + " điểm/phút &7(≈ " + (long) perHour
                 + "/giờ). Kho này nuôi được khoảng &f" + (costPerMinute > 0 ? (long) (v / costPerMinute) : 0) + " phút-người&7."));

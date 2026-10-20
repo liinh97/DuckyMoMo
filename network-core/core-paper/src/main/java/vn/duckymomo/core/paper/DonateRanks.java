@@ -192,7 +192,7 @@ final class DonateRanks implements Listener {
     private void skinCommand(CommandSender s, String[] a, boolean admin) {
         String sub = a.length > 1 ? a[1].toLowerCase(java.util.Locale.ROOT) : "";
         if (sub.isEmpty() || !admin) {
-            s.sendMessage(c("&6&lSkin độc quyền theo rank &7(menu /skins; bậc cao có luôn skin bậc dưới)"));
+            s.sendMessage(c("&6Skin độc quyền theo rank &7(menu /skins; bậc cao có luôn skin bậc dưới)"));
             for (Tier t : tiers) {
                 List<String> sk = tierSkins(t.group());
                 s.sendMessage(c("  " + t.color() + t.name() + "&7: " + (sk.isEmpty() ? "&8chưa có" : "&f" + String.join(", ", sk))));
@@ -244,7 +244,7 @@ final class DonateRanks implements Listener {
                 g.data().add(perm(node, false));
             });
             s.sendMessage(c("&a✔ Đã khoá skin &f" + name + " &acho " + t.color() + t.name() + " &a(và bậc cao hơn)."));
-            s.sendMessage(c("&eBước cuối: ").append(c("&a&l[Bấm để tạo skin]")
+            s.sendMessage(c("&eBước cuối: ").append(c("&a[Bấm để tạo skin]")
                     .clickEvent(net.kyori.adventure.text.event.ClickEvent.runCommand("/sr createcustom " + name + " " + url))
                     .hoverEvent(net.kyori.adventure.text.event.HoverEvent.showText(c("&7Chạy /sr createcustom " + name + " " + url
                             + "\n&8(lệnh của proxy nên phải bấm từ trong game)")))));
@@ -379,9 +379,9 @@ final class DonateRanks implements Listener {
     }
 
     private void showInfo(CommandSender s) {
-        s.sendMessage(c("&6&l✦ RANK DONATE (tước vị) ✦ &7chỉ trang trí, không lợi thế khi chơi"));
+        s.sendMessage(c("&6✦ RANK DONATE (tước vị) ✦ &7chỉ trang trí, không lợi thế khi chơi"));
         for (Tier t : tiers) {
-            s.sendMessage(c(t.color() + "&l" + t.name() + "&7: " + String.join("&7, ", t.perks().stream().map(x -> "&f" + x).toList())));
+            s.sendMessage(c(t.color() + t.name() + "&7: " + String.join("&7, ", t.perks().stream().map(x -> "&f" + x).toList())));
             List<String> sk = tierSkins(t.group());
             if (!sk.isEmpty()) {
                 s.sendMessage(c("   &7Skin độc quyền (/skins): &f" + String.join(", ", sk) + " &8(+ skin của bậc dưới)"));
@@ -392,7 +392,7 @@ final class DonateRanks implements Listener {
         }
         s.sendMessage(c("&7Bậc cao có đủ quyền của các bậc thấp hơn."));
         if (qr != null && qr.ready() && s instanceof Player) {
-            s.sendMessage(c("&a&l[Bấm để ủng hộ bằng mã QR]").clickEvent(net.kyori.adventure.text.event.ClickEvent.runCommand("/rank mua"))
+            s.sendMessage(c("&a[Bấm để ủng hộ bằng mã QR]").clickEvent(net.kyori.adventure.text.event.ClickEvent.runCommand("/rank mua"))
                     .append(c(" &7hoặc gõ &e/rank mua &7(quét bằng app ngân hàng, hiện ngay trong game)")));
         } else {
             s.sendMessage(c(howToBuy));

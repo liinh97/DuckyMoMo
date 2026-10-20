@@ -375,7 +375,7 @@ final class WarBalance implements Listener {
         }
         for (String h : now) {
             if (!hegemons.contains(h)) {
-                Bukkit.broadcast(c("&4⚔ &cNước &f" + h + " &cđã thành &lBÁ CHỦ&c (nắm từ " + fmt(hegemonPct) + "% thị trấn): đánh vào Bá chủ được giảm quỹ chiến tranh "
+                Bukkit.broadcast(c("&4⚔ &cNước &f" + h + " &cđã thành BÁ CHỦ&c (nắm từ " + fmt(hegemonPct) + "% thị trấn): đánh vào Bá chủ được giảm quỹ chiến tranh "
                         + fmt(hegemonDiscount) + "% và cộng " + fmt(hegemonPointsPct) + "% điểm. &7/canbang"));
             }
         }
@@ -423,7 +423,7 @@ final class WarBalance implements Listener {
     // ---------------------------------------------------------------- lệnh, lưu
 
     boolean command(CommandSender s, String[] args) {
-        s.sendMessage(c("&6&l⚖ Cân bằng chiến tranh"));
+        s.sendMessage(c("&6⚖ Cân bằng chiến tranh"));
         s.sendMessage(c("&7• Quỹ chiến tranh tăng &f" + fmt(chestExtraPct) + "% &7cho mỗi thị trấn (trừ thị trấn đầu) nước đi vây đang có."));
         s.sendMessage(c("&7• Mỗi thuộc địa tốn &f" + fmt(colonyUpkeep) + " xu/ngày &7từ ngân khố nước; còn nợ thì không cắm cờ vây được. Tối đa &f"
                 + maxColonies + " &7thuộc địa/nước."));

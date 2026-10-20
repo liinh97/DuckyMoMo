@@ -324,7 +324,7 @@ final class Bounty implements Listener {
 
     private void open(Player p) {
         Holder h = new Holder();
-        h.inv = Bukkit.createInventory(h, 54, c("&4&lTREO THƯỞNG"));
+        h.inv = Bukkit.createInventory(h, 54, c("&4TREO THƯỞNG"));
         List<Entry> list = entries();
         for (int i = 0; i < list.size() && i < 45; i++) {
             Entry en = list.get(i);
@@ -371,7 +371,7 @@ final class Bounty implements Listener {
         if (args.length >= 1 && args[0].equalsIgnoreCase("dat")) {
             place(p, args);
         } else if (args.length >= 1 && args[0].equalsIgnoreCase("giup")) {
-            p.sendMessage(c("&4&l━━ TREO THƯỞNG ━━"));
+            p.sendMessage(c("&4━━ TREO THƯỞNG ━━"));
             p.sendMessage(c("&e/treothuong &7xem ai đang bị treo · &e/treothuong dat <người> <xu> &7treo thưởng (phí "
                     + cfg.getDouble("fee-percent", 5) + "%)"));
             p.sendMessage(c("&7Ai hạ được người bị treo thì nhận hết. Giết liền " + cfg.getInt("streak.kills", 5)

@@ -1,127 +1,54 @@
 ################################################################################################################################
 #
-#   zAuctionHouse V4 - Purchase Confirmation Inventory
+#   zAuctionHouse V4 - Xác nhận mua MỘT món (DuckyMoMo, 21/10)
 #
-#   This inventory asks players to confirm their purchase before completing it.
-#   Shows the item being purchased with confirm/cancel options.
-#
-#   FEATURES:
-#   - Preview the item before buying
-#   - View shulker contents (if applicable)
-#   - Confirm or cancel the purchase
-#
-#   ACCESS:
-#   - Automatically opens when clicking an item to buy in the auction house
-#
-#   Documentation: https://docs.groupez.dev/zauctionhouse/introduction
-#   Discord: https://discord.groupez.dev/
+#   Plugin LUÔN mở màn này khi người mua bấm một món trong chợ (không có tuỳ chọn tắt). Để đỡ phiền, gần như cả màn là nút Mua:
+#   món hiện ở ô trên cùng giữa (slot 4) để xem, cột phải (8, 17, 26) là Quay lại, mọi ô còn lại (kể cả ô giữa 13, đúng chỗ vừa bấm)
+#   đều là Mua -> bấm thêm một lần ở gần như bất cứ đâu là mua.
+#   Hộp shulker: nút xem bên trong đè lên ô 17 (chỉ hiện khi món là hộp shulker).
 #
 ################################################################################################################################
 
-#=============================================================================
-# INVENTORY SETTINGS
-#=============================================================================
-
-# Inventory title - question format for clarity.
-name: "#0c1719Mua món này?"
-
-# Inventory size - 3 rows (27 slots) for compact confirmation dialog.
+name: "#0c1719Mua món này? &8· bấm ô xanh để mua"
 size: 27
 
-#=============================================================================
-# ITEMS
-#=============================================================================
-
 items:
-
-  #---------------------------------------------------------------------------
-  # CONFIRM BUTTON
-  #---------------------------------------------------------------------------
-  # Completes the purchase and transfers money/item.
-
   confirm:
-    # Button type - handles purchase confirmation.
     type: ZAUCTIONHOUSE_CONFIRM_PURCHASE
-
     item:
-      # Green glass pane for confirm action.
-      material: GREEN_STAINED_GLASS_PANE
+      material: LIME_STAINED_GLASS_PANE
       name: "&a✔ &fMua món này"
       lore:
       - "&a▍ &fTrả tiền và nhận món"
       - "&8&m                              "
       - "&a➜ Bấm để mua"
     slots:
-    - 0-2       # Top-left row
-    - 9-11      # Middle-left row
-    - 18-20     # Bottom-left row
-
-  #---------------------------------------------------------------------------
-  # CANCEL/BACK BUTTON
-  #---------------------------------------------------------------------------
-  # Cancels the purchase and returns to the auction house.
+    - 0-3
+    - 5-7
+    - 9-16
+    - 18-25
 
   deny:
-    # Button type - returns to previous inventory.
     type: BACK
-
     item:
-      # Red glass pane for cancel action.
       material: RED_STAINED_GLASS_PANE
       name: "&c✘ &fQuay lại"
       lore:
-      - "&c▍ &fKhông làm nữa"
+      - "&c▍ &fKhông mua nữa"
       - "&8&m                              "
-      - "&a➜ Bấm để quay lại"
+      - "&a➜ Bấm để quay lại chợ"
     slots:
-    - 6-8       # Top-right row
-    - 15-17     # Middle-right row
-    - 24-26     # Bottom-right row
-
-  #---------------------------------------------------------------------------
-  # DECORATION
-  #---------------------------------------------------------------------------
-  # Fills the middle column with glass panes.
-
-  decoration:
-    item:
-      material: LIGHT_BLUE_STAINED_GLASS_PANE
-      name: "&7Bấm khối &axanh lá &7bên trái để mua"
-      lore:
-      - "&7Khối &cđỏ &7bên phải: quay lại"
-
-    # Middle column and surrounding slots.
-    slots:
-    - 3-5       # Top center
-    - 12        # Middle-left of center
-    - 14        # Middle-right of center
-    - 21-23     # Bottom center
-
-  #---------------------------------------------------------------------------
-  # ITEM PREVIEW
-  #---------------------------------------------------------------------------
-  # Shows the item being purchased in the center.
+    - 8
+    - 17
+    - 26
 
   show:
-    # Button type - displays the auction item.
     type: ZAUCTIONHOUSE_SHOW
-
-    # Center slot.
-    slot: 13
-
-  #---------------------------------------------------------------------------
-  # SHULKER CONTENT BUTTON
-  #---------------------------------------------------------------------------
-  # Opens the shulker content viewer (only shown for shulker items).
-
-  shulker:
-    # Button type - opens shulker content preview.
-    # Only visible when the item contains shulker boxes.
-    type: ZAUCTIONHOUSE_SHULKER_OPEN
-
-    # Slot position.
     slot: 4
 
+  shulker:
+    type: ZAUCTIONHOUSE_SHULKER_OPEN
+    slot: 17
     item:
       material: SHULKER_BOX
       name: "&d▣ &fXem trong hộp shulker"

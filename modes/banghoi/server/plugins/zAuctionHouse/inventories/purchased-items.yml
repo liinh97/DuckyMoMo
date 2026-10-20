@@ -39,7 +39,7 @@ patterns:
   # Previous/next page buttons.
 - 'zauctionhouse-pagination'
   # Back button to return to auction house.
-- 'zauctionhouse-back'
+- 'zauctionhouse-choden'
 
 #=============================================================================
 # ITEMS

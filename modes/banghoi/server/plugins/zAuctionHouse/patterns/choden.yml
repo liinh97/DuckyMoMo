@@ -1,0 +1,22 @@
+################################################################################################################################
+#   DuckyMoMo (21/10): nút "Về Chợ đen" cho các màn mở thẳng từ /choden (đồ đang bán, hết hạn, lịch sử, đã mua).
+#   Nút BACK của zMenu chỉ chạy khi có màn trước trong cùng plugin; mở từ Chợ đen thì không có nên bấm không ăn.
+#   Nút này chạy /choden (trang chung Chợ đen) thay thế.
+################################################################################################################################
+name: "zauctionhouse-choden"
+size: 54
+items:
+  choden:
+    is-permanent: true
+    slot: 49
+    item:
+      material: BARRIER
+      name: "&7← &fVề Chợ đen"
+      lore:
+        - "&8▍ &7Trang chung mua bán giữa người chơi"
+        - "&8&m                              "
+        - "&a➜ Bấm để quay lại"
+    actions:
+      - type: player_command
+        commands:
+          - "choden"

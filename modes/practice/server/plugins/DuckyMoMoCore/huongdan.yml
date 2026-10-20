@@ -9,11 +9,263 @@
 # - Người chơi điện thoại (Bedrock) thấy cả chương trong một bảng.
 # - SỐ LIỆU (phí thị trấn, lịch công thành, giá...) ghi tay: đổi trên trang Cài đặt thì sửa luôn ở đây.
 #   Đối chiếu 19/10: Towny 1500/75/3000 xu, phí 30/300 xu/ngày (định giá lại 21/10); hoà bình chờ 2 ngày, rời 14 ngày; Hội đồng nhiệm kỳ 30 ngày;
-#   tổ chức 3 người, 300 xu/tuần; Kiến Trúc Sư đăng ký tuần 12, bình chọn tuần 13; bắt pet gốc 30%, bùa +25%; Thái Ấp 5.000/8.000/15.000.
+#   tổ chức 3 người, 300 xu/tuần; Kiến Trúc Sư đăng ký tuần 12, bình chọn tuần 13; bắt pet gốc 30%, bùa +25%; Thái Ấp 15.000/24.000/45.000.
 title: "&6Cẩm nang DuckyMoMo"
 author: "DuckyMoMo"
 toc-title: "&6CẨM NANG &r&8(/hd)\n"
 toc-footer: "&8Bấm tên chương"
+
+# MENU /hd (21/10, người dùng: "dài như này ai mà muốn đọc", làm theo kiểu menu lệnh của CherryMC):
+#   /hd mở rương các nhóm; rê chuột lên nhóm thấy ngay lệnh + mô tả ngắn; bấm thì mở SÁCH CHI TIẾT chỉ của chương "chuong".
+#   /hd sach = cả cuốn sách như cũ; /hd <mã chương> = sách của chương đó. Điện thoại (Bedrock): bảng nút, cùng nội dung.
+#   Mỗi nhóm: slot (ô rương, hàng đầu 0-8), icon (vật liệu), ten, mo (1 dòng), lenh ("/lệnh|mô tả", không có | = dòng thường),
+#   ghi (lưu ý, tuỳ chọn), chuong (mã chương bên dưới). Mô tả lệnh nên ≤ 24 chữ cho khung gọn. Sửa xong chạy ./ops/huongdan.sh.
+menu:
+  title: "&0Cẩm nang &8(/hd)"
+  rows: 5
+  book-slot: 31
+  items:
+  - slot: 10
+    icon: COMPASS
+    ten: "Bắt đầu"
+    mo: "Đăng nhập, chọn chế độ, mở menu"
+    chuong: batdau
+    lenh:
+    - "/register <mk> <mk>|đăng ký lần đầu"
+    - "/login <mk>|đăng nhập"
+    - "/menu|menu chính (hoặc Shift + F)"
+    - "/server banghoi-1|vào Bang Hội Chiến"
+    - "/server lobby|về sảnh"
+    - "/changepassword <cũ> <mới>|đổi mật khẩu"
+    ghi: "Đồ, tiền mỗi chế độ riêng, không mang qua lại."
+  - slot: 11
+    icon: ENDER_PEARL
+    ten: "Di chuyển"
+    mo: "Về spawn, nhà, dịch chuyển tới người khác"
+    chuong: banghoi
+    lenh:
+    - "/spawn|về spawn"
+    - "/warp|các địa danh (vd /warp pvp)"
+    - "/tpr <khu>|tới đất hoang để lập thị trấn"
+    - "/sethome <tên>|đặt nhà"
+    - "/home <tên>|về nhà"
+    - "/tpa <người>|xin tới chỗ người đó"
+    - "/tpaccept · /tpdeny|đồng ý / từ chối"
+    - "/back|về chỗ cũ hoặc chỗ vừa chết"
+    ghi: "Đang giao tranh không dịch chuyển được."
+  - slot: 12
+    icon: IRON_BARS
+    ten: "Luật server"
+    mo: "Đọc trước khi chơi"
+    chuong: luat
+    lenh:
+    - Không hack, x-ray, auto-click
+    - Không chửi bới, spam, quảng cáo
+    - Không lợi dụng lỗi, thấy lỗi báo admin
+    - Thoát game lúc đánh nhau = chết, rơi đồ
+    - Mua bán đồ chỉ qua /trade cho an toàn
+    - Tối đa 2 tài khoản, acc phụ phải khai
+    - Không chính trị, biên giới, dân tộc
+    - Giết dân hoà bình sẽ bị Hội Bàn Tròn xử
+  - slot: 13
+    icon: EXPERIENCE_BOTTLE
+    ten: "Danh phận & cấp"
+    mo: "Rank miễn phí, Thăng Cấp, thành tích"
+    chuong: banghoi
+    lenh:
+    - "/danhphan|rank chơi miễn phí, bấm nhận"
+    - "/capdo|Thăng Cấp, đổi điểm lấy đặc quyền"
+    - "/hoatdong|giờ chơi thật của bạn"
+    - "/thanhtich|sổ thành tích"
+    - "/bxh|bảng xếp hạng mùa"
+    - "/danhhieu|chọn danh hiệu"
+    - "/skills|kỹ năng nghề"
+    ghi: "Tị Nạn → Dân → Lương Dân → Hào Kiệt."
+  - slot: 14
+    icon: BELL
+    ten: "Thị trấn & quốc gia"
+    mo: "Lập thị trấn, mua đất, lập nước"
+    chuong: thitran
+    lenh:
+    - "/t new <tên>|lập thị trấn (1.500 xu, 3 giờ chơi)"
+    - "/t claim|mua ô đang đứng (75 xu)"
+    - "/t add <người>|mời dân"
+    - "/t deposit <xu>|nộp quỹ"
+    - "/t spawn|về thị trấn"
+    - "/plot claim|nhận lô đất"
+    - "/n new <tên>|lập quốc gia (3.000 xu)"
+    - "/n ally add <nước>|kết đồng minh"
+    ghi: "Phí 30 xu/ngày trừ quỹ, hết quỹ là tan."
+  - slot: 15
+    icon: WHITE_BANNER
+    ten: "Hoà bình"
+    mo: "Không muốn đánh nhau thì vào đây"
+    chuong: thitran
+    lenh:
+    - "/hoabinh|thông tin Liên minh Hoà Bình"
+    - "/hoabinh vao · /hoabinh roi|thị trưởng vào / rời"
+    - "/hoidong|Hội đồng, bầu đại diện"
+    - "/tochuc|Thương Hội, tổ chức sự kiện"
+    - "/sukien|sự kiện đang có"
+    - "/bantron|Hội Bàn Tròn, vụ án"
+    - "/binhchon|thi thị trấn đẹp"
+    ghi: "Không bị vây, không bị chiếm; đổi lại không đánh trận."
+  - slot: 16
+    icon: IRON_SWORD
+    ten: "Công thành"
+    mo: "Vây thị trấn địch, đánh theo phiên"
+    chuong: congthanh
+    lenh:
+    - "/sw|các cuộc vây đang có"
+    - "/lichcongthanh|giờ phiên tới"
+    - "/canbang|cân bằng chiến tranh"
+    - "/kholuong|kho lương ra trận"
+    - "/nauan|nấu món ra trận"
+    - "/linhdanhthue|đi đánh thuê"
+    - "/treothuong|treo thưởng"
+    - "/pvpstatus|trạng thái giao tranh"
+    ghi: "Phiên tối thứ 7 và chủ nhật, 20:00 và 21:00."
+  - slot: 19
+    icon: GOLD_INGOT
+    ten: "Kiếm tiền"
+    mo: "Nghề và bán đồ cho server"
+    chuong: kinhte
+    lenh:
+    - "/bal|xem tiền"
+    - "/jobs|nghề, việc gì ra bao nhiêu"
+    - "/sell hand|bán mọi món giống món đang cầm"
+    - "/sell all|bán hết túi"
+    - "/worth|giá món đang cầm"
+    - "/pay <người> <xu>|chuyển tiền"
+    - "/baltop|top giàu"
+    ghi: "Bán cho server tối đa 8.000 xu/ngày; ở kinh đô +10%."
+  - slot: 20
+    icon: EMERALD
+    ten: "Chợ & buôn bán"
+    mo: "Mua bán với người chơi và với server"
+    chuong: kinhte
+    lenh:
+    - "/choden|Chợ đen: hàng người chơi bán"
+    - "/choden ban [số] <giá>|treo món đang cầm"
+    - "/choden dat <số> <giá>|đặt đơn thu mua"
+    - "/choden cuatoi|đồ bạn đang treo"
+    - "/trade <người>|đổi đồ an toàn"
+    - "/qs|shop rương của bạn"
+    - "/shopsearch <món>|tìm shop"
+    ghi: "Cửa hàng Kinh Đô: bấm NPC cửa hàng ở spawn."
+  - slot: 21
+    icon: CRAFTING_TABLE
+    ten: "Chế tạo"
+    mo: "Đồ Xưởng, tinh luyện, phù phép, balo"
+    chuong: kinhte
+    lenh:
+    - "/xuong|đồ có hiệu ứng (dùng 7 ngày)"
+    - "/tinhluyen|đổi khối thành món tinh luyện"
+    - "/ce|shop sách phù phép"
+    - "/blacksmith|gộp sách phù phép"
+    - "/nauan|nấu món có hiệu ứng"
+    - "/balo|mở balo"
+  - slot: 22
+    icon: CHEST
+    ten: "Quà hằng ngày"
+    mo: "Vào mỗi ngày để nhận"
+    chuong: hangngay
+    lenh:
+    - "/diemdanh|150 xu + vé Gacha mỗi ngày"
+    - "/nhiemvu|3 nhiệm vụ mỗi ngày"
+    - "/gacha|quay bằng vé"
+    - "/vote|150 xu mỗi lượt vote"
+    - "/kit|gói quà theo danh phận"
+    ghi: "Vé Gacha Chăm Chỉ: mỗi 60 phút chơi thật."
+  - slot: 23
+    icon: FILLED_MAP
+    ten: "Khám phá"
+    mo: "Dungeon, cổng ẩn, kho báu, lữ khách"
+    chuong: khampha
+    lenh:
+    - "/dungeon|danh sách dungeon, bấm để vào"
+    - "/conghoang|lời đồn về cổng ẩn"
+    - "/khobau|cách dò bản đồ kho báu"
+    - "/lenhsan|quái mạnh đang ở đâu"
+    - "/lukhach|lữ khách kể chuyện"
+    - "/journal|nhiệm vụ cốt truyện"
+    - "/khaihoang|góp quỹ mở vùng mới"
+  - slot: 24
+    icon: GRASS_BLOCK
+    ten: "Thái Ấp"
+    mo: "Đất riêng an toàn, không PvP"
+    chuong: khampha
+    lenh:
+    - "/thaiap mua|mua đất (15.000 xu)"
+    - "/thaiap|về Thái Ấp"
+    - "/thaiap morong|mở rộng"
+    - "/thaiap moi <người>|mời xây cùng"
+    - "/thaiap sangtao|bản sao sáng tạo"
+    - "/thaiap ghe <người>|tham quan"
+    - "/thaiap top|Thái Ấp đẹp nhất"
+  - slot: 25
+    icon: FISHING_ROD
+    ten: "Câu cá & mùa"
+    mo: "Cá Việt theo mùa, mùa mưa / khô"
+    chuong: kinhte
+    lenh:
+    - "/emf|menu câu cá"
+    - "/emf shop|bán cá"
+    - "/mua|mùa hiện tại, còn mấy ngày"
+    - "/dacsan|đặc sản vùng"
+    ghi: "Thi câu thứ 7, chủ nhật 20:00, có thưởng."
+  - slot: 28
+    icon: LEAD
+    ten: "Pet & Đấu Trường"
+    mo: "Bắt pet, lên cấp, đấu 1v1"
+    chuong: pet
+    lenh:
+    - "/petcall|gọi pet ra"
+    - "/petinfo|thông tin pet"
+    - "/petchooseskilltree|chọn hệ pet"
+    - "/bxhpet tyle|tỉ lệ bắt pet"
+    - "/buabatpet|bùa tăng tỉ lệ bắt"
+    - "/warp pvp|sảnh Đấu Trường"
+    - "/dautruong thachdau <người>|thách đấu"
+    ghi: "Bắt pet: đánh tới yếu máu rồi quăng dây xích."
+  - slot: 29
+    icon: NAME_TAG
+    ten: "Ủng hộ & trang trí"
+    mo: "Rank ủng hộ, skin, Sứ Giả"
+    chuong: hangngay
+    lenh:
+    - "/rank|rank ủng hộ, quyền lợi"
+    - "/rank mua|nạp Vàng bằng QR"
+    - "/vang|cửa hàng Vàng"
+    - "/tuskin|tủ skin"
+    - "/skin <tên>|đổi skin"
+    - "/sugia|rank Sứ Giả cho streamer"
+    ghi: "Chỉ trang trí, không bán sức mạnh."
+  - slot: 30
+    icon: COMPARATOR
+    ten: "Cá nhân & hỗ trợ"
+    mo: "Cài đặt, nhắn tin, web, khi cần giúp"
+    chuong: hotro
+    lenh:
+    - "/caidat|bật/tắt chat, TPA, bảng bên phải"
+    - "/msg <người> <tin>|nhắn riêng"
+    - "/r <tin>|trả lời"
+    - "/web|mã đăng nhập trang web"
+    - "/taikhoanphu|khai tài khoản phụ"
+    - "/choilai|chơi lại từ đầu"
+    ghi: "Cần giúp thì hỏi người có [Helper], [Mod], [Admin]."
+  - slot: 32
+    icon: DIAMOND_SWORD
+    ten: "Practice (PvP)"
+    mo: "Đấu 1v1 bộ đồ có sẵn, không mất đồ"
+    chuong: practice
+    lenh:
+    - "/queue|vào hàng chờ"
+    - "/duel <người>|thách đấu"
+    - "/spectate <người>|xem đấu"
+    - "/duel top|xếp hạng"
+    - "/kit edit <bộ>|sắp lại đồ"
+    ghi: "Chỉ ở server Practice."
 
 chapters:
 - id: batdau
@@ -653,7 +905,7 @@ chapters:
     &2THÁI ẤP
     &0Đất riêng an toàn ở thế giới riêng: không PvP, không quái, không quặng. Để xây, làm nông, nuôi pet.
     &1/thaiap mua &0(15.000 xu, cạnh 50 khối)
-    &1/thaiap morong &0(8.000 → 70, 15.000 → 90)
+    &1/thaiap morong &0(24.000 → 70, 45.000 → 90)
     &1/thaiap &0về Thái Ấp
   - |-
     &2Thái Ấp: lệnh
@@ -725,7 +977,7 @@ chapters:
     &1/dautruong thachdau <người>
     &8Vd: /dautruong thachdau Linh
     &1/dautruong dongy&0 · &1tuchoi
-    &1/dautruong cuoc <xu> &0cược (tối đa 10.000, server thu 5%)
+    &1/dautruong cuoc <xu> &0cược (tối đa 30.000, server thu 5%)
     &1/dautruong doi 2v2 &0đổi kiểu
   - |-
     &6Đấu Trường: lệnh (tiếp)

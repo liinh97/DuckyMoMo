@@ -3,7 +3,9 @@ package vn.duckymomo.core.paper;
 import java.io.File;
 import java.text.Normalizer;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import net.kyori.adventure.inventory.Book;
 import net.kyori.adventure.text.Component;
@@ -12,28 +14,53 @@ import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
- * Cẩm nang trong game: /huongdan [chương] (alias hd, guide, camnang).
- * - Java: mở sách; trang đầu là mục lục, bấm tên chương để nhảy tới trang của chương.
- * - Bedrock (Floodgate): sách không mở được -> form nút bấm, mỗi chương một nút, bấm thì hiện nội dung chương.
+ * Cẩm nang trong game: /huongdan [sach | chương] (alias hd, guide, camnang).
+ * - /hd (21/10): MENU RƯƠNG các nhóm (huongdan.yml › menu). Rê chuột lên nhóm thấy ngay lệnh + mô tả ngắn (kiểu menu lệnh của CherryMC);
+ *   bấm thì mở sách chỉ gồm chương của nhóm đó. Ô sách (menu.book-slot) mở cả cuốn. Không có menu thì /hd mở sách như trước.
+ * - /hd sach: cả cuốn sách (trang đầu là mục lục, bấm tên chương để nhảy). /hd <mã chương>: sách của riêng chương đó.
+ * - Bedrock (Floodgate): sách không mở được -> form nút bấm: các nhóm, bấm nhóm thấy lệnh, nút "Đọc chi tiết" hiện cả chương.
  * Nội dung: plugins/DuckyMoMoCore/huongdan.yml (đọc lại mỗi lần mở, sửa không cần reload).
- *   title, author, chapters: [{id, name, pages: ["&6Tiêu đề\n...", ...]}]. Mỗi trang sách ~14 dòng x ~19 ký tự.
- * Mặc định mở chương guide.default-chapter trong config.yml (vd banghoi ở Bang Hội Chiến) khi không ghi chương.
+ *   title, author, menu{title, rows, book-slot, items[{slot, icon, ten, mo, lenh["/lệnh|mô tả"], ghi, chuong}]},
+ *   chapters: [{id, name, pages: ["&6Tiêu đề\n...", ...]}]. Mỗi trang sách ~14 dòng x ~19 ký tự.
  */
 final class Guide implements Listener {
 
     private static final LegacyComponentSerializer LEGACY = LegacyComponentSerializer.legacyAmpersand();
+    private static final Locale VI = Locale.forLanguageTag("vi");
+    private static final String FULL_BOOK = "\u0000sach";
 
     record Chapter(String id, String name, List<String> pages) {
+    }
+
+    record Item(int slot, Material icon, String name, String desc, String chapter, List<String> lines, String note) {
+    }
+
+    /** Rương menu /hd: ô -> mã chương (FULL_BOOK = cả cuốn). */
+    static final class Holder implements InventoryHolder {
+        final Map<Integer, String> target = new HashMap<>();
+        Inventory inv;
+
+        @Override
+        public Inventory getInventory() {
+            return inv;
+        }
     }
 
     private final JavaPlugin plugin;
@@ -74,6 +101,32 @@ final class Guide implements Listener {
         return out;
     }
 
+    private static List<Item> items(YamlConfiguration y) {
+        List<Item> out = new ArrayList<>();
+        for (Map<?, ?> m : y.getMapList("menu.items")) {
+            Material icon = Material.matchMaterial(String.valueOf(m.get("icon")));
+            List<String> lines = new ArrayList<>();
+            if (m.get("lenh") instanceof List<?> l) {
+                l.forEach(o -> lines.add(String.valueOf(o)));
+            }
+            out.add(new Item(m.get("slot") instanceof Number n ? n.intValue() : -1, icon == null || !icon.isItem() ? Material.BOOK : icon,
+                    str(m.get("ten")), str(m.get("mo")), str(m.get("chuong")), lines, str(m.get("ghi"))));
+        }
+        return out;
+    }
+
+    private static String str(Object o) {
+        return o == null ? "" : String.valueOf(o);
+    }
+
+    /** Gợi ý Tab: sach + mã chương. */
+    List<String> tab(String prefix) {
+        List<String> out = new ArrayList<>(List.of("sach"));
+        chapters(load()).forEach(c -> out.add(c.id()));
+        out.removeIf(x -> !x.startsWith(prefix.toLowerCase(Locale.ROOT)));
+        return out;
+    }
+
     boolean command(CommandSender s, String[] args) {
         if (!(s instanceof Player p)) {
             s.sendMessage("Chỉ người chơi mở được cẩm nang.");
@@ -85,13 +138,125 @@ final class Guide implements Listener {
             p.sendMessage(Component.text("Chưa có cẩm nang (thiếu plugins/DuckyMoMoCore/huongdan.yml).", NamedTextColor.RED));
             return true;
         }
+        boolean bedrock = BedrockMenu.available() && BedrockMenu.isBedrock(p.getUniqueId());
         String want = args.length > 0 ? args[0] : null;
-        if (BedrockMenu.available() && BedrockMenu.isBedrock(p.getUniqueId())) {
-            openForm(p, y, chs, want);
+        List<Item> menu = items(y);
+        if (want == null && !menu.isEmpty()) {
+            if (bedrock) {
+                menuForm(p, y, chs, menu);
+            } else {
+                openMenu(p, y, menu);
+            }
+            return true;
+        }
+        if (want != null && !want.equalsIgnoreCase("sach")) {
+            for (Chapter c : chs) {
+                if (c.id().equalsIgnoreCase(want)) {
+                    if (bedrock) {
+                        showChapter(p, y, chs, c);
+                    } else {
+                        openChapter(p, c);
+                    }
+                    return true;
+                }
+            }
+        }
+        if (bedrock) {
+            openForm(p, y, chs, null);
         } else {
-            openBook(p, y, chs, want == null ? defaultChapter : want);
+            openBook(p, y, chs, want == null ? defaultChapter : null);
         }
         return true;
+    }
+
+    // ---------------------------------------------------------------- Java: menu rương
+
+    private void openMenu(Player p, YamlConfiguration y, List<Item> menu) {
+        int rows = Math.max(1, Math.min(6, y.getInt("menu.rows", 5)));
+        Holder h = new Holder();
+        h.inv = Bukkit.createInventory(h, rows * 9, Tip.c(y.getString("menu.title", "&0Cẩm nang &8(/hd)")));
+        for (Item it : menu) {
+            if (it.slot() < 0 || it.slot() >= rows * 9) {
+                continue;
+            }
+            h.inv.setItem(it.slot(), tooltip(it).apply(new ItemStack(it.icon())));
+            if (!it.chapter().isBlank()) {
+                h.target.put(it.slot(), it.chapter());
+            }
+        }
+        int book = y.getInt("menu.book-slot", -1);
+        if (book >= 0 && book < rows * 9) {
+            h.inv.setItem(book, Tip.of("&6✎ &fCả cuốn cẩm nang").desc("Mọi chương trong một quyển sách", "Mục lục ở trang đầu, bấm tên chương để nhảy tới.")
+                    .line().click("Bấm để mở sách").apply(new ItemStack(Material.WRITABLE_BOOK)));
+            h.target.put(book, FULL_BOOK);
+        }
+        p.openInventory(h.inv);
+    }
+
+    /** Khung kiểu menu lệnh: TÊN NHÓM, mô tả, rồi mỗi dòng "/lệnh ➜ việc", lưu ý, bấm để đọc chi tiết. */
+    private static Tip tooltip(Item it) {
+        Tip t = Tip.of("&e✦ " + it.name().toUpperCase(VI)).desc(it.desc()).line();
+        for (String l : it.lines()) {
+            int bar = l.indexOf('|');
+            if (bar > 0) {
+                t.raw("&e" + l.substring(0, bar).trim() + " &8➜ &f" + l.substring(bar + 1).trim());
+            } else {
+                t.raw("&8• &f" + l.trim());
+            }
+        }
+        if (!it.note().isBlank()) {
+            t.gap();
+            List<String> w = Tip.wrap(it.note(), 40);
+            for (int i = 0; i < w.size(); i++) {
+                t.raw((i == 0 ? "&6⚠ &7" : "  &7") + w.get(i));
+            }
+        }
+        return it.chapter().isBlank() ? t : t.line().click("Bấm để đọc chi tiết");
+    }
+
+    @EventHandler
+    public void onClick(InventoryClickEvent e) {
+        if (!(e.getView().getTopInventory().getHolder() instanceof Holder h)) {
+            return;
+        }
+        e.setCancelled(true);
+        if (!(e.getWhoClicked() instanceof Player p) || e.getRawSlot() < 0 || e.getRawSlot() >= h.inv.getSize()) {
+            return;
+        }
+        String target = h.target.get(e.getRawSlot());
+        if (target == null) {
+            return;
+        }
+        p.closeInventory();
+        // mở sách ở tick sau (đóng rương xong mới mở sách được)
+        plugin.getServer().getScheduler().runTask(plugin, () -> {
+            YamlConfiguration y = load();
+            List<Chapter> chs = chapters(y);
+            if (FULL_BOOK.equals(target)) {
+                openBook(p, y, chs, null);
+                return;
+            }
+            chs.stream().filter(c -> c.id().equalsIgnoreCase(target)).findFirst().ifPresent(c -> openChapter(p, c));
+        });
+    }
+
+    @EventHandler
+    public void onDrag(InventoryDragEvent e) {
+        if (e.getView().getTopInventory().getHolder() instanceof Holder) {
+            e.setCancelled(true);
+        }
+    }
+
+    /** Sách chỉ một chương; dòng cuối mỗi trang "« Về cẩm nang" mở lại menu. */
+    private void openChapter(Player p, Chapter c) {
+        List<Component> pages = new ArrayList<>();
+        for (String src : c.pages().isEmpty() ? List.of("&8(chưa có nội dung)") : c.pages()) {
+            for (String text : paginate(src, 13)) {
+                pages.add(LEGACY.deserialize(text).append(Component.text("\n« Về cẩm nang", NamedTextColor.GRAY)
+                        .decoration(TextDecoration.UNDERLINED, true).clickEvent(ClickEvent.runCommand("/huongdan"))));
+            }
+        }
+        p.openBook(Book.book(Component.text(c.name()), Component.text("DuckyMoMo"), pages));
     }
 
     // ---------------------------------------------------------------- Java: sách
@@ -241,6 +406,48 @@ final class Guide implements Listener {
 
     // ---------------------------------------------------------------- Bedrock: form
 
+    /** Bedrock: danh sách nhóm; bấm nhóm thấy lệnh, nút "Đọc chi tiết" hiện cả chương. */
+    private void menuForm(Player p, YamlConfiguration y, List<Chapter> chs, List<Item> menu) {
+        List<BedrockMenu.Entry> entries = new ArrayList<>();
+        for (int i = 0; i < menu.size(); i++) {
+            entries.add(new BedrockMenu.Entry(menu.get(i).name(), String.valueOf(i)));
+        }
+        entries.add(new BedrockMenu.Entry("Cả cuốn cẩm nang", "sach"));
+        BedrockMenu.open(p.getUniqueId(), strip(y.getString("menu.title", "Cẩm nang")), "Chọn mục muốn xem:", entries,
+                pick -> plugin.getServer().getScheduler().runTask(plugin, () -> {
+                    if (pick.equals("sach")) {
+                        openForm(p, y, chs, null);
+                    } else {
+                        itemForm(p, y, chs, menu, menu.get(Integer.parseInt(pick)));
+                    }
+                }));
+    }
+
+    private void itemForm(Player p, YamlConfiguration y, List<Chapter> chs, List<Item> menu, Item it) {
+        StringBuilder body = new StringBuilder("§7" + it.desc() + "\n");
+        for (String l : it.lines()) {
+            int bar = l.indexOf('|');
+            body.append('\n').append(bar > 0 ? "§e" + l.substring(0, bar).trim() + " §8- §f" + l.substring(bar + 1).trim() : "§f• " + l.trim());
+        }
+        if (!it.note().isBlank()) {
+            body.append("\n\n§6Lưu ý: §7").append(it.note());
+        }
+        List<BedrockMenu.Entry> entries = new ArrayList<>();
+        if (!it.chapter().isBlank()) {
+            entries.add(new BedrockMenu.Entry("Đọc chi tiết", "ct"));
+        }
+        entries.add(new BedrockMenu.Entry("« Quay lại", "back"));
+        BedrockMenu.open(p.getUniqueId(), it.name(), body.toString(), entries,
+                pick -> plugin.getServer().getScheduler().runTask(plugin, () -> {
+                    if (pick.equals("ct")) {
+                        chs.stream().filter(c -> c.id().equalsIgnoreCase(it.chapter())).findFirst()
+                                .ifPresent(c -> showChapter(p, y, chs, c));
+                    } else {
+                        menuForm(p, y, chs, menu);
+                    }
+                }));
+    }
+
     private void openForm(Player p, YamlConfiguration y, List<Chapter> chs, String want) {
         for (Chapter c : chs) {
             if (want != null && c.id().equalsIgnoreCase(want)) {
@@ -260,8 +467,15 @@ final class Guide implements Listener {
     private void showChapter(Player p, YamlConfiguration y, List<Chapter> chs, Chapter c) {
         // Bedrock hiểu mã màu §: đổi & -> §; nội dung cả chương trong một form, nút Quay lại về danh sách chương
         String body = String.join("\n\n", c.pages()).replace('&', '§');
-        BedrockMenu.open(p.getUniqueId(), c.name(), body, List.of(new BedrockMenu.Entry("« Các chương", "back")),
-                x -> plugin.getServer().getScheduler().runTask(plugin, () -> openForm(p, y, chs, null)));
+        BedrockMenu.open(p.getUniqueId(), c.name(), body, List.of(new BedrockMenu.Entry("« Cẩm nang", "back")),
+                x -> plugin.getServer().getScheduler().runTask(plugin, () -> {
+                    List<Item> menu = items(y);
+                    if (menu.isEmpty()) {
+                        openForm(p, y, chs, null);
+                    } else {
+                        menuForm(p, y, chs, menu);
+                    }
+                }));
     }
 
     private static String strip(String s) {

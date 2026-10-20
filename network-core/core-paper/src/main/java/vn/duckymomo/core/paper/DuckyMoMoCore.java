@@ -345,6 +345,7 @@ public final class DuckyMoMoCore extends JavaPlugin {
                     getConfig().getString("guide.join-hint", ""));
             getServer().getPluginManager().registerEvents(guide, this);
             guideCmd.setExecutor((sender, cmd, label, args) -> guide.command(sender, args));
+            guideCmd.setTabCompleter((sender, cmd, label, args) -> args.length == 1 ? guide.tab(args[0]) : java.util.List.of());
         }
 
         // Chat có prefix LuckPerms (lobby không có EssentialsX Chat): chat-format.enabled

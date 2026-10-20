@@ -331,6 +331,12 @@ Bảng giá đầy đủ: `docs/dinh-gia-xu.html` (artifact SeZHthvXRXHusvgPqknX
 - [ ] Giới hạn 8.000 xu/ngày: qua 80% có dòng báo; lần bán vượt bị từ chối, không mất đồ, báo còn bao nhiêu; chặn cả nút bán /cuahang, Rìu Bán, món Tinh Luyện; /choden không bị chặn.
 - [ ] /hd (Kiếm tiền, Thị trấn, Vote, Điểm danh…) ghi đúng số mới.
 
+## 4y. 21/10: /hd thành menu rương — lobby, practice, sangtao đã chạy bản mới; banghoi chờ khởi động lại
+- [ ] /hd mở rương 18 nhóm, tiêu đề chữ đen đọc rõ; rê chuột lên nhóm: tên nhóm, mô tả, các dòng "/lệnh ➜ việc", lưu ý.
+- [ ] Bấm nhóm mở sách chỉ của chương đó; dòng cuối mỗi trang "« Về cẩm nang" mở lại menu. Ô quyển sách mở cả cuốn.
+- [ ] /hd sach (cả cuốn), /hd thitran (một chương), Tab gợi ý sach + mã chương. Không kéo/lấy được đồ trong menu.
+- [ ] Điện thoại: /hd hiện bảng nút các nhóm → bấm nhóm thấy lệnh → "Đọc chi tiết" hiện cả chương, "« Quay lại" về danh sách.
+
 ## 5. Quảng trường Danh vọng (sảnh)
 - [ ] (CHƯA CẦN, làm khi gần mở server) Chọn chỗ trống ở sảnh (map sakura). Đứng, quay mặt về phía người xem: `/vinhdanh dat moinhat tieude`, rồi `bachu`, `chienthan`, `phuho`,
       `kientrucsu`, `dautruong`, `pet` ở các chỗ khác. Bảng chữ nổi + đầu người chơi đúng hướng, không đè nhau.

@@ -84,6 +84,7 @@ final class PlayerSettings implements Listener {
         opt("loimoi", "Lời mời đấu / nhóm", Material.IRON_SWORD, true, "Lời mời đấu tay đôi (/duel) và vào nhóm (/party invite)", "Practice");
         opt("nhacvay", "Nhắc giờ công thành", Material.RED_BANNER, true, "Báo trước 15 phút khi thị trấn / nước bạn có trận vây", "Bang Hội Chiến");
         opt("nhacngay", "Nhắc điểm danh, nhiệm vụ", Material.WRITTEN_BOOK, true, "Mỗi giờ nhắc nếu chưa điểm danh / còn nhiệm vụ hằng ngày", "Bang Hội Chiến");
+        opt("fontviet", "Font tiếng Việt", Material.NAME_TAG, true, "Chữ có dấu rõ đẹp (gói tài nguyên). Tắt: dùng font gốc Minecraft, chữ căn giữa chuẩn hơn; hình vật phẩm riêng vẫn giữ", "");
         opt("goipet", "Tự gọi pet khi vào", Material.BONE, false, "Vào Bang Hội Chiến là pet chiến đấu (MyPet) tự ra đi theo", "Bang Hội Chiến");
     }
 
@@ -200,7 +201,7 @@ final class PlayerSettings implements Listener {
         if (!p.isOnline()) {
             return;
         }
-        for (String id : List.of("bangphai", "bossbar", "hat", "maumob")) {
+        for (String id : List.of("bangphai", "bossbar", "hat", "maumob", "fontviet")) {
             apply(p, id);
         }
     }
@@ -213,6 +214,7 @@ final class PlayerSettings implements Listener {
         }
         done.put(id, v);
         switch (id) {
+            case "fontviet" -> sendPack(p, v);
             case "bangphai" -> {
                 if (Bukkit.getPluginManager().isPluginEnabled("TAB")) {
                     Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "tab scoreboard " + (v ? "on " : "off ") + p.getName() + " -s");
@@ -286,6 +288,28 @@ final class PlayerSettings implements Listener {
         if (!hit.isEmpty()) {
             Bukkit.getScheduler().runTask(plugin, () -> hit.forEach(v -> v.playSound(v.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 0.8f, 1.6f)));
         }
+    }
+
+    // ---------------------------------------------------------------- gói tài nguyên theo lựa chọn từng người
+
+    /**
+     * Gửi gói tài nguyên theo ô "Font tiếng Việt" (config resource-pack, URL/SHA1 do ops/build-font-pack.sh ghi vào .env -> CFG_*):
+     * bật = gói đầy đủ (font Be Vietnam Pro + hình vật phẩm), tắt = gói chỉ có hình vật phẩm (font gốc Minecraft).
+     * Server.properties KHÔNG tự gửi gói nữa (RESOURCE_PACK trống trong compose). Không bắt buộc: từ chối vẫn chơi được.
+     */
+    private void sendPack(Player p, boolean font) {
+        var c = plugin.getConfig().getConfigurationSection("resource-pack");
+        if (c == null || !p.isOnline()) {
+            return;
+        }
+        String url = c.getString(font ? "font-url" : "item-url", "").trim();
+        String sha = c.getString(font ? "font-sha1" : "item-sha1", "").trim();
+        if (url.isEmpty() || url.startsWith("${") || !sha.matches("[0-9a-fA-F]{40}")) {
+            return;
+        }
+        byte[] hash = java.util.HexFormat.of().parseHex(sha);
+        String prompt = c.getString(font ? "font-prompt" : "item-prompt", "");
+        p.setResourcePack(url, hash, prompt.isEmpty() ? null : LegacyComponentSerializer.legacyAmpersand().deserialize(prompt), false);
     }
 
     // ---------------------------------------------------------------- vào / rời / tử vong

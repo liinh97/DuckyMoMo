@@ -29,8 +29,13 @@ services:
       TZ: Asia/Ho_Chi_Minh
       RCON_PASSWORD: ${RCON_PASSWORD:?Chưa đặt RCON_PASSWORD trong .env (chạy lại ./ops/init.sh)}
       ONLINE_MODE: "FALSE"
-      RESOURCE_PACK: ${FONT_PACK_URL:-}
-      RESOURCE_PACK_SHA1: ${FONT_PACK_SHA1:-}
+      # 20/10: server.properties KHÔNG gửi gói nữa; DuckyMoMoCore gửi theo lựa chọn từng người (/caidat › Font tiếng Việt)
+      RESOURCE_PACK: ""
+      RESOURCE_PACK_SHA1: ""
+      CFG_FONT_PACK_URL: ${FONT_PACK_URL:-}
+      CFG_FONT_PACK_SHA1: ${FONT_PACK_SHA1:-}
+      CFG_ITEM_PACK_URL: ${ITEM_PACK_URL:-}
+      CFG_ITEM_PACK_SHA1: ${ITEM_PACK_SHA1:-}
       RESOURCE_PACK_ENFORCE: "FALSE"
       RESOURCE_PACK_PROMPT: '{"text":"Tải font tiếng Việt dễ đọc (khoảng 60 KB)? Bấm Có để chữ có dấu rõ hơn.","color":"gold"}'
       # Lưu ý: dòng bắt đầu bằng # BÊN TRONG khối '|' không phải comment, image itzg sẽ đọc thành tên plugin.

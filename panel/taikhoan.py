@@ -144,6 +144,7 @@ CAIDAT = [
     ("loimoi", "Lời mời đấu / nhóm", True, "Lời mời đấu tay đôi (/duel) và vào nhóm (/party invite)", "Practice"),
     ("nhacvay", "Nhắc giờ công thành", True, "Báo trước 15 phút khi thị trấn / nước bạn có trận vây", "Bang Hội Chiến"),
     ("nhacngay", "Nhắc điểm danh, nhiệm vụ", True, "Mỗi giờ nhắc nếu chưa điểm danh / còn nhiệm vụ hằng ngày", "Bang Hội Chiến"),
+    ("fontviet", "Font tiếng Việt", True, "Chữ có dấu rõ đẹp. Tắt: font gốc Minecraft, chữ căn giữa chuẩn hơn (áp dụng khi vào lại / đổi server)", ""),
     ("goipet", "Tự gọi pet khi vào", False, "Vào Bang Hội Chiến là pet chiến đấu tự ra đi theo", "Bang Hội Chiến"),
 ]
 CAIDAT_IDS = {c[0]: c for c in CAIDAT}

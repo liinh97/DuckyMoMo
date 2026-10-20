@@ -74,3 +74,13 @@ donate-qr:
 # Đăng nhập trang web bằng mã /web (19/10: 5 → 60 phút). Sửa ở Cài đặt › Đăng nhập trang web (ghi cả 4 server).
 web-login:
   code-minutes: 60
+
+# Gói tài nguyên theo lựa chọn từng người (/caidat › Font tiếng Việt, 20/10). URL/SHA1 do ./ops/build-font-pack.sh ghi vào .env
+# -> compose -> CFG_*. Bật = gói font tiếng Việt + hình vật phẩm; tắt = chỉ hình vật phẩm (font gốc). Không bắt buộc tải.
+resource-pack:
+  font-url: "${CFG_FONT_PACK_URL}"
+  font-sha1: "${CFG_FONT_PACK_SHA1}"
+  item-url: "${CFG_ITEM_PACK_URL}"
+  item-sha1: "${CFG_ITEM_PACK_SHA1}"
+  font-prompt: "&6Tải font tiếng Việt dễ đọc (khoảng 70 KB)? Bấm Có để chữ có dấu rõ hơn. Không thích: /caidat tắt Font tiếng Việt."
+  item-prompt: "&6Tải hình vật phẩm riêng của server (khoảng 12 KB)?"

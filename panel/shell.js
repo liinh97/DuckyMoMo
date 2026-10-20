@@ -199,6 +199,19 @@ window.toast = function (msg, kind) {
   clearTimeout(t._h);
   if (kind) t._h = setTimeout(() => t.classList.remove("show"), kind === "err" ? 9000 : 4000);
 };
+// Phiên đăng nhập hết hạn (API trả 401): báo rồi tải lại để hiện trang đăng nhập, không để trang đứng im với lỗi khó hiểu
+(function () {
+  const raw = window.fetch.bind(window);
+  let warned = false;
+  window.fetch = (...args) => raw(...args).then(r => {
+    if (r.status === 401 && !warned) {
+      warned = true;
+      if (window.toast) window.toast("Phiên đăng nhập đã hết, đang mở trang đăng nhập…", "err");
+      setTimeout(() => location.reload(), 1500);
+    }
+    return r;
+  });
+})();
 (function () {
   const NAV = [
     ["Cấu hình", [["", "⚙️", "Cài đặt"], ["thuvien", "🗡️", "Thư viện đồ"], ["boss", "🐉", "Boss"], ["role", "👑", "Role & rank"], ["donate", "💳", "Donate"]]],
@@ -226,7 +239,14 @@ window.toast = function (msg, kind) {
   nav.innerHTML = html;
   // Staff đăng nhập bằng tài khoản game (qua trang web công khai): chỉ hiện trang mình có quyền, thêm tên + link về tài khoản
   fetch("api/toi").then(r => r.json()).then(t => {
-    if (!t.game) return;
+    if (!t.game) {
+      // admin đăng nhập bằng tài khoản quản trị: thêm nút Đăng xuất
+      const out = document.createElement("a");
+      out.className = "item"; out.href = "#"; out.innerHTML = '<span class="ic">🚪</span>Đăng xuất';
+      out.onclick = e => { e.preventDefault(); fetch("dangxuat", {method: "POST"}).finally(() => location.reload()); };
+      nav.querySelector(".foot").before(out);
+      return;
+    }
     const can = new Set(t.tinh_nang || []);
     const page = { caidat: ["caidat"], thuvien: ["thuvien", "thuvien-dua"], boss: ["boss"], role: ["role", "role-quyen", "rank", "rank-quyen"], donate: ["donate"], hoatdong: ["hoatdong"], hethong: ["hethong"], media: ["media"],
       camnang: ["camnang"], huongdan: ["huongdan"] };

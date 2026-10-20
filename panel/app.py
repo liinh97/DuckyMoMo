@@ -6,6 +6,7 @@ qua RCON để áp dụng ngay. Mật khẩu RCON đọc từ data/<server>/.rco
 """
 
 import base64
+import secrets
 import hmac
 import json
 import os
@@ -48,6 +49,51 @@ DONATE_HTML = (Path(__file__).parent / "donate.html").read_text(encoding="utf-8"
 HETHONG_HTML = (Path(__file__).parent / "hethong.html").read_text(encoding="utf-8")
 MEDIA_HTML = (Path(__file__).parent / "media.html").read_text(encoding="utf-8")
 # Khung chung mọi trang (thanh điều hướng trái, màu, nút): ui.css, shell.js
+# Đăng nhập trang quản trị bằng form + cookie phiên (thay hộp thoại Basic Auth của trình duyệt). Basic vẫn nhận cho script/curl.
+# Phiên giữ trong bộ nhớ: khởi động lại panel là phải đăng nhập lại. Sai 5 lần/10 phút trên một IP thì chặn tạm.
+SESSIONS = {}                 # token -> hết hạn (epoch giây)
+SESSION_HOURS = 12
+LOGIN_FAILS = {}              # ip -> [thời điểm sai]
+LOGIN_LOCK = threading.Lock()
+LOGIN_HTML = """<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DuckyMoMo · Đăng nhập quản trị</title><meta name="robots" content="noindex">
+<style>
+:root{--bg:#f3f4f7;--card:#fff;--text:#1b1f29;--muted:#6b7385;--line:#e3e6ec;--input:#fff;--accent:#e8711c;--err:#d93025}
+@media (prefers-color-scheme:dark){:root{--bg:#0f1115;--card:#171a21;--text:#e7e9ee;--muted:#98a2b3;--line:#2a2f3a;--input:#12151b;--err:#f28b82}}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;background:var(--bg);color:var(--text);
+font:15px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;padding:24px 16px}
+form{width:100%;max-width:360px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 24px;display:grid;gap:14px}
+.brand{display:flex;align-items:center;gap:10px}.brand span{font-size:30px;line-height:1}.brand b{display:block;font-size:18px}.brand small{color:var(--muted)}
+label{display:grid;gap:5px;font-size:13.5px;font-weight:600}
+input{font:inherit;padding:10px 12px;border:1px solid var(--line);border-radius:9px;background:var(--input);color:var(--text)}
+input:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--accent)}
+button{font:inherit;font-weight:700;padding:11px;border:0;border-radius:9px;background:var(--accent);color:#fff;cursor:pointer}
+button:disabled{opacity:.6;cursor:wait}.msg{min-height:1.2em;margin:0;color:var(--err);font-size:13.5px}.hint{margin:0;color:var(--muted);font-size:12.5px}
+</style></head><body>
+<form id="f" autocomplete="on">
+  <div class="brand"><span>🦆</span><div><b>DuckyMoMo</b><small>Trang quản trị</small></div></div>
+  <label>Tên đăng nhập<input id="ten" name="username" autocomplete="username" required autofocus></label>
+  <label>Mật khẩu<input id="matkhau" name="password" type="password" autocomplete="current-password" required></label>
+  <p class="msg" id="msg" role="alert"></p>
+  <button id="nut">Đăng nhập</button>
+  <p class="hint">Tài khoản quản trị trong file .env (PANEL_USER / PANEL_PASSWORD). Staff dùng mã /web trong game ở trang tài khoản.</p>
+</form>
+<script>
+document.getElementById("f").onsubmit = async e => {
+  e.preventDefault();
+  const nut = document.getElementById("nut"), msg = document.getElementById("msg");
+  nut.disabled = true; msg.textContent = "";
+  try {
+    const r = await fetch("dangnhap", {method: "POST", headers: {"Content-Type": "application/json"}, credentials: "same-origin",
+      body: JSON.stringify({ten: document.getElementById("ten").value, matkhau: document.getElementById("matkhau").value})});
+    const d = await r.json().catch(() => ({}));
+    if (r.ok && d.ok) return location.reload();
+    msg.textContent = d.message || "Không đăng nhập được.";
+  } catch (err) { msg.textContent = "Không kết nối được máy chủ."; }
+  nut.disabled = false;
+};
+</script></body></html>"""
+
 STATIC = {"/ui.css": ("text/css; charset=utf-8", (Path(__file__).parent / "ui.css").read_bytes()),
           "/shell.js": ("application/javascript; charset=utf-8", (Path(__file__).parent / "shell.js").read_bytes())}
 # Trang Role: role chức vụ (track staff + builder + default) và rank donate (track donate), lưu ở LuckPerms (MariaDB)
@@ -2296,7 +2342,73 @@ class Handler(BaseHTTPRequestHandler):
     def log_message(self, fmt, *args):
         sys.stdout.write("%s %s\n" % (self.address_string(), fmt % args))
 
+    def client_ip(self):
+        return (self.headers.get("CF-Connecting-IP") or self.headers.get("X-Forwarded-For", "").split(",")[0].strip()
+                or self.client_address[0])
+
+    def session_token(self):
+        for part in self.headers.get("Cookie", "").split(";"):
+            k, _, v = part.strip().partition("=")
+            if k == "dmm_panel":
+                return v
+        return ""
+
+    def cookie_path(self):
+        p = self.headers.get("X-Forwarded-Prefix", "") or "/"
+        return p if re.fullmatch(r"/[A-Za-z0-9/_-]*", p) else "/"
+
+    def login(self):
+        """POST /dangnhap {ten, matkhau}: đúng PANEL_USER/PANEL_PASSWORD thì cấp cookie phiên (HttpOnly, SameSite=Strict)."""
+        ip, now = self.client_ip(), time.time()
+        with LOGIN_LOCK:
+            fails = [t for t in LOGIN_FAILS.get(ip, []) if now - t < 600]
+            LOGIN_FAILS[ip] = fails
+        if len(fails) >= 5:
+            return self.send_json(429, {"ok": False, "message": "Sai quá nhiều lần. Thử lại sau 10 phút."})
+        try:
+            d = self.read_body(4096)
+        except ValueError:
+            d = {}
+        user, pw = str(d.get("ten", "")), str(d.get("matkhau", ""))
+        if not (hmac.compare_digest(user.encode(), PANEL_USER.encode()) and hmac.compare_digest(pw.encode(), PANEL_PASSWORD.encode())):
+            with LOGIN_LOCK:
+                LOGIN_FAILS.setdefault(ip, []).append(now)
+            sys.stdout.write(f"Đăng nhập quản trị SAI từ {ip}\n")
+            time.sleep(1)
+            return self.send_json(401, {"ok": False, "message": "Sai tên đăng nhập hoặc mật khẩu."})
+        tok = secrets.token_urlsafe(32)
+        with LOGIN_LOCK:
+            for k in [k for k, exp in SESSIONS.items() if exp < now]:
+                del SESSIONS[k]
+            SESSIONS[tok] = now + SESSION_HOURS * 3600
+            LOGIN_FAILS.pop(ip, None)
+        secure = "; Secure" if self.headers.get("X-Forwarded-Proto", "") == "https" else ""
+        body = json.dumps({"ok": True}).encode("utf-8")
+        self.send_response(200)
+        self.send_header("Set-Cookie", f"dmm_panel={tok}; Path={self.cookie_path()}; Max-Age={SESSION_HOURS * 3600}; HttpOnly; SameSite=Strict{secure}")
+        self.send_header("Content-Type", "application/json; charset=utf-8")
+        self.send_header("Content-Length", str(len(body)))
+        self.end_headers()
+        self.wfile.write(body)
+
+    def logout(self):
+        with LOGIN_LOCK:
+            SESSIONS.pop(self.session_token(), None)
+        body = json.dumps({"ok": True}).encode("utf-8")
+        self.send_response(200)
+        self.send_header("Set-Cookie", f"dmm_panel=; Path={self.cookie_path()}; Max-Age=0; HttpOnly; SameSite=Strict")
+        self.send_header("Content-Type", "application/json; charset=utf-8")
+        self.send_header("Content-Length", str(len(body)))
+        self.end_headers()
+        self.wfile.write(body)
+
     def authorized(self):
+        tok = self.session_token()
+        if tok:
+            with LOGIN_LOCK:
+                exp = SESSIONS.get(tok, 0)
+            if exp > time.time():
+                return True
         header = self.headers.get("Authorization", "")
         if header.startswith("Basic "):
             try:
@@ -2340,9 +2452,18 @@ class Handler(BaseHTTPRequestHandler):
             return True
         if self.authorized():
             return True
-        self.send_response(401)
-        self.send_header("WWW-Authenticate", 'Basic realm="DuckyMoMo", charset="UTF-8"')
-        self.end_headers()
+        # Chưa đăng nhập: trang HTML -> form đăng nhập; API -> 401 JSON. KHÔNG gửi WWW-Authenticate (trình duyệt sẽ bật hộp thoại).
+        path = self.path.split("?", 1)[0]
+        if self.command == "GET" and not path.startswith("/api/"):
+            body = LOGIN_HTML.encode("utf-8")
+            self.send_response(401)
+            self.send_header("Content-Type", "text/html; charset=utf-8")
+            self.send_header("Cache-Control", "no-store")
+            self.send_header("Content-Length", str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+        else:
+            self.send_json(401, {"ok": False, "dang_nhap": True, "message": "Phiên đăng nhập đã hết. Tải lại trang để đăng nhập."})
         return False
 
     def role_rights(self, group):
@@ -2516,6 +2637,10 @@ class Handler(BaseHTTPRequestHandler):
         return ok
 
     def do_POST(self):
+        if self.path == "/dangnhap" and not self.headers.get("X-DMM-Key"):
+            return self.login()
+        if self.path == "/dangxuat":
+            return self.logout()
         if not self.guard():
             return
         if self.path.startswith("/api/web/") or (self.site and self.who is None):

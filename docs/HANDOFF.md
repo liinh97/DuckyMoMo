@@ -1444,3 +1444,10 @@ Log: `docker compose logs banghoi-1 --since 5m | grep -iE "DuckyMoMoCore|Mùa:|V
 - Rank Media → **Sứ Giả** (tên + tiền tố trong Cài đặt, tin nhắn, cẩm nang, web, trang quản trị). Nhóm LuckPerms vẫn là `media`, khoá cài đặt rk_media_*/md_*, lệnh /media vẫn chạy; lệnh chính cho người chơi: /sugia.
 - Trang chủ: mục Giới thiệu gameplay; ô "Các chế độ" thêm Thái Ấp Sáng Tạo (mở), Skyblock + Lifesteal (sắp có, người dùng từng nêu), Pokémon (dự kiến).
 - Plugin đã build, CHƯA khởi động lại lobby/banghoi-1/practice-1/sangtao-1 (cần để /danhvong, /sugia và chữ mới trong game có hiệu lực).
+
+### 20/10: trang quản trị đăng nhập bằng form
+- Panel bỏ hộp thoại Basic Auth của trình duyệt (người dùng thấy như alert): chưa đăng nhập thì trang HTML trả form (LOGIN_HTML trong panel/app.py),
+  API trả 401 JSON (không WWW-Authenticate). POST /dangnhap {ten, matkhau} = PANEL_USER/PANEL_PASSWORD -> cookie dmm_panel (HttpOnly, SameSite=Strict,
+  Path theo X-Forwarded-Prefix = /mc/caidat, 12 giờ, giữ trong bộ nhớ: restart panel là đăng nhập lại). Sai 5 lần/10 phút/IP -> 429.
+  POST /dangxuat; shell.js có nút Đăng xuất và tự tải lại trang khi API trả 401. Basic auth (curl -u) vẫn nhận cho script.
+  Vẫn còn lớp đăng nhập Trạm 6 (require-login) phía trước: hai lần đăng nhập là cố ý (Cài đặt đổi được server qua RCON).

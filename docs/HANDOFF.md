@@ -14,9 +14,20 @@
   proxy chạy DuckyMoMoSkin (Tủ skin). Kiểm `docker compose config` trong worktree tạm: OK.
 - **Giai đoạn thử nghiệm (người dùng 20/10):** "cứ reset đi, đang test thôi, không phải check online" → được khởi động lại KHÔNG cần hỏi.
   Khi mở cửa chính thức thì quay lại quy tắc kiểm online (mục 000, bài học 1). Proxy khởi động lại thì VẪN phải tạo lại relay.
-- Người dùng đang tự thử toàn bộ theo **lộ trình test** (artifact có lưu tích: https://claude.ai/artifact/HFv53FeegS1PvHQCmxUTBL,
-  file nguồn ở scratchpad phiên cũ, KHÔNG có trong repo; sửa thì đọc lại artifact bằng Artifact read rồi đăng lại cùng URL)
-  + `docs/TEST-CHECKLIST.md` (mục 4t mới cho 20/10).
+- Người dùng đang tự thử toàn bộ theo **lộ trình test** (trang artifact có lưu tích Đạt/Lỗi/Bỏ qua + ghi chú).
+  - Bản gốc: https://claude.ai/artifact/HFv53FeegS1PvHQCmxUTBL (thuộc tài khoản claude.ai CŨ; tài khoản mới không sửa được).
+  - Đã chép vào repo: `docs/lo-trinh-test.html` (nguồn trang, 17 cụm) + `docs/lo-trinh-test-ketqua.json` (kết quả lúc 20/10 tối:
+    17 Đạt, 3 Lỗi, 1 Bỏ qua). Trang lưu kết quả ở database artifact, collection `ketqua`, mỗi mục 1 document id = mã mục
+    (`{tt: ok|err|skip, ghi_chu, luc}`).
+  - **Tài khoản mới: đăng lại trang** từ `docs/lo-trinh-test.html` (Artifact publish, capabilities {"db": {}}, icon "checklist") → được
+    URL mới, rồi nạp lại kết quả cũ bằng ArtifactData batch (set `ketqua/<mã>` từ file json). Báo người dùng URL mới.
+  - Sửa lộ trình (thêm mục cho tính năng mới): sửa mảng PLAN trong html (giữ nguyên id cũ để kết quả không lệch), đăng lại cùng URL.
+  - **3 mục LỖI người dùng ghi, CHƯA sửa** (việc tiếp theo nên làm trước):
+    1. m1 Quà tân thủ: "Mặc định vào không có gì, phải nhận từ kits mới có. Cài đặt có mục kits chưa, bao lâu nhận lại được. Mỗi rank
+       một bộ kits khác nhau. Trong kits có đồ mặc định, đồ trong thư viện, xu…" → làm hệ kit theo rank trên Cài đặt, chọn đồ từ Thư viện đồ.
+    2. m7 Lệnh nhà/warp/tpa: "Bổ sung /back cho người chơi" (hiện người chơi không có /back).
+    3. m8 /caidat: "Tắt nhận TPA nhưng vẫn nhận được" → lỗi, kiểm PlayerSettings chặn tpa (có thể Essentials /tpa đi đường khác, vd /tpahere, /etpa).
+- Danh sách tay: `docs/TEST-CHECKLIST.md` (mục 4t mới cho 20/10).
 
 ### Quy tắc mới 20/10 (người dùng yêu cầu, giữ)
 - **KHÔNG chữ in đậm** (&l, §l, <bold>, <b>) ở mọi chữ người chơi thấy: font tiếng Việt vẽ đậm bị nhòe như 3D. Thêm plugin/bản dịch:

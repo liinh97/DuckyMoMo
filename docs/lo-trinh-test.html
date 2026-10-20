@@ -1,0 +1,590 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Lộ trình test DuckyMoMo</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Bố cục: cột trái là bản đồ các cụm (tiến độ từng cụm), cột phải là sổ test của cụm đang mở. Chất liệu: sổ tay ngoài hiện trường, xanh rêu như khối cỏ. */
+:root{
+  --bg:#f1f4ef; --panel:#ffffff; --ink:#18211a; --muted:#5a6a5d; --line:#d5ddd3;
+  --moss:#3f7a3a; --moss-soft:#e3eedf; --earth:#8a5a2b;
+  --ok:#2f8a47; --ok-soft:#dff2e3; --err:#c23b31; --err-soft:#fbe3e0; --skip:#a87a12; --skip-soft:#f7edd2;
+  --code-bg:#eef2ec; --code-fg:#2d4a2b;
+  --f-body:"Be Vietnam Pro",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Consolas,monospace;
+  --r:12px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#111511; --panel:#181e18; --ink:#e4ebe2; --muted:#9aa99b; --line:#2a342a;
+  --moss:#7cc06f; --moss-soft:#1f2c1e; --earth:#d29a5e;
+  --ok:#5fcf7a; --ok-soft:#183020; --err:#f07a6e; --err-soft:#3a1c19; --skip:#e0b44a; --skip-soft:#352b12;
+  --code-bg:#1f271f; --code-fg:#b9e3a8; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#111511; --panel:#181e18; --ink:#e4ebe2; --muted:#9aa99b; --line:#2a342a;
+  --moss:#7cc06f; --moss-soft:#1f2c1e; --earth:#d29a5e;
+  --ok:#5fcf7a; --ok-soft:#183020; --err:#f07a6e; --err-soft:#3a1c19; --skip:#e0b44a; --skip-soft:#352b12;
+  --code-bg:#1f271f; --code-fg:#b9e3a8; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.6;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 60px}
+.wrap{max-width:1240px;margin:0 auto;display:grid;gap:20px}
+h1,h2,h3{text-wrap:balance;line-height:1.25;margin:0}
+code{font-family:var(--f-mono);font-size:.86em;background:var(--code-bg);color:var(--code-fg);padding:.08em .38em;border-radius:5px;overflow-wrap:anywhere}
+b{font-weight:700}
+button{font:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--moss);outline-offset:2px}
+
+/* đầu trang */
+.top{display:grid;grid-template-columns:1fr auto;gap:16px 24px;align-items:end;border-bottom:2px solid var(--ink);padding-bottom:16px}
+.top h1{font-size:clamp(1.6rem,3.4vw,2.4rem);font-weight:800;letter-spacing:-.02em}
+.top p{margin:6px 0 0;color:var(--muted);max-width:62ch}
+.meter{display:grid;gap:6px;min-width:240px}
+.meter .nums{display:flex;gap:14px;font-size:.85rem;font-variant-numeric:tabular-nums;flex-wrap:wrap}
+.meter .nums span b{font-size:1.25rem;margin-right:3px}
+.n-ok b{color:var(--ok)}.n-err b{color:var(--err)}.n-skip b{color:var(--skip)}.n-left b{color:var(--muted)}
+.bar{height:10px;border-radius:99px;background:var(--line);display:flex;overflow:hidden}
+.bar i{display:block;height:100%}
+.bar .ok{background:var(--ok)}.bar .err{background:var(--err)}.bar .skip{background:var(--skip)}
+@media (max-width:720px){.top{grid-template-columns:1fr}.meter{min-width:0}}
+
+/* hướng dẫn chung */
+.howto{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.howto div{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;font-size:.92rem}
+.howto h3{font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:var(--moss);margin-bottom:4px}
+.howto p{margin:0}
+@media (max-width:860px){.howto{grid-template-columns:1fr}}
+
+/* khung chính */
+.main{display:grid;grid-template-columns:280px minmax(0,1fr);gap:24px;align-items:start}
+@media (max-width:900px){.main{grid-template-columns:1fr}}
+nav.map{position:sticky;top:calc(env(safe-area-inset-top,0px) + 12px);display:grid;gap:4px;max-height:calc(100vh - 40px);overflow:auto;padding-right:4px}
+@media (max-width:900px){nav.map{position:static;max-height:none;grid-template-columns:repeat(auto-fill,minmax(220px,1fr))}}
+.cl{display:grid;grid-template-columns:auto 1fr auto;gap:4px 10px;align-items:center;text-align:left;border:1px solid transparent;background:none;color:var(--ink);padding:8px 10px;border-radius:10px}
+.cl:hover{background:var(--panel);border-color:var(--line)}
+.cl.on{background:var(--panel);border-color:var(--moss)}
+.cl .no{font-family:var(--f-mono);font-size:.78rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.cl .nm{font-weight:600;font-size:.92rem;line-height:1.3}
+.cl .ct{font-family:var(--f-mono);font-size:.75rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.cl .mini{grid-column:2/4;height:4px;border-radius:9px;background:var(--line);display:flex;overflow:hidden}
+.cl .mini i{display:block;height:100%}
+.cl.has-err .ct{color:var(--err);font-weight:600}
+
+/* cụm */
+section.cluster{display:grid;gap:16px;min-width:0}
+.ch{display:grid;gap:6px}
+.ch .eyebrow{font-family:var(--f-mono);font-size:.78rem;color:var(--earth);letter-spacing:.04em}
+.ch h2{font-size:clamp(1.3rem,2.4vw,1.75rem);font-weight:800;letter-spacing:-.01em}
+.ch p{margin:0;color:var(--muted);max-width:70ch}
+.boxes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+@media (max-width:760px){.boxes{grid-template-columns:1fr}}
+.box{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;min-width:0}
+.box h3{font-size:.8rem;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}
+.box.prep h3{color:var(--moss)}
+.box.warn{border-color:color-mix(in srgb,var(--skip) 45%,var(--line))}
+.box.warn h3{color:var(--skip)}
+.box ul{margin:0;padding-left:18px;display:grid;gap:4px;font-size:.92rem}
+
+.tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.tools .seg{display:flex;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--panel)}
+.tools .seg button{border:0;background:none;color:var(--muted);padding:6px 12px;font-size:.85rem;font-weight:600}
+.tools .seg button.on{background:var(--ink);color:var(--bg)}
+.tools input{flex:1 1 200px;min-width:0;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:10px;padding:7px 12px;font:inherit;font-size:.9rem}
+.btn{border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:10px;padding:6px 12px;font-size:.85rem;font-weight:600}
+.btn:hover{border-color:var(--moss)}
+
+/* mục test */
+.items{display:grid;gap:10px}
+.it{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);display:grid;grid-template-columns:4px minmax(0,1fr);overflow:hidden}
+.it .stripe{background:var(--line)}
+.it.s-ok .stripe{background:var(--ok)}.it.s-err .stripe{background:var(--err)}.it.s-skip .stripe{background:var(--skip)}
+.it .body{padding:12px 16px;display:grid;gap:8px;min-width:0}
+.it .head{display:flex;gap:12px;align-items:flex-start;justify-content:space-between;flex-wrap:wrap}
+.it .title{display:flex;gap:10px;align-items:baseline;min-width:0;flex:1 1 300px}
+.it .id{font-family:var(--f-mono);font-size:.75rem;color:var(--muted);flex:none}
+.it h4{margin:0;font-size:1rem;font-weight:700;line-height:1.35}
+.state{display:flex;gap:6px;flex:none}
+.state button{border:1px solid var(--line);background:none;color:var(--muted);border-radius:8px;padding:4px 10px;font-size:.8rem;font-weight:700}
+.state button[data-v="ok"].on{background:var(--ok-soft);color:var(--ok);border-color:var(--ok)}
+.state button[data-v="err"].on{background:var(--err-soft);color:var(--err);border-color:var(--err)}
+.state button[data-v="skip"].on{background:var(--skip-soft);color:var(--skip);border-color:var(--skip)}
+dl.d{margin:0;display:grid;grid-template-columns:96px minmax(0,1fr);gap:4px 12px;font-size:.92rem}
+dl.d dt{color:var(--muted);font-size:.78rem;text-transform:uppercase;letter-spacing:.06em;padding-top:2px}
+dl.d dd{margin:0;min-width:0}
+dl.d dd.exp{color:var(--ok)}
+:root[data-theme] dl.d dd.exp, dl.d dd.exp{font-weight:500}
+dl.d dd.fix{color:var(--err)}
+@media (max-width:560px){dl.d{grid-template-columns:1fr;gap:0}dl.d dt{padding-top:6px}}
+.note{display:grid;gap:4px}
+.note textarea{width:100%;min-height:58px;resize:vertical;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:8px;padding:8px 10px;font:inherit;font-size:.9rem}
+.note .saved{font-size:.75rem;color:var(--muted)}
+.empty{color:var(--muted);padding:20px;text-align:center;border:1px dashed var(--line);border-radius:var(--r)}
+.status{font-size:.8rem;color:var(--muted)}
+.toast{position:fixed;left:50%;bottom:calc(16px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:8px 16px;border-radius:10px;font-size:.88rem;opacity:0;transition:opacity .2s;pointer-events:none}
+.toast.show{opacity:1}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div>
+      <h1>Lộ trình test DuckyMoMo</h1>
+      <p>Đi theo đúng thứ tự một người chơi trải nghiệm: vào server, lên rank, làm kinh tế, chế đồ, đánh quái, lập nước, công thành. Mỗi mục có cách làm, kết quả đúng, lý do và chỗ sửa khi sai. Bấm <b>Đạt</b>, <b>Lỗi</b> hoặc <b>Bỏ qua</b>; mục lỗi ghi chú lại để Claude đọc và sửa.</p>
+    </div>
+    <div class="meter" aria-live="polite">
+      <div class="nums" id="totNums"></div>
+      <div class="bar" id="totBar"></div>
+      <div class="status" id="saveStatus">Đang kết nối nơi lưu kết quả…</div>
+    </div>
+  </header>
+
+  <div class="howto">
+    <div><h3>Trước khi test</h3><p>Chuẩn bị 3 tài khoản: <b>admin</b> (Linh), <b>người chơi A</b> (Java, không quyền), <b>người chơi B</b> (điện thoại Bedrock nếu được). Test bằng tài khoản thường mới thấy đúng cái người chơi thấy; admin thường bỏ qua được giới hạn.</p></div>
+    <div><h3>Khi đổi Cài đặt để thử</h3><p>Ghi lại số cũ trước khi sửa. Bấm <b>Lưu và áp dụng</b> là có hiệu lực ngay trong game; web cập nhật sau 30–60 giây. Thử xong nhớ trả về số cũ. Một số mục ghi rõ cần khởi động lại.</p></div>
+    <div><h3>Khi gặp lỗi</h3><p>Bấm <b>Lỗi</b>, ghi: làm gì, thấy gì, giờ nào, tài khoản nào. Xem log: <code>docker compose logs banghoi-1 --since 10m</code>. Trước khi khởi động lại bất kỳ server nào: kiểm có ai online bằng một lệnh riêng.</p></div>
+  </div>
+
+  <div class="main">
+    <nav class="map" id="map" aria-label="Các cụm test"></nav>
+    <section class="cluster" id="cluster"></section>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* Nội dung lộ trình. id cố định để kết quả không lệch khi sửa câu chữ.
+   Trường mục: t = việc test, b = cách làm, k = kết quả đúng, w = vì sao, f = nếu sai, c = cài đặt liên quan. */
+const PLAN = [
+{id:"cb", ten:"Chuẩn bị", mo:"Làm một lần trước mọi cụm. Đảm bảo có đường lui nếu thử hỏng thứ gì.",
+ prep:["Sao lưu tay trước đợt test lớn: kiểm <code>docker compose ps</code> các dịch vụ backup-* đang chạy, hoặc chụp lại thư mục <code>data/banghoi-1</code>.","Mở sẵn 2 tab: trang quản trị › Cài đặt và trang chủ web. Một cửa sổ terminal để xem log.","Tạo người chơi A, B bằng tên mới (chưa từng vào) để thấy đúng trải nghiệm người mới."],
+ warn:["Không test phá huỷ (cướp thị trấn, /choilai, xoá dữ liệu) trên tài khoản hoặc thị trấn người chơi thật.","Lệnh admin như <code>/mua dat</code>, <code>/mua sukien</code>, <code>/danhphan dat</code> ghi đè trạng thái: thử xong phải trả về (<code>tudong</code> hoặc bậc cũ)."],
+ items:[
+ {id:"cb1",t:"Các container đều chạy",b:"<code>docker compose ps</code> trong thư mục DuckyMoMo.",k:"proxy, relay, lobby, banghoi-1, practice-1, sangtao-1, panel, site, mariadb, các backup-* đều Up; không cái nào Restarting.",f:"Container Restarting: <code>docker compose logs &lt;tên&gt; --tail 80</code> rồi gửi Claude."},
+ {id:"cb2",t:"Log khởi động sạch",b:"<code>docker compose logs banghoi-1 --since 30m | grep -iE \"SEVERE|ERROR|Exception\" | head</code>",k:"Không có lỗi plugin nào bị tắt. Dòng <code>Votifier zip file closed</code> lúc tắt server là vô hại.",w:"Plugin lỗi lúc bật thì mọi tính năng phụ thuộc nó đều hỏng, test sau sẽ tốn công vô ích."},
+ {id:"cb3",t:"Tài khoản admin có quyền mà không cần OP",b:"Vào sảnh bằng tài khoản Linh, gõ <code>/lp</code>, <code>/dmm</code>, <code>/gamemode creative</code>.",k:"Đều chạy. Người chơi A gõ cùng lệnh thì bị từ chối.",f:"Kiểm nhóm LuckPerms của Linh: <code>/lp user Linh info</code>."},
+ ]},
+
+{id:"vao", ten:"Vào server & đăng nhập", mo:"Cửa ngõ của mọi người chơi. Lỗi ở đây là mất người ngay từ đầu nên test kỹ nhất, cả máy tính lẫn điện thoại.",
+ prep:["Java: địa chỉ <code>mc.goc6.io.vn</code>. Bedrock: <code>mc.goc6.io.vn</code> cổng <code>19132</code>.","Thử từ mạng ngoài (4G) ít nhất một lần, không chỉ wifi nhà: người chơi thật vào qua VPS."],
+ warn:["Phiên đăng nhập giữ 1 giờ theo IP: thử lại nhiều lần trên cùng mạng sẽ không bị hỏi mật khẩu, đừng tưởng là lỗi.","Sai mật khẩu nhiều lần sẽ bị khoá tạm 10–30 phút: dùng tài khoản thử, đừng thử trên tài khoản admin."],
+ items:[
+ {id:"v1",t:"Java bản mới nhất vào được, captcha bản đồ",b:"Tài khoản CHƯA từng vào (tên mới): Minecraft Java bản mới nhất → Multiplayer → Add Server → <code>mc.goc6.io.vn</code>.",k:"Lần đầu: rơi xuống một khoảng trống, cầm tấm bản đồ có chữ; gõ đúng chữ vào chat → báo xác minh xong và bị đá 1 lần → vào lại thì tới sảnh, yêu cầu đăng ký. Tài khoản đã xác minh vào thẳng, kể cả sau khi khởi động lại proxy.",w:"Captcha vẽ trên bản đồ, bot không chép chữ từ chat được. Người chơi điện thoại (Bedrock) không phải làm.",f:"Không kết nối: kiểm proxy và relay (<code>docker compose ps proxy relay</code>). Tạo lại proxy thì phải tạo lại relay. Cấu hình captcha: <code>proxy/plugins/sonar/config.yml</code>."},
+ {id:"v2",t:"Java bản cũ (1.13–1.20) vào được",b:"Dùng launcher chọn bản 1.16 hoặc 1.20.",k:"Vào được, chữ và menu hiển thị bình thường. Bản 1.7–1.12 bị chặn kèm thông báo.",w:"ViaVersion/ViaBackwards cho nhiều bản client; người Việt hay dùng TLauncher bản cũ."},
+ {id:"v3",t:"Đăng ký và đăng nhập",b:"Người chơi A: <code>/register matkhau matkhau</code>. Thoát, đổi mạng (wifi ↔ 4G), vào lại: <code>/login matkhau</code>.",k:"Đăng ký xong chuyển vào sảnh. Đổi mạng thì bị hỏi mật khẩu; cùng mạng trong 1 giờ thì không.",c:"Toàn mạng › Sảnh › Đăng nhập (AuthMe): thời gian giữ phiên.",w:"Giữ phiên 1 giờ thay vì 24 giờ để giảm rủi ro người khác dùng chung mạng vào trộm."},
+ {id:"v4",t:"Mật khẩu yếu bị từ chối",b:"Tài khoản mới: <code>/register 123455 123455</code>, rồi <code>/register abcdef abcdef</code>, rồi <code>/register matkhau1 matkhau1</code>. Tài khoản cũ thử <code>/changepassword &lt;mk cũ&gt; 000000</code>.",k:"Cả ba bị từ chối kèm câu \"Mật khẩu phải có cả CHỮ và SỐ…\" hoặc \"quá dễ đoán\". Mật khẩu kiểu <code>vit2026</code> thì được.",w:"Từ 20/10 bắt buộc có cả chữ và số, cộng danh sách mật khẩu hay bị đoán. Tài khoản đã đăng ký trước đó giữ mật khẩu cũ.",f:"Danh sách cấm và quy tắc: <code>lobby/plugins/AuthMe/config.yml</code> (unsafePasswords, allowedPasswordCharacters); nạp lại bằng <code>/authme reload</code> ở sảnh."},
+ {id:"v5",t:"Chặn đoán mật khẩu",b:"Tài khoản thử đã đăng ký: gõ <code>/login</code> sai mật khẩu liên tục (không bị đá ra, gõ lại tại chỗ).",k:"Mỗi lần sai báo \"Sai mật khẩu\", gõ lại được, không bị hỏi captcha chữ. Sai 10 lần trong 30 phút thì IP bị khoá 30 phút (thử bằng tài khoản phụ, mạng 4G).",w:"Captcha chữ AuthMe đã tắt vì chép được và trùng với captcha bản đồ lúc vào lần đầu. Khoá IP + mật khẩu có chữ và số đủ chặn dò mật khẩu.",f:"Xem <code>data/lobby/plugins/AuthMe/authme.log</code>; cấu hình Security.tempban trong <code>lobby/plugins/AuthMe/config.yml</code>."},
+ {id:"v5b",t:"Không lộ tài khoản cùng mạng",b:"Đăng nhập bằng tài khoản thường khi trong nhà có nhiều tài khoản dùng chung mạng.",k:"KHÔNG hiện dòng \"Bạn sở hữu N tài khoản: …\". Câu chào là tiếng Việt.",w:"Ở quán net, 4G dùng chung IP, dòng đó làm lộ tên tài khoản của người khác. Admin xem bằng <code>/authme accounts &lt;tên&gt;</code>."},
+ {id:"v6",t:"Bedrock vào và tự đăng nhập",b:"Điện thoại: Chơi → Máy chủ → Thêm: <code>mc.goc6.io.vn</code> cổng 19132.",k:"Không phải gõ mật khẩu (đăng nhập bằng Xbox). Tên có dấu chấm đầu, vd <code>.ten</code>. Menu hiện dạng nút bấm.",f:"Log proxy: <code>docker logs duckymomo-proxy-1 | grep -iE \"geyser|floodgate\" | tail</code>."},
+ {id:"v7",t:"Bedrock bản 26.40+ qua NetherNet",b:"Điện thoại cập nhật bản mới nhất, vào như trên.",k:"Lần đầu hỏi tin tưởng máy chủ, đồng ý thì vào được, chơi mượt.",w:"Từ 27/10 Bedrock bắt buộc NetherNet; dùng UDP 19133 qua VPS.",f:"<code>docker logs duckymomo-proxy-1 | grep -iE \"nethernet|webrtc|signal\"</code>."},
+ {id:"v8",t:"Skin hiển thị",b:"Người chơi không bản quyền gõ <code>/skin &lt;tên tài khoản có skin&gt;</code>.",k:"Skin đổi ngay, người khác cũng thấy."},
+ {id:"v9",t:"Sảnh: la bàn chọn chế độ",b:"Chuột phải la bàn (điện thoại: chạm giữ), hoặc <code>/menu</code>.",k:"Thấy Bang Hội Chiến (mở), Practice (thử nghiệm nếu có quyền beta). KHÔNG thấy Thái Ấp Sáng Tạo.",w:"Thái Ấp Sáng Tạo chỉ vào qua cổng trong Thái Ấp, không vào thẳng từ sảnh."},
+ {id:"v10",t:"Sảnh được bảo vệ",b:"Người chơi A phá khối, đặt khối, đánh người ở sảnh.",k:"Đều bị chặn kèm thông báo tiếng Việt."},
+ {id:"v11",t:"Cẩm nang /hd",b:"<code>/hd</code> ở sảnh; trên điện thoại cũng mở.",k:"Máy tính: sách, trang 1 là mục lục 11 chương bấm được. Điện thoại: bảng 11 nút.",f:"Trang bị tràn chữ: báo Claude tên chương và số trang."},
+ {id:"v12",t:"Đăng nhập trang web bằng /web",b:"Trong game <code>/web</code> lấy mã, đợi 15–30 phút rồi mới nhập mã trên trang tài khoản web.",k:"Vẫn đăng nhập được (mã sống 60 phút). Sau 60 phút mã hết hạn.",c:"Toàn mạng › Sảnh › Đăng nhập trang web."},
+ ]},
+
+{id:"moi", ten:"Ngày đầu ở Bang Hội Chiến", mo:"Những gì người mới gặp trong 10 phút đầu: quà, bảo vệ, dịch chuyển, giao diện.",
+ prep:["Dùng người chơi A chưa từng vào Bang Hội Chiến.","Có thể <code>/choilai</code> sau này để test lại từ đầu (xem cụm Vận hành)."],
+ warn:["Bảo vệ người mới 15 phút: trong thời gian này người khác không đánh được A. Test PvP thì đợi hết hoặc dùng tài khoản cũ.","/tpr bắt đứng yên 3 giây: di chuyển là huỷ, đó là đúng chứ không phải lỗi."],
+ items:[
+ {id:"m1",t:"Quà tân thủ và xu khởi đầu",b:"Vào Bang Hội Chiến lần đầu, gõ <code>/bal</code>, xem túi đồ.",k:"Có 200 xu và bộ quà tân thủ; tin chào người mới.",c:"Bang Hội Chiến › Người mới › Quà tân thủ."},
+ {id:"m2",t:"Tiền tố Dân Tị Nạn",b:"Nhìn chat và danh sách Tab.",k:"Tên có tiền tố [Tị Nạn]. Đúng 1 nhà (/sethome thứ 2 bị từ chối)."},
+ {id:"m3",t:"Bảo vệ người mới",b:"Người chơi B đánh A trong 15 phút đầu.",k:"Không gây sát thương, có thông báo A đang được bảo vệ."},
+ {id:"m4",t:"Dịch chuyển ngẫu nhiên /tpr",b:"<code>/tpr</code> hoặc bấm NPC ở spawn, chọn vùng.",k:"Danh sách vùng đã mở (Mã Lai, Philippines, Borneo, Java chỉ hiện khi khai hoang xong). Đứng yên 3 giây thì bay tới đất trống.",c:"Thế giới › Dịch chuyển ngẫu nhiên."},
+ {id:"m5",t:"Máu dưới tên và dòng chỉ số",b:"Đứng gần người khác; nhìn thanh trên hotbar.",k:"Dưới tên người khác có số máu ❤. Thanh hành động hiện ❤ máu | ⚔ Cấp | ✦ mana khi đứng yên."},
+ {id:"m6",t:"Bảng bên phải, thanh mẹo, Tab",b:"Quan sát màn hình.",k:"Có bảng bên phải, dòng mẹo chạy trên cùng (có /khobau, /lenhsan…), Tab có rank và [Cấp N].",c:"Hiển thị › Bảng bên phải, boss bar, danh sách Tab."},
+ {id:"m7",t:"Lệnh nhà, warp, tpa",b:"<code>/sethome</code>, <code>/home</code>, <code>/spawn</code>, <code>/warp</code>, <code>/tpa B</code>.",k:"Đều chạy, có thời gian chờ đứng yên. Người chơi không có <code>/back</code>.",c:"Thế giới › Dịch chuyển bằng lệnh."},
+ {id:"m8",t:"Cài đặt cá nhân /caidat",b:"<code>/caidat</code>, tắt Kênh chat chung, Tin nhắn riêng, Nhận TPA; B thử /msg, /tpa A.",k:"Menu 19 ô. B bị chặn kèm câu báo. Staff vẫn gửi được. Tắt Bảng bên phải thì ẩn ngay, vào lại vẫn giữ.",f:"Chi tiết từng ô: cụm Kiểm tra cũ 4g trong TEST-CHECKLIST.md."},
+ {id:"m9",t:"Việt hoá khi máy để tiếng Anh",b:"Đổi ngôn ngữ game sang English, thử /t, /bal, /ah, /emf.",k:"Vẫn là tiếng Việt.",w:"Các plugin bị ép tiếng Việt, không theo ngôn ngữ máy."},
+ ]},
+
+{id:"rank", ten:"Danh phận, rank & role", mo:"Rank chơi miễn phí (danh phận), rank Sứ Giả cho streamer, rank ủng hộ chỉ trang trí, và role staff. Kiểm quyền lợi từng bậc có đúng như Cài đặt không.",
+ prep:["Cài đặt › Người mới › Danh phận: ghi lại số nhà, balo, ô balo, món chợ, đơn thu mua của từng bậc.","Thử nhanh không cần cày: <code>/danhphan dat A dan</code> (rồi lương dân, hào kiệt). Xong trả về bậc cũ."],
+ warn:["Một người có nhiều nhóm (Hào Kiệt + Sứ Giả + rank ủng hộ): quyền lợi lấy số CAO NHẤT, không cộng dồn. Đặt rank khác thấp hơn danh phận thì coi như không có tác dụng.","Rank ủng hộ chỉ được trang trí theo luật Mojang. Nếu thấy rank ủng hộ cho thêm sức mạnh (giáp, sát thương) là sai luật, báo ngay.","Giờ chơi AFK không tính vào yêu cầu danh phận."],
+ items:[
+ {id:"r1",t:"Menu /danhphan",b:"Người chơi A gõ <code>/danhphan</code>.",k:"4 thẻ: Dân Tị Nạn → Dân → Lương Dân → Hào Kiệt, mỗi yêu cầu có ✔/✘ đúng với /hoatdong, /capdo, chương 1. Thẻ ◆ Sứ Giả bấm vào hiện cách liên hệ."},
+ {id:"r2",t:"Lên Dân bằng cách chơi thật",b:"Chơi đủ 6 giờ thật + xong chương 1 Già Làng, bấm Dân trong menu.",k:"Lên Dân, cả server được báo, tiền tố [Dân].",w:"Lên rank là bấm nhận, không tự động: người chơi có cảm giác tự tay giành được.",f:"Xong chương 1 mà ✘: <code>/lp user A permission check duckymomo.cotruyen.c1</code>."},
+ {id:"r3",t:"Quyền lợi theo bậc: nhà",b:"<code>/danhphan dat A dan</code> → đặt nhà tới khi bị chặn.",k:"Số nhà đúng như Cài đặt bậc Dân. Đổi số trên Cài đặt rồi Lưu → đặt được thêm, không cần gõ lệnh LuckPerms."},
+ {id:"r4",t:"Quyền lợi theo bậc: chợ đấu giá /ah",b:"Treo bán tới khi bị chặn.",k:"Số món treo đúng theo bậc (Tị Nạn 2)."},
+ {id:"r5",t:"Balo /balo",b:"Bậc có balo: <code>/balo</code>, để đồ, thoát, vào lại. Đang đánh người thì mở thử.",k:"Đồ còn nguyên. Số balo và số ô đúng Cài đặt. Đang giao tranh hoặc ở vùng vây đang đánh thì không mở được.",w:"Chặn mở balo khi đánh nhau để không giấu đồ tránh rơi khi chết.",f:"Giảm số ô trong Cài đặt: đồ ở ô bị khoá vẫn giữ, không mất."},
+ {id:"r6",t:"Quyền lợi theo bậc: đơn thu mua, vòng quay",b:"<code>/donhang tao</code> tới giới hạn; xem thời gian chờ vé <code>/vongquay</code>.",k:"Số đơn đúng bậc; bậc cao nhận vé nhanh hơn theo %."},
+ {id:"r7",t:"Rank Sứ Giả (cấp tay)",b:"<code>/lp user A parent add media</code>, xem tiền tố, /sethome, /balo, <code>/kit media</code>.",k:"Tiền tố ◆ Sứ Giả, quyền lợi theo Cài đặt › Quyền lợi theo rank khác. Kit nhận lại sau 3 ngày.",c:"Người mới › Quyền lợi theo rank khác (Sứ Giả, ủng hộ, staff)."},
+ {id:"r8",t:"Rank ủng hộ chỉ là trang trí",b:"Cấp rank ủng hộ cho A (theo trang Role & rank), xem quyền lợi.",k:"Có tiền tố, hiệu ứng hạt, đồ trang trí. Không có thêm giáp, sát thương, tiền.",w:"Luật Mojang cấm bán lợi thế chơi."},
+ {id:"r9",t:"Role staff",b:"Trang quản trị › Role & rank: gán helper cho A.",k:"A có tiền tố staff và đúng quyền của role đó; trang Role chỉ cho người quản lý thấy role mình được quản.",f:"Ai không phải admin mà sửa được role cao hơn mình là lỗi bảo mật, báo ngay."},
+ {id:"r10",t:"Quân hàm cần 5 giờ chơi",b:"Vua phong quân hàm cho người dưới 5 giờ chơi.",k:"Bị từ chối; đủ 5 giờ thì được."},
+ ]},
+
+{id:"kt", ten:"Kinh tế & thu nhập hằng ngày", mo:"Tiền vào (nghề, bán, quà hằng ngày) và tiền ra (chợ, shop, phí). Mục tiêu: không có chỗ in tiền vô hạn.",
+ prep:["Ghi lại số dư <code>/bal</code> trước mỗi thử để tính chênh lệch.","Cài đặt › Shop › Bảng giá bán (/sell), Nghề › từng nghề: biết giá trước khi thử."],
+ warn:["Nghề (Jobs) trả tiền cho hành động, /sell trả tiền cho vật phẩm: một hành động có thể ăn 2 lần (chặt gỗ được tiền nghề, bán gỗ lại được tiền). Kiểm tổng thu nhập một giờ có hợp lý không.","Đồ từ lồng quái và máy farm: phần lớn hệ thống không tính (pet, Thăng Cấp, Xu Quái). Nếu thấy máy farm vẫn hái ra nhiều tiền, ghi lại.","Chợ /ah có thể chỉ mở trong đất hoà bình (tuỳ Cài đặt). Bị chặn ở chỗ khác là đúng."],
+ items:[
+ {id:"k1",t:"Nghề ra tiền",b:"<code>/jobs join</code> Thợ mỏ, đào 20 quặng; Tiều phu chặt gỗ.",k:"Tiền và kinh nghiệm nghề tăng mỗi lần; đặt rồi phá lại khối của mình không ra tiền.",c:"Bang Hội Chiến › Nghề."},
+ {id:"k2",t:"Bán cho server /sell",b:"<code>/sell hand</code>, <code>/sell all</code>.",k:"Giá khớp bảng Cài đặt. Đồ không có giá thì không bán được."},
+ {id:"k3",t:"Chuyển tiền",b:"<code>/pay B 100</code>; thử số âm và số lẻ.",k:"B nhận đúng; số âm bị từ chối."},
+ {id:"k4",t:"Chợ đấu giá /ah",b:"Treo bán, B mua, để một món hết hạn.",k:"Mua bán chạy, tiền về người bán, món hết hạn vào mục lấy lại. Tiếng Việt toàn bộ.",c:"Shop › Chợ đấu giá /ah."},
+ {id:"k5",t:"Shop rương (QuickShop)",b:"Đặt rương, tạo shop, B mua.",k:"Mua bán đúng giá; người khác không phá được rương shop."},
+ {id:"k6",t:"Đổi đồ trực tiếp /trade",b:"<code>/trade B</code>, cả hai bỏ đồ và xác nhận.",k:"Đổi đúng; một bên huỷ thì đồ trả lại."},
+ {id:"k7",t:"Sàn thu mua /donhang",b:"Cầm 1 món mẫu, <code>/donhang tao 64 2</code>; B nộp hàng.",k:"Tiền bị giữ khi đặt đơn, B nộp thì nhận tiền, người đặt nhận hàng. Đơn cũng hiện trên web."},
+ {id:"k8",t:"Điểm danh, nhiệm vụ, vòng quay",b:"<code>/diemdanh</code>, <code>/nhiemvu</code>, <code>/vongquay</code>.",k:"Nhận quà đúng ngày; nhiệm vụ đếm tiến độ; vé vòng quay theo giờ chơi.",c:"Thưởng & sự kiện."},
+ {id:"k9",t:"Mảnh sự kiện và đổi quà",b:"<code>/doimanh</code>.",k:"Đổi được theo giá; giới hạn mảnh mỗi ngày đúng."},
+ {id:"k10",t:"Vote nhận xu",b:"Vote trên trang danh sách server.",k:"Nhận xu trong game; tên lên bảng vote trên web."},
+ {id:"k11",t:"Thăng Cấp /capdo",b:"<code>/capdo</code>; thử nhanh <code>/capdo dat A 9</code> rồi lên cấp 10.",k:"Điều kiện xu/hạ gục/giờ chơi tô đúng màu; lên cấp trừ xu, +1 điểm; cấp 10 báo cả server.",w:"Hạ quái lồng không tính để không cày bằng máy farm."},
+ {id:"k12",t:"Cửa hàng trang trí /cuahang",b:"Mua một món trang trí bằng xu.",k:"Trừ xu, món dùng được, không cho sức mạnh."},
+ ]},
+
+{id:"che", ten:"Chế đồ, Tinh Luyện & phù phép", mo:"Ba hệ chồng lên nhau: Xưởng (đồ có kỹ năng), Tinh Luyện (nguyên liệu quý), phù phép (CrazyEnchantments, Enchantio).",
+ prep:["Lấy nhanh đồ để thử: <code>/xuong tang &lt;mã&gt; A</code>, <code>/tinhluyen give kimcuong 1</code>.","Cài đặt › Shop › Tinh Luyện và Xưởng chế tạo."],
+ warn:["Món Tinh Luyện là một chiều: không đặt xuống, không bỏ vào bàn chế, đe, bàn rèn. Bị chặn là đúng.","Nhiều món Xưởng mất tác dụng trong vùng vây đang đánh: đó là cố ý để công thành công bằng.","Khoan Đào, Rìu Tiều phá nhiều khối một lúc: kiểm không phá được trong thị trấn người khác hay Thái Ấp người khác."],
+ items:[
+ {id:"c1",t:"Menu Xưởng",b:"<code>/xuong</code>, bấm một món.",k:"20 món; bảng chế 3×3 đúng nguyên liệu; đủ đồ + xu thì chế được, thiếu thì báo thiếu gì."},
+ {id:"c2",t:"Đồ đào/chặt nhiều khối",b:"Khoan Đào 3×3, Đào Hầm 5×5, Rìu Tiều, Gặt Lúa.",k:"Đào đúng mặt nhìn; độ bền trừ theo số khối; không đào được đất người khác.",f:"Phá được đất người khác là lỗi nghiêm trọng (phá hoại)."},
+ {id:"c3",t:"Đồ chiến đấu",b:"Khiên Thần, Kiếm Nhật, Rìu Chiến, Cung Máu, Móc Bay.",k:"Kỹ năng chạy đúng mô tả; trong vùng vây đang đánh thì báo không dùng được."},
+ {id:"c4",t:"Rìu Bán và Bắt Thú",b:"Rìu Bán đánh vào rương mình và rương người khác; Bắt Thú vào bò, pet, quái.",k:"Rương mình bán được, rương người khác bị chặn. Bò thành trứng; pet, thú có chủ, quái không bắt được."},
+ {id:"c5",t:"Tinh Luyện",b:"<code>/tinhluyen</code>, mang 64 khối than, bấm; Shift+bấm với 128 khối.",k:"Ra 1 rồi 2 Tinh Luyện Than. Món có hình riêng (gói tài nguyên), không đặt được."},
+ {id:"c6",t:"Bán món Tinh Luyện",b:"<code>/sell hand</code> cầm món; <code>/tinhluyen ban tatca</code>.",k:"Giá đúng bảng Cài đặt."},
+ {id:"c7",t:"Xu Quái rơi",b:"Giết ~20 quái thường, vài quái EliteMobs, quái từ lồng.",k:"Quái thường ~5%, quái tinh nhuệ ~40%; quái từ lồng không rơi.",c:"Shop › Tinh Luyện: tỉ lệ rơi."},
+ {id:"c8",t:"Tinh Luyện làm nguyên liệu Xưởng",b:"Cài đặt › Xưởng: thêm Tinh Luyện vào một món, Lưu, mở /xuong.",k:"Món đó ghi cần thêm Tinh Luyện; thiếu thì không chế được."},
+ {id:"c9",t:"Tinh Luyện để trade với dân làng",b:"Đặt trade Shopkeepers nhận Tinh Luyện, B đổi bằng món tự luyện.",k:"Đổi được; món giả (đổi tên vật phẩm thường) không đổi được."},
+ {id:"c10",t:"Shop phù phép /ce",b:"Mua sách, đập vào đồ, thử cả vỡ đồ.",k:"Giá và tỉ lệ thành công/vỡ đúng Cài đặt; tên phù phép tiếng Việt.",c:"Shop › Shop phù phép /ce; Phù phép › Bật/tắt từng phù phép."},
+ {id:"c11",t:"Gói tài nguyên",b:"Vào server lần đầu, đồng ý tải gói.",k:"Món Tinh Luyện có hình riêng, biểu tượng font hiện đúng. Từ chối gói thì vẫn chơi được, chỉ thấy hình gốc."},
+ ]},
+
+{id:"mua", ten:"Nông nghiệp, mùa & câu cá", mo:"Mùa mưa/khô đổi theo ngày thật, ảnh hưởng cây, mưa, cá, bắt pet, kho lương. Kèm nấu ăn, đặc sản vùng, kỹ năng nghề.",
+ prep:["Ép mùa để thử: <code>/mua dat mua</code>, <code>/mua dat kho</code>; sự kiện: <code>/mua sukien lu</code>, <code>/mua sukien han</code>.","Thử xong BẮT BUỘC: <code>/mua dat tudong</code> và <code>/mua sukien tudong</code>."],
+ warn:["Hệ số sự kiện NHÂN với hệ số mùa. Vd Hạn hán × mùa khô: khoai chỉ còn ~−2% chứ không chậm hẳn. <code>/mua</code> và web đều đã gộp sẵn, đọc số ở đó.","Bột xương không bị mùa ảnh hưởng (giữ lại có chủ ý, chặn thì quá gắt).","Web giữ số liệu mùa 60 giây: đổi mùa xong đợi 1 phút mới xem web."],
+ items:[
+ {id:"n1",t:"/mua hiển thị đúng",b:"<code>/mua</code> ở mỗi mùa và trong sự kiện.",k:"Tên mùa, ngày còn lại, cây lớn nhanh/chậm (đã gộp sự kiện), được mùa, cá mùa này. Web mục Mùa khớp từng số."},
+ {id:"n2",t:"Cây lớn nhanh/chậm thật",b:"Mùa khô: trồng khoai và lúa cạnh nhau, so sau 1–2 ngày game.",k:"Khoai lớn rõ nhanh hơn lúa. Xương rồng, mía đã thử bằng lệnh và chạy đúng.",w:"Tre và tảo bẹ mới sửa, chưa thử thật: nên để ý."},
+ {id:"n3",t:"Được mùa khi gặt",b:"Gặt 30 cây khoai chín trong mùa khô.",k:"Khoảng 1/4 lần rơi thêm 1 củ. Cây chưa chín không rơi thêm."},
+ {id:"n4",t:"Dưa hấu, bí ngô",b:"Mùa khô: gặt quả mọc từ dây; đặt khối bí ngô từ túi rồi đập.",k:"Quả mọc từ dây có lúc rơi gấp đôi; khối tự đặt thì không.",w:"Chặn nhân đồ bằng cách đặt rồi đập."},
+ {id:"n5",t:"Mưa theo mùa",b:"Theo dõi một buổi mỗi mùa.",k:"Mùa mưa hay mưa và mưa lâu; mùa khô ít mưa, mau tạnh. Lũ: mưa suốt. Hạn hán: không mưa."},
+ {id:"n6",t:"Cá theo mùa",b:"<code>/emf</code> nhật ký; câu ở sông và ở biển mỗi mùa.",k:"Mùa mưa có cá linh, cá lóc đồng, cua đồng…; mùa khô có cá bống, cá kèo; cá cơm, mực, cá mú chỉ ngoài biển mùa khô."},
+ {id:"n7",t:"Bán cá, thi câu",b:"<code>/emf shop</code>; <code>/emf admin competition start</code>.",k:"Bán đúng giá; thi câu xong hạng 1–3 nhận Bùa bắt pet."},
+ {id:"n8",t:"Nấu ăn /nauan",b:"Nấu đủ 5 món; ăn 2 món liền.",k:"Thiếu nguyên liệu báo rõ; ăn món thứ 2 trong 20 phút bị chặn."},
+ {id:"n9",t:"Đặc sản vùng /dacsan",b:"Thị trấn làm chủ vùng; gặt đặc sản ở vùng khác.",k:"Người phe chủ vùng gặt đặc sản ở đâu cũng có % rơi thêm. Liên minh Hoà Bình không làm chủ vùng."},
+ {id:"n10",t:"Kỹ năng nghề /skills",b:"Đào, chặt, câu; thử ở spawn và Thái Ấp.",k:"6 kỹ năng, tiếng Việt; spawn và Thái Ấp không lên; đặt rồi phá không lên; Đấu Trường máu về đúng 10 tim."},
+ ]},
+
+{id:"quai", ten:"Quái, dungeon & khám phá", mo:"Thế giới không có quái tinh nhuệ ngoài trời: phần thưởng mạnh nằm ở dungeon, Lệnh săn, kho báu, Cổng Hoang.",
+ prep:["Đồ thử: <code>/khobau give A</code>, <code>/dungeon cho &lt;mã&gt; A 1</code>, <code>/conghoang tao here</code>.","Admin tìm dungeon ẩn: <code>/dungeon ds</code>."],
+ warn:["Lệnh săn đổi tên từ Truy nã: <code>/truyna</code> vẫn chạy. Chữ Truy nã giờ chỉ dành cho án Hội Bàn Tròn.","Dungeon có điều kiện (nhóm 2–4, pet đủ cấp, giờ mở): bị chặn khi thiếu điều kiện là đúng.","Boss Trái Đất lâm nguy chưa ra mắt: bỏ qua."],
+ items:[
+ {id:"q1",t:"Thanh máu quái",b:"Đánh một con quái.",k:"Thanh máu hiện trên đầu, không đè tên boss EliteMobs. Tắt được trong /caidat."},
+ {id:"q2",t:"Lệnh săn /lenhsan",b:"Đợi lệnh đầu (~2 phút sau khi bật), tới vùng.",k:"Quái phát sáng xuất hiện khi tới gần; ai đánh nhiều nhất (kể cả pet) nhận thưởng; 60 phút không ai hạ thì trốn.",c:"Thế giới › Lệnh săn quái."},
+ {id:"q3",t:"Bản đồ kho báu",b:"<code>/khobau give A</code>, cầm đi dò.",k:"Lạnh/ấm/nóng; tới nơi Shift: lính canh ra; hạ hết thì có quà; rời xa hoặc hết 5 phút thì trả bản đồ."},
+ {id:"q4",t:"Danh sách dungeon",b:"<code>/dungeon</code>.",k:"Chia loại: chìa khoá, ẩn, vé, góp quỹ, Cổng Hoang. Web cùng nội dung theo tab."},
+ {id:"q5",t:"Chuỗi chìa khoá",b:"Vượt Đỉnh Vách Đá; dùng chìa rơi ra.",k:"Trùm cuối rơi chìa cho từng người; dùng chìa mở vĩnh viễn tầng sau. Người chưa có chìa không vào theo nhóm được."},
+ {id:"q6",t:"Vé và góp quỹ",b:"<code>/dungeon mua knights_castle_lair</code>; mở cổng rồi không vào 2 phút; <code>/dungeon gop</code>.",k:"Chỉ trừ vé khi thật sự vào; không vào thì hoàn vé. Góp đủ quỹ mở cho cả server."},
+ {id:"q7",t:"Cổng Hoang",b:"<code>/conghoang tao here</code>; người thường tới Shift ở ô giữa.",k:"Cổng hợp cảnh vật, không phá được; tìm ra thì báo server; thị trấn giữ cổng thu phí người ngoài."},
+ {id:"q8",t:"Cốt truyện chương 1",b:"Tìm Già Làng, chuột phải, đi hết chương.",k:"Hội thoại bấm chọn (Bedrock hiện form); đủ các bước; thưởng xu; <code>/journal</code> tiếng Việt.",f:"NPC chưa đặt thì không có gì để test: đặt bằng <code>/npc create Già Làng</code>."},
+ {id:"q9",t:"Lữ khách /lukhach",b:"<code>/lukhach</code>, tới nói chuyện.",k:"4 lữ khách ở các vùng, kể tin đồn về Cổng Hoang; qua cổng rồi về kể lại thì nhận thưởng."},
+ {id:"q10",t:"Thưởng tiền dungeon không lạm phát",b:"Ghi <code>/bal</code> trước và sau một lượt dungeon.",k:"Tiền rơi hợp lý so với thu nhập nghề một giờ.",w:"EliteMobs mặc định rơi nhiều tiền; nếu quá tay thì giảm hệ số trong Cài đặt Boss & Dungeon."},
+ ]},
+
+{id:"pet", ten:"Pet chiến đấu", mo:"Pet tự bắt, lên cấp, chọn hệ, dùng trong chiến tranh. Không mua bằng tiền thật.",
+ prep:["Lấy dây xích và Bùa bắt pet: <code>/buabatpet give A 3</code>.","Lên cấp nhanh: <code>/mypetadmin exp A 2000</code>."],
+ warn:["Phiên công thành có hoặc không cho pet tuỳ lịch: pet không gây sát thương trong phiên cấm pet là đúng.","Trong vùng vây không bay bằng pet; trong Đấu Trường không cưỡi pet."],
+ items:[
+ {id:"p1",t:"Bắt pet",b:"Đánh thú còn ≤10% máu, đánh tiếp bằng dây xích.",k:"Xác suất bắt; trượt thì thú không mất máu; 3 lần trượt thì thú hoảng chạy. Sói/mèo/ngựa đã thuần của mình bắt chắc chắn."},
+ {id:"p2",t:"Tỉ lệ theo mùa",b:"<code>/bxhpet tyle</code> ở mỗi mùa và khi Lũ.",k:"Mùa mưa Thủy tộc, Nhảy cao hơn; mùa khô Bay, Thú săn cao hơn; Lũ cộng thêm Thủy tộc."},
+ {id:"p3",t:"Chọn hệ và kỹ năng",b:"<code>/petchooseskilltree</code>; lên cấp 15.",k:"5 hệ, mô tả có nhóm loài; mốc cấp báo kỹ năng mới; tên kỹ năng tiếng Việt."},
+ {id:"p4",t:"Cưỡi bay",b:"Pet loài bay, hệ Thú Cưỡi, cấp 5.",k:"Bay được, hết quãng thì rơi không mất máu; ngựa không bay."},
+ {id:"p5",t:"Pet đánh người",b:"Pet A đánh B.",k:"Sát thương giảm 50%; pet giết người thì án/treo thưởng tính cho chủ."},
+ {id:"p6",t:"Cho pet ăn cá",b:"Chuột phải pet bằng cá câu.",k:"No, hồi máu, thêm kinh nghiệm; quá 300 kinh nghiệm/ngày thì chỉ no + hồi máu."},
+ {id:"p7",t:"Bán pet",b:"<code>/pettrade B 100</code>, B chấp nhận.",k:"Trừ/cộng xu đúng, pet sang chủ mới."},
+ {id:"p8",t:"Máy farm không nuôi pet",b:"Pet giết quái từ lồng quái.",k:"Không lên kinh nghiệm."},
+ ]},
+
+{id:"tt", ten:"Thị trấn & quốc gia", mo:"Towny: lập thị trấn, đất, ngân khố, thuế, phá sản, quốc gia.",
+ prep:["Người chơi A đủ giờ chơi (hoặc hạ điều kiện trong Cài đặt › Thị trấn để thử, nhớ trả lại).","Cần ít nhất 3 tài khoản để thử lập quốc gia."],
+ warn:["Đổi thị trấn phải chờ 3 NGÀY THEO LỊCH sau khi rời, không phải 72 giờ chơi.","Ngân khố hết tiền thì PHÁ SẢN (mắc nợ, không lập thêm đất), không bị xoá.","Không lập thị trấn ở Nether, End, thế giới Thái Ấp; cách thị trấn khác tối thiểu 10 ô."],
+ items:[
+ {id:"t1",t:"Lập thị trấn",b:"<code>/t new TenThu</code> khi chưa đủ giờ, rồi khi đủ.",k:"Chưa đủ 3 giờ chơi thật thì bị chặn; đủ giờ và 500 xu thì lập được.",c:"Thị trấn › Đất đai và người chơi thật."},
+ {id:"t2",t:"Mở đất",b:"<code>/t claim</code> nhiều lần; thử sát thị trấn khác.",k:"Giá mỗi ô tăng dần; quá gần thị trấn khác thì bị chặn; số đất theo số dân hoạt động."},
+ {id:"t3",t:"Ngân khố và phí duy trì",b:"<code>/t deposit 100</code>; qua mốc ngày mới (<code>/towny time</code>).",k:"Trừ 10 xu/ngày (thêm 0,5 xu/ô nếu thuộc Hoà Bình). Ngân khố hết thì báo phá sản, không xoá."},
+ {id:"t4",t:"Thuế dân",b:"<code>/t set taxes 5</code>; qua ngày mới.",k:"Dân bị trừ, ngân khố cộng; trưởng làng không bị trừ; dân không đủ tiền thì bị đuổi."},
+ {id:"t5",t:"Chờ đổi thị trấn",b:"B rời thị trấn rồi xin vào thị trấn khác ngay.",k:"Báo còn ~3 ngày mới vào được."},
+ {id:"t6",t:"Lập quốc gia",b:"Thị trấn có 3 dân hoạt động, 1000 xu: <code>/n new</code>.",k:"Thiếu dân hoạt động thì bị chặn. Phí quốc gia 100 xu/ngày."},
+ {id:"t7",t:"Dân hoạt động",b:"<code>/hoatdong</code>.",k:"Chỉ tính phút chơi thật; đứng AFK không tính; 3 giờ/tuần là hoạt động."},
+ ]},
+
+{id:"ct", ten:"Chiến tranh & công thành", mo:"Phần lõi của Bang Hội Chiến. Cần 2 quốc gia và ít nhất 2–4 người. Rút lịch phiên đánh xuống vài phút để thử.",
+ prep:["Cài đặt › Chiến tranh › Lịch công thành: rút giờ phiên tới vài phút nữa. Ghi lại lịch cũ để trả.","Giai đoạn mùa: tuần 1–2 hoà bình (tắt vây thành); đang ở tuần hoà bình thì bật vây thành tạm để thử.","Hai nước: nước Tấn công (A) và nước Phòng thủ (B), mỗi bên có tiền trong ngân khố."],
+ warn:["Liên minh Hoà Bình không bị vây: chọn 2 nước ngoài Hoà Bình.","Thua mà không đủ tiền thì trả dần 7 ngày, không phá sản ngay.","Thoát game khi đang đánh nhau (PvPManager) sẽ bị phạt: thử có chủ ý, đừng nhầm là lỗi."],
+ items:[
+ {id:"w1",t:"Cắm cờ vây thành",b:"Vua A cắm cờ gần thị trấn B.",k:"Trừ quỹ chiến tranh (tăng theo số thị trấn); nước còn nợ phí thuộc địa thì không cắm được."},
+ {id:"w2",t:"Phiên đánh theo lịch",b:"Đợi tới giờ phiên.",k:"Báo trước 60 và 10 phút; ngoài giờ phiên không đánh trong vùng vây; <code>/lichcongthanh</code> đúng.",c:"Chiến tranh › Lịch công thành."},
+ {id:"w3",t:"Kho lương",b:"<code>/kholuong noptat</code>; đánh trong vùng vây vài phút.",k:"Chỉ nộp nông sản/đồ ăn; trong trận được nuôi no, kho trừ 2 điểm/phút/người; kho cạn thì Đói. Hạn hán: nông sản nộp ×1,5."},
+ {id:"w4",t:"Thời tiết trong trận",b:"Đánh lúc đêm, lúc mưa, lúc nắng mùa khô.",k:"Đêm: Bóng tối trừ ai có pet mắt đêm. Mưa: đi bộ Chậm, pet nước mạnh, pet lửa yếu. Nắng gắt: Đói trừ ai có pet lửa."},
+ {id:"w5",t:"Luật pet trong vùng vây",b:"Bay bằng pet cao hơn 3 khối; phiên cấm pet cho pet đánh.",k:"Bị đẩy xuống kèm Rơi chậm; phiên cấm pet thì pet không gây sát thương."},
+ {id:"w6",t:"Kết thúc: cướp và chiếm",b:"Cho A thắng.",k:"Cướp tiền ngân khố B; B thiếu tiền thì nợ trả dần 7 ngày; hoặc chiếm làm thuộc địa (tối đa 3/nước)."},
+ {id:"w7",t:"Thuộc địa và nợ",b:"Qua ngày mới sau khi chiếm.",k:"Nước chiếm trả 50 xu/ngày/thuộc địa; thiếu thì ghi nợ và không cắm cờ mới được (<code>/canbang</code>)."},
+ {id:"w8",t:"Cân bằng: bên yếu được lợi",b:"Bên phòng thủ ít dân hơn một nửa bên tấn công.",k:"Điểm giữ cờ +15%. Bá chủ (≥30% thị trấn) bị đánh vào thì bên tấn công được hoàn 30% quỹ."},
+ {id:"w9",t:"Lính đánh thuê",b:"<code>/linhdanhthue dangky 500</code>; vua thuê; lính nhận.",k:"Trừ ngân khố nước thuê, lính nhận 450; lính vào vùng vây không bị ốm, không đánh được nước thuê; 48 giờ thì hết hạn."},
+ {id:"w10",t:"Treo thưởng",b:"<code>/treothuong dat B 1000</code>; A hạ B. A giết liền 5 người không chết.",k:"Phí 5% không hoàn; người hạ B nhận thưởng. Giết liền 5 thì hệ thống tự treo 500 xu lên A."},
+ {id:"w11",t:"Vũ khí nổ",b:"Thử crystal, anchor, giường ở Overworld trong trận.",k:"Đúng theo Cài đặt Vũ khí nổ (cho hay cấm).",c:"PvP & combat › Vũ khí nổ."},
+ {id:"w12",t:"Bảng xếp hạng mùa",b:"Sau trận xem <code>/bxh</code> và web.",k:"Tấn công thắng +30, phòng thủ thắng +20; Chiến Thần +3 mỗi người có quân hàm hạ được."},
+ ]},
+
+{id:"hb", ten:"Hoà Bình, Hội đồng & Hội Bàn Tròn", mo:"Con đường không chiến tranh và hệ thống xử án. Hai hệ này trái chiều với công thành nên phải thử các trường hợp giao nhau.",
+ prep:["Một thị trấn vào Liên minh Hoà Bình bằng <code>/hoabinh</code> (thị trưởng).","Cần vua của các nước top Bá Chủ để thử Hội Bàn Tròn (dùng tài khoản thử làm vua)."],
+ warn:["Vào Hoà Bình phải chờ vài ngày mới có hiệu lực; rời là mất ngay và 14 ngày mới vào lại.","Giết dân Hoà Bình tự mở án. Hội Bàn Tròn chỉ được phạt thêm, không được tha mức sàn.","Hoà Bình không bao giờ làm Bá chủ, không làm chủ vùng đặc sản, không bị tính phí thuộc địa."],
+ items:[
+ {id:"h1",t:"Vào và rời Hoà Bình",b:"<code>/hoabinh</code> vào; đợi hết thời gian chờ; rời; vào lại ngay.",k:"Chờ đủ ngày mới được bảo vệ; rời mất ngay; vào lại bị chặn 14 ngày.",c:"Thị trấn › Liên minh Hoà Bình."},
+ {id:"h2",t:"Đất Hoà Bình luôn tắt PvP",b:"B đánh A trong đất Hoà Bình.",k:"Không gây sát thương. Shop rương trong đất Hoà Bình miễn thuế."},
+ {id:"h3",t:"Án giết dân Hoà Bình",b:"Kẻ thù giết dân Hoà Bình ngoài đất Hoà Bình.",k:"Tự mở án; kẻ giết bị cấm vào đất Hoà Bình tới khi xử."},
+ {id:"h4",t:"Xử án",b:"Hội Bàn Tròn họp, <code>/bantron</code> bỏ phiếu mức phạt.",k:"Mức: giữ sàn, phạt nặng, truy nã 3 ngày, tù, lưu đày, cấm công thành."},
+ {id:"h5",t:"Truy nã (án)",b:"Xử mức truy nã; người khác hạ kẻ bị truy nã.",k:"Tên đỏ [Truy nã] 3 ngày; người hạ nhận tiền thưởng. Trang tài khoản web của kẻ bị truy nã có cảnh báo."},
+ {id:"h6",t:"Hội đồng Hoà Bình",b:"<code>/hoidong</code>.",k:"Bầu, biểu quyết theo Cài đặt."},
+ {id:"h7",t:"Tổ chức, giấy phép, sự kiện",b:"<code>/tochuc</code>, xin giấy phép, <code>/sukien tao 5 Thử</code>.",k:"Thu phí đúng; sự kiện hiện trên web."},
+ ]},
+
+{id:"ta", ten:"Thái Ấp & Thái Ấp Sáng Tạo", mo:"Đất riêng không bị chiếm, và bản sao sáng tạo của nó trên server riêng.",
+ prep:["A có 5000 xu để <code>/thaiap mua</code>."],
+ warn:["Đồ bên Sáng Tạo không mang về sinh tồn: túi đồ hai bên tách riêng. Mất đồ khi qua lại là LỖI nghiêm trọng.","Không lập thị trấn trong thế giới Thái Ấp; kỹ năng nghề không lên ở đây."],
+ items:[
+ {id:"a1",t:"Mua Thái Ấp",b:"<code>/thaiap mua</code>.",k:"Dịch tới mảnh 50×50 có viền lối mòn; trừ 5000 xu."},
+ {id:"a2",t:"Bảo vệ đất",b:"B phá, đặt, mở rương, đánh thú, đánh A.",k:"Đều bị chặn; không quái sinh ra."},
+ {id:"a3",t:"Mời, ghé, thích, mở rộng",b:"<code>/thaiap moi B</code>, <code>/thaiap ghe</code>, <code>/thaiap thich</code>, <code>/thaiap morong</code>.",k:"B xây được sau khi mời; viền to ra khi mở rộng."},
+ {id:"a4",t:"Bếp Thái Ấp",b:"Nấu <code>/nauan</code> trong Thái Ấp của mình.",k:"Món ghi bếp Thái Ấp, hiệu ứng lâu hơn 50%."},
+ {id:"a5",t:"Qua cổng sáng tạo",b:"<code>/thaiap sangtao</code> → bước vào cổng tím.",k:"Sang sangtao-1, chế độ sáng tạo, đứng đúng mảnh đất mình cùng cỡ."},
+ {id:"a6",t:"Người lạ và lối tắt bị chặn",b:"Người không được mời bước vào cổng; gõ <code>/server sangtao-1</code>.",k:"Bị đẩy ra trước cổng; lệnh /server bị chặn và về sảnh."},
+ {id:"a7",t:"Về sinh tồn giữ nguyên đồ",b:"<code>/thaiap ve</code>.",k:"Đứng trước cổng ở Bang Hội Chiến, túi đồ sinh tồn còn nguyên, không có đồ sáng tạo."},
+ {id:"a8",t:"Đồ chế bị lọc",b:"Ở Sáng Tạo lấy đồ bằng mod NBT (nếu có).",k:"Đồ thường lấy bình thường; đồ chế bị đổi thành bản trơn; TNT không nổ."},
+ ]},
+
+{id:"pvp", ten:"Đấu Trường & Practice", mo:"PvP không mất đồ: Đấu Trường trong Bang Hội Chiến (người + pet) và server Practice riêng.",
+ prep:["Hai tài khoản khác IP nếu muốn thử thưởng (cùng IP chỉ tính giao hữu)."],
+ warn:["Trong Đấu Trường máu cố định 10 tim, kỹ năng nghề không cộng: cố ý để công bằng."],
+ items:[
+ {id:"d1",t:"Vào Đấu Trường",b:"NPC Đấu Trường ở spawn hoặc <code>/warp pvp</code>.",k:"Tới sảnh PvP; bước vào cổng là vào sân chờ; có nút 2v2, cược, thoát."},
+ {id:"d2",t:"Trận 1v1",b:"A đấu B.",k:"Đếm ngược, chết không rơi đồ, kết quả và ELO; thắng nhận +30 kinh nghiệm pet (5 trận/ngày)."},
+ {id:"d3",t:"Practice",b:"Sảnh → Practice; <code>/duel B</code>, <code>/party</code>, hàng chờ.",k:"Kit có sẵn, combat 1.8, tiếng Việt; Bedrock có menu form."},
+ ]},
+
+{id:"web", ten:"Web & trang quản trị", mo:"Trang chủ cho người chơi, trang tài khoản, và trang quản trị cho admin.",
+ prep:["Thử cả máy tính và điện thoại (màn hẹp)."],
+ warn:["Cài đặt áp dụng lên web sau 30–60 giây (bộ nhớ đệm), không cần build lại. Vài câu chữ cố định trong trang (vd 24 loài cá, mùa 3 tháng) không theo Cài đặt."],
+ items:[
+ {id:"x1",t:"Trang chủ tải đủ",b:"Mở trang chủ, đi qua từng mục menu.",k:"Mọi mục có dữ liệu (Mùa, Pet, Dungeon, Đấu Trường, Xếp hạng, Danh vọng); không ô nào kẹt ở Đang tải."},
+ {id:"x2",t:"Điện thoại",b:"Mở trang chủ trên điện thoại.",k:"Menu thả xuống dùng được, không cuộn ngang, chữ không tràn."},
+ {id:"x3",t:"Cài đặt phản ánh lên web",b:"Đổi giá bán một món Tinh Luyện, Lưu, đợi 1 phút, tải lại trang chủ.",k:"Giá mới hiện trên web."},
+ {id:"x4",t:"Trang tài khoản",b:"Đăng nhập bằng mã /web.",k:"Danh phận, pet, Thăng Cấp, kỹ năng nghề, thị trấn, Cài đặt cá nhân đúng; đổi Cài đặt cá nhân áp dụng ngay trong game."},
+ {id:"x5",t:"Trang quản trị › Cài đặt",b:"Đổi một số, Lưu và áp dụng.",k:"Không báo lỗi; trong game có hiệu lực ngay."},
+ {id:"x6",t:"Trang quản trị › Sứ Giả",b:"Có đơn <code>/sugia dangky</code>: duyệt, gia hạn, gỡ.",k:"Rank có hạn 14 ngày; gỡ thì mất tiền tố và quyền lợi."},
+ {id:"x7",t:"Sứ Giả với live TikTok thật",b:"Streamer live TikTok thật, gõ <code>/sugia live</code>; đợi 15 phút.",k:"Cả server thấy thông báo LIVE; trang Sứ Giả tăng phút Xác minh. Chỉ tăng Chưa xác minh thì TikTok đã chặn: báo Claude.",w:"Chưa thử với live thật lần nào."},
+ {id:"x8",t:"Nạp Vàng bằng QR trong game",b:"<code>/rank mua</code>, chọn 20k. Đang cầm một món trên tay.",k:"Tấm bản đồ QR hiện ngay trên tay, không tốn ô; món đang cầm biến mất tạm. Bấm [Huỷ] hoặc Q: món cũ trở lại đúng ô. Quét QR bằng app ngân hàng ra đúng số tiền + nội dung.",w:"QR do server tự vẽ (VietQR đổi sang SVG nên game không đọc được ảnh của họ)."},
+ {id:"x9",t:"Duyệt nạp = cộng Vàng",b:"Bấm [Tôi đã chuyển khoản]; vào trang quản trị › Donate · Vàng bấm Duyệt.",k:"Người chơi được cộng Vàng theo tỉ giá + mốc thưởng, có tin báo trong game; lịch sử ghi lại. Bấm Duyệt lần nữa không cộng thêm.",c:"Toàn mạng › Rank donate › Vàng."},
+ {id:"x10",t:"Mua bằng Vàng",b:"<code>/vang</code>, bấm một món 2 lần; thử món đắt hơn số dư; mua trên trang tài khoản web.",k:"Trừ đúng Vàng, quyền/rank có ngay ở mọi server, món có hạn cộng dồn thời hạn. Thiếu Vàng thì báo thiếu, không trừ.",f:"Mua mà không có quyền: xem lịch sử Vàng có dòng Hoàn không; kiểm <code>/lp user &lt;tên&gt; info</code>."},
+ {id:"x11",t:"Vàng không chuyển, không đổi ra xu",b:"Tìm mọi cách chuyển Vàng cho người khác (lệnh, web).",k:"Không có cách nào. Không có món nào đổi Vàng ra xu hay đồ chơi game.",w:"Luật Mojang: tiền thật chỉ mua trang trí; chặn chợ đen bán Vàng."},
+ ]},
+
+{id:"hack", ten:"Thử phá: lỗ hổng & gian lận", mo:"Đóng vai người muốn phá server. Mỗi mục là một kiểu gian lận người chơi Việt hay thử. Kết quả đúng luôn là: bị chặn, không lợi được gì, và admin xem lại được.",
+ prep:["Dùng tài khoản thử, ghi số dư và túi đồ TRƯỚC mỗi lần thử để biết có nhân được đồ/tiền không.","Mở log để xem: <code>docker compose logs banghoi-1 -f | grep -iE \"grim|dupe|denied|cheat\"</code>.","Thử phía web bằng công cụ dev của trình duyệt (F12 › Network: sửa và gửi lại yêu cầu)."],
+ warn:["Nhân đồ hay xảy ra ở chỗ đồ đi qua 2 nơi: balo, chợ /ah, /trade, bán pet, qua lại server Sáng Tạo, thoát game giữa chừng. Thử thoát game hoặc mất mạng NGAY lúc đang thao tác.","Chống hack bắt nhầm người chơi điện thoại (Bedrock) cũng là lỗi: thử Bedrock đi lại, đào, đánh bình thường xem có bị kick oan.","Đừng thử máy gây lag khi có người chơi thật online."],
+ items:[
+ {id:"s1",t:"Lệnh trước khi đăng nhập",b:"Vào sảnh, CHƯA /login: thử đi lại, mở túi đồ, gõ <code>/server banghoi-1</code>, <code>/msg</code>, chat.",k:"Không làm được gì ngoài /login, /register.",w:"Lỗ hổng kinh điển: người lạ vào tên của bạn rồi dùng lệnh trước khi bị hỏi mật khẩu."},
+ {id:"s2",t:"Giả tên người chơi Bedrock",b:"Java đặt tên bắt đầu bằng dấu chấm, vd <code>.ten</code>, rồi vào.",k:"Bị từ chối hoặc vẫn phải đăng ký mật khẩu. Không được tự đăng nhập như Bedrock.",f:"Vào được không cần mật khẩu = lỗi nghiêm trọng, báo ngay."},
+ {id:"s3",t:"Nhân đồ qua balo",b:"Mở /balo, kéo đồ vào rồi thoát game ngay (hoặc rút mạng). Vào lại kiểm cả túi và balo.",k:"Món đó chỉ ở một chỗ, không có ở cả hai."},
+ {id:"s4",t:"Nhân đồ qua /trade",b:"Đặt đồ, cả hai bấm xác nhận cùng lúc; một bên thoát game ngay khi bấm.",k:"Hoặc đổi xong, hoặc trả lại; không ai có thêm."},
+ {id:"s5",t:"Nhân đồ qua chợ /ah",b:"Treo bán rồi gỡ ngay khi B đang bấm mua; hai người mua cùng lúc.",k:"Chỉ một người mua được; người bán không vừa được tiền vừa còn đồ."},
+ {id:"s6",t:"Nhân pet",b:"<code>/pettrade</code> rồi thoát game lúc B đang chấp nhận; bán pet đang triệu hồi.",k:"Pet chỉ thuộc một người; tiền trừ đúng một lần."},
+ {id:"s7",t:"Mang đồ từ Sáng Tạo về",b:"Ở sangtao-1: ném đồ, bỏ đồ vào rương, rồi /thaiap ve; thử cả rút mạng khi đang chuyển server.",k:"Không có đồ sáng tạo nào trong túi sinh tồn; ném đồ ở Sáng Tạo bị chặn.",f:"Lọt được đồ = phá kinh tế, báo ngay."},
+ {id:"s8",t:"Đồ giả bằng đe",b:"Đổi tên một khối than thành Tinh Luyện Than hay Xu Quái bằng đe, rồi <code>/sell hand</code>, nộp Xưởng, trade dân làng.",k:"Không bán được giá Tinh Luyện, không dùng làm nguyên liệu.",w:"Món thật có dấu ẩn riêng (PDC), tên và mô tả không quyết định."},
+ {id:"s9",t:"Bán đồ farm",b:"Máy farm quái và lồng quái: bán đồ rơi, kiểm Xu Quái, kinh nghiệm pet, điểm Thăng Cấp.",k:"Xu Quái, pet, Thăng Cấp không nhận từ quái lồng. Ghi lại thu nhập/giờ của máy farm để cân giá."},
+ {id:"s10",t:"Lách giới hạn số lượng",b:"Đặt nhà vượt giới hạn, treo /ah vượt giới hạn, đơn /donhang vượt giới hạn, nhận kit trước hạn.",k:"Đều bị chặn đúng số của bậc."},
+ {id:"s11",t:"Tiền âm và số tràn",b:"<code>/pay B -100</code>, <code>/pay B 1e20</code>, <code>/t deposit -50</code>, <code>/treothuong dat B -1</code>, <code>/dungeon gop &lt;mã&gt; -10</code>.",k:"Từ chối hết; không ai được cộng tiền."},
+ {id:"s12",t:"Nhiều tài khoản lấy quà",b:"2–3 tài khoản cùng IP nhận điểm danh, vòng quay, quà tân thủ, vote.",k:"Đúng giới hạn tài khoản phụ; cùng IP đấu Đấu Trường không có thưởng."},
+ {id:"s13",t:"Vượt bảo vệ đất từ bên ngoài",b:"Đứng ngoài thị trấn/Thái Ấp của A: dùng piston đẩy khối vào, đổ nham/nước, lửa lan, phễu hút rương sát ranh, TNT, Khoan Đào.",k:"Không phá hay lấy được gì bên trong."},
+ {id:"s14",t:"Lách công thành",b:"Đang trong vùng vây: thoát game, ném ngọc ender vào thị trấn đã đóng, dùng elytra, bay pet, dùng món Xưởng bị cấm, mở balo cất đồ.",k:"Thoát game bị phạt (PvPManager); món cấm và bay pet bị chặn; balo không mở được."},
+ {id:"s15",t:"Chèn mã màu và lệnh vào tên",b:"Đặt tên thị trấn, quốc gia, Thái Ấp, pet, shop có <code>&amp;k</code>, <code>§</code>, ký tự lạ, chữ rất dài, <code>&lt;script&gt;</code>.",k:"Trong game không ra chữ nhấp nháy hay nút bấm giả; trên web tên hiện nguyên văn, không chạy mã.",w:"Tên người chơi hiện trên web; nếu web không lọc thì kẻ xấu chèn mã lấy phiên đăng nhập của người khác."},
+ {id:"s16",t:"Sách và bảng làm sập",b:"Viết sách cực dài, biển nhiều ký tự đặc biệt.",k:"Server không lag hay sập; người đọc không bị văng."},
+ {id:"s17",t:"Máy gây lag",b:"Khi server vắng: mạch redstone đồng hồ nhanh, nhồi 200 con bò vào 1 ô, xe goòng chồng chất, trứng sinh vật ở Sáng Tạo.",k:"TPS không tụt mạnh; giới hạn thực thể chặn bớt; Sáng Tạo dừng ở 40 con.",f:"Xem <code>/spark tps</code> trong lúc thử."},
+ {id:"s18",t:"Hack client cơ bản",b:"Nếu có client hack: bay, đi nhanh, đánh xa, X-ray, đánh tự động.",k:"Chống hack phát hiện và xử lý theo Cài đặt; X-ray không lợi nhiều (quặng ẩn).",c:"Chống hack."},
+ {id:"s19",t:"Spam chat và lệnh",b:"Gửi liên tục cùng một câu, chữ in hoa, từ tục, quảng cáo IP server khác.",k:"Bị chặn spam, lọc từ tục, chặn quảng cáo.",c:"Toàn mạng › Chat › Lọc chat."},
+ {id:"s20",t:"Đoán mã /web",b:"Trên trang tài khoản nhập sai mã nhiều lần liên tiếp.",k:"Bị chặn sau vài lần sai (giới hạn tần suất), không đoán mò được.",f:"Không bị chặn = có thể dò mã, báo ngay."},
+ {id:"s21",t:"Giả dữ liệu gửi lên web",b:"F12 › Network: gửi lại yêu cầu đổi Cài đặt cá nhân, trang trí, chơi lại nhưng sửa tên người chơi thành người khác.",k:"Bị từ chối: server lấy tên từ phiên đăng nhập, không tin tên gửi lên.",w:"Đây là kiểu fake dữ liệu FE gửi lên BE."},
+ {id:"s22",t:"Trang quản trị không lộ",b:"Mở trang quản trị bằng trình duyệt ẩn danh (chưa đăng nhập); gọi thẳng đường dẫn <code>/api/...</code>.",k:"Bị yêu cầu đăng nhập; tài khoản không có quyền chỉ thấy phần được cấp."},
+ {id:"s23",t:"Giả đơn ủng hộ",b:"Tạo QR rồi không chuyển tiền; sửa số tiền trong yêu cầu gửi lên.",k:"Không nhận rank khi chưa có tiền vào; số tiền lấy theo gói ở server."},
+ {id:"s24",t:"Vé cổng Sáng Tạo dùng lại",b:"Qua cổng một lần, về, rồi gõ <code>/server sangtao-1</code> hoặc vào lại bằng vé cũ.",k:"Không vào được nếu không qua cổng lần mới."},
+ ]},
+
+{id:"vh", ten:"Vận hành & chống hack", mo:"Việc của chủ server: hiệu năng, sao lưu, chống hack, làm lại mùa.",
+ prep:["Làm khi server vắng hoặc trên tài khoản thử."],
+ warn:["Khởi động lại: luôn kiểm online bằng lệnh riêng trước. Tạo lại proxy thì phải tạo lại relay.","/choilai xoá sạch tiến trình của người đó: chỉ thử trên tài khoản thử."],
+ items:[
+ {id:"o1",t:"Hiệu năng lúc đông",b:"Khi có nhiều người: <code>/spark tps</code>.",k:"TPS ~20, mspt < 50. Lag thì chạy profiler (hỏi trước khi tải báo cáo lên)."},
+ {id:"o2",t:"Sao lưu",b:"Xem thư mục sao lưu ở ổ F, kiểm bản mới nhất.",k:"Có bản sao lưu gần đây cho lobby và banghoi-1, kể cả lúc không ai online."},
+ {id:"o3",t:"Chống hack",b:"Thử bay, đi nhanh bằng client hack (nếu có), hoặc xem log chống hack.",k:"Bị phát hiện và xử lý theo Cài đặt; người chơi Bedrock không bị bắt nhầm.",c:"Chống hack."},
+ {id:"o4",t:"Dọn rác",b:"Vứt đồ ra đất, đợi chu kỳ dọn.",k:"Có báo trước; đồ bị dọn đúng giờ; tắt được thông báo trong /caidat."},
+ {id:"o5",t:"Chơi lại /choilai",b:"Tài khoản thử gõ <code>/choilai</code>.",k:"Xác nhận 2 bước; mất tiền, đồ, balo, pet theo Cài đặt; giữ rank ủng hộ và đồ trang trí."},
+ {id:"o6",t:"Tài khoản phụ",b:"<code>/taikhoanphu</code>.",k:"Đúng giới hạn và cách tính."},
+ {id:"o7",t:"Mùa mới (thử trước khi mở mùa thật)",b:"Đọc mục Mở Mùa 1 trong cẩm nang admin; chỉ thử trên server thử.",k:"Cấp Thăng Cấp, kỹ năng nghề về 0; danh hiệu và rank ủng hộ giữ lại."},
+ ]},
+];
+
+/* ---------- trạng thái ---------- */
+const STATE = {};           // id -> {tt, ghi_chu, luc}
+let db = null, cur = PLAN[0].id, filter = "all", q = "";
+const $ = s => document.querySelector(s);
+const ALL = PLAN.flatMap(c => c.items.map(i => ({...i, cl: c.id})));
+const toast = m => { const t = $("#toast"); t.textContent = m; t.classList.add("show"); clearTimeout(toast.h); toast.h = setTimeout(() => t.classList.remove("show"), 1800); };
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+function local(save){
+  try {
+    if (save) localStorage.setItem("lotrinh-test", JSON.stringify(STATE));
+    else Object.assign(STATE, JSON.parse(localStorage.getItem("lotrinh-test") || "{}"));
+  } catch (e) {}
+}
+
+function counts(items){
+  let ok = 0, err = 0, skip = 0;
+  for (const i of items) { const s = STATE[i.id]?.tt; if (s === "ok") ok++; else if (s === "err") err++; else if (s === "skip") skip++; }
+  return {ok, err, skip, left: items.length - ok - err - skip, n: items.length};
+}
+const pct = (a, n) => n ? (a / n * 100).toFixed(2) + "%" : "0%";
+
+function drawTotals(){
+  const c = counts(ALL);
+  $("#totNums").innerHTML = `<span class="n-ok"><b>${c.ok}</b>đạt</span><span class="n-err"><b>${c.err}</b>lỗi</span><span class="n-skip"><b>${c.skip}</b>bỏ qua</span><span class="n-left"><b>${c.left}</b>còn lại / ${c.n}</span>`;
+  $("#totBar").innerHTML = `<i class="ok" style="width:${pct(c.ok,c.n)}"></i><i class="err" style="width:${pct(c.err,c.n)}"></i><i class="skip" style="width:${pct(c.skip,c.n)}"></i>`;
+}
+
+function drawMap(){
+  $("#map").innerHTML = PLAN.map((c, i) => {
+    const k = counts(c.items);
+    return `<button class="cl${c.id === cur ? " on" : ""}${k.err ? " has-err" : ""}" data-c="${c.id}">
+      <span class="no">${String(i + 1).padStart(2, "0")}</span><span class="nm">${esc(c.ten)}</span>
+      <span class="ct">${k.err ? k.err + " lỗi · " : ""}${k.ok + k.skip}/${k.n}</span>
+      <span class="mini"><i style="width:${pct(k.ok,k.n)};background:var(--ok)"></i><i style="width:${pct(k.err,k.n)};background:var(--err)"></i><i style="width:${pct(k.skip,k.n)};background:var(--skip)"></i></span></button>`;
+  }).join("");
+  document.querySelectorAll("#map .cl").forEach(b => b.onclick = () => { cur = b.dataset.c; try { localStorage.setItem("lotrinh-cum", cur); } catch (e) {} drawAll(); window.scrollTo({top: $("#cluster").offsetTop - 12, behavior: "smooth"}); });
+}
+
+function itemHtml(i){
+  const s = STATE[i.id] || {};
+  const row = (lbl, v, cls) => v ? `<dt>${lbl}</dt><dd${cls ? ` class="${cls}"` : ""}>${v}</dd>` : "";
+  return `<article class="it${s.tt ? " s-" + s.tt : ""}" id="it-${i.id}">
+    <div class="stripe"></div>
+    <div class="body">
+      <div class="head">
+        <div class="title"><span class="id">${i.id}</span><h4>${i.t}</h4></div>
+        <div class="state" role="group" aria-label="Kết quả">
+          <button data-i="${i.id}" data-v="ok" class="${s.tt === "ok" ? "on" : ""}">Đạt</button>
+          <button data-i="${i.id}" data-v="err" class="${s.tt === "err" ? "on" : ""}">Lỗi</button>
+          <button data-i="${i.id}" data-v="skip" class="${s.tt === "skip" ? "on" : ""}">Bỏ qua</button>
+        </div>
+      </div>
+      <dl class="d">${row("Cách làm", i.b)}${row("Đúng là", i.k, "exp")}${row("Vì sao", i.w)}${row("Nếu sai", i.f, "fix")}${row("Cài đặt", i.c)}</dl>
+      ${s.tt === "err" || s.ghi_chu ? `<div class="note"><textarea id="note-${i.id}" data-i="${i.id}" placeholder="Làm gì, thấy gì, giờ nào, tài khoản nào…">${esc(s.ghi_chu || "")}</textarea><span class="saved" id="sv-${i.id}">${s.luc ? "Lưu lúc " + new Date(s.luc).toLocaleString("vi-VN") : ""}</span></div>` : ""}
+    </div></article>`;
+}
+
+function drawCluster(){
+  const c = PLAN.find(x => x.id === cur);
+  const k = counts(c.items);
+  const show = c.items.filter(i => {
+    const s = STATE[i.id]?.tt;
+    if (filter === "left" && s) return false;
+    if (filter === "err" && s !== "err") return false;
+    if (q && !(i.t + " " + i.b + " " + i.k).toLowerCase().includes(q)) return false;
+    return true;
+  });
+  $("#cluster").innerHTML = `
+    <div class="ch"><span class="eyebrow">Cụm ${PLAN.indexOf(c) + 1}/${PLAN.length} · ${k.ok} đạt · ${k.err} lỗi · ${k.left} chưa test</span>
+      <h2>${esc(c.ten)}</h2><p>${c.mo}</p></div>
+    <div class="boxes">
+      <div class="box prep"><h3>Chuẩn bị</h3><ul>${c.prep.map(x => `<li>${x}</li>`).join("")}</ul></div>
+      <div class="box warn"><h3>Lưu ý, chỗ dễ nhầm và tính năng trái chiều</h3><ul>${c.warn.map(x => `<li>${x}</li>`).join("")}</ul></div>
+    </div>
+    <div class="tools">
+      <div class="seg" role="group" aria-label="Lọc">
+        <button data-f="all" class="${filter === "all" ? "on" : ""}">Tất cả</button>
+        <button data-f="left" class="${filter === "left" ? "on" : ""}">Chưa test</button>
+        <button data-f="err" class="${filter === "err" ? "on" : ""}">Lỗi</button>
+      </div>
+      <input id="search" type="search" placeholder="Tìm trong cụm này…" value="${esc(q)}" aria-label="Tìm">
+      <button class="btn" id="copyErr">Chép danh sách lỗi</button>
+    </div>
+    <div class="items">${show.length ? show.map(itemHtml).join("") : `<div class="empty">Không có mục nào khớp bộ lọc.</div>`}</div>`;
+  document.querySelectorAll(".state button").forEach(b => b.onclick = () => setState(b.dataset.i, b.dataset.v));
+  document.querySelectorAll(".tools .seg button").forEach(b => b.onclick = () => { filter = b.dataset.f; drawCluster(); });
+  const se = $("#search");
+  se.oninput = () => { q = se.value.trim().toLowerCase(); const pos = se.selectionStart; drawCluster(); const n = $("#search"); n.focus(); n.setSelectionRange(pos, pos); };
+  $("#copyErr").onclick = copyErrors;
+  document.querySelectorAll(".note textarea").forEach(t => { t.oninput = () => { clearTimeout(t.h); t.h = setTimeout(() => saveNote(t.dataset.i, t.value), 900); }; });
+}
+
+function drawAll(){ drawTotals(); drawMap(); drawCluster(); }
+
+async function write(id){
+  const s = STATE[id];
+  local(true);
+  if (!db) return;
+  try {
+    const ref = db.doc("ketqua/" + id);
+    if (!s || (!s.tt && !s.ghi_chu)) await ref.delete(); else await ref.set(s);
+  } catch (e) { $("#saveStatus").textContent = "Không lưu được lên máy chủ (" + (e.code || "lỗi") + "). Kết quả vẫn giữ trên trình duyệt này."; }
+}
+
+function setState(id, v){
+  const s = STATE[id] || {};
+  const nv = s.tt === v ? "" : v;   // bấm lại lần nữa là bỏ chọn
+  STATE[id] = {tt: nv, ghi_chu: s.ghi_chu || "", luc: Date.now()};
+  write(id);
+  drawAll();
+  if (nv === "err") { const t = document.getElementById("note-" + id); if (t) t.focus(); }
+}
+
+function saveNote(id, text){
+  const s = STATE[id] || {tt: ""};
+  if ((s.ghi_chu || "") === text) return;
+  STATE[id] = {tt: s.tt || "", ghi_chu: text, luc: Date.now()};
+  write(id);
+  const sv = document.getElementById("sv-" + id);
+  if (sv) sv.textContent = "Lưu lúc " + new Date().toLocaleString("vi-VN");
+  drawTotals(); drawMap();
+}
+
+function copyErrors(){
+  const lines = [];
+  for (const c of PLAN) for (const i of c.items) {
+    const s = STATE[i.id];
+    if (s?.tt === "err") lines.push(`[${i.id}] ${c.ten} › ${i.t.replace(/<[^>]+>/g, "")}: ${s.ghi_chu || "(chưa ghi chú)"}`);
+  }
+  const text = lines.length ? "Lỗi khi test DuckyMoMo:\n" + lines.join("\n") : "Chưa có mục lỗi nào.";
+  const done = () => toast(lines.length ? `Đã chép ${lines.length} lỗi, dán cho Claude là xong.` : "Chưa có mục lỗi nào.");
+  if (navigator.clipboard?.writeText) navigator.clipboard.writeText(text).then(done).catch(() => fallback(text));
+  else fallback(text);
+}
+function fallback(text){
+  const ta = document.createElement("textarea"); ta.value = text; document.body.appendChild(ta); ta.select();
+  try { document.execCommand("copy"); toast("Đã chép."); } catch (e) { toast("Không chép được, hãy bôi đen để chép."); }
+  ta.remove();
+}
+
+/* ---------- khởi động ---------- */
+local(false);
+try { const c = localStorage.getItem("lotrinh-cum"); if (c && PLAN.some(p => p.id === c)) cur = c; } catch (e) {}
+drawAll();
+
+(async () => {
+  db = window.claude?.use ? await window.claude.use("db") : null;
+  if (!db) { $("#saveStatus").textContent = "Đang lưu trên trình duyệt này (không kết nối được nơi lưu chung)."; return; }
+  $("#saveStatus").textContent = "Kết quả tự lưu, mở ở máy khác vẫn thấy.";
+  db.collection("ketqua").onSnapshot(snap => {
+    let changed = false;
+    for (const d of snap.docs) {
+      const v = d.data(); const old = STATE[d.id];
+      if (!old || (v.luc || 0) > (old.luc || 0)) { STATE[d.id] = {tt: v.tt || "", ghi_chu: v.ghi_chu || "", luc: v.luc || 0}; changed = true; }
+    }
+    if (changed) {
+      local(true);
+      const a = document.activeElement;
+      if (a && a.tagName === "TEXTAREA") { drawTotals(); drawMap(); } else drawAll();
+    }
+  }, e => { $("#saveStatus").textContent = "Mất kết nối nơi lưu chung (" + e.code + "). Kết quả vẫn giữ trên trình duyệt này."; });
+})();
+</script>
+
+</body></html>

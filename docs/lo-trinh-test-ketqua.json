@@ -1,0 +1,107 @@
+{
+ "cb1": {
+  "ghi_chu": "",
+  "luc": 1792466451176,
+  "tt": "ok"
+ },
+ "cb3": {
+  "ghi_chu": "",
+  "luc": 1792466852267,
+  "tt": "ok"
+ },
+ "m1": {
+  "ghi_chu": "Mặc định vào không có gì, phải nhận từ kits mới có (trong cài đặt có mục kits chưa, bao lâu thì nhận lại được. Mỗi rank lại có một bộ kits khác nhau)\nTrong kits sẽ có đồ mặc định, đồ trong thư viện, xu, ...",
+  "luc": 1792482660483,
+  "tt": "err"
+ },
+ "m2": {
+  "ghi_chu": "",
+  "luc": 1792483021794,
+  "tt": "ok"
+ },
+ "m3": {
+  "ghi_chu": "",
+  "luc": 1792483374697,
+  "tt": "skip"
+ },
+ "m4": {
+  "ghi_chu": "",
+  "luc": 1792483387155,
+  "tt": "ok"
+ },
+ "m5": {
+  "ghi_chu": "",
+  "luc": 1792483393375,
+  "tt": "ok"
+ },
+ "m6": {
+  "ghi_chu": "",
+  "luc": 1792483446639,
+  "tt": "ok"
+ },
+ "m7": {
+  "ghi_chu": "Bổ sung back cho người chơi",
+  "luc": 1792483603941,
+  "tt": "err"
+ },
+ "m8": {
+  "ghi_chu": "Tắt nhận tpa nhưng vẫn nhận được",
+  "luc": 1792484266730,
+  "tt": "err"
+ },
+ "m9": {
+  "ghi_chu": "",
+  "luc": 1792484371961,
+  "tt": "ok"
+ },
+ "v1": {
+  "ghi_chu": "",
+  "luc": 1792467019556,
+  "tt": "ok"
+ },
+ "v10": {
+  "ghi_chu": "",
+  "luc": 1792480886653,
+  "tt": "ok"
+ },
+ "v11": {
+  "ghi_chu": "",
+  "luc": 1792480892739,
+  "tt": "ok"
+ },
+ "v12": {
+  "ghi_chu": "",
+  "luc": 1792480898621,
+  "tt": "ok"
+ },
+ "v2": {
+  "ghi_chu": "",
+  "luc": 1792470584966,
+  "tt": "ok"
+ },
+ "v3": {
+  "ghi_chu": "",
+  "luc": 1792467196898,
+  "tt": "ok"
+ },
+ "v4": {
+  "ghi_chu": "",
+  "luc": 1792475735681,
+  "tt": "ok"
+ },
+ "v5": {
+  "ghi_chu": "",
+  "luc": 1792480866956,
+  "tt": "ok"
+ },
+ "v8": {
+  "ghi_chu": "",
+  "luc": 1792467352521,
+  "tt": "ok"
+ },
+ "v9": {
+  "ghi_chu": "",
+  "luc": 1792467356035,
+  "tt": "ok"
+ }
+}

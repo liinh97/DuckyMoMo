@@ -939,90 +939,6 @@ fm_shop:
   - {label: "5000 xu", cost: {lamnguy: 25}, limit: 0, rewards: [xu 5000]}
   - {label: "16 kim cương", cost: {lamnguy: 40}, limit: 0, rewards: [vat DIAMOND 16]}
   - {label: "Đĩa nhạc Pigstep (trang trí)", cost: {lamnguy: 20}, limit: 1, rewards: [vat MUSIC_DISC_PIGSTEP 1]}
-decor_materials:
-  - {material: DIRT, amount: 64, price: 100, cat: tunhien}
-  - {material: COBBLESTONE, amount: 64, price: 100, cat: tunhien}
-  - {material: SAND, amount: 64, price: 120, cat: tunhien}
-  - {material: GRAVEL, amount: 64, price: 120, cat: tunhien}
-  - {material: OAK_PLANKS, amount: 64, price: 160, cat: xaydung}
-  - {material: STONE, amount: 64, price: 160, cat: tunhien}
-  - {material: CLAY, amount: 64, price: 200, cat: tunhien}
-  - {material: GLASS, amount: 64, price: 250, cat: xaydung}
-  - {material: STONE_BRICKS, amount: 64, price: 250, cat: xaydung}
-  - {material: TORCH, amount: 32, price: 80, cat: xaydung}
-decor_items:
-  - material: LANTERN
-    amount: 8
-    price: 40
-    cat: trangtri
-  - material: SEA_LANTERN
-    amount: 8
-    price: 80
-    cat: trangtri
-  - material: GLOWSTONE
-    amount: 16
-    price: 60
-    cat: trangtri
-  - material: PRISMARINE_BRICKS
-    amount: 32
-    price: 60
-    cat: trangtri
-  - material: PURPUR_BLOCK
-    amount: 32
-    price: 80
-    cat: trangtri
-  - material: WHITE_GLAZED_TERRACOTTA
-    amount: 16
-    price: 40
-    cat: trangtri
-  - material: CYAN_GLAZED_TERRACOTTA
-    amount: 16
-    price: 40
-    cat: trangtri
-  - material: TERRACOTTA
-    amount: 64
-    price: 50
-    cat: trangtri
-  - material: QUARTZ_BLOCK
-    amount: 32
-    price: 80
-    cat: trangtri
-  - material: AMETHYST_BLOCK
-    amount: 16
-    price: 60
-    cat: trangtri
-  - material: CANDLE
-    amount: 16
-    price: 30
-    cat: trangtri
-  - material: FLOWER_POT
-    amount: 16
-    price: 20
-    cat: trangtri
-  - material: ITEM_FRAME
-    amount: 16
-    price: 30
-    cat: trangtri
-  - material: ARMOR_STAND
-    amount: 4
-    price: 40
-    cat: trangtri
-  - material: PAINTING
-    amount: 8
-    price: 30
-    cat: trangtri
-  - material: FLOWER_BANNER_PATTERN
-    amount: 1
-    price: 100
-    cat: trangtri
-  - material: GLOBE_BANNER_PATTERN
-    amount: 1
-    price: 150
-    cat: trangtri
-  - material: GLOW_INK_SAC
-    amount: 16
-    price: 40
-    cat: trangtri
 decor_titles:
   - {id: luukhach, text: "&7[Lữ Khách]", price: 1000}
   - {id: nghenhan, text: "&d[Nghệ Nhân]", price: 3000}
@@ -1759,11 +1675,13 @@ goiqua_list:
 back_on: true
 back_death: true
 decor_categories:
-  - {id: tunhien, name: Khối tự nhiên, icon: GRASS_BLOCK, slot: 11, desc: 'Đất, đá, cát, sỏi, đất sét', sell: []}
-  - {id: xaydung, name: Vật liệu xây, icon: BRICKS, slot: 13, desc: 'Ván gỗ, kính, gạch đá, đuốc', sell: []}
-  - {id: go, name: Gỗ, icon: OAK_LOG, slot: 15, desc: Bán khúc gỗ các loại cho server, sell: ['*_LOG']}
-  - {id: nongsan, name: Nông nghiệp, icon: WHEAT, slot: 20, desc: 'Nông sản, thịt, cá, trứng', sell: [WHEAT, CARROT, POTATO, BEETROOT, MELON_SLICE, PUMPKIN, SUGAR_CANE, COCOA_BEANS, SWEET_BERRIES, EGG, BEEF, PORKCHOP, CHICKEN, MUTTON, COD, SALMON]}
-  - {id: khoangsan, name: Khoáng sản, icon: DIAMOND, slot: 22, desc: 'Than, thỏi kim loại, đá quý', sell: [COAL, COPPER_INGOT, IRON_INGOT, GOLD_INGOT, DIAMOND, EMERALD, LAPIS_LAZULI, REDSTONE, QUARTZ, AMETHYST_SHARD, NETHERITE_SCRAP]}
-  - {id: quai, name: Đồ từ quái, icon: BONE, slot: 24, desc: 'Xương, tơ, thuốc súng, ngọc ender…', sell: [BONE, ROTTEN_FLESH, STRING, SPIDER_EYE, GUNPOWDER, ENDER_PEARL, BLAZE_ROD, GHAST_TEAR, SLIME_BALL, PHANTOM_MEMBRANE, LEATHER, FEATHER, WHITE_WOOL]}
-  - {id: trangtri, name: Trang trí, icon: LANTERN, slot: 30, desc: 'Đèn, gốm men, khung tranh, nến…', sell: []}
-  - {id: danhhieu, name: Danh hiệu, icon: NAME_TAG, slot: 32, desc: 'Chữ hiện cạnh tên, đổi bằng /danhhieu', sell: []}
+  - {id: tunhien, name: "Khối tự nhiên", icon: GRASS_BLOCK, slot: 10, desc: "Đất, đá, cát, băng, khối Nether và End", sell: [], items: [{material: COBBLESTONE, amount: 1, price: 1}, {material: COBBLED_DEEPSLATE, amount: 1, price: 2}, {material: NETHERRACK, amount: 1, price: 1}, {material: DIRT, amount: 1, price: 2}, {material: SAND, amount: 1, price: 2}, {material: GRAVEL, amount: 1, price: 2}, {material: STONE, amount: 1, price: 2}, {material: GRANITE, amount: 1, price: 2}, {material: DIORITE, amount: 1, price: 2}, {material: ANDESITE, amount: 1, price: 2}, {material: DEEPSLATE, amount: 1, price: 3}, {material: TUFF, amount: 1, price: 3}, {material: COARSE_DIRT, amount: 1, price: 3}, {material: RED_SAND, amount: 1, price: 3}, {material: SANDSTONE, amount: 1, price: 3}, {material: RED_SANDSTONE, amount: 1, price: 3}, {material: BASALT, amount: 1, price: 3}, {material: BLACKSTONE, amount: 1, price: 3}, {material: MUD, amount: 1, price: 4}, {material: ROOTED_DIRT, amount: 1, price: 4}, {material: MOSSY_COBBLESTONE, amount: 1, price: 4}, {material: CALCITE, amount: 1, price: 4}, {material: DRIPSTONE_BLOCK, amount: 1, price: 4}, {material: POINTED_DRIPSTONE, amount: 1, price: 4}, {material: SOUL_SAND, amount: 1, price: 4}, {material: SOUL_SOIL, amount: 1, price: 4}, {material: SNOW_BLOCK, amount: 1, price: 4}, {material: SNOWBALL, amount: 1, price: 1}, {material: GRASS_BLOCK, amount: 1, price: 6}, {material: PODZOL, amount: 1, price: 6}, {material: CLAY, amount: 1, price: 6}, {material: ICE, amount: 1, price: 6}, {material: END_STONE, amount: 1, price: 6}, {material: MYCELIUM, amount: 1, price: 8}, {material: MOSS_BLOCK, amount: 1, price: 8}, {material: PACKED_ICE, amount: 1, price: 12}, {material: MAGMA_BLOCK, amount: 1, price: 12}, {material: PRISMARINE, amount: 1, price: 12}, {material: OBSIDIAN, amount: 1, price: 40}, {material: BLUE_ICE, amount: 1, price: 40}]}
+  - {id: go, name: "Khối gỗ", icon: OAK_LOG, slot: 12, desc: "Khúc gỗ, gỗ bóc vỏ, ván các loại", sell: [], items: [{material: "STRIPPED_*", amount: 1, price: 9}, {material: "*_LOG", amount: 1, price: 8}, {material: "*_WOOD", amount: 1, price: 8}, {material: "*_STEM", amount: 1, price: 10}, {material: "*_HYPHAE", amount: 1, price: 10}, {material: BAMBOO_BLOCK, amount: 1, price: 8}, {material: "*_PLANKS", amount: 1, price: 2}, {material: STICK, amount: 1, price: 1}]}
+  - {id: xaydung, name: "Vật liệu xây", icon: BRICKS, slot: 14, desc: "Gạch, bê tông, len, kính, cầu thang, hàng rào", sell: [], items: [{material: PRISMARINE_BRICKS, amount: 1, price: 15}, {material: DARK_PRISMARINE, amount: 1, price: 18}, {material: PURPUR_BLOCK, amount: 1, price: 6}, {material: PURPUR_PILLAR, amount: 1, price: 6}, {material: BRICKS, amount: 1, price: 6}, {material: "*_BRICKS", amount: 1, price: 6}, {material: "POLISHED_*", amount: 1, price: 4}, {material: "CHISELED_*", amount: 1, price: 5}, {material: "CUT_*", amount: 1, price: 4}, {material: "SMOOTH_*", amount: 1, price: 4}, {material: "*_STAIRS", amount: 1, price: 3}, {material: "*_SLAB", amount: 1, price: 1.5}, {material: "*_WALL", amount: 1, price: 3}, {material: "*_CONCRETE_POWDER", amount: 1, price: 4}, {material: "*_CONCRETE", amount: 1, price: 5}, {material: "*_GLAZED_TERRACOTTA", amount: 1, price: 8}, {material: TERRACOTTA, amount: 1, price: 4}, {material: "*_TERRACOTTA", amount: 1, price: 4}, {material: "*_WOOL", amount: 1, price: 4}, {material: "*_CARPET", amount: 1, price: 2}, {material: GLASS, amount: 1, price: 5}, {material: TINTED_GLASS, amount: 1, price: 20}, {material: "*_STAINED_GLASS", amount: 1, price: 6}, {material: GLASS_PANE, amount: 1, price: 2}, {material: "*_GLASS_PANE", amount: 1, price: 2}, {material: "*_FENCE_GATE", amount: 1, price: 6}, {material: "*_FENCE", amount: 1, price: 4}, {material: "*_DOOR", amount: 1, price: 6}, {material: "*_TRAPDOOR", amount: 1, price: 6}, {material: "*_HANGING_SIGN", amount: 1, price: 6}, {material: "*_SIGN", amount: 1, price: 4}, {material: LADDER, amount: 1, price: 2}, {material: SCAFFOLDING, amount: 1, price: 4}, {material: TORCH, amount: 1, price: 1}, {material: SOUL_TORCH, amount: 1, price: 2}]}
+  - {id: nongsan, name: "Nông nghiệp", icon: WHEAT, slot: 28, desc: "Hạt giống, cây non, nông sản, thịt, cá", sell: [], items: [{material: WHEAT_SEEDS, amount: 1, price: 2}, {material: BEETROOT_SEEDS, amount: 1, price: 2}, {material: MELON_SEEDS, amount: 1, price: 4}, {material: PUMPKIN_SEEDS, amount: 1, price: 4}, {material: WHEAT, amount: 1, price: 4}, {material: CARROT, amount: 1, price: 4}, {material: POTATO, amount: 1, price: 4}, {material: BEETROOT, amount: 1, price: 4}, {material: SUGAR_CANE, amount: 1, price: 4}, {material: MELON_SLICE, amount: 1, price: 2}, {material: MELON, amount: 1, price: 12}, {material: PUMPKIN, amount: 1, price: 8}, {material: BAMBOO, amount: 1, price: 2}, {material: CACTUS, amount: 1, price: 4}, {material: COCOA_BEANS, amount: 1, price: 4}, {material: SWEET_BERRIES, amount: 1, price: 3}, {material: GLOW_BERRIES, amount: 1, price: 6}, {material: KELP, amount: 1, price: 2}, {material: DRIED_KELP_BLOCK, amount: 1, price: 10}, {material: HAY_BLOCK, amount: 1, price: 30}, {material: "*_SAPLING", amount: 1, price: 10}, {material: MANGROVE_PROPAGULE, amount: 1, price: 10}, {material: NETHER_WART, amount: 1, price: 10}, {material: BROWN_MUSHROOM, amount: 1, price: 4}, {material: RED_MUSHROOM, amount: 1, price: 4}, {material: CRIMSON_FUNGUS, amount: 1, price: 6}, {material: WARPED_FUNGUS, amount: 1, price: 6}, {material: APPLE, amount: 1, price: 6}, {material: EGG, amount: 1, price: 3}, {material: BONE_MEAL, amount: 1, price: 3}, {material: BEEF, amount: 1, price: 6}, {material: PORKCHOP, amount: 1, price: 6}, {material: CHICKEN, amount: 1, price: 5}, {material: MUTTON, amount: 1, price: 5}, {material: RABBIT, amount: 1, price: 6}, {material: COD, amount: 1, price: 6}, {material: SALMON, amount: 1, price: 7}, {material: "COOKED_*", amount: 1, price: 10}, {material: BREAD, amount: 1, price: 8}, {material: BAKED_POTATO, amount: 1, price: 8}]}
+  - {id: thuocnhuom, name: "Thuốc nhuộm & hoa", icon: RED_DYE, slot: 30, desc: "Thuốc nhuộm đủ màu, hoa các loại", sell: [], items: [{material: "*_DYE", amount: 1, price: 8}, {material: INK_SAC, amount: 1, price: 6}, {material: GLOW_INK_SAC, amount: 1, price: 15}, {material: DANDELION, amount: 1, price: 6}, {material: POPPY, amount: 1, price: 6}, {material: BLUE_ORCHID, amount: 1, price: 6}, {material: ALLIUM, amount: 1, price: 6}, {material: AZURE_BLUET, amount: 1, price: 6}, {material: "*_TULIP", amount: 1, price: 6}, {material: OXEYE_DAISY, amount: 1, price: 6}, {material: CORNFLOWER, amount: 1, price: 6}, {material: LILY_OF_THE_VALLEY, amount: 1, price: 6}, {material: SUNFLOWER, amount: 1, price: 8}, {material: LILAC, amount: 1, price: 8}, {material: ROSE_BUSH, amount: 1, price: 8}, {material: PEONY, amount: 1, price: 8}, {material: PINK_PETALS, amount: 1, price: 6}, {material: TORCHFLOWER, amount: 1, price: 15}, {material: PITCHER_PLANT, amount: 1, price: 15}, {material: SPORE_BLOSSOM, amount: 1, price: 30}]}
+  - {id: trangtri, name: "Trang trí", icon: LANTERN, slot: 32, desc: "Đèn, nến, san hô, lá cây, giường, cờ", sell: [], items: [{material: "*_LEAVES", amount: 1, price: 10}, {material: "*_CANDLE", amount: 1, price: 8}, {material: CANDLE, amount: 1, price: 6}, {material: "*_CORAL_BLOCK", amount: 1, price: 15}, {material: "*_CORAL_FAN", amount: 1, price: 12}, {material: "*_CORAL", amount: 1, price: 12}, {material: "*_FROGLIGHT", amount: 1, price: 40}, {material: LANTERN, amount: 1, price: 15}, {material: SOUL_LANTERN, amount: 1, price: 18}, {material: SEA_LANTERN, amount: 1, price: 30}, {material: GLOWSTONE, amount: 1, price: 20}, {material: CAMPFIRE, amount: 1, price: 15}, {material: SOUL_CAMPFIRE, amount: 1, price: 18}, {material: FLOWER_POT, amount: 1, price: 4}, {material: DECORATED_POT, amount: 1, price: 10}, {material: ITEM_FRAME, amount: 1, price: 8}, {material: GLOW_ITEM_FRAME, amount: 1, price: 15}, {material: PAINTING, amount: 1, price: 8}, {material: ARMOR_STAND, amount: 1, price: 20}, {material: "*_BANNER", amount: 1, price: 15}, {material: "*_BED", amount: 1, price: 20}, {material: BOOKSHELF, amount: 1, price: 30}, {material: CHEST, amount: 1, price: 6}, {material: BARREL, amount: 1, price: 6}, {material: VINE, amount: 1, price: 4}, {material: GLOW_LICHEN, amount: 1, price: 6}, {material: LILY_PAD, amount: 1, price: 6}, {material: AZALEA, amount: 1, price: 10}, {material: FLOWERING_AZALEA, amount: 1, price: 12}, {material: FERN, amount: 1, price: 3}, {material: SHORT_GRASS, amount: 1, price: 2}, {material: TALL_GRASS, amount: 1, price: 3}, {material: SEA_PICKLE, amount: 1, price: 8}]}
+  - {id: khoangsan, name: "Khoáng sản", icon: DIAMOND, slot: 34, desc: "Than, đồng, đá đỏ mua được; sắt, vàng, kim cương chỉ bán", sell: [RAW_COPPER, RAW_IRON, RAW_GOLD, IRON_NUGGET, IRON_INGOT, GOLD_INGOT, DIAMOND, EMERALD, ANCIENT_DEBRIS, NETHERITE_SCRAP, NETHERITE_INGOT, COPPER_BLOCK, IRON_BLOCK, GOLD_BLOCK, DIAMOND_BLOCK, EMERALD_BLOCK, LAPIS_BLOCK, REDSTONE_BLOCK, QUARTZ_BLOCK, AMETHYST_BLOCK], items: [{material: COAL, amount: 1, price: 27}, {material: CHARCOAL, amount: 1, price: 20}, {material: COAL_BLOCK, amount: 1, price: 240}, {material: COPPER_INGOT, amount: 1, price: 20}, {material: REDSTONE, amount: 1, price: 15}, {material: LAPIS_LAZULI, amount: 1, price: 25}, {material: QUARTZ, amount: 1, price: 20}, {material: AMETHYST_SHARD, amount: 1, price: 15}, {material: FLINT, amount: 1, price: 4}, {material: CLAY_BALL, amount: 1, price: 2}, {material: GLOWSTONE_DUST, amount: 1, price: 8}]}
+  - {id: quai, name: "Vật phẩm quái vật", icon: BONE, slot: 38, desc: "Xương, tơ, thuốc súng, ngọc ender, que blaze…", sell: [SHULKER_SHELL, NAUTILUS_SHELL], items: [{material: ROTTEN_FLESH, amount: 1, price: 2}, {material: ARROW, amount: 1, price: 2}, {material: FEATHER, amount: 1, price: 4}, {material: RABBIT_HIDE, amount: 1, price: 6}, {material: BONE, amount: 1, price: 8}, {material: STRING, amount: 1, price: 8}, {material: SPIDER_EYE, amount: 1, price: 10}, {material: PRISMARINE_SHARD, amount: 1, price: 10}, {material: PRISMARINE_CRYSTALS, amount: 1, price: 12}, {material: LEATHER, amount: 1, price: 12}, {material: FERMENTED_SPIDER_EYE, amount: 1, price: 20}, {material: GUNPOWDER, amount: 1, price: 20}, {material: SLIME_BALL, amount: 1, price: 25}, {material: BLAZE_POWDER, amount: 1, price: 30}, {material: MAGMA_CREAM, amount: 1, price: 50}, {material: PHANTOM_MEMBRANE, amount: 1, price: 50}, {material: RABBIT_FOOT, amount: 1, price: 50}, {material: ENDER_PEARL, amount: 1, price: 60}, {material: BLAZE_ROD, amount: 1, price: 60}, {material: ARMADILLO_SCUTE, amount: 1, price: 15}, {material: TURTLE_SCUTE, amount: 1, price: 30}, {material: BREEZE_ROD, amount: 1, price: 40}, {material: GHAST_TEAR, amount: 1, price: 150}]}
+  - {id: khac, name: "Khác", icon: SADDLE, slot: 40, desc: "Dụng cụ, đồ tiện ích", sell: [], items: [{material: PAPER, amount: 1, price: 2}, {material: BOOK, amount: 1, price: 15}, {material: WRITABLE_BOOK, amount: 1, price: 20}, {material: FIREWORK_ROCKET, amount: 1, price: 10}, {material: FISHING_ROD, amount: 1, price: 30}, {material: CARROT_ON_A_STICK, amount: 1, price: 35}, {material: WARPED_FUNGUS_ON_A_STICK, amount: 1, price: 40}, {material: LEAD, amount: 1, price: 40}, {material: BRUSH, amount: 1, price: 25}, {material: EXPERIENCE_BOTTLE, amount: 1, price: 30}, {material: BELL, amount: 1, price: 150}, {material: ANVIL, amount: 1, price: 500}, {material: ENDER_CHEST, amount: 1, price: 400}, {material: SADDLE, amount: 1, price: 300}, {material: NAME_TAG, amount: 1, price: 300}]}
+  - {id: danhhieu, name: "Danh hiệu", icon: NAME_TAG, slot: 42, desc: "Chữ hiện cạnh tên, đổi bằng /danhhieu", sell: [], items: []}

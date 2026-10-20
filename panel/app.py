@@ -270,7 +270,10 @@ def validate(s, v):
             else:
                 mat = str(d.get("material", "")).strip().upper()
                 meta = lib_meta() or {}
-                if not MATERIAL_RE.match(mat) or (meta.get("materials") and mat not in meta["materials"]):
+                if "*" in mat:   # mẫu: *_WOOL = mọi loại len (đồ đặc thù tự bị loại, xem DecorShop.DENY)
+                    if not re.match(r"^\*?[A-Z0-9_]{1,64}\*?$", mat):
+                        raise ValueError(f"{label}: mẫu vật liệu sai \"{mat}\" (vd *_WOOL, STRIPPED_*)")
+                elif not MATERIAL_RE.match(mat) or (meta.get("materials") and mat not in meta["materials"]):
                     raise ValueError(f"{label}: vật liệu không có trong server \"{mat}\"")
                 out.append({"material": mat, "amount": amount, "price": price, **({"cat": cat} if cat else {})})
         return out
@@ -300,8 +303,10 @@ def validate(s, v):
                 if not re.match(r"^\*?[A-Z0-9_]{1,64}\*?$", x):
                     raise ValueError(f"{label} ({cid}): mẫu thu mua sai \"{x}\"")
                 sell.append(x)
+            items = validate({"type": "shopitems", "label": f"{label} ({d.get('name') or cid})"}, d.get("items") or []) if d.get("items") else []
             out.append({"id": cid, "name": DoubleQuotedScalarString(str(d.get("name", "")).strip()[:40] or cid), "icon": icon, "slot": slot,
-                        "desc": DoubleQuotedScalarString(str(d.get("desc", "")).strip()[:80]), "sell": sell})
+                        "desc": DoubleQuotedScalarString(str(d.get("desc", "")).strip()[:80]), "sell": sell,
+                        "items": [{k: v for k, v in it.items() if k != "cat"} for it in items]})
         if not out:
             raise ValueError(f"{label}: cần ít nhất một danh mục")
         return out

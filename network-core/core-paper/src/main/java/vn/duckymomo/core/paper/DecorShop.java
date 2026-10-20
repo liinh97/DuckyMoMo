@@ -39,7 +39,8 @@ import org.bukkit.persistence.PersistentDataType;
  * desc, sell [mẫu vật liệu]); trong danh mục mỗi món ghi giá mua (server bán) và giá bán lại (Essentials worth.yml, /sell), số đang có.
  * Chuột trái: mua 1 lô · Chuột phải: bán 1 lô · Shift + phải: bán hết loại đó (bán qua lệnh /sell của Essentials nên giữ thưởng kinh đô,
  * quỹ khai hoang…). Món chỉ thu mua (không bán) lấy tự động từ worth.yml theo mẫu "sell" của danh mục (vd "*_LOG", "DIAMOND").
- * Món server bán: materials / items (thêm "cat: <mã danh mục>"), titles = danh mục danhhieu. Trả bằng xu, không bán gì tăng sức mạnh.
+ * Món server bán nằm TRONG danh mục: categories[].items [{material | library, amount, price}] (20/10, Cài đặt sửa theo từng danh mục);
+ * materials / items cũ (có "cat:") vẫn đọc được. titles = danh mục danhhieu. Trả bằng xu, không bán gì tăng sức mạnh.
  *  - Mọi người: bấm NPC cửa hàng ở khu shop tại spawn (admin đặt bằng /dmm shopnpc).
  *  - Rank ủng hộ (quyền rank-permission): gõ /cuahang, nhưng CHỈ khi đang đứng trong kinh đô (không mua từ xa được).
  *  - Vật liệu: chỉ server bán, không mua lại; món nào giá mỗi cái <= giá thu mua /sell (Essentials worth.yml) thì tự bỏ (chống lời vô hạn).
@@ -52,6 +53,17 @@ final class DecorShop implements Listener {
     record Cat(String id, String name, Material icon, int slot, String desc, List<String> sell) { }
 
     private final Map<String, Cat> cats = new LinkedHashMap<>();
+
+    /** Đồ ĐẶC THÙ không bao giờ bán theo mẫu (*): quặng, kim loại, đá quý, đồ hiếm, đồ admin, vũ khí/giáp/công cụ… (thêm: decor-shop.khong-ban). */
+    static final List<String> DENY = List.of("*_ORE", "RAW_*", "*_INGOT", "*_NUGGET", "*DIAMOND*", "*EMERALD*", "*NETHERITE*", "*GOLD*", "*IRON*",
+            "*COPPER*", "*LAPIS*", "*REDSTONE*", "*QUARTZ*", "*AMETHYST*", "ANCIENT_DEBRIS", "*_SPAWN_EGG", "SPAWNER", "TRIAL_SPAWNER", "VAULT",
+            "*COMMAND*", "BARRIER", "STRUCTURE_*", "JIGSAW", "LIGHT", "DEBUG_STICK", "BEDROCK", "END_PORTAL_FRAME", "REINFORCED_DEEPSLATE",
+            "ELYTRA", "TOTEM_OF_UNDYING", "BEACON", "NETHER_STAR", "DRAGON_*", "*SHULKER*", "ENCHANTED_*", "*_SMITHING_TEMPLATE", "HEAVY_CORE",
+            "*TRIAL_KEY", "OMINOUS_*", "CONDUIT", "HEART_OF_THE_SEA", "*_HEAD", "*_SKULL", "PETRIFIED_OAK_SLAB", "KNOWLEDGE_BOOK", "INFESTED_*",
+            "*SCULK*", "CALIBRATED_*", "*_SWORD", "*_AXE", "*_PICKAXE", "*_SHOVEL", "*_HOE", "*_HELMET", "*_CHESTPLATE", "*_LEGGINGS", "*_BOOTS",
+            "BOW", "CROSSBOW", "TRIDENT", "MACE", "SHIELD", "*POTION*", "*_BUCKET", "TNT*", "END_CRYSTAL", "RESPAWN_ANCHOR", "LODESTONE",
+            "CRYING_OBSIDIAN", "CHORUS_*", "FROGSPAWN", "*_POTTERY_SHERD", "WITHER_*", "ECHO_SHARD", "RECOVERY_COMPASS", "*_BANNER_PATTERN", "MUSIC_DISC_*",
+            "DISC_FRAGMENT_*", "GOAT_HORN", "SPYGLASS", "CLOCK", "COMPASS", "*_MINECART", "*RAIL", "POWERED_RAIL", "BUDDING_AMETHYST");
 
     /** lib: mã trong Thư viện đồ (bán đồ admin thiết kế), null = đồ thường theo icon. */
     record Offer(String key, String cat, Material icon, int amount, double price, String title, String titleText, String lib) {
@@ -97,12 +109,50 @@ final class DecorShop implements Listener {
         }
         YamlConfiguration worth = YamlConfiguration.loadConfiguration(new File(plugin.getDataFolder().getParentFile(), "Essentials/worth.yml"));
         int skipped = 0;
-        for (Map<?, ?> m : c.getMapList("materials")) {
-            Offer o = item(m, "vatlieu");
-            if (o == null) {
+        List<Map<?, ?>> buyList = new ArrayList<>();
+        for (Map<?, ?> cm : c.getMapList("categories")) {
+            if (cm.get("items") instanceof List<?> l) {
+                for (Object x : l) {
+                    if (x instanceof Map<?, ?> xm) {
+                        Map<Object, Object> copy = new LinkedHashMap<>(xm);
+                        copy.put("cat", String.valueOf(cm.get("id")));
+                        buyList.add(copy);
+                    }
+                }
+            }
+        }
+        buyList.addAll(c.getMapList("materials"));
+        List<String> deny = new ArrayList<>(DENY);
+        c.getStringList("khong-ban").forEach(x -> deny.add(x.toUpperCase(Locale.ROOT)));
+        java.util.Set<Material> listed = new java.util.HashSet<>();
+        List<Offer> expanded = new ArrayList<>();
+        for (Map<?, ?> m : buyList) {
+            String mat = String.valueOf(m.get("material")).toUpperCase(Locale.ROOT);
+            if (m.get("library") == null && mat.contains("*")) {
+                // mẫu (vd *_WOOL): mọi vật phẩm khớp, trừ đồ đặc thù (DENY + khong-ban) và món đã có dòng riêng
+                for (Material x : Material.values()) {
+                    if (x.isItem() && !x.isAir() && !x.isLegacy() && matches(mat, x) && deny.stream().noneMatch(d -> matches(d, x)) && !listed.contains(x)) {
+                        Map<Object, Object> one = new LinkedHashMap<>(m);
+                        one.put("material", x.name());
+                        Offer o = item(one, "vatlieu");
+                        if (o != null) {
+                            expanded.add(o);
+                            listed.add(x);
+                        }
+                    }
+                }
                 continue;
             }
-            double sell = worth.getDouble("worth." + o.icon().name().toLowerCase(Locale.ROOT), 0);
+            Offer single = item(m, "vatlieu");
+            if (single != null) {
+                if (single.lib() == null) {
+                    listed.add(single.icon());
+                }
+                expanded.add(single);
+            }
+        }
+        for (Offer o : expanded) {
+            double sell = o.lib() != null ? 0 : worth.getDouble("worth." + o.icon().name().toLowerCase(Locale.ROOT), 0);
             if (sell > 0 && o.price() / o.amount() <= sell) {
                 plugin.getLogger().warning("Cửa hàng: bỏ " + o.icon() + " vì giá bán (" + o.price() / o.amount() + "/cái) <= giá thu mua /sell (" + sell + ")");
                 skipped++;
@@ -110,7 +160,7 @@ final class DecorShop implements Listener {
             }
             offers.add(o);
         }
-        for (Map<?, ?> m : c.getMapList("items")) {
+        for (Map<?, ?> m : c.getMapList("items")) {   // cấu hình cũ: đồ trang trí không kiểm giá /sell
             Offer o = item(m, "trangtri");
             if (o != null) {
                 offers.add(o);
@@ -207,6 +257,9 @@ final class DecorShop implements Listener {
 
     private static boolean matches(String pattern, Material m) {
         String n = m.name();
+        if (pattern.length() > 1 && pattern.startsWith("*") && pattern.endsWith("*")) {
+            return n.contains(pattern.substring(1, pattern.length() - 1));
+        }
         if (pattern.startsWith("*")) {
             return n.endsWith(pattern.substring(1));
         }

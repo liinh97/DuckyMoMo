@@ -1605,3 +1605,9 @@ Log: `docker compose logs banghoi-1 --since 5m | grep -iE "DuckyMoMoCore|Mùa:|V
   món bán có "cat:", danh mục thu mua lấy từ Essentials worth.yml (đọc lại mỗi lần mở). Trái mua / phải bán 1 lô / Shift+phải bán hết
   (p.performCommand("sell <vật liệu> [số]") của Essentials). Cài đặt: kiểu mới shopcats (decor_categories) + cột danh mục ở shopitems.
   CHƯA thử bằng người: bấm bán, phân trang, Bedrock (Bedrock vẫn chỉ mua như cũ).
+- 20/10 khuya: Cửa hàng Kinh Đô = chợ server ĐẦY ĐỦ (người dùng gửi ảnh CherryMC): bảng giá sinh bằng tools/shop/bang-gia.py (10 danh mục,
+  giá THEO TỪNG MÓN, mỗi lần mua 1 món, giá mua >= 4 lần giá bán lại; quặng/kim loại/đá quý chỉ bán; script ghi decor-shop.categories ở repo +
+  data, decor_categories ở settings.yml và worth: của data/banghoi-1/plugins/Essentials/worth.yml). Món nằm TRONG danh mục (categories[].items),
+  dòng mẫu "*_WOOL" mở ra mọi vật phẩm khớp trừ đồ đặc thù (DecorShop.DENY). 764 món. GOLD_NUGGET và *_POTTERY_SHERD KHÔNG có giá /sell
+  (vật liệu nền Xu Quái / Tinh Luyện). Đổi giá: sửa bảng trong script rồi chạy lại, hoặc sửa trên Cài đặt › Shop (mỗi danh mục một khung).
+  VIỆC CÒN: định lại xu toàn server theo bảng giá này (nghề, điểm danh, nhiệm vụ, vòng quay, gói quà, phí thị trấn, công thành…), chờ người dùng duyệt mốc.

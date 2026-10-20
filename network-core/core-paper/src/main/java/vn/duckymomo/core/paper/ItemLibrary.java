@@ -67,7 +67,7 @@ final class ItemLibrary {
         NHOM.put("nguyen-lieu", "Nguyên liệu");
         NHOM.put("tien", "Tiền vật phẩm");
         NHOM.put("manh", "Mảnh sự kiện");
-        NHOM.put("chia-khoa", "Chìa khoá hòm");
+        NHOM.put("chia-khoa", "Vé gacha");
         NHOM.put("khac", "Khác");
     }
 

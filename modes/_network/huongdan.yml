@@ -188,7 +188,7 @@ chapters:
   - |-
     &c◆ RANK SỨ GIẢ
     &0Cho người livestream&r&0 về server (TikTok, YouTube…), miễn phí, admin xét duyệt.
-    &0Có thêm nhà, balo, món Chợ đen, đơn thu mua, vé vòng quay nhanh hơn, gói quà Sứ Giả (&1/kit&0).
+    &0Có thêm nhà, balo, món Chợ đen, đơn thu mua, vé gacha nhanh hơn, gói quà Sứ Giả (&1/kit&0).
     &0Xem yêu cầu: thẻ Sứ Giả trong &1/danhphan&0.
   - |-
     &cSỨ GIẢ: cách làm
@@ -747,16 +747,11 @@ chapters:
     &0Xong mỗi cái nhận xu, xong hết &6thêm thưởng&0. Đổi lúc 0h.
     &8Khối tự đặt rồi phá không được tính.
   - |-
-    &6HÒM QUAY
-    &1/hom&0: mỗi hòm cần chìa riêng, quay 1 lần mất 1 chìa.
-    &0Chìa &aĐiểm Danh&0: mỗi ngày gõ &1/diemdanh&0.
-    &0Chìa &3Chăm Chỉ&0: chơi thật mỗi 90 phút.
-    &0Cầm chìa bấm chuột phải cũng mở. Chìa không bán.
-  - |-
-    &6VÒNG QUAY
-    &0Chơi thật mỗi 60 phút&r&0 được 1 vé (treo máy không tính, giữ tối đa 5 vé).
-    &1/vongquay &0quay, menu ghi rõ tỉ lệ từng món&r&0.
-    &0Vé miễn phí, không bán.
+    &6GACHA (QUAY THƯỞNG)
+    &1/gacha&0: mỗi máy cần vé riêng, quay 1 lần mất 1 vé. Menu ghi rõ tỉ lệ.
+    &0Vé &aĐiểm Danh&0: mỗi ngày gõ &1/diemdanh&0.
+    &0Vé &3Chăm Chỉ&0: chơi thật mỗi 60 phút (giữ tối đa 5).
+    &0Cầm vé bấm chuột phải cũng quay. Vé không bán.
   - |-
     &2VOTE MIỄN PHÍ
     &0Gõ &1/vote&0, bấm link, nhập đúng tên&r&0 trong game.

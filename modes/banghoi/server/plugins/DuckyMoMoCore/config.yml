@@ -571,11 +571,11 @@ daily-quests:
     cau_ca: {name: "Câu 10 con cá", type: fish, targets: ["*"], amount: 10, rewards: ["xu 100"]}
     thu_hoach: {name: "Thu hoạch 64 nông sản", type: harvest, targets: [WHEAT, CARROTS, POTATOES, BEETROOTS, NETHER_WART, COCOA], amount: 64, rewards: ["xu 100"]}
 
-# Vòng quay miễn phí (/vongquay): mỗi minutes-per-key phút CHƠI THẬT (không tính treo máy) được 1 vé, giữ tối đa max-keys.
+# ĐÃ BỎ 21/10 (gộp vào Gacha /gacha, module LuckySpin đã xoá; khối này không còn được đọc). Vòng quay miễn phí (/vongquay): mỗi minutes-per-key phút CHƠI THẬT (không tính treo máy) được 1 vé, giữ tối đa max-keys.
 # Vé không bán, không trao đổi. Tỉ lệ = weight / tổng weight (hiện trong menu). rare: báo cả server. Lưu: vongquay.yml
 # Placeholder: %dmmvq_ve% (số vé), %dmmvq_con% (phút tới vé tiếp theo). Đừng đặt đồ quá mạnh (lệch chiến tranh).
 lucky-spin:
-  enabled: true
+  enabled: false
   minutes-per-key: 60
   max-keys: 5
   prizes:
@@ -590,17 +590,19 @@ lucky-spin:
     - {label: "1 khối kim cương", weight: 2, rare: true, rewards: ["vat DIAMOND_BLOCK 1"]}
     - {label: "Đĩa nhạc Cat (trang trí)", weight: 2, rare: true, rewards: ["vat MUSIC_DISC_CAT 1"]}
 
-# Hòm quay (/hom): nhiều hòm, mỗi hòm một CHÌA = món Thư viện đồ (công dụng "Chìa khoá hòm quay"). Quay 1 lần mất 1 chìa trong túi.
-# Chìa lấy từ: quà "do <chìa> 1" (điểm danh, nhiệm vụ…) + online-key (mỗi N phút CHƠI THẬT được 1 chìa, treo máy không tính).
-# Chìa KHÔNG bán bằng tiền thật / Vàng. Sửa ở Cài đặt › Thưởng & sự kiện › Hòm quay. source: dòng ghi thêm "chìa lấy từ đâu".
+# Gacha (/gacha, 21/10 thay hẳn /vongquay): nhiều máy, mỗi máy một VÉ = món Thư viện đồ (công dụng "Vé gacha"). Quay 1 lần mất 1 vé trong túi.
+# Vé lấy từ: quà "do <vé> 1" (điểm danh, nhiệm vụ…) + online-key (mỗi minutes phút CHƠI THẬT được 1 vé, treo máy không tính; giữ tối đa max
+# vé trong túi; rank nhanh hơn qua quyền duckymomo.vongquay.nhanh.<%>). Vé KHÔNG bán bằng tiền thật / Vàng. Cài đặt › Thưởng & sự kiện › Gacha.
+# Placeholder: %dmmhom_chia% (vé online đang có), %dmmhom_con% (phút tới vé tiếp theo / "đầy").
 crates:
   enabled: true
   online-key:
     item: chia_khoa_online
-    minutes: 90
+    minutes: 60
+    max: 5
   list:
   - id: diemdanh
-    name: "&aHòm Điểm Danh"
+    name: "&aGacha Điểm Danh"
     icon: CHEST
     key: chia_khoa_diemdanh
     source: ""
@@ -614,7 +616,7 @@ crates:
     - {label: "2 kim cương", weight: 6, rare: false, rewards: ["vat DIAMOND 2"]}
     - {label: "1500 xu", weight: 2, rare: true, rewards: ["xu 1500"]}
   - id: online
-    name: "&bHòm Chăm Chỉ"
+    name: "&bGacha Chăm Chỉ"
     icon: ENDER_CHEST
     key: chia_khoa_online
     source: ""
@@ -629,6 +631,8 @@ crates:
     - {label: "1 bảng tên", weight: 5, rare: false, rewards: ["vat NAME_TAG 1"]}
     - {label: "1 mảnh netherite", weight: 2, rare: true, rewards: ["vat NETHERITE_SCRAP 1"]}
     - {label: "2000 xu", weight: 2, rare: true, rewards: ["xu 2000"]}
+    - {label: "1 khối kim cương", weight: 1, rare: true, rewards: ["vat DIAMOND_BLOCK 1"]}
+    - {label: "Đĩa nhạc Cat (trang trí)", weight: 1, rare: true, rewards: ["vat MUSIC_DISC_CAT 1"]}
 
 # Mảnh sự kiện + đổi quà (/doimanh). Mảnh là ĐỒ VẬT (trao đổi, bán được), có dấu ẩn nên không làm giả được.
 # Phần thưởng "manh <loại> <số>" (điểm danh, nhiệm vụ, vòng quay…) bị giới hạn daily-cap mảnh/người/ngày.
@@ -1216,14 +1220,14 @@ player-menu:
     - {slot: 4, icon: PLAYER_HEAD, name: "&e☺ &fHồ sơ của bạn", sub: "%player_name%",
        lore: ["Tóm tắt nhanh tài sản và tiến độ"],
        gom: ["&7Xu: &a%vault_eco_balance_formatted%", "&7Vàng: &6%dmmvang_so_du%", "&7Thăng Cấp: &fcấp %dmmcap_cap%",
-             "&7Vé vòng quay: &f%dmmvq_ve%", "&7Thị trấn: &f%townyadvanced_town_unformatted%", "&7Mùa: %dmmmua_ten%"],
+             "&7Vé gacha online: &f%dmmhom_chia%", "&7Thị trấn: &f%townyadvanced_town_unformatted%", "&7Mùa: %dmmmua_ten%"],
        bam: "Bấm để xem danh phận", cmd: danhphan}
     - {slot: 10, icon: CLOCK, name: "&e☀ &fĐiểm danh", sub: "mỗi ngày", lore: ["Vào game mỗi ngày nhận quà", "Giữ chuỗi càng dài quà càng to"],
        gom: ["Quà ngày thường + quà mốc chuỗi", "Bỏ một ngày vẫn giữ chuỗi"], bam: "Bấm để điểm danh", cmd: diemdanh}
     - {slot: 11, icon: WRITABLE_BOOK, name: "&e✎ &fNhiệm vụ hôm nay", lore: ["Vài việc nhỏ mỗi ngày: đào, săn, câu, gặt"],
        gom: ["Mỗi nhiệm vụ có quà riêng", "Xong hết trong ngày có thưởng thêm"], bam: "Bấm để xem tiến độ", cmd: nhiemvu}
-    - {slot: 12, icon: NETHER_STAR, name: "&e✦ &fVòng quay", sub: "%dmmvq_ve% vé", lore: ["Chơi đủ giờ được vé quay miễn phí"],
-       gom: ["Xu, đồ hiếm, mảnh sự kiện", "Xem tỉ lệ từng phần thưởng trong menu"], bam: "Bấm để quay", cmd: vongquay}
+    - {slot: 12, icon: NETHER_STAR, name: "&e✦ &fGacha", sub: "%dmmhom_chia% vé online", lore: ["Quay thưởng bằng vé miễn phí"],
+       gom: ["Vé từ điểm danh và chơi online", "Xem tỉ lệ từng phần thưởng trong menu"], bam: "Bấm để quay", cmd: gacha}
     - {slot: 13, icon: EXPERIENCE_BOTTLE, name: "&e⬆ &fThăng Cấp", sub: "cấp %dmmcap_cap%", lore: ["Lên cấp bằng xu, giờ chơi và điểm hạ gục"],
        gom: ["Mỗi cấp +1 điểm đổi đặc quyền tiện ích", "Mốc cấp có quà và thông báo cả server"], bam: "Bấm để xem cấp", cmd: capdo}
     - {slot: 14, icon: NAME_TAG, name: "&e♛ &fDanh phận", lore: ["Rank chơi miễn phí, lên bằng cách chơi"],

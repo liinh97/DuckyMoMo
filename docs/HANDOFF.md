@@ -35,7 +35,12 @@ của phiên tài khoản cũ khuya 20/10 tóm ở đây (chi tiết: các dòng
   world, world_nether, world_the_end (xây, phá, bật/mở, dùng đồ). Lưu ở data/.../Towny/data/worlds/*.txt (không trong git).
   em_adventurers_guild, thaiap, dautruong giữ khoá. Mặc định config.yml unclaimed_zone_* vẫn false (thế giới mới tạo sau vẫn được khoá).
   Spawn được bảo vệ riêng bằng vùng WorldGuard "spawn" (build deny), không dựa vào luật đất hoang.
-- 21/10: **Hòm quay** `/hom` (Crates.java, config `crates`, Cài đặt › Thưởng & sự kiện › Hòm quay): nhiều hòm, mỗi hòm một chìa = món
+- 21/10: **GACHA `/gacha` thay hẳn /vongquay** (người dùng: bỏ một, giữ hòm; đổi tên vì "hòm" khó hiểu; chỉ MỘT lệnh /gacha, không tên phụ).
+  LuckySpin.java đã xoá, lucky-spin.enabled false, nhóm Cài đặt Vòng quay gỡ. Chìa → "vé" (mã nội bộ vẫn chia-khoa / chia_khoa_*; vật phẩm
+  đổi sang PAPER, đồ cũ dạng móc vẫn dùng được vì nhận theo mã). Vé Chăm Chỉ: 60 phút, giữ tối đa 5 (online-key.max), rank nhanh hơn qua
+  quyền duckymomo.vongquay.nhanh.<%> (giữ tên). Vé vòng quay tồn đổi thành vé Chăm Chỉ khi vào game. Placeholder %dmmhom_chia%/%dmmhom_con%
+  (TAB, /menu). Web: thẻ từng máy gacha + tỉ lệ; trang tài khoản: số lần đã quay.
+- (cũ, trước khi đổi tên) 21/10: **Hòm quay** `/hom` (Crates.java, config `crates`, Cài đặt › Thưởng & sự kiện › Hòm quay): nhiều hòm, mỗi hòm một chìa = món
   Thư viện đồ công dụng `chia-khoa` (chọn chìa bằng ô chọn; quà chọn Vật phẩm thường hoặc Món thư viện). Mặc định Hòm Điểm Danh (chìa
   `chia_khoa_diemdanh`, nằm trong Quà mỗi ngày của /diemdanh) + Hòm Chăm Chỉ (chìa `chia_khoa_online`, chơi thật 90 phút = 1 chìa,
   đếm phút ở hom.yml). Cầm chìa bấm chuột phải mở đúng hòm. "Chìa lấy từ đâu" tự dò điểm danh / mốc / nhiệm vụ / chìa online.

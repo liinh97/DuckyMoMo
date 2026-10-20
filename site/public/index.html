@@ -1067,9 +1067,8 @@ footer .fbrand img{width:44px}
       <div class="card"><h3>🎁 Mỗi ngày</h3><ul class="clean">
         <li><span class="kbd">/diemdanh</span> nhận xu (online đủ 5 phút)</li>
         <li><span class="kbd">/nhiemvu</span> 3 nhiệm vụ ngày, đổi lúc 0h</li>
-        <li><span class="kbd">/vongquay</span> vé miễn phí mỗi 60 phút chơi thật</li>
         <li><span class="kbd">/vote</span> mỗi lượt 100 xu, nhớ nhập đúng tên</li>
-        <li><span class="kbd">/hom</span> mở hòm quay bằng chìa (chìa từ điểm danh và chơi online)</li></ul></div>
+        <li><span class="kbd">/gacha</span> quay thưởng bằng vé miễn phí (điểm danh, mỗi 60 phút chơi thật)</li></ul></div>
       <div class="card"><h3>🐾 Pet, dungeon, khám phá</h3><ul class="clean">
         <li><span class="kbd">/petcall</span> gọi pet · <span class="kbd">/bxhpet tyle</span> tỉ lệ bắt</li>
         <li><span class="kbd">/dautruong thachdau Linh</span> thách đấu người + pet</li>
@@ -1222,7 +1221,7 @@ function danhPhan(info){
   if (!d || !d.bat || !d.bac.length) { box.innerHTML = ""; return; }
   const perk = t => [`${t.nha} nhà <span class="kbd">/sethome</span>`, t.balo ? `${t.balo} balo ${t.o} ô <span class="kbd">/balo</span>` : "chưa có balo",
     `${t.cho} món Chợ đen <span class="kbd">/choden</span>`, t.don ? `${t.don} đơn thu mua <span class="kbd">/choden dat</span>` : "",
-    t.skin ? `tủ ${t.skin} skin <span class="kbd">/tuskin</span>` : "", t.quay ? `vé vòng quay nhanh hơn ${t.quay}%` : "", t.kit ? `gói quà <span class="kbd">/kit ${esc(t.kit)}</span>` : ""].filter(Boolean);
+    t.skin ? `tủ ${t.skin} skin <span class="kbd">/tuskin</span>` : "", t.quay ? `vé gacha online nhanh hơn ${t.quay}%` : "", t.kit ? `gói quà <span class="kbd">/kit ${esc(t.kit)}</span>` : ""].filter(Boolean);
   const req = t => [t.gio ? `chơi thật ${t.gio} giờ` : "", t.cap ? `Thăng Cấp ${t.cap}` : "", t.them ? esc(t.them) : ""].filter(Boolean);
   let h = `<h3 style="margin-top:36px">Danh phận: rank chơi miễn phí</h3>
     <p class="muted">Ai mới vào cũng là <b>${esc(d.bac[0].ten)}</b>. Đủ yêu cầu thì vào game gõ <span class="kbd">/danhphan</span> bấm nhận bậc tiếp theo.
@@ -1549,9 +1548,9 @@ async function loadDaily(){
     if (d.nhiemvu.bat) cards.push(`<div class="card"><h3>📜 Nhiệm vụ <span class="kbd">/nhiemvu</span></h3>
       <p class="muted">Mỗi ngày nhận <b style="color:var(--text)">${d.nhiemvu.moi_ngay}</b> nhiệm vụ ngẫu nhiên, đổi lúc 0 giờ.${d.nhiemvu.xong_het.length ? ` Xong hết thưởng thêm <b style="color:var(--text)">${list(d.nhiemvu.xong_het)}</b>.` : ""}</p>
       <div class="votes">${d.nhiemvu.ds.map(q => `<span>${esc(q.ten)}${q.qua.length ? " · " + list(q.qua) : ""}</span>`).join("")}</div></div>`);
-    if (d.vongquay.bat) cards.push(`<div class="card hl"><h3>🎡 Vòng quay <span class="kbd">/vongquay</span></h3>
-      <p class="muted">Chơi thật mỗi <b style="color:var(--text)">${d.vongquay.phut} phút</b> được 1 vé (giữ tối đa ${d.vongquay.toi_da}). Vé miễn phí, không bán. Tỉ lệ công khai:</p>
-      ${d.vongquay.qua.map(p => `<div class="prize ${p.hiem ? "rare" : ""}"><b>${esc(p.ten)}${p.hiem ? " ✦" : ""}</b><span class="muted">${p.tile}%</span><div class="bar"><i style="width:${Math.min(100, p.tile * 3)}%"></i></div></div>`).join("")}</div>`);
+    if (d.gacha && d.gacha.bat) for (const m of d.gacha.may) cards.push(`<div class="card hl"><h3>🎟 ${esc(m.ten)} <span class="kbd">/gacha</span></h3>
+      <p class="muted">Vé miễn phí, không bán: ${[m.diemdanh ? "điểm danh mỗi ngày" : "", m.online ? `chơi thật mỗi <b style="color:var(--text)">${d.gacha.phut} phút</b> (giữ tối đa ${d.gacha.toi_da} vé)` : ""].filter(Boolean).join(" · ") || "sự kiện"}. Tỉ lệ công khai:</p>
+      ${m.qua.map(p => `<div class="prize ${p.hiem ? "rare" : ""}"><b>${esc(p.ten)}${p.hiem ? " ✦" : ""}</b><span class="muted">${p.tile}%</span><div class="bar"><i style="width:${Math.min(100, p.tile * 3)}%"></i></div></div>`).join("")}</div>`);
     const k = d.khaihoang;
     if (k && k.bat && k.moc.length) {
       const next = k.moc.find(g => !g.mo);

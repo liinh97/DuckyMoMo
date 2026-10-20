@@ -92,7 +92,7 @@
   .status.ok { color: var(--ok); } .status.err { color: var(--err); }
   details.results { margin-top: 6px; font-size: 12.5px; color: var(--muted); }
   details.results pre { white-space: pre-wrap; margin: 4px 0 0; max-height: 200px; overflow: auto; }
-  /* trình soạn (quà, mốc, nhiệm vụ, vòng quay, mảnh, cửa hàng) */
+  /* trình soạn (quà, mốc, nhiệm vụ, gacha, cửa hàng) */
   .ctl input, .ctl select, .ctl textarea { padding: 7px 10px; }
   .rw { display: flex; flex-direction: column; gap: 8px; }
   .rw-row { display: grid; grid-template-columns: 150px 1fr 90px 32px; gap: 8px; align-items: center; }
@@ -922,7 +922,7 @@ function questsEditor(value, onChange) {
 }
 
 
-// ---- Trình soạn vòng quay: [{label, weight, rare, rewards[]}], tỉ lệ = weight / tổng
+// ---- Trình soạn phần thưởng gacha: [{label, weight, rare, rewards[]}], tỉ lệ = weight / tổng
 function spinEditor(value, onChange) {
   const box = document.createElement("div");
   const ps = [];
@@ -939,7 +939,7 @@ function spinEditor(value, onChange) {
   function addP(d) {
     const wrap = document.createElement("div"); wrap.className = "ms";
     const head = document.createElement("div"); head.className = "sp-head";
-    head.innerHTML = '<input placeholder="Tên hiện trong vòng quay, vd 5 kim cương"><input type="number" min="1" max="100000" title="Trọng số (càng lớn càng dễ trúng)"><b class="sp-pct"></b><label class="sp-rare"><input type="checkbox"> Hiếm (báo cả server)</label><button type="button" class="x" title="Bỏ">×</button>';
+    head.innerHTML = '<input placeholder="Tên phần thưởng, vd 5 kim cương"><input type="number" min="1" max="100000" title="Trọng số (càng lớn càng dễ trúng)"><b class="sp-pct"></b><label class="sp-rare"><input type="checkbox"> Hiếm (báo cả server)</label><button type="button" class="x" title="Bỏ">×</button>';
     const [label, w] = head.querySelectorAll("input");
     const p = { label, w, rare: head.querySelector(".sp-rare input"), pct: head.querySelector(".sp-pct"), rewards: (d.rewards || []).slice() };
     label.value = d.label || ""; w.value = d.weight || 10; p.rare.checked = !!d.rare;
@@ -956,27 +956,27 @@ function spinEditor(value, onChange) {
 }
 
 
-// ---- Hòm quay: [{id, name, icon, key (món thư viện công dụng chia-khoa), source, prizes[]}]
+// ---- Gacha: [{id, name, icon, key (món thư viện công dụng chia-khoa = vé), source, prizes[]}]
 function cratesEditor(value, onChange) {
   const box = document.createElement("div");
   const cs = [];
   const emit = () => onChange(cs.map(c => ({ id: c.id.value.trim().toLowerCase(), name: c.name.value.trim(), icon: c.icon.value.trim().toUpperCase() || "CHEST",
     key: c.key.dataset.v || "", source: c.source.value.trim(), prizes: c.prizes })).filter(c => c.id));
-  const add = document.createElement("button"); add.type = "button"; add.className = "rw-add"; add.textContent = "+ Thêm hòm";
+  const add = document.createElement("button"); add.type = "button"; add.className = "rw-add"; add.textContent = "+ Thêm máy gacha";
   function addC(d) {
     const wrap = document.createElement("div"); wrap.className = "ms";
     const head = document.createElement("div"); head.className = "cr-head";
-    head.innerHTML = '<input placeholder="mã, vd diemdanh" title="Mã hòm (chữ thường không dấu, số, _), dùng cho /hom <mã>"><input placeholder="Tên hòm, vd &aHòm Điểm Danh" title="Tên hiện trong game (&a, &b… là màu)"><input placeholder="Biểu tượng, vd CHEST" title="Vật phẩm làm biểu tượng hòm"><span></span><button type="button" class="x" title="Bỏ hòm">×</button>';
+    head.innerHTML = '<input placeholder="mã, vd diemdanh" title="Mã máy (chữ thường không dấu, số, _), dùng cho /gacha <mã>"><input placeholder="Tên máy, vd &aGacha Điểm Danh" title="Tên hiện trong game (&a, &b… là màu)"><input placeholder="Biểu tượng, vd CHEST" title="Vật phẩm làm biểu tượng máy gacha"><span></span><button type="button" class="x" title="Bỏ máy gacha">×</button>';
     const [id, name, icon] = head.querySelectorAll("input");
     const c = { id, name, icon, key: null, source: document.createElement("input"), prizes: (d.prizes || []).slice() };
     id.value = d.id || ""; name.value = d.name || ""; icon.value = d.icon || "CHEST";
     c.key = libSelect(d.key || "", "chia-khoa", (v, init) => { if (!init) emit(); });
-    c.key.title = "Chìa mở hòm này (món Thư viện đồ, công dụng Chìa khoá hòm quay)";
+    c.key.title = "Vé quay máy này (món Thư viện đồ, công dụng Vé gacha)";
     head.querySelector("span").replaceWith(c.key);
-    c.source.placeholder = "Ghi thêm chìa lấy từ đâu (tuỳ chọn; điểm danh, nhiệm vụ, chìa online tự hiện)"; c.source.value = d.source || "";
+    c.source.placeholder = "Ghi thêm vé lấy từ đâu (tuỳ chọn; điểm danh, nhiệm vụ, vé online tự hiện)"; c.source.value = d.source || "";
     c.source.style.width = "100%";
     for (const el of [id, name, c.source]) el.oninput = emit;
-    head.querySelector(".x").onclick = async () => { if (!(await ask("Bỏ hòm " + (id.value || "này") + "? Bấm Lưu mới thật sự xoá.", { title: "Bỏ hòm", ok: "Bỏ hòm", danger: true }))) return; cs.splice(cs.indexOf(c), 1); wrap.remove(); emit(); };
+    head.querySelector(".x").onclick = async () => { if (!(await ask("Bỏ máy gacha " + (id.value || "này") + "? Bấm Lưu mới thật sự xoá.", { title: "Bỏ máy gacha", ok: "Bỏ máy", danger: true }))) return; cs.splice(cs.indexOf(c), 1); wrap.remove(); emit(); };
     const sub = document.createElement("div"); sub.className = "cr-sub"; sub.textContent = "Phần thưởng (quà chọn Vật phẩm = đồ thường, Món thư viện = đồ trong Thư viện đồ):";
     wrap.append(head, c.source, sub, spinEditor(c.prizes, v => { c.prizes = v; emit(); }));
     cs.push(c); box.insertBefore(wrap, add);

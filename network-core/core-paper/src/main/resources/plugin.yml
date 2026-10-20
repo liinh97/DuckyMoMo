@@ -22,12 +22,9 @@ commands:
   goiqua:
     description: "Gói quà theo rank (/kit, /kits, /goiqua). Admin: /kit <mã> <người>, /kit lamlai <người> [mã]"
     aliases: [kit, kits]
-  vongquay:
-    description: "Vòng quay miễn phí: chơi đủ giờ được vé, xem tỉ lệ từng phần thưởng. Admin: /vongquay give <người> <số>"
-    aliases: [vq, quay]
-  hom:
-    description: "Hòm quay: mỗi hòm một loại chìa (điểm danh, chơi online), xem tỉ lệ từng phần thưởng. Admin: /hom give <người> <mã hòm> [số]"
-    aliases: [homquay, crate, crates]
+  gacha:
+    description: "Gacha (quay thưởng): mỗi máy một loại vé (điểm danh, chơi online), xem tỉ lệ từng phần thưởng. Admin: /gacha give <người> <mã máy> [số]"
+    aliases: []
   xuong:
     description: "Xưởng chế tạo: đồ đặc biệt có lượt dùng và hạn 7 ngày (Túi Hư, xô nước vô tận, dây hút đồ, cung máu, búa tạ)"
     aliases: [chetao, servertools]

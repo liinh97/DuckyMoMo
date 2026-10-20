@@ -34,7 +34,7 @@ import org.bukkit.potion.PotionEffect;
  * Giữ: rank donate, danh hiệu, án/lệnh cấm, tài khoản. Trước khi xoá lưu bản sao playerdata + Essentials userdata.
  * Admin (trang quản trị › Hệ thống, console): /choilai admin <tên> [moi] [giurank]
  *   không "moi": như /choilai nhưng không cần xác nhận, không tính lượt, luôn có quà tân thủ (người phải online ở server này);
- *   "moi" = như người mới hoàn toàn (để test): thêm xoá dữ liệu module (điểm danh, nhiệm vụ, vòng quay, thành tích, Thăng Cấp,
+ *   "moi" = như người mới hoàn toàn (để test): thêm xoá dữ liệu module (điểm danh, nhiệm vụ, gacha, thành tích, Thăng Cấp,
  *   gói quà, /choilai), /caidat, danh phận (giurank: giữ rank ủng hộ/staff/Sứ Giả), rồi đá ra và xoá nhân vật (playerdata, chỉ số,
  *   thành tựu, AuraSkills, Essentials) để lần vào sau là "lần đầu". Người offline thì xoá thẳng.
  */

@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * Phần thưởng dùng chung (điểm danh, nhiệm vụ, vòng quay, đổi mảnh…). Mỗi dòng một quà, trang Cài đặt có ô chọn:
+ * Phần thưởng dùng chung (điểm danh, nhiệm vụ, gacha…). Mỗi dòng một quà, trang Cài đặt có ô chọn:
  *   xu <số>               cộng xu (Vault)
  *   do <mã> [số]          đồ trong thư viện đồ (ItemLibrary)
  *   vat <VẬT_LIỆU> [số]   đồ thường

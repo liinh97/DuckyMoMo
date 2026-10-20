@@ -502,20 +502,20 @@ items:
   chia_khoa_diemdanh:
     nguon: web
     nhom: chia-khoa
-    ten-goi: "Chìa Hòm Điểm Danh"
-    material: TRIPWIRE_HOOK
+    ten-goi: "Vé Gacha Điểm Danh"
+    material: PAPER
     amount: 1
-    name: "&aChìa Hòm Điểm Danh"
-    lore: ["&7Nhận khi điểm danh mỗi ngày (&f/diemdanh&7)", "&7Mở hòm: &f/hom &7hoặc cầm chìa bấm chuột phải"]
+    name: "&aVé Gacha Điểm Danh"
+    lore: ["&7Nhận khi điểm danh mỗi ngày (&f/diemdanh&7)", "&7Quay: &f/gacha &7hoặc cầm vé bấm chuột phải"]
     glint: true
     cong-dung: chia-khoa
   chia_khoa_online:
     nguon: web
     nhom: chia-khoa
-    ten-goi: "Chìa Hòm Chăm Chỉ"
-    material: TRIPWIRE_HOOK
+    ten-goi: "Vé Gacha Chăm Chỉ"
+    material: PAPER
     amount: 1
-    name: "&bChìa Hòm Chăm Chỉ"
-    lore: ["&7Nhận khi chơi thật đủ giờ (không tính treo máy)", "&7Mở hòm: &f/hom &7hoặc cầm chìa bấm chuột phải"]
+    name: "&bVé Gacha Chăm Chỉ"
+    lore: ["&7Nhận khi chơi thật đủ giờ (không tính treo máy)", "&7Quay: &f/gacha &7hoặc cầm vé bấm chuột phải"]
     glint: true
     cong-dung: chia-khoa

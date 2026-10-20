@@ -295,6 +295,7 @@ Triển khai: kiểm tra không ai online (lệnh riêng) → `docker compose up
 - [ ] /tpr vài lần ở vùng rừng: không bị kẹt trong tán lá.
 - [ ] /choden (/cho): 6 nút Đang bán, Treo bán, Đồ tôi đang bán, Đang thu mua, Đặt đơn, Đơn của tôi đều mở đúng; /menu có nút Chợ đen.
 - [ ] /ah bấm món → màn xác nhận: bấm bất kỳ ô xanh (kể cả ô giữa) là mua; cột phải đỏ quay lại.
+- [ ] /gacha (đổi tên từ /hom, bỏ /vongquay): 2 máy Gacha Điểm Danh, Gacha Chăm Chỉ; /vongquay, /hom, /quay báo không có lệnh; người có vé vòng quay cũ vào game nhận vé Chăm Chỉ tương ứng; có 5 vé Chăm Chỉ trong túi thì ngừng tích; TAB hiện số vé gacha; /menu nút Gacha.
 - [ ] /hom: 2 hòm (Điểm Danh, Chăm Chỉ), tooltip ghi số chìa đang có và chìa lấy từ đâu.
 - [ ] /diemdanh nhận thêm 1 Chìa Hòm Điểm Danh; chơi thật 90 phút nhận 1 Chìa Hòm Chăm Chỉ (treo máy không tính).
 - [ ] Trong hòm: bấm Quay mất đúng 1 chìa, hiệu ứng quay, nhận quà; không có chìa thì báo đỏ; món hiếm báo cả server.

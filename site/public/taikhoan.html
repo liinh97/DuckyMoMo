@@ -316,7 +316,7 @@ function render(){
   const badges = [`<span class="pill">${D.bedrock ? "📱 Bedrock" : "💻 Java"}</span>`,
     D.online ? `<span class="pill on"><span class="dot on"></span>Đang chơi · ${esc(SRV[D.online] || D.online)}</span>` : `<span class="pill"><span class="dot"></span>Đang offline</span>`]
     .concat((D.roles || []).map(r => `<span class="pill" title="${esc(r.ten)}">${r.prefix ? mc(r.prefix.trim()) : esc(r.ten)}${r.het ? ` <span class="dim">· đến ${day(r.het * 1000)}</span>` : ""}</span>`));
-  const t = h.towny, gc = h.giochoi || {}, dd = h.diemdanh || {}, vq = h.vongquay || {}, vt = h.vote || {}, ct = h.chienthan || {};
+  const t = h.towny, gc = h.giochoi || {}, dd = h.diemdanh || {}, vq = h.gacha || {}, vt = h.vote || {}, ct = h.chienthan || {};
   let html = `
   <div class="head">
     <div class="avatar">${esc((D.ten || "?").replace(/^\./, "").slice(0, 1).toUpperCase())}</div>
@@ -332,7 +332,7 @@ function render(){
     ${stat("💰 Tiền", h.tien == null ? "–" : nf.format(Math.round(h.tien)) + " xu", "Bang Hội Chiến")}
     ${stat("⏱️ Giờ chơi thật 7 ngày", (gc.tuan ?? 0) + " giờ", `Cả mùa ${gc.tong ?? 0} giờ · cần ${gc.can_tuan} giờ/tuần để là dân hoạt động`)}
     ${stat("📅 Điểm danh", (dd.so_ngay || 0) + " ngày", dd.hom_nay ? "Hôm nay đã điểm danh ✓" : "Hôm nay chưa điểm danh: gõ /diemdanh")}
-    ${stat("🎡 Vé vòng quay", vq.ve || 0, `Đã quay ${vq.da_quay || 0} lần${vq.phut_moi_ve ? ` · ${vq.phut_moi_ve} phút chơi = 1 vé` : ""}`)}
+    ${stat("🎟 Gacha đã quay", vq.da_quay || 0, `lần${vq.phut_moi_ve ? ` · ${vq.phut_moi_ve} phút chơi thật = 1 vé` : ""} · /gacha`)}
     ${stat("🏰 Thị trấn", t && t.thitran ? esc(t.thitran) : "Chưa có", t && t.quocgia ? "Quốc gia " + esc(t.quocgia) + (t.chuc.length ? " · " + esc(t.chuc.join(", ")) : "") : (t && t.chuc.length ? esc(t.chuc.join(", ")) : "Lập hoặc vào thị trấn trong game"))}
     ${stat("🗳️ Vote tháng này", vt.thang || 0, `Tổng ${vt.tong || 0} lượt · chuỗi ${vt.chuoi || 0} ngày`)}
     ${(h.cotruyen || []).map(c => stat("📜 " + esc(c.ten), c.xong ? "Hoàn thành ✓" : c.buoc ? "Bước " + c.buoc + "/" + c.tong : "Chưa bắt đầu", esc(c.viec || "Chờ chương tiếp theo"))).join("")}

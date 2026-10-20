@@ -917,7 +917,7 @@ nv_pool:
     amount: 64
     rewards:
       - xu 100
-vq_on: true
+vq_on: false
 vq_minutes: 60
 vq_max: 5
 vq_prizes:
@@ -933,10 +933,11 @@ vq_prizes:
   - {label: "Đĩa nhạc Cat (trang trí)", weight: 2, rare: true, rewards: ["vat MUSIC_DISC_CAT 1"]}
 hom_on: true
 hom_online_key: chia_khoa_online
-hom_online_min: 90
+hom_online_min: 60
+hom_online_max: 5
 hom_list:
   - id: diemdanh
-    name: "&aHòm Điểm Danh"
+    name: "&aGacha Điểm Danh"
     icon: CHEST
     key: chia_khoa_diemdanh
     source: ""
@@ -950,7 +951,7 @@ hom_list:
     - {label: "2 kim cương", weight: 6, rare: false, rewards: ["vat DIAMOND 2"]}
     - {label: "1500 xu", weight: 2, rare: true, rewards: ["xu 1500"]}
   - id: online
-    name: "&bHòm Chăm Chỉ"
+    name: "&bGacha Chăm Chỉ"
     icon: ENDER_CHEST
     key: chia_khoa_online
     source: ""
@@ -965,6 +966,8 @@ hom_list:
     - {label: "1 bảng tên", weight: 5, rare: false, rewards: ["vat NAME_TAG 1"]}
     - {label: "1 mảnh netherite", weight: 2, rare: true, rewards: ["vat NETHERITE_SCRAP 1"]}
     - {label: "2000 xu", weight: 2, rare: true, rewards: ["xu 2000"]}
+    - {label: "1 khối kim cương", weight: 1, rare: true, rewards: ["vat DIAMOND_BLOCK 1"]}
+    - {label: "Đĩa nhạc Cat (trang trí)", weight: 1, rare: true, rewards: ["vat MUSIC_DISC_CAT 1"]}
 fm_on: false
 fm_cap: 20
 fm_types:

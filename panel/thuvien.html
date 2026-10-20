@@ -304,7 +304,7 @@ const USE_NOTE = {
   "bua-bat-pet": "Cầm tay trái khi quăng dây xích bắt pet: cộng thêm % (Cài đặt › PvP & combat › Bắt pet theo xác suất › Bùa bắt pet), mất 1 bùa mỗi lần thử. Món bùa dùng cho /buabatpet chọn ở cùng chỗ.",
   "tinh-luyen": "Món Tinh Luyện: có dấu riêng, không đặt xuống / chế / rèn được, bán cho server được. Công thức và giá bán: config tinh-luyen.items.<mã> (giá bán sửa ở Cài đặt › Shop › Tinh Luyện). Mã món = mã thư viện.",
   "manh": "(Đã bỏ /doimanh 21/10) Mảnh sự kiện: phát bằng phần thưởng \"manh <mã> <số>\" hoặc /doimanh give, đổi quà ở /doimanh. Hạn đổi đặt ở Cài đặt › Thưởng & sự kiện › Mảnh sự kiện & đổi quà.",
-  "chia-khoa": "Chìa khoá hòm quay: gán chìa cho hòm ở Cài đặt › Thưởng & sự kiện › Hòm quay. Người chơi cầm chìa bấm chuột phải hoặc gõ /hom để mở, mỗi lần quay mất 1 chìa. Phát chìa: quà \"do <mã> 1\" (điểm danh, nhiệm vụ…) hoặc chọn làm chìa chơi online."
+  "chia-khoa": "Vé gacha: gán vé cho máy gacha ở Cài đặt › Thưởng & sự kiện › Gacha. Người chơi cầm vé bấm chuột phải hoặc gõ /gacha, mỗi lần quay mất 1 vé. Phát vé: quà \"do <mã> 1\" (điểm danh, nhiệm vụ…) hoặc chọn làm vé chơi online."
 };
 const EFFECT_VN = { REGENERATION: "Hồi máu", RESISTANCE: "Kháng sát thương", ABSORPTION: "Máu ảo", STRENGTH: "Sức mạnh", SPEED: "Nhanh nhẹn",
   FIRE_RESISTANCE: "Kháng lửa", NIGHT_VISION: "Nhìn đêm", WATER_BREATHING: "Thở dưới nước", JUMP_BOOST: "Nhảy cao", HASTE: "Đào nhanh",
@@ -734,7 +734,7 @@ function renderHowto() {
     ["Lấy cho chính mình", `/dmm laydo ${id}`, "Gõ trong game ở Bang Hội Chiến. Muốn nhiều cái: /dmm laydo " + id + " <tên bạn> <số>."],
     ["Đưa cho người khác", `/dmm laydo ${id} <người> [số]`, "Người nhận phải đang online ở server bạn gõ lệnh. Túi đầy thì đồ rơi xuống đất. Hoặc dùng ô Đưa ở trên."],
     ["Lưu đồ đang cầm vào thư viện", `/dmm luudo ${id} [tên gợi nhớ]`, "Cầm đồ trên tay rồi gõ. Giữ nguyên vẹn mọi thứ (kể cả phù phép CrazyEnchantments). Trùng mã thì ghi đè."],
-    ["Làm phần thưởng", `do ${id} 1`, "Ghi dòng này vào ô quà ở trang Cài đặt (Điểm danh, Nhiệm vụ, Vòng quay, Đổi mảnh…): do <mã> [số]."],
+    ["Làm phần thưởng", `do ${id} 1`, "Ghi dòng này vào ô quà ở trang Cài đặt (Điểm danh, Nhiệm vụ, Gacha…): do <mã> [số]."],
   ];
   $("howto").innerHTML = rows.map(([t, c, d]) => `<div class="hrow"><div><b>${esc(t)}</b><code>${esc(c)}</code><small>${esc(d)}</small></div>
     <button type="button" class="ghost small" data-copy="${esc(c)}">Chép</button></div>`).join("");

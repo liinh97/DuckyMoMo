@@ -15,6 +15,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
@@ -32,11 +33,14 @@ import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * Hòm quay (/hom, 21/10): nhiều hòm, mỗi hòm một CHÌA là món Thư viện đồ (công dụng chia-khoa). Mỗi lần quay mất 1 chìa trong túi.
+ * Gacha (/gacha, một lệnh duy nhất; 21/10): nhiều máy, mỗi máy một VÉ là món Thư viện đồ (công dụng chia-khoa). Mỗi lần quay mất 1 vé trong túi.
  * Phần thưởng dạng Rewards (vat = đồ thường, do = thư viện, xu…), tỉ lệ = weight / tổng, menu ghi rõ tỉ lệ.
  * Chìa lấy từ: quà "do <chìa> 1" ở điểm danh / nhiệm vụ… và chìa chơi online (online-key: mỗi N phút CHƠI THẬT, Activity, được 1 chìa).
  * Chìa KHÔNG bán bằng tiền thật / Vàng (luật Mojang về quay thưởng). Cầm chìa bấm chuột phải cũng mở đúng hòm.
  * Config: crates.{enabled, online-key{item, minutes}, list[{id, name, icon, key, source, prizes[{label, weight, rare, icon, rewards}]}]}
+ * 21/10: thay hẳn /vongquay. Chìa online: mỗi online-key.minutes phút (rank nhanh hơn: quyền duckymomo.vongquay.nhanh.<5..50>, giữ tên
+ * quyền cũ để Danh phận khỏi đổi), giữ tối đa online-key.max chìa trong túi (đầy thì ngừng đếm). Vé vòng quay còn tồn (vongquay.yml)
+ * tự đổi thành chìa online lúc vào game. Placeholder: %dmmhom_chia% (chìa online đang có), %dmmhom_con% (phút tới chìa tiếp theo / "đầy").
  * Lưu phút chơi: plugins/DuckyMoMoCore/hom.yml
  */
 final class Crates implements Listener {
@@ -66,6 +70,7 @@ final class Crates implements Listener {
     private final Map<String, Crate> crates = new LinkedHashMap<>();
     private final String onlineKey;
     private final int onlineMinutes;
+    private final int onlineMax;
     private final File file;
     private final YamlConfiguration data;
     private boolean dirty;
@@ -80,7 +85,8 @@ final class Crates implements Listener {
         this.data = YamlConfiguration.loadConfiguration(file);
         Shared.FORGET.add(id -> Shared.forget(data, file, id));
         this.onlineKey = cfg.getString("online-key.item", "").trim();
-        this.onlineMinutes = Math.max(5, cfg.getInt("online-key.minutes", 90));
+        this.onlineMinutes = Math.max(5, cfg.getInt("online-key.minutes", 60));
+        this.onlineMax = Math.max(1, cfg.getInt("online-key.max", 5));
         for (Map<?, ?> m : cfg.getMapList("list")) {
             String id = str(m.get("id")).toLowerCase(Locale.ROOT);
             String key = str(m.get("key"));
@@ -128,8 +134,25 @@ final class Crates implements Listener {
 
     // ---- chìa chơi online
 
+    /** Rank nhận chìa nhanh hơn: quyền duckymomo.vongquay.nhanh.<5..50> (% bớt thời gian, lấy mức cao nhất; Danh phận cấp). */
+    int minutesPerKey(OfflinePlayer o) {
+        Player p = o == null ? null : o.getPlayer();
+        if (p != null) {
+            for (int pct = 50; pct >= 5; pct -= 5) {
+                if (p.hasPermission("duckymomo.vongquay.nhanh." + pct)) {
+                    return Math.max(1, (int) Math.round(onlineMinutes * (100 - pct) / 100.0));
+                }
+            }
+        }
+        return onlineMinutes;
+    }
+
     int minutesToNext(OfflinePlayer p) {
-        return Math.max(0, onlineMinutes - data.getInt(p.getUniqueId() + ".phut", 0));
+        return Math.max(0, minutesPerKey(p) - data.getInt(p.getUniqueId() + ".phut", 0));
+    }
+
+    private boolean full(Player p) {
+        return count(p, onlineKey) >= onlineMax;
     }
 
     private void tickMinute() {
@@ -137,13 +160,16 @@ final class Crates implements Listener {
             if (activity != null && !activity.activeNow(p.getUniqueId())) {
                 continue;   // treo máy không tính
             }
+            if (full(p)) {
+                continue;   // đủ chìa chưa mở: ngừng đếm, mở bớt mới tích tiếp
+            }
             String k = p.getUniqueId().toString();
             int phut = data.getInt(k + ".phut", 0) + 1;
-            if (phut >= onlineMinutes) {
+            if (phut >= minutesPerKey(p)) {
                 phut = 0;
                 rewards.give(p, List.of("do " + onlineKey + " 1"));   // túi đầy thì rơi dưới chân
                 data.set(k + ".da-nhan", data.getInt(k + ".da-nhan") + 1);
-                p.sendMessage(c("&b🔑 Bạn nhận 1 &f" + keyName(onlineKey) + " &b(chơi đủ " + onlineMinutes + " phút). Gõ &f/hom &bđể mở!"));
+                p.sendMessage(c("&b🎟 Bạn nhận 1 &f" + keyName(onlineKey) + " &b(chơi đủ " + minutesPerKey(p) + " phút). Gõ &f/gacha &bđể quay!"));
                 p.playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.7f, 1.2f);
             }
             data.set(k + ".phut", phut);
@@ -170,7 +196,7 @@ final class Crates implements Listener {
     private String keyName(String key) {
         ConfigurationSection s = library.section(key);
         String n = s == null ? "" : s.getString("ten-goi", "");
-        return n.isEmpty() ? "chìa " + key : n;
+        return n.isEmpty() ? "vé " + key : n;
     }
 
     private static int count(Player p, String key) {
@@ -220,7 +246,7 @@ final class Crates implements Listener {
             out.add("Xong hết nhiệm vụ ngày &7(/nhiemvu)");
         }
         if (cr.key().equals(onlineKey)) {
-            out.add("Chơi thật " + onlineMinutes + " phút &7(không tính treo máy)");
+            out.add("Chơi thật " + onlineMinutes + " phút &7(treo máy không tính; giữ tối đa " + onlineMax + " vé)");
         }
         if (!cr.source().isEmpty()) {
             out.add(cr.source());
@@ -266,10 +292,10 @@ final class Crates implements Listener {
         int have = count(p, cr.key());
         Tip t = Tip.of("&6❖ &f" + cr.name()).sub(cr.prizes().size() + " phần thưởng")
                 .desc("Mỗi lần quay mất 1 " + keyName(cr.key()))
-                .line().kv("Chìa bạn đang có", (have > 0 ? "&a" : "&c") + have);
+                .line().kv("Vé bạn đang có", (have > 0 ? "&a" : "&c") + have);
         List<String> src = sources(cr);
         if (!src.isEmpty()) {
-            t.head("Chìa lấy từ").items(src);
+            t.head("Vé lấy từ").items(src);
         }
         t.line().click("Bấm để xem phần thưởng và quay");
         return t.apply(new ItemStack(cr.icon()));
@@ -277,7 +303,7 @@ final class Crates implements Listener {
 
     private ItemStack spinButton(Player p, Crate cr) {
         int have = count(p, cr.key());
-        Tip t = Tip.of(have > 0 ? "&a✦ &fQuay ngay" : "&7✦ &fChưa có chìa").sub(have + " chìa").accent(have > 0 ? "&a" : "&7")
+        Tip t = Tip.of(have > 0 ? "&a✦ &fQuay ngay" : "&7✦ &fChưa có vé").sub(have + " vé").accent(have > 0 ? "&a" : "&7")
                 .desc("Mỗi lần quay mất 1 " + keyName(cr.key())).line();
         if (have > 0) {
             t.click("Bấm để quay");
@@ -299,7 +325,7 @@ final class Crates implements Listener {
     void openList(Player p) {
         Holder h = new Holder();
         int rows = Math.min(6, Math.max(3, (crates.size() + 8) / 9 + 2));
-        h.inv = Bukkit.createInventory(h, rows * 9, c("&0❖ Hòm quay"));
+        h.inv = Bukkit.createInventory(h, rows * 9, c("&0❖ Gacha · quay thưởng"));
         ItemStack bg = pane(Material.GRAY_STAINED_GLASS_PANE);
         for (int s = 0; s < rows * 9; s++) {
             h.inv.setItem(s, bg);
@@ -311,13 +337,13 @@ final class Crates implements Listener {
             h.inv.setItem(start + i, crateIcon(p, list.get(i)));
             h.slots.put(start + i, list.get(i));
         }
-        Tip info = Tip.of("&e❖ &fHòm quay là gì?").accent("&e").desc("Mỗi hòm cần chìa riêng, quay một lần mất một chìa",
-                        "Menu hòm ghi rõ tỉ lệ từng phần thưởng")
-                .line().note("Chìa miễn phí: điểm danh, chơi online… KHÔNG bán bằng tiền thật");
+        Tip info = Tip.of("&e❖ &fGacha là gì?").accent("&e").desc("Mỗi máy gacha cần vé riêng, quay một lần mất một vé",
+                        "Menu ghi rõ tỉ lệ từng phần thưởng")
+                .line().note("Vé miễn phí: điểm danh, chơi online… KHÔNG bán bằng tiền thật");
         if (!onlineKey.isEmpty()) {
-            info.kv("Chìa online tiếp theo", "sau " + minutesToNext(p) + " phút");
+            info.kv("Vé online tiếp theo", full(p) ? "&cđủ " + onlineMax + " vé, quay bớt đã" : "sau " + minutesToNext(p) + " phút");
         }
-        info.line().click("Cầm chìa bấm chuột phải", "mở đúng hòm");
+        info.line().click("Cầm vé bấm chuột phải", "mở đúng máy gacha");
         h.inv.setItem(rows * 9 - 5, info.apply(new ItemStack(Material.BOOK)));
         p.openInventory(h.inv);
     }
@@ -334,18 +360,18 @@ final class Crates implements Listener {
         for (int i = 0; i < cr.prizes().size() && i < 36; i++) {
             h.inv.setItem(i, prizeIcon(cr, cr.prizes().get(i)));
         }
-        Tip info = Tip.of("&e❖ &fChìa lấy từ đâu?").accent("&e").desc(keyName(cr.key()), "Chìa miễn phí, không bán bằng tiền thật").line();
+        Tip info = Tip.of("&e❖ &fVé lấy từ đâu?").accent("&e").desc(keyName(cr.key()), "Vé miễn phí, không bán bằng tiền thật").line();
         List<String> src = sources(cr);
         if (src.isEmpty()) {
-            info.note("Chưa đặt nguồn chìa cho hòm này");
+            info.note("Chưa đặt nguồn vé cho máy này");
         } else {
             info.items(src);
         }
         if (cr.key().equals(onlineKey)) {
-            info.kv("Chìa online tiếp theo", "sau " + minutesToNext(p) + " phút");
+            info.kv("Vé online tiếp theo", full(p) ? "&cđủ " + onlineMax + " vé, quay bớt đã" : "sau " + minutesToNext(p) + " phút");
         }
         h.inv.setItem(INFO_SLOT, info.apply(new ItemStack(Material.BOOK)));
-        h.inv.setItem(BACK_SLOT, Tip.of("&c◂ &fCác hòm khác").accent("&c").click("Bấm để quay lại").apply(new ItemStack(Material.ARROW)));
+        h.inv.setItem(BACK_SLOT, Tip.of("&c◂ &fCác máy gacha khác").accent("&c").click("Bấm để quay lại").apply(new ItemStack(Material.ARROW)));
         h.inv.setItem(SPIN_SLOT, spinButton(p, cr));
         p.openInventory(h.inv);
     }
@@ -387,7 +413,7 @@ final class Crates implements Listener {
         }
         Crate cr = h.crate;
         if (cr.total() <= 0) {
-            p.sendMessage(c("&cHòm này chưa có phần thưởng."));
+            p.sendMessage(c("&cMáy gacha này chưa có phần thưởng."));
             return;
         }
         if (!take(p, cr.key())) {
@@ -399,7 +425,7 @@ final class Crates implements Listener {
         data.set(p.getUniqueId() + ".da-quay." + cr.id(), data.getInt(p.getUniqueId() + ".da-quay." + cr.id()) + 1);
         dirty = true;
         flush();
-        plugin.getLogger().info("Hòm " + cr.id() + ": " + p.getName() + " trúng " + win.label());
+        plugin.getLogger().info("Gacha " + cr.id() + ": " + p.getName() + " trúng " + win.label());
         h.spinning = true;
         final int[] step = {0};
         Bukkit.getScheduler().runTaskTimer(plugin, task -> {
@@ -415,7 +441,7 @@ final class Crates implements Listener {
             p.playSound(p.getLocation(), win.rare() ? Sound.UI_TOAST_CHALLENGE_COMPLETE : Sound.ENTITY_PLAYER_LEVELUP, 0.8f, 1f);
             p.sendMessage(c("&a🎉 " + cr.name() + "&a: bạn trúng &f" + win.label() + (got.isEmpty() ? "" : " &7(" + String.join("&7, ", got) + "&7)")));
             if (win.rare()) {
-                Bukkit.broadcast(c("&6✦ &f" + p.getName() + " &6mở " + cr.name() + " &6trúng &f" + win.label() + "&6! &7(/hom)"));
+                Bukkit.broadcast(c("&6✦ &f" + p.getName() + " &6quay " + cr.name() + " &6trúng &f" + win.label() + "&6! &7(/gacha)"));
             }
             Bukkit.getScheduler().runTaskLater(plugin, () -> {
                 if (p.getOpenInventory().getTopInventory().getHolder() == h) {
@@ -451,12 +477,82 @@ final class Crates implements Listener {
         }
     }
 
+    /** Vé /vongquay cũ còn tồn -> chìa online (mỗi vé 1 chìa), một lần. */
+    @EventHandler
+    public void onJoin(PlayerJoinEvent e) {
+        migrateSpinTickets(e.getPlayer());
+    }
+
+    void migrateSpinTickets(Player p) {
+        if (onlineKey.isEmpty()) {
+            return;
+        }
+        File vf = new File(plugin.getDataFolder(), "vongquay.yml");
+        if (!vf.isFile()) {
+            return;
+        }
+        YamlConfiguration vq = YamlConfiguration.loadConfiguration(vf);
+        String k = p.getUniqueId() + ".ve";
+        int ve = vq.getInt(k, 0);
+        if (ve <= 0) {
+            return;
+        }
+        vq.set(k, 0);
+        try {
+            vq.save(vf);
+        } catch (IOException ex) {
+            plugin.getLogger().warning("Không lưu được vongquay.yml: " + ex.getMessage());
+            return;
+        }
+        rewards.give(p, List.of("do " + onlineKey + " " + Math.min(64, ve)));
+        p.sendMessage(c("&b🎟 Vòng quay đã gộp vào Gacha: " + ve + " vé cũ của bạn đổi thành &f" + ve + " " + keyName(onlineKey) + "&b. Gõ &f/gacha&b."));
+        plugin.getLogger().info("Gacha: đổi " + ve + " vé vòng quay của " + p.getName() + " thành vé online");
+    }
+
+    /** %dmmhom_chia%, %dmmhom_con% (gọi chỉ khi có PlaceholderAPI). */
+    me.clip.placeholderapi.expansion.PlaceholderExpansion placeholders() {
+        return new me.clip.placeholderapi.expansion.PlaceholderExpansion() {
+            @Override
+            public String getIdentifier() {
+                return "dmmhom";
+            }
+
+            @Override
+            public String getAuthor() {
+                return "DuckyMoMo";
+            }
+
+            @Override
+            public String getVersion() {
+                return "1";
+            }
+
+            @Override
+            public boolean persist() {
+                return true;
+            }
+
+            @Override
+            public String onRequest(OfflinePlayer player, String params) {
+                Player p = player == null ? null : player.getPlayer();
+                if (p == null || onlineKey.isEmpty()) {
+                    return "";
+                }
+                return switch (params) {
+                    case "chia" -> String.valueOf(count(p, onlineKey));
+                    case "con" -> full(p) ? "đầy" : minutesToNext(p) + "p";
+                    default -> null;
+                };
+            }
+        };
+    }
+
     boolean command(CommandSender s, String[] args) {
         if (args.length >= 3 && args[0].equalsIgnoreCase("give") && s.hasPermission("duckymomo.admin")) {
             Player t = Bukkit.getPlayerExact(args[1]);
             Crate cr = crates.get(args[2].toLowerCase(Locale.ROOT));
             if (t == null || cr == null) {
-                s.sendMessage("Cần người đang online và mã hòm (" + String.join(", ", crates.keySet()) + ").");
+                s.sendMessage("Cần người đang online và mã máy gacha (" + String.join(", ", crates.keySet()) + ").");
                 return true;
             }
             int n = 1;
@@ -470,11 +566,11 @@ final class Crates implements Listener {
             return true;
         }
         if (!(s instanceof Player p)) {
-            s.sendMessage("/hom give <người> <mã hòm> [số chìa]");
+            s.sendMessage("/gacha give <người> <mã máy> [số vé]");
             return true;
         }
         if (crates.isEmpty()) {
-            p.sendMessage(c("&cChưa có hòm quay nào."));
+            p.sendMessage(c("&cChưa có máy gacha nào."));
             return true;
         }
         Crate cr = args.length > 0 ? crates.get(args[0].toLowerCase(Locale.ROOT)) : null;

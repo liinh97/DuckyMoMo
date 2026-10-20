@@ -44,9 +44,8 @@ public final class DuckyMoMoCore extends JavaPlugin {
     private ItemLibrary itemLibrary;
     private Rewards rewards;
     private DailyQuests quests;
-    private LuckySpin spin;
     private Crates crates;
-    private me.clip.placeholderapi.expansion.PlaceholderExpansion spinPapi;
+    private me.clip.placeholderapi.expansion.PlaceholderExpansion gachaPapi;
     private me.clip.placeholderapi.expansion.PlaceholderExpansion seasonPapi;
     private me.clip.placeholderapi.expansion.PlaceholderExpansion statsPapi;
     private me.clip.placeholderapi.expansion.PlaceholderExpansion frontierPapi;
@@ -188,13 +187,9 @@ public final class DuckyMoMoCore extends JavaPlugin {
         if (crates != null) {
             crates.flush();
         }
-        if (spin != null) {
-            spin.flush();
-            spin = null;
-        }
-        if (spinPapi != null) {
-            spinPapi.unregister();
-            spinPapi = null;
+        if (gachaPapi != null) {
+            gachaPapi.unregister();
+            gachaPapi = null;
         }
         if (levelPapi != null) {
             LevelUpPapi.unregister(levelPapi);
@@ -919,25 +914,21 @@ public final class DuckyMoMoCore extends JavaPlugin {
         }
         bind("nhiemvu", quests == null ? null : quests::command, "Nhiệm vụ hằng ngày");
 
-        // Vòng quay miễn phí: vé theo giờ chơi thật (Bang Hội Chiến: lucky-spin.enabled)
-        spin = getConfig().getBoolean("lucky-spin.enabled")
-                ? new LuckySpin(this, getConfig().getConfigurationSection("lucky-spin"), rewards, activity, itemLibrary) : null;
-        if (spin != null) {
-            getServer().getPluginManager().registerEvents(spin, this);
-            if (getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-                spinPapi = spin.placeholders();
-                spinPapi.register();
-            }
-        }
-        bind("vongquay", spin == null ? null : spin::command, "Vòng quay");
-
-        // Hòm quay: nhiều hòm, chìa là món Thư viện đồ (điểm danh, chơi online…) (Bang Hội Chiến: crates.enabled)
+        // Gacha (quay thưởng; 21/10 thay hẳn /vongquay): nhiều máy, mỗi máy một loại vé là món Thư viện đồ (điểm danh, chơi online…)
+        // (Bang Hội Chiến: crates.enabled)
         crates = getConfig().getBoolean("crates.enabled")
                 ? new Crates(this, getConfig().getConfigurationSection("crates"), rewards, activity, itemLibrary) : null;
         if (crates != null) {
             getServer().getPluginManager().registerEvents(crates, this);
+            if (getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+                gachaPapi = crates.placeholders();
+                gachaPapi.register();
+            }
+            for (Player online : getServer().getOnlinePlayers()) {
+                crates.migrateSpinTickets(online);   // dmm reload khi người chơi đang online
+            }
         }
-        bind("hom", crates == null ? null : crates::command, "Hòm quay");
+        bind("gacha", crates == null ? null : crates::command, "Gacha");
 
         // Mùa mưa / mùa khô: cây lớn nhanh/chậm, được mùa, mưa theo mùa, placeholder cho cá theo mùa (Bang Hội Chiến: seasons.enabled)
         Seasons seasons = getConfig().getBoolean("seasons.enabled") && getConfig().isConfigurationSection("seasons")

@@ -401,9 +401,10 @@ def profile(perms):
             spec = pool.get(q) or {}
             quests.append({"ten": spec.get("name", q), "da": (nv.get("progress") or {}).get(q, 0), "can": spec.get("amount", 0)})
     out["nhiemvu"] = quests
-    vq = safe_yaml(DMM / "vongquay.yml").get(uuid) or {}
-    out["vongquay"] = {"ve": vq.get("ve", 0), "da_quay": vq.get("da-quay", 0),
-                       "phut_moi_ve": (core.get("lucky-spin") or {}).get("minutes-per-key")}
+    # Gacha (21/10 thay Vòng quay): số lần đã quay mỗi máy (hom.yml); vé là đồ trong túi nên web không đếm được
+    hm = safe_yaml(DMM / "hom.yml").get(uuid) or {}
+    out["gacha"] = {"da_quay": sum(int(v or 0) for v in (hm.get("da-quay") or {}).values()),
+                    "phut_moi_ve": ((core.get("crates") or {}).get("online-key") or {}).get("minutes")}
     vt = (safe_yaml(DMM / "vote.yml").get("players") or {}).get(uuid) or {}
     month = date.today().strftime("%Y-%m")
     out["vote"] = {"tong": vt.get("total", 0), "chuoi": vt.get("streak", 0), "thang": vt.get("month-votes", 0) if vt.get("month") == month else 0}

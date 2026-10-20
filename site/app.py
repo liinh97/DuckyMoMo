@@ -1024,7 +1024,7 @@ def api_hangngay():
     def rw(lst):
         return [x for x in (reward_text(r, lib) for r in lst or []) if x]
 
-    dc, dq, ls, ef = (get(core, k, {}) or {} for k in ("daily-checkin", "daily-quests", "lucky-spin", "event-fragments"))
+    dc, dq, cr, ef = (get(core, k, {}) or {} for k in ("daily-checkin", "daily-quests", "crates", "event-fragments"))
     oc = get(core, "orders", {}) or {}
     days = int(oc.get("days", 7) or 7)
     now_ms = time.time() * 1000
@@ -1038,16 +1038,23 @@ def api_hangngay():
         don.append({"id": int(k), "ten": o.get("ten"), "vat": MAT_VI.get(m, m.lower().replace("_", " ")), "can": int(o.get("can", 0)),
                     "da": int(o.get("da", 0)), "gia": float(o.get("gia", 0))})
     don.sort(key=lambda x: -x["id"])
-    prizes = [p for p in ls.get("prizes") or [] if isinstance(p, dict)]
-    tw = sum(float(p.get("weight", 0) or 0) for p in prizes) or 1
+    may = []   # Gacha (21/10 thay Vòng quay): mỗi máy, tỉ lệ từng phần thưởng
+    for m in cr.get("list") or []:
+        if not isinstance(m, dict):
+            continue
+        ps = [p for p in m.get("prizes") or [] if isinstance(p, dict)]
+        tw = sum(float(p.get("weight", 0) or 0) for p in ps) or 1
+        may.append({"ten": strip_colors(str(m.get("name", m.get("id", "")))), "online": m.get("key") == (cr.get("online-key") or {}).get("item"),
+                    "diemdanh": any(str(r).startswith("do " + str(m.get("key")) + " ") or str(r) == "do " + str(m.get("key")) for r in dc.get("daily-rewards") or []),
+                    "qua": [{"ten": strip_colors(p.get("label", "")), "tile": round(float(p.get("weight", 0) or 0) * 100 / tw, 1),
+                             "hiem": bool(p.get("rare"))} for p in ps]})
     return {
         "diemdanh": {"bat": bool(dc.get("enabled")), "phut": dc.get("min-online-minutes", 5), "ngay": rw(dc.get("daily-rewards")),
                      "moc": [{"ngay": int(k), "qua": rw(v)} for k, v in sorted((dc.get("milestones") or {}).items(), key=lambda x: int(x[0]))]},
         "nhiemvu": {"bat": bool(dq.get("enabled")), "moi_ngay": dq.get("per-day", 3), "xong_het": rw(dq.get("complete-all-rewards")),
                     "ds": [{"ten": q.get("name", k), "qua": rw(q.get("rewards"))} for k, q in (dq.get("pool") or {}).items() if isinstance(q, dict)]},
-        "vongquay": {"bat": bool(ls.get("enabled")), "phut": ls.get("minutes-per-key", 60), "toi_da": ls.get("max-keys", 5),
-                     "qua": [{"ten": strip_colors(p.get("label", "")), "tile": round(float(p.get("weight", 0) or 0) * 100 / tw, 1),
-                              "hiem": bool(p.get("rare"))} for p in prizes]},
+        "gacha": {"bat": bool(cr.get("enabled")), "phut": (cr.get("online-key") or {}).get("minutes", 60),
+                  "toi_da": (cr.get("online-key") or {}).get("max", 5), "may": may},
         "khaihoang": khaihoang(core),
         "xuong": xuong(core),
         "tinhluyen": tinhluyen(core),

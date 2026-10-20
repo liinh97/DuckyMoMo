@@ -49,7 +49,7 @@ final class PlayRanks implements Listener {
     private static final List<String> MANAGED = List.of("essentials.sethome.multiple.dmm", "zauctionhouse.max.", "duckymomo.balo.",
             "duckymomo.donhang.", "duckymomo.vongquay.nhanh.", "duckymomo.tuskin.");
 
-    /** Quyền lợi: nhà /sethome, số balo + ô mỗi balo, món chợ /ah, đơn thu mua /donhang, % vé vòng quay nhanh hơn, kit Essentials. 0/"" = không cấp. */
+    /** Quyền lợi: nhà /sethome, số balo + ô mỗi balo, món chợ /ah, đơn thu mua /donhang, % vé gacha online nhanh hơn, kit Essentials. 0/"" = không cấp. */
     record Perks(int homes, int balo, int slots, int ah, int orders, int spin, String kit, int skins) { }
 
     record Tier(String id, String group, String name, String prefix, int priority, double hours, int level, String perm, String permText,
@@ -395,7 +395,7 @@ final class PlayRanks implements Listener {
             t.item("Tủ skin &a" + k.skins() + "&f ô &8(/tuskin)");
         }
         if (k.spin() > 0) {
-            t.item("Vé vòng quay nhanh hơn &a" + k.spin() + "%");
+            t.item("Vé gacha online nhanh hơn &a" + k.spin() + "%");
         }
         if (!k.kit().isEmpty()) {
             t.item("Gói quà &a/kit " + k.kit());

@@ -41,7 +41,7 @@ ranges:
   - ThisWorldDoesntExistButItsBlocked
   - NeitherDoesThisOneButItIsToo
 antiscam:
-  countdown: 10
+  countdown: 5
   cancelonchange: true
   preventchangeonaccept: true
   discrepancy-detection: true

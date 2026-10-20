@@ -713,7 +713,7 @@ ah_bc_sell: false
 ah_bc_buy: false
 tp_range: 10.0
 tp_cooldown: 20
-tp_countdown: 10
+tp_countdown: 5
 tp_money_on: true
 tp_money_tax: 0.0
 tp_xp_on: true

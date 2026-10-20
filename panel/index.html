@@ -128,7 +128,9 @@
   .ws-row label { font-size: 12.5px; color: var(--muted); display: flex; flex-direction: column; gap: 3px; }
   .fs-head { display: grid; grid-template-columns: 1fr 1fr 90px 32px; gap: 8px; margin-bottom: 8px; }
   .ms textarea { width: 100%; margin-bottom: 8px; }
-  .sh-row { display: grid; grid-template-columns: 130px 1fr 90px 110px 110px 32px; gap: 8px; align-items: center; }
+  .sh-row { display: grid; grid-template-columns: 130px 1fr 110px 120px 150px 32px; gap: 8px; align-items: center; }
+  .sh-row .sh-unit { grid-column: 2 / -1; color: var(--muted); font-size: 12.5px; margin-top: -4px; }
+  .sh-head { font-size: 12.5px; color: var(--muted); font-weight: 600; }
   .sh-row select, .sh-row input, .sh-row > span > * { width: 100%; }
   .mcline { margin-top: 6px; } .mcline .mc { display: inline-block; padding: 4px 10px; }
 
@@ -411,7 +413,7 @@ function fillCtl(mode, s, holder, ctl, compact) {
   } else if (s.type === "rewards") {
     input = rewardsEditor(value || [], v => change(mode, s, v, div));
   } else if (s.type === "shopitems") {
-    input = shopItemsEditor(value || [], v => change(mode, s, v, div));
+    input = shopItemsEditor(value || [], v => change(mode, s, v, div), (edits.decor_categories || mode.values.decor_categories || []));
   } else if (s.type === "shopcats") {
     input = shopCatsEditor(value || [], v => change(mode, s, v, div));
   } else if (s.type === "shoptitles") {
@@ -1113,14 +1115,20 @@ function workshopEditor(value, onChange) {
 }
 
 // ---- Cửa hàng Kinh Đô: món [{material|library, amount, price}] và danh hiệu [{id, text, price}]
-function shopItemsEditor(value, onChange) {
+function shopItemsEditor(value, onChange, cats) {
   const box = document.createElement("div"); box.className = "rw";
   const rows = [];
+  // tên cột: không có thì không biết ô nào là số lượng, ô nào là giá
+  const head = document.createElement("div"); head.className = "sh-row sh-head";
+  head.innerHTML = "<span>Loại đồ</span><span>Vật phẩm</span><span>Số lượng / lần mua</span><span>Giá cả lô (xu)</span><span>Danh mục</span><span></span>";
+  box.appendChild(head);
+  const catOpts = (cur) => '<option value="">(mặc định)</option>' + (cats || []).map(c => `<option value="${c.id}"${c.id === cur ? " selected" : ""}>${String(c.name || c.id).replace(/[<>&"]/g, "")}</option>`).join("")
+    + (cur && !(cats || []).some(c => c.id === cur) ? `<option value="${cur}" selected>${cur} (không có danh mục này!)</option>` : "");
   const emit = () => onChange(rows.map(r => r.val()).filter(Boolean));
   const add = document.createElement("button"); add.type = "button"; add.className = "rw-add"; add.textContent = "+ Thêm món";
   function addRow(d) {
     const row = document.createElement("div"); row.className = "sh-row";
-    row.innerHTML = '<select><option value="vat">Đồ thường</option><option value="do">Đồ thư viện</option></select><span></span><input type="number" min="1" max="2304" title="Số lượng mỗi lần mua"><input type="number" min="1" max="100000000" title="Giá (xu)"><input class="sh-cat" list="shop-cats" placeholder="danh mục" title="Mã danh mục (xem Danh mục cửa hàng), trống = mặc định"><button type="button" class="x" title="Bỏ">×</button>';
+    row.innerHTML = '<select><option value="vat">Đồ thường</option><option value="do">Đồ thư viện</option></select><span></span><input type="number" min="1" max="2304" title="Số lượng mỗi lần mua"><input type="number" min="1" max="100000000" title="Giá cả lô (xu)"><select class="sh-cat" title="Danh mục trong /cuahang"></select><button type="button" class="x" title="Bỏ">×</button><small class="sh-unit"></small>';
     const [src, mid, amt, price, cat, x] = [row.children[0], row.children[1], row.children[2], row.children[3], row.children[4], row.children[5]];
     let main = null;
     function build(init) {
@@ -1142,14 +1150,19 @@ function shopItemsEditor(value, onChange) {
       if (src.value !== "do") matPick(main, emit);
     }
     src.value = d.library ? "do" : "vat"; build(true);
-    amt.value = d.amount || 1; price.value = d.price || 100; cat.value = d.cat || "";
+    amt.value = d.amount || 1; price.value = d.price || 100; cat.innerHTML = catOpts(d.cat || "");
+    const unit = row.querySelector(".sh-unit");
+    const showUnit = () => { const a = parseInt(amt.value || "1", 10) || 1, pr = parseFloat(price.value || "0") || 0;
+      unit.textContent = a > 1 ? `Mỗi lần bấm mua ${a} món giá ${pr.toLocaleString("vi-VN")} xu (≈ ${(pr / a).toLocaleString("vi-VN", { maximumFractionDigits: 2 })} xu/món)` : `Mỗi lần bấm mua 1 món giá ${pr.toLocaleString("vi-VN")} xu`; };
+    showUnit();
     src.onchange = () => { build(false); emit(); };
-    amt.oninput = price.oninput = cat.oninput = emit;
+    amt.oninput = price.oninput = () => { showUnit(); emit(); };
+    cat.onchange = emit;
     const r = { val() {
       const v = String(main.value || "").trim(); if (!v) return null;
       const o = { amount: parseInt(amt.value || "1", 10), price: parseFloat(price.value || "0") };
       if (src.value === "do") o.library = v; else o.material = v.toUpperCase();
-      if (cat.value.trim()) o.cat = cat.value.trim().toLowerCase();
+      if (cat.value) o.cat = cat.value;
       return o;
     } };
     x.onclick = () => { rows.splice(rows.indexOf(r), 1); row.remove(); emit(); };
@@ -1159,11 +1172,6 @@ function shopItemsEditor(value, onChange) {
   add.onclick = () => { addRow({ material: "", amount: 16, price: 100 }); emit(); };
   for (const d of value || []) addRow(d || {});
   if (!document.getElementById("rw-mats")) rewardsEditor([], () => {});
-  if (!document.getElementById("shop-cats")) {
-    const dl = document.createElement("datalist"); dl.id = "shop-cats";
-    dl.innerHTML = ["tunhien", "xaydung", "go", "nongsan", "khoangsan", "quai", "trangtri", "danhhieu"].map(x => '<option value="' + x + '">').join("");
-    document.body.appendChild(dl);
-  }
   return box;
 }
 

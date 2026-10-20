@@ -16,6 +16,7 @@
   Khi mở cửa chính thức thì quay lại quy tắc kiểm online (mục 000, bài học 1). Proxy khởi động lại thì VẪN phải tạo lại relay.
 - Người dùng đang tự thử toàn bộ theo **lộ trình test** (trang artifact có lưu tích Đạt/Lỗi/Bỏ qua + ghi chú).
   - Bản gốc: https://claude.ai/artifact/HFv53FeegS1PvHQCmxUTBL (thuộc tài khoản claude.ai CŨ; tài khoản mới không sửa được).
+  - **Đã đăng lại cho tài khoản mới (20/10): https://claude.ai/artifact/YY55Wn87HYuMzL898MT8a7** (db, đã nạp 21 kết quả cũ). Dùng link này.
   - Đã chép vào repo: `docs/lo-trinh-test.html` (nguồn trang, 17 cụm) + `docs/lo-trinh-test-ketqua.json` (kết quả lúc 20/10 tối:
     17 Đạt, 3 Lỗi, 1 Bỏ qua). Trang lưu kết quả ở database artifact, collection `ketqua`, mỗi mục 1 document id = mã mục
     (`{tt: ok|err|skip, ghi_chu, luc}`).

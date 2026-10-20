@@ -21,9 +21,10 @@
   "tt": "ok"
  },
  "m3": {
-  "ghi_chu": "",
-  "luc": 1792483374697,
-  "tt": "skip"
+  "ghi_chu": "Bỏ qua tính năng này",
+  "luc": 1792492000000,
+  "sua": "20/10: bỏ bảo vệ người mới (Cài đặt › PvP & combat, bật lại được); web và sách /hd đã sửa.",
+  "tt": "lai"
  },
  "m4": {
   "ghi_chu": "",
@@ -44,13 +45,13 @@
   "ghi_chu": "Bổ sung back cho người chơi",
   "luc": 1792489400000,
   "sua": "20/10: người chơi có /back và /back về chỗ chết (Cài đặt › Thế giới › Lệnh /back).",
-  "tt": "lai"
+  "tt": "ok"
  },
  "m8": {
   "ghi_chu": "Tắt nhận tpa nhưng vẫn nhận được",
   "luc": 1792489400000,
   "sua": "20/10: lần test gửi từ admin (vượt công tắc, đúng thiết kế); thêm dòng báo cho staff + tìm một phần tên. Test bằng 2 tài khoản thường.",
-  "tt": "lai"
+  "tt": "ok"
  },
  "m9": {
   "ghi_chu": "",

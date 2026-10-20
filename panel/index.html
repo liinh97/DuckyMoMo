@@ -835,7 +835,7 @@ function kitsEditor(value, onChange) {
     drawWarn();
     for (const el of [idEl, tenEl]) el.oninput = emit;
     cdEl.onchange = emit;
-    wrap.querySelector(".kit-head .x").onclick = () => { if (!confirm("Bỏ gói " + (idEl.value || "này") + "?")) return; ks.splice(ks.indexOf(k), 1); wrap.remove(); emit(); };
+    wrap.querySelector(".kit-head .x").onclick = async () => { if (!(await ask("Bỏ gói quà " + (idEl.value || "này") + "? Bấm Lưu mới thật sự xoá.", { title: "Bỏ gói quà", ok: "Bỏ gói", danger: true }))) return; ks.splice(ks.indexOf(k), 1); wrap.remove(); emit(); };
     wrap.appendChild(rewardsEditor(k.qua, v => { k.qua = v; emit(); }));
     ks.push(k); box.insertBefore(wrap, add);
     matPick(iconEl, emit);

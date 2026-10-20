@@ -131,7 +131,7 @@ reset_each_season: true
 pvp_tag_seconds: 15
 pvp_kill_on_logout: true
 pvp_block_teleport: true
-pvp_newbie_enabled: true
+pvp_newbie_enabled: false
 pvp_newbie_seconds: 900
 cleaner_enabled: true
 cleaner_interval: 10
@@ -1670,7 +1670,7 @@ md_fail: 2
 md_cooldown: 60
 petcap_charm_item: bua_bat_pet
 goiqua_on: true
-goiqua_landau: tanthu
+goiqua_landau: ''
 goiqua_list:
   tanthu:
     ten: "Quà tân thủ"

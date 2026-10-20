@@ -543,7 +543,7 @@ footer .fbrand img{width:44px}
         <div class="card hl"><h3>🎁 Người mới được gì?</h3>
           <ul class="clean">
             <li><b data-k="player.start_money">200</b> xu khởi đầu và <b>bộ quà tân thủ</b></li>
-            <li><b data-k="player.newbie_minutes">15</b> phút được bảo vệ, không ai đánh được</li>
+            <li data-hide0="player.newbie_minutes"><b data-k="player.newbie_minutes">15</b> phút được bảo vệ, không ai đánh được</li>
             <li>Sách cẩm nang tiếng Việt: gõ <span class="kbd">/huongdan</span></li>
             <li>Dịch chuyển tới vùng đất trống: <span class="kbd">/tpr</span> hoặc bấm NPC ở spawn</li>
           </ul></div>
@@ -1262,6 +1262,8 @@ async function loadInfo(){
     if (el.dataset.k === "siege.immunity_days") v = Math.round(info.siege.immunity_hours/24);
     if (v !== undefined && v !== null && v !== "") el.textContent = fmt(v, el.dataset.f);
   });
+  // dòng chỉ đúng khi tính năng bật (vd bảo vệ người mới): số bằng 0 thì ẩn
+  document.querySelectorAll("[data-hide0]").forEach(el => { el.hidden = !get(info, el.dataset.hide0); });
   const site = info.site || {};
   if (site.java) { $("#javaAddr").textContent = site.java["dia-chi"]; }
   if (site.bedrock) { $("#bedAddr").textContent = site.bedrock["dia-chi"]; $("#bedPort").textContent = site.bedrock.cong; }

@@ -29,6 +29,9 @@
     2. m7 Lệnh nhà/warp/tpa: "Bổ sung /back cho người chơi" (hiện người chơi không có /back).
     3. m8 /caidat: "Tắt nhận TPA nhưng vẫn nhận được" → lỗi, kiểm PlayerSettings chặn tpa (có thể Essentials /tpa đi đường khác, vd /tpahere, /etpa).
 - Danh sách tay: `docs/TEST-CHECKLIST.md` (mục 4t mới cho 20/10).
+- **Người dùng test lại 20/10 tối:** m7 (/back), m8 (TPA) ĐẠT. m3 người dùng ghi "Bỏ qua tính năng này" (bấm Lỗi) → đã TẮT bảo vệ người mới
+  (pvp_newbie_enabled false qua API Lưu của panel, PvPManager reload), web trang chủ ẩn dòng "15 phút được bảo vệ" (`data-hide0`), sách /hd trang
+  "Mới vào" sửa, m3 gắn "cần test lại". Mọi hộp thoại trong panel/site dùng `ask()` của shell.js, KHÔNG dùng confirm/alert/prompt (người dùng yêu cầu).
 - **Trang Cài đặt xếp gọn (20/10 tối, panel/index.html):** mỗi cài đặt là thẻ nhỏ trong lưới nhiều cột (`.gbody` grid auto-fill 290px);
   công tắc chữ ngắn nằm cùng dòng tên; chữ dài/danh sách rộng gấp đôi; trình soạn lớn trải hết. Nhãn dạng "Chủ thể: mục" lặp ở ≥2 chủ thể và
   ≥2 mục tự gộp thành BẢNG so sánh (`matrix()`/`matrixEl()`, ô dùng chung `fillCtl()`), vd Danh phận 4 bậc × 10 mục, rank khác, mùa, sách CE.

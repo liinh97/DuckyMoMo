@@ -588,7 +588,8 @@ def api_info():
         "player": {
             "start_money": st.get("eco_starting_balance", 200),
             "pvp_wild": bool(get(core, "pvp-rules.wild-pvp", True)),
-            "newbie_minutes": int(st.get("pvp_newbie_seconds", 900)) // 60,
+            # 0 = tắt bảo vệ người mới (trang chủ ẩn dòng đó)
+            "newbie_minutes": int(st.get("pvp_newbie_seconds", 900)) // 60 if st.get("pvp_newbie_enabled", True) else 0,
             "death_keep_minutes": get(core, "item-cleaner.death-protect-minutes", 10),
             "rank_hours": get(core, "pvp-rules.min-rank-hours", 5),
             "max_accounts": get(core, "pvp-rules.max-accounts", 2),

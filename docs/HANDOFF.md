@@ -1,7 +1,46 @@
 # Bàn giao dự án DuckyMoMo Network
 
-> Dùng file này để tiếp tục ở session hoặc tài khoản Claude khác. Cập nhật: 20/10/2026 tối. ĐỌC MỤC 0000 TRƯỚC, rồi 000, 00, 0.
+> Dùng file này để tiếp tục ở session hoặc tài khoản Claude khác. Cập nhật: 20/10/2026 khuya. ĐỌC MỤC 00000 TRƯỚC, rồi 0000, 000, 00, 0.
 > Đọc kèm: `README.md`, `docs/minecraft-server-plan.md` (kế hoạch, quyết định), `docs/network-architecture.md` (kiến trúc).
+
+---
+
+## 00000. MỚI NHẤT — 20/10/2026 khuya (chuyển tài khoản Claude lần 3)
+
+Hai phiên Claude chạy song song cùng repo trong tối 20/10 (một ở tài khoản cũ, một ở tài khoản mới). Commit mới nhất xem `git log`; việc
+của phiên tài khoản cũ khuya 20/10 tóm ở đây (chi tiết: các dòng "- 20/10 tối/khuya:" cuối file + TEST-CHECKLIST mục 4v).
+
+### Đã làm (đã build + triển khai, CHƯA thử hết bằng người)
+- Tiền tố chỉ hiện MỘT (nhóm weight cao nhất), bỏ &l ở tiền tố rank ủng hộ.
+- Khung tooltip chung `Tip.java` cho mọi menu DuckyMoMoCore + menu plugin ngoài (/ah, /jobs, /ce, QuickShop, mô tả hệ pet). Quy tắc: menu
+  mới dựng bằng Tip (xem memory menu-tooltip-style).
+- `/tprandom` của Essentials đã tắt (đưa người ra ngoài bản đồ làm /tphere kéo sai chỗ), dùng /tpr của server.
+- `/ah` mở trong vòng kinh đô quanh spawn (chưa lập Liên minh Hoà Bình / thị trấn KinhDo; VIỆC CÒN: admin lập KinhDo + LienMinhHoaBinh).
+- **Cửa hàng Kinh Đô = chợ server đầy đủ** (người dùng gửi ảnh CherryMC): 10 danh mục, 764 món, mỗi lần mua 1 món, giá theo từng món,
+  quặng/kim loại/đá quý chỉ bán; trái mua / phải bán 1 / Shift+phải bán hết (qua /sell Essentials). Bảng giá: `tools/shop/bang-gia.py`
+  (ghi config repo + data, settings.yml decor_categories, data/.../Essentials/worth.yml 772 giá /sell). Cài đặt: mỗi danh mục một khung,
+  dòng mẫu `*_WOOL`. Sửa lỗi: trùng mã món (bấm xương ra đá cuội), Essentials sell-multipliers ×3 cho admin (đã bỏ double/triple).
+
+### VIỆC TIẾP THEO (theo thứ tự)
+1. **Định lại xu toàn server theo bảng giá mới** — người dùng đồng ý làm, nhắc "check kỹ đừng sót phần nào dùng xu". Claude đã gửi BẢNG
+   ĐỀ XUẤT (chờ người dùng duyệt / sửa dòng): mốc 1 giờ chơi chăm ≈ 1.500–2.000 xu; phần lớn ×5 (nghề UJobs mọi action, tiền khởi đầu
+   Essentials starting-balance + player-reset 200→1.000, điểm danh 100→500 và mốc 500/1.000/3.000→×5, nhiệm vụ, vòng quay, gói quà, thành tích,
+   kho báu, Lệnh săn, dungeon first-rewards/weekly, vote, thi câu EMF MONEY, BetonQuest c1_thuong_*/lk_thuong, Thăng Cấp money-base + mốc,
+   Người Tiên Phong, đổi mảnh, Đấu Trường win-reward/max-stake, bounty min/streak/per-kill, mercenary min/max, Towny new town/nation/outpost/
+   claim/upkeep, SiegeWar warchest/plunder per plot, colony upkeep, siege-supply cost, peace plot/fee, tổ chức weekly-fee, justice floor-fine,
+   danh hiệu cửa hàng, vé + goal dungeon, wild-gates max-toll, QuickShop fee-for-price-change/cost-per-shop, zAH price max); NGOẠI LỆ: EliteMobs
+   currencyShowerTierMultiplier ×3 (0,3→0,9, shop EM giá cố định), Thái Ấp ×4 (20k/32k/60k), Xưởng ×2, mốc quỹ khai hoang ×4, giá cá EMF
+   worth-multiplier ×3, giá bán món Tinh Luyện = 70% giá trị nguyên liệu theo worth mới; KHÔNG đổi: % phí, Vàng/giá rank (tiền thật).
+   Danh sách đầy đủ chỗ dùng xu đã quét: settings.schema banghoi (+_network), DuckyMoMoCore config (rewards "xu N", cost/price/fee…),
+   Towny config (price_*), SiegeWar, Essentials (starting-balance, sell-multipliers), EliteMobs EconomySettings, QuickShop, zAuctionHouse,
+   EvenMoreFish (rarities worth-multiplier, competitions MONEY), BetonQuest package constants, UJobs jobs.yml, MyPet EconomyCost (0), PvPManager (0).
+   Áp dụng: sửa settings.yml + data configs (panel apply-all) và cấu hình repo; kiểm lại bằng script quét như trên để không sót.
+2. Người dùng đang thử trên trang lộ trình test CŨ (HFv53…, tài khoản claude.ai cũ). Kết quả mới nhất đã gộp vào `docs/lo-trinh-test-ketqua.json`
+   (cụm Danh phận r1–r10): nạp lại vào trang của tài khoản mới (YY55… hoặc đăng lại). r4 đã sửa ("lai"). **r10 LỖI "Phong quân hàm như nào"**:
+   cần hướng dẫn / làm cách phong quân hàm dễ hiểu (Towny nation rank: `/n rank add <tên> <quân hàm>`, quân hàm trong town-rules.military-ranks,
+   cần min-rank-hours giờ chơi, tài khoản phụ không được) — có thể thêm menu hoặc giải thích trong /hd + lộ trình test.
+3. Thử bằng người: cửa hàng mới (mua/bán đúng món, đúng giá, phân trang, Bedrock), tooltip mọi menu, /jobs dòng thừa khi nghề ít việc,
+   tiền tố, /tprandom.
 
 ---
 

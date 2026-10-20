@@ -107,5 +107,50 @@
   "ghi_chu": "",
   "luc": 1792467356035,
   "tt": "ok"
+ },
+ "r1": {
+  "ghi_chu": "",
+  "luc": 1792501831114,
+  "tt": "ok"
+ },
+ "r10": {
+  "ghi_chu": "Phong quân hàm như nào",
+  "luc": 1792503874817,
+  "tt": "err"
+ },
+ "r2": {
+  "ghi_chu": "Đang test thôi nên không có thời gian làm nhiệm vụ lẫn chơi 6h",
+  "luc": 1792502915929,
+  "tt": "ok"
+ },
+ "r3": {
+  "ghi_chu": "",
+  "luc": 1792500692576,
+  "tt": "ok"
+ },
+ "r4": {
+  "ghi_chu": "Đứng ở spawn (khu vực hoà bình) nhưng lại báo chợ đấu giá chỉ mở trong khu vực hoà bình\n[Claude 20/10] Đã sửa: /ah luôn mở trong vòng kinh đô quanh spawn (chưa lập Liên minh Hoà Bình). Cần test lại.",
+  "luc": 1792503809785,
+  "tt": "lai"
+ },
+ "r5": {
+  "ghi_chu": "",
+  "luc": 1792501903288,
+  "tt": "ok"
+ },
+ "r7": {
+  "ghi_chu": "",
+  "luc": 1792503822662,
+  "tt": "ok"
+ },
+ "r8": {
+  "ghi_chu": "",
+  "luc": 1792503840404,
+  "tt": "ok"
+ },
+ "r9": {
+  "ghi_chu": "",
+  "luc": 1792503845775,
+  "tt": "ok"
  }
 }

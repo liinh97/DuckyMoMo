@@ -278,6 +278,18 @@ Triển khai: kiểm tra không ai online (lệnh riêng) → `docker compose up
 - [ ] m7 `/back` bằng tài khoản THƯỜNG: sau /home về chỗ cũ; chết rồi /back về chỗ chết. Tắt ở Cài đặt › Thế giới › Lệnh /back → hết quyền.
 - [ ] m8 `/caidat` tắt Nhận TPA (A), B thường gõ `/tpa A` và `/tpa <một phần tên>` → bị chặn. Admin gửi → tới nhưng thấy dòng xám báo A đang tắt.
 
+## 4v. 20/10 khuya: cửa hàng chợ server, tooltip, tiền tố — đã triển khai, CHƯA thử hết bằng người
+- [ ] /cuahang (hoặc NPC ở spawn): trang chính 10 danh mục; bấm từng món mua ĐÚNG món đó (lỗi cũ: mua nhầm đá cuội), giá 1 món.
+- [ ] Chuột phải bán 1, Shift + phải bán hết; giá bán đúng bảng /sell (admin không còn ×3); đồ có tên/phù phép không bán được.
+- [ ] Danh mục Khoáng sản: vàng, sắt, kim cương chỉ bán (không có giá mua); than, đồng mua được.
+- [ ] Phân trang danh mục nhiều món (Vật liệu xây, Khối gỗ); Bedrock: form mua.
+- [ ] Cài đặt › Shop › Cửa hàng: mỗi danh mục một khung, sửa giá 1 món, Lưu là có hiệu lực.
+- [ ] Tooltip kiểu mới: /menu (ô Hồ sơ có số liệu), /kit, /xuong, /nauan, /tinhluyen, /capdo, /caidat, /vang, /danhphan, menu sảnh.
+- [ ] Menu plugin ngoài: /ah (danh mục tiếng Việt, nút tăng giá +500), /jobs (không có dòng ▸ thừa), /ce, shop rương, chọn hệ pet.
+- [ ] Chat/Tab chỉ một tiền tố (rank ủng hộ thay [Dân], staff thay rank ủng hộ).
+- [ ] /tprandom mở menu /tpr của server; /tphere kéo người đúng chỗ admin.
+- [ ] /ah mở được khi đứng ở spawn.
+
 ## 5. Quảng trường Danh vọng (sảnh)
 - [ ] (CHƯA CẦN, làm khi gần mở server) Chọn chỗ trống ở sảnh (map sakura). Đứng, quay mặt về phía người xem: `/vinhdanh dat moinhat tieude`, rồi `bachu`, `chienthan`, `phuho`,
       `kientrucsu`, `dautruong`, `pet` ở các chỗ khác. Bảng chữ nổi + đầu người chơi đúng hướng, không đè nhau.

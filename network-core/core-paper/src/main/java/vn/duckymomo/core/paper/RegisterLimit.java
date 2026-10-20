@@ -25,9 +25,12 @@ import java.util.List;
  */
 final class RegisterLimit implements Listener {
     private static final long DAY = 24L * 60 * 60 * 1000;
+    private static final long MONTH = 30 * DAY;
 
     private final JavaPlugin plugin;
     private final int perDay;
+    /** Tối đa N tài khoản mỗi IP trong 30 ngày (register-limit.per-ip-per-30-days, 0 = tắt): chặn "nuôi" tài khoản dần dần 2/ngày. */
+    private final int perMonth;
     /** IP miễn giới hạn (register-limit.whitelist): đúng IP, hoặc tiền tố kết thúc bằng "." / ":" (vd "171.255.251." = cả dải). */
     private final java.util.List<String> whitelist;
     private final File file;
@@ -36,6 +39,7 @@ final class RegisterLimit implements Listener {
     RegisterLimit(JavaPlugin plugin, ConfigurationSection cfg) {
         this.plugin = plugin;
         this.perDay = cfg == null ? 2 : cfg.getInt("per-ip-per-day", 2);
+        this.perMonth = cfg == null ? 6 : cfg.getInt("per-ip-per-30-days", 6);
         this.whitelist = cfg == null ? java.util.List.of()
                 : cfg.getStringList("whitelist").stream().map(String::trim).filter(x -> !x.isEmpty()).toList();
         this.file = new File(plugin.getDataFolder(), "dangky-ip.yml");
@@ -55,7 +59,7 @@ final class RegisterLimit implements Listener {
     @SuppressWarnings("unchecked")
     boolean hook() {
         Plugin am = Bukkit.getPluginManager().getPlugin("AuthMe");
-        if (am == null || !am.isEnabled() || perDay <= 0) {
+        if (am == null || !am.isEnabled() || perDay <= 0 && perMonth <= 0) {
             return false;
         }
         try {
@@ -75,12 +79,18 @@ final class RegisterLimit implements Listener {
                     if (ip == null || whitelisted(ip)) {
                         return;
                     }
-                    int used = recent(ip).size();
-                    if (used >= perDay) {
+                    int used = recent(ip, DAY).size();
+                    int usedMonth = recent(ip, MONTH).size();
+                    if (perDay > 0 && used >= perDay) {
                         setCan.invoke(ev, false);
                         p.sendMessage("§cIP của bạn đã đăng ký " + used + " tài khoản trong 24 giờ qua (tối đa " + perDay
                                 + "). Thử lại sau, hoặc nhờ admin nếu bạn chơi ở quán net/mạng chung.");
                         plugin.getLogger().info("Chặn đăng ký: " + p.getName() + " từ " + ip + " (" + used + "/" + perDay + " trong 24 giờ)");
+                    } else if (perMonth > 0 && usedMonth >= perMonth) {
+                        setCan.invoke(ev, false);
+                        p.sendMessage("§cIP của bạn đã đăng ký " + usedMonth + " tài khoản trong 30 ngày qua (tối đa " + perMonth
+                                + "). Nhờ admin nếu bạn chơi ở quán net/mạng chung.");
+                        plugin.getLogger().info("Chặn đăng ký: " + p.getName() + " từ " + ip + " (" + usedMonth + "/" + perMonth + " trong 30 ngày)");
                     }
                 } catch (ReflectiveOperationException e) {
                     plugin.getLogger().warning("Giới hạn đăng ký: " + e);
@@ -123,13 +133,13 @@ final class RegisterLimit implements Listener {
         return "ip." + ip.replace('.', '_').replace(':', '-');
     }
 
-    private synchronized List<String> recent(String ip) {
+    private synchronized List<String> recent(String ip, long window) {
         long now = System.currentTimeMillis();
         List<String> keep = new ArrayList<>();
         for (String s : data.getStringList(key(ip))) {
             int i = s.indexOf(' ');
             try {
-                if (i > 0 && now - Long.parseLong(s.substring(0, i)) < DAY) {
+                if (i > 0 && now - Long.parseLong(s.substring(0, i)) < window) {
                     keep.add(s);
                 }
             } catch (NumberFormatException ignored) {
@@ -140,7 +150,7 @@ final class RegisterLimit implements Listener {
     }
 
     private synchronized void record(String ip, String name) {
-        List<String> list = recent(ip);
+        List<String> list = recent(ip, MONTH);   // giữ 30 ngày để đếm cả giới hạn tháng
         list.add(System.currentTimeMillis() + " " + name);
         data.set(key(ip), list);
         try {

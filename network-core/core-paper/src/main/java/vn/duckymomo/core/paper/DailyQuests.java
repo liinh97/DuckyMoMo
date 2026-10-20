@@ -133,6 +133,16 @@ final class DailyQuests implements Listener {
         return Math.max(1, (int) Math.round(q.amount() * LowPop.questScale()));
     }
 
+    /** Tên hiện cho người chơi: số trong tên ("Câu 10 con cá") đổi theo chỉ tiêu thật khi server vắng giảm việc. */
+    private static String title(Quest q) {
+        int n = need(q);
+        if (n == q.amount()) {
+            return q.name();
+        }
+        String t = q.name().replaceFirst("\\b" + q.amount() + "\\b", String.valueOf(n));
+        return t.equals(q.name()) ? q.name() + " (" + n + ")" : t;
+    }
+
     private static boolean matches(List<String> targets, String name) {
         for (String t : targets) {
             if (t.equals("*") || t.equals(name)
@@ -161,7 +171,7 @@ final class DailyQuests implements Listener {
             done = Math.min(need(q), done + n);
             data.set(key + ".progress." + qid, done);
             dirty = true;
-            p.sendActionBar(c("&e" + q.name() + " &f" + done + "&7/&f" + need(q)));
+            p.sendActionBar(c("&e" + title(q) + " &f" + done + "&7/&f" + need(q)));
             if (done >= need(q)) {
                 complete(p, q);
             }
@@ -170,7 +180,7 @@ final class DailyQuests implements Listener {
 
     private void complete(Player p, Quest q) {
         List<String> got = rewards.give(p, q.rewards());
-        p.sendMessage(c("&a✔ Xong nhiệm vụ: &f" + q.name() + (got.isEmpty() ? "" : "&a. Nhận: &f" + String.join("&7, &f", got))));
+        p.sendMessage(c("&a✔ Xong nhiệm vụ: &f" + title(q) + (got.isEmpty() ? "" : "&a. Nhận: &f" + String.join("&7, &f", got))));
         String key = "players." + p.getUniqueId();
         boolean all = true;
         for (String qid : todays(p.getUniqueId())) {
@@ -229,7 +239,8 @@ final class DailyQuests implements Listener {
         }
         String key = "players." + p.getUniqueId();
         List<String> qs = todays(p.getUniqueId());
-        p.sendMessage(c("&6Nhiệm vụ hôm nay &7(đổi lúc 0 giờ)"));
+        p.sendMessage(c("&6Nhiệm vụ hôm nay &7(đổi lúc 0 giờ)"
+                + (LowPop.questScale() < 1 ? " &8· &bserver đang vắng nên nhẹ hơn" : "")));
         for (String qid : qs) {
             Quest q = pool.get(qid);
             if (q == null) {
@@ -238,7 +249,7 @@ final class DailyQuests implements Listener {
             int done = data.getInt(key + ".progress." + qid, 0);
             int bars = 10 * Math.min(done, need(q)) / need(q);
             String bar = "&a" + "▮".repeat(bars) + "&8" + "▮".repeat(10 - bars);
-            p.sendMessage(c((done >= need(q) ? "&a✔ " : "&7• ") + "&f" + q.name() + " " + bar + " &7" + done + "/" + need(q)
+            p.sendMessage(c((done >= need(q) ? "&a✔ " : "&7• ") + "&f" + title(q) + " " + bar + " &7" + done + "/" + need(q)
                     + (q.rewards().isEmpty() ? "" : " &8→ &7" + String.join("&7, ", rewards.describe(q.rewards())))));
         }
         List<String> bonus = rewards.describe(cfg.getStringList("complete-all-rewards"));

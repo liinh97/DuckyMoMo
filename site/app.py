@@ -1289,8 +1289,17 @@ class Handler(BaseHTTPRequestHandler):
                 if not s:
                     return self._json(401, {"ok": False, "message": "Phiên đăng nhập đã hết, đăng nhập lại."})
                 d = self.body_json()
-                body = {"ten": s["ten"], "action": d.get("action"), "bac": d.get("bac"), "goi": d.get("goi"), "id": d.get("id")}
+                body = {"ten": s["ten"], "action": d.get("action"), "bac": d.get("bac"), "goi": d.get("goi"), "id": d.get("id"), "tien": d.get("tien")}
                 st, _, raw = panel("POST", "/api/web/donate", json.dumps(body).encode(), ip=self.client_ip())
+                return self._json(st if st in (200, 400) else 502, json.loads(raw or b"{}") if st in (200, 400) else
+                                  {"ok": False, "message": "Máy chủ đang bận, thử lại sau."})
+            if path == "/api/vang":
+                s = session_of(self.token())
+                if not s:
+                    return self._json(401, {"ok": False, "message": "Phiên đăng nhập đã hết, đăng nhập lại."})
+                d = self.body_json()
+                body = {"ten": s["ten"], "viec": d.get("viec"), "ma": d.get("ma")}
+                st, _, raw = panel("POST", "/api/web/vang", json.dumps(body).encode(), ip=self.client_ip())
                 return self._json(st if st in (200, 400) else 502, json.loads(raw or b"{}") if st in (200, 400) else
                                   {"ok": False, "message": "Máy chủ đang bận, thử lại sau."})
             if path == "/api/caidat":
@@ -1342,6 +1351,16 @@ class Handler(BaseHTTPRequestHandler):
                 return self._json(200, me(self.token(), self.client_ip()))
             except OSError:
                 return self._json(200, {"dang_nhap": True, "ok": False, "message": "Không tải được thông tin, thử lại sau."})
+        if path == "/api/vang":
+            ss = session_of(self.token())
+            if not ss:
+                return self._json(401, {"ok": False, "message": "Phiên đăng nhập đã hết, đăng nhập lại."})
+            try:
+                st, _, raw = panel("GET", "/api/web/vang?ten=" + urllib.parse.quote(ss["ten"]), ip=self.client_ip())
+                return self._json(st if st in (200, 400) else 502, json.loads(raw or b"{}") if st in (200, 400) else
+                                  {"ok": False, "message": "Máy chủ đang bận, thử lại sau."})
+            except (ValueError, OSError):
+                return self._json(502, {"ok": False, "message": "Không tải được ví Vàng, thử lại sau."})
         if path == "/api/skin":
             ss = session_of(self.token())
             if not ss:

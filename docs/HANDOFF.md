@@ -1459,3 +1459,9 @@ Log: `docker compose logs banghoi-1 --since 5m | grep -iE "DuckyMoMoCore|Mùa:|V
   ở scratchpad phiên 20/10). Plugin mới cài / file dịch mới: chạy `python3 tools/bo-in-dam.py --ghi` (+ thư mục data của plugin đó khi server dừng).
   Guide.java giữ chuỗi "&l" (đo độ rộng chữ đậm). Nhấn mạnh bằng màu.
 - 20/10: Tủ skin /tuskin chạy thật (proxy plugin DuckyMoMoSkin, cổng nội bộ 8095). Đã thử: thêm bằng tên bản quyền, ảnh PNG tải lên qua MineSkin, mặc, xoá, khoá sai 403.
+- 20/10: VÀNG (tiền ủng hộ) thay cho mua rank thẳng bằng tiền. Nạp (web chọn số tiền / /rank mua) -> admin Duyệt ở trang Donate · Vàng
+  = cộng Vàng (ví MariaDB network.vang_vi, sổ vang_log) -> người chơi tự mua ở /vang hoặc web (rank = giá donate-ranks ÷ tỉ giá, món lẻ vang.mon).
+  Không chuyển Vàng, không đổi ra xu. Đơn kiểu cũ đang chờ cũng duyệt thành Vàng; rank đã cấp kiểu cũ giữ tới hết hạn.
+  QR tự vẽ ở panel (segno, NAPAS) vì img.vietqr.io đổi sang SVG. QR trong game đặt thẳng vào tay, món đang cầm giấu trong bản đồ (PDC), cất là trả.
+  Đã thử: cộng tay, mua mũ (quyền 30 ngày thật), mua rank, thiếu Vàng bị chặn, tài khoản chưa vào server bị chặn trước khi trừ, nạp tạo QR.
+  CHƯA thử bằng người: menu /vang, /rank mua QR trên tay, thẻ Vàng trên trang tài khoản (cần đăng nhập /web).

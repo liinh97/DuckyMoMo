@@ -1,5 +1,7 @@
 package vn.duckymomo.core.paper;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import net.kyori.adventure.text.Component;
@@ -10,6 +12,7 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -20,6 +23,8 @@ import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
@@ -37,6 +42,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URI;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,18 +51,22 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * Ủng hộ bằng QR ngay trong game (/rank mua, ý từ UniMC): chọn bậc + gói trong menu -> panel tạo yêu cầu (chung hàng chờ với trang web,
- * /api/web/donate) và trả link VietQR -> vẽ QR lên một TẤM BẢN ĐỒ đưa vào tay người chơi, hết hạn sau minutes phút.
- * Người chơi bấm [Tôi đã chuyển khoản] trong chat -> panel báo admin; admin duyệt ở trang quản trị > Donate (như cũ).
- * Cần biến môi trường PANEL_URL + PANEL_SITE_KEY trong container server (compose) và thông tin ngân hàng trong site/config/site.yml.
- * Tấm bản đồ QR có dấu PDC: không vứt ra, không cất vào rương, chết không rơi, hết hạn tự biến mất.
+ * Ủng hộ bằng Vàng (20/10). /rank mua (/vang nap): chọn SỐ TIỀN nạp -> panel tạo yêu cầu (chung hàng chờ với web, /api/web/donate)
+ * và trả ảnh QR VietQR (panel tự vẽ, data URI) -> vẽ lên TẤM BẢN ĐỒ đặt THẲNG VÀO TAY: món đang cầm được giấu trong tấm bản đồ
+ * (PDC, nên server sập vẫn không mất) và trả lại đúng ô khi cất QR. Bấm [Tôi đã chuyển khoản] -> panel báo admin; admin duyệt = cộng Vàng.
+ * /vang: xem ví, mở cửa hàng Vàng (rank ủng hộ, trang trí, tên), bấm 2 lần để mua (panel /api/web/vang trừ Vàng rồi cấp).
+ * Cần PANEL_URL + PANEL_SITE_KEY trong môi trường và tài khoản ngân hàng trong site/config/site.yml.
  */
 final class DonateQr implements Listener {
     private static final LegacyComponentSerializer LEGACY = LegacyComponentSerializer.legacyAmpersand();
+    private static final long[] AMOUNTS = {20_000, 50_000, 100_000, 200_000, 500_000, 1_000_000};
 
+    /** Menu nạp: ô -> số tiền. Menu cửa hàng: ô -> mã món. */
     private static final class Holder implements InventoryHolder {
         Inventory inv;
-        final Map<Integer, int[]> slots = new HashMap<>();   // ô -> {bậc, gói}
+        final Map<Integer, Long> amounts = new HashMap<>();
+        final Map<Integer, JsonObject> items = new HashMap<>();
+        int shopSlot = -1;
 
         @Override
         public Inventory getInventory() {
@@ -66,17 +76,20 @@ final class DonateQr implements Listener {
 
     private final JavaPlugin plugin;
     private final ConfigurationSection cfg;
-    private final List<DonateRanks.Tier> tiers;
     private final NamespacedKey key;
+    private final NamespacedKey stashKey;
     private final String panelUrl = System.getenv().getOrDefault("PANEL_URL", "");
     private final String panelKey = System.getenv().getOrDefault("PANEL_SITE_KEY", "");
     private final Map<UUID, String> lastOrder = new HashMap<>();
+    /** Bấm mua lần 1 ghi lại; bấm lại cùng món trong 6 giây mới mua (chống bấm nhầm). */
+    private final Map<UUID, String> confirm = new HashMap<>();
+    private final Map<UUID, Long> confirmAt = new HashMap<>();
 
     DonateQr(JavaPlugin plugin, ConfigurationSection cfg, List<DonateRanks.Tier> tiers) {
         this.plugin = plugin;
         this.cfg = cfg;
-        this.tiers = tiers;
         this.key = new NamespacedKey(plugin, "qr_het");
+        this.stashKey = new NamespacedKey(plugin, "qr_giu_do");
     }
 
     boolean ready() {
@@ -95,55 +108,223 @@ final class DonateQr implements Listener {
         return cfg.getString("web", "");
     }
 
-    // ------------------------------------------------------------ menu chọn gói
+    private static String vnd(long v) {
+        return String.format("%,d", v).replace(',', '.') + "đ";
+    }
+
+    // ------------------------------------------------------------ gọi panel
+
+    private JsonObject call(String method, String path, String body) throws Exception {
+        HttpURLConnection con = (HttpURLConnection) URI.create(panelUrl + path).toURL().openConnection();
+        con.setConnectTimeout(5000);
+        con.setReadTimeout(30000);
+        con.setRequestMethod(method);
+        con.setRequestProperty("X-DMM-Key", panelKey);
+        con.setRequestProperty("X-DMM-Ip", "game");
+        if (body != null) {
+            con.setDoOutput(true);
+            con.setRequestProperty("Content-Type", "application/json");
+            try (OutputStream os = con.getOutputStream()) {
+                os.write(body.getBytes(StandardCharsets.UTF_8));
+            }
+        }
+        int code = con.getResponseCode();
+        try (InputStream in = code < 400 ? con.getInputStream() : con.getErrorStream()) {
+            String txt = in == null ? "{}" : new String(in.readAllBytes(), StandardCharsets.UTF_8);
+            JsonObject o = JsonParser.parseString(txt).getAsJsonObject();
+            if (code >= 400 || o.has("ok") && !o.get("ok").getAsBoolean()) {
+                throw new IllegalStateException(o.has("message") ? o.get("message").getAsString() : "Lỗi " + code);
+            }
+            return o;
+        }
+    }
+
+    private JsonObject wallet(String name) throws Exception {
+        return call("GET", "/api/web/vang?ten=" + URLEncoder.encode(name, StandardCharsets.UTF_8), null);
+    }
+
+    private static String str(JsonObject o, String k) {
+        return o != null && o.has(k) && !o.get(k).isJsonNull() ? o.get(k).getAsString() : "";
+    }
+
+    private static long num(JsonObject o, String k) {
+        return o != null && o.has(k) && !o.get(k).isJsonNull() ? o.get(k).getAsLong() : 0;
+    }
+
+    /** Chạy việc mạng ở luồng phụ rồi quay về luồng chính; lỗi thì báo người chơi. */
+    private void async(Player p, java.util.concurrent.Callable<JsonObject> work, java.util.function.BiConsumer<Player, JsonObject> done) {
+        UUID id = p.getUniqueId();
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+            try {
+                JsonObject r = work.call();
+                Bukkit.getScheduler().runTask(plugin, () -> {
+                    Player pl = Bukkit.getPlayer(id);
+                    if (pl != null) {
+                        done.accept(pl, r);
+                    }
+                });
+            } catch (Exception ex) {
+                Bukkit.getScheduler().runTask(plugin, () -> {
+                    Player pl = Bukkit.getPlayer(id);
+                    if (pl != null) {
+                        pl.sendMessage(c("&c[Vàng] " + ex.getMessage()));
+                    }
+                });
+            }
+        });
+    }
+
+    private static long vangFor(long tien, JsonObject w) {
+        long rate = Math.max(1, num(w, "ty_gia"));
+        long base = tien / rate;
+        long pct = 0;
+        if (w.has("thuong") && w.get("thuong").isJsonArray()) {
+            for (JsonElement e : w.getAsJsonArray("thuong")) {
+                if (tien >= num(e.getAsJsonObject(), "tu")) {
+                    pct = num(e.getAsJsonObject(), "pct");
+                }
+            }
+        }
+        return base + base * pct / 100;
+    }
+
+    // ------------------------------------------------------------ menu nạp (/rank mua, /vang nap)
 
     void open(Player p) {
         if (!ready()) {
-            p.sendMessage(c("&eỦng hộ trên web: &f" + web() + " &7(đăng nhập bằng /web)"));
+            p.sendMessage(c("&eNạp Vàng trên web: &f" + web() + " &7(đăng nhập bằng /web)"));
             return;
         }
-        Holder h = new Holder();
-        h.inv = Bukkit.createInventory(h, 54, c("&6ỦNG HỘ SERVER &8(chỉ đồ trang trí)"));
-        int row = 0;
-        for (int ti = 0; ti < tiers.size() && row < 6; ti++) {
-            DonateRanks.Tier t = tiers.get(ti);
-            ItemStack head = new ItemStack(Material.NAME_TAG);
-            ItemMeta hm = head.getItemMeta();
-            hm.displayName(c(t.color() + t.name()));
-            List<Component> lore = new ArrayList<>();
-            for (String perk : t.perks()) {
-                lore.add(c("&7• &f" + perk));
-            }
-            hm.lore(lore);
-            head.setItemMeta(hm);
-            h.inv.setItem(row * 9, head);
-            for (int gi = 0; gi < t.prices().size() && gi < 7; gi++) {
-                ItemStack it = new ItemStack(Material.GOLD_NUGGET, Math.min(64, gi + 1));
+        async(p, () -> wallet(p.getName()), (pl, w) -> {
+            Holder h = new Holder();
+            h.inv = Bukkit.createInventory(h, 27, c("&6Nạp Vàng &8(số dư: " + num(w, "so_du") + " Vàng)"));
+            int slot = 10;
+            for (long t : AMOUNTS) {
+                ItemStack it = new ItemStack(Material.GOLD_NUGGET, (int) Math.min(64, Math.max(1, t / 100_000)));
                 ItemMeta m = it.getItemMeta();
-                m.displayName(c(t.color() + t.name() + " &7· &e" + t.prices().get(gi)));
-                m.lore(List.of(c("&a» Bấm để tạo mã QR chuyển khoản"), c("&7Mã có hiệu lực " + cfg.getInt("minutes", 10) + " phút")));
+                m.displayName(c("&e" + vnd(t) + " &7→ &6" + vangFor(t, w) + " Vàng"));
+                m.lore(List.of(c("&a» Bấm để lấy mã QR chuyển khoản"), c("&7Mã hiện trên tay, hiệu lực " + cfg.getInt("minutes", 10) + " phút"),
+                        c("&7Số khác: nạp trên web " + web())));
                 it.setItemMeta(m);
-                int slot = row * 9 + 2 + gi;
                 h.inv.setItem(slot, it);
-                h.slots.put(slot, new int[] {ti, gi});
+                h.amounts.put(slot, t);
+                slot++;
             }
-            row++;
+            ItemStack shop = new ItemStack(Material.GOLD_INGOT);
+            ItemMeta sm = shop.getItemMeta();
+            sm.displayName(c("&6Cửa hàng Vàng"));
+            sm.lore(List.of(c("&7Rank ủng hộ, đồ trang trí, tên màu"), c("&7Bạn có &6" + num(w, "so_du") + " Vàng")));
+            shop.setItemMeta(sm);
+            h.inv.setItem(17, shop);
+            h.shopSlot = 17;
+            pl.openInventory(h.inv);
+        });
+    }
+
+    // ------------------------------------------------------------ /vang: ví + cửa hàng
+
+    boolean vangCommand(CommandSender s, String[] a) {
+        if (!(s instanceof Player p)) {
+            s.sendMessage("Chỉ người chơi dùng được.");
+            return true;
         }
-        p.openInventory(h.inv);
+        if (!ready()) {
+            p.sendMessage(c("&eVàng xem và mua trên web: &f" + web()));
+            return true;
+        }
+        if (a.length > 0 && a[0].equalsIgnoreCase("nap")) {
+            open(p);
+            return true;
+        }
+        openShop(p);
+        return true;
+    }
+
+    private void openShop(Player p) {
+        async(p, () -> wallet(p.getName()), (pl, w) -> {
+            JsonArray mon = w.has("mon") ? w.getAsJsonArray("mon") : new JsonArray();
+            int rows = Math.min(6, Math.max(2, (mon.size() + 9) / 9 + 1));
+            Holder h = new Holder();
+            long bal = num(w, "so_du");
+            h.inv = Bukkit.createInventory(h, rows * 9, c("&6Cửa hàng Vàng &8(có " + bal + " Vàng)"));
+            int slot = 0;
+            for (JsonElement e : mon) {
+                if (slot >= rows * 9 - 9) {
+                    break;
+                }
+                JsonObject m = e.getAsJsonObject();
+                long gia = num(m, "gia");
+                String loai = str(m, "loai");
+                ItemStack it = new ItemStack(loai.equals("rank") ? Material.NAME_TAG : bal >= gia ? Material.GOLD_INGOT : Material.IRON_INGOT);
+                ItemMeta im = it.getItemMeta();
+                im.displayName(c((bal >= gia ? "&e" : "&7") + str(m, "ten")));
+                List<Component> lore = new ArrayList<>();
+                if (!str(m, "mo_ta").isBlank()) {
+                    lore.add(c("&7" + str(m, "mo_ta")));
+                }
+                lore.add(c("&6Giá: " + gia + " Vàng"));
+                lore.add(c(bal >= gia ? "&a» Bấm 2 lần để mua" : "&cChưa đủ Vàng (thiếu " + (gia - bal) + ")"));
+                im.lore(lore);
+                it.setItemMeta(im);
+                h.inv.setItem(slot, it);
+                h.items.put(slot, m);
+                slot++;
+            }
+            ItemStack nap = new ItemStack(Material.GOLD_NUGGET);
+            ItemMeta nm = nap.getItemMeta();
+            nm.displayName(c("&eNạp thêm Vàng"));
+            nm.lore(List.of(c("&7Lấy mã QR chuyển khoản"), c("&7Tỉ giá: " + vnd(num(w, "ty_gia")) + " = 1 Vàng")));
+            nap.setItemMeta(nm);
+            h.inv.setItem(rows * 9 - 5, nap);
+            h.amounts.put(rows * 9 - 5, -1L);
+            pl.openInventory(h.inv);
+        });
+    }
+
+    private void buy(Player p, JsonObject m) {
+        String ma = str(m, "ma");
+        long now = System.currentTimeMillis();
+        if (!ma.equals(confirm.get(p.getUniqueId())) || now - confirmAt.getOrDefault(p.getUniqueId(), 0L) > 6000) {
+            confirm.put(p.getUniqueId(), ma);
+            confirmAt.put(p.getUniqueId(), now);
+            p.sendMessage(c("&6[Vàng] &fBấm lại &e" + str(m, "ten") + " &ftrong 6 giây để mua với &6" + num(m, "gia") + " Vàng&f."));
+            return;
+        }
+        confirm.remove(p.getUniqueId());
+        p.closeInventory();
+        JsonObject body = new JsonObject();
+        body.addProperty("ten", p.getName());
+        body.addProperty("viec", "mua");
+        body.addProperty("ma", ma);
+        async(p, () -> call("POST", "/api/web/vang", body.toString()),
+                (pl, r) -> pl.sendMessage(c("&a[Vàng] " + str(r, "message"))));
     }
 
     @EventHandler
     public void onMenuClick(InventoryClickEvent e) {
         if (e.getInventory().getHolder() instanceof Holder h) {
             e.setCancelled(true);
-            int[] pick = h.slots.get(e.getRawSlot());
-            if (pick != null && e.getWhoClicked() instanceof Player p) {
+            if (!(e.getWhoClicked() instanceof Player p) || e.getClickedInventory() != e.getView().getTopInventory()) {
+                return;
+            }
+            int slot = e.getRawSlot();
+            if (slot == h.shopSlot) {
                 p.closeInventory();
-                create(p, pick[0], pick[1]);
+                openShop(p);
+            } else if (h.amounts.containsKey(slot)) {
+                long t = h.amounts.get(slot);
+                p.closeInventory();
+                if (t < 0) {
+                    open(p);
+                } else {
+                    create(p, t);
+                }
+            } else if (h.items.containsKey(slot)) {
+                buy(p, h.items.get(slot));
             }
             return;
         }
-        // bản đồ QR: không cho cất vào rương/hòm khác
+        // bản đồ QR: không cho cất vào rương/hòm khác, không đổi chỗ bằng phím số
         if (e.getView().getTopInventory().getType() != InventoryType.CRAFTING
                 && (isQr(e.getCurrentItem()) || isQr(e.getCursor()) || e.getHotbarButton() >= 0
                 && isQr(e.getWhoClicked().getInventory().getItem(e.getHotbarButton())))) {
@@ -158,47 +339,18 @@ final class DonateQr implements Listener {
         }
     }
 
-    // ------------------------------------------------------------ gọi panel
+    // ------------------------------------------------------------ tạo mã nạp
 
-    private JsonObject post(String body) throws Exception {
-        HttpURLConnection con = (HttpURLConnection) URI.create(panelUrl + "/api/web/donate").toURL().openConnection();
-        con.setConnectTimeout(5000);
-        con.setReadTimeout(10000);
-        con.setRequestMethod("POST");
-        con.setDoOutput(true);
-        con.setRequestProperty("Content-Type", "application/json");
-        con.setRequestProperty("X-DMM-Key", panelKey);
-        con.setRequestProperty("X-DMM-Ip", "game");
-        try (OutputStream os = con.getOutputStream()) {
-            os.write(body.getBytes(StandardCharsets.UTF_8));
-        }
-        int code = con.getResponseCode();
-        try (InputStream in = code < 400 ? con.getInputStream() : con.getErrorStream()) {
-            String txt = in == null ? "{}" : new String(in.readAllBytes(), StandardCharsets.UTF_8);
-            JsonObject o = JsonParser.parseString(txt).getAsJsonObject();
-            if (code >= 400) {
-                throw new IllegalStateException(o.has("message") ? o.get("message").getAsString() : "Lỗi " + code);
-            }
-            return o;
-        }
-    }
-
-    private static String str(JsonObject o, String k) {
-        return o.has(k) && !o.get(k).isJsonNull() ? o.get(k).getAsString() : "";
-    }
-
-    private void create(Player p, int ti, int gi) {
-        p.sendMessage(c("&6[Ủng hộ] &7Đang tạo mã VietQR…"));
+    private void create(Player p, long tien) {
+        p.sendMessage(c("&6[Ủng hộ] &7Đang tạo mã QR…"));
+        JsonObject body = new JsonObject();
+        body.addProperty("action", "tao");
+        body.addProperty("ten", p.getName());
+        body.addProperty("tien", tien);
         UUID id = p.getUniqueId();
-        String name = p.getName();
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             try {
-                JsonObject body = new JsonObject();
-                body.addProperty("action", "tao");
-                body.addProperty("ten", name);
-                body.addProperty("bac", ti);
-                body.addProperty("goi", gi);
-                JsonObject res = post(body.toString());
+                JsonObject res = call("POST", "/api/web/donate", body.toString());
                 JsonObject don = res.getAsJsonObject("don");
                 String qr = str(res, "qr");
                 BufferedImage img = qr.isBlank() ? null : fetch(qr);
@@ -220,10 +372,10 @@ final class DonateQr implements Listener {
         });
     }
 
-    /** Tải ảnh QR, đổi về đen trắng 128x128 (điểm ảnh gần nhất) cho rõ trên bản đồ. */
+    /** Ảnh QR: data URI do panel tự vẽ (hoặc link ảnh), đổi về đen trắng 128x128 cho rõ trên bản đồ. */
     private static BufferedImage fetch(String url) throws Exception {
         BufferedImage src;
-        if (url.startsWith("data:image/")) {   // panel tự vẽ QR (PNG base64), không phải tải
+        if (url.startsWith("data:image/")) {
             src = ImageIO.read(new java.io.ByteArrayInputStream(java.util.Base64.getDecoder().decode(url.substring(url.indexOf(',') + 1))));
         } else {
             HttpURLConnection con = (HttpURLConnection) URI.create(url).toURL().openConnection();
@@ -251,7 +403,7 @@ final class DonateQr implements Listener {
     private void deliver(Player p, JsonObject don, BufferedImage img, JsonObject res) {
         String rid = str(don, "id");
         String content = str(don, "noi_dung");
-        String money = String.format("%,d", don.has("tien") ? don.get("tien").getAsLong() : 0).replace(',', '.') + "đ";
+        String money = vnd(num(don, "tien"));
         lastOrder.put(p.getUniqueId(), rid);
         if (img == null) {
             p.sendMessage(c("&e[Ủng hộ] Server chưa điền tài khoản ngân hàng. Nhắn admin, nội dung chuyển khoản: &f" + content));
@@ -278,31 +430,31 @@ final class DonateQr implements Listener {
         ItemStack map = new ItemStack(Material.FILLED_MAP);
         MapMeta meta = (MapMeta) map.getItemMeta();
         meta.setMapView(view);
-        meta.displayName(c("&6QR ủng hộ &7(" + minutes + " phút)"));
+        meta.displayName(c("&6QR nạp Vàng &7(" + minutes + " phút)"));
         List<Component> lore = new ArrayList<>();
-        lore.add(c("&7Gói: &f" + str(don, "bac") + " · " + str(don, "goi")));
+        lore.add(c("&7" + str(don, "bac") + ": &6" + str(don, "goi")));
         lore.add(c("&7Số tiền: &e" + money));
         lore.add(c("&7Nội dung CK: &f" + content));
         JsonObject bank = res.has("bank") && res.get("bank").isJsonObject() ? res.getAsJsonObject("bank") : new JsonObject();
         if (!str(bank, "ngan-hang").isBlank()) {
             lore.add(c("&7" + str(bank, "ngan-hang") + " · " + str(bank, "so-tai-khoan") + " · " + str(bank, "chu-tai-khoan")));
         }
-        lore.add(c("&8Cầm trên tay, mở app ngân hàng quét mã"));
+        lore.add(c("&8Mở app ngân hàng quét mã. Xong bấm [Tôi đã chuyển khoản] trong chat"));
         meta.lore(lore);
         meta.getPersistentDataContainer().set(key, PersistentDataType.LONG, System.currentTimeMillis() + minutes * 60_000L);
-        map.setItemMeta(meta);
+        // Đặt THẲNG vào tay, không tốn ô: món đang cầm giấu trong tấm bản đồ, cất QR thì trả lại đúng chỗ
         ItemStack hand = p.getInventory().getItemInMainHand();
-        if (hand.getType().isAir()) {
-            p.getInventory().setItemInMainHand(map);
-        } else if (!p.getInventory().addItem(map).isEmpty()) {
-            p.sendMessage(c("&c[Ủng hộ] Túi đầy, dọn 1 ô rồi bấm lại. Nội dung CK: &f" + content));
-            return;
+        if (!hand.getType().isAir()) {
+            meta.getPersistentDataContainer().set(stashKey, PersistentDataType.BYTE_ARRAY, hand.serializeAsBytes());
         }
-        p.sendMessage(c("&6[Ủng hộ] &fMã QR đã ở trong túi (tấm bản đồ), hiệu lực &e" + minutes + " phút&f. Số tiền &e" + money
-                + "&f, nội dung &f" + content + "&f."));
+        map.setItemMeta(meta);
+        p.getInventory().setItemInMainHand(map);
+        p.sendMessage(c("&6[Ủng hộ] &fMã QR đang trên tay bạn, hiệu lực &e" + minutes + " phút&f. Số tiền &e" + money
+                + "&f → &6" + str(don, "goi") + "&f. Nội dung &f" + content + "&f."));
         p.sendMessage(c("&a[Tôi đã chuyển khoản]").clickEvent(ClickEvent.runCommand("/rank dachuyen " + rid))
-                .hoverEvent(HoverEvent.showText(c("Báo admin kiểm tra và cấp rank")))
-                .append(c("  ")).append(c("&c[Huỷ]").clickEvent(ClickEvent.runCommand("/rank huyqr"))));
+                .hoverEvent(HoverEvent.showText(c("Báo admin kiểm tra và cộng Vàng")))
+                .append(c("  ")).append(c("&c[Huỷ]").clickEvent(ClickEvent.runCommand("/rank huyqr")))
+                .append(c("  &7(món đang cầm sẽ trả lại khi cất mã)")));
     }
 
     // ------------------------------------------------------------ báo đã chuyển, huỷ
@@ -316,28 +468,13 @@ final class DonateQr implements Listener {
             p.sendMessage(c("&7Chưa có mã nào. Gõ &e/rank mua"));
             return;
         }
-        String name = p.getName();
-        UUID uid = p.getUniqueId();
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-            String msg;
-            try {
-                JsonObject body = new JsonObject();
-                body.addProperty("action", "bao");
-                body.addProperty("ten", name);
-                body.addProperty("id", id);
-                JsonObject res = post(body.toString());
-                msg = "&a[Ủng hộ] " + (res.has("message") ? res.get("message").getAsString() : "Đã báo admin.");
-            } catch (Exception ex) {
-                msg = "&c[Ủng hộ] " + ex.getMessage();
-            }
-            String m = msg;
-            Bukkit.getScheduler().runTask(plugin, () -> {
-                Player pl = Bukkit.getPlayer(uid);
-                if (pl != null) {
-                    pl.sendMessage(c(m));
-                    removeAll(pl);
-                }
-            });
+        JsonObject body = new JsonObject();
+        body.addProperty("action", "bao");
+        body.addProperty("ten", p.getName());
+        body.addProperty("id", id);
+        async(p, () -> call("POST", "/api/web/donate", body.toString()), (pl, r) -> {
+            pl.sendMessage(c("&a[Ủng hộ] " + (str(r, "message").isBlank() ? "Đã báo admin." : str(r, "message"))));
+            removeAll(pl);
         });
     }
 
@@ -353,11 +490,27 @@ final class DonateQr implements Listener {
                 && it.getItemMeta().getPersistentDataContainer().has(key, PersistentDataType.LONG);
     }
 
+    /** Món đang cầm lúc nhận QR (giấu trong tấm bản đồ), null nếu tay không. */
+    private ItemStack stashed(ItemStack qr) {
+        byte[] b = qr.getItemMeta().getPersistentDataContainer().get(stashKey, PersistentDataType.BYTE_ARRAY);
+        try {
+            return b == null ? null : ItemStack.deserializeBytes(b);
+        } catch (RuntimeException ex) {
+            plugin.getLogger().warning("QR: không đọc được món đồ giữ trong bản đồ: " + ex);
+            return null;
+        }
+    }
+
+    /** Thay tấm bản đồ QR ở ô i bằng món đồ đã giấu (hoặc để trống). */
+    private void restore(Player p, int i, ItemStack qr) {
+        p.getInventory().setItem(i, stashed(qr));
+    }
+
     private void removeAll(Player p) {
         ItemStack[] inv = p.getInventory().getContents();
         for (int i = 0; i < inv.length; i++) {
             if (isQr(inv[i])) {
-                p.getInventory().setItem(i, null);
+                restore(p, i, inv[i]);
             }
         }
     }
@@ -369,7 +522,7 @@ final class DonateQr implements Listener {
             if (isQr(inv[i])) {
                 Long until = inv[i].getItemMeta().getPersistentDataContainer().get(key, PersistentDataType.LONG);
                 if (until == null || now > until) {
-                    p.getInventory().setItem(i, null);
+                    restore(p, i, inv[i]);
                     p.sendMessage(c("&7[Ủng hộ] Mã QR đã hết hạn. Cần mã mới: &e/rank mua"));
                 }
             }
@@ -379,18 +532,41 @@ final class DonateQr implements Listener {
     @EventHandler
     public void onDrop(PlayerDropItemEvent e) {
         if (isQr(e.getItemDrop().getItemStack())) {
-            e.getItemDrop().remove();
-            e.getPlayer().sendMessage(c("&7[Ủng hộ] Đã cất mã QR."));
+            e.setCancelled(true);   // bấm Q: cất mã và trả món cũ về tay
+            Bukkit.getScheduler().runTask(plugin, () -> cancel(e.getPlayer()));
+        }
+    }
+
+    @EventHandler
+    public void onSwap(PlayerSwapHandItemsEvent e) {
+        if (isQr(e.getMainHandItem()) || isQr(e.getOffHandItem())) {
+            e.setCancelled(true);   // không đưa QR sang tay trái (lẫn món đồ giấu bên trong)
         }
     }
 
     @EventHandler
     public void onDeath(PlayerDeathEvent e) {
-        e.getDrops().removeIf(this::isQr);
+        List<ItemStack> back = new ArrayList<>();
+        e.getDrops().removeIf(it -> {
+            if (isQr(it)) {
+                ItemStack s = stashed(it);
+                if (s != null) {
+                    back.add(s);   // món đồ giấu trong QR rơi ra như đồ thường
+                }
+                return true;
+            }
+            return false;
+        });
+        e.getDrops().addAll(back);
+    }
+
+    @EventHandler
+    public void onQuit(PlayerQuitEvent e) {
+        removeAll(e.getPlayer());
     }
 
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
-        removeExpired(e.getPlayer());
+        removeAll(e.getPlayer());   // server sập lúc đang cầm QR: trả món đồ giấu bên trong
     }
 }

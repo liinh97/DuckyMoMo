@@ -22,18 +22,29 @@
   .st-huy { color: var(--muted); }
   .empty { color: var(--muted); padding: 18px 0; }
   .hint { color: var(--muted); font-size: 13.5px; margin: 0 0 12px; }
+  .vg { padding: 14px 18px; margin-bottom: 14px; display: grid; gap: 10px; }
+  .vg .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .vg input { padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--input); color: var(--text); font: inherit; min-width: 0; }
+  .vg table { width: 100%; border-collapse: collapse; font-size: 13px; } .vg td { padding: 4px 6px; border-bottom: 1px solid var(--line); }
   @media (max-width: 700px) { .don { grid-template-columns: 1fr; } .don .acts { justify-content: flex-start; } }
 </style>
 </head>
-<body data-dozzle="__DOZZLE_URL__" data-title="Donate" data-sub="Người chơi chọn gói trên trang tài khoản, quét QR chuyển khoản rồi bấm 'Tôi đã chuyển khoản'. Kiểm tra tiền đã về (đúng số tiền + nội dung) rồi mới cấp rank.">
+<body data-dozzle="__DOZZLE_URL__" data-title="Donate · Vàng" data-sub="Người chơi chọn số tiền nạp (web hoặc /rank mua), quét QR rồi bấm 'Tôi đã chuyển khoản'. Kiểm tra tiền đã về (đúng số tiền + nội dung) rồi bấm Duyệt: server cộng Vàng, người chơi tự mua rank/đồ trang trí bằng Vàng.">
 <script src="shell.js"></script>
 <main>
+  <div class="card vg">
+    <b>Ví Vàng của người chơi</b>
+    <div class="row"><input id="vgTen" placeholder="Tên người chơi"><button class="ghost" id="vgXem">Xem ví</button>
+      <input id="vgSo" type="number" placeholder="Số Vàng (âm = trừ)" style="width:170px"><input id="vgLyDo" placeholder="Lý do (bắt buộc)" style="flex:1 1 200px">
+      <button class="primary" id="vgGo">Cộng / trừ</button></div>
+    <div id="vgOut" class="hint" style="margin:0"></div>
+  </div>
   <div class="tabs" id="tabs"></div>
-  <p class="hint">"Cấp rank" chạy <code>/rank give &lt;tên&gt; &lt;bậc&gt; &lt;tháng&gt;</code> (gia hạn thì cộng dồn). Chỉ đồ trang trí, đúng luật Mojang.</p>
+  <p class="hint">"Duyệt" = cộng Vàng theo số tiền (tỉ giá + mốc thưởng ở Cài đặt › Toàn mạng › Rank donate). Yêu cầu kiểu cũ (chọn gói rank) cũng được đổi thành Vàng. Vàng chỉ mua đồ trang trí, đúng luật Mojang.</p>
   <div class="list" id="list"><div class="empty">Đang tải…</div></div>
 </main>
 <script>
-const ST = { cho: "Chờ duyệt", tao: "Chưa báo chuyển", da_cap: "Đã cấp", huy: "Đã huỷ" };
+const ST = { cho: "Chờ duyệt", tao: "Chưa báo chuyển", da_cap: "Đã cộng Vàng", huy: "Đã huỷ" };
 let rows = [], tab = "cho";
 const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const when = ms => ms ? new Date(ms).toLocaleString("vi-VN", { hour: "2-digit", minute: "2-digit", day: "2-digit", month: "2-digit" }) : "";
@@ -49,17 +60,17 @@ function draw() {
       <div class="meta"><span class="money">${Number(r.tien).toLocaleString("vi-VN")}đ</span> · nội dung <code>${esc(r.noi_dung)}</code>
         · tạo ${when(r.tao_luc)}${r.bao_luc ? " · báo đã chuyển " + when(r.bao_luc) : ""}${r.xu_ly_boi ? ` · ${esc(r.xu_ly_boi)} xử lý ${when(r.xu_ly_luc)}` : ""}</div>
     </div><div class="acts">${r.trang_thai === "cho" || r.trang_thai === "tao" ? `
-      <button class="primary" data-a="cap" data-id="${r.id}">Cấp rank ${esc(r.thang)} tháng</button>
-      <button class="ghost" data-a="xong" data-id="${r.id}">Đã cấp tay</button>
+      <button class="primary" data-a="cap" data-id="${r.id}">Duyệt: cộng Vàng</button>
+      <button class="ghost" data-a="xong" data-id="${r.id}">Đã xử lý tay</button>
       <button class="ghost" data-a="huy" data-id="${r.id}">Huỷ</button>` : ""}</div></div>`).join("")
     : `<div class="empty">Không có yêu cầu nào${tab === "cho" ? " đang chờ duyệt" : ""}.</div>`;
   document.querySelectorAll("[data-a]").forEach(b => b.onclick = () => act(b.dataset.a, b.dataset.id));
 }
 async function act(a, id) {
   const r = rows.find(x => x.id === id);
-  const q = { cap: `Cấp ${r.bac} ${r.thang} tháng cho ${r.ten}? Kiểm tra đã nhận ${Number(r.tien).toLocaleString("vi-VN")}đ với nội dung ${r.noi_dung}.`,
-    xong: `Đánh dấu đã cấp (bạn đã tự cấp bằng lệnh)?`, huy: `Huỷ yêu cầu của ${r.ten}?` }[a];
-  if (!(await ask(q, { title: { cap: "Cấp rank", xong: "Đánh dấu đã cấp", huy: "Huỷ yêu cầu" }[a], ok: { cap: "Cấp rank", xong: "Đã cấp", huy: "Huỷ yêu cầu" }[a],
+  const q = { cap: `Cộng Vàng cho ${r.ten} (nạp ${Number(r.tien).toLocaleString("vi-VN")}đ)? Kiểm tra tài khoản ngân hàng đã nhận đúng số tiền với nội dung ${r.noi_dung}.`,
+    xong: `Đánh dấu đã xử lý (KHÔNG cộng Vàng, vd bạn đã tự cộng tay)?`, huy: `Huỷ yêu cầu của ${r.ten}?` }[a];
+  if (!(await ask(q, { title: { cap: "Duyệt nạp Vàng", xong: "Đánh dấu đã xử lý", huy: "Huỷ yêu cầu" }[a], ok: { cap: "Cộng Vàng", xong: "Đã xử lý", huy: "Huỷ yêu cầu" }[a],
     cancel: "Quay lại", danger: a === "huy" }))) return;
   toast("Đang xử lý…");
   const res = await fetch("api/donate", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: a, id }) });
@@ -67,6 +78,23 @@ async function act(a, id) {
   toast(d.message || "Lỗi", d.ok ? "ok" : "err");
   if (d.data) { rows = d.data; draw(); }
 }
+function vgShow(d) {
+  if (!d.ok && d.message) { document.getElementById("vgOut").textContent = d.message; return; }
+  document.getElementById("vgOut").innerHTML = `Số dư <b>${Number(d.so_du || 0).toLocaleString("vi-VN")} Vàng</b> · tổng nạp ${Number(d.tong_nap || 0).toLocaleString("vi-VN")}đ
+    ${(d.lich_su || []).length ? `<table>${d.lich_su.map(h => `<tr><td>${when(h.luc)}</td><td style="color:${h.thay_doi > 0 ? "var(--ok)" : "var(--err)"}">${h.thay_doi > 0 ? "+" : ""}${h.thay_doi}</td><td>${esc(h.ly_do)}</td><td>còn ${h.so_du_sau}</td></tr>`).join("")}</table>` : ""}`;
+}
+async function vgCall(body) {
+  const res = await fetch("api/vang", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+  return res.json().catch(() => ({ ok: false, message: "Lỗi" }));
+}
+document.getElementById("vgXem").onclick = async () => vgShow(await vgCall({ ten: document.getElementById("vgTen").value.trim() }));
+document.getElementById("vgGo").onclick = async () => {
+  const ten = document.getElementById("vgTen").value.trim(), so = parseInt(document.getElementById("vgSo").value, 10), ly_do = document.getElementById("vgLyDo").value.trim();
+  if (!ten || !so || !ly_do) { toast("Nhập tên, số Vàng và lý do.", "err"); return; }
+  if (!(await ask(`${so > 0 ? "Cộng" : "Trừ"} ${Math.abs(so)} Vàng cho ${ten}? Lý do: ${ly_do}`, { title: "Điều chỉnh Vàng", ok: "Đồng ý", cancel: "Quay lại", danger: so < 0 }))) return;
+  const d = await vgCall({ action: "dieuchinh", ten, so, ly_do });
+  toast(d.message || "Lỗi", d.ok ? "ok" : "err"); if (d.ok) vgShow(d);
+};
 fetch("api/donate").then(r => r.json()).then(d => { rows = d.rows || []; draw(); })
   .catch(() => { document.getElementById("list").innerHTML = '<div class="empty">Không tải được.</div>'; });
 </script>

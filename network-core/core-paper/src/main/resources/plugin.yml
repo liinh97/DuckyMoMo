@@ -56,6 +56,9 @@ commands:
     description: "Lệnh admin của DuckyMoMo: phù phép vượt cấp, thư viện đồ, dọn rác, NPC… (bấm Tab để gợi ý)"
     aliases: [duckymomo]
     permission: duckymomo.admin
+  vang:
+    description: "Vàng (tiền ủng hộ): xem ví, cửa hàng (rank, trang trí, tên màu); /vang nap lấy mã QR nạp"
+    aliases: [gold, vi]
   rank:
     description: "Xem rank donate (tước vị), giá, rank của bạn. Admin: /rank give|remove|check"
     aliases: [donate, tuocvi]

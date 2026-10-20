@@ -764,16 +764,17 @@ chapters:
     &6RANK ỦNG HỘ
     &0Ủng hộ server, nhận tước vị&r&0: chỉ để trang trí&r&0, không mua được lợi thế.
     &2Nam Tước &1Tử Tước &1Bá Tước &5Hầu Tước &6Công Tước
-    &1/rank &0xem giá, quyền lợi.
+    &0Mua bằng &6Vàng&0: nạp tiền ủng hộ được Vàng.
+    &1/rank &0xem quyền lợi, &1/vang &0cửa hàng.
   - |-
     &6Quyền lợi rank
     &0Prefix màu, chat màu, &1/hat&0, &1/nick&0, hiệu ứng hạt &1/pp&0, pet trang trí &1/pet&0 (không cưỡi, không đánh), chào khi vào server, &1/cuahang&0 trong kinh đô.
     &8Không bán đồ, tiền, sức mạnh, cape hay gì liên quan Pokémon.
   - |-
-    &6ỦNG HỘ BẰNG QR
-    &1/rank mua&0, chọn gói: mã QR hiện trên tấm bản đồ&r&0 trong tay (10 phút).
-    &0Mở app ngân hàng quét mã, chuyển xong bấm &2[Tôi đã chuyển khoản]&0 trong chat.
-    &0Admin cấp rank trong ngày. Cũng mua được trên web.
+    &6NẠP VÀNG BẰNG QR
+    &1/rank mua&0, chọn số tiền: mã QR hiện ngay trên tay (10 phút), món đang cầm được trả lại khi cất mã.
+    &0Quét bằng app ngân hàng, xong bấm &2[Tôi đã chuyển khoản]&0.
+    &0Admin duyệt là có Vàng. &1/vang &0mua rank, mũ, tên màu, pet…
   - |-
     &6ỦNG HỘ BẰNG QR (tiếp)
     &4Chỉ chuyển theo QR của server, admin không nhắn xin tiền riêng.

@@ -1323,7 +1323,7 @@ player-menu:
     - {slot: 37, icon: CHEST_MINECART, name: "&dBalo", lore: ["&7Túi đồ thêm theo danh phận"], cmd: balo}
     - {slot: 38, icon: LEATHER_CHESTPLATE, name: "&dTủ skin", lore: ["&7Lưu và đổi skin"], proxy: tuskin}
     - {slot: 39, icon: COMPARATOR, name: "&dCài đặt cá nhân", lore: ["&7Bật/tắt chat, thông báo, font…"], cmd: caidat}
-    - {slot: 40, icon: DIAMOND, name: "&dRank ủng hộ", lore: ["&7Chỉ đồ trang trí, không pay-to-win"], cmd: rank}
+    - {slot: 40, icon: GOLD_INGOT, name: "&6Vàng & rank ủng hộ", lore: ["&7Nạp Vàng, mua rank, trang trí, tên màu", "&7Chỉ trang trí, không pay-to-win"], cmd: vang}
     - {slot: 41, icon: IRON_SWORD, name: "&dĐấu Trường", lore: ["&7PvP không mất đồ"], cmd: "warp pvp"}
     - {slot: 43, icon: COMPASS, name: "&7Về sảnh", lore: ["&7Chọn chế độ khác"], server: lobby}
 

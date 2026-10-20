@@ -387,13 +387,14 @@ final class DonateRanks implements Listener {
                 s.sendMessage(c("   &7Skin độc quyền (/skins): &f" + String.join(", ", sk) + " &8(+ skin của bậc dưới)"));
             }
             if (!t.prices().isEmpty()) {
-                s.sendMessage(c("   &8Giá: &e" + String.join("&8 | &e", t.prices())));
+                s.sendMessage(c("   &8Giá (quy ra Vàng): &e" + String.join("&8 | &e", t.prices())));
             }
         }
         s.sendMessage(c("&7Bậc cao có đủ quyền của các bậc thấp hơn."));
         if (qr != null && qr.ready() && s instanceof Player) {
-            s.sendMessage(c("&a[Bấm để ủng hộ bằng mã QR]").clickEvent(net.kyori.adventure.text.event.ClickEvent.runCommand("/rank mua"))
-                    .append(c(" &7hoặc gõ &e/rank mua &7(quét bằng app ngân hàng, hiện ngay trong game)")));
+            s.sendMessage(c("&7Rank mua bằng &6Vàng&7: nạp tiền ủng hộ được Vàng, rồi tự chọn rank trong cửa hàng."));
+            s.sendMessage(c("&6[Mở cửa hàng Vàng]").clickEvent(net.kyori.adventure.text.event.ClickEvent.runCommand("/vang"))
+                    .append(c("  ")).append(c("&a[Nạp Vàng bằng mã QR]").clickEvent(net.kyori.adventure.text.event.ClickEvent.runCommand("/rank mua"))));
         } else {
             s.sendMessage(c(howToBuy));
         }

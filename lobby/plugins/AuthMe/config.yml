@@ -93,11 +93,13 @@ Hooks:
     bungeecord: true
     # Lấy từ AUTHME_SECRET trong .env, phải trùng proxySharedSecret trên proxy
     proxySharedSecret: '${CFG_AUTHME_SECRET}'
-# Chống dò mật khẩu (19/10): sai 3 lần phải gõ captcha (/captcha <mã>), sai 10 lần trong 30 phút thì cấm IP đó 30 phút
+# Chống dò mật khẩu: sai 10 lần trong 30 phút thì cấm IP đó 30 phút.
+# 20/10: TẮT captcha chữ của AuthMe (chép được nên bot qua dễ, người dùng thấy thừa vì đã có captcha BẢN ĐỒ của Sonar lúc vào lần đầu).
+# Trước đó (19/10): sai 3 lần phải gõ /captcha <mã>
 # (ngắn vì nhiều người chung IP 4G/quán net). Sai mật khẩu còn bị kick (kickOnWrongPassword mặc định), Sonar ở proxy hãm tốc độ vào lại.
 Security:
     captcha:
-        useCaptcha: true
+        useCaptcha: false
         maxLoginTry: 3
         captchaLength: 5
     tempban:

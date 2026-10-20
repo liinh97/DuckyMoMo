@@ -1,6 +1,6 @@
 # DuckyMoMo Network: hướng dẫn cho Claude
 
-- Đọc `docs/HANDOFF.md` trước tiên: trạng thái hiện tại, chi tiết kỹ thuật, việc tiếp theo. Việc cần test trong game: `docs/TEST-CHECKLIST.md`.
+- Đọc `docs/HANDOFF.md` trước tiên (mục 0000 = tình trạng mới nhất 20/10, rồi 000): trạng thái hiện tại, chi tiết kỹ thuật, việc tiếp theo. Việc cần test trong game: `docs/TEST-CHECKLIST.md`.
 - Trả lời người dùng bằng **tiếng Việt**, thực tế, nói rõ chỗ nào chưa chắc hoặc cần kiểm tra lại.
 - Hạ tầng **chỉ dùng Docker Compose**: mỗi thành phần hoặc chế độ một `compose.yaml`, file gốc dùng `include`.
 - **Không commit mật khẩu.** Mật khẩu để trong `.env`; file cấu hình dùng `${CFG_TEN_BIEN}` (image itzg tự điền).

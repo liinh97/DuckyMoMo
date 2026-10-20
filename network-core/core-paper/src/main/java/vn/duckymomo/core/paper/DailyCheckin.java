@@ -57,6 +57,7 @@ final class DailyCheckin implements Listener {
         this.rewards = rewards;
         this.file = new File(plugin.getDataFolder(), "diemdanh.yml");
         this.data = YamlConfiguration.loadConfiguration(file);
+        Shared.FORGET.add(id -> Shared.forget(data, file, id));   // admin reset "như người mới"
         long now = System.currentTimeMillis();
         for (Player p : Bukkit.getOnlinePlayers()) {
             joined.put(p.getUniqueId(), now);

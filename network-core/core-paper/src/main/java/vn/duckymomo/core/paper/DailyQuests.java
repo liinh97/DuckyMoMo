@@ -77,6 +77,7 @@ final class DailyQuests implements Listener {
         this.rewards = rewards;
         this.file = new File(plugin.getDataFolder(), "nhiemvu.yml");
         this.data = YamlConfiguration.loadConfiguration(file);
+        Shared.FORGET.add(id -> Shared.forget(data, file, id));   // admin reset "như người mới"
         ConfigurationSection p = cfg.getConfigurationSection("pool");
         if (p != null) {
             for (String id : p.getKeys(false)) {

@@ -179,6 +179,9 @@ commands:
     description: "Đấu Trường: người + pet đấu 1v1, 2v2 (hàng chờ, thách đấu, cược, xếp hạng)"
     aliases: [dt, arena]
 permissions:
+  duckymomo.choilai.admin:
+    description: "Reset người chơi khác (/choilai admin <tên> [moi] [giurank]); trang quản trị › Hệ thống dùng qua RCON"
+    default: op
   duckymomo.kit.admin:
     description: "Phát gói quà cho người khác, xoá lượt đã nhận (/kit <mã> <người>, /kit lamlai)"
     default: op

@@ -123,6 +123,7 @@ final class LevelUp implements Listener {
         }
         this.file = new File(plugin.getDataFolder(), "capdo.yml");
         this.data = YamlConfiguration.loadConfiguration(file);
+        Shared.FORGET.add(id -> Shared.forget(data, file, id));   // admin reset "như người mới"
     }
 
     String describe() {

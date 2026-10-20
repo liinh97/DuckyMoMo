@@ -25,6 +25,17 @@
   .restart button.danger { background: var(--err); }
   .restart select { padding: 5px 8px; border-radius: 8px; border: 1px solid var(--line); background: var(--card); color: inherit; }
   .hint { color: var(--muted); font-size: 13.5px; margin: 0 0 12px; max-width: 100%; white-space: normal; overflow-wrap: anywhere; }
+  .reset { margin-top: 22px; padding: 18px 20px; display: grid; gap: 12px; max-width: 900px; }
+  .reset h3 { margin: 0; font-size: 17px; }
+  .reset .row2 { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+  .reset .row2 input[type=text] { flex: 1 1 220px; min-width: 0; }
+  .reset .mode { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px; }
+  .reset .mode label { display: grid; grid-template-columns: auto 1fr; gap: 4px 10px; align-items: start; border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; cursor: pointer; background: var(--card-2); }
+  .reset .mode label:has(input:checked) { border-color: var(--accent); background: var(--accent-soft); }
+  .reset .mode input { margin-top: 4px; }
+  .reset .mode b { font-size: 14.5px; }
+  .reset .mode small { grid-column: 2; color: var(--muted); font-size: 13px; line-height: 1.45; }
+  .reset .keep { display: flex; gap: 8px; align-items: center; font-size: 14px; }
   pre.out { white-space: pre-wrap; background: var(--chip); border-radius: 8px; padding: 8px 10px; font-size: 12.5px; margin: 0; max-height: 160px; overflow: auto; }
 </style>
 </head>
@@ -34,6 +45,18 @@
   <p class="hint">TPS 20 là mượt; dưới 18 là bắt đầu giật. MSPT dưới 50 ms là ổn. Số liệu tự làm mới mỗi 15 giây.
     Khởi động lại: server lưu thế giới rồi tắt, Docker tự bật lại sau khoảng 1–2 phút. Proxy (cổng vào chung) không điều khiển được từ đây.</p>
   <div class="grid" id="grid"><div class="card srv muted">Đang tải…</div></div>
+  <section class="card reset">
+    <h3>Reset người chơi (Bang Hội Chiến)</h3>
+    <div class="row2"><input type="text" id="rsName" placeholder="Tên người chơi, vd vanlinh (Bedrock có dấu chấm đầu)" autocomplete="off"></div>
+    <div class="mode">
+      <label><input type="radio" name="rsMode" value="choilai" checked><b>Chơi lại (như /choilai)</b>
+        <small>Mất đồ, rương Ender, balo, XP, tiền (về mức khởi đầu), nhà, cấp nghề, thị trấn, giờ chơi; về spawn, nhận lại quà tân thủ. Giữ danh phận, rank, danh hiệu, án. Không tính lượt /choilai. Người chơi phải đang online.</small></label>
+      <label><input type="radio" name="rsMode" value="moi"><b>Như người mới hoàn toàn (để test)</b>
+        <small>Như bên trái, thêm xoá: điểm danh, nhiệm vụ, vòng quay, thành tích, Thăng Cấp, gói quà đã nhận, /caidat, danh phận (về Tị Nạn), kỹ năng nghề, nhân vật. Bị đá ra; vào lại được tính là LẦN ĐẦU (quà lần đầu, tin chào). Offline cũng được.</small></label>
+    </div>
+    <label class="keep"><input type="checkbox" id="rsKeep" checked> Giữ rank ủng hộ / staff / Sứ Giả (chỉ với "như người mới")</label>
+    <div class="row2"><button class="primary danger" id="rsGo">Reset</button><span class="muted">Có bản sao lưu ở plugins/DuckyMoMoCore/choilai-backup (giữ 7 ngày). Mật khẩu đăng nhập giữ nguyên.</span></div>
+  </section>
 </main>
 <script>
 const NAME = {"lobby": "Sảnh", "banghoi-1": "Bang Hội Chiến", "practice-1": "Practice"};
@@ -122,6 +145,24 @@ document.addEventListener("click", async e => {
   b.disabled = false;
   load();
 });
+
+$("#rsGo").onclick = async () => {
+  const ten = $("#rsName").value.trim();
+  if (!ten) { $("#rsName").focus(); return; }
+  const moi = document.querySelector('input[name=rsMode]:checked').value === "moi";
+  const keep = $("#rsKeep").checked;
+  const msg = moi ? `Reset ${ten} NHƯ NGƯỜI MỚI hoàn toàn? Mất hết đồ, tiền, tiến trình, danh phận${keep ? " (giữ rank ủng hộ/staff/Sứ Giả)" : " và mọi rank"}; người đó bị đá ra.`
+    : `Cho ${ten} chơi lại từ đầu (như /choilai)? Mất đồ, tiền, nhà, cấp nghề, thị trấn.`;
+  if (!await ask(msg + " Không hoàn tác bằng nút được (có bản sao lưu).", {title: "Reset người chơi", ok: "Reset", danger: true})) return;
+  $("#rsGo").disabled = true;
+  try {
+    const j = await post({server: "banghoi-1", action: "reset", ten, moi, giurank: keep});
+    window.toast?.(j.message || (j.ok ? "Xong" : "Lỗi"), j.ok ? "ok" : "err");
+  } catch (err) {
+    window.toast?.("Lỗi: " + err.message, "err");
+  }
+  $("#rsGo").disabled = false;
+};
 
 load();
 setInterval(load, 15000);

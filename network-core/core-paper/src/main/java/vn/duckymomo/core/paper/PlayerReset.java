@@ -32,6 +32,11 @@ import org.bukkit.potion.PotionEffect;
  * Xoá: đồ, rương Ender, XP, hiệu ứng, tiền (về starting-money nếu được quà, không thì 0), nhà, giường, cấp nghề uJobs,
  * rời thị trấn, giờ chơi thật, chờ /tpr; về spawn, bật lại bảo vệ người mới. Quà tân thủ + tiền khởi đầu chỉ lần đầu trong mùa.
  * Giữ: rank donate, danh hiệu, án/lệnh cấm, tài khoản. Trước khi xoá lưu bản sao playerdata + Essentials userdata.
+ * Admin (trang quản trị › Hệ thống, console): /choilai admin <tên> [moi] [giurank]
+ *   không "moi": như /choilai nhưng không cần xác nhận, không tính lượt, luôn có quà tân thủ (người phải online ở server này);
+ *   "moi" = như người mới hoàn toàn (để test): thêm xoá dữ liệu module (điểm danh, nhiệm vụ, vòng quay, thành tích, Thăng Cấp,
+ *   gói quà, /choilai), /caidat, danh phận (giurank: giữ rank ủng hộ/staff/Sứ Giả), rồi đá ra và xoá nhân vật (playerdata, chỉ số,
+ *   thành tựu, AuraSkills, Essentials) để lần vào sau là "lần đầu". Người offline thì xoá thẳng.
  */
 final class PlayerReset implements Listener {
 
@@ -52,6 +57,8 @@ final class PlayerReset implements Listener {
     private final File backupDir;
     private final Map<UUID, Long> confirmUntil = new HashMap<>();
     private final Map<UUID, Long> lastCombat = new HashMap<>();
+    /** Người vừa bị admin reset "như người mới": thoát game xong thì xoá file nhân vật. */
+    private final java.util.Set<UUID> wipeOnQuit = java.util.concurrent.ConcurrentHashMap.newKeySet();
 
     PlayerReset(DuckyMoMoCore plugin, Activity activity, ConfigurationSection c) {
         this.plugin = plugin;
@@ -89,6 +96,14 @@ final class PlayerReset implements Listener {
     // ------------------------------------------------------------------ lệnh
 
     boolean command(CommandSender s, String[] args) {
+        if (args.length >= 2 && args[0].equalsIgnoreCase("admin") && (!(s instanceof Player) || s.hasPermission("duckymomo.choilai.admin"))) {
+            java.util.Set<String> f = new java.util.HashSet<>();
+            for (int i = 2; i < args.length; i++) {
+                f.add(args[i].toLowerCase(Locale.ROOT));
+            }
+            s.sendMessage(adminReset(args[1], f.contains("moi"), f.contains("giurank")));
+            return true;
+        }
         if (!(s instanceof Player p)) {
             s.sendMessage("Chỉ người chơi dùng được /choilai.");
             return true;
@@ -196,10 +211,139 @@ final class PlayerReset implements Listener {
 
     // ------------------------------------------------------------------ chơi lại
 
+    /** Reset do admin làm. Trả câu báo kết quả (trang quản trị hiện nguyên văn). */
+    String adminReset(String name, boolean fresh, boolean keepRanks) {
+        Player p = Bukkit.getPlayerExact(name);
+        UUID id;
+        if (p != null) {
+            id = p.getUniqueId();
+        } else {
+            org.bukkit.OfflinePlayer op = Bukkit.getOfflinePlayerIfCached(name);
+            if (op == null || !fresh) {
+                return fresh ? "RESET LOI: không thấy người chơi \"" + name + "\" ở server này (sai tên hoặc chưa từng vào)."
+                        : "RESET LOI: " + name + " phải đang online ở server này (chơi lại cần dọn túi đồ). Chọn \"như người mới\" để reset khi offline.";
+            }
+            id = op.getUniqueId();
+        }
+        if (p != null) {
+            doReset(p, true);
+        } else {
+            backupFiles(name, id);
+            if (Bukkit.getPluginManager().isPluginEnabled("Towny")) {
+                TownyPart.leaveTown(id);
+            }
+            for (String home : Integrations.essentialsHomes(id)) {
+                console("delhome " + name + ":" + home);
+            }
+            activity.reset(id);
+            RandomTeleport.clearCooldown(id);
+        }
+        if (!fresh) {
+            plugin.getLogger().info("Admin reset (chơi lại): " + name);
+            return "RESET OK: " + name + " đã chơi lại từ đầu (như /choilai, không tính lượt, có quà tân thủ).";
+        }
+        for (java.util.function.Consumer<UUID> c : Shared.FORGET) {
+            try {
+                c.accept(id);
+            } catch (RuntimeException e) {
+                plugin.getLogger().warning("Reset " + name + ": một module không xoá được dữ liệu: " + e);
+            }
+        }
+        data.set(id.toString(), null);
+        try {
+            data.save(file);
+        } catch (IOException ignored) {
+            // lần sau
+        }
+        int lp = lpReset(id, keepRanks);
+        if (p != null) {
+            wipeOnQuit.add(id);
+            p.kick(c("&eTài khoản của bạn vừa được admin reset như người mới.\n&7Vào lại để bắt đầu từ đầu."));
+        } else {
+            wipeFiles(id);
+        }
+        plugin.getLogger().info("Admin reset (như người mới): " + name + " " + id + (keepRanks ? " (giữ rank)" : ""));
+        return "RESET OK: " + name + " đã reset như người mới" + (p != null ? " (đã đá ra, vào lại là lần đầu)" : "")
+                + "; xoá " + lp + " quyền/nhóm LuckPerms" + (keepRanks ? " (giữ rank ủng hộ/staff/Sứ Giả)" : "") + ". Sao lưu: plugins/DuckyMoMoCore/choilai-backup.";
+    }
+
+    /** Bỏ /caidat (meta dmmcaidat.*) và danh phận (nhóm các bậc); không giữ rank thì bỏ mọi nhóm trừ default. Trả số node đã bỏ. */
+    private int lpReset(UUID id, boolean keepRanks) {
+        java.util.Set<String> tiers = new java.util.HashSet<>();
+        ConfigurationSection ts = plugin.getConfig().getConfigurationSection("play-ranks.tiers");
+        if (ts != null) {
+            for (String k : ts.getKeys(false)) {
+                tiers.add(ts.getString(k + ".group", k).toLowerCase(Locale.ROOT));
+            }
+        }
+        tiers.remove("default");
+        int[] n = {0};
+        try {
+            net.luckperms.api.LuckPerms lp = net.luckperms.api.LuckPermsProvider.get();
+            lp.getUserManager().modifyUser(id, u -> {
+                for (net.luckperms.api.node.Node node : new ArrayList<>(u.getNodes())) {
+                    boolean meta = node instanceof net.luckperms.api.node.types.MetaNode m && m.getMetaKey().startsWith("dmmcaidat.");
+                    boolean group = node instanceof net.luckperms.api.node.types.InheritanceNode in
+                            && !in.getGroupName().equalsIgnoreCase("default")
+                            && (!keepRanks || tiers.contains(in.getGroupName().toLowerCase(Locale.ROOT)));
+                    if (meta || group) {
+                        u.data().remove(node);
+                        n[0]++;
+                    }
+                }
+            }).join();
+        } catch (RuntimeException | LinkageError e) {
+            plugin.getLogger().warning("Reset: không sửa được LuckPerms: " + e);
+        }
+        return n[0];
+    }
+
+    /** File nhân vật (vị trí, túi đồ, chỉ số, thành tựu) + Essentials + AuraSkills của người (đã offline). */
+    private List<File> playerFiles(UUID id) {
+        File world = Bukkit.getWorlds().get(0).getWorldFolder();
+        File plugins = plugin.getDataFolder().getParentFile();
+        List<File> out = new ArrayList<>();
+        for (String rel : List.of("players/data/%s.dat", "players/data/%s.dat_old", "players/stats/%s.json", "players/advancements/%s.json",
+                "playerdata/%s.dat", "playerdata/%s.dat_old", "stats/%s.json", "advancements/%s.json")) {
+            out.add(new File(world, rel.formatted(id)));
+        }
+        out.add(new File(plugins, "Essentials/userdata/" + id + ".yml"));
+        out.add(new File(plugins, "AuraSkills/userdata/" + id + ".yml"));
+        return out;
+    }
+
+    private void wipeFiles(UUID id) {
+        int n = 0;
+        for (File f : playerFiles(id)) {
+            if (f.isFile() && f.delete()) {
+                n++;
+            }
+        }
+        plugin.getLogger().info("Reset: đã xoá " + n + " file nhân vật của " + id);
+    }
+
+    /** Thoát game xong (server đã ghi file nhân vật) mới xoá, 2 giây sau cho chắc. */
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onQuit(org.bukkit.event.player.PlayerQuitEvent e) {
+        UUID id = e.getPlayer().getUniqueId();
+        if (wipeOnQuit.remove(id)) {
+            Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                if (Bukkit.getPlayer(id) == null) {
+                    wipeFiles(id);
+                }
+            }, 40L);
+        }
+    }
+
     private void doReset(Player p) {
+        doReset(p, false);
+    }
+
+    /** admin: không kiểm điều kiện, không tính lượt chơi lại, luôn có quà tân thủ. */
+    private void doReset(Player p, boolean admin) {
         UUID id = p.getUniqueId();
         String name = p.getName();
-        boolean gift = getsGift(id);
+        boolean gift = admin || getsGift(id);
         backup(p);
 
         if (Bukkit.getPluginManager().isPluginEnabled("Towny")) {
@@ -246,6 +390,10 @@ final class PlayerReset implements Listener {
             console("newbie add " + name);
         }
 
+        if (admin) {
+            p.sendMessage(c("&eAdmin vừa cho bạn chơi lại từ đầu." + (gift ? " &aĐã nhận quà tân thủ." : "")));
+            return;
+        }
         data.set(id + ".ten", name);
         data.set(id + ".lan-cuoi", System.currentTimeMillis());
         data.set(id + ".mua." + season + ".so-lan", countThisSeason(id) + 1);
@@ -265,16 +413,19 @@ final class PlayerReset implements Listener {
 
     private void backup(Player p) {
         p.saveData();
-        File dir = new File(backupDir, p.getName() + "-" + p.getUniqueId() + "-" + LocalDateTime.now().format(STAMP));
+        backupFiles(p.getName(), p.getUniqueId());
+    }
+
+    /** Sao lưu file nhân vật (26.x: world/players/data, bản cũ: world/playerdata) + Essentials + AuraSkills. */
+    private void backupFiles(String name, UUID id) {
+        File dir = new File(backupDir, name + "-" + id + "-" + LocalDateTime.now().format(STAMP));
         if (!dir.mkdirs()) {
             plugin.getLogger().warning("Không tạo được thư mục sao lưu " + dir);
         }
-        File world = Bukkit.getWorlds().get(0).getWorldFolder();
-        File ess = new File(plugin.getDataFolder().getParentFile(), "Essentials/userdata/" + p.getUniqueId() + ".yml");
-        for (File f : new File[] {new File(world, "playerdata/" + p.getUniqueId() + ".dat"), ess}) {
+        for (File f : playerFiles(id)) {
             if (f.isFile()) {
                 try {
-                    Files.copy(f.toPath(), new File(dir, f.getName()).toPath(), StandardCopyOption.REPLACE_EXISTING);
+                    Files.copy(f.toPath(), new File(dir, f.getParentFile().getName() + "-" + f.getName()).toPath(), StandardCopyOption.REPLACE_EXISTING);
                 } catch (IOException e) {
                     plugin.getLogger().warning("Sao lưu " + f + " lỗi: " + e.getMessage());
                 }

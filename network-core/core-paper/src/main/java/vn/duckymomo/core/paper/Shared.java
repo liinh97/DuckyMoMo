@@ -18,6 +18,33 @@ final class Shared {
     /** Thư viện đồ: mọi module lấy vật phẩm đặc biệt từ đây (Xưởng, món ăn, Tinh Luyện, mảnh, bùa, boss). */
     static volatile ItemLibrary library;
 
+    /** Admin reset "như người mới": mỗi module có dữ liệu theo người chơi đăng ký một hàm xoá dữ liệu của UUID đó. */
+    static final java.util.List<java.util.function.Consumer<java.util.UUID>> FORGET = new java.util.concurrent.CopyOnWriteArrayList<>();
+
+    /** Xoá mọi mục có khoá = UUID (ở mọi tầng: "players.<uuid>", "dem.<uuid>"…) trong file dữ liệu của module rồi lưu. */
+    static void forget(org.bukkit.configuration.file.YamlConfiguration data, java.io.File file, java.util.UUID id) {
+        if (removeKey(data, id.toString())) {
+            try {
+                data.save(file);
+            } catch (java.io.IOException ignored) {
+                // lưu lại ở lần ghi sau của module
+            }
+        }
+    }
+
+    private static boolean removeKey(org.bukkit.configuration.ConfigurationSection s, String key) {
+        boolean hit = false;
+        for (String k : new java.util.ArrayList<>(s.getKeys(false))) {
+            if (k.equals(key)) {
+                s.set(k, null);
+                hit = true;
+            } else if (s.isConfigurationSection(k)) {
+                hit |= removeKey(s.getConfigurationSection(k), key);
+            }
+        }
+        return hit;
+    }
+
     private Shared() {
     }
 
@@ -41,5 +68,6 @@ final class Shared {
         media = null;
         library = null;
         ItemLibrary.STAMPERS.clear();
+        FORGET.clear();
     }
 }

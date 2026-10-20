@@ -32,6 +32,12 @@
 - **Người dùng test lại 20/10 tối:** m7 (/back), m8 (TPA) ĐẠT. m3 người dùng ghi "Bỏ qua tính năng này" (bấm Lỗi) → đã TẮT bảo vệ người mới
   (pvp_newbie_enabled false qua API Lưu của panel, PvPManager reload), web trang chủ ẩn dòng "15 phút được bảo vệ" (`data-hide0`), sách /hd trang
   "Mới vào" sửa, m3 gắn "cần test lại". Mọi hộp thoại trong panel/site dùng `ask()` của shell.js, KHÔNG dùng confirm/alert/prompt (người dùng yêu cầu).
+- **Reset người chơi (20/10 tối):** trang Hệ thống › Reset người chơi → API hethong action "reset" → RCON banghoi `choilai admin <tên> [moi] [giurank]`
+  (PlayerReset.adminReset). Module có dữ liệu theo người chơi đăng ký `Shared.FORGET` (Shared.forget xoá mọi khoá = UUID trong file của module):
+  DailyCheckin, DailyQuests, LuckySpin, Achievements, LevelUp, Kits. Online: doReset(admin) → quên module → LuckPerms (meta dmmcaidat.*, nhóm bậc
+  Danh phận; không giurank thì mọi nhóm trừ default) → kick → PlayerQuit +2s xoá world/players/{data,stats,advancements}, Essentials, AuraSkills.
+  Sao lưu đã sửa đường dẫn 26.x (world/players/data, trước đây chép nhầm world/playerdata nên KHÔNG có bản sao playerdata).
+  Hệ thống quyền Claude Code từng CHẶN Claude tự dừng server + xoá file người chơi: reset người thật để người dùng bấm trên trang.
 - **Gói quà tách theo rank (20/10 tối):** Kits.allowed() xét NHÓM THẬT trong LuckPerms (getNodes(INHERITANCE) + getInheritedGroups),
   không dùng hasPermission (admin có * từng thấy mọi gói nhận được). Nhóm Danh phận (default=Tị Nạn, dan, luongdan, haokiet; đọc từ
   play-ranks.tiers) chỉ tính bậc HIỆN TẠI; nhóm khác phải gán trực tiếp. Ô "gói quà" của rank (play-ranks … kit) cũng trỏ gói. Thêm gói

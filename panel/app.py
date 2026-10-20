@@ -2032,6 +2032,16 @@ def hethong_action(body, who):
         text = "\n".join(COLOR_RE.sub("", o).strip() for _, o in res if o.strip()) or "(không có phản hồi)"
         web_log({"viec": "/api/hethong", "nguoi": who or PANEL_USER, "hanh_dong": act, "doi_tuong": srv, "ok": True})
         return {"ok": True, "message": f"{label} ({srv}): {text[:600]}"}
+    if act == "reset":
+        # Reset người chơi (DuckyMoMoCore PlayerReset.adminReset): "choilai" = như /choilai do admin làm; "moi" = như người mới hoàn toàn
+        ten = str(body.get("ten", "")).strip()
+        if not PLAYER_RE.match(ten):
+            raise ValueError("Tên người chơi không hợp lệ")
+        cmd = "choilai admin " + ten + (" moi" if body.get("moi") else "") + (" giurank" if body.get("giurank") else "")
+        out = COLOR_RE.sub("", rcon(srv, [cmd])[0][1]).strip()
+        ok = out.startswith("RESET OK")
+        web_log({"viec": "/api/hethong", "nguoi": who or PANEL_USER, "hanh_dong": cmd, "doi_tuong": srv, "ok": ok})
+        return {"ok": ok, "message": out.replace("RESET OK: ", "").replace("RESET LOI: ", "") or "Server không trả lời (server có module Chơi lại không?)"}
     if act == "huy":
         p = RESTART_PENDING.get(srv)
         if not p:

@@ -70,6 +70,7 @@ final class LuckySpin implements Listener {
         this.library = library;
         this.file = new File(plugin.getDataFolder(), "vongquay.yml");
         this.data = YamlConfiguration.loadConfiguration(file);
+        Shared.FORGET.add(id -> Shared.forget(data, file, id));   // admin reset "như người mới"
         int sum = 0;
         for (Map<?, ?> m : cfg.getMapList("prizes")) {
             int w = m.get("weight") instanceof Number n ? n.intValue() : 0;

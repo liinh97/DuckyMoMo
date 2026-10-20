@@ -96,6 +96,21 @@ def balance(name):
         con.close()
 
 
+def balances(names):
+    """Số dư của nhiều người (bảng bên phải trong game hỏi mỗi phút): {tên thường: số dư}."""
+    names = [n.lower() for n in names if NAME_RE.match(n)][:200]
+    if not names:
+        return {}
+    con = _db()
+    try:
+        with con.cursor() as c:
+            c.execute("SELECT ten, so_du FROM vang_vi WHERE ten IN (" + ",".join(["%s"] * len(names)) + ")", names)
+            got = {r[0]: int(r[1]) for r in c.fetchall()}
+        return {n: got.get(n, 0) for n in names}
+    finally:
+        con.close()
+
+
 def history(name, limit=20):
     con = _db()
     try:

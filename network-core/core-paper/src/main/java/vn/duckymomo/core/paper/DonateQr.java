@@ -84,6 +84,8 @@ final class DonateQr implements Listener {
     /** Bấm mua lần 1 ghi lại; bấm lại cùng món trong 6 giây mới mua (chống bấm nhầm). */
     private final Map<UUID, String> confirm = new HashMap<>();
     private final Map<UUID, Long> confirmAt = new HashMap<>();
+    /** Số dư Vàng của người đang online (tên thường -> Vàng) cho placeholder %dmmvang_so_du% (bảng bên phải). Làm mới mỗi phút. */
+    static final Map<String, Long> BAL = new java.util.concurrent.ConcurrentHashMap<>();
 
     DonateQr(JavaPlugin plugin, ConfigurationSection cfg, List<DonateRanks.Tier> tiers) {
         this.plugin = plugin;
@@ -98,6 +100,27 @@ final class DonateQr implements Listener {
 
     void start() {
         Bukkit.getScheduler().runTaskTimer(plugin, () -> Bukkit.getOnlinePlayers().forEach(this::removeExpired), 200L, 400L);
+        if (ready()) {
+            Bukkit.getScheduler().runTaskTimer(plugin, this::refreshBalances, 100L, 1200L);
+        }
+    }
+
+    /** Hỏi panel số Vàng của mọi người đang online trong MỘT lần gọi (luồng phụ). */
+    void refreshBalances() {
+        List<String> names = Bukkit.getOnlinePlayers().stream().map(Player::getName).toList();
+        if (names.isEmpty() || !ready()) {
+            return;
+        }
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+            try {
+                JsonObject r = call("GET", "/api/web/vang-ds?ten=" + URLEncoder.encode(String.join(",", names), StandardCharsets.UTF_8), null);
+                if (r.has("so_du") && r.get("so_du").isJsonObject()) {
+                    r.getAsJsonObject("so_du").entrySet().forEach(en -> BAL.put(en.getKey(), en.getValue().getAsLong()));
+                }
+            } catch (Exception ex) {
+                plugin.getLogger().fine("Vàng: không làm mới số dư: " + ex.getMessage());
+            }
+        });
     }
 
     private static Component c(String s) {
@@ -140,7 +163,11 @@ final class DonateQr implements Listener {
     }
 
     private JsonObject wallet(String name) throws Exception {
-        return call("GET", "/api/web/vang?ten=" + URLEncoder.encode(name, StandardCharsets.UTF_8), null);
+        JsonObject w = call("GET", "/api/web/vang?ten=" + URLEncoder.encode(name, StandardCharsets.UTF_8), null);
+        if (w.has("so_du")) {
+            BAL.put(name.toLowerCase(java.util.Locale.ROOT), w.get("so_du").getAsLong());
+        }
+        return w;
     }
 
     private static String str(JsonObject o, String k) {
@@ -296,8 +323,12 @@ final class DonateQr implements Listener {
         body.addProperty("ten", p.getName());
         body.addProperty("viec", "mua");
         body.addProperty("ma", ma);
-        async(p, () -> call("POST", "/api/web/vang", body.toString()),
-                (pl, r) -> pl.sendMessage(c("&a[Vàng] " + str(r, "message"))));
+        async(p, () -> call("POST", "/api/web/vang", body.toString()), (pl, r) -> {
+            if (r.has("so_du")) {
+                BAL.put(pl.getName().toLowerCase(java.util.Locale.ROOT), r.get("so_du").getAsLong());
+            }
+            pl.sendMessage(c("&a[Vàng] " + str(r, "message")));
+        });
     }
 
     @EventHandler
@@ -568,5 +599,6 @@ final class DonateQr implements Listener {
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
         removeAll(e.getPlayer());   // server sập lúc đang cầm QR: trả món đồ giấu bên trong
+        Bukkit.getScheduler().runTaskLater(plugin, this::refreshBalances, 60L);
     }
 }

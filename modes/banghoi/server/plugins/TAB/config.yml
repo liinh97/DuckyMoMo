@@ -86,6 +86,7 @@ scoreboard:
         - '%animation:SbDong1%'
         - '%animation:SbDong2%'
         - '%animation:SbDong3%'
+        - '%animation:SbDong4%'
         - '&r'
         - '&#5FD3F3☺ &b%online% &8· &7%condition:pingmau%'
 layout:

@@ -33,6 +33,7 @@ public final class DuckyMoMoCore extends JavaPlugin {
     private PlayerSettings playerSettings;
     private LevelUp levelUp;
     private Object levelPapi;
+    private Object vangPapi;
     private WildGates wildGates;
     private Wanderers wanderers;
     private Object wanderPapi;
@@ -190,6 +191,10 @@ public final class DuckyMoMoCore extends JavaPlugin {
             LevelUpPapi.unregister(levelPapi);
             levelPapi = null;
         }
+        if (vangPapi != null) {
+            VangPapi.unregister(vangPapi);
+            vangPapi = null;
+        }
         if (levelUp != null) {
             levelUp.stop();
             levelUp = null;
@@ -305,6 +310,9 @@ public final class DuckyMoMoCore extends JavaPlugin {
                 qr.start();
                 ranks.setQr(qr);
                 vangQr = qr;
+                if (getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+                    vangPapi = VangPapi.register();   // %dmmvang_so_du% cho bảng bên phải
+                }
                 getLogger().info("Ủng hộ bằng QR trong game: " + (qr.ready() ? "bật" : "thiếu PANEL_URL/PANEL_SITE_KEY, chỉ hiện link web"));
             }
             if (rankCmd != null) {

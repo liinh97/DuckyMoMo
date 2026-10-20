@@ -2194,8 +2194,98 @@ def vang_info(name):
             "ty_gia": c["ty_gia"], "thuong": [{"tu": a, "pct": b} for a, b in c["thuong"]], "nap_toi_thieu": c["nap_toi_thieu"]}
 
 
-def vang_admin(data, actor):
-    """Trang /donate: tra ví (xem) | cộng/trừ Vàng tay (dieuchinh) kèm lý do."""
+VANG_PERM_RE = re.compile(r"^lp user \{player\} permission (?:settemp (\S+) true \d+d accumulate|set (\S+) true)$")
+VANG_MA_RE = re.compile(r"^[a-z0-9_]{1,32}$")
+VANG_FILES = [DATA_DIR / "banghoi-1" / "plugins" / "DuckyMoMoCore" / "config.yml",
+              MODES_DIR / "banghoi" / "server" / "plugins" / "DuckyMoMoCore" / "config.yml"]
+
+
+def vang_mon_list():
+    """Món bán lẻ cho trình sửa: tách lệnh về dạng quyền (lệnh khớp mẫu lp ... permission) + lệnh tuỳ chỉnh."""
+    out = []
+    for m in vang.cfg()["mon"]:
+        if not isinstance(m, dict):
+            continue
+        quyen, them = [], []
+        for c in m.get("lenh") or []:
+            mm = VANG_PERM_RE.match(str(c).strip())
+            if mm:
+                quyen.append(mm.group(1) or mm.group(2))
+            else:
+                them.append(str(c))
+        out.append({"ma": str(m.get("ma", "")), "nhom": str(m.get("nhom", "Trang trí")), "ten": str(m.get("ten", "")),
+                    "mo_ta": str(m.get("mo-ta", "")), "gia": int(m.get("gia", 1) or 1), "ngay": int(m.get("ngay", 0) or 0),
+                    "quyen": quyen, "lenh_them": them})
+    return out
+
+
+def vang_mon_save(items, full):
+    """Kiểm từng món rồi ghi vang.mon vào config Bang Hội Chiến (data + repo, giữ comment). Lệnh tuỳ chỉnh chạy bằng console
+    -> chỉ tài khoản toàn quyền được đổi; quyền nguy hiểm (*, luckperms, web, admin) bị chặn."""
+    if not isinstance(items, list) or len(items) > 200:
+        raise ValueError("Danh sách món không hợp lệ")
+    old_extra = {m["ma"]: m["lenh_them"] for m in vang_mon_list()}
+    seen, out = set(), []
+    for i, m in enumerate(items, 1):
+        ma = str(m.get("ma", "")).strip().lower()
+        if not VANG_MA_RE.match(ma) or ma in seen:
+            raise ValueError(f"Món {i}: mã chỉ gồm chữ thường, số, _ và không trùng ({ma or 'trống'}).")
+        seen.add(ma)
+        ten = str(m.get("ten", "")).strip()[:60]
+        if not ten:
+            raise ValueError(f"Món {ma}: thiếu tên.")
+        try:
+            gia, ngay = int(m.get("gia", 0)), int(m.get("ngay", 0))
+        except (TypeError, ValueError):
+            raise ValueError(f"Món {ma}: giá / số ngày phải là số.")
+        if not 1 <= gia <= 1_000_000 or not 0 <= ngay <= 3650:
+            raise ValueError(f"Món {ma}: giá 1..1.000.000 Vàng, số ngày 0..3650 (0 = vĩnh viễn).")
+        quyen = [str(q).strip() for q in m.get("quyen") or [] if str(q).strip()]
+        for q in quyen:
+            if not PERM_RE.match(q) or PROTECTED_PERM_RE.match(q) or q.lower().startswith(("duckymomo.rank.admin", "minecraft.command.op")):
+                raise ValueError(f"Món {ma}: quyền không cho phép bán: {q}")
+        them = [str(c).strip() for c in m.get("lenh_them") or [] if str(c).strip()]
+        if them != old_extra.get(ma, []) and not full:
+            raise ValueError(f"Món {ma}: chỉ tài khoản toàn quyền được sửa lệnh tuỳ chỉnh (chạy bằng quyền console).")
+        if any(len(c) > 300 or "\n" in c for c in them):
+            raise ValueError(f"Món {ma}: lệnh tuỳ chỉnh quá dài.")
+        if not quyen and not them:
+            raise ValueError(f"Món {ma}: cần ít nhất một quyền hoặc lệnh để cấp.")
+        lenh = [f"lp user {{player}} permission settemp {q} true {ngay}d accumulate" if ngay else f"lp user {{player}} permission set {q} true"
+                for q in quyen] + them
+        out.append({"ma": ma, "nhom": str(m.get("nhom", "")).strip()[:30] or "Trang trí", "ten": ten,
+                    "mo-ta": str(m.get("mo_ta", "")).strip()[:120], "gia": gia, "ngay": ngay, "lenh": lenh})
+    # Chỉ thay khối `  mon:` trong mục `vang:` bằng văn bản (giữ nguyên từng ký tự phần còn lại của file, không để ruamel định dạng lại)
+    q = lambda v: json.dumps(v, ensure_ascii=False)
+    block = "  mon:\n" + "".join(
+        f"    - {{ma: {m['ma']}, nhom: {q(m['nhom'])}, ten: {q(m['ten'])}, mo-ta: {q(m['mo-ta'])}, gia: {m['gia']}, ngay: {m['ngay']},\n"
+        f"       lenh: [{', '.join(q(c) for c in m['lenh'])}]}}\n" for m in out)
+    for f in VANG_FILES:
+        if not f.exists():
+            continue
+        txt = f.read_text(encoding="utf-8")
+        mv = re.search(r"(?m)^vang:\n", txt)
+        if not mv:
+            raise ValueError(f"Không thấy mục vang: trong {f}")
+        mm = re.compile(r"(?m)^  mon:[^\n]*\n(?:(?:    |\s*#|\s*$)[^\n]*\n)*").search(txt, mv.end())
+        new = txt[:mm.start()] + block + txt[mm.end():] if mm else txt[:mv.end()] + block + txt[mv.end():]
+        from ruamel.yaml import YAML
+        if (YAML(typ="safe").load(new) or {}).get("vang", {}).get("mon") != out:
+            raise ValueError("Ghi cửa hàng lỗi (kiểm tra lại file cấu hình), chưa lưu gì.")
+        tmp = f.with_suffix(".yml.tmp")
+        tmp.write_text(new, encoding="utf-8")
+        tmp.replace(f)
+    return len(out)
+
+
+def vang_admin(data, actor, full=True):
+    """Trang /donate: tra ví (xem) | cộng/trừ Vàng tay (dieuchinh) | mon_ds / mon_luu: sửa món bán lẻ."""
+    if data.get("action") == "mon_ds":
+        return {"ok": True, "mon": vang_mon_list(), "toan_quyen": full}
+    if data.get("action") == "mon_luu":
+        n = vang_mon_save(data.get("mon"), full)
+        web_log({"viec": "vang-mon", "nguoi": actor or PANEL_USER, "so_mon": n, "ok": True})
+        return {"ok": True, "message": f"Đã lưu {n} món. Cửa hàng Vàng (web, /vang) đổi ngay.", "mon": vang_mon_list(), "toan_quyen": full}
     name = str(data.get("ten", "")).strip()
     if not PLAYER_RE.match(name):
         raise ValueError("Tên không hợp lệ")
@@ -2703,6 +2793,9 @@ class Handler(BaseHTTPRequestHandler):
                 self.send_json(200, web_cosmetic(self.read_body(4096), self.headers.get("X-DMM-Ip", "")))
             elif method == "POST" and path == "/api/web/vang":
                 self.send_json(200, web_vang(self.read_body(4096), self.headers.get("X-DMM-Ip", "")))
+            elif method == "GET" and path == "/api/web/vang-ds":
+                q = {k: v[-1] for k, v in urllib.parse.parse_qs(query).items()}
+                self.send_json(200, {"ok": True, "so_du": vang.balances([x for x in q.get("ten", "").split(",") if x])})
             elif method == "GET" and path == "/api/web/vang":
                 q = {k: v[-1] for k, v in urllib.parse.parse_qs(query).items()}
                 if not PLAYER_RE.match(q.get("ten", "")):
@@ -2895,7 +2988,8 @@ class Handler(BaseHTTPRequestHandler):
             return
         if self.path == "/api/vang":
             try:
-                self.send_json(200, vang_admin(self.body, self.who["name"] if self.who else None))
+                self.send_json(200, vang_admin(self.body, self.who["name"] if self.who else None,
+                                               full=self.who is None or self.who["acc"]["toan_quyen"]))
             except ValueError as e:
                 self.send_json(400, {"ok": False, "message": str(e)})
             except Exception as e:

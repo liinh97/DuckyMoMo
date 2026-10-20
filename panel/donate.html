@@ -26,6 +26,14 @@
   .vg .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
   .vg input { padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--input); color: var(--text); font: inherit; min-width: 0; }
   .vg table { width: 100%; border-collapse: collapse; font-size: 13px; } .vg td { padding: 4px 6px; border-bottom: 1px solid var(--line); }
+  .mons { display: grid; gap: 10px; }
+  .mon { padding: 12px 14px; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; align-items: end; }
+  .mon label { display: grid; gap: 3px; font-size: 12.5px; color: var(--muted); min-width: 0; }
+  .mon input, .mon textarea { padding: 7px 9px; border: 1px solid var(--line); border-radius: 8px; background: var(--input); color: var(--text); font: inherit; font-size: 13.5px; width: 100%; min-width: 0; }
+  .mon textarea { min-height: 54px; resize: vertical; font-family: ui-monospace, monospace; font-size: 12.5px; }
+  .mon .w2 { grid-column: span 2; } .mon .w3 { grid-column: span 3; } .mon .w6 { grid-column: 1 / -1; }
+  .mon .del { justify-self: end; }
+  @media (max-width: 900px) { .mon { grid-template-columns: 1fr 1fr; } .mon .w2, .mon .w3 { grid-column: span 2; } }
   @media (max-width: 700px) { .don { grid-template-columns: 1fr; } .don .acts { justify-content: flex-start; } }
 </style>
 </head>
@@ -39,6 +47,13 @@
       <button class="primary" id="vgGo">Cộng / trừ</button></div>
     <div id="vgOut" class="hint" style="margin:0"></div>
   </div>
+  <details class="card vg" id="monBox">
+    <summary><b>Cửa hàng Vàng: món bán lẻ</b> <span class="hint">(rank tự có theo giá ở Cài đặt › Rank donate)</span></summary>
+    <p class="hint" style="margin:6px 0 0">Mỗi món: <b>quyền</b> cấp cho người mua (mỗi dòng một quyền). Số ngày &gt; 0 = quyền có hạn, mua thêm cộng dồn; 0 = vĩnh viễn.
+      Chỉ bán đồ trang trí (luật Mojang). <b>Lệnh tuỳ chỉnh</b> chạy bằng console ở sảnh, <code>{player}</code> = tên người mua, chỉ tài khoản toàn quyền sửa được.</p>
+    <div class="mons" id="mons"></div>
+    <div class="row"><button class="ghost" id="monAdd">+ Thêm món</button><button class="primary" id="monSave">Lưu cửa hàng</button></div>
+  </details>
   <div class="tabs" id="tabs"></div>
   <p class="hint">"Duyệt" = cộng Vàng theo số tiền (tỉ giá + mốc thưởng ở Cài đặt › Toàn mạng › Rank donate). Yêu cầu kiểu cũ (chọn gói rank) cũng được đổi thành Vàng. Vàng chỉ mua đồ trang trí, đúng luật Mojang.</p>
   <div class="list" id="list"><div class="empty">Đang tải…</div></div>
@@ -94,6 +109,34 @@ document.getElementById("vgGo").onclick = async () => {
   if (!(await ask(`${so > 0 ? "Cộng" : "Trừ"} ${Math.abs(so)} Vàng cho ${ten}? Lý do: ${ly_do}`, { title: "Điều chỉnh Vàng", ok: "Đồng ý", cancel: "Quay lại", danger: so < 0 }))) return;
   const d = await vgCall({ action: "dieuchinh", ten, so, ly_do });
   toast(d.message || "Lỗi", d.ok ? "ok" : "err"); if (d.ok) vgShow(d);
+};
+let MON = [], FULL = true;
+function monDraw() {
+  document.getElementById("mons").innerHTML = MON.map((m, i) => `<div class="card mon" data-i="${i}">
+    <label>Mã<input data-f="ma" value="${esc(m.ma)}" placeholder="vd mu"></label>
+    <label class="w2">Tên<input data-f="ten" value="${esc(m.ten)}"></label>
+    <label>Nhóm<input data-f="nhom" value="${esc(m.nhom)}" placeholder="Trang trí"></label>
+    <label>Giá (Vàng)<input data-f="gia" type="number" min="1" value="${m.gia}"></label>
+    <label>Số ngày (0 = mãi)<input data-f="ngay" type="number" min="0" value="${m.ngay}"></label>
+    <label class="w6">Mô tả<input data-f="mo_ta" value="${esc(m.mo_ta)}"></label>
+    <label class="w3">Quyền cấp (mỗi dòng 1 quyền)<textarea data-f="quyen">${esc(m.quyen.join("\n"))}</textarea></label>
+    <label class="w3">Lệnh tuỳ chỉnh${FULL ? "" : " (chỉ toàn quyền)"}<textarea data-f="lenh_them" ${FULL ? "" : "readonly"}>${esc(m.lenh_them.join("\n"))}</textarea></label>
+    <button class="ghost del w6" data-del="${i}">Xoá món này</button></div>`).join("") || '<div class="empty">Chưa có món nào.</div>';
+  document.querySelectorAll("#mons [data-f]").forEach(el => el.oninput = () => {
+    const m = MON[+el.closest(".mon").dataset.i], f = el.dataset.f;
+    m[f] = f === "quyen" || f === "lenh_them" ? el.value.split("\n").map(x => x.trim()).filter(Boolean) : f === "gia" || f === "ngay" ? +el.value : el.value;
+  });
+  document.querySelectorAll("[data-del]").forEach(b => b.onclick = () => { MON.splice(+b.dataset.del, 1); monDraw(); });
+}
+document.getElementById("monBox").addEventListener("toggle", async e => {
+  if (!e.target.open || MON.length) return;
+  const d = await vgCall({ action: "mon_ds" }); MON = d.mon || []; FULL = d.toan_quyen !== false; monDraw();
+});
+document.getElementById("monAdd").onclick = () => { MON.push({ ma: "", ten: "", nhom: "Trang trí", mo_ta: "", gia: 10, ngay: 30, quyen: [], lenh_them: [] }); monDraw(); };
+document.getElementById("monSave").onclick = async () => {
+  if (!(await ask(`Lưu ${MON.length} món vào cửa hàng Vàng? Người chơi thấy ngay.`, { title: "Lưu cửa hàng", ok: "Lưu", cancel: "Quay lại" }))) return;
+  const d = await vgCall({ action: "mon_luu", mon: MON });
+  toast(d.message || "Lỗi", d.ok ? "ok" : "err"); if (d.ok) { MON = d.mon; monDraw(); }
 };
 fetch("api/donate").then(r => r.json()).then(d => { rows = d.rows || []; draw(); })
   .catch(() => { document.getElementById("list").innerHTML = '<div class="empty">Không tải được.</div>'; });

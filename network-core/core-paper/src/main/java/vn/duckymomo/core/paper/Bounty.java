@@ -324,27 +324,27 @@ final class Bounty implements Listener {
 
     private void open(Player p) {
         Holder h = new Holder();
-        h.inv = Bukkit.createInventory(h, 54, c("&4TREO THƯỞNG"));
+        h.inv = Bukkit.createInventory(h, 54, c("&0☠ Treo thưởng"));
         List<Entry> list = entries();
         for (int i = 0; i < list.size() && i < 45; i++) {
             Entry en = list.get(i);
             ItemStack head = new ItemStack(Material.PLAYER_HEAD);
             SkullMeta sm = (SkullMeta) head.getItemMeta();
             sm.setOwningPlayer(Bukkit.getOfflinePlayer(en.id()));
-            sm.displayName(c("&c" + en.name()));
             long h1 = Math.max(0, en.until() - System.currentTimeMillis()) / 3_600_000L;
-            sm.lore(List.of(c("&7Tiền thưởng: &e" + money(en.total())), c("&7Người treo: &f" + en.by()),
-                    c("&7Trạng thái: " + (Bukkit.getPlayer(en.id()) != null ? "&a✔ Đang trực tuyến" : "&8Ngoại tuyến")),
-                    c("&7Hết hạn sau: &f" + (h1 >= 24 ? h1 / 24 + " ngày" : h1 + " giờ"))));
+            Tip t = Tip.of("&c☠ &f" + en.name()).accent("&c").desc("Hạ người này để nhận tiền thưởng").line()
+                    .kv("Tiền thưởng", "&e" + money(en.total())).kv("Người treo", en.by())
+                    .kv("Trạng thái", Bukkit.getPlayer(en.id()) != null ? "&aĐang trực tuyến" : "&8Ngoại tuyến")
+                    .kv("Hết hạn sau", h1 >= 24 ? h1 / 24 + " ngày" : h1 + " giờ");
+            sm.displayName(t.name());
+            sm.lore(t.lore());
             head.setItemMeta(sm);
             h.inv.setItem(i, head);
         }
-        ItemStack info = new ItemStack(Material.BOOK);
-        var im = info.getItemMeta();
-        im.displayName(c("&eTreo thưởng"));
-        im.lore(List.of(c("&7/treothuong dat <người> <xu>"), c("&7Phí " + cfg.getDouble("fee-percent", 5) + "%, hết hạn sau "
-                + cfg.getInt("days", 3) + " ngày (trả lại tiền)"), c("&7Không treo lên dân Liên minh Hoà Bình")));
-        info.setItemMeta(im);
+        ItemStack info = Tip.of("&e❖ &fTreo thưởng là gì?").desc("Bỏ xu ra treo thưởng lên đầu một người chơi", "Ai hạ được người đó thì nhận tiền")
+                .line().kv("Lệnh", "&e/treothuong dat <người> <xu>").kv("Phí", cfg.getDouble("fee-percent", 5) + "% &8(không hoàn)")
+                .kv("Hết hạn", cfg.getInt("days", 3) + " ngày &8(trả lại tiền)").deny("Không treo lên dân Liên minh Hoà Bình")
+                .apply(new ItemStack(Material.BOOK));
         h.inv.setItem(49, info);
         if (list.isEmpty()) {
             p.sendMessage(c("&7Chưa có ai bị treo thưởng."));

@@ -232,18 +232,17 @@ final class Refining implements Listener {
     void open(Player p) {
         Holder h = new Holder();
         int rows = Math.min(6, Math.max(3, (int) Math.ceil(items.size() / 7.0) + 2));
-        h.inv = Bukkit.createInventory(h, rows * 9, c("&5TINH LUYỆN &8(đổi một chiều)"));
+        h.inv = Bukkit.createInventory(h, rows * 9, c("&0♨ Tinh Luyện"));
         ItemStack edge = pane(Material.LIGHT_BLUE_STAINED_GLASS_PANE), inner = pane(Material.WHITE_STAINED_GLASS_PANE);
         for (int s = 0; s < rows * 9; s++) {
             int r = s / 9, col = s % 9;
             h.inv.setItem(s, r == 0 || r == rows - 1 || col == 0 || col == 8 ? edge : inner);
         }
-        ItemStack info = new ItemStack(Material.NETHER_STAR);
-        ItemMeta im = info.getItemMeta();
-        im.displayName(c("&dTINH LUYỆN"));
-        im.lore(List.of(c("&7Đổi khối thường thành món quý: đổi đồ ở"), c("&7dân làng, chế Xưởng, bán cho server."),
-                c("&eBấm&7: 1 lần · &eShift+bấm&7: tinh luyện hết"), c("&cĐổi một chiều, không đổi lại được."), c("&8/tinhluyen ban · /tinhluyen ds")));
-        info.setItemMeta(im);
+        ItemStack info = Tip.of("&d♨ &fTinh Luyện").sub("đổi một chiều").accent("&d")
+                .desc("Đổi lượng lớn khối thường thành món quý")
+                .gap().head("Dùng để").item("Trao đổi ở shop dân làng").item("Nguyên liệu Xưởng chế tạo").item("Bán cho server: /tinhluyen ban")
+                .line().raw("&c✘ Không đổi ngược lại được").note("/tinhluyen ds: xem mọi công thức")
+                .apply(new ItemStack(Material.NETHER_STAR));
         h.inv.setItem(4, info);
         int i = 0;
         for (Item d : items.values()) {
@@ -281,22 +280,27 @@ final class Refining implements Listener {
             return null;
         }
         ItemMeta meta = it.getItemMeta();
-        List<Component> lore = new ArrayList<>();
-        lore.add(Component.empty());
-        lore.add(c("&eNguyên liệu cần:"));
+        List<Component> lore = meta.lore() == null ? new ArrayList<>() : new ArrayList<>(meta.lore());
+        lore.add(Tip.c(Tip.LINE));
+        lore.add(Tip.c("&8• &dNguyên liệu cần:"));
         boolean ok = true;
         for (Map.Entry<String, Integer> in : d.recipe().entrySet()) {
             int have = count(p, in.getKey());
             boolean enough = have >= in.getValue();
             ok &= enough;
-            lore.add(c(enough ? "&a✔ " : "&c✘ ").append(ingredientName(in.getKey()).color(null).decoration(TextDecoration.ITALIC, false))
-                    .append(c("&7: " + (enough ? "&a" : "&c") + have + "&7/" + in.getValue())));
+            lore.add(Tip.c("  &8▸ " + (enough ? "&a" : "&c") + in.getValue() + " &f").append(ingredientName(in.getKey()).color(null).decoration(TextDecoration.ITALIC, false))
+                    .append(Tip.c(" &8(có " + have + ")")));
         }
-        lore.add(Component.empty());
         if (d.sell() > 0) {
-            lore.add(c("&7Bán cho server: &6" + money(d.sell()) + " &8(/sell hoặc /tinhluyen ban)"));
+            lore.add(Tip.c("&8• &7Bán cho server: &6" + money(d.sell())));
         }
-        lore.add(ok ? c("&a▶ Bấm: tinh luyện 1 · Shift+bấm: tinh luyện hết") : c("&c✘ Bạn còn thiếu nguyên liệu."));
+        lore.add(Tip.c(Tip.LINE));
+        if (ok) {
+            lore.add(Tip.c("&a➜ Bấm để tinh luyện 1 lần"));
+            lore.add(Tip.c("&eShift + bấm&7: &ftinh luyện hết số có thể"));
+        } else {
+            lore.add(Tip.c("&c✘ Còn thiếu nguyên liệu"));
+        }
         meta.lore(lore);
         it.setItemMeta(meta);
         return it;

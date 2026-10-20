@@ -429,11 +429,14 @@ final class Workshop implements Listener {
         if (old != null) {
             lore.addAll(old.subList(0, Math.min(keep, old.size())));   // dòng mô tả của CrazyEnchantments
         }
-        lore.add(c("&7— Tính năng: &b" + featureText(r)));
-        if (uses >= 0) {
-            lore.add(c("&7— Độ bền: &6" + fmt(uses)));
+        if (!lore.isEmpty()) {
+            lore.add(c(Tip.LINE));
         }
-        lore.add(c("&7— Hết hạn: &b" + WHEN.format(Instant.ofEpochMilli(until))));
+        lore.add(c("&8• &7Kỹ năng: &b" + featureText(r)));
+        if (uses >= 0) {
+            lore.add(c("&8• &7Độ bền: &6" + fmt(uses)));
+        }
+        lore.add(c("&8• &7Hết hạn: &b" + WHEN.format(Instant.ofEpochMilli(until))));
         if (r.pvp()) {
             lore.add(c("&c✖ Mất tác dụng trong vùng vây khi đang đánh"));
         }
@@ -1155,37 +1158,48 @@ final class Workshop implements Listener {
     }
 
     private ItemStack icon(Player p, Recipe r, boolean craftView) {
-        ItemStack it = new ItemStack(r.material());
-        ItemMeta meta = it.getItemMeta();
-        meta.displayName(c(r.name()));
-        List<Component> lore = new ArrayList<>();
-        lore.add(Component.empty());
-        lore.add(c("&7— Tính năng: &b" + featureText(r)));
-        lore.add(c("&7— Độ bền: &6" + (r.uses() >= 0 ? fmt(r.uses()) : "như đồ thường")));
-        lore.add(c("&7— Thời hạn: &b" + String.format("%02d", r.days()) + " ngày"));
-        for (String d : r.desc()) {
-            lore.add(c("&8" + d));
-        }
+        Tip t = Tip.of(r.name()).accent("&b").desc(r.desc().toArray(String[]::new)).line()
+                .kv("Kỹ năng", "&b" + featureText(r))
+                .kv("Độ bền", r.uses() >= 0 ? "&6" + fmt(r.uses()) : "&7như đồ thường")
+                .kv("Thời hạn", "&b" + r.days() + " ngày &7sau khi chế");
         if (r.pvp()) {
-            lore.add(c("&c✖ Mất tác dụng trong vùng vây khi đang đánh"));
+            t.raw("&c✖ Mất tác dụng trong vùng vây khi đang đánh");
         }
-        lore.add(Component.empty());
+        t.line();
         if (craftView) {
             Refining rf = Shared.refining;
-            for (Map.Entry<String, Integer> in : r.refined().entrySet()) {
-                int have = rf == null ? 0 : rf.count(p, in.getKey());
-                lore.add(c("&7Cần thêm: " + (have >= in.getValue() ? "&a" : "&c") + in.getValue() + "x ")
-                        .append(c(rf == null ? in.getKey() : rf.name(in.getKey()))).append(c(" &8(có " + have + ")")));
+            boolean all = true;
+            if (!r.refined().isEmpty()) {
+                t.head("Cần thêm");
+                for (Map.Entry<String, Integer> in : r.refined().entrySet()) {
+                    int have = rf == null ? 0 : rf.count(p, in.getKey());
+                    all &= have >= in.getValue();
+                    t.item((have >= in.getValue() ? "&a" : "&c") + in.getValue() + "× &f" + (rf == null ? in.getKey() : rf.name(in.getKey()))
+                            + " &8(có " + have + ")");
+                }
+            }
+            for (Map.Entry<Material, Integer> in : r.ingredients().entrySet()) {
+                all &= countPlain(p, in.getKey()) >= in.getValue();
             }
             if (r.cost() > 0) {
                 boolean ok = VaultEconomy.available() && VaultEconomy.has(p, r.cost());
-                lore.add(c("&7Giá: " + (ok ? "&a" : "&c") + money(r.cost())));
+                all &= ok;
+                t.kv("Giá", (ok ? "&a" : "&c") + money(r.cost()));
             }
-            lore.add(c("&a→ Nhấn để chế tạo."));
+            t.gap();
+            if (all) {
+                t.click("Bấm để chế tạo");
+            } else {
+                t.deny("Chưa đủ nguyên liệu hoặc xu");
+            }
         } else {
-            lore.add(c("&a→ Nhấn để xem công thức."));
+            if (r.cost() > 0) {
+                t.kv("Giá", "&e" + money(r.cost()));
+            }
+            t.gap().click("Bấm để xem công thức");
         }
-        meta.lore(lore);
+        ItemStack it = t.apply(new ItemStack(r.material()));
+        ItemMeta meta = it.getItemMeta();
         meta.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE);
         if (!r.enchants().isEmpty()) {
             meta.setEnchantmentGlintOverride(true);
@@ -1205,7 +1219,7 @@ final class Workshop implements Listener {
 
     void open(Player p) {
         Holder h = new Holder();
-        h.inv = Bukkit.createInventory(h, 54, c("&0XƯỞNG CHẾ TẠO &8(hiệu ứng · độ bền · thời hạn)"));
+        h.inv = Bukkit.createInventory(h, 54, c("&0⚒ Xưởng chế tạo"));
         int i = 0;
         for (Recipe r : menu()) {
             if (i >= MAIN_SLOTS.length) {
@@ -1221,7 +1235,7 @@ final class Workshop implements Listener {
     private void openCraft(Player p, Recipe r) {
         Holder h = new Holder();
         h.view = r;
-        h.inv = Bukkit.createInventory(h, 54, c("&0CHẾ TẠO: " + LEGACY.serialize(c(r.name())).replaceAll("&.", "")));
+        h.inv = Bukkit.createInventory(h, 54, c("&0⚒ Chế tạo: " + LEGACY.serialize(c(r.name())).replaceAll("&.", "")));
         ItemStack bg = pane(Material.GRAY_STAINED_GLASS_PANE, " ");
         for (int s = 0; s < 54; s++) {
             h.inv.setItem(s, bg);
@@ -1238,13 +1252,14 @@ final class Workshop implements Listener {
             ItemMeta meta = it.getItemMeta();
             int have = countPlain(p, m);
             int need = r.ingredients().getOrDefault(m, n);
-            meta.lore(List.of(c("&7Cần: &f" + n + (need > n ? " &8(cả công thức " + need + ")" : "")), c((have >= need ? "&a" : "&c") + "Bạn có: " + have)));
+            meta.lore(List.of(Tip.c("&8• &7Ô này cần: &f" + n + (need > n ? " &8(cả công thức " + need + ")" : "")),
+                    Tip.c("&8• &7Bạn có: " + (have >= need ? "&a" : "&c") + have)));
             it.setItemMeta(meta);
             h.inv.setItem(GRID_SLOTS[k], it);
         }
         h.inv.setItem(ARROW_SLOT, pane(Material.ARROW, "&f→"));
         h.inv.setItem(RESULT_SLOT, icon(p, r, true));
-        h.inv.setItem(BACK_SLOT, pane(Material.BOOK, "&e← Về danh sách"));
+        h.inv.setItem(BACK_SLOT, Tip.of("&e← &fVề danh sách").click("Bấm để xem món khác").apply(new ItemStack(Material.BOOK)));
         p.openInventory(h.inv);
     }
 

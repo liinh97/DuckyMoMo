@@ -482,19 +482,13 @@ final class PlayerSettings implements Listener {
 
     private ItemStack icon(Player p, Opt o) {
         boolean v = on(p, o.id());
-        ItemStack it = new ItemStack(o.icon());
-        ItemMeta m = it.getItemMeta();
-        m.displayName(c((v ? "&a" : "&c") + o.name()));
-        List<Component> lore = new ArrayList<>();
-        lore.add(c("&7" + o.desc()));
+        Tip t = Tip.of((v ? "&a● " : "&c○ ") + "&f" + o.name()).accent(v ? "&a" : "&c").desc(o.desc());
         if (!o.where().isBlank()) {
-            lore.add(c("&8Có ở: " + o.where()));
+            t.note("Có ở: " + o.where());
         }
-        lore.add(Component.empty());
-        lore.add(c("&7— Trạng thái: " + (v ? "&aBật" : "&cTắt")));
-        lore.add(c("&a→ Nhấn để chuyển đổi."));
-        m.lore(lore);
-        m.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
+        t.line().kv("Trạng thái", v ? "&aĐang bật" : "&cĐang tắt").click(v ? "Bấm để tắt" : "Bấm để bật");
+        ItemStack it = t.apply(new ItemStack(o.icon()));
+        ItemMeta m = it.getItemMeta();
         if (v) {
             m.setEnchantmentGlintOverride(true);
         }
@@ -504,7 +498,7 @@ final class PlayerSettings implements Listener {
 
     void open(Player p) {
         Holder h = new Holder();
-        h.inv = Bukkit.createInventory(h, 45, c("&0CÀI ĐẶT CÁ NHÂN"));
+        h.inv = Bukkit.createInventory(h, 45, c("&0⚙ Cài đặt cá nhân"));
         int i = 0;
         for (Opt o : OPTS.values()) {
             if (i >= SLOTS.length) {

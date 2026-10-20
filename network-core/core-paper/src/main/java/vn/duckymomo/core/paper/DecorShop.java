@@ -178,10 +178,8 @@ final class DecorShop implements Listener {
         for (Map.Entry<String, String> e : CATS.entrySet()) {
             String cat = e.getKey();
             long n = offers.stream().filter(o -> o.cat().equals(cat)).count();
-            ItemStack it = new ItemStack(icons[i]);
+            ItemStack it = Tip.of("&6✿ &f" + e.getValue()).sub(n + " món").line().click("Bấm để xem").apply(new ItemStack(icons[i]));
             ItemMeta m = it.getItemMeta();
-            m.displayName(c("&6" + e.getValue()));
-            m.lore(List.of(c("&7" + n + " món"), c("&b» Bấm để xem")));
             m.getPersistentDataContainer().set(catKey, PersistentDataType.STRING, cat);
             it.setItemMeta(m);
             inv.setItem(slots[i++], it);
@@ -211,22 +209,25 @@ final class DecorShop implements Listener {
                 it = new ItemStack(o.icon());
             }
             it.setAmount(Math.max(1, Math.min(o.amount(), it.getMaxStackSize())));
-            ItemMeta m = it.getItemMeta();
-            m.displayName(c(label(o)));
-            List<Component> lore = new ArrayList<>();
-            lore.add(c("&7Giá: &e" + money(o.price())));
+            Tip t = Tip.of(label(o)).accent("&6");
             if (o.title() != null) {
-                lore.add(c("&7Danh hiệu, dùng bằng /danhhieu"));
+                t.desc("Danh hiệu hiện cạnh tên", "Đổi danh hiệu: /danhhieu");
             }
-            lore.add(c("&b» Bấm để mua"));
-            m.lore(lore);
+            t.line().kv("Giá", "&e" + money(o.price())).raw("&8Chỉ trang trí, không thêm sức mạnh").click("Bấm để mua");
+            if (o.lib() != null) {
+                t.append(it);   // món thư viện: giữ mô tả gốc, thêm giá bên dưới
+            } else {
+                t.apply(it);
+            }
+            ItemMeta m = it.getItemMeta();
+            m.displayName(t.name());
             m.getPersistentDataContainer().set(offerKey, PersistentDataType.STRING, o.key());
             it.setItemMeta(m);
             inv.setItem(i, it);
         }
         ItemStack back = new ItemStack(Material.ARROW);
         ItemMeta bm = back.getItemMeta();
-        bm.displayName(c("&7« Quay lại"));
+        bm.displayName(Tip.c("&7← &fQuay lại"));
         bm.getPersistentDataContainer().set(catKey, PersistentDataType.STRING, "menu");
         back.setItemMeta(bm);
         inv.setItem(inv.getSize() - 5, back);

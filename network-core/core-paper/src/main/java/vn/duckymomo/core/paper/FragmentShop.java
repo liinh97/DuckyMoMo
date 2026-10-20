@@ -282,31 +282,32 @@ final class FragmentShop implements Listener, Rewards.FragmentGiver {
         if (it == null) {
             it = new ItemStack(a[0].equalsIgnoreCase("xu") ? Material.GOLD_INGOT : Material.CHEST);
         }
-        ItemMeta meta = it.getItemMeta();
-        meta.displayName(c("&e" + o.label()));
-        List<Component> lore = new ArrayList<>();
-        for (String d : rewards.describe(o.rewards())) {
-            lore.add(c("&8• &7" + d));
-        }
-        lore.add(c("&7Giá:"));
+        Tip t = Tip.of("&e❖ &f" + o.label()).accent("&d").head("Nhận được").items(rewards.describe(o.rewards())).gap().head("Giá đổi");
         boolean enough = true;
         for (Map.Entry<String, Integer> e : o.cost().entrySet()) {
             int have = count(p, e.getKey());
             enough &= have >= e.getValue();
-            lore.add(c("  " + (have >= e.getValue() ? "&a" : "&c") + e.getValue() + " " + costName(e.getKey()) + " &8(có " + have + ")"));
+            t.item((have >= e.getValue() ? "&a" : "&c") + e.getValue() + " &f" + costName(e.getKey()) + " &8(có " + have + ")");
         }
+        boolean full = o.limit() > 0 && used(p, o) >= o.limit();
         if (o.limit() > 0) {
-            lore.add(c("&7Đã đổi &f" + used(p, o) + "/" + o.limit() + " &7lần"));
+            t.gap().kv("Lượt đổi", (full ? "&c" : "&f") + used(p, o) + "/" + o.limit());
         }
-        lore.add(c(enough ? "&a» Bấm để đổi" : "&c» Chưa đủ"));
-        meta.lore(lore);
-        it.setItemMeta(meta);
+        t.line();
+        if (full) {
+            t.deny("Đã hết lượt đổi món này");
+        } else if (enough) {
+            t.click("Bấm để đổi");
+        } else {
+            t.deny("Chưa đủ mảnh / cá");
+        }
+        it = t.apply(it);
         return it;
     }
 
     void open(Player p) {
         Holder h = new Holder();
-        h.inv = Bukkit.createInventory(h, 54, c("&5ĐỔI MẢNH & CÁ"));
+        h.inv = Bukkit.createInventory(h, 54, c("&0❖ Đổi mảnh & cá"));
         int slot = 10;
         for (Offer o : offers) {
             if (!available(o) || slot >= 44) {

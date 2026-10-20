@@ -106,9 +106,10 @@ final class Dishes implements Listener {
         }
         ItemMeta meta = it.getItemMeta();
         List<Component> lore = meta.lore() == null ? new ArrayList<>() : new ArrayList<>(meta.lore());
-        lore.add(c("&8Khi ăn:"));
+        lore.add(c(Tip.LINE));
+        lore.add(c("&8• &aKhi ăn:"));
         for (String e : s.getStringList("hieu-ung")) {
-            lore.add(c("&a• " + effectText(e)));
+            lore.add(c("  &8▸ &f" + effectText(e)));
         }
         lore.add(c("&8Món ăn ra trận · /nauan"));
         meta.lore(lore);
@@ -239,17 +240,21 @@ final class Dishes implements Listener {
         if (it == null) {
             return null;
         }
-        ItemMeta meta = it.getItemMeta();
-        List<Component> lore = meta.lore() == null ? new ArrayList<>() : new ArrayList<>(meta.lore());
-        lore.add(c("&7Cần:"));
+        Tip t = Tip.of("").head("Nguyên liệu");
         boolean ok = true;
         for (Map.Entry<String, Integer> e : d.need().entrySet()) {
             int have = count(p, e.getKey());
             ok &= have >= e.getValue();
-            lore.add(c("  " + (have >= e.getValue() ? "&a" : "&c") + e.getValue() + " " + needName(e.getKey()) + " &8(có " + have + ")"));
+            t.item((have >= e.getValue() ? "&a" : "&c") + e.getValue() + " &f" + needName(e.getKey()) + " &8(có " + have + ")");
         }
-        lore.add(c(ok ? "&a» Bấm để nấu" : "&c» Chưa đủ nguyên liệu"));
-        meta.lore(lore);
+        t.line();
+        if (ok) {
+            t.click("Bấm để nấu");
+        } else {
+            t.deny("Chưa đủ nguyên liệu");
+        }
+        t.append(it);
+        ItemMeta meta = it.getItemMeta();
         meta.getPersistentDataContainer().remove(KEY);   // biểu tượng trong menu không phải món thật
         it.setItemMeta(meta);
         return it;

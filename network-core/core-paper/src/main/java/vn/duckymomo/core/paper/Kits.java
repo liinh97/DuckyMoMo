@@ -368,7 +368,7 @@ final class Kits implements Listener {
     void open(Player p) {
         Holder h = new Holder();
         int size = Math.max(9, Math.min(54, (kits.size() + 8) / 9 * 9));
-        h.inv = Bukkit.createInventory(h, size, c("&0Gói quà &8(bấm để nhận)"));
+        h.inv = Bukkit.createInventory(h, size, c("&0✚ Gói quà"));
         // gói mình nhận được lên trước, gói của rank khác xếp sau (xám, ghi rank cần có)
         List<Kit> order = new ArrayList<>(kits.values());
         order.sort(java.util.Comparator.comparing(k -> !allowed(p, k)));
@@ -376,33 +376,26 @@ final class Kits implements Listener {
             if (h.slots.size() >= size) {
                 break;
             }
-            ItemStack it = new ItemStack(k.icon());
-            ItemMeta m = it.getItemMeta();
             boolean ok = allowed(p, k);
             long w = waitLeft(p, k);
-            m.displayName(c((ok && w == 0 ? "&a" : "&7") + k.name()));
-            List<Component> lore = new ArrayList<>();
-            lore.add(c("&8" + cooldownText(k)));
-            if (!ranksOf(k).isEmpty()) {
-                lore.add(c("&8Dành cho: " + rankText(k)));
-            }
-            lore.add(Component.empty());
-            for (String d : rewards.describe(k.rewards())) {
-                lore.add(c("&7• &f" + d));
-            }
-            lore.add(Component.empty());
+            boolean ready = ok && w == 0;
+            Tip t = Tip.of((ready ? "&a✚ " : "&7✚ ") + k.name()).accent(ready ? "&a" : "&7")
+                    .kv("Dành cho", ranksOf(k).isEmpty() ? "&aMọi người" : rankText(k))
+                    .kv("Nhận", cooldownText(k).replace("Nhận lại sau", "mỗi").replace("Nhận ", ""))
+                    .line().head("Phần thưởng").items(rewards.describe(k.rewards())).line();
             if (!ok) {
-                lore.add(c("&cCần rank: " + rankText(k)));
+                t.deny("Cần rank: " + rankText(k));
             } else if (w < 0) {
-                lore.add(c("&7Đã nhận"));
+                t.kv("Trạng thái", "&7Đã nhận (chỉ một lần)");
             } else if (w > 0) {
-                lore.add(c("&eNhận lại sau " + duration(w)));
+                t.kv("Trạng thái", "&eCòn " + duration(w)).deny("Chưa nhận lại được");
             } else {
-                lore.add(c("&a▶ Bấm để nhận"));
+                t.kv("Trạng thái", "&aSẵn sàng!").click("Bấm để nhận quà");
             }
-            m.lore(lore);
+            ItemStack it = t.apply(new ItemStack(k.icon()));
+            ItemMeta m = it.getItemMeta();
             m.addItemFlags(ItemFlag.values());
-            if (ok && w == 0) {
+            if (ready) {
                 m.setEnchantmentGlintOverride(true);
             }
             it.setItemMeta(m);

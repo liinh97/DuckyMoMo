@@ -118,7 +118,7 @@ final class Backpack implements Listener {
             }
             size = PlayRanks.slots(Math.max(defaultSlots, last));
         }
-        h.inv = Bukkit.createInventory(h, size, c("&0BALO " + index + " &8· " + ownerName + " &8(" + size + " ô)"));
+        h.inv = Bukkit.createInventory(h, size, c("&0▣ Balo " + index + " &8· " + ownerName + " · " + size + " ô"));
         int hidden = 0;
         for (int i = size; i < slots.size(); i++) {
             hidden += slots.get(i).isEmpty() ? 0 : 1;

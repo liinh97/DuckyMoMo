@@ -676,9 +676,11 @@ final class DungeonGate implements Listener {
     private ItemStack luckTicket(Dg d) {
         ItemStack it = new ItemStack(Material.AMETHYST_SHARD);
         ItemMeta m = it.getItemMeta();
-        m.displayName(c("&d✦ Vé Vận Mệnh &7(" + d.name() + "&7)"));
-        m.lore(List.of(c("&7Mở cổng dungeon may mắn &f" + d.name()), c("&7Dùng: &f/dungeon vao " + d.id()),
-                c(d.rollChance() < 100 ? "&c" + Math.round(d.rollChance()) + "% cổng mở, trượt thì vé tan biến" : "&aChắc chắn mở cổng")));
+        Tip t = Tip.of("&d✦ &fVé Vận Mệnh").sub(d.name()).accent("&d").desc("Mở cổng dungeon may mắn " + d.name()).line()
+                .kv("Dùng", "&e/dungeon vao " + d.id())
+                .kv("Mở cổng", d.rollChance() < 100 ? "&c" + Math.round(d.rollChance()) + "% &8(trượt thì vé tan biến)" : "&achắc chắn");
+        m.displayName(t.name());
+        m.lore(t.lore());
         m.setEnchantmentGlintOverride(true);
         m.getPersistentDataContainer().set(ticketKey, PersistentDataType.STRING, d.id());
         it.setItemMeta(m);
@@ -748,14 +750,17 @@ final class DungeonGate implements Listener {
     private ItemStack keyItem(Dg d, Player owner) {
         ItemStack it = new ItemStack(Material.TRIAL_KEY);
         ItemMeta m = it.getItemMeta();
-        m.displayName(c("&6🗝 Chìa khoá " + d.name()));
-        List<Component> lore = new ArrayList<>(List.of(c("&7Mở vĩnh viễn tầng &f" + d.name() + (d.level().isBlank() ? "" : " &8[cấp " + d.level() + "]")),
-                c("&7Dùng: &f/dungeon vao " + d.id() + " &7(chìa mất khi dùng)")));
+        Tip t = Tip.of("&6🗝 &fChìa khoá " + d.name()).accent("&6").desc("Mở vĩnh viễn tầng " + d.name()).line();
+        if (!d.level().isBlank()) {
+            t.kv("Cấp", d.level());
+        }
+        t.kv("Dùng", "&e/dungeon vao " + d.id()).note("Chìa mất khi dùng");
         if (!keyTradeable) {
-            lore.add(c("&cChỉ " + owner.getName() + " dùng được"));
+            t.deny("Chỉ " + owner.getName() + " dùng được");
             m.getPersistentDataContainer().set(keyOwner, PersistentDataType.STRING, owner.getUniqueId().toString());
         }
-        m.lore(lore);
+        m.displayName(t.name());
+        m.lore(t.lore());
         m.setEnchantmentGlintOverride(true);
         m.getPersistentDataContainer().set(keyKey, PersistentDataType.STRING, d.id());
         it.setItemMeta(m);
@@ -831,8 +836,10 @@ final class DungeonGate implements Listener {
     private ItemStack fragment(Dg d) {
         ItemStack it = new ItemStack(Material.ECHO_SHARD);
         ItemMeta m = it.getItemMeta();
-        m.displayName(c("&5✧ Mảnh Chìa &7(" + d.name() + "&7)"));
-        m.lore(List.of(c("&7Ghép đủ &f" + d.fragments() + " &7mảnh để mở lối vào &f" + d.name()), c("&7Ghép: &f/dungeon vao " + d.id())));
+        Tip t = Tip.of("&5✧ &fMảnh Chìa").sub(d.name()).accent("&5").desc("Ghép đủ mảnh để mở lối vào " + d.name()).line()
+                .kv("Cần", d.fragments() + " mảnh").kv("Ghép", "&e/dungeon vao " + d.id());
+        m.displayName(t.name());
+        m.lore(t.lore());
         m.setEnchantmentGlintOverride(true);
         m.getPersistentDataContainer().set(fragKey, PersistentDataType.STRING, d.id());
         it.setItemMeta(m);

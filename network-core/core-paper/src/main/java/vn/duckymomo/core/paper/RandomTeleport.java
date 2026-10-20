@@ -208,7 +208,7 @@ final class RandomTeleport implements Listener {
         }
         int rows = Math.max(3, Math.min(6, (zones.size() + 6) / 7 + 2));
         MenuHolder holder = new MenuHolder();
-        Inventory inv = plugin.getServer().createInventory(holder, rows * 9, c("&0Dịch chuyển ngẫu nhiên"));
+        Inventory inv = plugin.getServer().createInventory(holder, rows * 9, c("&0➹ Dịch chuyển tới vùng"));
         holder.inventory = inv;
         int slot = 10;
         for (Zone z : zones) {
@@ -227,19 +227,17 @@ final class RandomTeleport implements Listener {
     }
 
     private ItemStack zoneButton(Zone z, String info) {
-        ItemStack item = new ItemStack(z.icon());
-        ItemMeta meta = item.getItemMeta();
-        meta.displayName(c(z.name()));
-        List<Component> lore = new ArrayList<>();
+        Tip t = Tip.of("&b➹ &f" + z.name()).accent("&b");
         if (!z.description().isBlank()) {
-            lore.add(c("&7" + z.description()));
+            t.desc(z.description());
         }
-        lore.add(Component.empty());
+        t.line();
         if (!info.isBlank()) {
-            lore.add(c(info.strip()));
+            t.raw(info.strip());
         }
-        lore.add(c("&b» Bấm để dịch chuyển"));
-        meta.lore(lore);
+        t.click("Bấm để dịch chuyển").note("Đứng yên vài giây sau khi bấm");
+        ItemStack item = t.apply(new ItemStack(z.icon()));
+        ItemMeta meta = item.getItemMeta();
         meta.getPersistentDataContainer().set(zoneKey, PersistentDataType.STRING, z.id());
         item.setItemMeta(meta);
         return item;

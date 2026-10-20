@@ -205,10 +205,12 @@ final class TreasureHunt implements Listener {
     private ItemStack makeMap(Tier t, Location l, Zone z) {
         ItemStack it = new ItemStack(Material.PAPER);
         ItemMeta m = it.getItemMeta();
-        m.displayName(c("&6🗺 Bản đồ kho báu &7(" + t.name() + "&7)"));
         int rx = (int) Math.round(l.getX() / 50.0) * 50, rz = (int) Math.round(l.getZ() / 50.0) * 50;
-        m.lore(List.of(c("&7Vùng: &f" + z.name()), c("&7Quanh toạ độ: &fX " + rx + " Z " + rz + " &8(±50)"),
-                c("&7Cầm trên tay để dò: lạnh → ấm → nóng"), c("&eTới nơi: ngồi xuống (Shift) để đào"), c("&8Lính canh sẽ xuất hiện!")));
+        Tip tip = Tip.of("&6🗺 &fBản đồ kho báu").sub(t.name()).desc("Cầm trên tay để dò: lạnh → ấm → nóng").line()
+                .kv("Vùng", z.name()).kv("Quanh toạ độ", "X " + rx + " Z " + rz + " &8(±50)").line()
+                .click("Tới nơi", "ngồi xuống (Shift) để đào").note("Lính canh sẽ xuất hiện!");
+        m.displayName(tip.name());
+        m.lore(tip.lore());
         m.setEnchantmentGlintOverride(true);
         m.getPersistentDataContainer().set(key, PersistentDataType.STRING,
                 t.id() + ";" + l.getWorld().getName() + ";" + l.getBlockX() + ";" + l.getBlockY() + ";" + l.getBlockZ());

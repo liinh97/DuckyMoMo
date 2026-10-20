@@ -222,24 +222,28 @@ final class Orders implements Listener {
         int can = o.getInt("can");
         int da = o.getInt("da");
         double gia = o.getDouble("gia");
-        meta.displayName(c("&e#" + id + " &f").append(name(m)));
+        meta.displayName(c("&a✉ &f").append(name(m)).append(c(" &8(đơn #" + id + ")")));
         List<Component> lore = new ArrayList<>();
-        lore.add(c("&7Người đặt: &f" + o.getString("ten")));
-        lore.add(c("&7Cần mua: &a" + can + "x ").append(name(m)));
-        lore.add(c("&7Tiến độ: &f" + da + "/" + can + " &8(" + (can == 0 ? 0 : da * 100 / can) + "%)"));
-        lore.add(c("&7Đơn giá: &a" + money(gia)));
-        lore.add(c("&7Còn trả: &a" + money((can - da) * gia)));
-        lore.add(c(o.getBoolean("dong") ? "&8Đã đóng" : "&7Hết hạn sau: &f" + left(expiresAt(o) - System.currentTimeMillis())));
-        lore.add(Component.empty());
+        lore.add(c("&a▍ &fCần mua &a" + can + "× &f").append(name(m)));
+        int pct = can == 0 ? 0 : da * 100 / can;
+        Tip t = Tip.of("").kv("Người đặt", o.getString("ten")).kv("Đơn giá", "&a" + money(gia) + " &8/ món")
+                .kv("Tiến độ", da + "/" + can + " &8(" + pct + "%)").kv("Còn trả", "&a" + money((can - da) * gia))
+                .kv("Hết hạn", o.getBoolean("dong") ? "&8đã đóng" : left(expiresAt(o) - System.currentTimeMillis())).line();
         if (mine) {
             int kho = o.getInt("kho");
-            lore.add(c(kho > 0 ? "&a» Chuột trái: nhận " + kho + " món đã giao" : "&8Chưa có hàng giao tới"));
+            if (kho > 0) {
+                t.click("Chuột trái", "nhận " + kho + " món đã giao");
+            } else {
+                t.note("Chưa có hàng giao tới");
+            }
             if (!o.getBoolean("dong")) {
-                lore.add(c("&c» Chuột phải: huỷ đơn &8(/donhang huy " + id + ")"));
+                t.click("Chuột phải", "huỷ đơn &8(/donhang huy " + id + ")");
             }
         } else {
-            lore.add(c("&a» Bấm để giao hàng &7(chỉ đồ thường, không tên/phù phép)"));
+            t.click("Bấm để giao hàng").note("Chỉ nhận đồ thường, không tên, không phù phép");
         }
+        lore.add(c(Tip.LINE));
+        lore.addAll(t.lore());
         meta.lore(lore);
         it.setItemMeta(meta);
         it.setAmount(Math.max(1, Math.min(64, can - da)));
@@ -247,14 +251,11 @@ final class Orders implements Listener {
     }
 
     private static ItemStack button(Material m, String text, String sub) {
-        ItemStack it = new ItemStack(m);
-        ItemMeta meta = it.getItemMeta();
-        meta.displayName(c(text));
+        Tip t = Tip.of(text);
         if (sub != null) {
-            meta.lore(List.of(c(sub)));
+            t.desc(sub.replaceFirst("^&7", "")).line().click("Bấm để mở");
         }
-        it.setItemMeta(meta);
-        return it;
+        return t.apply(new ItemStack(m));
     }
 
     void openMarket(Player p, int page) {
@@ -265,7 +266,7 @@ final class Orders implements Listener {
                 list.add(id);
             }
         }
-        render(p, list, false, page, "&2SÀN THU MUA &8(" + list.size() + " đơn)");
+        render(p, list, false, page, "&0✉ Sàn thu mua &8· " + list.size() + " đơn");
     }
 
     void openMine(Player p) {
@@ -280,7 +281,7 @@ final class Orders implements Listener {
             p.sendMessage(c("&7Bạn chưa có đơn nào. Tạo: cầm món cần mua, gõ &e/donhang tao <số lượng> <đơn giá>"));
             return;
         }
-        render(p, list, true, 0, "&0ĐƠN CỦA TÔI");
+        render(p, list, true, 0, "&0✉ Đơn của tôi");
     }
 
     private void render(Player p, List<Integer> list, boolean mine, int page, String title) {
@@ -294,13 +295,13 @@ final class Orders implements Listener {
             h.slots.put(i, id);
         }
         if (page > 0) {
-            h.inv.setItem(45, button(Material.ARROW, "&e« Trang trước", null));
+            h.inv.setItem(45, button(Material.ARROW, "&e← &fTrang trước", null));
         }
-        h.inv.setItem(49, mine ? button(Material.EMERALD, "&aSàn thu mua", "&7Xem đơn của mọi người")
-                : button(Material.CHEST, "&6Đơn của tôi", "&7Nhận hàng, huỷ đơn"));
-        h.inv.setItem(48, button(Material.BOOK, "&eTạo đơn mới", "&7Cầm món cần mua, gõ &f/donhang tao <số> <giá>"));
+        h.inv.setItem(49, mine ? button(Material.EMERALD, "&a✉ &fSàn thu mua", "&7Xem đơn của mọi người")
+                : button(Material.CHEST, "&6✉ &fĐơn của tôi", "&7Nhận hàng, huỷ đơn"));
+        h.inv.setItem(48, button(Material.BOOK, "&e✚ &fTạo đơn mới", "&7Cầm món cần mua, gõ &f/donhang tao <số> <giá>"));
         if (page < pages - 1) {
-            h.inv.setItem(53, button(Material.ARROW, "&eTrang sau »", null));
+            h.inv.setItem(53, button(Material.ARROW, "&fTrang sau &e→", null));
         }
         if (list.isEmpty()) {
             h.inv.setItem(22, button(Material.BARRIER, "&7Chưa có đơn nào", "&7Hãy là người đặt đơn đầu tiên!"));

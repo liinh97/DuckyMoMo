@@ -1579,3 +1579,9 @@ Log: `docker compose logs banghoi-1 --since 5m | grep -iE "DuckyMoMoCore|Mùa:|V
   ở lobby/banghoi/practice/sangtao/template (+ data). Thứ tự theo weight: Admin 100 > Manager 90 > Mod 70 > Helper 50 > Builder 40 >
   Sứ Giả 20 > rank ủng hộ 5–9 > Hào Kiệt 3 > Lương Dân 2 > Dân 1 > Tị Nạn 0. Ghi chú cũ "prefix ghép role + rank donate" (mục Role 12/10) KHÔNG còn đúng.
   Bỏ &l khỏi tiền tố 5 rank ủng hộ (DB + Cài đặt tier*_prefix); namtuoc trước đó mất prefix, đã đặt lại.
+- 20/10 tối: KHUNG TOOLTIP CHUNG `Tip.java` (người dùng gửi ảnh CherryMC: "mô tả, sắp xếp đẹp, đừng đơn điệu"). Bố cục: tên có ký hiệu +
+  (phụ đề), ▍ mô tả, vạch &m, "• Nhãn: giá trị", "• Nhóm:" + "▸ mục", ✔/✘ điều kiện, "➜ Bấm để …" / "✘ lý do". Đã đổi toàn bộ:
+  /menu (nút thêm sub, gom, bam, %placeholder% qua PapiText; ô 4 = hồ sơ đầu người chơi), /kit, /xuong, /nauan, /tinhluyen, /doimanh,
+  /capdo (+ cửa hàng, xếp hạng), /caidat, /treothuong, /cuahang, /donhang, /vongquay, /tpr, /danhphan, /vang + QR, menu sảnh, chìa/vé/mảnh
+  dungeon, bản đồ kho báu, lore đồ Xưởng và món ăn. Tiêu đề menu: "&0<ký hiệu> Tên" (không viết hoa cả câu). Menu mới: dùng Tip.
+  CHƯA làm: GUI plugin ngoài (zAuctionHouse /ah, Jobs, MyPet, CrazyEnchantments /ce, QuickShop) vì là cấu hình riêng của từng plugin.

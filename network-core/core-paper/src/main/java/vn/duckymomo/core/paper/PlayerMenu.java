@@ -29,7 +29,9 @@ import java.util.Map;
 
 /**
  * Menu chính cho người chơi (/menu, Shift+F) ở server chế độ (Bang Hội Chiến…). Ở sảnh /menu vẫn là menu chọn chế độ.
- * Nút cấu hình trong player-menu.buttons: {slot, icon, name, lore, cmd | suggest | proxy | server}
+ * Nút cấu hình trong player-menu.buttons: {slot, icon, name, sub, lore, gom, bam, cmd | suggest | proxy | server}
+ *   name: tên (nên có ký hiệu đầu), sub: phụ đề xám, lore: mô tả, gom: danh sách "Gồm" (mục con), bam: chữ dòng bấm.
+ *   Chữ dùng được %placeholder% của PlaceholderAPI (vd %dmmvang_so_du%) nếu server có PlaceholderAPI. Khung mô tả: Tip.
  *   cmd: chạy lệnh thay người chơi trên server này (không dấu /), suggest: điền sẵn vào ô chat (vd "/trade "),
  *   proxy: nhờ proxy chạy lệnh (lệnh của proxy như tuskin; kênh duckymomo:cmd, proxy chỉ nhận lệnh trong danh sách cho phép),
  *   server: chuyển sang server khác (kênh BungeeCord Connect).
@@ -38,7 +40,8 @@ final class PlayerMenu implements Listener {
     static final String PROXY_CHANNEL = "duckymomo:cmd";
     private static final LegacyComponentSerializer L = LegacyComponentSerializer.legacyAmpersand();
 
-    record Button(int slot, Material icon, String name, List<String> lore, String cmd, String suggest, String proxy, String server) { }
+    record Button(int slot, Material icon, String name, String sub, List<String> lore, List<String> gom, String bam,
+                  String cmd, String suggest, String proxy, String server) { }
 
     private final JavaPlugin plugin;
     private final String title;
@@ -71,18 +74,36 @@ final class PlayerMenu implements Listener {
                     plugin.getLogger().warning("Menu: bỏ nút sai (ô " + slot + ", " + m.get("icon") + ")");
                     continue;
                 }
-                List<String> lore = new ArrayList<>();
-                if (m.get("lore") instanceof List<?> ll) {
-                    ll.forEach(x -> lore.add(String.valueOf(x)));
-                }
-                buttons.put(slot, new Button(slot, icon, String.valueOf(m.get("name")), lore, str(m.get("cmd")), str(m.get("suggest")),
-                        str(m.get("proxy")), str(m.get("server"))));
+                buttons.put(slot, new Button(slot, icon, String.valueOf(m.get("name")), str(m.get("sub")), list(m.get("lore")), list(m.get("gom")),
+                        str(m.get("bam")), str(m.get("cmd")), str(m.get("suggest")), str(m.get("proxy")), str(m.get("server"))));
             } catch (RuntimeException e) {
                 plugin.getLogger().warning("Menu: bỏ nút sai " + m + ": " + e.getMessage());
             }
         }
         plugin.getServer().getMessenger().registerOutgoingPluginChannel(plugin, PROXY_CHANNEL);
         plugin.getServer().getMessenger().registerOutgoingPluginChannel(plugin, "BungeeCord");
+    }
+
+    private static List<String> list(Object o) {
+        List<String> out = new ArrayList<>();
+        if (o instanceof List<?> ll) {
+            ll.forEach(x -> out.add(String.valueOf(x)));
+        } else if (o != null) {
+            out.add(String.valueOf(o));
+        }
+        return out;
+    }
+
+    /** Thay %placeholder% (PlaceholderAPI) nếu server có; không có thì giữ nguyên chữ. */
+    private static String ph(Player p, String s) {
+        if (s.indexOf('%') < 0 || !Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+            return s;
+        }
+        try {
+            return PapiText.apply(p, s);
+        } catch (Throwable t) {
+            return s;
+        }
     }
 
     private static String str(Object o) {
@@ -110,12 +131,21 @@ final class PlayerMenu implements Listener {
             }
         }
         for (Button b : buttons.values()) {
-            ItemStack it = new ItemStack(b.icon());
+            Tip t = Tip.of(ph(p, b.name()));
+            if (!b.sub().isEmpty()) {
+                t.sub(ph(p, b.sub()));
+            }
+            t.desc(b.lore().stream().map(x -> ph(p, x)).toArray(String[]::new));
+            if (!b.gom().isEmpty()) {
+                t.gap().head("Gồm");
+                b.gom().forEach(x -> t.item(ph(p, x)));
+            }
+            t.line().click(b.bam().isEmpty() ? (b.suggest().isEmpty() ? "Bấm để mở" : "Bấm rồi gõ tiếp trong khung chat") : ph(p, b.bam()));
+            ItemStack it = t.apply(new ItemStack(b.icon()));
             ItemMeta im = it.getItemMeta();
-            im.displayName(c(b.name()));
-            List<Component> lore = new ArrayList<>();
-            b.lore().forEach(x -> lore.add(c(x)));
-            im.lore(lore);
+            if (im instanceof org.bukkit.inventory.meta.SkullMeta sm) {
+                sm.setOwningPlayer(p);   // đầu người chơi = ô hồ sơ của chính mình
+            }
             im.addItemFlags(org.bukkit.inventory.ItemFlag.values());
             it.setItemMeta(im);
             h.inv.setItem(b.slot(), it);

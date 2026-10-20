@@ -309,7 +309,7 @@ final class PlayRanks implements Listener {
 
     void open(Player p) {
         Holder h = new Holder();
-        h.inv = Bukkit.createInventory(h, 27, c("&0DANH PHẬN &8(rank chơi, miễn phí)"));
+        h.inv = Bukkit.createInventory(h, 27, c("&0♛ Danh phận &8· rank chơi miễn phí"));
         ItemStack bg = pane();
         for (int s = 0; s < 27; s++) {
             h.inv.setItem(s, bg);
@@ -329,105 +329,99 @@ final class PlayRanks implements Listener {
                 ci++;
             }
         }
-        ItemStack info = new ItemStack(Material.BOOK);
-        ItemMeta m = info.getItemMeta();
-        m.displayName(c("&6Bạn đang là: &f" + tiers.get(cur).name()));
-        m.lore(List.of(c("&7Giờ chơi thật: &f" + String.format(Locale.ROOT, "%.1f", hours(p)) + " giờ &8(/hoatdong)"),
-                c("&7Thăng Cấp: &f" + level(p) + " &8(/capdo)"), c("&8Rank chơi kiếm bằng cách chơi, không bán.")));
-        info.setItemMeta(m);
+        ItemStack info = Tip.of("&6♛ &fBạn đang là: " + tiers.get(cur).name()).desc("Rank chơi miễn phí, lên bằng cách chơi")
+                .line().kv("Giờ chơi thật", String.format(Locale.ROOT, "%.1f", hours(p)) + " giờ &8(/hoatdong)")
+                .kv("Thăng Cấp", level(p) + " &8(/capdo)").note("Không bán bằng tiền, giờ AFK không tính")
+                .apply(new ItemStack(Material.BOOK));
         h.inv.setItem(4, info);
         p.openInventory(h.inv);
     }
 
     private ItemStack icon(Player p, int i, int cur) {
         Tier t = tiers.get(i);
-        ItemStack it = new ItemStack(t.icon());
-        ItemMeta m = it.getItemMeta();
-        m.displayName(c("&fRANK " + t.name().toUpperCase(Locale.ROOT)));
-        List<Component> lore = new ArrayList<>();
-        lore.add(c(t.prefix().isBlank() ? "&8(không tiền tố)" : "&7Tiền tố: " + t.prefix()));
-        lore.add(Component.empty());
-        lore.add(c("&eQUYỀN LỢI:"));
-        perkLore(lore, t.perks());
-        lore.add(Component.empty());
+        boolean now = i == cur;
+        Tip tip = Tip.of((now ? "&a♛ " : i < cur ? "&8♛ " : "&e♛ ") + "&f" + t.name()).sub("bậc " + (i + 1)).accent(now ? "&a" : "&e")
+                .kv("Tiền tố", t.prefix().isBlank() ? "&8không có" : t.prefix()).line().head("Quyền lợi");
+        perkTip(tip, t.perks());
         if (i > 0) {
-            lore.add(c("&7Giá nâng cấp: &aMiễn phí"));
-            lore.add(c("&eYÊU CẦU:"));
+            tip.gap().head("Yêu cầu");
             if (t.hours() > 0) {
-                boolean ok = hours(p) >= t.hours();
-                lore.add(c((ok ? "&a✔" : "&c✘") + " &7Chơi thật " + fmt(t.hours()) + " giờ &8(" + String.format(Locale.ROOT, "%.1f", hours(p)) + ")"));
+                tip.check(hours(p) >= t.hours(), "Chơi thật " + fmt(t.hours()) + " giờ &8(đang " + String.format(Locale.ROOT, "%.1f", hours(p)) + ")");
             }
             if (t.level() > 0) {
-                boolean ok = level(p) >= t.level();
-                lore.add(c((ok ? "&a✔" : "&c✘") + " &7Thăng Cấp " + t.level() + " &8(đang " + level(p) + ")"));
+                tip.check(level(p) >= t.level(), "Thăng Cấp " + t.level() + " &8(đang " + level(p) + ")");
             }
             if (!t.perm().isBlank()) {
-                lore.add(c((p.hasPermission(t.perm()) ? "&a✔ &7" : "&c✘ &7") + t.permText()));
+                tip.check(p.hasPermission(t.perm()), t.permText());
             }
-            lore.add(Component.empty());
+            tip.kv("Giá", "&aMiễn phí");
         }
-        if (i == cur) {
-            lore.add(c("&a★ Đây là danh phận hiện tại của bạn"));
-            m.setEnchantmentGlintOverride(true);
+        tip.line();
+        if (now) {
+            tip.raw("&a★ Danh phận hiện tại của bạn");
         } else if (i < cur) {
-            lore.add(c("&8Đã vượt qua"));
+            tip.note("Đã vượt qua");
         } else if (i == cur + 1) {
-            lore.add(meets(p, t) ? c("&e▶ Bấm để nhận rank!") : c("&c✘ Chưa đủ yêu cầu"));
+            if (meets(p, t)) {
+                tip.click("Bấm để nhận danh phận");
+            } else {
+                tip.deny("Chưa đủ yêu cầu");
+            }
         } else {
-            lore.add(c("&8Cần nhận bậc trước"));
+            tip.deny("Cần nhận bậc trước");
         }
-        m.lore(lore);
-        m.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
-        it.setItemMeta(m);
+        ItemStack it = tip.apply(new ItemStack(t.icon()));
+        if (now) {
+            ItemMeta m = it.getItemMeta();
+            m.setEnchantmentGlintOverride(true);
+            it.setItemMeta(m);
+        }
         return it;
     }
 
-    /** Dòng quyền lợi (dùng cho bậc danh phận và thẻ rank khác). */
-    private void perkLore(List<Component> lore, Perks k) {
+    /** Quyền lợi (dùng cho bậc danh phận và thẻ rank khác). */
+    private void perkTip(Tip t, Perks k) {
         if (k.homes() > 0) {
-            lore.add(c("&7• Đặt &a" + k.homes() + "&7 nhà &d(/sethome)"));
+            t.item("&a" + k.homes() + "&f nhà &8(/sethome)");
         }
-        lore.add(c("&7• " + (k.balo() > 0 ? "Có &a" + k.balo() + "&7 balo &a" + k.slots() + "&7 ô &d(/balo)" : "Chưa có balo &d(/balo)")));
+        t.item(k.balo() > 0 ? "&a" + k.balo() + "&f balo, &a" + k.slots() + "&f ô &8(/balo)" : "&7Chưa có balo");
         if (k.ah() > 0) {
-            lore.add(c("&7• &a" + k.ah() + "&7 món treo chợ đấu giá &d(/ah)"));
+            t.item("&a" + k.ah() + "&f món treo chợ &8(/ah)");
         }
         if (k.orders() > 0) {
-            lore.add(c("&7• &a" + k.orders() + "&7 đơn thu mua &d(/donhang)"));
+            t.item("&a" + k.orders() + "&f đơn thu mua &8(/donhang)");
         }
         if (k.skins() > 0) {
-            lore.add(c("&7• Tủ skin &a" + k.skins() + "&7 ô &d(/tuskin)"));
+            t.item("Tủ skin &a" + k.skins() + "&f ô &8(/tuskin)");
         }
         if (k.spin() > 0) {
-            lore.add(c("&7• Vé vòng quay nhanh hơn &a" + k.spin() + "% &d(/vongquay)"));
+            t.item("Vé vòng quay nhanh hơn &a" + k.spin() + "%");
         }
         if (!k.kit().isEmpty()) {
-            lore.add(c("&7• Gói quà &a/kit " + k.kit()));
+            t.item("Gói quà &a/kit " + k.kit());
         }
     }
 
     private ItemStack card(Player p, Extra e) {
-        ItemStack it = new ItemStack(e.icon());
-        ItemMeta m = it.getItemMeta();
-        m.displayName(c("&c◆ RANK " + e.name().toUpperCase(Locale.ROOT)));
-        List<Component> lore = new ArrayList<>();
+        Tip t = Tip.of("&c◆ &f" + e.name()).sub("rank xét duyệt").accent("&c");
         if (!e.info().isEmpty()) {
-            lore.add(c("&c▍ Yêu cầu đăng ký"));
-            e.info().forEach(l -> lore.add(c("&7• " + l)));
-            lore.add(Component.empty());
+            t.head("Yêu cầu đăng ký").items(e.info()).gap();
         }
-        lore.add(c("&b▍ Quyền lợi"));
-        perkLore(lore, e.perks());
-        lore.add(Component.empty());
-        if (p.hasPermission("group." + e.group())) {
-            lore.add(c("&a★ Bạn đang có rank này"));
-            m.setEnchantmentGlintOverride(true);
+        t.accent("&b").head("Quyền lợi");
+        perkTip(t, e.perks());
+        t.line();
+        boolean has = p.hasPermission("group." + e.group());
+        if (has) {
+            t.raw("&a★ Bạn đang có rank này");
         } else {
-            lore.add(c("&6Rank này không bán, admin xét duyệt."));
-            lore.add(c("&e▶ Bấm để xem cách liên hệ admin"));
+            t.note("Rank này không bán, admin xét duyệt").click("Bấm để xem cách liên hệ admin");
         }
-        m.lore(lore);
-        m.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
-        it.setItemMeta(m);
+        ItemStack it = t.apply(new ItemStack(e.icon()));
+        if (has) {
+            ItemMeta m = it.getItemMeta();
+            m.setEnchantmentGlintOverride(true);
+            it.setItemMeta(m);
+        }
         return it;
     }
 

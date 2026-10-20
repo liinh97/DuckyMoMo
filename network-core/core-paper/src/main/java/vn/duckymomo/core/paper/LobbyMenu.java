@@ -195,27 +195,28 @@ final class LobbyMenu implements Listener {
         if (icon == null || !icon.isItem()) {
             icon = Material.GRASS_BLOCK; // icon của mod (vd cobblemon:poke_ball) không có trên Paper
         }
-        List<Component> lore = new ArrayList<>();
+        Tip t = Tip.of("&6✦ &f" + mode.displayName());
         if (!mode.description().isBlank()) {
-            lore.add(text(mode.description(), NamedTextColor.GRAY));
+            t.desc(mode.description());
         }
-        lore.add(Component.empty());
         String server = mode.server();
-        switch (mode.status()) {
-            case "open" -> lore.add(text("● Đang mở", NamedTextColor.GREEN));
-            case "beta" -> lore.add(text("● Thử nghiệm (beta)", NamedTextColor.YELLOW));
-            case "maintenance" -> lore.add(text("● Đang bảo trì", NamedTextColor.RED));
-            default -> lore.add(text("● " + mode.status(), NamedTextColor.GRAY));
-        }
+        t.line().kv("Trạng thái", switch (mode.status()) {
+            case "open" -> "&a● Đang mở";
+            case "beta" -> "&e● Thử nghiệm (beta)";
+            case "maintenance" -> "&c● Đang bảo trì";
+            default -> "&7● " + mode.status();
+        });
+        t.kv("Điện thoại", mode.supportsBedrock() ? "&achơi được" : "&cchưa hỗ trợ").line();
         if (bedrock && !mode.supportsBedrock()) {
-            lore.add(text("Chế độ này chưa hỗ trợ điện thoại", NamedTextColor.RED));
+            t.deny("Chế độ này chưa hỗ trợ điện thoại");
             server = null;
         } else if (!mode.joinable()) {
+            t.deny("Chưa vào được lúc này");
             server = null;
         } else {
-            lore.add(text("» Bấm để vào", NamedTextColor.AQUA));
+            t.click("Bấm để vào");
         }
-        return button(icon, text(mode.displayName(), NamedTextColor.GOLD).decoration(TextDecoration.ITALIC, false), lore, server);
+        return button(icon, t.name(), t.lore(), server);
     }
 
     private ItemStack button(Material material, Component name, List<Component> lore, String server) {

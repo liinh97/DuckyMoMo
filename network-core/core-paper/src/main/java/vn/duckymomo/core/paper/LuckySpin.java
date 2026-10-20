@@ -179,31 +179,30 @@ final class LuckySpin implements Listener {
         if (it == null) {
             it = new ItemStack(Material.PAPER);
         }
-        ItemMeta meta = it.getItemMeta();
-        meta.displayName(c((pz.rare() ? "&6✦ " : "&e") + pz.label()));
-        List<Component> lore = new ArrayList<>();
-        lore.add(c(String.format(Locale.ROOT, "&7Tỉ lệ: &f%.1f%%", 100.0 * pz.weight() / total)));
-        for (String d : rewards.describe(pz.rewards())) {
-            lore.add(c("&8• &7" + d));
+        Tip t = Tip.of((pz.rare() ? "&6✦ &6" : "&e◇ &f") + pz.label()).accent(pz.rare() ? "&6" : "&e");
+        if (pz.rare()) {
+            t.sub("hiếm");
         }
-        meta.lore(lore);
-        it.setItemMeta(meta);
-        return it;
+        return t.kv("Tỉ lệ trúng", String.format(Locale.ROOT, "&f%.1f%%", 100.0 * pz.weight() / total))
+                .line().head("Phần thưởng").items(rewards.describe(pz.rewards())).apply(it);
     }
 
     private ItemStack spinButton(Player p) {
-        ItemStack it = new ItemStack(keys(p) > 0 ? Material.LIME_CONCRETE : Material.GRAY_CONCRETE);
-        ItemMeta meta = it.getItemMeta();
-        meta.displayName(c(keys(p) > 0 ? "&aQUAY (&f" + keys(p) + " vé&a)" : "&7Hết vé"));
-        meta.lore(List.of(c("&7Chơi thật &f" + minutesPerKey(p) + " phút &7= 1 vé (tối đa " + cfg.getInt("max-keys", 5) + ")"),
-                c("&7Vé tiếp theo sau &f" + minutesToNext(p) + " phút"), c("&8Vé miễn phí, không bán, không trao đổi")));
-        it.setItemMeta(meta);
-        return it;
+        boolean has = keys(p) > 0;
+        Tip t = Tip.of(has ? "&a✦ &fQuay ngay" : "&7✦ &fHết vé").sub(keys(p) + " vé").accent(has ? "&a" : "&7")
+                .desc("Chơi thật " + minutesPerKey(p) + " phút được 1 vé", "Giữ tối đa " + cfg.getInt("max-keys", 5) + " vé")
+                .line().kv("Vé tiếp theo", "sau " + minutesToNext(p) + " phút").note("Vé miễn phí, không bán, không trao đổi").line();
+        if (has) {
+            t.click("Bấm để quay");
+        } else {
+            t.deny("Chơi thêm để có vé");
+        }
+        return t.apply(new ItemStack(has ? Material.LIME_CONCRETE : Material.GRAY_CONCRETE));
     }
 
     void open(Player p) {
         Holder h = new Holder();
-        h.inv = Bukkit.createInventory(h, 54, c("&0VÒNG QUAY MIỄN PHÍ"));
+        h.inv = Bukkit.createInventory(h, 54, c("&0✦ Vòng quay miễn phí"));
         int slot = 10;
         for (Prize pz : prizes) {
             if (slot >= 44) {

@@ -327,16 +327,6 @@ final class LevelUp implements Listener {
         return VaultEconomy.available() ? VaultEconomy.format(v) : String.format(Locale.ROOT, "%,.0f xu", v);
     }
 
-    private static ItemStack item(Material m, String name, List<String> lore) {
-        ItemStack it = new ItemStack(m);
-        ItemMeta meta = it.getItemMeta();
-        meta.displayName(c(name));
-        meta.lore(lore.stream().map(LevelUp::c).toList());
-        meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
-        it.setItemMeta(meta);
-        return it;
-    }
-
     private String mark(boolean ok) {
         return ok ? "&a" : "&c";
     }
@@ -345,28 +335,40 @@ final class LevelUp implements Listener {
         UUID u = p.getUniqueId();
         int lv = level(u), next = lv + 1;
         Holder h = new Holder();
-        h.inv = Bukkit.createInventory(h, 45, c("&0THĂNG CẤP &8(cấp " + lv + "/" + maxLevel + ")"));
-        h.inv.setItem(4, item(Material.NETHER_STAR, "&6Cấp " + lv, List.of("&7Điểm thăng cấp: &e" + points(u),
-                "&7Điểm hạ gục: &f" + killPts(u) + " &8(quái +" + mobPoints + ", người +" + playerPoints + ")",
-                "&7Giờ chơi mùa này: &f" + String.format(Locale.ROOT, "%.1f", hours(u)) + " giờ")));
+        h.inv = Bukkit.createInventory(h, 45, c("&0⬆ Thăng Cấp &8· cấp " + lv + "/" + maxLevel));
+        h.inv.setItem(4, Tip.of("&6⬆ &fCấp " + lv).sub("tối đa " + maxLevel).desc("Tiến độ của bạn trong mùa này").line()
+                .kv("Điểm thăng cấp", "&e" + points(u))
+                .kv("Điểm hạ gục", killPts(u) + " &8(quái +" + mobPoints + ", người +" + playerPoints + ")")
+                .kv("Giờ chơi", String.format(Locale.ROOT, "%.1f", hours(u)) + " giờ")
+                .apply(new ItemStack(Material.NETHER_STAR)));
         if (next <= maxLevel) {
             boolean mOk = VaultEconomy.available() && VaultEconomy.has(p, moneyFor(next));
             boolean hOk = hours(u) >= hoursFor(next), kOk = killPts(u) >= killsFor(next);
             boolean all = mOk && hOk && kOk;
-            List<String> lore = new ArrayList<>(List.of(
-                    "&7— Tiền: " + mark(mOk) + money(VaultEconomy.available() ? VaultEconomy.balance(p) : 0) + "&7/" + money(moneyFor(next)) + " &8(trả khi lên)",
-                    "&7— Hạ gục: " + mark(kOk) + killPts(u) + "&7/" + killsFor(next),
-                    "&7— Giờ chơi: " + mark(hOk) + String.format(Locale.ROOT, "%.1f", hours(u)) + "&7/" + fmtH(hoursFor(next)) + " giờ",
-                    "&7— Thưởng: &e+" + pointsPerLevel + " điểm" + (milestoneEvery > 0 && next % milestoneEvery == 0 ? " &6+ quà mốc" : ""), ""));
-            lore.add(all ? "&a→ Nhấn để lên cấp." : "&c— Chưa đủ điều kiện.");
-            h.inv.setItem(22, item(all ? Material.LIME_STAINED_GLASS_PANE : Material.RED_STAINED_GLASS_PANE, "&eLên cấp " + next, lore));
+            Tip t = Tip.of((all ? "&a⬆ " : "&e⬆ ") + "&fLên cấp " + next).accent(all ? "&a" : "&e").head("Điều kiện")
+                    .item(mark(mOk) + money(VaultEconomy.available() ? VaultEconomy.balance(p) : 0) + "&7/" + money(moneyFor(next)) + " &8(trả khi lên)")
+                    .item(mark(kOk) + killPts(u) + "&7/" + killsFor(next) + " điểm hạ gục")
+                    .item(mark(hOk) + String.format(Locale.ROOT, "%.1f", hours(u)) + "&7/" + fmtH(hoursFor(next)) + " giờ chơi")
+                    .gap().head("Thưởng").item("&e+" + pointsPerLevel + " điểm thăng cấp")
+                    ;
+            if (milestoneEvery > 0 && next % milestoneEvery == 0) {
+                t.item("&6Quà mốc cấp " + next);
+            }
+            t.line();
+            if (all) {
+                t.click("Bấm để lên cấp");
+            } else {
+                t.deny("Chưa đủ điều kiện");
+            }
+            h.inv.setItem(22, t.apply(new ItemStack(all ? Material.LIME_STAINED_GLASS_PANE : Material.RED_STAINED_GLASS_PANE)));
             h.slots.put(22, "len");
         } else {
-            h.inv.setItem(22, item(Material.GOLD_BLOCK, "&6Đã đạt cấp tối đa", List.of()));
+            h.inv.setItem(22, Tip.of("&6✦ &fĐã đạt cấp tối đa").desc("Mùa sau làm lại từ đầu").apply(new ItemStack(Material.GOLD_BLOCK)));
         }
-        h.inv.setItem(38, item(Material.CHEST, "&eCửa hàng thăng cấp", List.of("&7Dùng điểm thăng cấp đổi tiện ích, trang trí.", "&a→ Nhấn để mở.")));
+        h.inv.setItem(38, Tip.of("&e⛃ &fCửa hàng thăng cấp").sub(points(u) + " điểm").desc("Dùng điểm thăng cấp đổi tiện ích, trang trí")
+                .line().click("Bấm để mở").apply(new ItemStack(Material.CHEST)));
         h.slots.put(38, "shop");
-        h.inv.setItem(42, item(Material.GOLD_INGOT, "&bXếp hạng", List.of("&7Những người cấp cao nhất server.", "&a→ Nhấn để xem.")));
+        h.inv.setItem(42, Tip.of("&b♛ &fXếp hạng").desc("Những người cấp cao nhất server").line().click("Bấm để xem").apply(new ItemStack(Material.GOLD_INGOT)));
         h.slots.put(42, "top");
         p.openInventory(h.inv);
     }
@@ -379,7 +381,7 @@ final class LevelUp implements Listener {
         UUID u = p.getUniqueId();
         Holder h = new Holder();
         h.view = "shop";
-        h.inv = Bukkit.createInventory(h, 54, c("&0CỬA HÀNG THĂNG CẤP &8(" + points(u) + " điểm)"));
+        h.inv = Bukkit.createInventory(h, 54, c("&0⛃ Cửa hàng thăng cấp &8· " + points(u) + " điểm"));
         List<String> owned = data.getStringList(k(u) + "mua");
         int slot = 10;
         for (Perk pk : shop.values()) {
@@ -390,18 +392,23 @@ final class LevelUp implements Listener {
                 slot += 2;
             }
             boolean has = owned.contains(pk.id());
-            List<String> lore = new ArrayList<>();
-            pk.desc().forEach(d -> lore.add("&7" + d));
-            lore.add("");
-            lore.add(has ? "&a✔ Đã có" : "&7Giá: " + (points(u) >= pk.cost() ? "&e" : "&c") + pk.cost() + " điểm");
-            if (!has) {
-                lore.add("&a→ Nhấn để đổi.");
+            Tip t = Tip.of((has ? "&a✔ " : "&e✦ ") + "&f" + pk.name()).desc(pk.desc().toArray(String[]::new)).line();
+            if (has) {
+                t.kv("Trạng thái", "&aĐã có");
+            } else {
+                boolean can = points(u) >= pk.cost();
+                t.kv("Giá", (can ? "&e" : "&c") + pk.cost() + " điểm");
+                if (can) {
+                    t.click("Bấm để đổi");
+                } else {
+                    t.deny("Chưa đủ điểm");
+                }
             }
-            h.inv.setItem(slot, item(pk.icon(), (has ? "&a" : "&f") + pk.name(), lore));
+            h.inv.setItem(slot, t.apply(new ItemStack(pk.icon())));
             h.slots.put(slot, "mua:" + pk.id());
             slot++;
         }
-        h.inv.setItem(49, item(Material.ARROW, "&7← Quay lại", List.of()));
+        h.inv.setItem(49, Tip.of("&7← &fQuay lại").apply(new ItemStack(Material.ARROW)));
         h.slots.put(49, "back");
         p.openInventory(h.inv);
     }
@@ -424,7 +431,7 @@ final class LevelUp implements Listener {
     private void openTop(Player p) {
         Holder h = new Holder();
         h.view = "top";
-        h.inv = Bukkit.createInventory(h, 45, c("&0XẾP HẠNG THĂNG CẤP"));
+        h.inv = Bukkit.createInventory(h, 45, c("&0♛ Xếp hạng Thăng Cấp"));
         int[] slots = {4, 12, 14, 20, 21, 22, 23, 24, 30, 32};
         List<Map.Entry<String, int[]>> top = ranking();
         for (int i = 0; i < Math.min(slots.length, top.size()); i++) {
@@ -434,11 +441,11 @@ final class LevelUp implements Listener {
             SkullMeta sm = (SkullMeta) head.getItemMeta();
             sm.setOwningPlayer(op);
             sm.displayName(c("&e[#" + (i + 1) + "] &f" + data.getString("nguoi." + e.getKey() + ".ten", op.getName())));
-            sm.lore(List.of(c("&7— Cấp độ: &b" + e.getValue()[0] + "/" + maxLevel), c("&7— Điểm thăng cấp: &e" + e.getValue()[1])));
+            sm.lore(Tip.of("").kv("Cấp", "&b" + e.getValue()[0] + "/" + maxLevel).kv("Điểm thăng cấp", "&e" + e.getValue()[1]).lore());
             head.setItemMeta(sm);
             h.inv.setItem(slots[i], head);
         }
-        h.inv.setItem(40, item(Material.ARROW, "&7← Quay lại", List.of()));
+        h.inv.setItem(40, Tip.of("&7← &fQuay lại").apply(new ItemStack(Material.ARROW)));
         h.slots.put(40, "back");
         p.openInventory(h.inv);
     }

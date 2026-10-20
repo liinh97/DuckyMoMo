@@ -224,24 +224,21 @@ final class DonateQr implements Listener {
         }
         async(p, () -> wallet(p.getName()), (pl, w) -> {
             Holder h = new Holder();
-            h.inv = Bukkit.createInventory(h, 27, c("&0Nạp Vàng &8(số dư: " + num(w, "so_du") + " Vàng)"));
+            h.inv = Bukkit.createInventory(h, 27, c("&0◆ Nạp Vàng &8· có " + num(w, "so_du") + " Vàng"));
             int slot = 10;
             for (long t : AMOUNTS) {
-                ItemStack it = new ItemStack(Material.GOLD_NUGGET, (int) Math.min(64, Math.max(1, t / 100_000)));
-                ItemMeta m = it.getItemMeta();
-                m.displayName(c("&e" + vnd(t) + " &7→ &6" + vangFor(t, w) + " Vàng"));
-                m.lore(List.of(c("&a» Bấm để lấy mã QR chuyển khoản"), c("&7Mã hiện trên tay, hiệu lực " + cfg.getInt("minutes", 10) + " phút"),
-                        c("&7Số khác: nạp trên web " + web())));
-                it.setItemMeta(m);
+                ItemStack it = Tip.of("&6◆ &f" + vnd(t)).sub("nhận " + vangFor(t, w) + " Vàng").accent("&6")
+                        .desc("Chuyển khoản ngân hàng bằng mã QR").line()
+                        .kv("Nhận được", "&6" + vangFor(t, w) + " Vàng").kv("Mã QR", "hiện trên tay, " + cfg.getInt("minutes", 10) + " phút")
+                        .note("Số tiền khác: nạp trên web " + web()).line().click("Bấm để lấy mã QR")
+                        .apply(new ItemStack(Material.GOLD_NUGGET, (int) Math.min(64, Math.max(1, t / 100_000))));
                 h.inv.setItem(slot, it);
                 h.amounts.put(slot, t);
                 slot++;
             }
-            ItemStack shop = new ItemStack(Material.GOLD_INGOT);
-            ItemMeta sm = shop.getItemMeta();
-            sm.displayName(c("&6Cửa hàng Vàng"));
-            sm.lore(List.of(c("&7Rank ủng hộ, đồ trang trí, tên màu"), c("&7Bạn có &6" + num(w, "so_du") + " Vàng")));
-            shop.setItemMeta(sm);
+            ItemStack shop = Tip.of("&6⛃ &fCửa hàng Vàng").sub(num(w, "so_du") + " Vàng").accent("&6")
+                    .desc("Tiêu Vàng bạn đang có").gap().head("Gồm").item("Rank ủng hộ").item("Đồ trang trí, hiệu ứng").item("Đổi tên màu")
+                    .line().click("Bấm để mở").apply(new ItemStack(Material.GOLD_INGOT));
             h.inv.setItem(17, shop);
             h.shopSlot = 17;
             pl.openInventory(h.inv);
@@ -273,7 +270,7 @@ final class DonateQr implements Listener {
             int rows = Math.min(6, Math.max(2, (mon.size() + 9) / 9 + 1));
             Holder h = new Holder();
             long bal = num(w, "so_du");
-            h.inv = Bukkit.createInventory(h, rows * 9, c("&0Cửa hàng Vàng &8(có " + bal + " Vàng)"));
+            h.inv = Bukkit.createInventory(h, rows * 9, c("&0⛃ Cửa hàng Vàng &8· có " + bal + " Vàng"));
             int slot = 0;
             for (JsonElement e : mon) {
                 if (slot >= rows * 9 - 9) {
@@ -282,26 +279,28 @@ final class DonateQr implements Listener {
                 JsonObject m = e.getAsJsonObject();
                 long gia = num(m, "gia");
                 String loai = str(m, "loai");
-                ItemStack it = new ItemStack(loai.equals("rank") ? Material.NAME_TAG : bal >= gia ? Material.GOLD_INGOT : Material.IRON_INGOT);
-                ItemMeta im = it.getItemMeta();
-                im.displayName(c((bal >= gia ? "&e" : "&7") + str(m, "ten")));
-                List<Component> lore = new ArrayList<>();
-                if (!str(m, "mo_ta").isBlank()) {
-                    lore.add(c("&7" + str(m, "mo_ta")));
+                boolean can = bal >= gia;
+                Tip t = Tip.of((can ? "&6◆ &f" : "&7◆ &7") + str(m, "ten")).accent("&6");
+                if (!str(m, "nhom").isBlank()) {
+                    t.sub(str(m, "nhom"));
                 }
-                lore.add(c("&6Giá: " + gia + " Vàng"));
-                lore.add(c(bal >= gia ? "&a» Bấm 2 lần để mua" : "&cChưa đủ Vàng (thiếu " + (gia - bal) + ")"));
-                im.lore(lore);
-                it.setItemMeta(im);
+                t.desc(str(m, "mo_ta")).line().kv("Giá", "&6" + gia + " Vàng");
+                long ngay = num(m, "ngay");
+                t.kv("Thời hạn", ngay > 0 ? ngay + " ngày &8(mua thêm cộng dồn)" : "vĩnh viễn");
+                t.line();
+                if (can) {
+                    t.click("Bấm 2 lần để mua");
+                } else {
+                    t.deny("Thiếu " + (gia - bal) + " Vàng");
+                }
+                ItemStack it = t.apply(new ItemStack(loai.equals("rank") ? Material.NAME_TAG : can ? Material.GOLD_INGOT : Material.IRON_INGOT));
                 h.inv.setItem(slot, it);
                 h.items.put(slot, m);
                 slot++;
             }
-            ItemStack nap = new ItemStack(Material.GOLD_NUGGET);
-            ItemMeta nm = nap.getItemMeta();
-            nm.displayName(c("&eNạp thêm Vàng"));
-            nm.lore(List.of(c("&7Lấy mã QR chuyển khoản"), c("&7Tỉ giá: " + vnd(num(w, "ty_gia")) + " = 1 Vàng")));
-            nap.setItemMeta(nm);
+            ItemStack nap = Tip.of("&e✚ &fNạp thêm Vàng").desc("Lấy mã QR chuyển khoản").line()
+                    .kv("Tỉ giá", vnd(num(w, "ty_gia")) + " = 1 Vàng").note("Chỉ trang trí, không pay-to-win").click("Bấm để chọn số tiền")
+                    .apply(new ItemStack(Material.GOLD_NUGGET));
             h.inv.setItem(rows * 9 - 5, nap);
             h.amounts.put(rows * 9 - 5, -1L);
             pl.openInventory(h.inv);
@@ -461,17 +460,15 @@ final class DonateQr implements Listener {
         ItemStack map = new ItemStack(Material.FILLED_MAP);
         MapMeta meta = (MapMeta) map.getItemMeta();
         meta.setMapView(view);
-        meta.displayName(c("&6QR nạp Vàng &7(" + minutes + " phút)"));
-        List<Component> lore = new ArrayList<>();
-        lore.add(c("&7" + str(don, "bac") + ": &6" + str(don, "goi")));
-        lore.add(c("&7Số tiền: &e" + money));
-        lore.add(c("&7Nội dung CK: &f" + content));
+        Tip qt = Tip.of("&6◆ &fQR nạp Vàng").sub(minutes + " phút").accent("&6").desc("Mở app ngân hàng, quét mã này").line()
+                .kv(str(don, "bac"), "&6" + str(don, "goi")).kv("Số tiền", "&e" + money).kv("Nội dung", content);
         JsonObject bank = res.has("bank") && res.get("bank").isJsonObject() ? res.getAsJsonObject("bank") : new JsonObject();
         if (!str(bank, "ngan-hang").isBlank()) {
-            lore.add(c("&7" + str(bank, "ngan-hang") + " · " + str(bank, "so-tai-khoan") + " · " + str(bank, "chu-tai-khoan")));
+            qt.kv("Ngân hàng", str(bank, "ngan-hang")).kv("Số TK", str(bank, "so-tai-khoan")).kv("Chủ TK", str(bank, "chu-tai-khoan"));
         }
-        lore.add(c("&8Mở app ngân hàng quét mã. Xong bấm [Tôi đã chuyển khoản] trong chat"));
-        meta.lore(lore);
+        qt.line().click("Xong thì bấm [Tôi đã chuyển khoản] trong chat").click("Q / cất đi", "huỷ, trả lại món đang cầm");
+        meta.displayName(qt.name());
+        meta.lore(qt.lore());
         meta.getPersistentDataContainer().set(key, PersistentDataType.LONG, System.currentTimeMillis() + minutes * 60_000L);
         // Đặt THẲNG vào tay, không tốn ô: món đang cầm giấu trong tấm bản đồ, cất QR thì trả lại đúng chỗ
         ItemStack hand = p.getInventory().getItemInMainHand();

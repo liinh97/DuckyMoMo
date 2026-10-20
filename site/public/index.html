@@ -587,8 +587,8 @@ footer .fbrand img{width:44px}
     <div class="journey">
       <div class="jstep"><div class="n">BƯỚC 1</div><h3>Đặt chân</h3><p class="muted">Nhận quà tân thủ, đọc <span class="kbd">/huongdan</span>, dùng <span class="kbd">/tpr</span> chọn vùng đất muốn tới.</p></div>
       <div class="jstep"><div class="n">BƯỚC 2</div><h3>Kiếm tiền</h3><p class="muted">Đào, chặt, săn, trồng, câu cá đều có tiền tự động. Bán đồ bằng <span class="kbd">/sell</span>, buôn ở chợ.</p></div>
-      <div class="jstep"><div class="n">BƯỚC 3</div><h3>Lập thị trấn</h3><p class="muted">Chơi đủ <b data-k="town.min_hours">3</b> giờ, có <b data-k="town.price" data-f="xu">500 xu</b>: gõ <span class="kbd">/t new &lt;tên&gt;</span>.</p></div>
-      <div class="jstep"><div class="n">BƯỚC 4</div><h3>Lập quốc gia</h3><p class="muted">Thị trấn có <b data-k="town.nation_min_active">3</b> dân hoạt động và <b data-k="town.nation_price" data-f="xu">1.000 xu</b>: <span class="kbd">/n new</span>.</p></div>
+      <div class="jstep"><div class="n">BƯỚC 3</div><h3>Lập thị trấn</h3><p class="muted">Chơi đủ <b data-k="town.min_hours">3</b> giờ, có <b data-k="town.price" data-f="xu">1.500 xu</b>: gõ <span class="kbd">/t new &lt;tên&gt;</span>.</p></div>
+      <div class="jstep"><div class="n">BƯỚC 4</div><h3>Lập quốc gia</h3><p class="muted">Thị trấn có <b data-k="town.nation_min_active">3</b> dân hoạt động và <b data-k="town.nation_price" data-f="xu">3.000 xu</b>: <span class="kbd">/n new</span>.</p></div>
       <div class="jstep"><div class="n">BƯỚC 5</div><h3>Công thành</h3><p class="muted">Cắm cờ vây thành địch, đánh vào tối cuối tuần, cướp tiền hoặc chiếm làm thuộc địa.</p></div>
     </div>
 
@@ -603,8 +603,8 @@ footer .fbrand img{width:44px}
         <h3>Thị trấn &amp; đất đai</h3>
         <ul class="clean">
           <li>Mỗi dân hoạt động mang lại <b data-k="town.plots_per_resident">8</b> ô đất (16×16 block)</li>
-          <li>Mua thêm ô: <b data-k="town.claim_price" data-f="xu">25 xu</b>, càng nhiều càng đắt</li>
-          <li>Phí duy trì <b data-k="town.upkeep" data-f="xu">10 xu</b>/ngày; hết tiền thì nợ, không bị xoá</li>
+          <li>Mua thêm ô: <b data-k="town.claim_price" data-f="xu">75 xu</b>, càng nhiều càng đắt</li>
+          <li>Phí duy trì <b data-k="town.upkeep" data-f="xu">30 xu</b>/ngày; hết tiền thì nợ, không bị xoá</li>
           <li>Hai thị trấn cách nhau ít nhất <b data-k="town.homeblock_distance">10</b> ô</li>
           <li>Không lập thị trấn ở Nether và End</li>
         </ul></div>
@@ -931,7 +931,7 @@ footer .fbrand img{width:44px}
 
     <div class="grid g3">
       <div class="card redc"><h3>🗡️ Khi nào có án?</h3><p class="muted">Giết dân hoà bình trong đất hoà bình hoặc trong <b data-k="justice.buffer">100</b> block quanh đó. Không tính khi nạn nhân đánh trước (tự vệ <span data-k="justice.self_defense">30</span> giây), khi đang trong trận công thành, hoặc trên đấu trường.</p></div>
-      <div class="card hl"><h3>⚡ Phạt ngay (mức sàn)</h3><p class="muted">Tự động bồi thường <b data-k="justice.floor" data-f="xu">100 xu</b> cho nạn nhân (tái phạm gấp đôi), <b>cấm vào đất hoà bình</b> và <b>cấm vào vùng công thành</b> cho tới khi Hội xử xong. Không ai tha được mức sàn.</p></div>
+      <div class="card hl"><h3>⚡ Phạt ngay (mức sàn)</h3><p class="muted">Tự động bồi thường <b data-k="justice.floor" data-f="xu">300 xu</b> cho nạn nhân (tái phạm gấp đôi), <b>cấm vào đất hoà bình</b> và <b>cấm vào vùng công thành</b> cho tới khi Hội xử xong. Không ai tha được mức sàn.</p></div>
       <div class="card"><h3>🏛️ Họp thế nào?</h3><p class="muted">Định kỳ <b data-k="justice.day">Thứ 4</b> lúc <b data-k="justice.time">21:00</b>, có việc mới họp. Phải có ít nhất <b data-k="justice.min_seats">3</b> ghế có mặt, đứng trong <span data-k="justice.radius">16</span> block quanh bàn. Từ 30 phút trước không ai dịch chuyển tới gần nơi họp được: phải đi đường. Mọi phiếu đều công khai.</p></div>
     </div>
 
@@ -1051,10 +1051,10 @@ footer .fbrand img{width:44px}
         <li><span class="kbd">/tpa Linh</span> xin tới chỗ Linh, Linh gõ <span class="kbd">/tpaccept</span></li>
         <li><span class="kbd">/t spawn</span> về thị trấn · <span class="kbd">/thaiap</span> về Thái Ấp</li></ul></div>
       <div class="card"><h3>🏘️ Thị trấn &amp; quốc gia</h3><ul class="clean">
-        <li><span class="kbd">/t new HaNoi</span> lập thị trấn (cần 3 giờ chơi, 500 xu)</li>
-        <li><span class="kbd">/t claim</span> mua ô đất đang đứng (25 xu)</li>
+        <li><span class="kbd">/t new HaNoi</span> lập thị trấn (cần 3 giờ chơi, 1.500 xu)</li>
+        <li><span class="kbd">/t claim</span> mua ô đất đang đứng (75 xu)</li>
         <li><span class="kbd">/t add Linh</span> mời dân · <span class="kbd">/t deposit 300</span> nộp quỹ</li>
-        <li><span class="kbd">/n new DaiViet</span> lập quốc gia (1.000 xu)</li>
+        <li><span class="kbd">/n new DaiViet</span> lập quốc gia (3.000 xu)</li>
         <li><span class="kbd">/hoabinh vao</span> thị trưởng đưa thị trấn vào Liên minh Hoà Bình</li>
         <li><span class="kbd">/tochuc lap thuonghoi BanMai</span> lập Thương Hội (dân hoà bình)</li></ul></div>
       <div class="card"><h3>💰 Tiền &amp; buôn bán</h3><ul class="clean">
@@ -1067,7 +1067,7 @@ footer .fbrand img{width:44px}
       <div class="card"><h3>🎁 Mỗi ngày</h3><ul class="clean">
         <li><span class="kbd">/diemdanh</span> nhận xu (online đủ 5 phút)</li>
         <li><span class="kbd">/nhiemvu</span> 3 nhiệm vụ ngày, đổi lúc 0h</li>
-        <li><span class="kbd">/vote</span> mỗi lượt 100 xu, nhớ nhập đúng tên</li>
+        <li><span class="kbd">/vote</span> mỗi lượt 150 xu, nhớ nhập đúng tên</li>
         <li><span class="kbd">/gacha</span> quay thưởng bằng vé miễn phí (điểm danh, mỗi 60 phút chơi thật)</li></ul></div>
       <div class="card"><h3>🐾 Pet, dungeon, khám phá</h3><ul class="clean">
         <li><span class="kbd">/petcall</span> gọi pet · <span class="kbd">/bxhpet tyle</span> tỉ lệ bắt</li>
@@ -1079,7 +1079,7 @@ footer .fbrand img{width:44px}
     <div class="callout" style="margin-top:20px"><b>Nhớ kỹ:</b>
       thoát game khi đang bị đánh (cờ giao tranh 15 giây) là <b>chết, rơi đồ</b> ·
       đồ dưới đất bị dọn mỗi 10 phút (chết thì đồ quanh chỗ chết được giữ 10 phút) ·
-      thị trấn hết quỹ là <b>tan</b> (phí 10 xu/ngày) ·
+      thị trấn hết quỹ là <b>tan</b> (phí 30 xu/ngày) ·
       chuyển tiền, treo thưởng không lấy lại được ·
       mua bán đồ thì dùng <span class="kbd">/trade</span>, admin không trả đồ bị lừa ngoài /trade ·
       tối đa 2 tài khoản, acc phụ phải khai <span class="kbd">/taikhoanphu</span> ·
@@ -1555,7 +1555,7 @@ async function loadDaily(){
     if (k && k.bat && k.moc.length) {
       const next = k.moc.find(g => !g.mo);
       cards.unshift(`<div class="card hl" style="grid-column:1/-1"><h3>🗺️ Khai hoang vùng mới <span class="kbd">/khaihoang</span></h3>
-        <p class="muted">Cả server góp chung một quỹ để mở rộng bản đồ: mỗi lần bán đồ bằng <span class="kbd">/sell</span> được tính ${k.ban}% vào quỹ (bạn không mất gì), hoặc góp thẳng <span class="kbd">/khaihoang gop &lt;xu&gt;</span>. Đủ mốc là viền bản đồ tự nới ra vùng mới: vùng đó hiện ở <span class="kbd">/tpr</span>, có đặc sản riêng, và <b>10 người đặt chân tới đầu tiên</b> là Người Tiên Phong (2000 xu + danh hiệu [Tiên Phong]).</p>
+        <p class="muted">Cả server góp chung một quỹ để mở rộng bản đồ: mỗi lần bán đồ bằng <span class="kbd">/sell</span> được tính ${k.ban}% vào quỹ (bạn không mất gì), hoặc góp thẳng <span class="kbd">/khaihoang gop &lt;xu&gt;</span>. Đủ mốc là viền bản đồ tự nới ra vùng mới: vùng đó hiện ở <span class="kbd">/tpr</span>, có đặc sản riêng, và <b>10 người đặt chân tới đầu tiên</b> là Người Tiên Phong (3000 xu + danh hiệu [Tiên Phong]).</p>
         <div style="font-size:1.4rem;font-weight:800;margin:6px 0 12px">Quỹ: <span class="gold">${nf.format(Math.round(k.quy))} xu</span></div>
         ${k.moc.map(g => { const p = g.mo ? 100 : Math.min(100, k.quy * 100 / g.can);
           return `<div class="prize${g === next ? "" : g.mo ? "" : " rare"}"><b>${g.mo ? "✔ " : g === next ? "➤ " : ""}${esc(g.ten)}</b><span class="muted">${g.mo ? "Đã mở" : nf.format(g.can) + " xu · " + p.toFixed(1) + "%"}</span><div class="bar"><i style="width:${p}%"></i></div></div>`; }).join("")}
@@ -1622,7 +1622,7 @@ function countTo(el, n){
 })();
 // lời thoại của vịt
 (function(){
-  const lines = ["Công thành tối nay không? ⚔️","Đất Tây Bắc còn trống kìa! 🏔️","Giết dân hoà bình là ra toà nha ⚖️","Vào sớm chọn đất đẹp! 🏰","Bán đồ ở kinh đô được +20% 💰","Có gì đó đang thức giấc… 🌋","Mùa mưa cá linh về đầy đồng 🎣","Điểm danh chưa đấy? 🎁"];
+  const lines = ["Công thành tối nay không? ⚔️","Đất Tây Bắc còn trống kìa! 🏔️","Giết dân hoà bình là ra toà nha ⚖️","Vào sớm chọn đất đẹp! 🏰","Bán đồ ở kinh đô được +10% 💰","Có gì đó đang thức giấc… 🌋","Mùa mưa cá linh về đầy đồng 🎣","Điểm danh chưa đấy? 🎁"];
   let i = 0; setInterval(() => { i = (i + 1) % lines.length; const b = $("#bubble"); if (b) b.textContent = lines[i]; }, 6000);
 })();
 

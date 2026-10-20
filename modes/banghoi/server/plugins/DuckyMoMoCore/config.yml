@@ -46,10 +46,7 @@ item-cleaner:
 # Phải khớp các block có tiền ở plugins/UJobs/jobs.yml (miner, lumberjack, digger). Dạng: tên đúng, *_LOG (đuôi), STONE* (đầu).
 job-guard:
   enabled: true
-  materials: ["*_LOG", "*_STEM", "*_ORE", "ANCIENT_DEBRIS", "STONE", "DEEPSLATE", "NETHERRACK", "BLACKSTONE", "GILDED_BLACKSTONE",
-              "BASALT", "SMOOTH_BASALT", "END_STONE", "DIORITE", "ANDESITE", "GRANITE", "TUFF", "CALCITE", "SANDSTONE",
-              "AMETHYST_BLOCK", "AMETHYST_CLUSTER", "SAND", "RED_SAND", "GRAVEL", "CLAY", "MUD", "MYCELIUM", "SOUL_SAND", "SOUL_SOIL",
-              "DIRT", "GRASS_BLOCK", "PODZOL", "COARSE_DIRT", "ROOTED_DIRT", "MELON", "PUMPKIN"]
+  materials: ["*_LOG", "*_STEM", "*_ORE", "ANCIENT_DEBRIS", "STONE", "DEEPSLATE", "NETHERRACK", "BLACKSTONE", "GILDED_BLACKSTONE", "BASALT", "SMOOTH_BASALT", "END_STONE", "DIORITE", "ANDESITE", "GRANITE", "TUFF", "CALCITE", "SANDSTONE", "AMETHYST_BLOCK", "AMETHYST_CLUSTER", "SAND", "RED_SAND", "GRAVEL", "CLAY", "MUD", "MYCELIUM", "SOUL_SAND", "SOUL_SOIL", "DIRT", "GRASS_BLOCK", "PODZOL", "COARSE_DIRT", "ROOTED_DIRT", "MELON", "PUMPKIN"]
 
 # Lọc chat (chung lobby/banghoi/practice, giữ giống nhau ở cả 3 file config.yml): che từ tục bằng ***, chống spam.
 #   words-accented: khớp đúng dạng CÓ DẤU (từ mà bỏ dấu sẽ trùng từ thường: lồn/lớn, cặc/các, buồi/buổi, đéo/đeo, đĩ/đi).
@@ -57,11 +54,8 @@ job-guard:
 #   Quyền duckymomo.chat.bypass (op): không bị chống spam.
 chat-filter:
   enabled: true
-  words-accented: [lồn, cặc, buồi, đéo, đĩ, đụ, đụ má, đụ mẹ, mẹ mày, má mày, con mẹ mày, óc chó, chó má, thằng chó, con chó,
-                   ngu như chó, lìn, cứt]
-  words-plain: [dm, dmm, dmmm, dcm, dkm, dcmm, dcmn, dit, dit me, dit ma, djt, vcl, vkl, vcc, vklm, vl, vloz, vlon, clm, clmm, cmm,
-                cmn, cmnr, ccmm, dmcs, dmvl, cl, cc, loz, l0n, lon me, cak, cac lon, du ma, du me, ditconme, dcmvl, dmml, fuck,
-                fucking, shit, bitch, dick, pussy, motherfucker]
+  words-accented: [lồn, cặc, buồi, đéo, đĩ, đụ, đụ má, đụ mẹ, mẹ mày, má mày, con mẹ mày, óc chó, chó má, thằng chó, con chó, ngu như chó, lìn, cứt]
+  words-plain: [dm, dmm, dmmm, dcm, dkm, dcmm, dcmn, dit, dit me, dit ma, djt, vcl, vkl, vcc, vklm, vl, vloz, vlon, clm, clmm, cmm, cmn, cmnr, ccmm, dmcs, dmvl, cl, cc, loz, l0n, lon me, cak, cac lon, du ma, du me, ditconme, dcmvl, dmml, fuck, fucking, shit, bitch, dick, pussy, motherfucker]
   min-interval-seconds: 1.5
   repeat-seconds: 30
   caps-ratio: 0.7
@@ -152,19 +146,19 @@ rtp:
     name: "&6Dịch chuyển ngẫu nhiên"
     lines: ["&7Bấm vào để chọn khu", "&8(PC: chuột phải · Điện thoại: chạm)"]
   zones:
-    - { id: taybac,    name: "&aTây Bắc Việt Nam",       icon: MOSSY_COBBLESTONE, center-x: 12365, center-z: -2569, radius: 230, description: "Núi rừng, gần spawn" }
-    - { id: lao,       name: "&aLào",                    icon: JUNGLE_SAPLING,    center-x: 12305, center-z: -2330, radius: 230, description: "Rừng núi" }
-    - { id: trungbo,   name: "&eTrung Bộ, Tây Nguyên",   icon: COCOA_BEANS,      center-x: 12843, center-z: -1732, radius: 230, description: "Cao nguyên, ven biển miền Trung" }
-    - { id: nambo,     name: "&eNam Bộ, Campuchia",      icon: WHEAT,             center-x: 12604, center-z: -1374, radius: 230, description: "Đồng bằng, hợp làm ruộng" }
-    - { id: thailan,   name: "&6Thái Lan",               icon: GOLD_BLOCK,        center-x: 12007, center-z: -1792, radius: 230, description: "Đồng bằng sông Chao Phraya" }
-    - { id: myanmar,   name: "&6Myanmar",                icon: BAMBOO,            center-x: 11529, center-z: -2389, radius: 230, description: "Xa spawn nhất về phía tây" }
-    - { id: namtq,     name: "&cNam Trung Quốc",         icon: RED_SAND,          center-x: 13142, center-z: -2808, radius: 230, description: "Phía bắc vùng mùa" }
+    - {id: taybac, name: "&aTây Bắc Việt Nam", icon: MOSSY_COBBLESTONE, center-x: 12365, center-z: -2569, radius: 230, description: "Núi rừng, gần spawn"}
+    - {id: lao, name: "&aLào", icon: JUNGLE_SAPLING, center-x: 12305, center-z: -2330, radius: 230, description: "Rừng núi"}
+    - {id: trungbo, name: "&eTrung Bộ, Tây Nguyên", icon: COCOA_BEANS, center-x: 12843, center-z: -1732, radius: 230, description: "Cao nguyên, ven biển miền Trung"}
+    - {id: nambo, name: "&eNam Bộ, Campuchia", icon: WHEAT, center-x: 12604, center-z: -1374, radius: 230, description: "Đồng bằng, hợp làm ruộng"}
+    - {id: thailan, name: "&6Thái Lan", icon: GOLD_BLOCK, center-x: 12007, center-z: -1792, radius: 230, description: "Đồng bằng sông Chao Phraya"}
+    - {id: myanmar, name: "&6Myanmar", icon: BAMBOO, center-x: 11529, center-z: -2389, radius: 230, description: "Xa spawn nhất về phía tây"}
+    - {id: namtq, name: "&cNam Trung Quốc", icon: RED_SAND, center-x: 13142, center-z: -2808, radius: 230, description: "Phía bắc vùng mùa"}
     # vùng mở bằng khai hoang (requires: id mốc frontier.goals): chỉ hiện ở /tpr, có đặc sản, Người Tiên Phong khi mốc đã mở
-    - { id: malai,     name: "&eBán đảo Mã Lai, Singapore", icon: JUNGLE_LOG,   center-x: 12250, center-z: -350,  radius: 230, requires: malaysia,    description: "Rừng mưa nhiệt đới, eo biển" }
-    - { id: philippines, name: "&bQuần đảo Philippines",  icon: SUGAR_CANE,   center-x: 14575, center-z: -1434, radius: 260, requires: philippines, description: "Nghìn đảo, ruộng bậc thang" }
-    - { id: borneo,    name: "&2Đảo Borneo",              icon: COCOA_BEANS,  center-x: 13620, center-z: -120,  radius: 260, requires: indonesia,   description: "Rừng già, ca cao" }
-    - { id: java,      name: "&dĐảo Java",                icon: WHEAT,        center-x: 13142, center-z: 896,   radius: 230, requires: indonesia,   description: "Núi lửa, ruộng lúa" }
-    - { id: ngaunhien, name: "&dNgẫu nhiên toàn vùng",   icon: ENDER_PEARL,       center-x: 0,     center-z: 0,     radius: 0,   description: "Bất kỳ đâu trong vùng mùa 1" }
+    - {id: malai, name: "&eBán đảo Mã Lai, Singapore", icon: JUNGLE_LOG, center-x: 12250, center-z: -350, radius: 230, requires: malaysia, description: "Rừng mưa nhiệt đới, eo biển"}
+    - {id: philippines, name: "&bQuần đảo Philippines", icon: SUGAR_CANE, center-x: 14575, center-z: -1434, radius: 260, requires: philippines, description: "Nghìn đảo, ruộng bậc thang"}
+    - {id: borneo, name: "&2Đảo Borneo", icon: COCOA_BEANS, center-x: 13620, center-z: -120, radius: 260, requires: indonesia, description: "Rừng già, ca cao"}
+    - {id: java, name: "&dĐảo Java", icon: WHEAT, center-x: 13142, center-z: 896, radius: 230, requires: indonesia, description: "Núi lửa, ruộng lúa"}
+    - {id: ngaunhien, name: "&dNgẫu nhiên toàn vùng", icon: ENDER_PEARL, center-x: 0, center-z: 0, radius: 0, description: "Bất kỳ đâu trong vùng mùa 1"}
 
 # Luật chiến tranh (docs/banghoi-luat-mua1.md). Trang Cài đặt > Chiến tranh.
 # wild-pvp: true (mặc định) = PvP đất hoang như thường, không phụ thuộc lịch công thành; false = ngoài đất thị trấn chỉ đánh được trong vùng vây lúc có phiên.
@@ -186,27 +180,27 @@ workshop:
   # <mã thư viện>: cost (xu), grid = 9 ô bàn chế 3×3 ("VẬT_LIỆU số", "" = trống), tinh-luyen {mã món: số} (tuỳ chọn).
   # Sửa trên trang Cài đặt › Shop › Xưởng chế tạo (công thức) và trang Thư viện đồ (món).
   items:
-    khoan_dao:   {cost: 8000, grid: ["DIAMOND 2", "IRON_BLOCK 2", "DIAMOND 2", "", "STICK 1", "", "", "STICK 1", ""]}
-    dao_ham:     {cost: 20000, grid: ["DIAMOND_BLOCK 1", "TNT 8", "DIAMOND_BLOCK 1", "OBSIDIAN 8", "NETHERITE_INGOT 1", "OBSIDIAN 8", "", "BLAZE_ROD 2", ""]}
-    xeng_dat:    {cost: 4000, grid: ["", "DIAMOND 2", "", "", "IRON_BLOCK 1", "", "", "STICK 2", ""]}
-    riu_tieu:    {cost: 5000, grid: ["DIAMOND 2", "IRON_BLOCK 1", "", "DIAMOND 1", "STICK 1", "", "", "STICK 1", ""]}
-    tu_nung:     {cost: 6000, grid: ["BLAST_FURNACE 1", "LAVA_BUCKET 1", "BLAST_FURNACE 1", "", "IRON_PICKAXE 1", "", "", "COAL_BLOCK 4", ""]}
-    da_nang:     {cost: 12000, grid: ["DIAMOND_PICKAXE 1", "DIAMOND_AXE 1", "DIAMOND_SHOVEL 1", "", "DIAMOND_BLOCK 1", "", "", "STICK 2", ""]}
-    gat_lua:     {cost: 3000, grid: ["DIAMOND 2", "HAY_BLOCK 4", "", "", "STICK 1", "", "", "STICK 1", ""]}
-    nam_cham:    {cost: 4000, grid: ["IRON_INGOT 4", "REDSTONE 8", "IRON_INGOT 4", "", "LODESTONE 1", "", "", "", ""]}
-    ban_ruong:   {cost: 6000, grid: ["GOLD_BLOCK 2", "EMERALD 8", "", "GOLD_BLOCK 1", "STICK 1", "", "", "STICK 1", ""]}
-    tui_hu:      {cost: 2000, grid: ["OBSIDIAN 4", "ENDER_EYE 1", "OBSIDIAN 4", "", "", "", "", "", ""]}
-    nuoc:        {cost: 500, grid: ["", "IRON_INGOT 3", "", "", "WATER_BUCKET 1", "", "", "", ""]}
-    dung_nham:   {cost: 3000, grid: ["", "MAGMA_BLOCK 8", "", "", "LAVA_BUCKET 1", "", "", "", ""]}
-    bat_thu:     {cost: 5000, grid: ["", "LEAD 4", "", "WHEAT 16", "EGG 16", "CARROT 16", "", "", ""]}
-    co_le:       {enabled: false, cost: 50000, grid: ["NETHERITE_INGOT 1", "", "", "", "IRON_BLOCK 4", "", "", "", "IRON_BLOCK 4"]}
-    moc_bay:     {cost: 4000, grid: ["", "", "TRIPWIRE_HOOK 4", "", "STICK 1", "STRING 8", "STICK 1", "", "SLIME_BALL 4"]}
-    khien_than:  {cost: 8000, grid: ["IRON_BLOCK 1", "DIAMOND 2", "IRON_BLOCK 1", "IRON_BLOCK 1", "TOTEM_OF_UNDYING 1", "IRON_BLOCK 1", "", "IRON_BLOCK 1", ""]}
-    cung_mau:    {cost: 6000, grid: ["", "GHAST_TEAR 2", "STRING 8", "BLAZE_ROD 1", "", "STRING 8", "", "GHAST_TEAR 2", "STRING 8"]}
-    no_toa:      {cost: 5000, grid: ["STICK 2", "IRON_INGOT 4", "STICK 2", "STRING 8", "TRIPWIRE_HOOK 1", "STRING 8", "", "STICK 2", ""]}
-    bua_ta:      {cost: 15000, grid: ["", "BREEZE_ROD 2", "", "IRON_BLOCK 1", "HEAVY_CORE 1", "IRON_BLOCK 1", "", "BREEZE_ROD 2", ""]}
-    kiem_nhat:   {cost: 8000, grid: ["", "", "DIAMOND 3", "", "IRON_BLOCK 1", "", "STICK 1", "", ""]}
-    riu_chien:   {cost: 8000, grid: ["DIAMOND 2", "REDSTONE_BLOCK 2", "", "DIAMOND 1", "STICK 1", "", "", "STICK 1", ""]}
+    khoan_dao: {cost: 8000, grid: ["DIAMOND 2", "IRON_BLOCK 2", "DIAMOND 2", "", "STICK 1", "", "", "STICK 1", ""]}
+    dao_ham: {cost: 20000, grid: ["DIAMOND_BLOCK 1", "TNT 8", "DIAMOND_BLOCK 1", "OBSIDIAN 8", "NETHERITE_INGOT 1", "OBSIDIAN 8", "", "BLAZE_ROD 2", ""]}
+    xeng_dat: {cost: 4000, grid: ["", "DIAMOND 2", "", "", "IRON_BLOCK 1", "", "", "STICK 2", ""]}
+    riu_tieu: {cost: 5000, grid: ["DIAMOND 2", "IRON_BLOCK 1", "", "DIAMOND 1", "STICK 1", "", "", "STICK 1", ""]}
+    tu_nung: {cost: 6000, grid: ["BLAST_FURNACE 1", "LAVA_BUCKET 1", "BLAST_FURNACE 1", "", "IRON_PICKAXE 1", "", "", "COAL_BLOCK 4", ""]}
+    da_nang: {cost: 12000, grid: ["DIAMOND_PICKAXE 1", "DIAMOND_AXE 1", "DIAMOND_SHOVEL 1", "", "DIAMOND_BLOCK 1", "", "", "STICK 2", ""]}
+    gat_lua: {cost: 3000, grid: ["DIAMOND 2", "HAY_BLOCK 4", "", "", "STICK 1", "", "", "STICK 1", ""]}
+    nam_cham: {cost: 4000, grid: ["IRON_INGOT 4", "REDSTONE 8", "IRON_INGOT 4", "", "LODESTONE 1", "", "", "", ""]}
+    ban_ruong: {cost: 6000, grid: ["GOLD_BLOCK 2", "EMERALD 8", "", "GOLD_BLOCK 1", "STICK 1", "", "", "STICK 1", ""]}
+    tui_hu: {cost: 2000, grid: ["OBSIDIAN 4", "ENDER_EYE 1", "OBSIDIAN 4", "", "", "", "", "", ""]}
+    nuoc: {cost: 500, grid: ["", "IRON_INGOT 3", "", "", "WATER_BUCKET 1", "", "", "", ""]}
+    dung_nham: {cost: 3000, grid: ["", "MAGMA_BLOCK 8", "", "", "LAVA_BUCKET 1", "", "", "", ""]}
+    bat_thu: {cost: 5000, grid: ["", "LEAD 4", "", "WHEAT 16", "EGG 16", "CARROT 16", "", "", ""]}
+    co_le: {enabled: false, cost: 50000, grid: ["NETHERITE_INGOT 1", "", "", "", "IRON_BLOCK 4", "", "", "", "IRON_BLOCK 4"]}
+    moc_bay: {cost: 4000, grid: ["", "", "TRIPWIRE_HOOK 4", "", "STICK 1", "STRING 8", "STICK 1", "", "SLIME_BALL 4"]}
+    khien_than: {cost: 8000, grid: ["IRON_BLOCK 1", "DIAMOND 2", "IRON_BLOCK 1", "IRON_BLOCK 1", "TOTEM_OF_UNDYING 1", "IRON_BLOCK 1", "", "IRON_BLOCK 1", ""]}
+    cung_mau: {cost: 6000, grid: ["", "GHAST_TEAR 2", "STRING 8", "BLAZE_ROD 1", "", "STRING 8", "", "GHAST_TEAR 2", "STRING 8"]}
+    no_toa: {cost: 5000, grid: ["STICK 2", "IRON_INGOT 4", "STICK 2", "STRING 8", "TRIPWIRE_HOOK 1", "STRING 8", "", "STICK 2", ""]}
+    bua_ta: {cost: 15000, grid: ["", "BREEZE_ROD 2", "", "IRON_BLOCK 1", "HEAVY_CORE 1", "IRON_BLOCK 1", "", "BREEZE_ROD 2", ""]}
+    kiem_nhat: {cost: 8000, grid: ["", "", "DIAMOND 3", "", "IRON_BLOCK 1", "", "STICK 1", "", ""]}
+    riu_chien: {cost: 8000, grid: ["DIAMOND 2", "REDSTONE_BLOCK 2", "", "DIAMOND 1", "STICK 1", "", "", "STICK 1", ""]}
 
 
 # Treo thưởng (/treothuong, ý từ UniMC "Bounty"; khác "truy nã" là án của Hội Bàn Tròn). Người chơi treo tiền (phí fee-percent % không hoàn),
@@ -214,16 +208,23 @@ workshop:
 # Không tính: giết tài khoản phụ, cùng IP, dân Liên minh Hoà Bình (allow-on-peace). Hết days ngày: trả lại tiền người treo. Lưu: treothuong.yml
 bounty:
   enabled: true
-  min: 100
-  max-total: 100000
+  min: 300.0
+  max-total: 300000.0
   fee-percent: 5
   days: 3
   allow-on-peace: false
   streak:
     enabled: true
     kills: 5
-    reward: 500
-    per-kill: 100
+    reward: 750.0
+    per-kill: 150.0
+
+# Giới hạn tiền bán đồ cho server mỗi người mỗi ngày (21/10, chống lạm phát: farm tự động chạy AFK in tiền). Tính /sell, nút bán ở /cuahang,
+# Rìu Bán của Xưởng, món Tinh Luyện; bán cho người chơi (/choden, shop rương, /trade) không tính. Mới lại lúc 0 giờ (giờ VN).
+# Quyền duckymomo.sell.khonggioihan thì không bị giới hạn. Đã bán hôm nay: plugins/DuckyMoMoCore/banchoserver.yml.
+sell-limit:
+  enabled: true
+  daily: 8000
 
 # Khai hoang vùng mới (/khaihoang, ý từ "Khai mở thứ nguyên" của UniMC). Quỹ chung tăng khi người chơi bán /sell (sell-percent % tiền bán,
 # người bán KHÔNG mất gì) và khi góp /khaihoang gop <xu> (tiền bị rút). Đủ mốc thì chạy commands (console) theo thứ tự goals.
@@ -235,21 +236,23 @@ frontier:
   min-donate: 10
   pioneer:                             # Người Tiên Phong: N người đầu tiên đặt chân tới vùng vừa mở (vùng rtp.zones có requires)
     count: 10
-    rewards: ["xu 2000", "danhhieu tienphong"]
+    rewards:
+      - xu 3000
+      - danhhieu tienphong
   goals:
     - id: malaysia
       name: "&eMở bán đảo Mã Lai và Singapore"
-      need: 300000
+      need: 900000.0
       message: "Viền phía nam đã nới xuống tới Singapore."
       commands: ["chunky world world", "chunky shape rectangle", "chunky center 12500 -1650", "chunky radius 1300 1550", "chunky border add world"]
     - id: philippines
       name: "&bMở quần đảo Philippines"
-      need: 800000
+      need: 2400000.0
       message: "Viền phía đông đã nới ra Philippines."
       commands: ["chunky world world", "chunky shape rectangle", "chunky center 13150 -1650", "chunky radius 1950 1550", "chunky border add world"]
     - id: indonesia
       name: "&dMở Borneo và Java (Indonesia)"
-      need: 2000000
+      need: 6000000.0
       message: "Viền phía nam đã nới tới đảo Java."
       commands: ["chunky world world", "chunky shape rectangle", "chunky center 13150 -1050", "chunky radius 1950 2150", "chunky border add world"]
 
@@ -301,7 +304,7 @@ player-reset:
   max-per-season: 3
   season: "1"
   gift-first-only: true
-  starting-money: 200
+  starting-money: 500.0
   kit: tanthu
   backup-days: 7
 
@@ -313,10 +316,10 @@ peace-alliance:
   capital: KinhDo
   join-wait-days: 2
   rejoin-cooldown-days: 14
-  plot-base-price: 25
-  plot-price-per-plot: 0.5
-  protection-fee-per-plot: 0.5
-  sell-bonus-percent: 20
+  plot-base-price: 75.0
+  plot-price-per-plot: 1.5
+  protection-fee-per-plot: 1.5
+  sell-bonus-percent: 10.0
   shop-tax-inside: 0
   shop-tax-outside: 0.05
   auction-only-in-peace: true
@@ -337,7 +340,7 @@ council:
 organizations:
   enabled: true
   min-members: 3
-  weekly-fee: 100
+  weekly-fee: 300.0
   slots: {thuonghoi: 3, sukien: 2}
   ad-cooldown-minutes: 60
   event-teleport-hours: 24
@@ -398,7 +401,7 @@ justice:
   enabled: true
   buffer-blocks: 100
   self-defense-seconds: 30
-  floor-fine: 100
+  floor-fine: 300.0
   repeat-multiplier: 2
   heavy-multiplier: 3
   bounty-days: 3
@@ -442,19 +445,22 @@ decor-shop:
     - {id: khac, name: "Khác", icon: SADDLE, slot: 40, desc: "Dụng cụ, đồ tiện ích", sell: [], items: [{material: PAPER, amount: 1, price: 2}, {material: BOOK, amount: 1, price: 15}, {material: WRITABLE_BOOK, amount: 1, price: 20}, {material: FIREWORK_ROCKET, amount: 1, price: 10}, {material: FISHING_ROD, amount: 1, price: 30}, {material: CARROT_ON_A_STICK, amount: 1, price: 35}, {material: WARPED_FUNGUS_ON_A_STICK, amount: 1, price: 40}, {material: LEAD, amount: 1, price: 40}, {material: BRUSH, amount: 1, price: 25}, {material: EXPERIENCE_BOTTLE, amount: 1, price: 30}, {material: BELL, amount: 1, price: 150}, {material: ANVIL, amount: 1, price: 500}, {material: ENDER_CHEST, amount: 1, price: 400}, {material: SADDLE, amount: 1, price: 300}, {material: NAME_TAG, amount: 1, price: 300}]}
     - {id: danhhieu, name: "Danh hiệu", icon: NAME_TAG, slot: 42, desc: "Chữ hiện cạnh tên, đổi bằng /danhhieu", sell: [], items: []}
   titles:
-    - {id: luukhach, text: "&7[Lữ Khách]", price: 1000}
-    - {id: nghenhan, text: "&d[Nghệ Nhân]", price: 3000}
-    - {id: phuthuong, text: "&6[Phú Thương]", price: 8000}
-
-# Thưởng vote server (Votifier/AzuVotifier). Vote vào từ VPS: cổng 8192 → relay (socat) → banghoi-1:8192.
-# Lượt vote của người chưa từng vào server bị bỏ qua. Dữ liệu: plugins/DuckyMoMoCore/vote.yml
+    - id: luukhach
+      text: "&7[Lữ Khách]"
+      price: 3000
+    - id: nghenhan
+      text: "&d[Nghệ Nhân]"
+      price: 9000
+    - id: phuthuong
+      text: "&6[Phú Thương]"
+      price: 24000
 vote:
   enabled: true
-  money-per-vote: 100
+  money-per-vote: 150
   streak-days: 7          # vote đủ N ngày liên tiếp (ít nhất 1 trang mỗi ngày) thì thưởng thêm
-  streak-bonus: 500
+  streak-bonus: 750
   party-every: 30         # cứ M lượt vote toàn server: vote party, ai đang online cũng nhận party-money
-  party-money: 200
+  party-money: 300
   broadcast: true
   sites:                  # link hiện ở /vote và trang web; url trống = ẩn. Thêm trang: copy một mục
     trang1:
@@ -473,66 +479,57 @@ goi-qua:
   enabled: true
   lan-dau: tanthu
   goi:
-    tanthu:
-      ten: "Quà tân thủ"
-      icon: CHEST
-      cho: -1
-      rank: []
+    tinan:
+      ten: '&8Quà tị nạn'
+      icon: BREAD
+      cho: 259200
+      rank:
+        - default
       qua:
-        - vat STONE_SWORD 1
-        - vat STONE_PICKAXE 1
-        - vat STONE_AXE 1
-        - vat STONE_SHOVEL 1
+        - vat BREAD 32
         - vat LEATHER_HELMET 1
         - vat LEATHER_CHESTPLATE 1
         - vat LEATHER_LEGGINGS 1
         - vat LEATHER_BOOTS 1
-        - vat BREAD 16
-        - vat TORCH 16
-        - vat WHITE_BED 1
-        - vat OAK_LOG 32
-        - vat CRAFTING_TABLE 1
-    tinan:
-      ten: "Gói Tị Nạn"
-      icon: DEAD_BUSH
-      cho: 86400
-      rank: [default]
-      qua:
-        - vat BREAD 8
-        - vat TORCH 16
+        - vat STONE_AXE 1
+        - vat STONE_PICKAXE 1
     dan:
-      ten: "Gói Dân"
+      ten: Gói Dân
       icon: BREAD
       cho: 86400
-      rank: [dan]
+      rank:
+        - dan
       qua:
         - vat BREAD 16
         - vat TORCH 32
-        - xu 50
+        - xu 75
     luongdan:
-      ten: "Gói Lương Dân"
+      ten: Gói Lương Dân
       icon: IRON_HOE
       cho: 86400
-      rank: [luongdan]
+      rank:
+        - luongdan
       qua:
         - vat COOKED_BEEF 16
         - vat IRON_INGOT 8
-        - xu 100
+        - xu 150
     haokiet:
-      ten: "Gói Hào Kiệt"
+      ten: Gói Hào Kiệt
       icon: GOLDEN_HELMET
       cho: 86400
-      rank: [haokiet]
+      rank:
+        - haokiet
       qua:
         - vat COOKED_BEEF 32
         - vat GOLDEN_CARROT 16
         - vat IRON_INGOT 16
-        - xu 200
+        - xu 300
     media:
-      ten: "Gói quà Sứ Giả"
+      ten: Gói quà Sứ Giả
       icon: BEACON
       cho: 259200
-      rank: [media]
+      rank:
+        - media
       qua:
         - vat COOKED_BEEF 32
         - vat GOLDEN_CARROT 16
@@ -540,7 +537,6 @@ goi-qua:
         - vat EXPERIENCE_BOTTLE 16
         - vat TORCH 64
         - lenh broadcast &c◆ Sứ Giả &f{player} &7vừa nhận gói quà Sứ Giả!
-
 daily-checkin:
   enabled: true
   min-online-minutes: 5       # phải online đủ trong phiên mới điểm danh được (chống tài khoản phụ)
@@ -548,32 +544,93 @@ daily-checkin:
   broadcast-milestone: true
   cycle-days: 30              # mốc lặp lại sau mỗi 30 lần điểm danh (0 = không lặp)
   daily-rewards:
-    - "xu 100"
-    - "do chia_khoa_diemdanh 1"
+    - xu 150
+    - do chia_khoa_diemdanh 1
   milestones:
-    7: ["xu 500", "vat GOLDEN_APPLE 2"]
-    14: ["xu 1000", "vat DIAMOND 3"]
-    30: ["xu 3000", "vat DIAMOND 8"]
-
-# Nhiệm vụ hằng ngày (/nhiemvu): mỗi người mỗi ngày per-day nhiệm vụ ngẫu nhiên từ pool. Lưu: nhiemvu.yml
-# type: break (phá khối) | place (đặt khối) | kill (giết mob) | fish (câu cá) | harvest (thu hoạch cây chín)
-# targets: tên vật liệu/mob, *_ORE, OAK_*, * (tất cả), @HOSTILE (mọi quái thù địch). Khối người chơi tự đặt không tính khi phá.
+    7:
+      - xu 750
+      - vat GOLDEN_APPLE 2
+    14:
+      - xu 1500
+      - vat DIAMOND 3
+    30:
+      - xu 4500
+      - vat DIAMOND 8
 daily-quests:
   enabled: true
   per-day: 3
-  complete-all-rewards: ["xu 300"]
+  complete-all-rewards:
+    - xu 450
   pool:
-    dao_da: {name: "Đào 128 khối đá", type: break, targets: [STONE, COBBLESTONE, DEEPSLATE, COBBLED_DEEPSLATE, ANDESITE, DIORITE, GRANITE, TUFF], amount: 128, rewards: ["xu 100"]}
-    dao_quang: {name: "Đào 16 quặng", type: break, targets: ["*_ORE"], amount: 16, rewards: ["xu 150"]}
-    chat_go: {name: "Chặt 64 khúc gỗ", type: break, targets: ["*_LOG", "*_STEM"], amount: 64, rewards: ["xu 100"]}
-    san_quai: {name: "Săn 20 quái vật", type: kill, targets: ["@HOSTILE"], amount: 20, rewards: ["xu 150"]}
-    xay_dung: {name: "Đặt 200 khối", type: place, targets: ["*"], amount: 200, rewards: ["xu 100"]}
-    cau_ca: {name: "Câu 10 con cá", type: fish, targets: ["*"], amount: 10, rewards: ["xu 100"]}
-    thu_hoach: {name: "Thu hoạch 64 nông sản", type: harvest, targets: [WHEAT, CARROTS, POTATOES, BEETROOTS, NETHER_WART, COCOA], amount: 64, rewards: ["xu 100"]}
-
-# ĐÃ BỎ 21/10 (gộp vào Gacha /gacha, module LuckySpin đã xoá; khối này không còn được đọc). Vòng quay miễn phí (/vongquay): mỗi minutes-per-key phút CHƠI THẬT (không tính treo máy) được 1 vé, giữ tối đa max-keys.
-# Vé không bán, không trao đổi. Tỉ lệ = weight / tổng weight (hiện trong menu). rare: báo cả server. Lưu: vongquay.yml
-# Placeholder: %dmmvq_ve% (số vé), %dmmvq_con% (phút tới vé tiếp theo). Đừng đặt đồ quá mạnh (lệch chiến tranh).
+    dao_da:
+      name: Đào 128 khối đá
+      type: break
+      targets:
+        - STONE
+        - COBBLESTONE
+        - DEEPSLATE
+        - COBBLED_DEEPSLATE
+        - ANDESITE
+        - DIORITE
+        - GRANITE
+        - TUFF
+      amount: 128
+      rewards:
+        - xu 150
+    dao_quang:
+      name: Đào 16 quặng
+      type: break
+      targets:
+        - '*_ORE'
+      amount: 16
+      rewards:
+        - xu 225
+    chat_go:
+      name: Chặt 64 khúc gỗ
+      type: break
+      targets:
+        - '*_LOG'
+        - '*_STEM'
+      amount: 64
+      rewards:
+        - xu 150
+    san_quai:
+      name: Săn 20 quái vật
+      type: kill
+      targets:
+        - '@HOSTILE'
+      amount: 20
+      rewards:
+        - xu 225
+    xay_dung:
+      name: Đặt 200 khối
+      type: place
+      targets:
+        - '*'
+      amount: 200
+      rewards:
+        - xu 150
+    cau_ca:
+      name: Câu 10 con cá
+      type: fish
+      targets:
+        - '*'
+      amount: 10
+      rewards:
+        - xu 150
+    thu_hoach:
+      name: Thu hoạch 64 nông sản
+      type: harvest
+      targets:
+        - WHEAT
+        - CARROTS
+        - POTATOES
+        - BEETROOTS
+        - NETHER_WART
+        - COCOA
+      amount: 64
+      rewards:
+        - xu 150
 lucky-spin:
   enabled: false
   minutes-per-key: 60
@@ -601,43 +658,118 @@ crates:
     minutes: 60
     max: 5
   list:
-  - id: diemdanh
-    name: "&aGacha Điểm Danh"
-    icon: CHEST
-    key: chia_khoa_diemdanh
-    source: ""
-    prizes:
-    - {label: "100 xu", weight: 30, rare: false, rewards: ["xu 100"]}
-    - {label: "250 xu", weight: 18, rare: false, rewards: ["xu 250"]}
-    - {label: "16 bánh mì", weight: 15, rare: false, rewards: ["vat BREAD 16"]}
-    - {label: "8 thỏi sắt", weight: 14, rare: false, rewards: ["vat IRON_INGOT 8"]}
-    - {label: "8 bình kinh nghiệm", weight: 8, rare: false, rewards: ["vat EXPERIENCE_BOTTLE 8"]}
-    - {label: "1 táo vàng", weight: 7, rare: false, rewards: ["vat GOLDEN_APPLE 1"]}
-    - {label: "2 kim cương", weight: 6, rare: false, rewards: ["vat DIAMOND 2"]}
-    - {label: "1500 xu", weight: 2, rare: true, rewards: ["xu 1500"]}
-  - id: online
-    name: "&bGacha Chăm Chỉ"
-    icon: ENDER_CHEST
-    key: chia_khoa_online
-    source: ""
-    prizes:
-    - {label: "150 xu", weight: 25, rare: false, rewards: ["xu 150"]}
-    - {label: "16 bít tết", weight: 15, rare: false, rewards: ["vat COOKED_BEEF 16"]}
-    - {label: "16 thỏi sắt", weight: 15, rare: false, rewards: ["vat IRON_INGOT 16"]}
-    - {label: "8 thỏi vàng", weight: 10, rare: false, rewards: ["vat GOLD_INGOT 8"]}
-    - {label: "16 bình kinh nghiệm", weight: 10, rare: false, rewards: ["vat EXPERIENCE_BOTTLE 16"]}
-    - {label: "3 kim cương", weight: 8, rare: false, rewards: ["vat DIAMOND 3"]}
-    - {label: "8 ngọc lục bảo", weight: 8, rare: false, rewards: ["vat EMERALD 8"]}
-    - {label: "1 bảng tên", weight: 5, rare: false, rewards: ["vat NAME_TAG 1"]}
-    - {label: "1 mảnh netherite", weight: 2, rare: true, rewards: ["vat NETHERITE_SCRAP 1"]}
-    - {label: "2000 xu", weight: 2, rare: true, rewards: ["xu 2000"]}
-    - {label: "1 khối kim cương", weight: 1, rare: true, rewards: ["vat DIAMOND_BLOCK 1"]}
-    - {label: "Đĩa nhạc Cat (trang trí)", weight: 1, rare: true, rewards: ["vat MUSIC_DISC_CAT 1"]}
-
-# Mảnh sự kiện + đổi quà (/doimanh). Mảnh là ĐỒ VẬT (trao đổi, bán được), có dấu ẩn nên không làm giả được.
-# Phần thưởng "manh <loại> <số>" (điểm danh, nhiệm vụ, vòng quay…) bị giới hạn daily-cap mảnh/người/ngày.
-# Boss/dungeon/admin phát bằng: /doimanh give <người> <loại> <số> (không tính giới hạn). until: hạn đổi yyyy-MM-dd (trống = không hạn).
-# Loại = mã thư viện đồ (công dụng "Mảnh sự kiện"): tên, vật phẩm, mô tả sửa ở trang Thư viện đồ.
+    - id: diemdanh
+      name: '&aGacha Điểm Danh'
+      icon: CHEST
+      key: chia_khoa_diemdanh
+      source: ''
+      prizes:
+        - label: 150 xu
+          weight: 30
+          rare: false
+          rewards:
+            - xu 150
+        - label: 375 xu
+          weight: 18
+          rare: false
+          rewards:
+            - xu 375
+        - label: 16 bánh mì
+          weight: 15
+          rare: false
+          rewards:
+            - vat BREAD 16
+        - label: 8 thỏi sắt
+          weight: 14
+          rare: false
+          rewards:
+            - vat IRON_INGOT 8
+        - label: 8 bình kinh nghiệm
+          weight: 8
+          rare: false
+          rewards:
+            - vat EXPERIENCE_BOTTLE 8
+        - label: 1 táo vàng
+          weight: 7
+          rare: false
+          rewards:
+            - vat GOLDEN_APPLE 1
+        - label: 2 kim cương
+          weight: 6
+          rare: false
+          rewards:
+            - vat DIAMOND 2
+        - label: 2250 xu
+          weight: 2
+          rare: true
+          rewards:
+            - xu 2250
+    - id: online
+      name: '&bGacha Chăm Chỉ'
+      icon: ENDER_CHEST
+      key: chia_khoa_online
+      source: ''
+      prizes:
+        - label: 225 xu
+          weight: 25
+          rare: false
+          rewards:
+            - xu 225
+        - label: 16 bít tết
+          weight: 15
+          rare: false
+          rewards:
+            - vat COOKED_BEEF 16
+        - label: 16 thỏi sắt
+          weight: 15
+          rare: false
+          rewards:
+            - vat IRON_INGOT 16
+        - label: 8 thỏi vàng
+          weight: 10
+          rare: false
+          rewards:
+            - vat GOLD_INGOT 8
+        - label: 16 bình kinh nghiệm
+          weight: 10
+          rare: false
+          rewards:
+            - vat EXPERIENCE_BOTTLE 16
+        - label: 3 kim cương
+          weight: 8
+          rare: false
+          rewards:
+            - vat DIAMOND 3
+        - label: 8 ngọc lục bảo
+          weight: 8
+          rare: false
+          rewards:
+            - vat EMERALD 8
+        - label: 1 bảng tên
+          weight: 5
+          rare: false
+          rewards:
+            - vat NAME_TAG 1
+        - label: 1 mảnh netherite
+          weight: 2
+          rare: true
+          rewards:
+            - vat NETHERITE_SCRAP 1
+        - label: 3000 xu
+          weight: 2
+          rare: true
+          rewards:
+            - xu 3000
+        - label: 1 khối kim cương
+          weight: 1
+          rare: true
+          rewards:
+            - vat DIAMOND_BLOCK 1
+        - label: Đĩa nhạc Cat (trang trí)
+          weight: 1
+          rare: true
+          rewards:
+            - vat MUSIC_DISC_CAT 1
 event-fragments:
   enabled: false   # 21/10: người dùng bỏ /doimanh (boss chỉ cần rơi đồ thư viện)
   daily-cap: 20
@@ -714,9 +846,9 @@ treasure:
   dig-radius: 4           # đứng trong ngần này khối quanh chỗ kho báu mới đào được
   guard-minutes: 5        # phải hạ hết lính canh trong ngần này phút (đứng trong 40 khối), không thì trả lại bản đồ
   tiers:
-    thuong: {name: "&fKho báu thường", weight: 70, guards: 2, guard-types: [ZOMBIE, SKELETON], guard-health: 1.5, rewards: ["xu 300", "vat IRON_INGOT 8"]}
-    hiem: {name: "&bKho báu hiếm", weight: 25, guards: 3, guard-types: [VINDICATOR, SKELETON, SPIDER], guard-health: 2, rewards: ["xu 1000", "vat DIAMOND 2", "vat GOLDEN_APPLE 1"]}
-    huyenthoai: {name: "&6Kho báu huyền thoại", weight: 5, guards: 4, guard-types: [WITHER_SKELETON, VINDICATOR, EVOKER], guard-health: 3, broadcast: true, reveal-hidden: 40, rewards: ["xu 5000", "vat DIAMOND 6", "vat ENCHANTED_GOLDEN_APPLE 1", "lenh buabatpet give {player} 2"]}
+    thuong: {name: "&fKho báu thường", weight: 70, guards: 2, guard-types: [ZOMBIE, SKELETON], guard-health: 1.5, rewards: [xu 450, "vat IRON_INGOT 8"]}
+    hiem: {name: "&bKho báu hiếm", weight: 25, guards: 3, guard-types: [VINDICATOR, SKELETON, SPIDER], guard-health: 2, rewards: [xu 1500, "vat DIAMOND 2", "vat GOLDEN_APPLE 1"]}
+    huyenthoai: {name: "&6Kho báu huyền thoại", weight: 5, guards: 4, guard-types: [WITHER_SKELETON, VINDICATOR, EVOKER], guard-health: 3, broadcast: true, reveal-hidden: 40, rewards: [xu 7500, "vat DIAMOND 6", "vat ENCHANTED_GOLDEN_APPLE 1", "lenh buabatpet give {player} 2"]}
 
 # Lệnh săn quái (/lenhsan, tên cũ /truyna): mỗi interval-minutes phút dán lệnh săn một quái mạnh ở vùng /tpr đã mở; ai gây nhiều sát thương nhất nhận thưởng.
 wanted:
@@ -726,19 +858,22 @@ wanted:
   max-active: 2
   spawn-distance: 64      # quái chỉ xuất hiện khi có người tới gần ngần này khối
   targets:
-    - {name: "Đồ Tể Rừng Già", type: VINDICATOR, health: 120, damage: 1.5, armor: iron, rewards: ["xu 1500", "vat EMERALD 8"]}
-    - {name: "Xác Sống Đầu Đàn", type: ZOMBIE, health: 150, damage: 2, armor: diamond, rewards: ["xu 1500", "vat IRON_INGOT 16"]}
-    - {name: "Cung Thủ Bóng Đêm", type: SKELETON, health: 100, damage: 2, armor: iron, rewards: ["xu 1500", "vat ARROW 64"]}
-    - {name: "Phù Thuỷ Đầm Lầy", type: WITCH, health: 120, damage: 1, armor: none, rewards: ["xu 1500", "vat EXPERIENCE_BOTTLE 16"]}
-    - {name: "Kỵ Sĩ Địa Ngục", type: WITHER_SKELETON, health: 200, damage: 1.5, armor: netherite, rewards: ["xu 3000", "vat DIAMOND 3", "lenh buabatpet give {player} 1"]}
-    - {name: "Kẻ Tàn Phá", type: RAVAGER, health: 250, damage: 1.2, armor: none, rewards: ["xu 4000", "vat DIAMOND 4"]}
+    - {name: "Đồ Tể Rừng Già", type: VINDICATOR, health: 120, damage: 1.5, armor: iron, rewards: [xu 2250, "vat EMERALD 8"]}
+    - {name: "Xác Sống Đầu Đàn", type: ZOMBIE, health: 150, damage: 2, armor: diamond, rewards: [xu 2250, "vat IRON_INGOT 16"]}
+    - {name: "Cung Thủ Bóng Đêm", type: SKELETON, health: 100, damage: 2, armor: iron, rewards: [xu 2250, "vat ARROW 64"]}
+    - {name: "Phù Thuỷ Đầm Lầy", type: WITCH, health: 120, damage: 1, armor: none, rewards: [xu 2250, "vat EXPERIENCE_BOTTLE 16"]}
+    - {name: "Kỵ Sĩ Địa Ngục", type: WITHER_SKELETON, health: 200, damage: 1.5, armor: netherite, rewards: [xu 4500, "vat DIAMOND 3", "lenh buabatpet give {player} 1"]}
+    - {name: "Kẻ Tàn Phá", type: RAVAGER, health: 250, damage: 1.2, armor: none, rewards: [xu 6000, "vat DIAMOND 4"]}
 
 # Thái Ấp (/thaiap): đất riêng an toàn trong thế giới phẳng riêng (không PvP, không quái, không quặng). sizes: cạnh theo cấp, prices: giá mua + mở rộng.
 thai-ap:
   enabled: true
   world: thaiap
   sizes: [50, 70, 90]
-  prices: [5000, 8000, 15000]
+  prices:
+    - 15000
+    - 24000
+    - 45000
   cell: 110               # khoảng cách tâm các mảnh (phần thừa là đường đi chung)
   max-trusted: 5          # số người được mời cùng xây
   kitchen-bonus: 50       # % kéo dài hiệu ứng món /nauan nấu trong Thái Ấp của mình
@@ -755,8 +890,8 @@ mercenary:
   min-hours: 5                 # phải chơi ít nhất ngần này giờ thật
   contract-hours: 48           # mỗi hợp đồng kéo dài (giờ)
   fee-percent: 10              # server giữ % giá thuê (rút tiền khỏi kinh tế)
-  min-price: 100
-  max-price: 100000
+  min-price: 300.0
+  max-price: 300000.0
   hire-ranks: [general, colonel, co-king]   # ngoài vua, chức nước nào được thuê lính
 
 # Server vắng thì tự nhẹ đi: quy mô = số người có chơi trong 7 ngày (chốt mỗi ngày). Dưới threshold thì nhiệm vụ dễ hơn, bắt pet dễ hơn,
@@ -773,32 +908,32 @@ low-population:
 achievements:
   enabled: true
   list:
-    kp1: {name: "Lữ khách", desc: "Đặt chân tới 3 vùng của /tpr", type: khampha, target: 3, rewards: ["xu 500"]}
-    kp2: {name: "Nhà thám hiểm", desc: "Đặt chân tới 7 vùng", type: khampha, target: 7, rewards: ["xu 2000", "danhhieu thamhiem"]}
-    ca1: {name: "Cần thủ tập sự", desc: "Câu được 50 con cá", type: cauca, target: 50, rewards: ["xu 300"]}
-    ca2: {name: "Ngư dân", desc: "Câu được 500 con cá", type: cauca, target: 500, rewards: ["xu 2000"]}
-    lc1: {name: "Nhà sưu tầm cá", desc: "Câu được 12 loài cá khác nhau", type: loaica, target: 12, rewards: ["xu 1000"]}
-    lc2: {name: "Ngư Ông", desc: "Câu được đủ 24 loài cá", type: loaica, target: 24, rewards: ["xu 3000", "danhhieu nguong"]}
-    q1: {name: "Thợ săn quái", desc: "Hạ 200 quái", type: quai, target: 200, rewards: ["xu 500"]}
-    q2: {name: "Diệt quái", desc: "Hạ 2000 quái", type: quai, target: 2000, rewards: ["xu 3000", "danhhieu diequai"]}
-    bp1: {name: "Người bắt thú", desc: "Có 3 pet chiến đấu", type: batpet, target: 3, rewards: ["xu 500"]}
+    kp1: {name: "Lữ khách", desc: "Đặt chân tới 3 vùng của /tpr", type: khampha, target: 3, rewards: [xu 750]}
+    kp2: {name: "Nhà thám hiểm", desc: "Đặt chân tới 7 vùng", type: khampha, target: 7, rewards: [xu 3000, "danhhieu thamhiem"]}
+    ca1: {name: "Cần thủ tập sự", desc: "Câu được 50 con cá", type: cauca, target: 50, rewards: [xu 450]}
+    ca2: {name: "Ngư dân", desc: "Câu được 500 con cá", type: cauca, target: 500, rewards: [xu 3000]}
+    lc1: {name: "Nhà sưu tầm cá", desc: "Câu được 12 loài cá khác nhau", type: loaica, target: 12, rewards: [xu 1500]}
+    lc2: {name: "Ngư Ông", desc: "Câu được đủ 24 loài cá", type: loaica, target: 24, rewards: [xu 4500, "danhhieu nguong"]}
+    q1: {name: "Thợ săn quái", desc: "Hạ 200 quái", type: quai, target: 200, rewards: [xu 750]}
+    q2: {name: "Diệt quái", desc: "Hạ 2000 quái", type: quai, target: 2000, rewards: [xu 4500, "danhhieu diequai"]}
+    bp1: {name: "Người bắt thú", desc: "Có 3 pet chiến đấu", type: batpet, target: 3, rewards: [xu 750]}
     pet1: {name: "Bạn đồng hành", desc: "Nuôi pet tới cấp 10", type: petcap, target: 10, rewards: ["lenh buabatpet give {player} 1"]}
-    pet2: {name: "Thuần Thú Sư", desc: "Nuôi pet tới cấp 50", type: petcap, target: 50, rewards: ["xu 3000", "danhhieu thuanthusu"]}
-    dt1: {name: "Võ sĩ", desc: "Thắng 10 trận Đấu Trường", type: dautruong, target: 10, rewards: ["xu 1000"]}
-    dt2: {name: "Bất Bại", desc: "Thắng 100 trận Đấu Trường", type: dautruong, target: 100, rewards: ["xu 5000", "danhhieu batbai"]}
-    na1: {name: "Bếp phó", desc: "Nấu 10 món ăn ra trận (/nauan)", type: nauan, target: 10, rewards: ["xu 500"]}
-    na2: {name: "Đầu Bếp", desc: "Nấu 100 món ăn ra trận", type: nauan, target: 100, rewards: ["xu 3000", "danhhieu daubep"]}
-    kl1: {name: "Hậu cần", desc: "Nộp 1000 điểm vào kho lương", type: kholuong, target: 1000, rewards: ["xu 1000"]}
-    gc1: {name: "Người quen", desc: "Chơi thật 10 giờ", type: giochoi, target: 10, rewards: ["xu 500"]}
-    gc2: {name: "Lão Làng", desc: "Chơi thật 100 giờ", type: giochoi, target: 100, rewards: ["xu 3000", "danhhieu laolang"]}
-    kb1: {name: "Thợ săn kho báu", desc: "Mở 5 rương kho báu", type: khobau, target: 5, rewards: ["xu 1500"]}
-    kb2: {name: "Đại Phú Kho Báu", desc: "Mở 30 rương kho báu", type: khobau, target: 30, rewards: ["xu 5000", "danhhieu sankhobau"]}
-    tn1: {name: "Thợ Săn", desc: "Hạ 3 quái của Lệnh săn", type: truyna, target: 3, rewards: ["xu 1500"]}
-    tn2: {name: "Kẻ Săn Đầu", desc: "Hạ 20 quái của Lệnh săn", type: truyna, target: 20, rewards: ["xu 5000", "danhhieu sandau"]}
-    dg1: {name: "Bước vào bóng tối", desc: "Vượt 1 dungeon", type: dungeon, target: 1, rewards: ["xu 500"]}
-    dg2: {name: "Kẻ Chinh Phục", desc: "Vượt dungeon 30 lần", type: dungeon, target: 30, rewards: ["xu 5000", "danhhieu chinhphuc"]}
-    cgh: {name: "Người Mở Cổng", desc: "Là người đầu tiên tìm ra một Cổng Hoang", type: conghoang, target: 1, rewards: ["xu 3000", "danhhieu mocong"]}
-    dga: {name: "Kẻ Tìm Lối", desc: "Tìm ra dungeon ẩn", type: dungeonan, target: 1, rewards: ["xu 3000", "danhhieu timan"]}
+    pet2: {name: "Thuần Thú Sư", desc: "Nuôi pet tới cấp 50", type: petcap, target: 50, rewards: [xu 4500, "danhhieu thuanthusu"]}
+    dt1: {name: "Võ sĩ", desc: "Thắng 10 trận Đấu Trường", type: dautruong, target: 10, rewards: [xu 1500]}
+    dt2: {name: "Bất Bại", desc: "Thắng 100 trận Đấu Trường", type: dautruong, target: 100, rewards: [xu 7500, "danhhieu batbai"]}
+    na1: {name: "Bếp phó", desc: "Nấu 10 món ăn ra trận (/nauan)", type: nauan, target: 10, rewards: [xu 750]}
+    na2: {name: "Đầu Bếp", desc: "Nấu 100 món ăn ra trận", type: nauan, target: 100, rewards: [xu 4500, "danhhieu daubep"]}
+    kl1: {name: "Hậu cần", desc: "Nộp 1000 điểm vào kho lương", type: kholuong, target: 1000, rewards: [xu 1500]}
+    gc1: {name: "Người quen", desc: "Chơi thật 10 giờ", type: giochoi, target: 10, rewards: [xu 750]}
+    gc2: {name: "Lão Làng", desc: "Chơi thật 100 giờ", type: giochoi, target: 100, rewards: [xu 4500, "danhhieu laolang"]}
+    kb1: {name: "Thợ săn kho báu", desc: "Mở 5 rương kho báu", type: khobau, target: 5, rewards: [xu 2250]}
+    kb2: {name: "Đại Phú Kho Báu", desc: "Mở 30 rương kho báu", type: khobau, target: 30, rewards: [xu 7500, "danhhieu sankhobau"]}
+    tn1: {name: "Thợ Săn", desc: "Hạ 3 quái của Lệnh săn", type: truyna, target: 3, rewards: [xu 2250]}
+    tn2: {name: "Kẻ Săn Đầu", desc: "Hạ 20 quái của Lệnh săn", type: truyna, target: 20, rewards: [xu 7500, "danhhieu sandau"]}
+    dg1: {name: "Bước vào bóng tối", desc: "Vượt 1 dungeon", type: dungeon, target: 1, rewards: [xu 750]}
+    dg2: {name: "Kẻ Chinh Phục", desc: "Vượt dungeon 30 lần", type: dungeon, target: 30, rewards: [xu 7500, "danhhieu chinhphuc"]}
+    cgh: {name: "Người Mở Cổng", desc: "Là người đầu tiên tìm ra một Cổng Hoang", type: conghoang, target: 1, rewards: [xu 4500, "danhhieu mocong"]}
+    dga: {name: "Kẻ Tìm Lối", desc: "Tìm ra dungeon ẩn", type: dungeonan, target: 1, rewards: [xu 4500, "danhhieu timan"]}
 
 # Thăng Cấp (/capdo; ý từ Prestige của UniMC): cấp riêng của server. Lên cấp N cần: xu (trả khi lên) = money-base × N^money-exponent,
 # giờ chơi thật của mùa >= hours-per-level × N, điểm hạ gục >= kill-points-per-level × N (quái +mob-points, người +player-points).
@@ -838,7 +973,7 @@ wild-gates:
   min-gate-distance: 800   # các cổng cách nhau
   grace-minutes: 30        # người tìm ra được ưu tiên lập/mở rộng thị trấn quanh cổng trong ngần này phút
   grace-radius: 64         # bán kính ưu tiên (khối)
-  max-toll: 10000          # phí qua cổng tối đa chủ cổng được đặt
+  max-toll: 30000          # phí qua cổng tối đa chủ cổng được đặt
   upkeep-per-day: 0        # xu/ngày trừ ngân khố thị trấn giữ cổng (0 = không)
   revolt-hours-less: 0     # thị trấn giữ cổng bị chiếm thì được khởi nghĩa sớm hơn ngần này giờ (0 = không)
   # Bậc ngụy trang: dungeon càng khó, cổng càng khó nhận ra. particle-range: hạt tím thấy trong (khối); night-only: hạt chỉ hiện ban đêm;
@@ -896,35 +1031,36 @@ dungeon-gate:
   weekly:                  # Dungeon của tuần: mỗi tuần chọn ngẫu nhiên 1 dungeon (kiểu trong types, đã cài), vượt được thêm quà
     enabled: true
     types: [chain, ticket, server]
-    rewards: ["xu 1500"]
+    rewards:
+      - xu 2250
     max-per-week: 3        # tối đa lần nhận quà tuần / người
   # Điều kiện phụ (tuỳ dungeon, kiểm từng người trong nhóm /em party): min-pet-level, party: "2-4", days: [t2..t7, cn],
   # hours: "19-23" (giờ VN), seasons: [mua, kho], hegemon-only: true, min-achievements. Dungeon ẩn: fragments: <số Mảnh Chìa>.
   dungeons:
-    the_climb_dungeon: {name: "Đỉnh Vách Đá", type: chain, level: "10", first-rewards: ["xu 500"]}
-    the_cave_sanctum: {name: "Hang Thánh Địa", type: chain, level: "15", requires: the_climb_dungeon, first-rewards: ["xu 800"]}
-    the_mines_dungeon: {name: "Mỏ Hoang", type: chain, level: "20", requires: the_cave_sanctum, first-rewards: ["xu 1000"]}
-    the_bridge_sanctum: {name: "Cây Cầu Cổ", type: chain, level: "25", requires: the_mines_dungeon, first-rewards: ["xu 1200"]}
-    the_city_dungeon: {name: "Thành Phố Đổ Nát", type: chain, level: "30", requires: the_bridge_sanctum, first-rewards: ["xu 1500"]}
-    the_palace_sanctum: {name: "Cung Điện", type: chain, level: "35", requires: the_city_dungeon, first-rewards: ["xu 2000"]}
-    the_quarry_dungeon: {name: "Mỏ Đá", type: chain, level: "40", requires: the_palace_sanctum, first-rewards: ["xu 2500"]}
-    the_deep_mines_dungeon: {name: "Mỏ Sâu", type: chain, level: "45", requires: the_quarry_dungeon, first-rewards: ["xu 3000"]}
-    the_nether_wastes_dungeon: {name: "Hoang Mạc Địa Ngục", type: chain, level: "50", requires: the_deep_mines_dungeon, min-pet-level: 10, first-rewards: ["xu 4000"]}
-    the_nether_bell_sanctum: {name: "Chuông Địa Ngục", type: chain, level: "55", requires: the_nether_wastes_dungeon, party: "2-4", first-rewards: ["xu 6000"]}
-    sewers_minidungeon: {name: "Cống Ngầm", type: gate, level: "25", first-rewards: ["xu 2000"]}
-    dark_cathedral_lair: {name: "Thánh Đường Bóng Tối", type: hidden, level: "15", night-only: true, fragments: 3, hint: "chỉ hiện ra lúc nửa đêm", first-rewards: ["xu 3000"]}
-    north_pole_minidungeon: {name: "Bắc Cực", type: gate, level: "55", first-rewards: ["xu 4000"]}
-    knights_castle_lair: {name: "Lâu Đài Hiệp Sĩ", type: ticket, level: "95", price: 3000, max-tickets: 5, days: [t7, cn]}
-    steamworks_lair: {name: "Xưởng Hơi Nước", type: ticket, level: "140", price: 5000, max-tickets: 5, min-achievements: 8}
-    fireworks_lair: {name: "Lễ Hội Pháo Hoa", type: server, level: "20", goal: 100000, open-days: 7}
-    hallosseum_lair: {name: "Đấu Trường Ma", type: server, level: "30", goal: 150000, open-days: 7, party: "2-5", hours: "19-23"}
-    binder_of_worlds_sanctum: {name: "Kẻ Trói Buộc Thế Giới", type: server, level: "100", goal: 1000000, open-days: 0, party: "3-6", min-pet-level: 20, first-rewards: ["xu 20000"]}
+    the_climb_dungeon: {name: "Đỉnh Vách Đá", type: chain, level: "10", first-rewards: [xu 750]}
+    the_cave_sanctum: {name: "Hang Thánh Địa", type: chain, level: "15", requires: the_climb_dungeon, first-rewards: [xu 1200]}
+    the_mines_dungeon: {name: "Mỏ Hoang", type: chain, level: "20", requires: the_cave_sanctum, first-rewards: [xu 1500]}
+    the_bridge_sanctum: {name: "Cây Cầu Cổ", type: chain, level: "25", requires: the_mines_dungeon, first-rewards: [xu 1800]}
+    the_city_dungeon: {name: "Thành Phố Đổ Nát", type: chain, level: "30", requires: the_bridge_sanctum, first-rewards: [xu 2250]}
+    the_palace_sanctum: {name: "Cung Điện", type: chain, level: "35", requires: the_city_dungeon, first-rewards: [xu 3000]}
+    the_quarry_dungeon: {name: "Mỏ Đá", type: chain, level: "40", requires: the_palace_sanctum, first-rewards: [xu 3750]}
+    the_deep_mines_dungeon: {name: "Mỏ Sâu", type: chain, level: "45", requires: the_quarry_dungeon, first-rewards: [xu 4500]}
+    the_nether_wastes_dungeon: {name: "Hoang Mạc Địa Ngục", type: chain, level: "50", requires: the_deep_mines_dungeon, min-pet-level: 10, first-rewards: [xu 6000]}
+    the_nether_bell_sanctum: {name: "Chuông Địa Ngục", type: chain, level: "55", requires: the_nether_wastes_dungeon, party: "2-4", first-rewards: [xu 9000]}
+    sewers_minidungeon: {name: "Cống Ngầm", type: gate, level: "25", first-rewards: [xu 3000]}
+    dark_cathedral_lair: {name: "Thánh Đường Bóng Tối", type: hidden, level: "15", night-only: true, fragments: 3, hint: "chỉ hiện ra lúc nửa đêm", first-rewards: [xu 4500]}
+    north_pole_minidungeon: {name: "Bắc Cực", type: gate, level: "55", first-rewards: [xu 6000]}
+    knights_castle_lair: {name: "Lâu Đài Hiệp Sĩ", type: ticket, level: "95", price: 4500, max-tickets: 5, days: [t7, cn]}
+    steamworks_lair: {name: "Xưởng Hơi Nước", type: ticket, level: "140", price: 7500, max-tickets: 5, min-achievements: 8}
+    fireworks_lair: {name: "Lễ Hội Pháo Hoa", type: server, level: "20", goal: 300000, open-days: 7}
+    hallosseum_lair: {name: "Đấu Trường Ma", type: server, level: "30", goal: 450000, open-days: 7, party: "2-5", hours: "19-23"}
+    binder_of_worlds_sanctum: {name: "Kẻ Trói Buộc Thế Giới", type: server, level: "100", goal: 3000000, open-days: 0, party: "3-6", min-pet-level: 20, first-rewards: [xu 30000]}
 
 # Cân bằng chiến tranh (/canbang): chống "nước to nuốt hết". Trang Cài đặt > Chiến tranh > Cân bằng chiến tranh
 war-balance:
   enabled: true
   war-chest-extra-percent-per-town: 10   # quỹ chiến tranh tăng % cho mỗi thị trấn (trừ thị trấn đầu) nước đi vây đang có
-  colony-upkeep-per-day: 50              # mỗi thuộc địa tốn ngần này xu/ngày từ ngân khố nước chiếm (thiếu thì ghi nợ, còn nợ không cắm cờ vây được)
+  colony-upkeep-per-day: 150.0           # mỗi thuộc địa tốn ngần này xu/ngày từ ngân khố nước chiếm (thiếu thì ghi nợ, còn nợ không cắm cờ vây được)
   max-colonies: 3                        # tối đa thuộc địa mỗi nước (0 = không giới hạn)
   revolt-hours-base: 72                  # thuộc địa được khởi nghĩa sau ngần này giờ
   revolt-hours-less-per-colony: 12       # bớt ngần này giờ cho mỗi thuộc địa khác của nước chiếm
@@ -1073,8 +1209,8 @@ arena:
   fight-seconds: 180                # hết giờ: đội còn nhiều % máu hơn thắng
   pet-damage-reduce-percent: 50     # trong sân: pet đánh người bị giảm bao nhiêu %
   fee-percent: 5                    # server thu % tổng tiền cược
-  max-stake: 10000
-  win-reward: 50                    # thưởng mỗi trận thắng (không tính giao hữu cùng IP)
+  max-stake: 30000.0
+  win-reward: 75.0                  # thưởng mỗi trận thắng (không tính giao hữu cùng IP)
   daily-reward-cap: 5               # số trận được thưởng mỗi ngày
   pet-exp-win: 30                     # kinh nghiệm cho pet đang dẫn khi thắng (chung giới hạn trận thưởng/ngày)
   elo-k: 32
@@ -1101,19 +1237,19 @@ tinh-luyen:
     elite-chance: 40        # % quái EliteMobs (tinh nhuệ, boss)
     elite-max: 3            # quái EliteMobs rơi 1..elite-max
   items:
-    xuquai:     {sell: 2}
-    xuquai2:    {recipe: {xuquai: 64}, sell: 100}
-    da:         {recipe: {COBBLESTONE: 256, COBBLED_DEEPSLATE: 256}, sell: 30}
-    than:       {recipe: {COAL_BLOCK: 64}, sell: 400}
-    dong:       {recipe: {RAW_COPPER_BLOCK: 64}, sell: 400}
-    sat:        {recipe: {RAW_IRON_BLOCK: 64}, sell: 1600}
-    dado:       {recipe: {REDSTONE_BLOCK: 64}, sell: 200}
-    lapis:      {recipe: {LAPIS_BLOCK: 64}, sell: 400}
-    vang:       {recipe: {RAW_GOLD_BLOCK: 64}, sell: 2400}
-    kimcuong:   {recipe: {DIAMOND_BLOCK: 64}, sell: 24000}
-    lucbao:     {recipe: {EMERALD_BLOCK: 32}, sell: 4000}
-    netherite:  {recipe: {NETHERITE_BLOCK: 32}, sell: 125000}
-    dialinh:    {recipe: {HAY_BLOCK: 64}, sell: 300}
+    xuquai: {sell: 4}
+    xuquai2: {recipe: {xuquai: 64}, sell: 180}
+    da: {recipe: {COBBLESTONE: 256, COBBLED_DEEPSLATE: 256}, sell: 7}
+    than: {recipe: {COAL_BLOCK: 64}, sell: 1200}
+    dong: {recipe: {RAW_COPPER_BLOCK: 64}, sell: 600}
+    sat: {recipe: {RAW_IRON_BLOCK: 64}, sell: 3200}
+    dado: {recipe: {REDSTONE_BLOCK: 64}, sell: 400}
+    lapis: {recipe: {LAPIS_BLOCK: 64}, sell: 1200}
+    vang: {recipe: {RAW_GOLD_BLOCK: 64}, sell: 6400}
+    kimcuong: {recipe: {DIAMOND_BLOCK: 64}, sell: 48000}
+    lucbao: {recipe: {EMERALD_BLOCK: 32}, sell: 8000}
+    netherite: {recipe: {NETHERITE_BLOCK: 32}, sell: 262000}
+    dialinh: {recipe: {HAY_BLOCK: 64}, sell: 270}
 
 # Danh phận (/danhphan, 19/10): rank CHƠI miễn phí, đủ yêu cầu thì bấm nhận trong menu. Sửa ở Cài đặt › Người mới › Danh phận.
 # Mỗi bậc: group (nhóm LuckPerms; bậc đầu PHẢI là default), name, prefix (tiền tố chat/Tab, priority càng cao càng ưu tiên, dưới staff),
@@ -1128,11 +1264,10 @@ play-ranks:
   server: banghoi-1
   announce: true
   tiers:
-    tinan:    {group: default, name: "Dân Tị Nạn", prefix: "&8[Tị Nạn] ", priority: 0, hours: 0, level: 0, homes: 1, balo: 0, balo-slots: 27, ah: 2, orders: 2, tu-skin: 1, icon: DEAD_BUSH}
-    dan:      {group: dan, name: "Dân", prefix: "&7[Dân] ", priority: 1, hours: 6, level: 0, perm: duckymomo.cotruyen.c1,
-               perm-text: "Xong chương 1 cốt truyện (Già Làng)", homes: 2, balo: 1, balo-slots: 27, ah: 4, orders: 3, tu-skin: 2, icon: WHEAT}
+    tinan: {group: default, name: "Dân Tị Nạn", prefix: "&8[Tị Nạn] ", priority: 0, hours: 0, level: 0, homes: 1, balo: 0, balo-slots: 27, ah: 2, orders: 2, tu-skin: 1, icon: DEAD_BUSH}
+    dan: {group: dan, name: "Dân", prefix: "&7[Dân] ", priority: 1, hours: 6, level: 0, perm: duckymomo.cotruyen.c1, perm-text: "Xong chương 1 cốt truyện (Già Làng)", homes: 2, balo: 1, balo-slots: 27, ah: 4, orders: 3, tu-skin: 2, icon: WHEAT}
     luongdan: {group: luongdan, name: "Lương Dân", prefix: "&a[Lương Dân] ", priority: 2, hours: 24, level: 10, homes: 3, balo: 2, balo-slots: 36, ah: 6, orders: 4, tu-skin: 3, icon: IRON_HOE}
-    haokiet:  {group: haokiet, name: "Hào Kiệt", prefix: "&6[Hào Kiệt] ", priority: 3, hours: 72, level: 25, homes: 5, balo: 3, balo-slots: 45, ah: 8, orders: 5, tu-skin: 5, icon: GOLDEN_HELMET}
+    haokiet: {group: haokiet, name: "Hào Kiệt", prefix: "&6[Hào Kiệt] ", priority: 3, hours: 72, level: 25, homes: 5, balo: 3, balo-slots: 45, ah: 8, orders: 5, tu-skin: 5, icon: GOLDEN_HELMET}
   # Rank KHÁC: quyền lợi homes (nhà) · balo · balo-slots (9..54) · ah (món chợ) · orders (đơn /donhang) · spin-faster (% vé vòng quay nhanh hơn,
   # 5..50) · kit (kit Essentials). 0 / "" = không cấp (theo danh phận). Người có nhiều rank lấy mức cao nhất. Cài đặt › Người mới › Quyền lợi theo rank.
   # create: true = plugin tạo nhóm + tiền tố (vd Sứ Giả); false = nhóm có sẵn (ủng hộ, staff), chỉ đụng quyền lợi, giữ tiền tố của họ.
@@ -1146,8 +1281,7 @@ play-ranks:
       priority: 20
       icon: SPYGLASS
       card: true
-      info: ["Livestream TikTok/YouTube về server ít nhất 4 buổi mỗi tuần", "Livestream đều đặn, nội dung lành mạnh",
-             "Tương tác và quảng bá server", "Muốn gắn bó lâu dài", "Nội dung: công thành, xây dựng, sinh tồn"]
+      info: ["Livestream TikTok/YouTube về server ít nhất 4 buổi mỗi tuần", "Livestream đều đặn, nội dung lành mạnh", "Tương tác và quảng bá server", "Muốn gắn bó lâu dài", "Nội dung: công thành, xây dựng, sinh tồn"]
       contact: "&7Gửi link kênh cho admin: nhắn &f/msg Linh &7trong game hoặc qua Discord/Zalo của server."
       homes: 5
       balo: 5
@@ -1217,61 +1351,33 @@ player-menu:
   # Mỗi nút: name (ký hiệu + tên), sub (phụ đề), lore (mô tả), gom (danh sách "Gồm"), bam (dòng bấm); dùng được %placeholder%.
   # Hàng 2 vàng = việc hằng ngày, hàng 3 xanh lá = kinh tế, hàng 4 xanh dương = thế giới, hàng 5 tím = cá nhân.
   buttons:
-    - {slot: 4, icon: PLAYER_HEAD, name: "&e☺ &fHồ sơ của bạn", sub: "%player_name%",
-       lore: ["Tóm tắt nhanh tài sản và tiến độ"],
-       gom: ["&7Xu: &a%vault_eco_balance_formatted%", "&7Vàng: &6%dmmvang_so_du%", "&7Thăng Cấp: &fcấp %dmmcap_cap%",
-             "&7Vé gacha online: &f%dmmhom_chia%", "&7Thị trấn: &f%townyadvanced_town_unformatted%", "&7Mùa: %dmmmua_ten%"],
-       bam: "Bấm để xem danh phận", cmd: danhphan}
-    - {slot: 10, icon: CLOCK, name: "&e☀ &fĐiểm danh", sub: "mỗi ngày", lore: ["Vào game mỗi ngày nhận quà", "Giữ chuỗi càng dài quà càng to"],
-       gom: ["Quà ngày thường + quà mốc chuỗi", "Bỏ một ngày vẫn giữ chuỗi"], bam: "Bấm để điểm danh", cmd: diemdanh}
-    - {slot: 11, icon: WRITABLE_BOOK, name: "&e✎ &fNhiệm vụ hôm nay", lore: ["Vài việc nhỏ mỗi ngày: đào, săn, câu, gặt"],
-       gom: ["Mỗi nhiệm vụ có quà riêng", "Xong hết trong ngày có thưởng thêm"], bam: "Bấm để xem tiến độ", cmd: nhiemvu}
-    - {slot: 12, icon: NETHER_STAR, name: "&e✦ &fGacha", sub: "%dmmhom_chia% vé online", lore: ["Quay thưởng bằng vé miễn phí"],
-       gom: ["Vé từ điểm danh và chơi online", "Xem tỉ lệ từng phần thưởng trong menu"], bam: "Bấm để quay", cmd: gacha}
-    - {slot: 13, icon: EXPERIENCE_BOTTLE, name: "&e⬆ &fThăng Cấp", sub: "cấp %dmmcap_cap%", lore: ["Lên cấp bằng xu, giờ chơi và điểm hạ gục"],
-       gom: ["Mỗi cấp +1 điểm đổi đặc quyền tiện ích", "Mốc cấp có quà và thông báo cả server"], bam: "Bấm để xem cấp", cmd: capdo}
-    - {slot: 14, icon: NAME_TAG, name: "&e♛ &fDanh phận", lore: ["Rank chơi miễn phí, lên bằng cách chơi"],
-       gom: ["Tị Nạn → Dân → Lương Dân → Hào Kiệt", "Bậc cao: thêm nhà, balo, ô chợ, đơn thu mua"], bam: "Bấm để xem điều kiện lên bậc", cmd: danhphan}
-    - {slot: 15, icon: GOLDEN_APPLE, name: "&e✪ &fSổ thành tích", lore: ["Mục tiêu chơi một mình, đạt là tự nhận quà"],
-       gom: ["Khám phá, câu cá, săn quái, bắt pet…", "Mở khoá danh hiệu hiện trên tên"], bam: "Bấm để mở sổ", cmd: thanhtich}
-    - {slot: 16, icon: BOOK, name: "&e❖ &fCẩm nang", lore: ["Hướng dẫn cách chơi từ đầu"],
-       gom: ["11 chương: kinh tế, thị trấn, công thành…", "Có ví dụ lệnh cho từng việc"], bam: "Bấm để đọc", cmd: huongdan}
+    - {slot: 4, icon: PLAYER_HEAD, name: "&e☺ &fHồ sơ của bạn", sub: "%player_name%", lore: ["Tóm tắt nhanh tài sản và tiến độ"], gom: ["&7Xu: &a%vault_eco_balance_formatted%", "&7Vàng: &6%dmmvang_so_du%", "&7Thăng Cấp: &fcấp %dmmcap_cap%", "&7Vé gacha online: &f%dmmhom_chia%", "&7Thị trấn: &f%townyadvanced_town_unformatted%", "&7Mùa: %dmmmua_ten%"], bam: "Bấm để xem danh phận", cmd: danhphan}
+    - {slot: 10, icon: CLOCK, name: "&e☀ &fĐiểm danh", sub: "mỗi ngày", lore: ["Vào game mỗi ngày nhận quà", "Giữ chuỗi càng dài quà càng to"], gom: ["Quà ngày thường + quà mốc chuỗi", "Bỏ một ngày vẫn giữ chuỗi"], bam: "Bấm để điểm danh", cmd: diemdanh}
+    - {slot: 11, icon: WRITABLE_BOOK, name: "&e✎ &fNhiệm vụ hôm nay", lore: ["Vài việc nhỏ mỗi ngày: đào, săn, câu, gặt"], gom: ["Mỗi nhiệm vụ có quà riêng", "Xong hết trong ngày có thưởng thêm"], bam: "Bấm để xem tiến độ", cmd: nhiemvu}
+    - {slot: 12, icon: NETHER_STAR, name: "&e✦ &fGacha", sub: "%dmmhom_chia% vé online", lore: ["Quay thưởng bằng vé miễn phí"], gom: ["Vé từ điểm danh và chơi online", "Xem tỉ lệ từng phần thưởng trong menu"], bam: "Bấm để quay", cmd: gacha}
+    - {slot: 13, icon: EXPERIENCE_BOTTLE, name: "&e⬆ &fThăng Cấp", sub: "cấp %dmmcap_cap%", lore: ["Lên cấp bằng xu, giờ chơi và điểm hạ gục"], gom: ["Mỗi cấp +1 điểm đổi đặc quyền tiện ích", "Mốc cấp có quà và thông báo cả server"], bam: "Bấm để xem cấp", cmd: capdo}
+    - {slot: 14, icon: NAME_TAG, name: "&e♛ &fDanh phận", lore: ["Rank chơi miễn phí, lên bằng cách chơi"], gom: ["Tị Nạn → Dân → Lương Dân → Hào Kiệt", "Bậc cao: thêm nhà, balo, ô chợ, đơn thu mua"], bam: "Bấm để xem điều kiện lên bậc", cmd: danhphan}
+    - {slot: 15, icon: GOLDEN_APPLE, name: "&e✪ &fSổ thành tích", lore: ["Mục tiêu chơi một mình, đạt là tự nhận quà"], gom: ["Khám phá, câu cá, săn quái, bắt pet…", "Mở khoá danh hiệu hiện trên tên"], bam: "Bấm để mở sổ", cmd: thanhtich}
+    - {slot: 16, icon: BOOK, name: "&e❖ &fCẩm nang", lore: ["Hướng dẫn cách chơi từ đầu"], gom: ["11 chương: kinh tế, thị trấn, công thành…", "Có ví dụ lệnh cho từng việc"], bam: "Bấm để đọc", cmd: huongdan}
     - {slot: 19, icon: GOLD_INGOT, name: "&6☠ &fChợ đen", sub: "/choden", lore: ["Mua bán trực tiếp giữa người chơi"], gom: ["Đang bán: hàng người chơi treo, bấm là mua", "Đang thu mua: đơn cần mua, giao hàng lấy tiền", "Treo bán, đặt đơn, đồ của tôi"], bam: "Bấm để vào chợ", cmd: choden}
-    - {slot: 20, icon: EMERALD, name: "&a⛃ &fBán đồ đang cầm", sub: "/sell hand", lore: ["Bán món trên tay cho server theo bảng giá"],
-       gom: ["Bán hết loại đó trong túi: /sell all", "Xem giá: /worth"], bam: "Bấm để bán ngay", cmd: "sell hand"}
-    - {slot: 21, icon: SMITHING_TABLE, name: "&a⚒ &fXưởng chế tạo", sub: "/xuong", lore: ["Đồ có kỹ năng riêng, độ bền và hạn dùng"],
-       gom: ["Đào 3×3, chặt cả cây, gặt 3×3", "Kiếm lướt chém, khiên phản đòn, cung hút máu"], bam: "Bấm để vào xưởng", cmd: xuong}
-    - {slot: 22, icon: BLAST_FURNACE, name: "&a♨ &fTinh Luyện", sub: "/tinhluyen", lore: ["Đổi khối thường thành nguyên liệu quý"],
-       gom: ["Trao đổi ở shop dân làng", "Nguyên liệu Xưởng, bán cho server"], bam: "Bấm để tinh luyện", cmd: tinhluyen}
+    - {slot: 20, icon: EMERALD, name: "&a⛃ &fBán đồ đang cầm", sub: "/sell hand", lore: ["Bán món trên tay cho server theo bảng giá"], gom: ["Bán hết loại đó trong túi: /sell all", "Xem giá: /worth"], bam: "Bấm để bán ngay", cmd: "sell hand"}
+    - {slot: 21, icon: SMITHING_TABLE, name: "&a⚒ &fXưởng chế tạo", sub: "/xuong", lore: ["Đồ có kỹ năng riêng, độ bền và hạn dùng"], gom: ["Đào 3×3, chặt cả cây, gặt 3×3", "Kiếm lướt chém, khiên phản đòn, cung hút máu"], bam: "Bấm để vào xưởng", cmd: xuong}
+    - {slot: 22, icon: BLAST_FURNACE, name: "&a♨ &fTinh Luyện", sub: "/tinhluyen", lore: ["Đổi khối thường thành nguyên liệu quý"], gom: ["Trao đổi ở shop dân làng", "Nguyên liệu Xưởng, bán cho server"], bam: "Bấm để tinh luyện", cmd: tinhluyen}
     - {slot: 23, icon: EMERALD_BLOCK, name: "&e⛃ &fCửa hàng Kinh Đô", sub: "/cuahang", lore: ["Mua vật liệu, bán nông sản, khoáng sản cho server"], gom: ["10 danh mục, giá theo từng món", "Mở ở NPC tại spawn; rank ủng hộ gõ /cuahang trong kinh đô"], bam: "Bấm để mở", cmd: cuahang}
-    - {slot: 24, icon: HOPPER, name: "&a⇄ &fĐổi đồ với người khác", sub: "/trade", lore: ["Hai bên bỏ đồ rồi cùng xác nhận"],
-       gom: ["Một bên huỷ thì đồ trả lại", "Không bị lừa giữa chừng"], bam: "Bấm rồi gõ tên người muốn đổi", suggest: "/trade "}
-    - {slot: 25, icon: PAINTING, name: "&a✿ &fCửa hàng trang trí", sub: "/cuahang", lore: ["Đồ trang trí, danh hiệu mua bằng xu"],
-       gom: ["Chỉ đẹp, không thêm sức mạnh"], bam: "Bấm để mua sắm", cmd: cuahang}
-    - {slot: 28, icon: ENDER_PEARL, name: "&b➹ &fDịch chuyển tới vùng", sub: "/tpr", lore: ["Bay tới đất trống ở vùng đã mở"],
-       gom: ["Đứng yên 3 giây để đi", "Có phí xu tuỳ vùng"], bam: "Bấm để chọn vùng", cmd: tpr}
-    - {slot: 29, icon: RED_BED, name: "&b⌂ &fVề nhà", sub: "/home", lore: ["Về nhà đã đặt bằng /sethome"],
-       gom: ["Số nhà theo danh phận", "Quay lại chỗ vừa chết: /back"], bam: "Bấm để về nhà", cmd: home}
-    - {slot: 30, icon: BELL, name: "&b⚑ &fThị trấn", sub: "%townyadvanced_town_unformatted%", lore: ["Thông tin thị trấn của bạn"],
-       gom: ["Lập: /t new <tên> (500 xu)", "Mở đất: /t claim, ngân khố: /t deposit"], bam: "Bấm để xem thị trấn", cmd: t}
-    - {slot: 31, icon: WHEAT, name: "&b☂ &fMùa mưa / mùa khô", sub: "%dmmmua_ten%", lore: ["Mùa đổi theo ngày thật"],
-       gom: ["Cây lớn nhanh, chậm theo mùa", "Cá theo mùa, mưa, sự kiện Lũ / Hạn"], bam: "Bấm để xem mùa", cmd: mua}
-    - {slot: 32, icon: CROSSBOW, name: "&b☠ &fLệnh săn", sub: "/lenhsan", lore: ["Quái mạnh xuất hiện ở một vùng"],
-       gom: ["Ai đánh nhiều nhất nhận thưởng", "Pet đánh cũng được tính"], bam: "Bấm để xem lệnh săn", cmd: lenhsan}
-    - {slot: 33, icon: IRON_BARS, name: "&b⚔ &fDungeon", sub: "/dungeon", lore: ["Cày đồ hiếm cùng nhóm"],
-       gom: ["Chuỗi chìa khoá 10 tầng", "Dungeon ẩn, vé, góp quỹ, Cổng Hoang"], bam: "Bấm để xem dungeon", cmd: dungeon}
-    - {slot: 34, icon: GRASS_BLOCK, name: "&b❀ &fThái Ấp", sub: "/thaiap", lore: ["Đất riêng không ai chiếm được"],
-       gom: ["Xây, trồng trọt an toàn", "Có bản sáng tạo riêng"], bam: "Bấm để về Thái Ấp", cmd: thaiap}
-    - {slot: 37, icon: CHEST_MINECART, name: "&d▣ &fBalo", sub: "/balo", lore: ["Túi đồ thêm, mở ở đâu cũng được"],
-       gom: ["Số balo và số ô theo danh phận", "Không mở được khi đang giao tranh"], bam: "Bấm để mở balo", cmd: balo}
-    - {slot: 38, icon: LEATHER_CHESTPLATE, name: "&d☺ &fTủ skin", sub: "/tuskin", lore: ["Lưu nhiều skin, đổi trong 1 bấm"],
-       gom: ["Thêm bằng tên bản quyền hoặc ảnh trên web", "Số ô theo danh phận, rank"], bam: "Bấm để mở tủ", proxy: tuskin}
-    - {slot: 39, icon: COMPARATOR, name: "&d⚙ &fCài đặt cá nhân", sub: "/caidat", lore: ["Bật / tắt theo ý mình"],
-       gom: ["Chat, tin nhắn riêng, nhận TPA", "Bảng bên phải, font tiếng Việt…"], bam: "Bấm để chỉnh", cmd: caidat}
-    - {slot: 40, icon: GOLD_INGOT, name: "&6◆ &fVàng & rank ủng hộ", sub: "%dmmvang_so_du% Vàng", lore: ["Ủng hộ server, nhận Vàng mua trang trí"],
-       gom: ["Rank ủng hộ có tiền tố, hiệu ứng", "Đồ trang trí, đổi tên màu", "Chỉ trang trí, không pay-to-win"], bam: "Bấm để mở ví Vàng", cmd: vang}
-    - {slot: 41, icon: IRON_SWORD, name: "&d⚔ &fĐấu Trường", sub: "PvP", lore: ["Đấu 1v1, 2v2 không mất đồ"],
-       gom: ["Máu cố định 10 tim, công bằng", "Thắng có kinh nghiệm pet"], bam: "Bấm để tới Đấu Trường", cmd: "warp pvp"}
+    - {slot: 24, icon: HOPPER, name: "&a⇄ &fĐổi đồ với người khác", sub: "/trade", lore: ["Hai bên bỏ đồ rồi cùng xác nhận"], gom: ["Một bên huỷ thì đồ trả lại", "Không bị lừa giữa chừng"], bam: "Bấm rồi gõ tên người muốn đổi", suggest: "/trade "}
+    - {slot: 25, icon: PAINTING, name: "&a✿ &fCửa hàng trang trí", sub: "/cuahang", lore: ["Đồ trang trí, danh hiệu mua bằng xu"], gom: ["Chỉ đẹp, không thêm sức mạnh"], bam: "Bấm để mua sắm", cmd: cuahang}
+    - {slot: 28, icon: ENDER_PEARL, name: "&b➹ &fDịch chuyển tới vùng", sub: "/tpr", lore: ["Bay tới đất trống ở vùng đã mở"], gom: ["Đứng yên 3 giây để đi", "Có phí xu tuỳ vùng"], bam: "Bấm để chọn vùng", cmd: tpr}
+    - {slot: 29, icon: RED_BED, name: "&b⌂ &fVề nhà", sub: "/home", lore: ["Về nhà đã đặt bằng /sethome"], gom: ["Số nhà theo danh phận", "Quay lại chỗ vừa chết: /back"], bam: "Bấm để về nhà", cmd: home}
+    - {slot: 30, icon: BELL, name: "&b⚑ &fThị trấn", sub: "%townyadvanced_town_unformatted%", lore: ["Thông tin thị trấn của bạn"], gom: ["Lập: /t new <tên> (500 xu)", "Mở đất: /t claim, ngân khố: /t deposit"], bam: "Bấm để xem thị trấn", cmd: t}
+    - {slot: 31, icon: WHEAT, name: "&b☂ &fMùa mưa / mùa khô", sub: "%dmmmua_ten%", lore: ["Mùa đổi theo ngày thật"], gom: ["Cây lớn nhanh, chậm theo mùa", "Cá theo mùa, mưa, sự kiện Lũ / Hạn"], bam: "Bấm để xem mùa", cmd: mua}
+    - {slot: 32, icon: CROSSBOW, name: "&b☠ &fLệnh săn", sub: "/lenhsan", lore: ["Quái mạnh xuất hiện ở một vùng"], gom: ["Ai đánh nhiều nhất nhận thưởng", "Pet đánh cũng được tính"], bam: "Bấm để xem lệnh săn", cmd: lenhsan}
+    - {slot: 33, icon: IRON_BARS, name: "&b⚔ &fDungeon", sub: "/dungeon", lore: ["Cày đồ hiếm cùng nhóm"], gom: ["Chuỗi chìa khoá 10 tầng", "Dungeon ẩn, vé, góp quỹ, Cổng Hoang"], bam: "Bấm để xem dungeon", cmd: dungeon}
+    - {slot: 34, icon: GRASS_BLOCK, name: "&b❀ &fThái Ấp", sub: "/thaiap", lore: ["Đất riêng không ai chiếm được"], gom: ["Xây, trồng trọt an toàn", "Có bản sáng tạo riêng"], bam: "Bấm để về Thái Ấp", cmd: thaiap}
+    - {slot: 37, icon: CHEST_MINECART, name: "&d▣ &fBalo", sub: "/balo", lore: ["Túi đồ thêm, mở ở đâu cũng được"], gom: ["Số balo và số ô theo danh phận", "Không mở được khi đang giao tranh"], bam: "Bấm để mở balo", cmd: balo}
+    - {slot: 38, icon: LEATHER_CHESTPLATE, name: "&d☺ &fTủ skin", sub: "/tuskin", lore: ["Lưu nhiều skin, đổi trong 1 bấm"], gom: ["Thêm bằng tên bản quyền hoặc ảnh trên web", "Số ô theo danh phận, rank"], bam: "Bấm để mở tủ", proxy: tuskin}
+    - {slot: 39, icon: COMPARATOR, name: "&d⚙ &fCài đặt cá nhân", sub: "/caidat", lore: ["Bật / tắt theo ý mình"], gom: ["Chat, tin nhắn riêng, nhận TPA", "Bảng bên phải, font tiếng Việt…"], bam: "Bấm để chỉnh", cmd: caidat}
+    - {slot: 40, icon: GOLD_INGOT, name: "&6◆ &fVàng & rank ủng hộ", sub: "%dmmvang_so_du% Vàng", lore: ["Ủng hộ server, nhận Vàng mua trang trí"], gom: ["Rank ủng hộ có tiền tố, hiệu ứng", "Đồ trang trí, đổi tên màu", "Chỉ trang trí, không pay-to-win"], bam: "Bấm để mở ví Vàng", cmd: vang}
+    - {slot: 41, icon: IRON_SWORD, name: "&d⚔ &fĐấu Trường", sub: "PvP", lore: ["Đấu 1v1, 2v2 không mất đồ"], gom: ["Máu cố định 10 tim, công bằng", "Thắng có kinh nghiệm pet"], bam: "Bấm để tới Đấu Trường", cmd: "warp pvp"}
     - {slot: 43, icon: COMPASS, name: "&7➜ &fVề sảnh", lore: ["Chọn chế độ chơi khác"], bam: "Bấm để về sảnh", server: lobby}
 
 # Vàng (20/10): tiền ủng hộ. Nạp tiền thật -> admin duyệt ở trang quản trị › Donate -> cộng Vàng (ví chung toàn mạng, MariaDB network.vang_vi).
@@ -1286,21 +1392,12 @@ vang:
     - "200000:10"
     - "500000:20"
   mon:
-    - {ma: mu, nhom: "Trang trí", ten: "Đội mũ bất kỳ (/hat)", mo-ta: "Đội khối trên tay lên đầu. 30 ngày", gia: 15, ngay: 30,
-       lenh: ["lp user {player} permission settemp essentials.hat true 30d accumulate"]}
-    - {ma: chatmau, nhom: "Tên & chat", ten: "Chat có màu", mo-ta: "Dùng mã màu &a, &e… trong chat. 30 ngày", gia: 15, ngay: 30,
-       lenh: ["lp user {player} permission settemp essentials.chat.color true 30d accumulate"]}
-    - {ma: nick, nhom: "Tên & chat", ten: "Đổi biệt danh (/nick)", mo-ta: "Đặt tên hiển thị khác. 30 ngày", gia: 25, ngay: 30,
-       lenh: ["lp user {player} permission settemp essentials.nick true 30d accumulate"]}
-    - {ma: nickmau, nhom: "Tên & chat", ten: "Biệt danh có màu", mo-ta: "Đổi biệt danh và tô màu cho nó. 30 ngày", gia: 35, ngay: 30,
-       lenh: ["lp user {player} permission settemp essentials.nick true 30d accumulate", "lp user {player} permission settemp essentials.nick.color true 30d accumulate"]}
-    - {ma: hat1, nhom: "Trang trí", ten: "1 hiệu ứng hạt (/pp)", mo-ta: "Hạt bay quanh người, chọn kiểu tuỳ thích. 30 ngày", gia: 30, ngay: 30,
-       lenh: ["lp user {player} permission settemp playerparticles.particles.max.1 true 30d accumulate", "lp user {player} permission settemp playerparticles.effect.* true 30d accumulate", "lp user {player} permission settemp playerparticles.style.* true 30d accumulate"]}
-    - {ma: pet_meo, nhom: "Pet trang trí", ten: "Pet mèo (/pet)", mo-ta: "Mèo trang trí đi theo, không đánh nhau. Vĩnh viễn", gia: 40, ngay: 0,
-       lenh: ["lp user {player} permission set pet.type.cat.* true"]}
-    - {ma: pet_cho, nhom: "Pet trang trí", ten: "Pet chó (/pet)", mo-ta: "Chó trang trí đi theo, không đánh nhau. Vĩnh viễn", gia: 40, ngay: 0,
-       lenh: ["lp user {player} permission set pet.type.wolf.* true"]}
-    - {ma: pet_vet, nhom: "Pet trang trí", ten: "Pet vẹt (/pet)", mo-ta: "Vẹt trang trí đậu vai. Vĩnh viễn", gia: 50, ngay: 0,
-       lenh: ["lp user {player} permission set pet.type.parrot.* true"]}
-    - {ma: tuskin10, nhom: "Trang trí", ten: "Tủ skin 10 ô (/tuskin)", mo-ta: "Lưu tới 10 skin để đổi nhanh. 30 ngày", gia: 20, ngay: 30,
-       lenh: ["lp user {player} permission settemp duckymomo.tuskin.10 true 30d accumulate"]}
+    - {ma: mu, nhom: "Trang trí", ten: "Đội mũ bất kỳ (/hat)", mo-ta: "Đội khối trên tay lên đầu. 30 ngày", gia: 15, ngay: 30, lenh: ["lp user {player} permission settemp essentials.hat true 30d accumulate"]}
+    - {ma: chatmau, nhom: "Tên & chat", ten: "Chat có màu", mo-ta: "Dùng mã màu &a, &e… trong chat. 30 ngày", gia: 15, ngay: 30, lenh: ["lp user {player} permission settemp essentials.chat.color true 30d accumulate"]}
+    - {ma: nick, nhom: "Tên & chat", ten: "Đổi biệt danh (/nick)", mo-ta: "Đặt tên hiển thị khác. 30 ngày", gia: 25, ngay: 30, lenh: ["lp user {player} permission settemp essentials.nick true 30d accumulate"]}
+    - {ma: nickmau, nhom: "Tên & chat", ten: "Biệt danh có màu", mo-ta: "Đổi biệt danh và tô màu cho nó. 30 ngày", gia: 35, ngay: 30, lenh: ["lp user {player} permission settemp essentials.nick true 30d accumulate", "lp user {player} permission settemp essentials.nick.color true 30d accumulate"]}
+    - {ma: hat1, nhom: "Trang trí", ten: "1 hiệu ứng hạt (/pp)", mo-ta: "Hạt bay quanh người, chọn kiểu tuỳ thích. 30 ngày", gia: 30, ngay: 30, lenh: ["lp user {player} permission settemp playerparticles.particles.max.1 true 30d accumulate", "lp user {player} permission settemp playerparticles.effect.* true 30d accumulate", "lp user {player} permission settemp playerparticles.style.* true 30d accumulate"]}
+    - {ma: pet_meo, nhom: "Pet trang trí", ten: "Pet mèo (/pet)", mo-ta: "Mèo trang trí đi theo, không đánh nhau. Vĩnh viễn", gia: 40, ngay: 0, lenh: ["lp user {player} permission set pet.type.cat.* true"]}
+    - {ma: pet_cho, nhom: "Pet trang trí", ten: "Pet chó (/pet)", mo-ta: "Chó trang trí đi theo, không đánh nhau. Vĩnh viễn", gia: 40, ngay: 0, lenh: ["lp user {player} permission set pet.type.wolf.* true"]}
+    - {ma: pet_vet, nhom: "Pet trang trí", ten: "Pet vẹt (/pet)", mo-ta: "Vẹt trang trí đậu vai. Vĩnh viễn", gia: 50, ngay: 0, lenh: ["lp user {player} permission set pet.type.parrot.* true"]}
+    - {ma: tuskin10, nhom: "Trang trí", ten: "Tủ skin 10 ô (/tuskin)", mo-ta: "Lưu tới 10 skin để đổi nhanh. 30 ngày", gia: 20, ngay: 30, lenh: ["lp user {player} permission settemp duckymomo.tuskin.10 true 30d accumulate"]}

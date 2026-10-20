@@ -48,8 +48,22 @@ Sảnh (lobby) chưa restart từ lâu nhưng không bật các module này; res
 
 ### Việc tiếp theo / chờ người dùng
 1. Restart banghoi (xem trên) rồi người dùng test mục 4w.
-2. **Định lại xu toàn server** (bảng đề xuất ở mục 00000 › VIỆC TIẾP THEO 1; trang duyệt docs/dinh-gia-xu.html do phiên khác làm, đang
-   sửa dở trong working tree — ĐỪNG commit đè). Khi chỉnh, nhớ cả giá phần thưởng Gacha và Thăng Cấp money-base.
+2. ~~Định lại xu toàn server~~ **ĐÃ ÁP DỤNG 21/10 ~03:40** (người dùng: "cứ làm như vậy, có người chơi rồi điều chỉnh sau; check mọi chỗ
+   dùng xu kể cả gacha, điểm danh"). Bảng + cách tính: `docs/dinh-gia-xu.html` (artifact SeZHthvXRXHusvgPqknXsh, db `duyet2` nếu người
+   dùng sửa dòng). Giờ công 1.400 xu (1 giờ chơi chăm; /sell mới đã cho 1.400–1.600/giờ). Phí/dịch vụ ×3; quà định kỳ + một lần ×1,5
+   (cả Gacha, điểm danh, nhiệm vụ, kit, vote, thành tích, kho báu, Lệnh săn, dungeon, thi câu, cốt truyện, AuraSkills, treo thưởng tự động);
+   nghề theo nghề (lumberjack/traveler/trader ×1, miner/producer/witcher ×2, farmer/fisher/digger/husbandry/guardian ×3, hunter ×5);
+   GIỮ Thăng Cấp money-base 500 (cấp 10 đã = 31 giờ chơi) và Xưởng; vé dungeon ×1,5; Thái Ấp/khai hoang/quỹ dungeon ×3; Tinh Luyện = 70%
+   giá nguyên liệu; tiền khởi đầu 500; EliteMobs coin 0,6; giá cá ×2; thưởng bán kinh đô 20→10%. Vòng quay cũ + đổi mảnh (đã tắt) không đổi.
+   Áp dụng bằng script chạy trong container panel (app.save_and_apply cho mục Cài đặt + ruamel sửa thẳng data VÀ bản repo: thành tích,
+   kho báu, Lệnh săn, dungeon first-rewards, vote, Towny outpost/reclaim/bonus/takeover/neutrality/spawn travel/bail, CE LostBook, EMF thicau).
+   SỰ CỐ ĐÃ SỬA: lần đầu chạy 2 lần → nhân chồng; viết lại tính từ giá gốc git (6e9ccf4) nên chạy lại không nhân; đã đối chiếu từng tỉ lệ.
+   **Giới hạn bán cho server 8.000 xu/người/ngày** (SellLimit.java, config sell-limit, Cài đặt › Kinh tế, quyền bỏ qua
+   duckymomo.sell.khonggioihan = op): chặn TRƯỚC khi bán (ước lượng theo worth.yml + giá Tinh Luyện; không bao giờ lấy đồ mà không trả),
+   đếm sau khi bán (UserBalanceUpdateEvent COMMAND_SELL ở MONITOR + record() từ Xưởng/Tinh Luyện); DecorShop dùng performCommand (không qua
+   PlayerCommandPreprocessEvent) nên hỏi giới hạn ngay trong DecorShop.sell. Dữ liệu banchoserver.yml. CHƯA thử bằng người (TEST-CHECKLIST 4x).
+   Phát hiện chưa xử lý: zMenu ví dụ `/pro_command` (quyền zmenu.pro) cho 64 kim cương lấy 500 xu — người thường không có quyền, nên gỡ
+   các lệnh ví dụ trong data/banghoi-1/plugins/zMenu/commands/commands.yml khi tiện.
 3. Đề nghị chưa trả lời: tắt kiểm tra cập nhật làm hiện "Bad response status: 403" (packetevents/HoloMobHealth/GrimAC hỏi GitHub bị chặn);
    staff bỏ chờ dịch chuyển; đấu giá thật /daugia; lập thị trấn KinhDo + Liên minh Hoà Bình; hướng dẫn r10 "Phong quân hàm".
 4. Món "Mảnh Lâm Nguy" (lamnguy) còn trong Thư viện đồ — người dùng có thể xoá.

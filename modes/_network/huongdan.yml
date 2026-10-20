@@ -8,8 +8,8 @@
 #   Nền sách màu giấy: tránh &e/&f/&a (khó đọc).
 # - Người chơi điện thoại (Bedrock) thấy cả chương trong một bảng.
 # - SỐ LIỆU (phí thị trấn, lịch công thành, giá...) ghi tay: đổi trên trang Cài đặt thì sửa luôn ở đây.
-#   Đối chiếu 19/10: Towny 500/25/1000 xu, phí 10/100 xu/ngày; hoà bình chờ 2 ngày, rời 14 ngày; Hội đồng nhiệm kỳ 30 ngày;
-#   tổ chức 3 người, 100 xu/tuần; Kiến Trúc Sư đăng ký tuần 12, bình chọn tuần 13; bắt pet gốc 30%, bùa +25%; Thái Ấp 5.000/8.000/15.000.
+#   Đối chiếu 19/10: Towny 1500/75/3000 xu, phí 30/300 xu/ngày (định giá lại 21/10); hoà bình chờ 2 ngày, rời 14 ngày; Hội đồng nhiệm kỳ 30 ngày;
+#   tổ chức 3 người, 300 xu/tuần; Kiến Trúc Sư đăng ký tuần 12, bình chọn tuần 13; bắt pet gốc 30%, bùa +25%; Thái Ấp 5.000/8.000/15.000.
 title: "&6Cẩm nang DuckyMoMo"
 author: "DuckyMoMo"
 toc-title: "&6CẨM NANG &r&8(/hd)\n"
@@ -116,7 +116,7 @@ chapters:
     &6Mới vào
     &0Khu spawn an toàn: không PvP, không phá.
     &4Ra khỏi spawn là có thể bị đánh&0 ngay (không có thời gian bảo vệ người mới).
-    &0Bắt đầu với 200 xu&r&0 + quà tân thủ.
+    &0Bắt đầu với 500 xu&r&0 + quà tân thủ.
     &1/kit &0gói quà: tân thủ, quà theo danh phận
   - |-
     &6Đi lại
@@ -256,16 +256,16 @@ chapters:
   - |-
     &6Thị trấn
     &0Cần 3 giờ&r&0 chơi thật.
-    &1/t new <tên> &0lập (500 xu&r&0)
+    &1/t new <tên> &0lập (1.500 xu&r&0)
     &8Vd: /t new HaNoi
-    &1/t claim &0mua ô 16x16 đang đứng (25 xu&r&0)
+    &1/t claim &0mua ô 16x16 đang đứng (75 xu&r&0)
     &1/t add <tên> &0mời dân
     &1/t kick <tên> &0đuổi
     &1/t deposit <tiền> &0nộp quỹ
     &8Vd: /t deposit 300
   - |-
     &6Thị trấn (tiếp)
-    &0Phí duy trì 10 xu mỗi ngày&r&0, trừ vào quỹ.
+    &0Phí duy trì 30 xu mỗi ngày&r&0, trừ vào quỹ.
     &4Hết quỹ thì thị trấn tan, mất đất!
     &1/t &0thông tin · &1/res &0bạn
     &1/t spawn &0về thị trấn
@@ -282,11 +282,11 @@ chapters:
   - |-
     &6Quốc gia
     &0Gom nhiều thị trấn:
-    &1/n new <tên> &0(1000 xu&r&0, thị trấn bạn là thủ đô)
+    &1/n new <tên> &0(3.000 xu&r&0, thị trấn bạn là thủ đô)
     &1/n add <thị trấn>
     &1/n ally add <nước> &0đồng minh
     &8Vd: /n new DaiViet
-    &0Phí 100 xu/ngày&r&0.
+    &0Phí 300 xu/ngày&r&0.
     &4Chỉ quốc gia mới công thành được, cần ít nhất 2 thị trấn.
   - |-
     &2LIÊN MINH HOÀ BÌNH
@@ -305,7 +305,7 @@ chapters:
   - |-
     &2Quyền lợi hoà bình
     &0Chợ đen &1/choden&0 chỉ dùng trong đất hoà bình.
-    &0Bán &1/sell&0 ở kinh đô được +20%&r&0.
+    &0Bán &1/sell&0 ở kinh đô được +10%&r&0.
     &0Shop rương trong đất hoà bình miễn thuế&r&0 (ngoài: 5%).
     &0Có công thành gần nhà sẽ được báo trước 2 ngày: hãy di tản khỏi vùng vây.
   - |-
@@ -341,7 +341,7 @@ chapters:
     &1/tochuc danhsach
   - |-
     &2Tổ chức: lệnh (tiếp)
-    &4Lưu ý: &0phí giấy phép 100 xu/tuần trừ quỹ, hết quỹ thì giấy phép bị treo. Hết mùa hết hạn.
+    &4Lưu ý: &0phí giấy phép 300 xu/tuần trừ quỹ, hết quỹ thì giấy phép bị treo. Hết mùa hết hạn.
   - |-
     &2Rao hàng
     &0Thành viên Thương Hội có giấy phép:
@@ -394,7 +394,7 @@ chapters:
   - |-
     &6Công thành (1)
     &0Muốn đánh thị trấn địch: cắm banner màu&r&0 (không trắng) sát rìa thị trấn đó.
-    &0Quốc gia trả quỹ chiến tranh&r&0 20 xu mỗi ô đất của thị trấn bị vây.
+    &0Quốc gia trả quỹ chiến tranh&r&0 60 xu mỗi ô đất của thị trấn bị vây.
     &1/sw &0xem cuộc vây.
     &4Lưu ý: &0thị trấn mới lập, vừa bị vây, dân hoà bình không vây được.
   - |-
@@ -461,7 +461,7 @@ chapters:
   pages:
   - |-
     &6Kiếm tiền
-    &0Bắt đầu 200 xu&r&0. &1/bal &0xem tiền.
+    &0Bắt đầu 500 xu&r&0. &1/bal &0xem tiền.
     &2Nghề (tự động):&0 đào quặng, chặt cây, săn quái, trồng, câu cá đều có tiền.
     &1/jobs &0cấp nghề, cách kiếm.
     &4Lưu ý: &0phá lại khối tự đặt không có tiền; nhiệm vụ ngày cũng không tính.
@@ -471,7 +471,7 @@ chapters:
     &1/sell all &0bán hết túi
     &1/worth &0xem giá món đang cầm
     &0Biển [Sell]&r&0 ở spawn: bấm để bán.
-    &8Đá cuội, đất, cát không bán được. Bán ở kinh đô +20%.
+    &8Bán ở kinh đô +10%. Mỗi ngày bán cho server tối đa 8.000 xu (mới lại lúc 0 giờ).
   - |-
     &6Chuyển tiền
     &1/pay <tên> <xu>
@@ -506,7 +506,7 @@ chapters:
     &6Dân làng bán hàng
     &0NPC dân làng ở spawn: bấm chuột phải để mua/bán như dân làng thường.
     &1/shopsearch <món> &0tìm shop
-    &8Bán đồ cho shop admin tối đa 1.000 xu/ngày.
+    &8Bán đồ cho shop admin tối đa 1.500 xu/ngày.
   - |-
     &6Cửa hàng Kinh Đô
     &0Bấm NPC cửa hàng&r&0 ở spawn: vật liệu (đất, đá, kính…), đồ trang trí, danh hiệu, trả bằng xu.
@@ -552,7 +552,7 @@ chapters:
     &0Ghép bằng đe&r&0. Hiếm nên bán được giá cao!
   - |-
     &6Shop phù phép /ce
-    &0Mua sách phù phép lạ: &2Thường 300 xu&0, &1Hiếm 800 xu&0. Kéo sách thả vào đồ để ghép.
+    &0Mua sách phù phép lạ: &2Thường 900 xu&0, &1Hiếm 2.400 xu&0. Kéo sách thả vào đồ để ghép.
     &4Sách ghi tỉ lệ thành công và tỉ lệ vỡ đồ!
     &0Cuộn giấy trắng&r&0 giữ đồ khi ghép hỏng.
     &1/blacksmith &0gộp sách
@@ -652,7 +652,7 @@ chapters:
   - |-
     &2THÁI ẤP
     &0Đất riêng an toàn ở thế giới riêng: không PvP, không quái, không quặng. Để xây, làm nông, nuôi pet.
-    &1/thaiap mua &0(5.000 xu, cạnh 50 khối)
+    &1/thaiap mua &0(15.000 xu, cạnh 50 khối)
     &1/thaiap morong &0(8.000 → 70, 15.000 → 90)
     &1/thaiap &0về Thái Ấp
   - |-
@@ -719,7 +719,7 @@ chapters:
     &6ĐẤU TRƯỜNG
     &0Người + pet đấu 1v1&r&0 hoặc 2v2&r&0, đồ của mình, &2chết không rơi đồ&0.
     &1/warp pvp &0tới sảnh đấu: bước vào 1 trong 3 cổng để chọn sân, vào hàng chờ.
-    &0Thắng +50 xu (5 trận có thưởng/ngày), trận tối đa 3 phút.
+    &0Thắng +75 xu (5 trận có thưởng/ngày), trận tối đa 3 phút.
   - |-
     &6Đấu Trường: lệnh
     &1/dautruong thachdau <người>
@@ -737,7 +737,7 @@ chapters:
   pages:
   - |-
     &2ĐIỂM DANH
-    &0Mỗi ngày gõ &1/diemdanh&0 (online đủ 5 phút) nhận 100 xu.
+    &0Mỗi ngày gõ &1/diemdanh&0 (online đủ 5 phút) nhận 150 xu.
     &0Đủ 7, 14, 30 ngày&r&0 có quà mốc (kim cương, táo vàng…).
     &0Bỏ một ngày không mất&r&0 chuỗi.
     &1/diemdanh xem &0tiến độ
@@ -755,7 +755,7 @@ chapters:
   - |-
     &2VOTE MIỄN PHÍ
     &0Gõ &1/vote&0, bấm link, nhập đúng tên&r&0 trong game.
-    &0Mỗi lượt &6100 xu&0, 7 ngày liền thêm &6500 xu&0, mỗi 30 lượt cả server có &5Vote Party&0.
+    &0Mỗi lượt &6150 xu&0, 7 ngày liền thêm &6750 xu&0, mỗi 30 lượt cả server có &5Vote Party&0.
     &1/vote top &0bảng vote tháng
   - |-
     &6RANK ỦNG HỘ

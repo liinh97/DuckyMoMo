@@ -15,7 +15,7 @@ catch-type: CATCH
 size:
   minSize: 20
   maxSize: 60
-worth-multiplier: 0.08
+worth-multiplier: 0.16
 fish:
   CaThu:
     displayname: 'Cá thu'

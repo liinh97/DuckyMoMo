@@ -3,25 +3,25 @@
 patterns: []
 levels:
   5:
-  - type: command
-    executor: console
-    command: eco give {player} 200
-    menu_message: '&aThưởng xu mốc cấp'
+    - type: command
+      executor: console
+      command: eco give {player} 300
+      menu_message: '&aThưởng xu mốc cấp'
   10:
-  - type: command
-    executor: console
-    command: eco give {player} 400
-    menu_message: '&aThưởng xu mốc cấp'
+    - type: command
+      executor: console
+      command: eco give {player} 600
+      menu_message: '&aThưởng xu mốc cấp'
   15:
-  - type: command
-    executor: console
-    command: eco give {player} 700
-    menu_message: '&aThưởng xu mốc cấp'
+    - type: command
+      executor: console
+      command: eco give {player} 1050
+      menu_message: '&aThưởng xu mốc cấp'
   20:
-  - type: command
-    executor: console
-    command: eco give {player} 1200
-    menu_message: '&aThưởng xu mốc cấp'
-  - type: stat
-    stat: health
-    value: 1
+    - type: command
+      executor: console
+      command: eco give {player} 1800
+      menu_message: '&aThưởng xu mốc cấp'
+    - type: stat
+      stat: health
+      value: 1

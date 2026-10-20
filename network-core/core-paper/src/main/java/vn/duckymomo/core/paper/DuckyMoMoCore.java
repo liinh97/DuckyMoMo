@@ -101,6 +101,10 @@ public final class DuckyMoMoCore extends JavaPlugin {
     }
 
     private void teardown() {
+        SellLimit sl = Shared.sellLimit;
+        if (sl != null) {
+            sl.flush();
+        }
         Backpack bp = Shared.backpack;
         if (bp != null) {
             bp.saveAll();
@@ -643,6 +647,14 @@ public final class DuckyMoMoCore extends JavaPlugin {
         }
         Frontier fr = frontier;
         bind("khaihoang", fr == null ? null : fr::command, "Khai hoang vùng mới");
+
+        // Giới hạn tiền bán cho server mỗi ngày (21/10, chống lạm phát): /sell, Rìu Bán của Xưởng, món Tinh Luyện (sell-limit.enabled)
+        SellLimit sellLimit = getConfig().getBoolean("sell-limit.enabled") && getConfig().isConfigurationSection("sell-limit")
+                ? new SellLimit(this, getConfig().getConfigurationSection("sell-limit")) : null;
+        if (sellLimit != null) {
+            getServer().getPluginManager().registerEvents(sellLimit, this);
+            sellLimit.start();
+        }
 
         // Xưởng chế tạo /xuong: đồ có lượt dùng + hạn (Bang Hội Chiến: workshop.enabled)
         Workshop workshop = getConfig().getBoolean("workshop.enabled") && getConfig().isConfigurationSection("workshop")

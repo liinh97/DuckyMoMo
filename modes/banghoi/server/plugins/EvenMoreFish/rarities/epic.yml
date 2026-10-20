@@ -15,7 +15,7 @@ catch-type: CATCH
 size:
   minSize: 40
   maxSize: 100
-worth-multiplier: 0.15
+worth-multiplier: 0.3
 fish:
   CaBop:
     displayname: 'Cá bớp'

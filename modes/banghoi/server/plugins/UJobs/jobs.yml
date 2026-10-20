@@ -23,148 +23,148 @@ jobs:
       kill:
         zombie:
           exp: 2
-          money: 0.25
+          money: 1.25
         skeleton:
           exp: 2
-          money: 0.25
+          money: 1.25
         spider:
           exp: 2
-          money: 0.25
+          money: 1.25
         creeper:
           exp: 2
-          money: 0.25
+          money: 1.25
         cave_spider:
           exp: 2.1
-          money: 0.3
+          money: 1.5
         husk:
           exp: 2.05
-          money: 0.275
+          money: 1.375
         stray:
           exp: 2.2
-          money: 0.375
+          money: 1.875
         drowned:
           exp: 2.1
-          money: 0.325
+          money: 1.625
         enderman:
           exp: 2.5
-          money: 0.375
+          money: 1.875
         blaze:
           exp: 2.5
-          money: 0.375
+          money: 1.875
         elder_guardian:
           exp: 20
-          money: 12.5
+          money: 62.5
         endermite:
           exp: 3
-          money: 0.75
+          money: 3.75
         evoker:
           exp: 5
-          money: 2.5
+          money: 12.5
         guardian:
           exp: 2.3
-          money: 0.425
+          money: 2.125
         vindicator:
           exp: 2.9
-          money: 0.35
+          money: 1.75
         piglin:
           exp: 2.2
-          money: 0.3
+          money: 1.5
         piglin_brute:
           exp: 10
-          money: 17.5
+          money: 87.5
         pillager:
           exp: 2.1
-          money: 0.275
+          money: 1.375
         ravager:
           exp: 5
-          money: 6.25
+          money: 31.25
         silverfish:
           exp: 1
-          money: 0.025
+          money: 0.125
         vex:
           exp: 2
-          money: 0.25
+          money: 1.25
         warden:
           exp: 100
-          money: 25.0
+          money: 125.0
         witch:
           exp: 3
-          money: 0.75
+          money: 3.75
         wither:
           exp: 50
-          money: 12.5
+          money: 62.5
         wither_skeleton:
           exp: 2.5
-          money: 0.375
+          money: 1.875
         zoglin:
           exp: 2.3
-          money: 0.325
+          money: 1.625
         zombie_villager:
           exp: 2.3
-          money: 0.325
+          money: 1.625
         ender_dragon:
           exp: 250
-          money: 62.5
+          money: 312.5
         pig:
           exp: 1
-          money: 0.025
+          money: 0.125
         chicken:
           exp: 1
-          money: 0.025
+          money: 0.125
         sheep:
           exp: 1
-          money: 0.025
+          money: 0.125
         cow:
           exp: 1
-          money: 0.025
+          money: 0.125
         cod:
           exp: 2.2
-          money: 0.45
+          money: 2.25
         salmon:
           exp: 2.2
-          money: 0.45
+          money: 2.25
         pufferfish:
           exp: 2.9
-          money: 0.725
+          money: 3.625
         tropical_fish:
           exp: 2.7
-          money: 0.675
+          money: 3.375
         horse:
           exp: 2.1
-          money: 0.3
+          money: 1.5
         donkey:
           exp: 2.1
-          money: 0.3
+          money: 1.5
         wolf:
           exp: 2.4
-          money: 0.6
+          money: 3.0
         fox:
           exp: 4
-          money: 1.0
+          money: 5.0
         rabbit:
           exp: 3
-          money: 0.875
+          money: 4.375
         iron_golem:
           exp: 5
-          money: 1.25
+          money: 6.25
         goat:
           exp: 2.3
-          money: 0.75
+          money: 3.75
         llama:
           exp: 2.1
-          money: 0.525
+          money: 2.625
         squid:
           exp: 2.7
-          money: 0.675
+          money: 3.375
         glow_squid:
           exp: 2.8
-          money: 0.7
+          money: 3.5
         mooshroom:
           exp: 5
-          money: 1.25
+          money: 6.25
         strider:
           exp: 2.5
-          money: 0.375
+          money: 1.875
   miner:
     name: "<gradient:#9B9B9B:#646464>Thợ mỏ"
     bossbar:
@@ -182,106 +182,106 @@ jobs:
       break:
         stone:
           exp: 0.1
-          money: 0.02
+          money: 0.04
         deepslate:
           exp: 0.11
-          money: 0.022
+          money: 0.044
         coal_ore:
           exp: 1
-          money: 0.5
+          money: 1.0
         deepslate_coal_ore:
           exp: 1.1
-          money: 0.55
+          money: 1.1
         iron_ore:
           exp: 1.1
-          money: 0.55
+          money: 1.1
         deepslate_iron_ore:
           exp: 1.2
-          money: 0.6
+          money: 1.2
         copper_ore:
           exp: 1.2
-          money: 0.6
+          money: 1.2
         deepslate_copper_ore:
           exp: 1.3
-          money: 0.65
+          money: 1.3
         gold_ore:
           exp: 1.4
-          money: 0.7
+          money: 1.4
         deepslate_gold_ore:
           exp: 1.5
-          money: 0.75
+          money: 1.5
         redstone_ore:
           exp: 1.3
-          money: 0.65
+          money: 1.3
         deepslate_redstone_ore:
           exp: 1.4
-          money: 0.7
+          money: 1.4
         emerald_ore:
           exp: 1.6
-          money: 0.8
+          money: 1.6
         deepslate_emerald_ore:
           exp: 1.7
-          money: 0.85
+          money: 1.7
         lapis_ore:
           exp: 1.5
-          money: 0.75
+          money: 1.5
         deepslate_lapis_ore:
           exp: 1.6
-          money: 0.8
+          money: 1.6
         diamond_ore:
           exp: 1.7
-          money: 0.85
+          money: 1.7
         deepslate_diamond_ore:
           exp: 1.8
-          money: 0.9
+          money: 1.8
         nether_gold_ore:
           exp: 1
-          money: 0.5
+          money: 1.0
         nether_quartz_ore:
           exp: 1.1
-          money: 0.55
+          money: 1.1
         netherrack:
           exp: 0.08
-          money: 0.016
+          money: 0.032
         gilded_blackstone:
           exp: 1.2
-          money: 0.6
+          money: 1.2
         blackstone:
           exp: 0.1
-          money: 0.02
+          money: 0.04
         basalt:
           exp: 0.1
-          money: 0.02
+          money: 0.04
         end_stone:
           exp: 0.1
-          money: 0.02
+          money: 0.04
         diorite:
           exp: 0.1
-          money: 0.02
+          money: 0.04
         andesite:
           exp: 0.1
-          money: 0.02
+          money: 0.04
         granite:
           exp: 0.1
-          money: 0.02
+          money: 0.04
         sandstone:
           exp: 0.1
-          money: 0.02
+          money: 0.04
         tuff:
           exp: 0.1
-          money: 0.02
+          money: 0.04
         calcite:
           exp: 0.1
-          money: 0.02
+          money: 0.04
         smooth_basalt:
           exp: 0.1
-          money: 0.02
+          money: 0.04
         amethyst_block:
           exp: 0.1
-          money: 0.02
+          money: 0.04
         amethyst_cluster:
           exp: 0.1
-          money: 0.05
+          money: 0.1
   farmer:
     name: "<gradient:#FFD500:#FF9B00>Nông dân"
     bossbar:
@@ -299,27 +299,27 @@ jobs:
       break:
         wheat7:
           exp: 1
-          money: 0.05
+          money: 0.15
         potatoes7:
           exp: 1
-          money: 0.05
+          money: 0.15
         carrots7:
           exp: 1
-          money: 0.05
+          money: 0.15
         beetroots3:
           exp: 1.1
-          money: 0.055
+          money: 0.165
         melon:
           exp: 1
-          money: 0.05
+          money: 0.15
         #bamboo
       harvest:
         glow_berries:
           exp: 1
-          money: 0.05
+          money: 0.15
         sweet_berries:
           exp: 1
-          money: 0.05
+          money: 0.15
   husbandry:
     name: "<gradient:#FF00BD:#AA4B00>Chăn nuôi"
     bossbar:
@@ -337,107 +337,107 @@ jobs:
       breed:
         pig:
           exp: 1
-          money: 0.03
+          money: 0.09
         chicken:
           exp: 1
-          money: 0.03
+          money: 0.09
         cow:
           exp: 1
-          money: 0.03
+          money: 0.09
         sheep:
           exp: 1
-          money: 0.03
+          money: 0.09
         horse:
           exp: 1
-          money: 0.03
+          money: 0.09
         donkey:
           exp: 1
-          money: 0.03
+          money: 0.09
         mule:
           exp: 1
-          money: 0.03
+          money: 0.09
         llama:
           exp: 1
-          money: 0.03
+          money: 0.09
         trader_llama:
           exp: 1
-          money: 0.03
+          money: 0.09
         rabbit:
           exp: 1
-          money: 0.03
+          money: 0.09
         fox:
           exp: 1
-          money: 0.03
+          money: 0.09
         wolf:
           exp: 1
-          money: 0.03
+          money: 0.09
         cat:
           exp: 1
-          money: 0.03
+          money: 0.09
         turtle:
           exp: 1
-          money: 0.03
+          money: 0.09
         bee:
           exp: 1
-          money: 0.03
+          money: 0.09
         camel:
           exp: 1
-          money: 0.03
+          money: 0.09
         panda:
           exp: 1
-          money: 0.03
+          money: 0.09
         parrot:
           exp: 1
-          money: 0.03
+          money: 0.09
         polar_bear:
           exp: 1
-          money: 0.03
+          money: 0.09
         frog:
           exp: 1
-          money: 0.03
+          money: 0.09
         axolotl:
           exp: 1
-          money: 0.03
+          money: 0.09
         mooshroom:
           exp: 1
-          money: 0.03
+          money: 0.09
         ocelot:
           exp: 1
-          money: 0.03
+          money: 0.09
         strider:
           exp: 1
-          money: 0.03
+          money: 0.09
         sniffer:
           exp: 1
-          money: 0.03
+          money: 0.09
       tame:
         wolf:
           exp: 1
-          money: 0.03
+          money: 0.09
         cat:
           exp: 1
-          money: 0.03
+          money: 0.09
         camel:
           exp: 1
-          money: 0.03
+          money: 0.09
         horse:
           exp: 1
-          money: 0.03
+          money: 0.09
         mule:
           exp: 1
-          money: 0.03
+          money: 0.09
         donkey:
           exp: 1
-          money: 0.03
+          money: 0.09
         trader_llama:
           exp: 1
-          money: 0.03
+          money: 0.09
         llama:
           exp: 1
-          money: 0.03
+          money: 0.09
         parrot:
           exp: 1
-          money: 0.03
+          money: 0.09
   fisher:
     name: "<gradient:#00D8FF:#0A75C8>Ngư dân"
     bossbar:
@@ -455,16 +455,16 @@ jobs:
       fish:
         cod:
           exp: 1
-          money: 0.5
+          money: 1.5
         salmon:
           exp: 1
-          money: 0.5
+          money: 1.5
         tropical_fish:
           exp: 3
-          money: 1.5
+          money: 4.5
         pufferfish:
           exp: 2.5
-          money: 1.25
+          money: 3.75
   witcher:
     name: "<gradient:#FF00FB:#9B00FF>Phù thuỷ"
     bossbar:
@@ -482,98 +482,98 @@ jobs:
       enchant:
         1:
           exp: 1
-          money: 0.1
+          money: 0.2
         2:
           exp: 2
-          money: 0.2
+          money: 0.4
         3:
           exp: 3
-          money: 0.3
+          money: 0.6
         4:
           exp: 4
-          money: 0.4
+          money: 0.8
         5:
           exp: 5
-          money: 0.5
+          money: 1.0
         6:
           exp: 6
-          money: 0.6
+          money: 1.2
         7:
           exp: 7
-          money: 0.7
+          money: 1.4
         8:
           exp: 8
-          money: 0.8
+          money: 1.6
         9:
           exp: 9
-          money: 0.9
+          money: 1.8
         10:
           exp: 10
-          money: 1.0
+          money: 2.0
         11:
           exp: 11
-          money: 1.1
+          money: 2.2
         12:
           exp: 12
-          money: 1.2
+          money: 2.4
         13:
           exp: 13
-          money: 1.3
+          money: 2.6
         14:
           exp: 14
-          money: 1.4
+          money: 2.8
         15:
           exp: 15
-          money: 1.5
+          money: 3.0
         16:
           exp: 16
-          money: 1.6
+          money: 3.2
         17:
           exp: 17
-          money: 1.7
+          money: 3.4
         18:
           exp: 18
-          money: 1.8
+          money: 3.6
         19:
           exp: 19
-          money: 1.9
+          money: 3.8
         20:
           exp: 20
-          money: 2.0
+          money: 4.0
         21:
           exp: 21
-          money: 2.1
+          money: 4.2
         22:
           exp: 22
-          money: 2.2
+          money: 4.4
         23:
           exp: 23
-          money: 2.3
+          money: 4.6
         24:
           exp: 24
-          money: 2.4
+          money: 4.8
         25:
           exp: 25
-          money: 2.5
+          money: 5.0
         26:
           exp: 26
-          money: 2.6
+          money: 5.2
         27:
           exp: 27
-          money: 2.7
+          money: 5.4
         28:
           exp: 28
-          money: 2.8
+          money: 5.6
         29:
           exp: 29
-          money: 2.9
+          money: 5.8
         30:
           exp: 30
-          money: 3.0
+          money: 6.0
       anvil_merge:
         enchanted_book:
           exp: 1.5
-          money: 1.5
+          money: 3.0
   lumberjack:
     name: "<gradient:#CB7800:#00B503>Tiều phu"
     bossbar:
@@ -642,37 +642,37 @@ jobs:
       break:
         sand:
           exp: 1
-          money: 0.02
+          money: 0.06
         red_sand:
           exp: 1.1
-          money: 0.022
+          money: 0.066
         clay:
           exp: 2
-          money: 0.04
+          money: 0.12
         mud:
           exp: 1.5
-          money: 0.03
+          money: 0.09
         gravel:
           exp: 1.25
-          money: 0.025
+          money: 0.075
         mycelium:
           exp: 2
-          money: 0.04
+          money: 0.12
         podzol:
           exp: 1.1
-          money: 0.022
+          money: 0.066
         coarse_dirt:
           exp: 1.1
-          money: 0.022
+          money: 0.066
         dirt:
           exp: 1
-          money: 0.02
+          money: 0.06
         grass_block:
           exp: 1
-          money: 0.02
+          money: 0.06
         soul_sand:
           exp: 2
-          money: 0.04
+          money: 0.12
   gladiator:
     name: "<gradient:#FF0000:#FFFF00>Đấu sĩ"
     bossbar:
@@ -708,10 +708,10 @@ jobs:
       raid:
         win:
           exp: 10
-          money: 0.2
+          money: 0.6
         wave:
           exp: 1
-          money: 0.02
+          money: 0.06
   producer:
     name: "<gradient:#A26238:#AF8D5B>Thợ chế tạo"
     bossbar:
@@ -729,46 +729,46 @@ jobs:
       craft:
         piston:
           exp: 1
-          money: 0.1
+          money: 0.2
         sticky_piston:
           exp: 0.1
-          money: 0.01
+          money: 0.02
         lectern:
           exp: 1
-          money: 0.1
+          money: 0.2
         redstone_lamp:
           exp: 1
-          money: 0.1
+          money: 0.2
         tnt:
           exp: 0.5
-          money: 0.05
+          money: 0.1
         dispenser:
           exp: 0.5
-          money: 0.05
+          money: 0.1
         dropper:
           exp: 0.4
-          money: 0.04
+          money: 0.08
         target:
           exp: 1
-          money: 0.1
+          money: 0.2
         repeater:
           exp: 1.5
-          money: 0.15
+          money: 0.3
         comparator:
           exp: 3
-          money: 0.3
+          money: 0.6
         daylight_detector:
           exp: 5
-          money: 0.5
+          money: 1.0
         note_block:
           exp: 0.5
-          money: 0.05
+          money: 0.1
         observer:
           exp: 1
-          money: 0.1
+          money: 0.2
         minecart:
           exp: 0.2
-          money: 0.02
+          money: 0.04
   trader:
     name: "<gradient:#0CFF00:#F7FF00>Thương nhân"
     bossbar:

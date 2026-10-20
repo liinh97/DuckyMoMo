@@ -758,6 +758,7 @@ final class Workshop implements Listener {
         Inventory inv = box.getInventory();
         double total = 0;
         int count = 0;
+        List<Integer> slots = new ArrayList<>();
         for (int i = 0; i < inv.getSize(); i++) {
             ItemStack s = inv.getItem(i);
             if (s == null || s.hasItemMeta() && !s.isSimilar(new ItemStack(s.getType()))) {
@@ -769,13 +770,21 @@ final class Workshop implements Listener {
             }
             total += price * s.getAmount();
             count += s.getAmount();
-            inv.setItem(i, null);
+            slots.add(i);
         }
         if (count == 0) {
             p.sendActionBar(c("&7Rương không có gì bán được (bảng giá /sell)."));
             return;
         }
+        SellLimit limit = Shared.sellLimit;
+        if (limit != null && !limit.allow(p, total)) {
+            return;   // vượt giới hạn bán mỗi ngày: rương giữ nguyên, không tốn lượt rìu
+        }
+        slots.forEach(i -> inv.setItem(i, null));
         VaultEconomy.deposit(p, total);
+        if (limit != null) {
+            limit.record(p, total);
+        }
         Frontier f = Shared.frontier;
         if (f != null) {
             f.addSale(p, total);   // như /sell: góp % vào quỹ khai hoang

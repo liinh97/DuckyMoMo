@@ -15,6 +15,8 @@ final class Shared {
     static volatile Refining refining;
     static volatile Backpack backpack;
     static volatile MediaProgram media;
+    /** Giới hạn tiền bán cho server mỗi ngày (null = tắt). */
+    static volatile SellLimit sellLimit;
     /** Thư viện đồ: mọi module lấy vật phẩm đặc biệt từ đây (Xưởng, món ăn, Tinh Luyện, mảnh, bùa, boss). */
     static volatile ItemLibrary library;
 
@@ -66,6 +68,7 @@ final class Shared {
         refining = null;
         backpack = null;
         media = null;
+        sellLimit = null;
         library = null;
         ItemLibrary.STAMPERS.clear();
         FORGET.clear();

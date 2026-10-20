@@ -15,7 +15,7 @@ catch-type: CATCH
 size:
   minSize: 80
   maxSize: 250
-worth-multiplier: 0.3
+worth-multiplier: 0.6
 fish:
   CaAnhVu:
     displayname: 'Cá anh vũ'

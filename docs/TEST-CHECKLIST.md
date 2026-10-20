@@ -336,3 +336,18 @@ Tiền, tin nhắn, khác
 - [ ] Điểm danh, nhiệm vụ hằng ngày, vòng quay, đổi mảnh (`/doimanh`, giá bằng cá), cửa hàng Kinh Đô, xưởng chế tạo.
 - [ ] Boss / sự kiện "Trái Đất lâm nguy" (EliteMobs), chia thưởng.
 - [ ] Client cũ (1.8–1.20) và Bedrock: vào được, AuthMe, form.
+
+## 4x. 21/10: định lại xu toàn server + giới hạn bán cho server — đã triển khai (banghoi restart 03:40), CHƯA thử bằng người
+Bảng giá đầy đủ: `docs/dinh-gia-xu.html` (artifact SeZHthvXRXHusvgPqknXsh). Lộ trình test: k16, k17. Dùng tài khoản THƯỜNG (admin không bị giới hạn bán).
+- [ ] Người mới vào có 500 xu; /choilai lần đầu trong mùa 500 xu.
+- [ ] /diemdanh 150 xu (+ vé Gacha); mốc 7/14/30 ngày 750/1.500/4.500.
+- [ ] /gacha: ô xu Điểm Danh 150 · 375 · 2.250, Chăm Chỉ 225 · 3.000 (tên ô ghi đúng số).
+- [ ] /nhiemvu: thưởng 150 hoặc 225 mỗi nhiệm vụ, xong hết +450.
+- [ ] /jobs: zombie 1,25 xu, đá 0,04, quặng kim cương sâu 1,8, lúa mì 0,15, cá 1,5, khúc gỗ 0,3 (giữ).
+- [ ] /kit: Dân 75, Lương Dân 150, Hào Kiệt 300 xu.
+- [ ] Towny: /t new 1.500, /t claim 75, /n new 3.000, phí duy trì 30/300 mỗi ngày; tiền đồn 1.500.
+- [ ] /ce: sách Thường 900, Hiếm 2.400; cuộn trắng 6.000. /thaiap 15.000. /capdo cấp 1 vẫn 500 xu.
+- [ ] /sell ở kinh đô thưởng +10% (trước 20%). Giá cá /emf shop gấp đôi.
+- [ ] Giới hạn 8.000 xu/ngày: qua 80% có dòng báo; lần bán vượt bị từ chối, không mất đồ, báo còn bao nhiêu; chặn cả nút bán /cuahang, Rìu Bán, món Tinh Luyện; /choden không bị chặn.
+- [ ] /hd (Kiếm tiền, Thị trấn, Vote, Điểm danh…) ghi đúng số mới.
+

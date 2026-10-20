@@ -25,20 +25,20 @@ alerts:
   - "1:00"
 rewards:
   '1':
-    - MESSAGE:<green>Giải nhất thi câu cá! +1000 xu
-    - MONEY:1000
+    - MESSAGE:<green>Giải nhất thi câu cá! +1500 xu
+    - MONEY:1500
     - COMMAND:buabatpet give {player} 3
     - MESSAGE:<aqua>+3 Bùa bắt pet (cầm tay trái khi bắt pet)
   '2':
-    - MESSAGE:<aqua>Giải nhì thi câu cá! +500 xu
-    - MONEY:500
+    - MESSAGE:<aqua>Giải nhì thi câu cá! +750 xu
+    - MONEY:750
     - COMMAND:buabatpet give {player} 2
     - MESSAGE:<aqua>+2 Bùa bắt pet (cầm tay trái khi bắt pet)
   '3':
-    - MESSAGE:<yellow>Giải ba thi câu cá! +300 xu
-    - MONEY:300
+    - MESSAGE:<yellow>Giải ba thi câu cá! +450 xu
+    - MONEY:450
     - COMMAND:buabatpet give {player} 1
     - MESSAGE:<aqua>+1 Bùa bắt pet (cầm tay trái khi bắt pet)
   participation:
-    - MESSAGE:<gray>Cảm ơn đã tham gia thi câu! +50 xu
-    - MONEY:50
+    - MESSAGE:<gray>Cảm ơn đã tham gia thi câu! +75 xu
+    - MONEY:75

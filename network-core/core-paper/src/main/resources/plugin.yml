@@ -179,6 +179,9 @@ permissions:
   duckymomo.choilai.admin:
     description: "Reset người chơi khác (/choilai admin <tên> [moi] [giurank]); trang quản trị › Hệ thống dùng qua RCON"
     default: op
+  duckymomo.sell.khonggioihan:
+    description: "Không bị giới hạn tiền bán cho server mỗi ngày (sell-limit)"
+    default: op
   duckymomo.kit.admin:
     description: "Phát gói quà cho người khác, xoá lượt đã nhận (/kit <mã> <người>, /kit lamlai)"
     default: op

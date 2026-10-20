@@ -15,7 +15,7 @@ catch-type: CATCH
 size:
   minSize: 10
   maxSize: 40
-worth-multiplier: 0.03
+worth-multiplier: 0.06
 fish:
   CaRoDong:
     displayname: 'Cá rô đồng'

@@ -352,6 +352,15 @@ groups:
         note: "Nên để Không: máy để English vẫn thấy tiếng Việt. Có = máy English thấy tiếng Anh (20/10 bị bật nhầm vì nhãn cũ ghi sai)."
         options: [ { value: false, label: "Không: mọi người đều thấy tiếng Việt (khuyên dùng)" }, { value: true, label: "Có: theo ngôn ngữ máy (máy English thấy tiếng Anh)" } ]
 
+      - { key: sell_limit_on, label: Giới hạn tiền bán cho server mỗi ngày, type: select, file: plugins/DuckyMoMoCore/config.yml, path: sell-limit.enabled,
+          commands: [dmm reload],
+          options: [ { value: true, label: "Bật (khuyên dùng): chặn farm tự động in tiền" }, { value: false, label: "Tắt: bán bao nhiêu cũng được" } ],
+          info: "Tính /sell, nút bán ở /cuahang, Rìu Bán của Xưởng, món Tinh Luyện. Bán cho người chơi (/choden, shop rương, /trade) không tính.
+Mới lại lúc 0 giờ. Vượt mức thì lần bán bị từ chối (không mất đồ), người chơi được báo còn bán được bao nhiêu.
+Admin (quyền duckymomo.sell.khonggioihan) không bị giới hạn." }
+      - { key: sell_limit_daily, label: Mỗi người bán cho server tối đa (xu/ngày), type: int, min: 0, max: 100000000,
+          file: plugins/DuckyMoMoCore/config.yml, path: sell-limit.daily, commands: [dmm reload],
+          note: "8.000 ≈ 5–6 giờ chơi chăm (21/10: 1 giờ chặt gỗ hoặc đào mỏ ≈ 1.400–1.600 xu)." }
   - title: Combat
     category: PvP & combat
     apply: [ocm reload]

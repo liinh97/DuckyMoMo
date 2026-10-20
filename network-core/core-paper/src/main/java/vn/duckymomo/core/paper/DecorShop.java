@@ -472,6 +472,10 @@ final class DecorShop implements Listener {
             p.sendMessage(c("&cTrong túi không có " + Rewards.vi(m.name()) + " (đồ thường) để bán."));
             return;
         }
+        SellLimit limit = Shared.sellLimit;   // performCommand không qua PlayerCommandPreprocessEvent nên hỏi giới hạn ở đây
+        if (limit != null && !limit.allow(p, limit.unitPrice(new ItemStack(m)) * (all ? have : Math.min(lot, have)))) {
+            return;
+        }
         p.performCommand("sell " + m.name().toLowerCase(Locale.ROOT) + (all ? "" : " " + Math.min(lot, have)));
         plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
             if (p.isOnline() && p.getOpenInventory().getTopInventory().getHolder() == h) {

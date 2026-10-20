@@ -25,11 +25,11 @@ constants:
   c1_so_sat: 16
   c1_so_quang: 24
   # Chương 1: thưởng (xu) từng bước và thưởng kết chương
-  c1_thuong_b1: 300
-  c1_thuong_b2: 300
-  c1_thuong_b3: 400
-  c1_thuong_b4: 300
-  c1_thuong_ket: 1500
+  c1_thuong_b1: 450
+  c1_thuong_b2: 450
+  c1_thuong_b3: 600
+  c1_thuong_b4: 450
+  c1_thuong_ket: 2250
   c1_thuong_kn: 200
   # Lữ khách (lukhach/): thưởng (xu) khi đi qua Cổng Hoang rồi về kể, mỗi lữ khách 1 lần
-  lk_thuong: 1000
+  lk_thuong: 1500

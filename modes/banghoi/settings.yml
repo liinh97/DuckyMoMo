@@ -12,16 +12,16 @@ siege_session_minutes: 60
 siege_sessions_per_siege: 4
 siege_weeks: weekly
 siege_max_attacks: 2
-siege_warchest_per_plot: 20.0
-siege_plunder_per_plot: 40.0
+siege_warchest_per_plot: 60.0
+siege_plunder_per_plot: 120.0
 siege_plunder_over_time: true
 siege_plunder_days: 7
 ldt_on: true
 ldt_hours: 5
 ldt_contract: 48
 ldt_fee: 10
-ldt_min: 100
-ldt_max: 100000
+ldt_min: 300.0
+ldt_max: 300000.0
 ldt_ranks: [general, colonel, co-king]
 lp_on: true
 lp_threshold: 15
@@ -41,16 +41,16 @@ dgt_frag_fish: 3
 dgt_frag_day: 3
 dgt_week_on: true
 dgt_week_rw:
-  - xu 1500
+  - xu 2250
 dgt_week_max: 3
 dgt_reveal: 40
-dgt_kc_price: 3000
-dgt_sw_price: 5000
-dgt_fw_goal: 100000
+dgt_kc_price: 4500
+dgt_sw_price: 7500
+dgt_fw_goal: 300000
 dgt_fw_days: 7
-dgt_hs_goal: 150000
+dgt_hs_goal: 450000
 dgt_hs_days: 7
-dgt_bw_goal: 1000000
+dgt_bw_goal: 3000000
 dgt_bw_days: 0
 wg_on: true
 wg_max: 4
@@ -77,7 +77,7 @@ wg_t3_hint: 0
 wg_t3_rumor: mo-ho
 wg_t3_treasure: 150
 wg_t3_build: 25
-wg_toll: 10000
+wg_toll: 30000
 wg_underwater: 30
 wg_upkeep: 0
 wg_revolt: 0
@@ -91,12 +91,15 @@ tna_every: 45
 tna_expire: 60
 tna_max: 2
 tap_on: true
-tap_prices: [5000, 8000, 15000]
+tap_prices:
+  - 15000
+  - 24000
+  - 45000
 tap_trust: 5
 tap_kitchen: 50
 wb_on: true
 wb_chest: 10
-wb_upkeep: 50
+wb_upkeep: 150.0
 wb_maxcol: 3
 wb_revolt: 72
 wb_revolt_less: 12
@@ -110,12 +113,12 @@ wb_heg_pts: 15
 wb_heg_reg: 2
 siege_immunity_hours: 168
 siege_immunity_new_town_hours: 168
-towny_price_new_town: 500.0
-towny_price_new_nation: 1000.0
-towny_price_claim: 25.0
-towny_town_upkeep: 10.0
-towny_nation_upkeep: 100.0
-eco_starting_balance: 200
+towny_price_new_town: 1500.0
+towny_price_new_nation: 3000.0
+towny_price_claim: 75.0
+towny_town_upkeep: 30.0
+towny_nation_upkeep: 300.0
+eco_starting_balance: 500
 eco_per_player_locale: false
 combat_mode:
   - old
@@ -198,164 +201,164 @@ tab_footer:
   - '&e/huongdan &8· &e/warp &8· &e/choden &8· &e/jobs &8· &e/rank'
   - '&8⚔ Công thành: tối T7, CN 20:00 & 21:00'
   - '&r'
-job_hunter_kill_zombie: 0.25
-job_hunter_kill_skeleton: 0.25
-job_hunter_kill_spider: 0.25
-job_hunter_kill_creeper: 0.25
-job_hunter_kill_cave_spider: 0.3
-job_hunter_kill_husk: 0.275
-job_hunter_kill_stray: 0.375
-job_hunter_kill_drowned: 0.325
-job_hunter_kill_enderman: 0.375
-job_hunter_kill_blaze: 0.375
-job_hunter_kill_elder_guardian: 12.5
-job_hunter_kill_endermite: 0.75
-job_hunter_kill_evoker: 2.5
-job_hunter_kill_guardian: 0.425
-job_hunter_kill_vindicator: 0.35
-job_hunter_kill_piglin: 0.3
-job_hunter_kill_piglin_brute: 17.5
-job_hunter_kill_pillager: 0.275
-job_hunter_kill_ravager: 6.25
-job_hunter_kill_silverfish: 0.025
-job_hunter_kill_vex: 0.25
-job_hunter_kill_warden: 25.0
-job_hunter_kill_witch: 0.75
-job_hunter_kill_wither: 12.5
-job_hunter_kill_wither_skeleton: 0.375
-job_hunter_kill_zoglin: 0.325
-job_hunter_kill_zombie_villager: 0.325
-job_hunter_kill_ender_dragon: 62.5
-job_hunter_kill_pig: 0.025
-job_hunter_kill_chicken: 0.025
-job_hunter_kill_sheep: 0.025
-job_hunter_kill_cow: 0.025
-job_hunter_kill_cod: 0.45
-job_hunter_kill_salmon: 0.45
-job_hunter_kill_pufferfish: 0.725
-job_hunter_kill_tropical_fish: 0.675
-job_hunter_kill_horse: 0.3
-job_hunter_kill_donkey: 0.3
-job_hunter_kill_wolf: 0.6
-job_hunter_kill_fox: 1.0
-job_hunter_kill_rabbit: 0.875
-job_hunter_kill_iron_golem: 1.25
-job_hunter_kill_goat: 0.75
-job_hunter_kill_llama: 0.525
-job_hunter_kill_squid: 0.675
-job_hunter_kill_glow_squid: 0.7
-job_hunter_kill_mooshroom: 1.25
-job_hunter_kill_strider: 0.375
-job_miner_break_stone: 0.02
-job_miner_break_deepslate: 0.022
-job_miner_break_coal_ore: 0.5
-job_miner_break_deepslate_coal_ore: 0.55
-job_miner_break_iron_ore: 0.55
-job_miner_break_deepslate_iron_ore: 0.6
-job_miner_break_copper_ore: 0.6
-job_miner_break_deepslate_copper_ore: 0.65
-job_miner_break_gold_ore: 0.7
-job_miner_break_deepslate_gold_ore: 0.75
-job_miner_break_redstone_ore: 0.65
-job_miner_break_deepslate_redstone_ore: 0.7
-job_miner_break_emerald_ore: 0.8
-job_miner_break_deepslate_emerald_ore: 0.85
-job_miner_break_lapis_ore: 0.75
-job_miner_break_deepslate_lapis_ore: 0.8
-job_miner_break_diamond_ore: 0.85
-job_miner_break_deepslate_diamond_ore: 0.9
-job_miner_break_nether_gold_ore: 0.5
-job_miner_break_nether_quartz_ore: 0.55
-job_miner_break_netherrack: 0.016
-job_miner_break_gilded_blackstone: 0.6
-job_miner_break_blackstone: 0.02
-job_miner_break_basalt: 0.02
-job_miner_break_end_stone: 0.02
-job_miner_break_diorite: 0.02
-job_miner_break_andesite: 0.02
-job_miner_break_granite: 0.02
-job_miner_break_sandstone: 0.02
-job_miner_break_tuff: 0.02
-job_miner_break_calcite: 0.02
-job_miner_break_smooth_basalt: 0.02
-job_miner_break_amethyst_block: 0.02
-job_miner_break_amethyst_cluster: 0.05
-job_farmer_break_wheat7: 0.05
-job_farmer_break_potatoes7: 0.05
-job_farmer_break_carrots7: 0.05
-job_farmer_break_beetroots3: 0.055
-job_farmer_break_melon: 0.05
-job_farmer_harvest_glow_berries: 0.05
-job_farmer_harvest_sweet_berries: 0.05
-job_husbandry_breed_pig: 0.03
-job_husbandry_breed_chicken: 0.03
-job_husbandry_breed_cow: 0.03
-job_husbandry_breed_sheep: 0.03
-job_husbandry_breed_horse: 0.03
-job_husbandry_breed_donkey: 0.03
-job_husbandry_breed_mule: 0.03
-job_husbandry_breed_llama: 0.03
-job_husbandry_breed_trader_llama: 0.03
-job_husbandry_breed_rabbit: 0.03
-job_husbandry_breed_fox: 0.03
-job_husbandry_breed_wolf: 0.03
-job_husbandry_breed_cat: 0.03
-job_husbandry_breed_turtle: 0.03
-job_husbandry_breed_bee: 0.03
-job_husbandry_breed_camel: 0.03
-job_husbandry_breed_panda: 0.03
-job_husbandry_breed_parrot: 0.03
-job_husbandry_breed_polar_bear: 0.03
-job_husbandry_breed_frog: 0.03
-job_husbandry_breed_axolotl: 0.03
-job_husbandry_breed_mooshroom: 0.03
-job_husbandry_breed_ocelot: 0.03
-job_husbandry_breed_strider: 0.03
-job_husbandry_breed_sniffer: 0.03
-job_husbandry_tame_wolf: 0.03
-job_husbandry_tame_cat: 0.03
-job_husbandry_tame_camel: 0.03
-job_husbandry_tame_horse: 0.03
-job_husbandry_tame_mule: 0.03
-job_husbandry_tame_donkey: 0.03
-job_husbandry_tame_trader_llama: 0.03
-job_husbandry_tame_llama: 0.03
-job_husbandry_tame_parrot: 0.03
-job_fisher_fish_cod: 0.5
-job_fisher_fish_salmon: 0.5
-job_fisher_fish_tropical_fish: 1.5
-job_fisher_fish_pufferfish: 1.25
-job_witcher_enchant_1: 0.1
-job_witcher_enchant_2: 0.2
-job_witcher_enchant_3: 0.3
-job_witcher_enchant_4: 0.4
-job_witcher_enchant_5: 0.5
-job_witcher_enchant_6: 0.6
-job_witcher_enchant_7: 0.7
-job_witcher_enchant_8: 0.8
-job_witcher_enchant_9: 0.9
-job_witcher_enchant_10: 1.0
-job_witcher_enchant_11: 1.1
-job_witcher_enchant_12: 1.2
-job_witcher_enchant_13: 1.3
-job_witcher_enchant_14: 1.4
-job_witcher_enchant_15: 1.5
-job_witcher_enchant_16: 1.6
-job_witcher_enchant_17: 1.7
-job_witcher_enchant_18: 1.8
-job_witcher_enchant_19: 1.9
-job_witcher_enchant_20: 2.0
-job_witcher_enchant_21: 2.1
-job_witcher_enchant_22: 2.2
-job_witcher_enchant_23: 2.3
-job_witcher_enchant_24: 2.4
-job_witcher_enchant_25: 2.5
-job_witcher_enchant_26: 2.6
-job_witcher_enchant_27: 2.7
-job_witcher_enchant_28: 2.8
-job_witcher_enchant_29: 2.9
-job_witcher_enchant_30: 3.0
-job_witcher_anvil_merge_enchanted_book: 1.5
+job_hunter_kill_zombie: 1.25
+job_hunter_kill_skeleton: 1.25
+job_hunter_kill_spider: 1.25
+job_hunter_kill_creeper: 1.25
+job_hunter_kill_cave_spider: 1.5
+job_hunter_kill_husk: 1.375
+job_hunter_kill_stray: 1.875
+job_hunter_kill_drowned: 1.625
+job_hunter_kill_enderman: 1.875
+job_hunter_kill_blaze: 1.875
+job_hunter_kill_elder_guardian: 62.5
+job_hunter_kill_endermite: 3.75
+job_hunter_kill_evoker: 12.5
+job_hunter_kill_guardian: 2.125
+job_hunter_kill_vindicator: 1.75
+job_hunter_kill_piglin: 1.5
+job_hunter_kill_piglin_brute: 87.5
+job_hunter_kill_pillager: 1.375
+job_hunter_kill_ravager: 31.25
+job_hunter_kill_silverfish: 0.125
+job_hunter_kill_vex: 1.25
+job_hunter_kill_warden: 125.0
+job_hunter_kill_witch: 3.75
+job_hunter_kill_wither: 62.5
+job_hunter_kill_wither_skeleton: 1.875
+job_hunter_kill_zoglin: 1.625
+job_hunter_kill_zombie_villager: 1.625
+job_hunter_kill_ender_dragon: 312.5
+job_hunter_kill_pig: 0.125
+job_hunter_kill_chicken: 0.125
+job_hunter_kill_sheep: 0.125
+job_hunter_kill_cow: 0.125
+job_hunter_kill_cod: 2.25
+job_hunter_kill_salmon: 2.25
+job_hunter_kill_pufferfish: 3.625
+job_hunter_kill_tropical_fish: 3.375
+job_hunter_kill_horse: 1.5
+job_hunter_kill_donkey: 1.5
+job_hunter_kill_wolf: 3.0
+job_hunter_kill_fox: 5.0
+job_hunter_kill_rabbit: 4.375
+job_hunter_kill_iron_golem: 6.25
+job_hunter_kill_goat: 3.75
+job_hunter_kill_llama: 2.625
+job_hunter_kill_squid: 3.375
+job_hunter_kill_glow_squid: 3.5
+job_hunter_kill_mooshroom: 6.25
+job_hunter_kill_strider: 1.875
+job_miner_break_stone: 0.04
+job_miner_break_deepslate: 0.044
+job_miner_break_coal_ore: 1.0
+job_miner_break_deepslate_coal_ore: 1.1
+job_miner_break_iron_ore: 1.1
+job_miner_break_deepslate_iron_ore: 1.2
+job_miner_break_copper_ore: 1.2
+job_miner_break_deepslate_copper_ore: 1.3
+job_miner_break_gold_ore: 1.4
+job_miner_break_deepslate_gold_ore: 1.5
+job_miner_break_redstone_ore: 1.3
+job_miner_break_deepslate_redstone_ore: 1.4
+job_miner_break_emerald_ore: 1.6
+job_miner_break_deepslate_emerald_ore: 1.7
+job_miner_break_lapis_ore: 1.5
+job_miner_break_deepslate_lapis_ore: 1.6
+job_miner_break_diamond_ore: 1.7
+job_miner_break_deepslate_diamond_ore: 1.8
+job_miner_break_nether_gold_ore: 1.0
+job_miner_break_nether_quartz_ore: 1.1
+job_miner_break_netherrack: 0.032
+job_miner_break_gilded_blackstone: 1.2
+job_miner_break_blackstone: 0.04
+job_miner_break_basalt: 0.04
+job_miner_break_end_stone: 0.04
+job_miner_break_diorite: 0.04
+job_miner_break_andesite: 0.04
+job_miner_break_granite: 0.04
+job_miner_break_sandstone: 0.04
+job_miner_break_tuff: 0.04
+job_miner_break_calcite: 0.04
+job_miner_break_smooth_basalt: 0.04
+job_miner_break_amethyst_block: 0.04
+job_miner_break_amethyst_cluster: 0.1
+job_farmer_break_wheat7: 0.15
+job_farmer_break_potatoes7: 0.15
+job_farmer_break_carrots7: 0.15
+job_farmer_break_beetroots3: 0.165
+job_farmer_break_melon: 0.15
+job_farmer_harvest_glow_berries: 0.15
+job_farmer_harvest_sweet_berries: 0.15
+job_husbandry_breed_pig: 0.09
+job_husbandry_breed_chicken: 0.09
+job_husbandry_breed_cow: 0.09
+job_husbandry_breed_sheep: 0.09
+job_husbandry_breed_horse: 0.09
+job_husbandry_breed_donkey: 0.09
+job_husbandry_breed_mule: 0.09
+job_husbandry_breed_llama: 0.09
+job_husbandry_breed_trader_llama: 0.09
+job_husbandry_breed_rabbit: 0.09
+job_husbandry_breed_fox: 0.09
+job_husbandry_breed_wolf: 0.09
+job_husbandry_breed_cat: 0.09
+job_husbandry_breed_turtle: 0.09
+job_husbandry_breed_bee: 0.09
+job_husbandry_breed_camel: 0.09
+job_husbandry_breed_panda: 0.09
+job_husbandry_breed_parrot: 0.09
+job_husbandry_breed_polar_bear: 0.09
+job_husbandry_breed_frog: 0.09
+job_husbandry_breed_axolotl: 0.09
+job_husbandry_breed_mooshroom: 0.09
+job_husbandry_breed_ocelot: 0.09
+job_husbandry_breed_strider: 0.09
+job_husbandry_breed_sniffer: 0.09
+job_husbandry_tame_wolf: 0.09
+job_husbandry_tame_cat: 0.09
+job_husbandry_tame_camel: 0.09
+job_husbandry_tame_horse: 0.09
+job_husbandry_tame_mule: 0.09
+job_husbandry_tame_donkey: 0.09
+job_husbandry_tame_trader_llama: 0.09
+job_husbandry_tame_llama: 0.09
+job_husbandry_tame_parrot: 0.09
+job_fisher_fish_cod: 1.5
+job_fisher_fish_salmon: 1.5
+job_fisher_fish_tropical_fish: 4.5
+job_fisher_fish_pufferfish: 3.75
+job_witcher_enchant_1: 0.2
+job_witcher_enchant_2: 0.4
+job_witcher_enchant_3: 0.6
+job_witcher_enchant_4: 0.8
+job_witcher_enchant_5: 1.0
+job_witcher_enchant_6: 1.2
+job_witcher_enchant_7: 1.4
+job_witcher_enchant_8: 1.6
+job_witcher_enchant_9: 1.8
+job_witcher_enchant_10: 2.0
+job_witcher_enchant_11: 2.2
+job_witcher_enchant_12: 2.4
+job_witcher_enchant_13: 2.6
+job_witcher_enchant_14: 2.8
+job_witcher_enchant_15: 3.0
+job_witcher_enchant_16: 3.2
+job_witcher_enchant_17: 3.4
+job_witcher_enchant_18: 3.6
+job_witcher_enchant_19: 3.8
+job_witcher_enchant_20: 4.0
+job_witcher_enchant_21: 4.2
+job_witcher_enchant_22: 4.4
+job_witcher_enchant_23: 4.6
+job_witcher_enchant_24: 4.8
+job_witcher_enchant_25: 5.0
+job_witcher_enchant_26: 5.2
+job_witcher_enchant_27: 5.4
+job_witcher_enchant_28: 5.6
+job_witcher_enchant_29: 5.8
+job_witcher_enchant_30: 6.0
+job_witcher_anvil_merge_enchanted_book: 3.0
 job_lumberjack_break_oak_log: 0.3
 job_lumberjack_break_birch_log: 0.3
 job_lumberjack_break_spruce_log: 0.3
@@ -368,34 +371,34 @@ job_lumberjack_break_warped_stem: 0.45
 job_lumberjack_break_crimson_stem: 0.45
 job_lumberjack_break_cherry_log: 0.3
 job_lumberjack_break_pale_oak_log: 0.3
-job_digger_break_sand: 0.02
-job_digger_break_red_sand: 0.022
-job_digger_break_clay: 0.04
-job_digger_break_mud: 0.03
-job_digger_break_gravel: 0.025
-job_digger_break_mycelium: 0.04
-job_digger_break_podzol: 0.022
-job_digger_break_coarse_dirt: 0.022
-job_digger_break_dirt: 0.02
-job_digger_break_grass_block: 0.02
-job_digger_break_soul_sand: 0.04
+job_digger_break_sand: 0.06
+job_digger_break_red_sand: 0.066
+job_digger_break_clay: 0.12
+job_digger_break_mud: 0.09
+job_digger_break_gravel: 0.075
+job_digger_break_mycelium: 0.12
+job_digger_break_podzol: 0.066
+job_digger_break_coarse_dirt: 0.066
+job_digger_break_dirt: 0.06
+job_digger_break_grass_block: 0.06
+job_digger_break_soul_sand: 0.12
 job_gladiator_kill_player: 0.0
-job_guardian_raid_win: 0.2
-job_guardian_raid_wave: 0.02
-job_producer_craft_piston: 0.1
-job_producer_craft_sticky_piston: 0.01
-job_producer_craft_lectern: 0.1
-job_producer_craft_redstone_lamp: 0.1
-job_producer_craft_tnt: 0.05
-job_producer_craft_dispenser: 0.05
-job_producer_craft_dropper: 0.04
-job_producer_craft_target: 0.1
-job_producer_craft_repeater: 0.15
-job_producer_craft_comparator: 0.3
-job_producer_craft_daylight_detector: 0.5
-job_producer_craft_note_block: 0.05
-job_producer_craft_observer: 0.1
-job_producer_craft_minecart: 0.02
+job_guardian_raid_win: 0.6
+job_guardian_raid_wave: 0.06
+job_producer_craft_piston: 0.2
+job_producer_craft_sticky_piston: 0.02
+job_producer_craft_lectern: 0.2
+job_producer_craft_redstone_lamp: 0.2
+job_producer_craft_tnt: 0.1
+job_producer_craft_dispenser: 0.1
+job_producer_craft_dropper: 0.08
+job_producer_craft_target: 0.2
+job_producer_craft_repeater: 0.3
+job_producer_craft_comparator: 0.6
+job_producer_craft_daylight_detector: 1.0
+job_producer_craft_note_block: 0.1
+job_producer_craft_observer: 0.2
+job_producer_craft_minecart: 0.04
 job_trader_trade_emerald: 0.2
 job_traveler_generate_loot_desert_pyramid: 10.0
 job_traveler_generate_loot_abandoned_mineshaft: 5.0
@@ -499,7 +502,7 @@ grim_block_reach: true
 grim_experimental: false
 grim_alert_console: true
 grim_forge_kick: true
-ce_common_cost: 300
+ce_common_cost: 900
 ce_common_currency: Vault
 ce_common_lore:
   - '&a▍ &fSách ngẫu nhiên 1 phù phép độ hiếm Thường'
@@ -508,7 +511,7 @@ ce_common_lore:
   - '&8• &7Giá: &e300 xu'
   - '&8&m                              '
   - '&a➜ Bấm để mua'
-ce_rare_cost: 800
+ce_rare_cost: 2400
 ce_rare_currency: Vault
 ce_rare_lore:
   - '&9▍ &fSách ngẫu nhiên 1 phù phép độ hiếm Hiếm'
@@ -553,21 +556,21 @@ ce_mythical_destroypercent_min: 20
 ce_mythical_destroypercent_max: 95
 ce_mythical_lvl_min: 1
 ce_mythical_lvl_max: 10
-ce_cost_whitescroll: 2000
+ce_cost_whitescroll: 6000
 ce_cur_whitescroll: Vault
-ce_cost_blackscroll: 1000
+ce_cost_blackscroll: 3000
 ce_cur_blackscroll: Vault
-ce_cost_transmogscroll: 200
+ce_cost_transmogscroll: 600
 ce_cur_transmogscroll: Vault
-ce_cost_successdust: 500
+ce_cost_successdust: 1500
 ce_cur_successdust: Vault
-ce_cost_destroydust: 500
+ce_cost_destroydust: 1500
 ce_cur_destroydust: Vault
-ce_cost_protectioncrystal: 500
+ce_cost_protectioncrystal: 1500
 ce_cur_protectioncrystal: Vault
-ce_cost_scrambler: 800
+ce_cost_scrambler: 2400
 ce_cur_scrambler: Vault
-ce_cost_slot_crystal: 500
+ce_cost_slot_crystal: 1500
 ce_cur_slot_crystal: Vault
 ce_on_glowing: true
 ce_on_burnshield: true
@@ -694,11 +697,11 @@ eio_max_tunnelling: 1
 qs_tax_rate: 0.05
 qs_create_cost: 0.0
 qs_price_fee_on: true
-qs_price_fee: 50.0
+qs_price_fee: 150.0
 qs_limits_on: false
 qs_limits_default: 10
 qs_ongoing_on: false
-qs_ongoing_cost: 2.0
+qs_ongoing_cost: 6.0
 qs_ongoing_ticks: 42000
 qs_restrict_on: false
 qs_sell_min: 0.01
@@ -722,7 +725,7 @@ over_enchant_on: true
 over_enchant_max: 50
 sk_player_shops: false
 sk_daily_limit_on: true
-sk_daily_limit: 1000.0
+sk_daily_limit: 1500.0
 sk_tax: 0
 sk_max_shops: -1
 sk_towny: false
@@ -756,15 +759,15 @@ reset_enabled: true
 reset_cooldown: 7
 reset_max: 3
 reset_gift_first: true
-reset_money: 0.0
+reset_money: 500.0
 reset_kit: ''
 reset_season: '1'
 peace_join_wait: 2
 peace_rejoin: 14
-peace_plot_base: 25
-peace_plot_step: 0.5
-peace_fee: 0.5
-peace_sell_bonus: 20
+peace_plot_base: 75.0
+peace_plot_step: 1.5
+peace_fee: 1.5
+peace_sell_bonus: 10.0
 peace_tax_inside: 0
 peace_tax_outside: 0.05
 peace_auction_only: true
@@ -776,7 +779,7 @@ council_election: 2
 council_max_terms: 2
 council_motion_days: 3
 org_min_members: 3
-org_weekly_fee: 100
+org_weekly_fee: 300.0
 org_slots_trade: 3
 org_slots_event: 2
 org_ad_cooldown: 60
@@ -800,7 +803,7 @@ lb_title_hours: 10
 lb_title_week: 12
 jus_buffer: 100
 jus_self_defense: 30
-jus_floor: 100
+jus_floor: 300.0
 jus_repeat: 2
 jus_heavy: 3
 jus_bounty_days: 3
@@ -822,21 +825,21 @@ em_natural_pct: 0.05
 em_dmg_player: 1.0
 em_dmg_elite: 1.0
 em_vault: true
-em_coin_mult: 0.3
+em_coin_mult: 0.6
 dd_on: true
 dd_min: 5
 dd_daily:
-  - xu 100
+  - xu 150
   - do chia_khoa_diemdanh 1
 dd_miles:
   7:
-    - xu 500
+    - xu 750
     - vat GOLDEN_APPLE 2
   14:
-    - xu 1000
+    - xu 1500
     - vat DIAMOND 3
   30:
-    - xu 3000
+    - xu 4500
     - vat DIAMOND 8
 dd_cycle: 30
 dd_remind: true
@@ -846,7 +849,8 @@ pvp_newbie_bar_text: "&6✦ &aBẢO VỆ NGƯỜI MỚI &6✦ &e<time>"
 pvp_newbie_bar_color: GREEN
 nv_on: true
 nv_per_day: 3
-nv_bonus: [xu 300]
+nv_bonus:
+  - xu 450
 nv_pool:
   dao_da:
     name: Đào 128 khối đá
@@ -862,7 +866,7 @@ nv_pool:
       - TUFF
     amount: 128
     rewards:
-      - xu 100
+      - xu 150
   dao_quang:
     name: Đào 16 quặng
     type: break
@@ -870,7 +874,7 @@ nv_pool:
       - '*_ORE'
     amount: 16
     rewards:
-      - xu 150
+      - xu 225
   chat_go:
     name: Chặt 64 khúc gỗ
     type: break
@@ -879,7 +883,7 @@ nv_pool:
       - '*_STEM'
     amount: 64
     rewards:
-      - xu 100
+      - xu 150
   san_quai:
     name: Săn 20 quái vật
     type: kill
@@ -887,7 +891,7 @@ nv_pool:
       - '@HOSTILE'
     amount: 20
     rewards:
-      - xu 150
+      - xu 225
   xay_dung:
     name: Đặt 200 khối
     type: place
@@ -895,7 +899,7 @@ nv_pool:
       - '*'
     amount: 200
     rewards:
-      - xu 100
+      - xu 150
   cau_ca:
     name: Câu 10 con cá
     type: fish
@@ -903,7 +907,7 @@ nv_pool:
       - '*'
     amount: 10
     rewards:
-      - xu 100
+      - xu 150
   thu_hoach:
     name: Thu hoạch 64 nông sản
     type: harvest
@@ -916,7 +920,7 @@ nv_pool:
       - COCOA
     amount: 64
     rewards:
-      - xu 100
+      - xu 150
 vq_on: false
 vq_minutes: 60
 vq_max: 5
@@ -937,37 +941,117 @@ hom_online_min: 60
 hom_online_max: 5
 hom_list:
   - id: diemdanh
-    name: "&aGacha Điểm Danh"
+    name: '&aGacha Điểm Danh'
     icon: CHEST
     key: chia_khoa_diemdanh
-    source: ""
+    source: ''
     prizes:
-    - {label: "100 xu", weight: 30, rare: false, rewards: ["xu 100"]}
-    - {label: "250 xu", weight: 18, rare: false, rewards: ["xu 250"]}
-    - {label: "16 bánh mì", weight: 15, rare: false, rewards: ["vat BREAD 16"]}
-    - {label: "8 thỏi sắt", weight: 14, rare: false, rewards: ["vat IRON_INGOT 8"]}
-    - {label: "8 bình kinh nghiệm", weight: 8, rare: false, rewards: ["vat EXPERIENCE_BOTTLE 8"]}
-    - {label: "1 táo vàng", weight: 7, rare: false, rewards: ["vat GOLDEN_APPLE 1"]}
-    - {label: "2 kim cương", weight: 6, rare: false, rewards: ["vat DIAMOND 2"]}
-    - {label: "1500 xu", weight: 2, rare: true, rewards: ["xu 1500"]}
+      - label: 150 xu
+        weight: 30
+        rare: false
+        rewards:
+          - xu 150
+      - label: 375 xu
+        weight: 18
+        rare: false
+        rewards:
+          - xu 375
+      - label: 16 bánh mì
+        weight: 15
+        rare: false
+        rewards:
+          - vat BREAD 16
+      - label: 8 thỏi sắt
+        weight: 14
+        rare: false
+        rewards:
+          - vat IRON_INGOT 8
+      - label: 8 bình kinh nghiệm
+        weight: 8
+        rare: false
+        rewards:
+          - vat EXPERIENCE_BOTTLE 8
+      - label: 1 táo vàng
+        weight: 7
+        rare: false
+        rewards:
+          - vat GOLDEN_APPLE 1
+      - label: 2 kim cương
+        weight: 6
+        rare: false
+        rewards:
+          - vat DIAMOND 2
+      - label: 2250 xu
+        weight: 2
+        rare: true
+        rewards:
+          - xu 2250
   - id: online
-    name: "&bGacha Chăm Chỉ"
+    name: '&bGacha Chăm Chỉ'
     icon: ENDER_CHEST
     key: chia_khoa_online
-    source: ""
+    source: ''
     prizes:
-    - {label: "150 xu", weight: 25, rare: false, rewards: ["xu 150"]}
-    - {label: "16 bít tết", weight: 15, rare: false, rewards: ["vat COOKED_BEEF 16"]}
-    - {label: "16 thỏi sắt", weight: 15, rare: false, rewards: ["vat IRON_INGOT 16"]}
-    - {label: "8 thỏi vàng", weight: 10, rare: false, rewards: ["vat GOLD_INGOT 8"]}
-    - {label: "16 bình kinh nghiệm", weight: 10, rare: false, rewards: ["vat EXPERIENCE_BOTTLE 16"]}
-    - {label: "3 kim cương", weight: 8, rare: false, rewards: ["vat DIAMOND 3"]}
-    - {label: "8 ngọc lục bảo", weight: 8, rare: false, rewards: ["vat EMERALD 8"]}
-    - {label: "1 bảng tên", weight: 5, rare: false, rewards: ["vat NAME_TAG 1"]}
-    - {label: "1 mảnh netherite", weight: 2, rare: true, rewards: ["vat NETHERITE_SCRAP 1"]}
-    - {label: "2000 xu", weight: 2, rare: true, rewards: ["xu 2000"]}
-    - {label: "1 khối kim cương", weight: 1, rare: true, rewards: ["vat DIAMOND_BLOCK 1"]}
-    - {label: "Đĩa nhạc Cat (trang trí)", weight: 1, rare: true, rewards: ["vat MUSIC_DISC_CAT 1"]}
+      - label: 225 xu
+        weight: 25
+        rare: false
+        rewards:
+          - xu 225
+      - label: 16 bít tết
+        weight: 15
+        rare: false
+        rewards:
+          - vat COOKED_BEEF 16
+      - label: 16 thỏi sắt
+        weight: 15
+        rare: false
+        rewards:
+          - vat IRON_INGOT 16
+      - label: 8 thỏi vàng
+        weight: 10
+        rare: false
+        rewards:
+          - vat GOLD_INGOT 8
+      - label: 16 bình kinh nghiệm
+        weight: 10
+        rare: false
+        rewards:
+          - vat EXPERIENCE_BOTTLE 16
+      - label: 3 kim cương
+        weight: 8
+        rare: false
+        rewards:
+          - vat DIAMOND 3
+      - label: 8 ngọc lục bảo
+        weight: 8
+        rare: false
+        rewards:
+          - vat EMERALD 8
+      - label: 1 bảng tên
+        weight: 5
+        rare: false
+        rewards:
+          - vat NAME_TAG 1
+      - label: 1 mảnh netherite
+        weight: 2
+        rare: true
+        rewards:
+          - vat NETHERITE_SCRAP 1
+      - label: 3000 xu
+        weight: 2
+        rare: true
+        rewards:
+          - xu 3000
+      - label: 1 khối kim cương
+        weight: 1
+        rare: true
+        rewards:
+          - vat DIAMOND_BLOCK 1
+      - label: Đĩa nhạc Cat (trang trí)
+        weight: 1
+        rare: true
+        rewards:
+          - vat MUSIC_DISC_CAT 1
 fm_on: false
 fm_cap: 20
 fm_types:
@@ -978,9 +1062,15 @@ fm_shop:
   - {label: "16 kim cương", cost: {lamnguy: 40}, limit: 0, rewards: [vat DIAMOND 16]}
   - {label: "Đĩa nhạc Pigstep (trang trí)", cost: {lamnguy: 20}, limit: 1, rewards: [vat MUSIC_DISC_PIGSTEP 1]}
 decor_titles:
-  - {id: luukhach, text: "&7[Lữ Khách]", price: 1000}
-  - {id: nghenhan, text: "&d[Nghệ Nhân]", price: 3000}
-  - {id: phuthuong, text: "&6[Phú Thương]", price: 8000}
+  - id: luukhach
+    text: "&7[Lữ Khách]"
+    price: 3000
+  - id: nghenhan
+    text: "&d[Nghệ Nhân]"
+    price: 9000
+  - id: phuthuong
+    text: "&6[Phú Thương]"
+    price: 24000
 mua_on: true
 mua_start: "2026-10-12"
 mua_days: 7
@@ -1015,27 +1105,29 @@ dh_minprice: 0.01
 dh_maxprice: 100000
 kh_on: true
 kh_sell: 100
-kh_g1: 300000
-kh_g2: 800000
+kh_g1: 900000.0
+kh_g2: 2400000.0
 kh_pioneer: 10
-kh_pioneer_rw: [xu 2000, danhhieu tienphong]
-kh_g3: 2000000
+kh_pioneer_rw:
+  - xu 3000
+  - danhhieu tienphong
+kh_g3: 6000000.0
 ach_on: true
-tt_min: 100
-tt_max: 100000
+tt_min: 300.0
+tt_max: 300000.0
 tt_fee: 5
 tt_days: 3
 tt_streak: 5
-tt_streak_xu: 500
-tt_streak_them: 100
+tt_streak_xu: 750.0
+tt_streak_them: 150.0
 emf_common_w: 100
-emf_common_gia: 0.03
+emf_common_gia: 0.06
 emf_rare_w: 25
-emf_rare_gia: 0.08
+emf_rare_gia: 0.16
 emf_epic_w: 6
-emf_epic_gia: 0.15
+emf_epic_gia: 0.3
 emf_legendary_w: 1
-emf_legendary_gia: 0.3
+emf_legendary_gia: 0.6
 emf_tc_phut: 20
 emf_tc_nguoi: 2
 emf_tc_t7: ["20:00"]
@@ -1152,8 +1244,8 @@ hmh_damage: true
 arena_fight: 180
 arena_pet_reduce: 50
 arena_fee: 5
-arena_max_stake: 10000
-arena_reward: 50
+arena_max_stake: 30000.0
+arena_reward: 75.0
 arena_cap: 5
 arena_pet_exp: 30
 arena_countdown: 5
@@ -1163,7 +1255,7 @@ mypet_exp_loss: 0
 mypet_respawn_factor: 5
 mypet_respawn_fixed: 0
 mypet_respawn_cost_fixed: 0.0
-mypet_respawn_cost_factor: 1.0
+mypet_respawn_cost_factor: 3.0
 mypet_hunger: true
 mypet_hunger_time: 60
 mypet_exp_nofarm:
@@ -1464,43 +1556,43 @@ bq_io: dialog
 bq_c1_quai: 20
 bq_c1_sat: 16
 bq_c1_quang: 24
-bq_c1_t1: 300
-bq_c1_t2: 300
-bq_c1_t3: 400
-bq_c1_t4: 300
-bq_c1_tket: 1500
+bq_c1_t1: 450
+bq_c1_t2: 450
+bq_c1_t3: 600
+bq_c1_t4: 450
+bq_c1_tket: 2250
 bq_c1_kn: 200
 lk_on: true
 lk_move: 72
 lk_announce: true
-lk_thuong: 1000
+lk_thuong: 1500
 as_cap: 20
 as_mana_unlock: 10
 as_mana_cd: 300
 as_mana_dur: 5.0
 as_luck: 2.0
-as_xu5: 200
-as_xu10: 400
-as_xu15: 700
-as_xu20: 1200
+as_xu5: 300
+as_xu10: 600
+as_xu15: 1050
+as_xu20: 1800
 as_reset: true
 tl_on: true
 tl_chance: 5.0
 tl_elite: 40.0
 tl_elite_max: 3
-tl_sell_xuquai: 2
-tl_sell_xuquai2: 100
-tl_sell_da: 30
-tl_sell_than: 400
-tl_sell_dong: 400
-tl_sell_sat: 1600
-tl_sell_dado: 200
-tl_sell_lapis: 400
-tl_sell_vang: 2400
-tl_sell_kimcuong: 24000
-tl_sell_lucbao: 4000
-tl_sell_netherite: 125000
-tl_sell_dialinh: 300
+tl_sell_xuquai: 4
+tl_sell_xuquai2: 180
+tl_sell_da: 7
+tl_sell_than: 1200
+tl_sell_dong: 600
+tl_sell_sat: 3200
+tl_sell_dado: 400
+tl_sell_lapis: 1200
+tl_sell_vang: 6400
+tl_sell_kimcuong: 48000
+tl_sell_lucbao: 8000
+tl_sell_netherite: 262000
+tl_sell_dialinh: 270
 dp_on: true
 dp_announce: true
 dp_tinan_name: "Dân Tị Nạn"
@@ -1675,7 +1767,7 @@ goiqua_list:
     qua:
       - vat BREAD 16
       - vat TORCH 32
-      - xu 50
+      - xu 75
   luongdan:
     ten: Gói Lương Dân
     icon: IRON_HOE
@@ -1685,7 +1777,7 @@ goiqua_list:
     qua:
       - vat COOKED_BEEF 16
       - vat IRON_INGOT 8
-      - xu 100
+      - xu 150
   haokiet:
     ten: Gói Hào Kiệt
     icon: GOLDEN_HELMET
@@ -1696,7 +1788,7 @@ goiqua_list:
       - vat COOKED_BEEF 32
       - vat GOLDEN_CARROT 16
       - vat IRON_INGOT 16
-      - xu 200
+      - xu 300
   media:
     ten: Gói quà Sứ Giả
     icon: BEACON
@@ -1723,3 +1815,5 @@ decor_categories:
   - {id: quai, name: "Vật phẩm quái vật", icon: BONE, slot: 38, desc: "Xương, tơ, thuốc súng, ngọc ender, que blaze…", sell: [SHULKER_SHELL, NAUTILUS_SHELL], items: [{material: ROTTEN_FLESH, amount: 1, price: 2}, {material: ARROW, amount: 1, price: 2}, {material: FEATHER, amount: 1, price: 4}, {material: RABBIT_HIDE, amount: 1, price: 6}, {material: BONE, amount: 1, price: 8}, {material: STRING, amount: 1, price: 8}, {material: SPIDER_EYE, amount: 1, price: 10}, {material: PRISMARINE_SHARD, amount: 1, price: 10}, {material: PRISMARINE_CRYSTALS, amount: 1, price: 12}, {material: LEATHER, amount: 1, price: 12}, {material: FERMENTED_SPIDER_EYE, amount: 1, price: 20}, {material: GUNPOWDER, amount: 1, price: 20}, {material: SLIME_BALL, amount: 1, price: 25}, {material: BLAZE_POWDER, amount: 1, price: 30}, {material: MAGMA_CREAM, amount: 1, price: 50}, {material: PHANTOM_MEMBRANE, amount: 1, price: 50}, {material: RABBIT_FOOT, amount: 1, price: 50}, {material: ENDER_PEARL, amount: 1, price: 60}, {material: BLAZE_ROD, amount: 1, price: 60}, {material: ARMADILLO_SCUTE, amount: 1, price: 15}, {material: TURTLE_SCUTE, amount: 1, price: 30}, {material: BREEZE_ROD, amount: 1, price: 40}, {material: GHAST_TEAR, amount: 1, price: 150}]}
   - {id: khac, name: "Khác", icon: SADDLE, slot: 40, desc: "Dụng cụ, đồ tiện ích", sell: [], items: [{material: PAPER, amount: 1, price: 2}, {material: BOOK, amount: 1, price: 15}, {material: WRITABLE_BOOK, amount: 1, price: 20}, {material: FIREWORK_ROCKET, amount: 1, price: 10}, {material: FISHING_ROD, amount: 1, price: 30}, {material: CARROT_ON_A_STICK, amount: 1, price: 35}, {material: WARPED_FUNGUS_ON_A_STICK, amount: 1, price: 40}, {material: LEAD, amount: 1, price: 40}, {material: BRUSH, amount: 1, price: 25}, {material: EXPERIENCE_BOTTLE, amount: 1, price: 30}, {material: BELL, amount: 1, price: 150}, {material: ANVIL, amount: 1, price: 500}, {material: ENDER_CHEST, amount: 1, price: 400}, {material: SADDLE, amount: 1, price: 300}, {material: NAME_TAG, amount: 1, price: 300}]}
   - {id: danhhieu, name: "Danh hiệu", icon: NAME_TAG, slot: 42, desc: "Chữ hiện cạnh tên, đổi bằng /danhhieu", sell: [], items: []}
+sell_limit_on: true
+sell_limit_daily: 8000

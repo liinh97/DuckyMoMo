@@ -390,8 +390,15 @@ final class Refining implements Listener {
         if (count == 0 || !VaultEconomy.available()) {
             return 0;
         }
+        SellLimit limit = Shared.sellLimit;
+        if (limit != null && !limit.allow(p, total)) {
+            return 0;   // vượt giới hạn bán mỗi ngày: chưa lấy món nào (inv là bản sao)
+        }
         p.getInventory().setStorageContents(inv);
         VaultEconomy.deposit(p, total);
+        if (limit != null) {
+            limit.record(p, total);
+        }
         Frontier f = Shared.frontier;
         if (f != null) {
             f.addSale(p, total);   // như /sell: góp % vào quỹ khai hoang
@@ -399,6 +406,12 @@ final class Refining implements Listener {
         p.sendMessage(c("&a[Tinh luyện] Đã bán " + count + " món: &e+" + money(total)));
         p.playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.8f, 1.2f);
         return count;
+    }
+
+    /** Giá bán cho server của 1 món tinh luyện; -1 = không phải món tinh luyện (cho SellLimit ước lượng /sell). */
+    double priceOf(ItemStack it) {
+        String id = idOf(it);
+        return id == null ? -1 : Math.max(0, items.get(id).sell());
     }
 
     /** /sell hand|all của Essentials: món tinh luyện bán theo giá riêng (vật liệu nền không có giá trong worth.yml). */

@@ -115,9 +115,9 @@ tr.hl td{background:var(--brass-soft)}
 
 <div class="wrap">
   <section class="top">
-    <span class="eyebrow">DuckyMoMo · Bang Hội Chiến · bảng chờ duyệt · bản 2 (21/10)</span>
+    <span class="eyebrow">DuckyMoMo · Bang Hội Chiến · ĐÃ ÁP DỤNG 21/10 · bản 2</span>
     <h1>Định lại xu toàn server</h1>
-    <p>Mọi con số được quy ra <b>giờ công</b>: số xu một người chơi chăm kiếm được trong 1 giờ. Giá đúng là giá khiến một việc tốn đúng số giờ chơi mình muốn. Chưa có gì được áp dụng; bấm <b>Duyệt</b>, <b>Sửa</b> (ghi số bạn muốn) hoặc <b>Bỏ</b> (giữ nguyên) ở từng dòng, Claude đọc kết quả rồi mới sửa cấu hình.</p>
+    <p>Mọi con số được quy ra <b>giờ công</b>: số xu một người chơi chăm kiếm được trong 1 giờ. Giá đúng là giá khiến một việc tốn đúng số giờ chơi mình muốn. Người dùng duyệt cả bảng ngày 21/10 ("cứ làm như vậy, có người chơi rồi điều chỉnh sau"); mọi dòng đã áp dụng vào server. Muốn chỉnh dòng nào thì bấm <b>Sửa</b> và ghi số mới, Claude đọc ở đây.</p>
   </section>
 
   <div class="sum">
@@ -170,7 +170,7 @@ tr.hl td{background:var(--brass-soft)}
           <tbody id="buyTbl"></tbody>
         </table></div>
       </div>
-      <p class="note">Gacha chỉ tính phần xu: vé Chăm Chỉ (1 vé mỗi giờ chơi) trung bình 76 xu, vé Điểm Danh (1 vé mỗi ngày) 105 xu. Đồ trong Gacha (sắt, vàng, kim cương…) đáng thêm khoảng 111 và 27 xu mỗi vé nếu bán. Không tính tiền rơi EliteMobs, Lệnh săn, dungeon, Đấu Trường.</p>
+      <p class="note">Gacha chỉ tính phần xu: vé Chăm Chỉ (1 vé mỗi giờ chơi) trung bình 76 → 114 xu, vé Điểm Danh (1 vé mỗi ngày) 105 → 158 xu. Đồ trong Gacha (sắt, vàng, kim cương…) đáng thêm khoảng 111 và 27 xu mỗi vé nếu bán. Không tính tiền rơi EliteMobs, Lệnh săn, dungeon, Đấu Trường.</p>
     </div>
   </section>
 
@@ -188,7 +188,7 @@ tr.hl td{background:var(--brass-soft)}
     <header><h2>Không đổi</h2><p>Đã quét, cố ý giữ nguyên.</p></header>
     <div class="card"><ul>
       <li><b>Cửa hàng Kinh Đô và bảng /sell</b>: vừa định giá mới, là mốc tính mọi thứ khác.</li>
-      <li><b>Gacha</b> (thay vòng quay từ 21/10): ô xu giữ nguyên. Vé Chăm Chỉ trung bình đáng 187 xu tính cả đồ (≈ 8 phút chơi mỗi giờ), vé Điểm Danh 132 xu. Đồ trong Gacha đã tự tăng giá theo bảng /sell mới.</li>
+      <li><b>Gacha</b> (thay vòng quay từ 21/10): lúc áp dụng người dùng dặn tính cả Gacha nên ô xu ×1,5 như quà định kỳ khác (Điểm Danh 150 · 375 · 2.250; Chăm Chỉ 225 · 3.000). Vé Chăm Chỉ trung bình 114 xu + đồ khoảng 111 xu; ô đồ giữ nguyên.</li>
       <li><b>Đã tắt 21/10</b>: đổi mảnh /doimanh (mảnh sự kiện).</li>
       <li><b>Các phí tính theo %</b>: treo thưởng 5%, lính đánh thuê 10%, đăng đơn 2%, cược Đấu Trường 5%, đổi hướng kỹ năng pet 5%, thuế /ah (đang tắt). Tự tăng theo giá.</li>
       <li><b>Giá người chơi tự đặt</b>: Chợ đen /choden (đồ đang bán giá sàn 10 xu, đơn thu mua), shop rương, /trade.</li>
@@ -216,7 +216,7 @@ const ACTS = [
 /* Quà định kỳ cho máy tính tuần: [hiện tại, đề xuất] */
 const P = {
   checkin:[100,150], m7:[500,750], m14:[1000,1500], m30:[3000,4500],
-  quest:[125,187.5], questAll:[300,450], gachaHour:[76,76], gachaDay:[105,105],
+  quest:[125,187.5], questAll:[300,450], gachaHour:[76,114], gachaDay:[105,157.5],
   vote:[100,150], voteStreak:[500,750],
   kit:[[0,0],[50,75],[100,150],[200,300]]
 };
@@ -336,7 +336,7 @@ const GROUPS = [
  {id:"l12",t:"Xu Quái 2",w:"64 Xu Quái = 256 xu (giá mới 4 ở dòng t25)",cur:"100",pro:"180",k:"70%"}
 ]},
 {id:"lp", ten:"Chống lạm phát", mo:"Hai việc chặn tiền in ra không cần chơi. Dòng có nhãn Cần code phải viết thêm vào plugin.", rows:[
- {id:"a01",t:"Giới hạn tiền bán /sell mỗi người mỗi ngày",w:"mới: DuckyMoMoCore bắt sự kiện bán của Essentials (như thưởng chợ kinh đô)",cur:"không giới hạn",pro:"8.000 xu/ngày",k:"mới",h:[8000],hp:[8000],flag:"code",n:"Bằng khoảng 5–6 giờ chơi chăm. Chặn farm tự động: trang trại mía 1 xu/cây, máy sắt, máy vàng chạy cả đêm ra vài nghìn xu mỗi giờ. Quá mức thì không bán cho server được nữa, vẫn bán cho người chơi qua /ah, shop rương."},
+ {id:"a01",t:"Giới hạn tiền bán /sell mỗi người mỗi ngày",w:"SellLimit.java, config sell-limit, Cài đặt › Kinh tế (đã làm 21/10)",cur:"không giới hạn",pro:"8.000 xu/ngày",k:"mới",h:[8000],hp:[8000],flag:"code",n:"Bằng khoảng 5–6 giờ chơi chăm. Chặn farm tự động: trang trại mía 1 xu/cây, máy sắt, máy vàng chạy cả đêm ra vài nghìn xu mỗi giờ. Quá mức thì không bán cho server được nữa, vẫn bán cho người chơi qua /ah, shop rương."},
  {id:"a02",t:"Thưởng khi bán /sell trong kinh đô",w:"peace-alliance.sell-bonus-percent",cur:"+20%",pro:"+10%",k:"½",flag:"moi",n:"Với giá /sell mới, +20% của 1.400 xu/giờ là thêm 280 xu mỗi giờ, gần bằng 2 ngày điểm danh."}
 ]}
 ];

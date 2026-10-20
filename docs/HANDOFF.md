@@ -1,11 +1,66 @@
 # Bàn giao dự án DuckyMoMo Network
 
-> Dùng file này để tiếp tục ở session hoặc tài khoản Claude khác. Cập nhật: 20/10/2026 khuya. ĐỌC MỤC 00000 TRƯỚC, rồi 0000, 000, 00, 0.
+> Dùng file này để tiếp tục ở session hoặc tài khoản Claude khác. Cập nhật: 21/10/2026 rạng sáng. ĐỌC MỤC 000000 TRƯỚC, rồi 00000, 0000, 000, 00, 0.
 > Đọc kèm: `README.md`, `docs/minecraft-server-plan.md` (kế hoạch, quyết định), `docs/network-architecture.md` (kiến trúc).
 
 ---
 
-## 00000. MỚI NHẤT — 20/10/2026 khuya (chuyển tài khoản Claude lần 3)
+## 000000. MỚI NHẤT — 21/10/2026 rạng sáng (chuyển tài khoản Claude lần 4)
+
+Tóm cả phiên 21/10 (chi tiết từng việc: mục 00000 bên dưới, các dòng "- 21/10:"; test: TEST-CHECKLIST mục 4w). Commit cuối: xem `git log`.
+Nhánh làm việc: claude/happy-ritchie-2p60v7. CHƯA push (người dùng chưa bảo).
+
+### ⚠ TRẠNG THÁI: Bang Hội CHƯA khởi động lại sau các commit cuối
+Lần restart banghoi cuối lúc ~02:40 (21/10). Sau đó đã build + commit nhưng CHƯA restart (Linh, vanlinh online, chờ người dùng bảo):
+- Gacha thay vòng quay (jar mới + config) — trước restart, trong game vẫn là /hom + /vongquay cũ.
+- Gỡ /doimanh (jar mới; config event-fragments.enabled false đã ghi).
+- /nhiemvu tên nhiệm vụ hiện đúng số khi server vắng.
+Panel + site ĐÃ dựng lại (đang hiện Gacha). Việc đầu tiên: hỏi người dùng rồi `docker compose restart banghoi-1` (kiểm online RIÊNG trước).
+Sảnh (lobby) chưa restart từ lâu nhưng không bật các module này; restart khi tiện để nhận jar mới.
+
+### Người dùng quyết trong phiên (giữ)
+- MỘT tính năng = MỘT lệnh, KHÔNG tên phụ thừa ("bỏ quay với vongquay đi cho đỡ thừa nhiều lệnh"). Chợ: /choden (+ /cho). Gacha: chỉ /gacha.
+- Chợ đen: /choden ban [số món] <giá CẢ LÔ>; /choden dat <số món> <giá MỖI MÓN>. Rút đơn thu mua chỉ ở "Đơn của tôi" (chuột phải) — người
+  dùng nói KHÔNG cần sửa cho rút ở màn Thu mua (đã revert).
+- Tiền hiện "xu", không "$".
+- Đất hoang: cho đào, xây, phá tự do (world, nether, end).
+- Bỏ /doimanh (mảnh sự kiện): boss chỉ cần rơi đồ thư viện (trang Boss › Đồ rơi).
+- Bỏ /vongquay, giữ hệ hòm, đổi tên thành Gacha, "chìa" → "vé".
+- /trade: nút đồng ý bê tông đỏ (chưa) / xanh lá (đã); đếm ngược 5 giây.
+- Nghề (uJobs) KHÔNG cần chọn nghề (tự tính tất cả); thanh tiến độ có chữ đầu "Nghề ·" / "Kỹ năng ·".
+
+### Đã làm 21/10 (build + triển khai; xem trạng thái restart ở trên; CHƯA thử hết bằng người)
+- Gacha `/gacha` (Crates.java): máy Gacha Điểm Danh (vé chia_khoa_diemdanh trong Quà mỗi ngày /diemdanh) + Gacha Chăm Chỉ (vé chia_khoa_online,
+  60 phút chơi thật, giữ tối đa 5, rank nhanh hơn qua duckymomo.vongquay.nhanh.<%>). Vé = món Thư viện đồ công dụng "Vé gacha" (mã chia-khoa).
+  Cài đặt › Thưởng & sự kiện › Gacha (type crates). Vé vòng quay cũ tự đổi thành vé khi vào game. %dmmhom_chia%, %dmmhom_con%.
+- Chợ đen /choden: hub 6 nút + lệnh con; /donhang bỏ; /ah ẩn Tab, gõ /ah trống mở hub; nút "← Về Chợ đen" ở màn Đồ đang bán / Hết hạn /
+  Lịch sử / Đã mua (pattern zauctionhouse-choden); /ah xác nhận mua gần như cả màn là nút Mua.
+- Tiền "xu": Essentials currency-format (data), zAH economies.yml (data), UJobs, AuraSkills, CE, Towny, nút /menu.
+- Essentials tiếng Việt: "Đã gửi 10 xu đến …", "Đã nhận được 10 xu từ …", /near.
+- /trade (TradePro) Việt hoá hết: gui.yml + config.yml (nút xu/XP, lời nhắc), đưa vào repo; /tradeplus → /tradepro.
+- /tpr tránh tán cây (MOTION_BLOCKING phải trùng mặt đất), max-attempts 30.
+- Towny: dịch lại thông báo cấm xây/phá; mở đất hoang 3 thế giới (data). Sau toggle phải `townyadmin reload townyperms` (cache quyền cũ
+  làm chặn im lặng — đã gặp thật).
+- /jobs: dòng "Tự tính khi làm, không cần chọn nghề".
+- /nhiemvu: tên đúng chỉ tiêu khi LowPop giảm (title()).
+- Gỡ /doimanh: event-fragments.enabled false, lệnh khỏi plugin.yml, nhóm Cài đặt, loại quà "manh" trong panel, nút chia mảnh trang Boss,
+  hướng dẫn, web. FragmentShop.java còn nằm (không chạy).
+
+### Việc tiếp theo / chờ người dùng
+1. Restart banghoi (xem trên) rồi người dùng test mục 4w.
+2. **Định lại xu toàn server** (bảng đề xuất ở mục 00000 › VIỆC TIẾP THEO 1; trang duyệt docs/dinh-gia-xu.html do phiên khác làm, đang
+   sửa dở trong working tree — ĐỪNG commit đè). Khi chỉnh, nhớ cả giá phần thưởng Gacha và Thăng Cấp money-base.
+3. Đề nghị chưa trả lời: tắt kiểm tra cập nhật làm hiện "Bad response status: 403" (packetevents/HoloMobHealth/GrimAC hỏi GitHub bị chặn);
+   staff bỏ chờ dịch chuyển; đấu giá thật /daugia; lập thị trấn KinhDo + Liên minh Hoà Bình; hướng dẫn r10 "Phong quân hàm".
+4. Món "Mảnh Lâm Nguy" (lamnguy) còn trong Thư viện đồ — người dùng có thể xoá.
+
+### File chỉ nằm ở data/ (KHÔNG trong git) đã sửa 21/10
+Essentials/config.yml (currency), zAuctionHouse/config.yml (alias), zAuctionHouse/economies.yml (xu), Towny/data/worlds/*.txt (đất hoang),
+DuckyMoMoCore/thuvien-do.yml (tên vé). Bản trước khi sửa Essentials/TradePro: scratchpad phiên cũ (không còn) — muốn hoàn tác thì sửa tay.
+
+---
+
+## 00000. 20/10/2026 khuya → 21/10 (chuyển tài khoản Claude lần 3; chi tiết từng việc 21/10) (chuyển tài khoản Claude lần 3)
 
 Hai phiên Claude chạy song song cùng repo trong tối 20/10 (một ở tài khoản cũ, một ở tài khoản mới). Commit mới nhất xem `git log`; việc
 của phiên tài khoản cũ khuya 20/10 tóm ở đây (chi tiết: các dòng "- 20/10 tối/khuya:" cuối file + TEST-CHECKLIST mục 4v).

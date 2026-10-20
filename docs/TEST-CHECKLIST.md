@@ -290,18 +290,32 @@ Triển khai: kiểm tra không ai online (lệnh riêng) → `docker compose up
 - [ ] /tprandom mở menu /tpr của server; /tphere kéo người đúng chỗ admin.
 - [ ] /ah mở được khi đứng ở spawn.
 
-## 4w. 21/10: Chợ đen, Hòm quay — đã triển khai, CHƯA thử bằng người
-- [ ] Gõ /choden ban 100 (cầm món) treo bán được; /choden dat 64 1 đặt đơn; Tab không hiện /ah, /donhang; gõ /ah mở trang Chợ đen; /choden giup.
-- [ ] /tpr vài lần ở vùng rừng: không bị kẹt trong tán lá.
+## 4w. 21/10: Chợ đen, Gacha, tiền xu, /trade, đất hoang — đã triển khai, CHƯA thử bằng người
+Trước khi test: banghoi phải đã restart sau commit Gacha (xem HANDOFF 000000).
+Chợ đen
 - [ ] /choden (/cho): 6 nút Đang bán, Treo bán, Đồ tôi đang bán, Đang thu mua, Đặt đơn, Đơn của tôi đều mở đúng; /menu có nút Chợ đen.
-- [ ] /ah bấm món → màn xác nhận: bấm bất kỳ ô xanh (kể cả ô giữa) là mua; cột phải đỏ quay lại.
-- [ ] /gacha (đổi tên từ /hom, bỏ /vongquay): 2 máy Gacha Điểm Danh, Gacha Chăm Chỉ; /vongquay, /hom, /quay báo không có lệnh; người có vé vòng quay cũ vào game nhận vé Chăm Chỉ tương ứng; có 5 vé Chăm Chỉ trong túi thì ngừng tích; TAB hiện số vé gacha; /menu nút Gacha.
-- [ ] /hom: 2 hòm (Điểm Danh, Chăm Chỉ), tooltip ghi số chìa đang có và chìa lấy từ đâu.
-- [ ] /diemdanh nhận thêm 1 Chìa Hòm Điểm Danh; chơi thật 90 phút nhận 1 Chìa Hòm Chăm Chỉ (treo máy không tính).
-- [ ] Trong hòm: bấm Quay mất đúng 1 chìa, hiệu ứng quay, nhận quà; không có chìa thì báo đỏ; món hiếm báo cả server.
-- [ ] Cầm chìa bấm chuột phải mở đúng hòm của chìa đó; /hom give <người> <mã hòm> [số] (admin).
-- [ ] Cài đặt › Thưởng & sự kiện › Hòm quay: thêm hòm mới, chọn chìa từ Thư viện đồ (chỉ hiện món công dụng Chìa khoá hòm quay), quà
-      Vật phẩm + Món thư viện, Lưu → /hom thấy ngay. Thư viện đồ: tạo chìa mới với công dụng Chìa khoá hòm quay.
+- [ ] Cầm 32 đuốc, /choden ban 10 → treo CẢ LÔ 10 xu; /choden ban 3 30 → 3 món, cả lô 30 xu; số món > đang cầm thì báo lỗi.
+- [ ] Nút "Treo bán" điền sẵn /choden ban; "Đặt đơn" điền /choden dat. /choden dat 64 2 đặt đơn (tiền giữ trước).
+- [ ] /choden cuatoi, hethan, lichsu, nhantien mở đúng; nút "← Về Chợ đen" ở các màn đó về trang chung.
+- [ ] /ah bấm món → màn xác nhận: bấm ô xanh (cả ô giữa) là mua; cột phải đỏ quay lại.
+- [ ] Người chơi thường: Tab không hiện /ah, /donhang; gõ /ah mở trang Chợ đen; /donhang báo không có lệnh. /choden giup đủ lệnh.
+- [ ] "Đơn của tôi": chuột phải rút đơn, trả lại tiền phần chưa giao.
+Gacha
+- [ ] /gacha: 2 máy Gacha Điểm Danh, Gacha Chăm Chỉ; tooltip ghi số vé đang có, vé lấy từ đâu; /vongquay, /hom, /quay báo không có lệnh.
+- [ ] /diemdanh nhận thêm 1 Vé Gacha Điểm Danh; chơi thật 60 phút nhận 1 Vé Gacha Chăm Chỉ (treo máy không tính); có 5 vé thì ngừng tích.
+- [ ] Bấm Quay mất đúng 1 vé, hiệu ứng quay, nhận quà; không có vé báo đỏ; món hiếm báo cả server. Cầm vé bấm chuột phải mở đúng máy.
+- [ ] Vé cũ (móc "Chìa Hòm …") vẫn quay được. Ai còn vé vòng quay cũ: vào game nhận vé Chăm Chỉ tương ứng + tin nhắn.
+- [ ] TAB (bảng phải) hiện "🎟 N vé gacha"; /menu ô Hồ sơ "Vé gacha online", nút Gacha (ô 12) mở /gacha.
+- [ ] Cài đặt › Thưởng & sự kiện › Gacha: thêm máy, chọn vé (chỉ hiện món công dụng Vé gacha), quà Vật phẩm + Món thư viện, Lưu → /gacha thấy.
+- [ ] /gacha give <người> <mã máy> [số] (admin). Web trang chủ: thẻ từng máy + tỉ lệ; trang tài khoản: "Gacha đã quay".
+Tiền, tin nhắn, khác
+- [ ] Mọi chỗ hiện "xu" thay "$": /bal, /pay ("Đã gửi 10 xu đến …", "Đã nhận được 10 xu từ …"), /sell, /worth, Chợ đen, /jobs, kỹ năng lên cấp, /ce, Towny.
+- [ ] /trade: tiếng Việt hết (tiêu đề, nút xu/XP, ô khoá, Ép trao đổi); nút đồng ý đỏ (chưa) / xanh lá (đã); đếm ngược 5 giây.
+- [ ] Đất hoang: đào đất, đá, xây, mở rương được ở world, Nether, End; spawn vẫn cấm xây phá; thị trấn người khác vẫn cấm.
+- [ ] /tpr vài lần ở vùng rừng: không bị kẹt trong tán lá.
+- [ ] Thanh tiến độ: "Nghề · Cấp … Thợ mỏ …" và "Kỹ năng · +… Đào mỏ XP …"; /jobs có dòng "không cần chọn nghề".
+- [ ] /nhiemvu khi server vắng: tên khớp số (vd "Câu 6 con cá 0/6"), dòng đầu ghi "server đang vắng nên nhẹ hơn".
+- [ ] /doimanh báo không có lệnh; Cài đặt không còn nhóm Mảnh sự kiện; trang Boss không còn nút chia mảnh.
 
 ## 5. Quảng trường Danh vọng (sảnh)
 - [ ] (CHƯA CẦN, làm khi gần mở server) Chọn chỗ trống ở sảnh (map sakura). Đứng, quay mặt về phía người xem: `/vinhdanh dat moinhat tieude`, rồi `bachu`, `chienthan`, `phuho`,

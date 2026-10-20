@@ -291,6 +291,8 @@ groups:
       - ["diemdanh", "Điểm danh nhận quà ngày + quà mốc (Bang Hội Chiến)", Mọi người]
       - ["diemdanh xem", "Xem số ngày đã điểm danh và mốc tiếp theo", Mọi người]
       - ["nhiemvu", "Nhiệm vụ hôm nay và tiến độ (Bang Hội Chiến)", Mọi người]
+      - ["hom", "Hòm quay: chọn hòm, xem tỉ lệ, quay bằng chìa (cầm chìa bấm chuột phải cũng mở) (Bang Hội Chiến)", Mọi người]
+      - ["hom give <người> <mã hòm> [số]", "Tặng chìa hòm (người đang online)", Chỉ admin]
       - ["vongquay", "Vòng quay miễn phí: menu phần thưởng + tỉ lệ, bấm Quay (Bang Hội Chiến)", Mọi người]
       - ["vongquay give <người> <số>", "Tặng/trừ vé vòng quay (số âm để trừ)", Chỉ admin]
       - ["xuong", "Xưởng chế tạo đồ có hạn dùng (Bang Hội Chiến)", Mọi người]

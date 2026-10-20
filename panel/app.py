@@ -430,6 +430,30 @@ def validate(s, v):
         if len(out) > 28:
             raise ValueError(f"{label}: tối đa 28 món (menu có 28 ô)")
         return out
+    if t == "crates":
+        # Hòm quay: [{id, name, icon, key (món thư viện công dụng chia-khoa), source, prizes[spin]}]
+        out, seen = [], set()
+        for c in (v or []):
+            c = c or {}
+            cid = str(c.get("id") or "").strip().lower()
+            if not LIB_ID_RE.match(cid):
+                raise ValueError(f"{label}: mã hòm \"{cid}\" chỉ gồm chữ thường không dấu, số, _")
+            if cid in seen:
+                raise ValueError(f"{label}: trùng mã hòm \"{cid}\"")
+            seen.add(cid)
+            name = " ".join(str(c.get("name") or "").split())[:40] or cid
+            icon = str(c.get("icon") or "CHEST").strip().upper()
+            if not MATERIAL_RE.match(icon):
+                raise ValueError(f"{label} ({cid}): biểu tượng sai \"{icon}\"")
+            key = lib_need(f"{label} ({cid}) chìa", str(c.get("key") or "").strip().lower(), "chia-khoa")
+            prizes = validate({"type": "spin", "label": f"{label} ({cid})"}, c.get("prizes"))
+            if len(prizes) > 36:
+                raise ValueError(f"{label} ({cid}): tối đa 36 phần thưởng (menu 4 hàng)")
+            out.append({"id": cid, "name": name, "icon": icon, "key": key,
+                        "source": " ".join(str(c.get("source") or "").split())[:80], "prizes": prizes})
+        if len(out) > 27:
+            raise ValueError(f"{label}: tối đa 27 hòm")
+        return out
     if t == "spin":
         out = []
         for pz in (v or []):
@@ -1400,9 +1424,10 @@ def lib_load():
 
 # Đầu mục (nhom) và công dụng (cong-dung) của món: khớp ItemLibrary.NHOM / STAMPERS (DuckyMoMoCore) và thuvien.html
 LIB_NHOM = {"vu-khi": "Vũ khí", "cong-cu": "Công cụ", "giap": "Giáp & khiên", "do-an": "Món ăn", "bua": "Bùa & tiêu hao",
-            "nguyen-lieu": "Nguyên liệu", "tien": "Tiền vật phẩm", "manh": "Mảnh sự kiện", "khac": "Khác"}
+            "nguyen-lieu": "Nguyên liệu", "tien": "Tiền vật phẩm", "manh": "Mảnh sự kiện", "chia-khoa": "Chìa khoá hòm", "khac": "Khác"}
 LIB_USES = {"": "Đồ thường", "ky-nang": "Kỹ năng đặc biệt (Xưởng)", "mon-an": "Món ăn (hiệu ứng khi ăn)", "bua-bat-pet": "Bùa bắt pet",
-            "tinh-luyen": "Nguyên liệu Tinh Luyện", "manh": "Mảnh sự kiện"}
+            "tinh-luyen": "Nguyên liệu Tinh Luyện", "manh": "Mảnh sự kiện",
+            "chia-khoa": "Chìa khoá hòm quay"}
 LIB_MODEL_RE = re.compile(r"^[a-z0-9_.-]{1,32}:[a-z0-9_./-]{1,64}$")
 BOSS_DROPS_FILE = LIB_DIR / "boss-roi.yml"
 BOSS_DROP_TO = {"top1": "Người đánh nhiều nhất", "top3": "3 người đánh nhiều nhất (mỗi người tung riêng)",
@@ -1444,6 +1469,12 @@ def lib_usage():
     for k in ((core.get("event-fragments") or {}).get("types") or {}):
         add(k, "Mảnh sự kiện")
     add((core.get("pet-capture") or {}).get("charm-item") or "bua_bat_pet", "Bùa bắt pet")
+    hom = core.get("crates") or {}
+    for c in hom.get("list") or []:
+        if isinstance(c, dict) and c.get("key"):
+            add(c["key"], f"Chìa hòm {c.get('id', '')}")
+    if (hom.get("online-key") or {}).get("item"):
+        add(hom["online-key"]["item"], "Chìa chơi online (hòm quay)")
     add((core.get("tinh-luyen") or {}).get("xu-quai", {}).get("item") or "xuquai", "Xu Quái rơi từ quái")
 
     def walk(node, top):

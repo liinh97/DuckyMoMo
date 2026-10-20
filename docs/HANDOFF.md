@@ -20,6 +20,14 @@ của phiên tài khoản cũ khuya 20/10 tóm ở đây (chi tiết: các dòng
   quặng/kim loại/đá quý chỉ bán; trái mua / phải bán 1 / Shift+phải bán hết (qua /sell Essentials). Bảng giá: `tools/shop/bang-gia.py`
   (ghi config repo + data, settings.yml decor_categories, data/.../Essentials/worth.yml 772 giá /sell). Cài đặt: mỗi danh mục một khung,
   dòng mẫu `*_WOOL`. Sửa lỗi: trùng mã món (bấm xương ra đá cuội), Essentials sell-multipliers ×3 cho admin (đã bỏ double/triple).
+- 21/10: `/ah` màn xác nhận mua gần như cả màn là nút Mua (plugin không cho bỏ màn này); Vòng quay bố cục mới (4 hàng phần thưởng).
+- 21/10: **Chợ đen** `/choden` (/cho): gộp chợ người chơi `/ah` (giá cố định, không phải đấu giá) + thu mua `/donhang` vào một trang.
+  Đấu giá thật (/daugia) để sau nếu người dùng muốn.
+- 21/10: **Hòm quay** `/hom` (Crates.java, config `crates`, Cài đặt › Thưởng & sự kiện › Hòm quay): nhiều hòm, mỗi hòm một chìa = món
+  Thư viện đồ công dụng `chia-khoa` (chọn chìa bằng ô chọn; quà chọn Vật phẩm thường hoặc Món thư viện). Mặc định Hòm Điểm Danh (chìa
+  `chia_khoa_diemdanh`, nằm trong Quà mỗi ngày của /diemdanh) + Hòm Chăm Chỉ (chìa `chia_khoa_online`, chơi thật 90 phút = 1 chìa,
+  đếm phút ở hom.yml). Cầm chìa bấm chuột phải mở đúng hòm. "Chìa lấy từ đâu" tự dò điểm danh / mốc / nhiệm vụ / chìa online.
+  /vongquay (vé theo giờ chơi) VẪN chạy song song: trùng nguồn "chơi online" với Hòm Chăm Chỉ, chờ người dùng chọn giữ hay tắt.
 
 ### VIỆC TIẾP THEO (theo thứ tự)
 1. **Định lại xu toàn server theo bảng giá mới** — người dùng đồng ý làm, nhắc "check kỹ đừng sót phần nào dùng xu". Claude đã gửi BẢNG

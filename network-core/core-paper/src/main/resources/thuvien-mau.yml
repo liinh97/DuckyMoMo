@@ -1,7 +1,7 @@
 # Đồ mẫu của Thư viện đồ (DuckyMoMoCore). Lần bật đầu tiên sau khi "phien" tăng: thêm vào plugins/DuckyMoMoCore/thuvien-do.yml
 # những món CHƯA có (không đè món admin đã sửa / đã xoá thì thêm lại). Sửa món: trang quản trị › Thư viện đồ.
 # Sinh từ cấu hình cũ ngày 20/10 (Xưởng, món ăn /nauan, Tinh Luyện, mảnh sự kiện, bùa bắt pet) khi gom mọi đồ đặc biệt về thư viện.
-phien: 1
+phien: 2
 items:
   khoan_dao:
     nguon: web
@@ -499,3 +499,23 @@ items:
     lore: ["&8Phần thưởng thi câu cá"]
     glint: true
     cong-dung: bua-bat-pet
+  chia_khoa_diemdanh:
+    nguon: web
+    nhom: chia-khoa
+    ten-goi: "Chìa Hòm Điểm Danh"
+    material: TRIPWIRE_HOOK
+    amount: 1
+    name: "&aChìa Hòm Điểm Danh"
+    lore: ["&7Nhận khi điểm danh mỗi ngày (&f/diemdanh&7)", "&7Mở hòm: &f/hom &7hoặc cầm chìa bấm chuột phải"]
+    glint: true
+    cong-dung: chia-khoa
+  chia_khoa_online:
+    nguon: web
+    nhom: chia-khoa
+    ten-goi: "Chìa Hòm Chăm Chỉ"
+    material: TRIPWIRE_HOOK
+    amount: 1
+    name: "&bChìa Hòm Chăm Chỉ"
+    lore: ["&7Nhận khi chơi thật đủ giờ (không tính treo máy)", "&7Mở hòm: &f/hom &7hoặc cầm chìa bấm chuột phải"]
+    glint: true
+    cong-dung: chia-khoa

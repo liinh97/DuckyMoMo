@@ -290,6 +290,16 @@ Triển khai: kiểm tra không ai online (lệnh riêng) → `docker compose up
 - [ ] /tprandom mở menu /tpr của server; /tphere kéo người đúng chỗ admin.
 - [ ] /ah mở được khi đứng ở spawn.
 
+## 4w. 21/10: Chợ đen, Hòm quay — đã triển khai, CHƯA thử bằng người
+- [ ] /choden (/cho): 6 nút Đang bán, Treo bán, Đồ tôi đang bán, Đang thu mua, Đặt đơn, Đơn của tôi đều mở đúng; /menu có nút Chợ đen.
+- [ ] /ah bấm món → màn xác nhận: bấm bất kỳ ô xanh (kể cả ô giữa) là mua; cột phải đỏ quay lại.
+- [ ] /hom: 2 hòm (Điểm Danh, Chăm Chỉ), tooltip ghi số chìa đang có và chìa lấy từ đâu.
+- [ ] /diemdanh nhận thêm 1 Chìa Hòm Điểm Danh; chơi thật 90 phút nhận 1 Chìa Hòm Chăm Chỉ (treo máy không tính).
+- [ ] Trong hòm: bấm Quay mất đúng 1 chìa, hiệu ứng quay, nhận quà; không có chìa thì báo đỏ; món hiếm báo cả server.
+- [ ] Cầm chìa bấm chuột phải mở đúng hòm của chìa đó; /hom give <người> <mã hòm> [số] (admin).
+- [ ] Cài đặt › Thưởng & sự kiện › Hòm quay: thêm hòm mới, chọn chìa từ Thư viện đồ (chỉ hiện món công dụng Chìa khoá hòm quay), quà
+      Vật phẩm + Món thư viện, Lưu → /hom thấy ngay. Thư viện đồ: tạo chìa mới với công dụng Chìa khoá hòm quay.
+
 ## 5. Quảng trường Danh vọng (sảnh)
 - [ ] (CHƯA CẦN, làm khi gần mở server) Chọn chỗ trống ở sảnh (map sakura). Đứng, quay mặt về phía người xem: `/vinhdanh dat moinhat tieude`, rồi `bachu`, `chienthan`, `phuho`,
       `kientrucsu`, `dautruong`, `pet` ở các chỗ khác. Bảng chữ nổi + đầu người chơi đúng hướng, không đè nhau.

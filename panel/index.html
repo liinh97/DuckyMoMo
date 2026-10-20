@@ -121,6 +121,9 @@
   .qe-head { display: grid; grid-template-columns: 130px 1fr 170px 100px 32px; gap: 8px; margin-bottom: 8px; }
   .qe-tg { width: 100%; margin-bottom: 8px; }
   .sp-head { display: grid; grid-template-columns: 1fr 100px 64px auto 32px; gap: 8px; align-items: center; margin-bottom: 8px; }
+  .cr-head { display: grid; grid-template-columns: 130px 1fr 170px minmax(200px,1fr) 32px; gap: 8px; align-items: center; margin-bottom: 8px; }
+  .cr-head .x { background: none; border: 0; color: var(--err); cursor: pointer; font-size: 18px; border-radius: 6px; }
+  .cr-sub { font-size: 13px; color: var(--muted); margin: 10px 0 6px; }
   .sp-pct { text-align: right; color: var(--accent); font-weight: 700; }
   .sp-rare { font-size: 13px; display: flex; gap: 6px; align-items: center; white-space: nowrap; }
   .sp-rare input { width: auto; }
@@ -170,7 +173,7 @@
   .ln-prev { margin-top: 12px; }
   .ln-cap { font-size: 11.5px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin-bottom: 5px; }
   @media (max-width: 700px) { .ln-act { opacity: 1; } .ln-row { grid-template-columns: minmax(0, 1fr) auto; } .ln-row .ln-i { display: none; } }
-  @media (max-width: 700px) { .rw-row, .qe-head, .fm-head, .fs-head, .sh-row, .sp-head { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 700px) { .cr-head, .rw-row, .qe-head, .fm-head, .fs-head, .sh-row, .sp-head { grid-template-columns: 1fr 1fr; } }
 </style>
 <link rel="stylesheet" href="ui.css">
 </head>
@@ -203,7 +206,7 @@ const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
 const CAT_ICON = { "Chiến tranh": "⚔️", "Thị trấn": "🏘️", "Thế giới": "🌍", "Thưởng & sự kiện": "🎁", "Shop": "🛒", "Hệ thống": "⚙️",
   "Kinh tế": "💰", "PvP & combat": "🗡️", "Hiển thị": "🎨", "Nghề": "⛏️", "Chống hack": "🛡️", "Phù phép": "✨", "Người mới": "🐣",
   "Chat": "💬", "Rank donate": "👑", "Sảnh": "🏰", "Role": "🎭", "Khác": "📁" };
-const WIDE = new Set(["kits", "rewards", "milestones", "quests", "spin", "fragtypes", "fragshop", "shopitems", "shoptitles", "dishes", "workshop", "shopcats"]);
+const WIDE = new Set(["kits", "rewards", "milestones", "quests", "spin", "fragtypes", "fragshop", "shopitems", "shoptitles", "dishes", "workshop", "shopcats", "crates"]);
 const fold = (s) => String(s || "").normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/đ/g, "d").replace(/Đ/g, "D").toLowerCase();
 
 async function load() {
@@ -433,6 +436,8 @@ function fillCtl(mode, s, holder, ctl, compact) {
     input = document.createElement("div");
     const sum = document.createElement("div"); sum.className = "small"; sum.style.marginTop = "4px";
     input.append(libSelect(value || "", s.use || null, (v, init) => { libSummary(sum, v); if (!init && v) change(mode, s, v, div); }), sum);
+  } else if (s.type === "crates") {
+    input = cratesEditor(value || [], v => change(mode, s, v, div));
   } else if (s.type === "spin") {
     input = spinEditor(value || [], v => change(mode, s, v, div));
   } else if (s.type === "kits") {
@@ -950,6 +955,38 @@ function spinEditor(value, onChange) {
   return box;
 }
 
+
+// ---- Hòm quay: [{id, name, icon, key (món thư viện công dụng chia-khoa), source, prizes[]}]
+function cratesEditor(value, onChange) {
+  const box = document.createElement("div");
+  const cs = [];
+  const emit = () => onChange(cs.map(c => ({ id: c.id.value.trim().toLowerCase(), name: c.name.value.trim(), icon: c.icon.value.trim().toUpperCase() || "CHEST",
+    key: c.key.dataset.v || "", source: c.source.value.trim(), prizes: c.prizes })).filter(c => c.id));
+  const add = document.createElement("button"); add.type = "button"; add.className = "rw-add"; add.textContent = "+ Thêm hòm";
+  function addC(d) {
+    const wrap = document.createElement("div"); wrap.className = "ms";
+    const head = document.createElement("div"); head.className = "cr-head";
+    head.innerHTML = '<input placeholder="mã, vd diemdanh" title="Mã hòm (chữ thường không dấu, số, _), dùng cho /hom <mã>"><input placeholder="Tên hòm, vd &aHòm Điểm Danh" title="Tên hiện trong game (&a, &b… là màu)"><input placeholder="Biểu tượng, vd CHEST" title="Vật phẩm làm biểu tượng hòm"><span></span><button type="button" class="x" title="Bỏ hòm">×</button>';
+    const [id, name, icon] = head.querySelectorAll("input");
+    const c = { id, name, icon, key: null, source: document.createElement("input"), prizes: (d.prizes || []).slice() };
+    id.value = d.id || ""; name.value = d.name || ""; icon.value = d.icon || "CHEST";
+    c.key = libSelect(d.key || "", "chia-khoa", (v, init) => { if (!init) emit(); });
+    c.key.title = "Chìa mở hòm này (món Thư viện đồ, công dụng Chìa khoá hòm quay)";
+    head.querySelector("span").replaceWith(c.key);
+    c.source.placeholder = "Ghi thêm chìa lấy từ đâu (tuỳ chọn; điểm danh, nhiệm vụ, chìa online tự hiện)"; c.source.value = d.source || "";
+    c.source.style.width = "100%";
+    for (const el of [id, name, c.source]) el.oninput = emit;
+    head.querySelector(".x").onclick = async () => { if (!(await ask("Bỏ hòm " + (id.value || "này") + "? Bấm Lưu mới thật sự xoá.", { title: "Bỏ hòm", ok: "Bỏ hòm", danger: true }))) return; cs.splice(cs.indexOf(c), 1); wrap.remove(); emit(); };
+    const sub = document.createElement("div"); sub.className = "cr-sub"; sub.textContent = "Phần thưởng (quà chọn Vật phẩm = đồ thường, Món thư viện = đồ trong Thư viện đồ):";
+    wrap.append(head, c.source, sub, spinEditor(c.prizes, v => { c.prizes = v; emit(); }));
+    cs.push(c); box.insertBefore(wrap, add);
+    matPick(icon, emit);
+  }
+  box.appendChild(add);
+  add.onclick = () => { addC({ id: "", name: "", icon: "CHEST", key: "", prizes: [{ label: "200 xu", weight: 10, rewards: ["xu 200"] }] }); emit(); };
+  for (const d of value || []) addC(d || {});
+  return box;
+}
 
 // ---- Loại mảnh sự kiện: {mã: {name, material, lore[], until}}
 function fragTypesEditor(value, onChange) {

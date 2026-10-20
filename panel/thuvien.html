@@ -303,7 +303,8 @@ let data = null, cur = null, isNew = true, enchRows = [], lastField = "name", fx
 const USE_NOTE = {
   "bua-bat-pet": "Cầm tay trái khi quăng dây xích bắt pet: cộng thêm % (Cài đặt › PvP & combat › Bắt pet theo xác suất › Bùa bắt pet), mất 1 bùa mỗi lần thử. Món bùa dùng cho /buabatpet chọn ở cùng chỗ.",
   "tinh-luyen": "Món Tinh Luyện: có dấu riêng, không đặt xuống / chế / rèn được, bán cho server được. Công thức và giá bán: config tinh-luyen.items.<mã> (giá bán sửa ở Cài đặt › Shop › Tinh Luyện). Mã món = mã thư viện.",
-  "manh": "Mảnh sự kiện: phát bằng phần thưởng \"manh <mã> <số>\" hoặc /doimanh give, đổi quà ở /doimanh. Hạn đổi đặt ở Cài đặt › Thưởng & sự kiện › Mảnh sự kiện & đổi quà."
+  "manh": "Mảnh sự kiện: phát bằng phần thưởng \"manh <mã> <số>\" hoặc /doimanh give, đổi quà ở /doimanh. Hạn đổi đặt ở Cài đặt › Thưởng & sự kiện › Mảnh sự kiện & đổi quà.",
+  "chia-khoa": "Chìa khoá hòm quay: gán chìa cho hòm ở Cài đặt › Thưởng & sự kiện › Hòm quay. Người chơi cầm chìa bấm chuột phải hoặc gõ /hom để mở, mỗi lần quay mất 1 chìa. Phát chìa: quà \"do <mã> 1\" (điểm danh, nhiệm vụ…) hoặc chọn làm chìa chơi online."
 };
 const EFFECT_VN = { REGENERATION: "Hồi máu", RESISTANCE: "Kháng sát thương", ABSORPTION: "Máu ảo", STRENGTH: "Sức mạnh", SPEED: "Nhanh nhẹn",
   FIRE_RESISTANCE: "Kháng lửa", NIGHT_VISION: "Nhìn đêm", WATER_BREATHING: "Thở dưới nước", JUMP_BOOST: "Nhảy cao", HASTE: "Đào nhanh",
@@ -313,6 +314,7 @@ function guessNhom(mat, use) {
   const m = String(mat || "").toUpperCase();
   if (use === "mon-an") return "do-an";
   if (use === "manh") return "manh";
+  if (use === "chia-khoa") return "chia-khoa";
   if (use === "bua-bat-pet") return "bua";
   if (use === "tinh-luyen") return "nguyen-lieu";
   if (/(_SWORD|BOW|CROSSBOW|MACE|TRIDENT|SPEAR)$/.test(m)) return "vu-khi";

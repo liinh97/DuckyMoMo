@@ -549,6 +549,7 @@ daily-checkin:
   cycle-days: 30              # mốc lặp lại sau mỗi 30 lần điểm danh (0 = không lặp)
   daily-rewards:
     - "xu 100"
+    - "do chia_khoa_diemdanh 1"
   milestones:
     7: ["xu 500", "vat GOLDEN_APPLE 2"]
     14: ["xu 1000", "vat DIAMOND 3"]
@@ -588,6 +589,46 @@ lucky-spin:
     - {label: "2000 xu", weight: 4, rare: true, rewards: ["xu 2000"]}
     - {label: "1 khối kim cương", weight: 2, rare: true, rewards: ["vat DIAMOND_BLOCK 1"]}
     - {label: "Đĩa nhạc Cat (trang trí)", weight: 2, rare: true, rewards: ["vat MUSIC_DISC_CAT 1"]}
+
+# Hòm quay (/hom): nhiều hòm, mỗi hòm một CHÌA = món Thư viện đồ (công dụng "Chìa khoá hòm quay"). Quay 1 lần mất 1 chìa trong túi.
+# Chìa lấy từ: quà "do <chìa> 1" (điểm danh, nhiệm vụ…) + online-key (mỗi N phút CHƠI THẬT được 1 chìa, treo máy không tính).
+# Chìa KHÔNG bán bằng tiền thật / Vàng. Sửa ở Cài đặt › Thưởng & sự kiện › Hòm quay. source: dòng ghi thêm "chìa lấy từ đâu".
+crates:
+  enabled: true
+  online-key:
+    item: chia_khoa_online
+    minutes: 90
+  list:
+  - id: diemdanh
+    name: "&aHòm Điểm Danh"
+    icon: CHEST
+    key: chia_khoa_diemdanh
+    source: ""
+    prizes:
+    - {label: "100 xu", weight: 30, rare: false, rewards: ["xu 100"]}
+    - {label: "250 xu", weight: 18, rare: false, rewards: ["xu 250"]}
+    - {label: "16 bánh mì", weight: 15, rare: false, rewards: ["vat BREAD 16"]}
+    - {label: "8 thỏi sắt", weight: 14, rare: false, rewards: ["vat IRON_INGOT 8"]}
+    - {label: "8 bình kinh nghiệm", weight: 8, rare: false, rewards: ["vat EXPERIENCE_BOTTLE 8"]}
+    - {label: "1 táo vàng", weight: 7, rare: false, rewards: ["vat GOLDEN_APPLE 1"]}
+    - {label: "2 kim cương", weight: 6, rare: false, rewards: ["vat DIAMOND 2"]}
+    - {label: "1500 xu", weight: 2, rare: true, rewards: ["xu 1500"]}
+  - id: online
+    name: "&bHòm Chăm Chỉ"
+    icon: ENDER_CHEST
+    key: chia_khoa_online
+    source: ""
+    prizes:
+    - {label: "150 xu", weight: 25, rare: false, rewards: ["xu 150"]}
+    - {label: "16 bít tết", weight: 15, rare: false, rewards: ["vat COOKED_BEEF 16"]}
+    - {label: "16 thỏi sắt", weight: 15, rare: false, rewards: ["vat IRON_INGOT 16"]}
+    - {label: "8 thỏi vàng", weight: 10, rare: false, rewards: ["vat GOLD_INGOT 8"]}
+    - {label: "16 bình kinh nghiệm", weight: 10, rare: false, rewards: ["vat EXPERIENCE_BOTTLE 16"]}
+    - {label: "3 kim cương", weight: 8, rare: false, rewards: ["vat DIAMOND 3"]}
+    - {label: "8 ngọc lục bảo", weight: 8, rare: false, rewards: ["vat EMERALD 8"]}
+    - {label: "1 bảng tên", weight: 5, rare: false, rewards: ["vat NAME_TAG 1"]}
+    - {label: "1 mảnh netherite", weight: 2, rare: true, rewards: ["vat NETHERITE_SCRAP 1"]}
+    - {label: "2000 xu", weight: 2, rare: true, rewards: ["xu 2000"]}
 
 # Mảnh sự kiện + đổi quà (/doimanh). Mảnh là ĐỒ VẬT (trao đổi, bán được), có dấu ẩn nên không làm giả được.
 # Phần thưởng "manh <loại> <số>" (điểm danh, nhiệm vụ, vòng quay…) bị giới hạn daily-cap mảnh/người/ngày.

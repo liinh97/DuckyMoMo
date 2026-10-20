@@ -136,6 +136,19 @@ groups:
       - { key: vq_prizes, label: Phần thưởng và tỉ lệ, type: spin, file: plugins/DuckyMoMoCore/config.yml, path: lucky-spin.prizes,
           note: "Trọng số càng lớn càng dễ trúng; % tự tính. Chỉ nên đặt tài nguyên, xu, đồ trang trí: đồ quá mạnh làm lệch chiến tranh." }
 
+  - title: Hòm quay
+    category: Thưởng & sự kiện
+    description: "/hom: nhiều hòm, mỗi hòm một loại chìa. Chìa là món Thư viện đồ (công dụng Chìa khoá hòm quay): tạo chìa ở trang Thư viện đồ rồi chọn ở đây. Phát chìa bằng quà \"Món thư viện\" (vd Quà mỗi ngày của điểm danh) hoặc chọn làm chìa chơi online. Chìa KHÔNG bán bằng tiền thật / Vàng (luật Mojang về quay thưởng)."
+    apply: [dmm reload]
+    settings:
+      - { key: hom_on, label: Bật hòm quay, type: select, file: plugins/DuckyMoMoCore/config.yml, path: crates.enabled,
+          options: [ { value: true, label: Bật }, { value: false, label: Tắt } ] }
+      - { key: hom_online_key, label: "Chìa chơi online: món", type: libitem, use: chia-khoa, file: plugins/DuckyMoMoCore/config.yml, path: crates.online-key.item,
+          note: "Chơi thật (không tính treo máy) đủ số phút bên dưới thì được 1 chìa này vào túi." }
+      - { key: hom_online_min, label: "Chìa chơi online: số phút chơi thật cho 1 chìa", type: int, min: 5, max: 1440, file: plugins/DuckyMoMoCore/config.yml, path: crates.online-key.minutes }
+      - { key: hom_list, label: Các hòm, type: crates, file: plugins/DuckyMoMoCore/config.yml, path: crates.list,
+          note: "Mỗi hòm: tên, biểu tượng, chìa (chọn từ Thư viện đồ) và phần thưởng. Quà chọn được đồ thường (Vật phẩm) lẫn đồ Thư viện (Món thư viện). Trọng số càng lớn càng dễ trúng; % tự tính." }
+
   - title: Mảnh sự kiện & đổi quà
     category: Thưởng & sự kiện
     description: "Mảnh là đồ vật (trao đổi, bán được), có dấu ẩn nên không làm giả được. /doimanh mở cửa hàng đổi quà. Phát từ phần thưởng (loại Mảnh sự kiện, có giới hạn mỗi ngày) hoặc admin/boss: /doimanh give <người> <loại> <số>."

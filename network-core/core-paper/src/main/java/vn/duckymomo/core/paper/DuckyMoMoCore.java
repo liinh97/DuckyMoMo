@@ -45,6 +45,7 @@ public final class DuckyMoMoCore extends JavaPlugin {
     private Rewards rewards;
     private DailyQuests quests;
     private LuckySpin spin;
+    private Crates crates;
     private me.clip.placeholderapi.expansion.PlaceholderExpansion spinPapi;
     private me.clip.placeholderapi.expansion.PlaceholderExpansion seasonPapi;
     private me.clip.placeholderapi.expansion.PlaceholderExpansion statsPapi;
@@ -183,6 +184,9 @@ public final class DuckyMoMoCore extends JavaPlugin {
         if (quests != null) {
             quests.flush();
             quests = null;
+        }
+        if (crates != null) {
+            crates.flush();
         }
         if (spin != null) {
             spin.flush();
@@ -927,6 +931,14 @@ public final class DuckyMoMoCore extends JavaPlugin {
             }
         }
         bind("vongquay", spin == null ? null : spin::command, "Vòng quay");
+
+        // Hòm quay: nhiều hòm, chìa là món Thư viện đồ (điểm danh, chơi online…) (Bang Hội Chiến: crates.enabled)
+        crates = getConfig().getBoolean("crates.enabled")
+                ? new Crates(this, getConfig().getConfigurationSection("crates"), rewards, activity, itemLibrary) : null;
+        if (crates != null) {
+            getServer().getPluginManager().registerEvents(crates, this);
+        }
+        bind("hom", crates == null ? null : crates::command, "Hòm quay");
 
         // Mùa mưa / mùa khô: cây lớn nhanh/chậm, được mùa, mưa theo mùa, placeholder cho cá theo mùa (Bang Hội Chiến: seasons.enabled)
         Seasons seasons = getConfig().getBoolean("seasons.enabled") && getConfig().isConfigurationSection("seasons")

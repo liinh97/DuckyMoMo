@@ -255,6 +255,20 @@ Triển khai: kiểm tra không ai online (lệnh riêng) → `docker compose up
 - [ ] Bấm Duyệt → người đó có tiền tố ◆ Sứ Giả + quyền lợi; /lp user <tên> parent info thấy media có thời hạn 14 ngày. Gia hạn / Gỡ chạy đúng.
 - [ ] Đứng AFK trong lúc live → phút không tăng. Thoát game → buổi kết thúc. /sugia baocao hiện ở cuối trang Sứ Giả.
 
+## 4t. 20/10: Thư viện đồ trung tâm, Vàng, tủ skin, đăng ký — đã triển khai, CHƯA thử bằng người
+- [ ] Trang Thư viện đồ: nhóm theo đầu mục, tìm món, sửa công dụng; xoá món đang dùng phải bị chặn.
+- [ ] Xưởng /xuong: chế Khoan Đào → đào 3×3, độ bền giảm, có dòng hạn; Kiếm Nhật lướt chém; Khiên Thần giảm sát thương.
+- [ ] /nauan: nấu Cơm nắm, ăn ra Máu ảo; chờ 20 phút mới ăn món khác. Admin `/dmm laydo canh_chua` rồi ăn cũng ra hiệu ứng.
+- [ ] /buabatpet give <tên> 2 → bùa cầm tay trái khi bắt pet +25%.
+- [ ] /tinhluyen: menu, tinh luyện, bán; Xu Quái rơi khi giết quái; shop dân làng còn nhận món Tinh Luyện cũ.
+- [ ] /doimanh give <tên> lamnguy 5 → mảnh ra đúng tên, đổi được quà.
+- [ ] Trang Boss: thêm đồ rơi (vd kiem_nhat 100%, người đánh nhiều nhất) → gọi boss → đánh chết → nhận đồ + tin nhắn "Đồ rơi từ boss".
+- [ ] Cài đặt: Xưởng / Món ăn / Mảnh / Bùa chọn món từ thư viện, lưu được.
+- [ ] Vàng: /vang (bấm 2 lần mua), /rank mua → QR hiện trên tay không tốn ô, cất là trả món cũ; web thẻ Vàng; trang Donate duyệt = cộng Vàng.
+- [ ] Tủ skin /tuskin + web (tải PNG); dân tị nạn không đổi được skin.
+- [ ] Đăng ký: tài khoản thứ 3 cùng IP bị chặn; tên trong whitelist thì không; captcha bản đồ Sonar khi vào lần đầu.
+- [ ] /caidat Font tiếng Việt bật/tắt đổi gói tài nguyên; /menu (Shift+F) đủ nút; không còn chữ đậm nhòe.
+
 ## 5. Quảng trường Danh vọng (sảnh)
 - [ ] (CHƯA CẦN, làm khi gần mở server) Chọn chỗ trống ở sảnh (map sakura). Đứng, quay mặt về phía người xem: `/vinhdanh dat moinhat tieude`, rồi `bachu`, `chienthan`, `phuho`,
       `kientrucsu`, `dautruong`, `pet` ở các chỗ khác. Bảng chữ nổi + đầu người chơi đúng hướng, không đè nhau.

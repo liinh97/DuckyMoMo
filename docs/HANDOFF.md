@@ -1,7 +1,59 @@
 # Bàn giao dự án DuckyMoMo Network
 
-> Dùng file này để tiếp tục ở session hoặc tài khoản Claude khác. Cập nhật: 19/10/2026 chiều. ĐỌC MỤC 000 TRƯỚC, rồi mục 00, rồi mục 0.
+> Dùng file này để tiếp tục ở session hoặc tài khoản Claude khác. Cập nhật: 20/10/2026 tối. ĐỌC MỤC 0000 TRƯỚC, rồi 000, 00, 0.
 > Đọc kèm: `README.md`, `docs/minecraft-server-plan.md` (kế hoạch, quyết định), `docs/network-architecture.md` (kiến trúc).
+
+---
+
+## 0000. BẮT ĐẦU Ở ĐÂY — tình trạng 20/10/2026 tối (chuyển tài khoản Claude lần 2)
+
+### Trạng thái
+- Nhánh `claude/happy-ritchie-2p60v7`, commit mới nhất `67b0872`. Khoảng **200 commit CHƯA push** (người dùng chưa bảo push).
+  `site/config/site.yml` đang sửa (số tài khoản ngân hàng): KHÔNG commit (luôn `git add -A -- . ':!site/config/site.yml'`).
+- Mọi thứ trong mục này ĐÃ build + triển khai: banghoi-1, lobby, practice-1, sangtao-1 chạy DuckyMoMoCore mới; panel đã build lại;
+  proxy chạy DuckyMoMoSkin (Tủ skin). Kiểm `docker compose config` trong worktree tạm: OK.
+- **Giai đoạn thử nghiệm (người dùng 20/10):** "cứ reset đi, đang test thôi, không phải check online" → được khởi động lại KHÔNG cần hỏi.
+  Khi mở cửa chính thức thì quay lại quy tắc kiểm online (mục 000, bài học 1). Proxy khởi động lại thì VẪN phải tạo lại relay.
+- Người dùng đang tự thử toàn bộ theo **lộ trình test** (artifact có lưu tích: https://claude.ai/artifact/HFv53FeegS1PvHQCmxUTBL,
+  file nguồn ở scratchpad phiên cũ, KHÔNG có trong repo; sửa thì đọc lại artifact bằng Artifact read rồi đăng lại cùng URL)
+  + `docs/TEST-CHECKLIST.md` (mục 4t mới cho 20/10).
+
+### Quy tắc mới 20/10 (người dùng yêu cầu, giữ)
+- **KHÔNG chữ in đậm** (&l, §l, <bold>, <b>) ở mọi chữ người chơi thấy: font tiếng Việt vẽ đậm bị nhòe như 3D. Thêm plugin/bản dịch:
+  `python3 tools/bo-in-dam.py --ghi`.
+- **Mọi vật phẩm đặc biệt chỉ tạo/sửa ở Thư viện đồ**; chỗ khác chỉ CHỌN món + giữ thông số riêng (chi tiết: ghi chú 20/10 cuối file
+  và cẩm nang "Thư viện đồ"). Thêm tính năng có vật phẩm mới thì làm công dụng mới trong thư viện (ItemLibrary.STAMPERS), đừng tự dựng đồ.
+- Kiếm tiền: tiền thật → **Vàng** (1.000đ = 1 Vàng, chỉnh ở Cài đặt) → mua rank ủng hộ / đồ trang trí / tên. Không chuyển Vàng, không đổi ra xu,
+  không pay-to-win, không bán gì Pokémon.
+- Giới hạn tài khoản: TỔNG tối đa 2 tài khoản / IP (vĩnh viễn), miễn theo tên thành viên hoặc IP (Cài đặt › Toàn mạng › Giới hạn đăng ký).
+- Đổi tên đã chốt: rank Media → **Sứ Giả** (/sugia, nhóm LuckPerms vẫn `media`); Bảng truy nã quái → **Lệnh săn** (/lenhsan);
+  Quảng trường Vinh danh → **Quảng trường Danh vọng** (/danhvong).
+
+### Làm trong 20/10 (theo thứ tự; chi tiết ở các dòng "- 20/10:" cuối file + git log)
+- Trang chủ: mục Giới thiệu, sửa chữ hero, ô chế độ (Thái Ấp Sáng Tạo, Skyblock, Lifesteal sắp có, Pokémon dự kiến), bảng Cổng Dungeon chia tab.
+- Mùa (Seasons): xương rồng, mía, tre, tảo bẹ lớn đúng tốc độ mùa; dưa/bí thêm sản lượng; Lũ lúa 0.5; bột xương KHÔNG bị ảnh hưởng (người dùng chốt).
+- Panel: đăng nhập bằng form + cookie (bỏ hộp thoại Basic Auth).
+- Bỏ chữ đậm toàn server (repo, data, prefix LuckPerms, menu sảnh).
+- Tủ skin `/tuskin` (plugin proxy `network-core/core-velocity`, DuckyMoMoSkin): số ô theo danh phận/rank trên Cài đặt; web tải PNG/link/tên bản quyền.
+- AuthMe: mật khẩu phải có chữ + số, sai không bị đá, 90 giây, tắt captcha chữ, chào tiếng Việt. Sonar: captcha bản đồ cho người mới
+  (kiểu modern, nhớ 7 ngày, 5 lần sai chặn IP), tối đa 5 người online / IP. Tin nhắn Velocity tiếng Việt.
+- Giới hạn đăng ký 2 tài khoản / IP + whitelist theo tên/IP.
+- Font tiếng Việt tuỳ chọn từng người (/caidat + web). Menu chính `/menu` (Shift+F) ở Bang Hội Chiến.
+- Essentials luôn tiếng Việt (per-player-locale false). QR VietQR tự vẽ (segno) vì img.vietqr.io trả SVG.
+- **Vàng**: ví MariaDB `network.vang_vi/vang_log` (panel/vang.py), /vang, /rank mua, QR đặt thẳng vào tay, trang tài khoản thẻ Vàng,
+  trang Donate · Vàng (duyệt = cộng Vàng, cộng/trừ tay, sửa món bán lẻ), %dmmvang_so_du% trên bảng bên phải.
+- **Thư viện đồ trung tâm** (commit 67b0872): đầu mục + công dụng; Xưởng/bếp/Tinh Luyện/mảnh/bùa/boss/phần thưởng chọn từ thư viện;
+  đồ rơi boss (BossDrops, `boss-roi.yml`, trang Boss mục 6); 41 món cũ thành đồ mẫu `thuvien-mau.yml`.
+
+### Chưa thử bằng người (người dùng thử, gửi ảnh thì sửa)
+- Thư viện đồ trong game: chế đồ Xưởng (kỹ năng chạy?), nấu + ăn món (/nauan), `/buabatpet give`, Xu Quái rơi, `/tinhluyen`, mảnh
+  `/doimanh give`, đồ rơi boss (đặt đồ rơi cho 1 boss trên trang Boss, gọi boss, đánh chết). Đã kiểm: 42 món dựng được, panel lưu/chặn đúng.
+- /vang menu + QR trên tay + thẻ Vàng web; Tủ skin trong game; câu thông báo Lệnh săn; công tắc Font tiếng Việt; /menu.
+
+### Việc chờ người dùng quyết
+- Lệnh `/rank` và `/pet`, `/pp` trùng giữa sảnh và Bang Hội Chiến: đã hỏi có xoá ở sảnh không, CHƯA trả lời.
+- Đã gợi ý (chưa làm): nút từ nhóm Vàng trên Cài đặt sang trang Donate.
+- Các mục cũ ở "Việc tiếp theo" của mục 000 vẫn còn.
 
 ---
 

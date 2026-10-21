@@ -1471,4 +1471,4 @@ vang:
 # Thư viện đồ: món có tooltip ước tính dài hơn tooltip-max-lines dòng thì tự gộp phù phép (3 cái/dòng) và khối chỉ số của game
 # (1 dòng "Khi mặc: +6 Giáp") để không bị đẩy ra ngoài màn hình. Tên, lore, phù phép CE giữ nguyên. 0 = tắt (hiện như game gốc).
 item-library:
-  tooltip-max-lines: 20
+  tooltip-max-lines: 0

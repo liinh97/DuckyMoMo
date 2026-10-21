@@ -1467,3 +1467,8 @@ vang:
     - {ma: pet_cho, nhom: "Pet trang trí", ten: "Pet chó (/pet)", mo-ta: "Chó trang trí đi theo, không đánh nhau. Vĩnh viễn", gia: 40, ngay: 0, lenh: ["lp user {player} permission set pet.type.wolf.* true"]}
     - {ma: pet_vet, nhom: "Pet trang trí", ten: "Pet vẹt (/pet)", mo-ta: "Vẹt trang trí đậu vai. Vĩnh viễn", gia: 50, ngay: 0, lenh: ["lp user {player} permission set pet.type.parrot.* true"]}
     - {ma: tuskin10, nhom: "Trang trí", ten: "Tủ skin 10 ô (/tuskin)", mo-ta: "Lưu tới 10 skin để đổi nhanh. 30 ngày", gia: 20, ngay: 30, lenh: ["lp user {player} permission settemp duckymomo.tuskin.10 true 30d accumulate"]}
+
+# Thư viện đồ: món có tooltip ước tính dài hơn tooltip-max-lines dòng thì tự gộp phù phép (3 cái/dòng) và khối chỉ số của game
+# (1 dòng "Khi mặc: +6 Giáp") để không bị đẩy ra ngoài màn hình. Tên, lore, phù phép CE giữ nguyên. 0 = tắt (hiện như game gốc).
+item-library:
+  tooltip-max-lines: 20

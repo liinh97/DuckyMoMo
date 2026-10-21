@@ -443,8 +443,21 @@ function addFx(spec) {
   fxRows.push(r); $("fxs").appendChild(row);
 }
 function render() {
-  const f = cur && cur.nguon === "game" ? cur : form();
+  const f = Object.assign({}, cur && cur.nguon === "game" ? cur : form());
   const mat = f.material || "STONE";
+  // tự gộp như ItemLibrary.tooltipLines: tooltip ước tính dài hơn item-library.tooltip-max-lines (0 = tắt) thì gộp phù phép + chỉ số
+  const tmax = data && data.meta && data.meta.tooltip_max !== undefined ? data.meta.tooltip_max : 20;
+  let autoC = false, rawLines = 0;
+  if (!(cur && cur.nguon === "game")) {
+    const ENCH_STAT0 = ["blast_protection", "fire_protection", "swift_sneak", "depth_strider", "respiration", "aqua_affinity", "soul_speed", "feather_falling"];
+    const ad0 = Object.assign({}, attrDef(mat), f.attributes || {});
+    const nAttr = Object.keys(ad0).filter(k => k !== "slot" && ad0[k] !== 0).length + (ad0.attack_damage ? 1 : 0);   // +1: game hiện cả tốc đánh
+    const nEs = Object.keys(f.enchants || {}).filter(k => ENCH_STAT0.includes(k)).length;
+    rawLines = 1 + (f.lore || []).length + (f.hide_enchants ? 0 : Object.keys(f.enchants || {}).length) + Object.keys(f.ce_enchants || {}).length
+      + (f.unbreakable ? 1 : 0) + (nAttr ? nAttr + 2 : 0) + (nEs ? nEs + 2 : 0);
+    autoC = tmax > 0 && rawLines > tmax;
+    if (autoC) { f.compact_enchants = true; f.hide_stats = true; }
+  }
   const hasEnch = Object.keys(f.enchants || {}).length + Object.keys(f.ce_enchants || {}).length > 0;
   let html = f.name ? `<div>${mc(f.name, "#FFFFFF", false)}</div>`
     : `<div style="color:${hasEnch ? "#55FFFF" : "#FFFFFF"}">${esc(prettyMat(mat))}</div>`;
@@ -490,7 +503,7 @@ function render() {
   const ENCH_STAT = ["blast_protection", "fire_protection", "swift_sneak", "depth_strider", "respiration", "aqua_affinity", "soul_speed", "feather_falling"];
   const enchStat = f.hide_stats ? 0 : Object.keys(f.enchants || {}).filter(k => ENCH_STAT.includes(k)).length;
   tipLines = (html.match(/<div/g) || []).length - 1 + (enchStat ? enchStat + 2 : 0);   // −1: dòng mã minecraft:… chỉ hiện khi bấm F3+H
-  html += `<div style="color:#555555;font-size:11px;margin-top:6px">${tipLines} dòng${enchStat ? " (kể cả khối \"Khi được mặc\" game tự thêm)" : ""}</div>`;
+  html += `<div style="color:#555555;font-size:11px;margin-top:6px">${tipLines} dòng${enchStat ? " (kể cả khối \"Khi được mặc\" game tự thêm)" : ""}${autoC ? ` · tự gộp vì dài ${rawLines} dòng (quá ${tmax}, Cài đặt › Shop › Thư viện đồ)` : ""}</div>`;
   $("tip").innerHTML = html;
   // cảnh báo
   const w = [];

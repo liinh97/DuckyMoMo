@@ -248,6 +248,30 @@ final class ItemLibrary {
         return item;
     }
 
+    /** Phù phép mà game tự vẽ thêm khối "Khi được mặc" (chỉ số theo phù phép, 1.21+). Khớp ENCH_STAT trong thuvien.html. */
+    private static final java.util.Set<String> ENCH_STAT = java.util.Set.of("blast_protection", "fire_protection", "swift_sneak", "depth_strider",
+            "respiration", "aqua_affinity", "soul_speed", "feather_falling");
+
+    /** Ước số dòng tooltip như game vẽ (tên, phù phép, phù phép CE, lore, "Không thể phá huỷ", khối chỉ số, khối "Khi được mặc"). */
+    @SuppressWarnings("deprecation")
+    private static int tooltipLines(ItemMeta meta, Material mat, ConfigurationSection s, int loreLines) {
+        int n = 1 + loreLines;
+        if (!s.getBoolean("hide-enchants")) {
+            n += meta.getEnchants().size();
+        }
+        ConfigurationSection cee = s.getConfigurationSection("ce-enchants");
+        n += cee == null ? 0 : cee.getKeys(false).size();
+        if (meta.isUnbreakable()) {
+            n++;
+        }
+        var mods = meta.getAttributeModifiers();
+        int attrs = mods != null && !mods.isEmpty() ? mods.keySet().size() : mat.getDefaultAttributeModifiers(mat.getEquipmentSlot()).keySet().size();
+        n += attrs > 0 ? attrs + 2 : 0;
+        int es = (int) meta.getEnchants().keySet().stream().filter(e -> ENCH_STAT.contains(e.getKey().getKey())).count();
+        n += es > 0 ? es + 2 : 0;
+        return n;
+    }
+
     private static final String[] ROMAN = {"", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"};
 
     /** Phù phép gộp 3 cái một dòng; tên là chữ dịch của game (máy người chơi tự hiện tiếng Việt, gói tài nguyên DuckyMoMo). */
@@ -432,12 +456,16 @@ final class ItemLibrary {
         if (at != null && !at.getKeys(false).isEmpty()) {
             applyAttributes(meta, mat, at);
         }
-        // tooltip gọn (21/10: đồ nhiều phù phép bị đẩy ra ngoài màn hình): 3 phù phép một dòng, chỉ số game gộp 1 dòng cuối mô tả
-        if (s.getBoolean("compact-enchants") && !(meta instanceof EnchantmentStorageMeta) && meta.getEnchants().size() > 1) {
+        // tooltip gọn (21/10: đồ nhiều phù phép bị đẩy ra ngoài màn hình): 3 phù phép một dòng, chỉ số game gộp 1 dòng cuối mô tả.
+        // Bật theo món (compact-enchants, hide-stats) hoặc TỰ BẬT khi tooltip ước tính dài hơn item-library.tooltip-max-lines (0 = tắt).
+        // Chỉ đổi cách hiện phần game tự vẽ; tên, lore, phù phép CE giữ nguyên.
+        int maxLines = plugin.getConfig().getInt("item-library.tooltip-max-lines", 20);
+        boolean auto = maxLines > 0 && tooltipLines(meta, mat, s, lore.size()) > maxLines;
+        if ((s.getBoolean("compact-enchants") || auto) && !(meta instanceof EnchantmentStorageMeta) && meta.getEnchants().size() > 1) {
             meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
             lore.addAll(0, compactEnchants(meta.getEnchants()));
         }
-        if (s.getBoolean("hide-stats")) {
+        if (s.getBoolean("hide-stats") || auto) {
             Component line = statsLine(meta, mat);
             meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
             if (line != null) {
@@ -664,7 +692,8 @@ final class ItemLibrary {
             sb.append("]}");
             first = false;
         }
-        sb.append("],\"attr_def\":{");   // chỉ số gốc từng loại đồ (trang web điền sẵn ô Chỉ số)
+        sb.append("],\"tooltip_max\":").append(plugin.getConfig().getInt("item-library.tooltip-max-lines", 20));
+        sb.append(",\"attr_def\":{");   // chỉ số gốc từng loại đồ (trang web điền sẵn ô Chỉ số)
         first = true;
         for (Material m : Material.values()) {
             if (m.isItem() && !m.isAir() && !m.isLegacy()) {

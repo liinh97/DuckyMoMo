@@ -943,6 +943,14 @@ Admin (quyền duckymomo.sell.khonggioihan) không bị giới hạn." }
       - { key: dh_minprice, label: Đơn giá thấp nhất, type: number, min: 0, file: plugins/DuckyMoMoCore/config.yml, path: orders.min-price }
       - { key: dh_maxprice, label: Đơn giá cao nhất, type: number, min: 0, file: plugins/DuckyMoMoCore/config.yml, path: orders.max-price }
 
+  - title: Thư viện đồ › Tooltip gọn
+    category: Shop
+    description: "Món có mô tả quá dài thì tự gộp cho vừa màn hình."
+    info: "Món có tooltip ước tính dài hơn số dòng này thì server tự gộp: phù phép 3 cái một dòng, khối chỉ số của game (Khi ở ngực: +6 Giáp, Khi được mặc…) thành 1 dòng \"Khi mặc: +6 Giáp\".\nTên, lore, phù phép CE giữ nguyên như thiết kế. Đồ đã phát cho người chơi trước đó không đổi.\nMàn hình 1080p, cỡ giao diện 3 hiện khoảng 20 dòng. Đặt 0 = tắt (hiện như game gốc).\nLưu xong: có hiệu lực ngay (dmm reload) với đồ phát từ lúc đó."
+    apply: [dmm reload]
+    settings:
+      - { key: thuvien_tooltip_max, label: "Tự gộp khi tooltip dài hơn (dòng; 0 = tắt)", type: int, min: 0, max: 100, file: plugins/DuckyMoMoCore/config.yml, path: item-library.tooltip-max-lines }
+
   - title: Thăng Cấp (/capdo)
     category: Kinh tế
     description: "Cấp riêng của server, cày cuốc: lên cấp cần xu (trả khi lên), giờ chơi thật và điểm hạ gục, càng lên càng lâu. Mỗi cấp được điểm thuộc tính (Máu, Sức mạnh, Bền bỉ, Nhanh nhẹn); đặc quyền mua bằng xu khi đủ cấp."

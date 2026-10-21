@@ -185,7 +185,7 @@
         <label class="switch"><input type="checkbox" id="hide"><span class="track"></span><span class="txt">Ẩn dòng phù phép</span></label>
         <label class="glint">Ánh lấp lánh <select id="glint"><option value="">Mặc định</option><option value="true">Luôn có</option><option value="false">Không có</option></select></label>
       </div>
-      <label class="f" for="model">Hình riêng <span class="hint">model trong gói tài nguyên DuckyMoMo, vd duckymomo:tl_sat; để trống = hình gốc của loại đồ</span></label>
+      <label class="f" for="model">Hình riêng <span class="hint">model trong gói tài nguyên DuckyMoMo, vd duckymomo:tl_sat (ghi tl_sat cũng được); để trống = hình gốc của loại đồ</span></label>
       <input id="model" placeholder="duckymomo:tl_sat" maxlength="96">
       <div id="warns"></div>
     </div>
@@ -451,6 +451,8 @@ function render() {
     if (c && !c.active) w.push(`Phù phép CE ${strip(c.display) || n} đang TẮT (Cài đặt › Phù phép) nên gắn vào cũng không có tác dụng`);
     if (c && c.max && l > c.max) w.push(`${strip(c.display) || n} ${l} vượt cấp tối đa của CE (${c.max}): server cho vượt cấp nên VẪN có tác dụng mạnh hơn cấp ${c.max} (vd Bánh răng ${l} = Tốc độ ${l}). Chỉ dùng cho đồ hiếm.`);
   }
+  const md = $("model").value.trim().toLowerCase();
+  if (md && !/^([a-z0-9_.-]{1,32}:)?[a-z0-9_./-]{1,64}$/.test(md)) w.push(`Ô "Hình riêng" ghi sai dạng ("${md}"): phải như duckymomo:tl_sat, chữ thường không dấu, không dấu cách. Không dùng hình riêng thì xoá trống.`);
   const mats = data && data.meta ? data.meta.materials : null;
   if (mats && f.material && !mats.includes(f.material)) w.push(`Không có loại đồ "${f.material}" trong server`);
   if (u.cong_dung === "mon-an" && data && data.foods && !data.foods.includes(f.material)) w.push("Món ăn phải là đồ ăn được (bánh mì, cá chín, súp…)");

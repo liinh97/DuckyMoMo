@@ -1724,9 +1724,12 @@ def thuvien_action(data, actor=None):
         if it.get("glint") in (True, False):
             entry["glint"] = it["glint"]
         model = str(it.get("model") or "").strip().lower()
+        if model and ":" not in model:
+            model = "duckymomo:" + model   # chỉ ghi tên hình thì hiểu là hình trong gói DuckyMoMo
         if model:
             if not LIB_MODEL_RE.match(model):
-                raise ValueError("Hình riêng (model) dạng tên_gói:tên_hình, vd duckymomo:tl_sat")
+                raise ValueError(f'Ô "Hình riêng" đang ghi "{model}": phải dạng tên_gói:tên_hình (vd duckymomo:tl_sat), chữ thường không dấu, '
+                                 "không dấu cách. Không dùng hình riêng thì xoá trống ô đó.")
             entry["model"] = model
         if extra.get("cong-dung") == "mon-an" and mat not in DISH_FOODS:
             raise ValueError("Món ăn phải là đồ ăn được (bánh mì, cá chín, súp…)")

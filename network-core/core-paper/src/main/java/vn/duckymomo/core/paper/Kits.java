@@ -243,7 +243,7 @@ final class Kits implements Listener {
     String give(Player p, Kit k, boolean force) {
         if (!force) {
             if (!allowed(p, k)) {
-                return "&cGói &f" + k.name() + "&c chỉ dành cho: &f" + rankText(k) + "&c.";
+                return "&f" + k.name() + "&c chỉ dành cho: &f" + rankText(k) + "&c.";
             }
             long w = waitLeft(p, k);
             if (w < 0) {

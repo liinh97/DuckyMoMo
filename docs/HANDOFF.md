@@ -1,11 +1,75 @@
 # Bàn giao dự án DuckyMoMo Network
 
-> Dùng file này để tiếp tục ở session hoặc tài khoản Claude khác. Cập nhật: 21/10/2026 rạng sáng. ĐỌC MỤC 000000 TRƯỚC, rồi 00000, 0000, 000, 00, 0.
+> Dùng file này để tiếp tục ở session hoặc tài khoản Claude khác. Cập nhật: 21/10/2026 chiều. ĐỌC MỤC 0000000 TRƯỚC, rồi 000000, 00000, 0000, 000, 00, 0.
 > Đọc kèm: `README.md`, `docs/minecraft-server-plan.md` (kế hoạch, quyết định), `docs/network-architecture.md` (kiến trúc).
 
 ---
 
-## 000000. MỚI NHẤT — 21/10/2026 rạng sáng (chuyển tài khoản Claude lần 4)
+## 0000000. MỚI NHẤT — 21/10/2026 chiều (chuyển tài khoản Claude lần 5)
+
+Phiên tài khoản trước (sáng → chiều 21/10). Mọi thứ đã build + triển khai: lần restart cuối banghoi 13:25, cả 4 server chạy bản mới nhất,
+KHÔNG còn gì chờ restart. Chưa push (người dùng chưa bảo). Commit cuối: xem `git log`.
+
+### Lộ trình test (QUAN TRỌNG khi đổi tài khoản)
+- Trang test: https://claude.ai/artifact/YY55Wn87HYuMzL898MT8a7 (thuộc tài khoản CŨ, tài khoản mới không sửa/đọc DB được).
+  Tài khoản mới: đăng lại từ `docs/lo-trinh-test.html` (Artifact publish, capabilities {"db": {}}, icon "checklist"), rồi nạp kết quả từ
+  `docs/lo-trinh-test-ketqua.json` vào collection `ketqua` (mỗi mục 1 doc {tt, ghi_chu, luc, sua?}; ArtifactData batch set).
+- Kết quả tới 21/10 chiều (đã chép vào json): 53/187 mục có kết quả: 52 đạt (cb1 cb3, v1–v5 v8–v12, m1–m9, r1–r9 r11, k1–k10 k12–k22),
+  1 LỖI: r10 "Phong quân hàm như nào" (cần hướng dẫn/menu cho /n rank add, quân hàm, min-rank-hours).
+- Chưa test: m10–m17 (gói quà /kit, quà lần đầu, menu/tên tiếng Việt, /tprandom, đất hoang, /tpr tán cây, thanh tiến độ, /hd menu), k11,
+  toàn bộ cụm 6 trở đi (Chế đồ, Mùa & câu cá, Quái/dungeon, Pet, Thị trấn, Chiến tranh, Hoà Bình, Thái Ấp, Đấu Trường, Web x1–x15,
+  Thử phá s1–s24, Vận hành o1–o7). Danh sách test chi tiết: TEST-CHECKLIST mục 4x (xu), 4y (/hd), 4z (nghề + luật hoà bình).
+- Trang định giá xu: https://claude.ai/artifact/SeZHthvXRXHusvgPqknXsh (nguồn `docs/dinh-gia-xu.html`, đã áp dụng, DB duyet2 trống).
+
+### Đã làm trong phiên (21/10)
+1. **Định lại xu toàn server** theo giờ công 1.400 xu/giờ (commit 27eefdd; chi tiết mục 00000 › VIỆC TIẾP THEO 2 + docs/dinh-gia-xu.html):
+   phí ×3, quà định kỳ/một lần ×1,5 (cả Gacha, điểm danh…), giữ Thăng Cấp/Xưởng, Tinh Luyện 70% nguyên liệu, tiền khởi đầu 500.
+   **Giới hạn bán cho server 8.000 xu/người/ngày** (SellLimit.java; /sell, nút bán /cuahang, Rìu Bán, Tinh Luyện).
+2. **/hd = menu rương 18 nhóm** (Guide.java + huongdan.yml › menu): rê chuột thấy lệnh, bấm mở sách chỉ chương đó; /hd sach cả cuốn.
+3. **Nghề: uJobs → Jobs Reborn 5.2.6.7 + CMILib, mỗi người 1 nghề** (8 nghề; tools/jobs/chuyen-ujobs.py sinh cấu hình + trang Cài đặt
+   › Nghề 238 mục; Words_vi 1.970 tên; CMILib tiếng Việt tools/jobs/cmilib-vi.py; /jobs trơn mở menu (JobsMenu); đổi nghề chờ 1 ngày;
+   vào lại nghề cũ mất 30% cấp (old-job.level-loss-percentage); +0,5% tiền/cấp, tối đa cấp 50. Jobs tự in "đã vào nghề" cả khi bị chặn
+   -> đã tắt câu đó (messages_vi command.join.success = ''), DuckyMoMoCore tự báo khi vào được thật.
+4. **Luật khu hoà bình** (PeaceAlliance): mua bán với server (/sell, /emf shop, /ce, /xuong, /tinhluyen, Rìu Bán, nút /menu gọi lệnh đó)
+   và VÀO/RỜI nghề chỉ khi đứng trong đất Liên minh / vòng spawn; **đặc quyền dân hoà bình: ở đâu cũng được** (ghi ở /hoabinh, /hd, web,
+   TAB). Xem /jobs ở đâu cũng được. /choilai vẫn rời nghề (Shared.JOBS_FREE). Cài đặt › Liên minh Hoà Bình: công tắc + danh sách lệnh.
+   **Chợ đen /choden mở ở MỌI NƠI** (người dùng: "chợ đen vốn phi chính phủ"; auction-only-in-peace: false).
+5. **Liên minh Hoà Bình ĐÃ LẬP** (LienMinhHoaBinh, thủ đô KinhDo, 1.521 ô quanh spawn, đang hoà bình). Sửa: TownRules không bắt kinh đô
+   đủ 3 dân hoạt động; miễn phí duy trì quốc gia liên minh (quỹ có sẵn 300.000 xu); PeaceStatus.java đọc trạng thái hoà bình của SiegeWar 3.7
+   (metadata siegewar_peaceSetting, KHÔNG phải neutral của Towny — trước đây tưởng chưa hoà bình mãi; cũng sửa RegionSpecialty, WarBalance).
+6. **Shop rương (QuickShop)**: GIỮ (đã so với Chợ đen: khác — đặt ở thị trấn mình, không hết hạn, bán cả rương). Tạo: nhìn rương
+   `/qs create <giá>` (chế độ sinh tồn); bấm trái shop = menu chọn số lượng, Shift+trái = mua 1 chồng (interaction.yml chế độ GUI).
+7. **Đăng nhập giữ 30 ngày** đang test (AuthMe, trang Cài đặt, trang tài khoản) + phiên web lưu ra file — xem mục "KHI MỞ SERVER" bên dưới.
+8. Khác: Thư viện đồ ô Mã tự sửa (iPhone tự viết hoa), PaySelfGuard chặn /pay cho chính mình, Towny phế tích (thị trấn xoá thành
+   "Ruins" 24–72 giờ; xoá ngay: /townyadmin town <tên> delete rồi /confirm), lệnh admin xu: /eco give|take|set|reset <tên> <số>.
+
+### ĐANG LÀM DỞ: làm lại Thăng Cấp (/capdo) — người dùng đã CHỐT thiết kế, CHƯA viết code
+Người dùng: "shop toàn lợi ích trùng rank/dân… lv up có điểm cộng máu, tốc độ, sức mạnh", "theo hướng cày cuốc", "chỉ max được 2 thuộc tính".
+- **Điểm thuộc tính**: 1 điểm/cấp + 1 điểm thưởng mỗi mốc 10 cấp = 110 điểm ở cấp 100 (max-level 100).
+- **4 thuộc tính, mỗi cái 10 bậc, bậc k tốn k điểm (max 1 thuộc tính = 55 điểm) => cấp 100 max đúng 2 thuộc tính**:
+  Máu +½ tim/bậc (max +5 tim, MAX_HEALTH); Sức mạnh +1%/bậc sát thương (max +10%); Bền bỉ −1%/bậc sát thương nhận (max −10%,
+  EntityDamageEvent); Nhanh nhẹn +1%/bậc tốc chạy (max +10%, MOVEMENT_SPEED ADD_SCALAR). Tắt trong Đấu Trường (như AuraSkills);
+  làm lại mỗi mùa cùng cấp. Áp AttributeModifier khi vào game / hồi sinh / đổi thế giới.
+- **Đặc quyền mua bằng XU + cần đủ cấp** (không dùng điểm): giảm 5% giá Xưởng (2 lần), +1.000 xu giới hạn bán/ngày (3 lần, SellLimit đọc
+  quyền), +10% kinh nghiệm nghề (Jobs: kiểm định dạng quyền jobs.boost.*), +10% kinh nghiệm kỹ năng (AuraSkills: kiểm quyền multiplier),
+  +5% tỉ lệ bắt pet, danh hiệu Lão Luyện. Giá xu/cấp tối thiểu: tự đề xuất (vd giảm Xưởng: cấp 20 + 30.000 xu), báo người dùng.
+  (+15% kinh nghiệm pet, pet hồi sinh nhanh: tuỳ có làm được không.) Chưa xác minh Jobs/AuraSkills có cộng kinh nghiệm theo quyền.
+- **Bỏ** khỏi shop (trùng rank ủng hộ / danh phận): /craft, /anvil, /disposal, /hat, hiệu ứng hạt (hat2), pet mèo.
+- **Lên cấp kiểu cày**: tổng giờ chơi thật cần tới cấp N = 0,04 × N² giờ (cấp 10: 4 g, 25: 25 g, 50: 100 g, 100: 400 g) — cần code
+  (hiện hours-per-level tuyến tính 0,5); điểm hạ gục cũng tăng dần; xu mỗi cấp 500 × N^0,6 (tổng tới cấp 10: 13k, 25: 56k, 100: 500k).
+  Lương Dân (cần cấp 10) / Hào Kiệt (cấp 25) vẫn đạt trong giờ chơi danh phận yêu cầu (24 g / 72 g).
+- File: LevelUp.java (566 dòng), config level-up (data + repo), settings.schema nhóm "Thăng Cấp (/capdo)", huongdan + camnang + web.
+
+### Câu hỏi đang chờ người dùng trả lời
+- Lương nghề: giữ (≈170–210 xu/giờ, ~10% thu nhập) hay ×2 cả 8 nghề.
+- Thoát nghề: giữ "vào lại mất 30% cấp" hay đổi (mất trắng / không trừ).
+- Towny phế tích (Ruins 24–72 g): giữ, tắt hay rút ngắn.
+- zMenu lệnh mẫu /pro_command (64 kim cương lấy 500 xu, quyền zmenu.pro, người thường không có): có gỡ commands.yml mẫu không.
+- r10 hướng dẫn phong quân hàm; các đề nghị cũ ở mục 000000 (tắt kiểm tra cập nhật 403, staff bỏ chờ dịch chuyển, /daugia).
+
+---
+
+## 000000. (cũ hơn) — 21/10/2026 rạng sáng (chuyển tài khoản Claude lần 4)
 
 Tóm cả phiên 21/10 (chi tiết từng việc: mục 00000 bên dưới, các dòng "- 21/10:"; test: TEST-CHECKLIST mục 4w). Commit cuối: xem `git log`.
 Nhánh làm việc: claude/happy-ritchie-2p60v7. CHƯA push (người dùng chưa bảo).

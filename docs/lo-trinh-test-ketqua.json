@@ -9,6 +9,112 @@
   "luc": 1792466852267,
   "tt": "ok"
  },
+ "k1": {
+  "ghi_chu": "",
+  "luc": 1792559627774,
+  "tt": "ok"
+ },
+ "k10": {
+  "ghi_chu": "",
+  "luc": 1792529416131,
+  "tt": "ok"
+ },
+ "k12": {
+  "ghi_chu": "",
+  "luc": 1792529430003,
+  "tt": "ok"
+ },
+ "k13": {
+  "ghi_chu": "",
+  "luc": 1792529438529,
+  "tt": "ok"
+ },
+ "k14": {
+  "ghi_chu": "",
+  "luc": 1792529535951,
+  "tt": "ok"
+ },
+ "k15": {
+  "ghi_chu": "",
+  "luc": 1792529549721,
+  "tt": "ok"
+ },
+ "k16": {
+  "ghi_chu": "",
+  "luc": 1792529607859,
+  "tt": "ok"
+ },
+ "k17": {
+  "ghi_chu": "",
+  "luc": 1792529820144,
+  "tt": "ok"
+ },
+ "k18": {
+  "ghi_chu": "",
+  "luc": 1792529682047,
+  "tt": "ok"
+ },
+ "k19": {
+  "ghi_chu": "",
+  "luc": 1792529694690,
+  "tt": "ok"
+ },
+ "k2": {
+  "ghi_chu": "",
+  "luc": 1792529844510,
+  "tt": "ok"
+ },
+ "k20": {
+  "ghi_chu": "",
+  "luc": 1792529704324,
+  "tt": "ok"
+ },
+ "k21": {
+  "ghi_chu": "",
+  "luc": 1792529707306,
+  "tt": "ok"
+ },
+ "k22": {
+  "ghi_chu": "",
+  "luc": 1792529721664,
+  "tt": "ok"
+ },
+ "k3": {
+  "ghi_chu": "",
+  "luc": 1792529381785,
+  "tt": "ok"
+ },
+ "k4": {
+  "ghi_chu": "",
+  "luc": 1792529387012,
+  "tt": "ok"
+ },
+ "k5": {
+  "ghi_chu": "Có chợ đen rồi",
+  "luc": 1792559620626,
+  "sua": "21/10: Đã so với Chợ đen: KHÔNG giống nên giữ. Shop rương đặt ở thị trấn mình (Chợ đen chỉ mở ở kinh đô / đất hoà bình), không hết hạn, không giới hạn món theo danh phận, bán liên tục cả rương (phễu từ máy farm). Test lại theo mô tả mới.",
+  "tt": "ok"
+ },
+ "k6": {
+  "ghi_chu": "",
+  "luc": 1792529404671,
+  "tt": "ok"
+ },
+ "k7": {
+  "ghi_chu": "",
+  "luc": 1792529405461,
+  "tt": "ok"
+ },
+ "k8": {
+  "ghi_chu": "",
+  "luc": 1792529408615,
+  "tt": "ok"
+ },
+ "k9": {
+  "ghi_chu": "",
+  "luc": 1792529413648,
+  "tt": "ok"
+ },
  "m1": {
   "ghi_chu": "Mặc định vào không có gì, phải nhận từ kits mới có (trong cài đặt có mục kits chưa, bao lâu thì nhận lại được. Mỗi rank lại có một bộ kits khác nhau)\nTrong kits sẽ có đồ mặc định, đồ trong thư viện, xu, ...",
   "luc": 1792492344612,
@@ -68,6 +174,11 @@
   "luc": 1792503874817,
   "tt": "err"
  },
+ "r11": {
+  "ghi_chu": "",
+  "luc": 1792563056138,
+  "tt": "ok"
+ },
  "r2": {
   "ghi_chu": "Đang test thôi nên không có thời gian làm nhiệm vụ lẫn chơi 6h",
   "luc": 1792502915929,
@@ -80,13 +191,18 @@
  },
  "r4": {
   "ghi_chu": "Đứng ở spawn (khu vực hoà bình) nhưng lại báo chợ đấu giá chỉ mở trong khu vực hoà bình",
-  "luc": 1792503809785,
-  "sua": "20/10: /ah luôn mở trong vòng kinh đô quanh spawn (chưa lập Liên minh Hoà Bình). Cần test lại.",
-  "tt": "lai"
+  "luc": 1792563008173,
+  "sua": "20/10: /ah luôn mở trong vòng kinh đô quanh spawn (chưa lập Liên minh Hoà Bình). 21/10: /ah nay nằm trong Chợ đen (/choden ban, /choden). Cần test lại.",
+  "tt": "ok"
  },
  "r5": {
   "ghi_chu": "",
   "luc": 1792501903288,
+  "tt": "ok"
+ },
+ "r6": {
+  "ghi_chu": "",
+  "luc": 1792563039923,
   "tt": "ok"
  },
  "r7": {

@@ -38,6 +38,17 @@ sau dịch chuyển có vài giây bất tử (đợi 5 giây rồi mới /damag
   Đã test bằng bot (tools/bottest/item-attr2.js): kiếm 12 sát thương + 4 máu -> zombie mất 11,04 (12 − 8% giáp kiểu 1.8), máu 24.
 - Sửa kèm: nút Xoá trên trang Thư viện đồ luôn báo "Thao tác không hợp lệ" (nhánh elif bắt nhầm action delete).
 
+### Đợt test 21/10 22h (sau khi người dùng bảo "tiếp đi")
+- ĐÃ SỬA: /choilai bị chặn với MỌI người khi chợ có món của ai đó (zAuctionHouse getItemsListedForSale(player) trả cả chợ ->
+  Integrations.auctionCount lọc LISTED theo người bán); tên pet có &k&l (PetNameGuard bỏ mã &, MyPet tự lỗi); HoloMobHealth câu báo
+  tiếng Việt (data, trang Cài đặt quản lý); trang chủ hiện tên món Tinh Luyện bằng mã (site/app.py tinhluyen dùng Thư viện đồ, đã build lại site).
+- SỰ CỐ 22:08: script khởi động lại banghoi-1 chỉ IN số người online, không dừng -> làm văng Linh (admin). Đã thay bằng
+  scratchpad restart_safe.sh (có người thì exit). BÀI HỌC: kiểm online phải là điều kiện DỪNG, không chỉ in ra.
+- banghoi-1 restart 22:10 (jar có PetNameGuard + sửa /choilai). lobby/practice-1 chưa restart (jar mới không ảnh hưởng).
+- Mẹo bot: qua ViaBackwards chỉ gói interact_at tới server -> dùng t.use(entity) (h.js), không dùng bot.activateEntity;
+  bot cần grim.exempt để phá/đặt khối nhanh; 2 bot cùng IP thì Bounty không trả thưởng (start(tên, ip) để giả IP khác).
+- Còn chờ: n4 dưa (test lại sau Hạn hán), k2 quyền /sell hand (chờ người dùng đồng ý), p3 menu hệ pet đúp.
+
 ### Dữ liệu test cần dọn (thêm vào danh sách ở mục 00000000)
 - Bot mới: ThuPet ThuDA ThuDB ThuPA ThuPB (practice-1) ThuS ThuTA ThuTB ThuCA ThuCB ThuCC ThuPetA ThuPetB ThuH ThuK ThuWeb ThuWebSai -> /choilai admin <tên> moi.
 - ThuA có Thái Ấp 70×70 (đã mua + mở rộng) -> xoá đất trong thaiap.yml nếu cần; ThuCapDo cũng có 1 mảnh.

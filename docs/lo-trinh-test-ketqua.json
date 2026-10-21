@@ -866,19 +866,44 @@
   "luc": 1792575500000,
   "tt": "ok"
  },
+ "x12": {
+  "ghi_chu": "CẦN BẠN TEST: phần giao diện (gắn tag, lọc theo tag, Thêm cả bộ) phải bấm trên trình duyệt.",
+  "luc": 1792596076618,
+  "tt": ""
+ },
+ "x13": {
+  "ghi_chu": "CẦN BẠN TEST: xếp thẻ / bảng so sánh là giao diện, phải xem trên trình duyệt.",
+  "luc": 1792596076618,
+  "tt": ""
+ },
  "x14": {
   "ghi_chu": "Claude chạy bằng lệnh console '/choilai admin <tên> moi' cho 2 bot: RESET OK, có sao lưu, xoá quyền LuckPerms. ĐÃ SỬA: reset xong tên vẫn nằm trên bảng xếp hạng Thăng Cấp trên web. CẦN BẠN: bấm nút trên trang quản trị › Hệ thống.",
   "luc": 1792576500000,
   "tt": ""
+ },
+ "x15": {
+  "ghi_chu": "Claude kiểm code: không còn confirm(/alert(/prompt( nào trong 11 file trang quản trị (panel/*.html, shell.js). CẦN BẠN: bấm thử vài nút xoá để xem hộp thoại.",
+  "luc": 1792596076618,
+  "tt": "ok"
  },
  "x2": {
   "ghi_chu": "Claude tự test bề ngang 390px: không tràn ngang, không lỗi. CẦN BẠN: mở bằng điện thoại thật, thử menu thả xuống.",
   "luc": 1792575500000,
   "tt": ""
  },
+ "x3": {
+  "ghi_chu": "Claude tự test: đổi giá Tinh Luyện Than 1200 -> 1199 bằng hàm Lưu của trang Cài đặt -> file cấu hình đổi + dmm reload; trang chủ (api/hangngay, đệm 60 giây) hiện 1199 trong vòng 1 phút; đã trả lại 1200. ĐÃ SỬA: trang chủ hiện tên món Tinh Luyện bằng MÃ (xuquai, da, than...) vì tên đã chuyển sang Thư viện đồ -> giờ hiện 'Xu Quái', 'Tinh Luyện Đá'... (đã build lại container site).",
+  "luc": 1792596076618,
+  "tt": "ok"
+ },
  "x4": {
   "ghi_chu": "Claude tự test (tools/bottest/x4-web.js): bot gõ /web lấy mã, đăng nhập trang web bằng tên + mã -> vào được; /api/toi trả đủ danh phận, tiền (khớp 1.234 xu), giờ chơi, điểm danh, pet, Thăng Cấp, kỹ năng, Đấu Trường, cài đặt cá nhân...; tắt 'Kênh chat chung' trên web thì /caidat trong game đổi ngay (đã bật lại). Mã đã dùng không dùng lại được. Đăng xuất thì phiên hết. CẦN BẠN: xem giao diện trang tài khoản trên trình duyệt (bot chỉ gọi API).",
   "luc": 1792582486848,
+  "tt": "ok"
+ },
+ "x5": {
+  "ghi_chu": "Claude tự test: Lưu một số trên Cài đặt (Bang Hội Chiến) trả 'Đã lưu và áp dụng', chạy dmm reload ngay, file data đổi đúng. CẦN BẠN: bấm thử trên giao diện trang (bot gọi thẳng hàm lưu).",
+  "luc": 1792596076618,
   "tt": "ok"
  }
 }

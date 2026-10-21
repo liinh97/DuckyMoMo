@@ -661,8 +661,11 @@ chapters:
   - |-
     &6Công thành (1)
     &0Muốn đánh thị trấn địch: cắm banner màu&r&0 (không trắng) sát rìa thị trấn đó.
-    &0Quốc gia trả quỹ chiến tranh&r&0 60 xu mỗi ô đất của thị trấn bị vây.
     &0Chỉ cắm cờ được &4thứ Năm&0, quốc gia cần &42 thị trấn&0.
+    &1/sw &0xem cuộc vây.
+  - |-
+    &6Công thành (1b)
+    &0Quốc gia trả quỹ chiến tranh&r&0 60 xu mỗi ô đất của thị trấn bị vây.
     &4Lưu ý: &0thị trấn mới lập, vừa bị vây, dân hoà bình không vây được.
   - |-
     &6Công thành (2)

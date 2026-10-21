@@ -662,7 +662,7 @@ chapters:
     &6Công thành (1)
     &0Muốn đánh thị trấn địch: cắm banner màu&r&0 (không trắng) sát rìa thị trấn đó.
     &0Quốc gia trả quỹ chiến tranh&r&0 60 xu mỗi ô đất của thị trấn bị vây.
-    &1/sw &0xem cuộc vây.
+    &0Chỉ cắm cờ được &4thứ Năm&0, quốc gia cần &42 thị trấn&0.
     &4Lưu ý: &0thị trấn mới lập, vừa bị vây, dân hoà bình không vây được.
   - |-
     &6Công thành (2)
@@ -682,6 +682,13 @@ chapters:
     &0Thị trấn vừa bị vây được miễn vây 7 ngày&r&0 (thủ đô 14 ngày), thị trấn mới lập cũng được 7 ngày.
     &0Thị trấn không bị phá hay trộm khi chủ offline.
     &8Chỉ người chơi ≥5 giờ, không phải acc phụ mới có quân hàm.
+  - |-
+    &6THẮNG RỒI LÀM GÌ
+    &0Vua bên thắng đứng cạnh cờ:
+    &0Cướp tiền: &1đặt một cái rương
+    &0Chiếm làm thuộc địa: &1cắm lại cờ màu
+    &0Rút quân / đầu hàng: &1cắm cờ trắng
+    &8Xem trận: /sw hud <thị trấn>
   - |-
     &6PHONG QUÂN HÀM
     &0Có quân hàm mới được tính điểm trận, giữ cờ.

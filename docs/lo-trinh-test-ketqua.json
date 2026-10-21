@@ -1,16 +1,201 @@
 {
+ "a1": {
+  "ghi_chu": "Claude tự test: /thaiap mua trừ 15.000 xu (giá mới), báo 'Thái Ấp 50×50, viền lối mòn'. ĐÃ SỬA: bỏ dòng '[OCM] Đã đặt chế độ đánh old' hiện mỗi lần đổi thế giới.",
+  "luc": 1792574500000,
+  "tt": "ok"
+ },
+ "c1": {
+  "ghi_chu": "Claude tự test: /xuong đủ 20 món; bấm món hiện bảng 3×3 đúng nguyên liệu + giá + '✘ Chưa đủ'; thiếu đồ báo 'Thiếu nguyên liệu: cần 4x Kim cương'. Tên nguyên liệu (Diamond…) giờ tiếng Việt cả với game tiếng Anh nhờ gói tài nguyên mới (cần khởi động lại server). Chưa thử chế khi đủ đồ.",
+  "luc": 1792573500000,
+  "tt": "ok"
+ },
+ "c10": {
+  "ghi_chu": "LỖI ĐÃ SỬA (Claude 21/10): menu /ce ghi giá cũ (sách Thường 300, Hiếm 800, các cuộn/bụi/đá giá cũ) nhưng trừ giá mới (Thường trừ 900). Đã sửa 14 dòng 'Giá:' khớp giá trừ thật, đã nạp lại. Sách mua ra tên tiếng Việt (vd Say rượu II). CẦN BẠN: đập sách vào đồ, thử vỡ.",
+  "luc": 1792573500000,
+  "tt": "lai"
+ },
+ "c11": {
+  "ghi_chu": "CẦN BẠN TEST: cần máy thật. Sau lần khởi động lại tới, gói còn Việt hoá tên đồ, phù phép, chỉ số giáp (để game tiếng Anh vẫn thấy tiếng Việt) — xem luôn.",
+  "luc": 1792573500000,
+  "tt": ""
+ },
+ "c2": {
+  "ghi_chu": "Claude tự test Khoan Đào ở đất hoang: đào 1 khối → cả lớp 3×3 mất, độ bền 8.000 → 7.994 (trừ theo số khối). CẦN BẠN: Đào Hầm 5×5, Rìu Tiều, Gặt Lúa và đào ở đất người khác.",
+  "luc": 1792573500000,
+  "tt": ""
+ },
+ "c3": {
+  "ghi_chu": "CẦN BẠN TEST: kỹ năng chiến đấu cần người thật + vùng vây đang đánh.",
+  "luc": 1792573500000,
+  "tt": ""
+ },
+ "c4": {
+  "ghi_chu": "CẦN BẠN TEST: bot đặt rương bị lỗi phía bot, không thử được Rìu Bán vào rương.",
+  "luc": 1792573500000,
+  "tt": ""
+ },
+ "c5": {
+  "ghi_chu": "Claude tự test: có 192 khối than, bấm → 1 Tinh Luyện Than, Shift+bấm → 2. Chưa xem hình riêng và thử đặt xuống (cần mắt người).",
+  "luc": 1792573500000,
+  "tt": "ok"
+ },
+ "c6": {
+  "ghi_chu": "Claude tự test: /tinhluyen ban tatca 3 Tinh Luyện Than = +3.600 xu (đúng giá 1.200/món). /sell hand chưa thử được vì nhóm default thiếu quyền essentials.sell.hand (xem k2).",
+  "luc": 1792573500000,
+  "tt": ""
+ },
+ "c7": {
+  "ghi_chu": "CẦN BẠN TEST (tỉ lệ rơi cần hạ nhiều quái thật).",
+  "luc": 1792573500000,
+  "tt": ""
+ },
+ "c8": {
+  "ghi_chu": "CẦN BẠN TEST: cần sửa Cài đặt › Xưởng.",
+  "luc": 1792573500000,
+  "tt": ""
+ },
+ "c9": {
+  "ghi_chu": "CẦN BẠN TEST: cần đặt NPC Shopkeepers.",
+  "luc": 1792573500000,
+  "tt": ""
+ },
  "cb1": {
-  "ghi_chu": "",
+  "ghi_chu": "Claude test lại 21/10: 17 container đều Up, không cái nào Restarting.",
   "luc": 1792466451176,
   "tt": "ok"
  },
+ "cb2": {
+  "ghi_chu": "Claude tự test 21/10 15:40: log banghoi/lobby/practice/sangtao không có plugin bị tắt. Chỉ có DiscordSRV chưa đặt token và SLF4J của Votifier (vô hại).",
+  "luc": 1792572000000,
+  "tt": "ok"
+ },
  "cb3": {
-  "ghi_chu": "",
+  "ghi_chu": "Claude test lại: ops.json trống (không ai OP).",
   "luc": 1792466852267,
   "tt": "ok"
  },
+ "cd1": {
+  "ghi_chu": "Claude tự test (bot ThuCapDo) cũng đạt: đủ ô thông tin, Lên cấp, 4 thuộc tính, Tẩy điểm, Đặc quyền, Xếp hạng; không còn cửa hàng /craft.",
+  "luc": 1792568198408,
+  "tt": "ok"
+ },
+ "cd10": {
+  "ghi_chu": "Claude tự test: vào thế giới Đấu Trường → máu 20, tốc 0,10; menu ghi đang tắt; ra lại → 30 / 0,11. Chưa thử trong trận thật.",
+  "luc": 1792569330503,
+  "tt": "ok"
+ },
+ "cd11": {
+  "ghi_chu": "Claude tự test: bấm thường chỉ nhắc giữ Shift; Shift + bấm trừ 10.000 xu, trả lại 110 điểm, máu về 20.",
+  "luc": 1792569330503,
+  "tt": "ok"
+ },
+ "cd12": {
+  "ghi_chu": "Claude tự test: đã cộng 10 điểm ở cấp 20, /capdo dat 5 → trả lại hết, còn 5 điểm, máu về 20.",
+  "luc": 1792569330503,
+  "tt": "ok"
+ },
+ "cd13": {
+  "ghi_chu": "Claude tự test: 8 món đúng cấp + giá; cấp 10 bấm → 'Cần Thăng Cấp 20'; thiếu xu → 'Cần 20.000 xu'; mua lần lượt từng bậc, đủ bậc báo 'đã có đủ'.",
+  "luc": 1792569330503,
+  "tt": "ok"
+ },
+ "cd14": {
+  "ghi_chu": "Claude đã kiểm: mua 2 bậc cấp đúng quyền duckymomo.xuong.giam + .giam.2, code trừ 0,95 / 0,90. CẦN BẠN TEST: chế 1 món ở /xuong xem số xu trừ thật (bot không có nguyên liệu).",
+  "luc": 1792569800000,
+  "tt": ""
+ },
+ "cd15": {
+  "ghi_chu": "Claude tự test: mua đủ 3 bậc → giới hạn 11.000 xu/ngày (câu báo ghi 11.000). PHÁT HIỆN LỖI KHÁC: nhóm mặc định thiếu quyền essentials.sell.hand / essentials.sell.bulk nên người thường gõ /sell hand bị 'không có quyền' — cần bạn chạy lệnh cấp quyền (xem tin nhắn).",
+  "luc": 1792569330503,
+  "tt": "ok"
+ },
+ "cd16": {
+  "ghi_chu": "Claude tự test: /jobs bonus ghi 'Perm bonus +10% exp' ngay (không cần vào lại); AuraSkills /skills multiplier: 1.1x / +10%.",
+  "luc": 1792569330503,
+  "tt": "ok"
+ },
+ "cd17": {
+  "ghi_chu": "Claude đã kiểm: mua được, cấp quyền duckymomo.pet.batgioi. CẦN BẠN TEST: quăng dây xích bắt pet, xem số % trong câu báo trượt cao hơn 5.",
+  "luc": 1792569800000,
+  "tt": ""
+ },
+ "cd18": {
+  "ghi_chu": "Claude tự test: cấp 100 mua 80.000 xu → nhận danh hiệu [Lão Luyện], có trong /danhhieu.",
+  "luc": 1792569330503,
+  "tt": "ok"
+ },
+ "cd19": {
+  "ghi_chu": "Claude tự test trang chủ: thẻ Thăng Cấp hiện đủ 8 đặc quyền kèm cấp + giá, xếp hạng; không lỗi JS, điện thoại không tràn ngang. CẦN BẠN TEST: trang tài khoản (phải đăng nhập bằng mã /web) có dòng thuộc tính.",
+  "luc": 1792569800000,
+  "tt": ""
+ },
+ "cd2": {
+  "ghi_chu": "Claude tự test: số đúng (cấp 10 = 995 xu / 4 giờ / 100 điểm; cấp 50 = 2.614 xu / 100 giờ / 2500 điểm). Lỗi hiển thị nhỏ: cấp 1 ghi '0/0 giờ chơi' (0,04 giờ bị làm tròn), '2500' thiếu dấu chấm. Sẽ sửa.",
+  "luc": 1792568249751,
+  "tt": "ok"
+ },
+ "cd20": {
+  "ghi_chu": "Claude đã đếm dòng các trang Thăng Cấp (≤13 dòng, đã rút gọn 2 trang sát 14 dòng). CẦN BẠN TEST: mở /hd › Thăng Cấp nhìn tận mắt xem chữ có tràn trang không.",
+  "luc": 1792569800000,
+  "tt": ""
+ },
+ "cd21": {
+  "ghi_chu": "Claude tự test: 2 bot cùng có sói cấp 1, cùng hạ 2 zombie: bot chưa mua được 2,50 kinh nghiệm, bot đã mua được 2,88 (×1,15). Chưa thử nguồn ăn cá.",
+  "luc": 1792569800000,
+  "tt": "ok"
+ },
+ "cd22": {
+  "ghi_chu": "Claude tự test: pet chết → MyPet báo 'hồi sinh trong 10 giây', thêm dòng '✦ Đặc quyền Thăng Cấp: pet hồi sinh sau 5 giây'; pet ra lại thật sau ~5 giây. Bot chưa mua: không có dòng ✦.",
+  "luc": 1792569800000,
+  "tt": "ok"
+ },
+ "cd3": {
+  "ghi_chu": "Claude tự test (tạm bỏ điều kiện giờ chơi/hạ gục rồi trả lại): lên cấp 1 trừ 250 xu, +1 điểm; lên cấp 10 +2 điểm, báo cả server, quà mốc 5.000 xu + 16 bình kinh nghiệm. Phần đủ giờ chơi thật chưa thử.",
+  "luc": 1792569330503,
+  "tt": "ok"
+ },
+ "cd4": {
+  "ghi_chu": "Claude tự test: cấp 20 = 22 điểm; Máu 4 bậc tốn 10 điểm còn 12; máu tối đa 20 → 24 (+2 tim).",
+  "luc": 1792569330503,
+  "tt": "ok"
+ },
+ "cd5": {
+  "ghi_chu": "Claude tự test: AuraSkills +4 máu = 24; thêm /capdo Máu 4 bậc = 28; AuraSkills lên cấp kỹ năng + thêm chỉ số vẫn giữ máu /capdo (30). Không ghi đè nhau.",
+  "luc": 1792569330503,
+  "tt": "ok"
+ },
+ "cd6": {
+  "ghi_chu": "Claude tự test: Bền bỉ 10: /damage 10 → mất 9 (không cộng mất 10). Sức mạnh 10: đánh zombie 10 sát thương → mất 10,18 (không cộng 9,2) ≈ +10%. Chưa thử bắn cung.",
+  "luc": 1792569330503,
+  "tt": "ok"
+ },
+ "cd7": {
+  "ghi_chu": "Claude tự test: Nhanh nhẹn 10 → tốc chạy 0,10 → 0,11 (+10%). Cảm giác chạy thật cần bạn xem.",
+  "luc": 1792569330503,
+  "tt": "ok"
+ },
+ "cd8": {
+  "ghi_chu": "Claude tự test: cấp 100 (110 điểm), Máu 10 + Sức mạnh 10 → còn 0 điểm, Bền bỉ bậc 1 báo không đủ điểm; máu 30.",
+  "luc": 1792569330503,
+  "tt": "ok"
+ },
+ "cd9": {
+  "ghi_chu": "Claude tự test: máu 30 / tốc 0,11 giữ nguyên sau khi chết hồi sinh, thoát vào lại, sang Nether.",
+  "luc": 1792569330503,
+  "tt": "ok"
+ },
+ "h6": {
+  "ghi_chu": "Claude đọc /hoidong: đang bầu đại diện tới 13:17 23/10, chưa ứng viên. CẦN BẠN: ứng cử / bầu thật.",
+  "luc": 1792574500000,
+  "tt": ""
+ },
+ "h7": {
+  "ghi_chu": "Claude đọc /tochuc: hướng dẫn lập, giấy phép 300 xu/tuần. CẦN BẠN: lập thật + /sukien.",
+  "luc": 1792574500000,
+  "tt": ""
+ },
  "k1": {
-  "ghi_chu": "",
+  "ghi_chu": "Claude test lại: nghề thứ 2 bị chặn; rời rồi vào lại nghề cũ phải chờ 1 ngày. CẦN BẠN QUYẾT: rời nghề xong vào NGAY nghề khác được (chờ 1 ngày chỉ áp cho đúng nghề vừa rời). Câu chờ ghi '23 hours 59 min' tiếng Anh: đã dịch, có hiệu lực lần khởi động lại tới.",
   "luc": 1792559627774,
   "tt": "ok"
  },
@@ -50,7 +235,7 @@
   "tt": "ok"
  },
  "k18": {
-  "ghi_chu": "",
+  "ghi_chu": "Claude test lại: đủ 6 nút + Đóng, /choden giup đủ lệnh.",
   "luc": 1792529682047,
   "tt": "ok"
  },
@@ -60,9 +245,9 @@
   "tt": "ok"
  },
  "k2": {
-  "ghi_chu": "",
+  "ghi_chu": "Claude test lại bằng tài khoản THƯỜNG: /sell hand báo 'Bạn không có quyền bán vật phẩm trên tay' (nhóm default thiếu essentials.sell.hand và .bulk; trước test bằng admin nên không lộ). Cần bạn chạy 2 lệnh cấp quyền (xem tin nhắn Claude).",
   "luc": 1792529844510,
-  "tt": "ok"
+  "tt": "err"
  },
  "k20": {
   "ghi_chu": "",
@@ -70,22 +255,22 @@
   "tt": "ok"
  },
  "k21": {
-  "ghi_chu": "",
+  "ghi_chu": "Claude test lại: màn tiếng Việt (Đồ của bạn / Đồ của họ, Bạn đưa xu/XP), nút đỏ → xanh lá khi đồng ý, chốt thành công.",
   "luc": 1792529707306,
   "tt": "ok"
  },
  "k22": {
-  "ghi_chu": "",
+  "ghi_chu": "Claude test lại: dòng đầu 'server đang vắng nên nhẹ hơn', 3 nhiệm vụ có số khớp.",
   "luc": 1792529721664,
   "tt": "ok"
  },
  "k3": {
-  "ghi_chu": "",
+  "ghi_chu": "Claude test lại: /pay 100 đúng, số âm bị chặn, 0,5 xu chuyển được, tự chuyển cho mình bị chặn.",
   "luc": 1792529381785,
   "tt": "ok"
  },
  "k4": {
-  "ghi_chu": "",
+  "ghi_chu": "Claude test lại: treo/mua/tiền về người bán đúng. LỖI ĐÃ SỬa: món mua không vào túi mà vào hộp 'Đã mua' (/ah purchased) không ai biết → đổi give-item: true, giờ vào thẳng túi (test lại đạt). Ai đã mua trước đó lấy ở /ah purchased.",
   "luc": 1792529387012,
   "tt": "ok"
  },
@@ -96,12 +281,12 @@
   "tt": "ok"
  },
  "k6": {
-  "ghi_chu": "",
+  "ghi_chu": "Claude test lại (2 bot): đổi 2 kim cương lấy 3 ngọc lục bảo đúng.",
   "luc": 1792529404671,
   "tt": "ok"
  },
  "k7": {
-  "ghi_chu": "",
+  "ghi_chu": "Claude test lại: đặt đơn 6 × 2 xu giữ 12 xu + phí 0,24; bot B giao nhận 12 xu ngay.",
   "luc": 1792529405461,
   "tt": "ok"
  },
@@ -111,7 +296,7 @@
   "tt": "ok"
  },
  "k9": {
-  "ghi_chu": "",
+  "ghi_chu": "Claude test lại: /doimanh /vongquay /hom /donhang đều không có lệnh.",
   "luc": 1792529413648,
   "tt": "ok"
  },
@@ -119,6 +304,46 @@
   "ghi_chu": "Mặc định vào không có gì, phải nhận từ kits mới có (trong cài đặt có mục kits chưa, bao lâu thì nhận lại được. Mỗi rank lại có một bộ kits khác nhau)\nTrong kits sẽ có đồ mặc định, đồ trong thư viện, xu, ...",
   "luc": 1792492344612,
   "sua": "20/10: Làm hệ Gói quà mới (/kit, /goiqua) thay kit Essentials. Quà tân thủ tự vào túi 2 giây sau khi vào Bang Hội Chiến lần đầu. Cài đặt › Người mới › Gói quà: mỗi gói có quà (đồ thường, đồ Thư viện, xu, lệnh), thời gian nhận lại (hoặc một lần), rank được nhận. Sẵn 5 gói: tanthu (mọi người, 1 lần), dan / luongdan / haokiet (theo danh phận, 1 ngày), media (Sứ Giả, 3 ngày). Thử lại: /goiqua lamlai <tên> rồi /kit.",
+  "tt": "ok"
+ },
+ "m10": {
+  "ghi_chu": "Claude tự test (bot Tị Nạn): menu 5 gói, gói Tị Nạn 'Sẵn sàng', gói khác ghi '✘ Cần rank'; nhận được đúng 32 bánh mì + đồ da + rìu, cuốc đá; bấm lại 'Còn 3 ngày'. Đã sửa câu báo 'Gói Gói Dân chỉ dành cho' (có hiệu lực lần khởi động lại tới). Chưa thử đổi bậc Dân, gợi ý Tab.",
+  "luc": 1792571000000,
+  "tt": "ok"
+ },
+ "m11": {
+  "ghi_chu": "Claude kiểm: bot mới vào lần đầu KHÔNG nhận gói tự phát (ô 'Gói tự phát khi vào lần đầu' đang trống → đúng). CẦN BẠN: quyết có điền mã gói (vd tinan) không; điền rồi báo tôi thử lại bằng bot mới.",
+  "luc": 1792571000000,
+  "tt": ""
+ },
+ "m12": {
+  "ghi_chu": "Claude đọc menu bằng bot: tên đồ trong quà đã là tiếng Việt (mũ da, rìu đá, bánh mì, bít tết), tiêu đề /kit màu đen. CẦN BẠN: nhìn màu chữ, độ rõ các menu /danhphan /gacha /balo /menu /cuahang.",
+  "luc": 1792571000000,
+  "tt": ""
+ },
+ "m13": {
+  "ghi_chu": "Claude tự test: /tprandom mở đúng menu /tpr (8 vùng). CẦN BẠN: /tphere (cần 2 người thật, admin kéo người khác).",
+  "luc": 1792571000000,
+  "tt": ""
+ },
+ "m14": {
+  "ghi_chu": "Claude tự test: đất hoang (12300,-2600) đào được cỏ, đất; spawn đào bị chặn với câu '[Towny] Người ngoài không được phá ở đây.'. Chưa thử Nether/End và thị trấn người khác; đặt rương bằng bot bị lỗi phía bot (không phải server).",
+  "luc": 1792571000000,
+  "tt": "ok"
+ },
+ "m15": {
+  "ghi_chu": "Claude tự test: /tpr Tây Bắc 2 lần (2 bot): đứng trên cỏ (12250,111,-2762) và (12263,76,-2374), không có lá quanh 5x5. Có chờ 3 giây và hồi 5 phút giữa 2 lần.",
+  "luc": 1792571000000,
+  "tt": "ok"
+ },
+ "m16": {
+  "ghi_chu": "Claude tự test: vào nghề Thợ đào đất ở kinh đô, đào đất ngoài đất hoang: thanh 'Nghề · Cấp 1 Thợ đào đất: 1.10/14', dòng '+0.06 xu +1.10 kn', không có $.",
+  "luc": 1792571000000,
+  "tt": "ok"
+ },
+ "m17": {
+  "ghi_chu": "Claude tự test: /hd mở rương 18 nhóm + ô 'Cả cuốn cẩm nang', mỗi nhóm có lệnh ➜ mô tả. Chưa thử bấm mở sách và bản điện thoại (Bedrock) → bạn xem giúp.",
+  "luc": 1792571000000,
   "tt": "ok"
  },
  "m2": {
@@ -164,15 +389,96 @@
   "luc": 1792484371961,
   "tt": "ok"
  },
+ "n1": {
+  "ghi_chu": "Claude tự test (Mùa khô + Hạn hán): /mua đủ tên mùa, sự kiện, còn 5 ngày, cây nhanh/chậm, được mùa, cá mùa này; web /api/mua khớp từng số. Chưa ép sang mùa mưa/Lũ (tránh đổi mùa thật khi có người chơi).",
+  "luc": 1792574000000,
+  "tt": "ok"
+ },
+ "n10": {
+  "ghi_chu": "Claude tự test: /skills tiếng Việt đủ 6 kỹ năng. Máu về 10 tim trong Đấu Trường đã thử ở cd10. CẦN BẠN: đào ở spawn/Thái Ấp không lên kinh nghiệm.",
+  "luc": 1792574000000,
+  "tt": ""
+ },
+ "n7": {
+  "ghi_chu": "Claude: /emf shop ngoài đất hoà bình bị chặn đúng luật. Web có lịch thi câu T7, CN 12:00. CẦN BẠN: bán cá ở kinh đô và chạy một đợt thi câu.",
+  "luc": 1792574000000,
+  "tt": ""
+ },
+ "n8": {
+  "ghi_chu": "Claude đọc menu /nauan: 5 món (Cơm nắm, Canh chua cá, Cá kho tộ, Lẩu cá, Gỏi cá huyền thoại) kèm hiệu ứng. CẦN BẠN: nấu thật (cần cá câu) và ăn 2 món liền.",
+  "luc": 1792574000000,
+  "tt": ""
+ },
+ "n9": {
+  "ghi_chu": "Claude tự test: /dacsan liệt 7 vùng + % đặc sản, chủ vùng (chưa có), 4 vùng chưa khai hoang. Chưa thử gặt thật khi có chủ vùng.",
+  "luc": 1792574000000,
+  "tt": "ok"
+ },
+ "o1": {
+  "ghi_chu": "Claude đo lúc vắng (1–3 người): TPS 20/20/20, mspt trung bình 0,5 (tối đa 12,9). CẦN BẠN: đo lại lúc đông người.",
+  "luc": 1792575800000,
+  "tt": ""
+ },
+ "o2": {
+  "ghi_chu": "Claude tự test: restic banghoi-1 có bản 07:06 và 13:06 hôm nay (6 giờ/lần), thư mục /mnt/f/DuckyMoMo-backups đủ banghoi-1, lobby, practice-1, sangtao-1, db.",
+  "luc": 1792575500000,
+  "tt": "ok"
+ },
+ "o4": {
+  "ghi_chu": "Claude: bot nhận được báo trước '[⚠] Dọn vật phẩm dưới đất sau 5s/30s'. CẦN BẠN: xem đồ bị dọn đúng giờ và tắt thông báo trong /caidat.",
+  "luc": 1792575500000,
+  "tt": ""
+ },
+ "p2": {
+  "ghi_chu": "Claude tự test (mùa khô): /bxhpet tyle ghi Loài bay 35% (+15% nhờ Mùa khô), Thú săn +5%, Quái nhầy +10%. Chưa xem mùa mưa / Lũ.",
+  "luc": 1792574500000,
+  "tt": "ok"
+ },
+ "p3": {
+  "ghi_chu": "Claude test lại sau khởi động: mã thô </gold> đã hết, mô tả sạch. CÒN LỖI: mỗi hệ hiện 2 lần trong menu 18 ô (10 ô cho 5 hệ), file chỉ có 5 cây cho Sói, chưa rõ nguyên nhân. Bạn mở /petchooseskilltree xem có đúng bị đúp không.",
+  "luc": 1792574500000,
+  "tt": "err"
+ },
+ "p7": {
+  "ghi_chu": "Claude thử: /pettrade gửi lời mời tiếng Việt; người nhận đã có pet thì báo 'Bạn hiện đã có một con thú cưng' và không trừ tiền. CẦN BẠN: thử với người chưa có pet.",
+  "luc": 1792574500000,
+  "tt": ""
+ },
+ "q2": {
+  "ghi_chu": "Claude đọc /lenhsan: có lệnh Kỵ Sĩ Địa Ngục ở Tây Bắc (12250, -2400), còn 34 phút, thưởng 4.500 xu + 3 kim cương. CẦN BẠN: tới đánh quái thật.",
+  "luc": 1792574000000,
+  "tt": ""
+ },
+ "q3": {
+  "ghi_chu": "Claude đọc /khobau: tỉ lệ rơi, 3 loại kho báu + quà. CẦN BẠN: cầm bản đồ đi dò (cần di chuyển thật).",
+  "luc": 1792574000000,
+  "tt": ""
+ },
+ "q4": {
+  "ghi_chu": "Claude: /dungeon hiện danh sách trong chat (kèm quỹ, dungeon ẩn còn 1). CẦN BẠN xem chia loại + tab trên web.",
+  "luc": 1792574000000,
+  "tt": ""
+ },
+ "q7": {
+  "ghi_chu": "Claude đọc /conghoang: chưa có cổng nào (mùa chưa mở). CẦN BẠN: /conghoang tao here rồi thử.",
+  "luc": 1792574000000,
+  "tt": ""
+ },
+ "q9": {
+  "ghi_chu": "Claude đọc /lukhach: 4 lữ khách ở Nam Trung Quốc (2), Trung Bộ, Myanmar. CẦN BẠN: tới nói chuyện.",
+  "luc": 1792574000000,
+  "tt": ""
+ },
  "r1": {
-  "ghi_chu": "",
+  "ghi_chu": "Claude test lại: 4 thẻ + Sứ Giả, ✔/✘ đúng giờ chơi và Thăng Cấp của bot.",
   "luc": 1792501831114,
   "tt": "ok"
  },
  "r10": {
-  "ghi_chu": "Phong quân hàm như nào",
+  "ghi_chu": "Claude tự test: vua phong private cho người 3,3 giờ → 'cần đủ 5 giờ'; mới vào thị trấn → 'cần ở đủ 3 ngày'; đủ cả hai → 'đã cấp thứ hạng private'. /hd đã có hướng dẫn.",
   "luc": 1792503874817,
-  "tt": "err"
+  "sua": "21/10 tối (Claude): /hd thêm 2 trang PHONG QUÂN HÀM (vua /n rank add <người> <hàm>: private… general; thị trưởng /t rank add <người> guard; gỡ /n rank remove; cần ≥5 giờ chơi thật) và dòng lệnh trong nhóm Công thành. Test lại: mở /hd › Công thành.",
+  "tt": "ok"
  },
  "r11": {
   "ghi_chu": "",
@@ -185,18 +491,18 @@
   "tt": "ok"
  },
  "r3": {
-  "ghi_chu": "",
+  "ghi_chu": "Claude test lại: bậc Dân đặt được 2 nhà, nhà thứ 3 'không thể đặt nhiều hơn 2 nhà'.",
   "luc": 1792500692576,
   "tt": "ok"
  },
  "r4": {
-  "ghi_chu": "Đứng ở spawn (khu vực hoà bình) nhưng lại báo chợ đấu giá chỉ mở trong khu vực hoà bình",
+  "ghi_chu": "Claude test lại: Tị Nạn treo tối đa 2 món. ĐÃ SỬA câu báo (trước lộ chữ 'zauctionhouse.<số trong config.yml>'), giờ ghi 'Lên danh phận cao hơn để treo nhiều hơn: /danhphan'.",
   "luc": 1792563008173,
   "sua": "20/10: /ah luôn mở trong vòng kinh đô quanh spawn (chưa lập Liên minh Hoà Bình). 21/10: /ah nay nằm trong Chợ đen (/choden ban, /choden). Cần test lại.",
   "tt": "ok"
  },
  "r5": {
-  "ghi_chu": "",
+  "ghi_chu": "Claude test lại: Dân có 1 balo 27 ô, /balo 2 báo chỉ có 1; đồ còn sau khi thoát vào lại. Chưa thử lúc đang đánh nhau.",
   "luc": 1792501903288,
   "tt": "ok"
  },
@@ -218,6 +524,66 @@
  "r9": {
   "ghi_chu": "",
   "luc": 1792503845775,
+  "tt": "ok"
+ },
+ "s10": {
+  "ghi_chu": "Claude tự test phần: nhà (Dân 2), treo Chợ đen (Tị Nạn 2), nhận kit trước hạn, bán quá giới hạn (11.000 khi có đặc quyền) đều bị chặn đúng. Chưa thử giới hạn đơn thu mua.",
+  "luc": 1792575500000,
+  "tt": ""
+ },
+ "s11": {
+  "ghi_chu": "Claude tự test: /pay -100, 1e20, NaN, Infinity, /t deposit -50, /treothuong -1, /dungeon gop -10, /choden ban/dat giá âm đều bị từ chối; số dư 2 bên giữ nguyên 1.000.",
+  "luc": 1792575500000,
+  "tt": "ok"
+ },
+ "s19": {
+  "ghi_chu": "Claude tự test: lặp 6 lần chỉ 1 câu lọt (đúng), từ tục bị chặn. LỖI ĐÃ SỬA: quảng cáo 'play.abcxyz.net' vẫn hiện (chỉ đổi dấu chấm thành cách) → thêm chặn tên miền / 'chấm net' / IP (trừ goc6.io.vn), không chặn nhầm '1.000.000 xu'. Có hiệu lực sau khởi động lại. Lưu ý: link web thường (shopee.vn…) cũng bị chặn.",
+  "luc": 1792575500000,
+  "tt": "lai"
+ },
+ "s20": {
+  "ghi_chu": "Claude tự test: nhập sai mã /web 5 lần thì lần 6 báo 'Sai quá nhiều lần. Đợi 15 phút' (HTTP 429).",
+  "luc": 1792575500000,
+  "tt": "ok"
+ },
+ "s22": {
+  "ghi_chu": "Claude tự test: chưa đăng nhập gọi /, /api/thuvien, /api/settings, /api/donate, /api/hethong đều 401.",
+  "luc": 1792575500000,
+  "tt": "ok"
+ },
+ "t1": {
+  "ghi_chu": "Claude tự test: 0,2 giờ chơi → '[Towny] Cần chơi thật đủ 3 giờ mới được lập thị trấn'; gần spawn báo 'quá gần thị trấn khác'. CẦN BẠN: lập thật khi đủ giờ (giá mới 1.500 xu).",
+  "luc": 1792574500000,
+  "tt": ""
+ },
+ "t2": {
+  "ghi_chu": "Claude tự test (bot ThuA): mở 3 ô kề, mỗi ô 75 xu (quy mô 4/8 theo dân); ô không sát đất cũ bị chặn; lập thị trấn cách thị trấn khác 80 khối bị chặn. Lưu ý: giá ô KHÔNG tăng dần (ô nào cũng 75) — lộ trình ghi 'tăng dần', bạn xem có cần không.",
+  "luc": 1792578000000,
+  "tt": "ok"
+ },
+ "t3": {
+  "ghi_chu": "Claude tự test: nộp 3000; qua ngày mới trừ 30 xu (10 × 3 sau định giá). Thị trấn D ngân khố 0 → báo phá sản, không xoá.",
+  "luc": 1792578000000,
+  "tt": "ok"
+ },
+ "t4": {
+  "ghi_chu": "Claude tự test: thuế 5% → dân B, C 50.000 → 47.500 (5% số dư), thị trưởng không bị trừ, ngân khố +5.000. Lưu ý: thuế theo % số dư mỗi ngày khá nặng.",
+  "luc": 1792578000000,
+  "tt": "ok"
+ },
+ "t5": {
+  "ghi_chu": "Claude tự test: C rời thị trấn A, vào ngay thị trấn D → 'còn 3.0 ngày nữa mới vào được thị trấn khác'.",
+  "luc": 1792578000000,
+  "tt": "ok"
+ },
+ "t6": {
+  "ghi_chu": "Claude tự test: chưa đủ 3 dân hoạt động → bị chặn (chặn cả lệnh admin); đủ (tạm hạ 'new-member-days' về 0 để thử rồi trả lại) → lập được, 3.000 xu. PHÁT HIỆN: Towny default_neutral: true → nước mới tự trung lập, bị trừ thêm 300 xu/ngày ngoài phí duy trì 300 — xem tin nhắn Claude.",
+  "luc": 1792578000000,
+  "tt": "ok"
+ },
+ "t7": {
+  "ghi_chu": "Claude tự test: /hoatdong ghi giờ mùa + 7 ngày, cần 3 giờ/7 ngày; bot đứng yên cả buổi chỉ có 0,2 giờ (AFK không tính).",
+  "luc": 1792574500000,
   "tt": "ok"
  },
  "v1": {
@@ -260,6 +626,21 @@
   "luc": 1792480866956,
   "tt": "ok"
  },
+ "v5b": {
+  "ghi_chu": "CẦN BẠN TEST: bot không qua được Sonar/AuthMe ở proxy (cần giải captcha) nên không thử đăng nhập được.",
+  "luc": 1792571000000,
+  "tt": ""
+ },
+ "v6": {
+  "ghi_chu": "CẦN BẠN TEST: cần điện thoại Bedrock thật.",
+  "luc": 1792571000000,
+  "tt": ""
+ },
+ "v7": {
+  "ghi_chu": "CẦN BẠN TEST: cần điện thoại Bedrock bản mới.",
+  "luc": 1792571000000,
+  "tt": ""
+ },
  "v8": {
   "ghi_chu": "",
   "luc": 1792467352521,
@@ -269,5 +650,50 @@
   "ghi_chu": "",
   "luc": 1792467356035,
   "tt": "ok"
+ },
+ "w1": {
+  "ghi_chu": "Claude tự test: cờ màu sát rìa → 'MỘT CUỘC CHIẾN ĐÃ BẮT ĐẦU', rương chiến tranh 60 xu + 10% (6 xu) vì nước có 2 thị trấn, quỹ nước trừ đúng. Chặn đúng: nước 1 thị trấn, không phải thứ Năm, cờ trắng (= đầu hàng), cờ xa rìa. Đã thêm vào /hd: chỉ thứ Năm, cần 2 thị trấn.",
+  "luc": 1792578000000,
+  "tt": "ok"
+ },
+ "w2": {
+  "ghi_chu": "Claude tự test (admin bật phiên): báo 'Phiên công thành bắt đầu: CÓ cho pet', phiên giữ cờ 16 khối/7 phút, hết phiên khôi phục bảo vệ PvP. Chưa xem báo trước 60/10 phút theo lịch thật.",
+  "luc": 1792574500000,
+  "tt": "ok"
+ },
+ "w3": {
+  "ghi_chu": "Claude tự test: nộp 32 bánh mì +144 điểm (Hạn hán ×1,5); trong trận ' được ăn no', kho trừ 1 điểm sau ~15 giây (2/phút); kho thị trấn D cạn → 'quân mau đói'.",
+  "luc": 1792578000000,
+  "tt": "ok"
+ },
+ "w6": {
+  "ghi_chu": "Claude tự test: thắng (admin đặt điểm) → 'Thị trấn sẵn sàng cho xâm lược/cướp', thu hồi rương chiến tranh; cắm lại cờ màu → chiếm làm thuộc địa, khởi nghĩa sau 72 giờ. CẦN BẠN: cướp = ĐẶT RƯƠNG cạnh cờ (bot đặt không thành). SiegeWar cảnh báo cướp 120 xu/ô 'quá cao' so với tính toán 1,31. Đã thêm trang /hd 'Thắng rồi làm gì'.",
+  "luc": 1792578000000,
+  "tt": ""
+ },
+ "w7": {
+  "ghi_chu": "Claude: qua ngày mới Towny thu 'thuế chiếm đóng 1 xu'; KHÔNG thấy phí thuộc địa 150 xu/ngày (có thể chạy theo giờ riêng, không theo lệnh newday). CẦN BẠN xem sau 0 giờ.",
+  "luc": 1792578000000,
+  "tt": ""
+ },
+ "w8": {
+  "ghi_chu": "Claude đọc /canbang: số đã theo giá mới (thuộc địa 150 xu/ngày, lộ trình ghi 50 là số cũ). CẦN BẠN: cần trận thật.",
+  "luc": 1792574500000,
+  "tt": ""
+ },
+ "x1": {
+  "ghi_chu": "Claude tự test (Playwright): trang chủ tải xong không lỗi JS, không còn ô nào 'Đang tải'.",
+  "luc": 1792575500000,
+  "tt": "ok"
+ },
+ "x14": {
+  "ghi_chu": "Claude chạy bằng lệnh console '/choilai admin <tên> moi' cho 2 bot: RESET OK, có sao lưu, xoá quyền LuckPerms. ĐÃ SỬA: reset xong tên vẫn nằm trên bảng xếp hạng Thăng Cấp trên web. CẦN BẠN: bấm nút trên trang quản trị › Hệ thống.",
+  "luc": 1792576500000,
+  "tt": ""
+ },
+ "x2": {
+  "ghi_chu": "Claude tự test bề ngang 390px: không tràn ngang, không lỗi. CẦN BẠN: mở bằng điện thoại thật, thử menu thả xuống.",
+  "luc": 1792575500000,
+  "tt": ""
  }
 }

@@ -1,7 +1,67 @@
 # Bàn giao dự án DuckyMoMo Network
 
-> Dùng file này để tiếp tục ở session hoặc tài khoản Claude khác. Cập nhật: 21/10/2026 chiều. ĐỌC MỤC 0000000 TRƯỚC, rồi 000000, 00000, 0000, 000, 00, 0.
+> Dùng file này để tiếp tục ở session hoặc tài khoản Claude khác. Cập nhật: 21/10/2026 tối. ĐỌC MỤC 00000000 TRƯỚC, rồi 0000000, 000000, 00000, 0000, 000, 00, 0.
 > Đọc kèm: `README.md`, `docs/minecraft-server-plan.md` (kế hoạch, quyết định), `docs/network-architecture.md` (kiến trúc).
+
+---
+
+## 00000000. MỚI NHẤT — 21/10/2026 tối (chuyển tài khoản Claude lần 6)
+
+Phiên này: làm lại Thăng Cấp, rồi Claude TỰ TEST lộ trình bằng bot. Mọi thứ đã commit (CHƯA push). Server: cả 4 server chạy bản mới nhất
+TRỪ 1 jar nhỏ (LevelUp: admin reset thì xoá khỏi bảng xếp hạng web) đã build, chờ lần restart banghoi tới.
+
+### Lộ trình test — trang của tài khoản lần 5 KHÔNG dùng được nữa
+- Kết quả mới nhất đã chép về `docs/lo-trinh-test-ketqua.json` (138 mục: 96 ok, 2 err, 2 lai, 38 chỉ ghi chú "CẦN BẠN TEST").
+- Tài khoản mới: đăng lại `docs/lo-trinh-test.html` (Artifact publish, capabilities {"db": {}}, icon "checklist"), nạp json vào
+  collection `ketqua` (mỗi mục 1 doc {tt, ghi_chu, luc, sua?}; ArtifactData batch set, ≤50/lần, dùng file_path). Gửi link cho người dùng.
+- Quy ước ghi: "Claude tự test: …" (tt ok/err), "CẦN BẠN TEST: …" (tt trống), "ĐÃ SỬA …" (tt lai). Người dùng muốn MỌI mục được điền.
+- Lỗi còn mở: k2 (người thường không /sell hand: nhóm default thiếu essentials.sell.hand + essentials.sell.bulk server=banghoi-1 —
+  Claude bị chặn cấp quyền nhóm, người dùng phải chạy lp), p3 (menu chọn hệ MyPet hiện mỗi hệ 2 lần, chưa rõ vì sao).
+- CHƯA TEST (~70 mục, xem json: mục không có hoặc tt trống): pet p1 p4 p5 p6 p8, quái q1 q5 q6 q8 q10, mùa n2–n6, chiến tranh w4 w5 w9–w12
+  (+ w6 phần cướp = vua ĐẶT RƯƠNG cạnh cờ, w7 phí thuộc địa 150/ngày chạy lúc 0 giờ), hoà bình h1–h5, Thái Ấp a2–a8, Đấu Trường d1–d3,
+  web x3–x13 x15, thử phá s1–s9 s12–s18 s21 s23 s24, vận hành o3 o5–o7. Đang định làm tiếp (người dùng ngắt trước khi chạy): p1 bắt pet
+  (summon heo NoAI Health:1, bot cầm dây xích đánh), rồi Đấu Trường, Thái Ấp, Hoà Bình, s3/s4/s5 nhân đồ (bot thoát ngang), web x4 (bot
+  /web lấy mã, Playwright đăng nhập site), panel x13/x15 (Playwright, mật khẩu panel trong .env).
+
+### Bot test (tools/bottest) — đọc trước khi dùng
+- `./tools/bottest/run.sh <kịch bản>.js` (BOTN=tên để đổi). mineflayer 1.21.4 qua ViaBackwards, vào THẲNG banghoi-1 (Velocity forwarding
+  secret trong data/banghoi-1/config/paper-global.yml) => không qua Sonar/AuthMe/proxy. Chạy trong container node:22-alpine mạng
+  duckymomo_default (Docker Desktop không vào được IP container). h.js: start(tên) -> {bot, rc (rcon), say, openMenu, click, itemText, attr,
+  end}; moveTo(t,x,z) = tp phía server rồi bot vào lại (qua Via bot không theo được tp). Kịch bản cũ ở scratchpad đã mất; viết lại theo
+  tools/bottest/vidu-capdo.js.
+- Mẹo: lệnh `kill`/`tp`/`execute` bị Essentials chiếm -> dùng `minecraft:kill`, `minecraft:tp`, `minecraft:execute`. Towny hỏi /confirm.
+  Đặt khối cần quyền `grim.exempt` cho bot (GrimAC chặn vì gói tin bot). Bot không đọc được tin chat người chơi (prismarine lỗi, đã bỏ qua).
+- Lệnh admin mới: `/hoatdong them <tên> <phút>` cộng giờ chơi (dựng tình huống: lập thị trấn 3 g, quân hàm 5 g).
+- Cấu hình hay phải tạm đổi (SAO LƯU rồi TRẢ LẠI ngay, dmm reload / swa reload): DuckyMoMoCore `active-play.new-member-days` (3),
+  SiegeWar `allowed_siege_start_days` (thursday), level-up hours-base/kill-base. Phiên đánh: `swa battlesession start|end`;
+  `swa siegeimmunity town <t> 0`; `swa siege <t> setbalance 500` / `end`; `townyadmin newday`.
+
+### ⚠ DỮ LIỆU TEST CẦN DỌN (khi test xong)
+- Bot: ThuCapDo, ThuPet2 (đã reset), ThuA ThuB ThuC ThuD ThuE ThuF (chưa). Dọn: `/choilai admin <tên> moi` từng bot (console).
+- Towny: thị trấn ThuTranA (ThuA, dân ThuB ThuE), ThuTranD (ThuD, đang là THUỘC ĐỊA của ThuNuoc), ThuTranF (ThuF, phá sản), quốc gia
+  ThuNuoc. Xoá: `townyadmin nation ThuNuoc delete`, `townyadmin town <tên> delete` (+ /confirm). Cờ banner (đỏ/xanh/trắng) quanh
+  x 11808 y 102 z -2700; vùng 11500 -2700.
+- Quyền grim.exempt của ThuA, ThuF: `lp user ThuA permission unset grim.exempt` (ThuF tương tự). Thái Ấp của ThuCapDo (đã reset, kiểm).
+
+### Đã làm phiên này (chi tiết: git log 21/10 chiều-tối)
+- Thăng Cấp làm lại (LevelUp.java): giờ 0,04 × N², xu 250 × N^0,6, hạ gục N²; điểm thuộc tính (Máu/Sức mạnh/Bền bỉ/Nhanh nhẹn, bậc k tốn k,
+  cấp 100 max 2 cái, tắt Đấu Trường, AttributeModifier tạm, tẩy điểm 10.000); 8 đặc quyền mua bằng xu (SellLimit duckymomo.sell.them.<n>,
+  Workshop giam/.giam.2, PetCapture batgioi, PetPerks.java: +15% kinh nghiệm MyPet, hồi sinh nhanh gấp đôi). Đã test kỹ (cd1–cd22).
+- Gói tài nguyên Việt hoá mọi chữ do máy người chơi vẽ (tên đồ/khối/sinh vật, phù phép, chỉ số giáp): tools/fontpack/lang-vi.py đè en_us +
+  en_gb (3.453 dòng); build-font-pack.sh -> up -d 4 server.
+- Sửa nhờ bot: /ce giá menu, Chợ đen give-item true + câu báo, OCM "Sát thương:" + bỏ "[OCM] chế độ đánh", CMILib giờ/phút/giây, /kit
+  "Gói Gói", MyPet bỏ thẻ </gold>, chặn quảng cáo chat (chat-filter.ads), /hd phong quân hàm + công thành (thứ Năm, 2 thị trấn, rương=cướp),
+  Thư viện đồ ô Hình riêng, Quần tân thủ (mã quan). Phát hiện nhưng KHÔNG sửa (chờ người dùng): xem "Câu hỏi" dưới.
+
+### Câu hỏi đang chờ người dùng (mới)
+1. Cấp quyền /sell hand + bulk cho nhóm default (lệnh ở trên) — người dùng phải tự chạy.
+2. Rời nghề xong vào ngay nghề khác được (chờ 1 ngày chỉ áp nghề vừa rời): có chặn mọi nghề 1 ngày không?
+3. Towny `default_neutral: 'true'` cho quốc gia: nước mới bị trừ thêm 300 xu/ngày "duy trì hoà bình", vô tác dụng trong SiegeWar. Đổi false?
+4. Chặn quảng cáo chặn cả link thường (shopee.vn…): có cho phép thêm trang nào (chat-filter.ads.allow)?
+5. Giá ô đất Towny không tăng dần (lộ trình ghi tăng dần); thuế dân tính % số dư/ngày (5% = 2.500 xu/ngày với 50k) có nặng không.
+6. SiegeWar cảnh báo cướp 120 xu/ô "quá cao" so với tính toán 1,31 (do định giá ×3).
+7. Câu hỏi cũ mục 0000000 (lương nghề, mất 30% cấp nghề, Ruins, /pro_command…) vẫn chưa trả lời.
+- site/config/site.yml có số tài khoản MB người dùng tự điền: CHƯA commit (hỏi người dùng muốn commit hay chuyển .env).
 
 ---
 

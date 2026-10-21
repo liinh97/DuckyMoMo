@@ -1,6 +1,6 @@
 # DuckyMoMo Network: hướng dẫn cho Claude
 
-- Đọc `docs/HANDOFF.md` trước tiên (mục 0000000 = mới nhất 21/10 chiều, gồm lộ trình test + Thăng Cấp đang làm dở; rồi 000000, 00000, 0000, 000): trạng thái hiện tại, chi tiết kỹ thuật, việc tiếp theo. Việc cần test trong game: `docs/TEST-CHECKLIST.md`.
+- Đọc `docs/HANDOFF.md` trước tiên (mục 00000000 = mới nhất 21/10 tối: kết quả tự test bằng bot, dữ liệu test cần dọn, câu hỏi chờ; rồi 0000000, 000000, 00000, 0000, 000): trạng thái hiện tại, chi tiết kỹ thuật, việc tiếp theo. Việc cần test trong game: `docs/TEST-CHECKLIST.md`; kết quả lộ trình test: `docs/lo-trinh-test-ketqua.json`; test bằng bot: `tools/bottest/`.
 - Trả lời người dùng bằng **tiếng Việt**, thực tế, nói rõ chỗ nào chưa chắc hoặc cần kiểm tra lại.
 - Hạ tầng **chỉ dùng Docker Compose**: mỗi thành phần hoặc chế độ một `compose.yaml`, file gốc dùng `include`.
 - **Không commit mật khẩu.** Mật khẩu để trong `.env`; file cấu hình dùng `${CFG_TEN_BIEN}` (image itzg tự điền).

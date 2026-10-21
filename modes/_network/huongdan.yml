@@ -152,7 +152,7 @@ menu:
     - "/trade <người>|đổi đồ an toàn"
     - "/qs|shop rương của bạn"
     - "/shopsearch <món>|tìm shop"
-    ghi: "Cửa hàng Kinh Đô: bấm NPC cửa hàng ở spawn."
+    ghi: "Chợ đen: bán lẻ, xem hàng cả server (ở kinh đô). Shop rương: cửa hàng cố định ở thị trấn bạn, bán cả rương, không hết hạn. Cửa hàng Kinh Đô: NPC ở spawn."
   - slot: 21
     icon: CRAFTING_TABLE
     ten: "Chế tạo"

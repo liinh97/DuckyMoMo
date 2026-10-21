@@ -1453,7 +1453,8 @@ LIB_USES = {"": "Đồ thường", "ky-nang": "Kỹ năng đặc biệt (Xưởn
             "tinh-luyen": "Nguyên liệu Tinh Luyện", "manh": "Mảnh sự kiện",
             "chia-khoa": "Vé gacha"}
 # Thư viện đồ › Chỉ số gốc: mã -> (tên, (nhỏ nhất, lớn nhất)); khớp ItemLibrary.ATTRS và ATTRS trong thuvien.html
-LIB_DMM_ENCH = {"luot": "Lướt", "hoi_mau": "Hồi máu", "cau_lua": "Cầu lửa"}   # khớp SkillEnchants.NAMES
+LIB_DMM_ENCH = {"luot": "Lướt", "hoi_mau": "Hồi máu", "cau_lua": "Cầu lửa", "bay": "Bay lên", "dich_chuyen": "Dịch chuyển",
+                "dam_dat": "Dậm đất", "cuong_no": "Cuồng nộ", "phong_bay": "Phóng bay"}   # khớp SkillEnchants.NAMES
 LIB_ATTRS = {"attack_damage": ("Sát thương", (0, 200)), "attack_speed": ("Tốc đánh", (0.1, 20)), "armor": ("Giáp", (0, 30)),
              "armor_toughness": ("Độ cứng giáp", (0, 20)), "knockback_resistance": ("Kháng đẩy lùi", (0, 1)),
              "max_health": ("Máu tối đa", (-10, 40)), "movement_speed": ("Tốc chạy %", (-50, 100))}

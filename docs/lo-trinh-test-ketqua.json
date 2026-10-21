@@ -474,15 +474,30 @@
   "luc": 1792574000000,
   "tt": ""
  },
+ "n2": {
+  "ghi_chu": "Claude tự test RÚT NGẮN THỜI GIAN (tools/bottest/n-thoigian.js + tạm random_tick_speed 100, ruộng thắp sáng, ép mùa; xong trả lại hết): 21 khoai + 21 lúa trồng cạnh nhau 40 giây. Mùa khô: khoai tuổi TB 3,76 > lúa 2,62. Mùa mưa: lúa 3,67 > khoai 2,05. Đúng hệ số mùa.",
+  "luc": 1792598674108,
+  "tt": "ok"
+ },
  "n3": {
   "ghi_chu": "Claude tự test bằng bot (tools/bottest/n-mua.js, mùa khô): gặt 120 cây khoai chín được trung bình 3,95 củ/cây (vanilla 3,71 + 25% được mùa = 3,96, khớp); 24 cây chưa chín đúng 1,00 củ/cây (không thưởng).",
   "luc": 1792595643864,
   "tt": "ok"
  },
  "n4": {
-  "ghi_chu": "Claude tự test: hiện đang sự kiện Hạn hán nên hệ số dưa = 1,3 × 0,7 = 0,91 < 1 -> theo thiết kế KHÔNG có thưởng; đo được dưa từ dây 4,75 lát, dưa tự đặt 4,91 lát (vanilla 5). CẦN TEST LẠI sau Hạn hán (ngày 5-7 mùa khô): dưa từ dây phải ~6,5 lát, tự đặt ~5.",
-  "luc": 1792595643864,
-  "tt": ""
+  "ghi_chu": "Claude tự test RÚT NGẮN (tạm tắt Hạn hán): dưa mọc từ dây ra 6,85 lát/quả (vanilla 5, +30% => 6,5), dưa tự đặt 4,84 lát (không thưởng). Trong Hạn hán hệ số dưa 1,3×0,7 < 1 nên không thưởng (đúng thiết kế).",
+  "luc": 1792598674108,
+  "tt": "ok"
+ },
+ "n5": {
+  "ghi_chu": "Claude tự test RÚT NGẮN (tạm tỉ lệ mưa/tạnh 100% + dmm reload cho lượt thời tiết chạy sau 30 giây, xong trả lại): mùa khô đang mưa -> tạnh; mùa mưa đang tạnh -> mưa; sự kiện Lũ ép mưa; Hạn hán ép tạnh. Tỉ lệ thật (mưa 25%/5 phút mùa mưa, tạnh 50% mùa khô) là số trong Cài đặt, không đo.",
+  "luc": 1792598674108,
+  "tt": "ok"
+ },
+ "n6": {
+  "ghi_chu": "Claude tự test (tools/bottest/n6-ca.js, ép mùa, câu ở ao tự đào): mùa mưa câu ra cá lóc đồng, cá rô phi, cua đồng, cá chép, diêu hồng; mùa khô ra cá bống; ao đất liền không ra cá biển. Mùa đã trả theo lịch.",
+  "luc": 1792598674108,
+  "tt": "ok"
  },
  "n7": {
   "ghi_chu": "Claude: /emf shop ngoài đất hoà bình bị chặn đúng luật. Web có lịch thi câu T7, CN 12:00. CẦN BẠN: bán cá ở kinh đô và chạy một đợt thi câu.",
@@ -510,9 +525,9 @@
   "tt": "ok"
  },
  "o4": {
-  "ghi_chu": "Claude: bot nhận được báo trước '[⚠] Dọn vật phẩm dưới đất sau 5s/30s'. CẦN BẠN: xem đồ bị dọn đúng giờ và tắt thông báo trong /caidat.",
-  "luc": 1792575500000,
-  "tt": ""
+  "ghi_chu": "Claude tự test RÚT NGẮN (tạm dọn mỗi 1 phút): báo 'Dọn vật phẩm dưới đất sau 30s', 'sau 5s', rồi 'Đã dọn sạch 11 vật phẩm'; tắt 'Thông báo dọn rác' trong /caidat thì không thấy báo nhưng đồ vẫn bị dọn; đã bật lại. Config trả lại 10 phút.",
+  "luc": 1792598674108,
+  "tt": "ok"
  },
  "o5": {
   "ghi_chu": "Claude tự test (tools/bottest/o5-choilai.js): ĐÃ SỬA LỖI NẶNG - /choilai báo 'còn 4 món trên Chợ đen' với MỌI người khi chợ có món của bất kỳ ai đang bán (hàm của zAuctionHouse trả về cả chợ, không lọc người) -> không ai chơi lại được. Giờ chỉ đếm món của chính người đó; câu báo thêm 'nhận đồ đã mua'. Test lại: /choilai hiện danh sách mất/giữ, /choilai xacnhan -> tiền về 500, mất đồ, nhận quà tân thủ, về spawn, bảo vệ PvP 15 phút; gõ lại bị chặn 7 ngày.",
@@ -555,9 +570,9 @@
   "tt": "ok"
  },
  "q2": {
-  "ghi_chu": "Claude đọc /lenhsan: có lệnh Kỵ Sĩ Địa Ngục ở Tây Bắc (12250, -2400), còn 34 phút, thưởng 4.500 xu + 3 kim cương. CẦN BẠN: tới đánh quái thật.",
-  "luc": 1792574000000,
-  "tt": ""
+  "ghi_chu": "Claude tự test RÚT NGẮN (tạm lệnh mới mỗi 1 phút, hết hạn 5 phút): /lenhsan hiện Kẻ Tàn Phá quanh X 12800 Z -1550; bot tới gần -> 'Kẻ Tàn Phá đã xuất hiện gần bạn', quái phát sáng; A gây nhiều sát thương hơn B -> A nhận 6.000 xu + 4 kim cương, B không nhận, báo cả server; lệnh khác để quá 5 phút -> 'đã trốn… Lệnh săn hết hạn'. Config đã trả lại (45 phút / 60 phút).",
+  "luc": 1792598674108,
+  "tt": "ok"
  },
  "q3": {
   "ghi_chu": "Claude đọc /khobau: tỉ lệ rơi, 3 loại kho báu + quà. CẦN BẠN: cầm bản đồ đi dò (cần di chuyển thật).",

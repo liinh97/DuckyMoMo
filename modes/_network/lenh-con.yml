@@ -328,6 +328,7 @@ groups:
       - ["dmm thuvien [nap]", "Xem / nạp lại thư viện đồ", Chỉ admin]
       - ["tpr [khu]", "Dịch chuyển ngẫu nhiên tới đất hoang (banghoi-1); không ghi khu thì mở menu", Mọi người]
       - ["hoatdong [tên]", "Giờ chơi thật (không tính AFK); xem người khác cần quyền admin", Mọi người]
+      - ["hoatdong them <tên> <phút>", "Cộng (hoặc trừ, số âm) giờ chơi thật để dựng tình huống test", Chỉ admin]
       - ["taikhoanphu khai <chính>", "Tài khoản phụ tự khai; tài khoản chính gõ taikhoanphu xacnhan <phụ> trong 10 phút", Mọi người]
       - ["hoabinh [vao|roi|danhsach]", "Liên minh Hoà Bình: xem, đưa thị trấn vào/ra", Thị trưởng]
       - ["dmm hoabinh setup|claim <r>", "Lập Liên minh Hoà Bình, kinh đô chiếm đất", Chỉ admin]

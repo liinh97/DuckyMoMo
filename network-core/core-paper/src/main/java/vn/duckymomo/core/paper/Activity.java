@@ -224,8 +224,28 @@ final class Activity implements Listener {
         saveIfDirty();
     }
 
-    /** /hoatdong [tên]: xem giờ chơi thật của mình (hoặc người khác nếu là admin). */
+    /** /hoatdong [tên]: xem giờ chơi thật của mình (hoặc người khác nếu là admin). Admin: /hoatdong them <tên> <phút> (dựng tình huống test). */
     boolean command(CommandSender s, String[] args) {
+        if (args.length >= 3 && args[0].equalsIgnoreCase("them") && s.hasPermission("duckymomo.admin")) {
+            OfflinePlayer t = Bukkit.getOfflinePlayerIfCached(args[1]);
+            int min;
+            try {
+                min = Integer.parseInt(args[2]);
+            } catch (NumberFormatException ex) {
+                min = 0;
+            }
+            if (t == null || min == 0) {
+                s.sendMessage("/hoatdong them <tên> <phút> (số âm để trừ)");
+                return true;
+            }
+            String k = t.getUniqueId().toString(), today = LocalDate.now().toString();
+            data.set(k + ".ten", t.getName());
+            data.set(k + ".tong", Math.max(0, data.getInt(k + ".tong") + min));
+            data.set(k + ".ngay." + today, Math.max(0, data.getInt(k + ".ngay." + today) + min));
+            dirty = true;
+            s.sendMessage(String.format(Locale.ROOT, "Đã cộng %d phút giờ chơi cho %s (tổng %.1f giờ)", min, t.getName(), totalHours(t.getUniqueId())));
+            return true;
+        }
         OfflinePlayer target;
         if (args.length >= 1 && s.hasPermission("duckymomo.admin")) {
             target = Bukkit.getOfflinePlayerIfCached(args[0]);

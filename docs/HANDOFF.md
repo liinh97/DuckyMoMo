@@ -22,10 +22,14 @@ sau dịch chuyển có vài giây bất tử (đợi 5 giây rồi mới /damag
 - Vé cổng Sáng Tạo chỉ dùng 1 lần (ThaiAp.useTicket). Đã build; ĐÃ restart sangtao-1. banghoi-1/lobby/practice-1 nhận jar mới ở lần restart sau
   (kèm jar Thăng Cấp đang chờ của tài khoản #6).
 
-### LỖI CHỜ NGƯỜI DÙNG CHỌN CÁCH SỬA: không thị trấn nào vào được Liên minh Hoà Bình (h1)
-- /hoabinh vao bắt đất thị trấn chạm đất liên minh. Vòng spawn (town-rules.reserved-spawn-radius 300) nằm GỌN trong đất kinh đô (KinhDo chiếm tới
-  ~310 block, chunk x 774..812, z -177..-139) nên lối "lập thị trấn sát kinh đô tự vào liên minh" (newTownInRing) không dùng được; ngoài vòng thì
-  Towny min_plot_distance_from_town_plot 5 chặn "quá gần thị trấn khác" (chỉ bỏ qua cho thị trấn CÙNG quốc gia).
+### ĐÃ SỬA (người dùng chọn "cho vào khi ở gần"): không thị trấn nào vào được Liên minh Hoà Bình (h1)
+- Nguyên nhân: /hoabinh vao bắt đất chạm liên minh; vòng spawn 300 block nằm gọn trong đất kinh đô (KinhDo tới ~310 block, chunk x 774..812,
+  z -177..-139) nên newTownInRing không dùng được; ngoài vòng Towny min_plot_distance_from_town_plot 5 chặn (chỉ bỏ qua cho cùng quốc gia).
+- Giờ (PeaceAlliance): vùng liên minh nối liền = loang từ đất kinh đô qua đất thị trấn thành viên (connectedPeace, cache 30 giây); thị trấn
+  cách vùng đó ≤ peace-alliance.join-max-distance (8, schema peace_join_dist) ô thì vào được; vào rồi /t claim nối sang; tick chỉ bật hoà bình khi
+  nối liền + đủ join-wait-days; /hoabinh danhsach ghi "(chờ nối đất)". Test trọn bằng tools/bottest/h1-vao.js (tạm join-wait-days 0).
+- banghoi-1 đã restart 18:42 với jar mới (gồm cả Thăng Cấp của tài khoản #6 - hết chờ). sangtao-1 restart 18:3x. lobby, practice-1 CHƯA restart
+  (jar mới chỉ khác ThaiAp bản sao + PeaceAlliance, không ảnh hưởng 2 server đó).
 
 ### Dữ liệu test cần dọn (thêm vào danh sách ở mục 00000000)
 - Bot mới: ThuPet ThuDA ThuDB ThuPA ThuPB (practice-1) ThuS ThuTA ThuTB ThuCA ThuCB ThuCC ThuPetA ThuPetB ThuH ThuK ThuWeb ThuWebSai -> /choilai admin <tên> moi.

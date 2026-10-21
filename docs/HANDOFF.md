@@ -31,6 +31,13 @@ sau dịch chuyển có vài giây bất tử (đợi 5 giây rồi mới /damag
 - banghoi-1 đã restart 18:42 với jar mới (gồm cả Thăng Cấp của tài khoản #6 - hết chờ). sangtao-1 restart 18:3x. lobby, practice-1 CHƯA restart
   (jar mới chỉ khác ThaiAp bản sao + PeaceAlliance, không ảnh hưởng 2 server đó).
 
+### Thư viện đồ: chỉ số gốc (21/10 tối, người dùng yêu cầu)
+- Mục 4 trang Thư viện đồ có ô Sát thương, Giáp, Độ cứng giáp, Kháng đẩy lùi, Máu tối đa, Tốc chạy % (attributes trong thuvien-do.yml;
+  ItemLibrary.ATTRS / LIB_ATTRS app.py / ATTRS thuvien.html phải khớp). Ô trống = giữ gốc; số gốc lấy từ thuvien-meta.json attr_def
+  (ghi lúc plugin bật). Sát thương gốc = bảng OldCombatMechanics old-tool-damage (kiếm kim cương 8). Không có tốc đánh (OCM bỏ hồi đòn).
+  Đã test bằng bot (tools/bottest/item-attr2.js): kiếm 12 sát thương + 4 máu -> zombie mất 11,04 (12 − 8% giáp kiểu 1.8), máu 24.
+- Sửa kèm: nút Xoá trên trang Thư viện đồ luôn báo "Thao tác không hợp lệ" (nhánh elif bắt nhầm action delete).
+
 ### Dữ liệu test cần dọn (thêm vào danh sách ở mục 00000000)
 - Bot mới: ThuPet ThuDA ThuDB ThuPA ThuPB (practice-1) ThuS ThuTA ThuTB ThuCA ThuCB ThuCC ThuPetA ThuPetB ThuH ThuK ThuWeb ThuWebSai -> /choilai admin <tên> moi.
 - ThuA có Thái Ấp 70×70 (đã mua + mở rộng) -> xoá đất trong thaiap.yml nếu cần; ThuCapDo cũng có 1 mảnh.

@@ -361,6 +361,11 @@ public final class DuckyMoMoCore extends JavaPlugin {
             getLogger().info("Rơi xuống hư không về spawn: bật (y < " + belowY + ")");
         }
 
+        // Chặn /pay cho chính mình (Essentials trừ rồi cộng lại, người chơi tưởng lỗi)
+        if (getServer().getPluginManager().isPluginEnabled("Essentials")) {
+            getServer().getPluginManager().registerEvents(new PaySelfGuard(), this);
+        }
+
         // Nghề Jobs Reborn (21/10): gõ /jobs (không thêm gì) là mở menu chọn nghề thay vì danh sách lệnh
         if (Integrations.jobsReborn()) {
             getServer().getPluginManager().registerEvents(new JobsMenu(), this);

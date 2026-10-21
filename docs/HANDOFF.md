@@ -59,6 +59,10 @@ Sảnh (lobby) chưa restart từ lâu nhưng không bật các module này; res
   DuckyMoMoCore: JobsMenu (gõ /jobs trơn → /jobs browse), PlayerReset dùng `jobs fireall`. Jar uJobs đã cất ở
   data/banghoi-1/plugins-da-go/ (thư mục dữ liệu UJobs còn). Cấp nghề cũ của uJobs KHÔNG chuyển (giai đoạn test). Thử trên server tạm
   trước khi đưa lên (8 nghề nạp, không sinh nghề mặc định). CHƯA thử bằng người: TEST-CHECKLIST 4z, lộ trình test k1, m16.
+  Việt hoá thêm (21/10 trưa): tiêu đề menu nghề dùng [jobfullname] (Thợ mỏ, không còn Miner), Jobs/TranslatableWords/Words_vi.yml
+  (1.970 tên khối/quái/phù phép/thuốc lấy từ vi_vn.json của game), CMILib Locale_VI.yml + config Language: VI (tools/jobs/cmilib-vi.py;
+  CMILib CẦN KHỞI ĐỘNG LẠI banghoi mới nhận, chưa restart vì có người chơi khác online). PaySelfGuard (DuckyMoMoCore): chặn /pay cho
+  chính mình (Linh gõ /pay Linh 10000 tưởng lỗi: trừ rồi cộng lại); jar đã build, CHƯA nạp (cần restart banghoi).
   Lưu ý: Spiget luôn lấy bản MỚI NHẤT (không ghim) — nếu một ngày Jobs/CMILib mới làm lỗi, ghim lại bằng link tải cụ thể.
 
 ### Việc tiếp theo / chờ người dùng

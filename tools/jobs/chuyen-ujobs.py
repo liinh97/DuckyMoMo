@@ -173,8 +173,61 @@ def main():
         if ks[-1] not in node:
             raise SystemExit(f"messages_en không có {path}")
         node[ks[-1]] = text
+    # tên nghề: [jobname] = mã nghề (Miner…) -> dùng [jobfullname] (Thợ mỏ…), trừ phần mô tả cú pháp lệnh (help.args)
+    def full(node, path=""):
+        if isinstance(node, dict):
+            for k in node:
+                node[k] = full(node[k], f"{path}.{k}")
+            return node
+        if isinstance(node, list):
+            return [full(x, path) for x in node]
+        if isinstance(node, str) and ".help.args" not in path:
+            return re.sub(r"(?i)([\[%])jobname([\]%])", r"\1jobfullname\2", node)
+        return node
+    full(msg)
     (OUT / "locale").mkdir(exist_ok=True)
     (OUT / "locale/messages_vi.yml").write_text(yaml.safe_dump(msg, allow_unicode=True, sort_keys=False, width=200), encoding="utf-8")
+
+    # tên vật phẩm / sinh vật / phù phép / thuốc / màu tiếng Việt (TranslatableWords/Words_vi.yml) từ file ngôn ngữ vi_vn của game
+    lang_file = ROOT / "data/banghoi-1/plugins/MyPet/cache/vanilla-lang/26.2/vi_vn.json"
+    if lang_file.exists():
+        import json
+        lang = json.loads(lang_file.read_text(encoding="utf-8"))
+        words = yaml.safe_load((GOC / "Words_en.yml").read_text(encoding="utf-8"))
+        cap = lambda t: t[:1].upper() + t[1:]
+        n = 0
+        for k in list(words.get("ItemList") or {}):
+            t = lang.get(f"block.minecraft.{k.lower()}") or lang.get(f"item.minecraft.{k.lower()}") or VI_ITEM.get(k.lower())
+            if t:
+                words["ItemList"][k] = cap(t); n += 1
+        for k in list(words.get("EntityList") or {}):
+            t = lang.get("entity.minecraft." + k.split("-", 1)[-1].lower())
+            if t:
+                words["EntityList"][k] = cap(t); n += 1
+        for k in list(words.get("EnchantList") or {}):
+            t = lang.get("enchantment.minecraft." + k.lower().replace(" ", "_"))
+            if t:
+                words["EnchantList"][k] = t; n += 1
+        for k in list(words.get("PotionEffects") or {}):
+            base, suf = k.lower(), ""
+            if base.startswith("long "):
+                base, suf = base[5:], " (lâu)"
+            elif base.startswith("strong "):
+                base, suf = base[7:], " II"
+            base = base.replace(" ", "_")
+            t = lang.get(f"item.minecraft.potion.effect.{base}") or lang.get(f"effect.minecraft.{base}")
+            if t:
+                words["PotionEffects"][k] = t + suf; n += 1
+        for k, v in list((words.get("ColorList") or {}).items()):
+            t = lang.get("color.minecraft." + k.split("-", 1)[-1])
+            if t:
+                code = re.match(r"^(&[0-9a-fk-or])*", str(v)).group(0)
+                words["ColorList"][k] = code + cap(re.sub(r"^Màu ", "", t)); n += 1
+        (OUT / "TranslatableWords").mkdir(exist_ok=True)
+        (OUT / "TranslatableWords/Words_vi.yml").write_text(
+            "# DuckyMoMo 21/10: tên tiếng Việt lấy từ file ngôn ngữ vi_vn của game (tools/jobs/chuyen-ujobs.py).\n"
+            + yaml.safe_dump(words, allow_unicode=True, sort_keys=False, width=200), encoding="utf-8")
+        print("Words_vi:", n, "tên")
 
     # trang Cài đặt: thay khối "Nghề"
     s = SCHEMA.read_text(encoding="utf-8")

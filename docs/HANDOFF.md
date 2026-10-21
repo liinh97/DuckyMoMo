@@ -47,7 +47,12 @@ sau dịch chuyển có vài giây bất tử (đợi 5 giây rồi mới /damag
 - banghoi-1 restart 22:10 (jar có PetNameGuard + sửa /choilai). lobby/practice-1 chưa restart (jar mới không ảnh hưởng).
 - Mẹo bot: qua ViaBackwards chỉ gói interact_at tới server -> dùng t.use(entity) (h.js), không dùng bot.activateEntity;
   bot cần grim.exempt để phá/đặt khối nhanh; 2 bot cùng IP thì Bounty không trả thưởng (start(tên, ip) để giả IP khác).
-- Còn chờ: n4 dưa (test lại sau Hạn hán), k2 quyền /sell hand (chờ người dùng đồng ý), p3 menu hệ pet đúp.
+- Còn chờ: p3 menu hệ pet đúp. k2: người dùng CHỐT không cho /sell hand, /sell all (hướng dẫn đã đổi sang /cuahang, /sell <món>).
+- Test RÚT NGẮN THỜI GIAN (người dùng: "tạm chỉnh thời gian ngắn lại để test, xong thì chỉnh lại"): n2 n4 n5 n6 q2 q3 o4 w7 đạt; wrapper ở
+  scratchpad (n-thoigian.sh, q2-o4.sh, q3.sh, w7d.sh) sao lưu config -> chỉnh -> chạy -> trả lại. Mẹo: Essentials chiếm /weather, /time
+  (dùng minecraft:weather; đọc mưa bằng execute if predicate weather_check); bot qua Via đọc tuổi cây / mưa sai -> đọc phía server;
+  /dmm reload GHI ĐÈ file dữ liệu (canbang.yml…) bằng bản trong bộ nhớ -> muốn sửa tay file dữ liệu phải dừng server rồi sửa.
+- WarBalance.colonies: đếm thêm thị trấn conquered trong nước (đề phòng getOccupiedForeignTowns bỏ sót); banghoi-1 restart 23:2x.
 
 ### Dữ liệu test cần dọn (thêm vào danh sách ở mục 00000000)
 - Bot mới: ThuPet ThuDA ThuDB ThuPA ThuPB (practice-1) ThuS ThuTA ThuTB ThuCA ThuCB ThuCC ThuPetA ThuPetB ThuH ThuK ThuWeb ThuWebSai -> /choilai admin <tên> moi.

@@ -575,9 +575,9 @@
   "tt": "ok"
  },
  "q3": {
-  "ghi_chu": "Claude đọc /khobau: tỉ lệ rơi, 3 loại kho báu + quà. CẦN BẠN: cầm bản đồ đi dò (cần di chuyển thật).",
-  "luc": 1792574000000,
-  "tt": ""
+  "ghi_chu": "Claude tự test RÚT NGẮN (tools/bottest/q3-khobau.js, tạm guard-minutes 1, xong trả 5): /khobau give -> bản đồ; cầm dò: cách 200 khối 'Lạnh', 60 'Ấm dần', 15 'Nóng lắm rồi', tới nơi 'Ngay dưới chân! Ngồi xuống (Shift) để đào'; Shift -> 'Đang đào kho báu… Hạ hết 2 lính canh trong 1 phút', 2 lính canh tên đỏ; hạ hết -> 'Mở rương kho báu: 450 xu, 8 thỏi sắt' (tiền +450). Lần 2 không hạ, để quá giờ -> 'Chưa giữ được kho báu… Đã trả lại bản đồ' (bản đồ về túi).",
+  "luc": 1792600065220,
+  "tt": "ok"
  },
  "q4": {
   "ghi_chu": "Claude: /dungeon hiện danh sách trong chat (kèm quỹ, dungeon ẩn còn 1). CẦN BẠN xem chia loại + tab trên web.",
@@ -867,9 +867,9 @@
   "tt": ""
  },
  "w7": {
-  "ghi_chu": "Claude: qua ngày mới Towny thu 'thuế chiếm đóng 1 xu'; KHÔNG thấy phí thuộc địa 150 xu/ngày (có thể chạy theo giờ riêng, không theo lệnh newday). CẦN BẠN xem sau 0 giờ.",
-  "luc": 1792578000000,
-  "tt": ""
+  "ghi_chu": "Claude tự test RÚT NGẮN: giả qua ngày mới (dừng server, đặt mốc phí về hôm qua, bật lại) -> quỹ nước ThuNuoc (1 thuộc địa ThuTranD) 29.401 -> 29.251 xu, trừ đúng 150; cùng ngày không trừ lại. Lần trước không thấy phí có thể vì mốc phí hôm đó đã chạy trước khi chiếm. Đã sửa thêm cho chắc: đếm thuộc địa = mọi thị trấn bị chiếm trong nước (trước chỉ dùng hàm 'thị trấn nước ngoài bị chiếm' của SiegeWar, có thể bỏ sót thị trấn trước đó không thuộc nước nào). Phần nợ khi quỹ thiếu và chặn cắm cờ khi còn nợ chưa thử.",
+  "luc": 1792600065220,
+  "tt": "ok"
  },
  "w8": {
   "ghi_chu": "Claude đọc /canbang: số đã theo giá mới (thuộc địa 150 xu/ngày, lộ trình ghi 50 là số cũ). CẦN BẠN: cần trận thật.",

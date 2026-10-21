@@ -162,11 +162,17 @@ final class WarBalance implements Listener {
 
     // ---------------------------------------------------------------- số liệu
 
+    /** Số thuộc địa = thị trấn bị chiếm (Towny conquered) trong nước n. 21/10: trước dùng SiegeWar getOccupiedForeignTowns, hàm đó bỏ sót
+     *  thị trấn trước khi bị chiếm không thuộc nước nào -> không thu phí thuộc địa, không tính giới hạn max-colonies. */
     int colonies(Nation n) {
-        try {
-            return ((Collection<?>) occupiedForeignTowns.invoke(null, n)).size();
-        } catch (ReflectiveOperationException | RuntimeException e) {
+        if (n == null) {
             return 0;
+        }
+        int k = (int) n.getTowns().stream().filter(Town::isConquered).count();
+        try {
+            return Math.max(k, ((Collection<?>) occupiedForeignTowns.invoke(null, n)).size());
+        } catch (ReflectiveOperationException | RuntimeException e) {
+            return k;
         }
     }
 

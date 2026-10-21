@@ -21,7 +21,13 @@ ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT / "modes" / "banghoi" / "server" / "plugins" / "MyPet" / "skilltrees"
 HE = json.loads((ROOT / "tools" / "mypet" / "he.json").read_text(encoding="utf-8"))
 HE_TEN = {"Combat": "Chiến Binh", "Utility": "Hậu Cần", "PvP": "Đấu Sĩ", "Ride": "Thú Cưỡi", "Farm": "Nông Trại"}
-LINE = "<dark_gray><st>                              </st></dark_gray>"
+# MyPet chỉ đổi thẻ MỞ (<gold>) thành màu; thẻ đóng (</gold>) và <st> bị in nguyên chữ (bot test 21/10) -> không dùng
+LINE = "<dark_gray>────────────────────"
+
+
+def bo_the_dong(lines):
+    """Bỏ thẻ đóng </màu> (MyPet không hiểu, in ra chữ thô)."""
+    return [re.sub(r"</[a-z_]+>", "", x) for x in lines]
 
 
 def khung(goc, nhom=None):
@@ -222,7 +228,7 @@ def main():
     n = 0
     for he, goc in HE.items():
         base = dict(goc)
-        base.update({"ID": he, "Name": he, "Display": HE_TEN[he], "MobTypes": [], "Description": khung(goc["Description"])})   # cây gốc: không loài nào chọn trực tiếp
+        base.update({"ID": he, "Name": he, "Display": HE_TEN[he], "MobTypes": [], "Description": bo_the_dong(khung(goc["Description"]))})   # cây gốc: không loài nào chọn trực tiếp
         (OUT / f"{he}.st.json").write_text(json.dumps(base, ensure_ascii=False, indent=2), encoding="utf-8")
         for ma, g in NHOM.items():
             # loài có đặc tính riêng -> cây riêng; loài không có -> chung một cây của nhóm
@@ -251,7 +257,7 @@ def main():
                 tree = {
                     "ID": tid, "Name": tid, "Display": HE_TEN[he], "Order": goc.get("Order", 0),
                     "Icon": goc.get("Icon"), "MobTypes": mobs, "Inheritance": {"Skilltree": he},
-                    "Description": khung(goc["Description"], desc), "Skills": skills, "Notifications": notes,
+                    "Description": bo_the_dong(khung(goc["Description"], desc)), "Skills": skills, "Notifications": notes,
                     "DmmNhom": {"ma": ma, "ten": g["ten"], "vai": g["vai"], "he": he, "mo_ta": g["mo_ta"],
                                 "tang": f"+{so(g['mau'])} máu, +{so(g['dame'])} sát thương mỗi 5 cấp sau cấp 10",
                                 "dac_tinh": LOAI[loai][0] if loai else None, "loai_vi": [TEN.get(m, m) for m in mobs]},   # cho web (site/app.py pet_trees), MyPet bỏ qua

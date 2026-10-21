@@ -95,6 +95,10 @@
   .ench > button { padding: 4px 0; color: var(--err); border: none; font-size: 17px; }
   .rw-add { align-self: flex-start; background: transparent; border: 1px dashed var(--line); color: var(--muted); border-radius: 8px; padding: 6px 12px; cursor: pointer; font-size: 13.5px; }
   .rw-add:hover { border-color: var(--accent); color: var(--accent); }
+  .attrs { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px 12px; margin-top: 6px; }
+  .attrs label { display: flex; flex-direction: column; justify-content: space-between; gap: 4px; font-size: 13px; color: var(--muted); }
+  .attrs label i { font-style: normal; opacity: .8; }
+  .attrs input.changed { border-color: var(--warn); }
   .opts { display: flex; flex-wrap: wrap; gap: 22px; align-items: center; margin-top: 10px; font-size: 14px; }
   .opts label { display: flex; gap: 6px; align-items: center; }
   .opts input[type=checkbox] { width: auto; }
@@ -185,6 +189,8 @@
         <label class="switch"><input type="checkbox" id="hide"><span class="track"></span><span class="txt">Ẩn dòng phù phép</span></label>
         <label class="glint">Ánh lấp lánh <select id="glint"><option value="">Mặc định</option><option value="true">Luôn có</option><option value="false">Không có</option></select></label>
       </div>
+      <label class="f">Chỉ số gốc <span class="hint" id="attrHint">số giống dòng "8 Sát thương" trong game; để trống = giữ như đồ thường; sát thương gốc theo kiểu đánh 1.8 của server</span></label>
+      <div class="attrs" id="attrs"></div>
       <label class="f" for="model">Hình riêng <span class="hint">model trong gói tài nguyên DuckyMoMo, vd duckymomo:tl_sat (ghi tl_sat cũng được); để trống = hình gốc của loại đồ</span></label>
       <input id="model" placeholder="duckymomo:tl_sat" maxlength="96">
       <div id="warns"></div>
@@ -367,6 +373,27 @@ function mc(text, defColor, defItalic) {
   }
   return out;
 }
+// Chỉ số gốc (ItemLibrary.ATTRS, LIB_ATTRS trong app.py): [mã, tên, ghi chú]
+const ATTRS = [["attack_damage", "Sát thương", ""], ["armor", "Giáp", ""],
+  ["armor_toughness", "Độ cứng giáp", ""], ["knockback_resistance", "Kháng đẩy lùi", "0–1"], ["max_health", "Máu tối đa", "2 = 1 tim"],
+  ["movement_speed", "Tốc chạy", "%"]];
+const SLOT_VI = {mainhand: "Khi cầm ở tay chính:", offhand: "Khi cầm ở tay phụ:", head: "Khi đội trên đầu:", chest: "Khi mặc trên người:",
+  legs: "Khi ở chân:", feet: "Khi đi ở chân:", body: "Khi mặc:", hand: "Khi cầm trên tay:"};
+function attrDef(mat) { return ((data && data.meta && data.meta.attr_def) || {})[mat] || {}; }
+const numVi = v => String(Math.round(v * 1000) / 1000).replace(".", ",");
+function buildAttrs() {
+  $("attrs").innerHTML = ATTRS.map(([k, n, u]) => `<label for="at_${k}">${esc(n)}${u ? ` <i>(${esc(u)})</i>` : ""}<input id="at_${k}" type="number" step="any"></label>`).join("");
+  for (const [k] of ATTRS) $("at_" + k).addEventListener("input", render);
+}
+function attrForm() {
+  const o = {};
+  for (const [k] of ATTRS) { const v = $("at_" + k).value.trim(); if (v !== "" && !isNaN(parseFloat(v))) o[k] = parseFloat(v); }
+  return o;
+}
+function attrPlaceholders(mat) {
+  const d = attrDef(mat);
+  for (const [k] of ATTRS) { const el = $("at_" + k); el.placeholder = "gốc " + numVi(d[k] ?? 0); el.classList.toggle("changed", el.value.trim() !== "" && parseFloat(el.value) !== (d[k] ?? 0)); }
+}
 function form() {
   const ench = {}, cee = {};
   for (const r of enchRows) {
@@ -378,7 +405,7 @@ function form() {
   return { ten_goi: $("tengoi").value.trim(), material: $("material").value.trim().toUpperCase(), amount: parseInt($("amount").value || "1", 10),
     name: $("name").value, lore: $("lore").value.replace(/\s+$/, "").split("\n").filter((l, i, a) => a.length > 1 || l !== ""),
     enchants: ench, ce_enchants: cee, unbreakable: $("unbreakable").checked, hide_enchants: $("hide").checked, glint: g === "" ? null : g === "true",
-    model: $("model").value.trim(), ...useForm() };
+    model: $("model").value.trim(), attributes: attrForm(), ...useForm() };
 }
 function useForm() {
   const use = $("cdung").value;
@@ -425,6 +452,16 @@ function render() {
   for (const [n, l] of Object.entries(f.ce_enchants || {})) { const c = ceInfo("ce:" + n); html += `<div>${mc((c ? c.display : "&7" + n) + " " + (ROMAN[l] || l), "#AAAAAA", false)}</div>`; }
   for (const line of f.lore || []) html += `<div>${line ? mc(line, "#AAAAAA", false) : "&nbsp;"}</div>`;
   if (f.unbreakable) html += `<div style="color:#5555FF">Không thể phá huỷ</div>`;
+  if (!(cur && cur.nguon === "game")) {
+    attrPlaceholders(mat);
+    const d = attrDef(mat), a = Object.assign({}, d, f.attributes || {}), rows = [];
+    for (const [k, n, u] of ATTRS) {
+      const v = a[k]; if (v === undefined || v === 0) continue;
+      const base = k === "attack_damage";   // game ghi tổng (đã cộng phần sẵn có của người chơi), màu xanh lá
+      rows.push(`<div style="color:${base ? "#00AA00" : (v < 0 ? "#FF5555" : "#5555FF")}">${base ? "&nbsp;" : (v > 0 ? "+" : "")}${numVi(v)}${k === "movement_speed" ? "%" : ""} ${esc(n)}</div>`);
+    }
+    if (rows.length) html += `<div>&nbsp;</div><div style="color:#AAAAAA">${esc(SLOT_VI[d.slot || "mainhand"] || SLOT_VI.mainhand)}</div>` + rows.join("");
+  }
   const u = useForm();
   if (u.cong_dung === "ky-nang" && u.ky_nang) {
     const k = u.ky_nang, fl = data && data.features ? data.features[k.feature] : null;
@@ -450,6 +487,13 @@ function render() {
     const c = ceInfo("ce:" + n);
     if (c && !c.active) w.push(`Phù phép CE ${strip(c.display) || n} đang TẮT (Cài đặt › Phù phép) nên gắn vào cũng không có tác dụng`);
     if (c && c.max && l > c.max) w.push(`${strip(c.display) || n} ${l} vượt cấp tối đa của CE (${c.max}): server cho vượt cấp nên VẪN có tác dụng mạnh hơn cấp ${c.max} (vd Bánh răng ${l} = Tốc độ ${l}). Chỉ dùng cho đồ hiếm.`);
+  }
+  const ad = attrDef(f.material);
+  for (const [k, n] of ATTRS) {
+    const v = (f.attributes || {})[k]; if (v === undefined) continue;
+    const g = ad[k] ?? 0;
+    if (k === "attack_damage" && v > Math.max(g * 1.5, g + 4)) w.push(`${n} ${numVi(v)} cao hơn nhiều so với gốc ${numVi(g)}: chém vài nhát là chết người`);
+    if ((k === "armor" || k === "max_health") && v > g + 4) w.push(`${n} ${numVi(v)} cao hơn gốc ${numVi(g)} khá nhiều`);
   }
   const md = $("model").value.trim().toLowerCase();
   if (md && !/^([a-z0-9_.-]{1,32}:)?[a-z0-9_./-]{1,64}$/.test(md)) w.push(`Ô "Hình riêng" ghi sai dạng ("${md}"): phải như duckymomo:tl_sat, chữ thường không dấu, không dấu cách. Không dùng hình riêng thì xoá trống.`);
@@ -535,6 +579,7 @@ function addEnch(key = "", lvl = 1) {
 // on = sửa được hình dạng (đồ web); đồ lấy từ game vẫn sửa được đầu mục, công dụng, tên gợi nhớ
 function setEditable(on) {
   for (const id of ["material", "amount", "name", "lore", "unbreakable", "hide", "glint", "addench", "model"]) $(id).disabled = !on;
+  for (const [k] of ATTRS) $("at_" + k).disabled = !on;
   enchRows.forEach(r => { r.sel.disabled = r.lvl.disabled = !on; r.el.querySelector(":scope > button").disabled = !on; });
 }
 function load(it) {
@@ -545,6 +590,7 @@ function load(it) {
   $("unbreakable").checked = !!(it && it.unbreakable); $("hide").checked = !!(it && it.hide_enchants);
   $("glint").value = it && it.glint !== null && it.glint !== undefined ? String(it.glint) : "";
   $("model").value = it ? it.model || "" : "";
+  for (const [k] of ATTRS) $("at_" + k).value = it && it.attributes && it.attributes[k] !== undefined ? it.attributes[k] : "";
   boList = it ? (it.bo || []).slice() : (setFilter ? [setFilter] : []); drawBo();
   $("cdung").value = it ? it.cong_dung || "" : "";
   nhomTouched = !!(it && it.nhom);
@@ -759,6 +805,7 @@ renderHowto(); });
 }
 renderSyms();
 $("name").onfocus = () => lastField = "name"; $("lore").onfocus = () => lastField = "lore";
+buildAttrs();
 for (const id of ["material", "amount", "name", "lore", "unbreakable", "hide", "glint", "tengoi", "model", "fval", "uses", "days", "ftext", "pvp"]) $(id).addEventListener("input", render);
 $("cdung").addEventListener("change", () => { if (!nhomTouched) $("nhom").value = guessNhom(curMat(), $("cdung").value); syncUse(); render(); });
 $("feat").addEventListener("change", () => { syncUse(); render(); });

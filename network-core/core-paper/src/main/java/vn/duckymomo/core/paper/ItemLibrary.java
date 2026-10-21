@@ -9,11 +9,15 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.EquipmentSlotGroup;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
@@ -37,7 +41,8 @@ import java.util.regex.Pattern;
  * Xưởng (giá, bàn chế), món ăn /nauan (nguyên liệu), Tinh Luyện (công thức, giá bán), mảnh sự kiện (hạn đổi), bùa bắt pet (% cộng),
  * boss (tỉ lệ rơi, cho ai: boss-roi.yml), phần thưởng "do <mã>". Mã của Xưởng / món ăn / Tinh Luyện / mảnh = mã thư viện.
  * Hai loại trong plugins/DuckyMoMoCore/thuvien-do.yml:
- *   nguon: web  – tạo/sửa trên trang Thư viện đồ (/thuvien): material, name, lore, enchants (cho phép vượt cấp), unbreakable, model…
+ *   nguon: web  – tạo/sửa trên trang Thư viện đồ (/thuvien): material, name, lore, enchants (cho phép vượt cấp), unbreakable, model,
+ *               attributes {attack_damage, attack_speed, armor, …}: chỉ số gốc ghi đè (số như dòng "+8 Sát thương" trong game; thiếu = giữ gốc).
  *   nguon: game – /dmm luudo <mã> khi cầm đồ: giữ nguyên vẹn (base64 của ItemStack), kèm "preview" để web hiển thị.
  * Chung cho cả hai: nhom (đầu mục trên web), cong-dung (ky-nang | mon-an | bua-bat-pet | tinh-luyen | manh; trống = đồ thường),
  *   ky-nang {feature, value, text, uses, days, pvp} (Workshop), hieu-ung ["HIỆU_ỨNG cấp giây"] (Dishes).
@@ -53,6 +58,18 @@ final class ItemLibrary {
     interface Stamper {
         ItemStack stamp(ItemStack item, String id, ConfigurationSection s);
     }
+
+    /** Chỉ số gốc chỉnh được (attributes.<mã>). base: số người chơi có sẵn mà dòng "+8 Sát thương" cộng vào (sát thương 1),
+     *  percent: ghi theo % (tốc chạy). Không có tốc đánh: OldCombatMechanics bỏ thời gian hồi đòn nên vô tác dụng. */
+    record AttrDef(String id, Attribute attr, double base, boolean percent) { }
+
+    static final List<AttrDef> ATTRS = List.of(
+            new AttrDef("attack_damage", Attribute.ATTACK_DAMAGE, 1, false),
+            new AttrDef("armor", Attribute.ARMOR, 0, false),
+            new AttrDef("armor_toughness", Attribute.ARMOR_TOUGHNESS, 0, false),
+            new AttrDef("knockback_resistance", Attribute.KNOCKBACK_RESISTANCE, 0, false),
+            new AttrDef("max_health", Attribute.MAX_HEALTH, 0, false),
+            new AttrDef("movement_speed", Attribute.MOVEMENT_SPEED, 0, true));
 
     static final Map<String, Stamper> STAMPERS = new java.util.concurrent.ConcurrentHashMap<>();
     /** Đầu mục (nhom) -> tên hiện; khớp NHOM trong panel/thuvien.html. */
@@ -231,6 +248,72 @@ final class ItemLibrary {
         return item;
     }
 
+    /** Gắn chỉ số riêng là Minecraft bỏ HẾT chỉ số gốc của loại đồ (kiếm mất sát thương nếu chỉ sửa giáp): chép chỉ số gốc trước, rồi ghi đè. */
+    @SuppressWarnings("deprecation")
+    private void applyAttributes(ItemMeta meta, Material mat, ConfigurationSection at) {
+        EquipmentSlot slot = mat.getEquipmentSlot();
+        EquipmentSlotGroup group = slot.getGroup();
+        mat.getDefaultAttributeModifiers(slot).forEach(meta::addAttributeModifier);
+        Double ocm = ocmDamage(mat);
+        for (AttrDef d : ATTRS) {
+            // sát thương không sửa mà có bảng OldCombatMechanics: ghi đúng số trong bảng (đồ có chỉ số riêng thì OCM dùng số trên đồ)
+            boolean keepOcm = !at.isSet(d.id()) && d.attr() == Attribute.ATTACK_DAMAGE && ocm != null;
+            if (!at.isSet(d.id()) && !keepOcm) {
+                continue;
+            }
+            double v = keepOcm ? ocm : at.getDouble(d.id());
+            meta.removeAttributeModifier(d.attr());
+            double amount = d.percent() ? v / 100.0 : v - d.base();
+            if (amount != 0) {
+                meta.addAttributeModifier(d.attr(), new AttributeModifier(new NamespacedKey(plugin, "thuvien_" + d.id()), amount,
+                        d.percent() ? AttributeModifier.Operation.ADD_SCALAR : AttributeModifier.Operation.ADD_NUMBER, group));
+            }
+        }
+    }
+
+    private static Map<String, Double> ocmTable;
+
+    /** Sát thương "gốc" theo bảng OldCombatMechanics old-tool-damage.damages (tên cũ GOLD_/WOOD_/SPADE), null nếu không có. */
+    private static Double ocmDamage(Material m) {
+        if (ocmTable == null) {
+            Map<String, Double> t = new java.util.HashMap<>();
+            File f = new File(Bukkit.getPluginsFolder(), "OldCombatMechanics/config.yml");
+            if (f.isFile() && Bukkit.getPluginManager().isPluginEnabled("OldCombatMechanics")) {
+                ConfigurationSection d = YamlConfiguration.loadConfiguration(f).getConfigurationSection("old-tool-damage.damages");
+                if (d != null) {
+                    for (String k : d.getKeys(false)) {
+                        t.put(k.toUpperCase(Locale.ROOT).replace("GOLD_", "GOLDEN_").replace("WOOD_", "WOODEN_").replace("_SPADE", "_SHOVEL"), d.getDouble(k));
+                    }
+                }
+            }
+            ocmTable = t;
+        }
+        return ocmTable.get(m.name());
+    }
+
+    /** Chỉ số gốc của loại đồ theo số hiện trong game ({"slot":"mainhand","attack_damage":8,…}); null nếu không có chỉ số nào. */
+    @SuppressWarnings("deprecation")
+    private static String defaultAttrs(Material m) {
+        EquipmentSlot slot = m.getEquipmentSlot();
+        var def = m.getDefaultAttributeModifiers(slot);
+        StringBuilder b = new StringBuilder("{\"slot\":\"").append(slot.getGroup().toString().toLowerCase(Locale.ROOT)).append('"');
+        boolean any = false;
+        for (AttrDef d : ATTRS) {
+            double sum = 0;
+            boolean has = false;
+            for (AttributeModifier mod : def.get(d.attr())) {
+                sum += mod.getAmount() * (d.percent() ? 100 : 1);
+                has = true;
+            }
+            Double ocm = d.attr() == Attribute.ATTACK_DAMAGE ? ocmDamage(m) : null;
+            if (has || ocm != null) {
+                b.append(",\"").append(d.id()).append("\":").append(ocm != null ? ocm : Math.round((sum + d.base()) * 1000) / 1000.0);
+                any = true;
+            }
+        }
+        return any || slot != EquipmentSlot.HAND ? b.append('}').toString() : null;
+    }
+
     private static Enchantment enchant(String name) {
         String n = name.toLowerCase(Locale.ROOT).trim();
         NamespacedKey key = n.contains(":") ? NamespacedKey.fromString(n) : NamespacedKey.minecraft(n);
@@ -281,6 +364,10 @@ final class ItemLibrary {
         }
         if (s.isBoolean("glint")) {
             meta.setEnchantmentGlintOverride(s.getBoolean("glint"));
+        }
+        ConfigurationSection at = s.getConfigurationSection("attributes");
+        if (at != null && !at.getKeys(false).isEmpty()) {
+            applyAttributes(meta, mat, at);
         }
         String model = s.getString("model", "");
         if (model != null && !model.isBlank()) {
@@ -457,6 +544,7 @@ final class ItemLibrary {
 
     /** Danh sách phù phép + vật liệu cho trang web (đọc registry thật, gồm cả phù phép plugin). */
     void exportMeta() {
+        ocmTable = null;   // đọc lại bảng sát thương OldCombatMechanics (dmm reload)
         StringBuilder sb = new StringBuilder("{\"enchantments\":[");
         boolean first = true;
         List<Material> items = new ArrayList<>();
@@ -498,7 +586,18 @@ final class ItemLibrary {
             sb.append("]}");
             first = false;
         }
-        sb.append("],\"materials\":[");
+        sb.append("],\"attr_def\":{");   // chỉ số gốc từng loại đồ (trang web điền sẵn ô Chỉ số)
+        first = true;
+        for (Material m : Material.values()) {
+            if (m.isItem() && !m.isAir() && !m.isLegacy()) {
+                String d = defaultAttrs(m);
+                if (d != null) {
+                    sb.append(first ? "" : ",").append('"').append(m.name()).append("\":").append(d);
+                    first = false;
+                }
+            }
+        }
+        sb.append("},\"materials\":[");
         first = true;
         for (Material m : Material.values()) {
             if (m.isItem() && !m.isAir() && !m.isLegacy()) {

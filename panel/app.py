@@ -1452,6 +1452,10 @@ LIB_NHOM = {"vu-khi": "Vũ khí", "cong-cu": "Công cụ", "giap": "Giáp & khi�
 LIB_USES = {"": "Đồ thường", "ky-nang": "Kỹ năng đặc biệt (Xưởng)", "mon-an": "Món ăn (hiệu ứng khi ăn)", "bua-bat-pet": "Bùa bắt pet",
             "tinh-luyen": "Nguyên liệu Tinh Luyện", "manh": "Mảnh sự kiện",
             "chia-khoa": "Vé gacha"}
+# Thư viện đồ › Chỉ số gốc: mã -> (tên, (nhỏ nhất, lớn nhất)); khớp ItemLibrary.ATTRS và ATTRS trong thuvien.html
+LIB_ATTRS = {"attack_damage": ("Sát thương", (0, 200)), "armor": ("Giáp", (0, 30)),
+             "armor_toughness": ("Độ cứng giáp", (0, 20)), "knockback_resistance": ("Kháng đẩy lùi", (0, 1)),
+             "max_health": ("Máu tối đa", (-10, 40)), "movement_speed": ("Tốc chạy %", (-50, 100))}
 LIB_MODEL_RE = re.compile(r"^[a-z0-9_.-]{1,32}:[a-z0-9_./-]{1,64}$")
 BOSS_DROPS_FILE = LIB_DIR / "boss-roi.yml"
 BOSS_DROP_TO = {"top1": "Người đánh nhiều nhất", "top3": "3 người đánh nhiều nhất (mỗi người tung riêng)",
@@ -1555,6 +1559,7 @@ def thuvien_json():
                    "ce_enchants": {str(k): int(v) for k, v in (s.get("ce-enchants") or {}).items()},
                    "unbreakable": bool(src.get("unbreakable", False)), "hide_enchants": bool(s.get("hide-enchants", False)),
                    "glint": s.get("glint"), "nguoi_luu": s.get("nguoi-luu", ""), "model": s.get("model", "") or "",
+                   "attributes": {str(k): float(v) for k, v in (s.get("attributes") or {}).items() if isinstance(v, (int, float))},
                    "nhom": s.get("nhom", "") or "", "cong_dung": s.get("cong-dung", "") or "", "bo": [str(x) for x in (s.get("bo") or [])],
                    "ky_nang": dict(s.get("ky-nang") or {}), "hieu_ung": [str(x) for x in (s.get("hieu-ung") or [])]})
         items.append(it)
@@ -1723,6 +1728,21 @@ def thuvien_action(data, actor=None):
             entry["hide-enchants"] = True
         if it.get("glint") in (True, False):
             entry["glint"] = it["glint"]
+        # chỉ số gốc ghi đè (số như dòng "+8 Sát thương" trong game; ô trống = giữ gốc của loại đồ). ItemLibrary.ATTRS
+        attrs = {}
+        for k, v in (it.get("attributes") or {}).items():
+            if k not in LIB_ATTRS:
+                raise ValueError(f"Chỉ số lạ: {k}")
+            try:
+                v = float(v)
+            except (TypeError, ValueError):
+                raise ValueError(f"Chỉ số {LIB_ATTRS[k][0]} phải là số")
+            lo, hi = LIB_ATTRS[k][1]
+            if not lo <= v <= hi:
+                raise ValueError(f"Chỉ số {LIB_ATTRS[k][0]} phải trong khoảng {lo} đến {hi}")
+            attrs[k] = int(v) if v == int(v) else round(v, 3)
+        if attrs:
+            entry["attributes"] = attrs
         model = str(it.get("model") or "").strip().lower()
         if model and ":" not in model:
             model = "duckymomo:" + model   # chỉ ghi tên hình thì hiểu là hình trong gói DuckyMoMo
@@ -1737,7 +1757,7 @@ def thuvien_action(data, actor=None):
         if actor:
             entry["nguoi-luu"] = actor
         items[iid] = entry
-    elif action != "save":
+    elif action not in ("save", "delete"):   # (trước 21/10 ghi != "save": nút Xoá luôn báo lỗi, không xoá được)
         raise ValueError("Thao tác không hợp lệ")
     LIB_DIR.mkdir(parents=True, exist_ok=True)
     with LIB_FILE.open("w", encoding="utf-8") as f:

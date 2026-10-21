@@ -158,6 +158,8 @@ groups:
       - { key: peace_tax_outside, info: "Là gì: thuế shop rương ngoài đất hoà bình.\nCách ghi: số từ 0 đến 1, vd 0.05 = 5%.", label: Thuế shop rương ngoài đất hoà bình (0,05 = 5%), type: number, min: 0, max: 1, file: plugins/DuckyMoMoCore/config.yml, path: peace-alliance.shop-tax-outside }
       - { key: peace_auction_only, label: Chợ đen /choden chỉ mở trong đất hoà bình, type: select, file: plugins/DuckyMoMoCore/config.yml, path: peace-alliance.auction-only-in-peace,
           options: [ { value: true, label: Có }, { value: false, label: "Không (mở ở mọi nơi)" } ] }
+      - { key: peace_jobs_join, label: Vào nghề (/jobs) chỉ trong đất hoà bình, type: select, file: plugins/DuckyMoMoCore/config.yml, path: peace-alliance.jobs-join-only-in-peace, commands: [dmm reload],
+          options: [ { value: true, label: "Có: phải đứng trong kinh đô / thị trấn hoà bình; dân hoà bình vào ở đâu cũng được" }, { value: false, label: "Không (vào nghề ở mọi nơi)" } ] }
       - { key: peace_warn_days, label: Báo dân hoà bình di tản trước ngày công thành (ngày), type: number, min: 0, max: 7, file: plugins/DuckyMoMoCore/config.yml, path: peace-alliance.siege-warn-days-before }
       - { key: peace_remind, label: Nhắc trước mỗi phiên công thành (phút), type: list, items: int, file: plugins/DuckyMoMoCore/config.yml, path: peace-alliance.siege-remind-minutes,
           note: "Ví dụ: 60, 10" }

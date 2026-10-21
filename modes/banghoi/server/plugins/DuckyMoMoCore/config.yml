@@ -323,6 +323,7 @@ peace-alliance:
   shop-tax-inside: 0
   shop-tax-outside: 0.05
   auction-only-in-peace: true
+  jobs-join-only-in-peace: true   # 21/10: vào nghề (Jobs) chỉ trong đất liên minh; dân hoà bình ở đâu cũng được
   auction-commands: [zauctionhouse, ah, hdv, auction, zauction]
   siege-warn-days-before: 2
   siege-remind-minutes: [60, 10]

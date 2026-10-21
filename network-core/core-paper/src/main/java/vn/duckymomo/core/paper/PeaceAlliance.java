@@ -70,6 +70,7 @@ final class PeaceAlliance implements Listener {
     private final double shopTaxInside;
     private final double shopTaxOutside;
     private final boolean auctionOnlyInPeace;
+    private final boolean jobsOnlyInPeace;
     private final Set<String> auctionCommands = new HashSet<>();
     private final double warnDaysBefore;
     private final List<Integer> remindMinutes;
@@ -91,6 +92,7 @@ final class PeaceAlliance implements Listener {
         this.shopTaxInside = c.getDouble("shop-tax-inside", 0);
         this.shopTaxOutside = c.getDouble("shop-tax-outside", 0.05);
         this.auctionOnlyInPeace = c.getBoolean("auction-only-in-peace", true);
+        this.jobsOnlyInPeace = c.getBoolean("jobs-join-only-in-peace", true);
         for (String s : c.getStringList("auction-commands")) {
             auctionCommands.add(s.toLowerCase(Locale.ROOT));
         }
@@ -112,6 +114,7 @@ final class PeaceAlliance implements Listener {
         Bukkit.getScheduler().runTaskTimer(plugin, this::tick, 400L, 1200L);
         hookSellBonus();
         hookShopTax();
+        hookJobsJoin();
         plugin.getLogger().info("Liên minh Hoà Bình: bật (quốc gia " + nationName + ", kinh đô " + capitalName
                 + (nation() == null ? ", CHƯA TẠO: đứng ở spawn gõ /dmm hoabinh setup" : "") + ")");
     }
@@ -392,6 +395,53 @@ final class PeaceAlliance implements Listener {
                 && !inPeaceLand(e.getPlayer().getLocation()) && !(spawnRing != null && spawnRing.test(e.getPlayer().getLocation()))) {
             e.setCancelled(true);
             e.getPlayer().sendMessage(c("&eChợ đen chỉ mở trong đất của Liên minh Hoà Bình (kinh đô và các thị trấn hoà bình)."));
+        }
+    }
+
+    /** Dân hoà bình: thị trấn của người chơi thuộc Liên minh Hoà Bình. */
+    boolean isPeacefulResident(Player p) {
+        Resident r = TownyAPI.getInstance().getResident(p);
+        return r != null && isMember(r.getTownOrNull());
+    }
+
+    /**
+     * Vào nghề (Jobs Reborn, 21/10, người dùng: "bắt về liên minh hoà bình bấm được, còn dân hoà bình thì ở đâu cũng bấm được"):
+     * chỉ vào nghề khi đứng trong đất liên minh (kinh đô, thị trấn hoà bình, vòng quanh spawn); dân hoà bình vào ở đâu cũng được.
+     * Huỷ JobsJoinEvent (Jobs gọi khi vào nghề bằng lệnh hay menu). Xem menu /jobs vẫn mở mọi nơi. peace-alliance.jobs-join-only-in-peace.
+     */
+    @SuppressWarnings("unchecked")
+    private void hookJobsJoin() {
+        Plugin jobs = Bukkit.getPluginManager().getPlugin("Jobs");
+        if (!jobsOnlyInPeace || jobs == null || !jobs.isEnabled()) {
+            return;
+        }
+        try {
+            Class<? extends Event> cls = (Class<? extends Event>) Class.forName("com.gamingmesh.jobs.api.JobsJoinEvent", true, jobs.getClass().getClassLoader());
+            Method jp = cls.getMethod("getPlayer");
+            Method cancel = cls.getMethod("setCancelled", boolean.class);
+            Bukkit.getPluginManager().registerEvent(cls, this, EventPriority.NORMAL, (l, ev) -> {
+                if (!cls.isInstance(ev)) {
+                    return;
+                }
+                try {
+                    Object jobsPlayer = jp.invoke(ev);
+                    Player p = jobsPlayer == null ? null : (Player) jobsPlayer.getClass().getMethod("getPlayer").invoke(jobsPlayer);
+                    if (p == null || p.hasPermission("duckymomo.peace.admin") || isPeacefulResident(p)) {
+                        return;
+                    }
+                    Location at = p.getLocation();
+                    if (inPeaceLand(at) || (spawnRing != null && spawnRing.test(at))) {
+                        return;
+                    }
+                    cancel.invoke(ev, true);
+                    p.sendMessage(c("&eChỉ vào nghề được khi đứng trong đất Liên minh Hoà Bình &7(kinh đô quanh spawn, thị trấn hoà bình)&e. "
+                            + "Dân hoà bình vào nghề ở đâu cũng được."));
+                } catch (ReflectiveOperationException | ClassCastException ex) {
+                    plugin.getLogger().warning("Chặn vào nghề ngoài đất hoà bình lỗi: " + ex);
+                }
+            }, plugin, true);
+        } catch (ReflectiveOperationException | RuntimeException e) {
+            plugin.getLogger().warning("Không gắn được sự kiện vào nghề của Jobs: " + e);
         }
     }
 

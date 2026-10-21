@@ -1801,3 +1801,4 @@ job_producer_craft_daylight_detector: 1
 job_producer_craft_note_block: 0.1
 job_producer_craft_observer: 0.2
 job_producer_craft_minecart: 0.04
+peace_jobs_join: true

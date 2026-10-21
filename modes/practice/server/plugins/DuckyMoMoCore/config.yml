@@ -15,6 +15,11 @@ chat-filter:
   caps-ratio: 0.7
   too-fast-message: "&cChat chậm lại một chút!"
   repeat-message: "&cĐừng gửi lặp lại cùng một câu!"
+  # chặn quảng cáo: câu có tên miền (abc.net, abc chấm net) hoặc IP thì không gửi; allow = tên miền được nhắc
+  ads:
+    enabled: true
+    allow: [goc6.io.vn]
+    message: "&cKhông quảng cáo server hay trang web khác trong chat."
 
 # Rank donate (tước vị) + thông báo vào/ra server. Giữ GIỐNG NHAU ở lobby/banghoi/practice.
 # Nhóm LuckPerms: tools/donate-ranks.cmds (bậc cao kế thừa bậc thấp). CHỈ quyền trang trí (luật Mojang).

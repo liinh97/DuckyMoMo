@@ -61,6 +61,11 @@ chat-filter:
   caps-ratio: 0.7
   too-fast-message: "&cChat chậm lại một chút!"
   repeat-message: "&cĐừng gửi lặp lại cùng một câu!"
+  # chặn quảng cáo: câu có tên miền (abc.net, abc chấm net) hoặc IP thì không gửi; allow = tên miền được nhắc
+  ads:
+    enabled: true
+    allow: [goc6.io.vn]
+    message: "&cKhông quảng cáo server hay trang web khác trong chat."
 
 # Ranh giới thị trấn Towny trên bản đồ web squaremap (lớp "Thị trấn", màu theo quốc gia, rê chuột xem thông tin)
 towny-map:

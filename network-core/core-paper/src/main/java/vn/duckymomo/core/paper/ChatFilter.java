@@ -24,6 +24,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
  *   words-accented: so khớp nguyên dạng có dấu (từ mà bỏ dấu sẽ trùng từ thường: lồn/lớn, cặc/các, buồi/buổi, đéo/đeo);
  *   words-plain: so khớp sau khi bỏ dấu, đ -> d (viết tắt rõ ràng: dm, vcl, dcm…), bắt được cả kiểu gõ không dấu.
  * Mỗi từ khớp theo ranh giới từ. Quyền duckymomo.chat.bypass: không bị chống spam (vẫn bị che từ tục).
+ * Chặn quảng cáo (ads.enabled): câu có tên miền (abc.net, abc chấm net, abc dot com) hoặc địa chỉ IP thì không gửi, trừ ads.allow.
  */
 final class ChatFilter implements Listener {
 
@@ -43,6 +44,17 @@ final class ChatFilter implements Listener {
     private final String repeated;
     private final Map<UUID, long[]> lastTime = new ConcurrentHashMap<>();
     private final Map<UUID, String> lastText = new ConcurrentHashMap<>();
+    private final boolean ads;
+    private final List<String> adsAllow;
+    private final String adsMessage;
+    /** tên miền: nhãn + (dấu chấm | "cham" | "dot") + đuôi tên miền hay gặp; chạy trên chữ đã bỏ dấu. */
+    private static final Pattern DOMAIN = Pattern.compile(
+            "(?<![a-z0-9])[a-z0-9][a-z0-9-]*(?:\\s*(?:\\.|\\(\\.\\)|\\[\\.\\]|\\bcham\\b|\\bdot\\b)\\s*[a-z0-9][a-z0-9-]*)*"
+                    + "\\s*(?:\\.|\\(\\.\\)|\\[\\.\\]|\\bcham\\b|\\bdot\\b)\\s*"
+                    + "(?:net|com|vn|io|me|org|gg|xyz|pro|club|online|asia|info|tk|ml|ga|cf|fun|top|site|store|cc|us|eu)(?![a-z0-9])");
+    /** IPv4: mỗi phần 0–255 không có số 0 đứng đầu (để "1.000.000.000 xu" không bị nhầm là IP). */
+    private static final String OCT = "(?:25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])";
+    private static final Pattern IP = Pattern.compile("(?<![0-9.])" + OCT + "(?:\\." + OCT + "){3}(?![0-9.])");
 
     ChatFilter(ConfigurationSection c) {
         this.accented = build(c.getStringList("words-accented"), false);
@@ -52,6 +64,22 @@ final class ChatFilter implements Listener {
         this.capsRatio = c.getDouble("caps-ratio", 0.7);
         this.tooFast = c.getString("too-fast-message", "&cChat chậm lại một chút!");
         this.repeated = c.getString("repeat-message", "&cĐừng gửi lặp lại cùng một câu!");
+        this.ads = c.getBoolean("ads.enabled", true);
+        this.adsAllow = c.getStringList("ads.allow").stream().map(x -> fold(x)).toList();
+        this.adsMessage = c.getString("ads.message", "&cKhông quảng cáo server hay trang web khác trong chat.");
+    }
+
+    /** Câu có tên miền / IP không nằm trong danh sách cho phép. */
+    boolean advert(String text) {
+        String f = fold(text);
+        Matcher m = DOMAIN.matcher(f);
+        while (m.find()) {
+            String hit = m.group().replaceAll("\\s+|\\(|\\)|\\[|\\]", "").replace("cham", ".").replace("dot", ".");
+            if (adsAllow.stream().noneMatch(hit::contains)) {
+                return true;
+            }
+        }
+        return IP.matcher(f).find();
     }
 
     /** Bỏ dấu tiếng Việt, đ -> d, chữ thường. Giữ nguyên độ dài chuỗi để vị trí khớp dùng lại được trên chuỗi gốc. */
@@ -128,6 +156,11 @@ final class ChatFilter implements Listener {
             if (norm.equals(lastText.get(p.getUniqueId())) && now - last[0] < repeatMs) {
                 e.setCancelled(true);
                 p.sendMessage(LEGACY.deserialize(repeated));
+                return;
+            }
+            if (ads && advert(text)) {
+                e.setCancelled(true);
+                p.sendMessage(LEGACY.deserialize(adsMessage));
                 return;
             }
             last[0] = now;

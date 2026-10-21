@@ -234,6 +234,31 @@
   "luc": 1792580054853,
   "tt": "ok"
  },
+ "h1": {
+  "ghi_chu": "Claude tự test (tools/bottest/h-hoabinh.js): KHÔNG THỊ TRẤN NÀO VÀO ĐƯỢC LIÊN MINH. /hoabinh vao bắt đất thị trấn phải chạm đất liên minh, nhưng: (1) vòng spawn 300 block nằm gọn trong đất kinh đô (đất kinh đô ra tới ~310 block) nên lối 'lập thị trấn sát kinh đô tự vào liên minh' không bao giờ dùng được; (2) ngoài vòng, Towny cấm đất cách thị trấn khác dưới 5 ô (min_plot_distance_from_town_plot 5) -> lập thị trấn ở ô kề kinh đô báo 'Khu vực này quá gần với diện-tích của thị trấn khác'. Chờ bạn chọn cách sửa (xem câu hỏi). Phần chờ hiệu lực / rời / vào lại chặn 14 ngày chưa thử được vì không vào được.",
+  "luc": 1792580935860,
+  "tt": "err"
+ },
+ "h2": {
+  "ghi_chu": "Claude tự test: ThuK đánh ThuH (dân KinhDo) trong đất kinh đô ngoài vùng spawn: không mất máu, không gắn giao tranh; ngoài hoang thì đánh trúng (đối chứng). Phần shop rương miễn thuế chưa thử.",
+  "luc": 1792580935860,
+  "tt": "ok"
+ },
+ "h3": {
+  "ghi_chu": "Claude tự test: ThuK giết ThuH (dân hoà bình) ở dải đệm 50 block ngoài mép đất -> mở 'Vụ án V1', báo cả server, tự trừ 300 xu bồi thường cho nạn nhân, ThuK /spawn bị chặn 'Bạn đang bị cấm vào đất Liên minh Hoà Bình'. Lưu ý: án mở khi giết TRONG đất hoà bình hoặc dải đệm 100 block quanh đó (không phải mọi nơi ngoài đất). Vụ thử V1 đã xoá (không thì lên bàn Hội Bàn Tròn 21:00 tối nay).",
+  "luc": 1792580935860,
+  "tt": "ok"
+ },
+ "h4": {
+  "ghi_chu": "CẦN BẠN TEST: Hội Bàn Tròn cần thủ lĩnh các quốc gia đứng đầu Bá Chủ + đại diện hoà bình họp trực tiếp (bot không dựng được đủ quốc gia). Họp tự mở lúc 21:00 thứ Tư khi có vụ án.",
+  "luc": 1792580935860,
+  "tt": ""
+ },
+ "h5": {
+  "ghi_chu": "CẦN BẠN TEST: cần một vụ được Hội Bàn Tròn xử mức truy nã (theo sau h4).",
+  "luc": 1792580935860,
+  "tt": ""
+ },
  "h6": {
   "ghi_chu": "Claude đọc /hoidong: đang bầu đại diện tới 13:17 23/10, chưa ứng viên. CẦN BẠN: ứng cử / bầu thật.",
   "luc": 1792574500000,
@@ -495,9 +520,9 @@
   "tt": "err"
  },
  "p7": {
-  "ghi_chu": "Claude thử: /pettrade gửi lời mời tiếng Việt; người nhận đã có pet thì báo 'Bạn hiện đã có một con thú cưng' và không trừ tiền. CẦN BẠN: thử với người chưa có pet.",
-  "luc": 1792574500000,
-  "tt": ""
+  "ghi_chu": "Claude tự test: /pettrade B 100 -> B thấy lời mời tiếng Việt, /pettrade accept: 'Bạn hiện là chủ của Pig', A +100 xu, B -100 xu, pet sang B.",
+  "luc": 1792581907558,
+  "tt": "ok"
  },
  "q2": {
   "ghi_chu": "Claude đọc /lenhsan: có lệnh Kỵ Sĩ Địa Ngục ở Tây Bắc (12250, -2400), còn 34 phút, thưởng 4.500 xu + 3 kim cương. CẦN BẠN: tới đánh quái thật.",
@@ -587,8 +612,8 @@
   "tt": ""
  },
  "s11": {
-  "ghi_chu": "Claude tự test: /pay -100, 1e20, NaN, Infinity, /t deposit -50, /treothuong -1, /dungeon gop -10, /choden ban/dat giá âm đều bị từ chối; số dư 2 bên giữ nguyên 1.000.",
-  "luc": 1792575500000,
+  "ghi_chu": "Claude tự test (tools/bottest/s11-tienam.js): /pay -100, 1e20, NaN, Infinity, 0.0000001; /t deposit|withdraw -50; /treothuong dat -1 và 1e20; /dungeon gop -10 và 1e20; /choden ban -100, NaN, 0: đều bị từ chối, không ai được cộng tiền. LƯU Ý: '/pay B 1,5' bị hiểu là 15 xu (dấu phẩy là phân cách hàng nghìn), người Việt quen gõ 1,5 = một rưỡi -> dễ chuyển nhầm gấp 10. '/choden ban NaN' hiện cú pháp gốc '/ah sell <price>...' thay vì /choden ban.",
+  "luc": 1792581907558,
   "tt": "ok"
  },
  "s19": {
@@ -604,6 +629,26 @@
  "s22": {
   "ghi_chu": "Claude tự test: chưa đăng nhập gọi /, /api/thuvien, /api/settings, /api/donate, /api/hethong đều 401.",
   "luc": 1792575500000,
+  "tt": "ok"
+ },
+ "s3": {
+  "ghi_chu": "Claude tự test bằng bot (tools/bottest/s3-balo.js): bỏ 10 kim cương vào /balo hoặc lấy ra rồi thoát ngay / rút mạng ngay sau cú bấm (4 lần): vào lại luôn đúng 10 cái, chỉ ở một chỗ. Lưu ý lý thuyết: balo ghi file ngay còn túi đồ chỉ lưu khi thoát / tự lưu, nên nếu server SẬP ĐỘT NGỘT (không tắt êm) ngay sau khi cất đồ thì có thể đôi đồ; khởi động lại bình thường (tắt êm) không sao.",
+  "luc": 1792581907558,
+  "tt": "ok"
+ },
+ "s4": {
+  "ghi_chu": "Claude tự test 2 bot (tools/bottest/s4-trade.js): đổi 10 kim cương lấy 10 vàng. Xong bình thường: đổi đúng. A rút mạng giữa đếm ngược 5 giây: 'Đã huỷ trao đổi', trả đồ về chủ. A rút mạng đúng lúc hết đếm ngược: đổi xong. Không lần nào có thêm đồ (tổng luôn 10 + 10).",
+  "luc": 1792581907558,
+  "tt": "ok"
+ },
+ "s5": {
+  "ghi_chu": "Claude tự test 3 bot (tools/bottest/s5-choden.js): A treo 1 kim cương 100 xu. A bấm gỡ đúng lúc B bấm 'Mua món này': B mua được, lệnh gỡ của A không có tác dụng, A +100 xu. B và C cùng muốn mua: khi một người đang ở menu xác nhận thì món bị giữ, người kia không thấy món để bấm -> chỉ một người mua. Kim cương luôn đúng 1 cái, xu không tự sinh. Ghi chú: chợ đang còn vài món treo từ trước (Cobblestone, Book, Kiếm rồng, Bread) - nếu là đồ test thì gỡ.",
+  "luc": 1792581907558,
+  "tt": "ok"
+ },
+ "s6": {
+  "ghi_chu": "Claude tự test (tools/bottest/s6-pettrade.js): người bán rút mạng đúng lúc người mua gõ /pettrade accept -> giao dịch vẫn xong một lần (pet sang người mua, tiền chuyển 100 một lần); người mua gõ accept 2 lần liền -> chỉ trừ tiền 1 lần. Pet luôn chỉ thuộc một người. Pet bán ra là pet đang triệu hồi.",
+  "luc": 1792581907558,
   "tt": "ok"
  },
  "t1": {

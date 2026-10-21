@@ -1,11 +1,45 @@
 # Bàn giao dự án DuckyMoMo Network
 
-> Dùng file này để tiếp tục ở session hoặc tài khoản Claude khác. Cập nhật: 21/10/2026 tối. ĐỌC MỤC 00000000 TRƯỚC, rồi 0000000, 000000, 00000, 0000, 000, 00, 0.
+> Dùng file này để tiếp tục ở session hoặc tài khoản Claude khác. Cập nhật: 21/10/2026 tối. ĐỌC MỤC 000000000 TRƯỚC, rồi 00000000, 0000000, 000000, 00000, 0000, 000, 00, 0.
 > Đọc kèm: `README.md`, `docs/minecraft-server-plan.md` (kế hoạch, quyết định), `docs/network-architecture.md` (kiến trúc).
 
 ---
 
-## 00000000. MỚI NHẤT — 21/10/2026 tối (chuyển tài khoản Claude lần 6)
+## 000000000. MỚI NHẤT — 21/10/2026 tối muộn (tiếp test bằng bot, tài khoản lần 5 quay lại)
+
+Trang test: https://claude.ai/artifact/YY55Wn87HYuMzL898MT8a7 (tài khoản này; đã nạp đủ kết quả, 162 mục có dữ liệu). Nguồn: `docs/lo-trinh-test-ketqua.json`.
+Kịch bản bot mới trong `tools/bottest/` (đọc chú thích đầu file): p1-batpet, d-dautruong, d3-practice (practice-1), a-thaiap, a-sangtao
+(sangtao-1), h-hoabinh, s3-balo, s4-trade, s5-choden (`run.sh s5-choden.js do` = chỉ dò menu), s6-pettrade, s11-tienam, x4-web (gọi site:8080),
+s24-ve. `start(tên, ip, host)` vào được practice-1 / sangtao-1. Mẹo: Essentials chiếm /item, /kill -> dùng minecraft:item / minecraft:kill;
+triệu hồi sinh vật ở `~ ~ ~` (lệch ra dễ kẹt trong đất chết ngạt); bot mới vào lần đầu bị đưa về spawn sau vài giây (chờ 5 giây rồi mới tp);
+sau dịch chuyển có vài giây bất tử (đợi 5 giây rồi mới /damage); bot rút mạng (socket.destroy) làm treo tiến trình -> process.exit(0) cuối kịch bản.
+
+### Đã sửa trong phiên
+- Đấu Trường: người thua vào trận từ spawn bị KẸT trong sân (PvPManager gắn giao tranh, chặn dịch chuyển về khu an toàn) -> PvPManager
+  World Exclusions thêm `dautruong` (repo + data, đã /pmr reload).
+- Practice: Việt hoá menu Duels (`modes/practice/server/plugins/Duels/GUI/*.yml`, config.yml đếm ngược, lang.yml '$' -> xu), lời chào
+  Essentials (motd.txt repo + data), câu "Welcome ... to the server" + bỏ kit dụng cụ đá lần đầu (CHỈ sửa data/practice-1/plugins/Essentials/config.yml).
+- Vé cổng Sáng Tạo chỉ dùng 1 lần (ThaiAp.useTicket). Đã build; ĐÃ restart sangtao-1. banghoi-1/lobby/practice-1 nhận jar mới ở lần restart sau
+  (kèm jar Thăng Cấp đang chờ của tài khoản #6).
+
+### LỖI CHỜ NGƯỜI DÙNG CHỌN CÁCH SỬA: không thị trấn nào vào được Liên minh Hoà Bình (h1)
+- /hoabinh vao bắt đất thị trấn chạm đất liên minh. Vòng spawn (town-rules.reserved-spawn-radius 300) nằm GỌN trong đất kinh đô (KinhDo chiếm tới
+  ~310 block, chunk x 774..812, z -177..-139) nên lối "lập thị trấn sát kinh đô tự vào liên minh" (newTownInRing) không dùng được; ngoài vòng thì
+  Towny min_plot_distance_from_town_plot 5 chặn "quá gần thị trấn khác" (chỉ bỏ qua cho thị trấn CÙNG quốc gia).
+
+### Dữ liệu test cần dọn (thêm vào danh sách ở mục 00000000)
+- Bot mới: ThuPet ThuDA ThuDB ThuPA ThuPB (practice-1) ThuS ThuTA ThuTB ThuCA ThuCB ThuCC ThuPetA ThuPetB ThuH ThuK ThuWeb ThuWebSai -> /choilai admin <tên> moi.
+- ThuA có Thái Ấp 70×70 (đã mua + mở rộng) -> xoá đất trong thaiap.yml nếu cần; ThuCapDo cũng có 1 mảnh.
+- Chợ đen còn các món treo cũ Cobblestone, Book, Kiếm rồng, Bread (không rõ của ai, xem /choden trước khi gỡ).
+- Vụ án thử V1 đã xoá (an.yml để trống, bản cũ /tmp/an-test-V1.yml). Pet thử đã thả hết.
+
+### Ghi nhận nhỏ (chưa sửa)
+- `/pay B 1,5` = 15 xu (Essentials hiểu dấu phẩy là phân cách nghìn). `/choden ban NaN` hiện cú pháp gốc `/ah sell <price>`.
+- /petinfo ghi tên thức ăn tiếng Anh. Balo: sập server đột ngột ngay sau khi cất đồ có thể đôi đồ (balo ghi file ngay, túi lưu khi thoát).
+
+---
+
+## 00000000. (cũ hơn) — 21/10/2026 tối (chuyển tài khoản Claude lần 6)
 
 Phiên này: làm lại Thăng Cấp, rồi Claude TỰ TEST lộ trình bằng bot. Mọi thứ đã commit (CHƯA push). Server: cả 4 server chạy bản mới nhất
 TRỪ 1 jar nhỏ (LevelUp: admin reset thì xoá khỏi bảng xếp hạng web) đã build, chờ lần restart banghoi tới.

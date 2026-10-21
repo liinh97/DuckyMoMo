@@ -170,6 +170,8 @@ commands:
   buabatpet:
     description: "Bùa bắt pet (tăng xác suất bắt); admin: /buabatpet give <người> [số]"
     aliases: [bua]
+  xemdo:
+    description: "Xem đủ mô tả món đang cầm trong khung chat (khi tooltip dài quá màn hình): cầm món rồi gõ /xemdo"
   bxhpet:
     description: "Bảng xếp hạng pet chiến đấu (theo kinh nghiệm, lọc theo hệ) và xác suất bắt pet: /bxhpet [hệ|tyle]"
     aliases: [toppet, petbxh]

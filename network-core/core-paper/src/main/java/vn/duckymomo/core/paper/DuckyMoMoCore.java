@@ -699,6 +699,7 @@ public final class DuckyMoMoCore extends JavaPlugin {
         // Đăng nhập trang web bằng tài khoản game: /web cấp mã, trang web kiểm tra qua RCON (/dmm webma)
         WebLogin webLogin = new WebLogin(getConfig().getConfigurationSection("web-login"));
         bind("web", webLogin::command, "Đăng nhập web");
+        bind("xemdo", ItemInspect::command, "Xem đồ");   // in đủ tooltip món đang cầm ra chat (tooltip dài quá màn hình)
         if (council != null) {
             getLogger().info("Hội đồng Hoà Bình, tổ chức, bảng xếp hạng, Hội Bàn Tròn, cửa hàng: "
                     + (orgs != null) + "/" + (board != null) + "/" + (justice != null) + "/" + (shop != null));

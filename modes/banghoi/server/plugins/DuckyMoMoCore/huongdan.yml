@@ -253,6 +253,7 @@ menu:
     - "/msg <người> <tin>|nhắn riêng"
     - "/r <tin>|trả lời"
     - "/web|mã đăng nhập trang web"
+    - "/xemdo|xem đủ mô tả món đang cầm trong chat (khi mô tả dài quá màn hình)"
     - "/taikhoanphu|khai tài khoản phụ"
     - "/choilai|chơi lại từ đầu"
     ghi: "Cần giúp thì hỏi người có [Helper], [Mod], [Admin]."

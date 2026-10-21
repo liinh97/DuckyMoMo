@@ -60,12 +60,18 @@ final class Integrations {
             Class<?> ap = Class.forName("fr.maxlego08.zauctionhouse.api.AuctionPlugin", true, cl);
             Class<?> am = Class.forName("fr.maxlego08.zauctionhouse.api.AuctionManager", true, cl);
             Object mgr = ap.getMethod("getAuctionManager").invoke(zah);
-            int n = ((Collection<?>) am.getMethod("getItemsListedForSale", Player.class).invoke(mgr, p)).size();
             Class<?> st = Class.forName("fr.maxlego08.zauctionhouse.api.item.StorageType", true, cl);
             Method getItems = am.getMethod("getItems", st);
             Class<?> itemCls = Class.forName("fr.maxlego08.zauctionhouse.api.item.Item", true, cl);
             Method seller = itemCls.getMethod("getSellerUniqueId");
             Method buyer = itemCls.getMethod("getBuyerUniqueId");
+            // 21/10: getItemsListedForSale(player) trả về MỌI món đang bán trên chợ (không lọc người) -> ai cũng bị chặn /choilai
+            int n = 0;
+            for (Object item : (List<?>) getItems.invoke(mgr, enumValue(st, "LISTED"))) {
+                if (p.getUniqueId().equals(seller.invoke(item))) {
+                    n++;
+                }
+            }
             for (Object item : (List<?>) getItems.invoke(mgr, enumValue(st, "EXPIRED"))) {
                 if (p.getUniqueId().equals(seller.invoke(item))) {
                     n++;

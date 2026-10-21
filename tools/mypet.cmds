@@ -84,3 +84,5 @@ lp group default permission set MyPet.command.trade.offer true server=banghoi-1
 lp group default permission set MyPet.command.trade.offer.* true server=banghoi-1
 lp group default permission set MyPet.command.trade.receive true server=banghoi-1
 lp group default permission set MyPet.command.trade.receive.* true server=banghoi-1
+# 21/10: tên pet không được dùng mã màu &k (nhấp nháy), &l… (MyPet mặc định cho mọi người)
+lp group default permission set MyPet.command.name.color false server=banghoi-1

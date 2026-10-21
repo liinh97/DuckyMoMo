@@ -474,15 +474,25 @@
   "luc": 1792574000000,
   "tt": ""
  },
+ "n3": {
+  "ghi_chu": "Claude tự test bằng bot (tools/bottest/n-mua.js, mùa khô): gặt 120 cây khoai chín được trung bình 3,95 củ/cây (vanilla 3,71 + 25% được mùa = 3,96, khớp); 24 cây chưa chín đúng 1,00 củ/cây (không thưởng).",
+  "luc": 1792595643864,
+  "tt": "ok"
+ },
+ "n4": {
+  "ghi_chu": "Claude tự test: hiện đang sự kiện Hạn hán nên hệ số dưa = 1,3 × 0,7 = 0,91 < 1 -> theo thiết kế KHÔNG có thưởng; đo được dưa từ dây 4,75 lát, dưa tự đặt 4,91 lát (vanilla 5). CẦN TEST LẠI sau Hạn hán (ngày 5-7 mùa khô): dưa từ dây phải ~6,5 lát, tự đặt ~5.",
+  "luc": 1792595643864,
+  "tt": ""
+ },
  "n7": {
   "ghi_chu": "Claude: /emf shop ngoài đất hoà bình bị chặn đúng luật. Web có lịch thi câu T7, CN 12:00. CẦN BẠN: bán cá ở kinh đô và chạy một đợt thi câu.",
   "luc": 1792574000000,
   "tt": ""
  },
  "n8": {
-  "ghi_chu": "Claude đọc menu /nauan: 5 món (Cơm nắm, Canh chua cá, Cá kho tộ, Lẩu cá, Gỏi cá huyền thoại) kèm hiệu ứng. CẦN BẠN: nấu thật (cần cá câu) và ăn 2 món liền.",
-  "luc": 1792574000000,
-  "tt": ""
+  "ghi_chu": "Claude tự test: menu /nauan có 5 món; nấu Canh chua thiếu cá báo 'Chưa đủ cá Thường (cần 2)'; nấu 2 Cơm nắm được; ăn món 1 có Máu ảo I 120 giây; ăn món 2 ngay bị chặn 'chờ 20 phút'. Món cá (cần cá EMF thật) chưa nấu thử.",
+  "luc": 1792595643864,
+  "tt": "ok"
  },
  "n9": {
   "ghi_chu": "Claude tự test: /dacsan liệt 7 vùng + % đặc sản, chủ vùng (chưa có), 4 vùng chưa khai hoang. Chưa thử gặt thật khi có chủ vùng.",
@@ -504,6 +514,16 @@
   "luc": 1792575500000,
   "tt": ""
  },
+ "o5": {
+  "ghi_chu": "Claude tự test (tools/bottest/o5-choilai.js): ĐÃ SỬA LỖI NẶNG - /choilai báo 'còn 4 món trên Chợ đen' với MỌI người khi chợ có món của bất kỳ ai đang bán (hàm của zAuctionHouse trả về cả chợ, không lọc người) -> không ai chơi lại được. Giờ chỉ đếm món của chính người đó; câu báo thêm 'nhận đồ đã mua'. Test lại: /choilai hiện danh sách mất/giữ, /choilai xacnhan -> tiền về 500, mất đồ, nhận quà tân thủ, về spawn, bảo vệ PvP 15 phút; gõ lại bị chặn 7 ngày.",
+  "luc": 1792595643864,
+  "tt": "ok"
+ },
+ "o6": {
+  "ghi_chu": "Claude tự test: /taikhoanphu hiện 'Tài khoản phụ của bạn: không có', luật tối đa 2 tài khoản và cách khai (/taikhoanphu khai <tên chính> rồi tài khoản chính /taikhoanphu xacnhan <tên phụ>).",
+  "luc": 1792595643864,
+  "tt": "ok"
+ },
  "p1": {
   "ghi_chu": "Claude tự test bằng bot (tools/bottest/p1-batpet.js): heo yếu máu đánh bằng dây xích, xác suất hiện 45%. Trượt thì heo không mất máu, báo 'Còn 2/1 lần thử'; trượt 3 lần thì 'Con này đã hoảng sợ, không bắt được nữa'; trúng thì 'Bạn đã thuần hoá một thú cưng'. Heo còn đầy máu: dây xích chỉ gây 1 sát thương, không tính lần thử. Sói đã thuần của mình: bắt ngay. Sói hoang còn đầy máu: không bắt. Chưa thấy được dòng 'chờ 2 giây' (lần đó trúng ngay). Nhỏ: /petinfo ghi tên thức ăn tiếng Anh (Carrot, Raw Beef).",
   "luc": 1792580054853,
@@ -519,9 +539,19 @@
   "luc": 1792574500000,
   "tt": "err"
  },
+ "p6": {
+  "ghi_chu": "Claude tự test: cá Huyền thoại (cá EMF) cho pet ăn -> +100 kinh nghiệm mỗi con, tin 'Pet ăn cá: no +100 · +100 kinh nghiệm (hôm nay 100/300)'; tới 300/ngày thì con thứ 4 bị từ chối 'Pet đang no, đủ máu và hôm nay đã nhận đủ kinh nghiệm' (không mất cá); cá thường Minecraft không tính.",
+  "luc": 1792595643864,
+  "tt": "ok"
+ },
  "p7": {
   "ghi_chu": "Claude tự test: /pettrade B 100 -> B thấy lời mời tiếng Việt, /pettrade accept: 'Bạn hiện là chủ của Pig', A +100 xu, B -100 xu, pet sang B.",
   "luc": 1792581907558,
+  "tt": "ok"
+ },
+ "q1": {
+  "ghi_chu": "Claude tự test: đánh zombie thấy trên đầu 'Zombie 19/20 ❤ (91%)'; /hmh toggle tắt thì không hiện, bật lại được. ĐÃ SỬA: câu báo bật/tắt và các câu lỗi của HoloMobHealth còn tiếng Anh. Chưa thử với boss EliteMobs.",
+  "luc": 1792595643864,
   "tt": "ok"
  },
  "q2": {
@@ -616,6 +646,31 @@
   "luc": 1792581907558,
   "tt": "ok"
  },
+ "s12": {
+  "ghi_chu": "Claude đọc code: giới hạn ở bước ĐĂNG KÝ trong sảnh (RegisterLimit + AuthMe, mỗi IP tổng tối đa 2 tài khoản, có danh sách miễn cho quán net); /taikhoanphu khai tài khoản phụ; Đấu Trường cùng IP = giao hữu, treo thưởng cùng IP không nhận. CẦN BẠN: đăng ký tài khoản thứ 3 cùng IP qua sảnh (bot vào thẳng server, không qua AuthMe).",
+  "luc": 1792595643864,
+  "tt": ""
+ },
+ "s13": {
+  "ghi_chu": "Claude tự test bằng lệnh ở mép mảnh Thái Ấp của ThuA: piston ngoài đẩy khối vào và piston dính kéo khối ra đều bị chặn; nham và nước đổ ngoài không chảy vào; TNT nổ sát mép không phá gì bên trong; lửa không lan (gamerule tắt). Đất thị trấn Towny dùng bảo vệ của Towny, chưa thử riêng.",
+  "luc": 1792595643864,
+  "tt": "ok"
+ },
+ "s15": {
+  "ghi_chu": "Claude tự test: tên Thái Ấp bỏ mã &, <script> chỉ hiện là chữ, dài thì cắt 32 ký tự, JSON không thành nút bấm. Gõ ký tự § trong chat thì server đá ra ngay (luật Minecraft). ĐÃ SỬA: tên pet nhận &k&l (chữ nhấp nháy đậm) dù đã bỏ quyền màu - lỗi của MyPet (bỏ mã § trước rồi mới đổi & thành màu) -> DuckyMoMoCore bỏ mã & khỏi /petname (staff vẫn dùng màu). Phần web: chưa thử hiển thị tên trên trang.",
+  "luc": 1792595643864,
+  "tt": "ok"
+ },
+ "s16": {
+  "ghi_chu": "Claude tự test: viết sách 100 trang x 2000 ký tự -> server từ chối gói tin và đá người viết ra, server vẫn chạy bình thường, sách không được lưu.",
+  "luc": 1792595643864,
+  "tt": "ok"
+ },
+ "s17": {
+  "ghi_chu": "Claude tự test: triệu hồi 200 con bò vào 1 ô ở đất hoang -> TPS vẫn 20,0; sau 5 giây còn 182 con (giới hạn chen chúc giết dần). Chưa thử redstone đồng hồ và xe goòng.",
+  "luc": 1792595643864,
+  "tt": "ok"
+ },
  "s19": {
   "ghi_chu": "Claude tự test: lặp 6 lần chỉ 1 câu lọt (đúng), từ tục bị chặn. LỖI ĐÃ SỬA: quảng cáo 'play.abcxyz.net' vẫn hiện (chỉ đổi dấu chấm thành cách) → thêm chặn tên miền / 'chấm net' / IP (trừ goc6.io.vn), không chặn nhầm '1.000.000 xu'. Có hiệu lực sau khởi động lại. Lưu ý: link web thường (shopee.vn…) cũng bị chặn.",
   "luc": 1792575500000,
@@ -665,6 +720,11 @@
   "ghi_chu": "Claude tự test một phần: ở sangtao-1 túi đồ riêng; về Bang Hội Chiến túi sinh tồn còn nguyên, không có đồ sáng tạo (xem a7); code chặn ném đồ ở Sáng Tạo (onMirrorDrop). CẦN BẠN: rút mạng đúng lúc đang chuyển server qua proxy (bot không qua proxy).",
   "luc": 1792582486848,
   "tt": ""
+ },
+ "s8": {
+  "ghi_chu": "Claude tự test: than đặt tên 'Tinh Luyện Than' (như đổi tên bằng đe) -> /tinhluyen ban báo 'Tay không có món tinh luyện nào bán được', không cộng tiền (món thật nhận theo dấu riêng, không theo tên). /sell hand thì người thường đang thiếu quyền (xem k2).",
+  "luc": 1792595643864,
+  "tt": "ok"
  },
  "t1": {
   "ghi_chu": "Claude tự test: 0,2 giờ chơi → '[Towny] Cần chơi thật đủ 3 giờ mới được lập thị trấn'; gần spawn báo 'quá gần thị trấn khác'. CẦN BẠN: lập thật khi đủ giờ (giá mới 1.500 xu).",
@@ -769,6 +829,11 @@
  "w1": {
   "ghi_chu": "Claude tự test: cờ màu sát rìa → 'MỘT CUỘC CHIẾN ĐÃ BẮT ĐẦU', rương chiến tranh 60 xu + 10% (6 xu) vì nước có 2 thị trấn, quỹ nước trừ đúng. Chặn đúng: nước 1 thị trấn, không phải thứ Năm, cờ trắng (= đầu hàng), cờ xa rìa. Đã thêm vào /hd: chỉ thứ Năm, cần 2 thị trấn.",
   "luc": 1792578000000,
+  "tt": "ok"
+ },
+ "w10": {
+  "ghi_chu": "Claude tự test 3 bot (tools/bottest/w10-p6-q1.js): A treo 1.000 lên B bị trừ 1.050 (phí 5%); C hạ B nhận đủ tiền treo; C giết B 5 lần liền không chết -> hệ thống tự treo 750 xu lên C. Chống gian đúng: bot cùng IP thì không nhận thưởng (phải giả IP khác mới nhận).",
+  "luc": 1792595643864,
   "tt": "ok"
  },
  "w2": {

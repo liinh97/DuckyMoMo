@@ -34,6 +34,8 @@ async function start(name, ip, host = 'banghoi-1') {
     async click(slot, shift = false) { const p = new Promise(res => { bot.once('windowOpen', w => res(w)); setTimeout(() => res(bot.currentWindow), 2500); }); await bot.clickWindow(slot, 0, shift ? 1 : 0).catch(e => console.log('clickErr', e.message)); const w = await p; await sleep(300); return w; },
     itemText(it) { if (!it) return null; let name = it.customName || it.displayName || it.name; let lore = []; try { const comps = it.components || []; for (const c of comps) { if (c.type === 'custom_name') name = flat(c.data); if (c.type === 'lore') lore = c.data.map(flat); } } catch (e) {} return { name: strip(flat(name)), lore: lore.map(strip) }; },
     async attr(a) { return rc.cmd(`attribute ${name} ${a} get`); },
+    // chuột phải vào thực thể: qua ViaBackwards chỉ gói interact_at (mouse 2) tới được server, bot.activateEntity thì không
+    async use(e) { bot.swingArm('right'); bot._client.write('use_entity', { target: e.id, mouse: 2, x: 0, y: e.height ? e.height / 2 : 0.5, z: 0, hand: 0, sneaking: false }); await sleep(800); },
     async end() { bot.quit(); await sleep(1000); rc.close(); },
   };
   return t;

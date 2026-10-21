@@ -153,5 +153,6 @@
     "35": "<gold>⬆ Pet đạt cấp 35: <yellow>Dậm đất",
     "40": "<gold>⬆ Pet đạt cấp 40: <yellow>Hào quang chạy nhanh + kháng lửa",
     "50": "<gold>⬆ Pet đạt cấp 50: <yellow>Cưỡi nhanh hơn"
-  }
+  },
+  "Permission": "dmm_goc_an"
 }

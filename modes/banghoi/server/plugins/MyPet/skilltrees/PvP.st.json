@@ -170,5 +170,6 @@
     "30": "<gold>⬆ Pet đạt cấp 30: <yellow>Sét đánh",
     "40": "<gold>⬆ Pet đạt cấp 40: <yellow>Đốt lửa mạnh hơn",
     "50": "<gold>⬆ Pet đạt cấp 50: <yellow>Sét đánh mạnh hơn"
-  }
+  },
+  "Permission": "dmm_goc_an"
 }

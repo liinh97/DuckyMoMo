@@ -159,5 +159,6 @@
     "35": "<gold>⬆ Pet đạt cấp 35: <yellow>Hộ chủ",
     "40": "<gold>⬆ Pet đạt cấp 40: <yellow>Nhặt đồ xa hơn",
     "50": "<gold>⬆ Pet đạt cấp 50: <yellow>Hào quang kháng lửa + thở dưới nước"
-  }
+  },
+  "Permission": "dmm_goc_an"
 }

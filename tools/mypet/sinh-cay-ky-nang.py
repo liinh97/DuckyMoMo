@@ -228,7 +228,9 @@ def main():
     n = 0
     for he, goc in HE.items():
         base = dict(goc)
-        base.update({"ID": he, "Name": he, "Display": HE_TEN[he], "MobTypes": [], "Description": bo_the_dong(khung(goc["Description"]))})   # cây gốc: không loài nào chọn trực tiếp
+        # cây gốc: không loài nào chọn trực tiếp. 21/10: MobTypes rỗng với MyPet = MỌI loài (menu chọn hệ bị đúp 10 ô) ->
+        # gắn Permission không ai có (MyPet.skilltree.dmm_goc_an); cây nhóm vẫn kế thừa (Inheritance) bình thường
+        base.update({"ID": he, "Name": he, "Display": HE_TEN[he], "MobTypes": [], "Permission": "dmm_goc_an", "Description": bo_the_dong(khung(goc["Description"]))})
         (OUT / f"{he}.st.json").write_text(json.dumps(base, ensure_ascii=False, indent=2), encoding="utf-8")
         for ma, g in NHOM.items():
             # loài có đặc tính riêng -> cây riêng; loài không có -> chung một cây của nhóm

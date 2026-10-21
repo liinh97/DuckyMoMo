@@ -1,0 +1,367 @@
+# DuckyMoMo 22/10: menu /ce info Việt hoá (scratchpad ce_types.py).
+Info-GUI-Settings:
+  Inventory:
+    Name: '&cDanh sách phù phép'
+    Size: 18
+  Back-Item:
+    Right:
+      Item: 'NETHER_STAR'
+      # Item model settings
+      Model:
+        # minecraft, or nexo, or oraxen
+        Namespace: ""
+        # diamond_helmet
+        Key: ""
+      Name: '&7<<&bQuay lại'
+      Lore: [ ]
+    Left:
+      Item: 'NETHER_STAR'
+      # Item model settings
+      Model:
+        # minecraft, or nexo, or oraxen
+        Namespace: ""
+        # diamond_helmet
+        Key: ""
+      Name: '&bQuay lại&7>>'
+      Lore: [ ]
+Types:
+  Helmet:
+    Display-Item:
+      Item: 'GOLDEN_HELMET'
+      # Item model settings
+      Model:
+        # minecraft, or nexo, or oraxen
+        Namespace: ""
+        # diamond_helmet
+        Key: ""
+      Slot: 1
+      Name: '&ePhù phép Mũ'
+      Lore:
+        - '&7Dùng được cho:'
+        - '&a- Mũ da'
+        - '&a- Mũ xích'
+        - '&a- Mũ vàng'
+        - '&a- Mũ sắt'
+        - '&a- Mũ kim cương'
+        - '&a- Mũ netherite'
+        - '&a- Mũ rùa'
+    Enchantable-Items:
+      - 'LEATHER_HELMET'
+      - 'CHAINMAIL_HELMET'
+      - 'GOLDEN_HELMET'
+      - 'IRON_HELMET'
+      - 'DIAMOND_HELMET'
+      - 'NETHERITE_HELMET'
+      - 'TURTLE_HELMET'
+  Boots:
+    Display-Item:
+      Item: 'GOLDEN_BOOTS'
+      # Item model settings
+      Model:
+        # minecraft, or nexo, or oraxen
+        Namespace: ""
+        # diamond_helmet
+        Key: ""
+      Slot: 2
+      Name: '&ePhù phép Giày'
+      Lore:
+        - '&7Dùng được cho:'
+        - '&a- Giày da'
+        - '&a- Giày xích'
+        - '&a- Giày vàng'
+        - '&a- Giày sắt'
+        - '&a- Giày kim cương'
+        - '&a- Giày netherite'
+    Enchantable-Items:
+      - 'LEATHER_BOOTS'
+      - 'CHAINMAIL_BOOTS'
+      - 'GOLDEN_BOOTS'
+      - 'IRON_BOOTS'
+      - 'DIAMOND_BOOTS'
+      - 'NETHERITE_BOOTS'
+  Armor:
+    Display-Item:
+      Item: 'GOLDEN_CHESTPLATE'
+      # Item model settings
+      Model:
+        # minecraft, or nexo, or oraxen
+        Namespace: ""
+        # diamond_helmet
+        Key: ""
+      Slot: 3
+      Name: '&ePhù phép Giáp'
+      Lore:
+        - '&7Dùng được cho:'
+        - '&a- Giáp da'
+        - '&a- Giáp xích'
+        - '&a- Giáp vàng'
+        - '&a- Giáp sắt'
+        - '&a- Giáp kim cương'
+        - '&a- Giáp netherite'
+    Enchantable-Items:
+      - 'LEATHER_HELMET'
+      - 'CHAINMAIL_HELMET'
+      - 'GOLDEN_HELMET'
+      - 'IRON_HELMET'
+      - 'DIAMOND_HELMET'
+      - 'NETHERITE_HELMET'
+      - 'TURTLE_HELMET'
+      - 'LEATHER_CHESTPLATE'
+      - 'CHAINMAIL_CHESTPLATE'
+      - 'GOLDEN_CHESTPLATE'
+      - 'IRON_CHESTPLATE'
+      - 'DIAMOND_CHESTPLATE'
+      - 'NETHERITE_CHESTPLATE'
+      - 'LEATHER_LEGGINGS'
+      - 'CHAINMAIL_LEGGINGS'
+      - 'GOLDEN_LEGGINGS'
+      - 'IRON_LEGGINGS'
+      - 'DIAMOND_LEGGINGS'
+      - 'NETHERITE_LEGGINGS'
+      - 'LEATHER_BOOTS'
+      - 'CHAINMAIL_BOOTS'
+      - 'GOLDEN_BOOTS'
+      - 'IRON_BOOTS'
+      - 'DIAMOND_BOOTS'
+      - 'NETHERITE_BOOTS'
+  Bow:
+    Display-Item:
+      Item: 'BOW'
+      # Item model settings
+      Model:
+        # minecraft, or nexo, or oraxen
+        Namespace: ""
+        # diamond_helmet
+        Key: ""
+      Slot: 4
+      Name: '&ePhù phép Cung'
+      Lore:
+        - '&7Dùng được cho:'
+        - '&a- Cung'
+    Enchantable-Items:
+      - 'BOW'
+  Sword:
+    Display-Item:
+      Item: 'GOLDEN_SWORD'
+      # Item model settings
+      Model:
+        # minecraft, or nexo, or oraxen
+        Namespace: ""
+        # diamond_helmet
+        Key: ""
+      Slot: 5
+      Name: '&ePhù phép Kiếm'
+      Lore:
+        - '&7Dùng được cho:'
+        - '&a- Kiếm gỗ'
+        - '&a- Kiếm đá'
+        - '&a- Kiếm vàng'
+        - '&a- Kiếm sắt'
+        - '&a- Kiếm kim cương'
+        - '&a- Kiếm netherite'
+    Enchantable-Items:
+      - 'WOODEN_SWORD'
+      - 'STONE_SWORD'
+      - 'IRON_SWORD'
+      - 'GOLDEN_SWORD'
+      - 'DIAMOND_SWORD'
+      - 'NETHERITE_SWORD'
+  Axe:
+    Display-Item:
+      Slot: 6
+      Item: 'GOLDEN_AXE'
+      # Item model settings
+      Model:
+        # minecraft, or nexo, or oraxen
+        Namespace: ""
+        # diamond_helmet
+        Key: ""
+      Name: '&ePhù phép Rìu'
+      Lore:
+        - '&7Dùng được cho:'
+        - '&a- Rìu gỗ'
+        - '&a- Rìu đá'
+        - '&a- Rìu sắt'
+        - '&a- Rìu vàng'
+        - '&a- Rìu kim cương'
+        - '&a- Rìu netherite'
+    Enchantable-Items:
+      - 'WOODEN_AXE'
+      - 'STONE_AXE'
+      - 'IRON_AXE'
+      - 'GOLDEN_AXE'
+      - 'DIAMOND_AXE'
+      - 'NETHERITE_AXE'
+  Hoe:
+    Display-Item:
+      Item: 'GOLDEN_HOE'
+      # Item model settings
+      Model:
+        # minecraft, or nexo, or oraxen
+        Namespace: ""
+        # diamond_helmet
+        Key: ""
+      Slot: 7
+      Name: '&ePhù phép Cuốc'
+      Lore:
+        - '&7Dùng được cho:'
+        - '&a- Cuốc gỗ'
+        - '&a- Cuốc đá'
+        - '&a- Cuốc vàng'
+        - '&a- Cuốc sắt'
+        - '&a- Cuốc kim cương'
+        - '&a- Cuốc netherite'
+    Enchantable-Items:
+      - 'WOODEN_HOE'
+      - 'STONE_HOE'
+      - 'IRON_HOE'
+      - 'GOLDEN_HOE'
+      - 'DIAMOND_HOE'
+      - 'NETHERITE_HOE'
+  Pickaxe:
+    Display-Item:
+      Item: 'GOLDEN_PICKAXE'
+      # Item model settings
+      Model:
+        # minecraft, or nexo, or oraxen
+        Namespace: ""
+        # diamond_helmet
+        Key: ""
+      Slot: 8
+      Name: '&ePhù phép Cúp'
+      Lore:
+        - '&7Dùng được cho:'
+        - '&a- Cúp gỗ'
+        - '&a- Cúp đá'
+        - '&a- Cúp vàng'
+        - '&a- Cúp sắt'
+        - '&a- Cúp kim cương'
+        - '&a- Cúp netherite'
+    Enchantable-Items:
+      - 'WOODEN_PICKAXE'
+      - 'STONE_PICKAXE'
+      - 'IRON_PICKAXE'
+      - 'GOLDEN_PICKAXE'
+      - 'DIAMOND_PICKAXE'
+      - 'NETHERITE_PICKAXE'
+  Tool:
+    Display-Item:
+      Item: 'GOLDEN_SHOVEL'
+      # Item model settings
+      Model:
+        # minecraft, or nexo, or oraxen
+        Namespace: ""
+        # diamond_helmet
+        Key: ""
+      Slot: 9
+      Name: '&ePhù phép Dụng cụ'
+      Lore:
+        - '&7Dùng được cho:'
+        - '&a- Mọi loại cúp'
+        - '&a- Mọi loại rìu'
+        - '&a- Mọi loại xẻng'
+        - '&a- Mọi loại cuốc'
+        - '&a- Kéo'
+    Enchantable-Items:
+      - 'WOODEN_PICKAXE'
+      - 'STONE_PICKAXE'
+      - 'IRON_PICKAXE'
+      - 'GOLDEN_PICKAXE'
+      - 'DIAMOND_PICKAXE'
+      - 'NETHERITE_PICKAXE'
+      - 'WOODEN_AXE'
+      - 'STONE_AXE'
+      - 'IRON_AXE'
+      - 'GOLDEN_AXE'
+      - 'DIAMOND_AXE'
+      - 'NETHERITE_AXE'
+      - 'WOODEN_SHOVEL'
+      - 'STONE_SHOVEL'
+      - 'IRON_SHOVEL'
+      - 'GOLDEN_SHOVEL'
+      - 'DIAMOND_SHOVEL'
+      - 'NETHERITE_SHOVEL'
+      - 'WOODEN_HOE'
+      - 'STONE_HOE'
+      - 'IRON_HOE'
+      - 'GOLDEN_HOE'
+      - 'DIAMOND_HOE'
+      - 'NETHERITE_HOE'
+      - 'SHEARS'
+  Damaged-Items:
+    Display-Item:
+      Item: 'DAMAGED_ANVIL'
+      # Item model settings
+      Model:
+        # minecraft, or nexo, or oraxen
+        Namespace: ""
+        # diamond_helmet
+        Key: ""
+      Slot: 14
+      Name: '&ePhù phép đồ có độ bền'
+      Lore:
+        - '&7Dùng được cho:'
+        - '&a- Cần câu'
+        - '&a- Kéo'
+        - '&a- Mọi dụng cụ'
+        - '&a- Mọi loại giáp'
+        - '&a- Mọi vũ khí'
+    Enchantable-Items:
+      - 'WOODEN_PICKAXE'
+      - 'STONE_PICKAXE'
+      - 'IRON_PICKAXE'
+      - 'GOLDEN_PICKAXE'
+      - 'DIAMOND_PICKAXE'
+      - 'NETHERITE_PICKAXE'
+      - 'WOODEN_AXE'
+      - 'STONE_AXE'
+      - 'IRON_AXE'
+      - 'GOLDEN_AXE'
+      - 'DIAMOND_AXE'
+      - 'NETHERITE_AXE'
+      - 'WOODEN_SHOVEL'
+      - 'STONE_SHOVEL'
+      - 'IRON_SHOVEL'
+      - 'GOLDEN_SHOVEL'
+      - 'DIAMOND_SHOVEL'
+      - 'NETHERITE_SHOVEL'
+      - 'WOODEN_HOE'
+      - 'STONE_HOE'
+      - 'IRON_HOE'
+      - 'GOLDEN_HOE'
+      - 'DIAMOND_HOE'
+      - 'NETHERITE_HOE'
+      - 'SHEARS'
+      - 'LEATHER_HELMET'
+      - 'CHAINMAIL_HELMET'
+      - 'GOLDEN_HELMET'
+      - 'IRON_HELMET'
+      - 'DIAMOND_HELMET'
+      - 'NETHERITE_HELMET'
+      - 'LEATHER_CHESTPLATE'
+      - 'CHAINMAIL_CHESTPLATE'
+      - 'GOLDEN_CHESTPLATE'
+      - 'IRON_CHESTPLATE'
+      - 'DIAMOND_CHESTPLATE'
+      - 'NETHERITE_CHESTPLATE'
+      - 'LEATHER_LEGGINGS'
+      - 'CHAINMAIL_LEGGINGS'
+      - 'GOLDEN_LEGGINGS'
+      - 'IRON_LEGGINGS'
+      - 'DIAMOND_LEGGINGS'
+      - 'NETHERITE_LEGGINGS'
+      - 'LEATHER_BOOTS'
+      - 'CHAINMAIL_BOOTS'
+      - 'GOLDEN_BOOTS'
+      - 'IRON_BOOTS'
+      - 'DIAMOND_BOOTS'
+      - 'NETHERITE_BOOTS'
+      - 'WOODEN_SWORD'
+      - 'STONE_SWORD'
+      - 'IRON_SWORD'
+      - 'GOLDEN_SWORD'
+      - 'DIAMOND_SWORD'
+      - 'NETHERITE_SWORD'
+      - 'BOW'
+      - 'FISHING_ROD'
+      - 'TURTLE_HELMET'

@@ -45,9 +45,9 @@
   "tt": "ok"
  },
  "c10": {
-  "ghi_chu": "LỖI ĐÃ SỬA (Claude 21/10): menu /ce ghi giá cũ (sách Thường 300, Hiếm 800, các cuộn/bụi/đá giá cũ) nhưng trừ giá mới (Thường trừ 900). Đã sửa 14 dòng 'Giá:' khớp giá trừ thật, đã nạp lại. Sách mua ra tên tiếng Việt (vd Say rượu II). CẦN BẠN: đập sách vào đồ, thử vỡ.",
-  "luc": 1792573500000,
-  "tt": "lai"
+  "ghi_chu": "Claude tự test (tools/bottest/c10-ce.js): menu /ce ghi giá Thường 900, Hiếm 2.400, Cuộn Giấy Trắng 6.000, Bụi Chống Vỡ 1.500; mua sách Thường 6 lần trừ đúng 900 mỗi lần; sách ra tên tiếng Việt (Giác ngộ I, Bùa ngải II…), mô tả có 'Thành công x% / Hỏng thì vỡ đồ y%'. ĐÃ SỬA: menu /ce info (danh sách phù phép theo loại đồ) còn tiếng Anh -> Việt hoá. CẦN BẠN: đập sách lên đồ (bot kéo thả qua Via bị lệch, không tin được kết quả).",
+  "luc": 1792601885622,
+  "tt": ""
  },
  "c11": {
   "ghi_chu": "CẦN BẠN TEST: cần máy thật. Sau lần khởi động lại tới, gói còn Việt hoá tên đồ, phù phép, chỉ số giáp (để game tiếng Anh vẫn thấy tiếng Việt) — xem luôn.",
@@ -550,9 +550,9 @@
   "tt": "ok"
  },
  "p3": {
-  "ghi_chu": "Claude test lại sau khởi động: mã thô </gold> đã hết, mô tả sạch. CÒN LỖI: mỗi hệ hiện 2 lần trong menu 18 ô (10 ô cho 5 hệ), file chỉ có 5 cây cho Sói, chưa rõ nguyên nhân. Bạn mở /petchooseskilltree xem có đúng bị đúp không.",
-  "luc": 1792574500000,
-  "tt": "err"
+  "ghi_chu": "ĐÃ SỬA 22/10 (Claude): menu /petchooseskilltree hiện mỗi hệ 2 lần vì 5 cây hệ gốc (Combat, Farm, PvP, Ride, Utility) để MobTypes rỗng - script sinh cây tưởng rỗng = không ai chọn, nhưng MyPet hiểu rỗng = MỌI loài. Đã gắn Permission 'dmm_goc_an' (không ai có) cho 5 cây gốc (repo + data + tools/mypet/sinh-cay-ky-nang.py), cây nhóm vẫn kế thừa. Test lại bằng bot (tools/bottest/p3-hepet.js) sau khởi động lại: Sói thấy đúng 5 hệ (Chiến Binh, Hậu Cần, Đấu Sĩ, Thú Cưỡi, Nông Trại), mô tả tiếng Việt; chọn Chiến Binh, đặt kinh nghiệm lên cấp 33 -> có đủ kỹ năng (HP +9,5, Chảy máu, Hồi phục, Gai, Hộ chủ, Túi đồ…) tên tiếng Việt. Nhỏ: dòng Chảy máu còn chữ 'for' (MyPet viết cứng). Tin báo mốc cấp khi lên cấp tự nhiên chưa xem (lệnh admin đặt thẳng kinh nghiệm không báo).",
+  "luc": 1792601885622,
+  "tt": "ok"
  },
  "p6": {
   "ghi_chu": "Claude tự test: cá Huyền thoại (cá EMF) cho pet ăn -> +100 kinh nghiệm mỗi con, tin 'Pet ăn cá: no +100 · +100 kinh nghiệm (hôm nay 100/300)'; tới 300/ngày thì con thứ 4 bị từ chối 'Pet đang no, đủ máu và hôm nay đã nhận đủ kinh nghiệm' (không mất cá); cá thường Minecraft không tính.",
@@ -687,9 +687,9 @@
   "tt": "ok"
  },
  "s19": {
-  "ghi_chu": "Claude tự test: lặp 6 lần chỉ 1 câu lọt (đúng), từ tục bị chặn. LỖI ĐÃ SỬA: quảng cáo 'play.abcxyz.net' vẫn hiện (chỉ đổi dấu chấm thành cách) → thêm chặn tên miền / 'chấm net' / IP (trừ goc6.io.vn), không chặn nhầm '1.000.000 xu'. Có hiệu lực sau khởi động lại. Lưu ý: link web thường (shopee.vn…) cũng bị chặn.",
-  "luc": 1792575500000,
-  "tt": "lai"
+  "ghi_chu": "Claude test lại sau khởi động (tools/bottest/s19-chat.js): lặp 6 lần cùng câu -> chỉ 1 lần lọt; quảng cáo play.abcxyz.net, 'abcxyz chấm net', IP 123.45.67.89, shopee.vn đều bị chặn 'Không quảng cáo server hay trang web khác'; goc6.io.vn và '1.000.000 xu' không bị chặn nhầm. Chữ IN HOA bị đổi thành chữ thường, 'dm' bị che thành '**' (đọc gói chat: người chơi thật nhận bản đã lọc; bot hiện câu gốc vì đọc phần đã ký). Nhỏ: goc6.io.vn hiện thành 'goc6 io vn'.",
+  "luc": 1792601885622,
+  "tt": "ok"
  },
  "s20": {
   "ghi_chu": "Claude tự test: nhập sai mã 5 lần cho một tên -> lần 6 trở đi báo 'Sai quá nhiều lần. Đợi 15 phút' (khoá theo tên 5 lần / 15 phút, theo IP 20 lần).",

@@ -147,5 +147,6 @@
     "40": "<gold>⬆ Pet đạt cấp 40: <yellow>Bắn tên mạnh hơn",
     "45": "<gold>⬆ Pet đạt cấp 45: <yellow>Dậm đất",
     "50": "<gold>⬆ Pet đạt cấp 50: <yellow>Bắn tên mạnh hơn"
-  }
+  },
+  "Permission": "dmm_goc_an"
 }

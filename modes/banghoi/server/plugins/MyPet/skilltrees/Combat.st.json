@@ -148,5 +148,6 @@
     "30": "<gold>⬆ Pet đạt cấp 30: <yellow>Hồi máu mạnh hơn",
     "40": "<gold>⬆ Pet đạt cấp 40: <yellow>Hộ chủ mạnh hơn",
     "50": "<gold>⬆ Pet đạt cấp 50: <yellow>Dậm đất mạnh hơn"
-  }
+  },
+  "Permission": "dmm_goc_an"
 }

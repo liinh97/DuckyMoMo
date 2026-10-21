@@ -187,6 +187,8 @@
       <div class="opts">
         <label class="switch"><input type="checkbox" id="unbreakable"><span class="track"></span><span class="txt">Không thể hỏng</span></label>
         <label class="switch"><input type="checkbox" id="hide"><span class="track"></span><span class="txt">Ẩn dòng phù phép</span></label>
+        <label class="switch" title="Tooltip dài bị đẩy ra ngoài màn hình: 3 phù phép một dòng"><input type="checkbox" id="compact"><span class="track"></span><span class="txt">Gộp phù phép (3 cái/dòng)</span></label>
+        <label class="switch" title="Thay khối 'Khi ở ngực: +6 Giáp…' của game bằng 1 dòng; ẩn luôn dòng 'Khi được mặc' do phù phép thêm"><input type="checkbox" id="hidestats"><span class="track"></span><span class="txt">Gộp dòng chỉ số</span></label>
         <label class="glint">Ánh lấp lánh <select id="glint"><option value="">Mặc định</option><option value="true">Luôn có</option><option value="false">Không có</option></select></label>
       </div>
       <label class="f">Chỉ số gốc <span class="hint" id="attrHint">số giống dòng "8 Sát thương" trong game; để trống = giữ như đồ thường; sát thương gốc theo kiểu đánh 1.8 của server</span></label>
@@ -373,6 +375,7 @@ function mc(text, defColor, defItalic) {
   }
   return out;
 }
+let tipLines = 0;
 // Chỉ số gốc (ItemLibrary.ATTRS, LIB_ATTRS trong app.py): [mã, tên, ghi chú]
 const ATTRS = [["attack_damage", "Sát thương", ""], ["armor", "Giáp", ""],
   ["armor_toughness", "Độ cứng giáp", ""], ["knockback_resistance", "Kháng đẩy lùi", "0–1"], ["max_health", "Máu tối đa", "2 = 1 tim"],
@@ -404,7 +407,8 @@ function form() {
   const g = $("glint").value;
   return { ten_goi: $("tengoi").value.trim(), material: $("material").value.trim().toUpperCase(), amount: parseInt($("amount").value || "1", 10),
     name: $("name").value, lore: $("lore").value.replace(/\s+$/, "").split("\n").filter((l, i, a) => a.length > 1 || l !== ""),
-    enchants: ench, ce_enchants: cee, unbreakable: $("unbreakable").checked, hide_enchants: $("hide").checked, glint: g === "" ? null : g === "true",
+    enchants: ench, ce_enchants: cee, unbreakable: $("unbreakable").checked, hide_enchants: $("hide").checked,
+    compact_enchants: $("compact").checked, hide_stats: $("hidestats").checked, glint: g === "" ? null : g === "true",
     model: $("model").value.trim(), attributes: attrForm(), ...useForm() };
 }
 function useForm() {
@@ -444,10 +448,10 @@ function render() {
   const hasEnch = Object.keys(f.enchants || {}).length + Object.keys(f.ce_enchants || {}).length > 0;
   let html = f.name ? `<div>${mc(f.name, "#FFFFFF", false)}</div>`
     : `<div style="color:${hasEnch ? "#55FFFF" : "#FFFFFF"}">${esc(prettyMat(mat))}</div>`;
-  if (!f.hide_enchants) for (const [k, l] of Object.entries(f.enchants || {})) {
-    const curse = /curse/.test(k);
-    html += `<div style="color:${curse ? "#FF5555" : "#AAAAAA"}">${esc(enchName(k))}${(enchMax(k) === 1 && l === 1) ? "" : " " + (ROMAN[l] || l)}</div>`;
-  }
+  const encs = Object.entries(f.enchants || {}).map(([k, l]) => `<span style="color:${/curse/.test(k) ? "#FF5555" : "#AAAAAA"}">${esc(enchName(k))}${(enchMax(k) === 1 && l === 1) ? "" : " " + (ROMAN[l] || l)}</span>`);
+  if (f.compact_enchants && encs.length > 1) {   // ItemLibrary.compactEnchants: 3 cái một dòng, nằm đầu mô tả
+    for (let i = 0; i < encs.length; i += 3) html += `<div>${encs.slice(i, i + 3).join('<span style="color:#555555"> · </span>')}</div>`;
+  } else if (!f.hide_enchants) for (const e of encs) html += `<div>${e}</div>`;
   // CE tự thêm dòng "<tên CE> <cấp>" vào mô tả (lore) của đồ
   for (const [n, l] of Object.entries(f.ce_enchants || {})) { const c = ceInfo("ce:" + n); html += `<div>${mc((c ? c.display : "&7" + n) + " " + (ROMAN[l] || l), "#AAAAAA", false)}</div>`; }
   for (const line of f.lore || []) html += `<div>${line ? mc(line, "#AAAAAA", false) : "&nbsp;"}</div>`;
@@ -460,7 +464,10 @@ function render() {
       const base = k === "attack_damage";   // game ghi tổng (đã cộng phần sẵn có của người chơi), màu xanh lá
       rows.push(`<div style="color:${base ? "#00AA00" : (v < 0 ? "#FF5555" : "#5555FF")}">${base ? "&nbsp;" : (v > 0 ? "+" : "")}${numVi(v)}${k === "movement_speed" ? "%" : ""} ${esc(n)}</div>`);
     }
-    if (rows.length) html += `<div>&nbsp;</div><div style="color:#AAAAAA">${esc(SLOT_VI[d.slot || "mainhand"] || SLOT_VI.mainhand)}</div>` + rows.join("");
+    if (rows.length && f.hide_stats) {   // ItemLibrary.statsLine
+      const slot = d.slot || "mainhand";
+      html += `<div style="color:#AAAAAA">${slot === "mainhand" ? "Khi cầm" : slot === "head" ? "Khi đội" : "Khi mặc"}: ${rows.map(r => r.replace(/^<div[^>]*>|<\/div>$/g, "").replace("&nbsp;", "")).map(t => `<span style="color:#5555FF">${t}</span>`).join('<span style="color:#555555"> · </span>')}</div>`;
+    } else if (rows.length) html += `<div>&nbsp;</div><div style="color:#AAAAAA">${esc(SLOT_VI[d.slot || "mainhand"] || SLOT_VI.mainhand)}</div>` + rows.join("");
   }
   const u = useForm();
   if (u.cong_dung === "ky-nang" && u.ky_nang) {
@@ -479,6 +486,11 @@ function render() {
     html += `<div>${mc("&7Cầm ở &ftay trái &7khi quăng dây xích bắt pet:", "#AAAAAA", false)}</div><div>${mc("&a+…% &7xác suất, mất 1 bùa mỗi lần thử.", "#AAAAAA", false)}</div>`;
   }
   html += `<div class="id">minecraft:${esc(mat.toLowerCase())}${(f.amount || 1) > 1 ? " ×" + f.amount : ""}</div>`;
+  // số dòng tooltip (màn hình 1080p cỡ giao diện 3 hiện khoảng 20 dòng). Phù phép bảo vệ… game tự thêm khối "Khi được mặc" (ẩn khi gộp chỉ số)
+  const ENCH_STAT = ["blast_protection", "fire_protection", "swift_sneak", "depth_strider", "respiration", "aqua_affinity", "soul_speed", "feather_falling"];
+  const enchStat = f.hide_stats ? 0 : Object.keys(f.enchants || {}).filter(k => ENCH_STAT.includes(k)).length;
+  tipLines = (html.match(/<div/g) || []).length - 1 + (enchStat ? enchStat + 2 : 0);   // −1: dòng mã minecraft:… chỉ hiện khi bấm F3+H
+  html += `<div style="color:#555555;font-size:11px;margin-top:6px">${tipLines} dòng${enchStat ? " (kể cả khối \"Khi được mặc\" game tự thêm)" : ""}</div>`;
   $("tip").innerHTML = html;
   // cảnh báo
   const w = [];
@@ -488,6 +500,7 @@ function render() {
     if (c && !c.active) w.push(`Phù phép CE ${strip(c.display) || n} đang TẮT (Cài đặt › Phù phép) nên gắn vào cũng không có tác dụng`);
     if (c && c.max && l > c.max) w.push(`${strip(c.display) || n} ${l} vượt cấp tối đa của CE (${c.max}): server cho vượt cấp nên VẪN có tác dụng mạnh hơn cấp ${c.max} (vd Bánh răng ${l} = Tốc độ ${l}). Chỉ dùng cho đồ hiếm.`);
   }
+  if (tipLines > 20) w.push(`Mô tả ${tipLines} dòng: màn hình nhỏ không hiện hết. Bật "Gộp phù phép" / "Gộp dòng chỉ số" hoặc bớt dòng mô tả.`);
   const ad = attrDef(f.material);
   for (const [k, n] of ATTRS) {
     const v = (f.attributes || {})[k]; if (v === undefined) continue;
@@ -578,7 +591,7 @@ function addEnch(key = "", lvl = 1) {
 }
 // on = sửa được hình dạng (đồ web); đồ lấy từ game vẫn sửa được đầu mục, công dụng, tên gợi nhớ
 function setEditable(on) {
-  for (const id of ["material", "amount", "name", "lore", "unbreakable", "hide", "glint", "addench", "model"]) $(id).disabled = !on;
+  for (const id of ["material", "amount", "name", "lore", "unbreakable", "hide", "compact", "hidestats", "glint", "addench", "model"]) $(id).disabled = !on;
   for (const [k] of ATTRS) $("at_" + k).disabled = !on;
   enchRows.forEach(r => { r.sel.disabled = r.lvl.disabled = !on; r.el.querySelector(":scope > button").disabled = !on; });
 }
@@ -588,6 +601,7 @@ function load(it) {
   $("tengoi").value = it ? it.ten_goi : ""; $("material").value = it ? it.material : "DIAMOND_SWORD";
   $("amount").value = it ? it.amount : 1; $("name").value = it ? it.name : ""; $("lore").value = it ? (it.lore || []).join("\n") : "";
   $("unbreakable").checked = !!(it && it.unbreakable); $("hide").checked = !!(it && it.hide_enchants);
+  $("compact").checked = !!(it && it.compact_enchants); $("hidestats").checked = !!(it && it.hide_stats);
   $("glint").value = it && it.glint !== null && it.glint !== undefined ? String(it.glint) : "";
   $("model").value = it ? it.model || "" : "";
   for (const [k] of ATTRS) $("at_" + k).value = it && it.attributes && it.attributes[k] !== undefined ? it.attributes[k] : "";
@@ -806,7 +820,7 @@ renderHowto(); });
 renderSyms();
 $("name").onfocus = () => lastField = "name"; $("lore").onfocus = () => lastField = "lore";
 buildAttrs();
-for (const id of ["material", "amount", "name", "lore", "unbreakable", "hide", "glint", "tengoi", "model", "fval", "uses", "days", "ftext", "pvp"]) $(id).addEventListener("input", render);
+for (const id of ["material", "amount", "name", "lore", "unbreakable", "hide", "compact", "hidestats", "glint", "tengoi", "model", "fval", "uses", "days", "ftext", "pvp"]) $(id).addEventListener("input", render);
 $("cdung").addEventListener("change", () => { if (!nhomTouched) $("nhom").value = guessNhom(curMat(), $("cdung").value); syncUse(); render(); });
 $("feat").addEventListener("change", () => { syncUse(); render(); });
 $("nhom").addEventListener("change", () => { nhomTouched = true; });

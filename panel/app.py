@@ -1559,6 +1559,7 @@ def thuvien_json():
                    "ce_enchants": {str(k): int(v) for k, v in (s.get("ce-enchants") or {}).items()},
                    "unbreakable": bool(src.get("unbreakable", False)), "hide_enchants": bool(s.get("hide-enchants", False)),
                    "glint": s.get("glint"), "nguoi_luu": s.get("nguoi-luu", ""), "model": s.get("model", "") or "",
+                   "compact_enchants": bool(s.get("compact-enchants", False)), "hide_stats": bool(s.get("hide-stats", False)),
                    "attributes": {str(k): float(v) for k, v in (s.get("attributes") or {}).items() if isinstance(v, (int, float))},
                    "nhom": s.get("nhom", "") or "", "cong_dung": s.get("cong-dung", "") or "", "bo": [str(x) for x in (s.get("bo") or [])],
                    "ky_nang": dict(s.get("ky-nang") or {}), "hieu_ung": [str(x) for x in (s.get("hieu-ung") or [])]})
@@ -1728,6 +1729,10 @@ def thuvien_action(data, actor=None):
             entry["hide-enchants"] = True
         if it.get("glint") in (True, False):
             entry["glint"] = it["glint"]
+        if it.get("compact_enchants"):
+            entry["compact-enchants"] = True   # 3 phù phép một dòng (tooltip dài bị đẩy ra ngoài màn hình)
+        if it.get("hide_stats"):
+            entry["hide-stats"] = True   # ẩn khối "Khi ở ngực: …" của game, thay bằng 1 dòng gọn
         # chỉ số gốc ghi đè (số như dòng "+8 Sát thương" trong game; ô trống = giữ gốc của loại đồ). ItemLibrary.ATTRS
         attrs = {}
         for k, v in (it.get("attributes") or {}).items():

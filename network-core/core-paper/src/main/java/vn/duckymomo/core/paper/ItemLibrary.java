@@ -248,6 +248,72 @@ final class ItemLibrary {
         return item;
     }
 
+    private static final String[] ROMAN = {"", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"};
+
+    /** Phù phép gộp 3 cái một dòng; tên là chữ dịch của game (máy người chơi tự hiện tiếng Việt, gói tài nguyên DuckyMoMo). */
+    private static List<Component> compactEnchants(Map<Enchantment, Integer> ench) {
+        List<Component> out = new ArrayList<>();
+        Component line = null;
+        int n = 0;
+        for (Map.Entry<Enchantment, Integer> e : ench.entrySet()) {
+            int lv = e.getValue();
+            Component c = e.getKey().description().color(e.getKey().isCursed() ? NamedTextColor.RED : NamedTextColor.GRAY);
+            if (!(lv == 1 && e.getKey().getMaxLevel() == 1)) {
+                c = c.append(Component.text(" " + (lv < ROMAN.length ? ROMAN[lv] : String.valueOf(lv))));
+            }
+            line = line == null ? c : line.append(Component.text(" · ", NamedTextColor.DARK_GRAY)).append(c);
+            if (++n % 3 == 0) {
+                out.add(line.decoration(TextDecoration.ITALIC, false));
+                line = null;
+            }
+        }
+        if (line != null) {
+            out.add(line.decoration(TextDecoration.ITALIC, false));
+        }
+        return out;
+    }
+
+    /** "Khi mặc: +6 Giáp · +2 Độ cứng giáp" thay cho khối "Khi ở ngực: …" của game. Đồ chưa có chỉ số riêng thì chép chỉ số gốc vào
+     *  để cờ ẩn có tác dụng. Dòng "Khi được mặc" do phù phép (vd Bảo vệ khỏi vụ nổ) cũng bị ẩn theo. */
+    @SuppressWarnings("deprecation")
+    private static Component statsLine(ItemMeta meta, Material mat) {
+        EquipmentSlot slot = mat.getEquipmentSlot();
+        if (meta.getAttributeModifiers() == null || meta.getAttributeModifiers().isEmpty()) {
+            mat.getDefaultAttributeModifiers(slot).forEach(meta::addAttributeModifier);
+        }
+        var mods = meta.getAttributeModifiers();
+        if (mods == null || mods.isEmpty()) {
+            return null;
+        }
+        Component line = Component.text(slot == EquipmentSlot.HAND ? "Khi cầm: " : slot == EquipmentSlot.HEAD ? "Khi đội: " : "Khi mặc: ", NamedTextColor.GRAY);
+        boolean first = true;
+        for (Attribute a : mods.keySet()) {
+            double sum = 0;
+            boolean pct = false;
+            for (AttributeModifier m : mods.get(a)) {
+                boolean p = m.getOperation() != AttributeModifier.Operation.ADD_NUMBER;
+                pct |= p;
+                sum += p ? m.getAmount() * 100 : m.getAmount();
+            }
+            if (a == Attribute.ATTACK_SPEED) {
+                continue;   // đánh kiểu 1.8 (OCM): không có hồi đòn
+            }
+            if (a == Attribute.ATTACK_DAMAGE) {
+                sum += 1;
+            }
+            if (sum == 0) {
+                continue;
+            }
+            String num = (sum > 0 && a != Attribute.ATTACK_DAMAGE ? "+" : "") + (sum == Math.floor(sum) ? String.valueOf((long) sum)
+                    : String.format(Locale.ROOT, "%.2f", sum).replaceAll("0+$", "").replace('.', ',')) + (pct ? "%" : "");
+            line = line.append(Component.text(first ? "" : " · ", NamedTextColor.DARK_GRAY))
+                    .append(Component.text(num + " ", sum < 0 ? NamedTextColor.RED : NamedTextColor.BLUE))
+                    .append(Component.translatable(a.translationKey(), sum < 0 ? NamedTextColor.RED : NamedTextColor.BLUE));
+            first = false;
+        }
+        return first ? null : line.decoration(TextDecoration.ITALIC, false);
+    }
+
     /** Gắn chỉ số riêng là Minecraft bỏ HẾT chỉ số gốc của loại đồ (kiếm mất sát thương nếu chỉ sửa giáp): chép chỉ số gốc trước, rồi ghi đè. */
     @SuppressWarnings("deprecation")
     private void applyAttributes(ItemMeta meta, Material mat, ConfigurationSection at) {
@@ -337,9 +403,6 @@ final class ItemLibrary {
             lore.add(LEGACY.deserialize(line).colorIfAbsent(NamedTextColor.GRAY)
                     .decorationIfAbsent(TextDecoration.ITALIC, TextDecoration.State.FALSE));
         }
-        if (!lore.isEmpty()) {
-            meta.lore(lore);
-        }
         ConfigurationSection ench = s.getConfigurationSection("enchants");
         if (ench != null) {
             for (String k : ench.getKeys(false)) {
@@ -368,6 +431,21 @@ final class ItemLibrary {
         ConfigurationSection at = s.getConfigurationSection("attributes");
         if (at != null && !at.getKeys(false).isEmpty()) {
             applyAttributes(meta, mat, at);
+        }
+        // tooltip gọn (21/10: đồ nhiều phù phép bị đẩy ra ngoài màn hình): 3 phù phép một dòng, chỉ số game gộp 1 dòng cuối mô tả
+        if (s.getBoolean("compact-enchants") && !(meta instanceof EnchantmentStorageMeta) && meta.getEnchants().size() > 1) {
+            meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+            lore.addAll(0, compactEnchants(meta.getEnchants()));
+        }
+        if (s.getBoolean("hide-stats")) {
+            Component line = statsLine(meta, mat);
+            meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+            if (line != null) {
+                lore.add(line);
+            }
+        }
+        if (!lore.isEmpty()) {
+            meta.lore(lore);
         }
         String model = s.getString("model", "");
         if (model != null && !model.isBlank()) {

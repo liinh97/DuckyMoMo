@@ -56,6 +56,16 @@ VI = {
     "info.nextPageClean": "{gcp} Sau",
     "info.nextPageOff": "{gcp} Sau {gcn}>>----",
     "info.nextPageConsole": "{gcn}Trang sau: gõ {gcs}[command]",
+    # thời gian (vd thời gian chờ vào lại nghề): "23 giờ 59 phút 58 giây"
+    "info.months": "{gcs}[months] {gcp}tháng ", "info.oneMonth": "{gcs}[months] {gcp}tháng ",
+    "info.weeks": "{gcs}[weeks] {gcp}tuần ", "info.oneWeek": "{gcs}[weeks] {gcp}tuần ",
+    "info.years": "{gcs}[years] {gcp}năm ", "info.oneYear": "{gcs}[years] {gcp}năm ",
+    "info.day": "{gcs}[days] {gcp}ngày ", "info.oneDay": "{gcs}[days] {gcp}ngày ",
+    "info.hour": "{gcs}[hours] {gcp}giờ ", "info.oneHour": "{gcs}[hours] {gcp}giờ ",
+    "info.min": "{gcs}[mins] {gcp}phút ", "info.sec": "{gcs}[secs] {gcp}giây ",
+    "info.time.short.year": "{gcs}[years]{gcp} năm", "info.time.short.month": "{gcs}[months]{gcp} th",
+    "info.time.short.day": "{gcs}[days]{gcp} ng", "info.time.short.hour": "{gcs}[hours]{gcp} g",
+    "info.time.short.min": "{gcs}[mins]{gcp} ph", "info.time.short.sec": "{gcs}[secs]{gcp} s",
 }
 
 

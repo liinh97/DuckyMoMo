@@ -280,7 +280,7 @@ price-decimal-not-allowed: "<error>Giá phải là số nguyên, không có ph�
 # Shown when player has reached their listing limit.
 # Available placeholders:
 #   %max-items% - Maximum items allowed
-listed-items-limit: "<error>Bạn chỉ đăng bán tối đa <white>%max-items%<error> món<error>. &8(&7Đã đặt quyền zauctionhouse.<số trong config.yml> chưa?&8)"
+listed-items-limit: "<error>Bạn chỉ đăng bán tối đa <white>%max-items%<error> món<error>. &7Lên danh phận cao hơn để treo nhiều hơn: &f/danhphan"
 
 # Shown when trying to sell in a banned world.
 # Available placeholders: none

@@ -755,6 +755,10 @@ final class Workshop implements Listener {
         if (!VaultEconomy.available()) {
             return;
         }
+        java.util.function.BiPredicate<Player, String> gate = Shared.economyGate;   // Rìu Bán = bán cho server, cùng luật /sell
+        if (gate != null && gate.test(p, "sell")) {
+            return;
+        }
         Inventory inv = box.getInventory();
         double total = 0;
         int count = 0;

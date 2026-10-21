@@ -15,6 +15,9 @@ final class Shared {
     static volatile Refining refining;
     static volatile Backpack backpack;
     static volatile MediaProgram media;
+    /** Lệnh kinh tế chỉ dùng trong đất hoà bình (PeaceAlliance): test(người, "lệnh không có /") = true nghĩa là BỊ CHẶN (đã báo người chơi).
+     *  Kiểu BiPredicate để lớp chạy ở sảnh (không có Towny) gọi được mà không nạp PeaceAlliance. */
+    static volatile java.util.function.BiPredicate<org.bukkit.entity.Player, String> economyGate;
     /** Giới hạn tiền bán cho server mỗi ngày (null = tắt). */
     static volatile SellLimit sellLimit;
     /** Thư viện đồ: mọi module lấy vật phẩm đặc biệt từ đây (Xưởng, món ăn, Tinh Luyện, mảnh, bùa, boss). */
@@ -69,6 +72,7 @@ final class Shared {
         backpack = null;
         media = null;
         sellLimit = null;
+        economyGate = null;
         library = null;
         ItemLibrary.STAMPERS.clear();
         FORGET.clear();

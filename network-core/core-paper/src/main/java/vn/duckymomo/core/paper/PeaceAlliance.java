@@ -71,6 +71,8 @@ final class PeaceAlliance implements Listener {
     private final double shopTaxOutside;
     private final boolean auctionOnlyInPeace;
     private final boolean jobsOnlyInPeace;
+    private final boolean economyOnlyInPeace;
+    private final List<String> economyCommands = new ArrayList<>();
     private final Set<String> auctionCommands = new HashSet<>();
     private final double warnDaysBefore;
     private final List<Integer> remindMinutes;
@@ -93,6 +95,10 @@ final class PeaceAlliance implements Listener {
         this.shopTaxOutside = c.getDouble("shop-tax-outside", 0.05);
         this.auctionOnlyInPeace = c.getBoolean("auction-only-in-peace", true);
         this.jobsOnlyInPeace = c.getBoolean("jobs-join-only-in-peace", true);
+        this.economyOnlyInPeace = c.getBoolean("economy-only-in-peace", true);
+        for (String s : c.getStringList("economy-commands")) {
+            economyCommands.add(s.trim().toLowerCase(Locale.ROOT));
+        }
         for (String s : c.getStringList("auction-commands")) {
             auctionCommands.add(s.toLowerCase(Locale.ROOT));
         }
@@ -115,6 +121,7 @@ final class PeaceAlliance implements Listener {
         hookSellBonus();
         hookShopTax();
         hookJobsJoin();
+        Shared.economyGate = this::blockEconomy;
         plugin.getLogger().info("Liên minh Hoà Bình: bật (quốc gia " + nationName + ", kinh đô " + capitalName
                 + (nation() == null ? ", CHƯA TẠO: đứng ở spawn gõ /dmm hoabinh setup" : "") + ")");
     }
@@ -238,6 +245,10 @@ final class PeaceAlliance implements Listener {
         p.sendMessage(c("&aLiên minh Hoà Bình &7- " + n.getTowns().size() + " thị trấn, " + totalPlots() + " ô"));
         p.sendMessage(c("&7Thị trấn trong liên minh: không bị vây, không bị chiếm, đất luôn tắt PvP. Đổi lại: dân không có quân hàm,"
                 + " không đánh trận, không tính điểm Bá Chủ, chỉ được tự vệ, phí bảo hộ " + feePerPlot + " xu/ô/ngày."));
+        if (economyOnlyInPeace || jobsOnlyInPeace) {
+            p.sendMessage(c("&aĐặc quyền dân hoà bình: &7mua bán với server (/sell, /emf shop, /ce, /xuong, /tinhluyen) và vào nghề ở ĐÂU cũng được."
+                    + " Người khác phải về kinh đô (quanh spawn) hoặc đất hoà bình."));
+        }
         p.sendMessage(c(String.format(Locale.ROOT, "&7Mua thêm ô: &f%.1f xu&7/ô lúc này (tăng theo tổng đất liên minh). Đất mới phải liền sát đất cũ.",
                 plotBase + plotPerPlot * memberPlots())));
         p.sendMessage(c("&7Thị trưởng: &f/hoabinh vao &7(thị trấn phải chạm đất liên minh, không thuộc quốc gia nào) · &f/hoabinh roi &7· &f/hoabinh danhsach"));
@@ -381,6 +392,14 @@ final class PeaceAlliance implements Listener {
 
     // ------------------------------------------------------------------ chợ
 
+    /** Lệnh kinh tế ngoài đất hoà bình: chặn trước Tinh Luyện / giới hạn bán (LOWEST). */
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    public void onEconomyCommand(PlayerCommandPreprocessEvent e) {
+        if (blockEconomy(e.getPlayer(), e.getMessage().substring(1))) {
+            e.setCancelled(true);
+        }
+    }
+
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onCommand(PlayerCommandPreprocessEvent e) {
         if (!auctionOnlyInPeace) {
@@ -396,6 +415,45 @@ final class PeaceAlliance implements Listener {
             e.setCancelled(true);
             e.getPlayer().sendMessage(c("&eChợ đen chỉ mở trong đất của Liên minh Hoà Bình (kinh đô và các thị trấn hoà bình)."));
         }
+    }
+
+    /** Được làm việc kinh tế ở chỗ đang đứng: admin, dân hoà bình (ở đâu cũng được), hoặc đang trong đất liên minh / vòng quanh spawn. */
+    boolean economyAllowed(Player p) {
+        if (p.hasPermission("duckymomo.peace.admin") || isPeacefulResident(p)) {
+            return true;
+        }
+        Location at = p.getLocation();
+        return inPeaceLand(at) || (spawnRing != null && spawnRing.test(at));
+    }
+
+    /**
+     * Lệnh kinh tế (21/10, người dùng: "chỉ những thứ liên quan kinh tế" bắt buộc ở khu hoà bình; dân hoà bình ở đâu cũng được):
+     * peace-alliance.economy-commands, mỗi mục là lệnh (không /) hoặc "lệnh lệnh-con" (vd "emf shop"). true = chặn (đã báo).
+     * Dùng cho PlayerCommandPreprocessEvent và chỗ gọi lệnh trực tiếp (nút /menu, Rìu Bán) qua Shared.economyGate.
+     */
+    boolean blockEconomy(Player p, String line) {
+        if (!economyOnlyInPeace || economyCommands.isEmpty()) {
+            return false;
+        }
+        String[] a = line.trim().toLowerCase(Locale.ROOT).split("\\s+");
+        if (a.length == 0 || a[0].isEmpty()) {
+            return false;
+        }
+        String label = a[0].startsWith("/") ? a[0].substring(1) : a[0];
+        int colon = label.indexOf(':');
+        if (colon >= 0) {
+            label = label.substring(colon + 1);
+        }
+        String withSub = a.length > 1 ? label + " " + a[1] : label;
+        if (!economyCommands.contains(label) && !economyCommands.contains(withSub)) {
+            return false;
+        }
+        if (economyAllowed(p)) {
+            return false;
+        }
+        p.sendMessage(c("&eViệc mua bán với server chỉ làm được trong đất Liên minh Hoà Bình &7(kinh đô quanh spawn, thị trấn hoà bình)&e. "
+                + "Dân hoà bình làm ở đâu cũng được."));
+        return true;
     }
 
     /** Dân hoà bình: thị trấn của người chơi thuộc Liên minh Hoà Bình. */
@@ -426,11 +484,7 @@ final class PeaceAlliance implements Listener {
                 try {
                     Object jobsPlayer = jp.invoke(ev);
                     Player p = jobsPlayer == null ? null : (Player) jobsPlayer.getClass().getMethod("getPlayer").invoke(jobsPlayer);
-                    if (p == null || p.hasPermission("duckymomo.peace.admin") || isPeacefulResident(p)) {
-                        return;
-                    }
-                    Location at = p.getLocation();
-                    if (inPeaceLand(at) || (spawnRing != null && spawnRing.test(at))) {
+                    if (p == null || economyAllowed(p)) {
                         return;
                     }
                     cancel.invoke(ev, true);

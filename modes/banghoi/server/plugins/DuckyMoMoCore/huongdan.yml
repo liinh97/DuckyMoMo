@@ -109,7 +109,7 @@ menu:
     - "/sukien|sự kiện đang có"
     - "/bantron|Hội Bàn Tròn, vụ án"
     - "/binhchon|thi thị trấn đẹp"
-    ghi: "Không bị vây, không bị chiếm; đổi lại không đánh trận."
+    ghi: "Không bị vây, không bị chiếm; mua bán với server và vào nghề ở đâu cũng được. Đổi lại không đánh trận."
   - slot: 16
     icon: IRON_SWORD
     ten: "Công thành"
@@ -138,7 +138,7 @@ menu:
     - "/worth|giá món đang cầm"
     - "/pay <người> <xu>|chuyển tiền"
     - "/baltop|top giàu"
-    ghi: "Bán cho server tối đa 8.000 xu/ngày; ở kinh đô +10%."
+    ghi: "Bán cho server, /ce, /xuong, /tinhluyen chỉ trong kinh đô / thị trấn hoà bình (dân hoà bình ở đâu cũng được). Tối đa 8.000 xu/ngày."
   - slot: 20
     icon: EMERALD
     ten: "Chợ & buôn bán"
@@ -557,6 +557,7 @@ chapters:
     &0- Rời: mất bảo vệ ngay, 14 ngày&r&0 mới vào lại.
   - |-
     &2Quyền lợi hoà bình
+    &2Đặc quyền:&0 mua bán với server (/sell, /emf shop, /ce, /xuong, /tinhluyen) và vào nghề ở đâu cũng được&r&0. Người khác phải về kinh đô hoặc đất hoà bình.
     &0Bán &1/sell&0 ở kinh đô được +10%&r&0.
     &0Shop rương trong đất hoà bình miễn thuế&r&0 (ngoài: 5%).
     &0Có công thành gần nhà sẽ được báo trước 2 ngày: hãy di tản khỏi vùng vây.
@@ -723,7 +724,7 @@ chapters:
     &1/sell all &0bán hết túi
     &1/worth &0xem giá món đang cầm
     &0Biển [Sell]&r&0 ở spawn: bấm để bán.
-    &8Bán ở kinh đô +10%. Mỗi ngày bán cho server tối đa 8.000 xu (mới lại lúc 0 giờ).
+    &8Chỉ bán được trong kinh đô / thị trấn hoà bình (dân hoà bình ở đâu cũng được). Ở kinh đô +10%. Tối đa 8.000 xu/ngày.
   - |-
     &6Chuyển tiền
     &1/pay <tên> <xu>

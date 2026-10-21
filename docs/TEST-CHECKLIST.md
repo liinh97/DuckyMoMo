@@ -345,6 +345,7 @@ Bảng giá đầy đủ: `docs/dinh-gia-xu.html` (artifact SeZHthvXRXHusvgPqknX
 - [ ] Phù thuỷ: phù phép đồ ra tiền, pha thuốc (nguyên liệu tan) ra tiền. Nông dân: gặt cây chín, cho thú đẻ, thuần hoá ra tiền.
 - [ ] Cài đặt › Nghề: sửa một mức tiền, Lưu → /jobs info thấy số mới.
 - [ ] /choilai (hoặc reset ở trang Hệ thống): người chơi bị rời nghề.
+- [ ] Ngoài đất hoà bình (tài khoản thường, không phải dân hoà bình): /sell, /emf shop, /ce, /xuong, /tinhluyen, Rìu Bán, nút /menu gọi các lệnh đó đều bị chặn kèm lời nhắc; trong kinh đô / vòng spawn / thị trấn hoà bình thì được; dân hoà bình ở đâu cũng được. /hoabinh, /hd, web, bảng TAB ghi đặc quyền này.
 - [ ] Vào nghề ngoài đất hoà bình (đất hoang, thị trấn thường) bị chặn kèm lời nhắc; trong kinh đô / vòng quanh spawn / thị trấn hoà bình thì được; dân của thị trấn hoà bình vào nghề ở đâu cũng được.
 
 ## 5. Quảng trường Danh vọng (sảnh)

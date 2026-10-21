@@ -200,7 +200,12 @@ final class PlayerMenu implements Listener {
             p.sendMessage(c("&6» &fBấm vào đây để gõ: &e" + b.suggest() + "&7 (điền tiếp rồi Enter)")
                     .clickEvent(ClickEvent.suggestCommand(b.suggest())));
         } else if (!b.cmd().isEmpty()) {
-            p.performCommand(b.cmd().startsWith("/") ? b.cmd().substring(1) : b.cmd());
+            String cmd = b.cmd().startsWith("/") ? b.cmd().substring(1) : b.cmd();
+            java.util.function.BiPredicate<Player, String> gate = Shared.economyGate;   // nút menu không qua PlayerCommandPreprocessEvent
+            if (gate != null && gate.test(p, cmd)) {
+                return;
+            }
+            p.performCommand(cmd);
         }
     }
 }

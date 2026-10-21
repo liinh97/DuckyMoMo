@@ -744,6 +744,7 @@ chapters:
     &1/qs create <giá>
     &8Vd: /qs create 5 (5 xu mỗi món)
     &03. Bỏ hàng vào rương. Hết hàng thì người mua được báo.
+    &0Người mua: &1bấm trái&0 vào shop mở menu chọn số lượng, &1Shift + bấm trái&0 mua ngay 1 chồng.
   - |-
     &6Shop rương: sửa shop
     &0Nhìn vào shop rồi gõ:

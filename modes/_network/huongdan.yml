@@ -120,6 +120,7 @@ menu:
     - "/lichcongthanh|giờ phiên tới"
     - "/canbang|cân bằng chiến tranh"
     - "/kholuong|kho lương ra trận"
+    - "/n rank add <người> <quân hàm>|vua phong quân hàm (private… general)"
     - "/nauan|nấu món ra trận"
     - "/linhdanhthue|đi đánh thuê"
     - "/treothuong|treo thưởng"
@@ -681,6 +682,18 @@ chapters:
     &0Thị trấn vừa bị vây được miễn vây 7 ngày&r&0 (thủ đô 14 ngày), thị trấn mới lập cũng được 7 ngày.
     &0Thị trấn không bị phá hay trộm khi chủ offline.
     &8Chỉ người chơi ≥5 giờ, không phải acc phụ mới có quân hàm.
+  - |-
+    &6PHONG QUÂN HÀM
+    &0Có quân hàm mới được tính điểm trận, giữ cờ.
+    &0Vua gõ:
+    &1/n rank add <người> <hàm>
+    &0Thị trưởng gõ:
+    &1/t rank add <người> guard
+  - |-
+    &6QUÂN HÀM (tiếp)
+    &0Hàm: private, sergeant, lieutenant, captain, major, colonel, general.
+    &0Gỡ: &1/n rank remove
+    &8Người được phong cần ≥5 giờ chơi thật, không phải acc phụ.
   - |-
     &6CÂN BẰNG
     &0Nước to đi vây tốn quỹ hơn, thuộc địa tốn phí, tối đa 3&r&0 thuộc địa.

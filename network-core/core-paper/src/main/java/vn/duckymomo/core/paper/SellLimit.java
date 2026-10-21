@@ -125,7 +125,7 @@ final class SellLimit implements Listener {
         if (estimate > left + 0.0001) {
             p.sendMessage(c("&cLần bán này khoảng &e" + Rewards.xu(estimate) + "&c, hôm nay chỉ còn bán được &e" + Rewards.xu(left)
                     + "&c cho server (giới hạn " + Rewards.xu(limit(p)) + "/ngày)."));
-            p.sendMessage(c("&7Bán bớt số lượng, vd &f/sell hand 16&7, hoặc bán cho người chơi ở &f/choden&7."));
+            p.sendMessage(c("&7Bán bớt số lượng (vd &f/sell <tên món> 16&7), hoặc bán cho người chơi ở &f/choden&7."));
             return false;
         }
         return true;

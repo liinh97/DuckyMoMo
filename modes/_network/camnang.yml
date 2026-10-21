@@ -265,7 +265,7 @@ plugins:
       - ["/tpa <tên> · /tpaccept · /tpdeny", "Xin dịch chuyển tới người khác"]
       - ["/msg <tên> <tin> · /r <tin>", "Nhắn riêng / trả lời"]
       - ["/bal · /baltop · /pay <tên> <tiền>", "Xem tiền, top giàu, chuyển tiền"]
-      - ["/sell hand · /sell all · /worth", "Bán đồ cho server, xem giá"]
+      - ["/sell <món> [số] · /worth", "Bán đồ cho server, xem giá. 21/10 chủ server: người thường KHÔNG có /sell hand, /sell all (quyền essentials.sell.hand / .bulk), bán qua /cuahang hoặc /sell <tên món>"]
       - ["/hat · /nick <tên>", "Đội đồ lên đầu, đổi tên hiển thị (cần rank donate)"]
     admin:
       - ["/eco give|take|set <tên> <số>", "Sửa tiền"]

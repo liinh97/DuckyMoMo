@@ -134,8 +134,8 @@ menu:
     lenh:
     - "/bal|xem tiền"
     - "/jobs|chọn nghề (mỗi người 1 nghề, chọn ở kinh đô)"
-    - "/sell hand|bán mọi món giống món đang cầm"
-    - "/sell all|bán hết túi"
+    - "/cuahang|bán cho server bằng nút trong cửa hàng"
+    - "/sell <tên món> [số]|bán theo tên, vd /sell cobblestone 64"
     - "/worth|giá món đang cầm"
     - "/pay <người> <xu>|chuyển tiền"
     - "/baltop|top giàu"
@@ -757,8 +757,8 @@ chapters:
     &4Lưu ý: &0phá lại khối tự đặt không có tiền; nhiệm vụ ngày cũng không tính.
   - |-
     &6Bán đồ cho server
-    &1/sell hand &0bán đồ đang cầm
-    &1/sell all &0bán hết túi
+    &1/cuahang &0bấm nút bán trong cửa hàng
+    &1/sell <tên món> [số] &0vd /sell cobblestone 64
     &1/worth &0xem giá món đang cầm
     &0Biển [Sell]&r&0 ở spawn: bấm để bán.
     &8Chỉ bán được trong kinh đô / thị trấn hoà bình (dân hoà bình ở đâu cũng được). Ở kinh đô +10%. Tối đa 8.000 xu/ngày.

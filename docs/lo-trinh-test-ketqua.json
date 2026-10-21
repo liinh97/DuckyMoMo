@@ -320,9 +320,9 @@
   "tt": "ok"
  },
  "k2": {
-  "ghi_chu": "Claude test lại bằng tài khoản THƯỜNG: /sell hand báo 'Bạn không có quyền bán vật phẩm trên tay' (nhóm default thiếu essentials.sell.hand và .bulk; trước test bằng admin nên không lộ). Cần bạn chạy 2 lệnh cấp quyền (xem tin nhắn Claude).",
-  "luc": 1792529844510,
-  "tt": "err"
+  "ghi_chu": "21/10 CHỦ SERVER CHỐT: KHÔNG cho người thường dùng /sell hand, /sell all (nhóm default chỉ có essentials.sell + worth). Người chơi bán qua /cuahang (nút bán) hoặc /sell <tên món> [số]. Đã sửa mọi chỗ hướng dẫn đang ghi /sell hand (/hd, trang chủ, TAB, câu báo giới hạn bán, cẩm nang).",
+  "luc": 1792596646324,
+  "tt": "ok"
  },
  "k20": {
   "ghi_chu": "",

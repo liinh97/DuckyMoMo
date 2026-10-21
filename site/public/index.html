@@ -620,7 +620,7 @@ footer .fbrand img{width:44px}
         <h3>Kinh tế</h3>
         <ul class="clean j">
           <li>Chọn 1 nghề: thợ mỏ, tiều phu, nông dân, thợ săn, ngư dân… (<span class="kbd">/jobs</span>)</li>
-          <li>Bán cho server: <span class="kbd">/sell hand</span>, <span class="kbd">/worth</span></li>
+          <li>Bán cho server: <span class="kbd">/cuahang</span> hoặc <span class="kbd">/sell &lt;tên món&gt; [số]</span>, <span class="kbd">/worth</span></li>
           <li>Chợ đen <span class="kbd">/choden</span>, shop rương, trao đổi <span class="kbd">/trade</span></li>
           <li>Phù phép: sách hiếm, shop <span class="kbd">/ce</span></li>
           <li>Cửa hàng Kinh Đô ở spawn: vật liệu cơ bản, đồ trang trí, danh hiệu, trả bằng xu</li>
@@ -1060,7 +1060,7 @@ footer .fbrand img{width:44px}
         <li><span class="kbd">/tochuc lap thuonghoi BanMai</span> lập Thương Hội (dân hoà bình)</li></ul></div>
       <div class="card"><h3>💰 Tiền &amp; buôn bán</h3><ul class="clean">
         <li><span class="kbd">/bal</span> xem tiền · <span class="kbd">/pay Linh 100</span> chuyển tiền</li>
-        <li><span class="kbd">/sell hand</span> bán đồ đang cầm · <span class="kbd">/worth</span> xem giá</li>
+        <li><span class="kbd">/cuahang</span> bấm nút bán · <span class="kbd">/sell &lt;tên món&gt; [số]</span> · <span class="kbd">/worth</span> xem giá</li>
         <li><span class="kbd">/choden</span> Chợ đen: mua, bán, thu mua giữa người chơi (ở đâu cũng được) · <span class="kbd">/choden ban 16 80</span> bán 16 món đang cầm, cả lô 80 xu</li>
         <li><span class="kbd">/trade Linh</span> đổi đồ an toàn, hai bên cùng bấm đồng ý</li>
         <li><span class="kbd">/choden dat 1000 1</span> cần mua 1.000 món đang cầm, 1 xu/món</li>
@@ -1575,7 +1575,7 @@ async function loadDaily(){
     const tl = d.tinhluyen;
     if (tl && tl.bat && tl.mon.length) cards.push(`<div class="card" style="grid-column:1/-1"><h3>🔮 Tinh Luyện <span class="kbd">/tinhluyen</span></h3>
       <p class="muted">Đổi <b>một chiều</b> thật nhiều khối thường thành một món tinh luyện quý: dùng để <b>đổi đồ ở dân làng</b>, chế đồ Xưởng hoặc bán cho server
-        (<span class="kbd">/tinhluyen ban</span>, <span class="kbd">/sell hand</span>). Bấm trong menu = 1 lần, Shift+bấm = tinh luyện hết.
+        (<span class="kbd">/tinhluyen ban</span>). Bấm trong menu = 1 lần, Shift+bấm = tinh luyện hết.
         <b>Xu Quái</b> rơi khi hạ quái thù địch (${tl.xu_quai}%, quái tinh nhuệ ${tl.xu_quai_tinh_nhue}%), quái từ lồng không rơi.</p>
       <div class="fishes">${tl.mon.map(m => `<div class="fish" style="--c:#b07cff"><b>${esc(m.ten)}</b><div class="d">${m.can.length ? "Cần: " + m.can.map(esc).join(" + ") : "Rơi khi hạ quái"}</div>
         <div class="m">${m.ban > 0 ? `<span>bán ${nf.format(m.ban)} xu</span>` : ""}</div></div>`).join("")}</div></div>`);

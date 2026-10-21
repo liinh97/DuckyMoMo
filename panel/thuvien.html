@@ -123,6 +123,7 @@
   .li .bo { color: var(--accent); font-size: 11.5px; margin-left: 4px; }
   .status { margin-top: 8px; font-size: 14px; color: var(--muted); min-height: 21px; }
   .status.ok { color: var(--ok); } .status.err { color: var(--err); }
+  input.bad { border-color: var(--err); box-shadow: 0 0 0 2px color-mix(in srgb, var(--err) 25%, transparent); }
   /* tooltip giống trong game */
   .pv-wrap { display: flex; justify-content: center; padding: 18px 10px; background: repeating-conic-gradient(#3b3b3b 0% 25%, #353535 0% 50%) 50% / 24px 24px; border-radius: 8px; margin-bottom: 12px; }
   .tip { background: rgba(16, 0, 16, .94); border: 2px solid; border-image: linear-gradient(#5000ff, #28007f) 1; padding: 6px 9px; min-width: 200px; max-width: 100%;
@@ -217,7 +218,7 @@
     <div class="sec save">
       <h3>6 · Lưu vào thư viện</h3>
       <div class="g-id">
-        <div><label class="f" for="id">Mã <span class="hint">không dấu, dùng trong quà/cửa hàng</span></label><input id="id" placeholder="kiem_rong" maxlength="32"></div>
+        <div><label class="f" for="id">Mã <span class="hint">không dấu, dùng trong quà/cửa hàng</span></label><input id="id" placeholder="để trống = tự lấy theo tên" maxlength="32" autocapitalize="none" autocorrect="off" autocomplete="off" spellcheck="false"></div>
         <div><label class="f" for="tengoi">Tên gợi nhớ <span class="hint">chỉ admin thấy</span></label><input id="tengoi" placeholder="Kiếm rồng (quà mốc 30 ngày)" maxlength="60"></div>
       </div>
       <label class="f" for="boIn">Bộ (tag) <span class="hint">để lọc và thêm nhanh cả bộ vào quà / gói quà; một món gắn được nhiều tag</span></label>
@@ -764,9 +765,24 @@ $("libq").addEventListener("input", renderList);
 $("material").addEventListener("input", () => enchRows.forEach(enchDesc));
 $("addench").onclick = (e) => { e.preventDefault(); addEnch(); render(); };
 $("new").onclick = () => load(null);
+// Mã món: chữ thường không dấu, số, _ (iPhone hay tự viết hoa chữ đầu -> tự sửa; để trống thì lấy theo tên món)
+function slugMa(t) {
+  return String(t || "").replace(/&#[0-9a-fA-F]{6}|&[0-9a-fk-orA-FK-OR]|<[^>]*>/g, "").normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .replace(/[đĐ]/g, "d").toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "").slice(0, 32).replace(/_+$/, "");
+}
+$("id").addEventListener("input", () => {
+  const el = $("id"), v = el.value, fixed = v.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[đĐ]/g, "d").replace(/[^a-z0-9_]/g, "_");
+  if (fixed !== v) { const pos = el.selectionStart; el.value = fixed; try { el.setSelectionRange(pos, pos); } catch (e) {} }
+  el.classList.remove("bad");
+});
 $("save").onclick = async () => {
+  if (!$("id").disabled && !$("id").value.trim()) $("id").value = slugMa($("tengoi").value || $("name").value || curMat());
   const id = $("id").value.trim();
-  if (!/^[a-z0-9_]{1,32}$/.test(id)) { status(false, "Mã chỉ gồm chữ thường không dấu, số, dấu _ (vd kiem_rong)"); return; }
+  if (!/^[a-z0-9_]{1,32}$/.test(id)) {
+    status(false, "Ô Mã chưa đúng: chỉ chữ thường không dấu, số, dấu _ (vd kiem_rong).");
+    const el = $("id"); el.classList.add("bad"); el.scrollIntoView({ behavior: "smooth", block: "center" }); setTimeout(() => el.focus(), 300);
+    return;
+  }
   const res = await post({ action: "save", id, is_new: isNew, item: form() });
   if (res.ok) load(data.items.find(x => x.id === id));
 };

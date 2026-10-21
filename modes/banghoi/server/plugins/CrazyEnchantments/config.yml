@@ -74,7 +74,7 @@ Settings:
       - '&e▍ &fQuay lại tỉ lệ của sách phù phép'
       - '&8▍ &7Ra tỉ lệ thành công và vỡ đồ mới'
       - '&8&m                              '
-      - '&8• &7Giá: &e800 xu'
+      - '&8• &7Giá: &e2.400 xu'
       - '&8&m                              '
       - '&a➜ Bấm để mua'
   Slot_Crystal:
@@ -97,7 +97,7 @@ Settings:
     GUILore:
       - '&5▍ &fThêm 1 ô phù phép cho món đồ'
       - '&8&m                              '
-      - '&8• &7Giá: &e500 xu'
+      - '&8• &7Giá: &e1.500 xu'
       - '&8&m                              '
       - '&a➜ Bấm để mua'
   GKitz: #GKitz GUI option.
@@ -136,7 +136,7 @@ Settings:
       - '&5▍ &fGiữ món đồ khi bạn chết'
       - '&8▍ &7Đồ có pha lê không rơi ra khi chết'
       - '&8&m                              '
-      - '&8• &7Giá: &e500 xu'
+      - '&8• &7Giá: &e1.500 xu'
       - '&8&m                              '
       - '&a➜ Bấm để mua'
   BlackSmith: #Options for the Black Smith
@@ -242,7 +242,7 @@ Settings:
       GUILore: #Lore in the GUI.
         - '&a▍ &fTăng tỉ lệ thành công của sách'
         - '&8&m                              '
-        - '&8• &7Giá: &e500 xu'
+        - '&8• &7Giá: &e1.500 xu'
         - '&8&m                              '
         - '&a➜ Bấm để mua'
       Slot: 25 #Slot number it is on
@@ -267,7 +267,7 @@ Settings:
       GUILore: #Lore in the GUI.
         - '&e▍ &fGiảm tỉ lệ vỡ đồ của sách'
         - '&8&m                              '
-        - '&8• &7Giá: &e500 xu'
+        - '&8• &7Giá: &e1.500 xu'
         - '&8&m                              '
         - '&a➜ Bấm để mua'
       Slot: 34 #Slot number it is on
@@ -321,7 +321,7 @@ Settings:
     Lore: #Lore of the item in the GUI
       - '&8▍ &7Gỡ ngẫu nhiên 1 phù phép đặc biệt khỏi đồ'
       - '&8&m                              '
-      - '&8• &7Giá: &e1.000 xu'
+      - '&8• &7Giá: &e3.000 xu'
       - '&8&m                              '
       - '&a➜ Bấm để mua'
     SuccessChance: #Controls what the success chance will be when they get the book from the Black Scroll
@@ -350,7 +350,7 @@ Settings:
     Lore: #Lore of the scroll in the GUI
       - '&f▍ &fGiữ đồ không vỡ khi gắn sách bị hỏng'
       - '&8&m                              '
-      - '&8• &7Giá: &e2.000 xu'
+      - '&8• &7Giá: &e6.000 xu'
       - '&8&m                              '
       - '&a➜ Bấm để mua'
     ProtectedName: '&bĐƯỢC BẢO VỆ' #The lore that is added to protect an item.
@@ -376,7 +376,7 @@ Settings:
       - '&d▍ &fSắp xếp gọn các dòng phù phép'
       - '&8▍ &7Ghi số phù phép đang có lên tên đồ'
       - '&8&m                              '
-      - '&8• &7Giá: &e200 xu'
+      - '&8• &7Giá: &e600 xu'
       - '&8&m                              '
       - '&a➜ Bấm để mua'
     Amount-of-Enchantments: ' &7[&6&n%amount%&7]' #The suffix that will be added at the end of the item's name.
@@ -524,7 +524,7 @@ Categories: #You can make as many different categories as you want
       - '&a▍ &fSách ngẫu nhiên 1 phù phép độ hiếm Thường'
       - '&8▍ &7Mỗi cuốn có tỉ lệ thành công riêng'
       - '&8&m                              '
-      - '&8• &7Giá: &e300 xu'
+      - '&8• &7Giá: &e900 xu'
       - '&8&m                              '
       - '&a➜ Bấm để mua'
     Item: 'LIME_STAINED_GLASS_PANE' #The id for the item
@@ -554,7 +554,7 @@ Categories: #You can make as many different categories as you want
         - '&8▍ &7Sách thất lạc nhóm Thường, chưa ai lau'
         - '&8▍ &7Lau sạch mới biết là phù phép gì'
         - '&8&m                              '
-        - '&8• &7Giá: &e1.000 xu'
+        - '&8• &7Giá: &e3.000 xu'
         - '&8&m                              '
         - '&a➜ Bấm để mua'
       Cost: 3000
@@ -582,7 +582,7 @@ Categories: #You can make as many different categories as you want
       - '&9▍ &fSách ngẫu nhiên 1 phù phép độ hiếm Hiếm'
       - '&8▍ &7Mỗi cuốn có tỉ lệ thành công riêng'
       - '&8&m                              '
-      - '&8• &7Giá: &e800 xu'
+      - '&8• &7Giá: &e2.400 xu'
       - '&8&m                              '
       - '&a➜ Bấm để mua'
     Item: 'BLUE_STAINED_GLASS_PANE'
@@ -612,7 +612,7 @@ Categories: #You can make as many different categories as you want
         - '&8▍ &7Sách thất lạc nhóm Hiếm, chưa ai lau'
         - '&8▍ &7Lau sạch mới biết là phù phép gì'
         - '&8&m                              '
-        - '&8• &7Giá: &e2.000 xu'
+        - '&8• &7Giá: &e6.000 xu'
         - '&8&m                              '
         - '&a➜ Bấm để mua'
       Cost: 6000
@@ -666,7 +666,7 @@ Categories: #You can make as many different categories as you want
         - '&8▍ &7Sách thất lạc nhóm Huyền thoại, chưa ai lau'
         - '&8▍ &7Lau sạch mới biết là phù phép gì'
         - '&8&m                              '
-        - '&8• &7Giá: &e3.000 xu'
+        - '&8• &7Giá: &e9.000 xu'
         - '&8&m                              '
         - '&a➜ Bấm để mua'
       Cost: 9000
@@ -720,7 +720,7 @@ Categories: #You can make as many different categories as you want
         - '&8▍ &7Sách thất lạc nhóm Thần thoại, chưa ai lau'
         - '&8▍ &7Lau sạch mới biết là phù phép gì'
         - '&8&m                              '
-        - '&8• &7Giá: &e10.000 xu'
+        - '&8• &7Giá: &e30.000 xu'
         - '&8&m                              '
         - '&a➜ Bấm để mua'
       Cost: 30000

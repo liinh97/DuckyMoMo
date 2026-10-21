@@ -19,7 +19,7 @@ python3 - <<'EOF'
 import json, zipfile, time, glob, os
 src = "tools/fontpack/src"
 # 26.2: resource pack format 88. min/max_format cho bản mới, supported_formats cho 1.20.2-1.21.8, pack_format cho bản cũ hơn.
-mcmeta = {"pack": {"description": "§6DuckyMoMo §f- font tiếng Việt + hình vật phẩm", "pack_format": 88,
+mcmeta = {"pack": {"description": "§6DuckyMoMo §f- font tiếng Việt + hình vật phẩm + mô tả đồ tiếng Việt", "pack_format": 88,
                    "supported_formats": [15, 88], "min_format": 15, "max_format": 88}}
 # Thứ tự: khoảng trắng gốc, font TTF (chữ), rồi font gốc (ký hiệu font TTF không có)
 default = {"providers": [
@@ -43,6 +43,11 @@ for out, with_font in (("tools/fontpack/out/duckymomo-font.zip", True), ("tools/
         put("assets/minecraft/font/default.json", json.dumps(default, indent=2))
         put("assets/minecraft/font/bevietnampro-medium.ttf", open(f"{src}/BeVietnamPro-Medium.ttf", "rb").read())
         put("LICENSE-font-OFL.txt", open(f"{src}/OFL.txt", "rb").read())
+    # chữ trong khung mô tả đồ do máy người chơi tự vẽ (tên phù phép, "Khi ở chân: +2 Giáp"…): tiếng Việt đè lên tiếng Anh
+    # (tools/fontpack/lang-vi.py sinh từ vi_vn.json gốc); game để tiếng Việt thì vốn đã đúng
+    lang = open(f"{src}/lang-vi.json", "rb").read()
+    for code in ("en_us", "en_gb"):
+        put(f"assets/minecraft/lang/{code}.json", lang)
     # vật phẩm riêng (1.21.4+: item_model trỏ tới assets/duckymomo/items/<tên>.json); client cũ thấy vật phẩm gốc
     for png in sorted(glob.glob("tools/fontpack/out/items/tl_*.png")):  # (vẫn trong vòng lặp 2 gói)
         n = os.path.basename(png)[:-4]

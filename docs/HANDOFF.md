@@ -10,6 +10,20 @@
 Phiên tài khoản trước (sáng → chiều 21/10). Mọi thứ đã build + triển khai: lần restart cuối banghoi 13:25, cả 4 server chạy bản mới nhất,
 KHÔNG còn gì chờ restart. Chưa push (người dùng chưa bảo). Commit cuối: xem `git log`.
 
+### 21/10 tối: Claude tự test bằng bot (tools/bottest) + sửa lỗi tìm ra
+- **Bot test**: `tools/bottest/run.sh <kịch bản>.js` (mineflayer trong container node, vào THẲNG banghoi-1 bằng Velocity forwarding secret,
+  không qua Sonar/AuthMe). Bot ThuCapDo, ThuPet2 (đã /choilai admin ... moi). Không test được: proxy/đăng nhập, Bedrock, sang server khác,
+  thứ cần nhìn (màu, hình). Kết quả ghi vào trang lộ trình (ghi chú "Claude tự test" / "CẦN BẠN TEST").
+- Đã sửa: /ce menu ghi giá cũ (×3 quên dòng Giá); Chợ đen mua vào hộp "Đã mua" không ai biết -> give-item true; câu hết suất treo lộ
+  "zauctionhouse.<số>"; OCM "OCM Damage" -> "Sát thương", bỏ "[OCM] Đã đặt chế độ đánh old"; Jobs/CMILib giờ phút giây; /kit "Gói Gói";
+  MyPet chọn hệ lộ </gold> (sinh lại 230 cây); /hd thêm phong quân hàm (r10); chặn quảng cáo tên miền/IP trong chat (chat-filter.ads);
+  Thăng Cấp giờ chơi < 1 giờ ghi phút; Thư viện đồ ô Hình riêng báo lỗi tại chỗ; gói tài nguyên Việt hoá tên đồ/khối/sinh vật/phù phép/
+  chỉ số (tools/fontpack/lang-vi.py, đè en_us/en_gb). Quần tân thủ (mã quan) trong Thư viện đồ.
+- **Chờ người dùng**: cấp quyền `essentials.sell.hand` + `.bulk` cho nhóm default server=banghoi-1 (Claude bị chặn cấp quyền) — người
+  thường KHÔNG /sell hand được; đổi nghề tức thì sang nghề khác được (chờ 1 ngày chỉ áp nghề vừa rời) có chặn không; MyPet menu chọn hệ
+  hiện mỗi hệ 2 lần (chưa rõ nguyên nhân); NPC cửa hàng Kinh Đô không thấy quanh spawn bằng lệnh (k13 người dùng đã test OK trước).
+- Jar mới nhất (LevelUp xoá bảng xếp hạng web khi reset) đã build, CHƯA nạp (lần restart banghoi tới).
+
 ### Lộ trình test (QUAN TRỌNG khi đổi tài khoản)
 - Trang test HIỆN TẠI (tài khoản lần 5, đã nạp 53 kết quả cũ + cụm mới "Thăng Cấp" cd1–cd20): https://claude.ai/artifact/XNwzopyMJVbRoYasBw5XeU
   Trang cũ YY55Wn87HYuMzL898MT8a7 thuộc tài khoản lần 4 (không dùng nữa). Chép kết quả mới về `docs/lo-trinh-test-ketqua.json` trước khi đổi tài khoản. Cụm Thăng Cấp: cd1–cd22.

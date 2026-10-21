@@ -186,7 +186,10 @@ final class LevelUp implements Listener {
         this.speedKey = new NamespacedKey(plugin, "capdo_nhanh");
         this.file = new File(plugin.getDataFolder(), "capdo.yml");
         this.data = YamlConfiguration.loadConfiguration(file);
-        Shared.FORGET.add(id -> Shared.forget(data, file, id));   // admin reset "như người mới"
+        Shared.FORGET.add(id -> {   // admin reset "như người mới": xoá cả khỏi bảng xếp hạng trên web
+            Shared.forget(data, file, id);
+            writeJson();
+        });
     }
 
     private static Number num(Object o, Number def) {

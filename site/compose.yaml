@@ -21,3 +21,4 @@ services:
       - ./config:/app/config:ro     # site.yml (thư mục, không mount file lẻ: file lẻ hay hỏng sau khi WSL khởi động lại)
       - ../data:/data:ro            # chỉ đọc: cấu hình + dữ liệu plugin của banghoi-1
       - ../modes:/repo/modes:ro     # settings.yml của trang Cài đặt
+      - ../data/site:/state         # phiên đăng nhập (phien.json) để dựng lại site không đăng xuất mọi người

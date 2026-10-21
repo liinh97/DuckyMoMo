@@ -55,8 +55,32 @@ MEDIA_HTML = (Path(__file__).parent / "media.html").read_text(encoding="utf-8")
 # Khung chung mọi trang (thanh điều hướng trái, màu, nút): ui.css, shell.js
 # Đăng nhập trang quản trị bằng form + cookie phiên (thay hộp thoại Basic Auth của trình duyệt). Basic vẫn nhận cho script/curl.
 # Phiên giữ trong bộ nhớ: khởi động lại panel là phải đăng nhập lại. Sai 5 lần/10 phút trên một IP thì chặn tạm.
-SESSIONS = {}                 # token -> hết hạn (epoch giây)
-SESSION_HOURS = 12
+SESSIONS = {}                 # sha256(token) -> hết hạn (epoch giây); lưu ở data/panel/phien-quantri.json để dựng lại panel không bị đăng xuất
+# Thời hạn đăng nhập trang quản trị. ĐANG TEST (21/10): 30 ngày = 720 giờ. KHI MỞ SERVER: đặt lại 12 (PANEL_SESSION_HOURS trong .env hoặc sửa số ở đây).
+SESSION_HOURS = int(os.environ.get("PANEL_SESSION_HOURS", "720"))
+SESSION_FILE = DATA_DIR / "panel" / "phien-quantri.json"
+
+
+def _tok_hash(tok):
+    return hashlib.sha256(tok.encode()).hexdigest()
+
+
+def _load_sessions():
+    try:
+        now = time.time()
+        SESSIONS.update({k: v for k, v in json.loads(SESSION_FILE.read_text(encoding="utf-8")).items() if v > now})
+    except (OSError, ValueError):
+        pass
+
+
+def _save_sessions():
+    try:
+        SESSION_FILE.parent.mkdir(parents=True, exist_ok=True)
+        tmp = SESSION_FILE.with_suffix(".tmp")
+        tmp.write_text(json.dumps(SESSIONS), encoding="utf-8")
+        tmp.replace(SESSION_FILE)
+    except OSError as e:
+        sys.stdout.write(f"Không lưu được phiên quản trị: {e}\n")
 LOGIN_FAILS = {}              # ip -> [thời điểm sai]
 LOGIN_LOCK = threading.Lock()
 LOGIN_HTML = """<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
@@ -2957,8 +2981,9 @@ class Handler(BaseHTTPRequestHandler):
         with LOGIN_LOCK:
             for k in [k for k, exp in SESSIONS.items() if exp < now]:
                 del SESSIONS[k]
-            SESSIONS[tok] = now + SESSION_HOURS * 3600
+            SESSIONS[_tok_hash(tok)] = now + SESSION_HOURS * 3600
             LOGIN_FAILS.pop(ip, None)
+            _save_sessions()
         secure = "; Secure" if self.headers.get("X-Forwarded-Proto", "") == "https" else ""
         body = json.dumps({"ok": True}).encode("utf-8")
         self.send_response(200)
@@ -2970,7 +2995,8 @@ class Handler(BaseHTTPRequestHandler):
 
     def logout(self):
         with LOGIN_LOCK:
-            SESSIONS.pop(self.session_token(), None)
+            SESSIONS.pop(_tok_hash(self.session_token()), None)
+            _save_sessions()
         body = json.dumps({"ok": True}).encode("utf-8")
         self.send_response(200)
         self.send_header("Set-Cookie", f"dmm_panel=; Path={self.cookie_path()}; Max-Age=0; HttpOnly; SameSite=Strict")
@@ -2983,7 +3009,7 @@ class Handler(BaseHTTPRequestHandler):
         tok = self.session_token()
         if tok:
             with LOGIN_LOCK:
-                exp = SESSIONS.get(tok, 0)
+                exp = SESSIONS.get(_tok_hash(tok), 0)
             if exp > time.time():
                 return True
         header = self.headers.get("Authorization", "")
@@ -3334,6 +3360,7 @@ class Handler(BaseHTTPRequestHandler):
 
 if __name__ == "__main__":
     print("Trang Cài đặt chạy ở cổng 8080", flush=True)
+    _load_sessions()
     try:
         vang.ensure_tables()
     except Exception as e:

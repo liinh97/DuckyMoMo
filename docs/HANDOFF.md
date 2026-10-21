@@ -65,6 +65,12 @@ Sảnh (lobby) chưa restart từ lâu nhưng không bật các module này; res
   chính mình (Linh gõ /pay Linh 10000 tưởng lỗi: trừ rồi cộng lại); jar đã build, CHƯA nạp (cần restart banghoi).
   Lưu ý: Spiget luôn lấy bản MỚI NHẤT (không ghim) — nếu một ngày Jobs/CMILib mới làm lỗi, ghim lại bằng link tải cụ thể.
 
+### ⚠ KHI MỞ SERVER CHÍNH THỨC: trả lại thời hạn đăng nhập (21/10 đặt 30 ngày cho giai đoạn test)
+- Trong game (AuthMe, nhớ phiên theo IP): Cài đặt › Toàn mạng › Đăng nhập › Thời hạn phiên = 60 (phút) (đang 43200).
+- Trang Cài đặt (admin): panel/app.py SESSION_HOURS mặc định 720 -> 12 (hoặc PANEL_SESSION_HOURS=12 trong .env).
+- Trang tài khoản người chơi: site/app.py SITE_SESSION_DAYS 30 -> 7, SITE_ADMIN_HOURS 720 -> 12 (env hoặc sửa mặc định).
+- Phiên web giờ lưu ra file (data/panel/phien-quantri.json, data/site/phien.json; chỉ mã băm) nên dựng lại panel/site không bị đăng xuất.
+
 ### Việc tiếp theo / chờ người dùng
 1. Restart banghoi (xem trên) rồi người dùng test mục 4w.
 2. ~~Định lại xu toàn server~~ **ĐÃ ÁP DỤNG 21/10 ~03:40** (người dùng: "cứ làm như vậy, có người chơi rồi điều chỉnh sau; check mọi chỗ

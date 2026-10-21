@@ -1068,8 +1068,10 @@ def api_hangngay():
 # ---------------------------------------------------------------- đăng nhập bằng tài khoản game
 
 COOKIE = "dmm_phien"
-SESSION_DAYS = 7          # phiên xem tài khoản
-ADMIN_HOURS = 12          # staff mở trang quản trị trong 12 giờ sau khi nhập mã; hết thì gõ /web lấy mã mới (vẫn xem được tài khoản)
+# ĐANG TEST (21/10): đăng nhập giữ 30 ngày. KHI MỞ SERVER: SITE_SESSION_DAYS=7, SITE_ADMIN_HOURS=12 (env trong .env, hoặc sửa mặc định ở đây).
+SESSION_DAYS = int(os.environ.get("SITE_SESSION_DAYS", "30"))    # phiên xem tài khoản
+ADMIN_HOURS = int(os.environ.get("SITE_ADMIN_HOURS", "720"))     # staff mở trang quản trị sau khi nhập mã /web; hết thì gõ /web lấy mã mới
+SESSION_FILE = "/state/phien.json"   # lưu phiên (khoá = sha256 token) để dựng lại site không đăng xuất mọi người
 NAME_RE = re.compile(r"^\.?[A-Za-z0-9_]{1,17}$")
 FAIL_WINDOW = 15 * 60
 FAIL_PER_NAME = 5         # sai 5 lần / 15 phút: khoá tên đó 15 phút (chống dò mã)
@@ -1077,6 +1079,28 @@ FAIL_PER_IP = 20
 _sessions = {}            # sha256(token) -> {ten, tao, het, game_het, ip}
 _fails = {}               # ("ten"|"ip", giá trị) -> [mốc thời gian sai]
 _slock = threading.Lock()
+
+
+def _load_sessions():
+    try:
+        with open(SESSION_FILE, encoding="utf-8") as f:
+            now = time.time()
+            _sessions.update({k: v for k, v in json.load(f).items() if v.get("het", 0) > now})
+    except (OSError, ValueError):
+        pass
+
+
+def _save_sessions():
+    try:
+        tmp = SESSION_FILE + ".tmp"
+        with open(tmp, "w", encoding="utf-8") as f:
+            json.dump(_sessions, f)
+        os.replace(tmp, SESSION_FILE)
+    except OSError:
+        pass   # chưa mount /state: phiên chỉ nằm trong bộ nhớ như trước
+
+
+_load_sessions()
 
 
 def panel(method, path, body=None, player=None, ip=""):
@@ -1158,6 +1182,7 @@ def login(data, ip):
             _fails.pop(k, None)
         _sessions[hashlib.sha256(token.encode()).hexdigest()] = {
             "ten": res["ten"], "tao": now, "het": now + SESSION_DAYS * 86400, "game_het": now + ADMIN_HOURS * 3600, "ip": ip}
+        _save_sessions()
     return 200, {"ok": True, "ten": res["ten"]}, token
 
 
@@ -1169,6 +1194,7 @@ def logout(token, everywhere=False):
                 _sessions.pop(k, None)
         elif token:
             _sessions.pop(hashlib.sha256(token.encode()).hexdigest(), None)
+        _save_sessions()
 
 
 def me(token, ip):

@@ -165,14 +165,14 @@ tier2_skins: []
 tier3_skins: []
 tier4_skins: []
 authme_session_on: true
-authme_session_min: 60
+authme_session_min: 43200
 web_code_min: 60
 reg_per_ip_total: 2
 reg_whitelist_players:
-- vanlinh
+  - vanlinh
 reg_whitelist: []
 vang_ty_gia: 1000
 vang_nap_min: 10000
 vang_thuong:
-- "200000:10"
-- "500000:20"
+  - "200000:10"
+  - "500000:20"

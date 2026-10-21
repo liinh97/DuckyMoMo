@@ -143,12 +143,12 @@ ERROR:
     not-a-uuid: '{PREFIX} &c%input% không phải UUID hợp lệ.'
     not-found: '{PREFIX} &cKhông có túi đồ nào với UUID ''%uuid%''.'
   queue:
-    not-found: '{PREFIX} &cKhông có hàng chờ với bộ đồ %kit% và cược $%bet_amount%.'
+    not-found: '{PREFIX} &cKhông có hàng chờ với bộ đồ %kit% và cược %bet_amount% xu.'
     not-found-name: '{PREFIX} &cKhông có hàng chờ tên ''%name%''.'
-    already-exists: '{PREFIX} &cĐã có hàng chờ với bộ đồ ''%kit%'' và cược $%bet_amount%.'
+    already-exists: '{PREFIX} &cĐã có hàng chờ với bộ đồ ''%kit%'' và cược %bet_amount% xu.'
     already-in: '{PREFIX} &cBạn đang ở trong hàng chờ rồi!'
     not-in-queue: '{PREFIX} &cBạn không ở trong hàng chờ nào.'
-    not-enough-money: '{PREFIX} &cCần $%bet_amount% để vào hàng chờ này.'
+    not-enough-money: '{PREFIX} &cCần %bet_amount% xu để vào hàng chờ này.'
     party-too-large: '{PREFIX} &cNhóm bạn có %party_size% người, nhưng hàng chờ này chỉ cho đội %team_size% người.'
     no-queues-available: '{PREFIX} &cHiện không có hàng chờ nào.'
   sign:
@@ -194,7 +194,7 @@ COMMAND:
         - '&6- &7Bộ đồ: &3%kit%'
         - '&6- &7Dùng đồ của mình: &r%own_inventory%'
         - '&6- &7Sân: &e%arena%'
-        - '&6- &7Cược: &6$%bet_amount%'
+        - '&6- &7Cược: &6%bet_amount% xu'
         - '&6- &7Cược đồ: &r%item_betting%'
         - '{LINE}'
         receiver:
@@ -203,7 +203,7 @@ COMMAND:
         - '&6- &7Bộ đồ: &3%kit%'
         - '&6- &7Dùng đồ của mình: &r%own_inventory%'
         - '&6- &7Sân: &e%arena%'
-        - '&6- &7Cược: &6$%bet_amount%'
+        - '&6- &7Cược: &6%bet_amount% xu'
         - '&6- &7Cược đồ: &r%item_betting%'
         - '{LINE}'
         clickable-text:
@@ -390,14 +390,14 @@ COMMAND:
     kit-give-target: '{PREFIX} &7You were given kit &3%kit%&7.'
     set-item: '{PREFIX} &7Kit &3%name%&7''s displayed item was changed to your held item.'
     set-arena-item: '{PREFIX} &7Arena &e%name%&7''s displayed item was changed to your held item.'
-    create-queue: '{PREFIX} &7Created a queue with kit &3%kit% &7and bet &6$%bet_amount%&7.'
-    delete-queue: '{PREFIX} &7Deleted a queue with kit &3%kit% &7and bet &6$%bet_amount%&7.'
+    create-queue: '{PREFIX} &7Created a queue with kit &3%kit% &7and bet &6%bet_amount% xu&7.'
+    delete-queue: '{PREFIX} &7Deleted a queue with kit &3%kit% &7and bet &6%bet_amount% xu&7.'
     queue-options:
       rated: '{PREFIX} &7Set rated to %rated% &7for queue &f%name%&7.'
       max-difference: '{PREFIX} &7Set max rating difference to &a%max_difference% &7for queue &f%name%&7.'
       max-difference-default: '{PREFIX} &7Queue &f%name% &7now uses the default max rating difference of &a%max_difference%&7.'
-    add-sign: '{PREFIX} &7Created queue sign at &f%location% &7with kit &3%kit% &7and bet &6$%bet_amount%&7.'
-    del-sign: '{PREFIX} &7Deleted queue sign at &f%location% &7with kit &3%kit% &7and bet &6$%bet_amount%&7.'
+    add-sign: '{PREFIX} &7Created queue sign at &f%location% &7with kit &3%kit% &7and bet &6%bet_amount% xu&7.'
+    del-sign: '{PREFIX} &7Deleted queue sign at &f%location% &7with kit &3%kit% &7and bet &6%bet_amount% xu&7.'
     set-lobby: '{PREFIX} &7Duel lobby set at your current location.'
     lobby: '{PREFIX} &7You have been teleported to lobby!'
     edit: '{PREFIX} &7Following action has been executed for &f%name%&7: &f%action% %amount% %type%'
@@ -550,7 +550,7 @@ DUEL:
     no-arena-available: '{FAIL_PREFIX} Hiện hết sân trống. Thử lại sau nhé.'
     arena-in-use: '{FAIL_PREFIX} Sân đã chọn đang có người đấu. Chọn sân khác nhé.'
     arena-not-applicable: '{FAIL_PREFIX} Không dùng bộ đồ %kit% ở sân đã chọn được.'
-    not-enough-money: '{FAIL_PREFIX} Bạn hoặc đối thủ không có đủ $%bet_amount%.'
+    not-enough-money: '{FAIL_PREFIX} Bạn hoặc đối thủ không có đủ %bet_amount% xu.'
   rounds:
     round-end: '{PREFIX} &7Hết hiệp &e%round%&7! &f%winner% &7thắng hiệp này!'
     round-status: '{PREFIX} &7Tỉ số: &f%player1% &7(&a%wins1%&7) - &f%player2% &7(&a%wins2%&7)'
@@ -587,8 +587,8 @@ DUEL:
     name-color: '&b'
   reward:
     money:
-      message: '{PREFIX} &7Bạn nhận &6$%money% &7vì thắng &f%name%&7!'
-      title: '&eBẠN THẮNG &6$%money%&e!'
+      message: '{PREFIX} &7Bạn nhận &6%money% xu &7vì thắng &f%name%&7!'
+      title: '&eBẠN THẮNG &6%money% xu&e!'
     items:
       message: '{PREFIX} &7Bạn nhận đồ của &f%name%&7 vì thắng!'
   leave:
@@ -604,15 +604,15 @@ PARTY:
 QUEUE:
   prevent:
     command: '&cKhông dùng ''%command%'' được khi đang trong hàng chờ.'
-  add: '{PREFIX} &7Bạn đã vào hàng chờ bộ đồ &3%kit% &7cược &6$%bet_amount%&7. Bấm lại biển hoặc gõ &f/queue leave &7để rời hàng chờ.'
+  add: '{PREFIX} &7Bạn đã vào hàng chờ bộ đồ &3%kit% &7cược &6%bet_amount% xu&7. Bấm lại biển hoặc gõ &f/queue leave &7để rời hàng chờ.'
   remove: '{PREFIX} &7Bạn đã rời hàng chờ.'
-  found-opponent: '{PREFIX} &7Đã tìm thấy đối thủ: &f%name%&7! Bắt đầu trận với bộ đồ &3%kit% &7cược &6$%bet_amount%&7...'
+  found-opponent: '{PREFIX} &7Đã tìm thấy đối thủ: &f%name%&7! Bắt đầu trận với bộ đồ &3%kit% &7cược &6%bet_amount% xu&7...'
 
 
 SIGN:
   format:
   - '&a[Bấm để vào]'
-  - '&3%name%&f:&e$%bet_amount%'
+  - '&3%name%&f:&e%bet_amount% xu'
   - '&f%in_queue% ĐANG CHỜ'
   - '&f%in_match% ĐANG ĐẤU'
 
@@ -1166,7 +1166,7 @@ GUI:
     kit: '&7Bộ đồ: &f%kit%\n'
     own-inventory: '&7Dùng đồ của mình: &aBật\n'
     arena: '&7Sân: &f%arena%\n'
-    bet: '&7Cược: &6$%bet%\n'
+    bet: '&7Cược: &6%bet% xu\n'
     item-betting: '&7Cược đồ: &aBật\n'
     question: \n&fBạn có nhận không?
     accept: '&a✔ Nhận'
@@ -1183,7 +1183,7 @@ GUI:
         - '&7Dùng đồ của mình: &r%own_inventory%'
         - '&7Sân: &e%arena%'
         - '&7Cược đồ: &r%item_betting%'
-        - '&7Cược: &6$%bet_amount%'
+        - '&7Cược: &6%bet_amount% xu'
         - ' '
         - '&7Muốn đổi tiền cược'
         - '&7thì gõ'
@@ -1270,7 +1270,7 @@ GUI:
       queue:
         name: '&3%name%'
         lore:
-        - '&7Cược: &6$%bet_amount%'
+        - '&7Cược: &6%bet_amount% xu'
         - '&7Đang chờ: &f%in_queue%'
         - '&7Đang đấu: &f%in_match%'
         - ' '
@@ -1296,7 +1296,7 @@ GUI:
         lore:
         - '&7Bộ đồ: &3%kit%'
         - '&7Sân: &e%arena%'
-        - '&7Cược: &6$%bet_amount%'
+        - '&7Cược: &6%bet_amount% xu'
       cancel:
         name: '&cBẤM ĐỂ HUỶ'
         lore:
@@ -1388,10 +1388,10 @@ GUI:
         - '&7Bộ đồ: &f%kit%'
         - '&7Sân: &e%arena%'
         - '&7Thời lượng: &e%duration%'
-        - '&7Cược: &6$%bet%'
+        - '&7Cược: &6%bet% xu'
         - '&7Kết thúc vì: &7%reason%'
         - '&7Ngày: &8%date%'
-        lore-bet: '&7Cược: &6$%bet%'
+        lore-bet: '&7Cược: &6%bet% xu'
       play:
         name: '&a▶ Xem lại'
         lore:

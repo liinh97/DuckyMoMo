@@ -1,0 +1,3 @@
+&6Chào {PLAYER}&6, đây là &cPractice&6 (luyện PvP, combat 1.8, đồ có sẵn).
+&e/duel <người>&7 thách đấu  &8|  &e/party <người>&7 mời vào nhóm  &8|  &e/queue&7 hàng chờ
+&7Đang online: &f{ONLINE}&7 người.

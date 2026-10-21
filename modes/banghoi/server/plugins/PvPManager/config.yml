@@ -12,8 +12,11 @@ General Settings:
   # Controls if the plugin will use teams, needed for changing nametags and some other things, disable if there are conflicts with other plugins
   Use Scoreboard Teams: true
   # List of worlds where PvPManager will have no effect
+  # DuckyMoMo 21/10: dautruong = Đấu Trường tự quản sát thương/thoát trận; nếu không loại trừ, giao tranh của trận chặn việc đưa
+  # người chơi về spawn (khu an toàn) khi hết trận -> kẹt lại trong sân.
   World Exclusions:
     - 'example'
+    - 'dautruong'
 
 ######################
 ####  Combat Tag  ####

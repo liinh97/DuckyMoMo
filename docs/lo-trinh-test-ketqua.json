@@ -4,6 +4,41 @@
   "luc": 1792574500000,
   "tt": "ok"
  },
+ "a2": {
+  "ghi_chu": "Claude tự test bằng 2 bot (tools/bottest/a-thaiap.js): người lạ trong Thái Ấp của ThuA phá đá, đặt khối, mở rương, đánh bò đều bị chặn ('Đây không phải Thái Ấp của bạn.'), đánh ThuA không mất máu. Thế giới Thái Ấp tắt quái tự sinh (doMobSpawning false).",
+  "luc": 1792580054853,
+  "tt": "ok"
+ },
+ "a3": {
+  "ghi_chu": "Claude tự test: /thaiap moi ThuF -> ThuF phá/đặt/mở rương được; /thaiap duoi bỏ quyền; /thaiap ghe ThuA dịch tới, /thaiap thich +1 lượt, thích lần 2 báo 'đã thích rồi'; /thaiap top đúng; /thaiap morong lên 70×70 trừ 24.000 xu.",
+  "luc": 1792580054853,
+  "tt": "ok"
+ },
+ "a4": {
+  "ghi_chu": "Claude tự test: /nauan trong Thái Ấp của mình nấu Cơm nắm, món có dòng 'Nấu ở bếp Thái Ấp: hiệu ứng +50%'. Chưa đo thời gian hiệu ứng khi ăn.",
+  "luc": 1792580054853,
+  "tt": "ok"
+ },
+ "a5": {
+  "ghi_chu": "Claude tự test (tools/bottest/a-sangtao.js): /thaiap sangtao dịch ra trước cổng; bước vào cổng báo 'Đang sang Thái Ấp Sáng Tạo…' và ghi vé; vào sangtao-1 có vé: chế độ sáng tạo, đứng đúng mảnh đất của mình, túi đồ riêng (trống). Bot vào thẳng server nên chưa thử bước chuyển server qua proxy thật.",
+  "luc": 1792580054853,
+  "tt": "ok"
+ },
+ "a6": {
+  "ghi_chu": "Claude tự test: người không có Thái Ấp / không được mời bước vào cổng bị báo cần có Thái Ấp và đẩy ra trước cổng; vào thẳng sangtao-1 không vé thì bị đặt chế độ phiêu lưu + báo 'chỉ vào được qua cổng' + đưa về sảnh. CẦN BẠN: gõ /server sangtao-1 qua proxy thật (bot không qua proxy).",
+  "luc": 1792580054853,
+  "tt": "ok"
+ },
+ "a7": {
+  "ghi_chu": "Claude tự test: /thaiap ve ở sangtao-1 báo 'Đang về Bang Hội Chiến…'; vào lại Bang Hội Chiến: chế độ sinh tồn, túi đồ sinh tồn còn nguyên (7 táo), không có đồ sáng tạo, đứng trước cổng.",
+  "luc": 1792580054853,
+  "tt": "ok"
+ },
+ "a8": {
+  "ghi_chu": "Claude tự test bằng gói sáng tạo gửi đồ chế: kiếm phù phép vượt cấp và kiếm 'không bao giờ hỏng' bị đổi thành kiếm trơn (log 'đổi thành bản trơn'); kiếm phù phép cấp 1 bình thường giữ nguyên; TNT châm không nổ, khối cạnh còn nguyên.",
+  "luc": 1792580054853,
+  "tt": "ok"
+ },
  "c1": {
   "ghi_chu": "Claude tự test: /xuong đủ 20 món; bấm món hiện bảng 3×3 đúng nguyên liệu + giá + '✘ Chưa đủ'; thiếu đồ báo 'Thiếu nguyên liệu: cần 4x Kim cương'. Tên nguyên liệu (Diamond…) giờ tiếng Việt cả với game tiếng Anh nhờ gói tài nguyên mới (cần khởi động lại server). Chưa thử chế khi đủ đồ.",
   "luc": 1792573500000,
@@ -182,6 +217,21 @@
  "cd9": {
   "ghi_chu": "Claude tự test: máu 30 / tốc 0,11 giữ nguyên sau khi chết hồi sinh, thoát vào lại, sang Nether.",
   "luc": 1792569330503,
+  "tt": "ok"
+ },
+ "d1": {
+  "ghi_chu": "Claude tự test: /warp pvp chờ 3 giây rồi tới sảnh PvP; /dautruong hiện hướng dẫn tiếng Việt; /dautruong toi đúng. CẦN BẠN TEST: bước vào 3 cổng trong sảnh (bot không đi bộ vào cổng được) xem có vào sân chờ, nút 2v2 / cược / thoát.",
+  "luc": 1792580054853,
+  "tt": ""
+ },
+ "d2": {
+  "ghi_chu": "Claude tự test bằng 2 bot (tools/bottest/d-dautruong.js): hàng chờ 1v1 cược 200 -> ghép trận sân san1, mỗi người bị trừ 200; người bị hạ báo 'bị loại', người thắng nhận 380 xu cược (400 trừ 5%) + thưởng 75 + pet 30 kinh nghiệm (pet lên cấp); điểm +15/-15; người thua còn nguyên đồ; /dautruong top đúng. ĐÃ SỬA: người thua vào từ spawn bị KẸT LẠI trong sân sau trận (PvPManager gắn cờ giao tranh nên chặn dịch chuyển về khu an toàn) -> bỏ thế giới dautruong khỏi PvPManager (Đấu Trường tự quản sát thương); test lại đã về đúng spawn.",
+  "luc": 1792580054853,
+  "tt": "ok"
+ },
+ "d3": {
+  "ghi_chu": "Claude tự test bằng 2 bot ở practice-1 (tools/bottest/d3-practice.js): /duel B -> menu, chọn bộ đồ NoDebuff, gửi; B thấy [NHẬN] [TỪ CHỐI]; nhận thì đếm ngược 5 giây, phát bộ đồ, điểm xếp hạng đổi (1400 -> 1416/1384); /party mời / nhận / list / giải tán; /duel stats. ĐÃ SỬA: menu thách đấu Duels còn tiếng Anh (Kit Selection, SEND REQUEST...), đếm ngược 'Starting in', 'Now in a match', tiền cược '$' -> 'xu', lời chào và câu 'Welcome ... to the server' của Practice; bỏ bộ dụng cụ đá phát lần đầu. CẦN BẠN: cảm giác combat 1.8 và menu Bedrock (bot không thử được).",
+  "luc": 1792580054853,
   "tt": "ok"
  },
  "h6": {
@@ -428,6 +478,11 @@
   "ghi_chu": "Claude: bot nhận được báo trước '[⚠] Dọn vật phẩm dưới đất sau 5s/30s'. CẦN BẠN: xem đồ bị dọn đúng giờ và tắt thông báo trong /caidat.",
   "luc": 1792575500000,
   "tt": ""
+ },
+ "p1": {
+  "ghi_chu": "Claude tự test bằng bot (tools/bottest/p1-batpet.js): heo yếu máu đánh bằng dây xích, xác suất hiện 45%. Trượt thì heo không mất máu, báo 'Còn 2/1 lần thử'; trượt 3 lần thì 'Con này đã hoảng sợ, không bắt được nữa'; trúng thì 'Bạn đã thuần hoá một thú cưng'. Heo còn đầy máu: dây xích chỉ gây 1 sát thương, không tính lần thử. Sói đã thuần của mình: bắt ngay. Sói hoang còn đầy máu: không bắt. Chưa thấy được dòng 'chờ 2 giây' (lần đó trúng ngay). Nhỏ: /petinfo ghi tên thức ăn tiếng Anh (Carrot, Raw Beef).",
+  "luc": 1792580054853,
+  "tt": "ok"
  },
  "p2": {
   "ghi_chu": "Claude tự test (mùa khô): /bxhpet tyle ghi Loài bay 35% (+15% nhờ Mùa khô), Thú săn +5%, Quái nhầy +10%. Chưa xem mùa mưa / Lũ.",

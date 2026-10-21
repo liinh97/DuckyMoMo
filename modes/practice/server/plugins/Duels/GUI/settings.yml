@@ -1,0 +1,185 @@
+# DuckyMoMo 21/10: chữ trong menu đã Việt hoá (tools: scratchpad duels_gui.py, sửa tay ở đây).
+# =============================================================
+# Duels - Request Settings GUI Configuration
+# =============================================================
+# This GUI opens when a player initiates a duel request (/duel <player>).
+#
+# Configurations available:
+#   title: The inventory title (supports & color codes and MiniMessage tags)
+#   rows: Number of rows in the GUI (1 - 6)
+#   decorations: Custom decorative/filler items placed into specific slots
+#   buttons: Functional interactive buttons
+#
+# Slot definitions support:
+#   slot: 4                          (single slot)
+#   slots: [0, 1, 2, 3]              (list of slots)
+#   slots: ["0-8", "18-26"]          (ranges of slots)
+#   glowing-slots: [10, 16]          (slots with enchantment glow)
+# =============================================================
+
+title: '&8Thách đấu'
+rows: 6
+
+# =============================================================
+# DECORATIONS
+# =============================================================
+decorations:
+  # Outer frame border
+  border:
+    slots:
+      - "0-3"
+      - "5-8"
+      - 9
+      - 17
+      - 18
+      - 26
+      - 27
+      - 35
+      - 36
+      - 44
+      - "48-50"
+    item:
+      material: STAINED_GLASS_PANE
+      data: 7
+      name: '&r'
+      lore: []
+      glowing: false
+      custom-model-data: 0
+
+  # Inner background filler
+  inner-filler:
+    slots:
+      - "10-16"
+      - 19
+      - 21
+      - 23
+      - 25
+      - "28-30"
+      - "32-34"
+      - "37-43"
+    item:
+      material: STAINED_GLASS_PANE
+      data: 15
+      name: '&r'
+      lore: []
+      glowing: false
+      custom-model-data: 0
+
+# =============================================================
+# FUNCTIONAL BUTTONS
+# =============================================================
+buttons:
+  details:
+    slot: 4
+    item:
+      material: OAK_SIGN
+      data: 0
+      name: '&9Chi tiết lời thách đấu'
+      lore:
+        - '&7Đối thủ: &f%opponent%'
+        - '&7Bộ đồ: &3%kit%'
+        - '&7Dùng đồ của mình: &r%own_inventory%'
+        - '&7Sân: &e%arena%'
+        - '&7Cược đồ: &r%item_betting%'
+        - '&7Cược: &6%bet_amount% xu'
+        - ' '
+        - '&7Đổi số tiền cược:'
+        - '&7gõ &b/duel %opponent% [số xu]'
+      glowing: false
+      custom-model-data: 0
+
+  kit-selector:
+    slot: 20
+    item:
+      material: DIAMOND_SWORD
+      data: 0
+      name: '&bChọn bộ đồ'
+      lore:
+        - '&7Bộ đồ đang chọn: &3%kit%'
+        - ' '
+        - '&aBấm để đổi bộ đồ'
+      lore-no-permission:
+        - '&cBạn không có quyền'
+        - '&cdùng mục này.'
+      glowing: false
+      custom-model-data: 0
+
+  own-inventory:
+    slot: 22
+    item:
+      material: CHEST
+      data: 0
+      name: '&eDùng đồ của mình'
+      lore:
+        - '&7Dùng đồ của mình: &r%own_inventory%'
+        - ' '
+        - '&aBấm để bật/tắt dùng đồ của mình'
+      lore-no-permission:
+        - '&cBạn không có quyền'
+        - '&cdùng mục này.'
+      glowing: false
+      custom-model-data: 0
+
+  arena-selector:
+    slot: 24
+    item:
+      material: GRASS_BLOCK
+      data: 0
+      name: '&aChọn sân'
+      lore:
+        - '&7Sân đang chọn: &e%arena%'
+        - ' '
+        - '&aBấm để đổi sân'
+      lore-no-permission:
+        - '&cBạn không có quyền'
+        - '&cdùng mục này.'
+      glowing: false
+      custom-model-data: 0
+
+  item-betting:
+    slot: 31
+    item:
+      material: GOLD_INGOT
+      data: 0
+      name: '&6Cho cược đồ'
+      lore:
+        - '&7Cược đồ: &r%item_betting%'
+        - ' '
+        - '&aBấm để bật/tắt cược đồ'
+      lore-no-permission:
+        - '&cBạn không có quyền'
+        - '&cdùng mục này.'
+      glowing: false
+      custom-model-data: 0
+
+  send:
+    slots:
+      - 45
+      - 46
+      - 47
+    glowing-slots:
+      - 46
+    item:
+      material: STAINED_GLASS_PANE
+      data: 5
+      name: '&aGỬI LỜI THÁCH ĐẤU'
+      lore:
+        - '&7Bấm để gửi lời thách đấu.'
+      glowing: false
+      custom-model-data: 0
+
+  cancel:
+    slots:
+      - 51
+      - 52
+      - 53
+    glowing-slots:
+      - 52
+    item:
+      material: STAINED_GLASS_PANE
+      data: 14
+      name: '&cHUỶ'
+      lore:
+        - '&7Bấm để huỷ và đóng.'
+      glowing: false
+      custom-model-data: 0

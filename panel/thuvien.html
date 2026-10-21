@@ -449,7 +449,7 @@ function render() {
   for (const [n, l] of Object.entries(f.ce_enchants || {})) {
     const c = ceInfo("ce:" + n);
     if (c && !c.active) w.push(`Phù phép CE ${strip(c.display) || n} đang TẮT (Cài đặt › Phù phép) nên gắn vào cũng không có tác dụng`);
-    if (c && c.max && l > c.max) w.push(`${strip(c.display) || n} ${l} vượt cấp tối đa của CE (${c.max})`);
+    if (c && c.max && l > c.max) w.push(`${strip(c.display) || n} ${l} vượt cấp tối đa của CE (${c.max}): server cho vượt cấp nên VẪN có tác dụng mạnh hơn cấp ${c.max} (vd Bánh răng ${l} = Tốc độ ${l}). Chỉ dùng cho đồ hiếm.`);
   }
   const mats = data && data.meta ? data.meta.materials : null;
   if (mats && f.material && !mats.includes(f.material)) w.push(`Không có loại đồ "${f.material}" trong server`);
@@ -459,8 +459,10 @@ function render() {
   $("warns").innerHTML = w.map(x => `<p class="warn">⚠ ${esc(x)}</p>`).join("");
 }
 // "Sắc bén / Sharpness" (vanilla), "Volley [Enchantio]" (plugin): tìm được bằng cả hai tên
+// Tên tiếng Anh của phù phép CE lấy từ mã gốc (tên hiện trong game đã dịch): "SmokeBomb" -> "Smoke Bomb", "Sticky-Shot" -> "Sticky Shot"
+function ceEn(n) { return String(n).replace(/[-_]+/g, " ").replace(/([a-z])([A-Z])/g, "$1 $2"); }
 function enchLabel(k) {
-  if (isCe(k)) { const c = ceInfo(k); return c && c.vi ? `${c.vi} / ${strip(c.display) || c.name} [CE]` : enchName(k) + " [CE]"; }
+  if (isCe(k)) { const c = ceInfo(k); return c ? `${c.vi || strip(c.display) || c.name} / ${ceEn(c.name)} [CE]` : enchName(k) + " [CE]"; }
   const s = short(k);
   const en = prettyMat(s.includes(":") ? s.split(":")[1] : s);
   return VN[s] ? `${VN[s]} / ${en}` : enchName(k);

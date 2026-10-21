@@ -12,7 +12,7 @@ KHÔNG còn gì chờ restart. Chưa push (người dùng chưa bảo). Commit c
 
 ### Lộ trình test (QUAN TRỌNG khi đổi tài khoản)
 - Trang test HIỆN TẠI (tài khoản lần 5, đã nạp 53 kết quả cũ + cụm mới "Thăng Cấp" cd1–cd20): https://claude.ai/artifact/XNwzopyMJVbRoYasBw5XeU
-  Trang cũ YY55Wn87HYuMzL898MT8a7 thuộc tài khoản lần 4 (không dùng nữa). Chép kết quả mới về `docs/lo-trinh-test-ketqua.json` trước khi đổi tài khoản.
+  Trang cũ YY55Wn87HYuMzL898MT8a7 thuộc tài khoản lần 4 (không dùng nữa). Chép kết quả mới về `docs/lo-trinh-test-ketqua.json` trước khi đổi tài khoản. Cụm Thăng Cấp: cd1–cd22.
   Đổi tài khoản lần nữa: đăng lại từ `docs/lo-trinh-test.html` (Artifact publish, capabilities {"db": {}}, icon "checklist"), rồi nạp kết quả từ
   `docs/lo-trinh-test-ketqua.json` vào collection `ketqua` (mỗi mục 1 doc {tt, ghi_chu, luc, sua?}; ArtifactData batch set).
 - Kết quả tới 21/10 chiều (đã chép vào json): 53/187 mục có kết quả: 52 đạt (cb1 cb3, v1–v5 v8–v12, m1–m9, r1–r9 r11, k1–k10 k12–k22),
@@ -49,9 +49,10 @@ Code: LevelUp.java viết lại (config level-up mới, data + repo đã ghi; se
 SellLimit (duckymomo.sell.them.<n>, sell-limit.extra-per-perk), Workshop (giam / giam.2), PetCapture (duckymomo.pet.batgioi +5%).
 Thuộc tính = AttributeModifier TẠM (addTransientModifier, khoá capdo_mau / capdo_nhanh) nên cộng dồn với AuraSkills (AuraSkills dùng khoá riêng,
 force_base_health false); Sức mạnh/Bền bỉ qua sự kiện sát thương. Lần đầu chạy: migrate() gỡ quyền cửa hàng điểm cũ (phienban 2).
-Giá đặc quyền tự đề xuất (chờ người dùng duyệt): Xưởng cấp 20/30k + cấp 50/120k; bán thêm cấp 15/20k, 35/60k, 60/150k; nghề +10% và kỹ năng +10%
-cấp 25/50k mỗi cái; bắt pet cấp 30/60k; Lão Luyện cấp 75/100k; tẩy điểm 20.000 xu. Kill: 2 × N² (cấp 10 = 200). Chưa làm: +15% kinh nghiệm pet,
-pet hồi sinh nhanh. Web (site + panel) đã dựng lại. Việc tiếp: kiểm online RIÊNG → restart banghoi-1 → xem log "Thăng Cấp:" → test cụm cd.
+Người dùng: "cứ làm như nào cho hợp lý, khó vừa phải" -> đã hạ: xu 250 × N^0,6 (tổng tới cấp 10 ≈ 6.600 ≈ 4,7 giờ công, khớp 4 giờ chơi;
+tới 100 ≈ 250.000), hạ gục 1 × N² (cấp 10 = 100, cấp 100 = 10.000), tẩy điểm 10.000. Giữ giờ chơi 0,04 × N². Giá đặc quyền: Xưởng cấp 20/20k + 50/80k;
+bán thêm 15/15k, 35/40k, 60/100k; nghề, kỹ năng +10% cấp 25/30k; bắt pet 30/40k; +15% kinh nghiệm pet 20/30k; pet hồi sinh nhanh gấp đôi 35/40k;
+Lão Luyện 75/80k. Pet: PetPerks.java (MyPetExpEvent qua phản chiếu; respawnTime giảm nửa 2 tick sau khi pet chết). Web (site + panel) đã dựng lại. Việc tiếp: kiểm online RIÊNG → restart banghoi-1 → xem log "Thăng Cấp:" → test cụm cd.
 
 ### (cũ) Thiết kế Thăng Cấp người dùng đã chốt
 Người dùng: "shop toàn lợi ích trùng rank/dân… lv up có điểm cộng máu, tốc độ, sức mạnh", "theo hướng cày cuốc", "chỉ max được 2 thuộc tính".

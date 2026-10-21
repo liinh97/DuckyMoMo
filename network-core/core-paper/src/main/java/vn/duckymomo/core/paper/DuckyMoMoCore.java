@@ -621,6 +621,12 @@ public final class DuckyMoMoCore extends JavaPlugin {
             getServer().getPluginManager().registerEvents(petFish, this);
             getLogger().info("Pet ăn cá: " + petFish.describe());
         }
+        // Đặc quyền Thăng Cấp cho pet: +15% kinh nghiệm, hồi sinh nhanh gấp đôi (quyền do /capdo cấp)
+        if (myPetOn) {
+            PetPerks petPerks = new PetPerks(this);
+            getServer().getPluginManager().registerEvents(petPerks, this);
+            petPerks.start();
+        }
         PetCapture charmOwner = petCapture;
         bind("buabatpet", charmOwner == null ? null : charmOwner::charmCommand, "Bùa bắt pet");
         PetTop petTop = myPetOn ? new PetTop(this, petCapture) : null;

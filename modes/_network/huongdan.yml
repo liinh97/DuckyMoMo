@@ -463,7 +463,7 @@ chapters:
   - |-
     &6THĂNG CẤP
     &1/capdo &0xem điều kiện, bấm lên cấp khi đủ:
-    &0xu (trả lúc lên), tổng giờ chơi, điểm hạ gục (quái +1, người +10). Càng lên càng lâu: cấp 10 cần 4 giờ, cấp 50 cần 100 giờ.
+    &0xu (trả lúc lên), tổng giờ chơi, điểm hạ gục (quái +1, người +10). Càng lên càng lâu: cấp 10 cần 4 giờ, cấp 25 cần 25 giờ.
     &0Mỗi 10 cấp có quà mốc. Cấp hiện cạnh tên ở Tab.
   - |-
     &6ĐIỂM THUỘC TÍNH
@@ -476,13 +476,13 @@ chapters:
   - |-
     &6ĐIỂM THUỘC TÍNH (tiếp)
     &0Cấp 100 có 110 điểm: chỉ max được 2 thuộc tính, chọn cho khéo.
-    &0Tẩy điểm: Shift + bấm trong &1/capdo&0 (tốn xu).
+    &0Tẩy điểm: Shift + bấm trong &1/capdo&0 (10.000 xu).
     &8Tắt trong Đấu Trường.
     &8Hạ cùng 1 người liên tục chỉ tính 1 lần mỗi 10 phút.
   - |-
     &6ĐẶC QUYỀN THĂNG CẤP
     &0Mua bằng xu khi đủ cấp (nút Đặc quyền trong &1/capdo&0):
-    &0giảm giá Xưởng, bán cho server thêm 1.000 xu/ngày, +10% kinh nghiệm nghề, kỹ năng, +5% bắt pet, danh hiệu Lão Luyện.
+    &0giảm giá Xưởng, bán cho server thêm 1.000 xu/ngày, +10% kinh nghiệm nghề, kỹ năng, +5% bắt pet, +15% kinh nghiệm pet, pet hồi sinh nhanh, danh hiệu Lão Luyện.
   - |-
     &6BXH & DANH HIỆU
     &1/bxh&0: Bá Chủ (quốc gia), Chiến Thần (đánh trận), Đại Phú Hộ, Kiến Trúc Sư.

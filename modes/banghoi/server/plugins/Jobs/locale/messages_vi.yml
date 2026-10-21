@@ -345,7 +345,7 @@ command:
       maxjobs: Mỗi người chỉ được 1 nghề. Rời nghề đang làm trước (/jobs leave <nghề>).
       rejoin: '&cChưa vào lại nghề này được. Chờ [time]'
     rejoin: '&aBấm để vào lại nghề: '
-    success: Bạn đã vào nghề %jobfullname%.
+    success: ''
     confirm: '&2Bấm lần nữa để xác nhận vào nghề &7[jobfullname]&2.'
   leave:
     help:

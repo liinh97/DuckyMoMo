@@ -306,7 +306,7 @@ VI_MSG = {
     "command.join.error.maxjobs": "Mỗi người chỉ được 1 nghề. Rời nghề đang làm trước (/jobs leave <nghề>).",
     "command.join.error.rejoin": "&cChưa vào lại nghề này được. Chờ [time]",
     "command.join.rejoin": "&aBấm để vào lại nghề: ",
-    "command.join.success": "Bạn đã vào nghề %jobname%.",
+    "command.join.success": "",   # để trống: DuckyMoMoCore báo khi vào được thật (Jobs in câu này cả khi bị chặn)
     "command.join.confirm": "&2Bấm lần nữa để xác nhận vào nghề &7[jobname]&2.",
     "command.leave.help.info": "Rời nghề.",
     "command.leave.help.args": "[nghề đang làm]",

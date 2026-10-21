@@ -209,7 +209,7 @@ final class PeaceAlliance implements Listener {
             s.sendMessage(c("&aLiên minh Hoà Bình &7(" + n.getTowns().size() + " thị trấn, " + totalPlots() + " ô):"));
             for (Town t : n.getTowns()) {
                 s.sendMessage(c("&f" + t.getName() + " &7- " + t.getResidents().size() + " dân, " + t.getNumTownBlocks() + " ô"
-                        + (t.isNeutral() ? " &a(đang hoà bình)" : " &e(chờ hiệu lực)")));
+                        + (PeaceStatus.peaceful(t) ? " &a(đang hoà bình)" : " &e(chờ hiệu lực)")));
             }
             return true;
         }
@@ -254,7 +254,7 @@ final class PeaceAlliance implements Listener {
                 plotBase + plotPerPlot * memberPlots())));
         p.sendMessage(c("&7Thị trưởng: &f/hoabinh vao &7(thị trấn phải chạm đất liên minh, không thuộc quốc gia nào) · &f/hoabinh roi &7· &f/hoabinh danhsach"));
         if (t != null && isMember(t)) {
-            p.sendMessage(c(t.isNeutral() ? "&aThị trấn của bạn đang được hoà bình." : "&eThị trấn của bạn đang chờ hoà bình có hiệu lực."));
+            p.sendMessage(c(PeaceStatus.peaceful(t) ? "&aThị trấn của bạn đang được hoà bình." : "&eThị trấn của bạn đang chờ hoà bình có hiệu lực."));
         }
         return true;
     }
@@ -309,7 +309,7 @@ final class PeaceAlliance implements Listener {
         data.set("vao." + t.getUUID(), null);
         data.set("roi." + t.getUUID(), System.currentTimeMillis());
         save();
-        if (t.isNeutral()) {
+        if (PeaceStatus.peaceful(t)) {
             console("swa town " + t.getName() + " setpeaceful false");
         }
         Bukkit.broadcast(c("&e✦ &f" + t.getName() + " &eđã rời Liên minh Hoà Bình."));
@@ -479,7 +479,34 @@ final class PeaceAlliance implements Listener {
     @SuppressWarnings("unchecked")
     private void hookJobsJoin() {
         Plugin jobs = Bukkit.getPluginManager().getPlugin("Jobs");
-        if (!jobsOnlyInPeace || jobs == null || !jobs.isEnabled()) {
+        if (jobs == null || !jobs.isEnabled()) {
+            return;
+        }
+        // Jobs in "Bạn đã vào nghề" kể cả khi sự kiện vào nghề bị huỷ -> tắt câu đó trong messages_vi.yml, báo ở đây khi vào được thật
+        try {
+            Class<? extends Event> cls = (Class<? extends Event>) Class.forName("com.gamingmesh.jobs.api.JobsJoinEvent", true, jobs.getClass().getClassLoader());
+            Method jp = cls.getMethod("getPlayer");
+            Method job = cls.getMethod("getJob");
+            Bukkit.getPluginManager().registerEvent(cls, this, EventPriority.MONITOR, (l, e) -> {
+                if (!cls.isInstance(e)) {
+                    return;
+                }
+                try {
+                    Object jobsPlayer = jp.invoke(e);
+                    Player p = jobsPlayer == null ? null : (Player) jobsPlayer.getClass().getMethod("getPlayer").invoke(jobsPlayer);
+                    Object j = job.invoke(e);
+                    if (p != null && j != null) {
+                        String name = String.valueOf(j.getClass().getMethod("getJobFullName").invoke(j));
+                        p.sendMessage(c("&aBạn đã vào nghề &f" + name + "&a. Làm đúng việc của nghề là có tiền; xem: &f/jobs"));
+                    }
+                } catch (ReflectiveOperationException | ClassCastException ex) {
+                    plugin.getLogger().warning("Báo vào nghề lỗi: " + ex);
+                }
+            }, plugin, true);
+        } catch (ReflectiveOperationException | RuntimeException e) {
+            plugin.getLogger().warning("Không gắn được báo vào nghề của Jobs: " + e);
+        }
+        if (!jobsOnlyInPeace) {
             return;
         }
         // Vào nghề VÀ rời nghề đều chỉ trong đất hoà bình (21/10: "bấm để họ đọc được, chỉ là không vào không ra được thôi")
@@ -597,12 +624,12 @@ final class PeaceAlliance implements Listener {
             long joined = data.getLong("vao." + t.getUUID());
             boolean due = isCapital(t) || joined > 0 && now - joined >= joinWaitDays * 86_400_000L;
             // Thử bật hoà bình tối đa 10 phút một lần (lệnh SiegeWar có thể không thành, ví dụ kinh đô khi allow_peaceful_capitals tắt)
-            if (due && !t.isNeutral() && now - data.getLong("thu." + t.getUUID()) > 600_000L) {
+            if (due && !PeaceStatus.peaceful(t) && now - data.getLong("thu." + t.getUUID()) > 600_000L) {
                 data.set("thu." + t.getUUID(), now);
                 save();
                 console("swa town " + t.getName() + " setpeaceful true");
                 Bukkit.getScheduler().runTaskLater(plugin, () -> {
-                    if (t.isNeutral()) {
+                    if (PeaceStatus.peaceful(t)) {
                         broadcastTown(t, "&aHoà bình của " + t.getName() + " đã có hiệu lực.");
                     } else {
                         plugin.getLogger().warning("Không bật được hoà bình cho " + t.getName() + " (xem log SiegeWar)");
@@ -616,7 +643,7 @@ final class PeaceAlliance implements Listener {
         }
         // Chỉ liên minh được hoà bình
         for (Town t : TownyAPI.getInstance().getTowns()) {
-            if (t.isNeutral() && !isMember(t)) {
+            if (PeaceStatus.peaceful(t) && !isMember(t)) {
                 console("swa town " + t.getName() + " setpeaceful false");
             }
         }

@@ -351,7 +351,7 @@ final class WarBalance implements Listener {
     /** Thị trấn/nước thuộc phe chiến tranh (không phải Liên minh Hoà Bình, không trung lập). */
     private boolean atWar(Town t) {
         Nation n = t.getNationOrNull();
-        return !t.isNeutral() && !(n != null && n.getName().equalsIgnoreCase(peaceNation));
+        return !PeaceStatus.peaceful(t) && !(n != null && n.getName().equalsIgnoreCase(peaceNation));
     }
 
     private boolean isPeace(Nation n) {

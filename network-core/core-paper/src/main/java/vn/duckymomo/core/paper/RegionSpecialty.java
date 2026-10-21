@@ -121,7 +121,7 @@ final class RegionSpecialty {
         Map<String, Map<String, Integer>> count = new HashMap<>();
         for (Town t : TownyAPI.getInstance().getTowns()) {
             Nation tn = t.getNationOrNull();
-            if (t.isNeutral() || (tn != null && tn.getName().equalsIgnoreCase(peaceNation))) {
+            if (PeaceStatus.peaceful(t) || (tn != null && tn.getName().equalsIgnoreCase(peaceNation))) {
                 continue;
             }
             double x;

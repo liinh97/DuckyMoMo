@@ -1563,6 +1563,9 @@ decor_categories:
   - {id: danhhieu, name: "Danh hiệu", icon: NAME_TAG, slot: 42, desc: "Chữ hiện cạnh tên, đổi bằng /danhhieu", sell: [], items: []}
 sell_limit_on: true
 sell_limit_daily: 8000
+peace_jobs_join: true
+peace_economy_only: true
+peace_economy_cmds: [sell, esell, emf shop, evenmorefish shop, ce, crazyenchantments, xuong, chetao, servertools, tinhluyen, tl, nguyenlieu]
 job_miner_break_stone: 0.04
 job_miner_break_deepslate: 0.044
 job_miner_break_coal_ore: 1
@@ -1801,6 +1804,3 @@ job_producer_craft_daylight_detector: 1
 job_producer_craft_note_block: 0.1
 job_producer_craft_observer: 0.2
 job_producer_craft_minecart: 0.04
-peace_jobs_join: true
-peace_economy_only: true
-peace_economy_cmds: [sell, esell, emf shop, evenmorefish shop, ce, crazyenchantments, xuong, chetao, servertools, tinhluyen, tl, nguyenlieu]

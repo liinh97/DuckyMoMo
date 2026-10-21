@@ -282,7 +282,7 @@ final class LevelUp implements Listener {
     }
 
     private double hoursFor(int lv) {
-        return Math.round(hoursBase * Math.pow(lv, hoursExp) * 10) / 10.0;
+        return hoursBase * Math.pow(lv, hoursExp);
     }
 
     private int killsFor(int lv) {
@@ -610,6 +610,19 @@ final class LevelUp implements Listener {
         return v == Math.floor(v) ? String.valueOf((long) v) : String.format(Locale.ROOT, "%.1f", v).replace('.', ',');
     }
 
+    /** 12.500 (dấu chấm ngăn nghìn). */
+    private static String count(long v) {
+        return String.format(Locale.ROOT, "%,d", v).replace(',', '.');
+    }
+
+    /** Giờ chơi: dưới 1 giờ ghi phút ("3 phút"), còn lại "4,5 giờ". need = mức yêu cầu (làm tròn lên), không thì làm tròn xuống. */
+    private static String time(double h, boolean need) {
+        if (h < 1) {
+            return (long) (need ? Math.ceil(h * 60) : Math.floor(h * 60)) + " phút";
+        }
+        return num((need ? Math.ceil(h * 10) : Math.floor(h * 10)) / 10) + " giờ";
+    }
+
     /** Hiệu lực của thuộc tính ở bậc t, vd "+3 tim", "+4% sát thương". */
     private String effect(Attr a, int t) {
         double v = t * perTier.get(a);
@@ -639,8 +652,8 @@ final class LevelUp implements Listener {
         h.inv = Bukkit.createInventory(h, 45, c("&0⬆ Thăng Cấp &8· cấp " + lv + "/" + maxLevel));
         h.inv.setItem(4, Tip.of("&6⬆ &fCấp " + lv).sub("tối đa " + maxLevel).desc("Tiến độ của bạn trong mùa này").line()
                 .kv("Điểm thuộc tính", "&e" + freePoints(u) + " &7chưa dùng &8(" + totalPoints(lv) + " tổng)")
-                .kv("Điểm hạ gục", killPts(u) + " &8(quái +" + mobPoints + ", người +" + playerPoints + ")")
-                .kv("Giờ chơi", num(Math.floor(hours(u) * 10) / 10) + " giờ")
+                .kv("Điểm hạ gục", count(killPts(u)) + " &8(quái +" + mobPoints + ", người +" + playerPoints + ")")
+                .kv("Giờ chơi", time(hours(u), false))
                 .gap().note("Mỗi cấp +" + pointsPerLevel + " điểm, mỗi " + milestoneEvery + " cấp thưởng thêm " + milestonePoints
                         + ". Cấp " + maxLevel + " có " + totalPoints(maxLevel) + " điểm: đủ max " + totalPoints(maxLevel) / (maxTier * (maxTier + 1) / 2) + " thuộc tính.")
                 .apply(new ItemStack(Material.NETHER_STAR)));
@@ -650,8 +663,8 @@ final class LevelUp implements Listener {
             boolean all = mOk && hOk && kOk;
             Tip t = Tip.of((all ? "&a⬆ " : "&e⬆ ") + "&fLên cấp " + next).accent(all ? "&a" : "&e").head("Điều kiện")
                     .item(mark(mOk) + money(VaultEconomy.available() ? VaultEconomy.balance(p) : 0) + "&7/" + money(moneyFor(next)) + " &8(trả khi lên)")
-                    .item(mark(kOk) + killPts(u) + "&7/" + killsFor(next) + " điểm hạ gục &8(tổng)")
-                    .item(mark(hOk) + num(Math.floor(hours(u) * 10) / 10) + "&7/" + num(hoursFor(next)) + " giờ chơi &8(tổng trong mùa)")
+                    .item(mark(kOk) + count(killPts(u)) + "&7/" + count(killsFor(next)) + " điểm hạ gục &8(tổng)")
+                    .item(mark(hOk) + time(hours(u), false) + "&7/" + time(hoursFor(next), true) + " chơi &8(tổng trong mùa)")
                     .gap().head("Thưởng").item("&e+" + (totalPoints(next) - totalPoints(lv)) + " điểm thuộc tính");
             if (milestoneEvery > 0 && next % milestoneEvery == 0) {
                 t.item("&6Quà mốc cấp " + next);

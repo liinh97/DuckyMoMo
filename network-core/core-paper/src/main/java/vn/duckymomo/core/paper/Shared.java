@@ -24,6 +24,9 @@ final class Shared {
     static volatile ItemLibrary library;
 
     /** Admin reset "như người mới": mỗi module có dữ liệu theo người chơi đăng ký một hàm xoá dữ liệu của UUID đó. */
+    /** Đang cho vào/rời nghề hộ (chơi lại, admin): luật "chỉ vào/rời nghề trong đất hoà bình" bỏ qua các UUID này. */
+    static final java.util.Set<java.util.UUID> JOBS_FREE = java.util.concurrent.ConcurrentHashMap.newKeySet();
+
     static final java.util.List<java.util.function.Consumer<java.util.UUID>> FORGET = new java.util.concurrent.CopyOnWriteArrayList<>();
 
     /** Xoá mọi mục có khoá = UUID (ở mọi tầng: "players.<uuid>", "dem.<uuid>"…) trong file dữ liệu của module rồi lưu. */

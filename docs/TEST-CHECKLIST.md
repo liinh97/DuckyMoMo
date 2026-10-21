@@ -346,6 +346,7 @@ Bảng giá đầy đủ: `docs/dinh-gia-xu.html` (artifact SeZHthvXRXHusvgPqknX
 - [ ] Cài đặt › Nghề: sửa một mức tiền, Lưu → /jobs info thấy số mới.
 - [ ] /choilai (hoặc reset ở trang Hệ thống): người chơi bị rời nghề.
 - [ ] Ngoài đất hoà bình (tài khoản thường, không phải dân hoà bình): /sell, /emf shop, /ce, /xuong, /tinhluyen, Rìu Bán, nút /menu gọi các lệnh đó đều bị chặn kèm lời nhắc; trong kinh đô / vòng spawn / thị trấn hoà bình thì được; dân hoà bình ở đâu cũng được. /hoabinh, /hd, web, bảng TAB ghi đặc quyền này.
+- [ ] Rời nghề (/jobs leave hoặc trong menu) ngoài đất hoà bình cũng bị chặn; mở /jobs để xem thì ở đâu cũng được; /choilai vẫn rời nghề được.
 - [ ] Vào nghề ngoài đất hoà bình (đất hoang, thị trấn thường) bị chặn kèm lời nhắc; trong kinh đô / vòng quanh spawn / thị trấn hoà bình thì được; dân của thị trấn hoà bình vào nghề ở đâu cũng được.
 
 ## 5. Quảng trường Danh vọng (sảnh)

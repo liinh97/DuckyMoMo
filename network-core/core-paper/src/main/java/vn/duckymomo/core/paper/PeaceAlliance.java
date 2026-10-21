@@ -473,29 +473,33 @@ final class PeaceAlliance implements Listener {
         if (!jobsOnlyInPeace || jobs == null || !jobs.isEnabled()) {
             return;
         }
-        try {
-            Class<? extends Event> cls = (Class<? extends Event>) Class.forName("com.gamingmesh.jobs.api.JobsJoinEvent", true, jobs.getClass().getClassLoader());
-            Method jp = cls.getMethod("getPlayer");
-            Method cancel = cls.getMethod("setCancelled", boolean.class);
-            Bukkit.getPluginManager().registerEvent(cls, this, EventPriority.NORMAL, (l, ev) -> {
-                if (!cls.isInstance(ev)) {
-                    return;
-                }
-                try {
-                    Object jobsPlayer = jp.invoke(ev);
-                    Player p = jobsPlayer == null ? null : (Player) jobsPlayer.getClass().getMethod("getPlayer").invoke(jobsPlayer);
-                    if (p == null || economyAllowed(p)) {
+        // Vào nghề VÀ rời nghề đều chỉ trong đất hoà bình (21/10: "bấm để họ đọc được, chỉ là không vào không ra được thôi")
+        for (String[] ev : new String[][] {{"com.gamingmesh.jobs.api.JobsJoinEvent", "Vào"}, {"com.gamingmesh.jobs.api.JobsLeaveEvent", "Rời"}}) {
+            try {
+                Class<? extends Event> cls = (Class<? extends Event>) Class.forName(ev[0], true, jobs.getClass().getClassLoader());
+                Method jp = cls.getMethod("getPlayer");
+                Method cancel = cls.getMethod("setCancelled", boolean.class);
+                String verb = ev[1];
+                Bukkit.getPluginManager().registerEvent(cls, this, EventPriority.NORMAL, (l, e) -> {
+                    if (!cls.isInstance(e)) {
                         return;
                     }
-                    cancel.invoke(ev, true);
-                    p.sendMessage(c("&eChỉ vào nghề được khi đứng trong đất Liên minh Hoà Bình &7(kinh đô quanh spawn, thị trấn hoà bình)&e. "
-                            + "Dân hoà bình vào nghề ở đâu cũng được."));
-                } catch (ReflectiveOperationException | ClassCastException ex) {
-                    plugin.getLogger().warning("Chặn vào nghề ngoài đất hoà bình lỗi: " + ex);
-                }
-            }, plugin, true);
-        } catch (ReflectiveOperationException | RuntimeException e) {
-            plugin.getLogger().warning("Không gắn được sự kiện vào nghề của Jobs: " + e);
+                    try {
+                        Object jobsPlayer = jp.invoke(e);
+                        Player p = jobsPlayer == null ? null : (Player) jobsPlayer.getClass().getMethod("getPlayer").invoke(jobsPlayer);
+                        if (p == null || Shared.JOBS_FREE.contains(p.getUniqueId()) || economyAllowed(p)) {
+                            return;
+                        }
+                        cancel.invoke(e, true);
+                        p.sendMessage(c("&e" + verb + " nghề chỉ làm được khi đứng trong đất Liên minh Hoà Bình &7(kinh đô quanh spawn, thị trấn hoà bình)&e. "
+                                + "Xem nghề thì ở đâu cũng được. Dân hoà bình vào/rời nghề ở đâu cũng được."));
+                    } catch (ReflectiveOperationException | ClassCastException ex) {
+                        plugin.getLogger().warning("Chặn " + verb.toLowerCase(Locale.ROOT) + " nghề ngoài đất hoà bình lỗi: " + ex);
+                    }
+                }, plugin, true);
+            } catch (ReflectiveOperationException | RuntimeException e) {
+                plugin.getLogger().warning("Không gắn được sự kiện " + ev[0] + " của Jobs: " + e);
+            }
         }
     }
 

@@ -378,7 +378,12 @@ final class PlayerReset implements Listener {
             console("delhome " + name + ":" + home);
         }
         if (Integrations.jobsReborn()) {
-            console("jobs fireall " + name);   // rời nghề (Jobs giữ cấp cũ trong lưu trữ, vào lại nghề đó bị trừ 30% cấp)
+            Shared.JOBS_FREE.add(id);   // chơi lại: rời nghề ở đâu cũng được
+            try {
+                console("jobs fireall " + name);   // rời nghề (Jobs giữ cấp cũ trong lưu trữ, vào lại nghề đó bị trừ 30% cấp)
+            } finally {
+                Shared.JOBS_FREE.remove(id);
+            }
         }
         activity.reset(id);
         RandomTeleport.clearCooldown(id);

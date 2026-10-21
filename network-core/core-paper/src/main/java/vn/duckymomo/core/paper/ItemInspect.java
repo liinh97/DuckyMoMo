@@ -148,9 +148,11 @@ final class ItemInspect implements Listener {
             show(p, it, "món trade", true);
             return;
         }
-        p.sendMessage(LEGACY.deserialize("&7Mô tả món này dài quá màn hình: rê chuột vào ô kết quả bấm &fF&7, hoặc ")
+        // ô kết quả chỉ hiện món khi đủ đồ trả, nên nút [Xem đủ] lên trước
+        p.sendMessage(LEGACY.deserialize("&7Mô tả món này dài quá màn hình: bấm ")
                 .append(LEGACY.deserialize("&a[Xem đủ]").clickEvent(ClickEvent.runCommand("/xemdo trade"))
-                        .hoverEvent(HoverEvent.showText(LEGACY.deserialize("&7In đủ mô tả ra khung chat")))));
+                        .hoverEvent(HoverEvent.showText(LEGACY.deserialize("&7In đủ mô tả ra khung chat"))))
+                .append(LEGACY.deserialize("&7 (hoặc khi đủ đồ trả: rê chuột vào ô kết quả, bấm &fF&7)")));
     }
 
     @EventHandler

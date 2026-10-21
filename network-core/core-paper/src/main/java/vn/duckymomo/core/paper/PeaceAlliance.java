@@ -63,6 +63,7 @@ final class PeaceAlliance implements Listener {
     private final String nationName;
     private final String capitalName;
     private final int joinWaitDays;
+    private final int joinMaxDistance;
     private final int rejoinCooldownDays;
     private final double plotBase;
     private final double plotPerPlot;
@@ -87,6 +88,7 @@ final class PeaceAlliance implements Listener {
         this.nationName = c.getString("nation", "LienMinhHoaBinh");
         this.capitalName = c.getString("capital", "KinhDo");
         this.joinWaitDays = c.getInt("join-wait-days", 2);
+        this.joinMaxDistance = Math.max(1, c.getInt("join-max-distance", 8));
         this.rejoinCooldownDays = c.getInt("rejoin-cooldown-days", 14);
         this.plotBase = c.getDouble("plot-base-price", 25);
         this.plotPerPlot = c.getDouble("plot-price-per-plot", 0.5);
@@ -187,10 +189,77 @@ final class PeaceAlliance implements Listener {
         return false;
     }
 
+    /**
+     * Đất liên minh NỐI LIỀN với kinh đô (loang 4 hướng từ đất kinh đô qua đất các thị trấn trong liên minh), khoá "thế giới:x:z".
+     * 21/10: Towny cấm đất cách thị trấn khác dưới 5 ô (trừ cùng quốc gia) nên thị trấn không thể đứng sát đất liên minh trước khi vào;
+     * giờ cho vào khi ở gần (join-max-distance ô), vào rồi (cùng quốc gia) chiếm đất nối sang, nối liền mới bật hoà bình.
+     */
+    private Set<String> connectedCache = Set.of();
+    private long connectedAt;
+
+    private Set<String> connectedPeace() {
+        long now = System.currentTimeMillis();
+        if (now - connectedAt < 30_000L) {
+            return connectedCache;
+        }
+        Set<String> seen = new HashSet<>();
+        java.util.ArrayDeque<TownBlock> q = new java.util.ArrayDeque<>();
+        Town cap = TownyUniverse.getInstance().getTown(capitalName);
+        if (cap != null) {
+            for (TownBlock tb : cap.getTownBlocks()) {
+                if (seen.add(key(tb))) {
+                    q.add(tb);
+                }
+            }
+        }
+        int[][] d = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+        while (!q.isEmpty()) {
+            TownBlock tb = q.poll();
+            for (int[] o : d) {
+                TownBlock nb = new WorldCoord(tb.getWorld().getName(), tb.getX() + o[0], tb.getZ() + o[1]).getTownBlockOrNull();
+                if (nb != null && isMember(nb.getTownOrNull()) && seen.add(key(nb))) {
+                    q.add(nb);
+                }
+            }
+        }
+        connectedCache = seen;
+        connectedAt = now;
+        return seen;
+    }
+
+    private static String key(TownBlock tb) {
+        return tb.getWorld().getName() + ":" + tb.getX() + ":" + tb.getZ();
+    }
+
+    /** Đất thị trấn đã nối liền với đất liên minh (qua các thị trấn đã nối tới kinh đô). */
     private boolean townTouchesPeace(Town t) {
+        Set<String> conn = connectedPeace();
+        int[][] d = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
         for (TownBlock tb : t.getTownBlocks()) {
-            if (adjacentToPeace(tb.getWorld().getName(), tb.getX(), tb.getZ(), t)) {
-                return true;
+            if (conn.contains(key(tb))) {
+                return true;   // đã nằm trong vùng loang (thị trấn trong liên minh, đất chạm)
+            }
+            for (int[] o : d) {
+                if (conn.contains(tb.getWorld().getName() + ":" + (tb.getX() + o[0]) + ":" + (tb.getZ() + o[1]))) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /** Có ô đất cách đất liên minh (đã nối kinh đô) không quá joinMaxDistance ô. */
+    private boolean townNearPeace(Town t) {
+        Set<String> conn = connectedPeace();
+        int r = joinMaxDistance;
+        for (TownBlock tb : t.getTownBlocks()) {
+            String w = tb.getWorld().getName();
+            for (int dx = -r; dx <= r; dx++) {
+                for (int dz = -r; dz <= r; dz++) {
+                    if (conn.contains(w + ":" + (tb.getX() + dx) + ":" + (tb.getZ() + dz))) {
+                        return true;
+                    }
+                }
             }
         }
         return false;
@@ -209,7 +278,7 @@ final class PeaceAlliance implements Listener {
             s.sendMessage(c("&aLiên minh Hoà Bình &7(" + n.getTowns().size() + " thị trấn, " + totalPlots() + " ô):"));
             for (Town t : n.getTowns()) {
                 s.sendMessage(c("&f" + t.getName() + " &7- " + t.getResidents().size() + " dân, " + t.getNumTownBlocks() + " ô"
-                        + (PeaceStatus.peaceful(t) ? " &a(đang hoà bình)" : " &e(chờ hiệu lực)")));
+                        + (PeaceStatus.peaceful(t) ? " &a(đang hoà bình)" : townTouchesPeace(t) ? " &e(chờ hiệu lực)" : " &e(chờ nối đất)")));
             }
             return true;
         }
@@ -227,9 +296,15 @@ final class PeaceAlliance implements Listener {
             }
             data.set("vao." + t.getUUID(), System.currentTimeMillis());
             save();
+            boolean touching = townTouchesPeace(t);
             console("ta nation " + nationName + " add " + t.getName());
             p.sendMessage(c("&aĐã đưa &f" + t.getName() + " &avào Liên minh Hoà Bình. Hoà bình có hiệu lực sau &f" + joinWaitDays
                     + " ngày&a (trong lúc chờ vẫn có thể bị vây)."));
+            if (!touching) {
+                connectedAt = 0;
+                p.sendMessage(c("&eĐất chưa nối liền với đất liên minh: chiếm thêm đất (&f/t claim&e) nối sát sang đất liên minh."
+                        + " Vào liên minh rồi thì được chiếm sát đất thị trấn bạn bè. Nối liền + đủ ngày chờ thì hoà bình mới có hiệu lực."));
+            }
             return true;
         }
         if (sub.equals("roi")) {
@@ -252,9 +327,12 @@ final class PeaceAlliance implements Listener {
         }
         p.sendMessage(c(String.format(Locale.ROOT, "&7Mua thêm ô: &f%.1f xu&7/ô lúc này (tăng theo tổng đất liên minh). Đất mới phải liền sát đất cũ.",
                 plotBase + plotPerPlot * memberPlots())));
-        p.sendMessage(c("&7Thị trưởng: &f/hoabinh vao &7(thị trấn phải chạm đất liên minh, không thuộc quốc gia nào) · &f/hoabinh roi &7· &f/hoabinh danhsach"));
+        p.sendMessage(c("&7Thị trưởng: &f/hoabinh vao &7(thị trấn cách đất liên minh tối đa " + joinMaxDistance
+                + " ô, không thuộc quốc gia nào; vào rồi chiếm đất nối sang) · &f/hoabinh roi &7· &f/hoabinh danhsach"));
         if (t != null && isMember(t)) {
-            p.sendMessage(c(PeaceStatus.peaceful(t) ? "&aThị trấn của bạn đang được hoà bình." : "&eThị trấn của bạn đang chờ hoà bình có hiệu lực."));
+            p.sendMessage(c(PeaceStatus.peaceful(t) ? "&aThị trấn của bạn đang được hoà bình."
+                    : !townTouchesPeace(t) ? "&eThị trấn của bạn chưa nối đất với liên minh: /t claim nối sát sang đất liên minh thì hoà bình mới có hiệu lực."
+                    : "&eThị trấn của bạn đang chờ hoà bình có hiệu lực."));
         }
         return true;
     }
@@ -277,8 +355,9 @@ final class PeaceAlliance implements Listener {
         if (left > 0 && wait > 0) {
             return String.format(Locale.ROOT, "Thị trấn vừa rời liên minh, còn %.1f ngày mới vào lại được.", wait / 86_400_000.0);
         }
-        if (!townTouchesPeace(t)) {
-            return "Đất thị trấn phải chạm (chung cạnh ô) với đất của liên minh. Đất hoà bình lan liền kề, không cách nhau.";
+        if (!townTouchesPeace(t) && !townNearPeace(t)) {
+            return "Thị trấn phải ở gần đất liên minh (cách tối đa " + joinMaxDistance + " ô = " + joinMaxDistance * 16
+                    + " block). Vào rồi chiếm đất nối liền sang thì hoà bình mới có hiệu lực.";
         }
         return null;
     }
@@ -622,7 +701,7 @@ final class PeaceAlliance implements Listener {
         long now = System.currentTimeMillis();
         for (Town t : new ArrayList<>(n.getTowns())) {
             long joined = data.getLong("vao." + t.getUUID());
-            boolean due = isCapital(t) || joined > 0 && now - joined >= joinWaitDays * 86_400_000L;
+            boolean due = isCapital(t) || joined > 0 && now - joined >= joinWaitDays * 86_400_000L && townTouchesPeace(t);
             // Thử bật hoà bình tối đa 10 phút một lần (lệnh SiegeWar có thể không thành, ví dụ kinh đô khi allow_peaceful_capitals tắt)
             if (due && !PeaceStatus.peaceful(t) && now - data.getLong("thu." + t.getUUID()) > 600_000L) {
                 data.set("thu." + t.getUUID(), now);

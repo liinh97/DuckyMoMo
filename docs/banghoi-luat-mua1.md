@@ -399,7 +399,7 @@ Hệ thống > "Chơi lại từ đầu"). Tắt thu phục (3) và khoảng cá
 người chơi cũ đều có 0 giờ (admin/op bỏ qua bằng quyền `duckymomo.town.bypass`).
 
 **Đã code đợt 2 (14/10, chưa thử trong game): Liên minh Hoà Bình** (`PeaceAlliance`): /hoabinh vao|roi|danhsach; không ai tự bật hoà bình;
-plugin bật/tắt hoà bình bằng `swa town <t> setpeaceful`; vào chờ 2 ngày, rời mất ngay, 14 ngày mới vào lại; thị trấn phải chạm đất liên minh;
+plugin bật/tắt hoà bình bằng `swa town <t> setpeaceful`; vào chờ 2 ngày, rời mất ngay, 14 ngày mới vào lại; thị trấn phải chạm đất liên minh (21/10: đổi thành cách tối đa 8 ô thì vào được, vào rồi chiếm đất nối liền; nối liền + đủ ngày mới hoà bình);
 lập thị trấn trong vòng 300 block quanh spawn phải sát đất hoà bình và tự vào liên minh; không tiền đồn; giá ô = 25 + 0,5 × tổng ô các thị trấn
 hoà bình (không tính kinh đô); phí bảo hộ 0,5 xu/ô/ngày cộng vào phí duy trì; đất hoà bình luôn tắt PvP; /ah chỉ mở trong đất hoà bình;
 /sell trong kinh đô +20%; shop rương trong đất hoà bình miễn thuế, ngoài 5%; báo vây thành (toàn server + tin/thư cho dân hoà bình có đất trong

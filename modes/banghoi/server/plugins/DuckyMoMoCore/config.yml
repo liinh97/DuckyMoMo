@@ -321,6 +321,7 @@ peace-alliance:
   nation: LienMinhHoaBinh
   capital: KinhDo
   join-wait-days: 2
+  join-max-distance: 8   # 21/10: thị trấn cách đất liên minh tối đa bao nhiêu ô (16 block) thì được /hoabinh vao; vào rồi chiếm đất nối liền mới bật hoà bình
   rejoin-cooldown-days: 14
   plot-base-price: 75.0
   plot-price-per-plot: 1.5

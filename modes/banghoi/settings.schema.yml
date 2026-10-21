@@ -147,6 +147,8 @@ groups:
     settings:
       - { key: peace_join_wait, label: Vào liên minh chờ bao nhiêu ngày mới hoà bình, type: int, min: 0, max: 30, file: plugins/DuckyMoMoCore/config.yml, path: peace-alliance.join-wait-days,
           note: "Trong lúc chờ vẫn có thể bị vây." }
+      - { key: peace_join_dist, label: Thị trấn cách đất liên minh tối đa bao nhiêu ô thì được vào, type: int, min: 1, max: 30, file: plugins/DuckyMoMoCore/config.yml, path: peace-alliance.join-max-distance,
+          note: "1 ô = 16 block. Towny cấm đất cách thị trấn khác dưới 5 ô nên phải từ 6 trở lên. Vào rồi thị trấn chiếm đất nối liền sang (cùng quốc gia được sát nhau); nối liền + đủ ngày chờ mới hoà bình." }
       - { key: peace_rejoin, label: Rời liên minh bao nhiêu ngày mới vào lại, type: int, min: 0, max: 90, file: plugins/DuckyMoMoCore/config.yml, path: peace-alliance.rejoin-cooldown-days }
       - { key: peace_plot_base, label: Giá mua ô đất hoà bình - giá gốc, type: number, min: 0, file: plugins/DuckyMoMoCore/config.yml, path: peace-alliance.plot-base-price }
       - { key: peace_plot_step, info: "Là gì: giá ô đất hoà bình tăng dần khi liên minh càng rộng, để đất hoà bình không lan quá nhanh.\nCông thức: giá 1 ô = giá gốc + số này × tổng ô liên minh đang có.\nVí dụ: giá gốc 100, số này 2, đang có 50 ô → 100 + 2×50 = 200.", label: Giá mua ô đất hoà bình - cộng thêm mỗi ô liên minh đang có, type: number, min: 0, file: plugins/DuckyMoMoCore/config.yml, path: peace-alliance.plot-price-per-plot,

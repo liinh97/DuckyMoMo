@@ -566,8 +566,8 @@ chapters:
     &0Thị trưởng gõ:
     &1/hoabinh vao&0 · &1/hoabinh roi
     &4Lưu ý:
-    &0- Thị trấn phải chạm đất&r&0 liên minh.
-    &0- Vào: chờ 2 ngày&r&0 mới được bảo vệ.
+    &0- Thị trấn ở gần đất liên minh (cách tối đa 8 ô = 128 block). Vào rồi &1/t claim&0 nối đất sang.
+    &0- Vào: đất nối liền + chờ 2 ngày&r&0 mới được bảo vệ.
     &0- Rời: mất bảo vệ ngay, 14 ngày&r&0 mới vào lại.
   - |-
     &2Quyền lợi hoà bình

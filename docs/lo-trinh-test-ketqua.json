@@ -235,9 +235,9 @@
   "tt": "ok"
  },
  "h1": {
-  "ghi_chu": "Claude tự test (tools/bottest/h-hoabinh.js): KHÔNG THỊ TRẤN NÀO VÀO ĐƯỢC LIÊN MINH. /hoabinh vao bắt đất thị trấn phải chạm đất liên minh, nhưng: (1) vòng spawn 300 block nằm gọn trong đất kinh đô (đất kinh đô ra tới ~310 block) nên lối 'lập thị trấn sát kinh đô tự vào liên minh' không bao giờ dùng được; (2) ngoài vòng, Towny cấm đất cách thị trấn khác dưới 5 ô (min_plot_distance_from_town_plot 5) -> lập thị trấn ở ô kề kinh đô báo 'Khu vực này quá gần với diện-tích của thị trấn khác'. Chờ bạn chọn cách sửa (xem câu hỏi). Phần chờ hiệu lực / rời / vào lại chặn 14 ngày chưa thử được vì không vào được.",
-  "luc": 1792580935860,
-  "tt": "err"
+  "ghi_chu": "ĐÃ SỬA 21/10 (theo lựa chọn của bạn: cho vào khi ở gần). Trước: không thị trấn nào vào được (bắt chạm đất, mà Towny cấm đất cách thị trấn khác dưới 5 ô). Giờ: thị trấn cách đất liên minh tối đa 8 ô (Cài đặt › Liên minh Hoà Bình) được /hoabinh vao; vào rồi cùng quốc gia nên chiếm được đất sát; hoà bình chỉ bật khi đất nối liền tới kinh đô + đủ ngày chờ. Claude tự test bằng bot (tools/bottest/h1-vao.js, tạm đặt chờ 0 ngày): lập ThuTranH cách mép kinh đô 6 ô -> /hoabinh vao báo 'Đất chưa nối liền...', danh sách ghi '(chờ nối đất)'; /t claim 5 ô nối sang -> 'đang chờ hoà bình' -> sau 1 phút '(đang hoà bình)'; /hoabinh roi 'mất hoà bình ngay, 14 ngày nữa mới vào lại'; vào lại bị chặn 'còn 14.0 ngày'. Đã xoá thị trấn thử. Lưu ý: rời liên minh rồi thì mấy ô đất nối sang vẫn giữ (nằm sát kinh đô).",
+  "luc": 1792583969917,
+  "tt": "ok"
  },
  "h2": {
   "ghi_chu": "Claude tự test: ThuK đánh ThuH (dân KinhDo) trong đất kinh đô ngoài vùng spawn: không mất máu, không gắn giao tranh; ngoài hoang thì đánh trúng (đối chứng). Phần shop rương miễn thuế chưa thử.",

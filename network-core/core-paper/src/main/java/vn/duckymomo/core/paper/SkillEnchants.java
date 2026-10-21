@@ -38,7 +38,7 @@ import java.util.concurrent.ConcurrentHashMap;
  *   hoi_mau     Hồi máu 1 tim mỗi cấp, hồi 20 giây (đầy máu không dùng)
  *   cau_lua     Cầu lửa: sát thương 3 + 2 × cấp, cháy người trúng, không đốt khối, hồi 3 giây
  *   bay         Bay lên: bay lơ lửng 1 + cấp giây rồi rơi chậm, hồi 15 giây
- *   dich_chuyen Dịch chuyển tức thì 2 + 2 × cấp khối về trước theo hướng ngang, dừng trước tường (không xuyên), hồi 8 giây
+ *   dich_chuyen Dịch chuyển tức thì 2 + 2 × cấp khối về trước theo hướng ngang, bám địa hình, dừng trước vách (không xuyên), hồi 8 giây
  *   dam_dat     Dậm đất: sát thương 2 + cấp, bán kính 2 + cấp, hất tung, hồi 12 giây
  *   cuong_no    Huyết chiến: mất 3 tim, +10 + 10 × cấp % sát thương trong 8 giây, hồi 30 giây (máu ≤ 7 thì không dùng)
  *   phong_bay   Phóng bay: gắn lên cánh elytra; đang mặc, chuột phải vào không khí là phóng lên và bay, hồi 10 giây
@@ -212,30 +212,36 @@ final class SkillEnchants implements Listener {
         return true;
     }
 
-    /** Điểm đến Dịch chuyển: đi theo hướng nhìn từng 0,5 khối, dừng ở chỗ trống xa nhất (đủ 2 khối cao) trước khi chạm khối đặc. */
+    /** Điểm đến Dịch chuyển: đi theo hướng ngang từng 0,5 khối, bám địa hình (mỗi bước lên tối đa 1 khối, xuống tối đa 2) như đi bộ;
+     *  gặp vách không có chỗ đứng đủ 2 khối cao thì dừng (không xuyên tường). Trả chỗ xa nhất đứng được, null nếu không đi được. */
     private static org.bukkit.Location blinkTarget(Player p, double dist) {
-        org.bukkit.Location eye = p.getEyeLocation();
-        // chỉ theo hướng ngang (nhìn chúc xuống thì không cắm xuống đất, nhìn lên thì không bay lên trời)
-        org.bukkit.util.Vector dir = eye.getDirection().setY(0);
+        org.bukkit.Location start = p.getLocation();
+        // chỉ theo hướng ngang (nhìn chúc xuống không cắm xuống đất, nhìn lên không bay lên trời)
+        org.bukkit.util.Vector dir = start.getDirection().setY(0);
         if (dir.lengthSquared() < 1e-4) {
             return null;
         }
         dir.normalize();
+        int y = start.getBlockY();
         org.bukkit.Location best = null;
         for (double d = 0.5; d <= dist; d += 0.5) {
-            org.bukkit.Location feet = p.getLocation().add(dir.clone().multiply(d));
-            org.bukkit.block.Block a = feet.getBlock(), b2 = a.getRelative(org.bukkit.block.BlockFace.UP);
-            if (!a.isPassable() || !b2.isPassable() || !eye.clone().add(dir.clone().multiply(d)).getBlock().isPassable()) {
-                break;   // không xuyên tường
+            org.bukkit.Location col = start.clone().add(dir.clone().multiply(d));
+            Integer ny = null;
+            for (int dy = 1; dy >= -2; dy--) {   // ưu tiên chỗ cao (leo dốc), rồi mới xuống
+                org.bukkit.block.Block feet = col.getWorld().getBlockAt(col.getBlockX(), y + dy, col.getBlockZ());
+                if (feet.isPassable() && feet.getRelative(org.bukkit.block.BlockFace.UP).isPassable()
+                        && !feet.getRelative(org.bukkit.block.BlockFace.DOWN).isPassable()) {
+                    ny = y + dy;
+                    break;
+                }
             }
-            best = feet;
+            if (ny == null) {
+                break;   // vách / tường: dừng, không xuyên
+            }
+            y = ny;
+            best = new org.bukkit.Location(col.getWorld(), col.getX(), y, col.getZ(), start.getYaw(), start.getPitch());
         }
-        if (best == null || best.distanceSquared(p.getLocation()) < 1) {
-            return null;
-        }
-        best.setYaw(p.getLocation().getYaw());
-        best.setPitch(p.getLocation().getPitch());
-        return best;
+        return best == null || best.distanceSquared(start) < 1 ? null : best;
     }
 
     @EventHandler(priority = EventPriority.HIGH)

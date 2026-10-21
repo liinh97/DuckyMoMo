@@ -8,6 +8,7 @@ import com.palmergames.bukkit.towny.event.NewTownEvent;
 import com.palmergames.bukkit.towny.event.TownBlockClaimCostCalculationEvent;
 import com.palmergames.bukkit.towny.event.TownPreClaimEvent;
 import com.palmergames.bukkit.towny.event.TownUpkeepCalculationEvent;
+import com.palmergames.bukkit.towny.event.NationUpkeepCalculationEvent;
 import com.palmergames.bukkit.towny.event.town.toggle.TownToggleNeutralEvent;
 import com.palmergames.bukkit.towny.event.town.toggle.TownTogglePVPEvent;
 import com.palmergames.bukkit.towny.object.Nation;
@@ -363,6 +364,14 @@ final class PeaceAlliance implements Listener {
             e.setUpkeep(0);
         } else if (isMember(t)) {
             e.setUpkeep(e.getUpkeep() + feePerPlot * t.getNumTownBlocks());
+        }
+    }
+
+    /** Quốc gia Liên minh Hoà Bình không có dân tự đóng phí: miễn phí duy trì quốc gia (21/10, không thì Towny xoá liên minh khi hết quỹ). */
+    @EventHandler
+    public void onNationUpkeep(NationUpkeepCalculationEvent e) {
+        if (e.getNation() != null && e.getNation().getName().equalsIgnoreCase(nationName)) {
+            e.setUpkeep(0);
         }
     }
 

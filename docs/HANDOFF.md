@@ -65,6 +65,12 @@ Sảnh (lobby) chưa restart từ lâu nhưng không bật các module này; res
   chính mình (Linh gõ /pay Linh 10000 tưởng lỗi: trừ rồi cộng lại); jar đã build, CHƯA nạp (cần restart banghoi).
   Lưu ý: Spiget luôn lấy bản MỚI NHẤT (không ghim) — nếu một ngày Jobs/CMILib mới làm lỗi, ghim lại bằng link tải cụ thể.
 
+### Liên minh Hoà Bình ĐÃ LẬP (21/10 13:16)
+- Linh /dmm hoabinh setup tạo KinhDo, nhưng bước lập quốc gia bị TownRules chặn ("cần 3 dân hoạt động") -> đã miễn cho đúng kinh đô + tên liên minh,
+  lập lại bằng console: townyadmin nation new LienMinhHoaBinh KinhDo; KinhDo 1.521 ô (claim 19), setpeaceful true.
+- Phí duy trì quốc gia 300/ngày: đã nạp 300.000 xu vào quỹ liên minh để an toàn; code miễn phí duy trì quốc gia (onNationUpkeep) đã build,
+  CHƯA nạp (cần restart banghoi). Thị trấn KinhDo vốn được miễn phí duy trì.
+
 ### ⚠ KHI MỞ SERVER CHÍNH THỨC: trả lại thời hạn đăng nhập (21/10 đặt 30 ngày cho giai đoạn test)
 - Trong game (AuthMe, nhớ phiên theo IP): Cài đặt › Toàn mạng › Đăng nhập › Thời hạn phiên = 60 (phút) (đang 43200).
 - Trang Cài đặt (admin): panel/app.py SESSION_HOURS mặc định 720 -> 12 (hoặc PANEL_SESSION_HOURS=12 trong .env).

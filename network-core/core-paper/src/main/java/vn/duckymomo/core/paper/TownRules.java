@@ -147,6 +147,10 @@ final class TownRules implements Listener {
         if (bypass(mayor)) {
             return;
         }
+        // Kinh đô của server (thị trưởng NPC, không có dân) lập Liên minh Hoà Bình: không cần dân hoạt động (21/10: /dmm hoabinh setup bị chặn ở đây)
+        if (peace != null && t.getName().equalsIgnoreCase(peace.capitalName()) && e.getNationName().equalsIgnoreCase(peace.nationName())) {
+            return;
+        }
         long active = t.getResidents().stream().filter(this::isActiveMember).count();
         if (active < nationMinActive) {
             e.setCancelled(true);

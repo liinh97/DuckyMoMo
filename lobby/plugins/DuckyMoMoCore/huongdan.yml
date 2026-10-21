@@ -150,7 +150,8 @@ menu:
     - "/choden dat <số> <giá>|đặt đơn thu mua"
     - "/choden cuatoi|đồ bạn đang treo"
     - "/trade <người>|đổi đồ an toàn"
-    - "/qs|shop rương của bạn"
+    - "/qs create <giá>|nhìn rương, tạo shop món đang cầm"
+    - "/qs find <món>|tìm shop rương"
     - "/shopsearch <món>|tìm shop"
     ghi: "Chợ đen: bán lẻ, xem hàng cả server (ở kinh đô). Shop rương: cửa hàng cố định ở thị trấn bạn, bán cả rương, không hết hạn. Cửa hàng Kinh Đô: NPC ở spawn."
   - slot: 21
@@ -737,11 +738,20 @@ chapters:
     &0Hai bên bỏ đồ/tiền vào bảng, cả hai cùng bấm đồng ý&r&0 mới đổi.
     &4Đừng đưa đồ trước "tin tưởng": admin không trả lại đồ bị lừa ngoài /trade.
   - |-
-    &6Shop rương
-    &0Đặt rương, cầm món muốn bán, bấm trái&r&0 vào rương, gõ giá vào chat.
-    &1/qs price <giá> &0đổi giá (nhìn rương)
-    &1/qs buy&0 · &1/qs sell &0bán ra / thu mua
+    &6Shop rương: tạo shop
+    &01. Đặt rương ở đất của bạn (chế độ sinh tồn).
+    &02. Cầm món muốn bán, nhìn vào rương, gõ:
+    &1/qs create <giá>
+    &8Vd: /qs create 5 (5 xu mỗi món)
+    &03. Bỏ hàng vào rương. Hết hàng thì người mua được báo.
+  - |-
+    &6Shop rương: sửa shop
+    &0Nhìn vào shop rồi gõ:
+    &1/qs price <giá> &0đổi giá
+    &1/qs sell &0shop bán ra (mặc định)
+    &1/qs buy &0shop thu mua (người khác bán cho bạn)
     &1/qs remove &0dỡ shop
+    &1/qs find <món> &0tìm shop gần nhất
   - |-
     &6Shop rương (tiếp)
     &0Tối đa 10 shop (Thương Hội nhiều hơn). Người khác mua được khi bạn offline.

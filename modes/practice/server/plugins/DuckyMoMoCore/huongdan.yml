@@ -153,7 +153,7 @@ menu:
     - "/qs create <giá>|nhìn rương, tạo shop món đang cầm"
     - "/qs find <món>|tìm shop rương"
     - "/shopsearch <món>|tìm shop"
-    ghi: "Chợ đen: bán lẻ, xem hàng cả server (ở kinh đô). Shop rương: cửa hàng cố định ở thị trấn bạn, bán cả rương, không hết hạn. Cửa hàng Kinh Đô: NPC ở spawn."
+    ghi: "Chợ đen: bán lẻ, xem hàng cả server, dùng ở đâu cũng được. Shop rương: cửa hàng cố định ở thị trấn bạn, bán cả rương, không hết hạn. Cửa hàng Kinh Đô: NPC ở spawn."
   - slot: 21
     icon: CRAFTING_TABLE
     ten: "Chế tạo"
@@ -557,7 +557,6 @@ chapters:
     &0- Rời: mất bảo vệ ngay, 14 ngày&r&0 mới vào lại.
   - |-
     &2Quyền lợi hoà bình
-    &0Chợ đen &1/choden&0 chỉ dùng trong đất hoà bình.
     &0Bán &1/sell&0 ở kinh đô được +10%&r&0.
     &0Shop rương trong đất hoà bình miễn thuế&r&0 (ngoài: 5%).
     &0Có công thành gần nhà sẽ được báo trước 2 ngày: hãy di tản khỏi vùng vây.
@@ -764,7 +763,7 @@ chapters:
     &8Vd: /choden ban 16 80 (16 món, cả lô 80 xu); bỏ số = cả chồng
     &1/choden cuatoi &0đồ đang treo
     &1/choden hethan &0lấy lại đồ hết hạn
-    &4Chỉ mở trong đất hoà bình&0 (kinh đô, thị trấn hoà bình).
+    &8Chợ đen: dùng ở đâu cũng được.
   - |-
     &6Dân làng bán hàng
     &0NPC dân làng ở spawn: bấm chuột phải để mua/bán như dân làng thường.

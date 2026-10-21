@@ -516,7 +516,7 @@ peace_fee: 1.5
 peace_sell_bonus: 10.0
 peace_tax_inside: 0
 peace_tax_outside: 0.05
-peace_auction_only: true
+peace_auction_only: false
 peace_warn_days: 2
 peace_remind: [60, 10]
 council_min_active: 3

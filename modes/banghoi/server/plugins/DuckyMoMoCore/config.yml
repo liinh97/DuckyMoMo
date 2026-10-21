@@ -322,7 +322,7 @@ peace-alliance:
   sell-bonus-percent: 10.0
   shop-tax-inside: 0
   shop-tax-outside: 0.05
-  auction-only-in-peace: true
+  auction-only-in-peace: false   # 21/10: Chợ đen "phi chính phủ", mở ở mọi nơi
   jobs-join-only-in-peace: true   # 21/10: vào nghề (Jobs) chỉ trong đất liên minh; dân hoà bình ở đâu cũng được
   auction-commands: [zauctionhouse, ah, hdv, auction, zauction]
   siege-warn-days-before: 2

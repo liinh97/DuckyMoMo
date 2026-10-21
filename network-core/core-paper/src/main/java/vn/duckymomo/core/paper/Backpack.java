@@ -62,7 +62,7 @@ final class Backpack implements Listener {
         dir.mkdirs();
     }
 
-    private static final class Holder implements InventoryHolder {
+    static final class Holder implements InventoryHolder {   // ItemInspect: balo tính là kho đồ
         UUID owner;
         int index;
         int hidden;   // số món nằm ở ô bị khoá (rank giảm số ô): vẫn giữ trong file

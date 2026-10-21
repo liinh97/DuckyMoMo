@@ -38,7 +38,7 @@ import java.util.concurrent.ConcurrentHashMap;
  *   hoi_mau     Hồi máu 1 tim mỗi cấp, hồi 20 giây (đầy máu không dùng)
  *   cau_lua     Cầu lửa: sát thương 3 + 2 × cấp, cháy người trúng, không đốt khối, hồi 3 giây
  *   bay         Bay lên: bay lơ lửng 1 + cấp giây rồi rơi chậm, hồi 15 giây
- *   dich_chuyen Dịch chuyển tức thì 2 + 2 × cấp khối về trước, dừng trước tường (không xuyên), hồi 8 giây
+ *   dich_chuyen Dịch chuyển tức thì 2 + 2 × cấp khối về trước theo hướng ngang, dừng trước tường (không xuyên), hồi 8 giây
  *   dam_dat     Dậm đất: sát thương 2 + cấp, bán kính 2 + cấp, hất tung, hồi 12 giây
  *   cuong_no    Huyết chiến: mất 3 tim, +10 + 10 × cấp % sát thương trong 8 giây, hồi 30 giây (máu ≤ 7 thì không dùng)
  *   phong_bay   Phóng bay: gắn lên cánh elytra; đang mặc, chuột phải vào không khí là phóng lên và bay, hồi 10 giây
@@ -215,7 +215,12 @@ final class SkillEnchants implements Listener {
     /** Điểm đến Dịch chuyển: đi theo hướng nhìn từng 0,5 khối, dừng ở chỗ trống xa nhất (đủ 2 khối cao) trước khi chạm khối đặc. */
     private static org.bukkit.Location blinkTarget(Player p, double dist) {
         org.bukkit.Location eye = p.getEyeLocation();
-        org.bukkit.util.Vector dir = eye.getDirection().normalize();
+        // chỉ theo hướng ngang (nhìn chúc xuống thì không cắm xuống đất, nhìn lên thì không bay lên trời)
+        org.bukkit.util.Vector dir = eye.getDirection().setY(0);
+        if (dir.lengthSquared() < 1e-4) {
+            return null;
+        }
+        dir.normalize();
         org.bukkit.Location best = null;
         for (double d = 0.5; d <= dist; d += 0.5) {
             org.bukkit.Location feet = p.getLocation().add(dir.clone().multiply(d));

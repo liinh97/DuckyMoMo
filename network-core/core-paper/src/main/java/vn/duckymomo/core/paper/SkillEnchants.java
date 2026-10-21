@@ -40,7 +40,7 @@ import java.util.concurrent.ConcurrentHashMap;
  *   bay         Bay lên: bay lơ lửng 1 + cấp giây rồi rơi chậm, hồi 15 giây
  *   dich_chuyen Dịch chuyển tức thì 2 + 2 × cấp khối về trước, dừng trước tường (không xuyên), hồi 8 giây
  *   dam_dat     Dậm đất: sát thương 2 + cấp, bán kính 2 + cấp, hất tung, hồi 12 giây
- *   cuong_no    Cuồng nộ: mất 3 tim, +10 + 10 × cấp % sát thương trong 8 giây, hồi 30 giây (máu ≤ 7 thì không dùng)
+ *   cuong_no    Huyết chiến: mất 3 tim, +10 + 10 × cấp % sát thương trong 8 giây, hồi 30 giây (máu ≤ 7 thì không dùng)
  *   phong_bay   Phóng bay: gắn lên cánh elytra; đang mặc, chuột phải vào không khí là phóng lên và bay, hồi 10 giây
  * Bay lên, Dịch chuyển, Phóng bay tắt trong vùng vây lúc có phiên đánh. Sát thương đi qua EntityDamageByEntityEvent nên Towny / PvP /
  * vùng an toàn vẫn chặn như đòn thường. Hồi chiêu theo người.
@@ -68,7 +68,7 @@ final class SkillEnchants implements Listener {
         NAMES.put("bay", new String[]{"Bay lên", "Ascend"});
         NAMES.put("dich_chuyen", new String[]{"Dịch chuyển", "Transmission"});
         NAMES.put("dam_dat", new String[]{"Dậm đất", "Rumble"});
-        NAMES.put("cuong_no", new String[]{"Cuồng nộ", "Soul Storm"});
+        NAMES.put("cuong_no", new String[]{"Huyết chiến", "Soul Storm"});   // "Cuồng nộ" trùng tên phù phép Rage của CE
         NAMES.put("phong_bay", new String[]{"Phóng bay", "Slingshot"});
     }
 
@@ -156,14 +156,14 @@ final class SkillEnchants implements Listener {
             }
             case "cuong_no" -> {
                 if (p.getHealth() <= 7) {
-                    p.sendActionBar(LEGACY.deserialize("&cMáu quá thấp để Cuồng nộ (cần hơn 3,5 tim)"));
+                    p.sendActionBar(LEGACY.deserialize("&cMáu quá thấp để Huyết chiến (cần hơn 3,5 tim)"));
                     return false;
                 }
                 p.setHealth(p.getHealth() - 6);
                 RAGE.put(p.getUniqueId(), new double[]{now + 8000, 1 + (value <= 0 ? 20 : value) / 100.0});
                 p.getWorld().spawnParticle(Particle.ANGRY_VILLAGER, p.getLocation().add(0, 2, 0), 6, 0.4, 0.3, 0.4, 0);
                 p.getWorld().playSound(p.getLocation(), Sound.ENTITY_RAVAGER_ROAR, 0.6f, 1.2f);
-                p.sendActionBar(LEGACY.deserialize("&cCuồng nộ: &f+" + Math.round(value <= 0 ? 20 : value) + "% sát thương trong 8 giây"));
+                p.sendActionBar(LEGACY.deserialize("&cHuyết chiến: &f+" + Math.round(value <= 0 ? 20 : value) + "% sát thương trong 8 giây"));
             }
             case "phong_bay" -> {
                 ItemStack chest = p.getInventory().getChestplate();

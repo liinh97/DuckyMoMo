@@ -339,13 +339,13 @@ function short(k) { return String(k).replace(/^minecraft:/, ""); }
 const isCe = (k) => String(k).startsWith("ce:");
 // Phù phép riêng của server (SkillEnchants.java): mã web "dmm:<mã>", chuột phải dùng kỹ năng, cấp I–III
 const DMM_ENCH = {
-  luot: { vi: "Lướt", en: "Dash", desc: "Chuột phải: lướt về phía trước (lực tăng theo cấp, hồi 4 giây)" },
-  hoi_mau: { vi: "Hồi máu", en: "Heal", desc: "Chuột phải: hồi 1 tim mỗi cấp (hồi 20 giây; đầy máu thì không dùng)" },
-  cau_lua: { vi: "Cầu lửa", en: "Fire", desc: "Chuột phải: bắn cầu lửa, sát thương 5 / 7 / 9 theo cấp, làm cháy người trúng, không đốt khối (hồi 3 giây)" },
-  bay: { vi: "Bay lên", en: "Ascend", desc: "Chuột phải: bay lơ lửng 2 / 3 / 4 giây rồi rơi chậm, không mất máu (hồi 15 giây; tắt trong vùng vây đang đánh)" },
-  dich_chuyen: { vi: "Dịch chuyển", en: "Transmission Teleport Blink", desc: "Chuột phải: dịch chuyển tức thì 4 / 6 / 8 khối về trước, không xuyên tường (hồi 8 giây; tắt trong vùng vây đang đánh)" },
+  luot: { vi: "Lướt", en: "Dash", kw: "charge launch", desc: "Chuột phải: lướt về phía trước (lực tăng theo cấp, hồi 4 giây)" },
+  hoi_mau: { vi: "Hồi máu", en: "Heal", kw: "vitality", desc: "Chuột phải: hồi 1 tim mỗi cấp (hồi 20 giây; đầy máu thì không dùng)" },
+  cau_lua: { vi: "Cầu lửa", en: "Fire", kw: "fireball", desc: "Chuột phải: bắn cầu lửa, sát thương 5 / 7 / 9 theo cấp, làm cháy người trúng, không đốt khối (hồi 3 giây)" },
+  bay: { vi: "Bay lên", en: "Ascend", kw: "levitate", desc: "Chuột phải: bay lơ lửng 2 / 3 / 4 giây rồi rơi chậm, không mất máu (hồi 15 giây; tắt trong vùng vây đang đánh)" },
+  dich_chuyen: { vi: "Dịch chuyển", en: "Transmission", kw: "teleport blink tele", desc: "Chuột phải: dịch chuyển tức thì 4 / 6 / 8 khối về trước, không xuyên tường (hồi 8 giây; tắt trong vùng vây đang đánh)" },
   dam_dat: { vi: "Dậm đất", en: "Rumble", desc: "Chuột phải: gây 3 / 4 / 5 sát thương và hất tung sinh vật trong bán kính 3 / 4 / 5 khối (hồi 12 giây)" },
-  cuong_no: { vi: "Cuồng nộ", en: "Soul Storm Rage", desc: "Chuột phải: mất 3 tim, +20 / 30 / 40% sát thương trong 8 giây (hồi 30 giây; dưới 3,5 tim thì không dùng được)" },
+  cuong_no: { vi: "Huyết chiến", en: "Soul Storm", kw: "rage cuong no buff", desc: "Chuột phải: mất 3 tim, +20 / 30 / 40% sát thương trong 8 giây (hồi 30 giây; dưới 3,5 tim thì không dùng được)" },
   phong_bay: { vi: "Phóng bay", en: "Slingshot", desc: "Gắn lên cánh elytra: đang mặc cánh, chuột phải vào không khí là phóng lên và bay (hồi 10 giây; tắt trong vùng vây đang đánh)" }};
 const isDmm = (k) => String(k).startsWith("dmm:");
 const dmmInfo = (k) => DMM_ENCH[String(k).slice(4)] || null;
@@ -568,7 +568,7 @@ function fits(k, mat) {
 function enchItems(q) {
   const mat = curMat(), all = $("enchAll") && $("enchAll").checked, f = fold(q);
   return enchKeys().filter(k => all || fits(k, mat))
-    .filter(k => !f || fold(enchLabel(k) + " " + k + " " + (isCe(k) || isDmm(k) ? descOf(k) : "")).includes(f))
+    .filter(k => !f || fold(enchLabel(k) + " " + k + " " + (isCe(k) || isDmm(k) ? descOf(k) : "") + " " + ((dmmInfo(k) || {}).kw || "")).includes(f))
     .sort((a, b) => (fits(b, mat) - fits(a, mat)) || enchName(a).localeCompare(enchName(b), "vi"))
     .map(k => ({ value: k, label: enchLabel(k), sub: `tối đa ${enchMax(k) || "?"} · ${descOf(k)}${fits(k, mat) ? "" : " · KHÔNG hợp loại đồ này"}`, dim: !fits(k, mat) }));
 }

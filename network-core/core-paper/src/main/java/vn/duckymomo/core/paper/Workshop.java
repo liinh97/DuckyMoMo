@@ -1323,7 +1323,9 @@ final class Workshop implements Listener {
             p.sendMessage(c("&cMón này không còn trong thư viện đồ, báo admin."));
             return;
         }
-        double cost = p.hasPermission("duckymomo.xuong.giam") ? Math.round(r.cost() * 0.95) : r.cost();   // đặc quyền Thăng Cấp: giảm 5%
+        // đặc quyền Thăng Cấp: giảm 5% mỗi bậc (duckymomo.xuong.giam, .giam.2)
+        double cost = p.hasPermission("duckymomo.xuong.giam.2") ? Math.round(r.cost() * 0.90)
+                : p.hasPermission("duckymomo.xuong.giam") ? Math.round(r.cost() * 0.95) : r.cost();
         if (cost > 0 && (!VaultEconomy.available() || !VaultEconomy.withdraw(p, cost))) {
             p.sendMessage(c("&cKhông đủ " + money(cost) + "."));
             return;

@@ -248,6 +248,9 @@ final class PetCapture implements Listener {
         lastTry.put(p.getUniqueId(), now);
         target.getPersistentDataContainer().set(triesKey, PersistentDataType.INTEGER, used + 1);
         int ch = chanceFor(type);
+        if (p.hasPermission("duckymomo.pet.batgioi")) {
+            ch = clamp(ch + 5);   // đặc quyền Thăng Cấp
+        }
         ItemStack off = p.getInventory().getItemInOffHand();
         if (isCharm(off)) {
             off.setAmount(off.getAmount() - 1);

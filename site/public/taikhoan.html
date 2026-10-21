@@ -338,7 +338,7 @@ function render(){
     ${(h.cotruyen || []).map(c => stat("📜 " + esc(c.ten), c.xong ? "Hoàn thành ✓" : c.buoc ? "Bước " + c.buoc + "/" + c.tong : "Chưa bắt đầu", esc(c.viec || "Chờ chương tiếp theo"))).join("")}
     ${(h.lukhach || []).length ? stat("🧭 Lữ khách", h.lukhach.filter(v => v.trang_thai === "xong").length + "/" + h.lukhach.length + " đã kể", h.lukhach.map(v => esc(v.ten) + ": " + ({xong: "đã kể ✓", qua: "đã qua cổng, về kể đi", nghe: "đã nghe chuyện"}[v.trang_thai] || "chưa gặp")).join(" · ") + " · /lukhach") : ""}
     ${(h.kynang || []).length ? stat("⚒ Kỹ năng nghề", "Tổng cấp " + h.kynang.reduce((n, k) => n + k.cap, 0), h.kynang.map(k => esc(k.ten) + " " + k.cap + "/" + k.tran).join(" · ") + " · /skills") : ""}
-    ${h.capdo ? stat("⬆️ Thăng Cấp", "Cấp " + h.capdo.cap + "/" + h.capdo.toi_da, h.capdo.diem + " điểm đặc quyền · " + h.capdo.ha + " điểm hạ gục · /capdo") : ""}
+    ${h.capdo ? stat("⬆️ Thăng Cấp", "Cấp " + h.capdo.cap + "/" + h.capdo.toi_da, [["mau", "Máu"], ["sucmanh", "Sức mạnh"], ["benbi", "Bền bỉ"], ["nhanhnhen", "Nhanh nhẹn"]].filter(([k]) => (h.capdo.thuoctinh || {})[k]).map(([k, n]) => n + " " + h.capdo.thuoctinh[k]).concat([h.capdo.diem + " điểm chưa cộng", h.capdo.ha + " điểm hạ gục", "/capdo"]).join(" · ")) : ""}
     ${stat("⚔️ Chiến Thần", ct.diem || 0, ct.hang ? "Hạng " + ct.hang + " mùa này" : "Chưa có điểm")}
     ${stat("⚔️ Giết / Chết", ((h.pvp || {}).giet || 0) + " / " + ((h.pvp || {}).chet || 0), "KDA " + ((h.pvp || {}).kda || 0) + " · Bang Hội Chiến")}
     ${stat("🌦️ Mùa", h.mua ? esc(h.mua.ten) : "–", h.mua ? (h.mua.con != null ? "Còn " + h.mua.con + " ngày · gõ /mua xem cây, cá" : "Admin đang thử mùa") : "")}

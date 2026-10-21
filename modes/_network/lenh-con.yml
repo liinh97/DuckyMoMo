@@ -491,7 +491,7 @@ groups:
       - ["thanhtich", "Xem sổ thành tích", Mọi người]
       - ["khobau", "Cách dò và đào kho báu, các bậc kho báu", Mọi người]
       - ["khobau give <người>", "Phát một bản đồ kho báu", Chỉ admin]
-      - ["capdo", "Thăng Cấp: xem điều kiện lên cấp, cửa hàng đặc quyền, xếp hạng", Mọi người]
+      - ["capdo", "Thăng Cấp: điều kiện lên cấp, cộng điểm thuộc tính, mua đặc quyền, xếp hạng", Mọi người]
       - ["capdo len", "Lên cấp (khi đủ điều kiện)", Mọi người]
       - ["capdo top", "Xếp hạng cấp cao nhất", Mọi người]
       - ["capdo dat <tên> <cấp>", "Đặt cấp cho người chơi", Chỉ admin]

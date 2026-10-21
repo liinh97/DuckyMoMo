@@ -483,8 +483,12 @@ def profile(perms):
     luc = core.get("level-up") or {}
     if luc.get("enabled"):
         lv = (safe_yaml(DMM / "capdo.yml").get("nguoi") or {}).get(uuid) or {}
-        out["capdo"] = {"cap": int(lv.get("cap", 0) or 0), "toi_da": int(luc.get("max-level", 100) or 100), "diem": int(lv.get("diem", 0) or 0),
-                        "ha": int(lv.get("ha", 0) or 0), "da_mua": len(lv.get("mua") or [])}
+        try:
+            js = (json.loads((DMM / "capdo.json").read_text(encoding="utf-8")).get("nguoi") or {}).get(uuid) or {}
+        except (OSError, ValueError):
+            js = {}
+        out["capdo"] = {"cap": int(lv.get("cap", 0) or 0), "toi_da": int(luc.get("max-level", 100) or 100), "diem": int(js.get("diem", 0) or 0),
+                        "ha": int(lv.get("ha", 0) or 0), "thuoctinh": lv.get("thuoctinh") or {}, "da_mua": sum(int(v or 0) for v in (lv.get("dacquyen") or {}).values())}
     dgc = core.get("dungeon-gate") or {}
     if dgc.get("enabled"):
         dg = safe_yaml(DMM / "dungeon.yml")

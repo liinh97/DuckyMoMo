@@ -225,6 +225,7 @@ bounty:
 sell-limit:
   enabled: true
   daily: 8000
+  extra-per-perk: 1000   # đặc quyền Thăng Cấp duckymomo.sell.them.<n>: +n × số này
 
 # Khai hoang vùng mới (/khaihoang, ý từ "Khai mở thứ nguyên" của UniMC). Quỹ chung tăng khi người chơi bán /sell (sell-percent % tiền bán,
 # người bán KHÔNG mất gì) và khi góp /khaihoang gop <xu> (tiền bị rút). Đủ mốc thì chạy commands (console) theo thứ tự goals.
@@ -938,33 +939,77 @@ achievements:
     cgh: {name: "Người Mở Cổng", desc: "Là người đầu tiên tìm ra một Cổng Hoang", type: conghoang, target: 1, rewards: [xu 4500, "danhhieu mocong"]}
     dga: {name: "Kẻ Tìm Lối", desc: "Tìm ra dungeon ẩn", type: dungeonan, target: 1, rewards: [xu 4500, "danhhieu timan"]}
 
-# Thăng Cấp (/capdo; ý từ Prestige của UniMC): cấp riêng của server. Lên cấp N cần: xu (trả khi lên) = money-base × N^money-exponent,
-# giờ chơi thật của mùa >= hours-per-level × N, điểm hạ gục >= kill-points-per-level × N (quái +mob-points, người +player-points).
-# Mỗi cấp +points-per-level điểm đổi đặc quyền (CHỈ tiện ích / trang trí). keep-on-new-season: false = mùa mới làm lại từ cấp 0.
+# Thăng Cấp (/capdo; làm lại 21/10 theo hướng cày cuốc): cấp riêng của server. Lên cấp cần xu (trả khi lên), tổng giờ chơi thật của mùa,
+# tổng điểm hạ gục (quái +mob-points, người +player-points), đều tăng dần theo cấp. Mỗi cấp được điểm thuộc tính (Máu, Sức mạnh, Bền bỉ,
+# Nhanh nhẹn; tắt trong Đấu Trường). Đặc quyền mua bằng xu + đủ cấp. keep-on-new-season: false = mùa mới làm lại từ cấp 0.
 # Trang Cài đặt › Kinh tế › Thăng Cấp.
 level-up:
   enabled: true
   max-level: 100
+  # Lên cấp N: trả money-base × N^money-exponent xu; TỔNG giờ chơi thật của mùa ≥ hours-base × N^hours-exponent;
+  # TỔNG điểm hạ gục ≥ kill-base × N^kill-exponent. Mặc định: cấp 10 = 4 giờ, 25 = 25 giờ, 50 = 100 giờ, 100 = 400 giờ.
   money-base: 500
-  money-exponent: 1.25
-  hours-per-level: 0.5
-  kill-points-per-level: 20
+  money-exponent: 0.6
+  hours-base: 0.04
+  hours-exponent: 2
+  kill-base: 2
+  kill-exponent: 2
   mob-points: 1
   player-points: 10
   player-cooldown-minutes: 10   # giết lại cùng một người trong ngần này phút không tính điểm
+  # Điểm thuộc tính: mỗi cấp + mỗi mốc (milestone-every cấp) thêm milestone-points; mốc còn có quà milestone-rewards.
   points-per-level: 1
   milestone-every: 10
+  milestone-points: 1
   milestone-rewards: ["xu 5000", "vat EXPERIENCE_BOTTLE 16"]
+  # 4 thuộc tính, mỗi cái attribute-max-tier bậc, bậc k tốn k điểm (10 bậc = 55 điểm; cấp 100 có 110 điểm = max 2 thuộc tính).
+  # Mỗi bậc: mau = máu (1 = nửa tim), sucmanh = % sát thương gây ra, benbi = % sát thương nhận giảm, nhanhnhen = % tốc chạy.
+  attribute-max-tier: 10
+  attributes: {mau: 1, sucmanh: 1, benbi: 1, nhanhnhen: 1}
+  attribute-off-worlds: []      # thế giới tắt thuộc tính (Đấu Trường luôn tắt)
+  respec-cost: 20000            # xu tẩy điểm (0 = miễn phí, -1 = không cho)
   keep-on-new-season: false
+  # Đặc quyền: mua bằng XU, cần đủ cấp, mua lần lượt từng bậc. Không trùng rank ủng hộ / danh phận.
   shop:
-    craft: {name: "Bàn chế tạo mang theo (/craft)", icon: CRAFTING_TABLE, cost: 3, perms: [essentials.workbench], description: ["Mở bàn chế tạo ở bất cứ đâu"]}
-    disposal: {name: "Thùng rác (/disposal)", icon: CAULDRON, cost: 2, perms: [essentials.disposal], description: ["Vứt đồ không cần nhanh gọn"]}
-    anvil: {name: "Đe mang theo (/anvil)", icon: ANVIL, cost: 5, perms: [essentials.anvil], description: ["Mở đe ở bất cứ đâu"]}
-    hat: {name: "Đội đồ lên đầu (/hat)", icon: LEATHER_HELMET, cost: 3, perms: [essentials.hat], description: ["Đội khối / đồ bất kỳ lên đầu (trang trí)"]}
-    hat2: {name: "Thêm 1 hiệu ứng hạt", icon: BLAZE_POWDER, cost: 6, perms: [playerparticles.particles.max.2], description: ["Bật cùng lúc 2 hiệu ứng hạt (/pp)"]}
-    meo: {name: "Pet mèo trang trí", icon: COD, cost: 5, perms: ["pet.type.cat.*"], description: ["Gọi mèo đi theo (/pet), chỉ trang trí"]}
-    giamxuong: {name: "Giảm 5% giá Xưởng", icon: SMITHING_TABLE, cost: 8, perms: [duckymomo.xuong.giam], description: ["Chế đồ ở /xuong rẻ hơn 5%"]}
-    laoluyen: {name: "Danh hiệu Lão Luyện", icon: NAME_TAG, cost: 15, rewards: ["danhhieu laoluyen"], description: ["Danh hiệu riêng cho người cấp cao"]}
+    giamxuong:
+      name: "Giảm giá Xưởng"
+      icon: SMITHING_TABLE
+      description: ["Chế đồ ở /xuong rẻ hơn 5% mỗi bậc (tối đa 10%)"]
+      tiers:
+        - {level: 20, cost: 30000, perms: [duckymomo.xuong.giam]}
+        - {level: 50, cost: 120000, perms: [duckymomo.xuong.giam.2]}
+    banthem:
+      name: "Bán cho server nhiều hơn"
+      icon: HOPPER
+      description: ["+1.000 xu giới hạn bán cho server mỗi ngày, mỗi bậc"]
+      tiers:
+        - {level: 15, cost: 20000, perms: [duckymomo.sell.them.1]}
+        - {level: 35, cost: 60000, perms: [duckymomo.sell.them.2]}
+        - {level: 60, cost: 150000, perms: [duckymomo.sell.them.3]}
+    nghe:
+      name: "+10% kinh nghiệm nghề"
+      icon: IRON_PICKAXE
+      description: ["Nghề (/jobs) lên cấp nhanh hơn 10%"]
+      tiers:
+        - {level: 25, cost: 50000, perms: [jobs.boost.all.exp.0.1]}
+    kynang:
+      name: "+10% kinh nghiệm kỹ năng"
+      icon: ENCHANTED_BOOK
+      description: ["Kỹ năng (/skills) lên cấp nhanh hơn 10%"]
+      tiers:
+        - {level: 25, cost: 50000, perms: [auraskills.multiplier.10]}
+    batpet:
+      name: "+5% tỉ lệ bắt pet"
+      icon: LEAD
+      description: ["Mỗi lần quăng dây xích bắt pet dễ hơn 5%"]
+      tiers:
+        - {level: 30, cost: 60000, perms: [duckymomo.pet.batgioi]}
+    laoluyen:
+      name: "Danh hiệu Lão Luyện"
+      icon: NAME_TAG
+      description: ["Danh hiệu riêng cho người cấp cao"]
+      tiers:
+        - {level: 75, cost: 100000, rewards: ["danhhieu laoluyen"]}
 
 # Cổng Hoang (/conghoang): cổng dungeon ngụy trang xuất hiện dần trên bản đồ. Chỉ tự đặt khi đã mở mùa (leaderboard.season-start).
 # Trang Cài đặt > Thế giới > Cổng Hoang. Thị trấn có ô đất chứa cổng là chủ; chiếm được thị trấn là có cổng.

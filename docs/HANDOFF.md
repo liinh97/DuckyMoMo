@@ -11,8 +11,9 @@ Phiên tài khoản trước (sáng → chiều 21/10). Mọi thứ đã build +
 KHÔNG còn gì chờ restart. Chưa push (người dùng chưa bảo). Commit cuối: xem `git log`.
 
 ### Lộ trình test (QUAN TRỌNG khi đổi tài khoản)
-- Trang test: https://claude.ai/artifact/YY55Wn87HYuMzL898MT8a7 (thuộc tài khoản CŨ, tài khoản mới không sửa/đọc DB được).
-  Tài khoản mới: đăng lại từ `docs/lo-trinh-test.html` (Artifact publish, capabilities {"db": {}}, icon "checklist"), rồi nạp kết quả từ
+- Trang test HIỆN TẠI (tài khoản lần 5, đã nạp 53 kết quả cũ + cụm mới "Thăng Cấp" cd1–cd20): https://claude.ai/artifact/XNwzopyMJVbRoYasBw5XeU
+  Trang cũ YY55Wn87HYuMzL898MT8a7 thuộc tài khoản lần 4 (không dùng nữa). Chép kết quả mới về `docs/lo-trinh-test-ketqua.json` trước khi đổi tài khoản.
+  Đổi tài khoản lần nữa: đăng lại từ `docs/lo-trinh-test.html` (Artifact publish, capabilities {"db": {}}, icon "checklist"), rồi nạp kết quả từ
   `docs/lo-trinh-test-ketqua.json` vào collection `ketqua` (mỗi mục 1 doc {tt, ghi_chu, luc, sua?}; ArtifactData batch set).
 - Kết quả tới 21/10 chiều (đã chép vào json): 53/187 mục có kết quả: 52 đạt (cb1 cb3, v1–v5 v8–v12, m1–m9, r1–r9 r11, k1–k10 k12–k22),
   1 LỖI: r10 "Phong quân hàm như nào" (cần hướng dẫn/menu cho /n rank add, quân hàm, min-rank-hours).
@@ -43,7 +44,16 @@ KHÔNG còn gì chờ restart. Chưa push (người dùng chưa bảo). Commit c
 8. Khác: Thư viện đồ ô Mã tự sửa (iPhone tự viết hoa), PaySelfGuard chặn /pay cho chính mình, Towny phế tích (thị trấn xoá thành
    "Ruins" 24–72 giờ; xoá ngay: /townyadmin town <tên> delete rồi /confirm), lệnh admin xu: /eco give|take|set|reset <tên> <số>.
 
-### ĐANG LÀM DỞ: làm lại Thăng Cấp (/capdo) — người dùng đã CHỐT thiết kế, CHƯA viết code
+### Thăng Cấp (/capdo) ĐÃ LÀM LẠI (21/10 tối) — jar đã build, ⚠ CHƯA restart banghoi (Linh + ~b0ybn2013 online lúc build)
+Code: LevelUp.java viết lại (config level-up mới, data + repo đã ghi; settings.schema + settings.yml nhóm Thăng Cấp viết lại, không trùng khoá),
+SellLimit (duckymomo.sell.them.<n>, sell-limit.extra-per-perk), Workshop (giam / giam.2), PetCapture (duckymomo.pet.batgioi +5%).
+Thuộc tính = AttributeModifier TẠM (addTransientModifier, khoá capdo_mau / capdo_nhanh) nên cộng dồn với AuraSkills (AuraSkills dùng khoá riêng,
+force_base_health false); Sức mạnh/Bền bỉ qua sự kiện sát thương. Lần đầu chạy: migrate() gỡ quyền cửa hàng điểm cũ (phienban 2).
+Giá đặc quyền tự đề xuất (chờ người dùng duyệt): Xưởng cấp 20/30k + cấp 50/120k; bán thêm cấp 15/20k, 35/60k, 60/150k; nghề +10% và kỹ năng +10%
+cấp 25/50k mỗi cái; bắt pet cấp 30/60k; Lão Luyện cấp 75/100k; tẩy điểm 20.000 xu. Kill: 2 × N² (cấp 10 = 200). Chưa làm: +15% kinh nghiệm pet,
+pet hồi sinh nhanh. Web (site + panel) đã dựng lại. Việc tiếp: kiểm online RIÊNG → restart banghoi-1 → xem log "Thăng Cấp:" → test cụm cd.
+
+### (cũ) Thiết kế Thăng Cấp người dùng đã chốt
 Người dùng: "shop toàn lợi ích trùng rank/dân… lv up có điểm cộng máu, tốc độ, sức mạnh", "theo hướng cày cuốc", "chỉ max được 2 thuộc tính".
 - **Điểm thuộc tính**: 1 điểm/cấp + 1 điểm thưởng mỗi mốc 10 cấp = 110 điểm ở cấp 100 (max-level 100).
 - **4 thuộc tính, mỗi cái 10 bậc, bậc k tốn k điểm (max 1 thuộc tính = 55 điểm) => cấp 100 max đúng 2 thuộc tính**:

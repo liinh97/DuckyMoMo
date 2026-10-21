@@ -541,7 +541,9 @@ def api_info():
         "capdo": {"enabled": bool(get(core, "level-up.enabled", False)), "max": get(core, "level-up.max-level", 100),
                   "mob": get(core, "level-up.mob-points", 1), "player": get(core, "level-up.player-points", 10),
                   "giu": bool(get(core, "level-up.keep-on-new-season", False)), "top": core_json("capdo.json").get("top") or [],
-                  "shop": [strip_colors(str(p.get("name", k))) for k, p in (get(core, "level-up.shop", {}) or {}).items() if p.get("enabled", True) is not False]},
+                  "shop": [{"ten": strip_colors(str(p.get("name", k))),
+                            "bac": [{"cap": t.get("level", 0), "xu": t.get("cost", 0)} for t in (p.get("tiers") or []) if isinstance(t, dict)]}
+                           for k, p in (get(core, "level-up.shop", {}) or {}).items() if isinstance(p, dict) and p.get("enabled", True) is not False]},
         "wildgates": {"enabled": bool(get(core, "wild-gates.enabled", False)), "max": get(core, "wild-gates.max-gates", 6),
                       "days": get(core, "wild-gates.interval-days", 7), "grace": get(core, "wild-gates.grace-minutes", 30),
                       **core_json("conghoang.json")},

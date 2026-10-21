@@ -114,7 +114,7 @@ commands:
     description: "Bản đồ kho báu: cách dò, các bậc kho báu; admin: /khobau give <người>"
     aliases: [kho-bau, treasure]
   capdo:
-    description: "Thăng Cấp: điều kiện lên cấp (xu, giờ chơi, hạ gục), cửa hàng đặc quyền, xếp hạng; admin: /capdo dat <tên> <cấp>"
+    description: "Thăng Cấp: điều kiện lên cấp (xu, giờ chơi, hạ gục), điểm thuộc tính, đặc quyền mua bằng xu, xếp hạng; admin: /capdo dat <tên> <cấp>"
     aliases: [cap, prestige, thangcap]
   caidat:
     description: "Cài đặt cá nhân: bật/tắt chat chung, tin nhắn riêng, thông báo, bảng bên phải, TPA, nhắc nhở…"

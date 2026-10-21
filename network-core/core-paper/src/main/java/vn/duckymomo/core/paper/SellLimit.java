@@ -34,6 +34,7 @@ import java.util.UUID;
  * Bán cho người chơi (/choden, shop rương, /trade) KHÔNG tính.
  *
  * Cấu hình sell-limit: enabled, daily (xu/người/ngày; ngày theo giờ Việt Nam, mới lại lúc 0 giờ). Quyền bỏ qua: duckymomo.sell.khonggioihan.
+ * Đặc quyền Thăng Cấp: duckymomo.sell.them.<n> (n = 1…9) cộng thêm n × extra-per-perk (mặc định 1.000) xu/ngày, lấy n lớn nhất.
  * Đếm: số xu thật nhận được (UserBalanceUpdateEvent COMMAND_SELL ở MONITOR, đã gồm thưởng bán ở kinh đô) + record() từ Xưởng / Tinh Luyện.
  * Chặn TRƯỚC khi bán: ước lượng giá trị lần bán theo worth.yml (+ giá món Tinh Luyện); vượt phần còn lại thì không bán gì và báo còn bao nhiêu
  * (không bao giờ lấy đồ mà không trả tiền). Lưu: banchoserver.yml (chỉ giữ ngày hôm nay).
@@ -46,6 +47,7 @@ final class SellLimit implements Listener {
 
     private final JavaPlugin plugin;
     private final double daily;
+    private final double extraPerPerk;
     private final File file;
     private final File worthFile;
     private final Map<UUID, Double> sold = new HashMap<>();
@@ -57,6 +59,7 @@ final class SellLimit implements Listener {
     SellLimit(JavaPlugin plugin, ConfigurationSection c) {
         this.plugin = plugin;
         this.daily = Math.max(0, c.getDouble("daily", 8000));
+        this.extraPerPerk = Math.max(0, c.getDouble("extra-per-perk", 1000));
         this.file = new File(plugin.getDataFolder(), "banchoserver.yml");
         this.worthFile = new File(plugin.getDataFolder().getParentFile(), "Essentials/worth.yml");
         YamlConfiguration y = YamlConfiguration.loadConfiguration(file);
@@ -84,13 +87,23 @@ final class SellLimit implements Listener {
         return daily;
     }
 
+    /** Giới hạn của riêng người này: daily + bậc đặc quyền Thăng Cấp. */
+    double limit(Player p) {
+        for (int n = 9; n >= 1; n--) {
+            if (p.hasPermission("duckymomo.sell.them." + n)) {
+                return daily + n * extraPerPerk;
+            }
+        }
+        return daily;
+    }
+
     /** Số xu còn được bán cho server hôm nay (người có quyền bỏ qua: vô hạn). */
     double remaining(Player p) {
         if (p.hasPermission(BYPASS)) {
             return Double.MAX_VALUE;
         }
         rollDay();
-        return Math.max(0, daily - sold.getOrDefault(p.getUniqueId(), 0.0));
+        return Math.max(0, limit(p) - sold.getOrDefault(p.getUniqueId(), 0.0));
     }
 
     double soldToday(Player p) {
@@ -105,13 +118,13 @@ final class SellLimit implements Listener {
             return true;
         }
         if (left <= 0.0001) {
-            p.sendMessage(c("&cHôm nay bạn đã bán cho server đủ &e" + Rewards.xu(daily) + "&c (giới hạn mỗi ngày, mới lại lúc 0 giờ)."));
+            p.sendMessage(c("&cHôm nay bạn đã bán cho server đủ &e" + Rewards.xu(limit(p)) + "&c (giới hạn mỗi ngày, mới lại lúc 0 giờ)."));
             p.sendMessage(c("&7Vẫn bán cho người chơi được: &f/choden&7, shop rương, &f/trade&7."));
             return false;
         }
         if (estimate > left + 0.0001) {
             p.sendMessage(c("&cLần bán này khoảng &e" + Rewards.xu(estimate) + "&c, hôm nay chỉ còn bán được &e" + Rewards.xu(left)
-                    + "&c cho server (giới hạn " + Rewards.xu(daily) + "/ngày)."));
+                    + "&c cho server (giới hạn " + Rewards.xu(limit(p)) + "/ngày)."));
             p.sendMessage(c("&7Bán bớt số lượng, vd &f/sell hand 16&7, hoặc bán cho người chơi ở &f/choden&7."));
             return false;
         }
@@ -128,8 +141,9 @@ final class SellLimit implements Listener {
         double after = before + amount;
         sold.put(p.getUniqueId(), after);
         dirty = true;
-        if (before < daily * 0.8 && after >= daily * 0.8) {
-            p.sendMessage(c("&eHôm nay bạn đã bán cho server " + Rewards.xu(after) + " / " + Rewards.xu(daily)
+        double lim = limit(p);
+        if (before < lim * 0.8 && after >= lim * 0.8) {
+            p.sendMessage(c("&eHôm nay bạn đã bán cho server " + Rewards.xu(after) + " / " + Rewards.xu(lim)
                     + "&e. Đủ mức thì phải chờ sang ngày mới bán tiếp cho server."));
         }
     }

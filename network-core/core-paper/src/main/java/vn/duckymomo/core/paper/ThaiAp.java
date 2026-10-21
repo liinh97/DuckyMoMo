@@ -97,6 +97,8 @@ final class ThaiAp implements Listener {
     private final int maxEntities;
     private final NamespacedKey portalKey;
     private final java.util.Map<UUID, Long> portalCooldown = new java.util.HashMap<>();
+    /** Bản sao: hạn của vé đã dùng theo người (file vé chỉ đọc, không xoá được) -> mỗi lần qua cổng chỉ vào được 1 lần. */
+    private final java.util.Map<UUID, Long> usedTicket = new java.util.HashMap<>();
 
     ThaiAp(DuckyMoMoCore plugin, ConfigurationSection c) {
         this.plugin = plugin;
@@ -812,8 +814,14 @@ final class ThaiAp implements Listener {
         }
     }
 
-    private boolean hasTicket(UUID u) {
-        return YamlConfiguration.loadConfiguration(ticketFile).getLong(u.toString()) > System.currentTimeMillis();
+    /** Còn vé chưa dùng thì đánh dấu đã dùng (vé ghi hạn mới mỗi lần bước vào cổng). */
+    private boolean useTicket(UUID u) {
+        long exp = YamlConfiguration.loadConfiguration(ticketFile).getLong(u.toString());
+        if (exp <= System.currentTimeMillis() || Long.valueOf(exp).equals(usedTicket.get(u))) {
+            return false;
+        }
+        usedTicket.put(u, exp);
+        return true;
     }
 
     /** Mảnh đất người này dùng ở bản sao: của mình, không có thì của người mời. */
@@ -831,7 +839,7 @@ final class ThaiAp implements Listener {
         UUID u = p.getUniqueId();
         UUID plot = plotFor(u);
         boolean admin = p.hasPermission("duckymomo.admin");
-        if (!admin && (!hasTicket(u) || plot == null)) {
+        if (!admin && (plot == null || !useTicket(u))) {
             p.setGameMode(org.bukkit.GameMode.ADVENTURE);
             p.sendMessage(c("&cThái Ấp Sáng Tạo chỉ vào được qua &dcổng trong Thái Ấp&c ở Bang Hội Chiến (&f/thaiap sangtao&c). Đang đưa về sảnh…"));
             Bukkit.getScheduler().runTaskLater(plugin, () -> {

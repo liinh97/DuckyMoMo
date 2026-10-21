@@ -622,13 +622,23 @@
   "tt": "lai"
  },
  "s20": {
-  "ghi_chu": "Claude tự test: nhập sai mã /web 5 lần thì lần 6 báo 'Sai quá nhiều lần. Đợi 15 phút' (HTTP 429).",
-  "luc": 1792575500000,
+  "ghi_chu": "Claude tự test: nhập sai mã 5 lần cho một tên -> lần 6 trở đi báo 'Sai quá nhiều lần. Đợi 15 phút' (khoá theo tên 5 lần / 15 phút, theo IP 20 lần).",
+  "luc": 1792582486848,
+  "tt": "ok"
+ },
+ "s21": {
+  "ghi_chu": "Claude tự test: gửi yêu cầu đổi Cài đặt cá nhân kèm ten=ThuK bằng phiên của ThuWeb -> server bỏ qua tên gửi lên, chỉ dùng tên trong phiên; không cookie hoặc cookie giả -> 401 'Phiên đăng nhập đã hết'. Đọc code site/app.py: mọi lệnh ghi (caidat, skin, trangtri, choilai, vang, donate) đều lấy tên từ phiên.",
+  "luc": 1792582486848,
   "tt": "ok"
  },
  "s22": {
-  "ghi_chu": "Claude tự test: chưa đăng nhập gọi /, /api/thuvien, /api/settings, /api/donate, /api/hethong đều 401.",
-  "luc": 1792575500000,
+  "ghi_chu": "Claude tự test: /quantri chưa đăng nhập -> chuyển về trang đăng nhập; /quantri/api/... -> 401 'Phiên quản trị hết hạn'; API nội bộ của panel (/api/web/hoso) không gọi được qua site (404).",
+  "luc": 1792582486848,
+  "tt": "ok"
+ },
+ "s24": {
+  "ghi_chu": "Claude tự test (tools/bottest/s24-ve.js): ĐÃ SỬA - trước đây vé cổng không bị huỷ khi dùng, trong 60 giây vào lại Sáng Tạo được bằng vé cũ. Giờ sangtao-1 nhớ vé đã dùng: qua cổng 1 lần chỉ vào được 1 lần, vào lại ngay hay sau 60 giây đều bị chặn 'chỉ vào được qua cổng'. (Đã khởi động lại sangtao-1; các server khác nhận jar mới ở lần khởi động lại sau.) CẦN BẠN: thử /server sangtao-1 qua proxy thật.",
+  "luc": 1792582486848,
   "tt": "ok"
  },
  "s3": {
@@ -650,6 +660,11 @@
   "ghi_chu": "Claude tự test (tools/bottest/s6-pettrade.js): người bán rút mạng đúng lúc người mua gõ /pettrade accept -> giao dịch vẫn xong một lần (pet sang người mua, tiền chuyển 100 một lần); người mua gõ accept 2 lần liền -> chỉ trừ tiền 1 lần. Pet luôn chỉ thuộc một người. Pet bán ra là pet đang triệu hồi.",
   "luc": 1792581907558,
   "tt": "ok"
+ },
+ "s7": {
+  "ghi_chu": "Claude tự test một phần: ở sangtao-1 túi đồ riêng; về Bang Hội Chiến túi sinh tồn còn nguyên, không có đồ sáng tạo (xem a7); code chặn ném đồ ở Sáng Tạo (onMirrorDrop). CẦN BẠN: rút mạng đúng lúc đang chuyển server qua proxy (bot không qua proxy).",
+  "luc": 1792582486848,
+  "tt": ""
  },
  "t1": {
   "ghi_chu": "Claude tự test: 0,2 giờ chơi → '[Towny] Cần chơi thật đủ 3 giờ mới được lập thị trấn'; gần spawn báo 'quá gần thị trấn khác'. CẦN BẠN: lập thật khi đủ giờ (giá mới 1.500 xu).",
@@ -795,5 +810,10 @@
   "ghi_chu": "Claude tự test bề ngang 390px: không tràn ngang, không lỗi. CẦN BẠN: mở bằng điện thoại thật, thử menu thả xuống.",
   "luc": 1792575500000,
   "tt": ""
+ },
+ "x4": {
+  "ghi_chu": "Claude tự test (tools/bottest/x4-web.js): bot gõ /web lấy mã, đăng nhập trang web bằng tên + mã -> vào được; /api/toi trả đủ danh phận, tiền (khớp 1.234 xu), giờ chơi, điểm danh, pet, Thăng Cấp, kỹ năng, Đấu Trường, cài đặt cá nhân...; tắt 'Kênh chat chung' trên web thì /caidat trong game đổi ngay (đã bật lại). Mã đã dùng không dùng lại được. Đăng xuất thì phiên hết. CẦN BẠN: xem giao diện trang tài khoản trên trình duyệt (bot chỉ gọi API).",
+  "luc": 1792582486848,
+  "tt": "ok"
  }
 }

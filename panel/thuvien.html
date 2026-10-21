@@ -191,7 +191,7 @@
         <label class="switch" title="Thay khối 'Khi ở ngực: +6 Giáp…' của game bằng 1 dòng; ẩn luôn dòng 'Khi được mặc' do phù phép thêm"><input type="checkbox" id="hidestats"><span class="track"></span><span class="txt">Gộp dòng chỉ số</span></label>
         <label class="glint">Ánh lấp lánh <select id="glint"><option value="">Mặc định</option><option value="true">Luôn có</option><option value="false">Không có</option></select></label>
       </div>
-      <label class="f">Chỉ số gốc <span class="hint" id="attrHint">số giống dòng "8 Sát thương" trong game; để trống = giữ như đồ thường; sát thương gốc theo kiểu đánh 1.8 của server</span></label>
+      <label class="f">Chỉ số gốc <span class="hint" id="attrHint">số giống dòng "8 Sát thương" trong game; để trống = giữ như đồ thường; sát thương gốc theo kiểu đánh 1.8 của server; tốc đánh để trống = bấm nhanh bao nhiêu cũng đủ sát thương (kiểu 1.8), đặt số thì đánh nhanh hơn số đó bị yếu đòn như game gốc</span></label>
       <div class="attrs" id="attrs"></div>
       <label class="f" for="model">Hình riêng <span class="hint">model trong gói tài nguyên DuckyMoMo, vd duckymomo:tl_sat (ghi tl_sat cũng được); để trống = hình gốc của loại đồ</span></label>
       <input id="model" placeholder="duckymomo:tl_sat" maxlength="96">
@@ -377,7 +377,7 @@ function mc(text, defColor, defItalic) {
 }
 let tipLines = 0;
 // Chỉ số gốc (ItemLibrary.ATTRS, LIB_ATTRS trong app.py): [mã, tên, ghi chú]
-const ATTRS = [["attack_damage", "Sát thương", ""], ["armor", "Giáp", ""],
+const ATTRS = [["attack_damage", "Sát thương", ""], ["attack_speed", "Tốc đánh", "đòn/giây"], ["armor", "Giáp", ""],
   ["armor_toughness", "Độ cứng giáp", ""], ["knockback_resistance", "Kháng đẩy lùi", "0–1"], ["max_health", "Máu tối đa", "2 = 1 tim"],
   ["movement_speed", "Tốc chạy", "%"]];
 const SLOT_VI = {mainhand: "Khi cầm ở tay chính:", offhand: "Khi cầm ở tay phụ:", head: "Khi đội trên đầu:", chest: "Khi mặc trên người:",
@@ -395,7 +395,7 @@ function attrForm() {
 }
 function attrPlaceholders(mat) {
   const d = attrDef(mat);
-  for (const [k] of ATTRS) { const el = $("at_" + k); el.placeholder = "gốc " + numVi(d[k] ?? 0); el.classList.toggle("changed", el.value.trim() !== "" && parseFloat(el.value) !== (d[k] ?? 0)); }
+  for (const [k] of ATTRS) { const el = $("at_" + k); el.placeholder = k === "attack_speed" ? "không giới hạn" : "gốc " + numVi(d[k] ?? 0); el.classList.toggle("changed", el.value.trim() !== "" && parseFloat(el.value) !== (d[k] ?? 0)); }
 }
 function form() {
   const ench = {}, cee = {};
@@ -468,12 +468,13 @@ function render() {
   // CE tự thêm dòng "<tên CE> <cấp>" vào mô tả (lore) của đồ
   for (const [n, l] of Object.entries(f.ce_enchants || {})) { const c = ceInfo("ce:" + n); html += `<div>${mc((c ? c.display : "&7" + n) + " " + (ROMAN[l] || l), "#AAAAAA", false)}</div>`; }
   for (const line of f.lore || []) html += `<div>${line ? mc(line, "#AAAAAA", false) : "&nbsp;"}</div>`;
+  if (f.attributes && f.attributes.attack_speed > 0) html += `<div>${mc("&7Tốc đánh: &f" + numVi(f.attributes.attack_speed) + " &7đòn/giây", "#AAAAAA", false)}</div>`;
   if (f.unbreakable) html += `<div style="color:#5555FF">Không thể phá huỷ</div>`;
   if (!(cur && cur.nguon === "game")) {
     attrPlaceholders(mat);
     const d = attrDef(mat), a = Object.assign({}, d, f.attributes || {}), rows = [];
     for (const [k, n, u] of ATTRS) {
-      const v = a[k]; if (v === undefined || v === 0) continue;
+      const v = a[k]; if (v === undefined || v === 0 || k === "attack_speed") continue;
       const base = k === "attack_damage";   // game ghi tổng (đã cộng phần sẵn có của người chơi), màu xanh lá
       rows.push(`<div style="color:${base ? "#00AA00" : (v < 0 ? "#FF5555" : "#5555FF")}">${base ? "&nbsp;" : (v > 0 ? "+" : "")}${numVi(v)}${k === "movement_speed" ? "%" : ""} ${esc(n)}</div>`);
     }

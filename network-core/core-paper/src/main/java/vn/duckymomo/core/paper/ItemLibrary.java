@@ -455,6 +455,14 @@ final class ItemLibrary {
         ConfigurationSection at = s.getConfigurationSection("attributes");
         if (at != null && !at.getKeys(false).isEmpty()) {
             applyAttributes(meta, mat, at);
+            // tốc đánh: OldCombatMechanics bỏ hồi đòn nên không dùng thuộc tính của game; AttackSpeed tự tính theo dấu này (đòn/giây)
+            double aps = at.getDouble("attack_speed", 0);
+            if (aps > 0) {
+                meta.getPersistentDataContainer().set(AttackSpeed.KEY, org.bukkit.persistence.PersistentDataType.DOUBLE, aps);
+                lore.add(LEGACY.deserialize("&7Tốc đánh: &f" + (aps == Math.floor(aps) ? String.valueOf((long) aps)
+                        : String.format(Locale.ROOT, "%.2f", aps).replaceAll("0+$", "").replace('.', ',')) + " &7đòn/giây")
+                        .decoration(TextDecoration.ITALIC, false));
+            }
         }
         // tooltip gọn (21/10: đồ nhiều phù phép bị đẩy ra ngoài màn hình): 3 phù phép một dòng, chỉ số game gộp 1 dòng cuối mô tả.
         // Bật theo món (compact-enchants, hide-stats) hoặc TỰ BẬT khi tooltip ước tính dài hơn item-library.tooltip-max-lines (0 = tắt).

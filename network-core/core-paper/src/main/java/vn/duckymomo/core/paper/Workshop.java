@@ -100,6 +100,9 @@ import java.util.concurrent.ThreadLocalRandom;
  *   khien_than  khiên (cầm tay chính hoặc phụ): giảm value% sát thương, phản lại 1/2 phần giảm -> 1 / đòn đỡ
  *   kiem_nhat   chuột phải: lướt tới, chém xuyên mọi sinh vật trên đường (value = sát thương, hồi 4 giây) -> 1 / lần lướt
  *   riu_chien   đánh: value% chí mạng (×1,5) + chảy máu 3 giây                               -> 1 / đòn
+ *   luot        chuột phải: lướt về phía trước (value = lực 1–3, không chém; hồi 4 giây, chung với kiem_nhat) -> 1 / lần
+ *   hoi_mau     chuột phải: hồi value máu (2 = 1 tim; hồi 20 giây; đầy máu thì không tốn)    -> 1 / lần
+ *   cau_lua     chuột phải: bắn cầu lửa nhỏ (value = sát thương, cháy người trúng, không đốt khối; hồi 3 giây) -> 1 / phát
  * Vũ khí / cung (feature trống) mất 1 độ bền mỗi đòn / phát; công cụ mất 1 mỗi khối. Món có độ bền riêng thì không hỏng theo độ bền gốc.
  * Dấu trên đồ (PDC): xuong_id, xuong_luot (độ bền còn, -1 = không đếm), xuong_het (hạn ms), xuong_celo (số dòng mô tả CE ở đầu lore).
  */
@@ -130,6 +133,9 @@ final class Workshop implements Listener {
         FEATURES.put("khien_than", new String[]{"Giảm sát thương + phản đòn", "% giảm"});
         FEATURES.put("kiem_nhat", new String[]{"Lướt chém", "sát thương"});
         FEATURES.put("riu_chien", new String[]{"Chí mạng + chảy máu", "% chí mạng"});
+        FEATURES.put("luot", new String[]{"Lướt", "lực lướt (1–3)"});
+        FEATURES.put("hoi_mau", new String[]{"Hồi máu", "máu hồi (2 = 1 tim)"});
+        FEATURES.put("cau_lua", new String[]{"Bắn cầu lửa", "sát thương"});
     }
 
     private static final Set<String> BLOCK_COUNT = Set.of("", "dao_vung", "chat_cay", "tu_nung", "da_nang", "gat_lua", "co_le");
@@ -184,6 +190,9 @@ final class Workshop implements Listener {
     private final Map<Material, Double> worth = new HashMap<>();
     private final Set<UUID> busy = new HashSet<>();                 // đang phá khối thay người chơi (chặn đệ quy)
     private final Map<UUID, Long> dashCd = new HashMap<>();
+    private final Map<UUID, Long> healCd = new HashMap<>();
+    private final Map<UUID, Long> fireCd = new HashMap<>();
+    private NamespacedKey kFire;
     private final ArrayDeque<double[]> deaths = new ArrayDeque<>(); // {x, y, z, ms, worldHash} chỗ người chơi chết (nam châm không hút)
 
     Workshop(JavaPlugin plugin, ConfigurationSection cfg) {
@@ -192,6 +201,7 @@ final class Workshop implements Listener {
         this.kUses = new NamespacedKey(plugin, "xuong_luot");
         this.kUntil = new NamespacedKey(plugin, "xuong_het");
         this.kArrow = new NamespacedKey(plugin, "xuong_hutmau");
+        this.kFire = new NamespacedKey(plugin, "xuong_caulua");
         this.kCeLore = new NamespacedKey(plugin, "xuong_celo");
         ConfigurationSection items = cfg.getConfigurationSection("items");
         if (items != null) {
@@ -734,6 +744,17 @@ final class Workshop implements Listener {
                 dash(p, r);
                 spendHand(p, r, 1);
             }
+            case "luot", "hoi_mau", "cau_lua" -> {
+                if (!right || e.getHand() != EquipmentSlot.HAND || !usable(p, it, r, EquipmentSlot.HAND)) {
+                    return;
+                }
+                if (r.feature().equals("hoi_mau") || r.feature().equals("cau_lua")) {
+                    e.setCancelled(true);   // không ăn / đặt khối / mở cửa khi dùng kỹ năng
+                }
+                if (castSkill(p, r)) {
+                    spendHand(p, r, 1);
+                }
+            }
             default -> { }
         }
     }
@@ -796,6 +817,52 @@ final class Workshop implements Listener {
         p.playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.8f, 1.2f);
         p.sendMessage(c("&a[Xưởng] Đã bán " + fmt(count) + " món trong rương: &e+" + money(total)));
         spendHand(p, r, 1);
+    }
+
+    /** Kỹ năng chuột phải (luot, hoi_mau, cau_lua). true = đã dùng (trừ 1 độ bền). */
+    private boolean castSkill(Player p, Recipe r) {
+        long now = System.currentTimeMillis();
+        Map<UUID, Long> cd = switch (r.feature()) {
+            case "luot" -> dashCd;
+            case "hoi_mau" -> healCd;
+            default -> fireCd;
+        };
+        String name = FEATURES.get(r.feature())[0];
+        if (cd.getOrDefault(p.getUniqueId(), 0L) > now) {
+            p.sendActionBar(c("&7" + name + " hồi trong " + ((cd.get(p.getUniqueId()) - now) / 1000 + 1) + " giây"));
+            return false;
+        }
+        switch (r.feature()) {
+            case "luot" -> {
+                double force = Math.max(1, Math.min(3, r.value() <= 0 ? 1.5 : r.value()));
+                p.setVelocity(p.getLocation().getDirection().setY(0).normalize().multiply(0.9 + 0.6 * force).setY(0.25));
+                p.setFallDistance(0);
+                p.getWorld().playSound(p.getLocation(), Sound.ENTITY_BREEZE_JUMP, 0.8f, 1.3f);
+                p.getWorld().spawnParticle(Particle.CLOUD, p.getLocation().add(0, 0.2, 0), 12, 0.3, 0.1, 0.3, 0.02);
+                cd.put(p.getUniqueId(), now + 4000);
+            }
+            case "hoi_mau" -> {
+                var attr = p.getAttribute(Attribute.MAX_HEALTH);
+                double max = attr == null ? 20 : attr.getValue();
+                if (p.getHealth() >= max) {
+                    p.sendActionBar(c("&7Máu đang đầy"));
+                    return false;
+                }
+                p.setHealth(Math.min(max, p.getHealth() + (r.value() <= 0 ? 6 : r.value())));
+                p.getWorld().spawnParticle(Particle.HEART, p.getLocation().add(0, 2, 0), 6, 0.4, 0.3, 0.4, 0);
+                p.getWorld().playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 0.5f, 1.8f);
+                cd.put(p.getUniqueId(), now + 20000);
+            }
+            default -> {
+                org.bukkit.entity.SmallFireball f = p.launchProjectile(org.bukkit.entity.SmallFireball.class,
+                        p.getLocation().getDirection().multiply(1.4));
+                f.setIsIncendiary(false);   // không đốt khối (đất người khác, rừng)
+                f.getPersistentDataContainer().set(kFire, PersistentDataType.DOUBLE, r.value() <= 0 ? 5 : r.value());
+                p.getWorld().playSound(p.getLocation(), Sound.ENTITY_BLAZE_SHOOT, 0.8f, 1f);
+                cd.put(p.getUniqueId(), now + 3000);
+            }
+        }
+        return true;
     }
 
     private void dash(Player p, Recipe r) {
@@ -1073,6 +1140,13 @@ final class Workshop implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onHit(EntityDamageByEntityEvent e) {
+        // cầu lửa Xưởng: sát thương theo value (qua sự kiện nên Towny / PvP vẫn kiểm)
+        if (e.getDamager() instanceof org.bukkit.entity.SmallFireball fb) {
+            Double dmg = fb.getPersistentDataContainer().get(kFire, PersistentDataType.DOUBLE);
+            if (dmg != null) {
+                e.setDamage(dmg);
+            }
+        }
         // cung hút máu
         if (e.getDamager() instanceof Projectile pr && pr.getShooter() instanceof Player shooter) {
             Double heal = pr.getPersistentDataContainer().get(kArrow, PersistentDataType.DOUBLE);

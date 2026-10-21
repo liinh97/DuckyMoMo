@@ -701,6 +701,7 @@ public final class DuckyMoMoCore extends JavaPlugin {
         bind("web", webLogin::command, "Đăng nhập web");
         getServer().getPluginManager().registerEvents(new ItemInspect(), this);   // phím F trong túi/menu, chọn món trade
         getServer().getPluginManager().registerEvents(new AttackSpeed(), this);   // tốc đánh món Thư viện đồ (OCM bỏ hồi đòn)
+        getServer().getPluginManager().registerEvents(new SkillEnchants(), this);   // phù phép riêng Lướt / Hồi máu / Cầu lửa
         bind("xemdo", ItemInspect::command, "Xem đồ");   // in đủ tooltip món ra chat (tooltip dài quá màn hình)
         if (council != null) {
             getLogger().info("Hội đồng Hoà Bình, tổ chức, bảng xếp hạng, Hội Bàn Tròn, cửa hàng: "

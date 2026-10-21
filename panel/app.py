@@ -155,8 +155,7 @@ FISH_COST_RE = re.compile(r"^ca:(common|rare|epic|legendary)$")   # giá đổi 
 # Hiệu ứng Xưởng chế tạo: mã -> có dùng "value" không (khớp Workshop.FEATURES trong DuckyMoMoCore)
 WORKSHOP_FEATURES = {"": False, "dao_vung": True, "chat_cay": True, "tu_nung": False, "da_nang": False, "gat_lua": False, "hut_do": False,
                      "nam_cham": True, "ban_ruong": False, "tui_hu": False, "nuoc": False, "dung_nham": False, "bat_thu": False, "co_le": False,
-                     "moc_bay": True, "hut_mau": True, "khien_than": True, "kiem_nhat": True, "riu_chien": True,
-                     "luot": True, "hoi_mau": True, "cau_lua": True}
+                     "moc_bay": True, "hut_mau": True, "khien_than": True, "kiem_nhat": True, "riu_chien": True}
 # tên + nghĩa của "value" từng kỹ năng (khớp Workshop.FEATURES), cho trang Thư viện đồ
 WORKSHOP_FEATURES_VI = {"": ["Không (chỉ phù phép)", ""], "dao_vung": ["Đào vùng", "1 = 3×3, 2 = 5×5"], "chat_cay": ["Chặt cả cây", "số khối gỗ tối đa"],
                         "tu_nung": ["Tự nung (quặng ra thỏi)", ""], "da_nang": ["3 trong 1 (cuốc/rìu/xẻng)", ""], "gat_lua": ["Gặt 3×3 + gieo lại", ""],
@@ -164,9 +163,7 @@ WORKSHOP_FEATURES_VI = {"": ["Không (chỉ phù phép)", ""], "dao_vung": ["Đ�
                         "tui_hu": ["Rương ender từ xa", ""], "nuoc": ["Nước vô tận", ""], "dung_nham": ["Dung nham vô tận", ""],
                         "bat_thu": ["Bắt thú thành trứng", ""], "co_le": ["Lấy lồng quái", ""], "moc_bay": ["Móc câu bay", "lực kéo (1–3)"],
                         "hut_mau": ["Hút máu (cung/nỏ)", "máu hồi/phát (2 = 1 tim)"], "khien_than": ["Giảm sát thương + phản đòn (khiên)", "% giảm"],
-                        "kiem_nhat": ["Lướt chém (chuột phải)", "sát thương"], "riu_chien": ["Chí mạng + chảy máu", "% chí mạng"],
-                        "luot": ["Lướt (chuột phải, hồi 4 giây)", "lực lướt 1–3"], "hoi_mau": ["Hồi máu (chuột phải, hồi 20 giây)", "máu hồi (2 = 1 tim)"],
-                        "cau_lua": ["Bắn cầu lửa (chuột phải, hồi 3 giây)", "sát thương"]}
+                        "kiem_nhat": ["Lướt chém (chuột phải)", "sát thương"], "riu_chien": ["Chí mạng + chảy máu", "% chí mạng"]}
 DISH_FOODS = {"BREAD", "COOKED_COD", "COOKED_SALMON", "BEETROOT_SOUP", "RABBIT_STEW", "MUSHROOM_STEW", "SUSPICIOUS_STEW", "BAKED_POTATO",
               "PUMPKIN_PIE", "COOKIE", "GOLDEN_CARROT", "COOKED_BEEF", "COOKED_PORKCHOP", "COOKED_CHICKEN", "COOKED_MUTTON", "COOKED_RABBIT",
               "DRIED_KELP", "HONEY_BOTTLE", "APPLE", "SWEET_BERRIES", "GLOW_BERRIES"}   # món ăn thư viện đồ phải là một trong số này
@@ -1456,6 +1453,7 @@ LIB_USES = {"": "Đồ thường", "ky-nang": "Kỹ năng đặc biệt (Xưởn
             "tinh-luyen": "Nguyên liệu Tinh Luyện", "manh": "Mảnh sự kiện",
             "chia-khoa": "Vé gacha"}
 # Thư viện đồ › Chỉ số gốc: mã -> (tên, (nhỏ nhất, lớn nhất)); khớp ItemLibrary.ATTRS và ATTRS trong thuvien.html
+LIB_DMM_ENCH = {"luot": "Lướt", "hoi_mau": "Hồi máu", "cau_lua": "Cầu lửa"}   # khớp SkillEnchants.NAMES
 LIB_ATTRS = {"attack_damage": ("Sát thương", (0, 200)), "attack_speed": ("Tốc đánh", (0.1, 20)), "armor": ("Giáp", (0, 30)),
              "armor_toughness": ("Độ cứng giáp", (0, 20)), "knockback_resistance": ("Kháng đẩy lùi", (0, 1)),
              "max_health": ("Máu tối đa", (-10, 40)), "movement_speed": ("Tốc chạy %", (-50, 100))}
@@ -1560,6 +1558,7 @@ def thuvien_json():
         it.update({"material": src.get("material", ""), "amount": src.get("amount", 1), "name": src.get("name", ""),
                    "lore": list(src.get("lore") or []), "enchants": {str(k): int(v) for k, v in (src.get("enchants") or {}).items()},
                    "ce_enchants": {str(k): int(v) for k, v in (s.get("ce-enchants") or {}).items()},
+                   "dmm_enchants": {str(k): int(v) for k, v in (s.get("dmm-enchants") or {}).items()},
                    "unbreakable": bool(src.get("unbreakable", False)), "hide_enchants": bool(s.get("hide-enchants", False)),
                    "glint": s.get("glint"), "nguoi_luu": s.get("nguoi-luu", ""), "model": s.get("model", "") or "",
                    "compact_enchants": bool(s.get("compact-enchants", False)), "hide_stats": bool(s.get("hide-stats", False)),
@@ -1726,6 +1725,16 @@ def thuvien_action(data, actor=None):
             entry["enchants"] = ench
         if cee:
             entry["ce-enchants"] = cee
+        dmm = {}   # phù phép riêng (SkillEnchants.java): Lướt, Hồi máu, Cầu lửa
+        for k, v in (it.get("dmm_enchants") or {}).items():
+            if k not in LIB_DMM_ENCH:
+                raise ValueError(f"Không có phù phép riêng: {k}")
+            lv = int(v)
+            if not 1 <= lv <= 5:
+                raise ValueError(f"{LIB_DMM_ENCH[k]}: cấp 1 đến 5")
+            dmm[k] = lv
+        if dmm:
+            entry["dmm-enchants"] = dmm
         if it.get("unbreakable"):
             entry["unbreakable"] = True
         if it.get("hide_enchants"):

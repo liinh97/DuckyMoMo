@@ -464,6 +464,13 @@ final class ItemLibrary {
                         .decoration(TextDecoration.ITALIC, false));
             }
         }
+        // phù phép riêng của server (Lướt, Hồi máu, Cầu lửa): dòng "Lướt II" đầu mô tả, ngay dưới phù phép của game
+        ConfigurationSection dmm = s.getConfigurationSection("dmm-enchants");
+        if (dmm != null && !dmm.getKeys(false).isEmpty()) {
+            Map<String, Integer> lv = new LinkedHashMap<>();
+            dmm.getKeys(false).forEach(k -> lv.put(k, dmm.getInt(k)));
+            lore.addAll(0, SkillEnchants.apply(meta, lv));
+        }
         // tooltip gọn (21/10: đồ nhiều phù phép bị đẩy ra ngoài màn hình): 3 phù phép một dòng, chỉ số game gộp 1 dòng cuối mô tả.
         // Bật theo món (compact-enchants, hide-stats) hoặc TỰ BẬT khi tooltip ước tính dài hơn item-library.tooltip-max-lines (0 = tắt).
         // Chỉ đổi cách hiện phần game tự vẽ; tên, lore, phù phép CE giữ nguyên.

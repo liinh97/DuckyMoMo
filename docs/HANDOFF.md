@@ -123,6 +123,13 @@ n7 câu cá (0,06 xu/cm, thi câu hạng 1 +1.500 + 3 bùa) · n10 AuraSkills th
   xoá lúc server tắt (sao lưu scratchpad bak-donbot). CỐ Ý ĐỂ: khaihoang.yml (xu bot góp quỹ khai hoang), thaiap.yml (Thái Ấp ThuA, ThuCapDo
   đã cấp ô), hoatdong.yml (chỉ còn tên, giờ = 0), sổ vang_log (ví bot về 0), vài khối san phẳng quanh 13631,-3150.
   ĐÃ SỬA PlayerReset "như người mới": không giữ rank thì bỏ cả quyền lẻ; LevelUp thu hồi quyền đặc quyền Thăng Cấp đã mua (trước còn sót).
+  23h50 HƯỚNG DẪN QUA CHAT -> MENU (người dùng: "chat khó nhìn, làm menu như ảnh, tooltip thoáng, gom danh mục, sang trang, không trống
+  nhiều ô"; "sửa mọi tooltip"): InfoMenu.java (menu thông tin dùng chung: tự co hàng, căn giữa, mỗi hàng 1 danh mục, sang trang, nút phụ
+  hàng dưới, InfoMenu.suggest điền sẵn lệnh). Tip.lore() thoáng cho MỌI tooltip (dòng trống sau tiêu đề, vạch ngăn -> dòng trống).
+  26 lệnh: /rank /dungeon (theo loại + trang con) /sachcam /sugia /dautruong /thaiap /choden giup /conghoang /mua /khaihoang /tochuc /hoidong
+  /linhdanhthue /hoabinh /bantron /canbang /kholuong /khobau /bxhpet /bxh /danhhieu /vote /lukhach /choilai (menu xác nhận) /vinhdanh /danhvong.
+  Console vẫn in chữ. Emoji ngoài BMP (font Be Vietnam Pro không có) -> ký hiệu cơ bản (code, sự kiện mùa, Duels, TAB). Test bot:
+  tools/bottest/menu-xem.js (CMDS=…). Bot ThuMenu đã xoá sạch như 62 bot. CHƯA LÀM: /hoatdong, /web (ngắn, để chat).
   20h40 XOÁ HẾT dữ liệu bot (người dùng "xoá hết những thứ liên quan đến bot"): 62 bot Thu* + .ThuS2 ở mọi server: 15 SQLite (zMenu, zAH,
   SimplePets, PvPManager, PlayerParticles, Jobs, HoloMobHealth, EMF, BetonQuest, EliteMobs, CoreProtect, MyPet, GrimAC ×2; VACUUM), QuickShop H2
   (dựng lại file), file nhân vật / stats / advancements, Essentials userdata (+ tài khoản town-/nation- thử, NPC thừa; usermap.bin xoá cho

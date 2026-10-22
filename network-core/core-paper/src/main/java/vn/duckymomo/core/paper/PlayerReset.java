@@ -305,6 +305,13 @@ final class PlayerReset implements Listener {
     /** File nhân vật (vị trí, túi đồ, chỉ số, thành tựu) + Essentials + AuraSkills của người (đã offline). */
     private List<File> playerFiles(UUID id) {
         File world = Bukkit.getWorlds().get(0).getWorldFolder();
+        // 26.x: thư mục thế giới là world/dimensions/minecraft/overworld, file nhân vật ở world/players (22/10: trước không xoá được)
+        for (File d = world; d != null; d = d.getParentFile()) {
+            if (new File(d, "players").isDirectory() || new File(d, "playerdata").isDirectory()) {
+                world = d;
+                break;
+            }
+        }
         File plugins = plugin.getDataFolder().getParentFile();
         List<File> out = new ArrayList<>();
         for (String rel : List.of("players/data/%s.dat", "players/data/%s.dat_old", "players/stats/%s.json", "players/advancements/%s.json",

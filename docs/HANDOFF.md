@@ -123,7 +123,15 @@ n7 câu cá (0,06 xu/cm, thi câu hạng 1 +1.500 + 3 bùa) · n10 AuraSkills th
   xoá lúc server tắt (sao lưu scratchpad bak-donbot). CỐ Ý ĐỂ: khaihoang.yml (xu bot góp quỹ khai hoang), thaiap.yml (Thái Ấp ThuA, ThuCapDo
   đã cấp ô), hoatdong.yml (chỉ còn tên, giờ = 0), sổ vang_log (ví bot về 0), vài khối san phẳng quanh 13631,-3150.
   ĐÃ SỬA PlayerReset "như người mới": không giữ rank thì bỏ cả quyền lẻ; LevelUp thu hồi quyền đặc quyền Thăng Cấp đã mua (trước còn sót).
-  (dòng cũ) Bot mới cần dọn: ThuR1, ThuR2, ThuR3 (có grim.exempt), ThuCA dùng lại. Chưa làm: Sách cấm ở Công thành / Hầm ngục, x12 x13 (giao diện web).
+  20h40 XOÁ HẾT dữ liệu bot (người dùng "xoá hết những thứ liên quan đến bot"): 62 bot Thu* + .ThuS2 ở mọi server: 15 SQLite (zMenu, zAH,
+  SimplePets, PvPManager, PlayerParticles, Jobs, HoloMobHealth, EMF, BetonQuest, EliteMobs, CoreProtect, MyPet, GrimAC ×2; VACUUM), QuickShop H2
+  (dựng lại file), file nhân vật / stats / advancements, Essentials userdata (+ tài khoản town-/nation- thử, NPC thừa; usermap.bin xoá cho
+  tự dựng lại), Towny residents + towns/deleted, 9 file DuckyMoMoCore (quỹ khai hoang trừ 4.704 xu bot góp -> 5,59), OCM players.bson,
+  usercache ×4, Duels users, vinhdanh S1, nhật ký activity / web-thaotac / combatlogs, phien.json, donate.json, LuckPerms + Vàng (MariaDB);
+  2 ô Thái Ấp của bot làm phẳng lại. Sao lưu: scratchpad donbot/ (tài khoản này). GIỮ: tên lạ vào qua proxy từ IP ngoài (dampowl5057…,
+  hsbzyzj4… = bot quét mạng, không phải bot test), "test" (IP Việt Nam), vài khối san phẳng quanh 13631,-3150.
+  ĐÃ SỬA PlayerReset: Paper 26.x thư mục thế giới là world/dimensions/minecraft/overworld nên reset "như người mới" KHÔNG xoá được file nhân vật
+  (world/players/...) -> đi ngược lên thư mục có players/. Đã lên banghoi-1. (có grim.exempt), ThuCA dùng lại. Chưa làm: Sách cấm ở Công thành / Hầm ngục, x12 x13 (giao diện web).
 - Lệch chưa rõ: Sứ Giả `tp-delay` repo -1, data 3 (data đang chạy). Ô "quyền lợi" chữ của rank (Cài đặt › Toàn mạng › Rank donate) chưa ghi balo.
 
 ### VIỆC CÒN LẠI (22/10 ~15h, account sắp hết lượt; trang test: 208 mục, 168 ok, 0 lỗi, 33 chờ người thật, 7 chưa đụng)

@@ -8,7 +8,8 @@
 ## 0000000000. MỚI NHẤT — 22/10/2026 trưa (test bot THEO CÀI ĐẶT WEB, tài khoản lần 5 trước khi chuyển)
 
 Trang test: https://claude.ai/artifact/YY55Wn87HYuMzL898MT8a7 (DB `ketqua`, ghi phải có `if_version`). Nguồn: `docs/lo-trinh-test-ketqua.json`
-(192 mục có dữ liệu). Ghi kết quả: scratchpad `kq_add.py <json {id: [tt, ghi_chu]}>` → `load2/<id>.json` → ArtifactData batch.
+(192 mục có dữ liệu). Ghi kết quả: `python3 tools/bottest/kq_add.py <json {id: [tt, ghi_chu]}>` → `load2/<id>.json` cạnh file json → ArtifactData batch.
+Khởi động lại banghoi-1 an toàn (có ai online thì dừng): `bash tools/bottest/restart_safe.sh`. Scratchpad của tài khoản cũ KHÔNG còn.
 
 ### ⚠ ĐỌC TRƯỚC: phiên Claude khác đang sửa song song + jar của họ ĐÃ LÊN banghoi-1
 - Có phiên khác (mục "22/10 sáng — Sách cấm" ngay dưới) sửa `BanBook.java`, `TownyAllies.java`, `SkillEnchants.java`, `Workshop.java`, `Arena.java`,

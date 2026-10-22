@@ -55,9 +55,9 @@
   "tt": ""
  },
  "c2": {
-  "ghi_chu": "Claude tự test Khoan Đào ở đất hoang: đào 1 khối → cả lớp 3×3 mất, độ bền 8.000 → 7.994 (trừ theo số khối). CẦN BẠN: Đào Hầm 5×5, Rìu Tiều, Gặt Lúa và đào ở đất người khác.",
-  "luc": 1792573500000,
-  "tt": ""
+  "ghi_chu": "Claude tự test ở đất hoang (mỗi khối trừ 1 độ bền): Khoan Đào 3×3 (lần trước). Đào Hầm: phá 1 khối giữa tấm đá 5×5 → mất cả 25 khối, độ bền 3.500 → 3.475. Rìu Tiều: chặt gốc → cả 6 khúc gỗ, 5.000 → 4.994. Gặt Lúa: ruộng 3×3 lúa chín → gặt cả 9, tự gieo lại 9 bằng 9 hạt trong túi, 8.000 → 7.991 (lúa rơi ra đất). CẦN BẠN: nhìn bằng máy thật cho chắc (hiệu ứng, âm thanh).",
+  "luc": 1792656310920,
+  "tt": "ok"
  },
  "c3": {
   "ghi_chu": "CẦN BẠN TEST: kỹ năng chiến đấu cần người thật + vùng vây đang đánh.",
@@ -686,6 +686,11 @@
   "luc": 1792503845775,
   "tt": "ok"
  },
+ "s1": {
+  "ghi_chu": "Claude tự test. Qua proxy: Sonar chặn bot ngay ('chưa qua kiểm tra chống bot': không gửi brand / gửi brand 2 lần; thử sai 5 lần thì IP vào danh sách đen 10 phút) → không tới được bước đăng nhập. Vào thẳng sảnh (AuthMe): chưa /login thì chat → 'phải đăng nhập trước rồi mới có thể chat'; /msg, /spawn, /menu, /server banghoi-1, /help → 'phải đăng nhập trước…'; chạy 2,5 giây chỉ nhích ~1 khối. CHƯA THỬ bằng máy thật qua proxy (đi qua Sonar).",
+  "luc": 1792656310920,
+  "tt": "ok"
+ },
  "s10": {
   "ghi_chu": "Claude tự test đủ, so với Cài đặt Chợ đen (dh_max 2, tối đa 6.400 món, giá tối đa 100.000, phí 2%) và quyền lợi rank (Tị Nạn 2 đơn, Lương Dân 4). Đơn 6.401 món và giá 100.001 bị chặn đúng câu báo. Tị Nạn: đơn 1, 2 được (mỗi đơn trừ 10 + phí 0,2), đơn 3 'Bạn đang có 2 đơn mở (tối đa 2)'. Lên Lương Dân: đơn 3, 4 được, đơn 5 bị chặn (tối đa 4). Huỷ 4 đơn: hoàn 10 xu/đơn, phí không hoàn. Phần khác (nhà, Chợ đen treo bán, kit, bán quá giới hạn) đã thử trước đó.",
   "luc": 1792638605297,
@@ -726,9 +731,19 @@
   "luc": 1792595643864,
   "tt": "ok"
  },
+ "s18": {
+  "ghi_chu": "Claude tự test bằng bot (không có quyền miễn Grim): BAY (đẩy lên 12 khối/giây) và ĐI NHANH (40 khối/giây) → Grim log 'failed Simulation', server kéo về chỗ cũ (toạ độ không đổi). ĐÁNH XA 7 khối → zombie không mất máu. Bot còn liên tục bị 'failed TickTimer'. Sonar ở proxy chặn bot từ cửa. CHƯA THỬ: client hack thật (X-ray, aura), mức phạt kick/ban theo Cài đặt Chống hack khi vượt ngưỡng.",
+  "luc": 1792656310920,
+  "tt": "ok"
+ },
  "s19": {
   "ghi_chu": "Claude test lại sau khởi động (tools/bottest/s19-chat.js): lặp 6 lần cùng câu -> chỉ 1 lần lọt; quảng cáo play.abcxyz.net, 'abcxyz chấm net', IP 123.45.67.89, shopee.vn đều bị chặn 'Không quảng cáo server hay trang web khác'; goc6.io.vn và '1.000.000 xu' không bị chặn nhầm. Chữ IN HOA bị đổi thành chữ thường, 'dm' bị che thành '**' (đọc gói chat: người chơi thật nhận bản đã lọc; bot hiện câu gốc vì đọc phần đã ký). Nhỏ: goc6.io.vn hiện thành 'goc6 io vn'.",
   "luc": 1792601885622,
+  "tt": "ok"
+ },
+ "s2": {
+  "ghi_chu": "Claude tự test: tên Java '.ThuS2' (giả tiền tố Bedrock) — Velocity VẪN NHẬN tên có dấu chấm (tới bước Sonar mới bị chặn vì là bot). Vào thẳng sảnh: vẫn bắt /register, không tự đăng nhập như Bedrock (đạt). CẦN BẠN QUYẾT: nên chặn hẳn tên Java bắt đầu bằng '.' ở proxy để không ai giành trước tên của người chơi Bedrock; và thử bằng máy Java thật qua proxy.",
+  "luc": 1792656310920,
   "tt": "ok"
  },
  "s20": {

@@ -721,6 +721,11 @@
   "luc": 1792582486848,
   "tt": "ok"
  },
+ "s23": {
+  "ghi_chu": "Claude tự test bằng hàm panel web_donate (site chuyển đúng các trường này, tên lấy từ phiên đăng nhập; không bấm 'đã chuyển', không duyệt; đã xoá đơn thử). Cài đặt nạp tối thiểu 10.000đ. Nạp 50.000đ kèm vang=999999 trong yêu cầu → đơn ghi 50 Vàng (server tự tính, bỏ qua số gửi lên), QR đúng 50.000đ. 1.234đ và số âm bị chặn, 50.999đ làm tròn về 50.000đ (dùng lại đơn cũ). Chưa có admin duyệt thì Vàng vẫn 0 (không ai tự cộng được). Gói rank: giá lấy theo gói ở server, gói không tồn tại bị chặn. ĐÃ SỬA (chưa nạp lại panel): người đang có đơn nạp Vàng chờ mà tạo đơn gói rank kiểu cũ thì báo lỗi 'group'.",
+  "luc": 1792640208061,
+  "tt": "ok"
+ },
  "s24": {
   "ghi_chu": "Claude tự test (tools/bottest/s24-ve.js): ĐÃ SỬA - trước đây vé cổng không bị huỷ khi dùng, trong 60 giây vào lại Sáng Tạo được bằng vé cũ. Giờ sangtao-1 nhớ vé đã dùng: qua cổng 1 lần chỉ vào được 1 lần, vào lại ngay hay sau 60 giây đều bị chặn 'chỉ vào được qua cổng'. (Đã khởi động lại sangtao-1; các server khác nhận jar mới ở lần khởi động lại sau.) CẦN BẠN: thử /server sangtao-1 qua proxy thật.",
   "luc": 1792582486848,

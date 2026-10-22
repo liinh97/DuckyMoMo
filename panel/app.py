@@ -2458,7 +2458,7 @@ def web_donate(data, ip):
                 raise ValueError("Gói không hợp lệ")
             g = next(g for g in tiers[ti]["goi"] if g["id"] == gi)
             # dùng lại mã chưa báo của đúng gói này (bấm lại không sinh mã mới mỗi lần)
-            old = next((r for r in mine if r["trang_thai"] == "tao" and r["group"] == tiers[ti]["group"] and r["thang"] == g["thang"]), None)
+            old = next((r for r in mine if r["trang_thai"] == "tao" and r.get("group") == tiers[ti]["group"] and r["thang"] == g["thang"]), None)   # đơn nạp Vàng không có "group"
             if old:
                 return {"ok": True, "don": old, **donate_qr(old)}
             if sum(1 for r in mine if r["trang_thai"] in ("tao", "cho")) >= 5:

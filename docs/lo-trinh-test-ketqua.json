@@ -220,8 +220,8 @@
   "tt": "ok"
  },
  "d1": {
-  "ghi_chu": "Claude tự test: /warp pvp chờ 3 giây rồi tới sảnh PvP; /dautruong hiện hướng dẫn tiếng Việt; /dautruong toi đúng. CẦN BẠN TEST: bước vào 3 cổng trong sảnh (bot không đi bộ vào cổng được) xem có vào sân chờ, nút 2v2 / cược / thoát.",
-  "luc": 1792580054853,
+  "ghi_chu": "Claude tự test: /warp pvp tới sảnh PvP, /dautruong hướng dẫn tiếng Việt. Bot KHÔNG đi bộ vào cổng được (trong thế giới đấu trường bot không nhận đất qua Via; tự gửi gói di chuyển thì bị đá 'di chuyển không hợp lệ'). Code cổng: sân trống -> vào sân chờ, tin 'đang chờ đối thủ' + nút [Đổi sang 2v2] [Cược…] [Thoát về sảnh]; sân đang đấu -> vào xem. CẦN BẠN: bước vào 3 cổng.",
+  "luc": 1792634031229,
   "tt": ""
  },
  "d2": {
@@ -524,6 +524,11 @@
   "luc": 1792575500000,
   "tt": "ok"
  },
+ "o3": {
+  "ghi_chu": "Claude: GrimAC đang bắt bot (log 'Grim » ThuX failed TickTimer…' khi bot gửi gói bất thường) -> chống hack có chạy. CẦN BẠN: thử client hack thật xem xử lý theo Cài đặt và Bedrock không bị bắt nhầm.",
+  "luc": 1792634031229,
+  "tt": ""
+ },
  "o4": {
   "ghi_chu": "Claude tự test RÚT NGẮN (tạm dọn mỗi 1 phút): báo 'Dọn vật phẩm dưới đất sau 30s', 'sau 5s', rồi 'Đã dọn sạch 11 vật phẩm'; tắt 'Thông báo dọn rác' trong /caidat thì không thấy báo nhưng đồ vẫn bị dọn; đã bật lại. Config trả lại 10 phút.",
   "luc": 1792598674108,
@@ -554,6 +559,11 @@
   "luc": 1792601885622,
   "tt": "ok"
  },
+ "p5": {
+  "ghi_chu": "Claude: bot không điều khiển pet đánh người chính xác được (lệnh @e không chọn được thực thể pet MyPet). Đọc code PetCombat: pet đánh người chơi bị giảm player-damage-reduce-percent (50%) mọi nơi trừ Đấu Trường; người bị pet hạ thì án/treo thưởng tính cho chủ (Culprit.of -> chủ pet). CẦN BẠN: cho pet đánh một người.",
+  "luc": 1792634031229,
+  "tt": ""
+ },
  "p6": {
   "ghi_chu": "Claude tự test: cá Huyền thoại (cá EMF) cho pet ăn -> +100 kinh nghiệm mỗi con, tin 'Pet ăn cá: no +100 · +100 kinh nghiệm (hôm nay 100/300)'; tới 300/ngày thì con thứ 4 bị từ chối 'Pet đang no, đủ máu và hôm nay đã nhận đủ kinh nghiệm' (không mất cá); cá thường Minecraft không tính.",
   "luc": 1792595643864,
@@ -562,6 +572,11 @@
  "p7": {
   "ghi_chu": "Claude tự test: /pettrade B 100 -> B thấy lời mời tiếng Việt, /pettrade accept: 'Bạn hiện là chủ của Pig', A +100 xu, B -100 xu, pet sang B.",
   "luc": 1792581907558,
+  "tt": "ok"
+ },
+ "p8": {
+  "ghi_chu": "Claude đọc cấu hình/code (chưa dựng máy farm thật): MyPet Exp.Gain.PreventFromSpawnReason = SPAWNER, TRIAL_SPAWNER, SPAWNER_EGG, DISPENSE_EGG -> pet không lên kinh nghiệm từ quái lồng; Thăng Cấp (LevelUp) bỏ qua quái SPAWNER/TRIAL_SPAWNER; Xu Quái (Refining) không rơi từ quái lồng.",
+  "luc": 1792634031229,
   "tt": "ok"
  },
  "q1": {
@@ -741,6 +756,11 @@
   "luc": 1792595643864,
   "tt": "ok"
  },
+ "s9": {
+  "ghi_chu": "Claude đọc code: quái lồng không cho Xu Quái, kinh nghiệm pet, điểm Thăng Cấp (xem p8). CẦN BẠN: chạy máy farm thật một giờ, ghi thu nhập/giờ (đồ rơi bán /sell, chịu giới hạn bán 8.000 xu/ngày) để cân giá.",
+  "luc": 1792634031229,
+  "tt": ""
+ },
  "t1": {
   "ghi_chu": "Claude tự test: 0,2 giờ chơi → '[Towny] Cần chơi thật đủ 3 giờ mới được lập thị trấn'; gần spawn báo 'quá gần thị trấn khác'. CẦN BẠN: lập thật khi đủ giờ (giá mới 1.500 xu).",
   "luc": 1792574500000,
@@ -881,6 +901,16 @@
   "luc": 1792575500000,
   "tt": "ok"
  },
+ "x10": {
+  "ghi_chu": "Claude tự test (tools/bottest/x10-vang.js): admin cộng tay 300 Vàng cho bot (chức năng Ví Vàng, ghi lý do); /vang hiện các gói rank; bấm 1 lần hỏi 'Bấm lại … trong 6 giây', bấm lần 2 mới mua: -20 Vàng mỗi lần; mua Nam Tước 1 tháng 2 lần -> rank hết hạn 21/12 (cộng dồn 60 ngày), áp mọi server (global); món 560 Vàng khi chỉ còn 260 -> 'Không đủ Vàng (có 260, cần 560)', không trừ. Đã gỡ rank và trừ hết Vàng thử (lịch sử ví ghi rõ).",
+  "luc": 1792634031229,
+  "tt": "ok"
+ },
+ "x11": {
+  "ghi_chu": "Claude tự test: /vang chuyen|give|pay <người> <số> không làm gì; panel/vang.py không có hàm chuyển Vàng giữa người chơi, không có món đổi Vàng ra xu (cửa hàng Vàng chỉ có rank). /pay chỉ chuyển xu.",
+  "luc": 1792634031229,
+  "tt": "ok"
+ },
  "x12": {
   "ghi_chu": "CẦN BẠN TEST: phần giao diện (gắn tag, lọc theo tag, Thêm cả bộ) phải bấm trên trình duyệt.",
   "luc": 1792596076618,
@@ -902,9 +932,9 @@
   "tt": "ok"
  },
  "x2": {
-  "ghi_chu": "Claude tự test bề ngang 390px: không tràn ngang, không lỗi. CẦN BẠN: mở bằng điện thoại thật, thử menu thả xuống.",
-  "luc": 1792575500000,
-  "tt": ""
+  "ghi_chu": "Claude tự test bằng trình duyệt trong app, cỡ điện thoại 375×812: trang chủ không cuộn ngang (độ rộng trang đúng 375px; dải chữ chạy nằm trong khung che), nút Menu mở danh sách mục, bấm 'Hằng ngày & kinh tế' nhảy đúng mục, chữ không tràn. Chưa thử trên điện thoại thật (chạm, bàn phím).",
+  "luc": 1792634031229,
+  "tt": "ok"
  },
  "x3": {
   "ghi_chu": "Claude tự test: đổi giá Tinh Luyện Than 1200 -> 1199 bằng hàm Lưu của trang Cài đặt -> file cấu hình đổi + dmm reload; trang chủ (api/hangngay, đệm 60 giây) hiện 1199 trong vòng 1 phút; đã trả lại 1200. ĐÃ SỬA: trang chủ hiện tên món Tinh Luyện bằng MÃ (xuquai, da, than...) vì tên đã chuyển sang Thư viện đồ -> giờ hiện 'Xu Quái', 'Tinh Luyện Đá'... (đã build lại container site).",
@@ -919,6 +949,11 @@
  "x5": {
   "ghi_chu": "Claude tự test: Lưu một số trên Cài đặt (Bang Hội Chiến) trả 'Đã lưu và áp dụng', chạy dmm reload ngay, file data đổi đúng. CẦN BẠN: bấm thử trên giao diện trang (bot gọi thẳng hàm lưu).",
   "luc": 1792596076618,
+  "tt": "ok"
+ },
+ "x8": {
+  "ghi_chu": "Claude tự test (tools/bottest/x8-qr.js): cầm kiếm sắt, /rank mua -> menu các mức 20.000đ (20 Vàng) … 1.000.000đ (1200 Vàng); chọn 20.000đ -> tấm bản đồ QR thay kiếm trên tay, chat có [Tôi đã chuyển khoản] [Huỷ]; [Huỷ] (/rank huyqr) hoặc bấm Q -> 'Đã cất mã QR', kiếm về đúng ô. Yêu cầu nạp thử đã đánh dấu huỷ trong hàng chờ Donate. CẦN BẠN: quét QR bằng app ngân hàng xem đúng số tiền + nội dung.",
+  "luc": 1792634031229,
   "tt": "ok"
  }
 }

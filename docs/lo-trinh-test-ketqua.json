@@ -742,8 +742,8 @@
   "tt": "ok"
  },
  "s2": {
-  "ghi_chu": "Claude tự test: tên Java '.ThuS2' (giả tiền tố Bedrock) — Velocity VẪN NHẬN tên có dấu chấm (tới bước Sonar mới bị chặn vì là bot). Vào thẳng sảnh: vẫn bắt /register, không tự đăng nhập như Bedrock (đạt). CẦN BẠN QUYẾT: nên chặn hẳn tên Java bắt đầu bằng '.' ở proxy để không ai giành trước tên của người chơi Bedrock; và thử bằng máy Java thật qua proxy.",
-  "luc": 1792656310920,
+  "ghi_chu": "Claude tự test: tên Java '.ThuS2' (giả tiền tố Bedrock) vẫn phải /register, không tự đăng nhập như Bedrock (đạt). Velocity vẫn nhận tên Java bắt đầu bằng '.'; 22/10 chủ server quyết: để nguyên (trùng tên thì người kia đặt tên khác).",
+  "luc": 1792656447693,
   "tt": "ok"
  },
  "s20": {

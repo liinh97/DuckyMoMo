@@ -83,7 +83,7 @@ n7 câu cá (0,06 xu/cm, thi câu hạng 1 +1.500 + 3 bùa) · n10 AuraSkills th
 ### VIỆC CÒN LẠI (22/10 ~15h, account sắp hết lượt; trang test: 208 mục, 168 ok, 0 lỗi, 33 chờ người thật, 7 chưa đụng)
 - ĐÃ LÀM XONG 15h (tools/bottest/s1-lobby.js, s1s2-proxy.js, s18-hack.js, c2-xuong.js): s1, s2, s18, c2 đạt. HẾT mục bot tự làm được.
   Sonar ở proxy chặn bot từ cửa (không brand / brand 2 lần; sai 5 lần -> IP đen 10 phút) nên s1/s2 thử ở sảnh vào thẳng.
-  **CẦN NGƯỜI DÙNG QUYẾT (s2):** Velocity nhận tên Java bắt đầu bằng "." -> có thể giành trước tên Bedrock; nên chặn ở proxy.
+  s2: Velocity nhận tên Java bắt đầu bằng "." (có thể giành trước tên Bedrock) -> chủ server quyết 22/10: ĐỂ NGUYÊN, không chặn.
 - (cũ) Bot còn tự làm được: **s1** lệnh trước khi /login (bot vào qua proxy, KHÔNG /register, thử đi, mở túi,
   /server banghoi-1, /msg, chat -> chỉ được /login /register); **s2** tên Java bắt đầu bằng "." (giả Bedrock) -> phải bị từ chối hoặc vẫn
   hỏi mật khẩu, vào thẳng = lỗi nghiêm trọng; **s18** bot gửi gói bay / đi nhanh / đánh xa -> Grim chặn theo Cài đặt Chống hack;

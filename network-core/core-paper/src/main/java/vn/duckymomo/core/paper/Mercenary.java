@@ -13,6 +13,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 import net.kyori.adventure.text.Component;
+import net.luckperms.api.LuckPermsProvider;
+import net.luckperms.api.node.types.PermissionNode;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
@@ -25,15 +27,14 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.permissions.PermissionAttachment;
 
 /**
  * Lính đánh thuê (/linhdanhthue, Bang Hội Chiến): cầu nối người chơi một mình với chiến tranh của các nước. Config mercenary:
  *  - Người KHÔNG thuộc nước nào (và không ở Liên minh Hoà Bình, không phải tài khoản phụ, chơi >= min-hours giờ) đăng ký kèm giá.
  *  - Vua hoặc người có chức nước trong hire-ranks thuê: /linhdanhthue thue <tên>; lính đồng ý /linhdanhthue nhan -> ngân khố nước trả giá,
  *    server giữ fee-percent %, lính nhận phần còn lại. Hợp đồng contract-hours giờ, mỗi lính 1 hợp đồng một lúc.
- *  - Trong hợp đồng: miễn "ốm" vùng vây của SiegeWar (quyền siegewar.immune.to.war.nausea, cấp tạm), ăn kho lương THỦ ĐÔ nước thuê,
+ *  - Trong hợp đồng: miễn "ốm" vùng vây của SiegeWar (quyền siegewar.immune.to.war.nausea, node LuckPerms có hạn = hạn hợp đồng;
+ *    22/10: trước dùng PermissionAttachment, test bot thấy SiegeWar không nhận -> lính vẫn ốm), ăn kho lương THỦ ĐÔ nước thuê,
  *    không đánh được người của nước thuê và ngược lại. Không giữ cờ được (SiegeWar chỉ tính quân hàm), không có điểm Chiến Thần.
  * Lưu: linhdanhthue.yml (dangky.<uuid>{ten,gia,xong}, hopdong.<uuid>{nuoc,het}).
  */
@@ -58,7 +59,6 @@ final class Mercenary implements Listener {
     private final File file;
     private final YamlConfiguration data;
     private final Map<UUID, Offer> offers = new HashMap<>();
-    private final Map<UUID, PermissionAttachment> perms = new HashMap<>();
 
     Mercenary(DuckyMoMoCore plugin, Activity activity, WarRules war, ConfigurationSection c) {
         this.plugin = plugin;
@@ -82,18 +82,14 @@ final class Mercenary implements Listener {
     void start() {
         INSTANCE = this;
         Bukkit.getScheduler().runTaskTimer(plugin, this::tick, 200L, 1200L);
-        Bukkit.getOnlinePlayers().forEach(this::applyPerm);
+        ConfigurationSection hd = data.getConfigurationSection("hopdong");   // hợp đồng làm trước 22/10 chưa có node
+        if (hd != null) {
+            hd.getKeys(false).forEach(id -> grantImmune(UUID.fromString(id), hd.getLong(id + ".het", 0)));
+        }
     }
 
     void stop() {
         INSTANCE = null;
-        perms.forEach((u, a) -> {
-            Player p = Bukkit.getPlayer(u);
-            if (p != null) {
-                p.removeAttachment(a);
-            }
-        });
-        perms.clear();
         save();
     }
 
@@ -120,14 +116,16 @@ final class Mercenary implements Listener {
         return n == null ? null : n.getCapital();
     }
 
-    private void applyPerm(Player p) {
-        boolean on = employer(p.getUniqueId()) != null;
-        PermissionAttachment a = perms.get(p.getUniqueId());
-        if (on && a == null) {
-            perms.put(p.getUniqueId(), p.addAttachment(plugin, IMMUNE, true));
-        } else if (!on && a != null) {
-            p.removeAttachment(a);
-            perms.remove(p.getUniqueId());
+    /** Miễn ốm vùng vây tới hết hợp đồng: node LuckPerms có hạn (tự hết, không cần gỡ). */
+    private static void grantImmune(UUID u, long het) {
+        if (het <= System.currentTimeMillis()) {
+            return;
+        }
+        try {
+            LuckPermsProvider.get().getUserManager().modifyUser(u, user ->
+                    user.data().add(PermissionNode.builder(IMMUNE).expiry(het / 1000).build()));
+        } catch (IllegalStateException | NoClassDefFoundError e) {
+            Bukkit.getLogger().warning("[DuckyMoMoCore] Lính đánh thuê: không cấp được quyền miễn ốm (" + e + ")");
         }
     }
 
@@ -146,14 +144,8 @@ final class Mercenary implements Listener {
                 }
             }
         }
-        Bukkit.getOnlinePlayers().forEach(this::applyPerm);
         offers.values().removeIf(o -> System.currentTimeMillis() - o.at() > 600_000L);
         save();
-    }
-
-    @EventHandler
-    public void onJoin(PlayerJoinEvent e) {
-        Bukkit.getScheduler().runTaskLater(plugin, () -> applyPerm(e.getPlayer()), 20L);
     }
 
     /** Lính và người của nước thuê không đánh nhau được (kể cả tên, pet, TNT…). */
@@ -333,7 +325,7 @@ final class Mercenary implements Listener {
         data.set("hopdong." + p.getUniqueId() + ".ten-nuoc", n.getName());
         data.set("hopdong." + p.getUniqueId() + ".het", het);
         save();
-        applyPerm(p);
+        grantImmune(p.getUniqueId(), het);
         p.sendMessage(c("&a⚔ Đã nhận hợp đồng với nước &f" + n.getName() + "&a: +" + fmt(net) + " xu. Trong " + fmt(contractHours)
                 + " giờ: vào vùng vây không bị ốm, ăn kho lương thủ đô của họ, không đánh được người của họ."));
         for (Resident r : n.getResidents()) {

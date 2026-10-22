@@ -686,6 +686,11 @@
   "luc": 1792595643864,
   "tt": "ok"
  },
+ "s14": {
+  "ghi_chu": "Claude tự test trong vùng vây lúc có phiên: /balo (rank Dân) → 'Không mở balo trong vùng vây khi đang có phiên đánh'. Thoát game khi đang giao tranh → bị giết, báo cả server 'thoát game khi đang giao tranh và bị xử thua', điểm trận −150; đồ KHÔNG rơi vì SiegeWar bật giữ đồ khi chết trong vùng vây (đúng cấu hình). Người ngoài không dịch chuyển vào vùng vây được (SiegeWar). CHƯA THỬ: elytra (PvPManager Block Gliding đang tắt), bay pet (w5), món Xưởng bị cấm (giờ theo Sách cấm của phiên khác), ngọc ender.",
+  "luc": 1792654208673,
+  "tt": "ok"
+ },
  "s15": {
   "ghi_chu": "Claude tự test: tên Thái Ấp bỏ mã &, <script> chỉ hiện là chữ, dài thì cắt 32 ký tự, JSON không thành nút bấm. Gõ ký tự § trong chat thì server đá ra ngay (luật Minecraft). ĐÃ SỬA: tên pet nhận &k&l (chữ nhấp nháy đậm) dù đã bỏ quyền màu - lỗi của MyPet (bỏ mã § trước rồi mới đổi & thành màu) -> DuckyMoMoCore bỏ mã & khỏi /petname (staff vẫn dùng màu). Phần web: chưa thử hiển thị tên trên trang.",
   "luc": 1792595643864,
@@ -876,6 +881,16 @@
   "luc": 1792595643864,
   "tt": "ok"
  },
+ "w11": {
+  "ghi_chu": "Claude tự test (Cài đặt Vũ khí nổ: crystal 0, anchor 0, giường 0, xe goòng TNT 0,3). Bot max 200 máu, nổ cách 3 khối: TNT thường mất 29,4 máu (đối chứng); xe goòng TNT mất 6,6 (≈22%, giảm đúng hướng, chênh 0,3 do tâm nổ khác); bot tự đánh end crystal: 0; respawn anchor nổ ở Overworld: 0; giường nổ ở Nether: 0. Ghi chú: crystal nổ bằng lệnh /damage (không có người đánh) vẫn gây ~3 máu — thực tế người chơi luôn đánh/bắn nên không ảnh hưởng.",
+  "luc": 1792654208673,
+  "tt": "ok"
+ },
+ "w12": {
+  "ghi_chu": "Claude tự test (Cài đặt tấn công thắng 30, phòng thủ thắng 20, hạ người 3; tạm hạ điều kiện thị trấn ≥3 dân, ≥3 ngày vì thị trấn thử mới lập). Trận 1 bên tấn công thắng: ThuNuocA +30, /bxh hiện '1. ThuNuocA - 30 điểm', lịch sử ghi 'tấn công thắng ở ThuThanhB'. Trận 2 bên phòng thủ thắng: ThuNuocB +20. Chiến Thần: ThuW2 (quân hàm private) hạ ThuW1 (private, phe kia) 2 lần trong vùng vây → 6 điểm. Chưa chạm giới hạn 3 lần/phiên. Dữ liệu BXH thử sẽ trả về bản sao lưu khi dọn.",
+  "luc": 1792654208673,
+  "tt": "ok"
+ },
  "w2": {
   "ghi_chu": "Claude tự test (admin bật phiên): báo 'Phiên công thành bắt đầu: CÓ cho pet', phiên giữ cờ 16 khối/7 phút, hết phiên khôi phục bảo vệ PvP. Chưa xem báo trước 60/10 phút theo lịch thật.",
   "luc": 1792574500000,
@@ -884,6 +899,11 @@
  "w3": {
   "ghi_chu": "Claude tự test: nộp 32 bánh mì +144 điểm (Hạn hán ×1,5); trong trận ' được ăn no', kho trừ 1 điểm sau ~15 giây (2/phút); kho thị trấn D cạn → 'quân mau đói'.",
   "luc": 1792578000000,
+  "tt": "ok"
+ },
+ "w4": {
+  "ghi_chu": "Claude tự test bằng công thành giả (ThuNuocA vây ThuThanhB, /swa battlesession start), mùa khô. Đêm: Bóng tối; có pet Sói (mắt đêm) đi theo: Nhìn đêm + câu 'pet mắt đêm soi đường'. Mưa: Chậm + câu 'đường lầy'. Ngày nắng mùa khô: Đói. Đúng Cài đặt siege-weather. Thêm: Kho lương thủ đô bên tấn công cạn thì quân bị Đói.",
+  "luc": 1792654208673,
   "tt": "ok"
  },
  "w6": {
@@ -900,6 +920,11 @@
   "ghi_chu": "Claude đọc /canbang: số đã theo giá mới (thuộc địa 150 xu/ngày, lộ trình ghi 50 là số cũ). CẦN BẠN: cần trận thật.",
   "luc": 1792574500000,
   "tt": ""
+ },
+ "w9": {
+  "ghi_chu": "Claude tự test (Cài đặt phí 10%, hợp đồng 48 giờ). ThuW4 đăng ký 500 → vua ThuNuocA thuê → ThuW4 +450 xu, hợp đồng hết hạn đúng +48 giờ. Trong vùng vây: lính đánh địch ThuW2 mất 7 máu; đánh người nước thuê 0; người nước thuê đánh lính 0; địch đánh lính mất 9. ĐÃ SỬA: lính vẫn bị Ốm Chiến Tranh (quyền miễn ốm gắn tạm bằng PermissionAttachment không có tác dụng) → nay cấp node LuckPerms có hạn = hạn hợp đồng; test lại: lính không ốm, người không hợp đồng vẫn ốm.",
+  "luc": 1792654208673,
+  "tt": "ok"
  },
  "x1": {
   "ghi_chu": "Claude tự test (Playwright): trang chủ tải xong không lỗi JS, không còn ô nào 'Đang tải'.",

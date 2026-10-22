@@ -470,9 +470,9 @@
   "tt": "ok"
  },
  "n10": {
-  "ghi_chu": "Claude tự test: /skills tiếng Việt đủ 6 kỹ năng. Máu về 10 tim trong Đấu Trường đã thử ở cd10. CẦN BẠN: đào ở spawn/Thái Ấp không lên kinh nghiệm.",
-  "luc": 1792574000000,
-  "tt": ""
+  "ghi_chu": "Claude tự test (AuraSkills, Cài đặt quặng than 1,0 kinh nghiệm/khối; vùng spawn chặn bằng WorldGuard, thế giới thaiap trong blocked_worlds, check_block_replace bật). Đào 5 quặng tự nhiên ở đất hoang: +4 kinh nghiệm Đào mỏ (1 lần bot đào trượt). Tự đặt quặng rồi phá 5 lần: +0. Đào trong đất Thái Ấp của mình: +0. Ở spawn: không phá được khối. /skills tiếng Việt đủ 6 kỹ năng (lần trước).",
+  "luc": 1792640109971,
+  "tt": "ok"
  },
  "n2": {
   "ghi_chu": "Claude tự test RÚT NGẮN THỜI GIAN (tools/bottest/n-thoigian.js + tạm random_tick_speed 100, ruộng thắp sáng, ép mùa; xong trả lại hết): 21 khoai + 21 lúa trồng cạnh nhau 40 giây. Mùa khô: khoai tuổi TB 3,76 > lúa 2,62. Mùa mưa: lúa 3,67 > khoai 2,05. Đúng hệ số mùa.",
@@ -500,9 +500,9 @@
   "tt": "ok"
  },
  "n7": {
-  "ghi_chu": "Claude: /emf shop ngoài đất hoà bình bị chặn đúng luật. Web có lịch thi câu T7, CN 12:00. CẦN BẠN: bán cá ở kinh đô và chạy một đợt thi câu.",
-  "luc": 1792574000000,
-  "tt": ""
+  "ghi_chu": "Claude tự test bằng bot. Bán cá ở kinh đô, Cài đặt Cá Thường 0,06 xu/cm: 32,9 + 26,8 cm → +3,58 xu; 23,4 + 18,3 cm → +2,50 xu (khớp). ĐÃ SỬA: người chơi thường gõ /emf shop, /emf help, /emf top đều báo 'Incorrect argument' (nhóm default thiếu quyền EMF) → không ai bán cá được; đã cấp emf.shop/top/help/journal cho nhóm default (tools/emf.cmds), không cấp sellall. Thi câu: bot câu thật bằng cần (1 con trong 2 phút), hết giờ hạng 1 nhận +1.500 xu + 3 Bùa bắt pet (đúng thicau.yml; bùa +25% = Cài đặt). ĐÃ SỬA: câu nhắc 'Còn … cho cuộc thi' mất thời gian ({time_formatted} → {time-formatted}); lệnh mở tay đúng là /emfa competition start thiCauCuoiTuan <giây> (ghi chú cũ sai).",
+  "luc": 1792640109971,
+  "tt": "ok"
  },
  "n8": {
   "ghi_chu": "Claude tự test: menu /nauan có 5 món; nấu Canh chua thiếu cá báo 'Chưa đủ cá Thường (cần 2)'; nấu 2 Cơm nắm được; ăn món 1 có Máu ảo I 120 giây; ăn món 2 ngay bị chặn 'chờ 20 phút'. Món cá (cần cá EMF thật) chưa nấu thử.",

@@ -1,4 +1,4 @@
-# DuckyMoMo: thi câu cá cuối tuần (EvenMoreFish). Ai câu được con DÀI NHẤT trong 20 phút thắng. Admin mở tay: /emfa competition start 20 LARGEST_FISH
+# DuckyMoMo: thi câu cá cuối tuần (EvenMoreFish). Ai câu được con DÀI NHẤT trong 20 phút thắng. Admin mở tay: /emfa competition start thiCauCuoiTuan 1200 (mã cuộc thi, thời lượng tính bằng GIÂY; 22/10 đã thử)
 # Tiền thưởng theo mặt bằng kinh tế server (kim cương bán 60 xu, nhiệm vụ ngày 100 xu). Không pay-to-win: thưởng chỉ là xu.
 id: thiCauCuoiTuan
 disabled: false

@@ -83,7 +83,7 @@ not-enough-players: <reset>Không có đủ người chơi online để bắt đ
 #Sent to all players at specific times to show the remaining time left
 #{time_formatted} shows the time (e.g. 5m left, 10m 30s left)
 #{time_raw} is what you input in competitions.yml
-time-alert: <reset>Còn {time_formatted} cho cuộc thi câu cá xếp hạng {type}
+time-alert: <reset>Còn {time-formatted} cho cuộc thi câu cá xếp hạng {type}
 #The message sent to players when they've sold their fish in the /emf shop
 fish-sale: <white>Bạn đã bán </white><green>{amount} </green><white>cá với giá </white><green>{sell-price}</green><white>.
 #Help messages

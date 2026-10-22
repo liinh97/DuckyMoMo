@@ -260,7 +260,7 @@ groups:
       - ["emf top", "Bảng xếp hạng thi câu đang diễn ra", Mọi người]
       - ["emf next", "Thời gian thi câu tiếp theo", Mọi người]
       - ["emf toggle", "Tắt/bật cá tuỳ chỉnh cho mình", Mọi người]
-      - ["emfa competition start <phút> <loại>", "Mở thi câu ngay", Chỉ admin]
+      - ["emfa competition start thiCauCuoiTuan <giây>", "Mở thi câu ngay (thời lượng tính bằng giây)", Chỉ admin]
       - ["emfa competition end", "Kết thúc thi câu", Chỉ admin]
       - ["emfa fish <độ hiếm> <cá> [người]", "Lấy cá", Chỉ admin]
       - ["emfa reload", "Nạp lại EvenMoreFish", Chỉ admin]

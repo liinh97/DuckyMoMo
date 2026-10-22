@@ -1,0 +1,7 @@
+# EvenMoreFish ở Bang Hội Chiến: quyền cho MỌI người chơi (nhóm default, server=banghoi-1). Chạy lại được (set đè).
+# 22/10: test bot thấy người chơi thường gõ /emf shop, /emf help, /emf top đều báo "Incorrect argument" (EMF mặc định chỉ op) -> không ai bán cá được.
+# Không cấp /emf sellall (như /sell all: chủ server không cho, trong menu /emf shop đã có nút Bán hết).
+lp group default permission set emf.shop true server=banghoi-1
+lp group default permission set emf.top true server=banghoi-1
+lp group default permission set emf.help true server=banghoi-1
+lp group default permission set emf.journal true server=banghoi-1

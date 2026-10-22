@@ -1,9 +1,73 @@
 # Bàn giao dự án DuckyMoMo Network
 
-> Dùng file này để tiếp tục ở session hoặc tài khoản Claude khác. Cập nhật: 21/10/2026 tối. ĐỌC MỤC 000000000 TRƯỚC, rồi 00000000, 0000000, 000000, 00000, 0000, 000, 00, 0.
+> Dùng file này để tiếp tục ở session hoặc tài khoản Claude khác. Cập nhật: 22/10/2026 trưa. ĐỌC MỤC 0000000000 TRƯỚC (và mục "22/10 sáng — Sách cấm" của phiên song song), rồi 000000000, 00000000, 0000000, 000000, 00000, 0000, 000, 00, 0.
 > Đọc kèm: `README.md`, `docs/minecraft-server-plan.md` (kế hoạch, quyết định), `docs/network-architecture.md` (kiến trúc).
 
 ---
+
+## 0000000000. MỚI NHẤT — 22/10/2026 trưa (test bot THEO CÀI ĐẶT WEB, tài khoản lần 5 trước khi chuyển)
+
+Trang test: https://claude.ai/artifact/YY55Wn87HYuMzL898MT8a7 (DB `ketqua`, ghi phải có `if_version`). Nguồn: `docs/lo-trinh-test-ketqua.json`
+(192 mục có dữ liệu). Ghi kết quả: scratchpad `kq_add.py <json {id: [tt, ghi_chu]}>` → `load2/<id>.json` → ArtifactData batch.
+
+### ⚠ ĐỌC TRƯỚC: phiên Claude khác đang sửa song song + jar của họ ĐÃ LÊN banghoi-1
+- Có phiên khác (mục "22/10 sáng — Sách cấm" ngay dưới) sửa `BanBook.java`, `TownyAllies.java`, `SkillEnchants.java`, `Workshop.java`, `Arena.java`,
+  `ItemLibrary.java`, `DuckyMoMoCore.java`, `plugin.yml`, `panel/app.py`, `panel/thuvien.html`, `camnang.yml`, `huongdan.yml`, `lenh-con.yml` (chưa commit).
+- Phiên này `./ops/build-core.sh` 2 lần + restart banghoi-1 (0 người online) lúc 09:4x và 10:08 → **plugin Sách cấm + Khổng lồ/Thu nhỏ của họ đang chạy
+  trên banghoi-1**, nhưng **panel CHƯA build lại** (họ ghi panel và plugin nên lên cùng lúc). lobby/practice/sangtao chưa restart.
+  Việc cần: phiên kia (hoặc người tiếp) `docker compose up -d --build panel` + restart lobby practice-1 sangtao-1 khi không ai online, rồi test Sách cấm.
+- Phiên này chỉ commit phần của mình; file dùng chung commit đúng dòng mình sửa bằng scratchpad `commit_mine.py` (lấy bản HEAD, áp thay thế, ghi index).
+
+### Luật mới của người dùng: test phải so với GIÁ TRỊ ĐANG ĐẶT trên trang Cài đặt (memory test-theo-cai-dat-web)
+- Đọc: `docker compose exec -T panel python -c "import sys; sys.path.insert(0,'/app'); import app; v=app.load_modes()['banghoi']['values']; print(v['<khoá>'])"`.
+- **`tools/cai-dat-lech.py`** (chạy trong panel: `docker compose exec -T panel python /repo/tools/cai-dat-lech.py [--sua-web]`): so settings.yml với file đang
+  chạy. 22/10 có **19 mục lệch** (giá /sell sau định giá ×3, giờ danh phận 24/72, mẹo boss bar, lore sách CE, giới hạn QuickShop, kit tanthu):
+  web hiện số cũ, bấm Lưu sẽ ghi đè server. Đã chép giá trị server vào settings.yml (server là ý định mới nhất theo HANDOFF) → 0 lệch.
+  Ai sửa thẳng file plugin trong data/ thì chạy lại công cụ này.
+
+### Kết quả phiên (tất cả ok, ghi cả "Cài đặt = X, đo = Y" trong trang test)
+c4 Rìu Bán (+368 xu = worth.yml) + Bắt Thú · c7 Xu Quái 11/200 = 5,5% (đặt 5%) · c8 · cd14 Giảm giá Xưởng (8.000→7.600→7.200) · cd17 bắt heo 35%→40% ·
+s10 Chợ đen (Tị Nạn 2 đơn, Lương Dân 4, phí 2% không hoàn) · x6 Sứ Giả (thử 14 ngày, gia hạn 30, gỡ) · q7 Cổng Hoang · q9 Lữ khách (+1.500) ·
+n7 câu cá (0,06 xu/cm, thi câu hạng 1 +1.500 + 3 bùa) · n10 AuraSkills theo vùng · s23 giả đơn ủng hộ (Vàng server tự tính, chưa duyệt không cộng).
+
+### Đã sửa phiên này (commit 0395deb, e543734, 4a8a0b5, 3246e7c; chưa push)
+- Menu /xuong hiện giá đã giảm Thăng Cấp ("gốc …, Thăng Cấp -X%"). Đã lên game.
+- **Người chơi thường KHÔNG bán được cá**: nhóm default thiếu quyền EMF (/emf shop, help, top báo "Incorrect argument"). `tools/emf.cmds` cấp
+  emf.shop/top/help/journal server=banghoi-1 (không sellall). ĐÃ CHẠY (LuckPerms).
+- Lữ khách: tag "đã qua cổng" chỉ gắn khi VÀO TỚI dungeon (DungeonGate.onEnter, Pass.gate) — trước: Shift mở menu độ khó là đủ lấy 1.500 xu. Đã lên game.
+- /sell hand còn sót: lời chào Essentials motd, menu chính ô 20 (bấm chạy lệnh không có quyền), lenh-vi, lenh-con, camnang, menu Bedrock DecorShop.
+- EMF: câu nhắc thi câu `{time_formatted}` → `{time-formatted}`; lệnh mở tay đúng `/emfa competition start thiCauCuoiTuan <GIÂY>` (ghi chú cũ sai).
+- panel `web_donate`: lỗi KeyError 'group' khi có đơn nạp Vàng rồi tạo đơn gói rank kiểu cũ (`r.get("group")`). **Chưa build lại panel.**
+
+### Mẹo bot học được phiên này
+- `data get entity <bot> Inventory` qua rcon bị cắt "…" khi đồ có components → đếm bằng `minecraft:clear <bot> <item> 0` ("Found N").
+- Trong đất thị trấn (KinhDo) không summon được quái (tắt mob) → đo rơi đồ ở đất hoang (13200,-2900).
+- Bot qua Via chuột phải NPC Citizens KHÔNG ăn (cả interact lẫn interact_at) → mở hội thoại BetonQuest bằng action tạm `conversation <tên>` +
+  `bq action <bot> cotruyen>…`, tạm đặt BetonQuest `default_io: simple` (chọn bằng số trong chat) rồi trả `dialog` (q9-lukhach.js + scratchpad q9.sh).
+- mineflayer `bot.fish()` câu được cá thật qua Via (hồ nước fill tạm).
+- Bot cần `grim.exempt` để tương tác ổn (Grim TickTimer). Lệnh trong `wsl.exe bash -c '…'` mất `$biến` → luôn viết script vào scratchpad.
+- `/choden dat`, `/xuong`… chỉ mở ở kinh đô / đất hoà bình. Balance rcon dạng "5,000 xu" (phẩy hàng nghìn).
+- Sửa file data (conghoang.yml…) phải lúc server TẮT: scratchpad `restart_restore.sh` (kiểm online, stop, chép, up).
+
+### Dữ liệu test thêm (dọn cùng danh sách ở mục 00000000)
+- Bot mới: ThuX1/ThuX2, ThuCD3 (đã mua đặc quyền), ThuS10, ThuSG, ThuQ7/ThuQ7b (tag BetonQuest lk_hoinuoc_*), ThuN7/ThuN7b (cá, 3 Bùa bắt pet,
+  +1.500 xu), ThuN10, ThuS23. ThuCD2 được set lại quyền xuong.giam/.giam.2/pet.batgioi. Danh hiệu "Người Mở Cổng" của ThuQ7.
+- conghoang.yml đã trả về dem 0 (cổng thử c1 đã gỡ). donate.json đã xoá đơn thử.
+- Vẫn còn: ~34 bot hoạt động làm LowPop tắt (dân ≥ 15) → hỏi người dùng trước khi dọn (xoá dữ liệu người chơi = cần đồng ý).
+
+### Ghi nhận nhỏ (chưa sửa)
+- Sứ Giả được duyệt lúc offline không nhận tin báo khi vào lại (MediaProgram.notify chỉ gửi người đang online).
+- Trong đất KinhDo, Bắt Thú vào bò không ăn và không báo gì (đất hoang thì đúng).
+- BetonQuest báo tiền "Đã nhận 1500.00" (dạng số tiếng Anh).
+
+### Việc tiếp theo (người dùng: "dựng lớn vào", không có người test công thành)
+1. Công thành giả 2 quốc gia (w4 thời tiết, w5 pet trong vùng vây, w9 lính đánh thuê, w11 vũ khí nổ, w12 điểm BXH, s14 lách công thành).
+   Đã tìm: nước tấn công cần ≥ 2 thị trấn (town-rules.siege-min-towns 2); bắt đầu vây = vua cắm cờ (bot đặt banner) cạnh thị trấn;
+   `/swa siegeimmunity town <t> 0`, `/swa battlesession start|end`, `/swa siege <t> setbalance|end|remove`; `/ta town new <tên> <thị trưởng>`,
+   `/ta nation new <tên> <thủ đô>`. w11 làm được ngoài trận: ExplosionRules (crystal 0, anchor 0, giường 0, xe goòng TNT 0,3; TNT khối không đổi) —
+   so máu mất của TNT khối với xe goòng TNT cùng khoảng cách (bot max_health cao). Xong phải trả BXH mùa / SiegeWar về như cũ (sao lưu trước, sửa lúc TẮT).
+2. Hầm ngục: q5 chuỗi chìa, q6 vé + góp quỹ (hoàn vé khi không vào), q8 cốt truyện chương 1 (NPC Già Làng chưa đặt), q10 tiền rơi dungeon.
+3. p4 cưỡi pet bay.
 
 ## 000000000. MỚI NHẤT — 21/10/2026 tối muộn (tiếp test bằng bot, tài khoản lần 5 quay lại)
 

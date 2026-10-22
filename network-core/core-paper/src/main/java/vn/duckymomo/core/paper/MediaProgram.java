@@ -131,8 +131,11 @@ final class MediaProgram implements Listener {
         return data.isConfigurationSection(k(u));
     }
 
+    /** Trạng thái đơn; DUYET mà rank đã quá hạn (LuckPerms tự gỡ nhóm) thì là HET (22/10: trước vẫn hiện "đang là Sứ Giả", vẫn bị chấm chỉ tiêu). */
     private String status(UUID u) {
-        return data.getString(k(u) + ".trangthai", "");
+        String st = data.getString(k(u) + ".trangthai", "");
+        long het = data.getLong(k(u) + ".het");
+        return "DUYET".equals(st) && het > 0 && het <= System.currentTimeMillis() ? "HET" : st;
     }
 
     private UUID byName(String name) {
@@ -330,7 +333,7 @@ final class MediaProgram implements Listener {
         ConfigurationSection n = data.getConfigurationSection("nguoi");
         if (n != null && data.isSet("tuan-da-cham")) {
             for (String id : n.getKeys(false)) {
-                if (!"DUYET".equals(n.getString(id + ".trangthai"))) {
+                if (!"DUYET".equals(status(UUID.fromString(id)))) {
                     continue;
                 }
                 long[] s = stats(UUID.fromString(id), from, to);
@@ -504,7 +507,7 @@ final class MediaProgram implements Listener {
             if (n != null) {
                 for (String id : n.getKeys(false)) {
                     long[] st = stats(UUID.fromString(id), now - 7 * DAY, now);
-                    s.sendMessage(LEGACY.serialize(c("&f" + n.getString(id + ".ten") + " &7[" + n.getString(id + ".trangthai") + "] " + st[0] + " buổi, "
+                    s.sendMessage(LEGACY.serialize(c("&f" + n.getString(id + ".ten") + " &7[" + status(UUID.fromString(id)) + "] " + st[0] + " buổi, "
                             + String.format(Locale.ROOT, "%.1f", (st[1] + st[2]) / 60.0) + " giờ (chưa xác minh " + st[2] + "p)"
                             + (meets(st) ? " &a✔" : " &c✘") + " &8" + n.getString(id + ".kenh"))));
                 }
@@ -615,7 +618,7 @@ final class MediaProgram implements Listener {
                 o.addProperty("ten", n.getString(id + ".ten"));
                 o.addProperty("kenh", n.getString(id + ".kenh", ""));
                 o.addProperty("nen_tang", platform(n.getString(id + ".kenh", "")));
-                o.addProperty("trang_thai", n.getString(id + ".trangthai", ""));
+                o.addProperty("trang_thai", status(u));
                 o.addProperty("dang_ky", n.getLong(id + ".dangky-luc"));
                 o.addProperty("het", n.getLong(id + ".het"));
                 o.addProperty("buoi_7", st[0]);

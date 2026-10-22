@@ -319,15 +319,16 @@ final class RandomTeleport implements Listener {
             return;
         }
         // chờ đứng yên trước khi đi (staff có quyền bỏ qua thời gian chờ thì đi ngay)
-        if (warmupSeconds <= 0 || p.hasPermission("essentials.teleport.timer.bypass") || p.hasPermission("duckymomo.rtp.bypass")) {
+        int warm = TeleportDelay.seconds(p, warmupSeconds);   // theo rank (Danh phận / rank khác: tp-delay), không có thì rtp.warmup-seconds
+        if (warm <= 0 || p.hasPermission("essentials.teleport.timer.bypass") || p.hasPermission("duckymomo.rtp.bypass")) {
             p.sendMessage(c("&7Đang tìm chỗ đất hoang ở " + z.name() + "&7…"));
             attempt(p, z, w, 1);
             return;
         }
         UUID id = p.getUniqueId();
         Location from = p.getLocation().clone();
-        int[] count = {warmupSeconds};
-        p.sendMessage(c("&7Đứng yên &f" + warmupSeconds + " giây &7để dịch chuyển (di chuyển hoặc bị đánh là huỷ)."));
+        int[] count = {warm};
+        p.sendMessage(c("&7Đứng yên &f" + warm + " giây &7để dịch chuyển (di chuyển hoặc bị đánh là huỷ)."));
         warming.put(id, plugin.getServer().getScheduler().runTaskTimer(plugin, () -> {
             if (!p.isOnline()) {
                 stopWarmup(id, null);

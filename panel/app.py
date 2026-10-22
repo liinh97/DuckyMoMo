@@ -1454,14 +1454,79 @@ LIB_USES = {"": "Đồ thường", "ky-nang": "Kỹ năng đặc biệt (Xưởn
             "chia-khoa": "Vé gacha"}
 # Thư viện đồ › Chỉ số gốc: mã -> (tên, (nhỏ nhất, lớn nhất)); khớp ItemLibrary.ATTRS và ATTRS trong thuvien.html
 LIB_DMM_ENCH = {"luot": "Lướt", "hoi_mau": "Hồi máu", "cau_lua": "Cầu lửa", "bay": "Bay lên", "dich_chuyen": "Dịch chuyển",
-                "dam_dat": "Dậm đất", "cuong_no": "Huyết chiến", "phong_bay": "Phóng bay"}   # khớp SkillEnchants.NAMES
+                "dam_dat": "Dậm đất", "cuong_no": "Huyết chiến", "phong_bay": "Phóng bay",
+                "khong_lo": "Khổng lồ", "thu_nho": "Thu nhỏ", "cam_lang": "Câm lặng", "troi": "Trói", "moc_keo": "Móc kéo",
+                "tua_thoi_gian": "Tua thời gian", "khien_phep": "Khiên phép", "hoi_mau_dong_doi": "Hồi máu đồng đội",
+                "chan_dan": "Chắn đạn", "soi_sang": "Soi sáng",
+                "hoang_so": "Hoảng sợ", "hoa_cuu": "Hoá cừu", "hoa_da": "Ánh mắt hoá đá", "khieu_khich": "Khiêu khích", "danh_dau": "Đánh dấu tử thần", "ho_den": "Hố đen", "day_vang": "Đẩy văng", "ho_gia": "Hộ giá", "dong_bang": "Đóng băng thời gian", "bat_tu": "Bất tử", "la_chan": "Lá chắn phép", "giai_khong_che": "Giải khống chế", "loc_xoay": "Lốc xoáy", "tia_sang": "Tia sáng", "phao_kich": "Pháo kích", "set_nay": "Sét nảy", "lien_hoan": "Liên hoàn đao", "rut_bai": "Rút bài", "tang_toc": "Tăng tốc"}   # khớp SkillEnchants.NAMES
 LIB_ATTRS = {"attack_damage": ("Sát thương", (0, 200)), "attack_speed": ("Tốc đánh", (0.1, 20)), "armor": ("Giáp", (0, 30)),
              "armor_toughness": ("Độ cứng giáp", (0, 20)), "knockback_resistance": ("Kháng đẩy lùi", (0, 1)),
-             "max_health": ("Máu tối đa", (-10, 40)), "movement_speed": ("Tốc chạy %", (-50, 100))}
+             "max_health": ("Máu tối đa", (-10, 40)), "movement_speed": ("Tốc chạy %", (-50, 100)),
+             # chỉnh theo % (22/10, âm = giảm): máu dùng chỉ số % của game, 3 cái sau server tự tính (ItemPercent.java)
+             "pct_mau": ("Máu %", (-90, 300)), "pct_sat_thuong": ("Sát thương %", (-90, 300)),
+             "pct_toc_danh": ("Tốc đánh %", (-90, 300)), "pct_day_lui": ("Kháng đẩy lùi %", (-300, 100))}
+# Sách cấm (BanBook.java): hoạt động -> (tên, giải thích cho admin); cách xử lý từng món. Khớp BanBook.ACTIVITIES / Mode
+LIB_ACTIVITIES = {"cong-thanh": ("Công thành", "Trong vùng vây lúc đang có phiên đánh (SiegeWar)."),
+                  "dau-truong": ("Đấu trường", "Thế giới Đấu Trường /dautruong (vào hàng chờ, thách đấu)."),
+                  "dungeon": ("Hầm ngục", "Dungeon EliteMobs, kể cả vào qua Cổng Hoang (trừ sảnh Hội Phiêu Lưu).")}
+LIB_BAN_MODES = {"vo-hieu": "Không dùng được", "chan-vao": "Không cho mang vào"}   # "tat-hieu-ung" (tên cũ) đọc thành vo-hieu
+LIB_OLD_SIEGE_ENCHANTS = ["bay", "dich_chuyen", "phong_bay", "thu_nho"]   # luật cũ trước Sách cấm (SkillEnchants)
 LIB_MODEL_RE = re.compile(r"^[a-z0-9_.-]{1,32}:[a-z0-9_./-]{1,64}$")
 BOSS_DROPS_FILE = LIB_DIR / "boss-roi.yml"
 BOSS_DROP_TO = {"top1": "Người đánh nhiều nhất", "top3": "3 người đánh nhiều nhất (mỗi người tung riêng)",
                 "tat-ca": "Mọi người đã đánh (mỗi người tung riêng)", "ngau-nhien": "Một người đã đánh (ngẫu nhiên)"}
+
+
+def lib_default_book(doc):
+    """Thư viện chưa có mục sach-cam: trang Công thành theo luật cũ (ky-nang.pvp + phù phép di chuyển). Khớp BanBook.defaults."""
+    do = {str(k): "vo-hieu" for k, v in (doc.get("items") or {}).items()
+          if (v or {}).get("cong-dung") == "ky-nang" and ((v or {}).get("ky-nang") or {}).get("pvp")}
+    return {"cong-thanh": {"mo-ta": "Trong vùng vây lúc đang có phiên đánh", "do": do, "phu-phep": list(LIB_OLD_SIEGE_ENCHANTS)}}
+
+
+def lib_book_json(doc):
+    book = doc.get("sach-cam")
+    if book is None:
+        book = lib_default_book(doc)
+    out = {}
+    for act in LIB_ACTIVITIES:
+        pg = (book or {}).get(act) or {}
+        out[act] = {"mo_ta": str(pg.get("mo-ta") or ""), "do": {str(k): ("vo-hieu" if str(v) == "tat-hieu-ung" else str(v)) for k, v in (pg.get("do") or {}).items()
+                           if str(v) in LIB_BAN_MODES or str(v) == "tat-hieu-ung"},
+                    "phu_phep": [str(x) for x in (pg.get("phu-phep") or []) if str(x) in LIB_DMM_ENCH]}
+    return out
+
+
+def lib_book_save(doc, raw):
+    """Trang Sách cấm gửi lên -> mục sach-cam (kiểm mã món, cách xử lý, phù phép riêng)."""
+    items = doc.get("items") or {}
+    book = {}
+    for act, pg in (raw or {}).items():
+        if act not in LIB_ACTIVITIES:
+            raise ValueError(f"Hoạt động lạ: {act}")
+        pg = pg or {}
+        do = {}
+        for iid, mode in (pg.get("do") or {}).items():
+            iid, mode = str(iid), str(mode)
+            if iid not in items:
+                raise ValueError(f"{LIB_ACTIVITIES[act][0]}: không có món \"{iid}\" trong thư viện")
+            if mode not in LIB_BAN_MODES:
+                raise ValueError(f"{LIB_ACTIVITIES[act][0]}: cách xử lý lạ \"{mode}\"")
+            do[iid] = mode
+        ench = []
+        for k in pg.get("phu_phep") or []:
+            if str(k) not in LIB_DMM_ENCH:
+                raise ValueError(f"Không có phù phép riêng: {k}")
+            if str(k) not in ench:
+                ench.append(str(k))
+        desc = " ".join(str(pg.get("mo_ta") or "").replace("&", "").split())[:120]
+        entry = {}
+        if desc:
+            entry["mo-ta"] = DoubleQuotedScalarString(desc)
+        entry["do"] = do
+        entry["phu-phep"] = ench
+        book[act] = entry
+    return book
 
 
 def lib_items():
@@ -1549,6 +1614,24 @@ def ce_vi():
         return {}
 
 
+def ce_chances():
+    """Tỉ lệ kích hoạt từng cấp phù phép CrazyEnchantments (22/10, người dùng: "né đòn không biết né được bao nhiêu %"):
+    {tên thường: [% cấp 1, % cấp 2, …]} = Chance-System Base + Increase × (cấp − 1), tối đa 100. Phù phép không có Chance-System
+    (luôn có tác dụng) không có trong kết quả. Đọc thẳng Enchantments.yml của Bang Hội Chiến (Cài đặt › Phù phép sửa được)."""
+    try:
+        d = YAML(typ="safe").load((DATA_DIR / LIB_SERVER / "plugins" / "CrazyEnchantments" / "Enchantments.yml").read_text(encoding="utf-8")) or {}
+    except (OSError, ValueError):
+        return {}
+    out = {}
+    for name, e in (d.get("Enchantments") or {}).items():
+        cs = e.get("Chance-System") if isinstance(e, dict) else None
+        if not isinstance(cs, dict):
+            continue
+        base, inc, mx = float(cs.get("Base", 0) or 0), float(cs.get("Increase", 0) or 0), int(e.get("MaxPower", 1) or 1)
+        out[str(name).lower()] = [round(min(100.0, base + inc * i), 2) for i in range(max(1, mx))]
+    return out
+
+
 def thuvien_json():
     _, doc = lib_load()
     items = []
@@ -1576,12 +1659,17 @@ def thuvien_json():
         pass
     meta = lib_meta()
     if meta and meta.get("ce"):
-        vi = ce_vi()
+        vi, ty = ce_vi(), ce_chances()
         for c in meta["ce"]:
             v = vi.get(str(c.get("name", "")).lower())
             if v:
                 c["vi"], c["vi_desc"] = str(v[0]), str(v[1])
+                if len(v) > 2:
+                    c["tac_dung"] = str(v[2])   # tác dụng từng cấp của phù phép luôn có tác dụng (ce-vi.yml phần tử 3)
+            if str(c.get("name", "")).lower() in ty:
+                c["ty_le"] = ty[str(c.get("name", "")).lower()]
     return {"items": items, "meta": meta, "online": [n for n in online if PLAYER_RE.match(n)], "dung_o": lib_usage(),
+            "sach_cam": lib_book_json(doc), "hoat_dong": {k: list(v) for k, v in LIB_ACTIVITIES.items()}, "che_do": LIB_BAN_MODES,
             "nhom": LIB_NHOM, "cong_dung": LIB_USES, "features": WORKSHOP_FEATURES_VI, "effects": sorted(DISH_EFFECTS), "foods": sorted(DISH_FOODS)}
 
 
@@ -1650,6 +1738,18 @@ def lib_extra(it):
 
 def thuvien_action(data, actor=None):
     action = data.get("action")
+    if action == "sachcam":
+        y, doc = lib_load()
+        doc["sach-cam"] = lib_book_save(doc, data.get("book"))
+        LIB_DIR.mkdir(parents=True, exist_ok=True)
+        with LIB_FILE.open("w", encoding="utf-8") as f:
+            y.dump(doc, f)
+        try:
+            res = rcon(LIB_SERVER, ["dmm thuvien nap"])[0][1]
+        except Exception as e:
+            res = f"Đã lưu file nhưng chưa nạp được vào server ({e}); server bật lên sẽ tự đọc."
+        return {"ok": "lỗi:" not in res, "message": "Đã lưu Sách cấm: đồ của người chơi tự cập nhật dòng ⛔ trong vài giây. " + res,
+                "data": thuvien_json()}
     iid = str(data.get("id", ""))
     if not LIB_ID_RE.match(iid):
         raise ValueError("Mã không hợp lệ: chỉ chữ thường không dấu, số, dấu _ (tối đa 32), vd kiem_rong")
@@ -1662,6 +1762,8 @@ def thuvien_action(data, actor=None):
         return {"ok": res.startswith("Đã"), "message": res or "Đã gửi lệnh"}
     y, doc = lib_load()
     items = doc.setdefault("items", {})
+    if "sach-cam" not in doc:
+        doc["sach-cam"] = lib_default_book(doc)   # ghi hẳn luật cũ trước khi sửa món (ô "pvp" của món đã bỏ, luật nằm ở Sách cấm)
     if action == "delete":
         if iid not in items:
             raise ValueError("Không có món này")
@@ -1669,6 +1771,9 @@ def thuvien_action(data, actor=None):
         if used:
             raise ValueError("Món đang được dùng ở: " + ", ".join(used) + ". Bỏ chọn món ở những chỗ đó trước rồi mới xoá.")
         del items[iid]
+        for pg in (doc.get("sach-cam") or {}).values():
+            if isinstance(pg, dict) and iid in (pg.get("do") or {}):
+                del pg["do"][iid]   # bỏ món đã xoá khỏi Sách cấm
     elif action == "save":
         it = data.get("item") or {}
         old = items.get(iid)

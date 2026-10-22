@@ -134,6 +134,21 @@
     font: 15px/1.45 ui-monospace, "Cascadia Mono", Menlo, Consolas, monospace; color: #fff; text-shadow: 2px 2px 0 #3f3f3f; word-break: break-word; }
   .tip .id { color: #555; text-shadow: none; font-size: 12.5px; margin-top: 4px; }
   .obf { filter: blur(1.5px); }
+  /* Sách cấm */
+  .bk-page { border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; margin-top: 12px; }
+  .bk-page > summary { cursor: pointer; font-weight: 600; list-style: none; display: flex; gap: 8px; align-items: center; }
+  .bk-page > summary::before { content: "▸"; font-size: 11px; transition: transform .15s; color: var(--muted); }
+  .bk-page[open] > summary::before { transform: rotate(90deg); }
+  .bk-row { display: grid; grid-template-columns: minmax(0, 1fr) 190px 30px; gap: 6px; margin-top: 6px; align-items: center; }
+  .bk-row > button { padding: 4px 0; color: var(--err); border: none; font-size: 17px; }
+  .bk-ench { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 6px; font-size: 13.5px; }
+  .bk-ench label { display: flex; gap: 6px; align-items: center; }
+  .bk-ench input { width: auto; }
+  .bk-modes { display: grid; gap: 4px; margin: 8px 0 0; font-size: 13px; color: var(--muted); }
+  .bk-modes b { color: var(--text); }
+  .baninfo { margin-top: 8px; font-size: 13.5px; }
+  .baninfo a { color: var(--accent); cursor: pointer; }
+  @media (max-width: 640px) { .bk-row { grid-template-columns: minmax(0, 1fr) 140px 30px; } }
 </style>
 <link rel="stylesheet" href="ui.css">
 </head>
@@ -141,7 +156,7 @@
 <script src="shell.js"></script>
 <main>
   <section class="card">
-    <h2><span>Đồ trong thư viện <span id="count" class="badge"></span></span><button class="primary" id="new">+ Tạo mới</button></h2>
+    <h2><span>Đồ trong thư viện <span id="count" class="badge"></span></span><span style="display:flex;gap:6px"><button id="bookBtn" title="Luật cấm đồ theo hoạt động">📕 Sách cấm</button><button class="primary" id="new">+ Tạo mới</button></span></h2>
     <input type="search" id="libq" placeholder="Tìm món: tên, mã, bộ…">
     <div class="sets" id="sets"></div>
     <div class="list" id="list"><p class="empty">Đang tải…</p></div>
@@ -191,7 +206,7 @@
         <label class="switch" title="Thay khối 'Khi ở ngực: +6 Giáp…' của game bằng 1 dòng; ẩn luôn dòng 'Khi được mặc' do phù phép thêm"><input type="checkbox" id="hidestats"><span class="track"></span><span class="txt">Gộp dòng chỉ số</span></label>
         <label class="glint">Ánh lấp lánh <select id="glint"><option value="">Mặc định</option><option value="true">Luôn có</option><option value="false">Không có</option></select></label>
       </div>
-      <label class="f">Chỉ số gốc <span class="hint" id="attrHint">số giống dòng "8 Sát thương" trong game; để trống = giữ như đồ thường; sát thương gốc theo kiểu đánh 1.8 của server; tốc đánh để trống = bấm nhanh bao nhiêu cũng đủ sát thương (kiểu 1.8), đặt số thì đánh nhanh hơn số đó bị yếu đòn như game gốc</span></label>
+      <label class="f">Chỉ số gốc <span class="hint" id="attrHint">số giống dòng "8 Sát thương" trong game; để trống = giữ như đồ thường; sát thương gốc theo kiểu đánh 1.8 của server; tốc đánh để trống = bấm nhanh bao nhiêu cũng đủ sát thương (kiểu 1.8), đặt số thì đánh nhanh hơn số đó bị yếu đòn như game gốc. Các ô <b>%</b>: tăng / giảm theo phần trăm (ghi số âm để giảm, vd -20), chỉ tính khi món ở đúng chỗ (vũ khí cầm tay chính, giáp đang mặc), nhiều món thì cộng dồn; Tốc đánh % trên vũ khí để trống tốc đánh: dương không đổi gì, âm thì lấy tốc đánh gốc của game làm mốc</span></label>
       <div class="attrs" id="attrs"></div>
       <label class="f" for="model">Hình riêng <span class="hint">model trong gói tài nguyên DuckyMoMo, vd duckymomo:tl_sat (ghi tl_sat cũng được); để trống = hình gốc của loại đồ</span></label>
       <input id="model" placeholder="duckymomo:tl_sat" maxlength="96">
@@ -212,7 +227,6 @@
           <div><label class="f" for="days">Hạn (ngày)</label><input id="days" type="number" min="1" max="365"></div>
         </div>
         <label class="f" for="ftext">Chữ "Tính năng" <span class="hint">để trống = tự ghi theo kỹ năng</span></label><input id="ftext" maxlength="80" placeholder="vd Bắn tỏa &e[3 mũi tên]">
-        <div class="opts"><label class="switch"><input type="checkbox" id="pvp"><span class="track"></span><span class="txt">Mất tác dụng trong vùng vây đang đánh</span></label></div>
         <p class="note">Độ bền riêng: mỗi khối đào / đòn đánh / lần dùng trừ 1, hết là món biến mất. Hạn tính từ lúc nhận. Giá và bàn chế đặt ở Cài đặt › Shop › Xưởng chế tạo.</p>
       </div>
       <div id="useFood" class="usebox" hidden>
@@ -238,6 +252,7 @@
         <span class="note">Lưu là server Bang Hội Chiến nạp lại thư viện ngay.</span>
       </div>
       <div class="usedin" id="usedin"></div>
+      <div class="baninfo" id="banInfo"></div>
     </div>
 
     <div class="sec">
@@ -257,6 +272,20 @@
     </div>
     <datalist id="online"></datalist>
     <div class="status" id="status"></div>
+  </section>
+
+  <section class="card" id="book" hidden>
+    <h2><span>📕 Sách cấm</span><button class="primary" id="bookSave">Lưu sách cấm</button></h2>
+    <p class="note">Mỗi trang là một hoạt động trên server. Chọn món của thư viện vào trang nào thì món đó bị cấm ở hoạt động đó.
+      Đổi luật ở đây là áp ngay cho cả đồ người chơi đã có (server đọc luật theo mã món); dòng <b>⛔</b> cuối mô tả đồ tự cập nhật.
+      Người chơi xem luật bằng <code>/sachcam</code>.</p>
+    <div class="bk-modes">
+      <div><b>Không dùng được</b>: ở hoạt động đó món tối đi (như lúc đang hồi chiêu) và không cầm được: không chọn lên tay, không đưa sang tay phụ;
+        đang cầm / đang mặc thì tự cất vào túi. Đánh, bắn, ăn, chuột phải, vật tổ đều không có tác dụng.</div>
+      <div><b>Không cho mang vào</b>: có món trong túi thì không vào được hoạt động; lỡ ở trong rồi thì như "Không dùng được".</div>
+    </div>
+    <div id="bookPages"></div>
+    <div class="status" id="bookStatus"></div>
   </section>
 </main>
 <script>
@@ -339,14 +368,43 @@ function short(k) { return String(k).replace(/^minecraft:/, ""); }
 const isCe = (k) => String(k).startsWith("ce:");
 // Phù phép riêng của server (SkillEnchants.java): mã web "dmm:<mã>", chuột phải dùng kỹ năng, cấp I–III
 const DMM_ENCH = {
-  luot: { vi: "Lướt", en: "Dash", kw: "charge launch", desc: "Chuột phải: lướt về phía trước (lực tăng theo cấp, hồi 4 giây)" },
-  hoi_mau: { vi: "Hồi máu", en: "Heal", kw: "vitality", desc: "Chuột phải: hồi 1 tim mỗi cấp (hồi 20 giây; đầy máu thì không dùng)" },
+  luot: { vi: "Lướt", en: "Dash", kw: "charge launch", desc: "Chuột phải: lướt về phía trước, lực 1 / 1,5 / 2 (cấp II mạnh hơn cấp I 50%, cấp III gấp đôi; hồi 4 giây)" },
+  hoi_mau: { vi: "Hồi máu", en: "Heal", kw: "vitality", desc: "Chuột phải: hồi 1 / 2 / 3 tim = 5% / 10% / 15% máu gốc (hồi 20 giây; đầy máu thì không dùng)" },
   cau_lua: { vi: "Cầu lửa", en: "Fire", kw: "fireball", desc: "Chuột phải: bắn cầu lửa, sát thương 5 / 7 / 9 theo cấp, làm cháy người trúng, không đốt khối (hồi 3 giây)" },
   bay: { vi: "Bay lên", en: "Ascend", kw: "levitate", desc: "Chuột phải: bay lơ lửng 2 / 3 / 4 giây rồi rơi chậm, không mất máu (hồi 15 giây; tắt trong vùng vây đang đánh)" },
   dich_chuyen: { vi: "Dịch chuyển", en: "Transmission", kw: "teleport blink tele", desc: "Chuột phải: dịch chuyển tức thì 4 / 6 / 8 khối về trước, không xuyên tường (hồi 8 giây; tắt trong vùng vây đang đánh)" },
   dam_dat: { vi: "Dậm đất", en: "Rumble", desc: "Chuột phải: gây 3 / 4 / 5 sát thương và hất tung sinh vật trong bán kính 3 / 4 / 5 khối (hồi 12 giây)" },
   cuong_no: { vi: "Huyết chiến", en: "Soul Storm", kw: "rage cuong no buff", desc: "Chuột phải: mất 3 tim, +20 / 30 / 40% sát thương trong 8 giây (hồi 30 giây; dưới 3,5 tim thì không dùng được)" },
-  phong_bay: { vi: "Phóng bay", en: "Slingshot", desc: "Gắn lên cánh elytra: đang mặc cánh, chuột phải vào không khí là phóng lên và bay (hồi 10 giây; tắt trong vùng vây đang đánh)" }};
+  phong_bay: { vi: "Phóng bay", en: "Slingshot", desc: "Gắn lên cánh elytra: đang mặc cánh, chuột phải vào không khí là phóng lên và bay (hồi 10 giây; tắt trong vùng vây đang đánh). Lực phóng 1,2 / 1,6 / 2 (cấp III mạnh hơn cấp I khoảng 65%)." },
+  khong_lo: { vi: "Khổng lồ", en: "Titan", kw: "to lon phong to scale giant", desc: "Chuột phải: to gấp 1,5 / 1,75 / 2 lần trong 10 giây, cần chỗ trống phía trên (hồi 40 giây)" },
+  thu_nho: { vi: "Thu nhỏ", en: "Shrink", kw: "nho thu nho scale tiny", desc: "Chuột phải: nhỏ còn 0,75 / 0,6 / 0,5 lần trong 10 giây (hồi 40 giây; tắt trong vùng vây đang đánh)" },
+  cam_lang: { vi: "Câm lặng", en: "Silence", kw: "silence cam lang khoa ky nang", desc: "Chuột phải nhắm 1 người (12 khối): 2 / 3 / 4 giây không dùng được phù phép riêng và kỹ năng Xưởng (hồi 25 giây)" },
+  troi: { vi: "Trói", en: "Bind", kw: "root bind troi dung im", desc: "Chuột phải nhắm 1 sinh vật (15 khối): đứng im, không nhảy 1 / 1,5 / 2 giây (hồi 14 giây)" },
+  moc_keo: { vi: "Móc kéo", en: "Hook", kw: "hook grab keo moc", desc: "Chuột phải nhắm 1 sinh vật (14 khối): kéo về phía mình, lực kéo 90% / 100% / 110% (hồi 16 giây)" },
+  tua_thoi_gian: { vi: "Tua thời gian", en: "Rewind", kw: "rewind tua quay ve moc", desc: "Chuột phải đặt mốc; trong 4 giây bấm lại (hoặc chờ) là quay về mốc, hồi lại 50 / 75 / 100% máu đã mất (hồi 20 giây)" },
+  khien_phep: { vi: "Khiên phép", en: "Barrier", kw: "shield khien tim vang absorption", desc: "Chuột phải: 2 / 4 / 6 tim vàng trong 6 giây cho người đang nhìn (10 khối), không nhìn ai thì cho mình (hồi 20 giây)" },
+  hoi_mau_dong_doi: { vi: "Hồi máu đồng đội", en: "Mend", kw: "heal ally hoi mau dong doi ho tro", desc: "Chuột phải nhìn vào người khác (15 khối): hồi 2 / 3 / 4 tim (hồi 12 giây)" },
+  chan_dan: { vi: "Chắn đạn", en: "Wind Wall", kw: "wind wall chan ten dan cung", desc: "Chuột phải: 3 / 4 / 5 giây chặn mọi mũi tên, đạn bay tới từ phía trước mặt (hồi 20 giây)" },
+  soi_sang: { vi: "Soi sáng", en: "Reveal", kw: "reveal glowing soi sang tang hinh", desc: "Chuột phải: người chơi trong 20 / 25 / 30 khối phát sáng 5 giây, thấy cả người tàng hình (hồi 30 giây)" },
+  hoang_so: { vi: "Hoảng sợ", en: "Terrify", kw: "fear so hai bo chay", desc: "Chuột phải nhắm (12 khối): quái bỏ chạy 2 / 3 / 4 giây; người bị đẩy lùi, chậm, tối mắt (hồi 18 giây)" },
+  hoa_cuu: { vi: "Hoá cừu", en: "Polymorph", kw: "polymorph cuu khong danh duoc disarm", desc: "Chuột phải nhắm (12 khối): mục tiêu không gây được sát thương 1 / 1,5 / 2 giây và bị chậm (hồi 20 giây)" },
+  hoa_da: { vi: "Ánh mắt hoá đá", en: "Petrify", kw: "petrify hoa da nhin stun", desc: "Chuột phải: hình nón 8 khối trước mặt; ai đang nhìn về phía bạn bị đứng im 1 / 1,5 / 2 giây, quay lưng thì chỉ bị chậm (hồi 24 giây)" },
+  khieu_khich: { vi: "Khiêu khích", en: "Taunt", kw: "taunt aggro quai boss tank", desc: "Chuột phải: quái thù địch trong 6 / 8 / 10 khối quay sang đánh bạn, hợp đánh boss theo nhóm; không tác dụng lên người (hồi 15 giây)" },
+  danh_dau: { vi: "Đánh dấu tử thần", en: "Death Mark", kw: "death mark dau no", desc: "Chuột phải nhắm (12 khối): 3 giây sau dấu nổ, gây thêm 25 / 35 / 45% sát thương bạn đã gây cho mục tiêu trong 3 giây đó (hồi 28 giây)" },
+  ho_den: { vi: "Hố đen", en: "Black Hole", kw: "black hole hut vortex", desc: "Chuột phải: chỗ nhắm (tối đa 15 khối) hút sinh vật trong 4 / 5 / 6 khối về giữa trong 2 giây (hồi 30 giây)" },
+  day_vang: { vi: "Đẩy văng", en: "Condemn", kw: "knockback day vang tuong stun", desc: "Chuột phải nhắm (10 khối): đẩy mục tiêu bật xa; đập vào tường thì đứng im 1 giây và mất thêm 1 tim (hồi 15 giây). Lực đẩy 1,4 / 1,6 / 1,8." },
+  ho_gia: { vi: "Hộ giá", en: "Guardian", kw: "teleport dong doi ho tro bao ve", desc: "Chuột phải nhìn đồng đội cùng thị trấn / quốc gia / đồng minh (40 khối): 1,5 giây sau dịch chuyển tới, cả hai được 2 / 4 / 6 tim vàng (hồi 60 giây)" },
+  dong_bang: { vi: "Đóng băng thời gian", en: "Stasis", kw: "stasis zhonya bat tu dong bang", desc: "Chuột phải: tự đóng băng 2 / 2,5 / 3 giây, đứng im, không nhận sát thương, không đánh được; xong hồi 1 tim (hồi 60 giây)" },
+  bat_tu: { vi: "Bất tử", en: "Undying", kw: "undying khong chet", desc: "Chuột phải: 3 / 4 / 5 giây máu không xuống dưới nửa tim (hồi 120 giây)" },
+  la_chan: { vi: "Lá chắn phép", en: "Spell Shield", kw: "spell shield chan phep", desc: "Chuột phải: trong 4 / 5 / 6 giây chặn 1 phù phép riêng người khác nhắm vào bạn (trói, kéo, câm lặng…) và hồi 1 tim (hồi 22 giây)" },
+  giai_khong_che: { vi: "Giải khống chế", en: "Cleanse", kw: "cleanse giai tru hieu ung xau", desc: "Chuột phải: gỡ Trói, Câm lặng, Hoá cừu, chậm, độc, mù…; kháng khống chế 1 / 2 / 3 giây; dùng được cả khi bị Câm lặng (hồi 30 giây)" },
+  loc_xoay: { vi: "Lốc xoáy", en: "Whirlwind", kw: "spin xoay chem aoe", desc: "Chuột phải: xoay chém 3 giây, mỗi 0,5 giây gây 1,5 / 2 / 2,5 sát thương quanh 3 khối (hồi 18 giây)" },
+  tia_sang: { vi: "Tia sáng", en: "Light Beam", kw: "laser tia beam", desc: "Chuột phải: tụ 0,5 giây rồi bắn tia thẳng 20 khối, trúng mọi sinh vật trên đường 4 / 6 / 8 sát thương (hồi 25 giây)" },
+  phao_kich: { vi: "Pháo kích", en: "Artillery", kw: "artillery phao no tam xa", desc: "Chuột phải chỉ vào mặt đất (30 khối): 1,5 giây sau nổ bán kính 3 khối, 4 / 6 / 8 sát thương, không phá khối (hồi 22 giây)" },
+  set_nay: { vi: "Sét nảy", en: "Chain Lightning", kw: "chain lightning set nay", desc: "Chuột phải nhắm (15 khối): 3 / 4 / 5 sát thương rồi nảy sang 2 / 3 / 4 sinh vật gần nhau, mỗi lần nảy bớt 20% (hồi 16 giây)" },
+  lien_hoan: { vi: "Liên hoàn đao", en: "Blade Flurry", kw: "alpha strike chem nhieu muc tieu", desc: "Chuột phải: chém lần lượt 2 / 3 / 4 sinh vật gần nhất trong 8 khối (4 / 5 / 6 sát thương), không bị đánh trong lúc chém, xong về chỗ cũ (hồi 22 giây)" },
+  rut_bai: { vi: "Rút bài", en: "Pick a Card", kw: "card bai do xanh vang", desc: "Chuột phải xoay bài, bấm lại để chốt; đòn cận chiến kế tiếp trong 6 giây: Đỏ nổ quanh mục tiêu 2 / 3 / 4 sát thương + chậm 2 giây, Xanh bạn hồi 2 / 3 / 4 tim, Vàng trói mục tiêu 1 / 1,5 / 2 giây (hồi 14 giây)" },
+  tang_toc: { vi: "Tăng tốc", en: "Swiftness", kw: "speed toc chay nhanh swift", desc: "Thụ động, không cần bấm: cầm món này (tay chính hoặc tay phụ) thì tốc chạy +10% / +20% / +30%" }};
 const isDmm = (k) => String(k).startsWith("dmm:");
 const dmmInfo = (k) => DMM_ENCH[String(k).slice(4)] || null;
 const strip = (t) => String(t || "").replace(/[&§][0-9a-fk-or]/gi, "").trim();
@@ -358,7 +416,10 @@ function descOf(k) {
   if (isCe(k)) {
     const c = ceInfo(k); if (!c) return "";
     const d = c.vi_desc || strip((c.desc || []).filter(Boolean).join(" ").split("Found in:")[0]);
-    return `${CE_TYPE[c.type] || c.type || "?"}: ${d}` + (c.active ? "" : " · ĐANG TẮT trong cài đặt CE");
+    // tỉ lệ từng cấp (app.ce_chances: Chance-System Base + Increase × (cấp − 1); sửa ở Cài đặt › Phù phép)
+    const ty = c.ty_le ? " · Tỉ lệ: " + c.ty_le.map((p, i) => `${ROMAN[i + 1] || i + 1} ${numVi(p)}%`).join(" · ")
+      : " · Luôn có tác dụng" + (c.tac_dung ? ": " + c.tac_dung : " (không theo tỉ lệ)");
+    return `${CE_TYPE[c.type] || c.type || "?"}: ${d}${ty}` + (c.active ? "" : " · ĐANG TẮT trong cài đặt CE");
   }
   return DESC[k] || "";
 }
@@ -393,7 +454,11 @@ let tipLines = 0;
 // Chỉ số gốc (ItemLibrary.ATTRS, LIB_ATTRS trong app.py): [mã, tên, ghi chú]
 const ATTRS = [["attack_damage", "Sát thương", ""], ["attack_speed", "Tốc đánh", "đòn/giây"], ["armor", "Giáp", ""],
   ["armor_toughness", "Độ cứng giáp", ""], ["knockback_resistance", "Kháng đẩy lùi", "0–1"], ["max_health", "Máu tối đa", "2 = 1 tim"],
-  ["movement_speed", "Tốc chạy", "%"]];
+  ["movement_speed", "Tốc chạy", "% (âm = giảm)"],
+  // chỉnh theo % (22/10, âm = giảm): Máu % là chỉ số % của game; Sát thương / Tốc đánh / Kháng đẩy lùi % server tự tính (ItemPercent.java)
+  ["pct_mau", "Máu", "% (âm = giảm)"], ["pct_sat_thuong", "Sát thương", "% (âm = giảm)"], ["pct_toc_danh", "Tốc đánh", "% (âm = giảm)"],
+  ["pct_day_lui", "Kháng đẩy lùi", "% (100 = không bị đẩy, âm = bị đẩy xa hơn)"]];
+const PCT_CUSTOM = { pct_sat_thuong: "Sát thương", pct_toc_danh: "Tốc đánh", pct_day_lui: "Kháng đẩy lùi" };
 const SLOT_VI = {mainhand: "Khi cầm ở tay chính:", offhand: "Khi cầm ở tay phụ:", head: "Khi đội trên đầu:", chest: "Khi mặc trên người:",
   legs: "Khi ở chân:", feet: "Khi đi ở chân:", body: "Khi mặc:", hand: "Khi cầm trên tay:"};
 function attrDef(mat) { return ((data && data.meta && data.meta.attr_def) || {})[mat] || {}; }
@@ -409,7 +474,7 @@ function attrForm() {
 }
 function attrPlaceholders(mat) {
   const d = attrDef(mat);
-  for (const [k] of ATTRS) { const el = $("at_" + k); el.placeholder = k === "attack_speed" ? "không giới hạn" : "gốc " + numVi(d[k] ?? 0); el.classList.toggle("changed", el.value.trim() !== "" && parseFloat(el.value) !== (d[k] ?? 0)); }
+  for (const [k] of ATTRS) { const el = $("at_" + k); el.placeholder = k === "attack_speed" ? "không giới hạn" : k.startsWith("pct_") ? "0%" : "gốc " + numVi(d[k] ?? 0); el.classList.toggle("changed", el.value.trim() !== "" && parseFloat(el.value) !== (d[k] ?? 0)); }
 }
 function form() {
   const ench = {}, cee = {}, dmm = {};
@@ -429,7 +494,7 @@ function useForm() {
   const use = $("cdung").value;
   const o = { nhom: $("nhom").value, cong_dung: use, bo: boList.slice() };
   if (use === "ky-nang") o.ky_nang = { feature: $("feat").value, value: $("fval").value === "" ? 0 : parseFloat($("fval").value), text: $("ftext").value.trim(),
-    uses: $("uses").value === "" ? -1 : parseInt($("uses").value, 10), days: parseInt($("days").value || "7", 10), pvp: $("pvp").checked };
+    uses: $("uses").value === "" ? -1 : parseInt($("uses").value, 10), days: parseInt($("days").value || "7", 10) };
   if (use === "mon-an") o.hieu_ung = fxRows.map(r => r.eff.value + " " + r.lv.value + " " + (parseInt(r.sec.value || "0", 10) || 30));
   return o;
 }
@@ -484,14 +549,15 @@ function render() {
   for (const [n, l] of Object.entries(f.ce_enchants || {})) { const c = ceInfo("ce:" + n); html += `<div>${mc((c ? c.display : "&7" + n) + " " + (ROMAN[l] || l), "#AAAAAA", false)}</div>`; }
   for (const line of f.lore || []) html += `<div>${line ? mc(line, "#AAAAAA", false) : "&nbsp;"}</div>`;
   if (f.attributes && f.attributes.attack_speed > 0) html += `<div>${mc("&7Tốc đánh: &f" + numVi(f.attributes.attack_speed) + " &7đòn/giây", "#AAAAAA", false)}</div>`;
+  for (const [k, n] of Object.entries(PCT_CUSTOM)) { const v = (f.attributes || {})[k]; if (v) html += `<div style="color:${v < 0 ? "#FF5555" : "#5555FF"}">${v > 0 ? "+" : ""}${numVi(v)}% ${esc(n)}</div>`; }   // ItemLibrary.PCTS
   if (f.unbreakable) html += `<div style="color:#5555FF">Không thể phá huỷ</div>`;
   if (!(cur && cur.nguon === "game")) {
     attrPlaceholders(mat);
     const d = attrDef(mat), a = Object.assign({}, d, f.attributes || {}), rows = [];
     for (const [k, n, u] of ATTRS) {
-      const v = a[k]; if (v === undefined || v === 0 || k === "attack_speed") continue;
+      const v = a[k]; if (v === undefined || v === 0 || k === "attack_speed" || PCT_CUSTOM[k]) continue;
       const base = k === "attack_damage";   // game ghi tổng (đã cộng phần sẵn có của người chơi), màu xanh lá
-      rows.push(`<div style="color:${base ? "#00AA00" : (v < 0 ? "#FF5555" : "#5555FF")}">${base ? "&nbsp;" : (v > 0 ? "+" : "")}${numVi(v)}${k === "movement_speed" ? "%" : ""} ${esc(n)}</div>`);
+      rows.push(`<div style="color:${base ? "#00AA00" : (v < 0 ? "#FF5555" : "#5555FF")}">${base ? "&nbsp;" : (v > 0 ? "+" : "")}${numVi(v)}${k === "movement_speed" || k === "pct_mau" ? "%" : ""} ${esc(k === "pct_mau" ? "Máu tối đa" : n)}</div>`);
     }
     if (rows.length && f.hide_stats) {   // ItemLibrary.statsLine
       const slot = d.slot || "mainhand";
@@ -505,7 +571,6 @@ function render() {
     html += `<div>${mc("&7— Tính năng: &b" + txt, "#AAAAAA", false)}</div>`;
     if (k.uses >= 0) html += `<div>${mc("&7— Độ bền: &6" + k.uses.toLocaleString("vi-VN"), "#AAAAAA", false)}</div>`;
     html += `<div>${mc("&7— Hết hạn: &b" + k.days + " ngày sau khi nhận", "#AAAAAA", false)}</div>`;
-    if (k.pvp) html += `<div>${mc("&c✖ Mất tác dụng trong vùng vây khi đang đánh", "#AAAAAA", false)}</div>`;
   } else if (u.cong_dung === "mon-an") {
     html += `<div>${mc("&8Khi ăn:", "#AAAAAA", false)}</div>` + (u.hieu_ung || []).map(e => { const a = e.split(" "); return `<div>${mc("&a• " + (EFFECT_VN[a[0]] || a[0]) + " " + (ROMAN[+a[1] + 1] || "") + " (" + a[2] + " giây)", "#AAAAAA", false)}</div>`; }).join("")
       + `<div>${mc("&8Món ăn ra trận · /nauan", "#AAAAAA", false)}</div>`;
@@ -514,6 +579,7 @@ function render() {
   } else if (u.cong_dung === "bua-bat-pet") {
     html += `<div>${mc("&7Cầm ở &ftay trái &7khi quăng dây xích bắt pet:", "#AAAAAA", false)}</div><div>${mc("&a+…% &7xác suất, mất 1 bùa mỗi lần thử.", "#AAAAAA", false)}</div>`;
   }
+  for (const l of banLines(cur ? cur.id : null, f.dmm_enchants)) html += `<div>${mc(l, "#AAAAAA", false)}</div>`;   // BanBook.loreLines
   html += `<div class="id">minecraft:${esc(mat.toLowerCase())}${(f.amount || 1) > 1 ? " ×" + f.amount : ""}</div>`;
   // số dòng tooltip (màn hình 1080p cỡ giao diện 3 hiện khoảng 20 dòng). Phù phép bảo vệ… game tự thêm khối "Khi được mặc" (ẩn khi gộp chỉ số)
   const ENCH_STAT = ["blast_protection", "fire_protection", "swift_sneak", "depth_strider", "respiration", "aqua_affinity", "soul_speed", "feather_falling"];
@@ -536,6 +602,8 @@ function render() {
     const g = ad[k] ?? 0;
     if (k === "attack_damage" && v > Math.max(g * 1.5, g + 4)) w.push(`${n} ${numVi(v)} cao hơn nhiều so với gốc ${numVi(g)}: chém vài nhát là chết người`);
     if ((k === "armor" || k === "max_health") && v > g + 4) w.push(`${n} ${numVi(v)} cao hơn gốc ${numVi(g)} khá nhiều`);
+    if ((k === "pct_sat_thuong" || k === "pct_mau") && v > 50) w.push(`${n} +${numVi(v)}% khá cao: cộng dồn nhiều món là rất mạnh`);
+    if (k === "pct_day_lui" && v >= 100) w.push(`Kháng đẩy lùi ${numVi(v)}%: người mặc không bị đẩy lùi chút nào`);
   }
   const md = $("model").value.trim().toLowerCase();
   if (md && !/^([a-z0-9_.-]{1,32}:)?[a-z0-9_./-]{1,64}$/.test(md)) w.push(`Ô "Hình riêng" ghi sai dạng ("${md}"): phải như duckymomo:tl_sat, chữ thường không dấu, không dấu cách. Không dùng hình riêng thì xoá trống.`);
@@ -642,7 +710,7 @@ function load(it) {
   $("nhom").value = it && it.nhom ? it.nhom : guessNhom(it ? it.material : "DIAMOND_SWORD", $("cdung").value);
   const kn = (it && it.ky_nang) || {};
   $("feat").value = kn.feature || ""; $("fval").value = kn.value ?? ""; $("uses").value = kn.uses ?? -1; $("days").value = kn.days ?? 7;
-  $("ftext").value = kn.text || ""; $("pvp").checked = !!kn.pvp;
+  $("ftext").value = kn.text || "";
   fxRows = []; $("fxs").innerHTML = "";
   for (const e of (it && it.hieu_ung) || []) addFx(e);
   syncUse();
@@ -656,6 +724,11 @@ function load(it) {
   $("gamenote").hidden = !game;
   $("gamenote").textContent = game ? `Đồ lấy từ game${it.nguoi_luu ? " (" + it.nguoi_luu + " lưu)" : ""}: hình dạng giữ nguyên vẹn nên không sửa trên web (sửa trong game rồi /dmm luudo ${it.id} lại). Đầu mục, công dụng và tên gợi nhớ vẫn sửa ở đây được.` : "";
   setEditable(!game); $("del").disabled = !it; $("give").disabled = !it;
+  const bl = it ? banLines(it.id, it.dmm_enchants) : [];
+  $("banInfo").innerHTML = it ? (bl.length ? "Sách cấm: " + bl.map(l => mc(l, "#AAAAAA", false)).join(" · ") : "Sách cấm: không bị cấm ở đâu.")
+    + ' · <a id="banOpen">Mở Sách cấm</a>' : "";
+  if (it) $("banOpen").onclick = () => showBook(true);
+  showBook(false);
   document.querySelectorAll(".li").forEach(b => b.classList.toggle("on", !!it && b.dataset.id === it.id));
   render();
 }
@@ -852,7 +925,7 @@ renderHowto(); });
 renderSyms();
 $("name").onfocus = () => lastField = "name"; $("lore").onfocus = () => lastField = "lore";
 buildAttrs();
-for (const id of ["material", "amount", "name", "lore", "unbreakable", "hide", "compact", "hidestats", "glint", "tengoi", "model", "fval", "uses", "days", "ftext", "pvp"]) $(id).addEventListener("input", render);
+for (const id of ["material", "amount", "name", "lore", "unbreakable", "hide", "compact", "hidestats", "glint", "tengoi", "model", "fval", "uses", "days", "ftext"]) $(id).addEventListener("input", render);
 $("cdung").addEventListener("change", () => { if (!nhomTouched) $("nhom").value = guessNhom(curMat(), $("cdung").value); syncUse(); render(); });
 $("feat").addEventListener("change", () => { syncUse(); render(); });
 $("nhom").addEventListener("change", () => { nhomTouched = true; });
@@ -887,6 +960,105 @@ $("del").onclick = async () => { if (cur && await ask(`Xoá "${cur.id}" khỏi t
 $("give").onclick = () => {
   const p = $("player").value.trim(); if (!cur || !p) { status(false, "Chọn một món và nhập tên người chơi"); return; }
   post({ action: "give", id: cur.id, player: p, amount: parseInt($("gamount").value || "0", 10) });
+};
+// ---- Sách cấm (BanBook.java): mỗi trang = hoạt động; chọn món + cách xử lý; phù phép riêng tắt ở hoạt động đó
+const BAN_TEXT = { "vo-hieu": "không dùng được", "chan-vao": "không cho mang vào" };
+// dòng ⛔ như trong game (khớp BanBook.loreLines)
+function banLines(id, dmm) {
+  const out = [], book = (data && data.sach_cam) || {};
+  for (const [act, pg] of Object.entries(book)) {
+    const name = ((data.hoat_dong || {})[act] || [act])[0];
+    const m = id ? (pg.do || {})[id] : null;
+    if (m) { out.push(`&c⛔ ${name}: &7${BAN_TEXT[m] || m}`); continue; }
+    const off = (pg.phu_phep || []).filter(k => dmm && dmm[k]).map(k => (DMM_ENCH[k] || {}).vi || k);
+    if (off.length) out.push(`&c⛔ ${name}: &7tắt ${off.join(", ")}`);
+  }
+  return out;
+}
+let bookRows = {};   // hoạt động -> [{el, sel, mode}]
+function showBook(on) {
+  $("book").hidden = !on; $("editor").hidden = on;
+  $("bookBtn").classList.toggle("primary", on);
+  if (on) { document.querySelectorAll(".li").forEach(b => b.classList.remove("on")); renderBook(); }
+}
+function itemLabel(id) {
+  const it = (data.items || []).find(x => x.id === id);
+  return it ? (strip(it.name) || it.ten_goi || prettyMat(it.material)) : id;
+}
+function bookItems(act) {
+  return (q) => {
+    const f = fold(q), taken = new Set((bookRows[act] || []).map(r => r.sel.value));
+    return (data.items || []).filter(it => !f || fold(it.id + " " + strip(it.name) + " " + (it.ten_goi || "") + " " + (it.bo || []).join(" ")).includes(f))
+      .map(it => ({ value: it.id, label: itemLabel(it.id), sub: it.id + (it.ten_goi && it.ten_goi !== it.id ? " · " + it.ten_goi : "") + (taken.has(it.id) ? " · đã có trong trang" : ""), dim: taken.has(it.id) }));
+  };
+}
+function addBookRow(act, id, mode) {
+  const box = document.querySelector(`[data-act="${act}"] .bk-rows`);
+  const row = document.createElement("div"); row.className = "bk-row";
+  row.innerHTML = `<input placeholder="Chọn món trong thư viện…"><select>${Object.entries(data.che_do || BAN_TEXT).map(([k, t]) => `<option value="${k}">${esc(t)}</option>`).join("")}</select><button title="Bỏ khỏi trang">×</button>`;
+  const r = { el: row, sel: row.querySelector("input"), mode: row.querySelector("select") };
+  r.sel.value = id || ""; r.mode.value = mode === "tat-hieu-ung" ? "vo-hieu" : (mode || "vo-hieu");
+  box.appendChild(row);
+  combo(r.sel, bookItems(act), () => countBook(act), { label: (v) => [itemLabel(v), v], search: "Tìm món: tên, mã, bộ…" });
+  row.querySelector(":scope > button").onclick = () => { bookRows[act] = bookRows[act].filter(x => x !== r); row.remove(); countBook(act); };
+  (bookRows[act] = bookRows[act] || []).push(r);
+  return r;
+}
+function countBook(act) {
+  const el = document.querySelector(`[data-act="${act}"] .bk-n`);
+  if (el) el.textContent = (bookRows[act] || []).filter(r => r.sel.value).length + " món";
+}
+function renderBook() {
+  const book = data.sach_cam || {};
+  bookRows = {};
+  $("bookPages").innerHTML = "";
+  let open;
+  try { open = JSON.parse(localStorage.getItem("dmm-bk-open") || "null"); } catch (e) { open = null; }
+  for (const [act, [name, hint]] of Object.entries(data.hoat_dong || {})) {
+    const pg = book[act] || { mo_ta: "", do: {}, phu_phep: [] };
+    const det = document.createElement("details"); det.className = "bk-page"; det.dataset.act = act;
+    det.open = !open || open.includes(act);
+    det.innerHTML = `<summary>⛔ ${esc(name)} <span class="badge bk-n"></span></summary>
+      <p class="note">${esc(hint)}</p>
+      <label class="f">Lời giải thích cho người chơi <span class="hint">hiện trong /sachcam</span></label><input class="bk-desc" maxlength="120">
+      <label class="f">Đồ bị cấm</label><div class="bk-rows"></div>
+      <div class="bar"><button type="button" class="rw-add bk-add">+ Thêm món</button>
+        <select class="bk-set" style="width:auto"><option value="">+ Thêm cả bộ…</option>${allSets().map(([b, n]) => `<option value="${esc(b)}">${esc(b)} (${n})</option>`).join("")}</select></div>
+      <label class="f">Phù phép riêng bị tắt ở đây <span class="hint">áp cho mọi món có phù phép đó</span></label>
+      <div class="bk-ench">${Object.entries(DMM_ENCH).map(([k, d]) => `<label><input type="checkbox" value="${k}"${(pg.phu_phep || []).includes(k) ? " checked" : ""}>${esc(d.vi)}</label>`).join("")}</div>`;
+    det.ontoggle = () => { try { localStorage.setItem("dmm-bk-open", JSON.stringify([...document.querySelectorAll(".bk-page")].filter(d => d.open).map(d => d.dataset.act))); } catch (e) {} };
+    $("bookPages").appendChild(det);
+    det.querySelector(".bk-desc").value = pg.mo_ta || "";
+    for (const [id, m] of Object.entries(pg.do || {})) addBookRow(act, id, m);
+    det.querySelector(".bk-add").onclick = () => { const r = addBookRow(act, "", "vo-hieu"); countBook(act); r.el.querySelector(".cb-trig").click(); };
+    det.querySelector(".bk-set").onchange = (e) => {
+      const b = e.target.value.toLowerCase(); e.target.value = "";
+      const have = new Set((bookRows[act] || []).map(r => r.sel.value));
+      for (const it of data.items || []) if ((it.bo || []).some(x => x.toLowerCase() === b) && !have.has(it.id)) addBookRow(act, it.id, "vo-hieu");
+      countBook(act);
+    };
+    countBook(act);
+  }
+}
+function bookForm() {
+  const out = {};
+  for (const det of document.querySelectorAll(".bk-page")) {
+    const act = det.dataset.act, d = {};
+    for (const r of bookRows[act] || []) if (r.sel.value) d[r.sel.value] = r.mode.value;
+    out[act] = { mo_ta: det.querySelector(".bk-desc").value.trim(), do: d,
+      phu_phep: [...det.querySelectorAll(".bk-ench input:checked")].map(x => x.value) };
+  }
+  return out;
+}
+$("bookBtn").onclick = () => showBook($("book").hidden);
+$("bookSave").onclick = async () => {
+  const st = $("bookStatus"); st.className = "status"; st.textContent = "Đang lưu…";
+  try {
+    const r = await fetch("api/thuvien", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "sachcam", book: bookForm() }) });
+    const res = await r.json();
+    st.className = "status " + (res.ok ? "ok" : "err"); st.textContent = res.message || "";
+    if (res.data) { data = res.data; renderList(); renderBook(); }
+  } catch (e) { st.className = "status err"; st.textContent = "Không gửi được: " + e; }
 };
 fetch("api/thuvien").then(r => r.json()).then(d => {
   data = d;

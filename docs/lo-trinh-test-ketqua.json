@@ -55,8 +55,8 @@
   "tt": ""
  },
  "c2": {
-  "ghi_chu": "Claude tự test ở đất hoang (mỗi khối trừ 1 độ bền): Khoan Đào 3×3 (lần trước). Đào Hầm: phá 1 khối giữa tấm đá 5×5 → mất cả 25 khối, độ bền 3.500 → 3.475. Rìu Tiều: chặt gốc → cả 6 khúc gỗ, 5.000 → 4.994. Gặt Lúa: ruộng 3×3 lúa chín → gặt cả 9, tự gieo lại 9 bằng 9 hạt trong túi, 8.000 → 7.991 (lúa rơi ra đất). CẦN BẠN: nhìn bằng máy thật cho chắc (hiệu ứng, âm thanh).",
-  "luc": 1792656310920,
+  "ghi_chu": "Claude tự test ở đất hoang (mỗi khối trừ 1 độ bền): Khoan Đào 3×3 (lần trước). Đào Hầm: phá 1 khối giữa tấm đá 5×5 → mất cả 25 khối, độ bền 3.500 → 3.475. Rìu Tiều: chặt gốc → cả 6 khúc gỗ, 5.000 → 4.994. Gặt Lúa: ruộng 3×3 lúa chín → gặt cả 9, tự gieo lại 9 bằng 9 hạt trong túi, 8.000 → 7.991 (lúa rơi ra đất). CẦN BẠN: nhìn bằng máy thật cho chắc (hiệu ứng, âm thanh).\n22/10 HẾT HẠN (tools/bottest/xuong-hethan.js, đặt hạn còn 20 giây): món cầm tay dùng sau hạn → biến mất + '[Xưởng] Khoan Đào đã hết hạn và biến mất' (vẫn phá được 1 khối như cuốc thường); món nằm trong túi → lượt quét 60 giây xoá + báo 'Chế lại: /xuong'. Đạt.",
+  "luc": 1792664826021,
   "tt": "ok"
  },
  "c3": {
@@ -160,9 +160,9 @@
   "tt": "ok"
  },
  "cd19": {
-  "ghi_chu": "Claude tự test trang chủ: thẻ Thăng Cấp hiện đủ 8 đặc quyền kèm cấp + giá, xếp hạng; không lỗi JS, điện thoại không tràn ngang. CẦN BẠN TEST: trang tài khoản (phải đăng nhập bằng mã /web) có dòng thuộc tính.",
-  "luc": 1792569800000,
-  "tt": ""
+  "ghi_chu": "Claude tự test trang chủ (lần trước) + trang tài khoản: bot ThuCD3 lấy mã /web, Playwright đăng nhập → 'Thăng Cấp: Cấp 50/100 · Máu 1 · Sức mạnh 1 · Bền bỉ 1 · … điểm chưa cộng · 1 điểm hạ gục'. ĐÃ SỬA: cộng / tẩy điểm xong, 'điểm chưa cộng' trên web vẫn số cũ (capdo.json chỉ ghi lúc lên cấp) → LevelUp ghi capdo.json ngay; test lại 55 → 52 sau 3 điểm. Đạt.",
+  "luc": 1792669623164,
+  "tt": "lai"
  },
  "cd2": {
   "ghi_chu": "Claude tự test: số đúng (cấp 10 = 995 xu / 4 giờ / 100 điểm; cấp 50 = 2.614 xu / 100 giờ / 2500 điểm). Lỗi hiển thị nhỏ: cấp 1 ghi '0/0 giờ chơi' (0,04 giờ bị làm tròn), '2500' thiếu dấu chấm. Sẽ sửa.",
@@ -255,8 +255,8 @@
   "tt": ""
  },
  "h5": {
-  "ghi_chu": "CẦN BẠN TEST: cần một vụ được Hội Bàn Tròn xử mức truy nã (theo sau h4).",
-  "luc": 1792580935860,
+  "ghi_chu": "CẦN BẠN TEST: cần một vụ được Hội Bàn Tròn xử mức truy nã (theo sau h4).\n22/10 Claude test phần HẾT HẠN: án truy nã quá hạn trả 500 xu ký quỹ về người bị hại (ThuBB 5.000 → 5.500); treo thưởng quá hạn trả 1.000 xu về người treo (ThuBC). Phần xử án vẫn CẦN BẠN.",
+  "luc": 1792664826021,
   "tt": ""
  },
  "h6": {
@@ -397,9 +397,9 @@
   "tt": ""
  },
  "m13": {
-  "ghi_chu": "Claude tự test: /tprandom mở đúng menu /tpr (8 vùng). CẦN BẠN: /tphere (cần 2 người thật, admin kéo người khác).",
-  "luc": 1792571000000,
-  "tt": ""
+  "ghi_chu": "Claude tự test: /tprandom mở menu /tpr (lần trước). /tphere (tools/bottest/m13.js): ThuR2 có quyền tạm essentials.tphere kéo ThuR3 đứng cách 30 khối về đúng chỗ mình (13200,66,-2899), báo 'Đang dịch chuyển...'. Đạt.",
+  "luc": 1792669623164,
+  "tt": "ok"
  },
  "m14": {
   "ghi_chu": "Claude tự test: đất hoang (12300,-2600) đào được cỏ, đất; spawn đào bị chặn với câu '[Towny] Người ngoài không được phá ở đây.'. Chưa thử Nether/End và thị trấn người khác; đặt rương bằng bot bị lỗi phía bot (không phải server).",
@@ -600,9 +600,9 @@
   "tt": "ok"
  },
  "q4": {
-  "ghi_chu": "Claude: /dungeon hiện danh sách trong chat (kèm quỹ, dungeon ẩn còn 1). CẦN BẠN xem chia loại + tab trên web.",
-  "luc": 1792574000000,
-  "tt": ""
+  "ghi_chu": "Claude tự test: trong game /dungeon chia nhóm (Chuỗi chìa khoá…, Dungeon của tuần). Web (Playwright, máy tính + điện thoại 390px): 5 tab Chuỗi chìa khoá (10), Dungeon ẩn (1), Vé cá nhân (2), Cả server góp quỹ (3), Chỉ qua Cổng Hoang (2), mỗi tab có giải thích cách vào + điều kiện; không tràn ngang, không lỗi JS.",
+  "luc": 1792669623164,
+  "tt": "ok"
  },
  "q5": {
   "ghi_chu": "Claude tự test (Cài đặt key-tradeable false). Chưa có chìa: 'cần Chìa khoá Hang Thánh Địa (trùm cuối Đỉnh Vách Đá rơi ra)'. Chìa ghi tên ThuQ5 đưa sang ThuQ5b: ThuQ5b dùng không được. ThuQ5 dùng chìa của mình: 'tầng Hang Thánh Địa mở vĩnh viễn', chìa bị lấy đi, mở menu độ khó; vào lại lần 2 không cần chìa. Chìa phát bằng /dungeon cho (bot không đánh hết dungeon để trùm rơi). CHƯA THỬ: người chưa có chìa vào theo nhóm /em party.",
@@ -610,8 +610,8 @@
   "tt": "ok"
  },
  "q6": {
-  "ghi_chu": "Claude tự test (Cài đặt Lâu Đài Hiệp Sĩ 4.500 xu/vé, tối đa 5, chỉ T7–CN — tạm thêm T5 để thử; cửa sổ vào tối thiểu 30 giây). Mua 6 vé → được 5, −22.500 xu; mua thêm báo 'đã giữ tối đa 5 vé'. Mở cổng: vé 5 → 4; 30 giây không vào: 'Cổng đã đóng (chưa vào). Vé đã được hoàn lại', vé về 5. Góp quỹ Lễ Hội Pháo Hoa (tạm hạ mục tiêu 2.000): góp 1.500, người sau góp 1.000 chỉ bị trừ 500 còn thiếu → 'CỔNG ĐÃ MỞ… cho cả server trong 7 ngày', vào được. Đã trả dungeon.yml về như cũ (cổng đóng, quỹ 0).",
-  "luc": 1792655454493,
+  "ghi_chu": "Claude tự test (Cài đặt Lâu Đài Hiệp Sĩ 4.500 xu/vé, tối đa 5, chỉ T7–CN — tạm thêm T5 để thử; cửa sổ vào tối thiểu 30 giây). Mua 6 vé → được 5, −22.500 xu; mua thêm báo 'đã giữ tối đa 5 vé'. Mở cổng: vé 5 → 4; 30 giây không vào: 'Cổng đã đóng (chưa vào). Vé đã được hoàn lại', vé về 5. Góp quỹ Lễ Hội Pháo Hoa (tạm hạ mục tiêu 2.000): góp 1.500, người sau góp 1.000 chỉ bị trừ 500 còn thiếu → 'CỔNG ĐÃ MỞ… cho cả server trong 7 ngày', vào được. Đã trả dungeon.yml về như cũ (cổng đóng, quỹ 0).\n22/10 HẾT HẠN: /dungeon mo fireworks_lair rồi lùi hạn mở (lúc tắt server) → quỹ tự đóng, cổng đóng (dungeon.yml về như trước). Đạt.",
+  "luc": 1792664826021,
   "tt": "ok"
  },
  "q7": {
@@ -692,8 +692,8 @@
   "tt": "ok"
  },
  "s10": {
-  "ghi_chu": "Claude tự test đủ, so với Cài đặt Chợ đen (dh_max 2, tối đa 6.400 món, giá tối đa 100.000, phí 2%) và quyền lợi rank (Tị Nạn 2 đơn, Lương Dân 4). Đơn 6.401 món và giá 100.001 bị chặn đúng câu báo. Tị Nạn: đơn 1, 2 được (mỗi đơn trừ 10 + phí 0,2), đơn 3 'Bạn đang có 2 đơn mở (tối đa 2)'. Lên Lương Dân: đơn 3, 4 được, đơn 5 bị chặn (tối đa 4). Huỷ 4 đơn: hoàn 10 xu/đơn, phí không hoàn. Phần khác (nhà, Chợ đen treo bán, kit, bán quá giới hạn) đã thử trước đó.",
-  "luc": 1792638605297,
+  "ghi_chu": "Claude tự test đủ, so với Cài đặt Chợ đen (dh_max 2, tối đa 6.400 món, giá tối đa 100.000, phí 2%) và quyền lợi rank (Tị Nạn 2 đơn, Lương Dân 4). Đơn 6.401 món và giá 100.001 bị chặn đúng câu báo. Tị Nạn: đơn 1, 2 được (mỗi đơn trừ 10 + phí 0,2), đơn 3 'Bạn đang có 2 đơn mở (tối đa 2)'. Lên Lương Dân: đơn 3, 4 được, đơn 5 bị chặn (tối đa 4). Huỷ 4 đơn: hoàn 10 xu/đơn, phí không hoàn. Phần khác (nhà, Chợ đen treo bán, kit, bán quá giới hạn) đã thử trước đó.\n22/10 HẾT HẠN: Chợ đen (tạm hạn treo 60 giây, đã trả về 2 ngày): món rời trang bán, sau ≤ 60 giây (plugin quét mỗi phút) vào /choden hethan, bấm lấy lại đủ 1 kim cương. Đơn mua quá 7 ngày (lùi mốc lúc tắt server): tự đóng, trả 30 xu giữ chỗ (phí 0,6 không hoàn). Đạt. LƯU Ý: món hết hạn không rút trong 7 ngày bị zAuctionHouse XOÁ VĨNH VIỄN (expiration.expire 604800).",
+  "luc": 1792664826021,
   "tt": "ok"
  },
  "s11": {
@@ -807,9 +807,9 @@
   "tt": ""
  },
  "t1": {
-  "ghi_chu": "Claude tự test: 0,2 giờ chơi → '[Towny] Cần chơi thật đủ 3 giờ mới được lập thị trấn'; gần spawn báo 'quá gần thị trấn khác'. CẦN BẠN: lập thật khi đủ giờ (giá mới 1.500 xu).",
-  "luc": 1792574500000,
-  "tt": ""
+  "ghi_chu": "Claude tự test đủ (tools/bottest/t1-m13.js, Cài đặt town_min_hours 3, giá 1.500): 0,2 giờ → bị chặn (lần trước); cộng 200 phút chơi thật → /t new ThuTranR1 hỏi xác nhận 1.500 xu, /confirm → 'đã tạo ra một thị trấn mới', số dư 3.000 → 1.500. Đã xoá thị trấn thử.",
+  "luc": 1792669623164,
+  "tt": "ok"
  },
  "t2": {
   "ghi_chu": "Claude tự test (bot ThuA): mở 3 ô kề, mỗi ô 75 xu (quy mô 4/8 theo dân); ô không sát đất cũ bị chặn; lập thị trấn cách thị trấn khác 80 khối bị chặn. Lưu ý: giá ô KHÔNG tăng dần (ô nào cũng 75) — lộ trình ghi 'tăng dần', bạn xem có cần không.",
@@ -962,8 +962,8 @@
   "tt": ""
  },
  "w9": {
-  "ghi_chu": "Claude tự test (Cài đặt phí 10%, hợp đồng 48 giờ). ThuW4 đăng ký 500 → vua ThuNuocA thuê → ThuW4 +450 xu, hợp đồng hết hạn đúng +48 giờ. Trong vùng vây: lính đánh địch ThuW2 mất 7 máu; đánh người nước thuê 0; người nước thuê đánh lính 0; địch đánh lính mất 9. ĐÃ SỬA: lính vẫn bị Ốm Chiến Tranh (quyền miễn ốm gắn tạm bằng PermissionAttachment không có tác dụng) → nay cấp node LuckPerms có hạn = hạn hợp đồng; test lại: lính không ốm, người không hợp đồng vẫn ốm.",
-  "luc": 1792654208673,
+  "ghi_chu": "Claude tự test (Cài đặt phí 10%, hợp đồng 48 giờ). ThuW4 đăng ký 500 → vua ThuNuocA thuê → ThuW4 +450 xu, hợp đồng hết hạn đúng +48 giờ. Trong vùng vây: lính đánh địch ThuW2 mất 7 máu; đánh người nước thuê 0; người nước thuê đánh lính 0; địch đánh lính mất 9. ĐÃ SỬA: lính vẫn bị Ốm Chiến Tranh (quyền miễn ốm gắn tạm bằng PermissionAttachment không có tác dụng) → nay cấp node LuckPerms có hạn = hạn hợp đồng; test lại: lính không ốm, người không hợp đồng vẫn ốm.\n22/10 HẾT HẠN (lùi mốc lúc tắt server): hợp đồng ThuW4 bị xoá, số hợp đồng đã xong +1, nhận việc mới được. Đạt.",
+  "luc": 1792664826021,
   "tt": "ok"
  },
  "x1": {
@@ -972,8 +972,8 @@
   "tt": "ok"
  },
  "x10": {
-  "ghi_chu": "Claude tự test (tools/bottest/x10-vang.js): admin cộng tay 300 Vàng cho bot (chức năng Ví Vàng, ghi lý do); /vang hiện các gói rank; bấm 1 lần hỏi 'Bấm lại … trong 6 giây', bấm lần 2 mới mua: -20 Vàng mỗi lần; mua Nam Tước 1 tháng 2 lần -> rank hết hạn 21/12 (cộng dồn 60 ngày), áp mọi server (global); món 560 Vàng khi chỉ còn 260 -> 'Không đủ Vàng (có 260, cần 560)', không trừ. Đã gỡ rank và trừ hết Vàng thử (lịch sử ví ghi rõ).",
-  "luc": 1792634031229,
+  "ghi_chu": "Claude tự test (tools/bottest/x10-vang.js): admin cộng tay 300 Vàng cho bot (chức năng Ví Vàng, ghi lý do); /vang hiện các gói rank; bấm 1 lần hỏi 'Bấm lại … trong 6 giây', bấm lần 2 mới mua: -20 Vàng mỗi lần; mua Nam Tước 1 tháng 2 lần -> rank hết hạn 21/12 (cộng dồn 60 ngày), áp mọi server (global); món 560 Vàng khi chỉ còn 260 -> 'Không đủ Vàng (có 260, cần 560)', không trừ. Đã gỡ rank và trừ hết Vàng thử (lịch sử ví ghi rõ).\n22/10 HẾT HẠN (tools/bottest/rank-hethan.js, cấp Bá Tước tạm 100 giây): đang có rank → [Bá Tước] trên Tab, /rank ghi ngày hết hạn, nick màu, /hat, hạt, balo mở được, chờ /spawn 3 giây. Hết hạn (đứng online VÀ thoát game chờ hết hạn rồi vào lại): /rank 'chưa có', Tab về [Tị Nạn], nick về tên thật, món đội /hat cất vào túi (có báo), hạt tắt, balo khoá, chờ /spawn về 5 giây. Đạt.",
+  "luc": 1792664826021,
   "tt": "ok"
  },
  "x11": {
@@ -982,19 +982,19 @@
   "tt": "ok"
  },
  "x12": {
-  "ghi_chu": "CẦN BẠN TEST: phần giao diện (gắn tag, lọc theo tag, Thêm cả bộ) phải bấm trên trình duyệt.",
-  "luc": 1792596076618,
-  "tt": ""
+  "ghi_chu": "Claude tự test bằng trình duyệt tự động (Playwright): món mới gắn tag gợi ý Tân thủ + gõ tag mới ThuTag Enter, Lưu; thanh lọc có 'ThuTag 1', bấm vào chỉ còn món đó (số 56 trên tiêu đề là tổng thư viện). Cài đặt › Người mới › Gói quà: '+ Thêm cả bộ…' liệt kê 'Tân thủ (11 món)', chọn bộ → thêm đúng 1 dòng + thông báo 'Đã thêm 1 món của bộ…'. Không lỗi JS. Đã xoá món thử, không lưu gói quà.",
+  "luc": 1792669623164,
+  "tt": "ok"
  },
  "x13": {
-  "ghi_chu": "CẦN BẠN TEST: xếp thẻ / bảng so sánh là giao diện, phải xem trên trình duyệt.",
-  "luc": 1792596076618,
-  "tt": ""
+  "ghi_chu": "Claude tự test bằng Playwright: Bang Hội Chiến có 14 danh mục; Người mới › Danh phận hiện bảng so sánh 4 bậc (tên, tiền tố, số nhà, balo, chờ dịch chuyển…). Sửa ô 'chờ dịch chuyển' Tị Nạn 5 → 6: ô viền cam, nút 'Lưu và áp dụng (1)', Lưu → file server thành 6 (đã trả về 5). Không lỗi JS.",
+  "luc": 1792669623164,
+  "tt": "ok"
  },
  "x14": {
-  "ghi_chu": "Claude chạy bằng lệnh console '/choilai admin <tên> moi' cho 2 bot: RESET OK, có sao lưu, xoá quyền LuckPerms. ĐÃ SỬA: reset xong tên vẫn nằm trên bảng xếp hạng Thăng Cấp trên web. CẦN BẠN: bấm nút trên trang quản trị › Hệ thống.",
-  "luc": 1792576500000,
-  "tt": ""
+  "ghi_chu": "Claude tự test bằng Playwright ở trang Hệ thống › Reset người chơi, bot ThuR3 online, chế độ Chơi lại: hộp xác nhận trong trang (không có hộp của trình duyệt), báo 'ThuR3 đã chơi lại từ đầu'; ThuR3 9.999 → 500 xu, mất 5 kim cương, nhận tin 'Admin vừa cho bạn chơi lại từ đầu. Đã nhận quà tân thủ'. Chưa thử chế độ 'Như người mới' (đá người chơi, xoá hết).",
+  "luc": 1792669623164,
+  "tt": "ok"
  },
  "x15": {
   "ghi_chu": "Claude kiểm code: không còn confirm(/alert(/prompt( nào trong 11 file trang quản trị (panel/*.html, shell.js). CẦN BẠN: bấm thử vài nút xoá để xem hộp thoại.",
@@ -1022,9 +1022,9 @@
   "tt": "ok"
  },
  "x6": {
-  "ghi_chu": "Claude tự test bằng hàm của trang quản trị (media_admin), Cài đặt thử việc 14 ngày, gia hạn 30 ngày. Bot /sugia dangky <link TikTok> → đơn CHO trên trang Sứ Giả. Duyệt → LuckPerms nhóm media hết hạn đúng +14 ngày, trạng thái DUYET. Gia hạn → hết hạn +30 ngày nữa. Gỡ → mất nhóm media, trạng thái HET. Ghi chú: người được duyệt lúc offline không nhận được tin báo khi vào lại (chỉ báo nếu đang online). Cùng lúc phát hiện lời chào vào game còn '/sell hand' → đã sửa.",
-  "luc": 1792638605297,
-  "tt": "ok"
+  "ghi_chu": "Claude tự test bằng hàm của trang quản trị (media_admin), Cài đặt thử việc 14 ngày, gia hạn 30 ngày. Bot /sugia dangky <link TikTok> → đơn CHO trên trang Sứ Giả. Duyệt → LuckPerms nhóm media hết hạn đúng +14 ngày, trạng thái DUYET. Gia hạn → hết hạn +30 ngày nữa. Gỡ → mất nhóm media, trạng thái HET. Ghi chú: người được duyệt lúc offline không nhận được tin báo khi vào lại (chỉ báo nếu đang online). Cùng lúc phát hiện lời chào vào game còn '/sell hand' → đã sửa.\n22/10 HẾT HẠN: ĐÃ SỬA lỗi Sứ Giả hết hạn tự nhiên vẫn ở trạng thái 'đã duyệt' (trang quản trị hiện 'Đang là Sứ Giả', vào game vẫn nhận tin chỉ tiêu, tuần nào cũng bị tính thiếu chỉ tiêu, không đăng ký lại được). Giờ quá hạn = HET. Test: duyệt ThuSG, lùi hạn lúc server tắt → /sugia ds [HET], web HET. Đạt.",
+  "luc": 1792664826021,
+  "tt": "lai"
  },
  "x8": {
   "ghi_chu": "Claude tự test (tools/bottest/x8-qr.js): cầm kiếm sắt, /rank mua -> menu các mức 20.000đ (20 Vàng) … 1.000.000đ (1200 Vàng); chọn 20.000đ -> tấm bản đồ QR thay kiếm trên tay, chat có [Tôi đã chuyển khoản] [Huỷ]; [Huỷ] (/rank huyqr) hoặc bấm Q -> 'Đã cất mã QR', kiếm về đúng ô. Yêu cầu nạp thử đã đánh dấu huỷ trong hàng chờ Donate. CẦN BẠN: quét QR bằng app ngân hàng xem đúng số tiền + nội dung.",

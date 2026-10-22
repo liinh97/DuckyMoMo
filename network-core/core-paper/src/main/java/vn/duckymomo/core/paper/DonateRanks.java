@@ -379,7 +379,7 @@ final class DonateRanks implements Listener {
     }
 
     private void showInfo(CommandSender s) {
-        s.sendMessage(c("&6✦ RANK DONATE (tước vị) ✦ &7chỉ trang trí, không lợi thế khi chơi"));
+        s.sendMessage(c("&6✦ RANK DONATE (tước vị) ✦"));
         for (Tier t : tiers) {
             s.sendMessage(c(t.color() + t.name() + "&7: " + String.join("&7, ", t.perks().stream().map(x -> "&f" + x).toList())));
             List<String> sk = tierSkins(t.group());

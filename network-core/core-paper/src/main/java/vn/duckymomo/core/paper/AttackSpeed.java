@@ -20,7 +20,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * Tốc đánh của món Thư viện đồ (attributes.attack_speed, đòn/giây; dấu PDC duckymomocore:thuvien_tocdanh). Server đánh kiểu 1.8
  * (OldCombatMechanics bỏ hồi đòn) nên thuộc tính tốc đánh của game vô tác dụng; ở đây tự tính giống game gốc: đòn tới sớm hơn
  * 1/tốc đánh giây thì sát thương × (0,2 + 0,8 × tiến độ²). Chỉ món có dấu này mới bị tính; món khác vẫn đánh kiểu 1.8.
- * Đổi món trên tay thì tính lại từ đầu (như game).
+ * Đổi món trên tay thì tính lại từ đầu (như game). % tốc đánh (ItemPercent) nhân thêm vào.
  */
 final class AttackSpeed implements Listener {
 
@@ -40,10 +40,16 @@ final class AttackSpeed implements Listener {
         if (!(e.getDamager() instanceof Player p) || e.getCause() != EntityDamageEvent.DamageCause.ENTITY_ATTACK) {
             return;
         }
-        double aps = of(p.getInventory().getItemInMainHand());
+        ItemStack hand = p.getInventory().getItemInMainHand();
+        double aps = of(hand);
+        double pct = ItemPercent.sum(p, ItemPercent.ATTACK_SPEED);   // % tốc đánh (Thư viện đồ, cộng dồn các món đang mặc / cầm)
+        if (aps <= 0 && pct < 0) {
+            aps = ItemPercent.vanillaSpeed(hand.getType());   // món không đặt tốc đánh mà bị giảm %: lấy tốc đánh gốc của game làm mốc
+        }
         if (aps <= 0) {
             return;
         }
+        aps *= Math.max(0.1, 1 + pct / 100.0);
         long now = System.currentTimeMillis();
         Long prev = last.put(p.getUniqueId(), now);
         if (prev == null) {

@@ -287,7 +287,7 @@ final class Arena implements Listener {
             p.sendMessage(c("&cĐang ở vùng công thành trong giờ đánh, không vào đấu trường được."));
             return true;
         }
-        return false;
+        return !BanBook.mayEnter(p, "dau-truong");   // mang đồ Sách cấm "không cho mang vào" Đấu trường
     }
 
     private double parseStake(Player p, String v) {

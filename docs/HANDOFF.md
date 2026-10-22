@@ -1,13 +1,13 @@
 # Bàn giao dự án DuckyMoMo Network
 
-> Dùng file này để tiếp tục ở session hoặc tài khoản Claude khác. Cập nhật: 22/10/2026 trưa. ĐỌC MỤC 0000000000 TRƯỚC (và mục "22/10 sáng — Sách cấm" của phiên song song), rồi 000000000, 00000000, 0000000, 000000, 00000, 0000, 000, 00, 0.
+> Dùng file này để tiếp tục ở session hoặc tài khoản Claude khác. Cập nhật: 22/10/2026 chiều. ĐỌC MỤC 0000000000 TRƯỚC và mục "22/10/2026 (cả ngày, phiên song song skill + Sách cấm + rank)" ngay dưới (đã triển khai, CHƯA COMMIT, danh sách file + việc còn lại), rồi 000000000, 00000000, 0000000, 000000, 00000, 0000, 000, 00, 0.
 > Đọc kèm: `README.md`, `docs/minecraft-server-plan.md` (kế hoạch, quyết định), `docs/network-architecture.md` (kiến trúc).
 
 ---
 
 ## 0000000000. MỚI NHẤT — 22/10/2026 trưa (test bot THEO CÀI ĐẶT WEB, tài khoản lần 5 trước khi chuyển)
 
-Trang test: https://claude.ai/artifact/YY55Wn87HYuMzL898MT8a7 (DB `ketqua`, ghi phải có `if_version`). Nguồn: `docs/lo-trinh-test-ketqua.json`
+Trang test MỚI (22/10 tối, tài khoản sau đăng lại vì không mở được trang cũ, đã nạp đủ 205 mục): https://claude.ai/artifact/AjfJRchbDTQj6xF3wAe5YG; trang cũ YY55Wn87HYuMzL898MT8a7 (DB `ketqua`, ghi phải có `if_version`). Nguồn: `docs/lo-trinh-test-ketqua.json`
 (192 mục có dữ liệu). Ghi kết quả: `python3 tools/bottest/kq_add.py <json {id: [tt, ghi_chu]}>` → `load2/<id>.json` cạnh file json → ArtifactData batch.
 Khởi động lại banghoi-1 an toàn (có ai online thì dừng): `bash tools/bottest/restart_safe.sh`. Scratchpad của tài khoản cũ KHÔNG còn.
 
@@ -80,6 +80,47 @@ n7 câu cá (0,06 xu/cm, thi câu hạng 1 +1.500 + 3 bùa) · n10 AuraSkills th
   quỹ 0); mọi cấu hình tạm đã trả. CÒN: bot mới ThuW1–W5, ThuQ5/Q5b, ThuQ8 (xong chương 1, có quyền cotruyen.c1), ThuQ10; vài khối đất
   san phẳng/cờ quanh 13631,93,-3150; ThuW4 còn hợp đồng lính đánh thuê tới 24/10.
 
+### 22/10 16h40 (đã lên game, CHƯA COMMIT; restart 4 server + build panel + huongdan.sh, 0 người online)
+- Người dùng chốt: Đẩy văng lực 1,4 / 1,6 / 1,8 (trước 1,5 / 1,8 / 2,1). Bỏ mọi câu "chỉ trang trí / không bán sức mạnh / không pay-to-win"
+  ("không hẳn pay-to-win nhưng vẫn chiếm lợi thế nhỏ"): site index.html + taikhoan.html, /vang (DonateQr), /rank (DonateRanks), menu chính ô 40,
+  huongdan (trang Rank ủng hộ thêm balo + chờ dịch chuyển 3 giây), panel donate.html + vang.py, settings.schema Toàn mạng. Vẫn KHÔNG bán đồ,
+  tiền trong game, chìa gacha, cape, Pokémon.
+- Dọn bot / dữ liệu test: người dùng "test xong hẳn đã rồi dọn".
+- 17h: Đẩy văng đo lại (sk-dayvang-luc.js): không Rơi chậm +6,7 / 7,6 / 8,6 khối, có Rơi chậm III +10,4. Chữ quyền lợi rank (Cài đặt Toàn
+  mạng tier*_perks) thêm balo + chờ 3 giây; Sứ Giả tp-delay repo = 3 (khớp data).
+- 17h20 người dùng: "check toàn bộ những thứ có thời hạn". ĐÃ TEST (kết quả ghi docs/lo-trinh-test-ketqua.json x10 x6 c2 s10 w9 q6 h5;
+  tài khoản này KHÔNG mở được trang test YY55Wn87 (404) → tài khoản cũ nạp lại từ json):
+  rank ủng hộ online + offline (rank-hethan.js), đồ Xưởng (xuong-hethan.js), Chợ đen món treo (zah-hethan.js, tạm hạn 60 giây, đã trả) + đơn
+  mua, treo thưởng, truy nã, hợp đồng lính đánh thuê, quỹ dungeon, Sứ Giả (lùi mốc lúc tắt server; sao lưu ở scratchpad bak-hethan, không
+  cần trả vì chỉ dữ liệu bot). Món Vàng + lệnh săn đã test trước. Tất cả đạt.
+  ĐÃ SỬA: Sứ Giả hết hạn tự nhiên vẫn "DUYET" (MediaProgram.status() giờ trả HET khi quá .het) — đã lên banghoi-1 (lobby/practice/sangtao
+  có jar mới, chưa restart, không ảnh hưởng). Tủ skin bỏ in đậm tiêu đề — proxy + relay đã tạo lại 17:22.
+  Tủ skin hết hạn: đọc code, skin ô vượt giới hạn tô xám, không mặc được, không mất. LƯU Ý cho người dùng: zAuctionHouse xoá VĨNH VIỄN món
+  hết hạn không rút sau 7 ngày (expiration.expire 604800).
+  17h45: bỏ câu báo riêng (zAuctionHouse đã báo "Bạn đã lấy lại…"), giữ đồ hết hạn 30 ngày (Cài đặt ah_expired_keep 2592000).
+  17h35 người dùng: "sao hết hạn không tự đẩy về kho đồ" → AuctionReturn.java (món Chợ đen hết hạn tự về túi lúc vào game + mỗi 60 giây,
+  túi đầy giữ ở /choden hethan + nhắc). Đã lên banghoi-1, test zah-tuve.js đạt (online, túi đầy rồi dọn, thoát vào lại).
+  18h (đã lên 4 server + panel, CHƯA COMMIT): Thư viện đồ CHỈNH THEO % (âm = giảm): Máu % (chỉ số % game), Sát thương % / Tốc đánh % /
+  Kháng đẩy lùi % (ItemPercent.java mới) — test pct-test.js đạt (máu 20→30; 7,36→3,42; đòn 0,6 giây 0,96; đẩy 1,99 / 0 / 5,52 khối).
+  Ô chọn phù phép hiện tỉ lệ % từng cấp CE (app.ce_chances) + Cài đặt › Phù phép › "Tỉ lệ phù phép CrazyEnchantments (%)" (122 ô ce_ty_*,
+  sinh từ Enchantments.yml). Mô tả phù phép riêng ghi số từng cấp. Phù phép riêng THỤ ĐỘNG mới Tăng tốc (tang_toc, +10/20/30% tốc chạy khi
+  cầm tay chính/phụ, SkillEnchants.startPassive) — tangtoc.js đạt. Bỏ in đậm Rút bài + tiêu đề /tuskin.
+  18h20: 42 phù phép CE luôn có tác dụng giờ hiện tác dụng từng cấp (ce-vi.yml phần tử 3, đọc từ code CE dịch ngược bằng CFR ở scratchpad).
+  CẦN NGƯỜI DÙNG QUYẾT: Hành quyết (Execute, đang BẬT) theo code cho Sức mạnh IV (+520% kiểu 1.8) MỖI đòn trúng, không theo tỉ lệ, không cần địch
+  sắp chết (mô tả cũ sai) — thêm Chance-System vào yml KHÔNG có tác dụng (CEnchantments enum cố định không có tỉ lệ). Chưa đo bằng bot.
+  Sát thương % đo lệch vài % do OldCombatMechanics old-armour-strength randomness: true.
+  18h50: Hành quyết CE chỉnh yếu (CeExecuteTamer.java, Cài đặt › Phù phép › Hành quyết: ≤30% máu, Sức mạnh I; config ce-execute) — ce-execute.js đạt.
+  Test thêm (Playwright + bot): t1 m13 x12 x13 x14 q4 cd19 đạt; cd19 ĐÃ SỬA LevelUp ghi capdo.json ngay khi cộng / tẩy điểm. Bảng: {'ok': 178, 'cho': 25, 'lai': 2}.
+  20h: SÁCH CẤM test xong ở Hầm ngục (sc-dungeon.js, vào thật em_id_the_climb_2 qua /dungeon vao + 2 lần bấm ô 2) và Công thành
+  (sc-cong.js, công thành giả dựng lại bằng cong-dung.js + rcon lập nước + cong-vay.js + /swa battlesession start; dọn hết). Đạt: chặn mang vào
+  (dịch chuyển + đi bộ qua mép 200 khối), tự cất món đang cầm, không cầm được, phù phép riêng tắt, món nhận bên trong không dùng được.
+  ĐÃ SỬA (đã lên banghoi-1): đồ "Không cho mang vào" nhận bằng lệnh / gói quà / menu không bị chặn khi dịch chuyển (CARRY_BLOCK chỉ tính lúc
+  nhặt / đóng túi) -> onTeleport kiểm thẳng túi đồ, CARRY_BLOCK tính lại mỗi giây. Mẹo: dịch chuyển vào vùng vây còn bị SiegeWar chặn với người
+  ngoài (non_resident_spawn_into_siegezones_or_besieged_towns_disabled), test thì tạm 'false'; phía z < -3340 ngoài vùng khai hoang (bị đẩy về
+  kinh đô) nên đi theo trục x. Bot trong dungeon EliteMobs không ra bằng minecraft:tp được (dùng /spawn của bot).
+  Bot mới cần dọn: ThuR1, ThuR2, ThuR3 (có grim.exempt), ThuCA dùng lại. Chưa làm: Sách cấm ở Công thành / Hầm ngục, x12 x13 (giao diện web).
+- Lệch chưa rõ: Sứ Giả `tp-delay` repo -1, data 3 (data đang chạy). Ô "quyền lợi" chữ của rank (Cài đặt › Toàn mạng › Rank donate) chưa ghi balo.
+
 ### VIỆC CÒN LẠI (22/10 ~15h, account sắp hết lượt; trang test: 208 mục, 168 ok, 0 lỗi, 33 chờ người thật, 7 chưa đụng)
 - ĐÃ LÀM XONG 15h (tools/bottest/s1-lobby.js, s1s2-proxy.js, s18-hack.js, c2-xuong.js): s1, s2, s18, c2 đạt. HẾT mục bot tự làm được.
   Sonar ở proxy chặn bot từ cửa (không brand / brand 2 lần; sai 5 lần -> IP đen 10 phút) nên s1/s2 thử ở sảnh vào thẳng.
@@ -90,6 +131,101 @@ n7 câu cá (0,06 xu/cm, thi câu hạng 1 +1.500 + 3 bùa) · n10 AuraSkills th
   **c2** đồ Xưởng còn lại: Đào Hầm 5×5, Rìu Tiều (chặt cả cây), Gặt Lúa 3×3 (`/xuong tang <mã> <bot>` ở đất hoang, như c-xuong.js).
 - Chỉ người thật: x7 (live TikTok), x9 (duyệt nạp = tiền thật), o7 (mở mùa, chỉ server thử), p4/w5 (cưỡi/bay pet), q10, đặt 3 NPC cốt truyện,
   các mục Bedrock / giao diện web / đông người (xem ghi chú từng mục trên trang test).
+
+## 22/10/2026 (cả ngày, phiên song song "skill + Sách cấm + rank") — ĐÃ TRIỂN KHAI, CHƯA COMMIT
+
+Phiên này chạy song song với phiên ở mục 0000000000 (test bot theo Cài đặt web / công thành giả). Hai phiên dùng chung repo, chung server:
+trước khi restart luôn kiểm online + `ps aux | grep bottest/run.sh` (phiên kia hay có bot ThuW*, ThuQ*, ThuSG đang test).
+
+### Trạng thái
+- **Đã lên game** (jar build lúc ~15:20, panel build lại, `./ops/huongdan.sh` đã chạy): banghoi-1, lobby, practice-1, sangtao-1 đều chạy jar mới nhất.
+- **CHƯA COMMIT.** File của phiên này (chỉ commit đúng các file này; `site/config/site.yml` và các commit chưa push là của phiên kia / người dùng):
+  - Java mới: `BanBook.java`, `TownyAllies.java`, `TeleportDelay.java`, `PerkCleanup.java`
+  - Java sửa: `SkillEnchants.java`, `Workshop.java`, `Arena.java`, `ItemLibrary.java`, `DuckyMoMoCore.java`, `PlayRanks.java`, `RandomTeleport.java`, `plugin.yml`
+  - Web: `panel/app.py`, `panel/thuvien.html`
+  - Cài đặt: `modes/banghoi/settings.schema.yml`, `modes/banghoi/settings.yml`, `modes/banghoi/server/plugins/DuckyMoMoCore/config.yml`
+    (đã đồng bộ với data, chỉ khác dòng `youtube-key: "${CFG_YOUTUBE_KEY}"`), `modes/banghoi/server/plugins/PlayerParticles/config.yml`,
+    `lobby/plugins/PlayerParticles/config.yml`
+  - Cẩm nang: `modes/_network/camnang.yml`, `huongdan.yml`, `lenh-con.yml` + 4 bản chép `*/plugins/DuckyMoMoCore/huongdan.yml`
+  - Tài liệu: `CLAUDE.md` (ngoại lệ balo rank ủng hộ), `docs/HANDOFF.md`, `docs/y-tuong-phu-phep-lmht.md`
+  - Test bot: `tools/bottest/sk-moi2..6.js`, `sk-sachcam.js`, `sk-sc-c.js`, `sk-hogia.js`, `sk-day-nguoi3.js`, `tp-delay.js`,
+    `vang-hethan.js`, `vang-hethan2.js`, `vang-hethan3.js`, `vang-pp.js`
+- `panel/app.py` có cả sửa `web_donate` (KeyError 'group') của phiên kia, chưa commit, đã lên panel cùng lúc.
+
+### 1. Phù phép riêng: 36 cái (SkillEnchants.java, thông số từng cấp ở đầu file; web: Thư viện đồ › Phù phép, mã `dmm:<mã>`)
+- Cũ 8 + mới 28: Khổng lồ, Thu nhỏ (chỉ số scale tạm) + 26 chiêu ý tưởng từ LMHT (đặt tên Việt riêng, không dùng tên Riot).
+  Danh sách ý tưởng (173 tướng, Data Dragon 16.21.1), lý do bỏ ý trùng với phù phép riêng / kỹ năng Xưởng / 105 phù phép CE: `docs/y-tuong-phu-phep-lmht.md`.
+  Người dùng đã chốt: KHÔNG làm Choáng xa, Mê hoặc (trùng Trói / Móc kéo + Hoá cừu).
+- Chiêu nhắm người khác chạy "đòn thử" (`strike`: sát thương thật qua sự kiện) để Towny / PvP / vùng an toàn / Lá chắn phép chặn được.
+  Hộ giá chỉ cho đồng đội (TownyAllies.java: cùng thị trấn / quốc gia / quốc gia đồng minh). Câm lặng chặn cả kỹ năng Xưởng.
+- **Test bot: cả 28 chiêu mới đạt** (tools/bottest/sk-moi2..6.js, sk-hogia.js, sk-day-nguoi3.js). Lỗi tìm ra + đã sửa: Thu nhỏ III ra 0,45;
+  Lốc xoáy đánh bật quái khỏi vòng; Hố đen không hút trên mặt đất; Chắn đạn không chặn tên bộ xương (giờ huỷ cả ở EntityDamageByEntityEvent);
+  Rút bài lá Đỏ không trúng mục tiêu chính.
+- **Chưa test (cần người thật):** Khổng lồ / Thu nhỏ trên Bedrock (điện thoại).
+- **Có thể cân bằng lại (người dùng chưa trả lời):** Đẩy văng III đẩy người 6 → 18 khối khi bot có Rơi chậm (người thật chắc 6–8 khối);
+  gợi ý giảm lực cấp III 2,1 → 1,8 (`levelValue` "day_vang").
+
+### 2. Sách cấm (BanBook.java; Thư viện đồ › nút 📕 Sách cấm; thuvien-do.yml mục `sach-cam`; người chơi `/sachcam`)
+- Mỗi trang = hoạt động: Công thành (vùng vây lúc đang đánh), Đấu trường (thế giới arena.world), Hầm ngục (thế giới EliteMobs `em_*`, trừ em_adventurers_guild).
+  Chọn món thư viện + cách xử lý: **Không dùng được** (người dùng: "tối đi và không cầm được": nhóm hồi chiêu `duckymomocore:sachcam_<hđ>` + đặt
+  hồi chiêu mỗi giây, huỷ đổi ô / đổi tay, đang cầm / mặc thì cất vào túi, đánh 0 sát thương…) hoặc **Không cho mang vào**. Thêm ô phù phép riêng
+  bị tắt ở hoạt động đó. Dòng ⛔ cuối mô tả đồ tự cập nhật (luật đọc theo mã thư viện, đồ đã phát cũng đổi theo).
+- Hiện file KHÔNG có mục `sach-cam` = luật mặc định: trang Công thành có 9 món Xưởng từng có ô pvp + phù phép Bay lên / Dịch chuyển / Phóng bay /
+  Thu nhỏ. Web lưu lần đầu (Sách cấm hoặc sửa món) thì ghi hẳn vào file. Ô "pvp" của món Xưởng đã bỏ khỏi web.
+- **Test bot ở Đấu trường: đạt** (sk-sachcam.js, sk-sc-c.js, sk-moi6.js giap): dòng ⛔ + nhóm hồi chiêu, chặn cầm, tự cất khỏi tay, tháo giáp,
+  chặn `/dautruong vao`, bỏ luật thì gỡ. Lỗi đã sửa: đồ có phù phép CE mất dòng ⛔ (CE dựng lại món lúc đổi ô cầm → cập nhật sau 1 tick + mỗi giây).
+- **Chưa test:** Công thành (phiên kia đã dựng được công thành giả ThuNuocA/ThuNuocB, xem mục 0000000000 / commit bd5b6b3 → dùng lại được) và
+  Hầm ngục (cần mở 1 lượt dungeon instanced `em_id_…`, phiên kia đã test q5/q6 dungeon, xem commit 2be35c6).
+
+### 3. Balo theo rank (chủ server chốt 22/10)
+- Rank ủng hộ có balo: Nam 1 · Tử 2 · Bá 2 · Hầu 3 · Công 4. **Mọi rank mỗi balo 9 ô** (Dân 1, Lương Dân 2, Hào Kiệt 3, Sứ Giả 5 balo giữ nguyên số;
+  Tị Nạn 0 balo). `backpack.default-slots: 9`. Đồ ở ô bị khoá (người từng có 27 / 36 / 45 ô) KHÔNG mất, lên lại số ô là thấy.
+- Bẫy đã gặp: mọi người kế thừa nhóm `default` (Tị Nạn) và balo lấy số ô CAO NHẤT → Tị Nạn phải để 9 ô thì mức 9 mới có tác dụng (đã sửa).
+- Đã bỏ dòng "rank ủng hộ để 0, trái luật Mojang" trong config + trang Cài đặt; CLAUDE.md ghi ngoại lệ "rank ủng hộ được thêm balo, đừng tự gỡ".
+- Người dùng từ chối thêm `/pv` làm tên khác của `/balo`.
+
+### 4. Thời gian chờ dịch chuyển theo rank (TeleportDelay.java)
+- Ô `tp-delay` mỗi bậc danh phận / rank khác (Cài đặt › Người mới; rank khác -1 = theo danh phận) → quyền `duckymomo.tpdelay.<giây>`
+  (PlayRanks tự đồng bộ), người nhiều rank lấy số NHỎ NHẤT. Mặc định: danh phận 5 giây, 5 tước ủng hộ 3 giây.
+- Áp cho Essentials /home /spawn /warp /back /tpa /tpahere (đổi `TeleportWarmupEvent.setDelay` qua reflection) và /tpr.
+  Essentials `teleport-delay` gốc PHẢI > 0 (đang 5; = 0 thì Essentials không đếm, rank cũng mất tác dụng).
+- Test bot (tp-delay.js): thường /spawn 5 giây, Nam tước 3 giây (đo +1 giây do chu kỳ Essentials). /tpr chưa đo riêng.
+
+### 5. Cửa hàng Vàng: món có hạn hết hạn (PerkCleanup.java)
+- Món bán lẻ cấp quyền NGAY bằng lệnh LuckPerms (`settemp … Nd accumulate` / `set`), không qua vật phẩm. LuckPerms gỡ quyền đúng giờ (đã test).
+- Test (vang-hethan*.js, quyền 25–70 giây): nick / món đội bằng /hat / hạt PlayerParticles CÒN SÓT → PerkCleanup (lúc vào game + mỗi 30 giây):
+  hết essentials.nick thì `nick off`; hết essentials.nick.color thì bỏ màu nick; hết essentials.hat thì cất món không đội được theo cách thường
+  vào túi; vừa mất quyền hạt thì `ppo <tên> reset`. Hết hạn lúc offline: PlayerParticles `check-permissions-on-login: true` (đã bật sảnh +
+  Bang Hội Chiến). **Tất cả đã test đạt** (online, offline, chỉ hết màu nick).
+- **Chưa kiểm:** tủ skin (/tuskin, chạy ở proxy) khi hết món "Tủ skin 10 ô": skin ở ô vượt số bị ẩn hay mất.
+- Ghi chú trên trang Donate vẫn ghi "Vàng chỉ mua đồ trang trí, đúng luật Mojang": không còn đúng hẳn (tước có balo, chờ dịch chuyển 3 giây).
+  Đã hỏi người dùng có sửa không, CHƯA trả lời.
+
+### 6. Sự cố ngoài: tên miền `.io.vn` lỗi DNSSEC (22/10 chiều)
+- `app.goc6.io.vn`, `mc.goc6.io.vn` không phân giải ở Google / Cloudflare DNS: "DNSSEC validation failure", lỗi ngay ở vùng `io.vn` (io.vn cũng
+  SERVFAIL; com.vn, id.vn vẫn bình thường). Bản ghi vẫn còn (bỏ kiểm DNSSEC thì ra IP Cloudflare). KHÔNG do server. Đã khuyên: báo nhà đăng ký
+  tên miền; tạm vào game bằng IP VPS 125.212.218.74; cân nhắc tên miền dự phòng ngoài io.vn. Lúc ghi chưa biết đã hết lỗi chưa → kiểm lại:
+  `curl -s "https://dns.google/resolve?name=app.goc6.io.vn&type=A"` (Status 0 = đã hết).
+
+### 7. Mẹo test bot học được (bổ sung mục 0000000000)
+- Quái triệu hồi `~ ~ ~dz` ở sa mạc 12320,-2610 hay kẹt trong cồn cát bị ngạt (số liệu sai) → `positioned over motion_blocking_no_leaves`.
+- Chiêu đẩy lên người chơi: bot CÓ nhận vận tốc, nhưng sa mạc nhiều bậc đất chặn → dựng sàn kính tạm trên trời (sk-day-nguoi3.js, dựng rồi xoá).
+- `tp` bị Essentials bắt → dùng `minecraft:tp`. Bot vào lại game hay bị đưa về kinh đô (12699,-2523) → dịch chuyển có thử lại (hàm `go`).
+- Bot vào lại trong thế giới đấu trường bị đưa ra ngoài → ở lại, không vào lại. Bot vừa vào game được PvPManager bảo vệ, chờ ~10 giây mới đánh được.
+- rcon cắt "…" khi đọc lore dài → đọc `components."minecraft:custom_data".PublicBukkitValues`. Bộ xương: `equipment:{mainhand:{…}}` (HandItems đã bỏ).
+- Action bar / chat của bot đọc từ gói tin (`action_bar`, `system_chat`) + hàm `txt()` giải NBT (xem sk-moi4.js).
+- Lệnh LuckPerms qua rcon không trả gì → đọc MariaDB (`luckperms_group_permissions`, `luckperms_user_permissions`). Hạt: SQLite PlayerParticles (đọc ro).
+- Đặt luật Sách cấm / lưu Cài đặt bằng đúng hàm panel: `docker compose exec -T panel python -c 'import sys; sys.path.insert(0,"/app"); import app; …'`
+  (`app.thuvien_action({"action":"sachcam",…})`, `app.save_and_apply("banghoi", {...})`).
+- Sửa file trong repo `modes/banghoi/server/plugins/...` phải KHỚP file data: itzg chép bản repo mới hơn sang data lúc khởi động.
+
+### 8. Việc còn lại của phiên này (theo thứ tự)
+1. Commit đúng các file ở trên (đừng gộp `site/config/site.yml`).
+2. Hỏi người dùng: giảm lực Đẩy văng III? sửa chữ "chỉ trang trí" trên trang Donate?
+3. Test Sách cấm ở Công thành (dùng lại cách dựng công thành giả của phiên kia) và Hầm ngục.
+4. Kiểm tủ skin khi hết hạn món Tủ skin 10 ô.
+5. Người thật thử Khổng lồ / Thu nhỏ trên Bedrock.
+6. 404 `favicon.ico` của panel (vô hại, có từ trước).
 
 ## 000000000. MỚI NHẤT — 21/10/2026 tối muộn (tiếp test bằng bot, tài khoản lần 5 quay lại)
 

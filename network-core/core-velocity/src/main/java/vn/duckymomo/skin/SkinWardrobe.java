@@ -406,7 +406,7 @@ public final class SkinWardrobe {
         List<Entry> l = list(p.getUsername());
         int lim = limit(p);
         String cur = SkinsRestorerProvider.get().getPlayerStorage().getSkinIdOfPlayer(p.getUniqueId()).map(SkinIdentifier::getIdentifier).orElse("");
-        p.sendMessage(c("&6&l👕 Tủ skin &7(" + l.size() + "/" + lim + " ô)"));
+        p.sendMessage(c("&6👕 Tủ skin &7(" + l.size() + "/" + lim + " ô)"));
         List<Entry> copy;
         synchronized (l) {
             copy = new ArrayList<>(l);

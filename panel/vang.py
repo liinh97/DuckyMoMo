@@ -71,7 +71,7 @@ def shop(donate_tiers):
     for t in donate_tiers():
         for g in t["goi"]:
             out.append({"ma": f"rank:{t['group']}:{g['thang']}", "loai": "rank", "ten": f"{t['ten']} {g['thang']} tháng",
-                        "mo_ta": "Rank ủng hộ: tiền tố, trang trí, không cho sức mạnh. Mua thêm thì cộng dồn thời hạn.",
+                        "mo_ta": "Rank ủng hộ: tiền tố, trang trí, balo. Mua thêm thì cộng dồn thời hạn.",
                         "gia": max(1, math.ceil(g["tien"] / c["ty_gia"])), "ngay": g["thang"] * 30,
                         "lenh": [f"rank give {{player}} {t['group']} {g['thang']}"], "nhom": t["ten"]})
     for m in c["mon"]:

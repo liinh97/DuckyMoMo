@@ -346,7 +346,7 @@ function render(){
         `${dp.nha} nhà · ${dp.balo ? dp.balo + " balo " + dp.o + " ô" : "chưa có balo"} · ${dp.cho} món Chợ đen · ${dp.don} đơn thu mua`
         + (dp.tiep ? `<br>Bậc sau: ${esc(dp.tiep.ten)} (${[dp.tiep.gio ? dp.tiep.gio + " giờ chơi thật" : "", dp.tiep.cap ? "Thăng Cấp " + dp.tiep.cap : "", esc(dp.tiep.them || "")].filter(Boolean).join(" + ")}) · /danhphan` : " · bậc cao nhất")
         + (dp.media && dp.media.het ? `<br>Sứ Giả hết hạn ${day(dp.media.het * 1000)}` : "")))(h.danh_phan || D.danh_phan) : ""}
-    ${stat("👑 Rank ủng hộ", donateRoles.length ? donateRoles.map(r => esc(r.ten)).join(", ") : "Chưa có", donateRoles.length && donateRoles[0].het ? "Hết hạn " + day(donateRoles[0].het * 1000) : "Chỉ đồ trang trí, không bán sức mạnh")}
+    ${stat("👑 Rank ủng hộ", donateRoles.length ? donateRoles.map(r => esc(r.ten)).join(", ") : "Chưa có", donateRoles.length && donateRoles[0].het ? "Hết hạn " + day(donateRoles[0].het * 1000) : "")}
   </div>`;
 
   // quản trị
@@ -430,7 +430,7 @@ function render(){
       return `<div class="quest"><div class="t"><span>${esc(x.ten)}</span><b>${nf.format(Math.min(x.da, x.can))}/${nf.format(x.can)}${pc >= 100 ? " ✓" : ""}</b></div><div class="bar"><i style="width:${pc}%"></i></div></div>`; }).join("")
       : '<p class="muted">Chưa nhận nhiệm vụ hôm nay. Vào Bang Hội Chiến gõ <code>/nhiemvu</code>.</p>'}</div>
     <div class="card" id="ungho"><h2>💰 Vàng <span class="pill on" id="vgBal">${VG && VG.so_du != null ? nf.format(VG.so_du) + " Vàng" : "…"}</span></h2>
-      <p class="small muted">Nạp tiền ủng hộ server được Vàng, dùng Vàng mua rank ủng hộ, đồ trang trí, màu tên (không bán sức mạnh). Vàng không chuyển cho người khác.
+      <p class="small muted">Nạp tiền ủng hộ server được Vàng, dùng Vàng mua rank ủng hộ, đồ trang trí, màu tên. Vàng không chuyển cho người khác.
         ${VG && VG.ty_gia ? `Tỉ giá: ${nf.format(VG.ty_gia)}đ = 1 Vàng${(VG.thuong || []).length ? " · thưởng: " + VG.thuong.map(t => `từ ${nf.format(t.tu)}đ +${t.pct}%`).join(", ") : ""}.` : ""}</p>
       <div class="pkgs">${[20000, 50000, 100000, 200000, 500000].map(t => `<button class="pkg nap" data-t="${t}">${nf.format(t / 1000)}k${VG && VG.ty_gia ? ` · ${nf.format(vgFor(t))} Vàng` : ""}</button>`).join("")}</div>
       <div class="skinRow" style="grid-template-columns:minmax(0,1fr) auto"><input id="napTien" inputmode="numeric" placeholder="Số tiền khác (đồng), vd 150000"><button class="btn small" id="napGo">Nạp</button></div>

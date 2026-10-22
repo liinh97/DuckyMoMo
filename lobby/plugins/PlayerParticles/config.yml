@@ -89,7 +89,7 @@ disabled-worlds:
 
 # Should particles a player no longer has permission to use be removed on login?
 # Default: false
-check-permissions-on-login: false
+check-permissions-on-login: true
 
 # The maximum number of particles a player can apply at once
 # The GUI will only display up to 21, don't set this any higher than that

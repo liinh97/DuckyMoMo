@@ -170,6 +170,9 @@ commands:
   buabatpet:
     description: "Bùa bắt pet (tăng xác suất bắt); admin: /buabatpet give <người> [số]"
     aliases: [bua]
+  sachcam:
+    description: "Sách cấm: đồ nào bị cấm / tắt hiệu ứng ở công thành, đấu trường, hầm ngục. Cầm món rồi gõ /sachcam để xem riêng món đó"
+    aliases: [luatcam]
   xemdo:
     description: "Xem đủ mô tả món đang cầm trong khung chat (khi tooltip dài quá màn hình): cầm món rồi gõ /xemdo"
   bxhpet:

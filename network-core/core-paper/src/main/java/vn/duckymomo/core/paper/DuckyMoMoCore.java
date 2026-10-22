@@ -365,6 +365,15 @@ public final class DuckyMoMoCore extends JavaPlugin {
         if (getServer().getPluginManager().isPluginEnabled("Essentials")) {
             getServer().getPluginManager().registerEvents(new PaySelfGuard(), this);
             getServer().getPluginManager().registerEvents(new PetNameGuard(), this);
+            TeleportDelay.hookEssentials(this);   // thời gian chờ /home /tpa… theo rank (quyền duckymomo.tpdelay.<N>)
+            PerkCleanup perkCleanup = new PerkCleanup(this);   // món Vàng hết hạn: gỡ nick, món /hat, hạt còn sót
+            getServer().getPluginManager().registerEvents(perkCleanup, this);
+            perkCleanup.start();
+            if (getServer().getPluginManager().getPlugin("zAuctionHouse") != null) {
+                AuctionReturn auctionReturn = new AuctionReturn(this);   // Chợ đen: món hết hạn tự về túi
+                getServer().getPluginManager().registerEvents(auctionReturn, this);
+                auctionReturn.start();
+            }
         }
 
         // Nghề Jobs Reborn (21/10): gõ /jobs (không thêm gì) là mở menu chọn nghề thay vì danh sách lệnh
@@ -702,7 +711,16 @@ public final class DuckyMoMoCore extends JavaPlugin {
         bind("web", webLogin::command, "Đăng nhập web");
         getServer().getPluginManager().registerEvents(new ItemInspect(), this);   // phím F trong túi/menu, chọn món trade
         getServer().getPluginManager().registerEvents(new AttackSpeed(), this);   // tốc đánh món Thư viện đồ (OCM bỏ hồi đòn)
+        getServer().getPluginManager().registerEvents(new ItemPercent(), this);   // % sát thương / tốc đánh / đẩy lùi món Thư viện đồ
         getServer().getPluginManager().registerEvents(new SkillEnchants(), this);   // phù phép riêng Lướt / Hồi máu / Cầu lửa
+        SkillEnchants.startPassive(this);   // phù phép thụ động (Tăng tốc)
+        if (getServer().getPluginManager().getPlugin("CrazyEnchantments") != null) {
+            getServer().getPluginManager().registerEvents(new CeExecuteTamer(this), this);   // Hành quyết CE: chỉnh yếu (Cài đặt › Phù phép)
+        }
+        BanBook banBook = new BanBook(this);   // Sách cấm: cấm đồ thư viện theo hoạt động (công thành, đấu trường, dungeon)
+        getServer().getPluginManager().registerEvents(banBook, this);
+        banBook.start();
+        bind("sachcam", banBook::command, "Sách cấm");
         bind("xemdo", ItemInspect::command, "Xem đồ");   // in đủ tooltip món ra chat (tooltip dài quá màn hình)
         if (council != null) {
             getLogger().info("Hội đồng Hoà Bình, tổ chức, bảng xếp hạng, Hội Bàn Tròn, cửa hàng: "

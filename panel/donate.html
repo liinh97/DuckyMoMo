@@ -37,7 +37,7 @@
   @media (max-width: 700px) { .don { grid-template-columns: 1fr; } .don .acts { justify-content: flex-start; } }
 </style>
 </head>
-<body data-dozzle="__DOZZLE_URL__" data-title="Donate · Vàng" data-sub="Người chơi chọn số tiền nạp (web hoặc /rank mua), quét QR rồi bấm 'Tôi đã chuyển khoản'. Kiểm tra tiền đã về (đúng số tiền + nội dung) rồi bấm Duyệt: server cộng Vàng, người chơi tự mua rank/đồ trang trí bằng Vàng.">
+<body data-dozzle="__DOZZLE_URL__" data-title="Donate · Vàng" data-sub="Người chơi chọn số tiền nạp (web hoặc /rank mua), quét QR rồi bấm 'Tôi đã chuyển khoản'. Kiểm tra tiền đã về (đúng số tiền + nội dung) rồi bấm Duyệt: server cộng Vàng, người chơi tự mua rank / món bán lẻ bằng Vàng.">
 <script src="shell.js"></script>
 <main>
   <div class="card vg">
@@ -50,12 +50,12 @@
   <details class="card vg" id="monBox">
     <summary><b>Cửa hàng Vàng: món bán lẻ</b> <span class="hint">(rank tự có theo giá ở Cài đặt › Rank donate)</span></summary>
     <p class="hint" style="margin:6px 0 0">Mỗi món: <b>quyền</b> cấp cho người mua (mỗi dòng một quyền). Số ngày &gt; 0 = quyền có hạn, mua thêm cộng dồn; 0 = vĩnh viễn.
-      Chỉ bán đồ trang trí (luật Mojang). <b>Lệnh tuỳ chỉnh</b> chạy bằng console ở sảnh, <code>{player}</code> = tên người mua, chỉ tài khoản toàn quyền sửa được.</p>
+      <b>Lệnh tuỳ chỉnh</b> chạy bằng console ở sảnh, <code>{player}</code> = tên người mua, chỉ tài khoản toàn quyền sửa được.</p>
     <div class="mons" id="mons"></div>
     <div class="row"><button class="ghost" id="monAdd">+ Thêm món</button><button class="primary" id="monSave">Lưu cửa hàng</button></div>
   </details>
   <div class="tabs" id="tabs"></div>
-  <p class="hint">"Duyệt" = cộng Vàng theo số tiền (tỉ giá + mốc thưởng ở Cài đặt › Toàn mạng › Rank donate). Yêu cầu kiểu cũ (chọn gói rank) cũng được đổi thành Vàng. Vàng chỉ mua đồ trang trí, đúng luật Mojang.</p>
+  <p class="hint">"Duyệt" = cộng Vàng theo số tiền (tỉ giá + mốc thưởng ở Cài đặt › Toàn mạng › Rank donate). Yêu cầu kiểu cũ (chọn gói rank) cũng được đổi thành Vàng.</p>
   <div class="list" id="list"><div class="empty">Đang tải…</div></div>
 </main>
 <script>

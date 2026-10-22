@@ -126,6 +126,11 @@ final class ItemLibrary {
         return id == null ? null : load().getConfigurationSection("items." + id);
     }
 
+    /** Mục khác của file thư viện (vd "sach-cam" của BanBook), null nếu không có. Đừng sửa. */
+    ConfigurationSection raw(String path) {
+        return load().getConfigurationSection(path);
+    }
+
     /** Tên hiện của món (mã màu &), trống nếu chưa đặt tên. */
     String name(String id) {
         ConfigurationSection s = section(id);
@@ -312,28 +317,33 @@ final class ItemLibrary {
         Component line = Component.text(slot == EquipmentSlot.HAND ? "Khi cầm: " : slot == EquipmentSlot.HEAD ? "Khi đội: " : "Khi mặc: ", NamedTextColor.GRAY);
         boolean first = true;
         for (Attribute a : mods.keySet()) {
-            double sum = 0;
-            boolean pct = false;
-            for (AttributeModifier m : mods.get(a)) {
-                boolean p = m.getOperation() != AttributeModifier.Operation.ADD_NUMBER;
-                pct |= p;
-                sum += p ? m.getAmount() * 100 : m.getAmount();
-            }
             if (a == Attribute.ATTACK_SPEED) {
                 continue;   // đánh kiểu 1.8 (OCM): không có hồi đòn
             }
+            double add = 0, per = 0;   // số cộng thẳng và số % (vd Máu tối đa +4 và +10%) hiện riêng
+            for (AttributeModifier m : mods.get(a)) {
+                if (m.getOperation() == AttributeModifier.Operation.ADD_NUMBER) {
+                    add += m.getAmount();
+                } else {
+                    per += m.getAmount() * 100;
+                }
+            }
             if (a == Attribute.ATTACK_DAMAGE) {
-                sum += 1;
+                add += 1;
             }
-            if (sum == 0) {
-                continue;
+            for (int k = 0; k < 2; k++) {
+                boolean pct = k == 1;
+                double sum = pct ? per : add;
+                if (sum == 0) {
+                    continue;
+                }
+                String num = (sum > 0 && a != Attribute.ATTACK_DAMAGE ? "+" : "") + (sum == Math.floor(sum) ? String.valueOf((long) sum)
+                        : String.format(Locale.ROOT, "%.2f", sum).replaceAll("0+$", "").replace('.', ',')) + (pct ? "%" : "");
+                line = line.append(Component.text(first ? "" : " · ", NamedTextColor.DARK_GRAY))
+                        .append(Component.text(num + " ", sum < 0 ? NamedTextColor.RED : NamedTextColor.BLUE))
+                        .append(Component.translatable(a.translationKey(), sum < 0 ? NamedTextColor.RED : NamedTextColor.BLUE));
+                first = false;
             }
-            String num = (sum > 0 && a != Attribute.ATTACK_DAMAGE ? "+" : "") + (sum == Math.floor(sum) ? String.valueOf((long) sum)
-                    : String.format(Locale.ROOT, "%.2f", sum).replaceAll("0+$", "").replace('.', ',')) + (pct ? "%" : "");
-            line = line.append(Component.text(first ? "" : " · ", NamedTextColor.DARK_GRAY))
-                    .append(Component.text(num + " ", sum < 0 ? NamedTextColor.RED : NamedTextColor.BLUE))
-                    .append(Component.translatable(a.translationKey(), sum < 0 ? NamedTextColor.RED : NamedTextColor.BLUE));
-            first = false;
         }
         return first ? null : line.decoration(TextDecoration.ITALIC, false);
     }
@@ -359,7 +369,18 @@ final class ItemLibrary {
                         d.percent() ? AttributeModifier.Operation.ADD_SCALAR : AttributeModifier.Operation.ADD_NUMBER, group));
             }
         }
+        double mau = at.getDouble("pct_mau", 0);   // Máu % (22/10): +10 = máu tối đa gốc ×1,1; âm = giảm
+        if (mau != 0) {
+            meta.addAttributeModifier(Attribute.MAX_HEALTH, new AttributeModifier(new NamespacedKey(plugin, "thuvien_pct_mau"), mau / 100.0,
+                    AttributeModifier.Operation.ADD_SCALAR, group));
+        }
     }
+
+    /** Chỉnh theo % server tự tính (ItemPercent): mã trong attributes -> (dấu PDC, tên hiện trên đồ). */
+    private static final List<Map.Entry<String, Map.Entry<NamespacedKey, String>>> PCTS = List.of(
+            Map.entry("pct_sat_thuong", Map.entry(ItemPercent.DAMAGE, "Sát thương")),
+            Map.entry("pct_toc_danh", Map.entry(ItemPercent.ATTACK_SPEED, "Tốc đánh")),
+            Map.entry("pct_day_lui", Map.entry(ItemPercent.KNOCKBACK, "Kháng đẩy lùi")));
 
     private static Map<String, Double> ocmTable;
 
@@ -462,6 +483,16 @@ final class ItemLibrary {
                 lore.add(LEGACY.deserialize("&7Tốc đánh: &f" + (aps == Math.floor(aps) ? String.valueOf((long) aps)
                         : String.format(Locale.ROOT, "%.2f", aps).replaceAll("0+$", "").replace('.', ',')) + " &7đòn/giây")
                         .decoration(TextDecoration.ITALIC, false));
+            }
+            for (var pe : PCTS) {
+                double v = at.getDouble(pe.getKey(), 0);
+                if (v == 0) {
+                    continue;
+                }
+                meta.getPersistentDataContainer().set(pe.getValue().getKey(), org.bukkit.persistence.PersistentDataType.DOUBLE, v);
+                String num = (v > 0 ? "+" : "") + (v == Math.floor(v) ? String.valueOf((long) v)
+                        : String.format(Locale.ROOT, "%.2f", v).replaceAll("0+$", "").replace('.', ','));
+                lore.add(LEGACY.deserialize((v > 0 ? "&9" : "&c") + num + "% " + pe.getValue().getValue()).decoration(TextDecoration.ITALIC, false));
             }
         }
         // phù phép riêng của server (Lướt, Hồi máu, Cầu lửa): dòng "Lướt II" đầu mô tả, ngay dưới phù phép của game

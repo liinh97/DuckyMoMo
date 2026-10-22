@@ -50,9 +50,9 @@ groups:
       - { key: rank_join_message, label: Dòng chào thêm cho người có rank donate, type: text, servers: [lobby, banghoi-1, practice-1], file: plugins/DuckyMoMoCore/config.yml, path: donate-ranks.rank-join-message }
 
   - title: Rank donate (tước vị)
-    info: "Là gì: quyền lợi TRANG TRÍ người chơi nhận khi ủng hộ (luật Mojang cấm bán lợi thế chơi).\nSửa ở đây: tên, prefix, chữ giá, chữ quyền lợi hiện trong /rank và trên web.\nQuyền lợi thật: trang Role › rank › Quyền.\nCấp rank: /rank give, hoặc trang Role / Donate."
+    info: "Là gì: quyền lợi người chơi nhận khi ủng hộ (trang trí, balo, chờ dịch chuyển ngắn; KHÔNG bán đồ, tiền trong game, chìa gacha).\nSửa ở đây: tên, prefix, chữ giá, chữ quyền lợi hiện trong /rank và trên web.\nQuyền lợi thật: trang Role › rank › Quyền.\nCấp rank: /rank give, hoặc trang Role / Donate."
     category: Rank donate
-    description: "Chỉ trang trí (luật Mojang). Admin cấp: /rank give <tên> <bậc> <số tháng>. Người chơi xem: /rank. Quyền lợi cụ thể của từng bậc nằm trong LuckPerms (tools/donate-ranks.cmds); ô Quyền lợi dưới đây chỉ là chữ hiện trong /rank."
+    description: "Admin cấp: /rank give <tên> <bậc> <số tháng>. Người chơi xem: /rank. Quyền lợi cụ thể của từng bậc nằm trong LuckPerms (tools/donate-ranks.cmds); ô Quyền lợi dưới đây chỉ là chữ hiện trong /rank."
     apply: [dmm reload]
     settings:
       - { key: donate_how_to_buy, info: "Là gì: dòng chữ cuối /rank chỉ cách ủng hộ (vd chuyển khoản trên web, nhắn admin).\nLưu ý: chỉ là chữ, không tự xử lý thanh toán.", label: Hướng dẫn mua (hiện trong /rank), type: text, servers: [lobby, banghoi-1, practice-1], file: plugins/DuckyMoMoCore/config.yml, path: donate-ranks.how-to-buy }

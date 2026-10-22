@@ -91,13 +91,13 @@ donate-ranks:
     - group: namtuoc
       name: Nam Tước
       color: "&a"
-      perks: [prefix, chat màu, /hat, chào khi vào server, /cuahang khi ở kinh đô]
+      perks: [prefix, chat màu, /hat, chào khi vào server, /cuahang khi ở kinh đô, 1 balo (/balo), chờ dịch chuyển 3 giây]
       prices: [1 tháng 20k, 3 tháng 50k, 6 tháng 90k, 1 năm 160k]
       skins: []          # skin độc quyền (tên custom skin SkinsRestorer: /sr createcustom <tên> <link>), bậc cao kế thừa bậc thấp
     - group: tutuoc
       name: Tử Tước
       color: "&b"
-      perks: [/nick, 1 hiệu ứng hạt (/pp)]
+      perks: [/nick, 1 hiệu ứng hạt (/pp), 2 balo]
       prices: [1 tháng 40k, 3 tháng 100k, 6 tháng 180k, 1 năm 320k]
       skins: []          # skin độc quyền (tên custom skin SkinsRestorer: /sr createcustom <tên> <link>), bậc cao kế thừa bậc thấp
     - group: batuoc
@@ -109,13 +109,13 @@ donate-ranks:
     - group: hautuoc
       name: Hầu Tước
       color: "&d"
-      perks: [chat đậm/nghiêng, 3 hiệu ứng hạt, pet hiếm]
+      perks: [chat đậm/nghiêng, 3 hiệu ứng hạt, pet hiếm, 3 balo]
       prices: [1 tháng 100k, 3 tháng 260k, 6 tháng 460k, 1 năm 800k]
       skins: []          # skin độc quyền (tên custom skin SkinsRestorer: /sr createcustom <tên> <link>), bậc cao kế thừa bậc thấp
     - group: congtuoc
       name: Công Tước
       color: "&6"
-      perks: [chat/nick màu tuỳ chọn (hex), 6 hiệu ứng hạt, mọi pet, chuông khi vào server]
+      perks: [chat/nick màu tuỳ chọn (hex), 6 hiệu ứng hạt, mọi pet, chuông khi vào server, 4 balo]
       prices: [1 tháng 150k, 3 tháng 390k, 6 tháng 690k, 1 năm 1.200k]
       skins: []          # skin độc quyền (tên custom skin SkinsRestorer: /sr createcustom <tên> <link>), bậc cao kế thừa bậc thấp
 
@@ -1330,15 +1330,15 @@ play-ranks:
   server: banghoi-1
   announce: true
   tiers:
-    tinan: {group: default, name: "Dân Tị Nạn", prefix: "&8[Tị Nạn] ", priority: 0, hours: 0, level: 0, homes: 1, balo: 0, balo-slots: 27, ah: 2, orders: 2, tu-skin: 1, icon: DEAD_BUSH}
-    dan: {group: dan, name: "Dân", prefix: "&7[Dân] ", priority: 1, hours: 6, level: 0, perm: duckymomo.cotruyen.c1, perm-text: "Xong chương 1 cốt truyện (Già Làng)", homes: 2, balo: 1, balo-slots: 27, ah: 4, orders: 3, tu-skin: 2, icon: WHEAT}
-    luongdan: {group: luongdan, name: "Lương Dân", prefix: "&a[Lương Dân] ", priority: 2, hours: 24, level: 10, homes: 3, balo: 2, balo-slots: 36, ah: 6, orders: 4, tu-skin: 3, icon: IRON_HOE}
-    haokiet: {group: haokiet, name: "Hào Kiệt", prefix: "&6[Hào Kiệt] ", priority: 3, hours: 72, level: 25, homes: 5, balo: 3, balo-slots: 45, ah: 8, orders: 5, tu-skin: 5, icon: GOLDEN_HELMET}
+    tinan: {group: default, name: "Dân Tị Nạn", prefix: "&8[Tị Nạn] ", priority: 0, hours: 0, level: 0, homes: 1, balo: 0, balo-slots: 9, ah: 2, orders: 2, tu-skin: 1, icon: DEAD_BUSH, tp-delay: 5}
+    dan: {group: dan, name: "Dân", prefix: "&7[Dân] ", priority: 1, hours: 6, level: 0, perm: duckymomo.cotruyen.c1, perm-text: "Xong chương 1 cốt truyện (Già Làng)", homes: 2, balo: 1, balo-slots: 9, ah: 4, orders: 3, tu-skin: 2, icon: WHEAT, tp-delay: 5}
+    luongdan: {group: luongdan, name: "Lương Dân", prefix: "&a[Lương Dân] ", priority: 2, hours: 24, level: 10, homes: 3, balo: 2, balo-slots: 9, ah: 6, orders: 4, tu-skin: 3, icon: IRON_HOE, tp-delay: 5}
+    haokiet: {group: haokiet, name: "Hào Kiệt", prefix: "&6[Hào Kiệt] ", priority: 3, hours: 72, level: 25, homes: 5, balo: 3, balo-slots: 9, ah: 8, orders: 5, tu-skin: 5, icon: GOLDEN_HELMET, tp-delay: 5}
   # Rank KHÁC: quyền lợi homes (nhà) · balo · balo-slots (9..54) · ah (món chợ) · orders (đơn /donhang) · spin-faster (% vé vòng quay nhanh hơn,
   # 5..50) · kit (kit Essentials). 0 / "" = không cấp (theo danh phận). Người có nhiều rank lấy mức cao nhất. Cài đặt › Người mới › Quyền lợi theo rank.
   # create: true = plugin tạo nhóm + tiền tố (vd Sứ Giả); false = nhóm có sẵn (ủng hộ, staff), chỉ đụng quyền lợi, giữ tiền tố của họ.
   # card: true = hiện thẻ trong /danhphan (info = yêu cầu đăng ký, contact = bấm vào thì hiện). Cấp rank Sứ Giả: /lp user <tên> parent add media
-  # RANK ỦNG HỘ (mua bằng tiền): mọi quyền lợi trên là LỢI THẾ CHƠI → trái luật Mojang (không pay-to-win), để 0.
+  # Rank ủng hộ (5 tước) có balo từ 22/10 (chủ server chốt): Nam 1 · Tử 2 · Bá 2 · Hầu 3 · Công 4 balo, mỗi balo 9 ô.
   other-ranks:
     media:
       create: true
@@ -1351,27 +1351,28 @@ play-ranks:
       contact: "&7Gửi link kênh cho admin: nhắn &f/msg Linh &7trong game hoặc qua Discord/Zalo của server."
       homes: 5
       balo: 5
-      balo-slots: 27
+      balo-slots: 9
       ah: 5
       orders: 5
       tu-skin: 5
       spin-faster: 20
       kit: media
-    namtuoc: {homes: 0, balo: 0, balo-slots: 0, ah: 0, orders: 0, tu-skin: 3, spin-faster: 0, kit: ""}
-    tutuoc: {homes: 0, balo: 0, balo-slots: 0, ah: 0, orders: 0, tu-skin: 5, spin-faster: 0, kit: ""}
-    batuoc: {homes: 0, balo: 0, balo-slots: 0, ah: 0, orders: 0, tu-skin: 8, spin-faster: 0, kit: ""}
-    hautuoc: {homes: 0, balo: 0, balo-slots: 0, ah: 0, orders: 0, tu-skin: 12, spin-faster: 0, kit: ""}
-    congtuoc: {homes: 0, balo: 0, balo-slots: 0, ah: 0, orders: 0, tu-skin: 20, spin-faster: 0, kit: ""}
-    builder: {homes: 0, balo: 0, balo-slots: 0, ah: 0, orders: 0, tu-skin: 0, spin-faster: 0, kit: ""}
-    helper: {homes: 0, balo: 0, balo-slots: 0, ah: 0, orders: 0, tu-skin: 0, spin-faster: 0, kit: ""}
-    mod: {homes: 0, balo: 0, balo-slots: 0, ah: 0, orders: 0, tu-skin: 0, spin-faster: 0, kit: ""}
-    quanly: {homes: 0, balo: 0, balo-slots: 0, ah: 0, orders: 0, tu-skin: 0, spin-faster: 0, kit: ""}
-    admin: {homes: 0, balo: 0, balo-slots: 0, ah: 0, orders: 0, tu-skin: 0, spin-faster: 0, kit: ""}
+      tp-delay: 3
+    namtuoc: {homes: 0, balo: 1, balo-slots: 9, ah: 0, orders: 0, tu-skin: 3, spin-faster: 0, kit: "", tp-delay: 3}
+    tutuoc: {homes: 0, balo: 2, balo-slots: 9, ah: 0, orders: 0, tu-skin: 5, spin-faster: 0, kit: "", tp-delay: 3}
+    batuoc: {homes: 0, balo: 2, balo-slots: 9, ah: 0, orders: 0, tu-skin: 8, spin-faster: 0, kit: "", tp-delay: 3}
+    hautuoc: {homes: 0, balo: 3, balo-slots: 9, ah: 0, orders: 0, tu-skin: 12, spin-faster: 0, kit: "", tp-delay: 3}
+    congtuoc: {homes: 0, balo: 4, balo-slots: 9, ah: 0, orders: 0, tu-skin: 20, spin-faster: 0, kit: "", tp-delay: 3}
+    builder: {homes: 0, balo: 0, balo-slots: 0, ah: 0, orders: 0, tu-skin: 0, spin-faster: 0, kit: "", tp-delay: -1}
+    helper: {homes: 0, balo: 0, balo-slots: 0, ah: 0, orders: 0, tu-skin: 0, spin-faster: 0, kit: "", tp-delay: -1}
+    mod: {homes: 0, balo: 0, balo-slots: 0, ah: 0, orders: 0, tu-skin: 0, spin-faster: 0, kit: "", tp-delay: -1}
+    quanly: {homes: 0, balo: 0, balo-slots: 0, ah: 0, orders: 0, tu-skin: 0, spin-faster: 0, kit: "", tp-delay: -1}
+    admin: {homes: 0, balo: 0, balo-slots: 0, ah: 0, orders: 0, tu-skin: 0, spin-faster: 0, kit: "", tp-delay: -1}
 
 # Balo cá nhân (/balo): số balo và số ô mỗi balo theo danh phận (play-ranks.tiers.*.balo / balo-slots) và rank khác (play-ranks.other-ranks). Không mở khi vừa đánh người (combat-seconds) hay trong vùng vây đang đánh.
 backpack:
   enabled: true
-  default-slots: 27        # số ô khi người chơi không có quyền duckymomo.balo.o.<N> nào
+  default-slots: 9         # số ô khi người chơi không có quyền duckymomo.balo.o.<N> nào
   combat-seconds: 15
   max: 9
 
@@ -1398,10 +1399,10 @@ media:
 # Gói tài nguyên theo lựa chọn từng người (/caidat › Font tiếng Việt, 20/10). URL/SHA1 do ./ops/build-font-pack.sh ghi vào .env
 # -> compose -> CFG_*. Bật = gói font tiếng Việt + hình vật phẩm; tắt = chỉ hình vật phẩm (font gốc). Không bắt buộc tải.
 resource-pack:
-  font-url: "${CFG_FONT_PACK_URL}"
-  font-sha1: "${CFG_FONT_PACK_SHA1}"
-  item-url: "${CFG_ITEM_PACK_URL}"
-  item-sha1: "${CFG_ITEM_PACK_SHA1}"
+  font-url: "https://app.goc6.io.vn/mc/pack/duckymomo-font-5f22d709.zip"
+  font-sha1: "5f22d70967dc90c337d18f9eef5b735062b1abc8"
+  item-url: "https://app.goc6.io.vn/mc/pack/duckymomo-items-e07e4989.zip"
+  item-sha1: "e07e498972eeea7481e3f5ca4d74de984ab1d6e4"
   font-prompt: "&6Tải font tiếng Việt dễ đọc (khoảng 70 KB)? Bấm Có để chữ có dấu rõ hơn. Không thích: /caidat tắt Font tiếng Việt."
   item-prompt: "&6Tải hình vật phẩm riêng của server (khoảng 12 KB)?"
 
@@ -1442,7 +1443,7 @@ player-menu:
     - {slot: 37, icon: CHEST_MINECART, name: "&d▣ &fBalo", sub: "/balo", lore: ["Túi đồ thêm, mở ở đâu cũng được"], gom: ["Số balo và số ô theo danh phận", "Không mở được khi đang giao tranh"], bam: "Bấm để mở balo", cmd: balo}
     - {slot: 38, icon: LEATHER_CHESTPLATE, name: "&d☺ &fTủ skin", sub: "/tuskin", lore: ["Lưu nhiều skin, đổi trong 1 bấm"], gom: ["Thêm bằng tên bản quyền hoặc ảnh trên web", "Số ô theo danh phận, rank"], bam: "Bấm để mở tủ", proxy: tuskin}
     - {slot: 39, icon: COMPARATOR, name: "&d⚙ &fCài đặt cá nhân", sub: "/caidat", lore: ["Bật / tắt theo ý mình"], gom: ["Chat, tin nhắn riêng, nhận TPA", "Bảng bên phải, font tiếng Việt…"], bam: "Bấm để chỉnh", cmd: caidat}
-    - {slot: 40, icon: GOLD_INGOT, name: "&6◆ &fVàng & rank ủng hộ", sub: "%dmmvang_so_du% Vàng", lore: ["Ủng hộ server, nhận Vàng mua trang trí"], gom: ["Rank ủng hộ có tiền tố, hiệu ứng", "Đồ trang trí, đổi tên màu", "Chỉ trang trí, không pay-to-win"], bam: "Bấm để mở ví Vàng", cmd: vang}
+    - {slot: 40, icon: GOLD_INGOT, name: "&6◆ &fVàng & rank ủng hộ", sub: "%dmmvang_so_du% Vàng", lore: ["Ủng hộ server, nhận Vàng mua rank, trang trí"], gom: ["Rank ủng hộ có tiền tố, hiệu ứng, balo", "Đồ trang trí, đổi tên màu"], bam: "Bấm để mở ví Vàng", cmd: vang}
     - {slot: 41, icon: IRON_SWORD, name: "&d⚔ &fĐấu Trường", sub: "PvP", lore: ["Đấu 1v1, 2v2 không mất đồ"], gom: ["Máu cố định 10 tim, công bằng", "Thắng có kinh nghiệm pet"], bam: "Bấm để tới Đấu Trường", cmd: "warp pvp"}
     - {slot: 43, icon: COMPASS, name: "&7➜ &fVề sảnh", lore: ["Chọn chế độ chơi khác"], bam: "Bấm để về sảnh", server: lobby}
 
@@ -1470,5 +1471,11 @@ vang:
 
 # Thư viện đồ: món có tooltip ước tính dài hơn tooltip-max-lines dòng thì tự gộp phù phép (3 cái/dòng) và khối chỉ số của game
 # (1 dòng "Khi mặc: +6 Giáp") để không bị đẩy ra ngoài màn hình. Tên, lore, phù phép CE giữ nguyên. 0 = tắt (hiện như game gốc).
+# Hành quyết (Execute) của CrazyEnchantments (22/10, CeExecuteTamer.java): CE gốc cho Sức mạnh IV (+520% kiểu 1.8) MỖI đòn trúng.
+# Ở đây: chỉ khi kẻ địch còn <= max-hp-percent % máu, và chỉ Sức mạnh cấp amplifier + 1 (0 = Sức mạnh I = +130%). enabled false = để như CE.
+ce-execute:
+  enabled: true
+  max-hp-percent: 30
+  amplifier: 0
 item-library:
   tooltip-max-lines: 0

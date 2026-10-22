@@ -538,6 +538,7 @@ final class LevelUp implements Listener {
         data.set(k(u) + "ten", p.getName());
         dirty = true;
         save();
+        writeJson();   // trang tài khoản đọc "điểm chưa cộng" ở capdo.json (22/10: trước giữ số cũ tới lần lên cấp sau)
         applyStats(p);
         p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 0.7f, 1.4f);
         p.sendMessage(c("&a✔ " + a.color + a.name + " &abậc " + (t + 1) + ": &f" + effect(a, t + 1) + (statsOff(p) ? " &8(tắt ở thế giới này)" : "")));
@@ -559,6 +560,7 @@ final class LevelUp implements Listener {
         data.set(k(u) + "thuoctinh", null);
         dirty = true;
         save();
+        writeJson();
         applyStats(p);
         p.sendMessage(c("&a✔ Đã tẩy điểm: nhận lại " + freePoints(u) + " điểm thuộc tính" + (respecCost > 0 ? " &7(−" + money(respecCost) + ")" : "") + "."));
     }

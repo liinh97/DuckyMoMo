@@ -451,11 +451,9 @@ final class Workshop implements Listener {
             lore.add(c("&8• &7Độ bền: &6" + fmt(uses)));
         }
         lore.add(c("&8• &7Hết hạn: &b" + WHEN.format(Instant.ofEpochMilli(until))));
-        if (r.pvp()) {
-            lore.add(c("&c✖ Mất tác dụng trong vùng vây khi đang đánh"));
-        }
         meta.lore(lore);
         it.setItemMeta(meta);
+        BanBook.refresh(it);   // thêm lại dòng luật cấm (⛔) theo Sách cấm
     }
 
     /** Trừ n độ bền. Trả về đồ sau khi trừ, hoặc null nếu hết (đồ biến mất). */
@@ -500,19 +498,20 @@ final class Workshop implements Listener {
         }
     }
 
-    private boolean blockedHere(Player p, Recipe r) {
-        return r.pvp() && SiegeWarHook.battleActive() && SiegeWarHook.inActiveSiegeZone(p.getLocation());
-    }
-
-    /** Món cầm tay còn dùng được không: hết hạn thì xoá; món pvp trong vùng vây đang đánh thì báo. */
+    /** Món cầm tay còn dùng được không: hết hạn thì xoá; Sách cấm cấm món ở chỗ đang đứng thì báo (BanBook). */
     private boolean usable(Player p, ItemStack it, Recipe r, EquipmentSlot slot) {
         if (expired(it)) {
             p.getInventory().setItem(slot, null);
             p.sendMessage(c("&7[Xưởng] " + r.name() + " &7đã hết hạn và biến mất."));
             return false;
         }
-        if (blockedHere(p, r)) {
-            p.sendActionBar(c("&c" + r.name() + " &cmất tác dụng trong vùng vây khi đang đánh"));
+        String ban = BanBook.effectsBlockedBy(p, it);
+        if (ban != null) {
+            p.sendActionBar(c("&c⛔ " + r.name() + " &ckhông dùng được ở " + ban + " &7(/sachcam)"));
+            return false;
+        }
+        if (SkillEnchants.silenced(p)) {
+            p.sendActionBar(c("&5Đang bị Câm lặng: " + r.name() + " &5chưa dùng được kỹ năng"));
             return false;
         }
         return true;
@@ -1032,7 +1031,7 @@ final class Workshop implements Listener {
                 continue;
             }
             Recipe r = recipeOf(p.getInventory().getItem(slot));
-            if (r == null || blockedHere(p, r)) {
+            if (r == null || BanBook.effectsBlockedBy(p, p.getInventory().getItem(slot)) != null) {
                 continue;
             }
             double rad = Math.max(2, Math.min(32, r.value() <= 0 ? 16 : r.value()));
@@ -1104,7 +1103,7 @@ final class Workshop implements Listener {
             for (EquipmentSlot slot : new EquipmentSlot[]{EquipmentSlot.OFF_HAND, EquipmentSlot.HAND}) {
                 ItemStack sh = victim.getInventory().getItem(slot);
                 Recipe r = recipeOf(sh);
-                if (r == null || !r.feature().equals("khien_than") || expired(sh) || blockedHere(victim, r)) {
+                if (r == null || !r.feature().equals("khien_than") || expired(sh) || BanBook.effectsBlockedBy(victim, sh) != null) {
                     continue;
                 }
                 double pct = Math.max(0, Math.min(90, r.value() <= 0 ? 50 : r.value())) / 100.0;
@@ -1128,10 +1127,10 @@ final class Workshop implements Listener {
         if (r == null) {
             return;
         }
-        if (blockedHere(p, r) && e.getEntity() instanceof Player) {
-            e.setCancelled(true);
-            p.sendActionBar(c("&c" + r.name() + " &ckhông dùng được trong vùng vây khi đang đánh"));
-            return;
+        String ban = BanBook.effectsBlockedBy(p, hand);
+        if (ban != null) {
+            p.sendActionBar(c("&c⛔ " + r.name() + " &ckhông dùng được ở " + ban + " &7(/sachcam)"));
+            return;   // BanBook đã huỷ đòn đánh; ở đây chỉ không chạy hiệu ứng
         }
         if (expired(hand)) {
             p.getInventory().setItemInMainHand(null);
@@ -1189,8 +1188,8 @@ final class Workshop implements Listener {
                 .kv("Kỹ năng", "&b" + featureText(r))
                 .kv("Độ bền", r.uses() >= 0 ? "&6" + fmt(r.uses()) : "&7như đồ thường")
                 .kv("Thời hạn", "&b" + r.days() + " ngày &7sau khi chế");
-        if (r.pvp()) {
-            t.raw("&c✖ Mất tác dụng trong vùng vây khi đang đánh");
+        for (String l : BanBook.loreLines(Shared.library == null ? null : Shared.library.build(r.id(), 1))) {
+            t.raw(l);
         }
         t.line();
         if (craftView) {

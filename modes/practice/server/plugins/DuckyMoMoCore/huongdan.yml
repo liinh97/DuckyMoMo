@@ -125,6 +125,7 @@ menu:
     - "/linhdanhthue|đi đánh thuê"
     - "/treothuong|treo thưởng"
     - "/pvpstatus|trạng thái giao tranh"
+    - "/sachcam|đồ bị cấm ở công thành, đấu trường, hầm ngục"
     ghi: "Phiên tối thứ 7 và chủ nhật, 20:00 và 21:00."
   - slot: 19
     icon: GOLD_INGOT
@@ -242,7 +243,7 @@ menu:
     - "/tuskin|tủ skin"
     - "/skin <tên>|đổi skin"
     - "/sugia|rank Sứ Giả cho streamer"
-    ghi: "Chỉ trang trí, không bán sức mạnh."
+    ghi: "Ủng hộ để server chạy lâu dài."
   - slot: 30
     icon: COMPARATOR
     ten: "Cá nhân & hỗ trợ"
@@ -800,7 +801,7 @@ chapters:
     &1/choden ban [số] <giá cả lô> &0bán món đang cầm
     &8Vd: /choden ban 16 80 (16 món, cả lô 80 xu); bỏ số = cả chồng
     &1/choden cuatoi &0đồ đang treo
-    &1/choden hethan &0lấy lại đồ hết hạn
+    &1/choden hethan &0đồ hết hạn (tự về túi khi túi còn chỗ)
     &8Chợ đen: dùng ở đâu cũng được.
   - |-
     &6Dân làng bán hàng
@@ -1059,14 +1060,14 @@ chapters:
     &1/vote top &0bảng vote tháng
   - |-
     &6RANK ỦNG HỘ
-    &0Ủng hộ server, nhận tước vị&r&0: chỉ để trang trí&r&0, không mua được lợi thế.
+    &0Ủng hộ server, nhận tước vị&r&0.
     &2Nam Tước &1Tử Tước &1Bá Tước &5Hầu Tước &6Công Tước
     &0Mua bằng &6Vàng&0: nạp tiền ủng hộ được Vàng.
     &1/rank &0xem quyền lợi, &1/vang &0cửa hàng.
   - |-
     &6Quyền lợi rank
-    &0Prefix màu, chat màu, &1/hat&0, &1/nick&0, hiệu ứng hạt &1/pp&0, pet trang trí &1/pet&0 (không cưỡi, không đánh), chào khi vào server, &1/cuahang&0 trong kinh đô.
-    &8Không bán đồ, tiền, sức mạnh, cape hay gì liên quan Pokémon.
+    &0Prefix màu, chat màu, &1/hat&0, &1/nick&0, hiệu ứng hạt &1/pp&0, pet trang trí &1/pet&0 (không cưỡi, không đánh), chào khi vào server, &1/cuahang&0 trong kinh đô, &1/balo&0 (Nam 1, Tử/Bá 2, Hầu 3, Công 4), chờ dịch chuyển 3 giây.
+    &8Không bán đồ, tiền, cape hay gì liên quan Pokémon.
   - |-
     &6NẠP VÀNG BẰNG QR
     &1/rank mua&0, chọn số tiền: mã QR hiện ngay trên tay (10 phút), món đang cầm được trả lại khi cất mã.

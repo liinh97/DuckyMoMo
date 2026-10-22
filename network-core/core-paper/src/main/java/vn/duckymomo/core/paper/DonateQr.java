@@ -299,7 +299,7 @@ final class DonateQr implements Listener {
                 slot++;
             }
             ItemStack nap = Tip.of("&e✚ &fNạp thêm Vàng").desc("Lấy mã QR chuyển khoản").line()
-                    .kv("Tỉ giá", vnd(num(w, "ty_gia")) + " = 1 Vàng").note("Chỉ trang trí, không pay-to-win").click("Bấm để chọn số tiền")
+                    .kv("Tỉ giá", vnd(num(w, "ty_gia")) + " = 1 Vàng").click("Bấm để chọn số tiền")
                     .apply(new ItemStack(Material.GOLD_NUGGET));
             h.inv.setItem(rows * 9 - 5, nap);
             h.amounts.put(rows * 9 - 5, -1L);

@@ -47,10 +47,11 @@ final class PlayRanks implements Listener {
 
     private static final LegacyComponentSerializer LEGACY = LegacyComponentSerializer.legacyAmpersand();
     private static final List<String> MANAGED = List.of("essentials.sethome.multiple.dmm", "zauctionhouse.max.", "duckymomo.balo.",
-            "duckymomo.donhang.", "duckymomo.vongquay.nhanh.", "duckymomo.tuskin.");
+            "duckymomo.donhang.", "duckymomo.vongquay.nhanh.", "duckymomo.tuskin.", "duckymomo.tpdelay.");
 
-    /** Quyền lợi: nhà /sethome, số balo + ô mỗi balo, món chợ /ah, đơn thu mua /donhang, % vé gacha online nhanh hơn, kit Essentials. 0/"" = không cấp. */
-    record Perks(int homes, int balo, int slots, int ah, int orders, int spin, String kit, int skins) { }
+    /** Quyền lợi: nhà /sethome, số balo + ô mỗi balo, món chợ /ah, đơn thu mua /donhang, % vé gacha online nhanh hơn, kit Essentials. 0/"" = không cấp.
+     *  tpDelay: giây chờ dịch chuyển (TeleportDelay, quyền duckymomo.tpdelay.<N>); -1 = không cấp (rank khác: theo danh phận). */
+    record Perks(int homes, int balo, int slots, int ah, int orders, int spin, String kit, int skins, int tpDelay) { }
 
     record Tier(String id, String group, String name, String prefix, int priority, double hours, int level, String perm, String permText,
                 Perks perks, Material icon) {
@@ -88,7 +89,8 @@ final class PlayRanks implements Listener {
         int slots = s.getInt("balo-slots", tier ? 27 : 0);
         return new Perks(Math.max(tier ? 1 : 0, s.getInt("homes", tier ? 1 : 0)), Math.max(0, s.getInt("balo", 0)), slots <= 0 ? 0 : slots(slots),
                 Math.max(tier ? 1 : 0, s.getInt("ah", tier ? 1 : 0)), Math.max(0, s.getInt("orders", 0)),
-                Math.max(0, Math.min(50, s.getInt("spin-faster", 0) / 5 * 5)), kit, Math.max(0, Math.min(50, s.getInt("tu-skin", tier ? 1 : 0))));
+                Math.max(0, Math.min(50, s.getInt("spin-faster", 0) / 5 * 5)), kit, Math.max(0, Math.min(50, s.getInt("tu-skin", tier ? 1 : 0))),
+                Math.max(tier ? 0 : -1, Math.min(30, s.getInt("tp-delay", tier ? 5 : -1))));
     }
 
     private final DuckyMoMoCore plugin;
@@ -241,6 +243,9 @@ final class PlayRanks implements Listener {
         if (!p.kit().isEmpty()) {
             add.accept("essentials.kits." + p.kit());
         }
+        if (p.tpDelay() >= 0) {
+            add.accept("duckymomo.tpdelay." + p.tpDelay());
+        }
         // Tủ skin (/tuskin) chạy trên PROXY: quyền KHÔNG kèm context server, proxy và mọi server đều đọc được
         if (p.skins() > 0) {
             g.data().add(PermissionNode.builder("duckymomo.tuskin." + p.skins()).build());
@@ -387,6 +392,9 @@ final class PlayRanks implements Listener {
         t.item(k.balo() > 0 ? "&a" + k.balo() + "&f balo, &a" + k.slots() + "&f ô &8(/balo)" : "&7Chưa có balo");
         if (k.ah() > 0) {
             t.item("&a" + k.ah() + "&f món treo Chợ đen &8(/choden)");
+        }
+        if (k.tpDelay() >= 0) {
+            t.item("Chờ dịch chuyển &a" + k.tpDelay() + "&f giây &8(/home, /tpa, /tpr…)");
         }
         if (k.orders() > 0) {
             t.item("&a" + k.orders() + "&f đơn thu mua &8(/choden dat)");

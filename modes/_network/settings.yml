@@ -87,6 +87,8 @@ tier0_perks:
   - /hat
   - chào khi vào server
   - /cuahang khi ở kinh đô
+  - 1 balo (/balo)
+  - chờ dịch chuyển 3 giây
 tier1_name: Tử Tước
 tier1_prefix: '&b[Tử Tước]'
 tier1_prices:
@@ -97,6 +99,7 @@ tier1_prices:
 tier1_perks:
   - /nick
   - 1 hiệu ứng hạt (/pp)
+  - 2 balo
 tier2_name: Bá Tước
 tier2_prefix: '&9[Bá Tước]'
 tier2_prices:
@@ -119,6 +122,7 @@ tier3_perks:
   - chat đậm/nghiêng
   - 3 hiệu ứng hạt
   - pet hiếm
+  - 3 balo
 tier4_name: Công Tước
 tier4_prefix: '&6[Công Tước]&r'
 tier4_prices:
@@ -131,6 +135,7 @@ tier4_perks:
   - 6 hiệu ứng hạt
   - mọi pet
   - chuông khi vào server
+  - 4 balo
 lobby_void_y: 0
 lobby_spawn_on_join: true
 pp_toggle_on_combat: true

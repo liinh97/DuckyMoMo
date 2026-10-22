@@ -149,6 +149,17 @@ final class Workshop implements Listener {
         SMELT.put(Material.ANCIENT_DEBRIS, Material.NETHERITE_SCRAP);
     }
 
+    /** Giá chế cho người này: đặc quyền Thăng Cấp giảm 5% mỗi bậc (duckymomo.xuong.giam, .giam.2). Menu và lúc chế dùng chung. */
+    static double costFor(Player p, Recipe r) {
+        return p != null && p.hasPermission("duckymomo.xuong.giam.2") ? Math.round(r.cost() * 0.90)
+                : p != null && p.hasPermission("duckymomo.xuong.giam") ? Math.round(r.cost() * 0.95) : r.cost();
+    }
+
+    /** Ghi chú giá gốc khi đang được giảm (22/10: menu từng hiện giá gốc dù chế bị trừ giá đã giảm). */
+    private static String discountNote(Player p, Recipe r, double cost) {
+        return cost < r.cost() ? " &8(gốc " + money(r.cost()) + ", Thăng Cấp -" + Math.round(100 - cost * 100 / r.cost()) + "%)" : "";
+    }
+
     record Recipe(String id, String name, Material material, String feature, double value, String text, int uses, int days, double cost,
                   List<String> grid, Map<Material, Integer> ingredients, Map<String, Integer> enchants, boolean pvp, List<String> desc,
                   Map<String, Integer> refined) { }
@@ -1198,9 +1209,10 @@ final class Workshop implements Listener {
                 all &= countPlain(p, in.getKey()) >= in.getValue();
             }
             if (r.cost() > 0) {
-                boolean ok = VaultEconomy.available() && VaultEconomy.has(p, r.cost());
+                double cost = costFor(p, r);
+                boolean ok = VaultEconomy.available() && VaultEconomy.has(p, cost);
                 all &= ok;
-                t.kv("Giá", (ok ? "&a" : "&c") + money(r.cost()));
+                t.kv("Giá", (ok ? "&a" : "&c") + money(cost) + discountNote(p, r, cost));
             }
             t.gap();
             if (all) {
@@ -1210,7 +1222,8 @@ final class Workshop implements Listener {
             }
         } else {
             if (r.cost() > 0) {
-                t.kv("Giá", "&e" + money(r.cost()));
+                double cost = costFor(p, r);
+                t.kv("Giá", "&e" + money(cost) + discountNote(p, r, cost));
             }
             t.gap().click("Bấm để xem công thức");
         }
@@ -1326,9 +1339,7 @@ final class Workshop implements Listener {
             p.sendMessage(c("&cMón này không còn trong thư viện đồ, báo admin."));
             return;
         }
-        // đặc quyền Thăng Cấp: giảm 5% mỗi bậc (duckymomo.xuong.giam, .giam.2)
-        double cost = p.hasPermission("duckymomo.xuong.giam.2") ? Math.round(r.cost() * 0.90)
-                : p.hasPermission("duckymomo.xuong.giam") ? Math.round(r.cost() * 0.95) : r.cost();
+        double cost = costFor(p, r);
         if (cost > 0 && (!VaultEconomy.available() || !VaultEconomy.withdraw(p, cost))) {
             p.sendMessage(c("&cKhông đủ " + money(cost) + "."));
             return;

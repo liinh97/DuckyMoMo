@@ -65,9 +65,9 @@
   "tt": ""
  },
  "c4": {
-  "ghi_chu": "CẦN BẠN TEST: bot đặt rương bị lỗi phía bot, không thử được Rìu Bán vào rương.",
-  "luc": 1792573500000,
-  "tt": ""
+  "ghi_chu": "Claude tự test bằng bot, so với Cài đặt. Rìu Bán: 64 lúa mì + 32 sắt trong rương của mình → +368 xu = đúng worth.yml (64×0,75 + 32×10); người ngoài bị chặn 'Bạn không có quyền mở rương này', rương giữ nguyên. Bắt Thú (đất hoang): bò → 1 trứng bò, cừu → 1 trứng cừu; bò đã đặt tên và sói có chủ bị từ chối đúng câu báo; mỗi con trừ 1 độ bền. Ghi chú: trong đất KinhDo bot bắt bò không ăn (không báo gì) — chưa thử trong đất thị trấn người chơi.",
+  "luc": 1792636899824,
+  "tt": "ok"
  },
  "c5": {
   "ghi_chu": "Claude tự test: có 192 khối than, bấm → 1 Tinh Luyện Than, Shift+bấm → 2. Chưa xem hình riêng và thử đặt xuống (cần mắt người).",
@@ -80,14 +80,14 @@
   "tt": ""
  },
  "c7": {
-  "ghi_chu": "CẦN BẠN TEST (tỉ lệ rơi cần hạ nhiều quái thật).",
-  "luc": 1792573500000,
-  "tt": ""
+  "ghi_chu": "Cài đặt tinh-luyen › xu-quai.chance = 5%. Đo: bot hạ 200 zombie thường ở đất hoang → 11 Xu Quái = 5,5% (sai số chuẩn ±1,5%) → khớp. Tạm đặt 100%: 5/5 con rơi (đã trả về 5). Trong đất KinhDo quái không sinh ra được nên không có xu (đúng, đất thị trấn tắt quái). Quái tinh nhuệ EliteMobs 40% chưa đo.",
+  "luc": 1792636899824,
+  "tt": "ok"
  },
  "c8": {
-  "ghi_chu": "CẦN BẠN TEST: cần sửa Cài đặt › Xưởng.",
-  "luc": 1792573500000,
-  "tt": ""
+  "ghi_chu": "Claude tự test (tạm sửa Cài đặt › Xưởng cho Khoan Đào cần 1 Tinh Luyện Sắt rồi trả lại): /xuong ghi 'Cần thêm 1× Tinh Luyện Sắt (có 0)' và chặn chế 'Chưa đủ'.",
+  "luc": 1792636899824,
+  "tt": "ok"
  },
  "c9": {
   "ghi_chu": "CẦN BẠN TEST: cần đặt NPC Shopkeepers.",
@@ -135,9 +135,9 @@
   "tt": "ok"
  },
  "cd14": {
-  "ghi_chu": "Claude đã kiểm: mua 2 bậc cấp đúng quyền duckymomo.xuong.giam + .giam.2, code trừ 0,95 / 0,90. CẦN BẠN TEST: chế 1 món ở /xuong xem số xu trừ thật (bot không có nguyên liệu).",
-  "luc": 1792569800000,
-  "tt": ""
+  "ghi_chu": "Claude tự test, Cài đặt: bậc 1 cấp 20 / 20.000 xu, bậc 2 cấp 50 / 80.000 xu, -5%/bậc. Mua: −20.000 rồi −80.000, lần 3 báo 'đã có đủ'. Giá /xuong: Khoan Đào 8.000 → 7.600 → 7.200, Đào Hầm 20.000 → 19.000 → 18.000 (khớp). ĐÃ SỬA: menu /xuong trước đó vẫn hiện giá gốc dù đã giảm, nay ghi '(gốc …, Thăng Cấp -X%)'; lúc chế dùng chung hàm giá.",
+  "luc": 1792636899824,
+  "tt": "ok"
  },
  "cd15": {
   "ghi_chu": "Claude tự test: mua đủ 3 bậc → giới hạn 11.000 xu/ngày (câu báo ghi 11.000). PHÁT HIỆN LỖI KHÁC: nhóm mặc định thiếu quyền essentials.sell.hand / essentials.sell.bulk nên người thường gõ /sell hand bị 'không có quyền' — cần bạn chạy lệnh cấp quyền (xem tin nhắn).",
@@ -150,9 +150,9 @@
   "tt": "ok"
  },
  "cd17": {
-  "ghi_chu": "Claude đã kiểm: mua được, cấp quyền duckymomo.pet.batgioi. CẦN BẠN TEST: quăng dây xích bắt pet, xem số % trong câu báo trượt cao hơn 5.",
-  "luc": 1792569800000,
-  "tt": ""
+  "ghi_chu": "Claude tự test, Cài đặt: cấp 30, 40.000 xu, +5%. Mua −40.000 xu. Bắt heo (nhóm Thú cưỡi, Cài đặt 35%): câu báo trượt 'xác suất 35%' trước → '40%' sau khi mua (khớp). Ghi chú: thưởng server ít người +10% đang TẮT vì 32 bot thử làm số người hoạt động ≥ 15.",
+  "luc": 1792636899824,
+  "tt": "ok"
  },
  "cd18": {
   "ghi_chu": "Claude tự test: cấp 100 mua 80.000 xu → nhận danh hiệu [Lão Luyện], có trong /danhhieu.",

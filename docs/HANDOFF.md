@@ -80,6 +80,14 @@ n7 câu cá (0,06 xu/cm, thi câu hạng 1 +1.500 + 3 bùa) · n10 AuraSkills th
   quỹ 0); mọi cấu hình tạm đã trả. CÒN: bot mới ThuW1–W5, ThuQ5/Q5b, ThuQ8 (xong chương 1, có quyền cotruyen.c1), ThuQ10; vài khối đất
   san phẳng/cờ quanh 13631,93,-3150; ThuW4 còn hợp đồng lính đánh thuê tới 24/10.
 
+### VIỆC CÒN LẠI (22/10 ~15h, account sắp hết lượt; trang test: 208 mục, 168 ok, 0 lỗi, 33 chờ người thật, 7 chưa đụng)
+- Bot còn tự làm được (đang làm dở / chưa làm): **s1** lệnh trước khi /login (bot vào qua proxy, KHÔNG /register, thử đi, mở túi,
+  /server banghoi-1, /msg, chat -> chỉ được /login /register); **s2** tên Java bắt đầu bằng "." (giả Bedrock) -> phải bị từ chối hoặc vẫn
+  hỏi mật khẩu, vào thẳng = lỗi nghiêm trọng; **s18** bot gửi gói bay / đi nhanh / đánh xa -> Grim chặn theo Cài đặt Chống hack;
+  **c2** đồ Xưởng còn lại: Đào Hầm 5×5, Rìu Tiều (chặt cả cây), Gặt Lúa 3×3 (`/xuong tang <mã> <bot>` ở đất hoang, như c-xuong.js).
+- Chỉ người thật: x7 (live TikTok), x9 (duyệt nạp = tiền thật), o7 (mở mùa, chỉ server thử), p4/w5 (cưỡi/bay pet), q10, đặt 3 NPC cốt truyện,
+  các mục Bedrock / giao diện web / đông người (xem ghi chú từng mục trên trang test).
+
 ## 000000000. MỚI NHẤT — 21/10/2026 tối muộn (tiếp test bằng bot, tài khoản lần 5 quay lại)
 
 Trang test: https://claude.ai/artifact/YY55Wn87HYuMzL898MT8a7 (tài khoản này; đã nạp đủ kết quả, 162 mục có dữ liệu). Nguồn: `docs/lo-trinh-test-ketqua.json`.

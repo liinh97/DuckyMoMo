@@ -75,9 +75,9 @@
   "tt": "ok"
  },
  "c6": {
-  "ghi_chu": "Claude tự test: /tinhluyen ban tatca 3 Tinh Luyện Than = +3.600 xu (đúng giá 1.200/món). /sell hand chưa thử được vì nhóm default thiếu quyền essentials.sell.hand (xem k2).",
-  "luc": 1792573500000,
-  "tt": ""
+  "ghi_chu": "Claude tự test: /tinhluyen ban tatca 3 Tinh Luyện Than = +3.600 xu (đúng giá 1.200/món). 21/10 chủ server bỏ /sell hand, /sell all cho người chơi thường (chỉ admin) → bán món tinh luyện bằng /tinhluyen ban [tatca]; ghi chú cũ '/sell hand chưa thử được' không còn áp dụng.",
+  "luc": 1792655827036,
+  "tt": "ok"
  },
  "c7": {
   "ghi_chu": "Cài đặt tinh-luyen › xu-quai.chance = 5%. Đo: bot hạ 200 zombie thường ở đất hoang → 11 Xu Quái = 5,5% (sai số chuẩn ±1,5%) → khớp. Tạm đặt 100%: 5/5 con rơi (đã trả về 5). Trong đất KinhDo quái không sinh ra được nên không có xu (đúng, đất thị trấn tắt quái). Quái tinh nhuệ EliteMobs 40% chưa đo.",

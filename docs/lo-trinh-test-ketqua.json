@@ -584,6 +584,11 @@
   "luc": 1792595643864,
   "tt": "ok"
  },
+ "q10": {
+  "ghi_chu": "Claude kiểm một phần: Cài đặt web = server (tiền Vault bật, hệ số tiền rơi 0,6). Bot hạ 5 quái elite cấp 10: 3 Xu Quái (Cài đặt 40%, tối đa 3: hợp lý) nhưng 0 xu Elite — EliteMobs chỉ cho tiền khi cấp đồ người chơi gần cấp quái và đồng xu phải đi qua mới nhặt, bot không làm được. CẦN BẠN: một lượt dungeon thật, ghi /bal trước và sau, so với thu nhập nghề ~1.400 xu/giờ.",
+  "luc": 1792655454493,
+  "tt": ""
+ },
  "q2": {
   "ghi_chu": "Claude tự test RÚT NGẮN (tạm lệnh mới mỗi 1 phút, hết hạn 5 phút): /lenhsan hiện Kẻ Tàn Phá quanh X 12800 Z -1550; bot tới gần -> 'Kẻ Tàn Phá đã xuất hiện gần bạn', quái phát sáng; A gây nhiều sát thương hơn B -> A nhận 6.000 xu + 4 kim cương, B không nhận, báo cả server; lệnh khác để quá 5 phút -> 'đã trốn… Lệnh săn hết hạn'. Config đã trả lại (45 phút / 60 phút).",
   "luc": 1792598674108,
@@ -599,9 +604,24 @@
   "luc": 1792574000000,
   "tt": ""
  },
+ "q5": {
+  "ghi_chu": "Claude tự test (Cài đặt key-tradeable false). Chưa có chìa: 'cần Chìa khoá Hang Thánh Địa (trùm cuối Đỉnh Vách Đá rơi ra)'. Chìa ghi tên ThuQ5 đưa sang ThuQ5b: ThuQ5b dùng không được. ThuQ5 dùng chìa của mình: 'tầng Hang Thánh Địa mở vĩnh viễn', chìa bị lấy đi, mở menu độ khó; vào lại lần 2 không cần chìa. Chìa phát bằng /dungeon cho (bot không đánh hết dungeon để trùm rơi). CHƯA THỬ: người chưa có chìa vào theo nhóm /em party.",
+  "luc": 1792655454493,
+  "tt": "ok"
+ },
+ "q6": {
+  "ghi_chu": "Claude tự test (Cài đặt Lâu Đài Hiệp Sĩ 4.500 xu/vé, tối đa 5, chỉ T7–CN — tạm thêm T5 để thử; cửa sổ vào tối thiểu 30 giây). Mua 6 vé → được 5, −22.500 xu; mua thêm báo 'đã giữ tối đa 5 vé'. Mở cổng: vé 5 → 4; 30 giây không vào: 'Cổng đã đóng (chưa vào). Vé đã được hoàn lại', vé về 5. Góp quỹ Lễ Hội Pháo Hoa (tạm hạ mục tiêu 2.000): góp 1.500, người sau góp 1.000 chỉ bị trừ 500 còn thiếu → 'CỔNG ĐÃ MỞ… cho cả server trong 7 ngày', vào được. Đã trả dungeon.yml về như cũ (cổng đóng, quỹ 0).",
+  "luc": 1792655454493,
+  "tt": "ok"
+ },
  "q7": {
   "ghi_chu": "Claude tự test (Cài đặt Cổng Hoang: ưu tiên 30 phút, bán kính 64; cổng thử ★3 Xưởng Hơi Nước, đã gỡ và trả số cổng của mùa về 0). Shift ở ô giữa: 'Bạn đã tìm ra một Cổng Hoang!', báo cả server, thành tích Người Mở Cổng, mở menu chọn độ khó EliteMobs. Người khác Shift ngay sau: 'đang trong thời gian ưu tiên'. Phá khối cổng: không phá được. ĐÃ SỬA: trước đây chỉ cần mở menu (chưa vào dungeon) đã được tính 'đã qua cổng' để về kể Lữ khách lấy 1.500 xu; nay chỉ tính khi vào tới dungeon. CẦN BẠN: chọn độ khó vào hẳn dungeon qua cổng (bot không bấm được menu EliteMobs) và thử phí cổng khi thị trấn giữ cổng.",
   "luc": 1792638605297,
+  "tt": "ok"
+ },
+ "q8": {
+  "ghi_chu": "Claude tự test cả chương 1 (NPC chưa đặt: mở hội thoại bằng action tạm, bảng chọn bằng số). Già Làng giao việc → hạ 20 quái (chỉ tính đòn đánh thật, /damage không tính) → +450 → Bác Thợ Rèn lấy 16 sắt +450 → đào 24 quặng ra Mảnh Sao Rơi +600 → Người Gác Cổng +450 → Già Làng kết chương +2.250, báo cả server, cấp quyền duckymomo.cotruyen.c1 (điều kiện lên Dân). Tổng +4.200 = đúng Cài đặt. Nhật ký cập nhật mỗi bước, lời thoại tiếng Việt. CẦN BẠN: đặt 3 NPC (/npc create Già Làng, Bác Thợ Rèn, Người Gác Cổng) rồi bấm thử bằng máy thật, cả Bedrock (form).",
+  "luc": 1792655454493,
   "tt": "ok"
  },
  "q9": {
@@ -905,6 +925,11 @@
   "ghi_chu": "Claude tự test bằng công thành giả (ThuNuocA vây ThuThanhB, /swa battlesession start), mùa khô. Đêm: Bóng tối; có pet Sói (mắt đêm) đi theo: Nhìn đêm + câu 'pet mắt đêm soi đường'. Mưa: Chậm + câu 'đường lầy'. Ngày nắng mùa khô: Đói. Đúng Cài đặt siege-weather. Thêm: Kho lương thủ đô bên tấn công cạn thì quân bị Đói.",
   "luc": 1792654208673,
   "tt": "ok"
+ },
+ "w5": {
+  "ghi_chu": "CẦN BẠN: bot qua Via không cưỡi/bay pet được. Đã đọc code: lúc có phiên đánh trong vùng vây, pet cưỡi cao hơn 3 khối (Cài đặt siege-no-fly-height 3) bị đẩy xuống + Rơi chậm 6 giây; phiên cấm pet (bốc thăm 30%) thì pet không gây sát thương cho người. Bot đã thấy câu báo phiên 'CÓ cho pet tham chiến'.",
+  "luc": 1792655454493,
+  "tt": ""
  },
  "w6": {
   "ghi_chu": "Claude tự test: thắng (admin đặt điểm) → 'Thị trấn sẵn sàng cho xâm lược/cướp', thu hồi rương chiến tranh; cắm lại cờ màu → chiếm làm thuộc địa, khởi nghĩa sau 72 giờ. CẦN BẠN: cướp = ĐẶT RƯƠNG cạnh cờ (bot đặt không thành). SiegeWar cảnh báo cướp 120 xu/ô 'quá cao' so với tính toán 1,31. Đã thêm trang /hd 'Thắng rồi làm gì'.",

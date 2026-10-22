@@ -61,14 +61,24 @@ n7 câu cá (0,06 xu/cm, thi câu hạng 1 +1.500 + 3 bùa) · n10 AuraSkills th
 - Trong đất KinhDo, Bắt Thú vào bò không ăn và không báo gì (đất hoang thì đúng).
 - BetonQuest báo tiền "Đã nhận 1500.00" (dạng số tiếng Anh).
 
-### Việc tiếp theo (người dùng: "dựng lớn vào", không có người test công thành)
-1. Công thành giả 2 quốc gia (w4 thời tiết, w5 pet trong vùng vây, w9 lính đánh thuê, w11 vũ khí nổ, w12 điểm BXH, s14 lách công thành).
-   Đã tìm: nước tấn công cần ≥ 2 thị trấn (town-rules.siege-min-towns 2); bắt đầu vây = vua cắm cờ (bot đặt banner) cạnh thị trấn;
-   `/swa siegeimmunity town <t> 0`, `/swa battlesession start|end`, `/swa siege <t> setbalance|end|remove`; `/ta town new <tên> <thị trưởng>`,
-   `/ta nation new <tên> <thủ đô>`. w11 làm được ngoài trận: ExplosionRules (crystal 0, anchor 0, giường 0, xe goòng TNT 0,3; TNT khối không đổi) —
-   so máu mất của TNT khối với xe goòng TNT cùng khoảng cách (bot max_health cao). Xong phải trả BXH mùa / SiegeWar về như cũ (sao lưu trước, sửa lúc TẮT).
-2. Hầm ngục: q5 chuỗi chìa, q6 vé + góp quỹ (hoàn vé khi không vào), q8 cốt truyện chương 1 (NPC Già Làng chưa đặt), q10 tiền rơi dungeon.
-3. p4 cưỡi pet bay.
+### 22/10 chiều: ĐÃ DỰNG công thành giả + hầm ngục (người dùng "test nốt")
+- Kết quả (trang test): w4 thời tiết, w9 lính đánh thuê, w11 vũ khí nổ, w12 BXH (+30 tấn công, +20 phòng thủ, Chiến Thần +3/lần hạ),
+  s14 (balo bị chặn, thoát game khi giao tranh bị xử thua; đồ không rơi vì SiegeWar giữ đồ trong vùng vây), q5 chuỗi chìa, q6 vé + hoàn vé +
+  góp quỹ, q8 cốt truyện chương 1 (đủ 4 bước, +4.200 = Cài đặt). Còn CẦN NGƯỜI THẬT: w5/p4 (cưỡi, bay pet), q10 (tiền elite), đặt 3 NPC cốt truyện.
+- ĐÃ SỬA + đã lên game (jar 14:11): lính đánh thuê vẫn bị Ốm Chiến Tranh -> Mercenary cấp node LuckPerms có hạn thay PermissionAttachment.
+- Cách dựng (tools/bottest/cong-*.js, dung-*.js, q8-cotruyen.js; wrapper ở scratchpad đã mất -> viết lại theo mô tả trong đầu từng file):
+  * Thị trấn/nước bằng `/ta town new <tên> <thị trưởng đang đứng tại chỗ>`, tạm hạ town-min-hours, nation-min-active-residents về 0.
+    x 14000 ngoài vùng khai hoang (bị đẩy về), dùng x 13400–13640 z -3150. Nước tấn công cần >= 2 thị trấn.
+  * Bắt đầu vây: vua `/n enemy add <nước kia>`, `/swa siegeimmunity town <t> 0`, cắm cờ MÀU (cờ trắng = đầu hàng) sát mép đất thị trấn
+    (cách tối đa 1 khối). Phiên: `/swa battlesession start`. Kết thúc: `/swa siege <t> setbalance ±5000` + `end`, hoặc `remove`.
+  * Người ngoài (kể cả lính đánh thuê) không dịch chuyển vào vùng vây được: tạm `non_resident_spawn_into_siegezones_or_besieged_towns_disabled: 'false'`.
+  * Quân hàm: cần min-rank-hours + new-member-days (ở thị trấn 3 ngày); vua không tính quân hàm. BXH chỉ tính thị trấn >= 3 dân, >= 3 ngày.
+  * Xoá thị trấn/nước cần /confirm trong CÙNG phiên RCON (panel app.rcon(server, [lệnh, 'confirm'])); xoá lần 1 thành phế tích, lần 2 mới mất.
+  * BetonQuest mobkill không tính quái chết bằng /damage ... by; bot phải chém thật. Mở hội thoại: file tạm chuong1/thu-tam.yml + IO simple.
+  * EliteMobs: `/em spawn elite <loại> <cấp>` chỉ chạy từ người chơi (bot cần quyền tạm elitemobs.*).
+- ĐÃ DỌN: 3 thị trấn + 2 nước thử đã xoá; bxh.yml bỏ điểm thử (giữ danh hiệu cũ); dungeon.yml trả bản trước test (Lễ Hội Pháo Hoa đóng lại,
+  quỹ 0); mọi cấu hình tạm đã trả. CÒN: bot mới ThuW1–W5, ThuQ5/Q5b, ThuQ8 (xong chương 1, có quyền cotruyen.c1), ThuQ10; vài khối đất
+  san phẳng/cờ quanh 13631,93,-3150; ThuW4 còn hợp đồng lính đánh thuê tới 24/10.
 
 ## 000000000. MỚI NHẤT — 21/10/2026 tối muộn (tiếp test bằng bot, tài khoản lần 5 quay lại)
 

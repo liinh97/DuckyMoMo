@@ -175,6 +175,48 @@ final class VoteRewards implements Listener {
             }
             return true;
         }
+        if (s instanceof Player pm) {   // menu (22/10, trước in chat)
+            String key = "players." + pm.getUniqueId();
+            InfoMenu m = InfoMenu.of("&a✔ Vote cho DuckyMoMo").accent(org.bukkit.Material.LIME_STAINED_GLASS_PANE);
+            m.top(Tip.of("&a✔ &fVote cho DuckyMoMo").accent("&a").desc("Mỗi trang 1 lần/ngày, nhập đúng tên trong game.").line()
+                    .kv("Mỗi lượt", "&e" + VaultEconomy.format(cfg.getDouble("money-per-vote", 100)))
+                    .kv(cfg.getInt("streak-days", 7) + " ngày liền", "&e+" + VaultEconomy.format(cfg.getDouble("streak-bonus", 500)))
+                    .kv("Vote party", "mỗi " + cfg.getInt("party-every", 30) + " lượt cả server")
+                    .gap().head("Bạn").kv("Tổng", data.getInt(key + ".total", 0) + " lượt").kv("Chuỗi", data.getInt(key + ".streak", 0) + " ngày")
+                    .apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.EMERALD)));
+            ConfigurationSection st = cfg.getConfigurationSection("sites");
+            int n = 0;
+            if (st != null) {
+                for (String k : st.getKeys(false)) {
+                    String url = st.getString(k + ".url", "");
+                    if (url.isBlank()) {
+                        continue;
+                    }
+                    String label = st.getString(k + ".name", k);
+                    m.add(Tip.of("&b➜ &f" + label).accent("&b").line().click("Bấm để nhận link vote trong chat")
+                            .apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.PAPER)), pl -> {
+                        pl.closeInventory();
+                        pl.sendMessage(c("&b➜ &f&n" + label).clickEvent(ClickEvent.openUrl(url)).hoverEvent(HoverEvent.showText(c("&7Bấm để mở " + url))));
+                    });
+                    n++;
+                }
+            }
+            if (n == 0) {
+                m.add(Tip.of("&7Sắp có link vote").desc("Server đang đăng ký lên các trang vote").apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.GRAY_DYE)));
+            }
+            String month = LocalDate.now(VN).toString().substring(0, 7);
+            List<Map.Entry<String, Integer>> rows = monthTop(month);
+            Tip tp = Tip.of("&6♛ &fBảng vote tháng " + month.substring(5) + "/" + month.substring(0, 4)).accent("&6");
+            if (rows.isEmpty()) {
+                tp.desc("Chưa ai vote tháng này");
+            }
+            for (int i = 0; i < Math.min(10, rows.size()); i++) {
+                tp.raw((i < 3 ? "&6" : "&7") + (i + 1) + ". &f" + rows.get(i).getKey() + " &8— &a" + rows.get(i).getValue() + " lượt");
+            }
+            m.bar(tp.apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.GOLD_INGOT)), null);
+            m.open(pm);
+            return true;
+        }
         s.sendMessage(c("&aVote cho DuckyMoMo &7(mỗi trang 1 lần/ngày, nhập đúng tên trong game)"));
         s.sendMessage(c("&7Mỗi lượt: &e" + VaultEconomy.format(cfg.getDouble("money-per-vote", 100))
                 + "&7 · vote " + cfg.getInt("streak-days", 7) + " ngày liền: thêm &e" + VaultEconomy.format(cfg.getDouble("streak-bonus", 500))

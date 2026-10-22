@@ -92,6 +92,31 @@ final class HallOfFameSnapshot {
             write(sub.equals("chot"), s);
             return true;
         }
+        if (s instanceof org.bukkit.entity.Player pm && !s.hasPermission("duckymomo.vinhdanh.admin")) {   // menu (22/10, trước in chat)
+            InfoMenu m = InfoMenu.of("&6⛫ Vinh danh mùa " + season).accent(org.bukkit.Material.YELLOW_STAINED_GLASS_PANE);
+            m.top(Tip.of("&6⛫ &fVinh danh mùa " + season).accent("&6").desc(locked() ? "Đã chốt" : "Tạm tính, cập nhật 30 phút/lần").line()
+                    .note("Xem tượng và bảng vàng ở Quảng trường Danh vọng tại sảnh, hoặc trang web mục Quảng trường Danh vọng.")
+                    .apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.BEACON)));
+            if (board != null) {
+                var top = board.topNations(3);
+                for (int i = 0; i < top.size(); i++) {
+                    org.bukkit.inventory.ItemStack it = Tip.of(i == 0 ? "&6♛ &fBá Chủ" : "&e♛ &fÁ Chủ").accent("&6").kv("Quốc gia", top.get(i).getKey())
+                            .kv("Điểm", String.valueOf(top.get(i).getValue())).apply(new org.bukkit.inventory.ItemStack(i == 0 ? org.bukkit.Material.NETHER_STAR
+                                    : org.bukkit.Material.GOLD_INGOT));
+                    m.add(it);
+                }
+                var war = board.topWarriors(1);
+                if (!war.isEmpty()) {
+                    m.add(Tip.of("&c⚔ &fChiến Thần").accent("&c").kv("Người", war.get(0).getKey()).kv("Điểm", String.valueOf(war.get(0).getValue()))
+                            .apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.IRON_SWORD)));
+                }
+                if (top.isEmpty() && war.isEmpty()) {
+                    m.add(Tip.of("&7Chưa có ai trên bảng").apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.GRAY_DYE)));
+                }
+            }
+            m.open(pm);
+            return true;
+        }
         s.sendMessage(c("&6⛫ Vinh danh mùa " + season + (locked() ? " &a(đã chốt)" : " &7(tạm tính, cập nhật 30 phút/lần)")));
         if (board != null) {
             var top = board.topNations(3);

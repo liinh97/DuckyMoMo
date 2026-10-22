@@ -1,6 +1,6 @@
 // Mở các menu thông tin (thay hướng dẫn qua chat, 22/10) bằng bot, in tiêu đề + tên / mô tả từng ô (bỏ ô kính khung).
 const h = require('./h');
-const CMDS = (process.env.CMDS || '/tochuc,/hoidong,/linhdanhthue,/hoabinh,/bantron,/canbang,/kholuong,/khobau,/bxhpet').split(',');
+const CMDS = (process.env.CMDS || '/vinhdanh').split(',');
 (async () => {
   const t = await h.start('ThuMenu'); await t.sleep(2000);
   for (const c of CMDS) {

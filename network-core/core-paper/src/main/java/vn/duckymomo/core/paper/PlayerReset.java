@@ -121,6 +121,32 @@ final class PlayerReset implements Listener {
             }
             return true;
         }
+        if (!(BedrockMenu.available() && BedrockMenu.isBedrock(id))) {   // Java: menu xác nhận (22/10, trước in chat + gõ lại lệnh)
+            boolean gift = getsGift(id);
+            InfoMenu m = InfoMenu.of("&6↺ Chơi lại từ đầu").accent(org.bukkit.Material.RED_STAINED_GLASS_PANE);
+            Tip top = Tip.of("&6↺ &fChơi lại từ đầu").sub("Bang Hội Chiến").accent("&c").line()
+                    .head("Mất hết").items(List.of("Đồ trên người, rương Ender, kinh nghiệm", "Tiền, nhà (/home), cấp nghề", "Thị trấn, quân hàm, giờ chơi thật"))
+                    .note("Đồ cất trong rương ngoài thế giới vẫn còn ở đó.")
+                    .gap().head("Giữ lại").items(List.of("Rank ủng hộ, danh hiệu", "Án và lệnh cấm (chơi lại không xoá tội)"))
+                    .gap().raw(gift ? "&a✔ Lần đầu trong mùa: có quà tân thủ + " + money(startingMoney) : "&e⚠ Đã chơi lại trong mùa: KHÔNG có quà tân thủ và tiền khởi đầu");
+            if (problems.isEmpty()) {
+                top.kv("Còn", (maxPerSeason - countThisSeason(id) - 1) + " lần trong mùa, cách nhau " + cooldownDays + " ngày");
+            }
+            m.top(top.apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.RECOVERY_COMPASS)));
+            if (!problems.isEmpty()) {
+                Tip no = Tip.of("&c✖ &fChưa chơi lại được").accent("&c");
+                problems.forEach(x -> no.raw("&c✖ &7" + x));
+                m.add(no.apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.BARRIER)));
+            } else {
+                confirmUntil.put(id, System.currentTimeMillis() + 60_000L);
+                m.add(Tip.of("&a✔ &fXác nhận chơi lại").accent("&a").desc("Bắt đầu lại ngay").line().deny("Không hoàn tác được")
+                        .click("Bấm để chơi lại").apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.LIME_CONCRETE)), InfoMenu.run("choilai xacnhan"));
+                m.add(Tip.of("&c✖ &fThôi, giữ nguyên").accent("&c").click("Bấm để đóng").apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.RED_CONCRETE)),
+                        pl -> { confirmUntil.remove(pl.getUniqueId()); pl.closeInventory(); });
+            }
+            m.open(p);
+            return true;
+        }
         p.sendMessage(c("&6CHƠI LẠI TỪ ĐẦU &7(Bang Hội Chiến)"));
         if (!problems.isEmpty()) {
             p.sendMessage(c("&cChưa chơi lại được:"));

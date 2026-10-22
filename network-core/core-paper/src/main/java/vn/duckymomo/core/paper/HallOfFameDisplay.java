@@ -384,6 +384,28 @@ final class HallOfFameDisplay {
             return true;
         }
         TreeMap<Integer, JsonObject> all = seasons();
+        if (s instanceof Player pm && !admin) {   // menu (22/10, trước in chat)
+            InfoMenu m = InfoMenu.of("&6⛫ Quảng trường Danh vọng").accent(org.bukkit.Material.YELLOW_STAINED_GLASS_PANE);
+            m.top(Tip.of("&6⛫ &fQuảng trường Danh vọng").accent("&6").desc("Tượng và bảng vinh danh người đứng đầu mỗi mùa.").line()
+                    .kv("Số mùa", all.isEmpty() ? "chưa có" : String.valueOf(all.size())).apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.BEACON)));
+            String[][] cats = {{"ba_chu", "Bá Chủ"}, {"chien_than", "Chiến Thần"}, {"phu_ho", "Đại Phú Hộ"}, {"dau_truong", "Đấu Trường"}, {"pet", "Pet"}};
+            for (Map.Entry<Integer, JsonObject> e : all.descendingMap().entrySet()) {
+                boolean now = "tam".equals(str(e.getValue(), "trang_thai"));
+                Tip t = Tip.of("&eMùa " + e.getKey()).sub(now ? "đang diễn ra" : "đã xong").accent("&e").line();
+                for (String[] ct : cats) {
+                    JsonArray ns = arr(e.getValue(), ct[0]);
+                    t.kv(ct[1], ns.isEmpty() ? "&7chưa có" : str(ns.get(0).getAsJsonObject(), "ten"));
+                }
+                m.add(t.apply(new org.bukkit.inventory.ItemStack(now ? org.bukkit.Material.CLOCK : org.bukkit.Material.GOLD_BLOCK)));
+            }
+            if (all.isEmpty()) {
+                m.add(Tip.of("&7Chưa có mùa nào").apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.GRAY_DYE)));
+            }
+            m.bar(Tip.of("&a✈ &fTới quảng trường").accent("&a").line().kv("Lệnh", "/danhvong tp").click("Bấm để tới")
+                    .apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.ENDER_PEARL)), InfoMenu.run("danhvong tp"));
+            m.open(pm);
+            return true;
+        }
         s.sendMessage(c("&6⛫ Quảng trường Danh vọng &7— " + (all.isEmpty() ? "chưa có mùa nào" : all.size() + " mùa")));
         for (Map.Entry<Integer, JsonObject> e : all.descendingMap().entrySet()) {
             JsonArray ns = arr(e.getValue(), "ba_chu");

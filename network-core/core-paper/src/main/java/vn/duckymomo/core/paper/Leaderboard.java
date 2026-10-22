@@ -490,6 +490,10 @@ final class Leaderboard implements Listener {
                     x -> plugin.getServer().getScheduler().runTask(plugin, () -> p.performCommand("bxh " + x)));
             return true;
         }
+        if (sub.isEmpty() && s instanceof Player pm) {
+            menu(pm);
+            return true;
+        }
         int w = week();
         String head = "&6BẢNG XẾP HẠNG MÙA " + data.getString("mua") + (w > 0 ? " &7(tuần " + w + ")" : "") + (locked() ? " &c(đã khoá)" : "");
         switch (sub) {
@@ -531,6 +535,51 @@ final class Leaderboard implements Listener {
             }
         }
         return true;
+    }
+
+    /** /bxh cho người chơi Java: menu, top 10 trong tooltip mỗi bảng (22/10, trước in chat). */
+    private void menu(Player p) {
+        int w = week();
+        InfoMenu m = InfoMenu.of("&6♛ Bảng xếp hạng mùa " + data.getString("mua", "")).accent(org.bukkit.Material.ORANGE_STAINED_GLASS_PANE);
+        Tip top = Tip.of("&6♛ &fBảng xếp hạng mùa " + data.getString("mua", "")).accent("&6").desc("Đứng đầu mỗi bảng khi đóng mùa được danh hiệu giữ mãi.").line();
+        if (w > 0) {
+            top.kv("Tuần", String.valueOf(w));
+        }
+        top.kv("Trạng thái", locked() ? "&cđã khoá (đang chờ trao thưởng)" : "&ađang tính điểm");
+        m.top(top.apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.GOLDEN_HELMET)));
+        Tip a = Tip.of("&d♛ &fBá Chủ").sub("quốc gia").accent("&d").desc("Điểm chiến tranh của quốc gia").line();
+        int i = 1;
+        for (Map.Entry<String, Integer> e : topNations(10)) {
+            a.raw((i <= 3 ? "&6" : "&7") + i++ + ". &f" + e.getKey() + " &8— &e" + e.getValue() + " điểm");
+        }
+        if (i == 1) {
+            a.note("Chưa có điểm");
+        }
+        m.add(a.apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.NETHER_STAR)));
+        Tip b = Tip.of("&c⚔ &fChiến Thần").accent("&c").desc("Điểm đánh trận của từng người").line();
+        i = 1;
+        for (Map.Entry<String, Integer> e : topWarriors(10)) {
+            b.raw((i <= 3 ? "&6" : "&7") + i++ + ". &f" + e.getKey() + " &8— &e" + e.getValue() + " điểm");
+        }
+        if (i == 1) {
+            b.note("Chưa có điểm");
+        }
+        m.add(b.apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.IRON_SWORD)));
+        Tip r = Tip.of("&e⛃ &fĐại Phú Hộ").accent("&e").desc("Người giàu nhất").line();
+        i = 1;
+        for (Map.Entry<String, Double> e : topRich(10)) {
+            r.raw((i <= 3 ? "&6" : "&7") + i++ + ". &f" + e.getKey() + " &8— &e" + String.format(Locale.ROOT, "%,.0f xu", e.getValue()).replace(',', '.'));
+        }
+        m.add(r.apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.GOLD_BLOCK)));
+        m.add(Tip.of("&b⌂ &fKiến Trúc Sư").accent("&b").desc("Bình chọn công trình đẹp nhất (tuần " + cfg.getInt("vote-week", 10) + " của mùa)").line()
+                .kv("Lệnh", "/bxh kientruc").click("Bấm để xem danh sách").apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.BRICKS)),
+                InfoMenu.run("bxh kientruc"));
+        m.row();
+        m.add(Tip.of("&f☰ &fĐiểm của một quốc gia").desc("Xem điểm Bá Chủ đến từ đâu").line().kv("Lệnh", "/bxh quocgia <tên>").click("Bấm để điền lệnh")
+                .apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.WRITABLE_BOOK)), InfoMenu.suggest("/bxh quocgia", "Gõ tên quốc gia"));
+        m.add(Tip.of("&6✦ &fDanh hiệu của bạn").accent("&6").desc("Chọn danh hiệu hiện cạnh tên").line().kv("Lệnh", "/danhhieu").click("Bấm để xem")
+                .apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.NAME_TAG)), InfoMenu.run("danhhieu"));
+        m.open(p);
     }
 
     // ------------------------------------------------------------------ đóng mùa, danh hiệu
@@ -680,15 +729,31 @@ final class Leaderboard implements Listener {
                 Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "lp user " + p.getUniqueId() + " meta removesuffix 60");
                 p.sendMessage(c("&aĐã ẩn danh hiệu."));
             }
-            default -> {
-                p.sendMessage(c("&6Danh hiệu của bạn &7(giữ qua các mùa, chỉ giành được trong game)"));
-                if (have.isEmpty()) {
-                    p.sendMessage(c("&7Chưa có. Giành bằng bảng xếp hạng mùa (/bxh) hoặc mua bằng xu ở /cuahang."));
-                }
+            default -> {   // menu (22/10, trước in chat)
+                String using = data.getString("danhhieu." + p.getUniqueId() + ".dung");
+                InfoMenu m = InfoMenu.of("&6✦ Danh hiệu").accent(org.bukkit.Material.ORANGE_STAINED_GLASS_PANE);
+                m.top(Tip.of("&6✦ &fDanh hiệu của bạn").accent("&6").desc("Hiện cạnh tên trong chat và Tab, giữ qua các mùa.").line()
+                        .kv("Đang dùng", using == null ? "&7không" : titleText(using)).gap().head("Cách có")
+                        .item("Đứng đầu bảng xếp hạng mùa (/bxh)").item("Mua bằng xu ở /cuahang")
+                        .apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.NAME_TAG)));
                 for (String t : have) {
-                    p.sendMessage(c("&f" + t + " &7→ " + titleText(t)));
+                    boolean on = t.equals(using);
+                    org.bukkit.inventory.ItemStack it = Tip.of(titleText(t)).sub(t).line()
+                            .raw(on ? "&a✔ Đang dùng" : "&a➜ Bấm để dùng").apply(new org.bukkit.inventory.ItemStack(on ? org.bukkit.Material.GOLDEN_HELMET : org.bukkit.Material.NAME_TAG));
+                    if (on) {
+                        it.editMeta(meta -> meta.setEnchantmentGlintOverride(true));
+                    }
+                    m.add(it, on ? null : InfoMenu.run("danhhieu chon " + t));
                 }
-                p.sendMessage(c("&7/danhhieu chon <mã> · /danhhieu tat"));
+                if (have.isEmpty()) {
+                    m.add(Tip.of("&7Chưa có danh hiệu nào").desc("Giành bằng bảng xếp hạng mùa (/bxh) hoặc mua bằng xu ở /cuahang")
+                            .apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.GRAY_DYE)));
+                }
+                m.bar(Tip.of("&7✖ &fẨn danh hiệu").line().kv("Lệnh", "/danhhieu tat").click("Bấm để ẩn")
+                        .apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.GRAY_DYE)), InfoMenu.run("danhhieu tat"));
+                m.bar(Tip.of("&e⛃ &fMua danh hiệu").accent("&e").desc("Cửa hàng Kinh Đô có mục Danh hiệu (trả bằng xu)").line().kv("Lệnh", "/cuahang")
+                        .click("Bấm để mở").apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.EMERALD)), InfoMenu.run("cuahang"));
+                m.open(p);
             }
         }
         return true;

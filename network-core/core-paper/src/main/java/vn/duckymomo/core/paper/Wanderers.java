@@ -244,6 +244,24 @@ final class Wanderers {
             s.sendMessage("Đã xoá mọi NPC lữ khách (5 phút sau tự tạo lại nếu module còn bật; tắt hẳn: wander-npcs.enabled false).");
             return true;
         }
+        if (s instanceof Player pm && !admin) {   // menu (22/10, trước in chat)
+            InfoMenu m = InfoMenu.of("&6☰ Lữ khách").accent(org.bukkit.Material.BROWN_STAINED_GLASS_PANE);
+            m.top(Tip.of("&6☰ &fLữ khách").accent("&6").desc("Người lạ lang thang ngoài đất hoang, mỗi người biết chuyện về một nơi phía sau Cổng Hoang.").line()
+                    .head("Cách gặp").item("Tìm họ ngoài đất hoang").item("Chuột phải để nói chuyện")
+                    .kv("Dời chỗ", "mỗi " + moveMs / 3_600_000L + " giờ").apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.COMPASS)));
+            for (Npc v : npcs.values()) {
+                String vung = data.getString(n(v.code()) + "vung", "");
+                Tip t = Tip.of("&f" + v.name()).accent("&6");
+                if (vung.isEmpty()) {
+                    t.desc("Chưa xuất hiện");
+                } else {
+                    t.kv("Đang ở", "&e" + vung).kv("Hướng", data.getString(n(v.code()) + "huong", ""));
+                }
+                m.add(t.apply(new org.bukkit.inventory.ItemStack(vung.isEmpty() ? org.bukkit.Material.GRAY_DYE : org.bukkit.Material.LEATHER_HELMET)));
+            }
+            m.open(pm);
+            return true;
+        }
         s.sendMessage(c("&6━━ ☰ LỮ KHÁCH ━━"));
         s.sendMessage(c("&7Những người lạ lang thang ngoài đất hoang, mỗi người biết chuyện về một nơi phía sau Cổng Hoang. Tìm họ, chuột phải để nói"
                 + " chuyện. Cứ " + moveMs / 3_600_000L + " giờ họ lại dời đi chỗ khác."));

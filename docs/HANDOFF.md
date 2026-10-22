@@ -118,7 +118,12 @@ n7 câu cá (0,06 xu/cm, thi câu hạng 1 +1.500 + 3 bùa) · n10 AuraSkills th
   nhặt / đóng túi) -> onTeleport kiểm thẳng túi đồ, CARRY_BLOCK tính lại mỗi giây. Mẹo: dịch chuyển vào vùng vây còn bị SiegeWar chặn với người
   ngoài (non_resident_spawn_into_siegezones_or_besieged_towns_disabled), test thì tạm 'false'; phía z < -3340 ngoài vùng khai hoang (bị đẩy về
   kinh đô) nên đi theo trục x. Bot trong dungeon EliteMobs không ra bằng minecraft:tp được (dùng /spawn của bot).
-  Bot mới cần dọn: ThuR1, ThuR2, ThuR3 (có grim.exempt), ThuCA dùng lại. Chưa làm: Sách cấm ở Công thành / Hầm ngục, x12 x13 (giao diện web).
+  20h20 ĐÃ DỌN DỮ LIỆU TEST (người dùng đồng ý): 59 bot Thu* reset "như người mới" (/choilai admin <tên> moi), quyền LuckPerms của bot đã
+  sạch (kiểm MariaDB), thị trấn ThuTranA/D/F + nước ThuNuoc xoá, mục bot trong bxh/dautruong/donhang/kholuong/linhdanhthue/media/treothuong
+  xoá lúc server tắt (sao lưu scratchpad bak-donbot). CỐ Ý ĐỂ: khaihoang.yml (xu bot góp quỹ khai hoang), thaiap.yml (Thái Ấp ThuA, ThuCapDo
+  đã cấp ô), hoatdong.yml (chỉ còn tên, giờ = 0), sổ vang_log (ví bot về 0), vài khối san phẳng quanh 13631,-3150.
+  ĐÃ SỬA PlayerReset "như người mới": không giữ rank thì bỏ cả quyền lẻ; LevelUp thu hồi quyền đặc quyền Thăng Cấp đã mua (trước còn sót).
+  (dòng cũ) Bot mới cần dọn: ThuR1, ThuR2, ThuR3 (có grim.exempt), ThuCA dùng lại. Chưa làm: Sách cấm ở Công thành / Hầm ngục, x12 x13 (giao diện web).
 - Lệch chưa rõ: Sứ Giả `tp-delay` repo -1, data 3 (data đang chạy). Ô "quyền lợi" chữ của rank (Cài đặt › Toàn mạng › Rank donate) chưa ghi balo.
 
 ### VIỆC CÒN LẠI (22/10 ~15h, account sắp hết lượt; trang test: 208 mục, 168 ok, 0 lỗi, 33 chờ người thật, 7 chưa đụng)

@@ -268,7 +268,8 @@ final class PlayerReset implements Listener {
                 + "; xoá " + lp + " quyền/nhóm LuckPerms" + (keepRanks ? " (giữ rank ủng hộ/staff/Sứ Giả)" : "") + ". Sao lưu: plugins/DuckyMoMoCore/choilai-backup.";
     }
 
-    /** Bỏ /caidat (meta dmmcaidat.*) và danh phận (nhóm các bậc); không giữ rank thì bỏ mọi nhóm trừ default. Trả số node đã bỏ. */
+    /** Bỏ /caidat (meta dmmcaidat.*) và danh phận (nhóm các bậc); không giữ rank thì bỏ mọi nhóm trừ default và mọi quyền lẻ. Trả số node đã bỏ.
+     *  Quyền đặc quyền Thăng Cấp do LevelUp thu hồi (Shared.FORGET). */
     private int lpReset(UUID id, boolean keepRanks) {
         java.util.Set<String> tiers = new java.util.HashSet<>();
         ConfigurationSection ts = plugin.getConfig().getConfigurationSection("play-ranks.tiers");
@@ -287,7 +288,9 @@ final class PlayerReset implements Listener {
                     boolean group = node instanceof net.luckperms.api.node.types.InheritanceNode in
                             && !in.getGroupName().equalsIgnoreCase("default")
                             && (!keepRanks || tiers.contains(in.getGroupName().toLowerCase(Locale.ROOT)));
-                    if (meta || group) {
+                    // không giữ rank: bỏ cả quyền lẻ (món Vàng, quyền admin cấp tay…) — 22/10, trước đó còn sót sau reset
+                    boolean perm = !keepRanks && node instanceof net.luckperms.api.node.types.PermissionNode;
+                    if (meta || group || perm) {
                         u.data().remove(node);
                         n[0]++;
                     }

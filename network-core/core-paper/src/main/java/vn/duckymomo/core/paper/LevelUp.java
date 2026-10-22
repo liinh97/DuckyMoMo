@@ -187,6 +187,8 @@ final class LevelUp implements Listener {
         this.file = new File(plugin.getDataFolder(), "capdo.yml");
         this.data = YamlConfiguration.loadConfiguration(file);
         Shared.FORGET.add(id -> {   // admin reset "như người mới": xoá cả khỏi bảng xếp hạng trên web
+            // 22/10: thu hồi luôn quyền của đặc quyền đã mua (giảm giá Xưởng, bán thêm…; trước đó còn sót sau reset)
+            revoke(id, shop.values().stream().flatMap(pk -> pk.tiers().stream()).flatMap(t -> t.perms().stream()).distinct().toList());
             Shared.forget(data, file, id);
             writeJson();
         });

@@ -376,7 +376,7 @@ final class DecorShop implements Listener {
                     es.add(new BedrockMenu.Entry(label(en.offer()).replaceAll("&.", "") + "\n" + money(en.offer().price()), en.offer().key()));
                 }
             }
-            BedrockMenu.open(p.getUniqueId(), ct.name(), es.isEmpty() ? "Mục này chỉ thu mua: cầm đồ rồi gõ /sell hand." : "Bấm để mua:", es,
+            BedrockMenu.open(p.getUniqueId(), ct.name(), es.isEmpty() ? "Mục này chỉ thu mua: gõ /sell <tên món> [số]." : "Bấm để mua:", es,
                     k -> plugin.getServer().getScheduler().runTask(plugin, () -> buy(p, k)));
             return;
         }

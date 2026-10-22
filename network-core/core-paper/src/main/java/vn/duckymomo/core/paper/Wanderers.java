@@ -30,7 +30,7 @@ import org.bukkit.entity.Player;
  *    chỗ khác và báo tin đồn cả server (vùng + hướng, không toạ độ). Lời thoại + nhiệm vụ: BetonQuest, gói cotruyen/lukhach/.
  *  - Cho BetonQuest biết cổng: placeholder %dmmlk_<mã>_cong|tim|tindon|vung|huong|chu|timboi|npcvung|npchuong% (WanderersPapi).
  *    Chưa mở mùa thì chưa có cổng (cong = khong): lữ khách chỉ kể truyền thuyết.
- *  - Ai đi qua một Cổng Hoang: gắn tag BetonQuest cotruyen>lk_<mã>_qua (lệnh console bq tag) để về kể cho lữ khách nhận thưởng.
+ *  - Ai đi qua một Cổng Hoang VÀO TỚI dungeon (DungeonGate.onEnter, không tính lúc mới mở menu): gắn tag BetonQuest cotruyen>lk_<mã>_qua (lệnh console bq tag) để về kể cho lữ khách nhận thưởng.
  * Lưu: lukhach.yml (ID NPC, chỗ, lúc dời); ghi lukhach.json cho web (không có toạ độ).
  */
 final class Wanderers {

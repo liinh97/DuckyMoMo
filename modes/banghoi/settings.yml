@@ -145,29 +145,29 @@ cleaner_min_age: 30
 cleaner_arrows: true
 cleaner_warn_msg: '&c[⚠] &7Dọn vật phẩm dưới đất sau &e{s}s&7.'
 cleaner_done_msg: '&c[⚠] &7Đã dọn sạch &e{n} &7vật phẩm!'
-worth_diamond: 60.0
-worth_emerald: 20.0
-worth_gold_ingot: 6.0
-worth_iron_ingot: 4.0
-worth_copper_ingot: 1.0
-worth_coal: 1.0
+worth_diamond: 120
+worth_emerald: 40
+worth_gold_ingot: 20
+worth_iron_ingot: 10
+worth_copper_ingot: 2
+worth_coal: 3
 worth_wheat: 0.75
 worth_carrot: 0.6
 worth_potato: 0.6
 worth_sugar_cane: 1.0
-worth_oak_log: 0.6
-worth_rotten_flesh: 0.25
+worth_oak_log: 2
+worth_rotten_flesh: 0.1
 worth_bone: 0.5
-worth_string: 0.75
-worth_gunpowder: 2.0
+worth_string: 0.5
+worth_gunpowder: 1
 worth_ender_pearl: 5.0
 tab_bossbar_tips:
-  - '&e✦ &fMới chơi? Gõ &e/huongdan &fđể xem cẩm nang &e✦'
   - '&e✦ &fGõ &e/warp &fđể tới các địa danh mùa 1 &e✦'
-  - '&e✦ &fLập thị trấn: &e/t new <tên> &f(500 xu) &e✦'
+  - '&e✦ &fLập thị trấn: &e/t new <tên> &f(1.500 xu) &e✦'
   - '&e✦ &fChợ đen: &e/choden &f• Đổi đồ: &e/trade <tên> &e✦'
-  - '&e✦ &fKiếm tiền: đào, chặt, săn quái tự có tiền &e/jobs &e✦'
-  - '&e✦ &fBán đồ cho server: &e/sell hand &fhoặc biển ở spawn &e✦'
+  - '&e✦ &fKiếm tiền: chọn 1 nghề ở &e/jobs &e✦'
+  - '&e✦ &fBán đồ cho server: &e/cuahang &fở kinh đô hoặc đất hoà bình &e✦'
+  - '&a✦ &fDân hoà bình: mua bán với server, vào nghề ở đâu cũng được &7(/hoabinh) &a✦'
   - '&c✦ &fĐang đánh nhau mà thoát game sẽ chết và rơi đồ &c✦'
   - '&e✦ &fCông thành: tối thứ 7, Chủ nhật 20:00 và 21:00 &e✦'
   - '&e✦ &fBản đồ thế giới online: Trạm 6 &e✦'
@@ -187,6 +187,7 @@ tab_sb_lines:
   - '%animation:SbDong1%'
   - '%animation:SbDong2%'
   - '%animation:SbDong3%'
+  - '%animation:SbDong4%'
   - '&r'
   - '&#5FD3F3☺ &b%online% &8· &7%condition:pingmau%'
 tab_header:
@@ -254,7 +255,7 @@ ce_common_lore:
   - '&a▍ &fSách ngẫu nhiên 1 phù phép độ hiếm Thường'
   - '&8▍ &7Mỗi cuốn có tỉ lệ thành công riêng'
   - '&8&m                              '
-  - '&8• &7Giá: &e300 xu'
+  - '&8• &7Giá: &e900 xu'
   - '&8&m                              '
   - '&a➜ Bấm để mua'
 ce_rare_cost: 2400
@@ -263,7 +264,7 @@ ce_rare_lore:
   - '&9▍ &fSách ngẫu nhiên 1 phù phép độ hiếm Hiếm'
   - '&8▍ &7Mỗi cuốn có tỉ lệ thành công riêng'
   - '&8&m                              '
-  - '&8• &7Giá: &e800 xu'
+  - '&8• &7Giá: &e2.400 xu'
   - '&8&m                              '
   - '&a➜ Bấm để mua'
 ce_legendary_ingui: false
@@ -444,7 +445,7 @@ qs_tax_rate: 0.05
 qs_create_cost: 0.0
 qs_price_fee_on: true
 qs_price_fee: 150.0
-qs_limits_on: false
+qs_limits_on: true
 qs_limits_default: 10
 qs_ongoing_on: false
 qs_ongoing_cost: 6.0
@@ -506,7 +507,7 @@ reset_cooldown: 7
 reset_max: 3
 reset_gift_first: true
 reset_money: 500.0
-reset_kit: ''
+reset_kit: 'tanthu'
 reset_season: '1'
 peace_join_wait: 2
 peace_rejoin: 14
@@ -1378,14 +1379,14 @@ dp_dan_balo: 1
 dp_dan_ah: 4
 dp_luongdan_name: "Lương Dân"
 dp_luongdan_prefix: "&a[Lương Dân] "
-dp_luongdan_hours: 48.0
+dp_luongdan_hours: 24
 dp_luongdan_level: 10
 dp_luongdan_homes: 3
 dp_luongdan_balo: 2
 dp_luongdan_ah: 6
 dp_haokiet_name: "Hào Kiệt"
 dp_haokiet_prefix: "&6[Hào Kiệt] "
-dp_haokiet_hours: 96.0
+dp_haokiet_hours: 72
 dp_haokiet_level: 25
 dp_haokiet_homes: 5
 dp_haokiet_balo: 3
@@ -1511,7 +1512,7 @@ md_fail: 2
 md_cooldown: 60
 petcap_charm_item: bua_bat_pet
 goiqua_on: true
-goiqua_landau: ''
+goiqua_landau: 'tanthu'
 goiqua_list:
   tinan:
     ten: '&8Quà tị nạn'

@@ -102,7 +102,7 @@ guide:
       - ["Đăng ký / đăng nhập", "Lần đầu: /register <mật khẩu> <mật khẩu> · lần sau: /login <mật khẩu>"]
       - ["Chọn chế độ", "Bấm la bàn ở sảnh hoặc /menu (điện thoại: hiện bảng nút bấm)"]
       - ["Cẩm nang trong game", "/huongdan — sửa nội dung: modes/_network/huongdan.yml rồi ./ops/huongdan.sh (có hiệu lực ngay)"]
-      - ["Bang Hội Chiến", "/warp để đi các địa danh · /tpr <khu> tìm đất hoang · /t new <tên> lập thị trấn (cần 3 giờ chơi thật, 1.500 xu) · /jobs xem nghề · /sell hand bán đồ · /choden chợ đen (chỉ trong đất hoà bình) · /trade <tên> đổi đồ an toàn"]
+      - ["Bang Hội Chiến", "/warp để đi các địa danh · /tpr <khu> tìm đất hoang · /t new <tên> lập thị trấn (cần 3 giờ chơi thật, 1.500 xu) · /jobs xem nghề · /cuahang hoặc /sell <tên món> bán đồ · /choden chợ đen (chỉ trong đất hoà bình) · /trade <tên> đổi đồ an toàn"]
       - ["Không thích đánh nhau", "Vào thị trấn trong Liên minh Hoà Bình (/hoabinh): không bị vây, không PvP; đổi lại không đánh trận. Thị trưởng hoà bình bầu Hội đồng (/hoidong), dân lập Thương Hội / Tổ chức Sự kiện (/tochuc)"]
       - ["Mỗi ngày nên làm", "/diemdanh (xu + vé Gacha Điểm Danh + quà mốc 7/14/30 ngày) · /gacha (quay bằng vé; vé Chăm Chỉ mỗi 60 phút chơi thật) · /nhiemvu (3 nhiệm vụ) · /vote (150 xu/lượt)"]
       - ["Lên cấp, kỹ năng, cốt truyện", "/capdo (thăng cấp, cộng điểm thuộc tính, mua đặc quyền bằng xu) · /skills (6 kỹ năng nghề, tối đa cấp 20) · tìm Già Làng ở spawn (chương 1) · /lukhach · /dungeon · /thanhtich"]

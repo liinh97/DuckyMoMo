@@ -1,7 +1,7 @@
 &6Bang Hội Chiến &7- chào &e{PLAYER}&7!
 &7Bạn đang ở &aspawn Hà Nội&7 (khu an toàn). Bản đồ là &bTrái Đất tỉ lệ 1:1000&7.
 &e/t new <tên>&7 lập thị trấn  &8|  &e/t&7 thông tin thị trấn  &8|  &e/n&7 quốc gia
-&e/sell hand&7 bán đồ đang cầm lấy tiền  &8|  &e/bal&7 xem tiền  &8|  &e/spawn&7 về spawn
+&e/cuahang&7 bán đồ cho server (kinh đô)  &8|  &e/bal&7 xem tiền  &8|  &e/spawn&7 về spawn
 &e/ah&7 chợ đấu giá  &8|  &e/trade <tên>&7 đổi đồ  &8|  &7cửa hàng rương: cầm đồ, bấm chuột trái vào rương
 &e/warp&7 đi tới thành phố thật (vd &e/warp hue&7, &e/warp bangkok&7)
 &7Công thành theo lịch (SiegeWar): &e/sw&7  &8|  &7Về sảnh: &e/server lobby

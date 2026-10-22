@@ -600,14 +600,14 @@
   "tt": ""
  },
  "q7": {
-  "ghi_chu": "Claude đọc /conghoang: chưa có cổng nào (mùa chưa mở). CẦN BẠN: /conghoang tao here rồi thử.",
-  "luc": 1792574000000,
-  "tt": ""
+  "ghi_chu": "Claude tự test (Cài đặt Cổng Hoang: ưu tiên 30 phút, bán kính 64; cổng thử ★3 Xưởng Hơi Nước, đã gỡ và trả số cổng của mùa về 0). Shift ở ô giữa: 'Bạn đã tìm ra một Cổng Hoang!', báo cả server, thành tích Người Mở Cổng, mở menu chọn độ khó EliteMobs. Người khác Shift ngay sau: 'đang trong thời gian ưu tiên'. Phá khối cổng: không phá được. ĐÃ SỬA: trước đây chỉ cần mở menu (chưa vào dungeon) đã được tính 'đã qua cổng' để về kể Lữ khách lấy 1.500 xu; nay chỉ tính khi vào tới dungeon. CẦN BẠN: chọn độ khó vào hẳn dungeon qua cổng (bot không bấm được menu EliteMobs) và thử phí cổng khi thị trấn giữ cổng.",
+  "luc": 1792638605297,
+  "tt": "ok"
  },
  "q9": {
-  "ghi_chu": "Claude đọc /lukhach: 4 lữ khách ở Nam Trung Quốc (2), Trung Bộ, Myanmar. CẦN BẠN: tới nói chuyện.",
-  "luc": 1792574000000,
-  "tt": ""
+  "ghi_chu": "Claude tự test lời thoại (mở hội thoại bằng /bq action vì bot qua Via chuột phải NPC Citizens không ăn), Cài đặt thưởng lk_thuong 1.500. Lần 1: kể chuyện, hỏi đường → 'cổng chưa mở', gắn tag nghe, nhật ký cập nhật. Lần 2: 'Lại là cháu à?'. Có tag đã qua: kể lại → 'Đã nhận 1500.00' (+1.500 xu, khớp), lần sau chỉ nói câu cảm ơn, không nhận lần 2. CẦN BẠN: chuột phải một lữ khách bằng máy thật xem bảng hội thoại hiện ra.",
+  "luc": 1792638605297,
+  "tt": "ok"
  },
  "r1": {
   "ghi_chu": "Claude test lại: 4 thẻ + Sứ Giả, ✔/✘ đúng giờ chơi và Thăng Cấp của bot.",
@@ -667,9 +667,9 @@
   "tt": "ok"
  },
  "s10": {
-  "ghi_chu": "Claude tự test phần: nhà (Dân 2), treo Chợ đen (Tị Nạn 2), nhận kit trước hạn, bán quá giới hạn (11.000 khi có đặc quyền) đều bị chặn đúng. Chưa thử giới hạn đơn thu mua.",
-  "luc": 1792575500000,
-  "tt": ""
+  "ghi_chu": "Claude tự test đủ, so với Cài đặt Chợ đen (dh_max 2, tối đa 6.400 món, giá tối đa 100.000, phí 2%) và quyền lợi rank (Tị Nạn 2 đơn, Lương Dân 4). Đơn 6.401 món và giá 100.001 bị chặn đúng câu báo. Tị Nạn: đơn 1, 2 được (mỗi đơn trừ 10 + phí 0,2), đơn 3 'Bạn đang có 2 đơn mở (tối đa 2)'. Lên Lương Dân: đơn 3, 4 được, đơn 5 bị chặn (tối đa 4). Huỷ 4 đơn: hoàn 10 xu/đơn, phí không hoàn. Phần khác (nhà, Chợ đen treo bán, kit, bán quá giới hạn) đã thử trước đó.",
+  "luc": 1792638605297,
+  "tt": "ok"
  },
  "s11": {
   "ghi_chu": "Claude tự test (tools/bottest/s11-tienam.js): /pay -100, 1e20, NaN, Infinity, 0.0000001; /t deposit|withdraw -50; /treothuong dat -1 và 1e20; /dungeon gop -10 và 1e20; /choden ban -100, NaN, 0: đều bị từ chối, không ai được cộng tiền. LƯU Ý: '/pay B 1,5' bị hiểu là 15 xu (dấu phẩy là phân cách hàng nghìn), người Việt quen gõ 1,5 = một rưỡi -> dễ chuyển nhầm gấp 10. '/choden ban NaN' hiện cú pháp gốc '/ah sell <price>...' thay vì /choden ban.",
@@ -949,6 +949,11 @@
  "x5": {
   "ghi_chu": "Claude tự test: Lưu một số trên Cài đặt (Bang Hội Chiến) trả 'Đã lưu và áp dụng', chạy dmm reload ngay, file data đổi đúng. CẦN BẠN: bấm thử trên giao diện trang (bot gọi thẳng hàm lưu).",
   "luc": 1792596076618,
+  "tt": "ok"
+ },
+ "x6": {
+  "ghi_chu": "Claude tự test bằng hàm của trang quản trị (media_admin), Cài đặt thử việc 14 ngày, gia hạn 30 ngày. Bot /sugia dangky <link TikTok> → đơn CHO trên trang Sứ Giả. Duyệt → LuckPerms nhóm media hết hạn đúng +14 ngày, trạng thái DUYET. Gia hạn → hết hạn +30 ngày nữa. Gỡ → mất nhóm media, trạng thái HET. Ghi chú: người được duyệt lúc offline không nhận được tin báo khi vào lại (chỉ báo nếu đang online). Cùng lúc phát hiện lời chào vào game còn '/sell hand' → đã sửa.",
+  "luc": 1792638605297,
   "tt": "ok"
  },
  "x8": {

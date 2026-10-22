@@ -843,10 +843,7 @@ final class WildGates implements Listener {
         }
         data.set(pfx + "luot", data.getInt(pfx + "luot", 0) + 1);
         save();
-        Wanderers wd = Shared.wanderers;
-        if (wd != null) {
-            wd.onGatePass(p, dungeon);
-        }
+        // Lữ khách: chỉ tính khi vào tới dungeon (DungeonGate.onEnter), không tính lúc mới mở menu chọn độ khó
     }
 
     private boolean sameTownAsFinder(Player p, String id) {

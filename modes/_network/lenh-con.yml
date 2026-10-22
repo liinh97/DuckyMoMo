@@ -223,9 +223,8 @@ groups:
   - plugin: Essentials
     servers: [banghoi-1]
     commands:
-      - ["sell hand", "Bán chồng đồ đang cầm", Mọi người]
-      - ["sell all", "Bán tất cả đồ bán được trong túi", Mọi người]
-      - ["sell inventory", "Bán cả túi (trừ đồ không có giá)", Mọi người]
+      - ["sell <tên món> [số]", "Bán món đó trong túi cho server (vd sell wheat 64)", Mọi người]
+      - ["sell hand · sell all · sell inventory", "Bán đồ đang cầm / cả túi (21/10: người thường KHÔNG có, dùng /cuahang hoặc /sell <tên món>)", Chỉ admin]
       - ["home <tên>", "Về nhà theo tên (có nhiều nhà)", Mọi người]
       - ["sethome <tên>", "Đặt nhà có tên", Mọi người]
       - ["warp <tên>", "Đi tới địa danh", Mọi người]
@@ -299,7 +298,7 @@ groups:
       - ["xuong", "Xưởng chế tạo đồ có hạn dùng (Bang Hội Chiến)", Mọi người]
       - ["xuong tang <id> [người]", "Tặng đồ xưởng (sự kiện)", Chỉ admin]
       - ["tinhluyen", "Menu Tinh Luyện: đổi khối thường thành món tinh luyện (bấm = 1, Shift = tối đa). Tên khác: /tl, /nguyenlieu", Mọi người]
-      - ["tinhluyen ban [tatca]", "Bán món tinh luyện đang cầm / cả túi (/sell hand|all cũng được)", Mọi người]
+      - ["tinhluyen ban [tatca]", "Bán món tinh luyện đang cầm / cả túi", Mọi người]
       - ["tinhluyen ds", "Danh sách mã món, công thức, giá bán", Mọi người]
       - ["tinhluyen give <mã> [số] [người]", "Lấy món tinh luyện (đặt trade Shopkeepers, phát thưởng)", Chỉ admin]
       - ["treothuong", "Xem ai đang bị treo thưởng (Bang Hội Chiến)", Mọi người]

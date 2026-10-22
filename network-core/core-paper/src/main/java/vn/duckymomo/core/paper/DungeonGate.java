@@ -93,7 +93,8 @@ final class DungeonGate implements Listener {
         }
     }
 
-    private record Pass(String id, long until, boolean ticket) { }
+    /** gate = mở qua Cổng Hoang (vào tới nơi thì báo Lữ khách; 22/10: trước đây tính ngay lúc mở menu, chưa cần vào). */
+    private record Pass(String id, long until, boolean ticket, boolean gate) { }
 
     private static final List<String> DAY_CODES = List.of("t2", "t3", "t4", "t5", "t6", "t7", "cn");
 
@@ -597,6 +598,9 @@ final class DungeonGate implements Listener {
             Pass pass = pending.get(p.getUniqueId());
             if (pass != null && pass.id().equals(id)) {
                 pending.remove(p.getUniqueId());   // vé đã dùng (đã trừ lúc mở cổng)
+                if (pass.gate() && Shared.wanderers != null) {
+                    Shared.wanderers.onGatePass(p, id);
+                }
             }
             refresh(p);
         }
@@ -1220,7 +1224,7 @@ final class DungeonGate implements Listener {
                 if (old != null && old.ticket() && !old.id().equals(d.id())) {
                     refund(m.getUniqueId(), old.id());
                 }
-                pending.put(m.getUniqueId(), new Pass(d.id(), until, ticketType));
+                pending.put(m.getUniqueId(), new Pass(d.id(), until, ticketType, false));
                 refresh(m);
             }
             if (m != p) {
@@ -1418,7 +1422,7 @@ final class DungeonGate implements Listener {
             p.sendMessage(c("&cBạn đang ở trong một dungeon."));
             return false;
         }
-        pending.put(p.getUniqueId(), new Pass(id, System.currentTimeMillis() + windowMs, false));
+        pending.put(p.getUniqueId(), new Pass(id, System.currentTimeMillis() + windowMs, false, true));
         open(p, d);
         return true;
     }

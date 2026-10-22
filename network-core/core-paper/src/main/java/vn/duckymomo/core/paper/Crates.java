@@ -169,7 +169,7 @@ final class Crates implements Listener {
                 phut = 0;
                 rewards.give(p, List.of("do " + onlineKey + " 1"));   // túi đầy thì rơi dưới chân
                 data.set(k + ".da-nhan", data.getInt(k + ".da-nhan") + 1);
-                p.sendMessage(c("&b🎟 Bạn nhận 1 &f" + keyName(onlineKey) + " &b(chơi đủ " + minutesPerKey(p) + " phút). Gõ &f/gacha &bđể quay!"));
+                p.sendMessage(c("&b▤ Bạn nhận 1 &f" + keyName(onlineKey) + " &b(chơi đủ " + minutesPerKey(p) + " phút). Gõ &f/gacha &bđể quay!"));
                 p.playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.7f, 1.2f);
             }
             data.set(k + ".phut", phut);
@@ -439,7 +439,7 @@ final class Crates implements Listener {
             h.spinning = false;
             h.inv.setItem(SPIN_SLOT, prizeIcon(cr, win));
             p.playSound(p.getLocation(), win.rare() ? Sound.UI_TOAST_CHALLENGE_COMPLETE : Sound.ENTITY_PLAYER_LEVELUP, 0.8f, 1f);
-            p.sendMessage(c("&a🎉 " + cr.name() + "&a: bạn trúng &f" + win.label() + (got.isEmpty() ? "" : " &7(" + String.join("&7, ", got) + "&7)")));
+            p.sendMessage(c("&a✦ " + cr.name() + "&a: bạn trúng &f" + win.label() + (got.isEmpty() ? "" : " &7(" + String.join("&7, ", got) + "&7)")));
             if (win.rare()) {
                 Bukkit.broadcast(c("&6✦ &f" + p.getName() + " &6quay " + cr.name() + " &6trúng &f" + win.label() + "&6! &7(/gacha)"));
             }
@@ -505,7 +505,7 @@ final class Crates implements Listener {
             return;
         }
         rewards.give(p, List.of("do " + onlineKey + " " + Math.min(64, ve)));
-        p.sendMessage(c("&b🎟 Vòng quay đã gộp vào Gacha: " + ve + " vé cũ của bạn đổi thành &f" + ve + " " + keyName(onlineKey) + "&b. Gõ &f/gacha&b."));
+        p.sendMessage(c("&b▤ Vòng quay đã gộp vào Gacha: " + ve + " vé cũ của bạn đổi thành &f" + ve + " " + keyName(onlineKey) + "&b. Gõ &f/gacha&b."));
         plugin.getLogger().info("Gacha: đổi " + ve + " vé vòng quay của " + p.getName() + " thành vé online");
     }
 

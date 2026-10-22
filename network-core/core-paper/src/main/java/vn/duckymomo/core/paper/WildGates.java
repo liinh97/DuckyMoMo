@@ -702,7 +702,7 @@ final class WildGates implements Listener {
             return null;
         }
         String id = place(l);
-        PlayerSettings.broadcast("sukien", c("&5🌀 TIN ĐỒN: &d" + data.getString(g(id) + "tin-don") + " &7(Cổng Hoang: /conghoang)"));
+        PlayerSettings.broadcast("sukien", c("&5◎ TIN ĐỒN: &d" + data.getString(g(id) + "tin-don") + " &7(Cổng Hoang: /conghoang)"));
         return id;
     }
 
@@ -743,7 +743,7 @@ final class WildGates implements Listener {
                     p.spawnParticle(Particle.PORTAL, c.clone().add(0, 0.6, 0), t.particleRange() >= 12 ? 12 : 5, 0.3, 0.4, 0.3, 0.3);
                 }
                 if (d < t.hintRange() * t.hintRange()) {
-                    p.sendActionBar(c(d < 3 ? "&5🌀 Luồng khí lạ ngay dưới chân… &dngồi xuống (Shift) thử xem" : "&5🌀 Bạn cảm thấy một luồng khí lạ quanh đây…"));
+                    p.sendActionBar(c(d < 3 ? "&5◎ Luồng khí lạ ngay dưới chân… &dngồi xuống (Shift) thử xem" : "&5◎ Bạn cảm thấy một luồng khí lạ quanh đây…"));
                 }
             }
         }
@@ -796,12 +796,12 @@ final class WildGates implements Listener {
             save();
             writeJson();
             p.playSound(p.getLocation(), Sound.BLOCK_END_PORTAL_SPAWN, 0.8f, 1.1f);
-            p.sendMessage(c("&5🌀 Bạn đã tìm ra một Cổng Hoang! &7Dẫn vào: &d" + dungeonName(id)));
+            p.sendMessage(c("&5◎ Bạn đã tìm ra một Cổng Hoang! &7Dẫn vào: &d" + dungeonName(id)));
             if (graceMs > 0) {
                 p.sendMessage(c("&7Trong &f" + graceMs / 60_000 + " phút &7tới, chỉ bạn (hoặc thị trấn của bạn) được lập/mở rộng thị trấn trong "
                         + graceRadius + " khối quanh đây. Thị trấn giữ cổng: dân mình vào miễn phí, người ngoài trả phí vào ngân khố."));
             }
-            PlayerSettings.broadcast("sukien", c("&5🌀 &f" + p.getName() + " &dđã tìm ra một Cổng Hoang ở vùng &f" + data.getString(pfx + "vung") + "&d!"));
+            PlayerSettings.broadcast("sukien", c("&5◎ &f" + p.getName() + " &dđã tìm ra một Cổng Hoang ở vùng &f" + data.getString(pfx + "vung") + "&d!"));
             Achievements.add(p, "conghoang", 1);
         }
         Town t = owner(id);
@@ -933,7 +933,7 @@ final class WildGates implements Listener {
         ThreadLocalRandom r = ThreadLocalRandom.current();
         p.playSound(p.getLocation(), Sound.BLOCK_END_PORTAL_FRAME_FILL, 1f, 0.6f);
         int rad = tier(id).treasureRadius();
-        p.sendMessage(c("&5🗺 Dưới đáy rương có mảnh giấy cũ: &d\"Cổng Hoang ở quanh X " + (s.getBlockX() + r.nextInt(-rad, rad + 1)) + " Z "
+        p.sendMessage(c("&5⌖ Dưới đáy rương có mảnh giấy cũ: &d\"Cổng Hoang ở quanh X " + (s.getBlockX() + r.nextInt(-rad, rad + 1)) + " Z "
                 + (s.getBlockZ() + r.nextInt(-rad, rad + 1)) + "\"&5. &7(sai số khoảng " + rad + " khối" + (tier(id).nightOnly() ? ", chỉ lộ dấu hiệu ban đêm" : "") + ")"));
         return true;
     }
@@ -1046,8 +1046,12 @@ final class WildGates implements Listener {
             }
             default -> { }
         }
-        // danh sách công khai
-        s.sendMessage(c("&5━━ 🌀 CỔNG HOANG ━━"));
+        // danh sách công khai: người chơi xem bằng menu (22/10, trước in chat)
+        if (s instanceof Player pm) {
+            menu(pm);
+            return true;
+        }
+        s.sendMessage(c("&5━━ ◎ CỔNG HOANG ━━"));
         s.sendMessage(c("&7Cổng dungeon ẩn trên bản đồ, ngụy trang như cảnh vật (vòng đá rêu, giếng cát, cột băng, gốc cây rêu…). Gần cổng có hạt tím,"
                 + " đứng lên ô giữa rồi &fngồi xuống (Shift) &7để vào. Mỗi " + intervalMs / 86_400_000L + " ngày thêm 1 cổng, tối đa " + maxGates + " cổng/mùa."));
         s.sendMessage(c("&7Thị trấn có ô đất chứa cổng là chủ: dân mình vào miễn phí, người ngoài trả phí vào ngân khố. Chiếm được thị trấn là có cổng."));
@@ -1063,6 +1067,46 @@ final class WildGates implements Listener {
         }
         s.sendMessage(c("&8Chủ cổng: /conghoang phi <mã> <xu> · /conghoang dong|mo <mã>"));
         return true;
+    }
+
+    private void menu(Player p) {
+        List<String> ids = gateIds();
+        InfoMenu m = InfoMenu.of("&5◎ Cổng Hoang").accent(org.bukkit.Material.PURPLE_STAINED_GLASS_PANE);
+        m.top(Tip.of("&5◎ &fCổng Hoang").accent("&d")
+                .desc("Cổng dungeon ẩn trên bản đồ, ngụy trang như cảnh vật (vòng đá rêu, giếng cát, cột băng, gốc cây rêu…).").line()
+                .head("Cách vào").item("Gần cổng có hạt tím").item("Đứng lên ô giữa rồi ngồi xuống (Shift)")
+                .gap().head("Chủ cổng").item("Thị trấn có ô đất chứa cổng là chủ")
+                .item("Dân mình vào miễn phí, người ngoài trả phí vào ngân khố").item("Chiếm được thị trấn là có cổng")
+                .gap().kv("Cổng mới", "mỗi " + intervalMs / 86_400_000L + " ngày, tối đa " + maxGates + " cổng/mùa")
+                .apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.END_PORTAL_FRAME)));
+        for (String gid : ids) {
+            Town t = owner(gid);
+            boolean f = found(gid);
+            int bac = Math.max(1, data.getInt(g(gid) + "bac", 1));
+            Tip tip = Tip.of((f ? "&d" + dungeonName(gid) : "&7???") + " &8#" + gid).sub("★".repeat(bac)).accent("&d");
+            if (!f) {
+                tip.desc("Chưa ai tìm ra").line().kv("Tin đồn", "&7" + data.getString(g(gid) + "tin-don", "không rõ"));
+            } else {
+                tip.line().kv("Tìm bởi", data.getString(g(gid) + "tim-boi", "?"));
+                if (t == null) {
+                    tip.kv("Chủ", "&ađất hoang, vào tự do");
+                } else {
+                    tip.kv("Chủ", "thị trấn " + t.getName()).kv(data.getBoolean(g(gid) + "dong") ? "Trạng thái" : "Phí người ngoài",
+                            data.getBoolean(g(gid) + "dong") ? "&cđóng với người ngoài" : money(data.getDouble(g(gid) + "phi", 0)));
+                }
+            }
+            java.util.function.Consumer<Player> act = null;
+            if (f && t != null && isManager(p, t)) {
+                tip.line().click("Bấm để đặt phí (bạn là chủ cổng)").note("Đóng / mở: /conghoang dong|mo " + gid);
+                act = InfoMenu.suggest("/conghoang phi " + gid, "Gõ số xu (0 = miễn phí)");
+            }
+            org.bukkit.inventory.ItemStack icon = tip.apply(new org.bukkit.inventory.ItemStack(f ? org.bukkit.Material.ENDER_EYE : org.bukkit.Material.GRAY_DYE));
+            m.add(icon, act);
+        }
+        if (ids.isEmpty()) {
+            m.add(Tip.of("&8Chưa có cổng nào xuất hiện").apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.GRAY_DYE)));
+        }
+        m.open(p);
     }
 
     private static String money(double v) {

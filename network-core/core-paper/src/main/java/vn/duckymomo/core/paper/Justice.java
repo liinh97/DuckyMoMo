@@ -1097,7 +1097,76 @@ final class Justice implements Listener {
         }
     }
 
+    /** /bantron cho người chơi: menu (22/10, trước in chat). */
+    private void menu(Player p) {
+        long t = meetingTime();
+        UUID me = p.getUniqueId();
+        long now = System.currentTimeMillis();
+        InfoMenu m = InfoMenu.of("&6⚖ Hội Bàn Tròn").accent(org.bukkit.Material.ORANGE_STAINED_GLASS_PANE);
+        Tip top = Tip.of("&6⚖ &fHội Bàn Tròn").accent("&6").desc("Các nước mạnh nhất và đại diện hoà bình họp xử án, bàn luật.").line()
+                .kv("Phiên họp", when(t) + (agenda().isEmpty() ? " &7(chưa có việc: không họp)" : ""))
+                .kv("Nơi họp", tableDesc());
+        if ("MO".equals(data.getString("hop.trangthai"))) {
+            top.raw("&a● đang họp");
+        }
+        top.gap().head("Ghế");
+        for (Map.Entry<String, String> e : seats().entrySet()) {
+            Nation n = e.getKey().startsWith("qg:") ? TownyAPI.getInstance().getNation(e.getValue()) : null;
+            String holder = e.getKey().equals("hb") ? (council.representative() == null ? "chưa có đại diện" : council.representative())
+                    : n == null || n.getKing() == null ? "?" : n.getKing().getName();
+            top.item(e.getValue() + " &7(" + holder + ")");
+        }
+        m.top(top.apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.LECTERN)));
+        for (String item : agenda()) {
+            String id = item.substring(item.indexOf('.') + 1);
+            boolean vu = item.startsWith("vu.");
+            Tip a = Tip.of((vu ? "&c☠ &fVụ án " : "&e✉ &fKiến nghị ") + id).accent(vu ? "&c" : "&e");
+            if (vu) {
+                a.kv("Kẻ giết", data.getString(item + ".ke", "?")).kv("Nạn nhân", data.getString(item + ".nan", "?")).kv("Lúc", when(data.getLong(item + ".luc")))
+                        .line().click("Bấm để điền lệnh xử").note("Mức: giu, phatnang, truyna, tu, luuday, camct1, camct2, camct3");
+            } else {
+                a.desc(org.bukkit.ChatColor.stripColor(describeMotion(item).replace('&', '§'))).line().click("Bấm để điền lệnh biểu quyết");
+            }
+            m.add(a.apply(new org.bukkit.inventory.ItemStack(vu ? org.bukkit.Material.SKELETON_SKULL : org.bukkit.Material.PAPER)),
+                    InfoMenu.suggest("/bantron xu " + id, vu ? "Gõ mức xử" : "Gõ co hoặc khong"));
+        }
+        m.row();
+        Tip st = Tip.of("&f☺ &fTình trạng của bạn").line();
+        st.raw(openKillers.contains(me) ? "&c✖ Có vụ án chưa xử: cấm vào đất hoà bình và công thành tới phiên họp" : "&a✔ Không có vụ án chưa xử");
+        if (data.getLong("cam." + me + ".hoabinh") > now) {
+            st.raw("&c✖ Lưu đày tới " + when(data.getLong("cam." + me + ".hoabinh")));
+        }
+        if (data.getLong("cam." + me + ".congthanh") > now) {
+            st.raw("&c✖ Cấm công thành tới " + when(data.getLong("cam." + me + ".congthanh")));
+        }
+        if (data.getLong("truyna." + me + ".den") > now) {
+            st.raw("&c✖ Đang bị truy nã tới " + when(data.getLong("truyna." + me + ".den")));
+        }
+        m.add(st.apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.PLAYER_HEAD)));
+        m.add(Tip.of("&f☰ &fLịch sử xử án").line().kv("Lệnh", "/bantron lichsu").click("Bấm để xem")
+                .apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.BOOK)), InfoMenu.run("bantron lichsu"));
+        m.add(Tip.of("&c⚖ &fXử án").accent("&c").desc("Ghế ngồi biểu quyết mức xử cho một vụ").line().kv("Lệnh", "/bantron xu <mã> <mức>")
+                .note("Vụ án: giu, phatnang, truyna, tu, luuday, camct1, camct2, camct3. Kiến nghị: co / khong.").click("Bấm để điền lệnh")
+                .apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.IRON_SWORD)), InfoMenu.suggest("/bantron xu", "Gõ mã vụ và mức xử"));
+        m.add(Tip.of("&e✎ &fKháng án").accent("&e").desc("Nộp bằng chứng xin xử lại").line().kv("Lệnh", "/bantron khangan <mã> <bằng chứng>")
+                .click("Bấm để điền lệnh").apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.WRITABLE_BOOK)), InfoMenu.suggest("/bantron khangan", "Gõ mã vụ và bằng chứng"));
+        m.add(Tip.of("&e✉ &fKiến nghị").accent("&e").desc("Vua, thị trưởng hoặc đại diện hoà bình đưa một việc ra phiên họp").line()
+                .head("Lệnh").item("/bantron kiennghi trudiem <quốc gia> <điểm> <lý do>").item("/bantron kiennghi thuhoi <tổ chức> <lý do>").click("Bấm để điền lệnh")
+                .apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.PAPER)), InfoMenu.suggest("/bantron kiennghi", "Gõ nội dung kiến nghị"));
+        m.add(Tip.of("&6⌂ &fĐặt bàn họp").accent("&6").desc("Đặt chỗ họp ở nơi đang đứng (người có ghế)").line().kv("Lệnh", "/bantron datban")
+                .click("Bấm để đặt").apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.CRAFTING_TABLE)), InfoMenu.run("bantron datban"));
+        m.add(Tip.of("&b⌖ &fChọn thị trấn họp").accent("&b").line().kv("Lệnh", "/bantron chon <thị trấn>").click("Bấm để điền lệnh")
+                .apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.COMPASS)), InfoMenu.suggest("/bantron chon", "Gõ tên thị trấn"));
+        m.add(Tip.of("&d✉ &fCử sứ thần").accent("&d").desc("Cử người ngồi thay ghế của bạn").line().kv("Lệnh", "/bantron suthan <tên>")
+                .click("Bấm để điền lệnh").apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.NAME_TAG)), InfoMenu.suggest("/bantron suthan", "Gõ tên người"));
+        m.open(p);
+    }
+
     private void overview(CommandSender s) {
+        if (s instanceof Player pm) {
+            menu(pm);
+            return;
+        }
         long t = meetingTime();
         s.sendMessage(c("&6⚖ HỘI BÀN TRÒN &7- họp " + when(t) + (agenda().isEmpty() ? " (chưa có việc: không họp)" : "") + " tại " + tableDesc()
                 + ("MO".equals(data.getString("hop.trangthai")) ? " &a(đang họp)" : "")));

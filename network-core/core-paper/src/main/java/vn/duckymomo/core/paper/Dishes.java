@@ -217,7 +217,7 @@ final class Dishes implements Listener {
             return true;
         }
         Holder h = new Holder();
-        h.inv = Bukkit.createInventory(h, 27, c("&0🍲 Bếp ra trận"));
+        h.inv = Bukkit.createInventory(h, 27, c("&0♨ Bếp ra trận"));
         int slot = 10;
         for (Dish d : dishes.values()) {
             if (slot > 16) {
@@ -288,14 +288,14 @@ final class Dishes implements Listener {
             ItemMeta dm = dish.getItemMeta();
             dm.getPersistentDataContainer().set(KITCHEN, PersistentDataType.BYTE, (byte) 1);
             List<Component> lore = dm.lore() == null ? new ArrayList<>() : new ArrayList<>(dm.lore());
-            lore.add(c("&d🏡 Nấu ở bếp Thái Ấp: hiệu ứng +" + (long) kitchenBonus + "%"));
+            lore.add(c("&d⌂ Nấu ở bếp Thái Ấp: hiệu ứng +" + (long) kitchenBonus + "%"));
             dm.lore(lore);
             dish.setItemMeta(dm);
         }
         Rewards.hand(p, dish);
         Achievements.add(p, "nauan", 1);
         p.playSound(p.getLocation(), Sound.BLOCK_SMOKER_SMOKE, 0.8f, 1f);
-        p.sendMessage(c("&a🍲 Đã nấu " + dishName(d.id()) + "&a."));
+        p.sendMessage(c("&a♨ Đã nấu " + dishName(d.id()) + "&a."));
         h.inv.setItem(e.getRawSlot(), icon(p, d));
     }
 
@@ -334,7 +334,7 @@ final class Dishes implements Listener {
             }
             p.addPotionEffect(new PotionEffect(t, sec * 20, lv, false, true, true));
         }
-        p.sendMessage(c("&a🍲 " + dishName(id) + "&a: " + String.join(", ", fx.stream().map(Dishes::effectText).toList())));
+        p.sendMessage(c("&a♨ " + dishName(id) + "&a: " + String.join(", ", fx.stream().map(Dishes::effectText).toList())));
     }
 
     private static Component c(String s) {

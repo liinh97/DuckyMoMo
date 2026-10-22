@@ -522,15 +522,63 @@ final class ThaiAp implements Listener {
         return true;
     }
 
+    /** /thaiap không tham số khi chưa có đất, /thaiap giup: menu (22/10, trước in 6 dòng chat). Hàng 1 = đất của tôi, hàng 2 = khám phá. */
     private void help(Player p) {
-        p.sendMessage(c("&6🏡 Thái Ấp &7— đất riêng an toàn: không PvP, không bị vây, không quái. Không có quặng: chỉ để xây, làm nông, nuôi pet."));
-        p.sendMessage(c("&7Mua: &f/thaiap mua &7(" + money(prices.get(0)) + ", cạnh " + sizes.get(0) + " khối) · mở rộng: &f/thaiap morong"));
-        p.sendMessage(c("&7Về: &f/thaiap &7· mời bạn xây cùng: &f/thaiap moi <tên> &7(bỏ: duoi) · đặt tên: &f/thaiap ten <tên> &7· chỗ xuất hiện: &f/thaiap datspawn"));
-        p.sendMessage(c("&7Tham quan: &f/thaiap ghe <tên> &7· thích Thái Ấp đang đứng: &f/thaiap thich &7· đẹp nhất: &f/thaiap top"));
-        p.sendMessage(c("&7Bếp riêng: món &f/nauan &7nấu trong Thái Ấp của mình kéo dài hiệu ứng thêm &f" + (long) Dishes.kitchenBonus + "%&7."));
-        if (creativeLink) {
-            p.sendMessage(c("&d✦ Thái Ấp Sáng Tạo: &7bản sao mảnh đất của bạn ở chế độ sáng tạo (xây thoả thích, đồ không mang về được). Tới cổng: &f/thaiap sangtao"));
+        java.util.UUID u = p.getUniqueId();
+        boolean own = has(u);
+        InfoMenu m = InfoMenu.of("&6⌂ Thái Ấp").accent(org.bukkit.Material.LIME_STAINED_GLASS_PANE);
+        Tip top = Tip.of("&6⌂ &fThái Ấp").accent("&a")
+                .desc("Đất riêng an toàn: không PvP, không bị vây, không quái.", "Không có quặng: chỉ để xây, làm nông, nuôi pet.").line();
+        if (own) {
+            int lv = data.getInt(key(u) + ".cap", 0);
+            int sz = sizes.get(Math.min(sizes.size() - 1, lv));
+            top.head("Thái Ấp của bạn").kv("Tên", data.getString(key(u) + ".ten", p.getName())).kv("Cỡ", sz + "×" + sz)
+                    .kv("Lượt thích", String.valueOf(data.getStringList(key(u) + ".thich").size()))
+                    .kv("Người xây cùng", String.valueOf(data.getStringList(key(u) + ".tin").size()));
+        } else {
+            top.kv("Giá mua", money(prices.get(0)) + " &7(cạnh " + sizes.get(0) + " khối)");
         }
+        top.kv("Bếp riêng", "món /nauan nấu ở đây dài thêm " + (long) Dishes.kitchenBonus + "%");
+        m.top(top.apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.OAK_SAPLING)));
+        if (own) {
+            m.add(Tip.of("&a⌂ &fVề Thái Ấp").accent("&a").line().kv("Lệnh", "/thaiap").click("Bấm để về")
+                    .apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.OAK_DOOR)), InfoMenu.run("thaiap"));
+            int lv = data.getInt(key(u) + ".cap", 0);
+            Tip ex = Tip.of("&e⤢ &fMở rộng").accent("&e").desc("Đất to hơn: " + String.join(" → ", sizes.stream().map(x -> x + "×" + x).toList())).line();
+            if (lv + 1 < sizes.size() && lv + 1 < prices.size()) {
+                ex.kv("Lên " + sizes.get(lv + 1) + "×" + sizes.get(lv + 1), money(prices.get(lv + 1))).kv("Lệnh", "/thaiap morong").click("Bấm để mở rộng");
+            } else {
+                ex.check(true, "Đã to nhất");
+            }
+            m.add(ex.apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.SCAFFOLDING)), InfoMenu.run("thaiap morong"));
+        } else {
+            m.add(Tip.of("&a✚ &fMua Thái Ấp").accent("&a").desc("Mảnh đất " + sizes.get(0) + "×" + sizes.get(0) + ", viền lối mòn là ranh giới").line()
+                    .kv("Giá", money(prices.get(0))).kv("Lệnh", "/thaiap mua").click("Bấm để mua")
+                    .apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.GRASS_BLOCK)), InfoMenu.run("thaiap mua"));
+        }
+        m.add(Tip.of("&f✎ &fĐặt tên").line().kv("Lệnh", "/thaiap ten <tên>").click("Bấm để điền lệnh")
+                .apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.NAME_TAG)), InfoMenu.suggest("/thaiap ten", "Gõ tên Thái Ấp"));
+        m.add(Tip.of("&f⚑ &fĐặt chỗ xuất hiện").desc("Đứng ở chỗ muốn khách xuất hiện rồi bấm").line().kv("Lệnh", "/thaiap datspawn")
+                .click("Bấm để đặt ở chỗ đang đứng").apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.RED_BED)), InfoMenu.run("thaiap datspawn"));
+        m.add(Tip.of("&b☺ &fMời xây cùng").accent("&b").desc("Cho bạn bè xây trong đất của bạn").line()
+                .kv("Lệnh", "/thaiap moi <tên>").click("Bấm để điền lệnh").apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.PLAYER_HEAD)),
+                InfoMenu.suggest("/thaiap moi", "Gõ tên người"));
+        m.add(Tip.of("&c✖ &fĐuổi người xây cùng").accent("&c").desc("Bỏ quyền xây của một người").line()
+                .kv("Lệnh", "/thaiap duoi <tên>").click("Bấm để điền lệnh").apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.IRON_DOOR)),
+                InfoMenu.suggest("/thaiap duoi", "Gõ tên người"));
+        m.row();
+        m.add(Tip.of("&d✈ &fTham quan").accent("&d").desc("Ghé Thái Ấp của người khác").line().kv("Lệnh", "/thaiap ghe <tên>").click("Bấm để điền lệnh")
+                .apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.COMPASS)), InfoMenu.suggest("/thaiap ghe", "Gõ tên chủ đất"));
+        m.add(Tip.of("&c❤ &fThích").accent("&c").desc("Thích Thái Ấp bạn đang đứng").line().kv("Lệnh", "/thaiap thich").click("Bấm để thích")
+                .apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.POPPY)), InfoMenu.run("thaiap thich"));
+        m.add(Tip.of("&6♛ &fĐẹp nhất").accent("&6").desc("Thái Ấp nhiều lượt thích nhất").line().kv("Lệnh", "/thaiap top").click("Bấm để xem")
+                .apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.GOLD_INGOT)), InfoMenu.run("thaiap top"));
+        if (creativeLink) {
+            m.add(Tip.of("&d✦ &fThái Ấp Sáng Tạo").accent("&d").desc("Bản sao mảnh đất của bạn ở chế độ sáng tạo: xây thoả thích, đồ không mang về được").line()
+                    .kv("Lệnh", "/thaiap sangtao").click("Bấm để tới cổng").apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.AMETHYST_CLUSTER)),
+                    InfoMenu.run("thaiap sangtao"));
+        }
+        m.open(p);
     }
 
     private static String money(double v) {
@@ -560,7 +608,7 @@ final class ThaiAp implements Listener {
         save();
         drawBorder(n, sizes.get(0));
         p.teleport(home(u));
-        p.sendMessage(c("&a🏡 Đã mua Thái Ấp " + sizes.get(0) + "×" + sizes.get(0) + "! &7Viền lối mòn là ranh giới. Gõ &f/thaiap &7để xem lệnh."));
+        p.sendMessage(c("&a⌂ Đã mua Thái Ấp " + sizes.get(0) + "×" + sizes.get(0) + "! &7Viền lối mòn là ranh giới. Gõ &f/thaiap &7để xem lệnh."));
         writeJson();
     }
 
@@ -1004,7 +1052,7 @@ final class ThaiAp implements Listener {
     }
 
     private void top(CommandSender s) {
-        s.sendMessage(c("&6🏡 Thái Ấp được thích nhiều nhất"));
+        s.sendMessage(c("&6⌂ Thái Ấp được thích nhiều nhất"));
         List<String> ids = ranked();
         for (int i = 0; i < Math.min(10, ids.size()); i++) {
             String id = ids.get(i);

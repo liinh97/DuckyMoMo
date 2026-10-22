@@ -446,7 +446,7 @@ final class MediaProgram implements Listener {
                 long last = data.getLong(k(u) + ".bao-luc");
                 if (now - last >= announceCooldown * MIN) {
                     data.set(k(u) + ".bao-luc", now);
-                    Component msg = c("&c🔴 LIVE &f" + p.getName() + " &7đang livestream server! ")
+                    Component msg = c("&c● LIVE &f" + p.getName() + " &7đang livestream server! ")
                             .append(c("&b&n[Bấm để xem]").clickEvent(ClickEvent.openUrl(link)).hoverEvent(HoverEvent.showText(c("&7" + link))));
                     Bukkit.broadcast(msg);
                 }
@@ -479,24 +479,43 @@ final class MediaProgram implements Listener {
         return true;
     }
 
+    /** /sugia: menu (22/10, trước in chat). */
     private void info(Player p) {
         UUID u = p.getUniqueId();
-        p.sendMessage(c("&c◆ SỨ GIẢ &7— rank cho người livestream server (miễn phí, admin duyệt)"));
-        p.sendMessage(c("&7Chỉ tiêu 7 ngày: &f" + minSessions + " buổi &7(mỗi buổi ≥ " + minSessionMinutes + " phút) &7và &f" + fmt(minHours)
-                + " giờ &7live, tính khi bạn ONLINE trong server và kênh ĐANG LIVE (server tự kiểm)."));
+        InfoMenu m = InfoMenu.of("&c◆ Sứ Giả").accent(org.bukkit.Material.RED_STAINED_GLASS_PANE);
+        Tip top = Tip.of("&c◆ &fSứ Giả").sub("rank livestream").accent("&c")
+                .desc("Rank miễn phí cho người livestream server, admin duyệt.").line()
+                .head("Chỉ tiêu 7 ngày")
+                .item(minSessions + " buổi live (mỗi buổi ≥ " + minSessionMinutes + " phút)")
+                .item(fmt(minHours) + " giờ live")
+                .note("Tính khi bạn ONLINE trong server và kênh ĐANG LIVE (server tự kiểm).");
         if (registered(u)) {
             long now = System.currentTimeMillis();
-            long[] s = stats(u, now - 7 * DAY, now);
-            String st = switch (status(u)) {
-                case "DUYET" -> "đã duyệt";
-                case "CHO" -> "chờ duyệt";
-                case "TUCHOI" -> "bị từ chối";
-                default -> "hết hạn";
+            long[] st = stats(u, now - 7 * DAY, now);
+            String sv = switch (status(u)) {
+                case "DUYET" -> "&ađã duyệt";
+                case "CHO" -> "&echờ duyệt";
+                case "TUCHOI" -> "&cbị từ chối";
+                default -> "&8hết hạn";
             };
-            p.sendMessage(c("&7Đơn: &f" + st + " &7· kênh &f" + data.getString(k(u) + ".kenh") + " &7· 7 ngày: &f" + s[0] + " buổi, "
-                    + String.format(Locale.ROOT, "%.1f", (s[1] + s[2]) / 60.0) + " giờ"));
+            top.line().head("Đơn của bạn").kv("Trạng thái", sv).kv("Kênh", data.getString(k(u) + ".kenh", ""))
+                    .kv("7 ngày qua", st[0] + " buổi, " + String.format(Locale.ROOT, "%.1f", (st[1] + st[2]) / 60.0) + " giờ")
+                    .check(meets(st), meets(st) ? "đạt chỉ tiêu" : "chưa đạt chỉ tiêu");
         }
-        p.sendMessage(c("&f/sugia dangky <link kênh> &7· &f/sugia live [link] &7· &f/sugia tat &7· &f/sugia baocao <tên> <lý do>"));
+        m.top(top.apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.RED_BANNER)));
+        m.add(Tip.of("&a✎ &fĐăng ký").accent("&a").desc("Gửi link kênh TikTok / YouTube để admin duyệt").line()
+                .kv("Lệnh", "/sugia dangky <link kênh>").click("Bấm để điền lệnh").apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.WRITABLE_BOOK)),
+                InfoMenu.suggest("/sugia dangky", "Dán link kênh"));
+        m.add(Tip.of("&c● &fĐang live").accent("&c").desc("Báo server bạn bắt đầu live (để tính chỉ tiêu)").line()
+                .kv("Lệnh", "/sugia live [link]").click("Bấm để báo đang live").apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.REDSTONE_TORCH)),
+                pl -> { pl.closeInventory(); pl.performCommand("sugia live"); });
+        m.add(Tip.of("&7■ &fKết thúc live").desc("Báo server bạn đã tắt live").line()
+                .kv("Lệnh", "/sugia tat").click("Bấm để báo đã tắt").apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.LEVER)),
+                pl -> { pl.closeInventory(); pl.performCommand("sugia tat"); });
+        m.add(Tip.of("&e⚑ &fBáo cáo").accent("&e").desc("Báo admin một Sứ Giả làm sai (live nội dung xấu, không live…)").line()
+                .kv("Lệnh", "/sugia baocao <tên> <lý do>").click("Bấm để điền lệnh").apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.BELL)),
+                InfoMenu.suggest("/sugia baocao", "Gõ tên và lý do"));
+        m.open(p);
     }
 
     private boolean adminCommand(CommandSender s, String sub, String[] args) {

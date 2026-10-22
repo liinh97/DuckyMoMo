@@ -710,6 +710,7 @@ public final class DuckyMoMoCore extends JavaPlugin {
         WebLogin webLogin = new WebLogin(getConfig().getConfigurationSection("web-login"));
         bind("web", webLogin::command, "Đăng nhập web");
         getServer().getPluginManager().registerEvents(new ItemInspect(), this);   // phím F trong túi/menu, chọn món trade
+        getServer().getPluginManager().registerEvents(new InfoMenu.Events(this), this);   // menu thông tin dùng chung (thay hướng dẫn qua chat)
         getServer().getPluginManager().registerEvents(new AttackSpeed(), this);   // tốc đánh món Thư viện đồ (OCM bỏ hồi đòn)
         getServer().getPluginManager().registerEvents(new ItemPercent(), this);   // % sát thương / tốc đánh / đẩy lùi món Thư viện đồ
         getServer().getPluginManager().registerEvents(new SkillEnchants(), this);   // phù phép riêng Lướt / Hồi máu / Cầu lửa

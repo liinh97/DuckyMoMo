@@ -127,7 +127,7 @@ final class PetFish implements Listener {
             e.getWorld().spawnParticle(Particle.HEART, e.getLocation().add(0, e.getHeight() + 0.3, 0), 4, 0.3, 0.2, 0.3, 0);
         }
         p.playSound(p.getLocation(), Sound.ENTITY_GENERIC_EAT, 0.8f, 1.2f);
-        p.sendActionBar(c("&a🐟 Pet ăn cá: &fno +" + (long) f.food() + (f.heal() > 0 && hurt ? " &7· &fhồi " + (long) f.heal() + "% máu" : "")
+        p.sendActionBar(c("&a≈ Pet ăn cá: &fno +" + (long) f.food() + (f.heal() > 0 && hurt ? " &7· &fhồi " + (long) f.heal() + "% máu" : "")
                 + (exp > 0 ? " &7· &e+" + fmt(exp) + " kinh nghiệm &7(hôm nay " + fmt(got + exp) + "/" + (long) cap + ")"
                         : f.exp() > 0 ? " &7· hôm nay đã đủ kinh nghiệm từ cá" : "")));
     }

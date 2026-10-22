@@ -257,7 +257,7 @@ final class Kits implements Listener {
         data.set("players." + p.getUniqueId() + ".name", p.getName());
         save();
         List<String> got = rewards.give(p, k.rewards());
-        p.sendMessage(c("&a🎁 Đã nhận &f" + k.name() + (got.isEmpty() ? "&a." : "&a: &f" + String.join("&7, &f", got))));
+        p.sendMessage(c("&a❀ Đã nhận &f" + k.name() + (got.isEmpty() ? "&a." : "&a: &f" + String.join("&7, &f", got))));
         p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 0.6f, 1.4f);
         plugin.getLogger().info("Gói quà: " + p.getName() + " nhận " + k.id() + (force ? " (admin/lần đầu)" : ""));
         return null;

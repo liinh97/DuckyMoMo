@@ -393,7 +393,51 @@ final class PeaceCouncil {
         return true;
     }
 
+    /** /hoidong cho người chơi: menu (22/10, trước in chat). */
+    private void menu(Player p) {
+        String rep = representative();
+        InfoMenu m = InfoMenu.of("&a☮ Hội đồng Hoà Bình").accent(org.bukkit.Material.LIME_STAINED_GLASS_PANE);
+        Tip top = Tip.of("&a☮ &fHội đồng Hoà Bình").accent("&a").desc("Các thị trấn Liên minh Hoà Bình cùng quyết việc chung.").line()
+                .kv("Thị trấn có phiếu", String.valueOf(votingTowns().size()))
+                .kv("Đại diện", rep == null ? "&7chưa có" : rep + (data.getBoolean("daidien.tam") ? " &7(tạm giữ)" : "")
+                        + " &7tới " + WHEN.format(Instant.ofEpochMilli(data.getLong("daidien.den"))));
+        if (data.getBoolean("bau.mo")) {
+            top.gap().kv("Đang bầu tới", "&e" + WHEN.format(Instant.ofEpochMilli(data.getLong("bau.dong"))));
+            List<String> uv = data.getStringList("bau.ungvien");
+            top.head("Ứng viên").items(uv.isEmpty() ? List.of("&7chưa có") : uv);
+        }
+        m.top(top.apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.BELL)));
+        ConfigurationSection ks = data.getConfigurationSection("kien");
+        if (ks != null) {
+            for (String id : ks.getKeys(false)) {
+                if (!ks.isSet(id + ".ketqua")) {
+                    m.add(Tip.of("&e✉ &fKiến nghị " + id).accent("&e").desc(org.bukkit.ChatColor.stripColor(describe(id).replace('&', '§'))).line()
+                            .kv("Hạn", WHEN.format(Instant.ofEpochMilli(ks.getLong(id + ".den")))).kv("Lệnh", "/hoidong phieu " + id + " co|khong")
+                            .click("Bấm để bỏ phiếu").apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.PAPER)),
+                            InfoMenu.suggest("/hoidong phieu " + id, "Gõ co hoặc khong"));
+                }
+            }
+            m.row();
+        }
+        m.add(Tip.of("&a✋ &fỨng cử đại diện").accent("&a").line().kv("Lệnh", "/hoidong ungcu").click("Bấm để ứng cử")
+                .apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.GOLDEN_HELMET)), InfoMenu.run("hoidong ungcu"));
+        m.add(Tip.of("&b✔ &fBầu đại diện").accent("&b").desc("Mỗi thị trấn có phiếu bầu một người").line().kv("Lệnh", "/hoidong bau <tên>")
+                .click("Bấm để điền lệnh").apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.WRITABLE_BOOK)), InfoMenu.suggest("/hoidong bau", "Gõ tên ứng viên"));
+        m.add(Tip.of("&e✉ &fBỏ phiếu kiến nghị").accent("&e").line().kv("Lệnh", "/hoidong phieu <mã> co|khong").click("Bấm để điền lệnh")
+                .apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.PAPER)), InfoMenu.suggest("/hoidong phieu", "Gõ mã kiến nghị rồi co hoặc khong"));
+        m.add(Tip.of("&c✖ &fBãi miễn đại diện").accent("&c").desc("Đề nghị bãi miễn đại diện hiện tại").line().kv("Lệnh", "/hoidong baimien")
+                .click("Bấm để đề nghị").apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.IRON_BARS)), InfoMenu.run("hoidong baimien"));
+        m.add(Tip.of("&c⚠ &fĐề nghị đuổi thị trấn").accent("&c").desc("Đuổi một thị trấn khỏi Liên minh (Hội đồng bỏ phiếu)").line()
+                .kv("Lệnh", "/hoidong deuoi <thị trấn> <lý do>").click("Bấm để điền lệnh")
+                .apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.TNT)), InfoMenu.suggest("/hoidong deuoi", "Gõ tên thị trấn và lý do"));
+        m.open(p);
+    }
+
     private void info(CommandSender s) {
+        if (s instanceof Player pm) {
+            menu(pm);
+            return;
+        }
         String rep = representative();
         s.sendMessage(c("&aHội đồng Hoà Bình &7- " + votingTowns().size() + " thị trấn có phiếu"));
         s.sendMessage(c("&7Đại diện: &f" + (rep == null ? "chưa có" : rep + (data.getBoolean("daidien.tam") ? " (tạm giữ)" : "")

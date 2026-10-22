@@ -1100,7 +1100,7 @@ GUI:
       content: '&eChọn việc muốn làm với bộ đồ này:'
       edit-layout: '&e✏ Sắp xếp túi đồ'
       edit-settings: '&b⚙ Sửa tên / mô tả'
-      preview: '&a👁 Xem trước'
+      preview: '&a◉ Xem trước'
       duplicate: '&6❐ Nhân bản'
       delete: '&c✘ Xoá'
       back: '&7« Về danh sách bộ đồ'
@@ -1120,7 +1120,7 @@ GUI:
       title-item: 'Vật phẩm: %material%'
       title-empty: Ô trống
       edit-properties: '&e✏ Sửa thuộc tính'
-      change-material: '&b🔄 Đổi loại vật phẩm'
+      change-material: '&b↻ Đổi loại vật phẩm'
       clear-slot: '&c✘ Làm trống ô'
       choose-material: '&a+ Chọn vật phẩm'
       back: '&7« Quay lại'
@@ -1171,7 +1171,7 @@ GUI:
     question: \n&fBạn có nhận không?
     accept: '&a✔ Nhận'
     deny: '&c✘ Từ chối'
-    preview-custom-kit: '&b👁 Xem bộ đồ tự tạo'
+    preview-custom-kit: '&b◉ Xem bộ đồ tự tạo'
   settings:
     title: Cài đặt thách đấu
     buttons:

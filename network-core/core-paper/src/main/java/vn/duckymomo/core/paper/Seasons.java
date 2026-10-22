@@ -556,13 +556,18 @@ final class Seasons implements Listener {
         }
         String id = current();
         ConfigurationSection s = season(id);
-        sender.sendMessage(c("&6━━ " + name(id) + " &6━━"));
-        ConfigurationSection evNow = event();
-        if (evNow != null) {
-            sender.sendMessage(c("&d⚡ Sự kiện: " + evNow.getString("name", evNow.getName()) + " &7— " + evNow.getString("subtitle", "")));
+        List<String> upM = List.of(), downM = List.of(), bonusM = List.of(), hintsM = List.of();
+        if (!(sender instanceof Player)) {
+            sender.sendMessage(c("&6━━ " + name(id) + " &6━━"));
         }
-        sender.sendMessage(c(forced() ? "&7Admin đang ghi đè mùa (thử nghiệm)."
-                : "&7Còn &f" + daysLeft() + " ngày&7, sau đó sang " + name(next()) + "&7. Mỗi mùa " + daysPer() + " ngày."));
+        ConfigurationSection evNow = event();
+        if (!(sender instanceof Player)) {
+            if (evNow != null) {
+                sender.sendMessage(c("&d⚡ Sự kiện: " + evNow.getString("name", evNow.getName()) + " &7— " + evNow.getString("subtitle", "")));
+            }
+            sender.sendMessage(c(forced() ? "&7Admin đang ghi đè mùa (thử nghiệm)."
+                    : "&7Còn &f" + daysLeft() + " ngày&7, sau đó sang " + name(next()) + "&7. Mỗi mùa " + daysPer() + " ngày."));
+        }
         if (s != null) {
             List<String> up = new ArrayList<>();
             List<String> down = new ArrayList<>();
@@ -587,11 +592,16 @@ final class Seasons implements Listener {
                     }
                 }
             }
-            if (!up.isEmpty()) {
-                sender.sendMessage(c("&a▲ Lớn nhanh: &f" + String.join(", ", up)));
-            }
-            if (!down.isEmpty()) {
-                sender.sendMessage(c("&c▼ Lớn chậm: &f" + String.join(", ", down)));
+            if (sender instanceof Player) {
+                upM = up;
+                downM = down;
+            } else {
+                if (!up.isEmpty()) {
+                    sender.sendMessage(c("&a▲ Lớn nhanh: &f" + String.join(", ", up)));
+                }
+                if (!down.isEmpty()) {
+                    sender.sendMessage(c("&c▼ Lớn chậm: &f" + String.join(", ", down)));
+                }
             }
             // được mùa: mùa + sự kiện cộng lại (giống onHarvest)
             java.util.Map<String, Double> hbm = new java.util.LinkedHashMap<>();
@@ -610,15 +620,68 @@ final class Seasons implements Listener {
                         bonus.add(cropName(k) + " " + Math.round(v) + "%");
                     }
                 });
-                if (!bonus.isEmpty()) {
+                bonusM = bonus;
+                if (!bonus.isEmpty() && !(sender instanceof Player)) {
                     sender.sendMessage(c("&e✦ Được mùa (rơi thêm 1 khi gặt cây chín): &f" + String.join(", ", bonus)));
                 }
             }
-            for (String line : s.getStringList("hints")) {
-                sender.sendMessage(c(line));
+            hintsM = s.getStringList("hints");
+            if (!(sender instanceof Player)) {
+                for (String line : hintsM) {
+                    sender.sendMessage(c(line));
+                }
             }
         }
+        if (sender instanceof Player pm) {
+            menu(pm, id, evNow, upM, downM, bonusM, hintsM);
+        }
         return true;
+    }
+
+    /** /mua cho người chơi: menu (22/10, trước in chat). */
+    private void menu(Player p, String id, ConfigurationSection ev, List<String> up, List<String> down, List<String> bonus, List<String> hints) {
+        InfoMenu m = InfoMenu.of("&6" + name(id)).accent(org.bukkit.Material.YELLOW_STAINED_GLASS_PANE);
+        Tip top = Tip.of(name(id)).accent("&e").desc("Mùa đổi theo ngày thật, cây lớn và cá cắn câu khác nhau theo mùa.").line();
+        if (forced()) {
+            top.kv("Lịch", "&dadmin đang ghi đè mùa (thử nghiệm)");
+        } else {
+            top.kv("Còn", daysLeft() + " ngày").kv("Mùa sau", name(next())).kv("Mỗi mùa", daysPer() + " ngày");
+        }
+        if (ev != null) {
+            top.gap().kv("⚡ Sự kiện", "&d" + ev.getString("name", ev.getName())).note(ev.getString("subtitle", ""));
+        }
+        m.top(top.apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.SUNFLOWER)));
+        Tip a = Tip.of("&a▲ &fCây lớn nhanh").accent("&a");
+        if (up.isEmpty()) {
+            a.desc("Không có cây nào lớn nhanh hơn thường");
+        } else {
+            a.items(up);
+        }
+        m.add(a.apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.WHEAT_SEEDS)));
+        Tip b = Tip.of("&c▼ &fCây lớn chậm").accent("&c");
+        if (down.isEmpty()) {
+            b.desc("Không có cây nào lớn chậm hơn thường");
+        } else {
+            b.items(down);
+        }
+        m.add(b.apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.DEAD_BUSH)));
+        Tip d = Tip.of("&e✦ &fĐược mùa").accent("&e").desc("Gặt cây chín có tỉ lệ rơi thêm 1");
+        if (bonus.isEmpty()) {
+            d.line().note("Mùa này không có cây được mùa");
+        } else {
+            d.line().items(bonus);
+        }
+        m.add(d.apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.HAY_BLOCK)));
+        Tip h = Tip.of("&b✎ &fMẹo mùa này").accent("&b");
+        if (hints.isEmpty()) {
+            h.desc("Không có mẹo riêng");
+        } else {
+            hints.forEach(x -> h.item(x.replaceAll("^(&[0-9a-fk-or])+", "")));
+        }
+        m.add(h.apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.BOOK)));
+        m.add(Tip.of("&3≈ &fCá theo mùa").desc("Mỗi mùa có loài cá dễ câu hơn").line().kv("Lệnh", "/emf journal").click("Bấm để xem sổ tay cá")
+                .apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.COD)), pl -> { pl.closeInventory(); pl.performCommand("emf journal"); });
+        m.open(p);
     }
 
     List<String> tab(CommandSender sender, String[] a) {

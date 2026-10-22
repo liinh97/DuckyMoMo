@@ -453,7 +453,7 @@ final class PlayerSettings implements Listener {
             boolean noCheck = dc != null && !dc.checkedToday(p.getUniqueId());
             int left = dq == null ? 0 : dq.remaining(p.getUniqueId());
             if (noCheck || left > 0) {
-                p.sendMessage(c("&e🔔 " + (noCheck ? "Hôm nay bạn chưa điểm danh. " : "") + (left > 0 ? "Còn &f" + left + " &enhiệm vụ hằng ngày. " : ""))
+                p.sendMessage(c("&e♫ " + (noCheck ? "Hôm nay bạn chưa điểm danh. " : "") + (left > 0 ? "Còn &f" + left + " &enhiệm vụ hằng ngày. " : ""))
                         .append(c(noCheck ? "&a&n[Điểm danh]" : "&a&n[Xem nhiệm vụ]").clickEvent(ClickEvent.runCommand(noCheck ? "/diemdanh" : "/nhiemvu")))
                         .append(c(" &8(tắt nhắc: /caidat)")));
             }

@@ -92,7 +92,7 @@ final class HallOfFameSnapshot {
             write(sub.equals("chot"), s);
             return true;
         }
-        s.sendMessage(c("&6🏛 Vinh danh mùa " + season + (locked() ? " &a(đã chốt)" : " &7(tạm tính, cập nhật 30 phút/lần)")));
+        s.sendMessage(c("&6⛫ Vinh danh mùa " + season + (locked() ? " &a(đã chốt)" : " &7(tạm tính, cập nhật 30 phút/lần)")));
         if (board != null) {
             var top = board.topNations(3);
             for (int i = 0; i < top.size(); i++) {
@@ -145,7 +145,7 @@ final class HallOfFameSnapshot {
             Files.createDirectories(dir.toPath());
             Files.writeString(file().toPath(), new GsonBuilder().setPrettyPrinting().create().toJson(root), StandardCharsets.UTF_8);
             if (who != null) {
-                who.sendMessage(c(lock ? "&a🏛 Đã chốt vinh danh mùa " + season + ". Sảnh và web cập nhật trong 1 phút." : "&aĐã ghi bản tạm tính mùa " + season + "."));
+                who.sendMessage(c(lock ? "&a⛫ Đã chốt vinh danh mùa " + season + ". Sảnh và web cập nhật trong 1 phút." : "&aĐã ghi bản tạm tính mùa " + season + "."));
             }
         } catch (IOException e) {
             plugin.getLogger().warning("Không ghi được vinh danh (" + dir + "): " + e.getMessage());

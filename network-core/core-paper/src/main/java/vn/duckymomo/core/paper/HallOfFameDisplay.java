@@ -48,7 +48,7 @@ final class HallOfFameDisplay {
 
     private static final LegacyComponentSerializer LEGACY = LegacyComponentSerializer.legacyAmpersand();
     static final List<String> CATS = List.of("tieude", "bachu", "chienthan", "phuho", "kientrucsu", "dautruong", "pet");
-    private static final String[] MEDAL = {"&6🥇", "&f🥈", "&c🥉"};
+    private static final String[] MEDAL = {"&6①", "&f②", "&c③"};
     private static final Map<String, String> HE_VI = Map.of("Combat", "Chiến Binh", "Utility", "Hậu Cần", "PvP", "Đấu Sĩ", "Ride", "Thú Cưỡi", "Farm", "Nông Trại");
 
     private record Anchor(String season, String cat, Location loc) { }
@@ -168,7 +168,7 @@ final class HallOfFameDisplay {
         List<String[]> heads = new ArrayList<>();   // {tên, uuid}
         switch (a.cat()) {
             case "tieude" -> {
-                lines.add("&6🏛 QUẢNG TRƯỜNG DANH VỌNG");
+                lines.add("&6⛫ QUẢNG TRƯỜNG DANH VỌNG");
                 lines.add("&eMùa " + season + (tam ? " &7— đang diễn ra" : " &7— đã khép lại"));
                 lines.add("&7Danh hiệu, tượng và tên khắc ở đây giữ mãi qua mọi mùa.");
             }
@@ -210,8 +210,8 @@ final class HallOfFameDisplay {
             case "chienthan", "phuho", "dautruong" -> {
                 String title = switch (a.cat()) {
                     case "chienthan" -> "&c⚔ CHIẾN THẦN";
-                    case "phuho" -> "&e💰 ĐẠI PHÚ HỘ";
-                    default -> "&b🏟 ĐẤU TRƯỜNG";
+                    case "phuho" -> "&e⛃ ĐẠI PHÚ HỘ";
+                    default -> "&b⚔ ĐẤU TRƯỜNG";
                 };
                 String unit = a.cat().equals("phuho") ? " xu" : " điểm";
                 lines.add(title + tag);
@@ -226,7 +226,7 @@ final class HallOfFameDisplay {
                 }
             }
             case "kientrucsu" -> {
-                lines.add("&b🏯 KIẾN TRÚC SƯ" + tag);
+                lines.add("&b⛫ KIẾN TRÚC SƯ" + tag);
                 JsonObject k = s != null && s.has("kien_truc_su") ? s.getAsJsonObject("kien_truc_su") : null;
                 if (k == null) {
                     lines.add("&7Chưa bình chọn.");
@@ -239,7 +239,7 @@ final class HallOfFameDisplay {
                 }
             }
             case "pet" -> {
-                lines.add("&d🐾 PET MẠNH NHẤT" + tag);
+                lines.add("&d❖ PET MẠNH NHẤT" + tag);
                 JsonArray ps = arr(s, "pet");
                 if (ps.isEmpty()) {
                     lines.add("&7Chưa có pet nào.");
@@ -384,7 +384,7 @@ final class HallOfFameDisplay {
             return true;
         }
         TreeMap<Integer, JsonObject> all = seasons();
-        s.sendMessage(c("&6🏛 Quảng trường Danh vọng &7— " + (all.isEmpty() ? "chưa có mùa nào" : all.size() + " mùa")));
+        s.sendMessage(c("&6⛫ Quảng trường Danh vọng &7— " + (all.isEmpty() ? "chưa có mùa nào" : all.size() + " mùa")));
         for (Map.Entry<Integer, JsonObject> e : all.descendingMap().entrySet()) {
             JsonArray ns = arr(e.getValue(), "ba_chu");
             s.sendMessage(c("&eMùa " + e.getKey() + ("tam".equals(str(e.getValue(), "trang_thai")) ? " &7(đang diễn ra)" : "") + "&7: Bá Chủ &f"

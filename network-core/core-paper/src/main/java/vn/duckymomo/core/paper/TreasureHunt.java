@@ -206,7 +206,7 @@ final class TreasureHunt implements Listener {
         ItemStack it = new ItemStack(Material.PAPER);
         ItemMeta m = it.getItemMeta();
         int rx = (int) Math.round(l.getX() / 50.0) * 50, rz = (int) Math.round(l.getZ() / 50.0) * 50;
-        Tip tip = Tip.of("&6🗺 &fBản đồ kho báu").sub(t.name()).desc("Cầm trên tay để dò: lạnh → ấm → nóng").line()
+        Tip tip = Tip.of("&6⌖ &fBản đồ kho báu").sub(t.name()).desc("Cầm trên tay để dò: lạnh → ấm → nóng").line()
                 .kv("Vùng", z.name()).kv("Quanh toạ độ", "X " + rx + " Z " + rz + " &8(±50)").line()
                 .click("Tới nơi", "ngồi xuống (Shift) để đào").note("Lính canh sẽ xuất hiện!");
         m.displayName(tip.name());
@@ -244,7 +244,7 @@ final class TreasureHunt implements Listener {
             save();
         }
         p.playSound(p.getLocation(), Sound.ITEM_BOOK_PAGE_TURN, 1f, 0.8f);
-        p.sendMessage(c("&6🗺 Bạn nhặt được &eBản đồ kho báu &7(" + t.name() + "&7) &6ở vùng &f" + z[0].name() + "&6. Cầm trên tay để dò."));
+        p.sendMessage(c("&6⌖ Bạn nhặt được &eBản đồ kho báu &7(" + t.name() + "&7) &6ở vùng &f" + z[0].name() + "&6. Cầm trên tay để dò."));
         return true;
     }
 
@@ -274,12 +274,12 @@ final class TreasureHunt implements Listener {
             }
             World w = Bukkit.getWorld(v[1]);
             if (w == null || p.getWorld() != w) {
-                p.sendActionBar(c("&7🗺 Kho báu ở thế giới khác."));
+                p.sendActionBar(c("&7⌖ Kho báu ở thế giới khác."));
                 continue;
             }
             double dx = p.getLocation().getX() - Integer.parseInt(v[2]), dz = p.getLocation().getZ() - Integer.parseInt(v[4]);
             double d = Math.sqrt(dx * dx + dz * dz);
-            p.sendActionBar(c(d <= digRadius ? "&c🔥🔥 Ngay dưới chân! &eNgồi xuống (Shift) để đào" : d < 30 ? "&c🔥 Nóng lắm rồi (" + (int) d + " khối)"
+            p.sendActionBar(c(d <= digRadius ? "&c✹✹ Ngay dưới chân! &eNgồi xuống (Shift) để đào" : d < 30 ? "&c✹ Nóng lắm rồi (" + (int) d + " khối)"
                     : d < 100 ? "&6☀ Ấm dần…" : d < 300 ? "&b❄ Lạnh" : "&9❄❄ Rất xa"));
         }
         long now = System.currentTimeMillis();
@@ -349,7 +349,7 @@ final class TreasureHunt implements Listener {
         p.sendMessage(c("&6⛏ Đang đào kho báu " + t.name() + "&6! " + (t.guards() > 0 ? "&cHạ hết " + t.guards() + " lính canh trong "
                 + guardMs / 60_000 + " phút &6(đứng trong 40 khối) để mở rương." : "")));
         if (t.broadcast()) {
-            PlayerSettings.broadcast("sukien", c("&6🗺 &f" + p.getName() + " &6đang đào &e" + t.name() + " &6quanh &fX " + ground.getBlockX() / 50 * 50 + " Z "
+            PlayerSettings.broadcast("sukien", c("&6⌖ &f" + p.getName() + " &6đang đào &e" + t.name() + " &6quanh &fX " + ground.getBlockX() / 50 * 50 + " Z "
                     + ground.getBlockZ() / 50 * 50 + "&6! Ai nhanh chân thì tới tranh."));
         }
     }
@@ -374,7 +374,7 @@ final class TreasureHunt implements Listener {
             }
         }
         if (d.tier.broadcast()) {
-            PlayerSettings.broadcast("sukien", c("&6🗺 &f" + p.getName() + " &6đã mở được &e" + d.tier.name() + "&6!"));
+            PlayerSettings.broadcast("sukien", c("&6⌖ &f" + p.getName() + " &6đã mở được &e" + d.tier.name() + "&6!"));
         }
     }
 
@@ -413,7 +413,26 @@ final class TreasureHunt implements Listener {
             }
             return true;
         }
-        s.sendMessage(c("&6🗺 Bản đồ kho báu"));
+        if (s instanceof Player pm) {   // menu (22/10, trước in chat)
+            InfoMenu m = InfoMenu.of("&6⌖ Bản đồ kho báu").accent(org.bukkit.Material.YELLOW_STAINED_GLASS_PANE);
+            m.top(Tip.of("&6⌖ &fBản đồ kho báu").accent("&6").desc("Bản đồ dẫn tới rương báu có lính canh.").line()
+                    .head("Nhặt được khi").item("Câu cá: " + fishChance + "%").item("Hạ quái: " + mobChance + "%").kv("Tối đa", maxPerDay + " bản đồ/ngày")
+                    .gap().head("Cách đào").item("Cầm bản đồ: thanh dưới màn hình báo lạnh / ấm / nóng").item("Tới nơi thì ngồi xuống (Shift) để đào")
+                    .item("Hạ hết lính canh để mở rương").apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.FILLED_MAP)));
+            org.bukkit.Material[] icons = {org.bukkit.Material.CHEST, org.bukkit.Material.TRAPPED_CHEST, org.bukkit.Material.ENDER_CHEST, org.bukkit.Material.SHULKER_BOX};
+            int k = 0;
+            for (Tier t : tiers) {
+                List<String> d = rewards == null ? t.rewards() : rewards.describe(t.rewards());
+                Tip tt = Tip.of("&e" + t.name()).accent("&e").kv("Lính canh", String.valueOf(t.guards())).gap().head("Phần thưởng").items(d);
+                if (t.broadcast()) {
+                    tt.gap().raw("&c⚠ Báo cả server khi đào");
+                }
+                m.add(tt.apply(new org.bukkit.inventory.ItemStack(icons[Math.min(k++, icons.length - 1)])));
+            }
+            m.open(pm);
+            return true;
+        }
+        s.sendMessage(c("&6⌖ Bản đồ kho báu"));
         s.sendMessage(c("&7Nhặt được khi &fcâu cá &7(" + fishChance + "%) hoặc &fhạ quái &7(" + mobChance + "%), tối đa " + maxPerDay + " bản đồ/ngày."));
         s.sendMessage(c("&7Cầm bản đồ trên tay: thanh dưới màn hình báo lạnh/ấm/nóng. Tới nơi thì ngồi xuống (Shift) để đào, hạ hết lính canh để mở rương."));
         for (Tier t : tiers) {

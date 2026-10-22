@@ -615,7 +615,7 @@ final class DungeonGate implements Listener {
             List<String> names = ps.stream().map(Player::getName).toList();
             data.set("dau." + id + ".ten", names);
             data.set("dau." + id + ".luc", System.currentTimeMillis());
-            PlayerSettings.broadcast("sukien", c("&6🏆 ĐẦU TIÊN! &e" + String.join(", ", names) + " &6là người đầu tiên của server vượt &f" + d.name() + "&6!"));
+            PlayerSettings.broadcast("sukien", c("&6♛ ĐẦU TIÊN! &e" + String.join(", ", names) + " &6là người đầu tiên của server vượt &f" + d.name() + "&6!"));
         }
         data.set("dem." + id, data.getInt("dem." + id, 0) + 1);
         long start = ps.stream().map(p -> enteredAt.get(p.getUniqueId())).filter(java.util.Objects::nonNull).min(Long::compare).orElse(0L);
@@ -754,7 +754,7 @@ final class DungeonGate implements Listener {
     private ItemStack keyItem(Dg d, Player owner) {
         ItemStack it = new ItemStack(Material.TRIAL_KEY);
         ItemMeta m = it.getItemMeta();
-        Tip t = Tip.of("&6🗝 &fChìa khoá " + d.name()).accent("&6").desc("Mở vĩnh viễn tầng " + d.name()).line();
+        Tip t = Tip.of("&6⚿ &fChìa khoá " + d.name()).accent("&6").desc("Mở vĩnh viễn tầng " + d.name()).line();
         if (!d.level().isBlank()) {
             t.kv("Cấp", d.level());
         }
@@ -798,7 +798,7 @@ final class DungeonGate implements Listener {
         data.set("mo." + uk(p.getUniqueId()), l);
         save();
         p.playSound(p.getLocation(), Sound.BLOCK_VAULT_OPEN_SHUTTER, 1f, 1f);
-        p.sendMessage(c("&6🗝 Đã dùng Chìa khoá: tầng &e" + d.name() + " &6mở vĩnh viễn cho bạn!"));
+        p.sendMessage(c("&6⚿ Đã dùng Chìa khoá: tầng &e" + d.name() + " &6mở vĩnh viễn cho bạn!"));
         refresh(p);
         return true;
     }
@@ -810,7 +810,7 @@ final class DungeonGate implements Listener {
                 continue;
             }
             Rewards.hand(p, keyItem(next, p));
-            p.sendMessage(c("&6🗝 Trùm cuối rơi &eChìa khoá " + next.name() + "&6! Dùng để mở tầng sau: ")
+            p.sendMessage(c("&6⚿ Trùm cuối rơi &eChìa khoá " + next.name() + "&6! Dùng để mở tầng sau: ")
                     .append(button(" &e[Mở " + next.name() + "]", "/dungeon vao " + next.id(), "Dùng chìa, mở vĩnh viễn tầng " + next.name())));
         }
     }
@@ -961,7 +961,7 @@ final class DungeonGate implements Listener {
         ThreadLocalRandom r = ThreadLocalRandom.current();
         int x = s.getBlockX() + r.nextInt(-40, 41), z = s.getBlockZ() + r.nextInt(-40, 41);
         p.playSound(p.getLocation(), Sound.BLOCK_END_PORTAL_FRAME_FILL, 1f, 0.6f);
-        p.sendMessage(c("&5🗺 Dưới đáy rương có mảnh giấy cũ: &d\"Lối vào " + d.name() + " ở quanh X " + x + " Z " + z
+        p.sendMessage(c("&5⌖ Dưới đáy rương có mảnh giấy cũ: &d\"Lối vào " + d.name() + " ở quanh X " + x + " Z " + z
                 + (d.nightOnly() ? ", chỉ hiện lúc đêm" : "") + "\"&5. &7(trong khoảng 40 khối, tìm hạt tím)"));
         return true;
     }
@@ -1172,7 +1172,7 @@ final class DungeonGate implements Listener {
             return;
         }
         if (d.type().equals("gate")) {
-            p.sendMessage(c("&5🌀 " + d.name() + " chỉ vào được qua &dCổng Hoang&5: tìm cổng ngụy trang trên bản đồ (/conghoang xem tin đồn)."));
+            p.sendMessage(c("&5◎ " + d.name() + " chỉ vào được qua &dCổng Hoang&5: tìm cổng ngụy trang trên bản đồ (/conghoang xem tin đồn)."));
             return;
         }
         String tp = timeProblem(d);
@@ -1415,7 +1415,7 @@ final class DungeonGate implements Listener {
     boolean passThrough(Player p, String id) {
         Dg d = dungeons.get(id);
         if (d == null || !hooked || !installed(id)) {
-            p.sendMessage(c("&5🌀 Cổng còn đang ngủ (dungeon " + (d == null ? id : d.name()) + " chưa sẵn sàng). Quay lại sau."));
+            p.sendMessage(c("&5◎ Cổng còn đang ngủ (dungeon " + (d == null ? id : d.name()) + " chưa sẵn sàng). Quay lại sau."));
             return false;
         }
         if (inside.containsKey(p.getUniqueId())) {
@@ -1434,7 +1434,168 @@ final class DungeonGate implements Listener {
         p.performCommand("em dungeontp " + d.id() + ".yml");
     }
 
+    /** Cách vào từng loại (dòng mô tả trong menu). */
+    private static final Map<String, String> TYPE_HOW = Map.of(
+            "chain", "Đi lần lượt: trùm cuối mỗi tầng rơi Chìa khoá, dùng chìa là mở vĩnh viễn tầng sau.",
+            "hidden", "Không có lối vào trong menu: tự tìm cổng giấu trên bản đồ, để ý hạt tím lấp lánh.",
+            "luck", "Cần Vé Vận Mệnh rơi hiếm từ quái.",
+            "ticket", "Mua vé bằng xu, mỗi vé một lượt; chỉ trừ vé khi thật sự vào.",
+            "server", "Cả server góp xu vào quỹ; đủ mục tiêu thì cổng mở cho mọi người.",
+            "gate", "Chỉ vào được qua Cổng Hoang ngụy trang trên bản đồ (/conghoang).");
+    private static final Map<String, Material> TYPE_ICON = Map.of("chain", Material.TRIPWIRE_HOOK, "hidden", Material.ENDER_EYE,
+            "luck", Material.RABBIT_FOOT, "ticket", Material.PAPER, "server", Material.BELL, "gate", Material.END_PORTAL_FRAME);
+
+    /** /dungeon cho người chơi: menu theo loại (22/10, trước in ~25 dòng chat). Trang chính = các loại + dungeon của tuần;
+     *  bấm loại mở trang con. Bấm dungeon = như bấm tên trong chat (vào / mua vé / góp quỹ). */
+    private void menu(Player p) {
+        UUID u = p.getUniqueId();
+        String weekly = weeklyId();
+        InfoMenu m = InfoMenu.of("&5⛩ Cổng Dungeon").accent(Material.PURPLE_STAINED_GLASS_PANE);
+        Tip top = Tip.of("&5⛩ &fCổng Dungeon").accent("&d")
+                .desc("Đồ hiếm, quái mạnh chỉ có trong dungeon.", "Chọn loại để xem các cổng và cách vào.");
+        if (weekly != null) {
+            top.line().kv("★ Dungeon của tuần", "&e" + name(weekly));
+            if (!weeklyRewards.isEmpty() && rewards != null) {
+                top.kv("Thưởng thêm", String.join(", ", rewards.describe(weeklyRewards)) + " &7(tối đa " + weeklyMax + " lần/tuần)");
+            }
+        }
+        m.top(top.apply(new ItemStack(Material.ENDER_EYE)));
+        java.util.Map<String, List<Dg>> byType = new java.util.LinkedHashMap<>();
+        for (Dg d : dungeons.values()) {
+            byType.computeIfAbsent(d.type(), k -> new java.util.ArrayList<>()).add(d);
+        }
+        for (var e : byType.entrySet()) {
+            String type = e.getKey();
+            List<Dg> list = e.getValue();
+            long done = list.stream().filter(d -> doneFor(u, d)).count();
+            Tip t = Tip.of("&d" + TYPE_VI.get(type)).sub(list.size() + " cổng").accent("&d").desc(TYPE_HOW.getOrDefault(type, "")).line();
+            for (Dg d : list) {
+                boolean hid = type.equals("hidden") && !found(u, d.id());
+                t.raw((doneFor(u, d) ? "&a✔ " : "&8○ ") + (hid ? "&7???" : "&f" + d.name()) + (d.level().isBlank() ? "" : " &8cấp " + d.level())
+                        + (d.id().equals(weekly) ? " &6★" : ""));
+            }
+            t.line().click("Bấm để xem từng cổng");
+            ItemStack icon = t.apply(new ItemStack(TYPE_ICON.getOrDefault(type, Material.COMPASS), (int) Math.max(1, Math.min(64, list.size()))));
+            if (done > 0) {
+                icon.editMeta(meta -> meta.setEnchantmentGlintOverride(true));
+            }
+            m.add(icon, pl -> typeMenu(pl, type));
+        }
+        if (weekly != null && dungeons.containsKey(weekly)) {
+            m.row();
+            Dg w = dungeons.get(weekly);
+            var en = entry(p, w, weekly);
+            m.add(en.getKey(), en.getValue());
+        }
+        m.open(p);
+    }
+
+    private boolean doneFor(UUID u, Dg d) {
+        return switch (d.type()) {
+            case "chain" -> cleared(u, d.id());
+            case "hidden" -> found(u, d.id());
+            case "server" -> serverOpen(d.id());
+            default -> false;
+        };
+    }
+
+    /** Trang con: các dungeon của một loại. */
+    private void typeMenu(Player p, String type) {
+        String weekly = weeklyId();
+        InfoMenu m = InfoMenu.of("&5⛩ " + TYPE_VI.get(type)).accent(Material.PURPLE_STAINED_GLASS_PANE).back(this::menu);
+        m.top(Tip.of("&d" + TYPE_VI.get(type)).accent("&d").desc(TYPE_HOW.getOrDefault(type, ""))
+                .apply(new ItemStack(TYPE_ICON.getOrDefault(type, Material.COMPASS))));
+        for (Dg d : dungeons.values()) {
+            if (d.type().equals(type)) {
+                var en = entry(p, d, weekly);
+                m.add(en.getKey(), en.getValue());
+            }
+        }
+        m.open(p);
+    }
+
+    /** Ô của một dungeon (tooltip + việc khi bấm). */
+    private java.util.Map.Entry<ItemStack, java.util.function.Consumer<Player>> entry(Player p, Dg d, String weekly) {
+        UUID u = p.getUniqueId();
+        boolean inst = !hooked || installed(d.id());
+        boolean hiddenUnknown = d.type().equals("hidden") && !found(u, d.id());
+        boolean done = switch (d.type()) {
+            case "chain" -> cleared(u, d.id()) || freeAccess(u, d);
+            case "hidden" -> found(u, d.id());
+            case "server" -> serverOpen(d.id());
+            case "ticket" -> tickets(u, d.id()) > 0;
+            default -> false;
+        };
+        String state;
+        if (!inst) {
+            state = "&8chưa cài";
+        } else if (!baseOk(d)) {
+            state = "&8chờ khai hoang";
+        } else {
+            state = switch (d.type()) {
+                case "chain" -> cleared(u, d.id()) ? "&a✔ đã vượt" : freeAccess(u, d) ? "&e⚿ đã mở"
+                    : keySlot(p, d.id()) != null ? "&6⚿ có chìa trong túi" : "&c✖ cần Chìa khoá của trùm " + name(d.requires());
+                case "hidden" -> found(u, d.id()) ? "&a✔ đã tìm ra" : "&7chưa tìm ra";
+                case "luck" -> "&7Vé Vận Mệnh" + (d.rollChance() < 100 ? ", " + Math.round(d.rollChance()) + "% mở" : "");
+                case "ticket" -> "&f" + tickets(u, d.id()) + " &7vé · " + money(d.price()) + "/vé";
+                case "gate" -> "&5◎ tìm Cổng Hoang để vào";
+                case "server" -> serverOpen(d.id()) ? "&a⛩ đang mở" + until(d.id())
+                    : "&7quỹ &f" + money(data.getDouble("quy." + d.id() + ".xu", 0)) + " &7/ " + money(d.goal());
+                default -> "";
+            };
+        }
+        Tip t = Tip.of((done ? "&a" : "&f") + (hiddenUnknown ? "???" : d.name()) + (d.id().equals(weekly) ? " &6★" : ""))
+                .sub(d.level().isBlank() ? TYPE_VI.get(d.type()) : "cấp " + d.level()).accent("&d")
+                .desc(TYPE_VI.get(d.type()), TYPE_HOW.getOrDefault(d.type(), "")).line()
+                .kv("Trạng thái", state);
+        if (hiddenUnknown && !d.hint().isBlank()) {
+            t.kv("Gợi ý", "&7" + d.hint());
+        }
+        List<String> dk = condText(d);
+        if (!dk.isEmpty()) {
+            t.gap().head("Điều kiện").items(dk);
+        }
+        List<String> rec = data.getStringList("kyluc." + d.id());
+        if (!rec.isEmpty()) {
+            String[] r0 = rec.get(0).split(";", 2);
+            t.kv("⏱ Kỷ lục", clock(Long.parseLong(r0[0])) + " &7(" + (r0.length > 1 ? r0[1] : "") + ")");
+        }
+        if (d.id().equals(weekly)) {
+            t.kv("★", "&eDungeon của tuần, vượt được thưởng thêm");
+        }
+        java.util.function.Consumer<Player> act = null;
+        boolean locked = d.type().equals("chain") && !cleared(u, d.id()) && !freeAccess(u, d) && keySlot(p, d.id()) == null;
+        if (locked) {
+            t.line().deny("Chưa mở: cần Chìa khoá của trùm " + name(d.requires()));
+        } else if (inst && baseOk(d) && !d.type().equals("gate") && !hiddenUnknown) {
+            t.line();
+            if (d.type().equals("ticket") && tickets(u, d.id()) == 0) {
+                t.click("Bấm để mua vé (" + money(d.price()) + ")");
+                act = pl -> { pl.closeInventory(); pl.performCommand("dungeon mua " + d.id()); };
+            } else if (d.type().equals("server") && !serverOpen(d.id())) {
+                t.click("Bấm để góp quỹ (gõ số xu)");
+                act = pl -> {
+                pl.closeInventory();
+                pl.sendMessage(c("&5⛩ &7Góp quỹ " + d.name() + ": ").append(c("&e[bấm rồi gõ số xu]")
+                        .clickEvent(ClickEvent.suggestCommand("/dungeon gop " + d.id() + " "))));
+                };
+            } else {
+                t.click("Bấm để vào");
+                act = pl -> { pl.closeInventory(); pl.performCommand("dungeon vao " + d.id()); };
+            }
+        }
+        ItemStack icon = t.apply(new ItemStack(hiddenUnknown ? Material.GRAY_DYE : TYPE_ICON.getOrDefault(d.type(), Material.COMPASS)));
+        if (done || d.id().equals(weekly)) {
+            icon.editMeta(meta -> meta.setEnchantmentGlintOverride(true));
+        }
+        return java.util.Map.entry(icon, act == null ? pl -> { } : act);
+    }
+
     private void list(CommandSender s) {
+        if (s instanceof Player pl) {
+            menu(pl);
+            return;
+        }
         UUID u = s instanceof Player p ? p.getUniqueId() : null;
         s.sendMessage(c("&5━━ ⛩ CỔNG DUNGEON ━━"));
         s.sendMessage(c("&7Bấm vào tên để vào. Đồ trong dungeon chỉ có ở đây; mỗi boss có thời gian chờ nhận lại đồ."));
@@ -1461,12 +1622,12 @@ final class DungeonGate implements Listener {
                 state = "";
             } else {
                 state = switch (d.type()) {
-                    case "chain" -> cleared(u, d.id()) ? "&a✔ đã vượt" : freeAccess(u, d) ? "&e🗝 đã mở"
-                            : s instanceof Player pl && keySlot(pl, d.id()) != null ? "&6🗝 có chìa trong túi, bấm để mở" : "&c🔒 cần Chìa khoá (từ trùm " + name(d.requires()) + ")";
+                    case "chain" -> cleared(u, d.id()) ? "&a✔ đã vượt" : freeAccess(u, d) ? "&e⚿ đã mở"
+                            : s instanceof Player pl && keySlot(pl, d.id()) != null ? "&6⚿ có chìa trong túi, bấm để mở" : "&c✖ cần Chìa khoá (từ trùm " + name(d.requires()) + ")";
                     case "hidden" -> found(u, d.id()) ? "&a✔ đã tìm ra" : "&7??? " + (d.hint().isBlank() ? "" : d.hint());
                     case "luck" -> "&7Vé Vận Mệnh rơi hiếm" + (d.rollChance() < 100 ? ", " + Math.round(d.rollChance()) + "% mở" : "");
                     case "ticket" -> "&7" + money(d.price()) + "/vé · đang có &f" + tickets(u, d.id());
-                    case "gate" -> "&5🌀 tìm Cổng Hoang để vào";
+                    case "gate" -> "&5◎ tìm Cổng Hoang để vào";
                     case "server" -> serverOpen(d.id()) ? "&a⛩ đang mở" + until(d.id())
                             : "&7quỹ " + money(data.getDouble("quy." + d.id() + ".xu", 0)) + "/" + money(d.goal());
                     default -> "";

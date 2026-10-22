@@ -151,7 +151,7 @@ final class Wanderers {
         writeJson();
         plugin.getLogger().info("Lữ khách " + v.name() + " -> " + l.getBlockX() + " " + l.getBlockY() + " " + l.getBlockZ() + " (" + z[0] + ")");
         if (announce) {
-            PlayerSettings.broadcast("sukien", c("&6📜 TIN ĐỒN: &eỞ " + z[0] + " (" + z[1] + ") " + v.rumor() + ". &7Người ta gọi là &f"
+            PlayerSettings.broadcast("sukien", c("&6☰ TIN ĐỒN: &eỞ " + z[0] + " (" + z[1] + ") " + v.rumor() + ". &7Người ta gọi là &f"
                     + v.name() + "&7. (/lukhach)"));
         }
     }
@@ -167,7 +167,7 @@ final class Wanderers {
             if (Bukkit.getPluginManager().isPluginEnabled("BetonQuest")) {
                 Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "bq tag " + p.getName() + " add cotruyen>lk_" + v.code() + "_qua");
             }
-            p.sendMessage(c("&6📜 &e" + v.name() + " &7hẳn sẽ muốn nghe chuyện về nơi này. Tìm lữ khách đó (&f/lukhach&7) mà kể."));
+            p.sendMessage(c("&6☰ &e" + v.name() + " &7hẳn sẽ muốn nghe chuyện về nơi này. Tìm lữ khách đó (&f/lukhach&7) mà kể."));
         }
     }
 
@@ -244,7 +244,7 @@ final class Wanderers {
             s.sendMessage("Đã xoá mọi NPC lữ khách (5 phút sau tự tạo lại nếu module còn bật; tắt hẳn: wander-npcs.enabled false).");
             return true;
         }
-        s.sendMessage(c("&6━━ 📜 LỮ KHÁCH ━━"));
+        s.sendMessage(c("&6━━ ☰ LỮ KHÁCH ━━"));
         s.sendMessage(c("&7Những người lạ lang thang ngoài đất hoang, mỗi người biết chuyện về một nơi phía sau Cổng Hoang. Tìm họ, chuột phải để nói"
                 + " chuyện. Cứ " + moveMs / 3_600_000L + " giờ họ lại dời đi chỗ khác."));
         for (Npc v : npcs.values()) {

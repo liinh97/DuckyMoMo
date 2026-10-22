@@ -140,9 +140,9 @@ final class Achievements implements Listener {
             dirty = true;
             List<String> got = rewards == null ? List.of() : rewards.give(p, g.rewards());
             p.playSound(p.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 0.7f, 1.1f);
-            p.sendMessage(c("&6🏅 Thành tích: &e" + g.name() + " &7— " + g.desc() + (got.isEmpty() ? "" : " &a(" + String.join(", ", got) + "&a)")));
+            p.sendMessage(c("&6✪ Thành tích: &e" + g.name() + " &7— " + g.desc() + (got.isEmpty() ? "" : " &a(" + String.join(", ", got) + "&a)")));
             if (g.rewards().stream().anyMatch(r -> r.startsWith("danhhieu"))) {
-                Bukkit.broadcast(c("&6🏅 &f" + p.getName() + " &6đạt thành tích &e" + g.name() + "&6!"));
+                Bukkit.broadcast(c("&6✪ &f" + p.getName() + " &6đạt thành tích &e" + g.name() + "&6!"));
             }
         }
     }
@@ -259,7 +259,7 @@ final class Achievements implements Listener {
             return true;
         }
         List<String> done = data.getStringList("xong." + p.getUniqueId());
-        s.sendMessage(c("&6🏅 Sổ thành tích " + (p == s ? "" : "của " + p.getName() + " ") + "&7(" + done.size() + "/" + goals.size() + ")"));
+        s.sendMessage(c("&6✪ Sổ thành tích " + (p == s ? "" : "của " + p.getName() + " ") + "&7(" + done.size() + "/" + goals.size() + ")"));
         for (Goal g : goals) {
             double v = Math.min(g.target(), value(p.getUniqueId(), g.type()));
             boolean ok = done.contains(g.id());

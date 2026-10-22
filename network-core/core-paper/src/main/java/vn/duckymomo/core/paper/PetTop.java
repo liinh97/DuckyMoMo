@@ -15,6 +15,7 @@ import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 /**
  * /bxhpet: bảng xếp hạng pet chiến đấu MyPet theo kinh nghiệm (đọc thẳng plugins/MyPet/pets.db, chỉ đọc, chạy nền).
@@ -41,12 +42,15 @@ final class PetTop {
 
     boolean command(CommandSender s, String[] args) {
         String a = args.length > 0 ? args[0].toLowerCase(Locale.ROOT) : "";
+        if ((a.equals("tyle") || a.equals("xacsuat")) && s instanceof Player pm0) {
+            a = "";   // người chơi: menu, ô Xác suất bắt nằm trong đó
+        }
         if (a.equals("tyle") || a.equals("xacsuat")) {
             if (capture == null) {
                 s.sendMessage(c("&7Bắt pet đang không dùng xác suất: đánh yếu máu rồi quăng dây xích là bắt được."));
                 return true;
             }
-            s.sendMessage(c("&6🐾 Xác suất bắt pet &7(mỗi lần quăng dây xích vào con yếu máu)"));
+            s.sendMessage(c("&6❖ Xác suất bắt pet &7(mỗi lần quăng dây xích vào con yếu máu)"));
             String season = Seasons.nowName();
             for (Object[] g : capture.table().values()) {
                 int bonus = (Integer) g[2];
@@ -64,6 +68,7 @@ final class PetTop {
         File db = new File(plugin.getDataFolder().getParentFile(), "MyPet/pets.db");
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             List<String> lines = new ArrayList<>();
+            List<String[]> rows = new ArrayList<>();   // tên, loài, cấp, chủ, hệ (cho menu)
             String sql = "SELECT p.name, p.type, p.exp, p.skilltree, pl.name FROM pets p LEFT JOIN players pl ON pl.internal_uuid = p.owner_uuid"
                     + (he != null ? " WHERE p.skilltree = ? OR p.skilltree LIKE ? ESCAPE '\\'" : "") + " ORDER BY p.exp DESC LIMIT 10";
             try {
@@ -81,6 +86,8 @@ final class PetTop {
                     int i = 1;
                     while (r.next()) {
                         String name = clean(r.getString(1));
+                        rows.add(new String[] {name.isEmpty() ? r.getString(2) : name, r.getString(2), String.valueOf(level(r.getDouble(3))),
+                                r.getString(5) == null ? "?" : r.getString(5), treeName(r.getString(4))});
                         lines.add("&6" + i++ + ". &f" + (name.isEmpty() ? r.getString(2) : name) + " &7(" + r.getString(2) + ") &ecấp "
                                 + level(r.getDouble(3)) + " &7· chủ &f" + (r.getString(5) == null ? "?" : r.getString(5))
                                 + (he == null ? " &8" + treeName(r.getString(4)) : ""));
@@ -90,7 +97,13 @@ final class PetTop {
                 lines.add("&cChưa đọc được dữ liệu pet: " + e.getMessage());
             }
             Bukkit.getScheduler().runTask(plugin, () -> {
-                s.sendMessage(c("&6🐾 Bảng xếp hạng pet" + (he != null ? " · " + he[1] : "")));
+                if (s instanceof Player pm) {
+                    if (pm.isOnline()) {
+                        menu(pm, he, rows);
+                    }
+                    return;
+                }
+                s.sendMessage(c("&6❖ Bảng xếp hạng pet" + (he != null ? " · " + he[1] : "")));
                 if (lines.isEmpty()) {
                     s.sendMessage(c("&7Chưa có pet nào."));
                 }
@@ -99,6 +112,49 @@ final class PetTop {
             });
         });
         return true;
+    }
+
+    /** /bxhpet cho người chơi: menu (22/10, trước in chat). Hàng 1 = top 10, hàng 2 = lọc theo hệ + xác suất bắt. */
+    private void menu(Player p, String[] he, List<String[]> rows) {
+        InfoMenu m = InfoMenu.of("&6❖ Bảng xếp hạng pet" + (he != null ? " &8· &f" + he[1] : "")).accent(org.bukkit.Material.ORANGE_STAINED_GLASS_PANE);
+        m.top(Tip.of("&6❖ &fBảng xếp hạng pet").accent("&6").desc(he != null ? "Hệ " + he[1] : "Mọi hệ", "Xếp theo kinh nghiệm của pet.")
+                .apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.BONE)));
+        for (int i = 0; i < rows.size(); i++) {
+            String[] r = rows.get(i);
+            org.bukkit.inventory.ItemStack it = Tip.of((i < 3 ? "&6" : "&f") + (i + 1) + ". " + r[0]).accent("&6").kv("Loài", r[1]).kv("Cấp", "&e" + r[2])
+                    .kv("Chủ", r[3]).kv("Hệ", r[4]).apply(new org.bukkit.inventory.ItemStack(i == 0 ? org.bukkit.Material.GOLD_INGOT
+                            : i == 1 ? org.bukkit.Material.IRON_INGOT : i == 2 ? org.bukkit.Material.COPPER_INGOT : org.bukkit.Material.NAME_TAG));
+            if (i < 3) {
+                it.editMeta(meta -> meta.setEnchantmentGlintOverride(true));
+            }
+            m.add(it);
+        }
+        if (rows.isEmpty()) {
+            m.add(Tip.of("&7Chưa có pet nào").apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.GRAY_DYE)));
+        }
+        m.row();
+        m.add(Tip.of((he == null ? "&a✔ " : "&f") + "Tất cả").line().click("Bấm để xem").apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.BOOK)),
+                InfoMenu.run("bxhpet"));
+        String[][] order = {{"chienbinh", "IRON_SWORD"}, {"haucan", "CHEST"}, {"dausi", "TARGET"}, {"thucuoi", "SADDLE"}, {"nongtrai", "WHEAT"}};
+        for (String[] o : order) {
+            String[] h = HE.get(o[0]);
+            m.add(Tip.of((he != null && he[0].equals(h[0]) ? "&a✔ " : "&f") + h[1]).line().kv("Lệnh", "/bxhpet " + o[0]).click("Bấm để xem")
+                    .apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.valueOf(o[1]))), InfoMenu.run("bxhpet " + o[0]));
+        }
+        Tip ty = Tip.of("&e% &fXác suất bắt").accent("&e");
+        if (capture == null) {
+            ty.desc("Đánh yếu máu rồi quăng dây xích là bắt được");
+        } else {
+            ty.desc("Mỗi lần quăng dây xích vào con yếu máu").line();
+            String season = Seasons.nowName();
+            for (Object[] g : capture.table().values()) {
+                int bonus = (Integer) g[2];
+                ty.raw("&e" + g[0] + "&7: &f" + Math.min(100, (Integer) g[1] + bonus) + "%" + (bonus != 0 ? " &a(" + (bonus > 0 ? "+" : "") + bonus + "% nhờ " + season + "&a)" : ""));
+            }
+            ty.kv("Loài khác", capture.defaultChance() + "%").note("Trượt nhiều lần con vật sẽ hoảng, phải tìm con khác.");
+        }
+        m.add(ty.apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.LEAD)));
+        m.open(p);
     }
 
     private static String treeName(String id) {

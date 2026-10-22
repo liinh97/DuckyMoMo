@@ -389,7 +389,57 @@ final class Organizations implements Listener {
         return true;
     }
 
+    /** /tochuc cho người chơi: menu (22/10, trước in chat). */
+    private void menu(Player p, String id) {
+        InfoMenu m = InfoMenu.of("&a⚑ Tổ chức").accent(org.bukkit.Material.LIME_STAINED_GLASS_PANE);
+        Tip top = Tip.of("&a⚑ &fTổ chức").accent("&a").desc("Nhóm của dân Liên minh Hoà Bình, có quỹ chung và giấy phép.").line();
+        if (id == null) {
+            top.kv("Bạn", "&7chưa ở tổ chức nào").gap().head("Giấy phép (Hội đồng Hoà Bình duyệt)")
+                    .item("Thương Hội: thêm shop rương, thêm món đấu giá, /quangcao").item("Tổ chức Sự kiện: mở sự kiện /sukien")
+                    .kv("Phí", weeklyFee + " xu/tuần, trừ vào quỹ tổ chức");
+        } else {
+            top.head(data.getString("tc." + id + ".ten", id)).kv("Loại", typeName(data.getString("tc." + id + ".loai")))
+                    .kv("Quỹ", String.format(Locale.ROOT, "%,.0f xu", data.getDouble("tc." + id + ".quy")).replace(',', '.'))
+                    .kv("Giấy phép", data.getString("tc." + id + ".giayphep", "chưa có"))
+                    .kv("Đứng đầu", data.getString("tc." + id + ".truong", "?"))
+                    .kv("Thành viên", String.join(", ", data.getStringList("tc." + id + ".thanhvien")));
+        }
+        m.top(top.apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.WHITE_BANNER)));
+        if (id == null) {
+            m.add(Tip.of("&6⛃ &fLập Thương Hội").accent("&6").desc("Tổ chức buôn bán: thêm shop rương, món đấu giá, quảng cáo").line()
+                    .kv("Lệnh", "/tochuc lap thuonghoi <tên>").click("Bấm để điền lệnh").apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.EMERALD)),
+                    InfoMenu.suggest("/tochuc lap thuonghoi", "Gõ tên tổ chức"));
+            m.add(Tip.of("&d✦ &fLập tổ chức Sự kiện").accent("&d").desc("Mở sự kiện cho cả server (/sukien)").line()
+                    .kv("Lệnh", "/tochuc lap sukien <tên>").click("Bấm để điền lệnh").apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.FIREWORK_ROCKET)),
+                    InfoMenu.suggest("/tochuc lap sukien", "Gõ tên tổ chức"));
+            m.add(Tip.of("&a✔ &fVào tổ chức").accent("&a").desc("Nhận lời mời vừa được gửi (trong 10 phút)").line().kv("Lệnh", "/tochuc vao")
+                    .click("Bấm để vào").apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.LIME_DYE)), InfoMenu.run("tochuc vao"));
+        }
+        m.add(Tip.of("&f☰ &fDanh sách tổ chức").desc("Các tổ chức đang có").line().kv("Lệnh", "/tochuc danhsach").click("Bấm để xem")
+                .apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.BOOK)), InfoMenu.run("tochuc danhsach"));
+        if (id != null) {
+            m.row();
+            m.add(Tip.of("&b☺ &fMời thành viên").accent("&b").desc("Người được mời phải online, là dân hoà bình").line()
+                    .kv("Lệnh", "/tochuc moi <tên>").click("Bấm để điền lệnh").apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.PLAYER_HEAD)),
+                    InfoMenu.suggest("/tochuc moi", "Gõ tên người"));
+            m.add(Tip.of("&c✖ &fĐuổi thành viên").accent("&c").line().kv("Lệnh", "/tochuc duoi <tên>").click("Bấm để điền lệnh")
+                    .apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.IRON_DOOR)), InfoMenu.suggest("/tochuc duoi", "Gõ tên người"));
+            m.add(Tip.of("&e⛃ &fGóp quỹ").accent("&e").desc("Quỹ trả phí giấy phép hằng tuần").line().kv("Lệnh", "/tochuc gop <xu>")
+                    .click("Bấm để điền lệnh").apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.GOLD_NUGGET)), InfoMenu.suggest("/tochuc gop", "Gõ số xu"));
+            m.add(Tip.of("&6✉ &fXin giấy phép").accent("&6").desc("Gửi Hội đồng Hoà Bình duyệt (cần đủ " + minMembers + " thành viên)").line()
+                    .kv("Phí", weeklyFee + " xu/tuần").kv("Lệnh", "/tochuc xinphep").click("Bấm để gửi")
+                    .apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.PAPER)), InfoMenu.run("tochuc xinphep"));
+            m.add(Tip.of("&7← &fRời tổ chức").line().kv("Lệnh", "/tochuc roi").click("Bấm để rời")
+                    .apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.OAK_DOOR)), InfoMenu.run("tochuc roi"));
+        }
+        m.open(p);
+    }
+
     private void show(CommandSender s, String id) {
+        if (s instanceof Player pm) {
+            menu(pm, id);
+            return;
+        }
         if (id == null) {
             s.sendMessage(c("&7Bạn chưa ở tổ chức nào. &f/tochuc lap thuonghoi|sukien <tên> &7· &f/tochuc danhsach"));
             s.sendMessage(c("&7Giấy phép: Thương Hội (thêm shop rương, thêm món đấu giá, /quangcao), Tổ chức Sự kiện (/sukien). Phí "

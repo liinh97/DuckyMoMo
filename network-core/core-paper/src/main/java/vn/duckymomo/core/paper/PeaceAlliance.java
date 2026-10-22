@@ -317,23 +317,36 @@ final class PeaceAlliance implements Listener {
                     + " ngày nữa mới vào lại được."));
             return true;
         }
-        // thông tin
-        p.sendMessage(c("&aLiên minh Hoà Bình &7- " + n.getTowns().size() + " thị trấn, " + totalPlots() + " ô"));
-        p.sendMessage(c("&7Thị trấn trong liên minh: không bị vây, không bị chiếm, đất luôn tắt PvP. Đổi lại: dân không có quân hàm,"
-                + " không đánh trận, không tính điểm Bá Chủ, chỉ được tự vệ, phí bảo hộ " + feePerPlot + " xu/ô/ngày."));
-        if (economyOnlyInPeace || jobsOnlyInPeace) {
-            p.sendMessage(c("&aĐặc quyền dân hoà bình: &7mua bán với server (/sell, /emf shop, /ce, /xuong, /tinhluyen) và vào nghề ở ĐÂU cũng được."
-                    + " Người khác phải về kinh đô (quanh spawn) hoặc đất hoà bình."));
-        }
-        p.sendMessage(c(String.format(Locale.ROOT, "&7Mua thêm ô: &f%.1f xu&7/ô lúc này (tăng theo tổng đất liên minh). Đất mới phải liền sát đất cũ.",
-                plotBase + plotPerPlot * memberPlots())));
-        p.sendMessage(c("&7Thị trưởng: &f/hoabinh vao &7(thị trấn cách đất liên minh tối đa " + joinMaxDistance
-                + " ô, không thuộc quốc gia nào; vào rồi chiếm đất nối sang) · &f/hoabinh roi &7· &f/hoabinh danhsach"));
+        // thông tin: menu (22/10, trước in 6 dòng chat)
+        InfoMenu m = InfoMenu.of("&a☮ Liên minh Hoà Bình").accent(org.bukkit.Material.LIME_STAINED_GLASS_PANE);
+        Tip top = Tip.of("&a☮ &fLiên minh Hoà Bình").accent("&a").desc("Các thị trấn không tham gia chiến tranh.").line()
+                .kv("Thị trấn", String.valueOf(n.getTowns().size())).kv("Tổng đất", totalPlots() + " ô");
         if (t != null && isMember(t)) {
-            p.sendMessage(c(PeaceStatus.peaceful(t) ? "&aThị trấn của bạn đang được hoà bình."
-                    : !townTouchesPeace(t) ? "&eThị trấn của bạn chưa nối đất với liên minh: /t claim nối sát sang đất liên minh thì hoà bình mới có hiệu lực."
-                    : "&eThị trấn của bạn đang chờ hoà bình có hiệu lực."));
+            top.gap().head("Thị trấn của bạn").raw(PeaceStatus.peaceful(t) ? "  &a✔ đang được hoà bình"
+                    : !townTouchesPeace(t) ? "  &e⚠ chưa nối đất với liên minh (/t claim nối sát sang)" : "  &e⌛ đang chờ hoà bình có hiệu lực");
         }
+        m.top(top.apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.WHITE_BANNER)));
+        m.add(Tip.of("&a✔ &fĐược bảo vệ").accent("&a").items(List.of("Không bị vây, không bị chiếm", "Đất luôn tắt PvP"))
+                .apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.SHIELD)));
+        m.add(Tip.of("&c✖ &fĐổi lại").accent("&c").items(List.of("Dân không có quân hàm, không đánh trận", "Không tính điểm Bá Chủ",
+                        "Chỉ được tự vệ", "Phí bảo hộ " + feePerPlot + " xu/ô/ngày"))
+                .apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.IRON_BARS)));
+        if (economyOnlyInPeace || jobsOnlyInPeace) {
+            m.add(Tip.of("&6⛃ &fĐặc quyền dân hoà bình").accent("&6").desc("Mua bán với server và vào nghề ở đâu cũng được")
+                    .items(List.of("/sell, /emf shop, /ce, /xuong, /tinhluyen")).note("Người khác phải về kinh đô (quanh spawn) hoặc đất hoà bình.")
+                    .apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.EMERALD)));
+        }
+        m.add(Tip.of("&e⬚ &fGiá đất").accent("&e").kv("Mua thêm ô", String.format(Locale.ROOT, "%.1f xu/ô", plotBase + plotPerPlot * memberPlots()).replace('.', ','))
+                .note("Tăng theo tổng đất liên minh. Đất mới phải liền sát đất cũ.").apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.GRASS_BLOCK)));
+        m.row();
+        m.add(Tip.of("&a✚ &fĐưa thị trấn vào").accent("&a").desc("Thị trưởng, thị trấn không thuộc quốc gia nào, cách đất liên minh tối đa "
+                        + joinMaxDistance + " ô").line().kv("Chờ hiệu lực", joinWaitDays + " ngày").kv("Lệnh", "/hoabinh vao").click("Bấm để vào")
+                .apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.LIME_BANNER)), InfoMenu.run("hoabinh vao"));
+        m.add(Tip.of("&c← &fRời liên minh").accent("&c").desc("Mất hoà bình ngay, " + rejoinCooldownDays + " ngày sau mới vào lại được").line()
+                .kv("Lệnh", "/hoabinh roi").click("Bấm để rời").apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.RED_BANNER)), InfoMenu.run("hoabinh roi"));
+        m.add(Tip.of("&f☰ &fDanh sách thị trấn").line().kv("Lệnh", "/hoabinh danhsach").click("Bấm để xem")
+                .apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.BOOK)), InfoMenu.run("hoabinh danhsach"));
+        m.open(p);
         return true;
     }
 

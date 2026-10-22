@@ -202,7 +202,7 @@ final class RegionSpecialty {
             Town t = res == null ? null : res.getTownOrNull();
             mine = t == null ? null : key(t);
         }
-        s.sendMessage(c("&6🌾 Đặc sản vùng &7(phe có nhiều thị trấn nhất trong vùng được mùa thêm khi gặt đặc sản, gặt ở đâu cũng được)"));
+        s.sendMessage(c("&6⚘ Đặc sản vùng &7(phe có nhiều thị trấn nhất trong vùng được mùa thêm khi gặt đặc sản, gặt ở đâu cũng được)"));
         for (Region r : regions) {
             if (!r.open()) {
                 s.sendMessage(c(r.name() + " &8(chưa khai hoang: góp quỹ /khaihoang để mở)"));

@@ -378,7 +378,68 @@ final class DonateRanks implements Listener {
         return true;
     }
 
+    /** Biểu tượng từng bậc (thấp -> cao). */
+    private static final org.bukkit.Material[] TIER_ICON = {org.bukkit.Material.COPPER_INGOT, org.bukkit.Material.IRON_INGOT,
+            org.bukkit.Material.GOLD_INGOT, org.bukkit.Material.DIAMOND, org.bukkit.Material.NETHERITE_INGOT};
+
+    /** /rank cho người chơi: menu (22/10, trước in ~15 dòng chat khó đọc). Console vẫn in chữ. */
+    private void showMenu(Player p) {
+        User u = lp().getUserManager().getUser(p.getUniqueId());
+        Tier mine = u == null ? null : tierOf(u);
+        boolean shop = qr != null && qr.ready();
+        InfoMenu m = InfoMenu.of("&6✦ Rank ủng hộ").accent(org.bukkit.Material.ORANGE_STAINED_GLASS_PANE);
+        Tip top = Tip.of("&6✦ &fRank ủng hộ").sub("tước vị").accent("&6")
+                .desc("Ủng hộ server để nhận tước vị và quyền lợi.", "Bậc cao có đủ quyền lợi của các bậc thấp hơn.").line()
+                .kv("Rank của bạn", u == null ? "&8chưa có" : describe(u));
+        if (shop) {
+            top.kv("Cách mua", "&6Vàng").note("Nạp tiền ủng hộ được Vàng, rồi chọn rank trong cửa hàng Vàng.");
+        } else {
+            top.raw(howToBuy);
+        }
+        m.top(top.apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.NETHER_STAR)));
+        for (int i = 0; i < tiers.size() && i < 7; i++) {
+            Tier t = tiers.get(i);
+            boolean have = mine != null && mine.group().equalsIgnoreCase(t.group());
+            Tip tip = Tip.of(t.color() + "♛ " + t.name()).sub("bậc " + (i + 1)).accent(t.color())
+                    .desc(i == 0 ? "Bậc khởi đầu" : "Có đủ quyền lợi của " + tiers.get(i - 1).name() + " và:").gap()
+                    .head("Quyền lợi").items(t.perks());
+            List<String> sk = tierSkins(t.group());
+            if (!sk.isEmpty()) {
+                tip.gap().head("Skin độc quyền (/skins)").items(sk);
+            }
+            if (!t.prices().isEmpty()) {
+                tip.gap().head("Giá (quy ra Vàng)");
+                t.prices().forEach(pr -> tip.raw("  &8▸ &e" + pr));
+            }
+            tip.line();
+            if (have) {
+                tip.check(true, "Bạn đang có: " + describe(u).replaceAll("^&.[^&]*", "").trim());
+            }
+            if (shop) {
+                tip.click(have ? "Bấm để gia hạn bằng Vàng" : "Bấm để mua bằng Vàng");
+            }
+            org.bukkit.inventory.ItemStack icon = tip.apply(new org.bukkit.inventory.ItemStack(TIER_ICON[Math.min(i, TIER_ICON.length - 1)]));
+            if (have) {
+                icon.editMeta(meta -> meta.setEnchantmentGlintOverride(true));
+            }
+            m.add(icon, shop ? pl -> { pl.closeInventory(); pl.performCommand("vang"); } : null);
+        }
+        if (shop) {
+            m.bar(Tip.of("&6⛃ &fCửa hàng Vàng").desc("Mua rank, đồ trang trí, đổi tên màu bằng Vàng").line()
+                    .click("Bấm để mở").apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.GOLD_BLOCK)),
+                    pl -> { pl.closeInventory(); pl.performCommand("vang"); });
+            m.bar(Tip.of("&a✚ &fNạp Vàng").sub("mã QR").desc("Chọn số tiền, mã QR chuyển khoản hiện ngay trên tay").line()
+                    .note("Admin duyệt xong là Vàng vào ví").click("Bấm để chọn số tiền").apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.MAP)),
+                    pl -> { pl.closeInventory(); pl.performCommand("rank mua"); });
+        }
+        m.open(p);
+    }
+
     private void showInfo(CommandSender s) {
+        if (s instanceof Player p) {
+            showMenu(p);
+            return;
+        }
         s.sendMessage(c("&6✦ RANK DONATE (tước vị) ✦"));
         for (Tier t : tiers) {
             s.sendMessage(c(t.color() + t.name() + "&7: " + String.join("&7, ", t.perks().stream().map(x -> "&f" + x).toList())));

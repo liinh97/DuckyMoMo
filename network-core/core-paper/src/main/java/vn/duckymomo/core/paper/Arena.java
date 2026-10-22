@@ -258,16 +258,39 @@ final class Arena implements Listener {
         return true;
     }
 
+    /** /dautruong: menu (22/10, trước in 7 dòng chat). Hàng 1 = vào trận, hàng 2 = xem / đi lại. */
     private void help(Player p) {
-        p.sendMessage(c("&6⚔ ĐẤU TRƯỜNG &7(người + pet, đồ của mình, chết không rơi đồ)"));
-        p.sendMessage(c("&e/dautruong vao <1v1|2v2> [cược] [sân] &7vào hàng chờ (ghép người cùng mức cược); &e/warp pvp &7tới sảnh có 3 cổng"));
-        p.sendMessage(c("&e/dautruong thachdau <người> [cược] &7thách đấu 1v1; người kia &e/dautruong dongy"));
-        p.sendMessage(c("&e/dautruong roi &7rời hàng chờ / thôi xem"));
-        p.sendMessage(c("&e/dautruong xem [người] &7xem trận đang đấu"));
-        p.sendMessage(c("&e/dautruong top &7bảng xếp hạng · &e/dautruong toi &7thành tích của bạn"));
-        p.sendMessage(c("&7Cược tối đa " + money(maxStake) + ", server thu " + fmt(feePercent) + "%. Trận " + fightSeconds
-                + " giây, hết giờ đội còn nhiều máu hơn thắng. Thắng thưởng " + money(winReward)
-                + (petExpWin > 0 ? " + " + fmtNum(petExpWin) + " kinh nghiệm cho pet đang dẫn" : "") + " (tối đa " + dailyCap + " trận/ngày)."));
+        InfoMenu m = InfoMenu.of("&6⚔ Đấu Trường").accent(org.bukkit.Material.ORANGE_STAINED_GLASS_PANE);
+        m.top(Tip.of("&6⚔ &fĐấu Trường").accent("&6").desc("Người + pet, dùng đồ của mình, chết không rơi đồ.").line()
+                .kv("Cược tối đa", money(maxStake) + " &7(server thu " + fmt(feePercent) + "%)")
+                .kv("Mỗi trận", fightSeconds + " giây &7(hết giờ đội còn nhiều máu hơn thắng)")
+                .kv("Thắng được", money(winReward) + (petExpWin > 0 ? " &7+ " + fmtNum(petExpWin) + " kinh nghiệm pet" : ""))
+                .kv("Tối đa", dailyCap + " trận có thưởng mỗi ngày")
+                .apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.GOLDEN_SWORD)));
+        m.add(Tip.of("&a⚔ &fVào 1v1").accent("&a").desc("Vào hàng chờ, ghép người cùng mức cược").line().kv("Lệnh", "/dautruong vao 1v1")
+                .click("Bấm để vào (không cược)").apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.IRON_SWORD)), InfoMenu.run("dautruong vao 1v1"));
+        m.add(Tip.of("&a⚔ &fVào 2v2").accent("&a").desc("Đánh đôi, ghép người cùng mức cược").line().kv("Lệnh", "/dautruong vao 2v2")
+                .click("Bấm để vào (không cược)").apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.DIAMOND_SWORD)), InfoMenu.run("dautruong vao 2v2"));
+        m.add(Tip.of("&e⛃ &fVào có cược").accent("&e").desc("Ghép với người cược cùng mức, thắng ăn cả hai phần cược (trừ phí)").line()
+                .kv("Lệnh", "/dautruong vao <1v1|2v2> <cược>").kv("Tối đa", money(maxStake)).click("Bấm để điền lệnh")
+                .apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.GOLD_NUGGET)), InfoMenu.suggest("/dautruong vao 1v1", "Gõ số xu cược"));
+        m.add(Tip.of("&e⚑ &fThách đấu").accent("&e").desc("Mời một người đấu 1v1, có thể kèm cược").line()
+                .kv("Lệnh", "/dautruong thachdau <người> [cược]").click("Bấm để điền lệnh").apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.TARGET)),
+                InfoMenu.suggest("/dautruong thachdau", "Gõ tên người (và số xu cược)"));
+        m.add(Tip.of("&a✔ &fĐồng ý thách đấu").accent("&a").desc("Nhận lời thách đấu vừa được mời").line().kv("Lệnh", "/dautruong dongy")
+                .click("Bấm để nhận lời").apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.LIME_DYE)), InfoMenu.run("dautruong dongy"));
+        m.row();
+        m.add(Tip.of("&b◉ &fXem trận").accent("&b").desc("Xem trận đang đấu").line().kv("Lệnh", "/dautruong xem [người]")
+                .click("Bấm để xem").apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.SPYGLASS)), InfoMenu.run("dautruong xem"));
+        m.add(Tip.of("&6♛ &fBảng xếp hạng").accent("&6").desc("Điểm xếp hạng các đấu sĩ").line().kv("Lệnh", "/dautruong top")
+                .click("Bấm để xem").apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.GOLD_INGOT)), InfoMenu.run("dautruong top"));
+        m.add(Tip.of("&f☰ &fThành tích của bạn").desc("Số trận, thắng, điểm").line().kv("Lệnh", "/dautruong toi")
+                .click("Bấm để xem").apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.BOOK)), InfoMenu.run("dautruong toi"));
+        m.add(Tip.of("&d⛩ &fTới sảnh PvP").accent("&d").desc("Sảnh có 3 cổng: bước vào cổng là vào hàng chờ").line().kv("Lệnh", "/warp pvp")
+                .click("Bấm để tới").apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.END_PORTAL_FRAME)), InfoMenu.run("warp pvp"));
+        m.add(Tip.of("&c← &fRời").accent("&c").desc("Rời hàng chờ / thôi xem").line().kv("Lệnh", "/dautruong roi")
+                .click("Bấm để rời").apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.OAK_DOOR)), InfoMenu.run("dautruong roi"));
+        m.open(p);
     }
 
     private boolean busy(Player p) {
@@ -656,7 +679,7 @@ final class Arena implements Listener {
                             + (petExp ? " &a+ pet &f" + fmtNum(petExpWin) + " kinh nghiệm" : "")));
                 }
             }
-            broadcastMatch(m, "&6🏆 Đội &f" + names(winners) + " &6thắng!");
+            broadcastMatch(m, "&6♛ Đội &f" + names(winners) + " &6thắng!");
             if (!m.friendly) {
                 rate(winners, losers);
             }
@@ -794,7 +817,7 @@ final class Arena implements Listener {
 
     private void top(Player p) {
         ConfigurationSection st = data.getConfigurationSection("stats");
-        p.sendMessage(c("&6🏆 TOP ĐẤU TRƯỜNG"));
+        p.sendMessage(c("&6♛ TOP ĐẤU TRƯỜNG"));
         if (st == null) {
             p.sendMessage(c("&7Chưa có trận nào."));
             return;

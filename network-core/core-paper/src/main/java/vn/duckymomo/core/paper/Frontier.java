@@ -332,6 +332,10 @@ final class Frontier implements Listener {
             return true;
         }
         Goal g = next();
+        if (s instanceof Player pm) {
+            menu(pm, g);
+            return true;
+        }
         s.sendMessage(c("&6━━ KHAI HOANG VÙNG MỚI ━━"));
         s.sendMessage(c("&7Cả server góp chung: bán đồ bằng &f/sell &7(được tính " + Math.round(cfg.getDouble("sell-percent", 100))
                 + "% tiền bán, bạn không mất gì) hoặc &f/khaihoang gop <xu>&7."));
@@ -356,6 +360,55 @@ final class Frontier implements Listener {
             s.sendMessage(c(sb.toString()));
         }
         return true;
+    }
+
+    /** /khaihoang cho người chơi: menu (22/10, trước in chat). */
+    private void menu(Player p, Goal g) {
+        InfoMenu m = InfoMenu.of("&6⚒ Khai hoang vùng mới").accent(org.bukkit.Material.BROWN_STAINED_GLASS_PANE);
+        Tip top = Tip.of("&6⚒ &fKhai hoang vùng mới").accent("&6").desc("Cả server góp chung để mở vùng đất mới.").line()
+                .kv("Quỹ hiện có", "&a" + money(fund()))
+                .gap().head("Cách góp")
+                .item("Bán đồ bằng /sell: tính " + Math.round(cfg.getDouble("sell-percent", 100)) + "% tiền bán, bạn không mất gì")
+                .item("/khaihoang gop <xu>");
+        if (!areas.isEmpty()) {
+            top.gap().head("Mỗi mốc mở").item("Vùng mới ở /tpr").item("Đặc sản riêng (/dacsan)")
+                    .item(cfg.getInt("pioneer.count", 10) + " người tới đầu tiên là Người Tiên Phong (quà, danh hiệu)");
+        }
+        m.top(top.apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.MAP)));
+        List<String> done = reached();
+        for (Goal x : goals) {
+            boolean ok = done.contains(x.id());
+            double pct = Math.min(100, fund() * 100 / x.need());
+            Tip t = Tip.of((ok ? "&a✔ " : x == g ? "&e➤ " : "&8○ ") + "&f" + x.name()).accent(ok ? "&a" : "&e").line();
+            if (ok) {
+                t.check(true, "Đã mở");
+            } else {
+                t.kv("Cần", money(x.need())).raw(bar(pct, 20) + " &f" + String.format(Locale.ROOT, "%.1f", pct) + "%");
+                if (x == g) {
+                    t.line().click("Bấm để góp quỹ");
+                }
+            }
+            org.bukkit.inventory.ItemStack icon = t.apply(new org.bukkit.inventory.ItemStack(ok ? org.bukkit.Material.FILLED_MAP
+                    : x == g ? org.bukkit.Material.COMPASS : org.bukkit.Material.PAPER));
+            if (ok) {
+                icon.editMeta(meta -> meta.setEnchantmentGlintOverride(true));
+            }
+            m.add(icon, !ok && x == g ? InfoMenu.suggest("/khaihoang gop", "Gõ số xu muốn góp") : null);
+        }
+        List<Map.Entry<String, Double>> tp = top(5);
+        Tip best = Tip.of("&6♛ &fGóp nhiều nhất").accent("&6");
+        if (tp.isEmpty()) {
+            best.desc("Chưa ai góp");
+        } else {
+            for (int i = 0; i < tp.size(); i++) {
+                best.raw("&e" + (i + 1) + ". &f" + tp.get(i).getKey() + " &8(" + money(tp.get(i).getValue()) + "&8)");
+            }
+        }
+        m.bar(best.apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.GOLD_INGOT)), null);
+        m.bar(Tip.of("&a✚ &fGóp quỹ").desc("Ít nhất " + money(cfg.getDouble("min-donate", 10))).line()
+                .kv("Lệnh", "/khaihoang gop <xu>").click("Bấm để điền lệnh").apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.EMERALD)),
+                InfoMenu.suggest("/khaihoang gop", "Gõ số xu muốn góp"));
+        m.open(p);
     }
 
     PlaceholderExpansion placeholders() {

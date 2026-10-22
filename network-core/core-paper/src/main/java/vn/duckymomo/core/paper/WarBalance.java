@@ -428,7 +428,44 @@ final class WarBalance implements Listener {
 
     // ---------------------------------------------------------------- lệnh, lưu
 
+    /** /canbang cho người chơi: menu (22/10, trước in 8 dòng chat). */
+    private void menu(Player p) {
+        InfoMenu m = InfoMenu.of("&6⚖ Cân bằng chiến tranh").accent(org.bukkit.Material.ORANGE_STAINED_GLASS_PANE);
+        Tip top = Tip.of("&6⚖ &fCân bằng chiến tranh").accent("&6").desc("Luật giúp nước nhỏ có cơ hội, nước lớn phải trả giá.").line()
+                .kv("Bá chủ hiện tại", hegemons.isEmpty() ? "&7chưa có" : String.join(", ", hegemons));
+        var res = TownyAPI.getInstance().getResident(p);
+        Town t = res == null ? null : res.getTownOrNull();
+        Nation n = t == null ? null : t.getNationOrNull();
+        if (n != null) {
+            top.gap().head("Nước bạn: " + n.getName()).kv("Thị trấn", String.valueOf(n.getTowns().size()))
+                    .kv("Thuộc địa", colonies(n) + "/" + maxColonies)
+                    .kv("Đi vây tốn thêm", fmt(chestExtraPct * Math.max(0, n.getTowns().size() - 1)) + "%");
+            if (debt(n) > 0) {
+                top.kv("Nợ", "&c" + fmt(debt(n)) + " xu &7(không cắm cờ vây được)");
+            }
+        }
+        m.top(top.apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.GOLDEN_HELMET)));
+        m.add(Tip.of("&e⛃ &fQuỹ chiến tranh").accent("&e").desc("Nước càng nhiều thị trấn, đi vây càng tốn")
+                .kv("Tăng", fmt(chestExtraPct) + "% cho mỗi thị trấn (trừ thị trấn đầu)").apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.CHEST)));
+        m.add(Tip.of("&6⚑ &fThuộc địa").accent("&6").kv("Phí", fmt(colonyUpkeep) + " xu/ngày từ ngân khố nước").kv("Tối đa", maxColonies + " thuộc địa/nước")
+                .note("Còn nợ phí thì không cắm cờ vây được.").apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.YELLOW_BANNER)));
+        m.add(Tip.of("&c✊ &fKhởi nghĩa").accent("&c").desc("Thuộc địa được nổi dậy giành lại tự do").kv("Sau", fmt(revoltBase) + " giờ")
+                .kv("Bớt", fmt(revoltLess) + " giờ cho mỗi thuộc địa khác của nước chủ").kv("Ít nhất", fmt(revoltMin) + " giờ")
+                .apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.TNT)));
+        m.add(Tip.of("&a⛨ &fBên yếu được lợi").accent("&a").desc("Bên phòng thủ ít dân hơn hẳn")
+                .kv("Khi", "bên kia đông gấp " + fmt(underdogRatio) + " lần").kv("Được", "+" + fmt(underdogPct) + "% điểm giữ cờ")
+                .apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.SHIELD)));
+        m.add(Tip.of("&d♛ &fBá chủ").accent("&d").desc("Nước nắm từ " + fmt(hegemonPct) + "% thị trấn (ít nhất " + hegemonMinTowns + ")")
+                .head("Bị bất lợi").item("Đánh vào Bá chủ được giảm " + fmt(hegemonDiscount) + "% quỹ").item("+" + fmt(hegemonPointsPct) + "% điểm khi đánh Bá chủ")
+                .item("Chỉ hưởng đặc sản tối đa " + hegemonMaxRegions + " vùng").apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.NETHER_STAR)));
+        m.open(p);
+    }
+
     boolean command(CommandSender s, String[] args) {
+        if (s instanceof Player pm) {
+            menu(pm);
+            return true;
+        }
         s.sendMessage(c("&6⚖ Cân bằng chiến tranh"));
         s.sendMessage(c("&7• Quỹ chiến tranh tăng &f" + fmt(chestExtraPct) + "% &7cho mỗi thị trấn (trừ thị trấn đầu) nước đi vây đang có."));
         s.sendMessage(c("&7• Mỗi thuộc địa tốn &f" + fmt(colonyUpkeep) + " xu/ngày &7từ ngân khố nước; còn nợ thì không cắm cờ vây được. Tối đa &f"

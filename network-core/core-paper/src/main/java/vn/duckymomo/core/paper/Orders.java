@@ -596,6 +596,9 @@ final class Orders implements Listener {
         h.inv.setItem(4, Tip.of("&6☠ &fChợ đen").desc("Mua bán trực tiếp giữa người chơi").gap()
                 .head("Hai bên chợ").item("&aĐang bán&f: người chơi treo hàng sẵn giá, bấm là mua")
                 .item("&bĐang thu mua&f: người chơi đặt đơn cần mua, ai có hàng giao vào lấy tiền")
+                .gap().head("Luật").item("Món treo bán hết hạn tự về túi (túi đầy thì chờ ở Đồ hết hạn)")
+                .item("Đơn thu mua tự đóng sau " + cfg.getInt("days", 7) + " ngày, trả lại tiền phần chưa giao")
+                .item("Đơn thu mua chỉ nhận đồ thường (không tên riêng, không phù phép)")
                 .note("Đấu giá (trả giá, ai cao nhất được) là chỗ khác, sắp có").apply(new ItemStack(Material.BOOK)));
         h.inv.setItem(10, hubButton(Material.CHEST, Tip.of("&a⛃ &fĐang bán").sub("hàng người chơi treo").accent("&a")
                 .desc("Xem đồ người khác đang bán, bấm là mua").line().click("Bấm để xem hàng"), "ah"));
@@ -611,6 +614,11 @@ final class Orders implements Listener {
                 .kv("Lệnh", "&e/choden dat <số món> <giá mỗi món>").click("Bấm để điền lệnh"), "order-new"));
         h.inv.setItem(16, hubButton(Material.BARREL, Tip.of("&b▣ &fĐơn của tôi").sub(myOrders + " đơn").accent("&b")
                 .desc("Nhận hàng đã giao, huỷ đơn").line().click("Bấm để mở"), "orders-mine"));
+        h.inv.setItem(19, hubButton(Material.CLOCK, Tip.of("&7⌛ &fĐồ hết hạn").accent("&7")
+                .desc("Món treo bán quá hạn chưa về túi (túi đầy)").line().kv("Lệnh", "&e/choden hethan").click("Bấm để mở"), "ah-expired"));
+        h.inv.setItem(20, hubButton(Material.EMERALD, Tip.of("&e⛃ &fNhận tiền bán hàng").accent("&e")
+                .desc("Tiền bán được lúc bạn offline").line().kv("Lệnh", "&e/choden nhantien").click("Bấm để nhận"), "ah-claim"));
+        h.inv.setItem(21, hubButton(Material.PAPER, Tip.of("&f☰ &fLịch sử mua bán").line().kv("Lệnh", "&e/choden lichsu").click("Bấm để xem"), "ah-history"));
         h.inv.setItem(22, hubButton(Material.BARRIER, Tip.of("&c✘ &fĐóng"), "close"));
         p.openInventory(h.inv);
     }
@@ -624,6 +632,10 @@ final class Orders implements Listener {
             case "ah-selling" -> {
                 p.closeInventory();
                 market(p, "/ah selling");
+            }
+            case "ah-expired", "ah-claim", "ah-history" -> {
+                p.closeInventory();
+                market(p, action.equals("ah-expired") ? "/ah expired" : action.equals("ah-claim") ? "/ah claim" : "/ah history");
             }
             case "ah-sell" -> suggest(p, "/choden ban ", "Gõ [số món] <giá cả lô> rồi Enter (cầm món trên tay). Bỏ số món = cả chồng.");
             case "orders" -> openMarket(p, 0);
@@ -680,7 +692,7 @@ final class Orders implements Listener {
             }
             case "don" -> command(s, new String[] {"cuatoi"});
             case "nhan", "huy" -> command(s, args);
-            default -> command(s, new String[] {"giup"});
+            default -> openHub(p);   // 22/10: /choden giup mở menu thay vì in 10 dòng chat
         }
         return true;
     }
@@ -798,19 +810,7 @@ final class Orders implements Listener {
                     }
                 }
             }
-            case "giup", "help" -> {
-                p.sendMessage(c("&6━━ CHỢ ĐEN ━━ &7(/choden mở trang chung)"));
-                p.sendMessage(c("&a/choden mua &7xem hàng người chơi đang bán, bấm là mua"));
-                p.sendMessage(c("&a/choden ban [số món] <giá cả lô> &7treo bán món đang cầm (bỏ số món = cả chồng)"));
-                p.sendMessage(c("&a/choden cuatoi &7đồ tôi đang treo bán, rút lại · &a/choden hethan &7lấy lại đồ hết hạn"));
-                p.sendMessage(c("&a/choden lichsu &7lịch sử mua bán · &a/choden nhantien &7nhận tiền bán hàng còn chờ"));
-                p.sendMessage(c("&b/choden thumua &7xem đơn thu mua, bấm đơn để giao hàng nhận tiền ngay"));
-                p.sendMessage(c("&e/choden dat <số món> <giá mỗi món> &7(cầm món cần mua) đặt đơn; tiền được giữ trước, phí "
-                        + cfg.getDouble("fee-percent", 2) + "%"));
-                p.sendMessage(c("&e/choden don &7nhận hàng (chuột trái), huỷ đơn (chuột phải)"));
-                p.sendMessage(c("&e/choden nhan &7nhận hết hàng · &e/choden huy <số> &7huỷ đơn, trả lại tiền phần chưa giao"));
-                p.sendMessage(c("&7Đơn tự đóng sau " + cfg.getInt("days", 7) + " ngày. Chỉ nhận đồ thường (không tên riêng, không phù phép)."));
-            }
+            case "giup", "help" -> openHub(p);   // 22/10: menu thay 10 dòng chat
             default -> openMarket(p, 0);
         }
         return true;

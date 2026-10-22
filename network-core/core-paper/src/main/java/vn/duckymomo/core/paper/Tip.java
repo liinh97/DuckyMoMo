@@ -20,6 +20,7 @@ import java.util.List;
  *   • Nhóm:                    (tiêu đề nhóm) +   ▸ mục con
  *   ───────────────
  *   ➜ Bấm để …                 (việc khi bấm, xanh; không làm được thì đỏ ✘)
+ * Hiển thị (lore()): dòng trống sau tiêu đề, vạch ngăn hiện thành dòng trống cho thoáng (22/10).
  * KHÔNG dùng chữ in đậm (&l): font tiếng Việt vẽ đậm bị nhòe. Dòng dài tự xuống dòng ở ~38 ký tự để khung không quá rộng.
  */
 final class Tip {
@@ -158,9 +159,19 @@ final class Tip {
         lines.add(s);
     }
 
+    /** Mô tả thoáng (22/10, người dùng: "tooltip nhìn phải thoáng"): dòng trống sau tiêu đề, vạch ngăn thành dòng trống,
+     *  không hai dòng trống liền nhau, không dòng trống ở cuối. */
     List<Component> lore() {
-        List<String> out = new ArrayList<>(lines);
-        while (!out.isEmpty() && (out.get(out.size() - 1).isEmpty() || out.get(out.size() - 1).equals(LINE))) {
+        List<String> out = new ArrayList<>();
+        out.add("");
+        for (String s : lines) {
+            String v = s.equals(LINE) ? "" : s;
+            if (v.isEmpty() && out.get(out.size() - 1).isEmpty()) {
+                continue;
+            }
+            out.add(v);
+        }
+        while (!out.isEmpty() && out.get(out.size() - 1).isEmpty()) {
             out.remove(out.size() - 1);
         }
         List<Component> lore = new ArrayList<>();
@@ -194,8 +205,7 @@ final class Tip {
             return it;
         }
         List<Component> lore = m.lore() == null ? new ArrayList<>() : new ArrayList<>(m.lore());
-        lore.add(c(LINE));
-        lore.addAll(lore());
+        lore.addAll(lore());   // lore() mở đầu bằng dòng trống: ngăn với lore sẵn có
         m.lore(lore);
         it.setItemMeta(m);
         return it;

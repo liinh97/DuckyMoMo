@@ -711,9 +711,63 @@ final class BanBook implements Listener {
 
     // ------------------------------------------------------------------ /sachcam
 
+    private static final Map<String, org.bukkit.Material> ACT_ICON = Map.of("cong-thanh", org.bukkit.Material.RED_BANNER,
+            "dau-truong", org.bukkit.Material.IRON_SWORD, "dungeon", org.bukkit.Material.SPAWNER);
+
+    /** /sachcam cho người chơi: menu (22/10, trước in chat). Mỗi hoạt động một ô; ô đầu trang = món đang cầm bị cấm ở đâu. */
+    private void menu(Player p) {
+        InfoMenu m = InfoMenu.of("&c⛔ Sách cấm").accent(org.bukkit.Material.RED_STAINED_GLASS_PANE);
+        ItemStack hand = p.getInventory().getItemInMainHand();
+        List<String> mine = loreLines(hand);
+        Tip top = Tip.of("&c⛔ &fSách cấm").accent("&c").desc("Luật cấm đồ theo hoạt động.", "Đồ bị cấm có dòng ⛔ cuối mô tả.").line()
+                .head("Món đang cầm");
+        if (hand.getType().isAir()) {
+            top.item("&7(tay trống)");
+        } else if (mine.isEmpty()) {
+            top.check(true, "không bị cấm ở đâu");
+        } else {
+            mine.forEach(l -> top.raw("  " + l));
+        }
+        top.gap().note("Không dùng được = món tối đi, không cầm / mặc được. Không cho mang vào = cất vào rương rồi mới vào được.");
+        m.top(top.apply(new ItemStack(org.bukkit.Material.WRITTEN_BOOK)));
+        for (String act : ACTIVITIES.keySet()) {
+            Page pg = pages.get(act);
+            Tip t = Tip.of("&c⛔ &f" + ACTIVITIES.get(act)).accent("&c");
+            if (pg != null && !pg.desc().isBlank()) {
+                t.desc(pg.desc());
+            }
+            boolean any = false;
+            if (pg != null) {
+                Map<Mode, List<String>> by = new HashMap<>();
+                pg.items().forEach((id, mode) -> by.computeIfAbsent(mode, k -> new ArrayList<>()).add(name(id)));
+                for (Mode mode : Mode.values()) {
+                    if (by.containsKey(mode)) {
+                        t.gap().head(Character.toUpperCase(mode.text.charAt(0)) + mode.text.substring(1)).items(by.get(mode));
+                        any = true;
+                    }
+                }
+                if (!pg.enchants().isEmpty()) {
+                    List<String> n = new ArrayList<>();
+                    pg.enchants().forEach(e -> n.add(SkillEnchants.NAMES.containsKey(e) ? SkillEnchants.NAMES.get(e)[0] : e));
+                    t.gap().head("Phù phép riêng bị tắt").items(n);
+                    any = true;
+                }
+            }
+            if (!any) {
+                t.line().check(true, "Không cấm món nào");
+            }
+            m.add(t.apply(new ItemStack(ACT_ICON.getOrDefault(act, org.bukkit.Material.BOOK))));
+        }
+        m.open(p);
+    }
+
     boolean command(CommandSender s, String[] args) {
         reload();
-        s.sendMessage(c("&c📕 SÁCH CẤM &7· luật cấm đồ theo hoạt động"));
+        if (s instanceof Player pl) {
+            menu(pl);
+            return true;
+        }
+        s.sendMessage(c("&c⛔ SÁCH CẤM &7· luật cấm đồ theo hoạt động"));
         if (s instanceof Player p) {
             ItemStack hand = p.getInventory().getItemInMainHand();
             List<String> mine = loreLines(hand);

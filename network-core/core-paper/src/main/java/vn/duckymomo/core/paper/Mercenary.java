@@ -336,7 +336,45 @@ final class Mercenary implements Listener {
         }
     }
 
+    /** /linhdanhthue cho người chơi: menu (22/10, trước in chat). */
+    private void menu(Player p) {
+        InfoMenu m = InfoMenu.of("&6⚔ Lính đánh thuê").accent(org.bukkit.Material.ORANGE_STAINED_GLASS_PANE);
+        m.top(Tip.of("&6⚔ &fLính đánh thuê").accent("&6").desc("Người không thuộc nước nào, nhận tiền đánh thuê cho một nước.").line()
+                .kv("Hợp đồng", fmt(contractHours) + " giờ").kv("Trả bằng", "ngân khố nước thuê")
+                .gap().note("Vua / tướng bấm vào một lính để thuê.").apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.IRON_HELMET)));
+        ConfigurationSection dk = data.getConfigurationSection("dangky");
+        if (dk != null) {
+            for (String id : dk.getKeys(false)) {
+                Nation e = employer(UUID.fromString(id));
+                OfflinePlayer op = Bukkit.getOfflinePlayer(UUID.fromString(id));
+                String name = dk.getString(id + ".ten", "?");
+                Tip t = Tip.of("&f" + name).accent("&6").line().kv("Giá", "&e" + fmt(dk.getDouble(id + ".gia")) + " xu")
+                        .kv("Đã làm", dk.getInt(id + ".xong", 0) + " hợp đồng")
+                        .kv("Trạng thái", e != null ? "&cđang làm cho " + e.getName() : op.isOnline() ? "&arảnh, đang online" : "&8offline");
+                if (e == null) {
+                    t.line().click("Bấm để thuê (vua / tướng)");
+                }
+                org.bukkit.inventory.ItemStack head = new org.bukkit.inventory.ItemStack(org.bukkit.Material.PLAYER_HEAD);
+                head.editMeta(org.bukkit.inventory.meta.SkullMeta.class, sm -> sm.setOwningPlayer(op));
+                m.add(t.apply(head), e == null ? InfoMenu.run("linhdanhthue thue " + name) : null);
+            }
+        }
+        if (dk == null || dk.getKeys(false).isEmpty()) {
+            m.add(Tip.of("&7Chưa ai đăng ký").apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.GRAY_DYE)));
+        }
+        m.bar(Tip.of("&a✚ &fĐăng ký làm lính").accent("&a").desc("Chỉ người không thuộc nước nào").line().kv("Lệnh", "/linhdanhthue dangky <giá>")
+                .click("Bấm để điền lệnh").apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.WRITABLE_BOOK)),
+                InfoMenu.suggest("/linhdanhthue dangky", "Gõ giá thuê (xu)"));
+        m.bar(Tip.of("&c✖ &fRút tên").accent("&c").line().kv("Lệnh", "/linhdanhthue huy").click("Bấm để rút")
+                .apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.RED_DYE)), InfoMenu.run("linhdanhthue huy"));
+        m.open(p);
+    }
+
     private void list(CommandSender s) {
+        if (s instanceof Player pm) {
+            menu(pm);
+            return;
+        }
         s.sendMessage(c("&6⚔ Lính đánh thuê &7(người không thuộc nước nào, thuê bằng ngân khố nước, " + fmt(contractHours) + " giờ/hợp đồng)"));
         ConfigurationSection dk = data.getConfigurationSection("dangky");
         int shown = 0;

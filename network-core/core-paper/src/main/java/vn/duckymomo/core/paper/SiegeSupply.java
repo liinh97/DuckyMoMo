@@ -176,9 +176,9 @@ final class SiegeSupply {
             }
             Boolean was = fedState.put(p.getUniqueId(), fed);
             if (was == null || was != fed) {
-                p.sendMessage(c(fed ? "&a🍚 Kho lương " + t.getName() + " nuôi quân: bạn được ăn no trong trận (kho còn " + (long) stock(t) + " điểm)."
-                        : t == null ? "&c🍚 Bạn không thuộc thị trấn nào: không có kho lương, sẽ mau đói trong trận."
-                                : "&c🍚 Kho lương " + t.getName() + " đã cạn: quân mau đói. Nộp thêm: &f/kholuong nop"));
+                p.sendMessage(c(fed ? "&a♨ Kho lương " + t.getName() + " nuôi quân: bạn được ăn no trong trận (kho còn " + (long) stock(t) + " điểm)."
+                        : t == null ? "&c♨ Bạn không thuộc thị trấn nào: không có kho lương, sẽ mau đói trong trận."
+                                : "&c♨ Kho lương " + t.getName() + " đã cạn: quân mau đói. Nộp thêm: &f/kholuong nop"));
             }
         }
     }
@@ -194,7 +194,7 @@ final class SiegeSupply {
                 }
             }
             rows.sort((a, b) -> Double.compare((Double) b[1], (Double) a[1]));
-            s.sendMessage(c("&6🍚 Kho lương các thị trấn"));
+            s.sendMessage(c("&6♨ Kho lương các thị trấn"));
             for (int i = 0; i < Math.min(10, rows.size()); i++) {
                 s.sendMessage(c("&6" + (i + 1) + ". &f" + rows.get(i)[0] + " &7— &e" + (long) (double) (Double) rows.get(i)[1] + " điểm"));
             }
@@ -250,22 +250,48 @@ final class SiegeSupply {
             Achievements.add(p, "kholuong", gained);
             p.playSound(p.getLocation(), Sound.BLOCK_BARREL_CLOSE, 0.8f, 1f);
             ConfigurationSection ev = Seasons.eventNow();
-            p.sendMessage(c("&a🍚 Đã nộp " + items + " món vào kho lương " + t.getName() + ": &f+" + fmt(gained) + " điểm &7(kho: "
+            p.sendMessage(c("&a♨ Đã nộp " + items + " món vào kho lương " + t.getName() + ": &f+" + fmt(gained) + " điểm &7(kho: "
                     + (long) stock(t) + "/" + (long) max + ")"
                     + (ev != null && ev.getDouble("supply-multiplier", 1.0) != 1.0 ? " &d" + ev.getString("name", "") + "&7: nông sản x"
                     + fmt(ev.getDouble("supply-multiplier")) : "")));
             return true;
         }
+        // menu (22/10, trước in 5 dòng chat)
         double v = stock(t);
-        p.sendMessage(c("&6🍚 Kho lương " + t.getName() + ": &e" + (long) v + "&7/" + (long) max + " điểm"));
-        double perHour = costPerMinute * 60;
-        p.sendMessage(c("&7Mỗi người đánh trong vùng vây ăn &f" + fmt(costPerMinute) + " điểm/phút &7(≈ " + (long) perHour
-                + "/giờ). Kho này nuôi được khoảng &f" + (costPerMinute > 0 ? (long) (v / costPerMinute) : 0) + " phút-người&7."));
+        InfoMenu m = InfoMenu.of("&6♨ Kho lương " + t.getName()).accent(org.bukkit.Material.ORANGE_STAINED_GLASS_PANE);
+        double pct = max > 0 ? Math.min(100, v * 100 / max) : 0;
+        Tip top = Tip.of("&6♨ &fKho lương " + t.getName()).accent("&6").desc("Lương nuôi quân khi công thành.").line()
+                .kv("Đang có", "&e" + (long) v + "&7/" + (long) max + " điểm")
+                .raw("&a" + "■".repeat((int) Math.round(pct / 5)) + "&8" + "■".repeat(20 - (int) Math.round(pct / 5)))
+                .kv("Nuôi được", "≈ " + (costPerMinute > 0 ? (long) (v / costPerMinute) : 0) + " phút-người")
+                .kv("Mỗi người đánh ăn", fmt(costPerMinute) + " điểm/phút (≈ " + (long) (costPerMinute * 60) + "/giờ)");
         if (spoil > 0) {
-            p.sendMessage(c("&7Lương để lâu hư: kho hao &f" + fmt(spoil) + "%/ngày&7, nên nộp gần ngày công thành."));
+            top.gap().note("Lương để lâu hư: kho hao " + fmt(spoil) + "%/ngày, nên nộp gần ngày công thành.");
         }
-        p.sendMessage(c("&7Nộp: cầm trên tay &f/kholuong nop &7· cả túi (trừ cá câu, món ăn) &f/kholuong noptat &7· các kho &f/kholuong top"));
-        p.sendMessage(c("&7Giá trị: cá câu và món ăn (/nauan) đáng nhiều điểm nhất; bánh mì, khoai nướng, thịt chín hơn đồ sống."));
+        m.top(top.apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.BARREL)));
+        m.add(Tip.of("&a✚ &fNộp món đang cầm").accent("&a").desc("Nông sản, đồ ăn, cá câu, món ăn").line().kv("Lệnh", "/kholuong nop")
+                .click("Bấm để nộp").apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.BREAD)), InfoMenu.run("kholuong nop"));
+        m.add(Tip.of("&a✚ &fNộp cả túi").accent("&a").desc("Mọi nông sản, đồ ăn trong túi").note("Trừ cá câu và món ăn (đồ quý: cầm trên tay mới nộp)").line()
+                .kv("Lệnh", "/kholuong noptat").click("Bấm để nộp").apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.HAY_BLOCK)), InfoMenu.run("kholuong noptat"));
+        m.add(Tip.of("&e✦ &fGiá trị").accent("&e").items(List.of("Cá câu và món ăn (/nauan): nhiều điểm nhất", "Bánh mì, khoai nướng, thịt chín: hơn đồ sống",
+                "Nông sản sống: ít điểm nhất")).apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.COOKED_BEEF)));
+        List<Object[]> rows = new ArrayList<>();
+        for (Town x : TownyAPI.getInstance().getTowns()) {
+            double sv = stock(x);
+            if (sv > 0) {
+                rows.add(new Object[] {x.getName(), sv});
+            }
+        }
+        rows.sort((a, b) -> Double.compare((Double) b[1], (Double) a[1]));
+        Tip tops = Tip.of("&6♛ &fKho các thị trấn").accent("&6");
+        if (rows.isEmpty()) {
+            tops.desc("Chưa thị trấn nào có lương");
+        }
+        for (int k = 0; k < Math.min(10, rows.size()); k++) {
+            tops.raw("&6" + (k + 1) + ". &f" + rows.get(k)[0] + " &8— &e" + (long) (double) (Double) rows.get(k)[1] + " điểm");
+        }
+        m.add(tops.apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.GOLD_INGOT)));
+        m.open(p);
         return true;
     }
 

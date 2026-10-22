@@ -831,7 +831,7 @@ seasons:
       season: mua
       from-day: -1
       to-day: -1
-      name: "&9🌊 Lũ cuối mùa"
+      name: "&9≋ Lũ cuối mùa"
       subtitle: "&7Mưa suốt ngày · Thủy tộc dễ bắt · lúa ngập chậm lớn"
       rain: "on"
       growth: {WHEAT: 0.5, POTATOES: 0.7, CARROTS: 0.7, BEETROOTS: 0.7, KELP: 1.5, SUGAR_CANE: 1.3}   # nhân với mùa mưa: lúa 1,4×0,5 = chậm 30%
@@ -840,7 +840,7 @@ seasons:
       season: kho
       from-day: 3
       to-day: 4
-      name: "&6🔥 Hạn hán"
+      name: "&6✹ Hạn hán"
       subtitle: "&7Không mưa · cây lớn chậm · lương thực quý (kho lương x1,5)"
       rain: "off"
       growth: {WHEAT: 0.7, POTATOES: 0.7, CARROTS: 0.7, BEETROOTS: 0.7, MELON: 0.7, PUMPKIN: 0.7, SUGAR_CANE: 0.5, CACTUS: 1.3}

@@ -1966,8 +1966,10 @@ dang-nhap-lau:
 # World spawn riêng (24/10): world trống chỉ chứa công trình spawn (đảo Nhật, schematic IQBUILDERS) + các khu dịch vụ; cổng sang world sinh
 # tồn. /dmm spawnmoi dan (dán schematic tại paste), /dmm spawnmoi diemxuathien (đặt điểm xuất hiện theo spawn).
 spawn-world:
-  enabled: true
+  enabled: false   # 24/10: đảo spawn đã dán vào world chính (main-paste), không cần world "spawn" riêng nữa
   name: spawn
   schematic: japan-spawn-iqbuilders.schem
   paste: {x: 0, y: 80, z: 0}
   spawn: {x: 0.5, y: 100, z: 0.5, yaw: 180}
+  # 24/10: spawn mới ĐẶT Ở WORLD CHÍNH (thay spawn cũ, tâm 12699 -2465): /dmm spawnmoi danchinh. Mặt đất quanh y 67, mặt đảo ~ điểm dán - 11.
+  main-paste: {x: 12690, y: 79, z: -2429, center-x: 12699, center-z: -2465, clear-radius: 128, clear-from-y: 67}

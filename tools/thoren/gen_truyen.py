@@ -78,6 +78,33 @@ TRUYEN = {
                    'Rất hiếm: quái ở Lâu Đài Hiệp Sĩ, Kẻ Trói Buộc, Xưởng Hơi Nước.'),
     'long_hon': ('Hồn con rồng cuối cùng bị nhốt trong viên châu, thợ kim hoàn phải đeo găng da rồng mới cầm được.',
                  'Ghép ở Thợ Kim Hoàn: Hồn Quái Kết Tinh + Hắc Diệu Thạch + Ngọc Thủy Triều + Huyết Tinh Thạch.'),
+    # Thần Thoại / Thần Thánh (23/10): chủ server CHƯA chốt nơi rơi -> nguồn để "chưa ai tìm ra", mở sau thì sửa dòng nguồn ở đây
+    'mt_an_khoi': ('Ấn của chư thần canh giữ cổng trời, mỗi trăm năm mới rơi xuống nhân gian một lần.',
+                   'Chưa ai tìm ra. Lời đồn: nằm trong tay kẻ mạnh nhất thế giới này.'),
+    'mt_an_than': ('Thần Ấn khắc tên các vị thần đã ngã xuống trong trận chiến đầu tiên.',
+                   'Chưa ai tìm ra. Lời đồn: nằm trong tay kẻ mạnh nhất thế giới này.'),
+    'mt_an_binh': ('Ấn trên chuôi thần binh, ai chạm vào sẽ nghe tiếng thần linh thì thầm.',
+                   'Chưa ai tìm ra. Lời đồn: nằm trong tay kẻ mạnh nhất thế giới này.'),
+    'dv_an_khoi': ('Thánh Ấn rơi từ vầng hào quang của đấng sáng thế.',
+                   'Chưa ai tìm ra. Người xưa nói chỉ trời mới ban cho.'),
+    'dv_an_than': ('Thánh Ấn sáng rực, đêm tối nhất cũng không che được.',
+                   'Chưa ai tìm ra. Người xưa nói chỉ trời mới ban cho.'),
+    'dv_an_binh': ('Thánh Ấn trên thanh kiếm phán xét, sét đánh theo mỗi nhát chém.',
+                   'Chưa ai tìm ra. Người xưa nói chỉ trời mới ban cho.'),
+    'nhat_nguyet': ('Ngày và đêm bị nhốt chung trong một viên châu, xoay mãi không ngừng.',
+                    'Ghép ở Thợ Kim Hoàn: Long Hồn Châu + Ngọc Thủy Triều + Hắc Diệu Thạch.'),
+    'thien_menh': ('Viên châu chọn chủ: người không đủ mệnh cầm vào sẽ bị bỏng tay.',
+                   'Ghép ở Thợ Kim Hoàn: Nhật Nguyệt Châu + Hồn Quái Kết Tinh + Ngôi sao Nether.'),
+    # set mùa U Linh (Lễ Hội Bí Ngô)
+    'keo_hon': ('Mỗi đêm hội, ma quỷ trốn khỏi nghĩa địa đi xin kẹo; hạ chúng thì kẹo rơi ra.',
+                'Chỉ trong mùa Lễ Hội Bí Ngô: hạ quái thù địch ngoài tự nhiên (không tính lồng sinh quái).'),
+    # set nghề Nông Gia (quầy Lão Nông)
+    'bong_lua': ('Lão Nông giữ lại bông lúa đẹp nhất mỗi vụ để dâng lên đình làng.',
+                 'Trồng lúa mì; đem 64 lúa tới Lão Nông.'),
+    'cu_qua': ('Củ to nhất mùa được rước đi khắp Kinh Đô trong ngày hội được mùa.',
+               'Trồng cà rốt, khoai tây; đổi ở Lão Nông.'),
+    'mat_ong': ('Ong rừng chỉ cho mật người biết đặt lửa hun khói, không phá tổ.',
+                'Lấy mật ong ở tổ ong (đặt lửa trại bên dưới cho ong khỏi đốt); đổi ở Lão Nông.'),
 }
 MARK = '✧ Truyền thuyết'
 

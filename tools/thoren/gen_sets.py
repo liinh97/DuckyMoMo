@@ -1,14 +1,15 @@
 # Sinh các set Thợ Rèn (Tinh Anh, Thợ Mỏ, Ngư Phủ, Du Hiệp) vào Thư viện đồ theo ĐÚNG khung áo giáp Tân Thủ của chủ server.
 # Chạy trong container panel (ruamel). Thang phù phép: memory set-do-trade (chừa đường cho set sau).
+import os
 from ruamel.yaml import YAML
 P = '/data/banghoi-1/plugins/DuckyMoMoCore/thuvien-do.yml'
 y = YAML(); y.preserve_quotes = True; y.width = 4096
 doc = y.load(open(P, encoding='utf-8'))
 items = doc['items']
 SEP = '&8&m━━━━━━━━━━━━━━━━'
-SLOT = {'mu': 'HELMET', 'ao': 'CHESTPLATE', 'quan': 'LEGGINGS', 'giay': 'BOOTS', 'kiem': 'SWORD', 'cup': 'PICKAXE'}
-NOUN = {'mu': 'Mũ', 'ao': 'Giáp', 'quan': 'Quần', 'giay': 'Giày', 'kiem': 'Kiếm', 'cup': 'Cúp', 'can': 'Cần câu', 'cung': 'Cung'}
-LOAI = {'mu': 'Armor', 'ao': 'Armor', 'quan': 'Armor', 'giay': 'Armor', 'kiem': 'Weapon', 'cung': 'Weapon', 'cup': 'Tool', 'can': 'Tool'}
+SLOT = {'mu': 'HELMET', 'ao': 'CHESTPLATE', 'quan': 'LEGGINGS', 'giay': 'BOOTS', 'kiem': 'SWORD', 'cup': 'PICKAXE', 'cuoc': 'HOE'}
+NOUN = {'mu': 'Mũ', 'ao': 'Giáp', 'quan': 'Quần', 'giay': 'Giày', 'kiem': 'Kiếm', 'cup': 'Cúp', 'can': 'Cần câu', 'cung': 'Cung', 'cuoc': 'Cuốc'}
+LOAI = {'mu': 'Armor', 'ao': 'Armor', 'quan': 'Armor', 'giay': 'Armor', 'kiem': 'Weapon', 'cung': 'Weapon', 'cup': 'Tool', 'can': 'Tool', 'cuoc': 'Tool'}
 
 
 def material(piece, base):
@@ -24,7 +25,7 @@ def roman(n):
 
 
 RAR_VI = {'&b✦ Uncommon': ('&b', 'Uncommon'), '&9✦ Rare': ('&9', 'Rare'), '&5✦ Epic': ('&5', 'Epic'), '&6✦ Epic': ('&6', 'Epic'),
-          '&6✦ Legendary': ('&6', 'Legendary')}
+          '&6✦ Legendary': ('&6', 'Legendary'), '&d✦ Mythic': ('&d', 'Mythic'), '&e✦ Divine': ('&e', 'Divine')}
 
 
 def stat_lines(attr, bullet):
@@ -83,6 +84,54 @@ def style(set_id, piece, lv, maxn, rarity, attr, skills, flavor):
         if st: lore += ['&c&l✸ UY LỰC'] + st
         lore += ['&6&l✸ TUYỆT THẾ THẦN CÔNG'] + (['&7  ⟡ ' + x for x in skills] if skills else ['&8  ⟡ Chưa thức tỉnh'])
         lore += ['&4✠━━━━━━━━━━━━━━━━━━━━━━✠', f'&6&o"{flavor}"']
+    elif set_id == 'mt':    # THẦN THOẠI (Mythic): tím – hồng – bạc, ☬ ✵, thanh thần tính ◆◇
+        name = f'&5☬ &d&l{noun} Thần Thoại &5☬ &f+{lv}'
+        lore = ['&5✵━━━━ &d&lTHẦN THOẠI &5━━━━✵',
+                f'&d☬ &7Thánh vật: &f{noun}',
+                f'&d☬ &7Phẩm chất: {col}{rname}',
+                '&d☬ &7Thần tính: ' + bar(lv, maxn, '◆', '◇', '&d', '&8') + f' &8({lv}/{maxn})', '']
+        st = stat_lines(attr, '&7  ✵ ')
+        if st: lore += ['&5&l❂ THẦN UY'] + st
+        lore += ['&d&l❂ THIÊN CƠ BÍ THUẬT'] + (['&7  ✵ ' + x for x in skills] if skills else ['&8  ✵ Chưa thức tỉnh'])
+        lore += ['&5✵━━━━━━━━━━━━━━━━━━━━━✵', f'&d&o"{flavor}"']
+    elif set_id == 'dv':    # THẦN THÁNH (Divine): trắng – vàng ánh sáng, ✟ ☀, thanh thánh quang ☀☼
+        name = f'&e✟ &f&l{noun} Thần Thánh &e✟ &6+{lv}'
+        lore = ['&e☀━━━━━ &f&lTHẦN THÁNH &e━━━━━☀',
+                f'&f✟ &7Thần khí: &e{noun}',
+                f'&f✟ &7Phẩm chất: {col}{rname}',
+                '&f✟ &7Thánh quang: ' + bar(lv, maxn, '☀', '☼', '&e', '&8') + f' &8({lv}/{maxn})', '']
+        st = stat_lines(attr, '&7  ✧ ')
+        if st: lore += ['&e&l✺ THIÊN UY'] + st
+        lore += ['&f&l✺ THẦN TÍCH'] + (['&7  ✧ ' + x for x in skills] if skills else ['&8  ✧ Chưa giáng thế'])
+        lore += ['&e☀━━━━━━━━━━━━━━━━━━━━━━☀', f'&f&o"{flavor}"']
+    elif set_id == 'ul':    # U LINH (set mùa Lễ Hội Bí Ngô): cam – tím đêm, ☠ ☾, thanh bí ngô ●○
+        name = f'&5☾ &6&l{noun} U Linh &5☾ &e+{lv}'
+        lore = ['&5☾━━━ &6&l☠ U LINH ☠ &5━━━☽',
+                f'&6☠ &7Món: &f{noun}   &7Phẩm: {col}{rname}',
+                '&6☠ &7Hồn lực: ' + bar(lv, maxn, '●', '○', '&6', '&8') + f' &8+{lv}',
+                '&6☠ &7Mùa: &dLễ Hội Bí Ngô &8(đúng mùa mạnh hơn)', '']
+        st = stat_lines(attr, '&7  ☽ ')
+        if st: lore += ['&6&l✦ MA LỰC'] + st
+        lore += ['&5&l✦ YÊU THUẬT'] + (['&7  ☽ ' + x for x in skills] if skills else ['&8  ☽ Chưa nhập hồn'])
+        lore += ['&5☾━━━━━━━━━━━━━━━━━━━☽', f'&6&o"{flavor}"']
+    elif set_id == 'nn':    # NÔNG GIA: xanh lá – vàng lúa, ❀ ♣, thanh ❀✿
+        name = f'&2❀ &e&l{noun} Nông Gia &2❀ &f+{lv}'
+        lore = ['&2♣♣♣♣ &e&l❀ NÔNG GIA ❀ &2♣♣♣♣',
+                f'&7Món: &f{noun}   &7Hạng: {col}{rname}',
+                '&7Mùa màng: ' + bar(lv, maxn, '❀', '✿', '&e', '&8') + f' &8+{lv}', '']
+        st = stat_lines(attr, '&7  ♣ ')
+        if st: lore += ['&e✾ &2&lSức vóc'] + st
+        lore += ['&e✾ &2&lKinh nghiệm nhà nông'] + (['&7  ♣ ' + x for x in skills] if skills else ['&8  ♣ Chưa có'])
+        lore += ['&2♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣♣', f'&e&o"{flavor}"']
+    elif set_id == 'ts':    # THỢ SĂN: đỏ máu – xám đêm, ☽ ✘, thanh vuốt ▲△
+        name = f'&4☽ &c&l{noun} Thợ Săn &4☽ &7+{lv}'
+        lore = ['&8✘━━━━ &c&l☽ THỢ SĂN ☽ &8━━━━✘',
+                f'&7Món: &f{noun}   &7Hạng: {col}{rname}',
+                '&7Chiến tích: ' + bar(lv, maxn, '▲', '△', '&c', '&8') + f' &8+{lv}', '']
+        st = stat_lines(attr, '&7  ✘ ')
+        if st: lore += ['&c☠ &4&lNanh vuốt'] + st
+        lore += ['&c☠ &4&lLuật săn đêm'] + (['&7  ✘ ' + x for x in skills] if skills else ['&8  ✘ Chưa có'])
+        lore += ['&8✘━━━━━━━━━━━━━━━━━━✘', f'&c&o"{flavor}"']
     elif set_id == 'tm':    # THỢ MỎ: vàng đồng, dải ▬, cúp ⛏, thanh ■□
         name = f'&6⛏ &e&l{noun} Thợ Mỏ &6[+{lv}]'
         lore = ['&8▬▬▬▬ &6&l⛏ THỢ MỎ ⛏ &8▬▬▬▬',
@@ -388,11 +437,213 @@ for sid, (title, low, fr, tool, flav) in NGHE.items():
                   skills=(['Có cơ hội &blàm chậm&7 kẻ trúng tên'] if lv >= 2 else []) + (['Có cơ hội &egấp đôi sát thương&7 (Xuyên giáp I)'] if lv >= 3 else [])
                          + (['Không tốn tên'] if lv >= 4 else []), flavor=flav['cung'][lv], **common)
 
+# ------------------------------------------------------------------ THẦN THOẠI (bậc 6, Mythic, +0..+4), nâng từ Huyền Thoại +3
+# Chủ server 23/10: làm trước, CHƯA chốt người chơi lấy Thần Ấn / Thánh Ấn ở đâu (chưa gắn rơi ở đâu cả).
+MT_FLAVOR = {
+    'mu': ['Vầng trăng tím trên trán…', 'Mắt thần nhìn thấu nhân gian…', 'Thiên cơ hiện trong tầm mắt…', 'Sao trời xoay quanh đỉnh đầu…', 'Thần trí bất diệt…'],
+    'ao': ['Giáp rèn từ hư không…', 'Thần văn tự sáng trên ngực…', 'Vạn kiếp không mòn…', 'Thân là núi, hồn là biển…', 'Thần thoại khoác lên người…'],
+    'quan': ['Bước qua cửa trời…', 'Đạp mây tím mà đi…', 'Thần cốt kim cương…', 'Núi sông dời theo bước chân…', 'Đứng ngoài vòng sinh tử…'],
+    'giay': ['Gót chân chạm tinh tú…', 'Một bước qua ba cõi…', 'Bóng tím như sao băng…', 'Đi trước cả thời gian…', 'Dấu chân thành thần thoại…'],
+    'kiem': ['Thần kiếm mở mắt…', 'Kiếm quang chia cắt đêm ngày…', 'Một kiếm trảm vạn tà…', 'Thiên cơ nằm trên lưỡi kiếm…', 'Kiếm của chư thần…'],
+}
+for lv in range(5):
+    common = dict(set_id='mt', tag='Thần Thoại', title='Thần Thoại', lv=lv, base='NETHERITE', frame='', rarity='&d✦ Mythic', maxn=4)
+    prot, unb, sp = [8, 8, 9, 9, 10][lv], 5, 5
+    build(piece='mu', ench={'protection': prot, 'unbreaking': unb, 'projectile_protection': sp, 'respiration': 3, 'aqua_affinity': 1},
+          attr={'pct_mau': [18, 19, 20, 22, 24][lv]}, ce={'Glowing': 1, 'Implants': 3, **({'Commander': 1 if lv < 4 else 2} if lv >= 2 else {})},
+          skills=['Mũ: nhìn rõ trong đêm', 'Đi đường dài không đói'] + (['Đồng minh ở gần được &eđào nhanh'] if lv >= 2 else []),
+          flavor=MT_FLAVOR['mu'][lv], **common)
+    build(piece='ao', ench={'protection': prot, 'unbreaking': unb, 'projectile_protection': sp, 'blast_protection': sp, 'fire_protection': sp},
+          attr={'pct_mau': [40, 42, 45, 48, 52][lv]},
+          ce={'Crouch': 3, 'Maneuver': 2 if lv < 3 else 3, 'Enlightened': 3, 'Savior': 2, 'SystemReboot': 1 if lv < 2 else 2, **({'Valor': 1} if lv >= 4 else {})},
+          skills=['Giáp: Khi ngồi &a(shift)&7 lúc chiến đấu, nhận ít sát thương hơn &e20%', 'Có tỉ lệ &e' + ('15' if lv < 3 else '20') + '% &7né hoàn toàn một đòn đánh.',
+                  'Có cơ hội &ahồi máu&7 khi đang bị đánh', 'Có cơ hội &egiảm nửa&7 sát thương nhận vào', 'Sắp hết máu mà bị đánh: có cơ hội &ahồi đầy máu']
+                 + (['Dũng cảm: &egiảm thêm&7 sát thương nhận'] if lv >= 4 else []), flavor=MT_FLAVOR['ao'][lv], **common)
+    build(piece='quan', ench={'protection': prot, 'unbreaking': unb, 'blast_protection': sp, 'swift_sneak': 3},
+          attr={'pct_mau': [18, 19, 20, 22, 24][lv]}, ce={'Nursery': 3, **({'OverLoad': 1 if lv < 4 else 2} if lv >= 1 else {})},
+          skills=['Quần: ngồi (shift) vẫn đi nhanh', 'Có cơ hội &ahồi máu&7 khi đi bộ (Dưỡng thương III)'] + (['Mặc vào &cthêm máu tối đa'] if lv >= 1 else []),
+          flavor=MT_FLAVOR['quan'][lv], **common)
+    build(piece='giay', ench={'protection': prot, 'unbreaking': unb, 'feather_falling': 5, 'depth_strider': 3},
+          attr={'pct_day_lui': [30, 32, 35, 38, 40][lv]}, ce={'Gears': 2, 'Springs': 2, 'Rocket': 1, **({'Adrenaline': 1} if lv >= 2 else {})},
+          skills=['Giày: chạy nhanh hơn &e40%', 'Nhảy cao hơn', 'Sắp hết máu: có cơ hội &ebật văng ra sau&7 để thoát thân']
+                 + (['Sắp hết máu: có cơ hội &etăng tốc chạy'] if lv >= 2 else []), flavor=MT_FLAVOR['giay'][lv], **common)
+    build(piece='kiem', ench={'sharpness': [9, 9, 10, 10, 11][lv], 'unbreaking': unb, 'looting': 3, 'sweeping_edge': 3, 'fire_aspect': 2},
+          attr={'pct_sat_thuong': [38, 42, 46, 50, 55][lv]},
+          ce={'Vampire': 3, 'Rage': 2, 'DoubleDamage': 2, 'LifeSteal': 1 if lv < 2 else 2, **({'Execute': 1} if lv >= 3 else {})},
+          dmm={'lien_hoan': 2 if lv < 3 else 3},
+          skills=['Có cơ hội &ehút máu&7 khi đánh (Ma cà rồng III)', 'Đánh liên tiếp: mỗi đòn mạnh thêm &e20%', 'Có cơ hội gây &egấp đôi sát thương',
+                  'Có cơ hội &chút máu&7 kẻ địch về mình',
+                  'Chuột phải: &eLiên hoàn đao ' + ('II' if lv < 3 else 'III') + '&7, chém lần lượt ' + ('3' if lv < 3 else '4') + ' kẻ gần nhất (hồi 22 giây)']
+                 + (['Kẻ địch sắp chết: có cơ hội &etăng sức mạnh'] if lv >= 3 else []),
+          flavor=MT_FLAVOR['kiem'][lv], **common)
+
+# ------------------------------------------------------------------ THẦN THÁNH (bậc 7, Divine, +0..+3), nâng từ Thần Thoại +4
+DV_FLAVOR = {
+    'mu': ['Vầng hào quang tự sáng…', 'Thiên nhãn khai mở…', 'Ánh sáng không bao giờ tắt…', 'Đỉnh cao của chư thiên…'],
+    'ao': ['Thánh giáp giáng trần…', 'Ánh dương hộ thể…', 'Không gì xuyên qua được ánh sáng…', 'Thân này là thần điện…'],
+    'quan': ['Bước chân thánh khiết…', 'Đi trên ánh sáng…', 'Thánh cốt bất hoại…', 'Trời đất cúi đầu…'],
+    'giay': ['Đôi cánh dưới gót…', 'Nhanh như tia sáng…', 'Bay qua chín tầng trời…', 'Nơi nào đặt chân, nơi đó bừng sáng…'],
+    'kiem': ['Thánh kiếm giáng thế…', 'Sấm trời theo lưỡi kiếm…', 'Một kiếm phán xét…', 'Kiếm của đấng tối cao…'],
+}
+for lv in range(4):
+    common = dict(set_id='dv', tag='Thần Thánh', title='Thần Thánh', lv=lv, base='NETHERITE', frame='', rarity='&e✦ Divine', maxn=3)
+    prot, unb, sp = [10, 10, 11, 12][lv], 5, 5
+    build(piece='mu', ench={'protection': prot, 'unbreaking': unb, 'projectile_protection': sp, 'respiration': 3, 'aqua_affinity': 1},
+          attr={'pct_mau': [26, 28, 30, 33][lv]}, ce={'Glowing': 1, 'Implants': 4, 'Commander': 3, 'Angel': 1 if lv < 2 else 2},
+          skills=['Mũ: nhìn rõ trong đêm', 'Đi đường dài không đói', 'Đồng minh ở gần được &eđào nhanh', 'Đồng minh ở gần được &ahồi máu'],
+          flavor=DV_FLAVOR['mu'][lv], **common)
+    build(piece='ao', ench={'protection': prot, 'unbreaking': unb, 'projectile_protection': sp, 'blast_protection': sp, 'fire_protection': sp},
+          attr={'pct_mau': [55, 58, 62, 66][lv]},
+          ce={'Crouch': 3, 'Maneuver': 3, 'Enlightened': 4, 'Savior': 3, 'SystemReboot': 2 if lv < 2 else 3, 'Valor': 2, **({'StormCaller': 1} if lv >= 1 else {})},
+          skills=['Giáp: Khi ngồi &a(shift)&7 lúc chiến đấu, nhận ít sát thương hơn &e20%', 'Có tỉ lệ &e20% &7né hoàn toàn một đòn đánh.',
+                  'Có cơ hội &ahồi máu&7 khi đang bị đánh', 'Có cơ hội &egiảm nửa&7 sát thương nhận vào', 'Sắp hết máu mà bị đánh: có cơ hội &ahồi đầy máu',
+                  'Dũng cảm: &egiảm thêm&7 sát thương nhận'] + (['Có cơ hội &egọi sét&7 đánh kẻ địch'] if lv >= 1 else []),
+          flavor=DV_FLAVOR['ao'][lv], **common)
+    build(piece='quan', ench={'protection': prot, 'unbreaking': unb, 'blast_protection': sp, 'swift_sneak': 3},
+          attr={'pct_mau': [26, 28, 30, 33][lv]}, ce={'Nursery': 4, 'OverLoad': 2 if lv < 2 else 3, 'HellForged': 1},
+          skills=['Quần: ngồi (shift) vẫn đi nhanh', 'Có cơ hội &ahồi máu&7 khi đi bộ (Dưỡng thương IV)', 'Mặc vào &cthêm máu tối đa',
+                  'Có cơ hội &atự sửa đồ&7 khi đi bộ'], flavor=DV_FLAVOR['quan'][lv], **common)
+    build(piece='giay', ench={'protection': prot, 'unbreaking': unb, 'feather_falling': 6, 'depth_strider': 3},
+          attr={'pct_day_lui': [42, 45, 48, 50][lv]}, ce={'Gears': 3, 'Springs': 2, 'Rocket': 2, 'Adrenaline': 2},
+          skills=['Giày: chạy nhanh hơn &e60%', 'Nhảy cao hơn', 'Sắp hết máu: có cơ hội &ebật văng ra sau&7 để thoát thân',
+                  'Sắp hết máu: có cơ hội &etăng tốc chạy'], flavor=DV_FLAVOR['giay'][lv], **common)
+    build(piece='kiem', ench={'sharpness': [11, 12, 12, 13][lv], 'unbreaking': unb, 'looting': 4, 'sweeping_edge': 3, 'fire_aspect': 2},
+          attr={'pct_sat_thuong': [58, 62, 67, 72][lv]},
+          ce={'Vampire': 3, 'Rage': 3, 'DoubleDamage': 3, 'LifeSteal': 2 if lv < 2 else 3, 'Execute': 2},
+          dmm={'set_nay': 3, **({'tang_toc': 1} if lv >= 2 else {})},
+          skills=['Có cơ hội &ehút máu&7 khi đánh (Ma cà rồng III)', 'Đánh liên tiếp: mỗi đòn mạnh thêm &e30%', 'Có cơ hội gây &egấp đôi sát thương',
+                  'Có cơ hội &chút máu&7 kẻ địch về mình', 'Kẻ địch sắp chết: có cơ hội &etăng sức mạnh',
+                  'Chuột phải: &eSét nảy III&7, sét đánh rồi nảy sang 4 kẻ gần nhau (hồi 16 giây)']
+                 + (['Cầm trên tay: chạy nhanh hơn &e10%'] if lv >= 2 else []),
+          flavor=DV_FLAVOR['kiem'][lv], **common)
+
+# Thần Ấn / Thánh Ấn (chưa rơi ở đâu) + Nhật Nguyệt Châu / Thiên Mệnh Châu (ghép ở Thợ Kim Hoàn)
+for sid, (word, c1, c2, sym, tag, mats) in {
+        'mt': ('Thần Ấn', '&5', '&d', '☬', 'Thần Thoại', ['HOST_ARMOR_TRIM_SMITHING_TEMPLATE', 'SPIRE_ARMOR_TRIM_SMITHING_TEMPLATE', 'VEX_ARMOR_TRIM_SMITHING_TEMPLATE']),
+        'dv': ('Thánh Ấn', '&e', '&f', '✟', 'Thần Thánh', ['FLOW_ARMOR_TRIM_SMITHING_TEMPLATE', 'BOLT_ARMOR_TRIM_SMITHING_TEMPLATE', 'RIB_ARMOR_TRIM_SMITHING_TEMPLATE'])}.items():
+    for (grp, (label, pieces)), mat in zip({'khoi': ('Khôi Giáp', 'Mũ, Giày'), 'than': ('Thân Giáp', 'Giáp, Quần'), 'binh': ('Binh Khí', 'Kiếm')}.items(), mats):
+        items[f'{sid}_an_{grp}'] = {
+            'nguon': 'web', 'nhom': 'nguyen-lieu', 'ten-goi': f'{word} · {label}', 'material': mat, 'amount': 1,
+            'name': f'{c1}{sym} {c2}{word} &8· &f{label}',
+            'lore': [f'&7Mảnh ấn của bộ {tag}, cực hiếm.', '', f'{c2}▸ &7Dùng rèn &f{pieces} {tag}&7 ở Thợ Rèn', '&8Trao đổi được · lấp lánh = hàng thật'],
+            'glint': True, 'bo': ['Nguyên liệu Thợ Rèn', tag], 'nguoi-luu': 'Claude (Thợ Rèn)'}
+for iid, (name, mat, desc, src) in {
+        'nhat_nguyet': ('&5❖ &d&lNhật Nguyệt Châu', 'END_CRYSTAL', 'Nửa ngày nửa đêm, xoay mãi không ngừng trong lòng châu.',
+                        'Thợ Kim Hoàn: 2 Long Hồn Châu + 2 Ngọc Thủy Triều + 2 Hắc Diệu Thạch'),
+        'thien_menh': ('&e❖ &f&lThiên Mệnh Châu', 'BEACON', 'Ai cầm viên châu này, trời đã chọn người đó.',
+                       'Thợ Kim Hoàn: 2 Nhật Nguyệt Châu + 4 Hồn Quái Kết Tinh + 1 Ngôi sao Nether')}.items():
+    items[iid] = {'nguon': 'web', 'nhom': 'nguyen-lieu', 'ten-goi': name.split('&l', 1)[1], 'material': mat, 'amount': 1, 'name': name,
+                  'lore': ['&7' + desc, '', '&6Tinh thể · &8' + src, '&8Dùng ở Thợ Rèn (/thoren)'],
+                  'glint': True, 'bo': ['Nguyên liệu Thợ Rèn'], 'nguoi-luu': 'Claude (Thợ Rèn)'}
+
+# ------------------------------------------------------------------ U LINH (set mùa Lễ Hội Bí Ngô, +0..+4): chỉ rèn trong mùa, đúng mùa mạnh hơn
+# Tầm Chiến Binh +7 / Tinh Anh; đúng mùa hiệu ứng bộ x1.5, kiếm +15% sát thương (ThoRen: tho-ren.sets.ulinh.season).
+UL_FLAVOR = {
+    'mu': ['Mặt nạ bí ngô cười toe…', 'Hai hốc mắt đỏ lửa…', 'Tiếng cười vọng từ trong mũ…', 'Đêm nhìn qua mắt bí ngô…', 'Vua của đêm hội…'],
+    'ao': ['Áo choàng may từ sương đêm…', 'Hồn ma bám quanh vạt áo…', 'Đòn đánh xuyên qua như khói…', 'Mạng nhện thay giáp trụ…', 'Đêm dài không bao giờ sáng…'],
+    'quan': ['Bước chân không tiếng động…', 'Đi qua nghĩa địa không ai hay…', 'Bóng đổ dài dưới trăng…', 'Ma trơi soi đường…', 'Lướt như hồn lạc…'],
+    'giay': ['Giày dẫm lá khô xào xạc…', 'Nhảy qua bia mộ…', 'Bay theo gió đêm…', 'Nhẹ như hồn ma…', 'Không chạm đất…'],
+    'kiem': ['Lưỡi liềm của thần chết…', 'Chém đâu héo đó…', 'Hồn kẻ thù nhập vào kiếm…', 'Kiếm khóc trong đêm…', 'Thu hồn cả nghĩa địa…'],
+}
+for lv in range(5):
+    common = dict(set_id='ul', tag='U Linh', title='U Linh', lv=lv, base='DIAMOND' if lv < 3 else 'NETHERITE', frame='',
+                  rarity=['&9✦ Rare', '&9✦ Rare', '&5✦ Epic', '&5✦ Epic', '&6✦ Epic'][lv], maxn=4)
+    prot, unb, sp = [4, 5, 5, 5, 6][lv], 4, [3, 3, 4, 4, 4][lv]
+    build(piece='mu', ench={'protection': prot, 'unbreaking': unb, 'projectile_protection': sp},
+          attr={'pct_mau': [7, 8, 9, 10, 11][lv]}, ce={'Glowing': 1},
+          skills=['Mũ: nhìn rõ trong đêm'], flavor=UL_FLAVOR['mu'][lv], **common)
+    build(piece='ao', ench={'protection': prot, 'unbreaking': unb, 'projectile_protection': sp, 'fire_protection': sp},
+          attr={'pct_mau': [18, 20, 22, 24, 26][lv]}, ce={'Crouch': 2, 'Molten': 1 if lv < 3 else 2, **({'SmokeBomb': 1} if lv >= 2 else {})},
+          skills=['Giáp: Khi ngồi &a(shift)&7 lúc chiến đấu, nhận ít sát thương hơn &e15%', 'Có cơ hội &cđốt cháy&7 kẻ đánh mình']
+                 + (['Có cơ hội &8thả bom khói&7, làm kẻ địch mù'] if lv >= 2 else []), flavor=UL_FLAVOR['ao'][lv], **common)
+    build(piece='quan', ench={'protection': prot, 'unbreaking': unb, 'blast_protection': sp, 'swift_sneak': 2 if lv < 3 else 3},
+          attr={'pct_mau': [7, 8, 9, 10, 11][lv]}, ce={'Ninja': 1} if lv >= 3 else None,
+          skills=['Quần: ngồi (shift) vẫn đi nhanh'] + (['Mặc vào &echạy nhanh&7 và thêm máu'] if lv >= 3 else []), flavor=UL_FLAVOR['quan'][lv], **common)
+    build(piece='giay', ench={'protection': prot, 'unbreaking': unb, 'feather_falling': 4, 'soul_speed': 2 if lv < 3 else 3},
+          attr={'pct_day_lui': [12, 14, 15, 16, 18][lv]}, ce={'Springs': 1, **({'AntiGravity': 1} if lv >= 4 else {})},
+          skills=['Giày: nhảy cao hơn', 'Đi nhanh trên cát linh hồn'] + (['Nhảy &erất cao'] if lv >= 4 else []), flavor=UL_FLAVOR['giay'][lv], **common)
+    build(piece='kiem', ench={'sharpness': [6, 6, 6, 7, 7][lv], 'unbreaking': unb, 'looting': 2 if lv < 3 else 3, 'smite': 3 if lv < 3 else 5},
+          attr={'pct_sat_thuong': [12, 14, 16, 18, 20][lv]}, ce={'Wither': 1 if lv < 3 else 2, **({'Blindness': 1} if lv >= 2 else {})},
+          dmm={'hoang_so': 1 if lv < 2 else (2 if lv < 4 else 3)},
+          skills=['Có cơ hội gây &8khô héo&7 cho kẻ địch'] + (['Có cơ hội làm kẻ địch &8mù'] if lv >= 2 else [])
+                 + ['Chuột phải: &eHoảng sợ ' + ('I' if lv < 2 else ('II' if lv < 4 else 'III')) + '&7, quái bỏ chạy, người bị đẩy lùi (hồi 18 giây)'],
+          flavor=UL_FLAVOR['kiem'][lv], **common)
+items['keo_hon'] = {'nguon': 'web', 'nhom': 'nguyen-lieu', 'ten-goi': 'Kẹo Linh Hồn', 'material': 'POPPED_CHORUS_FRUIT', 'amount': 1,
+                    'name': '&6☾ &dKẹo Linh Hồn',
+                    'lore': ['&7Kẹo ma quỷ đánh rơi trong đêm Lễ Hội Bí Ngô.', '', '&6▸ &7Dùng rèn set &6U Linh&7 ở Thợ Rèn',
+                             '&8Chỉ rơi khi đang mùa · lấp lánh = hàng thật'],
+                    'glint': True, 'bo': ['Nguyên liệu Thợ Rèn', 'U Linh'], 'nguoi-luu': 'Claude (Thợ Rèn)'}
+
+# ------------------------------------------------------------------ SET NGHỀ mới (+0..+4): NÔNG GIA (trồng trọt), THỢ SĂN (đánh quái đêm)
+NGHE2 = {
+    'nn': ('Nông Gia', 'cuoc', {
+        'mu': ['Nón lá đội nắng…', 'Mồ hôi rơi xuống ruộng…', 'Nhìn trời đoán mưa…', 'Thuộc lòng mùa vụ…', 'Lão nông tri điền…'],
+        'ao': ['Áo nâu bạc màu…', 'Vai gánh hai bồ lúa…', 'Gió đồng thổi mát lưng…', 'Lúa chín vàng ngực áo…', 'Cả cánh đồng là nhà…'],
+        'quan': ['Quần xắn ống lội ruộng…', 'Bùn bám tới gối…', 'Đi luống nhanh thoăn thoắt…', 'Ruộng nào cũng thuộc…', 'Bước chân mùa màng…'],
+        'giay': ['Chân đất quen bùn…', 'Bước trên bờ ruộng…', 'Không sợ trơn trượt…', 'Đi từ sáng tới tối…', 'Đất mềm dưới chân…'],
+        'cuoc': ['Cuốc cùn mà bền…', 'Một nhát cuốc một luống…', 'Đất tơi như bột…', 'Hạt giống tự rơi đúng chỗ…', 'Cuốc của thần nông…'],
+    }),
+    'ts': ('Thợ Săn', 'kiem', {
+        'mu': ['Mũ da sói…', 'Mắt quen bóng đêm…', 'Nghe được tiếng xương kêu…', 'Đêm nào cũng là đêm săn…', 'Kẻ săn trong bóng tối…'],
+        'ao': ['Áo da lông thú…', 'Vết cào của quái đêm…', 'Máu quái thấm thành hoa văn…', 'Không quái nào làm ngã…', 'Nỗi sợ của bóng đêm…'],
+        'quan': ['Quần vải thô đi đêm…', 'Bước không tiếng động…', 'Lần theo dấu quái…', 'Đuổi theo tới tận hang…', 'Bóng đêm nhường đường…'],
+        'giay': ['Giày da mềm…', 'Lặng như mèo rình…', 'Bật xa khỏi vòng vây…', 'Không ai đuổi kịp…', 'Tới trước cả trăng lên…'],
+        'kiem': ['Dao săn cũ…', 'Lưỡi bạc trừ tà…', 'Quái ngửi thấy là chạy…', 'Mỗi đêm một trăm con…', 'Thanh kiếm của trăng máu…'],
+    }),
+}
+for sid, (title, tool, flav) in NGHE2.items():
+    for lv in range(5):
+        common = dict(set_id=sid, tag=title, title=title, lv=lv, base=NG_BASE[lv], frame='', rarity=NG_RAR[lv], maxn=4)
+        armor = {'protection': PROT[lv], 'unbreaking': UNB[lv]}
+        if sid == 'nn':
+            build(piece='mu', ench={**armor}, ce={'Implants': 1 if lv < 3 else 2} if lv >= 1 else None,
+                  skills=['Mũ: làm đồng lâu &ekhông đói'] if lv >= 1 else [], flavor=flav['mu'][lv], **common)
+            build(piece='ao', ench={**armor, 'fire_protection': [0, 1, 1, 2, 2][lv]}, attr={'pct_mau': 5} if lv >= 4 else None,
+                  ce={'Nursery': 1} if lv >= 2 else None, skills=['Giáp: có cơ hội &ahồi máu&7 khi đi bộ'] if lv >= 2 else [],
+                  flavor=flav['ao'][lv], **common)
+            build(piece='quan', ench={**armor, 'swift_sneak': 1 if lv >= 2 else 0}, skills=['Quần: ngồi (shift) vẫn đi nhanh'] if lv >= 2 else [],
+                  flavor=flav['quan'][lv], **common)
+            build(piece='giay', ench={**armor, 'feather_falling': [1, 2, 2, 3, 3][lv]}, ce={'Gears': 1} if lv >= 3 else None,
+                  skills=['Giày: chạy nhanh hơn &e20%'] if lv >= 3 else [], flavor=flav['giay'][lv], **common)
+            build(piece='cuoc', ench={'efficiency': [2, 3, 3, 4, 5][lv], 'fortune': [0, 1, 2, 2, 3][lv], 'unbreaking': UNB[lv]},
+                  ce={'Tiller': 1, **({'Harvester': 1} if lv >= 1 else {}), **({'Planter': 1} if lv >= 2 else {}),
+                      **({'GreenThumb': [0, 0, 0, 2, 3][lv]} if lv >= 3 else {})},
+                  skills=['Cầm trên tay: cuốc đất là cuốc luôn &e3×3'] + (['Phá cây chín: thu hoạch luôn cả vùng &e3×3'] if lv >= 1 else [])
+                         + (['Cuốc xong &etự gieo hạt'] if lv >= 2 else []) + (['Chuột phải vào cây non: có cơ hội &alớn ngay'] if lv >= 3 else []),
+                  flavor=flav['cuoc'][lv], **common)
+        else:
+            build(piece='mu', ench={**armor, 'projectile_protection': [0, 1, 1, 2, 2][lv]}, ce={'Glowing': 1} if lv >= 1 else None,
+                  skills=['Mũ: nhìn rõ trong đêm'] if lv >= 1 else [], flavor=flav['mu'][lv], **common)
+            build(piece='ao', ench={**armor, 'projectile_protection': [1, 1, 2, 2, 3][lv]}, attr={'pct_mau': 5} if lv >= 4 else None,
+                  ce={'Cactus': 1} if lv >= 3 else None, skills=['Giáp: có cơ hội &cphản sát thương&7 lại kẻ đánh mình'] if lv >= 3 else [],
+                  flavor=flav['ao'][lv], **common)
+            build(piece='quan', ench={**armor, 'swift_sneak': 1 if lv >= 2 else 0}, skills=['Quần: ngồi (shift) vẫn đi nhanh'] if lv >= 2 else [],
+                  flavor=flav['quan'][lv], **common)
+            build(piece='giay', ench={**armor, 'feather_falling': [1, 2, 2, 3, 3][lv]}, ce={'Springs': 1} if lv >= 2 else None,
+                  skills=['Giày: nhảy cao hơn'] if lv >= 2 else [], flavor=flav['giay'][lv], **common)
+            build(piece='kiem', ench={'sharpness': [2, 3, 3, 4, 4][lv], 'smite': [2, 3, 4, 4, 5][lv], 'looting': [1, 1, 2, 2, 3][lv], 'unbreaking': UNB[lv]},
+                  ce={**({'Inquisitive': 1 if lv < 3 else 2} if lv >= 1 else {}), **({'Headless': 1} if lv >= 2 else {})} or None,
+                  dmm={'soi_sang': 1 if lv < 4 else 2} if lv >= 3 else None,
+                  skills=(['Có cơ hội nhận &agấp đôi kinh nghiệm'] if lv >= 1 else []) + (['Có cơ hội &erơi đầu&7 quái'] if lv >= 2 else [])
+                         + (['Chuột phải: &eSoi sáng ' + ('I' if lv < 4 else 'II') + '&7, người quanh mình phát sáng (hồi 30 giây)'] if lv >= 3 else []),
+                  flavor=flav['kiem'][lv], **common)
+# Mảnh Lão Nông (quầy mới lao_nong)
+for iid, (mat, name, desc, src) in {
+        'bong_lua': ('WHEAT', '&8✦ &eBông Lúa Vàng', 'Bông lúa trĩu hạt nhất của cả cánh đồng.', 'Lão Nông: 64 Lúa mì'),
+        'cu_qua': ('GOLDEN_CARROT', '&8✦ &6Củ Quả Mùa Màng', 'Củ to nhất mùa, đem dâng lên lễ hội.', 'Lão Nông: 32 Cà rốt + 32 Khoai tây'),
+        'mat_ong': ('HONEYCOMB', '&8✦ &eSáp Mật Rừng', 'Mật ong rừng đặc quánh, ngọt tới tận tim.', 'Lão Nông: 4 Chai mật ong')}.items():
+    items[iid] = {'nguon': 'web', 'nhom': 'nguyen-lieu', 'ten-goi': name.split(' ', 1)[1].replace('&', '').lstrip('0123456789abcdefklmnor'),
+                  'material': mat, 'amount': 1, 'name': name,
+                  'lore': ['&7' + desc, '', '&8Mảnh · ' + src, '&8Dùng ở Thợ Kim Hoàn, Thợ Rèn (/thoren)'], 'glint': True,
+                  'bo': ['Nguyên liệu Thợ Rèn'], 'nguoi-luu': 'Claude (Thợ Rèn)'}
+
 items['vaycahiem'] = {'nguon': 'web', 'nhom': 'nguyen-lieu', 'ten-goi': 'Vảy Cá Hiếm', 'material': 'ANGLER_POTTERY_SHERD', 'amount': 1,
                       'name': '&bVảy Cá Hiếm', 'lore': ['&7Thỉnh thoảng vớt được khi câu cá.', '&8Nguyên liệu Thợ Rèn (set Ngư Phủ): /thoren'],
                       'cong-dung': 'tinh-luyen'}
-y.dump(doc, open(P, 'w', encoding='utf-8'))
-n = sum(1 for k in items if k.split('_')[0] in ('ta', 'tm', 'np', 'dh', 'cb', 'cc', 'ht'))
+with open(P + '.tmp', 'w', encoding='utf-8') as f:   # ghi ra file tạm rồi đổi tên (không để file dở dang)
+    y.dump(doc, f)
+os.replace(P + '.tmp', P)
+n = sum(1 for k in items if k.split('_')[0] in ('ta', 'tm', 'np', 'dh', 'cb', 'cc', 'ht', 'mt', 'dv', 'ul', 'nn', 'ts'))
 print('đã ghi', n, 'món set mới + vaycahiem')
-for k in ['ht_kiem_3']:
+for k in ['mt_kiem_4', 'dv_ao_3', 'ul_kiem_4', 'nn_cuoc_4', 'ts_kiem_4']:
     print(k, items[k]['name'], '|', ' / '.join(items[k]['lore']), '|', dict(items[k]['enchants']), items[k].get('ce-enchants'), items[k].get('dmm-enchants'))

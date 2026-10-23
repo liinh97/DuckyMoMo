@@ -1538,6 +1538,16 @@ tho-ren:
         - {out: hac_dieu, cost: {xu: 800, manh_hac: 2, hop_kim: 2, lam_chau: 1}}
         - {out: ngoc_trieu, cost: {xu: 400, vaycahiem: 4, vay_trang: 4, lam_chau: 1}}
         - {out: long_hon, cost: {xu: 2000, hon_quai: 2, hac_dieu: 1, ngoc_trieu: 1, huyet_tinh: 2}}
+        - {out: nhat_nguyet, cost: {xu: 5000, long_hon: 2, ngoc_trieu: 2, hac_dieu: 2}}
+        - {out: thien_menh, cost: {xu: 15000, nhat_nguyet: 2, hon_quai: 4, NETHER_STAR: 1}}
+    laonong:
+      name: "&2❀ Lão Nông"
+      sub: "Đổi nông sản lấy mảnh"
+      profession: farmer
+      recipes:
+        - {out: bong_lua, cost: {WHEAT: 64}}
+        - {out: cu_qua, cost: {CARROT: 32, POTATO: 32}}
+        - {out: mat_ong, cost: {HONEY_BOTTLE: 4}}
     thoren:
       name: "&6⚒ Thợ Rèn"
       sub: "Rèn và nâng cấp đồ set"
@@ -1548,13 +1558,19 @@ tho-ren:
     ren_chienbinh: {name: "&c⚔ Rèn Chiến Binh", sub: "Nâng từ Tân Thủ +9", profession: weaponsmith, open: "set:chienbinh"}
     ren_tinhanh: {name: "&d❖ Rèn Tinh Anh", sub: "Nâng từ Chiến Binh +7", profession: armorer, open: "set:tinhanh"}
     ren_caocap: {name: "&6♛ Rèn Cao Cấp", sub: "Nâng từ Tinh Anh +5", profession: weaponsmith, open: "set:caocap"}
+    ren_huyenthoai: {name: "&6⚜ Rèn Huyền Thoại", sub: "Nâng từ Cao Cấp +5", profession: armorer, open: "set:huyenthoai"}
+    ren_thanthoai: {name: "&d☬ Rèn Thần Thoại", sub: "Nâng từ Huyền Thoại +3", profession: cleric, open: "set:thanthoai"}
+    ren_thanthanh: {name: "&e✟ Rèn Thần Thánh", sub: "Nâng từ Thần Thoại +4", profession: cleric, open: "set:thanthanh"}
+    ren_ulinh: {name: "&6☾ Rèn U Linh", sub: "Set mùa Lễ Hội Bí Ngô", profession: leatherworker, open: "set:ulinh"}
+    ren_nonggia: {name: "&2❀ Rèn Nông Gia", sub: "Set nghề trồng trọt", profession: farmer, open: "set:nonggia"}
+    ren_thosan: {name: "&c☽ Rèn Thợ Săn", sub: "Set nghề đánh quái đêm", profession: butcher, open: "set:thosan"}
     ren_thomo: {name: "&6⛏ Rèn Thợ Mỏ", sub: "Set nghề đào mỏ", profession: toolsmith, open: "set:thomo"}
     ren_nguphu: {name: "&3≈ Rèn Ngư Phủ", sub: "Set nghề câu cá", profession: fisherman, open: "set:nguphu"}
     ren_duhiep: {name: "&2➹ Rèn Du Hiệp", sub: "Set nghề cung thủ", profession: fletcher, open: "set:duhiep"}
   # Mảnh ấn trao đổi rơi trong dungeon (23/10, chủ server: vài tầng chung một set; tầng dễ mũ/giày, khó hơn giáp/quần, khó nhất vũ khí).
   # MỌI con trong tầng chỉ có tỉ lệ rơi 1 mảnh (chủ server 23/10: giết trùm KHÔNG chắc rơi): quái thường mob-chance %, phó trùm (tên 〖N〗)
   # miniboss-chance %, trùm (tên 『N』) boss-chance %. multiplier nhân cả ba (tối đa 100%).
-  guard: [cb_an_khoi, cb_an_than, cb_an_binh, ta_an_khoi, ta_an_than, ta_an_binh, cc_an_khoi, cc_an_than, cc_an_binh, ht_an_khoi, ht_an_than, ht_an_binh]
+  guard: [cb_an_khoi, cb_an_than, cb_an_binh, ta_an_khoi, ta_an_than, ta_an_binh, cc_an_khoi, cc_an_than, cc_an_binh, ht_an_khoi, ht_an_than, ht_an_binh, mt_an_khoi, mt_an_than, mt_an_binh, dv_an_khoi, dv_an_than, dv_an_binh, keo_hon]
   dungeon-drops:
     mob-chance: 3
     miniboss-chance: 15
@@ -1712,6 +1728,115 @@ tho-ren:
         - {from: 2, pieces: 2, mau: 15, day-lui: 10}
         - {from: 2, pieces: 4, mau: 30, day-lui: 25, giam-st: 14}
         - {from: 3, pieces: 4, mau: 35, day-lui: 30, giam-st: 16}
+    thanthoai:
+      name: "Thần Thoại"
+      icon: NETHER_STAR
+      desc: "Bậc 6 (Mythic): nâng từ Huyền Thoại +3. Thần Ấn chưa ai tìm ra (sắp mở)."
+      requires: huyenthoai
+      pieces:
+        mu: {name: "Mũ", an: mt_an_khoi, ids: [mt_mu_0, mt_mu_1, mt_mu_2, mt_mu_3, mt_mu_4]}
+        ao: {name: "Giáp", an: mt_an_than, ids: [mt_ao_0, mt_ao_1, mt_ao_2, mt_ao_3, mt_ao_4]}
+        quan: {name: "Quần", an: mt_an_than, ids: [mt_quan_0, mt_quan_1, mt_quan_2, mt_quan_3, mt_quan_4]}
+        giay: {name: "Giày", an: mt_an_khoi, ids: [mt_giay_0, mt_giay_1, mt_giay_2, mt_giay_3, mt_giay_4]}
+        kiem: {name: "Kiếm", an: mt_an_binh, ids: [mt_kiem_0, mt_kiem_1, mt_kiem_2, mt_kiem_3, mt_kiem_4]}
+      # 23/10 chủ server: làm trước, CHƯA chốt Thần Ấn lấy ở đâu (chưa rơi ở đâu cả; admin phát bằng /dmm laydo nếu cần thử)
+      cost:
+        - {xu: 100000, an: 3, nhat_nguyet: 1, NETHERITE_INGOT: 3}   # +0 (cộng món Huyền Thoại +3)
+        - {xu: 120000, an: 4, nhat_nguyet: 1, long_hon: 2}
+        - {xu: 150000, an: 5, nhat_nguyet: 2, hac_dieu: 4}
+        - {xu: 180000, an: 7, nhat_nguyet: 2, long_hon: 3}
+        - {xu: 220000, an: 9, nhat_nguyet: 3, NETHERITE_INGOT: 4}
+      wear: [7, 6, 5, 4, 3]
+      bonus:
+        - {from: 0, pieces: 4, mau: 38, day-lui: 32, giam-st: 17}
+        - {from: 2, pieces: 2, mau: 20, day-lui: 12}
+        - {from: 2, pieces: 4, mau: 42, day-lui: 35, giam-st: 19}
+        - {from: 4, pieces: 4, mau: 48, day-lui: 40, giam-st: 21}
+    thanthanh:
+      name: "Thần Thánh"
+      icon: BEACON
+      desc: "Bậc 7 (Divine), cao nhất: nâng từ Thần Thoại +4. Thánh Ấn chưa ai tìm ra (sắp mở)."
+      requires: thanthoai
+      pieces:
+        mu: {name: "Mũ", an: dv_an_khoi, ids: [dv_mu_0, dv_mu_1, dv_mu_2, dv_mu_3]}
+        ao: {name: "Giáp", an: dv_an_than, ids: [dv_ao_0, dv_ao_1, dv_ao_2, dv_ao_3]}
+        quan: {name: "Quần", an: dv_an_than, ids: [dv_quan_0, dv_quan_1, dv_quan_2, dv_quan_3]}
+        giay: {name: "Giày", an: dv_an_khoi, ids: [dv_giay_0, dv_giay_1, dv_giay_2, dv_giay_3]}
+        kiem: {name: "Kiếm", an: dv_an_binh, ids: [dv_kiem_0, dv_kiem_1, dv_kiem_2, dv_kiem_3]}
+      cost:
+        - {xu: 300000, an: 3, thien_menh: 1, NETHER_STAR: 1}   # +0 (cộng món Thần Thoại +4)
+        - {xu: 350000, an: 4, thien_menh: 1, nhat_nguyet: 2}
+        - {xu: 420000, an: 6, thien_menh: 2, NETHER_STAR: 2}
+        - {xu: 500000, an: 8, thien_menh: 3, nhat_nguyet: 3}
+      wear: [3, 2, 2, 1]
+      bonus:
+        - {from: 0, pieces: 4, mau: 50, day-lui: 42, giam-st: 22}
+        - {from: 2, pieces: 2, mau: 25, day-lui: 15}
+        - {from: 2, pieces: 4, mau: 55, day-lui: 45, giam-st: 24}
+        - {from: 3, pieces: 4, mau: 60, day-lui: 50, giam-st: 26}
+    ulinh:
+      name: "U Linh"
+      icon: CARVED_PUMPKIN
+      desc: "Set mùa Lễ Hội Bí Ngô: chỉ rèn được trong mùa, đúng mùa hiệu ứng bộ x1,5 và kiếm +15% sát thương. Kẹo Linh Hồn rơi từ quái lúc đang mùa."
+      # season.open: auto = theo ngày (from..to, MM-dd), on / off = bật tắt tay cho sự kiện (sửa rồi /dmm reload)
+      season: {name: "Lễ Hội Bí Ngô", from: "10-25", to: "11-08", open: auto, boost: 1.5, damage: 15, drop: {item: keo_hon, chance: 4}}
+      pieces:
+        mu: {name: "Mũ", ids: [ul_mu_0, ul_mu_1, ul_mu_2, ul_mu_3, ul_mu_4]}
+        ao: {name: "Giáp", ids: [ul_ao_0, ul_ao_1, ul_ao_2, ul_ao_3, ul_ao_4]}
+        quan: {name: "Quần", ids: [ul_quan_0, ul_quan_1, ul_quan_2, ul_quan_3, ul_quan_4]}
+        giay: {name: "Giày", ids: [ul_giay_0, ul_giay_1, ul_giay_2, ul_giay_3, ul_giay_4]}
+        kiem: {name: "Kiếm", ids: [ul_kiem_0, ul_kiem_1, ul_kiem_2, ul_kiem_3, ul_kiem_4]}
+      cost:
+        - {xu: 1500, keo_hon: 8, xuong_oan: 2}   # +0
+        - {xu: 2500, keo_hon: 12, to_bac: 2, huyet_tinh: 1}
+        - {xu: 4000, keo_hon: 16, hon_quai: 1}
+        - {xu: 6000, keo_hon: 24, hac_dieu: 1, hon_quai: 1}
+        - {xu: 9000, keo_hon: 32, hac_dieu: 2, hon_quai: 2}
+      wear: [70, 60, 50, 40, 30]
+      bonus:
+        - {from: 0, pieces: 4, mau: 6, giam-st: 3}
+        - {from: 2, pieces: 4, mau: 10, day-lui: 10, giam-st: 5}
+        - {from: 4, pieces: 4, mau: 15, day-lui: 15, giam-st: 7}
+    nonggia:
+      name: "Nông Gia"
+      icon: GOLDEN_HOE
+      desc: "Set nghề trồng trọt: cuốc 3x3, thu hoạch cả vùng, tự gieo hạt; mặc đủ bộ có cơ hội gấp đôi nông sản."
+      pieces:
+        mu: {name: "Mũ", ids: [nn_mu_0, nn_mu_1, nn_mu_2, nn_mu_3, nn_mu_4]}
+        ao: {name: "Giáp", ids: [nn_ao_0, nn_ao_1, nn_ao_2, nn_ao_3, nn_ao_4]}
+        quan: {name: "Quần", ids: [nn_quan_0, nn_quan_1, nn_quan_2, nn_quan_3, nn_quan_4]}
+        giay: {name: "Giày", ids: [nn_giay_0, nn_giay_1, nn_giay_2, nn_giay_3, nn_giay_4]}
+        cuoc: {name: "Cuốc", ids: [nn_cuoc_0, nn_cuoc_1, nn_cuoc_2, nn_cuoc_3, nn_cuoc_4]}
+      cost:
+        - {xu: 400, bong_lua: 3, cu_qua: 2}   # +0
+        - {xu: 800, bong_lua: 4, cu_qua: 3, manh_sat: 2}   # +1
+        - {xu: 1400, bong_lua: 5, mat_ong: 2, hop_kim: 1}   # +2
+        - {xu: 2000, cu_qua: 5, mat_ong: 3, lam_chau: 1}   # +3
+        - {xu: 3000, bong_lua: 8, mat_ong: 4, ngoc_trieu: 1}   # +4
+      wear: [85, 75, 65, 55, 45]
+      bonus:
+        - {from: 2, pieces: 4, mau: 6, thu-hoach: 10}
+        - {from: 4, pieces: 4, mau: 10, day-lui: 10, thu-hoach: 20}
+    thosan:
+      name: "Thợ Săn"
+      icon: IRON_SWORD
+      desc: "Set nghề đánh quái đêm: nhìn trong đêm, kiếm trừ tà rơi đầu quái; mặc đủ bộ đánh quái ban đêm mạnh hơn."
+      pieces:
+        mu: {name: "Mũ", ids: [ts_mu_0, ts_mu_1, ts_mu_2, ts_mu_3, ts_mu_4]}
+        ao: {name: "Giáp", ids: [ts_ao_0, ts_ao_1, ts_ao_2, ts_ao_3, ts_ao_4]}
+        quan: {name: "Quần", ids: [ts_quan_0, ts_quan_1, ts_quan_2, ts_quan_3, ts_quan_4]}
+        giay: {name: "Giày", ids: [ts_giay_0, ts_giay_1, ts_giay_2, ts_giay_3, ts_giay_4]}
+        kiem: {name: "Kiếm", ids: [ts_kiem_0, ts_kiem_1, ts_kiem_2, ts_kiem_3, ts_kiem_4]}
+      cost:
+        - {xu: 400, xuquai: 6, xuong_oan: 2, to_bac: 1}   # +0
+        - {xu: 800, xuquai: 8, hoa_duoc: 2, loiquai: 1}   # +1
+        - {xu: 1400, le_ender: 1, huyet_tinh: 1, loiquai: 2}   # +2
+        - {xu: 2000, le_ender: 2, huyet_tinh: 2, loiquai: 3}   # +3
+        - {xu: 3000, hon_quai: 1, huyet_tinh: 2, le_ender: 3}   # +4
+      wear: [85, 75, 65, 55, 45]
+      bonus:
+        - {from: 2, pieces: 4, mau: 6, dem-st: 10}
+        - {from: 4, pieces: 4, mau: 10, day-lui: 10, dem-st: 20}
     thomo:
       name: "Thợ Mỏ"
       icon: IRON_PICKAXE

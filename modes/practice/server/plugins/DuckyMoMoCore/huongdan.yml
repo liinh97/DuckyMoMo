@@ -859,12 +859,16 @@ chapters:
     &0Mảnh và tinh thể &6lấp lánh&0, chỉ server tạo ra được; đổi một chiều. Trao đổi được với người khác.
   - |-
     &6THỢ RÈN: các set
-    &0Chuỗi chính: Tân Thủ (+9) → &cChiến Binh&0 (+7) → &5Tinh Anh&0 (+5) → &6Cao Cấp&0 (+5). Cấp cuối set trước + nguyên liệu = cấp đầu set sau.
-    &0Mảnh ấn rơi trong dungeon: tầng 1–3 Chiến Ấn, 4–6 Linh Ấn, 7–10 Kim Ấn (tầng dễ mũ/giày, khó hơn giáp/quần, khó nhất vũ khí).
-    &0Set nghề: &6Thợ Mỏ&0 (cúp), &3Ngư Phủ&0 (cần câu, cần &bVảy Cá Hiếm&0 vớt khi câu cá), &2Du Hiệp&0 (cung).
+    &0Chuỗi chính: Tân Thủ (+9) → &cChiến Binh&0 (+7) → &5Tinh Anh&0 (+5) → &6Cao Cấp&0 (+5) → &4Huyền Thoại&0 (+3) → &dThần Thoại&0 (+4) → &eThần Thánh&0 (+3).
+    &0Mảnh ấn rơi trong dungeon: tầng 1–3 Chiến Ấn, 4–6 Linh Ấn, 7–10 Kim Ấn; Huyền Ấn rất hiếm ở dungeon khó. Thần Ấn, Thánh Ấn: chưa ai tìm ra.
+  - |-
+    &6THỢ RÈN: set nghề, set mùa
+    &0Set nghề: &6Thợ Mỏ&0 (cúp), &3Ngư Phủ&0 (cần câu), &2Du Hiệp&0 (cung), &2Nông Gia&0 (cuốc, gấp đôi nông sản), &cThợ Săn&0 (đánh quái ban đêm mạnh hơn).
+    &0Set mùa &6U Linh&0: chỉ rèn trong Lễ Hội Bí Ngô (25/10–8/11), đúng mùa mạnh hơn; &dKẹo Linh Hồn&0 rơi từ quái khi đang mùa.
+    &2Lão Nông&0: lúa, cà rốt, khoai, mật ong → mảnh.
   - |-
     &6THỢ RÈN: hiệu ứng bộ
-    &0Mặc 2 hoặc 4 món cùng set từ +3, +6, +9: thêm máu, kháng đẩy lùi, giảm sát thương.
+    &0Mặc 2 hoặc 4 món cùng set cấp cao: thêm máu, kháng đẩy lùi, giảm sát thương (set nghề có hiệu ứng riêng).
     &0Cấp càng cao càng mòn chậm.
     &0Đồ set trao đổi được (/trade, chợ đen).
   - |-

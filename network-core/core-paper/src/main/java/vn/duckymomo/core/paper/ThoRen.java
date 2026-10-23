@@ -39,7 +39,10 @@ import org.bukkit.inventory.PlayerInventory;
  *  - Rèn +0: chỉ cần nguyên liệu. Nâng +N: cần món CÙNG SET cấp +N-1 (bị lấy đi) + nguyên liệu cấp N (cost[N]). Không thất bại.
  *    Nguyên liệu: "xu" (Vault), mã thư viện (Xu Quái, Lõi Quái, Tinh Luyện…) hoặc vật liệu game (chỉ tính món thường, không phải đồ thư viện).
  *  - Hiệu ứng bộ (bonus): theo số món giáp đang mặc có cấp >= from; lấy mức cao nhất đạt được của mỗi set, cộng các set lại.
- *    mau (% máu tối đa), day-lui (% kháng đẩy lùi), giam-st (% giảm sát thương nhận).
+ *    mau (% máu tối đa), day-lui (% kháng đẩy lùi), giam-st (% giảm sát thương nhận), thu-hoach (% cơ hội gấp đôi nông sản khi phá cây
+ *    chín, set Nông Gia), dem-st (% sát thương thêm lên quái thù địch ban đêm ở thế giới thường, set Thợ Săn).
+ *  - Set mùa / sự kiện (season): chỉ rèn được khi mùa đang mở (ngày from..to MM-dd, hoặc open: on/off cho sự kiện bật tay); đúng mùa thì
+ *    hiệu ứng bộ x boost, vũ khí của set +damage % sát thương, quái thù địch (không từ lồng sinh quái) có drop-chance % rơi nguyên liệu mùa.
  *  - Độ mòn: wear[cấp] = % lần trừ độ bền được tính (cấp cao mòn chậm).
  */
 final class ThoRen implements Listener {
@@ -48,10 +51,15 @@ final class ThoRen implements Listener {
 
     /** an = mã mảnh ấn riêng của món (vd mũ, giày Chiến Binh: cb_an_khoi); khoá "an" trong cost được thay bằng mã này. */
     private record Piece(String key, String name, List<String> ids, String an) { }
-    private record Bonus(int from, int pieces, double mau, double dayLui, double giamSt) { }
+    private record Bonus(int from, int pieces, double mau, double dayLui, double giamSt, double thuHoach, double demSt) {
+        Bonus times(double k) {
+            return new Bonus(from, pieces, mau * k, dayLui * k, giamSt * k, thuHoach * k, demSt * k);
+        }
+    }
+    private record Season(String name, String from, String to, String open, double boost, double damage, String drop, double dropChance) { }
     /** requires = mã set trước: rèn +0 cần món cùng loại của set đó ở cấp cao nhất (vd Tinh Anh +0 cần Tân Thủ +9). */
     private record SetDef(String id, String name, Material icon, String desc, String requires, List<Piece> pieces, List<Map<String, Object>> costs,
-                          List<Integer> wear, List<Bonus> bonus) {
+                          List<Integer> wear, List<Bonus> bonus, Season season) {
         int max() {
             return pieces.stream().mapToInt(p -> p.ids().size()).min().orElse(0) - 1;
         }
@@ -61,7 +69,7 @@ final class ThoRen implements Listener {
     private record Recipe(String out, int amount, Map<String, Object> cost) { }
     private record Stall(String id, String name, String sub, String profession, String open, String skin, List<Recipe> recipes) { }
     /** Hiệu ứng đang áp cho một người (tổng các set) + mô tả để báo khi đổi. */
-    private record Active(double mau, double dayLui, double giamSt, String text) { }
+    private record Active(double mau, double dayLui, double giamSt, double thuHoach, double demSt, String text) { }
 
     private final DuckyMoMoCore plugin;
     private final ItemLibrary lib;
@@ -161,11 +169,16 @@ final class ThoRen implements Listener {
             List<Bonus> bonus = new ArrayList<>();
             for (Map<?, ?> m : s.getMapList("bonus")) {
                 bonus.add(new Bonus(num(m.get("from")).intValue(), num(m.get("pieces")).intValue(), num(m.get("mau")).doubleValue(),
-                        num(m.get("day-lui")).doubleValue(), num(m.get("giam-st")).doubleValue()));
+                        num(m.get("day-lui")).doubleValue(), num(m.get("giam-st")).doubleValue(), num(m.get("thu-hoach")).doubleValue(),
+                        num(m.get("dem-st")).doubleValue()));
             }
+            ConfigurationSection se = s.getConfigurationSection("season");
+            Season season = se == null ? null : new Season(se.getString("name", ""), se.getString("from", ""), se.getString("to", ""),
+                    se.getString("open", "auto"), se.getDouble("boost", 1), se.getDouble("damage", 0), se.getString("drop.item", ""),
+                    se.getDouble("drop.chance", 0));
             Material icon = Material.matchMaterial(s.getString("icon", "IRON_CHESTPLATE"));
             SetDef def = new SetDef(id, s.getString("name", id), icon == null ? Material.IRON_CHESTPLATE : icon, s.getString("desc", ""),
-                    s.getString("requires", ""), pieces, costs, s.getIntegerList("wear"), bonus);
+                    s.getString("requires", ""), pieces, costs, s.getIntegerList("wear"), bonus, season);
             sets.put(id, def);
             for (Piece p : pieces) {
                 for (int i = 0; i < p.ids().size(); i++) {
@@ -609,6 +622,9 @@ final class ThoRen implements Listener {
                 t.kv("Nâng từ", req.name() + " +" + req.max());
             }
             t.kv("Cấp", "+0 → +" + set.max()).kv("Món", String.join(", ", set.pieces().stream().map(Piece::name).toList()));
+            if (set.season() != null) {
+                t.kv("Mùa", seasonText(set.season()));
+            }
             Bonus b = best(p, set);
             if (b != null) {
                 t.kv("Đang có", "&d" + bonusText(b));
@@ -699,6 +715,10 @@ final class ThoRen implements Listener {
         }
         t.line();
         boolean ok = true;
+        if (set.season() != null) {
+            ok = open(set.season());
+            t.check(ok, "Mùa " + seasonText(set.season()));
+        }
         String prev = prevId(set, piece, lv);
         if (prev != null) {
             boolean has = hasItem(p, prev);
@@ -782,6 +802,10 @@ final class ThoRen implements Listener {
         }
         if (cur >= next) {
             p.sendMessage(c("&7Bạn đã có " + piece.name() + " " + set.name() + " +" + cur + "."));
+            return;
+        }
+        if (set.season() != null && !open(set.season())) {
+            p.sendMessage(c("&c" + set.name() + " chỉ rèn được trong mùa " + seasonText(set.season()) + "&c."));
             return;
         }
         Map<String, Object> cost = cost(set, piece, next);
@@ -886,23 +910,36 @@ final class ThoRen implements Listener {
         if (b.giamSt() != 0) {
             s.add("-" + trim(b.giamSt()) + "% sát thương nhận");
         }
+        if (b.thuHoach() != 0) {
+            s.add(trim(b.thuHoach()) + "% gấp đôi nông sản");
+        }
+        if (b.demSt() != 0) {
+            s.add("+" + trim(b.demSt()) + "% sát thương quái ban đêm");
+        }
         return String.join(", ", s);
     }
 
     private static String trim(double d) {
-        return d == Math.rint(d) ? String.valueOf((long) d) : String.valueOf(d);
+        double r = Math.round(d * 10) / 10.0;
+        return r == Math.rint(r) ? String.valueOf((long) r) : String.valueOf(r);
     }
 
     private void refresh(Player p) {
-        double mau = 0, day = 0, giam = 0;
+        double mau = 0, day = 0, giam = 0, thu = 0, dem = 0;
         List<String> txt = new ArrayList<>();
         for (SetDef set : sets.values()) {
             Bonus b = best(p, set);
             if (b != null) {
+                boolean boosted = set.season() != null && set.season().boost() != 1 && open(set.season());
+                if (boosted) {
+                    b = b.times(set.season().boost());
+                }
                 mau += b.mau();
                 day += b.dayLui();
                 giam += b.giamSt();
-                txt.add(set.name() + ": " + bonusText(b));
+                thu += b.thuHoach();
+                dem += b.demSt();
+                txt.add(set.name() + (boosted ? " (đúng mùa)" : "") + ": " + bonusText(b));
             }
         }
         String text = String.join(" · ", txt);
@@ -915,7 +952,7 @@ final class ThoRen implements Listener {
         if (text.isEmpty()) {
             active.remove(p.getUniqueId());
         } else {
-            active.put(p.getUniqueId(), new Active(mau, day, giam, text));
+            active.put(p.getUniqueId(), new Active(mau, day, giam, thu, dem, text));
         }
         if (old != null || !text.isEmpty()) {
             p.sendActionBar(c(text.isEmpty() ? "&7Hiệu ứng bộ: không còn" : "&d✦ Hiệu ứng bộ &f" + text));
@@ -1071,6 +1108,83 @@ final class ThoRen implements Listener {
             }
             if (n > 0) {
                 e.setDamage(e.getDamage() * (1 + emArmor * n));
+            }
+        }
+    }
+
+    // ---------------------------------------------------------------- set mùa, Nông Gia, Thợ Săn
+
+    private static final java.time.ZoneId VN = java.time.ZoneId.of("Asia/Ho_Chi_Minh");
+
+    /** Mùa đang mở: open on/off (sự kiện bật tay, /dmm reload), auto = theo ngày from..to (MM-dd, to < from là qua năm mới). */
+    private static boolean open(Season s) {
+        if (s.open().equalsIgnoreCase("on") || s.open().equalsIgnoreCase("true")) {   // YAML đọc on/off thành true/false
+            return true;
+        }
+        if (s.open().equalsIgnoreCase("off") || s.open().equalsIgnoreCase("false") || s.from().isBlank() || s.to().isBlank()) {
+            return false;
+        }
+        String today = java.time.LocalDate.now(VN).format(java.time.format.DateTimeFormatter.ofPattern("MM-dd"));
+        return s.from().compareTo(s.to()) <= 0 ? today.compareTo(s.from()) >= 0 && today.compareTo(s.to()) <= 0
+                : today.compareTo(s.from()) >= 0 || today.compareTo(s.to()) <= 0;
+    }
+
+    private static String seasonText(Season s) {
+        String when = s.open().equalsIgnoreCase("auto") && !s.from().isBlank()
+                ? " " + s.from().substring(3) + "/" + s.from().substring(0, 2) + " → " + s.to().substring(3) + "/" + s.to().substring(0, 2) : "";
+        return s.name() + when + (open(s) ? " &a(đang mở)" : " &c(chưa tới mùa)");
+    }
+
+    /** Vũ khí set mùa đúng mùa: +damage %. Hiệu ứng Thợ Săn: +dem-st % lên quái thù địch ban đêm (thế giới thường). */
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    public void onSetDamage(org.bukkit.event.entity.EntityDamageByEntityEvent e) {
+        if (!(e.getDamager() instanceof Player p)) {
+            return;
+        }
+        Ref r = byId.get(ItemLibrary.idOf(p.getInventory().getItemInMainHand()));
+        Season s = r == null ? null : r.set().season();
+        if (s != null && s.damage() != 0 && open(s)) {
+            e.setDamage(e.getDamage() * (1 + s.damage() / 100.0));
+        }
+        Active a = active.get(p.getUniqueId());
+        if (a != null && a.demSt() > 0 && e.getEntity() instanceof org.bukkit.entity.Enemy
+                && p.getWorld().getEnvironment() == org.bukkit.World.Environment.NORMAL) {
+            long t = p.getWorld().getTime();
+            if (t >= 13000 && t <= 23000) {
+                e.setDamage(e.getDamage() * (1 + a.demSt() / 100.0));
+            }
+        }
+    }
+
+    /** Nông Gia: phá cây đã chín, có thu-hoach % cơ hội rơi thêm một phần nông sản y hệt. */
+    @EventHandler(ignoreCancelled = true)
+    public void onHarvest(org.bukkit.event.block.BlockDropItemEvent e) {
+        Active a = active.get(e.getPlayer().getUniqueId());
+        if (a == null || a.thuHoach() <= 0 || !(e.getBlockState().getBlockData() instanceof org.bukkit.block.data.Ageable ag)
+                || ag.getAge() < ag.getMaximumAge() || ThreadLocalRandom.current().nextDouble(100) >= a.thuHoach()) {
+            return;
+        }
+        for (org.bukkit.entity.Item i : e.getItems()) {
+            e.getBlock().getWorld().dropItemNaturally(e.getBlock().getLocation().add(0.5, 0.5, 0.5), i.getItemStack().clone());
+        }
+    }
+
+    /** Nguyên liệu mùa: quái thù địch (không từ lồng sinh quái) do người chơi hạ, đúng mùa, có drop-chance % rơi. */
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onSeasonKill(org.bukkit.event.entity.EntityDeathEvent e) {
+        Player k = e.getEntity().getKiller();
+        if (k == null || !(e.getEntity() instanceof org.bukkit.entity.Enemy) || e.getEntity().fromMobSpawner()) {
+            return;
+        }
+        for (SetDef set : sets.values()) {
+            Season s = set.season();
+            if (s == null || s.drop().isBlank() || !open(s) || ThreadLocalRandom.current().nextDouble(100) >= s.dropChance()) {
+                continue;
+            }
+            ItemStack it = lib.build(s.drop(), 1);
+            if (it != null) {
+                Rewards.hand(k, it);
+                k.sendMessage(c("&6✦ " + s.name() + ": nhặt được " + lib.name(s.drop()) + "&6!"));
             }
         }
     }

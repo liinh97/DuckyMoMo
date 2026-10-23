@@ -64,7 +64,25 @@ final class WorldRebuild {
             }
             case "chepspawn" -> copySpawn(s);
             case "sua" -> fixHeights(s);
-            case "xoaspawncu" -> restoreSpawn(s);
+            case "xoaspawncu" -> restoreArea(s, SPAWN_X - HALF, SPAWN_Z - HALF, SPAWN_X + HALF, SPAWN_Z + HALF, Integer.MAX_VALUE, null);
+            case "xoavung" -> {   // /dmm thegioi xoavung x1 z1 x2 z2 đếnY [giữ x1 z1 x2 z2 từY]: trả một vùng về địa hình tự nhiên, chừa khối "giữ"
+                if (a.length < 7) {
+                    s.sendMessage("/dmm thegioi xoavung <x1> <z1> <x2> <z2> <đến y> [giữ <x1> <z1> <x2> <z2> <từ y>]");
+                    return;
+                }
+                int[] v = new int[5];
+                for (int i = 0; i < 5; i++) {
+                    v[i] = Integer.parseInt(a[2 + i]);
+                }
+                int[] keep = null;
+                if (a.length >= 13 && a[7].equalsIgnoreCase("giu")) {
+                    keep = new int[5];
+                    for (int i = 0; i < 5; i++) {
+                        keep[i] = Integer.parseInt(a[8 + i]);
+                    }
+                }
+                restoreArea(s, Math.min(v[0], v[2]), Math.min(v[1], v[3]), Math.max(v[0], v[2]), Math.max(v[1], v[3]), v[4], keep);
+            }
             default -> s.sendMessage("Đổi world: " + state);
         }
     }
@@ -258,19 +276,22 @@ final class WorldRebuild {
      * về địa hình tự nhiên: world tạm "dmm_tam" cùng seed với world chính, chép đè từng khối (cả rương công trình tự nhiên); xoá vật trang
      * trí cũ (khung tranh, armor stand, khối hiển thị; không đụng NPC Citizens, người chơi). Xong gỡ world tạm.
      */
-    private void restoreSpawn(CommandSender s) {
+    private void restoreArea(CommandSender s, int x0, int z0, int x1, int z1, int toY, int[] keep) {
         World dst = Bukkit.getWorlds().get(0);
         if (task != null) {
             s.sendMessage("Đang chạy việc khác: " + state);
             return;
         }
         World src = create("dmm_tam", dst.getSeed());
-        int x0 = SPAWN_X - HALF, z0 = SPAWN_Z - HALF, size = HALF * 2 + 1, minY = dst.getMinHeight(), maxY = dst.getMaxHeight();
+        int sx = x1 - x0 + 1, sz = z1 - z0 + 1, minY = dst.getMinHeight(), maxY = Math.min(dst.getMaxHeight(), toY == Integer.MAX_VALUE ? toY : toY + 1);
+        int cxm = (x0 + x1) / 2, czm = (z0 + z1) / 2;
         int removed = 0;
-        for (int cx = x0 >> 4; cx <= (x0 + size) >> 4; cx++) {
-            for (int cz = z0 >> 4; cz <= (z0 + size) >> 4; cz++) {
+        for (int cx = x0 >> 4; cx <= x1 >> 4; cx++) {
+            for (int cz = z0 >> 4; cz <= z1 >> 4; cz++) {
                 for (Entity e : dst.getChunkAt(cx, cz).getEntities()) {
-                    if (!e.hasMetadata("NPC") && (e instanceof org.bukkit.entity.Hanging || e instanceof org.bukkit.entity.ArmorStand
+                    if (!e.hasMetadata("NPC") && e.getLocation().getBlockX() >= x0 && e.getLocation().getBlockX() <= x1
+                            && e.getLocation().getBlockZ() >= z0 && e.getLocation().getBlockZ() <= z1 && e.getLocation().getY() < maxY
+                            && (e instanceof org.bukkit.entity.Hanging || e instanceof org.bukkit.entity.ArmorStand
                             || e instanceof org.bukkit.entity.Display || e instanceof org.bukkit.entity.Item)) {
                         e.remove();
                         removed++;
@@ -280,7 +301,7 @@ final class WorldRebuild {
         }
         int[] col = {0};
         long[] blocks = {0};
-        int total = size * size, rm = removed;
+        int total = sx * sz, rm = removed;
         task = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
             long t0 = System.nanoTime();
             while (System.nanoTime() - t0 < BUDGET_NS) {
@@ -297,8 +318,8 @@ final class WorldRebuild {
                     double sum = 0;
                     for (int deg = 0; deg < 360; deg += 10) {
                         for (int rr = 120; rr <= 140; rr += 10) {
-                            int hx = SPAWN_X + (int) Math.round(rr * Math.cos(Math.toRadians(deg)));
-                            int hz = SPAWN_Z + (int) Math.round(rr * Math.sin(Math.toRadians(deg)));
+                            int hx = cxm + (int) Math.round(rr * Math.cos(Math.toRadians(deg)));
+                            int hz = czm + (int) Math.round(rr * Math.sin(Math.toRadians(deg)));
                             sum += dst.getHighestBlockYAt(hx, hz, org.bukkit.HeightMap.MOTION_BLOCKING_NO_LEAVES);
                             n++;
                         }
@@ -309,8 +330,10 @@ final class WorldRebuild {
                     plugin.getLogger().info("Đổi world: " + state);
                     return;
                 }
-                int x = x0 + col[0] % size, z = z0 + col[0] / size;
-                for (int y = minY; y < maxY; y++) {
+                int x = x0 + col[0] % sx, z = z0 + col[0] / sx;
+                boolean inKeep = keep != null && x >= Math.min(keep[0], keep[2]) && x <= Math.max(keep[0], keep[2])
+                        && z >= Math.min(keep[1], keep[3]) && z <= Math.max(keep[1], keep[3]);
+                for (int y = minY; y < (inKeep ? Math.min(maxY, keep[4]) : maxY); y++) {
                     Block a = src.getBlockAt(x, y, z), b = dst.getBlockAt(x, y, z);
                     var data = a.getBlockData();
                     if (!b.getBlockData().equals(data)) {

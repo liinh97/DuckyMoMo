@@ -1125,6 +1125,24 @@ public final class DuckyMoMoCore extends JavaPlugin {
                     } else {
                         decorShop.npcCommand(sender, args);
                     }
+                } else if (args.length >= 1 && args[0].equalsIgnoreCase("thegioi")) {
+                    if (getConfig().getConfigurationSection("decorate") == null) {
+                        sender.sendMessage("Đổi world chỉ dùng ở Bang Hội Chiến (config decorate).");
+                    } else {
+                        if (worldRebuild == null) {
+                            worldRebuild = new WorldRebuild(this);
+                        }
+                        worldRebuild.command(sender, args);
+                    }
+                } else if (args.length >= 1 && args[0].equalsIgnoreCase("hang")) {
+                    if (getConfig().getConfigurationSection("decorate") == null) {
+                        sender.sendMessage("Đục hang chỉ dùng ở Bang Hội Chiến (config decorate).");
+                    } else {
+                        if (caveCarver == null) {
+                            caveCarver = new CaveCarver(this);
+                        }
+                        caveCarver.command(sender, args);
+                    }
                 } else if (args.length >= 1 && args[0].equalsIgnoreCase("thorennpc")) {
                     if (thoRen == null) {
                         sender.sendMessage("Thợ Rèn chưa bật trên server này (config: tho-ren.enabled).");
@@ -1192,11 +1210,15 @@ public final class DuckyMoMoCore extends JavaPlugin {
             "§e/dmm thorennpc <quầy|remove> §7đặt NPC quầy đổi nguyên liệu / Thợ Rèn ở chỗ đứng",
             "§e/dmm hoabinh setup|claim <r> §7Liên minh Hoà Bình   §e/dmm decorate|structures start|pause|status|reset");
     private static final List<String> DMM_SUBS = List.of("enchant", "sach", "laydo", "luudo", "thuvien", "clean", "reload", "lenh",
-            "rtpnpc", "shopnpc", "thorennpc", "phu", "hoabinh", "decorate", "structures");
+            "rtpnpc", "shopnpc", "thorennpc", "phu", "hoabinh", "decorate", "structures", "hang", "thegioi");
     /** Thợ Rèn (/thoren, NPC quầy /dmm thorennpc); null nếu tắt. */
     private ThoRen thoRen;
     /** Lệnh con /dmm chỉ Admin (duckymomo.admin); còn lại Manager dùng được (duckymomo.dmm). */
-    private static final java.util.Set<String> DMM_ADMIN_ONLY = java.util.Set.of("reload", "decorate", "structures");
+    private static final java.util.Set<String> DMM_ADMIN_ONLY = java.util.Set.of("reload", "decorate", "structures", "hang", "thegioi");
+    /** Đổi map sang world thường giả Trái Đất (/dmm thegioi, 23/10). */
+    private WorldRebuild worldRebuild;
+    /** Đục hang tự nhiên vào map Trái Đất (/dmm hang, 23/10). */
+    private CaveCarver caveCarver;
 
     /** Gợi ý Tab cho /dmm: lệnh con, tên phù phép, mã thư viện đồ, tên người chơi. */
     private List<String> dmmTab(org.bukkit.command.CommandSender sender, String[] a) {

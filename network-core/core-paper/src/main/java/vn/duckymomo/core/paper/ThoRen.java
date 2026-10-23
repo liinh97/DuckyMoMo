@@ -69,6 +69,8 @@ final class ThoRen implements Listener {
     private final Map<String, Ref> byId = new HashMap<>();
     private final Map<UUID, Active> active = new HashMap<>();
     private final NamespacedKey keyMau;
+    /** Dấu phiên bản mô tả của món set (băm mục Thư viện đồ): khác thì dựng lại món theo Thư viện, giữ độ mòn + số lượng. */
+    private final NamespacedKey keyVer;
     private final NamespacedKey keyDayLui;
     private final Map<String, Stall> stalls = new LinkedHashMap<>();
     private final java.util.Set<String> guarded = new java.util.HashSet<>();   // mảnh / tinh thể: cấm đặt, chế, nung, đốt
@@ -89,6 +91,7 @@ final class ThoRen implements Listener {
         this.plugin = plugin;
         this.lib = lib;
         this.keyMau = new NamespacedKey(plugin, "thoren_mau");
+        this.keyVer = new NamespacedKey(plugin, "thoren_ver");
         this.keyDayLui = new NamespacedKey(plugin, "thoren_daylui");
         this.npcKey = new NamespacedKey(plugin, "thoren_npc");
         this.citizens = !"villager".equalsIgnoreCase(c.getString("npc-type", "citizens")) && Bukkit.getPluginManager().isPluginEnabled("Citizens");
@@ -173,6 +176,7 @@ final class ThoRen implements Listener {
         Bukkit.getScheduler().runTaskTimer(plugin, () -> Bukkit.getOnlinePlayers().forEach(this::refresh), 100L, 40L);
         Bukkit.getScheduler().runTaskLater(plugin, () -> Bukkit.getWorlds().forEach(w -> w.getEntities().forEach(this::track)), 100L);
         Bukkit.getScheduler().runTaskTimer(plugin, this::lookAtPlayers, 120L, 5L);
+        Bukkit.getScheduler().runTaskTimer(plugin, () -> Bukkit.getOnlinePlayers().forEach(this::updateItems), 200L, 1200L);
         if (citizens) {   // skin trong config (tho-ren.quay.<quầy>.skin) áp lại cho NPC đã đặt
             Bukkit.getScheduler().runTaskLater(plugin, () -> stalls.values().forEach(st -> {
                 int id = npcIds.getInt(st.id(), -1);
@@ -777,6 +781,10 @@ final class ThoRen implements Listener {
             }
         }
         ItemStack made = lib.build(piece.ids().get(next), 1);
+        if (made != null) {
+            String ver = version(piece.ids().get(next));
+            made.editMeta(meta -> meta.getPersistentDataContainer().set(keyVer, org.bukkit.persistence.PersistentDataType.STRING, ver));
+        }
         if (made == null) {
             p.sendMessage(c("&cMón " + piece.ids().get(next) + " chưa có trong Thư viện đồ, báo admin."));
             return;
@@ -924,7 +932,54 @@ final class ThoRen implements Listener {
 
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
-        Bukkit.getScheduler().runTaskLater(plugin, () -> refresh(e.getPlayer()), 20L);
+        Bukkit.getScheduler().runTaskLater(plugin, () -> {
+            updateItems(e.getPlayer());
+            refresh(e.getPlayer());
+        }, 20L);
+    }
+
+    private String version(String id) {
+        ConfigurationSection s = lib.section(id);
+        return s == null ? "" : Integer.toHexString(s.getValues(true).toString().hashCode());
+    }
+
+    /**
+     * Món set người chơi đang giữ (túi + đang mặc + tay phụ) tự đổi theo Thư viện đồ khi mục trong thư viện đổi (23/10: bật gộp phù phép
+     * cho mô tả thấp, món đã phát vẫn hiện kiểu cũ). Giữ độ mòn và số lượng; món đúng phiên bản thì bỏ qua.
+     */
+    private void updateItems(Player p) {
+        org.bukkit.inventory.PlayerInventory inv = p.getInventory();
+        ItemStack[] all = inv.getContents();
+        boolean changed = false;
+        for (int i = 0; i < all.length; i++) {
+            ItemStack it = all[i];
+            String id = ItemLibrary.idOf(it);
+            if (id == null || !byId.containsKey(id)) {
+                continue;
+            }
+            String ver = version(id);
+            String has = it.getItemMeta().getPersistentDataContainer().get(keyVer, org.bukkit.persistence.PersistentDataType.STRING);
+            if (ver.equals(has)) {
+                continue;
+            }
+            ItemStack fresh = lib.build(id, it.getAmount());
+            if (fresh == null) {
+                continue;
+            }
+            int dmg = it.getItemMeta() instanceof org.bukkit.inventory.meta.Damageable d ? d.getDamage() : 0;
+            fresh.editMeta(meta -> {
+                if (meta instanceof org.bukkit.inventory.meta.Damageable d) {
+                    d.setDamage(dmg);
+                }
+                meta.getPersistentDataContainer().set(keyVer, org.bukkit.persistence.PersistentDataType.STRING, ver);
+            });
+            all[i] = fresh;
+            changed = true;
+        }
+        if (changed) {
+            inv.setContents(all);
+            plugin.getLogger().info("Thợ Rèn: cập nhật đồ set theo Thư viện cho " + p.getName());
+        }
     }
 
     @EventHandler

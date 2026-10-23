@@ -105,8 +105,75 @@ final class SpawnWorld {
         }
     }
 
+    /**
+     * Dán thử một schematic bất kỳ vào world chính (24/10, chủ server muốn xem nhiều bản spawn): tâm mặt bằng của schematic đặt ở (cx, cz),
+     * đáy ở minY. Có fromY thì dọn trước khối hình elip trùm mặt bằng (lề 6) từ fromY lên trời. Khối chắn (barrier) của schematic bỏ đi.
+     */
+    private void pasteTry(CommandSender s, String[] a) {
+        if (a.length < 6) {
+            s.sendMessage("/dmm spawnmoi thu <file> <tâmX> <tâmZ> <đáyY> [dọn từ y]");
+            return;
+        }
+        World w = Bukkit.getWorlds().get(0);
+        File f = new File(new File(plugin.getDataFolder().getParentFile(), "WorldEdit/schematics"), a[2]);
+        ClipboardFormat fmt = ClipboardFormats.findByFile(f);
+        if (!f.isFile() || fmt == null) {
+            s.sendMessage("Không đọc được schematic " + f);
+            return;
+        }
+        int cx = Integer.parseInt(a[3]), cz = Integer.parseInt(a[4]), minY = Integer.parseInt(a[5]);
+        try (ClipboardReader rd = fmt.getReader(new FileInputStream(f))) {
+            Clipboard clip = rd.read();
+            BlockVector3 mn = clip.getRegion().getMinimumPoint(), mx = clip.getRegion().getMaximumPoint(), o = clip.getOrigin();
+            int barriers = 0;
+            var air = com.sk89q.worldedit.world.block.BlockTypes.AIR.getDefaultState();
+            for (BlockVector3 p : clip.getRegion()) {
+                if (clip.getBlock(p).getBlockType() == com.sk89q.worldedit.world.block.BlockTypes.BARRIER) {
+                    clip.setBlock(p, air);
+                    barriers++;
+                }
+            }
+            // vị trí dán (gốc clipboard) sao cho tâm mặt bằng ở (cx, cz), đáy ở minY
+            int tx = cx - (mn.x() + mx.x()) / 2 + o.x(), tz = cz - (mn.z() + mx.z()) / 2 + o.z(), ty = minY - mn.y() + o.y();
+            int hx = (mx.x() - mn.x()) / 2 + 6, hz = (mx.z() - mn.z()) / 2 + 6;
+            long cleared = 0;
+            if (a.length >= 7) {
+                int fromY = Integer.parseInt(a[6]);
+                for (int dx = -hx; dx <= hx; dx++) {
+                    for (int dz = -hz; dz <= hz; dz++) {
+                        if ((double) dx * dx / ((double) hx * hx) + (double) dz * dz / ((double) hz * hz) > 1) {
+                            continue;
+                        }
+                        for (int yy = fromY; yy < w.getMaxHeight(); yy++) {
+                            var b = w.getBlockAt(cx + dx, yy, cz + dz);
+                            if (!b.getType().isAir()) {
+                                b.setType(org.bukkit.Material.AIR, false);
+                                cleared++;
+                            }
+                        }
+                    }
+                }
+            }
+            try (EditSession es = WorldEdit.getInstance().newEditSession(BukkitAdapter.adapt(w))) {
+                Operations.complete(new ClipboardHolder(clip).createPaste(es).to(BlockVector3.at(tx, ty, tz)).ignoreAirBlocks(true).build());
+                BlockVector3 lo = mn.subtract(o).add(tx, ty, tz), hi = mx.subtract(o).add(tx, ty, tz);
+                String msg = "Đã dán " + f.getName() + ": " + es.getBlockChangeCount() + " khối, vùng " + lo + " → " + hi + ", bỏ " + barriers
+                        + " khối chắn" + (cleared > 0 ? ", dọn trước " + cleared + " khối" : "") + ".";
+                s.sendMessage(msg);
+                plugin.getLogger().info("Spawn thử: " + msg);
+            }
+        } catch (Exception ex) {
+            s.sendMessage("Lỗi dán: " + ex.getMessage());
+            plugin.getLogger().warning("Spawn thử: lỗi dán " + ex);
+        }
+    }
+
     void command(CommandSender s, String[] a) {
         String sub = a.length >= 2 ? a[1].toLowerCase(java.util.Locale.ROOT) : "";
+        if (sub.equals("thu")) {   // dán vào world chính, không cần world spawn riêng (spawn-world.enabled false)
+            pasteTry(s, a);
+            return;
+        }
         ConfigurationSection c = cfg();
         if (c == null) {
             s.sendMessage("Chưa có spawn-world trong config.");

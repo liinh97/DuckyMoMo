@@ -240,7 +240,7 @@ for sid, (c1, c2, sym, word, tag, where) in {
         items[f'{sid}_an_{grp}'] = {
             'nguon': 'web', 'nhom': 'nguyen-lieu', 'ten-goi': f'{word} · {label}', 'material': next(SHERD) + '_POTTERY_SHERD', 'amount': 1,
             'name': f'{c1}{sym} {c2}{word} &8· &f{label}',
-            'lore': [f'&7Mảnh ấn rơi trong dungeon: {where}', '', f'{c2}▸ &7Dùng rèn &f{pieces} {tag}&7 ở Thợ Rèn', '&8Trao đổi được · lấp lánh = hàng thật'],
+            'lore': [f'&7Mảnh ấn của bộ {tag}, nhặt được trong dungeon.', '',   # nguồn chính xác từng tầng: gen_truyen.py f'{c2}▸ &7Dùng rèn &f{pieces} {tag}&7 ở Thợ Rèn', '&8Trao đổi được · lấp lánh = hàng thật'],
             'glint': True, 'bo': ['Nguyên liệu Thợ Rèn', tag], 'nguoi-luu': 'Claude (Thợ Rèn)'}
 
 # ------------------------------------------------------------------ SET NGHỀ (+0..+4): đi ngang, giáp ≤ Bảo vệ III, kỹ năng tiện ích

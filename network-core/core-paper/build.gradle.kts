@@ -22,6 +22,8 @@ dependencies {
     compileOnly("me.clip:placeholderapi:2.12.3") { isTransitive = false }
     // Lữ khách (wander-npcs, banghoi): NPC Citizens tự dời chỗ trên bản đồ, nói chuyện bằng BetonQuest
     compileOnly("net.citizensnpcs:citizensapi:2.0.44-SNAPSHOT") { isTransitive = false }
+    // Dán schematic spawn vào world spawn riêng (24/10): biên dịch với đúng jar WorldEdit trên server (chép vào libs/, không commit)
+    compileOnly(rootProject.files("libs/worldedit-bukkit-7.4.6.jar"))
 }
 
 tasks.withType<JavaCompile>().configureEach {

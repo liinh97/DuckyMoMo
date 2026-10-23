@@ -1962,3 +1962,12 @@ tho-ren:
 dang-nhap-lau:
   ngay: 30
   nguoi: [Linh]
+
+# World spawn riêng (24/10): world trống chỉ chứa công trình spawn (đảo Nhật, schematic IQBUILDERS) + các khu dịch vụ; cổng sang world sinh
+# tồn. /dmm spawnmoi dan (dán schematic tại paste), /dmm spawnmoi diemxuathien (đặt điểm xuất hiện theo spawn).
+spawn-world:
+  enabled: true
+  name: spawn
+  schematic: japan-spawn-iqbuilders.schem
+  paste: {x: 0, y: 80, z: 0}
+  spawn: {x: 0.5, y: 100, z: 0.5, yaw: 180}

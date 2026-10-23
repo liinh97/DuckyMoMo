@@ -242,6 +242,16 @@ public final class DuckyMoMoCore extends JavaPlugin {
         // Thư viện đồ (mọi server): dựng trước để cửa hàng, phần thưởng dùng; /dmm luudo|laydo|thuvien
         itemLibrary = new ItemLibrary(this);
         Shared.library = itemLibrary;
+        // World spawn riêng (24/10): world tạo bằng WorldCreator không tự nạp lại khi bật server -> plugin nạp (sau khi world chính sẵn sàng)
+        if (getConfig().getBoolean("spawn-world.enabled", false)) {
+            getServer().getScheduler().runTask(this, () -> {
+                if (spawnWorld == null) {
+                    spawnWorld = new SpawnWorld(this);
+                }
+                org.bukkit.World w = spawnWorld.load();
+                getLogger().info("World spawn riêng: " + (w == null ? "LỖI không nạp được" : w.getName()));
+            });
+        }
         // Người chơi Bedrock (đã xác thực qua Xbox + Floodgate) không phải nhập mật khẩu AuthMe.
         // Chỉ bật trên server có AuthMe (hiện tại là lobby).
         if (getServer().getPluginManager().isPluginEnabled("AuthMe")) {
@@ -1125,6 +1135,11 @@ public final class DuckyMoMoCore extends JavaPlugin {
                     } else {
                         decorShop.npcCommand(sender, args);
                     }
+                } else if (args.length >= 1 && args[0].equalsIgnoreCase("spawnmoi")) {
+                    if (spawnWorld == null) {
+                        spawnWorld = new SpawnWorld(this);
+                    }
+                    spawnWorld.command(sender, args);
                 } else if (args.length >= 1 && args[0].equalsIgnoreCase("thegioi")) {
                     if (getConfig().getConfigurationSection("decorate") == null) {
                         sender.sendMessage("Đổi world chỉ dùng ở Bang Hội Chiến (config decorate).");
@@ -1210,11 +1225,13 @@ public final class DuckyMoMoCore extends JavaPlugin {
             "§e/dmm thorennpc <quầy|remove> §7đặt NPC quầy đổi nguyên liệu / Thợ Rèn ở chỗ đứng",
             "§e/dmm hoabinh setup|claim <r> §7Liên minh Hoà Bình   §e/dmm decorate|structures start|pause|status|reset");
     private static final List<String> DMM_SUBS = List.of("enchant", "sach", "laydo", "luudo", "thuvien", "clean", "reload", "lenh",
-            "rtpnpc", "shopnpc", "thorennpc", "phu", "hoabinh", "decorate", "structures", "hang", "thegioi");
+            "rtpnpc", "shopnpc", "thorennpc", "phu", "hoabinh", "decorate", "structures", "hang", "thegioi", "spawnmoi");
     /** Thợ Rèn (/thoren, NPC quầy /dmm thorennpc); null nếu tắt. */
     private ThoRen thoRen;
     /** Lệnh con /dmm chỉ Admin (duckymomo.admin); còn lại Manager dùng được (duckymomo.dmm). */
-    private static final java.util.Set<String> DMM_ADMIN_ONLY = java.util.Set.of("reload", "decorate", "structures", "hang", "thegioi");
+    private static final java.util.Set<String> DMM_ADMIN_ONLY = java.util.Set.of("reload", "decorate", "structures", "hang", "thegioi", "spawnmoi");
+    /** World spawn riêng (/dmm spawnmoi, 24/10). */
+    private SpawnWorld spawnWorld;
     /** Đổi map sang world thường giả Trái Đất (/dmm thegioi, 23/10). */
     private WorldRebuild worldRebuild;
     /** Đục hang tự nhiên vào map Trái Đất (/dmm hang, 23/10). */

@@ -10,7 +10,7 @@ const WEAPONS_ALL = [
   ['lib', 'tt_kiem_0', 'Kiếm Tân Thủ +0'], ['lib', 'tt_kiem_9', 'Kiếm Tân Thủ +9'], ['lib', 'cb_kiem_7', 'Kiếm Chiến Binh +7'],
   ['lib', 'ta_kiem_5', 'Kiếm Tinh Anh +5'], ['lib', 'cc_kiem_5', 'Kiếm Cao Cấp +5'],
 ];
-const WEAPONS = process.env.DEBUG ? WEAPONS_ALL.slice(2, 3) : process.env.CHI_EM ? WEAPONS_ALL.slice(0, 2) : WEAPONS_ALL;
+const WEAPONS = process.env.CHI_LIB ? [['mc', 'diamond_sword', 'Kiếm kim cương thường'], ...process.env.CHI_LIB.split(',').map(id => ['lib', id, id])] : process.env.DEBUG ? WEAPONS_ALL.slice(2, 3) : process.env.CHI_EM ? WEAPONS_ALL.slice(0, 2) : WEAPONS_ALL;
 (async () => {
   let t = await h.start(N); let R = c => t.rc.cmd(c);
   await R(`lp user ${N} parent add admin`); await t.sleep(2500);

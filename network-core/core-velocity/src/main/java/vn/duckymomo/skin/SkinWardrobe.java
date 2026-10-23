@@ -10,7 +10,9 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
 import com.velocitypowered.api.command.CommandManager;
 import com.velocitypowered.api.command.SimpleCommand;
+import com.velocitypowered.api.event.PostOrder;
 import com.velocitypowered.api.event.Subscribe;
+import com.velocitypowered.api.event.command.CommandExecuteEvent;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
 import com.velocitypowered.api.event.connection.PluginMessageEvent;
@@ -147,6 +149,29 @@ public final class SkinWardrobe {
         }
         proxy.getCommandManager().executeAsync(sc.getPlayer(), cmd);
     }
+
+    /**
+     * 23/10: lệnh đổi skin của SkinsRestorer (/skin, /skins) chỉ cho người có quyền "Được đổi skin" (skinsrestorer.player trên trang Role).
+     * Thử tắt forceDefaultPermissions + cấm ở nhóm mặc định mà Tị Nạn vẫn /skin được, nên chặn thẳng ở đây trước khi tới SkinsRestorer
+     * (lệnh bị chặn cũng không chuyển xuống server game, nơi SkinsRestorer cho phép mặc định).
+     */
+    @Subscribe(order = PostOrder.FIRST)
+    public void onCommand(CommandExecuteEvent e) {
+        if (!(e.getCommandSource() instanceof Player p)) {
+            return;
+        }
+        String cmd = e.getCommand().trim();
+        String root = (cmd.startsWith("/") ? cmd.substring(1) : cmd).split(" ", 2)[0].toLowerCase(Locale.ROOT);
+        if (root.contains(":")) {
+            root = root.substring(root.indexOf(':') + 1);   // skinsrestorer:skin
+        }
+        if (SKIN_CMDS.contains(root) && !canChange(p)) {
+            e.setResult(CommandExecuteEvent.CommandResult.denied());
+            p.sendMessage(c(P + "&c" + NO_CHANGE));
+        }
+    }
+
+    static final java.util.Set<String> SKIN_CMDS = java.util.Set.of("skin", "skins", "skinsrestorer:skin", "skinsrestorer:skins");
 
     @Subscribe
     public void onStop(ProxyShutdownEvent e) {

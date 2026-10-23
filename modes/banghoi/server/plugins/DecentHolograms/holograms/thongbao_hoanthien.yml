@@ -1,0 +1,16 @@
+location: world:12699.500:71.400:-2517.500
+enabled: true
+display-range: 48
+update-range: 48
+update-interval: 20
+facing: 0.0
+down-origin: false
+pages:
+- lines:
+  - content: '&6⚒ SERVER ĐANG HOÀN THIỆN ⚒'
+    height: 0.3
+  - content: '&fCứ vào chơi trước, tính năng, đồ trade, sự kiện cập nhật dần'
+    height: 0.3
+  - content: '&7Thấy lỗi, cách lách luật? Báo &9Discord #reports &7» &aCó thưởng'
+    height: 0.3
+  actions: {}

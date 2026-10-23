@@ -1071,9 +1071,9 @@ def api_hangngay():
 # ---------------------------------------------------------------- đăng nhập bằng tài khoản game
 
 COOKIE = "dmm_phien"
-# ĐANG TEST (21/10): đăng nhập giữ 30 ngày. KHI MỞ SERVER: SITE_SESSION_DAYS=7, SITE_ADMIN_HOURS=12 (env trong .env, hoặc sửa mặc định ở đây).
-SESSION_DAYS = int(os.environ.get("SITE_SESSION_DAYS", "30"))    # phiên xem tài khoản
-ADMIN_HOURS = int(os.environ.get("SITE_ADMIN_HOURS", "720"))     # staff mở trang quản trị sau khi nhập mã /web; hết thì gõ /web lấy mã mới
+# 23/10 mở server: phiên tài khoản 7 ngày, quyền quản trị (mã /web) 12 giờ (giai đoạn test 21/10 từng để 30 ngày). Đổi: SITE_SESSION_DAYS, SITE_ADMIN_HOURS trong .env.
+SESSION_DAYS = int(os.environ.get("SITE_SESSION_DAYS", "7"))     # phiên xem tài khoản
+ADMIN_HOURS = int(os.environ.get("SITE_ADMIN_HOURS", "12"))     # staff mở trang quản trị sau khi nhập mã /web; hết thì gõ /web lấy mã mới
 SESSION_FILE = "/state/phien.json"   # lưu phiên (khoá = sha256 token) để dựng lại site không đăng xuất mọi người
 NAME_RE = re.compile(r"^\.?[A-Za-z0-9_]{1,17}$")
 FAIL_WINDOW = 15 * 60
@@ -1088,7 +1088,12 @@ def _load_sessions():
     try:
         with open(SESSION_FILE, encoding="utf-8") as f:
             now = time.time()
-            _sessions.update({k: v for k, v in json.load(f).items() if v.get("het", 0) > now})
+            for k, v in json.load(f).items():
+                if v.get("het", 0) > now:   # phiên lưu từ hồi hạn dài hơn (test 21/10: 30 ngày) bị cắt về hạn hiện tại
+                    v["het"] = min(v["het"], v.get("tao", now) + SESSION_DAYS * 86400)
+                    v["game_het"] = min(v.get("game_het", 0), v.get("tao", now) + ADMIN_HOURS * 3600)
+                    if v["het"] > now:
+                        _sessions[k] = v
     except (OSError, ValueError):
         pass
 

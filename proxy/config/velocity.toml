@@ -5,7 +5,7 @@ config-version = "2.7"
 # Cổng bên trong container (compose.yaml ánh xạ ra cổng JAVA_PORT của máy)
 bind = "0.0.0.0:25577"
 
-motd = "<gradient:#f7b733:#fc4a1a><bold>DuckyMoMo Network</bold></gradient><newline><gray>Bang Hội Chiến - PC & điện thoại"
+motd = "          <gradient:#f7b733:#fc4a1a><bold>Bang Hội Chiến</bold></gradient> <aqua>trên bản đồ Trái Đất</aqua><newline>  <red>⚔ Công thành</red> <dark_gray>•</dark_gray> <green>Pet</green> <dark_gray>•</dark_gray> <light_purple>Dungeon</light_purple> <dark_gray>•</dark_gray> <gold>Đồ trade</gold> <dark_gray>•</dark_gray> <yellow>PC & ĐT</yellow>"
 show-max-players = 500
 
 # Offline mode: cho cả người chơi không bản quyền vào (quyết định 07/10/2026).

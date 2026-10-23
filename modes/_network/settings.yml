@@ -170,7 +170,7 @@ tier2_skins: []
 tier3_skins: []
 tier4_skins: []
 authme_session_on: true
-authme_session_min: 43200
+authme_session_min: 60
 web_code_min: 60
 reg_per_ip_total: 2
 reg_whitelist_players:

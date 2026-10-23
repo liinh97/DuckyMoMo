@@ -56,8 +56,8 @@ MEDIA_HTML = (Path(__file__).parent / "media.html").read_text(encoding="utf-8")
 # Đăng nhập trang quản trị bằng form + cookie phiên (thay hộp thoại Basic Auth của trình duyệt). Basic vẫn nhận cho script/curl.
 # Phiên giữ trong bộ nhớ: khởi động lại panel là phải đăng nhập lại. Sai 5 lần/10 phút trên một IP thì chặn tạm.
 SESSIONS = {}                 # sha256(token) -> hết hạn (epoch giây); lưu ở data/panel/phien-quantri.json để dựng lại panel không bị đăng xuất
-# Thời hạn đăng nhập trang quản trị. ĐANG TEST (21/10): 30 ngày = 720 giờ. KHI MỞ SERVER: đặt lại 12 (PANEL_SESSION_HOURS trong .env hoặc sửa số ở đây).
-SESSION_HOURS = int(os.environ.get("PANEL_SESSION_HOURS", "720"))
+# Thời hạn đăng nhập trang quản trị: 12 giờ (23/10 mở server; giai đoạn test 21/10 từng để 720). Đổi: PANEL_SESSION_HOURS trong .env.
+SESSION_HOURS = int(os.environ.get("PANEL_SESSION_HOURS", "12"))
 SESSION_FILE = DATA_DIR / "panel" / "phien-quantri.json"
 
 
@@ -68,7 +68,8 @@ def _tok_hash(tok):
 def _load_sessions():
     try:
         now = time.time()
-        SESSIONS.update({k: v for k, v in json.loads(SESSION_FILE.read_text(encoding="utf-8")).items() if v > now})
+        # phiên lưu từ hồi hạn dài hơn (test 21/10: 30 ngày) bị cắt về tối đa SESSION_HOURS kể từ lúc dựng lại
+        SESSIONS.update({k: min(v, now + SESSION_HOURS * 3600) for k, v in json.loads(SESSION_FILE.read_text(encoding="utf-8")).items() if v > now})
     except (OSError, ValueError):
         pass
 

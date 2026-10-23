@@ -84,6 +84,10 @@
     .pcats { grid-template-columns: 1fr; }
   }
   @media (max-width: 600px) { .addm, .addm.no-months { grid-template-columns: 1fr; } .rd .card { padding: 16px; } }
+  .uform { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; margin-top: 14px; }
+  .uadd { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) auto auto auto; gap: 10px; align-items: center; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--line-2); }
+  .uadd label.ck { display: inline-flex; gap: 6px; align-items: center; font-size: 13.5px; color: var(--muted); white-space: nowrap; }
+  @media (max-width: 700px) { .uadd { grid-template-columns: 1fr; } }
 .autoh { all: unset; cursor: pointer; font: inherit; color: inherit; } .autoh:hover { color: var(--accent); }
 </style>
 </head>
@@ -111,12 +115,14 @@ let rq = null;
 const canMembers = (g) => g.kind !== "default" && (!rq || !!(rq[g.name] || {}).nguoi);
 const canPerms = (g) => !rq || !!(rq[g.name] || {}).quyen;
 const isFull = () => !rq;
+const USER = "@nguoi";   // mục "Quyền riêng từng người" (chỉ tài khoản toàn quyền)
+let uview = null;        // {name, groups, perms} người đang xem
 
 // chỉ hiện role/rank người đang xem cấp/gỡ người hoặc sửa quyền được
 const visible = () => data.groups.filter(g => canMembers(g) || canPerms(g));
 function render() {
   if (!visible().length) { $("list").innerHTML = '<p class="empty">Tài khoản của bạn không quản lý được role nào.</p>'; $("detail").innerHTML = ""; return; }
-  if (!visible().some(g => g.name === sel)) sel = visible()[0].name;
+  if (!visible().some(g => g.name === sel) && !(sel === USER && isFull())) sel = visible()[0].name;
   renderList(); renderDetail();
 }
 function renderList() {
@@ -131,6 +137,7 @@ function renderList() {
       h += `<button class="ri${g.name === sel ? " on" : ""}" data-g="${esc(g.name)}"><span class="t"><b>${esc(name(g.name))}</b><small>${who} · ${own} quyền</small></span><span class="mc">${mcHtml(prefixText(g))}</span></button>`;
     }
   }
+  if (isFull()) h += `<div class="sec">Người chơi</div><button class="ri${sel === USER ? " on" : ""}" data-g="${USER}"><span class="t"><b>👤 Quyền riêng từng người</b><small>cấp quyền cho một người, không qua role</small></span></button>`;
   $("list").innerHTML = h;
   $("list").querySelectorAll(".ri").forEach(b => b.onclick = () => { sel = b.dataset.g; filter = ""; history.replaceState(null, "", "#" + sel); render(); if (innerWidth < 1000) $("detail").scrollIntoView({ behavior: "smooth" }); });
 }
@@ -153,6 +160,7 @@ function inherited(g, seen = new Set()) {
 }
 
 function renderDetail() {
+  if (sel === USER) return renderUser();
   const g = data.groups.find(x => x.name === sel);
   const d = $("detail");
   const isDonate = g.kind === "donate";
@@ -274,6 +282,49 @@ function renderPerms(g, cats, own, inh) {
     cb.closest(".pr").classList.add("busy");
     post({ action: cb.checked ? "perm_set" : "perm_unset", group: g.name, node: cb.dataset.node, server });
   });
+}
+
+// ---- quyền riêng từng người (23/10): lp user <UUID> permission set|settemp|unset qua máy chủ
+function renderUser() {
+  const all = data.catalog.flatMap(c => c.perms.map(([node, label]) => [node, label]));
+  const label = (n) => (all.find(x => x[0] === n) || [n, ""])[1];
+  let h = `<section class="card"><h2>👤 Quyền riêng từng người${infoBtn("Là gì: cấp một quyền cho ĐÚNG một người chơi, không phải cho cả role.\nVí dụ: cho riêng 1 member dùng bàn chế tạo di động (essentials.workbench) 7 ngày.\nCó hạn: điền số ngày; 0 = vĩnh viễn.\nCấm: đặt quyền = false, chặn hẳn kể cả khi role của người đó có.\nToàn mạng hoặc chỉ một server.\nRole chức vụ / rank vẫn cấp ở mục role bên trái.", "Quyền riêng")}</h2>
+    <p class="hint">Gõ tên trong game (người chơi điện thoại có dấu chấm đầu, vd <code>.griim7833</code>). Người đó phải vào server ít nhất một lần.</p>
+    <div class="uform"><input id="uname" placeholder="Tên người chơi" value="${esc(uview ? uview.name : "")}" autocomplete="off"><button class="primary" id="ufind">Xem</button></div></section>`;
+  if (uview) {
+    const u = uview;
+    h += `<section class="card"><h2>${esc(u.name)}</h2><p class="hint">Role đang giữ: ${u.groups.length ? u.groups.map(g => esc(name(g.name)) + (g.server !== "global" ? ` (${esc(g.server)})` : "") + (g.expiry ? " " + expiry(g) : "")).join(", ") : "Dân (mặc định)"}</p>
+      <div class="others"><h3>Quyền riêng đang có</h3>${u.perms.length ? `<div class="members" style="margin-top:0">${u.perms.map(p => `<span class="mem">${p.value ? "" : '<span class="badge deny">CẤM</span>'}${label(p.node) ? esc(label(p.node)) + " " : ""}<code>${esc(p.node)}</code>${p.server !== "global" ? `<span class="exp">@${esc(p.server)}</span>` : ""}${expiry(p)}<button class="x" title="Gỡ quyền" data-uun="${esc(p.node)}" data-srv="${esc(p.server)}" data-temp="${p.expiry ? 1 : ""}">×</button></span>`).join("")}</div>` : '<p class="hint" style="margin:0">Chưa có quyền riêng nào.</p>'}</div>
+      <div class="uadd"><input id="unode" list="ucat" placeholder="Quyền, vd essentials.workbench" autocomplete="off">
+        <select id="usrv">${data.servers.map(sv => `<option value="${esc(sv)}">${sv === "global" ? "Toàn mạng" : esc(sv)}</option>`).join("")}</select>
+        <label class="ck">Số ngày <input id="udays" type="number" min="0" max="3650" value="0" style="width:70px" title="0 = vĩnh viễn"></label>
+        <label class="ck"><input type="checkbox" id="udeny"> Cấm</label><button class="primary" id="uadd">Cấp</button></div>
+      <p class="hint">Số ngày: 0 = vĩnh viễn. Gõ tên quyền hoặc chữ mô tả để chọn từ danh mục.</p>
+      <datalist id="ucat">${all.map(([n, l]) => `<option value="${esc(n)}">${esc(l)}</option>`).join("")}</datalist></section>`;
+  }
+  const d = $("detail"); d.innerHTML = h;
+  const find = () => { const n = $("uname").value.trim(); if (!n) return $("uname").focus(); upost({ action: "user_get", player: n }); };
+  $("ufind").onclick = find; $("uname").onkeydown = (e) => { if (e.key === "Enter") find(); };
+  if (!uview) return;
+  $("uadd").onclick = async () => {
+    const node = $("unode").value.trim(); if (!node) return $("unode").focus();
+    const days = parseInt($("udays").value, 10) || 0, deny = $("udeny").checked, sv = $("usrv").value;
+    if (deny && !(await ask(`CẤM ${node} với ${uview.name}${sv !== "global" ? " ở " + sv : ""}? Người này bị chặn quyền đó kể cả khi role của họ có.`, { title: "Cấm quyền", ok: "Cấm", danger: true }))) return;
+    upost({ action: "user_set", player: uview.name, node, server: sv, days, deny });
+  };
+  d.querySelectorAll("[data-uun]").forEach(b => b.onclick = async () => {
+    if (await ask(`Gỡ ${b.dataset.uun}${b.dataset.srv !== "global" ? " (ở " + b.dataset.srv + ")" : ""} của ${uview.name}?`, { title: "Gỡ quyền", ok: "Gỡ", danger: true }))
+      upost({ action: "user_unset", player: uview.name, node: b.dataset.uun, server: b.dataset.srv, temp: !!b.dataset.temp });
+  });
+}
+async function upost(body) {
+  toast("Đang gửi…", "");
+  try {
+    const r = await fetch("api/roles", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+    const res = await r.json();
+    toast(res.message || (res.ok ? "Xong." : "Lỗi."), res.ok ? "ok" : "err");
+    if (res.user) { uview = res.user; renderUser(); }
+  } catch (e) { toast("Không gửi được: " + e, "err"); }
 }
 
 async function post(body) {

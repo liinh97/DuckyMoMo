@@ -1141,10 +1141,71 @@ def apply_role_preset(group):
     return {"ok": not bad, "message": msg, "data": data}
 
 
+USER_SKIP = ("group.", "prefix.", "suffix.", "meta.", "weight.", "displayname.")
+
+
+def user_perms_json(uid, name):
+    """Quyền RIÊNG của một người (luckperms_user_permissions, bỏ role/prefix/meta) + role đang giữ."""
+    con = lp_db()
+    try:
+        cur = con.cursor()
+        cur.execute("SELECT permission, value, server, expiry FROM luckperms_user_permissions WHERE uuid = %s", (uid,))
+        rows = cur.fetchall()
+    finally:
+        con.close()
+    groups, perms = [], []
+    for perm, value, server, expiry in rows:
+        if perm.startswith("group."):
+            if value:
+                groups.append({"name": perm[6:], "server": server, "expiry": int(expiry or 0)})
+        elif not perm.startswith(USER_SKIP):
+            perms.append({"node": perm, "value": bool(value), "server": server, "expiry": int(expiry or 0)})
+    return {"name": name, "groups": sorted(groups, key=lambda g: g["name"]), "perms": sorted(perms, key=lambda p: (p["node"], p["server"]))}
+
+
+def user_perm_action(data):
+    """Quyền riêng từng người (23/10): user_get | user_set (node, server, days 0 = vĩnh viễn, deny = cấm) | user_unset.
+    Gửi lp user <UUID> … qua RCON ở sảnh (LuckPerms đồng bộ toàn mạng); tên Bedrock có dấu chấm nên dùng UUID."""
+    act, player = data.get("action"), str(data.get("player", "")).strip()
+    if not PLAYER_RE.match(player):
+        raise ValueError("Tên người chơi không hợp lệ")
+    found = lp_player(player)
+    if not found:
+        raise ValueError(f"Không thấy {player}: người chơi phải vào server ít nhất một lần (Bedrock có dấu chấm đầu, vd .griim7833).")
+    uid, player = found
+    if act == "user_get":
+        return {"ok": True, "message": f"Quyền riêng của {player}.", "user": user_perms_json(uid, player)}
+    node, server = str(data.get("node", "")).strip(), data.get("server") or "global"
+    if not PERM_RE.match(node) or node.startswith(USER_SKIP):
+        raise ValueError("Tên quyền không hợp lệ (vd essentials.workbench). Role cấp ở mục role, không gõ group.<tên> ở đây.")
+    if server not in SERVER_CTX:
+        raise ValueError("Server không hợp lệ")
+    ctx = "" if server == "global" else f" server={server}"
+    where = "toàn mạng" if server == "global" else server
+    if act == "user_set":
+        days = int(data.get("days") or 0)
+        if not 0 <= days <= 3650:
+            raise ValueError("Số ngày từ 0 (vĩnh viễn) đến 3650")
+        val = "false" if data.get("deny") else "true"
+        cmd = (f"lp user {uid} permission settemp {node} {val} {days}d accumulate{ctx}" if days
+               else f"lp user {uid} permission set {node} {val}{ctx}")
+        msg = f"Đã {'CẤM' if data.get('deny') else 'cấp'} {perm_label(node)} cho {player} ({where}{f', {days} ngày' if days else ', vĩnh viễn'})."
+    elif act == "user_unset":
+        cmd = f"lp user {uid} permission {'unsettemp' if data.get('temp') else 'unset'} {node}{ctx}"
+        msg = f"Đã gỡ {perm_label(node)} của {player} ({where})."
+    else:
+        raise ValueError("Thao tác không hợp lệ")
+    rcon("lobby", [cmd])
+    time.sleep(1.5)   # LuckPerms ghi DB bất đồng bộ
+    return {"ok": True, "message": msg, "user": user_perms_json(uid, player)}
+
+
 def role_action(data, actor_weight=None):
     """Cấp / gỡ role qua RCON ở lobby (LuckPerms dùng chung DB + Redis nên áp dụng toàn mạng).
     actor_weight: staff không toàn quyền -> không đụng người đang giữ role chức vụ ngang / trên mình."""
     act, player, group = data.get("action"), str(data.get("player", "")).strip(), data.get("group")
+    if act in ("user_get", "user_set", "user_unset"):
+        return user_perm_action(data)
     if act == "preset":
         if group not in ROLE_PRESETS:
             raise ValueError("Role này không có bộ quyền khuyên dùng")
@@ -3497,8 +3558,8 @@ class Handler(BaseHTTPRequestHandler):
         if p == "/api/roles":
             grp = str(b.get("group", ""))
             nguoi, quyen = self.role_rights(grp)
-            if b.get("action") == "preset":
-                ok = full
+            if b.get("action") in ("preset", "user_get", "user_set", "user_unset"):
+                ok = full   # quyền riêng từng người: chỉ tài khoản toàn quyền
             elif b.get("action") in ("perm_set", "perm_unset", "perm_deny"):
                 node = str(b.get("node", "")).strip().lower()
                 # bật quyền: chỉ quyền chính mình có (không tự nâng cấp dưới hơn mình)

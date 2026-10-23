@@ -57,7 +57,7 @@ final class ThoRen implements Listener {
         }
     }
     private record Ref(SetDef set, Piece piece, int level) { }
-    /** Quầy đổi nguyên liệu (NPC ở các quầy Kinh Đô): đổi MỘT CHIỀU cost -> out. open = "thoren": quầy Thợ Rèn mở menu set. */
+    /** Quầy đổi nguyên liệu (NPC ở các quầy Kinh Đô): đổi MỘT CHIỀU cost -> out. open = "thoren": menu mọi set; "set:<mã>": mở thẳng một set. */
     private record Recipe(String out, int amount, Map<String, Object> cost) { }
     private record Stall(String id, String name, String sub, String profession, String open, List<Recipe> recipes) { }
     /** Hiệu ứng đang áp cho một người (tổng các set) + mô tả để báo khi đổi. */
@@ -73,6 +73,8 @@ final class ThoRen implements Listener {
     private final Map<String, Stall> stalls = new LinkedHashMap<>();
     private final java.util.Set<String> guarded = new java.util.HashSet<>();   // mảnh / tinh thể: cấm đặt, chế, nung, đốt
     private final NamespacedKey npcKey;
+    /** NPC dân làng của quầy (để xoay đầu nhìn người chơi; quét lúc bật + khi chunk nạp). */
+    private final java.util.Set<UUID> npcs = java.util.concurrent.ConcurrentHashMap.newKeySet();
     /** Rơi mảnh trao đổi trong dungeon: mã dungeon -> [item, % quái thường, % phó trùm, % trùm]. Không con nào rơi chắc chắn. */
     private record Drop(List<String> items, double mob, double mini, double boss) { }
     private final Map<String, Drop> dungeonDrops = new HashMap<>();
@@ -162,6 +164,65 @@ final class ThoRen implements Listener {
 
     void start() {
         Bukkit.getScheduler().runTaskTimer(plugin, () -> Bukkit.getOnlinePlayers().forEach(this::refresh), 100L, 40L);
+        Bukkit.getScheduler().runTaskLater(plugin, () -> Bukkit.getWorlds().forEach(w -> w.getEntities().forEach(this::track)), 100L);
+        Bukkit.getScheduler().runTaskTimer(plugin, this::lookAtPlayers, 120L, 5L);
+    }
+
+    /** Ghi nhận NPC quầy; NPC đặt trước 23/10 có gắn tên trên dân làng (hiện chồng lên dòng chữ nổi) -> bỏ tên. */
+    private void track(org.bukkit.entity.Entity e) {
+        if (e instanceof org.bukkit.entity.Villager v && v.getPersistentDataContainer().has(npcKey, org.bukkit.persistence.PersistentDataType.STRING)) {
+            npcs.add(v.getUniqueId());
+            if (v.customName() != null) {
+                v.customName(null);
+            }
+            if (v.getVillagerType() != org.bukkit.entity.Villager.Type.PLAINS) {
+                v.setVillagerType(org.bukkit.entity.Villager.Type.PLAINS);   // loại theo biome (đầm lầy, rừng rậm…) nhìn tối như zombie dân làng
+            }
+        }
+    }
+
+    @EventHandler
+    public void onEntitiesLoad(org.bukkit.event.world.EntitiesLoadEvent e) {
+        e.getEntities().forEach(this::track);
+    }
+
+    /** NPC tắt AI nên không tự nhìn ai: mỗi 1/4 giây xoay mặt về người chơi gần nhất trong 8 khối. */
+    private void lookAtPlayers() {
+        for (UUID id : npcs) {
+            org.bukkit.entity.Entity e = Bukkit.getEntity(id);
+            if (!(e instanceof org.bukkit.entity.Villager v) || !v.isValid()) {
+                if (e == null || !e.isValid()) {
+                    continue;
+                }
+                npcs.remove(id);
+                continue;
+            }
+            Player best = null;
+            double bd = 64;
+            for (Player pl : v.getWorld().getPlayers()) {
+                double d = pl.getLocation().distanceSquared(v.getLocation());
+                if (d < bd && pl.getGameMode() != org.bukkit.GameMode.SPECTATOR) {
+                    bd = d;
+                    best = pl;
+                }
+            }
+            if (best == null) {
+                continue;
+            }
+            org.bukkit.util.Vector dir = best.getEyeLocation().toVector().subtract(v.getEyeLocation().toVector());
+            float yaw = (float) Math.toDegrees(Math.atan2(-dir.getX(), dir.getZ()));
+            float pitch = (float) Math.toDegrees(-Math.atan2(dir.getY(), Math.hypot(dir.getX(), dir.getZ())));
+            v.setRotation(yaw, pitch);
+            v.setBodyYaw(yaw);
+        }
+    }
+
+    /** NPC + dòng chữ của quầy: không ai đánh được (cờ bất tử của game vẫn để người chơi sáng tạo đánh chết). */
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onNpcDamage(org.bukkit.event.entity.EntityDamageEvent e) {
+        if (e.getEntity().getPersistentDataContainer().has(npcKey, org.bukkit.persistence.PersistentDataType.STRING)) {
+            e.setCancelled(true);
+        }
     }
 
     String summary() {
@@ -184,6 +245,10 @@ final class ThoRen implements Listener {
     private void stallMenu(Player p, Stall st) {
         if ("thoren".equals(st.open())) {
             menu(p);
+            return;
+        }
+        if (st.open().startsWith("set:") && sets.containsKey(st.open().substring(4))) {
+            setMenu(p, sets.get(st.open().substring(4)), false);   // NPC riêng của một set: mở thẳng set đó
             return;
         }
         InfoMenu m = InfoMenu.of("&6" + st.name()).accent(Material.ORANGE_STAINED_GLASS_PANE);
@@ -268,9 +333,8 @@ final class ThoRen implements Listener {
         loc.setYaw(p.getLocation().getYaw());
         loc.setPitch(0);
         org.bukkit.entity.Villager v = p.getWorld().spawn(loc, org.bukkit.entity.Villager.class, e -> {
-            e.customName(c(st.name()));
-            e.setCustomNameVisible(false);
-            e.setAI(false);
+            e.setAI(false);   // không gắn tên lên dân làng: nhìn vào sẽ hiện tên chồng lên dòng chữ nổi
+            e.setVillagerType(org.bukkit.entity.Villager.Type.PLAINS);   // dân làng đồng bằng (da sáng), không theo biome chỗ đặt
             e.setSilent(true);
             e.setInvulnerable(true);
             e.setCollidable(false);
@@ -286,6 +350,7 @@ final class ThoRen implements Listener {
             p.sendMessage(c("&cKhông đặt được NPC ở đây (có thể WorldGuard chặn sinh mob)."));
             return;
         }
+        npcs.add(v.getUniqueId());
         String[] lines = {st.name(), st.sub().isBlank() ? "&7Đổi nguyên liệu" : "&7" + st.sub(), "&8(bấm vào để mở)"};
         double y = 1.6 + (lines.length - 1) * 0.28;
         for (String line : lines) {

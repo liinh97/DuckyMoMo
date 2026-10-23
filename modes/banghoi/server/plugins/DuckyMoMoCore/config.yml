@@ -1541,6 +1541,14 @@ tho-ren:
       sub: "Rèn và nâng cấp đồ set"
       profession: weaponsmith
       open: thoren
+    # NPC riêng từng set (bấm vào mở thẳng set đó): /dmm thorennpc <mã>
+    ren_tanthu: {name: "&e◆ Rèn Tân Thủ", sub: "Đồ khởi đầu +0 → +9", profession: armorer, open: "set:tanthu"}
+    ren_chienbinh: {name: "&c⚔ Rèn Chiến Binh", sub: "Nâng từ Tân Thủ +9", profession: weaponsmith, open: "set:chienbinh"}
+    ren_tinhanh: {name: "&d❖ Rèn Tinh Anh", sub: "Nâng từ Chiến Binh +7", profession: armorer, open: "set:tinhanh"}
+    ren_caocap: {name: "&6♛ Rèn Cao Cấp", sub: "Nâng từ Tinh Anh +5", profession: weaponsmith, open: "set:caocap"}
+    ren_thomo: {name: "&6⛏ Rèn Thợ Mỏ", sub: "Set nghề đào mỏ", profession: toolsmith, open: "set:thomo"}
+    ren_nguphu: {name: "&3≈ Rèn Ngư Phủ", sub: "Set nghề câu cá", profession: fisherman, open: "set:nguphu"}
+    ren_duhiep: {name: "&2➹ Rèn Du Hiệp", sub: "Set nghề cung thủ", profession: fletcher, open: "set:duhiep"}
   # Mảnh ấn trao đổi rơi trong dungeon (23/10, chủ server: vài tầng chung một set; tầng dễ mũ/giày, khó hơn giáp/quần, khó nhất vũ khí).
   # MỌI con trong tầng chỉ có tỉ lệ rơi 1 mảnh (chủ server 23/10: giết trùm KHÔNG chắc rơi): quái thường mob-chance %, phó trùm (tên 〖N〗)
   # miniboss-chance %, trùm (tên 『N』) boss-chance %. multiplier nhân cả ba (tối đa 100%).

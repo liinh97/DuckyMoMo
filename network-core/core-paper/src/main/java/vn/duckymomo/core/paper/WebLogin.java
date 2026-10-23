@@ -58,14 +58,33 @@ final class WebLogin {
         }
         String code = String.format(Locale.ROOT, "%06d", random.nextInt(1_000_000));
         codes.put(p.getName().toLowerCase(Locale.ROOT), new Entry(p.getName(), code, System.currentTimeMillis() + minutes * 60_000L));
-        p.sendMessage(c("&6Đăng nhập trang web DuckyMoMo"));
-        p.sendMessage(c("&7Mã của bạn: ").append(c("&e" + code)
-                .clickEvent(ClickEvent.copyToClipboard(code)).hoverEvent(HoverEvent.showText(c("&7Bấm để sao chép"))))
-                .append(c(" &8(dùng 1 lần, hết hạn sau " + minutes + " phút)")));
-        p.sendMessage(c("&7Mở ").append(c("&f&n" + url).clickEvent(ClickEvent.openUrl(url)))
-                .append(c(" &7→ &fĐăng nhập &7→ &fMã từ game&7, nhập tên &f" + p.getName() + " &7và mã.")));
-        p.sendMessage(c("&8Không đưa mã cho ai. Admin không bao giờ hỏi mã này."));
+        menu(p, code);
         return true;
+    }
+
+    /** /web: menu (23/10, trước in chat). Mã ghi to ở giữa; bấm ô thì gửi mã (bấm sao chép) / link (bấm mở) vào chat vì menu không mở link được. */
+    private void menu(Player p, String code) {
+        InfoMenu m = InfoMenu.of("&6✉ Đăng nhập trang web").accent(org.bukkit.Material.ORANGE_STAINED_GLASS_PANE);
+        m.top(Tip.of("&6✉ &fĐăng nhập trang web DuckyMoMo").accent("&6").desc("Xem tài khoản, rank, lệnh của bạn.", "Staff mở trang quản trị theo quyền.")
+                .apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.WRITABLE_BOOK)));
+        m.add(Tip.of("&fMã của bạn: &e" + code).accent("&e").desc("Dùng 1 lần, hết hạn sau " + minutes + " phút.").line()
+                .deny("Không đưa mã cho ai. Admin không bao giờ hỏi mã này.").click("Bấm để gửi mã vào chat (bấm vào mã là sao chép)")
+                .apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.NAME_TAG)), pl -> {
+                    pl.closeInventory();
+                    pl.sendMessage(c("&7Mã đăng nhập web: ").append(c("&e" + code).clickEvent(ClickEvent.copyToClipboard(code))
+                            .hoverEvent(HoverEvent.showText(c("&7Bấm để sao chép")))).append(c(" &8(hết hạn sau " + minutes + " phút)")));
+                });
+        m.add(Tip.of("&fCách đăng nhập").accent("&b").line()
+                .item("Mở &f" + url).item("Bấm &fĐăng nhập &7→ &fMã từ game").item("Nhập tên &f" + p.getName() + " &7và mã")
+                .click("Bấm để gửi link vào chat (bấm vào link là mở)")
+                .apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.COMPASS)), pl -> {
+                    pl.closeInventory();
+                    pl.sendMessage(c("&7Trang web: ").append(c("&f&n" + url).clickEvent(ClickEvent.openUrl(url))
+                            .hoverEvent(HoverEvent.showText(c("&7Bấm để mở")))).append(c(" &7→ &fĐăng nhập &7→ &fMã từ game")));
+                });
+        m.add(Tip.of("&fLấy mã mới").accent("&a").desc("Mã cũ hết hiệu lực.").click("Bấm để lấy mã khác")
+                .apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.CLOCK)), InfoMenu.run("web"));
+        m.open(p);
     }
 
     /**

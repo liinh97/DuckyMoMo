@@ -3,7 +3,7 @@
 # Cấp người: trang Role > Manager > Thêm (hoặc lp user <tên> parent add quanly). Gỡ role: lp deletegroup quanly.
 #
 # Nguyên tắc: làm được hầu hết mọi việc (phạt, kinh tế, đồ, xây, Towny); CẤM (false) những gì chiếm quyền hoặc làm sập server:
-# phân quyền, /sudo, điều khiển server/plugin, luật thế giới, /dmm, xoá log CoreProtect.
+# phân quyền, /sudo, điều khiển server/plugin, luật thế giới, /dmm reload|decorate|structures, xoá log CoreProtect.
 # Quyền CẤM ghi rõ "false" để dù sau này có ai lỡ cấp quyền rộng (vd essentials.*) cho role cha thì vẫn bị chặn.
 lp creategroup quanly
 lp group quanly setdisplayname "Manager"
@@ -96,6 +96,8 @@ lp group quanly permission set duckymomo.web.caidat.hethong false
 lp group quanly permission set duckymomo.web.caidat.chonghack false
 lp group quanly permission set duckymomo.web.caidat.role false
 lp group quanly permission set duckymomo.admin false
+# /dmm dùng được (đồ vượt cấp, thư viện đồ, dọn rác, NPC, tài khoản phụ, Liên minh Hoà Bình); reload/decorate/structures vẫn cần duckymomo.admin
+lp group quanly permission set duckymomo.dmm true
 # ---- CẤM: điều khiển server, plugin, luật thế giới (gamerule, viền, forceload), /execute (chạy lệnh vòng qua khoá)
 lp group quanly permission set minecraft.command.op false
 lp group quanly permission set minecraft.command.deop false

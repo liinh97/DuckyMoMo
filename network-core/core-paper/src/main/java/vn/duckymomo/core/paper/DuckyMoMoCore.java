@@ -693,6 +693,16 @@ public final class DuckyMoMoCore extends JavaPlugin {
         }
         bind("xuong", workshop == null ? null : workshop::command, "Xưởng chế tạo");
 
+        // Thợ Rèn /thoren: set đồ trao đổi, nâng cấp theo bậc, hiệu ứng bộ, mòn theo cấp (Bang Hội Chiến: tho-ren.enabled)
+        thoRen = getConfig().getBoolean("tho-ren.enabled") && getConfig().isConfigurationSection("tho-ren")
+                ? new ThoRen(this, itemLibrary, getConfig().getConfigurationSection("tho-ren")) : null;
+        if (thoRen != null) {
+            getServer().getPluginManager().registerEvents(thoRen, this);
+            thoRen.start();
+            getLogger().info("Thợ Rèn: " + thoRen.summary());
+        }
+        bind("thoren", thoRen == null ? null : thoRen::command, "Thợ Rèn");
+
         // Chợ đen /choden (thu mua + chợ người chơi /ah) (Bang Hội Chiến: orders.enabled, cần Vault)
         Orders orders = getConfig().getBoolean("orders.enabled") && getConfig().isConfigurationSection("orders")
                 ? new Orders(this, getConfig().getConfigurationSection("orders")) : null;
@@ -1071,6 +1081,11 @@ public final class DuckyMoMoCore extends JavaPlugin {
         PluginCommand dmm = getCommand("dmm");
         if (dmm != null) {
             dmm.setExecutor((sender, cmd, label, args) -> {
+                if (args.length >= 1 && DMM_ADMIN_ONLY.contains(args[0].toLowerCase(java.util.Locale.ROOT)) && !sender.hasPermission("duckymomo.admin")) {
+                    // Manager (duckymomo.dmm) dùng được /dmm, trừ lệnh động tới cả server: nạp lại cấu hình, tự trang trí / đặt công trình khắp map
+                    sender.sendMessage("§cLệnh /dmm " + args[0].toLowerCase(java.util.Locale.ROOT) + " chỉ dành cho Admin.");
+                    return true;
+                }
                 if (args.length >= 1 && (args[0].equalsIgnoreCase("luudo") || args[0].equalsIgnoreCase("laydo")
                         || args[0].equalsIgnoreCase("thuvien"))) {
                     itemLibrary.command(sender, args);
@@ -1110,6 +1125,12 @@ public final class DuckyMoMoCore extends JavaPlugin {
                     } else {
                         decorShop.npcCommand(sender, args);
                     }
+                } else if (args.length >= 1 && args[0].equalsIgnoreCase("thorennpc")) {
+                    if (thoRen == null) {
+                        sender.sendMessage("Thợ Rèn chưa bật trên server này (config: tho-ren.enabled).");
+                    } else {
+                        thoRen.npcCommand(sender, args);
+                    }
                 } else if (args.length >= 1 && args[0].equalsIgnoreCase("hoabinh")) {
                     if (peace == null) {
                         sender.sendMessage("Liên minh Hoà Bình chưa bật trên server này (config: peace-alliance.enabled).");
@@ -1148,7 +1169,7 @@ public final class DuckyMoMoCore extends JavaPlugin {
                 }
                 return true;
             });
-            dmm.setTabCompleter((sender, cmd, label, args) -> dmmTab(args));
+            dmm.setTabCompleter((sender, cmd, label, args) -> dmmTab(sender, args));
         }
         if (!reloading && decorator != null && getConfig().getBoolean("decorate.auto-resume")) {
             // chạy tiếp sau khi server khởi động lại (nếu lần trước đang chạy dở)
@@ -1163,22 +1184,27 @@ public final class DuckyMoMoCore extends JavaPlugin {
             "§6/dmm §7(DuckyMoMo, gõ dài: /duckymomo) §8— bấm Tab để gợi ý",
             "§e/dmm enchant <phù phép> <cấp> §7phù phép vượt cấp món đang cầm (0 = gỡ)",
             "§e/dmm sach <phù phép> <cấp> [người] §7tặng sách phù phép",
-            "§e/dmm laydo <mã> [người] [số] §7lấy đồ trong Thư viện đồ",
+            "§e/dmm laydo <mã> [số] [người] §7lấy đồ trong Thư viện đồ",
             "§e/dmm luudo <mã> [tên gợi nhớ] §7lưu món đang cầm vào thư viện",
             "§e/dmm thuvien [nap] §7xem mã / kiểm tra thư viện",
             "§e/dmm clean §7dọn rác ngay   §e/dmm reload §7nạp lại config   §e/dmm lenh §7xuất danh sách lệnh",
             "§e/dmm rtpnpc|shopnpc [remove] §7đặt/gỡ NPC   §e/dmm phu add|remove|list §7tài khoản phụ",
+            "§e/dmm thorennpc <quầy|remove> §7đặt NPC quầy đổi nguyên liệu / Thợ Rèn ở chỗ đứng",
             "§e/dmm hoabinh setup|claim <r> §7Liên minh Hoà Bình   §e/dmm decorate|structures start|pause|status|reset");
     private static final List<String> DMM_SUBS = List.of("enchant", "sach", "laydo", "luudo", "thuvien", "clean", "reload", "lenh",
-            "rtpnpc", "shopnpc", "phu", "hoabinh", "decorate", "structures");
+            "rtpnpc", "shopnpc", "thorennpc", "phu", "hoabinh", "decorate", "structures");
+    /** Thợ Rèn (/thoren, NPC quầy /dmm thorennpc); null nếu tắt. */
+    private ThoRen thoRen;
+    /** Lệnh con /dmm chỉ Admin (duckymomo.admin); còn lại Manager dùng được (duckymomo.dmm). */
+    private static final java.util.Set<String> DMM_ADMIN_ONLY = java.util.Set.of("reload", "decorate", "structures");
 
     /** Gợi ý Tab cho /dmm: lệnh con, tên phù phép, mã thư viện đồ, tên người chơi. */
-    private List<String> dmmTab(String[] a) {
+    private List<String> dmmTab(org.bukkit.command.CommandSender sender, String[] a) {
         List<String> opts = new java.util.ArrayList<>();
         String sub = a[0].toLowerCase(java.util.Locale.ROOT);
         java.util.function.Supplier<List<String>> players = () -> getServer().getOnlinePlayers().stream().map(org.bukkit.entity.Player::getName).toList();
         if (a.length == 1) {
-            opts.addAll(DMM_SUBS);
+            DMM_SUBS.stream().filter(x -> !DMM_ADMIN_ONLY.contains(x) || sender.hasPermission("duckymomo.admin")).forEach(opts::add);
         } else {
             switch (sub) {
                 case "enchant", "sach" -> {
@@ -1194,13 +1220,19 @@ public final class DuckyMoMoCore extends JavaPlugin {
                         opts.addAll(players.get());
                     }
                 }
+                case "thorennpc" -> {
+                    if (a.length == 2 && thoRen != null) {
+                        opts.addAll(thoRen.stallIds());
+                        opts.add("remove");
+                    }
+                }
                 case "laydo" -> {
                     if (a.length == 2) {
                         opts.addAll(itemLibrary.ids());
                     } else if (a.length == 3) {
-                        opts.addAll(players.get());
-                    } else if (a.length == 4) {
                         opts.addAll(List.of("1", "16", "64"));
+                    } else if (a.length == 4) {
+                        opts.addAll(players.get());
                     }
                 }
                 case "luudo" -> {

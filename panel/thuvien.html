@@ -901,8 +901,8 @@ function renderSyms() {
 function renderHowto() {
   const id = ($("id").value || "").trim() || "<mã>";
   const rows = [
-    ["Lấy cho chính mình", `/dmm laydo ${id}`, "Gõ trong game ở Bang Hội Chiến. Muốn nhiều cái: /dmm laydo " + id + " <tên bạn> <số>."],
-    ["Đưa cho người khác", `/dmm laydo ${id} <người> [số]`, "Người nhận phải đang online ở server bạn gõ lệnh. Túi đầy thì đồ rơi xuống đất. Hoặc dùng ô Đưa ở trên."],
+    ["Lấy cho chính mình", `/dmm laydo ${id}`, "Gõ trong game ở Bang Hội Chiến. Muốn nhiều cái: /dmm laydo " + id + " <số>."],
+    ["Đưa cho người khác", `/dmm laydo ${id} [số] <người>`, "Người nhận phải đang online ở server bạn gõ lệnh. Túi đầy thì đồ rơi xuống đất. Hoặc dùng ô Đưa ở trên."],
     ["Lưu đồ đang cầm vào thư viện", `/dmm luudo ${id} [tên gợi nhớ]`, "Cầm đồ trên tay rồi gõ. Giữ nguyên vẹn mọi thứ (kể cả phù phép CrazyEnchantments). Trùng mã thì ghi đè."],
     ["Làm phần thưởng", `do ${id} 1`, "Ghi dòng này vào ô quà ở trang Cài đặt (Điểm danh, Nhiệm vụ, Gacha…): do <mã> [số]."],
   ];

@@ -56,7 +56,7 @@ commands:
   dmm:
     description: "Lệnh admin của DuckyMoMo: phù phép vượt cấp, thư viện đồ, dọn rác, NPC… (bấm Tab để gợi ý)"
     aliases: [duckymomo]
-    permission: duckymomo.admin
+    permission: duckymomo.dmm
   vang:
     description: "Vàng (tiền ủng hộ): xem ví, cửa hàng (rank, trang trí, tên màu); /vang nap lấy mã QR nạp"
     aliases: [gold, vi]
@@ -101,6 +101,8 @@ commands:
   danhhieu:
     description: "Xem và chọn danh hiệu"
     aliases: [title]
+  thoren:
+    description: "Thợ Rèn: rèn và nâng cấp đồ set (Tân Thủ…) bằng nguyên liệu, xem hiệu ứng bộ"
   web:
     description: "Lấy mã đăng nhập trang web (xem tài khoản, rank, lệnh của bạn; staff mở trang quản trị theo quyền)"
     aliases: [dangnhapweb, weblogin]
@@ -240,7 +242,12 @@ permissions:
     description: Vào server có tiếng chuông cho cả server (bậc cao nhất)
     default: false
   duckymomo.admin:
-    description: Lệnh admin /dmm
+    description: Quyền admin của DuckyMoMoCore (mọi lệnh con /dmm, kể cả reload, decorate, structures)
+    default: op
+    children:
+      duckymomo.dmm: true
+  duckymomo.dmm:
+    description: Dùng /dmm (Manager), trừ reload, decorate, structures (cần duckymomo.admin)
     default: op
   duckymomo.war.bypass:
     description: Phong quân hàm không cần đủ giờ chơi (admin)

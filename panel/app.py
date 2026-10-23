@@ -126,6 +126,7 @@ STATIC = {"/ui.css": ("text/css; charset=utf-8", (Path(__file__).parent / "ui.cs
           "/shell.js": ("application/javascript; charset=utf-8", (Path(__file__).parent / "shell.js").read_bytes())}
 # Trang Role: role chức vụ (track staff + builder + default) và rank donate (track donate), lưu ở LuckPerms (MariaDB)
 STAFF_GROUPS = ["admin", "quanly", "mod", "helper", "builder", "default"]
+STAFF_CHAIN = ["admin", "quanly", "mod", "helper"]   # role chức vụ theo bậc: mỗi người một role (builder riêng, giữ được song song)
 DONATE_GROUPS = ["congtuoc", "hautuoc", "batuoc", "tutuoc", "namtuoc"]
 PLAYER_RE = re.compile(r"^\.?[A-Za-z0-9_]{1,17}$")
 PERM_RE = re.compile(r"^[A-Za-z0-9_.*-]{1,120}$")
@@ -1089,6 +1090,26 @@ ROLE_PRESETS = {"quanly": "quanly-role.cmds", "builder": "builder-role.cmds"}
 TOOLS_DIR = Path(os.environ.get("TOOLS_DIR", "/repo/tools"))
 
 
+def admin_override():
+    """Admin luôn thắng: quyền nào role khác chặn (false) thì Admin ghi đích danh true (cùng server). Quyền false đích danh
+    thắng '*' của Admin (Admin kế thừa Mod -> Helper -> Dân, hoặc kiêm role khác), còn cùng một quyền thì role nặng hơn thắng.
+    Bỏ qua quyền Admin đã tự ghi (true hay false). Trả số quyền vừa thêm."""
+    con = lp_db()
+    try:
+        cur = con.cursor()
+        cur.execute("SELECT DISTINCT permission, server FROM luckperms_group_permissions WHERE value = 0 AND name <> 'admin'")
+        denied = set(cur.fetchall())
+        cur.execute("SELECT permission, server FROM luckperms_group_permissions WHERE name = 'admin'")
+        own = set(cur.fetchall())
+    finally:
+        con.close()
+    cmds = [f"lp group admin permission set {n} true" + ("" if srv == "global" else f" server={srv}")
+            for n, srv in sorted(denied - own) if PERM_RE.match(n)]
+    if cmds:
+        rcon("lobby", cmds)
+    return len(cmds)
+
+
 def apply_role_preset(group):
     f = TOOLS_DIR / ROLE_PRESETS[group]
     if not f.exists():
@@ -1100,6 +1121,7 @@ def apply_role_preset(group):
     out = rcon("lobby", lines)
     bad = [o for _, o in out if re.search(r"(?i)error|invalid|không hợp lệ", o) and "already" not in o.lower()]
     time.sleep(1.5)
+    admin_override()
     msg = f"Đã chạy {len(lines)} lệnh trong {f.name}." + (f" {len(bad)} lệnh báo lỗi: {bad[0][:120]}" if bad else "")
     data = roles_json()
     # báo luôn prefix thật trong LuckPerms sau khi chạy, để biết lệnh đã ăn hay chưa
@@ -1109,8 +1131,9 @@ def apply_role_preset(group):
     return {"ok": not bad, "message": msg, "data": data}
 
 
-def role_action(data):
-    """Cấp / gỡ role qua RCON ở lobby (LuckPerms dùng chung DB + Redis nên áp dụng toàn mạng)."""
+def role_action(data, actor_weight=None):
+    """Cấp / gỡ role qua RCON ở lobby (LuckPerms dùng chung DB + Redis nên áp dụng toàn mạng).
+    actor_weight: staff không toàn quyền -> không đụng người đang giữ role chức vụ ngang / trên mình."""
     act, player, group = data.get("action"), str(data.get("player", "")).strip(), data.get("group")
     if act == "preset":
         if group not in ROLE_PRESETS:
@@ -1131,6 +1154,8 @@ def role_action(data):
             cmd = f"lp group {group} permission set {node} {'false' if act == 'perm_deny' else 'true'}{ctx}"
         rcon("lobby", [cmd])
         time.sleep(1.5)
+        if act == "perm_deny" and group != "admin":
+            admin_override()
         threading.Thread(target=sync_perm_change, args=(group, node, act), daemon=True).start()
         return {"ok": True, "message": f"Đã gửi: /{cmd}. Người trong role đang online sẽ nhận tin (mất quyền bay/bất tử… thì tắt luôn).",
                 "data": roles_json()}
@@ -1152,6 +1177,13 @@ def role_action(data):
     elif act in ("add", "remove"):
         # LuckPerms từ chối tên có dấu chấm (người chơi Bedrock: .ten) trong "lp user <tên>" -> gửi theo UUID trong DB
         cmds = [f"lp user {uid} parent {act} {group}"]
+        if actor_weight is not None and group in STAFF_CHAIN:
+            held = taikhoan.load_perms(player) or {}
+            if any(group_weights().get(g, 0) >= actor_weight for g in held.get("groups", []) if g in STAFF_CHAIN):
+                raise ValueError(f"{player} đang giữ role chức vụ ngang hoặc trên bạn")
+        if act == "add" and group in STAFF_CHAIN:
+            # Chỉ giữ một role chức vụ: Manager chặn hẳn (false) duckymomo.admin, luckperms.*… nên Admin kiêm Manager mất quyền admin
+            cmds += [f"lp user {uid} parent remove {g}" for g in STAFF_CHAIN if g != group]
     else:
         raise ValueError("Thao tác không hợp lệ")
     rcon("lobby", cmds)
@@ -1315,6 +1347,30 @@ def mode_index():
     return [NETWORK_MODE] + modes, by_server
 
 
+_NICKS = {"t": 0.0, "map": {}}
+
+
+def nick_map():
+    """Biệt danh Essentials (/nick, bỏ mã màu, chữ thường) -> tên thật, đọc userdata Bang Hội Chiến + Practice, làm mới mỗi 60 giây.
+    Chat ghi theo tên hiển thị nên ai đổi biệt danh thì phải đổi lại mới lọc được theo tên thật."""
+    if time.time() - _NICKS["t"] < 60:
+        return _NICKS["map"]
+    out = {}
+    for srv in ("banghoi-1", "practice-1"):
+        for f in (DATA_DIR / srv / "plugins" / "Essentials" / "userdata").glob("*.yml"):
+            try:
+                txt = f.read_text(encoding="utf-8", errors="replace")
+            except OSError:
+                continue
+            nick, name = re.search(r"^nickname: *'?(.+?)'?$", txt, re.M), re.search(r"^last-account-name: *(\S+)", txt, re.M)
+            if nick and name:
+                n = re.sub(r"[§&][0-9a-fk-orx]", "", nick.group(1), flags=re.I).lstrip("~").strip().lower()
+                if n and n != name.group(1).lower():
+                    out[n] = name.group(1)
+    _NICKS.update(t=time.time(), map=out)
+    return out
+
+
 def read_activity(params):
     """Sự kiện mới nhất trước. Lọc: types (chat,join,command), mode, player, q (tìm trong nội dung),
     from / to (mốc UTC dạng 2026-10-10T17:00:00Z, trình duyệt tự đổi ngày giờ Việt Nam sang), limit."""
@@ -1342,6 +1398,7 @@ def read_activity(params):
         if ADMIN_FILE.exists():
             raw += ADMIN_FILE.read_text(encoding="utf-8", errors="replace").splitlines()[-2000:]
         seen = set()
+        nicks = nick_map()
         for line in raw:
             try:
                 e = json.loads(line)
@@ -1353,6 +1410,10 @@ def read_activity(params):
             seen.add(key)
             # chuyển server (proxy → banghoi-1) tính cho chế độ của server đích
             e["mode"] = by_server.get(e.get("target") or e.get("server"), "network")
+            real = nicks.get(e.get("player", "").lower()) if e.get("type") == "chat" else None
+            if real:   # chat ghi theo biệt danh -> gắn tên thật để lọc theo người chơi
+                e["text"] = e.get("text", "").replace(f"<{e['player']}>", f"<{e['player']} ({real})>", 1)
+                e["player"] = real
             events.append(e)
     events.sort(key=lambda e: e.get("ts", ""))
     out = []
@@ -1758,7 +1819,7 @@ def thuvien_action(data, actor=None):
         amount = int(data.get("amount") or 0)
         if not PLAYER_RE.match(player) or not 0 <= amount <= 64:
             raise ValueError("Tên người chơi hoặc số lượng không hợp lệ")
-        res = rcon(LIB_SERVER, [f"dmm laydo {iid} {player} {amount}"])[0][1]
+        res = rcon(LIB_SERVER, [f"dmm laydo {iid} {amount} {player}"])[0][1]
         return {"ok": res.startswith("Đã"), "message": res or "Đã gửi lệnh"}
     y, doc = lib_load()
     items = doc.setdefault("items", {})
@@ -3419,7 +3480,7 @@ class Handler(BaseHTTPRequestHandler):
             return
         if self.path == "/api/roles":
             try:
-                self.send_json(200, role_action(self.body))
+                self.send_json(200, role_action(self.body, None if self.who is None or self.who["acc"]["toan_quyen"] else self.who["weight"]))
             except ValueError as e:
                 self.send_json(400, {"ok": False, "message": str(e)})
             except Exception as e:

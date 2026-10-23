@@ -111,6 +111,13 @@ final class DungeonGate implements Listener {
     private final NamespacedKey keyKey;
     private final NamespacedKey keyOwner;
     private final boolean keyTradeable;
+    /** 23/10: vào là đánh luôn: tự bấm [SẴN SÀNG] hộ cả nhóm, tự /em start khi vào instance. */
+    private final boolean autoReady;
+    private final boolean autoStart;
+    private Map<?, ?> readyChecks;          // PartyDungeonReadyCheckManager.checksByParty
+    private Method readyCall;               // PartyDungeonReadyCheckManager.ready(Player, String)
+    private Method playerInstance;          // MatchInstance.getPlayerInstance(Player)
+    private final Set<Object> started = java.util.Collections.newSetFromMap(new java.util.WeakHashMap<>());
     private final double fragMob;
     private final double fragFish;
     private final int fragPerDay;
@@ -175,6 +182,8 @@ final class DungeonGate implements Listener {
         this.keyKey = new NamespacedKey(plugin, "dmm_chiatang");
         this.keyOwner = new NamespacedKey(plugin, "dmm_chiatang_chu");
         this.keyTradeable = c.getBoolean("key-tradeable", false);
+        this.autoReady = c.getBoolean("auto-ready", true);
+        this.autoStart = c.getBoolean("auto-start", true);
         this.file = new File(plugin.getDataFolder(), "dungeon.yml");
         this.data = YamlConfiguration.loadConfiguration(file);
     }
@@ -207,6 +216,7 @@ final class DungeonGate implements Listener {
         Shared.dungeonGate = this;
         Bukkit.getScheduler().runTaskLater(plugin, this::hook, 100L);
         Bukkit.getScheduler().runTaskTimer(plugin, this::tick, 120L, 100L);
+        Bukkit.getScheduler().runTaskTimer(plugin, this::autoReadyTick, 200L, 10L);
     }
 
     void stop() {
@@ -255,6 +265,20 @@ final class DungeonGate implements Listener {
             } catch (ReflectiveOperationException e) {
                 plugin.getLogger().warning("Cổng Dungeon: không đọc được nhóm EliteMobs, điều kiện nhóm coi như chỉ có 1 người.");
             }
+            try {
+                Class<?> rc = Class.forName("com.magmaguy.elitemobs.parties.PartyDungeonReadyCheckManager", true, cl);
+                java.lang.reflect.Field f = rc.getDeclaredField("checksByParty");
+                f.setAccessible(true);
+                readyChecks = (Map<?, ?>) f.get(null);
+                readyCall = rc.getMethod("ready", Player.class, String.class);
+            } catch (ReflectiveOperationException | RuntimeException e) {
+                plugin.getLogger().warning("Cổng Dungeon: không tự xác nhận sẵn sàng cho nhóm được (" + e + "), người chơi tự bấm [SẴN SÀNG].");
+            }
+            try {
+                playerInstance = Class.forName("com.magmaguy.elitemobs.instanced.MatchInstance", true, cl).getMethod("getPlayerInstance", Player.class);
+            } catch (ReflectiveOperationException e) {
+                plugin.getLogger().warning("Cổng Dungeon: không tự bắt đầu trận được (" + e + "), người chơi gõ /em start.");
+            }
             Class<? extends Event> join = (Class<? extends Event>) Class.forName("com.magmaguy.elitemobs.api.PlayerJoinDungeonEvent", true, cl);
             Class<? extends Event> leave = (Class<? extends Event>) Class.forName("com.magmaguy.elitemobs.api.PlayerLeaveDungeonEvent", true, cl);
             Class<? extends Event> done = (Class<? extends Event>) Class.forName("com.magmaguy.elitemobs.api.DungeonCompleteEvent", true, cl);
@@ -289,6 +313,11 @@ final class DungeonGate implements Listener {
         } catch (ReflectiveOperationException | RuntimeException e) {
             plugin.getLogger().warning("Cổng Dungeon: không gắn được EliteMobs: " + e);
         }
+    }
+
+    /** Mã dungeon người này đang ở trong (null nếu không ở dungeon nào); Thợ Rèn dùng để rơi mảnh theo dungeon. */
+    String dungeonOf(UUID u) {
+        return inside.get(u);
     }
 
     private Object pkg(String id) {
@@ -440,6 +469,9 @@ final class DungeonGate implements Listener {
     }
 
     private void refresh(Player p) {
+        if (!p.isOnline()) {
+            return;   // EliteMobs có thể báo rời dungeon SAU khi người chơi đã thoát (dọn instance): đừng tạo quyền cho đối tượng cũ
+        }
         UUID u = p.getUniqueId();
         Set<String> allow = new HashSet<>();
         for (Dg d : dungeons.values()) {
@@ -456,6 +488,10 @@ final class DungeonGate implements Listener {
             allow.add(in);
         }
         PermissionAttachment a = attach.get(u);
+        if (a != null && a.getPermissible() != p) {
+            attach.remove(u);   // quyền tạm của lượt chơi trước (23/10: lần vào sau bị "không có quyền vào hầm ngục này")
+            a = null;
+        }
         if (a == null) {
             a = p.addAttachment(plugin);
             attach.put(u, a);
@@ -603,6 +639,49 @@ final class DungeonGate implements Listener {
                 }
             }
             refresh(p);
+        }
+        if (autoStart && playerInstance != null && !ps.isEmpty()) {
+            Player first = ps.iterator().next();
+            // chờ cả nhóm dịch chuyển vào rồi bắt đầu trận một lần cho mỗi instance (vào instance chỉ là phòng chờ)
+            Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                try {
+                    Object inst = first.isOnline() ? playerInstance.invoke(null, first) : null;
+                    if (inst != null && started.add(inst)) {
+                        first.performCommand("em start");
+                    }
+                } catch (ReflectiveOperationException | RuntimeException e) {
+                    plugin.getLogger().warning("Cổng Dungeon: tự bắt đầu trận lỗi: " + e);
+                }
+            }, 40L);
+        }
+    }
+
+    /** Lượt kiểm tra sẵn sàng của nhóm EliteMobs đang chờ: bấm [SẴN SÀNG] hộ mọi thành viên đang online (mã lượt lấy từ ReadyCheck.token). */
+    private void autoReadyTick() {
+        if (!autoReady || readyChecks == null || readyChecks.isEmpty()) {
+            return;
+        }
+        for (Object rc : List.copyOf(readyChecks.values())) {
+            try {
+                java.lang.reflect.Field tf = rc.getClass().getDeclaredField("token");
+                java.lang.reflect.Field mf = rc.getClass().getDeclaredField("memberIds");
+                java.lang.reflect.Field rf = rc.getClass().getDeclaredField("readyPlayerIds");
+                tf.setAccessible(true);
+                mf.setAccessible(true);
+                rf.setAccessible(true);
+                String token = String.valueOf(tf.get(rc));
+                Set<?> ready = (Set<?>) rf.get(rc);
+                for (Object id : List.copyOf((List<?>) mf.get(rc))) {
+                    Player m = id instanceof UUID u ? Bukkit.getPlayer(u) : null;
+                    if (m != null && !ready.contains(id)) {
+                        readyCall.invoke(null, m, token);
+                    }
+                }
+            } catch (ReflectiveOperationException | RuntimeException e) {
+                plugin.getLogger().warning("Cổng Dungeon: tự xác nhận sẵn sàng lỗi: " + e);
+                readyChecks = null;   // tắt hẳn, khỏi lỗi lặp lại mỗi nửa giây
+                return;
+            }
         }
     }
 

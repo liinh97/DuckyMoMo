@@ -261,6 +261,10 @@ final class Activity implements Listener {
         }
         UUID id = target.getUniqueId();
         double week = weekHours(id);
+        if (s instanceof Player viewer) {
+            menu(viewer, target);
+            return true;
+        }
         s.sendMessage(LEGACY.deserialize(String.format(Locale.ROOT,
                 "&6Giờ chơi thật của &f%s&6: &f%.1f giờ &7trong mùa, &f%.1f giờ &7trong 7 ngày qua %s",
                 target.getName(), totalHours(id), week,
@@ -268,5 +272,39 @@ final class Activity implements Listener {
                         : String.format(Locale.ROOT, "&c(cần %.0f giờ/7 ngày để là dân hoạt động)", activeHoursPerWeek))));
         s.sendMessage(LEGACY.deserialize("&8Đứng yên, bị nước/xe đẩy đi không được tính giờ."));
         return true;
+    }
+
+    private static final String[] THU = {"Thứ Hai", "Thứ Ba", "Thứ Tư", "Thứ Năm", "Thứ Sáu", "Thứ Bảy", "Chủ Nhật"};
+
+    /** /hoatdong cho người chơi: menu (23/10, trước in chat). Hàng 1 = 7 ngày qua (cũ -> hôm nay), hàng 2 = giờ chơi dùng để làm gì. */
+    private void menu(Player p, OfflinePlayer target) {
+        UUID id = target.getUniqueId();
+        double week = weekHours(id);
+        boolean active = week >= activeHoursPerWeek;
+        InfoMenu m = InfoMenu.of("&6⌚ Giờ chơi thật &8· &f" + target.getName()).accent(org.bukkit.Material.ORANGE_STAINED_GLASS_PANE);
+        Tip top = Tip.of("&6⌚ &fGiờ chơi thật của " + target.getName()).accent("&6").desc("Không tính lúc đứng yên (AFK).")
+                .kv("Trong mùa", String.format(Locale.ROOT, "&e%.1f giờ", totalHours(id)))
+                .kv("7 ngày qua", String.format(Locale.ROOT, "&e%.1f giờ", week)).line()
+                .check(active, active ? "Đang là dân hoạt động"
+                        : String.format(Locale.ROOT, "Cần %.0f giờ / 7 ngày để là dân hoạt động (còn thiếu %.1f giờ)", activeHoursPerWeek, activeHoursPerWeek - week));
+        m.top(top.apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.CLOCK)));
+        LocalDate today = LocalDate.now();
+        for (int i = 6; i >= 0; i--) {
+            LocalDate d = today.minusDays(i);
+            int min = data.getInt(id + ".ngay." + d);
+            String name = (i == 0 ? "Hôm nay" : THU[d.getDayOfWeek().getValue() - 1]) + " &7" + String.format(Locale.ROOT, "%02d/%02d", d.getDayOfMonth(), d.getMonthValue());
+            org.bukkit.inventory.ItemStack it = Tip.of((min > 0 ? "&e" : "&7") + name).accent("&e")
+                    .kv("Giờ chơi", min > 0 ? String.format(Locale.ROOT, "&f%d giờ %02d phút", min / 60, min % 60) : "&8chưa chơi")
+                    .apply(new org.bukkit.inventory.ItemStack(min >= 60 ? org.bukkit.Material.LIME_DYE : min > 0 ? org.bukkit.Material.YELLOW_DYE : org.bukkit.Material.GRAY_DYE));
+            it.setAmount(Math.max(1, Math.min(64, min / 60)));
+            m.add(it);
+        }
+        m.row();
+        m.add(Tip.of("&b✦ &fGiờ chơi dùng để làm gì").accent("&b").desc("Tính trong mùa, /choilai xoá về 0.").line()
+                .item("Dân hoạt động: thị trấn được thêm 8 ô đất mỗi người")
+                .item("Lập thị trấn, phong quân hàm, bỏ phiếu")
+                .note("Đứng yên, bị nước hay xe đẩy đi không được tính giờ.")
+                .apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.BOOK)));
+        m.open(p);
     }
 }

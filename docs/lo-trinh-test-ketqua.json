@@ -605,7 +605,7 @@
   "tt": "ok"
  },
  "q5": {
-  "ghi_chu": "Claude tự test (Cài đặt key-tradeable false). Chưa có chìa: 'cần Chìa khoá Hang Thánh Địa (trùm cuối Đỉnh Vách Đá rơi ra)'. Chìa ghi tên ThuQ5 đưa sang ThuQ5b: ThuQ5b dùng không được. ThuQ5 dùng chìa của mình: 'tầng Hang Thánh Địa mở vĩnh viễn', chìa bị lấy đi, mở menu độ khó; vào lại lần 2 không cần chìa. Chìa phát bằng /dungeon cho (bot không đánh hết dungeon để trùm rơi). CHƯA THỬ: người chưa có chìa vào theo nhóm /em party.",
+  "ghi_chu": "Claude tự test (Cài đặt key-tradeable false). Chưa có chìa: 'cần Chìa khoá Hang Thánh Địa (trùm cuối Đỉnh Vách Đá rơi ra)'. Chìa ghi tên ThuQ5 đưa sang ThuQ5b: ThuQ5b dùng không được. ThuQ5 dùng chìa của mình: 'tầng Hang Thánh Địa mở vĩnh viễn', chìa bị lấy đi, mở menu độ khó; vào lại lần 2 không cần chìa. Chìa phát bằng /dungeon cho (bot không đánh hết dungeon để trùm rơi). CHƯA THỬ: người chưa có chìa vào theo nhóm /em party. | 23/10 ĐÃ THỬ RƠI CHÌA THẬT (tools/bottest/dg-chia.js): bot vào Đỉnh Vách Đá, /em start, hạ đủ 3 mục tiêu -> EliteMobs báo vượt xong -> nhận Chìa khoá Hang Thánh Địa (ghi 'Chỉ ThuDg dùng được'), 'Lần đầu vượt' + 750 xu, thành tích Bước vào bóng tối +750 xu, báo ĐẦU TIÊN + KỶ LỤC. Lưu ý: vào instance là phòng chờ, phải /em start (hoặc chờ đếm ngược) trận mới tính. Đã xoá danh hiệu đầu tiên/kỷ lục của bot.",
   "luc": 1792655454493,
   "tt": "ok"
  },

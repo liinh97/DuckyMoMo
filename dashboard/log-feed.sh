@@ -31,6 +31,16 @@ function js(v) { gsub(/\\/, "\\\\\\\\", v); gsub(/"/, "\\\"", v); gsub(/[\001-\0
   player = line; sub(/^</, "", player); sub(/> .*/, "", player)
 }
 
+# Chat có định dạng riêng (Paper ghi [Not Secure] vì plugin đổi khung chat): [Not Secure] [Admin] .Griim7833: alo
+(m == "chat" || m == "all") && out == "" && line ~ /^\[Not Secure\] / {
+  sub(/^\[Not Secure\] /, "", line); body = line
+  while (body ~ /^\[[^]]*\] /) sub(/^\[[^]]*\] /, "", body)        # bỏ tiền tố [Admin] [Bang]…
+  if (body ~ /^[^ :]+: /) {
+    player = body; sub(/: .*/, "", player)
+    out = "<" player "> " substr(body, length(player) + 3); tag = "CHAT"; type = "chat"
+  }
+}
+
 (m == "commands" || m == "all") && line ~ /^[^ ]+ issued server command: / {
   name = line; sub(/ issued server command: .*/, "", name)
   cmd = line;  sub(/^[^ ]+ issued server command: /, "", cmd)

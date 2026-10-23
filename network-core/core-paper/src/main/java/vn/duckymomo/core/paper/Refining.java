@@ -75,6 +75,8 @@ final class Refining implements Listener {
     private final double chance;
     private final double eliteChance;
     private final int eliteMax;
+    private final String coreId;       // Lõi Quái (23/10): chỉ quái EliteMobs rơi, nguyên liệu Thợ Rèn
+    private final double coreChance;
 
     Refining(DuckyMoMoCore plugin, ConfigurationSection c) {
         this.plugin = plugin;
@@ -112,6 +114,9 @@ final class Refining implements Listener {
         this.chance = x == null ? 5 : x.getDouble("chance", 5);
         this.eliteChance = x == null ? 40 : x.getDouble("elite-chance", 40);
         this.eliteMax = x == null ? 3 : Math.max(1, x.getInt("elite-max", 3));
+        ConfigurationSection lq = c.getConfigurationSection("loi-quai");
+        this.coreId = lq == null ? "" : lq.getString("item", "loiquai");
+        this.coreChance = lq == null ? 0 : lq.getDouble("elite-chance", 15);
     }
 
     String describe() {
@@ -441,6 +446,12 @@ final class Refining implements Listener {
             return;
         }
         boolean elite = en.getPersistentDataContainer().getKeys().stream().anyMatch(k -> k.getNamespace().equals("elitemobs"));
+        if (elite && coreChance > 0 && ThreadLocalRandom.current().nextDouble(100) < coreChance) {
+            ItemStack core = build(coreId, 1);
+            if (core != null) {
+                e.getDrops().add(core);
+            }
+        }
         double roll = ThreadLocalRandom.current().nextDouble(100);
         if (roll >= (elite ? eliteChance : chance)) {
             return;

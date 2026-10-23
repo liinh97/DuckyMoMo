@@ -342,6 +342,25 @@ groups:
           note: "1 ô = 16 block. 10 ô = 160 block (chốt 14/10)." }
       - { key: towny_town_upkeep, info: "Là gì: phí thị trấn trả mỗi ngày mới (giờ Towny, xem /towny time), trừ từ ngân khố.\nLưu ý: hết tiền trả thì thị trấn PHÁ SẢN (mắc nợ, không bị xoá: economy.bankruptcy bật, delete_towns_that_reach_debt_cap tắt). Nạp tiền vào ngân khố là trả nợ.",      label: Phí duy trì thị trấn mỗi ngày,  type: number, min: 0, file: plugins/Towny/settings/config.yml, path: economy.daily_taxes.price_town_upkeep }
       - { key: towny_nation_upkeep,    label: Phí duy trì quốc gia mỗi ngày,  type: number, min: 0, file: plugins/Towny/settings/config.yml, path: economy.daily_taxes.price_nation_upkeep }
+      - { key: towny_claim_increase, label: Giá ô đất tăng sau mỗi ô (hệ số), type: number, min: 1, max: 2, file: plugins/Towny/settings/config.yml, path: economy.new_expand.price_claim_townblock_increase,
+          info: "Là gì: ô sau đắt hơn ô trước. 1.015 = +1,5%/ô; 1 = giá cố định.\nVí dụ 75 xu, 1.015, trần 600: ô thứ 40 ≈ 136 xu (40 ô tốn ≈ 4.100), ô thứ 100 ≈ 330 xu (100 ô tốn ≈ 17.400)." }
+      - { key: towny_claim_max, label: Giá ô đất tối đa (xu), type: number, min: -1, file: plugins/Towny/settings/config.yml, path: economy.new_expand.max_price_claim_townblock, note: "-1 = không giới hạn." }
+      - { key: towny_bonus_price, label: Giá ô đất mua thêm (vượt giới hạn theo dân), type: number, min: 0, file: plugins/Towny/settings/config.yml, path: economy.new_expand.price_purchased_bonus_townblock,
+          info: "Là gì: ô thưởng thị trấn mua bằng /t buy bonus, không cần thêm dân hoạt động nên đắt gấp đôi ô thường." }
+      - { key: towny_bonus_increase, label: Giá ô mua thêm tăng sau mỗi ô (hệ số), type: number, min: 1, max: 2, file: plugins/Towny/settings/config.yml, path: economy.new_expand.price_purchased_bonus_townblock_increase }
+      - { key: towny_bonus_max, label: Giá ô mua thêm tối đa (xu), type: number, min: -1, file: plugins/Towny/settings/config.yml, path: economy.new_expand.price_purchased_bonus_townblock_max_price, note: "-1 = không giới hạn." }
+      - { key: towny_tax_flat_max, label: Thuế dân tối đa (xu/người/ngày; thuế số cố định), type: number, min: 0, file: plugins/Towny/settings/config.yml, path: economy.daily_taxes.max_town_tax_amount }
+      - { key: towny_tax_pct_max, label: Thuế dân tối đa (% số dư/ngày; thuế theo %), type: number, min: 0, max: 100, file: plugins/Towny/settings/config.yml, path: economy.daily_taxes.max_town_tax_percent,
+          info: "Là gì: thị trưởng đặt thuế theo % thì mỗi ngày trừ % số dư của dân, không vượt mức này và không vượt mức xu ở dưới." }
+      - { key: towny_tax_pct_cap, label: Thuế dân theo % tối đa (xu/người/ngày), type: number, min: 0, file: plugins/Towny/settings/config.yml, path: economy.daily_taxes.max_town_tax_percent_amount }
+      - { key: towny_plot_tax_max, label: Thuế mảnh đất riêng tối đa (xu/mảnh/ngày), type: number, min: 0, file: plugins/Towny/settings/config.yml, path: economy.daily_taxes.max_plot_tax_amount }
+      - { key: towny_ntax_flat_max, label: Thuế quốc gia thu mỗi thị trấn tối đa (xu/ngày), type: number, min: 0, file: plugins/Towny/settings/config.yml, path: economy.daily_taxes.max_nation_tax_amount }
+      - { key: towny_ntax_pct_max, label: Thuế quốc gia theo % ngân khố thị trấn tối đa, type: number, min: 0, max: 100, file: plugins/Towny/settings/config.yml, path: economy.daily_taxes.max_nation_tax_percent }
+      - { key: towny_ntax_pct_cap, label: Thuế quốc gia theo % tối đa (xu/thị trấn/ngày), type: number, min: 0, file: plugins/Towny/settings/config.yml, path: economy.daily_taxes.max_nation_tax_percent_amount }
+      - { key: towny_nation_neutral_default, label: Quốc gia mới tự bật trung lập Towny, type: select, file: plugins/Towny/settings/config.yml, path: nation.default_neutral,
+          options: [ { value: false, label: "Không (khuyên dùng): server dùng hoà bình của SiegeWar theo thị trấn" }, { value: true, label: "Có" } ] }
+      - { key: towny_nation_neutral_price, label: Phí trung lập Towny của quốc gia (xu/ngày), type: number, min: 0, file: plugins/Towny/settings/config.yml, path: economy.price_nation_neutrality,
+          info: "Là gì: trung lập kiểu Towny của quốc gia, KHÔNG có tác dụng trong SiegeWar (hoà bình tính theo thị trấn). Để 0 cho khỏi mất tiền oan." }
 
   - title: Kinh tế
     category: Kinh tế
@@ -840,6 +859,11 @@ Admin (quyền duckymomo.sell.khonggioihan) không bị giới hạn." }
       - { key: dgt_key_trade, label: "Chìa khoá tầng: cho trao đổi (người khác dùng được)", type: select, file: plugins/DuckyMoMoCore/config.yml, path: dungeon-gate.key-tradeable, options: [ { value: false, label: "Không (chỉ người nhận dùng)" }, { value: true, label: Có } ] }
       - { key: dgt_window, label: "Mở cổng xong có bao lâu để vào (giây)", type: int, min: 30, max: 900, file: plugins/DuckyMoMoCore/config.yml, path: dungeon-gate.window-seconds }
       - { key: dgt_radius, label: "Tới gần lối vào ẩn bao nhiêu khối là tìm ra", type: int, min: 2, max: 32, file: plugins/DuckyMoMoCore/config.yml, path: dungeon-gate.hidden-radius }
+      - { key: dgt_auto_ready, label: "Nhóm vào dungeon: tự xác nhận sẵn sàng", type: select, file: plugins/DuckyMoMoCore/config.yml, path: dungeon-gate.auto-ready, commands: [dmm reload],
+          options: [ { value: true, label: "Bật: trưởng nhóm chọn độ khó là cả nhóm vào luôn" }, { value: false, label: "Tắt: từng người bấm [SẴN SÀNG] (EliteMobs)" } ] }
+      - { key: dgt_auto_start, label: "Vào dungeon là bắt đầu đánh luôn", type: select, file: plugins/DuckyMoMoCore/config.yml, path: dungeon-gate.auto-start, commands: [dmm reload],
+          options: [ { value: true, label: "Bật: tự /em start khi vào" }, { value: false, label: "Tắt: vào là phòng chờ, gõ /em start mới đánh" } ],
+          info: "Là gì: dungeon của EliteMobs vào xong chỉ là phòng chờ; chưa /em start thì hạ trùm không tính vượt (không rơi chìa, không quà)." }
       - { key: dgt_luck_mob, label: "Vé Vận Mệnh: % rơi khi hạ quái", type: number, min: 0, max: 100, file: plugins/DuckyMoMoCore/config.yml, path: dungeon-gate.luck.mob-chance }
       - { key: dgt_luck_fish, label: "Vé Vận Mệnh: % rơi khi câu cá", type: number, min: 0, max: 100, file: plugins/DuckyMoMoCore/config.yml, path: dungeon-gate.luck.fish-chance }
       - { key: dgt_luck_day, label: "Vé Vận Mệnh: tối đa mỗi người mỗi ngày", type: int, min: 0, max: 20, file: plugins/DuckyMoMoCore/config.yml, path: dungeon-gate.luck.max-per-day }
@@ -1203,6 +1227,8 @@ Admin (quyền duckymomo.sell.khonggioihan) không bị giới hạn." }
       - { key: tl_chance, label: "Xu Quái: tỉ lệ rơi từ quái thường (%)", type: number, min: 0, max: 100, file: plugins/DuckyMoMoCore/config.yml, path: tinh-luyen.xu-quai.chance }
       - { key: tl_elite, label: "Xu Quái: tỉ lệ rơi từ quái EliteMobs (%)", type: number, min: 0, max: 100, file: plugins/DuckyMoMoCore/config.yml, path: tinh-luyen.xu-quai.elite-chance }
       - { key: tl_elite_max, label: "Xu Quái: quái EliteMobs rơi tối đa", type: int, min: 1, max: 64, file: plugins/DuckyMoMoCore/config.yml, path: tinh-luyen.xu-quai.elite-max }
+      - { key: tl_core, label: "Lõi Quái: tỉ lệ rơi từ quái EliteMobs (%)", type: number, min: 0, max: 100, file: plugins/DuckyMoMoCore/config.yml, path: tinh-luyen.loi-quai.elite-chance,
+          info: "Là gì: nguyên liệu Thợ Rèn (Tân Thủ từ +4). Chỉ quái tinh nhuệ EliteMobs rơi, kể cả quái trong dungeon; quái thường không rơi." }
       - { key: tl_sell_xuquai, label: "Giá bán: Xu Quái (xu, 0 = không bán)", type: int, min: 0, max: 10000000, file: plugins/DuckyMoMoCore/config.yml, path: tinh-luyen.items.xuquai.sell }
       - { key: tl_sell_xuquai2, label: "Giá bán: Xu Quái 2 (xu, 0 = không bán)", type: int, min: 0, max: 10000000, file: plugins/DuckyMoMoCore/config.yml, path: tinh-luyen.items.xuquai2.sell }
       - { key: tl_sell_da, label: "Giá bán: Tinh Luyện Đá (xu, 0 = không bán)", type: int, min: 0, max: 10000000, file: plugins/DuckyMoMoCore/config.yml, path: tinh-luyen.items.da.sell }
@@ -1217,6 +1243,13 @@ Admin (quyền duckymomo.sell.khonggioihan) không bị giới hạn." }
       - { key: tl_sell_netherite, label: "Giá bán: Tinh Luyện Netherite (xu, 0 = không bán)", type: int, min: 0, max: 10000000, file: plugins/DuckyMoMoCore/config.yml, path: tinh-luyen.items.netherite.sell }
       - { key: tl_sell_dialinh, label: "Giá bán: Địa Linh (xu, 0 = không bán)", type: int, min: 0, max: 10000000, file: plugins/DuckyMoMoCore/config.yml, path: tinh-luyen.items.dialinh.sell }
 
+  - title: Thợ Rèn (/thoren)
+    category: Shop
+    description: "Set đồ trao đổi: rèn +0 từ nguyên liệu, nâng +N cần món cùng set +N-1 (bị lấy đi) + nguyên liệu; không thất bại. Cấp cao mòn chậm. Mặc nhiều món cùng set cấp cao có hiệu ứng bộ."
+    info: "Set đang có: Tân Thủ (mũ, áo, quần, giày, kiếm; +0..+9). Hình dạng, phù phép, kỹ năng từng cấp: trang Thư viện đồ (bộ \"Tân thủ\", mã tt_mu_0.., áo giữ mã cũ giap, giap_tan_thu_1..).\nNguyên liệu từng cấp (xu, Xu Quái, Lõi Quái, Tinh Luyện, vật liệu game), độ mòn (wear: % lần trừ độ bền theo cấp), hiệu ứng bộ (bonus: từ +3 / +6 / +9, 2 hoặc 4 món): sửa trong tho-ren.sets.<set> của plugins/DuckyMoMoCore/config.yml.\nĐồ set trao đổi được (/trade, chợ đen, shop rương).\nLưu xong: có hiệu lực ngay (dmm reload)."
+    apply: [dmm reload]
+    settings:
+      - { key: tr_on, label: Bật Thợ Rèn, type: select, file: plugins/DuckyMoMoCore/config.yml, path: tho-ren.enabled, options: [ { value: true, label: Bật }, { value: false, label: Tắt } ] }
   - title: Xưởng chế tạo (/xuong)
     category: Shop
     description: "Đồ đặc biệt theo logic HIỆU ỨNG + ĐỘ BỀN + THỜI HẠN, chế bằng xu + nguyên liệu xếp trên bàn chế 3×3. Hết độ bền hoặc hết hạn là biến mất (rút tiền và tài nguyên khỏi kinh tế)."

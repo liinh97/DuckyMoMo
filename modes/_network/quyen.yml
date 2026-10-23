@@ -72,7 +72,8 @@ groups:
     perms:
       - [essentials.eco, "Sửa tiền người chơi (/eco)", "Làm gì: Cộng, trừ, đặt tiền của người chơi.\nCách dùng: /eco give|take|set <người> <tiền>\nCó ở: Bang Hội Chiến, Practice (sảnh không cài Essentials)\nLưu ý: Ảnh hưởng thẳng kinh tế, chỉ admin."]
       - [duckymomo.rank.admin, "Cấp/gỡ rank donate (/rank give)", "Làm gì: Cấp, gỡ, xem rank donate (sau khi nhận tiền thật); mở trang Donate trên web.\nCách dùng: /rank give <người> <bậc> <tháng>, /rank remove <người>, /rank check <người>\nCó ở: Mọi server"]
-      - [duckymomo.admin, "Lệnh /dmm (dọn rác, đồ vượt cấp, reload…)", "Làm gì: Mọi lệnh /dmm: dọn rác, nạp lại cấu hình, đồ vượt cấp, đặt NPC, khai hoang, liên minh hoà bình…\nCách dùng: /dmm …\nCó ở: Mọi server\nLưu ý: Gần như quyền admin của plugin riêng, chỉ cho Admin."]
+      - [duckymomo.dmm, "Lệnh /dmm (trừ reload, decorate, structures)", "Làm gì: /dmm đồ vượt cấp, sách, thư viện đồ, dọn rác, đặt NPC, tài khoản phụ, liên minh hoà bình…\nCách dùng: /dmm …\nCó ở: Mọi server\nLưu ý: Manager có sẵn. Nạp lại cấu hình, tự trang trí / đặt công trình khắp map cần duckymomo.admin."]
+      - [duckymomo.admin, "Admin DuckyMoMoCore (mọi /dmm + lệnh admin)", "Làm gì: Mọi lệnh /dmm kể cả reload, decorate, structures; lệnh con admin của các hệ (dungeon, đấu trường, rank chơi, rương…).\nCách dùng: /dmm …\nCó ở: Mọi server\nLưu ý: Gần như quyền admin của plugin riêng, chỉ cho Admin."]
       - [shopkeeper.admin, "Tạo/sửa dân làng bán hàng", "Làm gì: Tạo, sửa, xoá dân làng bán hàng của server.\nCách dùng: /shopkeeper admin\nCó ở: Bang Hội Chiến\nLưu ý: Người chơi thường đang bị tắt quyền tự mở shop dân làng."]
       - [crazyenchantments.admin, "Phát sách phù phép CrazyEnchantments", "Làm gì: Phát sách, thêm phù phép đặc biệt vào đồ.\nCách dùng: /ce give <người> <phù phép> <cấp>, /ce add <phù phép> <cấp>\nCó ở: Bang Hội Chiến"]
   - title: Quyền lợi rank donate (CHỈ trang trí — luật Mojang)

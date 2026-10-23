@@ -616,22 +616,26 @@ final class ItemLibrary {
         }
         if (sub.equals("laydo")) {
             if (args.length < 2) {
-                s.sendMessage("§e/dmm laydo <mã> [người chơi] [số lượng]");
+                s.sendMessage("§e/dmm laydo <mã> [số lượng] [người chơi]");
                 return;
             }
-            Player target = args.length >= 3 ? Bukkit.getPlayerExact(args[2]) : (s instanceof Player p ? p : null);
-            if (target == null) {
-                s.sendMessage("§cNgười chơi không online trên server này.");
-                return;
-            }
+            // 23/10: số trước, người sau (thường lấy cho mình: /dmm laydo kiem 5). Ô nào là số thì là số lượng, nên thứ tự cũ vẫn chạy.
             int amount = 0;
-            if (args.length >= 4) {
-                try {
-                    amount = Integer.parseInt(args[3]);
-                } catch (NumberFormatException e) {
+            String who = null;
+            for (int i = 2; i < Math.min(args.length, 4); i++) {
+                if (args[i].matches("\\d+") && amount == 0) {
+                    amount = Integer.parseInt(args[i]);
+                } else if (who == null) {
+                    who = args[i];
+                } else {
                     s.sendMessage("§cSố lượng không hợp lệ.");
                     return;
                 }
+            }
+            Player target = who != null ? Bukkit.getPlayerExact(who) : (s instanceof Player p ? p : null);
+            if (target == null) {
+                s.sendMessage(who != null ? "§c" + who + " không online trên server này." : "§e/dmm laydo <mã> [số lượng] <người chơi>");
+                return;
             }
             ItemStack item = build(args[1], amount);
             if (item == null) {
@@ -671,7 +675,7 @@ final class ItemLibrary {
                 s.sendMessage("§6" + NHOM.get(g) + ": §f" + String.join(", ", groups.get(g)));
             }
         }
-        s.sendMessage("§7/dmm luudo <mã> · /dmm laydo <mã> [người] [số] · /dmm thuvien nap");
+        s.sendMessage("§7/dmm luudo <mã> · /dmm laydo <mã> [số] [người] · /dmm thuvien nap");
     }
 
     private static String js(String v) {

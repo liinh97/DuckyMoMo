@@ -62,6 +62,49 @@ final class SpawnWorld {
         return w;
     }
 
+    /**
+     * Dán đảo spawn vào WORLD CHÍNH (24/10, chủ server: spawn mới ở world chính cho Liên minh Hoà Bình, bỏ spawn cũ).
+     * main-paste {x,y,z, clear-radius, clear-from-y}: trước khi dán, dọn hình trụ quanh tâm đảo từ clear-from-y lên trời (núi, cây) cho đảo
+     * không bị đất đè, rồi dán (bỏ qua ô không khí của schematic).
+     */
+    private void pasteMain(CommandSender s, ConfigurationSection c) {
+        World w = Bukkit.getWorlds().get(0);
+        File f = new File(new File(plugin.getDataFolder().getParentFile(), "WorldEdit/schematics"), c.getString("schematic", ""));
+        ClipboardFormat fmt = ClipboardFormats.findByFile(f);
+        if (!f.isFile() || fmt == null) {
+            s.sendMessage("Không đọc được schematic " + f);
+            return;
+        }
+        int x = c.getInt("main-paste.x"), y = c.getInt("main-paste.y"), z = c.getInt("main-paste.z");
+        int cx = c.getInt("main-paste.center-x"), cz = c.getInt("main-paste.center-z"), r = c.getInt("main-paste.clear-radius", 126);
+        int fromY = c.getInt("main-paste.clear-from-y", y - 10);
+        long cleared = 0;
+        for (int dx = -r; dx <= r; dx++) {
+            for (int dz = -r; dz <= r; dz++) {
+                if (dx * dx + dz * dz > r * r) {
+                    continue;
+                }
+                for (int yy = fromY; yy < w.getMaxHeight(); yy++) {
+                    var b = w.getBlockAt(cx + dx, yy, cz + dz);
+                    if (!b.getType().isAir()) {
+                        b.setType(org.bukkit.Material.AIR, false);
+                        cleared++;
+                    }
+                }
+            }
+        }
+        try (ClipboardReader rd = fmt.getReader(new FileInputStream(f))) {
+            Clipboard clip = rd.read();
+            try (EditSession es = WorldEdit.getInstance().newEditSession(BukkitAdapter.adapt(w))) {
+                Operations.complete(new ClipboardHolder(clip).createPaste(es).to(BlockVector3.at(x, y, z)).ignoreAirBlocks(true).build());
+                s.sendMessage("Đã dọn " + cleared + " khối trong hình trụ bán kính " + r + " (từ y " + fromY + "), dán đảo vào world chính tại "
+                        + x + " " + y + " " + z + " (" + es.getBlockChangeCount() + " khối).");
+            }
+        } catch (Exception ex) {
+            s.sendMessage("Lỗi dán: " + ex.getMessage());
+        }
+    }
+
     void command(CommandSender s, String[] a) {
         String sub = a.length >= 2 ? a[1].toLowerCase(java.util.Locale.ROOT) : "";
         ConfigurationSection c = cfg();
@@ -96,6 +139,7 @@ final class SpawnWorld {
                     plugin.getLogger().warning("Spawn mới: lỗi dán " + ex);
                 }
             }
+            case "danchinh" -> pasteMain(s, c);
             case "diemxuathien" -> {
                 Location l = new Location(w, c.getDouble("spawn.x", 0.5), c.getDouble("spawn.y", 100), c.getDouble("spawn.z", 0.5),
                         (float) c.getDouble("spawn.yaw", 0), 0);

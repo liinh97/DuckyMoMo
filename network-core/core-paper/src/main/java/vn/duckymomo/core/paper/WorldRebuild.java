@@ -64,6 +64,7 @@ final class WorldRebuild {
             }
             case "chepspawn" -> copySpawn(s);
             case "sua" -> fixHeights(s);
+            case "xoaspawncu" -> restoreSpawn(s);
             default -> s.sendMessage("Đổi world: " + state);
         }
     }
@@ -250,6 +251,85 @@ final class WorldRebuild {
         String msg = "Đổi world: đặt lại độ cao " + warps + " warp, " + homes + " nhà, " + npcs + " NPC ngoài spawn lên mặt đất mới.";
         s.sendMessage(msg);
         plugin.getLogger().info(msg);
+    }
+
+    /**
+     * 24/10 chủ server: bỏ spawn cũ (chép từ map Trái Đất), đặt đảo spawn mới vào world chính. Trả khung spawn (±HALF, toàn bộ độ cao)
+     * về địa hình tự nhiên: world tạm "dmm_tam" cùng seed với world chính, chép đè từng khối (cả rương công trình tự nhiên); xoá vật trang
+     * trí cũ (khung tranh, armor stand, khối hiển thị; không đụng NPC Citizens, người chơi). Xong gỡ world tạm.
+     */
+    private void restoreSpawn(CommandSender s) {
+        World dst = Bukkit.getWorlds().get(0);
+        if (task != null) {
+            s.sendMessage("Đang chạy việc khác: " + state);
+            return;
+        }
+        World src = create("dmm_tam", dst.getSeed());
+        int x0 = SPAWN_X - HALF, z0 = SPAWN_Z - HALF, size = HALF * 2 + 1, minY = dst.getMinHeight(), maxY = dst.getMaxHeight();
+        int removed = 0;
+        for (int cx = x0 >> 4; cx <= (x0 + size) >> 4; cx++) {
+            for (int cz = z0 >> 4; cz <= (z0 + size) >> 4; cz++) {
+                for (Entity e : dst.getChunkAt(cx, cz).getEntities()) {
+                    if (!e.hasMetadata("NPC") && (e instanceof org.bukkit.entity.Hanging || e instanceof org.bukkit.entity.ArmorStand
+                            || e instanceof org.bukkit.entity.Display || e instanceof org.bukkit.entity.Item)) {
+                        e.remove();
+                        removed++;
+                    }
+                }
+            }
+        }
+        int[] col = {0};
+        long[] blocks = {0};
+        int total = size * size, rm = removed;
+        task = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
+            long t0 = System.nanoTime();
+            while (System.nanoTime() - t0 < BUDGET_NS) {
+                if (col[0] >= total) {
+                    task.cancel();
+                    task = null;
+                    Path folder = src.getWorldFolder().toPath().toAbsolutePath().normalize();
+                    Path mainFolder = dst.getWorldFolder().toPath().toAbsolutePath().normalize();
+                    Bukkit.unloadWorld(src, false);
+                    if (folder.getFileName().toString().equals("dmm_tam") && !folder.equals(mainFolder) && !mainFolder.startsWith(folder)) {
+                        delete(folder);
+                    }
+                    int n = 0;
+                    double sum = 0;
+                    for (int deg = 0; deg < 360; deg += 10) {
+                        for (int rr = 120; rr <= 140; rr += 10) {
+                            int hx = SPAWN_X + (int) Math.round(rr * Math.cos(Math.toRadians(deg)));
+                            int hz = SPAWN_Z + (int) Math.round(rr * Math.sin(Math.toRadians(deg)));
+                            sum += dst.getHighestBlockYAt(hx, hz, org.bukkit.HeightMap.MOTION_BLOCKING_NO_LEAVES);
+                            n++;
+                        }
+                    }
+                    state = "xoá spawn cũ XONG: trả " + blocks[0] + " khối về địa hình tự nhiên, gỡ " + rm + " vật trang trí cũ. Mặt đất vành 120–140 quanh tâm: trung bình y "
+                            + Math.round(sum / n) + ".";
+                    s.sendMessage(state);
+                    plugin.getLogger().info("Đổi world: " + state);
+                    return;
+                }
+                int x = x0 + col[0] % size, z = z0 + col[0] / size;
+                for (int y = minY; y < maxY; y++) {
+                    Block a = src.getBlockAt(x, y, z), b = dst.getBlockAt(x, y, z);
+                    var data = a.getBlockData();
+                    if (!b.getBlockData().equals(data)) {
+                        b.setBlockData(data, false);
+                        blocks[0]++;
+                    }
+                    BlockState st = a.getState();
+                    if (st instanceof org.bukkit.block.TileState) {
+                        try {
+                            st.copy(b.getLocation()).update(true, false);
+                        } catch (Throwable ignored) {
+                        }
+                    }
+                }
+                col[0]++;
+            }
+            state = String.format("đang xoá spawn cũ %d/%d cột (%.1f%%)", col[0], total, 100.0 * col[0] / total);
+        }, 1L, 1L);
+        s.sendMessage("Bắt đầu trả khu spawn cũ về địa hình tự nhiên (" + total + " cột). Xem: /dmm thegioi xem");
     }
 
     /** Vật trang trí (khung tranh, tranh, armor stand trang trí, khối hiển thị): không chép NPC Citizens, người, quái, đồ rơi. */

@@ -1589,16 +1589,17 @@ tho-ren:
         giay: {name: "Giày", ids: [tt_giay_0, tt_giay_1, tt_giay_2, tt_giay_3, tt_giay_4, tt_giay_5, tt_giay_6, tt_giay_7, tt_giay_8, tt_giay_9]}
         kiem: {name: "Kiếm", ids: [tt_kiem_0, tt_kiem_1, tt_kiem_2, tt_kiem_3, tt_kiem_4, tt_kiem_5, tt_kiem_6, tt_kiem_7, tt_kiem_8, tt_kiem_9]}
       cost:
-        - {xu: 100, xuquai: 3, manh_than: 1}   # +0
-        - {xu: 200, xuquai: 4, manh_dong: 2}   # +1
-        - {xu: 300, xuquai: 5, manh_sat: 2, xuong_oan: 1}   # +2
-        - {xu: 500, xuquai: 6, manh_sat: 3, to_bac: 1}   # +3
-        - {xu: 800, xuquai: 8, hop_kim: 1, loiquai: 1}   # +4
-        - {xu: 1200, xuquai: 10, hop_kim: 1, manh_vang: 2, hoa_duoc: 1}   # +5
-        - {xu: 1800, xuquai: 12, hop_kim: 1, lam_chau: 1, loiquai: 2}   # +6
-        - {xu: 2500, xuquai: 14, hop_kim: 1, huyet_tinh: 1, le_ender: 1}   # +7
-        - {xu: 3200, xuquai: 16, hop_kim: 1, lam_chau: 1, huyet_tinh: 1}   # +8
-        - {xu: 4000, xuquai: 20, hop_kim: 1, hon_quai: 1, lam_chau: 1}   # +9
+        # 23/10: kiếm chủ yếu ngoài tự nhiên (đào mỏ + quái thường), +0/+1 không cần Xu Quái, Lõi Quái (qua Huyết Tinh) từ +7
+        - {xu: 200, manh_than: 2, manh_dong: 2, xuong_oan: 1}   # +0
+        - {xu: 300, manh_dong: 3, manh_sat: 2, to_bac: 1}   # +1
+        - {xu: 400, manh_sat: 3, manh_than: 2, hoa_duoc: 1, xuquai: 2}   # +2
+        - {xu: 600, manh_sat: 4, xuong_oan: 2, to_bac: 2, xuquai: 3}   # +3
+        - {xu: 900, hop_kim: 1, manh_lam: 2, xuquai: 4}   # +4
+        - {xu: 1300, hop_kim: 1, manh_vang: 2, hoa_duoc: 2, xuquai: 5}   # +5
+        - {xu: 1800, hop_kim: 1, lam_chau: 1, manh_hong: 2, xuquai: 6}   # +6
+        - {xu: 2500, hop_kim: 1, huyet_tinh: 1, le_ender: 1, xuquai: 8}   # +7
+        - {xu: 3200, hop_kim: 1, lam_chau: 1, huyet_tinh: 1, xuquai: 10}   # +8
+        - {xu: 4000, hop_kim: 2, lam_chau: 2, hon_quai: 1, xuquai: 12}   # +9
       wear: [100, 95, 90, 85, 80, 75, 65, 60, 55, 45]
       bonus:
         - {from: 3, pieces: 2, mau: 3}

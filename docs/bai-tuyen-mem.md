@@ -1,9 +1,12 @@
 ⚔️ DUCKYMOMO NETWORK – BANG HỘI CHIẾN TRÊN BẢN ĐỒ TRÁI ĐẤT ⚔️
 
+🦆 Sau gần chục năm vắng bóng, DuckyMoMo chính thức TÁI XUẤT GIANG HỒ!
+
 Cả Đông Nam Á dựng lại theo bản đồ thật, tỉ lệ 1:1000, và chưa mảnh đất nào có chủ.
 
 🏰 Lập thị trấn, kết thành quốc gia, mỗi tối cuối tuần CÔNG THÀNH
 🕊️ Thích yên bình? Vào Liên minh Hoà Bình: xây, buôn bán, không ai chiếm được đất
+✨ Hệ thống kỹ năng đa dạng: hàng chục chiêu thức riêng, kỹ năng nghề, Thăng Cấp cộng điểm thuộc tính theo lối chơi của bạn
 🐾 Pet chiến đấu tự tay bắt, tự tay nuôi, mang theo ra trận
 🗝️ Dungeon, Cổng Hoang giấu khắp bản đồ, boss săn chung cả server
 ⚒️ Tự cày, tự rèn đồ: 7 bậc từ Tân Thủ tới Thần Thánh, đồ trao đổi được giữa người chơi

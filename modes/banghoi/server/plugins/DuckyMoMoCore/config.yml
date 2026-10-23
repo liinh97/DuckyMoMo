@@ -1596,7 +1596,27 @@ tho-ren:
       steamworks_lair: {items: [cc_an_khoi, cc_an_than, cc_an_binh], multiplier: 2, rare: [ht_an_khoi, ht_an_than, ht_an_binh], rare-chance: 0.3}              # vé · 140
   # Đồ EliteMobs (rơi trong dungeon, dùng tạm) yếu hơn đồ set (23/10, chủ server): vũ khí EliteMobs đánh nhân weapon-damage,
   # mỗi món giáp EliteMobs đang mặc làm người mặc nhận thêm armor-penalty (0.08 = +8%) sát thương. Đồ set Thợ Rèn không bị ảnh hưởng.
-  elitemobs-gear: {weapon-damage: 0.8, armor-penalty: 0.08}
+  elitemobs-gear:
+    weapon-damage: 0.8
+    armor-penalty: 0.08
+    # Đồ set Thợ Rèn đánh / chịu đòn quái EliteMobs (dungeon, quái tinh nhuệ), CHỈ PvE (23/10 chủ server: đồ tân thủ vào dungeon tầng 1 phải đánh được).
+    # EliteMobs chấm cấp đồ theo phù phép (trần Sắc bén 5…) nên mọi set chỉ ngang đồ cấp ~10. Ở đây mỗi set có CẤP HIỆU DỤNG: cầm vũ khí set đánh quái
+    # EliteMobs / mặc giáp set (trung bình 4 ô, ô không phải đồ set = cấp 0) thì sát thương tính theo chênh lệch cấp; lấy mức có lợi hơn cho người chơi.
+    set-vs-elite:
+      nhat-ngang-cap: 3      # quái thường CÙNG cấp với đồ: chém mấy nhát thì chết (trùm / phó trùm nhân thêm hệ số máu của nó)
+      don-ngang-cap: 8       # quái thường cùng cấp đánh mấy đòn thì mình chết
+      he-so-cap: 1.08        # mỗi cấp chênh lệch: số nhát / số đòn nhân hoặc chia 1,08
+      # cấp hiệu dụng [ở +0, ở +max] (cấp giữa nội suy). Tầng dungeon: 1 = cấp 10, 4 = 25, 7 = 40, 10 = 55; dungeon vé 95–140.
+      cap:
+        tanthu: [3, 12]
+        chienbinh: [12, 24]
+        ulinh: [15, 30]
+        tinhanh: [24, 38]
+        caocap: [38, 56]
+        huyenthoai: [56, 75]
+        thanthoai: [75, 100]
+        thanthanh: [100, 140]
+        thosan: [5, 15]
   fish-drop: {item: vaycahiem, chance: 5}   # % mỗi lần câu được cá: rơi Vảy Cá Hiếm (set Ngư Phủ)
   sets:
     tanthu:

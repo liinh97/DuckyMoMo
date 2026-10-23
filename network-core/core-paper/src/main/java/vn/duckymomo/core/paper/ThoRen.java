@@ -96,6 +96,15 @@ final class ThoRen implements Listener {
     /** Đồ EliteMobs (dùng tạm) yếu hơn đồ set: hệ số sát thương vũ khí, % nhận thêm mỗi món giáp. */
     private final double emWeapon;
     private final double emArmor;      // nguyên liệu rơi khi câu cá (Vảy Cá Hiếm, set Ngư Phủ)
+    /**
+     * Đồ set đánh quái EliteMobs: cấp hiệu dụng của set [ở +0, ở +max] (nội suy theo cấp). EliteMobs chấm cấp đồ theo phù phép (trần Sắc bén 5…) nên
+     * mọi set chỉ ngang đồ cấp ~10, tầng cao gần như không đánh nổi (đo 23/10: Cao Cấp +5 vs quái cấp 55 = 1%/nhát). Thay bằng: quái thường cùng cấp
+     * chết sau nhat nhát (x hệ số máu của quái), mình chết sau don đòn; mỗi cấp chênh nhân / chia heSo. Lấy mức có lợi hơn cho người chơi.
+     */
+    private final Map<String, double[]> vsLevel = new HashMap<>();
+    private double vsHits = 3, vsTaken = 8, vsStep = 1.08;
+    private static java.lang.reflect.Method emEntity;
+    private static boolean emTried;
     private final double fishChance;
 
     ThoRen(DuckyMoMoCore plugin, ItemLibrary lib, ConfigurationSection c) {
@@ -145,6 +154,19 @@ final class ThoRen implements Listener {
         this.fishItem = c.getString("fish-drop.item", "");
         this.emWeapon = c.getDouble("elitemobs-gear.weapon-damage", 1);
         this.emArmor = c.getDouble("elitemobs-gear.armor-penalty", 0);
+        ConfigurationSection ve = c.getConfigurationSection("elitemobs-gear.set-vs-elite");
+        if (ve != null) {
+            vsHits = ve.getDouble("nhat-ngang-cap", 3);
+            vsTaken = ve.getDouble("don-ngang-cap", 8);
+            vsStep = ve.getDouble("he-so-cap", 1.08);
+            ConfigurationSection lv = ve.getConfigurationSection("cap");
+            for (String id : lv == null ? java.util.Set.<String>of() : lv.getKeys(false)) {
+                List<Double> d = lv.getDoubleList(id);
+                if (!d.isEmpty()) {
+                    vsLevel.put(id, new double[]{d.get(0), d.get(d.size() - 1)});
+                }
+            }
+        }
         this.fishChance = c.getDouble("fish-drop.chance", 0);
         ConfigurationSection ss = c.getConfigurationSection("sets");
         if (ss == null) {
@@ -1117,6 +1139,50 @@ final class ThoRen implements Listener {
                 e.setDamage(e.getDamage() * (1 + emArmor * n));
             }
         }
+        // 23/10 chủ server: "đồ tân thủ vào dungeon lv1 là bất khả thi" -> đồ set tính theo cấp hiệu dụng khi đánh / chịu đòn quái EliteMobs (chỉ PvE)
+        if (!vsLevel.isEmpty()) {
+            boolean shot = e.getDamager() instanceof org.bukkit.entity.Projectile;
+            Player atk = e.getDamager() instanceof Player p ? p
+                    : e.getDamager() instanceof org.bukkit.entity.Projectile pr && pr.getShooter() instanceof Player p ? p : null;
+            Object mob = atk == null ? null : elite(e.getEntity());
+            if (mob != null && e.getEntity() instanceof org.bukkit.entity.LivingEntity le) {
+                Ref r = byId.get(ItemLibrary.idOf(atk.getInventory().getItemInMainHand()));
+                double[] lv = r == null ? null : vsLevel.get(r.set().id());
+                if (lv != null) {
+                    double hits = vsHits * emNum(mob, "getHealthMultiplier", 1) * Math.pow(vsStep, emNum(mob, "getLevel", 0) - lerp(lv[0], lv[1], r));
+                    double max = le.getAttribute(Attribute.MAX_HEALTH) == null ? le.getHealth() : le.getAttribute(Attribute.MAX_HEALTH).getValue();
+                    double dmg = max / Math.max(0.34, hits);
+                    if (!shot) {
+                        float cd = atk.getAttackCooldown();   // bấm liên tục không chờ hồi đòn: giảm như game thường
+                        dmg *= 0.2 + 0.8 * cd * cd;
+                    }
+                    if (e.getCause() == EntityDamageEvent.DamageCause.ENTITY_SWEEP_ATTACK) {
+                        dmg *= 0.5;
+                    }
+                    e.setDamage(Math.max(e.getDamage(), dmg));
+                }
+            }
+            org.bukkit.entity.Entity src = e.getDamager() instanceof org.bukkit.entity.Projectile pr && pr.getShooter() instanceof org.bukkit.entity.Entity sh
+                    ? sh : e.getDamager();
+            Object from = e.getEntity() instanceof Player && !(src instanceof Player) ? elite(src) : null;
+            if (from != null && e.getEntity() instanceof Player v) {
+                double sum = 0;
+                boolean any = false;
+                for (ItemStack a : v.getInventory().getArmorContents()) {   // món không phải đồ set: cấp 0
+                    Ref r = byId.get(ItemLibrary.idOf(a));
+                    double[] lv = r == null ? null : vsLevel.get(r.set().id());
+                    if (lv != null) {
+                        sum += lerp(lv[0], lv[1], r);
+                        any = true;
+                    }
+                }
+                if (any) {
+                    double dieAfter = vsTaken / Math.max(0.1, emNum(from, "getDamageMultiplier", 1)) * Math.pow(vsStep, sum / 4 - emNum(from, "getLevel", 0));
+                    double max = v.getAttribute(Attribute.MAX_HEALTH) == null ? 20 : v.getAttribute(Attribute.MAX_HEALTH).getValue();
+                    e.setDamage(Math.min(e.getDamage(), max / Math.max(1, dieAfter)));
+                }
+            }
+        }
     }
 
     // ---------------------------------------------------------------- set mùa, Nông Gia, Thợ Săn
@@ -1193,6 +1259,40 @@ final class ThoRen implements Listener {
                 Rewards.hand(k, it);
                 k.sendMessage(c("&6✦ " + s.name() + ": nhặt được " + lib.name(s.drop()) + "&6!"));
             }
+        }
+    }
+
+    private static double lerp(double a, double b, Ref r) {
+        int max = r.set().max();
+        return max <= 0 ? b : a + (b - a) * r.level() / max;
+    }
+
+    /** EliteEntity của EliteMobs (EntityTracker.getEliteMobEntity qua phản chiếu), null nếu không phải quái EliteMobs / không có EliteMobs. */
+    private static Object elite(org.bukkit.entity.Entity en) {
+        if (!emTried) {
+            emTried = true;
+            try {
+                var em = Bukkit.getPluginManager().getPlugin("EliteMobs");
+                if (em != null) {
+                    emEntity = Class.forName("com.magmaguy.elitemobs.entitytracker.EntityTracker", true, em.getClass().getClassLoader())
+                            .getMethod("getEliteMobEntity", org.bukkit.entity.Entity.class);
+                }
+            } catch (ReflectiveOperationException ex) {
+                emEntity = null;
+            }
+        }
+        try {
+            return emEntity == null || en == null ? null : emEntity.invoke(null, en);
+        } catch (ReflectiveOperationException ex) {
+            return null;
+        }
+    }
+
+    private static double emNum(Object eliteEntity, String getter, double def) {
+        try {
+            return ((Number) eliteEntity.getClass().getMethod(getter).invoke(eliteEntity)).doubleValue();
+        } catch (ReflectiveOperationException | RuntimeException ex) {
+            return def;
         }
     }
 

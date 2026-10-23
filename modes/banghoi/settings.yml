@@ -1531,7 +1531,7 @@ goiqua_list:
   dan:
     ten: Gói Dân
     icon: BREAD
-    cho: 86400
+    cho: 259200
     rank:
       - dan
     qua:
@@ -1541,7 +1541,7 @@ goiqua_list:
   luongdan:
     ten: Gói Lương Dân
     icon: IRON_HOE
-    cho: 86400
+    cho: 259200
     rank:
       - luongdan
     qua:
@@ -1551,7 +1551,7 @@ goiqua_list:
   haokiet:
     ten: Gói Hào Kiệt
     icon: GOLDEN_HELMET
-    cho: 86400
+    cho: 259200
     rank:
       - haokiet
     qua:

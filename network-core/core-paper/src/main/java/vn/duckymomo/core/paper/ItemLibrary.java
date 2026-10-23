@@ -121,6 +121,14 @@ final class ItemLibrary {
         return version;
     }
 
+    /** Ghi ra file tạm rồi đổi tên (23/10: panel và plugin ghi chồng nhau từng để lại 88 KB ký tự rỗng giữa thuvien-do.yml). */
+    private static void saveAtomic(org.bukkit.configuration.file.YamlConfiguration y, File file) throws IOException {
+        File tmp = new File(file.getParentFile(), file.getName() + ".tmp");
+        y.save(tmp);
+        java.nio.file.Files.move(tmp.toPath(), file.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING,
+                java.nio.file.StandardCopyOption.ATOMIC_MOVE);
+    }
+
     /** Mục của một món (null nếu không có). Đừng sửa: dùng chung bản đã đọc. */
     ConfigurationSection section(String id) {
         return id == null ? null : load().getConfigurationSection("items." + id);
@@ -188,7 +196,7 @@ final class ItemLibrary {
             }
             y.set("phien-mau", want);
             plugin.getDataFolder().mkdirs();
-            y.save(file);
+            saveAtomic(y, file);
             plugin.getLogger().info("Thư viện đồ: nạp mẫu phiên " + want + ", thêm " + added + " món.");
         } catch (IOException | RuntimeException e) {
             plugin.getLogger().warning("Thư viện đồ: không nạp được đồ mẫu: " + e);
@@ -590,7 +598,7 @@ final class ItemLibrary {
             }
         }
         try {
-            y.save(file);
+            saveAtomic(y, file);
         } catch (IOException e) {
             return "§cKhông lưu được thư viện: " + e.getMessage();
         }

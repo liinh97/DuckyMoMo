@@ -1797,14 +1797,29 @@ def lib_extra(it):
     return out
 
 
+LIB_LOCK = threading.Lock()   # 23/10: 2 lần Lưu chồng nhau (bấm 2 lần trên điện thoại) làm thuvien-do.yml có 88 KB ký tự rỗng giữa file
+
+
+def lib_write(y, doc):
+    """Ghi thư viện an toàn: ra file tạm rồi đổi tên (không bao giờ để file dở dang / lỗ ký tự rỗng)."""
+    LIB_DIR.mkdir(parents=True, exist_ok=True)
+    tmp = LIB_FILE.with_suffix(".yml.tmp")
+    with tmp.open("w", encoding="utf-8") as f:
+        y.dump(doc, f)
+    os.replace(tmp, LIB_FILE)
+
+
 def thuvien_action(data, actor=None):
+    with LIB_LOCK:
+        return _thuvien_action(data, actor)
+
+
+def _thuvien_action(data, actor=None):
     action = data.get("action")
     if action == "sachcam":
         y, doc = lib_load()
         doc["sach-cam"] = lib_book_save(doc, data.get("book"))
-        LIB_DIR.mkdir(parents=True, exist_ok=True)
-        with LIB_FILE.open("w", encoding="utf-8") as f:
-            y.dump(doc, f)
+        lib_write(y, doc)
         try:
             res = rcon(LIB_SERVER, ["dmm thuvien nap"])[0][1]
         except Exception as e:
@@ -1943,9 +1958,7 @@ def thuvien_action(data, actor=None):
         items[iid] = entry
     elif action not in ("save", "delete"):   # (trước 21/10 ghi != "save": nút Xoá luôn báo lỗi, không xoá được)
         raise ValueError("Thao tác không hợp lệ")
-    LIB_DIR.mkdir(parents=True, exist_ok=True)
-    with LIB_FILE.open("w", encoding="utf-8") as f:
-        y.dump(doc, f)
+    lib_write(y, doc)
     try:
         res = rcon(LIB_SERVER, ["dmm thuvien nap"])[0][1]
     except Exception as e:

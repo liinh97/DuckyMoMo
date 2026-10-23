@@ -59,7 +59,7 @@ final class ThoRen implements Listener {
     private record Ref(SetDef set, Piece piece, int level) { }
     /** Quầy đổi nguyên liệu (NPC ở các quầy Kinh Đô): đổi MỘT CHIỀU cost -> out. open = "thoren": menu mọi set; "set:<mã>": mở thẳng một set. */
     private record Recipe(String out, int amount, Map<String, Object> cost) { }
-    private record Stall(String id, String name, String sub, String profession, String open, List<Recipe> recipes) { }
+    private record Stall(String id, String name, String sub, String profession, String open, String skin, List<Recipe> recipes) { }
     /** Hiệu ứng đang áp cho một người (tổng các set) + mô tả để báo khi đổi. */
     private record Active(double mau, double dayLui, double giamSt, String text) { }
 
@@ -75,6 +75,10 @@ final class ThoRen implements Listener {
     private final NamespacedKey npcKey;
     /** NPC dân làng của quầy (để xoay đầu nhìn người chơi; quét lúc bật + khi chunk nạp). */
     private final java.util.Set<UUID> npcs = java.util.concurrent.ConcurrentHashMap.newKeySet();
+    /** NPC hình người (Citizens, tho-ren.npc-type: citizens): quầy -> ID NPC, lưu ở thoren-npc.yml. Không có Citizens thì dùng dân làng. */
+    private final boolean citizens;
+    private final java.io.File npcFile;
+    private final org.bukkit.configuration.file.YamlConfiguration npcIds;
     /** Rơi mảnh trao đổi trong dungeon: mã dungeon -> [item, % quái thường, % phó trùm, % trùm]. Không con nào rơi chắc chắn. */
     private record Drop(List<String> items, double mob, double mini, double boss) { }
     private final Map<String, Drop> dungeonDrops = new HashMap<>();
@@ -87,6 +91,9 @@ final class ThoRen implements Listener {
         this.keyMau = new NamespacedKey(plugin, "thoren_mau");
         this.keyDayLui = new NamespacedKey(plugin, "thoren_daylui");
         this.npcKey = new NamespacedKey(plugin, "thoren_npc");
+        this.citizens = !"villager".equalsIgnoreCase(c.getString("npc-type", "citizens")) && Bukkit.getPluginManager().isPluginEnabled("Citizens");
+        this.npcFile = new java.io.File(plugin.getDataFolder(), "thoren-npc.yml");
+        this.npcIds = org.bukkit.configuration.file.YamlConfiguration.loadConfiguration(npcFile);
         ConfigurationSection qs = c.getConfigurationSection("quay");
         if (qs != null) {
             for (String id : qs.getKeys(false)) {
@@ -102,7 +109,7 @@ final class ThoRen implements Listener {
                     guarded.add(out);
                 }
                 stalls.put(id, new Stall(id, q.getString("name", id), q.getString("sub", ""), q.getString("profession", "MASON"),
-                        q.getString("open", ""), rs));
+                        q.getString("open", ""), q.getString("skin", ""), rs));
             }
         }
         guarded.addAll(c.getStringList("guard"));
@@ -166,10 +173,33 @@ final class ThoRen implements Listener {
         Bukkit.getScheduler().runTaskTimer(plugin, () -> Bukkit.getOnlinePlayers().forEach(this::refresh), 100L, 40L);
         Bukkit.getScheduler().runTaskLater(plugin, () -> Bukkit.getWorlds().forEach(w -> w.getEntities().forEach(this::track)), 100L);
         Bukkit.getScheduler().runTaskTimer(plugin, this::lookAtPlayers, 120L, 5L);
+        if (citizens) {   // skin trong config (tho-ren.quay.<quầy>.skin) áp lại cho NPC đã đặt
+            Bukkit.getScheduler().runTaskLater(plugin, () -> stalls.values().forEach(st -> {
+                int id = npcIds.getInt(st.id(), -1);
+                if (id >= 0 && CitizensBridge.exists(id)) {
+                    CitizensBridge.setSkin(id, st.skin());
+                }
+            }), 160L);
+        }
     }
 
     /** Ghi nhận NPC quầy; NPC đặt trước 23/10 có gắn tên trên dân làng (hiện chồng lên dòng chữ nổi) -> bỏ tên. */
     private void track(org.bukkit.entity.Entity e) {
+        if (citizens && e instanceof org.bukkit.entity.Villager v) {
+            String q = v.getPersistentDataContainer().get(npcKey, org.bukkit.persistence.PersistentDataType.STRING);
+            Stall st = q == null ? null : stalls.get(q);
+            if (st != null && npcIds.getInt(q, -1) < 0) {
+                // NPC dân làng đặt trước 23/10 (chủ server: "nhìn như zombie dân làng") -> NPC hình người đúng chỗ đó, giữ dòng chữ nổi
+                org.bukkit.Location loc = v.getLocation();
+                v.remove();
+                Bukkit.getScheduler().runTask(plugin, () -> {
+                    npcIds.set(q, CitizensBridge.createNoName(org.bukkit.ChatColor.stripColor(st.name().replace('&', '§')), loc, st.skin()));
+                    saveNpcIds();
+                    raiseLabels(loc, q);
+                });
+                return;
+            }
+        }
         if (e instanceof org.bukkit.entity.Villager v && v.getPersistentDataContainer().has(npcKey, org.bukkit.persistence.PersistentDataType.STRING)) {
             npcs.add(v.getUniqueId());
             if (v.customName() != null) {
@@ -177,6 +207,23 @@ final class ThoRen implements Listener {
             }
             if (v.getVillagerType() != org.bukkit.entity.Villager.Type.PLAINS) {
                 v.setVillagerType(org.bukkit.entity.Villager.Type.PLAINS);   // loại theo biome (đầm lầy, rừng rậm…) nhìn tối như zombie dân làng
+            }
+        }
+    }
+
+    private void saveNpcIds() {
+        try {
+            npcIds.save(npcFile);
+        } catch (java.io.IOException ex) {
+            plugin.getLogger().warning("Thợ Rèn: không lưu được thoren-npc.yml: " + ex.getMessage());
+        }
+    }
+
+    /** NPC người thấp hơn dân làng: nâng dòng chữ nổi của quầy cho khỏi chạm đầu (chỉ chạy một lần, lúc đổi). */
+    private void raiseLabels(org.bukkit.Location at, String q) {
+        for (org.bukkit.entity.Entity e : at.getWorld().getNearbyEntities(at, 0.6, 3, 0.6)) {
+            if (e instanceof org.bukkit.entity.ArmorStand a && q.equals(a.getPersistentDataContainer().get(npcKey, org.bukkit.persistence.PersistentDataType.STRING))) {
+                a.teleport(a.getLocation().add(0, 0.25, 0));
             }
         }
     }
@@ -332,6 +379,13 @@ final class ThoRen implements Listener {
         org.bukkit.Location loc = p.getLocation().getBlock().getLocation().add(0.5, 0, 0.5);
         loc.setYaw(p.getLocation().getYaw());
         loc.setPitch(0);
+        if (citizens) {
+            npcIds.set(st.id(), CitizensBridge.createNoName(org.bukkit.ChatColor.stripColor(st.name().replace('&', '§')), loc, st.skin()));
+            saveNpcIds();
+            labels(p, loc, st, 1.85);
+            p.sendMessage(c("&a✔ Đã đặt NPC " + st.name() + "&a." + (st.skin().isBlank() ? " &7(chưa đặt skin: tho-ren.quay." + st.id() + ".skin)" : "")));
+            return;
+        }
         org.bukkit.entity.Villager v = p.getWorld().spawn(loc, org.bukkit.entity.Villager.class, e -> {
             e.setAI(false);   // không gắn tên lên dân làng: nhìn vào sẽ hiện tên chồng lên dòng chữ nổi
             e.setVillagerType(org.bukkit.entity.Villager.Type.PLAINS);   // dân làng đồng bằng (da sáng), không theo biome chỗ đặt
@@ -351,8 +405,14 @@ final class ThoRen implements Listener {
             return;
         }
         npcs.add(v.getUniqueId());
+        labels(p, loc, st, 1.6);
+        p.sendMessage(c("&a✔ Đã đặt NPC " + st.name() + "&a."));
+    }
+
+    /** 3 dòng chữ nổi trên đầu NPC quầy (dòng thấp nhất ở độ cao base). */
+    private void labels(Player p, org.bukkit.Location loc, Stall st, double base) {
         String[] lines = {st.name(), st.sub().isBlank() ? "&7Đổi nguyên liệu" : "&7" + st.sub(), "&8(bấm vào để mở)"};
-        double y = 1.6 + (lines.length - 1) * 0.28;
+        double y = base + (lines.length - 1) * 0.28;
         for (String line : lines) {
             p.getWorld().spawn(loc.clone().add(0, y, 0), org.bukkit.entity.ArmorStand.class, a -> {
                 a.setMarker(true);
@@ -366,11 +426,20 @@ final class ThoRen implements Listener {
             });
             y -= 0.28;
         }
-        p.sendMessage(c("&a✔ Đã đặt NPC " + st.name() + "&a."));
     }
 
     private int removeNpc(org.bukkit.World w, String id) {
         int n = 0;
+        if (citizens) {
+            for (String q : List.copyOf(npcIds.getKeys(false))) {
+                if (id == null || id.equals(q)) {
+                    CitizensBridge.remove(npcIds.getInt(q, -1));
+                    npcIds.set(q, null);
+                    n++;
+                }
+            }
+            saveNpcIds();
+        }
         for (org.bukkit.entity.Entity e : w.getEntities()) {
             String v = e.getPersistentDataContainer().get(npcKey, org.bukkit.persistence.PersistentDataType.STRING);
             if (v != null && (id == null || id.equals(v))) {
@@ -388,6 +457,14 @@ final class ThoRen implements Listener {
     @EventHandler(priority = EventPriority.LOW)
     public void onNpc(org.bukkit.event.player.PlayerInteractEntityEvent e) {
         String id = e.getRightClicked().getPersistentDataContainer().get(npcKey, org.bukkit.persistence.PersistentDataType.STRING);
+        if (id == null && citizens && e.getRightClicked().hasMetadata("NPC")) {
+            int nid = CitizensBridge.idOf(e.getRightClicked());
+            for (String q : npcIds.getKeys(false)) {
+                if (nid >= 0 && npcIds.getInt(q, -1) == nid) {
+                    id = q;
+                }
+            }
+        }
         if (id == null) {
             return;
         }

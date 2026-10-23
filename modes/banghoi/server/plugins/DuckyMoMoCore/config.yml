@@ -1496,6 +1496,7 @@ tho-ren:
   # Quầy đổi ở Kinh Đô (23/10): NPC đặt bằng /dmm thorennpc <quầy> (đứng trong quầy). Đổi MỘT CHIỀU: cost -> out (mã Thư viện đồ).
   # Đồ thô -> MẢNH (Lão Khoáng / Lão Săn Quái / Ngư Ông) -> TINH THỂ (Thợ Kim Hoàn) -> set đồ (Thợ Rèn). Mảnh, tinh thể: lấp lánh +
   # dấu thuvien_id (không làm giả được), cấm đặt / chế tạo / nung / đốt / dùng chuột phải.
+  npc-type: citizens       # NPC quầy: citizens = hình người (skin ở từng quầy: skin: <tên người chơi bản quyền>), villager = dân làng
   quay:
     khoang:
       name: "&6⛏ Lão Khoáng"

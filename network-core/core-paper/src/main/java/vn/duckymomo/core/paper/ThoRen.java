@@ -599,8 +599,14 @@ final class ThoRen implements Listener {
                 .desc(set.desc().isBlank() ? "Rê chuột vào từng món để xem đồ và nguyên liệu." : set.desc(),
                         "Nâng +N cần món cùng loại +N-1 (bị lấy đi). Không bao giờ thất bại.")
                 .apply(new ItemStack(Material.ANVIL)));
+        // hàng trên: chính món của set (mô tả gốc, không chèn thêm cho khỏi dài quá màn hình); hàng dưới: nút Rèn ngay dưới từng món
         for (Piece piece : set.pieces()) {
-            m.add(pieceItem(p, set, piece, lv), pl -> {
+            ItemStack it = lib.build(piece.ids().get(lv), 1);
+            m.add(it != null ? it : Tip.of("&c" + piece.ids().get(lv)).desc("Chưa có trong Thư viện đồ, báo admin.").apply(new ItemStack(Material.BARRIER)));
+        }
+        m.row();
+        for (Piece piece : set.pieces()) {
+            m.add(forgeButton(p, set, piece, lv), pl -> {
                 upgrade(pl, set, piece, lv);
                 setMenu(pl, set, back, lv);
             });
@@ -639,38 +645,36 @@ final class ThoRen implements Listener {
         return false;
     }
 
-    private ItemStack pieceItem(Player p, SetDef set, Piece piece, int lv) {
-        ItemStack it = lib.build(piece.ids().get(lv), 1);
-        if (it == null) {
-            return Tip.of("&c" + piece.ids().get(lv)).desc("Chưa có trong Thư viện đồ, báo admin.").apply(new ItemStack(Material.BARRIER));
-        }
+    /** Nút Rèn dưới mỗi món: món phải nộp + nguyên liệu (✔/✘). Đủ: bàn rèn lấp lánh; thiếu: giấy; đã có: thuốc nhuộm xanh. */
+    private ItemStack forgeButton(Player p, SetDef set, Piece piece, int lv) {
         int cur = owned(p, piece);
-        List<String> add = new ArrayList<>();
-        add.add("");
-        add.add("&6&l⚒ RÈN &e" + piece.name() + " " + set.name() + " +" + lv);
+        Tip t = Tip.of("&6⚒ &fRèn " + piece.name() + " " + set.name() + " &e+" + lv).accent("&6");
         if (cur >= lv) {
-            add.add("&a✔ Bạn đã có " + (cur == lv ? "món này" : "cấp cao hơn (+" + cur + ")"));
-        } else {
-            boolean ok = true;
-            String prev = prevId(set, piece, lv);
-            if (prev != null) {
-                boolean has = hasItem(p, prev);
-                ok = has;
-                add.add((has ? "&a✔ &7" : "&c✘ &7") + label(prev) + " &8(bị lấy đi)");
-            }
-            for (Map.Entry<String, Object> e : cost(set, piece, lv).entrySet()) {
-                int need = num(e.getValue()).intValue();
-                long have = have(p, e.getKey());
-                ok &= have >= need;
-                add.add((have >= need ? "&a✔ &7" : "&c✘ &7") + label(e.getKey(), need) + " &8(" + fmt(have) + ")");
-            }
-            add.add(ok ? "&e➜ Bấm để rèn" : "&c✘ Chưa đủ điều kiện");
+            return t.check(true, "Bạn đã có " + (cur == lv ? "món này" : "cấp cao hơn (+" + cur + ")")).apply(new ItemStack(Material.LIME_DYE));
         }
-        it.editMeta(meta -> {
-            List<Component> lore = meta.lore() == null ? new ArrayList<>() : new ArrayList<>(meta.lore());
-            add.forEach(l -> lore.add(c(l)));
-            meta.lore(lore);
-        });
+        t.line();
+        boolean ok = true;
+        String prev = prevId(set, piece, lv);
+        if (prev != null) {
+            boolean has = hasItem(p, prev);
+            ok = has;
+            t.check(has, label(prev) + " &8(bị lấy đi)");
+        }
+        for (Map.Entry<String, Object> e : cost(set, piece, lv).entrySet()) {
+            int need = num(e.getValue()).intValue();
+            long have = have(p, e.getKey());
+            ok &= have >= need;
+            t.check(have >= need, label(e.getKey(), need) + " &8(" + fmt(have) + ")");
+        }
+        if (ok) {
+            t.click("Bấm để rèn");
+        } else {
+            t.deny("Chưa đủ điều kiện");
+        }
+        ItemStack it = t.apply(new ItemStack(ok ? Material.SMITHING_TABLE : Material.PAPER));
+        if (ok) {
+            it.editMeta(meta -> meta.setEnchantmentGlintOverride(true));
+        }
         return it;
     }
 

@@ -256,6 +256,7 @@ menu:
     - "/r <tin>|trả lời"
     - "/web|mã đăng nhập trang web"
     - "/xemdo|mô tả dài quá màn hình: cầm món gõ /xemdo, hoặc rê chuột lên món (túi đồ, menu, trade) bấm F"
+    - "mod Scrollable Tooltips|máy tính: cài mod này để lăn chuột đọc hết mô tả dài (cách cài ở chương Hỗ trợ)"
     - "/taikhoanphu|khai tài khoản phụ"
     - "/choilai|chơi lại từ đầu"
     ghi: "Cần giúp thì hỏi người có [Helper], [Mod], [Admin]."
@@ -427,6 +428,21 @@ chapters:
     &1/caidat &0tự bật/tắt: chat chung, tin nhắn riêng, thông báo, bảng bên phải, nhận TPA, nhắc công thành, font tiếng Việt…
     &0Đổi được cả trên web (trang tài khoản).
     &1/sb &0ẩn/hiện bảng bên phải.
+  - |-
+    &6MÔ TẢ DÀI QUÁ MÀN HÌNH
+    &0Đồ xịn có mô tả dài, rê chuột thấy bị che mất phần dưới.
+    &0Máy tính (Java): cài mod &2Scrollable Tooltips&0 rồi &6lăn chuột&0 trên món để đọc hết.
+    &0Điện thoại / Bedrock không cài mod được: cầm món gõ &1/xemdo&0.
+  - |-
+    &6CÀI MOD XEM MÔ TẢ (Java)
+    &01. Tải &2Fabric Installer&0 ở &9fabricmc.net&0, chọn bản &6giống server (26.2)&0, bấm Install.
+    &02. Trên &9modrinth.com&0 tải: &2Scrollable Tooltips&0 và &2Fabric Language Kotlin&0 (đúng bản 26.2).
+  - |-
+    &6CÀI MOD XEM MÔ TẢ (tiếp)
+    &03. Bỏ 2 file .jar vào thư mục &1.minecraft/mods&0.
+    &04. Mở launcher, chọn bản &2Fabric&0, vào server như thường.
+    &0Rê chuột lên món, &6lăn chuột&0 để cuộn mô tả.
+    &8Mod chỉ chạy trên máy bạn, server không cần gì.
   - |-
     &6DANH PHẬN
     &0Rank chơi miễn phí&r&0, bấm nhận trong &1/danhphan&0:

@@ -401,6 +401,7 @@ footer .fbrand img{width:44px}
           <a href="#hangngay">🎁 Hằng ngày &amp; kinh tế</a>
           <a href="#muavu">🎣 Mùa &amp; câu cá</a>
           <a href="#boss">🐉 Dungeon &amp; Boss</a>
+          <a href="#thoren">⚒ Thợ Rèn &amp; đồ set</a>
           <a href="#pet">🐾 Pet chiến đấu</a>
           <a href="#dautruong">🏟️ Đấu Trường</a>
         </div></div>
@@ -444,6 +445,7 @@ footer .fbrand img{width:44px}
         <a class="btn primary" href="#vao">Vào chơi ngay</a>
         <a class="btn" href="#banghoi">Xem cách chơi</a>
       </div>
+      <div class="callout" style="margin:0 0 12px"><b>🛠 Server đang hoàn thiện.</b> DuckyMoMo vẫn đang được làm tiếp: tính năng, đồ trao đổi ở Thợ Rèn, sự kiện… sẽ còn cập nhật thêm thường xuyên. Gặp lỗi hay có góp ý, cứ báo admin.</div>
       <p class="dim" style="font-size:.9rem;margin:0">Không cần tài khoản bản quyền · Java <span data-k="site.java.phien-ban">1.13 tới bản mới nhất</span> · Bedrock trên iOS, Android</p>
     </div>
     <div class="visual">
@@ -839,14 +841,14 @@ footer .fbrand img{width:44px}
     <p class="intro">Không chỉ đánh nhau giữa các bang hội. Có những thứ đáng sợ hơn đang thức giấc trên bản đồ Trái Đất, và đôi khi kẻ thù của hôm qua phải đứng chung một chiến tuyến.</p>
     <div class="grid g2">
       <div class="card hl">
-        <span class="pill" style="margin-bottom:10px">Đang chuẩn bị nội dung</span>
+        <span class="pill" style="margin-bottom:10px">Đã mở · còn thêm dần</span>
         <h3>🗝️ Dungeon: cày đồ, cày tiền</h3>
         <ul class="clean">
-          <li>Khu riêng đầy quái mạnh, bẫy và rương báu</li>
-          <li>Đi một mình hoặc lập nhóm với bạn bè, kể cả dân Liên minh Hoà Bình</li>
-          <li>Rơi xu dùng chung với cả server và đồ cấp cao</li>
-          <li>Có cấp kỹ năng: càng đánh càng mạnh, mở khoá đồ xịn hơn</li>
-          <li>Vào bằng lệnh <span class="kbd">/em</span></li>
+          <li>Khu riêng đầy quái mạnh, bẫy và rương báu; vào bằng <span class="kbd">/dungeon</span>, vào là đánh luôn</li>
+          <li>Đi một mình hoặc lập nhóm (<span class="kbd">/em party</span>) với bạn bè, kể cả dân Liên minh Hoà Bình</li>
+          <li>Rơi xu, <b>Lõi Quái</b> và <b>mảnh ấn</b> để rèn đồ set ở <a href="#thoren">Thợ Rèn</a></li>
+          <li>Tầng càng cao quái càng mạnh: tầng 1 hợp đồ Tân Thủ cấp cao, tầng sau cần set cao hơn</li>
+          <li>Đồ rơi trong dungeon chỉ để dùng tạm, yếu hơn đồ set trao đổi</li>
         </ul>
       </div>
       <div class="card redc">
@@ -860,6 +862,23 @@ footer .fbrand img{width:44px}
         </ul>
       </div>
     </div>
+    <div class="card" id="thoren" style="margin-top:16px;scroll-margin-top:80px"><h3>⚒ Thợ Rèn: đồ set trao đổi <span class="kbd">/thoren</span></h3>
+      <p class="muted">Đồ mạnh không mua bằng tiền thật mà <b>tự tay cày, tự tay rèn</b>, và trao đổi được với người khác (<span class="kbd">/trade</span>, chợ đen).
+        Đồ thô → <b>mảnh</b> (quầy NPC ở Kinh Đô: Lão Khoáng, Lão Săn Quái, Ngư Ông, Lão Nông) → <b>tinh thể</b> (Thợ Kim Hoàn) → <b>đồ set</b> (Thợ Rèn).
+        Mảnh và tinh thể <b>lấp lánh</b>, chỉ server tạo ra được, mỗi món có dòng truyền thuyết và gợi ý nơi kiếm.</p>
+      <div class="grid g2" style="margin-top:10px">
+        <div><h4 style="margin:6px 0">7 bậc chính</h4><ul class="clean">
+          <li>Tân Thủ (+0→+9) → Chiến Binh (+7) → Tinh Anh (+5) → Cao Cấp (+5) → Huyền Thoại (+3) → Thần Thoại (+4) → Thần Thánh (+3)</li>
+          <li>Cấp cuối của set trước + nguyên liệu = cấp đầu của set sau. Nâng cấp <b>không bao giờ thất bại</b>, cấp càng cao càng mòn chậm</li>
+          <li>Mỗi set có mũ, giáp, quần, giày và vũ khí tự chọn: <b>kiếm, rìu, giáo, cung hoặc chuỳ</b></li>
+          <li>Mặc nhiều món cùng set cấp cao: có <b>hiệu ứng bộ</b> (thêm máu, kháng đẩy lùi, giảm sát thương)</li></ul></div>
+        <div><h4 style="margin:6px 0">Mảnh ấn &amp; set khác</h4><ul class="clean">
+          <li>Mảnh ấn rơi trong dungeon: tầng 1–3 Chiến Ấn, 4–6 Linh Ấn, 7–10 Kim Ấn; Huyền Ấn rất hiếm. Thần Ấn, Thánh Ấn: chưa ai tìm ra…</li>
+          <li>Set nghề: Thợ Mỏ, Ngư Phủ, Du Hiệp, Nông Gia, Thợ Săn (tiện ích cho từng nghề)</li>
+          <li>Set mùa <b>U Linh</b>: chỉ rèn trong Lễ Hội Bí Ngô (25/10 → 8/11), đúng mùa mạnh hơn</li>
+          <li>Đồ set mạnh dần theo tầng dungeon; đồ rơi trong dungeon chỉ dùng tạm</li></ul></div>
+      </div>
+      <p class="dim" style="font-size:.85rem;margin-top:8px">Mô tả đồ dài bị che? Bản Java cài mod <b>Scrollable Tooltips</b> (Fabric) để cuộn mô tả. Chi tiết trong game: <span class="kbd">/huongdan</span>. Sẽ còn thêm set, mảnh và sự kiện mới.</p></div>
     <div class="card" style="margin-top:16px"><h3>📜 Cốt truyện <span class="kbd">/journal</span></h3>
       <p class="muted">Gặp NPC ở Bang Hội Chiến, <b>chuột phải</b> để nói chuyện và bấm chọn câu trả lời. Mỗi chương là một chuỗi nhiệm vụ có thưởng, làm được một lần. Nhật ký nhiệm vụ: <span class="kbd">/journal</span>; đồ nhiệm vụ lỡ vứt nằm trong <span class="kbd">/backpack</span>.</p>
       <div id="ctList" class="muted">Đang tải…</div>
@@ -1052,10 +1071,10 @@ footer .fbrand img{width:44px}
         <li><span class="kbd">/tpa Linh</span> xin tới chỗ Linh, Linh gõ <span class="kbd">/tpaccept</span></li>
         <li><span class="kbd">/t spawn</span> về thị trấn · <span class="kbd">/thaiap</span> về Thái Ấp</li></ul></div>
       <div class="card"><h3>🏘️ Thị trấn &amp; quốc gia</h3><ul class="clean">
-        <li><span class="kbd">/t new HaNoi</span> lập thị trấn (cần 3 giờ chơi, 1.500 xu)</li>
-        <li><span class="kbd">/t claim</span> mua ô đất đang đứng (75 xu)</li>
+        <li><span class="kbd">/t new HaNoi</span> lập thị trấn (cần <span data-k="town.min_hours">3</span> giờ chơi, <span data-k="town.price" data-f="xu">3.000 xu</span>)</li>
+        <li><span class="kbd">/t claim</span> mua ô đất đang đứng (<span data-k="town.claim_price" data-f="xu">75 xu</span>, càng nhiều càng đắt)</li>
         <li><span class="kbd">/t add Linh</span> mời dân · <span class="kbd">/t deposit 300</span> nộp quỹ</li>
-        <li><span class="kbd">/n new DaiViet</span> lập quốc gia (3.000 xu)</li>
+        <li><span class="kbd">/n new DaiViet</span> lập quốc gia (<span data-k="town.nation_price" data-f="xu">10.000 xu</span>)</li>
         <li><span class="kbd">/hoabinh vao</span> thị trưởng đưa thị trấn vào Liên minh Hoà Bình</li>
         <li><span class="kbd">/tochuc lap thuonghoi BanMai</span> lập Thương Hội (dân hoà bình)</li></ul></div>
       <div class="card"><h3>💰 Tiền &amp; buôn bán</h3><ul class="clean">
@@ -1074,13 +1093,14 @@ footer .fbrand img{width:44px}
         <li><span class="kbd">/petcall</span> gọi pet · <span class="kbd">/bxhpet tyle</span> tỉ lệ bắt</li>
         <li><span class="kbd">/dautruong thachdau Linh</span> thách đấu người + pet</li>
         <li><span class="kbd">/dungeon</span> danh sách, <span class="kbd">/dungeon mua &lt;mã&gt;</span> mua vé</li>
+        <li><span class="kbd">/thoren</span> rèn, nâng cấp đồ set · <span class="kbd">/huongdan</span> cẩm nang trong game</li>
         <li><span class="kbd">/lukhach</span> lữ khách đang ở vùng nào</li>
         <li><span class="kbd">/journal</span> nhật ký cốt truyện · <span class="kbd">/khobau</span> · <span class="kbd">/lenhsan</span></li></ul></div>
     </div>
     <div class="callout" style="margin-top:20px"><b>Nhớ kỹ:</b>
       thoát game khi đang bị đánh (cờ giao tranh 15 giây) là <b>chết, rơi đồ</b> ·
       đồ dưới đất bị dọn mỗi 10 phút (chết thì đồ quanh chỗ chết được giữ 10 phút) ·
-      thị trấn hết quỹ là <b>tan</b> (phí 30 xu/ngày) ·
+      thị trấn hết quỹ thì <b>phá sản, mắc nợ</b> (phí <span data-k="town.upkeep" data-f="xu">100 xu</span>/ngày) ·
       chuyển tiền, treo thưởng không lấy lại được ·
       mua bán đồ thì dùng <span class="kbd">/trade</span>, admin không trả đồ bị lừa ngoài /trade ·
       tối đa 2 tài khoản, acc phụ phải khai <span class="kbd">/taikhoanphu</span> ·
@@ -1131,6 +1151,8 @@ footer .fbrand img{width:44px}
   <div class="wrap">
     <div class="kicker s">Hỏi đáp</div>
     <h2>Câu hỏi thường gặp</h2>
+    <details><summary>Server đã hoàn thiện chưa?</summary><div>Chưa hẳn. Các phần chính (thị trấn, công thành, kinh tế, dungeon, pet, Đấu Trường, Thợ Rèn) đã chơi được, nhưng server vẫn đang được làm tiếp: thêm tính năng, thêm set đồ trao đổi, mảnh mới, sự kiện… và cân lại số liệu theo cách mọi người chơi. Gặp lỗi hay có góp ý, cứ báo admin.</div></details>
+    <details><summary>Làm sao có đồ mạnh?</summary><div>Rèn ở <a href="#thoren">Thợ Rèn</a> (<span class="kbd">/thoren</span>): đào mỏ, đánh quái, câu cá lấy đồ thô, đổi thành mảnh ở các quầy NPC ở Kinh Đô, ghép thành tinh thể rồi rèn và nâng cấp từ set Tân Thủ lên dần. Set cao hơn cần mảnh ấn rơi trong dungeon. Đồ set trao đổi được, không bán bằng tiền thật.</div></details>
     <details><summary>Không có Minecraft bản quyền có chơi được không?</summary><div>Được. Server chạy chế độ không bản quyền cho bản Java: dùng launcher miễn phí như TLauncher hay SKLauncher, đăng ký mật khẩu khi vào lần đầu. Điện thoại cần bản Minecraft Bedrock (mua trên App Store hoặc CH Play) và tài khoản Xbox miễn phí.</div></details>
     <details><summary>iPhone có chơi được không?</summary><div>Được, bằng Minecraft Bedrock trên iOS. Vào Máy chủ → Thêm máy chủ, nhập địa chỉ Bedrock và cổng ở mục Cách vào. Menu trên điện thoại hiện dạng nút bấm cho dễ chạm.</div></details>
     <details><summary>Tôi có bị mất hết đồ khi đang offline không?</summary><div>Không. Thành không thể bị phá hay trộm, chiến tranh chỉ diễn ra theo lịch công thành. Chết trong trận công thành cũng không rơi đồ (chỉ mòn 5%). Chỉ khi chết ngoài đất hoang mới rơi đồ, và đồ đó được giữ 10 phút cho bạn quay lại nhặt.</div></details>

@@ -1603,7 +1603,7 @@ tho-ren:
     # EliteMobs chấm cấp đồ theo phù phép (trần Sắc bén 5…) nên mọi set chỉ ngang đồ cấp ~10. Ở đây mỗi set có CẤP HIỆU DỤNG: cầm vũ khí set đánh quái
     # EliteMobs / mặc giáp set (trung bình 4 ô, ô không phải đồ set = cấp 0) thì sát thương tính theo chênh lệch cấp; lấy mức có lợi hơn cho người chơi.
     set-vs-elite:
-      nhat-ngang-cap: 3      # quái thường CÙNG cấp với đồ: chém mấy nhát thì chết (trùm / phó trùm nhân thêm hệ số máu của nó)
+      nhat-ngang-cap: 3.0    # quái thường CÙNG cấp với đồ: chém mấy nhát thì chết (trùm / phó trùm nhân thêm hệ số máu của nó)
       don-ngang-cap: 8       # quái thường cùng cấp đánh mấy đòn thì mình chết
       he-so-cap: 1.08        # mỗi cấp chênh lệch: số nhát / số đòn nhân hoặc chia 1,08
       # cấp hiệu dụng [ở +0, ở +max] (cấp giữa nội suy). Tầng dungeon: 1 = cấp 10, 4 = 25, 7 = 40, 10 = 55; dungeon vé 95–140.

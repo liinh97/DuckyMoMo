@@ -46,11 +46,11 @@ TRUYEN = {
     'ngoc_trieu': ('Áp vào tai nghe được tiếng sóng của đại dương đầu tiên.',
                    'Ghép ở Thợ Kim Hoàn: Vảy Cá Hiếm + Vảy Ánh Trăng + Lam Linh Châu.'),
     'loiquai': ('Trái tim của quái tinh nhuệ, còn nóng hổi khi rơi ra.',
-                'Hạ quái tinh nhuệ (quái có tên) ngoài tự nhiên hoặc trong dungeon.'),
+                'Hạ quái trong dungeon (/dungeon, Cổng Hoang): mỗi con có tỉ lệ rơi.'),
     'vaycahiem': ('Vảy của loài cá chỉ cắn câu người kiên nhẫn nhất.',
                   'Câu cá ở bất cứ đâu, thỉnh thoảng vớt được.'),
     'xuquai': ('Đồng xu cũ quái vật nuốt vào từ thời Kinh Đô còn là làng nhỏ.',
-               'Hạ quái thù địch (quái tinh nhuệ rơi nhiều hơn).'),
+               'Hạ quái thù địch ở bất cứ đâu (quái dungeon rơi nhiều hơn).'),
     # mảnh ấn dungeon: tầng 1–3 Chiến Ấn, 4–6 Linh Ấn, 7–10 Kim Ấn (tầng dễ mũ/giày, khó hơn giáp/quần, khó nhất vũ khí)
     'cb_an_khoi': ('Ấn của đội tiền quân đã ngã xuống trên Đỉnh Vách Đá.',
                    'Quái ở Đỉnh Vách Đá (tầng 1), Thánh Đường Bóng Tối.'),

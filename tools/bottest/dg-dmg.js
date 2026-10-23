@@ -32,6 +32,10 @@ const txt = o => { if (o == null) return ''; if (typeof o === 'string') return o
   };
   const hp = async sel => parseFloat((await R(`data get entity ${sel} Health`)).replace(/.*data: /, ''));
   for (const [label, armor, weapon] of LOADS) {
+    if (t.bot.entity.position.distanceTo({ x: 13300, y: t.bot.entity.position.y, z: -2400 }) > 20) {   // chết, hồi sinh ở spawn (cấm sinh quái): quay lại bãi test
+      const keep = msgs; t = await h.moveTo(t, 13300, -2400); R = c => t.rc.cmd(c);
+      t.bot._client.on('system_chat', p => { const v = txt(p.content ?? p.text ?? p).trim(); if (v) keep.push(v); });
+    }
     await R(`minecraft:clear ${N}`); await R(`effect clear ${N}`); await t.sleep(400);
     for (const a of armor) await give(a);
     await give(weapon); await t.sleep(1500);
@@ -62,7 +66,7 @@ const txt = o => { if (o == null) return ''; if (typeof o === 'string') return o
     if (await spawn()) {
       await R(`execute as @e[tag=dmgt] at ${N} run minecraft:tp @s ^ ^ ^1.2`);
       last = t.bot.health; t.bot.on('health', onH);
-      for (let s = 0; s < 10 && t.bot.health > 4; s++) await t.sleep(1000);
+      for (let s = 0; s < 10 && t.bot.health > 8; s++) await t.sleep(1000);
       t.bot.removeListener('health', onH);
     }
     await killAll(); await R(`effect give ${N} minecraft:instant_health 1 10 true`);

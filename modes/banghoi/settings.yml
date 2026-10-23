@@ -1988,3 +1988,6 @@ dgt_auto_ready: true
 dgt_auto_start: true
 tl_core: 15
 tr_on: true
+tr_em_nhat: 3.0
+tr_em_don: 8.0
+tr_em_heso: 1.08

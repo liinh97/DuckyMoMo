@@ -391,7 +391,7 @@ chapters:
     &4Lưu ý: &0đang giao tranh không dịch chuyển được.
   - |-
     &6Đi tìm đất
-    &0Muốn lập thị trấn xa spawn: bấm NPC dịch chuyển&r&0 ở spawn hoặc gõ &1/tpr&0, chọn khu.
+    &0Muốn lập thị trấn xa spawn: gõ &1/tpr&0 (hoặc &1/menu&0), chọn khu.
     &8Vd: /tpr taybac
     &0Khu: taybac, lao, trungbo, nambo, thailan, myanmar, namtq, ngaunhien.
   - |-

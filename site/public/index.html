@@ -547,7 +547,7 @@ footer .fbrand img{width:44px}
             <li><b data-k="player.start_money">200</b> xu khởi đầu và <b>bộ quà tân thủ</b></li>
             <li data-hide0="player.newbie_minutes"><b data-k="player.newbie_minutes">15</b> phút được bảo vệ, không ai đánh được</li>
             <li>Sách cẩm nang tiếng Việt: gõ <span class="kbd">/huongdan</span></li>
-            <li>Dịch chuyển tới vùng đất trống: <span class="kbd">/tpr</span> hoặc bấm NPC ở spawn</li>
+            <li>Dịch chuyển tới vùng đất trống: <span class="kbd">/tpr</span> (hoặc menu <span class="kbd">/menu</span>)</li>
           </ul></div>
         <div class="card"><h3>🧭 10 phút đầu nên làm gì?</h3>
           <ul class="clean s">
@@ -638,7 +638,7 @@ footer .fbrand img{width:44px}
         </ul></div>
       <div class="card"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#b48cff" stroke-width="2"><path d="M12 22s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/></svg></div>
         <h3>Dịch chuyển ngẫu nhiên</h3>
-        <p class="muted">Gõ <span class="kbd">/tpr</span> hoặc bấm NPC ở spawn, chọn khu. Bạn được thả xuống đất hoang an toàn, xa thị trấn khác. Chờ <b data-k="player.tpr_cooldown">5</b> phút giữa hai lần.</p>
+        <p class="muted">Gõ <span class="kbd">/tpr</span>, chọn khu. Bạn được thả xuống đất hoang an toàn, xa thị trấn khác. Chờ <b data-k="player.tpr_cooldown">5</b> phút giữa hai lần.</p>
         <div id="zoneList" class="votes"></div></div>
       <div class="card"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#f2b84b" stroke-width="2"><path d="M3 12a9 9 0 1 0 3-6.7L3 8M3 3v5h5"/></svg></div>
         <h3>Chơi lại từ đầu</h3>
@@ -924,7 +924,7 @@ footer .fbrand img{width:44px}
   <div class="wrap">
     <div class="kicker r">Người + pet</div>
     <h2>Đấu Trường: 1v1, 2v2, không mất đồ</h2>
-    <p class="intro">Gõ <span class="kbd">/warp pvp</span> (hoặc bấm NPC Đấu Trường ở spawn) tới sảnh có <b>3 cổng</b>. Bước vào cổng là vào thẳng sân chờ đối thủ. Dùng đồ của mình, <b>chết không rơi đồ</b>, bị loại thì chuyển sang xem.</p>
+    <p class="intro">Gõ <span class="kbd">/warp pvp</span> tới sảnh có <b>3 cổng</b>. Bước vào cổng là vào thẳng sân chờ đối thủ. Dùng đồ của mình, <b>chết không rơi đồ</b>, bị loại thì chuyển sang xem.</p>
     <div class="grid g2">
       <div class="card hl"><h3>Sân đang thế nào <span class="pill" id="dtLive" style="margin-left:6px">…</span></h3><div id="dtSans" class="muted">Đang tải…</div></div>
       <div class="grid">
@@ -1171,7 +1171,7 @@ footer .fbrand img{width:44px}
     <details><summary>Có voice chat không?</summary><div><b>Sắp có</b> cho người chơi máy tính (Java, cài thêm mod Simple Voice Chat): nghe nhau trong khoảng 40 block, lập nhóm để cả thị trấn nói chuyện ở mọi nơi. Điện thoại (Bedrock) chưa dùng được voice trong game. Trong lúc chờ, hãy dùng Discord hoặc Zalo để nói chuyện với đồng đội.</div></details>
     <details><summary>Người mới là "Dân Tị Nạn"? Làm sao lên rank?</summary><div>Ở Bang Hội Chiến ai mới vào cũng là <b>Dân Tị Nạn</b>. Rank chơi (danh phận) <b>miễn phí</b>, kiếm bằng cách chơi rồi bấm nhận trong <span class="kbd">/danhphan</span>: <b>Dân</b> (chơi thật 6 giờ + xong chương 1 cốt truyện) → <b>Lương Dân</b> (24 giờ + Thăng Cấp 10) → <b>Hào Kiệt</b> (72 giờ + cấp 25). Bậc càng cao càng được đặt nhiều nhà (<span class="kbd">/sethome</span>), có thêm balo 27 ô (<span class="kbd">/balo</span>) và treo nhiều món ở chợ (<span class="kbd">/choden</span>). Giờ đứng AFK không được tính.</div></details>
     <details><summary>Có pet chiến đấu không? Có phải mua không?</summary><div>Có, và <b>không bán</b>. Đánh một con thú hoặc quái tới khi yếu máu (thanh máu hiện trên đầu khi đánh) rồi quăng dây xích vào là bắt được. Pet lên cấp, chọn hệ Chiến Binh, Hậu Cần, Đấu Sĩ, Thú Cưỡi hoặc Nông Trại; lớn lên thế nào còn theo bản tính loài (thú lớn trâu, thú săn đánh đau, chỉ loài bay mới cưỡi bay được). Rank ủng hộ chỉ được giữ thêm vài con trong kho, mỗi lúc ai cũng chỉ dẫn 1 con. Xem mục <a href="#pet">Pet</a>.</div></details>
-    <details><summary>Đấu Trường là gì?</summary><div>Khu đấu riêng người + pet, 1v1 hoặc 2v2. Gõ <span class="kbd">/warp pvp</span> hoặc bấm NPC ở spawn, bước vào một trong 3 cổng là vào sân chờ đối thủ. Dùng đồ của mình, chết không rơi đồ, có cược tuỳ chọn và bảng xếp hạng. Xem mục <a href="#dautruong">Đấu Trường</a>.</div></details>
+    <details><summary>Đấu Trường là gì?</summary><div>Khu đấu riêng người + pet, 1v1 hoặc 2v2. Gõ <span class="kbd">/warp pvp</span>, bước vào một trong 3 cổng là vào sân chờ đối thủ. Dùng đồ của mình, chết không rơi đồ, có cược tuỳ chọn và bảng xếp hạng. Xem mục <a href="#dautruong">Đấu Trường</a>.</div></details>
     <details><summary>Hết mùa thì sao?</summary><div>Sau 3 tháng (13 tuần) mùa đóng lại, trao danh hiệu, thế giới cũ được giữ làm bảo tàng để xem lại. Mùa mới mở vùng đất mới, mọi người bắt đầu ngang nhau; danh hiệu và rank ủng hộ được giữ.</div></details>
   </div>
 </section>

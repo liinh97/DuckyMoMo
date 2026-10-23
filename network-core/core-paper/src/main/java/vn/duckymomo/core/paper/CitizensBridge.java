@@ -22,10 +22,13 @@ final class CitizensBridge {
     static int create(String name, Location l, String skin) {
         NPC npc = CitizensAPI.getNPCRegistry().createNPC(EntityType.PLAYER, name);
         trait(npc, "net.citizensnpcs.trait.LookClose", "lookClose", boolean.class, true);
-        if (skin != null && !skin.isBlank()) {
+        if (skin != null && !skin.isBlank() && !skin.startsWith("http")) {
             trait(npc, "net.citizensnpcs.trait.SkinTrait", "setSkinName", String.class, skin);
         }
         npc.spawn(l);
+        if (skin != null && skin.startsWith("http")) {
+            urlSkin(npc.getId(), skin);
+        }
         return npc.getId();
     }
 
@@ -34,17 +37,28 @@ final class CitizensBridge {
         NPC npc = CitizensAPI.getNPCRegistry().createNPC(EntityType.PLAYER, name);
         npc.data().setPersistent(NPC.Metadata.NAMEPLATE_VISIBLE, false);
         trait(npc, "net.citizensnpcs.trait.LookClose", "lookClose", boolean.class, true);
-        if (skin != null && !skin.isBlank()) {
+        if (skin != null && !skin.isBlank() && !skin.startsWith("http")) {
             trait(npc, "net.citizensnpcs.trait.SkinTrait", "setSkinName", String.class, skin);
         }
         npc.spawn(l);
+        if (skin != null && skin.startsWith("http")) {
+            urlSkin(npc.getId(), skin);
+        }
         return npc.getId();
     }
 
-    /** Đổi skin NPC theo tên người chơi (trống = bỏ qua). */
+    /**
+     * Skin từ link ảnh PNG (23/10, vd https://cdn.minecraft.how/skin/<số>/image.png): Citizens gửi MineSkin ký rồi lưu luôn vào NPC, nên chỉ
+     * gọi lúc tạo NPC (không gọi lại mỗi lần bật server, tránh MineSkin chặn vì gọi nhiều).
+     */
+    static void urlSkin(int id, String url) {
+        org.bukkit.Bukkit.dispatchCommand(org.bukkit.Bukkit.getConsoleSender(), "npc skin --url " + url + " --id " + id);
+    }
+
+    /** Đổi skin NPC theo tên người chơi (trống = bỏ qua; link ảnh: bỏ qua vì đã lưu trong NPC lúc tạo). */
     static void setSkin(int id, String skin) {
         NPC npc = CitizensAPI.getNPCRegistry().getById(id);
-        if (npc != null && skin != null && !skin.isBlank()) {
+        if (npc != null && skin != null && !skin.isBlank() && !skin.startsWith("http")) {
             trait(npc, "net.citizensnpcs.trait.SkinTrait", "setSkinName", String.class, skin);
         }
     }

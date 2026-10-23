@@ -1496,10 +1496,11 @@ tho-ren:
   # Quầy đổi ở Kinh Đô (23/10): NPC đặt bằng /dmm thorennpc <quầy> (đứng trong quầy). Đổi MỘT CHIỀU: cost -> out (mã Thư viện đồ).
   # Đồ thô -> MẢNH (Lão Khoáng / Lão Săn Quái / Ngư Ông) -> TINH THỂ (Thợ Kim Hoàn) -> set đồ (Thợ Rèn). Mảnh, tinh thể: lấp lánh +
   # dấu thuvien_id (không làm giả được), cấm đặt / chế tạo / nung / đốt / dùng chuột phải.
-  npc-type: citizens       # NPC quầy: citizens = hình người (skin ở từng quầy: skin: <tên người chơi bản quyền>), villager = dân làng
+  npc-type: citizens       # NPC quầy: citizens = hình người (skin ở từng quầy: skin: <tên người chơi bản quyền> hoặc link ảnh PNG — link chỉ áp lúc đặt NPC), villager = dân làng
   quay:
     khoang:
       name: "&6⛏ Lão Khoáng"
+      skin: "https://cdn.minecraft.how/skin/158314/image.png"
       sub: "Đổi khoáng sản thô lấy mảnh"
       profession: toolsmith
       recipes:
@@ -1513,6 +1514,7 @@ tho-ren:
         - {out: manh_hac, cost: {NETHERITE_SCRAP: 2}}
     sanquai:
       name: "&c⚔ Lão Săn Quái"
+      skin: "https://cdn.minecraft.how/skin/187597/image.png"
       sub: "Đổi chiến lợi phẩm quái lấy mảnh"
       profession: butcher
       recipes:
@@ -1522,12 +1524,14 @@ tho-ren:
         - {out: le_ender, cost: {ENDER_PEARL: 12}}
     nguong:
       name: "&3≈ Ngư Ông"
+      skin: "https://cdn.minecraft.how/skin/366846/image.png"
       sub: "Đổi cá lấy Vảy Ánh Trăng"
       profession: fisherman
       recipes:
         - {out: vay_trang, cost: {COD: 24, SALMON: 24}}
     kimhoan:
       name: "&e❖ Thợ Kim Hoàn"
+      skin: "https://cdn.minecraft.how/skin/236998/image.png"
       sub: "Ghép mảnh thành tinh thể"
       profession: cleric
       recipes:
@@ -1542,6 +1546,7 @@ tho-ren:
         - {out: thien_menh, cost: {xu: 15000, nhat_nguyet: 2, hon_quai: 4, NETHER_STAR: 1}}
     laonong:
       name: "&2❀ Lão Nông"
+      skin: "https://cdn.minecraft.how/skin/161770/image.png"
       sub: "Đổi nông sản lấy mảnh"
       profession: farmer
       recipes:
@@ -1550,23 +1555,24 @@ tho-ren:
         - {out: mat_ong, cost: {HONEY_BOTTLE: 4}}
     thoren:
       name: "&6⚒ Thợ Rèn"
+      skin: "https://cdn.minecraft.how/skin/159620/image.png"
       sub: "Rèn và nâng cấp đồ set"
       profession: weaponsmith
       open: thoren
     # NPC riêng từng set (bấm vào mở thẳng set đó): /dmm thorennpc <mã>
-    ren_tanthu: {name: "&e◆ Rèn Tân Thủ", sub: "Đồ khởi đầu +0 → +9", profession: armorer, open: "set:tanthu"}
-    ren_chienbinh: {name: "&c⚔ Rèn Chiến Binh", sub: "Nâng từ Tân Thủ +9", profession: weaponsmith, open: "set:chienbinh"}
-    ren_tinhanh: {name: "&d❖ Rèn Tinh Anh", sub: "Nâng từ Chiến Binh +7", profession: armorer, open: "set:tinhanh"}
-    ren_caocap: {name: "&6♛ Rèn Cao Cấp", sub: "Nâng từ Tinh Anh +5", profession: weaponsmith, open: "set:caocap"}
-    ren_huyenthoai: {name: "&6⚜ Rèn Huyền Thoại", sub: "Nâng từ Cao Cấp +5", profession: armorer, open: "set:huyenthoai"}
-    ren_thanthoai: {name: "&d☬ Rèn Thần Thoại", sub: "Nâng từ Huyền Thoại +3", profession: cleric, open: "set:thanthoai"}
-    ren_thanthanh: {name: "&e✟ Rèn Thần Thánh", sub: "Nâng từ Thần Thoại +4", profession: cleric, open: "set:thanthanh"}
-    ren_ulinh: {name: "&6☾ Rèn U Linh", sub: "Set mùa Lễ Hội Bí Ngô", profession: leatherworker, open: "set:ulinh"}
-    ren_nonggia: {name: "&2❀ Rèn Nông Gia", sub: "Set nghề trồng trọt", profession: farmer, open: "set:nonggia"}
-    ren_thosan: {name: "&c☽ Rèn Thợ Săn", sub: "Set nghề đánh quái đêm", profession: butcher, open: "set:thosan"}
-    ren_thomo: {name: "&6⛏ Rèn Thợ Mỏ", sub: "Set nghề đào mỏ", profession: toolsmith, open: "set:thomo"}
-    ren_nguphu: {name: "&3≈ Rèn Ngư Phủ", sub: "Set nghề câu cá", profession: fisherman, open: "set:nguphu"}
-    ren_duhiep: {name: "&2➹ Rèn Du Hiệp", sub: "Set nghề cung thủ", profession: fletcher, open: "set:duhiep"}
+    ren_tanthu: {name: "&e◆ Rèn Tân Thủ", sub: "Đồ khởi đầu +0 → +9", profession: armorer, open: "set:tanthu", skin: "https://cdn.minecraft.how/skin/170154/image.png"}
+    ren_chienbinh: {name: "&c⚔ Rèn Chiến Binh", sub: "Nâng từ Tân Thủ +9", profession: weaponsmith, open: "set:chienbinh", skin: "https://cdn.minecraft.how/skin/158043/image.png"}
+    ren_tinhanh: {name: "&d❖ Rèn Tinh Anh", sub: "Nâng từ Chiến Binh +7", profession: armorer, open: "set:tinhanh", skin: "https://cdn.minecraft.how/skin/343359/image.png"}
+    ren_caocap: {name: "&6♛ Rèn Cao Cấp", sub: "Nâng từ Tinh Anh +5", profession: weaponsmith, open: "set:caocap", skin: "https://cdn.minecraft.how/skin/303847/image.png"}
+    ren_huyenthoai: {name: "&6⚜ Rèn Huyền Thoại", sub: "Nâng từ Cao Cấp +5", profession: armorer, open: "set:huyenthoai", skin: "https://cdn.minecraft.how/skin/388944/image.png"}
+    ren_thanthoai: {name: "&d☬ Rèn Thần Thoại", sub: "Nâng từ Huyền Thoại +3", profession: cleric, open: "set:thanthoai", skin: "https://cdn.minecraft.how/skin/374549/image.png"}
+    ren_thanthanh: {name: "&e✟ Rèn Thần Thánh", sub: "Nâng từ Thần Thoại +4", profession: cleric, open: "set:thanthanh", skin: "https://cdn.minecraft.how/skin/168584/image.png"}
+    ren_ulinh: {name: "&6☾ Rèn U Linh", sub: "Set mùa Lễ Hội Bí Ngô", profession: leatherworker, open: "set:ulinh", skin: "https://cdn.minecraft.how/skin/217233/image.png"}
+    ren_nonggia: {name: "&2❀ Rèn Nông Gia", sub: "Set nghề trồng trọt", profession: farmer, open: "set:nonggia", skin: "https://cdn.minecraft.how/skin/285938/image.png"}
+    ren_thosan: {name: "&c☽ Rèn Thợ Săn", sub: "Set nghề đánh quái đêm", profession: butcher, open: "set:thosan", skin: "https://cdn.minecraft.how/skin/222750/image.png"}
+    ren_thomo: {name: "&6⛏ Rèn Thợ Mỏ", sub: "Set nghề đào mỏ", profession: toolsmith, open: "set:thomo", skin: "https://cdn.minecraft.how/skin/257181/image.png"}
+    ren_nguphu: {name: "&3≈ Rèn Ngư Phủ", sub: "Set nghề câu cá", profession: fisherman, open: "set:nguphu", skin: "https://cdn.minecraft.how/skin/334605/image.png"}
+    ren_duhiep: {name: "&2➹ Rèn Du Hiệp", sub: "Set nghề cung thủ", profession: fletcher, open: "set:duhiep", skin: "https://cdn.minecraft.how/skin/234622/image.png"}
   # Mảnh ấn trao đổi rơi trong dungeon (23/10, chủ server: vài tầng chung một set; tầng dễ mũ/giày, khó hơn giáp/quần, khó nhất vũ khí).
   # MỌI con trong tầng chỉ có tỉ lệ rơi 1 mảnh (chủ server 23/10: giết trùm KHÔNG chắc rơi): quái thường mob-chance %, phó trùm (tên 〖N〗)
   # miniboss-chance %, trùm (tên 『N』) boss-chance %. multiplier nhân cả ba (tối đa 100%).

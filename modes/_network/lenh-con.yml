@@ -457,7 +457,7 @@ groups:
       - ["bq tag <tên> del <tag>", "Xoá một bước cốt truyện để làm lại (tag kèm tên gói: cotruyen>c1_b1)", Chỉ admin]
       - ["bq objective <tên> list", "Xem mục tiêu nhiệm vụ đang chạy", Chỉ admin]
       - ["bq objective <tên> del <mục tiêu>", "Xoá mục tiêu nhiệm vụ đang chạy (kèm tên gói: cotruyen>c1_sanquai)", Chỉ admin]
-      - ["npc create <tên>", "Tạo NPC tại chỗ đứng (cốt truyện: Già Làng, Bác Thợ Rèn, Người Gác Cổng)", Chỉ admin]
+      - ["npc create <tên>", "Tạo NPC tại chỗ đứng (cốt truyện: Già Làng, Bác Thợ Rèn, Người Gác Cổng; BetonQuest gọi NPC theo ID: ghi ID mới vào QuestPackages/cotruyen/package.yml rồi /bq reload)", Chỉ admin]
       - ["npc select", "Chọn NPC gần nhất", Chỉ admin]
       - ["npc lookclose", "NPC quay mặt theo người chơi", Chỉ admin]
       - ["npc skin <tên>", "Đổi skin NPC theo skin người chơi", Chỉ admin]

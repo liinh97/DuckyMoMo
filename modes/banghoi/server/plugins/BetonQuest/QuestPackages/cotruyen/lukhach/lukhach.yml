@@ -2,10 +2,10 @@
 # Tình trạng cổng lấy qua PlaceholderAPI: %ph.dmmlk_<mã>_cong|tim|tindon|vung|huong|chu|timboi% (forceSync: đọc trên luồng chính).
 # Đi qua Cổng Hoang dẫn tới nơi đó -> DuckyMoMoCore gắn tag lk_<mã>_qua -> về kể cho lữ khách nhận thưởng (constants.lk_thuong). Mỗi người 1 lần.
 npcs:
-  lk_cong: citizens "Thợ Cống Già" byName
-  lk_bacuc: citizens "Người Kéo Xe Tuần Lộc" byName
-  lk_hiepsi: citizens "Hiệp Sĩ Lạc Đàn" byName
-  lk_hoinuoc: citizens "Kỹ Sư Bỏ Trốn" byName
+  lk_cong: citizens 4        # 23/10: byName không nhận NPC -> ID Citizens
+  lk_bacuc: citizens 5
+  lk_hiepsi: citizens 6
+  lk_hoinuoc: citizens 7
 npc_conversations:
   lk_cong: lk_cong
   lk_bacuc: lk_bacuc

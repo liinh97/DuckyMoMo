@@ -1,8 +1,8 @@
 # Cốt truyện DuckyMoMo (BetonQuest). Mỗi chương một thư mục con (chuong1/, chuong2/…), cùng một gói "cotruyen".
-# NPC là Citizens, gọi theo TÊN (byName): admin đứng chỗ muốn đặt rồi gõ đúng tên, ví dụ
+# NPC là Citizens, gọi theo ID (23/10: byName không nhận NPC). Admin đứng chỗ muốn đặt rồi gõ đúng tên, ví dụ
 #   /npc create Già Làng      /npc create Bác Thợ Rèn      /npc create Người Gác Cổng
 #   (thêm /npc lookclose để NPC quay mặt theo người chơi; /npc skin <tên người chơi> để đổi skin)
-# Đổi tên NPC thì sửa cả dòng tương ứng dưới đây. Nạp lại: /bq reload.
+# rồi xem ID (/npc select, /npc list) và ghi ID vào npcs dưới đây. Đặt lại NPC (ID mới) thì sửa số. Nạp lại: /bq reload.
 # Số lượng và phần thưởng nằm ở constants (sửa trên trang Cài đặt › Cốt truyện).
 
 # Phiên bản cú pháp gói (BetonQuest 3.2.0). Thiếu dòng này thì plugin tự ghi thêm và lưu đè cả gói.
@@ -10,9 +10,9 @@ package:
   version: "3.2.0-QUEST-2"
 
 npcs:
-  gia_lang: 'citizens "Già Làng" byName'
-  tho_ren: 'citizens "Bác Thợ Rèn" byName'
-  gac_cong: 'citizens "Người Gác Cổng" byName'
+  gia_lang: 'citizens 13'      # 23/10: theo tên (byName) không nhận NPC -> dùng ID Citizens (/npc select xem ID; đặt lại NPC thì sửa số)
+  tho_ren: 'citizens 14'
+  gac_cong: 'citizens 15'
 
 npc_conversations:
   gia_lang: gia_lang

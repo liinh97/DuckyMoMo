@@ -70,6 +70,14 @@ TRUYEN = {
                    'Quái ở Mỏ Sâu (tầng 8), Chuông Địa Ngục, Bắc Cực, Lâu Đài Hiệp Sĩ, Kẻ Trói Buộc, Xưởng Hơi Nước.'),
     'cc_an_binh': ('Kim ấn khắc trên vũ khí của tướng quỷ ở Hoang Mạc Địa Ngục.',
                    'Quái ở Hoang Mạc Địa Ngục (tầng 9), Chuông Địa Ngục, Lâu Đài Hiệp Sĩ, Kẻ Trói Buộc, Xưởng Hơi Nước.'),
+    'ht_an_khoi': ('Ấn của các hiệp sĩ rồng, chỉ lộ ra khi kẻ canh giữ cuối cùng ngã xuống.',
+                   'Rất hiếm: quái ở Chuông Địa Ngục (tầng 10), Bắc Cực, Kẻ Trói Buộc, Xưởng Hơi Nước.'),
+    'ht_an_than': ('Giáp ấn khắc vảy rồng, truyền từ đời hiệp sĩ đầu tiên của Kinh Đô.',
+                   'Rất hiếm: quái ở Lâu Đài Hiệp Sĩ, Bắc Cực, Kẻ Trói Buộc, Xưởng Hơi Nước.'),
+    'ht_an_binh': ('Binh ấn trên thanh kiếm từng chém đứt sừng rồng.',
+                   'Rất hiếm: quái ở Lâu Đài Hiệp Sĩ, Kẻ Trói Buộc, Xưởng Hơi Nước.'),
+    'long_hon': ('Hồn con rồng cuối cùng bị nhốt trong viên châu, thợ kim hoàn phải đeo găng da rồng mới cầm được.',
+                 'Ghép ở Thợ Kim Hoàn: Hồn Quái Kết Tinh + Hắc Diệu Thạch + Ngọc Thủy Triều + Huyết Tinh Thạch.'),
 }
 MARK = '✧ Truyền thuyết'
 

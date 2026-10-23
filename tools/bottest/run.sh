@@ -11,4 +11,4 @@ ROOT=$(cd "$D/../.." && pwd)
 V=$(grep -m1 "secret:" "$ROOT/data/banghoi-1/config/paper-global.yml" | awk '{print $2}')
 P=$(grep -m1 "^RCON_PASSWORD=" "$ROOT/.env" | cut -d= -f2-)
 [ -d "$D/node_modules" ] || docker run --rm -v "$D":/bot -w /bot node:22-alpine npm install --silent
-docker run --rm --network duckymomo_default -e VSECRET="$V" -e RCONPASS="$P" -e BOTN -e HOST -e KIEU -e CHI_DUNGEON -e DEBUG -e LV -v "$D":/bot -w /bot node:22-alpine timeout 600 node "$@"
+docker run --rm --network duckymomo_default -e VSECRET="$V" -e RCONPASS="$P" -e BOTN -e HOST -e KIEU -e CHI_DUNGEON -e DEBUG -e LV -e CHI_EM -v "$D":/bot -w /bot node:22-alpine timeout 600 node "$@"

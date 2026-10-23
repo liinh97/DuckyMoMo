@@ -1537,6 +1537,7 @@ tho-ren:
         - {out: hon_quai, cost: {xu: 500, loiquai: 4, le_ender: 2, to_bac: 2, hoa_duoc: 2}}
         - {out: hac_dieu, cost: {xu: 800, manh_hac: 2, hop_kim: 2, lam_chau: 1}}
         - {out: ngoc_trieu, cost: {xu: 400, vaycahiem: 4, vay_trang: 4, lam_chau: 1}}
+        - {out: long_hon, cost: {xu: 2000, hon_quai: 2, hac_dieu: 1, ngoc_trieu: 1, huyet_tinh: 2}}
     thoren:
       name: "&6⚒ Thợ Rèn"
       sub: "Rèn và nâng cấp đồ set"
@@ -1553,7 +1554,7 @@ tho-ren:
   # Mảnh ấn trao đổi rơi trong dungeon (23/10, chủ server: vài tầng chung một set; tầng dễ mũ/giày, khó hơn giáp/quần, khó nhất vũ khí).
   # MỌI con trong tầng chỉ có tỉ lệ rơi 1 mảnh (chủ server 23/10: giết trùm KHÔNG chắc rơi): quái thường mob-chance %, phó trùm (tên 〖N〗)
   # miniboss-chance %, trùm (tên 『N』) boss-chance %. multiplier nhân cả ba (tối đa 100%).
-  guard: [cb_an_khoi, cb_an_than, cb_an_binh, ta_an_khoi, ta_an_than, ta_an_binh, cc_an_khoi, cc_an_than, cc_an_binh]
+  guard: [cb_an_khoi, cb_an_than, cb_an_binh, ta_an_khoi, ta_an_than, ta_an_binh, cc_an_khoi, cc_an_than, cc_an_binh, ht_an_khoi, ht_an_than, ht_an_binh]
   dungeon-drops:
     mob-chance: 3
     miniboss-chance: 15
@@ -1568,15 +1569,18 @@ tho-ren:
       the_quarry_dungeon: {items: [cc_an_khoi]}           # tầng 7 · 40
       the_deep_mines_dungeon: {items: [cc_an_than]}       # tầng 8 · 45
       the_nether_wastes_dungeon: {items: [cc_an_binh]}    # tầng 9 · 50
-      the_nether_bell_sanctum: {items: [cc_an_khoi, cc_an_than, cc_an_binh], multiplier: 1.5}   # tầng 10 · 55
+      the_nether_bell_sanctum: {items: [cc_an_khoi, cc_an_than, cc_an_binh], multiplier: 1.5, rare: [ht_an_khoi], rare-chance: 0.15}   # tầng 10 · 55
       dark_cathedral_lair: {items: [cb_an_khoi, cb_an_than]}          # ẩn · 15
       fireworks_lair: {items: [cb_an_binh]}                           # cả server · 20
       sewers_minidungeon: {items: [ta_an_khoi, ta_an_than]}           # Cổng Hoang · 25
       hallosseum_lair: {items: [ta_an_than, ta_an_binh]}              # cả server · 30
-      north_pole_minidungeon: {items: [cc_an_khoi, cc_an_than]}       # Cổng Hoang · 55
-      knights_castle_lair: {items: [cc_an_than, cc_an_binh], multiplier: 2}                      # vé · 95
-      binder_of_worlds_sanctum: {items: [cc_an_khoi, cc_an_than, cc_an_binh], multiplier: 3}     # cả server · 100
-      steamworks_lair: {items: [cc_an_khoi, cc_an_than, cc_an_binh], multiplier: 2}              # vé · 140
+      north_pole_minidungeon: {items: [cc_an_khoi, cc_an_than], rare: [ht_an_khoi, ht_an_than], rare-chance: 0.15}       # Cổng Hoang · 55
+      knights_castle_lair: {items: [cc_an_than, cc_an_binh], multiplier: 2, rare: [ht_an_than, ht_an_binh], rare-chance: 0.25}                      # vé · 95
+      binder_of_worlds_sanctum: {items: [cc_an_khoi, cc_an_than, cc_an_binh], multiplier: 3, rare: [ht_an_khoi, ht_an_than, ht_an_binh], rare-chance: 0.3}     # cả server · 100
+      steamworks_lair: {items: [cc_an_khoi, cc_an_than, cc_an_binh], multiplier: 2, rare: [ht_an_khoi, ht_an_than, ht_an_binh], rare-chance: 0.3}              # vé · 140
+  # Đồ EliteMobs (rơi trong dungeon, dùng tạm) yếu hơn đồ set (23/10, chủ server): vũ khí EliteMobs đánh nhân weapon-damage,
+  # mỗi món giáp EliteMobs đang mặc làm người mặc nhận thêm armor-penalty (0.08 = +8%) sát thương. Đồ set Thợ Rèn không bị ảnh hưởng.
+  elitemobs-gear: {weapon-damage: 0.8, armor-penalty: 0.08}
   fish-drop: {item: vaycahiem, chance: 5}   # % mỗi lần câu được cá: rơi Vảy Cá Hiếm (set Ngư Phủ)
   sets:
     tanthu:
@@ -1686,6 +1690,28 @@ tho-ren:
         - {from: 2, pieces: 4, mau: 22, day-lui: 20, giam-st: 10}
         - {from: 5, pieces: 2, mau: 15, day-lui: 10}
         - {from: 5, pieces: 4, mau: 30, day-lui: 25, giam-st: 13}
+    huyenthoai:
+      name: "Huyền Thoại"
+      icon: NETHERITE_SWORD
+      desc: "Bậc 5 (Legendary, bản trao đổi): nâng từ Cao Cấp +5. Huyền Ấn rất hiếm, rơi ở dungeon tầng 10, Bắc Cực, dungeon vé và Kẻ Trói Buộc."
+      requires: caocap
+      pieces:
+        mu: {name: "Mũ", an: ht_an_khoi, ids: [ht_mu_0, ht_mu_1, ht_mu_2, ht_mu_3]}
+        ao: {name: "Giáp", an: ht_an_than, ids: [ht_ao_0, ht_ao_1, ht_ao_2, ht_ao_3]}
+        quan: {name: "Quần", an: ht_an_than, ids: [ht_quan_0, ht_quan_1, ht_quan_2, ht_quan_3]}
+        giay: {name: "Giày", an: ht_an_khoi, ids: [ht_giay_0, ht_giay_1, ht_giay_2, ht_giay_3]}
+        kiem: {name: "Kiếm", an: ht_an_binh, ids: [ht_kiem_0, ht_kiem_1, ht_kiem_2, ht_kiem_3]}
+      cost:
+        - {xu: 40000, an: 3, long_hon: 1, NETHERITE_INGOT: 2}             # +0 (cộng món Cao Cấp +5)
+        - {xu: 50000, an: 4, long_hon: 1, hac_dieu: 3}
+        - {xu: 60000, an: 6, long_hon: 2, hon_quai: 4}
+        - {xu: 75000, an: 8, long_hon: 3, NETHERITE_INGOT: 4}
+      wear: [14, 12, 10, 8]
+      bonus:
+        - {from: 0, pieces: 4, mau: 25, day-lui: 20, giam-st: 12}
+        - {from: 2, pieces: 2, mau: 15, day-lui: 10}
+        - {from: 2, pieces: 4, mau: 30, day-lui: 25, giam-st: 14}
+        - {from: 3, pieces: 4, mau: 35, day-lui: 30, giam-st: 16}
     thomo:
       name: "Thợ Mỏ"
       icon: IRON_PICKAXE

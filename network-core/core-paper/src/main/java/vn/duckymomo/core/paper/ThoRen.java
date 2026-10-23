@@ -82,9 +82,12 @@ final class ThoRen implements Listener {
     private final java.io.File npcFile;
     private final org.bukkit.configuration.file.YamlConfiguration npcIds;
     /** Rơi mảnh trao đổi trong dungeon: mã dungeon -> [item, % quái thường, % phó trùm, % trùm]. Không con nào rơi chắc chắn. */
-    private record Drop(List<String> items, double mob, double mini, double boss) { }
+    private record Drop(List<String> items, double mob, double mini, double boss, List<String> rare, double rareFactor) { }
     private final Map<String, Drop> dungeonDrops = new HashMap<>();
-    private final String fishItem;      // nguyên liệu rơi khi câu cá (Vảy Cá Hiếm, set Ngư Phủ)
+    private final String fishItem;
+    /** Đồ EliteMobs (dùng tạm) yếu hơn đồ set: hệ số sát thương vũ khí, % nhận thêm mỗi món giáp. */
+    private final double emWeapon;
+    private final double emArmor;      // nguyên liệu rơi khi câu cá (Vảy Cá Hiếm, set Ngư Phủ)
     private final double fishChance;
 
     ThoRen(DuckyMoMoCore plugin, ItemLibrary lib, ConfigurationSection c) {
@@ -126,10 +129,14 @@ final class ThoRen implements Listener {
                     continue;
                 }
                 double mul = x.getDouble("multiplier", 1);
-                dungeonDrops.put(id, new Drop(x.getStringList("items"), Math.min(100, mob * mul), Math.min(100, mini * mul), Math.min(100, boss * mul)));
+                // rare: mảnh hiếm (Huyền Ấn) tung riêng, tỉ lệ = tỉ lệ thường × rare-chance (vd 0.3 = bằng 30%)
+                dungeonDrops.put(id, new Drop(x.getStringList("items"), Math.min(100, mob * mul), Math.min(100, mini * mul), Math.min(100, boss * mul),
+                        x.getStringList("rare"), x.getDouble("rare-chance", 0.3)));
             }
         }
         this.fishItem = c.getString("fish-drop.item", "");
+        this.emWeapon = c.getDouble("elitemobs-gear.weapon-damage", 1);
+        this.emArmor = c.getDouble("elitemobs-gear.armor-penalty", 0);
         this.fishChance = c.getDouble("fish-drop.chance", 0);
         ConfigurationSection ss = c.getConfigurationSection("sets");
         if (ss == null) {
@@ -637,9 +644,14 @@ final class ThoRen implements Listener {
                 .desc(set.desc().isBlank() ? "Rê chuột vào từng món để xem đồ và nguyên liệu." : set.desc(),
                         "Nâng +N cần món cùng loại +N-1 (bị lấy đi). Không bao giờ thất bại.")
                 .apply(new ItemStack(Material.ANVIL)));
-        // chính món của set (mô tả màu gốc) + phần ⚒ RÈN ở cuối mô tả (chủ server 23/10: bị che cũng được, đẹp là được; tách 2 hàng không ưng)
+        // hàng trên: món nguyên bản (mô tả màu gốc); hàng dưới: nút Rèn ngay dưới từng món (chủ server 23/10 chốt 2 hàng)
         for (Piece piece : set.pieces()) {
-            m.add(pieceItem(p, set, piece, lv), pl -> {
+            ItemStack it = lib.build(piece.ids().get(lv), 1);
+            m.add(it != null ? it : Tip.of("&c" + piece.ids().get(lv)).desc("Chưa có trong Thư viện đồ, báo admin.").apply(new ItemStack(Material.BARRIER)));
+        }
+        m.row();
+        for (Piece piece : set.pieces()) {
+            m.add(forgeButton(p, set, piece, lv), pl -> {
                 upgrade(pl, set, piece, lv);
                 setMenu(pl, set, back, lv);
             });
@@ -678,40 +690,39 @@ final class ThoRen implements Listener {
         return false;
     }
 
-    private ItemStack pieceItem(Player p, SetDef set, Piece piece, int lv) {
-        ItemStack it = lib.build(piece.ids().get(lv), 1);
-        if (it == null) {
-            return Tip.of("&c" + piece.ids().get(lv)).desc("Chưa có trong Thư viện đồ, báo admin.").apply(new ItemStack(Material.BARRIER));
-        }
+    /** Nút Rèn dưới mỗi món: món phải nộp + nguyên liệu (✔/✘). Đủ: bàn rèn lấp lánh; thiếu: giấy; đã có: thuốc nhuộm xanh. */
+    private ItemStack forgeButton(Player p, SetDef set, Piece piece, int lv) {
         int cur = owned(p, piece);
-        List<String> add = new ArrayList<>();
-        add.add("");
-        add.add("&6&l⚒ RÈN &e" + piece.name() + " " + set.name() + " +" + lv);
+        Tip t = Tip.of("&6⚒ &fRèn " + piece.name() + " " + set.name() + " &e+" + lv).accent("&6");
         if (cur >= lv) {
-            add.add("&a✔ Bạn đã có " + (cur == lv ? "món này" : "cấp cao hơn (+" + cur + ")"));
-        } else {
-            boolean ok = true;
-            String prev = prevId(set, piece, lv);
-            if (prev != null) {
-                boolean has = hasItem(p, prev);
-                ok = has;
-                add.add((has ? "&a✔ &7" : "&c✘ &7") + label(prev) + " &8(bị lấy đi)");
-            }
-            for (Map.Entry<String, Object> e : cost(set, piece, lv).entrySet()) {
-                int need = num(e.getValue()).intValue();
-                long have = have(p, e.getKey());
-                ok &= have >= need;
-                add.add((have >= need ? "&a✔ &7" : "&c✘ &7") + label(e.getKey(), need) + " &8(" + fmt(have) + ")");
-            }
-            add.add(ok ? "&e➜ Bấm để rèn" : "&c✘ Chưa đủ điều kiện");
+            return t.check(true, "Bạn đã có " + (cur == lv ? "món này" : "cấp cao hơn (+" + cur + ")")).apply(new ItemStack(Material.LIME_DYE));
         }
-        it.editMeta(meta -> {
-            List<Component> lore = meta.lore() == null ? new ArrayList<>() : new ArrayList<>(meta.lore());
-            add.forEach(l -> lore.add(c(l)));
-            meta.lore(lore);
-        });
+        t.line();
+        boolean ok = true;
+        String prev = prevId(set, piece, lv);
+        if (prev != null) {
+            boolean has = hasItem(p, prev);
+            ok = has;
+            t.check(has, label(prev) + " &8(bị lấy đi)");
+        }
+        for (Map.Entry<String, Object> e : cost(set, piece, lv).entrySet()) {
+            int need = num(e.getValue()).intValue();
+            long have = have(p, e.getKey());
+            ok &= have >= need;
+            t.check(have >= need, label(e.getKey(), need) + " &8(" + fmt(have) + ")");
+        }
+        if (ok) {
+            t.click("Bấm để rèn");
+        } else {
+            t.deny("Chưa đủ điều kiện");
+        }
+        ItemStack it = t.apply(new ItemStack(ok ? Material.SMITHING_TABLE : Material.PAPER));
+        if (ok) {
+            it.editMeta(meta -> meta.setEnchantmentGlintOverride(true));
+        }
         return it;
     }
+
 
     private Map<String, Object> cost(SetDef set, Piece piece, int level) {
         Map<String, Object> raw = level < set.costs().size() ? set.costs().get(level) : Map.of();
@@ -1012,19 +1023,54 @@ final class ThoRen implements Listener {
         }
         String did = dg.dungeonOf(k.getUniqueId());
         Drop d = did == null ? null : dungeonDrops.get(did);
-        if (d == null || d.items().isEmpty()) {
+        if (d == null || d.items().isEmpty() && d.rare().isEmpty()) {
             return;
         }
         String name = e.getEntity().customName() == null ? ""
                 : net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer.plainText().serialize(e.getEntity().customName());
         double pct = name.startsWith("『") ? d.boss() : name.startsWith("〖") ? d.mini() : d.mob();
-        int n = ThreadLocalRandom.current().nextDouble(100) < pct ? 1 : 0;
-        for (int i = 0; i < n; i++) {
-            String id = d.items().get(ThreadLocalRandom.current().nextInt(d.items().size()));
+        List<String> got = new ArrayList<>();
+        if (!d.items().isEmpty() && ThreadLocalRandom.current().nextDouble(100) < pct) {
+            got.add(d.items().get(ThreadLocalRandom.current().nextInt(d.items().size())));
+        }
+        if (!d.rare().isEmpty() && ThreadLocalRandom.current().nextDouble(100) < pct * d.rareFactor()) {
+            got.add(d.rare().get(ThreadLocalRandom.current().nextInt(d.rare().size())));
+        }
+        for (String id : got) {
             ItemStack it = lib.build(id, 1);
             if (it != null) {
                 Rewards.hand(k, it);
                 k.sendMessage(c("&6✦ Nhặt được " + lib.name(id) + "&6!"));
+            }
+        }
+    }
+
+    // ---------------------------------------------------------------- đồ EliteMobs yếu hơn đồ set
+
+    /** Món của EliteMobs (có dấu PDC namespace "elitemobs"). */
+    private static boolean eliteGear(ItemStack it) {
+        return it != null && it.hasItemMeta()
+                && it.getItemMeta().getPersistentDataContainer().getKeys().stream().anyMatch(k -> k.getNamespace().equals("elitemobs"));
+    }
+
+    /**
+     * 23/10 chủ server: đồ EliteMobs rơi trong dungeon (rơi dễ, gắn chủ) không được mạnh bằng đồ trao đổi. Đánh bằng vũ khí EliteMobs: sát thương
+     * × weapon-damage; mỗi món giáp EliteMobs đang mặc: nhận thêm armor-penalty. Chạy HIGHEST (sau EliteMobs tính sát thương).
+     */
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onEliteGear(org.bukkit.event.entity.EntityDamageByEntityEvent e) {
+        if (emWeapon != 1 && e.getDamager() instanceof Player p && eliteGear(p.getInventory().getItemInMainHand())) {
+            e.setDamage(e.getDamage() * emWeapon);
+        }
+        if (emArmor > 0 && e.getEntity() instanceof Player v) {
+            int n = 0;
+            for (ItemStack a : v.getInventory().getArmorContents()) {
+                if (eliteGear(a)) {
+                    n++;
+                }
+            }
+            if (n > 0) {
+                e.setDamage(e.getDamage() * (1 + emArmor * n));
             }
         }
     }

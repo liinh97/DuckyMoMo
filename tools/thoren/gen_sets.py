@@ -23,7 +23,8 @@ def roman(n):
     return ['', 'I', 'II', 'III', 'IV', 'V', 'VI'][n]
 
 
-RAR_VI = {'&b✦ Uncommon': ('&b', 'Uncommon'), '&9✦ Rare': ('&9', 'Rare'), '&5✦ Epic': ('&5', 'Epic'), '&6✦ Epic': ('&6', 'Epic')}
+RAR_VI = {'&b✦ Uncommon': ('&b', 'Uncommon'), '&9✦ Rare': ('&9', 'Rare'), '&5✦ Epic': ('&5', 'Epic'), '&6✦ Epic': ('&6', 'Epic'),
+          '&6✦ Legendary': ('&6', 'Legendary')}
 
 
 def stat_lines(attr, bullet):
@@ -72,6 +73,16 @@ def style(set_id, piece, lv, maxn, rarity, attr, skills, flavor):
         if st: lore += ['&6&l◆ THẦN LỰC'] + st
         lore += ['&e&l◆ TUYỆT KỸ'] + (['&7  ✧ ' + x for x in skills] if skills else ['&8  ✧ Chưa khai mở'])
         lore += ['&6✦━━━━━━━━━━━━━━━━━━━━━✦', f'&e&o"{flavor}"']
+    elif set_id == 'ht':    # HUYỀN THOẠI (Legendary, bản trao đổi): đỏ thẫm – vàng kim, ⚜ ✠, thanh huyền lực ✦✧
+        name = f'&6⚜ &c&l{noun} Huyền Thoại &6⚜ &e+{lv}'
+        lore = ['&4✠━━━━━ &6&lHUYỀN THOẠI &4━━━━━✠',
+                f'&6⚜ &7Thần binh: &f{noun}',
+                f'&6⚜ &7Phẩm chất: {col}{rname}',
+                '&6⚜ &7Huyền lực: ' + bar(lv, maxn, '✦', '✧', '&e', '&8') + f' &8({lv}/{maxn})', '']
+        st = stat_lines(attr, '&7  ⟡ ')
+        if st: lore += ['&c&l✸ UY LỰC'] + st
+        lore += ['&6&l✸ TUYỆT THẾ THẦN CÔNG'] + (['&7  ⟡ ' + x for x in skills] if skills else ['&8  ⟡ Chưa thức tỉnh'])
+        lore += ['&4✠━━━━━━━━━━━━━━━━━━━━━━✠', f'&6&o"{flavor}"']
     elif set_id == 'tm':    # THỢ MỎ: vàng đồng, dải ▬, cúp ⛏, thanh ■□
         name = f'&6⛏ &e&l{noun} Thợ Mỏ &6[+{lv}]'
         lore = ['&8▬▬▬▬ &6&l⛏ THỢ MỎ ⛏ &8▬▬▬▬',
@@ -230,6 +241,58 @@ for lv in range(6):
                   'Đánh liên tiếp: mỗi đòn mạnh thêm &e20%'] + (['Có cơ hội gây &egấp đôi sát thương'] if lv >= 3 else []),
           flavor=CC_FLAVOR['kiem'][lv], **common)
 
+# ------------------------------------------------------------------ HUYỀN THOẠI (bậc 5, Legendary, +0..+3, BẢN TRAO ĐỔI), nâng từ Cao Cấp +5
+# Ngân 23/10: "thi thoảng cho vài món trade legendary nhưng cùi hơn đồ săn mảnh boss" -> bản này tối đa +3; bản săn boss (sau) mạnh hơn.
+HT_FLAVOR = {
+    'mu': ['Vương miện rèn từ hồn rồng…', 'Mắt rồng mở trên trán…', 'Trời đất thu vào tầm mắt…', 'Đội lên là thành truyền thuyết…'],
+    'ao': ['Giáp vảy rồng còn ấm…', 'Nghìn mũi tên gãy trên ngực…', 'Long hồn hộ thể…', 'Bất diệt giữa vạn quân…'],
+    'quan': ['Bước chân làm núi rung…', 'Đi qua lửa không bỏng…', 'Long cốt bất hoại…', 'Đứng trên đỉnh huyền thoại…'],
+    'giay': ['Đạp gió như rồng bay…', 'Một bước vạn dặm…', 'Bóng đỏ thoắt ẩn thoắt hiện…', 'Dấu chân thành sử thi…'],
+    'kiem': ['Thần binh tỉnh giấc…', 'Kiếm khí xé trời…', 'Máu rồng nhuộm lưỡi kiếm…', 'Một kiếm định giang sơn…'],
+}
+for lv in range(4):
+    common = dict(set_id='ht', tag='Huyền Thoại', title='Huyền Thoại', lv=lv, base='NETHERITE', frame='', rarity='&6✦ Legendary', maxn=3)
+    prot, unb, sp = [7, 7, 8, 8][lv], 5, 5
+    build(piece='mu', ench={'protection': prot, 'unbreaking': unb, 'projectile_protection': sp, 'respiration': 3, 'aqua_affinity': 1},
+          attr={'pct_mau': [14, 15, 17, 19][lv]}, ce={'Glowing': 1, 'Implants': 2},
+          skills=['Mũ: nhìn rõ trong đêm', 'Đi đường dài không đói'], flavor=HT_FLAVOR['mu'][lv], **common)
+    build(piece='ao', ench={'protection': prot, 'unbreaking': unb, 'projectile_protection': sp, 'blast_protection': sp, 'fire_protection': sp},
+          attr={'pct_mau': [32, 35, 38, 42][lv]}, ce={'Crouch': 3, 'Maneuver': 2, 'Enlightened': 2, 'Savior': 1 if lv < 2 else 2, **({'SystemReboot': 1} if lv >= 3 else {})},
+          skills=['Giáp: Khi ngồi &a(shift)&7 lúc chiến đấu, nhận ít sát thương hơn &e20%', 'Có tỉ lệ &e15% &7né hoàn toàn một đòn đánh.',
+                  'Có cơ hội &ahồi máu&7 khi đang bị đánh', 'Có cơ hội &egiảm nửa&7 sát thương nhận vào']
+                 + (['Sắp hết máu mà bị đánh: có cơ hội &ahồi đầy máu'] if lv >= 3 else []), flavor=HT_FLAVOR['ao'][lv], **common)
+    build(piece='quan', ench={'protection': prot, 'unbreaking': unb, 'blast_protection': sp, 'swift_sneak': 3},
+          attr={'pct_mau': [14, 15, 17, 19][lv]}, ce={'Nursery': 2 if lv < 2 else 3},
+          skills=['Quần: ngồi (shift) vẫn đi nhanh', 'Có cơ hội &ahồi máu&7 khi đi bộ (Dưỡng thương ' + ('II' if lv < 2 else 'III') + ')'],
+          flavor=HT_FLAVOR['quan'][lv], **common)
+    build(piece='giay', ench={'protection': prot, 'unbreaking': unb, 'feather_falling': 5, 'depth_strider': 3},
+          attr={'pct_day_lui': [22, 25, 28, 30][lv]}, ce={'Gears': 2, 'Springs': 1, **({'Rocket': 1} if lv >= 2 else {})},
+          skills=['Giày: chạy nhanh hơn &e40%', 'Nhảy cao hơn'] + (['Sắp hết máu: có cơ hội &ebật văng ra sau&7 để thoát thân'] if lv >= 2 else []),
+          flavor=HT_FLAVOR['giay'][lv], **common)
+    build(piece='kiem', ench={'sharpness': [8, 8, 9, 9][lv], 'unbreaking': unb, 'looting': 3, 'sweeping_edge': 3, 'fire_aspect': 2},
+          attr={'pct_sat_thuong': [28, 32, 36, 40][lv]}, ce={'Vampire': 2, 'Rage': 2, 'DoubleDamage': 1 if lv < 2 else 2, **({'LifeSteal': 1} if lv >= 2 else {})},
+          dmm={'cuong_no': 3},
+          skills=['Có cơ hội &ehút máu&7 khi đánh (Ma cà rồng II)', 'Chuột phải: &eHuyết chiến III&7, mất 3 tim đổi lấy sát thương (hồi 30 giây)',
+                  'Đánh liên tiếp: mỗi đòn mạnh thêm &e20%', 'Có cơ hội gây &egấp đôi sát thương'] + (['Có cơ hội &chút máu&7 kẻ địch về mình'] if lv >= 2 else []),
+          flavor=HT_FLAVOR['kiem'][lv], **common)
+
+# Huyền Ấn (mảnh hiếm Huyền Thoại, rơi ở dungeon tầng cao + dungeon vé) + Long Hồn Châu (tinh thể mới, ghép ở Thợ Kim Hoàn)
+for grp, (label, pieces, mat) in {'khoi': ('Khôi Giáp', 'Mũ, Giày', 'WARD_ARMOR_TRIM_SMITHING_TEMPLATE'),
+                                  'than': ('Thân Giáp', 'Giáp, Quần', 'SILENCE_ARMOR_TRIM_SMITHING_TEMPLATE'),
+                                  'binh': ('Binh Khí', 'Kiếm', 'EYE_ARMOR_TRIM_SMITHING_TEMPLATE')}.items():
+    items[f'ht_an_{grp}'] = {
+        'nguon': 'web', 'nhom': 'nguyen-lieu', 'ten-goi': f'Huyền Ấn · {label}', 'material': mat, 'amount': 1,
+        'name': f'&4⚜ &6&lHuyền Ấn &8· &c{label}',
+        'lore': ['&7Mảnh ấn hiếm của bộ Huyền Thoại, nhặt được trong dungeon.', '', f'&6▸ &7Dùng rèn &f{pieces} Huyền Thoại&7 ở Thợ Rèn',
+                 '&8Trao đổi được · lấp lánh = hàng thật'],
+        'glint': True, 'bo': ['Nguyên liệu Thợ Rèn', 'Huyền Thoại'], 'nguoi-luu': 'Claude (Thợ Rèn)'}
+items['long_hon'] = {'nguon': 'web', 'nhom': 'nguyen-lieu', 'ten-goi': 'Long Hồn Châu', 'material': 'DRAGON_HEAD', 'amount': 1,
+                     'name': '&6❖ &c&lLong Hồn Châu',
+                     'lore': ['&7Viên châu giữ hồn rồng, nóng rực trong lòng bàn tay.', '',
+                              '&6Tinh thể · &8Thợ Kim Hoàn: 2 Hồn Quái Kết Tinh + 1 Hắc Diệu Thạch + 1 Ngọc Thủy Triều + 2 Huyết Tinh Thạch',
+                              '&8Dùng ở Thợ Rèn (/thoren)'],
+                     'glint': True, 'bo': ['Nguyên liệu Thợ Rèn'], 'nguoi-luu': 'Claude (Thợ Rèn)'}
+
 # ------------------------------------------------------------------ MẢNH TRAO ĐỔI rơi trong dungeon (3 set × 3 nhóm món)
 SHERD = iter(['ARCHER', 'BREWER', 'EXPLORER', 'FLOW', 'GUSTER', 'HEARTBREAK', 'MOURNER', 'SCRAPE', 'SNORT'])
 for sid, (c1, c2, sym, word, tag, where) in {
@@ -240,7 +303,8 @@ for sid, (c1, c2, sym, word, tag, where) in {
         items[f'{sid}_an_{grp}'] = {
             'nguon': 'web', 'nhom': 'nguyen-lieu', 'ten-goi': f'{word} · {label}', 'material': next(SHERD) + '_POTTERY_SHERD', 'amount': 1,
             'name': f'{c1}{sym} {c2}{word} &8· &f{label}',
-            'lore': [f'&7Mảnh ấn của bộ {tag}, nhặt được trong dungeon.', '',   # nguồn chính xác từng tầng: gen_truyen.py f'{c2}▸ &7Dùng rèn &f{pieces} {tag}&7 ở Thợ Rèn', '&8Trao đổi được · lấp lánh = hàng thật'],
+            # nguồn chính xác từng tầng: gen_truyen.py
+            'lore': [f'&7Mảnh ấn của bộ {tag}, nhặt được trong dungeon.', '', f'{c2}▸ &7Dùng rèn &f{pieces} {tag}&7 ở Thợ Rèn', '&8Trao đổi được · lấp lánh = hàng thật'],
             'glint': True, 'bo': ['Nguyên liệu Thợ Rèn', tag], 'nguoi-luu': 'Claude (Thợ Rèn)'}
 
 # ------------------------------------------------------------------ SET NGHỀ (+0..+4): đi ngang, giáp ≤ Bảo vệ III, kỹ năng tiện ích
@@ -328,7 +392,7 @@ items['vaycahiem'] = {'nguon': 'web', 'nhom': 'nguyen-lieu', 'ten-goi': 'Vảy C
                       'name': '&bVảy Cá Hiếm', 'lore': ['&7Thỉnh thoảng vớt được khi câu cá.', '&8Nguyên liệu Thợ Rèn (set Ngư Phủ): /thoren'],
                       'cong-dung': 'tinh-luyen'}
 y.dump(doc, open(P, 'w', encoding='utf-8'))
-n = sum(1 for k in items if k.split('_')[0] in ('ta', 'tm', 'np', 'dh', 'cb', 'cc'))
+n = sum(1 for k in items if k.split('_')[0] in ('ta', 'tm', 'np', 'dh', 'cb', 'cc', 'ht'))
 print('đã ghi', n, 'món set mới + vaycahiem')
-for k in ['cb_ao_7', 'cc_kiem_5', 'cb_an_khoi']:
+for k in ['ht_kiem_3']:
     print(k, items[k]['name'], '|', ' / '.join(items[k]['lore']), '|', dict(items[k]['enchants']), items[k].get('ce-enchants'), items[k].get('dmm-enchants'))

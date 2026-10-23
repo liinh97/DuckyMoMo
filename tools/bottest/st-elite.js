@@ -10,7 +10,7 @@ const WEAPONS_ALL = [
   ['lib', 'tt_kiem_0', 'Kiếm Tân Thủ +0'], ['lib', 'tt_kiem_9', 'Kiếm Tân Thủ +9'], ['lib', 'cb_kiem_7', 'Kiếm Chiến Binh +7'],
   ['lib', 'ta_kiem_5', 'Kiếm Tinh Anh +5'], ['lib', 'cc_kiem_5', 'Kiếm Cao Cấp +5'],
 ];
-const WEAPONS = process.env.DEBUG ? WEAPONS_ALL.slice(2, 3) : WEAPONS_ALL;
+const WEAPONS = process.env.DEBUG ? WEAPONS_ALL.slice(2, 3) : process.env.CHI_EM ? WEAPONS_ALL.slice(0, 2) : WEAPONS_ALL;
 (async () => {
   let t = await h.start(N); let R = c => t.rc.cmd(c);
   await R(`lp user ${N} parent add admin`); await t.sleep(2500);
@@ -20,9 +20,12 @@ const WEAPONS = process.env.DEBUG ? WEAPONS_ALL.slice(2, 3) : WEAPONS_ALL;
   const hp = async () => parseFloat((await R(`data get entity @e[tag=dmgt,limit=1] Health`)).replace(/.*data: /, '')) || NaN;
   for (const [kind, id, label] of WEAPONS) {
     await R(`minecraft:clear ${N}`); await t.sleep(400);
-    if (kind === 'em') await R(`em loot give ${N} ${id}`); else if (kind === 'lib') await R(`dmm laydo ${id} 1 ${N}`); else await R(`minecraft:give ${N} minecraft:${id} 1`);
+    if (kind === 'emr') {   // rơi đồ thật (co giãn theo cấp, có trần maximumItemLevel): quay tới khi ra kiếm
+      for (let k = 0; k < 40 && !t.bot.inventory.items().some(i => /_sword$/.test(i.name)); k++) { await R(`minecraft:clear ${N}`); await R(`em loot random ${id} ${N}`); await t.sleep(700); }
+    } else if (kind === 'em') await R(`em loot give ${N} ${id}`); else if (kind === 'lib') await R(`dmm laydo ${id} 1 ${N}`); else await R(`minecraft:give ${N} minecraft:${id} 1`);
     await t.sleep(1500);
-    const w = t.bot.inventory.items()[0]; if (!w) { t.log(label, ': không có vũ khí'); continue; }
+    const w = t.bot.inventory.items().find(i => /_sword$/.test(i.name)) || t.bot.inventory.items()[0]; if (!w) { t.log(label, ': không có vũ khí'); continue; }
+    if (kind === 'emr') t.log(`   ${label}: ${t.itemText(w).name} | ${t.itemText(w).lore.filter(l => /Cấp|Level|level/.test(l)).join(' ')}`.slice(0, 200));
     await t.bot.equip(w, 'hand'); await t.sleep(2500);   // đợi hết hồi đòn sau khi đổi đồ (hệ tốc đánh)
     const held = t.bot.heldItem ? t.bot.heldItem.name : 'tay không';
     const res = [];

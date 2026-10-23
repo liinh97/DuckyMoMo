@@ -171,6 +171,10 @@ tier3_skins: []
 tier4_skins: []
 authme_session_on: true
 authme_session_min: 60
+dnl_nguoi:
+  - Linh
+dnl_ngay: 30
+dnl_panel_gio: 12
 web_code_min: 60
 reg_per_ip_total: 2
 reg_whitelist_players:

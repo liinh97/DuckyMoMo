@@ -1074,6 +1074,15 @@ COOKIE = "dmm_phien"
 # 23/10 mở server: phiên tài khoản 7 ngày, quyền quản trị (mã /web) 12 giờ (giai đoạn test 21/10 từng để 30 ngày). Đổi: SITE_SESSION_DAYS, SITE_ADMIN_HOURS trong .env.
 SESSION_DAYS = int(os.environ.get("SITE_SESSION_DAYS", "7"))     # phiên xem tài khoản
 ADMIN_HOURS = int(os.environ.get("SITE_ADMIN_HOURS", "12"))     # staff mở trang quản trị sau khi nhập mã /web; hết thì gõ /web lấy mã mới
+
+
+def long_days(ten):
+    """Đăng nhập lâu (23/10): tên trong dang-nhap-lau.nguoi (config DuckyMoMoCore Bang Hội Chiến, Cài đặt › Toàn mạng) -> số ngày giữ, không thì None."""
+    c = get(load_yaml(plugin("DuckyMoMoCore", "config.yml")), "dang-nhap-lau", {}) or {}
+    names = {str(n).strip().lower() for n in (c.get("nguoi") or [])}
+    return max(1, int(c.get("ngay") or 30)) if str(ten or "").lower() in names else None
+
+
 SESSION_FILE = "/state/phien.json"   # lưu phiên (khoá = sha256 token) để dựng lại site không đăng xuất mọi người
 NAME_RE = re.compile(r"^\.?[A-Za-z0-9_]{1,17}$")
 FAIL_WINDOW = 15 * 60
@@ -1090,8 +1099,9 @@ def _load_sessions():
             now = time.time()
             for k, v in json.load(f).items():
                 if v.get("het", 0) > now:   # phiên lưu từ hồi hạn dài hơn (test 21/10: 30 ngày) bị cắt về hạn hiện tại
-                    v["het"] = min(v["het"], v.get("tao", now) + SESSION_DAYS * 86400)
-                    v["game_het"] = min(v.get("game_het", 0), v.get("tao", now) + ADMIN_HOURS * 3600)
+                    dai = long_days(v.get("ten"))
+                    v["het"] = min(v["het"], v.get("tao", now) + (dai * 86400 if dai else SESSION_DAYS * 86400))
+                    v["game_het"] = min(v.get("game_het", 0), v.get("tao", now) + (dai * 86400 if dai else ADMIN_HOURS * 3600))
                     if v["het"] > now:
                         _sessions[k] = v
     except (OSError, ValueError):
@@ -1183,13 +1193,15 @@ def login(data, ip):
         return 401, {"ok": False, "message": msg}, None
     token = secrets.token_urlsafe(32)
     now = time.time()
+    dai = long_days(res["ten"])   # đăng nhập lâu: giữ phiên + quyền quản trị /web theo số ngày trong danh sách
     with _slock:
         for k in [k for k, v in _sessions.items() if v["het"] < now]:
             _sessions.pop(k, None)
         for k in [k for k, v in _fails.items() if not v or now - v[-1] > FAIL_WINDOW]:
             _fails.pop(k, None)
         _sessions[hashlib.sha256(token.encode()).hexdigest()] = {
-            "ten": res["ten"], "tao": now, "het": now + SESSION_DAYS * 86400, "game_het": now + ADMIN_HOURS * 3600, "ip": ip}
+            "ten": res["ten"], "tao": now, "het": now + (dai * 86400 if dai else SESSION_DAYS * 86400),
+            "game_het": now + (dai * 86400 if dai else ADMIN_HOURS * 3600), "ip": ip}
         _save_sessions()
     return 200, {"ok": True, "ten": res["ten"]}, token
 
@@ -1324,7 +1336,7 @@ class Handler(BaseHTTPRequestHandler):
         try:
             if path == "/api/dangnhap":
                 code, obj, token = login(self.body_json(), self.client_ip())
-                extra = {"Set-Cookie": self.cookie(token, SESSION_DAYS * 86400)} if token else None
+                extra = {"Set-Cookie": self.cookie(token, (long_days(obj.get("ten")) or SESSION_DAYS) * 86400)} if token else None
                 return self._json(code, obj, extra)
             if path == "/api/donate":
                 s = session_of(self.token())

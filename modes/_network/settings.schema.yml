@@ -125,6 +125,15 @@ groups:
       - { key: authme_session_on, label: Bật phiên đăng nhập, type: select, servers: [lobby], file: plugins/AuthMe/config.yml, path: settings.sessions.enabled, options: [ { value: true, label: Bật }, { value: false, label: Tắt } ] }
       - { key: authme_session_min, label: Thời hạn phiên (phút), type: int, min: 1, max: 43200, servers: [lobby], file: plugins/AuthMe/config.yml, path: settings.sessions.timeout, note: "Đề xuất 60. 4G/quán net nhiều người chung 1 IP: phiên càng dài, người khác cùng mạng gõ đúng tên càng dễ vào ké (cả admin)" }
 
+  - title: Đăng nhập lâu (danh sách)
+    category: Sảnh
+    description: "Người có tên ở đây được giữ đăng nhập lâu hơn: trong game vào lại từ đúng IP lần trước thì tự đăng nhập (không gõ mật khẩu), trên web (trang tài khoản, quyền quản trị bằng mã /web) giữ đăng nhập ngần ấy ngày. Người khác vẫn theo phiên thường (60 phút trong game, 7 ngày web)."
+    info: "Chỉ thêm người TIN CẬY (admin, staff): cùng mạng (quán net, 4G chung IP) người khác gõ đúng tên là vào được tài khoản đó.\nĐổi IP (đổi mạng) thì phải gõ mật khẩu một lần rồi mới được nhớ lại.\nTrang quản trị (panel, tài khoản admin) có ô giữ đăng nhập riêng ở dưới."
+    apply: [dmm reload]
+    settings:
+      - { key: dnl_nguoi, label: "Danh sách tên (mỗi dòng 1 tên trong game)", type: list, servers: [lobby, banghoi-1], file: plugins/DuckyMoMoCore/config.yml, path: dang-nhap-lau.nguoi }
+      - { key: dnl_ngay, label: "Giữ đăng nhập (ngày)", type: int, min: 1, max: 90, servers: [lobby, banghoi-1], file: plugins/DuckyMoMoCore/config.yml, path: dang-nhap-lau.ngay }
+      - { key: dnl_panel_gio, label: "Trang quản trị (panel) giữ đăng nhập (giờ)", info: "Là gì: đăng nhập trang quản trị bằng tài khoản admin (PANEL_USER) được giữ ngần ấy giờ. 12 = nửa ngày, 168 = 7 ngày, 720 = 30 ngày.\nCó hiệu lực từ lần đăng nhập sau.", type: int, min: 1, max: 2160 }
   - title: Giới hạn đăng ký tài khoản
     category: Sảnh
     description: "Mỗi IP (mạng) chỉ có tối đa số tài khoản này, tính tổng mãi mãi (chống tạo tài khoản ảo lấy quà tân thủ, nuôi bot). IP trong danh sách miễn thì không bị giới hạn."

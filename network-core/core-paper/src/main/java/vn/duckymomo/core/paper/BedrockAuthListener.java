@@ -48,6 +48,7 @@ final class BedrockAuthListener implements Listener {
         UUID id = profile.getId();
         String name = profile.getName();
         if (!isBedrock(id, name)) {
+            remember(event, name);
             return;
         }
         AuthMeApi api = AuthMeApi.getInstance();
@@ -58,6 +59,34 @@ final class BedrockAuthListener implements Listener {
             }
         }
         api.forceLoginFromProxy(name);
+    }
+
+    /**
+     * Đăng nhập lâu (23/10, chủ server): người có tên trong dang-nhap-lau.nguoi, vào lại từ ĐÚNG IP của lần đăng nhập trước và lần đó
+     * chưa quá dang-nhap-lau.ngay ngày thì tự đăng nhập (người khác vẫn theo phiên AuthMe, 60 phút). Chỉ cho người tin cậy: cùng mạng
+     * (quán net, 4G chung IP) người khác gõ đúng tên là vào được.
+     */
+    private void remember(AsyncPlayerConnectionConfigureEvent event, String name) {
+        var c = plugin.getConfig().getConfigurationSection("dang-nhap-lau");
+        if (c == null || name == null) {
+            return;
+        }
+        boolean listed = c.getStringList("nguoi").stream().anyMatch(n -> n.trim().equalsIgnoreCase(name));
+        if (!listed) {
+            return;
+        }
+        AuthMeApi api = AuthMeApi.getInstance();
+        java.net.InetSocketAddress addr = event.getConnection().getClientAddress();
+        String ip = addr == null || addr.getAddress() == null ? null : addr.getAddress().getHostAddress();
+        java.time.Instant last = api.isRegistered(name) ? api.getLastLoginTime(name) : null;
+        String lastIp = api.isRegistered(name) ? api.getLastIp(name) : null;
+        long days = Math.max(1, c.getLong("ngay", 30));
+        if (ip == null || last == null || lastIp == null || !ip.equals(lastIp)
+                || last.isBefore(java.time.Instant.now().minus(java.time.Duration.ofDays(days)))) {
+            return;
+        }
+        api.forceLoginFromProxy(name);
+        plugin.getLogger().info("Đăng nhập lâu: tự đăng nhập " + name + " (cùng IP, lần trước " + last + ")");
     }
 
     /** Dự phòng: nếu vì lý do nào đó vào rồi mà vẫn chưa đăng nhập (ví dụ tắt pre-join dialog). */

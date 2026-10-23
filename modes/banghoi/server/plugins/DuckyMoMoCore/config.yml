@@ -1955,3 +1955,10 @@ tho-ren:
       bonus:
         - {from: 2, pieces: 4, mau: 6}
         - {from: 4, pieces: 4, mau: 10, day-lui: 10}
+
+# Đăng nhập lâu (23/10): người trong danh sách được giữ đăng nhập lâu hơn, cả trong game (sảnh: vào lại từ ĐÚNG IP lần trước, chưa quá
+# "ngay" ngày thì tự đăng nhập, người khác vẫn theo phiên AuthMe) lẫn web (trang tài khoản + quyền quản trị /web giữ "ngay" ngày).
+# Chỉ thêm người tin cậy. Sửa ở Cài đặt › Toàn mạng › Đăng nhập lâu.
+dang-nhap-lau:
+  ngay: 30
+  nguoi: [Linh]

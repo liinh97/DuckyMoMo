@@ -65,11 +65,20 @@ def _tok_hash(tok):
     return hashlib.sha256(tok.encode()).hexdigest()
 
 
+def panel_hours():
+    """Giờ giữ đăng nhập trang quản trị: Cài đặt › Toàn mạng › Đăng nhập lâu (dnl_panel_gio), không có thì SESSION_HOURS."""
+    try:
+        v = YAML(typ="safe").load((MODES_DIR / "_network" / "settings.yml").read_text(encoding="utf-8")) or {}
+        return max(1, int(v.get("dnl_panel_gio") or SESSION_HOURS))
+    except Exception:
+        return SESSION_HOURS
+
+
 def _load_sessions():
     try:
         now = time.time()
         # phiên lưu từ hồi hạn dài hơn (test 21/10: 30 ngày) bị cắt về tối đa SESSION_HOURS kể từ lúc dựng lại
-        SESSIONS.update({k: min(v, now + SESSION_HOURS * 3600) for k, v in json.loads(SESSION_FILE.read_text(encoding="utf-8")).items() if v > now})
+        SESSIONS.update({k: min(v, now + panel_hours() * 3600) for k, v in json.loads(SESSION_FILE.read_text(encoding="utf-8")).items() if v > now})
     except (OSError, ValueError):
         pass
 
@@ -3249,13 +3258,13 @@ class Handler(BaseHTTPRequestHandler):
         with LOGIN_LOCK:
             for k in [k for k, exp in SESSIONS.items() if exp < now]:
                 del SESSIONS[k]
-            SESSIONS[_tok_hash(tok)] = now + SESSION_HOURS * 3600
+            SESSIONS[_tok_hash(tok)] = now + panel_hours() * 3600
             LOGIN_FAILS.pop(ip, None)
             _save_sessions()
         secure = "; Secure" if self.headers.get("X-Forwarded-Proto", "") == "https" else ""
         body = json.dumps({"ok": True}).encode("utf-8")
         self.send_response(200)
-        self.send_header("Set-Cookie", f"dmm_panel={tok}; Path={self.cookie_path()}; Max-Age={SESSION_HOURS * 3600}; HttpOnly; SameSite=Strict{secure}")
+        self.send_header("Set-Cookie", f"dmm_panel={tok}; Path={self.cookie_path()}; Max-Age={panel_hours() * 3600}; HttpOnly; SameSite=Strict{secure}")
         self.send_header("Content-Type", "application/json; charset=utf-8")
         self.send_header("Content-Length", str(len(body)))
         self.end_headers()

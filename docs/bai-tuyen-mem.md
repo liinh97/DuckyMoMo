@@ -2,7 +2,7 @@
 
 🦆 Sau gần chục năm vắng bóng, DuckyMoMo chính thức TÁI XUẤT GIANG HỒ!
 
-Cả Đông Nam Á dựng lại theo bản đồ thật, tỉ lệ 1:1000, và chưa mảnh đất nào có chủ.
+Một Đông Nam Á rộng lớn đang chờ chủ, chưa mảnh đất nào có người cắm cờ.
 
 🏰 Lập thị trấn, kết thành quốc gia, mỗi tối cuối tuần CÔNG THÀNH
 🕊️ Thích yên bình? Vào Liên minh Hoà Bình: xây, buôn bán, không ai chiếm được đất

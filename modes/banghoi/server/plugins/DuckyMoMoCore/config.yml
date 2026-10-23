@@ -1514,7 +1514,7 @@ tho-ren:
         - {out: manh_hac, cost: {NETHERITE_SCRAP: 2}}
     sanquai:
       name: "&c⚔ Lão Săn Quái"
-      skin: "https://cdn.minecraft.how/skin/187597/image.png"
+      skin: "https://cdn.minecraft.how/skin/205477/image.png"
       sub: "Đổi chiến lợi phẩm quái lấy mảnh"
       profession: butcher
       recipes:
@@ -1555,7 +1555,7 @@ tho-ren:
         - {out: mat_ong, cost: {HONEY_BOTTLE: 4}}
     thoren:
       name: "&6⚒ Thợ Rèn"
-      skin: "https://cdn.minecraft.how/skin/159620/image.png"
+      skin: "https://cdn.minecraft.how/skin/150520/image.png"
       sub: "Rèn và nâng cấp đồ set"
       profession: weaponsmith
       open: thoren

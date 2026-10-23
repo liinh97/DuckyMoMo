@@ -1609,6 +1609,10 @@ tho-ren:
         quan: {name: "Quần", ids: [tt_quan_0, tt_quan_1, tt_quan_2, tt_quan_3, tt_quan_4, tt_quan_5, tt_quan_6, tt_quan_7, tt_quan_8, tt_quan_9]}
         giay: {name: "Giày", ids: [tt_giay_0, tt_giay_1, tt_giay_2, tt_giay_3, tt_giay_4, tt_giay_5, tt_giay_6, tt_giay_7, tt_giay_8, tt_giay_9]}
         kiem: {name: "Kiếm", ids: [tt_kiem_0, tt_kiem_1, tt_kiem_2, tt_kiem_3, tt_kiem_4, tt_kiem_5, tt_kiem_6, tt_kiem_7, tt_kiem_8, tt_kiem_9]}
+        riu: {name: "Rìu", ids: [tt_riu_0, tt_riu_1, tt_riu_2, tt_riu_3, tt_riu_4, tt_riu_5, tt_riu_6, tt_riu_7, tt_riu_8, tt_riu_9]}
+        giao: {name: "Giáo", ids: [tt_giao_0, tt_giao_1, tt_giao_2, tt_giao_3, tt_giao_4, tt_giao_5, tt_giao_6, tt_giao_7, tt_giao_8, tt_giao_9]}
+        cung: {name: "Cung", ids: [tt_cung_0, tt_cung_1, tt_cung_2, tt_cung_3, tt_cung_4, tt_cung_5, tt_cung_6, tt_cung_7, tt_cung_8, tt_cung_9]}
+        chuy: {name: "Chuỳ", ids: [tt_chuy_0, tt_chuy_1, tt_chuy_2, tt_chuy_3, tt_chuy_4, tt_chuy_5, tt_chuy_6, tt_chuy_7, tt_chuy_8, tt_chuy_9]}
       cost:
         # 23/10: kiếm chủ yếu ngoài tự nhiên (đào mỏ + quái thường), +0/+1 không cần Xu Quái, Lõi Quái (qua Huyết Tinh) từ +7
         - {xu: 200, manh_than: 2, manh_dong: 2, xuong_oan: 1}   # +0
@@ -1640,6 +1644,10 @@ tho-ren:
         quan: {name: "Quần", an: cb_an_than, ids: [cb_quan_0, cb_quan_1, cb_quan_2, cb_quan_3, cb_quan_4, cb_quan_5, cb_quan_6, cb_quan_7]}
         giay: {name: "Giày", an: cb_an_khoi, ids: [cb_giay_0, cb_giay_1, cb_giay_2, cb_giay_3, cb_giay_4, cb_giay_5, cb_giay_6, cb_giay_7]}
         kiem: {name: "Kiếm", an: cb_an_binh, ids: [cb_kiem_0, cb_kiem_1, cb_kiem_2, cb_kiem_3, cb_kiem_4, cb_kiem_5, cb_kiem_6, cb_kiem_7]}
+        riu: {name: "Rìu", an: cb_an_binh, ids: [cb_riu_0, cb_riu_1, cb_riu_2, cb_riu_3, cb_riu_4, cb_riu_5, cb_riu_6, cb_riu_7]}
+        giao: {name: "Giáo", an: cb_an_binh, ids: [cb_giao_0, cb_giao_1, cb_giao_2, cb_giao_3, cb_giao_4, cb_giao_5, cb_giao_6, cb_giao_7]}
+        cung: {name: "Cung", an: cb_an_binh, ids: [cb_cung_0, cb_cung_1, cb_cung_2, cb_cung_3, cb_cung_4, cb_cung_5, cb_cung_6, cb_cung_7]}
+        chuy: {name: "Chuỳ", an: cb_an_binh, ids: [cb_chuy_0, cb_chuy_1, cb_chuy_2, cb_chuy_3, cb_chuy_4, cb_chuy_5, cb_chuy_6, cb_chuy_7]}
       cost:   # "an" = mảnh ấn của món đó (mũ/giày: Khôi Giáp, giáp/quần: Thân Giáp, kiếm: Binh Khí)
         - {xu: 2000, an: 2, hop_kim: 1, huyet_tinh: 1}   # +0 (cộng món Tân Thủ +9)
         - {xu: 2500, an: 3, hop_kim: 1, lam_chau: 1}
@@ -1667,6 +1675,10 @@ tho-ren:
         quan: {name: "Quần", an: ta_an_than, ids: [ta_quan_0, ta_quan_1, ta_quan_2, ta_quan_3, ta_quan_4, ta_quan_5]}
         giay: {name: "Giày", an: ta_an_khoi, ids: [ta_giay_0, ta_giay_1, ta_giay_2, ta_giay_3, ta_giay_4, ta_giay_5]}
         kiem: {name: "Kiếm", an: ta_an_binh, ids: [ta_kiem_0, ta_kiem_1, ta_kiem_2, ta_kiem_3, ta_kiem_4, ta_kiem_5]}
+        riu: {name: "Rìu", an: ta_an_binh, ids: [ta_riu_0, ta_riu_1, ta_riu_2, ta_riu_3, ta_riu_4, ta_riu_5]}
+        giao: {name: "Giáo", an: ta_an_binh, ids: [ta_giao_0, ta_giao_1, ta_giao_2, ta_giao_3, ta_giao_4, ta_giao_5]}
+        cung: {name: "Cung", an: ta_an_binh, ids: [ta_cung_0, ta_cung_1, ta_cung_2, ta_cung_3, ta_cung_4, ta_cung_5]}
+        chuy: {name: "Chuỳ", an: ta_an_binh, ids: [ta_chuy_0, ta_chuy_1, ta_chuy_2, ta_chuy_3, ta_chuy_4, ta_chuy_5]}
       cost:
         - {xu: 8000, an: 3, hon_quai: 1, hac_dieu: 1}    # +0 (cộng món Chiến Binh +7)
         - {xu: 9000, an: 4, hac_dieu: 1, lam_chau: 2}
@@ -1692,6 +1704,10 @@ tho-ren:
         quan: {name: "Quần", an: cc_an_than, ids: [cc_quan_0, cc_quan_1, cc_quan_2, cc_quan_3, cc_quan_4, cc_quan_5]}
         giay: {name: "Giày", an: cc_an_khoi, ids: [cc_giay_0, cc_giay_1, cc_giay_2, cc_giay_3, cc_giay_4, cc_giay_5]}
         kiem: {name: "Kiếm", an: cc_an_binh, ids: [cc_kiem_0, cc_kiem_1, cc_kiem_2, cc_kiem_3, cc_kiem_4, cc_kiem_5]}
+        riu: {name: "Rìu", an: cc_an_binh, ids: [cc_riu_0, cc_riu_1, cc_riu_2, cc_riu_3, cc_riu_4, cc_riu_5]}
+        giao: {name: "Giáo", an: cc_an_binh, ids: [cc_giao_0, cc_giao_1, cc_giao_2, cc_giao_3, cc_giao_4, cc_giao_5]}
+        cung: {name: "Cung", an: cc_an_binh, ids: [cc_cung_0, cc_cung_1, cc_cung_2, cc_cung_3, cc_cung_4, cc_cung_5]}
+        chuy: {name: "Chuỳ", an: cc_an_binh, ids: [cc_chuy_0, cc_chuy_1, cc_chuy_2, cc_chuy_3, cc_chuy_4, cc_chuy_5]}
       cost:
         - {xu: 18000, an: 4, hac_dieu: 2, hon_quai: 2}   # +0 (cộng món Tinh Anh +5)
         - {xu: 20000, an: 5, hac_dieu: 2, hon_quai: 2, lam_chau: 2}
@@ -1717,6 +1733,10 @@ tho-ren:
         quan: {name: "Quần", an: ht_an_than, ids: [ht_quan_0, ht_quan_1, ht_quan_2, ht_quan_3]}
         giay: {name: "Giày", an: ht_an_khoi, ids: [ht_giay_0, ht_giay_1, ht_giay_2, ht_giay_3]}
         kiem: {name: "Kiếm", an: ht_an_binh, ids: [ht_kiem_0, ht_kiem_1, ht_kiem_2, ht_kiem_3]}
+        riu: {name: "Rìu", an: ht_an_binh, ids: [ht_riu_0, ht_riu_1, ht_riu_2, ht_riu_3]}
+        giao: {name: "Giáo", an: ht_an_binh, ids: [ht_giao_0, ht_giao_1, ht_giao_2, ht_giao_3]}
+        cung: {name: "Cung", an: ht_an_binh, ids: [ht_cung_0, ht_cung_1, ht_cung_2, ht_cung_3]}
+        chuy: {name: "Chuỳ", an: ht_an_binh, ids: [ht_chuy_0, ht_chuy_1, ht_chuy_2, ht_chuy_3]}
       cost:
         - {xu: 40000, an: 3, long_hon: 1, NETHERITE_INGOT: 2}             # +0 (cộng món Cao Cấp +5)
         - {xu: 50000, an: 4, long_hon: 1, hac_dieu: 3}
@@ -1739,6 +1759,10 @@ tho-ren:
         quan: {name: "Quần", an: mt_an_than, ids: [mt_quan_0, mt_quan_1, mt_quan_2, mt_quan_3, mt_quan_4]}
         giay: {name: "Giày", an: mt_an_khoi, ids: [mt_giay_0, mt_giay_1, mt_giay_2, mt_giay_3, mt_giay_4]}
         kiem: {name: "Kiếm", an: mt_an_binh, ids: [mt_kiem_0, mt_kiem_1, mt_kiem_2, mt_kiem_3, mt_kiem_4]}
+        riu: {name: "Rìu", an: mt_an_binh, ids: [mt_riu_0, mt_riu_1, mt_riu_2, mt_riu_3, mt_riu_4]}
+        giao: {name: "Giáo", an: mt_an_binh, ids: [mt_giao_0, mt_giao_1, mt_giao_2, mt_giao_3, mt_giao_4]}
+        cung: {name: "Cung", an: mt_an_binh, ids: [mt_cung_0, mt_cung_1, mt_cung_2, mt_cung_3, mt_cung_4]}
+        chuy: {name: "Chuỳ", an: mt_an_binh, ids: [mt_chuy_0, mt_chuy_1, mt_chuy_2, mt_chuy_3, mt_chuy_4]}
       # 23/10 chủ server: làm trước, CHƯA chốt Thần Ấn lấy ở đâu (chưa rơi ở đâu cả; admin phát bằng /dmm laydo nếu cần thử)
       cost:
         - {xu: 100000, an: 3, nhat_nguyet: 1, NETHERITE_INGOT: 3}   # +0 (cộng món Huyền Thoại +3)
@@ -1763,6 +1787,10 @@ tho-ren:
         quan: {name: "Quần", an: dv_an_than, ids: [dv_quan_0, dv_quan_1, dv_quan_2, dv_quan_3]}
         giay: {name: "Giày", an: dv_an_khoi, ids: [dv_giay_0, dv_giay_1, dv_giay_2, dv_giay_3]}
         kiem: {name: "Kiếm", an: dv_an_binh, ids: [dv_kiem_0, dv_kiem_1, dv_kiem_2, dv_kiem_3]}
+        riu: {name: "Rìu", an: dv_an_binh, ids: [dv_riu_0, dv_riu_1, dv_riu_2, dv_riu_3]}
+        giao: {name: "Giáo", an: dv_an_binh, ids: [dv_giao_0, dv_giao_1, dv_giao_2, dv_giao_3]}
+        cung: {name: "Cung", an: dv_an_binh, ids: [dv_cung_0, dv_cung_1, dv_cung_2, dv_cung_3]}
+        chuy: {name: "Chuỳ", an: dv_an_binh, ids: [dv_chuy_0, dv_chuy_1, dv_chuy_2, dv_chuy_3]}
       cost:
         - {xu: 300000, an: 3, thien_menh: 1, NETHER_STAR: 1}   # +0 (cộng món Thần Thoại +4)
         - {xu: 350000, an: 4, thien_menh: 1, nhat_nguyet: 2}
@@ -1786,6 +1814,10 @@ tho-ren:
         quan: {name: "Quần", ids: [ul_quan_0, ul_quan_1, ul_quan_2, ul_quan_3, ul_quan_4]}
         giay: {name: "Giày", ids: [ul_giay_0, ul_giay_1, ul_giay_2, ul_giay_3, ul_giay_4]}
         kiem: {name: "Kiếm", ids: [ul_kiem_0, ul_kiem_1, ul_kiem_2, ul_kiem_3, ul_kiem_4]}
+        riu: {name: "Rìu", ids: [ul_riu_0, ul_riu_1, ul_riu_2, ul_riu_3, ul_riu_4]}
+        giao: {name: "Giáo", ids: [ul_giao_0, ul_giao_1, ul_giao_2, ul_giao_3, ul_giao_4]}
+        cung: {name: "Cung", ids: [ul_cung_0, ul_cung_1, ul_cung_2, ul_cung_3, ul_cung_4]}
+        chuy: {name: "Chuỳ", ids: [ul_chuy_0, ul_chuy_1, ul_chuy_2, ul_chuy_3, ul_chuy_4]}
       cost:
         - {xu: 1500, keo_hon: 8, xuong_oan: 2}   # +0
         - {xu: 2500, keo_hon: 12, to_bac: 2, huyet_tinh: 1}

@@ -8,9 +8,12 @@ y = YAML(); y.preserve_quotes = True; y.width = 4096
 doc = y.load(open(P, encoding='utf-8'))
 items = doc['items']
 SEP = '&8&m━━━━━━━━━━━━━━━━'
-SLOT = {'mu': 'HELMET', 'ao': 'CHESTPLATE', 'quan': 'LEGGINGS', 'giay': 'BOOTS', 'kiem': 'SWORD', 'cup': 'PICKAXE', 'cuoc': 'HOE'}
-NOUN = {'mu': 'Mũ', 'ao': 'Giáp', 'quan': 'Quần', 'giay': 'Giày', 'kiem': 'Kiếm', 'cup': 'Cúp', 'can': 'Cần câu', 'cung': 'Cung', 'cuoc': 'Cuốc'}
-LOAI = {'mu': 'Armor', 'ao': 'Armor', 'quan': 'Armor', 'giay': 'Armor', 'kiem': 'Weapon', 'cung': 'Weapon', 'cup': 'Tool', 'can': 'Tool', 'cuoc': 'Tool'}
+SLOT = {'mu': 'HELMET', 'ao': 'CHESTPLATE', 'quan': 'LEGGINGS', 'giay': 'BOOTS', 'kiem': 'SWORD', 'cup': 'PICKAXE', 'cuoc': 'HOE',
+        'riu': 'AXE', 'giao': 'SPEAR'}
+NOUN = {'mu': 'Mũ', 'ao': 'Giáp', 'quan': 'Quần', 'giay': 'Giày', 'kiem': 'Kiếm', 'cup': 'Cúp', 'can': 'Cần câu', 'cung': 'Cung', 'cuoc': 'Cuốc',
+        'riu': 'Rìu', 'giao': 'Giáo', 'chuy': 'Chuỳ'}
+LOAI = {'mu': 'Armor', 'ao': 'Armor', 'quan': 'Armor', 'giay': 'Armor', 'kiem': 'Weapon', 'cung': 'Weapon', 'cup': 'Tool', 'can': 'Tool', 'cuoc': 'Tool',
+        'riu': 'Weapon', 'giao': 'Weapon', 'chuy': 'Weapon'}
 
 
 def material(piece, base):
@@ -18,6 +21,8 @@ def material(piece, base):
         return 'FISHING_ROD'
     if piece == 'cung':
         return 'BOW'
+    if piece == 'chuy':
+        return 'MACE'
     return base + '_' + SLOT[piece]
 
 
@@ -172,16 +177,20 @@ CE_VI = {'Glowing': 'Phát sáng', 'Implants': 'Cấy ghép', 'Commander': 'Ch�
          'AutoSmelt': 'Tự nung', 'Telepathy': 'Thần giao', 'Mermaid': 'Người cá', 'IceFreeze': 'Đóng băng', 'Piercing': 'Xuyên giáp',
          'SlowMo': 'Chậm lại', 'Molten': 'Dung nham', 'SmokeBomb': 'Bom khói', 'Ninja': 'Ninja', 'AntiGravity': 'Phản trọng lực',
          'Wither': 'Khô héo', 'Blindness': 'Mù loà', 'Tiller': 'Cày ruộng', 'Harvester': 'Thu hoạch', 'Planter': 'Gieo hạt',
-         'GreenThumb': 'Bàn tay xanh', 'Cactus': 'Xương rồng', 'Inquisitive': 'Tò mò', 'Headless': 'Chặt đầu'}
+         'GreenThumb': 'Bàn tay xanh', 'Cactus': 'Xương rồng', 'Inquisitive': 'Tò mò', 'Headless': 'Chặt đầu',
+         'Dizzy': 'Chóng mặt', 'Rekt': 'Đập nát', 'BattleCry': 'Tiếng gầm', 'DemonForged': 'Rèn quỷ', 'Blessed': 'Ban phước',
+         'MultiArrow': 'Đa tiễn', 'Lightning': 'Sét'}
 DMM_VI = {'tang_toc': 'Tăng tốc'}
 # cụm chữ trong dòng kỹ năng (bỏ mã màu, chữ thường) -> phù phép; lấy phù phép đầu tiên món đó thật sự có
 SKILL_KEY = [('đồng minh ở gần được đào nhanh', ['Commander']), ('đồng minh ở gần được hồi máu', ['Angel']), ('nhìn rõ', ['Glowing']),
              ('không đói', ['Implants']), ('khi ngồi', ['Crouch']), ('né hoàn toàn', ['Maneuver']), ('hồi máu khi đang bị đánh', ['Enlightened']),
-             ('giảm nửa', ['Savior']), ('hồi đầy máu', ['SystemReboot']), ('gọi sét', ['StormCaller']), ('hồi máu khi đi bộ', ['Nursery']),
+             ('giảm nửa', ['Savior']), ('hồi đầy máu', ['SystemReboot']), ('gọi sét', ['StormCaller', 'Lightning']), ('hồi máu khi đi bộ', ['Nursery']),
              ('thêm máu tối đa', ['OverLoad']), ('tự sửa đồ', ['HellForged']), ('chạy nhanh và thêm máu', ['Ninja']),
              ('cầm trên tay: chạy nhanh', ['tang_toc']), ('cầm tay: chạy nhanh', ['tang_toc']), ('chạy nhanh hơn', ['Gears']),
              ('rất cao', ['AntiGravity']), ('nhảy cao hơn', ['Springs']), ('bật văng ra sau', ['Rocket']), ('tăng tốc chạy', ['Adrenaline']),
-             ('hút máu khi đánh', ['Vampire']), ('đánh liên tiếp', ['Rage']), ('gấp đôi sát thương', ['DoubleDamage', 'Piercing']),
+             ('hút máu khi đánh', ['Vampire']), ('đánh liên tiếp', ['Rage']), ('gấp đôi sát thương', ['DoubleDamage', 'Rekt', 'Piercing']),
+             ('choáng', ['Dizzy']), ('đẩy văng người', ['BattleCry']), ('giáp kẻ địch hao bền', ['DemonForged']), ('xoá hiệu ứng xấu', ['Blessed']),
+             ('nhiều mũi tên', ['MultiArrow']), ('sét xuống chỗ mũi tên', ['Lightning']),
              ('hút máu kẻ địch', ['LifeSteal']), ('tăng sức mạnh', ['Execute']), ('miễn sát thương lửa', ['BurnShield']),
              ('đào nhanh hơn', ['Haste']), ('tự nung', ['AutoSmelt']), ('bay thẳng vào túi', ['Telepathy']), ('thở dưới nước', ['Mermaid']),
              ('làm chậm', ['SlowMo', 'IceFreeze']), ('đốt cháy', ['Molten']), ('bom khói', ['SmokeBomb']), ('khô héo', ['Wither']),
@@ -205,6 +214,9 @@ def name_skills(skills, ce, dmm):
     return out
 
 
+KEPT = []
+
+
 def build(set_id, tag, title, lv, piece, base, frame, rarity, maxn, ench, attr=None, ce=None, dmm=None, skills=(), flavor=''):
     attr = attr or {}
     skills = [x.replace('Giáp: ', '').replace('Mũ: ', '').replace('Quần: ', '').replace('Giày: ', '').replace('Cần câu: ', '')
@@ -222,7 +234,12 @@ def build(set_id, tag, title, lv, piece, base, frame, rarity, maxn, ench, attr=N
     e['hide-stats'] = True
     e['bo'] = [tag, 'Đồ set']
     e['nguoi-luu'] = 'Claude (Thợ Rèn)'
-    items[f'{set_id}_{piece}_{lv}'] = e
+    key = f'{set_id}_{piece}_{lv}'
+    old = items.get(key)
+    if old is not None and str(old.get('nguoi-luu', '')) != 'Claude (Thợ Rèn)':
+        KEPT.append(key)   # chủ server / admin đã sửa trên web: giữ nguyên, không ghi đè
+        return
+    items[key] = e
 
 
 # ------------------------------------------------------------------ TINH ANH (+0..+5), nâng từ Chiến Binh +7
@@ -681,6 +698,75 @@ for iid, (mat, name, desc, src) in {
                   'lore': ['&7' + desc, '', '&8Mảnh · ' + src, '&8Dùng ở Thợ Kim Hoàn, Thợ Rèn (/thoren)'], 'glint': True,
                   'bo': ['Nguyên liệu Thợ Rèn'], 'nguoi-luu': 'Claude (Thợ Rèn)'}
 
+# ------------------------------------------------------------------ VŨ KHÍ KHÁC KIẾM (23/10, chủ server: "cả đống vũ khí mà set toàn kiếm")
+# Mỗi set chiến đấu thêm Rìu, Giáo, Cung, Chuỳ (người chơi chọn loại mình thích, cùng mảnh ấn Binh Khí). Chỉ số theo KIẾM cùng set cùng cấp
+# (sắc bén / % sát thương đọc từ món kiếm trong Thư viện, kiếm do chủ server cân) + bậc q = độ mạnh set + tiến độ cấp để mở phù phép.
+VK_FLAVOR = {
+    'riu': ['Lưỡi rìu nặng trịch…', 'Một nhát bổ đôi khiên…', 'Gỗ hay giáp cũng như nhau…', 'Rìu khát máu…', 'Tiếng rìu vang khắp chiến trường…',
+            'Bổ núi chẻ đá…', 'Rìu của bạo chúa…', 'Một nhát, cả đạo quân lùi…'],
+    'giao': ['Mũi giáo vươn xa…', 'Đâm trước khi địch kịp tới…', 'Thẳng như ý chí…', 'Xuyên qua cả khiên…', 'Cán giáo chưa từng gãy…',
+             'Lao tới như sấm…', 'Mũi giáo dẫn đầu vạn quân…', 'Một đường đâm định thắng bại…'],
+    'cung': ['Dây cung căng như gió…', 'Mũi tên biết đường bay…', 'Bách phát bách trúng…', 'Tên đi không tiếng…', 'Mưa tên phủ trời…',
+             'Tên xuyên mây…', 'Một mũi tên, một mạng…', 'Cung của thần xạ…'],
+    'chuy': ['Chuỳ nặng như núi…', 'Từ trên trời giáng xuống…', 'Đất nứt dưới mỗi nhát…', 'Giáp nào cũng móp…', 'Gió nổi khi chuỳ vung…',
+             'Đập tan tường thành…', 'Sấm rền theo chuỳ…', 'Một nhát nát cả trời đất…'],
+}
+VK_SETS = {   # mã set: (bậc mạnh g, số cấp tối đa, vật liệu theo cấp)
+    'cb': (1.0, 7, lambda lv: 'DIAMOND'), 'ul': (1.5, 4, lambda lv: 'DIAMOND' if lv < 3 else 'NETHERITE'), 'ta': (2.0, 5, lambda lv: 'NETHERITE'),
+    'cc': (3.0, 5, lambda lv: 'NETHERITE'), 'ht': (4.0, 3, lambda lv: 'NETHERITE'), 'mt': (5.0, 4, lambda lv: 'NETHERITE'), 'dv': (6.0, 3, lambda lv: 'NETHERITE')}
+SET_META = {'cb': ('Chiến Binh', '&9✦ Rare'), 'ul': ('U Linh', None), 'ta': ('Tinh Anh', '&5✦ Epic'), 'cc': ('Cao Cấp', '&6✦ Epic'),
+            'ht': ('Huyền Thoại', '&6✦ Legendary'), 'mt': ('Thần Thoại', '&d✦ Mythic'), 'dv': ('Thần Thánh', '&e✦ Divine')}
+for sid, (g, maxn, mat) in VK_SETS.items():
+    title, rar = SET_META[sid]
+    for lv in range(maxn + 1):
+        sword = items[f'{sid}_kiem_{lv}']
+        se = dict(sword.get('enchants') or {})
+        S = int(se.get('sharpness', 5))
+        pst = int((sword.get('attributes') or {}).get('pct_sat_thuong', 0))
+        unb = int(se.get('unbreaking', 4))
+        fire = int(se.get('fire_aspect', 0))
+        q = g + lv / maxn                       # 1 .. 7
+        r = rar or ['&9✦ Rare', '&9✦ Rare', '&5✦ Epic', '&5✦ Epic', '&6✦ Epic'][lv]
+        fl = lambda w: VK_FLAVOR[w][min(7, int(q))]
+        common = dict(set_id=sid, tag=title, title=title, lv=lv, base=mat(lv), frame='', rarity=r, maxn=maxn)
+        st = {'pct_sat_thuong': pst} if pst else None
+        # RÌU: chậm, mạnh, choáng / đập nát / tiếng gầm / rèn quỷ; chuột phải Dậm đất
+        ce = {'Dizzy': 1 if q < 3 else 2, **({'Rekt': 1 if q < 5 else 2} if q >= 2.5 else {}), **({'BattleCry': 1 if q < 6 else 2} if q >= 3.5 else {}),
+              **({'DemonForged': 1 if q < 6.5 else 2} if q >= 4.5 else {}), **({'Blessed': 1} if q >= 5 else {})}
+        dd = 1 if q < 3 else (2 if q < 5 else 3)
+        build(piece='riu', ench={'sharpness': S, 'efficiency': 4 if q < 3 else 5, 'unbreaking': unb, **({'fire_aspect': fire} if fire else {})}, attr=st, ce=ce,
+              dmm={'dam_dat': dd},
+              skills=['Có cơ hội làm kẻ địch &echoáng'] + (['Có cơ hội gây &egấp đôi sát thương'] if 'Rekt' in ce else [])
+                     + (['Khi đánh có cơ hội &eđẩy văng người&7 xung quanh'] if 'BattleCry' in ce else [])
+                     + (['Khi đánh: &egiáp kẻ địch hao bền&7 nhiều hơn'] if 'DemonForged' in ce else [])
+                     + (['Có cơ hội &axoá hiệu ứng xấu&7 trên người'] if 'Blessed' in ce else [])
+                     + [f'Chuột phải: &eDậm đất {roman(dd)}&7, hất tung kẻ địch quanh mình (hồi 12 giây)'], flavor=fl('riu'), **common)
+        # GIÁO: đâm xa, lao tới (giữ chuột phải = đòn lao của game, nên chỉ gắn Tăng tốc thụ động)
+        lg = 1 if q < 3 else (2 if q < 5 else 3)
+        tt = 1 if q < 3.5 else (2 if q < 5.5 else 3)
+        build(piece='giao', ench={'sharpness': S, 'lunge': lg, 'knockback': 1, 'unbreaking': unb, 'looting': int(se.get('looting', 2)),
+                                  **({'fire_aspect': fire} if fire else {})}, attr=st, dmm={'tang_toc': tt},
+              skills=[f'Giữ chuột phải: &elao tới đâm&7 (Lao tới {roman(lg)})', 'Đâm xa hơn kiếm, &eđẩy lùi&7 kẻ địch',
+                      f'Cầm trên tay: chạy nhanh hơn &e{tt * 10}%'], flavor=fl('giao'), **common)
+        # CUNG: lực bắn = sắc bén của kiếm; đóng băng / xuyên giáp / đa tiễn / sét
+        ce = {**({'IceFreeze': 1} if q >= 1.5 else {}), **({'Piercing': 1 if q < 4.5 else (2 if q < 6 else 3)} if q >= 2.5 else {}),
+              **({'MultiArrow': 1 if q < 5 else (2 if q < 6.5 else 3)} if q >= 3.5 else {}), **({'Lightning': 1} if q >= 5.5 else {})}
+        build(piece='cung', ench={'power': S, 'punch': 1 if q < 4 else 2, 'unbreaking': unb, **({'flame': 1} if q >= 2 else {}),
+                                  **({'infinity': 1} if q >= 3 else {})}, ce=ce or None,
+              skills=(['Tên có lửa'] if q >= 2 else []) + (['Không tốn tên'] if q >= 3 else [])
+                     + (['Có cơ hội &blàm chậm&7 kẻ trúng tên'] if 'IceFreeze' in ce else [])
+                     + (['Có cơ hội gây &egấp đôi sát thương'] if 'Piercing' in ce else [])
+                     + (['Có cơ hội bắn &enhiều mũi tên&7 một lúc'] if 'MultiArrow' in ce else [])
+                     + (['Có cơ hội gọi &esét xuống chỗ mũi tên&7 cắm'] if 'Lightning' in ce else []), flavor=fl('cung'), **common)
+        # CHUỲ: nhảy đập (mật độ), xuyên giáp (breach thấp, đỡ quá mạnh PvP), bật gió; chuột phải Đẩy văng
+        dv_ = 1 if q < 3 else (2 if q < 5 else 3)
+        build(piece='chuy', ench={'density': min(5, 1 + int(q * 0.7)), 'unbreaking': unb, **({'breach': 1 if q < 6 else 2} if q >= 3 else {}),
+                                  **({'wind_burst': 1 if q < 4 else (2 if q < 6 else 3)} if q >= 2 else {}), **({'fire_aspect': fire} if fire else {})},
+              attr=st, dmm={'day_vang': dv_},
+              skills=['Nhảy lên rồi đập: &erơi càng cao&7 đánh càng đau'] + (['Đập trúng thì &ebật lên&7 đập tiếp'] if q >= 2 else [])
+                     + (['Đòn đập &exuyên một phần giáp'] if q >= 3 else [])
+                     + [f'Chuột phải: &eĐẩy văng {roman(dv_)}&7 kẻ địch, đập tường thì bị trói (hồi 15 giây)'], flavor=fl('chuy'), **common)
+
 items['vaycahiem'] = {'nguon': 'web', 'nhom': 'nguyen-lieu', 'ten-goi': 'Vảy Cá Hiếm', 'material': 'ANGLER_POTTERY_SHERD', 'amount': 1,
                       'name': '&bVảy Cá Hiếm', 'lore': ['&7Thỉnh thoảng vớt được khi câu cá.', '&8Nguyên liệu Thợ Rèn (set Ngư Phủ): /thoren'],
                       'cong-dung': 'tinh-luyen'}
@@ -688,6 +774,7 @@ with open(P + '.tmp', 'w', encoding='utf-8') as f:   # ghi ra file tạm rồi �
     y.dump(doc, f)
 os.replace(P + '.tmp', P)
 n = sum(1 for k in items if k.split('_')[0] in ('ta', 'tm', 'np', 'dh', 'cb', 'cc', 'ht', 'mt', 'dv', 'ul', 'nn', 'ts'))
+print('giữ nguyên (đã sửa trên web):', KEPT)
 print('đã ghi', n, 'món set mới + vaycahiem')
-for k in ['mt_kiem_4', 'dv_ao_3', 'ul_kiem_4', 'nn_cuoc_4', 'ts_kiem_4']:
+for k in ['cb_riu_0', 'ht_giao_3', 'mt_cung_4', 'dv_chuy_3']:
     print(k, items[k]['name'], '|', ' / '.join(items[k]['lore']), '|', dict(items[k]['enchants']), items[k].get('ce-enchants'), items[k].get('dmm-enchants'))

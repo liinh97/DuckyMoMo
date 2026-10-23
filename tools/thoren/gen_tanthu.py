@@ -1,4 +1,5 @@
 # Mũ / Quần / Giày / Kiếm Tân Thủ theo ĐÚNG format áo giáp của chủ server (khung tên, ✦ EQUIPMENT ✦, ◆ dòng, ▸ THUỘC TÍNH, ▸ KỸ NĂNG).
+import os
 from ruamel.yaml import YAML
 import copy
 P = '/data/banghoi-1/plugins/DuckyMoMoCore/thuvien-do.yml'
@@ -23,8 +24,19 @@ FLAVOR = {
     'kiem': ['Lưỡi đá thô, ý chí sắc…', 'Đã biết mùi máu quái…', 'Ánh đồng lóe trong đêm…', 'Thép rèn qua lửa thử…',
              'Mỗi nhát chém một bài học…', 'Quái rơi đồ nhiều hơn hẳn…', 'Kim cương không biết cùn…', 'Một đường quét, ba con ngã…'],
 }
-LOAI = {'mu': 'Armor', 'quan': 'Armor', 'giay': 'Armor', 'kiem': 'Weapon'}
-NOUN = {'mu': 'Mũ', 'quan': 'Quần', 'giay': 'Giày', 'kiem': 'Kiếm'}
+FLAVOR.update({   # 23/10: thêm Rìu, Giáo, Cung, Chuỳ cho mọi set chiến đấu
+    'riu': ['Rìu đá bổ củi…', 'Bổ được cả khúc gỗ lớn…', 'Ánh đồng trên lưỡi rìu…', 'Rìu sắt, tay chắc…', 'Một nhát gãy khiên gỗ…',
+            'Quái nghe tiếng rìu là chạy…', 'Rìu kim cương sáng loá…', 'Bổ đôi cả bộ xương…'],
+    'giao': ['Cây giáo đá của dân làng…', 'Đâm xa hơn kiếm một chút…', 'Mũi đồng nhọn hoắt…', 'Giáo sắt giữ cổng làng…', 'Lao tới nhanh như gió…',
+             'Giữ quái ngoài tầm với…', 'Mũi giáo kim cương…', 'Một đường đâm xuyên ba con…'],
+    'cung': ['Cung gỗ tập bắn…', 'Bắn trúng bia đầu tiên…', 'Dây cung căng hơn…', 'Tên bay thẳng tắp…', 'Hạ quái từ xa…',
+             'Không con nào chạy thoát…', 'Mũi tên biết đường bay…', 'Thần xạ của làng…'],
+    'chuy': ['Chuỳ nặng tay tân binh…', 'Nhảy lên đập thử…', 'Đất rung theo nhát chuỳ…', 'Móp cả mũ sắt…', 'Rơi càng cao đập càng đau…',
+             'Gió nổi khi chuỳ vung…', 'Chuỳ của người gác cổng…', 'Một nhát nát cả đám quái…'],
+})
+LOAI = {'mu': 'Armor', 'quan': 'Armor', 'giay': 'Armor', 'kiem': 'Weapon', 'riu': 'Weapon', 'giao': 'Weapon', 'cung': 'Weapon', 'chuy': 'Weapon'}
+NOUN = {'mu': 'Mũ', 'quan': 'Quần', 'giay': 'Giày', 'kiem': 'Kiếm', 'riu': 'Rìu', 'giao': 'Giáo', 'cung': 'Cung', 'chuy': 'Chuỳ'}
+WEAPON = ('kiem', 'riu', 'giao', 'cung', 'chuy')
 
 # Mức gốc (chủ server 23/10: "tăng set sau chứ đừng giảm set trước" -> trả về như bản đầu; áo giữ thông số gốc của chủ server).
 PROT = [2, 2, 3, 3, 3, 3, 3, 3, 3, 4]
@@ -39,6 +51,20 @@ def spec(piece, lv):
         if lv >= 8: attr['pct_sat_thuong'] = 5 if lv == 8 else 10
         if lv >= 5: skills = {'luot': 1 if lv < 8 else 2}   # phù phép riêng (dmm-enchants): Lướt
         return ench, attr, skills
+    S = [1, 1, 2, 2, 3, 3, 3, 4, 4, 5][lv]   # theo kiếm Tân Thủ
+    if lv >= 8: attr['pct_sat_thuong'] = 5 if lv == 8 else 10
+    if piece == 'riu':
+        ench = {'sharpness': S, 'efficiency': [1, 1, 2, 2, 3, 3, 3, 4, 4, 4][lv], 'unbreaking': UNB[lv]}
+        return ench, attr, ({'dam_dat': 1} if lv >= 5 else {})
+    if piece == 'giao':
+        ench = {'sharpness': S, 'unbreaking': UNB[lv], **({'lunge': 1 if lv < 7 else 2} if lv >= 3 else {}), **({'knockback': 1} if lv >= 6 else {})}
+        return ench, attr, ({'tang_toc': 1} if lv >= 5 else {})
+    if piece == 'cung':
+        ench = {'power': S, 'unbreaking': UNB[lv], **({'punch': 1} if lv >= 6 else {}), **({'flame': 1} if lv >= 8 else {})}
+        return ench, {}, {}
+    if piece == 'chuy':
+        ench = {'density': [1, 1, 1, 2, 2, 2, 3, 3, 3, 3][lv], 'unbreaking': UNB[lv], **({'wind_burst': 1} if lv >= 7 else {})}
+        return ench, attr, ({'day_vang': 1} if lv >= 5 else {})
     ench = {'protection': PROT[lv], 'unbreaking': UNB[lv]}
     if piece == 'mu':
         ench['projectile_protection'] = [1, 1, 2, 2, 2, 3, 3, 3, 3, 3][lv]
@@ -63,6 +89,15 @@ def skill_lines(piece, lv, ench):
     if piece == 'kiem' and lv >= 5: s.append('&7• Chuột phải: &eLướt ' + ('I' if lv < 8 else 'II') + '&7 về phía trước (hồi 4 giây)')
     if piece == 'kiem' and lv >= 5: s.append('&7• Kiếm: quái rơi &enhiều đồ hơn')
     if piece == 'kiem' and lv >= 7: s.append('&7• Kiếm: chém &equét ngang&7 trúng nhiều quái')
+    if piece == 'riu' and lv >= 5: s.append('&7• Chuột phải: &eDậm đất I&7, hất tung quái quanh mình (hồi 12 giây)')
+    if piece == 'riu': s.append('&7• Rìu: đánh chậm mà đau, chặt gỗ nhanh')
+    if piece == 'giao' and lv >= 3: s.append('&7• Giữ chuột phải: &elao tới đâm&7 (Lao tới ' + ('I' if lv < 7 else 'II') + ')')
+    if piece == 'giao' and lv >= 5: s.append('&7• Cầm trên tay: chạy nhanh hơn &e10% &8(Tăng tốc I)')
+    if piece == 'cung' and lv >= 6: s.append('&7• Cung: tên &eđẩy lùi&7 quái')
+    if piece == 'cung' and lv >= 8: s.append('&7• Cung: tên có lửa')
+    if piece == 'chuy': s.append('&7• Nhảy lên rồi đập: &erơi càng cao&7 đánh càng đau')
+    if piece == 'chuy' and lv >= 7: s.append('&7• Đập trúng thì &ebật lên&7 đập tiếp')
+    if piece == 'chuy' and lv >= 5: s.append('&7• Chuột phải: &eĐẩy văng I&7 quái (hồi 15 giây)')
     return s
 
 def stat_lines(attr):
@@ -72,8 +107,15 @@ def stat_lines(attr):
     if attr.get('pct_sat_thuong'): s.append(f"&7• Tăng &a{attr['pct_sat_thuong']}%&7 sát thương")
     return s
 
-made = 0
-for piece in ['mu', 'quan', 'giay', 'kiem']:
+made, kept = 0, []
+SPEAR_MAT = ['WOODEN', 'STONE', 'COPPER', 'IRON', 'IRON', 'IRON', 'DIAMOND', 'DIAMOND', 'DIAMOND', 'DIAMOND']
+def mat(piece, lv):
+    if piece == 'cung': return 'BOW'
+    if piece == 'chuy': return 'MACE'
+    if piece == 'giao': return SPEAR_MAT[lv] + '_SPEAR'
+    if piece == 'riu': return SWORD_MAT[lv] + '_AXE'
+    return (SWORD_MAT if piece == 'kiem' else ARMOR_MAT)[lv] + '_' + {'mu': 'HELMET', 'quan': 'LEGGINGS', 'giay': 'BOOTS', 'kiem': 'SWORD'}[piece]
+for piece in ['mu', 'quan', 'giay', 'kiem', 'riu', 'giao', 'cung', 'chuy']:
     for lv in range(10):
         ao = items[AO[lv]]
         name = str(ao['name']).replace('Giáp', NOUN[piece], 1)
@@ -101,8 +143,8 @@ for piece in ['mu', 'quan', 'giay', 'kiem']:
         if lv < 8:   # cấp 8, 9 giữ thanh "Loading" như áo
             tail = ['&7&o' + FLAVOR[piece][lv]]
         lore += tail
-        e = {'nguon': 'web', 'nhom': 'vu-khi' if piece == 'kiem' else 'giap', 'ten-goi': f'{NOUN[piece]} tân thủ +{lv}',
-             'material': (SWORD_MAT if piece == 'kiem' else ARMOR_MAT)[lv] + '_' + {'mu': 'HELMET', 'quan': 'LEGGINGS', 'giay': 'BOOTS', 'kiem': 'SWORD'}[piece],
+        e = {'nguon': 'web', 'nhom': 'vu-khi' if piece in WEAPON else 'giap', 'ten-goi': f'{NOUN[piece]} tân thủ +{lv}',
+             'material': mat(piece, lv),
              'amount': 1, 'name': name, 'lore': lore, 'enchants': ench}
         if attr: e['attributes'] = attr
         if dmm: e['dmm-enchants'] = dmm
@@ -110,9 +152,15 @@ for piece in ['mu', 'quan', 'giay', 'kiem']:
         e['hide-stats'] = True
         e['bo'] = ['Tân thủ', 'Đồ set']
         e['nguoi-luu'] = 'Claude (Thợ Rèn)'
+        old = items.get(f'tt_{piece}_{lv}')
+        if old is not None and str(old.get('nguoi-luu', '')) != 'Claude (Thợ Rèn)':
+            kept.append(f'tt_{piece}_{lv}')   # chủ server đã sửa trên web: không ghi đè
+            continue
         items[f'tt_{piece}_{lv}'] = e
         made += 1
-y.dump(doc, open(P, 'w', encoding='utf-8'))
-print('đã ghi', made)
-for k in ['tt_mu_0', 'tt_kiem_5', 'tt_giay_9']:
+with open(P + '.tmp', 'w', encoding='utf-8') as f:   # file tạm rồi đổi tên
+    y.dump(doc, f)
+os.replace(P + '.tmp', P)
+print('đã ghi', made, '| giữ nguyên (đã sửa trên web):', kept)
+for k in ['tt_riu_5', 'tt_giao_9', 'tt_chuy_7']:
     print(k, items[k]['name'], '|', ' / '.join(items[k]['lore']))

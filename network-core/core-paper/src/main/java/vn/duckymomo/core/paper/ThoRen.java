@@ -660,17 +660,24 @@ final class ThoRen implements Listener {
                 .desc(set.desc().isBlank() ? "Rê chuột vào từng món để xem đồ và nguyên liệu." : set.desc(),
                         "Nâng +N cần món cùng loại +N-1 (bị lấy đi). Không bao giờ thất bại.")
                 .apply(new ItemStack(Material.ANVIL)));
-        // hàng trên: món nguyên bản (mô tả màu gốc); hàng dưới: nút Rèn ngay dưới từng món (chủ server 23/10 chốt 2 hàng)
-        for (Piece piece : set.pieces()) {
-            ItemStack it = lib.build(piece.ids().get(lv), 1);
-            m.add(it != null ? it : Tip.of("&c" + piece.ids().get(lv)).desc("Chưa có trong Thư viện đồ, báo admin.").apply(new ItemStack(Material.BARRIER)));
-        }
-        m.row();
-        for (Piece piece : set.pieces()) {
-            m.add(forgeButton(p, set, piece, lv), pl -> {
-                upgrade(pl, set, piece, lv);
-                setMenu(pl, set, back, lv);
-            });
+        // hàng trên: món nguyên bản (mô tả màu gốc); hàng dưới: nút Rèn ngay dưới từng món (chủ server 23/10 chốt 2 hàng).
+        // Set có hơn 7 món (giáp + nhiều loại vũ khí, 23/10): hai khối, giáp (4 món + nút) rồi vũ khí (+ nút), mỗi hàng tối đa 7 ô.
+        List<Piece> all = set.pieces();
+        List<List<Piece>> blocks = all.size() <= 7 ? List.of(all)
+                : List.of(all.subList(0, Math.min(4, all.size())), all.subList(Math.min(4, all.size()), all.size()));
+        for (List<Piece> block : blocks) {
+            for (Piece piece : block) {
+                ItemStack it = lib.build(piece.ids().get(lv), 1);
+                m.add(it != null ? it : Tip.of("&c" + piece.ids().get(lv)).desc("Chưa có trong Thư viện đồ, báo admin.").apply(new ItemStack(Material.BARRIER)));
+            }
+            m.row();
+            for (Piece piece : block) {
+                m.add(forgeButton(p, set, piece, lv), pl -> {
+                    upgrade(pl, set, piece, lv);
+                    setMenu(pl, set, back, lv);
+                });
+            }
+            m.row();
         }
         if (lv > 0) {
             m.bar(Tip.of("&e◀ &fCấp +" + (lv - 1)).click("Bấm để xem").apply(new ItemStack(Material.ARROW)), pl -> setMenu(pl, set, back, lv - 1));

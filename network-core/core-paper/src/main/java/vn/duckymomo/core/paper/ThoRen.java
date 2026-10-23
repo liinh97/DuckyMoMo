@@ -504,15 +504,36 @@ final class ThoRen implements Listener {
     }
 
     private void setMenu(Player p, SetDef set, boolean back) {
-        InfoMenu m = InfoMenu.of("&6⚒ Thợ Rèn &8· &f" + set.name()).accent(Material.ORANGE_STAINED_GLASS_PANE);
-        m.top(intro());
+        int lv = set.max();   // mở ở trang cấp thấp nhất người này còn phải rèn
         for (Piece piece : set.pieces()) {
-            m.add(pieceItem(p, set, piece), pl -> {
-                upgrade(pl, set, piece);
-                setMenu(pl, set, back);
+            lv = Math.min(lv, Math.min(set.max(), owned(p, piece) + 1));
+        }
+        setMenu(p, set, back, lv);
+    }
+
+    /**
+     * Menu một set, MỖI CẤP MỘT TRANG (chủ server 23/10): hiện chính các món thật của set ở cấp đó (đủ tên, phù phép, mô tả) để người chơi
+     * so với đồ đang có, cuối mô tả ghi điều kiện + nguyên liệu; ◀ ▶ chuyển cấp. Bấm = rèn đúng món cấp đó.
+     */
+    private void setMenu(Player p, SetDef set, boolean back, int level) {
+        int lv = Math.max(0, Math.min(set.max(), level));
+        InfoMenu m = InfoMenu.of("&6⚒ Rèn " + set.name() + " &8· &e+" + lv + " &8/ +" + set.max()).accent(Material.ORANGE_STAINED_GLASS_PANE);
+        m.top(Tip.of("&6⚒ &fRèn " + set.name() + " &e+" + lv).accent("&6")
+                .desc(set.desc().isBlank() ? "Rê chuột vào từng món để xem đồ và nguyên liệu." : set.desc(),
+                        "Nâng +N cần món cùng loại +N-1 (bị lấy đi). Không bao giờ thất bại.")
+                .apply(new ItemStack(Material.ANVIL)));
+        for (Piece piece : set.pieces()) {
+            m.add(pieceItem(p, set, piece, lv), pl -> {
+                upgrade(pl, set, piece, lv);
+                setMenu(pl, set, back, lv);
             });
         }
-        m.add(bonusItem(p, set));
+        if (lv > 0) {
+            m.bar(Tip.of("&e◀ &fCấp +" + (lv - 1)).click("Bấm để xem").apply(new ItemStack(Material.ARROW)), pl -> setMenu(pl, set, back, lv - 1));
+        }
+        if (lv < set.max()) {
+            m.bar(Tip.of("&fCấp +" + (lv + 1) + " &e▶").click("Bấm để xem").apply(new ItemStack(Material.SPECTRAL_ARROW)), pl -> setMenu(pl, set, back, lv + 1));
+        }
         if (back) {
             m.back(this::menu);
         }
@@ -541,50 +562,39 @@ final class ThoRen implements Listener {
         return false;
     }
 
-    private ItemStack pieceItem(Player p, SetDef set, Piece piece) {
+    private ItemStack pieceItem(Player p, SetDef set, Piece piece, int lv) {
+        ItemStack it = lib.build(piece.ids().get(lv), 1);
+        if (it == null) {
+            return Tip.of("&c" + piece.ids().get(lv)).desc("Chưa có trong Thư viện đồ, báo admin.").apply(new ItemStack(Material.BARRIER));
+        }
         int cur = owned(p, piece);
-        int next = cur + 1;
-        if (next > set.max()) {
-            ItemStack it = lib.build(piece.ids().get(set.max()), 1);
-            return Tip.of("&a✔ " + piece.name() + " " + set.name() + " &e+" + set.max()).accent("&a").desc("Đã tối đa.")
-                    .apply(it == null ? new ItemStack(Material.BARRIER) : new ItemStack(it.getType()));
-        }
-        ItemStack preview = lib.build(piece.ids().get(next), 1);
-        String prev = prevId(set, piece, next);
-        Tip t = Tip.of("&f" + piece.name() + " " + set.name() + " &e+" + next).accent("&e")
-                .desc(cur >= 0 ? "Nâng từ +" + cur + " lên +" + next + "." : prev != null ? "Nâng từ set trước." : "Rèn mới từ nguyên liệu.").line();
-        boolean ok = true;
-        if (prev != null) {
-            boolean has = hasItem(p, prev);
-            ok = has;
-            t.check(has, label(prev) + " &8(bị lấy đi)");
-        }
-        for (Map.Entry<String, Object> e : cost(set, piece, next).entrySet()) {
-            int need = num(e.getValue()).intValue();
-            long have = have(p, e.getKey());
-            boolean enough = have >= need;
-            ok &= enough;
-            t.check(enough, label(e.getKey(), need) + " &8(" + fmt(have) + ")");
-        }
-        if (ok) {
-            t.click("Bấm để " + (cur < 0 ? "rèn" : "nâng cấp"));
+        List<String> add = new ArrayList<>();
+        add.add("");
+        add.add("&6&l⚒ RÈN &e" + piece.name() + " " + set.name() + " +" + lv);
+        if (cur >= lv) {
+            add.add("&a✔ Bạn đã có " + (cur == lv ? "món này" : "cấp cao hơn (+" + cur + ")"));
         } else {
-            t.deny("Chưa đủ nguyên liệu");
+            boolean ok = true;
+            String prev = prevId(set, piece, lv);
+            if (prev != null) {
+                boolean has = hasItem(p, prev);
+                ok = has;
+                add.add((has ? "&a✔ &7" : "&c✘ &7") + label(prev) + " &8(bị lấy đi)");
+            }
+            for (Map.Entry<String, Object> e : cost(set, piece, lv).entrySet()) {
+                int need = num(e.getValue()).intValue();
+                long have = have(p, e.getKey());
+                ok &= have >= need;
+                add.add((have >= need ? "&a✔ &7" : "&c✘ &7") + label(e.getKey(), need) + " &8(" + fmt(have) + ")");
+            }
+            add.add(ok ? "&e➜ Bấm để rèn" : "&c✘ Chưa đủ điều kiện");
         }
-        ItemStack it = t.apply(new ItemStack(preview == null ? Material.BARRIER : preview.getType()));
-        if (ok) {
-            it.editMeta(meta -> meta.setEnchantmentGlintOverride(true));
-        }
+        it.editMeta(meta -> {
+            List<Component> lore = meta.lore() == null ? new ArrayList<>() : new ArrayList<>(meta.lore());
+            add.forEach(l -> lore.add(c(l)));
+            meta.lore(lore);
+        });
         return it;
-    }
-
-    private ItemStack bonusItem(Player p, SetDef set) {
-        Tip t = Tip.of("&d✦ &fHiệu ứng bộ " + set.name()).accent("&d").desc("Tính theo số món giáp đang mặc có cấp từ mức đó trở lên.").line();
-        Bonus cur = best(p, set);
-        for (Bonus b : set.bonus()) {
-            t.check(b == cur, "Từ +" + b.from() + ", " + b.pieces() + " món: " + bonusText(b));
-        }
-        return t.apply(new ItemStack(set.icon()));
     }
 
     private Map<String, Object> cost(SetDef set, Piece piece, int level) {
@@ -638,10 +648,13 @@ final class ThoRen implements Listener {
         p.getInventory().setStorageContents(inv);
     }
 
-    private void upgrade(Player p, SetDef set, Piece piece) {
+    private void upgrade(Player p, SetDef set, Piece piece, int next) {
         int cur = owned(p, piece);
-        int next = cur + 1;
         if (next > set.max()) {
+            return;
+        }
+        if (cur >= next) {
+            p.sendMessage(c("&7Bạn đã có " + piece.name() + " " + set.name() + " +" + cur + "."));
             return;
         }
         Map<String, Object> cost = cost(set, piece, next);

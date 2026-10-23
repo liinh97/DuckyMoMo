@@ -191,6 +191,29 @@ public final class SkinWardrobe {
 
     // ---------------------------------------------------------------- giới hạn, người chơi
 
+    /** Quyền đổi skin (23/10, chủ server): chỉ rank được bật "Được đổi skin" (skinsrestorer.player, trang Role & rank) mới thêm / mặc skin. */
+    static final String CHANGE = "skinsrestorer.player";
+    static final String NO_CHANGE = "Rank của bạn chưa được đổi skin. Lên rank có quyền đổi skin rồi quay lại nhé.";
+
+    boolean canChange(Player p) {
+        return p.hasPermission(CHANGE) || p.hasPermission("duckymomo.tuskin.admin");
+    }
+
+    boolean canChange(UUID uuid) {
+        Optional<Player> online = proxy.getPlayer(uuid);
+        if (online.isPresent()) {
+            return canChange(online.get());
+        }
+        try {
+            CachedPermissionData d = LuckPermsProvider.get().getUserManager().loadUser(uuid).get(5, TimeUnit.SECONDS)
+                    .getCachedData().getPermissionData();
+            return d.checkPermission(CHANGE).asBoolean() || d.checkPermission("duckymomo.tuskin.admin").asBoolean();
+        } catch (Exception ex) {
+            log.warn("Tủ skin: không đọc được quyền của {}: {}", uuid, ex.getMessage());
+            return false;
+        }
+    }
+
     int limit(Player p) {
         if (p.hasPermission("duckymomo.tuskin.admin")) {
             return MAX;
@@ -451,7 +474,15 @@ public final class SkinWardrobe {
             switch (sub) {
                 case "", "ds", "xem" -> async(() -> show(p));
                 case "luu" -> async(() -> reply(p, saveCurrent(p, join(a, 1))));
-                case "them" -> {
+                case "them", "mac" -> {
+                    if (!canChange(p)) {
+                        p.sendMessage(c(P + "&c" + NO_CHANGE));
+                        return;
+                    }
+                    if (sub.equals("mac")) {
+                        async(() -> reply(p, a.length < 2 ? Res.fail("Cách dùng: /tuskin mac <số ô>") : wearSlot(p.getUsername(), p.getUniqueId(), num(a[1]))));
+                        return;
+                    }
                     if (a.length < 2) {
                         p.sendMessage(c(P + "&7Cách dùng: &f/tuskin them <link ảnh|tên bản quyền> [tên gợi nhớ]"));
                         return;
@@ -459,7 +490,6 @@ public final class SkinWardrobe {
                     p.sendMessage(c(P + "&7Đang tạo skin, chờ vài giây…"));
                     async(() -> reply(p, add(p.getUsername(), p.getUniqueId(), a[1], join(a, 2))));
                 }
-                case "mac" -> async(() -> reply(p, a.length < 2 ? Res.fail("Cách dùng: /tuskin mac <số ô>") : wearSlot(p.getUsername(), p.getUniqueId(), num(a[1]))));
                 case "xoa" -> async(() -> reply(p, a.length < 2 ? Res.fail("Cách dùng: /tuskin xoa <số ô>") : remove(p.getUsername(), num(a[1]))));
                 default -> p.sendMessage(c(P + "&7/tuskin · /tuskin them <link|tên> [tên] · /tuskin luu [tên] · /tuskin mac <số> · /tuskin xoa <số>"));
             }
@@ -578,6 +608,8 @@ public final class SkinWardrobe {
         Res r;
         if (uuid == null && !viec.equals("xoa")) {
             r = Res.fail("Tài khoản điện thoại (tên có dấu chấm) cần đang ở trong server mới đổi skin trên web được.");
+        } else if ((viec.equals("them") || viec.equals("mac")) && !canChange(uuid)) {
+            r = Res.fail(NO_CHANGE);
         } else {
             int so = b.has("so") ? b.get("so").getAsInt() : -1;
             r = switch (viec) {

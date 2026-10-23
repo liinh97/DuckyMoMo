@@ -323,6 +323,7 @@ chapters:
     &1/changepassword <cũ> <mới>
   - |-
     &6SKIN & TỦ SKIN
+    &0Vào game tự có skin theo tên tài khoản. &6Đổi skin cần rank có quyền&0 (Hào Kiệt, rank ủng hộ…).
     &1/skin <tên> &0skin tài khoản bản quyền.
     &1/skin url <link> &0skin từ ảnh PNG.
     &1/tuskin &0tủ skin, bấm [Mặc] để đổi.

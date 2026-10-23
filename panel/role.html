@@ -102,8 +102,9 @@
 <script>
 const $ = (id) => document.getElementById(id);
 const NAMES = { default: "Dân (mặc định)", builder: "Builder", helper: "Helper", mod: "Mod", quanly: "Manager", admin: "Admin",
-  namtuoc: "Nam Tước", tutuoc: "Tử Tước", batuoc: "Bá Tước", hautuoc: "Hầu Tước", congtuoc: "Công Tước" };
-const KIND = { staff: "Role chức vụ", donate: "Rank donate", default: "Nhóm mặc định" };
+  namtuoc: "Nam Tước", tutuoc: "Tử Tước", batuoc: "Bá Tước", hautuoc: "Hầu Tước", congtuoc: "Công Tước",
+  dan: "Dân", luongdan: "Lương Dân", haokiet: "Hào Kiệt" };
+const KIND = { staff: "Role chức vụ", donate: "Rank donate", default: "Nhóm mặc định", play: "Danh phận" };
 const name = (g) => NAMES[g] || g;
 let data = null, sel = decodeURIComponent(location.hash.slice(1)) || "", server = "global", filter = "", onlyOn = false;
 const esc = (s) => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
@@ -112,7 +113,7 @@ const prefixText = (g) => (g.prefix || "").trim() || "&7(không prefix)";
 // người đang xem làm được gì (staff đăng nhập bằng tài khoản game bị giới hạn; máy chủ vẫn kiểm tra lại)
 // rq: {nhóm: {nguoi, quyen}} do máy chủ tính (role chức vụ cấp dưới mình, rank theo quyền riêng); null = toàn quyền
 let rq = null;
-const canMembers = (g) => g.kind !== "default" && (!rq || !!(rq[g.name] || {}).nguoi);
+const canMembers = (g) => g.kind !== "default" && g.kind !== "play" && (!rq || !!(rq[g.name] || {}).nguoi);   // Danh phận: lên bậc tự động
 const canPerms = (g) => !rq || !!(rq[g.name] || {}).quyen;
 const isFull = () => !rq;
 const USER = "@nguoi";   // mục "Quyền riêng từng người" (chỉ tài khoản toàn quyền)
@@ -127,9 +128,9 @@ function render() {
 }
 function renderList() {
   let h = "";
-  for (const [kind, title] of [["staff", "Role chức vụ"], ["donate", "Rank donate"]]) {
+  for (const [kind, title] of [["staff", "Role chức vụ"], ["play", "Danh phận (lên bậc tự động)"], ["donate", "Rank donate"]]) {
     h += `<div class="sec">${title}</div>`;
-    const gs = visible().filter(g => kind === "donate" ? g.kind === "donate" : g.kind !== "donate");
+    const gs = visible().filter(g => kind === "staff" ? (g.kind === "staff" || g.kind === "default") : g.kind === kind);
     if (!gs.length) { h = h.slice(0, h.lastIndexOf('<div class="sec">')); continue; }
     for (const g of gs) {
       const own = g.perms.filter(p => p.value).length;
@@ -187,6 +188,7 @@ function renderDetail() {
   } else {
     h += g.members.length ? `<div class="members">${g.members.map(m => `<span class="mem"><b>${esc(m.name)}</b>${expiry(m)}${m.server !== "global" ? `<span class="exp">chỉ ${esc(m.server)}</span>` : ""}${cm ? `<button class="x" title="Gỡ ${esc(m.name)} khỏi ${esc(name(g.name))}" data-rm="${esc(m.name)}">×</button>` : ""}</span>`).join("")}</div>`
       : `<p class="empty">Chưa có ai giữ ${isDonate ? "rank" : "role"} này.</p>`;
+    if (g.kind === "play") h += `<p class="hint">Bậc Danh phận do người chơi tự lên bằng <code>/danhphan</code> (đủ giờ chơi, cấp…), không thêm tay ở đây. Trang này chỉ sửa QUYỀN của bậc.</p>`;
     if (cm) h += `<div class="addm${isDonate ? "" : " no-months"}"><input id="player" placeholder="Tên người chơi (Bedrock có dấu chấm đầu, vd .griim7833)" autocomplete="off">
       ${isDonate ? `<select id="months">${[1, 2, 3, 6, 12].map(n => `<option value="${n}">${n} tháng</option>`).join("")}</select>` : ""}
       <button class="primary" id="give">Thêm vào ${esc(name(g.name))}</button></div>

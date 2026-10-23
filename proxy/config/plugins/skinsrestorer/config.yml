@@ -82,7 +82,8 @@ commands:
     # When enabled, SkinsRestorer grants this permission to all players.
     # When disabled, grant the permission through your permission plugin.
     # SkinsRestorer ignores this option on platforms that support default permissions.
-    forceDefaultPermissions: true
+    # 23/10 chủ server: chỉ rank được bật quyền skinsrestorer.player ("Được đổi skin", trang Role & rank) mới đổi skin.
+    forceDefaultPermissions: false
     # The cooldown, in seconds, between skin changes.
     # A value of 0 disables the cooldown.
     # Skin errors use commands.skinErrorCooldown instead.

@@ -138,6 +138,7 @@ STATIC = {"/ui.css": ("text/css; charset=utf-8", (Path(__file__).parent / "ui.cs
 STAFF_GROUPS = ["admin", "quanly", "mod", "helper", "builder", "default"]
 STAFF_CHAIN = ["admin", "quanly", "mod", "helper"]   # role chức vụ theo bậc: mỗi người một role (builder riêng, giữ được song song)
 DONATE_GROUPS = ["congtuoc", "hautuoc", "batuoc", "tutuoc", "namtuoc"]
+PLAY_GROUPS = ["haokiet", "luongdan", "dan"]   # Danh phận (lên bậc tự động bằng /danhphan): trang Role chỉ sửa QUYỀN, không thêm/gỡ người
 PLAYER_RE = re.compile(r"^\.?[A-Za-z0-9_]{1,17}$")
 PERM_RE = re.compile(r"^[A-Za-z0-9_.*-]{1,120}$")
 SERVER_CTX = ["global", "lobby", "banghoi-1", "practice-1", "sangtao-1"]
@@ -1023,9 +1024,9 @@ def roles_json():
     finally:
         con.close()
     out = []
-    for g in STAFF_GROUPS + DONATE_GROUPS:
+    for g in STAFF_GROUPS + PLAY_GROUPS + DONATE_GROUPS:
         m = meta.get(g, {})
-        out.append({"name": g, "kind": "default" if g == "default" else ("donate" if g in DONATE_GROUPS else "staff"),
+        out.append({"name": g, "kind": "default" if g == "default" else ("donate" if g in DONATE_GROUPS else "play" if g in PLAY_GROUPS else "staff"),
                     "prefix": m.get("prefix", ""), "prefixes": m.get("prefixes", []), "weight": m.get("weight", 0), "display": m.get("display", {"quanly": "Manager"}.get(g, g)),
                     "members": sorted(members.get(g, []), key=lambda x: x["name"].lower()),
                     "count": total if g == "default" else len(members.get(g, [])),
@@ -1212,7 +1213,7 @@ def role_action(data, actor_weight=None):
         return apply_role_preset(group)
     if act in ("perm_set", "perm_unset", "perm_deny"):
         node, server = str(data.get("node", "")).strip(), data.get("server") or "global"
-        if group not in STAFF_GROUPS + DONATE_GROUPS:
+        if group not in STAFF_GROUPS + DONATE_GROUPS + PLAY_GROUPS:
             raise ValueError("Role không hợp lệ")
         if not PERM_RE.match(node) or node.startswith("group."):
             raise ValueError("Tên quyền không hợp lệ (vd essentials.fly)")
@@ -3413,6 +3414,8 @@ class Handler(BaseHTTPRequestHandler):
             return True, True
         if group in DONATE_GROUPS:
             return self.can("rank"), self.can("rank-quyen")
+        if group in PLAY_GROUPS:
+            return False, self.can("role-quyen")
         if group not in STAFF_GROUPS or group_weights().get(group, 0) >= self.who["weight"]:
             return False, False
         return self.can("role") and group != "default", self.can("role-quyen")
@@ -3504,7 +3507,7 @@ class Handler(BaseHTTPRequestHandler):
                                         # role/rank nào được cấp/gỡ người, sửa quyền (None = tất cả); trang Role ẩn phần còn lại
                                         "role_quyen": None if not acc or acc["toan_quyen"] else
                                         {g: {"nguoi": self.role_rights(g)[0], "quyen": self.role_rights(g)[1]}
-                                         for g in STAFF_GROUPS + DONATE_GROUPS}})
+                                         for g in STAFF_GROUPS + PLAY_GROUPS + DONATE_GROUPS}})
         if path in ("/", "/hoatdong", "/camnang", "/huongdan", "/role", "/thuvien", "/boss", "/donate", "/hethong", "/media"):
             dozzle = DOZZLE_PROXY_URL if self.headers.get("X-Forwarded-Prefix") else DOZZLE_URL
             page = {"/": INDEX_HTML, "/hoatdong": ACTIVITY_HTML, "/camnang": CAMNANG_HTML, "/huongdan": HUONGDAN_HTML, "/role": ROLE_HTML,

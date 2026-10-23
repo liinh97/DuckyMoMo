@@ -1,6 +1,7 @@
 # Sinh các set Thợ Rèn (Tinh Anh, Thợ Mỏ, Ngư Phủ, Du Hiệp) vào Thư viện đồ theo ĐÚNG khung áo giáp Tân Thủ của chủ server.
 # Chạy trong container panel (ruamel). Thang phù phép: memory set-do-trade (chừa đường cho set sau).
 import os
+import re
 from ruamel.yaml import YAML
 P = '/data/banghoi-1/plugins/DuckyMoMoCore/thuvien-do.yml'
 y = YAML(); y.preserve_quotes = True; y.width = 4096
@@ -21,7 +22,7 @@ def material(piece, base):
 
 
 def roman(n):
-    return ['', 'I', 'II', 'III', 'IV', 'V', 'VI'][n]
+    return ['', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII'][n]
 
 
 RAR_VI = {'&b✦ Uncommon': ('&b', 'Uncommon'), '&9✦ Rare': ('&9', 'Rare'), '&5✦ Epic': ('&5', 'Epic'), '&6✦ Epic': ('&6', 'Epic'),
@@ -162,11 +163,54 @@ def style(set_id, piece, lv, maxn, rarity, attr, skills, flavor):
     return name, lore
 
 
+# 23/10 chủ server: "Hành quyết không thấy mô tả ở dưới là gì" -> mỗi dòng kỹ năng ghi kèm tên phù phép (đúng tên dòng trên đồ) + cấp.
+CE_VI = {'Glowing': 'Phát sáng', 'Implants': 'Cấy ghép', 'Commander': 'Chỉ huy', 'Crouch': 'Thủ thế', 'Maneuver': 'Né đòn',
+         'Enlightened': 'Giác ngộ', 'Savior': 'Cứu tinh', 'SystemReboot': 'Khởi động lại', 'Valor': 'Dũng cảm', 'StormCaller': 'Gọi bão',
+         'Nursery': 'Dưỡng thương', 'OverLoad': 'Quá tải', 'HellForged': 'Rèn ngục', 'Gears': 'Bánh răng', 'Springs': 'Lò xo',
+         'Rocket': 'Tên lửa', 'Adrenaline': 'Adrenaline', 'Vampire': 'Ma cà rồng', 'Rage': 'Cuồng nộ', 'DoubleDamage': 'Sát thương kép',
+         'LifeSteal': 'Hút máu', 'Execute': 'Hành quyết', 'Angel': 'Thiên thần', 'BurnShield': 'Khiên lửa', 'Haste': 'Nhanh tay',
+         'AutoSmelt': 'Tự nung', 'Telepathy': 'Thần giao', 'Mermaid': 'Người cá', 'IceFreeze': 'Đóng băng', 'Piercing': 'Xuyên giáp',
+         'SlowMo': 'Chậm lại', 'Molten': 'Dung nham', 'SmokeBomb': 'Bom khói', 'Ninja': 'Ninja', 'AntiGravity': 'Phản trọng lực',
+         'Wither': 'Khô héo', 'Blindness': 'Mù loà', 'Tiller': 'Cày ruộng', 'Harvester': 'Thu hoạch', 'Planter': 'Gieo hạt',
+         'GreenThumb': 'Bàn tay xanh', 'Cactus': 'Xương rồng', 'Inquisitive': 'Tò mò', 'Headless': 'Chặt đầu'}
+DMM_VI = {'tang_toc': 'Tăng tốc'}
+# cụm chữ trong dòng kỹ năng (bỏ mã màu, chữ thường) -> phù phép; lấy phù phép đầu tiên món đó thật sự có
+SKILL_KEY = [('đồng minh ở gần được đào nhanh', ['Commander']), ('đồng minh ở gần được hồi máu', ['Angel']), ('nhìn rõ', ['Glowing']),
+             ('không đói', ['Implants']), ('khi ngồi', ['Crouch']), ('né hoàn toàn', ['Maneuver']), ('hồi máu khi đang bị đánh', ['Enlightened']),
+             ('giảm nửa', ['Savior']), ('hồi đầy máu', ['SystemReboot']), ('gọi sét', ['StormCaller']), ('hồi máu khi đi bộ', ['Nursery']),
+             ('thêm máu tối đa', ['OverLoad']), ('tự sửa đồ', ['HellForged']), ('chạy nhanh và thêm máu', ['Ninja']),
+             ('cầm trên tay: chạy nhanh', ['tang_toc']), ('cầm tay: chạy nhanh', ['tang_toc']), ('chạy nhanh hơn', ['Gears']),
+             ('rất cao', ['AntiGravity']), ('nhảy cao hơn', ['Springs']), ('bật văng ra sau', ['Rocket']), ('tăng tốc chạy', ['Adrenaline']),
+             ('hút máu khi đánh', ['Vampire']), ('đánh liên tiếp', ['Rage']), ('gấp đôi sát thương', ['DoubleDamage', 'Piercing']),
+             ('hút máu kẻ địch', ['LifeSteal']), ('tăng sức mạnh', ['Execute']), ('miễn sát thương lửa', ['BurnShield']),
+             ('đào nhanh hơn', ['Haste']), ('tự nung', ['AutoSmelt']), ('bay thẳng vào túi', ['Telepathy']), ('thở dưới nước', ['Mermaid']),
+             ('làm chậm', ['SlowMo', 'IceFreeze']), ('đốt cháy', ['Molten']), ('bom khói', ['SmokeBomb']), ('khô héo', ['Wither']),
+             ('địch mù', ['Blindness']), ('cuốc luôn', ['Tiller']), ('thu hoạch luôn', ['Harvester']), ('tự gieo hạt', ['Planter']),
+             ('lớn ngay', ['GreenThumb']), ('phản sát thương', ['Cactus']), ('gấp đôi kinh nghiệm', ['Inquisitive']), ('rơi đầu', ['Headless'])]
+
+
+def name_skills(skills, ce, dmm):
+    have = {**(ce or {}), **(dmm or {})}
+    out = []
+    for x in skills:
+        plain = re.sub('&.', '', x).lower()
+        for phrase, keys in SKILL_KEY:
+            if phrase in plain:
+                k = next((k for k in keys if have.get(k)), None)
+                vi = CE_VI.get(k) or DMM_VI.get(k) if k else None
+                if vi and '(' + vi.lower() not in plain:   # đã ghi (Tên …) thì thôi
+                    x += f' &8({vi} {roman(have[k])})'
+                break
+        out.append(x)
+    return out
+
+
 def build(set_id, tag, title, lv, piece, base, frame, rarity, maxn, ench, attr=None, ce=None, dmm=None, skills=(), flavor=''):
     attr = attr or {}
     skills = [x.replace('Giáp: ', '').replace('Mũ: ', '').replace('Quần: ', '').replace('Giày: ', '').replace('Cần câu: ', '')
               .replace('Cầm trên tay: ', 'Cầm tay: ') for x in skills]
     skills = [x[0].upper() + x[1:] if x and x[0].islower() else x for x in skills]
+    skills = name_skills(skills, ce, dmm)
     name, lore = style(set_id, piece, lv, maxn, rarity, attr, skills, flavor)
     e = {'nguon': 'web', 'nhom': 'giap' if LOAI[piece] == 'Armor' else ('vu-khi' if LOAI[piece] == 'Weapon' else 'cong-cu'),
          'ten-goi': f'{NOUN[piece]} {title} +{lv}', 'material': material(piece, base), 'amount': 1,

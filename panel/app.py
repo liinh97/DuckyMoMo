@@ -1632,6 +1632,29 @@ def lib_usage():
     if (hom.get("online-key") or {}).get("item"):
         add(hom["online-key"]["item"], "Vé gacha chơi online")
     add((core.get("tinh-luyen") or {}).get("xu-quai", {}).get("item") or "xuquai", "Xu Quái rơi từ quái")
+    add(((core.get("tinh-luyen") or {}).get("loi-quai") or {}).get("item") or "loiquai", "Lõi Quái rơi từ quái tinh nhuệ")
+    tr = core.get("tho-ren") or {}   # Thợ Rèn (23/10): món set, mảnh ấn, nguyên liệu bảng giá, quầy đổi, rơi dungeon / câu cá
+    for sid, st in (tr.get("sets") or {}).items():
+        for pc in ((st or {}).get("pieces") or {}).values():
+            for i in (pc or {}).get("ids") or []:
+                add(i, f"Thợ Rèn: set {(st or {}).get('name', sid)}")
+            if (pc or {}).get("an"):
+                add(pc["an"], f"Thợ Rèn: mảnh ấn set {(st or {}).get('name', sid)}")
+        for c in (st or {}).get("cost") or []:
+            for k in (c or {}):
+                if k not in ("xu", "an") and not str(k).isupper():
+                    add(k, f"Thợ Rèn: nguyên liệu set {(st or {}).get('name', sid)}")
+    for q in (tr.get("quay") or {}).values():
+        for r in (q or {}).get("recipes") or []:
+            add((r or {}).get("out"), "Thợ Rèn: quầy đổi")
+            for k in ((r or {}).get("cost") or {}):
+                if k != "xu" and not str(k).isupper():
+                    add(k, "Thợ Rèn: nguyên liệu quầy đổi")
+    for d in ((tr.get("dungeon-drops") or {}).get("dungeons") or {}).values():
+        for i in (d or {}).get("items") or []:
+            add(i, "Thợ Rèn: rơi trong dungeon")
+    if (tr.get("fish-drop") or {}).get("item"):
+        add(tr["fish-drop"]["item"], "Thợ Rèn: rơi khi câu cá")
 
     def walk(node, top):
         if isinstance(node, dict):
@@ -1840,6 +1863,30 @@ def _thuvien_action(data, actor=None):
     items = doc.setdefault("items", {})
     if "sach-cam" not in doc:
         doc["sach-cam"] = lib_default_book(doc)   # ghi hẳn luật cũ trước khi sửa món (ô "pvp" của món đã bỏ, luật nằm ở Sách cấm)
+    if action == "rename":
+        new = str(data.get("new_id", "")).strip()
+        if iid not in items:
+            raise ValueError("Không có món này")
+        if not LIB_ID_RE.match(new):
+            raise ValueError("Mã mới không hợp lệ: chỉ chữ thường không dấu, số, dấu _ (tối đa 32)")
+        if new in items:
+            raise ValueError(f"Đã có món mã \"{new}\"")
+        used = lib_usage().get(iid)
+        if used:
+            raise ValueError(f"\"{iid}\" đang dùng ở: {', '.join(used)}. Đổi mã ở đó không tự cập nhật nên chưa cho đổi.")
+        keys = list(items.keys())
+        val = items.pop(iid)
+        items.insert(keys.index(iid), new, val)   # giữ đúng vị trí trong danh sách
+        for pg in (doc.get("sach-cam") or {}).values():
+            do = (pg or {}).get("do") or {}
+            if iid in do:
+                do[new] = do.pop(iid)
+        lib_write(y, doc)
+        try:
+            res = rcon(LIB_SERVER, ["dmm thuvien nap"])[0][1]
+        except Exception as e:
+            res = f"Đã lưu file nhưng chưa nạp được vào server ({e})."
+        return {"ok": True, "message": f"Đã đổi mã \"{iid}\" thành \"{new}\". {res}", "data": thuvien_json()}
     if action == "delete":
         if iid not in items:
             raise ValueError("Không có món này")

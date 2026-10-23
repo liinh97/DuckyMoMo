@@ -240,7 +240,7 @@
     <div class="sec save">
       <h3>6 · Lưu vào thư viện</h3>
       <div class="g-id">
-        <div><label class="f" for="id">Mã <span class="hint">không dấu, dùng trong quà/cửa hàng</span></label><input id="id" placeholder="để trống = tự lấy theo tên" maxlength="32" autocapitalize="none" autocorrect="off" autocomplete="off" spellcheck="false"></div>
+        <div><label class="f" for="id">Mã <span class="hint">không dấu, dùng trong quà/cửa hàng</span> <button type="button" id="rename" class="ghost" hidden style="margin-left:6px;padding:2px 10px;font-size:12px">Đổi mã</button></label><input id="id" placeholder="để trống = tự lấy theo tên" maxlength="32" autocapitalize="none" autocorrect="off" autocomplete="off" spellcheck="false"></div>
         <div><label class="f" for="tengoi">Tên gợi nhớ <span class="hint">chỉ admin thấy</span></label><input id="tengoi" placeholder="Kiếm rồng (quà mốc 30 ngày)" maxlength="60"></div>
       </div>
       <label class="f" for="boIn">Bộ (tag) <span class="hint">để lọc và thêm nhanh cả bộ vào quà / gói quà; một món gắn được nhiều tag</span></label>
@@ -696,7 +696,7 @@ function setEditable(on) {
 }
 function load(it) {
   cur = it; isNew = !it;
-  $("id").value = it ? it.id : ""; $("id").disabled = !!it; if (typeof renderHowto === "function") renderHowto();
+  $("id").value = it ? it.id : ""; $("id").disabled = !!it; $("rename").hidden = !it; $("rename").textContent = "Đổi mã"; if (typeof renderHowto === "function") renderHowto();
   $("tengoi").value = it ? it.ten_goi : ""; $("material").value = it ? it.material : "DIAMOND_SWORD";
   $("amount").value = it ? it.amount : 1; $("name").value = it ? it.name : ""; $("lore").value = it ? (it.lore || []).join("\n") : "";
   $("unbreakable").checked = !!(it && it.unbreakable); $("hide").checked = !!(it && it.hide_enchants);
@@ -945,6 +945,8 @@ $("id").addEventListener("input", () => {
   if (fixed !== v) { const pos = el.selectionStart; el.value = fixed; try { el.setSelectionRange(pos, pos); } catch (e) {} }
   el.classList.remove("bad");
 });
+// Đổi mã món đã lưu (23/10): bấm "Đổi mã" mở khoá ô Mã, sửa rồi bấm Lưu. Chỉ đổi được khi món chưa dùng ở đâu (server kiểm).
+$("rename").onclick = () => { $("id").disabled = false; $("rename").hidden = true; $("id").focus(); $("id").select(); status(null, "Sửa mã rồi bấm Lưu. Món đã phát cho người chơi theo mã cũ sẽ không còn được nhận là món này."); };
 $("save").onclick = async () => {
   if (!$("id").disabled && !$("id").value.trim()) $("id").value = slugMa($("tengoi").value || $("name").value || curMat());
   const id = $("id").value.trim();
@@ -952,6 +954,12 @@ $("save").onclick = async () => {
     status(false, "Ô Mã chưa đúng: chỉ chữ thường không dấu, số, dấu _ (vd kiem_rong).");
     const el = $("id"); el.classList.add("bad"); el.scrollIntoView({ behavior: "smooth", block: "center" }); setTimeout(() => el.focus(), 300);
     return;
+  }
+  if (cur && id !== cur.id) {
+    if (!await ask(`Đổi mã "${cur.id}" thành "${id}"? Món người chơi đang giữ (phát theo mã cũ) sẽ KHÔNG còn được nhận là món này nữa.`, { title: "Đổi mã", ok: "Đổi mã" })) return;
+    const rn = await post({ action: "rename", id: cur.id, new_id: id });
+    if (!rn.ok) return;
+    cur = data.items.find(x => x.id === id) || cur;
   }
   const res = await post({ action: "save", id, is_new: isNew, item: form() });
   if (res.ok) load(data.items.find(x => x.id === id));

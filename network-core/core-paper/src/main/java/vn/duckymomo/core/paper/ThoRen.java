@@ -318,6 +318,10 @@ final class ThoRen implements Listener {
         if (!desc.isEmpty()) {
             t.desc(desc.get(0).replaceAll("&[0-9a-fk-or]", ""));
         }
+        List<String> use = usage(r.out());
+        if (!use.isEmpty()) {
+            t.line().head("Dùng để").items(use);
+        }
         t.line();
         boolean ok = true;
         for (Map.Entry<String, Object> e : r.cost().entrySet()) {
@@ -337,6 +341,38 @@ final class ThoRen implements Listener {
             it.editMeta(meta -> meta.setEnchantmentGlintOverride(true));
         }
         return it;
+    }
+
+    /** Món này dùng vào đâu (23/10, chủ server: "nhìn không biết item này trade ra cái gì"): ghép ra tinh thể nào, rèn set nào cấp mấy. */
+    private List<String> usage(String id) {
+        List<String> out = new ArrayList<>();
+        for (Stall st : stalls.values()) {
+            for (Recipe r : st.recipes()) {
+                if (r.cost().containsKey(id)) {
+                    out.add("Ghép " + lib.name(r.out()) + "&7 ở " + st.name());
+                }
+            }
+        }
+        for (SetDef set : sets.values()) {
+            java.util.Set<String> pieces = new java.util.LinkedHashSet<>();
+            int lo = Integer.MAX_VALUE, hi = -1;
+            for (int lv = 0; lv < set.costs().size(); lv++) {
+                Map<String, Object> raw = set.costs().get(lv);
+                boolean direct = raw.containsKey(id);
+                for (Piece pc : set.pieces()) {
+                    if (direct || raw.containsKey("an") && id.equals(pc.an())) {
+                        pieces.add(pc.name());
+                        lo = Math.min(lo, lv);
+                        hi = Math.max(hi, lv);
+                    }
+                }
+            }
+            if (hi >= 0) {
+                boolean all = pieces.size() == set.pieces().size();
+                out.add("Rèn " + (all ? "" : String.join(", ", pieces) + " ") + set.name() + " &e+" + lo + (hi > lo ? "→+" + hi : ""));
+            }
+        }
+        return out;
     }
 
     private void exchange(Player p, Recipe r) {

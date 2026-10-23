@@ -620,14 +620,14 @@
   "tt": "ok"
  },
  "q8": {
-  "ghi_chu": "Claude tự test cả chương 1 (NPC chưa đặt: mở hội thoại bằng action tạm, bảng chọn bằng số). Già Làng giao việc → hạ 20 quái (chỉ tính đòn đánh thật, /damage không tính) → +450 → Bác Thợ Rèn lấy 16 sắt +450 → đào 24 quặng ra Mảnh Sao Rơi +600 → Người Gác Cổng +450 → Già Làng kết chương +2.250, báo cả server, cấp quyền duckymomo.cotruyen.c1 (điều kiện lên Dân). Tổng +4.200 = đúng Cài đặt. Nhật ký cập nhật mỗi bước, lời thoại tiếng Việt. CẦN BẠN: đặt 3 NPC (/npc create Già Làng, Bác Thợ Rèn, Người Gác Cổng) rồi bấm thử bằng máy thật, cả Bedrock (form).",
-  "luc": 1792655454493,
-  "tt": "ok"
+  "ghi_chu": "23/10 SỬA TRẠNG THÁI 'ok' -> CHỜ: lần test trước chỉ kiểm lời thoại + nhiệm vụ + thưởng (mở hội thoại bằng /bq action vì lúc đó chưa đặt NPC), CHƯA kiểm bước bấm NPC. Khi chủ server đặt NPC thật thì bấm Già Làng không ra gì: BetonQuest 3.2 'citizens \"<tên>\" byName' không nhận NPC (log debug: clicked Npc '[]' no conversation). ĐÃ SỬA: gọi theo ID Citizens (Già Làng 13, Bác Thợ Rèn 14, Người Gác Cổng 15). Đã thấy trong log: chủ server bấm thật Già Làng + Bác Thợ Rèn -> mở hội thoại. CẦN BẠN: bấm Người Gác Cổng, đi hết chương 1 bằng máy thật + Bedrock.\n--- lần trước: Claude tự test cả chương 1 (NPC chưa đặt: mở hội thoại bằng action tạm, bảng chọn bằng số). Già Làng giao việc → hạ 20 quái (chỉ tính đòn đánh thật, /damage không tính) → +450 → Bác Thợ Rèn lấy 16 sắt +450 → đào 24 quặng ra Mảnh Sao Rơi +600 → Người Gác Cổng +450 → Già Làng kết chương +2.250, báo cả server, cấp quyền duckymomo.cotruyen.c1 (điều kiện lên Dân). Tổng +4.200 = đúng Cài đặt. Nhật ký cập nhật mỗi bước, lời thoại tiếng Việt. CẦN BẠN: đặt 3 NPC (/npc create Già Làng, Bác Thợ Rèn, Người Gác Cổng) rồi bấm thử bằng máy thật, cả Bedrock (form).",
+  "luc": 1792752710750,
+  "tt": ""
  },
  "q9": {
-  "ghi_chu": "Claude tự test lời thoại (mở hội thoại bằng /bq action vì bot qua Via chuột phải NPC Citizens không ăn), Cài đặt thưởng lk_thuong 1.500. Lần 1: kể chuyện, hỏi đường → 'cổng chưa mở', gắn tag nghe, nhật ký cập nhật. Lần 2: 'Lại là cháu à?'. Có tag đã qua: kể lại → 'Đã nhận 1500.00' (+1.500 xu, khớp), lần sau chỉ nói câu cảm ơn, không nhận lần 2. CẦN BẠN: chuột phải một lữ khách bằng máy thật xem bảng hội thoại hiện ra.",
-  "luc": 1792638605297,
-  "tt": "ok"
+  "ghi_chu": "23/10 SỬA TRẠNG THÁI 'ok' -> CHỜ: hội thoại lữ khách cũng chỉ test bằng /bq action, chưa bấm NPC thật; khai báo byName cùng lỗi như Già Làng -> đã đổi sang ID Citizens (Thợ Cống Già 4, Người Kéo Xe Tuần Lộc 5, Hiệp Sĩ Lạc Đàn 6, Kỹ Sư Bỏ Trốn 7). CẦN BẠN: chuột phải một lữ khách bằng máy thật.\n--- lần trước: Claude tự test lời thoại (mở hội thoại bằng /bq action vì bot qua Via chuột phải NPC Citizens không ăn), Cài đặt thưởng lk_thuong 1.500. Lần 1: kể chuyện, hỏi đường → 'cổng chưa mở', gắn tag nghe, nhật ký cập nhật. Lần 2: 'Lại là cháu à?'. Có tag đã qua: kể lại → 'Đã nhận 1500.00' (+1.500 xu, khớp), lần sau chỉ nói câu cảm ơn, không nhận lần 2. CẦN BẠN: chuột phải một lữ khách bằng máy thật xem bảng hội thoại hiện ra.",
+  "luc": 1792752710750,
+  "tt": ""
  },
  "r1": {
   "ghi_chu": "Claude test lại: 4 thẻ + Sứ Giả, ✔/✘ đúng giờ chơi và Thăng Cấp của bot.",

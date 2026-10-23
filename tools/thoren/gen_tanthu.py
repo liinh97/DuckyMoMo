@@ -106,9 +106,8 @@ for piece in ['mu', 'quan', 'giay', 'kiem']:
              'amount': 1, 'name': name, 'lore': lore, 'enchants': ench}
         if attr: e['attributes'] = attr
         if dmm: e['dmm-enchants'] = dmm
-        if lv >= 6:
-            e['compact-enchants'] = True
-            e['hide-stats'] = True
+        e['compact-enchants'] = True   # 23/10: mọi cấp gộp phù phép + dòng chỉ số (như Giáp tân thủ +10) cho mô tả thấp, đỡ bị che
+        e['hide-stats'] = True
         e['bo'] = ['Tân thủ', 'Đồ set']
         e['nguoi-luu'] = 'Claude (Thợ Rèn)'
         items[f'tt_{piece}_{lv}'] = e

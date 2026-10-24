@@ -104,8 +104,8 @@ services:
       #   mỗi người chọn 1 nghề; 5.2.6.7 ghi hỗ trợ 26.2). Cấu hình: server/plugins/Jobs/ (sinh bằng tools/jobs/chuyen-ujobs.py).
       SPIGET_RESOURCES: "87610,4216"
       # 24/10: link GitHub (SiegeWar 3.7.0, OldCombatMechanics 2.7.0) BỎ khỏi PLUGINS: sau khi máy khởi động lại, mc-image-helper kiểm tra
-      # GitHub bị ngắt kết nối (PrematureCloseException) -> server không lên. Bản ghim, jar đã nằm sẵn trong data/<server>/plugins;
-      # máy mới thì tải tay: github.com/TownyAdvanced/SiegeWar/releases/download/3.7.0/SiegeWar-3.7.0.jar,
+      # GitHub bị ngắt kết nối (PrematureCloseException) -> server không lên. Bỏ khỏi danh sách thì mc-image-helper XOÁ jar nó từng tải,
+      # nên jar được tải tay (curl) vào data/<server>/plugins; máy mới cũng tải tay: github.com/TownyAdvanced/SiegeWar/releases/download/3.7.0/SiegeWar-3.7.0.jar,
       # github.com/kernitus/BukkitOldCombatMechanics/releases/download/v2.7.0/OldCombatMechanics.jar
       PLUGINS: |
         https://download.geysermc.org/v2/projects/floodgate/versions/latest/builds/latest/downloads/spigot

@@ -51,10 +51,13 @@ services:
         grimac:nKI7MWZj
         simple-voice-chat
       # Ghim link như banghoi: OldCombatMechanics (combat 1.8), EssentialsX bản dev cho 26.2 (chat có role, /spawn)
+      # 24/10: link GitHub (SiegeWar 3.7.0, OldCombatMechanics 2.7.0) BỎ khỏi PLUGINS: sau khi máy khởi động lại, mc-image-helper kiểm tra
+      # GitHub bị ngắt kết nối (PrematureCloseException) -> server không lên. Bản ghim, jar đã nằm sẵn trong data/<server>/plugins;
+      # máy mới thì tải tay: github.com/TownyAdvanced/SiegeWar/releases/download/3.7.0/SiegeWar-3.7.0.jar,
+      # github.com/kernitus/BukkitOldCombatMechanics/releases/download/v2.7.0/OldCombatMechanics.jar
       PLUGINS: |
         https://download.geysermc.org/v2/projects/floodgate/versions/latest/builds/latest/downloads/spigot
         https://cdn.modrinth.com/data/TsLS8Py5/versions/ziIzW16f/SkinsRestorer.jar
-        https://github.com/kernitus/BukkitOldCombatMechanics/releases/download/v2.7.0/OldCombatMechanics.jar
         https://ci.ender.zone/job/EssentialsX/1832/artifact/jars/EssentialsX-2.22.1-dev%2B27-e70bdb8.jar
         https://ci.ender.zone/job/EssentialsX/1832/artifact/jars/EssentialsXChat-2.22.1-dev%2B27-e70bdb8.jar
         https://ci.ender.zone/job/EssentialsX/1832/artifact/jars/EssentialsXSpawn-2.22.1-dev%2B27-e70bdb8.jar

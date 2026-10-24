@@ -103,12 +103,14 @@ services:
       # Spigot (qua Spiget, luôn lấy bản mới nhất): CMILib 87610 (thư viện bắt buộc của Jobs), Jobs Reborn 4216 (nghề, 21/10 thay uJobs:
       #   mỗi người chọn 1 nghề; 5.2.6.7 ghi hỗ trợ 26.2). Cấu hình: server/plugins/Jobs/ (sinh bằng tools/jobs/chuyen-ujobs.py).
       SPIGET_RESOURCES: "87610,4216"
+      # 24/10: link GitHub (SiegeWar 3.7.0, OldCombatMechanics 2.7.0) BỎ khỏi PLUGINS: sau khi máy khởi động lại, mc-image-helper kiểm tra
+      # GitHub bị ngắt kết nối (PrematureCloseException) -> server không lên. Bản ghim, jar đã nằm sẵn trong data/<server>/plugins;
+      # máy mới thì tải tay: github.com/TownyAdvanced/SiegeWar/releases/download/3.7.0/SiegeWar-3.7.0.jar,
+      # github.com/kernitus/BukkitOldCombatMechanics/releases/download/v2.7.0/OldCombatMechanics.jar
       PLUGINS: |
         https://download.geysermc.org/v2/projects/floodgate/versions/latest/builds/latest/downloads/spigot
         https://cdn.modrinth.com/data/TsLS8Py5/versions/ziIzW16f/SkinsRestorer.jar
-        https://github.com/TownyAdvanced/SiegeWar/releases/download/3.7.0/SiegeWar-3.7.0.jar
         https://mediafilez.forgecdn.net/files/8983/363/Shopkeepers-2.28.1.jar
-        https://github.com/kernitus/BukkitOldCombatMechanics/releases/download/v2.7.0/OldCombatMechanics.jar
         https://ci.ender.zone/job/EssentialsX/1832/artifact/jars/EssentialsX-2.22.1-dev%2B27-e70bdb8.jar
         https://ci.ender.zone/job/EssentialsX/1832/artifact/jars/EssentialsXChat-2.22.1-dev%2B27-e70bdb8.jar
         https://ci.ender.zone/job/EssentialsX/1832/artifact/jars/EssentialsXSpawn-2.22.1-dev%2B27-e70bdb8.jar

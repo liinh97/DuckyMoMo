@@ -85,6 +85,11 @@
     diện, bấm mở menu danh mục). Chuột trái = mua (offer), phải = bán (worth.yml, Shift bán hết), tên khung = tên + giá, giá đọc lại lúc bấm
     (/dmm shopkhung capnhat làm mới tên). NPC Cửa hàng (dân làng, không tên, quay nhìn người chơi) ở quầy giữa 12792 72 -2648. Warp: shop
     (12792.5 72 -2641.5), trade (= chợ, đổi tên từ cho), cong. NPC chợ đứng ngay cửa sạp trước quầy (y 71).
+    25/10 ~12h15 CHỢ THU NHỎ LẦN 2 (chủ server: vòng giữa còn rộng, chỗ nối nham nhở): scratchpad shrink2.py -> cho-nho.schem 69x40x69:
+    giữ đảo đài phun nước r<=17.8 (bỏ hào), 4 dãy nhà (mỗi cung 1: góc 51-80, 142.5-168, 231-260, 322.5-348) dời vào 28 ô, sàn đá lát mới
+    (viền andesite mài); dán `thu cho-nho.schem 12700 -2655 64 71` -> 12666 64 -2689 → 12734 103 -2621. 10 gian, 19 NPC Thợ Rèn (2/gian ở cửa,
+    y 71): nam = thoren/kimhoan/khoang/laonong/nguong, tây = sanquai + ren_tanthu..tinhanh, bắc = ren_caocap..ren_nonggia, đông = ren_thosan..duhiep.
+    Warp trade 12689.5 71 -2626.5 (lối tây nam). QUẢNG TRƯỜNG CỔNG ĐÃ GỠ (chủ server: xa spawn, dùng lệnh đi thẳng nơi cần) + bỏ warp cong.
     Citizens lưu NPC ngay sau lệnh (NpcAutoSave); tự lưu world 1 phút, Jobs/AuraSkills 1 phút; restic banghoi/sangtao 1h; nút Tắt máy an toàn.
   - 24/10 01h45 SPAWN CHỐT (thay mục world spawn riêng ngay dưới): chủ server đổi ý 2 lần -> (1) đảo Nhật IQBUILDERS đã dán vào world chính rồi GỠ
     (chủ server: "chưa oke"); (2) LÀNG SAKURA (map ArtillexStudios, trước là lobby) giờ là SPAWN WORLD CHÍNH: dán bằng `/dmm spawnmoi thu

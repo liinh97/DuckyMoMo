@@ -142,16 +142,16 @@ SbDong1:
 SbDong2:
   change-interval: 8000
   texts:
-    - '&#FFCC33▤  &e%dmmhom_chia% &7vé gacha'
-    - '&#C77DFF♛  &#E0B0FF%townyadvanced_nation_unformatted%'
+    - '&#FFCC33❖ &e%dmmhom_chia% &7vé gacha'
+    - '&#C77DFF⚜ &#E0B0FF%townyadvanced_nation_unformatted%'
 SbDong3:
   change-interval: 8000
   texts:
-    - '%dmmmua_ten% &8%dmmmua_con%n'
-    - '&#FF6B6B⚔ &f%dmmtoi_giet%&7/&f%dmmtoi_chet% &8· &7KDA &f%dmmtoi_kda%'
+    - '%dmmmua_ten% &7%dmmmua_con%n'
+    - '&#FF6B6B⚔ &f%dmmtoi_giet%&7/&f%dmmtoi_chet% &7· &7KDA &f%dmmtoi_kda%'
 SbDong4:
   change-interval: 8000
   texts:
-    - '&#FFD24D◆ &6%dmmvang_so_du% &eVàng'
+    - '&#FFD24D★ &6%dmmvang_so_du% &eVàng'
     - '&#9AE6B4✦ &7Thăng Cấp &f%dmmcap_cap%'
 

@@ -88,7 +88,7 @@ scoreboard:
         - '%animation:SbDong3%'
         - '%animation:SbDong4%'
         - '&r'
-        - '&#5FD3F3☺  &b%online% &8· &7%condition:pingmau%'
+        - '&#5FD3F3✪ &b%online% &7· &7%condition:pingmau%'
 layout:
   enabled: false
   direction: COLUMNS
@@ -162,9 +162,9 @@ placeholder-output-replacements:
     "yes": "&7| Vanished"
     "no": ""
   "%townyadvanced_town_unformatted%":
-    "": "&8Chưa có"
+    "": "&7Chưa có"
   "%townyadvanced_nation_unformatted%":
-    "": "&8Chưa có"
+    "": "&7Chưa có"
 
 # https://github.com/NEZNAMY/TAB/wiki/Feature-guide:-Conditional-placeholders
 conditions:

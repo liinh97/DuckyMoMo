@@ -11,9 +11,9 @@ pages:
     height: 0.3
   - content: '&fCứ vào chơi trước, tính năng, đồ trade, sự kiện cập nhật dần'
     height: 0.3
-  - content: '&e/warp trade &7chợ Thợ Rèn &7· &e/warp shop &7nhà buôn mua bán'
+  - content: '&e/warp trade &7(chợ Thợ Rèn) &7· &e/warp shop &7(nhà buôn mua bán)'
     height: 0.3
-  - content: '&e/huongdan &7cẩm nang &7· &e/menu &7menu chính (Shift + F)'
+  - content: '&e/huongdan &7(cẩm nang) &7· &e/menu &7(menu chính, Shift + F)'
     height: 0.3
   - content: '&7Thấy lỗi, cách lách luật? Báo &9Discord #reports &7» &aCó thưởng'
     height: 0.3

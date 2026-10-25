@@ -1,9 +1,9 @@
-# Khu trade (chợ Kinh Đô) (quảng trường tròn thu nhỏ, phía bắc làng Sakura): 20 NPC Thợ Rèn + Cửa hàng
+# Khu trade (chợ tròn thu nhỏ phía bắc làng Sakura, 19 NPC Thợ Rèn), lối vào tây nam
 world: 83762995-117c-4aba-9404-a7d9ba9b6dd8
 world-name: world
-x: 12700.5
+x: 12689.5
 y: 71.0
-z: -2623.5
-yaw: 180.0
+z: -2626.5
+yaw: -158.0
 pitch: 0.0
 name: trade

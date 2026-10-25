@@ -943,6 +943,37 @@ final class DecorShop implements Listener {
         buy(p, en.offer().key());
     }
 
+    /**
+     * Chuột trái thật sự tới đây: khung cố định + bất tử nên Paper bỏ cú đánh trước khi có EntityDamageByEntityEvent (25/10 chủ server:
+     * "chuột trái chưa mua được"). PrePlayerAttackEntityEvent phát ngay khi người chơi định đánh, kể cả thực thể bất tử.
+     */
+    @EventHandler(priority = org.bukkit.event.EventPriority.HIGHEST)
+    public void onFrameAttack(io.papermc.paper.event.player.PrePlayerAttackEntityEvent e) {
+        if (!(e.getAttacked() instanceof org.bukkit.entity.ItemFrame f)) {
+            return;
+        }
+        String tag = f.getPersistentDataContainer().get(frameKey, PersistentDataType.STRING);
+        if (tag == null) {
+            return;
+        }
+        e.setCancelled(true);
+        Player p = e.getPlayer();
+        if (frameCooldown(p)) {
+            return;
+        }
+        Entry en = entryOf(tag);
+        if (en != null && en.offer() != null && patternOf.containsKey(en.offer().key())) {
+            openCategory(p, catOf(en.offer(), cats), 0);
+            return;
+        }
+        if (en == null || en.offer() == null) {
+            p.sendMessage(c(en == null ? "&cMón này đã bỏ khỏi cửa hàng." : "&eServer không bán món này. &7Chuột phải để bán."));
+            return;
+        }
+        f.setItem(frameItem(en, worth()), false);
+        buy(p, en.offer().key());
+    }
+
     @EventHandler(priority = org.bukkit.event.EventPriority.HIGHEST)
     public void onFrameBreak(org.bukkit.event.hanging.HangingBreakEvent e) {
         if (e.getEntity().getPersistentDataContainer().has(frameKey, PersistentDataType.STRING)) {

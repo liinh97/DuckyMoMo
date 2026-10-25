@@ -350,7 +350,7 @@ groups:
       - ["dmm phu add <phụ> <chính>", "Ghi tài khoản phụ: không được quân hàm, không đánh trận (remove, list)", Chỉ admin]
       - ["dmm rtpnpc [remove]", "Đặt/xoá NPC dịch chuyển ngẫu nhiên ở chỗ đang đứng", Chỉ admin]
       - ["dmm thegioi seed|tao|chepspawn|sua|xoaspawncu|xoavung|xem", "Đổi world chính (tìm seed, tạo, chép spawn, sửa độ cao warp/nhà/NPC, trả khu spawn hoặc một vùng x1 z1 x2 z2 về địa hình tự nhiên)", Chỉ admin]
-      - ["dmm spawnmoi thu <file> <tâmX> <tâmZ> <đáyY> [dọn từ y]", "Dán thử schematic spawn vào world chính (bỏ khối chắn)", Chỉ admin]
+      - ["dmm spawnmoi thu <file> <tâmX> <tâmZ> <đáyY> [dọn từ y] [vuong] [khoet]", "Dán schematic vào world chính (bỏ khối chắn; vuong: dọn khung chữ nhật; khoet: dán cả ô trống để khoét đất)", Chỉ admin]
   - plugin: PvPManager
     servers: [banghoi-1]
     commands:

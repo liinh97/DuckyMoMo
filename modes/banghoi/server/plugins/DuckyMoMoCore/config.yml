@@ -806,7 +806,7 @@ seasons:
   order: [mua, kho]
   list:
     mua:
-      name: "&b☔ Mùa mưa"
+      name: "&b☔  Mùa mưa"
       subtitle: "&7Lúa, mía, tre lớn nhanh · cá linh, cá lóc về đồng"
       rain-start-chance: 25
       rain-stop-chance: 5
@@ -831,7 +831,7 @@ seasons:
       season: mua
       from-day: -1
       to-day: -1
-      name: "&9≋ Lũ cuối mùa"
+      name: "&9≋  Lũ cuối mùa"
       subtitle: "&7Mưa suốt ngày · Thủy tộc dễ bắt · lúa ngập chậm lớn"
       rain: "on"
       growth: {WHEAT: 0.5, POTATOES: 0.7, CARROTS: 0.7, BEETROOTS: 0.7, KELP: 1.5, SUGAR_CANE: 1.3}   # nhân với mùa mưa: lúa 1,4×0,5 = chậm 30%

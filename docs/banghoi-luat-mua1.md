@@ -6,8 +6,8 @@
 > **Còn treo:** (4) bán kính thu phục thị trấn hoà bình
 > (giữ 1.200 tới khi thấy thị trấn hoà bình quan trọng thế nào); bảng xếp hạng chi tiết (mục 8) chờ duyệt rồi mới code.
 
-> Bổ sung cho `docs/banghoi-design.md` (định hướng chung). File này là **luật cụ thể** cho mùa 1: map Trái Đất 1:1000,
-> vùng Đông Nam Á (viền 2.600 × 2.400 block quanh 12500/-2000), spawn Hà Nội.
+> Bổ sung cho `docs/banghoi-design.md` (định hướng chung). File này là **luật cụ thể** cho mùa 1: map Đại Lục Sương Mai 1:1000,
+> vùng Đại Lục Sương Mai (viền 2.600 × 2.400 block quanh 12500/-2000), spawn Kinh Đô Anh Đào.
 > Ký hiệu: **[đang chạy]** = cấu hình hiện tại trên banghoi-1 (đã đọc từ file thật 13/10);
 > **[đề xuất]** = chưa áp dụng, chờ chủ server chốt; **[cần kiểm tra]** = chưa chắc plugin làm được đúng như vậy.
 > Con số nào cũng sửa được sau khi chơi thử. Phần lớn đã có trên trang Cài đặt.
@@ -57,7 +57,7 @@ Bán kính vùng vây 200 block ≈ 185 km ngoài đời (cỡ một tỉnh lớ
 - **Nether 1 block = 8 block world chính:** thị trấn Nether gần cổng có thể chặn đường đi tắt của cả server.
 - Nether/End không có viền mùa như world chính (cần kiểm tra ChunkyBorder) nên chiếm đất không giới hạn.
 
-- **Tên thị trấn, quốc gia:** không tục, không xúc phạm, không chính trị. Map là Trái Đất thật nên thêm luật riêng (mục 7.4).
+- **Tên thị trấn, quốc gia:** không tục, không xúc phạm, không chính trị. Map là Đại Lục Sương Mai thật nên thêm luật riêng (mục 7.4).
 - **Thị trấn hoà bình** (`/t toggle peaceful`) **[đang chạy]**: không bị vây, không được phong quân hàm. Phải chờ 7 ngày mới có hiệu lực
   (thị trấn mới: 2 ngày). Quốc gia mạnh ở gần (trong 1.200 block) có thể "thu phục" mà không cần đánh.
   [CHƯA CHỐT] đề xuất hạ bán kính thu phục xuống **400 block** (1.200 block gần bằng nửa vùng mùa). Chủ server muốn xem thị trấn hoà bình
@@ -170,7 +170,7 @@ Ba lựa chọn đã cân nhắc:
 - Lời hứa, hợp đồng miệng giữa người chơi: admin **không bảo đảm**. Muốn an toàn thì dùng `/trade`, chợ `/ah`, shop rương.
   Admin chỉ can thiệp khi có lợi dụng lỗi hoặc hack.
 
-### 7.4 Tên và chat, riêng vì map là Trái Đất thật
+### 7.4 Tên và chat, riêng vì map là Đại Lục Sương Mai thật
 - **Lãnh thổ trong game không liên quan tới chủ quyền hay biên giới ngoài đời.** Cấm đặt tên, cấm chat kích động dân tộc,
   vùng miền, tôn giáo, chính trị, tranh chấp biên giới hay biển đảo thật. Admin đổi tên hoặc xoá thị trấn vi phạm.
 - Không chửi bới, quấy rối, phân biệt; không spam; không quảng cáo server khác (đã có trong luật hiện tại).

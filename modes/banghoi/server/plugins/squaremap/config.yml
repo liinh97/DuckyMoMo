@@ -1,5 +1,5 @@
 # squaremap của Bang Hội Chiến (12/10/2026). Xem trong Trạm 6: /mc/map (cổng SQUAREMAP_PORT trên máy, chỉ 127.0.0.1).
-# - visibility-limits: CHỈ vẽ vùng mùa 1 (khớp viền ChunkyBorder 11200..13800 x -3200..-800). Map Trái Đất có sẵn mọi chunk,
+# - visibility-limits: CHỈ vẽ vùng mùa 1 (khớp viền ChunkyBorder 11200..13800 x -3200..-800). Map có sẵn mọi chunk (Chunky tạo trước),
 #   vẽ hết rất lâu và tốn đĩa. Đổi mùa thì sửa vùng này rồi /map resetmap world + /map fullrender world.
 # - player-tracker: TẮT, server chiến tranh, hiện vị trí người chơi trên web là lộ quân.
 # - Ranh giới thị trấn/quốc gia: lớp "Thị trấn" do DuckyMoMoCore vẽ (towny-map trong DuckyMoMoCore/config.yml), tự đăng ký lại sau /squaremap reload.

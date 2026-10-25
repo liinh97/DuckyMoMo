@@ -9,7 +9,7 @@ services:
       VERSION: ${MC_VERSION:-26.2}
       # 11/10/2026: máy lên 64 GB, WSL 40 GB. Bật bộ tham số GC của Aikar (khuyên dùng cho Paper, ít khựng hơn).
       # Aikar giữ sẵn cả heap (Xms = Xmx = MEMORY, AlwaysPreTouch) nên container luôn dùng ~MEMORY + 1-1,5 GB.
-      # Map Trái Đất rộng, nhiều người bay khắp nơi tốn chunk: 6G đủ cho vài chục người. Đông hơn thì tăng (và mem_limit).
+      # Map rộng, nhiều người bay khắp nơi tốn chunk: 6G đủ cho vài chục người. Đông hơn thì tăng (và mem_limit).
       MEMORY: 6G
       MAX_PLAYERS: 100        # tối đa người trong server này (theo RAM 6G; muốn hơn thì tăng MEMORY). Mặc định Minecraft là 20; proxy hiện 500 cho cả mạng
       USE_AIKAR_FLAGS: "true"
@@ -36,7 +36,7 @@ services:
       #   viaversion: client mới hơn server, viabackwards: client cũ hơn, viarewind: 1.7-1.8
       # Lưu ý: dòng bắt đầu bằng # BÊN TRONG khối '|' không phải comment, image itzg sẽ đọc thành tên plugin.
       # towny: thị trấn/quốc gia; vaultunlocked: lớp nối kinh tế; coreprotect: ghi lại phá/đặt để khôi phục;
-      # worldguard: bảo vệ spawn/chợ; chunkyborder: viền thế giới hình chữ nhật (map Trái Đất). Thiết kế: docs/banghoi-design.md
+      # worldguard: bảo vệ spawn/chợ; chunkyborder: viền thế giới hình chữ nhật (vùng mùa). Thiết kế: docs/banghoi-design.md
       # Trade (12/10): quickshop-hikari = cửa hàng rương của người chơi; zauctionhouse = chợ đấu giá /ah;
       #   tradepro = trao đổi trực tiếp /trade <tên> (hai bên cùng xác nhận). zauctionhouse cần zmenu + placeholderapi.
       # 12/10: grimac = chống hack (chỉ có bản ALPHA cho 26.2, ghim id bản 2.3.74; có bản chính thức thì bỏ ":id");

@@ -190,7 +190,7 @@ Không nên chọn Crystal PvP (điện thoại khó chơi) hay Cobblemon (cần
 - Minecraft cần **CPU mạnh trên từng nhân** hơn là nhiều nhân. **Gói VPS quá rẻ thường CPU yếu hoặc bán vượt tải**, nên dùng thử trước khi thuê.
 
 ### Giai đoạn 2–3: nhiều chế độ
-- Máy chủ riêng khoảng 64 GB. Ví dụ OVH Singapore GAME-1 (Ryzen 7 9800X3D, 64 GB) khoảng **S$209,99/tháng chưa VAT (khoảng 4 triệu)**, phí cài đặt tháng đầu bằng 1 tháng tiền thuê. OVH có điều chỉnh giá nửa cuối 2026, cần kiểm tra lại.
+- Máy chủ riêng khoảng 64 GB. Ví dụ OVH Bán Đảo Mưa GAME-1 (Ryzen 7 9800X3D, 64 GB) khoảng **S$209,99/tháng chưa VAT (khoảng 4 triệu)**, phí cài đặt tháng đầu bằng 1 tháng tiền thuê. OVH có điều chỉnh giá nửa cuối 2026, cần kiểm tra lại.
 - **Tổng khoảng 5–10 triệu/tháng.** Chỉ nâng cấp khi số người chơi thật sự cần.
 
 ### Hòa vốn giai đoạn 1 (ví dụ chi phí 1,5 triệu/tháng)
@@ -229,7 +229,7 @@ Các hướng khác đã cân nhắc nhưng chưa chọn: game trên Roblox, ser
 - [ ] Mở Discord, chuẩn bị ghi hình.
 - [ ] Thiết kế **bảng rank, gói mùa và đồ trang trí** đúng luật, cùng giá cả.
 - [ ] Viết **web store** (VietQR + DotMan cho thẻ cào), xử lý cả tên Java và Bedrock, cấp rank qua RCON hoặc plugin.
-- [ ] Khi sẵn sàng mở công khai: chọn và thử máy chủ thuê (Việt Nam hoặc Singapore), chuyển dữ liệu, bật chống DDoS.
+- [ ] Khi sẵn sàng mở công khai: chọn và thử máy chủ thuê (Việt Nam hoặc Bán Đảo Mưa), chuyển dữ liệu, bật chống DDoS.
 - [ ] Sau khoảng 6 tháng: đánh giá chỉ số (người chơi cao điểm, tỉ lệ quay lại, tỉ lệ nạp), cân nhắc mở chế độ 2 và các hướng kinh doanh phụ.
 
 ## 10. Câu hỏi còn mở
@@ -246,7 +246,7 @@ Các hướng khác đã cân nhắc nhưng chưa chọn: game trên Roblox, ser
 - DotMan: https://github.com/minevn/dotman
 - Tebex: https://www.tebex.io/payment-methods · https://docs.tebex.io/creators/pricing-and-plans/tebex-platform-fee
 - Chợ plugin: https://mclicense.org/blog/spigotmc-vs-polymart-vs-builtbybit
-- OVH Singapore: https://www.ovhcloud.com/en-sg/bare-metal/game/ · https://blog.ovhcloud.com/en/posts/dedicated-servers-pricing-update-h2-2026/
+- OVH Bán Đảo Mưa: https://www.ovhcloud.com/en-sg/bare-metal/game/ · https://blog.ovhcloud.com/en/posts/dedicated-servers-pricing-update-h2-2026/
 - Hosting Việt Nam (tham khảo): https://vietnix.vn/vps/ · https://vpsmmo.vn/ · https://pikamc.vn/
 
 ---

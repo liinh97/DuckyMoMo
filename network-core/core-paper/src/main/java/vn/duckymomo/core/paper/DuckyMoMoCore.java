@@ -1242,7 +1242,7 @@ public final class DuckyMoMoCore extends JavaPlugin {
     private static final java.util.Set<String> DMM_ADMIN_ONLY = java.util.Set.of("reload", "decorate", "structures", "hang", "thegioi", "spawnmoi");
     /** World spawn riêng (/dmm spawnmoi, 24/10). */
     private SpawnWorld spawnWorld;
-    /** Đổi map sang world thường giả Trái Đất (/dmm thegioi, 23/10). */
+    /** Đổi map sang world thường (Đại Lục Sương Mai) (/dmm thegioi, 23/10). */
     private WorldRebuild worldRebuild;
     /** Đục hang tự nhiên vào map Trái Đất (/dmm hang, 23/10). */
     private CaveCarver caveCarver;

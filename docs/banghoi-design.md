@@ -32,8 +32,8 @@
 ## 3. Thế giới
 
 - **Một thế giới chính** cho mùa, có viền (world border) **(đề xuất)** bán kính **5.000 block** cho giai đoạn 30–50 người; nới rộng nếu đông.
-- **Đã chọn (09/10/2026): map Trái Đất tự tạo, tỉ lệ 1:2000** (21.504 × 10.752 block), xem `tools/earthmap/`. Spawn ở Hà Nội. Hai phương án đã cân nhắc:
-  - **Map Trái Đất tải sẵn** (tỉ lệ 1:1000 hoặc 1:2000): hợp Towny/SiegeWar (EarthPol, CCNet dùng). Nặng (vài GB trở lên), phải **kiểm tra giấy phép** (nhiều map cấm dùng cho server thu tiền hoặc bắt ghi tên tác giả).
+- **Đã chọn (09/10/2026): map Đại Lục Sương Mai tự tạo, tỉ lệ 1:2000** (21.504 × 10.752 block), xem `tools/earthmap/`. Spawn ở Kinh Đô Anh Đào. Hai phương án đã cân nhắc:
+  - **Map Đại Lục Sương Mai tải sẵn** (tỉ lệ 1:1000 hoặc 1:2000): hợp Towny/SiegeWar (EarthPol, CCNet dùng). Nặng (vài GB trở lên), phải **kiểm tra giấy phép** (nhiều map cấm dùng cho server thu tiền hoặc bắt ghi tên tác giả).
   - **Map tự nhiên do server sinh**: dễ nhất, không vướng bản quyền. Dùng Chunky **sinh sẵn địa hình** (không phải xây) trước khi mở để đỡ giật.
 - **Công trình** (spawn, chợ): tải schematic làm sẵn, dán bằng WorldEdit. Kiểm tra giấy phép trước khi dùng.
 - **Nether, End**: mở; **cấm lập thị trấn** trong Nether/End (`/tw toggle claimable` hoặc tương đương, cần kiểm tra lệnh).
@@ -127,7 +127,7 @@ Theo `minecraft-server-plan.md`: chỉ bán **đồ trang trí**, không pay-to-
 
 ## 12. Câu hỏi cần chốt
 
-1. **Map**: map Trái Đất tải sẵn hay map tự nhiên (mục 3). Kích thước viền và độ dài mùa (đề xuất: bán kính 5.000, 10–12 tuần).
+1. **Map**: map Đại Lục Sương Mai tải sẵn hay map tự nhiên (mục 3). Kích thước viền và độ dài mùa (đề xuất: bán kính 5.000, 10–12 tuần).
 2. ~~Lịch phiên chiến~~ → **setting** (mục 6).
 3. Combat: khởi đầu 1.8, là **setting** từng phần; chốt sau khi thử trên điện thoại (mục 7).
 4. ~~Nguồn tiền vào~~ → **setting** bật/tắt từng nguồn (mục 5).

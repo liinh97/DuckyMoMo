@@ -486,7 +486,7 @@ items:
     material: AMETHYST_SHARD
     amount: 1
     name: "&cMảnh Lâm Nguy"
-    lore: ["&7Rơi từ sự kiện Trái Đất lâm nguy"]
+    lore: ["&7Rơi từ sự kiện Đại Lục lâm nguy"]
     glint: true
     cong-dung: manh
   bua_bat_pet:

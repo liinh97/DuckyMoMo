@@ -55,7 +55,7 @@ bật công tắc vây thành, rút lịch phiên còn vài phút (Cài đặt �
 - [ ] `/dacsan`: chủ vùng sau khi có thị trấn; người phe chủ vùng gặt đặc sản ở đâu cũng thỉnh thoảng rơi thêm.
 
 ## 4b. Khai hoang, lính đánh thuê, thành tích, server vắng
-- [ ] `/tpr` chưa hiện Mã Lai/Philippines/Borneo/Java; admin cộng quỹ đủ mốc (hoặc sửa need nhỏ để thử) → vùng hiện, thông báo, 10 người đầu
+- [ ] `/tpr` chưa hiện Bán Đảo Mưa/Thiên Đảo/Đảo Rừng Già/Java; admin cộng quỹ đủ mốc (hoặc sửa need nhỏ để thử) → vùng hiện, thông báo, 10 người đầu
       tới nhận 2000 xu + danh hiệu [Tiên Phong]; `/dacsan` vùng mới có đặc sản.
 - [ ] `/linhdanhthue dangky 500` (người không thuộc nước); vua `/linhdanhthue thue <tên>` → lính `/linhdanhthue nhan`: trừ ngân khố, lính nhận 450.
       Lính vào vùng vây không bị ốm, không đánh được người nước thuê, được ăn kho lương thủ đô nước thuê; hết 48 giờ thì hết quyền.
@@ -366,5 +366,5 @@ Bảng giá đầy đủ: `docs/dinh-gia-xu.html` (artifact SeZHthvXRXHusvgPqknX
 - [ ] Liên minh Hoà Bình, Hội đồng, Hội Bàn Tròn, tổ chức/giấy phép, án giết dân hoà bình.
 - [ ] `/tpr` (chờ 3 giây, đứng yên), `/choilai`, tài khoản phụ, quân hàm cần 5 giờ chơi.
 - [ ] Điểm danh, nhiệm vụ hằng ngày, Gacha (thay vòng quay; /doimanh đã bỏ 21/10), cửa hàng Kinh Đô, xưởng chế tạo.
-- [ ] Boss / sự kiện "Trái Đất lâm nguy" (EliteMobs), chia thưởng.
+- [ ] Boss / sự kiện "Đại Lục lâm nguy" (EliteMobs), chia thưởng.
 - [ ] Client cũ (1.8–1.20) và Bedrock: vào được, AuthMe, form.

@@ -1,10 +1,10 @@
-# DuckyMoMoCore ở banghoi-1: trang trí map Trái Đất (cây, cỏ, công trình). Lệnh: /dmm decorate start|pause|status
+# DuckyMoMoCore ở banghoi-1 (Đại Lục Sương Mai): trang trí map (cây, cỏ, công trình). Lệnh: /dmm decorate start|pause|status
 lobby-menu:
   enabled: false
 decorate:
   enabled: true
   world: world
-  # Biên cho /dmm structures (và /dmm decorate nếu chạy): vùng mùa 1 Đông Nam Á, trùng viền ChunkyBorder.
+  # Biên cho /dmm structures (và /dmm decorate nếu chạy): vùng mùa 1 (trung tâm Đại Lục Sương Mai), trùng viền ChunkyBorder.
   min-x: 11200
   max-x: 13800
   min-z: -3200

@@ -72,6 +72,13 @@
     → 12968 126 -2428, torii lớn ở đầu tây (x ~12845) quay về làng, mặt đi ~y 70. Vùng WG spawn max x 12850 -> 12975. 6 cổng CHƯA gắn đích đến.
     NPC cốt truyện đặt lại quanh quảng trường spawn (console npc create --at): Già Làng 42 (12707 85 -2441), Bác Thợ Rèn 43 (12707 85 -2425),
     Người Gác Cổng 44 (12699 85 -2433); BetonQuest cotruyen trỏ 42/43/44.
+    25/10 ~11h40 CHỢ CHỐT = QUẢNG TRƯỜNG TRÒN THU NHỎ (chủ server chê quảng trường to phí chỗ + quầy xa nhau, chê phố chợ thẳng tự dựng):
+    scratchpad shrink.py: giữ nguyên lõi r<=31 (đài phun nước, hào nhỏ), 8 dãy nhà (mỗi cung 2 dãy: góc 12-37.5 và 51-80 đối xứng 4 cung)
+    dời nguyên khối vào trong 16 ô, bỏ 4 ki-ốt nhỏ, sàn vòng ngoài lấy từ bán kính +16, viền đá; cho-tron.schem 99x40x99, dán
+    `thu cho-tron.schem 12700 -2668 64 71` -> 12651 64 -2717 → 12749 103 -2619, sàn y 70, lối nam (x 12700, z -2622) quay về làng.
+    Quảng trường to (cho-oriental) và phố chợ thẳng (pho-cho) đã gỡ, trả địa hình (xoavung). 20 NPC đứng giữa 20 gian (y 71), từ cổng nam:
+    phía đông thoren 12707 -2631, kimhoan, khoang, laonong, nguong; phía tây shop 12692 -2631, sanquai, ren_tanthu, ren_chienbinh, ren_tinhanh;
+    nửa bắc ren_caocap..ren_ulinh (tây) và ren_nonggia..ren_duhiep (đông). WARP: cho (12700.5 71 -2623.5), cong (12852.5 69 -2469.5).
     Citizens lưu NPC ngay sau lệnh (NpcAutoSave); tự lưu world 1 phút, Jobs/AuraSkills 1 phút; restic banghoi/sangtao 1h; nút Tắt máy an toàn.
   - 24/10 01h45 SPAWN CHỐT (thay mục world spawn riêng ngay dưới): chủ server đổi ý 2 lần -> (1) đảo Nhật IQBUILDERS đã dán vào world chính rồi GỠ
     (chủ server: "chưa oke"); (2) LÀNG SAKURA (map ArtillexStudios, trước là lobby) giờ là SPAWN WORLD CHÍNH: dán bằng `/dmm spawnmoi thu

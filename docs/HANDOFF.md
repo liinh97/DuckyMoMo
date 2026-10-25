@@ -70,7 +70,8 @@
     23-41 (thoren-npc.yml). Skin ren_caocap đổi 204103 (303847 mineskin không nhận). QUẢNG TRƯỜNG 6 CỔNG (bản gốc x 176..261, y 20..84, z 336..469,
     cut.py --clean bỏ khối lơ lửng) cong-oriental.schem, dán xoay90 `thu cong-oriental.schem 12901 -2470 62 71 vuong khoet xoay90` -> 12835 62 -2513
     → 12968 126 -2428, torii lớn ở đầu tây (x ~12845) quay về làng, mặt đi ~y 70. Vùng WG spawn max x 12850 -> 12975. 6 cổng CHƯA gắn đích đến.
-    NPC cốt truyện Già Làng/Bác Thợ Rèn/Người Gác Cổng CHƯA đặt lại (mất khi máy tắt ngang); BetonQuest đang trỏ 22/23/24 (đã bị dùng/không còn).
+    NPC cốt truyện đặt lại quanh quảng trường spawn (console npc create --at): Già Làng 42 (12707 85 -2441), Bác Thợ Rèn 43 (12707 85 -2425),
+    Người Gác Cổng 44 (12699 85 -2433); BetonQuest cotruyen trỏ 42/43/44.
     Citizens lưu NPC ngay sau lệnh (NpcAutoSave); tự lưu world 1 phút, Jobs/AuraSkills 1 phút; restic banghoi/sangtao 1h; nút Tắt máy an toàn.
   - 24/10 01h45 SPAWN CHỐT (thay mục world spawn riêng ngay dưới): chủ server đổi ý 2 lần -> (1) đảo Nhật IQBUILDERS đã dán vào world chính rồi GỠ
     (chủ server: "chưa oke"); (2) LÀNG SAKURA (map ArtillexStudios, trước là lobby) giờ là SPAWN WORLD CHÍNH: dán bằng `/dmm spawnmoi thu

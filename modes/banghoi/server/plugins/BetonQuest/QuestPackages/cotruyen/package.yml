@@ -10,9 +10,9 @@ package:
   version: "3.2.0-QUEST-2"
 
 npcs:
-  gia_lang: 'citizens 22'      # 23/10: theo tên (byName) không nhận NPC -> dùng ID Citizens (/npc select xem ID; đặt lại NPC thì sửa số)
-  tho_ren: 'citizens 23'
-  gac_cong: 'citizens 24'
+  gia_lang: 'citizens 42'      # 23/10: theo tên (byName) không nhận NPC -> dùng ID Citizens (/npc select xem ID; đặt lại NPC thì sửa số)
+  tho_ren: 'citizens 43'
+  gac_cong: 'citizens 44'
 
 npc_conversations:
   gia_lang: gia_lang

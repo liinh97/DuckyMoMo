@@ -13,7 +13,7 @@ Một đại lục rộng lớn đang chờ chủ, chưa mảnh đất nào có 
 🏮 Chợ Thợ Rèn và nhà buôn ngay cạnh spawn: chuột trái mua, chuột phải bán
 📱 Máy tính và điện thoại đều chơi được, không cần tài khoản bản quyền
 
-🎮 Không chỉ Bang Hội Chiến, cả mạng DuckyMoMo dùng chung tài khoản và rank:
+🧭 Không chỉ Bang Hội Chiến, cả mạng DuckyMoMo dùng chung tài khoản và rank:
 🏗️ Thái Ấp Sáng Tạo: đang mở, xây sáng tạo trên bản sao mảnh đất của bạn
 🥊 Practice / Duels: đang thử nghiệm, đấu 1v1 luyện PvP không mất đồ
 🏝️ Skyblock (sắp có): khởi đầu trên hòn đảo nhỏ giữa trời, mở rộng đảo, đua top

@@ -79,6 +79,12 @@
     Quảng trường to (cho-oriental) và phố chợ thẳng (pho-cho) đã gỡ, trả địa hình (xoavung). 20 NPC đứng giữa 20 gian (y 71), từ cổng nam:
     phía đông thoren 12707 -2631, kimhoan, khoang, laonong, nguong; phía tây shop 12692 -2631, sanquai, ren_tanthu, ren_chienbinh, ren_tinhanh;
     nửa bắc ren_caocap..ren_ulinh (tây) và ren_nonggia..ren_duhiep (đông). WARP: cho (12700.5 71 -2623.5), cong (12852.5 69 -2469.5).
+    25/10 ~12h KHU SHOP: NHÀ BUÔN (scratchpad gen_shop.py -> nha-buon.schem 27x24x19, lòng 23x15, tường vữa trắng cột gỗ, mái ngói đen, cửa nam đỏ)
+    dán `thu nha-buon.schem 12792 -2648 65 72 vuong khoet` -> 12779 65 -2657 → 12805 88 -2639, sàn y 71. Khung: `/dmm shopkhung lap 12781 -2655 12803
+    -2641 71 4` = 247 khung (mọi món /cuahang theo danh mục, mỗi danh mục 1 đoạn tường + bảng tên TextDisplay; dòng mẫu *_WOOL... 1 khung đại
+    diện, bấm mở menu danh mục). Chuột trái = mua (offer), phải = bán (worth.yml, Shift bán hết), tên khung = tên + giá, giá đọc lại lúc bấm
+    (/dmm shopkhung capnhat làm mới tên). NPC Cửa hàng (dân làng, không tên, quay nhìn người chơi) ở quầy giữa 12792 72 -2648. Warp: shop
+    (12792.5 72 -2641.5), trade (= chợ, đổi tên từ cho), cong. NPC chợ đứng ngay cửa sạp trước quầy (y 71).
     Citizens lưu NPC ngay sau lệnh (NpcAutoSave); tự lưu world 1 phút, Jobs/AuraSkills 1 phút; restic banghoi/sangtao 1h; nút Tắt máy an toàn.
   - 24/10 01h45 SPAWN CHỐT (thay mục world spawn riêng ngay dưới): chủ server đổi ý 2 lần -> (1) đảo Nhật IQBUILDERS đã dán vào world chính rồi GỠ
     (chủ server: "chưa oke"); (2) LÀNG SAKURA (map ArtillexStudios, trước là lobby) giờ là SPAWN WORLD CHÍNH: dán bằng `/dmm spawnmoi thu

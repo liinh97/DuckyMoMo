@@ -1563,7 +1563,7 @@ tho-ren:
     ren_tanthu: {name: "&e◆ Rèn Tân Thủ", sub: "Đồ khởi đầu +0 → +9", profession: armorer, open: "set:tanthu", skin: "https://cdn.minecraft.how/skin/170154/image.png"}
     ren_chienbinh: {name: "&c⚔ Rèn Chiến Binh", sub: "Nâng từ Tân Thủ +9", profession: weaponsmith, open: "set:chienbinh", skin: "https://cdn.minecraft.how/skin/158043/image.png"}
     ren_tinhanh: {name: "&d❖ Rèn Tinh Anh", sub: "Nâng từ Chiến Binh +7", profession: armorer, open: "set:tinhanh", skin: "https://cdn.minecraft.how/skin/343359/image.png"}
-    ren_caocap: {name: "&6♛ Rèn Cao Cấp", sub: "Nâng từ Tinh Anh +5", profession: weaponsmith, open: "set:caocap", skin: "https://cdn.minecraft.how/skin/303847/image.png"}
+    ren_caocap: {name: "&6♛ Rèn Cao Cấp", sub: "Nâng từ Tinh Anh +5", profession: weaponsmith, open: "set:caocap", skin: "https://cdn.minecraft.how/skin/204103/image.png"}
     ren_huyenthoai: {name: "&6⚜ Rèn Huyền Thoại", sub: "Nâng từ Cao Cấp +5", profession: armorer, open: "set:huyenthoai", skin: "https://cdn.minecraft.how/skin/388944/image.png"}
     ren_thanthoai: {name: "&d☬ Rèn Thần Thoại", sub: "Nâng từ Huyền Thoại +3", profession: cleric, open: "set:thanthoai", skin: "https://cdn.minecraft.how/skin/374549/image.png"}
     ren_thanthanh: {name: "&e✟ Rèn Thần Thánh", sub: "Nâng từ Thần Thoại +4", profession: cleric, open: "set:thanthanh", skin: "https://cdn.minecraft.how/skin/168584/image.png"}

@@ -439,34 +439,47 @@ final class ThoRen implements Listener {
 
     /** /dmm thorennpc <quầy|remove>: đặt NPC quầy ở chỗ đang đứng (mỗi quầy một NPC, đặt lại thì NPC cũ của quầy đó bị xoá). */
     void npcCommand(CommandSender s, String[] args) {
-        if (!(s instanceof Player p)) {
-            s.sendMessage("Vào game, đứng trong quầy rồi gõ /dmm thorennpc <quầy>");
+        // Console/RCON: /dmm thorennpc <quầy> <x> <y> <z> <yaw> (world chính) — 25/10 xếp NPC vào sạp khu chợ bằng toạ độ tính sẵn
+        org.bukkit.Location at = null;
+        if (!(s instanceof Player) && args.length >= 6) {
+            at = new org.bukkit.Location(Bukkit.getWorlds().get(0), Integer.parseInt(args[2]) + 0.5, Integer.parseInt(args[3]),
+                    Integer.parseInt(args[4]) + 0.5, Float.parseFloat(args[5]), 0);
+        }
+        if (!(s instanceof Player) && at == null && !(args.length >= 2 && (args[1].equalsIgnoreCase("remove") || args[1].equalsIgnoreCase("xoa")))) {
+            s.sendMessage("Vào game, đứng trong quầy rồi gõ /dmm thorennpc <quầy> (console: /dmm thorennpc <quầy> <x> <y> <z> <yaw>)");
             return;
         }
+        org.bukkit.World world = s instanceof Player pl ? pl.getWorld() : Bukkit.getWorlds().get(0);
         String id = args.length >= 2 ? args[1].toLowerCase(Locale.ROOT) : "";
         if (id.equals("remove") || id.equals("xoa")) {
-            int n = removeNpc(p.getWorld(), args.length >= 3 ? args[2].toLowerCase(Locale.ROOT) : null);
-            p.sendMessage(c("&7Đã xoá " + n + " thực thể NPC quầy."));
+            int n = removeNpc(world, args.length >= 3 ? args[2].toLowerCase(Locale.ROOT) : null);
+            s.sendMessage(c("&7Đã xoá " + n + " thực thể NPC quầy."));
             return;
         }
         Stall st = stalls.get(id);
         if (st == null) {
-            p.sendMessage(c("&e/dmm thorennpc <quầy> &7đứng trong quầy rồi gõ. Quầy: &f" + String.join(", ", stalls.keySet())
+            s.sendMessage(c("&e/dmm thorennpc <quầy> &7đứng trong quầy rồi gõ. Quầy: &f" + String.join(", ", stalls.keySet())
                     + " &7· gỡ: &f/dmm thorennpc remove [quầy]"));
             return;
         }
-        removeNpc(p.getWorld(), id);
-        org.bukkit.Location loc = p.getLocation().getBlock().getLocation().add(0.5, 0, 0.5);
-        loc.setYaw(p.getLocation().getYaw());
-        loc.setPitch(0);
+        removeNpc(world, id);
+        org.bukkit.Location loc;
+        if (at != null) {
+            loc = at;
+        } else {
+            Player p = (Player) s;
+            loc = p.getLocation().getBlock().getLocation().add(0.5, 0, 0.5);
+            loc.setYaw(p.getLocation().getYaw());
+            loc.setPitch(0);
+        }
         if (citizens) {
             npcIds.set(st.id(), CitizensBridge.createNoName(org.bukkit.ChatColor.stripColor(st.name().replace('&', '§')), loc, st.skin()));
             saveNpcIds();
-            labels(p, loc, st, 1.85);
-            p.sendMessage(c("&a✔ Đã đặt NPC " + st.name() + "&a." + (st.skin().isBlank() ? " &7(chưa đặt skin: tho-ren.quay." + st.id() + ".skin)" : "")));
+            labels(world, loc, st, 1.85);
+            s.sendMessage(c("&a✔ Đã đặt NPC " + st.name() + "&a." + (st.skin().isBlank() ? " &7(chưa đặt skin: tho-ren.quay." + st.id() + ".skin)" : "")));
             return;
         }
-        org.bukkit.entity.Villager v = p.getWorld().spawn(loc, org.bukkit.entity.Villager.class, e -> {
+        org.bukkit.entity.Villager v = world.spawn(loc, org.bukkit.entity.Villager.class, e -> {
             e.setAI(false);   // không gắn tên lên dân làng: nhìn vào sẽ hiện tên chồng lên dòng chữ nổi
             e.setVillagerType(org.bukkit.entity.Villager.Type.PLAINS);   // dân làng đồng bằng (da sáng), không theo biome chỗ đặt
             e.setSilent(true);
@@ -481,20 +494,20 @@ final class ThoRen implements Listener {
             e.getPersistentDataContainer().set(npcKey, org.bukkit.persistence.PersistentDataType.STRING, st.id());
         });
         if (!v.isValid()) {
-            p.sendMessage(c("&cKhông đặt được NPC ở đây (có thể WorldGuard chặn sinh mob)."));
+            s.sendMessage(c("&cKhông đặt được NPC ở đây (có thể WorldGuard chặn sinh mob)."));
             return;
         }
         npcs.add(v.getUniqueId());
-        labels(p, loc, st, 1.6);
-        p.sendMessage(c("&a✔ Đã đặt NPC " + st.name() + "&a."));
+        labels(world, loc, st, 1.6);
+        s.sendMessage(c("&a✔ Đã đặt NPC " + st.name() + "&a."));
     }
 
     /** 3 dòng chữ nổi trên đầu NPC quầy (dòng thấp nhất ở độ cao base). */
-    private void labels(Player p, org.bukkit.Location loc, Stall st, double base) {
+    private void labels(org.bukkit.World w, org.bukkit.Location loc, Stall st, double base) {
         String[] lines = {st.name(), st.sub().isBlank() ? "&7Đổi nguyên liệu" : "&7" + st.sub(), "&8(bấm vào để mở)"};
         double y = base + (lines.length - 1) * 0.28;
         for (String line : lines) {
-            p.getWorld().spawn(loc.clone().add(0, y, 0), org.bukkit.entity.ArmorStand.class, a -> {
+            w.spawn(loc.clone().add(0, y, 0), org.bukkit.entity.ArmorStand.class, a -> {
                 a.setMarker(true);
                 a.setInvisible(true);
                 a.setGravity(false);

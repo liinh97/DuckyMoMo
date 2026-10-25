@@ -590,25 +590,34 @@ final class DecorShop implements Listener {
 
     /** /dmm shopnpc [remove]: đặt (hoặc xoá) NPC cửa hàng tại chỗ admin đứng. Đặt lại thì NPC cũ bị xoá. */
     void npcCommand(CommandSender s, String[] args) {
-        if (!(s instanceof Player p)) {
-            s.sendMessage("Vào game, đứng ở khu shop tại spawn rồi gõ /dmm shopnpc");
+        // Console/RCON: /dmm shopnpc <x> <y> <z> <yaw> (world chính) — 25/10 đặt vào sạp khu chợ bằng toạ độ tính sẵn
+        boolean console = !(s instanceof Player);
+        if (console && args.length < 5 && !(args.length >= 2 && args[1].equalsIgnoreCase("remove"))) {
+            s.sendMessage("Vào game, đứng ở khu shop tại spawn rồi gõ /dmm shopnpc (console: /dmm shopnpc <x> <y> <z> <yaw>)");
             return;
         }
+        org.bukkit.World world = s instanceof Player pl ? pl.getWorld() : org.bukkit.Bukkit.getWorlds().get(0);
         int removed = 0;
-        for (Entity e : p.getWorld().getEntities()) {
+        for (Entity e : world.getEntities()) {
             if (e.getPersistentDataContainer().has(npcKey, PersistentDataType.BYTE)) {
                 e.remove();
                 removed++;
             }
         }
         if (args.length >= 2 && args[1].equalsIgnoreCase("remove")) {
-            p.sendMessage(c("&7Đã xoá " + removed + " thực thể NPC cửa hàng."));
+            s.sendMessage(c("&7Đã xoá " + removed + " thực thể NPC cửa hàng."));
             return;
         }
-        Location loc = p.getLocation().getBlock().getLocation().add(0.5, 0, 0.5);
-        loc.setYaw(p.getLocation().getYaw());
-        loc.setPitch(0);
-        Villager v = p.getWorld().spawn(loc, Villager.class, e -> {
+        Location loc;
+        if (console) {
+            loc = new Location(world, Integer.parseInt(args[1]) + 0.5, Integer.parseInt(args[2]), Integer.parseInt(args[3]) + 0.5, Float.parseFloat(args[4]), 0);
+        } else {
+            Player p = (Player) s;
+            loc = p.getLocation().getBlock().getLocation().add(0.5, 0, 0.5);
+            loc.setYaw(p.getLocation().getYaw());
+            loc.setPitch(0);
+        }
+        Villager v = world.spawn(loc, Villager.class, e -> {
             e.customName(c(npcName));
             e.setCustomNameVisible(false);
             e.setAI(false);
@@ -622,13 +631,13 @@ final class DecorShop implements Listener {
             e.getPersistentDataContainer().set(npcKey, PersistentDataType.BYTE, (byte) 1);
         });
         if (!v.isValid()) {
-            p.sendMessage(c("&cKhông đặt được dân làng ở đây (có thể WorldGuard chặn sinh mob)."));
+            s.sendMessage(c("&cKhông đặt được dân làng ở đây (có thể WorldGuard chặn sinh mob)."));
             return;
         }
         String[] lines = {npcName, "&7Mua vật liệu · Bán nông sản, khoáng sản", "&8(bấm vào để mở)"};
         double y = 1.6 + (lines.length - 1) * 0.28;
         for (String line : lines) {
-            p.getWorld().spawn(loc.clone().add(0, y, 0), ArmorStand.class, a -> {
+            world.spawn(loc.clone().add(0, y, 0), ArmorStand.class, a -> {
                 a.setMarker(true);
                 a.setInvisible(true);
                 a.setGravity(false);
@@ -640,7 +649,7 @@ final class DecorShop implements Listener {
             });
             y -= 0.28;
         }
-        p.sendMessage(c("&aĐã đặt NPC Cửa hàng Kinh Đô tại &f" + loc.getBlockX() + " " + loc.getBlockY() + " " + loc.getBlockZ() + "&a. Xoá: &f/dmm shopnpc remove"));
+        s.sendMessage(c("&aĐã đặt NPC Cửa hàng Kinh Đô tại &f" + loc.getBlockX() + " " + loc.getBlockY() + " " + loc.getBlockZ() + "&a. Xoá: &f/dmm shopnpc remove"));
     }
 
     private boolean isNpc(Entity e) {

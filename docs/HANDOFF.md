@@ -64,6 +64,13 @@
     lối ra nam bậc thang lên y 68 ở x ~12697 z -2630 hướng về làng Sakura). Lấp lớp rỗng y 41-44 bằng đá; xoá 3.064 khối lơ lửng (koi, tán lá
     mất thân). Vùng WG spawn mở min z -2623 -> -2792 phủ chợ. ~15 sạp mái đen vòng quanh đài phun nước: dự kiến đặt 19 NPC Thợ Rèn + Cửa hàng.
     Quảng trường 6 cổng (bản gốc x ~195..300, z 336..460) chưa cắt: dự kiến làm khu cổng/sự kiện. Lệnh mới: thu ... [vuong] [khoet].
+    25/10 ~11h30: XẾP 20 NPC vào sạp chợ bằng toạ độ tính từ schematic (scratchpad stalls.py; lệnh console mới /dmm thorennpc <quầy> x y z yaw,
+    /dmm shopnpc x y z yaw): cung đông nam (gần cổng nam) thoren 12713 48 -2660, kimhoan, khoang, laonong, nguong; tây nam shop (villager)
+    12683 48 -2660, sanquai, ren_tanthu, ren_chienbinh, ren_tinhanh; tây bắc ren_caocap..ren_ulinh; đông bắc ren_nonggia..ren_duhiep. Citizens ID
+    23-41 (thoren-npc.yml). Skin ren_caocap đổi 204103 (303847 mineskin không nhận). QUẢNG TRƯỜNG 6 CỔNG (bản gốc x 176..261, y 20..84, z 336..469,
+    cut.py --clean bỏ khối lơ lửng) cong-oriental.schem, dán xoay90 `thu cong-oriental.schem 12901 -2470 62 71 vuong khoet xoay90` -> 12835 62 -2513
+    → 12968 126 -2428, torii lớn ở đầu tây (x ~12845) quay về làng, mặt đi ~y 70. Vùng WG spawn max x 12850 -> 12975. 6 cổng CHƯA gắn đích đến.
+    NPC cốt truyện Già Làng/Bác Thợ Rèn/Người Gác Cổng CHƯA đặt lại (mất khi máy tắt ngang); BetonQuest đang trỏ 22/23/24 (đã bị dùng/không còn).
     Citizens lưu NPC ngay sau lệnh (NpcAutoSave); tự lưu world 1 phút, Jobs/AuraSkills 1 phút; restic banghoi/sangtao 1h; nút Tắt máy an toàn.
   - 24/10 01h45 SPAWN CHỐT (thay mục world spawn riêng ngay dưới): chủ server đổi ý 2 lần -> (1) đảo Nhật IQBUILDERS đã dán vào world chính rồi GỠ
     (chủ server: "chưa oke"); (2) LÀNG SAKURA (map ArtillexStudios, trước là lobby) giờ là SPAWN WORLD CHÍNH: dán bằng `/dmm spawnmoi thu

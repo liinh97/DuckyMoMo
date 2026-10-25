@@ -45,6 +45,14 @@ if [ $CHECK_ONLY = 0 ]; then
   [ "$up" -lt 240 ] && { log "Máy vừa khởi động, chờ thêm 60 giây cho container lên…"; sleep 60; }
 fi
 
+# Bật lại container đã tắt bằng ops/tat-an-toan.sh (nút Tắt máy an toàn): "docker stop" làm restart: unless-stopped không tự bật lại
+LIST="$LOG_DIR/tat-an-toan.list"
+if [ $CHECK_ONLY = 0 ] && [ -s "$LIST" ]; then
+  log "Bật lại $(wc -l < "$LIST") container đã tắt an toàn lần trước…"
+  xargs -r docker start < "$LIST" >/dev/null 2>&1 && rm -f "$LIST"
+  sleep 60
+fi
+
 FIXED=()
 PROXY_TOUCHED=0
 

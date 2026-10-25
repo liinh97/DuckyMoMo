@@ -90,6 +90,13 @@
     (viền andesite mài); dán `thu cho-nho.schem 12700 -2655 64 71` -> 12666 64 -2689 → 12734 103 -2621. 10 gian, 19 NPC Thợ Rèn (2/gian ở cửa,
     y 71): nam = thoren/kimhoan/khoang/laonong/nguong, tây = sanquai + ren_tanthu..tinhanh, bắc = ren_caocap..ren_nonggia, đông = ren_thosan..duhiep.
     Warp trade 12689.5 71 -2626.5 (lối tây nam). QUẢNG TRƯỜNG CỔNG ĐÃ GỠ (chủ server: xa spawn, dùng lệnh đi thẳng nơi cần) + bỏ warp cong.
+    25/10 ~12h50 ĐỔI ĐỊA DANH THẬT -> TÊN BỊA (chủ server lo pháp lý bản đồ sai chủ quyền): "Đại Lục Sương Mai"; spawn "Kinh Đô Anh Đào";
+    vùng /tpr (rtp.zones, giữ id): taybac=Bắc Sơn Lĩnh, lao=Rừng Lam, trungbo=Cao Nguyên Gió, nambo=Châu Thổ Phù Sa, thailan=Đồng Kim,
+    myanmar=Tây Mộc Vực, namtq=Hồng Nguyên, malai=Bán Đảo Mưa, philippines=Thiên Đảo, borneo=Đảo Rừng Già, java=Đảo Núi Lửa; 33 warp đổi tên
+    (bảng: scratchpad warpmap.json; hanoi->kinhdo, hue->thanhco, bangkok->kimthanh, sapa->suongmu…). Web: sơ đồ vẽ từ địa hình thật
+    (site/public/map-mua1.png, API tpr_zones có x/z), Biển Ngọc/Biển Sương/Sông Long; MOTD proxy (đã restart proxy + relay lúc 0 người),
+    TAB, huongdan, camnang, motd.txt, squaremap tên, banner, bài tuyển mem, lời chào vùng spawn WG. "Đại Lục lâm nguy" thay "Trái Đất lâm nguy".
+    CÒN: docs cũ (banghoi-luat-mua1.md, README…) vẫn ghi Trái Đất/Đông Nam Á (tài liệu nội bộ).
     Citizens lưu NPC ngay sau lệnh (NpcAutoSave); tự lưu world 1 phút, Jobs/AuraSkills 1 phút; restic banghoi/sangtao 1h; nút Tắt máy an toàn.
   - 24/10 01h45 SPAWN CHỐT (thay mục world spawn riêng ngay dưới): chủ server đổi ý 2 lần -> (1) đảo Nhật IQBUILDERS đã dán vào world chính rồi GỠ
     (chủ server: "chưa oke"); (2) LÀNG SAKURA (map ArtillexStudios, trước là lobby) giờ là SPAWN WORLD CHÍNH: dán bằng `/dmm spawnmoi thu

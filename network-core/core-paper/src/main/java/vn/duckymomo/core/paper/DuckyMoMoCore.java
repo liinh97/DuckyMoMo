@@ -916,6 +916,10 @@ public final class DuckyMoMoCore extends JavaPlugin {
         }
         WildGates wgs = wildGates;
         bind("conghoang", wgs == null ? null : wgs::command, "Cổng Hoang");
+        // Lưu NPC ngay sau mỗi lệnh /npc, /citizens, /dmm thorennpc (25/10: máy tắt ngang làm mất 9 NPC chưa tới lần lưu định kỳ)
+        if (getServer().getPluginManager().isPluginEnabled("Citizens")) {
+            getServer().getPluginManager().registerEvents(new NpcAutoSave(this), this);
+        }
         // Lữ khách (wander-npcs): NPC Citizens lang thang ngoài đất hoang, kể chuyện về nơi phía sau Cổng Hoang (lời thoại: BetonQuest)
         wanderers = wildGates != null && getConfig().getBoolean("wander-npcs.enabled") && getConfig().isConfigurationSection("wander-npcs")
                 && getServer().getPluginManager().isPluginEnabled("Citizens")

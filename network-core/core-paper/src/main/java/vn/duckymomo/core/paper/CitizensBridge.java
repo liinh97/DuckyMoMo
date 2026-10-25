@@ -91,6 +91,11 @@ final class CitizensBridge {
         return npc == null ? null : npc.getStoredLocation();
     }
 
+    /** Ghi mọi NPC xuống Citizens/saves.yml ngay (NpcAutoSave). */
+    static void save() {
+        CitizensAPI.getNPCRegistry().saveToStore();
+    }
+
     static void remove(int id) {
         NPC npc = CitizensAPI.getNPCRegistry().getById(id);
         if (npc != null) {

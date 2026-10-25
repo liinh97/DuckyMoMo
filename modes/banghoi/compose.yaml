@@ -151,7 +151,7 @@ services:
       RCON_HOST: banghoi-1
       RCON_PASSWORD: ${RCON_PASSWORD}
       BACKUP_NAME: banghoi-1
-      BACKUP_INTERVAL: ${BACKUP_INTERVAL:-6h}
+      BACKUP_INTERVAL: ${BACKUP_INTERVAL_THEGIOI:-1h}   # 25/10: 6h -> 1h (world người chơi xây; restic chỉ lưu phần đổi, ~2 giây/lần)
       # restic: kho sao lưu khử trùng lặp, lần đầu ~ cỡ world, các lần sau chỉ phần thay đổi (map 1:1000 nặng 17+ GB,
       # nén tar.gz mỗi lần sẽ đầy ổ). Mất RESTIC_PASSWORD là KHÔNG khôi phục được: cất thêm một bản ngoài máy.
       BACKUP_METHOD: restic

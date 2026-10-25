@@ -220,7 +220,7 @@ on_death:
   reset_xp_ratio: 0
 auto_save:
   enabled: true
-  interval_ticks: 12000
+  interval_ticks: 1200   # 25/10: 10 phút -> 1 phút
 leveler:
   title:
     enabled: true

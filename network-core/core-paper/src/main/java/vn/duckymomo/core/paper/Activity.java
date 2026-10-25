@@ -56,7 +56,7 @@ final class Activity implements Listener {
     void start() {
         // Mỗi phút: ai có thao tác trong 60 giây qua được cộng 1 phút
         Bukkit.getScheduler().runTaskTimer(plugin, this::tickMinute, 1200L, 1200L);
-        Bukkit.getScheduler().runTaskTimer(plugin, this::saveIfDirty, 6000L, 6000L);
+        Bukkit.getScheduler().runTaskTimer(plugin, this::saveIfDirty, 1200L, 1200L);   // 25/10: 5 phút -> 1 phút
         plugin.getLogger().info("Giờ chơi thật: bật (dân hoạt động >= " + activeHoursPerWeek + " giờ/7 ngày)");
     }
 

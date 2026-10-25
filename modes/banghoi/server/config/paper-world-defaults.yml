@@ -46,6 +46,7 @@ anticheat:
 environment:
   optimize-explosions: true          # gộp tính toán vụ nổ (TNT, creeper) — kết quả như cũ, nhẹ hơn nhiều
 chunks:
+  auto-save-interval: 1200   # 25/10: 5 phút -> 1 phút (máy tắt ngang/mất điện mất ít world + túi đồ hơn)
   prevent-moving-into-unloaded-chunks: true   # chạy/bay nhanh vào chunk chưa tải thì dừng lại thay vì ép server tải gấp
   entity-per-chunk-save-limit:       # tối đa mỗi loại lưu trong 1 chunk (chống "bom mũi tên / cục kinh nghiệm" làm chunk nặng)
     arrow: 16

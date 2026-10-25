@@ -73,7 +73,7 @@ services:
       RCON_HOST: sangtao-1
       RCON_PASSWORD: ${RCON_PASSWORD}
       BACKUP_NAME: sangtao-1
-      BACKUP_INTERVAL: ${BACKUP_INTERVAL:-6h}
+      BACKUP_INTERVAL: ${BACKUP_INTERVAL_THEGIOI:-1h}   # 25/10: 6h -> 1h (world người chơi xây; restic chỉ lưu phần đổi, ~2 giây/lần)
       BACKUP_METHOD: restic
       RESTIC_REPOSITORY: /backups/restic
       RESTIC_PASSWORD: ${RESTIC_PASSWORD:?Chưa đặt RESTIC_PASSWORD trong .env (chạy lại ./ops/init.sh)}

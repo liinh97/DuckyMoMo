@@ -1,0 +1,3 @@
+# Paper (mọi thế giới Sáng Tạo): chỉ ghi mục cần đổi, còn lại Paper tự điền mặc định.
+chunks:
+  auto-save-interval: 1200   # 25/10: 5 phút -> 1 phút (máy tắt ngang/mất điện mất ít công trình hơn)

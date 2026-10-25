@@ -26,7 +26,7 @@ mysql:
   characterEncoding: utf8
   encoding: UTF-8
 # How often in minutes you want it to save. This must be a non-zero number
-save-period: 10
+save-period: 1   # 25/10: 10 -> 1 phút (mất điện mất ít tiến độ nghề)
 # Should player data be saved on disconnect?
 # Player data is always periodically auto-saved and autosaved during a clean shutdown.
 # Only enable this if you have a multi-server setup, or have a really good reason for enabling this.

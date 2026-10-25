@@ -468,7 +468,8 @@ def api_info():
                   for k, v in sched.items() if str(v).strip()]
     order = list(DAYS_VI.values())
     siege_days.sort(key=lambda d: order.index(d["day"]) if d["day"] in order else 9)
-    zones = [{"name": strip_colors(z.get("name", "")), "desc": z.get("description", ""), "id": z.get("id")}
+    zones = [{"name": strip_colors(z.get("name", "")), "desc": z.get("description", ""), "id": z.get("id"),
+              "x": z.get("center-x"), "z": z.get("center-z"), "requires": z.get("requires")}
              for z in get(core, "rtp.zones", []) or []]
     tiers = [{"name": t.get("name"), "color": t.get("color", "&f"), "perks": t.get("perks", []), "prices": t.get("prices", [])}
              for t in get(core, "donate-ranks.tiers", []) or []]

@@ -111,7 +111,7 @@ final class SpawnWorld {
      */
     private void pasteTry(CommandSender s, String[] a) {
         if (a.length < 6) {
-            s.sendMessage("/dmm spawnmoi thu <file> <tâmX> <tâmZ> <đáyY> [dọn từ y] [vuong] [khoet]");
+            s.sendMessage("/dmm spawnmoi thu <file> <tâmX> <tâmZ> <đáyY> [dọn từ y] [vuong] [khoet] [xoay90|xoay180|xoay270]");
             return;
         }
         World w = Bukkit.getWorlds().get(0);
@@ -133,15 +133,35 @@ final class SpawnWorld {
                     barriers++;
                 }
             }
-            // vị trí dán (gốc clipboard) sao cho tâm mặt bằng ở (cx, cz), đáy ở minY
-            int tx = cx - (mn.x() + mx.x()) / 2 + o.x(), tz = cz - (mn.z() + mx.z()) / 2 + o.z(), ty = minY - mn.y() + o.y();
-            int hx = (mx.x() - mn.x()) / 2 + 6, hz = (mx.z() - mn.z()) / 2 + 6;
             long cleared = 0;
-            // vuong: dọn khung chữ nhật thay vì elip; khoet: dán cả ô trống của schematic (khoét đất cho công trình trũng, vd quảng trường chợ)
+            // vuong: dọn khung chữ nhật thay vì elip; khoet: dán cả ô trống của schematic (khoét đất cho công trình trũng, vd quảng trường chợ);
+            // xoay90 | xoay180 | xoay270: xoay quanh trục đứng (WorldEdit, xoay cả hướng khối)
             java.util.Set<String> flags = new java.util.HashSet<>();
             for (int i = 7; i < a.length; i++) {
                 flags.add(a[i].toLowerCase(java.util.Locale.ROOT));
             }
+            int rot = flags.contains("xoay90") ? 90 : flags.contains("xoay180") ? 180 : flags.contains("xoay270") ? 270 : 0;
+            com.sk89q.worldedit.math.transform.AffineTransform tf = new com.sk89q.worldedit.math.transform.AffineTransform().rotateY(rot);
+            // khung sau khi xoay (tương đối với gốc clipboard)
+            double[] lo3 = {Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE}, hi3 = {-Double.MAX_VALUE, -Double.MAX_VALUE, -Double.MAX_VALUE};
+            for (int ix = 0; ix < 2; ix++) {
+                for (int iz = 0; iz < 2; iz++) {
+                    for (int iy = 0; iy < 2; iy++) {
+                        var v = tf.apply(com.sk89q.worldedit.math.Vector3.at((ix == 0 ? mn.x() : mx.x()) - o.x(), (iy == 0 ? mn.y() : mx.y()) - o.y(),
+                                (iz == 0 ? mn.z() : mx.z()) - o.z()));
+                        double[] c3 = {v.x(), v.y(), v.z()};
+                        for (int k = 0; k < 3; k++) {
+                            lo3[k] = Math.min(lo3[k], c3[k]);
+                            hi3[k] = Math.max(hi3[k], c3[k]);
+                        }
+                    }
+                }
+            }
+            int lx = (int) Math.round(lo3[0]), ly = (int) Math.round(lo3[1]), lz = (int) Math.round(lo3[2]);
+            int ux = (int) Math.round(hi3[0]), uz = (int) Math.round(hi3[2]), uy = (int) Math.round(hi3[1]);
+            // vị trí dán (gốc clipboard) sao cho tâm mặt bằng ở (cx, cz), đáy ở minY
+            int tx = cx - (lx + ux) / 2, tz = cz - (lz + uz) / 2, ty = minY - ly;
+            int hx = (ux - lx) / 2 + 6, hz = (uz - lz) / 2 + 6;
             if (a.length >= 7) {
                 int fromY = Integer.parseInt(a[6]);
                 boolean rect = flags.contains("vuong");   // dọn đúng khung chữ nhật (lề 6) thay vì elip
@@ -161,8 +181,10 @@ final class SpawnWorld {
                 }
             }
             try (EditSession es = WorldEdit.getInstance().newEditSession(BukkitAdapter.adapt(w))) {
-                Operations.complete(new ClipboardHolder(clip).createPaste(es).to(BlockVector3.at(tx, ty, tz)).ignoreAirBlocks(!flags.contains("khoet")).build());
-                BlockVector3 lo = mn.subtract(o).add(tx, ty, tz), hi = mx.subtract(o).add(tx, ty, tz);
+                ClipboardHolder holder = new ClipboardHolder(clip);
+                holder.setTransform(tf);
+                Operations.complete(holder.createPaste(es).to(BlockVector3.at(tx, ty, tz)).ignoreAirBlocks(!flags.contains("khoet")).build());
+                BlockVector3 lo = BlockVector3.at(tx + lx, ty + ly, tz + lz), hi = BlockVector3.at(tx + ux, ty + uy, tz + uz);
                 String msg = "Đã dán " + f.getName() + ": " + es.getBlockChangeCount() + " khối, vùng " + lo + " → " + hi + ", bỏ " + barriers
                         + " khối chắn" + (cleared > 0 ? ", dọn trước " + cleared + " khối" : "") + ".";
                 s.sendMessage(msg);

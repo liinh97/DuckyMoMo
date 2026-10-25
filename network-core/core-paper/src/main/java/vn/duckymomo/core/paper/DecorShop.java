@@ -80,11 +80,16 @@ final class DecorShop implements Listener {
     private final NamespacedKey catKey;
     private final NamespacedKey npcKey;
     private final NamespacedKey sellKey;
+    private final NamespacedKey frameKey;   // khung vật phẩm ở khu shop: "<mã offer>|<vật liệu thu mua>" (trống = không)
+    private final Map<java.util.UUID, Long> frameCd = new java.util.HashMap<>();
+    /** Món sinh từ dòng mẫu (vd *_WOOL) -> mẫu: khu shop chỉ treo 1 khung đại diện cho cả nhóm, bấm mở menu danh mục. */
+    private final Map<String, String> patternOf = new java.util.HashMap<>();
     private final ItemLibrary library;
 
     DecorShop(DuckyMoMoCore plugin, Leaderboard board, Predicate<Location> inCapital, ConfigurationSection c, ItemLibrary library) {
         this.plugin = plugin;
         this.library = library;
+        org.bukkit.Bukkit.getScheduler().runTaskTimer(plugin, this::lookAtPlayers, 100L, 5L);
         this.board = board;
         this.inCapital = inCapital;
         this.rankPermission = c.getString("rank-permission", "duckymomo.cuahang");
@@ -93,6 +98,7 @@ final class DecorShop implements Listener {
         this.catKey = new NamespacedKey(plugin, "cuahang_muc");
         this.npcKey = new NamespacedKey(plugin, "shop_npc");
         this.sellKey = new NamespacedKey(plugin, "cuahang_ban");
+        this.frameKey = new NamespacedKey(plugin, "cuahang_khung");
         for (Map<?, ?> m : c.getMapList("categories")) {
             String id = String.valueOf(m.get("id"));
             Material ic = Material.matchMaterial(String.valueOf(m.get("icon")));
@@ -139,6 +145,7 @@ final class DecorShop implements Listener {
                         if (o != null) {
                             expanded.add(o);
                             listed.add(x);
+                            patternOf.put(o.key(), mat);
                         }
                     }
                 }
@@ -478,7 +485,7 @@ final class DecorShop implements Listener {
         }
         p.performCommand("sell " + m.name().toLowerCase(Locale.ROOT) + (all ? "" : " " + Math.min(lot, have)));
         plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
-            if (p.isOnline() && p.getOpenInventory().getTopInventory().getHolder() == h) {
+            if (h != null && p.isOnline() && p.getOpenInventory().getTopInventory().getHolder() == h) {
                 openCategory(p, h.cat, h.page);
             }
         }, 2L);
@@ -618,8 +625,7 @@ final class DecorShop implements Listener {
             loc.setPitch(0);
         }
         Villager v = world.spawn(loc, Villager.class, e -> {
-            e.customName(c(npcName));
-            e.setCustomNameVisible(false);
+            // không đặt tên cho dân làng: nhìn vào sẽ hiện tên chồng lên dòng chữ nổi (25/10 chủ server thấy "Cửa hàng Kinh Đô" 2 lần)
             e.setAI(false);
             e.setSilent(true);
             e.setInvulnerable(true);
@@ -650,6 +656,298 @@ final class DecorShop implements Listener {
             y -= 0.28;
         }
         s.sendMessage(c("&aĐã đặt NPC Cửa hàng Kinh Đô tại &f" + loc.getBlockX() + " " + loc.getBlockY() + " " + loc.getBlockZ() + "&a. Xoá: &f/dmm shopnpc remove"));
+    }
+
+    /** NPC cửa hàng quay mặt nhìn người chơi gần nhất trong 8 ô (dân làng tắt AI nên không tự nhìn; cùng kiểu NPC quầy Thợ Rèn). */
+    private void lookAtPlayers() {
+        for (Player pl : org.bukkit.Bukkit.getOnlinePlayers()) {
+            if (pl.getGameMode() == org.bukkit.GameMode.SPECTATOR) {
+                continue;
+            }
+            for (Entity e : pl.getNearbyEntities(8, 4, 8)) {
+                if (e instanceof Villager v && isNpc(v)) {
+                    Player best = pl;
+                    double bd = pl.getLocation().distanceSquared(v.getLocation());
+                    for (Entity o : v.getNearbyEntities(8, 4, 8)) {
+                        if (o instanceof Player op && op.getGameMode() != org.bukkit.GameMode.SPECTATOR && op.getLocation().distanceSquared(v.getLocation()) < bd) {
+                            best = op;
+                            bd = op.getLocation().distanceSquared(v.getLocation());
+                        }
+                    }
+                    if (best != pl) {
+                        continue;   // người khác gần hơn sẽ xoay khi tới lượt họ
+                    }
+                    org.bukkit.util.Vector dir = pl.getEyeLocation().toVector().subtract(v.getEyeLocation().toVector());
+                    v.setRotation((float) Math.toDegrees(Math.atan2(-dir.getX(), dir.getZ())),
+                            (float) Math.toDegrees(-Math.atan2(dir.getY(), Math.hypot(dir.getX(), dir.getZ()))));
+                }
+            }
+        }
+    }
+
+    // ===================== KHU SHOP: KHUNG VẬT PHẨM TRÊN TƯỜNG (25/10) =====================
+    // Chủ server: "shop là một khu, treo ảnh items và giá, chuột phải bán, trái mua". Mỗi món = 1 khung vật phẩm cố định (setFixed) trên
+    // tường trong của một nhà; nhìn vào khung hiện tên món + giá (tên vật phẩm trong khung). Giá luôn đọc lại lúc bấm (worth.yml + offer).
+    // /dmm shopkhung lap <x1> <z1> <x2> <z2> <y sàn> [hàng]  — treo khung lên mặt trong 4 bức tường bao quanh hộp (x1..x2, z1..z2) (lòng nhà),
+    //   từ y sàn+1 lên <hàng> (mặc định 4) hàng, theo thứ tự danh mục, mỗi danh mục một đoạn tường có bảng tên phía trên, cách nhau 1 cột.
+    // /dmm shopkhung xoa <x1> <z1> <x2> <z2>  — gỡ khung + bảng tên trong hộp (mở rộng 1 ô).  /dmm shopkhung capnhat — làm lại tên/giá mọi khung.
+
+    private String frameName(Entry en, Map<Material, Double> worth) {
+        Offer o = en.offer();
+        StringBuilder sb = new StringBuilder(o != null ? label(o) : "&f" + Rewards.vi(en.sellMat().name()));
+        if (o != null) {
+            sb.append(" &8· &aMua ").append(money(o.price()));
+        }
+        if (en.sellMat() != null && worth.containsKey(en.sellMat())) {
+            sb.append(" &8· &eBán ").append(money(worth.get(en.sellMat()))).append("&8/món");
+        }
+        return sb.toString();
+    }
+
+    private ItemStack frameItem(Entry en, Map<Material, Double> worth) {
+        Offer o = en.offer();
+        String pat = o == null ? null : patternOf.get(o.key());
+        if (pat != null) {
+            long n = patternOf.values().stream().filter(pat::equals).count();
+            ItemStack g = new ItemStack(o.icon());
+            ItemMeta gm = g.getItemMeta();
+            gm.displayName(c("&f" + groupName(pat) + " &7(" + n + " loại) &8· &aMua " + money(o.price()) + "&8/" + o.amount() + " &8· &7bấm để chọn")
+                    .decoration(TextDecoration.ITALIC, false));
+            g.setItemMeta(gm);
+            return g;
+        }
+        ItemStack it = o != null && o.lib() != null ? library.build(o.lib(), 1) : null;
+        if (it == null) {
+            it = new ItemStack(o != null ? o.icon() : en.sellMat());
+        }
+        it.setAmount(1);
+        ItemMeta m = it.getItemMeta();
+        m.displayName(c(frameName(en, worth)).decoration(TextDecoration.ITALIC, false));
+        it.setItemMeta(m);
+        return it;
+    }
+
+    private static String groupName(String pattern) {
+        String core = pattern.replace("*", "").replace("__", "_");
+        while (core.startsWith("_")) core = core.substring(1);
+        while (core.endsWith("_")) core = core.substring(0, core.length() - 1);
+        return Rewards.vi(core.isEmpty() ? pattern : core);
+    }
+
+    private static String frameTag(Entry en) {
+        return (en.offer() != null ? en.offer().key() : "") + "|" + (en.sellMat() != null ? en.sellMat().name() : "");
+    }
+
+    void frameCommand(CommandSender s, String[] a) {
+        String sub = a.length >= 2 ? a[1].toLowerCase(Locale.ROOT) : "";
+        org.bukkit.World w = s instanceof Player pl ? pl.getWorld() : org.bukkit.Bukkit.getWorlds().get(0);
+        if (sub.equals("capnhat")) {
+            Map<Material, Double> worth = worth();
+            int n = 0;
+            for (org.bukkit.entity.ItemFrame f : w.getEntitiesByClass(org.bukkit.entity.ItemFrame.class)) {
+                String tag = f.getPersistentDataContainer().get(frameKey, PersistentDataType.STRING);
+                Entry en = tag == null ? null : entryOf(tag);
+                if (en != null) {
+                    f.setItem(frameItem(en, worth), false);
+                    n++;
+                }
+            }
+            s.sendMessage("Đã cập nhật tên/giá " + n + " khung (chunk đang tải).");
+            return;
+        }
+        if (a.length < 6) {
+            s.sendMessage("/dmm shopkhung lap <x1> <z1> <x2> <z2> <y sàn> [hàng] | xoa <x1> <z1> <x2> <z2> | capnhat");
+            return;
+        }
+        int x1 = Math.min(Integer.parseInt(a[2]), Integer.parseInt(a[4])), x2 = Math.max(Integer.parseInt(a[2]), Integer.parseInt(a[4]));
+        int z1 = Math.min(Integer.parseInt(a[3]), Integer.parseInt(a[5])), z2 = Math.max(Integer.parseInt(a[3]), Integer.parseInt(a[5]));
+        if (sub.equals("xoa")) {
+            int n = 0;
+            org.bukkit.util.BoundingBox box = new org.bukkit.util.BoundingBox(x1 - 1, w.getMinHeight(), z1 - 1, x2 + 2, w.getMaxHeight(), z2 + 2);
+            for (Entity e : w.getNearbyEntities(box)) {
+                if (e.getPersistentDataContainer().has(frameKey, PersistentDataType.STRING)) {
+                    e.remove();
+                    n++;
+                }
+            }
+            s.sendMessage("Đã gỡ " + n + " khung / bảng tên.");
+            return;
+        }
+        if (!sub.equals("lap") || a.length < 7) {
+            s.sendMessage("/dmm shopkhung lap <x1> <z1> <x2> <z2> <y sàn> [hàng]");
+            return;
+        }
+        int y0 = Integer.parseInt(a[6]), rows = a.length >= 8 ? Integer.parseInt(a[7]) : 4;
+        // các cột tường theo vòng: (ô trong nhà, hướng khung quay vào) — đi theo chiều kim đồng hồ từ góc tây bắc
+        List<Object[]> cols = new ArrayList<>();
+        for (int x = x1; x <= x2; x++) cols.add(new Object[] {x, z1, org.bukkit.block.BlockFace.SOUTH});       // tường bắc
+        for (int z = z1; z <= z2; z++) cols.add(new Object[] {x2, z, org.bukkit.block.BlockFace.WEST});        // tường đông
+        for (int x = x2; x >= x1; x--) cols.add(new Object[] {x, z2, org.bukkit.block.BlockFace.NORTH});       // tường nam
+        for (int z = z2; z >= z1; z--) cols.add(new Object[] {x1, z, org.bukkit.block.BlockFace.EAST});        // tường tây
+        Map<Material, Double> worth = worth();
+        int ci = 0, placed = 0, missing = 0;
+        for (Cat cat : cats.values()) {
+            List<Entry> all = entries(cat.id(), worth);
+            // nhóm mẫu: giữ món đầu tiên làm khung đại diện
+            List<Entry> list = new ArrayList<>();
+            java.util.Set<String> seenPat = new java.util.HashSet<>();
+            for (Entry en : all) {
+                String pat = en.offer() == null ? null : patternOf.get(en.offer().key());
+                if (pat == null || seenPat.add(pat)) {
+                    list.add(en);
+                }
+            }
+            if (list.isEmpty()) {
+                continue;
+            }
+            boolean header = false;
+            int k = 0;
+            while (k < list.size() && ci < cols.size()) {
+                Object[] col = cols.get(ci++);
+                int cx = (int) col[0], cz = (int) col[1];
+                org.bukkit.block.BlockFace face = (org.bukkit.block.BlockFace) col[2];
+                org.bukkit.block.Block wall = w.getBlockAt(cx, y0 + 1, cz).getRelative(face.getOppositeFace());
+                if (!wall.getType().isSolid() || !w.getBlockAt(cx, y0 + 1, cz).getType().isAir()) {
+                    continue;   // cửa ra vào / vật cản: bỏ cột này
+                }
+                if (!header) {
+                    final String title = "&6" + cat.name();
+                    Location hl = new Location(w, cx + 0.5 - face.getModX() * 0.45, y0 + rows + 1.1, cz + 0.5 - face.getModZ() * 0.45);
+                    w.spawn(hl, org.bukkit.entity.TextDisplay.class, d -> {
+                        d.text(c(title));
+                        d.setBillboard(org.bukkit.entity.Display.Billboard.FIXED);
+                        d.setRotation(yawOf(face), 0);
+                        d.setPersistent(true);
+                        d.getPersistentDataContainer().set(frameKey, PersistentDataType.STRING, "header");
+                    });
+                    header = true;
+                }
+                for (int r = rows; r >= 1 && k < list.size(); r--) {
+                    Location fl = new Location(w, cx, y0 + r, cz);
+                    if (!fl.getBlock().getType().isAir() || !fl.getBlock().getRelative(face.getOppositeFace()).getType().isSolid()) {
+                        continue;
+                    }
+                    Entry en = list.get(k++);
+                    try {
+                        w.spawn(fl, org.bukkit.entity.ItemFrame.class, f -> {
+                            f.setFacingDirection(face, true);
+                            f.setItem(frameItem(en, worth), false);
+                            f.setFixed(true);
+                            f.setInvulnerable(true);
+                            f.setPersistent(true);
+                            f.getPersistentDataContainer().set(frameKey, PersistentDataType.STRING, frameTag(en));
+                        });
+                        placed++;
+                    } catch (IllegalArgumentException ex) {
+                        k--;
+                    }
+                }
+            }
+            missing += list.size() - k;
+            ci++;   // cách 1 cột giữa 2 danh mục
+        }
+        s.sendMessage("Đã treo " + placed + " khung" + (missing > 0 ? " (HẾT chỗ trên tường, còn " + missing + " món chưa treo: thêm hàng hoặc nhà to hơn)" : "") + ".");
+    }
+
+    private static float yawOf(org.bukkit.block.BlockFace f) {
+        return switch (f) {
+            case SOUTH -> 0f;
+            case WEST -> 90f;
+            case NORTH -> 180f;
+            default -> -90f;
+        };
+    }
+
+    /** Tìm lại món theo thẻ khung (giá đọc mới). */
+    private Entry entryOf(String tag) {
+        int bar = tag.indexOf('|');
+        if (bar < 0) {
+            return null;
+        }
+        String key = tag.substring(0, bar), mat = tag.substring(bar + 1);
+        Offer o = key.isEmpty() ? null : offers.stream().filter(x -> x.key().equals(key)).findFirst().orElse(null);
+        Material m = mat.isEmpty() ? null : Material.matchMaterial(mat);
+        if (o == null && m == null) {
+            return null;
+        }
+        return new Entry(o, m);
+    }
+
+    private boolean frameCooldown(Player p) {
+        long now = System.currentTimeMillis();
+        Long last = frameCd.get(p.getUniqueId());
+        if (last != null && now - last < 250) {
+            return true;
+        }
+        frameCd.put(p.getUniqueId(), now);
+        return false;
+    }
+
+    /** Chuột phải vào khung: bán (Shift: bán hết). */
+    @EventHandler(priority = org.bukkit.event.EventPriority.HIGHEST)
+    public void onFrameRight(PlayerInteractEntityEvent e) {
+        if (!(e.getRightClicked() instanceof org.bukkit.entity.ItemFrame f)) {
+            return;
+        }
+        String tag = f.getPersistentDataContainer().get(frameKey, PersistentDataType.STRING);
+        if (tag == null) {
+            return;
+        }
+        e.setCancelled(true);
+        Player p = e.getPlayer();
+        if (e.getHand() != EquipmentSlot.HAND || frameCooldown(p)) {
+            return;
+        }
+        Entry en = entryOf(tag);
+        if (en == null) {
+            p.sendMessage(c("&cMón này đã bỏ khỏi cửa hàng."));
+            return;
+        }
+        if (en.offer() != null && patternOf.containsKey(en.offer().key())) {
+            openCategory(p, catOf(en.offer(), cats), 0);
+            return;
+        }
+        Map<Material, Double> worth = worth();
+        f.setItem(frameItem(en, worth), false);
+        if (en.sellMat() == null || !worth.containsKey(en.sellMat())) {
+            p.sendMessage(c("&eServer không thu mua món này. &7Chuột trái để mua."));
+            return;
+        }
+        sell(p, en.sellMat(), en.offer() != null ? en.offer().amount() : 64, p.isSneaking(), null);
+    }
+
+    /** Chuột trái vào khung: mua. Khung cố định + bất tử, mọi sát thương lên khung shop đều huỷ. */
+    @EventHandler(priority = org.bukkit.event.EventPriority.HIGHEST)
+    public void onFrameLeft(org.bukkit.event.entity.EntityDamageByEntityEvent e) {
+        if (!(e.getEntity() instanceof org.bukkit.entity.ItemFrame f)) {
+            return;
+        }
+        String tag = f.getPersistentDataContainer().get(frameKey, PersistentDataType.STRING);
+        if (tag == null) {
+            return;
+        }
+        e.setCancelled(true);
+        if (!(e.getDamager() instanceof Player p) || frameCooldown(p)) {
+            return;
+        }
+        Entry en = entryOf(tag);
+        if (en != null && en.offer() != null && patternOf.containsKey(en.offer().key())) {
+            openCategory(p, catOf(en.offer(), cats), 0);
+            return;
+        }
+        if (en == null || en.offer() == null) {
+            p.sendMessage(c(en == null ? "&cMón này đã bỏ khỏi cửa hàng." : "&eServer không bán món này. &7Chuột phải để bán."));
+            return;
+        }
+        f.setItem(frameItem(en, worth()), false);
+        buy(p, en.offer().key());
+    }
+
+    @EventHandler(priority = org.bukkit.event.EventPriority.HIGHEST)
+    public void onFrameBreak(org.bukkit.event.hanging.HangingBreakEvent e) {
+        if (e.getEntity().getPersistentDataContainer().has(frameKey, PersistentDataType.STRING)) {
+            e.setCancelled(true);
+        }
     }
 
     private boolean isNpc(Entity e) {

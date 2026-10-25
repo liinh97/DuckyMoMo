@@ -1133,6 +1133,12 @@ public final class DuckyMoMoCore extends JavaPlugin {
                     } else {
                         rtp.npcCommand(sender, args);
                     }
+                } else if (args.length >= 1 && args[0].equalsIgnoreCase("shopkhung")) {
+                    if (decorShop == null) {
+                        sender.sendMessage("Cửa hàng chưa bật trên server này (config: decor-shop.enabled).");
+                    } else {
+                        decorShop.frameCommand(sender, args);
+                    }
                 } else if (args.length >= 1 && args[0].equalsIgnoreCase("shopnpc")) {
                     if (decorShop == null) {
                         sender.sendMessage("Cửa hàng chưa bật trên server này (config: decor-shop.enabled).");
@@ -1225,11 +1231,11 @@ public final class DuckyMoMoCore extends JavaPlugin {
             "§e/dmm luudo <mã> [tên gợi nhớ] §7lưu món đang cầm vào thư viện",
             "§e/dmm thuvien [nap] §7xem mã / kiểm tra thư viện",
             "§e/dmm clean §7dọn rác ngay   §e/dmm reload §7nạp lại config   §e/dmm lenh §7xuất danh sách lệnh",
-            "§e/dmm rtpnpc|shopnpc [remove] §7đặt/gỡ NPC   §e/dmm phu add|remove|list §7tài khoản phụ",
+            "§e/dmm rtpnpc|shopnpc [remove] §7đặt/gỡ NPC   §e/dmm shopkhung lap|xoa|capnhat §7khung shop trên tường   §e/dmm phu add|remove|list §7tài khoản phụ",
             "§e/dmm thorennpc <quầy|remove> §7đặt NPC quầy đổi nguyên liệu / Thợ Rèn ở chỗ đứng",
             "§e/dmm hoabinh setup|claim <r> §7Liên minh Hoà Bình   §e/dmm decorate|structures start|pause|status|reset");
     private static final List<String> DMM_SUBS = List.of("enchant", "sach", "laydo", "luudo", "thuvien", "clean", "reload", "lenh",
-            "rtpnpc", "shopnpc", "thorennpc", "phu", "hoabinh", "decorate", "structures", "hang", "thegioi", "spawnmoi");
+            "rtpnpc", "shopnpc", "shopkhung", "thorennpc", "phu", "hoabinh", "decorate", "structures", "hang", "thegioi", "spawnmoi");
     /** Thợ Rèn (/thoren, NPC quầy /dmm thorennpc); null nếu tắt. */
     private ThoRen thoRen;
     /** Lệnh con /dmm chỉ Admin (duckymomo.admin); còn lại Manager dùng được (duckymomo.dmm). */

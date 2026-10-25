@@ -118,7 +118,7 @@ towny_price_new_nation: 10000.0
 towny_price_claim: 75.0
 towny_town_upkeep: 100.0
 towny_nation_upkeep: 300.0
-eco_starting_balance: 500
+eco_starting_balance: 0
 eco_per_player_locale: false
 combat_mode:
   - old
@@ -194,7 +194,7 @@ tab_header:
   - '&r'
   - <#FFC23D>✦ DUCKYMOMO ✦</#FF6A00>
   - '&6⚔ &eBang Hội Chiến &6⚔'
-  - '&7Chào &f%player%&7! Mùa 1: &aĐông Nam Á'
+  - '&7Chào &f%player%&7! Mùa 1: &aĐại Lục Sương Mai'
   - '&r'
 tab_footer:
   - '&r'

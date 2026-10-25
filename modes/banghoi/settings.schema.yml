@@ -429,7 +429,7 @@ Admin (quyền duckymomo.sell.khonggioihan) không bị giới hạn." }
           commands: ["execute in minecraft:overworld run forceload add {spawn_x} {spawn_z}",
                      "execute in minecraft:overworld positioned {spawn_x} 0 {spawn_z} positioned over motion_blocking_no_leaves run setworldspawn ~ ~ ~",
                      "execute in minecraft:overworld run forceload remove {spawn_x} {spawn_z}"],
-          note: "Độ cao tự lấy theo mặt đất. Map Trái Đất 1:1000: 1 độ kinh/vĩ ≈ 119,5 block (Hà Nội ≈ 12646, -2512)." }
+          note: "Độ cao tự lấy theo mặt đất. Map Trái Đất 1:1000: 1 độ kinh/vĩ ≈ 119,5 block (Kinh Đô ≈ 12707, -2433)." }
       - { key: spawn_z, label: Điểm spawn, toạ độ Z, type: int, min: -29000000, max: 29000000,
           commands: ["execute in minecraft:overworld run forceload add {spawn_x} {spawn_z}",
                      "execute in minecraft:overworld positioned {spawn_x} 0 {spawn_z} positioned over motion_blocking_no_leaves run setworldspawn ~ ~ ~",
@@ -455,14 +455,14 @@ Admin (quyền duckymomo.sell.khonggioihan) không bị giới hạn." }
           options: [ { value: true, label: Bật }, { value: false, label: Tắt } ] }
       - { key: kh_sell, label: "% tiền bán /sell tính vào quỹ", type: number, min: 0, max: 1000, file: plugins/DuckyMoMoCore/config.yml, path: frontier.sell-percent,
           note: "Chỉ để đếm, người bán vẫn nhận đủ tiền. 100 = bán 1 xu thì quỹ +1." }
-      - { key: kh_g1, label: "Mốc 1: Mã Lai + Singapore (xu)", type: number, min: 1, file: plugins/DuckyMoMoCore/config.yml, path: frontier.goals.0.need,
+      - { key: kh_g1, label: "Mốc 1: Bán Đảo Mưa (xu)", type: number, min: 1, file: plugins/DuckyMoMoCore/config.yml, path: frontier.goals.0.need,
           note: "Sau khi mở: Tâm viền 12500 / -1650, bán kính 1300 x 1550." }
-      - { key: kh_g2, label: "Mốc 2: Philippines (xu)", type: number, min: 1, file: plugins/DuckyMoMoCore/config.yml, path: frontier.goals.1.need,
+      - { key: kh_g2, label: "Mốc 2: Thiên Đảo (xu)", type: number, min: 1, file: plugins/DuckyMoMoCore/config.yml, path: frontier.goals.1.need,
           note: "Sau khi mở: Tâm viền 13150 / -1650, bán kính 1950 x 1550." }
-      - { key: kh_g3, label: "Mốc 3: Borneo + Java (xu)", type: number, min: 1, file: plugins/DuckyMoMoCore/config.yml, path: frontier.goals.2.need,
+      - { key: kh_g3, label: "Mốc 3: Đảo Rừng Già + Đảo Núi Lửa (xu)", type: number, min: 1, file: plugins/DuckyMoMoCore/config.yml, path: frontier.goals.2.need,
           note: "Sau khi mở: Tâm viền 13150 / -1050, bán kính 1950 x 2150." }
       - { key: kh_pioneer, label: "Người Tiên Phong: số người đầu tiên được thưởng mỗi vùng mới", type: int, min: 0, max: 100, file: plugins/DuckyMoMoCore/config.yml, path: frontier.pioneer.count,
-          info: "Là gì: khi mốc khai hoang mở, vùng mới hiện ở /tpr (Mã Lai, Philippines, Borneo, Java) kèm đặc sản riêng. Ngần này người ĐẦU TIÊN đặt chân tới vùng đó nhận quà ở dưới, cả server được báo.\n0 = tắt." }
+          info: "Là gì: khi mốc khai hoang mở, vùng mới hiện ở /tpr (Bán Đảo Mưa, Thiên Đảo, Đảo Rừng Già, Đảo Núi Lửa) kèm đặc sản riêng. Ngần này người ĐẦU TIÊN đặt chân tới vùng đó nhận quà ở dưới, cả server được báo.\n0 = tắt." }
       - { key: kh_pioneer_rw, label: "Người Tiên Phong: quà", type: rewards, file: plugins/DuckyMoMoCore/config.yml, path: frontier.pioneer.rewards,
           note: "Mặc định: 2000 xu + danh hiệu [Tiên Phong] (giữ qua các mùa)." }
 
@@ -946,7 +946,7 @@ Admin (quyền duckymomo.sell.khonggioihan) không bị giới hạn." }
   - title: Đặc sản vùng (/dacsan)
     category: Thế giới
     description: "Phe có nhiều thị trấn nhất trong một vùng (vùng của /rtp) thì dân phe đó gặt đặc sản vùng ở đâu cũng được mùa thêm %."
-    info: "Là gì: lý do kinh tế để chiếm đất. Phe = nước, hoặc thị trấn chưa vào nước. Đếm theo nhà chính/spawn của thị trấn. Hoà nhau = vùng chưa có chủ.\nĐặc sản mặc định: Tây Bắc khoai, Lào cà rốt, Trung Bộ ca cao, Nam Bộ lúa, Thái Lan lúa + ca cao, Myanmar củ dền, Nam Trung Quốc khoai + củ dền.\nĐổi đặc sản: region-specialty.regions trong plugins/DuckyMoMoCore/config.yml (chỉ cây WHEAT, CARROTS, POTATOES, BEETROOTS, COCOA).\nNgười chơi xem: /dacsan, trang chủ web mục Mùa.\nLưu xong: có hiệu lực ngay (dmm reload)."
+    info: "Là gì: lý do kinh tế để chiếm đất. Phe = nước, hoặc thị trấn chưa vào nước. Đếm theo nhà chính/spawn của thị trấn. Hoà nhau = vùng chưa có chủ.\nĐặc sản mặc định: Bắc Sơn Lĩnh khoai, Rừng Lam cà rốt, Cao Nguyên Gió ca cao, Châu Thổ Phù Sa lúa, Đồng Kim lúa + ca cao, Tây Mộc Vực củ dền, Hồng Nguyên khoai + củ dền.\nĐổi đặc sản: region-specialty.regions trong plugins/DuckyMoMoCore/config.yml (chỉ cây WHEAT, CARROTS, POTATOES, BEETROOTS, COCOA).\nNgười chơi xem: /dacsan, trang chủ web mục Mùa.\nLưu xong: có hiệu lực ngay (dmm reload)."
     apply: [dmm reload]
     settings:
       - { key: rs_on, label: Bật đặc sản vùng, type: select, file: plugins/DuckyMoMoCore/config.yml, path: region-specialty.enabled, options: [ { value: true, label: Bật }, { value: false, label: Tắt } ] }

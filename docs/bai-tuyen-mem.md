@@ -1,8 +1,8 @@
-⚔️ DUCKYMOMO NETWORK – BANG HỘI CHIẾN TRÊN BẢN ĐỒ TRÁI ĐẤT ⚔️
+⚔️ DUCKYMOMO NETWORK – BANG HỘI CHIẾN TRÊN ĐẠI LỤC SƯƠNG MAI ⚔️
 
 🦆 Sau gần chục năm vắng bóng, DuckyMoMo chính thức TÁI XUẤT GIANG HỒ!
 
-Một Đông Nam Á rộng lớn đang chờ chủ, chưa mảnh đất nào có người cắm cờ.
+Một đại lục rộng lớn đang chờ chủ, chưa mảnh đất nào có người cắm cờ.
 
 🏰 Lập thị trấn, kết thành quốc gia, mỗi tối cuối tuần CÔNG THÀNH
 🕊️ Thích yên bình? Vào Liên minh Hoà Bình: xây, buôn bán, không ai chiếm được đất

@@ -48,7 +48,7 @@ world-settings:
     default:
         map:
             enabled: true
-            display-name: Trái Đất - Mùa 1
+            display-name: Đại Lục Sương Mai - Mùa 1
             order: 0
             icon: ''
             max-render-threads: -1

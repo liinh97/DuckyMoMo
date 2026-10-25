@@ -12,7 +12,7 @@ decorate:
   tree-density: 1.0
   structure-spacing-chunks: 24   # vùng mùa 1 nhỏ: ~384 block giữa các điểm công trình mặt đất
   structure-chance: 0.7
-  exclude: {x: 12699, z: -2465, radius: 190}   # khu spawn Hà Nội: công trình GlassCup x 12599..12799, z -2620..-2310
+  exclude: {x: 12699, z: -2465, radius: 190}   # khu spawn Kinh Đô: công trình GlassCup x 12599..12799, z -2620..-2310
   # Từ 12/10 map dùng cách B (WorldPainter populate: Minecraft tự trồng cây/cỏ/hoa/động vật khi nạp chunk) nên
   # KHÔNG chạy /dmm decorate nữa. Cấu hình dưới đây chỉ còn để tham khảo (lượt 2 trồng rừng thủ công trên map cũ).
   plants: false
@@ -151,18 +151,18 @@ rtp:
     name: "&6Dịch chuyển ngẫu nhiên"
     lines: ["&7Bấm vào để chọn khu", "&8(PC: chuột phải · Điện thoại: chạm)"]
   zones:
-    - {id: taybac, name: "&aTây Bắc Việt Nam", icon: MOSSY_COBBLESTONE, center-x: 12365, center-z: -2569, radius: 230, description: "Núi rừng, gần spawn"}
-    - {id: lao, name: "&aLào", icon: JUNGLE_SAPLING, center-x: 12305, center-z: -2330, radius: 230, description: "Rừng núi"}
-    - {id: trungbo, name: "&eTrung Bộ, Tây Nguyên", icon: COCOA_BEANS, center-x: 12843, center-z: -1732, radius: 230, description: "Cao nguyên, ven biển miền Trung"}
-    - {id: nambo, name: "&eNam Bộ, Campuchia", icon: WHEAT, center-x: 12604, center-z: -1374, radius: 230, description: "Đồng bằng, hợp làm ruộng"}
-    - {id: thailan, name: "&6Thái Lan", icon: GOLD_BLOCK, center-x: 12007, center-z: -1792, radius: 230, description: "Đồng bằng sông Chao Phraya"}
-    - {id: myanmar, name: "&6Myanmar", icon: BAMBOO, center-x: 11529, center-z: -2389, radius: 230, description: "Xa spawn nhất về phía tây"}
-    - {id: namtq, name: "&cNam Trung Quốc", icon: RED_SAND, center-x: 13142, center-z: -2808, radius: 230, description: "Phía bắc vùng mùa"}
+    - {id: taybac, name: "&aBắc Sơn Lĩnh", icon: MOSSY_COBBLESTONE, center-x: 12365, center-z: -2569, radius: 230, description: "Núi rừng, gần kinh đô"}
+    - {id: lao, name: "&aRừng Lam", icon: JUNGLE_SAPLING, center-x: 12305, center-z: -2330, radius: 230, description: "Rừng núi"}
+    - {id: trungbo, name: "&eCao Nguyên Gió", icon: COCOA_BEANS, center-x: 12843, center-z: -1732, radius: 230, description: "Cao nguyên, ven biển phía đông"}
+    - {id: nambo, name: "&eChâu Thổ Phù Sa", icon: WHEAT, center-x: 12604, center-z: -1374, radius: 230, description: "Đồng bằng, hợp làm ruộng"}
+    - {id: thailan, name: "&6Đồng Kim", icon: GOLD_BLOCK, center-x: 12007, center-z: -1792, radius: 230, description: "Đồng bằng ven sông lớn"}
+    - {id: myanmar, name: "&6Tây Mộc Vực", icon: BAMBOO, center-x: 11529, center-z: -2389, radius: 230, description: "Xa kinh đô nhất về phía tây"}
+    - {id: namtq, name: "&cHồng Nguyên", icon: RED_SAND, center-x: 13142, center-z: -2808, radius: 230, description: "Phía bắc vùng mùa"}
     # vùng mở bằng khai hoang (requires: id mốc frontier.goals): chỉ hiện ở /tpr, có đặc sản, Người Tiên Phong khi mốc đã mở
-    - {id: malai, name: "&eBán đảo Mã Lai, Singapore", icon: JUNGLE_LOG, center-x: 12250, center-z: -350, radius: 230, requires: malaysia, description: "Rừng mưa nhiệt đới, eo biển"}
-    - {id: philippines, name: "&bQuần đảo Philippines", icon: SUGAR_CANE, center-x: 14575, center-z: -1434, radius: 260, requires: philippines, description: "Nghìn đảo, ruộng bậc thang"}
-    - {id: borneo, name: "&2Đảo Borneo", icon: COCOA_BEANS, center-x: 13620, center-z: -120, radius: 260, requires: indonesia, description: "Rừng già, ca cao"}
-    - {id: java, name: "&dĐảo Java", icon: WHEAT, center-x: 13142, center-z: 896, radius: 230, requires: indonesia, description: "Núi lửa, ruộng lúa"}
+    - {id: malai, name: "&eBán Đảo Mưa", icon: JUNGLE_LOG, center-x: 12250, center-z: -350, radius: 230, requires: malaysia, description: "Rừng mưa nhiệt đới, eo biển"}
+    - {id: philippines, name: "&bThiên Đảo", icon: SUGAR_CANE, center-x: 14575, center-z: -1434, radius: 260, requires: philippines, description: "Nghìn đảo, ruộng bậc thang"}
+    - {id: borneo, name: "&2Đảo Rừng Già", icon: COCOA_BEANS, center-x: 13620, center-z: -120, radius: 260, requires: indonesia, description: "Rừng già, ca cao"}
+    - {id: java, name: "&dĐảo Núi Lửa", icon: WHEAT, center-x: 13142, center-z: 896, radius: 230, requires: indonesia, description: "Núi lửa, ruộng lúa"}
     - {id: ngaunhien, name: "&dNgẫu nhiên toàn vùng", icon: ENDER_PEARL, center-x: 0, center-z: 0, radius: 0, description: "Bất kỳ đâu trong vùng mùa 1"}
 
 # Luật chiến tranh (docs/banghoi-luat-mua1.md). Trang Cài đặt > Chiến tranh.
@@ -247,19 +247,19 @@ frontier:
       - danhhieu tienphong
   goals:
     - id: malaysia
-      name: "&eMở bán đảo Mã Lai và Singapore"
+      name: "&eMở Bán Đảo Mưa"
       need: 900000.0
-      message: "Viền phía nam đã nới xuống tới Singapore."
+      message: "Viền phía nam đã nới xuống tới Bán Đảo Mưa."
       commands: ["chunky world world", "chunky shape rectangle", "chunky center 12500 -1650", "chunky radius 1300 1550", "chunky border add world"]
     - id: philippines
-      name: "&bMở quần đảo Philippines"
+      name: "&bMở Thiên Đảo"
       need: 2400000.0
-      message: "Viền phía đông đã nới ra Philippines."
+      message: "Viền phía đông đã nới ra Thiên Đảo."
       commands: ["chunky world world", "chunky shape rectangle", "chunky center 13150 -1650", "chunky radius 1950 1550", "chunky border add world"]
     - id: indonesia
-      name: "&dMở Borneo và Java (Indonesia)"
+      name: "&dMở Đảo Rừng Già và Đảo Núi Lửa"
       need: 6000000.0
-      message: "Viền phía nam đã nới tới đảo Java."
+      message: "Viền phía nam đã nới tới Đảo Núi Lửa."
       commands: ["chunky world world", "chunky shape rectangle", "chunky center 13150 -1050", "chunky radius 1950 2150", "chunky border add world"]
 
 # Chợ đen (thu mua) (/donhang, ý từ UniMC "Orders"): người mua đặt đơn, tiền (số lượng x đơn giá) bị giữ trước + phí fee-percent % (không hoàn,
@@ -1197,7 +1197,7 @@ region-specialty:
   regions:
     taybac: {label: "khoai núi", crops: {POTATOES: 25}}
     lao: {label: "rau củ vùng núi", crops: {CARROTS: 25}}
-    trungbo: {label: "ca cao Tây Nguyên", crops: {COCOA: 30}}
+    trungbo: {label: "ca cao Cao Nguyên Gió", crops: {COCOA: 30}}
     nambo: {label: "vựa lúa", crops: {WHEAT: 30}}
     thailan: {label: "lúa Thái, ca cao", crops: {WHEAT: 20, COCOA: 10}}
     myanmar: {label: "củ dền", crops: {BEETROOTS: 25}}

@@ -1,4 +1,4 @@
-location: world:12699.500:67.000:-2517.500
+location: world:12711.313:86.605:-2432.599
 enabled: true
 display-range: 48
 update-range: 48
@@ -10,6 +10,10 @@ pages:
   - content: '&6⚒ SERVER ĐANG HOÀN THIỆN ⚒'
     height: 0.3
   - content: '&fCứ vào chơi trước, tính năng, đồ trade, sự kiện cập nhật dần'
+    height: 0.3
+  - content: '&e/warp trade &7chợ Thợ Rèn &7· &e/warp shop &7nhà buôn mua bán'
+    height: 0.3
+  - content: '&e/huongdan &7cẩm nang &7· &e/menu &7menu chính (Shift + F)'
     height: 0.3
   - content: '&7Thấy lỗi, cách lách luật? Báo &9Discord #reports &7» &aCó thưởng'
     height: 0.3

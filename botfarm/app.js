@@ -368,6 +368,27 @@ setInterval(() => {
   connect(n).catch(e => { rt.err = e.message; rt.connecting = false; });
 }, 1000);
 
+// Dơi tích dần trong hang quanh chỗ bot đứng (27/10: 4.400 con, riêng quanh Bao_Khang 2.188; vượt xa giới hạn 15 / người, chưa rõ vì
+// sao). 10 phút một lần xoá dơi trong 160 ô quanh mỗi bot, trừ dơi trong 48 ô quanh người thật (khỏi thấy dơi biến mất).
+setInterval(async () => {
+  const by = {};
+  for (const n of NAMES) if (RT[n].bot) (by[state[n].server] = by[state[n].server] || []).push(n);
+  for (const [host, bots] of Object.entries(by)) {
+    const R = rcon(host);
+    try {
+      const real = '@a[' + NAMES.map(n => 'name=!' + n).join(',') + ']';
+      await R.cmd(`execute as ${real} at @s run minecraft:tag @e[type=minecraft:bat,distance=..48] add botfarm_keep`);
+      let k = 0;
+      for (const n of bots) {
+        const r = await R.cmd(`execute as ${n} at @s run minecraft:kill @e[type=minecraft:bat,distance=..160,tag=!botfarm_keep]`);
+        const m = r.match(/Killed (\d+) entities/); k += m ? +m[1] : /Killed /.test(r) ? 1 : 0;   // 1 con: "Killed Bat"
+      }
+      await R.cmd('minecraft:tag @e[type=minecraft:bat,tag=botfarm_keep] remove botfarm_keep');
+      if (k) log('xoá', k, 'dơi quanh bot ở', SERVERS[host] || host);
+    } catch (e) { log('lỗi xoá dơi:', e.message); }
+  }
+}, 600000);
+
 // ---------------------------------------------------------------- bot tự chat với nhau (27/10, bật / tắt ở trang Bot)
 // Cứ min–max phút chọn 2–3 bot đang cùng một server, nói một đoạn hội thoại soạn sẵn (gõ chậm như người, mỗi bot một kiểu gõ).
 // Nội dung chỉ chuyện vặt / mẹo đúng của server: không hẹn gặp, không rủ đi đâu (người thật đến thì bot không đáp được),

@@ -133,6 +133,16 @@ async function randomHome(name) {
     const g = await ground('banghoi-1', x, y, z);
     if (g) return g;
   }
+  // hết điểm gợi ý (27/10: 20 bot > số điểm): đứng cạnh một điểm đã có bot, lệch 4–6 ô (chủ server: 2 bot gần nhau cũng được).
+  // Toạ độ ngẫu nhiên khắp vùng /tpr hay rơi xuống biển (map quần đảo) nên không dùng; bỏ 2 điểm sát spawn.
+  const all = NAMES.filter(n => n !== name).map(n => state[n].home['banghoi-1']).filter(Boolean);
+  const near = SPOTS.filter(([x, , z]) => Math.hypot(x - 12706, z + 2430) > 30);
+  for (let k = near.length - 1; k > 0; k--) { const j = Math.floor(Math.random() * (k + 1)); [near[k], near[j]] = [near[j], near[k]]; }
+  for (const [x, y, z] of near.slice(0, 8)) {
+    const sx = Math.random() < 0.5 ? -1 : 1, sz = Math.random() < 0.5 ? -1 : 1;
+    const g = await ground('banghoi-1', x + sx * (4 + Math.floor(Math.random() * 3)), y, z + sz * (4 + Math.floor(Math.random() * 3)));
+    if (g && !all.some(h => Math.hypot(h.x - g.x, h.z - g.z) < 3)) return g;
+  }
   return null;
 }
 

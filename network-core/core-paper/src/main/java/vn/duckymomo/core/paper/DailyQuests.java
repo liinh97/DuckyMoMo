@@ -49,6 +49,8 @@ import java.util.UUID;
  * nhận hết việc của người đó, làm xong (feature) chưa có quà mà phải quay lại NPC đó mới nhận. Việc chưa nhận thì làm cũng không tính.
  * NPC: "bq" (hội thoại BetonQuest gọi lệnh), "quay:<quầy Thợ Rèn>" (ThoRen.onNpc), "donbuon" (Nhà Buôn): có việc để giao / trả thì
  * NPC nói trong chat và lần bấm đó không mở menu. Lưu lang.<uuid>: mo (đã mở nhánh), nhan (đang làm), xong (chờ nhận thưởng).
+ * NPC hội thoại (bq): xong việc thì gắn tag BetonQuest cotruyen>vl_<mã>_tra -> câu mở đầu "xong rồi à?" gọi trả thưởng ngay khi bấm NPC;
+ * chữ trong chat đợi hội thoại ĐÓNG mới gửi (PlayerConversationEndEvent; bảng dialog che chat, đóng muộn thì chữ đã mờ; 28/10).
  */
 final class DailyQuests implements Listener {
     static volatile DailyQuests INSTANCE;
@@ -84,6 +86,9 @@ final class DailyQuests implements Listener {
     private final Map<String, Quest> pool = new LinkedHashMap<>();
     private final Map<String, Intro> intros = new LinkedHashMap<>();
     private final Map<String, Giver> givers = new LinkedHashMap<>();
+    /** Hội thoại BetonQuest đã gọi /dmm viecnpc, chờ hội thoại đóng mới nói (người chơi -> NPC). */
+    private final Map<UUID, Giver> pending = new java.util.HashMap<>();
+    private boolean convEndHook;
     private boolean dirty;
 
     DailyQuests(JavaPlugin plugin, ConfigurationSection cfg, Rewards rewards) {
@@ -138,6 +143,8 @@ final class DailyQuests implements Listener {
                 }
             }, 1200L, 1200L);
         }
+        hookConversationEnd();
+        Bukkit.getScheduler().runTaskLater(plugin, () -> Bukkit.getOnlinePlayers().forEach(this::syncTags), 100L);
         hookEvent("fr.maxlego08.zauctionhouse.api.event.events.stats.AuctionItemListedEvent", "getSeller", "choden");
         hookEvent("com.jaketheman.tradepro.events.TradeCompleteEvent", "getPlayerOne", "trade");
         hookEvent("com.jaketheman.tradepro.events.TradeCompleteEvent", "getPlayerTwo", "trade");
@@ -166,6 +173,70 @@ final class DailyQuests implements Listener {
         } catch (ClassNotFoundException | NoSuchMethodException e) {
             // plugin đó chưa cài
         }
+    }
+
+    /** BetonQuest PlayerConversationEndEvent (không phụ thuộc lúc biên dịch): hội thoại đóng thì NPC nói phần đang chờ. */
+    @SuppressWarnings("unchecked")
+    private void hookConversationEnd() {
+        try {
+            Class<? extends org.bukkit.event.Event> ev = (Class<? extends org.bukkit.event.Event>)
+                    Class.forName("org.betonquest.betonquest.api.bukkit.event.PlayerConversationEndEvent");
+            java.lang.reflect.Method prof = ev.getMethod("getProfile");
+            Bukkit.getPluginManager().registerEvent(ev, this, EventPriority.MONITOR, (l, e) -> {
+                if (!ev.isInstance(e)) {
+                    return;
+                }
+                try {
+                    Object pr = prof.invoke(e);
+                    if (pr.getClass().getMethod("getPlayer").invoke(pr) instanceof org.bukkit.OfflinePlayer op) {
+                        UUID u = op.getUniqueId();
+                        Bukkit.getScheduler().runTaskLater(plugin, () -> sayPending(u), 5L);
+                    }
+                } catch (ReflectiveOperationException ignored) {
+                    // bỏ qua
+                }
+            }, plugin);
+            convEndHook = true;
+        } catch (ClassNotFoundException | NoSuchMethodException e) {
+            // BetonQuest chưa cài
+        }
+    }
+
+    private void sayPending(UUID u) {
+        Giver g = pending.remove(u);
+        Player p = Bukkit.getPlayer(u);
+        if (g != null && p != null) {
+            talk(p, g, true);
+            syncTag(p, g);
+        }
+    }
+
+    /** NPC hội thoại: có việc xong chờ trả thì gắn tag cotruyen>vl_<mã>_tra (câu mở đầu "xong rồi à?" trong hội thoại), hết thì gỡ. */
+    private void syncTag(Player p, Giver g) {
+        if (!"bq".equals(g.npc()) || !Bukkit.getPluginManager().isPluginEnabled("BetonQuest")) {
+            return;
+        }
+        boolean has = list(p.getUniqueId(), "xong").stream().anyMatch(id -> intros.containsKey(id) && g.id().equals(intros.get(id).giver()));
+        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "bq tag " + p.getName() + (has ? " add" : " del") + " cotruyen>vl_" + g.id() + "_tra");
+    }
+
+    /** Lúc vào server: gắn lại tag cho NPC hội thoại còn việc xong chưa trả (chỉ gắn, không gỡ, đỡ lệnh thừa). */
+    private void syncTags(Player p) {
+        for (Giver g : givers.values()) {
+            if ("bq".equals(g.npc()) && list(p.getUniqueId(), "xong").stream().anyMatch(id -> intros.containsKey(id) && g.id().equals(intros.get(id).giver()))) {
+                syncTag(p, g);
+            }
+        }
+    }
+
+    @EventHandler
+    public void onJoin(org.bukkit.event.player.PlayerJoinEvent e) {
+        Player p = e.getPlayer();
+        Bukkit.getScheduler().runTaskLater(plugin, () -> {
+            if (p.isOnline()) {
+                syncTags(p);
+            }
+        }, 40L);
     }
 
     /** Module khác báo người chơi vừa dùng một tính năng (mã trong daily-quests.intro). */
@@ -217,6 +288,7 @@ final class DailyQuests implements Listener {
         p.sendMessage(c("&a✔ Xong việc: &f" + in.name() + "&a. Về gặp " + g.name() + (g.where().isEmpty() ? "" : " &7(" + g.where() + ")")
                 + " &anhận thưởng."));
         p.playSound(p.getLocation(), org.bukkit.Sound.ENTITY_PLAYER_LEVELUP, 0.6f, 1.4f);
+        syncTag(p, g);
         flush();
     }
 
@@ -290,7 +362,7 @@ final class DailyQuests implements Listener {
         return false;
     }
 
-    /** /dmm viecnpc <người> <mã người giao>: hội thoại BetonQuest gọi (console). Chờ 1 giây cho hội thoại đóng rồi mới nói. */
+    /** /dmm viecnpc <người> <mã người giao>: hội thoại BetonQuest gọi (console). Đợi hội thoại đóng rồi mới nói (bảng hội thoại che chat). */
     void talkCommand(CommandSender s, String[] args) {
         Player p = args.length >= 3 ? Bukkit.getPlayerExact(args[1]) : null;
         Giver g = args.length >= 3 ? givers.get(args[2].toLowerCase(Locale.ROOT)) : null;
@@ -298,11 +370,9 @@ final class DailyQuests implements Listener {
             s.sendMessage("/dmm viecnpc <người đang online> <" + String.join("|", givers.keySet()) + ">: NPC giao / trả việc dân làng");
             return;
         }
-        Bukkit.getScheduler().runTaskLater(plugin, () -> {
-            if (p.isOnline()) {
-                talk(p, g, true);
-            }
-        }, 20L);
+        UUID u = p.getUniqueId();
+        pending.put(u, g);
+        Bukkit.getScheduler().runTaskLater(plugin, () -> sayPending(u), convEndHook ? 1200L : 20L);
     }
 
     /** asked = người chơi chủ động hỏi (hội thoại): không có gì mới cũng trả lời (việc còn dở / hết việc). */

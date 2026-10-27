@@ -4,3 +4,9 @@ actions:
   vl_gialang: "command dmm viecnpc %player% gialang"
   vl_bacthoren: "command dmm viecnpc %player% bacthoren"
   vl_gaccong: "command dmm viecnpc %player% gaccong"
+
+# Việc xong chờ trả (DuckyMoMoCore gắn / gỡ tag vl_<mã>_tra): câu mở đầu "xong rồi à?" của NPC đó
+conditions:
+  vl_gialang_tra: "tag vl_gialang_tra"
+  vl_bacthoren_tra: "tag vl_bacthoren_tra"
+  vl_gaccong_tra: "tag vl_gaccong_tra"

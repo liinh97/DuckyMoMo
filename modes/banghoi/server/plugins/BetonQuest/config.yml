@@ -91,7 +91,7 @@ conversation:
       message_delay: 10
     dialog:
       quester_in_title: true
-      only_buttons: false
+      only_buttons: true   # 28/10: false thì lựa chọn hiện 2 lần (chữ trong bảng không bấm được + nút)
       button_width: 250
       button_render_padding: 13
       close_with_escape: true

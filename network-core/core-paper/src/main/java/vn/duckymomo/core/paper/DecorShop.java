@@ -483,6 +483,7 @@ final class DecorShop implements Listener {
         if (limit != null && !limit.allow(p, limit.unitPrice(new ItemStack(m)) * (all ? have : Math.min(lot, have)))) {
             return;
         }
+        DailyQuests.watchSell(p);   // performCommand không qua PlayerCommandPreprocessEvent
         p.performCommand("sell " + m.name().toLowerCase(Locale.ROOT) + (all ? "" : " " + Math.min(lot, have)));
         plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
             if (h != null && p.isOnline() && p.getOpenInventory().getTopInventory().getHolder() == h) {
@@ -515,6 +516,7 @@ final class DecorShop implements Listener {
             p.sendMessage(c("&cKhông đủ tiền (" + money(o.price()) + ")."));
             return;
         }
+        DailyQuests.feature(p, "mua");
         if (o.title() != null) {
             board.grant(p.getUniqueId(), p.getName(), o.title());
         } else {

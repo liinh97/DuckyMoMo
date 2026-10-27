@@ -494,6 +494,9 @@ final class DungeonGate implements Listener {
         }
         if (a == null) {
             a = p.addAttachment(plugin);
+            if (a == null) {   // 27/10: đối tượng người chơi của lượt cũ (thoát rồi vào lại trong 1 giây) không gắn quyền được
+                return;
+            }
             attach.put(u, a);
         }
         for (Dg d : dungeons.values()) {
@@ -639,6 +642,9 @@ final class DungeonGate implements Listener {
                 }
             }
             refresh(p);
+            // 26/10: member không biết cách ra giữa chừng
+            p.sendMessage(c("&7⛩ Muốn thoát dungeon giữa chừng: gõ &f/em quit"));
+            DailyQuests.feature(p, "dungeon");
         }
         if (autoStart && playerInstance != null && !ps.isEmpty()) {
             Player first = ps.iterator().next();
@@ -738,9 +744,11 @@ final class DungeonGate implements Listener {
 
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
+        UUID id = e.getPlayer().getUniqueId();
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
-            if (e.getPlayer().isOnline()) {
-                refresh(e.getPlayer());
+            Player p = Bukkit.getPlayer(id);   // lấy người chơi hiện tại: thoát rồi vào lại thì đối tượng cũ vẫn báo online theo UUID
+            if (p != null && p.isValid()) {
+                refresh(p);
             }
         }, 20L);
     }

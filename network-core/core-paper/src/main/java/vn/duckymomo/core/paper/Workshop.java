@@ -1353,6 +1353,7 @@ final class Workshop implements Listener {
         p.playSound(p.getLocation(), Sound.BLOCK_ANVIL_USE, 0.6f, 1.2f);
         p.sendMessage(c("&a✔ Đã chế " + r.name() + "&a. Dùng được " + r.days() + " ngày."));
         plugin.getLogger().info("Xưởng: " + p.getName() + " chế " + r.id());
+        DailyQuests.feature(p, "xuong");
         openCraft(p, r);
     }
 

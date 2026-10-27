@@ -188,6 +188,12 @@ def main():
         head = w.read_text(encoding="utf-8").split("\nworth:", 1)[0]
         body = "".join(f"  {m.lower()}: {num(v)}\n" for m, v in sorted(worth.items()))
         w.write_text(head + "\nworth:\n" + body, encoding="utf-8")
+        # Essentials tra giá theo tên bỏ dấu _ (lapislazuli): thêm khối tên liền, thiếu thì món có dấu _ không bán được
+        import importlib.util
+        spec = importlib.util.spec_from_file_location("we", Path(__file__).with_name("worth-essentials.py"))
+        we = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(we)
+        w.write_text(we.mirror(w.read_text(encoding="utf-8"))[0], encoding="utf-8")
     nbuy = sum(len(c["items"]) for c in cats)
     print(f"{len(cats)} danh mục, {nbuy} dòng món bán, {sum(len(c['sell']) for c in cats)} món chỉ thu mua, {len(worth)} giá /sell")
 

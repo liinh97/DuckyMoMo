@@ -517,6 +517,7 @@ final class LevelUp implements Listener {
         save();
         writeJson();
         p.playSound(p.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 0.8f, 1.1f);
+        DailyQuests.feature(p, "capdo");
         p.sendMessage(c("&a⬆ Lên cấp " + next + "! &7+" + gain + " điểm thuộc tính (đang có " + freePoints(u) + "). Cộng điểm: &f/capdo"));
         if (milestoneEvery > 0 && next % milestoneEvery == 0) {
             List<String> got = rewards == null ? List.of() : rewards.give(p, milestoneRewards);

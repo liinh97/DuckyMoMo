@@ -143,6 +143,7 @@ final class DailyCheckin implements Listener {
         List<String> got = new ArrayList<>(rewards.give(p, cfg.getStringList("daily-rewards")));
         int day = cycleDay(count);
         List<String> mile = milestones().get(day);
+        DailyQuests.feature(p, "diemdanh");
         p.sendMessage(c("&a✔ Điểm danh ngày thứ &f" + count + "&a!" + (got.isEmpty() ? "" : " Nhận: &f" + String.join("&7, &f", got))));
         if (mile != null && !mile.isEmpty()) {
             List<String> extra = rewards.give(p, mile);

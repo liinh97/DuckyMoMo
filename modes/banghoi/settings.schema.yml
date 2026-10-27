@@ -113,7 +113,7 @@ groups:
 
   - title: Nhiệm vụ hằng ngày
     category: Thưởng & sự kiện
-    description: "/nhiemvu: mỗi người mỗi ngày nhận vài nhiệm vụ ngẫu nhiên (cố định trong ngày, đổi lúc 0 giờ) từ danh sách dưới. Khối người chơi tự đặt rồi phá không được tính."
+    description: "/nhiemvu: mỗi người mỗi ngày nhận vài nhiệm vụ ngẫu nhiên (cố định trong ngày, đổi lúc 0 giờ) từ danh sách dưới. Khối người chơi tự đặt rồi phá không được tính. Kèm nhóm Làm quen tính năng (mỗi việc 1 lần)."
     apply: [dmm reload]
     settings:
       - { key: nv_on, label: Bật nhiệm vụ hằng ngày, type: select, file: plugins/DuckyMoMoCore/config.yml, path: daily-quests.enabled,
@@ -122,6 +122,33 @@ groups:
       - { key: nv_bonus, label: Thưởng thêm khi xong hết trong ngày, type: rewards, file: plugins/DuckyMoMoCore/config.yml, path: daily-quests.complete-all-rewards }
       - { key: nv_pool, label: Danh sách nhiệm vụ, type: quests, file: plugins/DuckyMoMoCore/config.yml, path: daily-quests.pool,
           note: "Mục tiêu: tên vật liệu/mob tiếng Anh, cách nhau dấu phẩy. *_ORE = mọi quặng, *_LOG = mọi khúc gỗ, * = tất cả, @HOSTILE = mọi quái thù địch." }
+      - { key: nv_intro_diemdanh, label: "Làm quen: Điểm danh lần đầu", type: rewards, file: plugins/DuckyMoMoCore/config.yml, path: daily-quests.intro.diemdanh.rewards }
+      - { key: nv_intro_gacha, label: "Làm quen: Quay gacha một lần", type: rewards, file: plugins/DuckyMoMoCore/config.yml, path: daily-quests.intro.gacha.rewards }
+      - { key: nv_intro_mua, label: "Làm quen: Mua một món ở Cửa hàng Kinh Đô", type: rewards, file: plugins/DuckyMoMoCore/config.yml, path: daily-quests.intro.mua.rewards }
+      - { key: nv_intro_ban, label: "Làm quen: Bán đồ cho server", type: rewards, file: plugins/DuckyMoMoCore/config.yml, path: daily-quests.intro.ban.rewards }
+      - { key: nv_intro_cauca, label: "Làm quen: Câu được một con cá", type: rewards, file: plugins/DuckyMoMoCore/config.yml, path: daily-quests.intro.cauca.rewards }
+      - { key: nv_intro_nauan, label: "Làm quen: Nấu một món ăn", type: rewards, file: plugins/DuckyMoMoCore/config.yml, path: daily-quests.intro.nauan.rewards }
+      - { key: nv_intro_choden, label: "Làm quen: Treo một món lên Chợ đen", type: rewards, file: plugins/DuckyMoMoCore/config.yml, path: daily-quests.intro.choden.rewards }
+      - { key: nv_intro_datdon, label: "Làm quen: Đặt một đơn thu mua", type: rewards, file: plugins/DuckyMoMoCore/config.yml, path: daily-quests.intro.datdon.rewards }
+      - { key: nv_intro_giaodon, label: "Làm quen: Giao hàng cho một đơn thu mua", type: rewards, file: plugins/DuckyMoMoCore/config.yml, path: daily-quests.intro.giaodon.rewards }
+      - { key: nv_intro_trade, label: "Làm quen: Trao đổi đồ với người khác", type: rewards, file: plugins/DuckyMoMoCore/config.yml, path: daily-quests.intro.trade.rewards }
+      - { key: nv_intro_tinhluyen, label: "Làm quen: Tinh luyện một món", type: rewards, file: plugins/DuckyMoMoCore/config.yml, path: daily-quests.intro.tinhluyen.rewards }
+      - { key: nv_intro_xuong, label: "Làm quen: Chế một món ở Xưởng", type: rewards, file: plugins/DuckyMoMoCore/config.yml, path: daily-quests.intro.xuong.rewards }
+      - { key: nv_intro_thoren, label: "Làm quen: Rèn hoặc nâng một món ở Thợ Rèn", type: rewards, file: plugins/DuckyMoMoCore/config.yml, path: daily-quests.intro.thoren.rewards }
+      - { key: nv_intro_pet, label: "Làm quen: Bắt một pet chiến đấu", type: rewards, file: plugins/DuckyMoMoCore/config.yml, path: daily-quests.intro.pet.rewards }
+      - { key: nv_intro_kham, label: "Làm quen: Khảm một Tinh Luyện vào đồ set", type: rewards, file: plugins/DuckyMoMoCore/config.yml, path: daily-quests.intro.kham.rewards }
+      - { key: nv_intro_donbuon, label: "Làm quen: Giao một đơn nhà buôn", type: rewards, file: plugins/DuckyMoMoCore/config.yml, path: daily-quests.intro.donbuon.rewards }
+      - { key: nv_intro_thitran, label: "Làm quen: Vào một thị trấn", type: rewards, file: plugins/DuckyMoMoCore/config.yml, path: daily-quests.intro.thitran.rewards }
+      - { key: nv_intro_kholuong, label: "Làm quen: Nộp kho lương cho thị trấn", type: rewards, file: plugins/DuckyMoMoCore/config.yml, path: daily-quests.intro.kholuong.rewards }
+      - { key: nv_intro_danhphan, label: "Làm quen: Lên một bậc danh phận", type: rewards, file: plugins/DuckyMoMoCore/config.yml, path: daily-quests.intro.danhphan.rewards }
+      - { key: nv_intro_capdo, label: "Làm quen: Lên một cấp Thăng Cấp", type: rewards, file: plugins/DuckyMoMoCore/config.yml, path: daily-quests.intro.capdo.rewards }
+      - { key: nv_intro_dungeon, label: "Làm quen: Vào một dungeon", type: rewards, file: plugins/DuckyMoMoCore/config.yml, path: daily-quests.intro.dungeon.rewards }
+      - { key: nv_intro_vuotdungeon, label: "Làm quen: Vượt một dungeon", type: rewards, file: plugins/DuckyMoMoCore/config.yml, path: daily-quests.intro.vuotdungeon.rewards }
+      - { key: nv_intro_truyna, label: "Làm quen: Hạ một quái trong Lệnh săn", type: rewards, file: plugins/DuckyMoMoCore/config.yml, path: daily-quests.intro.truyna.rewards }
+      - { key: nv_intro_khobau, label: "Làm quen: Mở một rương kho báu", type: rewards, file: plugins/DuckyMoMoCore/config.yml, path: daily-quests.intro.khobau.rewards }
+      - { key: nv_intro_dautruong, label: "Làm quen: Thắng một trận Đấu Trường", type: rewards, file: plugins/DuckyMoMoCore/config.yml, path: daily-quests.intro.dautruong.rewards }
+      - { key: nv_intro_bonus, label: "Làm quen: thưởng thêm khi xong hết", type: rewards, file: plugins/DuckyMoMoCore/config.yml, path: daily-quests.intro-all-rewards,
+          note: "Làm quen tính năng: mỗi việc 1 lần/người, làm song song, hiện trong /nhiemvu. Tên + dòng hướng dẫn sửa trong config.yml (daily-quests.intro)." }
 
   - title: Gacha (quay thưởng)
     category: Thưởng & sự kiện
@@ -1250,6 +1277,18 @@ Admin (quyền duckymomo.sell.khonggioihan) không bị giới hạn." }
     apply: [dmm reload]
     settings:
       - { key: tr_on, label: Bật Thợ Rèn, type: select, file: plugins/DuckyMoMoCore/config.yml, path: tho-ren.enabled, options: [ { value: true, label: Bật }, { value: false, label: Tắt } ] }
+      - { key: kham_on, label: "Bật Khảm Tinh Luyện (/thoren kham)", type: select, file: plugins/DuckyMoMoCore/config.yml, path: kham.enabled, options: [ { value: true, label: Bật }, { value: false, label: Tắt } ] }
+      - { key: kham_thao_xu, label: "Khảm: tiền tháo một ngọc (xu)", type: int, min: 0, max: 1000000, file: plugins/DuckyMoMoCore/config.yml, path: kham.thao-xu }
+      - { key: db_on, label: "Bật Đơn nhà buôn tuần (NPC Nhà Buôn ở /warp shop)", type: select, file: plugins/DuckyMoMoCore/config.yml, path: don-buon.enabled, options: [ { value: true, label: Bật }, { value: false, label: Tắt } ] }
+      - { key: db_per_week, label: "Đơn nhà buôn: số đơn mỗi tuần", type: int, min: 1, max: 10, file: plugins/DuckyMoMoCore/config.yml, path: don-buon.per-week }
+      - { key: db_gia, label: "Đơn nhà buôn: trả bao nhiêu % giá bán Tinh Luyện", type: int, min: 50, max: 300, file: plugins/DuckyMoMoCore/config.yml, path: don-buon.gia }
+      - { key: db_luot, label: "Đơn nhà buôn: số lượt giao mỗi đơn cả server (0 = không giới hạn)", type: int, min: 0, max: 1000, file: plugins/DuckyMoMoCore/config.yml, path: don-buon.luot,
+          info: "Mẫu đơn (món cần + quà thêm): config.yml mục don-buon.pool. Đơn đổi mỗi thứ Hai." }
+      - { key: kham_nang_luong, label: "Khảm: năng lượng đầy của một ngọc (lượt dùng)", type: int, min: 100, max: 1000000, file: plugins/DuckyMoMoCore/config.yml, path: kham.nang-luong,
+          info: "Giáp mất 1 mỗi lần trúng đòn từ quái / người (ngã, cháy, độc không tính), vũ khí mất 1 mỗi con hạ được (trùm: mất nhiều hơn, config kham.vukhi-trum). Không đánh nhau thì không hao. Cạn thì ngọc vỡ." }
+      - { key: kham_nap_xu, label: "Khảm: tiền nạp đầy năng lượng (xu, kèm 1 Tinh Luyện cùng loại)", type: int, min: 0, max: 1000000, file: plugins/DuckyMoMoCore/config.yml, path: kham.nap-xu }
+      - { key: kham_thao_vo, label: "Khảm: tỉ lệ vỡ ngọc khi tháo (%)", type: int, min: 0, max: 100, file: plugins/DuckyMoMoCore/config.yml, path: kham.thao-vo,
+          info: "Số ô theo set, chỉ số từng loại ngọc và trần chỉ số: config.yml mục kham (slots, gems, cap)." }
       - { key: tr_em_nhat, label: "Quái dungeon cùng cấp: chém mấy nhát thì chết", info: "Là gì: người cầm vũ khí đồ set đánh quái EliteMobs (dungeon) cùng cấp với đồ thì quái thường chết sau ngần này nhát (trùm / phó trùm nhân thêm hệ số máu của nó).\nTăng = quái trâu hơn.", type: number, min: 0.5, max: 50, file: plugins/DuckyMoMoCore/config.yml, path: tho-ren.elitemobs-gear.set-vs-elite.nhat-ngang-cap }
       - { key: tr_em_don, label: "Quái dungeon cùng cấp: đánh mấy đòn thì người chết", info: "Là gì: người mặc giáp đồ set bị quái thường EliteMobs cùng cấp đánh ngần này đòn thì chết.\nGiảm = quái đánh đau hơn.", type: number, min: 1, max: 100, file: plugins/DuckyMoMoCore/config.yml, path: tho-ren.elitemobs-gear.set-vs-elite.don-ngang-cap }
       - { key: tr_em_heso, label: "Mỗi cấp chênh lệch quái / đồ (hệ số)", info: "Là gì: mỗi cấp quái cao hơn đồ, số nhát cần chém nhân thêm hệ số này và số đòn chịu được chia cho nó (thấp hơn thì ngược lại). 1,08 = 8% mỗi cấp.", type: number, min: 1, max: 1.5, file: plugins/DuckyMoMoCore/config.yml, path: tho-ren.elitemobs-gear.set-vs-elite.he-so-cap }

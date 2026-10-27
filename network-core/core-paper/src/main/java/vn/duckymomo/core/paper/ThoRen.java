@@ -329,6 +329,10 @@ final class ThoRen implements Listener {
             s.sendMessage("Chỉ người chơi dùng được /thoren.");
             return true;
         }
+        if (args.length >= 1 && args[0].equalsIgnoreCase("kham") && Kham.INSTANCE != null) {
+            Kham.INSTANCE.open(p);
+            return true;
+        }
         menu(p);
         return true;
     }
@@ -666,6 +670,10 @@ final class ThoRen implements Listener {
             }
             m.add(t.click("Bấm để xem").apply(new ItemStack(set.icon())), pl -> setMenu(pl, set, true));
         }
+        if (Kham.INSTANCE != null) {
+            m.bar(Tip.of("&5◈ &fKhảm Tinh Luyện").accent("&d").desc("Cầm đồ set trên tay chính, khảm Tinh Luyện vào ô để thêm chỉ số.")
+                    .kv("Lệnh", "/thoren kham").click("Bấm để mở").apply(new ItemStack(Material.AMETHYST_CLUSTER)), pl -> Kham.INSTANCE.open(pl));
+        }
         m.open(p);
     }
 
@@ -822,9 +830,10 @@ final class ThoRen implements Listener {
         }
         Material mat = lib.section(key) == null ? Material.matchMaterial(key) : null;
         ItemStack[] inv = p.getInventory().getStorageContents();
+        for (int pass = 0; pass < 2; pass++)   // lượt 1 bỏ qua ngọc đã tháo (mang phẩm Khảm)
         for (int i = 0; i < inv.length && need > 0; i++) {
             ItemStack it = inv[i];
-            if (it == null) {
+            if (it == null || pass == 0 && Kham.isLooseGem(it)) {
                 continue;
             }
             String id = ItemLibrary.idOf(it);
@@ -885,6 +894,7 @@ final class ThoRen implements Listener {
         cost.forEach((k, v) -> take(p, k, num(v).intValue()));
         if (slot >= 0) {
             ItemStack old = p.getInventory().getItem(slot);
+            Kham.carry(old, made, p);   // ngọc khảm theo sang món mới
             if (old != null && old.getAmount() > 1) {
                 old.setAmount(old.getAmount() - 1);
                 Rewards.hand(p, made);
@@ -897,10 +907,26 @@ final class ThoRen implements Listener {
         p.playSound(p.getLocation(), Sound.BLOCK_ANVIL_USE, 0.8f, 1.2f);
         p.sendMessage(c("&6⚒ " + (prevId == null ? "Đã rèn" : "Đã nâng cấp") + " &f" + piece.name() + " " + set.name() + " &e+" + next + "&6."));
         plugin.getLogger().info("Thợ Rèn: " + p.getName() + " " + piece.ids().get(next) + " (+" + next + ")");
+        DailyQuests.feature(p, "thoren");
         refresh(p);
     }
 
     /** "Mũ Tân Thủ +9" cho món set (tên trong Thư viện là khung trang trí, không thấy cấp). */
+    /** {mã set, mã món, cấp} của đồ set (Kham), null nếu không phải. */
+    String[] setInfo(String id) {
+        Ref r = id == null ? null : byId.get(id);
+        return r == null ? null : new String[] {r.set().id(), r.piece().key(), String.valueOf(r.level())};
+    }
+
+    String labelOf(String id) {
+        return label(id);
+    }
+
+    String setName(String set) {
+        SetDef s = sets.get(set);
+        return s == null ? set : s.name();
+    }
+
     private String label(String id) {
         Ref r = byId.get(id);
         return r == null ? lib.name(id) : r.piece().name() + " " + r.set().name() + " +" + r.level();
@@ -1063,6 +1089,7 @@ final class ThoRen implements Listener {
                 }
                 meta.getPersistentDataContainer().set(keyVer, org.bukkit.persistence.PersistentDataType.STRING, ver);
             });
+            Kham.carry(it, fresh, p);
             all[i] = fresh;
             changed = true;
         }

@@ -464,6 +464,7 @@ final class Orders implements Listener {
                 .append(c(" &agiá " + money(price) + "/món. Đã giữ " + money(total) + " (phí " + money(fee) + ")."
                         + " Hàng giao tới nhận ở &f/choden don&a.")));
         plugin.getLogger().info("Đơn #" + id + ": " + p.getName() + " mua " + amount + " " + m + " giá " + price);
+        DailyQuests.feature(p, "datdon");
     }
 
     private void deliver(Player p, int id) {
@@ -497,6 +498,7 @@ final class Orders implements Listener {
         p.playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.7f, 1.4f);
         p.sendMessage(c("&a✔ Đã giao " + n + "x ").append(name(m)).append(c(" &acho " + o.getString("ten") + ", nhận &f" + money(pay) + "&a.")));
         plugin.getLogger().info("Đơn #" + id + ": " + p.getName() + " giao " + n + " " + m + " nhận " + pay);
+        DailyQuests.feature(p, "giaodon");
         Player owner = Bukkit.getPlayer(UUID.fromString(o.getString("owner")));
         if (owner != null) {
             owner.sendMessage(c("&6[Đơn hàng] &f" + p.getName() + " vừa giao &a" + n + "x ").append(name(m))

@@ -59,13 +59,20 @@ actions:
   c1_tag_b4x: "tag add c1_b4x"
   c1_nk_b5: "journal add c1_nk_b5"
   # Kết chương
-  c1_ket: "folder c1_tien_ket,c1_kn_ket,c1_tag_xong,c1_nk_xong,c1_baotoan,c1_quyen"
+  c1_ket: "folder c1_tien_ket,c1_kn_ket,c1_tag_xong,c1_nk_xong,c1_baotoan,c1_quyen,c1_huongdan"
   c1_tien_ket: "money +%constant.c1_thuong_ket% notify"
   c1_kn_ket: "experience %constant.c1_thuong_kn% action:addExperience"
   c1_tag_xong: "tag add c1_xong"
   # Danh phận (19/10): xong chương 1 là điều kiện lên "Dân" (/danhphan) — quyền LuckPerms, DuckyMoMoCore PlayRanks kiểm
   c1_quyen: "command lp user %player% permission set duckymomo.cotruyen.c1 true"
   c1_nk_xong: "journal add c1_nk_xong"
+  # 26/10 (chủ server: xong nhiệm vụ Già Làng không thấy nói gì tiếp theo): chỉ việc tiếp, cũng hiện khi hỏi lại Già Làng
+  c1_huongdan: "folder c1_hd_0,c1_hd_1,c1_hd_2,c1_hd_3,c1_hd_4"
+  c1_hd_0: "notify &6✦ Chương 1 xong! Việc tiếp theo: io:chat"
+  c1_hd_1: "notify &e➜ /danhphan &7nhận làm Dân (đủ giờ chơi): thêm nhà, thêm balo io:chat"
+  c1_hd_2: "notify &e➜ /lukhach &7tìm lữ khách ngoài đất hoang, nghe chuyện phía sau Cổng Hoang io:chat"
+  c1_hd_3: "notify &e➜ /nhiemvu &7việc mỗi ngày + hơn 20 việc Làm quen có quà · &e/dungeon &7cày đồ io:chat"
+  c1_hd_4: "notify &e➜ /t new <tên> &7lập thị trấn cùng bạn bè · &7Chương 2: Già Làng sẽ gọi io:chat"
   # notifyall điền %player% theo từng người nhận nên dùng broadcast của Essentials (chạy từ console, %player% = người hoàn thành)
   c1_baotoan: "command broadcast &6%player% &eđã hoàn thành &6Chương 1 «Điềm Báo»&e của cốt truyện!"
 
@@ -75,4 +82,4 @@ journal:
   c1_nk_b3: "&6Chương 1&0\nBác Thợ Rèn nghe thợ mỏ kể dưới lòng đất có thứ đá phát sáng lạ.\n&2Việc: đào %constant.c1_so_quang% quặng bất kỳ, để ý thứ gì khác thường."
   c1_nk_b4: "&6Chương 1&0\nBạn đào được một Mảnh Sao Rơi, lạnh buốt và phát sáng.\n&2Việc: mang mảnh sao tới Người Gác Cổng."
   c1_nk_b5: "&6Chương 1&0\nNgười Gác Cổng nói mảnh sao giống thứ ánh sáng trong các cổng dungeon.\n&2Việc: về báo tin cho Già Làng."
-  c1_nk_xong: "&6Chương 1 «Điềm Báo»: &2HOÀN THÀNH&0\nGià Làng tin rằng những vết nứt trên trời chỉ mới bắt đầu. Hãy chờ chương tiếp theo."
+  c1_nk_xong: "&6Chương 1 «Điềm Báo»: &2HOÀN THÀNH&0\nGià Làng tin rằng những vết nứt trên trời chỉ mới bắt đầu. Hãy chờ chương tiếp theo.\n&2Trong lúc chờ: /danhphan (lên Dân), /lukhach, /nhiemvu, /dungeon, lập thị trấn /t new."

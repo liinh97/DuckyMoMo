@@ -195,9 +195,13 @@ final class Refining implements Listener {
         Material m = items.containsKey(low) ? null : Material.matchMaterial(ingredient);
         ItemStack plain = m == null ? null : new ItemStack(m);
         ItemStack[] inv = p.getInventory().getStorageContents();
+        for (int pass = 0; pass < 2; pass++)   // lượt 1 bỏ qua ngọc đã tháo (mang phẩm Khảm), hết món trơn mới lấy tới
         for (int i = 0; i < inv.length && amount > 0; i++) {
             ItemStack it = inv[i];
             boolean match = plain != null ? it != null && it.getType() == m && it.isSimilar(plain) : low.equals(idOf(it));
+            if (match && pass == 0 && Kham.isLooseGem(it)) {
+                continue;
+            }
             if (match) {
                 int t = Math.min(amount, it.getAmount());
                 it.setAmount(it.getAmount() - t);
@@ -208,6 +212,16 @@ final class Refining implements Listener {
             }
         }
         p.getInventory().setStorageContents(inv);
+    }
+
+    /** Giá bán cho server của một món tinh luyện (0 nếu không có). */
+    double sellOf(String id) {
+        Item d = items.get(id);
+        return d == null ? 0 : d.sell();
+    }
+
+    Component nameOf(String id) {
+        return ingredientName(id);
     }
 
     private Component ingredientName(String k) {
@@ -245,7 +259,8 @@ final class Refining implements Listener {
         }
         ItemStack info = Tip.of("&d♨ &fTinh Luyện").sub("đổi một chiều").accent("&d")
                 .desc("Đổi lượng lớn khối thường thành món quý")
-                .gap().head("Dùng để").item("Trao đổi ở shop dân làng").item("Nguyên liệu Xưởng chế tạo").item("Bán cho server: /tinhluyen ban")
+                .gap().head("Dùng để").item("Khảm vào đồ set: /thoren kham").item("Thợ Rèn: lên set bậc cao (Cao Cấp trở lên)")
+                .item("Giao đơn Nhà Buôn mỗi tuần (lời 20%, NPC ở /warp shop)").item("Trao đổi giữa người chơi").item("Bán cho server: /tinhluyen ban")
                 .line().raw("&c✘ Không đổi ngược lại được").note("/tinhluyen ds: xem mọi công thức")
                 .apply(new ItemStack(Material.NETHER_STAR));
         h.inv.setItem(4, info);
@@ -341,6 +356,7 @@ final class Refining implements Listener {
         p.playSound(p.getLocation(), Sound.BLOCK_SMITHING_TABLE_USE, 0.7f, 1.1f);
         p.sendMessage(c("&a✔ Đã tinh luyện " + times + " ").append(c(d.name())).append(c("&a.")));
         plugin.getLogger().info("Tinh luyện: " + p.getName() + " → " + times + " " + d.id());
+        DailyQuests.feature(p, "tinhluyen");
         open(p);
     }
 

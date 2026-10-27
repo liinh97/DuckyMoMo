@@ -62,7 +62,8 @@ final class Shared {
             return true;
         }
         Frontier f = frontier;
-        return f != null && f.isReached(goalId);
+        // 27/10: khai hoang tắt (frontier.enabled false) = đã mở hết map -> mọi mốc coi như đã mở (vùng /tpr, dungeon gắn mốc)
+        return f == null || f.isReached(goalId);
     }
 
     static void clear() {

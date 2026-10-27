@@ -896,8 +896,14 @@ final class WildGates implements Listener {
     private boolean isGateBlock(Block b) {
         String key = b.getX() + "," + b.getY() + "," + b.getZ() + ",";
         for (String id : gateIds()) {
-            if (b.getWorld().getName().equals(data.getString(g(id) + "world", world))
-                    && data.getStringList(g(id) + "khoi").stream().anyMatch(s -> s.startsWith(key))) {
+            if (!b.getWorld().getName().equals(data.getString(g(id) + "world", world))) {
+                continue;
+            }
+            // ô đất giữa cổng (chỗ đứng + Shift, y lưu = mặt đất + 1) cũng giữ, phá đi là người chơi tụt xuống hố
+            if (b.getX() == data.getInt(g(id) + "x") && b.getY() == data.getInt(g(id) + "y") - 1 && b.getZ() == data.getInt(g(id) + "z")) {
+                return true;
+            }
+            if (data.getStringList(g(id) + "khoi").stream().anyMatch(s -> s.startsWith(key))) {
                 return true;
             }
         }

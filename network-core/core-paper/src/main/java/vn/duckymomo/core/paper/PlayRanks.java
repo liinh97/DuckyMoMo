@@ -472,6 +472,7 @@ final class PlayRanks implements Listener {
             Bukkit.broadcast(c("&6✦ &f" + p.getName() + " &7vừa trở thành ").append(c(t.prefix().isBlank() ? "&f" + t.name() : t.prefix().trim())).append(c("&7!")));
         }
         plugin.getLogger().info("Danh phận: " + p.getName() + " → " + t.id());
+        DailyQuests.feature(p, "danhphan");
     }
 
     @EventHandler

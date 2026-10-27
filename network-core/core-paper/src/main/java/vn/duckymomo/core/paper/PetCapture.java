@@ -316,7 +316,9 @@ final class PetCapture implements Listener {
     /** Quyền tạm cho đúng cú đánh này: MyPet xét ở MONITOR cùng sự kiện, tick sau gỡ. */
     private void grant(Player p) {
         PermissionAttachment a = p.addAttachment(plugin, PERM, true);
-        Bukkit.getScheduler().runTask(plugin, () -> p.removeAttachment(a));
+        if (a != null) {
+            Bukkit.getScheduler().runTask(plugin, () -> p.removeAttachment(a));
+        }
     }
 
     private String petType(LivingEntity e) {

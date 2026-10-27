@@ -710,6 +710,14 @@ public final class DuckyMoMoCore extends JavaPlugin {
             getServer().getPluginManager().registerEvents(thoRen, this);
             thoRen.start();
             getLogger().info("Thợ Rèn: " + thoRen.summary());
+            // Khảm Tinh Luyện vào đồ set (27/10): /thoren kham
+            if (getConfig().getBoolean("kham.enabled") && getConfig().isConfigurationSection("kham")) {
+                Kham kham = new Kham(this, thoRen, getConfig().getConfigurationSection("kham"));
+                getServer().getPluginManager().registerEvents(kham, this);
+                getLogger().info("Khảm: " + kham.describe());
+            } else {
+                Kham.INSTANCE = null;
+            }
         }
         bind("thoren", thoRen == null ? null : thoRen::command, "Thợ Rèn");
 
@@ -842,6 +850,13 @@ public final class DuckyMoMoCore extends JavaPlugin {
             getServer().getPluginManager().registerEvents(refining, this);
             getLogger().info("Tinh luyện: " + refining.describe());
         }
+        // Đơn nhà buôn mỗi tuần (don-buon, 27/10): giao Tinh Luyện lấy xu + quà (NPC Nhà Buôn ở khu shop, /dmm donbuonnpc)
+        DonBuon.INSTANCE = refining != null && getConfig().getBoolean("don-buon.enabled") && getConfig().isConfigurationSection("don-buon")
+                ? new DonBuon(this, rewards, getConfig().getConfigurationSection("don-buon")) : null;
+        if (DonBuon.INSTANCE != null) {
+            getServer().getPluginManager().registerEvents(DonBuon.INSTANCE, this);
+            getLogger().info("Đơn nhà buôn: " + DonBuon.INSTANCE.describe());
+        }
         bind("tinhluyen", refining == null ? null : refining::command, "Tinh Luyện");
         // Danh phận (play-ranks): rank chơi miễn phí Dân Tị Nạn → Dân → Lương Dân → Hào Kiệt, bấm nhận; tự đồng bộ nhóm LuckPerms
         PlayRanks playRanks = getConfig().getBoolean("play-ranks.enabled") && getConfig().isConfigurationSection("play-ranks")
@@ -919,6 +934,7 @@ public final class DuckyMoMoCore extends JavaPlugin {
         // Lưu NPC ngay sau mỗi lệnh /npc, /citizens, /dmm thorennpc (25/10: máy tắt ngang làm mất 9 NPC chưa tới lần lưu định kỳ)
         if (getServer().getPluginManager().isPluginEnabled("Citizens")) {
             getServer().getPluginManager().registerEvents(new NpcAutoSave(this), this);
+            getServer().getPluginManager().registerEvents(new NpcGround(), this);   // khối dưới chân NPC không phá được
         }
         // Lữ khách (wander-npcs): NPC Citizens lang thang ngoài đất hoang, kể chuyện về nơi phía sau Cổng Hoang (lời thoại: BetonQuest)
         wanderers = wildGates != null && getConfig().getBoolean("wander-npcs.enabled") && getConfig().isConfigurationSection("wander-npcs")
@@ -1139,6 +1155,12 @@ public final class DuckyMoMoCore extends JavaPlugin {
                     } else {
                         decorShop.frameCommand(sender, args);
                     }
+                } else if (args.length >= 1 && args[0].equalsIgnoreCase("donbuonnpc")) {
+                    if (DonBuon.INSTANCE == null) {
+                        sender.sendMessage("Đơn nhà buôn chưa bật trên server này (config: don-buon.enabled).");
+                    } else {
+                        DonBuon.INSTANCE.npcCommand(sender, args);
+                    }
                 } else if (args.length >= 1 && args[0].equalsIgnoreCase("shopnpc")) {
                     if (decorShop == null) {
                         sender.sendMessage("Cửa hàng chưa bật trên server này (config: decor-shop.enabled).");
@@ -1231,11 +1253,11 @@ public final class DuckyMoMoCore extends JavaPlugin {
             "§e/dmm luudo <mã> [tên gợi nhớ] §7lưu món đang cầm vào thư viện",
             "§e/dmm thuvien [nap] §7xem mã / kiểm tra thư viện",
             "§e/dmm clean §7dọn rác ngay   §e/dmm reload §7nạp lại config   §e/dmm lenh §7xuất danh sách lệnh",
-            "§e/dmm rtpnpc|shopnpc [remove] §7đặt/gỡ NPC   §e/dmm shopkhung lap|xoa|capnhat §7khung shop trên tường   §e/dmm phu add|remove|list §7tài khoản phụ",
+            "§e/dmm rtpnpc|shopnpc|donbuonnpc [remove] §7đặt/gỡ NPC   §e/dmm shopkhung lap|xoa|capnhat §7khung shop trên tường   §e/dmm phu add|remove|list §7tài khoản phụ",
             "§e/dmm thorennpc <quầy|remove> §7đặt NPC quầy đổi nguyên liệu / Thợ Rèn ở chỗ đứng",
             "§e/dmm hoabinh setup|claim <r> §7Liên minh Hoà Bình   §e/dmm decorate|structures start|pause|status|reset");
     private static final List<String> DMM_SUBS = List.of("enchant", "sach", "laydo", "luudo", "thuvien", "clean", "reload", "lenh",
-            "rtpnpc", "shopnpc", "shopkhung", "thorennpc", "phu", "hoabinh", "decorate", "structures", "hang", "thegioi", "spawnmoi");
+            "rtpnpc", "shopnpc", "donbuonnpc", "shopkhung", "thorennpc", "phu", "hoabinh", "decorate", "structures", "hang", "thegioi", "spawnmoi");
     /** Thợ Rèn (/thoren, NPC quầy /dmm thorennpc); null nếu tắt. */
     private ThoRen thoRen;
     /** Lệnh con /dmm chỉ Admin (duckymomo.admin); còn lại Manager dùng được (duckymomo.dmm). */
@@ -1299,7 +1321,7 @@ public final class DuckyMoMoCore extends JavaPlugin {
                         opts.addAll(List.of("start", "pause", "status", "reset"));
                     }
                 }
-                case "rtpnpc", "shopnpc" -> {
+                case "rtpnpc", "shopnpc", "donbuonnpc" -> {
                     if (a.length == 2) {
                         opts.add("remove");
                     }

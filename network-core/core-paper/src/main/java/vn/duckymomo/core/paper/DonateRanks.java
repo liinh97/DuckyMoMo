@@ -297,9 +297,16 @@ final class DonateRanks implements Listener {
 
     // ---------------------------------------------------------------- vào / ra
 
+    /** 27/10: vào / ra không báo (bot trang quản trị › Bot: botfarm cấp quyền này, khỏi cả loạt dòng [+] [-] khi dịch vụ khởi động lại). */
+    static final String SILENT = "duckymomo.vaora.an";
+
     @EventHandler(priority = EventPriority.HIGH)
     public void onJoin(PlayerJoinEvent e) {
         Player p = e.getPlayer();
+        if (p.hasPermission(SILENT)) {
+            e.joinMessage(null);
+            return;
+        }
         e.joinMessage(c(joinMsg.replace("{prefix}", prefixOf(p)).replace("{player}", p.getName())));
         if (!p.hasPermission("duckymomo.rank.join")) {
             return;
@@ -319,6 +326,10 @@ final class DonateRanks implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onQuit(PlayerQuitEvent e) {
+        if (e.getPlayer().hasPermission(SILENT)) {
+            e.quitMessage(null);
+            return;
+        }
         e.quitMessage(c(quitMsg.replace("{prefix}", prefixOf(e.getPlayer())).replace("{player}", e.getPlayer().getName())));
     }
 

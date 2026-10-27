@@ -72,8 +72,8 @@ towny-map:
   enabled: true
   world: world
   interval-seconds: 60
-  # Viền mùa vẽ lên bản đồ (minX, minZ, maxX, maxZ), khớp ChunkyBorder/settings.yml (tâm 12500,-2000, bán kính 1300x1200)
-  border: [11200, -3200, 13800, -800]
+  # Viền mùa vẽ lên bản đồ (minX, minZ, maxX, maxZ), khớp ChunkyBorder/settings.yml. 27/10: mở hết map, bỏ viền -> [] (không vẽ)
+  border: []
   border-label: "Viền mùa 1"
 
 # Rank donate (tước vị) + thông báo vào/ra server. Giữ GIỐNG NHAU ở lobby/banghoi/practice.
@@ -143,7 +143,7 @@ rtp:
   cost: 0                       # phí mỗi lần (0 = miễn phí); duckymomo.rtp.free không mất phí
   max-attempts: 30
   town-buffer: 32
-  border: [11200, -3200, 13800, -800]       # viền mùa 1 (tâm 12500/-2000, 1300x1200), thả cách viền >= 16 block
+  border: [11200, -3200, 15100, 1100]       # 27/10 mở hết map: khung /rtp = vùng thiết kế (hết 4 vùng khai hoang), không thả xa hơn cho đỡ sinh địa hình mới (giật); thả cách khung >= 16 block
   exclude:
     - [12556, -2623, 12801, -2298]           # khu spawn (công trình GlassCup + vùng WorldGuard spawn)
   blocked-biomes: [ocean, river, beach]
@@ -159,10 +159,11 @@ rtp:
     - {id: myanmar, name: "&6Tây Mộc Vực", icon: BAMBOO, center-x: 11529, center-z: -2389, radius: 230, description: "Xa kinh đô nhất về phía tây"}
     - {id: namtq, name: "&cHồng Nguyên", icon: RED_SAND, center-x: 13142, center-z: -2808, radius: 230, description: "Phía bắc vùng mùa"}
     # vùng mở bằng khai hoang (requires: id mốc frontier.goals): chỉ hiện ở /tpr, có đặc sản, Người Tiên Phong khi mốc đã mở
-    - {id: malai, name: "&eBán Đảo Mưa", icon: JUNGLE_LOG, center-x: 12250, center-z: -350, radius: 230, requires: malaysia, description: "Rừng mưa nhiệt đới, eo biển"}
-    - {id: philippines, name: "&bThiên Đảo", icon: SUGAR_CANE, center-x: 14575, center-z: -1434, radius: 260, requires: philippines, description: "Nghìn đảo, ruộng bậc thang"}
-    - {id: borneo, name: "&2Đảo Rừng Già", icon: COCOA_BEANS, center-x: 13620, center-z: -120, radius: 260, requires: indonesia, description: "Rừng già, ca cao"}
-    - {id: java, name: "&dĐảo Núi Lửa", icon: WHEAT, center-x: 13142, center-z: 896, radius: 230, requires: indonesia, description: "Núi lửa, ruộng lúa"}
+    # 27/10: mở hết map, bỏ requires 4 vùng dưới (khai hoang đã tắt)
+    - {id: malai, name: "&eBán Đảo Mưa", icon: JUNGLE_LOG, center-x: 12250, center-z: -350, radius: 230, description: "Rừng mưa nhiệt đới, eo biển"}
+    - {id: philippines, name: "&bThiên Đảo", icon: SUGAR_CANE, center-x: 14575, center-z: -1434, radius: 260, description: "Nghìn đảo, ruộng bậc thang"}
+    - {id: borneo, name: "&2Đảo Rừng Già", icon: COCOA_BEANS, center-x: 13620, center-z: -120, radius: 260, description: "Rừng già, ca cao"}
+    - {id: java, name: "&dĐảo Núi Lửa", icon: WHEAT, center-x: 13142, center-z: 896, radius: 230, description: "Núi lửa, ruộng lúa"}
     - {id: ngaunhien, name: "&dNgẫu nhiên toàn vùng", icon: ENDER_PEARL, center-x: 0, center-z: 0, radius: 0, description: "Bất kỳ đâu trong vùng mùa 1"}
 
 # Luật chiến tranh (docs/banghoi-luat-mua1.md). Trang Cài đặt > Chiến tranh.
@@ -237,7 +238,7 @@ sell-limit:
 # Mốc mặc định nới viền ChunkyBorder (mùa 1 hiện: tâm 12500 -2000, bán kính 1300 x 1200). SAU KHI MỞ: sửa 4 ô viền ở Cài đặt > Thế giới cho khớp
 # (không thì "Áp dụng lại tất cả" thu viền về cũ). Dữ liệu: khaihoang.yml. Hologram: %dmmkh_ten%, %dmmkh_quy%, %dmmkh_can%, %dmmkh_pct%, %dmmkh_thanh%.
 frontier:
-  enabled: true
+  enabled: false   # 27/10: chủ server mở hết map (bỏ viền mùa), tắt khai hoang để mốc không thu viền lại; mùa sau dựng map mới
   sell-percent: 100
   min-donate: 10
   pioneer:                             # Người Tiên Phong: N người đầu tiên đặt chân tới vùng vừa mở (vùng rtp.zones có requires)
@@ -571,6 +572,37 @@ daily-quests:
   per-day: 3
   complete-all-rewards:
     - xu 450
+  # Làm quen tính năng (26/10): mỗi việc 1 lần/người, làm song song, việc nào trước cũng được; how = dòng hướng dẫn trong /nhiemvu.
+  # Mã cố định (code báo theo mã; bỏ một việc = xoá mục đó). Quà theo công sức (dễ 100–200, vừa 300–500, khó 600–1.000):
+  # tổng 8.150 xu + 2.000 khi xong hết; chương 1 cốt truyện ~4.200 xu, nhiệm vụ ngày ~1.000 xu.
+  intro:
+    diemdanh: {name: "Điểm danh lần đầu", how: "/diemdanh (mỗi ngày một lần, có vé gacha)", rewards: [xu 100]}
+    gacha: {name: "Quay gacha một lần", how: "/gacha, chọn máy có vé (vé từ /diemdanh hoặc chơi online)", rewards: [xu 100]}
+    mua: {name: "Mua một món ở Cửa hàng Kinh Đô", how: "/warp shop, chuột trái vào khung hàng trên tường", rewards: [xu 150]}
+    ban: {name: "Bán đồ cho server", how: "/sell hand (cầm món trên tay) hoặc chuột phải khung hàng ở /warp shop", rewards: [xu 150]}
+    cauca: {name: "Câu được một con cá", how: "Cần câu thả xuống nước; bán cá ở /emf shop", rewards: [xu 150]}
+    nauan: {name: "Nấu một món ăn", how: "/nauan: cá câu + nông sản thành món có hiệu ứng", rewards: [xu 200]}
+    choden: {name: "Treo một món lên Chợ đen", how: "Cầm món muốn bán, gõ /choden ban <giá>", rewards: [xu 300]}
+    datdon: {name: "Đặt một đơn thu mua", how: "/choden dat <số món> <giá> khi cầm món mẫu, người khác giao hàng cho bạn", rewards: [xu 200]}
+    giaodon: {name: "Giao hàng cho một đơn thu mua", how: "/choden thumua, chọn đơn rồi giao món người ta cần", rewards: [xu 200]}
+    trade: {name: "Trao đổi đồ với người khác", how: "/trade <tên> với người đang online, hai bên bấm đồng ý", rewards: [xu 300]}
+    tinhluyen: {name: "Tinh luyện một món", how: "/tinhluyen, đổi khối thường lấy món tinh luyện", rewards: [xu 300]}
+    xuong: {name: "Chế một món ở Xưởng", how: "/xuong: đồ tiện ích có lượt dùng (Túi Hư, xô vô tận…)", rewards: [xu 300]}
+    thoren: {name: "Rèn hoặc nâng một món ở Thợ Rèn", how: "/thoren (Thợ Rèn ở chợ /warp trade)", rewards: [xu 500]}
+    pet: {name: "Bắt một pet chiến đấu", how: "Đánh con vật tới yếu máu rồi quăng dây xích (/huongdan › Pet)", rewards: [xu 400]}
+    kham: {name: "Khảm một Tinh Luyện vào đồ set", how: "Cầm đồ set có ô khảm, gõ /thoren kham", rewards: [xu 500]}
+    donbuon: {name: "Giao một đơn nhà buôn", how: "Gặp NPC Nhà Buôn ở /warp shop, giao món Tinh Luyện ông ấy cần trong tuần", rewards: [xu 500]}
+    thitran: {name: "Vào một thị trấn", how: "Lập thị trấn /t new <tên> hoặc xin vào /t join <tên>", rewards: [xu 500]}
+    kholuong: {name: "Nộp kho lương cho thị trấn", how: "/kholuong nop: nộp nông sản, cá, món ăn cho phiên công thành", rewards: [xu 300]}
+    danhphan: {name: "Lên một bậc danh phận", how: "/danhphan: đủ giờ chơi (và xong chương 1 Già Làng) thì bấm nhận", rewards: [xu 500]}
+    capdo: {name: "Lên một cấp Thăng Cấp", how: "/capdo: đủ xu, giờ chơi, hạ gục thì lên cấp, nhận điểm thuộc tính", rewards: [xu 400]}
+    dungeon: {name: "Vào một dungeon", how: "/dungeon, chọn dungeon để vào (thoát giữa chừng: /em quit)", rewards: [xu 600]}
+    vuotdungeon: {name: "Vượt một dungeon", how: "Hạ hết trùm trong một dungeon (đi nhóm: /em party create)", rewards: [xu 1000]}
+    truyna: {name: "Hạ một quái trong Lệnh săn", how: "/lenhsan xem quái đang bị săn ở đâu", rewards: [xu 600]}
+    khobau: {name: "Mở một rương kho báu", how: "Có Bản đồ kho báu thì đi theo chỉ dẫn mà đào (/khobau)", rewards: [xu 500]}
+    dautruong: {name: "Thắng một trận Đấu Trường", how: "/dautruong: người + pet đấu 1v1, 2v2", rewards: [xu 400]}
+  intro-all-rewards:
+    - xu 2000
   pool:
     dao_da:
       name: Đào 128 khối đá
@@ -1324,6 +1356,73 @@ tinh-luyen:
     netherite: {recipe: {NETHERITE_BLOCK: 32}, sell: 262000}
     dialinh: {recipe: {HAY_BLOCK: 64}, sell: 270}
 
+# Đơn nhà buôn mỗi tuần (NPC Nhà Buôn ở khu shop, đặt bằng /dmm donbuonnpc; 27/10, DonBuon.java): thứ Hai chọn per-week đơn ngẫu nhiên từ pool; giao đủ món Tinh Luyện trong "can"
+# nhận gia % giá bán Tinh Luyện (tinh-luyen.items.<mã>.sell) bằng xu + quà "qua" (dạng như mọi quà: xu, do <mã> <số>…). Mỗi người mỗi đơn 1 lần/tuần,
+# mỗi đơn tối đa luot lượt cả server (0 = không giới hạn). gia 120 = lời 20% so với bán thẳng (/tinhluyen ban trả ~70% giá nguyên liệu).
+don-buon:
+  enabled: true
+  per-week: 3
+  gia: 120
+  luot: 10
+  announce: true
+  pool:
+    - {can: {sat: 2}, qua: [do chia_khoa_diemdanh 1]}
+    - {can: {dong: 3, than: 1}, qua: [do chia_khoa_diemdanh 1]}
+    - {can: {than: 2, lapis: 1}, qua: [do chia_khoa_diemdanh 1]}
+    - {can: {dado: 3, lapis: 1}, qua: [do chia_khoa_diemdanh 1]}
+    - {can: {sat: 1, vang: 1}, qua: [do chia_khoa_diemdanh 2]}
+    - {can: {vang: 2}, qua: [do chia_khoa_diemdanh 2]}
+    - {can: {lucbao: 1, sat: 1}, qua: [do chia_khoa_diemdanh 2]}
+    - {can: {dialinh: 8, dong: 1}, qua: [do chia_khoa_diemdanh 1]}
+    - {can: {kimcuong: 1}, qua: [do chia_khoa_diemdanh 3]}
+    - {can: {sat: 2, dong: 2, than: 2}, qua: [do chia_khoa_diemdanh 2]}
+
+# Khảm Tinh Luyện (/thoren kham, 27/10): khảm món Tinh Luyện vào ô của đồ set để thêm chỉ số (Kham.java). Món bị lấy đi; tháo tốn thao-xu,
+# thao-vo % vỡ ngọc. slots.<set>: số ô (một số cho mọi cấp, hoặc danh sách theo cấp +0, +1…); set không ghi = 0 ô.
+# gems.<mã Tinh Luyện>: giap = chỉ số khi khảm vào mũ/áo/quần/giày (tính khi mặc), vukhi = khi khảm vào vũ khí (tính khi cầm tay chính).
+# Chỉ số: mau, day-lui, giam-st, lua, st, st-chay, toc-danh, toc-chay, kinh-nghiem, hoi-mau, hut-mau, dot, cham-mon (tính riêng từng món).
+# Cân 27/10: một ngọc = 64 khối (576 thỏi/viên) nên mỗi ngọc đáng kể nhưng có trần cả người (cap) để không phá PvP: tối đa +10% máu,
+# -8% sát thương nhận (cộng thêm hiệu ứng bộ của set), +12% sát thương. Đầy ô Huyền Thoại (5 món × 3 = 15 ngọc) mới chạm trần.
+kham:
+  enabled: true
+  thao-xu: 2000
+  thao-vo: 50
+  # Phẩm + năng lượng (27/10): khảm ra phẩm ngẫu nhiên (ti-le), % hiệu năng trong min..max nhân vào chỉ số gốc ở gems. Năng lượng đầy nang-luong:
+  # giáp -1 mỗi lần người mặc trúng đòn từ quái / người (cận chiến, tên, nổ; ngã, cháy, độc, đói không tính), vũ khí -1 mỗi con quái / người
+  # hạ được (trùm EliteMobs: vukhi-trum); không đánh nhau thì không hao. Còn canh-bao % thì nhắc, cạn thì ngọc vỡ. Nạp đầy: 1 Tinh Luyện cùng loại
+  # + nap-xu. Tháo ra giữ phẩm + năng lượng. 5.000 ≈ 2–3 tuần (giáp) / 3–4 tuần (vũ khí) với người chơi 2 giờ/ngày.
+  nang-luong: 5000
+  vukhi-trum: 10
+  # Hào quang (27/10): mỗi ngọc một hạt màu rgb xoay quanh người (tầng của món; vũ khí ở tay phải), người khác cũng thấy (tắt được
+  # bằng /caidat "Hiệu ứng hạt người khác"). Màu = loại ngọc; KIỂU hạt = phẩm (pham[].hat, ghép bằng +: cham = chấm màu, chuyen-mau = chấm
+  # đổi từ màu ngọc sang trắng, xoay = hạt xoáy kiểu thuốc, vet = vệt sáng có đuôi, xoan-oc = vệt xoắn ốc chân -> đầu, vong-dau = vòng sáng
+  # trên đầu); pham[].mat-do = hệ số số hạt của phẩm (mặc định 1). Chủ server chốt 27/10: Thường cham, Tốt xoay, Hoàn Mỹ xoan-oc × 0,5.
+  # Năng lượng cạn dần thì thưa, nhỏ dần. chu-ky: tick.
+  hao-quang: {enabled: true, chu-ky: 4, ban-kinh: 32, so-hat: 2, co: 0.85}   # so-hat, co: lúc đầy năng lượng (27/10: bằng mức chủ server ưng)
+  nap-xu: 1000
+  canh-bao: 10
+  pham:
+    - {name: "Thường", color: "&7", ti-le: 60, min: 80, max: 100, hat: cham}
+    - {name: "Tốt", color: "&a", ti-le: 30, min: 100, max: 120, hat: xoay}
+    - {name: "Hoàn Mỹ", color: "&6", ti-le: 10, min: 120, max: 150, hat: xoan-oc, mat-do: 0.5}
+  slots:
+    tinhanh: [0, 0, 0, 1, 1, 1]
+    caocap: [1, 1, 1, 1, 1, 2]
+    huyenthoai: 3
+    thanthoai: 3
+    thanthanh: 4
+  gems:
+    sat: {name: "Sắt", color: "&7", rgb: "#F2F2F2", giap: {mau: 2}, vukhi: {st: 2}}
+    vang: {name: "Vàng", color: "&e", rgb: "#FFD23F", giap: {day-lui: 3}, vukhi: {toc-danh: 3}}
+    kimcuong: {name: "Kim Cương", color: "&b", rgb: "#00E5FF", giap: {giam-st: 1.5}, vukhi: {st: 3}}
+    lucbao: {name: "Lục Bảo", color: "&a", rgb: "#2EE06A", giap: {kinh-nghiem: 5}, vukhi: {kinh-nghiem: 8}}
+    lapis: {name: "Lưu Ly", color: "&9", rgb: "#2F5BFF", giap: {hoi-mau: 6}, vukhi: {hut-mau: 1.5}}
+    dado: {name: "Đá Đỏ", color: "&c", rgb: "#FF2E2E", giap: {toc-chay: 1.5}, vukhi: {toc-danh: 4}}
+    dong: {name: "Đồng", color: "&6", rgb: "#E07B39", giap: {cham-mon: 15}, vukhi: {cham-mon: 20}}
+    than: {name: "Than", color: "&8", rgb: "#3B3B3B", giap: {lua: 8}, vukhi: {st-chay: 6}}   # vũ khí set có ô đều sẵn Lửa: Than tăng sát thương lên mục tiêu đang cháy
+    netherite: {name: "Netherite", color: "&5", rgb: "#8A3FD1", giap: {giam-st: 2.5}, vukhi: {st: 4.5}}
+  cap: {mau: 10, day-lui: 15, giam-st: 8, lua: 30, st: 12, toc-danh: 10, toc-chay: 6, kinh-nghiem: 25, hoi-mau: 24, hut-mau: 4, dot: 30, st-chay: 18, cham-mon: 50}
+
 # Danh phận (/danhphan, 19/10): rank CHƠI miễn phí, đủ yêu cầu thì bấm nhận trong menu. Sửa ở Cài đặt › Người mới › Danh phận.
 # Mỗi bậc: group (nhóm LuckPerms; bậc đầu PHẢI là default), name, prefix (tiền tố chat/Tab, priority càng cao càng ưu tiên, dưới staff),
 # hours (giờ chơi thật, /hoatdong), level (Thăng Cấp), perm + perm-text (quyền cần có, vd xong chương 1 cốt truyện), homes (số nhà /sethome),
@@ -1735,7 +1834,7 @@ tho-ren:
         cung: {name: "Cung", an: cc_an_binh, ids: [cc_cung_0, cc_cung_1, cc_cung_2, cc_cung_3, cc_cung_4, cc_cung_5]}
         chuy: {name: "Chuỳ", an: cc_an_binh, ids: [cc_chuy_0, cc_chuy_1, cc_chuy_2, cc_chuy_3, cc_chuy_4, cc_chuy_5]}
       cost:
-        - {xu: 18000, an: 4, hac_dieu: 2, hon_quai: 2}   # +0 (cộng món Tinh Anh +5)
+        - {xu: 18000, an: 4, hac_dieu: 2, hon_quai: 2, sat: 1, vang: 1}   # +0 (cộng món Tinh Anh +5; 27/10: thêm Tinh Luyện)
         - {xu: 20000, an: 5, hac_dieu: 2, hon_quai: 2, lam_chau: 2}
         - {xu: 23000, an: 6, hac_dieu: 3, hon_quai: 3}
         - {xu: 26000, an: 8, hac_dieu: 3, hon_quai: 3, NETHERITE_INGOT: 1}
@@ -1764,7 +1863,7 @@ tho-ren:
         cung: {name: "Cung", an: ht_an_binh, ids: [ht_cung_0, ht_cung_1, ht_cung_2, ht_cung_3]}
         chuy: {name: "Chuỳ", an: ht_an_binh, ids: [ht_chuy_0, ht_chuy_1, ht_chuy_2, ht_chuy_3]}
       cost:
-        - {xu: 40000, an: 3, long_hon: 1, NETHERITE_INGOT: 2}             # +0 (cộng món Cao Cấp +5)
+        - {xu: 40000, an: 3, long_hon: 1, NETHERITE_INGOT: 2, lucbao: 1, kimcuong: 1}             # +0 (cộng món Cao Cấp +5; 27/10: thêm Tinh Luyện)
         - {xu: 50000, an: 4, long_hon: 1, hac_dieu: 3}
         - {xu: 60000, an: 6, long_hon: 2, hon_quai: 4}
         - {xu: 75000, an: 8, long_hon: 3, NETHERITE_INGOT: 4}
@@ -1791,7 +1890,7 @@ tho-ren:
         chuy: {name: "Chuỳ", an: mt_an_binh, ids: [mt_chuy_0, mt_chuy_1, mt_chuy_2, mt_chuy_3, mt_chuy_4]}
       # 23/10 chủ server: làm trước, CHƯA chốt Thần Ấn lấy ở đâu (chưa rơi ở đâu cả; admin phát bằng /dmm laydo nếu cần thử)
       cost:
-        - {xu: 100000, an: 3, nhat_nguyet: 1, NETHERITE_INGOT: 3}   # +0 (cộng món Huyền Thoại +3)
+        - {xu: 100000, an: 3, nhat_nguyet: 1, NETHERITE_INGOT: 3, kimcuong: 2}   # +0 (cộng món Huyền Thoại +3; 27/10: thêm Tinh Luyện)
         - {xu: 120000, an: 4, nhat_nguyet: 1, long_hon: 2}
         - {xu: 150000, an: 5, nhat_nguyet: 2, hac_dieu: 4}
         - {xu: 180000, an: 7, nhat_nguyet: 2, long_hon: 3}
@@ -1818,7 +1917,7 @@ tho-ren:
         cung: {name: "Cung", an: dv_an_binh, ids: [dv_cung_0, dv_cung_1, dv_cung_2, dv_cung_3]}
         chuy: {name: "Chuỳ", an: dv_an_binh, ids: [dv_chuy_0, dv_chuy_1, dv_chuy_2, dv_chuy_3]}
       cost:
-        - {xu: 300000, an: 3, thien_menh: 1, NETHER_STAR: 1}   # +0 (cộng món Thần Thoại +4)
+        - {xu: 300000, an: 3, thien_menh: 1, NETHER_STAR: 1, netherite: 1}   # +0 (cộng món Thần Thoại +4; 27/10: thêm Tinh Luyện)
         - {xu: 350000, an: 4, thien_menh: 1, nhat_nguyet: 2}
         - {xu: 420000, an: 6, thien_menh: 2, NETHER_STAR: 2}
         - {xu: 500000, an: 8, thien_menh: 3, nhat_nguyet: 3}

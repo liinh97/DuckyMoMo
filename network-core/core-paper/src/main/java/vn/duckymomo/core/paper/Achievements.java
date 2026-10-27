@@ -126,6 +126,9 @@ final class Achievements implements Listener {
         }
         data.set("dem." + p.getUniqueId() + "." + type, v);
         dirty = true;
+        if (v > 0) {
+            DailyQuests.feature(p, type.equals("dungeon") ? "vuotdungeon" : type);   // việc làm quen cùng mã (nếu có)
+        }
         check(p, type);
     }
 
@@ -183,6 +186,9 @@ final class Achievements implements Listener {
             Integer n = caught.get(p.getUniqueId().toString());
             if (n != null) {
                 set(p, "batpet", n);
+                if (n > 0) {
+                    DailyQuests.feature(p, "pet");
+                }
             }
             int wins = YamlConfiguration.loadConfiguration(new File(plugin.getDataFolder(), "dautruong.yml"))
                     .getInt("stats." + p.getUniqueId() + ".thang", 0);

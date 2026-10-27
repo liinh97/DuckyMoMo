@@ -349,6 +349,7 @@ final class Crates implements Listener {
     }
 
     void open(Player p, Crate cr) {
+        refreshTickets(p);
         Holder h = new Holder();
         h.crate = cr;
         h.inv = Bukkit.createInventory(h, 54, c("&0❖ " + org.bukkit.ChatColor.stripColor(
@@ -426,6 +427,7 @@ final class Crates implements Listener {
         dirty = true;
         flush();
         plugin.getLogger().info("Gacha " + cr.id() + ": " + p.getName() + " trúng " + win.label());
+        DailyQuests.feature(p, "gacha");
         h.spinning = true;
         final int[] step = {0};
         Bukkit.getScheduler().runTaskTimer(plugin, task -> {
@@ -481,6 +483,40 @@ final class Crates implements Listener {
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
         migrateSpinTickets(e.getPlayer());
+        refreshTickets(e.getPlayer());
+    }
+
+    /**
+     * Vé đã phát giữ tên/mô tả lúc phát (27/10: vé cũ còn ghi "/hom" sau khi đổi sang /gacha). Vé trong túi + rương Ender khác Thư viện đồ
+     * (tên, mô tả) thì dựng lại theo Thư viện, giữ số lượng. Gọi khi vào game và khi mở gacha.
+     */
+    void refreshTickets(Player p) {
+        java.util.Set<String> keys = new java.util.HashSet<>();
+        crates.values().forEach(cr -> keys.add(cr.key()));
+        for (org.bukkit.inventory.Inventory inv : List.of(p.getInventory(), p.getEnderChest())) {
+            ItemStack[] all = inv.getContents();
+            boolean changed = false;
+            for (int i = 0; i < all.length; i++) {
+                String id = ItemLibrary.idOf(all[i]);
+                if (id == null || !keys.contains(id)) {
+                    continue;
+                }
+                ItemStack fresh = library.build(id, all[i].getAmount());
+                if (fresh == null || !fresh.hasItemMeta()) {
+                    continue;
+                }
+                var a = all[i].getItemMeta();
+                var b = fresh.getItemMeta();
+                if (java.util.Objects.equals(a.lore(), b.lore()) && java.util.Objects.equals(a.displayName(), b.displayName())) {
+                    continue;
+                }
+                all[i] = fresh;
+                changed = true;
+            }
+            if (changed) {
+                inv.setContents(all);
+            }
+        }
     }
 
     void migrateSpinTickets(Player p) {

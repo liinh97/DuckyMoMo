@@ -40,6 +40,10 @@ import java.util.UUID;
  * targets: tên vật liệu/mob, dạng *_ORE, OAK_*, * (tất cả), @hostile (mọi quái thù địch). Khối do người chơi đặt không tính
  * (PlacedBlockGuard huỷ sự kiện phá; ở đây ignoreCancelled). Làm xong một nhiệm vụ: quà của nó; xong hết: complete-all-rewards.
  * Lưu: plugins/DuckyMoMoCore/nhiemvu.yml (ghi mỗi phút + khi thoát).
+ * Làm quen tính năng (intro, 26/10): mỗi người làm MỘT lần mỗi việc, làm song song, không theo thứ tự; module khác báo bằng
+ * DailyQuests.feature(p, mã) khi người chơi làm thật: mua (Cửa hàng Kinh Đô), ban (/sell có tiền về), choden (treo món zAuctionHouse),
+ * trade (TradePro xong), thoren, tinhluyen, dungeon (vào tới), pet (bắt pet), thitran (có thị trấn Towny, kiểm mỗi phút).
+ * Xong hết: intro-all-rewards. Lưu intro.<uuid>: [mã đã xong] (không xoá khi sang ngày).
  */
 final class DailyQuests implements Listener {
     static volatile DailyQuests INSTANCE;
@@ -62,12 +66,15 @@ final class DailyQuests implements Listener {
 
     private record Quest(String id, String name, String type, List<String> targets, int amount, List<String> rewards) { }
 
+    private record Intro(String id, String name, String how, List<String> rewards) { }
+
     private final JavaPlugin plugin;
     private final ConfigurationSection cfg;
     private final Rewards rewards;
     private final File file;
     private final YamlConfiguration data;
     private final Map<String, Quest> pool = new LinkedHashMap<>();
+    private final Map<String, Intro> intros = new LinkedHashMap<>();
     private boolean dirty;
 
     DailyQuests(JavaPlugin plugin, ConfigurationSection cfg, Rewards rewards) {
@@ -90,7 +97,99 @@ final class DailyQuests implements Listener {
                         t.isEmpty() ? List.of("*") : t, Math.max(1, q.getInt("amount", 1)), q.getStringList("rewards")));
             }
         }
+        ConfigurationSection in = cfg.getConfigurationSection("intro");
+        if (in != null) {
+            for (String id : in.getKeys(false)) {
+                ConfigurationSection q = in.getConfigurationSection(id);
+                if (q != null) {
+                    intros.put(id, new Intro(id, q.getString("name", id), q.getString("how", ""), q.getStringList("rewards")));
+                }
+            }
+        }
         Bukkit.getScheduler().runTaskTimer(plugin, this::flush, 1200L, 1200L);
+        if (intros.containsKey("thitran") && Bukkit.getPluginManager().isPluginEnabled("Towny")) {
+            Bukkit.getScheduler().runTaskTimer(plugin, () -> {
+                for (Player pl : Bukkit.getOnlinePlayers()) {
+                    if (!introDone(pl.getUniqueId(), "thitran") && TownyCheck.hasTown(pl)) {
+                        intro(pl, "thitran");
+                    }
+                }
+            }, 1200L, 1200L);
+        }
+        hookEvent("fr.maxlego08.zauctionhouse.api.event.events.stats.AuctionItemListedEvent", "getSeller", "choden");
+        hookEvent("com.jaketheman.tradepro.events.TradeCompleteEvent", "getPlayerOne", "trade");
+        hookEvent("com.jaketheman.tradepro.events.TradeCompleteEvent", "getPlayerTwo", "trade");
+    }
+
+    /** Sự kiện của plugin khác (không phụ thuộc lúc biên dịch): người chơi lấy bằng getter, có thì tính việc làm quen. */
+    @SuppressWarnings("unchecked")
+    private void hookEvent(String cls, String getter, String intro) {
+        if (!intros.containsKey(intro)) {
+            return;
+        }
+        try {
+            Class<? extends org.bukkit.event.Event> ev = (Class<? extends org.bukkit.event.Event>) Class.forName(cls);
+            java.lang.reflect.Method g = ev.getMethod(getter);
+            Bukkit.getPluginManager().registerEvent(ev, this, EventPriority.MONITOR, (l, e) -> {
+                if (ev.isInstance(e)) {
+                    try {
+                        if (g.invoke(e) instanceof Player p) {
+                            intro(p, intro);
+                        }
+                    } catch (ReflectiveOperationException ignored) {
+                        // bỏ qua
+                    }
+                }
+            }, plugin, true);
+        } catch (ClassNotFoundException | NoSuchMethodException e) {
+            // plugin đó chưa cài
+        }
+    }
+
+    /** Module khác báo người chơi vừa dùng một tính năng (mã trong daily-quests.intro). */
+    static void feature(Player p, String id) {
+        DailyQuests d = INSTANCE;
+        if (d != null) {
+            d.intro(p, id);
+        }
+    }
+
+    /** /sell (lệnh hoặc khung shop): chờ 2 tick, có tiền về mới tính việc "ban" (bán hụt không tính). */
+    static void watchSell(Player p) {
+        DailyQuests d = INSTANCE;
+        if (d == null || !d.intros.containsKey("ban") || d.introDone(p.getUniqueId(), "ban") || !VaultEconomy.available()) {
+            return;
+        }
+        double before = VaultEconomy.balance(p);
+        Bukkit.getScheduler().runTaskLater(d.plugin, () -> {
+            if (p.isOnline() && VaultEconomy.balance(p) > before) {
+                d.intro(p, "ban");
+            }
+        }, 2L);
+    }
+
+    private boolean introDone(UUID id, String intro) {
+        return data.getStringList("intro." + id).contains(intro);
+    }
+
+    private void intro(Player p, String id) {
+        Intro in = intros.get(id);
+        if (in == null || introDone(p.getUniqueId(), id)) {
+            return;
+        }
+        List<String> done = new ArrayList<>(data.getStringList("intro." + p.getUniqueId()));
+        done.add(id);
+        data.set("intro." + p.getUniqueId(), done);
+        dirty = true;
+        List<String> got = rewards.give(p, in.rewards());
+        long left = intros.keySet().stream().filter(k -> !done.contains(k)).count();
+        p.sendMessage(c("&a✔ Làm quen: &f" + in.name() + (got.isEmpty() ? "" : "&a. Nhận: &f" + String.join("&7, &f", got))
+                + (left > 0 ? " &7(còn " + left + " việc làm quen, xem /nhiemvu)" : "")));
+        if (left == 0) {
+            List<String> bonus = rewards.give(p, cfg.getStringList("intro-all-rewards"));
+            p.sendMessage(c("&6★ Đã làm quen hết các tính năng!" + (bonus.isEmpty() ? "" : " Thưởng thêm: &f" + String.join("&7, &f", bonus))));
+        }
+        flush();
     }
 
     private static Component c(String s) {
@@ -224,6 +323,15 @@ final class DailyQuests implements Listener {
     public void onFish(PlayerFishEvent e) {
         if (e.getState() == PlayerFishEvent.State.CAUGHT_FISH) {
             progress(e.getPlayer(), "fish", "*", false, 1);
+            intro(e.getPlayer(), "cauca");
+        }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onSellCommand(org.bukkit.event.player.PlayerCommandPreprocessEvent e) {
+        String c = e.getMessage().toLowerCase(Locale.ROOT);
+        if (c.startsWith("/sell") || c.startsWith("/esell") || c.startsWith("/essentials:sell")) {
+            watchSell(e.getPlayer());
         }
     }
 
@@ -255,6 +363,25 @@ final class DailyQuests implements Listener {
         List<String> bonus = rewards.describe(cfg.getStringList("complete-all-rewards"));
         if (!bonus.isEmpty()) {
             p.sendMessage(c("&7Xong hết: thưởng thêm &f" + String.join("&7, &f", bonus) + (data.getBoolean(key + ".bonus") ? " &a(đã nhận)" : "")));
+        }
+        if (!intros.isEmpty()) {
+            List<String> done = data.getStringList("intro." + p.getUniqueId());
+            long left = intros.keySet().stream().filter(k -> !done.contains(k)).count();
+            if (left == 0) {
+                p.sendMessage(c("&a✔ Đã làm quen hết " + intros.size() + " tính năng."));
+            } else {
+                p.sendMessage(c("&6Làm quen tính năng &7(mỗi việc nhận quà 1 lần, làm việc nào trước cũng được)"));
+                for (Intro in : intros.values()) {
+                    boolean ok = done.contains(in.id());
+                    p.sendMessage(c((ok ? "&a✔ &7" : "&7• &f") + in.name() + (ok || in.rewards().isEmpty() ? ""
+                            : " &8→ &7" + String.join("&7, ", rewards.describe(in.rewards())))
+                            + (ok || in.how().isEmpty() ? "" : "\n   &8" + in.how())));
+                }
+                List<String> ib = rewards.describe(cfg.getStringList("intro-all-rewards"));
+                if (!ib.isEmpty()) {
+                    p.sendMessage(c("&7Làm quen hết: thưởng thêm &f" + String.join("&7, &f", ib)));
+                }
+            }
         }
         return true;
     }

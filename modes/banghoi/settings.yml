@@ -124,8 +124,8 @@ combat_mode:
   - old
 border_center_x: 12500
 border_center_z: -2000
-border_x: 1300
-border_z: 1200
+border_x: 29000000
+border_z: 29000000
 spawn_x: 12699
 spawn_z: -2523
 map_type: earth
@@ -598,6 +598,58 @@ nv_on: true
 nv_per_day: 3
 nv_bonus:
   - xu 450
+nv_intro_diemdanh:
+  - xu 100
+nv_intro_gacha:
+  - xu 100
+nv_intro_mua:
+  - xu 150
+nv_intro_ban:
+  - xu 150
+nv_intro_cauca:
+  - xu 150
+nv_intro_nauan:
+  - xu 200
+nv_intro_choden:
+  - xu 300
+nv_intro_datdon:
+  - xu 200
+nv_intro_giaodon:
+  - xu 200
+nv_intro_trade:
+  - xu 300
+nv_intro_tinhluyen:
+  - xu 300
+nv_intro_xuong:
+  - xu 300
+nv_intro_thoren:
+  - xu 500
+nv_intro_pet:
+  - xu 400
+nv_intro_kham:
+  - xu 500
+nv_intro_donbuon:
+  - xu 500
+nv_intro_thitran:
+  - xu 500
+nv_intro_kholuong:
+  - xu 300
+nv_intro_danhphan:
+  - xu 500
+nv_intro_capdo:
+  - xu 400
+nv_intro_dungeon:
+  - xu 600
+nv_intro_vuotdungeon:
+  - xu 1000
+nv_intro_truyna:
+  - xu 600
+nv_intro_khobau:
+  - xu 500
+nv_intro_dautruong:
+  - xu 400
+nv_intro_bonus:
+  - xu 2000
 nv_pool:
   dao_da:
     name: Đào 128 khối đá
@@ -1988,6 +2040,15 @@ dgt_auto_ready: true
 dgt_auto_start: true
 tl_core: 15
 tr_on: true
+kham_on: true
+kham_thao_xu: 2000
+kham_thao_vo: 50
+kham_nang_luong: 5000
+kham_nap_xu: 1000
+db_on: true
+db_per_week: 3
+db_gia: 120
+db_luot: 10
 tr_em_nhat: 3.0
 tr_em_don: 8.0
 tr_em_heso: 1.08

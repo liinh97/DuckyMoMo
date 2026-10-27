@@ -176,7 +176,7 @@ menu:
     chuong: hangngay
     lenh:
     - "/diemdanh|150 xu + vé Gacha mỗi ngày"
-    - "/nhiemvu|3 nhiệm vụ mỗi ngày"
+    - "/nhiemvu|3 nhiệm vụ mỗi ngày + làm quen tính năng"
     - "/gacha|quay bằng vé"
     - "/vote|150 xu mỗi lượt vote"
     - "/kit|gói quà theo danh phận"
@@ -193,7 +193,7 @@ menu:
     - "/lenhsan|quái mạnh đang ở đâu"
     - "/lukhach|lữ khách kể chuyện"
     - "/journal|nhiệm vụ cốt truyện"
-    - "/khaihoang|góp quỹ mở vùng mới"
+    - "/tpr|dịch chuyển tới các vùng trên bản đồ"
   - slot: 24
     icon: GRASS_BLOCK
     ten: "Thái Ấp"
@@ -879,9 +879,29 @@ chapters:
   - |-
     &5TINH LUYỆN
     &1/tinhluyen &0đổi khối thành món tinh luyện, vd 64 khối kim cương → 1 Tinh Luyện Kim Cương.
-    &0Dùng để đổi đồ ở dân làng&r&0, chế đồ Xưởng, hoặc bán.
+    &0Món cày khó, rất giá trị: &5khảm&0 vào đồ set, Thợ Rèn đòi khi lên set cao, giao đơn nhà buôn, trao đổi.
     &0Bấm = 1 lần, Shift+bấm = hết.
     &1/tinhluyen ban &0bán món đang cầm
+  - |-
+    &5KHẢM TINH LUYỆN
+    &0Cầm đồ set trên tay, gõ &1/thoren kham&0. Mỗi ô khảm 1 món Tinh Luyện để thêm chỉ số (Sắt máu, Kim Cương giảm sát thương, Netherite…).
+    &0Có ô: Tinh Anh +3 trở lên, Cao Cấp, Huyền Thoại (3 ô)…
+    &0Nâng cấp đồ: ngọc tự theo sang. Tháo: tốn xu, &c50% vỡ&0.
+  - |-
+    &5NGỌC: PHẨM VÀ NĂNG LƯỢNG
+    &0Khảm ra phẩm ngẫu nhiên: &7Thường&0, &2Tốt&0, &6Hoàn Mỹ&0 (mạnh hơn).
+    &0Ngọc hao &1năng lượng&0 khi đánh nhau (giáp: trúng đòn quái/người; vũ khí: mỗi con hạ được), cạn thì &cvỡ&0. Không dùng thì không hao.
+    &0Muốn giữ ngọc tốt: bấm ngọc trong &1/thoren kham&0 → &2Nạp đầy&0 (1 Tinh Luyện cùng loại + xu).
+    &0Tháo ra vẫn giữ phẩm, năng lượng.
+    &0Ngọc vỡ chỉ mất phần khảm, đồ vẫn nguyên.
+  - |-
+    &5HÀO QUANG NGỌC
+    &0Đồ có ngọc phát &dánh sáng&0 màu theo loại ngọc, ai cũng thấy. Phẩm khác kiểu hạt: &7Thường&0 chấm, &2Tốt&0 xoáy, &6Hoàn Mỹ&0 vệt xoắn ốc. Năng lượng cạn thì mờ dần.
+    &0Thấy rối mắt: &1/caidat&0 tắt "Hiệu ứng hạt người khác".
+  - |-
+    &6ĐƠN NHÀ BUÔN
+    &0Gặp &6Nhà Buôn&0 ở &1/warp shop&0: mỗi thứ Hai nhà buôn cần vài món Tinh Luyện, trả &6hơn 20%&0 giá bán + vé gacha.
+    &0Mỗi đơn giao 1 lần/tuần, có giới hạn lượt: ai nhanh người đó được.
   - |-
     &5TINH LUYỆN: lưu ý
     &4Đổi một chiều&0, không đổi lại thành khối được.
@@ -889,11 +909,10 @@ chapters:
     &6Xu Quái&0 rơi khi hạ quái (quái lồng không rơi), gom 64 đổi Xu Quái 2.
     &1/tinhluyen ds &0xem giá, công thức.
   - |-
-    &6KHAI HOANG
-    &1/khaihoang &0xem quỹ mở vùng mới.
-    &1/khaihoang gop <xu>
-    &8Vd: /khaihoang gop 200
-    &0Đủ mốc thì mở rộng bản đồ. 10 người tới đầu tiên là &2Tiên Phong&0.
+    &6BẢN ĐỒ MÙA NÀY
+    &0Đã mở &2toàn bộ&0: đi đâu cũng được, không còn ranh giới.
+    &1/tpr &0chọn vùng để dịch chuyển tới (cả Bán Đảo Mưa, Thiên Đảo, Đảo Rừng Già, Đảo Núi Lửa).
+    &8Dịch chuyển ngẫu nhiên chỉ thả trong vùng bản đồ chính cho đỡ giật.
   - |-
     &6Phù phép hiếm
     &0Có phù phép mới, chỉ tìm được sách trong rương công trình&r&0, khi câu cá&r&0 hoặc đổi với dân làng&r&0: Telepathy, Smelting, Tunnelling (đào 3x3), Replanting, Volley...
@@ -962,6 +981,7 @@ chapters:
     &0Đi nhóm: &1/em party create&0, mời &1/em party invite <tên>&0.
     &0Chuỗi 10 tầng: hạ hết trùm là vượt, rơi &6Chìa khoá&0 mở tầng sau.
     &0Có dungeon &5ẩn&0 (tìm lối vào trên bản đồ).
+    &0Thoát giữa chừng: &1/em quit
   - |-
     &5VÉ VÀO DUNGEON
     &1/dungeon mua <mã> &0mua vé
@@ -1095,6 +1115,9 @@ chapters:
     &1/nhiemvu&0: mỗi ngày 3 nhiệm vụ (đào, chặt, săn, xây, câu, thu hoạch).
     &0Xong mỗi cái nhận xu, xong hết &6thêm thưởng&0. Đổi lúc 0h.
     &8Khối tự đặt rồi phá không được tính.
+  - |-
+    &2LÀM QUEN TÍNH NĂNG
+    &0Cũng ở &1/nhiemvu&0. Hơn 20 việc (shop, chợ đen, trade, Thợ Rèn, dungeon, pet…), mỗi việc nhận xu &11 lần&0, làm việc nào trước cũng được. Xong hết &6thưởng lớn&0.
   - |-
     &6GACHA (QUAY THƯỞNG)
     &1/gacha&0: mỗi máy cần vé riêng, quay 1 lần mất 1 vé. Menu ghi rõ tỉ lệ.

@@ -50,6 +50,13 @@ conversations:
       xong:
         text: "Ta vẫn đang dõi lên trời. Có tin gì mới ta sẽ gọi. Trong lúc chờ, đừng lơ là luyện tập."
         conditions: "c1_xong"
+        pointers: "hoi_tiep,tam_biet"
+      tiep_1:
+        text: "Làng đã ghi tên cháu rồi: gõ /danhphan, đủ giờ chơi là được nhận làm Dân, thêm nhà, thêm balo. Còn muốn biết chuyện bên kia vết nứt thì tìm mấy lữ khách lạ ngoài đất hoang, gõ /lukhach xem tin đồn họ ở đâu."
+        pointers: "hoi_them,tam_biet"
+      tiep_2:
+        text: "Gõ /nhiemvu: ngoài việc mỗi ngày còn hơn hai chục việc Làm quen, mỗi việc làm một lần là có quà. Đủ sức thì ra chỗ Người Gác Cổng vào dungeon (/dungeon). Rồi rủ bạn lập thị trấn (/t new), đất là của người đến trước. Chương sau ta sẽ gọi khi trời có biến."
+        actions: "c1_huongdan"
     player_options:
       hoi_vi_sao:
         text: "Có chuyện gì vậy, cụ?"
@@ -73,6 +80,14 @@ conversations:
       hoi_lam_gi:
         text: "Vậy giờ chúng ta phải làm gì?"
         pointers: "ket_2"
+      hoi_tiep:
+        text: "Giờ cháu nên làm gì tiếp ạ?"
+        pointers: "tiep_1"
+      hoi_them:
+        text: "Còn gì nữa không cụ?"
+        pointers: "tiep_2"
+      tam_biet:
+        text: "Cháu đi đây ạ."
 
   tho_ren:
     quester: "&6Bác Thợ Rèn"

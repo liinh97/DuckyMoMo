@@ -7,8 +7,9 @@ Player:
 
  # default settings for all groups, all groups will take properties from this section unless player's primary group overrides a specific setting
 _DEFAULT_:
-  tabprefix: "%luckperms-prefix%"
-  tagprefix: "%luckperms-prefix%"
+  # &f sau tiền tố: tên trắng, không ăn màu tiền tố (27/10: "[Tị Nạn] Itrap" tên xám theo &8 của tiền tố)
+  tabprefix: "%luckperms-prefix%&f"
+  tagprefix: "%luckperms-prefix%&f"
   customtabname: "%player%"
   tabsuffix: "%luckperms-suffix% &8[&eCấp %dmmcap_cap%&8]"
   tagsuffix: "%luckperms-suffix%"

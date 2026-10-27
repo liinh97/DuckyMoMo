@@ -30,8 +30,8 @@ groups:
     description: "Bang Hội Chiến + Practice (sảnh dùng DuckyMoMoCore, không có Essentials). Chat bị lặp [Mod] [Công Tước] hai lần: tắt 'Gắn prefix vào tên hiển thị' (định dạng chat đã có {PREFIX}). Lưu là nạp lại Essentials ngay."
     apply: [essentials reload]
     settings:
-      - { key: ess_chat_format, label: Định dạng chat, type: text, servers: [banghoi-1, practice-1], file: plugins/Essentials/config.yml, path: chat.format, default: "{PREFIX}{DISPLAYNAME}{SUFFIX}&7: &f{MESSAGE}",
-          note: "{PREFIX} = tiền tố cao nhất (LuckPerms: staff > Sứ Giả > rank ủng hộ > danh phận), {DISPLAYNAME} = tên (hoặc tên đã đổi), {SUFFIX} = danh hiệu, {MESSAGE} = nội dung. Gợi ý: {PREFIX}{DISPLAYNAME}{SUFFIX}&7: &f{MESSAGE}" }
+      - { key: ess_chat_format, label: Định dạng chat, type: text, servers: [banghoi-1, practice-1], file: plugins/Essentials/config.yml, path: chat.format, default: "{PREFIX}&f{DISPLAYNAME}{SUFFIX}&7: &f{MESSAGE}",
+          note: "{PREFIX} = tiền tố cao nhất (LuckPerms: staff > Sứ Giả > rank ủng hộ > danh phận), {DISPLAYNAME} = tên (hoặc tên đã đổi), {SUFFIX} = danh hiệu, {MESSAGE} = nội dung. Gợi ý: {PREFIX}&f{DISPLAYNAME}{SUFFIX}&7: &f{MESSAGE}" }
       - { key: ess_add_prefix_suffix, label: Gắn prefix/suffix vào tên hiển thị, type: select, servers: [banghoi-1, practice-1], file: plugins/Essentials/config.yml, path: add-prefix-suffix, default: false,
           options: [ { value: false, label: "Tắt (khuyên dùng: định dạng chat đã có {PREFIX})" }, { value: true, label: "Bật (role/rank sẽ hiện 2 lần nếu định dạng có {PREFIX})" } ] }
       - { key: ess_nick_max, label: Tên hiển thị (/nick) dài tối đa, type: int, min: 3, max: 32, servers: [banghoi-1, practice-1], file: plugins/Essentials/config.yml, path: max-nick-length, default: 16 }

@@ -149,7 +149,7 @@ role_admin_prefix: "&c[Admin]"
 dqr_on: true
 dqr_minutes: 10
 dqr_web: "https://app.goc6.io.vn/mc/web/taikhoan.html"
-ess_chat_format: '{PREFIX}{DISPLAYNAME}{SUFFIX}&7: &f{MESSAGE}'
+ess_chat_format: '{PREFIX}&f{DISPLAYNAME}{SUFFIX}&7: &f{MESSAGE}'
 ess_add_prefix_suffix: false
 ess_nick_max: 16
 ess_nick_ignore_colors: true

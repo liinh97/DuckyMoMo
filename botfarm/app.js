@@ -403,7 +403,7 @@ function saveChat() { try { fs.writeFileSync(CHAT_CFG, JSON.stringify(chatCfg));
 // A / B / C: người nói; {A} {B} {C}: tên bot đó
 const TALKS = [
   ['A:ae ơi /capdo lên cấp kiểu gì nhỉ', 'B:đủ xu, đủ giờ chơi với điểm hạ gục là bấm lên cấp được', 'A:à ok thanks'],
-  ['A:hôm nay đào mãi không thấy kim cương', 'B:xuống tầm y -58 mà đào', 'A:ok để thử'],
+  ['A:đào mãi không thấy kim cương', 'B:xuống tầm y -58 mà đào', 'A:ok để thử'],
   ['A:gg', 'B:gg'],
   ['A:{B} ơi', 'B:sao', 'A:à thôi nhầm người :v'],
   ['A:map này đẹp nhỉ', 'B:ừ quần đảo nhiều chỗ đẹp phết'],

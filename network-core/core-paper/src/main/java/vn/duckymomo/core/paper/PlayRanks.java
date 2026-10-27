@@ -346,7 +346,7 @@ final class PlayRanks implements Listener {
         Tier t = tiers.get(i);
         boolean now = i == cur;
         Tip tip = Tip.of((now ? "&a♛ " : i < cur ? "&8♛ " : "&e♛ ") + "&f" + t.name()).sub("bậc " + (i + 1)).accent(now ? "&a" : "&e")
-                .kv("Tiền tố", t.prefix().isBlank() ? "&8không có" : t.prefix()).line().head("Quyền lợi");
+                .kv("Tiền tố", t.prefix().isBlank() ? "&7không có" : t.prefix()).line().head("Quyền lợi");
         perkTip(tip, t.perks());
         if (i > 0) {
             tip.gap().head("Yêu cầu");

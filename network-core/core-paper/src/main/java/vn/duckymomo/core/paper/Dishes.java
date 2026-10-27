@@ -111,7 +111,7 @@ final class Dishes implements Listener {
         for (String e : s.getStringList("hieu-ung")) {
             lore.add(c("  &8▸ &f" + effectText(e)));
         }
-        lore.add(c("&8Món ăn ra trận · /nauan"));
+        lore.add(c("&7Món ăn ra trận · /nauan"));
         meta.lore(lore);
         meta.getPersistentDataContainer().set(KEY, PersistentDataType.STRING, id);
         it.setItemMeta(meta);

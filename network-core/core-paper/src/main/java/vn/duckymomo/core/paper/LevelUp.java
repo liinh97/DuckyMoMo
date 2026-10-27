@@ -810,7 +810,7 @@ final class LevelUp implements Listener {
                         case BEN -> "Nhận ít sát thương hơn";
                         case NHANH -> "Chạy nhanh hơn";
                     }).raw(bar(t, maxTier, a.color)).line()
-                    .kv("Đang có", t == 0 ? "&8chưa có" : "&f" + effect(a, t));
+                    .kv("Đang có", t == 0 ? "&7chưa có" : "&f" + effect(a, t));
             if (t > 0 && !off) {
                 tip.kv("Thực tế", real(p, a, t));
                 if (a == Attr.SUC || a == Attr.BEN) {

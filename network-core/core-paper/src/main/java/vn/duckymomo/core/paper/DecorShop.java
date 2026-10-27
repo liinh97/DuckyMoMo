@@ -336,7 +336,7 @@ final class DecorShop implements Listener {
             long buyN = es.stream().filter(x -> x.offer() != null).count(), sellN = es.stream().filter(x -> x.sellMat() != null).count();
             Tip t = Tip.of("&e" + ct.name());
             if (!ct.desc().isBlank()) {
-                t.raw("&8↳ &7" + ct.desc());
+                t.raw("&7↳ &7" + ct.desc());
             }
             t.line();
             if (buyN > 0) {
@@ -435,9 +435,9 @@ final class DecorShop implements Listener {
         int have = sm == null ? 0 : count(p, sm);
         if (sm != null) {
             t.kv("Giá bán lại", "&e" + money(worth.get(sm)) + " &8/ món");
-            t.kv("Bạn đang có", have > 0 ? "&f" + have : "&80");
+            t.kv("Bạn đang có", have > 0 ? "&f" + have : "&70");
         } else if (o != null && o.title() == null) {
-            t.kv("Giá bán lại", "&8server không thu mua");
+            t.kv("Giá bán lại", "&7server không thu mua");
         }
         t.line();
         if (o != null) {

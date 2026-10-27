@@ -233,7 +233,7 @@ final class Orders implements Listener {
         int pct = can == 0 ? 0 : da * 100 / can;
         Tip t = Tip.of("").kv("Người đặt", o.getString("ten")).kv("Đơn giá", "&a" + money(gia) + " &8/ món")
                 .kv("Tiến độ", da + "/" + can + " &8(" + pct + "%)").kv("Còn trả", "&a" + money((can - da) * gia))
-                .kv("Hết hạn", o.getBoolean("dong") ? "&8đã đóng" : left(expiresAt(o) - System.currentTimeMillis())).line();
+                .kv("Hết hạn", o.getBoolean("dong") ? "&7đã đóng" : left(expiresAt(o) - System.currentTimeMillis())).line();
         if (mine) {
             int kho = o.getInt("kho");
             if (kho > 0) {

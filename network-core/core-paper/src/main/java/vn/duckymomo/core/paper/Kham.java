@@ -571,7 +571,7 @@ final class Kham implements Listener {
             Sock sk = list.get(i);
             Gem gem = gems.get(sk.code());
             if (gem == null) {
-                m.add(Tip.of("&8◇ Ô trống " + (i + 1)).accent("&d").desc("Bấm để chọn Tinh Luyện khảm vào ô này.")
+                m.add(Tip.of("&7◇ Ô trống " + (i + 1)).accent("&d").desc("Bấm để chọn Tinh Luyện khảm vào ô này.")
                         .click("Chọn ngọc").apply(new ItemStack(Material.GRAY_STAINED_GLASS_PANE)), pl -> pick(pl, handId, slot));
             } else {
                 ItemStack icon = Shared.refining != null ? Shared.refining.build(gem.id(), 1) : null;

@@ -947,7 +947,7 @@ final class SkillEnchants implements Listener {
         }
         t.setVelocity(new org.bukkit.util.Vector(0, Math.min(0, t.getVelocity().getY()), 0));
         if (t instanceof Player tp) {
-            tp.sendActionBar(LEGACY.deserialize("&8Bị Trói " + fmtSec(ticks / 20.0) + " giây"));
+            tp.sendActionBar(LEGACY.deserialize("&7Bị Trói " + fmtSec(ticks / 20.0) + " giây"));
         }
         org.bukkit.Bukkit.getScheduler().runTaskLater(pl(), () -> {
             if (!Long.valueOf(token).equals(ROOT_TOKEN.get(t.getUniqueId()))) {
@@ -1013,7 +1013,7 @@ final class SkillEnchants implements Listener {
             }
             tp.addPotionEffect(new org.bukkit.potion.PotionEffect(org.bukkit.potion.PotionEffectType.SLOWNESS, ticks, 0, false, false, true));
             tp.addPotionEffect(new org.bukkit.potion.PotionEffect(org.bukkit.potion.PotionEffectType.DARKNESS, ticks, 0, false, false, true));
-            tp.sendActionBar(LEGACY.deserialize("&8Bị Hoảng sợ"));
+            tp.sendActionBar(LEGACY.deserialize("&7Bị Hoảng sợ"));
             return;
         }
         if (!(t instanceof org.bukkit.entity.Mob m)) {

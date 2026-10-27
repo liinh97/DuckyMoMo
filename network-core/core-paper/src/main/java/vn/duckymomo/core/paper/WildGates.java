@@ -1063,15 +1063,15 @@ final class WildGates implements Listener {
         s.sendMessage(c("&7Thị trấn có ô đất chứa cổng là chủ: dân mình vào miễn phí, người ngoài trả phí vào ngân khố. Chiếm được thị trấn là có cổng."));
         for (String gid : gateIds()) {
             Town t = owner(gid);
-            String state = !found(gid) ? "&8chưa ai tìm ra · " + "★".repeat(Math.max(1, data.getInt(g(gid) + "bac", 1))) + " &7" + data.getString(g(gid) + "tin-don", "")
+            String state = !found(gid) ? "&7chưa ai tìm ra · " + "★".repeat(Math.max(1, data.getInt(g(gid) + "bac", 1))) + " &7" + data.getString(g(gid) + "tin-don", "")
                     : "&7tìm bởi &f" + data.getString(g(gid) + "tim-boi") + " &7· " + (t == null ? "&ađất hoang, vào tự do"
                     : "&fthị trấn " + t.getName() + (data.getBoolean(g(gid) + "dong") ? " &c(đóng)" : " &7· phí " + money(data.getDouble(g(gid) + "phi", 0))));
             s.sendMessage(c("  &d" + gid + " &8— &7" + (found(gid) ? dungeonName(gid) + " &8· " : "") + state));
         }
         if (gateIds().isEmpty()) {
-            s.sendMessage(c("  &8Chưa có cổng nào xuất hiện."));
+            s.sendMessage(c("  &7Chưa có cổng nào xuất hiện."));
         }
-        s.sendMessage(c("&8Chủ cổng: /conghoang phi <mã> <xu> · /conghoang dong|mo <mã>"));
+        s.sendMessage(c("&7Chủ cổng: /conghoang phi <mã> <xu> · /conghoang dong|mo <mã>"));
         return true;
     }
 
@@ -1110,7 +1110,7 @@ final class WildGates implements Listener {
             m.add(icon, act);
         }
         if (ids.isEmpty()) {
-            m.add(Tip.of("&8Chưa có cổng nào xuất hiện").apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.GRAY_DYE)));
+            m.add(Tip.of("&7Chưa có cổng nào xuất hiện").apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.GRAY_DYE)));
         }
         m.open(p);
     }

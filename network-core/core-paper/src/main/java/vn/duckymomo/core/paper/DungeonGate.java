@@ -1558,7 +1558,7 @@ final class DungeonGate implements Listener {
             Tip t = Tip.of("&d" + TYPE_VI.get(type)).sub(list.size() + " cổng").accent("&d").desc(TYPE_HOW.getOrDefault(type, "")).line();
             for (Dg d : list) {
                 boolean hid = type.equals("hidden") && !found(u, d.id());
-                t.raw((doneFor(u, d) ? "&a✔ " : "&8○ ") + (hid ? "&7???" : "&f" + d.name()) + (d.level().isBlank() ? "" : " &8cấp " + d.level())
+                t.raw((doneFor(u, d) ? "&a✔ " : "&8○ ") + (hid ? "&7???" : "&f" + d.name()) + (d.level().isBlank() ? "" : " &7cấp " + d.level())
                         + (d.id().equals(weekly) ? " &6★" : ""));
             }
             t.line().click("Bấm để xem từng cổng");
@@ -1615,9 +1615,9 @@ final class DungeonGate implements Listener {
         };
         String state;
         if (!inst) {
-            state = "&8chưa cài";
+            state = "&7chưa cài";
         } else if (!baseOk(d)) {
-            state = "&8chờ khai hoang";
+            state = "&7chờ khai hoang";
         } else {
             state = switch (d.type()) {
                 case "chain" -> cleared(u, d.id()) ? "&a✔ đã vượt" : freeAccess(u, d) ? "&e⚿ đã mở"
@@ -1702,9 +1702,9 @@ final class DungeonGate implements Listener {
             String lv = d.level().isBlank() ? "" : " &8[cấp " + d.level() + "]";
             String state;
             if (!inst) {
-                state = "&8chưa cài";
+                state = "&7chưa cài";
             } else if (!baseOk(d)) {
-                state = "&8chờ khai hoang";
+                state = "&7chờ khai hoang";
             } else if (u == null) {
                 state = "";
             } else {
@@ -1735,14 +1735,14 @@ final class DungeonGate implements Listener {
                 String cmd = d.type().equals("ticket") && u != null && tickets(u, d.id()) == 0 ? "/dungeon mua " + d.id()
                         : d.type().equals("server") && !serverOpen(d.id()) ? "/dungeon gop " + d.id() + " " : "/dungeon vao " + d.id();
                 line = line.clickEvent(cmd.endsWith(" ") ? ClickEvent.suggestCommand(cmd) : ClickEvent.runCommand(cmd))
-                        .hoverEvent(HoverEvent.showText(c("&7" + cmd + hover + "\n&8mã: " + d.id())));
+                        .hoverEvent(HoverEvent.showText(c("&7" + cmd + hover + "\n&7mã: " + d.id())));
             }
             s.sendMessage(line);
         }
         if (hiddenLeft > 0) {
             s.sendMessage(c("&7Còn &d" + hiddenLeft + " &7dungeon ẩn chưa tìm ra: lối vào giấu đâu đó trên bản đồ, để ý hạt tím lấp lánh."));
         }
-        s.sendMessage(c("&8Rê chuột lên tên: điều kiện (&e⚠&8) và kỷ lục tốc độ. Lệnh: /dungeon vao|mua|gop <mã>"));
+        s.sendMessage(c("&7Rê chuột lên tên: điều kiện (&e⚠&8) và kỷ lục tốc độ. Lệnh: /dungeon vao|mua|gop <mã>"));
     }
 
     private String until(String id) {

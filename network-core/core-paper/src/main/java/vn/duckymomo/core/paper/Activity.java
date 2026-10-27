@@ -270,7 +270,7 @@ final class Activity implements Listener {
                 target.getName(), totalHours(id), week,
                 week >= activeHoursPerWeek ? "&a(đang là dân hoạt động)"
                         : String.format(Locale.ROOT, "&c(cần %.0f giờ/7 ngày để là dân hoạt động)", activeHoursPerWeek))));
-        s.sendMessage(LEGACY.deserialize("&8Đứng yên, bị nước/xe đẩy đi không được tính giờ."));
+        s.sendMessage(LEGACY.deserialize("&7Đứng yên, bị nước/xe đẩy đi không được tính giờ."));
         return true;
     }
 
@@ -294,7 +294,7 @@ final class Activity implements Listener {
             int min = data.getInt(id + ".ngay." + d);
             String name = (i == 0 ? "Hôm nay" : THU[d.getDayOfWeek().getValue() - 1]) + " &7" + String.format(Locale.ROOT, "%02d/%02d", d.getDayOfMonth(), d.getMonthValue());
             org.bukkit.inventory.ItemStack it = Tip.of((min > 0 ? "&e" : "&7") + name).accent("&e")
-                    .kv("Giờ chơi", min > 0 ? String.format(Locale.ROOT, "&f%d giờ %02d phút", min / 60, min % 60) : "&8chưa chơi")
+                    .kv("Giờ chơi", min > 0 ? String.format(Locale.ROOT, "&f%d giờ %02d phút", min / 60, min % 60) : "&7chưa chơi")
                     .apply(new org.bukkit.inventory.ItemStack(min >= 60 ? org.bukkit.Material.LIME_DYE : min > 0 ? org.bukkit.Material.YELLOW_DYE : org.bukkit.Material.GRAY_DYE));
             it.setAmount(Math.max(1, Math.min(64, min / 60)));
             m.add(it);

@@ -496,7 +496,7 @@ final class MediaProgram implements Listener {
                 case "DUYET" -> "&ađã duyệt";
                 case "CHO" -> "&echờ duyệt";
                 case "TUCHOI" -> "&cbị từ chối";
-                default -> "&8hết hạn";
+                default -> "&7hết hạn";
             };
             top.line().head("Đơn của bạn").kv("Trạng thái", sv).kv("Kênh", data.getString(k(u) + ".kenh", ""))
                     .kv("7 ngày qua", st[0] + " buổi, " + String.format(Locale.ROOT, "%.1f", (st[1] + st[2]) / 60.0) + " giờ")

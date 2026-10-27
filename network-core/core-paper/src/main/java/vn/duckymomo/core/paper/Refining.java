@@ -136,7 +136,7 @@ final class Refining implements Listener {
     private ItemStack stamp(ItemStack it, String id) {
         ItemMeta meta = it.getItemMeta();
         List<Component> lore = meta.lore() == null ? new ArrayList<>() : new ArrayList<>(meta.lore());
-        lore.add(c("&8Nguyên liệu tinh luyện · /tinhluyen"));
+        lore.add(c("&7Nguyên liệu tinh luyện · /tinhluyen"));
         meta.lore(lore);
         if (!meta.hasItemModel() && !meta.hasEnchantmentGlintOverride()) {
             meta.setEnchantmentGlintOverride(true);

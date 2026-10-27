@@ -350,7 +350,7 @@ final class Mercenary implements Listener {
                 String name = dk.getString(id + ".ten", "?");
                 Tip t = Tip.of("&f" + name).accent("&6").line().kv("Giá", "&e" + fmt(dk.getDouble(id + ".gia")) + " xu")
                         .kv("Đã làm", dk.getInt(id + ".xong", 0) + " hợp đồng")
-                        .kv("Trạng thái", e != null ? "&cđang làm cho " + e.getName() : op.isOnline() ? "&arảnh, đang online" : "&8offline");
+                        .kv("Trạng thái", e != null ? "&cđang làm cho " + e.getName() : op.isOnline() ? "&arảnh, đang online" : "&7offline");
                 if (e == null) {
                     t.line().click("Bấm để thuê (vua / tướng)");
                 }
@@ -383,7 +383,7 @@ final class Mercenary implements Listener {
                 Nation e = employer(UUID.fromString(id));
                 OfflinePlayer op = Bukkit.getOfflinePlayer(UUID.fromString(id));
                 s.sendMessage(c("&f" + dk.getString(id + ".ten") + " &7— &e" + fmt(dk.getDouble(id + ".gia")) + " xu &7· " + dk.getInt(id + ".xong", 0)
-                        + " hợp đồng đã làm · " + (e != null ? "&cđang làm cho " + e.getName() : op.isOnline() ? "&arảnh, đang online" : "&8offline")));
+                        + " hợp đồng đã làm · " + (e != null ? "&cđang làm cho " + e.getName() : op.isOnline() ? "&arảnh, đang online" : "&7offline")));
                 shown++;
             }
         }

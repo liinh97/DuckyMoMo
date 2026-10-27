@@ -799,7 +799,7 @@ final class BanBook implements Listener {
         if (!any) {
             s.sendMessage(c("&aHiện không cấm món nào."));
         }
-        s.sendMessage(c("&8Không dùng được = món tối đi, không cầm / mặc được · Không cho mang vào = phải cất vào rương mới vào được"));
+        s.sendMessage(c("&7Không dùng được = món tối đi, không cầm / mặc được · Không cho mang vào = phải cất vào rương mới vào được"));
         return true;
     }
 }

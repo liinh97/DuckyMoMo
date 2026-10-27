@@ -186,7 +186,7 @@ final class PetCombat implements Listener {
                     msg.append("&b☾ Đêm: pet mắt đêm soi đường cho bạn. ");
                 } else {
                     p.addPotionEffect(new PotionEffect(PotionEffectType.DARKNESS, 60, 0, true, false, true));
-                    msg.append("&8☾ Đêm: tầm nhìn giảm. &7Pet mắt đêm (dơi, mèo, cáo, sói, nhện…) soi đường được. ");
+                    msg.append("&7☾ Đêm: tầm nhìn giảm. &7Pet mắt đêm (dơi, mèo, cáo, sói, nhện…) soi đường được. ");
                 }
             }
             if (cond.contains("mua") && rainSlow) {

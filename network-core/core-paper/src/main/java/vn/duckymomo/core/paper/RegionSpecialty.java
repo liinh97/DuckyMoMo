@@ -212,7 +212,7 @@ final class RegionSpecialty {
             List<String> crops = new ArrayList<>();
             r.crops().forEach((m, v) -> crops.add(Seasons.cropLabel(m) + " +" + Math.round(v) + "%"));
             s.sendMessage(c(r.name() + " &7(" + r.label() + "): &f" + String.join(", ", crops) + " &7· chủ: "
-                    + (o == null ? "&8chưa có" : (o.equals(mine) ? "&a" : "&f") + ownerName.get(r.id()) + " &7(" + ownerTowns.get(r.id()) + " thị trấn)")));
+                    + (o == null ? "&7chưa có" : (o.equals(mine) ? "&a" : "&f") + ownerName.get(r.id()) + " &7(" + ownerTowns.get(r.id()) + " thị trấn)")));
         }
         s.sendMessage(c("&7Xây thêm thị trấn hoặc chiếm thành trong vùng để giành đặc sản. Tính lại mỗi " + refreshTicks / 1200 + " phút."));
         return true;

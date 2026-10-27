@@ -195,7 +195,7 @@ final class DonateRanks implements Listener {
             s.sendMessage(c("&6Skin độc quyền theo rank &7(menu /skins; bậc cao có luôn skin bậc dưới)"));
             for (Tier t : tiers) {
                 List<String> sk = tierSkins(t.group());
-                s.sendMessage(c("  " + t.color() + t.name() + "&7: " + (sk.isEmpty() ? "&8chưa có" : "&f" + String.join(", ", sk))));
+                s.sendMessage(c("  " + t.color() + t.name() + "&7: " + (sk.isEmpty() ? "&7chưa có" : "&f" + String.join(", ", sk))));
             }
             if (admin) {
                 s.sendMessage(c("&7Thêm: &f/rank skin them <bậc> <tên> <link ảnh .png> &7· Bỏ khoá: &f/rank skin xoa <tên>"));
@@ -401,7 +401,7 @@ final class DonateRanks implements Listener {
         InfoMenu m = InfoMenu.of("&6✦ Rank ủng hộ").accent(org.bukkit.Material.ORANGE_STAINED_GLASS_PANE);
         Tip top = Tip.of("&6✦ &fRank ủng hộ").sub("tước vị").accent("&6")
                 .desc("Ủng hộ server để nhận tước vị và quyền lợi.", "Bậc cao có đủ quyền lợi của các bậc thấp hơn.").line()
-                .kv("Rank của bạn", u == null ? "&8chưa có" : describe(u));
+                .kv("Rank của bạn", u == null ? "&7chưa có" : describe(u));
         if (shop) {
             top.kv("Cách mua", "&6Vàng").note("Nạp tiền ủng hộ được Vàng, rồi chọn rank trong cửa hàng Vàng.");
         } else {
@@ -459,7 +459,7 @@ final class DonateRanks implements Listener {
                 s.sendMessage(c("   &7Skin độc quyền (/skins): &f" + String.join(", ", sk) + " &8(+ skin của bậc dưới)"));
             }
             if (!t.prices().isEmpty()) {
-                s.sendMessage(c("   &8Giá (quy ra Vàng): &e" + String.join("&8 | &e", t.prices())));
+                s.sendMessage(c("   &7Giá (quy ra Vàng): &e" + String.join("&8 | &e", t.prices())));
             }
         }
         s.sendMessage(c("&7Bậc cao có đủ quyền của các bậc thấp hơn."));
@@ -482,7 +482,7 @@ final class DonateRanks implements Listener {
     private String describe(User u) {
         Tier t = tierOf(u);
         if (t == null) {
-            return "&8chưa có";
+            return "&7chưa có";
         }
         for (InheritanceNode n : u.getNodes(net.luckperms.api.node.NodeType.INHERITANCE)) {
             if (n.getGroupName().equalsIgnoreCase(t.group())) {

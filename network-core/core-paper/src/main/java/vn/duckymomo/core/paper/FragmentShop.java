@@ -111,7 +111,7 @@ final class FragmentShop implements Listener, Rewards.FragmentGiver {
             ItemMeta meta = it.getItemMeta();
             List<Component> lore = meta.lore() == null ? new ArrayList<>() : new ArrayList<>(meta.lore());
             if (!t.until().isBlank()) {
-                lore.add(c("&8Đổi được đến hết ngày " + t.until()));
+                lore.add(c("&7Đổi được đến hết ngày " + t.until()));
             }
             meta.lore(lore);
             if (!meta.hasEnchantmentGlintOverride()) {

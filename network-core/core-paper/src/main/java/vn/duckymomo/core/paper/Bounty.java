@@ -334,7 +334,7 @@ final class Bounty implements Listener {
             long h1 = Math.max(0, en.until() - System.currentTimeMillis()) / 3_600_000L;
             Tip t = Tip.of("&c☠ &f" + en.name()).accent("&c").desc("Hạ người này để nhận tiền thưởng").line()
                     .kv("Tiền thưởng", "&e" + money(en.total())).kv("Người treo", en.by())
-                    .kv("Trạng thái", Bukkit.getPlayer(en.id()) != null ? "&aĐang trực tuyến" : "&8Ngoại tuyến")
+                    .kv("Trạng thái", Bukkit.getPlayer(en.id()) != null ? "&aĐang trực tuyến" : "&7Ngoại tuyến")
                     .kv("Hết hạn sau", h1 >= 24 ? h1 / 24 + " ngày" : h1 + " giờ");
             sm.displayName(t.name());
             sm.lore(t.lore());

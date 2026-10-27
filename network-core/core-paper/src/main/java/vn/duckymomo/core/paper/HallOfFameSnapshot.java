@@ -129,7 +129,7 @@ final class HallOfFameSnapshot {
             }
         }
         s.sendMessage(c("&7Xem tượng và bảng vàng ở &fQuảng trường Danh vọng &7tại sảnh, hoặc trang web mục Quảng trường Danh vọng."
-                + (s.hasPermission("duckymomo.vinhdanh.admin") ? " &8Admin: /vinhdanh chot | tam" : "")));
+                + (s.hasPermission("duckymomo.vinhdanh.admin") ? " &7Admin: /vinhdanh chot | tam" : "")));
         return true;
     }
 

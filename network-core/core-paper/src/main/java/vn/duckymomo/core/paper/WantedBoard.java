@@ -141,7 +141,7 @@ final class WantedBoard implements Listener {
                     e.remove();
                 }
                 posts.remove(p);
-                PlayerSettings.broadcast("sukien", c("&8☠ " + p.target.name() + " &7đã trốn khỏi " + p.zone + "&7. Lệnh săn hết hạn."));
+                PlayerSettings.broadcast("sukien", c("&7☠ " + p.target.name() + " &7đã trốn khỏi " + p.zone + "&7. Lệnh săn hết hạn."));
                 continue;
             }
             if (p.entity == null && p.loc.isChunkLoaded() && nearby(p.loc)) {
@@ -258,7 +258,7 @@ final class WantedBoard implements Listener {
         UUID best = p.damage.entrySet().stream().max(Map.Entry.comparingByValue()).map(Map.Entry::getKey).orElse(null);
         Player w = best == null ? null : Bukkit.getPlayer(best);
         if (w == null) {
-            PlayerSettings.broadcast("sukien", c("&8☠ " + p.target.name() + " &7đã bị hạ nhưng không ai nhận thưởng."));
+            PlayerSettings.broadcast("sukien", c("&7☠ " + p.target.name() + " &7đã bị hạ nhưng không ai nhận thưởng."));
             return;
         }
         List<String> got = rewards == null ? List.of() : rewards.give(w, p.target.rewards());

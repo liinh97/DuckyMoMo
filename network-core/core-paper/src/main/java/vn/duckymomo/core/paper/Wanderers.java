@@ -267,10 +267,10 @@ final class Wanderers {
                 + " chuyện. Cứ " + moveMs / 3_600_000L + " giờ họ lại dời đi chỗ khác."));
         for (Npc v : npcs.values()) {
             String vung = data.getString(n(v.code()) + "vung", "");
-            s.sendMessage(c("  &f" + v.name() + " &8— " + (vung.isEmpty() ? "&8chưa xuất hiện" : "&7đang ở &e" + vung + " &7(" + data.getString(n(v.code()) + "huong", "") + ")")));
+            s.sendMessage(c("  &f" + v.name() + " &8— " + (vung.isEmpty() ? "&7chưa xuất hiện" : "&7đang ở &e" + vung + " &7(" + data.getString(n(v.code()) + "huong", "") + ")")));
         }
         if (admin) {
-            s.sendMessage(c("&8Admin: /lukhach ds · /lukhach doi <mã|all> · /lukhach xoa"));
+            s.sendMessage(c("&7Admin: /lukhach ds · /lukhach doi <mã|all> · /lukhach xoa"));
         }
         return true;
     }

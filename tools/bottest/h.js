@@ -24,6 +24,9 @@ async function start(name, ip, host = 'banghoi-1') {
   bot.on('kicked', r => console.log('KICK', JSON.stringify(r).slice(0, 300)));
   bot.on('error', e => console.log('ERR', e.message));
   await new Promise((res, rej) => { bot.once('spawn', res); setTimeout(() => rej(new Error('không vào được')), 40000); });
+  // 27/10: client 1.21.2+ gửi "client_tick_end" mỗi tick; mineflayer không gửi -> Grim báo TickTimer liên tục. Tự gửi 20 lần/giây.
+  const tick = setInterval(() => { try { bot._client.write('tick_end', {}); } catch (e) { /* bỏ qua */ } }, 50);
+  bot.once('end', () => clearInterval(tick));
   await sleep(3000);
   const t = {
     bot, rc, chat, sleep, strip,

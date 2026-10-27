@@ -34,6 +34,8 @@ public final class DuckyMoMoCore extends JavaPlugin {
     private PlayerSettings playerSettings;
     private LevelUp levelUp;
     private Object levelPapi;
+    /** %dmmviec_…% (DailyQuestsPapi). */
+    private Object questPapi;
     private Object vangPapi;
     private WildGates wildGates;
     private Wanderers wanderers;
@@ -194,6 +196,10 @@ public final class DuckyMoMoCore extends JavaPlugin {
         if (gachaPapi != null) {
             gachaPapi.unregister();
             gachaPapi = null;
+        }
+        if (questPapi != null) {
+            DailyQuestsPapi.unregister(questPapi);
+            questPapi = null;
         }
         if (levelPapi != null) {
             LevelUpPapi.unregister(levelPapi);
@@ -1011,6 +1017,9 @@ public final class DuckyMoMoCore extends JavaPlugin {
                 ? new DailyQuests(this, getConfig().getConfigurationSection("daily-quests"), rewards) : null;
         if (quests != null) {
             getServer().getPluginManager().registerEvents(quests, this);
+            if (getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+                questPapi = DailyQuestsPapi.register();
+            }
         }
         bind("nhiemvu", quests == null ? null : quests::command, "Nhiệm vụ hằng ngày");
 

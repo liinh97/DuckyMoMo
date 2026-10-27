@@ -10,6 +10,7 @@ conversations:
         text: "À, việc ta nhờ cháu xong rồi đấy à? Giỏi lắm, để ta xem nào."
         conditions: "vl_gialang_tra"
         actions: "vl_gialang"
+        pointers: "vl_cam"
       chao:
         text: "Lại thêm một người lạ… Ngồi xuống đây đã. Mấy đêm nay ta không ngủ được."
         conditions: "!c1_b1"
@@ -68,7 +69,16 @@ conversations:
       viec_lang_dap:
         text: "Ai trong làng cũng có việc cả. Để ta nói cho mà nghe."
         actions: "vl_gialang"
+        pointers: "vl_nghe"
+      vl_ket:
+        text: "%ph.dmmviec_ketqua%"
     player_options:
+      vl_cam:
+        text: "Dạ, cháu làm xong rồi ạ."
+        pointers: "vl_ket"
+      vl_nghe:
+        text: "Dạ, cháu nghe đây."
+        pointers: "vl_ket"
       hoi_vi_sao:
         text: "Có chuyện gì vậy, cụ?"
         pointers: "ke_chuyen"
@@ -111,6 +121,7 @@ conversations:
         text: "Xong việc bác nhờ rồi hả? Khá lắm, lại đây bác xem."
         conditions: "vl_bacthoren_tra"
         actions: "vl_bacthoren"
+        pointers: "vl_cam"
       chua:
         text: "Lò đang nóng, đứng xa ra kẻo bỏng! Cần gì thì hỏi Già Làng trước."
         pointers: "viec_tr,tam_biet"
@@ -131,7 +142,16 @@ conversations:
       viec_tr_dap:
         text: "Việc thì lúc nào chả có. Nghe đây."
         actions: "vl_bacthoren"
+        pointers: "vl_nghe"
+      vl_ket:
+        text: "%ph.dmmviec_ketqua%"
     player_options:
+      vl_cam:
+        text: "Dạ, cháu làm xong rồi ạ."
+        pointers: "vl_ket"
+      vl_nghe:
+        text: "Dạ, cháu nghe đây."
+        pointers: "vl_ket"
       dua_sat:
         text: "Bác cầm lấy ạ."
         pointers: "cam_on"
@@ -151,6 +171,7 @@ conversations:
         text: "Cháu đã làm được việc ta giao. Không tệ, nhận lấy phần của cháu."
         conditions: "vl_gaccong_tra"
         actions: "vl_gaccong"
+        pointers: "vl_cam"
       chua:
         text: "Phía sau ta là lối tới các dungeon. Đủ sức thì gõ /dungeon mà chọn. Ngoài hoang dã còn có những cổng lạ (/conghoang) và mấy lữ khách biết chuyện về chúng (/lukhach)."
         pointers: "viec_gc,tam_biet"
@@ -174,7 +195,16 @@ conversations:
       viec_gc_dap:
         text: "Muốn ta giao việc à? Nghe cho kỹ."
         actions: "vl_gaccong"
+        pointers: "vl_nghe"
+      vl_ket:
+        text: "%ph.dmmviec_ketqua%"
     player_options:
+      vl_cam:
+        text: "Dạ, cháu làm xong rồi ạ."
+        pointers: "vl_ket"
+      vl_nghe:
+        text: "Dạ, cháu nghe đây."
+        pointers: "vl_ket"
       dua_manh:
         text: "Ông nói vậy là sao?"
         pointers: "giu_manh"

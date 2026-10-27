@@ -111,9 +111,11 @@ conversations:
         text: Xong việc ta nhờ rồi à? Để ta xem nào.
         conditions: vl_lk_cong_tra
         actions: vl_lk_cong
+        pointers: vl_cam
       viec_dap:
         text: Có chứ. Ngồi xuống đây ta nói cho mà nghe.
         actions: vl_lk_cong
+        pointers: vl_nghe
       chao:
         text: Đừng đứng gần quá, người ta toàn mùi bùn. Cả đời ta đào cống cho một thành phố mà giờ chẳng còn ai nhớ tên.
         conditions: '!lk_cong_nghe'
@@ -151,7 +153,15 @@ conversations:
         text: Vậy là dưới đó vẫn còn thứ ấy… Cảm ơn cháu. Đêm nay ta ngủ được rồi.
         conditions: lk_cong_xong
         pointers: viec,di
+      vl_ket:
+        text: "%ph.dmmviec_ketqua%"
     player_options:
+      vl_cam:
+        text: Dạ, cháu làm xong rồi ạ.
+        pointers: vl_ket
+      vl_nghe:
+        text: Dạ, cháu nghe đây.
+        pointers: vl_ket
       viec:
         text: Ông có việc gì cần giúp không?
         pointers: viec_dap
@@ -177,9 +187,11 @@ conversations:
         text: Xong việc ta nhờ rồi à? Để ta xem nào.
         conditions: vl_lk_bacuc_tra
         actions: vl_lk_bacuc
+        pointers: vl_cam
       viec_dap:
         text: Có chứ. Ngồi xuống đây ta nói cho mà nghe.
         actions: vl_lk_bacuc
+        pointers: vl_nghe
       chao:
         text: Brr… Cháu không thấy lạnh à? Từ hôm ở chỗ đó về, người ta cứ lạnh mãi không thôi.
         conditions: '!lk_bacuc_nghe'
@@ -218,7 +230,15 @@ conversations:
         text: Đêm qua ta lại nghe tiếng chuông xe… Chắc chỉ là gió thôi.
         conditions: lk_bacuc_xong
         pointers: viec,di
+      vl_ket:
+        text: "%ph.dmmviec_ketqua%"
     player_options:
+      vl_cam:
+        text: Dạ, cháu làm xong rồi ạ.
+        pointers: vl_ket
+      vl_nghe:
+        text: Dạ, cháu nghe đây.
+        pointers: vl_ket
       viec:
         text: Ông có việc gì cần giúp không?
         pointers: viec_dap
@@ -244,9 +264,11 @@ conversations:
         text: Xong việc ta nhờ rồi à? Để ta xem nào.
         conditions: vl_lk_hiepsi_tra
         actions: vl_lk_hiepsi
+        pointers: vl_cam
       viec_dap:
         text: Có chứ. Ngồi xuống đây ta nói cho mà nghe.
         actions: vl_lk_hiepsi
+        pointers: vl_nghe
       chao:
         text: Đừng nhìn bộ giáp này. Nó từng sáng loáng, khi ta còn thuộc về một đội hiệp sĩ.
         conditions: '!lk_hiepsi_nghe'
@@ -285,7 +307,15 @@ conversations:
         text: Một ngày nào đó ta sẽ quay lại lâu đài. Không phải hôm nay.
         conditions: lk_hiepsi_xong
         pointers: viec,di
+      vl_ket:
+        text: "%ph.dmmviec_ketqua%"
     player_options:
+      vl_cam:
+        text: Dạ, cháu làm xong rồi ạ.
+        pointers: vl_ket
+      vl_nghe:
+        text: Dạ, cháu nghe đây.
+        pointers: vl_ket
       viec:
         text: Ông có việc gì cần giúp không?
         pointers: viec_dap
@@ -311,9 +341,11 @@ conversations:
         text: Xong việc ta nhờ rồi à? Để ta xem nào.
         conditions: vl_lk_hoinuoc_tra
         actions: vl_lk_hoinuoc
+        pointers: vl_cam
       viec_dap:
         text: Có chứ. Ngồi xuống đây ta nói cho mà nghe.
         actions: vl_lk_hoinuoc
+        pointers: vl_nghe
       chao:
         text: Suỵt! Đừng nói to. Cháu không nghe tiếng máy rít à? Không à… chắc chỉ trong đầu ta.
         conditions: '!lk_hoinuoc_nghe'
@@ -352,7 +384,15 @@ conversations:
         text: Ta vẫn giữ cái cờ lê. Biết đâu một ngày cần đến.
         conditions: lk_hoinuoc_xong
         pointers: viec,di
+      vl_ket:
+        text: "%ph.dmmviec_ketqua%"
     player_options:
+      vl_cam:
+        text: Dạ, cháu làm xong rồi ạ.
+        pointers: vl_ket
+      vl_nghe:
+        text: Dạ, cháu nghe đây.
+        pointers: vl_ket
       viec:
         text: Ông có việc gì cần giúp không?
         pointers: viec_dap

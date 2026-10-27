@@ -95,8 +95,12 @@ final class DailyQuests implements Listener {
     private final Map<String, Intro> intros = new LinkedHashMap<>();
     private final Map<String, Giver> givers = new LinkedHashMap<>();
     private final Map<String, List<Step>> chains = new LinkedHashMap<>();
-    /** Hội thoại BetonQuest đã gọi /dmm viecnpc, chờ hội thoại đóng mới nói (người chơi -> NPC). */
-    private final Map<UUID, Giver> pending = new java.util.HashMap<>();
+    /** Hội thoại BetonQuest đã gọi /dmm viecnpc: lời NPC gom lại, gửi chat khi hội thoại đóng (bảng che chat). */
+    private final Map<UUID, List<Component>> pending = new java.util.HashMap<>();
+    /** Đang gom lời NPC (trong lúc chạy talk từ /dmm viecnpc). */
+    private final Map<UUID, List<Component>> capture = new java.util.HashMap<>();
+    /** Lời NPC lần gần nhất dạng chữ thường: %dmmviec_ketqua% hiện ngay trong bảng hội thoại (28/10: bấm Ok không thấy gì). */
+    private static final Map<UUID, String> SUMMARY = new java.util.concurrent.ConcurrentHashMap<>();
     private boolean convEndHook;
     private boolean dirty;
 
@@ -250,12 +254,40 @@ final class DailyQuests implements Listener {
     }
 
     private void sayPending(UUID u) {
-        Giver g = pending.remove(u);
+        List<Component> msgs = pending.remove(u);
         Player p = Bukkit.getPlayer(u);
-        if (g != null && p != null) {
-            talk(p, g, true);
-            syncTag(p, g);
+        if (msgs != null && p != null) {
+            msgs.forEach(p::sendMessage);
         }
+    }
+
+    private void send(Player p, Component m) {
+        List<Component> cap = capture.get(p.getUniqueId());
+        if (cap != null) {
+            cap.add(m);
+        } else {
+            p.sendMessage(m);
+        }
+    }
+
+    /** %dmmviec_ketqua%: lời NPC vừa nói (trả thưởng / giao việc) cho bảng hội thoại. */
+    static String summary(UUID u) {
+        return SUMMARY.getOrDefault(u, "Ta chưa có gì để nói thêm.");
+    }
+
+    private static String plainSummary(List<Component> msgs) {
+        List<String> out = new ArrayList<>();
+        for (Component m : msgs) {
+            String t = net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer.plainText().serialize(m).trim();
+            java.util.regex.Matcher mm = java.util.regex.Pattern.compile("^[^:“]{1,40}: “(.*)”$", java.util.regex.Pattern.DOTALL).matcher(t);
+            if (mm.matches()) {
+                t = mm.group(1);   // lời NPC: bỏ tên + ngoặc, bảng đã có tên NPC
+            }
+            if (!t.isEmpty()) {
+                out.add(t.replaceAll("\\n\\s+", "\n   "));
+            }
+        }
+        return out.isEmpty() ? "Ta chưa có gì để nói thêm." : String.join("\n", out);
     }
 
     /** NPC hội thoại: có việc xong chờ trả thì gắn tag cotruyen>vl_<mã>_tra (câu mở đầu "xong rồi à?" trong hội thoại), hết thì gỡ. */
@@ -370,7 +402,7 @@ final class DailyQuests implements Listener {
                 st.items().forEach((mat, n) -> take(p, mat, n));
                 say(p, g, g.tra());
                 List<String> got = rewards.give(p, st.rewards());
-                p.sendMessage(c("&a✔ Bước " + (b + 1) + "/" + steps.size() + ": &f" + st.name()
+                send(p, c("&a✔ Bước " + (b + 1) + "/" + steps.size() + ": &f" + st.name()
                         + (got.isEmpty() ? "" : "&a. Nhận: &f" + String.join("&7, &f", got))));
                 b++;
                 data.set(k + ".b", b);
@@ -381,9 +413,9 @@ final class DailyQuests implements Listener {
                 paid = true;
             } else if (asked) {
                 say(p, g, "Việc ta nhờ vẫn chưa xong đâu:");
-                p.sendMessage(c("&7• " + stepLine(st, dem) + (st.how().isEmpty() ? "" : "\n   &7" + st.how())));
+                send(p, c("&7• " + stepLine(st, dem) + (st.how().isEmpty() ? "" : "\n   &7" + st.how())));
                 if (st.type().equals("nop")) {
-                    st.items().forEach((mat, n) -> p.sendMessage(c("   &7Trong túi: &f" + count(p, mat) + "&7/" + n
+                    st.items().forEach((mat, n) -> send(p, c("   &7Trong túi: &f" + count(p, mat) + "&7/" + n
                             + " &7(đồ thường, không đổi tên)")));
                 }
                 said = true;
@@ -392,7 +424,7 @@ final class DailyQuests implements Listener {
         if (b < steps.size() && !data.getBoolean(k + ".nhan") && (asked || paid)) {
             Step st = steps.get(b);
             say(p, g, !st.noi().isEmpty() ? st.noi() : g.nhan());
-            p.sendMessage(c("&6Bước " + (b + 1) + "/" + steps.size() + ": " + stepLine(st, 0) + (st.how().isEmpty() ? "" : "\n   &7" + st.how())));
+            send(p, c("&6Bước " + (b + 1) + "/" + steps.size() + ": " + stepLine(st, 0) + (st.how().isEmpty() ? "" : "\n   &7" + st.how())));
             data.set(k + ".nhan", true);
             data.set(k + ".dem", 0);
             dirty = true;
@@ -529,7 +561,7 @@ final class DailyQuests implements Listener {
             done.add(id);
             added = true;
             List<String> got = rewards.give(p, in.rewards());
-            p.sendMessage(c("&a✔ " + in.name() + (got.isEmpty() ? "" : "&a. Nhận: &f" + String.join("&7, &f", got))));
+            send(p, c("&a✔ " + in.name() + (got.isEmpty() ? "" : "&a. Nhận: &f" + String.join("&7, &f", got))));
         }
         if (!added) {
             return;
@@ -538,7 +570,7 @@ final class DailyQuests implements Listener {
         dirty = true;
         if (intros.keySet().stream().allMatch(done::contains)) {
             List<String> bonus = rewards.give(p, cfg.getStringList("intro-all-rewards"));
-            p.sendMessage(c("&6★ Đã giúp hết dân làng!" + (bonus.isEmpty() ? "" : " Thưởng thêm: &f" + String.join("&7, &f", bonus))));
+            send(p, c("&6★ Đã giúp hết dân làng!" + (bonus.isEmpty() ? "" : " Thưởng thêm: &f" + String.join("&7, &f", bonus))));
         }
         flush();
     }
@@ -565,9 +597,9 @@ final class DailyQuests implements Listener {
         return in.rewards().isEmpty() ? "" : " &7→ &a" + String.join("&7, &a", rewards.describe(in.rewards()));
     }
 
-    private static void say(Player p, Giver g, String line) {
+    private void say(Player p, Giver g, String line) {
         if (!line.isBlank()) {
-            p.sendMessage(c(g.name() + "&7: &f“" + line + "&f”"));
+            send(p, c(g.name() + "&7: &f“" + line + "&f”"));
         }
     }
 
@@ -586,7 +618,8 @@ final class DailyQuests implements Listener {
         return false;
     }
 
-    /** /dmm viecnpc <người> <mã người giao>: hội thoại BetonQuest gọi (console). Đợi hội thoại đóng rồi mới nói (bảng hội thoại che chat). */
+    /** /dmm viecnpc <người> <mã người giao>: hội thoại BetonQuest gọi (console). Trả / giao việc ngay, lời NPC hiện trong câu sau của
+     *  hội thoại (%dmmviec_ketqua%) và chép vào chat khi hội thoại đóng (bảng che chat). */
     void talkCommand(CommandSender s, String[] args) {
         Player p = args.length >= 3 ? Bukkit.getPlayerExact(args[1]) : null;
         Giver g = args.length >= 3 ? givers.get(args[2].toLowerCase(Locale.ROOT)) : null;
@@ -595,7 +628,16 @@ final class DailyQuests implements Listener {
             return;
         }
         UUID u = p.getUniqueId();
-        pending.put(u, g);
+        List<Component> got = new ArrayList<>();
+        capture.put(u, got);
+        try {
+            talk(p, g, true);   // trả thưởng / giao việc NGAY (bảng hội thoại hiện kết quả qua %dmmviec_ketqua% ở câu sau)
+        } finally {
+            capture.remove(u);
+        }
+        syncTag(p, g);
+        SUMMARY.put(u, plainSummary(got));
+        pending.put(u, got);    // chép vào chat khi hội thoại đóng (dự phòng 60 giây)
         Bukkit.getScheduler().runTaskLater(plugin, () -> sayPending(u), convEndHook ? 1200L : 20L);
     }
 
@@ -619,11 +661,11 @@ final class DailyQuests implements Listener {
             data.set(lk(u) + ".mo", true);
             dirty = true;
             say(p, g, g.mo());
-            p.sendMessage(c("&6Việc dân làng nhờ &7(gặp từng người để nhận việc, làm xong quay lại người đó nhận thưởng):"));
+            send(p, c("&6Việc dân làng nhờ &7(gặp từng người để nhận việc, làm xong quay lại người đó nhận thưởng):"));
             for (Giver x : givers.values()) {
                 long n = intros.values().stream().filter(i -> x.id().equals(i.giver()) && !introDone(u, i.id())).count();
                 if (n > 0) {
-                    p.sendMessage(c("&7• " + x.name() + (x.where().isEmpty() ? "" : " &7· " + x.where()) + " &f(" + n + " việc)"));
+                    send(p, c("&7• " + x.name() + (x.where().isEmpty() ? "" : " &7· " + x.where()) + " &f(" + n + " việc)"));
                 }
             }
             said = true;
@@ -644,12 +686,12 @@ final class DailyQuests implements Listener {
         if (!moi.isEmpty()) {
             say(p, g, g.nhan());
             for (Intro i : moi) {
-                p.sendMessage(c("&7• &f" + i.name() + rewardText(i) + (i.how().isEmpty() ? "" : "\n   &7" + i.how())));
+                send(p, c("&7• &f" + i.name() + rewardText(i) + (i.how().isEmpty() ? "" : "\n   &7" + i.how())));
                 nhan.add(i.id());
             }
             data.set(lk(u) + ".nhan", nhan);
             dirty = true;
-            p.sendMessage(c("&a✔ Đã nhận " + moi.size() + " việc. &7Xong thì quay lại gặp " + g.name() + "&7 nhận thưởng (xem lại: &e/nhiemvu&7)."));
+            send(p, c("&a✔ Đã nhận " + moi.size() + " việc. &7Xong thì quay lại gặp " + g.name() + "&7 nhận thưởng (xem lại: &e/nhiemvu&7)."));
             p.playSound(p.getLocation(), org.bukkit.Sound.ENTITY_VILLAGER_YES, 0.8f, 1f);
             said = true;
         }
@@ -658,12 +700,12 @@ final class DailyQuests implements Listener {
             say(p, g, g.het());
             givers.values().stream().filter(x -> intros.values().stream().anyMatch(i -> x.id().equals(i.giver()) && !introDone(u, i.id())
                     && !nhan.contains(i.id()) && !xong.contains(i.id()))).findFirst()
-                    .ifPresent(x -> p.sendMessage(c("&7➜ Gợi ý: gặp " + x.name() + (x.where().isEmpty() ? "" : " &7ở " + x.where()))));
+                    .ifPresent(x -> send(p, c("&7➜ Gợi ý: gặp " + x.name() + (x.where().isEmpty() ? "" : " &7ở " + x.where()))));
             said = true;
         } else if (!said && asked) {
             say(p, g, "Việc ta nhờ cháu vẫn chưa xong đâu:");
             intros.values().stream().filter(i -> g.id().equals(i.giver()) && nhan.contains(i.id()))
-                    .forEach(i -> p.sendMessage(c("&7• &f" + i.name() + (i.how().isEmpty() ? "" : "\n   &7" + i.how()))));
+                    .forEach(i -> send(p, c("&7• &f" + i.name() + (i.how().isEmpty() ? "" : "\n   &7" + i.how()))));
             said = true;
         }
         if (said) {

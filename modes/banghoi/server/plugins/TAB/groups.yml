@@ -11,7 +11,7 @@ _DEFAULT_:
   tabprefix: "%luckperms-prefix%&f"
   tagprefix: "%luckperms-prefix%&f"
   customtabname: "%player%"
-  tabsuffix: "%luckperms-suffix% &8[&eCấp %dmmcap_cap%&8]"
+  tabsuffix: "%luckperms-suffix% &8[%dmmcap_mau%Cấp %dmmcap_cap%&8]"
   tagsuffix: "%luckperms-suffix%"
 
 per-world:

@@ -32,6 +32,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.EquipmentSlotGroup;
 import org.bukkit.inventory.Inventory;
@@ -52,7 +53,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Thăng Cấp (/capdo, Bang Hội Chiến; làm lại 21/10 theo hướng cày cuốc). Config level-up:
@@ -66,6 +69,10 @@ import java.util.UUID;
  *  - Đặc quyền (shop.<mã>: name, icon, description, tiers [{level, cost (xu), perms [quyền LuckPerms vĩnh viễn], rewards}]): mua lần lượt
  *    từng bậc, cần đủ cấp + trả xu. Không trùng rank ủng hộ / danh phận.
  *  - keep-on-new-season: false (mặc định) = khi leaderboard.season-start đổi (mùa mới) thì cấp, thuộc tính, đặc quyền đã mua làm lại từ đầu.
+ *  - level-colors "cấp:mã màu, …" (27/10, chủ server): màu của cấp đổi theo mốc (mặc định mỗi 10 cấp), hiện ở TAB, thanh chỉ số,
+ *    bảng bên phải, menu (%dmmcap_mau%, %dmmcap_mau_mm%); lên mốc đổi màu thì báo người đó.
+ *  - Sức mạnh / Bền bỉ cộng ngay lúc trúng đòn nên không nhìn thấy: %dmmcap_hud_mm% hiện vài giây trên thanh chỉ số sát thương đánh ra
+ *    và phần được cộng / được đỡ; menu ghi ví dụ thực tế (đòn 10 -> …, máu tối đa hiện tại…).
  * Hiện %dmmcap_cap% (TAB). Lưu capdo.yml; ghi capdo.json (top) cho web.
  */
 final class LevelUp implements Listener {
@@ -138,6 +145,17 @@ final class LevelUp implements Listener {
     private final YamlConfiguration data;
     private final Map<String, Long> lastVictim = new HashMap<>();
     private boolean dirty;
+    static final String DEFAULT_COLORS = "0:&f, 10:&a, 20:&b, 30:&9, 40:&d, 50:&6, 60:&c, 70:&5, 80:&4, 90:&e, 100:&e&l";
+    private final TreeMap<Integer, String> colors = new TreeMap<>();
+    private static final long HUD_MS = 3000;
+    /** Đòn gần nhất có Sức mạnh (đánh) / Bền bỉ (bị đánh): {thời điểm ms, sát thương, phần thuộc tính cộng / đỡ}. */
+    private final Map<UUID, double[]> lastHit = new ConcurrentHashMap<>();
+    private final Map<UUID, double[]> lastHurt = new ConcurrentHashMap<>();
+    private static final Map<Character, String> MM = Map.ofEntries(Map.entry('0', "black"), Map.entry('1', "dark_blue"),
+            Map.entry('2', "dark_green"), Map.entry('3', "dark_aqua"), Map.entry('4', "dark_red"), Map.entry('5', "dark_purple"),
+            Map.entry('6', "gold"), Map.entry('7', "gray"), Map.entry('8', "dark_gray"), Map.entry('9', "blue"), Map.entry('a', "green"),
+            Map.entry('b', "aqua"), Map.entry('c', "red"), Map.entry('d', "light_purple"), Map.entry('e', "yellow"), Map.entry('f', "white"),
+            Map.entry('l', "bold"), Map.entry('o', "italic"), Map.entry('n', "underlined"), Map.entry('m', "strikethrough"));
 
     LevelUp(JavaPlugin plugin, Activity activity, Rewards rewards, ConfigurationSection c) {
         this.plugin = plugin;
@@ -164,6 +182,16 @@ final class LevelUp implements Listener {
         offWorlds.addAll(c.getStringList("attribute-off-worlds"));
         this.respecCost = c.getDouble("respec-cost", 20000);
         this.keep = c.getBoolean("keep-on-new-season", false);
+        for (String part : c.getString("level-colors", DEFAULT_COLORS).split(",")) {
+            String[] kv = part.trim().split(":", 2);
+            try {
+                if (kv.length == 2 && !kv[1].isBlank()) {
+                    colors.put(Integer.parseInt(kv[0].trim()), kv[1].trim());
+                }
+            } catch (NumberFormatException ignored) {
+                // bỏ mục sai, giữ phần còn lại
+            }
+        }
         ConfigurationSection ss = c.getConfigurationSection("shop");
         if (ss != null) {
             for (String id : ss.getKeys(false)) {
@@ -253,6 +281,53 @@ final class LevelUp implements Listener {
     static int levelOf(UUID u) {
         LevelUp l = INSTANCE;
         return l == null ? 0 : l.level(u);
+    }
+
+    /** Mã màu & của cấp lv (mốc gần nhất ≤ lv trong level-colors). */
+    static String colorOf(int lv) {
+        LevelUp l = INSTANCE;
+        Map.Entry<Integer, String> e = l == null ? null : l.colors.floorEntry(lv);
+        return e == null ? "&f" : e.getValue();
+    }
+
+    /** "&a&l" -> "<green><bold>" (thanh chỉ số AuraSkills đọc MiniMessage). */
+    static String miniMessage(String legacy) {
+        StringBuilder b = new StringBuilder();
+        for (int i = 0; i + 1 < legacy.length(); i++) {
+            char ch = legacy.charAt(i);
+            if (ch != '&' && ch != '§') {
+                continue;
+            }
+            String t = MM.get(Character.toLowerCase(legacy.charAt(i + 1)));
+            if (t != null) {
+                b.append('<').append(t).append('>');
+            }
+            i++;
+        }
+        return b.toString();
+    }
+
+    /** Vài giây sau đòn có Sức mạnh / Bền bỉ: " | ⚔ 7,7 (+0,7)", " | đỡ −0,5" (MiniMessage, gắn vào thanh chỉ số). */
+    static String hud(UUID u) {
+        LevelUp l = INSTANCE;
+        if (l == null) {
+            return "";
+        }
+        long now = System.currentTimeMillis();
+        StringBuilder b = new StringBuilder();
+        double[] h = l.lastHit.get(u);
+        if (h != null && now - (long) h[0] < HUD_MS) {
+            b.append(" <dark_gray>| <gold>⚔ ").append(dmg(h[1])).append(" <gray>(+").append(dmg(h[2])).append(" Sức mạnh)");
+        }
+        double[] d = l.lastHurt.get(u);
+        if (d != null && now - (long) d[0] < HUD_MS) {
+            b.append(" <dark_gray>| <blue>Bền bỉ đỡ −").append(dmg(d[2]));
+        }
+        return b.toString();
+    }
+
+    private static String dmg(double v) {
+        return String.format(Locale.ROOT, v < 1 ? "%.2f" : "%.1f", v).replace('.', ',');
     }
 
     /** Tổng điểm thuộc tính có được ở cấp lv. */
@@ -466,8 +541,16 @@ final class LevelUp implements Listener {
         }
         double b = bonus(p, Attr.SUC);
         if (b > 0) {
-            e.setDamage(e.getDamage() * (1 + b / 100.0));
+            double base = e.getDamage(), d = base * (1 + b / 100.0);
+            e.setDamage(d);
+            lastHit.put(p.getUniqueId(), new double[] {System.currentTimeMillis(), d, d - base});
         }
+    }
+
+    @EventHandler
+    public void onQuit(PlayerQuitEvent e) {
+        lastHit.remove(e.getPlayer().getUniqueId());
+        lastHurt.remove(e.getPlayer().getUniqueId());
     }
 
     /** Bền bỉ: −% sát thương nhận (trừ rơi khỏi thế giới, /kill, viền thế giới). */
@@ -484,7 +567,9 @@ final class LevelUp implements Listener {
         }
         double b = Math.min(90, bonus(p, Attr.BEN));
         if (b > 0) {
-            e.setDamage(e.getDamage() * (1 - b / 100.0));
+            double base = e.getDamage(), d = base * (1 - b / 100.0);
+            e.setDamage(d);
+            lastHurt.put(p.getUniqueId(), new double[] {System.currentTimeMillis(), d, base - d});
         }
     }
 
@@ -519,6 +604,9 @@ final class LevelUp implements Listener {
         p.playSound(p.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 0.8f, 1.1f);
         DailyQuests.feature(p, "capdo");
         p.sendMessage(c("&a⬆ Lên cấp " + next + "! &7+" + gain + " điểm thuộc tính (đang có " + freePoints(u) + "). Cộng điểm: &f/capdo"));
+        if (!colorOf(next).equals(colorOf(next - 1))) {
+            p.sendMessage(c("&e✦ Cấp của bạn đổi màu: " + colorOf(next) + "Cấp " + next + " &7(ở Tab, thanh chỉ số, bảng bên phải)"));
+        }
         if (milestoneEvery > 0 && next % milestoneEvery == 0) {
             List<String> got = rewards == null ? List.of() : rewards.give(p, milestoneRewards);
             PlayerSettings.broadcast("sukien", c("&6⬆ " + p.getName() + " &eđã đạt &6Cấp " + next + "&e!" + (got.isEmpty() ? "" : " &7Quà mốc: &f" + String.join(", ", got))));
@@ -642,6 +730,23 @@ final class LevelUp implements Listener {
         };
     }
 
+    /** Hiệu lực nhìn được: máu tối đa / tốc chạy đọc từ chỉ số thật của nhân vật, sức mạnh / bền bỉ quy ra một đòn 10 sát thương. */
+    private String real(Player p, Attr a, int t) {
+        double v = t * perTier.get(a);
+        return switch (a) {
+            case MAU -> {
+                AttributeInstance m = p.getAttribute(Attribute.MAX_HEALTH);
+                yield "&fmáu tối đa " + num((m == null ? 20 : m.getValue()) / 2) + " tim";
+            }
+            case SUC -> "&fđòn 10 sát thương thành " + num(Math.round(10 * (1 + v / 100.0) * 10) / 10.0);
+            case BEN -> "&fbị đánh 10 chỉ mất " + num(Math.round(10 * (1 - Math.min(90, v) / 100.0) * 10) / 10.0);
+            case NHANH -> {
+                AttributeInstance s = p.getAttribute(Attribute.MOVEMENT_SPEED);
+                yield "&ftốc chạy " + (s == null || s.getBaseValue() <= 0 ? "+" + num(v) : num(Math.round(s.getValue() / s.getBaseValue() * 100))) + "%";
+            }
+        };
+    }
+
     private static String bar(int t, int max, String color) {
         StringBuilder b = new StringBuilder(color);
         for (int i = 0; i < max; i++) {
@@ -658,7 +763,10 @@ final class LevelUp implements Listener {
         int lv = level(u), next = lv + 1;
         Holder h = new Holder();
         h.inv = Bukkit.createInventory(h, 45, c("&0⬆ Thăng Cấp &8· cấp " + lv + "/" + maxLevel));
-        h.inv.setItem(4, Tip.of("&6⬆ &fCấp " + lv).sub("tối đa " + maxLevel).desc("Tiến độ của bạn trong mùa này").line()
+        Integer nextColor = colors.higherKey(lv);
+        h.inv.setItem(4, Tip.of("&6⬆ " + colorOf(lv) + "Cấp " + lv).sub("tối đa " + maxLevel).desc("Tiến độ của bạn trong mùa này").line()
+                .kv("Màu cấp", colorOf(lv) + "■■■ &8" + (nextColor == null ? "(màu cao nhất)"
+                        : "· cấp " + nextColor + " đổi sang " + colors.get(nextColor) + "■■■"))
                 .kv("Điểm thuộc tính", "&e" + freePoints(u) + " &7chưa dùng &8(" + totalPoints(lv) + " tổng)")
                 .kv("Điểm hạ gục", count(killPts(u)) + " &8(quái +" + mobPoints + ", người +" + playerPoints + ")")
                 .kv("Giờ chơi", time(hours(u), false))
@@ -702,6 +810,12 @@ final class LevelUp implements Listener {
                         case NHANH -> "Chạy nhanh hơn";
                     }).raw(bar(t, maxTier, a.color)).line()
                     .kv("Đang có", t == 0 ? "&8chưa có" : "&f" + effect(a, t));
+            if (t > 0 && !off) {
+                tip.kv("Thực tế", real(p, a, t));
+                if (a == Attr.SUC || a == Attr.BEN) {
+                    tip.note("Đánh / bị đánh: thanh chỉ số dưới màn hình hiện phần " + a.name + " vài giây");
+                }
+            }
             if (t < maxTier) {
                 boolean can = freePoints(u) >= t + 1;
                 tip.kv("Bậc " + (t + 1), "&f" + effect(a, t + 1) + " &8· " + (can ? "&e" : "&c") + (t + 1) + " điểm").line();

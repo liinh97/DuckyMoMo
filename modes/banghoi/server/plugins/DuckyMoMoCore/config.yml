@@ -1007,6 +1007,8 @@ level-up:
   attribute-off-worlds: []      # thế giới tắt thuộc tính (Đấu Trường luôn tắt)
   respec-cost: 10000            # xu tẩy điểm (0 = miễn phí, -1 = không cho)
   keep-on-new-season: false
+  # màu cấp theo mốc "cấp:mã màu" (mã & 0-9 a-f, &l đậm): hiện ở TAB, thanh chỉ số, bảng bên phải, menu (27/10)
+  level-colors: "0:&f, 10:&a, 20:&b, 30:&9, 40:&d, 50:&6, 60:&c, 70:&5, 80:&4, 90:&e, 100:&e&l"
   # Đặc quyền: mua bằng XU, cần đủ cấp, mua lần lượt từng bậc. Không trùng rank ủng hộ / danh phận.
   shop:
     giamxuong:

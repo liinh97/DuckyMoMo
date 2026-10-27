@@ -153,5 +153,5 @@ SbDong4:
   change-interval: 8000
   texts:
     - '&#FFD24D★ &6%dmmvang_so_du% &eVàng'
-    - '&#9AE6B4✦ &7Thăng Cấp &f%dmmcap_cap%'
+    - '&#9AE6B4✦ &7Thăng Cấp %dmmcap_mau%%dmmcap_cap%'
 

@@ -11,7 +11,7 @@ abilities:
 action_bar:
   # DuckyMoMo 19/10: dòng chỉ số trên thanh máu "❤ [20/20] | ⚔ [Cấp 5] | ✦ [20/20]" (⚔ = cấp Thăng Cấp, PlaceholderAPI %dmmcap_cap%; ✦ = mana).
   # File này có trong repo (modes/banghoi/server/plugins/AuraSkills/messages/global.yml), áp: /skills reload.
-  idle: "{{action_bar.hp_display}} <dark_gray>| <gold>⚔ [Cấp %dmmcap_cap%] <dark_gray>| {{action_bar.mana_display}}"
+  idle: "{{action_bar.hp_display}} <dark_gray>| %dmmcap_mau_mm%⚔ [Cấp %dmmcap_cap%] <dark_gray>| {{action_bar.mana_display}}%dmmcap_hud_mm%"
   hp_display: "<red>❤ [{hp}/{max_hp}]"
   mana_display: "<aqua>✦ [{mana}/{max_mana}]"
   xp: "{{action_bar.hp_display}}  <gold>{xp_gained} {skill} {{units.xp}} <gray>({current_xp}/{level_xp} {{units.xp}})  {{action_bar.mana_display}}"

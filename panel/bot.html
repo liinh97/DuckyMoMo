@@ -43,7 +43,8 @@
   .tg.doi { color: var(--botc); background: color-mix(in srgb, var(--botc) 14%, transparent); }
   .tg.nhac, .tg.kick, .tg.chet { color: var(--nhac); background: color-mix(in srgb, var(--nhac) 14%, transparent); }
   .ln .tx { white-space: pre-wrap; word-break: break-word; }
-  .ln .tx b { font-weight: 600; } .ln .tx .b { color: var(--botc); font-weight: 600; }
+  .ln .tx b { font-weight: 600; } .ln .tx .b { color: var(--botc); font-weight: 600; cursor: pointer; }
+  .ln .tx .b:hover { text-decoration: underline; }
   .dev { display: inline-block; font-size: 10px; font-weight: 700; border-radius: 5px; padding: 0 4px; margin-right: 4px; vertical-align: 1px; }
   .dev.pc { color: #3b82f6; background: color-mix(in srgb, #3b82f6 15%, transparent); }
   .dev.be { color: #16a34a; background: color-mix(in srgb, #16a34a 15%, transparent); }
@@ -58,7 +59,9 @@
   .empty { padding: 40px 14px; text-align: center; color: var(--muted); }
   #mk { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; padding: 8px 14px; border-bottom: 1px solid var(--line-2); }
   #mk input { width: 170px; } #mk select { padding: 4px 6px; font-size: 13px; }
-  #mk .hint { font-size: 12px; color: var(--muted); }
+  #mk .hint, #tc .hint { font-size: 12px; color: var(--muted); }
+  #tc { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; padding: 6px 14px 8px; border-bottom: 1px solid var(--line-2); }
+  #tc input[type=number] { width: 58px; padding: 3px 6px; font-size: 13px; }
   label.chk { display: inline-flex; gap: 6px; align-items: center; font-size: 12.5px; color: var(--muted); font-weight: 400; }
 </style>
 <link rel="stylesheet" href="ui.css">
@@ -76,6 +79,12 @@
       <select id="mkSrv" title="Vào server nào"></select>
       <button type="submit" class="mini primary">Tạo bot</button>
       <span class="hint">3–16 ký tự không dấu, số, gạch dưới; không trùng tên người chơi đã từng vào.</span>
+    </form>
+    <form id="tc" autocomplete="off" title="Cứ vài phút 2–3 bot đang cùng server nói một đoạn hội thoại soạn sẵn (chuyện vặt, mẹo chơi), gõ chậm như người. Đêm 1–7 giờ im.">
+      <label class="chk"><input type="checkbox" id="tcOn"> Bot tự chat với nhau</label>
+      <span class="hint">mỗi</span><input id="tcMin" type="number" min="1" max="240"><span class="hint">–</span><input id="tcMax" type="number" min="1" max="240"><span class="hint">phút một đoạn</span>
+      <button type="submit" class="mini">Lưu</button>
+      <button type="button" class="mini" id="tcNow" title="Cho 2–3 bot nói một đoạn ngay để xem thử">Chat thử</button>
     </form>
     <div id="bots"><div class="empty">Đang tải…</div></div>
   </div>
@@ -161,6 +170,12 @@ $("mk").addEventListener("submit", async (ev) => {
   const d = await act({ bot: name, action: "create", server: $("mkSrv").value });
   if (d.ok) $("mkName").value = "";
 });
+$("tc").addEventListener("submit", (ev) => {
+  ev.preventDefault();
+  act({ action: "chatcfg", on: $("tcOn").checked, min: +$("tcMin").value, max: +$("tcMax").value });
+});
+$("tcOn").onchange = () => act({ action: "chatcfg", on: $("tcOn").checked });
+$("tcNow").onclick = () => act({ action: "chatnow" });
 $("allJoin").onclick = async () => { if (await ask(`Cho cả ${BOTS.length} bot vào game (mỗi bot vào server đang chọn của nó)?`, { title: "Vào tất cả", ok: "Vào" })) act({ bot: "*", action: "join" }); };
 $("allLeave").onclick = async () => { if (await ask("Cho mọi bot thoát game?", { title: "Thoát tất cả", ok: "Thoát" })) act({ bot: "*", action: "leave" }); };
 
@@ -172,6 +187,9 @@ async function loadBots() {
     if ($("fsrv").options.length === 1) for (const [k, v] of Object.entries(SERVERS)) $("fsrv").add(new Option(v, k));
     if (!$("mkSrv").options.length) for (const [k, v] of Object.entries(SERVERS)) $("mkSrv").add(new Option(v, k));
     if (!document.activeElement || !document.activeElement.closest("#bots select")) renderBots();
+    if (d.chat && !(document.activeElement && document.activeElement.closest("#tc"))) {
+      $("tcOn").checked = !!d.chat.on; $("tcMin").value = d.chat.min; $("tcMax").value = d.chat.max;
+    }
   } catch (e) { $("bots").innerHTML = `<div class="empty">Không tải được: ${esc(e)}</div>`; }
 }
 
@@ -181,6 +199,8 @@ const devHtml = (p) => { const d = DEV[p]; return d ? `<span class="dev ${esc(d.
 const TAG = { chat: "Chat", command: "Lệnh", msg: "Nhắn riêng", tpa: "TPA", nhac: "Gọi tên", kick: "Bị đá", chet: "Chết", doi: "Dời chỗ" };
 const hhmm = (ts) => { const d = new Date(ts); return isNaN(d) ? "" : d.toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false }); };
 const isBot = (n) => BOTS.some((b) => b.name === n);
+// tên bot trong khung chat: bấm để chọn bot đó ở ô "Nói bằng bot nào"
+const botName = (n) => `<span class="b" data-pick="${esc(n)}" title="Bấm để nói bằng ${esc(n)}">${esc(n)}</span>`;
 
 function renderFeed() {
   const srv = $("fsrv").value, showCmd = $("fcmd").checked;
@@ -201,12 +221,12 @@ function renderFeed() {
   feed.innerHTML = rows.slice(-400).map((r) => {
     let tx;
     if (r.bot) {   // tin bot nhận
-      tx = r.type === "msg" ? `<b>${esc(r.from)}</b> nhắn riêng <span class="b">${esc(r.bot)}</span>: ${esc(r.text)}`
-        : r.type === "tpa" ? `<span class="b">${esc(r.bot)}</span> nhận: ${esc(r.text)}`
-        : `<span class="b">${esc(r.bot)}</span> · ${esc(r.text)}`;
+      tx = r.type === "msg" ? `<b>${esc(r.from)}</b> nhắn riêng ${botName(r.bot)}: ${esc(r.text)}`
+        : r.type === "tpa" ? `${botName(r.bot)} nhận: ${esc(r.text)}`
+        : `${botName(r.bot)} · ${esc(r.text)}`;
     } else {
       const t = String(r.text || ""), p = r.player || "";
-      const who = devHtml(p) + (isBot(p) ? `<span class="b">${esc(p)}</span>` : `<b>${esc(p)}</b>`);
+      const who = devHtml(p) + (isBot(p) ? botName(p) : `<b>${esc(p)}</b>`);
       tx = p && t.startsWith(p) ? (r.type === "command" ? `${who} <code>${esc(t.slice(p.length).replace(/^:\s*/, ""))}</code>` : who + esc(t.slice(p.length))) : esc(t);
     }
     const hot = r.type === "msg" || r.type === "tpa";
@@ -216,6 +236,12 @@ function renderFeed() {
   if (atBottom) feed.scrollTop = feed.scrollHeight;
 }
 $("feed").addEventListener("click", (ev) => {
+  const pk = ev.target.closest("[data-pick]");
+  if (pk) {
+    const n = pk.dataset.pick;
+    if (![...$("who").options].some((o) => o.value === n)) { window.toast && window.toast(n + " đang không online", "err"); return; }
+    $("who").value = n; $("txt").focus(); renderBots(); return;
+  }
   const ln = ev.target.closest(".ln.hot"); if (!ln) return;
   if ([...$("who").options].some((o) => o.value === ln.dataset.bot)) $("who").value = ln.dataset.bot;
   $("txt").value = ln.dataset.type === "tpa" ? "/tpaccept" : `/msg ${ln.dataset.from} `;

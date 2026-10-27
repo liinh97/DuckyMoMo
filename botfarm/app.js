@@ -6,7 +6,8 @@
 //        action: join (vào, kèm server), leave (thoát), server (đổi server), chat (nói), cmd (chạy lệnh như bot gõ),
 //                move (đi tới x z), home (về chỗ mặc định), sethome (lấy chỗ đang đứng làm chỗ mặc định),
 //                random (Bang Hội Chiến: khu ngẫu nhiên chưa bot nào đứng, đặt làm chỗ mặc định),
-//                create (tạo bot mới tên b.bot, vào luôn server b.server), remove (xoá bot đã tạo thêm, phải thoát trước)
+//                create (tạo bot mới tên b.bot, vào luôn server b.server), remove (xoá bot đã tạo thêm, phải thoát trước),
+//                chatcfg (bot tự chat với nhau: on, min, max phút; lưu /state/chat.json), chatnow (cho chat một đoạn ngay)
 // Bot tạo thêm (27/10) làm y như 20 bot gốc: quyền duckymomo.vaora.an (cấp TRƯỚC lần vào đầu cho khỏi báo [+]), Sáng tạo + /god mỗi lần
 // xuất hiện, IP giả riêng, tự đăng ký AuthMe ở sảnh. Lưu trong bots.json (created, ipn = số IP giả).
 // /bots có thêm spawn: true khi bot đang đứng trong 16 ô quanh điểm spawn của server đó.
@@ -367,9 +368,97 @@ setInterval(() => {
   connect(n).catch(e => { rt.err = e.message; rt.connecting = false; });
 }, 1000);
 
+// ---------------------------------------------------------------- bot tự chat với nhau (27/10, bật / tắt ở trang Bot)
+// Cứ min–max phút chọn 2–3 bot đang cùng một server, nói một đoạn hội thoại soạn sẵn (gõ chậm như người, mỗi bot một kiểu gõ).
+// Nội dung chỉ chuyện vặt / mẹo đúng của server: không hẹn gặp, không rủ đi đâu (người thật đến thì bot không đáp được),
+// không nói gì về nạp tiền / mua bán. Đêm khuya (1–7 giờ) im.
+const CHAT_CFG = '/state/chat.json';
+const chatCfg = { on: false, min: 4, max: 9 };
+try { Object.assign(chatCfg, JSON.parse(fs.readFileSync(CHAT_CFG, 'utf8'))); } catch (e) { /* chưa cài: tắt */ }
+function saveChat() { try { fs.writeFileSync(CHAT_CFG, JSON.stringify(chatCfg)); } catch (e) { log('không lưu được chat.json:', e.message); } }
+// A / B / C: người nói; {A} {B} {C}: tên bot đó
+const TALKS = [
+  ['A:ae ơi /capdo lên cấp kiểu gì nhỉ', 'B:đủ xu, đủ giờ chơi với điểm hạ gục là bấm lên cấp được', 'A:à ok thanks'],
+  ['A:hôm nay đào mãi không thấy kim cương', 'B:xuống tầm y -58 mà đào', 'A:ok để thử'],
+  ['A:gg', 'B:gg'],
+  ['A:{B} ơi', 'B:sao', 'A:à thôi nhầm người :v'],
+  ['A:đói quá đi ăn cơm đã', 'B:ăn ngon nhé'],
+  ['A:map này đẹp nhỉ', 'B:ừ quần đảo nhiều chỗ đẹp phết'],
+  ['A:có ai lập bang chưa', 'B:t đang góp tiền lập nè', 'A:lập xong nhớ mời t'],
+  ['A:mai có ai on không', 'B:chắc tối t on', 'C:t cũng thế'],
+  ['A:ae ở đây chơi lâu chưa', 'B:mới được mấy hôm', 'C:t cũng mới'],
+  ['A:đêm rồi quái nhiều vãi', 'B:ở trong nhà đi', 'A:ok'],
+  ['A:chán quá', 'B:đi câu cá đi', 'A:ừ cũng được'],
+  ['A:hello ae', 'B:hi', 'C:chào'],
+  ['A:t afk tí nhé', 'B:ok'],
+  ['A:có ai lên được cấp 5 chưa', 'B:t mới cấp 2 :v', 'A:t cũng thế, cày giờ lâu vãi'],
+  ['A:{B} ơi nhà xây xong chưa', 'B:chưa, thiếu đá', 'A:đá thì đầy ngoài kia mà'],
+  ['A:công thành là gì thế ae', 'B:bang này đánh chiếm thị trấn bang kia ấy', 'A:nghe căng nhỉ'],
+  ['A:vừa chết vì creeper :(', 'B:haha', 'C:mất đồ không'],
+  ['A:câu được con cá to vãi', 'B:ghê vậy'],
+  ['A:ae có biết làm bàn phù phép không', 'B:4 obsidian 2 kim cương 1 quyển sách', 'A:thanks'],
+  ['A:sắp sáng chưa nhỉ', 'B:sắp rồi'],
+  ['A:t mới xây xong cái chuồng gà', 'B:nuôi gà làm gì', 'A:lấy trứng với lông làm tên :v'],
+  ['A:lag tí xíu', 'B:t thấy bình thường mà', 'A:chắc mạng nhà t'],
+  ['A:{B} chơi minecraft lâu chưa', 'B:từ hồi bản 1.8', 'A:lão làng rồi'],
+  ['A:hôm nay mưa suốt', 'B:ừ mưa cả ngoài đời lẫn trong game :v'],
+  ['A:tìm mãi không thấy làng nào', 'B:đi thuyền dọc bờ biển dễ thấy hơn', 'A:để thử'],
+  ['A:ae ơi cuốc vàng có tốt không', 'B:nhanh mà mau hỏng lắm', 'C:dùng sắt cho lành'],
+];
+const SOLO = ['ae ơi', ':v', 'buồn ngủ quá', 'hehe', 'chiều nay nóng thật', 'đi câu cá thôi', 'vừa đào được ít sắt', 'gió to thế'];
+const STYLE = n => [...n].reduce((s, c) => s + c.charCodeAt(0), 0) % 3;   // 0 có dấu, 1 không dấu, 2 có dấu + viết thường hết
+const noAccent = s => s.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'D');
+const styled = (n, s) => STYLE(n) === 1 ? noAccent(s) : STYLE(n) === 2 ? s.toLowerCase() : s;
+const vnHour = () => (new Date().getUTCHours() + 7) % 24;
+let chatBusy = false;
+
+async function chatOnce() {
+  if (chatBusy) return 'đang có một đoạn chat dở';
+  // server có nhiều bot online nhất (thường là Bang Hội Chiến)
+  const by = {};
+  for (const n of NAMES) if (RT[n].bot && !RT[n].placing) (by[state[n].server] = by[state[n].server] || []).push(n);
+  const srv = Object.keys(by).sort((a, b) => by[b].length - by[a].length)[0];
+  const pool = srv ? by[srv].slice() : [];
+  if (!pool.length) return 'không có bot nào online';
+  for (let k = pool.length - 1; k > 0; k--) { const j = Math.floor(Math.random() * (k + 1)); [pool[k], pool[j]] = [pool[j], pool[k]]; }
+  const fit = TALKS.filter(t => new Set(t.map(l => l[0])).size <= pool.length);
+  const talk = pool.length >= 2 && Math.random() < 0.85 && fit.length ? fit[Math.floor(Math.random() * fit.length)] : ['A:' + SOLO[Math.floor(Math.random() * SOLO.length)]];
+  const who = { A: pool[0], B: pool[1], C: pool[2] };
+  chatBusy = true;
+  try {
+    for (const line of talk) {
+      const n = who[line[0]], text = line.slice(2).replace(/\{([ABC])\}/g, (_, x) => who[x] || '');
+      await sleep(1500 + Math.random() * 3000 + Math.min(text.length * 150, 9000));   // đọc + gõ
+      if (!RT[n] || !RT[n].bot) break;
+      RT[n].bot.chat(styled(n, text));
+    }
+  } finally { chatBusy = false; }
+  return 'bot chat ở ' + (SERVERS[srv] || srv) + ': ' + talk.length + ' câu';
+}
+
+(function chatLoop() {
+  const wait = (chatCfg.min + Math.random() * Math.max(0, chatCfg.max - chatCfg.min)) * 60000;
+  setTimeout(() => {
+    const h = vnHour();
+    if (chatCfg.on && !(h >= 1 && h < 7)) chatOnce().then(r => log(r)).catch(e => log('lỗi bot chat:', e.message));
+    chatLoop();
+  }, wait);
+})();
+
 // ---------------------------------------------------------------- điều khiển
 
 async function act(b) {
+  if (b.action === 'chatcfg') {
+    const min = Math.round(+b.min), max = Math.round(+b.max);
+    if (b.on != null) chatCfg.on = !!b.on;
+    if (b.min != null || b.max != null) {
+      if (!(min >= 1 && max >= min && max <= 240)) throw new Error('khoảng phút không hợp lệ (1 ≤ từ ≤ đến ≤ 240)');
+      chatCfg.min = min; chatCfg.max = max;
+    }
+    saveChat();
+    return 'bot tự chat: ' + (chatCfg.on ? 'bật' : 'tắt') + ', ' + chatCfg.min + '–' + chatCfg.max + ' phút một lần';
+  }
+  if (b.action === 'chatnow') { chatOnce().then(r => log(r)).catch(e => log('lỗi bot chat:', e.message)); return 'cho bot chat thử ngay (vài giây nữa mới nói)'; }
   if (b.bot === '*') {
     const out = [];
     for (const n of NAMES) out.push(await act(Object.assign({}, b, { bot: n })).catch(e => e.message));
@@ -479,6 +568,7 @@ http.createServer((req, res) => {
           home: h ? [Math.floor(h.x), Math.floor(h.y), Math.floor(h.z)] : null, away: !!st.at[st.server], created: !!st.created };
       }),
       events: EVENTS.slice(-100),
+      chat: chatCfg,
     });
   }
   if (req.method === 'POST' && req.url === '/act') {

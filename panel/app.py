@@ -1502,6 +1502,7 @@ def read_activity(params):
                 e["player"] = real
             events.append(e)
     events.sort(key=lambda e: e.get("ts", ""))
+    mark_switches(events)
     out = []
     for e in reversed(events):
         if e.get("type") not in types or (mode and e["mode"] != mode):
@@ -1517,6 +1518,32 @@ def read_activity(params):
         if len(out) >= limit:
             break
     return {"modes": modes, "events": out, "has_file": ACTIVITY_FILE.exists(), "thiet_bi": devices_for({e.get("player", "") for e in out})}
+
+
+def mark_switches(events):
+    """Chuyển server (sảnh -> Bang Hội) làm server cũ ghi "X mất kết nối: Disconnected" như thoát thật.
+    Proxy ghi "X → server mới" trong vòng 3 giây thì đổi chữ thành chuyển server."""
+    import datetime
+
+    def secs(ts):
+        try:
+            return datetime.datetime.fromisoformat(ts.replace("Z", "+00:00")).timestamp()
+        except ValueError:
+            return None
+    moves = {}
+    for e in events:
+        if e.get("server") == "proxy" and e.get("type") == "join" and e.get("target"):
+            t = secs(e.get("ts", ""))
+            if t is not None:
+                moves.setdefault(e.get("player", "").lower(), []).append((t, e["target"]))
+    for e in events:
+        if e.get("type") != "join" or e.get("server") == "proxy" or not e.get("text", "").endswith("mất kết nối: Disconnected"):
+            continue
+        t = secs(e.get("ts", ""))
+        to = next((dst for mt, dst in moves.get(e.get("player", "").lower(), [])
+                   if t is not None and abs(mt - t) <= 3 and dst != e.get("server")), None)
+        if to:
+            e["text"] = f"{e['player']} rời {e['server']} (chuyển sang {to})"
 
 
 DEVICE_FILE = DATA_DIR / "proxy" / "plugins" / "duckymomoskin" / "thietbi.json"

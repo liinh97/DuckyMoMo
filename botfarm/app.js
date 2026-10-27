@@ -208,7 +208,13 @@ async function pickHomeNow(name) {
 function make(name, host, i) {
   // keepAlive tự trả lời ngay = ping 0 ms trong Tab, trông giả: tự trả lời sau 45–60 ms (ping ~52 ms như người chơi trong nước)
   const bot = mineflayer.createBot({ host, port: 25565, username: name, version: '1.21.4', auth: 'offline', hideErrors: true, keepAlive: false });
-  bot._client.on('keep_alive', p => setTimeout(() => { try { bot._client.write('keep_alive', { keepAliveId: p.keepAliveId }); } catch (e) { /* bỏ qua */ } }, 45 + Math.random() * 15));
+  // Trả lời đúng thứ tự nhận: Paper ngắt kết nối khi câu trả lời sai thứ tự ("keepalive response out-of-order" -> "Timed out");
+  // 27/10: trễ ngẫu nhiên từng gói làm 2 gói sát nhau đảo thứ tự, bot rớt ~3 lần / phút. Xếp hàng: gói sau chỉ gửi sau gói trước.
+  let kaQ = Promise.resolve();
+  bot._client.on('keep_alive', p => {
+    const due = Date.now() + 45 + Math.random() * 15;
+    kaQ = kaQ.then(() => sleep(Math.max(0, due - Date.now()))).then(() => { try { bot._client.write('keep_alive', { keepAliveId: p.keepAliveId }); } catch (e) { /* bỏ qua */ } });
+  });
   bot._client.removeAllListeners('login_plugin_request');
   bot._client.on('login_plugin_request', p => {
     if (p.channel !== 'velocity:player_info') return bot._client.write('login_plugin_response', { messageId: p.messageId });

@@ -5,7 +5,10 @@
 //   POST /act    {bot ("*" = mọi bot), action, server, text, x, z}
 //        action: join (vào, kèm server), leave (thoát), server (đổi server), chat (nói), cmd (chạy lệnh như bot gõ),
 //                move (đi tới x z), home (về chỗ mặc định), sethome (lấy chỗ đang đứng làm chỗ mặc định),
-//                random (Bang Hội Chiến: khu ngẫu nhiên chưa bot nào đứng, đặt làm chỗ mặc định)
+//                random (Bang Hội Chiến: khu ngẫu nhiên chưa bot nào đứng, đặt làm chỗ mặc định),
+//                create (tạo bot mới tên b.bot, vào luôn server b.server), remove (xoá bot đã tạo thêm, phải thoát trước)
+// Bot tạo thêm (27/10) làm y như 20 bot gốc: quyền duckymomo.vaora.an (cấp TRƯỚC lần vào đầu cho khỏi báo [+]), Sáng tạo + /god mỗi lần
+// xuất hiện, IP giả riêng, tự đăng ký AuthMe ở sảnh. Lưu trong bots.json (created, ipn = số IP giả).
 // Trạng thái: /state/bots.json {name: {server, want, home: {server: {x,y,z}}, at: {server: {x,y,z}}}} (home = chỗ mặc định, at = chỗ đang đứng).
 // Bang Hội Chiến: bot chưa có chỗ thì tự chọn một chỗ đứng khô ráo gần các điểm warp (mỗi bot một khu, không tụ một chỗ).
 // Server khác: đứng ở chỗ vào game (spawn) trừ khi chủ server cho đi / đặt chỗ.
@@ -21,8 +24,9 @@ const RCON_PASS = process.env.RCON_PASSWORD || '';
 const BOT_PASS = process.env.BOT_PASSWORD || '';
 const STATE = '/state/bots.json';
 const SERVERS = { 'banghoi-1': 'Bang Hội Chiến', lobby: 'Sảnh', 'practice-1': 'Practice', 'sangtao-1': 'Thái Ấp Sáng Tạo' };
-const NAMES = ['Minh_Tuan', 'HoangLong99', 'Thu_Trang', 'Duc_Anh', 'NamPro2k8', 'Linh_Chi', 'Bao_Khang', 'QuangHuy_VN', 'Tuan_Kiet', 'MaiAnh2k9',
+const BASE = ['Minh_Tuan', 'HoangLong99', 'Thu_Trang', 'Duc_Anh', 'NamPro2k8', 'Linh_Chi', 'Bao_Khang', 'QuangHuy_VN', 'Tuan_Kiet', 'MaiAnh2k9',
   'KhoiNguyen', 'TrungHieu07', 'Phuong_Vy', 'GiaBao_VN', 'Hai_Dang', 'AnhThu_x', 'ThanhDat99', 'Khanh_Linh', 'VietHoang', 'Nhat_Minh'];
+const NAMES = [...BASE];   // + bot tạo thêm ở trang quản trị (đọc từ bots.json bên dưới)
 // Bang Hội Chiến: điểm gợi ý (spawn + điểm warp thành phố); bot chỉ đứng chỗ khô ráo tìm được trong 6 ô quanh đó
 const SPOTS = [[12704, 85, -2436], [12689, 71, -2626], [12853, 85, -1966], [12942, 63, -1896], [12708, 85, -2428], [12926, 98, -1916],
   [12696, 100, -2708], [12258, 72, -2144], [12626, 110, -2232], [12542, 97, -2726], [12406, 73, -2668], [12308, 92, -2554], [12114, 121, -2502],
@@ -38,6 +42,7 @@ const log = (...a) => console.log(new Date().toLocaleTimeString('vi-VN', { hour1
 let state = {};
 let fresh = false;
 try { state = JSON.parse(fs.readFileSync(STATE, 'utf8')); } catch (e) { state = {}; fresh = true; }
+for (const n of Object.keys(state)) if (state[n] && state[n].created && !NAMES.includes(n)) NAMES.push(n);
 for (const n of NAMES) state[n] = Object.assign({ server: 'banghoi-1', want: false, home: {}, at: {} }, state[n] || {});
 for (const n of NAMES) delete state[n].bad;   // chỗ "xấu" của lượt chạy trước (thường do quái giết, nay bot bất tử): thử lại
 if (fresh) NAMES.slice(0, 7).forEach(n => { state[n].want = true; });   // lần đầu: 7 bot đang đứng từ trước (tools/bottest/dung-spawn.js) bật sẵn
@@ -54,7 +59,10 @@ function save() {
   saveTimer = setTimeout(() => { try { fs.mkdirSync('/state', { recursive: true }); fs.writeFileSync(STATE + '.tmp', JSON.stringify(state, null, 1)); fs.renameSync(STATE + '.tmp', STATE); } catch (e) { log('không lưu được trạng thái:', e.message); } }, 500);
 }
 const RT = {};   // name -> {bot, connecting, fast, retryAt, err, deaths: [ts], placedAt}
-for (const n of NAMES) RT[n] = { bot: null, connecting: false, fast: false, retryAt: 0, err: '', deaths: [], placedAt: 0 };
+const newRT = () => ({ bot: null, connecting: false, fast: false, retryAt: 0, err: '', deaths: [], placedAt: 0 });
+for (const n of NAMES) RT[n] = newRT();
+/** Số IP giả của bot (10.30.i.(10+i)): bot gốc theo thứ tự, bot tạo thêm giữ số được cấp lúc tạo (xoá bot khác không đổi IP). */
+const ipIndex = n => state[n].ipn || (BASE.indexOf(n) + 1);
 const EVENTS = [];
 function event(e) { EVENTS.push(Object.assign({ ts: now() }, e)); if (EVENTS.length > 300) EVENTS.shift(); }
 
@@ -191,7 +199,7 @@ function make(name, host, i) {
 }
 
 async function connect(name) {
-  const rt = RT[name], st = state[name], host = st.server, i = NAMES.indexOf(name) + 1;
+  const rt = RT[name], st = state[name], host = st.server, i = ipIndex(name);
   rt.connecting = true; rt.err = '';
   const bot = make(name, host, i);
   let tick = null, first = true;
@@ -337,6 +345,7 @@ async function act(b) {
     for (const n of NAMES) out.push(await act(Object.assign({}, b, { bot: n })).catch(e => e.message));
     return out.length + ' bot: ' + (b.action === 'join' ? 'vào' : b.action === 'leave' ? 'thoát' : b.action);
   }
+  if (b.action === 'create') return create(String(b.bot || '').trim(), b.server);
   const st = state[b.bot], rt = RT[b.bot];
   if (!st) throw new Error('không có bot ' + b.bot);
   const text = String(b.text || '').replace(/[\x00-\x1f\x7f§]/g, '').trim().slice(0, 240);
@@ -397,9 +406,33 @@ async function act(b) {
       st.home[st.server] = p; delete st.at[st.server]; save();
       return b.bot + ': chỗ mặc định mới ' + Math.floor(p.x) + ' ' + Math.floor(p.y) + ' ' + Math.floor(p.z);
     }
+    case 'remove':
+      if (!st.created) throw new Error('chỉ xoá được bot tạo thêm (20 bot gốc giữ nguyên, muốn thì bấm Thoát)');
+      if (st.want || rt.bot || rt.connecting) throw new Error('cho ' + b.bot + ' thoát trước rồi mới xoá');
+      delete state[b.bot]; delete RT[b.bot]; NAMES.splice(NAMES.indexOf(b.bot), 1); save();
+      return 'đã xoá bot ' + b.bot + ' khỏi danh sách (tài khoản trong game vẫn còn: /choilai admin ' + b.bot + ' moi nếu muốn xoá hẳn)';
     default:
       throw new Error('thao tác lạ');
   }
+}
+
+/** UUID offline (như server tính cho tài khoản offline) để cấp quyền LuckPerms trước khi bot vào lần đầu. */
+function offlineUuid(name) {
+  const h = crypto.createHash('md5').update('OfflinePlayer:' + name).digest(); h[6] = (h[6] & 0x0f) | 0x30; h[8] = (h[8] & 0x3f) | 0x80;
+  const x = h.toString('hex'); return `${x.slice(0, 8)}-${x.slice(8, 12)}-${x.slice(12, 16)}-${x.slice(16, 20)}-${x.slice(20)}`;
+}
+
+async function create(name, server) {
+  if (!/^[A-Za-z0-9_]{3,16}$/.test(name)) throw new Error('tên bot 3–16 ký tự, chỉ chữ không dấu, số, gạch dưới');
+  if (NAMES.some(n => n.toLowerCase() === name.toLowerCase())) throw new Error('đã có bot tên ' + name);
+  const srv = SERVERS[server] ? server : 'banghoi-1';
+  const ipn = Math.max(BASE.length, ...NAMES.map(n => state[n].ipn || 0)) + 1;
+  // như bot gốc: vào / ra không báo [+] [-] — cấp trước lần vào đầu (bot gốc cấp sau khi vào nên lần đầu vẫn hiện [+])
+  await rcon('banghoi-1').cmd(`lp user ${offlineUuid(name)} permission set duckymomo.vaora.an true`).catch(() => {});
+  state[name] = { server: srv, want: true, home: {}, at: {}, created: now(), ipn };
+  NAMES.push(name); RT[name] = newRT(); save();
+  event({ type: 'doi', bot: name, server: srv, text: 'đã tạo bot ' + name + ', đang vào ' + SERVERS[srv] });
+  return 'đã tạo bot ' + name + ', sẽ vào ' + SERVERS[srv] + ' trong ít giây';
 }
 
 http.createServer((req, res) => {
@@ -413,7 +446,7 @@ http.createServer((req, res) => {
         const h = st.home[st.server];
         return { name: n, want: st.want, server: st.server, online: !!rt.bot, connecting: rt.connecting, err: rt.err,
           x: p ? Math.floor(p.x) : null, y: p ? Math.floor(p.y) : null, z: p ? Math.floor(p.z) : null,
-          home: h ? [Math.floor(h.x), Math.floor(h.y), Math.floor(h.z)] : null, away: !!st.at[st.server] };
+          home: h ? [Math.floor(h.x), Math.floor(h.y), Math.floor(h.z)] : null, away: !!st.at[st.server], created: !!st.created };
       }),
       events: EVENTS.slice(-100),
     });

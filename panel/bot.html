@@ -54,6 +54,9 @@
   #sayMsg { padding: 0 12px 8px; font-size: 12.5px; color: var(--muted); background: var(--card-2); min-height: 4px; }
   #sayMsg.ok { color: var(--ok); } #sayMsg.err { color: var(--err); }
   .empty { padding: 40px 14px; text-align: center; color: var(--muted); }
+  #mk { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; padding: 8px 14px; border-bottom: 1px solid var(--line-2); }
+  #mk input { width: 170px; } #mk select { padding: 4px 6px; font-size: 13px; }
+  #mk .hint { font-size: 12px; color: var(--muted); }
   label.chk { display: inline-flex; gap: 6px; align-items: center; font-size: 12.5px; color: var(--muted); font-weight: 400; }
 </style>
 <link rel="stylesheet" href="ui.css">
@@ -66,6 +69,12 @@
       <button class="mini" id="allJoin" title="Bật mọi bot (mỗi bot vào server đang chọn của nó)">Vào tất cả</button>
       <button class="mini" id="allLeave">Thoát tất cả</button></span></h3>
     <div class="note">Bot không tự làm gì. Ở Bang Hội Chiến mỗi bot tự đứng một khu riêng (gần các điểm warp). Bot vào thẳng server con nên không tính vào số người ở danh sách server; đứng yên nên không tính giờ chơi.</div>
+    <form id="mk" autocomplete="off" title="Bot mới làm y như bot cũ: vào / ra không báo, Sáng tạo + bất tử, tự đăng ký ở Sảnh">
+      <input id="mkName" placeholder="Tên bot mới (vd Quoc_Bao)" maxlength="16" pattern="[A-Za-z0-9_]{3,16}">
+      <select id="mkSrv" title="Vào server nào"></select>
+      <button type="submit" class="mini primary">Tạo bot</button>
+      <span class="hint">3–16 ký tự không dấu, số, gạch dưới; không trùng tên người chơi đã từng vào.</span>
+    </form>
     <div id="bots"><div class="empty">Đang tải…</div></div>
   </div>
   <div class="card">
@@ -115,7 +124,8 @@ function renderBots() {
       <td><div class="acts">${b.want ? '<button data-a="leave">Thoát</button>' : '<button class="primary" data-a="join">Vào</button>'}
         ${b.online ? `<button data-a="home" title="Về chỗ mặc định">Về chỗ</button>${b.server === "banghoi-1" ? '<button data-a="random" title="Ra một khu ngẫu nhiên chưa bot nào đứng (đặt làm chỗ mặc định)">Ngẫu nhiên</button>' : ""}<button data-a="move" title="Đi tới toạ độ X Z">Đi tới…</button>
         <button data-a="cmd" data-t="spawn">/spawn</button><button data-a="cmd" data-t="tpaccept">/tpaccept</button><button data-a="cmd" data-t="tpdeny">/tpdeny</button>
-        <button data-a="sethome" title="Lấy chỗ đang đứng làm chỗ mặc định">Đặt chỗ</button><button data-a="pick" title="Chọn bot này ở khung chat">Chat</button>` : ""}</div></td></tr>`;
+        <button data-a="sethome" title="Lấy chỗ đang đứng làm chỗ mặc định">Đặt chỗ</button><button data-a="pick" title="Chọn bot này ở khung chat">Chat</button>` : ""}
+        ${b.created && !b.want && !b.online ? '<button data-a="remove" title="Xoá bot tạo thêm khỏi danh sách">Xoá</button>' : ""}</div></td></tr>`;
   }
   $("bots").innerHTML = h + "</tbody></table>";
   const keep = $("who").value;
@@ -135,6 +145,7 @@ $("bots").addEventListener("click", async (ev) => {
   }
   if (a === "join") return act({ bot: name, action: "join", server });
   if (a === "cmd") return act({ bot: name, action: "cmd", text: btn.dataset.t });
+  if (a === "remove") { if (await ask(`Xoá bot ${name} khỏi danh sách? (tài khoản trong game vẫn còn)`, { title: "Xoá bot", ok: "Xoá" })) act({ bot: name, action: "remove" }); return; }
   return act({ bot: name, action: a });
 });
 $("bots").addEventListener("change", (ev) => {
@@ -142,7 +153,13 @@ $("bots").addEventListener("change", (ev) => {
   const b = BOTS.find((x) => x.name === s.closest("tr").dataset.n);
   if (b && b.want) act({ bot: b.name, action: "server", server: s.value });   // đang bật: chuyển server ngay; đang tắt: chọn rồi bấm Vào
 });
-$("allJoin").onclick = async () => { if (await ask("Cho cả 20 bot vào game (mỗi bot vào server đang chọn của nó)?", { title: "Vào tất cả", ok: "Vào" })) act({ bot: "*", action: "join" }); };
+$("mk").addEventListener("submit", async (ev) => {
+  ev.preventDefault();
+  const name = $("mkName").value.trim(); if (!name) return;
+  const d = await act({ bot: name, action: "create", server: $("mkSrv").value });
+  if (d.ok) $("mkName").value = "";
+});
+$("allJoin").onclick = async () => { if (await ask(`Cho cả ${BOTS.length} bot vào game (mỗi bot vào server đang chọn của nó)?`, { title: "Vào tất cả", ok: "Vào" })) act({ bot: "*", action: "join" }); };
 $("allLeave").onclick = async () => { if (await ask("Cho mọi bot thoát game?", { title: "Thoát tất cả", ok: "Thoát" })) act({ bot: "*", action: "leave" }); };
 
 async function loadBots() {
@@ -151,6 +168,7 @@ async function loadBots() {
     if (!d.ok) { $("bots").innerHTML = `<div class="empty">${esc(d.message || "Không tải được")}</div>`; return; }
     SERVERS = d.servers || {}; BOTS = d.bots || []; EVENTS = d.events || [];
     if ($("fsrv").options.length === 1) for (const [k, v] of Object.entries(SERVERS)) $("fsrv").add(new Option(v, k));
+    if (!$("mkSrv").options.length) for (const [k, v] of Object.entries(SERVERS)) $("mkSrv").add(new Option(v, k));
     if (!document.activeElement || !document.activeElement.closest("#bots select")) renderBots();
   } catch (e) { $("bots").innerHTML = `<div class="empty">Không tải được: ${esc(e)}</div>`; }
 }

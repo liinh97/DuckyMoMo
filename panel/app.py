@@ -1675,7 +1675,19 @@ def say_command(text, target, full, who):
 # ---------------------------------------------------------------- Bot (dịch vụ botfarm, chỉ trong mạng Docker)
 
 BOTFARM_URL = os.environ.get("BOTFARM_URL", "http://botfarm:8090")
-BOT_ACTIONS = {"join": "vào", "leave": "thoát", "server": "đổi server", "chat": "nói", "cmd": "gõ lệnh", "move": "đi tới", "home": "về chỗ", "sethome": "đặt chỗ", "random": "ra khu ngẫu nhiên"}
+BOT_ACTIONS = {"join": "vào", "leave": "thoát", "server": "đổi server", "chat": "nói", "cmd": "gõ lệnh", "move": "đi tới", "home": "về chỗ", "sethome": "đặt chỗ", "random": "ra khu ngẫu nhiên",
+               "create": "tạo bot", "remove": "xoá bot"}
+
+
+def known_player_names():
+    """Tên mọi tài khoản từng vào một server con (usercache.json của Paper), chữ thường: tạo bot không được trùng người thật."""
+    out = set()
+    for f in DATA_DIR.glob("*/usercache.json"):
+        try:
+            out |= {str(x.get("name", "")).lower() for x in json.loads(f.read_text(encoding="utf-8"))}
+        except Exception:
+            pass
+    return out
 
 
 def bot_json():
@@ -1691,6 +1703,12 @@ def bot_action(body, who):
     act = str(body.get("action", ""))
     if act not in BOT_ACTIONS:
         raise ValueError("Thao tác không hợp lệ")
+    if act == "create":
+        name = str(body.get("bot", "")).strip()
+        if not re.fullmatch(r"[A-Za-z0-9_]{3,16}", name):
+            raise ValueError("Tên bot 3–16 ký tự, chỉ chữ không dấu, số, gạch dưới")
+        if name.lower() in known_player_names():
+            raise ValueError(f"Tên {name} đã có tài khoản trong game (người chơi hoặc bot cũ), chọn tên khác")
     payload = {k: body.get(k) for k in ("bot", "action", "server", "text", "x", "z") if body.get(k) is not None}
     req = urllib.request.Request(BOTFARM_URL + "/act", data=json.dumps(payload).encode("utf-8"), headers={"Content-Type": "application/json"}, method="POST")
     try:

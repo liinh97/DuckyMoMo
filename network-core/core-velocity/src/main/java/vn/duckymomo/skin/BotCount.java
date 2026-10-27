@@ -18,13 +18,12 @@ import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 /**
  * Bot của trang quản trị › Bot (dịch vụ botfarm, 27/10) vào thẳng server con nên proxy không đếm: cộng số bot đang online vào số người
- * ở danh sách server (ProxyPingEvent), thêm tên bot vào danh sách rê chuột. Hỏi botfarm mỗi 15 giây (BOTFARM_URL, mặc định
- * http://botfarm:8090/bots); botfarm tắt thì cộng 0.
+ * ở danh sách server (ProxyPingEvent). Hỏi botfarm mỗi 15 giây (BOTFARM_URL, mặc định http://botfarm:8090/bots); botfarm tắt thì cộng 0.
+ * 27/10 chủ server: rê chuột vào số người KHÔNG hiện tên ai (cả người thật lẫn bot) -> luôn xoá danh sách mẫu.
  */
 final class BotCount {
 
@@ -62,21 +61,11 @@ final class BotCount {
     @Subscribe(order = PostOrder.LATE)
     public void onPing(ProxyPingEvent e) {
         List<String> bots = online;
-        if (bots.isEmpty()) {
-            return;
-        }
         ServerPing ping = e.getPing();
         ServerPing.Builder b = ping.asBuilder();
         int base = ping.getPlayers().map(ServerPing.Players::getOnline).orElse(0);
         b.onlinePlayers(base + bots.size());
-        List<ServerPing.SamplePlayer> sample = new ArrayList<>(ping.getPlayers().map(ServerPing.Players::getSample).orElse(List.of()));
-        for (String n : bots) {
-            if (sample.size() >= 12) {
-                break;
-            }
-            sample.add(new ServerPing.SamplePlayer(n, UUID.nameUUIDFromBytes(("OfflinePlayer:" + n).getBytes(StandardCharsets.UTF_8))));
-        }
-        b.clearSamplePlayers().samplePlayers(sample.toArray(new ServerPing.SamplePlayer[0]));
+        b.clearSamplePlayers();   // ẩn tên người chơi khi rê chuột vào số người
         e.setPing(b.build());
     }
 }

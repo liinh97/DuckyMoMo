@@ -711,6 +711,7 @@ final class ThoRen implements Listener {
         for (List<Piece> block : blocks) {
             for (Piece piece : block) {
                 ItemStack it = lib.build(piece.ids().get(lv), 1);
+                Kham.blank(it);   // món xem trước hiện số ô khảm
                 m.add(it != null ? it : Tip.of("&c" + piece.ids().get(lv)).desc("Chưa có trong Thư viện đồ, báo admin.").apply(new ItemStack(Material.BARRIER)));
             }
             m.row();
@@ -867,6 +868,7 @@ final class ThoRen implements Listener {
             }
         }
         ItemStack made = lib.build(piece.ids().get(next), 1);
+        Kham.blank(made);   // khối "◇ Ô trống"; carry() bên dưới ghi đè nếu món cũ có ngọc
         if (made != null) {
             String ver = version(piece.ids().get(next));
             made.editMeta(meta -> meta.getPersistentDataContainer().set(keyVer, org.bukkit.persistence.PersistentDataType.STRING, ver));
@@ -1076,6 +1078,7 @@ final class ThoRen implements Listener {
             String ver = version(id);
             String has = it.getItemMeta().getPersistentDataContainer().get(keyVer, org.bukkit.persistence.PersistentDataType.STRING);
             if (ver.equals(has)) {
+                changed |= Kham.blank(it);   // đồ cũ đúng phiên bản nhưng chưa có khối ô khảm
                 continue;
             }
             ItemStack fresh = lib.build(id, it.getAmount());
@@ -1090,6 +1093,7 @@ final class ThoRen implements Listener {
                 meta.getPersistentDataContainer().set(keyVer, org.bukkit.persistence.PersistentDataType.STRING, ver);
             });
             Kham.carry(it, fresh, p);
+            Kham.blank(fresh);
             all[i] = fresh;
             changed = true;
         }

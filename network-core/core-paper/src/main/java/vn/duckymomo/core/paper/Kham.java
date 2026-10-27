@@ -465,11 +465,11 @@ final class Kham implements Listener {
                 Sock sk = i < list.size() ? list.get(i) : EMPTY;
                 Gem gem = gems.get(sk.code());
                 if (gem == null) {
-                    add.add(c("&8  ◇ Ô trống &7(/thoren kham)"));
+                    add.add(c("&7  ◇ Ô trống &7(/thoren kham)"));
                 } else {
                     Tier t = tier(sk);
                     add.add(c("&7  ◆ " + gem.color() + gem.name() + " " + t.color() + "[" + t.name() + " " + sk.factor() + "%]&7: " + effect(gem, isArmor(in), sk.factor())));
-                    add.add(c("&8      năng lượng " + bar(sk.energy()) + " &7" + pct(sk.energy()) + "%"));
+                    add.add(c("&7      năng lượng " + bar(sk.energy()) + " &7" + pct(sk.energy()) + "%"));
                 }
             }
         }
@@ -488,6 +488,21 @@ final class Kham implements Listener {
         List<String> s = new ArrayList<>();
         (armor ? gem.armor() : gem.weapon()).forEach((k, v) -> s.add("&a+" + trim(v * factor / 100.0) + "&7" + STAT_VI.getOrDefault(k, " " + k)));
         return s.isEmpty() ? "&8(không có tác dụng ở loại đồ này)" : String.join("&7, ", s);
+    }
+
+    /** Món có ô mà chưa có khối lore khảm (mới rèn, món xem trước trong menu, đồ cũ): vẽ khối "◇ Ô trống" để biết món có mấy ô
+     *  (28/10: trước chỉ hiện sau lần khảm đầu). true = đã đổi món. */
+    static boolean blank(ItemStack it) {
+        Kham k = INSTANCE;
+        if (k == null || it == null || !it.hasItemMeta() || it.getItemMeta().getPersistentDataContainer().has(k.keyGems, PersistentDataType.STRING)) {
+            return false;
+        }
+        int n = k.slotsOf(it);
+        if (n <= 0) {
+            return false;
+        }
+        k.write(it, new ArrayList<>(java.util.Collections.nCopies(n, EMPTY)));
+        return true;
     }
 
     /** Thợ Rèn dựng lại món: chép ngọc từ món cũ sang món mới (ô thừa nếu món mới ít ô hơn: trả ngọc về túi người chơi). */
@@ -532,7 +547,7 @@ final class Kham implements Listener {
         it.editMeta(meta -> {
             List<Component> lore = meta.lore() == null ? new ArrayList<>() : new ArrayList<>(meta.lore());
             lore.add(c("&5◈ Ngọc đã khảm: " + t.color() + t.name() + " " + g.factor() + "%"));
-            lore.add(c("&8   năng lượng " + bar(g.energy()) + " &7" + pct(g.energy()) + "%"));
+            lore.add(c("&7   năng lượng " + bar(g.energy()) + " &7" + pct(g.energy()) + "%"));
             meta.lore(lore);
             meta.getPersistentDataContainer().set(keyLoose, PersistentDataType.STRING, g.tier() + ":" + g.factor() + ":" + g.energy());
         });

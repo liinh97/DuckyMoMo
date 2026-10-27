@@ -121,6 +121,8 @@ public final class SkinWardrobe {
         cm.register(cm.metaBuilder("tuskin").aliases("wardrobe").plugin(this).build(), new Cmd());
         proxy.getChannelRegistrar().register(CMD);
         startHttp();
+        proxy.getEventManager().register(this, new BotCount(this, proxy, log));   // 27/10: số bot trang quản trị › Bot vào danh sách server
+        proxy.getEventManager().register(this, new DeviceLog(this, proxy, log, file.getParent()));   // 27/10: thiết bị (Bedrock / máy tính) cho trang quản trị
         log.info("Tủ skin: bật, {} người có tủ", data.size());
     }
 

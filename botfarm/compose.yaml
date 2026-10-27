@@ -1,0 +1,14 @@
+# Bot của trang quản trị › Bot (27/10): ~20 bot tài khoản offline vào thẳng server con qua Velocity modern forwarding (không qua proxy, nên
+# KHÔNG tính vào số người ở danh sách server). Chủ server bật / tắt từng bot, chọn server, cho bot nói / chạy lệnh / đi tới toạ độ.
+# Chỉ mở cổng điều khiển 8090 trong mạng Docker cho panel (http://botfarm:8090), không ra ngoài. Trạng thái: data/botfarm/bots.json.
+services:
+  botfarm:
+    build: .
+    restart: unless-stopped
+    environment:
+      VELOCITY_SECRET: ${VELOCITY_SECRET}
+      RCON_PASSWORD: ${RCON_PASSWORD}
+      BOT_PASSWORD: ${BOT_PASSWORD}
+      TZ: Asia/Ho_Chi_Minh
+    volumes:
+      - ../data/botfarm:/state

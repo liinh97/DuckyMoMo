@@ -52,6 +52,7 @@ BOSS_HTML = (Path(__file__).parent / "boss.html").read_text(encoding="utf-8")
 DONATE_HTML = (Path(__file__).parent / "donate.html").read_text(encoding="utf-8")
 HETHONG_HTML = (Path(__file__).parent / "hethong.html").read_text(encoding="utf-8")
 MEDIA_HTML = (Path(__file__).parent / "media.html").read_text(encoding="utf-8")
+BOT_HTML = (Path(__file__).parent / "bot.html").read_text(encoding="utf-8")
 # Khung chung mọi trang (thanh điều hướng trái, màu, nút): ui.css, shell.js
 # Đăng nhập trang quản trị bằng form + cookie phiên (thay hộp thoại Basic Auth của trình duyệt). Basic vẫn nhận cho script/curl.
 # Phiên giữ trong bộ nhớ: khởi động lại panel là phải đăng nhập lại. Sai 5 lần/10 phút trên một IP thì chặn tạm.
@@ -578,6 +579,17 @@ def validate(s, v):
     raise ValueError(f"{label}: kiểu {t} không ghi được")
 
 
+def mirror_worth(doc):
+    """Essentials tra giá /sell theo tên bỏ dấu _ (LAPIS_LAZULI -> worth.lapislazuli); bảng giá ghi tên có dấu _ (code DuckyMoMoCore
+    đọc tên đó). Chép giá sang tên liền, thiếu thì món không bán được (tools/shop/worth-essentials.py làm cùng việc cho cả file)."""
+    w = doc.get("worth") if hasattr(doc, "get") else None
+    if not hasattr(w, "items"):
+        return
+    for k, v in list(w.items()):
+        if "_" in str(k):
+            w[str(k).replace("_", "")] = v
+
+
 def set_path(doc, dotted, value):
     # Phần tử là số = chỉ số trong danh sách YAML (ví dụ donate-ranks.tiers.0.prices)
     keys = [int(k) if k.isdigit() else k for k in dotted.split(".")]
@@ -699,6 +711,8 @@ def save_and_apply(mode_id, incoming, apply_all=False):
         doc = y.load(path.read_text(encoding="utf-8"))
         for dotted, v in items:
             set_path(doc, dotted, v)
+        if rel.endswith("Essentials/worth.yml"):
+            mirror_worth(doc)
         tmp = path.with_suffix(path.suffix + ".tmp")
         with tmp.open("w", encoding="utf-8") as f:
             y.dump(doc, f)
@@ -1502,7 +1516,47 @@ def read_activity(params):
         out.append(e)
         if len(out) >= limit:
             break
-    return {"modes": modes, "events": out, "has_file": ACTIVITY_FILE.exists()}
+    return {"modes": modes, "events": out, "has_file": ACTIVITY_FILE.exists(), "thiet_bi": devices_for({e.get("player", "") for e in out})}
+
+
+DEVICE_FILE = DATA_DIR / "proxy" / "plugins" / "duckymomoskin" / "thietbi.json"
+_bot_names = {"at": 0.0, "names": set()}
+
+
+def devices_for(names):
+    """Thiết bị của người chơi (plugin proxy ghi thietbi.json): {tên: "PC" | "BE·Android" | "Bot"}; bot của trang Bot ghi "Bot"."""
+    import time as _t
+    if _t.time() - _bot_names["at"] > 60:
+        _bot_names["at"] = _t.time()
+        try:
+            _bot_names["names"] = {b["name"].lower() for b in bot_json().get("bots", [])}
+        except Exception:
+            pass
+    try:
+        data = json.loads(DEVICE_FILE.read_text(encoding="utf-8")) if DEVICE_FILE.exists() else {}
+    except (OSError, ValueError):
+        data = {}
+    os_vi = {"GOOGLE": "Android", "IOS": "iOS", "OSX": "macOS", "AMAZON": "Fire", "GEARVR": "VR", "HOLOLENS": "VR", "UWP": "Windows",
+             "WIN32": "Windows", "DEDICATED": "Server", "TVOS": "Apple TV", "PS4": "PlayStation", "NX": "Switch", "XBOX": "Xbox",
+             "WINDOWS_PHONE": "Windows Phone", "LINUX": "Linux"}
+    out = {}
+    for n in names:
+        if not n:
+            continue
+        low = n.lower()
+        if low in _bot_names["names"]:
+            out[n] = {"nhan": "Bot", "loai": "bot", "chi_tiet": "Bot của trang quản trị › Bot"}
+            continue
+        d = data.get(low)
+        if not d:
+            continue
+        if d.get("loai") == "be":
+            os_ = os_vi.get(str(d.get("os", "")).upper(), str(d.get("os", "")).title())
+            out[n] = {"nhan": "BE" + ("·" + os_ if os_ else ""), "loai": "be", "chi_tiet": f"Bedrock {os_} · bản {d.get('ban', '?')}".strip()}
+        else:
+            cl = str(d.get("client") or "")
+            out[n] = {"nhan": "PC", "loai": "pc", "chi_tiet": f"Máy tính (Java) · bản {d.get('ban', '?')}" + (f" · client {cl}" if cl else "")}
+    return out
 
 
 
@@ -1513,9 +1567,12 @@ SAY_SERVERS = {"lobby": "Sảnh", "banghoi-1": "Bang Hội Chiến", "practice-1
 SAY_KINDS = {"chat": "Chat admin", "broadcast": "Thông báo", "title": "Thông báo giữa màn hình"}
 
 
-def say(payload):
-    """Gửi tin vào game bằng tellraw/title qua RCON, rồi ghi vào dòng hoạt động (loại "admin")."""
+def say(payload, full=True, who=None):
+    """Gửi tin vào game bằng tellraw/title qua RCON, rồi ghi vào dòng hoạt động (loại "admin").
+    Nội dung bắt đầu bằng "/" = chạy lệnh console trên một server (chỉ tài khoản toàn quyền)."""
     text = re.sub(r"[\x00-\x1f\x7f§]", "", str(payload.get("text", ""))).strip()
+    if text.startswith("/"):
+        return say_command(text, payload.get("target", "all"), full, who)
     name = re.sub(r"[\x00-\x1f\x7f§]", "", str(payload.get("name", "") or "Admin")).strip()[:24] or "Admin"
     kind = payload.get("kind", "chat")
     target = payload.get("target", "all")
@@ -1561,6 +1618,65 @@ def say(payload):
     if failed:
         msg += " (bỏ qua server đang tắt: " + ", ".join(failed) + ")"
     return {"ok": True, "message": msg}
+
+def say_command(text, target, full, who):
+    """Lệnh console gõ từ ô gửi tin: chạy trên đúng một server, trả lại phản hồi của server."""
+    if not full:
+        raise ValueError("Chỉ tài khoản toàn quyền được chạy lệnh console")
+    if target not in SAY_SERVERS:
+        raise ValueError("Chọn một server cụ thể để chạy lệnh (không chạy cho cả mạng)")
+    cmd = text[1:].strip()
+    if not cmd:
+        raise ValueError("Chưa nhập lệnh")
+    try:
+        out = COLOR_RE.sub("", rcon(target, [cmd])[0][1]).strip()
+    except Exception:
+        raise ValueError(f"Không chạy được: {SAY_SERVERS[target]} đang tắt")
+    web_log({"viec": "/api/say", "nguoi": who or PANEL_USER, "hanh_dong": "/" + cmd, "doi_tuong": target, "ok": True})
+    from datetime import datetime, timezone
+    event = {"ts": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"), "server": target, "type": "admin",
+             "player": who or "Admin", "text": f"Lệnh console ({SAY_SERVERS[target]}) · {who or 'Admin'}: /{cmd}", "target": target}
+    try:
+        ADMIN_FILE.parent.mkdir(parents=True, exist_ok=True)
+        with ADMIN_FILE.open("a", encoding="utf-8") as f:
+            f.write(json.dumps(event, ensure_ascii=False) + "\n")
+    except OSError as e:
+        print(f"Không ghi được {ADMIN_FILE}: {e}", flush=True)
+    return {"ok": True, "message": f"/{cmd} ({SAY_SERVERS[target]}): " + (out[:600] or "đã chạy, server không trả lời gì")}
+
+
+# ---------------------------------------------------------------- Bot (dịch vụ botfarm, chỉ trong mạng Docker)
+
+BOTFARM_URL = os.environ.get("BOTFARM_URL", "http://botfarm:8090")
+BOT_ACTIONS = {"join": "vào", "leave": "thoát", "server": "đổi server", "chat": "nói", "cmd": "gõ lệnh", "move": "đi tới", "home": "về chỗ", "sethome": "đặt chỗ", "random": "ra khu ngẫu nhiên"}
+
+
+def bot_json():
+    """Danh sách bot + sự kiện bot nhận (tin nhắn riêng, TPA, bị gọi tên) từ botfarm."""
+    try:
+        with urllib.request.urlopen(BOTFARM_URL + "/bots", timeout=5) as r:
+            return json.loads(r.read().decode("utf-8")) | {"ok": True}
+    except Exception as e:
+        return {"ok": False, "message": f"Dịch vụ bot không trả lời ({e}). Kiểm tra: docker compose ps botfarm", "bots": [], "events": [], "servers": {}}
+
+
+def bot_action(body, who):
+    act = str(body.get("action", ""))
+    if act not in BOT_ACTIONS:
+        raise ValueError("Thao tác không hợp lệ")
+    payload = {k: body.get(k) for k in ("bot", "action", "server", "text", "x", "z") if body.get(k) is not None}
+    req = urllib.request.Request(BOTFARM_URL + "/act", data=json.dumps(payload).encode("utf-8"), headers={"Content-Type": "application/json"}, method="POST")
+    try:
+        with urllib.request.urlopen(req, timeout=15) as r:
+            res = json.loads(r.read().decode("utf-8"))
+    except urllib.error.HTTPError as e:
+        res = json.loads(e.read().decode("utf-8") or "{}") or {"ok": False, "message": str(e)}
+    except Exception as e:
+        raise ValueError(f"Dịch vụ bot không trả lời ({e})")
+    web_log({"viec": "/api/bot", "nguoi": who or PANEL_USER, "hanh_dong": f"{payload.get('bot')} {BOT_ACTIONS[act]} {payload.get('text') or payload.get('server') or ''}".strip(),
+             "doi_tuong": payload.get("bot", ""), "ok": bool(res.get("ok"))})
+    return res
+
 
 # ---------------------------------------------------------------- Thư viện đồ (DuckyMoMoCore ItemLibrary, banghoi-1)
 
@@ -3265,9 +3381,9 @@ def web_profile(name, by_code):
 # Trang/API -> tính năng cần có (staff đăng nhập bằng tài khoản game)
 PAGE_FEATURES = {"/": ("caidat",), "/thuvien": ("thuvien", "thuvien-dua"), "/boss": ("boss",), "/role": ("role", "role-quyen", "rank", "rank-quyen"),
                  "/hoatdong": ("hoatdong",), "/camnang": ("camnang",), "/huongdan": ("huongdan",),
-                 "/donate": ("donate",), "/hethong": ("hethong",), "/media": ("media",)}
+                 "/donate": ("donate",), "/hethong": ("hethong",), "/media": ("media",), "/bot": ("bot",)}
 API_GET_FEATURES = {"/api/modes": ("caidat",), "/api/camnang": ("camnang",), "/api/huongdan": ("huongdan",), "/api/roles": ("role", "role-quyen", "rank", "rank-quyen"),
-                    "/api/boss": ("boss",), "/api/activity": ("hoatdong",), "/api/donate": ("donate",), "/api/hethong": ("hethong",), "/api/media": ("media",), "/api/thuvien": None, "/api/toi": None}
+                    "/api/boss": ("boss",), "/api/activity": ("hoatdong",), "/api/donate": ("donate",), "/api/hethong": ("hethong",), "/api/media": ("media",), "/api/bot": ("bot",), "/api/thuvien": None, "/api/toi": None}
 # Staff đăng nhập bằng tài khoản game chỉ thao tác được CẤP DƯỚI: role chức vụ có weight nhỏ hơn role chức vụ cao nhất của mình
 # (Manager 90: Mod, Helper, Builder, Dân; Mod 70: Helper, Builder, Dân…). Rank donate theo quyền riêng (web.rank / web.rank.quyen).
 # Không ai ngoài toàn quyền cấp được * hay quyền web/admin/LuckPerms, và chỉ cấp được quyền chính mình đang có.
@@ -3508,10 +3624,10 @@ class Handler(BaseHTTPRequestHandler):
                                         "role_quyen": None if not acc or acc["toan_quyen"] else
                                         {g: {"nguoi": self.role_rights(g)[0], "quyen": self.role_rights(g)[1]}
                                          for g in STAFF_GROUPS + PLAY_GROUPS + DONATE_GROUPS}})
-        if path in ("/", "/hoatdong", "/camnang", "/huongdan", "/role", "/thuvien", "/boss", "/donate", "/hethong", "/media"):
+        if path in ("/", "/hoatdong", "/camnang", "/huongdan", "/role", "/thuvien", "/boss", "/donate", "/hethong", "/media", "/bot"):
             dozzle = DOZZLE_PROXY_URL if self.headers.get("X-Forwarded-Prefix") else DOZZLE_URL
             page = {"/": INDEX_HTML, "/hoatdong": ACTIVITY_HTML, "/camnang": CAMNANG_HTML, "/huongdan": HUONGDAN_HTML, "/role": ROLE_HTML,
-                    "/thuvien": THUVIEN_HTML, "/boss": BOSS_HTML, "/donate": DONATE_HTML, "/hethong": HETHONG_HTML, "/media": MEDIA_HTML}[path]
+                    "/thuvien": THUVIEN_HTML, "/boss": BOSS_HTML, "/donate": DONATE_HTML, "/hethong": HETHONG_HTML, "/media": MEDIA_HTML, "/bot": BOT_HTML}[path]
             body = page.replace("__DOZZLE_URL__", "" if self.who else dozzle).encode("utf-8")
             self.send_response(200)
             self.send_header("Content-Type", "text/html; charset=utf-8")
@@ -3548,6 +3664,8 @@ class Handler(BaseHTTPRequestHandler):
             self.send_json(200, hethong_status())
         elif path == "/api/media":
             self.send_json(200, media_json())
+        elif path == "/api/bot":
+            self.send_json(200, bot_json())
         elif path == "/api/activity":
             params = {k: v[-1] for k, v in urllib.parse.parse_qs(query).items()}
             self.send_json(200, read_activity(params))
@@ -3584,6 +3702,8 @@ class Handler(BaseHTTPRequestHandler):
             ok = self.can("hethong")
         elif p == "/api/media":
             ok = self.can("media")
+        elif p == "/api/bot":
+            ok = self.can("bot")
         else:
             m = re.fullmatch(r"/api/modes/([a-z0-9_-]+)/(save|apply-all)", p)
             if m and m.group(2) == "save":
@@ -3622,7 +3742,8 @@ class Handler(BaseHTTPRequestHandler):
             return
         if self.path == "/api/say":
             try:
-                self.send_json(200, say(self.body))
+                self.send_json(200, say(self.body, full=self.who is None or self.who["acc"]["toan_quyen"],
+                                        who=self.who["name"] if self.who else None))
             except ValueError as e:
                 self.send_json(400, {"ok": False, "message": str(e)})
             except Exception as e:
@@ -3656,6 +3777,14 @@ class Handler(BaseHTTPRequestHandler):
         if self.path == "/api/donate":
             try:
                 self.send_json(200, donate_admin(self.body, self.who["name"] if self.who else None))
+            except ValueError as e:
+                self.send_json(400, {"ok": False, "message": str(e)})
+            except Exception as e:
+                self.send_json(500, {"ok": False, "message": f"Lỗi: {e}"})
+            return
+        if self.path == "/api/bot":
+            try:
+                self.send_json(200, bot_action(self.body, self.who["name"] if self.who else None))
             except ValueError as e:
                 self.send_json(400, {"ok": False, "message": str(e)})
             except Exception as e:

@@ -14,3 +14,4 @@ include:
   - site/compose.yaml           # Trang giới thiệu công khai cho người chơi, http://localhost:8892
   - modes/practice/compose.yaml
   - modes/sangtao/compose.yaml  # Thái Ấp Sáng Tạo (ẩn khỏi menu, vào qua cổng trong Thái Ấp)
+  - botfarm/compose.yaml        # Bot của trang quản trị › Bot (vào / thoát, nói, chạy lệnh thay bot; chỉ trong mạng Docker)

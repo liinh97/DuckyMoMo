@@ -1,0 +1,8 @@
+{
+  "name": "duckymomo-botfarm",
+  "private": true,
+  "description": "Bot trang quản trị › Bot (vào / thoát, nói, chạy lệnh thay bot)",
+  "dependencies": {
+    "mineflayer": "^4.27.0"
+  }
+}

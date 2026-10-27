@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DuckyMoMo · Bot</title>
+<style>
+  :root { --chat: #3b82f6; --command: #c48a00; --msg: #8b5cf6; --tpa: #16a34a; --nhac: #e5484d; --botc: #0ea5a4; }
+  @media (prefers-color-scheme: dark) { :root { --chat: #8ab4f8; --command: #fdd663; --msg: #c7a6ff; --tpa: #81c995; --nhac: #ff8a80; --botc: #5eead4; } }
+  .wrap { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: 14px; align-items: start; }
+  @media (max-width: 1100px) { .wrap { grid-template-columns: 1fr; } }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+  .card h3 { margin: 0; padding: 12px 14px; font-size: 15px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; border-bottom: 1px solid var(--line); }
+  .card h3 .sp { margin-left: auto; display: flex; gap: 8px; align-items: center; }
+  .note { padding: 8px 14px; font-size: 12.5px; color: var(--muted); border-bottom: 1px solid var(--line-2); }
+  /* bảng bot */
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  th, td { padding: 7px 10px; border-bottom: 1px solid var(--line-2); text-align: left; vertical-align: middle; }
+  th { font-size: 12px; color: var(--muted); font-weight: 600; background: var(--card-2); position: sticky; top: 0; }
+  #bots { max-height: calc(100vh - 230px); overflow-y: auto; }
+  .dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: var(--muted); opacity: .45; margin-right: 6px; }
+  .dot.on { background: #2ecc71; opacity: 1; box-shadow: 0 0 6px #2ecc71; }
+  .dot.wait { background: #f1c40f; opacity: 1; }
+  td.name b { font-weight: 600; }
+  td .err { display: block; color: var(--err); font-size: 11.5px; max-width: 220px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  td .pos { font-variant-numeric: tabular-nums; color: var(--muted); font-size: 12.5px; white-space: nowrap; }
+  td select { padding: 4px 6px; font-size: 13px; }
+  .acts { display: flex; gap: 4px; flex-wrap: wrap; }
+  .acts button, .mini { padding: 3px 8px; font-size: 12.5px; border-radius: 7px; }
+  tr.sel { background: color-mix(in srgb, var(--botc) 10%, transparent); }
+  /* khung chat */
+  #feed { height: calc(100vh - 330px); min-height: 320px; overflow-y: auto; font-size: 13.5px; }
+  .ln { display: grid; grid-template-columns: 62px 64px minmax(0, 1fr); gap: 8px; padding: 5px 12px; border-bottom: 1px solid var(--line-2); align-items: baseline; }
+  .ln:hover { background: var(--chip); }
+  .ln .ts { color: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; }
+  .ln .tg { font-size: 10.5px; font-weight: 700; text-align: center; border-radius: 999px; padding: 1px 0; }
+  .tg.chat { color: var(--chat); background: color-mix(in srgb, var(--chat) 14%, transparent); }
+  .tg.command { color: var(--command); background: color-mix(in srgb, var(--command) 16%, transparent); }
+  .tg.msg { color: var(--msg); background: color-mix(in srgb, var(--msg) 16%, transparent); }
+  .tg.tpa { color: var(--tpa); background: color-mix(in srgb, var(--tpa) 16%, transparent); }
+  .tg.doi { color: var(--botc); background: color-mix(in srgb, var(--botc) 14%, transparent); }
+  .tg.nhac, .tg.kick, .tg.chet { color: var(--nhac); background: color-mix(in srgb, var(--nhac) 14%, transparent); }
+  .ln .tx { white-space: pre-wrap; word-break: break-word; }
+  .ln .tx b { font-weight: 600; } .ln .tx .b { color: var(--botc); font-weight: 600; }
+  .dev { display: inline-block; font-size: 10px; font-weight: 700; border-radius: 5px; padding: 0 4px; margin-right: 4px; vertical-align: 1px; }
+  .dev.pc { color: #3b82f6; background: color-mix(in srgb, #3b82f6 15%, transparent); }
+  .dev.be { color: #16a34a; background: color-mix(in srgb, #16a34a 15%, transparent); }
+  .dev.bot { color: var(--muted); background: var(--chip); }
+  .ln .tx code { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12.5px; background: var(--chip); border-radius: 5px; padding: 0 5px; }
+  .ln.hot { background: color-mix(in srgb, var(--msg) 7%, transparent); cursor: pointer; }
+  .ln .srv { color: var(--muted); font-size: 11.5px; }
+  #say { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; padding: 10px 12px; border-top: 1px solid var(--line); background: var(--card-2); }
+  #say input#txt { flex: 1; min-width: 200px; }
+  #sayMsg { padding: 0 12px 8px; font-size: 12.5px; color: var(--muted); background: var(--card-2); min-height: 4px; }
+  #sayMsg.ok { color: var(--ok); } #sayMsg.err { color: var(--err); }
+  .empty { padding: 40px 14px; text-align: center; color: var(--muted); }
+  label.chk { display: inline-flex; gap: 6px; align-items: center; font-size: 12.5px; color: var(--muted); font-weight: 400; }
+</style>
+<link rel="stylesheet" href="ui.css">
+</head>
+<body data-dozzle="__DOZZLE_URL__" data-title="Bot" data-sub="Cho bot vào / thoát server, nói và chạy lệnh thay bot để trò chuyện với member.">
+<script src="shell.js"></script>
+<div class="wrap">
+  <div class="card">
+    <h3>Danh sách bot <span class="sp">
+      <button class="mini" id="allJoin" title="Bật mọi bot (mỗi bot vào server đang chọn của nó)">Vào tất cả</button>
+      <button class="mini" id="allLeave">Thoát tất cả</button></span></h3>
+    <div class="note">Bot không tự làm gì. Ở Bang Hội Chiến mỗi bot tự đứng một khu riêng (gần các điểm warp). Bot vào thẳng server con nên không tính vào số người ở danh sách server; đứng yên nên không tính giờ chơi.</div>
+    <div id="bots"><div class="empty">Đang tải…</div></div>
+  </div>
+  <div class="card">
+    <h3>Chat <span class="sp">
+      <select id="fsrv" title="Lọc server"><option value="">Mọi server</option></select>
+      <label class="chk"><input type="checkbox" id="fcmd" checked> Lệnh member</label></span></h3>
+    <div class="note">Chat + lệnh của member (từ trang Hoạt động) và tin bot nhận: <b style="color:var(--msg)">tin nhắn riêng</b>, <b style="color:var(--tpa)">lời mời TPA</b>, <b style="color:var(--nhac)">bị gọi tên</b>. Bấm dòng tin nhắn riêng / TPA để trả lời đúng bot đó.</div>
+    <div id="feed"><div class="empty">Đang tải…</div></div>
+    <form id="say" autocomplete="off">
+      <select id="who" title="Nói bằng bot nào"></select>
+      <input id="txt" placeholder="Nói thay bot, hoặc /lệnh (vd /msg Tên nội dung, /tpaccept) — Enter để gửi" maxlength="240">
+      <button type="submit" class="primary" id="send">Gửi</button>
+    </form>
+    <div id="sayMsg"></div>
+  </div>
+</div>
+<script>
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+let BOTS = [], SERVERS = {}, busy = false;
+
+async function act(body, quiet) {
+  try {
+    const r = await fetch("api/bot", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+    const d = await r.json();
+    if (!quiet || !d.ok) window.toast ? window.toast(d.message || (d.ok ? "Xong" : "Lỗi"), d.ok ? "ok" : "err") : null;
+    setTimeout(loadBots, 800);
+    return d;
+  } catch (e) { window.toast && window.toast("Không gửi được: " + e, "err"); return { ok: false }; }
+}
+
+function srvOptions(cur) {
+  return Object.entries(SERVERS).map(([k, v]) => `<option value="${esc(k)}"${k === cur ? " selected" : ""}>${esc(v)}</option>`).join("");
+}
+
+function renderBots() {
+  if (!BOTS.length) return;
+  const sel = $("who").value;
+  let h = '<table><thead><tr><th>Bot</th><th>Server</th><th>Vị trí</th><th>Thao tác</th></tr></thead><tbody>';
+  for (const b of BOTS) {
+    const st = b.online ? "on" : (b.want || b.connecting) ? "wait" : "";
+    const pos = b.online && b.x != null ? `${b.x} ${b.y} ${b.z}${b.away ? " · đang ở chỗ khác" : ""}` : (b.want ? "đang vào…" : "—");
+    h += `<tr data-n="${esc(b.name)}"${b.name === sel ? ' class="sel"' : ""}>
+      <td class="name"><span class="dot ${st}"></span><b>${esc(b.name)}</b>${b.err && !b.online ? `<span class="err" title="${esc(b.err)}">${esc(b.err)}</span>` : ""}</td>
+      <td><select data-a="server">${srvOptions(b.server)}</select></td>
+      <td><span class="pos" title="${b.home ? "Chỗ mặc định: " + b.home.join(" ") : ""}">${esc(pos)}</span></td>
+      <td><div class="acts">${b.want ? '<button data-a="leave">Thoát</button>' : '<button class="primary" data-a="join">Vào</button>'}
+        ${b.online ? `<button data-a="home" title="Về chỗ mặc định">Về chỗ</button>${b.server === "banghoi-1" ? '<button data-a="random" title="Ra một khu ngẫu nhiên chưa bot nào đứng (đặt làm chỗ mặc định)">Ngẫu nhiên</button>' : ""}<button data-a="move" title="Đi tới toạ độ X Z">Đi tới…</button>
+        <button data-a="cmd" data-t="spawn">/spawn</button><button data-a="cmd" data-t="tpaccept">/tpaccept</button><button data-a="cmd" data-t="tpdeny">/tpdeny</button>
+        <button data-a="sethome" title="Lấy chỗ đang đứng làm chỗ mặc định">Đặt chỗ</button><button data-a="pick" title="Chọn bot này ở khung chat">Chat</button>` : ""}</div></td></tr>`;
+  }
+  $("bots").innerHTML = h + "</tbody></table>";
+  const keep = $("who").value;
+  $("who").innerHTML = BOTS.filter((b) => b.online).map((b) => `<option>${esc(b.name)}</option>`).join("") || '<option value="">(chưa bot nào online)</option>';
+  if ([...$("who").options].some((o) => o.value === keep)) $("who").value = keep;
+}
+
+$("bots").addEventListener("click", async (ev) => {
+  const btn = ev.target.closest("button[data-a]"); if (!btn) return;
+  const name = btn.closest("tr").dataset.n, a = btn.dataset.a;
+  const server = btn.closest("tr").querySelector('select[data-a="server"]').value;
+  if (a === "pick") { $("who").value = name; $("txt").focus(); renderBots(); return; }
+  if (a === "move") {
+    const v = prompt(`Cho ${name} đi tới toạ độ (X Z), vd: 12700 -2430`); if (!v) return;
+    const m = v.trim().split(/[\s,]+/); if (m.length < 2) return;
+    return act({ bot: name, action: "move", x: +m[0], z: +m[1] });
+  }
+  if (a === "join") return act({ bot: name, action: "join", server });
+  if (a === "cmd") return act({ bot: name, action: "cmd", text: btn.dataset.t });
+  return act({ bot: name, action: a });
+});
+$("bots").addEventListener("change", (ev) => {
+  const s = ev.target.closest('select[data-a="server"]'); if (!s) return;
+  const b = BOTS.find((x) => x.name === s.closest("tr").dataset.n);
+  if (b && b.want) act({ bot: b.name, action: "server", server: s.value });   // đang bật: chuyển server ngay; đang tắt: chọn rồi bấm Vào
+});
+$("allJoin").onclick = async () => { if (await ask("Cho cả 20 bot vào game (mỗi bot vào server đang chọn của nó)?", { title: "Vào tất cả", ok: "Vào" })) act({ bot: "*", action: "join" }); };
+$("allLeave").onclick = async () => { if (await ask("Cho mọi bot thoát game?", { title: "Thoát tất cả", ok: "Thoát" })) act({ bot: "*", action: "leave" }); };
+
+async function loadBots() {
+  try {
+    const d = await (await fetch("api/bot")).json();
+    if (!d.ok) { $("bots").innerHTML = `<div class="empty">${esc(d.message || "Không tải được")}</div>`; return; }
+    SERVERS = d.servers || {}; BOTS = d.bots || []; EVENTS = d.events || [];
+    if ($("fsrv").options.length === 1) for (const [k, v] of Object.entries(SERVERS)) $("fsrv").add(new Option(v, k));
+    if (!document.activeElement || !document.activeElement.closest("#bots select")) renderBots();
+  } catch (e) { $("bots").innerHTML = `<div class="empty">Không tải được: ${esc(e)}</div>`; }
+}
+
+// ---------------------------------------------------------------- khung chat: chat + lệnh member (Hoạt động) + tin bot nhận
+let EVENTS = [], ACT = [], DEV = {}, atBottom = true;
+const devHtml = (p) => { const d = DEV[p]; return d ? `<span class="dev ${esc(d.loai)}" title="${esc(d.chi_tiet || "")}">${esc(d.nhan)}</span>` : ""; };
+const TAG = { chat: "Chat", command: "Lệnh", msg: "Nhắn riêng", tpa: "TPA", nhac: "Gọi tên", kick: "Bị đá", chet: "Chết", doi: "Dời chỗ" };
+const hhmm = (ts) => { const d = new Date(ts); return isNaN(d) ? "" : d.toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false }); };
+const isBot = (n) => BOTS.some((b) => b.name === n);
+
+function renderFeed() {
+  const srv = $("fsrv").value, showCmd = $("fcmd").checked;
+  const rows = [];
+  for (const e of ACT) {
+    if (e.type === "command" && !showCmd) continue;
+    if (srv && e.server !== srv && e.target !== srv) continue;
+    rows.push({ ts: e.ts, type: e.type, player: e.player, text: e.text, server: e.server });
+  }
+  for (const e of EVENTS) {
+    if (srv && e.server && e.server !== srv) continue;
+    rows.push({ ts: e.ts, type: e.type, bot: e.bot, from: e.from, text: e.text, server: e.server });
+  }
+  rows.sort((a, b) => (a.ts < b.ts ? -1 : a.ts > b.ts ? 1 : 0));
+  const feed = $("feed");
+  atBottom = feed.scrollHeight - feed.scrollTop - feed.clientHeight < 40;
+  if (!rows.length) { feed.innerHTML = '<div class="empty">Chưa có gì hôm nay.</div>'; return; }
+  feed.innerHTML = rows.slice(-400).map((r) => {
+    let tx;
+    if (r.bot) {   // tin bot nhận
+      tx = r.type === "msg" ? `<b>${esc(r.from)}</b> nhắn riêng <span class="b">${esc(r.bot)}</span>: ${esc(r.text)}`
+        : r.type === "tpa" ? `<span class="b">${esc(r.bot)}</span> nhận: ${esc(r.text)}`
+        : `<span class="b">${esc(r.bot)}</span> · ${esc(r.text)}`;
+    } else {
+      const t = String(r.text || ""), p = r.player || "";
+      const who = devHtml(p) + (isBot(p) ? `<span class="b">${esc(p)}</span>` : `<b>${esc(p)}</b>`);
+      tx = p && t.startsWith(p) ? (r.type === "command" ? `${who} <code>${esc(t.slice(p.length).replace(/^:\s*/, ""))}</code>` : who + esc(t.slice(p.length))) : esc(t);
+    }
+    const hot = r.type === "msg" || r.type === "tpa";
+    return `<div class="ln${hot ? " hot" : ""}"${hot ? ` data-bot="${esc(r.bot)}" data-from="${esc(r.from || "")}" data-type="${r.type}"` : ""}>
+      <span class="ts">${hhmm(r.ts)}</span><span class="tg ${r.type}">${TAG[r.type] || r.type}</span><span class="tx">${tx} <span class="srv">${esc(SERVERS[r.server] || r.server || "")}</span></span></div>`;
+  }).join("");
+  if (atBottom) feed.scrollTop = feed.scrollHeight;
+}
+$("feed").addEventListener("click", (ev) => {
+  const ln = ev.target.closest(".ln.hot"); if (!ln) return;
+  if ([...$("who").options].some((o) => o.value === ln.dataset.bot)) $("who").value = ln.dataset.bot;
+  $("txt").value = ln.dataset.type === "tpa" ? "/tpaccept" : `/msg ${ln.dataset.from} `;
+  $("txt").focus(); renderBots();
+});
+$("fsrv").onchange = renderFeed; $("fcmd").onchange = renderFeed;
+
+async function loadFeed() {
+  const from = new Date(); from.setHours(0, 0, 0, 0);
+  try {
+    const d = await (await fetch("api/activity?types=chat,command&limit=400&from=" + encodeURIComponent(from.toISOString().replace(/\.\d+Z$/, "Z")))).json();
+    ACT = (d.events || []).slice().reverse(); DEV = d.thiet_bi || {};
+  } catch (e) { /* giữ bản cũ */ }
+  renderFeed();
+}
+
+$("say").onsubmit = async (ev) => {
+  ev.preventDefault();
+  const bot = $("who").value, text = $("txt").value.trim();
+  if (!bot || !text) return;
+  $("send").disabled = true;
+  const d = await act({ bot, action: text.startsWith("/") ? "cmd" : "chat", text }, true);
+  $("sayMsg").textContent = d.message || ""; $("sayMsg").className = d.ok ? "ok" : "err";
+  if (d.ok) { $("txt").value = ""; setTimeout(loadFeed, 1200); }
+  $("send").disabled = false; $("txt").focus();
+};
+
+loadBots().then(loadFeed);
+setInterval(loadBots, 4000);
+setInterval(loadFeed, 3000);
+</script>
+</body>
+</html>

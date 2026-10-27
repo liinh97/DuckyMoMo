@@ -19,6 +19,7 @@ else
     -e "s/^RCON_PASSWORD=.*/RCON_PASSWORD=$(rand 32)/" \
     -e "s/^RESTIC_PASSWORD=.*/RESTIC_PASSWORD=$(rand 40)/" \
     -e "s/^PANEL_SITE_KEY=.*/PANEL_SITE_KEY=$(rand 48)/" \
+    -e "s/^BOT_PASSWORD=.*/BOT_PASSWORD=$(rand 24)/" \
     .env.example > .env
   chmod 600 .env
   echo "Đã tạo .env với mật khẩu ngẫu nhiên."
@@ -33,6 +34,10 @@ fi
 if ! grep -q '^PANEL_SITE_KEY=' .env; then
   printf '\n# Khoá nội bộ giữa trang web công khai và trang quản trị (thêm bởi ops/init.sh)\nPANEL_SITE_KEY=%s\n' "$(rand 48)" >> .env
   echo "Đã thêm PANEL_SITE_KEY vào .env (đăng nhập trang web bằng tài khoản game)."
+fi
+if ! grep -q '^BOT_PASSWORD=' .env; then
+  printf '\n# Mật khẩu AuthMe chung của bot trang quản trị › Bot (thêm bởi ops/init.sh)\nBOT_PASSWORD=%s\n' "$(rand 24)" >> .env
+  echo "Đã thêm BOT_PASSWORD vào .env (bot tự đăng ký / đăng nhập AuthMe ở sảnh)."
 fi
 if ! grep -q '^PANEL_PASSWORD=' .env; then
   printf '\n# Trang Cài đặt (thêm bởi ops/init.sh)\nPANEL_USER=admin\nPANEL_PASSWORD=%s\n' "$(rand 20)" >> .env

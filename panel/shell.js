@@ -215,12 +215,12 @@ window.toast = function (msg, kind) {
 (function () {
   const NAV = [
     ["Cấu hình", [["", "⚙️", "Cài đặt"], ["thuvien", "🗡️", "Thư viện đồ"], ["boss", "🐉", "Boss"], ["role", "👑", "Role & rank"], ["donate", "💳", "Donate"]]],
-    ["Theo dõi", [["hoatdong", "📈", "Hoạt động người chơi"], ["hethong", "🖥️", "Hệ thống"], ["media", "📺", "Sứ Giả (livestream)"], ["@log", "📜", "Xem log ↗"]]],
+    ["Theo dõi", [["hoatdong", "📈", "Hoạt động người chơi"], ["hethong", "🖥️", "Hệ thống"], ["media", "📺", "Sứ Giả (livestream)"], ["bot", "🤖", "Bot"], ["@log", "📜", "Xem log ↗"]]],
     ["Tài liệu", [["camnang", "📘", "Cẩm nang admin"], ["huongdan", "📖", "Cẩm nang trong game"]]],
   ];
   const body = document.body;
   const here = location.pathname.replace(/\/+$/, "").split("/").pop();
-  const page = ["thuvien", "boss", "role", "donate", "hoatdong", "hethong", "media", "camnang", "huongdan"].includes(here) ? here : "";
+  const page = ["thuvien", "boss", "role", "donate", "hoatdong", "hethong", "media", "bot", "camnang", "huongdan"].includes(here) ? here : "";
   const dozzle = body.dataset.dozzle && !body.dataset.dozzle.startsWith("__") ? body.dataset.dozzle : "";
   const nav = document.createElement("aside");
   nav.className = "sidenav";
@@ -248,7 +248,7 @@ window.toast = function (msg, kind) {
       return;
     }
     const can = new Set(t.tinh_nang || []);
-    const page = { caidat: ["caidat"], thuvien: ["thuvien", "thuvien-dua"], boss: ["boss"], role: ["role", "role-quyen", "rank", "rank-quyen"], donate: ["donate"], hoatdong: ["hoatdong"], hethong: ["hethong"], media: ["media"],
+    const page = { caidat: ["caidat"], thuvien: ["thuvien", "thuvien-dua"], boss: ["boss"], role: ["role", "role-quyen", "rank", "rank-quyen"], donate: ["donate"], hoatdong: ["hoatdong"], hethong: ["hethong"], media: ["media"], bot: ["bot"],
       camnang: ["camnang"], huongdan: ["huongdan"] };
     nav.querySelectorAll("a.item[data-page]").forEach(a => {
       if (!t.toan_quyen && !(page[a.dataset.page] || []).some(f => can.has(f))) a.remove();

@@ -7,6 +7,12 @@
 
 ## 27/10/2026 tối: TRẠNG THÁI KHI CHUYỂN TÀI KHOẢN (đọc mục này trước)
 
+- **27/10 khuya (commit a1ce437, CHƯA LÊN SERVER — lệnh triển khai bị chặn quyền, chờ chủ server cho phép):** trang Bot tạo / xoá bot mới
+  (botfarm action create/remove, panel kiểm tên trùng usercache.json), danh sách server không hiện tên người chơi khi rê chuột
+  (core-velocity BotCount xoá sample). Triển khai khi không có người thật: `./ops/build-core.sh` → `docker compose up -d --build botfarm panel`
+  → `docker compose restart proxy` → `docker compose --profile tunnel up -d --force-recreate relay`. Sau đó thử tạo 1 bot, xem LuckPerms có
+  duckymomo.vaora.an trước khi bot vào (không hiện [+]), bot Sáng tạo + god, rồi Thoát + Xoá; ping server list xem hết tên khi rê chuột.
+
 - Git: nhánh claude/happy-ritchie-2p60v7, ĐÃ COMMIT hết phần việc 26–27/10 (1054594 … 249153e), CHƯA PUSH. Còn 2 file sửa tay của chủ server,
   cố ý KHÔNG commit: modes/_network/settings.yml (dnl_panel_gio 12 -> 72), site/config/site.yml (Discord, donate). Đừng tự commit / hoàn tác.
 - Server đang chạy bản mới nhất: plugin core-paper (banghoi-1), core-velocity (proxy + relay), panel, botfarm đều đã build + lên.

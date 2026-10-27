@@ -18,6 +18,7 @@ register-limit:
   # Quán net: nhập tên 1 người trong nhóm, người đó đăng nhập ở quán một lần là cả nhóm ở quán đăng ký được.
   whitelist-players:
     - vanlinh
+    - Itrap
   # Miễn theo IP (khi cần cố định một IP / dải IP)
   whitelist: []
 

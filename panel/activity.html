@@ -48,7 +48,7 @@
   .dev { display: inline-block; font-size: 10.5px; font-weight: 700; border-radius: 5px; padding: 0 5px; margin-right: 5px; vertical-align: 1px; letter-spacing: .02em; }
   .dev.pc { color: #3b82f6; background: color-mix(in srgb, #3b82f6 15%, transparent); }
   .dev.be { color: #16a34a; background: color-mix(in srgb, #16a34a 15%, transparent); }
-  .dev.bot { color: var(--muted); background: var(--chip); }
+  .dev.bot { color: #a855f7; background: color-mix(in srgb, #a855f7 15%, transparent); }
   .line .msg code { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 13px; background: var(--chip); border-radius: 5px; padding: 1px 6px; }
   .line.join .msg { color: var(--muted); } .line.join .msg b { color: var(--text); }
   .where { font-size: 12px; color: var(--muted); white-space: nowrap; }
@@ -188,6 +188,9 @@ function devHtml(p) {
 }
 function msgHtml(e) {
   const t = String(e.text || ""), p = e.player || "";
+  // chat "<tên> nội dung" (biệt danh: "<biệt danh (tên thật)>"): nhãn Bot / PC / BE trước tên để biết bot hay người (bot tự chat 27/10)
+  const c = e.type === "chat" && p ? /^(<[^>]*>)([\s\S]*)$/.exec(t) : null;
+  if (c) return `${devHtml(p)}<b>${esc(c[1])}</b>${esc(c[2])}`;
   if (!p || !t.startsWith(p)) return esc(t);
   let rest = t.slice(p.length);
   if (e.type === "command" && /^:\s*\//.test(rest)) return `${devHtml(p)}<b>${esc(p)}</b> <code>${esc(rest.replace(/^:\s*/, ""))}</code>`;
@@ -272,6 +275,26 @@ $("auto").onchange = () => { $("liveLabel").classList.toggle("on", $("auto").che
 // Gửi tin vào game: chat admin, thông báo, hoặc thông báo giữa màn hình (title) qua RCON
 try { $("sayName").value = localStorage.getItem("dmm_say_name") || "Admin"; } catch (e) {}
 $("sayText").oninput = () => { $("sayCount").textContent = $("sayText").value.length + "/200"; };
+// ↑ / ↓ gọi lại tin / lệnh đã gửi như console (nhớ 50 dòng gần nhất trong trình duyệt này)
+let sayHist = [], histPos = -1, histDraft = "";
+try { sayHist = JSON.parse(localStorage.getItem("dmm_say_hist") || "[]"); } catch (e) {}
+function remember(text) {
+  sayHist = [text, ...sayHist.filter((x) => x !== text)].slice(0, 50);
+  histPos = -1;
+  try { localStorage.setItem("dmm_say_hist", JSON.stringify(sayHist)); } catch (e) {}
+}
+$("sayText").onkeydown = (ev) => {
+  if ((ev.key !== "ArrowUp" && ev.key !== "ArrowDown") || ev.isComposing) return;
+  if (histPos === -1) histDraft = $("sayText").value;
+  const next = ev.key === "ArrowUp" ? Math.min(histPos + 1, sayHist.length - 1) : histPos - 1;
+  if (next === histPos || next < -1) return;
+  ev.preventDefault();
+  histPos = next;
+  const v = histPos === -1 ? histDraft : sayHist[histPos];
+  $("sayText").value = v;
+  $("sayText").setSelectionRange(v.length, v.length);
+  $("sayCount").textContent = v.length + "/200";
+};
 $("say").onsubmit = async (ev) => {
   ev.preventDefault();
   const text = $("sayText").value.trim();
@@ -290,7 +313,7 @@ $("say").onsubmit = async (ev) => {
     const d = await r.json();
     $("sayMsg").textContent = d.message || (d.ok ? "Đã gửi" : "Lỗi");
     $("sayMsg").className = d.ok ? "ok" : "err";
-    if (d.ok) { $("sayText").value = ""; $("sayCount").textContent = "0/200"; firstRender = true; load(); }
+    if (d.ok) { remember(text); $("sayText").value = ""; $("sayCount").textContent = "0/200"; firstRender = true; load(); }
   } catch (e) {
     $("sayMsg").textContent = "Không gửi được: " + e; $("sayMsg").className = "err";
   }

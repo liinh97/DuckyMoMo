@@ -307,7 +307,8 @@ final class LevelUp implements Listener {
         return b.toString();
     }
 
-    /** Vài giây sau đòn có Sức mạnh / Bền bỉ: " | ⚔ 7,7 (+0,7)", " | đỡ −0,5" (MiniMessage, gắn vào thanh chỉ số). */
+    /** Vài giây sau đòn có Sức mạnh / Bền bỉ: " | ⚔ 7,7 (+0,7)", " | đỡ −0,5" (mã §, gắn vào thanh chỉ số: AuraSkills chèn
+     *  placeholder như chữ thường SAU khi đọc MiniMessage nên thẻ <gold> / mã & hiện nguyên chữ, còn § thì game vẫn tô màu; 28/10). */
     static String hud(UUID u) {
         LevelUp l = INSTANCE;
         if (l == null) {
@@ -317,11 +318,11 @@ final class LevelUp implements Listener {
         StringBuilder b = new StringBuilder();
         double[] h = l.lastHit.get(u);
         if (h != null && now - (long) h[0] < HUD_MS) {
-            b.append(" <dark_gray>| <gold>⚔ ").append(dmg(h[1])).append(" <gray>(+").append(dmg(h[2])).append(" Sức mạnh)");
+            b.append(" §8| §6⚔ ").append(dmg(h[1])).append(" §7(+").append(dmg(h[2])).append(" Sức mạnh)");
         }
         double[] d = l.lastHurt.get(u);
         if (d != null && now - (long) d[0] < HUD_MS) {
-            b.append(" <dark_gray>| <blue>Bền bỉ đỡ −").append(dmg(d[2]));
+            b.append(" §8| §9Bền bỉ đỡ −").append(dmg(d[2]));
         }
         return b.toString();
     }

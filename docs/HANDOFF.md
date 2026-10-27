@@ -1,9 +1,26 @@
 # Bàn giao dự án DuckyMoMo Network
 
-> Dùng file này để tiếp tục ở session hoặc tài khoản Claude khác. Cập nhật: 27/10/2026 tối. ĐỌC TỪ TRÊN XUỐNG: các mục có ngày ở đầu file là mới nhất (27/10 tối -> 27/10 chiều -> trưa -> rạng sáng -> 26/10), rồi mới tới mục 0000000000 (22/10) và các mục 000… cũ hơn.
+> Dùng file này để tiếp tục ở session hoặc tài khoản Claude khác. Cập nhật: 28/10/2026 rạng sáng. ĐỌC TỪ TRÊN XUỐNG: các mục có ngày ở đầu file là mới nhất (28/10 rạng sáng -> 27/10 tối -> 27/10 chiều -> trưa -> rạng sáng -> 26/10), rồi mới tới mục 0000000000 (22/10) và các mục 000… cũ hơn.
 > Đọc kèm: `README.md`, `docs/minecraft-server-plan.md` (kế hoạch, quyết định), `docs/network-architecture.md` (kiến trúc).
 
 ---
+
+## 28/10/2026 rạng sáng: VIỆC DÂN LÀNG NHỜ, MÀU CẤP, TRANG HOẠT ĐỘNG (ĐÃ LÊN 01:20–01:33, 0 người thật)
+
+- Việc dân làng nhờ (f155279): "Làm quen tính năng" chuyển thành việc do NPC giao (chủ server: "chuyển thành giao tiếp với NPC,
+  /nhiemvu chỉ hiện nhiệm vụ ngày + việc đang nhận"). Hỏi Già Làng "Trong làng có ai cần giúp không ạ?" (BetonQuest
+  cotruyen/vieclang -> console /dmm viecnpc <người> <mã>) mở nhánh; 10 NPC giao 25 việc (daily-quests.givers + intro.<mã>.npc),
+  làm xong quay lại NPC đó nhận quà; việc chưa nhận làm cũng không tính. NPC quầy (ThoRen.onNpc) / Nhà Buôn (DonBuon.clicked) có
+  việc giao / trả thì lần bấm đó nói trong chat, không mở quầy. Lưu nhiemvu.yml lang.<uuid>.mo/nhan/xong; việc đã nhận quà cũ giữ.
+  ĐÃ THỬ bằng bot (tools/bottest/vl-thu.js, vl-thu2.js): mở nhánh, /nhiemvu, /diemdanh -> "Xong việc… về gặp Già Làng", trả 100 xu,
+  Ngư Ông bấm lần 1 nói + giao việc, lần 2 mở quầy. CHƯA THỬ: hội thoại BetonQuest thật (bot không bấm được NPC hội thoại; người thật
+  thử câu hỏi mới ở Già Làng / Bác Thợ Rèn / Người Gác Cổng), Nhà Buôn.
+- Màu cấp theo mốc + hiện Sức mạnh / Bền bỉ (0414baf + sửa 28/10): AuraSkills chèn placeholder như CHỮ THƯỜNG sau khi đọc MiniMessage
+  -> thẻ <white> / mã & hiện nguyên chữ. Thanh chỉ số dùng %dmmcap_mau_s% / %dmmcap_hud_s% (mã §) bọc trong <white>…</white>.
+  Đã thử (ab-thu.js, /capdo dat ThuVL 12): thanh chỉ số + Tab cấp 12 màu xanh lá. HUD sát thương chưa thử trong trận thật.
+- Trang Hoạt động (9686cd0): nhãn Bot / PC / BE trước tên trong dòng chat; ↑ / ↓ trong ô gửi gọi lại tin / lệnh (localStorage 50 dòng).
+- Botfarm: câu chat mới (giao dịch, shop, cách chơi; bỏ câu dính giờ giấc) đã lên.
+- Bot thử ThuVL đã /choilai admin ThuVL moi.
 
 ## 27/10/2026 tối: TRẠNG THÁI KHI CHUYỂN TÀI KHOẢN (đọc mục này trước)
 

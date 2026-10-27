@@ -6,8 +6,9 @@ import org.bukkit.OfflinePlayer;
 /**
  * Placeholder Thăng Cấp. Lớp riêng để sảnh không có PlaceholderAPI vẫn nạp được LevelUp.
  *  %dmmcap_cap% cấp · %dmmcap_mau% mã màu & của cấp (đổi theo mốc level-colors, cho TAB / bảng bên phải) · %dmmcap_mau_mm% màu đó
- *  dạng MiniMessage (thanh chỉ số AuraSkills) · %dmmcap_capmau% "&a12" · %dmmcap_hud_mm% vài giây sau khi đánh / bị đánh:
- *  " | ⚔ 7,7 (+0,7)" phần sát thương Sức mạnh cộng thêm, " | 🛡 −0,5" phần Bền bỉ đỡ (27/10: trước chỉ có dòng chữ báo, không thấy hiệu lực).
+ *  dạng MiniMessage · %dmmcap_mau_s% màu đó dạng § (thanh chỉ số AuraSkills: nó chèn placeholder như chữ thường nên thẻ MiniMessage
+ *  và mã & hiện nguyên chữ, § thì game vẫn tô; 28/10) · %dmmcap_capmau% "&a12" · %dmmcap_hud_s% (mã §) vài giây sau khi đánh / bị đánh:
+ *  " | ⚔ 7,7 (+0,7 Sức mạnh)" phần sát thương Sức mạnh cộng thêm, " | Bền bỉ đỡ −0,5" (27/10: trước chỉ có dòng chữ báo, không thấy hiệu lực).
  */
 final class LevelUpPapi {
 
@@ -47,7 +48,8 @@ final class LevelUpPapi {
                     case "mau" -> LevelUp.colorOf(lv);
                     case "mau_mm" -> LevelUp.miniMessage(LevelUp.colorOf(lv));
                     case "capmau" -> LevelUp.colorOf(lv) + lv;
-                    case "hud_mm" -> LevelUp.hud(player.getUniqueId());
+                    case "mau_s" -> LevelUp.colorOf(lv).replace('&', '§');
+                    case "hud_s" -> LevelUp.hud(player.getUniqueId());
                     default -> null;
                 };
             }

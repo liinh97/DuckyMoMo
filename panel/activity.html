@@ -22,6 +22,8 @@
   .custom { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); }
   .custom[hidden] { display: none; }
   .right { margin-left: auto; display: flex; align-items: center; gap: 14px; font-size: 13.5px; }
+  .onl { color: var(--muted); font-size: 13px; white-space: nowrap; cursor: default; }
+  .onl b { color: var(--text); font-weight: 600; font-variant-numeric: tabular-nums; }
   label.live { display: flex; align-items: center; gap: 6px; color: var(--muted); cursor: pointer; user-select: none; }
   label.live input { display: none; }
   label.live .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); }
@@ -88,6 +90,7 @@
   <input id="player" placeholder="Người chơi">
   <input id="q" placeholder="Tìm trong nội dung">
   <div class="right">
+    <span class="onl" id="onl" hidden></span>
     <label class="live on" id="liveLabel" title="Tự cập nhật mỗi 5 giây"><input type="checkbox" id="auto" checked><span class="dot"></span>Live</label>
   </div>
 </header>
@@ -191,6 +194,17 @@ function msgHtml(e) {
   return `${devHtml(p)}<b>${esc(p)}</b>${esc(rest)}`;
 }
 
+// Số đang online cạnh Live: người thật / bot (botfarm), rê chuột xem theo server + tên người thật
+const SRV_NAME = { lobby: "Sảnh", "banghoi-1": "Bang Hội Chiến", "practice-1": "Practice", "sangtao-1": "Thái Ấp Sáng Tạo" };
+function showOnline(o) {
+  const el = $("onl");
+  if (!o) { el.hidden = true; return; }
+  el.hidden = false;
+  el.innerHTML = `Đang online: <b>${o.nguoi}</b> người thật · <b>${o.bot}</b> bot`;
+  const lines = Object.entries(o.theo_server).map(([s, c]) => `${SRV_NAME[s] || s}: ${c.nguoi} người thật, ${c.bot} bot`);
+  el.title = (lines.join(String.fromCharCode(10)) || "Không ai online") + (o.ten.length ? String.fromCharCode(10, 10) + "Người thật: " + o.ten.join(", ") : "");
+}
+
 async function load() {
   const p = params();
   if (!p.get("types")) { render([]); return; }
@@ -207,6 +221,7 @@ async function load() {
       return;
     }
     DEV = data.thiet_bi || {};
+    showOnline(data.online);
     render(data.events);
   } catch (e) {
     $("log").innerHTML = '<div class="empty">Không tải được: ' + esc(e) + '</div>';

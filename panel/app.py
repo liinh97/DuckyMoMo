@@ -1517,7 +1517,26 @@ def read_activity(params):
         out.append(e)
         if len(out) >= limit:
             break
-    return {"modes": modes, "events": out, "has_file": ACTIVITY_FILE.exists(), "thiet_bi": devices_for({e.get("player", "") for e in out})}
+    return {"modes": modes, "events": out, "has_file": ACTIVITY_FILE.exists(), "thiet_bi": devices_for({e.get("player", "") for e in out}),
+            "online": online_stats()}
+
+
+def online_stats():
+    """Số đang online cạnh nút Live (27/10): người thật / bot (botfarm) tổng và theo server, kèm tên người thật. Lỗi thì None."""
+    try:
+        on = online_players()
+        bots = web_cached("bot_names", 15, lambda: {str(b.get("name", "")).lower() for b in bot_json().get("bots", [])})
+        out = {"nguoi": 0, "bot": 0, "theo_server": {}, "ten": []}
+        for name, srv in sorted(on.items()):
+            k = "bot" if name in bots else "nguoi"
+            out[k] += 1
+            s = out["theo_server"].setdefault(srv, {"nguoi": 0, "bot": 0})
+            s[k] += 1
+            if k == "nguoi":
+                out["ten"].append(name)
+        return out
+    except Exception:
+        return None
 
 
 def mark_switches(events):

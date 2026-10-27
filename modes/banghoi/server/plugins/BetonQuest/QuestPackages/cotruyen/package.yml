@@ -33,3 +33,11 @@ constants:
   c1_thuong_kn: 200
   # Lữ khách (lukhach/): thưởng (xu) khi đi qua Cổng Hoang rồi về kể, mỗi lữ khách 1 lần
   lk_thuong: 1500
+
+# 28/10 (chủ server: bỏ dòng "====Đối thoại với … bắt đầu! / đã xong!===="): thông báo có sẵn của BetonQuest theo loại,
+# io: suppress = không hiện. Áp cho mọi hội thoại (BetonQuest gộp mục notifications của mọi gói).
+notifications:
+  conversation_start:
+    io: suppress
+  conversation_end:
+    io: suppress

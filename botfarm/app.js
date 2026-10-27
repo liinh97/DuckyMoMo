@@ -9,6 +9,7 @@
 //                create (tạo bot mới tên b.bot, vào luôn server b.server), remove (xoá bot đã tạo thêm, phải thoát trước)
 // Bot tạo thêm (27/10) làm y như 20 bot gốc: quyền duckymomo.vaora.an (cấp TRƯỚC lần vào đầu cho khỏi báo [+]), Sáng tạo + /god mỗi lần
 // xuất hiện, IP giả riêng, tự đăng ký AuthMe ở sảnh. Lưu trong bots.json (created, ipn = số IP giả).
+// /bots có thêm spawn: true khi bot đang đứng trong 16 ô quanh điểm spawn của server đó.
 // Trạng thái: /state/bots.json {name: {server, want, home: {server: {x,y,z}}, at: {server: {x,y,z}}}} (home = chỗ mặc định, at = chỗ đang đứng).
 // Bang Hội Chiến: bot chưa có chỗ thì tự chọn một chỗ đứng khô ráo gần các điểm warp (mỗi bot một khu, không tụ một chỗ).
 // Server khác: đứng ở chỗ vào game (spawn) trừ khi chủ server cho đi / đặt chỗ.
@@ -93,6 +94,26 @@ function rcon(host) {
   return (RCON[host] = { cmd });
 }
 
+/** Điểm spawn thế giới của từng server (để trang Bot ghi "ở spawn"). Lệnh từ console chạy tại spawn: nạp chunk "~ ~",
+ *  thả marker ở "~ ~ ~" rồi đọc toạ độ. Dò lúc chạy, server chưa lên thì thử lại sau. */
+const SPAWN = {};
+async function learnSpawn(host) {
+  const R = rcon(host);
+  await R.cmd('execute in minecraft:overworld run forceload add ~ ~');
+  await sleep(2000);
+  await R.cmd('execute in minecraft:overworld run summon minecraft:marker ~ ~ ~ {Tags:["botfarm_sp"]}');
+  const r = await R.cmd('data get entity @e[type=minecraft:marker,tag=botfarm_sp,limit=1] Pos');
+  await R.cmd('minecraft:kill @e[type=minecraft:marker,tag=botfarm_sp]');
+  await R.cmd('execute in minecraft:overworld run forceload remove ~ ~');
+  const m = r.match(/\[(-?[\d.]+)d, (-?[\d.]+)d, (-?[\d.]+)d\]/);
+  if (m) SPAWN[host] = { x: +m[1], z: +m[3] };
+}
+const atSpawn = (host, p) => !!(p && SPAWN[host] && Math.hypot(p.x - SPAWN[host].x, p.z - SPAWN[host].z) <= 16);
+setTimeout(function spawns() {
+  Promise.all(Object.keys(SERVERS).filter(h => !SPAWN[h]).map(h => learnSpawn(h).catch(() => {})))
+    .then(() => { if (Object.keys(SERVERS).some(h => !SPAWN[h])) setTimeout(spawns, 60000); });
+}, 5000);
+
 async function serverPos(name, host) {
   const r = await rcon(host).cmd(`data get entity ${name} Pos`);
   const m = r.match(/\[(-?[\d.]+)d, (-?[\d.]+)d, (-?[\d.]+)d\]/);
@@ -118,7 +139,9 @@ async function ground(host, x, y, z) {
     // nhất (không tính lá; nước tính là mặt nên đứng trên nước sẽ bị loại ở bước dưới)
     await R.cmd(`execute in minecraft:overworld positioned ${X}.5 0 ${Z}.5 positioned over motion_blocking_no_leaves run summon minecraft:marker ~ ~ ~ {Tags:["botfarm_y"]}`);
     const r = await R.cmd(`data get entity @e[type=minecraft:marker,tag=botfarm_y,limit=1] Pos[1]`);
-    await R.cmd(`kill @e[type=minecraft:marker,tag=botfarm_y]`);
+    // minecraft:kill: "kill" trơn là lệnh của Essentials (chỉ nhận người chơi) -> marker không bị xoá, sót lại hàng nghìn
+    // và lần dò sau đọc nhầm độ cao marker cũ (27/10)
+    await R.cmd(`minecraft:kill @e[type=minecraft:marker,tag=botfarm_y]`);
     const m = r.match(/(-?[\d.]+)d/);
     if (!m) continue;
     const Y = Math.round(+m[1]);
@@ -160,7 +183,8 @@ let homeLock = Promise.resolve();
 function pickHome(name) {
   const run = homeLock.then(async () => {
     if (state[name].home['banghoi-1']) return state[name].home['banghoi-1'];
-    const h = await pickHomeNow(name);
+    // hết điểm gợi ý trống (bot tạo thêm): ra khu ngẫu nhiên như nút "Ngẫu nhiên", khỏi đứng mãi ở spawn
+    const h = await pickHomeNow(name) || await randomHome(name);
     if (h) { state[name].home['banghoi-1'] = h; save(); }
     return h;
   });
@@ -445,7 +469,7 @@ http.createServer((req, res) => {
         const p = e && e.position;
         const h = st.home[st.server];
         return { name: n, want: st.want, server: st.server, online: !!rt.bot, connecting: rt.connecting, err: rt.err,
-          x: p ? Math.floor(p.x) : null, y: p ? Math.floor(p.y) : null, z: p ? Math.floor(p.z) : null,
+          x: p ? Math.floor(p.x) : null, y: p ? Math.floor(p.y) : null, z: p ? Math.floor(p.z) : null, spawn: atSpawn(st.server, p),
           home: h ? [Math.floor(h.x), Math.floor(h.y), Math.floor(h.z)] : null, away: !!st.at[st.server], created: !!st.created };
       }),
       events: EVENTS.slice(-100),

@@ -446,9 +446,14 @@ final class Kham implements Listener {
         return new Sock(code, i, ThreadLocalRandom.current().nextInt(t.min(), t.max() + 1), maxEnergy);
     }
 
-    /** Ghi ngọc + vẽ lại khối lore khảm ở cuối món. */
+    private static final String LINE_PREFIX = "◈ Khảm ";
+
+    /**
+     * Ghi ngọc + dòng khảm. 28/10 (chủ server: khối khảm ở cuối món, mô tả dài thì không thấy): MỘT dòng
+     * "◈ Khảm 1/4: ◆Sắt Tốt ◇ ◇ ◇ · ⚡95%" đặt sau dòng trống đầu tiên (ngay trên khối "THIÊN UY…"); chỉ số chi tiết xem /thoren kham.
+     * Khối cũ ở cuối (dmm_kham_n dòng) gỡ đi khi ghi lại.
+     */
     private void write(ItemStack it, List<Sock> list) {
-        String[] in = info(it);
         int n = slotsOf(it);
         ItemMeta meta = it.getItemMeta();
         List<Component> lore = meta.lore() == null ? new ArrayList<>() : new ArrayList<>(meta.lore());
@@ -456,28 +461,66 @@ final class Kham implements Listener {
         if (old != null && old > 0 && old <= lore.size()) {
             lore = new ArrayList<>(lore.subList(0, lore.size() - old));
         }
-        List<Component> add = new ArrayList<>();
+        var plain = net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer.plainText();
+        int at = -1;
+        for (int i = 0; i < lore.size(); i++) {
+            if (plain.serialize(lore.get(i)).startsWith(LINE_PREFIX)) {
+                lore.remove(i);
+                at = i;
+                break;
+            }
+        }
         if (n > 0) {
+            if (at < 0) {
+                for (int i = 0; i < lore.size() && at < 0; i++) {
+                    if (plain.serialize(lore.get(i)).isBlank()) {
+                        at = i + 1;
+                    }
+                }
+            }
+            if (at < 0 || at > lore.size()) {
+                at = lore.size();
+            }
             long filled = list.stream().filter(x -> !x.empty()).count();
-            add.add(Component.empty());
-            add.add(c("&5&l◈ KHẢM TINH LUYỆN &8[&d" + filled + "&8/&d" + n + "&8]"));
+            StringBuilder b = new StringBuilder("&5" + LINE_PREFIX + "&d" + filled + "/" + n + "&7:");
+            int minE = Integer.MAX_VALUE;
             for (int i = 0; i < n; i++) {
                 Sock sk = i < list.size() ? list.get(i) : EMPTY;
                 Gem gem = gems.get(sk.code());
                 if (gem == null) {
-                    add.add(c("&7  ◇ Ô trống &7(/thoren kham)"));
+                    b.append(" &7◇");
                 } else {
                     Tier t = tier(sk);
-                    add.add(c("&7  ◆ " + gem.color() + gem.name() + " " + t.color() + "[" + t.name() + " " + sk.factor() + "%]&7: " + effect(gem, isArmor(in), sk.factor())));
-                    add.add(c("&7      năng lượng " + bar(sk.energy()) + " &7" + pct(sk.energy()) + "%"));
+                    b.append(" ").append(gem.color()).append("◆").append(gem.name()).append(" ").append(t.color()).append(t.name());
+                    minE = Math.min(minE, sk.energy());
                 }
             }
+            if (filled > 0) {
+                int pc = pct(minE);
+                b.append(" &7· ").append(minE * 100 <= warnPct * maxEnergy ? "&c" : minE * 2 <= maxEnergy ? "&e" : "&a").append("⚡").append(pc).append("%");
+            } else {
+                b.append(" &7(/thoren kham)");
+            }
+            lore.add(at, c(b.toString()));
         }
-        lore.addAll(add);
         meta.lore(lore);
         meta.getPersistentDataContainer().set(keyGems, PersistentDataType.STRING, String.join(",", list.stream().map(Sock::enc).toList()));
-        meta.getPersistentDataContainer().set(keyLines, PersistentDataType.INTEGER, add.size());
+        meta.getPersistentDataContainer().set(keyLines, PersistentDataType.INTEGER, 0);
         it.setItemMeta(meta);
+    }
+
+    /** Đồ còn khối khảm kiểu cũ (nhiều dòng ở cuối): ghi lại thành 1 dòng. true = đã đổi món. */
+    static boolean migrate(ItemStack it) {
+        Kham k = INSTANCE;
+        if (k == null || it == null || !it.hasItemMeta()) {
+            return false;
+        }
+        Integer old = it.getItemMeta().getPersistentDataContainer().get(k.keyLines, PersistentDataType.INTEGER);
+        if (old == null || old <= 0 || k.slotsOf(it) <= 0) {
+            return false;
+        }
+        k.write(it, k.gemsOf(it));
+        return true;
     }
 
     private String effect(Gem gem, boolean armor) {

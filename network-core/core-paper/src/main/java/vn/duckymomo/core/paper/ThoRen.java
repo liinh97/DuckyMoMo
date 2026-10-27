@@ -1078,7 +1078,9 @@ final class ThoRen implements Listener {
             String ver = version(id);
             String has = it.getItemMeta().getPersistentDataContainer().get(keyVer, org.bukkit.persistence.PersistentDataType.STRING);
             if (ver.equals(has)) {
-                changed |= Kham.blank(it);   // đồ cũ đúng phiên bản nhưng chưa có khối ô khảm
+                changed |= ItemLibrary.tidyLore(it);   // gom phù phép 3 cái một dòng, tên tiếng Việt (đồ cũ)
+                changed |= Kham.migrate(it);           // khối khảm cũ nhiều dòng -> 1 dòng
+                changed |= Kham.blank(it);             // đồ cũ đúng phiên bản nhưng chưa có dòng ô khảm
                 continue;
             }
             ItemStack fresh = lib.build(id, it.getAmount());

@@ -287,19 +287,80 @@ final class ItemLibrary {
 
     private static final String[] ROMAN = {"", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"};
 
-    /** Phù phép gộp 3 cái một dòng; tên là chữ dịch của game (máy người chơi tự hiện tiếng Việt, gói tài nguyên DuckyMoMo). */
-    private static List<Component> compactEnchants(Map<Enchantment, Integer> ench) {
+    /** Tên phù phép của game bằng chữ tiếng Việt cố định (bản dịch vi_vn của Minecraft). 28/10: trước dùng chữ "máy tự dịch", nhưng
+     *  CrazyEnchantments ghi lại mô tả bằng chuỗi nên đổi thành chữ TIẾNG ANH cố định (kiếm hiện "Fire Aspect · Sharpness"). */
+    private static final Map<String, String> VI_ENCH = Map.ofEntries(
+            Map.entry("aqua_affinity", "Đào nhanh dưới nước"),
+            Map.entry("bane_of_arthropods", "Diệt chân đốt"),
+            Map.entry("binding_curse", "Lời nguyền ràng buộc"),
+            Map.entry("blast_protection", "Bảo vệ khỏi vụ nổ"),
+            Map.entry("breach", "Phá giáp"),
+            Map.entry("channeling", "Chớp điện"),
+            Map.entry("density", "Tỉ trọng"),
+            Map.entry("depth_strider", "Sải bước dưới nước"),
+            Map.entry("efficiency", "Hiệu suất"),
+            Map.entry("feather_falling", "Bảo vệ khỏi sát thương rơi"),
+            Map.entry("fire_aspect", "Gây cháy"),
+            Map.entry("fire_protection", "Bảo vệ khỏi lửa"),
+            Map.entry("flame", "Lửa"),
+            Map.entry("fortune", "Gia tài"),
+            Map.entry("frost_walker", "Chân lạnh"),
+            Map.entry("impaling", "Xiên vào da thịt"),
+            Map.entry("infinity", "Vô hạn"),
+            Map.entry("knockback", "Đánh bật lùi"),
+            Map.entry("looting", "Nhặt"),
+            Map.entry("loyalty", "Trung thành"),
+            Map.entry("luck_of_the_sea", "May mắn của biển cả"),
+            Map.entry("lunge", "Lao tới"),
+            Map.entry("lure", "Nhử"),
+            Map.entry("mending", "Tu sửa"),
+            Map.entry("multishot", "Mưa tên"),
+            Map.entry("piercing", "Xuyên thủng"),
+            Map.entry("power", "Sức mạnh"),
+            Map.entry("projectile_protection", "Bảo vệ khỏi vật bắn ra"),
+            Map.entry("protection", "Bảo vệ"),
+            Map.entry("punch", "Xung kích"),
+            Map.entry("quick_charge", "Nạp nhanh"),
+            Map.entry("respiration", "Hô hấp"),
+            Map.entry("riptide", "Sóng dữ"),
+            Map.entry("sharpness", "Sắc bén"),
+            Map.entry("silk_touch", "Độ mềm mại"),
+            Map.entry("smite", "Diệt xác sống"),
+            Map.entry("soul_speed", "Tốc độ linh hồn"),
+            Map.entry("sweeping", "Quét cạnh"),
+            Map.entry("sweeping_edge", "Quét cạnh"),
+            Map.entry("swift_sneak", "Rón rén nhanh"),
+            Map.entry("thorns", "Gai"),
+            Map.entry("unbreaking", "Chậm hỏng"),
+            Map.entry("vanishing_curse", "Lời nguyền biến mất"),
+            Map.entry("wind_burst", "Phong bộc"));
+
+    private static Component enchName(Enchantment e) {
+        String vi = "minecraft".equals(e.getKey().getNamespace()) ? VI_ENCH.get(e.getKey().getKey()) : null;
+        return vi != null ? Component.text(vi) : e.description();
+    }
+
+    /** Phù phép của game, mỗi phù phép một mục (gộp 3 mục một dòng ở tidyLore / compactEnchants). */
+    private static List<Component> enchEntries(Map<Enchantment, Integer> ench) {
         List<Component> out = new ArrayList<>();
-        Component line = null;
-        int n = 0;
         for (Map.Entry<Enchantment, Integer> e : ench.entrySet()) {
             int lv = e.getValue();
-            Component c = e.getKey().description().color(e.getKey().isCursed() ? NamedTextColor.RED : NamedTextColor.GRAY);
+            Component c = enchName(e.getKey()).color(e.getKey().isCursed() ? NamedTextColor.RED : NamedTextColor.GRAY);
             if (!(lv == 1 && e.getKey().getMaxLevel() == 1)) {
                 c = c.append(Component.text(" " + (lv < ROMAN.length ? ROMAN[lv] : String.valueOf(lv))));
             }
+            out.add(c);
+        }
+        return out;
+    }
+
+    private static List<Component> pack(List<Component> entries, int per) {
+        List<Component> out = new ArrayList<>();
+        Component line = null;
+        int n = 0;
+        for (Component c : entries) {
             line = line == null ? c : line.append(Component.text(" · ", NamedTextColor.DARK_GRAY)).append(c);
-            if (++n % 3 == 0) {
+            if (++n % per == 0) {
                 out.add(line.decoration(TextDecoration.ITALIC, false));
                 line = null;
             }
@@ -308,6 +369,65 @@ final class ItemLibrary {
             out.add(line.decoration(TextDecoration.ITALIC, false));
         }
         return out;
+    }
+
+    /** Phù phép gộp 3 cái một dòng, tên tiếng Việt. */
+    private static List<Component> compactEnchants(Map<Enchantment, Integer> ench) {
+        return pack(enchEntries(ench), 3);
+    }
+
+    private static final java.util.regex.Pattern ENCH_ENTRY =
+            java.util.regex.Pattern.compile("^[\\p{L}][\\p{L} '’-]{0,30} ([IVXLC]+|\\d+)$");   // tên + cấp bắt buộc: không gộp nhầm dòng mô tả
+    private static final org.bukkit.NamespacedKey TIDY_KEY = new org.bukkit.NamespacedKey("duckymomocore", "lore_gon");
+
+    /**
+     * Gom khối phù phép đầu mô tả (CrazyEnchantments mỗi phù phép một dòng, phù phép riêng của server, dòng phù phép game đã gộp) thành
+     * 3 mục một dòng; dòng phù phép game viết lại bằng tên tiếng Việt (sửa đồ cũ bị CE đổi sang tiếng Anh). 28/10, chủ server.
+     * Chạy lúc dựng món (sau khi CE ghi mô tả) và lúc vào game cho đồ đang giữ. true = đã đổi món.
+     */
+    static boolean tidyLore(ItemStack it) {
+        if (it == null || !it.hasItemMeta() || it.getItemMeta().getPersistentDataContainer().has(TIDY_KEY)) {
+            return false;
+        }
+        ItemMeta meta = it.getItemMeta();
+        List<Component> lore = meta.lore();
+        if (lore == null || lore.isEmpty()) {
+            return false;
+        }
+        var plain = net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer.plainText();
+        List<Component> entries = new ArrayList<>();
+        boolean vanillaDone = false;
+        int k = 0;
+        for (; k < lore.size(); k++) {
+            String t = plain.serialize(lore.get(k)).trim();
+            if (t.isEmpty()) {
+                break;
+            }
+            if (t.contains(" · ")) {   // dòng phù phép game đã gộp (có thể đã thành tiếng Anh): dựng lại từ dữ liệu phù phép
+                boolean all = java.util.Arrays.stream(t.split(" · ")).allMatch(x -> ENCH_ENTRY.matcher(x.trim()).matches() || x.trim().matches("^[\\p{L}][\\p{L} '’-]{0,30}$"));   // phù phép 1 cấp không ghi cấp
+                if (!all || !meta.hasItemFlag(ItemFlag.HIDE_ENCHANTS)) {
+                    break;
+                }
+                if (!vanillaDone) {
+                    entries.addAll(enchEntries(meta.getEnchants()));
+                    vanillaDone = true;
+                }
+                continue;
+            }
+            if (!ENCH_ENTRY.matcher(t).matches()) {
+                break;
+            }
+            entries.add(lore.get(k));
+        }
+        if (entries.isEmpty()) {
+            return false;
+        }
+        List<Component> out = new ArrayList<>(pack(entries, 3));
+        out.addAll(lore.subList(k, lore.size()));
+        meta.lore(out);
+        meta.getPersistentDataContainer().set(TIDY_KEY, org.bukkit.persistence.PersistentDataType.BYTE, (byte) 1);
+        it.setItemMeta(meta);
+        return true;
     }
 
     /** "Khi mặc: +6 Giáp · +2 Độ cứng giáp" thay cho khối "Khi ở ngực: …" của game. Đồ chưa có chỉ số riêng thì chép chỉ số gốc vào
@@ -547,6 +667,7 @@ final class ItemLibrary {
                 }
             }
         }
+        tidyLore(item);   // gom phù phép 3 cái một dòng (sau khi CE ghi mô tả)
         return item;
     }
 

@@ -7,6 +7,19 @@
 
 ## 27/10/2026 tối: TRẠNG THÁI KHI CHUYỂN TÀI KHOẢN (đọc mục này trước)
 
+- **27/10 đêm (commit 52a4704 … BotView, ĐÃ LÊN: botfarm + panel 22:57, banghoi-1 restart 23:04 lúc 0 người thật):**
+  - Trang Bot: nhãn "Ở spawn" (botfarm dò spawn từng server bằng lệnh console tại "~ ~"), bấm tên bot trong khung chat để chọn bot,
+    bot tự chat với nhau (TALKS trong botfarm/app.js, bật/tắt + khoảng phút ở trang Bot, data/botfarm/chat.json; chủ server đã bật 3–7 phút).
+    Bot mới hết điểm gợi ý thì tự ra khu ngẫu nhiên.
+  - Bot rớt "Timed out" ~3 lần/phút: KHÔNG phải mạng mà Paper ngắt vì trả keep-alive SAI THỨ TỰ (trễ ngẫu nhiên từng gói). Đã xếp hàng, 0 lần từ 20:03.
+  - `kill` trên banghoi-1 là lệnh Essentials (chỉ người chơi): marker / thực thể phải dùng `minecraft:kill` (đã sót ~4.400 marker botfarm_y, đã dọn).
+  - Dơi tích dần quanh bot (4.400 con): botfarm 10 phút xoá dơi trong 160 ô quanh bot (trừ 48 ô quanh người thật). Có vẻ dơi bay ra vùng
+    nạp-nhưng-không-chạy rồi không bao giờ biến mất (lưu cả vào chunk): sau restart nạp lại ~850 con.
+  - Botfarm sập 22:51 "JavaScript heap out of memory" (4 GB): bot nhận địa hình 12 chunk. Nay viewDistance tiny (~380 MB sau restart, theo dõi tiếp).
+  - Server gần quá tải với 22 bot (5.578 chunk, MSPT 43,5): DuckyMoMoCore BotView đặt bot (IP 10.30.x.x) simulation/view distance 2
+    (config bot-view.*). Sau restart: 1.495 chunk, MSPT ~27, CPU banghoi-1 138% -> 86%.
+  - Kiểm người thật trước restart: `app.online_stats()['nguoi']` trong panel (loại bot). tools/bottest/restart_safe.sh đếm cả bot nên luôn từ chối.
+
 - **27/10 khuya (commit a1ce437, ĐÃ LÊN SERVER 17:49 + đã thử: bot Thu_TaoBot tạo/vào/xoá, quyền có trước khi vào, không [+]/[-], Sáng tạo, IP 10.30.21.31; ping proxy 20/500, rê chuột trống; bot thử đã /choilai):** trang Bot tạo / xoá bot mới
   (botfarm action create/remove, panel kiểm tên trùng usercache.json), danh sách server không hiện tên người chơi khi rê chuột
   (core-velocity BotCount xoá sample). Triển khai khi không có người thật: `./ops/build-core.sh` → `docker compose up -d --build botfarm panel`

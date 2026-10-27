@@ -1,6 +1,6 @@
 # DuckyMoMo Network: hướng dẫn cho Claude
 
-- Đọc `docs/HANDOFF.md` trước tiên (mục 0000000000 = mới nhất 22/10 trưa: test bot THEO CÀI ĐẶT WEB, công cụ tools/cai-dat-lech.py, mục "22/10/2026 (cả ngày, phiên song song skill + Sách cấm + rank)" = 36 phù phép riêng, Sách cấm, balo + chờ dịch chuyển theo rank, dọn món Vàng hết hạn, ĐÃ lên game nhưng CHƯA COMMIT, có danh sách file + việc còn lại; 000000000 = 21/10 tối muộn: test bot + Liên minh Hoà Bình; 00000000 = kết quả tự test bằng bot, dữ liệu test cần dọn, câu hỏi chờ; rồi 0000000, 000000, 00000, 0000, 000): trạng thái hiện tại, chi tiết kỹ thuật, việc tiếp theo. Việc cần test trong game: `docs/TEST-CHECKLIST.md`; kết quả lộ trình test: `docs/lo-trinh-test-ketqua.json`; test bằng bot: `tools/bottest/`.
+- Đọc `docs/HANDOFF.md` trước tiên: các mục có ngày ở đầu file là mới nhất (bắt đầu từ "27/10/2026 tối: TRẠNG THÁI KHI CHUYỂN TÀI KHOẢN"), đọc từ trên xuống; sau đó mới tới mục 0000000000 (22/10) và các mục 000… cũ hơn. Việc cần test trong game: `docs/TEST-CHECKLIST.md`; kết quả lộ trình test: `docs/lo-trinh-test-ketqua.json`; test bằng bot: `tools/bottest/`; bot "người chơi" cho server đỡ vắng: `botfarm/` + trang quản trị › Bot.
 - Trả lời người dùng bằng **tiếng Việt**, thực tế, nói rõ chỗ nào chưa chắc hoặc cần kiểm tra lại.
 - Hạ tầng **chỉ dùng Docker Compose**: mỗi thành phần hoặc chế độ một `compose.yaml`, file gốc dùng `include`.
 - **Không commit mật khẩu.** Mật khẩu để trong `.env`; file cấu hình dùng `${CFG_TEN_BIEN}` (image itzg tự điền).

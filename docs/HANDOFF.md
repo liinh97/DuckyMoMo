@@ -1,9 +1,26 @@
 # Bàn giao dự án DuckyMoMo Network
 
-> Dùng file này để tiếp tục ở session hoặc tài khoản Claude khác. Cập nhật: 22/10/2026 chiều. ĐỌC MỤC 0000000000 TRƯỚC và mục "22/10/2026 (cả ngày, phiên song song skill + Sách cấm + rank)" ngay dưới (đã triển khai, CHƯA COMMIT, danh sách file + việc còn lại), rồi 000000000, 00000000, 0000000, 000000, 00000, 0000, 000, 00, 0.
+> Dùng file này để tiếp tục ở session hoặc tài khoản Claude khác. Cập nhật: 27/10/2026 tối. ĐỌC TỪ TRÊN XUỐNG: các mục có ngày ở đầu file là mới nhất (27/10 tối -> 27/10 chiều -> trưa -> rạng sáng -> 26/10), rồi mới tới mục 0000000000 (22/10) và các mục 000… cũ hơn.
 > Đọc kèm: `README.md`, `docs/minecraft-server-plan.md` (kế hoạch, quyết định), `docs/network-architecture.md` (kiến trúc).
 
 ---
+
+## 27/10/2026 tối: TRẠNG THÁI KHI CHUYỂN TÀI KHOẢN (đọc mục này trước)
+
+- Git: nhánh claude/happy-ritchie-2p60v7, ĐÃ COMMIT hết phần việc 26–27/10 (1054594 … 249153e), CHƯA PUSH. Còn 2 file sửa tay của chủ server,
+  cố ý KHÔNG commit: modes/_network/settings.yml (dnl_panel_gio 12 -> 72), site/config/site.yml (Discord, donate). Đừng tự commit / hoàn tác.
+- Server đang chạy bản mới nhất: plugin core-paper (banghoi-1), core-velocity (proxy + relay), panel, botfarm đều đã build + lên.
+- Bot (trang quản trị › Bot): 20 bot online ở Bang Hội Chiến, cả 20 Sáng tạo + god, rải 20 chỗ khác nhau (kiểm 17:3x).
+  - Lỗi đã sửa 27/10 tối: RCON của server đọc mỗi lần một gói, botfarm gửi 3–4 lệnh sát nhau thì lệnh sau mất -> /gamemode lúc bot vào
+    bị bỏ, bot Sinh tồn bị quái giết / kẹt tường, rồi lệnh đưa về chỗ sau hồi sinh cũng mất nên vòng theo dõi nhận spawn làm chỗ đứng.
+    Sửa: rcon().cmd xếp hàng từng lệnh; creative() đọc lại playerGameType, thử 3 lần. Mọi code gọi RCON song song (dùng hàm rcon()) giờ an toàn.
+  - "Ngẫu nhiên": hết điểm gợi ý (SPOTS 24 điểm, 2 điểm sát spawn) thì đứng cạnh điểm đã có bot, lệch 4–6 ô (chủ server: 2 bot gần nhau cũng được).
+    Toạ độ ngẫu nhiên khắp vùng /tpr đã thử và bỏ: map quần đảo, hay rơi xuống biển.
+  - Khởi động lại botfarm = 20 bot thoát + vào lại rải rác ~5 phút, không báo [+]/[-] (quyền duckymomo.vaora.an). Vẫn nên hỏi khi có người thật.
+- Trang Hoạt động: "X mất kết nối: Disconnected" ở server cũ mà proxy ghi "X → server mới" trong 3 giây -> hiện "X rời lobby (chuyển sang banghoi-1)" (mark_switches trong panel/app.py).
+- Dọn bot test xong (64 tài khoản, /choilai admin <tên> moi). Lúc dọn vẫn hiện 46 dòng [-] khi thoát: /choilai xoá luôn quyền im lặng, cấp lại 1,5 giây trước khi thoát chưa kịp có tác dụng. Lần sau cấp lại sớm hơn / chờ lâu hơn.
+- Người chơi thật hay vào: Itrap (PC). Kiểm online trước khi restart (bot botfarm thì bỏ qua khi đếm).
+- Việc còn lại: xem mục "27/10 chiều › Còn lại" ngay dưới + docs/TEST-CHECKLIST.md mục 4j, 4k.
 
 ## 27/10/2026 chiều: MỞ HẾT MAP Bang Hội Chiến (chủ server: "mở hết đi, mùa sau build lại map hoặc tính sau")
 

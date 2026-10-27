@@ -208,7 +208,9 @@ async function pickHomeNow(name) {
 
 function make(name, host, i) {
   // keepAlive tự trả lời ngay = ping 0 ms trong Tab, trông giả: tự trả lời sau 45–60 ms (ping ~52 ms như người chơi trong nước)
-  const bot = mineflayer.createBot({ host, port: 25565, username: name, version: '1.21.4', auth: 'offline', hideErrors: true, keepAlive: false });
+  // viewDistance tiny (2 chunk): bot đứng yên, không cần thấy xa. Mặc định 'far' (12, server cắt còn 8) thì 22 bot giữ ~6.000 chunk
+  // trong RAM, botfarm phình tới 4 GB rồi sập (27/10 22:51, "JavaScript heap out of memory"); server cũng đỡ gửi chunk.
+  const bot = mineflayer.createBot({ host, port: 25565, username: name, version: '1.21.4', auth: 'offline', hideErrors: true, keepAlive: false, viewDistance: 'tiny' });
   // Trả lời đúng thứ tự nhận: Paper ngắt kết nối khi câu trả lời sai thứ tự ("keepalive response out-of-order" -> "Timed out");
   // 27/10: trễ ngẫu nhiên từng gói làm 2 gói sát nhau đảo thứ tự, bot rớt ~3 lần / phút. Xếp hàng: gói sau chỉ gửi sau gói trước.
   let kaQ = Promise.resolve();

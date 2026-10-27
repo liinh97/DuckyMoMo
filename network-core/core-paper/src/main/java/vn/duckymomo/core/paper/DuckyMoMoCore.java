@@ -364,6 +364,13 @@ public final class DuckyMoMoCore extends JavaPlugin {
             getLogger().info("Chat có prefix LuckPerms: bật");
         }
 
+        // Bot botfarm (IP 10.30.x.x) chỉ giữ vùng nhỏ quanh mình: 22 bot rải 22 khu làm server gần quá tải (27/10)
+        if (getConfig().getBoolean("bot-view.enabled", true)) {
+            int sim = getConfig().getInt("bot-view.simulation-distance", 2), view = getConfig().getInt("bot-view.view-distance", 2);
+            getServer().getPluginManager().registerEvents(new BotView(sim, view, getLogger()), this);
+            getLogger().info("Bot botfarm: simulation-distance " + sim + ", view-distance " + view);
+        }
+
         // Đảo bay (lobby): rơi xuống dưới void-teleport.below-y thì về spawn (không đặt = tắt)
         if (getConfig().isInt("void-teleport.below-y")) {
             int belowY = getConfig().getInt("void-teleport.below-y");

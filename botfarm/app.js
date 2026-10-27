@@ -74,10 +74,14 @@ function rcon(host) {
       while (buf.length >= 4) { const len = buf.readInt32LE(0); if (buf.length < len + 4) break; const rid = buf.readInt32LE(4); const body = buf.slice(12, 4 + len - 2).toString('utf8'); buf = buf.slice(4 + len); if (waiters[rid]) { const w = waiters[rid]; delete waiters[rid]; w(body); } }
     });
   }));
-  const cmd = async c => {
+  const send = async c => {
     await connect();
     return new Promise(res => { const r = id++; waiters[r] = b => res(String(b).replace(/§./g, '').replace(/\x1b\[[0-9;]*m/g, '')); sock.write(pkt(r, 2, c)); setTimeout(() => { if (waiters[r]) { delete waiters[r]; res('(timeout)'); } }, 8000); });
   };
+  // Từng lệnh một: RCON của server đọc mỗi lần một gói, hai lệnh gửi sát nhau dính chung một gói thì lệnh sau bị bỏ
+  // (27/10: /gamemode lúc bot vào bị mất -> bot Sinh tồn chết vì quái / kẹt tường)
+  let queue = Promise.resolve();
+  const cmd = c => { const p = queue.then(() => send(c)); queue = p.catch(() => {}); return p; };
   return (RCON[host] = { cmd });
 }
 
@@ -218,11 +222,22 @@ async function connect(name) {
     if (!st.silent) {   // vào / ra không báo [+] [-] (DuckyMoMoCore DonateRanks: duckymomo.vaora.an), cấp một lần
       rcon(host).cmd(`lp user ${name} permission set duckymomo.vaora.an true`).then(() => { st.silent = true; save(); }).catch(() => {});
     }
-    rcon(host).cmd(`gamemode creative ${name}`).catch(() => {});   // mỗi lần xuất hiện (cả sau hồi sinh / đổi thế giới), sau khi đã vào hẳn
-    rcon(host).cmd(`god ${name} on`).catch(() => {});
+    creative(name, host).catch(() => {});   // mỗi lần xuất hiện (cả sau hồi sinh / đổi thế giới), sau khi đã vào hẳn
     place(name, bot).catch(e => log(name, 'lỗi đặt chỗ:', e.message)).finally(() => { rt.placing = false; rt.placedAt = Date.now(); });
   });
   setTimeout(() => { if (rt.connecting && !rt.bot) { rt.err = 'vào không được (quá 40 giây)'; try { bot.quit(); } catch (e) { /* bỏ qua */ } rt.connecting = false; rt.retryAt = Date.now() + 60000; } }, 40000);
+}
+
+/** Sáng tạo + bất tử, đọc lại chế độ chơi cho chắc (thử tối đa 3 lần). */
+async function creative(name, host) {
+  const R = rcon(host);
+  for (let i = 0; i < 3; i++) {
+    await R.cmd(`gamemode creative ${name}`);
+    await R.cmd(`god ${name} on`);
+    if (/data: 1$/.test((await R.cmd(`data get entity ${name} playerGameType`)).trim())) return;
+    await sleep(2000);
+  }
+  log(name, 'không chuyển được Sáng tạo');
 }
 
 /** Đưa bot về chỗ đang đứng (at) hoặc chỗ mặc định (home); chết 2 lần trong 3 phút sau khi đặt ở một chỗ thì bỏ chỗ đó. */

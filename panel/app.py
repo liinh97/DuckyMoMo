@@ -1522,38 +1522,25 @@ def read_activity(params):
 
 
 def online_stats():
-    """Số đang online cạnh nút Live (27/10): người thật / bot (botfarm) tổng và theo server, kèm tên người thật. Lỗi thì None.
-    Tổng lấy từ CON SỐ ở đầu kết quả minecraft:list (danh sách tên bị cắt "..." sau ~14 người), bot lấy từ botfarm,
-    người thật = tổng - bot. Tên người thật chỉ từ phần tên chưa bị cắt (thiếu thì "con" > 0)."""
+    """Số đang online cạnh nút Live (27/10): người thật / bot (botfarm) tổng và theo server, kèm tên người thật. Lỗi thì None."""
     def load():
-        bots = bot_json().get("bots", [])
-        bot_on = {}
-        for b in bots:
-            if b.get("online"):
-                bot_on[b.get("server")] = bot_on.get(b.get("server"), 0) + 1
-        bot_names = {str(b.get("name", "")).lower() for b in bots}
+        bots = {str(b.get("name", "")).lower() for b in bot_json().get("bots", [])}
         out = {"nguoi": 0, "bot": 0, "theo_server": {}, "ten": [], "con": 0}
-        for srv in GAME_SERVERS:
-            try:
-                text = rcon(srv, ["minecraft:list"])[0][1]
-            except Exception:
-                continue
-            m = re.search(r"(\d+)", text)
-            total = int(m.group(1)) if m else 0
-            nb = min(bot_on.get(srv, 0), total)
-            if total:
-                out["theo_server"][srv] = {"nguoi": total - nb, "bot": nb}
-            out["nguoi"] += total - nb
-            out["bot"] += nb
-            names = text.split(":", 1)[1] if ":" in text else ""
-            real = [n.strip().split(" ")[-1] for n in re.split(r"[,\n]", names)]
-            out["ten"] += [n for n in real if PLAYER_RE.match(n) and n.lower() not in bot_names]
-        out["con"] = max(0, out["nguoi"] - len(out["ten"]))
+        for name, srv in sorted(online_players(fresh=True).items()):
+            k = "bot" if name in bots else "nguoi"
+            out[k] += 1
+            out["theo_server"].setdefault(srv, {"nguoi": 0, "bot": 0})[k] += 1
+        out["ten"] = sorted(n for n in names_cased() if n.lower() not in bots)
         return out
     try:
         return web_cached("online_stats", 10, load)
     except Exception:
         return None
+
+
+def names_cased():
+    """Tên đúng hoa thường của người đang online (đọc lại từ lần dò gần nhất trong online_players)."""
+    return list(_web_cache.get("online_cased", (0, []))[1])
 
 
 def mark_switches(events):
@@ -2005,9 +1992,7 @@ def thuvien_json():
         items.append(it)
     online = []
     try:
-        out = rcon(LIB_SERVER, ["minecraft:list"])[0][1]
-        names = out.split(":", 1)[1] if ":" in out else ""
-        online = [n.strip().split(" ")[-1] for n in re.split(r"[,\n]", names) if n.strip()]
+        online = server_online_names(LIB_SERVER)
     except Exception:
         pass
     meta = lib_meta()
@@ -2718,24 +2703,37 @@ def web_log(event):
         print(f"Không ghi được {WEB_LOG_FILE}: {e}", flush=True)
 
 
+def server_online_names(srv):
+    """Tên THẬT của mọi người đang ở một server con (27/10). minecraft:list cắt danh sách sau ~14 tên ("..."), essentials:list
+    hiện tên /nick: chạy "experience query" cho từng người (@a), mỗi người một câu "<tên> has N experience levels", đủ hết."""
+    text = rcon(srv, ["minecraft:execute as @a run minecraft:experience query @s levels"])[0][1]
+    names = re.findall(r"([.A-Za-z0-9_]{1,17}) has -?\d+ experience levels?", text)
+    if names or "has" in text:
+        return names
+    # phòng khi câu trả lời đổi ngôn ngữ: quay về minecraft:list (có thể thiếu tên khi đông)
+    out = rcon(srv, ["minecraft:list"])[0][1]
+    tail = out.split(":", 1)[1] if ":" in out else ""
+    return [n.strip().split(" ")[-1] for n in re.split(r"[,\n]", tail) if n.strip() and n.strip() != "..."]
+
+
 def online_players(fresh=False):
     """{tên thường: server} của người đang online ở lobby/banghoi/practice (giữ 15 giây; fresh=True: hỏi lại ngay)."""
     if fresh:
         with _web_lock:
             _web_cache.pop("online", None)
     def load():
-        out = {}
+        out, cased = {}, []
         for srv in GAME_SERVERS:
-            # list gốc của Minecraft: luôn tên thật (list của Essentials hiện tên /nick, vd ~b0ybn2013)
             try:
-                text = rcon(srv, ["minecraft:list"])[0][1]
+                names = server_online_names(srv)
             except Exception:
                 continue
-            names = text.split(":", 1)[1] if ":" in text else ""
-            for n in re.split(r"[,\n]", names):
-                n = n.strip().split(" ")[-1]
+            for n in names:
                 if PLAYER_RE.match(n):
                     out[n.lower()] = srv
+                    cased.append(n)
+        with _web_lock:
+            _web_cache["online_cased"] = (time.time(), cased)
         return out
     return web_cached("online", 15, load)
 

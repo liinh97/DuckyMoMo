@@ -21,6 +21,11 @@
 - Trang Hoạt động (9686cd0): nhãn Bot / PC / BE trước tên trong dòng chat; ↑ / ↓ trong ô gửi gọi lại tin / lệnh (localStorage 50 dòng).
 - Botfarm: câu chat mới (giao dịch, shop, cách chơi; bỏ câu dính giờ giấc) đã lên.
 - Bot thử ThuVL đã /choilai admin ThuVL moi.
+- 28/10 sáng (restart banghoi-1 lúc Itrap online, chủ server đồng ý): chuỗi việc lữ khách (7148fa2), khối ô khảm [0/n] (f7b9b53),
+  bấm Già Làng trả thưởng ngay + lời NPC đợi đóng hội thoại (3b59494), chữ dễ đọc (48d7d67), BetonQuest only_buttons + ẩn "Đối thoại với".
+  Bot đã thử (vl-lk.js): Kỹ Sư nộp 64 đá đỏ -> 400 xu + giao bước 2; /nhiemvu phần lữ khách; Mũ Thần Thánh +3 hiện [0/4] + 4 ô trống.
+  CHƯA THỬ: đếm hạ quái của chuỗi (bot qua Via không giết được nhện, cả nhiệm vụ ngày cũng 0 -> lỗi cách thử; cùng đường code với nhiệm vụ
+  ngày), hội thoại thật với lữ khách / Già Làng (câu mới, câu "xong rồi à?"), lời NPC hiện sau khi đóng bảng. Bot ThuLK đã /choilai.
 
 ## 27/10/2026 tối: TRẠNG THÁI KHI CHUYỂN TÀI KHOẢN (đọc mục này trước)
 

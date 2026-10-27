@@ -349,6 +349,33 @@ Bảng giá đầy đủ: `docs/dinh-gia-xu.html` (artifact SeZHthvXRXHusvgPqknX
 - [ ] Rời nghề (/jobs leave hoặc trong menu) ngoài đất hoà bình cũng bị chặn; mở /jobs để xem thì ở đâu cũng được; /choilai vẫn rời nghề được.
 - [ ] Vào nghề ngoài đất hoà bình (đất hoang, thị trấn thường) bị chặn kèm lời nhắc; trong kinh đô / vòng quanh spawn / thị trấn hoà bình thì được; dân của thị trấn hoà bình vào nghề ở đâu cũng được.
 
+## 4i. 26/10: Làm quen tính năng (/nhiemvu), NPC, /sell
+- [ ] /nhiemvu hiện nhóm Làm quen; làm từng việc thấy "✔ Làm quen: …" + quà đúng: điểm danh, gacha, mua ở /warp shop (chuột trái khung), bán (chuột phải khung, /sell hand), câu cá, nấu ăn, chợ đen treo / đặt đơn / giao đơn, trade 2 người, tinh luyện, Xưởng, Thợ Rèn, bắt pet (tính sau tối đa 1 phút), vào thị trấn (kiểm mỗi phút), kho lương, danh phận, Thăng Cấp, vào dungeon, vượt dungeon, lệnh săn, kho báu, Đấu Trường.
+- [ ] Xong hết 23 việc: thưởng thêm 2.000 xu một lần.
+- [ ] /sell bán được món có dấu _ (lưu ly, sắt thô, gỗ…); sửa giá trên Cài đặt rồi /worth vẫn đúng giá mới.
+- [ ] Người thường không phá được khối dưới chân lữ khách / NPC chợ; TNT gần NPC không làm mất khối đó.
+- [ ] Già Làng sau chương 1: hội thoại "Giờ cháu nên làm gì" hiện đủ 2 câu, cuối có 5 dòng chỉ việc trong chat.
+- [ ] Vào dungeon thấy dòng nhắc /em quit; /em quit ra được (xem bị đưa về đâu, có mất vé không).
+- [ ] Trang Hoạt động: gõ /fly <tên> trên Bang Hội Chiến chạy được; chọn Cả mạng thì bị chặn.
+
+## 4j. 27/10: Khảm Tinh Luyện, Thợ Rèn set cao, Đơn nhà buôn
+- [ ] /thoren kham với đồ không có ô: báo cầm đồ set có ô + bảng số ô. Đồ Tinh Anh +3 có 1 ô, Cao Cấp +5 có 2, Huyền Thoại 3.
+- [x] Khảm từng loại ngọc: lore, máu, tốc chạy, tốc đánh, kinh nghiệm, giảm st, hút máu (bot 27/10). Ngọc Than vũ khí nay là +% st lên mục tiêu đang cháy: [ ] thử bằng người.
+- [x] Trần: 6 ngọc Sắt (12%) -> 10%; rìu tốc đánh 11% -> 10% (bot 27/10).
+- [x] Chậm mòn ngọc Đồng (bot 27/10, giày: bớt ~57%). [ ] Tháo: trừ 2.000 xu, khoảng một nửa số lần vỡ. Không đủ xu thì không tháo.
+- [x] Đổi chủ đồ khảm giữ ngọc; vào lại game giữ ngọc (bot 27/10). [ ] Trade bằng giao diện /trade thật giữa 2 người.
+- [x] Phẩm ngẫu nhiên, năng lượng giáp/vũ khí, nạp, tháo giữ phẩm, cạn thì vỡ (bot 27/10, năng lượng tạm 20). [ ] Người thật: không nghe tiếng mặc giáp lạ khi đánh nhau; thanh năng lượng trên lore; nhắc khi còn 10%.
+- [x] Hào quang: số chấm + cỡ theo phẩm và năng lượng, người khác thấy, /caidat tắt được, vỡ có bùng hạt + tiếng (bot 27/10). [ ] Nhìn bằng mắt: màu từng loại, Thường / Tốt / Hoàn Mỹ khác độ sáng, năng lượng thấp thì mờ; người khác thấy; /caidat tắt "hat" thì không thấy của người khác; vỡ ngọc có bùng hạt + tiếng.
+- [ ] Rèn Cao Cấp +0 / Huyền Thoại +0 đòi đúng Tinh Luyện; thiếu thì báo.
+- [x] NPC Nhà Buôn bấm mở đơn; sang tuần mới xoá lượt + báo (bot 27/10). [ ] Người thật: NPC Nhà Buôn ở /warp shop: bấm mở 3 đơn, giao được 1 lần/đơn, lượt giảm, đơn đổi vào thứ Hai + có thông báo.
+
+## 4k. 27/10 chiều: mở hết map, Bot, nhãn thiết bị
+- [ ] /tpr ra trong khu đã dựng (rtp.border 11200..15100 × -3200..1100), không chờ sinh map lâu. 4 vùng mới (malai, philippines, borneo, java) hiện trong /tpr.
+- [ ] Dungeon từng gắn mốc khai hoang vào được ngay.
+- [ ] Trang quản trị › Bot: Vào/Thoát từng bot, chọn server, Ngẫu nhiên, Đi tới X Z, /spawn, /tpaccept, Chat; không thấy dòng [+]/[-] trong game khi bot vào/ra.
+- [ ] Danh sách server (máy tính) hiện số người gồm bot, ping bot ~52.
+- [ ] Trang Hoạt động: nhãn PC trước tên người chơi máy tính, BE trước người Bedrock (chưa có người Bedrock thử).
+
 ## 5. Quảng trường Danh vọng (sảnh)
 - [ ] (CHƯA CẦN, làm khi gần mở server) Chọn chỗ trống ở sảnh (map sakura). Đứng, quay mặt về phía người xem: `/vinhdanh dat moinhat tieude`, rồi `bachu`, `chienthan`, `phuho`,
       `kientrucsu`, `dautruong`, `pet` ở các chỗ khác. Bảng chữ nổi + đầu người chơi đúng hướng, không đè nhau.

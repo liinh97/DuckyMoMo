@@ -5,6 +5,104 @@
 
 ---
 
+## 27/10/2026 chiều: MỞ HẾT MAP Bang Hội Chiến (chủ server: "mở hết đi, mùa sau build lại map hoặc tính sau")
+
+- Gỡ viền mùa ChunkyBorder (chunky border remove world; borders.json rỗng). Cài đặt › Thế giới: border_x/z = 29000000 (Áp dụng lại tất cả không thu viền).
+- Tắt khai hoang (frontier.enabled false: mốc chạy lệnh đặt viền nhỏ lại). Gỡ requires 4 vùng /tpr (malai, philippines, borneo, java) cho hiện luôn.
+- Mùa sau: dựng map mới, bật lại khai hoang + viền nếu muốn.
+- Bot: quyền duckymomo.vaora.an (DonateRanks không báo [+]/[-]); bot không còn thoát ra vào lại sau tp (đã thử: bot tự theo lệnh tp);
+  vào rải rác 8–20 giây; ground() chờ khu nạp xong. Plugin + botfarm áp dụng bằng tác vụ chờ vắng người thật.
+- /tpr giới hạn trong rtp.border [11200, -3200, 15100, 1100] (khu đã dựng + Chunky nạp sẵn tâm 13150 -1050) cho khỏi lag sinh map xa.
+  Thông tin người chơi: huongdan "Bản đồ mùa này" thay "Khai hoang".
+- Dọn bot test (tools/bottest/don-bot.js: /choilai admin <tên> moi, thoát im lặng): 7 + 57 tài khoản Thu*, HQ_*, NL_*, Pham_*, Mon_*, HM_*...
+- Log [+]/[-] ở trang Hoạt động lúc 16:34–16:38 là bot ngắt thật do restart banghoi-1 + build lại botfarm, KHÔNG phải chuyển sảnh -> Bang Hội.
+
+### Còn lại (chưa làm / chưa thử, commit 27/10 tối)
+- Nhãn thiết bị Bedrock (DeviceLog đọc Floodgate) chưa thử với người Bedrock thật; PC đã thấy nhãn.
+- Màu hào quang từng loại ngọc: chủ server mới xem một số loại, chưa xem hết bằng mắt.
+- /trade (TradePro) đổi đồ có ngọc khảm: chưa thử giao diện thật (dữ liệu PDC theo món nên dự kiến giữ nguyên).
+- 22/25 nhiệm vụ Làm quen chưa chạy bằng bot (đã thử: mua shop, bán, đơn nhà buôn).
+- Ý tưởng Tinh Luyện để sau: đổi kiểu vũ khí, vật tư công thành, chìa dungeon, danh hiệu, bảng Phú Hộ.
+- Tuỳ chọn: ẩn dòng vào/ra của bot ở trang Hoạt động (chủ server chưa chốt).
+- Chunky nạp trước khu dựng: 90% lúc 16:42, xem `chunky progress` đã xong chưa.
+- Mùa sau: map mới, bật lại frontier + viền, thêm lại requires các vùng /tpr, nới/đổi rtp.border.
+- modes/_network/settings.yml (dnl_panel_gio 12 -> 72) và site/config/site.yml (Discord, donate) là sửa tay của chủ server, KHÔNG nằm trong commit.
+
+## 27/10/2026 trưa: trang quản trị › Bot (dịch vụ botfarm), chốt kiểu hạt hào quang
+
+- Chủ server muốn server đỡ vắng: 20 bot (botfarm/, compose, chi tiết camnang "Bot"). Bật sẵn 7 bot đứng 7 khu Bang Hội Chiến; 13 bot còn lại tắt,
+  chủ server bật ở trang Bot. Thay cho tools/bottest/dung-spawn.js + container docker run tay (đã gỡ). Bot vào thẳng server con nên KHÔNG tính
+  vào số người ở proxy; plugin proxy BotCount (core-velocity) cộng số bot online vào danh sách server (đã restart proxy + relay 15:18, ping qua
+  VPS thấy 7/500 + tên bot). Bot: Sáng tạo + /god (hết chết vì quái), keep-alive trễ 45–60 ms (ping ~52 ms). Đã thử bằng hàm backend: danh sách, vào Sảnh (AuthMe tự đăng ký), nói,
+  gõ lệnh. CHƯA mở trang Bot bằng trình duyệt (không đăng nhập Playwright vì phải đọc mật khẩu panel).
+- Grim TickTimer: mineflayer không gửi client_tick_end -> Grim báo liên tục; bot gửi tick_end mỗi 50 ms (botfarm + tools/bottest/h.js) thì 0 báo.
+  (Cấp grim.exempt cho bot bị hệ thống chặn: nới chống hack.)
+- Hào quang chốt (chủ server xem bằng bot trưng bày): Thường cham, Tốt xoay (ENTITY_EFFECT), Hoàn Mỹ xoan-oc × mat-do 0,5. ĐÃ lên server 11:44.
+- Sửa lỗi DungeonGate.onJoin (NPE PermissionAttachment khi thoát rồi vào lại trong 1 giây: hẹn giờ giữ đối tượng người chơi cũ) -> lấy
+  Bukkit.getPlayer(uuid) + chặn addAttachment trả null; PetCapture.grant cũng chặn null. Đã restart banghoi-1 lúc vắng (chỉ bot), 0 lỗi.
+- Dọn khi xong: bot test Thu*, HQ_*, NL_*, Pham_*, Mon_*, Tot_Xoay, HM_*, HoanMy_NL25 có tài khoản LuckPerms/Essentials/hoatdong (đã xoá đồ).
+
+## 27/10/2026 rạng sáng: Tinh Luyện thành đồ cày giá trị — Khảm, Thợ Rèn set cao, Đơn nhà buôn
+
+- Chủ server chốt: Tinh Luyện là đồ cày khó, giá trị thật (giữ công thức 64 khối), dùng trao đổi các set; làm theo thứ tự đề xuất, số liệu Claude tự cân.
+- KHẢM (/thoren kham, Kham.java, config kham): ô theo set (Tinh Anh +3..+5: 1, Cao Cấp 1 / +5: 2, Huyền Thoại 3, Thần Thoại 3, Thần Thánh 4).
+  Khảm luôn được, tháo 2.000 xu + 50% vỡ (chủ server chọn vỡ 50%). 9 ngọc, chỉ số giáp/vũ khí khác nhau, trần cả người (+10% máu, -8% st nhận,
+  +12% st…). Ngọc theo sang khi nâng cấp (Kham.carry trong ThoRen.upgrade + updateItems). Việc làm quen "kham" (+500).
+- THỢ RÈN: cấp +0 của Cao Cấp / Huyền Thoại / Thần Thoại / Thần Thánh thêm Tinh Luyện (xem camnang "Thợ Rèn đòi Tinh Luyện").
+- ĐƠN NHÀ BUÔN (NPC Nhà Buôn ở /warp shop, không có lệnh; DonBuon.java, config don-buon): 3 đơn/tuần, trả 120% giá bán Tinh Luyện + vé gacha, 10 lượt/đơn cả server,
+  mỗi người mỗi đơn 1 lần/tuần. Việc làm quen "donbuon" (+500). Tuần W44: đơn 8 (Địa Linh 8 + Đồng 1), 4 (Đá Đỏ 3 + Lưu Ly 1), 2 (Đồng 3 + Than 1).
+- Bot đã thử (kham.js, kham-nang.js): khảm 2 ngọc, máu tăng khi mặc, tháo (trừ 2.000, ngọc về), giao đơn (3.600 xu + vé), nâng Cao Cấp +5 ->
+  Huyền Thoại +0 giữ ngọc [2/3]. Dữ liệu đơn của bot đã xoá (dmm reload). Bot ThuKham: đã xoá đồ, tiền về 0 (còn ghi nhận làm quen).
+- 27/10 sáng: Nhà Buôn thành NPC (dân làng tắt AI, chữ nổi) ở khu shop 12788 72 -2648 cạnh NPC Cửa hàng, KHÔNG có lệnh (/tinhluyen don đã bỏ);
+  đặt/gỡ: /dmm donbuonnpc [remove] (console: <x> <y> <z> <yaw>). Mở theo interact_at hoặc interact (bỏ cú thứ hai trong 300 ms).
+  Ngọc Than trên vũ khí đổi từ "đốt 10%" sang +6% sát thương lên mục tiêu đang cháy (st-chay, trần 18%): mọi vũ khí set có ô đều sẵn Lửa II.
+  Chặn khảm vào chồng nhiều món (dmm laydo <mã> 2 cho ra chồng 2 giày -> 1 ngọc thành 2). Menu khảm hiện "Đang có (cả người)" + chạm trần.
+  Vé gacha cũ ghi "/hom": sửa Thư viện đồ + Crates.refreshTickets dựng lại vé trong túi / rương Ender khi vào game và khi mở gacha.
+  BOT ĐÃ THỬ (kham-chiso, kham-dr, kham-con, kham-trade, kham-dot, npc-donbuon, db-tuan, ve-cu): trần máu 10%, tốc chạy 1,5%, trần tốc đánh 10%,
+  kinh nghiệm +5% (100 -> 105), giảm sát thương (12 lần: trơn TB 5,7 / khảm 5,4, nhiễu do phù phép CE), hút máu có hồi, vào lại game giữ ngọc
+  (7 món), đổi chủ giữ ngọc, NPC mở đơn, sang tuần mới xoá lượt + báo cả server, vé cũ tự đổi chữ.
+  Chậm mòn (giày 3 Đồng, 120 đòn cactus 16, đọc độ mòn từ server): trơn 12/11/17, khảm 0/11/6 (bớt ~57%, kỳ vọng 45%). Lưu ý: /damage generic
+  KHÔNG làm mòn giáp, dùng cactus. Bot cần dọn khi test xong hẳn (/choilai admin <tên> moi, phải online): ThuLuuLy, ThuGl, ThuLamQuen, ThuKham,
+  ThuKhamCS (còn bộ Huyền Thoại khảm trong túi), ThuKhamDR, ThuKhamA, ThuKhamB, ThuKhamDot, ThuKhamM, ThuNhaBuon, ThuVeCu.
+- NĂNG LƯỢNG + PHẨM NGỌC (chủ server chốt 27/10, thay cho "sửa đồ set bằng Tinh Luyện"): khảm tung phẩm Thường/Tốt/Hoàn Mỹ (% hiệu năng ngẫu nhiên),
+  năng lượng 5.000 (giáp -1/đòn nhận từ quái/người, không tính ngã/cháy/độc; vũ khí -1/con hạ, trùm -10 — đổi 27/10 trưa, bot kham-nl2 đã thử), cạn thì vỡ; nạp đầy = 1 Tinh Luyện cùng loại + 1.000 xu; tháo giữ phẩm + năng lượng;
+  ngọc khảm trước đó = Thường 100% đầy. Chi tiết kỹ thuật: camnang "Khảm Tinh Luyện". Bot đã thử (kham-nl, kham-vo, năng lượng tạm 20): phẩm,
+  giáp 8 đòn -> 60%, vũ khí 3 nhát trúng -> 85%, nạp (trừ 1.000 + 1 Sắt), tháo rồi khảm lại đúng phẩm, 25 đòn -> vỡ + báo + ô trống.
+  2 lỗi đã sửa khi test: tháo giáp làm mất phần năng lượng chờ (né hao), mòn độ bền bị coi là đổi giáp (sameGear: so mã thư viện + ngọc).
+  HÀO QUANG + hiệu ứng vỡ (27/10 chiều, chủ server): xem camnang "Khảm Tinh Luyện". Bot haoquang.js: B thấy 125 hạt/5 giây, tắt /caidat hat
+  thì 0; vỡ ngọc B thấy bùng hạt + nghe tiếng; kiếm vẫn nguyên chỉ số. ĐO (haoquang-do2.js, haoquang-hm.js, B đếm 6 giây, kiếm 1 ngọc):
+  Thường đầy 30 chấm cỡ 0,55; Tốt đầy 60 / 0,85 -> 50%: 41 / 0,62 -> 25%: 25 / 0,50 -> 10%: 19 / 0,43; Hoàn Mỹ đầy 90 / 1,15 + 3 tia END_ROD.
+  Khớp công thức. Rút năng lượng bằng cách cho bot hạ "trùm" tên 『N』 (-10/con).
+  CHỦ SERVER XEM TẬN MẮT 27/10 chiều (bot trưng bày tools/bottest/trungbay-ngoc.js, ngọc ghi thẳng bằng /item modify set_custom_data): màu + vị trí OK
+  (Kim Cương đổi #00E5FF, Sắt #F2F2F2 cho khỏi lẫn); phẩm phân biệt bằng KIỂU hạt, cùng độ dày mức NL_100: Thường chấm, Tốt xoáy (ENTITY_EFFECT),
+  Hoàn Mỹ xoắn ốc (TRAIL) × 0,5 (mat-do: cần bản build mới, áp dụng ở lần khởi động lại sau 27/10 chiều).
+- GHI CHÚ ĐỂ TÍNH SAU (chủ server: "đáng suy nghĩ, cứ note lại"): SỬA ĐỒ SET CAO CẤP bằng Tinh Luyện — đồ set vẫn mòn; từ Cao Cấp trở lên sửa bằng
+  Tinh Luyện cùng chất liệu (vd giáp Huyền Thoại: 1 Sắt hồi 25% độ bền) hoặc xu đắt; chặn sửa bằng đe cho đồ set cao. Là chỗ tiêu Tinh Luyện đều
+  đặn. Các ý khác chưa làm: đổi kiểu vũ khí trong set (1 Tinh Luyện), vật tư công thành (Tinh Luyện Đá/Sắt), mở dungeon bậc cao bằng Tinh Luyện,
+  danh hiệu đổi bằng Tinh Luyện, bảng "Phú Hộ".
+- CHƯA COMMIT.
+
+## 26/10/2026 tối: bán /sell hỏng ~690 món, Làm quen tính năng, NPC rơi, Già Làng chỉ việc tiếp, lệnh console ở trang Hoạt động
+
+- /sell HỎNG từ 20/10 (bang-gia.py ghi worth.yml tên có dấu _): EssentialsX tra giá theo tên BỎ dấu _ (lapislazuli) nên mọi món có dấu _
+  (lapis_lazuli, raw_iron, oak_log, gold_ingot…) báo "không thể bán". Sửa: tools/shop/worth-essentials.py thêm khối tên liền cuối worth.yml
+  (689 dòng), bang-gia.py tự gọi, panel mirror_worth khi lưu giá. Đã /essentials reload, kiểm /worth đủ 772 món đều có giá.
+  Hệ quả kinh tế: trước giờ người chơi gần như chỉ bán được món tên một chữ (diamond, coal, wheat…); nay bán được hết, theo dõi tiền vào.
+- Làm quen tính năng (/nhiemvu, DailyQuests intro): 23 việc mỗi việc quà 1 lần, làm song song; tổng 8.150 xu + 2.000 xong hết. Quà ở Cài đặt ›
+  Nhiệm vụ hằng ngày (nv_intro_*). Bot ĐÃ thử: /quests, danh sách, việc "ban" (+150). CHƯA thử: các việc còn lại (TEST-CHECKLIST 4i).
+- /quests = /nhiemvu: commands.yml của data/banghoi-1 (không thuộc repo, như pets), BetonQuest có alias quests cho lệnh admin nên ghi đè ở đây.
+- NpcGround: khối dưới chân NPC Citizens không phá được (bot thử: khối thường mất, khối dưới Thợ Cống Già còn). Lữ khách Thợ Cống Già đã tụt 83→82
+  trước khi sửa, để nguyên. Ô đất giữa Cổng Hoang giữ như khối cổng.
+- Già Làng sau chương 1: hỏi "Giờ cháu nên làm gì" → chỉ /danhphan, /lukhach, /nhiemvu (làm quen), /dungeon, /t new; kết chương in 5 dòng chỉ việc
+  (c1_huongdan). Hội thoại dùng dialog (bot 1.21.4 không xem được), mới thử hành động c1_huongdan bằng bot.
+- Dungeon: vào là nhắc "/em quit" để thoát; /huongdan trang Cổng Dungeon + lenh-con có /em quit.
+- Trang Hoạt động: gõ /lệnh ở ô gửi tin = chạy console trên server đang chọn (chỉ toàn quyền, không cho Cả mạng, lệnh nặng hỏi lại, ghi log).
+- Essentials unsafeTeleportDestination đổi câu dễ hiểu (sethome báo "không an toàn" khi đang nhảy/đứng trong nước…).
+- Facebook: ảnh bìa site/public/og-cover.png + thẻ og: trong index.html (link card đẹp; "Link unavailable" là do tên miền chưa gắn Fanpage).
+- CHỜ CHỦ SERVER: đồ Tinh Luyện gần như vô dụng (không công thức Xưởng/Thợ Rèn/shop dân làng nào dùng, bán chỉ ~70%) — chọn hướng cho nó.
+- Bot test còn dữ liệu: ThuLuuLy, ThuGl, ThuLamQuen (đã xoá đồ; ThuLamQuen có ~183 xu + 1 việc làm quen). Dọn khi test xong hẳn: /choilai admin <tên> moi.
+- CHƯA COMMIT tất cả các thay đổi trên.
+
 ## 23/10/2026 rạng sáng: Admin không dùng được /dmm, chat không hiện ở trang Hoạt động
 
 - .Griim7833 có cả Admin lẫn Manager (quanly). Nhóm quanly chặn hẳn (false) duckymomo.admin, luckperms.*, duckymomo.web.toanquyen, op, stop…; quyền false đích danh thắng `*` của Admin, nên Admin kiêm Manager mất quyền admin cả trong game lẫn trên web. Đã gỡ quanly khỏi người này. panel/app.py: cấp role chức vụ (STAFF_CHAIN admin/quanly/mod/helper) thì tự gỡ role chức vụ khác; staff không toàn quyền không đụng được người đang giữ role ngang/trên mình.

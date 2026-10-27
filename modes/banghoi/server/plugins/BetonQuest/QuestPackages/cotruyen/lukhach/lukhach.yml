@@ -105,12 +105,19 @@ journal:
 conversations:
   lk_cong:
     quester: '&6Thợ Cống Già'
-    first: xong,tra,chao_lai,chao
+    first: vl_tra,xong,tra,chao_lai,chao
     NPC_options:
+      vl_tra:
+        text: Xong việc ta nhờ rồi à? Để ta xem nào.
+        conditions: vl_lk_cong_tra
+        actions: vl_lk_cong
+      viec_dap:
+        text: Có chứ. Ngồi xuống đây ta nói cho mà nghe.
+        actions: vl_lk_cong
       chao:
         text: Đừng đứng gần quá, người ta toàn mùi bùn. Cả đời ta đào cống cho một thành phố mà giờ chẳng còn ai nhớ tên.
         conditions: '!lk_cong_nghe'
-        pointers: hoi,di
+        pointers: hoi,viec,di
       ke1:
         text: Bên dưới thành phố ấy là cả một mê cung đường cống. Một đêm nước dâng, đội thợ của ta xuống sửa… chỉ mình ta trèo lên được. Từ dưới đó vọng lên tiếng gì như đang gặm đá.
         pointers: hoi_dau,di
@@ -132,7 +139,7 @@ conversations:
       chao_lai:
         text: Lại là cháu à? Đã tìm ra đường tới đó chưa?
         conditions: lk_cong_nghe,!lk_cong_qua
-        pointers: hoi_dau,hoi_lai,di
+        pointers: hoi_dau,hoi_lai,viec,di
       tra:
         text: Cháu xuống tận đó thật à? Kể ta nghe, dưới ấy giờ ra sao?
         conditions: lk_cong_qua,!lk_cong_xong
@@ -143,7 +150,11 @@ conversations:
       xong:
         text: Vậy là dưới đó vẫn còn thứ ấy… Cảm ơn cháu. Đêm nay ta ngủ được rồi.
         conditions: lk_cong_xong
+        pointers: viec,di
     player_options:
+      viec:
+        text: Ông có việc gì cần giúp không?
+        pointers: viec_dap
       hoi:
         text: Có chuyện gì vậy?
         pointers: ke1
@@ -160,12 +171,19 @@ conversations:
         text: Tôi đi đây.
   lk_bacuc:
     quester: '&6Người Kéo Xe Tuần Lộc'
-    first: xong,tra,chao_lai,chao
+    first: vl_tra,xong,tra,chao_lai,chao
     NPC_options:
+      vl_tra:
+        text: Xong việc ta nhờ rồi à? Để ta xem nào.
+        conditions: vl_lk_bacuc_tra
+        actions: vl_lk_bacuc
+      viec_dap:
+        text: Có chứ. Ngồi xuống đây ta nói cho mà nghe.
+        actions: vl_lk_bacuc
       chao:
         text: Brr… Cháu không thấy lạnh à? Từ hôm ở chỗ đó về, người ta cứ lạnh mãi không thôi.
         conditions: '!lk_bacuc_nghe'
-        pointers: hoi,di
+        pointers: hoi,viec,di
       ke1:
         text: Ta kéo xe hàng cho một xưởng làm quà ở tận cùng phương bắc. Một sáng tuyết rơi giữa trời nắng, cả đàn tuần lộc chạy mất. Người trong xưởng cứ đứng cười… mà mắt thì không cười.
         pointers: hoi_dau,di
@@ -188,7 +206,7 @@ conversations:
       chao_lai:
         text: Lại là cháu à? Đã tìm ra đường tới đó chưa?
         conditions: lk_bacuc_nghe,!lk_bacuc_qua
-        pointers: hoi_dau,hoi_lai,di
+        pointers: hoi_dau,hoi_lai,viec,di
       tra:
         text: Cháu tới được cái xưởng ấy rồi? Đàn tuần lộc của ta còn đó không?
         conditions: lk_bacuc_qua,!lk_bacuc_xong
@@ -199,7 +217,11 @@ conversations:
       xong:
         text: Đêm qua ta lại nghe tiếng chuông xe… Chắc chỉ là gió thôi.
         conditions: lk_bacuc_xong
+        pointers: viec,di
     player_options:
+      viec:
+        text: Ông có việc gì cần giúp không?
+        pointers: viec_dap
       hoi:
         text: Có chuyện gì vậy?
         pointers: ke1
@@ -216,12 +238,19 @@ conversations:
         text: Tôi đi đây.
   lk_hiepsi:
     quester: '&6Hiệp Sĩ Lạc Đàn'
-    first: xong,tra,chao_lai,chao
+    first: vl_tra,xong,tra,chao_lai,chao
     NPC_options:
+      vl_tra:
+        text: Xong việc ta nhờ rồi à? Để ta xem nào.
+        conditions: vl_lk_hiepsi_tra
+        actions: vl_lk_hiepsi
+      viec_dap:
+        text: Có chứ. Ngồi xuống đây ta nói cho mà nghe.
+        actions: vl_lk_hiepsi
       chao:
         text: Đừng nhìn bộ giáp này. Nó từng sáng loáng, khi ta còn thuộc về một đội hiệp sĩ.
         conditions: '!lk_hiepsi_nghe'
-        pointers: hoi,di
+        pointers: hoi,viec,di
       ke1:
         text: Bọn ta nhận lệnh giữ một toà lâu đài. Một đêm cổng tự mở, và những kẻ mặc đúng bộ giáp của bọn ta bước vào. Ta là người duy nhất chạy thoát. Đêm nào trong mơ cũng nghe tiếng giáp sắt va nhau.
         pointers: hoi_dau,di
@@ -244,7 +273,7 @@ conversations:
       chao_lai:
         text: Lại là cháu à? Đã tìm ra đường tới đó chưa?
         conditions: lk_hiepsi_nghe,!lk_hiepsi_qua
-        pointers: hoi_dau,hoi_lai,di
+        pointers: hoi_dau,hoi_lai,viec,di
       tra:
         text: Cháu đã vào lâu đài ấy? Những kẻ mặc giáp… họ vẫn còn đó chứ?
         conditions: lk_hiepsi_qua,!lk_hiepsi_xong
@@ -255,7 +284,11 @@ conversations:
       xong:
         text: Một ngày nào đó ta sẽ quay lại lâu đài. Không phải hôm nay.
         conditions: lk_hiepsi_xong
+        pointers: viec,di
     player_options:
+      viec:
+        text: Ông có việc gì cần giúp không?
+        pointers: viec_dap
       hoi:
         text: Có chuyện gì vậy?
         pointers: ke1
@@ -272,12 +305,19 @@ conversations:
         text: Tôi đi đây.
   lk_hoinuoc:
     quester: '&6Kỹ Sư Bỏ Trốn'
-    first: xong,tra,chao_lai,chao
+    first: vl_tra,xong,tra,chao_lai,chao
     NPC_options:
+      vl_tra:
+        text: Xong việc ta nhờ rồi à? Để ta xem nào.
+        conditions: vl_lk_hoinuoc_tra
+        actions: vl_lk_hoinuoc
+      viec_dap:
+        text: Có chứ. Ngồi xuống đây ta nói cho mà nghe.
+        actions: vl_lk_hoinuoc
       chao:
         text: Suỵt! Đừng nói to. Cháu không nghe tiếng máy rít à? Không à… chắc chỉ trong đầu ta.
         conditions: '!lk_hoinuoc_nghe'
-        pointers: hoi,di
+        pointers: hoi,viec,di
       ke1:
         text: Ta từng đứng máy trong một xưởng hơi nước dưới lòng đất. Bọn ta chế ra những cỗ máy tự chạy, rồi một ngày chúng không chịu dừng nữa. Ta bỏ trốn, mang theo đúng cái cờ lê này.
         pointers: hoi_dau,di
@@ -300,7 +340,7 @@ conversations:
       chao_lai:
         text: Lại là cháu à? Đã tìm ra đường tới đó chưa?
         conditions: lk_hoinuoc_nghe,!lk_hoinuoc_qua
-        pointers: hoi_dau,hoi_lai,di
+        pointers: hoi_dau,hoi_lai,viec,di
       tra:
         text: Cháu xuống tận xưởng rồi? Lò hơi còn cháy không?
         conditions: lk_hoinuoc_qua,!lk_hoinuoc_xong
@@ -311,7 +351,11 @@ conversations:
       xong:
         text: Ta vẫn giữ cái cờ lê. Biết đâu một ngày cần đến.
         conditions: lk_hoinuoc_xong
+        pointers: viec,di
     player_options:
+      viec:
+        text: Ông có việc gì cần giúp không?
+        pointers: viec_dap
       hoi:
         text: Có chuyện gì vậy?
         pointers: ke1

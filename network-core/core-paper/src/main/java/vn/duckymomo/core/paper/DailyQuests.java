@@ -51,6 +51,10 @@ import java.util.UUID;
  * NPC nói trong chat và lần bấm đó không mở menu. Lưu lang.<uuid>: mo (đã mở nhánh), nhan (đang làm), xong (chờ nhận thưởng).
  * NPC hội thoại (bq): xong việc thì gắn tag BetonQuest cotruyen>vl_<mã>_tra -> câu mở đầu "xong rồi à?" gọi trả thưởng ngay khi bấm NPC;
  * chữ trong chat đợi hội thoại ĐÓNG mới gửi (PlayerConversationEndEvent; bảng dialog che chat, đóng muộn thì chữ đã mờ; 28/10).
+ * Chuỗi việc lữ khách (28/10, daily-quests.chains.<người giao>): các bước nối nhau, khó dần; nhận bước -> làm -> về kể -> trả thưởng
+ * và giao luôn bước sau. Loại bước: kill / break / place / fish / harvest (đếm như nhiệm vụ ngày), feature (mã DailyQuests.feature,
+ * vd dautruong, vuotdungeon, xuong), nop (mang đồ thường tới nộp, items: {VẬT_LIỆU: số}). Không cần mở nhánh Già Làng.
+ * Lưu lang.<uuid>.chuoi.<mã>: b (số bước đã xong), nhan (đang làm bước b), dem (tiến độ).
  */
 final class DailyQuests implements Listener {
     static volatile DailyQuests INSTANCE;
@@ -75,6 +79,10 @@ final class DailyQuests implements Listener {
 
     private record Intro(String id, String name, String how, List<String> rewards, String giver) { }
 
+    /** Một bước trong chuỗi việc lữ khách (noi = câu NPC nói lúc giao bước này). */
+    private record Step(String name, String type, List<String> targets, int amount, Map<Material, Integer> items, String how,
+                        String noi, List<String> rewards) { }
+
     /** Người giao việc dân làng: npc = "bq" | "quay:<quầy>" | "donbuon"; mo / nhan / tra / het = câu nói lúc mở nhánh / giao / trả / hết việc. */
     private record Giver(String id, String name, String npc, String where, String mo, String nhan, String tra, String het) { }
 
@@ -86,6 +94,7 @@ final class DailyQuests implements Listener {
     private final Map<String, Quest> pool = new LinkedHashMap<>();
     private final Map<String, Intro> intros = new LinkedHashMap<>();
     private final Map<String, Giver> givers = new LinkedHashMap<>();
+    private final Map<String, List<Step>> chains = new LinkedHashMap<>();
     /** Hội thoại BetonQuest đã gọi /dmm viecnpc, chờ hội thoại đóng mới nói (người chơi -> NPC). */
     private final Map<UUID, Giver> pending = new java.util.HashMap<>();
     private boolean convEndHook;
@@ -119,6 +128,44 @@ final class DailyQuests implements Listener {
                     String ten = "&e" + g.getString("name", id).replaceAll("(?i)[&§][0-9a-fk-or]", "");   // một màu vàng cho mọi NPC, dễ đọc
                     givers.put(id, new Giver(id, ten, g.getString("npc", "bq").toLowerCase(Locale.ROOT), g.getString("where", ""),
                             g.getString("mo", ""), g.getString("nhan", ""), g.getString("tra", ""), g.getString("het", "")));
+                }
+            }
+        }
+        ConfigurationSection cs = cfg.getConfigurationSection("chains");
+        if (cs != null) {
+            for (String gid : cs.getKeys(false)) {
+                if (!givers.containsKey(gid)) {
+                    plugin.getLogger().warning("daily-quests.chains." + gid + ": chưa có người giao trong daily-quests.givers");
+                    continue;
+                }
+                List<Step> steps = new ArrayList<>();
+                for (Map<?, ?> m : cs.getMapList(gid)) {
+                    Map<Material, Integer> items = new LinkedHashMap<>();
+                    if (m.get("items") instanceof Map<?, ?> im) {
+                        im.forEach((k, v) -> {
+                            Material mat = Material.matchMaterial(String.valueOf(k));
+                            if (mat == null) {
+                                plugin.getLogger().warning("daily-quests.chains." + gid + ": không có vật liệu " + k);
+                            } else {
+                                items.put(mat, Integer.parseInt(String.valueOf(v)));
+                            }
+                        });
+                    }
+                    List<String> t = new ArrayList<>();
+                    if (m.get("targets") instanceof List<?> tl) {
+                        tl.forEach(x -> t.add(String.valueOf(x).toUpperCase(Locale.ROOT)));
+                    }
+                    List<String> rw = new ArrayList<>();
+                    if (m.get("rewards") instanceof List<?> rl) {
+                        rl.forEach(x -> rw.add(String.valueOf(x)));
+                    }
+                    Object amt = m.get("amount");
+                    steps.add(new Step(String.valueOf(m.get("name")), String.valueOf(m.get("type")).toLowerCase(Locale.ROOT),
+                            t.isEmpty() ? List.of("*") : t, amt == null ? 1 : Math.max(1, Integer.parseInt(String.valueOf(amt))), items,
+                            m.get("how") == null ? "" : String.valueOf(m.get("how")), m.get("noi") == null ? "" : String.valueOf(m.get("noi")), rw));
+                }
+                if (!steps.isEmpty()) {
+                    chains.put(gid, steps);
                 }
             }
         }
@@ -216,14 +263,190 @@ final class DailyQuests implements Listener {
         if (!"bq".equals(g.npc()) || !Bukkit.getPluginManager().isPluginEnabled("BetonQuest")) {
             return;
         }
-        boolean has = list(p.getUniqueId(), "xong").stream().anyMatch(id -> intros.containsKey(id) && g.id().equals(intros.get(id).giver()));
+        boolean has = claimable(p.getUniqueId(), g);
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "bq tag " + p.getName() + (has ? " add" : " del") + " cotruyen>vl_" + g.id() + "_tra");
+    }
+
+    private boolean claimable(UUID u, Giver g) {
+        if (list(u, "xong").stream().anyMatch(id -> intros.containsKey(id) && g.id().equals(intros.get(id).giver()))) {
+            return true;
+        }
+        List<Step> steps = chains.get(g.id());
+        int b = data.getInt(ck(u, g.id()) + ".b", 0);
+        return steps != null && b < steps.size() && data.getBoolean(ck(u, g.id()) + ".nhan")
+                && !steps.get(b).type().equals("nop") && data.getInt(ck(u, g.id()) + ".dem", 0) >= steps.get(b).amount();
+    }
+
+    // ---------------------------------------------------------------- chuỗi việc lữ khách
+
+    private static String ck(UUID u, String g) {
+        return lk(u) + ".chuoi." + g;
+    }
+
+    private void chainProgress(Player p, String type, String target, boolean hostile, int n) {
+        UUID u = p.getUniqueId();
+        for (Map.Entry<String, List<Step>> e : chains.entrySet()) {
+            String k = ck(u, e.getKey());
+            int b = data.getInt(k + ".b", 0);
+            if (b >= e.getValue().size() || !data.getBoolean(k + ".nhan")) {
+                continue;
+            }
+            Step st = e.getValue().get(b);
+            if (!st.type().equals(type) || !(matches(st.targets(), target) || (hostile && st.targets().contains("@HOSTILE")))) {
+                continue;
+            }
+            int dem = data.getInt(k + ".dem", 0);
+            if (dem >= st.amount()) {
+                continue;
+            }
+            dem = Math.min(st.amount(), dem + n);
+            data.set(k + ".dem", dem);
+            dirty = true;
+            Giver g = givers.get(e.getKey());
+            p.sendActionBar(c("&e" + st.name() + " &f" + dem + "&7/&f" + st.amount()));
+            if (dem >= st.amount()) {
+                p.sendMessage(c("&a✔ Xong việc: &f" + st.name() + "&a. Về kể cho " + g.name() + (g.where().isEmpty() ? "" : " &7(" + g.where() + ")")
+                        + " &anhận thưởng."));
+                p.playSound(p.getLocation(), org.bukkit.Sound.ENTITY_PLAYER_LEVELUP, 0.6f, 1.4f);
+                syncTag(p, g);
+                flush();
+            }
+        }
+    }
+
+    /** Đồ thường (không tên riêng, không dấu plugin) trong túi: đếm / lấy đi cho bước "nop". */
+    private static boolean plain(org.bukkit.inventory.ItemStack it) {
+        if (it == null || it.getType().isAir()) {
+            return false;
+        }
+        if (!it.hasItemMeta()) {
+            return true;
+        }
+        org.bukkit.inventory.meta.ItemMeta m = it.getItemMeta();
+        return !m.hasDisplayName() && m.getPersistentDataContainer().isEmpty();
+    }
+
+    private static int count(Player p, Material mat) {
+        int n = 0;
+        for (org.bukkit.inventory.ItemStack it : p.getInventory().getStorageContents()) {
+            if (it != null && it.getType() == mat && plain(it)) {
+                n += it.getAmount();
+            }
+        }
+        return n;
+    }
+
+    private static void take(Player p, Material mat, int n) {
+        org.bukkit.inventory.ItemStack[] inv = p.getInventory().getStorageContents();
+        for (int i = 0; i < inv.length && n > 0; i++) {
+            org.bukkit.inventory.ItemStack it = inv[i];
+            if (it != null && it.getType() == mat && plain(it)) {
+                int t = Math.min(n, it.getAmount());
+                it.setAmount(it.getAmount() - t);
+                n -= t;
+            }
+        }
+        p.getInventory().setStorageContents(inv);
+    }
+
+    private String stepLine(Step st, int dem) {
+        String prog = st.type().equals("nop") ? "" : " &7" + Math.min(dem, st.amount()) + "/" + st.amount();
+        return "&f" + st.name() + prog + (st.rewards().isEmpty() ? "" : " &7→ &a" + String.join("&7, &a", rewards.describe(st.rewards())));
+    }
+
+    /** NPC lữ khách: trả bước đang làm nếu xong (bước "nop": có đủ đồ thì lấy luôn), rồi giao bước sau. */
+    private boolean talkChain(Player p, Giver g, List<Step> steps, boolean asked) {
+        UUID u = p.getUniqueId();
+        String k = ck(u, g.id());
+        int b = data.getInt(k + ".b", 0);
+        boolean said = false;
+        boolean paid = false;
+        if (b < steps.size() && data.getBoolean(k + ".nhan")) {
+            Step st = steps.get(b);
+            int dem = data.getInt(k + ".dem", 0);
+            boolean done = st.type().equals("nop") ? st.items().entrySet().stream().allMatch(x -> count(p, x.getKey()) >= x.getValue())
+                    : dem >= st.amount();
+            if (done) {
+                st.items().forEach((mat, n) -> take(p, mat, n));
+                say(p, g, g.tra());
+                List<String> got = rewards.give(p, st.rewards());
+                p.sendMessage(c("&a✔ Bước " + (b + 1) + "/" + steps.size() + ": &f" + st.name()
+                        + (got.isEmpty() ? "" : "&a. Nhận: &f" + String.join("&7, &f", got))));
+                b++;
+                data.set(k + ".b", b);
+                data.set(k + ".nhan", false);
+                data.set(k + ".dem", 0);
+                dirty = true;
+                said = true;
+                paid = true;
+            } else if (asked) {
+                say(p, g, "Việc ta nhờ vẫn chưa xong đâu:");
+                p.sendMessage(c("&7• " + stepLine(st, dem) + (st.how().isEmpty() ? "" : "\n   &7" + st.how())));
+                if (st.type().equals("nop")) {
+                    st.items().forEach((mat, n) -> p.sendMessage(c("   &7Trong túi: &f" + count(p, mat) + "&7/" + n
+                            + " &7(đồ thường, không đổi tên)")));
+                }
+                said = true;
+            }
+        }
+        if (b < steps.size() && !data.getBoolean(k + ".nhan") && (asked || paid)) {
+            Step st = steps.get(b);
+            say(p, g, !st.noi().isEmpty() ? st.noi() : g.nhan());
+            p.sendMessage(c("&6Bước " + (b + 1) + "/" + steps.size() + ": " + stepLine(st, 0) + (st.how().isEmpty() ? "" : "\n   &7" + st.how())));
+            data.set(k + ".nhan", true);
+            data.set(k + ".dem", 0);
+            dirty = true;
+            said = true;
+        } else if (b >= steps.size() && (asked || paid)) {
+            say(p, g, g.het());
+            said = true;
+        }
+        if (said) {
+            flush();
+        }
+        return said;
+    }
+
+    /** Phần lữ khách của /nhiemvu: bước đang làm của từng người. */
+    private void wandererQuests(Player p) {
+        if (chains.isEmpty()) {
+            return;
+        }
+        UUID u = p.getUniqueId();
+        List<String> lines = new ArrayList<>();
+        int doneAll = 0;
+        for (Map.Entry<String, List<Step>> e : chains.entrySet()) {
+            String k = ck(u, e.getKey());
+            int b = data.getInt(k + ".b", 0);
+            if (b >= e.getValue().size()) {
+                doneAll++;
+                continue;
+            }
+            if (!data.getBoolean(k + ".nhan")) {
+                continue;
+            }
+            Step st = e.getValue().get(b);
+            int dem = data.getInt(k + ".dem", 0);
+            boolean ok = !st.type().equals("nop") && dem >= st.amount();
+            lines.add(givers.get(e.getKey()).name() + " &7(bước " + (b + 1) + "/" + e.getValue().size() + ")");
+            lines.add(ok ? " &a✔ " + st.name() + " &f— xong, về kể cho lữ khách nhận thưởng"
+                    : " &f• " + stepLine(st, dem) + (st.how().isEmpty() ? "" : "\n    &7" + st.how()));
+        }
+        if (lines.isEmpty()) {
+            if (doneAll < chains.size()) {
+                p.sendMessage(c("&6Lữ khách nhờ việc: &7gặp lữ khách ngoài đất hoang (&f/lukhach &7xem họ ở đâu), hỏi &f“Ông có việc gì cần giúp không?”"
+                        + " &7(" + chains.size() + " người, mỗi người " + chains.values().iterator().next().size() + " việc khó dần)"));
+            }
+            return;
+        }
+        p.sendMessage(c("&6Lữ khách nhờ việc &7(/lukhach xem họ đang ở đâu)"));
+        lines.forEach(l -> p.sendMessage(c(l)));
     }
 
     /** Lúc vào server: gắn lại tag cho NPC hội thoại còn việc xong chưa trả (chỉ gắn, không gỡ, đỡ lệnh thừa). */
     private void syncTags(Player p) {
         for (Giver g : givers.values()) {
-            if ("bq".equals(g.npc()) && list(p.getUniqueId(), "xong").stream().anyMatch(id -> intros.containsKey(id) && g.id().equals(intros.get(id).giver()))) {
+            if ("bq".equals(g.npc()) && claimable(p.getUniqueId(), g)) {
                 syncTag(p, g);
             }
         }
@@ -244,6 +467,7 @@ final class DailyQuests implements Listener {
         DailyQuests d = INSTANCE;
         if (d != null) {
             d.intro(p, id);
+            d.chainProgress(p, "feature", id.toUpperCase(Locale.ROOT), false, 1);
         }
     }
 
@@ -377,6 +601,10 @@ final class DailyQuests implements Listener {
 
     /** asked = người chơi chủ động hỏi (hội thoại): không có gì mới cũng trả lời (việc còn dở / hết việc). */
     private boolean talk(Player p, Giver g, boolean asked) {
+        List<Step> chain = chains.get(g.id());
+        if (chain != null) {
+            return talkChain(p, g, chain, asked);
+        }
         UUID u = p.getUniqueId();
         boolean said = false;
         if (!opened(u)) {
@@ -506,6 +734,7 @@ final class DailyQuests implements Listener {
     }
 
     private void progress(Player p, String type, String target, boolean hostile, int n) {
+        chainProgress(p, type, target, hostile, n);
         String key = "players." + p.getUniqueId();
         for (String qid : todays(p.getUniqueId())) {
             Quest q = pool.get(qid);
@@ -677,6 +906,7 @@ final class DailyQuests implements Listener {
         if (!intros.isEmpty()) {
             villageQuests(p);
         }
+        wandererQuests(p);
         return true;
     }
 }

@@ -649,6 +649,71 @@ daily-quests:
       nhan: "Sau lưng ta là lối vào dungeon. Muốn qua thì phải đủ mạnh: lên cấp đi, rồi vào thử một lần, vượt được thì ta mới tin."
       tra: "Cháu sống sót trở về. Không tệ chút nào."
       het: "Ta không còn gì để dạy. Ra ngoài hoang dã tìm Cổng Hoang mà thử sức (/conghoang)."
+    # Lữ khách (28/10): chuỗi việc khó dần trong daily-quests.chains (không cần hỏi Già Làng trước). Họ dời chỗ mỗi vài ngày: /lukhach.
+    lk_cong:
+      name: "Thợ Cống Già"
+      npc: bq
+      where: "lữ khách, xem chỗ ở /lukhach"
+      tra: "Giỏi lắm. Cầm lấy, tiền công của một thợ cống già đây."
+      het: "Cháu làm hết những gì ta nhờ rồi. Giờ chỉ còn chờ cánh cổng tới Cống Ngầm mở ra thôi."
+    lk_bacuc:
+      name: "Người Kéo Xe Tuần Lộc"
+      npc: bq
+      where: "lữ khách, xem chỗ ở /lukhach"
+      tra: "Brr… làm tốt lắm. Đây, phần của cháu."
+      het: "Xe ta sửa xong cả rồi. Chỉ thiếu đường quay về phương bắc nữa thôi."
+    lk_hiepsi:
+      name: "Hiệp Sĩ Lạc Đàn"
+      npc: bq
+      where: "lữ khách, xem chỗ ở /lukhach"
+      tra: "Một chiến binh thực thụ. Nhận lấy phần thưởng xứng đáng."
+      het: "Ta không còn gì để thử thách cháu nữa. Cháu đã mạnh hơn cả đội hiệp sĩ năm xưa."
+    lk_hoinuoc:
+      name: "Kỹ Sư Bỏ Trốn"
+      npc: bq
+      where: "lữ khách, xem chỗ ở /lukhach"
+      tra: "Hoàn hảo, đúng thông số! Đây là tiền công."
+      het: "Cỗ máy của ta xong rồi. Cảm ơn cháu, người phụ tá giỏi nhất ta từng có."
+  # Chuỗi việc lữ khách (28/10, chủ server: "càng nhiều nhiệm vụ càng tốt, tăng dần siêu khó"): bước nối nhau, nhận -> làm -> về kể -> thưởng
+  # + giao bước sau. type: kill | break | place | fish | harvest (targets: tên mob / khối, @HOSTILE = mọi quái) · feature (targets: mã
+  # dautruong, vuotdungeon, xuong, dungeon, capdo…) · nop (items: {VẬT_LIỆU: số}, đồ thường không đổi tên). noi = câu NPC lúc giao bước.
+  chains:
+    lk_cong:
+      - {name: "Hạ 10 con nhện", type: kill, targets: [SPIDER, CAVE_SPIDER], amount: 10, how: "Nhện ra ban đêm hoặc trong hang", noi: "Lũ nhện dưới cống từng cắn chết hai thợ của ta. Dọn bớt chúng đi.", rewards: [xu 400]}
+      - {name: "Mang 32 đá cuội rêu", type: nop, items: {MOSSY_COBBLESTONE: 32}, how: "Có ở hầm ngục, đền rừng, hoặc chế từ đá cuội + dây leo", noi: "Ta muốn xây lại một đoạn cống cho đỡ nhớ nghề. Kiếm cho ta ít đá rêu.", rewards: [xu 600]}
+      - {name: "Hạ 20 slime", type: kill, targets: [SLIME], amount: 20, how: "Slime ở đầm lầy ban đêm hoặc sâu dưới lòng đất", noi: "Dưới cống có thứ nhầy nhụa bò ra bò vào. Cháu xử lý được không?", rewards: [xu 900]}
+      - {name: "Đào 256 khối đá phiến sâu", type: break, targets: [DEEPSLATE, TUFF], amount: 256, how: "Đá phiến sâu (deepslate) và tuff nằm dưới tầng Y 0", noi: "Muốn xuống tới cống ngầm thì phải quen đào sâu. Đào xuyên tầng đá phiến cho ta xem.", rewards: [xu 1200]}
+      - {name: "Hạ 40 nhện hang", type: kill, targets: [CAVE_SPIDER], amount: 40, how: "Nhện hang ở hầm mỏ bỏ hoang, quanh lồng sinh quái", noi: "Hầm mỏ bỏ hoang nào cũng có ổ nhện hang. Phá cho ta vài ổ.", rewards: [xu 1800]}
+      - {name: "Đào 48 quặng tầng sâu", type: break, targets: [DEEPSLATE_COAL_ORE, DEEPSLATE_IRON_ORE, DEEPSLATE_COPPER_ORE, DEEPSLATE_GOLD_ORE, DEEPSLATE_REDSTONE_ORE, DEEPSLATE_LAPIS_ORE, DEEPSLATE_DIAMOND_ORE, DEEPSLATE_EMERALD_ORE], amount: 48, how: "Quặng nằm trong đá phiến sâu, dưới tầng Y 0", noi: "Đội thợ của ta đã chết vì đào trúng mạch quặng sâu. Đào cho ta xem dưới đó còn gì.", rewards: [xu 2500]}
+      - {name: "Mang 8 mảnh vang (echo shard)", type: nop, items: {ECHO_SHARD: 8}, how: "Chỉ có trong rương Thành Cổ (Ancient City) tận đáy thế giới. Đi thật khẽ, coi chừng Warden", noi: "Ta từng nghe tiếng vọng từ một thành phố chôn sâu dưới đất. Mang cho ta thứ đá biết vang ấy.", rewards: [xu 6000]}
+      - {name: "SIÊU KHÓ: Hạ một Warden", type: kill, targets: [WARDEN], amount: 1, how: "Warden ở Thành Cổ, rất mạnh. Rủ bạn bè, mang đồ tốt nhất", noi: "Thứ gặm đá dưới cống… ta tin nó cùng giống với con quái mù loà dưới Thành Cổ. Hạ được nó, ta mới yên lòng.", rewards: [xu 15000]}
+    lk_bacuc:
+      - {name: "Mang 32 khối tuyết", type: nop, items: {SNOW_BLOCK: 32}, how: "Xẻng xúc tuyết ở vùng lạnh, hoặc ghép 4 quả cầu tuyết", noi: "Xe ta thiếu tuyết lót đường trượt. Kiếm cho ta ít khối tuyết.", rewards: [xu 400]}
+      - {name: "Mang 24 da thuộc", type: nop, items: {LEATHER: 24}, how: "Bò, ngựa, lạc đà không bướu, thỏ (ghép da thỏ)", noi: "Dây cương đứt cả rồi. Ta cần da để bện lại.", rewards: [xu 600]}
+      - {name: "Hạ 15 Stray (xương băng)", type: kill, targets: [STRAY], amount: 15, how: "Stray ra ban đêm ở vùng tuyết", noi: "Lũ xương băng bám theo xe ta từ phương bắc về tận đây. Dẹp chúng giùm ta.", rewards: [xu 1000]}
+      - {name: "Câu 40 con cá", type: fish, amount: 40, how: "Câu ở đâu cũng được", noi: "Đàn tuần lộc của ta mê cá khô lắm. Câu cho ta một mẻ thật to.", rewards: [xu 1200]}
+      - {name: "Mang 16 băng xanh", type: nop, items: {BLUE_ICE: 16}, how: "Băng xanh ở núi băng, hoặc ghép 9 băng nén", noi: "Đường xe chạy phải lát băng xanh mới trơn. Mang cho ta 16 khối.", rewards: [xu 1800]}
+      - {name: "Mang 2 tù và dê núi", type: nop, items: {GOAT_HORN: 2}, how: "Dê núi húc vào đá, gỗ, quặng thì rơi sừng", noi: "Thiếu tiếng tù và thì đàn tuần lộc không nghe gọi. Tìm cho ta 2 cái.", rewards: [xu 2500]}
+      - {name: "Hạ 80 Stray", type: kill, targets: [STRAY], amount: 80, how: "Đêm ở vùng tuyết, đi thành nhóm cho nhanh", noi: "Chúng lại kéo tới, đông hơn trước. Lần này phải dẹp tận gốc.", rewards: [xu 5000]}
+      - {name: "SIÊU KHÓ: Vượt 3 dungeon", type: feature, targets: [vuotdungeon], amount: 3, how: "Hạ hết trùm trong dungeon (/dungeon), dungeon nào cũng được", noi: "Cái xưởng ở phương bắc… không ai sống sót vào được nếu chưa từng vượt qua vài hầm ngục. Chứng minh cho ta xem.", rewards: [xu 12000]}
+    lk_hiepsi:
+      - {name: "Hạ 30 zombie", type: kill, targets: [ZOMBIE, ZOMBIE_VILLAGER, HUSK, DROWNED], amount: 30, how: "Zombie ra ban đêm", noi: "Muốn theo ta học kiếm thì trước hết dọn lũ xác sống quanh đây đã.", rewards: [xu 400]}
+      - {name: "Hạ 30 bộ xương", type: kill, targets: [SKELETON, STRAY, BOGGED], amount: 30, how: "Bộ xương bắn cung, ra ban đêm", noi: "Kẻ địch biết bắn cung mới đáng gờm. Tập né tên đi.", rewards: [xu 600]}
+      - {name: "Mang 48 thỏi sắt", type: nop, items: {IRON_INGOT: 48}, how: "Nung quặng sắt", noi: "Bộ giáp này thủng lỗ chỗ rồi. Mang cho ta sắt để rèn lại.", rewards: [xu 900]}
+      - {name: "Thắng 1 trận Đấu Trường", type: feature, targets: [dautruong], amount: 1, how: "/dautruong: người + pet đấu 1v1, 2v2", noi: "Đánh quái thì ai chả đánh được. Lên Đấu Trường đấu với người thật xem nào.", rewards: [xu 1500]}
+      - {name: "Hạ 25 lính đột kích", type: kill, targets: [PILLAGER, VINDICATOR, EVOKER, RAVAGER, WITCH], amount: 25, how: "Tiền đồn pillager, dinh thự rừng rậm, hoặc trận đột kích làng", noi: "Những kẻ phản bội đội hiệp sĩ của ta giờ đi theo bọn đột kích. Trừng trị chúng.", rewards: [xu 2200]}
+      - {name: "Hạ 30 Wither Skeleton", type: kill, targets: [WITHER_SKELETON], amount: 30, how: "Pháo đài Nether", noi: "Dưới Nether có đội quân xương đen. Ta nghe nói chúng mặc giáp giống hệt đội ta.", rewards: [xu 4000]}
+      - {name: "Thắng thêm 10 trận Đấu Trường", type: feature, targets: [dautruong], amount: 10, how: "/dautruong", noi: "Một trận thắng có thể là may mắn. Mười trận mới là bản lĩnh.", rewards: [xu 6000]}
+      - {name: "SIÊU KHÓ: Hạ Wither", type: kill, targets: [WITHER], amount: 1, how: "Triệu hồi Wither bằng 3 đầu lâu Wither Skeleton + 4 cát linh hồn. Rủ cả thị trấn", noi: "Kẻ đã mở cổng lâu đài đêm ấy mang hình dạng ba đầu. Hạ nó, rồi ta sẽ được yên nghỉ.", rewards: [xu 15000]}
+    lk_hoinuoc:
+      - {name: "Mang 64 bụi đá đỏ", type: nop, items: {REDSTONE: 64}, how: "Đào quặng đá đỏ", noi: "Cỗ máy của ta chạy bằng đá đỏ. Mang cho ta một chồng đầy.", rewards: [xu 400]}
+      - {name: "Mang 64 thỏi đồng", type: nop, items: {COPPER_INGOT: 64}, how: "Nung quặng đồng", noi: "Ống dẫn hơi phải làm bằng đồng, sắt thì gỉ mất.", rewards: [xu 600]}
+      - {name: "Chế một món ở Xưởng", type: feature, targets: [xuong], amount: 1, how: "/xuong: đồ tiện ích có lượt dùng", noi: "Thử tay nghề cái đã: vào Xưởng chế lấy một món.", rewards: [xu 800]}
+      - {name: "Hạ 25 creeper", type: kill, targets: [CREEPER], amount: 25, how: "Creeper ra ban đêm, đánh xa cho an toàn", noi: "Lũ creeper nổ tung cả xưởng cũ của ta. Ta ghét chúng.", rewards: [xu 1200]}
+      - {name: "Mang 16 pít-tông", type: nop, items: {PISTON: 16}, how: "Chế từ gỗ, đá cuội, sắt, đá đỏ", noi: "Cần pít-tông để đẩy van hơi. Chế cho ta 16 cái.", rewards: [xu 1500]}
+      - {name: "Hạ 30 Blaze", type: kill, targets: [BLAZE], amount: 30, how: "Pháo đài Nether, quanh lồng sinh Blaze", noi: "Lò hơi cần lửa không bao giờ tắt. Lửa của Blaze là tốt nhất.", rewards: [xu 3000]}
+      - {name: "Mang 1 thỏi Netherite", type: nop, items: {NETHERITE_INGOT: 1}, how: "Đào mảnh vụn cổ (ancient debris) ở Nether, ghép 4 mảnh + 4 vàng", noi: "Lõi máy phải chịu được nhiệt khủng khiếp. Chỉ có Netherite thôi.", rewards: [xu 6000]}
+      - {name: "SIÊU KHÓ: Hạ 3 Elder Guardian", type: kill, targets: [ELDER_GUARDIAN], amount: 3, how: "Đền dưới biển (ocean monument) có đúng 3 con. Mang thuốc thở dưới nước", noi: "Nguồn năng lượng cuối cùng nằm dưới đáy biển, có ba con quái già canh giữ.", rewards: [xu 15000]}
   # Làm quen tính năng (26/10): mỗi việc 1 lần/người, làm song song, việc nào trước cũng được; how = dòng hướng dẫn trong /nhiemvu.
   # Mã cố định (code báo theo mã; bỏ một việc = xoá mục đó). Quà theo công sức (dễ 100–200, vừa 300–500, khó 600–1.000):
   # tổng 8.150 xu + 2.000 khi xong hết; chương 1 cốt truyện ~4.200 xu, nhiệm vụ ngày ~1.000 xu.

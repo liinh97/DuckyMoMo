@@ -191,7 +191,7 @@ menu:
     - "/conghoang|lời đồn về cổng ẩn"
     - "/khobau|cách dò bản đồ kho báu"
     - "/lenhsan|quái mạnh đang ở đâu"
-    - "/lukhach|lữ khách kể chuyện"
+    - "/lukhach|lữ khách kể chuyện, nhờ việc khó dần"
     - "/journal|nhiệm vụ cốt truyện"
     - "/tpr|dịch chuyển tới các vùng trên bản đồ"
   - slot: 24
@@ -970,6 +970,11 @@ chapters:
     &0Người lạ lang thang ngoài đất hoang, mỗi người kể chuyện về một nơi sau &5Cổng Hoang&0.
     &1/lukhach &0xem họ ở vùng nào.
     &0Nghe chuyện, đi qua cổng tới nơi họ kể, rồi tìm họ kể lại: có thưởng.
+  - |-
+    &6LỮ KHÁCH NHỜ VIỆC
+    &0Hỏi lữ khách &1"Ông có việc gì cần giúp không?"&0: mỗi người 8 việc nối nhau, khó dần tới &4siêu khó&0 (Warden, Wither…).
+    &0Làm xong tìm họ kể lại, nhận xu rồi nhận việc tiếp.
+    &1/nhiemvu &0xem việc đang làm.
   - |-
     &6LỮ KHÁCH (tiếp)
     &8Lữ khách đổi chỗ mỗi 3 ngày.

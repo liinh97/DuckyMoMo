@@ -4,9 +4,17 @@ actions:
   vl_gialang: "command dmm viecnpc %player% gialang"
   vl_bacthoren: "command dmm viecnpc %player% bacthoren"
   vl_gaccong: "command dmm viecnpc %player% gaccong"
+  vl_lk_cong: "command dmm viecnpc %player% lk_cong"
+  vl_lk_bacuc: "command dmm viecnpc %player% lk_bacuc"
+  vl_lk_hiepsi: "command dmm viecnpc %player% lk_hiepsi"
+  vl_lk_hoinuoc: "command dmm viecnpc %player% lk_hoinuoc"
 
 # Việc xong chờ trả (DuckyMoMoCore gắn / gỡ tag vl_<mã>_tra): câu mở đầu "xong rồi à?" của NPC đó
 conditions:
   vl_gialang_tra: "tag vl_gialang_tra"
   vl_bacthoren_tra: "tag vl_bacthoren_tra"
   vl_gaccong_tra: "tag vl_gaccong_tra"
+  vl_lk_cong_tra: "tag vl_lk_cong_tra"
+  vl_lk_bacuc_tra: "tag vl_lk_bacuc_tra"
+  vl_lk_hiepsi_tra: "tag vl_lk_hiepsi_tra"
+  vl_lk_hoinuoc_tra: "tag vl_lk_hoinuoc_tra"

@@ -1522,19 +1522,36 @@ def read_activity(params):
 
 
 def online_stats():
-    """Số đang online cạnh nút Live (27/10): người thật / bot (botfarm) tổng và theo server, kèm tên người thật. Lỗi thì None."""
-    try:
-        on = online_players()
-        bots = web_cached("bot_names", 15, lambda: {str(b.get("name", "")).lower() for b in bot_json().get("bots", [])})
-        out = {"nguoi": 0, "bot": 0, "theo_server": {}, "ten": []}
-        for name, srv in sorted(on.items()):
-            k = "bot" if name in bots else "nguoi"
-            out[k] += 1
-            s = out["theo_server"].setdefault(srv, {"nguoi": 0, "bot": 0})
-            s[k] += 1
-            if k == "nguoi":
-                out["ten"].append(name)
+    """Số đang online cạnh nút Live (27/10): người thật / bot (botfarm) tổng và theo server, kèm tên người thật. Lỗi thì None.
+    Tổng lấy từ CON SỐ ở đầu kết quả minecraft:list (danh sách tên bị cắt "..." sau ~14 người), bot lấy từ botfarm,
+    người thật = tổng - bot. Tên người thật chỉ từ phần tên chưa bị cắt (thiếu thì "con" > 0)."""
+    def load():
+        bots = bot_json().get("bots", [])
+        bot_on = {}
+        for b in bots:
+            if b.get("online"):
+                bot_on[b.get("server")] = bot_on.get(b.get("server"), 0) + 1
+        bot_names = {str(b.get("name", "")).lower() for b in bots}
+        out = {"nguoi": 0, "bot": 0, "theo_server": {}, "ten": [], "con": 0}
+        for srv in GAME_SERVERS:
+            try:
+                text = rcon(srv, ["minecraft:list"])[0][1]
+            except Exception:
+                continue
+            m = re.search(r"(\d+)", text)
+            total = int(m.group(1)) if m else 0
+            nb = min(bot_on.get(srv, 0), total)
+            if total:
+                out["theo_server"][srv] = {"nguoi": total - nb, "bot": nb}
+            out["nguoi"] += total - nb
+            out["bot"] += nb
+            names = text.split(":", 1)[1] if ":" in text else ""
+            real = [n.strip().split(" ")[-1] for n in re.split(r"[,\n]", names)]
+            out["ten"] += [n for n in real if PLAYER_RE.match(n) and n.lower() not in bot_names]
+        out["con"] = max(0, out["nguoi"] - len(out["ten"]))
         return out
+    try:
+        return web_cached("online_stats", 10, load)
     except Exception:
         return None
 

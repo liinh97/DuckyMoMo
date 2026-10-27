@@ -202,7 +202,7 @@ function showOnline(o) {
   el.hidden = false;
   el.innerHTML = `Đang online: <b>${o.nguoi}</b> người thật · <b>${o.bot}</b> bot`;
   const lines = Object.entries(o.theo_server).map(([s, c]) => `${SRV_NAME[s] || s}: ${c.nguoi} người thật, ${c.bot} bot`);
-  el.title = (lines.join(String.fromCharCode(10)) || "Không ai online") + (o.ten.length ? String.fromCharCode(10, 10) + "Người thật: " + o.ten.join(", ") : "");
+  el.title = (lines.join(String.fromCharCode(10)) || "Không ai online") + (o.ten.length ? String.fromCharCode(10, 10) + "Người thật: " + o.ten.join(", ") + (o.con ? ` và ${o.con} người khác` : "") : "");
 }
 
 async function load() {

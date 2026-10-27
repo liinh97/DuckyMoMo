@@ -335,6 +335,54 @@ final class ItemLibrary {
             Map.entry("vanishing_curse", "Lời nguyền biến mất"),
             Map.entry("wind_burst", "Phong bộc"));
 
+    /** Tên chỉ số bằng chữ tiếng Việt cố định (cùng lý do VI_ENCH: plugin khác ghi lại mô tả thì chữ "máy tự dịch" thành tiếng Anh). */
+    private static final Map<String, String> VI_ATTR = Map.ofEntries(
+            Map.entry("air_drag_modifier", "Hệ số lực cản không khí"),
+            Map.entry("armor", "Giáp"),
+            Map.entry("armor_toughness", "Độ cứng giáp"),
+            Map.entry("attack_damage", "Sát thương"),
+            Map.entry("attack_knockback", "Sức bật lùi"),
+            Map.entry("attack_speed", "Tốc độ tấn công"),
+            Map.entry("below_name_distance", "Khoảng cách hiển thị điểm số trên nhãn ghi tên"),
+            Map.entry("block_break_speed", "Tốc độ phá khối"),
+            Map.entry("block_interaction_range", "Phạm vi tương tác khối"),
+            Map.entry("bounciness", "Độ nảy"),
+            Map.entry("burning_time", "Thời gian cháy"),
+            Map.entry("camera_distance", "Khoảng cách máy quay"),
+            Map.entry("entity_interaction_range", "Phạm vi tương tác thực thể"),
+            Map.entry("explosion_knockback_resistance", "Kháng đẩy lùi từ vụ nổ"),
+            Map.entry("fall_damage_multiplier", "Hệ số sát thương rơi"),
+            Map.entry("flying_speed", "Tốc độ bay"),
+            Map.entry("follow_range", "Phạm vi đi theo của sinh vật"),
+            Map.entry("friction_modifier", "Hệ số ma sát"),
+            Map.entry("gravity", "Trọng lực"),
+            Map.entry("jump_strength", "Sức nhảy"),
+            Map.entry("knockback_resistance", "Kháng đẩy lùi"),
+            Map.entry("luck", "May mắn"),
+            Map.entry("max_absorption", "Hấp thụ tối đa"),
+            Map.entry("max_health", "Máu tối đa"),
+            Map.entry("mining_efficiency", "Hiệu suất đào"),
+            Map.entry("movement_efficiency", "Hiệu quả di chuyển"),
+            Map.entry("movement_speed", "Tốc chạy"),
+            Map.entry("nameplate_distance", "Khoảng cách hiển thị nhãn ghi tên"),
+            Map.entry("oxygen_bonus", "Phần oxi thêm"),
+            Map.entry("safe_fall_distance", "Độ cao rơi xuống an toàn"),
+            Map.entry("scale", "Quy mô"),
+            Map.entry("sneaking_speed", "Tốc độ đi rón rén"),
+            Map.entry("spawn_reinforcements", "Lực lượng thây ma tăng cường"),
+            Map.entry("step_height", "Chiều cao bước"),
+            Map.entry("submerged_mining_speed", "Tốc độ đào dưới nước"),
+            Map.entry("sweeping_damage_ratio", "Tỉ lệ sát thương quét cạnh"),
+            Map.entry("tempt_range", "Phạm vi thu hút sinh vật"),
+            Map.entry("water_movement_efficiency", "Hiệu quả di chuyển dưới nước"),
+            Map.entry("waypoint_receive_range", "Phạm vi nhận điểm mốc"),
+            Map.entry("waypoint_transmit_range", "Phạm vi truyền điểm mốc"));
+
+    private static Component attrName(Attribute a) {
+        String vi = VI_ATTR.get(a.getKey().getKey());
+        return vi != null ? Component.text(vi) : Component.translatable(a.translationKey());
+    }
+
     private static Component enchName(Enchantment e) {
         String vi = "minecraft".equals(e.getKey().getNamespace()) ? VI_ENCH.get(e.getKey().getKey()) : null;
         return vi != null ? Component.text(vi) : e.description();
@@ -386,46 +434,78 @@ final class ItemLibrary {
      * Chạy lúc dựng món (sau khi CE ghi mô tả) và lúc vào game cho đồ đang giữ. true = đã đổi món.
      */
     static boolean tidyLore(ItemStack it) {
-        if (it == null || !it.hasItemMeta() || it.getItemMeta().getPersistentDataContainer().has(TIDY_KEY)) {
+        if (it == null || !it.hasItemMeta()) {
             return false;
         }
         ItemMeta meta = it.getItemMeta();
+        byte ver = meta.getPersistentDataContainer().getOrDefault(TIDY_KEY, org.bukkit.persistence.PersistentDataType.BYTE, (byte) 0);
         List<Component> lore = meta.lore();
-        if (lore == null || lore.isEmpty()) {
+        if (ver >= 2 || lore == null || lore.isEmpty()) {
             return false;
         }
         var plain = net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer.plainText();
-        List<Component> entries = new ArrayList<>();
-        boolean vanillaDone = false;
-        int k = 0;
-        for (; k < lore.size(); k++) {
-            String t = plain.serialize(lore.get(k)).trim();
-            if (t.isEmpty()) {
-                break;
-            }
-            if (t.contains(" · ")) {   // dòng phù phép game đã gộp (có thể đã thành tiếng Anh): dựng lại từ dữ liệu phù phép
-                boolean all = java.util.Arrays.stream(t.split(" · ")).allMatch(x -> ENCH_ENTRY.matcher(x.trim()).matches() || x.trim().matches("^[\\p{L}][\\p{L} '’-]{0,30}$"));   // phù phép 1 cấp không ghi cấp
-                if (!all || !meta.hasItemFlag(ItemFlag.HIDE_ENCHANTS)) {
+        List<Component> out = new ArrayList<>(lore);
+        if (ver < 1) {   // v1: gom phù phép đầu mô tả
+            List<Component> entries = new ArrayList<>();
+            boolean vanillaDone = false;
+            int k = 0;
+            for (; k < lore.size(); k++) {
+                String t = plain.serialize(lore.get(k)).trim();
+                if (t.isEmpty()) {
                     break;
                 }
-                if (!vanillaDone) {
-                    entries.addAll(enchEntries(meta.getEnchants()));
-                    vanillaDone = true;
+                if (t.contains(" · ")) {   // dòng phù phép game đã gộp (có thể đã thành tiếng Anh): dựng lại từ dữ liệu phù phép
+                    boolean all = java.util.Arrays.stream(t.split(" · ")).allMatch(x -> ENCH_ENTRY.matcher(x.trim()).matches() || x.trim().matches("^[\\p{L}][\\p{L} '’-]{0,30}$"));
+                    if (!all || !meta.hasItemFlag(ItemFlag.HIDE_ENCHANTS)) {
+                        break;
+                    }
+                    if (!vanillaDone) {
+                        entries.addAll(enchEntries(meta.getEnchants()));
+                        vanillaDone = true;
+                    }
+                    continue;
+                }
+                if (!ENCH_ENTRY.matcher(t).matches()) {
+                    break;
+                }
+                entries.add(lore.get(k));
+            }
+            if (!entries.isEmpty()) {
+                out = new ArrayList<>(pack(entries, 3));
+                out.addAll(lore.subList(k, lore.size()));
+            }
+        }
+        // v2 (28/10): dòng chỉ số tiếng Việt, gỡ dòng "Sát thương: 9" của OldCombatMechanics (trùng "Khi cầm"), gỡ dòng "+72% Sát thương"
+        // trùng với khối nội dung của set ("✧ +72% sát thương")
+        List<String> low = out.stream().map(c -> plain.serialize(c).toLowerCase(Locale.ROOT)).toList();
+        List<Component> res = new ArrayList<>();
+        for (int i = 0; i < out.size(); i++) {
+            String t = plain.serialize(out.get(i)).trim();
+            if (t.matches("^Sát thương: [0-9.,]+$")) {
+                if (!res.isEmpty() && plain.serialize(res.get(res.size() - 1)).isBlank()) {
+                    res.remove(res.size() - 1);
                 }
                 continue;
             }
-            if (!ENCH_ENTRY.matcher(t).matches()) {
-                break;
+            if (t.matches("^[+-][0-9.,]+% .+$")) {
+                String want = t.toLowerCase(Locale.ROOT);
+                int self = i;
+                boolean dup = java.util.stream.IntStream.range(0, low.size()).anyMatch(j -> j != self && low.get(j).contains(want));
+                if (dup) {
+                    continue;
+                }
             }
-            entries.add(lore.get(k));
+            if (t.startsWith("Khi cầm: ") || t.startsWith("Khi mặc: ") || t.startsWith("Khi đội: ")) {
+                Component line = statsLine(meta, it.getType());
+                if (line != null) {
+                    res.add(line);
+                    continue;
+                }
+            }
+            res.add(out.get(i));
         }
-        if (entries.isEmpty()) {
-            return false;
-        }
-        List<Component> out = new ArrayList<>(pack(entries, 3));
-        out.addAll(lore.subList(k, lore.size()));
-        meta.lore(out);
-        meta.getPersistentDataContainer().set(TIDY_KEY, org.bukkit.persistence.PersistentDataType.BYTE, (byte) 1);
+        meta.lore(res);
+        meta.getPersistentDataContainer().set(TIDY_KEY, org.bukkit.persistence.PersistentDataType.BYTE, (byte) 2);
         it.setItemMeta(meta);
         return true;
     }
@@ -469,7 +549,7 @@ final class ItemLibrary {
                         : String.format(Locale.ROOT, "%.2f", sum).replaceAll("0+$", "").replace('.', ',')) + (pct ? "%" : "");
                 line = line.append(Component.text(first ? "" : " · ", NamedTextColor.DARK_GRAY))
                         .append(Component.text(num + " ", sum < 0 ? NamedTextColor.RED : NamedTextColor.BLUE))
-                        .append(Component.translatable(a.translationKey(), sum < 0 ? NamedTextColor.RED : NamedTextColor.BLUE));
+                        .append(attrName(a).color(sum < 0 ? NamedTextColor.RED : NamedTextColor.BLUE));
                 first = false;
             }
         }

@@ -447,6 +447,8 @@ final class Kham implements Listener {
     }
 
     private static final String LINE_PREFIX = "◈ Khảm ";
+    private static final String TITLE = "KHẢM NGỌC";
+    private static final java.util.regex.Pattern HEADER = java.util.regex.Pattern.compile("^((?:&[0-9a-fk-or]|&#[0-9a-fA-F]{6})*)(\\S+) ((?:&[0-9a-fk-or]|&#[0-9a-fA-F]{6})*)\\S.*$");
 
     /**
      * Ghi ngọc + dòng khảm. 28/10 (chủ server: khối khảm ở cuối món, mô tả dài thì không thấy): MỘT dòng
@@ -464,7 +466,8 @@ final class Kham implements Listener {
         var plain = net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer.plainText();
         int at = -1;
         for (int i = 0; i < lore.size(); i++) {
-            if (plain.serialize(lore.get(i)).startsWith(LINE_PREFIX)) {
+            String pl = plain.serialize(lore.get(i));
+            if (pl.startsWith(LINE_PREFIX) || pl.contains(" " + TITLE + " »")) {
                 lore.remove(i);
                 at = i;
                 break;
@@ -482,24 +485,36 @@ final class Kham implements Listener {
                 at = lore.size();
             }
             long filled = list.stream().filter(x -> !x.empty()).count();
-            StringBuilder b = new StringBuilder("&5" + LINE_PREFIX + "&d" + filled + "/" + n + "&7:");
+            // tiêu đề cùng kiểu mục của set (28/10, chủ server: dòng khảm lệch kiểu, xấu): lấy ký hiệu + màu dòng tiêu đề ngay dưới
+            String sym = "◈", c1 = "&d&l", c2 = "";
+            if (at < lore.size()) {
+                java.util.regex.Matcher m = HEADER.matcher(LEGACY.serialize(lore.get(at)));
+                if (m.matches() && m.group(2).length() <= 2) {
+                    sym = m.group(2);
+                    c1 = m.group(1).isEmpty() ? c1 : m.group(1);
+                    c2 = m.group(3);
+                }
+            }
+            String tc = c2.isEmpty() ? c1 : c2;
+            StringBuilder b = new StringBuilder(c1 + sym + " " + tc + TITLE + " &r&8» ");
             int minE = Integer.MAX_VALUE;
             for (int i = 0; i < n; i++) {
                 Sock sk = i < list.size() ? list.get(i) : EMPTY;
                 Gem gem = gems.get(sk.code());
+                if (i > 0) {
+                    b.append(" ");
+                }
                 if (gem == null) {
-                    b.append(" &7◇");
+                    b.append("&8◇");
                 } else {
                     Tier t = tier(sk);
-                    b.append(" ").append(gem.color()).append("◆").append(gem.name()).append(" ").append(t.color()).append(t.name());
+                    b.append(gem.color()).append("◆ ").append(gem.name()).append(" ").append(t.color()).append("(").append(t.name()).append(")");
                     minE = Math.min(minE, sk.energy());
                 }
             }
+            b.append(" &7").append(filled).append("/").append(n);
             if (filled > 0) {
-                int pc = pct(minE);
-                b.append(" &7· ").append(minE * 100 <= warnPct * maxEnergy ? "&c" : minE * 2 <= maxEnergy ? "&e" : "&a").append("⚡").append(pc).append("%");
-            } else {
-                b.append(" &7(/thoren kham)");
+                b.append(" &8· ").append(minE * 100 <= warnPct * maxEnergy ? "&c" : minE * 2 <= maxEnergy ? "&e" : "&a").append("⚡").append(pct(minE)).append("%");
             }
             lore.add(at, c(b.toString()));
         }
@@ -509,14 +524,17 @@ final class Kham implements Listener {
         it.setItemMeta(meta);
     }
 
-    /** Đồ còn khối khảm kiểu cũ (nhiều dòng ở cuối): ghi lại thành 1 dòng. true = đã đổi món. */
+    /** Đồ còn dòng khảm kiểu cũ (khối nhiều dòng ở cuối, hoặc "◈ Khảm 0/4"): ghi lại theo kiểu mục của set. true = đã đổi món. */
     static boolean migrate(ItemStack it) {
         Kham k = INSTANCE;
         if (k == null || it == null || !it.hasItemMeta()) {
             return false;
         }
         Integer old = it.getItemMeta().getPersistentDataContainer().get(k.keyLines, PersistentDataType.INTEGER);
-        if (old == null || old <= 0 || k.slotsOf(it) <= 0) {
+        List<Component> lore = it.getItemMeta().lore();
+        var plain = net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer.plainText();
+        boolean oneLineOld = lore != null && lore.stream().anyMatch(l -> plain.serialize(l).startsWith(LINE_PREFIX));   // "◈ Khảm 0/4" sáng 28/10
+        if (((old == null || old <= 0) && !oneLineOld) || k.slotsOf(it) <= 0) {
             return false;
         }
         k.write(it, k.gemsOf(it));

@@ -393,8 +393,9 @@ setInterval(async () => {
 
 // ---------------------------------------------------------------- bot tự chat với nhau (27/10, bật / tắt ở trang Bot)
 // Cứ min–max phút chọn 2–3 bot đang cùng một server, nói một đoạn hội thoại soạn sẵn (gõ chậm như người, mỗi bot một kiểu gõ).
-// Nội dung chỉ chuyện vặt / mẹo đúng của server: không hẹn gặp, không rủ đi đâu (người thật đến thì bot không đáp được),
-// không nói gì về nạp tiền / mua bán. Đêm khuya (1–7 giờ) im.
+// Nội dung chỉ chuyện vặt / mẹo đúng của server (lệnh lấy theo huongdan.yml): không hẹn gặp, không rủ đi đâu, không câu hỏi bỏ lửng
+// (người thật trả lời thì bot không đáp được), không nói gì về nạp tiền. KHÔNG câu gắn với giờ / ngày / thời tiết thật (ăn cơm, đêm,
+// mưa, mai on…): nói sai lúc là lộ bot (27/10, chủ server). Đêm khuya (1–7 giờ) im.
 const CHAT_CFG = '/state/chat.json';
 const chatCfg = { on: false, min: 4, max: 9 };
 try { Object.assign(chatCfg, JSON.parse(fs.readFileSync(CHAT_CFG, 'utf8'))); } catch (e) { /* chưa cài: tắt */ }
@@ -405,12 +406,9 @@ const TALKS = [
   ['A:hôm nay đào mãi không thấy kim cương', 'B:xuống tầm y -58 mà đào', 'A:ok để thử'],
   ['A:gg', 'B:gg'],
   ['A:{B} ơi', 'B:sao', 'A:à thôi nhầm người :v'],
-  ['A:đói quá đi ăn cơm đã', 'B:ăn ngon nhé'],
   ['A:map này đẹp nhỉ', 'B:ừ quần đảo nhiều chỗ đẹp phết'],
-  ['A:có ai lập bang chưa', 'B:t đang góp tiền lập nè', 'A:lập xong nhớ mời t'],
-  ['A:mai có ai on không', 'B:chắc tối t on', 'C:t cũng thế'],
+  ['A:có ai lập thị trấn chưa', 'B:t đang góp tiền lập nè', 'A:lập xong nhớ mời t'],
   ['A:ae ở đây chơi lâu chưa', 'B:mới được mấy hôm', 'C:t cũng mới'],
-  ['A:đêm rồi quái nhiều vãi', 'B:ở trong nhà đi', 'A:ok'],
   ['A:chán quá', 'B:đi câu cá đi', 'A:ừ cũng được'],
   ['A:hello ae', 'B:hi', 'C:chào'],
   ['A:t afk tí nhé', 'B:ok'],
@@ -420,15 +418,38 @@ const TALKS = [
   ['A:vừa chết vì creeper :(', 'B:haha', 'C:mất đồ không'],
   ['A:câu được con cá to vãi', 'B:ghê vậy'],
   ['A:ae có biết làm bàn phù phép không', 'B:4 obsidian 2 kim cương 1 quyển sách', 'A:thanks'],
-  ['A:sắp sáng chưa nhỉ', 'B:sắp rồi'],
   ['A:t mới xây xong cái chuồng gà', 'B:nuôi gà làm gì', 'A:lấy trứng với lông làm tên :v'],
-  ['A:lag tí xíu', 'B:t thấy bình thường mà', 'A:chắc mạng nhà t'],
   ['A:{B} chơi minecraft lâu chưa', 'B:từ hồi bản 1.8', 'A:lão làng rồi'],
-  ['A:hôm nay mưa suốt', 'B:ừ mưa cả ngoài đời lẫn trong game :v'],
   ['A:tìm mãi không thấy làng nào', 'B:đi thuyền dọc bờ biển dễ thấy hơn', 'A:để thử'],
   ['A:ae ơi cuốc vàng có tốt không', 'B:nhanh mà mau hỏng lắm', 'C:dùng sắt cho lành'],
+  // buôn bán, cửa hàng, kiếm tiền
+  ['A:bán đồ cho server ở đâu thế ae', 'B:/cuahang hoặc /sell ấy', 'C:phải đứng trong kinh đô hoặc thị trấn hoà bình mới bán được', 'A:à thế à'],
+  ['A:/sell bán theo tên được không', 'B:được, vd /sell cobblestone 64', 'A:tiện ghê'],
+  ['A:kim cương bán server được bao nhiêu nhỉ', 'B:cầm lên gõ /worth là biết giá', 'A:ok'],
+  ['A:tạo shop rương kiểu gì nhỉ', 'B:cầm món muốn bán, nhìn vào rương rồi /qs create giá', 'A:để thử'],
+  ['A:muốn tìm shop bán sắt thì sao', 'B:/qs find iron_ingot', 'C:hoặc lên /choden xem người ta treo'],
+  ['A:chợ đen treo đồ bán kiểu gì', 'B:cầm món rồi /choden ban giá', 'A:có hết hạn không', 'B:có, hết hạn thì đồ tự về túi'],
+  ['A:{B} ơi có sắt không, t cần ít', 'B:có, /trade t đi', 'A:ok để t gửi'],
+  ['A:đổi đồ với người khác thì dùng /trade cho an toàn nhé', 'B:ừ đừng ném đồ xuống đất, mất như chơi'],
+  ['A:nghề nào kiếm tiền ổn ae', 'B:t làm thợ mỏ thấy cũng được', 'C:câu cá bán /emf shop cũng ra tiền', 'A:để t xem /jobs'],
+  ['A:ai giàu nhất server nhỉ', 'B:xem /baltop ấy', 'A:toàn đại gia :v'],
+  ['A:bán cá ở đâu ae', 'B:/emf shop', 'C:cá hiếm giá cao lắm'],
+  // tính năng
+  ['A:điểm danh chưa ae', 'B:rồi, được cả vé gacha', 'C:quay /gacha toàn ra đồ linh tinh :v'],
+  ['A:nhiệm vụ /nhiemvu khó ghê', 'B:làm từ từ thôi, có thưởng mà'],
+  ['A:bắt pet kiểu gì nhỉ', 'B:đánh tới yếu máu rồi quăng dây xích', 'A:thanks'],
+  ['A:thái ấp có pvp không ae', 'B:không, đất riêng an toàn', 'A:vậy để dành tiền mua'],
+  ['A:lập thị trấn cần gì ae', 'B:đủ tiền với giờ chơi rồi /t new tên', 'C:nhớ nộp quỹ /t deposit, hết quỹ là mắc nợ đấy'],
+  ['A:không thích đánh nhau thì sao', 'B:vào liên minh hoà bình, xem /hoabinh', 'A:ok'],
+  ['A:rèn đồ ở đâu ae', 'B:/thoren', 'A:thanks'],
+  ['A:dungeon vào kiểu gì', 'B:gõ /dungeon rồi bấm chọn', 'C:đi đông người cho dễ'],
+  ['A:công thành đánh lúc nào ae', 'B:xem /lichcongthanh có giờ phiên', 'A:ok'],
+  ['A:balo mở bằng gì', 'B:/balo', 'A:à ok'],
+  ['A:muốn đổi skin thì sao', 'B:/skin tên là được', 'C:hoặc /tuskin chọn'],
+  ['A:skill nghề xem ở đâu', 'B:/skills', 'A:thanks'],
+  ['A:lên cấp /capdo được điểm thuộc tính đấy', 'B:cộng vào máu hay sức mạnh', 'A:t cộng máu cho trâu'],
 ];
-const SOLO = ['ae ơi', ':v', 'buồn ngủ quá', 'hehe', 'chiều nay nóng thật', 'đi câu cá thôi', 'vừa đào được ít sắt', 'gió to thế'];
+const SOLO = [':v', 'hehe', 'gg', 'đi câu cá thôi', 'vừa đào được ít sắt', 'cày cấp mệt ghê', 'vừa bán được ít cá', 'shop rương tiện thật'];
 const STYLE = n => [...n].reduce((s, c) => s + c.charCodeAt(0), 0) % 3;   // 0 có dấu, 1 không dấu, 2 có dấu + viết thường hết
 const noAccent = s => s.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'D');
 const styled = (n, s) => STYLE(n) === 1 ? noAccent(s) : STYLE(n) === 2 ? s.toLowerCase() : s;

@@ -20,7 +20,8 @@ register-limit:
     - vanlinh
     - Itrap
   # Miễn theo IP (khi cần cố định một IP / dải IP)
-  whitelist: []
+  whitelist:
+    - 171.255.251.82
 
 # World sảnh là đảo bay (Sakura Spawn): rơi xuống dưới y này thì về spawn, không chết vì hư không
 void-teleport:

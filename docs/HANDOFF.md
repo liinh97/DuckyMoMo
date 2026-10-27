@@ -7,7 +7,7 @@
 
 ## 27/10/2026 tối: TRẠNG THÁI KHI CHUYỂN TÀI KHOẢN (đọc mục này trước)
 
-- **27/10 khuya (commit a1ce437, CHƯA LÊN SERVER — lệnh triển khai bị chặn quyền, chờ chủ server cho phép):** trang Bot tạo / xoá bot mới
+- **27/10 khuya (commit a1ce437, ĐÃ LÊN SERVER 17:49 + đã thử: bot Thu_TaoBot tạo/vào/xoá, quyền có trước khi vào, không [+]/[-], Sáng tạo, IP 10.30.21.31; ping proxy 20/500, rê chuột trống; bot thử đã /choilai):** trang Bot tạo / xoá bot mới
   (botfarm action create/remove, panel kiểm tên trùng usercache.json), danh sách server không hiện tên người chơi khi rê chuột
   (core-velocity BotCount xoá sample). Triển khai khi không có người thật: `./ops/build-core.sh` → `docker compose up -d --build botfarm panel`
   → `docker compose restart proxy` → `docker compose --profile tunnel up -d --force-recreate relay`. Sau đó thử tạo 1 bot, xem LuckPerms có

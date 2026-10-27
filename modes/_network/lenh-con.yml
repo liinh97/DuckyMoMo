@@ -293,7 +293,7 @@ groups:
       - ["vote top", "Bảng vote tháng", Mọi người]
       - ["diemdanh", "Điểm danh nhận quà ngày + quà mốc (Bang Hội Chiến)", Mọi người]
       - ["diemdanh xem", "Xem số ngày đã điểm danh và mốc tiếp theo", Mọi người]
-      - ["nhiemvu", "Nhiệm vụ hôm nay + Làm quen tính năng (mỗi việc 1 lần) (Bang Hội Chiến; gõ /quests cũng được)", Mọi người]
+      - ["nhiemvu", "Nhiệm vụ hôm nay + việc dân làng đang nhận từ NPC (Bang Hội Chiến; gõ /quests cũng được)", Mọi người]
       - ["gacha", "Gacha (quay thưởng): chọn máy, xem tỉ lệ, quay bằng vé (cầm vé bấm chuột phải cũng quay) (Bang Hội Chiến)", Mọi người]
       - ["gacha give <người> <mã máy> [số]", "Tặng vé gacha (người đang online)", Chỉ admin]
       - ["xuong", "Xưởng chế tạo đồ có hạn dùng (Bang Hội Chiến)", Mọi người]

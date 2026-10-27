@@ -1,0 +1,6 @@
+# Việc dân làng nhờ (28/10): hội thoại Già Làng / Bác Thợ Rèn / Người Gác Cổng gọi DuckyMoMoCore giao / trả việc trong chat
+# (daily-quests.givers + intro trong config DuckyMoMoCore). Người chơi chọn câu hỏi việc trong hội thoại -> lệnh console dưới đây.
+actions:
+  vl_gialang: "command dmm viecnpc %player% gialang"
+  vl_bacthoren: "command dmm viecnpc %player% bacthoren"
+  vl_gaccong: "command dmm viecnpc %player% gaccong"

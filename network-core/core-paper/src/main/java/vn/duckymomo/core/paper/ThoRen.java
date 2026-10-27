@@ -570,7 +570,7 @@ final class ThoRen implements Listener {
             return;
         }
         Stall st = stalls.get(id);
-        if (st != null) {
+        if (st != null && !DailyQuests.talkAt(e.getPlayer(), "quay:" + id)) {   // việc dân làng nhờ (28/10)
             stallMenu(e.getPlayer(), st);
         }
     }

@@ -166,7 +166,7 @@ final class DonBuon implements org.bukkit.event.Listener {
         }
         long now = System.currentTimeMillis();
         Long last = lastClick.put(p.getUniqueId(), now);
-        if (last == null || now - last > 300) {
+        if ((last == null || now - last > 300) && !DailyQuests.talkAt(p, "donbuon")) {   // việc dân làng nhờ (28/10)
             open(p);
         }
     }

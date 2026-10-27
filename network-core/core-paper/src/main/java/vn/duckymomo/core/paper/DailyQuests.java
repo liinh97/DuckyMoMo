@@ -44,6 +44,11 @@ import java.util.UUID;
  * DailyQuests.feature(p, mã) khi người chơi làm thật: mua (Cửa hàng Kinh Đô), ban (/sell có tiền về), choden (treo món zAuctionHouse),
  * trade (TradePro xong), thoren, tinhluyen, dungeon (vào tới), pet (bắt pet), thitran (có thị trấn Towny, kiểm mỗi phút).
  * Xong hết: intro-all-rewards. Lưu intro.<uuid>: [mã đã xong] (không xoá khi sang ngày).
+ * Việc dân làng nhờ (28/10, thay danh sách Làm quen trong /nhiemvu): mỗi việc intro có npc = người giao (daily-quests.givers).
+ * Nhánh mở khi hỏi người giao ĐẦU TIÊN (Già Làng, hội thoại BetonQuest gọi /dmm viecnpc <người> gialang); sau đó bấm từng NPC thì
+ * nhận hết việc của người đó, làm xong (feature) chưa có quà mà phải quay lại NPC đó mới nhận. Việc chưa nhận thì làm cũng không tính.
+ * NPC: "bq" (hội thoại BetonQuest gọi lệnh), "quay:<quầy Thợ Rèn>" (ThoRen.onNpc), "donbuon" (Nhà Buôn): có việc để giao / trả thì
+ * NPC nói trong chat và lần bấm đó không mở menu. Lưu lang.<uuid>: mo (đã mở nhánh), nhan (đang làm), xong (chờ nhận thưởng).
  */
 final class DailyQuests implements Listener {
     static volatile DailyQuests INSTANCE;
@@ -66,7 +71,10 @@ final class DailyQuests implements Listener {
 
     private record Quest(String id, String name, String type, List<String> targets, int amount, List<String> rewards) { }
 
-    private record Intro(String id, String name, String how, List<String> rewards) { }
+    private record Intro(String id, String name, String how, List<String> rewards, String giver) { }
+
+    /** Người giao việc dân làng: npc = "bq" | "quay:<quầy>" | "donbuon"; mo / nhan / tra / het = câu nói lúc mở nhánh / giao / trả / hết việc. */
+    private record Giver(String id, String name, String npc, String where, String mo, String nhan, String tra, String het) { }
 
     private final JavaPlugin plugin;
     private final ConfigurationSection cfg;
@@ -75,6 +83,7 @@ final class DailyQuests implements Listener {
     private final YamlConfiguration data;
     private final Map<String, Quest> pool = new LinkedHashMap<>();
     private final Map<String, Intro> intros = new LinkedHashMap<>();
+    private final Map<String, Giver> givers = new LinkedHashMap<>();
     private boolean dirty;
 
     DailyQuests(JavaPlugin plugin, ConfigurationSection cfg, Rewards rewards) {
@@ -97,12 +106,24 @@ final class DailyQuests implements Listener {
                         t.isEmpty() ? List.of("*") : t, Math.max(1, q.getInt("amount", 1)), q.getStringList("rewards")));
             }
         }
+        ConfigurationSection gs = cfg.getConfigurationSection("givers");
+        if (gs != null) {
+            for (String id : gs.getKeys(false)) {
+                ConfigurationSection g = gs.getConfigurationSection(id);
+                if (g != null) {
+                    givers.put(id, new Giver(id, g.getString("name", id), g.getString("npc", "bq").toLowerCase(Locale.ROOT), g.getString("where", ""),
+                            g.getString("mo", ""), g.getString("nhan", ""), g.getString("tra", ""), g.getString("het", "")));
+                }
+            }
+        }
         ConfigurationSection in = cfg.getConfigurationSection("intro");
         if (in != null) {
             for (String id : in.getKeys(false)) {
                 ConfigurationSection q = in.getConfigurationSection(id);
                 if (q != null) {
-                    intros.put(id, new Intro(id, q.getString("name", id), q.getString("how", ""), q.getStringList("rewards")));
+                    String g = q.getString("npc");
+                    intros.put(id, new Intro(id, q.getString("name", id), q.getString("how", ""), q.getStringList("rewards"),
+                            g != null && givers.containsKey(g) ? g : null));
                 }
             }
         }
@@ -174,22 +195,182 @@ final class DailyQuests implements Listener {
 
     private void intro(Player p, String id) {
         Intro in = intros.get(id);
-        if (in == null || introDone(p.getUniqueId(), id)) {
+        UUID u = p.getUniqueId();
+        if (in == null || introDone(u, id)) {
             return;
         }
-        List<String> done = new ArrayList<>(data.getStringList("intro." + p.getUniqueId()));
-        done.add(id);
-        data.set("intro." + p.getUniqueId(), done);
+        if (in.giver() == null) {
+            claim(p, List.of(id));
+            return;
+        }
+        List<String> nhan = list(u, "nhan");
+        if (!nhan.remove(id)) {
+            return;   // chưa nhận việc từ NPC: chưa tính
+        }
+        List<String> xong = list(u, "xong");
+        xong.add(id);
+        data.set(lk(u) + ".nhan", nhan);
+        data.set(lk(u) + ".xong", xong);
         dirty = true;
-        List<String> got = rewards.give(p, in.rewards());
-        long left = intros.keySet().stream().filter(k -> !done.contains(k)).count();
-        p.sendMessage(c("&a✔ Làm quen: &f" + in.name() + (got.isEmpty() ? "" : "&a. Nhận: &f" + String.join("&7, &f", got))
-                + (left > 0 ? " &7(còn " + left + " việc làm quen, xem /nhiemvu)" : "")));
-        if (left == 0) {
+        Giver g = givers.get(in.giver());
+        p.sendMessage(c("&a✔ Xong việc: &f" + in.name() + "&a. Về gặp " + g.name() + (g.where().isEmpty() ? "" : " &7(" + g.where() + ")")
+                + " &anhận thưởng."));
+        p.playSound(p.getLocation(), org.bukkit.Sound.ENTITY_PLAYER_LEVELUP, 0.6f, 1.4f);
+        flush();
+    }
+
+    /** Trả quà các việc (ghi vào intro.<uuid>); việc cuối cùng xong thì thưởng thêm intro-all-rewards. */
+    private void claim(Player p, List<String> ids) {
+        UUID u = p.getUniqueId();
+        List<String> done = new ArrayList<>(data.getStringList("intro." + u));
+        boolean added = false;
+        for (String id : ids) {
+            Intro in = intros.get(id);
+            if (in == null || done.contains(id)) {
+                continue;
+            }
+            done.add(id);
+            added = true;
+            List<String> got = rewards.give(p, in.rewards());
+            p.sendMessage(c("&a✔ " + in.name() + (got.isEmpty() ? "" : "&a. Nhận: &f" + String.join("&7, &f", got))));
+        }
+        if (!added) {
+            return;
+        }
+        data.set("intro." + u, done);
+        dirty = true;
+        if (intros.keySet().stream().allMatch(done::contains)) {
             List<String> bonus = rewards.give(p, cfg.getStringList("intro-all-rewards"));
-            p.sendMessage(c("&6★ Đã làm quen hết các tính năng!" + (bonus.isEmpty() ? "" : " Thưởng thêm: &f" + String.join("&7, &f", bonus))));
+            p.sendMessage(c("&6★ Đã giúp hết dân làng!" + (bonus.isEmpty() ? "" : " Thưởng thêm: &f" + String.join("&7, &f", bonus))));
         }
         flush();
+    }
+
+    // ---------------------------------------------------------------- việc dân làng nhờ: NPC giao / trả
+
+    private static String lk(UUID id) {
+        return "lang." + id;
+    }
+
+    private boolean opened(UUID id) {
+        return data.getBoolean(lk(id) + ".mo");
+    }
+
+    private List<String> list(UUID id, String k) {
+        return new ArrayList<>(data.getStringList(lk(id) + "." + k));
+    }
+
+    private Giver head() {
+        return givers.values().iterator().next();
+    }
+
+    private String rewardText(Intro in) {
+        return in.rewards().isEmpty() ? "" : " &8→ &7" + String.join("&7, ", rewards.describe(in.rewards()));
+    }
+
+    private static void say(Player p, Giver g, String line) {
+        if (!line.isBlank()) {
+            p.sendMessage(c(g.name() + "&f: &7“" + line + "&7”"));
+        }
+    }
+
+    /** NPC quầy ("quay:<mã>") / Nhà Buôn ("donbuon") được bấm: true = NPC đã nói (giao / trả việc), bên gọi không mở menu lần này. */
+    static boolean talkAt(Player p, String npc) {
+        DailyQuests d = INSTANCE;
+        if (d == null) {
+            return false;
+        }
+        for (Giver g : d.givers.values()) {
+            if (g.npc().equals(npc) && d.talk(p, g, false)) {
+                p.sendMessage(c("&8(bấm lần nữa để mở quầy)"));
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /** /dmm viecnpc <người> <mã người giao>: hội thoại BetonQuest gọi (console). Chờ 1 giây cho hội thoại đóng rồi mới nói. */
+    void talkCommand(CommandSender s, String[] args) {
+        Player p = args.length >= 3 ? Bukkit.getPlayerExact(args[1]) : null;
+        Giver g = args.length >= 3 ? givers.get(args[2].toLowerCase(Locale.ROOT)) : null;
+        if (p == null || g == null) {
+            s.sendMessage("/dmm viecnpc <người đang online> <" + String.join("|", givers.keySet()) + ">: NPC giao / trả việc dân làng");
+            return;
+        }
+        Bukkit.getScheduler().runTaskLater(plugin, () -> {
+            if (p.isOnline()) {
+                talk(p, g, true);
+            }
+        }, 20L);
+    }
+
+    /** asked = người chơi chủ động hỏi (hội thoại): không có gì mới cũng trả lời (việc còn dở / hết việc). */
+    private boolean talk(Player p, Giver g, boolean asked) {
+        UUID u = p.getUniqueId();
+        boolean said = false;
+        if (!opened(u)) {
+            Giver h = head();
+            if (h != g) {
+                if (asked) {
+                    say(p, g, "Cháu mới tới làng hả? Gặp " + h.name() + "&7 trước đã" + (h.where().isEmpty() ? "" : " (" + h.where() + ")")
+                            + ", cụ ấy sẽ chỉ việc cho.");
+                }
+                return asked;
+            }
+            data.set(lk(u) + ".mo", true);
+            dirty = true;
+            say(p, g, g.mo());
+            p.sendMessage(c("&6Việc dân làng nhờ &7(gặp từng người để nhận việc, làm xong quay lại người đó nhận thưởng):"));
+            for (Giver x : givers.values()) {
+                long n = intros.values().stream().filter(i -> x.id().equals(i.giver()) && !introDone(u, i.id())).count();
+                if (n > 0) {
+                    p.sendMessage(c("&7• " + x.name() + (x.where().isEmpty() ? "" : " &8· &7" + x.where()) + " &8(" + n + " việc)"));
+                }
+            }
+            said = true;
+        }
+        List<String> nhan = list(u, "nhan");
+        List<String> xong = list(u, "xong");
+        List<String> tra = xong.stream().filter(id -> intros.containsKey(id) && g.id().equals(intros.get(id).giver())).toList();
+        if (!tra.isEmpty()) {
+            say(p, g, g.tra());
+            xong.removeAll(tra);
+            data.set(lk(u) + ".xong", xong);
+            dirty = true;
+            claim(p, tra);
+            said = true;
+        }
+        List<Intro> moi = intros.values().stream().filter(i -> g.id().equals(i.giver()) && !introDone(u, i.id())
+                && !nhan.contains(i.id()) && !xong.contains(i.id())).toList();
+        if (!moi.isEmpty()) {
+            say(p, g, g.nhan());
+            for (Intro i : moi) {
+                p.sendMessage(c("&7• &f" + i.name() + rewardText(i) + (i.how().isEmpty() ? "" : "\n   &8" + i.how())));
+                nhan.add(i.id());
+            }
+            data.set(lk(u) + ".nhan", nhan);
+            dirty = true;
+            p.sendMessage(c("&a✔ Đã nhận " + moi.size() + " việc. &7Xong thì quay lại gặp " + g.name() + "&7 nhận thưởng (xem lại: &e/nhiemvu&7)."));
+            p.playSound(p.getLocation(), org.bukkit.Sound.ENTITY_VILLAGER_YES, 0.8f, 1f);
+            said = true;
+        }
+        boolean allMine = intros.values().stream().filter(i -> g.id().equals(i.giver())).allMatch(i -> introDone(u, i.id()));
+        if (allMine && (!tra.isEmpty() || asked)) {
+            say(p, g, g.het());
+            givers.values().stream().filter(x -> intros.values().stream().anyMatch(i -> x.id().equals(i.giver()) && !introDone(u, i.id())
+                    && !nhan.contains(i.id()) && !xong.contains(i.id()))).findFirst()
+                    .ifPresent(x -> p.sendMessage(c("&7➜ Gợi ý: gặp " + x.name() + (x.where().isEmpty() ? "" : " &7ở " + x.where()))));
+            said = true;
+        } else if (!said && asked) {
+            say(p, g, "Việc ta nhờ cháu vẫn chưa xong đâu:");
+            intros.values().stream().filter(i -> g.id().equals(i.giver()) && nhan.contains(i.id()))
+                    .forEach(i -> p.sendMessage(c("&7• &f" + i.name() + (i.how().isEmpty() ? "" : "\n   &8" + i.how()))));
+            said = true;
+        }
+        if (said) {
+            flush();
+        }
+        return said;
     }
 
     private static Component c(String s) {
@@ -340,6 +521,53 @@ final class DailyQuests implements Listener {
         flush();
     }
 
+    /** Phần "Việc dân làng nhờ" của /nhiemvu: chỉ việc đang nhận / chờ nhận thưởng, việc chưa nhận chỉ ghi tên người giao. */
+    private void villageQuests(Player p) {
+        UUID u = p.getUniqueId();
+        long left = intros.keySet().stream().filter(k -> !introDone(u, k)).count();
+        if (left == 0) {
+            p.sendMessage(c("&a✔ Đã giúp hết dân làng (" + intros.size() + " việc)."));
+            return;
+        }
+        if (!givers.isEmpty() && !opened(u)) {
+            Giver h = head();
+            p.sendMessage(c("&6Việc dân làng nhờ: &7gặp " + h.name() + (h.where().isEmpty() ? "" : " &7ở " + h.where())
+                    + "&7, hỏi &f“Trong làng có ai cần giúp không ạ?” &8(" + left + " việc có quà)"));
+            return;
+        }
+        List<String> nhan = list(u, "nhan");
+        List<String> xong = list(u, "xong");
+        List<Intro> tudo = intros.values().stream().filter(i -> i.giver() == null && !introDone(u, i.id())).toList();
+        p.sendMessage(c("&6Việc dân làng nhờ &7(" + (nhan.size() + xong.size() + tudo.size()) + " việc đang nhận)"));
+        for (String id : xong) {
+            Intro in = intros.get(id);
+            if (in != null) {
+                Giver g = givers.get(in.giver());
+                p.sendMessage(c("&a✔ &f" + in.name() + " &a→ về gặp " + g.name() + (g.where().isEmpty() ? "" : " &7(" + g.where() + ")") + "&a nhận" + rewardText(in)));
+            }
+        }
+        for (String id : nhan) {
+            Intro in = intros.get(id);
+            if (in != null) {
+                p.sendMessage(c("&7• &f" + in.name() + " &8(" + givers.get(in.giver()).name() + "&8)" + rewardText(in)
+                        + (in.how().isEmpty() ? "" : "\n   &8" + in.how())));
+            }
+        }
+        for (Intro in : tudo) {
+            p.sendMessage(c("&7• &f" + in.name() + rewardText(in) + (in.how().isEmpty() ? "" : "\n   &8" + in.how())));
+        }
+        List<String> chua = givers.values().stream().filter(x -> intros.values().stream().anyMatch(i -> x.id().equals(i.giver())
+                && !introDone(u, i.id()) && !nhan.contains(i.id()) && !xong.contains(i.id())))
+                .map(x -> x.name() + (x.where().isEmpty() ? "" : " &8(" + x.where() + ")")).toList();
+        if (!chua.isEmpty()) {
+            p.sendMessage(c("&7Còn việc chưa nhận, gặp: " + String.join("&7, ", chua)));
+        }
+        List<String> ib = rewards.describe(cfg.getStringList("intro-all-rewards"));
+        if (!ib.isEmpty()) {
+            p.sendMessage(c("&7Giúp hết dân làng: thưởng thêm &f" + String.join("&7, &f", ib)));
+        }
+    }
+
     boolean command(CommandSender s, String[] args) {
         if (!(s instanceof Player p)) {
             s.sendMessage("Chỉ người chơi xem được nhiệm vụ.");
@@ -365,23 +593,7 @@ final class DailyQuests implements Listener {
             p.sendMessage(c("&7Xong hết: thưởng thêm &f" + String.join("&7, &f", bonus) + (data.getBoolean(key + ".bonus") ? " &a(đã nhận)" : "")));
         }
         if (!intros.isEmpty()) {
-            List<String> done = data.getStringList("intro." + p.getUniqueId());
-            long left = intros.keySet().stream().filter(k -> !done.contains(k)).count();
-            if (left == 0) {
-                p.sendMessage(c("&a✔ Đã làm quen hết " + intros.size() + " tính năng."));
-            } else {
-                p.sendMessage(c("&6Làm quen tính năng &7(mỗi việc nhận quà 1 lần, làm việc nào trước cũng được)"));
-                for (Intro in : intros.values()) {
-                    boolean ok = done.contains(in.id());
-                    p.sendMessage(c((ok ? "&a✔ &7" : "&7• &f") + in.name() + (ok || in.rewards().isEmpty() ? ""
-                            : " &8→ &7" + String.join("&7, ", rewards.describe(in.rewards())))
-                            + (ok || in.how().isEmpty() ? "" : "\n   &8" + in.how())));
-                }
-                List<String> ib = rewards.describe(cfg.getStringList("intro-all-rewards"));
-                if (!ib.isEmpty()) {
-                    p.sendMessage(c("&7Làm quen hết: thưởng thêm &f" + String.join("&7, &f", ib)));
-                }
-            }
+            villageQuests(p);
         }
         return true;
     }

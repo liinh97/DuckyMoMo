@@ -1197,6 +1197,12 @@ public final class DuckyMoMoCore extends JavaPlugin {
                         }
                         caveCarver.command(sender, args);
                     }
+                } else if (args.length >= 1 && args[0].equalsIgnoreCase("viecnpc")) {
+                    if (quests == null) {
+                        sender.sendMessage("Nhiệm vụ chưa bật trên server này (config: daily-quests.enabled).");
+                    } else {
+                        quests.talkCommand(sender, args);
+                    }
                 } else if (args.length >= 1 && args[0].equalsIgnoreCase("thorennpc")) {
                     if (thoRen == null) {
                         sender.sendMessage("Thợ Rèn chưa bật trên server này (config: tho-ren.enabled).");
@@ -1262,9 +1268,10 @@ public final class DuckyMoMoCore extends JavaPlugin {
             "§e/dmm clean §7dọn rác ngay   §e/dmm reload §7nạp lại config   §e/dmm lenh §7xuất danh sách lệnh",
             "§e/dmm rtpnpc|shopnpc|donbuonnpc [remove] §7đặt/gỡ NPC   §e/dmm shopkhung lap|xoa|capnhat §7khung shop trên tường   §e/dmm phu add|remove|list §7tài khoản phụ",
             "§e/dmm thorennpc <quầy|remove> §7đặt NPC quầy đổi nguyên liệu / Thợ Rèn ở chỗ đứng",
+            "§e/dmm viecnpc <người> <NPC> §7NPC giao / trả việc dân làng (hội thoại BetonQuest gọi)",
             "§e/dmm hoabinh setup|claim <r> §7Liên minh Hoà Bình   §e/dmm decorate|structures start|pause|status|reset");
     private static final List<String> DMM_SUBS = List.of("enchant", "sach", "laydo", "luudo", "thuvien", "clean", "reload", "lenh",
-            "rtpnpc", "shopnpc", "donbuonnpc", "shopkhung", "thorennpc", "phu", "hoabinh", "decorate", "structures", "hang", "thegioi", "spawnmoi");
+            "rtpnpc", "shopnpc", "donbuonnpc", "shopkhung", "thorennpc", "viecnpc", "phu", "hoabinh", "decorate", "structures", "hang", "thegioi", "spawnmoi");
     /** Thợ Rèn (/thoren, NPC quầy /dmm thorennpc); null nếu tắt. */
     private ThoRen thoRen;
     /** Lệnh con /dmm chỉ Admin (duckymomo.admin); còn lại Manager dùng được (duckymomo.dmm). */

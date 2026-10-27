@@ -71,7 +71,7 @@ actions:
   c1_hd_0: "notify &6✦ Chương 1 xong! Việc tiếp theo: io:chat"
   c1_hd_1: "notify &e➜ /danhphan &7nhận làm Dân (đủ giờ chơi): thêm nhà, thêm balo io:chat"
   c1_hd_2: "notify &e➜ /lukhach &7tìm lữ khách ngoài đất hoang, nghe chuyện phía sau Cổng Hoang io:chat"
-  c1_hd_3: "notify &e➜ /nhiemvu &7việc mỗi ngày + hơn 20 việc Làm quen có quà · &e/dungeon &7cày đồ io:chat"
+  c1_hd_3: "notify &e➜ &7Hỏi Già Làng &f“Trong làng có ai cần giúp không ạ?” &7nhận việc dân làng có quà · &e/nhiemvu &7việc mỗi ngày io:chat"
   c1_hd_4: "notify &e➜ /t new <tên> &7lập thị trấn cùng bạn bè · &7Chương 2: Già Làng sẽ gọi io:chat"
   # notifyall điền %player% theo từng người nhận nên dùng broadcast của Essentials (chạy từ console, %player% = người hoàn thành)
   c1_baotoan: "command broadcast &6%player% &eđã hoàn thành &6Chương 1 «Điềm Báo»&e của cốt truyện!"

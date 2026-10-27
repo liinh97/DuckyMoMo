@@ -572,35 +572,112 @@ daily-quests:
   per-day: 3
   complete-all-rewards:
     - xu 450
+  # Việc dân làng nhờ (28/10, chủ server: "chuyển Làm quen tính năng thành giao tiếp với NPC"): mỗi việc intro có npc = người giao.
+  # Hỏi Già Làng (người ĐẦU TIÊN trong danh sách) "Trong làng có ai cần giúp không ạ?" thì mở nhánh; bấm từng NPC nhận việc của họ,
+  # làm xong quay lại NPC đó nhận quà (việc chưa nhận thì làm cũng không tính). /nhiemvu chỉ hiện việc đang nhận.
+  # npc: bq = NPC hội thoại BetonQuest (gói cotruyen/vieclang gọi /dmm viecnpc <người> <mã>), quay:<quầy tho-ren>, donbuon = Nhà Buôn.
+  # mo = câu nói lúc mở nhánh (chỉ người đầu tiên), nhan = lúc giao việc, tra = lúc trả thưởng, het = khi đã giúp xong hết việc của họ.
+  givers:
+    gialang:
+      name: "&6Già Làng"
+      npc: bq
+      where: "quảng trường Kinh Đô /warp kinhdo"
+      mo: "Muốn giúp làng à? Tốt lắm. Ai trong làng cũng đang cần thêm một đôi tay: Nhà Buôn ở khu shop, mấy lão ở chợ, Thợ Rèn, cả Người Gác Cổng nữa. Cháu đi gặp từng người, họ nhờ gì thì giúp nấy."
+      nhan: "Còn ta thì muốn cháu quen với nếp sống trong làng trước đã: điểm danh mỗi ngày, thử vận may, rồi tìm chỗ mà ở."
+      tra: "Giỏi lắm, cháu quen với làng nhanh hơn ta tưởng."
+      het: "Việc của ta xong cả rồi. Đi gặp những người khác xem họ cần gì."
+    nhabuon:
+      name: "&eNhà Buôn"
+      npc: donbuon
+      where: "khu shop /warp shop"
+      nhan: "Khách mới hả? Buôn bán ở đây dễ lắm: mua vài món ở Cửa hàng, bán lại đồ thừa, rồi giao cho ta một đơn hàng tuần."
+      tra: "Làm ăn thế là được! Cầm lấy tiền công."
+      het: "Hết việc rồi. Muốn buôn lớn thì hỏi Thợ Kim Hoàn ở chợ, lão rành Chợ đen lắm."
+    kimhoan:
+      name: "&e❖ Thợ Kim Hoàn"
+      npc: "quay:kimhoan"
+      where: "chợ /warp trade"
+      nhan: "Ta làm kim hoàn nhưng sống nhờ buôn bán. Muốn kiếm lớn thì học Chợ đen: treo hàng, đặt đơn thu mua, giao đơn cho người khác, rồi đổi đồ tận tay với ai đó."
+      tra: "Có mắt buôn bán đấy. Phần của cháu đây."
+      het: "Hết việc rồi. Có mảnh thì mang tới đây, ta ghép thành tinh thể cho."
+    nguong:
+      name: "&3≈ Ngư Ông"
+      npc: "quay:nguong"
+      where: "chợ /warp trade"
+      nhan: "Ngồi câu với lão một lúc không? Thả cần xuống nước, phao chìm thì giật."
+      tra: "Con cá đẹp đấy! Câu nhiều thì mang lại đây đổi Vảy Ánh Trăng."
+      het: "Lão chẳng còn gì để dạy. Cá câu được thì đem cho Lão Nông nấu."
+    laonong:
+      name: "&2❀ Lão Nông"
+      npc: "quay:laonong"
+      where: "chợ /warp trade"
+      nhan: "Cá với rau củ để sống thì phí. Nấu thành món ăn, ăn vào khoẻ người hơn."
+      tra: "Thơm quá! Cháu nấu khéo tay đấy."
+      het: "Hết việc rồi. Lúa, củ quả dư thì mang lại đây đổi mảnh."
+    khoang:
+      name: "&6⛏ Lão Khoáng"
+      npc: "quay:khoang"
+      where: "chợ /warp trade"
+      nhan: "Lão đào mỏ cả đời, biết người xưa hay chôn của ở đâu. Có Bản đồ kho báu thì đi theo chỉ dẫn mà đào lấy một rương."
+      tra: "Rương nặng thế kia à! Lão nói có sai đâu."
+      het: "Hết việc rồi. Quặng thô dư thì mang lại đây đổi mảnh."
+    sanquai:
+      name: "&c⚔ Lão Săn Quái"
+      npc: "quay:sanquai"
+      where: "chợ /warp trade"
+      nhan: "Đi săn thì phải có bạn đồng hành: bắt lấy một con pet. Có Lệnh săn thì hạ con quái bị truy nã, rồi lên Đấu Trường thử tay."
+      tra: "Khá lắm, thợ săn thật thụ rồi đấy."
+      het: "Hết việc rồi. Xương, tơ, thuốc súng dư thì mang lại đây đổi mảnh."
+    thoren:
+      name: "&6⚒ Thợ Rèn"
+      npc: "quay:thoren"
+      where: "chợ /warp trade"
+      nhan: "Đồ set rèn ở đây mạnh hơn đồ thường nhiều. Thử rèn một món, rồi khảm Tinh Luyện vào cho nó mạnh thêm."
+      tra: "Đồ đẹp đấy! Nhớ ghé thường xuyên mà nâng cấp."
+      het: "Hết việc rồi. Muốn thử sức với bộ đồ mới thì sang Người Gác Cổng."
+    bacthoren:
+      name: "&6Bác Thợ Rèn"
+      npc: bq
+      where: "quảng trường Kinh Đô /warp kinhdo"
+      nhan: "Lò của bác không rèn kịp cho cả làng. Cháu tự tay làm lấy vài thứ: tinh luyện một món, chế một món ở Xưởng."
+      tra: "Tay nghề khá đấy! Lò rèn này có thêm người phụ rồi."
+      het: "Bác hết việc rồi. Thợ Rèn ở chợ đang cần người thử đồ set đấy."
+    gaccong:
+      name: "&6Người Gác Cổng"
+      npc: bq
+      where: "quảng trường Kinh Đô /warp kinhdo"
+      nhan: "Sau lưng ta là lối vào dungeon. Muốn qua thì phải đủ mạnh: lên cấp đi, rồi vào thử một lần, vượt được thì ta mới tin."
+      tra: "Cháu sống sót trở về. Không tệ chút nào."
+      het: "Ta không còn gì để dạy. Ra ngoài hoang dã tìm Cổng Hoang mà thử sức (/conghoang)."
   # Làm quen tính năng (26/10): mỗi việc 1 lần/người, làm song song, việc nào trước cũng được; how = dòng hướng dẫn trong /nhiemvu.
   # Mã cố định (code báo theo mã; bỏ một việc = xoá mục đó). Quà theo công sức (dễ 100–200, vừa 300–500, khó 600–1.000):
   # tổng 8.150 xu + 2.000 khi xong hết; chương 1 cốt truyện ~4.200 xu, nhiệm vụ ngày ~1.000 xu.
   intro:
-    diemdanh: {name: "Điểm danh lần đầu", how: "/diemdanh (mỗi ngày một lần, có vé gacha)", rewards: [xu 100]}
-    gacha: {name: "Quay gacha một lần", how: "/gacha, chọn máy có vé (vé từ /diemdanh hoặc chơi online)", rewards: [xu 100]}
-    mua: {name: "Mua một món ở Cửa hàng Kinh Đô", how: "/warp shop, chuột trái vào khung hàng trên tường", rewards: [xu 150]}
-    ban: {name: "Bán đồ cho server", how: "/sell hand (cầm món trên tay) hoặc chuột phải khung hàng ở /warp shop", rewards: [xu 150]}
-    cauca: {name: "Câu được một con cá", how: "Cần câu thả xuống nước; bán cá ở /emf shop", rewards: [xu 150]}
-    nauan: {name: "Nấu một món ăn", how: "/nauan: cá câu + nông sản thành món có hiệu ứng", rewards: [xu 200]}
-    choden: {name: "Treo một món lên Chợ đen", how: "Cầm món muốn bán, gõ /choden ban <giá>", rewards: [xu 300]}
-    datdon: {name: "Đặt một đơn thu mua", how: "/choden dat <số món> <giá> khi cầm món mẫu, người khác giao hàng cho bạn", rewards: [xu 200]}
-    giaodon: {name: "Giao hàng cho một đơn thu mua", how: "/choden thumua, chọn đơn rồi giao món người ta cần", rewards: [xu 200]}
-    trade: {name: "Trao đổi đồ với người khác", how: "/trade <tên> với người đang online, hai bên bấm đồng ý", rewards: [xu 300]}
-    tinhluyen: {name: "Tinh luyện một món", how: "/tinhluyen, đổi khối thường lấy món tinh luyện", rewards: [xu 300]}
-    xuong: {name: "Chế một món ở Xưởng", how: "/xuong: đồ tiện ích có lượt dùng (Túi Hư, xô vô tận…)", rewards: [xu 300]}
-    thoren: {name: "Rèn hoặc nâng một món ở Thợ Rèn", how: "/thoren (Thợ Rèn ở chợ /warp trade)", rewards: [xu 500]}
-    pet: {name: "Bắt một pet chiến đấu", how: "Đánh con vật tới yếu máu rồi quăng dây xích (/huongdan › Pet)", rewards: [xu 400]}
-    kham: {name: "Khảm một Tinh Luyện vào đồ set", how: "Cầm đồ set có ô khảm, gõ /thoren kham", rewards: [xu 500]}
-    donbuon: {name: "Giao một đơn nhà buôn", how: "Gặp NPC Nhà Buôn ở /warp shop, giao món Tinh Luyện ông ấy cần trong tuần", rewards: [xu 500]}
-    thitran: {name: "Vào một thị trấn", how: "Lập thị trấn /t new <tên> hoặc xin vào /t join <tên>", rewards: [xu 500]}
-    kholuong: {name: "Nộp kho lương cho thị trấn", how: "/kholuong nop: nộp nông sản, cá, món ăn cho phiên công thành", rewards: [xu 300]}
-    danhphan: {name: "Lên một bậc danh phận", how: "/danhphan: đủ giờ chơi (và xong chương 1 Già Làng) thì bấm nhận", rewards: [xu 500]}
-    capdo: {name: "Lên một cấp Thăng Cấp", how: "/capdo: đủ xu, giờ chơi, hạ gục thì lên cấp, nhận điểm thuộc tính", rewards: [xu 400]}
-    dungeon: {name: "Vào một dungeon", how: "/dungeon, chọn dungeon để vào (thoát giữa chừng: /em quit)", rewards: [xu 600]}
-    vuotdungeon: {name: "Vượt một dungeon", how: "Hạ hết trùm trong một dungeon (đi nhóm: /em party create)", rewards: [xu 1000]}
-    truyna: {name: "Hạ một quái trong Lệnh săn", how: "/lenhsan xem quái đang bị săn ở đâu", rewards: [xu 600]}
-    khobau: {name: "Mở một rương kho báu", how: "Có Bản đồ kho báu thì đi theo chỉ dẫn mà đào (/khobau)", rewards: [xu 500]}
-    dautruong: {name: "Thắng một trận Đấu Trường", how: "/dautruong: người + pet đấu 1v1, 2v2", rewards: [xu 400]}
+    diemdanh: {npc: gialang, name: "Điểm danh lần đầu", how: "/diemdanh (mỗi ngày một lần, có vé gacha)", rewards: [xu 100]}
+    gacha: {npc: gialang, name: "Quay gacha một lần", how: "/gacha, chọn máy có vé (vé từ /diemdanh hoặc chơi online)", rewards: [xu 100]}
+    mua: {npc: nhabuon, name: "Mua một món ở Cửa hàng Kinh Đô", how: "/warp shop, chuột trái vào khung hàng trên tường", rewards: [xu 150]}
+    ban: {npc: nhabuon, name: "Bán đồ cho server", how: "/sell hand (cầm món trên tay) hoặc chuột phải khung hàng ở /warp shop", rewards: [xu 150]}
+    cauca: {npc: nguong, name: "Câu được một con cá", how: "Cần câu thả xuống nước; bán cá ở /emf shop", rewards: [xu 150]}
+    nauan: {npc: laonong, name: "Nấu một món ăn", how: "/nauan: cá câu + nông sản thành món có hiệu ứng", rewards: [xu 200]}
+    choden: {npc: kimhoan, name: "Treo một món lên Chợ đen", how: "Cầm món muốn bán, gõ /choden ban <giá>", rewards: [xu 300]}
+    datdon: {npc: kimhoan, name: "Đặt một đơn thu mua", how: "/choden dat <số món> <giá> khi cầm món mẫu, người khác giao hàng cho bạn", rewards: [xu 200]}
+    giaodon: {npc: kimhoan, name: "Giao hàng cho một đơn thu mua", how: "/choden thumua, chọn đơn rồi giao món người ta cần", rewards: [xu 200]}
+    trade: {npc: kimhoan, name: "Trao đổi đồ với người khác", how: "/trade <tên> với người đang online, hai bên bấm đồng ý", rewards: [xu 300]}
+    tinhluyen: {npc: bacthoren, name: "Tinh luyện một món", how: "/tinhluyen, đổi khối thường lấy món tinh luyện", rewards: [xu 300]}
+    xuong: {npc: bacthoren, name: "Chế một món ở Xưởng", how: "/xuong: đồ tiện ích có lượt dùng (Túi Hư, xô vô tận…)", rewards: [xu 300]}
+    thoren: {npc: thoren, name: "Rèn hoặc nâng một món ở Thợ Rèn", how: "/thoren (Thợ Rèn ở chợ /warp trade)", rewards: [xu 500]}
+    pet: {npc: sanquai, name: "Bắt một pet chiến đấu", how: "Đánh con vật tới yếu máu rồi quăng dây xích (/huongdan › Pet)", rewards: [xu 400]}
+    kham: {npc: thoren, name: "Khảm một Tinh Luyện vào đồ set", how: "Cầm đồ set có ô khảm, gõ /thoren kham", rewards: [xu 500]}
+    donbuon: {npc: nhabuon, name: "Giao một đơn nhà buôn", how: "Gặp NPC Nhà Buôn ở /warp shop, giao món Tinh Luyện ông ấy cần trong tuần", rewards: [xu 500]}
+    thitran: {npc: gialang, name: "Vào một thị trấn", how: "Lập thị trấn /t new <tên> hoặc xin vào /t join <tên>", rewards: [xu 500]}
+    kholuong: {npc: gialang, name: "Nộp kho lương cho thị trấn", how: "/kholuong nop: nộp nông sản, cá, món ăn cho phiên công thành", rewards: [xu 300]}
+    danhphan: {npc: gialang, name: "Lên một bậc danh phận", how: "/danhphan: đủ giờ chơi (và xong chương 1 Già Làng) thì bấm nhận", rewards: [xu 500]}
+    capdo: {npc: gaccong, name: "Lên một cấp Thăng Cấp", how: "/capdo: đủ xu, giờ chơi, hạ gục thì lên cấp, nhận điểm thuộc tính", rewards: [xu 400]}
+    dungeon: {npc: gaccong, name: "Vào một dungeon", how: "/dungeon, chọn dungeon để vào (thoát giữa chừng: /em quit)", rewards: [xu 600]}
+    vuotdungeon: {npc: gaccong, name: "Vượt một dungeon", how: "Hạ hết trùm trong một dungeon (đi nhóm: /em party create)", rewards: [xu 1000]}
+    truyna: {npc: sanquai, name: "Hạ một quái trong Lệnh săn", how: "/lenhsan xem quái đang bị săn ở đâu", rewards: [xu 600]}
+    khobau: {npc: khoang, name: "Mở một rương kho báu", how: "Có Bản đồ kho báu thì đi theo chỉ dẫn mà đào (/khobau)", rewards: [xu 500]}
+    dautruong: {npc: sanquai, name: "Thắng một trận Đấu Trường", how: "/dautruong: người + pet đấu 1v1, 2v2", rewards: [xu 400]}
   intro-all-rewards:
     - xu 2000
   pool:

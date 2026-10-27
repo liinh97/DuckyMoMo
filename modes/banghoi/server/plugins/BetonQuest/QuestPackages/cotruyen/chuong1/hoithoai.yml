@@ -9,7 +9,7 @@ conversations:
       chao:
         text: "Lại thêm một người lạ… Ngồi xuống đây đã. Mấy đêm nay ta không ngủ được."
         conditions: "!c1_b1"
-        pointers: "hoi_vi_sao,di_thoi"
+        pointers: "hoi_vi_sao,viec_lang,di_thoi"
       ke_chuyen:
         text: "Đêm rằm vừa rồi có một ngôi sao rơi về phía bắc, sáng rực cả trời. Từ hôm đó, đêm nào quái cũng kéo về đông gấp đôi."
         pointers: "hoi_giup,khong_tin"
@@ -24,6 +24,7 @@ conversations:
       cho_b1:
         text: "Còn %objective.c1_sanquai.left% con nữa. Đêm nay chắc lại có thêm."
         conditions: "c1_b1,!c1_b1x"
+        pointers: "viec_lang,tam_biet"
       tra_b1:
         text: "Giỏi lắm, đêm nay dân làng ngủ yên được rồi. Nhưng chừng đó chưa đủ. Ta cần một chiếc chuông thật to trên tháp canh, quái đến là cả làng biết."
         conditions: "c1_b1x,!c1_b2"
@@ -34,12 +35,15 @@ conversations:
       cho_b2:
         text: "Bác Thợ Rèn còn đợi %constant.c1_so_sat% thỏi sắt đấy."
         conditions: "c1_b2,!c1_b2x"
+        pointers: "viec_lang,tam_biet"
       cho_b3:
         text: "Thợ mỏ kể dưới lòng đất có đá phát sáng lạ? Ừ… cứ đào thử xem. Có gì báo ta ngay."
         conditions: "c1_b3,!c1_b3x"
+        pointers: "viec_lang,tam_biet"
       cho_b4:
         text: "Thứ này… lạnh như băng. Ta không biết nó là gì. Mang tới Người Gác Cổng, ông ấy đi nhiều biết rộng."
         conditions: "c1_b4,!c1_b4x"
+        pointers: "viec_lang,tam_biet"
       ket:
         text: "Mảnh sao giống ánh sáng trong cổng dungeon à? Vậy là ta đoán đúng. Trời đang nứt ra, và thứ gì đó bên kia đang nhìn sang đây."
         conditions: "c1_b4x,!c1_xong"
@@ -50,13 +54,16 @@ conversations:
       xong:
         text: "Ta vẫn đang dõi lên trời. Có tin gì mới ta sẽ gọi. Trong lúc chờ, đừng lơ là luyện tập."
         conditions: "c1_xong"
-        pointers: "hoi_tiep,tam_biet"
+        pointers: "hoi_tiep,viec_lang,tam_biet"
       tiep_1:
         text: "Làng đã ghi tên cháu rồi: gõ /danhphan, đủ giờ chơi là được nhận làm Dân, thêm nhà, thêm balo. Còn muốn biết chuyện bên kia vết nứt thì tìm mấy lữ khách lạ ngoài đất hoang, gõ /lukhach xem tin đồn họ ở đâu."
         pointers: "hoi_them,tam_biet"
       tiep_2:
-        text: "Gõ /nhiemvu: ngoài việc mỗi ngày còn hơn hai chục việc Làm quen, mỗi việc làm một lần là có quà. Đủ sức thì ra chỗ Người Gác Cổng vào dungeon (/dungeon). Rồi rủ bạn lập thị trấn (/t new), đất là của người đến trước. Chương sau ta sẽ gọi khi trời có biến."
+        text: "Gõ /nhiemvu xem việc mỗi ngày. Dân làng ai cũng có việc nhờ, mỗi việc một lần là có quà: hỏi ta \"Trong làng có ai cần giúp không\" là ta chỉ cho. Đủ sức thì ra chỗ Người Gác Cổng vào dungeon (/dungeon). Rồi rủ bạn lập thị trấn (/t new), đất là của người đến trước. Chương sau ta sẽ gọi khi trời có biến."
         actions: "c1_huongdan"
+      viec_lang_dap:
+        text: "Ai trong làng cũng có việc cả. Để ta nói cho mà nghe."
+        actions: "vl_gialang"
     player_options:
       hoi_vi_sao:
         text: "Có chuyện gì vậy, cụ?"
@@ -88,6 +95,9 @@ conversations:
         pointers: "tiep_2"
       tam_biet:
         text: "Cháu đi đây ạ."
+      viec_lang:
+        text: "Trong làng có ai cần giúp không ạ?"
+        pointers: "viec_lang_dap"
 
   tho_ren:
     quester: "&6Bác Thợ Rèn"
@@ -95,6 +105,7 @@ conversations:
     NPC_options:
       chua:
         text: "Lò đang nóng, đứng xa ra kẻo bỏng! Cần gì thì hỏi Già Làng trước."
+        pointers: "viec_tr,tam_biet"
       thieu_sat:
         text: "Già Làng bảo cháu mang sắt tới hả? Chưa đủ đâu, bác cần %constant.c1_so_sat% thỏi."
         conditions: "c1_b2,!c1_b2x,!c1_du_sat"
@@ -108,12 +119,21 @@ conversations:
       sau:
         text: "Chuông treo lên tháp rồi đấy, nghe vang cả cánh đồng. Cần sửa đồ thì cứ ghé."
         conditions: "c1_b2x"
+        pointers: "viec_tr,tam_biet"
+      viec_tr_dap:
+        text: "Việc thì lúc nào chả có. Nghe đây."
+        actions: "vl_bacthoren"
     player_options:
       dua_sat:
         text: "Bác cầm lấy ạ."
         pointers: "cam_on"
       chua_dua:
         text: "Cháu còn cần dùng sắt, lát nữa cháu quay lại."
+      viec_tr:
+        text: "Bác có việc gì cho cháu không?"
+        pointers: "viec_tr_dap"
+      tam_biet:
+        text: "Cháu đi đây ạ."
 
   gac_cong:
     quester: "&6Người Gác Cổng"
@@ -121,6 +141,7 @@ conversations:
     NPC_options:
       chua:
         text: "Phía sau ta là lối tới các dungeon. Đủ sức thì gõ /dungeon mà chọn. Ngoài hoang dã còn có những cổng lạ (/conghoang) và mấy lữ khách biết chuyện về chúng (/lukhach)."
+        pointers: "viec_gc,tam_biet"
       nhan_manh:
         text: "Cho ta xem thứ cháu cầm… Ánh sáng này giống hệt ánh sáng trong các cổng dungeon. Nó không thuộc về thế giới này."
         conditions: "c1_b4,!c1_b4x,c1_co_manh"
@@ -137,6 +158,10 @@ conversations:
       sau:
         text: "Mảnh sao ta cất kỹ rồi. Ngoài đất hoang có mấy lữ khách lạ, mỗi người biết chuyện về một nơi phía sau các Cổng Hoang. Gõ /lukhach xem tin đồn họ đang ở đâu."
         conditions: "c1_b4x"
+        pointers: "viec_gc,tam_biet"
+      viec_gc_dap:
+        text: "Muốn ta giao việc à? Nghe cho kỹ."
+        actions: "vl_gaccong"
     player_options:
       dua_manh:
         text: "Ông nói vậy là sao?"
@@ -144,3 +169,8 @@ conversations:
       mat_roi:
         text: "Hình như cháu làm rơi đâu mất rồi."
         pointers: "tim_lai"
+      viec_gc:
+        text: "Ông có việc gì cho cháu không?"
+        pointers: "viec_gc_dap"
+      tam_biet:
+        text: "Cháu đi đây ạ."

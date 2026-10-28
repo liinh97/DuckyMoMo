@@ -9,7 +9,7 @@
 - Hồ sơ bot (xu, Thăng Cấp, điểm hạ gục, giờ, danh phận, nghề, kỹ năng, điểm danh, thành tích, thị trấn), Tự phát triển (tính cách ngẫu nhiên,
   chỉ khi online), Tạo quá khứ (0–40 giờ, một lần; reset=True làm lại), bot tự trả lời TPA (chỉ từ chối / lơ), bot thỉnh thoảng tpa người
   thật rồi tự huỷ (mặc định tắt), botfarm thoát dần khi tắt (đã triển khai 15:20, rời từng con trước khi dựng lại).
-- 3 thị trấn bot: LamPhong / VongNguyet / DoiGio (xem cẩm nang "Bot: thị trấn, chợ…"). Lập bằng tiến trình nền /tmp/bot_thitran.py trong
+- XONG 18:20: 3 thị trấn bot đủ thành viên + nhà 5×5 cho cả 10 bot (tools/bot-nha.py), chỗ đứng mặc định trong nhà. Panel đã dựng lại (tên thị trấn dưới tên bot, bot treo bán Chợ đen). Thị trấn: LamPhong / VongNguyet / DoiGio (xem cẩm nang "Bot: thị trấn, chợ…"). Lập bằng tiến trình nền /tmp/bot_thitran.py trong
   container panel (giãn 12–22 phút / thị trấn) — dựng lại panel giữa chừng sẽ cắt ngang, kiểm /tmp/bot_thitran.log.
 - Bot treo bán Chợ đen: chủ server đồng ý, đã cấp duckymomo.peace.admin cho 23 bot (bot mới thì cấp tay). Code _bot_market đã có, chưa
   dựng lại panel (đợi tiến trình thị trấn xong).

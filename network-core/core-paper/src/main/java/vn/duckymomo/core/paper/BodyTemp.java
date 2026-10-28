@@ -252,7 +252,7 @@ final class BodyTemp implements Listener {
                     Block b = w.getBlockAt(bx + x, by + y, bz + z);
                     Material m = b.getType();
                     switch (m) {
-                        case FIRE, SOUL_FIRE, LAVA -> heat = Math.max(heat, 1);
+                        case FIRE, SOUL_FIRE, LAVA, LAVA_CAULDRON -> heat = Math.max(heat, 1);
                         case CAMPFIRE, SOUL_CAMPFIRE, FURNACE, BLAST_FURNACE, SMOKER -> {
                             if (b.getBlockData() instanceof Lightable lt && lt.isLit()) {
                                 heat = Math.max(heat, 1);

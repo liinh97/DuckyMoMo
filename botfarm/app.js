@@ -256,6 +256,7 @@ async function connect(name) {
     if (w && w[1] !== name && !/^(tôi|me)$/i.test(w[1])) { event({ type: 'msg', bot: name, server: host, from: w[1], text: w[3] }); return; }
     w = m.match(/^(\S+) đã yêu cầu (dịch chuyển đến chỗ bạn|bạn dịch chuyển đến chỗ họ)/);
     if (w) { event({ type: 'tpa', bot: name, server: host, from: w[1], text: m }); autoTpa(name, w[1]); return; }
+    if (/đã (tự động )?(đồng ý|chấp nhận) yêu cầu dịch chuyển của bạn|Đang bắt đầu dịch chuyển/.test(m) && RT[name].fakeTpa) { dodgeTeleport(name); return; }
     if (pos === 'chat' && m.toLowerCase().includes(name.toLowerCase()) && !m.includes(name + ':') && !m.includes(name + ' »')) event({ type: 'nhac', bot: name, server: host, text: m.slice(0, 240) });
   });
   bot.on('death', () => { rt.deaths.push(Date.now()); log(name, 'chết'); event({ type: 'chet', bot: name, server: host, text: name + ' chết' }); });
@@ -419,6 +420,50 @@ try { Object.assign(chatCfg, JSON.parse(fs.readFileSync(CHAT_CFG, 'utf8'))); } c
 function saveChat() { try { fs.writeFileSync(CHAT_CFG, JSON.stringify(chatCfg)); } catch (e) { log('không lưu được chat.json:', e.message); } }
 // Bot tự trả lời TPA (28/10, chủ server: "cả tp deny nữa"; "không được nhận, nhận thì người chơi biết là bot"): KHÔNG BAO GIỜ nhận.
 // Mỗi bot một tính (state[n].tpa.tuchoi): sau 4–25 giây /tpdeny, còn lại lơ cho lời mời tự hết hạn. Bật/tắt chung: /state/tpa.json.
+// Bot thỉnh thoảng /tpa một người chơi THẬT rồi tự /tpacancel (28/10, chủ server: "tpa người chơi ngẫu nhiên rồi tự huỷ, không thực sự tới
+// người chơi để bị phát hiện, đừng tpa liên tục không lại bị nghi"). Hiếm: cả server ~1 lần / 40–90 phút, đêm 1–7 giờ im; một người thật
+// tối đa 1 lần / 3 giờ, một bot 1 lần / 4 giờ. Người kia lỡ bấm nhận: Essentials chờ 5 giây, bot nhảy + /tpacancel là huỷ (dodgeTeleport).
+const FTPA_CFG = '/state/tpa-gia.json';
+const ftpaCfg = { on: false };
+try { Object.assign(ftpaCfg, JSON.parse(fs.readFileSync(FTPA_CFG, 'utf8'))); } catch (e) { /* chưa cài: tắt */ }
+function saveFtpa() { try { fs.writeFileSync(FTPA_CFG, JSON.stringify(ftpaCfg)); } catch (e) { log('không lưu được tpa-gia.json:', e.message); } }
+const ftpaLast = { bot: {}, nguoi: {} };   // tên -> lúc tpa gần nhất
+let ftpaNext = Date.now() + (20 + Math.random() * 40) * 60000;
+function dodgeTeleport(name) {
+  const rt = RT[name], b = rt.bot; if (!b) return;
+  try {
+    b.setControlState('jump', true); b.setControlState('forward', true);
+    setTimeout(() => { try { b.setControlState('jump', false); b.setControlState('forward', false); b.chat('/tpacancel'); } catch (e) { /* bỏ qua */ } }, 700);
+  } catch (e) { /* bỏ qua */ }
+  log(name, 'né dịch chuyển (người kia đã nhận TPA giả)');
+}
+function fakeTpaOnce() {
+  const h = new Date().getHours();
+  if (h >= 1 && h < 7) return 'đêm: không tpa';
+  const now = Date.now();
+  const bots = NAMES.filter(n => RT[n].bot && state[n].server === 'banghoi-1' && now - (ftpaLast.bot[n] || 0) > 4 * 3600e3).sort(() => Math.random() - 0.5);
+  for (const n of bots) {
+    const b = RT[n].bot;
+    const real = Object.keys(b.players || {}).filter(x => !NAMES.includes(x) && /^[A-Za-z0-9_.]{3,16}$/.test(x) && now - (ftpaLast.nguoi[x.toLowerCase()] || 0) > 3 * 3600e3);
+    if (!real.length) continue;
+    const who = real[Math.floor(Math.random() * real.length)];
+    ftpaLast.bot[n] = now; ftpaLast.nguoi[who.toLowerCase()] = now;
+    RT[n].fakeTpa = true;
+    b.chat('/tpa ' + who);
+    event({ type: 'tpa', bot: n, from: who, text: `${n} gửi /tpa tới ${who} (sẽ tự huỷ)` });
+    setTimeout(() => {
+      try { if (RT[n].bot) RT[n].bot.chat('/tpacancel ' + who); } catch (e) { /* bỏ qua */ }
+      setTimeout(() => { RT[n].fakeTpa = false; }, 8000);   // còn canh thêm vài giây phòng người kia nhận sát lúc huỷ
+    }, 3000 + Math.random() * 12000);
+    return `${n} /tpa ${who} rồi tự huỷ`;
+  }
+  return 'không có người thật nào phù hợp';
+}
+setInterval(() => {
+  if (stopping || !ftpaCfg.on || Date.now() < ftpaNext) return;
+  ftpaNext = Date.now() + (40 + Math.random() * 50) * 60000;
+  log('tpa giả:', fakeTpaOnce());
+}, 60000);
 const TPA_CFG = '/state/tpa.json';
 const tpaCfg = { on: false };
 try { Object.assign(tpaCfg, JSON.parse(fs.readFileSync(TPA_CFG, 'utf8'))); } catch (e) { /* chưa cài: tắt */ }
@@ -539,6 +584,10 @@ async function act(b) {
     saveChat();
     return 'bot tự chat: ' + (chatCfg.on ? 'bật' : 'tắt') + ', ' + chatCfg.min + '–' + chatCfg.max + ' phút một lần';
   }
+  if (b.action === 'ftpacfg') {
+    ftpaCfg.on = !!b.on; saveFtpa();
+    return 'bot thỉnh thoảng tpa người chơi rồi tự huỷ: ' + (ftpaCfg.on ? 'bật (~1 lần / 40–90 phút cả server)' : 'tắt');
+  }
   if (b.action === 'tpacfg') {
     tpaCfg.on = !!b.on; saveTpa();
     return 'bot tự trả lời TPA: ' + (tpaCfg.on ? 'bật (không bao giờ nhận: từ chối hoặc lơ, mỗi bot một tỉ lệ)' : 'tắt');
@@ -655,6 +704,7 @@ http.createServer((req, res) => {
       events: EVENTS.slice(-100),
       chat: chatCfg,
       tpa: tpaCfg,
+      tpagia: ftpaCfg,
     });
   }
   if (req.method === 'POST' && req.url === '/act') {

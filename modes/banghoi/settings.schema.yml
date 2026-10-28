@@ -836,7 +836,7 @@ Admin (quyền duckymomo.sell.khonggioihan) không bị giới hạn." }
   - title: Thân nhiệt (/nhietdo)
     category: Thế giới
     description: "Thời tiết khắc nghiệt: đợt Rét đậm (mùa mưa) và Nắng nóng (mùa khô), vùng tuyết lạnh, sa mạc nóng, đêm lạnh, dầm mưa bị ướt. Quá lạnh / nóng thì chậm, đói nhanh, mất máu (không chết). Giữ ấm / mát: nhà có mái, lửa trại, Đá Ôn Linh, ô lá (Lá Nhỏ Giọt), giáp da, súp / dưa hấu."
-    info: "Mỗi giây: nhiệt môi trường = nhiệt nền (mùa, hoặc đợt đang diễn ra) + vùng đất + đêm / nắng + ướt + giáp da + lửa / băng gần, dưới mái che kéo về nhiệt dễ chịu. Thân nhiệt đuổi dần theo.\nĐá Ôn Linh: chế 4 đá trơn + 4 đá lửa + 1 sắt; để cạnh lửa thì nóng, cạnh băng thì lạnh, mang trong túi.\nMiễn: bot, người mới, chế độ sáng tạo, Nether/End/dungeon.\nNgười chơi xem: /nhietdo. Admin: /nhietdo cho <người> [độ], /nhietdo dat <người> <độ>.\nLưu xong: có hiệu lực ngay (dmm reload)."
+    info: "Mỗi giây: nhiệt môi trường = nhiệt nền (mùa, hoặc đợt đang diễn ra) + vùng đất + đêm / nắng + ướt + giáp da + lửa / băng gần, dưới mái che kéo về nhiệt dễ chịu. Thân nhiệt đuổi dần theo.\nĐá Ôn Linh: chế 4 Đá (thường hoặc trơn) + 4 đá lửa + 1 sắt, ô nào cũng được; để cạnh lửa thì nóng, cạnh băng thì lạnh, mang trong túi.\nMiễn: bot, người mới, chế độ sáng tạo, Nether/End/dungeon.\nNgười chơi xem: /nhietdo. Admin: /nhietdo cho <người> [độ], /nhietdo dat <người> <độ>.\nLưu xong: có hiệu lực ngay (dmm reload)."
     apply: [dmm reload]
     settings:
       - { key: tn_on, label: "Bật thân nhiệt", type: select, file: plugins/DuckyMoMoCore/config.yml, path: body-temp.enabled, options: [ { value: true, label: Bật }, { value: false, label: Tắt } ] }

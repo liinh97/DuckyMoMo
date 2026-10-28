@@ -89,9 +89,12 @@ final class BodyTemp implements Listener {
     private void recipes() {
         NamespacedKey k = new NamespacedKey(plugin, "daonlinh");
         Bukkit.removeRecipe(k);
-        // 28/10: không theo hình (chủ server xếp theo hàng không ra): đủ 4 đá trơn + 4 đá lửa + 1 sắt, ô nào cũng được
+        // 28/10: không theo hình: đủ 4 đá (Đá hoặc Đá trơn) + 4 đá lửa + 1 sắt, ô nào cũng được
         org.bukkit.inventory.ShapelessRecipe r = new org.bukkit.inventory.ShapelessRecipe(k, stone(cfg.getDouble("comfort-mid", 22)));
-        r.addIngredient(4, Material.SMOOTH_STONE);
+        RecipeChoice da = new RecipeChoice.MaterialChoice(Material.STONE, Material.SMOOTH_STONE);   // chủ server đặt Đá thường: cả hai đều được
+        for (int i = 0; i < 4; i++) {
+            r.addIngredient(da);
+        }
         r.addIngredient(4, Material.FLINT);
         r.addIngredient(1, Material.IRON_INGOT);
         Bukkit.addRecipe(r);
@@ -531,7 +534,7 @@ final class BodyTemp implements Listener {
         for (String s : parts) {
             p.sendMessage(Tip.c("  " + s));
         }
-        p.sendMessage(Tip.c("&8▸ &6Đá Ôn Linh&7: chế 4 đá trơn + 4 đá lửa + 1 sắt (giữa). Hơ cạnh lửa / ướp cạnh băng rồi mang theo."));
+        p.sendMessage(Tip.c("&8▸ &6Đá Ôn Linh&7: chế 4 Đá (thường hoặc trơn) + 4 đá lửa + 1 sắt, xếp ô nào cũng được. Hơ cạnh lửa / ướp cạnh băng rồi mang theo."));
         p.sendMessage(Tip.c("&8▸ &aÔ lá&7: cầm Lá Nhỏ Giọt (hang Lush, hoặc chế 3 lá cây + 2 que) để không ướt khi mưa, đỡ nắng."));
         p.sendMessage(Tip.c("&8▸ &7Ấm: súp, lửa trại, giáp da, vào nhà. Mát: dưa hấu, nước, bóng râm, xuống nước."));
         p.sendMessage(Tip.c(Tip.LINE));

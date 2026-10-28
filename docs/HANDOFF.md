@@ -5,6 +5,11 @@
 
 ---
 
+## 28/10/2026: KinhDo mở cửa cho người mới
+- Chủ server: mở cửa KinhDo để người mới `/t join KinhDo` làm dân hoà bình. Đã `ta town KinhDo toggle open`, `set perm resident build off`,
+  `destroy off` (dân chỉ switch/itemuse; đất kinh đô rộng hơn vùng WorldGuard spawn x 12556–12975, z -2792…-2298, nên đừng bật lại build/destroy).
+  Thị trưởng NPC2, 1521 ô, đang hoà bình. Hội đồng Hoà Bình chưa có đại diện (chưa thị trấn người chơi nào ≥3 dân). Dữ liệu ở data/ (không trong git).
+
 ## 28/10/2026 rạng sáng: VIỆC DÂN LÀNG NHỜ, MÀU CẤP, TRANG HOẠT ĐỘNG (ĐÃ LÊN 01:20–01:33, 0 người thật)
 
 - Việc dân làng nhờ (f155279): "Làm quen tính năng" chuyển thành việc do NPC giao (chủ server: "chuyển thành giao tiếp với NPC,

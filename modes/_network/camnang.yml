@@ -246,6 +246,7 @@ plugins:
       - ["/dmm sach <phù phép> <cấp> [người]", "Tạo sách vượt cấp tặng người chơi đang online; người chơi ghép bằng đe giữ nguyên cấp. Chỉ làm phần thưởng / hàng trong game, KHÔNG bán lấy tiền thật"]
       - ["/dmm reload", "Nạp lại config"]
       - ["/hoatdong <tên>", "Xem giờ chơi thật của người khác"]
+      - ["Kinh đô KinhDo mở cửa (28/10)", "Chủ server cho người mới /t join KinhDo làm dân hoà bình. Đã: /ta town KinhDo toggle open + set perm resident build off, destroy off (dân chỉ switch, itemuse trên đất chung; đất kinh đô rộng hơn vùng WorldGuard spawn nên KHÔNG được bật lại build/destroy cho dân). Thị trưởng NPC2. Lưu ở data/.../Towny (không trong git)."]
       - ["/dmm hoabinh setup", "Lập Liên minh Hoà Bình lần đầu: đứng giữa spawn, tạo kinh đô KinhDo (thị trưởng NPC), quốc gia LienMinhHoaBinh, bật hoà bình"]
       - ["/bxh dongmua · traothuong · hologram", "Đóng mùa (khoá điểm, 3 ngày khiếu nại ở Hội Bàn Tròn), trao danh hiệu; hologram = hướng dẫn tạo hologram bảng xếp hạng. Dòng riêng cho từng người xem: %dmm_toi_chienthan% (vd 12 điểm (#3)), %dmm_toi_bachu% (quốc gia của mình + hạng). Hologram đã có thì thêm: /dh line add bxh_chienthan 1 &7Bạn: &f%dmm_toi_chienthan% · /dh line add bxh_bachu 1 &7Quốc gia bạn: &f%dmm_toi_bachu%"]
       - ["/dmm shopnpc [remove]", "Đặt NPC Cửa hàng Kinh Đô (dân làng + chữ nổi) tại chỗ đứng ở khu shop spawn; đặt lại thì NPC cũ bị xoá"]

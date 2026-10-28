@@ -43,6 +43,25 @@ final class BotView implements Listener {
      * Mỗi phút (khi có bot online) gỡ quái thù địch + dơi ở world / nether / end nếu: không có người THẬT trong 128 khối (như luật biến mất của game),
      * quái thường (removeWhenFarAway = không bị giữ lại, không tên; Entity#isPersistent của Bukkit là "lưu cùng chunk", đừng dùng). EliteMobs / pet / NPC có tên hoặc persistent nên không bị đụng.
      */
+    /**
+     * Chặn quái sinh tự nhiên ở chỗ không có người THẬT trong 128 khối (29/10: setAffectsSpawning không chặn được, bot vẫn làm
+     * sinh ~1.250 quái / phút). Game gốc cũng xoá ngay quái cách mọi người chơi > 128 khối, nên người thật không thấy khác.
+     */
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    public void onSpawn(org.bukkit.event.entity.CreatureSpawnEvent e) {
+        if (e.getSpawnReason() != org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.NATURAL
+                || !CLEAN_WORLDS.contains(e.getLocation().getWorld().getName())) {
+            return;
+        }
+        org.bukkit.Location l = e.getLocation();
+        for (Player p : l.getWorld().getPlayers()) {
+            if (!isBot(p) && p.getLocation().distanceSquared(l) < 128 * 128) {
+                return;
+            }
+        }
+        e.setCancelled(true);
+    }
+
     private static final Set<String> CLEAN_WORLDS = Set.of("world", "world_nether", "world_the_end");
 
     void startCleanup(org.bukkit.plugin.Plugin plugin) {

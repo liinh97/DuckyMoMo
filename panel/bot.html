@@ -49,6 +49,11 @@
   .dev.pc { color: #3b82f6; background: color-mix(in srgb, #3b82f6 15%, transparent); }
   .dev.be { color: #16a34a; background: color-mix(in srgb, #16a34a 15%, transparent); }
   .dev.bot { color: var(--muted); background: var(--chip); }
+  .ask.hoso { width: min(640px, calc(100vw - 32px)); }
+  .hs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; margin: 10px 0; }
+  .hs-grid label { display: flex; flex-direction: column; gap: 4px; font-size: 13px; }
+  .hs-grid input, .hs-grid select { width: 100%; }
+  .hs-sub { font-weight: 600; margin-top: 6px; }
   .ln .tx code { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12.5px; background: var(--chip); border-radius: 5px; padding: 0 5px; }
   .ln.hot { background: color-mix(in srgb, var(--msg) 7%, transparent); cursor: pointer; }
   .ln .srv { color: var(--muted); font-size: 11.5px; }
@@ -136,6 +141,7 @@ function renderBots() {
         ${b.online ? `<button data-a="home" title="Về chỗ mặc định">Về chỗ</button>${b.server === "banghoi-1" ? `<button data-a="random"${b.spawn ? ' class="hl"' : ""} title="Ra một khu ngẫu nhiên chưa bot nào đứng (đặt làm chỗ mặc định)">Ngẫu nhiên</button>` : ""}<button data-a="move" title="Đi tới toạ độ X Z">Đi tới…</button>
         <button data-a="cmd" data-t="spawn">/spawn</button><button data-a="cmd" data-t="tpaccept">/tpaccept</button><button data-a="cmd" data-t="tpdeny">/tpdeny</button>
         <button data-a="sethome" title="Lấy chỗ đang đứng làm chỗ mặc định">Đặt chỗ</button><button data-a="pick" title="Chọn bot này ở khung chat">Chat</button>` : ""}
+        <button data-a="hoso" title="Xu, Thăng Cấp, giờ chơi, danh phận, nghề, kỹ năng: số liệu giống người chơi thật">Hồ sơ</button>
         ${b.created && !b.want && !b.online ? '<button data-a="remove" title="Xoá bot tạo thêm khỏi danh sách">Xoá</button>' : ""}</div></td></tr>`;
   }
   $("bots").innerHTML = h + "</tbody></table>";
@@ -149,6 +155,7 @@ $("bots").addEventListener("click", async (ev) => {
   const name = btn.closest("tr").dataset.n, a = btn.dataset.a;
   const server = btn.closest("tr").querySelector('select[data-a="server"]').value;
   if (a === "pick") { $("who").value = name; $("txt").focus(); renderBots(); return; }
+  if (a === "hoso") return openProfile(name);
   if (a === "move") {
     const v = prompt(`Cho ${name} đi tới toạ độ (X Z), vd: 12700 -2430`); if (!v) return;
     const m = v.trim().split(/[\s,]+/); if (m.length < 2) return;
@@ -191,6 +198,42 @@ async function loadBots() {
       $("tcOn").checked = !!d.chat.on; $("tcMin").value = d.chat.min; $("tcMax").value = d.chat.max;
     }
   } catch (e) { $("bots").innerHTML = `<div class="empty">Không tải được: ${esc(e)}</div>`; }
+}
+
+// ---------------------------------------------------------------- hồ sơ bot (28/10): xu, Thăng Cấp, giờ chơi, danh phận, nghề, kỹ năng
+async function openProfile(name) {
+  let d;
+  try { d = await (await fetch("api/bot", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ bot: name, action: "hoso" }) })).json(); }
+  catch (e) { window.toast && window.toast("Không tải được hồ sơ: " + e, "err"); return; }
+  if (!d.ok) { window.toast && window.toast(d.message || "Lỗi", "err"); return; }
+  const b = BOTS.find((x) => x.name.toLowerCase() === name.toLowerCase()), online = !!(b && b.online && b.server === "banghoi-1");
+  const opt = (pairs, cur) => pairs.map(([v, t]) => `<option value="${esc(v)}"${v === cur ? " selected" : ""}>${esc(t)}</option>`).join("");
+  const wrap = document.createElement("div"); wrap.className = "ask-wrap";
+  wrap.innerHTML = `<div class="ask hoso" role="dialog" aria-modal="true"><h3>Hồ sơ ${esc(d.ten)}</h3>
+    <p class="muted">Số liệu Bang Hội Chiến hiện trên bảng xếp hạng, /bal, Tab… Đặt giống người chơi thật cho bot khỏi lộ.${online ? "" : " <b>Bot đang không ở Bang Hội Chiến:</b> danh phận và kỹ năng chỉ đổi được khi bot online ở đó."}</p>
+    <div class="hs-grid">
+      <label>Xu<input data-k="xu" type="number" min="0" step="1" value="${d.xu}"></label>
+      <label>Thăng Cấp (/capdo)<input data-k="capdo" type="number" min="0" max="100" value="${d.capdo}"></label>
+      <label>Giờ chơi thật (giờ)<input data-k="gio" type="number" min="0" step="0.5" value="${d.gio}"></label>
+      <label>Danh phận<select data-k="danhphan"${online ? "" : " disabled"}>${opt(Object.entries(d.chon.danhphan), d.danhphan)}</select></label>
+      <label>Nghề<select data-k="nghe"><option value="">(chưa vào nghề)</option>${opt(d.chon.nghe.map((j) => [j.ma, j.ten]), d.nghe)}</select></label>
+      <label>Cấp nghề<input data-k="cap_nghe" type="number" min="0" max="50" value="${d.cap_nghe}"></label>
+    </div>
+    <div class="hs-sub">Kỹ năng (/skills)</div>
+    <div class="hs-grid">${d.chon.kynang.map((k) => `<label title="Tối đa ${k.toi_da}">${esc(k.ten)}<input data-sk="${esc(k.ma)}" type="number" min="0" max="${k.toi_da}" value="${d.kynang[k.ma] || 0}"${online ? "" : " disabled"}></label>`).join("")}</div>
+    <div class="ask-btns"><button type="button" class="ghost hs-no">Đóng</button><button type="button" class="primary hs-ok">Lưu</button></div></div>`;
+  const box = wrap.querySelector(".ask");
+  const close = () => wrap.remove();
+  wrap.onmousedown = (e) => { if (e.target === wrap) close(); };
+  box.querySelector(".hs-no").onclick = close;
+  box.querySelector(".hs-ok").onclick = async () => {
+    const hoso = { kynang: {} };
+    box.querySelectorAll("[data-k]").forEach((el) => { if (!el.disabled) hoso[el.dataset.k] = el.value; });
+    box.querySelectorAll("[data-sk]").forEach((el) => { if (!el.disabled) hoso.kynang[el.dataset.sk] = el.value; });
+    const r = await act({ bot: d.ten, action: "hoso_luu", hoso });
+    if (r && r.ok) close();
+  };
+  document.body.appendChild(wrap);
 }
 
 // ---------------------------------------------------------------- khung chat: chat + lệnh member (Hoạt động) + tin bot nhận

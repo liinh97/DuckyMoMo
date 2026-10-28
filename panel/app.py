@@ -1722,8 +1722,158 @@ def bot_json():
         return {"ok": False, "message": f"Dịch vụ bot không trả lời ({e}). Kiểm tra: docker compose ps botfarm", "bots": [], "events": [], "servers": {}}
 
 
+# ---------------------------------------------------------------- hồ sơ bot (28/10): số liệu giống người chơi thật để bot không lộ
+# Đọc từ dữ liệu Bang Hội (xu Essentials, Thăng Cấp capdo.yml, giờ chơi hoatdong.yml, danh phận LuckPerms, nghề Jobs Reborn, kỹ năng
+# AuraSkills); lưu bằng lệnh admin qua RCON, chỉ mục nào đổi mới chạy lệnh.
+BOT_SRV = "banghoi-1"
+BOT_TIERS = {"tinan": "Dân Tị Nạn", "dan": "Dân", "luongdan": "Lương Dân", "haokiet": "Hào Kiệt"}
+
+
+def _bot_uuid(name):
+    try:
+        for x in json.loads((DATA_DIR / BOT_SRV / "usercache.json").read_text(encoding="utf-8")):
+            if str(x.get("name", "")).lower() == name.lower():
+                return x.get("uuid"), x.get("name")
+    except Exception:
+        pass
+    return None, name
+
+
+def _bot_jobs():
+    """[(mã nghề Jobs, tên hiện, cấp tối đa)]"""
+    out = []
+    for f in sorted((DATA_DIR / BOT_SRV / "plugins" / "Jobs" / "jobs").glob("*.yml")):
+        try:
+            d = YAML(typ="safe").load(f.read_text(encoding="utf-8")) or {}
+        except Exception:
+            continue
+        for k, v in d.items():
+            if isinstance(v, dict) and v.get("fullname"):
+                out.append((k, str(v.get("fullname")), int(v.get("max-level", 50) or 50)))
+    return out
+
+
+def _bot_skills():
+    """[(mã kỹ năng, tên hiện, cấp tối đa)] các kỹ năng AuraSkills đang bật."""
+    base = DATA_DIR / BOT_SRV / "plugins" / "AuraSkills"
+    sk = taikhoan.safe_yaml(base / "skills.yml").get("skills") or {}
+    return [(k.split("/")[-1], taikhoan.SKILL_VI.get(k.split("/")[-1], k.split("/")[-1]), int((v.get("options") or {}).get("max_level", 100)))
+            for k, v in sk.items() if (v.get("options") or {}).get("enabled", True)]
+
+
+def bot_profile(name):
+    if not re.fullmatch(r"[A-Za-z0-9_]{3,16}", name or ""):
+        raise ValueError("Tên bot không hợp lệ")
+    uuid, real = _bot_uuid(name)
+    if not uuid:
+        raise ValueError(f"{name} chưa từng vào Bang Hội Chiến: cho bot vào game một lần rồi mới sửa hồ sơ được")
+    dmm = taikhoan.DMM
+    cap = (taikhoan.safe_yaml(dmm / "capdo.yml").get("nguoi") or {}).get(uuid) or {}
+    hd = taikhoan.safe_yaml(dmm / "hoatdong.yml").get(uuid) or {}
+    tier = "tinan"
+    try:
+        perms = taikhoan.load_perms(real) or {}
+        have = {g.get("group") for g in perms.get("direct", []) if isinstance(g, dict)} | set(perms.get("groups", {}) if isinstance(perms.get("groups"), dict) else [])
+        for t in ("haokiet", "luongdan", "dan"):
+            if t in have:
+                tier = t
+                break
+    except Exception:
+        pass
+    job, job_lv = "", 0
+    try:
+        import sqlite3
+        con = sqlite3.connect(f"file:{DATA_DIR / BOT_SRV / 'plugins' / 'Jobs' / 'jobs.sqlite.db'}?mode=ro", uri=True)
+        row = con.execute("SELECT j.job, j.level FROM jobs j JOIN users u ON u.id = j.userid WHERE u.player_uuid = ? ORDER BY j.level DESC LIMIT 1", (uuid,)).fetchone()
+        con.close()
+        if row:
+            job, job_lv = row[0], int(row[1] or 0)
+    except Exception:
+        pass
+    sk = {k.split("/")[-1]: int((v or {}).get("level", 0) or 0) for k, v in (taikhoan.safe_yaml(DATA_DIR / BOT_SRV / "plugins" / "AuraSkills" / "userdata" / f"{uuid}.yml").get("skills") or {}).items()}
+    return {"ok": True, "ten": real, "uuid": uuid,
+            "xu": taikhoan.money(uuid) or 0, "capdo": int(cap.get("cap", 0) or 0), "gio": round((hd.get("tong") or 0) / 60, 1),
+            "danhphan": tier, "nghe": job, "cap_nghe": job_lv, "kynang": {k: sk.get(k, 0) for k, _, _ in _bot_skills()},
+            "chon": {"danhphan": BOT_TIERS, "nghe": [{"ma": k, "ten": t, "toi_da": m} for k, t, m in _bot_jobs()],
+                     "kynang": [{"ma": k, "ten": t, "toi_da": m} for k, t, m in _bot_skills()]}}
+
+
+def bot_profile_save(body, who):
+    name = str(body.get("bot", "")).strip()
+    cur = bot_profile(name)
+    n = cur["ten"]
+    new = body.get("hoso") or {}
+    cmds, did = [], []
+
+    def num(k, lo, hi, cast=float):
+        try:
+            v = cast(new.get(k))
+        except (TypeError, ValueError):
+            raise ValueError(f"{k}: phải là số")
+        if not lo <= v <= hi:
+            raise ValueError(f"{k}: từ {lo} tới {hi}")
+        return v
+    if "xu" in new:
+        v = round(num("xu", 0, 100_000_000), 2)
+        if abs(v - float(cur["xu"])) > 0.001:
+            cmds.append(f"eco set {n} {v:g}"); did.append(f"xu {v:g}")
+    if "capdo" in new:
+        v = num("capdo", 0, 100, int)
+        if v != cur["capdo"]:
+            cmds.append(f"capdo dat {n} {v}"); did.append(f"Thăng Cấp {v}")
+    if "gio" in new:
+        v = num("gio", 0, 100000)
+        delta = int(round((v - cur["gio"]) * 60))
+        if delta:
+            cmds.append(f"hoatdong them {n} {delta}"); did.append(f"giờ chơi {v:g}")
+    online = any(str(b.get("name", "")).lower() == n.lower() and b.get("online") and b.get("server") == BOT_SRV for b in bot_json().get("bots", []))
+    if new.get("danhphan") and new["danhphan"] != cur["danhphan"]:
+        if new["danhphan"] not in BOT_TIERS:
+            raise ValueError("Danh phận không hợp lệ")
+        if not online:
+            raise ValueError("Đổi danh phận cần bot đang online ở Bang Hội Chiến (lệnh /danhphan dat chỉ nhận người đang online)")
+        cmds.append(f"danhphan dat {n} {new['danhphan']}"); did.append(f"danh phận {BOT_TIERS[new['danhphan']]}")
+    jobs = {k: m for k, _, m in _bot_jobs()}
+    job = str(new.get("nghe") or "")
+    if job and job not in jobs:
+        raise ValueError("Nghề không hợp lệ")
+    lv = num("cap_nghe", 0, max(jobs.values() or [50]), int) if "cap_nghe" in new else cur["cap_nghe"]
+    if job != cur["nghe"]:
+        cmds.append(f"jobs fireall {n}")
+        if job:
+            cmds.append(f"jobs employ {n} {job}")
+        did.append(f"nghề {job or 'không'}")
+    if job and (lv != cur["cap_nghe"] or job != cur["nghe"]) and lv >= 1:
+        cmds.append(f"jobs level {n} {job} set {min(lv, jobs[job])}"); did.append(f"cấp nghề {lv}")
+    skills = {k: m for k, _, m in _bot_skills()}
+    for k, v in (new.get("kynang") or {}).items():
+        if k not in skills:
+            continue
+        try:
+            v = max(0, min(skills[k], int(v)))
+        except (TypeError, ValueError):
+            raise ValueError("Cấp kỹ năng phải là số")
+        if v != cur["kynang"].get(k, 0):
+            if not online:
+                raise ValueError("Đổi cấp kỹ năng cần bot đang online ở Bang Hội Chiến")
+            cmds.append(f"skills skill setlevel {n} {k} {v}"); did.append(f"{taikhoan.SKILL_VI.get(k, k)} {v}")
+    if not cmds:
+        return {"ok": True, "message": "Không có gì thay đổi"}
+    try:
+        res = rcon(BOT_SRV, cmds)
+    except Exception as e:
+        raise ValueError(f"Không gửi được lệnh vào Bang Hội Chiến ({e})")
+    bad = [f"{c}: {o.strip()[:120]}" for c, o in res if re.search(r"(?i)không tìm thấy|unknown|incorrect|error|lỗi|sai cách", o or "")]
+    web_log({"viec": "/api/bot", "nguoi": who or PANEL_USER, "hanh_dong": f"{n} sửa hồ sơ: " + ", ".join(did)})
+    return {"ok": not bad, "message": ("Đã đặt cho " + n + ": " + ", ".join(did)) if not bad else "Có lệnh không chạy được: " + " | ".join(bad)}
+
+
 def bot_action(body, who):
     act = str(body.get("action", ""))
+    if act == "hoso":
+        return bot_profile(str(body.get("bot", "")).strip())
+    if act == "hoso_luu":
+        return bot_profile_save(body, who)
     if act not in BOT_ACTIONS:
         raise ValueError("Thao tác không hợp lệ")
     if act == "create":

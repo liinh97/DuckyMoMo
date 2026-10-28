@@ -1761,6 +1761,21 @@ def _bot_skills():
             for k, v in sk.items() if (v.get("options") or {}).get("enabled", True)]
 
 
+def _bot_towns():
+    """{uuid thị trấn: tên} từ dữ liệu Towny."""
+    out = {}
+    for f in (DATA_DIR / BOT_SRV / "plugins" / "Towny" / "data" / "towns").glob("*.txt"):
+        kv = taikhoan.towny_kv(f)
+        if kv.get("name"):
+            out[f.stem] = kv["name"]
+    return out
+
+
+def _bot_achievements():
+    core = taikhoan.safe_yaml(taikhoan.DMM / "config.yml")
+    return [(str(k), str((v or {}).get("name", k)), str((v or {}).get("desc", ""))) for k, v in ((core.get("achievements") or {}).get("list") or {}).items()]
+
+
 def bot_profile(name):
     if not re.fullmatch(r"[A-Za-z0-9_]{3,16}", name or ""):
         raise ValueError("Tên bot không hợp lệ")
@@ -1791,11 +1806,18 @@ def bot_profile(name):
     except Exception:
         pass
     sk = {k.split("/")[-1]: int((v or {}).get("level", 0) or 0) for k, v in (taikhoan.safe_yaml(DATA_DIR / BOT_SRV / "plugins" / "AuraSkills" / "userdata" / f"{uuid}.yml").get("skills") or {}).items()}
+    dd = ((taikhoan.safe_yaml(dmm / "diemdanh.yml").get("players") or {}).get(uuid) or {})
+    tt = (taikhoan.safe_yaml(dmm / "thanhtich.yml").get("xong") or {}).get(uuid) or []
+    towns = _bot_towns()
+    res = taikhoan.towny_kv(DATA_DIR / BOT_SRV / "plugins" / "Towny" / "data" / "residents" / f"{uuid}.txt")
     return {"ok": True, "ten": real, "uuid": uuid,
+            "diemdanh": int(dd.get("count", 0) or 0), "thanhtich": [str(x) for x in tt], "thitran": towns.get(res.get("town", ""), ""),
             "xu": taikhoan.money(uuid) or 0, "capdo": int(cap.get("cap", 0) or 0), "gio": round((hd.get("tong") or 0) / 60, 1),
             "danhphan": tier, "nghe": job, "cap_nghe": job_lv, "kynang": {k: sk.get(k, 0) for k, _, _ in _bot_skills()},
             "chon": {"danhphan": BOT_TIERS, "nghe": [{"ma": k, "ten": t, "toi_da": m} for k, t, m in _bot_jobs()],
-                     "kynang": [{"ma": k, "ten": t, "toi_da": m} for k, t, m in _bot_skills()]}}
+                     "kynang": [{"ma": k, "ten": t, "toi_da": m} for k, t, m in _bot_skills()],
+                     "thanhtich": [{"ma": k, "ten": t, "mo_ta": d} for k, t, d in _bot_achievements()],
+                     "thitran": sorted(towns.values(), key=str.lower)}}
 
 
 def bot_profile_save(body, who):
@@ -1857,6 +1879,25 @@ def bot_profile_save(body, who):
             if not online:
                 raise ValueError("Đổi cấp kỹ năng cần bot đang online ở Bang Hội Chiến")
             cmds.append(f"skills skill setlevel {n} {k} {v}"); did.append(f"{taikhoan.SKILL_VI.get(k, k)} {v}")
+    if "diemdanh" in new:
+        v = num("diemdanh", 0, 100000, int)
+        if v != cur["diemdanh"]:
+            cmds.append(f"diemdanh dat {n} {v}"); did.append(f"điểm danh {v} ngày")
+    if "thanhtich" in new:
+        ids = {k for k, _, _ in _bot_achievements()}
+        want = [str(x) for x in (new.get("thanhtich") or []) if str(x) in ids]
+        if sorted(want) != sorted(cur["thanhtich"]):
+            cmds.append(f"thanhtich dat {n} {','.join(want) if want else 'xoa'}"); did.append(f"{len(want)} thành tích")
+    if "thitran" in new:
+        town = str(new.get("thitran") or "")
+        if town and town not in cur["chon"]["thitran"]:
+            raise ValueError("Thị trấn không hợp lệ")
+        if town != cur["thitran"]:
+            if cur["thitran"]:
+                cmds.append(f"ta town {cur['thitran']} kick {n}")
+            if town:
+                cmds.append(f"ta town {town} add {n}")
+            did.append(f"thị trấn {town or 'không'}")
     if not cmds:
         return {"ok": True, "message": "Không có gì thay đổi"}
     try:

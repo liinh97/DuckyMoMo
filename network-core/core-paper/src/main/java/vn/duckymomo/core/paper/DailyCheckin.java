@@ -114,6 +114,26 @@ final class DailyCheckin implements Listener {
     }
 
     boolean command(CommandSender s, String[] args) {
+        // Admin (28/10, trang Bot › Hồ sơ): /diemdanh dat <tên> <số ngày> — đặt tổng số ngày, lần cuối = hôm nay (0 = xoá)
+        if (args.length >= 3 && args[0].equalsIgnoreCase("dat") && s.hasPermission("duckymomo.admin")) {
+            org.bukkit.OfflinePlayer t = Bukkit.getOfflinePlayerIfCached(args[1]);
+            int n;
+            try {
+                n = Math.max(0, Math.min(100000, Integer.parseInt(args[2])));
+            } catch (NumberFormatException e) {
+                n = -1;
+            }
+            if (t == null || n < 0) {
+                s.sendMessage("/diemdanh dat <tên đã từng vào> <số ngày>");
+                return true;
+            }
+            String k = "players." + t.getUniqueId();
+            data.set(k + ".count", n);
+            data.set(k + ".last", n > 0 ? today() : null);
+            save();
+            s.sendMessage("Đã đặt điểm danh của " + t.getName() + ": " + n + " ngày");
+            return true;
+        }
         if (!(s instanceof Player p)) {
             s.sendMessage("Chỉ người chơi điểm danh được.");
             return true;

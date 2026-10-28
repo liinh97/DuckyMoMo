@@ -53,7 +53,11 @@
   .hs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; margin: 10px 0; }
   .hs-grid label { display: flex; flex-direction: column; gap: 4px; font-size: 13px; }
   .hs-grid input, .hs-grid select { width: 100%; }
-  .hs-sub { font-weight: 600; margin-top: 6px; }
+  .hs-sub { font-weight: 600; margin-top: 6px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .hs-sub button { padding: 2px 8px; font-size: 12px; }
+  .hs-ach { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 4px 10px; margin: 8px 0; max-height: 180px; overflow: auto; font-size: 13px; }
+  .hs-ach label { display: flex; gap: 6px; align-items: center; }
+  .ask.hoso { max-height: calc(100vh - 40px); overflow: auto; }
   .ln .tx code { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12.5px; background: var(--chip); border-radius: 5px; padding: 0 5px; }
   .ln.hot { background: color-mix(in srgb, var(--msg) 7%, transparent); cursor: pointer; }
   .ln .srv { color: var(--muted); font-size: 11.5px; }
@@ -218,18 +222,26 @@ async function openProfile(name) {
       <label>Danh phận<select data-k="danhphan"${online ? "" : " disabled"}>${opt(Object.entries(d.chon.danhphan), d.danhphan)}</select></label>
       <label>Nghề<select data-k="nghe"><option value="">(chưa vào nghề)</option>${opt(d.chon.nghe.map((j) => [j.ma, j.ten]), d.nghe)}</select></label>
       <label>Cấp nghề<input data-k="cap_nghe" type="number" min="0" max="50" value="${d.cap_nghe}"></label>
+      <label>Điểm danh (số ngày)<input data-k="diemdanh" type="number" min="0" value="${d.diemdanh}"></label>
+      <label>Thị trấn<select data-k="thitran"><option value="">(không thị trấn)</option>${opt(d.chon.thitran.map((t) => [t, t]), d.thitran)}</select></label>
     </div>
     <div class="hs-sub">Kỹ năng (/skills)</div>
     <div class="hs-grid">${d.chon.kynang.map((k) => `<label title="Tối đa ${k.toi_da}">${esc(k.ten)}<input data-sk="${esc(k.ma)}" type="number" min="0" max="${k.toi_da}" value="${d.kynang[k.ma] || 0}"${online ? "" : " disabled"}></label>`).join("")}</div>
+    <div class="hs-sub">Thành tích (/thanhtich) <span class="muted">· đánh dấu lặng, không phát quà xu, không báo cả server</span>
+      <button type="button" class="ghost hs-all">Chọn hết</button><button type="button" class="ghost hs-none">Bỏ hết</button></div>
+    <div class="hs-ach">${d.chon.thanhtich.map((a) => `<label title="${esc(a.mo_ta)}"><input type="checkbox" data-ach="${esc(a.ma)}"${d.thanhtich.includes(a.ma) ? " checked" : ""}> ${esc(a.ten)}</label>`).join("")}</div>
     <div class="ask-btns"><button type="button" class="ghost hs-no">Đóng</button><button type="button" class="primary hs-ok">Lưu</button></div></div>`;
   const box = wrap.querySelector(".ask");
   const close = () => wrap.remove();
   wrap.onmousedown = (e) => { if (e.target === wrap) close(); };
   box.querySelector(".hs-no").onclick = close;
+  box.querySelector(".hs-all").onclick = () => box.querySelectorAll("[data-ach]").forEach((c) => { c.checked = true; });
+  box.querySelector(".hs-none").onclick = () => box.querySelectorAll("[data-ach]").forEach((c) => { c.checked = false; });
   box.querySelector(".hs-ok").onclick = async () => {
     const hoso = { kynang: {} };
     box.querySelectorAll("[data-k]").forEach((el) => { if (!el.disabled) hoso[el.dataset.k] = el.value; });
     box.querySelectorAll("[data-sk]").forEach((el) => { if (!el.disabled) hoso.kynang[el.dataset.sk] = el.value; });
+    hoso.thanhtich = [...box.querySelectorAll("[data-ach]:checked")].map((c) => c.dataset.ach);
     const r = await act({ bot: d.ten, action: "hoso_luu", hoso });
     if (r && r.ok) close();
   };

@@ -255,6 +255,47 @@ final class Achievements implements Listener {
     // ---------------------------------------------------------------- lệnh
 
     boolean command(CommandSender s, String[] args) {
+        // Admin (28/10, trang Bot › Hồ sơ): /thanhtich dat <tên> <mã,mã…|het|xoa> — đánh dấu đã đạt, LẶNG (không quà xu, không báo cả
+        // server); quà danh hiệu vẫn trao nếu người đó đang online.
+        if (args.length >= 3 && args[0].equalsIgnoreCase("dat") && s.hasPermission("duckymomo.admin")) {
+            org.bukkit.OfflinePlayer t = Bukkit.getOfflinePlayerIfCached(args[1]);
+            if (t == null) {
+                s.sendMessage("/thanhtich dat <tên đã từng vào> <mã,mã…|het|xoa>");
+                return true;
+            }
+            List<String> ids = goals.stream().map(Goal::id).toList();
+            List<String> want = new ArrayList<>();
+            String arg = args[2].toLowerCase(java.util.Locale.ROOT);
+            if (arg.equals("het")) {
+                want.addAll(ids);
+            } else if (!arg.equals("xoa")) {
+                for (String x : arg.split(",")) {
+                    if (ids.contains(x.trim())) {
+                        want.add(x.trim());
+                    } else if (!x.isBlank()) {
+                        s.sendMessage("Không có thành tích mã " + x + " (có: " + String.join(", ", ids) + ")");
+                        return true;
+                    }
+                }
+            }
+            List<String> before = data.getStringList("xong." + t.getUniqueId());
+            data.set("xong." + t.getUniqueId(), want.isEmpty() ? null : want);
+            dirty = true;
+            flush();
+            Player on = t.getPlayer();
+            if (on != null && rewards != null) {
+                for (Goal g : goals) {
+                    if (want.contains(g.id()) && !before.contains(g.id())) {
+                        List<String> titles = g.rewards().stream().filter(r -> r.startsWith("danhhieu")).toList();
+                        if (!titles.isEmpty()) {
+                            rewards.give(on, titles);
+                        }
+                    }
+                }
+            }
+            s.sendMessage("Đã đặt thành tích của " + t.getName() + ": " + want.size() + "/" + ids.size());
+            return true;
+        }
         Player p = s instanceof Player pl ? pl : null;
         if (args.length > 0 && s.hasPermission("duckymomo.admin")) {
             Player t = Bukkit.getPlayerExact(args[0]);

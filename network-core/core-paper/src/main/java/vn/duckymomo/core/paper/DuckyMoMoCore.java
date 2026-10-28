@@ -751,6 +751,14 @@ public final class DuckyMoMoCore extends JavaPlugin {
         WebLogin webLogin = new WebLogin(getConfig().getConfigurationSection("web-login"));
         bind("web", webLogin::command, "Đăng nhập web");
 
+        // Ẩn giáp /angiap (Bang Hội Chiến: armor-hide.enabled, cần Towny): chỉ ẩn ở chỗ an toàn, không giao tranh
+        ArmorHide armorHide = getConfig().getBoolean("armor-hide.enabled") && getServer().getPluginManager().isPluginEnabled("Towny")
+                ? new ArmorHide(this, getConfig().getConfigurationSection("armor-hide"), peace) : null;
+        if (armorHide != null) {
+            getServer().getPluginManager().registerEvents(armorHide, this);
+        }
+        bind("angiap", armorHide == null ? null : armorHide::command, "Ẩn giáp");
+
         // Tài khoản tin cậy giữ đăng nhập AuthMe lâu hơn (sảnh: auth-trust.enabled), mặc định mọi người vẫn 60 phút
         if (getConfig().getBoolean("auth-trust.enabled")) {
             AuthTrust trust = new AuthTrust(this, getConfig().getConfigurationSection("auth-trust"));

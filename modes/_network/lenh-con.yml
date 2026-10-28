@@ -295,6 +295,7 @@ groups:
       - ["diemdanh dat <tên> <số ngày>", "Đặt tổng số ngày điểm danh (lần cuối = hôm nay; 0 = xoá). Dùng cho bot (trang Bot › Hồ sơ)", Chỉ admin]
       - ["diemdanh xem", "Xem số ngày đã điểm danh và mốc tiếp theo", Mọi người]
       - ["nhiemvu", "Nhiệm vụ hôm nay + việc dân làng đang nhận từ NPC (Bang Hội Chiến; gõ /quests cũng được)", Mọi người]
+      - ["angiap", "Ẩn giáp (bật/tắt): người khác thấy skin, không thấy giáp; chỉ ở kinh đô, đất hoà bình, thị trấn của mình, không lúc đánh nhau (Bang Hội Chiến)", Mọi người]
       - ["gacha", "Gacha (quay thưởng): chọn máy, xem tỉ lệ, quay bằng vé (cầm vé bấm chuột phải cũng quay) (Bang Hội Chiến)", Mọi người]
       - ["gacha give <người> <mã máy> [số]", "Tặng vé gacha (người đang online)", Chỉ admin]
       - ["xuong", "Xưởng chế tạo đồ có hạn dùng (Bang Hội Chiến)", Mọi người]

@@ -2217,3 +2217,9 @@ spawn-world:
   spawn: {x: 0.5, y: 100, z: 0.5, yaw: 180}
   # 24/10: spawn mới ĐẶT Ở WORLD CHÍNH (thay spawn cũ, tâm 12699 -2465): /dmm spawnmoi danchinh. Mặt đất quanh y 67, mặt đảo ~ điểm dán - 11.
   main-paste: {x: 12690, y: 79, z: -2429, center-x: 12699, center-z: -2465, clear-radius: 128, clear-from-y: 67}
+
+# Ẩn giáp /angiap (28/10): người khác thấy skin, không thấy giáp (giáp vẫn bảo vệ). Chỉ ẩn ở vòng kinh đô / đất hoà bình / thị trấn
+# của chính mình và không đang giao tranh (combat-seconds sau khi đánh / bị người đánh). Lưu người bật: angiap.yml
+armor-hide:
+  enabled: true
+  combat-seconds: 15

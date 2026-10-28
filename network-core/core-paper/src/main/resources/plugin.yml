@@ -24,6 +24,8 @@ commands:
   goiqua:
     description: "Gói quà theo rank (/kit, /kits, /goiqua). Admin: /kit <mã> <người>, /kit lamlai <người> [mã]"
     aliases: [kit, kits]
+  angiap:
+    description: "Ẩn giáp (bật/tắt): người khác thấy skin, không thấy giáp; giáp vẫn bảo vệ. Chỉ ẩn ở kinh đô, đất hoà bình, thị trấn của mình, không lúc đánh nhau"
   gacha:
     description: "Gacha (quay thưởng): mỗi máy một loại vé (điểm danh, chơi online), xem tỉ lệ từng phần thưởng. Admin: /gacha give <người> <mã máy> [số]"
     aliases: []

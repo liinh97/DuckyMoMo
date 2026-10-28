@@ -1908,7 +1908,8 @@ def bot_profile_save(body, who):
         res = rcon(BOT_SRV, cmds)
     except Exception as e:
         raise ValueError(f"Không gửi được lệnh vào Bang Hội Chiến ({e})")
-    bad = [f"{c}: {o.strip()[:120]}" for c, o in res if re.search(r"(?i)không tìm thấy|unknown|incorrect|error|lỗi|sai cách", o or "")]
+    bad = [f"{c}: {o.strip()[:120]}" for c, o in res if re.search(r"(?i)không tìm thấy|unknown|incorrect|error|lỗi|sai cách", o or "")
+           and not c.startswith(("jobs employ", "jobs fireall"))]
     web_log({"viec": "/api/bot", "nguoi": who or PANEL_USER, "hanh_dong": f"{n} sửa hồ sơ: " + ", ".join(did)})
     return {"ok": not bad, "message": ("Đã đặt cho " + n + ": " + ", ".join(did)) if not bad else "Có lệnh không chạy được: " + " | ".join(bad)}
 
@@ -2032,11 +2033,14 @@ def _bot_dev_step(name, st, prof, now, play_h=None):
     jobs = {k: m for k, _, m in _bot_jobs()}
     job = st.get("nghe") if st.get("nghe") in jobs else (next(iter(jobs)) if jobs else "")
     if job:
-        lv = prof["cap_nghe"] if prof["nghe"] == job else 1
+        # 28/10: Jobs Reborn ghi xuống jobs.sqlite.db theo chu kỳ -> đọc có thể ra số cũ ("chưa có nghề") làm nghề bị làm lại từ cấp 1.
+        # Cấp nghề lấy theo số bộ tự phát triển tự nhớ (nghe_lv), số đọc từ DB chỉ để lấy mức cao hơn.
+        lv = max(1, st.get("nghe_lv", 0), prof["cap_nghe"] if prof["nghe"] == job else 0)
         st["kexp"] = st.get("kexp", 0) + h * may
         while lv < jobs[job] and st["kexp"] >= 0.25 + 0.12 * lv:
             st["kexp"] -= 0.25 + 0.12 * lv
             lv += 1
+        st["nghe_lv"] = lv
         hoso["nghe"], hoso["cap_nghe"] = job, max(1, lv)
     # kỹ năng: kỹ năng chính nhanh, kỹ năng khác thỉnh thoảng
     kn = {}
@@ -2082,11 +2086,21 @@ def _bot_dev_step(name, st, prof, now, play_h=None):
     return hoso
 
 
-def bot_dev_past(name, st):
-    """Tạo quá khứ (28/10): giả lập 0–40 giờ đã chơi theo tính cách, áp một lần. Trả thông báo."""
+def bot_dev_past(name, st, reset=False, total=None):
+    """Tạo quá khứ (28/10): giả lập 0–40 giờ đã chơi theo tính cách, áp một lần. reset=True: làm lại TỪ ĐẦU (xoá số liệu cũ,
+    vd bot bị cộng quá khứ hai lần), ghi đè xu, cấp, giờ, nghề, kỹ năng, thành tích, điểm danh, danh phận."""
     prof = bot_profile(name)
-    total = round(40 * _rnd.random() ** 1.7, 1)             # lệch: nhiều bot chơi ít, vài bot chơi nhiều
-    p = dict(prof, kynang=dict(prof["kynang"]), thanhtich=list(prof["thanhtich"]))
+    if total is None:
+        total = round(40 * _rnd.random() ** 1.7, 1)         # lệch: nhiều bot chơi ít, vài bot chơi nhiều
+    if reset:
+        for k in ("kexp", "knexp", "sim", "nghe_lv"):
+            st.pop(k, None)
+        st["knexp"] = {}
+        base = dict(prof, xu=float(_rnd.randint(300, 1500)), capdo=0, diem_ha=0, gio=0.0, danhphan="tinan", cap_nghe=0,
+                    diemdanh=0, kynang={k: 0 for k in prof["kynang"]}, thanhtich=[])
+    else:
+        base = prof
+    p = dict(base, kynang=dict(base["kynang"]), thanhtich=list(base["thanhtich"]))
     done, now = 0.0, time.time()
     while done < total - 1e-9:
         h = min(1.0, total - done)
@@ -2099,7 +2113,7 @@ def bot_dev_past(name, st):
         done += h
     days = int(round(total / _rnd.uniform(1.2, 3.0) * st.get("deu", 0.7)))
     hoso = {k: p[k] for k in ("xu", "capdo", "diem_ha", "gio", "nghe", "cap_nghe", "danhphan", "kynang", "thanhtich")}
-    hoso["diemdanh"] = prof["diemdanh"] + days
+    hoso["diemdanh"] = base["diemdanh"] + days
     res = bot_profile_save({"bot": name, "hoso": hoso}, "tạo quá khứ")
     if res.get("ok"):
         st["quakhu"] = "xong"

@@ -476,9 +476,9 @@ final class Kham implements Listener {
         int at = -1;
         for (int i = 0; i < lore.size(); i++) {
             String pl = plain.serialize(lore.get(i));
-            if (pl.startsWith(LINE_PREFIX) || pl.contains(" " + TITLE + " »")) {
+            if (pl.startsWith(LINE_PREFIX) || pl.contains(" " + TITLE)) {
                 lore.remove(i);
-                if (i < lore.size() && plain.serialize(lore.get(i)).isBlank() && pl.contains(" " + TITLE + " »")) {
+                if (i < lore.size() && plain.serialize(lore.get(i)).isBlank() && pl.contains(" " + TITLE)) {
                     lore.remove(i);   // dòng trống đặt kèm dưới dòng khảm
                 }
                 at = firstSection(lore) >= 0 ? -1 : i;   // có tiêu đề mục thì tính lại chỗ (sửa đồ lỡ đặt sai), không thì giữ chỗ cũ
@@ -514,17 +514,17 @@ final class Kham implements Listener {
             String[] in = info(it);
             String ic = in == null ? "◆◇" : icons.getOrDefault(in[0], ICONS.getOrDefault(in[0], "◆◇"));
             int[] cp = ic.codePoints().toArray();
-            String full = new String(cp, 0, 1), empty = cp.length > 1 ? new String(cp, 1, 1) : full;
-            StringBuilder b = new StringBuilder(c1 + sym + " " + tc + TITLE + " &r&8» ");
+            String full = "◆", empty = "◇";   // 28/10 tối (chủ server): ô khảm nhỏ, hình viên ngọc, mọi set như nhau
+            StringBuilder b = new StringBuilder(c1 + sym + " " + tc + TITLE + "&r");
             int minE = Integer.MAX_VALUE;
             List<String> names = new ArrayList<>();
             for (int i = 0; i < n; i++) {   // ô dạng [●][○][○] như thanh Loading của Tân Thủ, tô theo màu ngọc
                 Sock sk = i < list.size() ? list.get(i) : EMPTY;
                 Gem gem = gems.get(sk.code());
                 if (gem == null) {
-                    b.append("&8[&7").append(empty).append("&8]");
+                    b.append(" &7").append(empty);
                 } else {
-                    b.append("&8[").append(gem.color()).append(full).append("&8]");
+                    b.append(" ").append(gem.color()).append(full);
                     names.add(gem.color() + gem.name());
                     minE = Math.min(minE, sk.energy());
                 }
@@ -570,7 +570,7 @@ final class Kham implements Listener {
         if (lore != null) {
             int sec = firstSection(lore);
             for (int i = 0; i < lore.size(); i++) {
-                if (plain.serialize(lore.get(i)).contains(" " + TITLE + " »")) {
+                if (plain.serialize(lore.get(i)).contains(" " + TITLE)) {
                     int nx = i + 1;
                     while (nx < lore.size() && plain.serialize(lore.get(nx)).isBlank()) {
                         nx++;

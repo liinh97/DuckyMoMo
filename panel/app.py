@@ -1990,10 +1990,11 @@ def _bot_dev_step(name, st, prof, now, play_h=None):
     # xu: có tăng có giảm như mua bán thật (chủ server 28/10: "có tăng phải có giảm")
     earn = _rnd.uniform(*S["xu"]) * h * may
     xu = prof["xu"] + earn
+    # chủ server 28/10: "lên mạnh hơn xuống" -> tiêu thường ngày ít hơn số kiếm, mua món lớn hiếm và nhỏ
     if _rnd.random() < st["tieu"]:
-        xu -= earn * _rnd.uniform(0.3, 1.6)                  # chi tiêu thường ngày: có lúc tiêu hơn số vừa kiếm
-    if _rnd.random() < st["tieu"] * 0.35:
-        xu -= max(0.0, xu) * _rnd.uniform(0.1, 0.45)         # mua món lớn: đồ, treo chợ, thuế thị trấn…
+        xu -= earn * _rnd.uniform(0.2, 0.9)                  # chi tiêu thường ngày
+    if _rnd.random() < st["tieu"] * 0.2:
+        xu -= max(0.0, xu) * _rnd.uniform(0.05, 0.25)        # mua món lớn: đồ, treo chợ, thuế thị trấn…
     if _rnd.random() < (0.15 if st.get("kieu") == "thuongnhan" else 0.04):
         xu += _rnd.uniform(400, 3000) * may                  # bán được mối lớn
     ha = prof["diem_ha"] + int(round(_rnd.uniform(*S["ha"]) * h * may))

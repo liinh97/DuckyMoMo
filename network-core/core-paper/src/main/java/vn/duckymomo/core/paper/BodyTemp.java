@@ -425,7 +425,17 @@ final class BodyTemp implements Listener {
         }
 
         double b = body.getOrDefault(u, mid);
-        b += (best - b) * cfg.getDouble("body-rate", 0.025);
+        double diff = best - b;
+        // 28/10 chủ server: càng lạnh (nóng) càng tụt (tăng) nhanh: đi xa mức dễ chịu thì nhân 1 + accel × khoảng cách / 10°;
+        // quay về mức dễ chịu (được sưởi / làm mát) giữ tốc độ thường
+        double speed = 1;
+        if (b != mid && Math.signum(diff) == Math.signum(b - mid)) {
+            speed += cfg.getDouble("accel", 1) * Math.abs(b - mid) / 10;
+        }
+        b += diff * cfg.getDouble("body-rate", 0.025) * speed;
+        if ((diff > 0 && b > best) || (diff < 0 && b < best)) {
+            b = best;   // không vượt quá nhiệt môi trường
+        }
         body.put(u, b);
         effects(p, b, w);
     }

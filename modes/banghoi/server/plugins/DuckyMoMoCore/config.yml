@@ -2254,6 +2254,7 @@ body-temp:
   damage-every: 4
   min-health: 2            # không trừ máu dưới mức này (2 = 1 tim)
   body-rate: 0.004         # thân nhiệt đuổi theo môi trường mỗi giây (0.004 ≈ 4 phút; 28/10 chủ server: chậm thêm nửa)
+  accel: 1                 # càng xa mức dễ chịu càng tụt / tăng nhanh: mỗi 10° xa thêm ×(1 + accel); quay về thì tốc độ thường
   biome-scale: 15          # (nhiệt quần xã − 0.8) × số này: tuyết ≈ −12..−20, sa mạc ≈ +18
   night: 6
   sun: 4

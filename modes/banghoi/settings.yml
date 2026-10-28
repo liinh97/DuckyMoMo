@@ -2092,3 +2092,4 @@ tn_water_wet: 5
 tn_dry: 0.25
 tn_dry_fire: 1.5
 tn_stone_rate: 0.01
+tn_accel: 1

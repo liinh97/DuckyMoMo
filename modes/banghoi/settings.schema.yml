@@ -858,6 +858,7 @@ Admin (quyền duckymomo.sell.khonggioihan) không bị giới hạn." }
       - { key: tn_every, label: "Mất máu mỗi (giây)", type: int, min: 1, max: 60, file: plugins/DuckyMoMoCore/config.yml, path: body-temp.damage-every }
       - { key: tn_minhp, label: "Không trừ máu dưới (2 = 1 tim)", type: number, min: 1, max: 20, file: plugins/DuckyMoMoCore/config.yml, path: body-temp.min-health, note: "Chủ server chốt không chết vì nhiệt: để từ 1 trở lên." }
       - { key: tn_rate, label: "Tốc độ thân nhiệt đổi theo môi trường (mỗi giây)", type: number, min: 0.001, max: 1, file: plugins/DuckyMoMoCore/config.yml, path: body-temp.body-rate, note: "0.004 ≈ 4 phút mới đổi gần hết; lớn hơn = đổi nhanh hơn." }
+      - { key: tn_accel, label: "Càng lạnh / nóng càng đổi nhanh (hệ số)", type: number, min: 0, max: 10, file: plugins/DuckyMoMoCore/config.yml, path: body-temp.accel, note: "1: lệch 10° khỏi mức dễ chịu thì nhanh ×2, lệch 20° nhanh ×3. 0 = tắt. Quay về mức dễ chịu luôn ở tốc độ thường." }
       - { key: tn_biome, label: "Độ chênh theo vùng đất", type: number, min: 0, max: 50, file: plugins/DuckyMoMoCore/config.yml, path: body-temp.biome-scale, note: "15: vùng tuyết lạnh hơn ~12–20°, sa mạc nóng hơn ~18°." }
       - { key: tn_night, label: "Ban đêm lạnh hơn (°)", type: number, min: 0, max: 40, file: plugins/DuckyMoMoCore/config.yml, path: body-temp.night }
       - { key: tn_sun, label: "Nắng ban ngày nóng hơn (°)", type: number, min: 0, max: 40, file: plugins/DuckyMoMoCore/config.yml, path: body-temp.sun, note: "Cầm ô lá còn 1/3." }

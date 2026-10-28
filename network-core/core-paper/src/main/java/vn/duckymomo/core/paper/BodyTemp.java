@@ -134,6 +134,7 @@ final class BodyTemp implements Listener {
         m.lore(lore);
         String model = t >= 40 ? "magma_block" : t <= 8 ? "packed_ice" : "smooth_stone";
         m.setItemModel(NamespacedKey.minecraft(model));
+        m.setEnchantmentGlintOverride(true);   // lấp lánh: phân biệt với Đá trơn / băng / đá magma thường
     }
 
     private boolean isStone(ItemStack it) {
@@ -374,7 +375,7 @@ final class BodyTemp implements Listener {
             }
             double ns = st + (target - st) * rate;
             pm.put(i, ns);
-            if (Math.round(ns) != Math.round(stored)) {
+            if (Math.round(ns) != Math.round(stored) || !m.hasEnchantmentGlintOverride()) {   // viên chế trước 28/10 chưa lấp lánh
                 m.getPersistentDataContainer().set(stoneKey, PersistentDataType.DOUBLE, (double) Math.round(ns));
                 decorate(m, ns);
                 it.setItemMeta(m);

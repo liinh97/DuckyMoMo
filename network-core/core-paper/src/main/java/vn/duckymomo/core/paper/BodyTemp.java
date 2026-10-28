@@ -89,11 +89,11 @@ final class BodyTemp implements Listener {
     private void recipes() {
         NamespacedKey k = new NamespacedKey(plugin, "daonlinh");
         Bukkit.removeRecipe(k);
-        ShapedRecipe r = new ShapedRecipe(k, stone(cfg.getDouble("comfort-mid", 22)));
-        r.shape("SFS", "FIF", "SFS");
-        r.setIngredient('S', Material.SMOOTH_STONE);
-        r.setIngredient('F', Material.FLINT);
-        r.setIngredient('I', Material.IRON_INGOT);
+        // 28/10: không theo hình (chủ server xếp theo hàng không ra): đủ 4 đá trơn + 4 đá lửa + 1 sắt, ô nào cũng được
+        org.bukkit.inventory.ShapelessRecipe r = new org.bukkit.inventory.ShapelessRecipe(k, stone(cfg.getDouble("comfort-mid", 22)));
+        r.addIngredient(4, Material.SMOOTH_STONE);
+        r.addIngredient(4, Material.FLINT);
+        r.addIngredient(1, Material.IRON_INGOT);
         Bukkit.addRecipe(r);
         // Ô lá: Minecraft không có cái ô; Lá Nhỏ Giọt cầm tay trông như ô lá. Ngoài hang Lush còn chế được: 3 lá cây + 2 que
         NamespacedKey u = new NamespacedKey(plugin, "ola");

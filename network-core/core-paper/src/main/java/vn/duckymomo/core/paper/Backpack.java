@@ -258,7 +258,8 @@ final class Backpack implements Listener {
             s.sendMessage("Dùng trong game.");
             return true;
         }
-        if (args.length >= 2 && args[0].equalsIgnoreCase("xem") && p.hasPermission("duckymomo.admin")) {
+        // 28/10: quyền riêng duckymomo.balo.xem (staff xem / lấy đồ balo người khác) để khỏi phải cấp cả duckymomo.admin
+        if (args.length >= 2 && args[0].equalsIgnoreCase("xem") && (p.hasPermission("duckymomo.admin") || p.hasPermission("duckymomo.balo.xem"))) {
             OfflinePlayer t = Bukkit.getOfflinePlayerIfCached(args[1]);
             if (t == null) {
                 p.sendMessage(c("&cKhông thấy người chơi " + args[1]));
@@ -303,7 +304,7 @@ final class Backpack implements Listener {
             for (int i = 1; i <= allowed(p); i++) {
                 out.add(String.valueOf(i));
             }
-            if (p.hasPermission("duckymomo.admin")) {
+            if (p.hasPermission("duckymomo.admin") || p.hasPermission("duckymomo.balo.xem")) {
                 out.add("xem");
             }
             return out;

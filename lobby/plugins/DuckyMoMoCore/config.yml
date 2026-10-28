@@ -138,3 +138,10 @@ resource-pack:
 dang-nhap-lau:
   ngay: 30
   nguoi: [Linh]
+
+# Tài khoản tin cậy (28/10, chủ server): vào lại sảnh CÙNG IP trong vòng `hours` giờ kể từ lần đăng nhập trước thì tự đăng nhập AuthMe.
+# Mọi người khác vẫn theo AuthMe sessions.timeout (60 phút). Thêm / bớt tên ở players rồi khởi động lại sảnh.
+auth-trust:
+  enabled: true
+  hours: 24
+  players: [Itrap]

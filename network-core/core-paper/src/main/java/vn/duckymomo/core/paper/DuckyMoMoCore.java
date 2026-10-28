@@ -750,6 +750,15 @@ public final class DuckyMoMoCore extends JavaPlugin {
         // Đăng nhập trang web bằng tài khoản game: /web cấp mã, trang web kiểm tra qua RCON (/dmm webma)
         WebLogin webLogin = new WebLogin(getConfig().getConfigurationSection("web-login"));
         bind("web", webLogin::command, "Đăng nhập web");
+
+        // Tài khoản tin cậy giữ đăng nhập AuthMe lâu hơn (sảnh: auth-trust.enabled), mặc định mọi người vẫn 60 phút
+        if (getConfig().getBoolean("auth-trust.enabled")) {
+            AuthTrust trust = new AuthTrust(this, getConfig().getConfigurationSection("auth-trust"));
+            if (trust.ready()) {
+                getServer().getPluginManager().registerEvents(trust, this);
+                getLogger().info("Tài khoản tin cậy: bật");
+            }
+        }
         getServer().getPluginManager().registerEvents(new ItemInspect(), this);   // phím F trong túi/menu, chọn món trade
         getServer().getPluginManager().registerEvents(new InfoMenu.Events(this), this);   // menu thông tin dùng chung (thay hướng dẫn qua chat)
         getServer().getPluginManager().registerEvents(new AttackSpeed(), this);   // tốc đánh món Thư viện đồ (OCM bỏ hồi đòn)

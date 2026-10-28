@@ -2253,15 +2253,15 @@ body-temp:
   damage: 1                # máu mất mỗi damage-every giây khi rét cóng / nóng bỏng
   damage-every: 4
   min-health: 2            # không trừ máu dưới mức này (2 = 1 tim)
-  body-rate: 0.008         # thân nhiệt đuổi theo môi trường mỗi giây (0.008 ≈ 2 phút; 28/10 chủ server: 0.025 nhanh quá)
+  body-rate: 0.004         # thân nhiệt đuổi theo môi trường mỗi giây (0.004 ≈ 4 phút; 28/10 chủ server: chậm thêm nửa)
   biome-scale: 15          # (nhiệt quần xã − 0.8) × số này: tuyết ≈ −12..−20, sa mạc ≈ +18
   night: 6
   sun: 4
   water: 8
-  rain-wet: 1              # % ướt mỗi giây dầm mưa (không mái / không ô)
-  water-wet: 10            # % ướt mỗi giây dưới nước
-  dry-rate: 0.5            # % khô mỗi giây
-  dry-fire: 3              # % khô mỗi giây cạnh lửa
+  rain-wet: 0.5              # % ướt mỗi giây dầm mưa (không mái / không ô)
+  water-wet: 5            # % ướt mỗi giây dưới nước
+  dry-rate: 0.25            # % khô mỗi giây
+  dry-fire: 1.5              # % khô mỗi giây cạnh lửa
   leather-per-piece: 3
   shelter: 0.5             # dưới mái: kéo 50% về comfort-mid
   source-radius: 3
@@ -2269,8 +2269,8 @@ body-temp:
   cold-source: 10          # băng / tuyết gần
   stone-hot: 70            # Đá Ôn Linh hơ cạnh lửa nóng tới
   stone-cold: -10          # ướp cạnh băng lạnh tới
-  stone-heat-rate: 0.02    # đá nóng lên / lạnh đi mỗi giây cạnh lửa / băng (0.02 ≈ 1 phút)
-  stone-hold-seconds: 600  # đá nguội về nhiệt xung quanh (hằng số thời gian)
+  stone-heat-rate: 0.01    # đá nóng lên / lạnh đi mỗi giây cạnh lửa / băng (0.01 ≈ 2 phút)
+  stone-hold-seconds: 300  # đá nguội về nhiệt xung quanh (hằng số thời gian, 5 phút)
   stone-strength: 0.6
   food-warm: 8
   food-cool: 5

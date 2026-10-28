@@ -1534,6 +1534,34 @@ final class DungeonGate implements Listener {
 
     /** /dungeon cho người chơi: menu theo loại (22/10, trước in ~25 dòng chat). Trang chính = các loại + dungeon của tuần;
      *  bấm loại mở trang con. Bấm dungeon = như bấm tên trong chat (vào / mua vé / góp quỹ). */
+    /** Cấp chiến đấu EliteMobs 10 (trung bình kỹ năng vũ khí + giáp, luyện bằng cách hạ quái elite; đồ kim cương KHÔNG tăng cấp).
+     *  -1 nếu không đọc được (không có PlaceholderAPI). 28/10: người mới không biết vì sao vào dungeon bị đánh như không mặc giáp. */
+    static int combatLevel(Player p) {
+        if (!Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+            return -1;
+        }
+        try {
+            return Integer.parseInt(PapiText.apply(p, "%elitemobs_player_combat_level%").trim());
+        } catch (RuntimeException | LinkageError e) {
+            return -1;
+        }
+    }
+
+    private static int levelOf(Dg d) {
+        try {
+            return Integer.parseInt(d.level().replaceAll("[^0-9].*$", "").trim());
+        } catch (NumberFormatException e) {
+            return 0;
+        }
+    }
+
+    /** "12 / cần ~10 (vừa sức)" có màu. */
+    private static String fit(int mine, int need) {
+        String c = mine >= need ? "&a" : mine >= need - 5 ? "&e" : "&c";
+        String w = mine >= need ? "vừa sức" : mine >= need - 5 ? "hơi yếu" : "quá yếu";
+        return c + mine + " &7/ cần ~" + need + " " + c + "(" + w + ")";
+    }
+
     private void menu(Player p) {
         UUID u = p.getUniqueId();
         String weekly = weeklyId();
@@ -1545,6 +1573,12 @@ final class DungeonGate implements Listener {
             if (!weeklyRewards.isEmpty() && rewards != null) {
                 top.kv("Thưởng thêm", String.join(", ", rewards.describe(weeklyRewards)) + " &7(tối đa " + weeklyMax + " lần/tuần)");
             }
+        }
+        int cl = combatLevel(p);
+        if (cl >= 0) {
+            top.line().kv("Cấp chiến đấu của bạn", "&f" + cl)
+                    .note("Trong dungeon, sức mạnh tính theo CẤP CHIẾN ĐẤU (kỹ năng vũ khí + giáp của EliteMobs), không theo đồ kim cương hay netherite.")
+                    .note("Luyện cấp: hạ quái elite ngoài đất hoang (quái có hiệu ứng phát sáng, cấp tự theo cấp của bạn), rồi vào dungeon vừa sức. Xem kỹ năng: /em");
         }
         m.top(top.apply(new ItemStack(Material.ENDER_EYE)));
         java.util.Map<String, List<Dg>> byType = new java.util.LinkedHashMap<>();
@@ -1635,6 +1669,10 @@ final class DungeonGate implements Listener {
                 .sub(d.level().isBlank() ? TYPE_VI.get(d.type()) : "cấp " + d.level()).accent("&d")
                 .desc(TYPE_VI.get(d.type()), TYPE_HOW.getOrDefault(d.type(), "")).line()
                 .kv("Trạng thái", state);
+        int mine = combatLevel(p), need = levelOf(d);
+        if (mine >= 0 && need > 0 && !hiddenUnknown) {
+            t.kv("Cấp chiến đấu", fit(mine, need));
+        }
         if (hiddenUnknown && !d.hint().isBlank()) {
             t.kv("Gợi ý", "&7" + d.hint());
         }

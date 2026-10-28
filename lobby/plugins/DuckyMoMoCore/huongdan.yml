@@ -989,6 +989,11 @@ chapters:
     &0Có dungeon &5ẩn&0 (tìm lối vào trên bản đồ).
     &0Thoát giữa chừng: &1/em quit
   - |-
+    &5CẤP CHIẾN ĐẤU
+    &0Trong dungeon, sức mạnh tính theo &6cấp chiến đấu&0 (kỹ năng vũ khí + giáp), &4không theo đồ kim cương&0.
+    &0Luyện: hạ &5quái elite&0 ngoài đất hoang (quái phát sáng, cấp tự theo cấp bạn).
+    &1/dungeon &0ghi cấp bạn / dungeon cần. Xem kỹ năng: &1/em&0.
+  - |-
     &5VÉ VÀO DUNGEON
     &1/dungeon mua <mã> &0mua vé
     &0Dungeon lớn: cả server góp &1/dungeon gop <mã> <xu>&0, đủ thì mở cho mọi người.

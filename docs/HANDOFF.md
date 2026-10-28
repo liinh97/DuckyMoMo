@@ -12,7 +12,7 @@
   vì /tpr thả xa). Kiểm: ~13 elite ngoài đất hoang sau khi bật. /dungeon ghi "Cấp chiến đấu: X / cần ~Y" + giải thích (DungeonGate.combatLevel,
   %elitemobs_player_combat_level%). /hd trang CẤP CHIẾN ĐẤU. translations/vietnamese.csv: [EM] Vào $dungeon!, 28 tên quái elite
   tiếng Việt. Hai file EliteMobs này CHỈ ở data/ (không trong git).
-- Theo dõi: elite rơi xu qua Vault (currencyShowerTierMultiplier 0.6) — xem lạm phát; TPS khi đông người.
+- Theo dõi: elite rơi xu qua Vault (currencyShowerTierMultiplier 0.3, giảm từ 0.6 ngày 28/10) — xem lạm phát; TPS khi đông người.
 
 ## 28/10/2026: KinhDo mở cửa cho người mới
 - Chủ server: mở cửa KinhDo để người mới `/t join KinhDo` làm dân hoà bình. Đã `ta town KinhDo toggle open`, `set perm resident build off`,

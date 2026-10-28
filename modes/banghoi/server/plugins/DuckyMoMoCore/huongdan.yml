@@ -1132,7 +1132,8 @@ chapters:
     &0Cũng ở &1/nhiemvu&0. Hơn 20 việc (shop, chợ đen, trade, Thợ Rèn, dungeon, pet…), mỗi việc nhận xu &11 lần&0, làm việc nào trước cũng được. Xong hết &6thưởng lớn&0.
   - |-
     &6ẨN GIÁP
-    &1/angiap&0 (hoặc &1/caidat&0): người khác thấy &askin&0, không thấy giáp. Bạn vẫn thấy giáp của mình, giáp vẫn bảo vệ đủ.
+    &1/angiap&0 (hoặc &1/caidat&0): ai cũng thấy &askin&0, không thấy giáp, kể cả bạn.
+    &4Ô giáp trong túi đồ trông trống&0 nhưng giáp vẫn đang mặc, vẫn bảo vệ đủ.
     &0Ẩn ở mọi nơi, kể cả đất hoang, lúc đánh nhau.
     &4Chỉ khi công thành&0 (giờ đánh, trong vùng vây) giáp mới hiện.
     &0Đang ẩn thì dưới tên hiện &bset đồ&0 bạn mặc (vd &b⛨ Tân Thủ +7&0).

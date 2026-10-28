@@ -86,7 +86,7 @@ final class PlayerSettings implements Listener {
         opt("nhacngay", "Nhắc điểm danh, nhiệm vụ", Material.WRITTEN_BOOK, true, "Mỗi giờ nhắc nếu chưa điểm danh / còn nhiệm vụ hằng ngày", "Bang Hội Chiến");
         opt("fontviet", "Font tiếng Việt", Material.NAME_TAG, true, "Chữ có dấu rõ đẹp (gói tài nguyên). Tắt: dùng font gốc Minecraft, chữ căn giữa chuẩn hơn; hình vật phẩm riêng vẫn giữ", "");
         opt("goipet", "Tự gọi pet khi vào", Material.BONE, false, "Vào Bang Hội Chiến là pet chiến đấu (MyPet) tự ra đi theo", "Bang Hội Chiến");
-        opt("angiap", "Ẩn giáp", Material.LEATHER_CHESTPLATE, false, "Chỉ NGƯỜI KHÁC thấy skin, không thấy giáp (dưới tên hiện set đồ đang mặc). Bạn vẫn thấy giáp của mình (góc nhìn thứ 3, túi đồ): giáp vẫn đang mặc, vẫn bảo vệ đủ. Ẩn ở mọi nơi; chỉ khi công thành giáp mới hiện", "Bang Hội Chiến");   // 28/10, cùng /angiap (ArmorHide)
+        opt("angiap", "Ẩn giáp", Material.LEATHER_CHESTPLATE, false, "Ai cũng thấy skin, không thấy giáp, kể cả bạn (dưới tên hiện set đồ đang mặc). LƯU Ý: ô giáp trong túi đồ trông TRỐNG nhưng giáp vẫn đang mặc, vẫn bảo vệ đủ. Ẩn ở mọi nơi; chỉ khi công thành giáp mới hiện", "Bang Hội Chiến");   // 28/10, cùng /angiap (ArmorHide)
     }
 
     private static final Set<String> MSG_CMDS = Set.of("msg", "tell", "w", "m", "t", "pm", "whisper", "emsg", "etell", "ew", "ewhisper", "epm", "dm");

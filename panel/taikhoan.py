@@ -146,7 +146,7 @@ CAIDAT = [
     ("nhacngay", "Nhắc điểm danh, nhiệm vụ", True, "Mỗi giờ nhắc nếu chưa điểm danh / còn nhiệm vụ hằng ngày", "Bang Hội Chiến"),
     ("fontviet", "Font tiếng Việt", True, "Chữ có dấu rõ đẹp. Tắt: font gốc Minecraft, chữ căn giữa chuẩn hơn (áp dụng khi vào lại / đổi server)", ""),
     ("goipet", "Tự gọi pet khi vào", False, "Vào Bang Hội Chiến là pet chiến đấu tự ra đi theo", "Bang Hội Chiến"),
-    ("angiap", "Ẩn giáp", False, "Chỉ NGƯỜI KHÁC thấy skin, không thấy giáp (dưới tên hiện set đồ đang mặc). Bạn vẫn thấy giáp của mình (góc nhìn thứ 3, túi đồ): giáp vẫn đang mặc, vẫn bảo vệ đủ. Ẩn ở mọi nơi; chỉ khi công thành giáp mới hiện", "Bang Hội Chiến"),
+    ("angiap", "Ẩn giáp", False, "Ai cũng thấy skin, không thấy giáp, kể cả bạn (dưới tên hiện set đồ đang mặc). LƯU Ý: ô giáp trong túi đồ trông TRỐNG nhưng giáp vẫn đang mặc, vẫn bảo vệ đủ. Ẩn ở mọi nơi; chỉ khi công thành giáp mới hiện", "Bang Hội Chiến"),
 ]
 CAIDAT_IDS = {c[0]: c for c in CAIDAT}
 _CAIDAT_RE = re.compile(r"^meta\.dmmcaidat\\?\.([a-z]+)\.(bat|tat)$")

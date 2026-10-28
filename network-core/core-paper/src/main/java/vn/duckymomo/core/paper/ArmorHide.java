@@ -120,6 +120,7 @@ final class ArmorHide implements Listener {
         for (Player v : p.getTrackedBy()) {
             send(v, p, hide);
         }
+        send(p, p, hide);   // 28/10 chủ server: ẩn cả với chính mình (góc nhìn thứ 3; ô giáp trong túi đồ trông trống nhưng vẫn mặc)
     }
 
     private static void send(Player viewer, Player p, boolean hide) {
@@ -299,7 +300,7 @@ final class ArmorHide implements Listener {
             }
             p.sendMessage(c("&7Đã tắt ẩn giáp: người khác thấy giáp của bạn như thường."));
         } else {
-            p.sendMessage(c("&aĐã bật ẩn giáp: &fngười khác thấy skin, không thấy giáp. &7Bạn vẫn thấy giáp của mình (góc nhìn thứ 3, túi đồ): giáp vẫn đang mặc, vẫn bảo vệ đủ."));
+            p.sendMessage(c("&aĐã bật ẩn giáp: &fai cũng thấy skin, không thấy giáp, kể cả bạn. &eÔ giáp trong túi đồ trông TRỐNG nhưng giáp vẫn đang mặc, vẫn bảo vệ đủ &7(đừng tưởng mất đồ)."));
             p.sendMessage(c("&7Ẩn ở mọi nơi, kể cả đất hoang và lúc đánh nhau; CHỈ khi công thành (giờ đánh, trong vùng vây) giáp mới hiện. Dưới tên bạn hiện set đồ đang mặc. Gõ &f/angiap &7để tắt."));
         }
         return true;

@@ -48,7 +48,7 @@ belowname-objective:
   value: "%health%"
   fancy-value: "&c%health% ❤%dmmgiap_tren%"   # 28/10: đang ẩn giáp thì hiện món giáp mạnh nhất (ArmorHide)
   fancy-value-default: "NPC"
-  title: "&c❤"
+  title: " "   # 28/10: bỏ ❤ thừa ở cuối dòng (fancy-value đã có ❤)
   disable-condition: '%world%=disabledworld'
   view-distance: 10
 

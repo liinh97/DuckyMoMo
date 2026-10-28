@@ -1717,7 +1717,8 @@ def bot_json():
     """Danh sách bot + sự kiện bot nhận (tin nhắn riêng, TPA, bị gọi tên) từ botfarm."""
     try:
         with urllib.request.urlopen(BOTFARM_URL + "/bots", timeout=5) as r:
-            return json.loads(r.read().decode("utf-8")) | {"ok": True, "phattrien": bot_dev_info()}
+            d = json.loads(r.read().decode("utf-8"))
+            return d | {"ok": True, "phattrien": bot_dev_info(), "thitran": bot_towns_of([b.get("name", "") for b in d.get("bots", [])])}
     except Exception as e:
         return {"ok": False, "message": f"Dịch vụ bot không trả lời ({e}). Kiểm tra: docker compose ps botfarm", "bots": [], "events": [], "servers": {}}
 
@@ -1774,6 +1775,29 @@ def _bot_towns():
 def _bot_achievements():
     core = _core_cfg() if "_core_cfg" in globals() else taikhoan.safe_yaml(taikhoan.DMM / "config.yml")
     return [(str(k), str((v or {}).get("name", k)), str((v or {}).get("desc", ""))) for k, v in ((core.get("achievements") or {}).get("list") or {}).items()]
+
+
+def bot_towns_of(names):
+    """{tên bot: thị trấn (+ " · thị trưởng")} từ dữ liệu Towny (28/10: trang Bot hiện bot ở thị trấn nào)."""
+    try:
+        cache = {str(x.get("name", "")).lower(): x.get("uuid") for x in json.loads((DATA_DIR / BOT_SRV / "usercache.json").read_text(encoding="utf-8"))}
+    except Exception:
+        return {}
+    base = DATA_DIR / BOT_SRV / "plugins" / "Towny" / "data"
+    towns, mayors = {}, {}
+    for f in (base / "towns").glob("*.txt"):
+        kv = taikhoan.towny_kv(f)
+        towns[f.stem] = kv.get("name", "")
+        mayors[f.stem] = kv.get("mayor", "")
+    out = {}
+    for n in names:
+        u = cache.get(str(n).lower())
+        if not u:
+            continue
+        t = taikhoan.towny_kv(base / "residents" / f"{u}.txt").get("town", "")
+        if t in towns:
+            out[n] = towns[t] + (" · thị trưởng" if mayors.get(t) == u else "")
+    return out
 
 
 def bot_profile(name):

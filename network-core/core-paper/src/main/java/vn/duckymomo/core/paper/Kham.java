@@ -508,25 +508,29 @@ final class Kham implements Listener {
                     c2 = m.group(3);
                 }
             }
-            String tc = c2.isEmpty() ? c1 : c2;
+            String tc = "&a&l";   // 28/10 tối (chủ server: màu mè như Tân Thủ): mục khảm một màu riêng, xanh lá
+            c1 = "&a&l";
+            sym = "▸";
             String[] in = info(it);
             String ic = in == null ? "◆◇" : icons.getOrDefault(in[0], ICONS.getOrDefault(in[0], "◆◇"));
             int[] cp = ic.codePoints().toArray();
             String full = new String(cp, 0, 1), empty = cp.length > 1 ? new String(cp, 1, 1) : full;
             StringBuilder b = new StringBuilder(c1 + sym + " " + tc + TITLE + " &r&8» ");
             int minE = Integer.MAX_VALUE;
-            for (int i = 0; i < n; i++) {
+            List<String> names = new ArrayList<>();
+            for (int i = 0; i < n; i++) {   // ô dạng [●][○][○] như thanh Loading của Tân Thủ, tô theo màu ngọc
                 Sock sk = i < list.size() ? list.get(i) : EMPTY;
                 Gem gem = gems.get(sk.code());
-                if (i > 0) {
-                    b.append(" ");
-                }
                 if (gem == null) {
-                    b.append("&8").append(empty);
+                    b.append("&8[&7").append(empty).append("&8]");
                 } else {
-                    b.append(gem.color()).append(full).append(gem.name());
+                    b.append("&8[").append(gem.color()).append(full).append("&8]");
+                    names.add(gem.color() + gem.name());
                     minE = Math.min(minE, sk.energy());
                 }
+            }
+            if (!names.isEmpty()) {
+                b.append(" ").append(String.join("&7, ", names));
             }
             // 28/10 chiều (chủ server): không đếm "1/4", "⚡95%" (dài, xấu) — dãy ô sáng/tối như thanh "Loading" của Tân Thủ;
             // phẩm, chỉ số, năng lượng xem ở /thoren kham; chỉ nhắc khi năng lượng sắp cạn
@@ -534,9 +538,6 @@ final class Kham implements Listener {
                 b.append(" &c⚡ sắp cạn");
             }
             lore.add(at, c(b.toString()));
-            if (at + 1 < lore.size() && !plain.serialize(lore.get(at + 1)).isBlank()) {
-                lore.add(at + 1, Component.empty());   // khoảng trống giữa mục khảm và mục dưới (28/10: đỡ ríu)
-            }
         }
         meta.lore(lore);
         meta.getPersistentDataContainer().set(keyGems, PersistentDataType.STRING, String.join(",", list.stream().map(Sock::enc).toList()));

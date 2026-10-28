@@ -25,6 +25,8 @@
   sửa bằng script: bỏ "(n/max)" + "+N" ở dòng tiến độ, icon nhỏ (▪ dòng thông tin, ▸ tiêu đề mục, • gạch đầu dòng), bỏ icon to quanh
   thanh tiêu đề, khung Tinh Anh 3 dòng -> 1, Thánh quang ●○, Thăng hoa ▰▱, dòng trống giữa các mục; 485 món 12 set (trừ Tân Thủ = mẫu).
   Sao lưu: data/banghoi-1/plugins/DuckyMoMoCore/thuvien-do.yml.bak-28-10-dem (trước bỏ đếm), .bak-28-10-icon (trước đổi icon).
+  Tối 28/10 (màu mè như Tân Thủ, không cách dòng trong mô tả, cách dòng trước câu trích dẫn): thanh tiêu đề có icon nhỏ + màu theo bộ màu
+  từng set, tiến độ dạng [●][○], tiêu đề mục màu sáng khác nhau, KHẢM NGỌC xanh lá [●][○] + tên ngọc. Sao lưu .bak-28-10-mau.
   Code: tidyLore (phù phép gộp 3/dòng tên tiếng Việt cố định, chỉ số tiếng Việt, gỡ dòng OCM "Sát thương: N" + "%" trùng, dòng trống sau
   phù phép), Kham "▸ KHẢM NGỌC » ●Sắt ○ ○ ○" (ký hiệu theo set kham.icons, màu theo tiêu đề mục dưới, dòng trống sau). OldCombatMechanics
   old-tool-damage.tooltip.enabled=false (data). Đổi Thư viện -> đồ set người chơi DỰNG LẠI lúc vào game (giữ mòn + ngọc, mất phù phép tự thêm).

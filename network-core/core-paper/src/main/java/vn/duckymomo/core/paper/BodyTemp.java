@@ -359,6 +359,9 @@ final class BodyTemp implements Listener {
     private void step(Player p) {
         UUID u = p.getUniqueId();
         double[] src = sources(p.getLocation(), cfg.getInt("source-radius", 3));
+        if (p.getFireTicks() > 0) {
+            src[0] = 1;   // đang bốc cháy: như đứng sát lửa (ấm lên, khô nhanh, hơ đá được)
+        }
         // ướt: mưa không có mái / ô, xuống nước; khô dần (nhanh hơn cạnh lửa)
         double w = wet.getOrDefault(u, 0.0);
         boolean raining = p.getWorld().hasStorm() && !covered(p) && !umbrella(p)
@@ -550,6 +553,9 @@ final class BodyTemp implements Listener {
         double w = wet.getOrDefault(p.getUniqueId(), 0.0);
         List<String> parts = new ArrayList<>();
         double[] src = sources(p.getLocation(), cfg.getInt("source-radius", 3));
+        if (p.getFireTicks() > 0) {
+            src[0] = 1;
+        }
         double env = environment(p, src[0], src[1], parts);
         ConfigurationSection ev = Seasons.eventNow();
         p.sendMessage(Tip.c(Tip.LINE));

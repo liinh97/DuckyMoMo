@@ -107,7 +107,42 @@ final class ThoRen implements Listener {
     private static boolean emTried;
     private final double fishChance;
 
+    static volatile ThoRen INSTANCE;
+
+    /** Set giáp đang mặc nhiều món nhất (28/10, hiện dưới tên khi ẩn giáp): "Tân Thủ +7", chưa đủ bộ thì "Tân Thủ +7 (3/4)".
+     *  Cấp = món thấp nhất trong số đang mặc của set đó. null nếu không mặc món giáp nào của set. */
+    static String wornSet(Player p) {
+        ThoRen t = INSTANCE;
+        if (t == null || p == null) {
+            return null;
+        }
+        Map<SetDef, int[]> seen = new LinkedHashMap<>();   // set -> {số món, cấp thấp nhất}
+        for (ItemStack it : p.getInventory().getArmorContents()) {
+            Ref r = it == null ? null : t.byId.get(ItemLibrary.idOf(it));
+            if (r == null) {
+                continue;
+            }
+            int[] v = seen.computeIfAbsent(r.set(), k -> new int[] {0, Integer.MAX_VALUE});
+            v[0]++;
+            v[1] = Math.min(v[1], r.level());
+        }
+        SetDef best = null;
+        int[] bv = null;
+        for (Map.Entry<SetDef, int[]> e : seen.entrySet()) {
+            int[] v = e.getValue();
+            if (bv == null || v[0] > bv[0] || (v[0] == bv[0] && v[1] > bv[1])) {
+                best = e.getKey();
+                bv = v;
+            }
+        }
+        if (best == null) {
+            return null;
+        }
+        return best.name() + " +" + bv[1] + (bv[0] < 4 ? " (" + bv[0] + "/4)" : "");
+    }
+
     ThoRen(DuckyMoMoCore plugin, ItemLibrary lib, ConfigurationSection c) {
+        INSTANCE = this;
         this.plugin = plugin;
         this.lib = lib;
         this.keyMau = new NamespacedKey(plugin, "thoren_mau");

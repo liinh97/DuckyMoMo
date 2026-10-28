@@ -36,14 +36,15 @@ import java.util.UUID;
 
 /**
  * Ẩn giáp (/angiap, 28/10, chủ server: "có skin thì mặc giáp vào bị xấu"). Bật thì NGƯỜI KHÁC nhìn thấy skin, không thấy giáp
- * (giáp vẫn bảo vệ đủ; chỉ gửi gói trang bị giả "không có gì" tới người xem bằng Player#sendEquipmentChange). Công bằng PvP:
- * CHỈ ẩn ở chỗ an toàn (vòng kinh đô / đất hoà bình / thị trấn của chính mình) và KHÔNG đang giao tranh (combat-seconds sau
- * khi đánh / bị người đánh); ra đất hoang, vùng vây hay vừa đánh nhau thì người khác thấy giáp thật ngay.
+ * (giáp vẫn bảo vệ đủ; chỉ gửi gói trang bị giả "không có gì" tới người xem bằng Player#sendEquipmentChange). Chủ server chốt:
+ * bật là lúc nào cũng ẩn (cả PvP, đất hoang); CHỈ khi công thành (giờ đánh + trong vùng vây) giáp hiện. Dưới tên có món giáp
+ * mạnh nhất (%dmmgiap_tren%) để người khác vẫn biết sức đối thủ.
  * Config: armor-hide {enabled, combat-seconds}. Lưu người đang bật: plugins/DuckyMoMoCore/angiap.yml
  */
 final class ArmorHide implements Listener {
     private static final EquipmentSlot[] ARMOR = {EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET};
     private static final ItemStack AIR = new ItemStack(Material.AIR);
+    private static final java.util.regex.Pattern LEGACY_STRIP = java.util.regex.Pattern.compile("(?i)&[0-9a-fk-or]|&#[0-9a-f]{6}");
 
     private final JavaPlugin plugin;
     private final PeaceAlliance peace;
@@ -108,8 +109,10 @@ final class ArmorHide implements Listener {
         return PlayerSettings.INSTANCE != null ? PlayerSettings.on(p, "angiap") : on.contains(p.getUniqueId());
     }
 
+    /** 28/10 chủ server: bật là LÚC NÀO cũng ẩn (kể cả PvP, đất hoang); CHỈ khi công thành (giờ đánh + trong vùng vây) giáp hiện.
+     *  Dưới tên luôn có món giáp mạnh nhất (%dmmgiap_tren%) nên người khác vẫn biết sức đối thủ. */
     private boolean shouldHide(Player p) {
-        return enabled(p) && !inCombat(p) && safeSpot(p);
+        return enabled(p) && !(SiegeWarHook.battleActive() && SiegeWarHook.inActiveSiegeZone(p.getLocation()));
     }
 
     /** Gửi giáp (giả hoặc thật) của p tới mọi người đang thấy p. */
@@ -150,11 +153,7 @@ final class ArmorHide implements Listener {
             long now = System.currentTimeMillis();
             lastFight.put(a.getUniqueId(), now);
             lastFight.put(b.getUniqueId(), now);
-            for (Player x : new Player[] {a, b}) {
-                if (hiddenNow.remove(x.getUniqueId())) {
-                    push(x, false);
-                }
-            }
+            // 28/10: đánh nhau không còn làm hiện giáp (chỉ công thành mới hiện)
         }
     }
 
@@ -273,8 +272,8 @@ final class ArmorHide implements Listener {
                 if (p == null || !params.equals("tren") || !hiddenNow.contains(p.getUniqueId())) {
                     return "";
                 }
-                String b = bestPiece(p);
-                return b == null ? "" : " &8· &b⛨ " + b;
+                String b = ThoRen.wornSet(p);   // 28/10 chủ server: hiện TÊN SET (ai cũng có đồ kim cương, tên món không nói lên gì)
+                return b == null ? "" : " &8· &b⛨ " + LEGACY_STRIP.matcher(b).replaceAll("");
             }
         };
     }
@@ -301,7 +300,7 @@ final class ArmorHide implements Listener {
             p.sendMessage(c("&7Đã tắt ẩn giáp: người khác thấy giáp của bạn như thường."));
         } else {
             p.sendMessage(c("&aĐã bật ẩn giáp: &fngười khác thấy skin, không thấy giáp. &7Bạn vẫn thấy giáp của mình (góc nhìn thứ 3, túi đồ): giáp vẫn đang mặc, vẫn bảo vệ đủ."));
-            p.sendMessage(c("&7Chỉ ẩn ở kinh đô, đất hoà bình, thị trấn của bạn; ra đất hoang, vùng vây hoặc đang đánh nhau thì giáp hiện lại. Gõ &f/angiap &7để tắt."));
+            p.sendMessage(c("&7Ẩn ở mọi nơi, kể cả đất hoang và lúc đánh nhau; CHỈ khi công thành (giờ đánh, trong vùng vây) giáp mới hiện. Dưới tên bạn hiện set đồ đang mặc. Gõ &f/angiap &7để tắt."));
         }
         return true;
     }

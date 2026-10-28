@@ -2168,6 +2168,9 @@ def _bot_market(name, st):
     except Exception:
         allowed = False
     if not allowed:
+        if st.get("cap_quyen_cho"):                         # bot tạo mới: chủ server đã đồng ý cấp, cấp một lần rồi treo ở lượt sau
+            rcon(BOT_SRV, [f"lp user {name} permission set duckymomo.peace.admin true"])
+            st.pop("cap_quyen_cho", None)
         return None
     rcon(BOT_SRV, [f"minecraft:item replace entity {name} weapon.mainhand with minecraft:{item} {n}"])   # "item" trần bị Essentials chiếm
     time.sleep(1.5)
@@ -2343,6 +2346,20 @@ def bot_action(body, who):
     web_log({"viec": "/api/bot", "nguoi": who or PANEL_USER, "hanh_dong": f"{payload.get('bot') or ''} {BOT_ACTIONS[act]} {payload.get('text') or payload.get('server') or ''}".strip()
              + (f" ({'bật' if payload.get('on') else 'tắt'}, {payload.get('min')}–{payload.get('max')} phút)" if act == "chatcfg" else ""),
              "doi_tuong": payload.get("bot", ""), "ok": bool(res.get("ok"))})
+    if act == "create" and res.get("ok"):
+        # 28/10 chủ server: "lưu ý các tính năng này cho bot khi tạo mới" -> bot mới tự bật tự phát triển, xếp hàng tạo quá khứ, được cấp
+        # quyền mở chợ (duckymomo.peace.admin; chủ server đã đồng ý cho bot) ở lần treo bán đầu (LuckPerms cần bot đã vào game).
+        try:
+            n = str(body.get("bot", "")).strip()
+            with BOT_DEV_LOCK:
+                d = _dev_load()
+                d[n] = _dev_new(_bot_jobs())
+                d[n]["quakhu"] = "cho"
+                d[n]["cap_quyen_cho"] = True
+                _dev_save(d)
+            res["message"] = str(res.get("message", "")) + " · tự phát triển, tạo quá khứ khi vào Bang Hội Chiến"
+        except Exception as e:
+            res["message"] = str(res.get("message", "")) + f" · chưa bật tự phát triển được: {e}"
     return res
 
 

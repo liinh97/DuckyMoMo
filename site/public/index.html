@@ -777,6 +777,7 @@ footer .fbrand img{width:44px}
       <div class="sea" id="seaNow"><div class="fx"></div><div class="muted">Đang tải mùa…</div></div>
       <div class="card" id="seaCrops"><h3>🌾 Nông sản mùa này</h3><div class="muted">Đang tải…</div></div>
     </div>
+    <div class="card" id="seaTemp" style="margin-top:20px;display:none"></div>
     <div class="fishbar" id="fishTabs">
       <button class="tab on" data-f="now">🎣 Câu được bây giờ</button>
       <button class="tab" data-f="all">Tất cả</button>
@@ -1560,12 +1561,35 @@ function tickContest(){
   el.textContent = (d ? d + " ngày " : "") + p(Math.floor(s / 3600)) + ":" + p(Math.floor(s % 3600 / 60)) + ":" + p(s % 60);
 }
 setInterval(tickContest, 1000);
+function tempCard(n){
+  const el = $("#seaTemp");
+  if (!n || !n.bat) { el.style.display = "none"; return; }
+  const dot = n.dot.map(d => `<span${d.dang ? ' style="border-color:var(--gold2);color:var(--gold2)"' : ""}>${d.dang ? "▶ " : ""}${esc(d.ten)} · ${esc(d.mua)} ngày ${d.tu}${d.den !== d.tu ? "–" + d.den : ""} · nền ${d.nhiet}°</span>`).join("");
+  el.style.display = "";
+  el.innerHTML = `<h3>🌡 Thân nhiệt &amp; thời tiết khắc nghiệt <span class="kbd">/nhietdo</span></h3>
+    <p class="muted">Nhiệt nền lúc này: <b style="color:var(--text)">${n.nen}°</b> (${esc(n.theo)}). Thân nhiệt dễ chịu từ ${n.lanh}° tới ${n.nong}°. Vùng tuyết lạnh hơn, sa mạc nóng hơn, ban đêm lạnh, dầm mưa bị ướt.</p>
+    ${dot ? `<div class="votes" style="margin:8px 0 12px">${dot}</div>` : ""}
+    <div class="grid g2">
+      <ul class="clean s">
+        <li>❄ <b>Quá lạnh</b>: màn hình đóng băng, đi chậm, đói nhanh; rét cóng thì mất máu.</li>
+        <li>☀ <b>Quá nóng</b>: yếu sức, đói nhanh; nóng bỏng thì mất máu.</li>
+        <li>Không chết vì nhiệt: mất máu dừng ở 1 tim. Người mới (${n.moi} giờ chơi đầu) được miễn.</li>
+      </ul>
+      <ul class="clean s">
+        <li>🔥 <b>Giữ ấm</b>: vào nhà có mái, đứng gần lửa trại / lò đang cháy, ăn súp, mặc giáp da.</li>
+        <li>💧 <b>Giữ mát</b>: bóng râm, xuống nước, ăn dưa hấu, uống nước.</li>
+        <li>🪨 <b>Đá Ôn Linh</b> (4 đá trơn + 4 đá lửa + 1 sắt): hơ cạnh lửa thì nóng, để cạnh băng thì lạnh; mang trong túi.</li>
+        <li>☂ <b>Ô lá</b>: cầm Lá Nhỏ Giọt (hang Lush, hoặc 3 lá cây + 2 que) để không ướt khi mưa, đỡ nắng.</li>
+      </ul>
+    </div>`;
+}
 async function loadMua(){
   try {
     const m = await j("api/mua"); MUA = m;
     if (m.bat) seaCard(m);
     else { $("#seaGrid").innerHTML = `<div class="card muted">Mùa mưa / mùa khô đang tắt.</div>`; if (fishFilter === "now") fishFilter = "all"; }
     $("#seaEvent").innerHTML = m.su_kien ? `<div class="card hl" style="margin-bottom:14px"><b>⚡ Sự kiện mùa: ${esc(m.su_kien.ten)}</b> <span class="muted">— ${esc(m.su_kien.mo_ta)}</span></div>` : "";
+    tempCard(m.nhiet);
     fishList(); contestCard(m.thicau || []);
   } catch (e) { $("#fishList").innerHTML = `<div class="empty">Không tải được thông tin mùa.</div>`; }
 }

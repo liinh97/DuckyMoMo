@@ -961,7 +961,37 @@ def api_mua():
         out.update({"bat": True, "hien_tai": season_view(st["cur"], cur), "tiep": season_view(st["next"], lst[st["next"]]),
                     "con": st["left"], "ngay_thu": st["day"], "moi_mua": st["per"], "ghi_de": st["forced"],
                     "cac_mua": [season_view(o, lst[o]) for o in st["order"]]})
+    out["nhiet"] = body_temp(core, cfg, st, out.get("su_kien"))
     return out
+
+
+def body_temp(core, cfg, st, su_kien):
+    """Thân nhiệt /nhietdo (body-temp, 28/10): nhiệt nền đang áp dụng, mức dễ chịu, lịch đợt Rét đậm / Nắng nóng."""
+    bt = core.get("body-temp") or {}
+    if not bt.get("enabled") or not st:
+        return {"bat": False}
+    lst = cfg.get("list") or {}
+    evs = cfg.get("events") or {}
+    ev = evs.get(su_kien["id"]) if su_kien else None
+    if ev and "temperature" in ev:
+        nen, theo = ev.get("temperature"), su_kien["ten"]
+    else:
+        nen, theo = (lst.get(st["cur"]) or {}).get("temperature", 25), strip_colors((lst.get(st["cur"]) or {}).get("name", "")).strip()
+    per = st["per"]
+    dot = []
+    for eid, e in evs.items():
+        e = e or {}
+        if "temperature" not in e:
+            continue
+        a = int(e.get("from-day", 1))
+        b = int(e.get("to-day", a))
+        a = per + a + 1 if a < 0 else a
+        b = per + b + 1 if b < 0 else b
+        dot.append({"ten": strip_colors(e.get("name", eid)).strip(), "mo_ta": strip_colors(e.get("subtitle", "")).strip(),
+                    "mua": strip_colors((lst.get(e.get("season")) or {}).get("name", "")).strip(), "tu": a, "den": b,
+                    "nhiet": e.get("temperature"), "dang": bool(su_kien and su_kien["id"] == eid)})
+    return {"bat": True, "nen": nen, "theo": theo, "lanh": bt.get("cold", 10), "nong": bt.get("hot", 35),
+            "moi": bt.get("newbie-hours", 2), "dot": dot}
 
 
 def khaihoang(core):

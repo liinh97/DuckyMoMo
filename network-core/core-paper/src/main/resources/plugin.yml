@@ -25,6 +25,8 @@ commands:
   goiqua:
     description: "Gói quà theo rank (/kit, /kits, /goiqua). Admin: /kit <mã> <người>, /kit lamlai <người> [mã]"
     aliases: [kit, kits]
+  nhietdo:
+    description: "Thân nhiệt: lạnh / nóng theo mùa và đợt thời tiết, cách giữ ấm / mát (Đá Ôn Linh, ô lá)"
   angiap:
     description: "Ẩn giáp (bật/tắt): người khác thấy skin, không thấy giáp; giáp vẫn bảo vệ. Ẩn mọi nơi, chỉ khi công thành giáp mới hiện"
   gacha:

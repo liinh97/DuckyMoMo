@@ -295,6 +295,7 @@ groups:
       - ["diemdanh dat <tên> <số ngày>", "Đặt tổng số ngày điểm danh (lần cuối = hôm nay; 0 = xoá). Dùng cho bot (trang Bot › Hồ sơ)", Chỉ admin]
       - ["diemdanh xem", "Xem số ngày đã điểm danh và mốc tiếp theo", Mọi người]
       - ["nhiemvu", "Nhiệm vụ hôm nay + việc dân làng đang nhận từ NPC (Bang Hội Chiến; gõ /quests cũng được)", Mọi người]
+      - ["nhietdo", "Thân nhiệt: xem nhiệt độ cơ thể, môi trường và từng lý do (mùa / đợt, vùng đất, đêm, ướt, mái che, lửa); cách giữ ấm / mát. Admin: /nhietdo cho <người> [độ] (Đá Ôn Linh), /nhietdo dat <người> <độ> (Bang Hội Chiến)", Mọi người]
       - ["angiap", "Ẩn giáp (bật/tắt): người khác thấy skin, không thấy giáp, dưới tên hiện set đồ đang mặc; chỉ khi công thành giáp mới hiện (Bang Hội Chiến)", Mọi người]
       - ["gacha", "Gacha (quay thưởng): chọn máy, xem tỉ lệ, quay bằng vé (cầm vé bấm chuột phải cũng quay) (Bang Hội Chiến)", Mọi người]
       - ["gacha give <người> <mã máy> [số]", "Tặng vé gacha (người đang online)", Chỉ admin]

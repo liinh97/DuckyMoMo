@@ -49,6 +49,7 @@ public final class DuckyMoMoCore extends JavaPlugin {
     private Crates crates;
     private me.clip.placeholderapi.expansion.PlaceholderExpansion gachaPapi;
     private me.clip.placeholderapi.expansion.PlaceholderExpansion seasonPapi;
+    private BodyTemp bodyTemp;
     private me.clip.placeholderapi.expansion.PlaceholderExpansion statsPapi;
     private me.clip.placeholderapi.expansion.PlaceholderExpansion frontierPapi;
     private me.clip.placeholderapi.expansion.PlaceholderExpansion arenaPapi;
@@ -212,6 +213,10 @@ public final class DuckyMoMoCore extends JavaPlugin {
         if (levelUp != null) {
             levelUp.stop();
             levelUp = null;
+        }
+        if (bodyTemp != null) {
+            bodyTemp.shutdown();
+            bodyTemp = null;
         }
         if (seasonPapi != null) {
             seasonPapi.unregister();
@@ -761,6 +766,13 @@ public final class DuckyMoMoCore extends JavaPlugin {
             }
         }
         bind("angiap", armorHide == null ? null : armorHide::command, "Ẩn giáp");
+
+        // Thân nhiệt /nhietdo (Bang Hội Chiến: body-temp.enabled, 28/10): rét / nóng theo mùa + đợt, Đá Ôn Linh, ô lá
+        bodyTemp = getConfig().getBoolean("body-temp.enabled") ? new BodyTemp(this, getConfig().getConfigurationSection("body-temp")) : null;
+        if (bodyTemp != null) {
+            getServer().getPluginManager().registerEvents(bodyTemp, this);
+        }
+        bind("nhietdo", bodyTemp == null ? null : bodyTemp::command, "Thân nhiệt");
 
         // Tài khoản tin cậy giữ đăng nhập AuthMe lâu hơn (sảnh: auth-trust.enabled), mặc định mọi người vẫn 60 phút
         if (getConfig().getBoolean("auth-trust.enabled")) {

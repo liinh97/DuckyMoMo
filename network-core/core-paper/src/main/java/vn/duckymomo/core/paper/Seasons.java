@@ -157,6 +157,20 @@ final class Seasons implements Listener {
         return s == null ? null : s.event();
     }
 
+    /** Nhiệt độ nền (°) cho Thân nhiệt: đợt đang diễn ra có khoá temperature thì lấy, không thì của mùa (list.<mùa>.temperature), mặc định 25. */
+    static double temperature() {
+        Seasons s = INSTANCE;
+        if (s == null) {
+            return 25;
+        }
+        ConfigurationSection ev = s.event();
+        if (ev != null && ev.contains("temperature")) {
+            return ev.getDouble("temperature");
+        }
+        ConfigurationSection se = s.season(s.current());
+        return se == null ? 25 : se.getDouble("temperature", 25);
+    }
+
     /** Thêm % được mùa từ nơi khác (đặc sản vùng): (người gặt, cây) -> %. */
     static volatile java.util.function.BiFunction<Player, Material, Double> extraHarvest;
 

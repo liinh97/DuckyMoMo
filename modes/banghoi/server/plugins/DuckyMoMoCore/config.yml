@@ -984,6 +984,7 @@ seasons:
       subtitle: "&7Lúa, mía, tre lớn nhanh · cá linh, cá lóc về đồng"
       rain-start-chance: 25
       rain-stop-chance: 5
+      temperature: 24          # nhiệt nền cho Thân nhiệt (body-temp), độ
       growth: {WHEAT: 1.4, SUGAR_CANE: 1.5, BAMBOO: 1.5, KELP: 1.3, MELON_STEM: 1.2, CACTUS: 0.5, POTATOES: 0.8, BEETROOTS: 0.8}
       harvest-bonus: {WHEAT: 25}
       hints:
@@ -994,6 +995,7 @@ seasons:
       subtitle: "&7Khoai, cà rốt, dưa, bí được mùa · cá cơm, cá kèo, mực ra khơi"
       rain-start-chance: 0
       rain-stop-chance: 50
+      temperature: 30
       growth: {POTATOES: 1.4, CARROTS: 1.4, BEETROOTS: 1.3, MELON: 1.3, PUMPKIN: 1.3, COCOA: 1.3, CACTUS: 1.5, WHEAT: 0.8, SUGAR_CANE: 0.6, BAMBOO: 0.7}
       harvest-bonus: {POTATOES: 25, CARROTS: 25, BEETROOTS: 25}
       hints:
@@ -1020,6 +1022,23 @@ seasons:
       growth: {WHEAT: 0.7, POTATOES: 0.7, CARROTS: 0.7, BEETROOTS: 0.7, MELON: 0.7, PUMPKIN: 0.7, SUGAR_CANE: 0.5, CACTUS: 1.3}
       supply-multiplier: 1.5
       capture-bonus: {bay: 5, nhay: 10}
+    # 28/10 Thân nhiệt: đợt rét / nóng (temperature = nhiệt nền thay cho mùa trong những ngày này)
+    retdam:
+      season: mua
+      from-day: 3
+      to-day: 4
+      name: "&b❄ Rét đậm"
+      subtitle: "&7Mưa lạnh · ở ngoài lâu bị rét: vào nhà, lửa trại, Đá Ôn Linh hơ nóng (/nhietdo)"
+      rain: "on"
+      temperature: 4
+    nangnong:
+      season: kho
+      from-day: 5
+      to-day: 6
+      name: "&c☀ Nắng nóng"
+      subtitle: "&7Trời như đổ lửa · tìm bóng râm, cầm ô lá, Đá Ôn Linh ướp lạnh (/nhietdo)"
+      rain: "off"
+      temperature: 40
 
 # Bản đồ kho báu (/khobau): rơi khi câu cá / hạ quái; cầm để dò nóng-lạnh, tới nơi Shift để đào, hạ lính canh để mở rương.
 treasure:
@@ -2220,6 +2239,39 @@ spawn-world:
 
 # Ẩn giáp /angiap (28/10): người khác thấy skin, không thấy giáp (giáp vẫn bảo vệ). Chỉ ẩn ở vòng kinh đô / đất hoà bình / thị trấn
 # của chính mình và không đang giao tranh (combat-seconds sau khi đánh / bị người đánh). Lưu người bật: angiap.yml
+# Thân nhiệt /nhietdo (28/10): nhiệt môi trường = nhiệt nền của mùa / đợt (seasons ... temperature) + vùng đất + đêm/nắng + ướt
+# + giáp da + mái che + lửa/băng gần; thân nhiệt đuổi dần theo. Không chết vì nhiệt: mất máu dừng ở min-health.
+body-temp:
+  enabled: true
+  worlds: [world]
+  newbie-hours: 2          # giờ chơi đầu tiên được miễn
+  comfort-mid: 22          # nhiệt dễ chịu (mái che kéo về đây)
+  cold: 10                 # dưới: lạnh (màn hình băng, chậm, đói nhanh)
+  freezing: 2              # dưới: rét cóng (chậm hơn, mất máu)
+  hot: 35                  # trên: nóng (yếu sức, đói nhanh)
+  scorching: 43            # trên: nóng bỏng (thêm chậm, mất máu)
+  damage: 1                # máu mất mỗi damage-every giây khi rét cóng / nóng bỏng
+  damage-every: 4
+  min-health: 2            # không trừ máu dưới mức này (2 = 1 tim)
+  body-rate: 0.025         # thân nhiệt đuổi theo môi trường mỗi giây (0.025 ≈ 40 giây)
+  biome-scale: 15          # (nhiệt quần xã − 0.8) × số này: tuyết ≈ −12..−20, sa mạc ≈ +18
+  night: 6
+  sun: 4
+  water: 8
+  rain-wet: 4              # % ướt mỗi giây dầm mưa (không mái / không ô)
+  leather-per-piece: 3
+  shelter: 0.5             # dưới mái: kéo 50% về comfort-mid
+  source-radius: 3
+  heat-source: 18          # lửa / lửa trại / lò đang cháy / dung nham gần
+  cold-source: 10          # băng / tuyết gần
+  stone-hot: 70            # Đá Ôn Linh hơ cạnh lửa nóng tới
+  stone-cold: -10          # ướp cạnh băng lạnh tới
+  stone-hold-seconds: 300  # đá nguội về nhiệt xung quanh (hằng số thời gian)
+  stone-strength: 0.6
+  food-warm: 8
+  food-cool: 5
+  tip-minutes: 5
+
 armor-hide:
   enabled: true
   combat-seconds: 15

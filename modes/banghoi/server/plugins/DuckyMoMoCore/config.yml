@@ -1583,7 +1583,8 @@ play-ranks:
     tinan: {group: default, name: "Dân Tị Nạn", prefix: "&8[Tị Nạn] ", priority: 0, hours: 0, level: 0, homes: 1, balo: 0, balo-slots: 9, ah: 2, orders: 2, tu-skin: 1, icon: DEAD_BUSH, tp-delay: 5}
     dan: {group: dan, name: "Dân", prefix: "&7[Dân] ", priority: 1, hours: 6, level: 0, perm: duckymomo.cotruyen.c1, perm-text: "Xong chương 1 cốt truyện (Già Làng)", homes: 2, balo: 1, balo-slots: 9, ah: 4, orders: 3, tu-skin: 2, icon: WHEAT, tp-delay: 5}
     luongdan: {group: luongdan, name: "Lương Dân", prefix: "&a[Lương Dân] ", priority: 2, hours: 24, level: 10, homes: 3, balo: 2, balo-slots: 9, ah: 6, orders: 4, tu-skin: 3, icon: IRON_HOE, tp-delay: 5}
-    haokiet: {group: haokiet, name: "Hào Kiệt", prefix: "&6[Hào Kiệt] ", priority: 3, hours: 72, level: 25, homes: 5, balo: 3, balo-slots: 9, ah: 8, orders: 5, tu-skin: 5, icon: GOLDEN_HELMET, tp-delay: 5}
+    haokiet: {group: haokiet, name: "Hào Kiệt", prefix: "&6[Hào Kiệt] ", priority: 3, hours: 72, level: 25, homes: 5, balo: 3, balo-slots: 9, ah: 8, orders: 5, tu-skin: 5, icon: GOLDEN_HELMET, tp-delay: 5, radar: true}
+  # radar: true = thấy rada người chơi (chấm chỉ hướng người khác trên thanh kinh nghiệm); bậc / rank khác không thấy, bot không bao giờ hiện (28/10).
   # Rank KHÁC: quyền lợi homes (nhà) · balo · balo-slots (9..54) · ah (món chợ) · orders (đơn /donhang) · spin-faster (% vé vòng quay nhanh hơn,
   # 5..50) · kit (kit Essentials). 0 / "" = không cấp (theo danh phận). Người có nhiều rank lấy mức cao nhất. Cài đặt › Người mới › Quyền lợi theo rank.
   # create: true = plugin tạo nhóm + tiền tố (vd Sứ Giả); false = nhóm có sẵn (ủng hộ, staff), chỉ đụng quyền lợi, giữ tiền tố của họ.
@@ -1614,10 +1615,10 @@ play-ranks:
     hautuoc: {homes: 0, balo: 3, balo-slots: 9, ah: 0, orders: 0, tu-skin: 12, spin-faster: 0, kit: "", tp-delay: 3}
     congtuoc: {homes: 0, balo: 4, balo-slots: 9, ah: 0, orders: 0, tu-skin: 20, spin-faster: 0, kit: "", tp-delay: 3}
     builder: {homes: 0, balo: 0, balo-slots: 0, ah: 0, orders: 0, tu-skin: 0, spin-faster: 0, kit: "", tp-delay: -1}
-    helper: {homes: 0, balo: 0, balo-slots: 0, ah: 0, orders: 0, tu-skin: 0, spin-faster: 0, kit: "", tp-delay: -1}
-    mod: {homes: 0, balo: 0, balo-slots: 0, ah: 0, orders: 0, tu-skin: 0, spin-faster: 0, kit: "", tp-delay: -1}
-    quanly: {homes: 0, balo: 0, balo-slots: 0, ah: 0, orders: 0, tu-skin: 0, spin-faster: 0, kit: "", tp-delay: -1}
-    admin: {homes: 0, balo: 0, balo-slots: 0, ah: 0, orders: 0, tu-skin: 0, spin-faster: 0, kit: "", tp-delay: -1}
+    helper: {homes: 0, balo: 0, balo-slots: 0, ah: 0, orders: 0, tu-skin: 0, spin-faster: 0, kit: "", tp-delay: -1, radar: true}
+    mod: {homes: 0, balo: 0, balo-slots: 0, ah: 0, orders: 0, tu-skin: 0, spin-faster: 0, kit: "", tp-delay: -1, radar: true}
+    quanly: {homes: 0, balo: 0, balo-slots: 0, ah: 0, orders: 0, tu-skin: 0, spin-faster: 0, kit: "", tp-delay: -1, radar: true}
+    admin: {homes: 0, balo: 0, balo-slots: 0, ah: 0, orders: 0, tu-skin: 0, spin-faster: 0, kit: "", tp-delay: -1, radar: true}
 
 # Balo cá nhân (/balo): số balo và số ô mỗi balo theo danh phận (play-ranks.tiers.*.balo / balo-slots) và rank khác (play-ranks.other-ranks). Không mở khi vừa đánh người (combat-seconds) hay trong vùng vây đang đánh.
 backpack:

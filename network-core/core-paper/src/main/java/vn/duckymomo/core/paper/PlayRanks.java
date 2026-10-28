@@ -51,7 +51,8 @@ final class PlayRanks implements Listener {
 
     /** Quyền lợi: nhà /sethome, số balo + ô mỗi balo, món chợ /ah, đơn thu mua /donhang, % vé gacha online nhanh hơn, kit Essentials. 0/"" = không cấp.
      *  tpDelay: giây chờ dịch chuyển (TeleportDelay, quyền duckymomo.tpdelay.<N>); -1 = không cấp (rank khác: theo danh phận). */
-    record Perks(int homes, int balo, int slots, int ah, int orders, int spin, String kit, int skins, int tpDelay) { }
+    /** radar: thấy rada người chơi (chấm chỉ hướng người khác trên thanh kinh nghiệm, 28/10 chủ server: chỉ Hào Kiệt, tránh dò ra bot). */
+    record Perks(int homes, int balo, int slots, int ah, int orders, int spin, String kit, int skins, int tpDelay, boolean radar) { }
 
     record Tier(String id, String group, String name, String prefix, int priority, double hours, int level, String perm, String permText,
                 Perks perks, Material icon) {
@@ -90,7 +91,45 @@ final class PlayRanks implements Listener {
         return new Perks(Math.max(tier ? 1 : 0, s.getInt("homes", tier ? 1 : 0)), Math.max(0, s.getInt("balo", 0)), slots <= 0 ? 0 : slots(slots),
                 Math.max(tier ? 1 : 0, s.getInt("ah", tier ? 1 : 0)), Math.max(0, s.getInt("orders", 0)),
                 Math.max(0, Math.min(50, s.getInt("spin-faster", 0) / 5 * 5)), kit, Math.max(0, Math.min(50, s.getInt("tu-skin", tier ? 1 : 0))),
-                Math.max(tier ? 0 : -1, Math.min(30, s.getInt("tp-delay", tier ? 5 : -1))));
+                Math.max(tier ? 0 : -1, Math.min(30, s.getInt("tp-delay", tier ? 5 : -1))), s.getBoolean("radar", false));
+    }
+
+    private static final org.bukkit.NamespacedKey RADAR_OFF = new org.bukkit.NamespacedKey("duckymomocore", "rada_tat");
+
+    /**
+     * Rada người chơi (locator bar của game, 28/10): chỉ người có bậc / rank radar: true (Hào Kiệt, staff, OP) thấy chấm người khác;
+     * người còn lại tầm nhận điểm mốc × 0. Bot botfarm (IP 10.30.x.x) không bao giờ hiện trên rada của ai (tầm phát × 0) và không nhận.
+     * Modifier tạm (không lưu vào dữ liệu người chơi): tắt tính năng / đổi cấu hình là tự hết. Kiểm mỗi 5 giây.
+     */
+    void startRadar() {
+        java.util.Set<String> groups = new java.util.HashSet<>();
+        tiers.stream().filter(t -> t.perks().radar()).forEach(t -> groups.add(t.group()));
+        extras.stream().filter(e -> e.perks().radar()).forEach(e -> groups.add(e.group()));
+        if (groups.isEmpty()) {
+            return;
+        }
+        Bukkit.getScheduler().runTaskTimer(plugin, () -> {
+            for (Player p : Bukkit.getOnlinePlayers()) {
+                boolean bot = BotView.isBot(p);
+                boolean see = !bot && (p.isOp() || groups.stream().anyMatch(g -> p.hasPermission("group." + g)));
+                radarMod(p.getAttribute(org.bukkit.attribute.Attribute.WAYPOINT_RECEIVE_RANGE), !see);
+                radarMod(p.getAttribute(org.bukkit.attribute.Attribute.WAYPOINT_TRANSMIT_RANGE), bot);
+            }
+        }, 40L, 100L);
+        plugin.getLogger().info("Rada người chơi: chỉ nhóm " + groups + " thấy; bot ẩn khỏi rada");
+    }
+
+    private static void radarMod(org.bukkit.attribute.AttributeInstance a, boolean off) {
+        if (a == null) {
+            return;
+        }
+        boolean has = a.getModifier(RADAR_OFF) != null;
+        if (off && !has) {
+            a.addTransientModifier(new org.bukkit.attribute.AttributeModifier(RADAR_OFF, -1,
+                    org.bukkit.attribute.AttributeModifier.Operation.MULTIPLY_SCALAR_1));
+        } else if (!off && has) {
+            a.removeModifier(RADAR_OFF);
+        }
     }
 
     private final DuckyMoMoCore plugin;
@@ -407,6 +446,9 @@ final class PlayRanks implements Listener {
         }
         if (!k.kit().isEmpty()) {
             t.item("Gói quà &a/kit " + k.kit());
+        }
+        if (k.radar()) {
+            t.item("&aRada người chơi&f: chấm chỉ hướng người khác trên thanh kinh nghiệm");
         }
     }
 

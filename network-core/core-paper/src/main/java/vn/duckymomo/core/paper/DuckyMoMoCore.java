@@ -877,6 +877,7 @@ public final class DuckyMoMoCore extends JavaPlugin {
         if (playRanks != null) {
             getServer().getPluginManager().registerEvents(playRanks, this);
             getServer().getScheduler().runTaskLater(this, playRanks::sync, 60L);
+            playRanks.startRadar();
             getLogger().info("Danh phận: " + playRanks.describe());
         }
         bind("danhphan", playRanks == null ? null : playRanks::command, "Danh phận");

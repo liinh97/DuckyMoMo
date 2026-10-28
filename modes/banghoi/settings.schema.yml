@@ -1079,6 +1079,7 @@ Admin (quyền duckymomo.sell.khonggioihan) không bị giới hạn." }
       - { key: dp_tinan_ah, label: "Dân Tị Nạn (mới vào): số món treo Chợ đen (bên Đang bán)", type: int, min: 1, max: 20, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.tiers.tinan.ah }
       - { key: dp_tinan_orders, label: "Dân Tị Nạn (mới vào): số đơn thu mua Chợ đen", type: int, min: 0, max: 50, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.tiers.tinan.orders }
       - { key: dp_tinan_tuskin, label: "Dân Tị Nạn (mới vào): số skin lưu trong tủ /tuskin", type: int, min: 0, max: 50, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.tiers.tinan.tu-skin }
+      - { key: dp_tinan_radar, label: "Dân Tị Nạn (mới vào): thấy rada người chơi", type: select, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.tiers.tinan.radar, options: [ { value: true, label: Có }, { value: false, label: Không } ], note: "Chấm chỉ hướng người khác trên thanh kinh nghiệm. Bậc không có thì không thấy; bot không bao giờ hiện trên rada." }
       - { key: dp_tinan_spin, label: "Dân Tị Nạn (mới vào): vé gacha online nhanh hơn (%)", type: int, min: 0, max: 50, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.tiers.tinan.spin-faster }
       - { key: dp_dan_name, label: "Dân: tên", type: text, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.tiers.dan.name }
       - { key: dp_dan_prefix, label: "Dân: tiền tố (mã màu &)", type: text, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.tiers.dan.prefix }
@@ -1091,6 +1092,7 @@ Admin (quyền duckymomo.sell.khonggioihan) không bị giới hạn." }
       - { key: dp_dan_ah, label: "Dân: số món treo Chợ đen (bên Đang bán)", type: int, min: 1, max: 20, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.tiers.dan.ah }
       - { key: dp_dan_orders, label: "Dân: số đơn thu mua Chợ đen", type: int, min: 0, max: 50, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.tiers.dan.orders }
       - { key: dp_dan_tuskin, label: "Dân: số skin lưu trong tủ /tuskin", type: int, min: 0, max: 50, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.tiers.dan.tu-skin }
+      - { key: dp_dan_radar, label: "Dân: thấy rada người chơi", type: select, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.tiers.dan.radar, options: [ { value: true, label: Có }, { value: false, label: Không } ], note: "Chấm chỉ hướng người khác trên thanh kinh nghiệm. Bậc không có thì không thấy; bot không bao giờ hiện trên rada." }
       - { key: dp_dan_spin, label: "Dân: vé gacha online nhanh hơn (%)", type: int, min: 0, max: 50, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.tiers.dan.spin-faster }
       - { key: dp_luongdan_name, label: "Lương Dân: tên", type: text, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.tiers.luongdan.name }
       - { key: dp_luongdan_prefix, label: "Lương Dân: tiền tố (mã màu &)", type: text, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.tiers.luongdan.prefix }
@@ -1103,6 +1105,7 @@ Admin (quyền duckymomo.sell.khonggioihan) không bị giới hạn." }
       - { key: dp_luongdan_ah, label: "Lương Dân: số món treo Chợ đen (bên Đang bán)", type: int, min: 1, max: 20, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.tiers.luongdan.ah }
       - { key: dp_luongdan_orders, label: "Lương Dân: số đơn thu mua Chợ đen", type: int, min: 0, max: 50, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.tiers.luongdan.orders }
       - { key: dp_luongdan_tuskin, label: "Lương Dân: số skin lưu trong tủ /tuskin", type: int, min: 0, max: 50, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.tiers.luongdan.tu-skin }
+      - { key: dp_luongdan_radar, label: "Lương Dân: thấy rada người chơi", type: select, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.tiers.luongdan.radar, options: [ { value: true, label: Có }, { value: false, label: Không } ], note: "Chấm chỉ hướng người khác trên thanh kinh nghiệm. Bậc không có thì không thấy; bot không bao giờ hiện trên rada." }
       - { key: dp_luongdan_spin, label: "Lương Dân: vé gacha online nhanh hơn (%)", type: int, min: 0, max: 50, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.tiers.luongdan.spin-faster }
       - { key: dp_haokiet_name, label: "Hào Kiệt: tên", type: text, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.tiers.haokiet.name }
       - { key: dp_haokiet_prefix, label: "Hào Kiệt: tiền tố (mã màu &)", type: text, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.tiers.haokiet.prefix }
@@ -1115,6 +1118,7 @@ Admin (quyền duckymomo.sell.khonggioihan) không bị giới hạn." }
       - { key: dp_haokiet_ah, label: "Hào Kiệt: số món treo Chợ đen (bên Đang bán)", type: int, min: 1, max: 20, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.tiers.haokiet.ah }
       - { key: dp_haokiet_orders, label: "Hào Kiệt: số đơn thu mua Chợ đen", type: int, min: 0, max: 50, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.tiers.haokiet.orders }
       - { key: dp_haokiet_tuskin, label: "Hào Kiệt: số skin lưu trong tủ /tuskin", type: int, min: 0, max: 50, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.tiers.haokiet.tu-skin }
+      - { key: dp_haokiet_radar, label: "Hào Kiệt: thấy rada người chơi", type: select, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.tiers.haokiet.radar, options: [ { value: true, label: Có }, { value: false, label: Không } ], note: "Chấm chỉ hướng người khác trên thanh kinh nghiệm. Bậc không có thì không thấy; bot không bao giờ hiện trên rada." }
       - { key: dp_haokiet_spin, label: "Hào Kiệt: vé gacha online nhanh hơn (%)", type: int, min: 0, max: 50, file: plugins/DuckyMoMoCore/config.yml, path: play-ranks.tiers.haokiet.spin-faster }
 
   - title: Chương trình Sứ Giả (/media) — kiểm soát rank livestream

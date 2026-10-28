@@ -40,23 +40,36 @@ final class BotView implements Listener {
     /**
      * Dọn quái "đông cứng" quanh bot (29/10, spark: ~5.000 quái, TPS 12–15). Bot giữ vòng chunk ngoài được nạp nhưng không chạy
      * (ngoài simulation-distance): quái lang thang ra đó đứng im mãi, không bao giờ tự biến mất, vẫn tốn công đếm / theo dõi.
-     * Mỗi phút gỡ quái thù địch + dơi trong 64 khối quanh bot nếu: không có người THẬT trong 128 khối (như luật biến mất của game),
+     * Mỗi phút (khi có bot online) gỡ quái thù địch + dơi ở world / nether / end nếu: không có người THẬT trong 128 khối (như luật biến mất của game),
      * quái thường (removeWhenFarAway = không bị giữ lại, không tên; Entity#isPersistent của Bukkit là "lưu cùng chunk", đừng dùng). EliteMobs / pet / NPC có tên hoặc persistent nên không bị đụng.
      */
+    private static final Set<String> CLEAN_WORLDS = Set.of("world", "world_nether", "world_the_end");
+
     void startCleanup(org.bukkit.plugin.Plugin plugin) {
         Bukkit.getScheduler().runTaskTimer(plugin, this::cleanup, 200L, 1200L);
     }
 
     private void cleanup() {
         List<Player> real = new ArrayList<>();
-        List<Player> bots = new ArrayList<>();
+        boolean anyBot = false;
         for (Player p : Bukkit.getOnlinePlayers()) {
-            (isBot(p) ? bots : real).add(p);
+            if (isBot(p)) {
+                anyBot = true;
+            } else {
+                real.add(p);
+            }
         }
+        if (!anyBot) {
+            return;   // không có bot: game tự lo như thường
+        }
+        // 29/10: rà cả thế giới (không chỉ quanh bot): quái dưới hang sâu, ở chunk do bot / thị trấn giữ nạp cũng đông cứng
         Set<org.bukkit.entity.Entity> gone = new HashSet<>();
-        for (Player b : bots) {
-            for (org.bukkit.entity.Entity e : b.getNearbyEntities(64, 64, 64)) {
-                if (gone.contains(e) || !(e instanceof org.bukkit.entity.Mob m)) {
+        for (org.bukkit.World w : Bukkit.getWorlds()) {
+            if (!CLEAN_WORLDS.contains(w.getName())) {
+                continue;
+            }
+            for (org.bukkit.entity.LivingEntity le : w.getLivingEntities()) {
+                if (!(le instanceof org.bukkit.entity.Mob m)) {
                     continue;
                 }
                 if (!(m instanceof org.bukkit.entity.Enemy) && !(m instanceof org.bukkit.entity.Bat)) {
@@ -67,7 +80,7 @@ final class BotView implements Listener {
                 }
                 boolean near = false;
                 for (Player r : real) {
-                    if (r.getWorld().equals(m.getWorld()) && r.getLocation().distanceSquared(m.getLocation()) < 128 * 128) {
+                    if (r.getWorld().equals(w) && r.getLocation().distanceSquared(m.getLocation()) < 128 * 128) {
                         near = true;
                         break;
                     }

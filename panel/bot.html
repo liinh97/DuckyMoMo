@@ -84,7 +84,8 @@
       <button class="mini" id="allJoin" title="Bật mọi bot (mỗi bot vào server đang chọn của nó)">Vào tất cả</button>
       <button class="mini" id="allLeave">Thoát tất cả</button>
       <button class="mini" id="allDev" title="Bật tự phát triển cho mọi bot: mỗi bot một tính cách, nhịp riêng">Tự phát triển tất cả</button>
-      <button class="mini" id="allDevOff">Tắt tự phát triển</button></span></h3>
+      <button class="mini" id="allDevOff">Tắt tự phát triển</button>
+      <button class="mini" id="devPast" title="Mỗi bot đang tự phát triển được giả lập 0–40 giờ đã chơi theo tính cách (một lần duy nhất)">Tạo quá khứ</button></span></h3>
     <div class="note">Bot không tự làm gì. Ở Bang Hội Chiến mỗi bot tự đứng một khu riêng (gần các điểm warp). Bot vào thẳng server con nên không tính vào số người ở danh sách server; đứng yên nên không tính giờ chơi.</div>
     <form id="mk" autocomplete="off" title="Bot mới làm y như bot cũ: vào / ra không báo, Sáng tạo + bất tử, tự đăng ký ở Sảnh">
       <input id="mkName" placeholder="Tên bot mới (vd Quoc_Bao)" maxlength="16" pattern="[A-Za-z0-9_]{3,16}">
@@ -196,6 +197,7 @@ $("tcOn").onchange = () => act({ action: "chatcfg", on: $("tcOn").checked });
 $("tpaOn").onchange = () => act({ action: "tpacfg", on: $("tpaOn").checked });
 $("tcNow").onclick = () => act({ action: "chatnow" });
 $("allDev").onclick = async () => { if (await ask(`Bật tự phát triển cho cả ${BOTS.length} bot? Mỗi bot được gán ngẫu nhiên một tính cách và nhịp riêng.`, { title: "Tự phát triển", ok: "Bật" })) act({ bot: "*", action: "phattrien", on: true }); };
+$("devPast").onclick = async () => { if (await ask("Tạo quá khứ cho các bot đang tự phát triển? Mỗi bot được giả lập ngẫu nhiên 0–40 giờ đã chơi theo tính cách (nhiều bot ít, vài bot nhiều). Mỗi bot chỉ tạo một lần.", { title: "Tạo quá khứ", ok: "Tạo" })) act({ action: "quakhu" }); };
 $("allDevOff").onclick = async () => { if (await ask("Tắt tự phát triển của mọi bot? (số liệu đã có giữ nguyên)", { title: "Tắt tự phát triển", ok: "Tắt" })) act({ bot: "*", action: "phattrien", on: false }); };
 $("allJoin").onclick = async () => { if (await ask(`Cho cả ${BOTS.length} bot vào game (mỗi bot vào server đang chọn của nó)?`, { title: "Vào tất cả", ok: "Vào" })) act({ bot: "*", action: "join" }); };
 $("allLeave").onclick = async () => { if (await ask("Cho mọi bot thoát game?", { title: "Thoát tất cả", ok: "Thoát" })) act({ bot: "*", action: "leave" }); };
@@ -218,7 +220,8 @@ async function loadBots() {
 // nhãn tính cách dưới tên bot đang tự phát triển; rê chuột xem lần cập nhật gần nhất
 function devTag(n) {
   const v = DEV_STATE[n]; if (!v || !v.on) return "";
-  return `<span class="devtag" title="${esc(`Chăm ${Math.round((v.cham || 0) * 100)}% · nghề ${v.nghe || "?"}${v.ghi ? "\nGần nhất: " + v.ghi : ""}`)}">↗ ${esc(v.kieu || "tự phát triển")}</span>`;
+  const qk = v.quakhu === "cho" ? " · chờ tạo quá khứ" : "";
+  return `<span class="devtag" title="${esc(`Chăm ${Math.round((v.cham || 0) * 100)}% · nghề ${v.nghe || "?"}${v.ghi ? "\nGần nhất: " + v.ghi : ""}`)}">↗ ${esc(v.kieu || "tự phát triển")}${qk}</span>`;
 }
 
 // ---------------------------------------------------------------- hồ sơ bot (28/10): xu, Thăng Cấp, giờ chơi, danh phận, nghề, kỹ năng

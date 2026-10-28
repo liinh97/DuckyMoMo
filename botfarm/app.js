@@ -358,7 +358,24 @@ setInterval(async () => {
 // vòng giữ: bot bật thì vào (thử lại khi rớt), bot tắt thì thoát. Vào rải rác: mỗi lần 1 bot, cách nhau 8–20 giây
 // (27/10, chủ server: đừng để cả loạt thoát / vào cùng lúc)
 let nextJoin = 0;
+// Tắt dịch vụ (docker stop / dựng lại): KHÔNG cho mọi bot thoát cùng một giây (28/10: 21 bot "mất kết nối" cùng lúc 14:52:43 khi có người
+// thật online = lộ bot). Bot thoát dần từng con, thứ tự ngẫu nhiên, cách 3–15 giây; compose stop_grace_period đủ dài để kịp.
+let stopping = false;
+async function gracefulStop(sig) {
+  if (stopping) return;
+  stopping = true;
+  const on = NAMES.filter(n => RT[n].bot).sort(() => Math.random() - 0.5);
+  log('nhận', sig, '- cho', on.length, 'bot thoát dần');
+  for (const n of on) {
+    try { RT[n].bot.quit(); } catch (e) { /* bỏ qua */ }
+    await sleep(3000 + Math.random() * 12000);
+  }
+  process.exit(0);
+}
+process.on('SIGTERM', () => gracefulStop('SIGTERM'));
+process.on('SIGINT', () => gracefulStop('SIGINT'));
 setInterval(() => {
+  if (stopping) return;
   for (const n of NAMES) {
     if (!state[n].want && RT[n].bot) { RT[n].fast = false; RT[n].bot.quit(); }
   }

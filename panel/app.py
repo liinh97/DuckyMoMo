@@ -1974,12 +1974,15 @@ def _lu(cfg, key, default):
         return default
 
 
-def _bot_dev_step(name, st, prof, now):
-    """Một lượt phát triển cho một bot: trả hoso (chỉ mục đổi) + cập nhật st."""
+def _bot_dev_step(name, st, prof, now, play_h=None):
+    """Một lượt phát triển cho một bot: trả hoso (chỉ mục đổi) + cập nhật st. play_h: số giờ chơi cho sẵn (tạo quá khứ)."""
     S = BOT_STYLES.get(st.get("kieu"), BOT_STYLES["lairai"])
-    gap_h = min(2.0, max(0.05, (now - st.get("last", now)) / 3600))
-    h = gap_h * st["cham"] * _rnd.uniform(0.5, 1.4)         # giờ "chơi thật" của lượt này
-    st["last"] = now
+    if play_h is None:
+        gap_h = min(2.0, max(0.05, (now - st.get("last", now)) / 3600))
+        h = gap_h * st["cham"] * _rnd.uniform(0.5, 1.4)     # giờ "chơi thật" của lượt này
+        st["last"] = now
+    else:
+        h = play_h
     may = st["may"]
     hoso = {}
     gio = prof["gio"] + h
@@ -2033,7 +2036,7 @@ def _bot_dev_step(name, st, prof, now):
     hoso["kynang"] = kn
     # điểm danh: mỗi ngày một lần, có ngày quên
     today = time.strftime("%Y-%m-%d")
-    if st.get("dd_ngay") != today:
+    if play_h is None and st.get("dd_ngay") != today:
         st["dd_ngay"] = today
         if _rnd.random() < st["deu"]:
             hoso["diemdanh"] = prof["diemdanh"] + 1
@@ -2063,6 +2066,31 @@ def _bot_dev_step(name, st, prof, now):
     return hoso
 
 
+def bot_dev_past(name, st):
+    """Tạo quá khứ (28/10): giả lập 0–40 giờ đã chơi theo tính cách, áp một lần. Trả thông báo."""
+    prof = bot_profile(name)
+    total = round(40 * _rnd.random() ** 1.7, 1)             # lệch: nhiều bot chơi ít, vài bot chơi nhiều
+    p = dict(prof, kynang=dict(prof["kynang"]), thanhtich=list(prof["thanhtich"]))
+    done, now = 0.0, time.time()
+    while done < total - 1e-9:
+        h = min(1.0, total - done)
+        hs = _bot_dev_step(name, st, p, now, play_h=h)
+        for k in ("xu", "capdo", "diem_ha", "gio", "nghe", "cap_nghe", "danhphan"):
+            if k in hs:
+                p[k] = hs[k]
+        p["kynang"].update(hs.get("kynang") or {})
+        p["thanhtich"] = hs.get("thanhtich", p["thanhtich"])
+        done += h
+    days = int(round(total / _rnd.uniform(1.2, 3.0) * st.get("deu", 0.7)))
+    hoso = {k: p[k] for k in ("xu", "capdo", "diem_ha", "gio", "nghe", "cap_nghe", "danhphan", "kynang", "thanhtich")}
+    hoso["diemdanh"] = prof["diemdanh"] + days
+    res = bot_profile_save({"bot": name, "hoso": hoso}, "tạo quá khứ")
+    if res.get("ok"):
+        st["quakhu"] = "xong"
+    st["ghi"] = time.strftime("%d/%m %H:%M") + f" · tạo quá khứ {total} giờ: " + str(res.get("message", ""))[:140]
+    return res
+
+
 def bot_dev_tick():
     with BOT_DEV_LOCK:
         d = _dev_load()
@@ -2078,6 +2106,13 @@ def bot_dev_tick():
                 continue
             if name.lower() not in online:
                 st["last"] = now                                 # offline: không tính giờ
+                continue
+            if st.get("quakhu") == "cho":                       # tạo quá khứ đang chờ bot online
+                try:
+                    bot_dev_past(name, st)
+                except Exception as e:
+                    st["ghi"] = time.strftime("%d/%m %H:%M") + f" · tạo quá khứ lỗi: {e}"[:160]
+                st["last"] = now
                 continue
             if now < st.get("next", 0):
                 continue
@@ -2125,10 +2160,27 @@ def bot_dev_set(body, who):
     return {"ok": True, "message": ("Bật" if on else "Tắt") + " tự phát triển cho " + ("tất cả bot" if name == "*" else name)}
 
 
+def bot_dev_past_all(body, who):
+    """Đánh dấu tạo quá khứ cho mọi bot đang tự phát triển chưa tạo; luồng nền áp khi bot online (ngay lượt tới, ≤5 phút)."""
+    with BOT_DEV_LOCK:
+        d = _dev_load()
+        n = 0
+        for v in d.values():
+            if v.get("on") and v.get("quakhu") not in ("xong", "cho"):
+                v["quakhu"] = "cho"
+                n += 1
+        _dev_save(d)
+    threading.Thread(target=bot_dev_tick, daemon=True).start()
+    web_log({"viec": "/api/bot", "nguoi": who or PANEL_USER, "hanh_dong": f"tạo quá khứ cho {n} bot"})
+    if not n:
+        return {"ok": True, "message": "Không còn bot nào cần tạo quá khứ (mỗi bot chỉ tạo một lần; bật tự phát triển trước)"}
+    return {"ok": True, "message": f"Đang tạo quá khứ cho {n} bot (bot offline sẽ được tạo khi vào Bang Hội Chiến). Xem kết quả ở nhãn dưới tên bot."}
+
+
 def bot_dev_info():
     d = _dev_load()
     return {n: {"on": bool(v.get("on")), "kieu": BOT_STYLES.get(v.get("kieu"), {}).get("ten", ""), "cham": v.get("cham"),
-                "nghe": v.get("nghe"), "ghi": v.get("ghi", "")} for n, v in d.items()}
+                "nghe": v.get("nghe"), "ghi": v.get("ghi", ""), "quakhu": v.get("quakhu", "")} for n, v in d.items()}
 
 
 def bot_action(body, who):
@@ -2139,6 +2191,8 @@ def bot_action(body, who):
         return bot_profile_save(body, who)
     if act == "phattrien":
         return bot_dev_set(body, who)
+    if act == "quakhu":
+        return bot_dev_past_all(body, who)
     if act not in BOT_ACTIONS:
         raise ValueError("Thao tác không hợp lệ")
     if act == "create":

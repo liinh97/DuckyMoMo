@@ -5,6 +5,8 @@ services:
   botfarm:
     build: .
     restart: unless-stopped
+    # bot thoát dần khi tắt (app.js gracefulStop, 3–15 giây/bot): chờ tới 6 phút trước khi Docker cắt ngang
+    stop_grace_period: 6m
     environment:
       VELOCITY_SECRET: ${VELOCITY_SECRET}
       RCON_PASSWORD: ${RCON_PASSWORD}

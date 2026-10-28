@@ -58,6 +58,7 @@ final class BodyTemp implements Listener {
     private final NamespacedKey stoneKey;
     private final NamespacedKey bodyKey;
     private final NamespacedKey wetKey;
+    private final NamespacedKey umbrellaKey;
     private final Map<UUID, Double> body = new HashMap<>();
     private final Map<UUID, Double> wet = new HashMap<>();
     private final Map<UUID, BossBar> bars = new HashMap<>();
@@ -74,6 +75,7 @@ final class BodyTemp implements Listener {
         this.stoneKey = new NamespacedKey(plugin, "daonlinh");
         this.bodyKey = new NamespacedKey(plugin, "thannhiet");
         this.wetKey = new NamespacedKey(plugin, "uot");
+        this.umbrellaKey = new NamespacedKey(plugin, "ola");
         worlds.addAll(cfg.getStringList("worlds"));
         if (worlds.isEmpty()) {
             worlds.add("world");
@@ -101,11 +103,37 @@ final class BodyTemp implements Listener {
         // Ô lá: Minecraft không có cái ô; Lá Nhỏ Giọt cầm tay trông như ô lá. Ngoài hang Lush còn chế được: 3 lá cây + 2 que
         NamespacedKey u = new NamespacedKey(plugin, "ola");
         Bukkit.removeRecipe(u);
-        ShapedRecipe o = new ShapedRecipe(u, new ItemStack(Material.BIG_DRIPLEAF));
+        ShapedRecipe o = new ShapedRecipe(u, umbrellaItem());
         o.shape("LLL", " S ", " S ");
         o.setIngredient('L', new RecipeChoice.MaterialChoice(Tag.LEAVES));
         o.setIngredient('S', Material.STICK);
         Bukkit.addRecipe(o);
+    }
+
+    /** Ô Lá chế được (28/10): Lá Nhỏ Giọt có tên, mô tả, lấp lánh; không đặt xuống được (đặt là mất tên). Lá nhặt ở hang Lush vẫn làm ô được. */
+    ItemStack umbrellaItem() {
+        ItemStack it = new ItemStack(Material.BIG_DRIPLEAF);
+        ItemMeta m = it.getItemMeta();
+        m.getPersistentDataContainer().set(umbrellaKey, PersistentDataType.BYTE, (byte) 1);
+        m.setMaxStackSize(1);
+        m.displayName(Tip.c("&aÔ Lá").decoration(net.kyori.adventure.text.format.TextDecoration.ITALIC, false));
+        List<net.kyori.adventure.text.Component> lore = new ArrayList<>();
+        for (String s : List.of("&8▍&7Cầm ở tay chính hoặc tay phụ:", "&8▍&7không ướt khi mưa, đỡ nắng.", "&8• &7Không đặt xuống được")) {
+            lore.add(Tip.c(s).decoration(net.kyori.adventure.text.format.TextDecoration.ITALIC, false));
+        }
+        m.lore(lore);
+        m.setEnchantmentGlintOverride(true);
+        it.setItemMeta(m);
+        return it;
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onPlace(org.bukkit.event.block.BlockPlaceEvent e) {
+        ItemStack it = e.getItemInHand();
+        if (it.getType() == Material.BIG_DRIPLEAF && it.hasItemMeta()
+                && it.getItemMeta().getPersistentDataContainer().has(umbrellaKey, PersistentDataType.BYTE)) {
+            e.setCancelled(true);
+        }
     }
 
     ItemStack stone(double t) {

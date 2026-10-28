@@ -558,6 +558,7 @@ chapters:
     &1/t &0thông tin · &1/res &0bạn
     &1/t spawn &0về thị trấn
     &1/t set spawn &0đặt chỗ về
+    &1/t toggle public &0cho người ngoài dịch chuyển tới (mặc định tắt)
     &1/plot claim &0nhận lô đất trong thị trấn
   - |-
     &6Thị trấn (tiếp)

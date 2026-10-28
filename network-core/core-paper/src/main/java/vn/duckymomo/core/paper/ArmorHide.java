@@ -103,8 +103,13 @@ final class ArmorHide implements Listener {
         return System.currentTimeMillis() - lastFight.getOrDefault(p.getUniqueId(), 0L) < combatMillis;
     }
 
+    /** Bật hay chưa: công tắc "angiap" ở /caidat (PlayerSettings, lưu meta LuckPerms); angiap.yml cũ vẫn tính. */
+    private boolean enabled(Player p) {
+        return PlayerSettings.INSTANCE != null ? PlayerSettings.on(p, "angiap") : on.contains(p.getUniqueId());
+    }
+
     private boolean shouldHide(Player p) {
-        return on.contains(p.getUniqueId()) && !inCombat(p) && safeSpot(p);
+        return enabled(p) && !inCombat(p) && safeSpot(p);
     }
 
     /** Gửi giáp (giả hoặc thật) của p tới mọi người đang thấy p. */
@@ -185,15 +190,21 @@ final class ArmorHide implements Listener {
             return true;
         }
         UUID u = p.getUniqueId();
-        if (on.remove(u)) {
+        boolean was = enabled(p);
+        on.remove(u);
+        save();
+        if (PlayerSettings.INSTANCE != null) {
+            PlayerSettings.INSTANCE.set(p, "angiap", !was);              // cùng công tắc với /caidat
+        } else if (!was) {
+            on.add(u);
             save();
+        }
+        if (was) {
             if (hiddenNow.remove(u)) {
                 push(p, false);
             }
             p.sendMessage(c("&7Đã tắt ẩn giáp: người khác thấy giáp của bạn như thường."));
         } else {
-            on.add(u);
-            save();
             p.sendMessage(c("&aĐã bật ẩn giáp: &fngười khác thấy skin, không thấy giáp &7(giáp vẫn bảo vệ đủ)."));
             p.sendMessage(c("&7Chỉ ẩn ở kinh đô, đất hoà bình, thị trấn của bạn; ra đất hoang, vùng vây hoặc đang đánh nhau thì giáp hiện lại. Gõ &f/angiap &7để tắt."));
         }

@@ -89,6 +89,7 @@ final class Kham implements Listener {
     private final DuckyMoMoCore plugin;
     private final ThoRen thoRen;
     private final Map<String, List<Integer>> slots = new HashMap<>();
+    private final Map<String, String> icons = new HashMap<>();
     private final Map<String, Gem> gems = new LinkedHashMap<>();
     private final Map<String, Double> cap = new HashMap<>();
     private final double unsocketCost;
@@ -152,6 +153,12 @@ final class Kham implements Listener {
         if (s != null) {
             for (String set : s.getKeys(false)) {
                 slots.put(set, s.isList(set) ? s.getIntegerList(set) : List.of(s.getInt(set)));
+            }
+        }
+        ConfigurationSection ic = c.getConfigurationSection("icons");
+        if (ic != null) {
+            for (String set : ic.getKeys(false)) {
+                icons.put(set, ic.getString(set, "◆◇"));
             }
         }
         ConfigurationSection g = c.getConfigurationSection("gems");
@@ -448,6 +455,8 @@ final class Kham implements Listener {
 
     private static final String LINE_PREFIX = "◈ Khảm ";
     private static final String TITLE = "KHẢM NGỌC";
+    /** Ký hiệu ô khảm theo set (đầy, trống) — cùng cặp với dòng cấp nâng của set (Thánh quang ☀☼, Huyền lực ✦✧…); config kham.icons.<set>. */
+    private static final Map<String, String> ICONS = Map.of("tinhanh", "★☆", "caocap", "✪✪", "huyenthoai", "✦✧", "thanthoai", "◆◇", "thanthanh", "☀☼");
     private static final java.util.regex.Pattern HEADER = java.util.regex.Pattern.compile("^((?:&[0-9a-fk-or]|&#[0-9a-fA-F]{6})*)(\\S+) ((?:&[0-9a-fk-or]|&#[0-9a-fA-F]{6})*)\\S.*$");
 
     /**
@@ -496,6 +505,10 @@ final class Kham implements Listener {
                 }
             }
             String tc = c2.isEmpty() ? c1 : c2;
+            String[] in = info(it);
+            String ic = in == null ? "◆◇" : icons.getOrDefault(in[0], ICONS.getOrDefault(in[0], "◆◇"));
+            int[] cp = ic.codePoints().toArray();
+            String full = new String(cp, 0, 1), empty = cp.length > 1 ? new String(cp, 1, 1) : full;
             StringBuilder b = new StringBuilder(c1 + sym + " " + tc + TITLE + " &r&8» ");
             int minE = Integer.MAX_VALUE;
             for (int i = 0; i < n; i++) {
@@ -505,16 +518,16 @@ final class Kham implements Listener {
                     b.append(" ");
                 }
                 if (gem == null) {
-                    b.append("&8◇");
+                    b.append("&8").append(empty);
                 } else {
-                    Tier t = tier(sk);
-                    b.append(gem.color()).append("◆ ").append(gem.name()).append(" ").append(t.color()).append("(").append(t.name()).append(")");
+                    b.append(gem.color()).append(full).append(gem.name());
                     minE = Math.min(minE, sk.energy());
                 }
             }
-            b.append(" &7").append(filled).append("/").append(n);
-            if (filled > 0) {
-                b.append(" &8· ").append(minE * 100 <= warnPct * maxEnergy ? "&c" : minE * 2 <= maxEnergy ? "&e" : "&a").append("⚡").append(pct(minE)).append("%");
+            // 28/10 chiều (chủ server): không đếm "1/4", "⚡95%" (dài, xấu) — dãy ô sáng/tối như thanh "Loading" của Tân Thủ;
+            // phẩm, chỉ số, năng lượng xem ở /thoren kham; chỉ nhắc khi năng lượng sắp cạn
+            if (filled > 0 && minE * 100 <= warnPct * maxEnergy) {
+                b.append(" &c⚡ sắp cạn");
             }
             lore.add(at, c(b.toString()));
         }

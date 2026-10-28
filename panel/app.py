@@ -1772,7 +1772,7 @@ def _bot_towns():
 
 
 def _bot_achievements():
-    core = taikhoan.safe_yaml(taikhoan.DMM / "config.yml")
+    core = _core_cfg() if "_core_cfg" in globals() else taikhoan.safe_yaml(taikhoan.DMM / "config.yml")
     return [(str(k), str((v or {}).get("name", k)), str((v or {}).get("desc", ""))) for k, v in ((core.get("achievements") or {}).get("list") or {}).items()]
 
 
@@ -1940,6 +1940,21 @@ BOT_STYLES = {
 LU_CFG = {"money-base": 250, "money-exponent": 0.6, "hours-base": 0.04, "hours-exponent": 2, "kill-base": 1, "kill-exponent": 2}
 
 
+_CORE_CACHE = {"mtime": None, "data": {}}
+
+
+def _core_cfg():
+    """config.yml DuckyMoMoCore (rất lớn, ~0,5 giây/lần đọc): nhớ lại, chỉ đọc lại khi file đổi."""
+    f = taikhoan.DMM / "config.yml"
+    try:
+        m = f.stat().st_mtime
+    except OSError:
+        return {}
+    if _CORE_CACHE["mtime"] != m:
+        _CORE_CACHE["data"], _CORE_CACHE["mtime"] = taikhoan.safe_yaml(f), m
+    return _CORE_CACHE["data"]
+
+
 def _dev_load():
     try:
         return json.loads(BOT_DEV_FILE.read_text(encoding="utf-8"))
@@ -2000,7 +2015,7 @@ def _bot_dev_step(name, st, prof, now, play_h=None):
     ha = prof["diem_ha"] + int(round(_rnd.uniform(*S["ha"]) * h * may))
     hoso["diem_ha"] = ha
     # Thăng Cấp: đủ xu + giờ + điểm hạ gục thì có lúc lên (không lên ngay như máy)
-    core = taikhoan.safe_yaml(taikhoan.DMM / "config.yml").get("level-up") or {}
+    core = _core_cfg().get("level-up") or {}
     cap = prof["capdo"]
     for _ in range(3):
         n = cap + 1
@@ -2049,7 +2064,7 @@ def _bot_dev_step(name, st, prof, now, play_h=None):
         else:
             sim[t] = sim.get(t, 0) + rate * h * _rnd.uniform(0.4, 1.4) * may
     sim["giochoi"], sim["quai"] = gio, ha
-    goals = (taikhoan.safe_yaml(taikhoan.DMM / "config.yml").get("achievements") or {}).get("list") or {}
+    goals = (_core_cfg().get("achievements") or {}).get("list") or {}
     done = set(prof["thanhtich"])
     for gid, g in goals.items():
         if isinstance(g, dict) and sim.get(g.get("type"), 0) >= float(g.get("target", 1e18)):
@@ -2057,7 +2072,7 @@ def _bot_dev_step(name, st, prof, now, play_h=None):
     hoso["thanhtich"] = sorted(done)
     # danh phận: đủ giờ + Thăng Cấp thì có lúc bấm nhận
     order = ["tinan", "dan", "luongdan", "haokiet"]
-    tiers = (taikhoan.safe_yaml(taikhoan.DMM / "config.yml").get("play-ranks") or {}).get("tiers") or {}
+    tiers = (_core_cfg().get("play-ranks") or {}).get("tiers") or {}
     cur = prof["danhphan"] if prof["danhphan"] in order else "tinan"
     i = order.index(cur)
     if i + 1 < len(order):
@@ -2114,6 +2129,7 @@ def bot_dev_tick():
                 except Exception as e:
                     st["ghi"] = time.strftime("%d/%m %H:%M") + f" · tạo quá khứ lỗi: {e}"[:160]
                 st["last"] = now
+                _dev_save(d)
                 continue
             if now < st.get("next", 0):
                 continue
@@ -2125,6 +2141,7 @@ def bot_dev_tick():
             except Exception as e:
                 st["ghi"] = time.strftime("%d/%m %H:%M") + f" · lỗi: {e}"[:160]
             st["next"] = now + _rnd.uniform(25, 70) * 60
+            _dev_save(d)                                         # lưu ngay từng bot (lượt dài, panel dựng lại giữa chừng không mất)
         _dev_save(d)
 
 

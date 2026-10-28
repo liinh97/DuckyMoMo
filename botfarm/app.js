@@ -482,56 +482,26 @@ function autoTpa(name, from) {
     event({ type: 'tpa', bot: name, from, text: `${name} tự từ chối TPA của ${from}` });
   }, 4000 + Math.random() * 21000);
 }
-// A / B / C: người nói; {A} {B} {C}: tên bot đó
-const TALKS = [
-  ['A:ae ơi /capdo lên cấp kiểu gì nhỉ', 'B:đủ xu, đủ giờ chơi với điểm hạ gục là bấm lên cấp được', 'A:à ok thanks'],
-  ['A:đào mãi không thấy kim cương', 'B:xuống tầm y -58 mà đào', 'A:ok để thử'],
-  ['A:gg', 'B:gg'],
-  ['A:{B} ơi', 'B:sao', 'A:à thôi nhầm người :v'],
-  ['A:map này đẹp nhỉ', 'B:ừ quần đảo nhiều chỗ đẹp phết'],
-  ['A:có ai lập thị trấn chưa', 'B:t đang góp tiền lập nè', 'A:lập xong nhớ mời t'],
-  ['A:ae ở đây chơi lâu chưa', 'B:mới được mấy hôm', 'C:t cũng mới'],
-  ['A:chán quá', 'B:đi câu cá đi', 'A:ừ cũng được'],
-  ['A:hello ae', 'B:hi', 'C:chào'],
-  ['A:t afk tí nhé', 'B:ok'],
-  ['A:có ai lên được cấp 5 chưa', 'B:t mới cấp 2 :v', 'A:t cũng thế, cày giờ lâu vãi'],
-  ['A:{B} ơi nhà xây xong chưa', 'B:chưa, thiếu đá', 'A:đá thì đầy ngoài kia mà'],
-  ['A:công thành là gì thế ae', 'B:bang này đánh chiếm thị trấn bang kia ấy', 'A:nghe căng nhỉ'],
-  ['A:vừa chết vì creeper :(', 'B:haha', 'C:mất đồ không'],
-  ['A:câu được con cá to vãi', 'B:ghê vậy'],
-  ['A:ae có biết làm bàn phù phép không', 'B:4 obsidian 2 kim cương 1 quyển sách', 'A:thanks'],
-  ['A:t mới xây xong cái chuồng gà', 'B:nuôi gà làm gì', 'A:lấy trứng với lông làm tên :v'],
-  ['A:{B} chơi minecraft lâu chưa', 'B:từ hồi bản 1.8', 'A:lão làng rồi'],
-  ['A:tìm mãi không thấy làng nào', 'B:đi thuyền dọc bờ biển dễ thấy hơn', 'A:để thử'],
-  ['A:ae ơi cuốc vàng có tốt không', 'B:nhanh mà mau hỏng lắm', 'C:dùng sắt cho lành'],
-  // buôn bán, cửa hàng, kiếm tiền
-  ['A:bán đồ cho server ở đâu thế ae', 'B:/cuahang hoặc /sell ấy', 'C:phải đứng trong kinh đô hoặc thị trấn hoà bình mới bán được', 'A:à thế à'],
-  ['A:/sell bán theo tên được không', 'B:được, vd /sell cobblestone 64', 'A:tiện ghê'],
-  ['A:kim cương bán server được bao nhiêu nhỉ', 'B:cầm lên gõ /worth là biết giá', 'A:ok'],
-  ['A:tạo shop rương kiểu gì nhỉ', 'B:cầm món muốn bán, nhìn vào rương rồi /qs create giá', 'A:để thử'],
-  ['A:muốn tìm shop bán sắt thì sao', 'B:/qs find iron_ingot', 'C:hoặc lên /choden xem người ta treo'],
-  ['A:chợ đen treo đồ bán kiểu gì', 'B:cầm món rồi /choden ban giá', 'A:có hết hạn không', 'B:có, hết hạn thì đồ tự về túi'],
-  ['A:{B} ơi có sắt không, t cần ít', 'B:có, /trade t đi', 'A:ok để t gửi'],
-  ['A:đổi đồ với người khác thì dùng /trade cho an toàn nhé', 'B:ừ đừng ném đồ xuống đất, mất như chơi'],
-  ['A:nghề nào kiếm tiền ổn ae', 'B:t làm thợ mỏ thấy cũng được', 'C:câu cá bán /emf shop cũng ra tiền', 'A:để t xem /jobs'],
-  ['A:ai giàu nhất server nhỉ', 'B:xem /baltop ấy', 'A:toàn đại gia :v'],
-  ['A:bán cá ở đâu ae', 'B:/emf shop', 'C:cá hiếm giá cao lắm'],
-  // tính năng
-  ['A:điểm danh chưa ae', 'B:rồi, được cả vé gacha', 'C:quay /gacha toàn ra đồ linh tinh :v'],
-  ['A:nhiệm vụ /nhiemvu khó ghê', 'B:làm từ từ thôi, có thưởng mà'],
-  ['A:bắt pet kiểu gì nhỉ', 'B:đánh tới yếu máu rồi quăng dây xích', 'A:thanks'],
-  ['A:thái ấp có pvp không ae', 'B:không, đất riêng an toàn', 'A:vậy để dành tiền mua'],
-  ['A:lập thị trấn cần gì ae', 'B:đủ tiền với giờ chơi rồi /t new tên', 'C:nhớ nộp quỹ /t deposit, hết quỹ là mắc nợ đấy'],
-  ['A:không thích đánh nhau thì sao', 'B:vào liên minh hoà bình, xem /hoabinh', 'A:ok'],
-  ['A:rèn đồ ở đâu ae', 'B:/thoren', 'A:thanks'],
-  ['A:dungeon vào kiểu gì', 'B:gõ /dungeon rồi bấm chọn', 'C:đi đông người cho dễ'],
-  ['A:công thành đánh lúc nào ae', 'B:xem /lichcongthanh có giờ phiên', 'A:ok'],
-  ['A:balo mở bằng gì', 'B:/balo', 'A:à ok'],
-  ['A:muốn đổi skin thì sao', 'B:/skin tên là được', 'C:hoặc /tuskin chọn'],
-  ['A:skill nghề xem ở đâu', 'B:/skills', 'A:thanks'],
-  ['A:lên cấp /capdo được điểm thuộc tính đấy', 'B:cộng vào máu hay sức mạnh', 'A:t cộng máu cho trâu'],
-];
-const SOLO = [':v', 'hehe', 'gg', 'đi câu cá thôi', 'vừa đào được ít sắt', 'cày cấp mệt ghê', 'vừa bán được ít cá', 'shop rương tiện thật'];
+// Lời thoại: talks.js. 28/10 chủ server: tầm 5 tiếng mới lặp lại một đoạn → nhớ đoạn đã nói (chat-used.json), chỗ trống {CA} {VUNG}… điền ngẫu nhiên
+const { TALKS, SOLO, SLOTS } = require('./talks');
+const CHAT_USED = '/state/chat-used.json';
+let chatUsed = {};
+try { chatUsed = JSON.parse(fs.readFileSync(CHAT_USED, 'utf8')); } catch (e) { /* chưa có */ }
+const talkKey = t => t.join('|');
+function pickFresh(list, key) {
+  const now = Date.now(), gap = (chatCfg.norepeat || 5) * 3600e3;
+  const fresh = list.filter(t => now - (chatUsed[key(t)] || 0) > gap);
+  const pool = fresh.length ? fresh : list.slice().sort((x, y) => (chatUsed[key(x)] || 0) - (chatUsed[key(y)] || 0)).slice(0, Math.max(1, Math.ceil(list.length / 10)));
+  const t = pool[Math.floor(Math.random() * pool.length)];
+  chatUsed[key(t)] = now;
+  for (const k of Object.keys(chatUsed)) if (now - chatUsed[k] > 48 * 3600e3) delete chatUsed[k];   // dọn đoạn đã xoá khỏi talks.js
+  try { fs.writeFileSync(CHAT_USED, JSON.stringify(chatUsed)); } catch (e) { log('không lưu được chat-used.json:', e.message); }
+  return t;
+}
+function fillSlots(lines) {
+  const val = {};
+  return lines.map(l => l.replace(/\{(CA|QUANG|VUNG|SO|MON)\}/g, (_, k) => val[k] || (val[k] = SLOTS[k][Math.floor(Math.random() * SLOTS[k].length)])));
+}
 const STYLE = n => [...n].reduce((s, c) => s + c.charCodeAt(0), 0) % 3;   // 0 có dấu, 1 không dấu, 2 có dấu + viết thường hết
 const noAccent = s => s.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'D');
 const styled = (n, s) => STYLE(n) === 1 ? noAccent(s) : STYLE(n) === 2 ? s.toLowerCase() : s;
@@ -548,7 +518,7 @@ async function chatOnce() {
   if (!pool.length) return 'không có bot nào online';
   for (let k = pool.length - 1; k > 0; k--) { const j = Math.floor(Math.random() * (k + 1)); [pool[k], pool[j]] = [pool[j], pool[k]]; }
   const fit = TALKS.filter(t => new Set(t.map(l => l[0])).size <= pool.length);
-  const talk = pool.length >= 2 && Math.random() < 0.85 && fit.length ? fit[Math.floor(Math.random() * fit.length)] : ['A:' + SOLO[Math.floor(Math.random() * SOLO.length)]];
+  const talk = fillSlots(pool.length >= 2 && Math.random() < 0.85 && fit.length ? pickFresh(fit, talkKey) : ['A:' + pickFresh(SOLO, x => 'solo|' + x)]);
   const who = { A: pool[0], B: pool[1], C: pool[2] };
   chatBusy = true;
   try {

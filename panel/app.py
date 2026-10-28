@@ -2145,7 +2145,7 @@ def _bot_market(name, st):
         allowed = False
     if not allowed:
         return None
-    rcon(BOT_SRV, [f"item replace entity {name} weapon.mainhand with minecraft:{item} {n}"])
+    rcon(BOT_SRV, [f"minecraft:item replace entity {name} weapon.mainhand with minecraft:{item} {n}"])   # "item" trần bị Essentials chiếm
     time.sleep(1.5)
     req = urllib.request.Request(BOTFARM_URL + "/act", data=json.dumps({"bot": name, "action": "cmd", "text": f"choden ban {n} {total}"}).encode("utf-8"),
                                  headers={"Content-Type": "application/json"}, method="POST")

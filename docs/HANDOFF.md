@@ -11,7 +11,7 @@
   thật rồi tự huỷ (mặc định tắt), botfarm thoát dần khi tắt (đã triển khai 15:20, rời từng con trước khi dựng lại).
 - 3 thị trấn bot: LamPhong / VongNguyet / DoiGio (xem cẩm nang "Bot: thị trấn, chợ…"). Lập bằng tiến trình nền /tmp/bot_thitran.py trong
   container panel (giãn 12–22 phút / thị trấn) — dựng lại panel giữa chừng sẽ cắt ngang, kiểm /tmp/bot_thitran.log.
-- CHƯA: bot treo bán Chợ đen cần quyền duckymomo.peace.admin cho tài khoản bot — chờ chủ server đồng ý cấp. Code _bot_market đã có, chưa
+- Bot treo bán Chợ đen: chủ server đồng ý, đã cấp duckymomo.peace.admin cho 23 bot (bot mới thì cấp tay). Code _bot_market đã có, chưa
   dựng lại panel (đợi tiến trình thị trấn xong).
 - BÀI HỌC: dựng lại botfarm khi có người thật = 21 bot thoát cùng giây, lộ bot (memory botfarm-restart-lo-bot).
 

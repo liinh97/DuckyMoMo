@@ -362,15 +362,29 @@ let nextJoin = 0;
 // Tắt dịch vụ (docker stop / dựng lại): KHÔNG cho mọi bot thoát cùng một giây (28/10: 21 bot "mất kết nối" cùng lúc 14:52:43 khi có người
 // thật online = lộ bot). Bot thoát dần từng con, thứ tự ngẫu nhiên, cách 3–15 giây; compose stop_grace_period đủ dài để kịp.
 let stopping = false;
+/** Người THẬT đang online (thấy trong danh sách người chơi của bất kỳ bot nào, trừ tên bot). */
+function realOnline() {
+  const seen = new Set();
+  for (const n of NAMES) {
+    const b = RT[n].bot;
+    if (!b || !b.players) continue;
+    for (const x of Object.keys(b.players)) if (!NAMES.includes(x)) seen.add(x);
+  }
+  return [...seen];
+}
+
 async function gracefulStop(sig) {
   if (stopping) return;
   stopping = true;
   const on = NAMES.filter(n => RT[n].bot).sort(() => Math.random() - 0.5);
-  log('nhận', sig, '- cho', on.length, 'bot thoát dần');
+  const real = realOnline();
+  // 29/10 chủ server: không có người thật thì thoát hết luôn; có người chơi mới thoát dần (không lộ bot)
+  log('nhận', sig, '-', on.length, 'bot', real.length ? 'thoát dần (đang có ' + real.join(', ') + ')' : 'thoát hết (không có người thật)');
   for (const n of on) {
     try { RT[n].bot.quit(); } catch (e) { /* bỏ qua */ }
-    await sleep(3000 + Math.random() * 12000);
+    if (real.length) await sleep(3000 + Math.random() * 12000);
   }
+  await sleep(1500);
   process.exit(0);
 }
 process.on('SIGTERM', () => gracefulStop('SIGTERM'));
@@ -384,7 +398,7 @@ setInterval(() => {
   const n = NAMES.find(x => state[x].want && !RT[x].bot && !RT[x].connecting && Date.now() >= RT[x].retryAt);
   if (!n) return;
   const rt = RT[n];
-  nextJoin = Date.now() + (rt.fast ? 2000 : 8000 + Math.random() * 12000);
+  nextJoin = Date.now() + (rt.fast || !realOnline().length ? 2000 : 8000 + Math.random() * 12000);   // không có người thật: vào nhanh
   connect(n).catch(e => { rt.err = e.message; rt.connecting = false; });
 }, 1000);
 

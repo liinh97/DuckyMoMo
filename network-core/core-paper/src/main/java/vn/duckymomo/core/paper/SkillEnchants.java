@@ -396,6 +396,9 @@ final class SkillEnchants implements Listener {
                 p.getWorld().spawnParticle(Particle.EXPLOSION, p.getLocation(), 3, r / 2, 0.2, r / 2, 0);
                 p.getWorld().playSound(p.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 0.6f, 1.4f);
                 for (org.bukkit.entity.Entity en : p.getNearbyEntities(r, 2, r)) {
+                    if (hiddenAdmin(p, en)) {
+                        continue;   // admin đang ẩn (/v): chiêu không trúng, không lộ
+                    }
                     if (en instanceof org.bukkit.entity.LivingEntity le && en != p && !PetCombat.isPet(en)) {
                         le.damage(value <= 0 ? 3 : value, p);   // qua sự kiện: Towny / PvP vẫn kiểm
                         if (!le.isDead()) {
@@ -522,7 +525,14 @@ final class SkillEnchants implements Listener {
             case "soi_sang" -> {
                 int n = 0;
                 for (Player o : p.getWorld().getPlayers()) {
-                    if (o != p && o.getLocation().distanceSquared(p.getLocation()) <= value * value) {
+                    if (o != p && o.getLocation().distanceSquared(p.getLocation()) <= value * value
+                            && o.getGameMode() != org.bukkit.GameMode.SPECTATOR) {
+                        if (STEALTH.containsKey(o.getUniqueId())) {
+                            reveal(o);   // Soi sáng phá Tàng hình (28/10)
+                            o.sendActionBar(LEGACY.deserialize("&eBị Soi sáng của " + p.getName() + " làm lộ diện"));
+                        } else if (!p.canSee(o)) {
+                            continue;    // admin đang ẩn (/v): không làm sáng, không đếm (không lộ có người)
+                        }
                         o.addPotionEffect(new org.bukkit.potion.PotionEffect(org.bukkit.potion.PotionEffectType.GLOWING, 100, 0, false, false, true));
                         n++;
                     }
@@ -634,6 +644,9 @@ final class SkillEnchants implements Listener {
                 face.normalize();
                 int hit = 0;
                 for (org.bukkit.entity.Entity en : p.getNearbyEntities(8, 4, 8)) {
+                    if (hiddenAdmin(p, en)) {
+                        continue;   // admin đang ẩn (/v): chiêu không trúng, không lộ
+                    }
                     if (!(en instanceof org.bukkit.entity.LivingEntity t) || en instanceof org.bukkit.entity.ArmorStand) {
                         continue;
                     }
@@ -658,6 +671,9 @@ final class SkillEnchants implements Listener {
                 double r = 4 + 2 * value;
                 int n = 0;
                 for (org.bukkit.entity.Entity en : p.getNearbyEntities(r, r / 2, r)) {
+                    if (hiddenAdmin(p, en)) {
+                        continue;   // admin đang ẩn (/v): chiêu không trúng, không lộ
+                    }
                     if (en instanceof org.bukkit.entity.Mob m && en instanceof org.bukkit.entity.Enemy && !PetCombat.isPet(en)) {
                         m.setTarget(p);
                         n++;
@@ -773,6 +789,9 @@ final class SkillEnchants implements Listener {
                         p.getWorld().spawnParticle(Particle.SWEEP_ATTACK, p.getLocation().add(0, 1, 0), 6, 1.5, 0.2, 1.5, 0);
                         p.getWorld().playSound(p.getLocation(), Sound.ENTITY_PLAYER_ATTACK_SWEEP, 0.7f, 1f);
                         for (org.bukkit.entity.Entity en : p.getNearbyEntities(3, 1.5, 3)) {
+                            if (hiddenAdmin(p, en)) {
+                                continue;   // admin đang ẩn (/v): chiêu không trúng, không lộ
+                            }
                             if (en instanceof org.bukkit.entity.LivingEntity le && !PetCombat.isPet(en) && !(en instanceof org.bukkit.entity.ArmorStand)) {
                                 org.bukkit.util.Vector v = le.getVelocity();
                                 le.setNoDamageTicks(0);
@@ -807,6 +826,9 @@ final class SkillEnchants implements Listener {
             case "lien_hoan" -> {
                 List<org.bukkit.entity.LivingEntity> targets = new ArrayList<>();
                 for (org.bukkit.entity.Entity en : p.getNearbyEntities(8, 4, 8)) {
+                    if (hiddenAdmin(p, en)) {
+                        continue;   // admin đang ẩn (/v): chiêu không trúng, không lộ
+                    }
                     if (en instanceof org.bukkit.entity.LivingEntity le && !PetCombat.isPet(en) && !(en instanceof org.bukkit.entity.ArmorStand)
                             && !(en instanceof Player o && o.getGameMode() == org.bukkit.GameMode.SPECTATOR)) {
                         targets.add(le);
@@ -879,6 +901,9 @@ final class SkillEnchants implements Listener {
                 }
                 p.addPotionEffect(new org.bukkit.potion.PotionEffect(org.bukkit.potion.PotionEffectType.INVISIBILITY, (int) (dur / 50) + 2, 0, false, false, true));
                 for (org.bukkit.entity.Entity en : p.getNearbyEntities(32, 16, 32)) {
+                    if (hiddenAdmin(p, en)) {
+                        continue;   // admin đang ẩn (/v): chiêu không trúng, không lộ
+                    }
                     if (en instanceof org.bukkit.entity.Mob m && p.equals(m.getTarget())) {
                         m.setTarget(null);
                     }
@@ -1033,6 +1058,9 @@ final class SkillEnchants implements Listener {
                     at.getWorld().spawnParticle(Particle.ITEM_SLIME, at, 40, 1.5, 0.3, 1.5, 0.1);
                     at.getWorld().playSound(at, Sound.ENTITY_SLIME_SQUISH, 1.2f, 0.6f);
                     for (org.bukkit.entity.Entity en : p.getNearbyEntities(3, 2, 3)) {
+                        if (hiddenAdmin(p, en)) {
+                            continue;   // admin đang ẩn (/v): chiêu không trúng, không lộ
+                        }
                         if (en instanceof org.bukkit.entity.LivingEntity le && !(en instanceof org.bukkit.entity.ArmorStand) && !PetCombat.isPet(en)
                                 && strike(p, le, dmg) && !le.isDead()) {
                             le.setVelocity(le.getLocation().toVector().subtract(at.toVector()).setY(0).normalize().multiply(0.4).setY(0.6));
@@ -1057,6 +1085,9 @@ final class SkillEnchants implements Listener {
         at.getWorld().playSound(at, Sound.ENTITY_IRON_GOLEM_ATTACK, 1f, 0.8f);
         int hit = 0;
         for (org.bukkit.entity.Entity en : p.getNearbyEntities(3, 2, 3)) {
+            if (hiddenAdmin(p, en)) {
+                continue;   // admin đang ẩn (/v): chiêu không trúng, không lộ
+            }
             if (en instanceof org.bukkit.entity.LivingEntity le && !(en instanceof org.bukkit.entity.ArmorStand) && !PetCombat.isPet(en) && strike(p, le, dmg)) {
                 if (!le.isDead()) {
                     root(le, 20);
@@ -1094,12 +1125,21 @@ final class SkillEnchants implements Listener {
         org.bukkit.Location eye = p.getEyeLocation();
         var hit = p.getWorld().rayTrace(eye, eye.getDirection(), range, org.bukkit.FluidCollisionMode.NEVER, true, 0.35,
                 e -> e != p && e instanceof org.bukkit.entity.LivingEntity && !(e instanceof org.bukkit.entity.ArmorStand)
-                        && (!onlyPlayers || e instanceof Player) && !(e instanceof Player o && o.getGameMode() == org.bukkit.GameMode.SPECTATOR));
+                        && (!onlyPlayers || e instanceof Player) && !(e instanceof Player o && o.getGameMode() == org.bukkit.GameMode.SPECTATOR)
+                        && !(e instanceof Player o && !p.canSee(o)));   // admin /v, người đang Tàng hình: không nhắm trúng
         return hit != null && hit.getHitEntity() instanceof org.bukkit.entity.LivingEntity le ? le : null;
     }
 
     /** Đòn thử: gây dmg sát thương thật (qua EntityDamageByEntityEvent). false = bị Towny / PvP / vùng an toàn / Đấu Trường chặn. */
+    /** Admin đang ẩn (/v của Essentials ẩn bằng hidePlayer): mọi chiêu bỏ qua. Người đang Tàng hình (chiêu) không tính: vẫn dính chiêu vùng. */
+    private static boolean hiddenAdmin(Player p, org.bukkit.entity.Entity e) {
+        return e instanceof Player o && o != p && !p.canSee(o) && !STEALTH.containsKey(o.getUniqueId());
+    }
+
     private static boolean strike(Player p, org.bukkit.entity.LivingEntity t, double dmg) {
+        if (hiddenAdmin(p, t)) {
+            return false;
+        }
         if (t instanceof Player tp && active(SPELL_SHIELD, tp)) {
             SPELL_SHIELD.remove(tp.getUniqueId());   // Lá chắn phép: chặn chiêu này, hồi 1 tim
             var attr = tp.getAttribute(Attribute.MAX_HEALTH);
@@ -1280,6 +1320,9 @@ final class SkillEnchants implements Listener {
                 center.getWorld().spawnParticle(Particle.REVERSE_PORTAL, center, 30, r / 2, 0.6, r / 2, 0.05);
                 center.getWorld().spawnParticle(Particle.SQUID_INK, center, 4, 0.2, 0.2, 0.2, 0);
                 for (org.bukkit.entity.Entity en : center.getWorld().getNearbyEntities(center, r, r / 2 + 1, r)) {
+                    if (hiddenAdmin(p, en)) {
+                        continue;   // admin đang ẩn (/v): chiêu không trúng, không lộ
+                    }
                     if (!(en instanceof org.bukkit.entity.LivingEntity le) || en == p || PetCombat.isPet(en) || en instanceof org.bukkit.entity.ArmorStand) {
                         continue;
                     }
@@ -1312,6 +1355,9 @@ final class SkillEnchants implements Listener {
         org.bukkit.util.Vector a = eye.toVector();
         org.bukkit.util.BoundingBox box = org.bukkit.util.BoundingBox.of(a, a.clone().add(dir.clone().multiply(len))).expand(1.2);
         for (org.bukkit.entity.Entity en : p.getWorld().getNearbyEntities(box)) {
+            if (hiddenAdmin(p, en)) {
+                continue;   // admin đang ẩn (/v): chiêu không trúng, không lộ
+            }
             if (!(en instanceof org.bukkit.entity.LivingEntity le) || en == p || PetCombat.isPet(en) || en instanceof org.bukkit.entity.ArmorStand) {
                 continue;
             }
@@ -1345,6 +1391,9 @@ final class SkillEnchants implements Listener {
                 at.getWorld().spawnParticle(Particle.EXPLOSION_EMITTER, at, 1, 0, 0, 0, 0);
                 at.getWorld().playSound(at, Sound.ENTITY_GENERIC_EXPLODE, 1.2f, 0.9f);
                 for (org.bukkit.entity.Entity en : at.getWorld().getNearbyEntities(at, 3, 3, 3)) {
+                    if (hiddenAdmin(p, en)) {
+                        continue;   // admin đang ẩn (/v): chiêu không trúng, không lộ
+                    }
                     if (en instanceof org.bukkit.entity.LivingEntity le && en != p && !PetCombat.isPet(en) && !(en instanceof org.bukkit.entity.ArmorStand)
                             && le.getLocation().distanceSquared(at) <= 9) {
                         le.setNoDamageTicks(0);
@@ -1379,6 +1428,9 @@ final class SkillEnchants implements Listener {
             org.bukkit.entity.LivingEntity next = null;
             double best = 36;
             for (org.bukkit.entity.Entity en : cur.getNearbyEntities(6, 3, 6)) {
+                if (hiddenAdmin(p, en)) {
+                    continue;   // admin đang ẩn (/v): chiêu không trúng, không lộ
+                }
                 if (en instanceof org.bukkit.entity.LivingEntity le && en != p && !hit.contains(en.getUniqueId()) && !PetCombat.isPet(en)
                         && !(en instanceof org.bukkit.entity.ArmorStand)) {
                     double ds = en.getLocation().distanceSquared(cur.getLocation());
@@ -1489,6 +1541,9 @@ final class SkillEnchants implements Listener {
                 victim.getWorld().spawnParticle(Particle.EXPLOSION, victim.getLocation().add(0, 1, 0), 2, 0.5, 0.3, 0.5, 0);
                 victim.getWorld().playSound(victim.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 0.6f, 1.5f);
                 for (org.bukkit.entity.Entity en : victim.getNearbyEntities(3, 2, 3)) {
+                    if (hiddenAdmin(p, en)) {
+                        continue;   // admin đang ẩn (/v): chiêu không trúng, không lộ
+                    }
                     if (en instanceof org.bukkit.entity.LivingEntity le && en != p && !PetCombat.isPet(en) && !(en instanceof org.bukkit.entity.ArmorStand)) {
                         org.bukkit.Bukkit.getScheduler().runTask(pl(), () -> {
                             le.setNoDamageTicks(0);

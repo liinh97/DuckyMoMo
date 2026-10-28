@@ -378,7 +378,9 @@ public final class DuckyMoMoCore extends JavaPlugin {
         // Bot botfarm (IP 10.30.x.x) chỉ giữ vùng nhỏ quanh mình: 22 bot rải 22 khu làm server gần quá tải (27/10)
         if (getConfig().getBoolean("bot-view.enabled", true)) {
             int sim = getConfig().getInt("bot-view.simulation-distance", 2), view = getConfig().getInt("bot-view.view-distance", 2);
-            getServer().getPluginManager().registerEvents(new BotView(sim, view, getLogger()), this);
+            BotView botView = new BotView(sim, view, getLogger());
+            getServer().getPluginManager().registerEvents(botView, this);
+            botView.startCleanup(this);   // dọn quái đông cứng quanh bot mỗi phút (29/10)
             getLogger().info("Bot botfarm: simulation-distance " + sim + ", view-distance " + view);
         }
 

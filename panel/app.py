@@ -1669,6 +1669,59 @@ def say(payload, full=True, who=None):
         msg += " (bỏ qua server đang tắt: " + ", ".join(failed) + ")"
     return {"ok": True, "message": msg}
 
+# Lệnh thời tiết Essentials chạy từ console bắt buộc ghi thế giới (/sun <world> <storm/sun> [duration]) - 29/10 chủ server:
+# "đang ở world nào thì mặc định dùng lệnh cho world đó"
+WEATHER_SUN = {"sun", "esun"}
+WEATHER_STORM = {"storm", "estorm", "rain", "erain"}
+WEATHER_ANY = {"weather", "eweather", "sky", "esky"}
+
+
+def player_world(target, name):
+    """Thế giới (tên Bukkit) người chơi đang đứng, đọc Dimension qua RCON; không đọc được thì None."""
+    try:
+        out = COLOR_RE.sub("", rcon(target, [f"minecraft:data get entity {name} Dimension"])[0][1])
+    except Exception:
+        return None
+    m = re.search(r'"([a-z0-9_.-]+):([a-z0-9_./-]+)"', out)
+    if not m:
+        return None
+    return {"overworld": "world", "the_nether": "world_nether", "the_end": "world_the_end"}.get(m.group(2), m.group(2))
+
+
+def fill_world(target, cmd, who):
+    """Thêm thế giới cho lệnh thời tiết Essentials nếu chưa ghi: thế giới của người trùng tên ô Tên hiển thị, không có thì của người
+    thật duy nhất đang ở server đó, còn lại thế giới chính. Trả (lệnh mới, ghi chú) hoặc (lệnh cũ, "")."""
+    parts = cmd.split()
+    base = parts[0].lower().split(":")[-1]
+    rest = parts[1:]
+    if base in WEATHER_SUN or base in WEATHER_STORM:
+        if rest and not rest[0].isdigit() and rest[0].lower() not in ("sun", "storm"):
+            return cmd, ""                       # đã ghi thế giới
+        if rest and rest[0].lower() in ("sun", "storm"):
+            mode, rest = rest[0].lower(), rest[1:]
+        else:
+            mode = "sun" if base in WEATHER_SUN else "storm"
+    elif base in WEATHER_ANY:
+        if not rest or rest[0].lower() not in ("sun", "storm"):
+            return cmd, ""
+        mode, rest = rest[0].lower(), rest[1:]
+    else:
+        return cmd, ""
+    online = online_players(fresh=True)
+    bots = {str(b.get("name", "")).lower() for b in bot_json().get("bots", [])}
+    cased = {n.lower(): n for n in names_cased()}
+    pick = None
+    if who and online.get(who.lower()) == target:
+        pick = who
+    else:
+        real = [n for n, srv in online.items() if srv == target and n not in bots]
+        if len(real) == 1:
+            pick = cased.get(real[0], real[0])
+    world = (player_world(target, pick) if pick else None) or "world"
+    note = f"thế giới {world}" + (f" (chỗ {pick} đang đứng)" if pick else " (thế giới chính)")
+    return " ".join([parts[0], world, mode] + rest), note
+
+
 def say_command(text, target, full, who):
     """Lệnh console gõ từ ô gửi tin: chạy trên đúng một server, trả lại phản hồi của server."""
     if not full:
@@ -1678,6 +1731,10 @@ def say_command(text, target, full, who):
     cmd = text[1:].strip()
     if not cmd:
         raise ValueError("Chưa nhập lệnh")
+    try:
+        cmd, note = fill_world(target, cmd, who)
+    except Exception:
+        note = ""
     try:
         out = COLOR_RE.sub("", rcon(target, [cmd])[0][1]).strip()
     except Exception:
@@ -1692,7 +1749,7 @@ def say_command(text, target, full, who):
             f.write(json.dumps(event, ensure_ascii=False) + "\n")
     except OSError as e:
         print(f"Không ghi được {ADMIN_FILE}: {e}", flush=True)
-    return {"ok": True, "message": f"/{cmd} ({SAY_SERVERS[target]}): " + (out[:600] or "đã chạy, server không trả lời gì")}
+    return {"ok": True, "message": f"/{cmd} ({SAY_SERVERS[target]}{', ' + note if note else ''}): " + (out[:600] or "đã chạy, server không trả lời gì")}
 
 
 # ---------------------------------------------------------------- Bot (dịch vụ botfarm, chỉ trong mạng Docker)

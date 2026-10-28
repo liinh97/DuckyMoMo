@@ -833,6 +833,49 @@ Admin (quyền duckymomo.sell.khonggioihan) không bị giới hạn." }
       - { key: mua_kho_pumpkin, label: "Mùa khô: Bí ngô (quả)", type: number, min: 0, max: 5, file: plugins/DuckyMoMoCore/config.yml, path: seasons.list.kho.growth.PUMPKIN }
       - { key: mua_kho_cactus, label: "Mùa khô: Xương rồng", type: number, min: 0, max: 5, file: plugins/DuckyMoMoCore/config.yml, path: seasons.list.kho.growth.CACTUS }
 
+  - title: Thân nhiệt (/nhietdo)
+    category: Thế giới
+    description: "Thời tiết khắc nghiệt: đợt Rét đậm (mùa mưa) và Nắng nóng (mùa khô), vùng tuyết lạnh, sa mạc nóng, đêm lạnh, dầm mưa bị ướt. Quá lạnh / nóng thì chậm, đói nhanh, mất máu (không chết). Giữ ấm / mát: nhà có mái, lửa trại, Đá Ôn Linh, ô lá (Lá Nhỏ Giọt), giáp da, súp / dưa hấu."
+    info: "Mỗi giây: nhiệt môi trường = nhiệt nền (mùa, hoặc đợt đang diễn ra) + vùng đất + đêm / nắng + ướt + giáp da + lửa / băng gần, dưới mái che kéo về nhiệt dễ chịu. Thân nhiệt đuổi dần theo.\nĐá Ôn Linh: chế 4 đá trơn + 4 đá lửa + 1 sắt; để cạnh lửa thì nóng, cạnh băng thì lạnh, mang trong túi.\nMiễn: bot, người mới, chế độ sáng tạo, Nether/End/dungeon.\nNgười chơi xem: /nhietdo. Admin: /nhietdo cho <người> [độ], /nhietdo dat <người> <độ>.\nLưu xong: có hiệu lực ngay (dmm reload)."
+    apply: [dmm reload]
+    settings:
+      - { key: tn_on, label: "Bật thân nhiệt", type: select, file: plugins/DuckyMoMoCore/config.yml, path: body-temp.enabled, options: [ { value: true, label: Bật }, { value: false, label: Tắt } ] }
+      - { key: tn_newbie, label: "Người mới được miễn (giờ chơi đầu)", type: number, min: 0, max: 100, file: plugins/DuckyMoMoCore/config.yml, path: body-temp.newbie-hours }
+      - { key: tn_mua, label: "Nhiệt nền mùa mưa (°)", type: number, min: -30, max: 60, file: plugins/DuckyMoMoCore/config.yml, path: seasons.list.mua.temperature }
+      - { key: tn_kho, label: "Nhiệt nền mùa khô (°)", type: number, min: -30, max: 60, file: plugins/DuckyMoMoCore/config.yml, path: seasons.list.kho.temperature }
+      - { key: tn_ret_temp, label: "Rét đậm: nhiệt nền (°)", type: number, min: -30, max: 60, file: plugins/DuckyMoMoCore/config.yml, path: seasons.events.retdam.temperature }
+      - { key: tn_ret_from, label: "Rét đậm: từ ngày thứ (của mùa mưa)", type: int, min: -30, max: 60, file: plugins/DuckyMoMoCore/config.yml, path: seasons.events.retdam.from-day, note: "Số âm đếm từ cuối mùa (-1 = ngày cuối). Đừng trùng ngày Lũ (ngày cuối mùa mưa)." }
+      - { key: tn_ret_to, label: "Rét đậm: tới ngày thứ", type: int, min: -30, max: 60, file: plugins/DuckyMoMoCore/config.yml, path: seasons.events.retdam.to-day }
+      - { key: tn_nong_temp, label: "Nắng nóng: nhiệt nền (°)", type: number, min: -30, max: 60, file: plugins/DuckyMoMoCore/config.yml, path: seasons.events.nangnong.temperature }
+      - { key: tn_nong_from, label: "Nắng nóng: từ ngày thứ (của mùa khô)", type: int, min: -30, max: 60, file: plugins/DuckyMoMoCore/config.yml, path: seasons.events.nangnong.from-day, note: "Đừng trùng ngày Hạn hán (ngày 3–4 mùa khô)." }
+      - { key: tn_nong_to, label: "Nắng nóng: tới ngày thứ", type: int, min: -30, max: 60, file: plugins/DuckyMoMoCore/config.yml, path: seasons.events.nangnong.to-day }
+      - { key: tn_mid, label: "Nhiệt dễ chịu (°)", type: number, min: -10, max: 40, file: plugins/DuckyMoMoCore/config.yml, path: body-temp.comfort-mid, note: "Dưới mái che, đá, đồ ăn kéo thân nhiệt về quanh mức này." }
+      - { key: tn_cold, label: "Lạnh khi thân nhiệt dưới (°)", type: number, min: -30, max: 40, file: plugins/DuckyMoMoCore/config.yml, path: body-temp.cold, note: "Màn hình đóng băng, đi chậm, đói nhanh." }
+      - { key: tn_freezing, label: "Rét cóng khi dưới (°)", type: number, min: -40, max: 40, file: plugins/DuckyMoMoCore/config.yml, path: body-temp.freezing, note: "Chậm hơn, mất máu." }
+      - { key: tn_hot, label: "Nóng khi thân nhiệt trên (°)", type: number, min: 0, max: 70, file: plugins/DuckyMoMoCore/config.yml, path: body-temp.hot, note: "Yếu sức, đói nhanh." }
+      - { key: tn_scorching, label: "Nóng bỏng khi trên (°)", type: number, min: 0, max: 80, file: plugins/DuckyMoMoCore/config.yml, path: body-temp.scorching, note: "Thêm chậm, mất máu." }
+      - { key: tn_damage, label: "Máu mất mỗi lần (rét cóng / nóng bỏng, 1 = nửa tim)", type: number, min: 0, max: 20, file: plugins/DuckyMoMoCore/config.yml, path: body-temp.damage }
+      - { key: tn_every, label: "Mất máu mỗi (giây)", type: int, min: 1, max: 60, file: plugins/DuckyMoMoCore/config.yml, path: body-temp.damage-every }
+      - { key: tn_minhp, label: "Không trừ máu dưới (2 = 1 tim)", type: number, min: 1, max: 20, file: plugins/DuckyMoMoCore/config.yml, path: body-temp.min-health, note: "Chủ server chốt không chết vì nhiệt: để từ 1 trở lên." }
+      - { key: tn_rate, label: "Tốc độ thân nhiệt đổi theo môi trường (mỗi giây)", type: number, min: 0.001, max: 1, file: plugins/DuckyMoMoCore/config.yml, path: body-temp.body-rate, note: "0.025 ≈ 40 giây mới đổi gần hết; lớn hơn = đổi nhanh hơn." }
+      - { key: tn_biome, label: "Độ chênh theo vùng đất", type: number, min: 0, max: 50, file: plugins/DuckyMoMoCore/config.yml, path: body-temp.biome-scale, note: "15: vùng tuyết lạnh hơn ~12–20°, sa mạc nóng hơn ~18°." }
+      - { key: tn_night, label: "Ban đêm lạnh hơn (°)", type: number, min: 0, max: 40, file: plugins/DuckyMoMoCore/config.yml, path: body-temp.night }
+      - { key: tn_sun, label: "Nắng ban ngày nóng hơn (°)", type: number, min: 0, max: 40, file: plugins/DuckyMoMoCore/config.yml, path: body-temp.sun, note: "Cầm ô lá còn 1/3." }
+      - { key: tn_water, label: "Dưới nước mát hơn (°)", type: number, min: 0, max: 40, file: plugins/DuckyMoMoCore/config.yml, path: body-temp.water }
+      - { key: tn_wet, label: "Dầm mưa: % ướt mỗi giây", type: number, min: 0, max: 100, file: plugins/DuckyMoMoCore/config.yml, path: body-temp.rain-wet, note: "Ướt 100% = lạnh thêm 10°. Có mái / cầm ô lá thì không ướt." }
+      - { key: tn_leather, label: "Mỗi món giáp da ấm thêm (°)", type: number, min: 0, max: 20, file: plugins/DuckyMoMoCore/config.yml, path: body-temp.leather-per-piece }
+      - { key: tn_shelter, label: "Mái che kéo về dễ chịu (0–1)", type: number, min: 0, max: 1, file: plugins/DuckyMoMoCore/config.yml, path: body-temp.shelter, note: "0.5 = kéo một nửa khoảng cách về nhiệt dễ chịu." }
+      - { key: tn_heat, label: "Gần lửa / lửa trại / lò / dung nham ấm thêm (°)", type: number, min: 0, max: 60, file: plugins/DuckyMoMoCore/config.yml, path: body-temp.heat-source }
+      - { key: tn_coldsrc, label: "Gần băng / tuyết lạnh thêm (°)", type: number, min: 0, max: 60, file: plugins/DuckyMoMoCore/config.yml, path: body-temp.cold-source }
+      - { key: tn_radius, label: "Bán kính tìm lửa / băng (khối)", type: int, min: 1, max: 6, file: plugins/DuckyMoMoCore/config.yml, path: body-temp.source-radius, note: "Lớn quá làm server nặng hơn." }
+      - { key: tn_stone_hot, label: "Đá Ôn Linh hơ lửa nóng tới (°)", type: number, min: 0, max: 120, file: plugins/DuckyMoMoCore/config.yml, path: body-temp.stone-hot }
+      - { key: tn_stone_cold, label: "Đá Ôn Linh ướp băng lạnh tới (°)", type: number, min: -60, max: 30, file: plugins/DuckyMoMoCore/config.yml, path: body-temp.stone-cold }
+      - { key: tn_stone_hold, label: "Đá giữ nhiệt (giây)", type: int, min: 10, max: 3600, file: plugins/DuckyMoMoCore/config.yml, path: body-temp.stone-hold-seconds, note: "Càng lớn đá càng lâu nguội." }
+      - { key: tn_stone_str, label: "Sức đá kéo nhiệt (0–1)", type: number, min: 0, max: 1, file: plugins/DuckyMoMoCore/config.yml, path: body-temp.stone-strength }
+      - { key: tn_food_warm, label: "Ăn súp ấm thêm (°)", type: number, min: 0, max: 40, file: plugins/DuckyMoMoCore/config.yml, path: body-temp.food-warm }
+      - { key: tn_food_cool, label: "Ăn dưa hấu / quả mọng mát đi (°; nước, mật ong một nửa)", type: number, min: 0, max: 40, file: plugins/DuckyMoMoCore/config.yml, path: body-temp.food-cool }
+      - { key: tn_tip, label: "Nhắc cách giữ ấm / mát mỗi (phút)", type: int, min: 1, max: 120, file: plugins/DuckyMoMoCore/config.yml, path: body-temp.tip-minutes }
+
   - title: Server vắng thì nhẹ đi
     category: Thế giới
     description: "Lúc server còn ít người: nhiệm vụ dễ hơn, bắt pet dễ hơn, thị trấn vắng nhà không bị mất trắng khi công thành."

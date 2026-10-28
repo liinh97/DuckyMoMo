@@ -36,8 +36,14 @@ final class ArmorHidePackets extends PacketListenerAbstract {
         super(PacketListenerPriority.HIGH);
     }
 
-    static void register() {
-        PacketEvents.getAPI().getEventManager().registerListener(new ArmorHidePackets());
+    private static boolean registered;
+
+    /** Đăng ký một lần (dmm reload tạo lại ArmorHide nhưng PacketEvents giữ listener cũ: đăng ký lại là lọc trùng). */
+    static synchronized void register() {
+        if (!registered) {
+            PacketEvents.getAPI().getEventManager().registerListener(new ArmorHidePackets());
+            registered = true;
+        }
     }
 
     private static boolean armor(EquipmentSlot s) {

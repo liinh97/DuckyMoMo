@@ -195,7 +195,8 @@ async function loadBots() {
 
 // ---------------------------------------------------------------- khung chat: chat + lệnh member (Hoạt động) + tin bot nhận
 let EVENTS = [], ACT = [], DEV = {}, atBottom = true;
-const devHtml = (p) => { const d = DEV[p]; return d ? `<span class="dev ${esc(d.loai)}" title="${esc(d.chi_tiet || "")}">${esc(d.nhan)}</span>` : ""; };
+const devHtml = (p) => { const d = DEV[p] || (BOTS.some((b) => b.name === p) ? { nhan: "Bot", loai: "bot", chi_tiet: "Bot của trang quản trị › Bot" } : null);
+  return d ? `<span class="dev ${esc(d.loai)}" title="${esc(d.chi_tiet || "")}">${esc(d.nhan)}</span>` : ""; };
 const TAG = { chat: "Chat", command: "Lệnh", msg: "Nhắn riêng", tpa: "TPA", nhac: "Gọi tên", kick: "Bị đá", chet: "Chết", doi: "Dời chỗ" };
 const hhmm = (ts) => { const d = new Date(ts); return isNaN(d) ? "" : d.toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false }); };
 const isBot = (n) => BOTS.some((b) => b.name === n);
@@ -221,13 +222,18 @@ function renderFeed() {
   feed.innerHTML = rows.slice(-400).map((r) => {
     let tx;
     if (r.bot) {   // tin bot nhận
-      tx = r.type === "msg" ? `<b>${esc(r.from)}</b> nhắn riêng ${botName(r.bot)}: ${esc(r.text)}`
-        : r.type === "tpa" ? `${botName(r.bot)} nhận: ${esc(r.text)}`
-        : `${botName(r.bot)} · ${esc(r.text)}`;
+      const bn = devHtml(r.bot) + botName(r.bot);
+      tx = r.type === "msg" ? `<b>${esc(r.from)}</b> nhắn riêng ${bn}: ${esc(r.text)}`
+        : r.type === "tpa" ? `${bn} nhận: ${esc(r.text)}`
+        : `${bn} · ${esc(r.text)}`;
     } else {
       const t = String(r.text || ""), p = r.player || "";
       const who = devHtml(p) + (isBot(p) ? botName(p) : `<b>${esc(p)}</b>`);
-      tx = p && t.startsWith(p) ? (r.type === "command" ? `${who} <code>${esc(t.slice(p.length).replace(/^:\s*/, ""))}</code>` : who + esc(t.slice(p.length))) : esc(t);
+      if (p && t.startsWith("<" + p + ">")) {   // dòng chat dạng "<tên> nội dung": nhãn PC/Bot + tên bot bấm chọn được
+        tx = devHtml(p) + `&lt;${isBot(p) ? botName(p) : `<b>${esc(p)}</b>`}&gt;` + esc(t.slice(p.length + 2));
+      } else {
+        tx = p && t.startsWith(p) ? (r.type === "command" ? `${who} <code>${esc(t.slice(p.length).replace(/^:\s*/, ""))}</code>` : who + esc(t.slice(p.length))) : esc(t);
+      }
     }
     const hot = r.type === "msg" || r.type === "tpa";
     return `<div class="ln${hot ? " hot" : ""}"${hot ? ` data-bot="${esc(r.bot)}" data-from="${esc(r.from || "")}" data-type="${r.type}"` : ""}>

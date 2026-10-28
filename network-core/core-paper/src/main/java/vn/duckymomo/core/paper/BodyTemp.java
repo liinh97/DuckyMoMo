@@ -364,11 +364,11 @@ final class BodyTemp implements Listener {
         boolean raining = p.getWorld().hasStorm() && !covered(p) && !umbrella(p)
                 && p.getLocation().getBlock().getTemperature() < 1.5;   // sa mạc / đất cằn không mưa
         if (p.isInWater()) {
-            w += 25;
+            w += cfg.getDouble("water-wet", 10);
         } else if (raining) {
-            w += cfg.getDouble("rain-wet", 4);
+            w += cfg.getDouble("rain-wet", 1);
         } else {
-            w -= src[0] > 0 ? 6 : 1.5;
+            w -= src[0] > 0 ? cfg.getDouble("dry-fire", 3) : cfg.getDouble("dry-rate", 0.5);
         }
         w = Math.max(0, Math.min(100, w));
         wet.put(u, w);
@@ -393,10 +393,10 @@ final class BodyTemp implements Listener {
             double rate;
             if (src[0] > 0) {
                 target = cfg.getDouble("stone-hot", 70);
-                rate = 0.06;
+                rate = cfg.getDouble("stone-heat-rate", 0.02);
             } else if (src[1] > 0) {
                 target = cfg.getDouble("stone-cold", -10);
-                rate = 0.06;
+                rate = cfg.getDouble("stone-heat-rate", 0.02);
             } else {
                 target = env;
                 rate = 1.0 / Math.max(10, cfg.getDouble("stone-hold-seconds", 300));

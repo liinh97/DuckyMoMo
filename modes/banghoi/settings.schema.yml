@@ -857,12 +857,15 @@ Admin (quyền duckymomo.sell.khonggioihan) không bị giới hạn." }
       - { key: tn_damage, label: "Máu mất mỗi lần (rét cóng / nóng bỏng, 1 = nửa tim)", type: number, min: 0, max: 20, file: plugins/DuckyMoMoCore/config.yml, path: body-temp.damage }
       - { key: tn_every, label: "Mất máu mỗi (giây)", type: int, min: 1, max: 60, file: plugins/DuckyMoMoCore/config.yml, path: body-temp.damage-every }
       - { key: tn_minhp, label: "Không trừ máu dưới (2 = 1 tim)", type: number, min: 1, max: 20, file: plugins/DuckyMoMoCore/config.yml, path: body-temp.min-health, note: "Chủ server chốt không chết vì nhiệt: để từ 1 trở lên." }
-      - { key: tn_rate, label: "Tốc độ thân nhiệt đổi theo môi trường (mỗi giây)", type: number, min: 0.001, max: 1, file: plugins/DuckyMoMoCore/config.yml, path: body-temp.body-rate, note: "0.025 ≈ 40 giây mới đổi gần hết; lớn hơn = đổi nhanh hơn." }
+      - { key: tn_rate, label: "Tốc độ thân nhiệt đổi theo môi trường (mỗi giây)", type: number, min: 0.001, max: 1, file: plugins/DuckyMoMoCore/config.yml, path: body-temp.body-rate, note: "0.008 ≈ 2 phút mới đổi gần hết; lớn hơn = đổi nhanh hơn." }
       - { key: tn_biome, label: "Độ chênh theo vùng đất", type: number, min: 0, max: 50, file: plugins/DuckyMoMoCore/config.yml, path: body-temp.biome-scale, note: "15: vùng tuyết lạnh hơn ~12–20°, sa mạc nóng hơn ~18°." }
       - { key: tn_night, label: "Ban đêm lạnh hơn (°)", type: number, min: 0, max: 40, file: plugins/DuckyMoMoCore/config.yml, path: body-temp.night }
       - { key: tn_sun, label: "Nắng ban ngày nóng hơn (°)", type: number, min: 0, max: 40, file: plugins/DuckyMoMoCore/config.yml, path: body-temp.sun, note: "Cầm ô lá còn 1/3." }
       - { key: tn_water, label: "Dưới nước mát hơn (°)", type: number, min: 0, max: 40, file: plugins/DuckyMoMoCore/config.yml, path: body-temp.water }
       - { key: tn_wet, label: "Dầm mưa: % ướt mỗi giây", type: number, min: 0, max: 100, file: plugins/DuckyMoMoCore/config.yml, path: body-temp.rain-wet, note: "Ướt 100% = lạnh thêm 10°. Có mái / cầm ô lá thì không ướt." }
+      - { key: tn_water_wet, label: "Dưới nước: % ướt mỗi giây", type: number, min: 0, max: 100, file: plugins/DuckyMoMoCore/config.yml, path: body-temp.water-wet }
+      - { key: tn_dry, label: "Khô dần: % mỗi giây", type: number, min: 0, max: 100, file: plugins/DuckyMoMoCore/config.yml, path: body-temp.dry-rate }
+      - { key: tn_dry_fire, label: "Khô cạnh lửa: % mỗi giây", type: number, min: 0, max: 100, file: plugins/DuckyMoMoCore/config.yml, path: body-temp.dry-fire }
       - { key: tn_leather, label: "Mỗi món giáp da ấm thêm (°)", type: number, min: 0, max: 20, file: plugins/DuckyMoMoCore/config.yml, path: body-temp.leather-per-piece }
       - { key: tn_shelter, label: "Mái che kéo về dễ chịu (0–1)", type: number, min: 0, max: 1, file: plugins/DuckyMoMoCore/config.yml, path: body-temp.shelter, note: "0.5 = kéo một nửa khoảng cách về nhiệt dễ chịu." }
       - { key: tn_heat, label: "Gần lửa / lửa trại / lò / dung nham ấm thêm (°)", type: number, min: 0, max: 60, file: plugins/DuckyMoMoCore/config.yml, path: body-temp.heat-source }
@@ -870,6 +873,7 @@ Admin (quyền duckymomo.sell.khonggioihan) không bị giới hạn." }
       - { key: tn_radius, label: "Bán kính tìm lửa / băng (khối)", type: int, min: 1, max: 6, file: plugins/DuckyMoMoCore/config.yml, path: body-temp.source-radius, note: "Lớn quá làm server nặng hơn." }
       - { key: tn_stone_hot, label: "Đá Ôn Linh hơ lửa nóng tới (°)", type: number, min: 0, max: 120, file: plugins/DuckyMoMoCore/config.yml, path: body-temp.stone-hot }
       - { key: tn_stone_cold, label: "Đá Ôn Linh ướp băng lạnh tới (°)", type: number, min: -60, max: 30, file: plugins/DuckyMoMoCore/config.yml, path: body-temp.stone-cold }
+      - { key: tn_stone_rate, label: "Đá nóng lên / lạnh đi mỗi giây (0–1)", type: number, min: 0.001, max: 1, file: plugins/DuckyMoMoCore/config.yml, path: body-temp.stone-heat-rate, note: "0.02 ≈ 1 phút hơ lửa mới nóng rõ." }
       - { key: tn_stone_hold, label: "Đá giữ nhiệt (giây)", type: int, min: 10, max: 3600, file: plugins/DuckyMoMoCore/config.yml, path: body-temp.stone-hold-seconds, note: "Càng lớn đá càng lâu nguội." }
       - { key: tn_stone_str, label: "Sức đá kéo nhiệt (0–1)", type: number, min: 0, max: 1, file: plugins/DuckyMoMoCore/config.yml, path: body-temp.stone-strength }
       - { key: tn_food_warm, label: "Ăn súp ấm thêm (°)", type: number, min: 0, max: 40, file: plugins/DuckyMoMoCore/config.yml, path: body-temp.food-warm }

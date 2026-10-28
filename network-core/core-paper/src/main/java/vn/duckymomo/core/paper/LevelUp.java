@@ -996,6 +996,23 @@ final class LevelUp implements Listener {
     }
 
     boolean command(CommandSender s, String[] args) {
+        // Admin (28/10, trang Bot › Hồ sơ): /capdo diem <tên> <điểm hạ gục> — đặt điểm hạ gục tích luỹ
+        if (args.length >= 3 && args[0].equalsIgnoreCase("diem") && s.hasPermission("duckymomo.admin")) {
+            OfflinePlayer t = Bukkit.getOfflinePlayer(args[1]);
+            try {
+                UUID u = t.getUniqueId();
+                int v = Math.max(0, Math.min(10_000_000, Integer.parseInt(args[2])));
+                data.set(k(u) + "ha", v);
+                data.set(k(u) + "ten", t.getName());
+                dirty = true;
+                save();
+                writeJson();
+                s.sendMessage("Đã đặt điểm hạ gục " + v + " cho " + t.getName());
+            } catch (NumberFormatException ex) {
+                s.sendMessage("/capdo diem <tên> <điểm hạ gục>");
+            }
+            return true;
+        }
         if (args.length >= 3 && args[0].equalsIgnoreCase("dat") && s.hasPermission("duckymomo.admin")) {
             OfflinePlayer t = Bukkit.getOfflinePlayer(args[1]);
             try {

@@ -1812,7 +1812,7 @@ def bot_profile(name):
     res = taikhoan.towny_kv(DATA_DIR / BOT_SRV / "plugins" / "Towny" / "data" / "residents" / f"{uuid}.txt")
     return {"ok": True, "ten": real, "uuid": uuid,
             "diemdanh": int(dd.get("count", 0) or 0), "thanhtich": [str(x) for x in tt], "thitran": towns.get(res.get("town", ""), ""),
-            "xu": taikhoan.money(uuid) or 0, "capdo": int(cap.get("cap", 0) or 0), "gio": round((hd.get("tong") or 0) / 60, 1),
+            "xu": taikhoan.money(uuid) or 0, "capdo": int(cap.get("cap", 0) or 0), "diem_ha": int(cap.get("ha", 0) or 0), "gio": round((hd.get("tong") or 0) / 60, 1),
             "danhphan": tier, "nghe": job, "cap_nghe": job_lv, "kynang": {k: sk.get(k, 0) for k, _, _ in _bot_skills()},
             "chon": {"danhphan": BOT_TIERS, "nghe": [{"ma": k, "ten": t, "toi_da": m} for k, t, m in _bot_jobs()],
                      "kynang": [{"ma": k, "ten": t, "toi_da": m} for k, t, m in _bot_skills()],
@@ -1843,6 +1843,10 @@ def bot_profile_save(body, who):
         v = num("capdo", 0, 100, int)
         if v != cur["capdo"]:
             cmds.append(f"capdo dat {n} {v}"); did.append(f"Thăng Cấp {v}")
+    if "diem_ha" in new:
+        v = num("diem_ha", 0, 10_000_000, int)
+        if v != cur["diem_ha"]:
+            cmds.append(f"capdo diem {n} {v}"); did.append(f"điểm hạ gục {v}")
     if "gio" in new:
         v = num("gio", 0, 100000)
         delta = int(round((v - cur["gio"]) * 60))

@@ -218,6 +218,7 @@ async function openProfile(name) {
     <div class="hs-grid">
       <label>Xu<input data-k="xu" type="number" min="0" step="1" value="${d.xu}"></label>
       <label>Thăng Cấp (/capdo)<input data-k="capdo" type="number" min="0" max="100" value="${d.capdo}"></label>
+      <label title="Hạ quái +1, hạ người +10; Thăng Cấp cấp N cần 20×N điểm">Điểm hạ gục<input data-k="diem_ha" type="number" min="0" value="${d.diem_ha}"></label>
       <label>Giờ chơi thật (giờ)<input data-k="gio" type="number" min="0" step="0.5" value="${d.gio}"></label>
       <label>Danh phận<select data-k="danhphan"${online ? "" : " disabled"}>${opt(Object.entries(d.chon.danhphan), d.danhphan)}</select></label>
       <label>Nghề<select data-k="nghe"><option value="">(chưa vào nghề)</option>${opt(d.chon.nghe.map((j) => [j.ma, j.ten]), d.nghe)}</select></label>

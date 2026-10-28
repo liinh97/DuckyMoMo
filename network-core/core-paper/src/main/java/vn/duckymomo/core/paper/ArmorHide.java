@@ -7,6 +7,7 @@ import com.palmergames.bukkit.towny.object.Town;
 import io.papermc.paper.event.player.PlayerTrackEntityEvent;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
@@ -19,6 +20,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -53,6 +55,7 @@ final class ArmorHide implements Listener {
     private final Set<UUID> on = new HashSet<>();
     private final Set<UUID> hiddenNow = new HashSet<>();      // đang gửi giáp giả (để biết khi nào phải trả giáp thật)
     private final Map<UUID, Long> lastFight = new HashMap<>();
+    private final boolean packets;                            // có PacketEvents: ẩn bằng sửa gói tin (không chớp)
 
     ArmorHide(JavaPlugin plugin, ConfigurationSection cfg, PeaceAlliance peace) {
         this.plugin = plugin;
@@ -66,7 +69,46 @@ final class ArmorHide implements Listener {
                 // bỏ dòng hỏng
             }
         }
+        boolean pk = false;
+        if (Bukkit.getPluginManager().isPluginEnabled("packetevents")) {
+            try {
+                ArmorHidePackets.register();
+                pk = true;
+            } catch (RuntimeException | LinkageError e) {
+                plugin.getLogger().warning("Ẩn giáp: không dùng được PacketEvents, quay về cách gửi đè mỗi giây: " + e);
+            }
+        }
+        this.packets = pk;
         Bukkit.getScheduler().runTaskTimer(plugin, this::tick, 40L, 20L);
+    }
+
+    /** Ẩn với cả chính mình chỉ khi sinh tồn / phiêu lưu: creative túi đồ do máy người chơi quyết, ô trông trống mà bấm là mất giáp thật. */
+    private static boolean selfOk(Player p) {
+        return p.getGameMode() == GameMode.SURVIVAL || p.getGameMode() == GameMode.ADVENTURE;
+    }
+
+    /** Cập nhật danh sách sửa gói tin của p rồi gửi lại cho đúng (người khác: gói trang bị; mình: cả túi đồ). */
+    private void apply(Player p, boolean hide) {
+        int id = p.getEntityId();
+        boolean self = hide && selfOk(p);
+        boolean selfWas = ArmorHidePackets.SELF.contains(id);
+        if (hide) {
+            ArmorHidePackets.HIDDEN.add(id);
+        } else {
+            ArmorHidePackets.HIDDEN.remove(id);
+        }
+        if (self) {
+            ArmorHidePackets.SELF.add(id);
+        } else {
+            ArmorHidePackets.SELF.remove(id);
+        }
+        for (Player v : p.getTrackedBy()) {
+            send(v, p, hide);                                     // qua bộ lọc gói tin nên giáp giả/thật đều đúng
+        }
+        if (self != selfWas) {
+            p.updateInventory();                                  // gửi lại cả túi đồ (bộ lọc làm trống ô giáp nếu đang ẩn)
+            send(p, p, self);                                     // hình nhân vật của mình ở góc nhìn thứ 3
+        }
     }
 
     private void save() {
@@ -120,7 +162,7 @@ final class ArmorHide implements Listener {
         for (Player v : p.getTrackedBy()) {
             send(v, p, hide);
         }
-        send(p, p, hide);   // 28/10 chủ server: ẩn cả với chính mình (góc nhìn thứ 3; ô giáp trong túi đồ trông trống nhưng vẫn mặc)
+        send(p, p, hide && selfOk(p));   // 28/10 chủ server: ẩn cả với chính mình (góc nhìn thứ 3; ô giáp trong túi đồ trông trống nhưng vẫn mặc)
     }
 
     private static void send(Player viewer, Player p, boolean hide) {
@@ -134,6 +176,18 @@ final class ArmorHide implements Listener {
         for (Player p : Bukkit.getOnlinePlayers()) {
             boolean hide = shouldHide(p);
             boolean was = hiddenNow.contains(p.getUniqueId());
+            if (packets) {
+                if (hide) {
+                    hiddenNow.add(p.getUniqueId());
+                } else {
+                    hiddenNow.remove(p.getUniqueId());
+                }
+                boolean selfNow = hide && selfOk(p);
+                if (hide != was || selfNow != ArmorHidePackets.SELF.contains(p.getEntityId())) {
+                    apply(p, hide);                               // chỉ gửi khi đổi trạng thái; còn lại bộ lọc gói tin lo
+                }
+                continue;
+            }
             if (hide) {
                 hiddenNow.add(p.getUniqueId());
                 push(p, true);                                    // gửi lại mỗi giây: server có thể gửi giáp thật khi giáp đổi / mòn
@@ -161,14 +215,14 @@ final class ArmorHide implements Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     public void onArmor(PlayerArmorChangeEvent e) {
         Player p = e.getPlayer();
-        if (hiddenNow.contains(p.getUniqueId())) {
+        if (!packets && hiddenNow.contains(p.getUniqueId())) {
             Bukkit.getScheduler().runTask(plugin, () -> push(p, true));
         }
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onTrack(PlayerTrackEntityEvent e) {
-        if (e.getEntity() instanceof Player p && hiddenNow.contains(p.getUniqueId())) {
+        if (!packets && e.getEntity() instanceof Player p && hiddenNow.contains(p.getUniqueId())) {
             Player v = e.getPlayer();
             Bukkit.getScheduler().runTaskLater(plugin, () -> {
                 if (v.isOnline() && p.isOnline() && hiddenNow.contains(p.getUniqueId())) {
@@ -178,8 +232,34 @@ final class ArmorHide implements Listener {
         }
     }
 
+    /** Sang creative / spectator: thôi ẩn với chính mình NGAY (không đợi tick), tránh bấm ô trông trống mà mất giáp. */
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onMode(PlayerGameModeChangeEvent e) {
+        Player p = e.getPlayer();
+        if (!hiddenNow.contains(p.getUniqueId())) {
+            return;
+        }
+        if (packets) {
+            ArmorHidePackets.SELF.remove(p.getEntityId());
+        }
+        Bukkit.getScheduler().runTask(plugin, () -> {
+            if (p.isOnline()) {
+                if (packets) {
+                    apply(p, hiddenNow.contains(p.getUniqueId()));
+                } else {
+                    send(p, p, false);
+                    p.updateInventory();
+                }
+            }
+        });
+    }
+
     @EventHandler
     public void onQuit(PlayerQuitEvent e) {
+        if (packets) {
+            ArmorHidePackets.HIDDEN.remove(e.getPlayer().getEntityId());
+            ArmorHidePackets.SELF.remove(e.getPlayer().getEntityId());
+        }
         hiddenNow.remove(e.getPlayer().getUniqueId());
         lastFight.remove(e.getPlayer().getUniqueId());
     }

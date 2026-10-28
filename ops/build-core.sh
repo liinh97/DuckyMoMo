@@ -13,6 +13,9 @@ if [ ! -f network-core/libs/velocity.jar ]; then
   [ -n "$v" ] && docker cp "duckymomo-proxy-1:$v" network-core/libs/velocity.jar
 fi
 [ -f data/proxy/plugins/SkinsRestorer.jar ] && cp data/proxy/plugins/SkinsRestorer.jar network-core/libs/SkinsRestorer.jar
+# PacketEvents (ẩn giáp sửa gói tin) biên dịch theo đúng jar ở banghoi
+pe=$(ls data/banghoi-1/plugins/packetevents-spigot-*.jar 2>/dev/null | head -1 || true)
+[ -n "$pe" ] && cp "$pe" network-core/libs/packetevents.jar
 
 docker run --rm \
   -u "$(id -u):$(id -g)" \

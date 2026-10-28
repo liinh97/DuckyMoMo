@@ -24,6 +24,8 @@ dependencies {
     compileOnly("net.citizensnpcs:citizensapi:2.0.44-SNAPSHOT") { isTransitive = false }
     // Dán schematic spawn vào world spawn riêng (24/10): biên dịch với đúng jar WorldEdit trên server (chép vào libs/, không commit)
     compileOnly(rootProject.files("libs/worldedit-bukkit-7.4.6.jar"))
+    // Ẩn giáp sửa gói tin (28/10): PacketEvents có sẵn ở banghoi; build-core.sh chép jar vào libs/ (không commit)
+    compileOnly(rootProject.files("libs/packetevents.jar"))
 }
 
 tasks.withType<JavaCompile>().configureEach {

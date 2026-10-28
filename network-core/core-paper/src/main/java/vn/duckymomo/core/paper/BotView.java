@@ -41,7 +41,7 @@ final class BotView implements Listener {
      * Dọn quái "đông cứng" quanh bot (29/10, spark: ~5.000 quái, TPS 12–15). Bot giữ vòng chunk ngoài được nạp nhưng không chạy
      * (ngoài simulation-distance): quái lang thang ra đó đứng im mãi, không bao giờ tự biến mất, vẫn tốn công đếm / theo dõi.
      * Mỗi phút gỡ quái thù địch + dơi trong 64 khối quanh bot nếu: không có người THẬT trong 128 khối (như luật biến mất của game),
-     * quái thường (removeWhenFarAway, không tên, không persistent). EliteMobs / pet / NPC có tên hoặc persistent nên không bị đụng.
+     * quái thường (removeWhenFarAway = không bị giữ lại, không tên; Entity#isPersistent của Bukkit là "lưu cùng chunk", đừng dùng). EliteMobs / pet / NPC có tên hoặc persistent nên không bị đụng.
      */
     void startCleanup(org.bukkit.plugin.Plugin plugin) {
         Bukkit.getScheduler().runTaskTimer(plugin, this::cleanup, 200L, 1200L);
@@ -62,7 +62,7 @@ final class BotView implements Listener {
                 if (!(m instanceof org.bukkit.entity.Enemy) && !(m instanceof org.bukkit.entity.Bat)) {
                     continue;
                 }
-                if (!m.getRemoveWhenFarAway() || m.customName() != null || m.isPersistent() || m.isInsideVehicle() || !m.getPassengers().isEmpty()) {
+                if (!m.getRemoveWhenFarAway() || m.customName() != null || m.isInsideVehicle() || !m.getPassengers().isEmpty()) {
                     continue;
                 }
                 boolean near = false;

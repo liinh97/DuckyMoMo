@@ -8,7 +8,7 @@
 ## 28/10/2026: EliteMobs cho người mới (người chơi TyninWorld bỏ sau 2 phút)
 - EliteMobs 10 tính sức mạnh theo CẤP CHIẾN ĐẤU (kỹ năng vũ khí + giáp, luyện bằng hạ elite); đo: full kim cương/netherite vẫn cấp 1.
   Dungeon thấp nhất ~cấp 10 mà elite tự nhiên đang TẮT → người mới không có chỗ luyện.
-- Đã: data/.../EliteMobs/MobCombatSettings.yml doNaturalEliteMobSpawning true (5%, cấp theo người chơi gần đó; KHÔNG bật theo khoảng cách
+- Đã: data/.../EliteMobs/MobCombatSettings.yml doNaturalEliteMobSpawning true (3% — chủ server giảm từ 5%, cấp theo người chơi gần đó; KHÔNG bật theo khoảng cách
   vì /tpr thả xa). Kiểm: ~13 elite ngoài đất hoang sau khi bật. /dungeon ghi "Cấp chiến đấu: X / cần ~Y" + giải thích (DungeonGate.combatLevel,
   %elitemobs_player_combat_level%). /hd trang CẤP CHIẾN ĐẤU. translations/vietnamese.csv: [EM] Vào $dungeon!, 28 tên quái elite
   tiếng Việt. Hai file EliteMobs này CHỈ ở data/ (không trong git).

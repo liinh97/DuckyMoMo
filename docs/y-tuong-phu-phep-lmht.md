@@ -145,3 +145,13 @@ Giải khống chế, Lốc xoáy, Tia sáng, Pháo kích, Sét nảy, Liên ho�
 5. Chắn đạn: chống cung thủ khi công thành.
 6. Soi sáng: khắc chế tàng hình và người núp.
 7. Đẩy văng vào tường: kỹ năng cần ngắm, vui.
+
+
+## Đợt 3 (28/10, đã làm)
+
+| Tên | Lấy ý | Làm gì | Cấp |
+|---|---|---|---|
+| Tàng hình | Shaco Q | Lướt 3–5 khối, vô hình hẳn 1,5–2,5 giây, đòn đầu +30–60% sát thương | 1–3 |
+| Nhảy cao | — | Bật lên ~5/9/14 khối, không mất máu khi rơi | 1–3 |
+| Súng cao su | Zac E | Bấm kéo dây (tối đa 1,2 giây), bấm lại bắn mình xa 8/11/14 khối, đáp đất hất tung + 3/4/5 sát thương | 1–3 |
+| Phản công | Jax E | Né mọi đòn 2 giây, rồi choáng 1 giây + 2/3/4 sát thương quanh 3 khối, +20%/đòn đã né | 1–3 |

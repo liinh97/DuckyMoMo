@@ -81,6 +81,15 @@ import java.util.concurrent.ConcurrentHashMap;
  *   rut_bai     Rút bài: bấm lần 1 xoay bài Đỏ / Xanh / Vàng (4 giây), bấm lần 2 chốt; đòn cận chiến kế tiếp trong 6 giây: Đỏ = nổ quanh mục tiêu
  *               + chậm, Xanh = mình hồi máu, Vàng = trói mục tiêu; mạnh theo cấp, hồi 14 giây (tính từ lúc chốt)
  *   tang_toc    Tăng tốc (thụ động, 22/10): cầm trên tay chính / tay phụ thì tốc chạy +10% / 20% / 30% (startPassive)
+ * Đợt 3 (28/10, chủ server: "tàng hình ngắn như Q Shaco, nhảy cao, súng cao su như E Zac, phản công như Jax"):
+ *   tang_hinh   Tàng hình: lướt 3 / 4 / 5 khối về trước (không xuyên tường) rồi vô hình hẳn với người khác (cả giáp) 1,5 / 2 / 2,5 giây,
+ *               quái đang nhắm thì mất dấu; đòn đầu tiên trong lúc tàng hình +30 / 45 / 60 % sát thương và lộ diện, hồi 14 giây
+ *   nhay_cao    Nhảy cao: bật thẳng lên ~5 / 9 / 14 khối (hơi nhích theo hướng nhìn), không mất máu khi rơi, phải đứng trên đất, hồi 8 giây
+ *   sung_cao_su Súng cao su: bấm lần 1 kéo dây (đứng gần như im, tối đa 1,2 giây đầy), bấm lần 2 (hoặc tự bật sau 2,2 giây) bắn mình bay
+ *               theo hướng nhìn, xa tối đa 8 / 11 / 14 khối theo độ căng; đáp đất hất tung + 3 / 4 / 5 sát thương quanh 3 khối, không mất
+ *               máu khi rơi, hồi 16 giây (tính từ lúc kéo)
+ *   phan_cong   Phản công: 2 giây né mọi đòn đánh (cận chiến + tên / đạn của sinh vật), hết giờ (hoặc bấm lại sau 0,5 giây) choáng 1 giây +
+ *               2 / 3 / 4 sát thương quanh 3 khối, mỗi đòn đã né +20 % sát thương (tối đa +100 %), hồi 18 giây
  * Kích thước là modifier tạm (addTransientModifier: không lưu vào dữ liệu người chơi, thoát game / sập server là mất), mỗi lần dùng chỉ
  * 1 lệnh hẹn giờ trả lại nên không gây lag. Hết giờ mà đang ở chỗ chật thì chờ ra chỗ rộng (tối đa 10 giây) rồi mới về cỡ thường.
  * Tắt ở đâu do Sách cấm quyết định (BanBook; trang Công thành mặc định tắt Bay lên, Dịch chuyển, Phóng bay, Thu nhỏ).
@@ -102,7 +111,16 @@ final class SkillEnchants implements Listener {
             Map.entry("danh_dau", 28000L), Map.entry("ho_den", 30000L), Map.entry("day_vang", 15000L), Map.entry("ho_gia", 60000L),
             Map.entry("dong_bang", 60000L), Map.entry("bat_tu", 120000L), Map.entry("la_chan", 22000L), Map.entry("giai_khong_che", 30000L),
             Map.entry("loc_xoay", 18000L), Map.entry("tia_sang", 25000L), Map.entry("phao_kich", 22000L), Map.entry("set_nay", 16000L),
-            Map.entry("lien_hoan", 22000L), Map.entry("rut_bai", 14000L));
+            Map.entry("lien_hoan", 22000L), Map.entry("rut_bai", 14000L), Map.entry("tang_hinh", 14000L), Map.entry("nhay_cao", 8000L),
+            Map.entry("sung_cao_su", 16000L), Map.entry("phan_cong", 18000L));
+    /** Tàng hình: người -> [hết lúc (ms), % sát thương đòn đầu]. */
+    private static final Map<UUID, double[]> STEALTH = new ConcurrentHashMap<>();
+    /** Nhảy cao / Súng cao su: không mất máu khi rơi tới lúc. */
+    private static final Map<UUID, Long> NOFALL = new ConcurrentHashMap<>();
+    /** Súng cao su đang kéo: người -> [bắt đầu (ms), xa tối đa, sát thương]. */
+    private static final Map<UUID, double[]> SLING = new ConcurrentHashMap<>();
+    /** Phản công: người -> [hết lúc (ms), sát thương gốc, số đòn đã né, bắt đầu (ms)]. */
+    private static final Map<UUID, double[]> COUNTER = new ConcurrentHashMap<>();
     /** Hoá cừu / Đóng băng: sinh vật -> hết lúc không gây được sát thương. */
     private static final Map<UUID, Long> DISARM = new ConcurrentHashMap<>();
     /** Đóng băng / Liên hoàn đao: không nhận sát thương tới lúc. */
@@ -197,6 +215,10 @@ final class SkillEnchants implements Listener {
         NAMES.put("lien_hoan", new String[]{"Liên hoàn đao", "Blade Flurry"});
         NAMES.put("rut_bai", new String[]{"Rút bài", "Pick a Card"});
         NAMES.put("tang_toc", new String[]{"Tăng tốc", "Swiftness"});   // thụ động: cầm là chạy nhanh hơn (startPassive)
+        NAMES.put("tang_hinh", new String[]{"Tàng hình", "Vanish"});
+        NAMES.put("nhay_cao", new String[]{"Nhảy cao", "Leap"});
+        NAMES.put("sung_cao_su", new String[]{"Súng cao su", "Catapult"});
+        NAMES.put("phan_cong", new String[]{"Phản công", "Counter"});
     }
 
     static NamespacedKey key(String id) {
@@ -284,6 +306,10 @@ final class SkillEnchants implements Listener {
             case "set_nay" -> 2 + lv;                  // sát thương; số lần nảy = 1 + cấp
             case "lien_hoan" -> 3 + lv;                // sát thương; số mục tiêu = cấp + 1
             case "rut_bai" -> lv;
+            case "tang_hinh" -> 1 + 0.5 * lv;          // giây tàng hình; lướt 2 + cấp khối; đòn đầu +15 + 15 × cấp %
+            case "nhay_cao" -> 0.6 + 0.3 * lv;         // lực bật lên
+            case "sung_cao_su" -> 5 + 3.0 * lv;        // xa tối đa (khối); sát thương đáp đất = 2 + cấp
+            case "phan_cong" -> 1 + lv;                // sát thương gốc
             default -> 3 + 2.0 * lv;            // cau_lua
         };
     }
@@ -324,6 +350,17 @@ final class SkillEnchants implements Listener {
         Mark mk = id.equals("tua_thoi_gian") ? MARKS.get(p.getUniqueId()) : null;
         if (mk != null) {
             rewind(p, mk.token());   // bấm lần 2: quay về mốc ngay
+            return true;
+        }
+        if (id.equals("sung_cao_su") && SLING.containsKey(p.getUniqueId())) {
+            releaseSling(p);   // bấm lần 2: bắn
+            return true;
+        }
+        double[] ctr = id.equals("phan_cong") ? COUNTER.get(p.getUniqueId()) : null;
+        if (ctr != null) {
+            if (now - ctr[3] >= 500) {
+                counterBurst(p);   // bấm lại sau 0,5 giây: nổ sớm
+            }
             return true;
         }
         long next = NEXT.getOrDefault(k, 0L);
@@ -825,6 +862,93 @@ final class SkillEnchants implements Listener {
                 org.bukkit.Bukkit.getScheduler().runTaskLater(org.bukkit.Bukkit.getPluginManager().getPlugin("DuckyMoMoCore"),
                         () -> endScale(p, token, 0), SIZE_MS / 50);
             }
+            case "tang_hinh" -> {
+                int lv = (int) Math.round((value - 1) * 2);
+                p.getWorld().spawnParticle(Particle.LARGE_SMOKE, p.getLocation().add(0, 1, 0), 25, 0.3, 0.6, 0.3, 0.02);
+                p.getWorld().playSound(p.getLocation(), Sound.ENTITY_ILLUSIONER_MIRROR_MOVE, 0.8f, 1.2f);
+                org.bukkit.Location to = blinkTarget(p, 2 + lv);
+                if (to != null) {
+                    p.teleport(to, io.papermc.paper.entity.TeleportFlag.Relative.VELOCITY_ROTATION);
+                }
+                long dur = Math.round(value * 1000);
+                STEALTH.put(p.getUniqueId(), new double[]{now + dur, 15 + 15 * lv});
+                for (Player o : org.bukkit.Bukkit.getOnlinePlayers()) {
+                    if (o != p) {
+                        o.hideEntity(pl(), p);   // vô hình hẳn (cả giáp, tên), khác thuốc tàng hình
+                    }
+                }
+                p.addPotionEffect(new org.bukkit.potion.PotionEffect(org.bukkit.potion.PotionEffectType.INVISIBILITY, (int) (dur / 50) + 2, 0, false, false, true));
+                for (org.bukkit.entity.Entity en : p.getNearbyEntities(32, 16, 32)) {
+                    if (en instanceof org.bukkit.entity.Mob m && p.equals(m.getTarget())) {
+                        m.setTarget(null);
+                    }
+                }
+                org.bukkit.Bukkit.getScheduler().runTaskLater(pl(), () -> {
+                    double[] st = STEALTH.get(p.getUniqueId());
+                    if (st != null && st[0] <= System.currentTimeMillis() + 60) {
+                        reveal(p);
+                    }
+                }, dur / 50 + 1);
+                p.sendActionBar(LEGACY.deserialize("&8Tàng hình &7" + fmtSec(value) + " giây · đòn đầu tiên &e+" + (15 + 15 * lv) + "% sát thương"));
+            }
+            case "nhay_cao" -> {
+                if (!p.isOnGround()) {
+                    p.sendActionBar(LEGACY.deserialize("&7Phải đứng trên mặt đất mới Nhảy cao được"));
+                    return false;
+                }
+                org.bukkit.util.Vector dir = p.getLocation().getDirection().setY(0);
+                dir = dir.lengthSquared() > 0 ? dir.normalize().multiply(0.25) : dir;
+                p.setVelocity(dir.setY(value <= 0 ? 1.2 : value));
+                NOFALL.put(p.getUniqueId(), now + 8000);
+                p.getWorld().spawnParticle(Particle.CLOUD, p.getLocation(), 20, 0.4, 0.1, 0.4, 0.05);
+                p.getWorld().playSound(p.getLocation(), Sound.ENTITY_BREEZE_JUMP, 1f, 0.8f);
+            }
+            case "sung_cao_su" -> {
+                if (!p.isOnGround()) {
+                    p.sendActionBar(LEGACY.deserialize("&7Phải đứng trên mặt đất mới kéo Súng cao su được"));
+                    return false;
+                }
+                int lv = (int) Math.round((value - 5) / 3);
+                UUID u = p.getUniqueId();
+                double[] sl = {now, value, 2 + lv};
+                SLING.put(u, sl);
+                p.addPotionEffect(new org.bukkit.potion.PotionEffect(org.bukkit.potion.PotionEffectType.SLOWNESS, 50, 5, false, false, false));
+                p.getWorld().playSound(p.getLocation(), Sound.ITEM_CROSSBOW_LOADING_START, 1f, 0.8f);
+                new org.bukkit.scheduler.BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        if (SLING.get(u) != sl || !p.isOnline() || p.isDead()) {
+                            if (SLING.get(u) == sl) {
+                                SLING.remove(u);
+                            }
+                            cancel();
+                            return;
+                        }
+                        long held = System.currentTimeMillis() - (long) sl[0];
+                        double frac = Math.min(1, held / 1200.0);
+                        int bars = (int) Math.round(frac * 10);
+                        p.sendActionBar(LEGACY.deserialize("&aSúng cao su &8[" + (frac >= 1 ? "&e" : "&a") + "▮".repeat(bars) + "&7" + "▮".repeat(10 - bars)
+                                + "&8] &7bấm lần nữa để bật"));
+                        if (held >= 2200) {
+                            releaseSling(p);   // giữ quá lâu: tự bật
+                            cancel();
+                        }
+                    }
+                }.runTaskTimer(pl(), 2L, 2L);
+            }
+            case "phan_cong" -> {
+                UUID u = p.getUniqueId();
+                double[] c = {now + 2000, value <= 0 ? 3 : value, 0, now};
+                COUNTER.put(u, c);
+                p.getWorld().spawnParticle(Particle.ENCHANTED_HIT, p.getLocation().add(0, 1, 0), 20, 0.4, 0.6, 0.4, 0.2);
+                p.getWorld().playSound(p.getLocation(), Sound.ITEM_SHIELD_BLOCK, 1f, 0.7f);
+                p.sendActionBar(LEGACY.deserialize("&6Phản công: &fné mọi đòn 2 giây, rồi choáng kẻ địch quanh mình &7(bấm lại để nổ sớm)"));
+                org.bukkit.Bukkit.getScheduler().runTaskLater(pl(), () -> {
+                    if (COUNTER.get(u) == c) {
+                        counterBurst(p);
+                    }
+                }, 40L);
+            }
             case "luot" -> {
                 double force = Math.max(1, Math.min(3, value <= 0 ? 1.5 : value));
                 p.setVelocity(p.getLocation().getDirection().setY(0).normalize().multiply(0.9 + 0.6 * force).setY(0.25));
@@ -855,6 +979,93 @@ final class SkillEnchants implements Listener {
         }
         NEXT.put(k, now + COOLDOWN_MS.getOrDefault(id, 3000L));
         return true;
+    }
+
+    /** Tàng hình hết giờ / ra đòn: hiện lại với mọi người. */
+    private static void reveal(Player p) {
+        if (STEALTH.remove(p.getUniqueId()) == null) {
+            return;
+        }
+        for (Player o : org.bukkit.Bukkit.getOnlinePlayers()) {
+            if (o != p) {
+                o.showEntity(pl(), p);
+            }
+        }
+        var inv = p.getPotionEffect(org.bukkit.potion.PotionEffectType.INVISIBILITY);
+        if (inv != null && inv.getDuration() <= 60) {
+            p.removePotionEffect(org.bukkit.potion.PotionEffectType.INVISIBILITY);   // chỉ gỡ hiệu ứng của chiêu, không gỡ thuốc uống
+        }
+        p.getWorld().spawnParticle(Particle.SMOKE, p.getLocation().add(0, 1, 0), 15, 0.3, 0.6, 0.3, 0.02);
+    }
+
+    /** Súng cao su: bắn mình theo hướng nhìn, xa theo độ căng; đáp đất hất tung quanh 3 khối. */
+    private static void releaseSling(Player p) {
+        double[] sl = SLING.remove(p.getUniqueId());
+        if (sl == null) {
+            return;
+        }
+        double frac = Math.min(1, (System.currentTimeMillis() - (long) sl[0]) / 1200.0);
+        double dist = Math.max(3, sl[1] * frac);
+        p.removePotionEffect(org.bukkit.potion.PotionEffectType.SLOWNESS);
+        org.bukkit.util.Vector dir = p.getLocation().getDirection().setY(0);
+        if (dir.lengthSquared() == 0) {
+            dir = new org.bukkit.util.Vector(0, 0, 1);
+        }
+        p.setVelocity(dir.normalize().multiply(dist / 8.5).setY(0.6 + 0.2 * frac));
+        NOFALL.put(p.getUniqueId(), System.currentTimeMillis() + 6000);
+        p.getWorld().playSound(p.getLocation(), Sound.ITEM_CROSSBOW_SHOOT, 1f, 0.7f);
+        p.getWorld().spawnParticle(Particle.ITEM_SLIME, p.getLocation(), 20, 0.4, 0.2, 0.4, 0.05);
+        double dmg = sl[2];
+        new org.bukkit.scheduler.BukkitRunnable() {
+            int t;
+
+            @Override
+            public void run() {
+                t++;
+                if (!p.isOnline() || p.isDead()) {
+                    cancel();
+                    return;
+                }
+                if ((t > 3 && p.isOnGround()) || t > 60) {
+                    cancel();
+                    org.bukkit.Location at = p.getLocation();
+                    at.getWorld().spawnParticle(Particle.EXPLOSION, at, 2, 1, 0.2, 1, 0);
+                    at.getWorld().spawnParticle(Particle.ITEM_SLIME, at, 40, 1.5, 0.3, 1.5, 0.1);
+                    at.getWorld().playSound(at, Sound.ENTITY_SLIME_SQUISH, 1.2f, 0.6f);
+                    for (org.bukkit.entity.Entity en : p.getNearbyEntities(3, 2, 3)) {
+                        if (en instanceof org.bukkit.entity.LivingEntity le && !(en instanceof org.bukkit.entity.ArmorStand) && !PetCombat.isPet(en)
+                                && strike(p, le, dmg) && !le.isDead()) {
+                            le.setVelocity(le.getLocation().toVector().subtract(at.toVector()).setY(0).normalize().multiply(0.4).setY(0.6));
+                        }
+                    }
+                }
+            }
+        }.runTaskTimer(pl(), 1L, 1L);
+    }
+
+    /** Phản công: choáng 1 giây + sát thương quanh 3 khối, mạnh thêm theo số đòn đã né. */
+    private static void counterBurst(Player p) {
+        double[] c = COUNTER.remove(p.getUniqueId());
+        if (c == null || !p.isOnline() || p.isDead()) {
+            return;
+        }
+        int dodged = (int) c[2];
+        double dmg = c[1] * (1 + 0.2 * Math.min(5, dodged));
+        org.bukkit.Location at = p.getLocation();
+        at.getWorld().spawnParticle(Particle.SWEEP_ATTACK, at.clone().add(0, 1, 0), 12, 1.5, 0.3, 1.5, 0);
+        at.getWorld().spawnParticle(Particle.CRIT, at.clone().add(0, 1, 0), 30, 1.5, 0.5, 1.5, 0.2);
+        at.getWorld().playSound(at, Sound.ENTITY_IRON_GOLEM_ATTACK, 1f, 0.8f);
+        int hit = 0;
+        for (org.bukkit.entity.Entity en : p.getNearbyEntities(3, 2, 3)) {
+            if (en instanceof org.bukkit.entity.LivingEntity le && !(en instanceof org.bukkit.entity.ArmorStand) && !PetCombat.isPet(en) && strike(p, le, dmg)) {
+                if (!le.isDead()) {
+                    root(le, 20);
+                }
+                hit++;
+            }
+        }
+        p.sendActionBar(LEGACY.deserialize("&6Phản công: &fné " + dodged + " đòn · " + hit + " kẻ bị choáng"
+                + (dodged > 0 ? " &7(+" + Math.min(5, dodged) * 20 + "% sát thương)" : "")));
     }
 
     private static org.bukkit.plugin.Plugin pl() {
@@ -1454,6 +1665,10 @@ final class SkillEnchants implements Listener {
         if (active(INVULN, e.getEntity())) {
             e.setCancelled(true);
         }
+        if (e.getCause() == org.bukkit.event.entity.EntityDamageEvent.DamageCause.FALL && active(NOFALL, e.getEntity())) {
+            e.setCancelled(true);   // Nhảy cao / Súng cao su: không mất máu khi rơi
+            NOFALL.remove(e.getEntity().getUniqueId());
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -1485,6 +1700,17 @@ final class SkillEnchants implements Listener {
             e.setCancelled(true);   // Hoá cừu / Đóng băng: không gây được sát thương
             return;
         }
+        double[] ctr = probeTo == null && e.getEntity() instanceof Player vp ? COUNTER.get(vp.getUniqueId()) : null;
+        if (ctr != null && System.currentTimeMillis() <= ctr[0] && src instanceof org.bukkit.entity.LivingEntity) {
+            e.setCancelled(true);   // Phản công: né mọi đòn đánh (cận chiến + tên / đạn của sinh vật)
+            ctr[2]++;
+            e.getEntity().getWorld().playSound(e.getEntity().getLocation(), Sound.ENTITY_PLAYER_ATTACK_NODAMAGE, 1f, 1.4f);
+            e.getEntity().getWorld().spawnParticle(Particle.ENCHANTED_HIT, e.getEntity().getLocation().add(0, 1, 0), 8, 0.3, 0.5, 0.3, 0.1);
+            if (e.getDamager() instanceof org.bukkit.entity.Projectile pr) {
+                pr.remove();
+            }
+            return;
+        }
         if (e.getDamager() instanceof org.bukkit.entity.Projectile pr && e.getEntity() instanceof Player victim && fromFront(victim, pr)) {
             e.setCancelled(true);   // Chắn đạn (test bot 22/10: chỉ huỷ ProjectileHitEvent thì tên của bộ xương vẫn gây sát thương)
             pr.remove();
@@ -1502,6 +1728,17 @@ final class SkillEnchants implements Listener {
         }
         Player atk = e.getDamager() instanceof Player pl ? pl
                 : e.getDamager() instanceof org.bukkit.entity.Projectile pr && pr.getShooter() instanceof Player pl ? pl : null;
+        if (atk != null && probeTo == null) {
+            double[] st = STEALTH.get(atk.getUniqueId());
+            if (st != null) {
+                if (st[0] >= System.currentTimeMillis()) {
+                    e.setDamage(e.getDamage() * (1 + st[1] / 100.0));   // Tàng hình: đòn đầu tiên mạnh hơn rồi lộ diện
+                    e.getEntity().getWorld().spawnParticle(Particle.CRIT, e.getEntity().getLocation().add(0, 1, 0), 20, 0.3, 0.5, 0.3, 0.2);
+                    e.getEntity().getWorld().playSound(e.getEntity().getLocation(), Sound.ENTITY_PLAYER_ATTACK_CRIT, 1f, 0.8f);
+                }
+                reveal(atk);
+            }
+        }
         if (atk != null) {
             double[] r = RAGE.get(atk.getUniqueId());
             if (r != null) {
@@ -1520,8 +1757,22 @@ final class SkillEnchants implements Listener {
         }
     }
 
+    @EventHandler(ignoreCancelled = true)
+    public void onTarget(org.bukkit.event.entity.EntityTargetLivingEntityEvent e) {
+        if (e.getTarget() instanceof Player t) {
+            double[] st = STEALTH.get(t.getUniqueId());
+            if (st != null && st[0] >= System.currentTimeMillis()) {
+                e.setCancelled(true);
+            }
+        }
+    }
+
     @EventHandler
     public void onQuit(PlayerQuitEvent e) {
+        reveal(e.getPlayer());   // ẩn với người khác là theo phiên của họ: phải hiện lại, không thì vào lại vẫn bị ẩn
+        for (Map<UUID, ?> m : List.of(NOFALL, SLING, COUNTER)) {
+            m.remove(e.getPlayer().getUniqueId());
+        }
         String u = e.getPlayer().getUniqueId() + ":";
         NEXT.keySet().removeIf(k -> k.startsWith(u));
         RAGE.remove(e.getPlayer().getUniqueId());

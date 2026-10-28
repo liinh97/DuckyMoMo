@@ -1776,7 +1776,8 @@ LIB_DMM_ENCH = {"luot": "Lướt", "hoi_mau": "Hồi máu", "cau_lua": "Cầu l�
                 "khong_lo": "Khổng lồ", "thu_nho": "Thu nhỏ", "cam_lang": "Câm lặng", "troi": "Trói", "moc_keo": "Móc kéo",
                 "tua_thoi_gian": "Tua thời gian", "khien_phep": "Khiên phép", "hoi_mau_dong_doi": "Hồi máu đồng đội",
                 "chan_dan": "Chắn đạn", "soi_sang": "Soi sáng",
-                "hoang_so": "Hoảng sợ", "hoa_cuu": "Hoá cừu", "hoa_da": "Ánh mắt hoá đá", "khieu_khich": "Khiêu khích", "danh_dau": "Đánh dấu tử thần", "ho_den": "Hố đen", "day_vang": "Đẩy văng", "ho_gia": "Hộ giá", "dong_bang": "Đóng băng thời gian", "bat_tu": "Bất tử", "la_chan": "Lá chắn phép", "giai_khong_che": "Giải khống chế", "loc_xoay": "Lốc xoáy", "tia_sang": "Tia sáng", "phao_kich": "Pháo kích", "set_nay": "Sét nảy", "lien_hoan": "Liên hoàn đao", "rut_bai": "Rút bài", "tang_toc": "Tăng tốc"}   # khớp SkillEnchants.NAMES
+                "hoang_so": "Hoảng sợ", "hoa_cuu": "Hoá cừu", "hoa_da": "Ánh mắt hoá đá", "khieu_khich": "Khiêu khích", "danh_dau": "Đánh dấu tử thần", "ho_den": "Hố đen", "day_vang": "Đẩy văng", "ho_gia": "Hộ giá", "dong_bang": "Đóng băng thời gian", "bat_tu": "Bất tử", "la_chan": "Lá chắn phép", "giai_khong_che": "Giải khống chế", "loc_xoay": "Lốc xoáy", "tia_sang": "Tia sáng", "phao_kich": "Pháo kích", "set_nay": "Sét nảy", "lien_hoan": "Liên hoàn đao", "rut_bai": "Rút bài", "tang_toc": "Tăng tốc",
+                "tang_hinh": "Tàng hình", "nhay_cao": "Nhảy cao", "sung_cao_su": "Súng cao su", "phan_cong": "Phản công"}   # khớp SkillEnchants.NAMES
 LIB_ATTRS = {"attack_damage": ("Sát thương", (0, 200)), "attack_speed": ("Tốc đánh", (0.1, 20)), "armor": ("Giáp", (0, 30)),
              "armor_toughness": ("Độ cứng giáp", (0, 20)), "knockback_resistance": ("Kháng đẩy lùi", (0, 1)),
              "max_health": ("Máu tối đa", (-10, 40)), "movement_speed": ("Tốc chạy %", (-50, 100)),

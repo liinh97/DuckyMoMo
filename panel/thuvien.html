@@ -404,7 +404,11 @@ const DMM_ENCH = {
   set_nay: { vi: "Sét nảy", en: "Chain Lightning", kw: "chain lightning set nay", desc: "Chuột phải nhắm (15 khối): 3 / 4 / 5 sát thương rồi nảy sang 2 / 3 / 4 sinh vật gần nhau, mỗi lần nảy bớt 20% (hồi 16 giây)" },
   lien_hoan: { vi: "Liên hoàn đao", en: "Blade Flurry", kw: "alpha strike chem nhieu muc tieu", desc: "Chuột phải: chém lần lượt 2 / 3 / 4 sinh vật gần nhất trong 8 khối (4 / 5 / 6 sát thương), không bị đánh trong lúc chém, xong về chỗ cũ (hồi 22 giây)" },
   rut_bai: { vi: "Rút bài", en: "Pick a Card", kw: "card bai do xanh vang", desc: "Chuột phải xoay bài, bấm lại để chốt; đòn cận chiến kế tiếp trong 6 giây: Đỏ nổ quanh mục tiêu 2 / 3 / 4 sát thương + chậm 2 giây, Xanh bạn hồi 2 / 3 / 4 tim, Vàng trói mục tiêu 1 / 1,5 / 2 giây (hồi 14 giây)" },
-  tang_toc: { vi: "Tăng tốc", en: "Swiftness", kw: "speed toc chay nhanh swift", desc: "Thụ động, không cần bấm: cầm món này (tay chính hoặc tay phụ) thì tốc chạy +10% / +20% / +30%" }};
+  tang_toc: { vi: "Tăng tốc", en: "Swiftness", kw: "speed toc chay nhanh swift", desc: "Thụ động, không cần bấm: cầm món này (tay chính hoặc tay phụ) thì tốc chạy +10% / +20% / +30%" },
+  tang_hinh: { vi: "Tàng hình", en: "Vanish", kw: "an than tang hinh invisible stealth shaco", desc: "Chuột phải: lướt 3 / 4 / 5 khối rồi vô hình hẳn 1,5 / 2 / 2,5 giây, quái mất dấu; đòn đầu tiên +30 / 45 / 60% sát thương rồi lộ diện. Hồi 14 giây" },
+  nhay_cao: { vi: "Nhảy cao", en: "Leap", kw: "nhay cao jump leap bat len", desc: "Chuột phải (đứng trên đất): bật lên ~5 / 9 / 14 khối, không mất máu khi rơi. Hồi 8 giây" },
+  sung_cao_su: { vi: "Súng cao su", en: "Catapult", kw: "sung cao su slingshot zac bat xa", desc: "Chuột phải kéo dây (tối đa 1,2 giây), bấm lại để bắn mình bay xa tối đa 8 / 11 / 14 khối; đáp đất hất tung + 3 / 4 / 5 sát thương quanh 3 khối. Hồi 16 giây" },
+  phan_cong: { vi: "Phản công", en: "Counter", kw: "phan cong counter jax ne don choang", desc: "Chuột phải: né mọi đòn đánh 2 giây, rồi choáng 1 giây + 2 / 3 / 4 sát thương quanh 3 khối (mỗi đòn đã né +20%, tối đa +100%); bấm lại để nổ sớm. Hồi 18 giây" }};
 const isDmm = (k) => String(k).startsWith("dmm:");
 const dmmInfo = (k) => DMM_ENCH[String(k).slice(4)] || null;
 const strip = (t) => String(t || "").replace(/[&§][0-9a-fk-or]/gi, "").trim();

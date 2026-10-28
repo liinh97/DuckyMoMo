@@ -255,7 +255,7 @@ async function connect(name) {
     let w = m.match(/^\[(.+?) -> (.+?)\] (.*)$/);
     if (w && w[1] !== name && !/^(tôi|me)$/i.test(w[1])) { event({ type: 'msg', bot: name, server: host, from: w[1], text: w[3] }); return; }
     w = m.match(/^(\S+) đã yêu cầu (dịch chuyển đến chỗ bạn|bạn dịch chuyển đến chỗ họ)/);
-    if (w) { event({ type: 'tpa', bot: name, server: host, from: w[1], text: m }); return; }
+    if (w) { event({ type: 'tpa', bot: name, server: host, from: w[1], text: m }); autoTpa(name, w[1]); return; }
     if (pos === 'chat' && m.toLowerCase().includes(name.toLowerCase()) && !m.includes(name + ':') && !m.includes(name + ' »')) event({ type: 'nhac', bot: name, server: host, text: m.slice(0, 240) });
   });
   bot.on('death', () => { rt.deaths.push(Date.now()); log(name, 'chết'); event({ type: 'chet', bot: name, server: host, text: name + ' chết' }); });
@@ -400,6 +400,29 @@ const CHAT_CFG = '/state/chat.json';
 const chatCfg = { on: false, min: 4, max: 9 };
 try { Object.assign(chatCfg, JSON.parse(fs.readFileSync(CHAT_CFG, 'utf8'))); } catch (e) { /* chưa cài: tắt */ }
 function saveChat() { try { fs.writeFileSync(CHAT_CFG, JSON.stringify(chatCfg)); } catch (e) { log('không lưu được chat.json:', e.message); } }
+// Bot tự trả lời TPA (28/10, chủ server: "cả tp deny nữa"): mỗi bot một tính riêng (state[n].tpa = {nhan, lo}): sau 4–25 giây nhận
+// (/tpaccept) hoặc từ chối (/tpdeny), đôi khi lơ để lời mời tự hết hạn. Bật/tắt chung: /state/tpa.json.
+const TPA_CFG = '/state/tpa.json';
+const tpaCfg = { on: false };
+try { Object.assign(tpaCfg, JSON.parse(fs.readFileSync(TPA_CFG, 'utf8'))); } catch (e) { /* chưa cài: tắt */ }
+function saveTpa() { try { fs.writeFileSync(TPA_CFG, JSON.stringify(tpaCfg)); } catch (e) { log('không lưu được tpa.json:', e.message); } }
+function tpaTrait(n) {
+  if (!state[n].tpa) { state[n].tpa = { nhan: +(0.25 + Math.random() * 0.6).toFixed(2), lo: +(0.05 + Math.random() * 0.25).toFixed(2) }; save(); }
+  return state[n].tpa;
+}
+function autoTpa(name, from) {
+  if (!tpaCfg.on) return;
+  const t = tpaTrait(name), rt = RT[name];
+  if (Math.random() < t.lo) { log(name, 'lơ TPA của', from); return; }
+  const yes = Math.random() < t.nhan;
+  setTimeout(async () => {
+    if (!rt.bot) return;
+    const before = yes ? await serverPos(name, state[name].server).catch(() => null) : null;
+    rt.bot.chat(yes ? '/tpaccept' : '/tpdeny');
+    event({ type: 'tpa', bot: name, from, text: `${name} tự ${yes ? 'nhận' : 'từ chối'} TPA của ${from}` });
+    if (yes) followTeleport(name, before);
+  }, 4000 + Math.random() * 21000);
+}
 // A / B / C: người nói; {A} {B} {C}: tên bot đó
 const TALKS = [
   ['A:ae ơi /capdo lên cấp kiểu gì nhỉ', 'B:đủ xu, đủ giờ chơi với điểm hạ gục là bấm lên cấp được', 'A:à ok thanks'],
@@ -501,6 +524,10 @@ async function act(b) {
     }
     saveChat();
     return 'bot tự chat: ' + (chatCfg.on ? 'bật' : 'tắt') + ', ' + chatCfg.min + '–' + chatCfg.max + ' phút một lần';
+  }
+  if (b.action === 'tpacfg') {
+    tpaCfg.on = !!b.on; saveTpa();
+    return 'bot tự trả lời TPA: ' + (tpaCfg.on ? 'bật (mỗi bot một tính: có bot dễ nhận, có bot hay từ chối, đôi khi lơ)' : 'tắt');
   }
   if (b.action === 'chatnow') { chatOnce().then(r => log(r)).catch(e => log('lỗi bot chat:', e.message)); return 'cho bot chat thử ngay (vài giây nữa mới nói)'; }
   if (b.bot === '*') {
@@ -613,6 +640,7 @@ http.createServer((req, res) => {
       }),
       events: EVENTS.slice(-100),
       chat: chatCfg,
+      tpa: tpaCfg,
     });
   }
   if (req.method === 'POST' && req.url === '/act') {

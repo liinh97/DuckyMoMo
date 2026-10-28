@@ -1699,7 +1699,7 @@ def say_command(text, target, full, who):
 
 BOTFARM_URL = os.environ.get("BOTFARM_URL", "http://botfarm:8090")
 BOT_ACTIONS = {"join": "vào", "leave": "thoát", "server": "đổi server", "chat": "nói", "cmd": "gõ lệnh", "move": "đi tới", "home": "về chỗ", "sethome": "đặt chỗ", "random": "ra khu ngẫu nhiên",
-               "create": "tạo bot", "remove": "xoá bot", "chatcfg": "cài bot tự chat", "chatnow": "cho bot chat thử"}
+               "create": "tạo bot", "remove": "xoá bot", "chatcfg": "cài bot tự chat", "chatnow": "cho bot chat thử", "tpacfg": "cài bot tự trả lời TPA"}
 
 
 def known_player_names():
@@ -1984,10 +1984,15 @@ def _bot_dev_step(name, st, prof, now):
     hoso = {}
     gio = prof["gio"] + h
     hoso["gio"] = round(gio, 2)
+    # xu: có tăng có giảm như mua bán thật (chủ server 28/10: "có tăng phải có giảm")
     earn = _rnd.uniform(*S["xu"]) * h * may
     xu = prof["xu"] + earn
     if _rnd.random() < st["tieu"]:
-        xu -= earn * _rnd.uniform(0.2, 0.8)                  # đi mua đồ, phí, chợ…
+        xu -= earn * _rnd.uniform(0.3, 1.6)                  # chi tiêu thường ngày: có lúc tiêu hơn số vừa kiếm
+    if _rnd.random() < st["tieu"] * 0.35:
+        xu -= max(0.0, xu) * _rnd.uniform(0.1, 0.45)         # mua món lớn: đồ, treo chợ, thuế thị trấn…
+    if _rnd.random() < (0.15 if st.get("kieu") == "thuongnhan" else 0.04):
+        xu += _rnd.uniform(400, 3000) * may                  # bán được mối lớn
     ha = prof["diem_ha"] + int(round(_rnd.uniform(*S["ha"]) * h * may))
     hoso["diem_ha"] = ha
     # Thăng Cấp: đủ xu + giờ + điểm hạ gục thì có lúc lên (không lên ngay như máy)

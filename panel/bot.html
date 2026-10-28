@@ -97,6 +97,7 @@
       <span class="hint">mỗi</span><input id="tcMin" type="number" min="1" max="240"><span class="hint">–</span><input id="tcMax" type="number" min="1" max="240"><span class="hint">phút một đoạn</span>
       <button type="submit" class="mini">Lưu</button>
       <button type="button" class="mini" id="tcNow" title="Cho 2–3 bot nói một đoạn ngay để xem thử">Chat thử</button>
+      <label class="chk" title="Có người gửi /tpa tới bot: sau 4–25 giây bot tự nhận hoặc từ chối, mỗi bot một tính (có bot dễ nhận, có bot hay từ chối), đôi khi lơ để lời mời tự hết hạn"><input type="checkbox" id="tpaOn"> Bot tự trả lời TPA</label>
     </form>
     <div id="bots"><div class="empty">Đang tải…</div></div>
   </div>
@@ -192,6 +193,7 @@ $("tc").addEventListener("submit", (ev) => {
   act({ action: "chatcfg", on: $("tcOn").checked, min: +$("tcMin").value, max: +$("tcMax").value });
 });
 $("tcOn").onchange = () => act({ action: "chatcfg", on: $("tcOn").checked });
+$("tpaOn").onchange = () => act({ action: "tpacfg", on: $("tpaOn").checked });
 $("tcNow").onclick = () => act({ action: "chatnow" });
 $("allDev").onclick = async () => { if (await ask(`Bật tự phát triển cho cả ${BOTS.length} bot? Mỗi bot được gán ngẫu nhiên một tính cách và nhịp riêng.`, { title: "Tự phát triển", ok: "Bật" })) act({ bot: "*", action: "phattrien", on: true }); };
 $("allDevOff").onclick = async () => { if (await ask("Tắt tự phát triển của mọi bot? (số liệu đã có giữ nguyên)", { title: "Tắt tự phát triển", ok: "Tắt" })) act({ bot: "*", action: "phattrien", on: false }); };
@@ -209,6 +211,7 @@ async function loadBots() {
     if (d.chat && !(document.activeElement && document.activeElement.closest("#tc"))) {
       $("tcOn").checked = !!d.chat.on; $("tcMin").value = d.chat.min; $("tcMax").value = d.chat.max;
     }
+    if (d.tpa && document.activeElement !== $("tpaOn")) $("tpaOn").checked = !!d.tpa.on;
   } catch (e) { $("bots").innerHTML = `<div class="empty">Không tải được: ${esc(e)}</div>`; }
 }
 

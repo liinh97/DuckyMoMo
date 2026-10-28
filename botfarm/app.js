@@ -556,7 +556,8 @@ async function chatOnce() {
       const n = who[line[0]], text = line.slice(2).replace(/\{([ABC])\}/g, (_, x) => who[x] || '');
       await sleep(1500 + Math.random() * 3000 + Math.min(text.length * 150, 9000));   // đọc + gõ
       if (!RT[n] || !RT[n].bot) break;
-      RT[n].bot.chat(styled(n, text));
+      const msg = styled(n, text);
+      RT[n].bot.chat(msg.startsWith('/') ? '.' + msg : msg);   // "./sell …": khoe lệnh trong chat như người thật, không chạy thành lệnh (28/10)
     }
   } finally { chatBusy = false; }
   return 'bot chat ở ' + (SERVERS[srv] || srv) + ': ' + talk.length + ' câu';

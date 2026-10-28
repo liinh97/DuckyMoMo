@@ -5,6 +5,16 @@
 
 ---
 
+## 28/10/2026 chiều: bot giống người thật (trang Bot)
+- Hồ sơ bot (xu, Thăng Cấp, điểm hạ gục, giờ, danh phận, nghề, kỹ năng, điểm danh, thành tích, thị trấn), Tự phát triển (tính cách ngẫu nhiên,
+  chỉ khi online), Tạo quá khứ (0–40 giờ, một lần; reset=True làm lại), bot tự trả lời TPA (chỉ từ chối / lơ), bot thỉnh thoảng tpa người
+  thật rồi tự huỷ (mặc định tắt), botfarm thoát dần khi tắt (đã triển khai 15:20, rời từng con trước khi dựng lại).
+- 3 thị trấn bot: LamPhong / VongNguyet / DoiGio (xem cẩm nang "Bot: thị trấn, chợ…"). Lập bằng tiến trình nền /tmp/bot_thitran.py trong
+  container panel (giãn 12–22 phút / thị trấn) — dựng lại panel giữa chừng sẽ cắt ngang, kiểm /tmp/bot_thitran.log.
+- CHƯA: bot treo bán Chợ đen cần quyền duckymomo.peace.admin cho tài khoản bot — chờ chủ server đồng ý cấp. Code _bot_market đã có, chưa
+  dựng lại panel (đợi tiến trình thị trấn xong).
+- BÀI HỌC: dựng lại botfarm khi có người thật = 21 bot thoát cùng giây, lộ bot (memory botfarm-restart-lo-bot).
+
 ## 28/10/2026 tối: TRẠNG THÁI CUỐI NGÀY (đọc mục này trước) — đã push nhánh claude/happy-ritchie-2p60v7
 
 - Server: banghoi-1, panel, botfarm chạy bản mới nhất (restart cuối 15:56). Chủ server chơi bằng 2 tài khoản: **Itrap** và **Linh**

@@ -2086,6 +2086,74 @@ def _bot_dev_step(name, st, prof, now, play_h=None):
     return hoso
 
 
+# Bot treo bán ở Chợ đen (28/10, chủ server: "/choden, /ah… mục nào fake được thì fake"): món theo tính cách, giá 1,2–2,2 lần giá /sell.
+BOT_MARKET = {
+    "thomo": [("coal", 16, 64), ("iron_ingot", 8, 32), ("raw_iron", 16, 32), ("redstone", 32, 64), ("lapis_lazuli", 16, 32),
+              ("copper_ingot", 32, 64), ("gold_ingot", 4, 16), ("coal", 32, 64), ("iron_ingot", 16, 32), ("diamond", 1, 3)],
+    "nongdan": [("wheat", 32, 64), ("bread", 16, 32), ("carrot", 32, 64), ("potato", 32, 64), ("sugar_cane", 32, 64), ("pumpkin", 8, 16),
+                ("hay_block", 4, 16)],
+    "ngudan": [("cooked_cod", 16, 32), ("cooked_salmon", 16, 32), ("ink_sac", 8, 16), ("cooked_salmon", 32, 64)],
+    "tieuphu": [("oak_log", 32, 64), ("spruce_log", 32, 64), ("birch_log", 32, 64), ("dark_oak_log", 16, 48), ("charcoal", 16, 32), ("apple", 8, 16)],
+    "thuongnhan": [("glass", 32, 64), ("white_wool", 16, 32), ("bookshelf", 4, 8), ("lantern", 8, 16), ("candle", 8, 16), ("hay_block", 8, 16)],
+    "chienbinh": [("bone", 16, 32), ("arrow", 32, 64), ("string", 16, 32), ("gunpowder", 8, 16), ("spider_eye", 8, 16), ("ender_pearl", 2, 4)],
+    "lairai": [("bread", 16, 32), ("oak_log", 16, 32), ("wheat", 16, 32), ("coal", 8, 16), ("torch", 32, 64)],
+}
+_WORTH = {"mtime": None, "data": {}}
+
+
+def _worth(item):
+    f = DATA_DIR / BOT_SRV / "plugins" / "Essentials" / "worth.yml"
+    try:
+        m = f.stat().st_mtime
+        if _WORTH["mtime"] != m:
+            _WORTH["data"], _WORTH["mtime"] = (taikhoan.safe_yaml(f).get("worth") or {}), m
+    except OSError:
+        return None
+    v = _WORTH["data"].get(item)
+    if v is None:
+        v = _WORTH["data"].get(item.replace("_", ""))
+    try:
+        return float(v) if v is not None else None
+    except (TypeError, ValueError):
+        return None
+
+
+def _bot_market(name, st):
+    """Thỉnh thoảng treo một món ở Chợ đen (giữ 1–3 món; món zAuctionHouse hết hạn sau 48 giờ)."""
+    h = int(time.strftime("%H"))
+    if 1 <= h < 7:
+        return None
+    now = time.time()
+    st["cho"] = [t for t in st.get("cho", []) if now - t < 47 * 3600]
+    st.setdefault("cho_max", _rnd.randint(1, 3))
+    if len(st["cho"]) >= st["cho_max"] or _rnd.random() > 0.3:
+        return None
+    item, lo, hi = _rnd.choice(BOT_MARKET.get(st.get("kieu"), BOT_MARKET["lairai"]))
+    w = _worth(item)
+    if not w:
+        return None
+    n = _rnd.randint(lo, hi)
+    total = w * n * _rnd.uniform(1.2, 2.2)
+    step = 5 if total < 100 else 10 if total < 1000 else 50
+    total = max(5, int(round(total / step) * step))
+    # Bot đứng ngoài kinh đô cần quyền duckymomo.peace.admin mới mở chợ được. KHÔNG tự cấp (chủ server cấp tay nếu đồng ý):
+    # chưa có quyền thì bỏ qua lượt treo.
+    try:
+        perms = taikhoan.load_perms(name)
+        allowed = bool(perms) and taikhoan.has(perms, "duckymomo.peace.admin", BOT_SRV)
+    except Exception:
+        allowed = False
+    if not allowed:
+        return None
+    rcon(BOT_SRV, [f"item replace entity {name} weapon.mainhand with minecraft:{item} {n}"])
+    time.sleep(1.5)
+    req = urllib.request.Request(BOTFARM_URL + "/act", data=json.dumps({"bot": name, "action": "cmd", "text": f"choden ban {n} {total}"}).encode("utf-8"),
+                                 headers={"Content-Type": "application/json"}, method="POST")
+    urllib.request.urlopen(req, timeout=20).read()
+    st["cho"].append(now)
+    return f"treo bán {n} {item} giá {total} xu"
+
+
 def bot_dev_past(name, st, reset=False, total=None):
     """Tạo quá khứ (28/10): giả lập 0–40 giờ đã chơi theo tính cách, áp một lần. reset=True: làm lại TỪ ĐẦU (xoá số liệu cũ,
     vd bot bị cộng quá khứ hai lần), ghi đè xu, cấp, giờ, nghề, kỹ năng, thành tích, điểm danh, danh phận."""
@@ -2152,6 +2220,12 @@ def bot_dev_tick():
                 hoso = _bot_dev_step(name, st, prof, now)
                 res = bot_profile_save({"bot": name, "hoso": hoso}, "tự phát triển")
                 st["ghi"] = time.strftime("%d/%m %H:%M") + " · " + str(res.get("message", ""))[:160]
+                try:
+                    mk = _bot_market(name, st)
+                    if mk:
+                        st["ghi"] += " · " + mk
+                except Exception as e:
+                    st["ghi"] += f" · chợ lỗi: {e}"[:80]
             except Exception as e:
                 st["ghi"] = time.strftime("%d/%m %H:%M") + f" · lỗi: {e}"[:160]
             st["next"] = now + _rnd.uniform(25, 70) * 60

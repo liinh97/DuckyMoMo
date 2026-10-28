@@ -756,6 +756,9 @@ public final class DuckyMoMoCore extends JavaPlugin {
                 ? new ArmorHide(this, getConfig().getConfigurationSection("armor-hide"), peace) : null;
         if (armorHide != null) {
             getServer().getPluginManager().registerEvents(armorHide, this);
+            if (getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+                armorHide.placeholders().register();   // %dmmgiap_tren%: món giáp mạnh nhất dưới tên khi đang ẩn giáp
+            }
         }
         bind("angiap", armorHide == null ? null : armorHide::command, "Ẩn giáp");
 

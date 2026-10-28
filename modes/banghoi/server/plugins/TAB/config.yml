@@ -46,7 +46,7 @@ playerlist-objective:
 belowname-objective:
   enabled: true
   value: "%health%"
-  fancy-value: "&c%health% ❤"
+  fancy-value: "&c%health% ❤%dmmgiap_tren%"   # 28/10: đang ẩn giáp thì hiện món giáp mạnh nhất (ArmorHide)
   fancy-value-default: "NPC"
   title: "&c❤"
   disable-condition: '%world%=disabledworld'

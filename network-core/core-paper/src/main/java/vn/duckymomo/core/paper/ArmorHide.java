@@ -184,6 +184,101 @@ final class ArmorHide implements Listener {
         lastFight.remove(e.getPlayer().getUniqueId());
     }
 
+    // ---------------------------------------------------------------- món giáp mạnh nhất (hiện dưới tên khi đang ẩn giáp, 28/10)
+    private static int tier(Material m) {
+        String n = m.name();
+        if (n.startsWith("NETHERITE_")) {
+            return 7;
+        }
+        if (n.startsWith("DIAMOND_")) {
+            return 6;
+        }
+        if (n.startsWith("IRON_") || n.equals("TURTLE_HELMET")) {
+            return 5;
+        }
+        if (n.startsWith("CHAINMAIL_") || n.startsWith("COPPER_")) {
+            return 4;
+        }
+        if (n.startsWith("GOLDEN_")) {
+            return 3;
+        }
+        return n.startsWith("LEATHER_") ? 2 : 1;
+    }
+
+    private static String pieceName(Material m) {
+        String n = m.name();
+        if (n.equals("TURTLE_HELMET")) {
+            return "Mai Rùa";
+        }
+        String part = n.endsWith("_HELMET") ? "Mũ" : n.endsWith("_CHESTPLATE") ? "Áo Giáp" : n.endsWith("_LEGGINGS") ? "Quần"
+                : n.endsWith("_BOOTS") ? "Giày" : null;
+        if (part == null) {
+            return null;
+        }
+        String mat = n.startsWith("NETHERITE_") ? "Netherite" : n.startsWith("DIAMOND_") ? "Kim Cương" : n.startsWith("IRON_") ? "Sắt"
+                : n.startsWith("CHAINMAIL_") ? "Xích" : n.startsWith("COPPER_") ? "Đồng" : n.startsWith("GOLDEN_") ? "Vàng"
+                : n.startsWith("LEATHER_") ? "Da" : "";
+        return (part + " " + mat).trim();
+    }
+
+    /** "Quần Kim Cương +4" (món mạnh nhất theo chất liệu, rồi cấp Bảo vệ); null nếu không mặc giáp. */
+    static String bestPiece(Player p) {
+        String best = null;
+        int bestScore = -1;
+        for (EquipmentSlot s : ARMOR) {
+            ItemStack it = p.getInventory().getItem(s);
+            if (it == null || it.getType().isAir()) {
+                continue;
+            }
+            String name = pieceName(it.getType());
+            if (name == null) {
+                continue;
+            }
+            int prot = it.getEnchantmentLevel(org.bukkit.enchantments.Enchantment.PROTECTION);
+            int score = tier(it.getType()) * 100 + prot;
+            if (score > bestScore) {
+                bestScore = score;
+                best = name + (prot > 0 ? " +" + prot : "");
+            }
+        }
+        return best;
+    }
+
+    /** Placeholder %dmmgiap_tren%: " · ⛨ <món mạnh nhất>" khi người đó đang ẩn giáp, rỗng khi không (TAB dòng dưới tên). */
+    me.clip.placeholderapi.expansion.PlaceholderExpansion placeholders() {
+        return new me.clip.placeholderapi.expansion.PlaceholderExpansion() {
+            @Override
+            public String getIdentifier() {
+                return "dmmgiap";
+            }
+
+            @Override
+            public String getAuthor() {
+                return "DuckyMoMo";
+            }
+
+            @Override
+            public String getVersion() {
+                return "1";
+            }
+
+            @Override
+            public boolean persist() {
+                return true;
+            }
+
+            @Override
+            public String onRequest(org.bukkit.OfflinePlayer player, String params) {
+                Player p = player == null ? null : player.getPlayer();
+                if (p == null || !params.equals("tren") || !hiddenNow.contains(p.getUniqueId())) {
+                    return "";
+                }
+                String b = bestPiece(p);
+                return b == null ? "" : " &8· &b⛨ " + b;
+            }
+        };
+    }
+
     boolean command(CommandSender s, String[] args) {
         if (!(s instanceof Player p)) {
             s.sendMessage("Chỉ dùng trong game.");

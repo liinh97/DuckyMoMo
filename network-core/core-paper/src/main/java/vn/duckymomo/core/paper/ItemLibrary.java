@@ -472,6 +472,9 @@ final class ItemLibrary {
             }
             if (!entries.isEmpty()) {
                 out = new ArrayList<>(pack(entries, 3));
+                if (k < lore.size() && !plain.serialize(lore.get(k)).isBlank()) {
+                    out.add(Component.empty());   // khoảng trống giữa khối phù phép và tiêu đề set
+                }
                 out.addAll(lore.subList(k, lore.size()));
             }
         }

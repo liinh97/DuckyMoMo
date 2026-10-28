@@ -456,7 +456,7 @@ final class Kham implements Listener {
     private static final String LINE_PREFIX = "◈ Khảm ";
     private static final String TITLE = "KHẢM NGỌC";
     /** Ký hiệu ô khảm theo set (đầy, trống) — cùng cặp với dòng cấp nâng của set (Thánh quang ☀☼, Huyền lực ✦✧…); config kham.icons.<set>. */
-    private static final Map<String, String> ICONS = Map.of("tinhanh", "★☆", "caocap", "✪✪", "huyenthoai", "✦✧", "thanthoai", "◆◇", "thanthanh", "☀☼");
+    private static final Map<String, String> ICONS = Map.of("tinhanh", "★☆", "caocap", "▰▱", "huyenthoai", "✦✧", "thanthoai", "◆◇", "thanthanh", "●○");
     private static final java.util.regex.Pattern HEADER = java.util.regex.Pattern.compile("^((?:&[0-9a-fk-or]|&#[0-9a-fA-F]{6})*)(\\S+) ((?:&[0-9a-fk-or]|&#[0-9a-fA-F]{6})*)\\S.*$");
 
     /**
@@ -478,6 +478,9 @@ final class Kham implements Listener {
             String pl = plain.serialize(lore.get(i));
             if (pl.startsWith(LINE_PREFIX) || pl.contains(" " + TITLE + " »")) {
                 lore.remove(i);
+                if (i < lore.size() && plain.serialize(lore.get(i)).isBlank() && pl.contains(" " + TITLE + " »")) {
+                    lore.remove(i);   // dòng trống đặt kèm dưới dòng khảm
+                }
                 at = i;
                 break;
             }
@@ -530,6 +533,9 @@ final class Kham implements Listener {
                 b.append(" &c⚡ sắp cạn");
             }
             lore.add(at, c(b.toString()));
+            if (at + 1 < lore.size() && !plain.serialize(lore.get(at + 1)).isBlank()) {
+                lore.add(at + 1, Component.empty());   // khoảng trống giữa mục khảm và mục dưới (28/10: đỡ ríu)
+            }
         }
         meta.lore(lore);
         meta.getPersistentDataContainer().set(keyGems, PersistentDataType.STRING, String.join(",", list.stream().map(Sock::enc).toList()));

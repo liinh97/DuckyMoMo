@@ -21,6 +21,13 @@
 - Trang Hoạt động (9686cd0): nhãn Bot / PC / BE trước tên trong dòng chat; ↑ / ↓ trong ô gửi gọi lại tin / lệnh (localStorage 50 dòng).
 - Botfarm: câu chat mới (giao dịch, shop, cách chơi; bỏ câu dính giờ giấc) đã lên.
 - Bot thử ThuVL đã /choilai admin ThuVL moi.
+- 28/10 chiều MÔ TẢ ĐỒ SET (chủ server: gọn, đẹp, icon nhỏ, có khoảng trống vừa phải, không đếm "(3/3)"): Thư viện đồ (data, NGOÀI repo)
+  sửa bằng script: bỏ "(n/max)" + "+N" ở dòng tiến độ, icon nhỏ (▪ dòng thông tin, ▸ tiêu đề mục, • gạch đầu dòng), bỏ icon to quanh
+  thanh tiêu đề, khung Tinh Anh 3 dòng -> 1, Thánh quang ●○, Thăng hoa ▰▱, dòng trống giữa các mục; 485 món 12 set (trừ Tân Thủ = mẫu).
+  Sao lưu: data/banghoi-1/plugins/DuckyMoMoCore/thuvien-do.yml.bak-28-10-dem (trước bỏ đếm), .bak-28-10-icon (trước đổi icon).
+  Code: tidyLore (phù phép gộp 3/dòng tên tiếng Việt cố định, chỉ số tiếng Việt, gỡ dòng OCM "Sát thương: N" + "%" trùng, dòng trống sau
+  phù phép), Kham "▸ KHẢM NGỌC » ●Sắt ○ ○ ○" (ký hiệu theo set kham.icons, màu theo tiêu đề mục dưới, dòng trống sau). OldCombatMechanics
+  old-tool-damage.tooltip.enabled=false (data). Đổi Thư viện -> đồ set người chơi DỰNG LẠI lúc vào game (giữ mòn + ngọc, mất phù phép tự thêm).
 - 28/10 sáng (restart banghoi-1 lúc Itrap online, chủ server đồng ý): chuỗi việc lữ khách (7148fa2), khối ô khảm [0/n] (f7b9b53),
   bấm Già Làng trả thưởng ngay + lời NPC đợi đóng hội thoại (3b59494), chữ dễ đọc (48d7d67), BetonQuest only_buttons + ẩn "Đối thoại với".
   Bot đã thử (vl-lk.js): Kỹ Sư nộp 64 đá đỏ -> 400 xu + giao bước 2; /nhiemvu phần lữ khách; Mũ Thần Thánh +3 hiện [0/4] + 4 ô trống.

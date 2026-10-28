@@ -1,9 +1,52 @@
 # Bàn giao dự án DuckyMoMo Network
 
-> Dùng file này để tiếp tục ở session hoặc tài khoản Claude khác. Cập nhật: 28/10/2026 rạng sáng. ĐỌC TỪ TRÊN XUỐNG: các mục có ngày ở đầu file là mới nhất (28/10 rạng sáng -> 27/10 tối -> 27/10 chiều -> trưa -> rạng sáng -> 26/10), rồi mới tới mục 0000000000 (22/10) và các mục 000… cũ hơn.
+> Dùng file này để tiếp tục ở session hoặc tài khoản Claude khác. Cập nhật: 28/10/2026 tối. ĐỌC TỪ TRÊN XUỐNG: các mục có ngày ở đầu file là mới nhất (28/10 tối -> 28/10 rạng sáng -> 27/10 tối -> 27/10 chiều -> trưa -> rạng sáng -> 26/10), rồi mới tới mục 0000000000 (22/10) và các mục 000… cũ hơn.
 > Đọc kèm: `README.md`, `docs/minecraft-server-plan.md` (kế hoạch, quyết định), `docs/network-architecture.md` (kiến trúc).
 
 ---
+
+## 28/10/2026 tối: TRẠNG THÁI CUỐI NGÀY (đọc mục này trước) — đã push nhánh claude/happy-ritchie-2p60v7
+
+- Server: banghoi-1, panel, botfarm chạy bản mới nhất (restart cuối 15:56). Chủ server chơi bằng 2 tài khoản: **Itrap** và **Linh**
+  (cả hai là chủ server; Itrap đang bậc Dân — đã thử Hào Kiệt rồi trả về). Bot botfarm ~20, chủ server có lúc tự thoát hết bot.
+- Chưa commit (cố ý, chủ server sửa qua web): modes/_network/settings.yml, modes/banghoi/settings.yml, site/config/site.yml.
+- NGOÀI repo (chỉ data/): Thư viện đồ thuvien-do.yml (mô tả đồ set mới, sao lưu .bak-28-10-*), OldCombatMechanics config
+  (old-tool-damage.tooltip.enabled=false), BetonQuest data (bản sao của modes/, đồng bộ tay khi sửa).
+
+### Đã làm 28/10 chiều–tối (theo thứ tự)
+- Giới hạn đăng ký: miễn Itrap (whitelist-players) + cố định IP 171.255.251.82 (lobby/plugins/DuckyMoMoCore/config.yml).
+- Hội thoại BetonQuest: ẩn "====Đối thoại với…====" (cotruyen/package.yml notifications io: suppress), dialog only_buttons: true
+  (trước lựa chọn hiện 2 lần). Việc làng: câu mở đầu "xong rồi à?" khi có việc chờ trả (tag cotruyen>vl_<mã>_tra), nút "Dạ, cháu làm
+  xong rồi ạ." / "Dạ, cháu nghe đây." -> câu NPC %ph.dmmviec_ketqua% hiện kết quả NGAY trong bảng (DailyQuestsPapi), chat chép lại khi đóng.
+  Lý do: hội thoại kết thúc TRƯỚC khi lệnh /dmm viecnpc chạy nên chờ PlayerConversationEndEvent không bắt được.
+- Lữ khách nhờ việc (daily-quests.chains): 4 lữ khách × 8 bước khó dần (kill/break/fish/nop/feature; cuối: Warden, Wither, 3 Elder
+  Guardian, vượt 3 dungeon), 400 -> 15.000 xu, không cần Cổng Hoang. Bot đã thử: Kỹ Sư nộp đá đỏ -> thưởng + bước 2. CHƯA THỬ: đếm hạ quái
+  (bot qua Via không giết được quái; cùng đường code nhiệm vụ ngày).
+- Cổng Hoang: chưa có cổng nào vì leaderboard.season-start trống (chưa mở mùa). Chủ server CHƯA quyết mở mùa / tạo cổng tay.
+- Chữ dễ đọc: /nhiemvu gom việc theo NPC, tên NPC một màu vàng; 43 chỗ &8 (xám đậm) trước chữ -> &7 toàn plugin.
+- Mô tả đồ set (nhiều vòng, chủ server duyệt bằng ảnh): phù phép gộp 3/dòng tên tiếng Việt cố định (CE + OCM ghi lại lore làm chữ
+  "máy tự dịch" thành tiếng Anh), "Khi cầm: 9 Sát thương" tiếng Việt, bỏ dòng OCM "Sát thương: N" và "+72%" trùng. Kiểu cuối:
+  thanh tiêu đề có icon nhỏ + bộ màu riêng từng set, ▪ dòng thông tin, tiến độ [•][◦] (Cao Cấp ▰▱), "▸ KHẢM NGỌC ◆ ◇ ◇ ◇" (xanh lá,
+  ngay trên mục đầu), tiêu đề mục khác nhóm màu với tên set, dòng mô tả không thụt, điều kiện tô màu (Chuột phải cam, Cầm tay/Mũ/Giáp…
+  xanh lá, tình huống trắng), dòng trống: sau khối phù phép, trước mục thứ 2, trước câu trích dẫn. Thư viện tự đọc lại file khi đổi; đồ
+  set người chơi DỰNG LẠI khi vào game (giữ mòn + ngọc, MẤT phù phép tự thêm sau khi rèn). Kiểm cả thư viện bằng scratchpad audit.
+- Phù phép riêng đợt 3 (SkillEnchants): tang_hinh (Q Shaco), nhay_cao, sung_cao_su (E Zac), phan_cong (E Jax) — chưa gắn món nào,
+  Sách cấm chưa chặn trong công thành (tuỳ chủ server). CHƯA THỬ bằng người. Soi sáng phá Tàng hình. Mọi chiêu (nhắm / vùng / Soi sáng)
+  bỏ qua người mình không thấy => KHÔNG làm lộ admin /v (chủ server yêu cầu).
+- Rada người chơi (locator bar): chỉ play-ranks radar: true (Hào Kiệt + helper/mod/quanly/admin, OP) thấy; bot tầm phát × 0 (không ai
+  dò ra bot). /danhphan ghi quyền lợi; Cài đặt › Danh phận có ô theo bậc. Đã đo: Dân 0, Hào Kiệt 6e7, bot 0.
+- Botfarm: câu chat bắt đầu bằng "/" gửi thành "./…" (trước bị chạy thành lệnh).
+- AFK: Essentials auto-afk 300 giây, KHÔNG tự kick (chủ server chốt giữ như vậy).
+- Bài học: lệnh LuckPerms qua RCON không trả chữ (kết quả async); kiểm quyền bằng DB (panel app.lp_db(), PYTHONPATH=/app) hoặc
+  attribute. Tool Edit trên \\wsl hay lỗi EPERM -> sửa bằng script Python trong WSL; biến shell trong `wsl.exe -- bash -c` bị nuốt -> dùng file .sh.
+  Không đặt tên script scratchpad trùng module Python (re.py làm hỏng import json).
+
+### Còn lại / chưa thử bằng người
+- Lữ khách: hội thoại thật, đếm quái, nộp đồ; việc làng: Nhà Buôn, câu hỏi ở Bác Thợ Rèn / Người Gác Cổng.
+- 4 phù phép mới (cảm giác độ cao Nhảy cao, quãng bay Súng cao su, Tàng hình với người khác, Phản công né + choáng).
+- Rada: 2 người thật cùng online (Hào Kiệt thấy, Dân không thấy, không ai thấy bot).
+- Màu mô tả đồ set: chủ server đã xem Thần Thánh; các set khác mới kiểm bằng script/bot (chỉ chữ, không màu).
+- Theo dõi: botfarm rò bộ nhớ (~25 MB/phút trước đây), dơi quanh bot; quyết định mở Mùa 1 (Cổng Hoang, Thăng Cấp/AuraSkills làm lại).
 
 ## 28/10/2026: EliteMobs cho người mới (người chơi TyninWorld bỏ sau 2 phút)
 - EliteMobs 10 tính sức mạnh theo CẤP CHIẾN ĐẤU (kỹ năng vũ khí + giáp, luyện bằng hạ elite); đo: full kim cương/netherite vẫn cấp 1.

@@ -481,12 +481,13 @@ final class Kham implements Listener {
                 if (i < lore.size() && plain.serialize(lore.get(i)).isBlank() && pl.contains(" " + TITLE + " »")) {
                     lore.remove(i);   // dòng trống đặt kèm dưới dòng khảm
                 }
-                at = i;
+                at = firstSection(lore) >= 0 ? -1 : i;   // có tiêu đề mục thì tính lại chỗ (sửa đồ lỡ đặt sai), không thì giữ chỗ cũ
                 break;
             }
         }
         if (n > 0) {
-            if (at < 0) {
+            if (at < 0) {   // ngay trên tiêu đề mục đầu tiên ("▸ THIÊN UY"…); đồ kiểu cũ: sau dòng trống đầu tiên
+                at = firstSection(lore);
                 for (int i = 0; i < lore.size() && at < 0; i++) {
                     if (plain.serialize(lore.get(i)).isBlank()) {
                         at = i + 1;
@@ -543,6 +544,17 @@ final class Kham implements Listener {
         it.setItemMeta(meta);
     }
 
+    /** Dòng tiêu đề mục đầu tiên ("▸ …") trong mô tả; -1 nếu không có. */
+    private static int firstSection(List<Component> lore) {
+        var plain = net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer.plainText();
+        for (int i = 0; i < lore.size(); i++) {
+            if (plain.serialize(lore.get(i)).startsWith("▸ ")) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
     /** Đồ còn dòng khảm kiểu cũ (khối nhiều dòng ở cuối, hoặc "◈ Khảm 0/4"): ghi lại theo kiểu mục của set. true = đã đổi món. */
     static boolean migrate(ItemStack it) {
         Kham k = INSTANCE;
@@ -553,7 +565,20 @@ final class Kham implements Listener {
         List<Component> lore = it.getItemMeta().lore();
         var plain = net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer.plainText();
         boolean oneLineOld = lore != null && lore.stream().anyMatch(l -> plain.serialize(l).startsWith(LINE_PREFIX));   // "◈ Khảm 0/4" sáng 28/10
-        if (((old == null || old <= 0) && !oneLineOld) || k.slotsOf(it) <= 0) {
+        boolean misplaced = false;   // 28/10 chiều: dòng khảm lỡ đặt trên tiêu đề set (sau dòng trống mới thêm dưới khối phù phép)
+        if (lore != null) {
+            int sec = firstSection(lore);
+            for (int i = 0; i < lore.size(); i++) {
+                if (plain.serialize(lore.get(i)).contains(" " + TITLE + " »")) {
+                    int nx = i + 1;
+                    while (nx < lore.size() && plain.serialize(lore.get(nx)).isBlank()) {
+                        nx++;
+                    }
+                    misplaced = sec >= 0 && nx != sec;
+                }
+            }
+        }
+        if (((old == null || old <= 0) && !oneLineOld && !misplaced) || k.slotsOf(it) <= 0) {
             return false;
         }
         k.write(it, k.gemsOf(it));

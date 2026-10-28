@@ -46,6 +46,9 @@ final class BotView implements Listener {
             p.setSimulationDistance(sim);
             p.setViewDistance(view);
             p.setSendViewDistance(view);
+            // 29/10: bot đứng yên cả ngày làm quái sinh dồn quanh mình (spark: ~5.000 quái, TPS 14). Không tính bot vào sinh quái
+            // (Paper: người không affects-spawning cũng bị bỏ qua khi xét quái biến mất) → quái quanh bot tự biến mất, quanh người thật vẫn sinh
+            p.setAffectsSpawning(false);
         } catch (RuntimeException e) {
             log.warning("Không đặt được tầm nhìn cho bot " + p.getName() + ": " + e.getMessage());
         }

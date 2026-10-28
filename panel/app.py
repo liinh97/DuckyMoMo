@@ -3193,6 +3193,36 @@ def _num(x):
         return None
 
 
+# Tài khoản thử nghiệm của tools/bottest (không phải người chơi): bỏ khỏi thống kê người chơi (28/10)
+TEST_ACC_RE = re.compile(r"^(Thu[A-Z_]|Thu$|ThuX|Tot_|Pham_|NL_\d|Mon_|HQ_|HM_|HoanMy_|MM_Bao$)")
+
+
+def townless_players():
+    """Người chơi THẬT ở Bang Hội Chiến chưa vào thị trấn (bỏ bot, NPC, tài khoản test), mới online trước (28/10)."""
+    base = DATA_DIR / "banghoi-1" / "plugins" / "Towny" / "data"
+    try:
+        bots = {str(b.get("name", "")).lower() for b in bot_json().get("bots", [])}
+    except Exception:
+        bots = set()
+    towns = {f.stem: taikhoan.towny_kv(f).get("name", "") for f in (base / "towns").glob("*.txt")}
+    out, co = [], []
+    for f in (base / "residents").glob("*.txt"):
+        kv = taikhoan.towny_kv(f)
+        n = kv.get("name", "")
+        if not n or kv.get("isNPC") == "true" or n.lower() in bots or TEST_ACC_RE.match(n):
+            continue
+        try:
+            last = int(kv.get("lastOnline", "0") or 0) // 1000
+        except ValueError:
+            last = 0
+        if kv.get("town") in towns:
+            co.append({"ten": n, "thitran": towns[kv["town"]]})
+        else:
+            out.append({"ten": n, "last": last})
+    out.sort(key=lambda x: -x["last"])
+    return {"chua": out, "co": sorted(co, key=lambda x: x["ten"].lower())}
+
+
 def hethong_status():
     out = []
     for srv in GAME_SERVERS:
@@ -4080,7 +4110,7 @@ PAGE_FEATURES = {"/": ("caidat",), "/thuvien": ("thuvien", "thuvien-dua"), "/bos
                  "/hoatdong": ("hoatdong",), "/camnang": ("camnang",), "/huongdan": ("huongdan",),
                  "/donate": ("donate",), "/hethong": ("hethong",), "/media": ("media",), "/bot": ("bot",)}
 API_GET_FEATURES = {"/api/modes": ("caidat",), "/api/camnang": ("camnang",), "/api/huongdan": ("huongdan",), "/api/roles": ("role", "role-quyen", "rank", "rank-quyen"),
-                    "/api/boss": ("boss",), "/api/activity": ("hoatdong",), "/api/donate": ("donate",), "/api/hethong": ("hethong",), "/api/media": ("media",), "/api/bot": ("bot",), "/api/thuvien": None, "/api/toi": None}
+                    "/api/boss": ("boss",), "/api/activity": ("hoatdong",), "/api/donate": ("donate",), "/api/hethong": ("hethong",), "/api/hethong/thitran": ("hethong",), "/api/media": ("media",), "/api/bot": ("bot",), "/api/thuvien": None, "/api/toi": None}
 # Staff đăng nhập bằng tài khoản game chỉ thao tác được CẤP DƯỚI: role chức vụ có weight nhỏ hơn role chức vụ cao nhất của mình
 # (Manager 90: Mod, Helper, Builder, Dân; Mod 70: Helper, Builder, Dân…). Rank donate theo quyền riêng (web.rank / web.rank.quyen).
 # Không ai ngoài toàn quyền cấp được * hay quyền web/admin/LuckPerms, và chỉ cấp được quyền chính mình đang có.
@@ -4359,6 +4389,8 @@ class Handler(BaseHTTPRequestHandler):
             self.send_json(200, {"rows": donate_load()[::-1]})
         elif path == "/api/hethong":
             self.send_json(200, hethong_status())
+        elif path == "/api/hethong/thitran":
+            self.send_json(200, townless_players())
         elif path == "/api/media":
             self.send_json(200, media_json())
         elif path == "/api/bot":

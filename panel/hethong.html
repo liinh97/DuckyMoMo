@@ -45,6 +45,11 @@
   <p class="hint">TPS 20 là mượt; dưới 18 là bắt đầu giật. MSPT dưới 50 ms là ổn. Số liệu tự làm mới mỗi 15 giây.
     Khởi động lại: server lưu thế giới rồi tắt, Docker tự bật lại sau khoảng 1–2 phút. Proxy (cổng vào chung) không điều khiển được từ đây.</p>
   <div class="grid" id="grid"><div class="card srv muted">Đang tải…</div></div>
+  <section class="card reset" id="tt">
+    <h3>Người chơi chưa vào thị trấn (Bang Hội Chiến)</h3>
+    <div class="muted" id="ttSum">Đang tải…</div>
+    <div id="ttList" style="margin-top:8px;max-height:320px;overflow:auto"></div>
+  </section>
   <section class="card reset">
     <h3>Reset người chơi (Bang Hội Chiến)</h3>
     <div class="row2"><input type="text" id="rsName" placeholder="Tên người chơi, vd vanlinh (Bedrock có dấu chấm đầu)" autocomplete="off"></div>
@@ -67,6 +72,16 @@ let LENH = {};
 const viTime = t => t.replace(/(\d+) days?/g, "$1 ngày").replace(/(\d+) hours?/g, "$1 giờ").replace(/(\d+) minutes?/g, "$1 phút")
   .replace(/\s*\d+ seconds?/g, "").trim() || "dưới 1 phút";
 const out = {};
+// người chơi thật chưa vào thị trấn (bỏ bot, NPC, tài khoản test), mới online trước
+async function loadTownless() {
+  try {
+    const d = await (await fetch("api/hethong/thitran", {cache: "no-store"})).json();
+    const ago = (t) => { if (!t) return "?"; const h = (Date.now() / 1000 - t) / 3600; return h < 1 ? "vừa xong" : h < 24 ? Math.round(h) + " giờ trước" : Math.round(h / 24) + " ngày trước"; };
+    $("#ttSum").textContent = `${d.chua.length} người chưa có thị trấn · ${d.co.length} người đã có` + (d.co.length ? ` (${d.co.map((x) => x.ten + " → " + x.thitran).join(", ")})` : "") + ". Không tính bot, NPC, tài khoản test.";
+    $("#ttList").innerHTML = d.chua.length ? `<table style="width:100%"><thead><tr><th style="text-align:left">Người chơi</th><th style="text-align:left">Online gần nhất</th></tr></thead><tbody>${d.chua.map((x) => `<tr><td>${esc(x.ten)}</td><td class="muted">${ago(x.last)}</td></tr>`).join("")}</tbody></table>` : "";
+  } catch (e) { $("#ttSum").textContent = "Không tải được: " + e.message; }
+}
+loadTownless();
 
 async function post(body) {
   const r = await fetch("api/hethong", {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify(body)});

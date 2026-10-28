@@ -137,7 +137,7 @@ function srvOptions(cur) {
   return Object.entries(SERVERS).map(([k, v]) => `<option value="${esc(k)}"${k === cur ? " selected" : ""}>${esc(v)}</option>`).join("");
 }
 
-let DEV_STATE = {}, TOWNS = {};
+let DEV_STATE = {}, TOWNS = {}, TOWN_LIST = [];
 function renderBots() {
   if (!BOTS.length) return;
   const sel = $("who").value;
@@ -154,6 +154,7 @@ function renderBots() {
         <button data-a="cmd" data-t="spawn">/spawn</button><button data-a="cmd" data-t="tpaccept">/tpaccept</button><button data-a="cmd" data-t="tpdeny">/tpdeny</button>
         <button data-a="sethome" title="Lấy chỗ đang đứng làm chỗ mặc định">Đặt chỗ</button><button data-a="pick" title="Chọn bot này ở khung chat">Chat</button>` : ""}
         <button data-a="hoso" title="Xu, Thăng Cấp, giờ chơi, danh phận, nghề, kỹ năng: số liệu giống người chơi thật">Hồ sơ</button>
+        <button data-a="town" title="Cho bot vào / đổi / rời thị trấn">Thị trấn</button>
         <button data-a="dev"${(DEV_STATE[b.name] || {}).on ? ' class="hl"' : ""} title="Bot tự tăng số liệu dần như người thật (chỉ khi online ở Bang Hội Chiến), mỗi bot một tính cách riêng">${(DEV_STATE[b.name] || {}).on ? "Đang tự phát triển" : "Tự phát triển"}</button>
         ${b.created && !b.want && !b.online ? '<button data-a="remove" title="Xoá bot tạo thêm khỏi danh sách">Xoá</button>' : ""}</div></td></tr>`;
   }
@@ -169,6 +170,7 @@ $("bots").addEventListener("click", async (ev) => {
   const server = btn.closest("tr").querySelector('select[data-a="server"]').value;
   if (a === "pick") { $("who").value = name; $("txt").focus(); renderBots(); return; }
   if (a === "hoso") return openProfile(name);
+  if (a === "town") return openTown(name);
   if (a === "dev") return act({ bot: name, action: "phattrien", on: !(DEV_STATE[name] || {}).on });
   if (a === "move") {
     const v = prompt(`Cho ${name} đi tới toạ độ (X Z), vd: 12700 -2430`); if (!v) return;
@@ -209,7 +211,7 @@ async function loadBots() {
   try {
     const d = await (await fetch("api/bot")).json();
     if (!d.ok) { $("bots").innerHTML = `<div class="empty">${esc(d.message || "Không tải được")}</div>`; return; }
-    SERVERS = d.servers || {}; BOTS = d.bots || []; EVENTS = d.events || []; DEV_STATE = d.phattrien || {}; TOWNS = d.thitran || {};
+    SERVERS = d.servers || {}; BOTS = d.bots || []; EVENTS = d.events || []; DEV_STATE = d.phattrien || {}; TOWNS = d.thitran || {}; TOWN_LIST = d.ds_thitran || [];
     if ($("fsrv").options.length === 1) for (const [k, v] of Object.entries(SERVERS)) $("fsrv").add(new Option(v, k));
     if (!$("mkSrv").options.length) for (const [k, v] of Object.entries(SERVERS)) $("mkSrv").add(new Option(v, k));
     if (!document.activeElement || !document.activeElement.closest("#bots select")) renderBots();
@@ -220,6 +222,26 @@ async function loadBots() {
     $("ftpaOn").disabled = !d.tpagia;   // botfarm chưa có tính năng (chưa dựng lại)
     if (d.tpagia && document.activeElement !== $("ftpaOn")) $("ftpaOn").checked = !!d.tpagia.on;
   } catch (e) { $("bots").innerHTML = `<div class="empty">Không tải được: ${esc(e)}</div>`; }
+}
+
+// chọn thị trấn cho bot (vào / đổi / rời)
+function openTown(name) {
+  const cur = (TOWNS[name] || "").split(" · ")[0];
+  const wrap = document.createElement("div"); wrap.className = "ask-wrap";
+  wrap.innerHTML = `<div class="ask" role="dialog" aria-modal="true"><h3>Thị trấn của ${esc(name)}</h3>
+    <p class="muted">Hiện tại: <b>${esc(cur || "chưa có thị trấn")}</b>${(TOWNS[name] || "").includes("thị trưởng") ? " (đang là thị trưởng: rời thì thị trấn mất thị trưởng, nên đổi ở trong game)" : ""}</p>
+    <select class="ask-in" id="tSel"><option value="">(rời thị trấn / không thị trấn)</option>${TOWN_LIST.map((t) => `<option${t === cur ? " selected" : ""}>${esc(t)}</option>`).join("")}</select>
+    <div class="ask-btns"><button type="button" class="ghost t-no">Huỷ</button><button type="button" class="primary t-ok">Lưu</button></div></div>`;
+  const close = () => wrap.remove();
+  wrap.onmousedown = (e) => { if (e.target === wrap) close(); };
+  wrap.querySelector(".t-no").onclick = close;
+  wrap.querySelector(".t-ok").onclick = async () => {
+    const v = wrap.querySelector("#tSel").value;
+    if (v === cur) { close(); return; }
+    const r = await act({ bot: name, action: "vaothitran", thitran: v });
+    if (r && r.ok) close();
+  };
+  document.body.appendChild(wrap);
 }
 
 // nhãn tính cách dưới tên bot đang tự phát triển; rê chuột xem lần cập nhật gần nhất

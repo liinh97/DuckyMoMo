@@ -1718,7 +1718,8 @@ def bot_json():
     try:
         with urllib.request.urlopen(BOTFARM_URL + "/bots", timeout=5) as r:
             d = json.loads(r.read().decode("utf-8"))
-            return d | {"ok": True, "phattrien": bot_dev_info(), "thitran": bot_towns_of([b.get("name", "") for b in d.get("bots", [])])}
+            return d | {"ok": True, "phattrien": bot_dev_info(), "thitran": bot_towns_of([b.get("name", "") for b in d.get("bots", [])]),
+                        "ds_thitran": sorted(_bot_towns().values(), key=str.lower)}
     except Exception as e:
         return {"ok": False, "message": f"Dịch vụ bot không trả lời ({e}). Kiểm tra: docker compose ps botfarm", "bots": [], "events": [], "servers": {}}
 
@@ -1884,7 +1885,8 @@ def bot_profile_save(body, who):
             raise ValueError("Đổi danh phận cần bot đang online ở Bang Hội Chiến (lệnh /danhphan dat chỉ nhận người đang online)")
         cmds.append(f"danhphan dat {n} {new['danhphan']}"); did.append(f"danh phận {BOT_TIERS[new['danhphan']]}")
     jobs = {k: m for k, _, m in _bot_jobs()}
-    job = str(new.get("nghe") or "")
+    # 28/10: chỉ đụng nghề khi có gửi mục "nghe" (nút Thị trấn chỉ gửi thitran; thiếu mục này từng bị hiểu là bỏ nghề)
+    job = str(new.get("nghe") or "") if "nghe" in new else cur["nghe"]
     if job and job not in jobs:
         raise ValueError("Nghề không hợp lệ")
     lv = num("cap_nghe", 0, max(jobs.values() or [50]), int) if "cap_nghe" in new else cur["cap_nghe"]
@@ -2326,6 +2328,8 @@ def bot_action(body, who):
         return bot_dev_set(body, who)
     if act == "quakhu":
         return bot_dev_past_all(body, who)
+    if act == "vaothitran":   # nút Thị trấn ở trang Bot: chỉ đổi thị trấn (Hồ sơ bot dùng ta town <cũ> kick + ta town <mới> add)
+        return bot_profile_save({"bot": str(body.get("bot", "")).strip(), "hoso": {"thitran": str(body.get("thitran") or "")}}, who)
     if act not in BOT_ACTIONS:
         raise ValueError("Thao tác không hợp lệ")
     if act == "create":

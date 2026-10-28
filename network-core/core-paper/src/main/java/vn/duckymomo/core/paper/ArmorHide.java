@@ -205,7 +205,7 @@ final class ArmorHide implements Listener {
             }
             p.sendMessage(c("&7Đã tắt ẩn giáp: người khác thấy giáp của bạn như thường."));
         } else {
-            p.sendMessage(c("&aĐã bật ẩn giáp: &fngười khác thấy skin, không thấy giáp &7(giáp vẫn bảo vệ đủ)."));
+            p.sendMessage(c("&aĐã bật ẩn giáp: &fngười khác thấy skin, không thấy giáp. &7Bạn vẫn thấy giáp của mình (góc nhìn thứ 3, túi đồ): giáp vẫn đang mặc, vẫn bảo vệ đủ."));
             p.sendMessage(c("&7Chỉ ẩn ở kinh đô, đất hoà bình, thị trấn của bạn; ra đất hoang, vùng vây hoặc đang đánh nhau thì giáp hiện lại. Gõ &f/angiap &7để tắt."));
         }
         return true;

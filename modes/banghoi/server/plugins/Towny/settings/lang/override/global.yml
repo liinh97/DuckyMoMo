@@ -725,7 +725,7 @@ msg_cant_toggle_pvp_outsider_in_town: Có người ngoài vào thị trấn củ
 msg_err_unclaim_not_outpost: Không thể hủy yêu cầu, lô đất này không phải là tiền đồn!
 outpost_plu: Tiền đồn
 msg_err_not_enough_residents: Không có đủ cư dân ở thị trấn này để làm điều đó.
-msg_err_friendly_fire_disable: Chế độ thân thiện đã bị vô hiệu hóa!
+msg_err_friendly_fire_disable: '&cKhông đánh được người cùng thị trấn, cùng quốc gia hoặc đồng minh.'
 msg_claim_error: '&cMột plugin khác đã dừng yêu cầu của (%s)/(%s) khối thị trấn, không thể hoàn tất hoạt động.'
 msg_err_town_spawn_forbidden_war: '&cChỉ được phép di chuyển đến thị trấn trong thời gian chiến tranh.'
 msg_err_town_spawn_forbidden_peace: '&cViệc di chuyển đến thị trấn bị cấm trong thời gian chiến tranh.'

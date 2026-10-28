@@ -50,6 +50,7 @@
   .dev.be { color: #16a34a; background: color-mix(in srgb, #16a34a 15%, transparent); }
   .dev.bot { color: var(--muted); background: var(--chip); }
   .ask.hoso { width: min(640px, calc(100vw - 32px)); }
+  .devtag { display: block; font-size: 11px; color: #16a34a; margin-top: 2px; font-weight: 500; }
   .hs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; margin: 10px 0; }
   .hs-grid label { display: flex; flex-direction: column; gap: 4px; font-size: 13px; }
   .hs-grid input, .hs-grid select { width: 100%; }
@@ -81,7 +82,9 @@
   <div class="card">
     <h3>Danh sách bot <span class="sp">
       <button class="mini" id="allJoin" title="Bật mọi bot (mỗi bot vào server đang chọn của nó)">Vào tất cả</button>
-      <button class="mini" id="allLeave">Thoát tất cả</button></span></h3>
+      <button class="mini" id="allLeave">Thoát tất cả</button>
+      <button class="mini" id="allDev" title="Bật tự phát triển cho mọi bot: mỗi bot một tính cách, nhịp riêng">Tự phát triển tất cả</button>
+      <button class="mini" id="allDevOff">Tắt tự phát triển</button></span></h3>
     <div class="note">Bot không tự làm gì. Ở Bang Hội Chiến mỗi bot tự đứng một khu riêng (gần các điểm warp). Bot vào thẳng server con nên không tính vào số người ở danh sách server; đứng yên nên không tính giờ chơi.</div>
     <form id="mk" autocomplete="off" title="Bot mới làm y như bot cũ: vào / ra không báo, Sáng tạo + bất tử, tự đăng ký ở Sảnh">
       <input id="mkName" placeholder="Tên bot mới (vd Quoc_Bao)" maxlength="16" pattern="[A-Za-z0-9_]{3,16}">
@@ -130,6 +133,7 @@ function srvOptions(cur) {
   return Object.entries(SERVERS).map(([k, v]) => `<option value="${esc(k)}"${k === cur ? " selected" : ""}>${esc(v)}</option>`).join("");
 }
 
+let DEV_STATE = {};
 function renderBots() {
   if (!BOTS.length) return;
   const sel = $("who").value;
@@ -138,7 +142,7 @@ function renderBots() {
     const st = b.online ? "on" : (b.want || b.connecting) ? "wait" : "";
     const pos = b.online && b.x != null ? `${b.x} ${b.y} ${b.z}${b.away ? " · đang ở chỗ khác" : ""}` : (b.want ? "đang vào…" : "—");
     h += `<tr data-n="${esc(b.name)}"${b.name === sel ? ' class="sel"' : ""}>
-      <td class="name"><span class="dot ${st}"></span><b>${esc(b.name)}</b>${b.err && !b.online ? `<span class="err" title="${esc(b.err)}">${esc(b.err)}</span>` : ""}</td>
+      <td class="name"><span class="dot ${st}"></span><b>${esc(b.name)}</b>${b.err && !b.online ? `<span class="err" title="${esc(b.err)}">${esc(b.err)}</span>` : ""}${devTag(b.name)}</td>
       <td><select data-a="server">${srvOptions(b.server)}</select></td>
       <td>${b.online && b.spawn ? `<span class="atsp" title="Đang đứng ở khu spawn${b.server === "banghoi-1" ? " — bấm Ngẫu nhiên để ra khu riêng" : ""}">Ở spawn</span>` : ""}<span class="pos" title="${b.home ? "Chỗ mặc định: " + b.home.join(" ") : ""}">${esc(pos)}</span></td>
       <td><div class="acts">${b.want ? '<button data-a="leave">Thoát</button>' : '<button class="primary" data-a="join">Vào</button>'}
@@ -146,6 +150,7 @@ function renderBots() {
         <button data-a="cmd" data-t="spawn">/spawn</button><button data-a="cmd" data-t="tpaccept">/tpaccept</button><button data-a="cmd" data-t="tpdeny">/tpdeny</button>
         <button data-a="sethome" title="Lấy chỗ đang đứng làm chỗ mặc định">Đặt chỗ</button><button data-a="pick" title="Chọn bot này ở khung chat">Chat</button>` : ""}
         <button data-a="hoso" title="Xu, Thăng Cấp, giờ chơi, danh phận, nghề, kỹ năng: số liệu giống người chơi thật">Hồ sơ</button>
+        <button data-a="dev"${(DEV_STATE[b.name] || {}).on ? ' class="hl"' : ""} title="Bot tự tăng số liệu dần như người thật (chỉ khi online ở Bang Hội Chiến), mỗi bot một tính cách riêng">${(DEV_STATE[b.name] || {}).on ? "Đang tự phát triển" : "Tự phát triển"}</button>
         ${b.created && !b.want && !b.online ? '<button data-a="remove" title="Xoá bot tạo thêm khỏi danh sách">Xoá</button>' : ""}</div></td></tr>`;
   }
   $("bots").innerHTML = h + "</tbody></table>";
@@ -160,6 +165,7 @@ $("bots").addEventListener("click", async (ev) => {
   const server = btn.closest("tr").querySelector('select[data-a="server"]').value;
   if (a === "pick") { $("who").value = name; $("txt").focus(); renderBots(); return; }
   if (a === "hoso") return openProfile(name);
+  if (a === "dev") return act({ bot: name, action: "phattrien", on: !(DEV_STATE[name] || {}).on });
   if (a === "move") {
     const v = prompt(`Cho ${name} đi tới toạ độ (X Z), vd: 12700 -2430`); if (!v) return;
     const m = v.trim().split(/[\s,]+/); if (m.length < 2) return;
@@ -187,6 +193,8 @@ $("tc").addEventListener("submit", (ev) => {
 });
 $("tcOn").onchange = () => act({ action: "chatcfg", on: $("tcOn").checked });
 $("tcNow").onclick = () => act({ action: "chatnow" });
+$("allDev").onclick = async () => { if (await ask(`Bật tự phát triển cho cả ${BOTS.length} bot? Mỗi bot được gán ngẫu nhiên một tính cách và nhịp riêng.`, { title: "Tự phát triển", ok: "Bật" })) act({ bot: "*", action: "phattrien", on: true }); };
+$("allDevOff").onclick = async () => { if (await ask("Tắt tự phát triển của mọi bot? (số liệu đã có giữ nguyên)", { title: "Tắt tự phát triển", ok: "Tắt" })) act({ bot: "*", action: "phattrien", on: false }); };
 $("allJoin").onclick = async () => { if (await ask(`Cho cả ${BOTS.length} bot vào game (mỗi bot vào server đang chọn của nó)?`, { title: "Vào tất cả", ok: "Vào" })) act({ bot: "*", action: "join" }); };
 $("allLeave").onclick = async () => { if (await ask("Cho mọi bot thoát game?", { title: "Thoát tất cả", ok: "Thoát" })) act({ bot: "*", action: "leave" }); };
 
@@ -194,7 +202,7 @@ async function loadBots() {
   try {
     const d = await (await fetch("api/bot")).json();
     if (!d.ok) { $("bots").innerHTML = `<div class="empty">${esc(d.message || "Không tải được")}</div>`; return; }
-    SERVERS = d.servers || {}; BOTS = d.bots || []; EVENTS = d.events || [];
+    SERVERS = d.servers || {}; BOTS = d.bots || []; EVENTS = d.events || []; DEV_STATE = d.phattrien || {};
     if ($("fsrv").options.length === 1) for (const [k, v] of Object.entries(SERVERS)) $("fsrv").add(new Option(v, k));
     if (!$("mkSrv").options.length) for (const [k, v] of Object.entries(SERVERS)) $("mkSrv").add(new Option(v, k));
     if (!document.activeElement || !document.activeElement.closest("#bots select")) renderBots();
@@ -202,6 +210,12 @@ async function loadBots() {
       $("tcOn").checked = !!d.chat.on; $("tcMin").value = d.chat.min; $("tcMax").value = d.chat.max;
     }
   } catch (e) { $("bots").innerHTML = `<div class="empty">Không tải được: ${esc(e)}</div>`; }
+}
+
+// nhãn tính cách dưới tên bot đang tự phát triển; rê chuột xem lần cập nhật gần nhất
+function devTag(n) {
+  const v = DEV_STATE[n]; if (!v || !v.on) return "";
+  return `<span class="devtag" title="${esc(`Chăm ${Math.round((v.cham || 0) * 100)}% · nghề ${v.nghe || "?"}${v.ghi ? "\nGần nhất: " + v.ghi : ""}`)}">↗ ${esc(v.kieu || "tự phát triển")}</span>`;
 }
 
 // ---------------------------------------------------------------- hồ sơ bot (28/10): xu, Thăng Cấp, giờ chơi, danh phận, nghề, kỹ năng

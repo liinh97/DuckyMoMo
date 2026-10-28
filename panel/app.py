@@ -1717,7 +1717,7 @@ def bot_json():
     """Danh sách bot + sự kiện bot nhận (tin nhắn riêng, TPA, bị gọi tên) từ botfarm."""
     try:
         with urllib.request.urlopen(BOTFARM_URL + "/bots", timeout=5) as r:
-            return json.loads(r.read().decode("utf-8")) | {"ok": True}
+            return json.loads(r.read().decode("utf-8")) | {"ok": True, "phattrien": bot_dev_info()}
     except Exception as e:
         return {"ok": False, "message": f"Dịch vụ bot không trả lời ({e}). Kiểm tra: docker compose ps botfarm", "bots": [], "events": [], "servers": {}}
 
@@ -1913,12 +1913,227 @@ def bot_profile_save(body, who):
     return {"ok": not bad, "message": ("Đã đặt cho " + n + ": " + ", ".join(did)) if not bad else "Có lệnh không chạy được: " + " | ".join(bad)}
 
 
+# ---------------------------------------------------------------- bot tự phát triển (28/10)
+# Chủ server: "bot tự tăng tiến giống người thật, nhưng không được bot nào cũng giống nhau". Mỗi bot bật lên được gán NGẪU NHIÊN một tính
+# cách (nghề, kỹ năng chính, tốc độ kiếm xu / hạ quái…) + mức chăm chỉ + độ đều điểm danh; luồng nền mỗi 5 phút xét, mỗi bot tới lượt
+# riêng (25–70 phút, lệch nhau), CHỈ tiến khi bot đang online ở Bang Hội Chiến. Áp số liệu qua bot_profile_save (lệnh admin, chỉ mục đổi).
+import random as _rnd
+BOT_DEV_FILE = DATA_DIR / "panel" / "bot-phattrien.json"
+BOT_DEV_LOCK = threading.Lock()
+# tính cách: nghề Jobs, kỹ năng chính, xu/giờ, điểm hạ gục/giờ, thành tích hay làm (loại: số/giờ)
+BOT_STYLES = {
+    "thomo": {"ten": "Thợ mỏ", "nghe": "Miner", "kn": ["mining", "excavation"], "xu": (700, 1300), "ha": (6, 16),
+              "tt": {"khampha": 0.4, "kholuong": 60, "khobau": 0.1, "dungeon": 0.05}},
+    "nongdan": {"ten": "Nông dân", "nghe": "Farmer", "kn": ["farming", "foraging"], "xu": (450, 950), "ha": (2, 7),
+                "tt": {"nauan": 1.5, "kholuong": 120, "batpet": 0.15, "petcap": 0.6}},
+    "chienbinh": {"ten": "Chiến binh", "nghe": "Hunter", "kn": ["foraging", "mining"], "xu": (550, 1100), "ha": (25, 60),
+                  "tt": {"dautruong": 0.6, "dungeon": 0.3, "truyna": 0.25, "conghoang": 0.03, "khampha": 0.3, "petcap": 0.8, "batpet": 0.1}},
+    "ngudan": {"ten": "Ngư dân", "nghe": "Fisherman", "kn": ["fishing", "alchemy"], "xu": (450, 900), "ha": (2, 6),
+               "tt": {"cauca": 35, "loaica": 0.9, "khobau": 0.35, "nauan": 0.8}},
+    "tieuphu": {"ten": "Tiều phu", "nghe": "Woodcutter", "kn": ["foraging", "farming"], "xu": (550, 1000), "ha": (4, 10),
+                "tt": {"khampha": 0.5, "kholuong": 70, "batpet": 0.1}},
+    "thuongnhan": {"ten": "Thương nhân", "nghe": "Crafter", "kn": ["alchemy", "farming"], "xu": (900, 1800), "ha": (2, 8),
+                   "tt": {"khampha": 0.6, "nauan": 0.6, "kholuong": 40}},
+    "lairai": {"ten": "Lai rai", "nghe": None, "kn": None, "xu": (250, 700), "ha": (3, 12),
+               "tt": {"cauca": 6, "khampha": 0.2, "nauan": 0.3, "batpet": 0.05}},
+}
+LU_CFG = {"money-base": 250, "money-exponent": 0.6, "hours-base": 0.04, "hours-exponent": 2, "kill-base": 1, "kill-exponent": 2}
+
+
+def _dev_load():
+    try:
+        return json.loads(BOT_DEV_FILE.read_text(encoding="utf-8"))
+    except Exception:
+        return {}
+
+
+def _dev_save(d):
+    BOT_DEV_FILE.parent.mkdir(parents=True, exist_ok=True)
+    tmp = BOT_DEV_FILE.with_suffix(".tmp")
+    tmp.write_text(json.dumps(d, ensure_ascii=False, indent=1), encoding="utf-8")
+    tmp.replace(BOT_DEV_FILE)
+
+
+def _dev_new(jobs):
+    style = _rnd.choice(list(BOT_STYLES))
+    st = BOT_STYLES[style]
+    job = st["nghe"] or _rnd.choice([k for k, _, _ in jobs] or ["Miner"])
+    sk = st["kn"] or _rnd.sample([k for k, _, _ in _bot_skills()] or ["mining"], 2)
+    return {"on": True, "kieu": style, "nghe": job, "kn": sk,
+            "cham": round(_rnd.uniform(0.3, 1.0), 2),            # phần thời gian online thật sự "chơi"
+            "deu": round(_rnd.uniform(0.45, 0.97), 2),           # xác suất điểm danh mỗi ngày có vào
+            "may": round(_rnd.uniform(0.75, 1.3), 2),            # hệ số may / giỏi riêng
+            "tieu": round(_rnd.uniform(0.1, 0.45), 2),           # thói quen tiêu xu
+            "sim": {}, "kexp": 0.0, "knexp": {}, "next": time.time() + _rnd.uniform(60, 600), "last": time.time(), "dd_ngay": ""}
+
+
+def _lu(cfg, key, default):
+    try:
+        return float(cfg.get(key, default))
+    except (TypeError, ValueError):
+        return default
+
+
+def _bot_dev_step(name, st, prof, now):
+    """Một lượt phát triển cho một bot: trả hoso (chỉ mục đổi) + cập nhật st."""
+    S = BOT_STYLES.get(st.get("kieu"), BOT_STYLES["lairai"])
+    gap_h = min(2.0, max(0.05, (now - st.get("last", now)) / 3600))
+    h = gap_h * st["cham"] * _rnd.uniform(0.5, 1.4)         # giờ "chơi thật" của lượt này
+    st["last"] = now
+    may = st["may"]
+    hoso = {}
+    gio = prof["gio"] + h
+    hoso["gio"] = round(gio, 2)
+    earn = _rnd.uniform(*S["xu"]) * h * may
+    xu = prof["xu"] + earn
+    if _rnd.random() < st["tieu"]:
+        xu -= earn * _rnd.uniform(0.2, 0.8)                  # đi mua đồ, phí, chợ…
+    ha = prof["diem_ha"] + int(round(_rnd.uniform(*S["ha"]) * h * may))
+    hoso["diem_ha"] = ha
+    # Thăng Cấp: đủ xu + giờ + điểm hạ gục thì có lúc lên (không lên ngay như máy)
+    core = taikhoan.safe_yaml(taikhoan.DMM / "config.yml").get("level-up") or {}
+    cap = prof["capdo"]
+    for _ in range(3):
+        n = cap + 1
+        cost = round(_lu(core, "money-base", 250) * n ** _lu(core, "money-exponent", 0.6))
+        need_h = _lu(core, "hours-base", 0.04) * n ** _lu(core, "hours-exponent", 2)
+        need_k = round(_lu(core, "kill-base", 1) * n ** _lu(core, "kill-exponent", 2))
+        if n <= 100 and xu >= cost * 1.2 and gio >= need_h and ha >= need_k and _rnd.random() < 0.7:
+            cap, xu = n, xu - cost
+        else:
+            break
+    hoso["capdo"] = cap
+    hoso["xu"] = round(max(0, xu))
+    # nghề: kinh nghiệm theo giờ, cấp sau chậm dần
+    jobs = {k: m for k, _, m in _bot_jobs()}
+    job = st.get("nghe") if st.get("nghe") in jobs else (next(iter(jobs)) if jobs else "")
+    if job:
+        lv = prof["cap_nghe"] if prof["nghe"] == job else 1
+        st["kexp"] = st.get("kexp", 0) + h * may
+        while lv < jobs[job] and st["kexp"] >= 0.25 + 0.12 * lv:
+            st["kexp"] -= 0.25 + 0.12 * lv
+            lv += 1
+        hoso["nghe"], hoso["cap_nghe"] = job, max(1, lv)
+    # kỹ năng: kỹ năng chính nhanh, kỹ năng khác thỉnh thoảng
+    kn = {}
+    for k, _, mx in _bot_skills():
+        main = k in (st.get("kn") or [])
+        e = st["knexp"].get(k, 0) + h * may * (1.0 if main else _rnd.uniform(0, 0.25))
+        lvk = prof["kynang"].get(k, 0)
+        while lvk < mx and e >= 0.4 + 0.35 * lvk:
+            e -= 0.4 + 0.35 * lvk
+            lvk += 1
+        st["knexp"][k] = round(e, 3)
+        kn[k] = lvk
+    hoso["kynang"] = kn
+    # điểm danh: mỗi ngày một lần, có ngày quên
+    today = time.strftime("%Y-%m-%d")
+    if st.get("dd_ngay") != today:
+        st["dd_ngay"] = today
+        if _rnd.random() < st["deu"]:
+            hoso["diemdanh"] = prof["diemdanh"] + 1
+    # thành tích: bộ đếm riêng theo tính cách + giờ chơi, điểm hạ gục
+    sim = st.setdefault("sim", {})
+    for t, rate in S["tt"].items():
+        if t in ("loaica", "petcap", "khampha"):
+            sim[t] = min({"loaica": 24, "petcap": 60, "khampha": 12}[t], sim.get(t, 0) + rate * h * _rnd.uniform(0.3, 1.2))
+        else:
+            sim[t] = sim.get(t, 0) + rate * h * _rnd.uniform(0.4, 1.4) * may
+    sim["giochoi"], sim["quai"] = gio, ha
+    goals = (taikhoan.safe_yaml(taikhoan.DMM / "config.yml").get("achievements") or {}).get("list") or {}
+    done = set(prof["thanhtich"])
+    for gid, g in goals.items():
+        if isinstance(g, dict) and sim.get(g.get("type"), 0) >= float(g.get("target", 1e18)):
+            done.add(str(gid))
+    hoso["thanhtich"] = sorted(done)
+    # danh phận: đủ giờ + Thăng Cấp thì có lúc bấm nhận
+    order = ["tinan", "dan", "luongdan", "haokiet"]
+    tiers = (taikhoan.safe_yaml(taikhoan.DMM / "config.yml").get("play-ranks") or {}).get("tiers") or {}
+    cur = prof["danhphan"] if prof["danhphan"] in order else "tinan"
+    i = order.index(cur)
+    if i + 1 < len(order):
+        t = tiers.get(order[i + 1]) or {}
+        if gio >= float(t.get("hours", 1e9)) and cap >= int(t.get("level", 0)) and _rnd.random() < 0.5:
+            hoso["danhphan"] = order[i + 1]
+    return hoso
+
+
+def bot_dev_tick():
+    with BOT_DEV_LOCK:
+        d = _dev_load()
+        if not any(v.get("on") for v in d.values()):
+            return
+        try:
+            online = {str(b.get("name", "")).lower(): b for b in bot_json().get("bots", []) if b.get("online") and b.get("server") == BOT_SRV}
+        except Exception:
+            return
+        now = time.time()
+        for name, st in d.items():
+            if not st.get("on"):
+                continue
+            if name.lower() not in online:
+                st["last"] = now                                 # offline: không tính giờ
+                continue
+            if now < st.get("next", 0):
+                continue
+            try:
+                prof = bot_profile(name)
+                hoso = _bot_dev_step(name, st, prof, now)
+                res = bot_profile_save({"bot": name, "hoso": hoso}, "tự phát triển")
+                st["ghi"] = time.strftime("%d/%m %H:%M") + " · " + str(res.get("message", ""))[:160]
+            except Exception as e:
+                st["ghi"] = time.strftime("%d/%m %H:%M") + f" · lỗi: {e}"[:160]
+            st["next"] = now + _rnd.uniform(25, 70) * 60
+        _dev_save(d)
+
+
+def bot_dev_loop():
+    time.sleep(90)
+    while True:
+        try:
+            bot_dev_tick()
+        except Exception as e:
+            print(f"Bot tự phát triển: lỗi {e}", flush=True)
+        time.sleep(300)
+
+
+def bot_dev_set(body, who):
+    name = str(body.get("bot", "")).strip()
+    on = bool(body.get("on"))
+    names = [str(b.get("name", "")) for b in bot_json().get("bots", [])] if name == "*" else [name]
+    with BOT_DEV_LOCK:
+        d = _dev_load()
+        jobs = _bot_jobs()
+        for n in names:
+            if not re.fullmatch(r"[A-Za-z0-9_]{3,16}", n or ""):
+                continue
+            if on and not (d.get(n) or {}).get("kieu"):
+                d[n] = _dev_new(jobs)
+            elif n in d:
+                d[n]["on"] = on
+                if on:
+                    d[n]["last"] = time.time()
+            elif on:
+                d[n] = _dev_new(jobs)
+        _dev_save(d)
+    web_log({"viec": "/api/bot", "nguoi": who or PANEL_USER, "hanh_dong": f"{'bật' if on else 'tắt'} tự phát triển: {', '.join(names)[:200]}"})
+    return {"ok": True, "message": ("Bật" if on else "Tắt") + " tự phát triển cho " + ("tất cả bot" if name == "*" else name)}
+
+
+def bot_dev_info():
+    d = _dev_load()
+    return {n: {"on": bool(v.get("on")), "kieu": BOT_STYLES.get(v.get("kieu"), {}).get("ten", ""), "cham": v.get("cham"),
+                "nghe": v.get("nghe"), "ghi": v.get("ghi", "")} for n, v in d.items()}
+
+
 def bot_action(body, who):
     act = str(body.get("action", ""))
     if act == "hoso":
         return bot_profile(str(body.get("bot", "")).strip())
     if act == "hoso_luu":
         return bot_profile_save(body, who)
+    if act == "phattrien":
+        return bot_dev_set(body, who)
     if act not in BOT_ACTIONS:
         raise ValueError("Thao tác không hợp lệ")
     if act == "create":
@@ -4111,4 +4326,5 @@ if __name__ == "__main__":
         vang.ensure_tables()
     except Exception as e:
         print(f"Vàng: không tạo được bảng ({e})", flush=True)
+    threading.Thread(target=bot_dev_loop, daemon=True).start()   # bot tự phát triển
     ThreadingHTTPServer(("0.0.0.0", 8080), Handler).serve_forever()

@@ -855,17 +855,18 @@ setInterval(() => {
   const now = Date.now();
   const bh = NAMES.filter(n => state[n].server === 'banghoi-1');
   const on = bh.filter(n => state[n].want), off = bh.filter(n => !state[n].want);
+  if (rotJoinAt && !realOnline().length) rotJoinAt = Math.min(rotJoinAt, now + 15000);   // vắng người: đổi ca nhanh
   if (rotJoinAt && now >= rotJoinAt) { rotJoinAt = 0; const j = rotJoin(off); if (j) log('thay phiên: đổi ca,', j, 'vào'); return; }
   if (rotTarget == null || now >= rotRetarget) { rotTarget = rotPick(); rotRetarget = now + (15 + Math.random() * 35) * 60000; log('thay phiên: mục tiêu', rotTarget, 'bot'); }
   if (now < rotStep || rotJoinAt) return;
-  rotStep = now + (2 + Math.random() * 6) * 60000;
+  rotStep = now + (realOnline().length ? (2 + Math.random() * 6) * 60000 : 10000 + Math.random() * 10000);   // không có người thật: chỉnh nhanh (29/10)
   if (on.length > rotTarget) { const n = rotLeave(on); if (n) log('thay phiên:', n, 'thoát (' + (on.length - 1) + '/' + rotTarget + ')'); }
   else if (on.length < rotTarget) { const n = rotJoin(off); if (n) log('thay phiên:', n, 'vào (' + (on.length + 1) + '/' + rotTarget + ')'); }
   else if (off.length && Math.random() < 0.4) {   // đổi ca
     const n = rotLeave(on);
     if (n) { rotJoinAt = now + (1 + Math.random() * 3) * 60000; log('thay phiên: đổi ca,', n, 'thoát'); }
   }
-}, 30000);
+}, 10000);   // 10 giây kiểm một lần (bước chỉnh vẫn theo rotStep)
 
 // ---------------------------------------------------------------- điều khiển
 

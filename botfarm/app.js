@@ -561,13 +561,14 @@ async function chatOnce() {
 // ---------------------------------------------------------------- phòng ẩn + đi dạo (29/10)
 // Chủ server: "đưa hết bot về spawn đứng nhưng member không nhìn thấy … thi thoảng cho bot chạy loanh quanh spawn, các warp nếu có member ở đấy".
 // Bot đứng chung một phòng kín dưới đất xa mọi warp > 128 khối (DuckyMoMoCore bot-hide chặn gói hiện bot trong phòng: không ai thấy, tên
-// vẫn ở TAB) → 23 bot dùng chung một vùng chunk. Thỉnh thoảng có người THẬT trong `radius` khối quanh spawn / warp thì 1–2 bot dịch chuyển
-// ra cách người đó 18–30 khối, đi lang thang vài phút (đi, nhảy qua chướng ngại, đứng nhìn quanh / nhìn người), rồi về phòng.
+// vẫn ở TAB) → 23 bot dùng chung một vùng chunk. Thỉnh thoảng có người THẬT trong `radius` khối quanh spawn / warp trade / warp shop (chủ
+// server: chỉ 3 chỗ này) thì 1–2 bot ra trong khu đó (cách người ≥ 12 khối), đi lang thang vài phút (đi, nhảy qua chướng ngại, nhìn quanh /
+// nhìn người, giả vờ giao dịch với NPC: tới gần, nhìn, vung tay; không bấm mở menu thật), rồi về phòng.
 const WANDER_CFG = '/state/wander.json';
 const wanderCfg = { on: false, room: { x: 11150.5, y: -41, z: -3099.5 }, everyMin: 4, everyMax: 9, durMin: 90, durMax: 240, maxActive: 2, radius: 60,
-  points: [{ name: 'baicat', x: 13048, z: -1645 }, { name: 'bendo', x: 12625, z: -2231 }, { name: 'cangsao', x: 13642, z: -2660 }, { name: 'chonoi', x: 12638, z: -1196 }, { name: 'chuavang', x: 12202, z: -2376 }, { name: 'codo', x: 11478, z: -2624 }, { name: 'dachong', x: 12542, z: -2725 }, { name: 'daodua', x: 11728, z: -941 }, { name: 'daongoc', x: 12454, z: -1253 }, { name: 'datdo', x: 12902, z: -1669 }, { name: 'doicaphe', x: 12907, z: -1513 }, { name: 'doithong', x: 12955, z: -1425 }, { name: 'haidao', x: 12784, z: -1048 }, { name: 'hongcang', x: 13530, z: -2761 }, { name: 'kimthanh', x: 12006, z: -1643 }, { name: 'kinhdo', x: 12707, z: -2432 }, { name: 'lamthanh', x: 12258, z: -2144 }, { name: 'langchai', x: 13045, z: -1461 }, { name: 'lungchien', x: 12307, z: -2554 }, { name: 'muigio', x: 12792, z: -1235 }, { name: 'nuitra', x: 11825, z: -2244 }, { name: 'phodenlong', x: 12942, z: -1896 }, { name: 'phohoa', x: 12747, z: -1287 }, { name: 'rungduoc', x: 12576, z: -1089 }, { name: 'rungsau', x: 12114, z: -2502 }, { name: 'shop', x: 12792, z: -2641 }, { name: 'suongmu', x: 12405, z: -2668 }, { name: 'tanthanh', x: 11478, z: -2361 }, { name: 'thacbac', x: 12695, z: -2707 }, { name: 'thanhco', x: 12853, z: -1966 }, { name: 'thanhvang', x: 12534, z: -1380 }, { name: 'thapda', x: 12407, z: -1602 }, { name: 'thapngoc', x: 11493, z: -2014 }, { name: 'trade', x: 12689, z: -2626 }, { name: 'vinhmay', x: 12926, z: -1916 }] };
-try { Object.assign(wanderCfg, JSON.parse(fs.readFileSync(WANDER_CFG, 'utf8'))); } catch (e) { /* chưa cài: tắt */ }
-function saveWander() { try { fs.writeFileSync(WANDER_CFG, JSON.stringify(wanderCfg)); } catch (e) { log('không lưu được wander.json:', e.message); } }
+  points: [{ name: 'spawn', x: 12707, z: -2432 }, { name: 'trade', x: 12689, z: -2626 }, { name: 'shop', x: 12792, z: -2641 }] };
+try { wanderCfg.on = !!JSON.parse(fs.readFileSync(WANDER_CFG, 'utf8')).on; } catch (e) { /* chưa cài: tắt */ }   // chỉ lưu bật/tắt, điểm + phòng theo code
+function saveWander() { try { fs.writeFileSync(WANDER_CFG, JSON.stringify({ on: wanderCfg.on })); } catch (e) { log('không lưu được wander.json:', e.message); } }
 function roomSpot(i) { const r = wanderCfg.room; return { x: r.x + (i % 5) - 2, y: r.y, z: r.z + (Math.floor(i / 5) % 5) - 2 }; }
 async function gatherRoom() {
   NAMES.forEach((n, i) => {
@@ -619,13 +620,22 @@ async function wanderOnce() {
   return (out.join(', ') || 'không bot nào') + ' đi dạo ở ' + c.pt.name + ' (có ' + c.who + ')';
 }
 async function startWander(n, c) {
-  const a = Math.random() * Math.PI * 2, d = 18 + Math.random() * 12;
-  const x = Math.floor(c.p.x + Math.cos(a) * d) + 0.5, z = Math.floor(c.p.z + Math.sin(a) * d) + 0.5;
+  // chỗ ra: trong 25 khối quanh điểm warp, cách người chơi ≥ 12 khối (thử 12 lần, không được thì lấy chỗ cuối)
+  let x = c.pt.x, z = c.pt.z;
+  for (let i = 0; i < 12; i++) {
+    const a = Math.random() * Math.PI * 2, d = 6 + Math.random() * 19;
+    x = Math.floor(c.pt.x + Math.cos(a) * d) + 0.5; z = Math.floor(c.pt.z + Math.sin(a) * d) + 0.5;
+    if (Math.hypot(x - c.p.x, z - c.p.z) >= 12) break;
+  }
   const rt = RT[n];
-  rt.wander = { until: Date.now() + (wanderCfg.durMin + Math.random() * (wanderCfg.durMax - wanderCfg.durMin)) * 1000, cx: x, cz: z, next: 0 };
+  rt.wander = { until: Date.now() + (wanderCfg.durMin + Math.random() * (wanderCfg.durMax - wanderCfg.durMin)) * 1000, cx: c.pt.x + 0.5, cz: c.pt.z + 0.5, next: 0 };
   rt.placedAt = Date.now();
   await rcon('banghoi-1').cmd(`execute in minecraft:overworld positioned ${x} 0 ${z} positioned over motion_blocking_no_leaves run minecraft:tp ${n} ~ ~ ~`);
   event({ type: 'doi', bot: n, server: 'banghoi-1', text: n + ' đi dạo ở ' + c.pt.name + ' (gần ' + c.who + ')' });
+}
+/** NPC Citizens: thực thể người chơi không có trong danh sách người chơi (TAB) hoặc UUID bản 2. */
+function isNpc(b, e) {
+  return e.type === 'player' && e.username && (!b.players[e.username] || (e.uuid && e.uuid[14] === '2'));
 }
 function stopWander(n) {
   const rt = RT[n], st = state[n];
@@ -634,20 +644,37 @@ function stopWander(n) {
   delete st.at['banghoi-1']; save();
   if (rt.bot) place(n, rt.bot).catch(e => log(n, e.message));   // về phòng ẩn (chỗ mặc định)
 }
-setInterval(() => {   // nhịp đi dạo: đi vài giây, đứng nhìn quanh, nhảy khi vướng, đi xa quá 12 khối thì quay về
+setInterval(() => {   // nhịp đi dạo: đi vài giây, nhìn quanh, ghé NPC giả vờ giao dịch, nhảy khi vướng, xa khu quá 25 khối thì quay về
   for (const n of NAMES) {
     const rt = RT[n], w = rt.wander;
     if (!w) continue;
     const b = rt.bot;
     if (!b || !b.entity) { rt.wander = null; continue; }
-    if (Date.now() > w.until) { stopWander(n); continue; }
+    if (Date.now() > w.until && !w.talk) { stopWander(n); continue; }
     try {
+      const p = b.entity.position;
       b.setControlState('jump', !!(b.entity.isCollidedHorizontally && b.getControlState('forward')));
+      if (w.npc) {   // đang tới / đứng trước NPC
+        const e = b.entities[w.npc];
+        if (!e) { w.npc = null; w.talk = 0; b.clearControlStates(); continue; }
+        const head = e.position.offset(0, 1.6, 0);
+        if (!w.talk) {
+          if (p.distanceTo(e.position) > 2.6 && Date.now() < w.next) { b.lookAt(head); b.setControlState('forward', true); continue; }
+          b.clearControlStates(); w.talk = Date.now() + 4000 + Math.random() * 6000;
+        }
+        b.lookAt(head);
+        if (Math.random() < 0.18) b.swingArm('right');
+        if (Date.now() > w.talk) { w.npc = null; w.talk = 0; w.next = Date.now() + 1000 + Math.random() * 2000; }
+        continue;
+      }
       if (Date.now() < w.next) continue;
       b.clearControlStates();
-      const p = b.entity.position, far = Math.hypot(p.x - w.cx, p.z - w.cz) > 12;
-      if (!far && Math.random() < 0.35) {
-        const e = b.nearestEntity(x => x.type === 'player' && x.position.distanceTo(p) < 24);
+      const far = Math.hypot(p.x - w.cx, p.z - w.cz) > 25;
+      const npc = !far && Math.random() < 0.3 && b.nearestEntity(x => isNpc(b, x) && x.position.distanceTo(p) < 22);
+      if (npc) {
+        w.npc = npc.id; w.talk = 0; w.next = Date.now() + 15000;   // tối đa 15 giây để đi tới
+      } else if (!far && Math.random() < 0.3) {
+        const e = b.nearestEntity(x => x.type === 'player' && !isNpc(b, x) && x.position.distanceTo(p) < 24);
         if (e && Math.random() < 0.5) b.lookAt(e.position.offset(0, 1.6, 0)); else b.look(Math.random() * Math.PI * 2 - Math.PI, (Math.random() - 0.5) * 0.6);
         w.next = Date.now() + 2000 + Math.random() * 5000;
       } else {

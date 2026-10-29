@@ -1840,3 +1840,654 @@ resource-pack:
   item-sha1: "${CFG_ITEM_PACK_SHA1}"
   font-prompt: "&6Tải font chữ mềm Be Vietnam Pro (khoảng 130 KB)? Không thích: /caidat tắt Font chữ mềm."
   item-prompt: "&6Tải gói của server (sửa dấu tiếng Việt + hình vật phẩm, khoảng 80 KB)?"
+
+# Menu chính cho người chơi (20/10): /menu hoặc Shift + F. Mỗi nút: slot (0..rows*9-1), icon, name, lore, và MỘT trong:
+#   cmd (chạy lệnh thay người chơi, không cần /), suggest (điền sẵn vào ô chat), proxy (lệnh của proxy: tuskin, skin), server (chuyển server).
+# Sảnh không có menu này (ở sảnh /menu = chọn chế độ). Không dùng mã chữ đậm: font tiếng Việt bị nhòe.
+player-menu:
+  enabled: true
+  title: "&0✦ Menu Bang Hội Chiến"
+  rows: 5
+  shift-f: true
+  filler: GRAY_STAINED_GLASS_PANE
+  # Mỗi nút: name (ký hiệu + tên), sub (phụ đề), lore (mô tả), gom (danh sách "Gồm"), bam (dòng bấm); dùng được %placeholder%.
+  # Hàng 2 vàng = việc hằng ngày, hàng 3 xanh lá = kinh tế, hàng 4 xanh dương = thế giới, hàng 5 tím = cá nhân.
+  buttons:
+    - {slot: 4, icon: PLAYER_HEAD, name: "&e☺ &fHồ sơ của bạn", sub: "%player_name%", lore: ["Tóm tắt nhanh tài sản và tiến độ"], gom: ["&7Xu: &a%vault_eco_balance_formatted%", "&7Vàng: &6%dmmvang_so_du%", "&7Thăng Cấp: &fcấp %dmmcap_cap%", "&7Vé gacha online: &f%dmmhom_chia%", "&7Thị trấn: &f%townyadvanced_town_unformatted%", "&7Mùa: %dmmmua_ten%"], bam: "Bấm để xem danh phận", cmd: danhphan}
+    - {slot: 10, icon: CLOCK, name: "&e☀ &fĐiểm danh", sub: "mỗi ngày", lore: ["Vào game mỗi ngày nhận quà", "Giữ chuỗi càng dài quà càng to"], gom: ["Quà ngày thường + quà mốc chuỗi", "Bỏ một ngày vẫn giữ chuỗi"], bam: "Bấm để điểm danh", cmd: diemdanh}
+    - {slot: 11, icon: WRITABLE_BOOK, name: "&e✎ &fNhiệm vụ hôm nay", lore: ["Vài việc nhỏ mỗi ngày: đào, săn, câu, gặt"], gom: ["Mỗi nhiệm vụ có quà riêng", "Xong hết trong ngày có thưởng thêm"], bam: "Bấm để xem tiến độ", cmd: nhiemvu}
+    - {slot: 12, icon: NETHER_STAR, name: "&e✦ &fGacha", sub: "%dmmhom_chia% vé online", lore: ["Quay thưởng bằng vé miễn phí"], gom: ["Vé từ điểm danh và chơi online", "Xem tỉ lệ từng phần thưởng trong menu"], bam: "Bấm để quay", cmd: gacha}
+    - {slot: 13, icon: EXPERIENCE_BOTTLE, name: "&e⬆ &fThăng Cấp", sub: "cấp %dmmcap_cap%", lore: ["Lên cấp bằng xu, giờ chơi và điểm hạ gục"], gom: ["Mỗi cấp +1 điểm đổi đặc quyền tiện ích", "Mốc cấp có quà và thông báo cả server"], bam: "Bấm để xem cấp", cmd: capdo}
+    - {slot: 14, icon: NAME_TAG, name: "&e♛ &fDanh phận", lore: ["Rank chơi miễn phí, lên bằng cách chơi"], gom: ["Tị Nạn → Dân → Lương Dân → Hào Kiệt", "Bậc cao: thêm nhà, balo, ô chợ, đơn thu mua"], bam: "Bấm để xem điều kiện lên bậc", cmd: danhphan}
+    - {slot: 15, icon: GOLDEN_APPLE, name: "&e✪ &fSổ thành tích", lore: ["Mục tiêu chơi một mình, đạt là tự nhận quà"], gom: ["Khám phá, câu cá, săn quái, bắt pet…", "Mở khoá danh hiệu hiện trên tên"], bam: "Bấm để mở sổ", cmd: thanhtich}
+    - {slot: 16, icon: BOOK, name: "&e❖ &fCẩm nang", lore: ["Hướng dẫn cách chơi từ đầu"], gom: ["11 chương: kinh tế, thị trấn, công thành…", "Có ví dụ lệnh cho từng việc"], bam: "Bấm để đọc", cmd: huongdan}
+    - {slot: 19, icon: GOLD_INGOT, name: "&6☠ &fChợ đen", sub: "/choden", lore: ["Mua bán trực tiếp giữa người chơi"], gom: ["Đang bán: hàng người chơi treo, bấm là mua", "Đang thu mua: đơn cần mua, giao hàng lấy tiền", "Treo bán, đặt đơn, đồ của tôi"], bam: "Bấm để vào chợ", cmd: choden}
+    - {slot: 20, icon: EMERALD, name: "&a⛃ &fBán đồ cho server", sub: "/sell <tên món>", lore: ["Bán cho server theo bảng giá"], gom: ["Gõ /sell <tên món> [số], vd /sell wheat 64", "Hoặc bán ở /cuahang trong kinh đô", "Xem giá: /worth"], bam: "Bấm rồi gõ tên món", suggest: "/sell "}
+    - {slot: 21, icon: SMITHING_TABLE, name: "&a⚒ &fXưởng chế tạo", sub: "/xuong", lore: ["Đồ có kỹ năng riêng, độ bền và hạn dùng"], gom: ["Đào 3×3, chặt cả cây, gặt 3×3", "Kiếm lướt chém, khiên phản đòn, cung hút máu"], bam: "Bấm để vào xưởng", cmd: xuong}
+    - {slot: 22, icon: BLAST_FURNACE, name: "&a♨ &fTinh Luyện", sub: "/tinhluyen", lore: ["Đổi khối thường thành nguyên liệu quý"], gom: ["Trao đổi ở shop dân làng", "Nguyên liệu Xưởng, bán cho server"], bam: "Bấm để tinh luyện", cmd: tinhluyen}
+    - {slot: 23, icon: EMERALD_BLOCK, name: "&e⛃ &fCửa hàng Kinh Đô", sub: "/cuahang", lore: ["Mua vật liệu, bán nông sản, khoáng sản cho server"], gom: ["10 danh mục, giá theo từng món", "Mở ở NPC tại spawn; rank ủng hộ gõ /cuahang trong kinh đô"], bam: "Bấm để mở", cmd: cuahang}
+    - {slot: 24, icon: HOPPER, name: "&a⇄ &fĐổi đồ với người khác", sub: "/trade", lore: ["Hai bên bỏ đồ rồi cùng xác nhận"], gom: ["Một bên huỷ thì đồ trả lại", "Không bị lừa giữa chừng"], bam: "Bấm rồi gõ tên người muốn đổi", suggest: "/trade "}
+    - {slot: 25, icon: PAINTING, name: "&a✿ &fCửa hàng trang trí", sub: "/cuahang", lore: ["Đồ trang trí, danh hiệu mua bằng xu"], gom: ["Chỉ đẹp, không thêm sức mạnh"], bam: "Bấm để mua sắm", cmd: cuahang}
+    - {slot: 28, icon: ENDER_PEARL, name: "&b➹ &fDịch chuyển tới vùng", sub: "/tpr", lore: ["Bay tới đất trống ở vùng đã mở"], gom: ["Đứng yên 3 giây để đi", "Có phí xu tuỳ vùng"], bam: "Bấm để chọn vùng", cmd: tpr}
+    - {slot: 29, icon: RED_BED, name: "&b⌂ &fVề nhà", sub: "/home", lore: ["Về nhà đã đặt bằng /sethome"], gom: ["Số nhà theo danh phận", "Quay lại chỗ vừa chết: /back"], bam: "Bấm để về nhà", cmd: home}
+    - {slot: 30, icon: BELL, name: "&b⚑ &fThị trấn", sub: "%townyadvanced_town_unformatted%", lore: ["Thông tin thị trấn của bạn"], gom: ["Lập: /t new <tên> (500 xu)", "Mở đất: /t claim, ngân khố: /t deposit"], bam: "Bấm để xem thị trấn", cmd: t}
+    - {slot: 31, icon: WHEAT, name: "&b☂ &fMùa mưa / mùa khô", sub: "%dmmmua_ten%", lore: ["Mùa đổi theo ngày thật"], gom: ["Cây lớn nhanh, chậm theo mùa", "Cá theo mùa, mưa, sự kiện Lũ / Hạn"], bam: "Bấm để xem mùa", cmd: mua}
+    - {slot: 32, icon: CROSSBOW, name: "&b☠ &fLệnh săn", sub: "/lenhsan", lore: ["Quái mạnh xuất hiện ở một vùng"], gom: ["Ai đánh nhiều nhất nhận thưởng", "Pet đánh cũng được tính"], bam: "Bấm để xem lệnh săn", cmd: lenhsan}
+    - {slot: 33, icon: IRON_BARS, name: "&b⚔ &fDungeon", sub: "/dungeon", lore: ["Cày đồ hiếm cùng nhóm"], gom: ["Chuỗi chìa khoá 10 tầng", "Dungeon ẩn, vé, góp quỹ, Cổng Hoang"], bam: "Bấm để xem dungeon", cmd: dungeon}
+    - {slot: 34, icon: GRASS_BLOCK, name: "&b❀ &fThái Ấp", sub: "/thaiap", lore: ["Đất riêng không ai chiếm được"], gom: ["Xây, trồng trọt an toàn", "Có bản sáng tạo riêng"], bam: "Bấm để về Thái Ấp", cmd: thaiap}
+    - {slot: 37, icon: CHEST_MINECART, name: "&d▣ &fBalo", sub: "/balo", lore: ["Túi đồ thêm, mở ở đâu cũng được"], gom: ["Số balo và số ô theo danh phận", "Không mở được khi đang giao tranh"], bam: "Bấm để mở balo", cmd: balo}
+    - {slot: 38, icon: LEATHER_CHESTPLATE, name: "&d☺ &fTủ skin", sub: "/tuskin", lore: ["Lưu nhiều skin, đổi trong 1 bấm"], gom: ["Thêm bằng tên bản quyền hoặc ảnh trên web", "Số ô theo danh phận, rank"], bam: "Bấm để mở tủ", proxy: tuskin}
+    - {slot: 39, icon: COMPARATOR, name: "&d⚙ &fCài đặt cá nhân", sub: "/caidat", lore: ["Bật / tắt theo ý mình"], gom: ["Chat, tin nhắn riêng, nhận TPA", "Bảng bên phải, font tiếng Việt…"], bam: "Bấm để chỉnh", cmd: caidat}
+    - {slot: 40, icon: GOLD_INGOT, name: "&6◆ &fVàng & rank ủng hộ", sub: "%dmmvang_so_du% Vàng", lore: ["Ủng hộ server, nhận Vàng mua rank, trang trí"], gom: ["Rank ủng hộ có tiền tố, hiệu ứng, balo", "Đồ trang trí, đổi tên màu"], bam: "Bấm để mở ví Vàng", cmd: vang}
+    - {slot: 41, icon: IRON_SWORD, name: "&d⚔ &fĐấu Trường", sub: "PvP", lore: ["Đấu 1v1, 2v2 không mất đồ"], gom: ["Máu cố định 10 tim, công bằng", "Thắng có kinh nghiệm pet"], bam: "Bấm để tới Đấu Trường", cmd: "warp pvp"}
+    - {slot: 43, icon: COMPASS, name: "&7➜ &fVề sảnh", lore: ["Chọn chế độ chơi khác"], bam: "Bấm để về sảnh", server: lobby}
+
+# Vàng (20/10): tiền ủng hộ. Nạp tiền thật -> admin duyệt ở trang quản trị › Donate -> cộng Vàng (ví chung toàn mạng, MariaDB network.vang_vi).
+# Người chơi tiêu Vàng: /vang (trong game) hoặc trang tài khoản. KHÔNG chuyển cho nhau, KHÔNG đổi ra xu (luật Mojang: chỉ trang trí).
+# Rank ủng hộ tự có trong cửa hàng: giá tiền thật ở donate-ranks ('1 tháng 20k') quy ra Vàng theo ty-gia.
+# Panel đọc mục này (tỉ giá, mốc thưởng: Cài đặt › Toàn mạng › Rank donate). Món lẻ: ma (duy nhất), ten, mo-ta, gia (Vàng), ngay (0 = vĩnh viễn),
+# nhom, lenh (chạy ở sảnh qua RCON, {player} = tên). Quyền có hạn: "lp user {player} permission settemp <quyền> true <N>d accumulate".
+vang:
+  ty-gia: 1000             # bao nhiêu đồng = 1 Vàng
+  nap-toi-thieu: 10000     # nạp ít nhất (đồng)
+  thuong-nap:              # "từ số tiền:% thưởng thêm" (lấy mốc cao nhất đạt được)
+    - "200000:10"
+    - "500000:20"
+  mon:
+    - {ma: mu, nhom: "Trang trí", ten: "Đội mũ bất kỳ (/hat)", mo-ta: "Đội khối trên tay lên đầu. 30 ngày", gia: 15, ngay: 30, lenh: ["lp user {player} permission settemp essentials.hat true 30d accumulate"]}
+    - {ma: chatmau, nhom: "Tên & chat", ten: "Chat có màu", mo-ta: "Dùng mã màu &a, &e… trong chat. 30 ngày", gia: 15, ngay: 30, lenh: ["lp user {player} permission settemp essentials.chat.color true 30d accumulate"]}
+    - {ma: nick, nhom: "Tên & chat", ten: "Đổi biệt danh (/nick)", mo-ta: "Đặt tên hiển thị khác. 30 ngày", gia: 25, ngay: 30, lenh: ["lp user {player} permission settemp essentials.nick true 30d accumulate"]}
+    - {ma: nickmau, nhom: "Tên & chat", ten: "Biệt danh có màu", mo-ta: "Đổi biệt danh và tô màu cho nó. 30 ngày", gia: 35, ngay: 30, lenh: ["lp user {player} permission settemp essentials.nick true 30d accumulate", "lp user {player} permission settemp essentials.nick.color true 30d accumulate"]}
+    - {ma: hat1, nhom: "Trang trí", ten: "1 hiệu ứng hạt (/pp)", mo-ta: "Hạt bay quanh người, chọn kiểu tuỳ thích. 30 ngày", gia: 30, ngay: 30, lenh: ["lp user {player} permission settemp playerparticles.particles.max.1 true 30d accumulate", "lp user {player} permission settemp playerparticles.effect.* true 30d accumulate", "lp user {player} permission settemp playerparticles.style.* true 30d accumulate"]}
+    - {ma: pet_meo, nhom: "Pet trang trí", ten: "Pet mèo (/pet)", mo-ta: "Mèo trang trí đi theo, không đánh nhau. Vĩnh viễn", gia: 40, ngay: 0, lenh: ["lp user {player} permission set pet.type.cat.* true"]}
+    - {ma: pet_cho, nhom: "Pet trang trí", ten: "Pet chó (/pet)", mo-ta: "Chó trang trí đi theo, không đánh nhau. Vĩnh viễn", gia: 40, ngay: 0, lenh: ["lp user {player} permission set pet.type.wolf.* true"]}
+    - {ma: pet_vet, nhom: "Pet trang trí", ten: "Pet vẹt (/pet)", mo-ta: "Vẹt trang trí đậu vai. Vĩnh viễn", gia: 50, ngay: 0, lenh: ["lp user {player} permission set pet.type.parrot.* true"]}
+    - {ma: tuskin10, nhom: "Trang trí", ten: "Tủ skin 10 ô (/tuskin)", mo-ta: "Lưu tới 10 skin để đổi nhanh. 30 ngày", gia: 20, ngay: 30, lenh: ["lp user {player} permission settemp duckymomo.tuskin.10 true 30d accumulate"]}
+    - {ma: wb, nhom: "Tiện ích", ten: "Bàn chế tạo mang theo (/wb) · 1 giờ", mo-ta: "Mở bàn chế tạo ở bất cứ đâu. 1 giờ, mua thêm cộng dồn.", gia: 1, gio: 1, lenh: ["lp user {player} permission settemp essentials.workbench true 1h accumulate server=banghoi-1"]}
+    - {ma: trash, nhom: "Tiện ích", ten: "Thùng rác (/trash) · 1 giờ", mo-ta: "Vứt đồ không cần. 1 giờ, mua thêm cộng dồn.", gia: 1, gio: 1, lenh: ["lp user {player} permission settemp essentials.disposal true 1h accumulate server=banghoi-1"]}
+    - {ma: anvil, nhom: "Tiện ích", ten: "Đe mang theo (/anvil) · 1 giờ", mo-ta: "Mở đe ở bất cứ đâu (vẫn tốn kinh nghiệm). 1 giờ, mua thêm cộng dồn.", gia: 1, gio: 1, lenh: ["lp user {player} permission settemp essentials.anvil true 1h accumulate server=banghoi-1"]}
+    - {ma: ec, nhom: "Tiện ích", ten: "Rương Ender mang theo (/ec) · 1 giờ", mo-ta: "Mở rương Ender ở bất cứ đâu; không mở khi vừa đánh người hay trong vùng vây giờ đánh. 1 giờ, mua thêm cộng dồn.", gia: 2, gio: 1, lenh: ["lp user {player} permission settemp essentials.enderchest true 1h accumulate server=banghoi-1"]}
+    - {ma: feed, nhom: "Tiện ích", ten: "No bụng (/feed) · 1 giờ", mo-ta: "Đầy thanh đói ngay, 10 phút một lần. 1 giờ, mua thêm cộng dồn.", gia: 2, gio: 1, lenh: ["lp user {player} permission settemp essentials.feed true 1h accumulate server=banghoi-1"]}
+    - {ma: fix, nhom: "Tiện ích", ten: "Sửa đồ (/fix) · 1 giờ", mo-ta: "Sửa món đang cầm về đầy độ bền, 1 giờ một lần; không sửa đồ set Thợ Rèn / đồ đặc biệt. 1 giờ, mua thêm cộng dồn.", gia: 3, gio: 1, lenh: ["lp user {player} permission settemp essentials.repair true 1h accumulate server=banghoi-1"]}
+    - {ma: bay, nhom: "Tiện ích", ten: "Bay trong thị trấn (/bay) · 1 giờ", mo-ta: "Bay trong đất thị trấn của mình; tự tắt khi ra khỏi thị trấn, giao tranh, công thành. 1 giờ, mua thêm cộng dồn.", gia: 3, gio: 1, lenh: ["lp user {player} permission settemp duckymomo.bay true 1h accumulate server=banghoi-1"]}
+
+# Thư viện đồ: món có tooltip ước tính dài hơn tooltip-max-lines dòng thì tự gộp phù phép (3 cái/dòng) và khối chỉ số của game
+# (1 dòng "Khi mặc: +6 Giáp") để không bị đẩy ra ngoài màn hình. Tên, lore, phù phép CE giữ nguyên. 0 = tắt (hiện như game gốc).
+# Hành quyết (Execute) của CrazyEnchantments (22/10, CeExecuteTamer.java): CE gốc cho Sức mạnh IV (+520% kiểu 1.8) MỖI đòn trúng.
+# Ở đây: chỉ khi kẻ địch còn <= max-hp-percent % máu, và chỉ Sức mạnh cấp amplifier + 1 (0 = Sức mạnh I = +130%). enabled false = để như CE.
+ce-execute:
+  enabled: true
+  max-hp-percent: 30
+  amplifier: 0
+item-library:
+  tooltip-max-lines: 0
+
+# Thợ Rèn /thoren (23/10, ThoRen.java): set đồ trao đổi. Mỗi món mỗi cấp là một món trong Thư viện đồ (ids, vị trí = cấp +0..).
+# Nâng +N cần món cùng set +N-1 (bị lấy đi) + cost[N]; không thất bại. cost: xu, mã thư viện (xuquai, loiquai, than, dong, sat…) hoặc
+# vật liệu game (chỉ đếm món thường). wear[cấp] = % lần trừ độ bền được tính (cấp cao mòn chậm). bonus: mặc >= pieces món giáp có
+# cấp >= from -> mau (% máu), day-lui (% kháng đẩy lùi), giam-st (% giảm sát thương nhận); lấy mức cao nhất mỗi set.
+tho-ren:
+  enabled: true
+  # Quầy đổi ở Kinh Đô (23/10): NPC đặt bằng /dmm thorennpc <quầy> (đứng trong quầy). Đổi MỘT CHIỀU: cost -> out (mã Thư viện đồ).
+  # Đồ thô -> MẢNH (Lão Khoáng / Lão Săn Quái / Ngư Ông) -> TINH THỂ (Thợ Kim Hoàn) -> set đồ (Thợ Rèn). Mảnh, tinh thể: lấp lánh +
+  # dấu thuvien_id (không làm giả được), cấm đặt / chế tạo / nung / đốt / dùng chuột phải.
+  npc-type: citizens       # NPC quầy: citizens = hình người (skin ở từng quầy: skin: <tên người chơi bản quyền> hoặc link ảnh PNG — link chỉ áp lúc đặt NPC), villager = dân làng
+  quay:
+    khoang:
+      name: "&6⛏ Lão Khoáng"
+      skin: "https://cdn.minecraft.how/skin/158314/image.png"
+      sub: "Đổi khoáng sản thô lấy mảnh"
+      profession: toolsmith
+      recipes:
+        - {out: manh_than, cost: {COAL: 64}}
+        - {out: manh_dong, cost: {RAW_COPPER: 48}}
+        - {out: manh_sat, cost: {RAW_IRON: 32}}
+        - {out: manh_vang, cost: {RAW_GOLD: 24}}
+        - {out: manh_lam, cost: {LAPIS_LAZULI: 48}}
+        - {out: manh_hong, cost: {REDSTONE: 64}}
+        - {out: vun_kc, cost: {DIAMOND: 4}}
+        - {out: manh_hac, cost: {NETHERITE_SCRAP: 2}}
+    sanquai:
+      name: "&c⚔ Lão Săn Quái"
+      skin: "https://cdn.minecraft.how/skin/205477/image.png"
+      sub: "Đổi chiến lợi phẩm quái lấy mảnh"
+      profession: butcher
+      recipes:
+        - {out: xuong_oan, cost: {BONE: 48}}
+        - {out: to_bac, cost: {STRING: 48}}
+        - {out: hoa_duoc, cost: {GUNPOWDER: 48}}
+        - {out: le_ender, cost: {ENDER_PEARL: 12}}
+    nguong:
+      name: "&3≈ Ngư Ông"
+      skin: "https://cdn.minecraft.how/skin/366846/image.png"
+      sub: "Đổi cá lấy Vảy Ánh Trăng"
+      profession: fisherman
+      recipes:
+        - {out: vay_trang, cost: {COD: 24, SALMON: 24}}
+    kimhoan:
+      name: "&e❖ Thợ Kim Hoàn"
+      skin: "https://cdn.minecraft.how/skin/236998/image.png"
+      sub: "Ghép mảnh thành tinh thể"
+      profession: cleric
+      recipes:
+        - {out: hop_kim, cost: {xu: 200, manh_sat: 4, manh_than: 3, manh_dong: 2}}
+        - {out: lam_chau, cost: {xu: 300, manh_lam: 4, manh_vang: 2, vun_kc: 1}}
+        - {out: huyet_tinh, cost: {xu: 300, manh_hong: 4, xuong_oan: 2, loiquai: 2}}
+        - {out: hon_quai, cost: {xu: 500, loiquai: 4, le_ender: 2, to_bac: 2, hoa_duoc: 2}}
+        - {out: hac_dieu, cost: {xu: 800, manh_hac: 2, hop_kim: 2, lam_chau: 1}}
+        - {out: ngoc_trieu, cost: {xu: 400, vaycahiem: 4, vay_trang: 4, lam_chau: 1}}
+        - {out: long_hon, cost: {xu: 2000, hon_quai: 2, hac_dieu: 1, ngoc_trieu: 1, huyet_tinh: 2}}
+        - {out: nhat_nguyet, cost: {xu: 5000, long_hon: 2, ngoc_trieu: 2, hac_dieu: 2}}
+        - {out: thien_menh, cost: {xu: 15000, nhat_nguyet: 2, hon_quai: 4, NETHER_STAR: 1}}
+    laonong:
+      name: "&2❀ Lão Nông"
+      skin: "https://cdn.minecraft.how/skin/161770/image.png"
+      sub: "Đổi nông sản lấy mảnh"
+      profession: farmer
+      recipes:
+        - {out: bong_lua, cost: {WHEAT: 64}}
+        - {out: cu_qua, cost: {CARROT: 32, POTATO: 32}}
+        - {out: mat_ong, cost: {HONEY_BOTTLE: 4}}
+    thoren:
+      name: "&6⚒ Thợ Rèn"
+      skin: "https://cdn.minecraft.how/skin/150520/image.png"
+      sub: "Rèn và nâng cấp đồ set"
+      profession: weaponsmith
+      open: thoren
+    # NPC riêng từng set (bấm vào mở thẳng set đó): /dmm thorennpc <mã>
+    ren_tanthu: {name: "&e◆ Rèn Tân Thủ", sub: "Đồ khởi đầu +0 → +9", profession: armorer, open: "set:tanthu", skin: "https://cdn.minecraft.how/skin/170154/image.png"}
+    ren_chienbinh: {name: "&c⚔ Rèn Chiến Binh", sub: "Nâng từ Tân Thủ +9", profession: weaponsmith, open: "set:chienbinh", skin: "https://cdn.minecraft.how/skin/158043/image.png"}
+    ren_tinhanh: {name: "&d❖ Rèn Tinh Anh", sub: "Nâng từ Chiến Binh +7", profession: armorer, open: "set:tinhanh", skin: "https://cdn.minecraft.how/skin/343359/image.png"}
+    ren_caocap: {name: "&6♛ Rèn Cao Cấp", sub: "Nâng từ Tinh Anh +5", profession: weaponsmith, open: "set:caocap", skin: "https://cdn.minecraft.how/skin/204103/image.png"}
+    ren_huyenthoai: {name: "&6⚜ Rèn Huyền Thoại", sub: "Nâng từ Cao Cấp +5", profession: armorer, open: "set:huyenthoai", skin: "https://cdn.minecraft.how/skin/388944/image.png"}
+    ren_thanthoai: {name: "&d☬ Rèn Thần Thoại", sub: "Nâng từ Huyền Thoại +3", profession: cleric, open: "set:thanthoai", skin: "https://cdn.minecraft.how/skin/374549/image.png"}
+    ren_thanthanh: {name: "&e✟ Rèn Thần Thánh", sub: "Nâng từ Thần Thoại +4", profession: cleric, open: "set:thanthanh", skin: "https://cdn.minecraft.how/skin/168584/image.png"}
+    ren_ulinh: {name: "&6☾ Rèn U Linh", sub: "Set mùa Lễ Hội Bí Ngô", profession: leatherworker, open: "set:ulinh", skin: "https://cdn.minecraft.how/skin/217233/image.png"}
+    ren_nonggia: {name: "&2❀ Rèn Nông Gia", sub: "Set nghề trồng trọt", profession: farmer, open: "set:nonggia", skin: "https://cdn.minecraft.how/skin/285938/image.png"}
+    ren_thosan: {name: "&c☽ Rèn Thợ Săn", sub: "Set nghề đánh quái đêm", profession: butcher, open: "set:thosan", skin: "https://cdn.minecraft.how/skin/222750/image.png"}
+    ren_thomo: {name: "&6⛏ Rèn Thợ Mỏ", sub: "Set nghề đào mỏ", profession: toolsmith, open: "set:thomo", skin: "https://cdn.minecraft.how/skin/257181/image.png"}
+    ren_nguphu: {name: "&3≈ Rèn Ngư Phủ", sub: "Set nghề câu cá", profession: fisherman, open: "set:nguphu", skin: "https://cdn.minecraft.how/skin/334605/image.png"}
+    ren_duhiep: {name: "&2➹ Rèn Du Hiệp", sub: "Set nghề cung thủ", profession: fletcher, open: "set:duhiep", skin: "https://cdn.minecraft.how/skin/234622/image.png"}
+  # Mảnh ấn trao đổi rơi trong dungeon (23/10, chủ server: vài tầng chung một set; tầng dễ mũ/giày, khó hơn giáp/quần, khó nhất vũ khí).
+  # MỌI con trong tầng chỉ có tỉ lệ rơi 1 mảnh (chủ server 23/10: giết trùm KHÔNG chắc rơi): quái thường mob-chance %, phó trùm (tên 〖N〗)
+  # miniboss-chance %, trùm (tên 『N』) boss-chance %. multiplier nhân cả ba (tối đa 100%).
+  guard: [cb_an_khoi, cb_an_than, cb_an_binh, ta_an_khoi, ta_an_than, ta_an_binh, cc_an_khoi, cc_an_than, cc_an_binh, ht_an_khoi, ht_an_than, ht_an_binh, mt_an_khoi, mt_an_than, mt_an_binh, dv_an_khoi, dv_an_than, dv_an_binh, keo_hon, phieu_dd]
+  dungeon-drops:
+    mob-chance: 3
+    miniboss-chance: 15
+    boss-chance: 30
+    dungeons:
+      the_climb_dungeon: {items: [cb_an_khoi]}            # tầng 1 · cấp 10
+      the_cave_sanctum: {items: [cb_an_than]}             # tầng 2 · 15
+      the_mines_dungeon: {items: [cb_an_binh]}            # tầng 3 · 20
+      the_bridge_sanctum: {items: [ta_an_khoi]}           # tầng 4 · 25
+      the_city_dungeon: {items: [ta_an_than]}             # tầng 5 · 30
+      the_palace_sanctum: {items: [ta_an_binh]}           # tầng 6 · 35
+      the_quarry_dungeon: {items: [cc_an_khoi]}           # tầng 7 · 40
+      the_deep_mines_dungeon: {items: [cc_an_than]}       # tầng 8 · 45
+      the_nether_wastes_dungeon: {items: [cc_an_binh]}    # tầng 9 · 50
+      the_nether_bell_sanctum: {items: [cc_an_khoi, cc_an_than, cc_an_binh], multiplier: 1.5, rare: [ht_an_khoi], rare-chance: 0.15}   # tầng 10 · 55
+      dark_cathedral_lair: {items: [cb_an_khoi, cb_an_than]}          # ẩn · 15
+      fireworks_lair: {items: [cb_an_binh]}                           # cả server · 20
+      sewers_minidungeon: {items: [ta_an_khoi, ta_an_than]}           # Cổng Hoang · 25
+      hallosseum_lair: {items: [ta_an_than, ta_an_binh]}              # cả server · 30
+      north_pole_minidungeon: {items: [cc_an_khoi, cc_an_than], rare: [ht_an_khoi, ht_an_than], rare-chance: 0.15}       # Cổng Hoang · 55
+      knights_castle_lair: {items: [cc_an_than, cc_an_binh], multiplier: 2, rare: [ht_an_than, ht_an_binh], rare-chance: 0.25}                      # vé · 95
+      binder_of_worlds_sanctum: {items: [cc_an_khoi, cc_an_than, cc_an_binh], multiplier: 3, rare: [ht_an_khoi, ht_an_than, ht_an_binh], rare-chance: 0.3}     # cả server · 100
+      steamworks_lair: {items: [cc_an_khoi, cc_an_than, cc_an_binh], multiplier: 2, rare: [ht_an_khoi, ht_an_than, ht_an_binh], rare-chance: 0.3}              # vé · 140
+  # Đồ EliteMobs (rơi trong dungeon, dùng tạm) yếu hơn đồ set (23/10, chủ server): vũ khí EliteMobs đánh nhân weapon-damage,
+  # mỗi món giáp EliteMobs đang mặc làm người mặc nhận thêm armor-penalty (0.08 = +8%) sát thương. Đồ set Thợ Rèn không bị ảnh hưởng.
+  elitemobs-gear:
+    weapon-damage: 0.8
+    armor-penalty: 0.08
+    # Đồ set Thợ Rèn đánh / chịu đòn quái EliteMobs (dungeon, quái tinh nhuệ), CHỈ PvE (23/10 chủ server: đồ tân thủ vào dungeon tầng 1 phải đánh được).
+    # EliteMobs chấm cấp đồ theo phù phép (trần Sắc bén 5…) nên mọi set chỉ ngang đồ cấp ~10. Ở đây mỗi set có CẤP HIỆU DỤNG: cầm vũ khí set đánh quái
+    # EliteMobs / mặc giáp set (trung bình 4 ô, ô không phải đồ set = cấp 0) thì sát thương tính theo chênh lệch cấp; lấy mức có lợi hơn cho người chơi.
+    set-vs-elite:
+      nhat-ngang-cap: 3.0    # quái thường CÙNG cấp với đồ: chém mấy nhát thì chết (trùm / phó trùm nhân thêm hệ số máu của nó)
+      don-ngang-cap: 8       # quái thường cùng cấp đánh mấy đòn thì mình chết
+      he-so-cap: 1.08        # mỗi cấp chênh lệch: số nhát / số đòn nhân hoặc chia 1,08
+      # cấp hiệu dụng [ở +0, ở +max] (cấp giữa nội suy). Tầng dungeon: 1 = cấp 10, 4 = 25, 7 = 40, 10 = 55; dungeon vé 95–140.
+      cap:
+        tanthu: [3, 12]
+        chienbinh: [12, 24]
+        ulinh: [15, 30]
+        tinhanh: [24, 38]
+        caocap: [38, 56]
+        huyenthoai: [56, 75]
+        thanthoai: [75, 100]
+        thanthanh: [100, 140]
+        thosan: [5, 15]
+  fish-drop: {item: vaycahiem, chance: 5}   # % mỗi lần câu được cá: rơi Vảy Cá Hiếm (set Ngư Phủ)
+  sets:
+    tanthu:
+      name: "Tân Thủ"
+      icon: IRON_CHESTPLATE
+      desc: "Set khởi đầu: đánh quái, đào mỏ lấy nguyên liệu, nâng từ +0 tới +9."
+      pieces:
+        mu: {name: "Mũ", ids: [tt_mu_0, tt_mu_1, tt_mu_2, tt_mu_3, tt_mu_4, tt_mu_5, tt_mu_6, tt_mu_7, tt_mu_8, tt_mu_9]}
+        ao: {name: "Giáp", ids: [giap, giap_tan_thu_1, giap_tan_thu_2, giap_tan_thu_3, giap_tan_thu, giap_tan_thu_5, giap_tan_thu_6, giap_tan_thu_7, giap_tan_thu_8, giap_tan_thu_9]}
+        quan: {name: "Quần", ids: [tt_quan_0, tt_quan_1, tt_quan_2, tt_quan_3, tt_quan_4, tt_quan_5, tt_quan_6, tt_quan_7, tt_quan_8, tt_quan_9]}
+        giay: {name: "Giày", ids: [tt_giay_0, tt_giay_1, tt_giay_2, tt_giay_3, tt_giay_4, tt_giay_5, tt_giay_6, tt_giay_7, tt_giay_8, tt_giay_9]}
+        kiem: {name: "Kiếm", ids: [tt_kiem_0, tt_kiem_1, tt_kiem_2, tt_kiem_3, tt_kiem_4, tt_kiem_5, tt_kiem_6, tt_kiem_7, tt_kiem_8, tt_kiem_9]}
+        riu: {name: "Rìu", ids: [tt_riu_0, tt_riu_1, tt_riu_2, tt_riu_3, tt_riu_4, tt_riu_5, tt_riu_6, tt_riu_7, tt_riu_8, tt_riu_9]}
+        giao: {name: "Giáo", ids: [tt_giao_0, tt_giao_1, tt_giao_2, tt_giao_3, tt_giao_4, tt_giao_5, tt_giao_6, tt_giao_7, tt_giao_8, tt_giao_9]}
+        cung: {name: "Cung", ids: [tt_cung_0, tt_cung_1, tt_cung_2, tt_cung_3, tt_cung_4, tt_cung_5, tt_cung_6, tt_cung_7, tt_cung_8, tt_cung_9]}
+        chuy: {name: "Chuỳ", ids: [tt_chuy_0, tt_chuy_1, tt_chuy_2, tt_chuy_3, tt_chuy_4, tt_chuy_5, tt_chuy_6, tt_chuy_7, tt_chuy_8, tt_chuy_9]}
+      cost:
+        # 23/10: kiếm chủ yếu ngoài tự nhiên (đào mỏ + quái thường), +0/+1 không cần Xu Quái, Lõi Quái (qua Huyết Tinh) từ +7
+        - {xu: 200, manh_than: 2, manh_dong: 2, xuong_oan: 1}   # +0
+        - {xu: 300, manh_dong: 3, manh_sat: 2, to_bac: 1}   # +1
+        - {xu: 400, manh_sat: 3, manh_than: 2, hoa_duoc: 1, xuquai: 2}   # +2
+        - {xu: 600, manh_sat: 4, xuong_oan: 2, to_bac: 2, xuquai: 3}   # +3
+        - {xu: 900, hop_kim: 1, manh_lam: 2, xuquai: 4}   # +4
+        - {xu: 1300, hop_kim: 1, manh_vang: 2, hoa_duoc: 2, xuquai: 5}   # +5
+        - {xu: 1800, hop_kim: 1, lam_chau: 1, manh_hong: 2, xuquai: 6}   # +6
+        - {xu: 2500, hop_kim: 1, huyet_tinh: 1, le_ender: 1, xuquai: 8}   # +7
+        - {xu: 3200, hop_kim: 1, lam_chau: 1, huyet_tinh: 1, xuquai: 10}   # +8
+        - {xu: 4000, hop_kim: 2, lam_chau: 2, hon_quai: 1, xuquai: 12}   # +9
+      wear: [100, 95, 90, 85, 80, 75, 65, 60, 55, 45]
+      bonus:
+        - {from: 3, pieces: 2, mau: 3}
+        - {from: 3, pieces: 4, mau: 6}
+        - {from: 6, pieces: 2, mau: 5}
+        - {from: 6, pieces: 4, mau: 10, day-lui: 10}
+        - {from: 9, pieces: 2, mau: 8, day-lui: 5}
+        - {from: 9, pieces: 4, mau: 15, day-lui: 15, giam-st: 5}
+    chienbinh:
+      name: "Chiến Binh"
+      icon: DIAMOND_CHESTPLATE
+      desc: "Bậc 2: nâng từ Tân Thủ +9. Mảnh Chiến Ấn rơi ở dungeon tầng 1–3."
+      requires: tanthu
+      pieces:
+        mu: {name: "Mũ", an: cb_an_khoi, ids: [cb_mu_0, cb_mu_1, cb_mu_2, cb_mu_3, cb_mu_4, cb_mu_5, cb_mu_6, cb_mu_7]}
+        ao: {name: "Giáp", an: cb_an_than, ids: [cb_ao_0, cb_ao_1, cb_ao_2, cb_ao_3, cb_ao_4, cb_ao_5, cb_ao_6, cb_ao_7]}
+        quan: {name: "Quần", an: cb_an_than, ids: [cb_quan_0, cb_quan_1, cb_quan_2, cb_quan_3, cb_quan_4, cb_quan_5, cb_quan_6, cb_quan_7]}
+        giay: {name: "Giày", an: cb_an_khoi, ids: [cb_giay_0, cb_giay_1, cb_giay_2, cb_giay_3, cb_giay_4, cb_giay_5, cb_giay_6, cb_giay_7]}
+        kiem: {name: "Kiếm", an: cb_an_binh, ids: [cb_kiem_0, cb_kiem_1, cb_kiem_2, cb_kiem_3, cb_kiem_4, cb_kiem_5, cb_kiem_6, cb_kiem_7]}
+        riu: {name: "Rìu", an: cb_an_binh, ids: [cb_riu_0, cb_riu_1, cb_riu_2, cb_riu_3, cb_riu_4, cb_riu_5, cb_riu_6, cb_riu_7]}
+        giao: {name: "Giáo", an: cb_an_binh, ids: [cb_giao_0, cb_giao_1, cb_giao_2, cb_giao_3, cb_giao_4, cb_giao_5, cb_giao_6, cb_giao_7]}
+        cung: {name: "Cung", an: cb_an_binh, ids: [cb_cung_0, cb_cung_1, cb_cung_2, cb_cung_3, cb_cung_4, cb_cung_5, cb_cung_6, cb_cung_7]}
+        chuy: {name: "Chuỳ", an: cb_an_binh, ids: [cb_chuy_0, cb_chuy_1, cb_chuy_2, cb_chuy_3, cb_chuy_4, cb_chuy_5, cb_chuy_6, cb_chuy_7]}
+      cost:   # "an" = mảnh ấn của món đó (mũ/giày: Khôi Giáp, giáp/quần: Thân Giáp, kiếm: Binh Khí)
+        - {xu: 2000, an: 2, hop_kim: 1, huyet_tinh: 1}   # +0 (cộng món Tân Thủ +9)
+        - {xu: 2500, an: 3, hop_kim: 1, lam_chau: 1}
+        - {xu: 3000, an: 3, huyet_tinh: 1, loiquai: 3}
+        - {xu: 3500, an: 4, hop_kim: 2, lam_chau: 1}
+        - {xu: 4000, an: 4, huyet_tinh: 2, hon_quai: 1}
+        - {xu: 5000, an: 5, hop_kim: 2, lam_chau: 2}
+        - {xu: 6000, an: 6, huyet_tinh: 2, hon_quai: 1}
+        - {xu: 7000, an: 8, hon_quai: 2, lam_chau: 2}
+      wear: [70, 66, 62, 58, 54, 50, 46, 42]
+      bonus:
+        - {from: 0, pieces: 4, mau: 6, giam-st: 2}
+        - {from: 4, pieces: 2, mau: 6}
+        - {from: 4, pieces: 4, mau: 10, day-lui: 10, giam-st: 4}
+        - {from: 7, pieces: 2, mau: 8, day-lui: 5}
+        - {from: 7, pieces: 4, mau: 15, day-lui: 15, giam-st: 6}
+    tinhanh:
+      name: "Tinh Anh"
+      icon: NETHERITE_CHESTPLATE
+      desc: "Bậc 3: nâng từ Chiến Binh +7. Mảnh Linh Ấn rơi ở dungeon tầng 4–6."
+      requires: chienbinh
+      pieces:
+        mu: {name: "Mũ", an: ta_an_khoi, ids: [ta_mu_0, ta_mu_1, ta_mu_2, ta_mu_3, ta_mu_4, ta_mu_5]}
+        ao: {name: "Giáp", an: ta_an_than, ids: [ta_ao_0, ta_ao_1, ta_ao_2, ta_ao_3, ta_ao_4, ta_ao_5]}
+        quan: {name: "Quần", an: ta_an_than, ids: [ta_quan_0, ta_quan_1, ta_quan_2, ta_quan_3, ta_quan_4, ta_quan_5]}
+        giay: {name: "Giày", an: ta_an_khoi, ids: [ta_giay_0, ta_giay_1, ta_giay_2, ta_giay_3, ta_giay_4, ta_giay_5]}
+        kiem: {name: "Kiếm", an: ta_an_binh, ids: [ta_kiem_0, ta_kiem_1, ta_kiem_2, ta_kiem_3, ta_kiem_4, ta_kiem_5]}
+        riu: {name: "Rìu", an: ta_an_binh, ids: [ta_riu_0, ta_riu_1, ta_riu_2, ta_riu_3, ta_riu_4, ta_riu_5]}
+        giao: {name: "Giáo", an: ta_an_binh, ids: [ta_giao_0, ta_giao_1, ta_giao_2, ta_giao_3, ta_giao_4, ta_giao_5]}
+        cung: {name: "Cung", an: ta_an_binh, ids: [ta_cung_0, ta_cung_1, ta_cung_2, ta_cung_3, ta_cung_4, ta_cung_5]}
+        chuy: {name: "Chuỳ", an: ta_an_binh, ids: [ta_chuy_0, ta_chuy_1, ta_chuy_2, ta_chuy_3, ta_chuy_4, ta_chuy_5]}
+      cost:
+        - {xu: 8000, an: 3, hon_quai: 1, hac_dieu: 1}    # +0 (cộng món Chiến Binh +7)
+        - {xu: 9000, an: 4, hac_dieu: 1, lam_chau: 2}
+        - {xu: 10000, an: 5, hon_quai: 2, huyet_tinh: 2}
+        - {xu: 12000, an: 6, hac_dieu: 2, NETHERITE_INGOT: 1}
+        - {xu: 14000, an: 7, hon_quai: 2, hac_dieu: 2}
+        - {xu: 16000, an: 9, hon_quai: 3, hac_dieu: 2, NETHERITE_INGOT: 1}
+      wear: [40, 36, 32, 28, 24, 20]
+      bonus:
+        - {from: 0, pieces: 4, mau: 10, giam-st: 4}
+        - {from: 2, pieces: 2, mau: 10}
+        - {from: 2, pieces: 4, mau: 15, day-lui: 15, giam-st: 6}
+        - {from: 5, pieces: 2, mau: 12, day-lui: 8}
+        - {from: 5, pieces: 4, mau: 20, day-lui: 20, giam-st: 9}
+    caocap:
+      name: "Cao Cấp"
+      icon: GOLDEN_CHESTPLATE
+      desc: "Bậc 4, cao nhất cày được: nâng từ Tinh Anh +5. Mảnh Kim Ấn rơi ở dungeon tầng 7–10 và dungeon vé."
+      requires: tinhanh
+      pieces:
+        mu: {name: "Mũ", an: cc_an_khoi, ids: [cc_mu_0, cc_mu_1, cc_mu_2, cc_mu_3, cc_mu_4, cc_mu_5]}
+        ao: {name: "Giáp", an: cc_an_than, ids: [cc_ao_0, cc_ao_1, cc_ao_2, cc_ao_3, cc_ao_4, cc_ao_5]}
+        quan: {name: "Quần", an: cc_an_than, ids: [cc_quan_0, cc_quan_1, cc_quan_2, cc_quan_3, cc_quan_4, cc_quan_5]}
+        giay: {name: "Giày", an: cc_an_khoi, ids: [cc_giay_0, cc_giay_1, cc_giay_2, cc_giay_3, cc_giay_4, cc_giay_5]}
+        kiem: {name: "Kiếm", an: cc_an_binh, ids: [cc_kiem_0, cc_kiem_1, cc_kiem_2, cc_kiem_3, cc_kiem_4, cc_kiem_5]}
+        riu: {name: "Rìu", an: cc_an_binh, ids: [cc_riu_0, cc_riu_1, cc_riu_2, cc_riu_3, cc_riu_4, cc_riu_5]}
+        giao: {name: "Giáo", an: cc_an_binh, ids: [cc_giao_0, cc_giao_1, cc_giao_2, cc_giao_3, cc_giao_4, cc_giao_5]}
+        cung: {name: "Cung", an: cc_an_binh, ids: [cc_cung_0, cc_cung_1, cc_cung_2, cc_cung_3, cc_cung_4, cc_cung_5]}
+        chuy: {name: "Chuỳ", an: cc_an_binh, ids: [cc_chuy_0, cc_chuy_1, cc_chuy_2, cc_chuy_3, cc_chuy_4, cc_chuy_5]}
+      cost:
+        - {xu: 18000, an: 4, hac_dieu: 2, hon_quai: 2, sat: 1, vang: 1}   # +0 (cộng món Tinh Anh +5; 27/10: thêm Tinh Luyện)
+        - {xu: 20000, an: 5, hac_dieu: 2, hon_quai: 2, lam_chau: 2}
+        - {xu: 23000, an: 6, hac_dieu: 3, hon_quai: 3}
+        - {xu: 26000, an: 8, hac_dieu: 3, hon_quai: 3, NETHERITE_INGOT: 1}
+        - {xu: 30000, an: 10, hac_dieu: 4, hon_quai: 4}
+        - {xu: 35000, an: 12, hac_dieu: 5, hon_quai: 5, NETHERITE_INGOT: 2}
+      wear: [30, 27, 24, 21, 18, 15]
+      bonus:
+        - {from: 0, pieces: 4, mau: 18, giam-st: 8}
+        - {from: 2, pieces: 2, mau: 12}
+        - {from: 2, pieces: 4, mau: 22, day-lui: 20, giam-st: 10}
+        - {from: 5, pieces: 2, mau: 15, day-lui: 10}
+        - {from: 5, pieces: 4, mau: 30, day-lui: 25, giam-st: 13}
+    huyenthoai:
+      name: "Huyền Thoại"
+      icon: NETHERITE_SWORD
+      desc: "Bậc 5 (Legendary, bản trao đổi): nâng từ Cao Cấp +5. Huyền Ấn rất hiếm, rơi ở dungeon tầng 10, Bắc Cực, dungeon vé và Kẻ Trói Buộc."
+      requires: caocap
+      pieces:
+        mu: {name: "Mũ", an: ht_an_khoi, ids: [ht_mu_0, ht_mu_1, ht_mu_2, ht_mu_3]}
+        ao: {name: "Giáp", an: ht_an_than, ids: [ht_ao_0, ht_ao_1, ht_ao_2, ht_ao_3]}
+        quan: {name: "Quần", an: ht_an_than, ids: [ht_quan_0, ht_quan_1, ht_quan_2, ht_quan_3]}
+        giay: {name: "Giày", an: ht_an_khoi, ids: [ht_giay_0, ht_giay_1, ht_giay_2, ht_giay_3]}
+        kiem: {name: "Kiếm", an: ht_an_binh, ids: [ht_kiem_0, ht_kiem_1, ht_kiem_2, ht_kiem_3]}
+        riu: {name: "Rìu", an: ht_an_binh, ids: [ht_riu_0, ht_riu_1, ht_riu_2, ht_riu_3]}
+        giao: {name: "Giáo", an: ht_an_binh, ids: [ht_giao_0, ht_giao_1, ht_giao_2, ht_giao_3]}
+        cung: {name: "Cung", an: ht_an_binh, ids: [ht_cung_0, ht_cung_1, ht_cung_2, ht_cung_3]}
+        chuy: {name: "Chuỳ", an: ht_an_binh, ids: [ht_chuy_0, ht_chuy_1, ht_chuy_2, ht_chuy_3]}
+      cost:
+        - {xu: 40000, an: 3, long_hon: 1, NETHERITE_INGOT: 2, lucbao: 1, kimcuong: 1}             # +0 (cộng món Cao Cấp +5; 27/10: thêm Tinh Luyện)
+        - {xu: 50000, an: 4, long_hon: 1, hac_dieu: 3}
+        - {xu: 60000, an: 6, long_hon: 2, hon_quai: 4}
+        - {xu: 75000, an: 8, long_hon: 3, NETHERITE_INGOT: 4}
+      wear: [14, 12, 10, 8]
+      bonus:
+        - {from: 0, pieces: 4, mau: 25, day-lui: 20, giam-st: 12}
+        - {from: 2, pieces: 2, mau: 15, day-lui: 10}
+        - {from: 2, pieces: 4, mau: 30, day-lui: 25, giam-st: 14}
+        - {from: 3, pieces: 4, mau: 35, day-lui: 30, giam-st: 16}
+    thanthoai:
+      name: "Thần Thoại"
+      icon: NETHER_STAR
+      desc: "Bậc 6 (Mythic): nâng từ Huyền Thoại +3. Thần Ấn chưa ai tìm ra (sắp mở)."
+      requires: huyenthoai
+      pieces:
+        mu: {name: "Mũ", an: mt_an_khoi, ids: [mt_mu_0, mt_mu_1, mt_mu_2, mt_mu_3, mt_mu_4]}
+        ao: {name: "Giáp", an: mt_an_than, ids: [mt_ao_0, mt_ao_1, mt_ao_2, mt_ao_3, mt_ao_4]}
+        quan: {name: "Quần", an: mt_an_than, ids: [mt_quan_0, mt_quan_1, mt_quan_2, mt_quan_3, mt_quan_4]}
+        giay: {name: "Giày", an: mt_an_khoi, ids: [mt_giay_0, mt_giay_1, mt_giay_2, mt_giay_3, mt_giay_4]}
+        kiem: {name: "Kiếm", an: mt_an_binh, ids: [mt_kiem_0, mt_kiem_1, mt_kiem_2, mt_kiem_3, mt_kiem_4]}
+        riu: {name: "Rìu", an: mt_an_binh, ids: [mt_riu_0, mt_riu_1, mt_riu_2, mt_riu_3, mt_riu_4]}
+        giao: {name: "Giáo", an: mt_an_binh, ids: [mt_giao_0, mt_giao_1, mt_giao_2, mt_giao_3, mt_giao_4]}
+        cung: {name: "Cung", an: mt_an_binh, ids: [mt_cung_0, mt_cung_1, mt_cung_2, mt_cung_3, mt_cung_4]}
+        chuy: {name: "Chuỳ", an: mt_an_binh, ids: [mt_chuy_0, mt_chuy_1, mt_chuy_2, mt_chuy_3, mt_chuy_4]}
+      # 23/10 chủ server: làm trước, CHƯA chốt Thần Ấn lấy ở đâu (chưa rơi ở đâu cả; admin phát bằng /dmm laydo nếu cần thử)
+      cost:
+        - {xu: 100000, an: 3, nhat_nguyet: 1, NETHERITE_INGOT: 3, kimcuong: 2}   # +0 (cộng món Huyền Thoại +3; 27/10: thêm Tinh Luyện)
+        - {xu: 120000, an: 4, nhat_nguyet: 1, long_hon: 2}
+        - {xu: 150000, an: 5, nhat_nguyet: 2, hac_dieu: 4}
+        - {xu: 180000, an: 7, nhat_nguyet: 2, long_hon: 3}
+        - {xu: 220000, an: 9, nhat_nguyet: 3, NETHERITE_INGOT: 4}
+      wear: [7, 6, 5, 4, 3]
+      bonus:
+        - {from: 0, pieces: 4, mau: 38, day-lui: 32, giam-st: 17}
+        - {from: 2, pieces: 2, mau: 20, day-lui: 12}
+        - {from: 2, pieces: 4, mau: 42, day-lui: 35, giam-st: 19}
+        - {from: 4, pieces: 4, mau: 48, day-lui: 40, giam-st: 21}
+    thanthanh:
+      name: "Thần Thánh"
+      icon: BEACON
+      desc: "Bậc 7 (Divine), cao nhất: nâng từ Thần Thoại +4. Thánh Ấn chưa ai tìm ra (sắp mở)."
+      requires: thanthoai
+      pieces:
+        mu: {name: "Mũ", an: dv_an_khoi, ids: [dv_mu_0, dv_mu_1, dv_mu_2, dv_mu_3]}
+        ao: {name: "Giáp", an: dv_an_than, ids: [dv_ao_0, dv_ao_1, dv_ao_2, dv_ao_3]}
+        quan: {name: "Quần", an: dv_an_than, ids: [dv_quan_0, dv_quan_1, dv_quan_2, dv_quan_3]}
+        giay: {name: "Giày", an: dv_an_khoi, ids: [dv_giay_0, dv_giay_1, dv_giay_2, dv_giay_3]}
+        kiem: {name: "Kiếm", an: dv_an_binh, ids: [dv_kiem_0, dv_kiem_1, dv_kiem_2, dv_kiem_3]}
+        riu: {name: "Rìu", an: dv_an_binh, ids: [dv_riu_0, dv_riu_1, dv_riu_2, dv_riu_3]}
+        giao: {name: "Giáo", an: dv_an_binh, ids: [dv_giao_0, dv_giao_1, dv_giao_2, dv_giao_3]}
+        cung: {name: "Cung", an: dv_an_binh, ids: [dv_cung_0, dv_cung_1, dv_cung_2, dv_cung_3]}
+        chuy: {name: "Chuỳ", an: dv_an_binh, ids: [dv_chuy_0, dv_chuy_1, dv_chuy_2, dv_chuy_3]}
+      cost:
+        - {xu: 300000, an: 3, thien_menh: 1, NETHER_STAR: 1, netherite: 1}   # +0 (cộng món Thần Thoại +4; 27/10: thêm Tinh Luyện)
+        - {xu: 350000, an: 4, thien_menh: 1, nhat_nguyet: 2}
+        - {xu: 420000, an: 6, thien_menh: 2, NETHER_STAR: 2}
+        - {xu: 500000, an: 8, thien_menh: 3, nhat_nguyet: 3}
+      wear: [3, 2, 2, 1]
+      bonus:
+        - {from: 0, pieces: 4, mau: 50, day-lui: 42, giam-st: 22}
+        - {from: 2, pieces: 2, mau: 25, day-lui: 15}
+        - {from: 2, pieces: 4, mau: 55, day-lui: 45, giam-st: 24}
+        - {from: 3, pieces: 4, mau: 60, day-lui: 50, giam-st: 26}
+    ulinh:
+      name: "U Linh"
+      icon: CARVED_PUMPKIN
+      desc: "Set mùa Lễ Hội Bí Ngô: chỉ rèn được trong mùa, đúng mùa hiệu ứng bộ x1,5 và kiếm +15% sát thương. Kẹo Linh Hồn rơi từ quái lúc đang mùa."
+      # season.open: auto = theo ngày (from..to, MM-dd), on / off = bật tắt tay cho sự kiện (sửa rồi /dmm reload)
+      season: {name: "Lễ Hội Bí Ngô", from: "10-25", to: "11-08", open: auto, boost: 1.5, damage: 15, drop: {item: keo_hon, chance: 4}}
+      pieces:
+        mu: {name: "Mũ", ids: [ul_mu_0, ul_mu_1, ul_mu_2, ul_mu_3, ul_mu_4]}
+        ao: {name: "Giáp", ids: [ul_ao_0, ul_ao_1, ul_ao_2, ul_ao_3, ul_ao_4]}
+        quan: {name: "Quần", ids: [ul_quan_0, ul_quan_1, ul_quan_2, ul_quan_3, ul_quan_4]}
+        giay: {name: "Giày", ids: [ul_giay_0, ul_giay_1, ul_giay_2, ul_giay_3, ul_giay_4]}
+        kiem: {name: "Kiếm", ids: [ul_kiem_0, ul_kiem_1, ul_kiem_2, ul_kiem_3, ul_kiem_4]}
+        riu: {name: "Rìu", ids: [ul_riu_0, ul_riu_1, ul_riu_2, ul_riu_3, ul_riu_4]}
+        giao: {name: "Giáo", ids: [ul_giao_0, ul_giao_1, ul_giao_2, ul_giao_3, ul_giao_4]}
+        cung: {name: "Cung", ids: [ul_cung_0, ul_cung_1, ul_cung_2, ul_cung_3, ul_cung_4]}
+        chuy: {name: "Chuỳ", ids: [ul_chuy_0, ul_chuy_1, ul_chuy_2, ul_chuy_3, ul_chuy_4]}
+      cost:
+        - {xu: 1500, keo_hon: 8, xuong_oan: 2}   # +0
+        - {xu: 2500, keo_hon: 12, to_bac: 2, huyet_tinh: 1}
+        - {xu: 4000, keo_hon: 16, hon_quai: 1}
+        - {xu: 6000, keo_hon: 24, hac_dieu: 1, hon_quai: 1}
+        - {xu: 9000, keo_hon: 32, hac_dieu: 2, hon_quai: 2}
+      wear: [70, 60, 50, 40, 30]
+      bonus:
+        - {from: 0, pieces: 4, mau: 6, giam-st: 3}
+        - {from: 2, pieces: 4, mau: 10, day-lui: 10, giam-st: 5}
+        - {from: 4, pieces: 4, mau: 15, day-lui: 15, giam-st: 7}
+    chuyencan:
+      name: Chuyên Cần
+      icon: SUNFLOWER
+      desc: 'Set điểm danh: đổi bằng Phiếu Chuyên Cần (điểm danh mỗi ngày, mốc điểm danh). Cả bộ +0 cần ~1 tháng điểm danh. Đủ bộ thêm máu và kinh nghiệm, +5 tự vá đồ.'
+      cost:
+      - {xu: 200, phieu_dd: 8}     # 29/10: bộ +0 = 32 phiếu, điểm danh ~1 tháng
+      - {xu: 300, phieu_dd: 6}
+      - {xu: 500, phieu_dd: 8}
+      - {xu: 800, phieu_dd: 10}
+      - {xu: 1200, phieu_dd: 12}
+      - {xu: 1800, phieu_dd: 15}
+      wear: [80, 72, 64, 56, 48, 40]
+      bonus:
+      - {from: 0, pieces: 4, mau: 6, kn: 10}
+      - {from: 3, pieces: 4, mau: 8, day-lui: 5, giam-st: 2, kn: 20}
+      - {from: 5, pieces: 4, mau: 10, day-lui: 10, giam-st: 4, kn: 30}
+      pieces:
+        mu: {name: Mũ, ids: [cn_mu_0, cn_mu_1, cn_mu_2, cn_mu_3, cn_mu_4, cn_mu_5]}
+        ao: {name: Giáp, ids: [cn_ao_0, cn_ao_1, cn_ao_2, cn_ao_3, cn_ao_4, cn_ao_5]}
+        quan: {name: Quần, ids: [cn_quan_0, cn_quan_1, cn_quan_2, cn_quan_3, cn_quan_4, cn_quan_5]}
+        giay: {name: Giày, ids: [cn_giay_0, cn_giay_1, cn_giay_2, cn_giay_3, cn_giay_4, cn_giay_5]}
+    nonggia:
+      name: "Nông Gia"
+      icon: GOLDEN_HOE
+      desc: "Set nghề trồng trọt: cuốc 3x3, thu hoạch cả vùng, tự gieo hạt; mặc đủ bộ có cơ hội gấp đôi nông sản."
+      pieces:
+        mu: {name: "Mũ", ids: [nn_mu_0, nn_mu_1, nn_mu_2, nn_mu_3, nn_mu_4]}
+        ao: {name: "Giáp", ids: [nn_ao_0, nn_ao_1, nn_ao_2, nn_ao_3, nn_ao_4]}
+        quan: {name: "Quần", ids: [nn_quan_0, nn_quan_1, nn_quan_2, nn_quan_3, nn_quan_4]}
+        giay: {name: "Giày", ids: [nn_giay_0, nn_giay_1, nn_giay_2, nn_giay_3, nn_giay_4]}
+        cuoc: {name: "Cuốc", ids: [nn_cuoc_0, nn_cuoc_1, nn_cuoc_2, nn_cuoc_3, nn_cuoc_4]}
+      cost:
+        - {xu: 400, bong_lua: 3, cu_qua: 2}   # +0
+        - {xu: 800, bong_lua: 4, cu_qua: 3, manh_sat: 2}   # +1
+        - {xu: 1400, bong_lua: 5, mat_ong: 2, hop_kim: 1}   # +2
+        - {xu: 2000, cu_qua: 5, mat_ong: 3, lam_chau: 1}   # +3
+        - {xu: 3000, bong_lua: 8, mat_ong: 4, ngoc_trieu: 1}   # +4
+      wear: [85, 75, 65, 55, 45]
+      bonus:
+        - {from: 2, pieces: 4, mau: 6, thu-hoach: 10}
+        - {from: 4, pieces: 4, mau: 10, day-lui: 10, thu-hoach: 20}
+    thosan:
+      name: "Thợ Săn"
+      icon: IRON_SWORD
+      desc: "Set nghề đánh quái đêm: nhìn trong đêm, kiếm trừ tà rơi đầu quái; mặc đủ bộ đánh quái ban đêm mạnh hơn."
+      pieces:
+        mu: {name: "Mũ", ids: [ts_mu_0, ts_mu_1, ts_mu_2, ts_mu_3, ts_mu_4]}
+        ao: {name: "Giáp", ids: [ts_ao_0, ts_ao_1, ts_ao_2, ts_ao_3, ts_ao_4]}
+        quan: {name: "Quần", ids: [ts_quan_0, ts_quan_1, ts_quan_2, ts_quan_3, ts_quan_4]}
+        giay: {name: "Giày", ids: [ts_giay_0, ts_giay_1, ts_giay_2, ts_giay_3, ts_giay_4]}
+        kiem: {name: "Kiếm", ids: [ts_kiem_0, ts_kiem_1, ts_kiem_2, ts_kiem_3, ts_kiem_4]}
+      cost:
+        - {xu: 400, xuquai: 6, xuong_oan: 2, to_bac: 1}   # +0
+        - {xu: 800, xuquai: 8, hoa_duoc: 2, loiquai: 1}   # +1
+        - {xu: 1400, le_ender: 1, huyet_tinh: 1, loiquai: 2}   # +2
+        - {xu: 2000, le_ender: 2, huyet_tinh: 2, loiquai: 3}   # +3
+        - {xu: 3000, hon_quai: 1, huyet_tinh: 2, le_ender: 3}   # +4
+      wear: [85, 75, 65, 55, 45]
+      bonus:
+        - {from: 2, pieces: 4, mau: 6, dem-st: 10}
+        - {from: 4, pieces: 4, mau: 10, day-lui: 10, dem-st: 20}
+    thomo:
+      name: "Thợ Mỏ"
+      icon: IRON_PICKAXE
+      desc: "Set nghề đào mỏ: nhìn trong hầm, kháng lửa, cúp đào nhanh, đồ vào thẳng túi. Giáp nhẹ hơn Tân Thủ cùng tầm."
+      pieces:
+        mu: {name: "Mũ", ids: [tm_mu_0, tm_mu_1, tm_mu_2, tm_mu_3, tm_mu_4]}
+        ao: {name: "Giáp", ids: [tm_ao_0, tm_ao_1, tm_ao_2, tm_ao_3, tm_ao_4]}
+        quan: {name: "Quần", ids: [tm_quan_0, tm_quan_1, tm_quan_2, tm_quan_3, tm_quan_4]}
+        giay: {name: "Giày", ids: [tm_giay_0, tm_giay_1, tm_giay_2, tm_giay_3, tm_giay_4]}
+        cup: {name: "Cúp", ids: [tm_cup_0, tm_cup_1, tm_cup_2, tm_cup_3, tm_cup_4]}
+      cost:
+        - {xu: 400, xuquai: 4, manh_than: 3, manh_sat: 2}   # +0
+        - {xu: 800, manh_dong: 4, manh_sat: 3}   # +1
+        - {xu: 1400, hop_kim: 1, manh_vang: 2, loiquai: 1}   # +2
+        - {xu: 2000, hop_kim: 2, vun_kc: 4}   # +3
+        - {xu: 3000, hop_kim: 2, lam_chau: 1, manh_hac: 1}   # +4
+      wear: [85, 75, 65, 55, 45]
+      bonus:
+        - {from: 2, pieces: 4, mau: 6}
+        - {from: 4, pieces: 4, mau: 10, day-lui: 10}
+    nguphu:
+      name: "Ngư Phủ"
+      icon: FISHING_ROD
+      desc: "Set nghề câu cá: thở và đi nhanh dưới nước, cần câu cá cắn nhanh, ra đồ quý. Nguyên liệu chính: Vảy Cá Hiếm."
+      pieces:
+        mu: {name: "Mũ", ids: [np_mu_0, np_mu_1, np_mu_2, np_mu_3, np_mu_4]}
+        ao: {name: "Giáp", ids: [np_ao_0, np_ao_1, np_ao_2, np_ao_3, np_ao_4]}
+        quan: {name: "Quần", ids: [np_quan_0, np_quan_1, np_quan_2, np_quan_3, np_quan_4]}
+        giay: {name: "Giày", ids: [np_giay_0, np_giay_1, np_giay_2, np_giay_3, np_giay_4]}
+        can: {name: "Cần câu", ids: [np_can_0, np_can_1, np_can_2, np_can_3, np_can_4]}
+      cost:
+        - {xu: 400, vaycahiem: 2, vay_trang: 2}   # +0
+        - {xu: 800, vaycahiem: 3, vay_trang: 3, to_bac: 1}   # +1
+        - {xu: 1400, vaycahiem: 4, vay_trang: 4, manh_lam: 3}   # +2
+        - {xu: 2000, vaycahiem: 4, ngoc_trieu: 1}   # +3
+        - {xu: 3000, vaycahiem: 6, ngoc_trieu: 2}   # +4
+      wear: [85, 75, 65, 55, 45]
+      bonus:
+        - {from: 2, pieces: 4, mau: 6}
+        - {from: 4, pieces: 4, mau: 10, day-lui: 10}
+    duhiep:
+      name: "Du Hiệp"
+      icon: BOW
+      desc: "Set nghề cung thủ: nhảy cao, chạy nhanh, cung làm chậm và có cơ hội gấp đôi sát thương."
+      pieces:
+        mu: {name: "Mũ", ids: [dh_mu_0, dh_mu_1, dh_mu_2, dh_mu_3, dh_mu_4]}
+        ao: {name: "Giáp", ids: [dh_ao_0, dh_ao_1, dh_ao_2, dh_ao_3, dh_ao_4]}
+        quan: {name: "Quần", ids: [dh_quan_0, dh_quan_1, dh_quan_2, dh_quan_3, dh_quan_4]}
+        giay: {name: "Giày", ids: [dh_giay_0, dh_giay_1, dh_giay_2, dh_giay_3, dh_giay_4]}
+        cung: {name: "Cung", ids: [dh_cung_0, dh_cung_1, dh_cung_2, dh_cung_3, dh_cung_4]}
+      cost:
+        - {xu: 400, xuquai: 5, to_bac: 2, xuong_oan: 1}   # +0
+        - {xu: 800, to_bac: 3, hoa_duoc: 1, loiquai: 1}   # +1
+        - {xu: 1400, le_ender: 1, hop_kim: 1, loiquai: 2}   # +2
+        - {xu: 2000, le_ender: 2, huyet_tinh: 1, loiquai: 2}   # +3
+        - {xu: 3000, hon_quai: 1, huyet_tinh: 1, le_ender: 2}   # +4
+      wear: [85, 75, 65, 55, 45]
+      bonus:
+        - {from: 2, pieces: 4, mau: 6}
+        - {from: 4, pieces: 4, mau: 10, day-lui: 10}
+
+# Đăng nhập lâu (23/10): người trong danh sách được giữ đăng nhập lâu hơn, cả trong game (sảnh: vào lại từ ĐÚNG IP lần trước, chưa quá
+# "ngay" ngày thì tự đăng nhập, người khác vẫn theo phiên AuthMe) lẫn web (trang tài khoản + quyền quản trị /web giữ "ngay" ngày).
+# Chỉ thêm người tin cậy. Sửa ở Cài đặt › Toàn mạng › Đăng nhập lâu.
+dang-nhap-lau:
+  ngay: 30
+  nguoi: [Linh]
+
+# World spawn riêng (24/10): world trống chỉ chứa công trình spawn (đảo Nhật, schematic IQBUILDERS) + các khu dịch vụ; cổng sang world sinh
+# tồn. /dmm spawnmoi dan (dán schematic tại paste), /dmm spawnmoi diemxuathien (đặt điểm xuất hiện theo spawn).
+spawn-world:
+  enabled: false   # 24/10: đảo spawn đã dán vào world chính (main-paste), không cần world "spawn" riêng nữa
+  name: spawn
+  schematic: japan-spawn-iqbuilders.schem
+  paste: {x: 0, y: 80, z: 0}
+  spawn: {x: 0.5, y: 100, z: 0.5, yaw: 180}
+  # 24/10: spawn mới ĐẶT Ở WORLD CHÍNH (thay spawn cũ, tâm 12699 -2465): /dmm spawnmoi danchinh. Mặt đất quanh y 67, mặt đảo ~ điểm dán - 11.
+  main-paste: {x: 12690, y: 79, z: -2429, center-x: 12699, center-z: -2465, clear-radius: 128, clear-from-y: 67}
+
+# Ẩn giáp /angiap (28/10): người khác thấy skin, không thấy giáp (giáp vẫn bảo vệ). Chỉ ẩn ở vòng kinh đô / đất hoà bình / thị trấn
+# của chính mình và không đang giao tranh (combat-seconds sau khi đánh / bị người đánh). Lưu người bật: angiap.yml
+# Thân nhiệt /nhietdo (28/10): nhiệt môi trường = nhiệt nền của mùa / đợt (seasons ... temperature) + vùng đất + đêm/nắng + ướt
+# + giáp da + mái che + lửa/băng gần; thân nhiệt đuổi dần theo. Không chết vì nhiệt: mất máu dừng ở min-health.
+body-temp:
+  enabled: true
+  worlds: [world]
+  newbie-hours: 2          # giờ chơi đầu tiên được miễn
+  safe-towns: true         # đất thị trấn (cả Kinh Đô): thân nhiệt + ướt giữ nguyên (29/10)
+  safe-warp-radius: 48     # trong ngần này khối quanh mỗi warp Essentials cũng vậy (0 = tắt)
+  comfort-mid: 22          # nhiệt dễ chịu (mái che kéo về đây)
+  cold: 10                 # dưới: lạnh (màn hình băng, chậm, đói nhanh)
+  freezing: 2              # dưới: rét cóng (chậm hơn, mất máu)
+  hot: 35                  # trên: nóng (yếu sức, đói nhanh)
+  scorching: 43            # trên: nóng bỏng (thêm chậm, mất máu)
+  damage: 1                # máu mất mỗi damage-every giây khi rét cóng / nóng bỏng
+  damage-every: 4
+  min-health: 2            # không trừ máu dưới mức này (2 = 1 tim)
+  body-rate: 0.004         # thân nhiệt đuổi theo môi trường mỗi giây (0.004 ≈ 4 phút; 28/10 chủ server: chậm thêm nửa)
+  accel: 1                 # càng xa mức dễ chịu càng tụt / tăng nhanh: mỗi 10° xa thêm ×(1 + accel); quay về thì tốc độ thường
+  biome-scale: 15          # (nhiệt quần xã − 0.8) × số này: tuyết ≈ −12..−20, sa mạc ≈ +18
+  night: 6
+  sun: 4
+  water: 8
+  rain-wet: 0.5              # % ướt mỗi giây dầm mưa (không mái / không ô)
+  water-wet: 5            # % ướt mỗi giây dưới nước
+  dry-rate: 0.25            # % khô mỗi giây
+  dry-fire: 1.5              # % khô mỗi giây cạnh lửa
+  leather-per-piece: 3
+  shelter: 0.5             # dưới mái: kéo 50% về comfort-mid
+  source-radius: 3
+  heat-source: 18          # lửa / lửa trại / lò đang cháy / dung nham gần
+  cold-source: 10          # băng / tuyết gần
+  stone-hot: 70            # Đá Ôn Linh hơ cạnh lửa nóng tới
+  stone-cold: -10          # ướp cạnh băng lạnh tới
+  stone-heat-rate: 0.01    # đá nóng lên / lạnh đi mỗi giây cạnh lửa / băng (0.01 ≈ 2 phút)
+  stone-hold-seconds: 300  # đá nguội về nhiệt xung quanh (hằng số thời gian, 5 phút)
+  stone-strength: 0.6
+  food-warm: 8
+  food-cool: 5
+  tip-minutes: 5
+
+# Phòng ẩn bot (29/10): bot botfarm đứng trong vùng này thì không ai thấy (tên vẫn ở TAB). Đặt xa mọi warp / spawn > 128 khối
+# (tầm theo dõi người chơi) để bot ra / vào phòng thì client tự tạo / xoá. Cần packetevents. Botfarm: /state/wander.json room.
+bot-hide:
+  enabled: true
+  world: world
+  x: 11150.5
+  y: -40
+  z: -3099.5
+  radius: 8
+
+# Đặc quyền Công Tước (29/10): /bay trong đất thị trấn của mình (quyền duckymomo.bay), tự tắt khi ra khỏi thị trấn / giao tranh / vây;
+# /fix (essentials.repair) không sửa đồ Thư viện đồ. Hồi chiêu /fix ở Essentials command-cooldowns (repair, fix).
+town-fly:
+  enabled: true
+  combat-seconds: 15
+
+armor-hide:
+  enabled: true
+  combat-seconds: 15

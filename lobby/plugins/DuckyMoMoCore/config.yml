@@ -131,3 +131,17 @@ resource-pack:
   item-sha1: "${CFG_ITEM_PACK_SHA1}"
   font-prompt: "&6Tải font chữ mềm Be Vietnam Pro (khoảng 130 KB)? Không thích: /caidat tắt Font chữ mềm."
   item-prompt: "&6Tải gói của server (sửa dấu tiếng Việt + hình vật phẩm, khoảng 80 KB)?"
+
+# Đăng nhập lâu (23/10): người trong danh sách được giữ đăng nhập lâu hơn, cả trong game (sảnh: vào lại từ ĐÚNG IP lần trước, chưa quá
+# "ngay" ngày thì tự đăng nhập, người khác vẫn theo phiên AuthMe) lẫn web (trang tài khoản + quyền quản trị /web giữ "ngay" ngày).
+# Chỉ thêm người tin cậy. Sửa ở Cài đặt › Toàn mạng › Đăng nhập lâu.
+dang-nhap-lau:
+  ngay: 30
+  nguoi: [Linh]
+
+# Tài khoản tin cậy (28/10, chủ server): vào lại sảnh CÙNG IP trong vòng `hours` giờ kể từ lần đăng nhập trước thì tự đăng nhập AuthMe.
+# Mọi người khác vẫn theo AuthMe sessions.timeout (60 phút). Thêm / bớt tên ở players rồi khởi động lại sảnh.
+auth-trust:
+  enabled: true
+  hours: 24
+  players: [Itrap]

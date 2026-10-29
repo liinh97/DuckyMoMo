@@ -552,9 +552,15 @@ async function chatOnce() {
   const who = { A: pool[0], B: pool[1], C: pool[2] };
   chatBusy = true;
   try {
+    let prev = null;
     for (const line of talk) {
       const n = who[line[0]], text = line.slice(2).replace(/\{([ABC])\}/g, (_, x) => who[x] || '');
-      await sleep(1500 + Math.random() * 3000 + Math.min(text.length * 150, 9000));   // đọc + gõ
+      // 29/10 (chủ server: bot trả lời nhau nhanh quá): người khác đáp = đọc + nghĩ 3–9 giây, 30% đang bận (đánh quái, đào) thêm
+      // 8–25 giây; cùng người nói tiếp 1–2 giây; gõ ~4 ký tự / giây (±20%)
+      const react = prev === null ? 0 : n === prev ? 800 + Math.random() * 1500
+        : 3000 + Math.random() * 6000 + (Math.random() < 0.3 ? 8000 + Math.random() * 17000 : 0);
+      await sleep(react + Math.min(text.length * 250, 15000) * (0.8 + Math.random() * 0.4));
+      prev = n;
       if (!RT[n] || !RT[n].bot) break;
       const msg = styled(n, text);
       RT[n].bot.chat(msg.startsWith('/') ? '.' + msg : msg);   // "./sell …": khoe lệnh trong chat như người thật, không chạy thành lệnh (28/10)

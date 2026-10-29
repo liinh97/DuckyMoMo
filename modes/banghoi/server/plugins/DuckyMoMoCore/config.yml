@@ -1483,6 +1483,92 @@ pet-combat:
     heat-bonus: 15                     # % sát thương thêm cho pet lửa lúc nắng gắt
     fire-pets: [Blaze, MagmaCube, Strider, WitherSkeleton, Hoglin, Zoglin, Piglin, PiglinBrute, ZombifiedPiglin, Ghast]
 
+# Hầm Ngục DuckyMoMo /hamnguc (HamNguc.java, 29/10): dungeon tự dựng trong thế giới riêng, quái vanilla tên Việt, rơi thẳng món set +0
+# (mã đầu tiên trong tho-ren.sets.<set>.pieces.<món>.ids). Chạy song song dungeon EliteMobs. Chỉ số quái (hp, dmg) CHƯA cân bằng bằng
+# người thật: chỉnh ở đây. Nhóm đông: máu quái x (1 + party-hp x (số người - 1)).
+ham-nguc:
+  enabled: true
+  world: hamnguc
+  max-party: 4
+  party-hp: 0.6
+  mobs-per-room: 3          # quái phòng i = mobs-per-room + i + 2 x (số người - 1), tối đa 14
+  cooldown-seconds: 120     # chờ giữa 2 lượt (tính từ lúc vào)
+  time-limit-minutes: 40
+  exit-after-seconds: 30    # vượt xong ở lại bao lâu
+  broadcast-first: true
+  drop:                     # % mỗi con (nhân drop-mult của dungeon)
+    mob: 2
+    mini: 15
+    boss: 40
+  pieces:                   # món có thể rơi theo loại quái
+    mob: [mu, giay]
+    mini: [mu, giay, quan, ao]
+    boss: [mu, giay, quan, ao, kiem, riu, giao, cung, chuy]
+  dungeons:
+    hammo:
+      name: "Hầm Mộ Cổ"
+      theme: hammo
+      set: tanthu
+      icon: SKELETON_SKULL
+      rooms: 5
+      hint: "đồ sắt hoặc Tân Thủ +0"
+      hp: 26
+      dmg: 4
+      mobs: ["ZOMBIE:Xác Sống Hầm Mộ", "SKELETON:Cung Thủ Xương", "SPIDER:Nhện Hang", "HUSK:Xác Khô"]
+      mini: {type: ZOMBIE, name: "〖Gác Mộ Già〗", hp: 160, dmg: 6, scale: 1.3}
+      boss: {type: SKELETON, name: "『Vua Hầm Mộ』", hp: 380, dmg: 8, scale: 1.6}
+      drop-mult: 1.0
+      reward: 150
+      first-reward: 500
+    mo:
+      name: "Mỏ Bỏ Hoang"
+      theme: mo
+      set: chienbinh
+      icon: IRON_PICKAXE
+      requires: hammo
+      rooms: 6
+      hint: "Tân Thủ +6 trở lên"
+      hp: 50
+      dmg: 7
+      mobs: ["ZOMBIE_VILLAGER:Thợ Mỏ Hoá Xác", "SKELETON:Xạ Thủ Hầm Sâu", "SPIDER:Nhện Đá", "PILLAGER:Kẻ Cướp Mỏ"]
+      mini: {type: VINDICATOR, name: "〖Đốc Công Mất Trí〗", hp: 320, dmg: 10, scale: 1.25}
+      boss: {type: RAVAGER, name: "『Quỷ Đá Sâu』", hp: 720, dmg: 12, scale: 1.0}
+      drop-mult: 0.8
+      reward: 300
+      first-reward: 1000
+    thanhco:
+      name: "Thành Cổ Hỏa Ngục"
+      theme: thanhco
+      set: tinhanh
+      icon: NETHER_BRICKS
+      requires: mo
+      rooms: 6
+      hint: "Chiến Binh +5 trở lên"
+      hp: 85
+      dmg: 10
+      mobs: ["WITHER_SKELETON:Lính Xương Đen", "BLAZE:Linh Hồn Lửa", "PIGLIN_BRUTE:Đồ Tể Lợn", "SKELETON:Cung Thủ Tro"]
+      mini: {type: PIGLIN_BRUTE, name: "〖Hộ Vệ Hỏa Ngục〗", hp: 520, dmg: 14, scale: 1.3}
+      boss: {type: WITHER_SKELETON, name: "『Lãnh Chúa Tro Tàn』", hp: 1100, dmg: 16, scale: 1.8}
+      drop-mult: 0.6
+      reward: 600
+      first-reward: 2000
+    vuc:
+      name: "Vực Thẳm Hư Không"
+      theme: vuc
+      set: caocap
+      icon: CRYING_OBSIDIAN
+      requires: thanhco
+      rooms: 7
+      hint: "Tinh Anh +3 trở lên, nên đi nhóm"
+      hp: 135
+      dmg: 14
+      mobs: ["VINDICATOR:Kẻ Phán Xử Hư Không", "ENDERMAN:Bóng Hư Vô", "STRAY:Cung Thủ Băng", "WITHER_SKELETON:Hộ Vệ Vực"]
+      mini: {type: EVOKER, name: "〖Pháp Sư Hư Vô〗", hp: 800, dmg: 18, scale: 1.2}
+      boss: {type: ZOGLIN, name: "『Kẻ Gác Vực』", hp: 1700, dmg: 22, scale: 1.8}
+      drop-mult: 0.45
+      reward: 1200
+      first-reward: 4000
+
 # Đấu Trường /dautruong (Arena): trang Cài đặt > PvP & combat > Đấu Trường
 arena:
   enabled: true

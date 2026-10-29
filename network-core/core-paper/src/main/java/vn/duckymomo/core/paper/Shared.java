@@ -10,6 +10,7 @@ final class Shared {
     static volatile Frontier frontier;
     static volatile Leaderboard leaderboard;
     static volatile DungeonGate dungeonGate;
+    static volatile HamNguc hamNguc;
     static volatile WildGates wildGates;
     static volatile Wanderers wanderers;
     static volatile Refining refining;

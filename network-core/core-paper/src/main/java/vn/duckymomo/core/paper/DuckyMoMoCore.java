@@ -20,6 +20,7 @@ public final class DuckyMoMoCore extends JavaPlugin {
     private RandomTeleport rtp;
     private WarRules warRules;
     private Arena arena;
+    private HamNguc hamNguc;
     private SiegeSupply supply;
     private RegionSpecialty specialty;
     private WarBalance warBalance;
@@ -186,6 +187,11 @@ public final class DuckyMoMoCore extends JavaPlugin {
         if (arena != null) {
             arena.shutdown();
             arena = null;
+        }
+        if (hamNguc != null) {
+            hamNguc.shutdown();
+            hamNguc = null;
+            Shared.hamNguc = null;
         }
         if (quests != null) {
             quests.flush();
@@ -686,6 +692,17 @@ public final class DuckyMoMoCore extends JavaPlugin {
         }
         Arena ar = arena;
         bind("dautruong", ar == null ? null : ar::command, "Đấu Trường");
+        // Hầm Ngục DuckyMoMo /hamnguc (29/10): dungeon tự dựng, quái rơi thẳng món set +0 (chạy song song dungeon EliteMobs)
+        hamNguc = getConfig().getBoolean("ham-nguc.enabled") && getConfig().isConfigurationSection("ham-nguc")
+                ? new HamNguc(this, getConfig().getConfigurationSection("ham-nguc")) : null;
+        if (hamNguc != null) {
+            getServer().getPluginManager().registerEvents(hamNguc, this);
+            hamNguc.start();
+            Shared.hamNguc = hamNguc;
+            getLogger().info("Hầm Ngục: " + hamNguc.describe());
+        }
+        HamNguc hn = hamNguc;
+        bind("hamnguc", hn == null ? null : hn::command, "Hầm Ngục");
 
         // Thưởng vote server (Votifier ở banghoi-1; vote từ VPS qua relay socat 8192)
         VoteRewards vote = getConfig().getBoolean("vote.enabled") ? new VoteRewards(this, getConfig().getConfigurationSection("vote")) : null;

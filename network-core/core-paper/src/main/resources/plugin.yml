@@ -131,7 +131,7 @@ commands:
     aliases: [settings, tuychon]
   dungeon:
     description: "Cổng Dungeon: danh sách dungeon, chìa khoá, vé; /dungeon vao|mua|gop <mã>; admin: datan|cho|mo"
-    aliases: [dg, hamnguc]
+    aliases: [dg]   # 29/10: hamnguc chuyển sang Hầm Ngục DuckyMoMo
   conghoang:
     description: "Cổng Hoang: cổng dungeon ẩn trên bản đồ; chủ cổng: phi|dong|mo; admin: tao [here]|xoa|ds|datlai"
     aliases: [cong-hoang, rift]
@@ -191,6 +191,9 @@ commands:
   dautruong:
     description: "Đấu Trường: người + pet đấu 1v1, 2v2 (hàng chờ, thách đấu, cược, xếp hạng)"
     aliases: [dt, arena]
+  hamnguc:
+    description: "Hầm Ngục DuckyMoMo: dungeon tự dựng, quái rơi món set +0 (/hamnguc, moi <tên>, thoat)"
+    aliases: [hn]
 permissions:
   duckymomo.choilai.admin:
     description: "Reset người chơi khác (/choilai admin <tên> [moi] [giurank]); trang quản trị › Hệ thống dùng qua RCON"

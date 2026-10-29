@@ -1581,6 +1581,13 @@ final class DungeonGate implements Listener {
                     .note("Luyện cấp: hạ quái elite ngoài đất hoang (quái có hiệu ứng phát sáng, cấp tự theo cấp của bạn), rồi vào dungeon vừa sức. Xem kỹ năng: /em");
         }
         m.top(top.apply(new ItemStack(Material.ENDER_EYE)));
+        if (Shared.hamNguc != null) {   // 29/10: hầm ngục tự dựng, rơi thẳng đồ set
+            m.add(Tip.of("&6⚔ Hầm Ngục DuckyMoMo").sub("mới").accent("&6")
+                    .desc("Hầm ngục của server: quái rơi thẳng món set +0", "(Tân Thủ → Chiến Binh → Tinh Anh → Cao Cấp).")
+                    .note("Không cần cấp chiến đấu, sức mạnh theo đồ bạn mặc.").line().click("Bấm để mở")
+                    .apply(new ItemStack(Material.IRON_BARS)), InfoMenu.run("hamnguc"));
+            m.row();
+        }
         java.util.Map<String, List<Dg>> byType = new java.util.LinkedHashMap<>();
         for (Dg d : dungeons.values()) {
             byType.computeIfAbsent(d.type(), k -> new java.util.ArrayList<>()).add(d);

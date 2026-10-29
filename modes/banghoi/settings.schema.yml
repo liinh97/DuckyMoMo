@@ -2256,6 +2256,24 @@ Admin (quyền duckymomo.sell.khonggioihan) không bị giới hạn." }
       - { key: sk_towny, label: Shop người chơi chỉ được đặt trong thị trấn (ô đất thương mại), type: select, file: plugins/Shopkeepers/config.yml, path: enable-towny-restrictions,
           options: [ { value: true, label: Có }, { value: false, label: Không } ] }
 
+  - title: Tiện ích (bán lẻ theo giờ + đặc quyền rank)
+    category: Shop
+    description: "Tiện ích /wb, /trash, /anvil, /ec, /feed, /fix, /bay: bán lẻ bằng Vàng mỗi gói 1 giờ (mua thêm cộng dồn), và có sẵn theo rank ủng hộ (Nam /wb, Tử /anvil, Bá /ec, Hầu /feed, Công /bay + /fix)."
+    info: "Giá: số Vàng cho 1 giờ (1 Vàng = tỉ giá đồng, xem Toàn mạng › Rank donate › Vàng).\nRank nào có tiện ích nào: trang Role & rank › rank đó › Quyền (essentials.workbench, essentials.disposal, essentials.anvil, essentials.enderchest, essentials.feed, essentials.repair, duckymomo.bay; ngữ cảnh server banghoi-1).\n/ec không mở khi vừa đánh người hoặc trong vùng vây giờ đánh (như balo). /fix chỉ sửa món đang cầm, không sửa đồ set Thợ Rèn / đồ Thư viện.\n/bay chỉ bay trong đất thị trấn của mình, tự tắt khi ra khỏi thị trấn, giao tranh, công thành.\nLưu xong: có hiệu lực ngay."
+    apply: [dmm reload, essentials reload]
+    settings:
+      - { key: tienich_gia_wb, label: "Giá /wb bàn chế tạo (Vàng / giờ)", type: int, min: 1, max: 1000, file: plugins/DuckyMoMoCore/config.yml, path: vang.mon.9.gia }
+      - { key: tienich_gia_trash, label: "Giá /trash thùng rác (Vàng / giờ)", type: int, min: 1, max: 1000, file: plugins/DuckyMoMoCore/config.yml, path: vang.mon.10.gia }
+      - { key: tienich_gia_anvil, label: "Giá /anvil đe (Vàng / giờ)", type: int, min: 1, max: 1000, file: plugins/DuckyMoMoCore/config.yml, path: vang.mon.11.gia }
+      - { key: tienich_gia_ec, label: "Giá /ec rương Ender (Vàng / giờ)", type: int, min: 1, max: 1000, file: plugins/DuckyMoMoCore/config.yml, path: vang.mon.12.gia }
+      - { key: tienich_gia_feed, label: "Giá /feed no bụng (Vàng / giờ)", type: int, min: 1, max: 1000, file: plugins/DuckyMoMoCore/config.yml, path: vang.mon.13.gia }
+      - { key: tienich_gia_fix, label: "Giá /fix sửa đồ (Vàng / giờ)", type: int, min: 1, max: 1000, file: plugins/DuckyMoMoCore/config.yml, path: vang.mon.14.gia }
+      - { key: tienich_gia_bay, label: "Giá /bay bay trong thị trấn (Vàng / giờ)", type: int, min: 1, max: 1000, file: plugins/DuckyMoMoCore/config.yml, path: vang.mon.15.gia }
+      - { key: tienich_cd_feed, label: "/feed: hồi chiêu (giây)", type: int, min: 0, max: 86400, file: plugins/Essentials/config.yml, path: command-cooldowns.feed, note: "600 = 10 phút. 0 = không chờ." }
+      - { key: tienich_cd_fix, label: "/fix: hồi chiêu (giây)", type: int, min: 0, max: 86400, targets: [ { file: plugins/Essentials/config.yml, path: command-cooldowns.repair }, { file: plugins/Essentials/config.yml, path: command-cooldowns.fix } ], note: "3600 = 1 giờ." }
+      - { key: tienich_bay_on, label: "/bay: bật", type: select, file: plugins/DuckyMoMoCore/config.yml, path: town-fly.enabled, options: [ { value: true, label: Bật }, { value: false, label: Tắt } ], note: "Đổi bật / tắt cần khởi động lại Bang Hội Chiến." }
+      - { key: tienich_bay_combat, label: "/bay: tắt bay sau khi đánh người (giây)", type: int, min: 0, max: 300, file: plugins/DuckyMoMoCore/config.yml, path: town-fly.combat-seconds }
+
   - title: Gói quà (/kit)
     category: Người mới
     description: "Mỗi gói: quà (đồ thường, đồ trong Thư viện đồ, xu, lệnh), bao lâu nhận lại, rank nào được nhận. Người chơi gõ /kit mở menu bấm nhận. Gói «lần đầu» tự phát khi vào Bang Hội Chiến lần đầu (không cần rank)."

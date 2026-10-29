@@ -2101,3 +2101,14 @@ tn_stone_rate: 0.01
 tn_accel: 1
 tn_safe_town: true
 tn_safe_warp: 48
+tienich_gia_wb: 1
+tienich_gia_trash: 1
+tienich_gia_anvil: 1
+tienich_gia_ec: 2
+tienich_gia_feed: 2
+tienich_gia_fix: 3
+tienich_gia_bay: 3
+tienich_cd_feed: 600
+tienich_cd_fix: 3600
+tienich_bay_on: true
+tienich_bay_combat: 15

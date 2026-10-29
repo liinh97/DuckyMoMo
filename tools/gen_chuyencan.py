@@ -14,6 +14,10 @@ PROT = [3, 3, 4, 4, 4, 4]
 UNB = [3, 3, 4, 4, 4, 4]
 PROJ = [1, 2, 2, 3, 3, 3]
 MAU = [2, 2, 3, 4, 5, 6]
+# dòng hiệu ứng bộ theo cấp (khớp bonus trong config: từ +0 / +3 / +5), ghi số cụ thể thay cho tên lệnh
+SETB = ["&7• Đủ 4 món: &c+6% máu&7, &e+10% kinh nghiệm",
+        "&7• Đủ 4 món từ +3: &c+8% máu&7, &e+20% kinh nghiệm&7, giảm 2% sát thương",
+        "&7• Đủ 4 món +5: &c+10% máu&7, &e+30% kinh nghiệm&7, giảm 4% sát thương"]
 QUOTE = ["Ngày đầu đến làng, áo còn thơm mùi vải mới…", "Sáng nào cũng thấy mặt ở quảng trường…", "Già Làng bắt đầu nhớ tên bạn rồi đấy…",
          "Bền như người chẳng bỏ buổi nào…", "Cả làng đã quen tiếng bước chân này…", "Ngày công dệt thành sợi chỉ vàng trên áo…"]
 
@@ -64,7 +68,7 @@ for key, vn, slot in PIECES:
             "",
             "&a▸ NẾP CHĂM",
             *perks,
-            "&7• Đủ 4 món: &c+máu&7, &e+kinh nghiệm &8(/thoren)",
+            SETB[0 if lv < 3 else 1 if lv < 5 else 2],
             "&6━━━━━━━━━━━━━━━━━━━",
             "",
             f'&e&o"{QUOTE[lv]}"',

@@ -123,6 +123,7 @@ public final class SkinWardrobe {
         startHttp();
         proxy.getEventManager().register(this, new BotCount(this, proxy, log));   // 27/10: số bot trang quản trị › Bot vào danh sách server
         proxy.getEventManager().register(this, new DeviceLog(this, proxy, log, file.getParent()));   // 27/10: thiết bị (Bedrock / máy tính) cho trang quản trị
+        proxy.getEventManager().register(this, new PackEarly(proxy, log, file.getParent()));   // 30/10: gửi gói tài nguyên sớm (công tắc goi-tai-nguyen.json)
         log.info("Tủ skin: bật, {} người có tủ", data.size());
     }
 

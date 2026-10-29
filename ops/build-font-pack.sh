@@ -79,4 +79,22 @@ for kind in font items; do
   set_env "${KEY}_PACK_SHA1" "$SHA1"
   echo "$kind: $PUBLIC_BASE/$NAME ($SHA1)"
 done
+# 30/10: proxy gửi gói sớm (DuckyMoMoSkin PackEarly) đọc data/proxy/plugins/duckymomoskin/goi-tai-nguyen.json mỗi lần có người vào.
+# Giữ nguyên công tắc "bat" + "cho-giay" đang có (mặc định tắt); chỉ cập nhật URL/SHA1/lời hỏi.
+PACK_JSON=data/proxy/plugins/duckymomoskin/goi-tai-nguyen.json
+if [ -d "$(dirname "$PACK_JSON")" ]; then
+  python3 - "$PACK_JSON" <<'PY'
+import json, os, re, sys
+f = sys.argv[1]
+env = dict(re.findall(r"^([A-Z0-9_]+)=(.*)$", open(".env", encoding="utf-8").read(), re.M))
+try: c = json.load(open(f, encoding="utf-8"))
+except Exception: c = {}
+c.setdefault("bat", False); c.setdefault("cho-giay", 30)
+c["font"] = {"url": env["FONT_PACK_URL"], "sha1": env["FONT_PACK_SHA1"], "prompt": "&6Tải font chữ mềm Be Vietnam Pro (khoảng 130 KB)? Không thích: /caidat tắt Font chữ mềm."}
+c["items"] = {"url": env["ITEM_PACK_URL"], "sha1": env["ITEM_PACK_SHA1"], "prompt": "&6Tải gói của server (sửa dấu tiếng Việt + hình vật phẩm, khoảng 80 KB)?"}
+c["ghi-chu"] = "bat: proxy gửi gói lúc đang kết nối (true) hay chỉ server con gửi sau khi vào (false). cho-giay: chờ máy người chơi tối đa bao lâu."
+json.dump(c, open(f, "w", encoding="utf-8"), ensure_ascii=False, indent=2)
+print("proxy:", f, "bat =", c["bat"])
+PY
+fi
 echo "Áp dụng (kiểm ai online trước): docker compose up -d lobby banghoi-1 practice-1 sangtao-1"

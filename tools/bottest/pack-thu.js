@@ -2,7 +2,7 @@
 const mf = require('mineflayer');
 const seen = [];
 const orig = mf.createBot;   // gắn nghe gói ngay khi tạo bot (server gửi gói 2 giây sau khi vào, trước khi h.start xong)
-mf.createBot = (o) => { const b = orig(o); b._client.on('packet', (d, m) => { if (/resource|pack/i.test(m.name)) seen.push(m.name + ' ' + (d.url || '')); }); return b; };
+mf.createBot = (o) => { const b = orig(o); b._client.on('packet', (d, m) => { if (/resource|pack/i.test(m.name)) seen.push(m.name + ' ' + (d.uuid || '') + ' ' + (d.url || '')); }); return b; };
 const h = require('./h');
 const N = process.env.BOTN || 'PackThu';
 (async () => {

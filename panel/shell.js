@@ -249,7 +249,7 @@ window.toast = function (msg, kind) {
     }
     const can = new Set(t.tinh_nang || []);
     const page = { caidat: ["caidat"], thuvien: ["thuvien", "thuvien-dua"], boss: ["boss"], role: ["role", "role-quyen", "rank", "rank-quyen"], donate: ["donate"], hoatdong: ["hoatdong"], hethong: ["hethong"], media: ["media"], bot: ["bot"],
-      camnang: ["camnang"], huongdan: ["huongdan"] };
+      thongbao: ["hethong"], camnang: ["camnang"], huongdan: ["huongdan"] };   // thongbao: 29/10, thiếu thì staff tài khoản game không thấy mục
     nav.querySelectorAll("a.item[data-page]").forEach(a => {
       if (!t.toan_quyen && !(page[a.dataset.page] || []).some(f => can.has(f))) a.remove();
     });

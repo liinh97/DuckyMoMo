@@ -2,7 +2,7 @@
   "name": "DuckyMoMo Admin",
   "short_name": "DuckyMoMo",
   "description": "Trang quản trị DuckyMoMo: thông báo người chơi vào / ra, chat, sự cố server",
-  "start_url": "thongbao",
+  "start_url": "hoatdong",
   "scope": "./",
   "display": "standalone",
   "background_color": "#0f1216",

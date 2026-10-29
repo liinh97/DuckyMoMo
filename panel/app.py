@@ -142,6 +142,12 @@ PUBLIC_STATIC = {"/sw.js": ("application/javascript; charset=utf-8", (_HERE / "s
                  "/icon-192.png": ("image/png", (_HERE / "icon-192.png").read_bytes()),
                  "/icon-512.png": ("image/png", (_HERE / "icon-512.png").read_bytes()),
                  "/apple-touch-icon.png": ("image/png", (_HERE / "apple-touch-icon.png").read_bytes())}
+# Thẻ PWA chèn vào mọi trang (manifest kèm cookie vì cổng Trạm 6 bắt đăng nhập; thẻ apple-* cho iPhone)
+PWA_HEAD = ('<link rel="manifest" href="manifest.webmanifest" crossorigin="use-credentials">\n'
+            '<link rel="apple-touch-icon" href="apple-touch-icon.png">\n'
+            '<meta name="apple-mobile-web-app-capable" content="yes">\n<meta name="mobile-web-app-capable" content="yes">\n'
+            '<meta name="apple-mobile-web-app-title" content="DuckyMoMo">\n'
+            '<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">\n<meta name="theme-color" content="#0f1216">\n')
 STATIC = {"/ui.css": ("text/css; charset=utf-8", (Path(__file__).parent / "ui.css").read_bytes()),
           "/shell.js": ("application/javascript; charset=utf-8", (Path(__file__).parent / "shell.js").read_bytes())}
 # Trang Role: role chức vụ (track staff + builder + default) và rank donate (track donate), lưu ở LuckPerms (MariaDB)
@@ -4692,7 +4698,10 @@ class Handler(BaseHTTPRequestHandler):
             dozzle = DOZZLE_PROXY_URL if self.headers.get("X-Forwarded-Prefix") else DOZZLE_URL
             page = {"/": INDEX_HTML, "/hoatdong": ACTIVITY_HTML, "/camnang": CAMNANG_HTML, "/huongdan": HUONGDAN_HTML, "/role": ROLE_HTML,
                     "/thuvien": THUVIEN_HTML, "/boss": BOSS_HTML, "/donate": DONATE_HTML, "/hethong": HETHONG_HTML, "/media": MEDIA_HTML, "/bot": BOT_HTML, "/thongbao": THONGBAO_HTML}[path]
-            body = page.replace("__DOZZLE_URL__", "" if self.who else dozzle).encode("utf-8")
+            html = page.replace("__DOZZLE_URL__", "" if self.who else dozzle)
+            if 'rel="manifest"' not in html:   # 29/10: mọi trang là PWA (thêm ra Màn hình chính iPhone thì mở thành app, không phải Safari)
+                html = html.replace("</head>", PWA_HEAD + "</head>", 1)
+            body = html.encode("utf-8")
             self.send_response(200)
             self.send_header("Content-Type", "text/html; charset=utf-8")
             self.send_header("Content-Length", str(len(body)))

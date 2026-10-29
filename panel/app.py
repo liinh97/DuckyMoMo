@@ -2320,6 +2320,81 @@ def bot_dev_tick():
         _dev_save(d)
 
 
+# ---------------------------------------------------------------- giáp bot theo tài nguyên (29/10)
+# Chủ server: "phải cho bot mặc giáp, thay đổi phụ thuộc tài nguyên". Điểm = cấp Thăng Cấp ×2 + xu (log) + giờ chơi; mỗi bot một "tính cách"
+# cố định (random theo tên): trộn món, ~1/3 không đội mũ (khoe skin), giáp da nhuộm màu riêng. Tài nguyên tăng thì tự lên đồ.
+# Mọi bot online ở Bang Hội Chiến (cả bot mới tạo), 5 phút kiểm một lần, chỉ trao lại khi khác lần trước (bot-giap.json).
+BOT_GEAR_FILE = DATA_DIR / "panel" / "bot-giap.json"
+BOT_GEAR_SLOTS = (("head", "helmet"), ("chest", "chestplate"), ("legs", "leggings"), ("feet", "boots"))
+
+
+def _bot_gear_plan(name, prof):
+    import math
+    r = _rnd.Random("giap:" + name.lower())
+    # cấp quyết định chính; xu (1k → +3, 10k → +6, 100k → +9) và giờ chơi chỉ cộng thêm
+    score = float(prof.get("capdo", 0) or 0) * 2 + max(0.0, math.log10(float(prof.get("xu", 0) or 0) + 1) * 3 - 6) + min(8.0, float(prof.get("gio", 0) or 0) / 10)
+    color = r.randint(0x202020, 0xEFEFEF)
+    no_helmet = r.random() < 0.35
+    plan = []
+    for slot, piece in BOT_GEAR_SLOTS:
+        s, pick, ench_roll = score + r.uniform(-8, 8), r.random(), r.random()
+        if slot == "head" and no_helmet:
+            plan.append((slot, None))
+            continue
+        if s < 5:
+            mat = None if pick < 0.5 else "leather"
+        elif s < 12:
+            mat = "leather" if pick < 0.5 else "chainmail" if pick < 0.7 else "iron"
+        elif s < 25:
+            mat = "iron" if pick < 0.75 else "chainmail"
+        elif s < 40:
+            mat = "iron" if pick < 0.5 else "diamond"
+        elif s < 65:
+            mat = "diamond"
+        else:
+            mat = "diamond" if pick < 0.6 else "netherite"
+        if not mat:
+            plan.append((slot, None))
+            continue
+        comps = []
+        if mat == "leather":
+            comps.append(f"minecraft:dyed_color={color}")
+        if s >= 30 and ench_roll < min(0.9, (s - 20) / 50):
+            comps.append('minecraft:enchantments={"minecraft:protection":%d}' % (4 if s > 70 else 3 if s > 50 else 2))
+        plan.append((slot, f"minecraft:{mat}_{piece}" + (f"[{','.join(comps)}]" if comps else "")))
+    return plan
+
+
+def bot_gear_sync(force=False):
+    try:
+        done = json.loads(BOT_GEAR_FILE.read_text(encoding="utf-8"))
+    except Exception:
+        done = {}
+    online = [b["name"] for b in bot_json().get("bots", []) if b.get("online") and b.get("server") == BOT_SRV]
+    n = 0
+    for name in online:
+        try:
+            plan = _bot_gear_plan(name, bot_profile(name))
+        except Exception:
+            continue
+        sig = "|".join(f"{k}={v}" for k, v in plan)
+        if not force and done.get(name) == sig:
+            continue
+        cmds = [f"minecraft:item replace entity {name} armor.{slot} with {item or 'minecraft:air'}" for slot, item in plan]
+        try:
+            rcon(BOT_SRV, cmds)
+        except Exception:
+            continue
+        done[name] = sig
+        n += 1
+    try:
+        BOT_GEAR_FILE.parent.mkdir(parents=True, exist_ok=True)
+        BOT_GEAR_FILE.write_text(json.dumps(done, ensure_ascii=False), encoding="utf-8")
+    except OSError:
+        pass
+    return n
+
+
 def bot_dev_loop():
     time.sleep(90)
     while True:
@@ -2327,6 +2402,12 @@ def bot_dev_loop():
             bot_dev_tick()
         except Exception as e:
             print(f"Bot tự phát triển: lỗi {e}", flush=True)
+        try:
+            k = bot_gear_sync()
+            if k:
+                print(f"Giáp bot: trao lại cho {k} bot", flush=True)
+        except Exception as e:
+            print(f"Giáp bot: lỗi {e}", flush=True)
         time.sleep(300)
 
 

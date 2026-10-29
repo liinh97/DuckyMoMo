@@ -578,9 +578,12 @@ async function gatherRoom() {
   });
   save();
   let k = 0;
-  for (const n of NAMES) {
+  const todo = NAMES.filter(n => RT[n].bot && state[n].server === 'banghoi-1' && !RT[n].wander);
+  todo.forEach(n => { RT[n].placing = true; });   // vòng "bị dời" không nhận chỗ cũ làm chỗ đang đứng trong lúc chờ tới lượt (29/10)
+  for (const n of todo) {
     const rt = RT[n];
-    if (rt.bot && state[n].server === 'banghoi-1' && !rt.wander) { await place(n, rt.bot).catch(e => log(n, e.message)); k++; await sleep(400); }
+    try { if (rt.bot) { await place(n, rt.bot); k++; } } catch (e) { log(n, e.message); } finally { rt.placing = false; rt.placedAt = Date.now(); }
+    await sleep(400);
   }
   return 'gom ' + NAMES.length + ' bot vào phòng ẩn (' + k + ' bot đang online đã dời)';
 }

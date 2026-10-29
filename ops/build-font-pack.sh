@@ -27,13 +27,21 @@ default = {"providers": [
     {"type": "ttf", "file": "minecraft:bevietnampro-medium.ttf", "shift": [0.0, 0.0], "size": 6.5, "oversample": 8.0},
     {"type": "reference", "id": "minecraft:include/default"},
     {"type": "reference", "id": "minecraft:include/unifont"}]}
+# 30/10: gói "font gốc" (items) vẫn là font pixel của Minecraft nhưng thay các chữ có dấu ngã (font gốc vẽ ngã như dấu mũ, "Đã"
+# đọc thành "Đẫ") bằng tools/fontpack/src/vn-pixel.png (sinh từ tools/fontpack/vn-pixel.py), đặt trước include/default.
+vn_pixel = json.load(open(f"{src}/vn-pixel.json", encoding="utf-8"))
+pixel = {"providers": [
+    {"type": "reference", "id": "minecraft:include/space"},
+    vn_pixel,
+    {"type": "reference", "id": "minecraft:include/default", "filter": {"uniform": False}},
+    {"type": "reference", "id": "minecraft:include/unifont"}]}
 fixed = (2026, 10, 12, 0, 0, 0)  # thời gian cố định -> cùng nội dung thì cùng SHA1 (máy người chơi không tải lại)
-# 2 gói (20/10): duckymomo-font.zip = font tiếng Việt + hình vật phẩm (mặc định); duckymomo-items.zip = chỉ hình vật phẩm
-# (người chơi tắt ô "Font tiếng Việt" trong /caidat thì nhận gói này, chữ dùng font gốc Minecraft).
+# 2 gói (20/10): duckymomo-font.zip = font Be Vietnam Pro + hình vật phẩm; duckymomo-items.zip = font pixel gốc (đã sửa dấu ngã)
+# + hình vật phẩm. 30/10 chủ server chọn font pixel làm mặc định: ô "Font tiếng Việt" trong /caidat mặc định TẮT (nhận gói items).
 for out, with_font in (("tools/fontpack/out/duckymomo-font.zip", True), ("tools/fontpack/out/duckymomo-items.zip", False)):
   meta = json.loads(json.dumps(mcmeta))
   if not with_font:
-    meta["pack"]["description"] = "§6DuckyMoMo §f- hình vật phẩm (font gốc)"
+    meta["pack"]["description"] = "§6DuckyMoMo §f- font pixel (sửa dấu ngã) + hình vật phẩm"
   with zipfile.ZipFile(out, "w", zipfile.ZIP_DEFLATED) as z:
     def put(name, data):
         info = zipfile.ZipInfo(name, fixed); info.compress_type = zipfile.ZIP_DEFLATED
@@ -43,6 +51,9 @@ for out, with_font in (("tools/fontpack/out/duckymomo-font.zip", True), ("tools/
         put("assets/minecraft/font/default.json", json.dumps(default, indent=2))
         put("assets/minecraft/font/bevietnampro-medium.ttf", open(f"{src}/BeVietnamPro-Medium.ttf", "rb").read())
         put("LICENSE-font-OFL.txt", open(f"{src}/OFL.txt", "rb").read())
+    else:
+        put("assets/minecraft/font/default.json", json.dumps(pixel, ensure_ascii=False, indent=2))
+        put("assets/minecraft/textures/font/vn-pixel.png", open(f"{src}/vn-pixel.png", "rb").read())
     # chữ trong khung mô tả đồ do máy người chơi tự vẽ (tên phù phép, "Khi ở chân: +2 Giáp"…): tiếng Việt đè lên tiếng Anh
     # (tools/fontpack/lang-vi.py sinh từ vi_vn.json gốc); game để tiếng Việt thì vốn đã đúng
     lang = open(f"{src}/lang-vi.json", "rb").read()

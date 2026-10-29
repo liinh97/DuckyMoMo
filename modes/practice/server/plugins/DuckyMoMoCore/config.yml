@@ -80,12 +80,12 @@ donate-qr:
 web-login:
   code-minutes: 60
 
-# Gói tài nguyên theo lựa chọn từng người (/caidat › Font tiếng Việt, 20/10). URL/SHA1 do ./ops/build-font-pack.sh ghi vào .env
-# -> compose -> CFG_*. Bật = gói font tiếng Việt + hình vật phẩm; tắt = chỉ hình vật phẩm (font gốc). Không bắt buộc tải.
+# Gói tài nguyên theo lựa chọn từng người (/caidat › Font chữ mềm). URL/SHA1 do ./ops/build-font-pack.sh ghi vào .env -> compose -> CFG_*.
+# 30/10: mặc định TẮT = gói items (font pixel gốc Minecraft đã sửa dấu ngã + hình vật phẩm); bật = Be Vietnam Pro + hình vật phẩm.
 resource-pack:
   font-url: "${CFG_FONT_PACK_URL}"
   font-sha1: "${CFG_FONT_PACK_SHA1}"
   item-url: "${CFG_ITEM_PACK_URL}"
   item-sha1: "${CFG_ITEM_PACK_SHA1}"
-  font-prompt: "&6Tải font tiếng Việt dễ đọc (khoảng 70 KB)? Bấm Có để chữ có dấu rõ hơn. Không thích: /caidat tắt Font tiếng Việt."
-  item-prompt: "&6Tải hình vật phẩm riêng của server (khoảng 12 KB)?"
+  font-prompt: "&6Tải font chữ mềm Be Vietnam Pro (khoảng 130 KB)? Không thích: /caidat tắt Font chữ mềm."
+  item-prompt: "&6Tải gói của server (sửa dấu tiếng Việt + hình vật phẩm, khoảng 80 KB)?"

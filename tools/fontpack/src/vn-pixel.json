@@ -1,0 +1,10 @@
+{
+  "type": "bitmap",
+  "file": "minecraft:font/vn-pixel.png",
+  "height": 12,
+  "ascent": 10,
+  "chars": [
+    "ãẫẵẽễĩõỗỡũữỹ",
+    "ÃẪẴẼỄĨÕỖỠŨỮỸ"
+  ]
+}

@@ -643,7 +643,11 @@ final class HamNguc implements Listener {
                 done.run();
                 return;
             }
-            buildRoom(w, r, t, i[0]);
+            try {
+                buildRoom(w, r, t, i[0]);
+            } catch (RuntimeException ex) {
+                plugin.getLogger().warning("Hầm Ngục: lỗi dựng phòng " + i[0] + " của " + r.dg.id() + ": " + ex);
+            }
             i[0]++;
         }, 1L, 1L);
     }
@@ -653,8 +657,16 @@ final class HamNguc implements Listener {
     }
 
     private void set(World w, int x, int y, int z, String data) {
-        w.getBlockAt(x, y, z).setBlockData(Bukkit.createBlockData(data), false);
+        try {
+            w.getBlockAt(x, y, z).setBlockData(Bukkit.createBlockData(data), false);
+        } catch (IllegalArgumentException ex) {   // tên khối đổi giữa các bản (26.x: chain -> iron_chain): bỏ qua khối đó, không hỏng cả lượt
+            if (badBlocks.add(data)) {
+                plugin.getLogger().warning("Hầm Ngục: khối không hợp lệ " + data);
+            }
+        }
     }
+
+    private final Set<String> badBlocks = new HashSet<>();
 
     private void buildRoom(World w, Run r, Theme t, int i) {
         ThreadLocalRandom rnd = ThreadLocalRandom.current();
@@ -714,7 +726,7 @@ final class HamNguc implements Listener {
         // đèn chùm: xích + đèn treo
         for (int x = x0 + 6; x <= x1 - 6; x += 6) {
             for (int z : new int[] {-3, 3}) {
-                set(w, x, y0 + h + 1, z, "minecraft:chain[axis=y]");
+                set(w, x, y0 + h + 1, z, "minecraft:iron_chain[axis=y]");
                 set(w, x, y0 + h, z, t.lantern());
             }
         }
@@ -758,7 +770,7 @@ final class HamNguc implements Listener {
             if (n % 3 == 0) {
                 int len = 1 + rnd.nextInt(3);
                 for (int k = 1; k <= len; k++) {
-                    set(w, x, top - k, z, "minecraft:chain[axis=y]");
+                    set(w, x, top - k, z, "minecraft:iron_chain[axis=y]");
                 }
             } else {
                 set(w, x, top - 1, z, t.hang());
@@ -812,13 +824,13 @@ final class HamNguc implements Listener {
                     cs.setDelay(Integer.MAX_VALUE / 2);
                     cs.update(true, false);
                 }
-                set(w, c[0], y0 + 2, c[1], "minecraft:chain[axis=y]");
+                set(w, c[0], y0 + 2, c[1], "minecraft:iron_chain[axis=y]");
                 r.cages.get(i).add(c);
             }
         }
         // phòng đầu: biển tên + lò lửa hai bên + đồ của người canh hầm
         if (i == 0) {
-            w.getBlockAt(x0 + 1, y0 + 3, 0).setBlockData(Bukkit.createBlockData(t.sign() + "[facing=east]"), false);
+            set(w, x0 + 1, y0 + 3, 0, t.sign() + "[facing=east]");
             if (w.getBlockAt(x0 + 1, y0 + 3, 0).getState() instanceof org.bukkit.block.Sign sg) {
                 var side = sg.getSide(org.bukkit.block.sign.Side.FRONT);
                 side.line(0, Tip.c("&6⚔"));
@@ -1332,7 +1344,7 @@ final class HamNguc implements Listener {
                         + (before == 0 ? " &7(lần đầu)" : "") + "&f. Tự về sau " + cfg.getLong("exit-after-seconds", 30) + " giây, hoặc &e/hamnguc thoat&f."));
                 Dg next = dungeons.values().stream().filter(d -> r.dg.id().equals(d.requires())).findFirst().orElse(null);
                 if (before == 0 && next != null) {
-                    p.sendMessage(Tip.c("&a🔓 Đã mở &f" + next.name() + "&a."));
+                    p.sendMessage(Tip.c("&a✦ Đã mở &f" + next.name() + "&a."));
                 }
             }
             if (before == 0 && cfg.getBoolean("broadcast-first", true) && p != null) {
@@ -1396,7 +1408,8 @@ final class HamNguc implements Listener {
             return;
         }
         Rewards.hand(p, it);
-        p.sendMessage(Tip.c("&6✦ Nhặt được " + lib.name(ids.get(0)) + "&6!"));
+        String pn = plugin.getConfig().getString("tho-ren.sets." + d.set() + ".pieces." + piece + ".name", piece);
+        p.sendMessage(Tip.c("&6✦ Nhặt được &f" + pn + " " + setName(d.set()) + " +0&6!"));
         p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 0.7f, 1.6f);
     }
 

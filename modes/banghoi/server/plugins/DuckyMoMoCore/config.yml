@@ -512,12 +512,13 @@ goi-qua:
         - dan
       qua:
         - vat BREAD 32
-        - vat CHAINMAIL_HELMET 1
-        - vat CHAINMAIL_CHESTPLATE 1
-        - vat CHAINMAIL_LEGGINGS 1
-        - vat CHAINMAIL_BOOTS 1
+        - vat IRON_HOE 1
         - vat IRON_AXE 1
         - vat IRON_PICKAXE 1
+        - vat WHEAT_SEEDS 16
+        - vat WHITE_BED 1
+        - vat CHEST 1
+        - vat FURNACE 1
         - vat TORCH 32
     luongdan:
       ten: '&aQuà Lương Dân'
@@ -531,9 +532,11 @@ goi-qua:
         - vat IRON_CHESTPLATE 1
         - vat IRON_LEGGINGS 1
         - vat IRON_BOOTS 1
-        - vat IRON_SWORD 1
         - vat IRON_PICKAXE 1
         - vat IRON_SHOVEL 1
+        - vat SHEARS 1
+        - vat FISHING_ROD 1
+        - vat BUCKET 1
         - vat TORCH 32
     haokiet:
       ten: '&6Quà Hào Kiệt'
@@ -547,8 +550,10 @@ goi-qua:
         - vat IRON_CHESTPLATE 1
         - vat IRON_LEGGINGS 1
         - vat IRON_BOOTS 1
-        - vat DIAMOND_PICKAXE 1
         - vat DIAMOND_SWORD 1
+        - vat SHIELD 1
+        - vat BOW 1
+        - vat ARROW 64
         - vat GOLDEN_APPLE 2
         - vat EXPERIENCE_BOTTLE 16
     media:
@@ -565,9 +570,11 @@ goi-qua:
         - vat IRON_BOOTS 1
         - vat IRON_SWORD 1
         - vat IRON_PICKAXE 1
-        - vat GOLDEN_APPLE 4
+        - vat SPYGLASS 1
+        - vat COMPASS 1
+        - vat FIREWORK_ROCKET 16
+        - vat GOLDEN_APPLE 2
         - vat EXPERIENCE_BOTTLE 16
-        - vat TORCH 64
         - lenh broadcast &c◆ Sứ Giả &f{player} &7vừa nhận gói quà Sứ Giả!
 daily-checkin:
   enabled: true

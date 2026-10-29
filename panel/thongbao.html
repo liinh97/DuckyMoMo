@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>DuckyMoMo · Thông báo</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="DuckyMoMo">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0f1216">
+<link rel="stylesheet" href="ui.css">
+<style>
+  main { padding: 0 0 80px; min-width: 0; max-width: 900px; }
+  .box { padding: 16px 18px; display: grid; gap: 12px; margin-bottom: 14px; }
+  .box h3 { margin: 0; font-size: 17px; }
+  .muted { color: var(--muted); font-size: 13.5px; line-height: 1.5; }
+  .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+  .kinds { display: grid; gap: 8px; }
+  .kinds label { display: flex; gap: 10px; align-items: center; border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; background: var(--card-2); cursor: pointer; font-size: 14.5px; }
+  .kinds label:has(input:checked) { border-color: var(--accent); background: var(--accent-soft); }
+  .kinds small { color: var(--muted); display: block; font-size: 12.5px; }
+  .state { font-weight: 600; }
+  .state.on { color: var(--ok); }
+  .state.off { color: var(--muted); }
+  .steps { margin: 0; padding-left: 20px; font-size: 14px; line-height: 1.7; }
+  .log { display: grid; gap: 6px; max-height: 420px; overflow: auto; }
+  .log div { display: grid; grid-template-columns: 54px 1fr; gap: 8px; font-size: 13.5px; border-bottom: 1px solid var(--line-2); padding-bottom: 6px; }
+  .log time { color: var(--muted); font-variant-numeric: tabular-nums; }
+  .warn { color: var(--warn); font-weight: 600; }
+  [hidden] { display: none !important; }
+  .log .empty { display: block; border: 0; }
+</style>
+</head>
+<body data-dozzle="__DOZZLE_URL__" data-title="Thông báo" data-sub="Đẩy thông báo về điện thoại khi người chơi thật vào / ra, chat, hoặc server gặp sự cố. Mỗi máy tự chọn loại muốn nhận.">
+<script src="shell.js"></script>
+<main>
+  <section class="card box">
+    <h3>Máy này: <span class="state off" id="st">đang kiểm tra…</span></h3>
+    <div class="muted" id="why"></div>
+    <div class="row">
+      <button class="primary" id="on">Bật thông báo</button>
+      <button id="off" hidden>Tắt trên máy này</button>
+      <button id="test" hidden>Gửi thử</button>
+    </div>
+    <div class="kinds" id="kinds"></div>
+  </section>
+
+  <section class="card box" id="ios" hidden>
+    <h3>iPhone: cài thành app trước</h3>
+    <ol class="steps">
+      <li>Mở trang này bằng <b>Safari</b>.</li>
+      <li>Bấm nút <b>Chia sẻ</b> (ô vuông mũi tên lên) → <b>Thêm vào Màn hình chính</b> → Thêm.</li>
+      <li>Mở app <b>DuckyMoMo</b> vừa thêm ở màn hình chính (đăng nhập lại nếu được hỏi).</li>
+      <li>Vào lại trang <b>Thông báo</b>, bấm <b>Bật thông báo</b> → Cho phép.</li>
+    </ol>
+    <div class="muted">Cần iOS 16.4 trở lên. Đây là giới hạn của Apple: Safari thường không nhận thông báo đẩy, chỉ app đã thêm vào màn hình chính mới nhận.</div>
+  </section>
+
+  <section class="card box">
+    <h3>Thông báo gần đây <span class="muted" id="cnt"></span></h3>
+    <div class="log" id="log"><div class="muted empty">Đang tải…</div></div>
+  </section>
+</main>
+<script>
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+let KEY = null, KINDS = {}, SUB = null, MINE = null;
+
+const ios = /iPad|iPhone|iPod/.test(navigator.userAgent);
+const standalone = navigator.standalone === true || matchMedia("(display-mode: standalone)").matches;
+function unsupported() {
+  if (!("serviceWorker" in navigator)) return "Trình duyệt này không hỗ trợ (thiếu Service Worker).";
+  if (ios && !standalone) return "Trên iPhone phải thêm trang vào Màn hình chính rồi mở từ biểu tượng mới bật được (xem hướng dẫn bên dưới).";
+  if (!("PushManager" in window) || !("Notification" in window)) return "Trình duyệt này không hỗ trợ thông báo đẩy.";
+  return null;
+}
+function b64ToBytes(s) {
+  const pad = "=".repeat((4 - s.length % 4) % 4), raw = atob((s + pad).replace(/-/g, "+").replace(/_/g, "/"));
+  return Uint8Array.from(raw, (c) => c.charCodeAt(0));
+}
+async function api(body) {
+  const r = await fetch("api/push", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+  const d = await r.json().catch(() => ({}));
+  if (!r.ok || d.ok === false) throw new Error(d.message || ("Lỗi " + r.status));
+  return d;
+}
+function prefsNow() {
+  const p = {};
+  document.querySelectorAll("#kinds input").forEach((el) => { p[el.dataset.k] = el.checked; });
+  return p;
+}
+function render() {
+  const on = !!(SUB && MINE);
+  $("st").textContent = on ? "đang nhận thông báo" : "chưa bật";
+  $("st").className = "state " + (on ? "on" : "off");
+  $("on").hidden = on; $("off").hidden = !on; $("test").hidden = !on;
+  const why = unsupported();
+  $("why").innerHTML = why ? `<span class="warn">${esc(why)}</span>` : (Notification.permission === "denied" ? '<span class="warn">Máy này đã chặn thông báo của trang. Mở Cài đặt của trình duyệt / iPhone (Cài đặt › Thông báo › DuckyMoMo) để cho phép lại.</span>' : (on ? "Bỏ chọn loại nào thì máy này không nhận loại đó." : "Bật xong chọn loại muốn nhận."));
+  $("on").disabled = !!why;
+  $("ios").hidden = !(ios && !standalone);
+  const pr = (MINE && MINE.prefs) || {};
+  $("kinds").innerHTML = Object.entries(KINDS).map(([k, t]) => `<label><input type="checkbox" data-k="${k}" ${pr[k] !== false ? "checked" : ""} ${on ? "" : "disabled"}>
+    <span>${esc(t)}<small>${{ vaora: "Người chơi thật (không tính bot, không tính staff) vào / thoát; ghi rõ lần đầu vào, số phút đã chơi.", chat: "Tin chat của người chơi thật, để kịp vào trả lời người mới hỏi.", suco: "Server không phản hồi / hoạt động lại, Bang Hội lag (TPS dưới 15 kéo dài), bot rớt hàng loạt." }[k] || ""}</small></span></label>`).join("");
+  document.querySelectorAll("#kinds input").forEach((el) => el.onchange = async () => {
+    try { await api({ action: "prefs", endpoint: SUB.endpoint, prefs: prefsNow() }); toast("Đã lưu", "ok"); } catch (e) { toast(e.message, "err"); }
+  });
+}
+async function load() {
+  if (!unsupported()) {
+    try {
+      const reg = await navigator.serviceWorker.register("sw.js", { scope: "./" });
+      SUB = await reg.pushManager.getSubscription();
+    } catch (e) { $("why").textContent = "Không đăng ký được service worker: " + e.message; }
+  }
+  const d = await (await fetch("api/push" + (SUB ? "?endpoint=" + encodeURIComponent(SUB.endpoint) : ""))).json();
+  KEY = d.key; KINDS = d.kinds || {}; MINE = d.cua_toi;
+  $("cnt").textContent = `· ${d.so_may} máy đang nhận`;
+  $("log").innerHTML = (d.gan_day || []).length ? d.gan_day.map((x) => `<div><time>${new Date(x.t * 1000).toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" })}</time><span><b>${esc(x.tieu_de)}</b> <span class="muted">${esc(x.noi_dung)}</span></span></div>`).join("") : '<div class="muted empty">Chưa có thông báo nào.</div>';
+  render();
+}
+$("on").onclick = async () => {
+  try {
+    const perm = await Notification.requestPermission();
+    if (perm !== "granted") { toast("Chưa cho phép thông báo", "err"); return render(); }
+    const reg = await navigator.serviceWorker.ready;
+    SUB = await reg.pushManager.getSubscription() || await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64ToBytes(KEY) });
+    await api({ action: "subscribe", sub: SUB.toJSON(), prefs: { vaora: true, chat: true, suco: true }, ten: (ios ? "iPhone" : navigator.platform || "Máy") });
+    toast("Đã bật thông báo", "ok");
+    await load();
+  } catch (e) { toast("Không bật được: " + e.message, "err"); }
+};
+$("off").onclick = async () => {
+  try {
+    await api({ action: "unsubscribe", endpoint: SUB.endpoint });
+    await SUB.unsubscribe().catch(() => {});
+    SUB = null; MINE = null; toast("Đã tắt trên máy này", "ok"); await load();
+  } catch (e) { toast(e.message, "err"); }
+};
+$("test").onclick = async () => { try { const d = await api({ action: "test", endpoint: SUB.endpoint }); toast(d.message, "ok"); } catch (e) { toast(e.message, "err"); } };
+load().catch((e) => { $("log").innerHTML = `<div class="warn">Không tải được: ${esc(e.message)}</div>`; });
+setInterval(() => load().catch(() => {}), 30000);
+</script>
+</body>
+</html>

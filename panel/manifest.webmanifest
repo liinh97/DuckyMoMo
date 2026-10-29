@@ -1,0 +1,15 @@
+{
+  "name": "DuckyMoMo Admin",
+  "short_name": "DuckyMoMo",
+  "description": "Trang quản trị DuckyMoMo: thông báo người chơi vào / ra, chat, sự cố server",
+  "start_url": "thongbao",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0f1216",
+  "theme_color": "#0f1216",
+  "lang": "vi",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

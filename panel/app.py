@@ -27,6 +27,7 @@ from ruamel.yaml import YAML
 from ruamel.yaml.scalarstring import DoubleQuotedScalarString, LiteralScalarString, SingleQuotedScalarString
 
 import taikhoan
+import thongbao
 import vang
 
 MODES_DIR = Path(os.environ.get("MODES_DIR", "/repo/modes"))
@@ -53,6 +54,7 @@ DONATE_HTML = (Path(__file__).parent / "donate.html").read_text(encoding="utf-8"
 HETHONG_HTML = (Path(__file__).parent / "hethong.html").read_text(encoding="utf-8")
 MEDIA_HTML = (Path(__file__).parent / "media.html").read_text(encoding="utf-8")
 BOT_HTML = (Path(__file__).parent / "bot.html").read_text(encoding="utf-8")
+THONGBAO_HTML = (Path(__file__).parent / "thongbao.html").read_text(encoding="utf-8")
 # Khung chung mọi trang (thanh điều hướng trái, màu, nút): ui.css, shell.js
 # Đăng nhập trang quản trị bằng form + cookie phiên (thay hộp thoại Basic Auth của trình duyệt). Basic vẫn nhận cho script/curl.
 # Phiên giữ trong bộ nhớ: khởi động lại panel là phải đăng nhập lại. Sai 5 lần/10 phút trên một IP thì chặn tạm.
@@ -133,6 +135,13 @@ document.getElementById("f").onsubmit = async e => {
 };
 </script></body></html>"""
 
+# PWA thông báo (29/10): service worker, manifest, biểu tượng — công khai, không chứa dữ liệu
+_HERE = Path(__file__).parent
+PUBLIC_STATIC = {"/sw.js": ("application/javascript; charset=utf-8", (_HERE / "sw.js").read_bytes()),
+                 "/manifest.webmanifest": ("application/manifest+json; charset=utf-8", (_HERE / "manifest.webmanifest").read_bytes()),
+                 "/icon-192.png": ("image/png", (_HERE / "icon-192.png").read_bytes()),
+                 "/icon-512.png": ("image/png", (_HERE / "icon-512.png").read_bytes()),
+                 "/apple-touch-icon.png": ("image/png", (_HERE / "apple-touch-icon.png").read_bytes())}
 STATIC = {"/ui.css": ("text/css; charset=utf-8", (Path(__file__).parent / "ui.css").read_bytes()),
           "/shell.js": ("application/javascript; charset=utf-8", (Path(__file__).parent / "shell.js").read_bytes())}
 # Trang Role: role chức vụ (track staff + builder + default) và rank donate (track donate), lưu ở LuckPerms (MariaDB)
@@ -2505,6 +2514,62 @@ def bot_staff_push():
         return json.loads(r.read().decode("utf-8")).get("message", "")
 
 
+# ---------------------------------------------------------------- thông báo đẩy (29/10, thongbao.py)
+_NOTI_CACHE = {}
+
+
+def _cached(key, ttl, fn):
+    t, v = _NOTI_CACHE.get(key, (0, None))
+    if time.time() - t > ttl or v is None:
+        try:
+            v = fn()
+        except Exception:
+            v = v if v is not None else set()
+        _NOTI_CACHE[key] = (time.time(), v)
+    return v
+
+
+def _noti_bots():
+    return _cached("bots", 60, lambda: {str(b.get("name", "")).lower() for b in bot_json().get("bots", [])})
+
+
+def _noti_staff():
+    def load():
+        con = taikhoan.db("luckperms")
+        try:
+            cur = con.cursor()
+            marks = ",".join(["%s"] * len(BOT_STAFF_GROUPS))
+            cur.execute(f"SELECT DISTINCT p.username FROM luckperms_user_permissions u JOIN luckperms_players p ON p.uuid = u.uuid "
+                        f"WHERE u.value = 1 AND u.permission IN ({marks})", tuple("group." + g for g in BOT_STAFF_GROUPS))
+            return {str(r[0]).lower() for r in cur.fetchall() if r[0]}
+        finally:
+            con.close()
+    return _cached("staff", 300, load)
+
+
+def _noti_servers():
+    out = {}
+    for srv in ("lobby", "banghoi-1", "practice-1", "sangtao-1"):
+        try:
+            text = COLOR_RE.sub("", rcon(srv, ["tps"])[0][1])
+            m = re.search(r"([\d.]+)", text.split(":", 1)[-1])
+            out[srv] = (True, float(m.group(1)) if m else None)
+        except Exception:
+            out[srv] = (False, None)
+    return out
+
+
+def _noti_botfarm():
+    try:
+        return sum(1 for b in bot_json().get("bots", []) if b.get("online"))
+    except Exception:
+        return None
+
+
+NOTIFIER = thongbao.Notifier(DATA_DIR, ACTIVITY_FILE, _noti_bots, _noti_staff, _noti_servers, _noti_botfarm,
+                             log=lambda m: print(m, flush=True))
+
+
 def bot_dev_loop():
     time.sleep(90)
     while True:
@@ -4371,9 +4436,9 @@ def web_profile(name, by_code):
 # Trang/API -> tính năng cần có (staff đăng nhập bằng tài khoản game)
 PAGE_FEATURES = {"/": ("caidat",), "/thuvien": ("thuvien", "thuvien-dua"), "/boss": ("boss",), "/role": ("role", "role-quyen", "rank", "rank-quyen"),
                  "/hoatdong": ("hoatdong",), "/camnang": ("camnang",), "/huongdan": ("huongdan",),
-                 "/donate": ("donate",), "/hethong": ("hethong",), "/media": ("media",), "/bot": ("bot",)}
+                 "/donate": ("donate",), "/hethong": ("hethong",), "/media": ("media",), "/bot": ("bot",), "/thongbao": ("hethong",)}
 API_GET_FEATURES = {"/api/modes": ("caidat",), "/api/camnang": ("camnang",), "/api/huongdan": ("huongdan",), "/api/roles": ("role", "role-quyen", "rank", "rank-quyen"),
-                    "/api/boss": ("boss",), "/api/activity": ("hoatdong",), "/api/donate": ("donate",), "/api/hethong": ("hethong",), "/api/hethong/thitran": ("hethong",), "/api/media": ("media",), "/api/bot": ("bot",), "/api/thuvien": None, "/api/toi": None}
+                    "/api/boss": ("boss",), "/api/activity": ("hoatdong",), "/api/donate": ("donate",), "/api/hethong": ("hethong",), "/api/hethong/thitran": ("hethong",), "/api/media": ("media",), "/api/bot": ("bot",), "/api/push": ("hethong",), "/api/thuvien": None, "/api/toi": None}
 # Staff đăng nhập bằng tài khoản game chỉ thao tác được CẤP DƯỚI: role chức vụ có weight nhỏ hơn role chức vụ cao nhất của mình
 # (Manager 90: Mod, Helper, Builder, Dân; Mod 70: Helper, Builder, Dân…). Rank donate theo quyền riêng (web.rank / web.rank.quyen).
 # Không ai ngoài toàn quyền cấp được * hay quyền web/admin/LuckPerms, và chỉ cấp được quyền chính mình đang có.
@@ -4588,6 +4653,15 @@ class Handler(BaseHTTPRequestHandler):
             self.send_json(500, {"ok": False, "message": f"Lỗi: {e}"})
 
     def do_GET(self):
+        pub = PUBLIC_STATIC.get(self.path.split("?", 1)[0])
+        if pub:
+            self.send_response(200)
+            self.send_header("Content-Type", pub[0])
+            self.send_header("Content-Length", str(len(pub[1])))
+            self.send_header("Cache-Control", "no-cache")
+            self.end_headers()
+            self.wfile.write(pub[1])
+            return
         if not self.guard():
             return
         path, _, query = self.path.partition("?")
@@ -4614,10 +4688,10 @@ class Handler(BaseHTTPRequestHandler):
                                         "role_quyen": None if not acc or acc["toan_quyen"] else
                                         {g: {"nguoi": self.role_rights(g)[0], "quyen": self.role_rights(g)[1]}
                                          for g in STAFF_GROUPS + PLAY_GROUPS + DONATE_GROUPS}})
-        if path in ("/", "/hoatdong", "/camnang", "/huongdan", "/role", "/thuvien", "/boss", "/donate", "/hethong", "/media", "/bot"):
+        if path in ("/", "/hoatdong", "/camnang", "/huongdan", "/role", "/thuvien", "/boss", "/donate", "/hethong", "/media", "/bot", "/thongbao"):
             dozzle = DOZZLE_PROXY_URL if self.headers.get("X-Forwarded-Prefix") else DOZZLE_URL
             page = {"/": INDEX_HTML, "/hoatdong": ACTIVITY_HTML, "/camnang": CAMNANG_HTML, "/huongdan": HUONGDAN_HTML, "/role": ROLE_HTML,
-                    "/thuvien": THUVIEN_HTML, "/boss": BOSS_HTML, "/donate": DONATE_HTML, "/hethong": HETHONG_HTML, "/media": MEDIA_HTML, "/bot": BOT_HTML}[path]
+                    "/thuvien": THUVIEN_HTML, "/boss": BOSS_HTML, "/donate": DONATE_HTML, "/hethong": HETHONG_HTML, "/media": MEDIA_HTML, "/bot": BOT_HTML, "/thongbao": THONGBAO_HTML}[path]
             body = page.replace("__DOZZLE_URL__", "" if self.who else dozzle).encode("utf-8")
             self.send_response(200)
             self.send_header("Content-Type", "text/html; charset=utf-8")
@@ -4658,6 +4732,9 @@ class Handler(BaseHTTPRequestHandler):
             self.send_json(200, media_json())
         elif path == "/api/bot":
             self.send_json(200, bot_json())
+        elif path == "/api/push":
+            q = {k: v[-1] for k, v in urllib.parse.parse_qs(query).items()}
+            self.send_json(200, NOTIFIER.info(q.get("endpoint", "")))
         elif path == "/api/activity":
             params = {k: v[-1] for k, v in urllib.parse.parse_qs(query).items()}
             self.send_json(200, read_activity(params))
@@ -4696,6 +4773,8 @@ class Handler(BaseHTTPRequestHandler):
             ok = self.can("media")
         elif p == "/api/bot":
             ok = self.can("bot")
+        elif p == "/api/push":
+            ok = self.can("hethong")
         else:
             m = re.fullmatch(r"/api/modes/([a-z0-9_-]+)/(save|apply-all)", p)
             if m and m.group(2) == "save":
@@ -4774,6 +4853,14 @@ class Handler(BaseHTTPRequestHandler):
             except Exception as e:
                 self.send_json(500, {"ok": False, "message": f"Lỗi: {e}"})
             return
+        if self.path == "/api/push":
+            try:
+                self.send_json(200, NOTIFIER.action(self.body, self.who["name"] if self.who else PANEL_USER))
+            except ValueError as e:
+                self.send_json(400, {"ok": False, "message": str(e)})
+            except Exception as e:
+                self.send_json(500, {"ok": False, "message": f"Lỗi: {e}"})
+            return
         if self.path == "/api/bot":
             try:
                 self.send_json(200, bot_action(self.body, self.who["name"] if self.who else None))
@@ -4828,4 +4915,5 @@ if __name__ == "__main__":
     except Exception as e:
         print(f"Vàng: không tạo được bảng ({e})", flush=True)
     threading.Thread(target=bot_dev_loop, daemon=True).start()   # bot tự phát triển
+    NOTIFIER.start()   # thông báo đẩy: người thật vào / ra, chat, sự cố
     ThreadingHTTPServer(("0.0.0.0", 8080), Handler).serve_forever()

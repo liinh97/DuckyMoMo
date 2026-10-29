@@ -301,6 +301,15 @@ async function creative(name, host) {
 async function place(name, bot) {
   const rt = RT[name], st = state[name], host = st.server;
   if (rt.bot !== bot) return;
+  // 29/10: đã gom vào phòng ẩn (homeOld có) thì chỗ mặc định LUÔN là phòng: lệch (chưa rõ chỗ nào xoá) thì đặt lại + ghi log để tìm
+  if (host === 'banghoi-1' && st.homeOld !== undefined) {
+    const r = roomSpot(NAMES.indexOf(name)), h = st.home[host];
+    if (!h || Math.hypot(h.x - r.x, h.z - r.z) > 8 || Math.abs(h.y - r.y) > 4) {
+      log(name, 'chỗ mặc định lệch khỏi phòng ẩn:', JSON.stringify(h || null), '-> đặt lại phòng');
+      st.home[host] = r; delete st.at[host]; save();
+    }
+    rt.deaths = [];   // phòng ẩn an toàn: không áp luật "chết 2 lần thì bỏ chỗ"
+  }
   const recent = rt.deaths.filter(t => Date.now() - t < 180000);
   if (recent.length >= 2) {
     rt.deaths = [];

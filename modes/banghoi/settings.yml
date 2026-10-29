@@ -1564,7 +1564,7 @@ md_fail: 2
 md_cooldown: 60
 petcap_charm_item: bua_bat_pet
 goiqua_on: true
-goiqua_landau: 'tanthu'
+goiqua_landau: 'tinan'
 goiqua_list:
   tinan:
     ten: '&8Quà tị nạn'

@@ -488,7 +488,7 @@ vote:
 #   lan-dau: gói tự phát khi vào Bang Hội Chiến lần đầu. Rank ủng hộ (mua bằng tiền) KHÔNG được có gói đồ chơi game (luật Mojang).
 goi-qua:
   enabled: true
-  lan-dau: tanthu
+  lan-dau: tinan
   goi:
     tinan:
       ten: '&8Quà tị nạn'

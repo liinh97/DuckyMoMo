@@ -92,6 +92,7 @@ tier0_perks:
   - chờ dịch chuyển 3 giây
   - đổi skin (/skin, /skins), tủ 3 skin (/tuskin)
   - kho 1 pet chiến đấu (MyPet)
+  - /wb (bàn chế tạo mang theo)
 tier1_name: Tử Tước
 tier1_prefix: '&b[Tử Tước]'
 tier1_prices:
@@ -106,6 +107,7 @@ tier1_perks:
   - 2 balo 36 ô
   - tủ 5 skin
   - kho 2 pet chiến đấu
+  - /anvil (đe mang theo)
 tier2_name: Bá Tước
 tier2_prefix: '&9[Bá Tước]'
 tier2_prices:
@@ -120,6 +122,7 @@ tier2_perks:
   - 3 balo 36 ô
   - tủ 8 skin
   - kho 3 pet chiến đấu
+  - /ec (rương Ender mang theo, không mở khi giao tranh)
 tier3_name: Hầu Tước
 tier3_prefix: '&d[Hầu Tước]'
 tier3_prices:
@@ -135,6 +138,7 @@ tier3_perks:
   - chờ dịch chuyển 2 giây
   - tủ 12 skin
   - kho 4 pet chiến đấu
+  - /feed (no bụng, hồi chiêu 10 phút)
 tier4_name: Công Tước
 tier4_prefix: '&6[Công Tước]&r'
 tier4_prices:

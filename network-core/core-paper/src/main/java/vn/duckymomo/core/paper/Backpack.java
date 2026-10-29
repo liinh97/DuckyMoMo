@@ -199,6 +199,23 @@ final class Backpack implements Listener {
 
     // ---------------------------------------------------------------- sự kiện
 
+    /** 29/10: /ec (rương Ender mang theo, rank Bá Tước) cũng không mở khi giao tranh / trong vùng vây đang đánh, như balo (khỏi cất đồ khi thua). */
+    private static final java.util.Set<String> EC_CMDS = java.util.Set.of("ec", "echest", "enderchest", "endersee", "eec", "eechest", "eenderchest", "eendersee");
+
+    @EventHandler(ignoreCancelled = true)
+    public void onEnderChestCmd(org.bukkit.event.player.PlayerCommandPreprocessEvent e) {
+        String root = e.getMessage().substring(1).split(" ", 2)[0].toLowerCase(java.util.Locale.ROOT);
+        root = root.substring(root.indexOf(':') + 1);
+        if (!EC_CMDS.contains(root)) {
+            return;
+        }
+        String why = blocked(e.getPlayer());
+        if (why != null) {
+            e.setCancelled(true);
+            e.getPlayer().sendMessage(Tip.c("&c" + why.replace("balo", "rương Ender")));
+        }
+    }
+
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onFight(EntityDamageByEntityEvent e) {
         if (!(e.getEntity() instanceof Player victim)) {

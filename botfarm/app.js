@@ -831,8 +831,9 @@ setInterval(async () => {
 
 // ---------------------------------------------------------------- thay phiên online (29/10)
 // Chủ server: "35 bot, duy trì đăng nhập tầm 25–31 bot online và thay phiên tránh số lượng online lúc nào cũng giống nhau".
-// Mục tiêu ngẫu nhiên trong [min, max] đổi mỗi 15–50 phút (đêm 1–7 giờ nghiêng thấp, tối 19–23 giờ nghiêng cao); mỗi 2–8 phút chỉnh MỘT
-// bot (thừa: bot online lâu nhất thoát; thiếu: bot nghỉ lâu nhất vào); đủ rồi thì thỉnh thoảng đổi ca (1 thoát, 1–4 phút sau 1 vào).
+// Mục tiêu ngẫu nhiên trong [min, max] đổi mỗi 15–50 phút (đêm 1–7 giờ nghiêng thấp, tối 19–23 giờ nghiêng cao); lệch mục tiêu thì mỗi
+// 2–8 phút chỉnh MỘT bot (thừa: bot online lâu nhất thoát; thiếu: bot nghỉ lâu nhất vào); đủ rồi thì 10–20 phút đổi ca một lần
+// (1 thoát, 1–4 phút sau 1 vào). 29/10 chủ server: bỏ nhịp nhanh lúc vắng người, "để tầm 10–20 phút thay một lần".
 // Chỉ bot Bang Hội Chiến; bot đang đi dạo không bị cho thoát. Lưu /state/rotate.json (bật/tắt).
 const ROT_CFG = '/state/rotate.json';
 const rotCfg = { on: false, min: 25, max: 31 };
@@ -866,17 +867,16 @@ setInterval(() => {
   const now = Date.now();
   const bh = NAMES.filter(n => state[n].server === 'banghoi-1');
   const on = bh.filter(n => state[n].want), off = bh.filter(n => !state[n].want);
-  if (rotJoinAt && !realOnline().length) rotJoinAt = Math.min(rotJoinAt, now + 15000);   // vắng người: đổi ca nhanh
   if (rotJoinAt && now >= rotJoinAt) { rotJoinAt = 0; const j = rotJoin(off); if (j) log('thay phiên: đổi ca,', j, 'vào'); return; }
   if (rotTarget == null || now >= rotRetarget) { rotTarget = rotPick(); rotRetarget = now + (15 + Math.random() * 35) * 60000; log('thay phiên: mục tiêu', rotTarget, 'bot'); }
   if (now < rotStep || rotJoinAt) return;
-  rotStep = now + (realOnline().length ? (2 + Math.random() * 6) * 60000 : 10000 + Math.random() * 10000);   // không có người thật: chỉnh nhanh (29/10)
-  if (on.length > rotTarget) { const n = rotLeave(on); if (n) log('thay phiên:', n, 'thoát (' + (on.length - 1) + '/' + rotTarget + ')'); }
-  else if (on.length < rotTarget) { const n = rotJoin(off); if (n) log('thay phiên:', n, 'vào (' + (on.length + 1) + '/' + rotTarget + ')'); }
-  else if (off.length && Math.random() < 0.4) {   // đổi ca
+  if (on.length > rotTarget) { rotStep = now + (2 + Math.random() * 6) * 60000; const n = rotLeave(on); if (n) log('thay phiên:', n, 'thoát (' + (on.length - 1) + '/' + rotTarget + ')'); }
+  else if (on.length < rotTarget) { rotStep = now + (2 + Math.random() * 6) * 60000; const n = rotJoin(off); if (n) log('thay phiên:', n, 'vào (' + (on.length + 1) + '/' + rotTarget + ')'); }
+  else if (off.length) {   // đủ mục tiêu: đổi ca, lần sau sau 10–20 phút
+    rotStep = now + (10 + Math.random() * 10) * 60000;
     const n = rotLeave(on);
     if (n) { rotJoinAt = now + (1 + Math.random() * 3) * 60000; log('thay phiên: đổi ca,', n, 'thoát'); }
-  }
+  } else rotStep = now + 5 * 60000;
 }, 10000);   // 10 giây kiểm một lần (bước chỉnh vẫn theo rotStep)
 
 // ---------------------------------------------------------------- điều khiển

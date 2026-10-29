@@ -2706,7 +2706,7 @@ def bot_action(body, who):
             raise ValueError("Tên bot 3–16 ký tự, chỉ chữ không dấu, số, gạch dưới")
         if name.lower() in known_player_names():
             raise ValueError(f"Tên {name} đã có tài khoản trong game (người chơi hoặc bot cũ), chọn tên khác")
-    payload = {k: body.get(k) for k in ("bot", "action", "server", "text", "x", "z", "on", "min", "max") if body.get(k) is not None}
+    payload = {k: body.get(k) for k in ("bot", "action", "server", "text", "x", "z", "on", "min", "max", "khung") if body.get(k) is not None}
     req = urllib.request.Request(BOTFARM_URL + "/act", data=json.dumps(payload).encode("utf-8"), headers={"Content-Type": "application/json"}, method="POST")
     try:
         with urllib.request.urlopen(req, timeout=15) as r:
@@ -2716,7 +2716,8 @@ def bot_action(body, who):
     except Exception as e:
         raise ValueError(f"Dịch vụ bot không trả lời ({e})")
     web_log({"viec": "/api/bot", "nguoi": who or PANEL_USER, "hanh_dong": f"{payload.get('bot') or ''} {BOT_ACTIONS[act]} {payload.get('text') or payload.get('server') or ''}".strip()
-             + (f" ({'bật' if payload.get('on') else 'tắt'}, {payload.get('min')}–{payload.get('max')} phút)" if act == "chatcfg" else ""),
+             + (f" ({'bật' if payload.get('on') else 'tắt'}, {payload.get('min')}–{payload.get('max')} phút)" if act == "chatcfg" else "")
+             + (f": {res.get('message', '')}" if act == "rotcfg" else ""),
              "doi_tuong": payload.get("bot", ""), "ok": bool(res.get("ok"))})
     if act == "create" and res.get("ok"):
         # 28/10 chủ server: "lưu ý các tính năng này cho bot khi tạo mới" -> bot mới tự bật tự phát triển, xếp hàng tạo quá khứ, được cấp

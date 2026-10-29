@@ -11,6 +11,7 @@
   (8 thị trấn mới, tổng 12, mỗi cái nạp 15.000 xu). Tiện ích bán lẻ theo giờ trong cửa hàng Vàng (/wb /trash /anvil 1, /ec /feed 2, /fix /bay 3),
   chỉnh ở Cài đặt › Tiện ích (trỏ theo VỊ TRÍ món trong vang.mon: thêm / bớt món phía trước thì sửa schema). Công Tước: /bay trong thị trấn mình,
   /fix (không sửa đồ Thư viện).
+- 30/10 rạng sáng: trang Bot › Thay phiên online có khoảng mặc định + tối đa 12 khung giờ (giờ VN, `tu` tính, `den` không tính, tu > den = qua đêm, khung trên cùng khớp thắng), lưu `rotate.json` `khung:[{tu,den,min,max}]`; sang khung mới đặt mục tiêu ngay, lệch > 5 bot thì 1–3 phút một bot. Chưa có khung thì giữ nghiêng đêm/tối kiểu cũ. Cài hiện tại vẫn 43–47, chưa đặt khung nào.
 - Hầm Ngục /hamnguc (dungeon tự dựng, phòng to, quái rơi set +0): ĐANG THỬ, chỉ chi-cho (Itrap, Linh) + admin vào, nút ở /dungeon ẩn với
   người khác. 2 trang cẩm nang + dòng /hamnguc trong `modes/_network/huongdan.yml` đang để dạng chú thích (`  # `): mở công khai thì bỏ
   chú thích rồi `./ops/huongdan.sh`. Bot test: `tools/bottest/hn-thu.js`.

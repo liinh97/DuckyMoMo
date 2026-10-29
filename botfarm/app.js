@@ -839,12 +839,31 @@ const ROT_CFG = '/state/rotate.json';
 const rotCfg = { on: false, min: 25, max: 31 };
 try { Object.assign(rotCfg, JSON.parse(fs.readFileSync(ROT_CFG, 'utf8'))); } catch (e) { /* chưa cài: tắt */ }
 function saveRot() { try { fs.writeFileSync(ROT_CFG, JSON.stringify(rotCfg)); } catch (e) { log('không lưu được rotate.json:', e.message); } }
-let rotTarget = null, rotRetarget = 0, rotStep = 0, rotJoinAt = 0;
-function rotPick() {
-  const h = vnHour();
+let rotTarget = null, rotRetarget = 0, rotStep = 0, rotJoinAt = 0, rotSlotKey = null;
+// 30/10 chủ server: "khoảng số lượng bot online để set cho phù hợp thời điểm" -> rotCfg.khung = [{tu, den, min, max}] (giờ VN,
+// tu ≤ giờ < den, tu > den là qua đêm, vd 23 -> 2). Khung đầu tiên khớp thắng; ngoài mọi khung dùng min/max mặc định. Chưa có
+// khung nào thì giữ cách cũ (đêm 1–7 giờ nghiêng thấp, tối 19–23 giờ nghiêng cao).
+function rotSlot(h = vnHour()) {
+  const k = Array.isArray(rotCfg.khung) ? rotCfg.khung : [];
+  for (let i = 0; i < k.length; i++) {
+    const { tu, den } = k[i];
+    if (tu === den || (tu < den ? h >= tu && h < den : h >= tu || h < den)) return i;
+  }
+  return -1;
+}
+function rotRange() {
+  const i = rotSlot();
+  if (i >= 0) return { lo: rotCfg.khung[i].min, hi: rotCfg.khung[i].max, khung: i };
   let lo = rotCfg.min, hi = rotCfg.max;
-  if (h >= 1 && h < 7) hi = Math.min(hi, lo + 2);
-  else if (h >= 19 && h < 23) lo = Math.max(lo, hi - 2);
+  if (!(rotCfg.khung && rotCfg.khung.length)) {
+    const h = vnHour();
+    if (h >= 1 && h < 7) hi = Math.min(hi, lo + 2);
+    else if (h >= 19 && h < 23) lo = Math.max(lo, hi - 2);
+  }
+  return { lo, hi, khung: -1 };
+}
+function rotPick() {
+  const { lo, hi } = rotRange();
   return lo + Math.floor(Math.random() * (hi - lo + 1));
 }
 function rotLeave(on) {
@@ -868,10 +887,13 @@ setInterval(() => {
   const bh = NAMES.filter(n => state[n].server === 'banghoi-1');
   const on = bh.filter(n => state[n].want), off = bh.filter(n => !state[n].want);
   if (rotJoinAt && now >= rotJoinAt) { rotJoinAt = 0; const j = rotJoin(off); if (j) log('thay phiên: đổi ca,', j, 'vào'); return; }
+  const slot = rotSlot();
+  if (slot !== rotSlotKey) { rotSlotKey = slot; rotTarget = null; }   // sang khung giờ mới: đặt mục tiêu ngay
   if (rotTarget == null || now >= rotRetarget) { rotTarget = rotPick(); rotRetarget = now + (15 + Math.random() * 35) * 60000; log('thay phiên: mục tiêu', rotTarget, 'bot'); }
   if (now < rotStep || rotJoinAt) return;
-  if (on.length > rotTarget) { rotStep = now + (2 + Math.random() * 6) * 60000; const n = rotLeave(on); if (n) log('thay phiên:', n, 'thoát (' + (on.length - 1) + '/' + rotTarget + ')'); }
-  else if (on.length < rotTarget) { rotStep = now + (2 + Math.random() * 6) * 60000; const n = rotJoin(off); if (n) log('thay phiên:', n, 'vào (' + (on.length + 1) + '/' + rotTarget + ')'); }
+  const gap = Math.abs(on.length - rotTarget), pace = gap > 5 ? 1 + Math.random() * 2 : 2 + Math.random() * 6;   // lệch nhiều: 1–3 phút một bot
+  if (on.length > rotTarget) { rotStep = now + pace * 60000; const n = rotLeave(on); if (n) log('thay phiên:', n, 'thoát (' + (on.length - 1) + '/' + rotTarget + ')'); }
+  else if (on.length < rotTarget) { rotStep = now + pace * 60000; const n = rotJoin(off); if (n) log('thay phiên:', n, 'vào (' + (on.length + 1) + '/' + rotTarget + ')'); }
   else if (off.length) {   // đủ mục tiêu: đổi ca, lần sau sau 10–20 phút
     rotStep = now + (10 + Math.random() * 10) * 60000;
     const n = rotLeave(on);
@@ -905,11 +927,24 @@ async function act(b) {
   if (b.action === 'rotcfg') {
     if (b.min != null || b.max != null) {   // 29/10: chỉnh khoảng số bot qua /act, khỏi sửa rotate.json tay
       const min = Math.round(+b.min), max = Math.round(+b.max);
-      if (!(min >= 1 && max >= min && max <= 100)) throw new Error('khoảng bot không hợp lệ (1 ≤ từ ≤ đến ≤ 100)');
+      if (!(min >= 0 && max >= min && max <= 100)) throw new Error('khoảng bot không hợp lệ (0 ≤ từ ≤ đến ≤ 100)');
       rotCfg.min = min; rotCfg.max = max;
     }
+    if (Array.isArray(b.khung)) {
+      if (b.khung.length > 12) throw new Error('tối đa 12 khung giờ');
+      rotCfg.khung = b.khung.map((k, i) => {
+        const tu = Math.round(+k.tu), den = Math.round(+k.den), min = Math.round(+k.min), max = Math.round(+k.max);
+        if (!(tu >= 0 && tu <= 23 && den >= 0 && den <= 24)) throw new Error('khung ' + (i + 1) + ': giờ phải từ 0 đến 24');
+        if (!(min >= 0 && max >= min && max <= 100)) throw new Error('khung ' + (i + 1) + ': số bot không hợp lệ (0 ≤ từ ≤ đến ≤ 100)');
+        return { tu, den: den % 24, min, max };
+      });
+    }
     if (b.on != null) rotCfg.on = !!b.on;
-    saveRot(); rotTarget = null; return 'thay phiên online: ' + (rotCfg.on ? 'bật (' + rotCfg.min + '–' + rotCfg.max + ' bot)' : 'tắt'); }
+    saveRot(); rotTarget = null; rotSlotKey = null;
+    const r = rotRange();
+    return 'thay phiên online: ' + (rotCfg.on ? 'bật' : 'tắt') + ', mặc định ' + rotCfg.min + '–' + rotCfg.max + ' bot, ' + (rotCfg.khung || []).length
+      + ' khung giờ; bây giờ ' + r.lo + '–' + r.hi + ' bot' + (r.khung >= 0 ? ' (khung ' + (r.khung + 1) + ')' : ' (mặc định)');
+  }
   if (b.action === 'staff') {
     staffSet = new Set((Array.isArray(b.names) ? b.names : []).map(x => String(x).toLowerCase()));
     try { fs.writeFileSync(STAFF_FILE, JSON.stringify([...staffSet])); } catch (e) { /* bỏ qua */ }
@@ -1036,7 +1071,7 @@ http.createServer((req, res) => {
       chat: chatCfg,
       tpa: tpaCfg,
       tpagia: ftpaCfg,
-      thayphien: { on: rotCfg.on, min: rotCfg.min, max: rotCfg.max, muctieu: rotTarget },
+      thayphien: { on: rotCfg.on, min: rotCfg.min, max: rotCfg.max, khung: rotCfg.khung || [], muctieu: rotTarget, dang: rotCfg.on ? rotRange() : null, banghoi: NAMES.filter(n => state[n].server === 'banghoi-1').length },
       dido: { on: wanderCfg.on, phong: NAMES.some(n => state[n].homeOld !== undefined), dang: NAMES.filter(n => RT[n].wander) },
     });
   }

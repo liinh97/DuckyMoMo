@@ -73,6 +73,12 @@
   #mk .hint, #tc .hint { font-size: 12px; color: var(--muted); }
   #tc { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; padding: 6px 14px 8px; border-bottom: 1px solid var(--line-2); }
   #tc input[type=number] { width: 58px; padding: 3px 6px; font-size: 13px; }
+  #rot { display: flex; flex-direction: column; gap: 4px; padding: 6px 14px 8px; border-bottom: 1px solid var(--line-2); }
+  #rot .rot-row { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+  #rot .hint { font-size: 12px; color: var(--muted); }
+  #rot input[type=number] { width: 58px; padding: 3px 6px; font-size: 13px; }
+  #rot .rot-row.now { color: var(--accent, #e8791d); }
+  #rot .rot-row.now .hint.tag { color: inherit; }
   label.chk { display: inline-flex; gap: 6px; align-items: center; font-size: 12.5px; color: var(--muted); font-weight: 400; }
 </style>
 <link rel="stylesheet" href="ui.css">
@@ -106,8 +112,17 @@
       <button type="button" class="mini" id="wdRoom" title="Đặt chỗ mặc định của mọi bot vào phòng ẩn (chỗ cũ được giữ để trả lại)">Gom vào phòng ẩn</button>
       <button type="button" class="mini" id="wdBack" title="Trả mọi bot về chỗ đứng cũ (trước khi gom)">Trả về chỗ cũ</button>
       <span class="hint" id="wdState"></span>
-      <label class="chk" title="Giữ 25–31 bot online ở Bang Hội Chiến, mục tiêu đổi mỗi 15–50 phút (đêm thấp, tối cao); mỗi 2–8 phút chỉnh một bot, đủ rồi thì thỉnh thoảng đổi ca (1 thoát, 1–4 phút sau 1 vào). Bật thì nút Vào / Thoát từng bot có thể bị thay phiên ghi đè."><input type="checkbox" id="rotOn"> Thay phiên online 25–31</label>
-      <span class="hint" id="rotState"></span>
+    </form>
+    <form id="rot" autocomplete="off" title="Giữ số bot online ở Bang Hội Chiến trong khoảng đặt. Mục tiêu chọn ngẫu nhiên trong khoảng, đổi mỗi 15–50 phút; lệch mục tiêu thì mỗi 2–8 phút chỉnh một bot (lệch hơn 5 bot: 1–3 phút); đủ rồi thì thỉnh thoảng đổi ca (1 thoát, 1–4 phút sau 1 vào). Bật thì nút Vào / Thoát từng bot có thể bị thay phiên ghi đè.">
+      <div class="rot-row">
+        <label class="chk"><input type="checkbox" id="rotOn"> Thay phiên online</label>
+        <span class="hint">mặc định</span><input id="rotMin" type="number" min="0" max="100"><span class="hint">–</span><input id="rotMax" type="number" min="0" max="100"><span class="hint">bot</span>
+        <button type="button" class="mini" id="rotAdd" title="Thêm khung giờ có khoảng bot riêng (giờ Việt Nam)">+ Khung giờ</button>
+        <button type="submit" class="mini">Lưu</button>
+        <span class="hint" id="rotState"></span>
+      </div>
+      <div id="rotSlots"></div>
+      <span class="hint" id="rotHint"></span>
     </form>
     <div id="bots"><div class="empty">Đang tải…</div></div>
   </div>
@@ -211,6 +226,32 @@ $("tcNow").onclick = () => act({ action: "chatnow" });
 $("wdOn").onchange = () => act({ action: "wandercfg", on: $("wdOn").checked });
 $("wdNow").onclick = () => act({ action: "wandernow" });
 $("rotOn").onchange = () => act({ action: "rotcfg", on: $("rotOn").checked });
+// 30/10: khung giờ thay phiên (mỗi khung một khoảng số bot; ngoài khung dùng mặc định)
+let ROT_DIRTY = false;
+function rotSlotRow(k) {
+  const row = document.createElement("div"); row.className = "rot-row slot";
+  row.innerHTML = `<span class="hint">từ</span><input type="number" class="tu" min="0" max="23"><span class="hint">giờ đến</span><input type="number" class="den" min="0" max="24"><span class="hint">giờ:</span>`
+    + `<input type="number" class="mn" min="0" max="100"><span class="hint">–</span><input type="number" class="mx" min="0" max="100"><span class="hint">bot</span>`
+    + `<button type="button" class="mini del" title="Bỏ khung này">Bỏ</button><span class="hint tag"></span>`;
+  row.querySelector(".tu").value = k.tu; row.querySelector(".den").value = k.den; row.querySelector(".mn").value = k.min; row.querySelector(".mx").value = k.max;
+  row.querySelector(".del").onclick = () => { row.remove(); ROT_DIRTY = true; };
+  row.addEventListener("input", () => { ROT_DIRTY = true; });
+  return row;
+}
+function rotRender(tp) {
+  const box = $("rotSlots"); box.innerHTML = "";
+  (tp.khung || []).forEach(k => box.appendChild(rotSlotRow(k)));
+  $("rotMin").value = tp.min; $("rotMax").value = tp.max;
+  ROT_DIRTY = false;
+}
+$("rotAdd").onclick = () => { $("rotSlots").appendChild(rotSlotRow({ tu: 19, den: 23, min: $("rotMin").value || 0, max: $("rotMax").value || 0 })); ROT_DIRTY = true; };
+$("rotMin").oninput = $("rotMax").oninput = () => { ROT_DIRTY = true; };
+$("rot").addEventListener("submit", async (ev) => {
+  ev.preventDefault();
+  const khung = [...$("rotSlots").querySelectorAll(".slot")].map(r => ({ tu: +r.querySelector(".tu").value, den: +r.querySelector(".den").value, min: +r.querySelector(".mn").value, max: +r.querySelector(".mx").value }));
+  const d = await act({ action: "rotcfg", on: $("rotOn").checked, min: +$("rotMin").value, max: +$("rotMax").value, khung });
+  if (d && d.ok) ROT_DIRTY = false;
+});
 $("wdRoom").onclick = async () => { if (await ask("Đặt chỗ mặc định của mọi bot vào phòng ẩn? Bot đang online sẽ được dời ngay; chỗ cũ được giữ để trả lại.", { title: "Gom vào phòng ẩn", ok: "Gom" })) act({ action: "gomphong" }); };
 $("wdBack").onclick = async () => { if (await ask("Trả mọi bot về chỗ đứng cũ (trước khi gom vào phòng ẩn)?", { title: "Trả về chỗ cũ", ok: "Trả về" })) act({ action: "trave" }); };
 $("allDev").onclick = async () => { if (await ask(`Bật tự phát triển cho cả ${BOTS.length} bot? Mỗi bot được gán ngẫu nhiên một tính cách và nhịp riêng.`, { title: "Tự phát triển", ok: "Bật" })) act({ bot: "*", action: "phattrien", on: true }); };
@@ -235,7 +276,14 @@ async function loadBots() {
     if (d.tpagia && document.activeElement !== $("ftpaOn")) $("ftpaOn").checked = !!d.tpagia.on;
     $("rotOn").disabled = !d.thayphien;
     if (d.thayphien && document.activeElement !== $("rotOn")) $("rotOn").checked = !!d.thayphien.on;
-    $("rotState").textContent = d.thayphien && d.thayphien.on && d.thayphien.muctieu ? "· mục tiêu " + d.thayphien.muctieu + " bot" : "";
+    const tp = d.thayphien;
+    $("rotState").textContent = tp && tp.on && tp.dang ? "· bây giờ " + tp.dang.lo + "–" + tp.dang.hi + " bot" + (tp.dang.khung >= 0 ? " (khung " + (tp.dang.khung + 1) + ")" : " (mặc định)") + (tp.muctieu != null ? ", mục tiêu " + tp.muctieu : "") : "";
+    if (tp && !ROT_DIRTY && !(document.activeElement && document.activeElement.closest("#rot"))) rotRender(tp);
+    if (tp) {
+      [...$("rotSlots").querySelectorAll(".slot")].forEach((r, i) => { const now = tp.on && tp.dang && tp.dang.khung === i; r.classList.toggle("now", now); r.querySelector(".tag").textContent = now ? "← đang dùng" : ""; });
+      $("rotHint").textContent = (tp.khung && tp.khung.length ? "Giờ Việt Nam, \"từ\" tính, \"đến\" không tính (19 đến 23 = 19:00–22:59; 23 đến 2 = qua đêm). Khung trên cùng khớp được dùng; ngoài các khung dùng mặc định." : "Chưa có khung giờ: dùng mặc định, đêm 1–7 giờ nghiêng thấp, tối 19–23 giờ nghiêng cao.")
+        + (tp.banghoi != null ? " Có " + tp.banghoi + " bot ở Bang Hội Chiến." : "");
+    }
     $("wdOn").disabled = !d.dido;   // botfarm chưa có tính năng (chưa dựng lại)
     if (d.dido && document.activeElement !== $("wdOn")) $("wdOn").checked = !!d.dido.on;
     $("wdState").textContent = d.dido ? (d.dido.phong ? "· đang ở phòng ẩn" : "· chưa gom") + (d.dido.dang.length ? " · đi dạo: " + d.dido.dang.join(", ") : "") : "";

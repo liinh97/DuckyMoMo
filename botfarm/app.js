@@ -278,22 +278,23 @@ async function connect(name) {
     if (!st.grim) {   // 29/10 (chủ server đồng ý): GrimAC kéo bot lùi mỗi bước khi đi dạo + báo admin "failed Simulation" = lộ bot
       rcon(host).cmd(`lp user ${name} permission set grim.exempt true`).then(() => { st.grim = true; save(); }).catch(() => {});
     }
-    creative(name, host).catch(() => {});   // mỗi lần xuất hiện (cả sau hồi sinh / đổi thế giới), sau khi đã vào hẳn
+    creative(name, host).catch(() => {});   // mỗi lần xuất hiện: Sinh tồn, tắt /god (29/10)
     place(name, bot).catch(e => log(name, 'lỗi đặt chỗ:', e.message)).finally(() => { rt.placing = false; rt.placedAt = Date.now(); });
   });
   setTimeout(() => { if (rt.connecting && !rt.bot) { rt.err = 'vào không được (quá 40 giây)'; try { bot.quit(); } catch (e) { /* bỏ qua */ } rt.connecting = false; rt.retryAt = Date.now() + 60000; } }, 40000);
 }
 
-/** Sáng tạo + bất tử, đọc lại chế độ chơi cho chắc (thử tối đa 3 lần). */
+/** Sinh tồn, không /god (29/10 chủ server: bot ở phòng ẩn kín + chỉ ra khu an toàn spawn / trade / shop, không cần Sáng tạo + bất tử
+ *  nữa; trước đó 27/10 bot đứng đất hoang bị quái giết nên đặt Sáng tạo). Đọc lại chế độ chơi cho chắc (thử tối đa 3 lần). */
 async function creative(name, host) {
   const R = rcon(host);
   for (let i = 0; i < 3; i++) {
-    await R.cmd(`gamemode creative ${name}`);
-    await R.cmd(`god ${name} on`);
-    if (/data: 1$/.test((await R.cmd(`data get entity ${name} playerGameType`)).trim())) return;
+    await R.cmd(`gamemode survival ${name}`);
+    await R.cmd(`god ${name} off`);
+    if (/data: 0$/.test((await R.cmd(`data get entity ${name} playerGameType`)).trim())) return;
     await sleep(2000);
   }
-  log(name, 'không chuyển được Sáng tạo');
+  log(name, 'không chuyển được Sinh tồn');
 }
 
 /** Đưa bot về chỗ đang đứng (at) hoặc chỗ mặc định (home); chết 2 lần trong 3 phút sau khi đặt ở một chỗ thì bỏ chỗ đó. */

@@ -325,7 +325,7 @@ chapters:
     &6SKIN & TỦ SKIN
     &0Vào game tự có skin theo tên tài khoản. &6Đổi skin cần rank có quyền&0 (Hào Kiệt, rank ủng hộ…).
     &1/skin <tên> &0skin tài khoản bản quyền.
-    &1/skin url <link> &0skin từ ảnh PNG.
+    &1/skin url <link> &0(Công Tước) skin từ ảnh PNG; rank khác thêm ảnh qua &1/tuskin them&0 hoặc web.
     &1/tuskin &0tủ skin, bấm [Mặc] để đổi.
     &1/tuskin luu &0lưu skin đang mặc.
     &0Bậc danh phận cao có thêm ô tủ. Trên web tải ảnh lên được.
@@ -903,6 +903,11 @@ chapters:
     &0Đồ có ngọc phát &dánh sáng&0 màu theo loại ngọc, ai cũng thấy. Phẩm khác kiểu hạt: &7Thường&0 chấm, &2Tốt&0 xoáy, &6Hoàn Mỹ&0 vệt xoắn ốc. Năng lượng cạn thì mờ dần.
     &0Thấy rối mắt: &1/caidat&0 tắt "Hiệu ứng hạt người khác".
   - |-
+    &6KHU SHOP (&1/warp shop&6)
+    &0Khung treo tường: &2chuột trái mua 32&0, &6chuột phải bán 32&0, Shift + phải bán hết.
+    &0Tên khung ghi giá cả lô.
+    &8Bán cho server tối đa 8.000 xu/ngày.
+  - |-
     &6ĐƠN NHÀ BUÔN
     &0Gặp &6Nhà Buôn&0 ở &1/warp shop&0: mỗi thứ Hai nhà buôn cần vài món Tinh Luyện, trả &6hơn 20%&0 giá bán + vé gacha.
     &0Mỗi đơn giao 1 lần/tuần, có giới hạn lượt: ai nhanh người đó được.
@@ -1167,8 +1172,16 @@ chapters:
     &1/rank &0xem quyền lợi, &1/vang &0cửa hàng.
   - |-
     &6Quyền lợi rank
-    &0Prefix màu, chat màu, &1/hat&0, &1/nick&0, hiệu ứng hạt &1/pp&0, pet trang trí &1/pet&0 (không cưỡi, không đánh), chào khi vào server, &1/cuahang&0 trong kinh đô, &1/balo&0 (Nam 1, Tử/Bá 2, Hầu 3, Công 4), chờ dịch chuyển 3 giây.
+    &0Prefix màu, chat màu, &1/hat&0, &1/nick&0, hiệu ứng hạt &1/pp&0, chào khi vào server, &1/cuahang&0 trong kinh đô.
+    &0Đổi skin &1/skin&0, tủ skin &1/tuskin&0 (Nam 3 … Công 20 skin).
+    &0Pet trang trí &1/pet&0: Tử mèo, Bá 13 loài, Hầu loài hiếm, Công mọi pet.
     &8Không bán đồ, tiền, cape hay gì liên quan Pokémon.
+  - |-
+    &6Quyền lợi rank (tiếp)
+    &1/balo&0: Nam 2×27 ô, Tử 2×36, Bá 3×36, Hầu 3×45, Công 4×54.
+    &0Chờ dịch chuyển: Nam, Tử, Bá 3 giây; Hầu, Công 2 giây.
+    &0Kho pet chiến đấu: Nam 1 … Công 5.
+    &8Chi tiết từng bậc: &1/rank&8.
   - |-
     &6NẠP VÀNG BẰNG QR
     &1/rank mua&0, chọn số tiền: mã QR hiện ngay trên tay (10 phút), món đang cầm được trả lại khi cất mã.

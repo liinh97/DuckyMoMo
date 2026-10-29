@@ -478,6 +478,15 @@ vote:
     minecraftmp:          # 29/10: minecraft-mp.com, server ID 366061 (Votifier V1 + public key)
       name: "Minecraft-MP"
       url: "https://minecraft-mp.com/server/366061/vote/"
+    minecraftservers:     # 29/10: minecraftservers.org, server 695353
+      name: "MinecraftServers.org"
+      url: "https://minecraftservers.org/vote/695353"
+    serverlist:           # 29/10: minecraft-server-list.com, server 524516
+      name: "Minecraft Server List"
+      url: "https://minecraft-server-list.com/server/524516/vote/"
+    topg:                 # 29/10: topg.org, server 687709 (form vote nằm ngay trên trang server)
+      name: "TopG"
+      url: "https://topg.org/minecraft-servers/server-687709"
 
 # Điểm danh hằng ngày (/diemdanh): đếm TỔNG số ngày (bỏ ngày không mất chuỗi). Lưu: diemdanh.yml
 # Quà, mỗi dòng một món: xu <số> | do <mã thư viện đồ> [số] | vat <VẬT_LIỆU> [số] | lenh <lệnh, {player}> | manh <loại> <số>

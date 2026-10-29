@@ -1488,6 +1488,7 @@ pet-combat:
 # người thật: chỉnh ở đây. Nhóm đông: máu quái x (1 + party-hp x (số người - 1)).
 ham-nguc:
   enabled: true
+  chi-cho: [Itrap, Linh]    # GIAI ĐOẠN THỬ (29/10): chỉ những tên này + admin vào được, nút ở /dungeon ẩn với người khác. [] = mở cho mọi người
   world: hamnguc
   max-party: 4
   party-hp: 0.6

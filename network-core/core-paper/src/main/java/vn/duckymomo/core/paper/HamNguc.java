@@ -310,6 +310,10 @@ final class HamNguc implements Listener {
             s.sendMessage("Lệnh này phải gõ trong game.");
             return true;
         }
+        if (!allowed(p) && !byPlayer.containsKey(p.getUniqueId())) {
+            p.sendMessage(Tip.c("&6⚔ &fHầm Ngục DuckyMoMo &7đang thử nghiệm, sắp mở cho mọi người. Trong lúc chờ: &f/dungeon"));
+            return true;
+        }
         switch (sub) {
             case "thoat", "roi", "leave" -> leave(p, true);
             case "moi", "invite" -> invite(p, args.length >= 2 ? args[1] : "");
@@ -325,6 +329,13 @@ final class HamNguc implements Listener {
             default -> menu(p);
         }
         return true;
+    }
+
+    /** Giai đoạn thử (29/10 chủ server: chưa cho member vào): chi-cho = danh sách tên được vào (+ admin, + quyền duckymomo.hamnguc.thu); trống = mở. */
+    boolean allowed(Player p) {
+        List<String> only = cfg.getStringList("chi-cho");
+        return only.isEmpty() || p.hasPermission("duckymomo.admin") || p.hasPermission("duckymomo.hamnguc.thu")
+                || only.stream().anyMatch(n -> n.equalsIgnoreCase(p.getName()));
     }
 
     private int clears(UUID u, String dg) {

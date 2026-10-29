@@ -487,6 +487,9 @@ vote:
     topg:                 # 29/10: topg.org, server 687709 (form vote nằm ngay trên trang server)
       name: "TopG"
       url: "https://topg.org/minecraft-servers/server-687709"
+    planetminecraft:      # 29/10: planetminecraft.com/server/duckymomo
+      name: "Planet Minecraft"
+      url: "https://www.planetminecraft.com/server/duckymomo/vote/"
 
 # Điểm danh hằng ngày (/diemdanh): đếm TỔNG số ngày (bỏ ngày không mất chuỗi). Lưu: diemdanh.yml
 # Quà, mỗi dòng một món: xu <số> | do <mã thư viện đồ> [số] | vat <VẬT_LIỆU> [số] | lenh <lệnh, {player}> | manh <loại> <số>

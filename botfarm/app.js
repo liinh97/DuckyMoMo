@@ -595,7 +595,7 @@ const wanderCfg = { on: false, room: { x: 11150.5, y: -41, z: -3099.5 }, everyMi
     { name: 'shop', cmd: 'warp shop', x: 12792, z: -2641, order: 'near', npcs: [] }] };
 try { const j = JSON.parse(fs.readFileSync(WANDER_CFG, 'utf8')); wanderCfg.on = !!j.on; wanderCfg.walk = !!j.walk; } catch (e) { /* chưa cài: tắt */ }   // chỉ lưu bật/tắt, điểm + phòng theo code
 function saveWander() { try { fs.writeFileSync(WANDER_CFG, JSON.stringify({ on: wanderCfg.on, walk: wanderCfg.walk })); } catch (e) { log('không lưu được wander.json:', e.message); } }
-function roomSpot(i) { const r = wanderCfg.room; return { x: r.x + (i % 5) - 2, y: r.y, z: r.z + (Math.floor(i / 5) % 5) - 2 }; }
+function roomSpot(i) { const r = wanderCfg.room; return { x: r.x + (i % 7) - 3, y: r.y, z: r.z + (Math.floor(i / 7) % 7) - 3 }; }   // lưới 7×7 (35 bot, 29/10)
 async function gatherRoom() {
   NAMES.forEach((n, i) => {
     const st = state[n];
@@ -817,6 +817,56 @@ setInterval(async () => {
   wanderOnce().then(r => log('đi dạo:', r)).catch(e => log('lỗi đi dạo:', e.message));
 }, 30000);
 
+
+// ---------------------------------------------------------------- thay phiên online (29/10)
+// Chủ server: "35 bot, duy trì đăng nhập tầm 25–31 bot online và thay phiên tránh số lượng online lúc nào cũng giống nhau".
+// Mục tiêu ngẫu nhiên trong [min, max] đổi mỗi 15–50 phút (đêm 1–7 giờ nghiêng thấp, tối 19–23 giờ nghiêng cao); mỗi 2–8 phút chỉnh MỘT
+// bot (thừa: bot online lâu nhất thoát; thiếu: bot nghỉ lâu nhất vào); đủ rồi thì thỉnh thoảng đổi ca (1 thoát, 1–4 phút sau 1 vào).
+// Chỉ bot Bang Hội Chiến; bot đang đi dạo không bị cho thoát. Lưu /state/rotate.json (bật/tắt).
+const ROT_CFG = '/state/rotate.json';
+const rotCfg = { on: false, min: 25, max: 31 };
+try { Object.assign(rotCfg, JSON.parse(fs.readFileSync(ROT_CFG, 'utf8'))); } catch (e) { /* chưa cài: tắt */ }
+function saveRot() { try { fs.writeFileSync(ROT_CFG, JSON.stringify(rotCfg)); } catch (e) { log('không lưu được rotate.json:', e.message); } }
+let rotTarget = null, rotRetarget = 0, rotStep = 0, rotJoinAt = 0;
+function rotPick() {
+  const h = vnHour();
+  let lo = rotCfg.min, hi = rotCfg.max;
+  if (h >= 1 && h < 7) hi = Math.min(hi, lo + 2);
+  else if (h >= 19 && h < 23) lo = Math.max(lo, hi - 2);
+  return lo + Math.floor(Math.random() * (hi - lo + 1));
+}
+function rotLeave(on) {
+  const c = on.filter(n => !RT[n].wander && !RT[n].placing).sort((a, b) => (state[a].since || 0) - (state[b].since || 0));
+  if (!c.length) return null;
+  const n = c[Math.floor(Math.random() * Math.min(3, c.length))];   // một trong 3 bot online lâu nhất
+  state[n].want = false; state[n].offSince = Date.now(); save();
+  if (RT[n].bot) RT[n].bot.quit();
+  return n;
+}
+function rotJoin(off) {
+  const c = off.slice().sort((a, b) => (state[a].offSince || 0) - (state[b].offSince || 0));
+  if (!c.length) return null;
+  const n = c[Math.floor(Math.random() * Math.min(3, c.length))];   // một trong 3 bot nghỉ lâu nhất
+  state[n].want = true; state[n].since = Date.now(); RT[n].retryAt = 0; save();
+  return n;
+}
+setInterval(() => {
+  if (stopping || !rotCfg.on) return;
+  const now = Date.now();
+  const bh = NAMES.filter(n => state[n].server === 'banghoi-1');
+  const on = bh.filter(n => state[n].want), off = bh.filter(n => !state[n].want);
+  if (rotJoinAt && now >= rotJoinAt) { rotJoinAt = 0; const j = rotJoin(off); if (j) log('thay phiên: đổi ca,', j, 'vào'); return; }
+  if (rotTarget == null || now >= rotRetarget) { rotTarget = rotPick(); rotRetarget = now + (15 + Math.random() * 35) * 60000; log('thay phiên: mục tiêu', rotTarget, 'bot'); }
+  if (now < rotStep || rotJoinAt) return;
+  rotStep = now + (2 + Math.random() * 6) * 60000;
+  if (on.length > rotTarget) { const n = rotLeave(on); if (n) log('thay phiên:', n, 'thoát (' + (on.length - 1) + '/' + rotTarget + ')'); }
+  else if (on.length < rotTarget) { const n = rotJoin(off); if (n) log('thay phiên:', n, 'vào (' + (on.length + 1) + '/' + rotTarget + ')'); }
+  else if (off.length && Math.random() < 0.4) {   // đổi ca
+    const n = rotLeave(on);
+    if (n) { rotJoinAt = now + (1 + Math.random() * 3) * 60000; log('thay phiên: đổi ca,', n, 'thoát'); }
+  }
+}, 30000);
+
 // ---------------------------------------------------------------- điều khiển
 
 async function act(b) {
@@ -840,6 +890,7 @@ async function act(b) {
   }
   if (b.action === 'wandercfg') { wanderCfg.on = !!b.on; saveWander(); return 'bot đi dạo khi có người ở spawn / warp: ' + (wanderCfg.on ? 'bật' : 'tắt'); }
   if (b.action === 'wanderwalk') { wanderCfg.walk = !!b.on; saveWander(); return 'bot đi dạo: ' + (wanderCfg.walk ? 'được đi lại (cần grim.exempt)' : 'chỉ đứng nhìn quanh'); }
+  if (b.action === 'rotcfg') { rotCfg.on = !!b.on; saveRot(); rotTarget = null; return 'thay phiên online: ' + (rotCfg.on ? 'bật (' + rotCfg.min + '–' + rotCfg.max + ' bot)' : 'tắt'); }
   if (b.action === 'wandernow') return await wanderOnce();
   if (b.action === 'gomphong') return await gatherRoom();
   if (b.action === 'trave') return await backHomes();
@@ -934,7 +985,11 @@ async function create(name, server) {
   // như bot gốc: vào / ra không báo [+] [-] — cấp trước lần vào đầu (bot gốc cấp sau khi vào nên lần đầu vẫn hiện [+])
   await rcon('banghoi-1').cmd(`lp user ${offlineUuid(name)} permission set duckymomo.vaora.an true`).catch(() => {});
   state[name] = { server: srv, want: true, home: {}, at: {}, created: now(), ipn };
-  NAMES.push(name); RT[name] = newRT(); save();
+  NAMES.push(name); RT[name] = newRT();
+  if (NAMES.some(n => n !== name && state[n].homeOld !== undefined)) {   // đang dùng phòng ẩn: bot mới vào thẳng phòng (29/10)
+    state[name].homeOld = null; state[name].home['banghoi-1'] = roomSpot(NAMES.indexOf(name));
+  }
+  save();
   event({ type: 'doi', bot: name, server: srv, text: 'đã tạo bot ' + name + ', đang vào ' + SERVERS[srv] });
   return 'đã tạo bot ' + name + ', sẽ vào ' + SERVERS[srv] + ' trong ít giây';
 }
@@ -956,6 +1011,7 @@ http.createServer((req, res) => {
       chat: chatCfg,
       tpa: tpaCfg,
       tpagia: ftpaCfg,
+      thayphien: { on: rotCfg.on, min: rotCfg.min, max: rotCfg.max, muctieu: rotTarget },
       dido: { on: wanderCfg.on, phong: NAMES.some(n => state[n].homeOld !== undefined), dang: NAMES.filter(n => RT[n].wander) },
     });
   }

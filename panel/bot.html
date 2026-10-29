@@ -106,6 +106,8 @@
       <button type="button" class="mini" id="wdRoom" title="Đặt chỗ mặc định của mọi bot vào phòng ẩn (chỗ cũ được giữ để trả lại)">Gom vào phòng ẩn</button>
       <button type="button" class="mini" id="wdBack" title="Trả mọi bot về chỗ đứng cũ (trước khi gom)">Trả về chỗ cũ</button>
       <span class="hint" id="wdState"></span>
+      <label class="chk" title="Giữ 25–31 bot online ở Bang Hội Chiến, mục tiêu đổi mỗi 15–50 phút (đêm thấp, tối cao); mỗi 2–8 phút chỉnh một bot, đủ rồi thì thỉnh thoảng đổi ca (1 thoát, 1–4 phút sau 1 vào). Bật thì nút Vào / Thoát từng bot có thể bị thay phiên ghi đè."><input type="checkbox" id="rotOn"> Thay phiên online 25–31</label>
+      <span class="hint" id="rotState"></span>
     </form>
     <div id="bots"><div class="empty">Đang tải…</div></div>
   </div>
@@ -208,6 +210,7 @@ $("ftpaOn").onchange = () => act({ action: "ftpacfg", on: $("ftpaOn").checked })
 $("tcNow").onclick = () => act({ action: "chatnow" });
 $("wdOn").onchange = () => act({ action: "wandercfg", on: $("wdOn").checked });
 $("wdNow").onclick = () => act({ action: "wandernow" });
+$("rotOn").onchange = () => act({ action: "rotcfg", on: $("rotOn").checked });
 $("wdRoom").onclick = async () => { if (await ask("Đặt chỗ mặc định của mọi bot vào phòng ẩn? Bot đang online sẽ được dời ngay; chỗ cũ được giữ để trả lại.", { title: "Gom vào phòng ẩn", ok: "Gom" })) act({ action: "gomphong" }); };
 $("wdBack").onclick = async () => { if (await ask("Trả mọi bot về chỗ đứng cũ (trước khi gom vào phòng ẩn)?", { title: "Trả về chỗ cũ", ok: "Trả về" })) act({ action: "trave" }); };
 $("allDev").onclick = async () => { if (await ask(`Bật tự phát triển cho cả ${BOTS.length} bot? Mỗi bot được gán ngẫu nhiên một tính cách và nhịp riêng.`, { title: "Tự phát triển", ok: "Bật" })) act({ bot: "*", action: "phattrien", on: true }); };
@@ -230,6 +233,9 @@ async function loadBots() {
     if (d.tpa && document.activeElement !== $("tpaOn")) $("tpaOn").checked = !!d.tpa.on;
     $("ftpaOn").disabled = !d.tpagia;   // botfarm chưa có tính năng (chưa dựng lại)
     if (d.tpagia && document.activeElement !== $("ftpaOn")) $("ftpaOn").checked = !!d.tpagia.on;
+    $("rotOn").disabled = !d.thayphien;
+    if (d.thayphien && document.activeElement !== $("rotOn")) $("rotOn").checked = !!d.thayphien.on;
+    $("rotState").textContent = d.thayphien && d.thayphien.on && d.thayphien.muctieu ? "· mục tiêu " + d.thayphien.muctieu + " bot" : "";
     $("wdOn").disabled = !d.dido;   // botfarm chưa có tính năng (chưa dựng lại)
     if (d.dido && document.activeElement !== $("wdOn")) $("wdOn").checked = !!d.dido.on;
     $("wdState").textContent = d.dido ? (d.dido.phong ? "· đang ở phòng ẩn" : "· chưa gom") + (d.dido.dang.length ? " · đi dạo: " + d.dido.dang.join(", ") : "") : "";

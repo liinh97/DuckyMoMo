@@ -69,31 +69,31 @@ donate-ranks:
     - group: namtuoc
       name: Nam Tước
       color: "&a"
-      perks: [prefix, chat màu, /hat, chào khi vào server, /cuahang khi ở kinh đô, 2 balo 27 ô (/balo), chờ dịch chuyển 3 giây]
+      perks: [prefix, chat màu, /hat, /disposal (thùng rác), chào khi vào server, /cuahang khi ở kinh đô, 2 balo 27 ô (/balo), chờ dịch chuyển 3 giây, "đổi skin (/skin, /skins), tủ 3 skin (/tuskin)", kho 1 pet chiến đấu (MyPet)]
       prices: [1 tháng 20k, 3 tháng 50k, 6 tháng 90k, 1 năm 160k]
       skins: []          # skin độc quyền (tên custom skin SkinsRestorer: /sr createcustom <tên> <link>), bậc cao kế thừa bậc thấp
     - group: tutuoc
       name: Tử Tước
       color: "&b"
-      perks: [/nick, 1 hiệu ứng hạt (/pp), 2 balo 36 ô]
+      perks: [/nick, 1 hiệu ứng hạt (/pp), 2 balo 36 ô, tủ 5 skin, kho 2 pet chiến đấu]
       prices: [1 tháng 40k, 3 tháng 100k, 6 tháng 180k, 1 năm 320k]
       skins: []          # skin độc quyền (tên custom skin SkinsRestorer: /sr createcustom <tên> <link>), bậc cao kế thừa bậc thấp
     - group: batuoc
       name: Bá Tước
       color: "&9"
-      perks: [nick có màu, 2 hiệu ứng hạt, 1 pet (/pet), 3 balo 36 ô]
+      perks: [nick có màu, 2 hiệu ứng hạt, 1 pet (/pet), 3 balo 36 ô, tủ 8 skin, kho 3 pet chiến đấu]
       prices: [1 tháng 70k, 3 tháng 180k, 6 tháng 320k, 1 năm 560k]
       skins: []          # skin độc quyền (tên custom skin SkinsRestorer: /sr createcustom <tên> <link>), bậc cao kế thừa bậc thấp
     - group: hautuoc
       name: Hầu Tước
       color: "&d"
-      perks: [chat đậm/nghiêng, 3 hiệu ứng hạt, pet hiếm, 3 balo 45 ô, chờ dịch chuyển 2 giây]
+      perks: [chat đậm/nghiêng, 3 hiệu ứng hạt, pet hiếm, 3 balo 45 ô, chờ dịch chuyển 2 giây, tủ 12 skin, kho 4 pet chiến đấu]
       prices: [1 tháng 100k, 3 tháng 260k, 6 tháng 460k, 1 năm 800k]
       skins: []          # skin độc quyền (tên custom skin SkinsRestorer: /sr createcustom <tên> <link>), bậc cao kế thừa bậc thấp
     - group: congtuoc
       name: Công Tước
       color: "&6"
-      perks: [chat/nick màu tuỳ chọn (hex), 6 hiệu ứng hạt, mọi pet, chuông khi vào server, 4 balo 54 ô, chờ dịch chuyển 2 giây]
+      perks: [chat/nick màu tuỳ chọn (hex), 6 hiệu ứng hạt, mọi pet, chuông khi vào server, 4 balo 54 ô, chờ dịch chuyển 2 giây, tủ 20 skin + đặt skin từ link (/skin url), kho 5 pet chiến đấu]
       prices: [1 tháng 150k, 3 tháng 390k, 6 tháng 690k, 1 năm 1.200k]
       skins: []          # skin độc quyền (tên custom skin SkinsRestorer: /sr createcustom <tên> <link>), bậc cao kế thừa bậc thấp
 

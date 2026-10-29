@@ -2277,6 +2277,16 @@ body-temp:
   food-cool: 5
   tip-minutes: 5
 
+# Phòng ẩn bot (29/10): bot botfarm đứng trong vùng này thì không ai thấy (tên vẫn ở TAB). Đặt xa mọi warp / spawn > 128 khối
+# (tầm theo dõi người chơi) để bot ra / vào phòng thì client tự tạo / xoá. Cần packetevents. Botfarm: /state/wander.json room.
+bot-hide:
+  enabled: true
+  world: world
+  x: 11150.5
+  y: -40
+  z: -3099.5
+  radius: 8
+
 armor-hide:
   enabled: true
   combat-seconds: 15

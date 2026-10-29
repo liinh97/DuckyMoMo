@@ -68,6 +68,55 @@ final class BotView implements Listener {
         Bukkit.getScheduler().runTaskTimer(plugin, this::cleanup, 200L, 1200L);
     }
 
+    // ---------------------------------------------------------------- phòng ẩn (29/10)
+    private String hideWorld;
+    private double hideX;
+    private double hideY;
+    private double hideZ;
+    private double hideR;
+
+    /** Bot trong phòng ẩn (bot-hide {world, x, y, z, radius}) thì không ai thấy (BotHidePackets). Cần packetevents. */
+    void startHide(org.bukkit.plugin.Plugin plugin, org.bukkit.configuration.ConfigurationSection c) {
+        if (c == null || !c.getBoolean("enabled") || !Bukkit.getPluginManager().isPluginEnabled("packetevents")) {
+            return;
+        }
+        hideWorld = c.getString("world", "world");
+        hideX = c.getDouble("x");
+        hideY = c.getDouble("y");
+        hideZ = c.getDouble("z");
+        hideR = c.getDouble("radius", 8);
+        BotHidePackets.register();
+        BotHidePackets.HIDDEN.clear();
+        Bukkit.getScheduler().runTaskTimer(plugin, () -> {
+            for (Player p : Bukkit.getOnlinePlayers()) {
+                hideCheck(p, p.getLocation());
+            }
+        }, 20L, 20L);
+        log.info("Phòng ẩn bot: " + hideWorld + " " + (int) hideX + " " + (int) hideY + " " + (int) hideZ + " (bán kính " + (int) hideR + ")");
+    }
+
+    private boolean inRoom(org.bukkit.Location l) {
+        return hideWorld != null && l.getWorld() != null && l.getWorld().getName().equals(hideWorld)
+                && Math.abs(l.getY() - hideY) <= hideR && (l.getX() - hideX) * (l.getX() - hideX) + (l.getZ() - hideZ) * (l.getZ() - hideZ) <= hideR * hideR;
+    }
+
+    private void hideCheck(Player p, org.bukkit.Location at) {
+        if (hideWorld == null) {
+            return;
+        }
+        if (isBot(p) && inRoom(at)) {
+            BotHidePackets.HIDDEN.add(p.getEntityId());
+        } else {
+            BotHidePackets.HIDDEN.remove(p.getEntityId());
+        }
+    }
+
+    /** Dịch chuyển: cập nhật ngay theo chỗ tới (trước khi server gửi gói hiện bot cho người ở chỗ mới). */
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onTeleport(org.bukkit.event.player.PlayerTeleportEvent e) {
+        hideCheck(e.getPlayer(), e.getTo());
+    }
+
     private void cleanup() {
         List<Player> real = new ArrayList<>();
         boolean anyBot = false;

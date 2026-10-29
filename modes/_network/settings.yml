@@ -102,6 +102,7 @@ tier1_prices:
 tier1_perks:
   - /nick
   - 1 hiệu ứng hạt (/pp)
+  - pet trang trí: mèo (/pet)
   - 2 balo 36 ô
   - tủ 5 skin
   - kho 2 pet chiến đấu
@@ -115,7 +116,7 @@ tier2_prices:
 tier2_perks:
   - nick có màu
   - 2 hiệu ứng hạt
-  - 1 pet (/pet)
+  - pet trang trí 13 loài: sói, cáo, ong, vẹt…
   - 3 balo 36 ô
   - tủ 8 skin
   - kho 3 pet chiến đấu
@@ -129,7 +130,7 @@ tier3_prices:
 tier3_perks:
   - chat đậm/nghiêng
   - 3 hiệu ứng hạt
-  - pet hiếm
+  - pet trang trí hiếm: lạc đà, gấu trắng, cá heo, gấu trúc…
   - 3 balo 45 ô
   - chờ dịch chuyển 2 giây
   - tủ 12 skin
@@ -144,7 +145,7 @@ tier4_prices:
 tier4_perks:
   - chat/nick màu tuỳ chọn (hex)
   - 6 hiệu ứng hạt
-  - mọi pet
+  - mọi pet trang trí (cả loài quái)
   - chuông khi vào server
   - 4 balo 54 ô
   - chờ dịch chuyển 2 giây

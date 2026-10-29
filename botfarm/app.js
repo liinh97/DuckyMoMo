@@ -902,7 +902,14 @@ async function act(b) {
   }
   if (b.action === 'wandercfg') { wanderCfg.on = !!b.on; saveWander(); return 'bot đi dạo khi có người ở spawn / warp: ' + (wanderCfg.on ? 'bật' : 'tắt'); }
   if (b.action === 'wanderwalk') { wanderCfg.walk = !!b.on; saveWander(); return 'bot đi dạo: ' + (wanderCfg.walk ? 'được đi lại (cần grim.exempt)' : 'chỉ đứng nhìn quanh'); }
-  if (b.action === 'rotcfg') { rotCfg.on = !!b.on; saveRot(); rotTarget = null; return 'thay phiên online: ' + (rotCfg.on ? 'bật (' + rotCfg.min + '–' + rotCfg.max + ' bot)' : 'tắt'); }
+  if (b.action === 'rotcfg') {
+    if (b.min != null || b.max != null) {   // 29/10: chỉnh khoảng số bot qua /act, khỏi sửa rotate.json tay
+      const min = Math.round(+b.min), max = Math.round(+b.max);
+      if (!(min >= 1 && max >= min && max <= 100)) throw new Error('khoảng bot không hợp lệ (1 ≤ từ ≤ đến ≤ 100)');
+      rotCfg.min = min; rotCfg.max = max;
+    }
+    if (b.on != null) rotCfg.on = !!b.on;
+    saveRot(); rotTarget = null; return 'thay phiên online: ' + (rotCfg.on ? 'bật (' + rotCfg.min + '–' + rotCfg.max + ' bot)' : 'tắt'); }
   if (b.action === 'staff') {
     staffSet = new Set((Array.isArray(b.names) ? b.names : []).map(x => String(x).toLowerCase()));
     try { fs.writeFileSync(STAFF_FILE, JSON.stringify([...staffSet])); } catch (e) { /* bỏ qua */ }
@@ -917,7 +924,7 @@ async function act(b) {
     for (const n of NAMES) out.push(await act(Object.assign({}, b, { bot: n })).catch(e => e.message));
     return out.length + ' bot: ' + (b.action === 'join' ? 'vào' : b.action === 'leave' ? 'thoát' : b.action);
   }
-  if (b.action === 'create') return create(String(b.bot || '').trim(), b.server);
+  if (b.action === 'create') return create(String(b.bot || '').trim(), b.server, b.want !== false);
   const st = state[b.bot], rt = RT[b.bot];
   if (!st) throw new Error('không có bot ' + b.bot);
   const text = String(b.text || '').replace(/[\x00-\x1f\x7f§]/g, '').trim().slice(0, 240);
@@ -994,21 +1001,22 @@ function offlineUuid(name) {
   const x = h.toString('hex'); return `${x.slice(0, 8)}-${x.slice(8, 12)}-${x.slice(12, 16)}-${x.slice(16, 20)}-${x.slice(20)}`;
 }
 
-async function create(name, server) {
+async function create(name, server, want = true) {   // want=false: tạo ở trạng thái nghỉ, thay phiên cho vào dần
   if (!/^[A-Za-z0-9_]{3,16}$/.test(name)) throw new Error('tên bot 3–16 ký tự, chỉ chữ không dấu, số, gạch dưới');
   if (NAMES.some(n => n.toLowerCase() === name.toLowerCase())) throw new Error('đã có bot tên ' + name);
   const srv = SERVERS[server] ? server : 'banghoi-1';
   const ipn = Math.max(BASE.length, ...NAMES.map(n => state[n].ipn || 0)) + 1;
   // như bot gốc: vào / ra không báo [+] [-] — cấp trước lần vào đầu (bot gốc cấp sau khi vào nên lần đầu vẫn hiện [+])
   await rcon('banghoi-1').cmd(`lp user ${offlineUuid(name)} permission set duckymomo.vaora.an true`).catch(() => {});
-  state[name] = { server: srv, want: true, home: {}, at: {}, created: now(), ipn };
+  state[name] = { server: srv, want, home: {}, at: {}, created: now(), ipn };
+  if (!want) state[name].offSince = Date.now();
   NAMES.push(name); RT[name] = newRT();
   if (NAMES.some(n => n !== name && state[n].homeOld !== undefined)) {   // đang dùng phòng ẩn: bot mới vào thẳng phòng (29/10)
     state[name].homeOld = null; state[name].home['banghoi-1'] = roomSpot(NAMES.indexOf(name));
   }
   save();
   event({ type: 'doi', bot: name, server: srv, text: 'đã tạo bot ' + name + ', đang vào ' + SERVERS[srv] });
-  return 'đã tạo bot ' + name + ', sẽ vào ' + SERVERS[srv] + ' trong ít giây';
+  return 'đã tạo bot ' + name + (want ? ', sẽ vào ' + SERVERS[srv] + ' trong ít giây' : ', đang nghỉ (thay phiên sẽ cho vào)');
 }
 
 http.createServer((req, res) => {

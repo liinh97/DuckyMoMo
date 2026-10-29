@@ -71,9 +71,7 @@ import org.bukkit.scheduler.BukkitTask;
  */
 final class HamNguc implements Listener {
 
-    private static final int ROOM = 17;          // ruột phòng 17 x 17
-    private static final int CORRIDOR = 7;       // hành lang dài 7
-    private static final int STEP = ROOM + 2 + CORRIDOR;
+    private static final int CORRIDOR = 9;       // hành lang dài 9, ruột rộng 5
     private static final int FLOOR_Y = -60;      // thế giới phẳng: mặt cỏ ở -61, hầm đặt ngay trên
     private static final int SLOT_GAP = 512;
     private static final int SLOTS = 64;
@@ -131,6 +129,18 @@ final class HamNguc implements Listener {
             this.started = new boolean[dg.rooms()];
             this.cleared = new boolean[dg.rooms()];
             this.spawning = new int[dg.rooms()];
+            int n = dg.rooms();
+            int last = n - 1;
+            rx = new int[n];
+            sz = new int[n];
+            ht = new int[n];
+            int x = slot * SLOT_GAP;
+            for (int i = 0; i < n; i++) {
+                sz[i] = i == 0 ? 21 : i == last ? 41 : i == last / 2 ? 33 : 29;
+                ht[i] = i == 0 ? 8 : i == last ? 15 : i == last / 2 ? 11 : 9;
+                rx[i] = x;
+                x += sz[i] + 2 + CORRIDOR;
+            }
             for (int i = 0; i < dg.rooms(); i++) {
                 roomMobs.add(new ArrayList<>());
                 cages.add(new ArrayList<>());
@@ -140,12 +150,29 @@ final class HamNguc implements Listener {
             cleared[0] = true;
         }
 
+        final int[] rx;   // x tường trái phòng i
+        final int[] sz;   // ruột phòng (lẻ, vuông): đầu 21, đánh 29, phó trùm 33, trùm 41 (29/10 chủ server: phòng phải là khu to)
+        final int[] ht;   // cao ruột
+        final List<long[]> tickets = new ArrayList<>();
+
         int baseX() {
             return slot * SLOT_GAP;
         }
 
-        int roomX(int i) {   // x của tường trái phòng i
-            return baseX() + i * STEP;
+        int roomX(int i) {
+            return rx[i];
+        }
+
+        int x1(int i) {   // tường phải
+            return rx[i] + sz[i] + 1;
+        }
+
+        int cx(int i) {   // giữa phòng
+            return rx[i] + sz[i] / 2 + 1;
+        }
+
+        int half(int i) {   // tường ở z = ±half
+            return sz[i] / 2 + 1;
         }
     }
 
@@ -416,7 +443,7 @@ final class HamNguc implements Listener {
 
     private Location entrance(Run r) {
         World w = Bukkit.getWorld(worldName);
-        return new Location(w, r.roomX(0) + 5.5, FLOOR_Y + 1, 0.5, -90f, 0f);
+        return new Location(w, r.roomX(0) + 4.5, FLOOR_Y + 1, 0.5, -90f, 0f);
     }
 
     private void enter(Player p, Run r) {
@@ -555,13 +582,19 @@ final class HamNguc implements Listener {
                 }
             }
         }
+        if (w != null) {
+            for (long[] c : r.tickets) {
+                w.removePluginChunkTicket((int) c[0], (int) c[1], plugin);
+            }
+        }
         runs.remove(r.slot);
         waveTotal.keySet().removeIf(k -> k / 16 == r.id);
     }
 
     private boolean near(Entity e, Run r) {
-        double x = e.getLocation().getX() - r.baseX();
-        return x > -20 && x < r.dg.rooms() * STEP + 20;
+        double x = e.getLocation().getX();
+        int last = r.dg.rooms() - 1;
+        return x > r.baseX() - 20 && x < r.x1(last) + 20;
     }
 
     // ------------------------------------------------------------------ dựng hầm ngục
@@ -625,31 +658,48 @@ final class HamNguc implements Listener {
         return a[rnd.nextInt(a.length)];
     }
 
-    private int roomHeight(Run r, int i) {
-        return i == r.dg.rooms() - 1 ? 10 : 7;
-    }
-
-    /** Dựng từng phòng mỗi tick (xoá sạch hộp trước, ô có thể còn đồ dựng của lượt cũ), xong gọi done. */
+    /** Nạp trước (bất đồng bộ) mọi chunk của lượt, giữ bằng vé plugin, rồi dựng từng phòng mỗi tick; xong gọi done. */
     private void build(World w, Run r, Runnable done) {
         Theme t = theme(r.dg.theme());
-        int[] i = {0};
-        Bukkit.getScheduler().runTaskTimer(plugin, task -> {
-            if (!runs.containsValue(r)) {
-                task.cancel();
-                return;
+        int last = r.dg.rooms() - 1;
+        int maxHalf = 0;
+        for (int i = 0; i <= last; i++) {
+            maxHalf = Math.max(maxHalf, r.half(i));
+        }
+        List<java.util.concurrent.CompletableFuture<org.bukkit.Chunk>> fs = new ArrayList<>();
+        for (int cx = (r.baseX() - 4) >> 4; cx <= (r.x1(last) + 4) >> 4; cx++) {
+            for (int cz = (-maxHalf - 6) >> 4; cz <= (maxHalf + 6) >> 4; cz++) {
+                fs.add(w.getChunkAtAsync(cx, cz));
+                r.tickets.add(new long[] {cx, cz});
             }
-            if (i[0] >= r.dg.rooms()) {
-                task.cancel();
-                done.run();
-                return;
-            }
-            try {
-                buildRoom(w, r, t, i[0]);
-            } catch (RuntimeException ex) {
-                plugin.getLogger().warning("Hầm Ngục: lỗi dựng phòng " + i[0] + " của " + r.dg.id() + ": " + ex);
-            }
-            i[0]++;
-        }, 1L, 1L);
+        }
+        java.util.concurrent.CompletableFuture.allOf(fs.toArray(new java.util.concurrent.CompletableFuture[0])).whenComplete((v, ex) ->
+                Bukkit.getScheduler().runTask(plugin, () -> {
+                    if (!runs.containsValue(r)) {
+                        return;
+                    }
+                    for (long[] c : r.tickets) {
+                        w.addPluginChunkTicket((int) c[0], (int) c[1], plugin);
+                    }
+                    int[] i = {0};
+                    Bukkit.getScheduler().runTaskTimer(plugin, task -> {
+                        if (!runs.containsValue(r)) {
+                            task.cancel();
+                            return;
+                        }
+                        if (i[0] > last) {
+                            task.cancel();
+                            done.run();
+                            return;
+                        }
+                        try {
+                            buildRoom(w, r, t, i[0]);
+                        } catch (RuntimeException e2) {
+                            plugin.getLogger().warning("Hầm Ngục: lỗi dựng phòng " + i[0] + " của " + r.dg.id() + ": " + e2);
+                        }
+                        i[0]++;
+                    }, 1L, 2L);
+                }));
     }
 
     private void set(World w, int x, int y, int z, Material m) {
@@ -668,167 +718,173 @@ final class HamNguc implements Listener {
 
     private final Set<String> badBlocks = new HashSet<>();
 
+    private boolean air(World w, int x, int y, int z) {
+        return w.getBlockAt(x, y, z).getType() == Material.AIR;
+    }
+
+    /** Một cột: chân + mũ trim, thân pillar. */
+    private void column(World w, Theme t, int x, int z, int yFrom, int yTo) {
+        for (int y = yFrom; y <= yTo; y++) {
+            set(w, x, y, z, y == yFrom || y == yTo ? t.trim() : t.pillar());
+        }
+    }
+
     private void buildRoom(World w, Run r, Theme t, int i) {
         ThreadLocalRandom rnd = ThreadLocalRandom.current();
-        int x0 = r.roomX(i);
-        int x1 = x0 + ROOM + 1;
-        int h = roomHeight(r, i);
-        int half = ROOM / 2 + 1;   // tường ở z = ±9
         int last = r.dg.rooms() - 1;
         int mid = last / 2;
+        int x0 = r.rx[i];
+        int s = r.sz[i];
+        int x1 = r.x1(i);
+        int h = r.ht[i];
+        int half = r.half(i);
+        int cx = r.cx(i);
         int y0 = FLOOR_Y;
-        // xoá hộp phòng + hành lang phía sau
-        for (int x = x0 - 1; x <= x0 + STEP; x++) {
-            for (int z = -half - 1; z <= half + 1; z++) {
-                for (int y = y0; y <= y0 + 14; y++) {
-                    if (w.getBlockAt(x, y, z).getType() != Material.AIR) {
+        boolean big = s >= 29;
+        // ---- xoá hộp phòng + hành lang phía sau (ô có thể còn đồ của lượt cũ)
+        int xEnd = i < last ? r.rx[i + 1] - 1 : x1 + 1;
+        for (int x = x0 - 1; x <= xEnd; x++) {
+            for (int z = -half - 2; z <= half + 2; z++) {
+                for (int y = y0; y <= y0 + h + 5; y++) {
+                    if (!air(w, x, y, z)) {
                         set(w, x, y, z, Material.AIR);
                     }
                 }
             }
         }
+        // ---- sàn, tường, trần vòm có sườn
         for (int x = x0; x <= x1; x++) {
             for (int z = -half; z <= half; z++) {
-                int d = Math.min(Math.min(x - x0, x1 - x), Math.min(z + half, half - z));   // cách tường bao nhiêu
-                boolean edge = d == 0;
-                // sàn: viền, lối giữa, còn lại trộn
-                Material fl = edge ? t.base() : d == 1 ? t.accent() : Math.abs(z) <= 1 ? t.path()
-                        : (x + z) % 7 == 0 ? t.accent() : pick(t.floor(), rnd);
+                int d = Math.min(Math.min(x - x0, x1 - x), Math.min(z + half, half - z));
+                Material fl = d == 0 ? t.base() : d == 1 || big && d == 4 ? t.accent()
+                        : Math.abs(z) <= 1 || Math.abs(x - cx) <= 1 ? t.path()
+                        : Math.floorMod(x + z, 9) == 0 || Math.floorMod(x - z, 9) == 0 ? t.accent() : pick(t.floor(), rnd);
                 set(w, x, y0, z, fl);
-                if (edge) {   // tường: chân, thân (trụ ốp mỗi 4 khối), đỉnh
+                if (d == 0) {
                     boolean pilaster = (x == x0 || x == x1) ? Math.floorMod(z, 4) == 0 : Math.floorMod(x - x0, 4) == 0;
                     for (int y = y0 + 1; y <= y0 + h + 1; y++) {
-                        Material m = y == y0 + 1 ? t.base() : y == y0 + h + 1 ? t.trim() : pilaster ? t.pillar() : pick(t.wall(), rnd);
+                        Material m = y == y0 + 1 ? t.base() : y == y0 + h + 1 || h >= 9 && y == y0 + h - 2 ? t.trim()
+                                : pilaster ? t.pillar() : pick(t.wall(), rnd);
                         set(w, x, y, z, m);
                     }
-                    set(w, x, y0 + h + 2, z, t.trim());
-                } else {   // trần vòm: sát tường thấp, giữa cao hơn 1, vòng chuyển bằng trim
-                    if (d == 1) {
-                        set(w, x, y0 + h + 1, z, pick(t.ceil(), rnd));
+                } else if (d == 1) {
+                    set(w, x, y0 + h + 1, z, pick(t.ceil(), rnd));
+                } else if (d == 2) {
+                    set(w, x, y0 + h + 1, z, t.trim());
+                    set(w, x, y0 + h + 2, z, pick(t.ceil(), rnd));
+                } else {
+                    if (d == 3 || Math.floorMod(x - x0, 6) == 0 || z == 0) {
+                        set(w, x, y0 + h + 2, z, t.trim());   // sườn vòm
+                    }
+                    set(w, x, y0 + h + 3, z, pick(t.ceil(), rnd));
+                }
+            }
+        }
+        // ---- hốc tường hai bên (đặt đồ trang trí)
+        if (big) {
+            for (int x = x0 + 6; x < x1 - 3; x += 8) {
+                for (int sd : new int[] {-1, 1}) {
+                    int zw = sd * half;
+                    for (int y = y0 + 1; y <= y0 + 3; y++) {
+                        set(w, x, y, zw, Material.AIR);
+                        set(w, x, y, zw + sd, y == y0 + 1 ? t.base() : t.trim());
+                    }
+                    set(w, x, y0, zw, t.accent());
+                    Material dc = pick(t.deco(), rnd);
+                    if (rnd.nextInt(3) == 0) {
+                        set(w, x, y0 + 1, zw, "minecraft:candle[candles=4,lit=true]");
                     } else {
-                        if (d == 2) {
-                            set(w, x, y0 + h + 1, z, t.trim());
-                        }
-                        set(w, x, y0 + h + 2, z, pick(t.ceil(), rnd));
+                        set(w, x, y0 + 1, zw, dc);
                     }
                 }
             }
         }
-        // cột 4 góc trong (phòng trùm: 6 cột), mũ cột
-        int[] colX = i == last ? new int[] {x0 + 3, x0 + 9, x0 + 15} : new int[] {x0 + 3, x0 + ROOM - 2};
-        for (int cx : colX) {
-            for (int cz : new int[] {-5, 5}) {
-                for (int y = y0 + 1; y <= y0 + h + 1; y++) {
-                    set(w, cx, y, cz, y == y0 + 1 || y == y0 + h + 1 ? t.trim() : t.pillar());
+        // ---- cột lớn: 2 hàng dọc phòng (phòng nhỏ: 4 góc)
+        int ctop = y0 + h + 2;
+        if (big) {
+            for (int x = x0 + 4; x <= x1 - 4; x += 8) {
+                for (int z : new int[] {-(half - 5), half - 5}) {
+                    column(w, t, x, z, y0 + 1, ctop);
+                }
+            }
+        } else {
+            for (int x : new int[] {x0 + 3, x1 - 3}) {
+                for (int z : new int[] {-(half - 4), half - 4}) {
+                    column(w, t, x, z, y0 + 1, ctop);
                 }
             }
         }
-        // đèn chùm: xích + đèn treo
-        for (int x = x0 + 6; x <= x1 - 6; x += 6) {
-            for (int z : new int[] {-3, 3}) {
-                set(w, x, y0 + h + 1, z, "minecraft:iron_chain[axis=y]");
-                set(w, x, y0 + h, z, t.lantern());
+        // ---- đèn chùm: lưới, xích 2 khối + đèn
+        for (int x = x0 + (big ? 8 : 6); x <= x1 - 6; x += 8) {
+            for (int z : big ? new int[] {-(half - 9), 0, half - 9} : new int[] {-3, 3}) {
+                int top = big ? y0 + h + 2 : y0 + h + 1;
+                set(w, x, top, z, "minecraft:iron_chain[axis=y]");
+                set(w, x, top - 1, z, "minecraft:iron_chain[axis=y]");
+                set(w, x, top - 2, z, t.lantern());
             }
         }
-        // đuốc tường mỗi 4 khối (giữa 2 trụ ốp), tránh lỗ cửa
+        // ---- đuốc tường, cờ treo
         for (int x = x0 + 2; x < x1; x += 4) {
-            set(w, x, y0 + 3, -half + 1, t.torch() + "[facing=south]");
-            set(w, x, y0 + 3, half - 1, t.torch() + "[facing=north]");
+            boolean alcove = big && Math.floorMod(x - x0 - 6, 8) == 0;
+            if (!alcove) {
+                set(w, x, y0 + 3, -half + 1, t.torch() + "[facing=south]");
+                set(w, x, y0 + 3, half - 1, t.torch() + "[facing=north]");
+            }
         }
         for (int z = -half + 2; z < half; z += 4) {
-            if (Math.abs(z) > 2) {
+            if (Math.abs(z) > 3) {
                 if (i > 0) {
                     set(w, x0 + 1, y0 + 3, z, t.torch() + "[facing=east]");
                 }
                 set(w, x1 - 1, y0 + 3, z, t.torch() + "[facing=west]");
             }
         }
-        // góc phòng + sát tường: đồ trang trí
-        for (int[] c : new int[][] {{x0 + 1, -half + 1}, {x0 + 1, half - 1}, {x1 - 1, -half + 1}, {x1 - 1, half - 1}}) {
-            set(w, c[0], y0 + h, c[1], Material.COBWEB);
-        }
-        for (int n = 0; n < 10; n++) {
-            int x = x0 + 2 + rnd.nextInt(ROOM - 2);
-            int z = rnd.nextBoolean() ? -half + 1 : half - 1;
-            if (w.getBlockAt(x, y0 + 1, z).getType() == Material.AIR) {
-                set(w, x, y0 + 1, z, pick(t.deco(), rnd));
-            }
-        }
-        // cờ treo tường phía trên đuốc
-        for (int x = x0 + 2; x < x1; x += 8) {
+        for (int x = x0 + 4; x < x1 - 1; x += 8) {
             set(w, x, y0 + h - 1, -half + 1, t.banner() + "[facing=south]");
             set(w, x, y0 + h - 1, half - 1, t.banner() + "[facing=north]");
         }
-        // đồ treo trần + xích rủ (không trên lối giữa)
-        for (int n = 0; n < 9; n++) {
-            int x = x0 + 3 + rnd.nextInt(ROOM - 4);
-            int z = (rnd.nextBoolean() ? 1 : -1) * (3 + rnd.nextInt(5));
-            int top = y0 + h + 1 + (Math.min(Math.min(x - x0, x1 - x), Math.min(z + half, half - z)) >= 2 ? 1 : 0);
-            if (w.getBlockAt(x, top - 1, z).getType() != Material.AIR) {
+        // ---- đồ treo trần, xích rủ
+        for (int n = 0; n < s * s / 35; n++) {
+            int x = x0 + 3 + rnd.nextInt(s - 4);
+            int z = -half + 3 + rnd.nextInt(2 * half - 5);
+            int d = Math.min(Math.min(x - x0, x1 - x), Math.min(z + half, half - z));
+            int under = d <= 1 ? y0 + h : d == 2 ? y0 + h + 1 : y0 + h + 2;
+            if (!air(w, x, under, z)) {
                 continue;
             }
-            if (n % 3 == 0) {
-                int len = 1 + rnd.nextInt(3);
-                for (int k = 1; k <= len; k++) {
-                    set(w, x, top - k, z, "minecraft:iron_chain[axis=y]");
+            if (n % 4 == 0) {
+                int len = 1 + rnd.nextInt(4);
+                for (int k = 0; k < len && air(w, x, under - k, z); k++) {
+                    set(w, x, under - k, z, "minecraft:iron_chain[axis=y]");
                 }
             } else {
-                set(w, x, top - 1, z, t.hang());
+                set(w, x, under, z, t.hang());
             }
         }
-        // gạch vụn, nến, cột gãy (phòng đánh)
-        for (int n = 0; n < 8; n++) {
-            int x = x0 + 2 + rnd.nextInt(ROOM - 2);
-            int z = (rnd.nextBoolean() ? 1 : -1) * (3 + rnd.nextInt(5));
-            if (w.getBlockAt(x, y0 + 1, z).getType() == Material.AIR) {
+        // ---- mạng nhện góc trên, gạch vụn, nến, đồ sát tường
+        for (int[] c : new int[][] {{x0 + 1, -half + 1}, {x0 + 1, half - 1}, {x1 - 1, -half + 1}, {x1 - 1, half - 1}}) {
+            set(w, c[0], y0 + h, c[1], Material.COBWEB);
+            set(w, c[0], y0 + h - 1, c[1], Material.COBWEB);
+        }
+        for (int n = 0; n < s * s / 45; n++) {
+            int x = x0 + 2 + rnd.nextInt(s - 2);
+            int z = (rnd.nextBoolean() ? 1 : -1) * (3 + rnd.nextInt(Math.max(1, half - 4)));
+            if (Math.abs(x - cx) > 1 && air(w, x, y0 + 1, z)) {
                 set(w, x, y0 + 1, z, pick(t.rubble(), rnd));
             }
         }
-        for (int n = 0; n < 5; n++) {
-            int x = x0 + 1 + rnd.nextInt(ROOM);
-            int z = rnd.nextBoolean() ? -half + 1 : half - 1;
-            if (w.getBlockAt(x, y0 + 1, z).getType() == Material.AIR) {
-                set(w, x, y0 + 1, z, "minecraft:candle[candles=" + (1 + rnd.nextInt(4)) + ",lit=true]");
+        for (int n = 0; n < s / 2; n++) {
+            int x = x0 + 1 + rnd.nextInt(s);
+            int z = rnd.nextBoolean() ? -half + 1 + rnd.nextInt(2) : half - 1 - rnd.nextInt(2);
+            if (air(w, x, y0 + 1, z)) {
+                if (rnd.nextInt(3) == 0) {
+                    set(w, x, y0 + 1, z, "minecraft:candle[candles=" + (1 + rnd.nextInt(4)) + ",lit=true]");
+                } else {
+                    set(w, x, y0 + 1, z, pick(t.deco(), rnd));
+                }
             }
         }
-        if (i > 0 && i < last) {
-            for (int n = 0; n < 2; n++) {
-                int x = x0 + 5 + rnd.nextInt(ROOM - 9);
-                int z = (rnd.nextBoolean() ? 1 : -1) * (3 + rnd.nextInt(3));
-                if (w.getBlockAt(x, y0 + 1, z).getType() != Material.AIR) {
-                    continue;
-                }
-                int ph = 1 + rnd.nextInt(3);
-                for (int y = y0 + 1; y < y0 + 1 + ph; y++) {
-                    set(w, x, y, z, t.pillar());
-                }
-                set(w, x, y0 + 1 + ph, z, t.slab());
-            }
-        }
-        // lồng quái: spawner trang trí (quái do plugin cho chui ra, lồng không tự đẻ)
-        r.cages.get(i).clear();
-        if (i > 0) {
-            // quanh phòng, sát hai bên tường (29/10 chủ server: đặt quanh để quái ra từ mọi phía); phòng sau nhiều lồng hơn
-            int[] xs = i >= 2 || i == last ? new int[] {x0 + 5, x0 + 9, x0 + 13} : new int[] {x0 + 6, x0 + 12};
-            List<int[]> spots = new ArrayList<>();
-            for (int cx : xs) {
-                spots.add(new int[] {cx, -7});
-                spots.add(new int[] {cx, 7});
-            }
-            for (int[] c : spots) {
-                set(w, c[0], y0, c[1], t.accent());
-                set(w, c[0], y0 + 1, c[1], Material.SPAWNER);
-                if (w.getBlockAt(c[0], y0 + 1, c[1]).getState() instanceof org.bukkit.block.CreatureSpawner cs) {
-                    cs.setSpawnedType(r.dg.mobs().get(rnd.nextInt(r.dg.mobs().size())).type());
-                    cs.setMaxNearbyEntities(0);
-                    cs.setDelay(Integer.MAX_VALUE / 2);
-                    cs.update(true, false);
-                }
-                set(w, c[0], y0 + 2, c[1], "minecraft:iron_chain[axis=y]");
-                r.cages.get(i).add(c);
-            }
-        }
-        // phòng đầu: biển tên + lò lửa hai bên + đồ của người canh hầm
+        // ---- điểm nhấn từng phòng
         if (i == 0) {
             set(w, x0 + 1, y0 + 3, 0, t.sign() + "[facing=east]");
             if (w.getBlockAt(x0 + 1, y0 + 3, 0).getState() instanceof org.bukkit.block.Sign sg) {
@@ -840,42 +896,139 @@ final class HamNguc implements Listener {
                 side.setGlowingText(true);
                 sg.update(true, false);
             }
-            set(w, x0 + 2, y0 + 1, -2, t.fire());
-            set(w, x0 + 2, y0 + 1, 2, t.fire());
-            set(w, x0 + 1, y0 + 1, -half + 1, Material.ANVIL);
-            set(w, x0 + 2, y0 + 1, -half + 1, Material.DECORATED_POT);
-            set(w, x0 + 1, y0 + 1, half - 1, "minecraft:water_cauldron[level=3]");
-            set(w, x0 + 2, y0 + 1, half - 1, Material.DECORATED_POT);
-            for (int x = x0 + 4; x <= x0 + 7; x++) {
+            for (int z : new int[] {-3, 3}) {
+                set(w, x0 + 2, y0 + 1, z, t.trim());
+                set(w, x0 + 2, y0 + 2, z, t.fire());
+            }
+            set(w, x0 + 2, y0 + 1, -half + 1, Material.ANVIL);
+            set(w, x0 + 3, y0 + 1, -half + 1, Material.DECORATED_POT);
+            set(w, x0 + 4, y0 + 1, -half + 1, Material.BARREL);
+            set(w, x0 + 2, y0 + 1, half - 1, "minecraft:water_cauldron[level=3]");
+            set(w, x0 + 3, y0 + 1, half - 1, Material.DECORATED_POT);
+            for (int x = x0 + 5; x <= x0 + 9; x++) {
                 set(w, x, y0 + 1, half - 1, Material.BOOKSHELF);
                 set(w, x, y0 + 2, half - 1, x % 2 == 0 ? Material.CHISELED_BOOKSHELF : Material.BOOKSHELF);
+                set(w, x, y0 + 3, half - 1, "minecraft:candle[candles=2,lit=true]");
             }
-        }
-        // phòng phó trùm: bệ thờ phía cuối phòng
-        if (i == mid && i != last) {
-            set(w, x1 - 2, y0 + 1, 0, t.accent());
-            set(w, x1 - 2, y0 + 2, 0, t.trim());
-            set(w, x1 - 2, y0 + 3, 0, t.fire());
-        }
-        // phòng trùm: bệ cao cuối phòng, ngai, lò lửa giữa các cột
-        if (i == last) {
-            for (int x = x1 - 4; x < x1; x++) {
-                for (int z = -4; z <= 4; z++) {
-                    set(w, x, y0 + 1, z, x == x1 - 4 || Math.abs(z) == 4 ? t.trim() : t.accent());
+        } else if (i == last) {
+            // bệ ngai 2 bậc cuối phòng
+            for (int x = x1 - 7; x < x1; x++) {
+                for (int z = -7; z <= 7; z++) {
+                    boolean edge = x == x1 - 7 || Math.abs(z) == 7;
+                    set(w, x, y0 + 1, z, edge ? t.trim() : t.accent());
+                    if (x >= x1 - 5 && Math.abs(z) <= 6) {
+                        set(w, x, y0 + 2, z, x == x1 - 5 || Math.abs(z) == 6 ? t.trim() : t.base());
+                    }
                 }
             }
-            set(w, x1 - 1, y0 + 2, 0, t.pillar());
-            set(w, x1 - 1, y0 + 3, 0, t.trim());
-            for (int x : new int[] {x0 + 6, x0 + 12}) {
-                for (int z : new int[] {-6, 6}) {
-                    set(w, x, y0 + 1, z, t.fire());
+            column(w, t, x1 - 1, 0, y0 + 3, y0 + 6);
+            set(w, x1 - 1, y0 + 7, 0, t.fire());
+            for (int z : new int[] {-6, 6}) {
+                column(w, t, x1 - 1, z, y0 + 3, y0 + 8);
+                set(w, x1 - 2, y0 + 3, z, t.fire());
+            }
+            // vòng cột + lò lửa quanh tâm
+            for (int[] p : new int[][] {{-9, -9}, {-9, 9}, {0, -12}, {0, 12}, {9, -9}, {9, 9}}) {
+                column(w, t, cx + p[0], p[1], y0 + 1, ctop);
+            }
+            for (int[] p : new int[][] {{-5, -6}, {-5, 6}, {5, -6}, {5, 6}}) {
+                set(w, cx + p[0], y0 + 1, p[1], t.trim());
+                set(w, cx + p[0], y0 + 2, p[1], t.fire());
+            }
+        } else if (i == mid) {
+            // bệ thờ 5x5 giữa phòng
+            for (int x = cx - 2; x <= cx + 2; x++) {
+                for (int z = -2; z <= 2; z++) {
+                    set(w, x, y0 + 1, z, Math.abs(x - cx) == 2 || Math.abs(z) == 2 ? t.trim() : t.accent());
+                }
+            }
+            column(w, t, cx, 0, y0 + 2, y0 + 4);
+            set(w, cx, y0 + 5, 0, t.fire());
+            for (int[] p : new int[][] {{-2, -2}, {-2, 2}, {2, -2}, {2, 2}}) {
+                set(w, cx + p[0], y0 + 2, p[1], "minecraft:candle[candles=4,lit=true]");
+            }
+        } else if (i % 3 == 1) {
+            // tượng đài giữa phòng
+            for (int x = cx - 1; x <= cx + 1; x++) {
+                for (int z = -1; z <= 1; z++) {
+                    set(w, x, y0 + 1, z, t.trim());
+                }
+            }
+            column(w, t, cx, 0, y0 + 2, y0 + 5);
+            set(w, cx, y0 + 6, 0, t.fire());
+        } else if (i % 3 == 2) {
+            // hố bẫy hai bên lối giữa
+            for (int sd : new int[] {-1, 1}) {
+                for (int x = cx - 4; x <= cx + 4; x++) {
+                    for (int dz = 0; dz <= 3; dz++) {
+                        int z = sd * (half - 9 + dz);
+                        boolean rim = x == cx - 4 || x == cx + 4 || dz == 0 || dz == 3;
+                        if (rim) {
+                            set(w, x, y0, z, t.trim());
+                            continue;
+                        }
+                        set(w, x, y0, z, Material.AIR);
+                        switch (r.dg.theme()) {
+                            case "thanhco" -> set(w, x, y0 - 1, z, Material.LAVA);
+                            case "mo" -> {
+                                set(w, x, y0 - 1, z, Material.GRAVEL);
+                                set(w, x, y0, z, Material.COBWEB);
+                            }
+                            case "vuc" -> set(w, x, y0 - 1, z, Material.CRYING_OBSIDIAN);
+                            default -> {
+                                set(w, x, y0 - 1, z, Material.SOUL_SAND);
+                                set(w, x, y0, z, "minecraft:soul_fire");
+                            }
+                        }
+                    }
+                }
+            }
+        } else {
+            // tường đổ nát làm chỗ nấp
+            for (int n = 0; n < 4; n++) {
+                int sx = x0 + 5 + rnd.nextInt(Math.max(1, s - 12));
+                int z = (rnd.nextBoolean() ? 1 : -1) * (4 + rnd.nextInt(Math.max(1, half - 8)));
+                int len = 4 + rnd.nextInt(3);
+                for (int x = sx; x < sx + len && x < x1 - 2; x++) {
+                    if (Math.abs(x - cx) <= 1) {
+                        continue;
+                    }
+                    int hh = 1 + rnd.nextInt(3);
+                    for (int y = y0 + 1; y <= y0 + hh; y++) {
+                        set(w, x, y, z, y == y0 + 1 ? t.base() : pick(t.wall(), rnd));
+                    }
+                    if (rnd.nextInt(3) == 0) {
+                        set(w, x, y0 + hh + 1, z, t.slab());
+                    }
                 }
             }
         }
-        // cửa vào (tường trái) và cửa ra (tường phải): lỗ 3 x 4, khung trim; cửa ra đóng song sắt (trừ phòng 0)
-        for (int z = -2; z <= 2; z++) {
-            for (int y = y0 + 1; y <= y0 + 5; y++) {
-                boolean hole = Math.abs(z) <= 1 && y <= y0 + 4;
+        // ---- lồng quái quanh phòng (sát hai bên tường), không chắn lối ngang giữa
+        r.cages.get(i).clear();
+        if (i > 0) {
+            int stepC = i == 1 ? 9 : 7;
+            for (int x = x0 + 5; x <= x1 - 4; x += stepC) {
+                if (Math.abs(x - cx) <= 1) {
+                    continue;
+                }
+                for (int z : new int[] {-(half - 2), half - 2}) {
+                    set(w, x, y0, z, t.accent());
+                    set(w, x, y0 + 1, z, Material.SPAWNER);
+                    if (w.getBlockAt(x, y0 + 1, z).getState() instanceof org.bukkit.block.CreatureSpawner csp) {
+                        csp.setSpawnedType(r.dg.mobs().get(rnd.nextInt(r.dg.mobs().size())).type());
+                        csp.setMaxNearbyEntities(0);
+                        csp.setDelay(Integer.MAX_VALUE / 2);
+                        csp.update(true, false);
+                    }
+                    set(w, x, y0 + 2, z, "minecraft:iron_chain[axis=y]");
+                    r.cages.get(i).add(new int[] {x, z});
+                }
+            }
+        }
+        // ---- cửa 5x5, khung trim; cửa ra đóng song sắt (trừ phòng đầu)
+        for (int z = -3; z <= 3; z++) {
+            for (int y = y0 + 1; y <= y0 + 6; y++) {
+                boolean hole = Math.abs(z) <= 2 && y <= y0 + 5;
                 if (i > 0) {
                     set(w, x0, y, z, hole ? Material.AIR : t.trim());
                 }
@@ -884,46 +1037,45 @@ final class HamNguc implements Listener {
                 }
             }
         }
-        // hành lang tới phòng sau: vòm, đuốc
+        // ---- hành lang: rộng 5, cao 6, vòm, cột, hốc tường, đèn
         if (i < last) {
-            for (int x = x1 + 1; x < x0 + STEP; x++) {
-                for (int z = -2; z <= 2; z++) {
-                    set(w, x, y0, z, Math.abs(z) <= 1 ? t.path() : t.base());
-                    set(w, x, y0 + 5, z, pick(t.ceil(), rnd));
-                    for (int y = y0 + 1; y <= y0 + 4; y++) {
-                        Material m = Math.abs(z) == 2 ? (y == y0 + 1 ? t.base() : (x - x1) % 3 == 0 ? t.pillar() : pick(t.wall(), rnd))
-                                : Material.AIR;
+            int xa = x1 + 1;
+            int xb = r.rx[i + 1] - 1;
+            for (int x = xa; x <= xb; x++) {
+                for (int z = -3; z <= 3; z++) {
+                    set(w, x, y0, z, Math.abs(z) <= 2 ? (Math.abs(z) <= 1 ? t.path() : t.accent()) : t.base());
+                    set(w, x, y0 + 7, z, pick(t.ceil(), rnd));
+                    for (int y = y0 + 1; y <= y0 + 6; y++) {
+                        Material m = Math.abs(z) == 3 ? (y == y0 + 1 ? t.base() : (x - xa) % 3 == 0 ? t.pillar() : pick(t.wall(), rnd))
+                                : Math.abs(z) == 2 && y == y0 + 6 ? t.trim() : Material.AIR;
                         set(w, x, y, z, m);
-                    }
-                    if (Math.abs(z) == 1) {
-                        set(w, x, y0 + 4, z, t.trim());   // vòm
                     }
                 }
             }
-            int cx = x1 + 1 + CORRIDOR / 2;
-            set(w, cx, y0 + 2, -1, t.torch() + "[facing=south]");
-            set(w, cx, y0 + 2, 1, t.torch() + "[facing=north]");
-            for (int sz : new int[] {-1, 1}) {   // hốc tường: đầu lâu + nến
-                int nx = cx + (sz < 0 ? -2 : 2);
-                set(w, nx, y0 + 2, 2 * sz, Material.AIR);
-                set(w, nx, y0 + 2, 3 * sz, t.trim());
-                set(w, nx, y0 + 1, 2 * sz, t.base());
-                set(w, nx, y0 + 3, 2 * sz, t.trim());
-                set(w, nx, y0 + 2, 2 * sz, rnd.nextBoolean() ? "minecraft:skeleton_skull[rotation=" + (sz < 0 ? 0 : 8) + "]"
-                        : "minecraft:candle[candles=3,lit=true]");
+            int mx = (xa + xb) / 2;
+            set(w, mx, y0 + 6, 0, "minecraft:iron_chain[axis=y]");
+            set(w, mx, y0 + 5, 0, t.lantern());
+            for (int sd : new int[] {-1, 1}) {
+                set(w, mx, y0 + 3, sd * 2, t.torch() + "[facing=" + (sd < 0 ? "south" : "north") + "]");
+                for (int nx : new int[] {mx - 3, mx + 3}) {   // hốc: đầu lâu / nến
+                    set(w, nx, y0 + 2, sd * 3, rnd.nextBoolean() ? "minecraft:skeleton_skull[rotation=" + (sd < 0 ? 0 : 8) + "]"
+                            : "minecraft:candle[candles=3,lit=true]");
+                    set(w, nx, y0 + 2, sd * 4, t.trim());
+                    set(w, nx, y0 + 3, sd * 3, t.trim());
+                }
             }
         }
     }
 
     private void openGate(World w, Run r, int i) {
-        int x = r.roomX(i) + ROOM + 1;
-        for (int z = -1; z <= 1; z++) {
-            for (int y = FLOOR_Y + 1; y <= FLOOR_Y + 4; y++) {
+        int x = r.x1(i);
+        for (int z = -2; z <= 2; z++) {
+            for (int y = FLOOR_Y + 1; y <= FLOOR_Y + 5; y++) {
                 set(w, x, y, z, Material.AIR);
             }
         }
         w.playSound(new Location(w, x, FLOOR_Y + 2, 0), Sound.BLOCK_IRON_DOOR_OPEN, 1.5f, 0.6f);
-        w.spawnParticle(Particle.CLOUD, x + 0.5, FLOOR_Y + 2.5, 0.5, 20, 0.2, 1, 1, 0.02);
+        w.spawnParticle(Particle.CLOUD, x + 0.5, FLOOR_Y + 3, 0.5, 30, 0.2, 1.5, 1.5, 0.02);
     }
 
     // ------------------------------------------------------------------ quái
@@ -953,6 +1105,10 @@ final class HamNguc implements Listener {
             }
             if (d.scale() != 1.0 && le.getAttribute(Attribute.SCALE) != null) {
                 le.getAttribute(Attribute.SCALE).setBaseValue(d.scale());
+            }
+            AttributeInstance sp = le.getAttribute(Attribute.MOVEMENT_SPEED);
+            if (sp != null && !role.equals("boss")) {
+                sp.setBaseValue(sp.getBaseValue() * cfg.getDouble("speed", 1.15));
             }
             AttributeInstance kb = le.getAttribute(Attribute.KNOCKBACK_RESISTANCE);
             if (kb != null && !role.equals("mob")) {
@@ -1009,14 +1165,17 @@ final class HamNguc implements Listener {
     private Location spot(World w, Run r, int i) {
         ThreadLocalRandom rnd = ThreadLocalRandom.current();
         int x0 = r.roomX(i);
-        for (int tries = 0; tries < 20; tries++) {
-            int x = x0 + 8 + rnd.nextInt(ROOM - 9);
-            int z = -6 + rnd.nextInt(13);
-            if (w.getBlockAt(x, FLOOR_Y + 1, z).getType() == Material.AIR && w.getBlockAt(x, FLOOR_Y + 2, z).getType() == Material.AIR) {
+        int s = r.sz[i];
+        int zr = s / 2 - 2;
+        for (int tries = 0; tries < 30; tries++) {
+            int x = x0 + s / 3 + rnd.nextInt(Math.max(1, s - s / 3 - 1));
+            int z = -zr + rnd.nextInt(2 * zr + 1);
+            if (w.getBlockAt(x, FLOOR_Y, z).getType().isSolid() && w.getBlockAt(x, FLOOR_Y + 1, z).isPassable()
+                    && w.getBlockAt(x, FLOOR_Y + 2, z).isPassable()) {
                 return new Location(w, x + 0.5, FLOOR_Y + 1, z + 0.5);
             }
         }
-        return new Location(w, x0 + 12.5, FLOOR_Y + 1, 0.5);
+        return new Location(w, r.cx(i) + 3.5, FLOOR_Y + 1, 0.5);
     }
 
     private void startRoom(World w, Run r, int i) {
@@ -1029,7 +1188,7 @@ final class HamNguc implements Listener {
         String title;
         int count;
         if (i == last) {
-            LivingEntity b = spawnMob(w, r, r.dg.boss(), "boss", new Location(w, r.roomX(i) + ROOM - 1.5, FLOOR_Y + 2, 0.5, 90f, 0f));
+            LivingEntity b = spawnMob(w, r, r.dg.boss(), "boss", new Location(w, r.x1(i) - 3.5, FLOOR_Y + 3, 0.5, 90f, 0f));
             if (b != null) {
                 list.add(b.getUniqueId());
                 r.boss = b.getUniqueId();
@@ -1048,7 +1207,7 @@ final class HamNguc implements Listener {
         } else {
             count = Math.min(16, cfg.getInt("mobs-per-room", 3) + i + extra * 2);
             if (i == mid && r.dg.mini() != null) {
-                LivingEntity m = spawnMob(w, r, r.dg.mini(), "mini", new Location(w, r.roomX(i) + 11.5, FLOOR_Y + 1, 0.5, 90f, 0f));
+                LivingEntity m = spawnMob(w, r, r.dg.mini(), "mini", new Location(w, r.cx(i) + 5.5, FLOOR_Y + 1, 0.5, 90f, 0f));
                 if (m != null) {
                     list.add(m.getUniqueId());
                     w.spawnParticle(Particle.LARGE_SMOKE, m.getLocation().add(0, 1, 0), 40, 0.5, 1, 0.5, 0.02);
@@ -1081,8 +1240,8 @@ final class HamNguc implements Listener {
         // phòng trùm: đóng cửa vào sau lưng
         if (i == last) {
             int x = r.roomX(i);
-            for (int z = -1; z <= 1; z++) {
-                for (int y = FLOOR_Y + 1; y <= FLOOR_Y + 4; y++) {
+            for (int z = -2; z <= 2; z++) {
+                for (int y = FLOOR_Y + 1; y <= FLOOR_Y + 5; y++) {
                     if (w.getBlockAt(x, y, z).getType() == Material.AIR) {
                         set(w, x, y, z, theme(r.dg.theme()).gate());
                     }
@@ -1151,13 +1310,13 @@ final class HamNguc implements Listener {
     }
 
     private int roomOf(Run r, Location l) {
-        double x = l.getX() - r.baseX();
-        int i = (int) Math.floor(x / STEP);
-        double in = x - i * STEP;
-        if (i < 0 || i >= r.dg.rooms() || in < 1 || in > ROOM + 1 || Math.abs(l.getZ()) > ROOM / 2.0) {
-            return -1;
+        double x = l.getX();
+        for (int i = 0; i < r.dg.rooms(); i++) {
+            if (x >= r.rx[i] + 1 && x < r.x1(i) && Math.abs(l.getZ()) < r.sz[i] / 2.0) {
+                return i;
+            }
         }
-        return i;
+        return -1;
     }
 
     // ------------------------------------------------------------------ vòng lặp
@@ -1224,7 +1383,7 @@ final class HamNguc implements Listener {
                 if (b instanceof LivingEntity le && le.isValid()) {
                     AttributeInstance mh = le.getAttribute(Attribute.MAX_HEALTH);
                     r.bar.setProgress(Math.max(0, Math.min(1, le.getHealth() / (mh == null ? 20 : mh.getValue()))));
-                    if (r.skillTick % 16 == 8) {   // ~8 giây
+                    if (r.skillTick % cfg.getInt("boss-skill-ticks", 12) == 6) {   // mặc định 12 nhịp = ~6 giây
                         bossSkill(w, r, le);
                     }
                 }
@@ -1363,8 +1522,8 @@ final class HamNguc implements Listener {
         }
         var pdc = e.getEntity().getPersistentDataContainer();
         Integer runId = pdc.get(kRun, PersistentDataType.INTEGER);
-        e.getDrops().clear();
         if (runId == null) {
+            e.getDrops().clear();
             e.setDroppedExp(0);
             return;
         }
@@ -1381,16 +1540,27 @@ final class HamNguc implements Listener {
             pool = role.equals("boss") ? List.of("mu", "giay", "quan", "ao", "kiem", "riu", "giao", "cung", "chuy")
                     : role.equals("mini") ? List.of("mu", "giay", "quan", "ao") : List.of("mu", "giay");
         }
-        if (role.equals("boss")) {   // trùm: mỗi người trong lượt quay riêng
+        double xu = cfg.getDouble("xu." + role, role.equals("boss") ? 120 : role.equals("mini") ? 40 : 4);
+        if (role.equals("boss")) {   // trùm: mỗi người trong lượt quay riêng + nhận xu
             for (UUID m : r.members) {
                 Player p = Bukkit.getPlayer(m);
                 if (p != null) {
                     roll(p, r.dg, pool, pct);
+                    pay(p, xu);
                 }
             }
         } else if (k != null && r.members.contains(k.getUniqueId())) {
             roll(k, r.dg, pool, pct);
+            pay(k, xu);
         }
+    }
+
+    private void pay(Player p, double xu) {
+        if (xu <= 0) {
+            return;
+        }
+        VaultEconomy.deposit(p, xu);
+        p.sendActionBar(Tip.c("&e+" + VaultEconomy.format(xu)));
     }
 
     private void roll(Player p, Dg d, List<String> pool, double pct) {

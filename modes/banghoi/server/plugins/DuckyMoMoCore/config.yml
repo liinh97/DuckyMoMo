@@ -1491,15 +1491,21 @@ ham-nguc:
   world: hamnguc
   max-party: 4
   party-hp: 0.6
-  mobs-per-room: 3          # quái phòng i = mobs-per-room + i + 2 x (số người - 1), tối đa 14
+  mobs-per-room: 5          # quái phòng i = mobs-per-room + i + 2 x (số người - 1), tối đa 14
   cooldown-seconds: 120     # chờ giữa 2 lượt (tính từ lúc vào)
   time-limit-minutes: 40
   exit-after-seconds: 30    # vượt xong ở lại bao lâu
   broadcast-first: true
-  drop:                     # % mỗi con (nhân drop-mult của dungeon)
-    mob: 2
-    mini: 15
-    boss: 40
+  drop:                     # % ra 1 món set +0 mỗi con (nhân drop-mult của dungeon); trùm: mỗi người quay riêng
+    mob: 4
+    mini: 30
+    boss: 100
+  xu:                       # xu mỗi lần hạ (trùm: mỗi người trong lượt); quái vẫn rơi đồ vanilla
+    mob: 4
+    mini: 40
+    boss: 120
+  speed: 1.15               # tốc chạy quái thường + phó trùm x
+  boss-skill-ticks: 12      # trùm dùng kỹ năng mỗi N nhịp (1 nhịp = 0,5 giây)
   pieces:                   # món có thể rơi theo loại quái
     mob: [mu, giay]
     mini: [mu, giay, quan, ao]
@@ -1512,11 +1518,11 @@ ham-nguc:
       icon: SKELETON_SKULL
       rooms: 5
       hint: "đồ sắt hoặc Tân Thủ +0"
-      hp: 26
-      dmg: 4
+      hp: 46
+      dmg: 6
       mobs: ["ZOMBIE:Xác Sống Hầm Mộ", "SKELETON:Cung Thủ Xương", "SPIDER:Nhện Hang", "HUSK:Xác Khô"]
-      mini: {type: ZOMBIE, name: "〖Gác Mộ Già〗", hp: 160, dmg: 6, scale: 1.3}
-      boss: {type: SKELETON, name: "『Vua Hầm Mộ』", hp: 380, dmg: 8, scale: 1.6}
+      mini: {type: ZOMBIE, name: "〖Gác Mộ Già〗", hp: 300, dmg: 9, scale: 1.3}
+      boss: {type: SKELETON, name: "『Vua Hầm Mộ』", hp: 750, dmg: 12, scale: 1.6}
       drop-mult: 1.0
       reward: 150
       first-reward: 500
@@ -1528,11 +1534,11 @@ ham-nguc:
       requires: hammo
       rooms: 6
       hint: "Tân Thủ +6 trở lên"
-      hp: 50
-      dmg: 7
+      hp: 90
+      dmg: 10
       mobs: ["ZOMBIE_VILLAGER:Thợ Mỏ Hoá Xác", "SKELETON:Xạ Thủ Hầm Sâu", "SPIDER:Nhện Đá", "PILLAGER:Kẻ Cướp Mỏ"]
-      mini: {type: VINDICATOR, name: "〖Đốc Công Mất Trí〗", hp: 320, dmg: 10, scale: 1.25}
-      boss: {type: RAVAGER, name: "『Quỷ Đá Sâu』", hp: 720, dmg: 12, scale: 1.0}
+      mini: {type: VINDICATOR, name: "〖Đốc Công Mất Trí〗", hp: 580, dmg: 15, scale: 1.25}
+      boss: {type: RAVAGER, name: "『Quỷ Đá Sâu』", hp: 1300, dmg: 18, scale: 1.0}
       drop-mult: 0.8
       reward: 300
       first-reward: 1000
@@ -1544,11 +1550,11 @@ ham-nguc:
       requires: mo
       rooms: 6
       hint: "Chiến Binh +5 trở lên"
-      hp: 85
-      dmg: 10
+      hp: 150
+      dmg: 15
       mobs: ["WITHER_SKELETON:Lính Xương Đen", "BLAZE:Linh Hồn Lửa", "PIGLIN_BRUTE:Đồ Tể Lợn", "SKELETON:Cung Thủ Tro"]
-      mini: {type: PIGLIN_BRUTE, name: "〖Hộ Vệ Hỏa Ngục〗", hp: 520, dmg: 14, scale: 1.3}
-      boss: {type: WITHER_SKELETON, name: "『Lãnh Chúa Tro Tàn』", hp: 1100, dmg: 16, scale: 1.8}
+      mini: {type: PIGLIN_BRUTE, name: "〖Hộ Vệ Hỏa Ngục〗", hp: 940, dmg: 21, scale: 1.3}
+      boss: {type: WITHER_SKELETON, name: "『Lãnh Chúa Tro Tàn』", hp: 1900, dmg: 24, scale: 1.8}
       drop-mult: 0.6
       reward: 600
       first-reward: 2000
@@ -1560,11 +1566,11 @@ ham-nguc:
       requires: thanhco
       rooms: 7
       hint: "Tinh Anh +3 trở lên, nên đi nhóm"
-      hp: 135
-      dmg: 14
+      hp: 240
+      dmg: 21
       mobs: ["VINDICATOR:Kẻ Phán Xử Hư Không", "ENDERMAN:Bóng Hư Vô", "STRAY:Cung Thủ Băng", "WITHER_SKELETON:Hộ Vệ Vực"]
-      mini: {type: EVOKER, name: "〖Pháp Sư Hư Vô〗", hp: 800, dmg: 18, scale: 1.2}
-      boss: {type: ZOGLIN, name: "『Kẻ Gác Vực』", hp: 1700, dmg: 22, scale: 1.8}
+      mini: {type: EVOKER, name: "〖Pháp Sư Hư Vô〗", hp: 1440, dmg: 27, scale: 1.2}
+      boss: {type: ZOGLIN, name: "『Kẻ Gác Vực』", hp: 2000, dmg: 32, scale: 1.8}
       drop-mult: 0.45
       reward: 1200
       first-reward: 4000

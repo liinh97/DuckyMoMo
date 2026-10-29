@@ -51,6 +51,7 @@ public final class DuckyMoMoCore extends JavaPlugin {
     private me.clip.placeholderapi.expansion.PlaceholderExpansion gachaPapi;
     private me.clip.placeholderapi.expansion.PlaceholderExpansion seasonPapi;
     private BodyTemp bodyTemp;
+    private NewbiePath newbie;
     private me.clip.placeholderapi.expansion.PlaceholderExpansion statsPapi;
     private me.clip.placeholderapi.expansion.PlaceholderExpansion frontierPapi;
     private me.clip.placeholderapi.expansion.PlaceholderExpansion arenaPapi;
@@ -219,6 +220,10 @@ public final class DuckyMoMoCore extends JavaPlugin {
         if (levelUp != null) {
             levelUp.stop();
             levelUp = null;
+        }
+        if (newbie != null) {
+            newbie.shutdown();
+            newbie = null;
         }
         if (bodyTemp != null) {
             bodyTemp.shutdown();
@@ -1083,6 +1088,23 @@ public final class DuckyMoMoCore extends JavaPlugin {
             }
         }
         bind("nhiemvu", quests == null ? null : quests::command, "Nhiệm vụ hằng ngày");
+
+        // Đường tân thủ /tanthu (29/10): người mới vào lần đầu làm theo từng bước có thưởng, thanh tiến độ trên đầu màn hình
+        newbie = getConfig().getBoolean("newbie-path.enabled")
+                ? new NewbiePath(this, getConfig().getConfigurationSection("newbie-path"), rewards) : null;
+        if (newbie != null) {
+            getServer().getPluginManager().registerEvents(newbie, this);
+        }
+        bind("tanthu", newbie == null ? null : newbie::command, "Đường tân thủ");
+
+        // Giới thiệu bạn bè /gioithieu (29/10): người mới nhập tên người rủ, người rủ nhận quà khi người mới chơi đủ giờ
+        Referral.INSTANCE = null;
+        Referral referral = getConfig().getBoolean("referral.enabled")
+                ? new Referral(this, getConfig().getConfigurationSection("referral"), rewards) : null;
+        if (referral != null) {
+            getServer().getPluginManager().registerEvents(referral, this);
+        }
+        bind("gioithieu", referral == null ? null : referral::command, "Giới thiệu bạn bè");
 
         // Gacha (quay thưởng; 21/10 thay hẳn /vongquay): nhiều máy, mỗi máy một loại vé là món Thư viện đồ (điểm danh, chơi online…)
         // (Bang Hội Chiến: crates.enabled)

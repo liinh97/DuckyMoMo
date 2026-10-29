@@ -21,6 +21,13 @@
   Sức mạnh: +0 kim cương Bảo vệ III (~Tân Thủ +6), 8 phiếu/món = bộ 32 phiếu (~ngày 27); +3 ~ Chiến Binh +0; +5 ~ Chiến Binh +4 + Tu sửa
   + 30% kinh nghiệm (hiệu ứng bộ mới `kn`), cả bộ 236 phiếu (~6 tháng). Đã test bằng bot (`tools/bottest/cc-thu.js` rèn +0, `cc-dd.js`
   điểm danh sau 5 phút ra 1 phiếu); restart banghoi-1 21:44 và 21:58 lúc 0 người thật.
+- Giữ chân người mới (29/10, phân tích activity.jsonl: 18 người mới thật từ 24/10, đa số thoát sau 1–8 phút, mò lệnh lung tung, /diemdanh
+  bị "cần 5 phút", /rtp xong thoát, /tpa bot không ai nhận -> "sv toàn bot à"): (A) đường tân thủ /tanthu (NewbiePath.java, config
+  newbie-path, boss bar vàng, 8 bước có thưởng, bước 1 hỏi Già Làng nối vào Việc dân làng); (B) /diemdanh gõ sớm -> tự điểm danh khi đủ
+  5 phút; giới thiệu bạn bè /gioithieu (Referral.java, config referral; thay ý "code tân thủ" vì trùng kit). Chưa làm: bot nhận /tpa
+  người lạ kiểu "đang tắt nhận dịch chuyển" (C), mẹo tự động theo từ khoá chat (D). Test: tools/bottest/tt-thu.js, gt-thu.js.
+- Cẩm nang web (`modes/_network/camnang.yml`) KHÔNG đọc được từ 28/10 22:23 tới 29/10 23:00 (ngoặc kép trong dòng Ẩn giáp + `: ` trong
+  purpose SimplePets) -> đã sửa; sửa file này xong phải load bằng ruamel trong container panel.
 - PlayerParticles: bản mẫu `ticks-per-particle: 1` mới hơn data (3, chủ server chỉnh trên web) vài micro giây → đã `touch` data trước restart.
   Trước mỗi restart vẫn so bản mẫu / data (xem BÀI HỌC mục 29/10 bên dưới).
 

@@ -393,6 +393,8 @@ leaderboard:
     nguong: "&3[Ngư Ông]"
     diequai: "&c[Diệt Quái]"
     thuanthusu: "&d[Thuần Thú Sư]"
+    dandat: "&b[Người Dẫn Đường]"   # 29/10: rủ được 5 người (/gioithieu)
+    daisu: "&6[Đại Sứ Làng]"   # 29/10: rủ được 10 người
     batbai: "&6[Bất Bại]"
     daubep: "&e[Đầu Bếp]"
     laolang: "&7[Lão Làng]"
@@ -600,6 +602,42 @@ daily-checkin:
     max-per-day: 2
     idle-minutes: 5
     set: chuyencan            # nút [Đổi set Chuyên Cần] ở /diemdanh mở /thoren set <mã>
+# Đường tân thủ /tanthu (29/10, chủ server: người mới vào mò lệnh vài phút rồi thoát). Người vào LẦN ĐẦU tự bắt đầu, làm theo thứ tự,
+# thanh trên đầu màn hình hiện bước đang làm; xong mỗi bước nhận rewards ngay, xong hết nhận final-rewards. Kẹt: /tanthu boqua (mất thưởng bước đó).
+# type: feature (target = mã: gialang hỏi Già Làng, diemdanh, rtp, sethome, hoặc mã DailyQuests.feature: mua, ban, thoren, dungeon…),
+# break / craft (target vật liệu, *_LOG = mọi loại gỗ), kill (@hostile = mọi quái thù địch). cmd: nút bấm trong chat.
+newbie-path:
+  enabled: true
+  steps:
+    - {type: feature, target: gialang, name: "Hỏi chuyện Già Làng", how: "bấm chuột phải vào Già Làng ở spawn, chọn \"Trong làng có ai cần giúp không ạ?\"", cmd: "/spawn", rewards: [xu 100]}
+    - {type: feature, target: diemdanh, name: "Điểm danh hôm nay", how: "gõ /diemdanh, chưa đủ 5 phút online thì server tự điểm danh khi đủ", cmd: "/diemdanh", rewards: [xu 100]}
+    - {type: feature, target: rtp, name: "Ra vùng hoang", how: "gõ /rtp rồi chọn vùng muốn tới", cmd: "/rtp", rewards: [xu 50]}
+    - {type: break, target: ["*_LOG"], amount: 8, name: "Chặt 8 khúc gỗ", how: "đấm vào thân cây", rewards: [xu 100]}
+    - {type: craft, target: CRAFTING_TABLE, name: "Làm bàn chế tạo", how: "mở túi đồ (E), bỏ gỗ ván vào ô chế tạo", rewards: [xu 50]}
+    - {type: break, target: [STONE, COBBLESTONE, DEEPSLATE, COBBLED_DEEPSLATE, ANDESITE, DIORITE, GRANITE, TUFF, "*_ORE"], amount: 16, name: "Đào 16 khối đá", how: "làm cúp gỗ rồi đào đá", rewards: [xu 100]}
+    - {type: feature, target: sethome, name: "Đặt nhà", how: "đứng ở chỗ muốn ở, gõ /sethome nha (về sau gõ /home nha)", cmd: "/sethome nha", rewards: [xu 100]}
+    - {type: kill, target: "@hostile", amount: 3, name: "Hạ 3 con quái", how: "quái ra ban đêm hoặc trong hang tối", rewards: [xu 150]}
+  final-rewards:
+    - xu 500
+    - vat COOKED_BEEF 16
+# Giới thiệu bạn bè /gioithieu (29/10, chủ server): mã = tên người chơi. Người mới (vào lần đầu chưa quá window-days ngày) nhập tên người rủ:
+# nhận new-rewards ngay; người rủ nhận referrer-rewards khi người mới chơi đủ need-hours giờ (offline thì phát lúc vào game);
+# milestones: tổng số người đã xác nhận -> thưởng thêm (danh hiệu chỉ là trang trí). Không tự giới thiệu, không cùng IP, bot không tính.
+referral:
+  enabled: true
+  window-days: 3
+  need-hours: 2
+  new-rewards:
+    - xu 300
+  referrer-rewards:
+    - xu 1000
+  milestones:
+    5:
+      - xu 3000
+      - danhhieu dandat
+    10:
+      - xu 8000
+      - danhhieu daisu
 daily-quests:
   enabled: true
   per-day: 3

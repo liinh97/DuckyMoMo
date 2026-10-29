@@ -191,6 +191,10 @@ commands:
   dautruong:
     description: "Đấu Trường: người + pet đấu 1v1, 2v2 (hàng chờ, thách đấu, cược, xếp hạng)"
     aliases: [dt, arena]
+  tanthu:
+    description: "Đường tân thủ: các bước đầu cho người mới, mỗi bước có thưởng (/tanthu, an, hien, boqua). Admin: /tanthu batdau <tên>"
+  gioithieu:
+    description: "Giới thiệu bạn bè: xem mã của mình (/gioithieu), người mới nhập /gioithieu <tên người rủ>, /gioithieu top"
   hamnguc:
     description: "Hầm Ngục DuckyMoMo: dungeon tự dựng, quái rơi món set +0 (/hamnguc, moi <tên>, thoat)"
     aliases: [hn]

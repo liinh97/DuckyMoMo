@@ -481,6 +481,7 @@ final class RandomTeleport implements Listener {
             busy.remove(p.getUniqueId());
             if (Boolean.TRUE.equals(ok)) {
                 LAST_USE.put(p.getUniqueId(), System.currentTimeMillis());
+                NewbiePath.feature(p, "rtp");
                 p.sendMessage(c("&aĐã tới " + z.name() + "&a: &f" + dest.getBlockX() + " " + dest.getBlockY() + " " + dest.getBlockZ()
                         + (pay ? " &7(phí " + money(cost) + ")" : "") + "&a. Muốn lập thị trấn ở đây: &f/t new <tên>"));
             } else {

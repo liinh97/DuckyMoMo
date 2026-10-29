@@ -176,6 +176,8 @@ menu:
     chuong: hangngay
     lenh:
     - "/diemdanh|150 xu + vé Gacha + Phiếu Chuyên Cần mỗi ngày"
+    - "/tanthu|đường tân thủ: từng bước đầu, bước nào cũng có thưởng"
+    - "/gioithieu|rủ bạn vào chơi: cả hai cùng nhận quà"
     - "/nhiemvu|3 nhiệm vụ mỗi ngày + việc dân làng đang nhận (hỏi Già Làng)"
     - "/gacha|quay bằng vé"
     - "/vote|150 xu mỗi lượt vote"
@@ -1146,6 +1148,13 @@ chapters:
     &0Đủ 7, 14, 30 ngày&r&0 có quà mốc (kim cương, táo vàng…).
     &0Bỏ một ngày không mất&r&0 chuỗi.
     &1/diemdanh xem &0tiến độ
+    &8Gõ sớm khi chưa đủ 5 phút: đủ giờ server tự điểm danh.
+  - |-
+    &2NGƯỜI MỚI
+    &0Vào lần đầu có &6đường tân thủ&0 trên đầu màn hình: làm từng bước, bước nào cũng có xu.
+    &1/tanthu &0xem các bước, &1/tanthu boqua &0nếu kẹt.
+    &2RỦ BẠN
+    &1/gioithieu &0xem mã (là tên bạn). Bạn mới gõ &1/gioithieu <tên bạn>&0 trong 3 ngày đầu: nhận 300 xu, bạn nhận 1.000 xu khi họ chơi đủ 2 giờ.
   - |-
     &2NHIỆM VỤ NGÀY
     &1/nhiemvu&0: mỗi ngày 3 nhiệm vụ (đào, chặt, săn, xây, câu, thu hoạch).

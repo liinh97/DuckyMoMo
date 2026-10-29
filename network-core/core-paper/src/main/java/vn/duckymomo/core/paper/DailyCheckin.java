@@ -49,7 +49,8 @@ final class DailyCheckin implements Listener {
     private final File file;
     private final YamlConfiguration data;
     private final Map<UUID, Long> joined = new HashMap<>();
-    private final Map<UUID, Long> moved = new HashMap<>();   // lần cuối cử động (phiếu online không tính lúc đứng im)
+    private final Map<UUID, Long> moved = new HashMap<>();
+    private final java.util.Set<UUID> waiting = new java.util.HashSet<>();   // gõ /diemdanh sớm: đủ phút thì tự điểm danh (29/10)   // lần cuối cử động (phiếu online không tính lúc đứng im)
 
     DailyCheckin(JavaPlugin plugin, ConfigurationSection cfg, Rewards rewards) {
         INSTANCE = this;
@@ -71,6 +72,13 @@ final class DailyCheckin implements Listener {
             }
             onlineTick();
         }, 1200L, 1200L);
+        Bukkit.getScheduler().runTaskTimer(plugin, task -> {   // 20 giây: ai đang chờ đủ phút online thì tự điểm danh
+            if (INSTANCE != this) {
+                task.cancel();
+                return;
+            }
+            autoCheckin();
+        }, 400L, 400L);
     }
 
     /**
@@ -177,6 +185,7 @@ final class DailyCheckin implements Listener {
     public void onQuit(PlayerQuitEvent e) {
         joined.remove(e.getPlayer().getUniqueId());
         moved.remove(e.getPlayer().getUniqueId());
+        waiting.remove(e.getPlayer().getUniqueId());
     }
 
     boolean command(CommandSender s, String[] args) {
@@ -215,12 +224,46 @@ final class DailyCheckin implements Listener {
             status(p, count);
             return true;
         }
-        int need = cfg.getInt("min-online-minutes", 5);
-        long online = (System.currentTimeMillis() - joined.getOrDefault(p.getUniqueId(), System.currentTimeMillis())) / 60000;
-        if (online < need) {
-            p.sendMessage(c("&eCần online thêm &f" + (need - online) + " phút&e nữa mới điểm danh được (chống tài khoản phụ)."));
+        long left = minutesLeft(p);
+        if (left > 0) {
+            waiting.add(p.getUniqueId());
+            p.sendMessage(c("&e⏳ Còn &f" + left + " phút&e nữa là điểm danh được. &7Cứ chơi tiếp, tới lúc đó server &atự điểm danh&7 cho bạn."));
             return true;
         }
+        checkin(p);
+        return true;
+    }
+
+    /** Số phút online còn thiếu trong phiên này (0 = đủ). */
+    private long minutesLeft(Player p) {
+        long ms = System.currentTimeMillis() - joined.getOrDefault(p.getUniqueId(), System.currentTimeMillis());
+        long need = cfg.getInt("min-online-minutes", 5) * 60_000L;
+        return ms >= need ? 0 : (need - ms + 59_999) / 60_000;
+    }
+
+    private void autoCheckin() {
+        for (java.util.Iterator<UUID> it = waiting.iterator(); it.hasNext(); ) {
+            Player p = Bukkit.getPlayer(it.next());
+            if (p == null) {
+                it.remove();
+                continue;
+            }
+            if (today().equals(data.getString("players." + p.getUniqueId() + ".last"))) {
+                it.remove();
+                continue;
+            }
+            if (minutesLeft(p) == 0) {
+                it.remove();
+                p.playSound(p.getLocation(), org.bukkit.Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.8f, 1.2f);
+                checkin(p);
+            }
+        }
+    }
+
+    /** Điểm danh thật (đã kiểm: hôm nay chưa điểm danh, đủ phút online). */
+    private void checkin(Player p) {
+        String key = "players." + p.getUniqueId();
+        int count = data.getInt(key + ".count", 0);
         count++;
         data.set(key + ".name", p.getName());
         data.set(key + ".count", count);
@@ -239,7 +282,6 @@ final class DailyCheckin implements Listener {
             }
         }
         status(p, count);
-        return true;
     }
 
     private void status(Player p, int count) {

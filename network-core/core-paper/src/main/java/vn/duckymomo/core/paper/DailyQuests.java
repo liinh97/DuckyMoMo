@@ -496,6 +496,7 @@ final class DailyQuests implements Listener {
 
     /** Module khác báo người chơi vừa dùng một tính năng (mã trong daily-quests.intro). */
     static void feature(Player p, String id) {
+        NewbiePath.feature(p, id);   // đường tân thủ dùng chung mã
         DailyQuests d = INSTANCE;
         if (d != null) {
             d.intro(p, id);
@@ -628,6 +629,7 @@ final class DailyQuests implements Listener {
             return;
         }
         UUID u = p.getUniqueId();
+        NewbiePath.feature(p, g.id());   // đường tân thủ: bước "hỏi Già Làng" (gialang)
         List<Component> got = new ArrayList<>();
         capture.put(u, got);
         try {

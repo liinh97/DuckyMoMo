@@ -51,7 +51,8 @@ if (fresh) NAMES.slice(0, 7).forEach(n => { state[n].want = true; });   // lần
 // chỗ mặc định trùng nhau (bản đầu chọn song song): giữ bot đầu, bot sau chọn lại
 NAMES.forEach((n, k) => {
   const h = state[n].home['banghoi-1'];
-  if (h && NAMES.slice(0, k).some(o => { const g = state[o].home['banghoi-1']; return g && Math.hypot(g.x - h.x, g.z - h.z) < 12; })) {
+  // 29/10: bot đã gom phòng ẩn (homeOld) đứng sát nhau là đúng ý: không coi là trùng (trước đây mỗi lần khởi động xoá chỗ của 22 bot)
+  if (h && state[n].homeOld === undefined && NAMES.slice(0, k).some(o => { const g = state[o].home['banghoi-1']; return state[o].homeOld === undefined && g && Math.hypot(g.x - h.x, g.z - h.z) < 12; })) {
     delete state[n].home['banghoi-1']; delete state[n].at['banghoi-1'];
   }
 });

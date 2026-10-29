@@ -1,9 +1,28 @@
 # Bàn giao dự án DuckyMoMo Network
 
-> Dùng file này để tiếp tục ở session hoặc tài khoản Claude khác. Cập nhật: 29/10/2026 chiều. ĐỌC TỪ TRÊN XUỐNG: các mục có ngày ở đầu file là mới nhất (29/10 -> 28/10 tối -> 28/10 rạng sáng -> 27/10 tối -> 27/10 chiều -> trưa -> rạng sáng -> 26/10), rồi mới tới mục 0000000000 (22/10) và các mục 000… cũ hơn.
+> Dùng file này để tiếp tục ở session hoặc tài khoản Claude khác. Cập nhật: 29/10/2026 tối. ĐỌC TỪ TRÊN XUỐNG: các mục có ngày ở đầu file là mới nhất (29/10 tối -> 29/10 -> 28/10 tối -> 28/10 rạng sáng -> 27/10 tối -> 27/10 chiều -> trưa -> rạng sáng -> 26/10), rồi mới tới mục 0000000000 (22/10) và các mục 000… cũ hơn.
 > Đọc kèm: `README.md`, `docs/minecraft-server-plan.md` (kế hoạch, quyết định), `docs/network-architecture.md` (kiến trúc).
 
 ---
+
+## 29/10/2026 tối: Vote, Hầm Ngục (giai đoạn thử), set Chuyên Cần, tiện ích bán lẻ theo giờ (đã push nhánh claude/happy-ritchie-2p60v7)
+- Vote: /vote thêm Minecraft-MP (ID 366061, Votifier V1), MinecraftServers.org, Minecraft Server List, TopG, Planet Minecraft; hiện tên cần nhập.
+- Botfarm: bot mới tạo ở trạng thái nghỉ (want:false); `/act rotcfg` chỉnh min/max thay phiên. Thị trấn 1 bot: `tools/bot-town-new.py`
+  (8 thị trấn mới, tổng 12, mỗi cái nạp 15.000 xu). Tiện ích bán lẻ theo giờ trong cửa hàng Vàng (/wb /trash /anvil 1, /ec /feed 2, /fix /bay 3),
+  chỉnh ở Cài đặt › Tiện ích (trỏ theo VỊ TRÍ món trong vang.mon: thêm / bớt món phía trước thì sửa schema). Công Tước: /bay trong thị trấn mình,
+  /fix (không sửa đồ Thư viện).
+- Hầm Ngục /hamnguc (dungeon tự dựng, phòng to, quái rơi set +0): ĐANG THỬ, chỉ chi-cho (Itrap, Linh) + admin vào, nút ở /dungeon ẩn với
+  người khác. 2 trang cẩm nang + dòng /hamnguc trong `modes/_network/huongdan.yml` đang để dạng chú thích (`  # `): mở công khai thì bỏ
+  chú thích rồi `./ops/huongdan.sh`. Bot test: `tools/bottest/hn-thu.js`.
+- Set Chuyên Cần (set điểm danh, `tools/gen_chuyencan.py` sinh món cn_* + phieu_dd vào `data/.../thuvien-do.yml`, KHÔNG có trong git;
+  bản trước khi thêm: `thuvien-do.yml.bak-29-10-chuyencan`, bản trước lần sinh lại: `.bak-chuyencan-chaylai`; script chạy lại được).
+  Chủ server 29/10: "phải điểm danh cả tháng", "tuỳ sức mạnh bộ đồ" → phiếu CHỈ từ điểm danh (1/ngày, mốc 7/14/30: 2/3/5 = 40 phiếu/30 ngày),
+  phiếu online TẮT (`daily-checkin.online-ticket.enabled: false`, /diemdanh vẫn có nút [Đổi set Chuyên Cần] → `/thoren set chuyencan`).
+  Sức mạnh: +0 kim cương Bảo vệ III (~Tân Thủ +6), 8 phiếu/món = bộ 32 phiếu (~ngày 27); +3 ~ Chiến Binh +0; +5 ~ Chiến Binh +4 + Tu sửa
+  + 30% kinh nghiệm (hiệu ứng bộ mới `kn`), cả bộ 236 phiếu (~6 tháng). Đã test bằng bot (`tools/bottest/cc-thu.js` rèn +0, `cc-dd.js`
+  điểm danh sau 5 phút ra 1 phiếu); restart banghoi-1 21:44 và 21:58 lúc 0 người thật.
+- PlayerParticles: bản mẫu `ticks-per-particle: 1` mới hơn data (3, chủ server chỉnh trên web) vài micro giây → đã `touch` data trước restart.
+  Trước mỗi restart vẫn so bản mẫu / data (xem BÀI HỌC mục 29/10 bên dưới).
 
 ## 29/10/2026: Thân nhiệt, giảm lag, bot phòng ẩn, thông báo đẩy, kit + danh phận (đã push nhánh claude/happy-ritchie-2p60v7)
 

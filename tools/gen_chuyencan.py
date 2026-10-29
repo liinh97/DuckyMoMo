@@ -1,21 +1,26 @@
-"""Set Chuyên Cần (29/10): 4 món giáp x +0..+5, đổi bằng Phiếu Chuyên Cần (điểm danh + online). Ghi vào thư viện (data) + config (repo + data)."""
+"""Set Chuyên Cần (29/10): 4 món giáp x +0..+5, đổi bằng Phiếu Chuyên Cần (điểm danh). Ghi vào thư viện (data) + config (repo + data).
+
+Cân bằng (29/10, chủ server: "phải điểm danh cả tháng", "tuỳ sức mạnh bộ đồ"): chỉ điểm danh ra phiếu (1/ngày + mốc 7/14/30: 2/3/5
+= 40 phiếu/30 ngày, phiếu online tắt). +0 cả bộ 32 phiếu (~1 tháng) ~ Tân Thủ +6 (kim cương, Bảo vệ III); +3 ~ Chiến Binh +0;
++5 ~ Chiến Binh +4 + Tu sửa + 30% kinh nghiệm, cả bộ 236 phiếu (~6 tháng).
+Chạy lại được: món cn_* / phieu_dd đã có thì thay bằng bản mới (người đang giữ món cũ không đổi theo)."""
 import shutil, yaml, re
 R = "/home/developer/works/DuckyMoMo/"
 LIB = R + "data/banghoi-1/plugins/DuckyMoMoCore/thuvien-do.yml"
 
 PIECES = [("mu", "Mũ", "HELMET"), ("ao", "Giáp", "CHESTPLATE"), ("quan", "Quần", "LEGGINGS"), ("giay", "Giày", "BOOTS")]
 RAR = ["&aCommon", "&bUncommon", "&bUncommon", "&9Rare", "&9Rare", "&5Epic"]
-PROT = [2, 3, 3, 3, 4, 4]
-UNB = [2, 3, 3, 3, 4, 4]
-PROJ = [0, 0, 2, 2, 3, 3]
-MAU = [0, 2, 3, 4, 5, 6]
+PROT = [3, 3, 4, 4, 4, 4]
+UNB = [3, 3, 4, 4, 4, 4]
+PROJ = [1, 2, 2, 3, 3, 3]
+MAU = [2, 2, 3, 4, 5, 6]
 QUOTE = ["Ngày đầu đến làng, áo còn thơm mùi vải mới…", "Sáng nào cũng thấy mặt ở quảng trường…", "Già Làng bắt đầu nhớ tên bạn rồi đấy…",
          "Bền như người chẳng bỏ buổi nào…", "Cả làng đã quen tiếng bước chân này…", "Ngày công dệt thành sợi chỉ vàng trên áo…"]
 
 items = {}
 for key, vn, slot in PIECES:
     for lv in range(6):
-        mat = ("IRON_" if lv <= 2 else "DIAMOND_") + slot
+        mat = "DIAMOND_" + slot
         ench = {"protection": PROT[lv], "unbreaking": UNB[lv]}
         if PROJ[lv]:
             ench["projectile_protection"] = PROJ[lv]
@@ -45,19 +50,19 @@ for key, vn, slot in PIECES:
                 perks.append("&7• Lội nước nhanh &8(Sải chân I)")
         if lv >= 5:
             ench["mending"] = 1
-            perks.append("&a&l• Tự vá: &akinh nghiệm nhặt được sửa đồ &8(Tu sửa)")
+            perks.append("&a• Tự vá: &akinh nghiệm nhặt được sửa đồ &8(Tu sửa)")
         if not perks:
             perks.append("&8• Lên +1 để mở nếp chăm đầu tiên")
         mau = MAU[lv] + (1 if key == "ao" and lv >= 1 else 0)
         dots = "".join("&8[&e☀&8]" if j <= lv else "&8[&7·&8]" for j in range(6))
         lore = [
-            "&6━━━ &e☀ &6&lCHUYÊN CẦN &e☀ &6━━━",
+            "&6━━━ &e☀ &6CHUYÊN CẦN &e☀ &6━━━",
             f"&e▪ &7Món: &f{vn}   &7Phẩm: {RAR[lv]}",
             f"&e▪ &7Ngày công: {dots}",
-            "&b&l▸ SỨC BỀN",
-            f"&7• +{mau}% sinh lực tối đa" if mau else "&7• Giáp sắt vững chãi cho người mới",
+            "&b▸ SỨC BỀN",
+            f"&7• +{mau}% sinh lực tối đa" if mau else "&7• Giáp kim cương của người chăm chỉ",
             "",
-            "&a&l▸ NẾP CHĂM",
+            "&a▸ NẾP CHĂM",
             *perks,
             "&7• Đủ 4 món: &c+máu&7, &e+kinh nghiệm &8(/thoren)",
             "&6━━━━━━━━━━━━━━━━━━━",
@@ -66,7 +71,7 @@ for key, vn, slot in PIECES:
         ]
         it = {
             "nguon": "web", "nhom": "giap", "ten-goi": f"{vn} Chuyên Cần +{lv}", "material": mat, "amount": 1,
-            "name": f"&e☀ &6&l{vn} Chuyên Cần &e☀ &f+{lv}", "lore": lore, "enchants": ench,
+            "name": f"&e☀ &6{vn} Chuyên Cần &e☀ &f+{lv}", "lore": lore, "enchants": ench,
         }
         if mau:
             it["attributes"] = {"pct_mau": mau}
@@ -75,17 +80,23 @@ for key, vn, slot in PIECES:
 items["phieu_dd"] = {
     "nguon": "web", "nhom": "nguyen-lieu", "ten-goi": "Phiếu Chuyên Cần", "material": "SUNFLOWER", "amount": 1,
     "name": "&e☀ &6Phiếu Chuyên Cần",
-    "lore": ["&7Nhận khi &f/diemdanh &7mỗi ngày, ở mốc điểm danh,", "&7và mỗi giờ online hoạt động &8(tối đa 2/ngày)&7.",
+    "lore": ["&7Nhận khi &f/diemdanh &7mỗi ngày &8(1 phiếu)&7,", "&7mốc 7 / 14 / 30 ngày &8(2 / 3 / 5 phiếu)&7.",
              "&a⚑ Đổi: &fset Chuyên Cần ở Thợ Rèn &8(/thoren)"],
     "glint": True, "cong-dung": "tinh-luyen",
 }
 
 # ---- thư viện (data): chèn ngay sau "items:" (giữ nguyên phần còn lại của tệp)
 src = open(LIB, encoding="utf-8").read()
-if "\n  cn_mu_0:" in src or src.startswith("items:\n  cn_mu_0:"):
-    print("thư viện đã có cn_*")
+if src.startswith("items:\n  cn_mu_0:"):   # chạy lại: bỏ khối cũ (cn_* + phieu_dd nằm đầu tệp) rồi chèn bản mới
+    shutil.copy(LIB, LIB + ".bak-chuyencan-chaylai")
+    m = re.search(r"\n  phieu_dd:\n(?:    .*\n|\n)*?(?=  [a-z0-9_]+:\n)", src)
+    assert m, "không thấy cuối khối phieu_dd"
+    src = "items:\n" + src[m.end():]
+if "\n  cn_mu_0:" in src:
+    print("thư viện có cn_* ở chỗ khác, dừng")
 else:
-    shutil.copy(LIB, LIB + ".bak-29-10-chuyencan")
+    if not __import__("os").path.exists(LIB + ".bak-29-10-chuyencan"):
+        shutil.copy(LIB, LIB + ".bak-29-10-chuyencan")
     block = yaml.safe_dump(items, allow_unicode=True, sort_keys=False, width=1000)
     block = "".join("  " + l + "\n" if l else "\n" for l in block.splitlines())
     assert src.startswith("items:\n"), src[:20]
@@ -99,19 +110,19 @@ else:
 SET = '''    chuyencan:
       name: Chuyên Cần
       icon: SUNFLOWER
-      desc: 'Set điểm danh: đổi bằng Phiếu Chuyên Cần (điểm danh mỗi ngày, mốc điểm danh, mỗi giờ online). Đủ bộ thêm máu và kinh nghiệm, +5 tự vá đồ.'
+      desc: 'Set điểm danh: đổi bằng Phiếu Chuyên Cần (điểm danh mỗi ngày, mốc điểm danh). Cả bộ +0 cần ~1 tháng điểm danh. Đủ bộ thêm máu và kinh nghiệm, +5 tự vá đồ.'
       cost:
-      - {xu: 200, phieu_dd: 3}
-      - {xu: 300, phieu_dd: 3}
-      - {xu: 500, phieu_dd: 4}
-      - {xu: 800, phieu_dd: 5}
-      - {xu: 1200, phieu_dd: 7}
-      - {xu: 1800, phieu_dd: 9}
+      - {xu: 200, phieu_dd: 8}
+      - {xu: 300, phieu_dd: 6}
+      - {xu: 500, phieu_dd: 8}
+      - {xu: 800, phieu_dd: 10}
+      - {xu: 1200, phieu_dd: 12}
+      - {xu: 1800, phieu_dd: 15}
       wear: [80, 72, 64, 56, 48, 40]
       bonus:
-      - {from: 0, pieces: 4, mau: 4, kn: 10}
-      - {from: 3, pieces: 4, mau: 8, day-lui: 5, kn: 20}
-      - {from: 5, pieces: 4, mau: 12, day-lui: 10, giam-st: 3, kn: 30}
+      - {from: 0, pieces: 4, mau: 6, kn: 10}
+      - {from: 3, pieces: 4, mau: 8, day-lui: 5, giam-st: 2, kn: 20}
+      - {from: 5, pieces: 4, mau: 10, day-lui: 10, giam-st: 4, kn: 30}
       pieces:
 ''' + "".join(f"        {k}: {{name: {vn}, ids: [{', '.join(f'cn_{k}_{i}' for i in range(6))}]}}\n" for k, vn, _ in PIECES)
 

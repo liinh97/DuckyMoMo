@@ -175,7 +175,7 @@ menu:
     mo: "Vào mỗi ngày để nhận"
     chuong: hangngay
     lenh:
-    - "/diemdanh|150 xu + vé Gacha mỗi ngày"
+    - "/diemdanh|150 xu + vé Gacha + Phiếu Chuyên Cần mỗi ngày"
     - "/nhiemvu|3 nhiệm vụ mỗi ngày + việc dân làng đang nhận (hỏi Già Làng)"
     - "/gacha|quay bằng vé"
     - "/vote|150 xu mỗi lượt vote"
@@ -187,6 +187,7 @@ menu:
     mo: "Dungeon, cổng ẩn, kho báu, lữ khách"
     chuong: khampha
     lenh:
+    # - "/hamnguc|Hầm Ngục DuckyMoMo: quái rơi thẳng đồ set"   # Hầm Ngục đang thử (29/10): mở lại khi công khai
     - "/dungeon|danh sách dungeon, bấm để vào"
     - "/conghoang|lời đồn về cổng ẩn"
     - "/khobau|cách dò bản đồ kho báu"
@@ -987,6 +988,21 @@ chapters:
   - |-
     &6LỮ KHÁCH (tiếp)
     &8Lữ khách đổi chỗ mỗi 3 ngày.
+  # Hầm Ngục đang thử (29/10, chỉ chi-cho + admin): 2 trang dưới tạm ẩn, mở lại khi công khai (bỏ "  # " đầu dòng).
+  # - |-
+  #   &6HẦM NGỤC DUCKYMOMO
+  #   &1/hamnguc &0chọn hầm ngục để vào.
+  #   &0Đi qua từng phòng, hạ hết quái thì cửa mở. Phòng giữa có phó trùm, phòng cuối có trùm.
+  #   &0Chết không mất đồ.
+  # - |-
+  #   &6HẦM NGỤC (tiếp)
+  #   &0Quái rơi thẳng &6món set +0&0:
+  #   &0Hầm Mộ Cổ: Tân Thủ
+  #   &0Mỏ Bỏ Hoang: Chiến Binh
+  #   &0Thành Cổ: Tinh Anh
+  #   &0Vực Thẳm: Cao Cấp
+  #   &0Rủ bạn: &1/hamnguc moi <tên>
+  #   &0Ra: &1/hamnguc thoat
   - |-
     &5CỔNG DUNGEON
     &0Dungeon cày đồ hiếm, đi theo nhóm.
@@ -1126,6 +1142,7 @@ chapters:
   - |-
     &2ĐIỂM DANH
     &0Mỗi ngày gõ &1/diemdanh&0 (online đủ 5 phút) nhận 150 xu.
+    &0Thêm &6Phiếu Chuyên Cần&0 (mỗi ngày 1, mốc 7/14/30 thêm 2/3/5). Đủ 1 tháng đổi cả bộ set &6Chuyên Cần&0 ở &1/thoren&0.
     &0Đủ 7, 14, 30 ngày&r&0 có quà mốc (kim cương, táo vàng…).
     &0Bỏ một ngày không mất&r&0 chuỗi.
     &1/diemdanh xem &0tiến độ

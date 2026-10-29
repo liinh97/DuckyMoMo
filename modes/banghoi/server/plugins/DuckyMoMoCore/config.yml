@@ -591,9 +591,10 @@ daily-checkin:
       - vat DIAMOND 8
       - do phieu_dd 5
   # Phiếu online (29/10, set Chuyên Cần): mỗi every-minutes phút ĐANG HOẠT ĐỘNG trong ngày (đứng im quá idle-minutes không tính, bot không tính)
-  # nhận 1 item, tối đa max-per-day. Một tháng chăm: ~30 (điểm danh) + 10 (mốc) + ~60 (online) phiếu; cả bộ +5 cần 124 phiếu.
+  # nhận 1 item, tối đa max-per-day. TẮT (29/10, chủ server: phải điểm danh cả tháng mới đủ bộ): chỉ còn 1 phiếu/ngày + mốc 7/14/30 (2/3/5)
+  # = 40 phiếu/30 ngày; bộ +0 = 4 x 8 = 32 phiếu (~ngày 27), cả bộ +5 = 236 phiếu (~6 tháng). Tắt thì /diemdanh chỉ ẩn dòng phiếu online, nút [Đổi set Chuyên Cần] vẫn hiện.
   online-ticket:
-    enabled: true
+    enabled: false
     item: phieu_dd
     every-minutes: 60
     max-per-day: 2
@@ -2254,19 +2255,19 @@ tho-ren:
     chuyencan:
       name: Chuyên Cần
       icon: SUNFLOWER
-      desc: 'Set điểm danh: đổi bằng Phiếu Chuyên Cần (điểm danh mỗi ngày, mốc điểm danh, mỗi giờ online). Đủ bộ thêm máu và kinh nghiệm, +5 tự vá đồ.'
+      desc: 'Set điểm danh: đổi bằng Phiếu Chuyên Cần (điểm danh mỗi ngày, mốc điểm danh). Cả bộ +0 cần ~1 tháng điểm danh. Đủ bộ thêm máu và kinh nghiệm, +5 tự vá đồ.'
       cost:
-      - {xu: 200, phieu_dd: 3}
-      - {xu: 300, phieu_dd: 3}
-      - {xu: 500, phieu_dd: 4}
-      - {xu: 800, phieu_dd: 5}
-      - {xu: 1200, phieu_dd: 7}
-      - {xu: 1800, phieu_dd: 9}
+      - {xu: 200, phieu_dd: 8}     # 29/10: bộ +0 = 32 phiếu, điểm danh ~1 tháng
+      - {xu: 300, phieu_dd: 6}
+      - {xu: 500, phieu_dd: 8}
+      - {xu: 800, phieu_dd: 10}
+      - {xu: 1200, phieu_dd: 12}
+      - {xu: 1800, phieu_dd: 15}
       wear: [80, 72, 64, 56, 48, 40]
       bonus:
-      - {from: 0, pieces: 4, mau: 4, kn: 10}
-      - {from: 3, pieces: 4, mau: 8, day-lui: 5, kn: 20}
-      - {from: 5, pieces: 4, mau: 12, day-lui: 10, giam-st: 3, kn: 30}
+      - {from: 0, pieces: 4, mau: 6, kn: 10}
+      - {from: 3, pieces: 4, mau: 8, day-lui: 5, giam-st: 2, kn: 20}
+      - {from: 5, pieces: 4, mau: 10, day-lui: 10, giam-st: 4, kn: 30}
       pieces:
         mu: {name: Mũ, ids: [cn_mu_0, cn_mu_1, cn_mu_2, cn_mu_3, cn_mu_4, cn_mu_5]}
         ao: {name: Giáp, ids: [cn_ao_0, cn_ao_1, cn_ao_2, cn_ao_3, cn_ao_4, cn_ao_5]}

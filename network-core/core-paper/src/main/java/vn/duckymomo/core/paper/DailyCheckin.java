@@ -254,16 +254,20 @@ final class DailyCheckin implements Listener {
                 ? (next.getKey() - cfg.getInt("cycle-days", 30)) : next.getKey()) + " ngày&7 (còn &f" + (next.getKey() - day) + "&7 lần điểm danh)";
         p.sendMessage(c("&7Đã điểm danh &f" + count + "&7 ngày" + nextText));
         ConfigurationSection o = cfg.getConfigurationSection("online-ticket");
-        if (o != null && o.getBoolean("enabled", true)) {
-            String k = "players." + p.getUniqueId() + ".online";
-            boolean td = today().equals(data.getString(k + ".day"));
-            int got = td ? data.getInt(k + ".got") : 0;
-            int min = td ? data.getInt(k + ".min") : 0;
-            int max = o.getInt("max-per-day", 2);
-            int every = Math.max(1, o.getInt("every-minutes", 60));
+        if (o != null) {   // nút đổi set luôn hiện; dòng phiếu online chỉ khi online-ticket bật (29/10 đã tắt: chỉ điểm danh ra phiếu)
             String set = o.getString("set", "chuyencan");
-            p.sendMessage(c("&e☀ Phiếu online hôm nay: &f" + got + "/" + max + (got < max ? " &7(phiếu tiếp sau &f"
-                    + Math.max(1, every * (got + 1) - min) + " phút&7 hoạt động)" : "") + " ")
+            String line = "&e☀ Đổi Phiếu Chuyên Cần lấy set ở Thợ Rèn ";
+            if (o.getBoolean("enabled", true)) {
+                String k = "players." + p.getUniqueId() + ".online";
+                boolean td = today().equals(data.getString(k + ".day"));
+                int got = td ? data.getInt(k + ".got") : 0;
+                int min = td ? data.getInt(k + ".min") : 0;
+                int max = o.getInt("max-per-day", 2);
+                int every = Math.max(1, o.getInt("every-minutes", 60));
+                line = "&e☀ Phiếu online hôm nay: &f" + got + "/" + max + (got < max ? " &7(phiếu tiếp sau &f"
+                        + Math.max(1, every * (got + 1) - min) + " phút&7 hoạt động)" : "") + " ";
+            }
+            p.sendMessage(c(line)
                     .append(c("&6&n[Đổi set Chuyên Cần]").clickEvent(ClickEvent.runCommand("/thoren set " + set))
                             .hoverEvent(HoverEvent.showText(c("&7Đổi Phiếu Chuyên Cần lấy món set ở Thợ Rèn")))));
         }

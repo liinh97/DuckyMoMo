@@ -174,7 +174,8 @@ final class PetTop {
         return s == null ? "" : s.replaceAll("<[^>]+>|[&§][0-9a-fk-or]", "");
     }
 
-    /** Cấp MyPet từ kinh nghiệm: 17/cấp tới 17, rồi +3, từ 32 +7 (công thức mặc định). */
+    /** Cấp MyPet từ kinh nghiệm: CalculationMode Default (DefaultExperienceCalculator): lên cấp i+1 cần 7 + ⌊(i−1)·3,5⌋ (29/10: trước dùng
+     *  công thức của exp.js, file chỉ dùng khi CalculationMode JS, nên cấp hiện cao hơn thật, vd 348 kinh nghiệm: 20 thay vì 13). */
     static int level(double exp) {
         int lv = 1;
         while (lv < 1000 && need(lv + 1) <= exp) {
@@ -184,18 +185,11 @@ final class PetTop {
     }
 
     private static double need(int lv) {
-        if (lv <= 1) {
-            return 0;
+        double t = 0;
+        for (int i = 1; i < lv; i++) {
+            t += 7 + Math.floor((i - 1) * 3.5);
         }
-        if (lv <= 17) {
-            return (lv - 1) * 17.0;
-        }
-        if (lv <= 31) {
-            int n = lv - 17;
-            return 272 + n * (3.0 * lv - 14) / 2;
-        }
-        int n = lv - 32;
-        return 887 + n * (7.0 * lv - 93) / 2;
+        return t;
     }
 
     private static Component c(String s) {

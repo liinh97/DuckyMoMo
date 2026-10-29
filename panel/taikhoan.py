@@ -323,17 +323,11 @@ def season_now(cfg):
 
 
 def pet_level(exp):
-    """Cấp MyPet từ kinh nghiệm (công thức mặc định, giống exp.js: 17 XP/cấp tới 17, +3 tới 31, +7 từ 32)."""
+    """Cấp MyPet từ kinh nghiệm (MyPet CalculationMode Default)."""
     def need(lv):
-        if lv <= 1:
-            return 0
-        if lv <= 17:
-            return (lv - 1) * 17
-        if lv <= 31:
-            n = lv - 17
-            return 272 + n * (3 * lv - 14) / 2
-        n = lv - 32
-        return 887 + n * (7 * lv - 93) / 2
+        # MyPet CalculationMode Default (DefaultExperienceCalculator): lên cấp i+1 cần 7 + floor((i-1)*3.5) (29/10: trước theo exp.js, sai)
+        import math
+        return sum(7 + math.floor((i - 1) * 3.5) for i in range(1, lv))
     lv = 1
     while lv < 1000 and need(lv + 1) <= (exp or 0):
         lv += 1

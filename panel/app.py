@@ -2404,15 +2404,9 @@ BOT_PET_NAMES = ["Mực", "Vàng", "Bông", "Mít", "Đốm", "Cún", "Miu", "B�
 
 
 def _pet_need(lv):
-    if lv <= 1:
-        return 0
-    if lv <= 17:
-        return (lv - 1) * 17
-    if lv <= 31:
-        n = lv - 17
-        return 272 + n * (3 * lv - 14) / 2
-    n = lv - 32
-    return 887 + n * (7 * lv - 93) / 2
+    """Kinh nghiệm cần để đạt cấp lv (MyPet CalculationMode Default)."""
+    import math
+    return sum(7 + math.floor((i - 1) * 3.5) for i in range(1, lv))
 
 
 def _bot_pet_plan(name, prof):
@@ -2443,10 +2437,16 @@ def bot_pet_sync():
             continue
         cur = done.get(name) or {}
         cmds = []
-        if not cur.get("type"):
-            cmds.append(f"petadmin create {name} {plan['type']}")
-            if plan["name"]:
-                cmds.append(f"petadmin name {name} {plan['name']}")
+        if not cur.get("type"):   # lượt này chỉ tạo; đặt kinh nghiệm + tên ở lượt sau (chạy liền thì pet chưa tạo xong, không ăn)
+            try:
+                rcon(BOT_SRV, [f"petadmin create {name} {plan['type']}"])
+            except Exception:
+                continue
+            done[name] = {"type": plan["type"], "exp": 0, "named": False}
+            n += 1
+            continue
+        if plan["name"] and not cur.get("named"):
+            cmds.append(f"petadmin name {name} {plan['name']}")
         if plan["exp"] > float(cur.get("exp", 0) or 0):
             cmds.append(f"petadmin exp {name} {plan['exp']:.0f}")
         if not cmds:
@@ -2455,7 +2455,7 @@ def bot_pet_sync():
             rcon(BOT_SRV, cmds)
         except Exception:
             continue
-        done[name] = {"type": cur.get("type") or plan["type"], "exp": max(plan["exp"], float(cur.get("exp", 0) or 0))}
+        done[name] = {"type": cur.get("type") or plan["type"], "exp": max(plan["exp"], float(cur.get("exp", 0) or 0)), "named": True}
         n += 1
     try:
         BOT_PET_FILE.parent.mkdir(parents=True, exist_ok=True)

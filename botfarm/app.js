@@ -655,6 +655,24 @@ async function startWander(n, c) {
   log(n, 'không tới được', c.pt.name, '- về phòng');
   stopWander(n);
 }
+/** Phía trước (1–2 khối theo hướng nhìn) đi được không: có nền trong 2 khối dưới chân, không phải nước / dung nham (29/10: bot đi
+ *  ra NPC Già Làng rồi bước qua mép quảng trường rơi xuống). */
+function safeAhead(b) {
+  const p = b.entity.position, yaw = b.entity.yaw;
+  const dx = -Math.sin(yaw), dz = -Math.cos(yaw);
+  for (const d of [1, 2]) {
+    const x = p.x + dx * d, z = p.z + dz * d;
+    let ground = false;
+    for (let dy = 0; dy >= -3; dy--) {
+      const bl = b.blockAt(p.offset(x - p.x, dy, z - p.z));
+      if (!bl) return false;   // chưa nạp: coi như nguy hiểm
+      if (/water|lava|fire|magma|powder_snow|cactus|sweet_berry/.test(bl.name)) return false;
+      if (dy <= -1 && bl.boundingBox === 'block') { ground = dy >= -2; break; }   // nền ở -1 hoặc -2 (bậc thang xuống 1 khối)
+    }
+    if (!ground) return false;
+  }
+  return true;
+}
 /** NPC Citizens: thực thể người chơi không có trong danh sách người chơi (TAB) hoặc UUID bản 2. */
 function isNpc(b, e) {
   return e.type === 'player' && e.username && (!b.players[e.username] || (e.uuid && e.uuid[14] === '2'));
@@ -692,6 +710,13 @@ setInterval(() => {   // nhịp đi dạo: đi vài giây, nhìn quanh, ghé NPC
     try {
       const p = b.entity.position;
       b.setControlState('jump', !!(b.entity.isCollidedHorizontally && b.getControlState('forward')));
+      if (b.getControlState('forward') && !safeAhead(b)) {   // vực / nước phía trước: dừng, quay hướng khác
+        b.clearControlStates();
+        b.look(b.entity.yaw + Math.PI * (0.5 + Math.random()), 0, true);
+        if (w.npc && !w.talk) w.npc = null;   // không tới được NPC: bỏ
+        w.next = Date.now() + 800 + Math.random() * 1500;
+        continue;
+      }
       if (w.going) continue;
       if (!wanderCfg.walk) b.clearControlStates();
       if (w.npc) {   // đang tới / đứng trước NPC

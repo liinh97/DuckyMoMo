@@ -375,8 +375,8 @@ chapters:
     &6Mới vào
     &0Khu spawn an toàn: không PvP, không phá.
     &4Ra khỏi spawn là có thể bị đánh&0 ngay (không có thời gian bảo vệ người mới).
-    &0Bắt đầu với 500 xu&r&0 + quà tân thủ.
-    &1/kit &0gói quà: tân thủ, quà theo danh phận
+    &0Bắt đầu với 500 xu&r&0 + Quà tị nạn (tự nhận).
+    &1/kit &0gói quà theo danh phận (3 ngày nhận lại)
   - |-
     &6Đi lại
     &1/spawn &0về spawn
@@ -453,16 +453,18 @@ chapters:
   - |-
     &6DANH PHẬN: quyền lợi
     &0Tị Nạn: 1 nhà, 2 món Chợ đen.
-    &0Dân: 2 nhà, 1 balo 27 ô, 4 món Chợ đen.
-    &0Lương Dân: 3 nhà, 2 balo 36 ô, 6 món Chợ đen.
-    &0Hào Kiệt: 5 nhà, 3 balo 45 ô, 8 món Chợ đen.
+    &0Dân: 2 nhà, 1 balo 18 ô, 4 món Chợ đen.
+    &0Lương Dân: 3 nhà, 1 balo 27 ô, 6 món Chợ đen.
+    &0Hào Kiệt: 4 nhà, 2 balo 36 ô, 8 món Chợ đen, &6đổi skin&0, &6rada&0, dịch chuyển 4 giây (bậc khác 5).
   - |-
     &6DANH PHẬN (tiếp)
+    &0Mỗi bậc một gói quà &1/kit&0 (3 ngày nhận lại).
+    &0Tủ skin &1/tuskin&0 mở từ Hào Kiệt.
     &8Giữ danh phận khi /choilai. Số liệu có thể đổi: xem /danhphan.
   - |-
     &c◆ RANK SỨ GIẢ
     &0Cho người livestream&r&0 về server (TikTok, YouTube…), miễn phí, admin xét duyệt.
-    &0Có thêm nhà, balo, món Chợ đen, đơn thu mua, vé gacha nhanh hơn, gói quà Sứ Giả (&1/kit&0).
+    &0Hơn Hào Kiệt một chút: 5 nhà, 2 balo 45 ô, 9 món Chợ đen, đổi skin, rada, dịch chuyển 2 giây, vé gacha nhanh hơn, gói quà Sứ Giả (&1/kit&0).
     &0Xem yêu cầu: thẻ Sứ Giả trong &1/danhphan&0.
   - |-
     &cSỨ GIẢ: cách làm

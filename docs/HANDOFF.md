@@ -1,9 +1,29 @@
 # Bàn giao dự án DuckyMoMo Network
 
-> Dùng file này để tiếp tục ở session hoặc tài khoản Claude khác. Cập nhật: 28/10/2026 tối. ĐỌC TỪ TRÊN XUỐNG: các mục có ngày ở đầu file là mới nhất (28/10 tối -> 28/10 rạng sáng -> 27/10 tối -> 27/10 chiều -> trưa -> rạng sáng -> 26/10), rồi mới tới mục 0000000000 (22/10) và các mục 000… cũ hơn.
+> Dùng file này để tiếp tục ở session hoặc tài khoản Claude khác. Cập nhật: 29/10/2026 chiều. ĐỌC TỪ TRÊN XUỐNG: các mục có ngày ở đầu file là mới nhất (29/10 -> 28/10 tối -> 28/10 rạng sáng -> 27/10 tối -> 27/10 chiều -> trưa -> rạng sáng -> 26/10), rồi mới tới mục 0000000000 (22/10) và các mục 000… cũ hơn.
 > Đọc kèm: `README.md`, `docs/minecraft-server-plan.md` (kế hoạch, quyết định), `docs/network-architecture.md` (kiến trúc).
 
 ---
+
+## 29/10/2026: Thân nhiệt, giảm lag, bot phòng ẩn, thông báo đẩy, kit + danh phận (đã push nhánh claude/happy-ritchie-2p60v7)
+
+### ⚠ BÀI HỌC (gây sự cố thật 29/10 15:54)
+- itzg **chép `modes/banghoi/server/plugins/<plugin>/config.yml` (bản mẫu) đè lên `data/banghoi-1/plugins/...` lúc khởi động lại nếu bản mẫu MỚI HƠN**
+  (log: `Interpolating /plugins/DuckyMoMoCore/config.yml -> /data/...`). Sửa cả hai thì **ghi bản mẫu TRƯỚC, data SAU** (hoặc `touch` data sau cùng).
+  15:52 ghi bản mẫu sau → restart 15:54 đè mất số balo chỉnh trên web (Dân 1×18, Lương Dân 1×27, Hào Kiệt 2×36); đã khôi phục từ restic
+  (`docker exec duckymomo-backup-banghoi-1-1 restic snapshots`, `restic restore <id> --target /tmp/rs --include <đường dẫn>`), bản mẫu đã chứa số đó.
+- So web với config đang chạy: lặp `app.all_settings(schema)` trong container panel, đọc giá trị file theo `path` (đã làm 29/10, chỉ 5 mục balo lệch).
+
+### Đã làm 29/10 (chi tiết ở cẩm nang admin)
+- Thân nhiệt /nhietdo (BodyTemp), đợt Rét đậm / Nắng nóng, Đá Ôn Linh, Ô Lá, khu an toàn (thị trấn + quanh warp), mục web + trang member.
+- Lag: quái đông cứng quanh bot (BotView chặn sinh + dọn), raiders activation 48 (`data/banghoi-1/spigot.yml`, ngoài repo). MSPT ~67 → ~5 ms.
+- Bot: phòng ẩn (bot-hide + botfarm gom phòng), đi dạo theo lộ trình ở spawn / trade / shop (/spawn /warp → NPC / khung → /back, pathfinder,
+  grim.exempt, không diễn cho staff), giáp + pet theo tài nguyên, 35 bot thay phiên online 25–31, lịch sử tiến độ hồ sơ bot, chat 143 đoạn.
+- Ẩn /pl /version cho nhóm default (LuckPerms, không có trong repo).
+- Thông báo đẩy về iPhone (PWA, panel/thongbao.py): người thật vào / ra, chat, sự cố.
+- Kit /kit theo vai danh phận, chỉ đồ tiêu hao; người mới tự nhận Quà tị nạn. Hào Kiệt 4 nhà / dịch chuyển 4 giây; Sứ Giả nhỉnh hơn Hào Kiệt
+  (đổi skin, rada, 2 giây); tủ skin = 0 cho Tị Nạn / Dân / Lương Dân. Cấp pet tính đúng công thức MyPet (bxhpet, web).
+- Chưa commit (phiên khác): `modes/_network/settings.yml`, `site/config/site.yml`, phần balo trong `modes/banghoi/settings.yml`.
 
 ## 28/10/2026 chiều: bot giống người thật (trang Bot)
 - Hồ sơ bot (xu, Thăng Cấp, điểm hạ gục, giờ, danh phận, nghề, kỹ năng, điểm danh, thành tích, thị trấn), Tự phát triển (tính cách ngẫu nhiên,

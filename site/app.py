@@ -434,21 +434,31 @@ def danhphan_info(core):
     """Danh phận (play-ranks) + rank Media (other-ranks.media + media): đọc thẳng config nên đổi trên Cài đặt là web đổi theo."""
     pr = get(core, "play-ranks", {}) or {}
 
-    def perks(t):
+    kits = (get(core, "goi-qua.goi", {}) or {}) if get(core, "goi-qua.enabled", False) else {}
+
+    def kit_of(group, own):
+        """Gói quà của bậc: gói có rank chứa nhóm đó (goi-qua.goi.*.rank), hoặc ô kit riêng (rank khác)."""
+        for k, v in kits.items():
+            if isinstance(v, dict) and group in (v.get("rank") or []):
+                return strip_colors(v.get("ten", k)).strip()
+        return own
+
+    def perks(t, group=""):
         return {"nha": t.get("homes", 0), "balo": t.get("balo", 0), "o": t.get("balo-slots", 0), "cho": t.get("ah", 0),
-                "don": t.get("orders", 0), "quay": t.get("spin-faster", 0), "kit": t.get("kit", ""), "skin": t.get("tu-skin", 0)}
+                "don": t.get("orders", 0), "quay": t.get("spin-faster", 0), "kit": kit_of(group, t.get("kit", "")), "skin": t.get("tu-skin", 0),
+                "tp": t.get("tp-delay", -1), "rada": bool(t.get("radar"))}
     tiers = []
     for k, t in (pr.get("tiers") or {}).items():
         if isinstance(t, dict):
             tiers.append({"ma": k, "ten": t.get("name", k), "tien_to": strip_colors(t.get("prefix", "")).strip(), "gio": t.get("hours", 0),
-                          "cap": t.get("level", 0), "them": t.get("perm-text", "") if t.get("perm") else ""} | perks(t))
+                          "cap": t.get("level", 0), "them": t.get("perm-text", "") if t.get("perm") else ""} | perks(t, t.get("group", k)))
     md = (pr.get("other-ranks") or {}).get("media") or {}
     mc = get(core, "media", {}) or {}
     media = None
     if md and mc.get("enabled"):
         media = {"ten": md.get("name", "Sứ Giả"), "tien_to": strip_colors(md.get("prefix", "")).strip(), "yeu_cau": md.get("info") or [],
                  "buoi": mc.get("min-sessions", 4), "phut": mc.get("min-session-minutes", 30), "gio": mc.get("min-hours", 6),
-                 "thu": mc.get("trial-days", 14)} | perks(md)
+                 "thu": mc.get("trial-days", 14)} | perks(md, "media")
     return {"bat": bool(pr.get("enabled")), "bac": tiers, "media": media,
             "balo": bool(get(core, "backpack.enabled", False)), "don_toi_thieu": get(core, "orders.max-per-player", 2)}
 

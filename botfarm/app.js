@@ -625,11 +625,16 @@ async function backHomes() {
   save();
   return k + ' bot về lại chỗ cũ';
 }
+// staff (29/10 chủ server: "là staff thì bot không cần diễn"): panel đẩy danh sách tên (nhóm helper/mod/quanly/admin/builder) 5 phút một lần
+const STAFF_FILE = '/state/staff.json';
+let staffSet = new Set();
+try { staffSet = new Set(JSON.parse(fs.readFileSync(STAFF_FILE, 'utf8')).map(x => String(x).toLowerCase())); } catch (e) { /* chưa có */ }
+const isStaff = who => staffSet.has(String(who).toLowerCase());
 async function wanderOnce() {
   const active = NAMES.filter(n => RT[n].wander).length;
   if (active >= wanderCfg.maxActive) return 'đang có đủ bot đi dạo';
   const R = rcon('banghoi-1'), cands = [];
-  for (const who of realOnline()) {
+  for (const who of realOnline().filter(w => !isStaff(w))) {
     const dim = await R.cmd(`data get entity ${who} Dimension`).catch(() => '');
     if (!/overworld/.test(dim)) continue;
     const p = await serverPos(who, 'banghoi-1').catch(() => null);
@@ -801,7 +806,7 @@ setInterval(async () => {
   if (Date.now() < wanderNext) {
     try {
       const now = new Set();   // "người|khu": đổi khu (trade → shop) cũng tính là mới tới (29/10)
-      for (const who of realOnline()) {
+      for (const who of realOnline().filter(w => !isStaff(w))) {
         const p = await serverPos(who, 'banghoi-1').catch(() => null);
         const pt = p && wanderCfg.points.find(q => Math.hypot(q.x - p.x, q.z - p.z) <= wanderCfg.radius);
         if (pt) now.add(who + '|' + pt.name);
@@ -892,6 +897,11 @@ async function act(b) {
   if (b.action === 'wandercfg') { wanderCfg.on = !!b.on; saveWander(); return 'bot đi dạo khi có người ở spawn / warp: ' + (wanderCfg.on ? 'bật' : 'tắt'); }
   if (b.action === 'wanderwalk') { wanderCfg.walk = !!b.on; saveWander(); return 'bot đi dạo: ' + (wanderCfg.walk ? 'được đi lại (cần grim.exempt)' : 'chỉ đứng nhìn quanh'); }
   if (b.action === 'rotcfg') { rotCfg.on = !!b.on; saveRot(); rotTarget = null; return 'thay phiên online: ' + (rotCfg.on ? 'bật (' + rotCfg.min + '–' + rotCfg.max + ' bot)' : 'tắt'); }
+  if (b.action === 'staff') {
+    staffSet = new Set((Array.isArray(b.names) ? b.names : []).map(x => String(x).toLowerCase()));
+    try { fs.writeFileSync(STAFF_FILE, JSON.stringify([...staffSet])); } catch (e) { /* bỏ qua */ }
+    return 'staff: ' + staffSet.size + ' tên (bot không diễn cho staff)';
+  }
   if (b.action === 'wandernow') return await wanderOnce();
   if (b.action === 'gomphong') return await gatherRoom();
   if (b.action === 'trave') return await backHomes();

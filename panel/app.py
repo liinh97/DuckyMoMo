@@ -2485,6 +2485,26 @@ def bot_pet_sync():
     return n
 
 
+BOT_STAFF_GROUPS = ("helper", "mod", "quanly", "admin", "builder")   # media KHÔNG tính: bot vẫn diễn khi họ quay video
+
+
+def bot_staff_push():
+    """Đẩy tên staff (nhóm trực tiếp trong LuckPerms) cho botfarm: staff ở spawn / trade / shop thì bot không ra diễn (29/10)."""
+    con = taikhoan.db("luckperms")
+    try:
+        cur = con.cursor()
+        marks = ",".join(["%s"] * len(BOT_STAFF_GROUPS))
+        cur.execute(f"SELECT DISTINCT p.username FROM luckperms_user_permissions u JOIN luckperms_players p ON p.uuid = u.uuid "
+                    f"WHERE u.value = 1 AND u.permission IN ({marks})", tuple("group." + g for g in BOT_STAFF_GROUPS))
+        names = sorted({r[0] for r in cur.fetchall() if r[0]})
+    finally:
+        con.close()
+    req = urllib.request.Request(BOTFARM_URL + "/act", data=json.dumps({"action": "staff", "names": names}).encode("utf-8"),
+                                 headers={"Content-Type": "application/json"}, method="POST")
+    with urllib.request.urlopen(req, timeout=10) as r:
+        return json.loads(r.read().decode("utf-8")).get("message", "")
+
+
 def bot_dev_loop():
     time.sleep(90)
     while True:
@@ -2492,6 +2512,10 @@ def bot_dev_loop():
             bot_dev_tick()
         except Exception as e:
             print(f"Bot tự phát triển: lỗi {e}", flush=True)
+        try:
+            bot_staff_push()
+        except Exception as e:
+            print(f"Staff cho bot: lỗi {e}", flush=True)
         try:
             k = bot_pet_sync()
             if k:

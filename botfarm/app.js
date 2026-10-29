@@ -634,7 +634,15 @@ async function startWander(n, c) {
   rt.wander = { until: Date.now() + (wanderCfg.durMin + Math.random() * (wanderCfg.durMax - wanderCfg.durMin)) * 1000, hard: Date.now() + wanderCfg.maxDur * 1000,
     cx: c.pt.x + 0.5, cz: c.pt.z + 0.5, next: 0 };
   rt.placedAt = Date.now();
-  await rcon('banghoi-1').cmd(`execute in minecraft:overworld positioned ${x} 0 ${z} positioned over motion_blocking_no_leaves run minecraft:tp ${n} ~ ~ ~`);
+  const R = rcon('banghoi-1');
+  let y = null;
+  for (const dy of [0, 1, -1, 2, -2, 3, -3, 4, -4]) {   // gần độ cao người chơi: chân + đầu trống, dưới chân là khối đặc
+    const yy = Math.floor(c.p.y) + dy;
+    const ok = await R.cmd(`execute in minecraft:overworld if block ${Math.floor(x)} ${yy} ${Math.floor(z)} #minecraft:replaceable if block ${Math.floor(x)} ${yy + 1} ${Math.floor(z)} #minecraft:replaceable unless block ${Math.floor(x)} ${yy - 1} ${Math.floor(z)} #minecraft:replaceable`).catch(() => '');
+    if (/passed/i.test(ok)) { y = yy; break; }
+  }
+  if (y != null) await R.cmd(`execute in minecraft:overworld run minecraft:tp ${n} ${x} ${y} ${z}`);
+  else await R.cmd(`execute in minecraft:overworld positioned ${x} 0 ${z} positioned over motion_blocking_no_leaves run minecraft:tp ${n} ~ ~ ~`);
   event({ type: 'doi', bot: n, server: 'banghoi-1', text: n + ' đi dạo ở ' + c.pt.name + ' (gần ' + c.who + ')' });
 }
 /** NPC Citizens: thực thể người chơi không có trong danh sách người chơi (TAB) hoặc UUID bản 2. */
@@ -697,8 +705,21 @@ setInterval(() => {   // nhịp đi dạo: đi vài giây, nhìn quanh, ghé NPC
   }
 }, 500);
 let wanderNext = Date.now() + 120000;
-setInterval(() => {
-  if (stopping || !wanderCfg.on || Date.now() < wanderNext) return;
+let wanderSeen = new Set();   // người thật đang ở khu lần kiểm trước: người MỚI tới thì cho bot ra sớm (29/10: đợi 4–9 phút thì người đã đi)
+setInterval(async () => {
+  if (stopping || !wanderCfg.on) return;
+  if (Date.now() < wanderNext) {
+    try {
+      const now = new Set();
+      for (const who of realOnline()) {
+        const p = await serverPos(who, 'banghoi-1').catch(() => null);
+        if (p && wanderCfg.points.some(q => Math.hypot(q.x - p.x, q.z - p.z) <= wanderCfg.radius)) now.add(who);
+      }
+      const fresh = [...now].some(w => !wanderSeen.has(w));
+      wanderSeen = now;
+      if (!fresh) return;
+    } catch (e) { return; }
+  }
   wanderNext = Date.now() + (wanderCfg.everyMin + Math.random() * (wanderCfg.everyMax - wanderCfg.everyMin)) * 60000;
   const h = vnHour();
   if (h >= 1 && h < 7) return;

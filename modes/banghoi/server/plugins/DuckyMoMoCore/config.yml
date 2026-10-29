@@ -1608,7 +1608,7 @@ play-ranks:
     tinan: {group: default, name: "Dân Tị Nạn", prefix: "&8[Tị Nạn] ", priority: 0, hours: 0, level: 0, homes: 1, balo: 0, balo-slots: 9, ah: 2, orders: 2, tu-skin: 1, icon: DEAD_BUSH, tp-delay: 5}
     dan: {group: dan, name: "Dân", prefix: "&7[Dân] ", priority: 1, hours: 6, level: 0, perm: duckymomo.cotruyen.c1, perm-text: "Xong chương 1 cốt truyện (Già Làng)", homes: 2, balo: 1, balo-slots: 9, ah: 4, orders: 3, tu-skin: 2, icon: WHEAT, tp-delay: 5}
     luongdan: {group: luongdan, name: "Lương Dân", prefix: "&a[Lương Dân] ", priority: 2, hours: 24, level: 10, homes: 3, balo: 2, balo-slots: 9, ah: 6, orders: 4, tu-skin: 3, icon: IRON_HOE, tp-delay: 5}
-    haokiet: {group: haokiet, name: "Hào Kiệt", prefix: "&6[Hào Kiệt] ", priority: 3, hours: 72, level: 25, homes: 4, balo: 3, balo-slots: 9, ah: 8, orders: 5, tu-skin: 5, icon: GOLDEN_HELMET, tp-delay: 3, radar: true}
+    haokiet: {group: haokiet, name: "Hào Kiệt", prefix: "&6[Hào Kiệt] ", priority: 3, hours: 72, level: 25, homes: 4, balo: 3, balo-slots: 9, ah: 8, orders: 5, tu-skin: 5, icon: GOLDEN_HELMET, tp-delay: 4, radar: true}
   # radar: true = thấy rada người chơi (chấm chỉ hướng người khác trên thanh kinh nghiệm); bậc / rank khác không thấy, bot không bao giờ hiện (28/10).
   # Rank KHÁC: quyền lợi homes (nhà) · balo · balo-slots (9..54) · ah (món chợ) · orders (đơn /donhang) · spin-faster (% vé vòng quay nhanh hơn,
   # 5..50) · kit (kit Essentials). 0 / "" = không cấp (theo danh phận). Người có nhiều rank lấy mức cao nhất. Cài đặt › Người mới › Quyền lợi theo rank.

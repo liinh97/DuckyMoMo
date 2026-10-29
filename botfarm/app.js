@@ -703,12 +703,11 @@ async function runRoute(n, c) {
   await sleep(1500 + Math.random() * 2500);   // vừa tới: đứng nhìn quanh một chút
   let stops = [];
   if (c.pt.npcs.length && c.pt.order === 'fixed') {   // 29/10 chủ server: không 1 màu, đảo thứ tự; thỉnh thoảng bỏ 1 NPC
-    stops = c.pt.npcs.slice().sort(() => Math.random() - 0.5);
-    if (stops.length > 2 && Math.random() < 0.3) stops.pop();
+    stops = c.pt.npcs.slice().sort(() => Math.random() - 0.5).slice(0, 1 + Math.floor(Math.random() * c.pt.npcs.length));   // 1..hết, không bắt buộc đi hết
   }
-  else if (c.pt.npcs.length) {   // 2–4 NPC gần nhau, đi lần lượt cái gần nhất
+  else if (c.pt.npcs.length) {   // 1–4 NPC gần nhau, đi lần lượt cái gần nhất
     let at = rt.bot.entity.position, left = c.pt.npcs.slice();
-    const k = Math.min(left.length, 2 + Math.floor(Math.random() * 3));
+    const k = Math.min(left.length, 1 + Math.floor(Math.random() * 4));   // 1–4 NPC
     for (let i = 0; i < k; i++) {
       left.sort((a, b) => Math.hypot(a.x - at.x, a.z - at.z) - Math.hypot(b.x - at.x, b.z - at.z));
       const pick = left.splice(Math.random() < 0.7 ? 0 : Math.min(1, left.length - 1), 1)[0];
@@ -717,8 +716,9 @@ async function runRoute(n, c) {
   } else {   // shop (29/10 chủ server: tìm chỗ bán rồi ra đó thao tác): khung vật phẩm treo tường (chuột trái mua, phải bán)
     const me = rt.bot.entity.position;
     const frames = Object.values(rt.bot.entities).filter(e => /item_frame/.test(e.name || '') && e.position.distanceTo(me) < 20).sort(() => Math.random() - 0.5);
-    for (const f of frames) {   // 2–4 khung cách nhau ≥ 3 khối
-      if (stops.length >= 2 + Math.floor(Math.random() * 3)) break;
+    const kf = 1 + Math.floor(Math.random() * 4);   // 1–4 khung cách nhau ≥ 3 khối
+    for (const f of frames) {
+      if (stops.length >= kf) break;
       if (stops.every(o => Math.hypot(o.x - f.position.x, o.z - f.position.z) >= 3)) stops.push({ x: f.position.x, y: f.position.y, z: f.position.z, khung: true });
     }
   }

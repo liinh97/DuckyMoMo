@@ -733,10 +733,11 @@ final class DecorShop implements Listener {
 
     private String frameName(Entry en, Map<Material, Double> worth) {
         Offer o = en.offer();
-        StringBuilder sb = new StringBuilder(o != null ? label(o) : "&f" + Rewards.vi(en.sellMat().name()));
+        int k = o == null ? 1 : frameMult(o);
+        StringBuilder sb = new StringBuilder(o == null ? "&f" + Rewards.vi(en.sellMat().name())
+                : k > 1 ? "&f" + (o.amount() * k) + " × " + Rewards.vi(o.icon().name()) : label(o));
         if (o != null) {
-            int k = frameMult(o);
-            sb.append(" &8· &aMua ").append(k > 1 ? (o.amount() * k) + ": " : "").append(money(o.price() * k));
+            sb.append(" &8· &aMua ").append(money(o.price() * k));
         }
         if (en.sellMat() != null && worth.containsKey(en.sellMat())) {
             sb.append(" &8· &eBán ").append(frameLot).append(": ").append(money(worth.get(en.sellMat()) * frameLot));

@@ -5,9 +5,10 @@ Cách chạy giống goc6 (fe_goc6/src/services/pushService.ts + be_goc6 PushSer
 xin quyền, subscribe bằng khoá VAPID công khai, gửi subscription lên panel; panel lưu (data/panel/push-subs.json) và đẩy khi có sự kiện.
 iPhone (iOS 16.4+): phải "Thêm vào Màn hình chính" rồi mở từ biểu tượng mới bật được (giới hạn của Apple).
 
-Ba loại, mỗi máy tự bật / tắt:
-  vaora — người THẬT vào / ra mạng (bỏ bot botfarm, bỏ staff; lần đầu vào thì ghi rõ; ra kèm số phút đã chơi)
-  chat  — tin chat của người thật (bỏ bot, bỏ staff)
+Bốn loại, mỗi máy tự bật / tắt:
+  vaora  — người THẬT vào / ra mạng (bỏ bot botfarm, bỏ staff; lần đầu vào thì ghi rõ; ra kèm số phút đã chơi + server cuối)
+  chuyen — người thật đổi server (29/10; không báo lần vào sảnh ngay sau khi đăng nhập)
+  chat   — tin chat của người thật, ghi rõ server (bỏ bot, bỏ staff)
   suco  — server không phản hồi / hoạt động lại, TPS Bang Hội dưới 15 kéo dài, botfarm rớt nhiều bot cùng lúc
 Khoá VAPID tự tạo lần đầu: data/panel/push-vapid.pem (không commit).
 """
@@ -19,7 +20,8 @@ import threading
 import time
 from pathlib import Path
 
-KINDS = {"vaora": "Người chơi vào / ra", "chat": "Chat của người chơi", "suco": "Sự cố server"}
+KINDS = {"vaora": "Người chơi vào / ra", "chuyen": "Người chơi chuyển server", "chat": "Chat của người chơi", "suco": "Sự cố server"}
+SRV = {"lobby": "Sảnh", "banghoi-1": "Bang Hội Chiến", "practice-1": "Practice", "sangtao-1": "Thái Ấp Sáng Tạo"}
 
 
 class Notifier:
@@ -163,7 +165,7 @@ class Notifier:
             return False
 
     def _watch_activity(self):
-        seen, joined = set(), {}
+        seen, joined, self._where = set(), {}, {}
         pos = 0
         try:   # ai đã từng vào (để biết "lần đầu"), rồi bắt đầu đọc từ cuối file
             with self.activity_file.open("rb") as f:
@@ -204,22 +206,35 @@ class Notifier:
         if not name or self._skip(name):
             return
         low = name.lower()
+        where = self._where
         if e.get("server") == "proxy" and text.endswith(" vào network"):
             first = low not in seen
             seen.add(low)
             joined[low] = time.time()
+            where.pop(low, None)
             self.push("vaora", f"🟢 {name} vào server", "Lần đầu vào DuckyMoMo" if first else "Đã từng chơi", tag="vao-" + low)
         elif e.get("server") == "proxy" and text.endswith(" rời network"):
             t0 = joined.pop(low, None)
+            last = where.pop(low, None)
             mins = f"chơi {max(1, round((time.time() - t0) / 60))} phút" if t0 else "rời mạng"
-            self.push("vaora", f"🔴 {name} thoát", mins, tag="ra-" + low)
+            self.push("vaora", f"🔴 {name} thoát", mins + (f" · cuối ở {SRV.get(last, last)}" if last else ""), tag="ra-" + low)
+        elif e.get("server") == "proxy" and e.get("target") and " → " in text:
+            to, prev = str(e["target"]), where.get(low)
+            where[low] = to
+            t0 = joined.get(low)
+            if prev is None and to == "lobby" and t0 and time.time() - t0 < 20:
+                return   # vào sảnh ngay sau khi đăng nhập: đã có thông báo "vào server"
+            if prev == to:
+                return
+            self.push("chuyen", f"🔀 {name} → {SRV.get(to, to)}", f"từ {SRV.get(prev, prev)}" if prev else "đổi server", tag="chuyen-" + low)
         elif e.get("type") == "chat" and e.get("server") != "proxy":
             msg = re.sub(r"^<[^>]+>\s*", "", text)[:180]
-            self.push("chat", f"💬 {name}", msg, tag="chat-" + low)
+            srv = str(e.get("server", ""))
+            self.push("chat", f"💬 {name} · {SRV.get(srv, srv)}", msg, tag="chat-" + low)
 
     def _watch_servers(self):
         down, low_tps, last_tps_alert, last_bots = {}, 0, 0, None
-        NAMES = {"lobby": "Sảnh", "banghoi-1": "Bang Hội Chiến", "practice-1": "Practice", "sangtao-1": "Thái Ấp"}
+        NAMES = SRV
         time.sleep(60)
         while True:
             try:

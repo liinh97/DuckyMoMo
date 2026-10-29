@@ -77,11 +77,49 @@ def panel_hours():
         return SESSION_HOURS
 
 
+FOREVER_S = 10 * 365 * 86400   # "vĩnh viễn": 10 năm
+_TRUST = {"t": 0.0, "ips": set()}
+RECENT_IPS = {}                  # IP -> {"t": lúc, "ua": trình duyệt}; ghi data/panel/ip-gan-day.json để thêm IP tin cậy
+RECENT_FILE = DATA_DIR / "panel" / "ip-gan-day.json"
+
+
+def panel_trusted_ips():
+    """IP giữ đăng nhập trang quản trị vĩnh viễn (29/10, chủ server: máy nhà + điện thoại 4G): Cài đặt › Toàn mạng › Đăng nhập lâu
+    (dnl_panel_ip). Đọc lại mỗi 15 giây."""
+    if time.time() - _TRUST["t"] > 15:
+        try:
+            v = YAML(typ="safe").load((MODES_DIR / "_network" / "settings.yml").read_text(encoding="utf-8")) or {}
+            _TRUST["ips"] = {str(x).strip() for x in (v.get("dnl_panel_ip") or []) if str(x).strip()}
+        except Exception:
+            pass
+        _TRUST["t"] = time.time()
+    return _TRUST["ips"]
+
+
+def note_ip(ip, ua):
+    """Ghi IP các lượt vào trang quản trị gần đây (đã đăng nhập), để biết IP 4G / máy mới mà thêm vào danh sách tin cậy."""
+    now = time.time()
+    old = RECENT_IPS.get(ip)
+    RECENT_IPS[ip] = {"t": now, "ua": (ua or "")[:160]}
+    if old and now - old["t"] < 60:
+        return
+    for k in sorted(RECENT_IPS, key=lambda k: RECENT_IPS[k]["t"])[:-30]:
+        del RECENT_IPS[k]
+    try:
+        RECENT_FILE.parent.mkdir(parents=True, exist_ok=True)
+        RECENT_FILE.write_text(json.dumps({k: {"luc": time.strftime("%d/%m %H:%M:%S", time.localtime(v["t"])), "ua": v["ua"]}
+                                           for k, v in RECENT_IPS.items()}, ensure_ascii=False, indent=1), encoding="utf-8")
+    except OSError:
+        pass
+
+
 def _load_sessions():
     try:
         now = time.time()
-        # phiên lưu từ hồi hạn dài hơn (test 21/10: 30 ngày) bị cắt về tối đa SESSION_HOURS kể từ lúc dựng lại
-        SESSIONS.update({k: min(v, now + panel_hours() * 3600) for k, v in json.loads(SESSION_FILE.read_text(encoding="utf-8")).items() if v > now})
+        # phiên lưu từ hồi hạn dài hơn (test 21/10: 30 ngày) bị cắt về tối đa SESSION_HOURS kể từ lúc dựng lại;
+        # phiên vĩnh viễn của IP tin cậy (hạn > 5 năm) giữ nguyên
+        SESSIONS.update({k: (v if v > now + FOREVER_S / 2 else min(v, now + panel_hours() * 3600))
+                         for k, v in json.loads(SESSION_FILE.read_text(encoding="utf-8")).items() if v > now})
     except (OSError, ValueError):
         pass
 
@@ -4497,13 +4535,14 @@ class Handler(BaseHTTPRequestHandler):
         with LOGIN_LOCK:
             for k in [k for k, exp in SESSIONS.items() if exp < now]:
                 del SESSIONS[k]
-            SESSIONS[_tok_hash(tok)] = now + panel_hours() * 3600
+            life = FOREVER_S if ip in panel_trusted_ips() else panel_hours() * 3600
+            SESSIONS[_tok_hash(tok)] = now + life
             LOGIN_FAILS.pop(ip, None)
             _save_sessions()
         secure = "; Secure" if self.headers.get("X-Forwarded-Proto", "") == "https" else ""
         body = json.dumps({"ok": True}).encode("utf-8")
         self.send_response(200)
-        self.send_header("Set-Cookie", f"dmm_panel={tok}; Path={self.cookie_path()}; Max-Age={panel_hours() * 3600}; HttpOnly; SameSite=Strict{secure}")
+        self.send_header("Set-Cookie", f"dmm_panel={tok}; Path={self.cookie_path()}; Max-Age={life}; HttpOnly; SameSite=Strict{secure}")
         self.send_header("Content-Type", "application/json; charset=utf-8")
         self.send_header("Content-Length", str(len(body)))
         self.end_headers()
@@ -4522,11 +4561,20 @@ class Handler(BaseHTTPRequestHandler):
         self.wfile.write(body)
 
     def authorized(self):
+        self._renew = None
         tok = self.session_token()
         if tok:
             with LOGIN_LOCK:
                 exp = SESSIONS.get(_tok_hash(tok), 0)
-            if exp > time.time():
+            now = time.time()
+            if exp > now:
+                ip = self.client_ip()
+                note_ip(ip, self.headers.get("User-Agent", ""))
+                if ip in panel_trusted_ips() and exp < now + FOREVER_S / 2:
+                    with LOGIN_LOCK:   # IP tin cậy: phiên đang mở thành vĩnh viễn, cookie gửi lại với hạn mới (end_headers)
+                        SESSIONS[_tok_hash(tok)] = now + FOREVER_S
+                        _save_sessions()
+                    self._renew = tok
                 return True
         header = self.headers.get("Authorization", "")
         if header.startswith("Basic "):
@@ -4536,6 +4584,14 @@ class Handler(BaseHTTPRequestHandler):
                 return False
             return hmac.compare_digest(user, PANEL_USER) and hmac.compare_digest(pw, PANEL_PASSWORD)
         return False
+
+    def end_headers(self):
+        tok = getattr(self, "_renew", None)
+        if tok:
+            self._renew = None
+            secure = "; Secure" if self.headers.get("X-Forwarded-Proto", "") == "https" else ""
+            self.send_header("Set-Cookie", f"dmm_panel={tok}; Path={self.cookie_path()}; Max-Age={FOREVER_S}; HttpOnly; SameSite=Strict{secure}")
+        super().end_headers()
 
     def send_json(self, code, obj):
         body = json.dumps(obj, ensure_ascii=False).encode("utf-8")

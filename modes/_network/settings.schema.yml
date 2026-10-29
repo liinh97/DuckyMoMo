@@ -134,6 +134,7 @@ groups:
       - { key: dnl_nguoi, label: "Danh sách tên (mỗi dòng 1 tên trong game)", type: list, servers: [lobby, banghoi-1], file: plugins/DuckyMoMoCore/config.yml, path: dang-nhap-lau.nguoi }
       - { key: dnl_ngay, label: "Giữ đăng nhập (ngày)", type: int, min: 1, max: 90, servers: [lobby, banghoi-1], file: plugins/DuckyMoMoCore/config.yml, path: dang-nhap-lau.ngay }
       - { key: dnl_panel_gio, label: "Trang quản trị (panel) giữ đăng nhập (giờ)", info: "Là gì: đăng nhập trang quản trị bằng tài khoản admin (PANEL_USER) được giữ ngần ấy giờ. 12 = nửa ngày, 168 = 7 ngày, 720 = 30 ngày.\nCó hiệu lực từ lần đăng nhập sau.", type: int, min: 1, max: 2160 }
+      - { key: dnl_panel_ip, label: "IP giữ đăng nhập trang quản trị vĩnh viễn (mỗi dòng 1 IP)", type: lines, info: "Đăng nhập trang quản trị từ IP trong danh sách thì giữ 10 năm; phiên đang mở từ IP đó cũng tự gia hạn. Chỉ nên để IP máy nhà / máy riêng. IP 4G nhà mạng hay đổi và nhiều người dùng chung: đổi IP thì thêm lại. IP các lượt vào gần đây: data/panel/ip-gan-day.json." }
   - title: Giới hạn đăng ký tài khoản
     category: Sảnh
     description: "Mỗi IP (mạng) chỉ có tối đa số tài khoản này, tính tổng mãi mãi (chống tạo tài khoản ảo lấy quà tân thủ, nuôi bot). IP trong danh sách miễn thì không bị giới hạn."

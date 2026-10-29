@@ -475,9 +475,9 @@ vote:
   party-money: 300
   broadcast: true
   sites:                  # link hiện ở /vote và trang web; url trống = ẩn. Thêm trang: copy một mục
-    trang1:
-      name: "Trang vote 1"
-      url: ""
+    minecraftmp:          # 29/10: minecraft-mp.com, server ID 366061 (Votifier V1 + public key)
+      name: "Minecraft-MP"
+      url: "https://minecraft-mp.com/server/366061/vote/"
 
 # Điểm danh hằng ngày (/diemdanh): đếm TỔNG số ngày (bỏ ngày không mất chuỗi). Lưu: diemdanh.yml
 # Quà, mỗi dòng một món: xu <số> | do <mã thư viện đồ> [số] | vat <VẬT_LIỆU> [số] | lenh <lệnh, {player}> | manh <loại> <số>

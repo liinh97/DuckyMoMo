@@ -1440,7 +1440,7 @@ dp_haokiet_name: "Hào Kiệt"
 dp_haokiet_prefix: "&6[Hào Kiệt] "
 dp_haokiet_hours: 72
 dp_haokiet_level: 25
-dp_haokiet_homes: 5
+dp_haokiet_homes: 4
 dp_haokiet_balo: 3
 dp_haokiet_ah: 8
 dp_tinan_slots: 9
@@ -1453,11 +1453,11 @@ rk_media_prefix: "&c◆ Sứ Giả &r"
 rk_media_contact: "&7Gửi link kênh cho admin: nhắn &f/msg Linh &7trong game hoặc qua Discord/Zalo của server."
 rk_media_info: ["Livestream TikTok/YouTube về server ít nhất 4 buổi mỗi tuần", "Livestream đều đặn, nội dung lành mạnh", "Tương tác và quảng bá server", "Muốn gắn bó lâu dài", "Nội dung: công thành, xây dựng, sinh tồn"]
 rk_media_homes: 5
-rk_media_balo: 5
-rk_media_slots: 9
-rk_media_ah: 5
-rk_media_orders: 5
-rk_media_tuskin: 5
+rk_media_balo: 2
+rk_media_slots: 45
+rk_media_ah: 9
+rk_media_orders: 6
+rk_media_tuskin: 6
 rk_media_spin: 20
 rk_media_kit: "media"
 rk_namtuoc_homes: 0
@@ -1891,8 +1891,8 @@ thuvien_tooltip_max: 0
 dp_tinan_tpdelay: 5
 dp_dan_tpdelay: 5
 dp_luongdan_tpdelay: 5
-dp_haokiet_tpdelay: 5
-rk_media_tpdelay: 3
+dp_haokiet_tpdelay: 3
+rk_media_tpdelay: 2
 rk_namtuoc_tpdelay: 3
 rk_tutuoc_tpdelay: 3
 rk_batuoc_tpdelay: 3

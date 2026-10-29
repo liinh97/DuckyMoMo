@@ -800,10 +800,11 @@ setInterval(async () => {
   if (stopping || !wanderCfg.on) return;
   if (Date.now() < wanderNext) {
     try {
-      const now = new Set();
+      const now = new Set();   // "người|khu": đổi khu (trade → shop) cũng tính là mới tới (29/10)
       for (const who of realOnline()) {
         const p = await serverPos(who, 'banghoi-1').catch(() => null);
-        if (p && wanderCfg.points.some(q => Math.hypot(q.x - p.x, q.z - p.z) <= wanderCfg.radius)) now.add(who);
+        const pt = p && wanderCfg.points.find(q => Math.hypot(q.x - p.x, q.z - p.z) <= wanderCfg.radius);
+        if (pt) now.add(who + '|' + pt.name);
       }
       const fresh = [...now].some(w => !wanderSeen.has(w));
       wanderSeen = now;

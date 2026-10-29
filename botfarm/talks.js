@@ -105,14 +105,14 @@ const TALKS = [
   ['A:cổng hoang là cái gì ae', 'B:/conghoang, cổng ẩn dẫn vào dungeon', 'C:có tin đồn mà khó tìm lắm'],
   ['A:creeper nổ mất cái tường nhà t', 'B:sửa lại thôi', 'A:tức ghê'],
   ['A:đánh enderman bị nó dí', 'B:đứng dưới mái thấp là nó không vào được', 'A:mẹo hay'],
-  // pet
-  ['A:pet t lên cấp {SO} rồi', 'B:pet gì', 'A:sói', 'B:ngon'],
-  ['A:đấu trường pet có gì vui không', 'B:/dautruong đánh pet với người khác', 'A:pet t yếu lắm :v'],
-  ['A:bắt được con pet bay chưa ae', 'B:chưa, khó bắt lắm', 'C:t bắt được rồi hehe'],
-  ['A:pet chết rồi lâu hồi sinh không', 'B:đợi chút là sống lại', 'A:may thế'],
-  ['A:xem bảng xếp hạng pet đi', 'B:/bxhpet', 'A:top 1 mạnh ghê'],
+  // pet (29/10: bot chưa có pet thật → chỉ hỏi / nghe kể, không khoe pet của mình; người chơi bấm /bxhpet là thấy trống)
+  ['A:nuôi pet gì mạnh nhất ae', 'B:nghe nói sói với ngựa ổn', 'A:để đi bắt thử'],
+  ['A:đấu trường pet có gì vui không', 'B:/dautruong đánh pet với người khác', 'A:phải có pet đã :v'],
+  ['A:có pet nào bay được không ae', 'B:nghe nói có, mà khó bắt lắm', 'A:thèm ghê'],
+  ['A:pet chết thì mất luôn à ae', 'B:không, đợi chút là sống lại', 'A:may thế'],
+  ['A:bảng xếp hạng pet xem ở đâu ae', 'B:/bxhpet', 'A:ok để xem'],
   // trang bị, thợ rèn
-  ['A:set tân thủ lên +{SO} rồi', 'B:ghê, t mới +2', 'A:cày dần thôi'],
+  ['A:set tân thủ nâng cấp kiểu gì ae', 'B:ra thợ rèn ở /warp trade ấy', 'A:ok thanks'],
   ['A:mảnh ấn rơi ở đâu ae', 'B:trong dungeon ấy', 'A:thanks'],
   ['A:ẩn giáp cho đẹp skin nhỉ', 'B:/angiap là được', 'C:hoặc bật trong /caidat'],
   ['A:mặc giáp vào xấu skin quá', 'B:bật ẩn giáp đi, /angiap', 'A:ồ có cả cái đó'],

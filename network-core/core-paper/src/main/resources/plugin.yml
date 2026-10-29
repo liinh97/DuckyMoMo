@@ -27,6 +27,8 @@ commands:
     aliases: [kit, kits]
   nhietdo:
     description: "Thân nhiệt: lạnh / nóng theo mùa và đợt thời tiết, cách giữ ấm / mát (Đá Ôn Linh, ô lá)"
+  bay:
+    description: "Bay trong đất thị trấn của mình (đặc quyền Công Tước): bật/tắt; tự tắt khi ra khỏi thị trấn, giao tranh, công thành"
   angiap:
     description: "Ẩn giáp (bật/tắt): người khác thấy skin, không thấy giáp; giáp vẫn bảo vệ. Ẩn mọi nơi, chỉ khi công thành giáp mới hiện"
   gacha:

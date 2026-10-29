@@ -770,6 +770,14 @@ public final class DuckyMoMoCore extends JavaPlugin {
         }
         bind("angiap", armorHide == null ? null : armorHide::command, "Ẩn giáp");
 
+        // Đặc quyền Công Tước (29/10): /bay trong đất thị trấn mình + chặn /fix đồ Thư viện (TownFly, cần Towny)
+        TownFly townFly = getConfig().getBoolean("town-fly.enabled", true) && getServer().getPluginManager().isPluginEnabled("Towny")
+                ? new TownFly(this, getConfig().getConfigurationSection("town-fly")) : null;
+        if (townFly != null) {
+            getServer().getPluginManager().registerEvents(townFly, this);
+        }
+        bind("bay", townFly == null ? null : townFly::command, "Bay trong thị trấn");
+
         // Thân nhiệt /nhietdo (Bang Hội Chiến: body-temp.enabled, 28/10): rét / nóng theo mùa + đợt, Đá Ôn Linh, ô lá
         bodyTemp = getConfig().getBoolean("body-temp.enabled") ? new BodyTemp(this, getConfig().getConfigurationSection("body-temp")) : null;
         if (bodyTemp != null) {

@@ -115,7 +115,7 @@ donate-ranks:
     - group: congtuoc
       name: Công Tước
       color: "&6"
-      perks: [chat/nick màu tuỳ chọn (hex), 6 hiệu ứng hạt, mọi pet trang trí (cả loài quái), chuông khi vào server, 4 balo 54 ô, chờ dịch chuyển 2 giây, tủ 20 skin + đặt skin từ link (/skin url), kho 5 pet chiến đấu]
+      perks: [chat/nick màu tuỳ chọn (hex), 6 hiệu ứng hạt, mọi pet trang trí (cả loài quái), chuông khi vào server, 4 balo 54 ô, chờ dịch chuyển 2 giây, tủ 20 skin + đặt skin từ link (/skin url), kho 5 pet chiến đấu, /bay (bay trong đất thị trấn mình), "/fix món đang cầm (1 giờ, trừ đồ set Thợ Rèn)"]
       prices: [1 tháng 150k, 3 tháng 390k, 6 tháng 690k, 1 năm 1.200k]
       skins: []          # skin độc quyền (tên custom skin SkinsRestorer: /sr createcustom <tên> <link>), bậc cao kế thừa bậc thấp
 
@@ -2296,6 +2296,12 @@ bot-hide:
   y: -40
   z: -3099.5
   radius: 8
+
+# Đặc quyền Công Tước (29/10): /bay trong đất thị trấn của mình (quyền duckymomo.bay), tự tắt khi ra khỏi thị trấn / giao tranh / vây;
+# /fix (essentials.repair) không sửa đồ Thư viện đồ. Hồi chiêu /fix ở Essentials command-cooldowns (repair, fix).
+town-fly:
+  enabled: true
+  combat-seconds: 15
 
 armor-hide:
   enabled: true

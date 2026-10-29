@@ -155,6 +155,8 @@ tier4_perks:
   - chờ dịch chuyển 2 giây
   - tủ 20 skin + đặt skin từ link (/skin url)
   - kho 5 pet chiến đấu
+  - /bay (bay trong đất thị trấn mình)
+  - /fix món đang cầm (1 giờ, trừ đồ set Thợ Rèn)
 lobby_void_y: 0
 lobby_spawn_on_join: true
 pp_toggle_on_combat: true

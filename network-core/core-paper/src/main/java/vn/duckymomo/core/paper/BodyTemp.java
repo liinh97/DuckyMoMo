@@ -81,10 +81,53 @@ final class BodyTemp implements Listener {
             worlds.add("world");
         }
         recipes();
+        loadWarps();
         for (Player p : Bukkit.getOnlinePlayers()) {
             load(p);
         }
         Bukkit.getScheduler().runTaskTimer(plugin, this::tick, 40L, 20L);
+    }
+
+    // ------------------------------------------------------------------ khu an toàn (29/10)
+    // Chủ server: "đứng ở khu an toàn sẽ không ảnh hưởng bởi lạnh và mưa, ví dụ tại town, warp … không bị tăng giảm nhiệt độ, ướt".
+    // Đất thị trấn (Towny, cả Kinh Đô) và trong safe-warp-radius khối quanh mỗi warp Essentials: thân nhiệt + ướt đứng yên, không phạt.
+    private final List<Location> warps = new ArrayList<>();
+
+    private void loadWarps() {
+        warps.clear();
+        java.io.File dir = new java.io.File(plugin.getDataFolder().getParentFile(), "Essentials/warps");
+        java.io.File[] fs = dir.listFiles((d, n) -> n.endsWith(".yml"));
+        if (fs == null) {
+            return;
+        }
+        for (java.io.File f : fs) {
+            var y = org.bukkit.configuration.file.YamlConfiguration.loadConfiguration(f);
+            World w = Bukkit.getWorld(y.getString("world-name", ""));
+            if (w != null) {
+                warps.add(new Location(w, y.getDouble("x"), y.getDouble("y"), y.getDouble("z")));
+            }
+        }
+    }
+
+    /** Khu an toàn: đất thị trấn hoặc gần warp. */
+    boolean safe(Player p) {
+        Location l = p.getLocation();
+        double r = cfg.getDouble("safe-warp-radius", 48);
+        if (r > 0) {
+            for (Location w : warps) {
+                if (w.getWorld().equals(l.getWorld()) && w.distanceSquared(l) <= r * r) {
+                    return true;
+                }
+            }
+        }
+        if (cfg.getBoolean("safe-towns", true) && Bukkit.getPluginManager().isPluginEnabled("Towny")) {
+            try {
+                return com.palmergames.bukkit.towny.TownyAPI.getInstance().getTown(l) != null;
+            } catch (RuntimeException | LinkageError e) {
+                return false;
+            }
+        }
+        return false;
     }
 
     // ------------------------------------------------------------------ đồ
@@ -358,6 +401,10 @@ final class BodyTemp implements Listener {
 
     private void step(Player p) {
         UUID u = p.getUniqueId();
+        if (safe(p)) {   // khu an toàn: thân nhiệt + ướt giữ nguyên, không phạt
+            showSafe(p);
+            return;
+        }
         double[] src = sources(p.getLocation(), cfg.getInt("source-radius", 3));
         if (p.getFireTicks() > 0) {
             src[0] = 1;   // đang bốc cháy: như đứng sát lửa (ấm lên, khô nhanh, hơ đá được)
@@ -501,6 +548,26 @@ final class BodyTemp implements Listener {
         }
     }
 
+    private void showSafe(Player p) {
+        double b = body.getOrDefault(p.getUniqueId(), cfg.getDouble("comfort-mid", 22));
+        double w = wet.getOrDefault(p.getUniqueId(), 0.0);
+        if (b >= cfg.getDouble("cold", 10) + 5 && b <= cfg.getDouble("hot", 35) - 5 && w < 30) {
+            hideBar(p);
+            return;
+        }
+        BossBar bar = bars.computeIfAbsent(p.getUniqueId(), k -> {
+            BossBar nb = Bukkit.createBossBar("", BarColor.GREEN, BarStyle.SEGMENTED_10);
+            nb.addPlayer(p);
+            return nb;
+        });
+        bar.setTitle("§a✔ Khu an toàn §8· §fThân nhiệt " + Math.round(b) + "°" + (w >= 10 ? " §8· §3ướt " + Math.round(w) + "%" : "") + " §8(giữ nguyên)");
+        bar.setColor(BarColor.GREEN);
+        bar.setProgress(Math.max(0, Math.min(1, (b + 10) / 60.0)));
+        if (!bar.getPlayers().contains(p)) {
+            bar.addPlayer(p);
+        }
+    }
+
     private void hideBar(Player p) {
         BossBar bar = bars.remove(p.getUniqueId());
         if (bar != null) {
@@ -573,6 +640,9 @@ final class BodyTemp implements Listener {
                 + Math.round(cfg.getDouble("hot", 35)) + "°)" + (w >= 1 ? " &8· &3ướt " + Math.round(w) + "%" : "")));
         if (!affected(p)) {
             p.sendMessage(Tip.c("&7Bạn đang được miễn (người mới, chế độ sáng tạo, hoặc không ở thế giới chính)."));
+        }
+        if (affected(p) && safe(p)) {
+            p.sendMessage(Tip.c("&a✔ Bạn đang ở khu an toàn (đất thị trấn / gần warp): thân nhiệt và độ ướt giữ nguyên."));
         }
         p.sendMessage(Tip.c("&7Môi trường quanh bạn: &f" + Math.round(env) + "°"
                 + (ev != null && ev.contains("temperature") ? " &8(" + Seasons.plain(ev.getString("name", "")) + ")" : "")));

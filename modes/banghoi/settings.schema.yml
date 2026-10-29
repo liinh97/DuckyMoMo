@@ -841,6 +841,8 @@ Admin (quyền duckymomo.sell.khonggioihan) không bị giới hạn." }
     settings:
       - { key: tn_on, label: "Bật thân nhiệt", type: select, file: plugins/DuckyMoMoCore/config.yml, path: body-temp.enabled, options: [ { value: true, label: Bật }, { value: false, label: Tắt } ] }
       - { key: tn_newbie, label: "Người mới được miễn (giờ chơi đầu)", type: number, min: 0, max: 100, file: plugins/DuckyMoMoCore/config.yml, path: body-temp.newbie-hours }
+      - { key: tn_safe_town, label: "Đất thị trấn là khu an toàn (không đổi thân nhiệt, ướt)", type: select, file: plugins/DuckyMoMoCore/config.yml, path: body-temp.safe-towns, options: [ { value: true, label: Bật }, { value: false, label: Tắt } ] }
+      - { key: tn_safe_warp, label: "Quanh warp là khu an toàn (khối, 0 = tắt)", type: int, min: 0, max: 500, file: plugins/DuckyMoMoCore/config.yml, path: body-temp.safe-warp-radius }
       - { key: tn_mua, label: "Nhiệt nền mùa mưa (°)", type: number, min: -30, max: 60, file: plugins/DuckyMoMoCore/config.yml, path: seasons.list.mua.temperature }
       - { key: tn_kho, label: "Nhiệt nền mùa khô (°)", type: number, min: -30, max: 60, file: plugins/DuckyMoMoCore/config.yml, path: seasons.list.kho.temperature }
       - { key: tn_ret_temp, label: "Rét đậm: nhiệt nền (°)", type: number, min: -30, max: 60, file: plugins/DuckyMoMoCore/config.yml, path: seasons.events.retdam.temperature }

@@ -2245,6 +2245,8 @@ body-temp:
   enabled: true
   worlds: [world]
   newbie-hours: 2          # giờ chơi đầu tiên được miễn
+  safe-towns: true         # đất thị trấn (cả Kinh Đô): thân nhiệt + ướt giữ nguyên (29/10)
+  safe-warp-radius: 48     # trong ngần này khối quanh mỗi warp Essentials cũng vậy (0 = tắt)
   comfort-mid: 22          # nhiệt dễ chịu (mái che kéo về đây)
   cold: 10                 # dưới: lạnh (màn hình băng, chậm, đói nhanh)
   freezing: 2              # dưới: rét cóng (chậm hơn, mất máu)

@@ -2093,3 +2093,5 @@ tn_dry: 0.25
 tn_dry_fire: 1.5
 tn_stone_rate: 0.01
 tn_accel: 1
+tn_safe_town: true
+tn_safe_warp: 48

@@ -10,6 +10,7 @@ Một đại lục rộng lớn đang chờ chủ, chưa mảnh đất nào có 
 🐾 Pet chiến đấu tự tay bắt, tự tay nuôi, mang theo ra trận
 🗝️ Dungeon, Cổng Hoang giấu khắp đại lục, boss săn chung cả server
 ⚒️ Tự cày, tự rèn đồ: 7 bậc từ Tân Thủ tới Thần Thánh, đồ trao đổi được giữa người chơi
+👕 Ẩn giáp: mặc full giáp mà ai cũng thấy trọn skin của bạn, giáp vẫn bảo vệ đủ (chỉ hiện khi công thành)
 🏮 Chợ Thợ Rèn và nhà buôn ngay cạnh spawn: chuột trái mua, chuột phải bán
 📱 Máy tính và điện thoại đều chơi được, không cần tài khoản bản quyền
 

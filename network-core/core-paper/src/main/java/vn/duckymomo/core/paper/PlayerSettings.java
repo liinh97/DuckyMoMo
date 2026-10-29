@@ -309,10 +309,21 @@ final class PlayerSettings implements Listener {
         if (url.isEmpty() || url.startsWith("${") || !sha.matches("[0-9a-fA-F]{40}")) {
             return;
         }
-        byte[] hash = java.util.HexFormat.of().parseHex(sha);
         String prompt = c.getString(font ? "font-prompt" : "item-prompt", "");
-        p.setResourcePack(url, hash, prompt.isEmpty() ? null : LegacyComponentSerializer.legacyAmpersand().deserialize(prompt), false);
+        // 30/10: mỗi gói một mã cố định, gửi bằng "thêm" (không "gỡ hết rồi gắn lại" như setResourcePack): chuyển server mà máy đã có
+        // đúng gói này (cùng mã + SHA1) thì không nạp lại tài nguyên. Đổi ô Font chữ mềm thì gỡ gói kia.
+        p.removeResourcePacks(font ? PACK_ITEMS : PACK_FONT);
+        var req = net.kyori.adventure.resource.ResourcePackRequest.resourcePackRequest()
+                .packs(net.kyori.adventure.resource.ResourcePackInfo.resourcePackInfo(font ? PACK_FONT : PACK_ITEMS, java.net.URI.create(url), sha.toLowerCase()))
+                .replace(false).required(false);
+        if (!prompt.isEmpty()) {
+            req = req.prompt(LegacyComponentSerializer.legacyAmpersand().deserialize(prompt));
+        }
+        p.sendResourcePacks(req.build());
     }
+
+    private static final java.util.UUID PACK_FONT = java.util.UUID.nameUUIDFromBytes("duckymomo:pack-font".getBytes(java.nio.charset.StandardCharsets.UTF_8));
+    private static final java.util.UUID PACK_ITEMS = java.util.UUID.nameUUIDFromBytes("duckymomo:pack-items".getBytes(java.nio.charset.StandardCharsets.UTF_8));
 
     // ---------------------------------------------------------------- vào / rời / tử vong
 

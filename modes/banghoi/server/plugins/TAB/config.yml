@@ -6,7 +6,7 @@ header-footer:
       header:
         - '&r'
         - <#FFC23D>✦ DUCKYMOMO ✦</#FF6A00>
-        - '&6⚔ &eBang Hội Chiến &6⚔'
+        - '&6⚔ &eDuckyMoMo &6⚔'
         - '&7Chào &f%player%&7! Mùa 1: &aĐại Lục Sương Mai'
         - '&r'
       footer:
@@ -78,7 +78,7 @@ scoreboard:
   delay-on-join-milliseconds: 0
   scoreboards:
     banghoi:
-      title: "<#FFC23D>⚔ BANG HỘI CHIẾN</#FF6A00>"
+      title: "<#FFC23D>⚔ DuckyMoMo</#FF6A00>"
       lines:
         - '&#FFD966❤ &f%player%'
         - '&r'

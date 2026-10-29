@@ -66,6 +66,17 @@ final class DecorShop implements Listener {
             "DISC_FRAGMENT_*", "GOAT_HORN", "SPYGLASS", "CLOCK", "COMPASS", "*_MINECART", "*RAIL", "POWERED_RAIL", "BUDDING_AMETHYST");
 
     /** lib: mã trong Thư viện đồ (bán đồ admin thiết kế), null = đồ thường theo icon. */
+    /** Khu shop khung vật phẩm (29/10, chủ server: "32 items một lần thay vì mua / bán 1 item"): số món mỗi lần bấm khung. */
+    private final int frameLot;
+
+    /** Số lần giá gốc (offer.amount() món) mỗi lần bấm khung: món thường đủ frameLot món; danh hiệu, món Thư viện, món không xếp chồng = 1. */
+    private int frameMult(Offer o) {
+        if (o.title() != null || o.lib() != null || new ItemStack(o.icon()).getMaxStackSize() <= 1) {
+            return 1;
+        }
+        return Math.max(1, (int) Math.ceil(frameLot / (double) Math.max(1, o.amount())));
+    }
+
     record Offer(String key, String cat, Material icon, int amount, double price, String title, String titleText, String lib) {
     }
 
@@ -93,6 +104,7 @@ final class DecorShop implements Listener {
         this.board = board;
         this.inCapital = inCapital;
         this.rankPermission = c.getString("rank-permission", "duckymomo.cuahang");
+        this.frameLot = Math.max(1, Math.min(2304, c.getInt("frame-lot", 32)));
         this.npcName = c.getString("npc-name", "&6Cửa hàng Kinh Đô");
         this.offerKey = new NamespacedKey(plugin, "cuahang");
         this.catKey = new NamespacedKey(plugin, "cuahang_muc");
@@ -504,8 +516,33 @@ final class DecorShop implements Listener {
     }
 
     private void buy(Player p, String key) {
+        buy(p, key, 1);
+    }
+
+    /** mult: mua mult lần gói (offer.amount() món, giá offer.price()) trong một lần trả tiền (khung shop: đủ frameLot món). */
+    private void buy(Player p, String key, int mult) {
         Offer o = offers.stream().filter(x -> x.key().equals(key)).findFirst().orElse(null);
         if (o == null) {
+            return;
+        }
+        if (mult > 1 && o.title() == null && o.lib() == null) {
+            double cost = o.price() * mult;
+            if (!VaultEconomy.available() || !VaultEconomy.withdraw(p, cost)) {
+                p.sendMessage(c("&cKhông đủ tiền (" + money(cost) + " cho " + (o.amount() * mult) + " món)."));
+                return;
+            }
+            DailyQuests.feature(p, "mua");
+            int left = o.amount() * mult;
+            while (left > 0) {
+                ItemStack give = new ItemStack(o.icon());
+                int n = Math.min(left, give.getMaxStackSize());
+                give.setAmount(n);
+                for (ItemStack rest : p.getInventory().addItem(give).values()) {
+                    p.getWorld().dropItemNaturally(p.getLocation(), rest);
+                }
+                left -= n;
+            }
+            p.sendMessage(c("&aĐã mua " + (o.amount() * mult) + " × &f" + Rewards.vi(o.icon().name()) + " &avới " + money(cost)));
             return;
         }
         if (o.title() != null && board != null && !board.grantable(p.getUniqueId(), o.title())) {
@@ -698,10 +735,11 @@ final class DecorShop implements Listener {
         Offer o = en.offer();
         StringBuilder sb = new StringBuilder(o != null ? label(o) : "&f" + Rewards.vi(en.sellMat().name()));
         if (o != null) {
-            sb.append(" &8· &aMua ").append(money(o.price()));
+            int k = frameMult(o);
+            sb.append(" &8· &aMua ").append(k > 1 ? (o.amount() * k) + ": " : "").append(money(o.price() * k));
         }
         if (en.sellMat() != null && worth.containsKey(en.sellMat())) {
-            sb.append(" &8· &eBán ").append(money(worth.get(en.sellMat()))).append("&8/món");
+            sb.append(" &8· &eBán ").append(frameLot).append(": ").append(money(worth.get(en.sellMat()) * frameLot));
         }
         return sb.toString();
     }
@@ -915,7 +953,7 @@ final class DecorShop implements Listener {
             p.sendMessage(c("&eServer không thu mua món này. &7Chuột trái để mua."));
             return;
         }
-        sell(p, en.sellMat(), en.offer() != null ? en.offer().amount() : 64, p.isSneaking(), null);
+        sell(p, en.sellMat(), frameLot, p.isSneaking(), null);   // mỗi lần bấm frameLot món (Shift: bán hết)
     }
 
     /** Chuột trái vào khung: mua. Khung cố định + bất tử, mọi sát thương lên khung shop đều huỷ. */
@@ -942,7 +980,7 @@ final class DecorShop implements Listener {
             return;
         }
         f.setItem(frameItem(en, worth()), false);
-        buy(p, en.offer().key());
+        buy(p, en.offer().key(), frameMult(en.offer()));
     }
 
     /**
@@ -973,7 +1011,7 @@ final class DecorShop implements Listener {
             return;
         }
         f.setItem(frameItem(en, worth()), false);
-        buy(p, en.offer().key());
+        buy(p, en.offer().key(), frameMult(en.offer()));
     }
 
     @EventHandler(priority = org.bukkit.event.EventPriority.HIGHEST)

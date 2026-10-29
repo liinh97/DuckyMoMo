@@ -441,6 +441,7 @@ decor-shop:
   # Cửa hàng Kinh Đô (14/10): rank ủng hộ (rank-permission) mở /cuahang khi đứng trong kinh đô; mọi người bấm NPC (/dmm shopnpc).
   rank-permission: duckymomo.cuahang
   npc-name: "&6Cửa hàng Kinh Đô"
+  frame-lot: 32   # khu shop khung vật phẩm (/warp shop): mỗi lần bấm mua / bán ngần này món (29/10); món không xếp chồng, Thư viện, danh hiệu = 1
   # Danh mục (20/10): trang chính /cuahang. slot = ô trong menu 6 hàng (0-44), sell = vật liệu server THU MUA hiện trong danh mục
   # (giá lấy từ Essentials worth.yml, "*_LOG" = mọi loại khúc gỗ). items = món SERVER BÁN trong danh mục {material | library, amount, price};
   # giá mỗi cái phải > giá thu mua /sell, không thì tự bị bỏ. Sửa: Cài đặt › Shop › Cửa hàng (mỗi danh mục một khung).

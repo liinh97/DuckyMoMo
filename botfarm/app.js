@@ -640,11 +640,11 @@ async function wanderOnce() {
   if (!cands.length) return 'không có người thật ở spawn / warp';
   const c = cands[Math.floor(Math.random() * cands.length)];
   const idle = NAMES.filter(n => RT[n].bot && state[n].server === 'banghoi-1' && !RT[n].wander && !RT[n].placing).sort(() => Math.random() - 0.5);
-  const k = Math.min(idle.length, wanderCfg.maxActive - active, Math.random() < 0.4 ? 2 : 1);
+  const k = Math.min(idle.length, wanderCfg.maxActive - active, Math.random() < 0.25 ? 2 : 1);
   const out = [];
   for (const n of idle.slice(0, k)) {
     await startWander(n, c); out.push(n);
-    await sleep(4000 + Math.random() * 10000);
+    await sleep(45000 + Math.random() * 75000);   // 29/10: bot thứ hai ra sau 45–120 giây (cùng /spawn thì rơi đúng một điểm)
   }
   return (out.join(', ') || 'không bot nào') + ' đi dạo ở ' + c.pt.name + ' (có ' + c.who + ')';
 }
@@ -728,7 +728,12 @@ async function runRoute(n, c) {
       stops.push({ x: c.pt.x + Math.cos(a) * d, y: rt.bot.entity.position.y, z: c.pt.z + Math.sin(a) * d, diem: true });
     }
   }
-  if (Math.random() < 0.85) stops.splice(Math.floor(Math.random() * (stops.length + 1)), 0, { nguoi: true });   // nhìn người chơi: đầu / giữa / cuối, đôi khi bỏ
+  // nhìn người chơi: ~35% lượt, vị trí ngẫu nhiên; trong một khu chỉ một bot làm (29/10: 2 bot cùng ra nhìn user)
+  const other = NAMES.some(o => o !== n && RT[o].wander && RT[o].wander.area === c.pt.name && RT[o].wander.meet);
+  if (!other && Math.random() < 0.35) {
+    rt.wander.meet = true;
+    stops.splice(Math.floor(Math.random() * (stops.length + 1)), 0, { nguoi: true });
+  }
   for (const st of stops) {
     if (!alive()) return;
     if (st.nguoi) { await meetPlayer(n, c.who, alive); continue; }

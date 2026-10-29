@@ -112,6 +112,9 @@ final class HamNguc implements Listener {
         final boolean[] started;
         final boolean[] cleared;
         final List<List<UUID>> roomMobs = new ArrayList<>();
+        final List<List<int[]>> cages = new ArrayList<>();                      // lồng quái mỗi phòng {x, z}
+        final List<java.util.ArrayDeque<List<MobDef>>> waves = new ArrayList<>(); // đợt chưa ra
+        final int[] spawning;                                                     // quái đang chui ra khỏi lồng
         final long startAt = System.currentTimeMillis();
         long emptySince;
         long doneAt;
@@ -127,8 +130,11 @@ final class HamNguc implements Listener {
             this.leader = leader;
             this.started = new boolean[dg.rooms()];
             this.cleared = new boolean[dg.rooms()];
+            this.spawning = new int[dg.rooms()];
             for (int i = 0; i < dg.rooms(); i++) {
                 roomMobs.add(new ArrayList<>());
+                cages.add(new ArrayList<>());
+                waves.add(new java.util.ArrayDeque<>());
             }
             started[0] = true;
             cleared[0] = true;
@@ -550,6 +556,7 @@ final class HamNguc implements Listener {
             }
         }
         runs.remove(r.slot);
+        waveTotal.keySet().removeIf(k -> k / 16 == r.id);
     }
 
     private boolean near(Entity e, Run r) {
@@ -564,7 +571,8 @@ final class HamNguc implements Listener {
      * tường, mũ cột, vòm; ceil: trần; pillar: cột, trụ ốp tường; lantern/torch/fire: đèn treo, đuốc tường (thiếu facing), lò lửa; deco: góc tường.
      */
     private record Theme(Material[] floor, Material accent, Material path, Material base, Material[] wall, Material trim, Material[] ceil,
-            Material pillar, String lantern, String torch, String fire, Material[] deco, Material gate, String sign) { }
+            Material pillar, String lantern, String torch, String fire, Material[] deco, Material gate, String sign,
+            String banner, String hang, Material[] rubble, Material slab) { }
 
     private static Theme theme(String id) {
         return switch (id) {
@@ -576,7 +584,9 @@ final class HamNguc implements Listener {
                     Material.STRIPPED_SPRUCE_LOG, new Material[] {Material.DEEPSLATE_TILES, Material.TUFF_BRICKS},
                     Material.SPRUCE_LOG, "minecraft:lantern[hanging=true]", "minecraft:wall_torch", "minecraft:campfire[lit=true]",
                     new Material[] {Material.COBWEB, Material.BARREL, Material.COBBLESTONE_WALL, Material.BROWN_MUSHROOM, Material.POINTED_DRIPSTONE},
-                    Material.IRON_BARS, "minecraft:spruce_wall_sign");
+                    Material.IRON_BARS, "minecraft:spruce_wall_sign", "minecraft:brown_wall_banner",
+                    "minecraft:pointed_dripstone[vertical_direction=down,thickness=tip]",
+                    new Material[] {Material.COBBLESTONE, Material.GRAVEL, Material.COAL_BLOCK, Material.TUFF_SLAB}, Material.COBBLED_DEEPSLATE_SLAB);
             case "thanhco" -> new Theme(
                     new Material[] {Material.NETHER_BRICKS, Material.RED_NETHER_BRICKS, Material.POLISHED_BLACKSTONE_BRICKS},
                     Material.GILDED_BLACKSTONE, Material.POLISHED_BLACKSTONE, Material.POLISHED_BLACKSTONE_BRICKS,
@@ -585,7 +595,9 @@ final class HamNguc implements Listener {
                     Material.CHISELED_POLISHED_BLACKSTONE, "minecraft:soul_lantern[hanging=true]", "minecraft:soul_wall_torch",
                     "minecraft:soul_campfire[lit=true]",
                     new Material[] {Material.NETHER_BRICK_FENCE, Material.SOUL_SAND, Material.CRIMSON_ROOTS, Material.WITHER_SKELETON_SKULL, Material.MAGMA_BLOCK},
-                    Material.IRON_BARS, "minecraft:crimson_wall_sign");
+                    Material.IRON_BARS, "minecraft:crimson_wall_sign", "minecraft:red_wall_banner",
+                    "minecraft:weeping_vines",
+                    new Material[] {Material.BLACKSTONE, Material.NETHERRACK, Material.BLACKSTONE_SLAB, Material.BONE_BLOCK}, Material.NETHER_BRICK_SLAB);
             case "vuc" -> new Theme(
                     new Material[] {Material.END_STONE_BRICKS, Material.PURPUR_BLOCK, Material.OBSIDIAN},
                     Material.CRYING_OBSIDIAN, Material.PURPUR_BLOCK, Material.OBSIDIAN,
@@ -593,7 +605,9 @@ final class HamNguc implements Listener {
                     Material.PURPUR_PILLAR, new Material[] {Material.OBSIDIAN, Material.PURPUR_BLOCK},
                     Material.PURPUR_PILLAR, "minecraft:end_rod[facing=down]", "minecraft:soul_wall_torch", "minecraft:soul_campfire[lit=true]",
                     new Material[] {Material.AMETHYST_CLUSTER, Material.CHORUS_PLANT, Material.SMALL_AMETHYST_BUD, Material.DRAGON_HEAD, Material.AMETHYST_BLOCK},
-                    Material.IRON_BARS, "minecraft:warped_wall_sign");
+                    Material.IRON_BARS, "minecraft:warped_wall_sign", "minecraft:purple_wall_banner",
+                    "minecraft:amethyst_cluster[facing=down]",
+                    new Material[] {Material.END_STONE, Material.OBSIDIAN, Material.PURPUR_SLAB, Material.AMETHYST_BLOCK}, Material.PURPUR_SLAB);
             default -> new Theme(   // hammo
                     new Material[] {Material.STONE_BRICKS, Material.CRACKED_STONE_BRICKS, Material.MOSSY_STONE_BRICKS, Material.MOSSY_COBBLESTONE},
                     Material.POLISHED_DEEPSLATE, Material.POLISHED_ANDESITE, Material.DEEPSLATE_BRICKS,
@@ -601,7 +615,9 @@ final class HamNguc implements Listener {
                     Material.CHISELED_STONE_BRICKS, new Material[] {Material.DEEPSLATE_TILES, Material.DEEPSLATE_BRICKS},
                     Material.POLISHED_DEEPSLATE, "minecraft:soul_lantern[hanging=true]", "minecraft:soul_wall_torch", "minecraft:soul_campfire[lit=true]",
                     new Material[] {Material.COBWEB, Material.SKELETON_SKULL, Material.BONE_BLOCK, Material.CANDLE, Material.COBWEB},
-                    Material.IRON_BARS, "minecraft:dark_oak_wall_sign");
+                    Material.IRON_BARS, "minecraft:dark_oak_wall_sign", "minecraft:gray_wall_banner",
+                    "minecraft:hanging_roots",
+                    new Material[] {Material.COBBLESTONE, Material.MOSSY_COBBLESTONE, Material.STONE_BRICK_SLAB, Material.BONE_BLOCK}, Material.STONE_BRICK_SLAB);
         };
     }
 
@@ -726,7 +742,81 @@ final class HamNguc implements Listener {
                 set(w, x, y0 + 1, z, pick(t.deco(), rnd));
             }
         }
-        // phòng đầu: biển tên + lò lửa hai bên
+        // cờ treo tường phía trên đuốc
+        for (int x = x0 + 2; x < x1; x += 8) {
+            set(w, x, y0 + h - 1, -half + 1, t.banner() + "[facing=south]");
+            set(w, x, y0 + h - 1, half - 1, t.banner() + "[facing=north]");
+        }
+        // đồ treo trần + xích rủ (không trên lối giữa)
+        for (int n = 0; n < 9; n++) {
+            int x = x0 + 3 + rnd.nextInt(ROOM - 4);
+            int z = (rnd.nextBoolean() ? 1 : -1) * (3 + rnd.nextInt(5));
+            int top = y0 + h + 1 + (Math.min(Math.min(x - x0, x1 - x), Math.min(z + half, half - z)) >= 2 ? 1 : 0);
+            if (w.getBlockAt(x, top - 1, z).getType() != Material.AIR) {
+                continue;
+            }
+            if (n % 3 == 0) {
+                int len = 1 + rnd.nextInt(3);
+                for (int k = 1; k <= len; k++) {
+                    set(w, x, top - k, z, "minecraft:chain[axis=y]");
+                }
+            } else {
+                set(w, x, top - 1, z, t.hang());
+            }
+        }
+        // gạch vụn, nến, cột gãy (phòng đánh)
+        for (int n = 0; n < 8; n++) {
+            int x = x0 + 2 + rnd.nextInt(ROOM - 2);
+            int z = (rnd.nextBoolean() ? 1 : -1) * (3 + rnd.nextInt(5));
+            if (w.getBlockAt(x, y0 + 1, z).getType() == Material.AIR) {
+                set(w, x, y0 + 1, z, pick(t.rubble(), rnd));
+            }
+        }
+        for (int n = 0; n < 5; n++) {
+            int x = x0 + 1 + rnd.nextInt(ROOM);
+            int z = rnd.nextBoolean() ? -half + 1 : half - 1;
+            if (w.getBlockAt(x, y0 + 1, z).getType() == Material.AIR) {
+                set(w, x, y0 + 1, z, "minecraft:candle[candles=" + (1 + rnd.nextInt(4)) + ",lit=true]");
+            }
+        }
+        if (i > 0 && i < last) {
+            for (int n = 0; n < 2; n++) {
+                int x = x0 + 5 + rnd.nextInt(ROOM - 9);
+                int z = (rnd.nextBoolean() ? 1 : -1) * (3 + rnd.nextInt(3));
+                if (w.getBlockAt(x, y0 + 1, z).getType() != Material.AIR) {
+                    continue;
+                }
+                int ph = 1 + rnd.nextInt(3);
+                for (int y = y0 + 1; y < y0 + 1 + ph; y++) {
+                    set(w, x, y, z, t.pillar());
+                }
+                set(w, x, y0 + 1 + ph, z, t.slab());
+            }
+        }
+        // lồng quái: spawner trang trí (quái do plugin cho chui ra, lồng không tự đẻ)
+        r.cages.get(i).clear();
+        if (i > 0) {
+            // quanh phòng, sát hai bên tường (29/10 chủ server: đặt quanh để quái ra từ mọi phía); phòng sau nhiều lồng hơn
+            int[] xs = i >= 2 || i == last ? new int[] {x0 + 5, x0 + 9, x0 + 13} : new int[] {x0 + 6, x0 + 12};
+            List<int[]> spots = new ArrayList<>();
+            for (int cx : xs) {
+                spots.add(new int[] {cx, -7});
+                spots.add(new int[] {cx, 7});
+            }
+            for (int[] c : spots) {
+                set(w, c[0], y0, c[1], t.accent());
+                set(w, c[0], y0 + 1, c[1], Material.SPAWNER);
+                if (w.getBlockAt(c[0], y0 + 1, c[1]).getState() instanceof org.bukkit.block.CreatureSpawner cs) {
+                    cs.setSpawnedType(r.dg.mobs().get(rnd.nextInt(r.dg.mobs().size())).type());
+                    cs.setMaxNearbyEntities(0);
+                    cs.setDelay(Integer.MAX_VALUE / 2);
+                    cs.update(true, false);
+                }
+                set(w, c[0], y0 + 2, c[1], "minecraft:chain[axis=y]");
+                r.cages.get(i).add(c);
+            }
+        }
+        // phòng đầu: biển tên + lò lửa hai bên + đồ của người canh hầm
         if (i == 0) {
             w.getBlockAt(x0 + 1, y0 + 3, 0).setBlockData(Bukkit.createBlockData(t.sign() + "[facing=east]"), false);
             if (w.getBlockAt(x0 + 1, y0 + 3, 0).getState() instanceof org.bukkit.block.Sign sg) {
@@ -740,6 +830,14 @@ final class HamNguc implements Listener {
             }
             set(w, x0 + 2, y0 + 1, -2, t.fire());
             set(w, x0 + 2, y0 + 1, 2, t.fire());
+            set(w, x0 + 1, y0 + 1, -half + 1, Material.ANVIL);
+            set(w, x0 + 2, y0 + 1, -half + 1, Material.DECORATED_POT);
+            set(w, x0 + 1, y0 + 1, half - 1, "minecraft:water_cauldron[level=3]");
+            set(w, x0 + 2, y0 + 1, half - 1, Material.DECORATED_POT);
+            for (int x = x0 + 4; x <= x0 + 7; x++) {
+                set(w, x, y0 + 1, half - 1, Material.BOOKSHELF);
+                set(w, x, y0 + 2, half - 1, x % 2 == 0 ? Material.CHISELED_BOOKSHELF : Material.BOOKSHELF);
+            }
         }
         // phòng phó trùm: bệ thờ phía cuối phòng
         if (i == mid && i != last) {
@@ -793,6 +891,15 @@ final class HamNguc implements Listener {
             int cx = x1 + 1 + CORRIDOR / 2;
             set(w, cx, y0 + 2, -1, t.torch() + "[facing=south]");
             set(w, cx, y0 + 2, 1, t.torch() + "[facing=north]");
+            for (int sz : new int[] {-1, 1}) {   // hốc tường: đầu lâu + nến
+                int nx = cx + (sz < 0 ? -2 : 2);
+                set(w, nx, y0 + 2, 2 * sz, Material.AIR);
+                set(w, nx, y0 + 2, 3 * sz, t.trim());
+                set(w, nx, y0 + 1, 2 * sz, t.base());
+                set(w, nx, y0 + 3, 2 * sz, t.trim());
+                set(w, nx, y0 + 2, 2 * sz, rnd.nextBoolean() ? "minecraft:skeleton_skull[rotation=" + (sz < 0 ? 0 : 8) + "]"
+                        : "minecraft:candle[candles=3,lit=true]");
+            }
         }
     }
 
@@ -908,11 +1015,13 @@ final class HamNguc implements Listener {
         List<UUID> list = r.roomMobs.get(i);
         ThreadLocalRandom rnd = ThreadLocalRandom.current();
         String title;
+        int count;
         if (i == last) {
             LivingEntity b = spawnMob(w, r, r.dg.boss(), "boss", new Location(w, r.roomX(i) + ROOM - 1.5, FLOOR_Y + 2, 0.5, 90f, 0f));
             if (b != null) {
                 list.add(b.getUniqueId());
                 r.boss = b.getUniqueId();
+                w.spawnParticle(Particle.SOUL_FIRE_FLAME, b.getLocation().add(0, 1, 0), 60, 0.6, 1.2, 0.6, 0.05);
                 r.bar = Bukkit.createBossBar(net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection()
                         .serialize(Tip.c("&c&l" + strip(r.dg.boss().name()))), BarColor.RED, BarStyle.SEGMENTED_10);
                 for (UUID m : r.members) {
@@ -922,38 +1031,42 @@ final class HamNguc implements Listener {
                     }
                 }
             }
-            for (int n = 0; n < 2 + extra; n++) {
-                LivingEntity e = spawnMob(w, r, r.dg.mobs().get(rnd.nextInt(r.dg.mobs().size())), "mob", spot(w, r, i));
-                if (e != null) {
-                    list.add(e.getUniqueId());
-                }
-            }
+            count = 2 + extra;
             title = "&c&l" + strip(r.dg.boss().name());
         } else {
-            int count = Math.min(14, cfg.getInt("mobs-per-room", 3) + i + extra * 2);
+            count = Math.min(16, cfg.getInt("mobs-per-room", 3) + i + extra * 2);
             if (i == mid && r.dg.mini() != null) {
-                LivingEntity m = spawnMob(w, r, r.dg.mini(), "mini", new Location(w, r.roomX(i) + 13.5, FLOOR_Y + 1, 0.5));
+                LivingEntity m = spawnMob(w, r, r.dg.mini(), "mini", new Location(w, r.roomX(i) + 11.5, FLOOR_Y + 1, 0.5, 90f, 0f));
                 if (m != null) {
                     list.add(m.getUniqueId());
+                    w.spawnParticle(Particle.LARGE_SMOKE, m.getLocation().add(0, 1, 0), 40, 0.5, 1, 0.5, 0.02);
                 }
                 count = Math.max(2, count - 2);
             }
-            for (int n = 0; n < count; n++) {
-                LivingEntity e = spawnMob(w, r, r.dg.mobs().get(rnd.nextInt(r.dg.mobs().size())), "mob", spot(w, r, i));
-                if (e != null) {
-                    list.add(e.getUniqueId());
-                }
-            }
             title = i == mid && r.dg.mini() != null ? "&6" + strip(r.dg.mini().name()) : "&fPhòng " + i + "/" + (last - 1);
         }
+        // chia đợt: mỗi đợt tối đa 2 con / lồng
+        int per = Math.max(2, r.cages.get(i).size() * 2);
+        List<MobDef> wave = new ArrayList<>();
+        for (int n = 0; n < count; n++) {
+            wave.add(r.dg.mobs().get(rnd.nextInt(r.dg.mobs().size())));
+            if (wave.size() >= per) {
+                r.waves.get(i).add(wave);
+                wave = new ArrayList<>();
+            }
+        }
+        if (!wave.isEmpty()) {
+            r.waves.get(i).add(wave);
+        }
+        releaseWave(w, r, i);
         for (UUID m : r.members) {
             Player p = Bukkit.getPlayer(m);
             if (p != null) {
-                p.showTitle(net.kyori.adventure.title.Title.title(Tip.c(title), Tip.c("&7Hạ hết quái để mở cửa")));
+                p.showTitle(net.kyori.adventure.title.Title.title(Tip.c(title), Tip.c("&7Quái chui ra từ lồng, hạ hết để mở cửa")));
                 p.playSound(p.getLocation(), i == last ? Sound.ENTITY_WITHER_SPAWN : Sound.ENTITY_EVOKER_PREPARE_SUMMON, 0.8f, 1f);
             }
         }
-        // đóng cửa vào sau lưng ở phòng trùm (không ai chạy ra hành lang kéo trùm)
+        // phòng trùm: đóng cửa vào sau lưng
         if (i == last) {
             int x = r.roomX(i);
             for (int z = -1; z <= 1; z++) {
@@ -964,6 +1077,60 @@ final class HamNguc implements Listener {
                 }
             }
         }
+    }
+
+    /** Thả đợt kế tiếp: từng con chui ra khỏi lồng cách nhau 6 tick. */
+    private void releaseWave(World w, Run r, int i) {
+        List<MobDef> wave = r.waves.get(i).poll();
+        if (wave == null) {
+            return;
+        }
+        if (r.cleared[i - 1] && r.waves.get(i).size() + 1 < countWaves(r, i)) {
+            tell(r, "&c⚠ Đợt quái mới!");
+        }
+        for (int n = 0; n < wave.size(); n++) {
+            MobDef d = wave.get(n);
+            r.spawning[i]++;
+            Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                r.spawning[i]--;
+                if (!runs.containsValue(r) || r.cleared[i]) {
+                    return;
+                }
+                Location l = cageExit(w, r, i);
+                LivingEntity e = spawnMob(w, r, d, "mob", l);
+                if (e != null) {
+                    r.roomMobs.get(i).add(e.getUniqueId());
+                    w.spawnParticle(Particle.FLAME, l.clone().add(0, 0.8, 0), 18, 0.3, 0.5, 0.3, 0.02);
+                    w.spawnParticle(Particle.LARGE_SMOKE, l.clone().add(0, 1, 0), 10, 0.3, 0.4, 0.3, 0.01);
+                    w.playSound(l, Sound.BLOCK_FIRE_EXTINGUISH, 0.6f, 0.8f);
+                }
+            }, 6L * n + 4L);
+        }
+    }
+
+    private final Map<Integer, Integer> waveTotal = new HashMap<>();
+
+    private int countWaves(Run r, int i) {
+        return waveTotal.computeIfAbsent(r.id * 16 + i, k -> r.waves.get(i).size() + 1);
+    }
+
+    /** Chỗ quái ra: ô trống sát một lồng ngẫu nhiên của phòng (không có lồng thì chỗ ngẫu nhiên). */
+    private Location cageExit(World w, Run r, int i) {
+        List<int[]> cs = r.cages.get(i);
+        ThreadLocalRandom rnd = ThreadLocalRandom.current();
+        if (!cs.isEmpty()) {
+            int[] c = cs.get(rnd.nextInt(cs.size()));
+            int[][] around = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}, {-1, -1}, {1, 1}, {-1, 1}, {1, -1}};
+            for (int k = 0; k < around.length; k++) {
+                int[] o = around[(k + rnd.nextInt(around.length)) % around.length];
+                int x = c[0] + o[0];
+                int z = c[1] + o[1];
+                if (w.getBlockAt(x, FLOOR_Y + 1, z).isPassable() && w.getBlockAt(x, FLOOR_Y + 2, z).isPassable()) {
+                    return new Location(w, x + 0.5, FLOOR_Y + 1, z + 0.5);
+                }
+            }
+        }
+        return spot(w, r, i);
     }
 
     private boolean alive(UUID id) {
@@ -1023,7 +1190,13 @@ final class HamNguc implements Listener {
             }
             // phòng sạch quái
             for (int i = 1; i < r.dg.rooms(); i++) {
-                if (r.started[i] && !r.cleared[i] && r.roomMobs.get(i).stream().noneMatch(this::alive)) {
+                if (r.started[i] && !r.cleared[i] && r.spawning[i] == 0 && !r.waves.get(i).isEmpty()
+                        && r.roomMobs.get(i).stream().filter(this::alive).count() <= (i == r.dg.rooms() - 1 ? 1 : 1)
+                        && (i != r.dg.rooms() - 1 || r.roomMobs.get(i).stream().filter(this::alive).allMatch(id -> id.equals(r.boss)))) {
+                    releaseWave(w, r, i);
+                }
+                if (r.started[i] && !r.cleared[i] && r.spawning[i] == 0 && r.waves.get(i).isEmpty()
+                        && r.roomMobs.get(i).stream().noneMatch(this::alive)) {
                     r.cleared[i] = true;
                     if (i == r.dg.rooms() - 1) {
                         complete(r);
@@ -1064,10 +1237,7 @@ final class HamNguc implements Listener {
             return;
         }
         for (int k = 0; k < n; k++) {
-            Location l = at.clone().add(ThreadLocalRandom.current().nextDouble(-2, 2), 0, ThreadLocalRandom.current().nextDouble(-2, 2));
-            if (w.getBlockAt(l).getType() != Material.AIR) {
-                l = at;
-            }
+            Location l = r.cages.get(room).isEmpty() ? at : cageExit(w, r, room);
             LivingEntity e = spawnMob(w, r, r.dg.mobs().get(ThreadLocalRandom.current().nextInt(r.dg.mobs().size())), "mob", l);
             if (e != null) {
                 list.add(e.getUniqueId());
@@ -1256,6 +1426,13 @@ final class HamNguc implements Listener {
     public void onTarget(EntityTargetEvent e) {   // quái hầm ngục không đánh nhau
         if (inWorld(e.getEntity().getWorld()) && e.getTarget() != null && !(e.getTarget() instanceof Player)
                 && e.getTarget().getPersistentDataContainer().has(kRun, PersistentDataType.INTEGER)) {
+            e.setCancelled(true);
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onSpawner(org.bukkit.event.entity.SpawnerSpawnEvent e) {
+        if (inWorld(e.getLocation().getWorld())) {
             e.setCancelled(true);
         }
     }

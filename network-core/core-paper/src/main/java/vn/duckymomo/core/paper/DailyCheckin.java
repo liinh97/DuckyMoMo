@@ -49,6 +49,7 @@ final class DailyCheckin implements Listener {
     private final File file;
     private final YamlConfiguration data;
     private final Map<UUID, Long> joined = new HashMap<>();
+    private final Map<UUID, Long> moved = new HashMap<>();   // lần cuối cử động (phiếu online không tính lúc đứng im)
 
     DailyCheckin(JavaPlugin plugin, ConfigurationSection cfg, Rewards rewards) {
         INSTANCE = this;
@@ -61,6 +62,69 @@ final class DailyCheckin implements Listener {
         long now = System.currentTimeMillis();
         for (Player p : Bukkit.getOnlinePlayers()) {
             joined.put(p.getUniqueId(), now);
+            moved.put(p.getUniqueId(), now);
+        }
+        Bukkit.getScheduler().runTaskTimer(plugin, task -> {   // mỗi phút; dmm reload tạo bản mới thì bản cũ tự dừng
+            if (INSTANCE != this) {
+                task.cancel();
+                return;
+            }
+            onlineTick();
+        }, 1200L, 1200L);
+    }
+
+    /**
+     * Phiếu online (29/10, set Chuyên Cần): mỗi every-minutes phút ĐANG HOẠT ĐỘNG trong ngày (giờ VN) nhận 1 món item, tối đa max-per-day.
+     * Phút đứng im quá idle-minutes không tính; bot không tính. Lưu players.<uuid>.online.{day,min,got}.
+     */
+    private void onlineTick() {
+        ConfigurationSection o = cfg.getConfigurationSection("online-ticket");
+        if (o == null || !o.getBoolean("enabled", true)) {
+            return;
+        }
+        String item = o.getString("item", "phieu_dd");
+        int every = Math.max(1, o.getInt("every-minutes", 60));
+        int max = o.getInt("max-per-day", 2);
+        long idle = o.getLong("idle-minutes", 5) * 60_000L;
+        long now = System.currentTimeMillis();
+        String day = today();
+        boolean dirty = false;
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            if (BotView.isBot(p) || now - moved.getOrDefault(p.getUniqueId(), 0L) > idle) {
+                continue;
+            }
+            String k = "players." + p.getUniqueId() + ".online";
+            if (!day.equals(data.getString(k + ".day"))) {
+                data.set(k + ".day", day);
+                data.set(k + ".min", 0);
+                data.set(k + ".got", 0);
+            }
+            int got = data.getInt(k + ".got");
+            if (got >= max) {
+                continue;
+            }
+            int min = data.getInt(k + ".min") + 1;
+            data.set(k + ".min", min);
+            dirty = true;
+            if (min >= every * (got + 1)) {
+                got++;
+                data.set(k + ".got", got);
+                List<String> r = rewards.give(p, List.of("do " + item + " 1"));
+                p.sendMessage(c("&e☀ Online " + min + " phút hôm nay: nhận &f" + String.join("&7, &f", r)
+                        + (got < max ? "&7 (phiếu tiếp sau " + every + " phút nữa)" : "&7 (đủ " + max + " phiếu online hôm nay)")));
+            }
+        }
+        if (dirty) {
+            save();
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onMove(org.bukkit.event.player.PlayerMoveEvent e) {
+        org.bukkit.Location f = e.getFrom();
+        org.bukkit.Location t = e.getTo();
+        if (f.getYaw() != t.getYaw() || f.getPitch() != t.getPitch() || f.getBlockX() != t.getBlockX() || f.getBlockZ() != t.getBlockZ()) {
+            moved.put(e.getPlayer().getUniqueId(), System.currentTimeMillis());
         }
     }
 
@@ -97,6 +161,7 @@ final class DailyCheckin implements Listener {
     public void onJoin(PlayerJoinEvent e) {
         Player p = e.getPlayer();
         joined.put(p.getUniqueId(), System.currentTimeMillis());
+        moved.put(p.getUniqueId(), System.currentTimeMillis());
         if (!cfg.getBoolean("remind-on-join", true)) {
             return;
         }
@@ -111,6 +176,7 @@ final class DailyCheckin implements Listener {
     @EventHandler
     public void onQuit(PlayerQuitEvent e) {
         joined.remove(e.getPlayer().getUniqueId());
+        moved.remove(e.getPlayer().getUniqueId());
     }
 
     boolean command(CommandSender s, String[] args) {
@@ -187,6 +253,20 @@ final class DailyCheckin implements Listener {
         String nextText = next == null ? "" : " &7· mốc tiếp theo: &f" + (next.getKey() > cfg.getInt("cycle-days", 30) && cfg.getInt("cycle-days", 30) > 0
                 ? (next.getKey() - cfg.getInt("cycle-days", 30)) : next.getKey()) + " ngày&7 (còn &f" + (next.getKey() - day) + "&7 lần điểm danh)";
         p.sendMessage(c("&7Đã điểm danh &f" + count + "&7 ngày" + nextText));
+        ConfigurationSection o = cfg.getConfigurationSection("online-ticket");
+        if (o != null && o.getBoolean("enabled", true)) {
+            String k = "players." + p.getUniqueId() + ".online";
+            boolean td = today().equals(data.getString(k + ".day"));
+            int got = td ? data.getInt(k + ".got") : 0;
+            int min = td ? data.getInt(k + ".min") : 0;
+            int max = o.getInt("max-per-day", 2);
+            int every = Math.max(1, o.getInt("every-minutes", 60));
+            String set = o.getString("set", "chuyencan");
+            p.sendMessage(c("&e☀ Phiếu online hôm nay: &f" + got + "/" + max + (got < max ? " &7(phiếu tiếp sau &f"
+                    + Math.max(1, every * (got + 1) - min) + " phút&7 hoạt động)" : "") + " ")
+                    .append(c("&6&n[Đổi set Chuyên Cần]").clickEvent(ClickEvent.runCommand("/thoren set " + set))
+                            .hoverEvent(HoverEvent.showText(c("&7Đổi Phiếu Chuyên Cần lấy món set ở Thợ Rèn")))));
+        }
     }
 
     private void save() {

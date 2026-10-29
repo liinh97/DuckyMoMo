@@ -175,7 +175,7 @@ menu:
     mo: "Vào mỗi ngày để nhận"
     chuong: hangngay
     lenh:
-    - "/diemdanh|150 xu + vé Gacha mỗi ngày"
+    - "/diemdanh|150 xu + vé Gacha + Phiếu Chuyên Cần mỗi ngày"
     - "/nhiemvu|3 nhiệm vụ mỗi ngày + việc dân làng đang nhận (hỏi Già Làng)"
     - "/gacha|quay bằng vé"
     - "/vote|150 xu mỗi lượt vote"
@@ -1141,6 +1141,7 @@ chapters:
   - |-
     &2ĐIỂM DANH
     &0Mỗi ngày gõ &1/diemdanh&0 (online đủ 5 phút) nhận 150 xu.
+    &0Thêm &6Phiếu Chuyên Cần&0: mỗi ngày, mốc điểm danh, mỗi giờ online (tối đa 2). Đổi set &6Chuyên Cần&0 ở &1/thoren&0.
     &0Đủ 7, 14, 30 ngày&r&0 có quà mốc (kim cương, táo vàng…).
     &0Bỏ một ngày không mất&r&0 chuỗi.
     &1/diemdanh xem &0tiến độ

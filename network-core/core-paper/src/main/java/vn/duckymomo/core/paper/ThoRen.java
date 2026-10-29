@@ -51,9 +51,9 @@ final class ThoRen implements Listener {
 
     /** an = mã mảnh ấn riêng của món (vd mũ, giày Chiến Binh: cb_an_khoi); khoá "an" trong cost được thay bằng mã này. */
     private record Piece(String key, String name, List<String> ids, String an) { }
-    private record Bonus(int from, int pieces, double mau, double dayLui, double giamSt, double thuHoach, double demSt) {
+    private record Bonus(int from, int pieces, double mau, double dayLui, double giamSt, double thuHoach, double demSt, double kn) {
         Bonus times(double k) {
-            return new Bonus(from, pieces, mau * k, dayLui * k, giamSt * k, thuHoach * k, demSt * k);
+            return new Bonus(from, pieces, mau * k, dayLui * k, giamSt * k, thuHoach * k, demSt * k, kn * k);
         }
     }
     private record Season(String name, String from, String to, String open, double boost, double damage, String drop, double dropChance) { }
@@ -69,7 +69,7 @@ final class ThoRen implements Listener {
     private record Recipe(String out, int amount, Map<String, Object> cost) { }
     private record Stall(String id, String name, String sub, String profession, String open, String skin, List<Recipe> recipes) { }
     /** Hiệu ứng đang áp cho một người (tổng các set) + mô tả để báo khi đổi. */
-    private record Active(double mau, double dayLui, double giamSt, double thuHoach, double demSt, String text) { }
+    private record Active(double mau, double dayLui, double giamSt, double thuHoach, double demSt, double kn, String text) { }
 
     private final DuckyMoMoCore plugin;
     private final ItemLibrary lib;
@@ -227,7 +227,7 @@ final class ThoRen implements Listener {
             for (Map<?, ?> m : s.getMapList("bonus")) {
                 bonus.add(new Bonus(num(m.get("from")).intValue(), num(m.get("pieces")).intValue(), num(m.get("mau")).doubleValue(),
                         num(m.get("day-lui")).doubleValue(), num(m.get("giam-st")).doubleValue(), num(m.get("thu-hoach")).doubleValue(),
-                        num(m.get("dem-st")).doubleValue()));
+                        num(m.get("dem-st")).doubleValue(), num(m.get("kn")).doubleValue()));
             }
             ConfigurationSection se = s.getConfigurationSection("season");
             Season season = se == null ? null : new Season(se.getString("name", ""), se.getString("from", ""), se.getString("to", ""),
@@ -366,6 +366,10 @@ final class ThoRen implements Listener {
         }
         if (args.length >= 1 && args[0].equalsIgnoreCase("kham") && Kham.INSTANCE != null) {
             Kham.INSTANCE.open(p);
+            return true;
+        }
+        if (args.length >= 2 && args[0].equalsIgnoreCase("set") && sets.containsKey(args[1].toLowerCase(java.util.Locale.ROOT))) {
+            setMenu(p, sets.get(args[1].toLowerCase(java.util.Locale.ROOT)), false);   // /thoren set <mã>: mở thẳng một set (vd nút ở /diemdanh)
             return true;
         }
         menu(p);
@@ -1021,6 +1025,9 @@ final class ThoRen implements Listener {
         if (b.demSt() != 0) {
             s.add("+" + trim(b.demSt()) + "% sát thương quái ban đêm");
         }
+        if (b.kn() != 0) {
+            s.add("+" + trim(b.kn()) + "% kinh nghiệm");
+        }
         return String.join(", ", s);
     }
 
@@ -1030,7 +1037,7 @@ final class ThoRen implements Listener {
     }
 
     private void refresh(Player p) {
-        double mau = 0, day = 0, giam = 0, thu = 0, dem = 0;
+        double mau = 0, day = 0, giam = 0, thu = 0, dem = 0, kn = 0;
         List<String> txt = new ArrayList<>();
         for (SetDef set : sets.values()) {
             Bonus b = best(p, set);
@@ -1044,6 +1051,7 @@ final class ThoRen implements Listener {
                 giam += b.giamSt();
                 thu += b.thuHoach();
                 dem += b.demSt();
+                kn += b.kn();
                 txt.add(set.name() + (boosted ? " (đúng mùa)" : "") + ": " + bonusText(b));
             }
         }
@@ -1057,7 +1065,7 @@ final class ThoRen implements Listener {
         if (text.isEmpty()) {
             active.remove(p.getUniqueId());
         } else {
-            active.put(p.getUniqueId(), new Active(mau, day, giam, thu, dem, text));
+            active.put(p.getUniqueId(), new Active(mau, day, giam, thu, dem, kn, text));
         }
         if (old != null || !text.isEmpty()) {
             p.sendActionBar(c(text.isEmpty() ? "&7Hiệu ứng bộ: không còn" : "&d✦ Hiệu ứng bộ &f" + text));
@@ -1307,6 +1315,17 @@ final class ThoRen implements Listener {
             if (t >= 13000 && t <= 23000) {
                 e.setDamage(e.getDamage() * (1 + a.demSt() / 100.0));
             }
+        }
+    }
+
+    /** Chuyên Cần (29/10): hiệu ứng bộ kn = % kinh nghiệm (orb) nhận thêm. */
+    @EventHandler(ignoreCancelled = true)
+    public void onExp(org.bukkit.event.player.PlayerExpChangeEvent e) {
+        Active a = active.get(e.getPlayer().getUniqueId());
+        if (a != null && a.kn() > 0 && e.getAmount() > 0) {
+            double v = e.getAmount() * (1 + a.kn() / 100.0);
+            int base = (int) Math.floor(v);
+            e.setAmount(base + (ThreadLocalRandom.current().nextDouble() < v - base ? 1 : 0));
         }
     }
 

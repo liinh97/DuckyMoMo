@@ -576,16 +576,29 @@ daily-checkin:
   daily-rewards:
     - xu 150
     - do chia_khoa_diemdanh 1
+    - do phieu_dd 1           # 29/10: Phiếu Chuyên Cần, đổi set Chuyên Cần ở Thợ Rèn
   milestones:
     7:
       - xu 750
       - vat GOLDEN_APPLE 2
+      - do phieu_dd 2
     14:
       - xu 1500
       - vat DIAMOND 3
+      - do phieu_dd 3
     30:
       - xu 4500
       - vat DIAMOND 8
+      - do phieu_dd 5
+  # Phiếu online (29/10, set Chuyên Cần): mỗi every-minutes phút ĐANG HOẠT ĐỘNG trong ngày (đứng im quá idle-minutes không tính, bot không tính)
+  # nhận 1 item, tối đa max-per-day. Một tháng chăm: ~30 (điểm danh) + 10 (mốc) + ~60 (online) phiếu; cả bộ +5 cần 124 phiếu.
+  online-ticket:
+    enabled: true
+    item: phieu_dd
+    every-minutes: 60
+    max-per-day: 2
+    idle-minutes: 5
+    set: chuyencan            # nút [Đổi set Chuyên Cần] ở /diemdanh mở /thoren set <mã>
 daily-quests:
   enabled: true
   per-day: 3
@@ -1959,7 +1972,7 @@ tho-ren:
   # Mảnh ấn trao đổi rơi trong dungeon (23/10, chủ server: vài tầng chung một set; tầng dễ mũ/giày, khó hơn giáp/quần, khó nhất vũ khí).
   # MỌI con trong tầng chỉ có tỉ lệ rơi 1 mảnh (chủ server 23/10: giết trùm KHÔNG chắc rơi): quái thường mob-chance %, phó trùm (tên 〖N〗)
   # miniboss-chance %, trùm (tên 『N』) boss-chance %. multiplier nhân cả ba (tối đa 100%).
-  guard: [cb_an_khoi, cb_an_than, cb_an_binh, ta_an_khoi, ta_an_than, ta_an_binh, cc_an_khoi, cc_an_than, cc_an_binh, ht_an_khoi, ht_an_than, ht_an_binh, mt_an_khoi, mt_an_than, mt_an_binh, dv_an_khoi, dv_an_than, dv_an_binh, keo_hon]
+  guard: [cb_an_khoi, cb_an_than, cb_an_binh, ta_an_khoi, ta_an_than, ta_an_binh, cc_an_khoi, cc_an_than, cc_an_binh, ht_an_khoi, ht_an_than, ht_an_binh, mt_an_khoi, mt_an_than, mt_an_binh, dv_an_khoi, dv_an_than, dv_an_binh, keo_hon, phieu_dd]
   dungeon-drops:
     mob-chance: 3
     miniboss-chance: 15
@@ -2238,6 +2251,27 @@ tho-ren:
         - {from: 0, pieces: 4, mau: 6, giam-st: 3}
         - {from: 2, pieces: 4, mau: 10, day-lui: 10, giam-st: 5}
         - {from: 4, pieces: 4, mau: 15, day-lui: 15, giam-st: 7}
+    chuyencan:
+      name: Chuyên Cần
+      icon: SUNFLOWER
+      desc: 'Set điểm danh: đổi bằng Phiếu Chuyên Cần (điểm danh mỗi ngày, mốc điểm danh, mỗi giờ online). Đủ bộ thêm máu và kinh nghiệm, +5 tự vá đồ.'
+      cost:
+      - {xu: 200, phieu_dd: 3}
+      - {xu: 300, phieu_dd: 3}
+      - {xu: 500, phieu_dd: 4}
+      - {xu: 800, phieu_dd: 5}
+      - {xu: 1200, phieu_dd: 7}
+      - {xu: 1800, phieu_dd: 9}
+      wear: [80, 72, 64, 56, 48, 40]
+      bonus:
+      - {from: 0, pieces: 4, mau: 4, kn: 10}
+      - {from: 3, pieces: 4, mau: 8, day-lui: 5, kn: 20}
+      - {from: 5, pieces: 4, mau: 12, day-lui: 10, giam-st: 3, kn: 30}
+      pieces:
+        mu: {name: Mũ, ids: [cn_mu_0, cn_mu_1, cn_mu_2, cn_mu_3, cn_mu_4, cn_mu_5]}
+        ao: {name: Giáp, ids: [cn_ao_0, cn_ao_1, cn_ao_2, cn_ao_3, cn_ao_4, cn_ao_5]}
+        quan: {name: Quần, ids: [cn_quan_0, cn_quan_1, cn_quan_2, cn_quan_3, cn_quan_4, cn_quan_5]}
+        giay: {name: Giày, ids: [cn_giay_0, cn_giay_1, cn_giay_2, cn_giay_3, cn_giay_4, cn_giay_5]}
     nonggia:
       name: "Nông Gia"
       icon: GOLDEN_HOE

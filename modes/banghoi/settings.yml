@@ -1581,45 +1581,66 @@ goiqua_list:
       - vat STONE_AXE 1
       - vat STONE_PICKAXE 1
   dan:
-    ten: Gói Dân
-    icon: BREAD
+    ten: '&7Quà Dân'
+    icon: WHEAT
     cho: 259200
     rank:
       - dan
     qua:
-      - vat BREAD 16
+      - vat BREAD 32
+      - vat CHAINMAIL_HELMET 1
+      - vat CHAINMAIL_CHESTPLATE 1
+      - vat CHAINMAIL_LEGGINGS 1
+      - vat CHAINMAIL_BOOTS 1
+      - vat IRON_AXE 1
+      - vat IRON_PICKAXE 1
       - vat TORCH 32
-      - xu 75
   luongdan:
-    ten: Gói Lương Dân
+    ten: '&aQuà Lương Dân'
     icon: IRON_HOE
     cho: 259200
     rank:
       - luongdan
     qua:
-      - vat COOKED_BEEF 16
-      - vat IRON_INGOT 8
-      - xu 150
+      - vat COOKED_BEEF 32
+      - vat IRON_HELMET 1
+      - vat IRON_CHESTPLATE 1
+      - vat IRON_LEGGINGS 1
+      - vat IRON_BOOTS 1
+      - vat IRON_SWORD 1
+      - vat IRON_PICKAXE 1
+      - vat IRON_SHOVEL 1
+      - vat TORCH 32
   haokiet:
-    ten: Gói Hào Kiệt
+    ten: '&6Quà Hào Kiệt'
     icon: GOLDEN_HELMET
     cho: 259200
     rank:
       - haokiet
     qua:
-      - vat COOKED_BEEF 32
-      - vat GOLDEN_CARROT 16
-      - vat IRON_INGOT 16
-      - xu 300
+      - vat GOLDEN_CARROT 32
+      - vat IRON_HELMET 1
+      - vat IRON_CHESTPLATE 1
+      - vat IRON_LEGGINGS 1
+      - vat IRON_BOOTS 1
+      - vat DIAMOND_PICKAXE 1
+      - vat DIAMOND_SWORD 1
+      - vat GOLDEN_APPLE 2
+      - vat EXPERIENCE_BOTTLE 16
   media:
-    ten: Gói quà Sứ Giả
+    ten: '&cQuà Sứ Giả'
     icon: BEACON
     cho: 259200
     rank:
       - media
     qua:
       - vat COOKED_BEEF 32
-      - vat GOLDEN_CARROT 16
+      - vat IRON_HELMET 1
+      - vat IRON_CHESTPLATE 1
+      - vat IRON_LEGGINGS 1
+      - vat IRON_BOOTS 1
+      - vat IRON_SWORD 1
+      - vat IRON_PICKAXE 1
       - vat GOLDEN_APPLE 4
       - vat EXPERIENCE_BOTTLE 16
       - vat TORCH 64

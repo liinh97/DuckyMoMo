@@ -440,6 +440,10 @@ final class PlayRanks implements Listener {
         }
         if (k.skins() > 0) {
             t.item("Tủ skin &a" + k.skins() + "&f ô &8(/tuskin)");
+        } else if (tiers.stream().anyMatch(x -> x.perks() == k)) {
+            // 29/10 chủ server: bậc chưa được đổi skin thì tủ skin = 0, ghi rõ bậc mở (mục tiêu lên bậc)
+            tiers.stream().filter(x -> x.perks().skins() > 0).findFirst()
+                    .ifPresent(x -> t.item("&7Tủ skin: mở khi lên &f" + x.name() + " &8(đổi skin, /tuskin)"));
         }
         if (k.spin() > 0) {
             t.item("Vé gacha online nhanh hơn &a" + k.spin() + "%");

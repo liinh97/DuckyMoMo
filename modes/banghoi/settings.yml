@@ -1541,13 +1541,13 @@ rk_admin_tuskin: 0
 rk_admin_spin: 0
 rk_admin_kit: ""
 dp_tinan_orders: 2
-dp_tinan_tuskin: 1
+dp_tinan_tuskin: 0
 dp_tinan_spin: 0
 dp_dan_orders: 3
-dp_dan_tuskin: 2
+dp_dan_tuskin: 0
 dp_dan_spin: 0
 dp_luongdan_orders: 4
-dp_luongdan_tuskin: 3
+dp_luongdan_tuskin: 0
 dp_luongdan_spin: 0
 dp_haokiet_orders: 5
 dp_haokiet_tuskin: 5

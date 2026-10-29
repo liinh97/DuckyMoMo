@@ -177,8 +177,10 @@ final class VoteRewards implements Listener {
         }
         if (s instanceof Player pm) {   // menu (22/10, trước in chat)
             String key = "players." + pm.getUniqueId();
+            String webName = webName(pm);
             InfoMenu m = InfoMenu.of("&a✔ Vote cho DuckyMoMo").accent(org.bukkit.Material.LIME_STAINED_GLASS_PANE);
-            m.top(Tip.of("&a✔ &fVote cho DuckyMoMo").accent("&a").desc("Mỗi trang 1 lần/ngày, nhập đúng tên trong game.").line()
+            m.top(Tip.of("&a✔ &fVote cho DuckyMoMo").accent("&a").desc("Mỗi trang 1 lần/ngày. Trên web nhập đúng tên trong game, sai tên là mất lượt.").line()
+                    .kv("Tên nhập trên web", "&e" + webName)
                     .kv("Mỗi lượt", "&e" + VaultEconomy.format(cfg.getDouble("money-per-vote", 100)))
                     .kv(cfg.getInt("streak-days", 7) + " ngày liền", "&e+" + VaultEconomy.format(cfg.getDouble("streak-bonus", 500)))
                     .kv("Vote party", "mỗi " + cfg.getInt("party-every", 30) + " lượt cả server")
@@ -193,10 +195,11 @@ final class VoteRewards implements Listener {
                         continue;
                     }
                     String label = st.getString(k + ".name", k);
-                    m.add(Tip.of("&b➜ &f" + label).accent("&b").line().click("Bấm để nhận link vote trong chat")
+                    m.add(Tip.of("&b➜ &f" + label).accent("&b").kv("Tên nhập", "&e" + webName).line().click("Bấm để nhận link vote trong chat")
                             .apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.PAPER)), pl -> {
                         pl.closeInventory();
                         pl.sendMessage(c("&b➜ &f&n" + label).clickEvent(ClickEvent.openUrl(url)).hoverEvent(HoverEvent.showText(c("&7Bấm để mở " + url))));
+                        pl.sendMessage(c("&7Trên web nhập tên: &e" + webName + " &7(sai tên là mất lượt)"));
                     });
                     n++;
                 }
@@ -240,10 +243,17 @@ final class VoteRewards implements Listener {
         }
         if (s instanceof Player p) {
             String key = "players." + p.getUniqueId();
+            s.sendMessage(c("&7Trên web nhập tên: &e" + webName(p) + " &7(sai tên là mất lượt)"));
             s.sendMessage(c("&7Bạn: &f" + data.getInt(key + ".total", 0) + "&7 lượt · chuỗi &f"
                     + data.getInt(key + ".streak", 0) + "&7 ngày · &f/vote top &7xem bảng tháng"));
         }
         return true;
+    }
+
+    /** Tên người chơi gõ trên trang vote: bỏ dấu "." của Bedrock, find() tự thử lại có dấu chấm. */
+    private static String webName(Player p) {
+        String n = p.getName();
+        return n.startsWith(".") ? n.substring(1) : n;
     }
 
     private List<Map.Entry<String, Integer>> monthTop(String month) {

@@ -275,6 +275,9 @@ async function connect(name) {
     if (!st.silent) {   // vào / ra không báo [+] [-] (DuckyMoMoCore DonateRanks: duckymomo.vaora.an), cấp một lần
       rcon(host).cmd(`lp user ${name} permission set duckymomo.vaora.an true`).then(() => { st.silent = true; save(); }).catch(() => {});
     }
+    if (!st.grim) {   // 29/10 (chủ server đồng ý): GrimAC kéo bot lùi mỗi bước khi đi dạo + báo admin "failed Simulation" = lộ bot
+      rcon(host).cmd(`lp user ${name} permission set grim.exempt true`).then(() => { st.grim = true; save(); }).catch(() => {});
+    }
     creative(name, host).catch(() => {});   // mỗi lần xuất hiện (cả sau hồi sinh / đổi thế giới), sau khi đã vào hẳn
     place(name, bot).catch(e => log(name, 'lỗi đặt chỗ:', e.message)).finally(() => { rt.placing = false; rt.placedAt = Date.now(); });
   });
@@ -562,10 +565,10 @@ async function chatOnce() {
 // Chủ server: "đưa hết bot về spawn đứng nhưng member không nhìn thấy … thi thoảng cho bot chạy loanh quanh spawn, các warp nếu có member ở đấy".
 // Bot đứng chung một phòng kín dưới đất xa mọi warp > 128 khối (DuckyMoMoCore bot-hide chặn gói hiện bot trong phòng: không ai thấy, tên
 // vẫn ở TAB) → 23 bot dùng chung một vùng chunk. Thỉnh thoảng có người THẬT trong `radius` (35) khối quanh spawn / warp trade / warp shop (chủ
-// server: chỉ 3 chỗ này; hết lượt mà người còn trong 64 khối thì ở lại, tối đa 10 phút) thì 1–2 bot ra trong khu đó (cách người ≥ 12 khối), đi lang thang vài phút (đi, nhảy qua chướng ngại, nhìn quanh /
+// server: chỉ 3 chỗ này; xuất hiện bằng /spawn /warp, hết lượt về luôn bằng /back như người chơi) thì 1–2 bot ra trong khu đó (cách người ≥ 12 khối), đi lang thang vài phút (đi, nhảy qua chướng ngại, nhìn quanh /
 // nhìn người, giả vờ giao dịch với NPC: tới gần, nhìn, vung tay; không bấm mở menu thật), rồi về phòng.
 const WANDER_CFG = '/state/wander.json';
-const wanderCfg = { on: false, room: { x: 11150.5, y: -41, z: -3099.5 }, everyMin: 4, everyMax: 9, durMin: 90, durMax: 240, maxDur: 600, stayNear: 64, maxActive: 2, radius: 35,
+const wanderCfg = { on: false, room: { x: 11150.5, y: -41, z: -3099.5 }, everyMin: 4, everyMax: 9, durMin: 90, durMax: 240, maxDur: 600, maxActive: 2, radius: 35,
   walk: false,   // đi lại: cần grim.exempt cho bot (chưa cấp thì Grim kéo lùi mỗi bước + báo admin), tạm chỉ đứng nhìn quanh / NPC sát cạnh
   points: [{ name: 'spawn', cmd: 'spawn', x: 12707, z: -2432 }, { name: 'trade', cmd: 'warp trade', x: 12689, z: -2626 }, { name: 'shop', cmd: 'warp shop', x: 12792, z: -2641 }] };
 try { const j = JSON.parse(fs.readFileSync(WANDER_CFG, 'utf8')); wanderCfg.on = !!j.on; wanderCfg.walk = !!j.walk; } catch (e) { /* chưa cài: tắt */ }   // chỉ lưu bật/tắt, điểm + phòng theo code
@@ -648,10 +651,26 @@ function isNpc(b, e) {
 }
 function stopWander(n) {
   const rt = RT[n], st = state[n];
+  const w = rt.wander;
   rt.wander = null;
   try { if (rt.bot) rt.bot.clearControlStates(); } catch (e) { /* bỏ qua */ }
   delete st.at['banghoi-1']; save();
-  if (rt.bot) place(n, rt.bot).catch(e => log(n, e.message));   // về phòng ẩn (chỗ mặc định)
+  if (!rt.bot) return;
+  rt.placing = true;
+  (async () => {
+    try {
+      if (w && !w.going) {   // 29/10 chủ server: về luôn như người chơi: /back = chỗ trước lệnh /spawn /warp, tức phòng ẩn
+        rt.bot.chat('/back');
+        for (let i = 0; i < 8; i++) {
+          await sleep(1500);
+          const p = await serverPos(n, 'banghoi-1').catch(() => null);
+          const h = st.home['banghoi-1'];
+          if (p && h && Math.hypot(p.x - h.x, p.z - h.z) <= 8) return;
+        }
+      }
+      if (rt.bot) await place(n, rt.bot);   // /back không về được phòng thì dời thẳng
+    } catch (e) { log(n, e.message); } finally { rt.placing = false; rt.placedAt = Date.now(); }
+  })();
 }
 setInterval(() => {   // nhịp đi dạo: đi vài giây, nhìn quanh, ghé NPC giả vờ giao dịch, nhảy khi vướng, xa khu quá 25 khối thì quay về
   for (const n of NAMES) {
@@ -659,13 +678,7 @@ setInterval(() => {   // nhịp đi dạo: đi vài giây, nhìn quanh, ghé NPC
     if (!w) continue;
     const b = rt.bot;
     if (!b || !b.entity) { rt.wander = null; continue; }
-    if (Date.now() > w.until && !w.talk) {
-      // hết lượt mà còn người THẬT trong stayNear khối thì đi tiếp (tối đa maxDur): về phòng lúc không ai thấy
-      const me = b.entity.position;
-      const seen = Object.values(b.entities).some(x => x.type === 'player' && x.username && !NAMES.includes(x.username) && !isNpc(b, x)
-        && x.position.distanceTo(me) < wanderCfg.stayNear);
-      if (seen && Date.now() < w.hard) { w.until = Date.now() + 20000; } else { stopWander(n); continue; }
-    }
+    if (Date.now() > w.until && !w.talk && !w.going) { stopWander(n); continue; }   // hết lượt về luôn (/back), không chờ người đi khỏi
     try {
       const p = b.entity.position;
       b.setControlState('jump', !!(b.entity.isCollidedHorizontally && b.getControlState('forward')));

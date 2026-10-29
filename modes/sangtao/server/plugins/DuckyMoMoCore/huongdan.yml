@@ -1189,6 +1189,7 @@ chapters:
     &1/rank mua&0, chọn số tiền: mã QR hiện ngay trên tay (10 phút), món đang cầm được trả lại khi cất mã.
     &0Quét bằng app ngân hàng, xong bấm &2[Tôi đã chuyển khoản]&0.
     &0Admin duyệt là có Vàng. &1/vang &0mua rank, mũ, tên màu, pet…
+    &0Tiện ích lẻ theo giờ: &1/wb /trash /anvil&0 1 Vàng, &1/ec /feed&0 2, &1/fix /bay&0 3 (mua thêm cộng dồn).
   - |-
     &6ỦNG HỘ BẰNG QR (tiếp)
     &4Chỉ chuyển theo QR của server, admin không nhắn xin tiền riêng.

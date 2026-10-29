@@ -278,7 +278,19 @@ async function openProfile(name) {
   const b = BOTS.find((x) => x.name.toLowerCase() === name.toLowerCase()), online = !!(b && b.online && b.server === "banghoi-1");
   const opt = (pairs, cur) => pairs.map(([v, t]) => `<option value="${esc(v)}"${v === cur ? " selected" : ""}>${esc(t)}</option>`).join("");
   const wrap = document.createElement("div"); wrap.className = "ask-wrap";
+  // tiến độ (29/10): lượt gần nhất + 24 giờ qua + từ lúc bắt đầu ghi
+  const ls = d.lichsu || [], nf = (v, k) => k === "gio" ? (Math.round(v * 10) / 10).toLocaleString("vi-VN") : Math.round(v).toLocaleString("vi-VN");
+  const diff = (a, b) => [["xu", "xu"], ["cap", "Thăng Cấp"], ["ha", "điểm hạ gục"], ["gio", "giờ chơi"]]
+    .map(([k, ten]) => { const v = b[k] - a[k]; return Math.abs(v) < (k === "gio" ? 0.05 : 0.5) ? "" : `${ten} ${v > 0 ? "+" : "−"}${nf(Math.abs(v), k)}`; }).filter(Boolean).join(", ") || "không đổi";
+  const tt = (x) => new Date(x * 1000).toLocaleString("vi-VN", { hour: "2-digit", minute: "2-digit", day: "2-digit", month: "2-digit" });
+  let tiendo = "Chưa có lịch sử (ghi từ 29/10, mỗi lượt tự phát triển 25–70 phút một lần).";
+  if (ls.length >= 2) {
+    const last = ls[ls.length - 1], prev = ls[ls.length - 2];
+    const day = ls.find((x) => x.t >= last.t - 86400) || ls[0];
+    tiendo = `Lượt gần nhất ${tt(last.t)}: ${diff(prev, last)}.<br>24 giờ qua: ${diff(day, last)}. Từ ${tt(ls[0].t)} (${ls.length} lượt): ${diff(ls[0], last)}.`;
+  } else if (ls.length === 1) tiendo = `Bắt đầu ghi lúc ${tt(ls[0].t)}, cần thêm một lượt nữa mới so được.`;
   wrap.innerHTML = `<div class="ask hoso" role="dialog" aria-modal="true"><h3>Hồ sơ ${esc(d.ten)}</h3>
+    <p class="muted" style="margin:4px 0 8px"><b>Tiến độ:</b> ${tiendo}</p>
     <p class="muted">Số liệu Bang Hội Chiến hiện trên bảng xếp hạng, /bal, Tab… Đặt giống người chơi thật cho bot khỏi lộ.${online ? "" : " <b>Bot đang không ở Bang Hội Chiến:</b> danh phận và kỹ năng chỉ đổi được khi bot online ở đó."}</p>
     <div class="hs-grid">
       <label>Xu<input data-k="xu" type="number" min="0" step="1" value="${d.xu}"></label>

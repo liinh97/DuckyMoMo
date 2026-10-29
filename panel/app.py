@@ -1893,7 +1893,7 @@ def bot_profile(name):
     tt = (taikhoan.safe_yaml(dmm / "thanhtich.yml").get("xong") or {}).get(uuid) or []
     towns = _bot_towns()
     res = taikhoan.towny_kv(DATA_DIR / BOT_SRV / "plugins" / "Towny" / "data" / "residents" / f"{uuid}.txt")
-    return {"ok": True, "ten": real, "uuid": uuid,
+    return {"ok": True, "ten": real, "uuid": uuid, "lichsu": bot_hist(real),
             "diemdanh": int(dd.get("count", 0) or 0), "thanhtich": [str(x) for x in tt], "thitran": towns.get(res.get("town", ""), ""),
             "xu": taikhoan.money(uuid) or 0, "capdo": int(cap.get("cap", 0) or 0), "diem_ha": int(cap.get("ha", 0) or 0), "gio": round((hd.get("tong") or 0) / 60, 1),
             "danhphan": tier, "nghe": job, "cap_nghe": job_lv, "kynang": {k: sk.get(k, 0) for k, _, _ in _bot_skills()},
@@ -2276,6 +2276,22 @@ def bot_dev_past(name, st, reset=False, total=None):
     return res
 
 
+# Lịch sử tiến độ bot (29/10, chủ server: "có chắc là bot vẫn đang thăng tiến không … không nhớ số cũ"): mỗi lượt tự phát triển ghi
+# {t, xu, cap, ha, gio} vào st["ls"] (giữ 60 lượt), hồ sơ bot hiện lượt gần nhất tăng gì, 24 giờ qua tăng bao nhiêu.
+def _bot_hist_add(st, prof, now):
+    ls = st.setdefault("ls", [])
+    ls.append({"t": int(now), "xu": float(prof.get("xu", 0) or 0), "cap": int(prof.get("capdo", 0) or 0),
+               "ha": int(prof.get("diem_ha", 0) or 0), "gio": float(prof.get("gio", 0) or 0)})
+    del ls[:-60]
+
+
+def bot_hist(name):
+    try:
+        return (_dev_load().get(name) or {}).get("ls", [])
+    except Exception:
+        return []
+
+
 def bot_dev_tick():
     with BOT_DEV_LOCK:
         d = _dev_load()
@@ -2307,6 +2323,10 @@ def bot_dev_tick():
                 hoso = _bot_dev_step(name, st, prof, now)
                 res = bot_profile_save({"bot": name, "hoso": hoso}, "tự phát triển")
                 st["ghi"] = time.strftime("%d/%m %H:%M") + " · " + str(res.get("message", ""))[:160]
+                try:
+                    _bot_hist_add(st, bot_profile(name), now)
+                except Exception:
+                    pass
                 try:
                     mk = _bot_market(name, st)
                     if mk:

@@ -286,7 +286,8 @@ final class DonateQr implements Listener {
                 }
                 t.desc(str(m, "mo_ta")).line().kv("Giá", "&6" + gia + " Vàng");
                 long ngay = num(m, "ngay");
-                t.kv("Thời hạn", ngay > 0 ? ngay + " ngày &8(mua thêm cộng dồn)" : "vĩnh viễn");
+                long gio = num(m, "gio");   // 29/10: tiện ích bán theo giờ
+                t.kv("Thời hạn", gio > 0 ? gio + " giờ &8(mua thêm cộng dồn)" : ngay > 0 ? ngay + " ngày &8(mua thêm cộng dồn)" : "vĩnh viễn");
                 t.line();
                 if (can) {
                     t.click("Bấm 2 lần để mua");

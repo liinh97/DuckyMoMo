@@ -78,7 +78,7 @@ def shop(donate_tiers):
         if not isinstance(m, dict) or not m.get("ma") or not m.get("lenh"):
             continue
         out.append({"ma": str(m["ma"]), "loai": str(m.get("loai", "trangtri")), "ten": str(m.get("ten", m["ma"])),
-                    "mo_ta": str(m.get("mo-ta", "")), "gia": max(1, int(m.get("gia", 1))), "ngay": int(m.get("ngay", 0) or 0),
+                    "mo_ta": str(m.get("mo-ta", "")), "gia": max(1, int(m.get("gia", 1))), "ngay": int(m.get("ngay", 0) or 0), "gio": int(m.get("gio", 0) or 0),
                     "lenh": [str(x) for x in m.get("lenh") or []], "nhom": str(m.get("nhom", "Trang trí"))})
     return out
 

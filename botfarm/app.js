@@ -20,6 +20,7 @@ const net = require('net');
 const fs = require('fs');
 const crypto = require('crypto');
 const mineflayer = require('mineflayer');
+const { pathfinder, Movements, goals } = require('mineflayer-pathfinder');
 
 const SECRET = process.env.VELOCITY_SECRET || '';
 const RCON_PASS = process.env.RCON_PASSWORD || '';
@@ -581,7 +582,17 @@ async function chatOnce() {
 const WANDER_CFG = '/state/wander.json';
 const wanderCfg = { on: false, room: { x: 11150.5, y: -41, z: -3099.5 }, everyMin: 4, everyMax: 9, durMin: 90, durMax: 240, maxDur: 600, maxActive: 2, radius: 35,
   walk: false,   // đi lại: cần grim.exempt cho bot (chưa cấp thì Grim kéo lùi mỗi bước + báo admin), tạm chỉ đứng nhìn quanh / NPC sát cạnh
-  points: [{ name: 'spawn', cmd: 'spawn', x: 12707, z: -2432 }, { name: 'trade', cmd: 'warp trade', x: 12689, z: -2626 }, { name: 'shop', cmd: 'warp shop', x: 12792, z: -2641 }] };
+  // lộ trình (29/10 chủ server: "xác định lộ trình … về spawn thì ra npc già làng rồi đi qua các npc khác rồi ra nhìn user rồi back"):
+  // npcs theo thứ tự (order 'fixed') hoặc 2–4 NPC gần nhau ('near'); không có NPC thì 2–3 điểm ngẫu nhiên quanh khu; cuối cùng tới nhìn người chơi
+  points: [
+    { name: 'spawn', cmd: 'spawn', x: 12707, z: -2432, order: 'fixed', npcs: [
+      { ten: 'Già Làng', x: 12705.7, y: 85, z: -2441.7 }, { ten: 'Bác Thợ Rèn', x: 12707, y: 85, z: -2425 }, { ten: 'Người Gác Cổng', x: 12699, y: 85, z: -2433 }] },
+    { name: 'trade', cmd: 'warp trade', x: 12689, z: -2626, order: 'near', npcs: [
+      { ten: 'Rèn Chiến Binh', x: 12680.5, y: 70.5, z: -2638.5 }, { ten: 'Rèn Thợ Săn', x: 12721.5, y: 70.5, z: -2655.5 }, { ten: 'Thợ Kim Hoàn', x: 12708.5, y: 71, z: -2632.5 },
+      { ten: 'Rèn Tinh Anh', x: 12681.5, y: 71, z: -2636.5 }, { ten: 'Thợ Rèn', x: 12714.5, y: 71, z: -2639.5 }, { ten: 'Rèn Huyền Thoại', x: 12680.5, y: 71, z: -2669.5 },
+      { ten: 'Lão Khoáng', x: 12712.5, y: 70.5, z: -2634.5 }, { ten: 'Lão Nông', x: 12700.5, y: 70.5, z: -2631.5 }, { ten: 'Ngư Ông', x: 12705.5, y: 71, z: -2631.5 },
+      { ten: 'Lão Săn Quái', x: 12676.5, y: 70.5, z: -2653.5 }, { ten: 'Rèn Tân Thủ', x: 12676.5, y: 70.5, z: -2649.5 }] },
+    { name: 'shop', cmd: 'warp shop', x: 12792, z: -2641, order: 'near', npcs: [] }] };
 try { const j = JSON.parse(fs.readFileSync(WANDER_CFG, 'utf8')); wanderCfg.on = !!j.on; wanderCfg.walk = !!j.walk; } catch (e) { /* chưa cài: tắt */ }   // chỉ lưu bật/tắt, điểm + phòng theo code
 function saveWander() { try { fs.writeFileSync(WANDER_CFG, JSON.stringify({ on: wanderCfg.on, walk: wanderCfg.walk })); } catch (e) { log('không lưu được wander.json:', e.message); } }
 function roomSpot(i) { const r = wanderCfg.room; return { x: r.x + (i % 5) - 2, y: r.y, z: r.z + (Math.floor(i / 5) % 5) - 2 }; }
@@ -638,24 +649,99 @@ async function wanderOnce() {
   return (out.join(', ') || 'không bot nào') + ' đi dạo ở ' + c.pt.name + ' (có ' + c.who + ')';
 }
 async function startWander(n, c) {
-  // 29/10 chủ server: xuất hiện "chính thống" bằng lệnh như người thật (/spawn, /warp trade, /warp shop), không tp linh tinh
+  // xuất hiện "chính thống" bằng lệnh như người thật (/spawn, /warp trade, /warp shop), rồi chạy lộ trình, hết thì /back
   const rt = RT[n], b = rt.bot;
-  rt.wander = { until: Date.now() + 60000, hard: Date.now() + wanderCfg.maxDur * 1000, cx: c.pt.x + 0.5, cz: c.pt.z + 0.5, next: Date.now() + 3000, going: true };
+  rt.wander = { going: true, hard: Date.now() + wanderCfg.maxDur * 1000, area: c.pt.name };
   rt.placedAt = Date.now();
   b.chat('/' + c.pt.cmd);
-  for (let i = 0; i < 12; i++) {   // chờ dịch chuyển xong (có thể có thời gian chờ theo danh phận)
+  let arrived = false;
+  for (let i = 0; i < 12 && !arrived; i++) {   // chờ dịch chuyển xong (có thể có thời gian chờ theo danh phận)
     await sleep(1500);
     const p = await serverPos(n, 'banghoi-1').catch(() => null);
-    if (p && Math.hypot(p.x - c.pt.x, p.z - c.pt.z) < 30) {
-      rt.wander.going = false;
-      rt.wander.until = Date.now() + (wanderCfg.durMin + Math.random() * (wanderCfg.durMax - wanderCfg.durMin)) * 1000;
-      event({ type: 'doi', bot: n, server: 'banghoi-1', text: n + ' /' + c.pt.cmd + ' (đi dạo, gần ' + c.who + ')' });
-      return;
+    arrived = !!(p && Math.hypot(p.x - c.pt.x, p.z - c.pt.z) < 30);
+  }
+  if (!arrived) { log(n, 'không tới được', c.pt.name, '- về phòng'); stopWander(n); return; }
+  rt.wander.going = false;
+  event({ type: 'doi', bot: n, server: 'banghoi-1', text: n + ' /' + c.pt.cmd + ' (đi dạo, gần ' + c.who + ')' });
+  runRoute(n, c).catch(e => log(n, 'lộ trình lỗi:', e.message)).finally(() => { if (RT[n].wander) stopWander(n); });
+}
+
+/** Đi tới (x, y, z) bằng pathfinder: không đào / đặt khối / nhảy vực, rơi tối đa 2 khối; quá hạn thì bỏ chặng. */
+async function walkTo(b, x, y, z, range, ms) {
+  if (!b.pathfinder) b.loadPlugin(pathfinder);
+  const mv = new Movements(b);
+  mv.canDig = false; mv.allowParkour = false; mv.allow1by1towers = false; mv.scafoldingBlocks = []; mv.maxDropDown = 2; mv.allowSprinting = false;
+  b.pathfinder.setMovements(mv);
+  let done = false;
+  await Promise.race([b.pathfinder.goto(new goals.GoalNear(x, y, z, range)).then(() => { done = true; }).catch(() => {}), sleep(ms)]);
+  try { b.pathfinder.stop(); b.clearControlStates(); } catch (e) { /* bỏ qua */ }
+  return done;
+}
+
+/** Đứng trước mục tiêu: nhìn đầu, thỉnh thoảng vung tay (giả vờ giao dịch) trong ms. */
+async function faceFor(n, head, ms, swing) {
+  const end = Date.now() + ms;
+  while (Date.now() < end && RT[n].wander && RT[n].bot) {
+    try { await RT[n].bot.lookAt(head); if (swing && Math.random() < 0.35) RT[n].bot.swingArm('right'); } catch (e) { /* bỏ qua */ }
+    await sleep(600 + Math.random() * 600);
+  }
+}
+
+/** Tới gần người chơi (cách ~4 khối), nhìn họ vài giây. */
+async function meetPlayer(n, who, alive) {
+  const rt = RT[n], find = () => Object.values(rt.bot.entities).find(e => e.type === 'player' && e.username === who);
+  const e = find();
+  if (!e || !alive()) return;
+  await walkTo(rt.bot, e.position.x, e.position.y, e.position.z, 4, 20000);
+  const e2 = find();
+  if (e2 && alive()) await faceFor(n, e2.position.offset(0, 1.6, 0), 3000 + Math.random() * 3000, false);
+}
+
+async function runRoute(n, c) {
+  const rt = RT[n], alive = () => rt.wander && rt.bot && Date.now() < rt.wander.hard;
+  const V = (x, y, z) => rt.bot.entity.position.offset(x - rt.bot.entity.position.x, y - rt.bot.entity.position.y, z - rt.bot.entity.position.z);
+  await sleep(1500 + Math.random() * 2500);   // vừa tới: đứng nhìn quanh một chút
+  let stops = [];
+  if (c.pt.npcs.length && c.pt.order === 'fixed') {   // 29/10 chủ server: không 1 màu, đảo thứ tự; thỉnh thoảng bỏ 1 NPC
+    stops = c.pt.npcs.slice().sort(() => Math.random() - 0.5);
+    if (stops.length > 2 && Math.random() < 0.3) stops.pop();
+  }
+  else if (c.pt.npcs.length) {   // 2–4 NPC gần nhau, đi lần lượt cái gần nhất
+    let at = rt.bot.entity.position, left = c.pt.npcs.slice();
+    const k = Math.min(left.length, 2 + Math.floor(Math.random() * 3));
+    for (let i = 0; i < k; i++) {
+      left.sort((a, b) => Math.hypot(a.x - at.x, a.z - at.z) - Math.hypot(b.x - at.x, b.z - at.z));
+      const pick = left.splice(Math.random() < 0.7 ? 0 : Math.min(1, left.length - 1), 1)[0];
+      stops.push(pick); at = pick;
+    }
+  } else {   // shop (29/10 chủ server: tìm chỗ bán rồi ra đó thao tác): khung vật phẩm treo tường (chuột trái mua, phải bán)
+    const me = rt.bot.entity.position;
+    const frames = Object.values(rt.bot.entities).filter(e => /item_frame/.test(e.name || '') && e.position.distanceTo(me) < 20).sort(() => Math.random() - 0.5);
+    for (const f of frames) {   // 2–4 khung cách nhau ≥ 3 khối
+      if (stops.length >= 2 + Math.floor(Math.random() * 3)) break;
+      if (stops.every(o => Math.hypot(o.x - f.position.x, o.z - f.position.z) >= 3)) stops.push({ x: f.position.x, y: f.position.y, z: f.position.z, khung: true });
     }
   }
-  log(n, 'không tới được', c.pt.name, '- về phòng');
-  stopWander(n);
+  if (!stops.length) {   // không có NPC / khung: 2–3 điểm quanh khu
+    for (let i = 0; i < 2 + Math.floor(Math.random() * 2); i++) {
+      const a = Math.random() * Math.PI * 2, d = 4 + Math.random() * 10;
+      stops.push({ x: c.pt.x + Math.cos(a) * d, y: rt.bot.entity.position.y, z: c.pt.z + Math.sin(a) * d, diem: true });
+    }
+  }
+  if (Math.random() < 0.85) stops.splice(Math.floor(Math.random() * (stops.length + 1)), 0, { nguoi: true });   // nhìn người chơi: đầu / giữa / cuối, đôi khi bỏ
+  for (const st of stops) {
+    if (!alive()) return;
+    if (st.nguoi) { await meetPlayer(n, c.who, alive); continue; }
+    const ok = await walkTo(rt.bot, st.x, st.y, st.z, st.diem ? 2 : 2.5, 25000);
+    if (!alive()) return;
+    if (st.diem) { await faceFor(n, V(st.x + Math.random() * 6 - 3, st.y + 1.2, st.z + Math.random() * 6 - 3), 2000 + Math.random() * 3000, false); continue; }
+    if (st.khung) { if (ok) await faceFor(n, V(st.x, st.y, st.z), 3000 + Math.random() * 4000, true); await sleep(500 + Math.random() * 1000); continue; }   // xem / giả vờ mua (chỉ vung tay, không đánh vào khung)
+    if (ok) await faceFor(n, V(st.x, st.y + 1.6, st.z), 4000 + Math.random() * 5000, true);   // giả vờ giao dịch
+    await sleep(500 + Math.random() * 1500);
+  }
+  await sleep(1000 + Math.random() * 2000);
 }
+
 /** Phía trước (1–2 khối theo hướng nhìn) đi được không: có nền trong 2 khối dưới chân, không phải nước / dung nham (29/10: bot đi
  *  ra NPC Già Làng rồi bước qua mép quảng trường rơi xuống). */
 function safeAhead(b) {
@@ -682,7 +768,7 @@ function stopWander(n) {
   const rt = RT[n], st = state[n];
   const w = rt.wander;
   rt.wander = null;
-  try { if (rt.bot) rt.bot.clearControlStates(); } catch (e) { /* bỏ qua */ }
+  try { if (rt.bot) { if (rt.bot.pathfinder) rt.bot.pathfinder.stop(); rt.bot.clearControlStates(); } } catch (e) { /* bỏ qua */ }
   delete st.at['banghoi-1']; save();
   if (!rt.bot) return;
   rt.placing = true;
@@ -701,57 +787,7 @@ function stopWander(n) {
     } catch (e) { log(n, e.message); } finally { rt.placing = false; rt.placedAt = Date.now(); }
   })();
 }
-setInterval(() => {   // nhịp đi dạo: đi vài giây, nhìn quanh, ghé NPC giả vờ giao dịch, nhảy khi vướng, xa khu quá 25 khối thì quay về
-  for (const n of NAMES) {
-    const rt = RT[n], w = rt.wander;
-    if (!w) continue;
-    const b = rt.bot;
-    if (!b || !b.entity) { rt.wander = null; continue; }
-    if (Date.now() > w.until && !w.talk && !w.going) { stopWander(n); continue; }   // hết lượt về luôn (/back), không chờ người đi khỏi
-    try {
-      const p = b.entity.position;
-      b.setControlState('jump', !!(b.entity.isCollidedHorizontally && b.getControlState('forward')));
-      if (b.getControlState('forward') && !safeAhead(b)) {   // vực / nước phía trước: dừng, quay hướng khác
-        b.clearControlStates();
-        b.look(b.entity.yaw + Math.PI * (0.5 + Math.random()), 0, true);
-        if (w.npc && !w.talk) w.npc = null;   // không tới được NPC: bỏ
-        w.next = Date.now() + 800 + Math.random() * 1500;
-        continue;
-      }
-      if (w.going) continue;
-      if (!wanderCfg.walk) b.clearControlStates();
-      if (w.npc) {   // đang tới / đứng trước NPC
-        const e = b.entities[w.npc];
-        if (!e) { w.npc = null; w.talk = 0; b.clearControlStates(); continue; }
-        const head = e.position.offset(0, 1.6, 0);
-        if (!w.talk) {
-          if (p.distanceTo(e.position) > 2.6 && Date.now() < w.next && wanderCfg.walk) { b.lookAt(head); b.setControlState('forward', true); continue; }
-          b.clearControlStates(); w.talk = Date.now() + 4000 + Math.random() * 6000;
-        }
-        b.lookAt(head);
-        if (Math.random() < 0.18) b.swingArm('right');
-        if (Date.now() > w.talk) { w.npc = null; w.talk = 0; w.next = Date.now() + 1000 + Math.random() * 2000; }
-        continue;
-      }
-      if (Date.now() < w.next) continue;
-      b.clearControlStates();
-      const far = Math.hypot(p.x - w.cx, p.z - w.cz) > 25;
-      const npc = !far && Math.random() < 0.3 && b.nearestEntity(x => isNpc(b, x) && x.position.distanceTo(p) < (wanderCfg.walk ? 22 : 4));
-      if (npc) {
-        w.npc = npc.id; w.talk = 0; w.next = Date.now() + 15000;   // tối đa 15 giây để đi tới
-      } else if (!wanderCfg.walk || (!far && Math.random() < 0.3)) {
-        const e = b.nearestEntity(x => x.type === 'player' && !isNpc(b, x) && x.position.distanceTo(p) < 24);
-        if (e && Math.random() < 0.5) b.lookAt(e.position.offset(0, 1.6, 0)); else b.look(Math.random() * Math.PI * 2 - Math.PI, (Math.random() - 0.5) * 0.6);
-        w.next = Date.now() + 2000 + Math.random() * 5000;
-      } else {
-        if (far) b.lookAt(p.offset(w.cx - p.x, 1.6, w.cz - p.z)); else b.look(Math.random() * Math.PI * 2 - Math.PI, 0);
-        b.setControlState('forward', true);
-        if (Math.random() < 0.2) b.setControlState('sprint', true);
-        w.next = Date.now() + 1500 + Math.random() * 3500;
-      }
-    } catch (e) { /* bỏ qua */ }
-  }
-}, 500);
+// (29/10) nhịp đi lang thang ngẫu nhiên đã bỏ: bot đi theo lộ trình runRoute
 let wanderNext = Date.now() + 120000;
 let wanderSeen = new Set();   // người thật đang ở khu lần kiểm trước: người MỚI tới thì cho bot ra sớm (29/10: đợi 4–9 phút thì người đã đi)
 setInterval(async () => {

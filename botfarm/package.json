@@ -3,6 +3,7 @@
   "private": true,
   "description": "Bot trang quản trị › Bot (vào / thoát, nói, chạy lệnh thay bot)",
   "dependencies": {
-    "mineflayer": "^4.27.0"
+    "mineflayer": "^4.27.0",
+    "mineflayer-pathfinder": "^2.4.5"
   }
 }

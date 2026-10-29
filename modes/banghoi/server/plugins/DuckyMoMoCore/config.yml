@@ -1746,6 +1746,13 @@ vang:
     - {ma: pet_cho, nhom: "Pet trang trí", ten: "Pet chó (/pet)", mo-ta: "Chó trang trí đi theo, không đánh nhau. Vĩnh viễn", gia: 40, ngay: 0, lenh: ["lp user {player} permission set pet.type.wolf.* true"]}
     - {ma: pet_vet, nhom: "Pet trang trí", ten: "Pet vẹt (/pet)", mo-ta: "Vẹt trang trí đậu vai. Vĩnh viễn", gia: 50, ngay: 0, lenh: ["lp user {player} permission set pet.type.parrot.* true"]}
     - {ma: tuskin10, nhom: "Trang trí", ten: "Tủ skin 10 ô (/tuskin)", mo-ta: "Lưu tới 10 skin để đổi nhanh. 30 ngày", gia: 20, ngay: 30, lenh: ["lp user {player} permission settemp duckymomo.tuskin.10 true 30d accumulate"]}
+    - {ma: wb, nhom: "Tiện ích", ten: "Bàn chế tạo mang theo (/wb)", mo-ta: "Mở bàn chế tạo ở bất cứ đâu. 30 ngày", gia: 10, ngay: 30, lenh: ["lp user {player} permission settemp essentials.workbench true 30d accumulate server=banghoi-1"]}
+    - {ma: trash, nhom: "Tiện ích", ten: "Thùng rác (/trash)", mo-ta: "Vứt đồ không cần. 30 ngày", gia: 10, ngay: 30, lenh: ["lp user {player} permission settemp essentials.disposal true 30d accumulate server=banghoi-1"]}
+    - {ma: anvil, nhom: "Tiện ích", ten: "Đe mang theo (/anvil)", mo-ta: "Mở đe ở bất cứ đâu (vẫn tốn kinh nghiệm). 30 ngày", gia: 15, ngay: 30, lenh: ["lp user {player} permission settemp essentials.anvil true 30d accumulate server=banghoi-1"]}
+    - {ma: ec, nhom: "Tiện ích", ten: "Rương Ender mang theo (/ec)", mo-ta: "Mở rương Ender ở bất cứ đâu; không mở khi vừa đánh người hay trong vùng vây giờ đánh. 30 ngày", gia: 25, ngay: 30, lenh: ["lp user {player} permission settemp essentials.enderchest true 30d accumulate server=banghoi-1"]}
+    - {ma: feed, nhom: "Tiện ích", ten: "No bụng (/feed)", mo-ta: "Đầy thanh đói ngay, 10 phút một lần. 30 ngày", gia: 25, ngay: 30, lenh: ["lp user {player} permission settemp essentials.feed true 30d accumulate server=banghoi-1"]}
+    - {ma: fix, nhom: "Tiện ích", ten: "Sửa đồ (/fix)", mo-ta: "Sửa món đang cầm về đầy độ bền, 1 giờ một lần; không sửa đồ set Thợ Rèn / đồ đặc biệt. 30 ngày", gia: 40, ngay: 30, lenh: ["lp user {player} permission settemp essentials.repair true 30d accumulate server=banghoi-1"]}
+    - {ma: bay, nhom: "Tiện ích", ten: "Bay trong thị trấn (/bay)", mo-ta: "Bay trong đất thị trấn của mình; tự tắt khi ra khỏi thị trấn, giao tranh, công thành. 30 ngày", gia: 60, ngay: 30, lenh: ["lp user {player} permission settemp duckymomo.bay true 30d accumulate server=banghoi-1"]}
 
 # Thư viện đồ: món có tooltip ước tính dài hơn tooltip-max-lines dòng thì tự gộp phù phép (3 cái/dòng) và khối chỉ số của game
 # (1 dòng "Khi mặc: +6 Giáp") để không bị đẩy ra ngoài màn hình. Tên, lore, phù phép CE giữ nguyên. 0 = tắt (hiện như game gốc).

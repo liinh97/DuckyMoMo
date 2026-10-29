@@ -710,7 +710,8 @@ async function runRoute(n, c) {
     const k = Math.min(left.length, 1 + Math.floor(Math.random() * 4));   // 1–4 NPC
     for (let i = 0; i < k; i++) {
       left.sort((a, b) => Math.hypot(a.x - at.x, a.z - at.z) - Math.hypot(b.x - at.x, b.z - at.z));
-      const pick = left.splice(Math.random() < 0.7 ? 0 : Math.min(1, left.length - 1), 1)[0];
+      // 29/10: NPC đầu chọn ngẫu nhiên trong cả khu (trước luôn là cái gần điểm warp nhất: Lão Nông); sau đó ưu tiên gần, có lệch
+      const pick = left.splice(i === 0 ? Math.floor(Math.random() * left.length) : Math.min(Math.floor(Math.random() * 3), left.length - 1), 1)[0];
       stops.push(pick); at = pick;
     }
   } else {   // shop (29/10 chủ server: tìm chỗ bán rồi ra đó thao tác): khung vật phẩm treo tường (chuột trái mua, phải bán)

@@ -2395,6 +2395,76 @@ def bot_gear_sync(force=False):
     return n
 
 
+# ---------------------------------------------------------------- pet bot (29/10)
+# Chủ server: "làm pet cho bot" (bot chat chuyện pet mà /bxhpet trống). ~2/3 bot có pet, loại + tên cố định theo bot, cấp theo tài nguyên
+# (giống giáp), chỉ tăng. MyPet: /petadmin create <bot> <loại> (bot phải online), /petadmin exp <bot> <exp>. Đã làm: bot-pet.json.
+BOT_PET_FILE = DATA_DIR / "panel" / "bot-pet.json"
+BOT_PET_TYPES = ["Wolf", "Wolf", "Cat", "Fox", "Horse", "Parrot", "Rabbit", "Llama", "Ocelot", "Pig", "Sheep", "Goat", "Bee", "Axolotl"]
+BOT_PET_NAMES = ["Mực", "Vàng", "Bông", "Mít", "Đốm", "Cún", "Miu", "Bơ", "Sữa", "Lu", "Tôm", "Khoai", "Na", "Bim", "Mochi", "Sen"]
+
+
+def _pet_need(lv):
+    if lv <= 1:
+        return 0
+    if lv <= 17:
+        return (lv - 1) * 17
+    if lv <= 31:
+        n = lv - 17
+        return 272 + n * (3 * lv - 14) / 2
+    n = lv - 32
+    return 887 + n * (7 * lv - 93) / 2
+
+
+def _bot_pet_plan(name, prof):
+    import math
+    r = _rnd.Random("pet:" + name.lower())
+    if r.random() >= 0.67:
+        return None
+    typ = r.choice(BOT_PET_TYPES)
+    pname = r.choice(BOT_PET_NAMES) if r.random() < 0.5 else ""
+    score = float(prof.get("capdo", 0) or 0) * 2 + max(0.0, math.log10(float(prof.get("xu", 0) or 0) + 1) * 3 - 6) + min(8.0, float(prof.get("gio", 0) or 0) / 10)
+    lv = max(1, int(score * r.uniform(0.35, 0.8)))
+    return {"type": typ, "name": pname, "level": lv, "exp": _pet_need(lv) + r.randint(0, 15)}
+
+
+def bot_pet_sync():
+    try:
+        done = json.loads(BOT_PET_FILE.read_text(encoding="utf-8"))
+    except Exception:
+        done = {}
+    online = [b["name"] for b in bot_json().get("bots", []) if b.get("online") and b.get("server") == BOT_SRV]
+    n = 0
+    for name in online:
+        try:
+            plan = _bot_pet_plan(name, bot_profile(name))
+        except Exception:
+            continue
+        if not plan:
+            continue
+        cur = done.get(name) or {}
+        cmds = []
+        if not cur.get("type"):
+            cmds.append(f"petadmin create {name} {plan['type']}")
+            if plan["name"]:
+                cmds.append(f"petadmin name {name} {plan['name']}")
+        if plan["exp"] > float(cur.get("exp", 0) or 0):
+            cmds.append(f"petadmin exp {name} {plan['exp']:.0f}")
+        if not cmds:
+            continue
+        try:
+            rcon(BOT_SRV, cmds)
+        except Exception:
+            continue
+        done[name] = {"type": cur.get("type") or plan["type"], "exp": max(plan["exp"], float(cur.get("exp", 0) or 0))}
+        n += 1
+    try:
+        BOT_PET_FILE.parent.mkdir(parents=True, exist_ok=True)
+        BOT_PET_FILE.write_text(json.dumps(done, ensure_ascii=False), encoding="utf-8")
+    except OSError:
+        pass
+    return n
+
+
 def bot_dev_loop():
     time.sleep(90)
     while True:
@@ -2402,6 +2472,12 @@ def bot_dev_loop():
             bot_dev_tick()
         except Exception as e:
             print(f"Bot tự phát triển: lỗi {e}", flush=True)
+        try:
+            k = bot_pet_sync()
+            if k:
+                print(f"Pet bot: cập nhật {k} bot", flush=True)
+        except Exception as e:
+            print(f"Pet bot: lỗi {e}", flush=True)
         try:
             k = bot_gear_sync()
             if k:

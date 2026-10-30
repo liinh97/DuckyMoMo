@@ -2813,7 +2813,7 @@ death-rules:
 
 # Hoạt động giả của bot botfarm theo giờ chơi người THẬT (30/10, chủ server: người chơi lâu mà bot cứ lượn quanh là biết; lâu hẳn thì thôi).
 # Giờ chơi < gio thì nhân tần suất với he-so; quá mức cuối = 0 (không giả nữa). Áp cho: bot tự chat, chết giả, tpa giả, đi dạo (botfarm
-# hỏi /dmm botgia qua RCON), bot trả lời câu đố (chat-games.bot-answer). Cả server lấy người MỚI nhất đang online; không có ai = như cũ.
+# hỏi /dmm botgia qua RCON). 31/10: bot trả lời câu đố KHÔNG theo hệ số này. Cả server lấy người MỚI nhất đang online; không có ai = như cũ.
 bot-gia:
   muc:
     - {gio: 1, he-so: 1}

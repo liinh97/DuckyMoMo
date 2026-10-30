@@ -106,6 +106,10 @@ public final class DuckyMoMoCore extends JavaPlugin {
     }
 
     private void teardown() {
+        if (lobbyNpcs != null) {
+            lobbyNpcs.stop();
+            lobbyNpcs = null;
+        }
         if (teBoss != null) {
             teBoss.stop();   // xoá boss đang sống + bảng chữ, lưu tiến độ
             teBoss = null;
@@ -312,6 +316,16 @@ public final class DuckyMoMoCore extends JavaPlugin {
                 });
             }
             getLogger().info("Menu chọn chế độ: bật, đọc chế độ từ " + modesDir);
+            // NPC chọn chế độ ở sảnh (30/10): Mannequin có skin + chữ nổi + số online, bấm là vào server (lobby-npcs)
+            if (lobbyNpcs != null) {
+                lobbyNpcs.stop();
+                lobbyNpcs = null;
+            }
+            if (getConfig().getBoolean("lobby-npcs.enabled") && getConfig().isConfigurationSection("lobby-npcs")) {
+                lobbyNpcs = new LobbyNpcs(this, getConfig().getConfigurationSection("lobby-npcs"), modesDir);
+                getServer().getPluginManager().registerEvents(lobbyNpcs, this);
+                lobbyNpcs.start();
+            }
         } else if (menuCommand != null && getConfig().getBoolean("player-menu.enabled")) {
             // Server chế độ: /menu (và Shift+F) mở menu chính: điểm danh, chợ, xưởng, balo, tủ skin, rank… (player-menu)
             PlayerMenu pm = new PlayerMenu(this, getConfig().getConfigurationSection("player-menu"));
@@ -1361,6 +1375,12 @@ public final class DuckyMoMoCore extends JavaPlugin {
                     } else {
                         quests.talkCommand(sender, args);
                     }
+                } else if (args.length >= 1 && args[0].equalsIgnoreCase("npcsanh")) {
+                    if (lobbyNpcs == null) {
+                        sender.sendMessage("NPC sảnh chỉ có ở sảnh (config: lobby-npcs.enabled).");
+                    } else {
+                        lobbyNpcs.command(sender, args);
+                    }
                 } else if (args.length >= 1 && args[0].equalsIgnoreCase("dante")) {
                     if (teBoss == null) {
                         sender.sendMessage("Đàn tế chưa bật trên server này (config: te-boss.enabled).");
@@ -1440,17 +1460,20 @@ public final class DuckyMoMoCore extends JavaPlugin {
             "§e/dmm clean §7dọn rác ngay   §e/dmm reload §7nạp lại config   §e/dmm lenh §7xuất danh sách lệnh",
             "§e/dmm rtpnpc|shopnpc|donbuonnpc [remove] §7đặt/gỡ NPC   §e/dmm shopkhung lap|xoa|capnhat §7khung shop trên tường   §e/dmm phu add|remove|list §7tài khoản phụ",
             "§e/dmm thorennpc <quầy|remove> §7đặt NPC quầy đổi nguyên liệu / Thợ Rèn ở chỗ đứng",
+            "§e/dmm npcsanh <chế độ>|xoa <chế độ> §7(sảnh) đặt NPC chọn chế độ có skin, chữ nổi, số online",
             "§e/dmm dante dat|lua|goi|huy|manh <đàn> §7đàn tế gọi boss (linh hồn, lễ vật, ấn, 4 ngọn lửa)",
             "§e/dmm minigame [kiểu] §7ra câu đố vui trong chat ngay (xaotron dienchu daonguoc toan dayso gonhanh caudo)",
             "§e/dmm bangtranh <tên>|xoa <tên>|capnhat §7treo ảnh (plugins/DuckyMoMoCore/bangtranh/<tên>.png) lên tường bằng bản đồ",
             "§e/dmm viecnpc <người> <NPC> §7NPC giao / trả việc dân làng (hội thoại BetonQuest gọi)",
             "§e/dmm hoabinh setup|claim <r> §7Liên minh Hoà Bình   §e/dmm decorate|structures start|pause|status|reset");
     private static final List<String> DMM_SUBS = List.of("enchant", "sach", "laydo", "luudo", "thuvien", "clean", "reload", "lenh",
-            "rtpnpc", "shopnpc", "donbuonnpc", "shopkhung", "thorennpc", "bangtranh", "minigame", "dante", "viecnpc", "phu", "hoabinh", "decorate", "structures", "hang", "thegioi", "spawnmoi");
+            "rtpnpc", "shopnpc", "donbuonnpc", "shopkhung", "thorennpc", "bangtranh", "minigame", "dante", "npcsanh", "viecnpc", "phu", "hoabinh", "decorate", "structures", "hang", "thegioi", "spawnmoi");
     /** Thợ Rèn (/thoren, NPC quầy /dmm thorennpc); null nếu tắt. */
     private ThoRen thoRen;
     /** Bảng tranh treo tường bằng bản đồ (/dmm bangtranh, 30/10). */
     private BangTranh bangTranh;
+    /** NPC chọn chế độ ở sảnh (/dmm npcsanh, 30/10); null nếu không phải sảnh / tắt. */
+    private LobbyNpcs lobbyNpcs;
     /** Đố vui trong chat (chat-games, 30/10); null nếu tắt. */
     private ChatGames chatGames;
     /** Ngủ bỏ qua đêm (sleep, 30/10); null nếu tắt. */

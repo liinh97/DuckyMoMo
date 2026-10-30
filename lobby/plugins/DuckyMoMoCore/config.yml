@@ -4,6 +4,18 @@ lobby-menu:
   modes-dir: /modes       # ../modes gắn vào đây (chỉ đọc), xem lobby/compose.yaml
   item-slot: 4
 
+
+# 30/10 NPC chọn chế độ ở sảnh (LobbyNpcs.java). Đặt: đứng chỗ muốn rồi /dmm npcsanh <mã chế độ>, gỡ: /dmm npcsanh xoa <mã>.
+# skin = skinId trong plugins/SkinsRestorer/recommendations.json (skin đã ký sẵn). version = dòng phiên bản hiện trên đầu.
+lobby-npcs:
+  enabled: true
+  particle: SOUL_FIRE_FLAME
+  modes:
+    banghoi: {skin: knight, color: "&6", version: "Java 1.13 → 26.2 · Bedrock", pack: true}
+    practice: {skin: boy-fighting-sport, color: "&c", version: "Java 1.13 → 26.2 · Bedrock", pack: true}
+    sangtao: {skin: girl-wizzard, color: "&a", version: "Java 1.13 → 26.2 · Bedrock", pack: true}
+    pokemon: {skin: boy-axolotl, color: "&b", version: "Java 1.21.1 · cần modpack", pack: false}
+
 # Giới hạn đăng ký AuthMe theo IP (luật mùa 1, mục 37). Không tính IP nội bộ. Lưu: dangky-ip.yml.
 # Không dùng maxRegPerIp của AuthMe vì không có danh sách IP miễn (whitelist) cho quán net / nhà đông người.
 register-limit:

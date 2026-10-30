@@ -846,6 +846,7 @@ final class LevelUp implements Listener {
         h.slots.put(40, "shop");
         h.inv.setItem(42, Tip.of("&b♛ &fXếp hạng").desc("Những người cấp cao nhất server").line().click("Bấm để xem").apply(new ItemStack(Material.GOLD_INGOT)));
         h.slots.put(42, "top");
+        MenuFrame.paint(h.inv, Material.ORANGE_STAINED_GLASS_PANE);
         p.openInventory(h.inv);
     }
 
@@ -899,6 +900,7 @@ final class LevelUp implements Listener {
         }
         h.inv.setItem(40, Tip.of("&7← &fQuay lại").apply(new ItemStack(Material.ARROW)));
         h.slots.put(40, "back");
+        MenuFrame.paint(h.inv, Material.ORANGE_STAINED_GLASS_PANE);
         p.openInventory(h.inv);
     }
 
@@ -945,6 +947,7 @@ final class LevelUp implements Listener {
         }
         h.inv.setItem(40, Tip.of("&7← &fQuay lại").apply(new ItemStack(Material.ARROW)));
         h.slots.put(40, "back");
+        MenuFrame.paint(h.inv, Material.ORANGE_STAINED_GLASS_PANE);
         p.openInventory(h.inv);
     }
 

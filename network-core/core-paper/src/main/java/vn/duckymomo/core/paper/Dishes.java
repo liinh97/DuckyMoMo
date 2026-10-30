@@ -231,6 +231,7 @@ final class Dishes implements Listener {
             h.slots.put(slot, d);
             slot++;
         }
+        MenuFrame.paint(h.inv, Material.ORANGE_STAINED_GLASS_PANE);
         p.openInventory(h.inv);
         return true;
     }

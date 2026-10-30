@@ -223,6 +223,7 @@ final class RandomTeleport implements Listener {
             }
             inv.setItem(slot++, zoneButton(z, info));
         }
+        MenuFrame.paint(inv, Material.PINK_STAINED_GLASS_PANE);
         p.openInventory(inv);
     }
 

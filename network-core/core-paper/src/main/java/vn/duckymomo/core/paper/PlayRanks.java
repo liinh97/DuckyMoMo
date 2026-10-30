@@ -378,6 +378,7 @@ final class PlayRanks implements Listener {
                 .kv("Thăng Cấp", level(p) + " &8(/capdo)").note("Không bán bằng tiền, giờ AFK không tính")
                 .apply(new ItemStack(Material.BOOK));
         h.inv.setItem(4, info);
+        MenuFrame.paint(h.inv, Material.LIME_STAINED_GLASS_PANE);
         p.openInventory(h.inv);
     }
 

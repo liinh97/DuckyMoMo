@@ -522,6 +522,7 @@ final class PlayerSettings implements Listener {
             h.slots.put(SLOTS[i], o.id());
             i++;
         }
+        MenuFrame.paint(h.inv, Material.LIME_STAINED_GLASS_PANE);
         p.openInventory(h.inv);
     }
 

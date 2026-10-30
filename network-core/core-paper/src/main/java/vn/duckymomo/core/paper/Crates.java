@@ -346,6 +346,7 @@ final class Crates implements Listener {
         }
         info.line().click("Cầm vé bấm chuột phải", "mở đúng máy gacha");
         h.inv.setItem(rows * 9 - 5, info.apply(new ItemStack(Material.BOOK)));
+        MenuFrame.paint(h.inv, Material.ORANGE_STAINED_GLASS_PANE);
         p.openInventory(h.inv);
     }
 

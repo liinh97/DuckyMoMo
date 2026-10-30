@@ -321,6 +321,7 @@ final class FragmentShop implements Listener, Rewards.FragmentGiver {
             p.sendMessage(c("&7Hiện chưa có sự kiện nào mở đổi mảnh."));
             return;
         }
+        MenuFrame.paint(h.inv, Material.YELLOW_STAINED_GLASS_PANE);
         p.openInventory(h.inv);
     }
 

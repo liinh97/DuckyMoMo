@@ -402,6 +402,7 @@ final class Kits implements Listener {
             h.inv.setItem(h.slots.size(), it);
             h.slots.add(k.id());
         }
+        MenuFrame.paint(h.inv, Material.LIME_STAINED_GLASS_PANE);
         p.openInventory(h.inv);
     }
 

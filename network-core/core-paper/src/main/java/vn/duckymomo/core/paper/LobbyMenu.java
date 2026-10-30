@@ -187,6 +187,7 @@ final class LobbyMenu implements Listener {
             }
             inv.setItem(slot++, modeButton(mode, bedrock));
         }
+        MenuFrame.paint(inv, Material.LIGHT_BLUE_STAINED_GLASS_PANE);
         player.openInventory(inv);
     }
 

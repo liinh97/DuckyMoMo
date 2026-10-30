@@ -349,6 +349,7 @@ final class Bounty implements Listener {
         if (list.isEmpty()) {
             p.sendMessage(c("&7Chưa có ai bị treo thưởng."));
         }
+        MenuFrame.paint(h.inv, Material.RED_STAINED_GLASS_PANE);
         p.openInventory(h.inv);
     }
 

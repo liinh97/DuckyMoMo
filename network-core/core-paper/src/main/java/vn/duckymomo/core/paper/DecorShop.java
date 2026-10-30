@@ -344,7 +344,15 @@ final class DecorShop implements Listener {
         inv.setItem(4, Tip.of("&6⛃ &fCửa hàng Kinh Đô").desc("Mua vật liệu, đồ trang trí, danh hiệu", "Bán nông sản, khoáng sản, đồ từ quái")
                 .line().kv("Số dư", "&a" + money(VaultEconomy.available() ? VaultEconomy.balance(p) : 0))
                 .note("Trả bằng xu trong game, không bán gì tăng sức mạnh").apply(new ItemStack(Material.GOLD_INGOT)));
-        int[] auto = {11, 13, 15, 20, 22, 24, 29, 31, 33, 38, 40, 42};
+        // 30/10: xếp danh mục căn giữa, mỗi hàng tối đa 4 ô cách nhau (nhiều hơn 16 thì 7 ô liền), viền vàng như nhóm Kinh tế
+        int n = cats.size(), per = n > 16 ? 7 : 4, rowsNeed = Math.max(1, (n + per - 1) / per), firstRow = 1 + Math.max(0, (4 - rowsNeed) / 2);
+        List<Integer> auto = new ArrayList<>();
+        for (int r = 0; r < rowsNeed; r++) {
+            int inRow = Math.min(per, n - r * per);
+            for (int col : MenuFrame.cols(inRow)) {
+                auto.add((firstRow + r) * 9 + col);
+            }
+        }
         int ai = 0;
         for (Cat ct : cats.values()) {
             List<Entry> es = entries(ct.id(), worth);
@@ -365,13 +373,7 @@ final class DecorShop implements Listener {
             ItemMeta m = it.getItemMeta();
             m.getPersistentDataContainer().set(catKey, PersistentDataType.STRING, ct.id());
             it.setItemMeta(m);
-            int slot = ct.slot() >= 0 && ct.slot() < 45 && inv.getItem(ct.slot()) == null ? ct.slot() : -1;
-            while (slot < 0 && ai < auto.length) {
-                if (inv.getItem(auto[ai]) == null) {
-                    slot = auto[ai];
-                }
-                ai++;
-            }
+            int slot = ai < auto.size() ? auto.get(ai++) : -1;
             if (slot >= 0) {
                 inv.setItem(slot, it);
             }
@@ -381,6 +383,7 @@ final class DecorShop implements Listener {
         cm.getPersistentDataContainer().set(catKey, PersistentDataType.STRING, "close");
         close.setItemMeta(cm);
         inv.setItem(49, close);
+        MenuFrame.paint(inv, Material.YELLOW_STAINED_GLASS_PANE);
         p.openInventory(inv);
     }
 
@@ -419,6 +422,12 @@ final class DecorShop implements Listener {
         inv.setItem(49, nav(Material.PAPER, "&7← &fVề danh mục", "menu"));
         if (page < pages - 1) {
             inv.setItem(53, nav(Material.ARROW, "&fTrang sau &e→", "trang:" + (page + 1)));
+        }
+        ItemStack bar = MenuFrame.pane(Material.YELLOW_STAINED_GLASS_PANE);   // 30/10: hàng dưới viền vàng
+        for (int i = 45; i < 54; i++) {
+            if (inv.getItem(i) == null) {
+                inv.setItem(i, bar);
+            }
         }
         p.openInventory(inv);
     }

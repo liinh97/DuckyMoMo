@@ -47,7 +47,7 @@ final class InfoMenu {
     private record Entry(ItemStack item, Consumer<Player> action) { }
 
     private final String titleText;
-    private Material frame = Material.GRAY_STAINED_GLASS_PANE;
+    private Material frame = Material.CYAN_STAINED_GLASS_PANE;   // 30/10: viền màu như /menu (accent() đổi theo nhóm)
     private ItemStack top;
     /** Các hàng (danh mục), mỗi hàng tối đa 7 món; hàng dài hơn tự tách. */
     private final List<List<Entry>> groups = new ArrayList<>();
@@ -157,7 +157,7 @@ final class InfoMenu {
         Inventory inv = Bukkit.createInventory(h, rows * 9, title);
         h.inv = inv;
         ItemStack pane = hidden(new ItemStack(frame));
-        ItemStack dark = hidden(new ItemStack(Material.BLACK_STAINED_GLASS_PANE));
+        ItemStack dark = hidden(new ItemStack(Material.GRAY_STAINED_GLASS_PANE));   // 30/10: nền xám sáng thay đen
         for (int i = 0; i < rows * 9; i++) {
             boolean edge = i < 9 || i >= (rows - 1) * 9 || i % 9 == 0 || i % 9 == 8;
             inv.setItem(i, edge ? pane : dark);

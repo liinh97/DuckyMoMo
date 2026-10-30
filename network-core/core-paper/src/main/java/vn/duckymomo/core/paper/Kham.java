@@ -419,6 +419,53 @@ final class Kham implements Listener {
      * Luật chết (30/10): món có Ngọc Hộ Thân còn năng lượng thì được giữ, trừ một lượt (ho-than.ton theo phẩm: Thường 25%, Tốt 20%,
      * Hoàn Mỹ 12,5% năng lượng đầy), hết thì ngọc vỡ. Ghi thẳng vào it. true = giữ món.
      */
+    /** Số lượt giữ món còn lại của các Ngọc Hộ Thân trên món (-1 = không có ngọc này). Cho /chet. */
+    static int keepLeft(ItemStack it) {
+        Kham k = INSTANCE;
+        if (k == null || it == null || !it.hasItemMeta() || !k.hasGems(it)) {
+            return -1;
+        }
+        int n = -1;
+        for (Sock sk : k.gemsOf(it)) {
+            if (sk.code().equals(k.keepId) && sk.energy() > 0) {
+                int cost = k.keepCost(sk);
+                n = Math.max(n, 0) + (sk.energy() + cost - 1) / cost;
+            }
+        }
+        return n;
+    }
+
+    /** Năng lượng mất mỗi lần Ngọc Hộ Thân giữ món, theo phẩm. */
+    private int keepCost(Sock sk) {
+        double pc = keepCost.get(Math.max(0, Math.min(sk.tier(), keepCost.size() - 1)));
+        return Math.max(1, (int) Math.ceil(maxEnergy * pc / 100.0));
+    }
+
+    /** Lượt giữ của Ngọc Hộ Thân mới theo phẩm (Thường, Tốt, Hoàn Mỹ…) và tỉ lệ khảm hỏng. Cho /chet. */
+    static String keepSummary() {
+        Kham k = INSTANCE;
+        if (k == null) {
+            return "";
+        }
+        List<String> out = new ArrayList<>();
+        for (int i = 0; i < k.tiers.size(); i++) {
+            int cost = k.keepCost(new Sock(k.keepId, i, 100, k.maxEnergy));
+            out.add(k.tiers.get(i).color() + k.tiers.get(i).name() + " &f" + (k.maxEnergy + cost - 1) / cost);
+        }
+        return String.join("&7, ", out);
+    }
+
+    /** Tên ngắn của món (đồ set: "Áo Tinh Anh +4"…). */
+    static String label(ItemStack it) {
+        Kham k = INSTANCE;
+        return k == null ? "?" : k.thoRen.labelOf(ItemLibrary.idOf(it));
+    }
+
+        static int keepFailPct() {
+        Kham k = INSTANCE;
+        return k == null ? 45 : k.keepFail;
+    }
+
     static boolean useKeep(Player p, ItemStack it) {
         Kham k = INSTANCE;
         if (k == null || it == null || !it.hasItemMeta() || !k.hasGems(it)) {
@@ -430,8 +477,7 @@ final class Kham implements Listener {
             if (!sk.code().equals(k.keepId) || sk.energy() <= 0) {
                 continue;
             }
-            double pc = k.keepCost.get(Math.max(0, Math.min(sk.tier(), k.keepCost.size() - 1)));
-            int cost = Math.max(1, (int) Math.ceil(k.maxEnergy * pc / 100.0));
+            int cost = k.keepCost(sk);
             int left = sk.energy() - cost;
             Gem gem = k.gems.get(sk.code());
             String nm = gem == null ? "Ngọc Hộ Thân" : gem.color() + gem.name();

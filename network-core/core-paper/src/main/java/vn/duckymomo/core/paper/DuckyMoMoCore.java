@@ -796,8 +796,24 @@ public final class DuckyMoMoCore extends JavaPlugin {
         }
         getServer().getPluginManager().registerEvents(new ScreenNotify(this), this);
         // Luật chết (death-rules, 30/10): < 30 giờ / công thành / thị trấn mình giữ đồ; còn lại rơi túi + 10% mỗi món mặc/cầm; Ngọc Hộ Thân giữ món
+        PluginCommand chetCmd = getCommand("chet");
         if (getConfig().getBoolean("death-rules.enabled") && getConfig().isConfigurationSection("death-rules")) {
-            getServer().getPluginManager().registerEvents(new DeathRules(this, getConfig().getConfigurationSection("death-rules")), this);
+            DeathRules deathRules = new DeathRules(this, getConfig().getConfigurationSection("death-rules"));
+            getServer().getPluginManager().registerEvents(deathRules, this);
+            if (chetCmd != null) {   // /chet: giải thích luật chết + tình trạng của người chơi
+                chetCmd.setExecutor((sender, cmd, label, args) -> {
+                    if (sender instanceof org.bukkit.entity.Player pl) {
+                        deathRules.open(pl);
+                    }
+                    return true;
+                });
+            }
+        } else if (chetCmd != null) {
+            offCommands.add("chet");
+            chetCmd.setExecutor((sender, cmd, label, args) -> {
+                sender.sendMessage("Server này dùng luật chết của game gốc.");
+                return true;
+            });
         }
         if (tabLimit != null) {
             tabLimit.stop();

@@ -63,6 +63,7 @@ menu:
     - Không chửi bới, spam, quảng cáo
     - Không lợi dụng lỗi, thấy lỗi báo admin
     - Thoát game lúc đánh nhau = chết, rơi đồ
+    - "/chet|chết có mất đồ không"
     - Mua bán đồ chỉ qua /trade cho an toàn
     - Tối đa 2 tài khoản, acc phụ phải khai
     - Không chính trị, biên giới, dân tộc
@@ -423,6 +424,7 @@ chapters:
     &4Còn lại &0(quái, rơi, cháy, bị người giết): &crơi hết túi đồ&0; giáp, vũ khí đang cầm mỗi món &c10%&0 rơi.
     &0Đồ trong &1/balo &0không bao giờ rơi.
     &0Giữ đồ quý: khảm &6Ngọc Hộ Thân&0 (xem phần Khảm).
+    &1/chet &0xem chi tiết và bạn có đang an toàn không.
   - |-
     &6Đồ rơi & dọn rác
     &0Đồ dưới đất bị dọn mỗi 10 phút&r&0 (báo trước 30 và 5 giây).

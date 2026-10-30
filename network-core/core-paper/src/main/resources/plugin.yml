@@ -78,6 +78,8 @@ commands:
     description: "Dịch chuyển ngẫu nhiên tới đất hoang trong vùng mùa: /tpr (menu) hoặc /tpr <khu>"
     aliases: [rtp, ngaunhien, tprandom, randomtp]
     permission: duckymomo.rtp
+  chet:
+    description: "Luật chết: khi nào mất đồ, Ngọc Hộ Thân, tình trạng của bạn"
   hoatdong:
     description: "Xem giờ chơi thật (không tính AFK) của bạn"
     aliases: [giochoi]

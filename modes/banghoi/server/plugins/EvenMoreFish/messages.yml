@@ -2,7 +2,7 @@
 #Sent to players when they fish an EvenMoreFish fish
 fish-caught: '{player} <reset>đã câu được con {fish} dài {length}cm {rarity} !'
 #By setting a fish's minimum-length to less than 0, you can create a lengthless fish. This is used when a player fishes a lengthless fish.
-lengthless-fish-caught: '{player} <reset>đã câu được con {fish} dài {length} cm {rarity}!'
+lengthless-fish-caught: '{player} <reset>đã câu được {rarity} <reset>{fish}!'
 #Sent to a player when they don't have permission to execute a command.
 no-permission: <red>bạn không có quyền để chạy lệnh này.
 #The message to be sent when a competition starts and ends
@@ -28,7 +28,7 @@ competition-types:
   #SPECIFIC_FISH
   specific: '{amount} {rarity} {fish}<reset>'
   #SPECIFIC_RARITY
-  specific-rarity: '{amount} {rarity_colour}{rarity}<reset> cá'
+  specific-rarity: '{amount} cá {rarity}'
 #Segments shown in the bossbar when competitions run
   shortest: con cá ngắn nhất
   shortest-total: tổng chiều dài cá ngắn nhất
@@ -52,12 +52,12 @@ prefix-error: '<red>[EvenMoreFish] '
 #{custom-lore} is specified in the fish.yml under the lore: section, if the fish has a lore, the lore's lines will
 #replace the {fish_lore}, however if it's empty the line will be removed. DO NOT ADD ANYTHING OTHER THAN THIS VARIABLE
 #TO THAT LINE.
-fish-lore:
-- <white>Bắt bởi {player}
-- <white>Dài {length} cm
+fish-lore:   # 30/10: biến mới của EvenMoreFish 2.5 (cũ {player} {length} {rarity_colour} không còn)
+- '{fisherman_lore}'
+- '{length_lore}'
 - ''
 - '{fish_lore}'
-- '{rarity_colour}{rarity}'
+- '{rarity}'
 #The format of commands in /emf help (this message doesn't support papi placeholders)
 help: /{command} - {description}
 #The format of the leaderboard after a competition is over (this message doesn't support papi placeholders)
@@ -83,7 +83,7 @@ not-enough-players: <reset>Không có đủ người chơi online để bắt đ
 #Sent to all players at specific times to show the remaining time left
 #{time_formatted} shows the time (e.g. 5m left, 10m 30s left)
 #{time_raw} is what you input in competitions.yml
-time-alert: <reset>Còn {time-formatted} cho cuộc thi câu cá xếp hạng {type}
+time-alert: '<yellow>Thi câu cá <gray>({type}<gray>)</gray> còn <white>{time_formatted}</white>'   # 30/10: biến là {time_formatted} (gạch dưới)
 #The message sent to players when they've sold their fish in the /emf shop
 fish-sale: <white>Bạn đã bán </white><green>{amount} </green><white>cá với giá </white><green>{sell-price}</green><white>.
 #Help messages
@@ -123,7 +123,7 @@ no-competition-running: Không có cuộc thi câu cá nào đang diễn ra.
 #How should the %emf_competition_place_fish_*% be formatted?
 emf-competition-fish-format: '{length}cm {rarity} {fish}'
 #How should the %emf_competition_place_fish_*% be formatted when there's no length on the fish?
-emf-lengthless-fish-format: '{rarity_colour}{rarity}{fish}'
+emf-lengthless-fish-format: '{rarity} <reset>{fish}'
 #How should %emf_competition_place_fish_*% be formatted during MOST/SPECIFIC_FISH competitions?
 emf-most-fish-format: '{amount} con cá'
 #What should be displayed for %emf_competition_place_size_*% during the MOST_FISH competition?

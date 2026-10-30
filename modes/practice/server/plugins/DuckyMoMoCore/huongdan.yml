@@ -847,6 +847,7 @@ chapters:
     &6Cửa hàng Kinh Đô
     &0Bấm NPC cửa hàng&r&0 ở spawn: vật liệu (đất, đá, kính…), đồ trang trí, danh hiệu, trả bằng xu.
     &0Rank ủng hộ: gõ &1/cuahang&0 (hoặc &1/shop&0) khi đứng trong kinh đô. Người khác gõ &1/shop&0 để được chỉ tới khu shop.
+    &2Chuột trái&0 mua 1 gói, &6Shift + chuột trái&0 mua cả chồng 64.
     &8Không bán gì tăng sức mạnh.
   - |-
     &6CHỢ ĐEN: THU MUA

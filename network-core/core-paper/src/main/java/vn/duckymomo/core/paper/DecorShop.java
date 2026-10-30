@@ -473,6 +473,10 @@ final class DecorShop implements Listener {
         t.raw("&eCách sử dụng:");
         if (o != null) {
             t.raw("&6 ↳» &fChuột trái để " + (o.title() != null ? "mua danh hiệu" : "mua " + o.amount() + " món"));
+            if (o.title() == null && o.lib() == null && o.amount() < 64 && new ItemStack(o.icon()).getMaxStackSize() > 1) {
+                int n = (int) Math.ceil(64 / (double) Math.max(1, o.amount()));
+                t.raw("&6 ↳» &fShift + Chuột trái để mua " + (n * o.amount()) + " món (" + money(o.price() * n) + ")");
+            }
         }
         if (sm != null) {
             if (have > 0) {
@@ -537,6 +541,40 @@ final class DecorShop implements Listener {
 
     private void buy(Player p, String key) {
         buy(p, key, 1);
+    }
+
+    /** Shift + chuột trái: mua đủ 1 chồng (64 món, hoặc 1 gói nếu gói đã ≥ 1 chồng), bớt lại cho vừa chỗ trống trong túi (không rơi ra đất). */
+    private void buyStack(Player p, String key) {
+        Offer o = offers.stream().filter(x -> x.key().equals(key)).findFirst().orElse(null);
+        if (o == null || o.title() != null || o.lib() != null || new ItemStack(o.icon()).getMaxStackSize() <= 1) {
+            buy(p, key);   // danh hiệu, món Thư viện, món không xếp chồng: mua 1 gói như thường
+            return;
+        }
+        int per = Math.max(1, o.amount());
+        int want = Math.max(1, (int) Math.ceil(64 / (double) per));
+        int room = 0;
+        ItemStack like = new ItemStack(o.icon());
+        for (ItemStack it : p.getInventory().getStorageContents()) {
+            if (it == null || it.getType().isAir()) {
+                room += like.getMaxStackSize();
+            } else if (it.isSimilar(like)) {
+                room += Math.max(0, it.getMaxStackSize() - it.getAmount());
+            }
+        }
+        int fit = room / per;
+        if (fit <= 0) {
+            p.sendMessage(c("&cTúi đồ đã đầy."));
+            return;
+        }
+        int mult = Math.min(want, fit);
+        if (VaultEconomy.available()) {   // không đủ tiền cho cả chồng: mua số gói đủ tiền
+            mult = Math.min(mult, (int) Math.floor(VaultEconomy.balance(p) / Math.max(0.01, o.price())));
+        }
+        if (mult <= 1) {
+            buy(p, key);
+            return;
+        }
+        buy(p, key, mult);
     }
 
     /** mult: mua mult lần gói (offer.amount() món, giá offer.price()) trong một lần trả tiền (khung shop: đủ frameLot món). */
@@ -633,7 +671,11 @@ final class DecorShop implements Listener {
             return;
         }
         if (key != null && ct.isLeftClick()) {
-            buy(p, key);
+            if (ct.isShiftClick()) {
+                buyStack(p, key);   // 30/10 chủ server: mua nhiều một lần
+            } else {
+                buy(p, key);
+            }
             if (h.cat != null) {
                 Holder hh = h;
                 plugin.getServer().getScheduler().runTaskLater(plugin, () -> {

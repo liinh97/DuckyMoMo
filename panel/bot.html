@@ -26,6 +26,7 @@
   td .pos { font-variant-numeric: tabular-nums; color: var(--muted); font-size: 12.5px; white-space: nowrap; }
   td .atsp { display: inline-block; font-size: 11px; font-weight: 700; color: var(--tpa); background: color-mix(in srgb, var(--tpa) 16%, transparent); border-radius: 6px; padding: 1px 6px; margin-right: 5px; }
   .acts button.hl { border-color: var(--tpa); color: var(--tpa); }
+  button.mini#devToggle.on { border-color: #22c55e; color: #22c55e; }
   td select { padding: 4px 6px; font-size: 13px; }
   .acts { display: flex; gap: 4px; flex-wrap: wrap; }
   .acts button, .mini { padding: 3px 8px; font-size: 12.5px; border-radius: 7px; }
@@ -90,8 +91,7 @@
     <h3>Danh sách bot <span class="sp">
       <button class="mini" id="allJoin" title="Bật mọi bot (mỗi bot vào server đang chọn của nó)">Vào tất cả</button>
       <button class="mini" id="allLeave">Thoát tất cả</button>
-      <button class="mini" id="allDev" title="Bật tự phát triển cho mọi bot: mỗi bot một tính cách, nhịp riêng">Tự phát triển tất cả</button>
-      <button class="mini" id="allDevOff">Tắt tự phát triển</button>
+      <button class="mini" id="devToggle" title="Bot tự tăng số liệu dần như người thật (mỗi bot một tính cách, nhịp riêng). Bấm: đang bật hết thì tắt hết, còn lại thì bật cho mọi bot. Bật / tắt từng bot ở nút trong danh sách.">Tự phát triển: …</button>
       <button class="mini" id="devPast" title="Mỗi bot đang tự phát triển được giả lập 0–40 giờ đã chơi theo tính cách (một lần duy nhất)">Tạo quá khứ</button></span></h3>
     <div class="note">Bot không tự làm gì. Ở Bang Hội Chiến mỗi bot tự đứng một khu riêng (gần các điểm warp). Bot vào thẳng server con nên không tính vào số người ở danh sách server; đứng yên nên không tính giờ chơi.</div>
     <form id="mk" autocomplete="off" title="Bot mới làm y như bot cũ: vào / ra không báo, Sáng tạo + bất tử, tự đăng ký ở Sảnh">
@@ -258,9 +258,24 @@ $("rot").addEventListener("submit", async (ev) => {
 });
 $("wdRoom").onclick = async () => { if (await ask("Đặt chỗ mặc định của mọi bot vào phòng ẩn? Bot đang online sẽ được dời ngay; chỗ cũ được giữ để trả lại.", { title: "Gom vào phòng ẩn", ok: "Gom" })) act({ action: "gomphong" }); };
 $("wdBack").onclick = async () => { if (await ask("Trả mọi bot về chỗ đứng cũ (trước khi gom vào phòng ẩn)?", { title: "Trả về chỗ cũ", ok: "Trả về" })) act({ action: "trave" }); };
-$("allDev").onclick = async () => { if (await ask(`Bật tự phát triển cho cả ${BOTS.length} bot? Mỗi bot được gán ngẫu nhiên một tính cách và nhịp riêng.`, { title: "Tự phát triển", ok: "Bật" })) act({ bot: "*", action: "phattrien", on: true }); };
+// 31/10 chủ server: 2 nút "Tự phát triển tất cả" / "Tắt tự phát triển" không biết đang ở chế độ nào -> 1 nút hiện trạng thái
+function devCount() { return BOTS.filter((b) => (DEV_STATE[b.name] || {}).on).length; }
+function devLabel() {
+  const n = devCount(), t = BOTS.length, el = $("devToggle");
+  if (!t) { el.textContent = "Tự phát triển: …"; el.classList.remove("on"); return; }
+  el.textContent = n === 0 ? "Tự phát triển: Tắt" : n === t ? `Tự phát triển: Bật · ${n}/${t} bot` : `Tự phát triển: ${n}/${t} bot`;
+  el.classList.toggle("on", n > 0);
+}
+$("devToggle").onclick = async () => {
+  const n = devCount(), t = BOTS.length;
+  if (!t) return;
+  if (n === t) {
+    if (await ask(`Tắt tự phát triển của cả ${t} bot? (số liệu đã có giữ nguyên)`, { title: "Tắt tự phát triển", ok: "Tắt" })) act({ bot: "*", action: "phattrien", on: false });
+  } else if (await ask(`Bật tự phát triển cho cả ${t} bot${n ? ` (đang bật ${n})` : ""}? Mỗi bot được gán ngẫu nhiên một tính cách và nhịp riêng.`, { title: "Tự phát triển", ok: "Bật" })) {
+    act({ bot: "*", action: "phattrien", on: true });
+  }
+};
 $("devPast").onclick = async () => { if (await ask("Tạo quá khứ cho các bot đang tự phát triển? Mỗi bot được giả lập ngẫu nhiên 0–40 giờ đã chơi theo tính cách (nhiều bot ít, vài bot nhiều). Mỗi bot chỉ tạo một lần.", { title: "Tạo quá khứ", ok: "Tạo" })) act({ action: "quakhu" }); };
-$("allDevOff").onclick = async () => { if (await ask("Tắt tự phát triển của mọi bot? (số liệu đã có giữ nguyên)", { title: "Tắt tự phát triển", ok: "Tắt" })) act({ bot: "*", action: "phattrien", on: false }); };
 $("allJoin").onclick = async () => { if (await ask(`Cho cả ${BOTS.length} bot vào game (mỗi bot vào server đang chọn của nó)?`, { title: "Vào tất cả", ok: "Vào" })) act({ bot: "*", action: "join" }); };
 $("allLeave").onclick = async () => { if (await ask("Cho mọi bot thoát game?", { title: "Thoát tất cả", ok: "Thoát" })) act({ bot: "*", action: "leave" }); };
 
@@ -272,6 +287,7 @@ async function loadBots() {
     if ($("fsrv").options.length === 1) for (const [k, v] of Object.entries(SERVERS)) $("fsrv").add(new Option(v, k));
     if (!$("mkSrv").options.length) for (const [k, v] of Object.entries(SERVERS)) $("mkSrv").add(new Option(v, k));
     if (!document.activeElement || !document.activeElement.closest("#bots select")) renderBots();
+    devLabel();
     if (d.chat && !(document.activeElement && document.activeElement.closest("#tc"))) {
       $("tcOn").checked = !!d.chat.on; $("tcMin").value = d.chat.min; $("tcMax").value = d.chat.max;
     }

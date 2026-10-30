@@ -5,6 +5,22 @@
 
 ---
 
+## 31/10/2026 sáng: luật chết, Ngọc Hộ Thân, bot (CPU, thay phiên, chết giả, mua /ah), web + /hd (đã push tới d1ff2de; sau đó còn commit chưa push)
+- Luật chết (DeathRules, `/chet` menu "Luật chết rơi đồ"): < 30 giờ / công thành / thị trấn mình + Kinh Đô giữ đồ; còn lại rơi túi + 10% mỗi món mặc/cầm;
+  balo không rơi. Ngọc Hộ Thân (khảm, hỏng 45%, 4/5/8 lượt theo phẩm, hao 20% khi đánh, không nạp) = 2 Lõi Quái + 1 TL Kim Cương + 2 TL Lục Bảo + 5.000 xu.
+- Bot: botfarm bớt CPU (player_info nhẹ, tắt vật lý khi đứng yên), thay phiên theo phiên chơi 50–240 phút có tin vào/ra + chào nhau, chết giả,
+  hoạt động giả giảm theo giờ chơi người thật (bot-gia), bot mua /ah (bot-ah, cả người offline, nhớ UUID bot ở bot-uuid.txt). Botfarm ĐANG TẮT
+  (31/10 chủ server tắt trước khi khởi động lại), bật lại: `docker compose up -d botfarm`.
+- Khác: /rtp chỉ thả chỗ lập được thị trấn; vòng Kinh Đô cấm lập thị trấn; dân hoà bình về Kinh Đô chờ 1 giây; mưa theo ngày của mùa;
+  giới thiệu bạn bè chặn nick phụ (10 IP, /taikhoanphu, mỗi mạng 1 người) + quà tài nguyên mốc 3/5/10/15/20; màu tước hex + ⚜; rank ủng hộ 2–6 nhà;
+  ẩn giáp hiện món ≤ 10% độ bền; cửa hàng Shift mua 64; trang Hoạt động hiện kết quả lệnh (LuckPerms qua /dmm console) + gợi ý lệnh admin;
+  /tinhluyen ghi tác dụng khảm + "Dùng cho" (đọc config). Chi tiết từng mục: cẩm nang (modes/_network/camnang.yml).
+- VIỆC ĐỂ SAU (chủ server):
+  - **Cốt truyện Chương 2** (BetonQuest QuestPackages/cotruyen): Chương 1 «Điềm Báo» kết thúc "chờ chương tiếp theo"; soạn đề cương cho chủ server duyệt rồi làm.
+  - Tinh Luyện Đá, Xu Quái ×64 chưa dùng ở đâu (tooltip ghi "Nguyên liệu tương lai"): đưa vào công thức nào sau.
+  - Bùa Hộ Mệnh (giữ hết đồ khi chết, kiếm cực khó): để sau.
+
+
 ## 29/10/2026 tối: Vote, Hầm Ngục (giai đoạn thử), set Chuyên Cần, tiện ích bán lẻ theo giờ (đã push nhánh claude/happy-ritchie-2p60v7)
 - Vote: /vote thêm Minecraft-MP (ID 366061, Votifier V1), MinecraftServers.org, Minecraft Server List, TopG, Planet Minecraft; hiện tên cần nhập.
 - Botfarm: bot mới tạo ở trạng thái nghỉ (want:false); `/act rotcfg` chỉnh min/max thay phiên. Thị trấn 1 bot: `tools/bot-town-new.py`

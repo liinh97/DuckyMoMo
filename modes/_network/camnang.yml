@@ -277,6 +277,7 @@ plugins:
       - ["/dmm phu add <phụ> <chính> | remove <phụ> | list", "Ghi tài khoản phụ (Bang Hội Chiến): không được phong quân hàm, không gây sát thương trong vùng vây lúc có phiên. Lưu ở plugins/DuckyMoMoCore/taikhoanphu.yml"]
       - ["/dmm choilaiweb <tên>", "Chỉ console/RCON (nút Chơi lại từ đầu trên trang web): người chơi phải online ở Bang Hội Chiến, server mở bước xác nhận /choilai trong game; web không tự xoá gì"]
       - ["/dmm webma <tên> <mã>", "Chỉ console/RCON (trang web tự gọi để kiểm tra mã /web). Người chơi gõ thì luôn báo sai"]
+      - ["/dmm thorennpc trungbay | chiduong", "30/10: Tủ Trưng Bày (chỉ xem đồ cấp cao nhất các set, sửa danh sách ở tho-ren.quay.trungbay.sets) và Lái Buôn Chỉ Đường (dân làng, menu điểm đến tho-ren.quay.chiduong.di, bấm = /warp). Đứng chỗ muốn đặt rồi gõ; gỡ: /dmm thorennpc remove <quầy>"]
       - ["/dmm rtpnpc [remove]", "Đặt NPC dịch chuyển ngẫu nhiên (dân làng + chữ nổi) tại chỗ đang đứng; đặt lại thì NPC cũ bị xoá; remove = xoá"]
       - ["/dmm decorate | structures start|pause|status", "Trang trí map / đặt công trình (dùng khi làm map mới)"]
     settings: "Trang Cài đặt: Toàn mạng (Chat, Rank donate, Sảnh), Bang Hội Chiến (Hệ thống; Thế giới: /tpr thời gian chờ, phí; Chiến tranh > Giai đoạn mùa và PvP). Danh sách khu /tpr: modes/banghoi/server/plugins/DuckyMoMoCore/config.yml mục rtp.zones"

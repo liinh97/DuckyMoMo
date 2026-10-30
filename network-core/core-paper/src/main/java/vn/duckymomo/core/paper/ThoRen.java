@@ -67,7 +67,13 @@ final class ThoRen implements Listener {
     private record Ref(SetDef set, Piece piece, int level) { }
     /** Quầy đổi nguyên liệu (NPC ở các quầy Kinh Đô): đổi MỘT CHIỀU cost -> out. open = "thoren": menu mọi set; "set:<mã>": mở thẳng một set. */
     private record Recipe(String out, int amount, Map<String, Object> cost) { }
-    private record Stall(String id, String name, String sub, String profession, String open, String skin, List<Recipe> recipes) { }
+    /**
+     * 30/10: open = "trungbay": tủ trưng bày, chỉ XEM đồ cấp cao nhất của các set (sets: thứ tự hiện, trống = mọi set), không đổi được;
+     * open = "chiduong": người chỉ đường, menu các điểm đến (di: [{name, warp, icon, desc}]) bấm = /warp. kieu: danlang = NPC dân làng
+     * (giống ông lái buôn ở shop) dù đang dùng Citizens.
+     */
+    private record Stall(String id, String name, String sub, String profession, String open, String skin, List<Recipe> recipes,
+                         List<String> showSets, List<Map<?, ?>> go, boolean villager) { }
     /** Hiệu ứng đang áp cho một người (tổng các set) + mô tả để báo khi đổi. */
     private record Active(double mau, double dayLui, double giamSt, double thuHoach, double demSt, double kn, String text) { }
 
@@ -167,7 +173,8 @@ final class ThoRen implements Listener {
                     guarded.add(out);
                 }
                 stalls.put(id, new Stall(id, q.getString("name", id), q.getString("sub", ""), q.getString("profession", "MASON"),
-                        q.getString("open", ""), q.getString("skin", ""), rs));
+                        q.getString("open", ""), q.getString("skin", ""), rs, q.getStringList("sets"), q.getMapList("di"),
+                        "danlang".equalsIgnoreCase(q.getString("kieu", ""))));
             }
         }
         guarded.addAll(c.getStringList("guard"));
@@ -269,7 +276,7 @@ final class ThoRen implements Listener {
         if (citizens && e instanceof org.bukkit.entity.Villager v) {
             String q = v.getPersistentDataContainer().get(npcKey, org.bukkit.persistence.PersistentDataType.STRING);
             Stall st = q == null ? null : stalls.get(q);
-            if (st != null && npcIds.getInt(q, -1) < 0) {
+            if (st != null && !st.villager() && npcIds.getInt(q, -1) < 0) {   // kieu: danlang (30/10) giữ dân làng
                 // NPC dân làng đặt trước 23/10 (chủ server: "nhìn như zombie dân làng") -> NPC hình người đúng chỗ đó, giữ dòng chữ nổi
                 org.bukkit.Location loc = v.getLocation();
                 v.remove();
@@ -381,6 +388,14 @@ final class ThoRen implements Listener {
     private void stallMenu(Player p, Stall st) {
         if ("thoren".equals(st.open())) {
             menu(p);
+            return;
+        }
+        if ("trungbay".equals(st.open())) {
+            showcase(p, st);
+            return;
+        }
+        if ("chiduong".equals(st.open())) {
+            guide(p, st);
             return;
         }
         if (st.open().startsWith("set:") && sets.containsKey(st.open().substring(4))) {
@@ -515,7 +530,7 @@ final class ThoRen implements Listener {
             loc.setYaw(p.getLocation().getYaw());
             loc.setPitch(0);
         }
-        if (citizens) {
+        if (citizens && !st.villager()) {
             npcIds.set(st.id(), CitizensBridge.createNoName(org.bukkit.ChatColor.stripColor(st.name().replace('&', '§')), loc, st.skin()));
             saveNpcIds();
             labels(world, loc, st, 1.85);
@@ -712,6 +727,78 @@ final class ThoRen implements Listener {
         if (Kham.INSTANCE != null) {
             m.bar(Tip.of("&5◈ &fKhảm Tinh Luyện").accent("&d").desc("Cầm đồ set trên tay chính, khảm Tinh Luyện vào ô để thêm chỉ số.")
                     .kv("Lệnh", "/thoren kham").click("Bấm để mở").apply(new ItemStack(Material.AMETHYST_CLUSTER)), pl -> Kham.INSTANCE.open(pl));
+        }
+        m.open(p);
+    }
+
+    /** Tủ trưng bày (30/10): mỗi set một ô, bấm xem các món cấp cao nhất. Chỉ xem, không có nút rèn / đổi. */
+    private void showcase(Player p, Stall st) {
+        InfoMenu m = InfoMenu.of(st.name()).accent(Material.MAGENTA_STAINED_GLASS_PANE);
+        m.top(Tip.of(st.name()).accent("&d").desc(st.sub().isBlank() ? "Đồ xịn nhất server, chỉ để xem." : st.sub(),
+                        "Rê chuột vào từng món để xem chỉ số. Muốn có thì cày nguyên liệu rồi rèn ở Thợ Rèn.")
+                .kv("Thợ Rèn", "/warp trade").apply(new ItemStack(Material.NETHER_STAR)));
+        List<SetDef> list = new ArrayList<>();
+        for (String id : st.showSets()) {
+            if (sets.containsKey(id)) {
+                list.add(sets.get(id));
+            }
+        }
+        if (list.isEmpty()) {
+            list.addAll(sets.values());
+        }
+        for (SetDef set : list) {
+            Tip t = Tip.of("&f" + set.name() + " &e+" + set.max()).accent("&d");
+            if (!set.desc().isBlank()) {
+                t.desc(set.desc());
+            }
+            t.kv("Món", String.join(", ", set.pieces().stream().map(Piece::name).toList()));
+            if (!set.bonus().isEmpty()) {
+                t.kv("Hiệu ứng bộ", "&d" + bonusText(set.bonus().get(set.bonus().size() - 1)));
+            }
+            m.add(t.click("Bấm để xem đồ").apply(new ItemStack(set.icon())), pl -> showcaseSet(pl, st, set));
+        }
+        m.open(p);
+    }
+
+    private void showcaseSet(Player p, Stall st, SetDef set) {
+        int lv = set.max();
+        InfoMenu m = InfoMenu.of("&d✦ " + set.name() + " &e+" + lv).accent(Material.MAGENTA_STAINED_GLASS_PANE);
+        Tip top = Tip.of("&d✦ &f" + set.name() + " &e+" + lv).accent("&d")
+                .desc(set.desc().isBlank() ? "Đồ cấp cao nhất của set, chỉ để xem." : set.desc(), "Chỉ để xem. Rèn ở Thợ Rèn: /warp trade.");
+        if (!set.bonus().isEmpty()) {
+            top.kv("Hiệu ứng bộ", "&d" + bonusText(set.bonus().get(set.bonus().size() - 1)));
+        }
+        m.top(top.apply(new ItemStack(set.icon())));
+        List<Piece> all = set.pieces();
+        List<List<Piece>> blocks = all.size() <= 7 ? List.of(all)
+                : List.of(all.subList(0, Math.min(4, all.size())), all.subList(Math.min(4, all.size()), all.size()));
+        for (List<Piece> block : blocks) {
+            for (Piece piece : block) {
+                ItemStack it = lib.build(piece.ids().get(lv), 1);
+                if (it != null) {
+                    Kham.blank(it);
+                }
+                m.add(it != null ? it : Tip.of("&c" + piece.ids().get(lv)).desc("Chưa có trong Thư viện đồ.").apply(new ItemStack(Material.BARRIER)));
+            }
+            m.row();
+        }
+        m.back(pl -> showcase(pl, st));
+        m.open(p);
+    }
+
+    /** Người chỉ đường (30/10): menu điểm đến, bấm = /warp tới đó. */
+    private void guide(Player p, Stall st) {
+        InfoMenu m = InfoMenu.of(st.name()).accent(Material.LIME_STAINED_GLASS_PANE);
+        m.top(Tip.of(st.name()).accent("&a").desc(st.sub().isBlank() ? "Muốn đi đâu, tôi chỉ cho." : st.sub()).apply(new ItemStack(Material.COMPASS)));
+        for (Map<?, ?> d : st.go()) {
+            String warp = String.valueOf(d.get("warp"));
+            Material icon = Material.matchMaterial(String.valueOf(d.containsKey("icon") ? d.get("icon") : "ENDER_PEARL"));
+            Tip t = Tip.of("&f" + (d.containsKey("name") ? d.get("name") : warp)).accent("&a");
+            if (d.get("desc") != null) {
+                t.desc(String.valueOf(d.get("desc")));
+            }
+            m.add(t.kv("Lệnh", "/warp " + warp).click("Bấm để đi").apply(new ItemStack(icon == null ? Material.ENDER_PEARL : icon)),
+                    InfoMenu.run("warp " + warp));
         }
         m.open(p);
     }

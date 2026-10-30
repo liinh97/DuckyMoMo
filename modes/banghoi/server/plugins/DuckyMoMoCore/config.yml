@@ -1933,6 +1933,23 @@ tho-ren:
   # dấu thuvien_id (không làm giả được), cấm đặt / chế tạo / nung / đốt / dùng chuột phải.
   npc-type: citizens       # NPC quầy: citizens = hình người (skin ở từng quầy: skin: <tên người chơi bản quyền> hoặc link ảnh PNG — link chỉ áp lúc đặt NPC), villager = dân làng
   quay:
+    # 30/10: tủ trưng bày (chỉ xem đồ cấp cao nhất các set, không đổi) + người chỉ đường (dân làng như ông lái buôn, bấm = /warp).
+    # Đặt: đứng chỗ muốn đặt rồi /dmm thorennpc trungbay | /dmm thorennpc chiduong. Gỡ: /dmm thorennpc remove <quầy>.
+    trungbay:
+      name: "&d✦ Tủ Trưng Bày"
+      skin: "https://cdn.minecraft.how/skin/168584/image.png"
+      sub: "Xem đồ xịn nhất server (chỉ xem)"
+      open: trungbay
+      sets: [thanthanh, thanthoai, huyenthoai, caocap, ulinh, tinhanh, chienbinh, chuyencan, tanthu, thomo, thosan, nguphu, nonggia, duhiep]
+    chiduong:
+      name: "&a⚖ Lái Buôn Chỉ Đường"
+      sub: "Muốn mua bán, rèn đồ? Bấm để tôi chỉ đường"
+      open: chiduong
+      kieu: danlang
+      profession: cartographer
+      di:
+        - {name: "Khu buôn bán", warp: shop, icon: EMERALD, desc: "Nhà buôn mua bán đồ, chuột trái mua, chuột phải bán"}
+        - {name: "Chợ Thợ Rèn", warp: trade, icon: ANVIL, desc: "Rèn, nâng cấp đồ set, đổi nguyên liệu, khảm Tinh Luyện"}
     khoang:
       name: "&6⛏ Lão Khoáng"
       skin: "https://cdn.minecraft.how/skin/158314/image.png"

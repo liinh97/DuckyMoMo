@@ -60,6 +60,11 @@ final class LobbyNpcs implements Listener, PluginMessageListener {
     private final File file;
     private final YamlConfiguration data;
     private final Map<String, Integer> counts = new HashMap<>();
+    /** 31/10 chủ server: số online trên NPC chưa có bot (bot vào thẳng server con, proxy không đếm). Số bot mỗi server hỏi botfarm /bots. */
+    private volatile Map<String, Integer> botCounts = Map.of();
+    private volatile long botOkAt;
+    private org.bukkit.scheduler.BukkitTask botTask;
+    private final java.net.http.HttpClient http = java.net.http.HttpClient.newBuilder().connectTimeout(java.time.Duration.ofSeconds(3)).build();
     /** Mã thực thể hiện tại (NPC lưu vào thế giới; vùng nhả rồi nạp lại thì là đối tượng mới nên tra theo UUID). */
     private final Map<String, UUID> npcs = new HashMap<>();
     private final Map<String, UUID> labels = new HashMap<>();
@@ -80,6 +85,7 @@ final class LobbyNpcs implements Listener, PluginMessageListener {
         Bukkit.getMessenger().registerIncomingPluginChannel(plugin, "BungeeCord", this);
         Bukkit.getScheduler().runTaskLater(plugin, this::spawnAll, 40L);
         tick = Bukkit.getScheduler().runTaskTimer(plugin, this::refresh, 60L, 100L);
+        botTask = Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, this::pollBots, 40L, 300L);
         Particle part = Particle.SOUL_FIRE_FLAME;
         try {
             part = Particle.valueOf(cfg.getString("particle", "SOUL_FIRE_FLAME").toUpperCase(Locale.ROOT));
@@ -97,7 +103,32 @@ final class LobbyNpcs implements Listener, PluginMessageListener {
         }, 40L, 8L);
     }
 
+    /** Đếm bot đang online theo server (botfarm /bots); lỗi thì giữ số cũ tối đa 2 phút (botfarm bận / đang dựng lại). */
+    private void pollBots() {
+        String base = System.getenv().getOrDefault("BOTFARM_URL", "http://botfarm:8090");
+        try {
+            var r = http.send(java.net.http.HttpRequest.newBuilder(java.net.URI.create(base + "/bots")).timeout(java.time.Duration.ofSeconds(8)).GET().build(),
+                    java.net.http.HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
+            Map<String, Integer> m = new HashMap<>();
+            for (JsonElement b : JsonParser.parseString(r.body()).getAsJsonObject().getAsJsonArray("bots")) {
+                JsonObject o = b.getAsJsonObject();
+                if (o.has("online") && o.get("online").getAsBoolean() && o.has("server")) {
+                    m.merge(o.get("server").getAsString(), 1, Integer::sum);
+                }
+            }
+            botCounts = m;
+            botOkAt = System.currentTimeMillis();
+        } catch (Exception e) {
+            if (System.currentTimeMillis() - botOkAt > 120_000) {
+                botCounts = Map.of();   // botfarm tắt: không cộng
+            }
+        }
+    }
+
     void stop() {
+        if (botTask != null) {
+            botTask.cancel();
+        }
         if (tick != null) {
             tick.cancel();
         }
@@ -211,7 +242,7 @@ final class LobbyNpcs implements Listener, PluginMessageListener {
         if (g.status().equals("closed") || g.status().equals("maintenance")) {
             state = g.status().equals("maintenance") ? "&6● Đang bảo trì" : "&c● Sắp mở";
         } else {
-            int n = counts.getOrDefault(g.server(), 0);
+            int n = counts.getOrDefault(g.server(), 0) + botCounts.getOrDefault(g.server(), 0);   // người qua proxy + bot (vào thẳng)
             state = (g.status().equals("beta") ? "&e● Thử nghiệm &7· " : "&a● ") + "&f" + n + " &aonline";
         }
         return color + g.displayName().toUpperCase(Locale.forLanguageTag("vi")) + "\n"

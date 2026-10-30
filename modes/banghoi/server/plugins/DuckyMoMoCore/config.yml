@@ -635,21 +635,34 @@ newbie-path:
 # Giới thiệu bạn bè /gioithieu (29/10, chủ server): mã = tên người chơi. Người mới (vào lần đầu chưa quá window-days ngày) nhập tên người rủ:
 # nhận new-rewards ngay; người rủ nhận referrer-rewards khi người mới chơi đủ need-hours giờ (offline thì phát lúc vào game);
 # milestones: tổng số người đã xác nhận -> thưởng thêm (danh hiệu chỉ là trang trí). Không tự giới thiệu, không cùng IP, bot không tính.
+# Giới thiệu bạn bè /gioithieu. 31/10 chủ server: "300 xu ai mà thèm đi giới thiệu" -> quà to hơn. Người mới: đủ tiền lập thị trấn (1.500 xu)
+# + vé gacha + bùa bắt pet. Người rủ nhận khi bạn chơi THẬT đủ need-hours giờ (treo máy không tính; nick phụ / chung mạng bị chặn).
+# 10 người ≈ 70.000 xu tổng cho 10 người chơi thật (so: bán cho server tối đa 8.000 xu/ngày).
 referral:
   enabled: true
   window-days: 3
   need-hours: 2
   new-rewards:
-    - xu 300
+    - xu 1500
+    - do chia_khoa_diemdanh 3
+    - do bua_bat_pet 2
   referrer-rewards:
-    - xu 1000
+    - xu 3000
+    - do chia_khoa_diemdanh 2
+    - do bua_bat_pet 1
   milestones:
+    3:
+      - xu 5000
+      - do chia_khoa_diemdanh 3
     5:
-      - xu 3000
+      - xu 10000
       - danhhieu dandat
+      - do chia_khoa_diemdanh 5
     10:
-      - xu 8000
+      - xu 25000
       - danhhieu daisu
+      - do phieu_dd 3
+      - vat ENCHANTED_GOLDEN_APPLE 1
 daily-quests:
   enabled: true
   per-day: 3

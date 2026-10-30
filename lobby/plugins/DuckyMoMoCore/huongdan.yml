@@ -1204,8 +1204,13 @@ chapters:
     &0Vào lần đầu có &6đường tân thủ&0 trên đầu màn hình: làm từng bước, bước nào cũng có xu.
     &1/tanthu &0xem các bước, &1/tanthu boqua &0nếu kẹt.
     &2RỦ BẠN
-    &1/gioithieu &0xem mã (là tên bạn). Bạn mới gõ &1/gioithieu <tên bạn>&0 trong 3 ngày đầu: nhận 300 xu, bạn nhận 1.000 xu khi họ chơi đủ 2 giờ.
-    &0Rủ đủ &65 người&0: +3.000 xu, danh hiệu &3[Người Dẫn Đường]&0. Đủ &610 người&0: +8.000 xu, &6[Đại Sứ Làng]&0.
+    &1/gioithieu &0xem mã (là tên bạn). Bạn mới gõ &1/gioithieu <tên bạn>&0 trong 3 ngày đầu: nhận &61.500 xu&0 (đủ lập thị trấn), 3 vé gacha, 2 bùa bắt pet.
+  - |-
+    &2RỦ BẠN: QUÀ NGƯỜI RỦ
+    &0Mỗi bạn chơi đủ 2 giờ: &63.000 xu&0, 2 vé gacha, 1 bùa bắt pet.
+    &0Đủ &63 người&0: +5.000 xu, 3 vé.
+    &0Đủ &65 người&0: +10.000 xu, 5 vé, danh hiệu &3[Người Dẫn Đường]&0.
+    &0Đủ &610 người&0: +25.000 xu, 3 Phiếu Chuyên Cần, táo vàng phù phép, &6[Đại Sứ Làng]&0.
     &8Giờ chơi tính giờ chơi thật (treo máy không tính). Nick phụ, người dùng chung mạng với bạn không được tính.
   - |-
     &2NHIỆM VỤ NGÀY

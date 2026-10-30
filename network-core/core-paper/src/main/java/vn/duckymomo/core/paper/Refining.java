@@ -139,6 +139,9 @@ final class Refining implements Listener {
         ItemMeta meta = it.getItemMeta();
         List<Component> lore = meta.lore() == null ? new ArrayList<>() : new ArrayList<>(meta.lore());
         lore.add(c("&7Nguyên liệu tinh luyện · /tinhluyen"));
+        if (!Kham.gemInfo(id).isEmpty()) {
+            lore.add(c("&dKhảm được vào đồ set &7· xem tác dụng ở /tinhluyen"));
+        }
         meta.lore(lore);
         if (!meta.hasItemModel() && !meta.hasEnchantmentGlintOverride()) {
             meta.setEnchantmentGlintOverride(true);
@@ -328,6 +331,11 @@ final class Refining implements Listener {
         }
         if (d.sell() > 0) {
             lore.add(Tip.c("&7• &7Bán cho server: &6" + money(d.sell())));
+        }
+        List<String> kham = Kham.gemInfo(d.id());   // 31/10: nói rõ khảm được gì, phẩm, năng lượng
+        if (!kham.isEmpty()) {
+            lore.add(Tip.c(Tip.LINE));
+            kham.forEach(x -> lore.add(Tip.c(x)));
         }
         lore.add(Tip.c(Tip.LINE));
         if (ok) {

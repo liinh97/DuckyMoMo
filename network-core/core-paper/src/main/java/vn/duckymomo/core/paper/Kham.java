@@ -468,6 +468,49 @@ final class Kham implements Listener {
         return k == null ? 20 : k.keepCombatPct;
     }
 
+    /** 31/10 chủ server: menu /tinhluyen không nói khảm được gì. Dòng mô tả khảm của món Tinh Luyện id (rỗng = không phải ngọc). */
+    static List<String> gemInfo(String id) {
+        Kham k = INSTANCE;
+        List<String> out = new ArrayList<>();
+        Gem g = k == null || id == null ? null : k.gems.get(id);
+        if (g == null) {
+            return out;
+        }
+        out.add("&7• &dKhảm vào đồ set &7(/thoren kham, Tinh Anh trở lên):");
+        if (id.equals(k.keepId)) {
+            out.add("  &7▸ &aGiữ món khi chết &7(không rơi)");
+            out.add("  &7▸ &fSố lần giữ: " + keepSummary());
+            out.add("  &7▸ &cKhảm hỏng " + k.keepFail + "% &7(ngọc vỡ, món nguyên)");
+            out.add("  &7▸ &7Đánh nhau hao ít, hết thì vỡ, không nạp lại");
+            return out;
+        }
+        out.add("  &7▸ &fGiáp: " + k.effect(g, true));
+        out.add("  &7▸ &fVũ khí: " + k.effect(g, false));
+        StringBuilder t = new StringBuilder("  &7▸ &fPhẩm ngẫu nhiên: ");
+        int total = k.tiers.stream().mapToInt(Tier::chance).sum();
+        for (int i = 0; i < k.tiers.size(); i++) {
+            Tier tr = k.tiers.get(i);
+            t.append(i > 0 ? "&7, " : "").append(tr.color()).append(tr.name()).append(" &7")
+                    .append(Math.round(100.0 * tr.chance() / Math.max(1, total))).append("% (").append(tr.min()).append("–").append(tr.max()).append("% chỉ số)");
+        }
+        out.add(t.toString());
+        java.util.LinkedHashSet<String> keys = new java.util.LinkedHashSet<>(g.armor().keySet());
+        keys.addAll(g.weapon().keySet());
+        List<String> caps = new ArrayList<>();
+        for (String key : keys) {
+            if (k.cap.containsKey(key)) {
+                caps.add(trim(k.cap.get(key)) + STAT_VI.getOrDefault(key, " " + key));
+            }
+        }
+        if (!caps.isEmpty()) {
+            out.add("  &7▸ &7Cộng dồn cả người tối đa: " + String.join(", ", caps));
+        }
+        out.add("  &7▸ &fNăng lượng " + String.format(java.util.Locale.ROOT, "%,d", k.maxEnergy).replace(',', '.')
+                + "&7: hao khi đánh nhau, cạn thì ngọc vỡ");
+        out.add("  &7▸ &fNạp đầy: 1 món cùng loại + " + money(k.rechargeCost) + " &7· Tháo: " + money(k.unsocketCost) + ", " + k.breakChance + "% vỡ");
+        return out;
+    }
+
     static int keepFailPct() {
         Kham k = INSTANCE;
         return k == null ? 45 : k.keepFail;

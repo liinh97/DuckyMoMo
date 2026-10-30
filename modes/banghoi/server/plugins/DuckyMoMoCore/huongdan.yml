@@ -933,8 +933,21 @@ chapters:
     &0Có ô: Tinh Anh +3 trở lên, Cao Cấp, Huyền Thoại (3 ô)…
     &0Nâng cấp đồ: ngọc tự theo sang. Tháo: tốn xu, &c50% vỡ&0.
   - |-
+    &5NGỌC NÀO TÁC DỤNG GÌ
+    &8(giáp · vũ khí, phẩm Thường)
+    &5Netherite&0: -2,5% st nhận · +4,5% st
+    &3Kim Cương&0: -1,5% st nhận · +3% st
+    &8Sắt&0: +2% máu · +2% st
+    &6Vàng&0: +3% kháng đẩy · +3% tốc đánh
+    &4Đá Đỏ&0: +1,5% tốc chạy · +4% tốc đánh
+    &1Lưu Ly&0: +6% hồi máu · +1,5% hút máu
+    &2Lục Bảo&0: +5% · +8% kinh nghiệm
+    &8Than&0: -8% st lửa · +6% st lên mục tiêu cháy
+    &6Đồng&0: +15% · +20% chậm mòn
+  - |-
     &5NGỌC: PHẨM VÀ NĂNG LƯỢNG
-    &0Khảm ra phẩm ngẫu nhiên: &7Thường&0, &2Tốt&0, &6Hoàn Mỹ&0 (mạnh hơn).
+    &0Khảm ra phẩm ngẫu nhiên: &7Thường&0 60% (80–100% chỉ số), &2Tốt&0 30% (100–120%), &6Hoàn Mỹ&0 10% (120–150%).
+    &0Cộng dồn cả người có trần: giảm st nhận tối đa 8%, st tối đa 12%.
     &0Ngọc hao &1năng lượng&0 khi đánh nhau (giáp: trúng đòn quái/người; vũ khí: mỗi con hạ được), cạn thì &cvỡ&0. Không dùng thì không hao.
     &0Muốn giữ ngọc tốt: bấm ngọc trong &1/thoren kham&0 → &2Nạp đầy&0 (1 Tinh Luyện cùng loại + xu).
     &0Tháo ra vẫn giữ phẩm, năng lượng.

@@ -179,7 +179,7 @@ tab_bossbar_tips:
 tab_bossbar_interval: 8000
 tab_bossbar_enabled: true
 tab_sb_enabled: true
-tab_sb_title: '<#FFC23D>⚔ BANG HỘI CHIẾN</#FF6A00>'
+tab_sb_title: '<#FFC23D>⚔ DuckyMoMo</#FF6A00>'
 tab_sb_lines:
   - '&#FFD966❤ &f%player%'
   - '&r'
@@ -189,11 +189,12 @@ tab_sb_lines:
   - '%animation:SbDong3%'
   - '%animation:SbDong4%'
   - '&r'
-  - '&#5FD3F3☺ &b%online% &8· &7%condition:pingmau%'
+  - '&#5FD3F3✪ &b%online% &7· &7%condition:pingmau%'
+  - '&8(12+)'
 tab_header:
   - '&r'
   - <#FFC23D>✦ DUCKYMOMO ✦</#FF6A00>
-  - '&6⚔ &eBang Hội Chiến &6⚔'
+  - '&6⚔ &eDuckyMoMo &6⚔'
   - '&7Chào &f%player%&7! Mùa 1: &aĐại Lục Sương Mai'
   - '&r'
 tab_footer:
@@ -567,27 +568,31 @@ jus_rt_notp_min: 30
 jus_rt_deadline: 24
 jus_rt_item: 10
 decor_enabled: true
-em_natural: false
-em_natural_pct: 0.05
+em_natural: true
+em_natural_pct: 0.03
 em_dmg_player: 1.0
 em_dmg_elite: 1.0
 em_vault: true
-em_coin_mult: 0.6
+em_coin_mult: 0.3
 dd_on: true
 dd_min: 5
 dd_daily:
   - xu 150
   - do chia_khoa_diemdanh 1
+  - do phieu_dd 1
 dd_miles:
   7:
     - xu 750
     - vat GOLDEN_APPLE 2
+    - do phieu_dd 2
   14:
     - xu 1500
     - vat DIAMOND 3
+    - do phieu_dd 3
   30:
     - xu 4500
     - vat DIAMOND 8
+    - do phieu_dd 5
 dd_cycle: 30
 dd_remind: true
 dd_bc: true
@@ -902,7 +907,7 @@ dh_fee: 2
 dh_days: 7
 dh_minprice: 0.01
 dh_maxprice: 100000
-kh_on: true
+kh_on: false
 kh_sell: 100
 kh_g1: 900000.0
 kh_g2: 2400000.0
@@ -1418,26 +1423,26 @@ tl_sell_dialinh: 270
 dp_on: true
 dp_announce: true
 dp_tinan_name: "Dân Tị Nạn"
-dp_tinan_prefix: "&8[Tị Nạn] "
+dp_tinan_prefix: "&7[&fTị Nạn&7] "
 dp_tinan_homes: 1
 dp_tinan_balo: 0
 dp_tinan_ah: 2
 dp_dan_name: "Dân"
-dp_dan_prefix: "&7[Dân] "
+dp_dan_prefix: "&3[&bDân&3] "
 dp_dan_hours: 6.0
 dp_dan_level: 0
 dp_dan_homes: 2
 dp_dan_balo: 1
 dp_dan_ah: 4
 dp_luongdan_name: "Lương Dân"
-dp_luongdan_prefix: "&a[Lương Dân] "
+dp_luongdan_prefix: "&2[&aLương Dân&2] "
 dp_luongdan_hours: 24
 dp_luongdan_level: 10
 dp_luongdan_homes: 3
 dp_luongdan_balo: 2
 dp_luongdan_ah: 6
 dp_haokiet_name: "Hào Kiệt"
-dp_haokiet_prefix: "&6[Hào Kiệt] "
+dp_haokiet_prefix: "&6[&eHào Kiệt&6] "
 dp_haokiet_hours: 72
 dp_haokiet_level: 25
 dp_haokiet_homes: 4

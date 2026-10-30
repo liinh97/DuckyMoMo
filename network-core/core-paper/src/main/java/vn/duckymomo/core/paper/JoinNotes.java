@@ -83,7 +83,7 @@ final class JoinNotes {
             return;
         }
         // Bố cục 30/10: vạch · dòng chào · link cộng đồng · các dòng nhắc · vạch
-        p.sendMessage(c("&8&m                                                     "));
+        p.sendMessage(c("&d&m                                                     "));
         p.sendMessage(c(welcome.replace("%name%", p.getName())));
         // 30/10 chủ server "thông báo hơi ríu rít": link gộp 1 dòng, các dòng nhắc liền nhau, không dòng trống
         if (!links.isEmpty()) {
@@ -91,7 +91,7 @@ final class JoinNotes {
             boolean first = true;
             for (String[] l : links) {
                 if (!first) {
-                    line = line.append(c(" &8· "));
+                    line = line.append(c(" &7· "));
                 }
                 first = false;
                 if (l[2].isBlank()) {
@@ -106,7 +106,7 @@ final class JoinNotes {
         for (Object[] o : list) {
             p.sendMessage(c(" ").append((Component) o[1]));
         }
-        p.sendMessage(c("&8&m                                                     "));
+        p.sendMessage(c("&d&m                                                     "));
     }
 
     static Component c(String s) {

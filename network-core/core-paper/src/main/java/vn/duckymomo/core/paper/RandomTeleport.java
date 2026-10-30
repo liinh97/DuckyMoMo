@@ -329,6 +329,7 @@ final class RandomTeleport implements Listener {
         Location from = p.getLocation().clone();
         int[] count = {warm};
         p.sendMessage(c("&7Đứng yên &f" + warm + " giây &7để dịch chuyển (di chuyển hoặc bị đánh là huỷ)."));
+        ScreenNotify.countdown(p, warm);
         warming.put(id, plugin.getServer().getScheduler().runTaskTimer(plugin, () -> {
             if (!p.isOnline()) {
                 stopWarmup(id, null);

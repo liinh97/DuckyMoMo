@@ -31,7 +31,7 @@ import java.util.concurrent.ThreadLocalRandom;
  *   riddles[{q, a[]}]}
  */
 final class ChatGames implements Listener {
-    private static final String LINE = "&8&m                                                     ";
+    private static final String LINE = "&d&m                                                     ";
 
     private final JavaPlugin plugin;
     private final ConfigurationSection cfg;
@@ -160,12 +160,16 @@ final class ChatGames implements Listener {
                 StringBuilder b = new StringBuilder();
                 int[] cps = shown.codePoints().toArray();
                 for (int i = 0; i < cps.length; i++) {
-                    // che ~40% chữ cái, giữ chữ đầu mỗi tiếng cho dễ đoán
+                    // che ~45% chữ cái, giữ chữ đầu mỗi chữ; 30/10: cách từng ký tự, chỗ trống vàng cho dễ nhìn
                     boolean first = i == 0 || cps[i - 1] == ' ';
-                    b.append(cps[i] != ' ' && !first && rnd.nextInt(100) < 45 ? "_" : new String(Character.toChars(cps[i])));
+                    if (cps[i] == ' ') {
+                        b.append("   ");
+                        continue;
+                    }
+                    b.append(!first && rnd.nextInt(100) < 45 ? "&e_" : "&f" + new String(Character.toChars(cps[i]))).append(' ');
                 }
                 head = "Điền chữ còn thiếu!";
-                body = "&6Gợi ý: &f" + b + " &7(" + shown.split(" ").length + " tiếng)";
+                body = "&6Gợi ý: " + b.toString().trim() + " &b(" + shown.split(" ").length + " chữ)";
                 ans.add(shown);
             }
             case "daonguoc" -> {
@@ -247,13 +251,13 @@ final class ChatGames implements Listener {
         kind = k;
         answers = ans.stream().map(ChatGames::norm).toList();
         int secs = Math.max(15, cfg.getInt("timeout", 60));
-        broadcast(LINE, "&d✦ DuckyMoMo - Đố vui &8(" + label(k) + ")", "&e" + head, body,
-                "&7Gõ đáp án vào chat · " + secs + " giây · thưởng &a" + VaultEconomy.format(cfg.getDouble("reward-min", 50))
-                        + "&7 - &a" + VaultEconomy.format(cfg.getDouble("reward-max", 150)), LINE);
+        broadcast(LINE, "&d✦ DuckyMoMo - Đố vui &e(" + label(k) + ")", "&e" + head, body,
+                "&fGõ đáp án vào chat &7· &e" + secs + " giây &7· &fthưởng &a" + VaultEconomy.format(cfg.getDouble("reward-min", 50))
+                        + "&f - &a" + VaultEconomy.format(cfg.getDouble("reward-max", 150)), LINE);
         timeout = Bukkit.getScheduler().runTaskLater(plugin, () -> {
             if (answers != null) {
                 answers = null;
-                broadcast(LINE, "&d✦ Đố vui &7- hết giờ, chưa ai trả lời đúng.", "&7Đáp án: &d" + shown, LINE);
+                broadcast(LINE, "&d✦ Đố vui &7- hết giờ, chưa ai trả lời đúng.", "&fĐáp án: &d" + shown, LINE);
             }
         }, secs * 20L);
         return true;
@@ -303,8 +307,8 @@ final class ChatGames implements Listener {
         double prize = Math.round(lo + rnd.nextDouble() * (hi - lo));
         VaultEconomy.deposit(p, prize);
         ScreenNotify.show(p, "&a+" + VaultEconomy.format(prize), "&7Trả lời đúng đầu tiên!");
-        broadcast(LINE, "&d✦ DuckyMoMo - Đố vui &8(" + label(kind) + ")",
-                "&a" + p.getName() + " &dtrả lời đúng đầu tiên, nhận &a" + VaultEconomy.format(prize) + "&d!", "&7Đáp án: &d" + shown, LINE);
+        broadcast(LINE, "&d✦ DuckyMoMo - Đố vui &e(" + label(kind) + ")",
+                "&a" + p.getName() + " &dtrả lời đúng đầu tiên, nhận &a" + VaultEconomy.format(prize) + "&d!", "&fĐáp án: &d" + shown, LINE);
     }
 
     void command(CommandSender s, String[] args) {

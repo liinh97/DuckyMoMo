@@ -27,8 +27,38 @@ final class ScreenNotify implements Listener {
     private final Map<UUID, Long> joined = new HashMap<>();
     private final Map<UUID, Long> lastTp = new HashMap<>();
 
+    private static JavaPlugin PLUGIN;
+    private static final Map<UUID, org.bukkit.scheduler.BukkitTask> COUNTDOWN = new HashMap<>();
+
     ScreenNotify(JavaPlugin plugin) {
         this.plugin = plugin;
+        PLUGIN = plugin;
+    }
+
+    /** 30/10: đếm ngược dịch chuyển giữa màn hình "Đứng yên / còn N giây". Dừng khi người chơi di chuyển (Essentials / tpr tự huỷ). */
+    static void countdown(Player p, int secs) {
+        if (PLUGIN == null || secs <= 0 || p == null || BotView.isBot(p) || !PlayerSettings.on(p, "chugiua")) {
+            return;
+        }
+        var old = COUNTDOWN.remove(p.getUniqueId());
+        if (old != null) {
+            old.cancel();
+        }
+        Location start = p.getLocation();
+        int[] left = {secs};
+        COUNTDOWN.put(p.getUniqueId(), Bukkit.getScheduler().runTaskTimer(PLUGIN, () -> {
+            boolean moved = !p.isOnline() || p.getWorld() != start.getWorld() || p.getLocation().distanceSquared(start) > 0.6 * 0.6;
+            if (moved || left[0] <= 0) {
+                var t = COUNTDOWN.remove(p.getUniqueId());
+                if (t != null) {
+                    t.cancel();
+                }
+                return;
+            }
+            p.showTitle(Title.title(Tip.c("&eĐứng yên"), Tip.c("&fDịch chuyển sau &a" + left[0] + " &fgiây"),
+                    Title.Times.times(Duration.ZERO, Duration.ofMillis(1100), Duration.ofMillis(200))));
+            left[0]--;
+        }, 0L, 20L));
     }
 
     static void show(Player p, String big, String small) {
@@ -73,7 +103,7 @@ final class ScreenNotify implements Listener {
             return;
         }
         lastTp.put(p.getUniqueId(), now);
-        String where = w.equals("spawn") ? "&7Khu spawn" : "&7x=" + to.getBlockX() + " y=" + to.getBlockY() + " z=" + to.getBlockZ();
+        String where = w.equals("spawn") ? "&fKhu spawn" : "&fx=" + to.getBlockX() + " y=" + to.getBlockY() + " z=" + to.getBlockZ();
         Bukkit.getScheduler().runTaskLater(plugin, () -> show(p, "&6Tới nơi!", where), 2L);
     }
 }

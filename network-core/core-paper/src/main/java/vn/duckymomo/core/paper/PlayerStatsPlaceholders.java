@@ -73,6 +73,27 @@ final class PlayerStatsPlaceholders extends PlaceholderExpansion {
         if ("thue_con".equals(params)) {
             return untilNewDay();
         }
+        if ("congthanh".equals(params)) {   // 30/10: phiên công thành tới, ngắn cho bảng phải: "T7 20:00", "hôm nay 20:00"
+            Long t = SiegeWarHook.nextBattleSessionStart();
+            if (t == null || t <= 0) {
+                return "chưa có lịch";
+            }
+            java.time.LocalDateTime d = java.time.LocalDateTime.ofInstant(java.time.Instant.ofEpochMilli(t), java.time.ZoneId.systemDefault());
+            String hm = String.format(Locale.ROOT, "%02d:%02d", d.getHour(), d.getMinute());
+            if (d.toLocalDate().equals(java.time.LocalDate.now())) {
+                return "hôm nay " + hm;
+            }
+            int dow = d.getDayOfWeek().getValue();   // 1 = thứ Hai
+            return (dow == 7 ? "CN" : "T" + (dow + 1)) + " " + hm;
+        }
+        if ("quocgia".equals(params)) {   // 30/10: tên quốc gia gọn (bỏ "LienMinh"), rỗng nếu chưa có
+            org.bukkit.entity.Player pl = player == null ? null : player.getPlayer();
+            if (pl == null) {
+                return "";
+            }
+            String n = PapiText.apply(pl, "%townyadvanced_nation_unformatted%").trim();
+            return n.startsWith("LienMinh") && n.length() > 8 ? n.substring(8) : n;
+        }
         if (player == null) {
             return "";
         }

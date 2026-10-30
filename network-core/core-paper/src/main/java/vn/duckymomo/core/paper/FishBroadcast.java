@@ -73,11 +73,11 @@ final class FishBroadcast implements Listener {
         double kg = (double) call(fish, "getWeight");
         boolean legend = id.equalsIgnoreCase("Legendary");
         String bar = legend ? "&6&m                                        " : "&d&m                                        ";
-        String stats = "&7Độ hiếm: " + rName + (kg > 0 ? " &8| &7Nặng: &b" + String.format(Locale.ROOT, "%.1f", kg) + "kg" : "")
-                + (len > 0 ? " &8| &7Dài: &d" + String.format(Locale.ROOT, "%.1f", len) + "cm" : "");
+        String stats = "&fĐộ hiếm: " + rName + (kg > 0 ? " &7| &fNặng: &b" + String.format(Locale.ROOT, "%.1f", kg) + "kg" : "")
+                + (len > 0 ? " &7| &fDài: &d" + String.format(Locale.ROOT, "%.1f", len) + "cm" : "");
         PlayerSettings.broadcast("sukien", Tip.c(bar));
         PlayerSettings.broadcast("sukien", Tip.c(legend ? "      &6✦ &eCÁ HUYỀN THOẠI! &6✦" : "      &d★ &fCON CÁ HIẾM! &d★"));
-        PlayerSettings.broadcast("sukien", Tip.c("&7Người chơi &e" + p.getName() + " &7vừa câu được &r" + fName + "&7!"));
+        PlayerSettings.broadcast("sukien", Tip.c("&fNgười chơi &e" + p.getName() + " &fvừa câu được &r" + fName + "&7!"));
         PlayerSettings.broadcast("sukien", Tip.c(stats));
         PlayerSettings.broadcast("sukien", Tip.c(bar));
         ScreenNotify.show(p, legend ? "&6✦ Cá Huyền thoại!" : "&d★ Cá hiếm!", "&f" + fName);

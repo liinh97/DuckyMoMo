@@ -89,7 +89,7 @@ scoreboard:
         - '%animation:SbDong4%'
         - '&r'
         - '&#5FD3F3✪ &b%online% &7· &7%condition:pingmau%'
-        - '&8(12+)'   # 30/10: nhãn độ tuổi theo phân loại trò chơi VN (00+, 12+, 16+, 18+)
+        - '&7(12+)'   # 30/10: nhãn độ tuổi theo phân loại trò chơi VN (00+, 12+, 16+, 18+)
 layout:
   enabled: false
   direction: COLUMNS
@@ -179,29 +179,29 @@ conditions:
   tt_ten:
     conditions:
       - "%townyadvanced_town_townblocks_used%>0"
-    true: "&#FF9F43⚑ &#FFD580%townyadvanced_town_unformatted% &8· &7%townyadvanced_town_townblocks_used% ô"
+    true: "&#FF9F43⚑ &#FFD580%townyadvanced_town_unformatted% &7· &f%townyadvanced_town_townblocks_used% ô"
     false: "&#FF9F43⚑ &7Chưa có thị trấn"
   tt_dan:
     conditions:
       - "%townyadvanced_town_townblocks_used%>0"
-    true: "&#9AE6B4☺ &7Dân: &f%townyadvanced_town_residents_amount% &8(&a%townyadvanced_town_residents_online% online&8)"
+    true: "&#9AE6B4☺ &fDân: &a%townyadvanced_town_residents_online%&7/&f%townyadvanced_town_residents_amount% &7online"
     false: "&#9AE6B4☺ &7Lập: &f/t new <tên>"
   tt_kho:
     conditions:
       - "%townyadvanced_town_townblocks_used%>0"
-    true: "&#7CFC9A⛃ &7Ngân khố: &a%townyadvanced_town_balance%"
+    true: "&#7CFC9A⛃ &fNgân khố: &a%townyadvanced_town_balance%"
     false: "&#7CFC9A⛃ &7Vào: &f/t join <tên>"
   tt_quocgia:
     conditions:
-      - "%townyadvanced_nation_unformatted%!="
-    true: "%townyadvanced_nation_unformatted%"
+      - "%dmmtoi_quocgia%!="
+    true: "%dmmtoi_quocgia%"
     false: "&7Chưa có quốc gia"
   # 30/10: có thị trấn thì đếm ngược tới lúc Towny thu thuế (ngày mới), chưa có thì gợi ý lập
   thue:
     conditions:
       - "%townyadvanced_town_townblocks_used%>0"
-    true: "&#FFB86B⛀ &fThuế sau &e%dmmtoi_thue_con% &8(%townyadvanced_daily_town_upkeep%)"
-    false: "&#FFB86B⛀ &7Thuế: &fchưa có thị trấn"
+    true: "&#FFB86B⛀ &fThuế: &e%dmmtoi_thue_con%"
+    false: "&#FFB86B⛀ &fThuế: &7không"
   # Ping có màu cho bảng bên phải: %condition:pingmau%
   pingmau:
     conditions:

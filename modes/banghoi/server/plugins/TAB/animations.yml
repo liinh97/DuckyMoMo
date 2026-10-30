@@ -144,18 +144,18 @@ SbDong1:
 SbDong2:
   change-interval: 8000
   texts:
-    - '&#FFCC33❖ &e%dmmhom_chia% &7vé gacha &8· &7%dmmhom_con%'
+    - '&#FFCC33❖ &e%dmmhom_chia% &fvé gacha &7· &e%dmmhom_con%'
     - '%condition:tt_dan%'
-    - '&#FF6B6B⚔ &f%dmmtoi_giet%&7/&f%dmmtoi_chet% &7· &7KDA &f%dmmtoi_kda%'
+    - '&#FF6B6B⚔ &f%dmmtoi_giet%&7/&f%dmmtoi_chet% &7· &fKDA &e%dmmtoi_kda%'
 SbDong3:
   change-interval: 8000
   texts:
     - '%dmmmua_ten% &7%dmmmua_con%n'
     - '%condition:tt_kho%'
-    - '&#9AE6B4✦ &7Thăng Cấp %dmmcap_mau%%dmmcap_cap%'
+    - '&#9AE6B4✦ &fThăng Cấp %dmmcap_mau%%dmmcap_cap%'
 SbDong4:
   change-interval: 8000
   texts:
     - '&#FFD24D★ &6%dmmvang_so_du% &eVàng'
     - '%condition:thue%'
-    - '&7⚑ Lịch công thành: &f/lichcongthanh'
+    - '&#FF6B6B⚑ &fCông thành: &e%dmmtoi_congthanh%'

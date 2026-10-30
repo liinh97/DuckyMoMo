@@ -225,7 +225,7 @@ final class TeBoss implements Listener {
         } else if (now < d.cooldownUntil) {
             sb.append("&7Đàn đang nghỉ, mở lại sau &f").append((d.cooldownUntil - now) / 60000 + 1).append(" phút");
         } else if (d.mode.equals("an")) {
-            sb.append("&7Cầm &f").append(d.need).append(" Mảnh Ấn &7bấm vào đàn để gọi boss\n&8(mảnh rơi từ quái thù địch)");
+            sb.append("&7Cầm &f").append(d.need).append(" Mảnh Ấn &7bấm vào đàn để gọi boss\n&7(mảnh rơi từ quái thù địch)");
         } else {
             int pct = Math.min(100, d.progress * 100 / d.need);
             int bars = pct / 10;
@@ -360,7 +360,7 @@ final class TeBoss implements Listener {
                     && dead.getLocation().distanceSquared(d.loc) <= (double) d.radius * d.radius) {
                 if (d.bossId == null && System.currentTimeMillis() >= d.cooldownUntil) {
                     dead.getWorld().spawnParticle(Particle.SOUL, dead.getLocation().add(0, 1, 0), 12, 0.3, 0.5, 0.3, 0.02);
-                    killer.sendActionBar(Tip.c("&b+1 linh hồn &7cho " + d.name + " &8(" + Math.min(d.need, d.progress + 1) + "/" + d.need + ")"));
+                    killer.sendActionBar(Tip.c("&b+1 linh hồn &7cho " + d.name + " &7(" + Math.min(d.need, d.progress + 1) + "/" + d.need + ")"));
                 }
                 add(d, killer, 1);
             }
@@ -432,7 +432,7 @@ final class TeBoss implements Listener {
                     hand.setAmount(amount - use);
                     p.playSound(b.getLocation(), Sound.BLOCK_RESPAWN_ANCHOR_CHARGE, 0.8f, 1.2f);
                     b.getWorld().spawnParticle(Particle.FLAME, b.getLocation().add(0.5, 1.1, 0.5), 20, 0.3, 0.3, 0.3, 0.02);
-                    p.sendActionBar(Tip.c("&6+" + use * pts + " điểm lễ vật &8(" + Math.min(d.need, d.progress + use * pts) + "/" + d.need + ")"));
+                    p.sendActionBar(Tip.c("&6+" + use * pts + " điểm lễ vật &7(" + Math.min(d.need, d.progress + use * pts) + "/" + d.need + ")"));
                     add(d, p, use * pts);
                 }
                 case "an" -> {

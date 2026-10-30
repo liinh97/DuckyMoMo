@@ -54,7 +54,9 @@ final class TeleportDelay {
                     Object user = teleportee.invoke(e);
                     if (user != null && user.getClass().getMethod("getBase").invoke(user) instanceof Player p) {
                         double cur = (double) getDelay.invoke(e);
-                        setDelay.invoke(e, (double) seconds(p, (int) Math.round(cur)));
+                        int secs = seconds(p, (int) Math.round(cur));
+                        setDelay.invoke(e, (double) secs);
+                        ScreenNotify.countdown(p, secs);   // 30/10: đếm ngược giữa màn hình
                     }
                 } catch (ReflectiveOperationException | RuntimeException ex) {
                     plugin.getLogger().warning("Thời gian chờ dịch chuyển theo rank: lỗi đọc sự kiện Essentials (" + ex + ")");

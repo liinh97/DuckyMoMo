@@ -45,7 +45,11 @@ final class Activity implements Listener {
     private final int newMemberDays;
     private boolean dirty;
 
+    /** Bản đang chạy (Referral tính giờ chơi thật, không tính AFK). */
+    static volatile Activity INSTANCE;
+
     Activity(DuckyMoMoCore plugin, ConfigurationSection c) {
+        INSTANCE = this;
         this.plugin = plugin;
         this.file = new File(plugin.getDataFolder(), "hoatdong.yml");
         this.data = YamlConfiguration.loadConfiguration(file);

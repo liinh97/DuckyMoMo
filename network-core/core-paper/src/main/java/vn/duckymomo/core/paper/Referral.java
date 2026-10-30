@@ -27,7 +27,9 @@ import java.util.UUID;
  * Giới thiệu bạn bè /gioithieu (29/10, chủ server: "bổ sung code để user giới thiệu nhau"). Mã giới thiệu = tên người chơi.
  * Người mới (vào lần đầu chưa quá window-days ngày) gõ /gioithieu <tên người giới thiệu>: nhận new-rewards ngay. Người giới thiệu nhận
  * referrer-rewards khi người mới chơi đủ need-hours giờ (thống kê thời gian chơi), mốc tổng số người (milestones) thưởng thêm.
- * Chống tài khoản phụ: không tự giới thiệu, không cùng IP với người giới thiệu (IP lần vào gần nhất), mỗi người mới chỉ nhập 1 lần.
+ * Chống tài khoản phụ: không tự giới thiệu, không bot; 31/10: không từng dùng chung IP nào (nhớ 10 IP gần nhất mỗi người), không cùng chủ
+ * theo /taikhoanphu; kiểm lại lúc trả quà (dính thì huỷ thưởng, ghi ref.<…>.chan); "đủ giờ" là giờ chơi thật (Activity, không tính treo máy).
+ * Mỗi người mới chỉ nhập 1 lần.
  * Người giới thiệu offline lúc đủ giờ: thưởng giữ lại, phát khi vào game. Lưu plugins/DuckyMoMoCore/gioithieu.yml:
  * ref.<người mới>: {by, byName, name, t, ok}; ip.<uuid>; count.<uuid> (đã xác nhận); owed.<uuid> (chờ phát); name.<uuid>.
  */
@@ -72,8 +74,35 @@ final class Referral implements Listener {
         return (long) (cfg.getDouble("need-hours", 2) * 72000);
     }
 
+    /** 31/10: giờ chơi THẬT (Activity, không tính treo máy) - trước tính cả AFK nên nick phụ treo 2 giờ là người rủ nhận quà. Tính theo tick. */
     private static long played(Player p) {
-        return p.getStatistic(Statistic.PLAY_ONE_MINUTE);   // tính theo tick
+        Activity a = Activity.INSTANCE;
+        return a != null ? (long) (a.totalHours(p.getUniqueId()) * 72000) : p.getStatistic(Statistic.PLAY_ONE_MINUTE);
+    }
+
+    /** Lịch sử IP (tối đa 10 gần nhất) + IP cũ một ô. */
+    private java.util.Set<String> ips(String uuid) {
+        java.util.Set<String> out = new java.util.HashSet<>(data.getStringList("ips." + uuid));
+        String one = data.getString("ip." + uuid, "");
+        if (!one.isEmpty()) {
+            out.add(one);
+        }
+        return out;
+    }
+
+    /** 31/10 chống nick phụ: từng dùng chung IP nào (không chỉ lần vào gần nhất), hoặc cùng chủ theo /taikhoanphu. null = được. */
+    private String altReason(String newUuid, String newName, String refUuid, String refName) {
+        java.util.Set<String> a = ips(newUuid);
+        a.retainAll(ips(refUuid));
+        a.remove("");
+        if (!a.isEmpty()) {
+            return "từng dùng chung mạng";
+        }
+        String o1 = WarRules.ownerOf(newName), o2 = WarRules.ownerOf(refName);
+        if (o1 != null && o2 != null && o1.equalsIgnoreCase(o2)) {
+            return "cùng chủ (tài khoản phụ đã khai)";
+        }
+        return null;
     }
 
     // ------------------------------------------------------------------ vào game
@@ -86,6 +115,10 @@ final class Referral implements Listener {
         }
         String u = p.getUniqueId().toString();
         data.set("ip." + u, ip(p));
+        List<String> hist = new ArrayList<>(data.getStringList("ips." + u));   // 31/10: nhớ 10 IP gần nhất (đổi mạng vẫn bắt được nick phụ)
+        hist.remove(ip(p));
+        hist.add(0, ip(p));
+        data.set("ips." + u, hist.subList(0, Math.min(10, hist.size())));
         data.set("name." + u, p.getName());
         boolean first = !p.hasPlayedBefore();
         int owed = data.getInt("owed." + u);
@@ -120,6 +153,13 @@ final class Referral implements Listener {
             data.set(k + ".ok", true);
             dirty = true;
             String by = data.getString(k + ".by");
+            // kiểm lại lúc trả quà: hai bên có thể đã dùng chung mạng / khai tài khoản phụ sau khi nhập mã
+            String why = by == null ? null : altReason(p.getUniqueId().toString(), p.getName(), by, data.getString(k + ".byName", ""));
+            if (why != null) {
+                data.set(k + ".chan", why);
+                plugin.getLogger().info("Giới thiệu: huỷ thưởng " + data.getString(k + ".byName") + " <- " + p.getName() + " (" + why + ")");
+                continue;
+            }
             Player r = by == null ? null : Bukkit.getPlayer(UUID.fromString(by));
             if (r != null) {
                 pay(r);
@@ -238,9 +278,10 @@ final class Referral implements Listener {
             p.sendMessage(Tip.c("&cNgười này không nhận giới thiệu."));
             return;
         }
-        String rip = data.getString("ip." + r.getUniqueId(), "");
-        if (!rip.isEmpty() && rip.equals(ip(p))) {
-            p.sendMessage(Tip.c("&cBạn và &f" + r.getName() + "&c dùng chung mạng: không tính giới thiệu (chống tài khoản phụ)."));
+        String why = altReason(p.getUniqueId().toString(), p.getName(), r.getUniqueId().toString(), r.getName());
+        if (why != null) {
+            p.sendMessage(Tip.c("&cBạn và &f" + r.getName() + "&c " + why + ": không tính giới thiệu (chống tài khoản phụ)."));
+            plugin.getLogger().info("Giới thiệu: chặn " + p.getName() + " <- " + r.getName() + " (" + why + ")");
             return;
         }
         data.set(k + ".by", r.getUniqueId().toString());

@@ -55,7 +55,21 @@ final class WarRules implements Listener {
     // yêu cầu khai đang chờ: tên phụ (thường) -> tên chính, hết hạn sau 10 phút
     private final Map<String, String[]> pending = new java.util.HashMap<>();
 
+    /** Bản đang chạy (Referral hỏi tài khoản phụ đã khai). */
+    static volatile WarRules INSTANCE;
+
+    /** Tên tài khoản chính nếu name là tài khoản phụ đã khai (/taikhoanphu), ngược lại chính name. */
+    static String ownerOf(String name) {
+        WarRules w = INSTANCE;
+        if (w == null || name == null) {
+            return name;
+        }
+        String main = w.alts.getString(key(name) + ".chinh", "");
+        return main.isEmpty() ? name : main;
+    }
+
     WarRules(DuckyMoMoCore plugin, Activity activity, ConfigurationSection c) {
+        INSTANCE = this;
         this.activity = activity;
         this.maxAccounts = Math.max(1, c.getInt("max-accounts", 2));
         this.wildPvp = c.getBoolean("wild-pvp", true);

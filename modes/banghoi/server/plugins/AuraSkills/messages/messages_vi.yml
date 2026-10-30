@@ -688,13 +688,13 @@ commands:
   unknown_trait: <yellow>Không có đặc tính này!
   no_profile: <yellow>Người chơi không có hồ sơ Khả năng. Hãy thử thoát ra và vào lại hoặc khởi động lại máy chủ.
 leveler:
-  level_up: Lên cấp Khả năng {skill}
+  level_up: ⬆ {skill}
   skill_level_up: Lên cấp Khả năng
   rewards: Thưởng
   ability_unlock: Kỹ năng bị động
   ability_level_up: Lên cấp Kỹ năng bị động
   mana_ability_unlock: Kỹ năng ma pháp
-  mana_ability_level_up: Lên cắp Kỹ năng Ma pháp
+  mana_ability_level_up: Lên cấp Kỹ năng Ma pháp
   unclaimed_item: <red>Bạn có vật phẩm chưa nhận do kho đồ đã đầy, dùng <yellow>/skills claimitems <red>để nhận
 menus:
   common:

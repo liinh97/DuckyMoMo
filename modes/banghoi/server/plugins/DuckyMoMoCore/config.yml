@@ -153,7 +153,7 @@ rtp:
   zones:
     - {id: taybac, name: "&aBắc Sơn Lĩnh", icon: MOSSY_COBBLESTONE, center-x: 12365, center-z: -2569, radius: 230, description: "Núi rừng, gần kinh đô"}
     - {id: lao, name: "&aRừng Lam", icon: JUNGLE_SAPLING, center-x: 12305, center-z: -2330, radius: 230, description: "Rừng núi"}
-    - {id: trungbo, name: "&eCao Nguyên Gió", icon: COCOA_BEANS, center-x: 12843, center-z: -1732, radius: 230, description: "Cao nguyên, ven biển phía đông"}
+    - {id: trungbo, name: "&eCao Nguyên Gió", icon: WIND_CHARGE, center-x: 12843, center-z: -1732, radius: 230, description: "Cao nguyên, ven biển phía đông"}
     - {id: nambo, name: "&eChâu Thổ Phù Sa", icon: WHEAT, center-x: 12604, center-z: -1374, radius: 230, description: "Đồng bằng, hợp làm ruộng"}
     - {id: thailan, name: "&6Đồng Kim", icon: GOLD_BLOCK, center-x: 12007, center-z: -1792, radius: 230, description: "Đồng bằng ven sông lớn"}
     - {id: myanmar, name: "&6Tây Mộc Vực", icon: BAMBOO, center-x: 11529, center-z: -2389, radius: 230, description: "Xa kinh đô nhất về phía tây"}
@@ -161,9 +161,9 @@ rtp:
     # vùng mở bằng khai hoang (requires: id mốc frontier.goals): chỉ hiện ở /tpr, có đặc sản, Người Tiên Phong khi mốc đã mở
     # 27/10: mở hết map, bỏ requires 4 vùng dưới (khai hoang đã tắt)
     - {id: malai, name: "&eBán Đảo Mưa", icon: JUNGLE_LOG, center-x: 12250, center-z: -350, radius: 230, description: "Rừng mưa nhiệt đới, eo biển"}
-    - {id: philippines, name: "&bThiên Đảo", icon: SUGAR_CANE, center-x: 14575, center-z: -1434, radius: 260, description: "Nghìn đảo, ruộng bậc thang"}
-    - {id: borneo, name: "&2Đảo Rừng Già", icon: COCOA_BEANS, center-x: 13620, center-z: -120, radius: 260, description: "Rừng già, ca cao"}
-    - {id: java, name: "&dĐảo Núi Lửa", icon: WHEAT, center-x: 13142, center-z: 896, radius: 230, description: "Núi lửa, ruộng lúa"}
+    - {id: philippines, name: "&bThiên Đảo", icon: LILY_PAD, center-x: 14575, center-z: -1434, radius: 260, description: "Nghìn đảo, ruộng bậc thang"}
+    - {id: borneo, name: "&2Đảo Rừng Già", icon: DARK_OAK_SAPLING, center-x: 13620, center-z: -120, radius: 260, description: "Rừng già, ca cao"}
+    - {id: java, name: "&dĐảo Núi Lửa", icon: MAGMA_BLOCK, center-x: 13142, center-z: 896, radius: 230, description: "Núi lửa, ruộng lúa"}
     - {id: ngaunhien, name: "&dNgẫu nhiên toàn vùng", icon: ENDER_PEARL, center-x: 0, center-z: 0, radius: 0, description: "Bất kỳ đâu trong vùng mùa 1"}
 
 # Luật chiến tranh (docs/banghoi-luat-mua1.md). Trang Cài đặt > Chiến tranh.
@@ -1378,24 +1378,24 @@ dungeon-gate:
   # Điều kiện phụ (tuỳ dungeon, kiểm từng người trong nhóm /em party): min-pet-level, party: "2-4", days: [t2..t7, cn],
   # hours: "19-23" (giờ VN), seasons: [mua, kho], hegemon-only: true, min-achievements. Dungeon ẩn: fragments: <số Mảnh Chìa>.
   dungeons:
-    the_climb_dungeon: {name: "Đỉnh Vách Đá", type: chain, level: "10", first-rewards: [xu 750]}
-    the_cave_sanctum: {name: "Hang Thánh Địa", type: chain, level: "15", requires: the_climb_dungeon, first-rewards: [xu 1200]}
-    the_mines_dungeon: {name: "Mỏ Hoang", type: chain, level: "20", requires: the_cave_sanctum, first-rewards: [xu 1500]}
-    the_bridge_sanctum: {name: "Cây Cầu Cổ", type: chain, level: "25", requires: the_mines_dungeon, first-rewards: [xu 1800]}
-    the_city_dungeon: {name: "Thành Phố Đổ Nát", type: chain, level: "30", requires: the_bridge_sanctum, first-rewards: [xu 2250]}
-    the_palace_sanctum: {name: "Cung Điện", type: chain, level: "35", requires: the_city_dungeon, first-rewards: [xu 3000]}
-    the_quarry_dungeon: {name: "Mỏ Đá", type: chain, level: "40", requires: the_palace_sanctum, first-rewards: [xu 3750]}
-    the_deep_mines_dungeon: {name: "Mỏ Sâu", type: chain, level: "45", requires: the_quarry_dungeon, first-rewards: [xu 4500]}
-    the_nether_wastes_dungeon: {name: "Hoang Mạc Địa Ngục", type: chain, level: "50", requires: the_deep_mines_dungeon, min-pet-level: 10, first-rewards: [xu 6000]}
-    the_nether_bell_sanctum: {name: "Chuông Địa Ngục", type: chain, level: "55", requires: the_nether_wastes_dungeon, party: "2-4", first-rewards: [xu 9000]}
-    sewers_minidungeon: {name: "Cống Ngầm", type: gate, level: "25", first-rewards: [xu 3000]}
-    dark_cathedral_lair: {name: "Thánh Đường Bóng Tối", type: hidden, level: "15", night-only: true, fragments: 3, hint: "chỉ hiện ra lúc nửa đêm", first-rewards: [xu 4500]}
-    north_pole_minidungeon: {name: "Bắc Cực", type: gate, level: "55", first-rewards: [xu 6000]}
-    knights_castle_lair: {name: "Lâu Đài Hiệp Sĩ", type: ticket, level: "95", price: 4500, max-tickets: 5, days: [t7, cn]}
-    steamworks_lair: {name: "Xưởng Hơi Nước", type: ticket, level: "140", price: 7500, max-tickets: 5, min-achievements: 8}
-    fireworks_lair: {name: "Lễ Hội Pháo Hoa", type: server, level: "20", goal: 300000, open-days: 7}
-    hallosseum_lair: {name: "Đấu Trường Ma", type: server, level: "30", goal: 450000, open-days: 7, party: "2-5", hours: "19-23"}
-    binder_of_worlds_sanctum: {name: "Kẻ Trói Buộc Thế Giới", type: server, level: "100", goal: 3000000, open-days: 0, party: "3-5", min-pet-level: 20, first-rewards: [xu 30000]}
+    the_climb_dungeon: {icon: LADDER, name: "Đỉnh Vách Đá", type: chain, level: "10", first-rewards: [xu 750]}
+    the_cave_sanctum: {icon: DRIPSTONE_BLOCK, name: "Hang Thánh Địa", type: chain, level: "15", requires: the_climb_dungeon, first-rewards: [xu 1200]}
+    the_mines_dungeon: {icon: RAIL, name: "Mỏ Hoang", type: chain, level: "20", requires: the_cave_sanctum, first-rewards: [xu 1500]}
+    the_bridge_sanctum: {icon: CHISELED_STONE_BRICKS, name: "Cây Cầu Cổ", type: chain, level: "25", requires: the_mines_dungeon, first-rewards: [xu 1800]}
+    the_city_dungeon: {icon: CRACKED_STONE_BRICKS, name: "Thành Phố Đổ Nát", type: chain, level: "30", requires: the_bridge_sanctum, first-rewards: [xu 2250]}
+    the_palace_sanctum: {icon: QUARTZ_PILLAR, name: "Cung Điện", type: chain, level: "35", requires: the_city_dungeon, first-rewards: [xu 3000]}
+    the_quarry_dungeon: {icon: STONECUTTER, name: "Mỏ Đá", type: chain, level: "40", requires: the_palace_sanctum, first-rewards: [xu 3750]}
+    the_deep_mines_dungeon: {icon: DEEPSLATE_DIAMOND_ORE, name: "Mỏ Sâu", type: chain, level: "45", requires: the_quarry_dungeon, first-rewards: [xu 4500]}
+    the_nether_wastes_dungeon: {icon: CRIMSON_NYLIUM, name: "Hoang Mạc Địa Ngục", type: chain, level: "50", requires: the_deep_mines_dungeon, min-pet-level: 10, first-rewards: [xu 6000]}
+    the_nether_bell_sanctum: {icon: SOUL_LANTERN, name: "Chuông Địa Ngục", type: chain, level: "55", requires: the_nether_wastes_dungeon, party: "2-4", first-rewards: [xu 9000]}
+    sewers_minidungeon: {icon: MOSSY_STONE_BRICKS, name: "Cống Ngầm", type: gate, level: "25", first-rewards: [xu 3000]}
+    dark_cathedral_lair: {icon: WITHER_SKELETON_SKULL, name: "Thánh Đường Bóng Tối", type: hidden, level: "15", night-only: true, fragments: 3, hint: "chỉ hiện ra lúc nửa đêm", first-rewards: [xu 4500]}
+    north_pole_minidungeon: {icon: BLUE_ICE, name: "Bắc Cực", type: gate, level: "55", first-rewards: [xu 6000]}
+    knights_castle_lair: {icon: SHIELD, name: "Lâu Đài Hiệp Sĩ", type: ticket, level: "95", price: 4500, max-tickets: 5, days: [t7, cn]}
+    steamworks_lair: {icon: PISTON, name: "Xưởng Hơi Nước", type: ticket, level: "140", price: 7500, max-tickets: 5, min-achievements: 8}
+    fireworks_lair: {icon: FIREWORK_ROCKET, name: "Lễ Hội Pháo Hoa", type: server, level: "20", goal: 300000, open-days: 7}
+    hallosseum_lair: {icon: JACK_O_LANTERN, name: "Đấu Trường Ma", type: server, level: "30", goal: 450000, open-days: 7, party: "2-5", hours: "19-23"}
+    binder_of_worlds_sanctum: {icon: END_CRYSTAL, name: "Kẻ Trói Buộc Thế Giới", type: server, level: "100", goal: 3000000, open-days: 0, party: "3-5", min-pet-level: 20, first-rewards: [xu 30000]}
 
 # Cân bằng chiến tranh (/canbang): chống "nước to nuốt hết". Trang Cài đặt > Chiến tranh > Cân bằng chiến tranh
 war-balance:
@@ -1910,7 +1910,7 @@ player-menu:
       icon: FILLED_MAP
       name: "&b✈ &3Máy chủ"
       lore: ["Xem mục máy chủ", "Đi lại, thị trấn, khu vực, sự kiện"]
-      gom: ["Dịch chuyển, về nhà, khu tiện ích", "Thị trấn, lệnh săn, dungeon, Đấu Trường"]
+      gom: ["Dịch chuyển, về nhà, khu tiện ích", "Thị trấn, lệnh săn, dungeon, Đấu Trường", "Chuyển server"]
       border: PINK_STAINED_GLASS_PANE
       border2: PURPLE_STAINED_GLASS_PANE
       title: "&0✦ DuckyMoMo - Máy chủ"
@@ -1924,7 +1924,7 @@ player-menu:
         - {icon: CROSSBOW, name: "&c☠ &fLệnh săn", sub: "/lenhsan", lore: ["Quái mạnh xuất hiện ở một vùng"], gom: ["Ai đánh nhiều nhất nhận thưởng"], bam: "Bấm để xem lệnh săn", cmd: lenhsan}
         - {icon: SPAWNER, name: "&5⚔ &fDungeon", sub: "/dungeon", lore: ["Cày đồ hiếm cùng nhóm"], gom: ["Chuỗi chìa khoá 10 tầng", "Dungeon ẩn, Cổng Hoang"], bam: "Bấm để xem dungeon", cmd: dungeon}
         - {icon: IRON_SWORD, name: "&c⚔ &fĐấu Trường", sub: "PvP", lore: ["Đấu 1v1, 2v2 không mất đồ"], gom: ["Máu cố định 10 tim, công bằng"], bam: "Bấm để tới Đấu Trường", cmd: "warp pvp"}
-        - {icon: OAK_DOOR, name: "&7➜ &fVề sảnh", lore: ["Chọn chế độ chơi khác"], bam: "Bấm để về sảnh", server: lobby}
+        - {icon: RECOVERY_COMPASS, name: "&d✈ &fChuyển server", lore: ["Mạng lưới máy chủ DuckyMoMo", "Đổi sang sảnh hoặc chế độ chơi khác"], bam: "Bấm để chọn server", open: chuyenserver}
     - id: nguoichoi
       slot: 25
       icon: ARMOR_STAND
@@ -1944,6 +1944,16 @@ player-menu:
         - {icon: RED_SHULKER_BOX, name: "&c❤ &fGói quà", sub: "/goiqua", lore: ["Quà tân thủ & nhu yếu phẩm", "Nhận đồ theo bậc và quà định kỳ"], gom: ["Gói lương thực: 32 bánh mì, mỗi 1 tiếng", "Gói theo danh phận: mỗi 3 ngày"], bam: "Bấm để mở gói quà", cmd: goiqua}
         - {icon: OAK_SAPLING, name: "&a✦ &fĐường tân thủ", sub: "/tanthu", lore: ["Từng bước làm quen server, bước nào cũng có quà"], bam: "Bấm để xem", cmd: tanthu}
         - {icon: BOOK, name: "&e❖ &fCẩm nang", sub: "/huongdan", lore: ["Hướng dẫn cách chơi từ đầu"], gom: ["Kinh tế, thị trấn, công thành…"], bam: "Bấm để đọc", cmd: huongdan}
+    - id: chuyenserver
+      hidden: true          # không hiện ở menu chính / tab, mở bằng nút "Chuyển server" (open: chuyenserver)
+      icon: RECOVERY_COMPASS
+      name: "&d✈ &5Chuyển server"
+      border: MAGENTA_STAINED_GLASS_PANE
+      border2: PURPLE_STAINED_GLASS_PANE
+      title: "&0✦ DuckyMoMo - Chuyển server"
+      buttons:
+        - {icon: CHERRY_LEAVES, name: "&d❀ &fSảnh chờ", lore: ["Nơi chọn chế độ chơi"], gom: ["Tủ skin, cài đặt tài khoản"], bam: "Bấm để về sảnh", server: lobby}
+        - {icon: NETHERITE_SWORD, name: "&6⚔ &fBang Hội Chiến", sub: "bạn đang ở đây", lore: ["Lập bang, chiếm đất, công thành theo lịch"], bam: "Đang ở server này", server: banghoi-1}
 
 # Vàng (20/10): tiền ủng hộ. Nạp tiền thật -> admin duyệt ở trang quản trị › Donate -> cộng Vàng (ví chung toàn mạng, MariaDB network.vang_vi).
 # Người chơi tiêu Vàng: /vang (trong game) hoặc trang tài khoản. KHÔNG chuyển cho nhau, KHÔNG đổi ra xu (luật Mojang: chỉ trang trí).

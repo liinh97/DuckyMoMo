@@ -166,6 +166,10 @@ final class DungeonGate implements Listener {
                     plugin.getLogger().warning("Cổng Dungeon: kiểu lạ '" + type + "' ở " + id + " (chain|hidden|luck|ticket|server|gate)");
                     continue;
                 }
+                Material ic = Material.matchMaterial(d.getString("icon", ""));
+                if (ic != null) {
+                    dgIcon.put(id, ic);
+                }
                 dungeons.put(id, new Dg(id, d.getString("name", id), type, d.getString("level", ""), d.getString("requires", ""),
                         d.getString("requires-frontier", ""), d.getString("hint", ""), d.getBoolean("night-only", false),
                         Math.max(1, Math.min(100, d.getDouble("roll-chance", 100))), Math.max(0, d.getDouble("price", 0)),
@@ -1529,6 +1533,8 @@ final class DungeonGate implements Listener {
             "ticket", "Mua vé bằng xu, mỗi vé một lượt; chỉ trừ vé khi thật sự vào.",
             "server", "Cả server góp xu vào quỹ; đủ mục tiêu thì cổng mở cho mọi người.",
             "gate", "Chỉ vào được qua Cổng Hoang ngụy trang trên bản đồ (/conghoang).");
+    /** 30/10: icon riêng từng dungeon (dungeons.<id>.icon), không có thì theo loại (TYPE_ICON). */
+    private final Map<String, Material> dgIcon = new java.util.HashMap<>();
     private static final Map<String, Material> TYPE_ICON = Map.of("chain", Material.TRIPWIRE_HOOK, "hidden", Material.ENDER_EYE,
             "luck", Material.RABBIT_FOOT, "ticket", Material.PAPER, "server", Material.BELL, "gate", Material.END_PORTAL_FRAME);
 
@@ -1716,7 +1722,7 @@ final class DungeonGate implements Listener {
                 act = pl -> { pl.closeInventory(); pl.performCommand("dungeon vao " + d.id()); };
             }
         }
-        ItemStack icon = t.apply(new ItemStack(hiddenUnknown ? Material.GRAY_DYE : TYPE_ICON.getOrDefault(d.type(), Material.COMPASS)));
+        ItemStack icon = t.apply(new ItemStack(hiddenUnknown ? Material.GRAY_DYE : dgIcon.getOrDefault(d.id(), TYPE_ICON.getOrDefault(d.type(), Material.COMPASS))));
         if (done || d.id().equals(weekly)) {
             icon.editMeta(meta -> meta.setEnchantmentGlintOverride(true));
         }

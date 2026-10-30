@@ -45,12 +45,12 @@ final class PlayerMenu implements Listener {
     private static final LegacyComponentSerializer L = LegacyComponentSerializer.legacyAmpersand();
 
     record Group(String id, int slot, Material icon, String name, String sub, List<String> lore, List<String> gom, Material border,
-                 Material border2, String title, List<Button> buttons) { }
+                 Material border2, String title, boolean hidden, List<Button> buttons) { }
 
     private static final int BACK_SLOT = 48, CLOSE_SLOT = 50;
 
     record Button(int slot, Material icon, String name, String sub, List<String> lore, List<String> gom, String bam,
-                  String cmd, String suggest, String proxy, String server) { }
+                  String cmd, String suggest, String proxy, String server, String open) { }
 
     private final JavaPlugin plugin;
     private final String title;
@@ -87,8 +87,9 @@ final class PlayerMenu implements Listener {
         for (Map<?, ?> m : cfg.getMapList("groups")) {
             try {
                 Material icon = Material.matchMaterial(String.valueOf(m.get("icon")));
-                int slot = ((Number) m.get("slot")).intValue();
-                if (icon == null || slot < 0 || slot >= rows * 9) {
+                boolean hidden = Boolean.TRUE.equals(m.get("hidden"));   // nhóm ẩn: chỉ mở bằng nút có open: <id>
+                int slot = m.get("slot") instanceof Number n ? n.intValue() : -1;
+                if (icon == null || (!hidden && (slot < 0 || slot >= rows * 9))) {
                     plugin.getLogger().warning("Menu: bỏ nhóm sai " + m.get("id"));
                     continue;
                 }
@@ -106,7 +107,7 @@ final class PlayerMenu implements Listener {
                 Material b1 = Material.matchMaterial(str(m.get("border")));
                 Material b2 = Material.matchMaterial(str(m.get("border2")));
                 groups.add(new Group(str(m.get("id")), slot, icon, String.valueOf(m.get("name")), str(m.get("sub")), list(m.get("lore")),
-                        list(m.get("gom")), b1 == null ? Material.YELLOW_STAINED_GLASS_PANE : b1, b2, str(m.get("title")), bs));
+                        list(m.get("gom")), b1 == null ? Material.YELLOW_STAINED_GLASS_PANE : b1, b2, str(m.get("title")), hidden, bs));
             } catch (RuntimeException e) {
                 plugin.getLogger().warning("Menu: bỏ nhóm sai " + m.get("id") + ": " + e.getMessage());
             }
@@ -124,7 +125,7 @@ final class PlayerMenu implements Listener {
                 return null;
             }
             return new Button(slot, icon, String.valueOf(m.get("name")), str(m.get("sub")), list(m.get("lore")), list(m.get("gom")),
-                    str(m.get("bam")), str(m.get("cmd")), str(m.get("suggest")), str(m.get("proxy")), str(m.get("server")));
+                    str(m.get("bam")), str(m.get("cmd")), str(m.get("suggest")), str(m.get("proxy")), str(m.get("server")), str(m.get("open")));
         } catch (RuntimeException e) {
             plugin.getLogger().warning("Menu: bỏ nút sai " + m + ": " + e.getMessage());
             return null;
@@ -173,6 +174,9 @@ final class PlayerMenu implements Listener {
             put(h, b.slot(), icon(p, b), b);
         }
         for (Group g : groups) {
+            if (g.hidden()) {
+                continue;
+            }
             Tip t = Tip.of(ph(p, g.name()));
             if (!g.sub().isEmpty()) {
                 t.sub(ph(p, g.sub()));
@@ -205,9 +209,10 @@ final class PlayerMenu implements Listener {
                 fill(h.inv, i, i + 1, g.border2());
             }
         }
-        int start = Math.max(0, (9 - groups.size()) / 2);
-        for (int i = 0; i < groups.size() && start + i < 9; i++) {
-            Group o = groups.get(i);
+        List<Group> tabs = groups.stream().filter(x -> !x.hidden() || x == g).toList();
+        int start = Math.max(0, (9 - tabs.size()) / 2);
+        for (int i = 0; i < tabs.size() && start + i < 9; i++) {
+            Group o = tabs.get(i);
             Tip t = Tip.of(ph(p, o.name()));
             if (o == g) {
                 t.kv("Trạng thái", "&aĐang xem");
@@ -309,7 +314,9 @@ final class PlayerMenu implements Listener {
         } else if ("close".equals(what)) {
             p.closeInventory();
         } else if (what instanceof Button b) {
-            p.closeInventory();
+            if (b.open().isEmpty()) {
+                p.closeInventory();
+            }
             Bukkit.getScheduler().runTask(plugin, () -> run(p, b));
         }
     }
@@ -331,7 +338,9 @@ final class PlayerMenu implements Listener {
     }
 
     private void run(Player p, Button b) {
-        if (!b.server().isEmpty()) {
+        if (!b.open().isEmpty()) {
+            groups.stream().filter(g -> g.id().equals(b.open())).findFirst().ifPresent(g -> openGroup(p, g));
+        } else if (!b.server().isEmpty()) {
             ByteArrayDataOutput out = ByteStreams.newDataOutput();
             out.writeUTF("Connect");
             out.writeUTF(b.server());

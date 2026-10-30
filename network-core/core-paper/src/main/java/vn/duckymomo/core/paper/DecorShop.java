@@ -241,7 +241,10 @@ final class DecorShop implements Listener {
             return true;
         }
         if (!p.hasPermission(rankPermission)) {
-            p.sendMessage(c("&eCửa hàng Kinh Đô: tới &fNPC cửa hàng ở khu shop tại spawn&e để mua. Rank ủng hộ mở được bằng &f/cuahang &ekhi đứng trong kinh đô."));
+            // 30/10: member gõ /shop (commands.yml: shop -> cuahang) hay /cuahang: bấm dòng này là tới khu shop
+            p.sendMessage(c("&eCửa hàng Kinh Đô: tới &fNPC cửa hàng ở khu shop&e để mua bán. Rank ủng hộ mở được bằng &f/cuahang &ekhi đứng trong kinh đô."));
+            p.sendMessage(c("&a[➜ Bấm để tới khu shop]").clickEvent(net.kyori.adventure.text.event.ClickEvent.runCommand("/warp shop"))
+                    .hoverEvent(net.kyori.adventure.text.event.HoverEvent.showText(c("&7/warp shop"))));
             return true;
         }
         if (!inCapital.test(p.getLocation())) {

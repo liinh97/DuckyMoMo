@@ -256,7 +256,7 @@ plugins:
       - ["/danhhieu · chon <mã> · tat", "Danh hiệu (giữ qua các mùa): giành bằng bảng xếp hạng hoặc mua ở /cuahang"]
       - ["/danhphan · /balo [số]", "Bang Hội Chiến: danh phận (rank chơi miễn phí, bấm nhận khi đủ giờ chơi thật / cấp / cốt truyện) và balo cá nhân 27 ô theo danh phận. Admin: /danhphan dat <người> <mã> · dongbo, /balo xem <tên> [số]"]
       - ["/tinhluyen · ban [tatca] · ds", "Bang Hội Chiến: Tinh Luyện, đổi một chiều 64 khối (than, sắt thô, kim cương…) thành món tinh luyện để trade ở shop dân làng, làm nguyên liệu Xưởng, bán cho server. Admin: /tinhluyen give <mã> [số] [người]"]
-      - ["/cuahang", "Cửa hàng Kinh Đô: vật liệu cơ bản (đất, đá, cát, kính… 64 cái), đồ trang trí, danh hiệu, trả bằng xu. Mọi người bấm NPC ở khu shop tại spawn; rank ủng hộ gõ /cuahang nhưng chỉ khi đứng trong kinh đô"]
+      - ["/cuahang (hoặc /shop)", "30/10: /shop là lệnh tắt của /cuahang (data/banghoi-1/commands.yml aliases, thay alias shop của QuickShop; shop rương vẫn /qs); member không có rank thì có dòng bấm tới /warp shop. Cửa hàng Kinh Đô: vật liệu cơ bản (đất, đá, cát, kính… 64 cái), đồ trang trí, danh hiệu, trả bằng xu. Mọi người bấm NPC ở khu shop tại spawn; rank ủng hộ gõ /cuahang nhưng chỉ khi đứng trong kinh đô"]
       - ["/tpr [khu] · /rtp", "Bang Hội Chiến: dịch chuyển ngẫu nhiên tới đất hoang (không menu thì mở menu chọn khu; NPC dân làng ở spawn cũng mở menu này). Khu: taybac, lao, trungbo, nambo, thailan, myanmar, namtq, ngaunhien"]
     admin:
       - ["/rank give <tên> <bậc> <tháng>", "Cấp rank donate (gia hạn cộng dồn)"]

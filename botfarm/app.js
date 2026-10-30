@@ -513,7 +513,13 @@ function autoTpa(name, from) {
   }, 4000 + Math.random() * 21000);
 }
 // Lời thoại: talks.js. 28/10 chủ server: tầm 5 tiếng mới lặp lại một đoạn → nhớ đoạn đã nói (chat-used.json), chỗ trống {CA} {VUNG}… điền ngẫu nhiên
-const { TALKS, SOLO, SLOTS } = require('./talks');
+const { TALKS, SOLO, SLOTS, NHIET } = require('./talks');
+// 30/10: Thân nhiệt đang bật không (hỏi /nhietdo qua RCON mỗi 10 phút; tắt thì báo "tạm tắt") -> đoạn chat NHIET chỉ nói khi bật
+let nhietOn = false;
+async function checkNhiet() {
+  try { const r = await rcon('banghoi-1').cmd('nhietdo'); nhietOn = !!r && !/tạm tắt|chỉ có ở/i.test(r); } catch (e) { nhietOn = false; }
+}
+setTimeout(checkNhiet, 30000); setInterval(checkNhiet, 600000);
 const CHAT_USED = '/state/chat-used.json';
 let chatUsed = {};
 try { chatUsed = JSON.parse(fs.readFileSync(CHAT_USED, 'utf8')); } catch (e) { /* chưa có */ }
@@ -547,7 +553,7 @@ async function chatOnce() {
   const pool = srv ? by[srv].slice() : [];
   if (!pool.length) return 'không có bot nào online';
   for (let k = pool.length - 1; k > 0; k--) { const j = Math.floor(Math.random() * (k + 1)); [pool[k], pool[j]] = [pool[j], pool[k]]; }
-  const fit = TALKS.filter(t => new Set(t.map(l => l[0])).size <= pool.length);
+  const fit = (nhietOn ? TALKS.concat(NHIET) : TALKS).filter(t => new Set(t.map(l => l[0])).size <= pool.length);
   const talk = fillSlots(pool.length >= 2 && Math.random() < 0.85 && fit.length ? pickFresh(fit, talkKey) : ['A:' + pickFresh(SOLO, x => 'solo|' + x)]);
   const who = { A: pool[0], B: pool[1], C: pool[2] };
   chatBusy = true;

@@ -11,7 +11,7 @@ const TALKS = [
   ['A:chán quá', 'B:đi câu cá đi', 'A:ừ cũng được'],
   ['A:hello ae', 'B:hi', 'C:chào'],
   ['A:t afk tí nhé', 'B:ok'],
-  ['A:có ai lên được cấp 5 chưa', 'B:t mới cấp 2 :v', 'A:t cũng thế, cày giờ lâu vãi'],
+  ['A:ae cấp mấy rồi', 'B:nhìn tab là thấy mà :v', 'A:à ừ quên'],   // 30/10: bỏ câu khoe cấp cụ thể (TAB hiện cấp thật của bot)
   ['A:{B} ơi nhà xây xong chưa', 'B:chưa, thiếu đá', 'A:đá thì đầy ngoài kia mà'],
   ['A:công thành là gì thế ae', 'B:bang này đánh chiếm thị trấn bang kia ấy', 'A:nghe căng nhỉ'],
   ['A:vừa chết vì creeper :(', 'B:haha', 'C:mất đồ không'],
@@ -48,19 +48,6 @@ const TALKS = [
   ['A:skill nghề xem ở đâu', 'B:/skills', 'A:thanks'],
   ['A:lên cấp /capdo được điểm thuộc tính đấy', 'B:cộng vào máu hay sức mạnh', 'A:t cộng máu cho trâu'],
   // 28/10: thêm cho 5 tiếng không lặp. {CA} {QUANG} {VUNG} {SO} {MON} {GIO}: điền ngẫu nhiên, cùng một đoạn thì cùng giá trị
-  // thời tiết, thân nhiệt
-  ['A:rét vãi ae', 'B:đang rét đậm mà, vào nhà ngồi cạnh lửa trại đi', 'A:ướt hết người rồi :('],
-  ['A:sao màn hình t đóng băng thế này', 'B:lạnh quá đấy, gõ /nhietdo xem', 'A:ồ thân nhiệt có {SO} độ'],
-  ['A:đá ôn linh làm kiểu gì ae', 'B:4 đá 4 đá lửa 1 sắt, xếp đâu cũng được', 'C:hơ cạnh lửa cho nóng rồi bỏ túi', 'A:hay đấy'],
-  ['A:ra ngoài mưa ướt sũng luôn', 'B:cầm ô lá đi', 'A:ô lá ở đâu ra', 'B:3 lá cây 2 que chế ra'],
-  ['A:đêm nay lạnh thật', 'B:ăn bát súp cho ấm', 'C:súp nấm là ngon nhất :v'],
-  ['A:mùa khô nóng muốn xỉu', 'B:đứng bóng râm hoặc ăn dưa hấu', 'A:dưa hấu hết rồi huhu'],
-  ['A:đá ôn linh của t nguội mất rồi', 'B:hơ lại cạnh lửa ấy, tầm 2 phút', 'A:ok'],
-  ['A:ae có biết đứng cạnh dung nham cũng ấm không', 'B:biết, nhưng cẩn thận rơi vào thì toang', 'C:kkk'],
-  ['A:lên vùng tuyết mà không mang đá ôn linh là xác định', 'B:t mặc nguyên bộ giáp da cũng đỡ'],
-  ['A:sắp nắng nóng rồi đấy ae', 'B:sao biết', 'A:/mua xem lịch đợt ấy'],
-  ['A:đi {VUNG} mà mưa suốt', 'B:mùa mưa mà', 'A:mưa xong lạnh run luôn'],
-  ['A:đợt rét này lúa mì lớn có nhanh không ae', 'B:mùa mưa lúa vẫn nhanh mà', 'A:vậy trồng thêm'],
   // câu cá, nấu ăn
   ['A:vừa câu được {CA}', 'B:to không', 'A:tầm {SO}0 phân', 'B:ngon'],
   ['A:câu cả buổi chỉ toàn cá thường', 'B:gắn mồi vào cần /emf applybaits ấy', 'A:để thử'],
@@ -125,11 +112,11 @@ const TALKS = [
   ['A:đủ giờ lên cấp rồi mà thiếu xu', 'B:đi bán đồ đi', 'A:ok'],
   ['A:nhiệm vụ hôm nay toàn bắt đi câu cá', 'B:t thì bắt đi đào mỏ', 'A:đổi cho nhau đi :v'],
   ['A:xong hết nhiệm vụ hôm nay rồi', 'B:nhanh thế', 'A:dễ mà'],
-  ['A:danh phận lên hào kiệt rồi ae', 'B:chơi lâu nhỉ', 'A:ngày nào cũng onl mà'],
+  ['A:lên danh phận cần gì ae', 'B:đủ giờ chơi là /danhphan bấm nhận', 'A:ok để xem còn bao lâu'],   // 30/10: bỏ câu khoe danh phận (chat hiện danh phận thật)
   ['A:danh hiệu đổi ở đâu', 'B:/danhhieu', 'A:thanks'],
   // khám phá
   ['A:/tpr đi {VUNG} đẹp phết', 'B:t thì thích Thiên Đảo hơn', 'A:để qua xem'],
-  ['A:ai từng ra Đảo Núi Lửa chưa', 'B:t ra rồi, nóng vãi', 'C:nhớ mang đá ôn linh ướp lạnh'],
+  ['A:ai từng ra Đảo Núi Lửa chưa', 'B:t ra rồi, nóng vãi', 'C:dung nham khắp nơi, cẩn thận'],
   ['A:đi lạc rồi ae', 'B:/spawn về thôi', 'A:ok'],
   ['A:đặc sản vùng là gì thế', 'B:/dacsan, phe nào nhiều thị trấn trong vùng thì được', 'A:thú vị đấy'],
   ['A:lữ khách là ai thế ae', 'B:NPC đi lang thang, kể chuyện cổng hoang', 'C:/lukhach xem'],
@@ -161,9 +148,26 @@ const TALKS = [
 const SOLO = [':v', 'hehe', 'gg', 'đi câu cá thôi', 'vừa đào được ít sắt', 'cày cấp mệt ghê', 'vừa bán được ít cá', 'shop rương tiện thật',
   'lạnh quá', 'mưa mãi', 'ướt hết rồi', 'đói quá', 'vừa câu được {CA}', 'đi ngủ đây', 'xây nhà mệt ghê', 'ai có than không',
   'rét run', 'vừa thấy {SO} con creeper', 'hôm nay hên ghê', 'đen thôi đỏ quên đi', 'lag à', 'ok', 'kkk', 'haha',
-  'vừa lên cấp', 'đi dungeon không ae', 'cần mua {QUANG}', 'ai bán {QUANG} không', 'nắng quá', 'nhớ điểm danh ae ơi',
+  'lên cấp chậm ghê', 'đi dungeon không ae', 'cần mua {QUANG}', 'ai bán {QUANG} không', 'nắng quá', 'nhớ điểm danh ae ơi',
   'ae ơi', 'chào cả nhà', 'quay lại rồi đây', 'chán', 'vừa ra {VUNG}', 'đẹp thật', 'mất đồ rồi :(', 'hên thế',
   'xong nhiệm vụ', 'ai đi câu không', 'hehe giàu rồi', 'nghèo quá', 'đang xây', 'tí quay lại', 'afk tí'];
+// 30/10: đoạn nói về Thân nhiệt (đóng băng, /nhietdo, Đá Ôn Linh, ô lá, đợt rét đậm / nắng nóng): chỉ nói khi Thân nhiệt đang bật
+// (app.js hỏi /nhietdo qua RCON Bang Hội Chiến). Chủ server tạm tắt Thân nhiệt chờ đông member.
+const NHIET = [
+  ['A:rét vãi ae', 'B:đang rét đậm mà, vào nhà ngồi cạnh lửa trại đi', 'A:ướt hết người rồi :('],
+  ['A:sao màn hình t đóng băng thế này', 'B:lạnh quá đấy, gõ /nhietdo xem', 'A:ồ thân nhiệt có {SO} độ'],
+  ['A:đá ôn linh làm kiểu gì ae', 'B:4 đá 4 đá lửa 1 sắt, xếp đâu cũng được', 'C:hơ cạnh lửa cho nóng rồi bỏ túi', 'A:hay đấy'],
+  ['A:ra ngoài mưa ướt sũng luôn', 'B:cầm ô lá đi', 'A:ô lá ở đâu ra', 'B:3 lá cây 2 que chế ra'],
+  ['A:đêm nay lạnh thật', 'B:ăn bát súp cho ấm', 'C:súp nấm là ngon nhất :v'],
+  ['A:mùa khô nóng muốn xỉu', 'B:đứng bóng râm hoặc ăn dưa hấu', 'A:dưa hấu hết rồi huhu'],
+  ['A:đá ôn linh của t nguội mất rồi', 'B:hơ lại cạnh lửa ấy, tầm 2 phút', 'A:ok'],
+  ['A:ae có biết đứng cạnh dung nham cũng ấm không', 'B:biết, nhưng cẩn thận rơi vào thì toang', 'C:kkk'],
+  ['A:lên vùng tuyết mà không mang đá ôn linh là xác định', 'B:t mặc nguyên bộ giáp da cũng đỡ'],
+  ['A:sắp nắng nóng rồi đấy ae', 'B:sao biết', 'A:/mua xem lịch đợt ấy'],
+  ['A:đi {VUNG} mà mưa suốt', 'B:mùa mưa mà', 'A:mưa xong lạnh run luôn'],
+  ['A:đợt rét này lúa mì lớn có nhanh không ae', 'B:mùa mưa lúa vẫn nhanh mà', 'A:vậy trồng thêm'],
+  ['A:ai từng ra Đảo Núi Lửa chưa', 'B:t ra rồi, nóng vãi', 'C:nhớ mang đá ôn linh ướp lạnh'],
+];
 // chỗ trống điền ngẫu nhiên
 const SLOTS = {
   CA: ['cá linh', 'cá lóc', 'cá rô phi', 'tôm càng', 'cua đồng', 'cá chình', 'cá bống', 'cá kèo', 'cá cơm', 'mực ống', 'cá mú', 'cá hô'],
@@ -172,4 +176,4 @@ const SLOTS = {
   SO: ['2', '3', '4', '5', '6', '7', '8'],
   MON: ['ít xu', 'vé gì đó', 'cái kiếm', 'mấy viên kim cương', 'đồ trang trí', 'bánh mì :v'],
 };
-module.exports = { TALKS, SOLO, SLOTS };
+module.exports = { TALKS, SOLO, SLOTS, NHIET };

@@ -1925,7 +1925,7 @@ fish-broadcast:
 # 30/10 Tab chỉ hiện tối đa max người (TabLimit.java): chính mình + người thật luôn hiện, bot lấp chỗ còn lại.
 tab-limit:
   enabled: true
-  max: 20
+  max: 24   # 30/10: > 20 người thì game chia 2 cột -> 24 = 2 cột x 12 dòng (gọn, thấp); <= 20 là 1 cột dài
 # 30/10 Ngủ bỏ qua đêm (SleepVote.java): cần percent % người thật (bot không tính) cùng ngủ; báo "Đang ngủ để bỏ qua đêm [x/y]".
 sleep:
   enabled: true

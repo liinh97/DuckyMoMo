@@ -1089,30 +1089,41 @@ function setSilent(n, on) {
     .then(() => { st.silent = on; save(); }).catch(() => {});
 }
 const BYE = ['t off đây ae', 'off nhé ae', 'bye ae', 'out đây', 't thoát tí', 'pp ae', 'off đây, gg', 'thôi t off', 'bye'];
-const BYE_REPLY = ['bye', 'ok bye', 'bb', 'pp', 'bai {A}', 'ok', 'gg', 'bye {A}'];
+const BYE_REPLY = ['bye', 'ok bye', 'bb', 'pp', 'bai {A}', 'ok', 'gg', 'bye {A}', 'pp {A}', 'bai'];
 const HI = ['hi ae', 'chào ae', 'hello ae', 'hi', 'vào rồi', 'alo ae', 'hế lô'];
-const HI_REPLY = ['hi', 'chào {A}', 'hello', 'hi {A}', 'yo'];
+const HI_REPLY = ['hi', 'chào {A}', 'hello', 'hi {A}', 'yo', 'hế lô', 'hi bro', 'chào'];
+/** 31/10 chủ server: "đôi khi phải có vài bot chào nhau chứ không phải chào một mình". Chọn 0–3 bot đáp, nối tiếp cách nhau vài giây:
+ *  bot vừa nói chuyện cùng (recent) được ưu tiên; người đầu đáp với xác suất first, mỗi người sau thêm 40%. Trả số câu đã đáp. */
+async function replyMany(n, recent, lines, first, delayMin, delayMax) {
+  const all = NAMES.filter(x => x !== n && RT[x] && RT[x].bot && !RT[x].leaving && state[x].server === 'banghoi-1');
+  if (!all.length || Math.random() >= first) return 0;
+  const pool = [...recent.filter(x => all.includes(x)).sort(() => Math.random() - 0.5), ...all.filter(x => !recent.includes(x)).sort(() => Math.random() - 0.5)];
+  const used = new Set();
+  let said = 0;
+  for (const o of pool.slice(0, 3)) {
+    if (said > 0 && Math.random() >= 0.4) break;
+    let line = lines[Math.floor(Math.random() * lines.length)];
+    for (let k = 0; k < 4 && used.has(line); k++) line = lines[Math.floor(Math.random() * lines.length)];   // đừng cả đám nói y một câu
+    used.add(line);
+    if (await sayAs(o, line.replace('{A}', n), delayMin + Math.random() * (delayMax - delayMin))) said++;
+  }
+  return said;
+}
 async function sayHi(n, force) {
   const h = vnHour();
   if (!force && ((h >= 1 && h < 7) || Math.random() >= 0.35)) return;   // force: admin bấm Vào tay thì luôn chào (31/10)
   if (!(await sayAs(n, HI[Math.floor(Math.random() * HI.length)], 6000 + Math.random() * 12000))) return;
-  const lt = lastTalk[n], recent = lt && Date.now() - lt.at < 3 * 3600e3 ? lt.with.filter(o => RT[o] && RT[o].bot) : [];
-  const others = recent.length ? recent : NAMES.filter(x => x !== n && RT[x].bot && state[x].server === 'banghoi-1');
-  if (others.length && Math.random() < (recent.length ? 0.6 : 0.3)) {
-    const o = others[Math.floor(Math.random() * others.length)];
-    await sayAs(o, HI_REPLY[Math.floor(Math.random() * HI_REPLY.length)].replace('{A}', n), 3000 + Math.random() * 8000);
-  }
+  const lt = lastTalk[n], recent = lt && Date.now() - lt.at < 3 * 3600e3 ? lt.with : [];
+  await replyMany(n, recent, HI_REPLY, recent.length ? 0.75 : 0.5, 2500, 9000);
 }
 const lastTalk = {};   // bot -> {with: [bot…], at}: ai vừa nói chuyện cùng (chatOnce ghi)
+/** Chào trước khi thoát; trả về sau khi MỌI bot đã đáp xong (rotLeaveNow thoát sau đó, không thoát giữa chừng). */
 async function sayBye(n, force) {
   const b = RT[n].bot, h = vnHour();
-  if (!b || (!force && ((h >= 1 && h < 7) || Math.random() >= 0.45))) return;   // force: admin bấm Thoát tay thì luôn chào
+  if (!b || (!force && ((h >= 1 && h < 7) || Math.random() >= 0.45))) return 0;   // force: admin bấm Thoát tay thì luôn chào
   await sayAs(n, BYE[Math.floor(Math.random() * BYE.length)], 1000);
-  const lt = lastTalk[n], recent = lt && Date.now() - lt.at < 45 * 60000 ? lt.with.filter(o => RT[o] && RT[o].bot) : [];
-  let o = null;
-  if (recent.length && Math.random() < 0.75) o = recent[Math.floor(Math.random() * recent.length)];
-  else if (Math.random() < 0.3) { const others = NAMES.filter(x => x !== n && RT[x].bot && state[x].server === 'banghoi-1'); if (others.length) o = others[Math.floor(Math.random() * others.length)]; }
-  if (o) await sayAs(o, BYE_REPLY[Math.floor(Math.random() * BYE_REPLY.length)].replace('{A}', n), 2500 + Math.random() * 6000);
+  const lt = lastTalk[n], recent = lt && Date.now() - lt.at < 45 * 60000 ? lt.with : [];
+  return await replyMany(n, recent, BYE_REPLY, recent.length ? 0.8 : 0.45, 2500, 8000);
 }
 async function rotLeaveNow(n, why, silent, force) {
   if (RT[n].leaving) return;
@@ -1122,7 +1133,8 @@ async function rotLeaveNow(n, why, silent, force) {
   try {
     if (!silent) {
       await setSilent(n, false);
-      await sayBye(n, force).catch(() => {});
+      const rep = await sayBye(n, force).catch(() => 0);
+      if (rep) await sleep(3000 + Math.random() * 7000);   // có người đáp: nán lại đọc một lúc rồi mới thoát
     }
     await sleep(4000 + Math.random() * 9000);
     st.want = false; st.offSince = Date.now(); delete st.sessionEnd; save();

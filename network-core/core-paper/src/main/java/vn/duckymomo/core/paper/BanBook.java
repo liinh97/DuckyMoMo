@@ -374,6 +374,12 @@ final class BanBook implements Listener {
             meta.setUseCooldown(uc);
             changed = true;
         }
+        // 30/10: hình riêng đổi trong thư viện (vd Tinh Luyện sang mẫu rèn) -> đồ đang có trong túi đổi theo
+        NamespacedKey model = id == null ? null : ItemLibrary.modelOf(id);
+        if (model != null && !model.equals(meta.hasItemModel() ? meta.getItemModel() : null)) {
+            meta.setItemModel(model);
+            changed = true;
+        }
         if (changed) {
             it.setItemMeta(meta);
         }

@@ -96,7 +96,11 @@ final class ItemLibrary {
     private long cacheStamp = -1;
     private int version;
 
+    /** Bản đang chạy (BanBook dùng đồng bộ hình riêng của đồ trong túi khi thư viện đổi). */
+    static ItemLibrary INSTANCE;
+
     ItemLibrary(JavaPlugin plugin) {
+        INSTANCE = this;
         this.plugin = plugin;
         this.file = new File(plugin.getDataFolder(), "thuvien-do.yml");
         this.ce = new CeBridge(plugin.getLogger());
@@ -130,6 +134,14 @@ final class ItemLibrary {
     }
 
     /** Mục của một món (null nếu không có). Đừng sửa: dùng chung bản đã đọc. */
+    /** 30/10: hình riêng (model) của món theo thư viện; null = không đặt. */
+    static NamespacedKey modelOf(String id) {
+        ItemLibrary l = INSTANCE;
+        ConfigurationSection s = l == null || id == null ? null : l.section(id);
+        String m = s == null ? "" : s.getString("model", "");
+        return m == null || m.isBlank() ? null : NamespacedKey.fromString(m.toLowerCase(Locale.ROOT));
+    }
+
     ConfigurationSection section(String id) {
         return id == null ? null : load().getConfigurationSection("items." + id);
     }

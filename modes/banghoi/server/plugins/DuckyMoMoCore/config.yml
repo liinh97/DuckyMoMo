@@ -1858,6 +1858,11 @@ resource-pack:
 # Menu chính cho người chơi (20/10): /menu hoặc Shift + F. Mỗi nút: slot (0..rows*9-1), icon, name, lore, và MỘT trong:
 #   cmd (chạy lệnh thay người chơi, không cần /), suggest (điền sẵn vào ô chat), proxy (lệnh của proxy: tuskin, skin), server (chuyển server).
 # Sảnh không có menu này (ở sảnh /menu = chọn chế độ). Không dùng mã chữ đậm: font tiếng Việt bị nhòe.
+# 30/10 Báo cả server khi câu được cá hiếm (FishBroadcast.java, nghe EvenMoreFish). rarities = mã độ hiếm EvenMoreFish;
+# độ hiếm nào ở đây thì tắt broadcast.enabled của nó trong plugins/EvenMoreFish/rarities/ để không báo 2 lần.
+fish-broadcast:
+  enabled: true
+  rarities: [Epic, Legendary]
 # 30/10 Ngủ bỏ qua đêm (SleepVote.java): cần percent % người thật (bot không tính) cùng ngủ; báo "Đang ngủ để bỏ qua đêm [x/y]".
 sleep:
   enabled: true

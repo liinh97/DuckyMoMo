@@ -769,6 +769,15 @@ public final class DuckyMoMoCore extends JavaPlugin {
             sleepVote.start();
         }
         getServer().getPluginManager().registerEvents(new ScreenNotify(this), this);
+        // Báo cá hiếm toàn server (fish-broadcast, 30/10): EvenMoreFish bật muộn hơn nên gắn sau 1 tick
+        if (getConfig().getBoolean("fish-broadcast.enabled")) {
+            FishBroadcast fb = new FishBroadcast(this, getConfig().getStringList("fish-broadcast.rarities"));
+            getServer().getScheduler().runTask(this, () -> {
+                if (!fb.hook()) {
+                    getLogger().info("Báo cá hiếm: chưa có EvenMoreFish");
+                }
+            });
+        }
         bangTranh = new BangTranh(this);
         getServer().getScheduler().runTaskLater(this, () -> {
             int n = bangTranh.restore();

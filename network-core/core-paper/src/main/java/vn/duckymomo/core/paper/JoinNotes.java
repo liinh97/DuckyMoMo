@@ -85,18 +85,24 @@ final class JoinNotes {
         // Bố cục 30/10: vạch · dòng chào · link cộng đồng · các dòng nhắc · vạch
         p.sendMessage(c("&8&m                                                     "));
         p.sendMessage(c(welcome.replace("%name%", p.getName())));
+        // 30/10 chủ server "thông báo hơi ríu rít": link gộp 1 dòng, các dòng nhắc liền nhau, không dòng trống
         if (!links.isEmpty()) {
-            p.sendMessage(Component.empty());
+            Component line = c(" ");
+            boolean first = true;
             for (String[] l : links) {
-                Component line = c(" &8▪ &7" + l[0] + " &8» &f" + l[1]);
-                if (!l[2].isBlank()) {
-                    line = line.clickEvent(net.kyori.adventure.text.event.ClickEvent.openUrl(l[2]))
-                            .hoverEvent(net.kyori.adventure.text.event.HoverEvent.showText(c("&7Bấm để mở")));
+                if (!first) {
+                    line = line.append(c(" &8· "));
                 }
-                p.sendMessage(line);
+                first = false;
+                if (l[2].isBlank()) {
+                    line = line.append(c("&7" + l[0].trim() + ": &f" + l[1]));
+                } else {
+                    line = line.append(c("&b[" + l[0].trim() + "]").clickEvent(net.kyori.adventure.text.event.ClickEvent.openUrl(l[2]))
+                            .hoverEvent(net.kyori.adventure.text.event.HoverEvent.showText(c("&f" + l[1] + "\n&7Bấm để mở"))));
+                }
             }
+            p.sendMessage(line);
         }
-        p.sendMessage(Component.empty());
         for (Object[] o : list) {
             p.sendMessage(c(" ").append((Component) o[1]));
         }

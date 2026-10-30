@@ -122,7 +122,7 @@ donate-ranks:
 # Cẩm nang trong game (/huongdan): nội dung plugins/DuckyMoMoCore/huongdan.yml (bản gốc modes/_network/huongdan.yml, chép bằng ./ops/huongdan.sh)
 guide:
   default-chapter: banghoi
-  join-hint: "&6✦ &fGõ &e/huongdan &fđể xem cách chơi Bang Hội Chiến (bấm vào đây)."
+  join-hint: "&6✦ &fCách chơi, các lệnh: &e[/huongdan]"   # 30/10 rút gọn (cả dòng bấm được)
 
 # Đồ / sách phù phép vượt cấp (vd Sắc bén XXX): CHỈ admin tạo bằng /dmm enchant <phù phép> <cấp> (món đang cầm)
 # và /dmm sach <phù phép> <cấp> [người]. Đe: ghép sách vượt cấp vào đồ giữ nguyên cấp. Làm phần thưởng / hàng hiếm

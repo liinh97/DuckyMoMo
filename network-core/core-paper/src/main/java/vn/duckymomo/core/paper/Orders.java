@@ -381,7 +381,8 @@ final class Orders implements Listener {
         }
         if (waiting > 0) {
             int w = waiting;
-            JoinNotes.add(e.getPlayer(), 40, c("&6[Đơn hàng] &fCó &a" + w + " &fmón đã giao chờ bạn nhận: &e/choden don"));
+            JoinNotes.add(e.getPlayer(), 40, c("&6⛃ &fCó &a" + w + " &fmón đơn hàng chờ nhận ").append(c("&e[/choden don]")
+                    .clickEvent(net.kyori.adventure.text.event.ClickEvent.runCommand("/choden don"))));
         }
     }
 

@@ -346,8 +346,8 @@ final class PetCombat implements Listener {
     public void onJoin(PlayerJoinEvent event) {
         Long next = upcoming;
         if (next != null && next > System.currentTimeMillis()) {
-            JoinNotes.add(event.getPlayer(), 20, c("&6⚔ Phiên công thành tới (" + WHEN.format(Instant.ofEpochMilli(next))
-                    + "): " + petText(allowedFor(next)) + "&6."));
+            JoinNotes.add(event.getPlayer(), 20, c("&6⚔ &fCông thành &e" + WHEN.format(Instant.ofEpochMilli(next))
+                    + "&7: " + petText(allowedFor(next))));
         }
     }
 

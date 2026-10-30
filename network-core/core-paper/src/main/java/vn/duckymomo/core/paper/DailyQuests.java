@@ -492,19 +492,6 @@ final class DailyQuests implements Listener {
                 syncTags(p);
             }
         }, 40L);
-        // 30/10: nhắc nhiệm vụ hôm nay còn dở (bấm = /nhiemvu)
-        List<String> qs = todays(p.getUniqueId());
-        int left = 0;
-        for (String qid : qs) {
-            Quest q = pool.get(qid);
-            if (q != null && data.getInt("players." + p.getUniqueId() + ".progress." + qid, 0) < need(q)) {
-                left++;
-            }
-        }
-        if (left > 0) {
-            JoinNotes.add(p, 35, c("&b☰ &fCòn &e" + left + "&f/" + qs.size() + " nhiệm vụ hôm nay chưa xong. ")
-                    .append(c("&a[/nhiemvu]").clickEvent(net.kyori.adventure.text.event.ClickEvent.runCommand("/nhiemvu"))));
-        }
     }
 
     /** Module khác báo người chơi vừa dùng một tính năng (mã trong daily-quests.intro). */

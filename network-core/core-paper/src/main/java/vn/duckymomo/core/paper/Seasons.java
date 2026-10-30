@@ -508,8 +508,10 @@ final class Seasons implements Listener {
             return;
         }
         ConfigurationSection ev = event();
-        JoinNotes.add(e.getPlayer(), 10, c("&6[Mùa] &fĐang là " + name(current()) + (forced() ? "" : " &7(còn " + daysLeft() + " ngày)")
-                + (ev == null ? "" : " &f· " + ev.getString("name", ev.getName())) + "&f. Gõ &e/mua &fđể xem chi tiết."));
+        // 30/10 rút gọn khung chào: một ý, kèm nút lệnh
+        JoinNotes.add(e.getPlayer(), 10, c(name(current()) + (forced() ? "" : " &7(còn " + daysLeft() + " ngày)")
+                + (ev == null ? "" : " &8· &f" + ev.getString("name", ev.getName())) + " ").append(c("&e[/mua]")
+                .clickEvent(net.kyori.adventure.text.event.ClickEvent.runCommand("/mua"))));
     }
 
     /** Tên Việt của cây/nông sản (vd WHEAT -> lúa). */

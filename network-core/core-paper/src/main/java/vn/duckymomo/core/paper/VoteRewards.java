@@ -96,8 +96,8 @@ final class VoteRewards implements Listener {
         if (LocalDate.now(VN).toString().equals(data.getString("players." + p.getUniqueId() + ".last-day", ""))) {
             return;
         }
-        JoinNotes.add(p, 25, c("&e⚡ &fĐừng quên &evote hằng ngày &fđể nhận &e" + VaultEconomy.format(cfg.getDouble("money-per-vote", 100))
-                + "&f/lượt. ").append(c("&a[/vote]").clickEvent(ClickEvent.runCommand("/vote"))
+        JoinNotes.add(p, 25, c("&e⚡ &fChưa vote hôm nay: &a+" + VaultEconomy.format(cfg.getDouble("money-per-vote", 100))
+                + " ").append(c("&e[/vote]").clickEvent(ClickEvent.runCommand("/vote"))
                 .hoverEvent(HoverEvent.showText(c("Bấm để mở link vote")))));
     }
 

@@ -175,7 +175,7 @@ final class DailyCheckin implements Listener {
         }
         if (!today().equals(data.getString("players." + p.getUniqueId() + ".last"))) {
             int mins = cfg.getInt("min-online-minutes", 5);
-            JoinNotes.add(p, 30, c("&e☷ Hôm nay bạn chưa điểm danh. ").append(c("&a&n[Bấm để điểm danh]")
+            JoinNotes.add(p, 30, c("&e☷ &fChưa điểm danh hôm nay ").append(c("&e[/diemdanh]")
                     .clickEvent(ClickEvent.runCommand("/diemdanh"))
                     .hoverEvent(HoverEvent.showText(c("&7/diemdanh" + (mins > 0 ? " (cần online đủ " + mins + " phút)" : ""))))));
         }

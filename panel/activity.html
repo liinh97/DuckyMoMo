@@ -15,6 +15,7 @@
   .chip.on::before { opacity: 1; }
   .chip[data-type="chat"]::before { background: var(--chat); } .chip[data-type="join"]::before { background: var(--join); }
   .chip[data-type="command"]::before { background: var(--command); } .chip[data-type="admin"]::before { background: var(--admin); }
+  #botChip::before { background: #f59e0b; }
   header.keep .sepr { width: 1px; height: 24px; background: var(--line); margin: 0 2px; }
   header.keep select, header.keep input { padding: 6px 10px; font-size: 14px; }
   header.keep input#player { width: 130px; } header.keep input#q { width: 170px; }
@@ -74,6 +75,7 @@
   <button class="chip on" data-type="join">Vào/ra</button>
   <button class="chip on" data-type="command">Lệnh</button>
   <button class="chip on" data-type="admin" title="Tin admin gửi từ trang này">Admin</button>
+  <button class="chip on" id="botChip" title="Hiện / ẩn chat, vào ra, lệnh của bot (trang Bot)">Bot</button>
   <span class="sepr"></span>
   <select id="mode" title="Chế độ"><option value="">Mọi chế độ</option></select>
   <select id="range" title="Khoảng ngày">
@@ -125,8 +127,12 @@ let modeNames = {}, timer = null, firstRender = true;
 const saved = new URLSearchParams(location.hash.slice(1));
 if (saved.has("types")) {
   const t = saved.get("types").split(",");
-  document.querySelectorAll(".chip").forEach((c) => c.classList.toggle("on", t.includes(c.dataset.type)));
+  document.querySelectorAll(".chip[data-type]").forEach((c) => c.classList.toggle("on", t.includes(c.dataset.type)));
 }
+// 30/10: ẩn bot (nhớ trong địa chỉ trang, không có thì theo lần chọn trước trên máy này)
+let botOff = saved.get("bot") === "0";
+if (!saved.has("bot")) { try { botOff = localStorage.getItem("dmm_act_bot") === "0"; } catch (e) {} }
+if (botOff) $("botChip").classList.remove("on");
 $("player").value = saved.get("player") || "";
 $("range").value = saved.get("range") || "today";   // mặc định: hôm nay
 $("from").value = saved.get("from") || "";
@@ -155,7 +161,8 @@ $("q").value = saved.get("q") || "";
 
 function params() {
   const p = new URLSearchParams();
-  p.set("types", [...document.querySelectorAll(".chip.on")].map((c) => c.dataset.type).join(","));
+  p.set("types", [...document.querySelectorAll(".chip.on[data-type]")].map((c) => c.dataset.type).join(","));
+  if (!$("botChip").classList.contains("on")) p.set("bot", "0");
   if ($("mode").value || saved.get("mode")) p.set("mode", $("mode").value || saved.get("mode"));
   if ($("player").value.trim()) p.set("player", $("player").value.trim());
   if ($("q").value.trim()) p.set("q", $("q").value.trim());
@@ -263,6 +270,7 @@ function changed() {
   load();
 }
 document.querySelectorAll(".chip").forEach((c) => c.onclick = () => { c.classList.toggle("on"); changed(); });
+$("botChip").addEventListener("click", () => { try { localStorage.setItem("dmm_act_bot", $("botChip").classList.contains("on") ? "1" : "0"); } catch (e) {} });
 $("mode").onchange = changed;
 $("range").onchange = () => { $("custom").hidden = $("range").value !== "custom"; changed(); };
 $("from").onchange = changed;

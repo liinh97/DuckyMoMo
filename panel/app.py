@@ -1511,7 +1511,7 @@ def nick_map():
 
 
 def read_activity(params):
-    """Sự kiện mới nhất trước. Lọc: types (chat,join,command), mode, player, q (tìm trong nội dung),
+    """Sự kiện mới nhất trước. Lọc: types (chat,join,command), mode, player, q (tìm trong nội dung), bot=0 (ẩn bot),
     from / to (mốc UTC dạng 2026-10-10T17:00:00Z, trình duyệt tự đổi ngày giờ Việt Nam sang), limit."""
     types = set(filter(None, params.get("types", "").split(","))) or {"chat", "join", "command", "admin"}
     mode = params.get("mode", "")
@@ -1557,8 +1557,11 @@ def read_activity(params):
     events.sort(key=lambda e: e.get("ts", ""))
     mark_switches(events)
     out = []
+    hide_bots = bot_names() if params.get("bot") == "0" else set()   # 30/10: ẩn chat / vào ra / lệnh của bot trang Bot
     for e in reversed(events):
         if e.get("type") not in types or (mode and e["mode"] != mode):
+            continue
+        if hide_bots and e.get("player", "").lower() in hide_bots:
             continue
         ts = e.get("ts", "")
         if (ts_from and ts < ts_from) or (ts_to and ts >= ts_to):
@@ -1626,8 +1629,8 @@ DEVICE_FILE = DATA_DIR / "proxy" / "plugins" / "duckymomoskin" / "thietbi.json"
 _bot_names = {"at": 0.0, "names": set()}
 
 
-def devices_for(names):
-    """Thiết bị của người chơi (plugin proxy ghi thietbi.json): {tên: "PC" | "BE·Android" | "Bot"}; bot của trang Bot ghi "Bot"."""
+def bot_names():
+    """Tên bot của trang Bot (chữ thường), hỏi botfarm tối đa 1 lần / phút."""
     import time as _t
     if _t.time() - _bot_names["at"] > 60:
         _bot_names["at"] = _t.time()
@@ -1635,6 +1638,12 @@ def devices_for(names):
             _bot_names["names"] = {b["name"].lower() for b in bot_json().get("bots", [])}
         except Exception:
             pass
+    return _bot_names["names"]
+
+
+def devices_for(names):
+    """Thiết bị của người chơi (plugin proxy ghi thietbi.json): {tên: "PC" | "BE·Android" | "Bot"}; bot của trang Bot ghi "Bot"."""
+    bot_names()
     try:
         data = json.loads(DEVICE_FILE.read_text(encoding="utf-8")) if DEVICE_FILE.exists() else {}
     except (OSError, ValueError):

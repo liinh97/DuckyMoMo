@@ -795,6 +795,15 @@ public final class DuckyMoMoCore extends JavaPlugin {
             sleepVote.start();
         }
         getServer().getPluginManager().registerEvents(new ScreenNotify(this), this);
+        if (tabLimit != null) {
+            tabLimit.stop();
+            tabLimit = null;
+        }
+        if (getConfig().getBoolean("tab-limit.enabled")) {
+            tabLimit = new TabLimit(this, getConfig().getInt("tab-limit.max", 20));
+            getServer().getPluginManager().registerEvents(tabLimit, this);
+            tabLimit.start();
+        }
         // Menu hiệu ứng hạt tiếng Việt (30/10): /pp, /pp gui mở menu chia nhóm vết chân / vòng đầu / quanh thân / cánh / hành động
         if (getServer().getPluginManager().isPluginEnabled("PlayerParticles")) {
             getServer().getPluginManager().registerEvents(new ParticleMenu(this), this);
@@ -1474,6 +1483,8 @@ public final class DuckyMoMoCore extends JavaPlugin {
     private BangTranh bangTranh;
     /** NPC chọn chế độ ở sảnh (/dmm npcsanh, 30/10); null nếu không phải sảnh / tắt. */
     private LobbyNpcs lobbyNpcs;
+    /** Tab chỉ hiện ~20 người (tab-limit, 30/10); null nếu tắt. */
+    private TabLimit tabLimit;
     /** Đố vui trong chat (chat-games, 30/10); null nếu tắt. */
     private ChatGames chatGames;
     /** Ngủ bỏ qua đêm (sleep, 30/10); null nếu tắt. */

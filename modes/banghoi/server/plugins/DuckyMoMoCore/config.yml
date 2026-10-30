@@ -1922,6 +1922,10 @@ te-boss:
 fish-broadcast:
   enabled: true
   rarities: [Epic, Legendary]
+# 30/10 Tab chỉ hiện tối đa max người (TabLimit.java): chính mình + người thật luôn hiện, bot lấp chỗ còn lại.
+tab-limit:
+  enabled: true
+  max: 20
 # 30/10 Ngủ bỏ qua đêm (SleepVote.java): cần percent % người thật (bot không tính) cùng ngủ; báo "Đang ngủ để bỏ qua đêm [x/y]".
 sleep:
   enabled: true

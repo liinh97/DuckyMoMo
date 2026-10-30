@@ -147,7 +147,8 @@ final class ThoRen implements Listener {
         if (best == null) {
             return null;
         }
-        return best.name() + " +" + bv[1] + (bv[0] < 4 ? " (" + bv[0] + "/4)" : "");
+        // 30/10 chủ server: bỏ "(1/4)" (người khác tưởng chỉ mặc 1 món trong khi các món còn lại là set khác)
+        return best.name() + " +" + bv[1];
     }
 
     /** Bậc sức mạnh của set (tho-ren.sets.<id>.bac, 1 = yếu nhất), dùng chọn set hiện trên đầu khi ẩn giáp. */

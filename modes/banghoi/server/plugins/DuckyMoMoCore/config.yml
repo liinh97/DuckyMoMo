@@ -2063,6 +2063,7 @@ player-menu:
         - {icon: OAK_HANGING_SIGN, name: "&d✎ &fDanh hiệu", sub: "/danhhieu", lore: ["Chữ nhỏ hiện cạnh tên"], gom: ["Mở khoá bằng thành tích hoặc mua ở cửa hàng"], bam: "Bấm để chọn danh hiệu", cmd: danhhieu}
         - {icon: CHEST_MINECART, name: "&6▣ &fBalo", sub: "/balo", lore: ["Túi đồ thêm, mở ở đâu cũng được"], gom: ["Số balo và số ô theo danh phận"], bam: "Bấm để mở balo", cmd: balo}
         - {icon: LEATHER_CHESTPLATE, name: "&d☺ &fTủ skin", sub: "/tuskin", lore: ["Lưu nhiều skin, đổi trong 1 bấm"], gom: ["Thêm bằng tên bản quyền hoặc ảnh trên web"], bam: "Bấm để mở tủ", proxy: tuskin}
+        - {icon: BLAZE_POWDER, name: "&d✦ &fHiệu ứng hạt", sub: "/pp", lore: ["Hạt trang trí quanh người"], gom: ["Vết chân, vòng đầu, quanh thân", "Cánh, theo hành động"], bam: "Bấm để chọn hiệu ứng", cmd: pp}
         - {icon: CHAINMAIL_CHESTPLATE, name: "&7◈ &fẨn giáp", sub: "/angiap", lore: ["Ẩn giáp, vẫn thấy skin"], gom: ["Giáp vẫn bảo vệ như thường"], bam: "Bấm để bật / tắt", cmd: angiap}
         - {icon: COMPARATOR, name: "&7⚙ &fCài đặt cá nhân", sub: "/caidat", lore: ["Bật / tắt các tính năng cá nhân"], gom: ["Chat, tin nhắn riêng, nhận TPA", "Bảng bên phải, font chữ…"], bam: "Bấm để chỉnh", cmd: caidat}
         - {icon: RED_SHULKER_BOX, name: "&c❤ &fGói quà", sub: "/goiqua", lore: ["Quà tân thủ & nhu yếu phẩm", "Nhận đồ theo bậc và quà định kỳ"], gom: ["Gói lương thực: 32 bánh mì, mỗi 1 tiếng", "Gói theo danh phận: mỗi 3 ngày"], bam: "Bấm để mở gói quà", cmd: goiqua}

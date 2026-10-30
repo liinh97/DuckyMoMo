@@ -781,6 +781,10 @@ public final class DuckyMoMoCore extends JavaPlugin {
             sleepVote.start();
         }
         getServer().getPluginManager().registerEvents(new ScreenNotify(this), this);
+        // Menu hiệu ứng hạt tiếng Việt (30/10): /pp, /pp gui mở menu chia nhóm vết chân / vòng đầu / quanh thân / cánh / hành động
+        if (getServer().getPluginManager().isPluginEnabled("PlayerParticles")) {
+            getServer().getPluginManager().registerEvents(new ParticleMenu(this), this);
+        }
         // Báo cá hiếm toàn server (fish-broadcast, 30/10): EvenMoreFish bật muộn hơn nên gắn sau 1 tick
         if (getConfig().getBoolean("fish-broadcast.enabled")) {
             FishBroadcast fb = new FishBroadcast(this, getConfig().getStringList("fish-broadcast.rarities"));

@@ -31,6 +31,16 @@ final class ArmorHidePackets extends PacketListenerAbstract {
     static final Set<Integer> HIDDEN = ConcurrentHashMap.newKeySet();
     /** entity id của người đang ẩn với cả chính mình (không tính creative/spectator: creative túi đồ do máy người chơi quyết, ô trông trống mà bấm là mất giáp thật) */
     static final Set<Integer> SELF = ConcurrentHashMap.newKeySet();
+    /** 30/10 chủ server: món giáp sắp hỏng thì KHÔNG ẩn (để biết mà sửa). entity id -> bit ô giáp được hiện (1 mũ, 2 áo, 4 quần, 8 giày). */
+    static final java.util.Map<Integer, Integer> SHOW = new ConcurrentHashMap<>();
+
+    private static boolean shown(int id, int bit) {
+        return (SHOW.getOrDefault(id, 0) & bit) != 0;
+    }
+
+    private static int bit(EquipmentSlot s) {
+        return s == EquipmentSlot.HELMET ? 1 : s == EquipmentSlot.CHEST_PLATE ? 2 : s == EquipmentSlot.LEGGINGS ? 4 : 8;
+    }
 
     private ArmorHidePackets() {
         super(PacketListenerPriority.HIGH);
@@ -72,7 +82,7 @@ final class ArmorHidePackets extends PacketListenerAbstract {
             boolean changed = false;
             for (int i = 0; i < l.size(); i++) {
                 Equipment q = l.get(i);
-                if (armor(q.getSlot()) && !q.getItem().isEmpty()) {
+                if (armor(q.getSlot()) && !q.getItem().isEmpty() && !shown(id, bit(q.getSlot()))) {
                     l.set(i, new Equipment(q.getSlot(), ItemStack.EMPTY));
                     changed = true;
                 }
@@ -88,7 +98,7 @@ final class ArmorHidePackets extends PacketListenerAbstract {
         }
         if (type == PacketType.Play.Server.SET_SLOT) {
             WrapperPlayServerSetSlot w = new WrapperPlayServerSetSlot(e);
-            if (w.getWindowId() == 0 && w.getSlot() >= 5 && w.getSlot() <= 8 && !w.getItem().isEmpty()) {
+            if (w.getWindowId() == 0 && w.getSlot() >= 5 && w.getSlot() <= 8 && !w.getItem().isEmpty() && !shown(me, 1 << (w.getSlot() - 5))) {
                 w.setItem(ItemStack.EMPTY);
                 e.markForReEncode(true);
             }
@@ -98,14 +108,16 @@ final class ArmorHidePackets extends PacketListenerAbstract {
             if (w.getWindowId() == 0 && items.size() > 8) {
                 List<ItemStack> l = new ArrayList<>(items);
                 for (int i = 5; i <= 8; i++) {
-                    l.set(i, ItemStack.EMPTY);
+                    if (!shown(me, 1 << (i - 5))) {   // ô 5 mũ, 6 áo, 7 quần, 8 giày
+                        l.set(i, ItemStack.EMPTY);
+                    }
                 }
                 w.setItems(l);
                 e.markForReEncode(true);
             }
         } else {
             WrapperPlayServerSetPlayerInventory w = new WrapperPlayServerSetPlayerInventory(e);
-            if (w.getSlot() >= 36 && w.getSlot() <= 39 && !w.getStack().isEmpty()) {
+            if (w.getSlot() >= 36 && w.getSlot() <= 39 && !w.getStack().isEmpty() && !shown(me, 1 << (39 - w.getSlot()))) {   // 36 giày … 39 mũ
                 w.setStack(ItemStack.EMPTY);
                 e.markForReEncode(true);
             }

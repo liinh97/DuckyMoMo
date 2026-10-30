@@ -2768,6 +2768,7 @@ town-fly:
 armor-hide:
   enabled: true
   combat-seconds: 15
+  warn-percent: 10     # 30/10: món giáp còn ≤ 10% độ bền thì KHÔNG ẩn (ẩn thì trong túi đồ không thấy để sửa); 0 = tắt
 
 # Luật chết (30/10, chủ server chốt; class DeathRules). Theo thứ tự: chơi chưa đủ newbie-hours giờ -> giữ hết; trong trận công thành đang
 # diễn ra -> giữ hết; trong thị trấn của mình / Kinh Đô (capital-town) -> giữ hết; còn lại (quái, môi trường, bị người giết) -> rơi hết túi

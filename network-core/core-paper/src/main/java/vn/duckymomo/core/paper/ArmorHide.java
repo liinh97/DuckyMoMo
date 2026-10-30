@@ -56,11 +56,13 @@ final class ArmorHide implements Listener {
     private final Set<UUID> hiddenNow = new HashSet<>();      // đang gửi giáp giả (để biết khi nào phải trả giáp thật)
     private final Map<UUID, Long> lastFight = new HashMap<>();
     private final boolean packets;                            // có PacketEvents: ẩn bằng sửa gói tin (không chớp)
+    private final int warnPct;                                // món còn ≤ % độ bền thì không ẩn (armor-hide.warn-percent)
 
     ArmorHide(JavaPlugin plugin, ConfigurationSection cfg, PeaceAlliance peace) {
         this.plugin = plugin;
         this.peace = peace;
         this.combatMillis = Math.max(0, cfg.getInt("combat-seconds", 15)) * 1000L;
+        this.warnPct = Math.max(0, Math.min(100, cfg.getInt("warn-percent", 10)));
         this.file = new File(plugin.getDataFolder(), "angiap.yml");
         for (String s : YamlConfiguration.loadConfiguration(file).getStringList("bat")) {
             try {
@@ -103,11 +105,11 @@ final class ArmorHide implements Listener {
             ArmorHidePackets.SELF.remove(id);
         }
         for (Player v : p.getTrackedBy()) {
-            send(v, p, hide);                                     // qua bộ lọc gói tin nên giáp giả/thật đều đúng
+            send(v, p, false);                                    // gửi giáp thật, bộ lọc gói tin làm trống ô đang ẩn (trừ món sắp hỏng)
         }
         if (self != selfWas) {
             p.updateInventory();                                  // gửi lại cả túi đồ (bộ lọc làm trống ô giáp nếu đang ẩn)
-            send(p, p, self);                                     // hình nhân vật của mình ở góc nhìn thứ 3
+            send(p, p, false);                                    // hình nhân vật của mình ở góc nhìn thứ 3 (bộ lọc lo phần ẩn)
         }
     }
 
@@ -172,11 +174,57 @@ final class ArmorHide implements Listener {
         }
     }
 
+    /** Món giáp còn ≤ warn-percent % độ bền (bỏ qua đồ không mòn). */
+    private boolean worn(ItemStack it) {
+        if (it == null || it.getType().isAir() || !it.hasItemMeta() || !(it.getItemMeta() instanceof org.bukkit.inventory.meta.Damageable d)
+                || it.getItemMeta().isUnbreakable()) {
+            return false;
+        }
+        int max = d.hasMaxDamage() ? d.getMaxDamage() : it.getType().getMaxDurability();
+        return max > 0 && (long) (max - d.getDamage()) * 100 <= (long) max * warnPct;
+    }
+
+    /** 30/10 chủ server: món sắp hỏng không ẩn (ẩn rồi thì trong túi đồ không thấy để sửa). Đổi thì gửi lại + nhắc một lần. */
+    private void updateWorn(Player p, boolean hide) {
+        int id = p.getEntityId();
+        int mask = 0;
+        if (hide && warnPct > 0) {
+            for (int i = 0; i < ARMOR.length; i++) {
+                if (worn(p.getInventory().getItem(ARMOR[i]))) {
+                    mask |= 1 << i;   // 1 mũ, 2 áo, 4 quần, 8 giày (khớp ArmorHidePackets)
+                }
+            }
+        }
+        int old = ArmorHidePackets.SHOW.getOrDefault(id, 0);
+        if (mask == old) {
+            return;
+        }
+        if (mask == 0) {
+            ArmorHidePackets.SHOW.remove(id);
+        } else {
+            ArmorHidePackets.SHOW.put(id, mask);
+        }
+        int added = mask & ~old;
+        for (int i = 0; i < ARMOR.length; i++) {
+            if ((added & (1 << i)) != 0) {
+                ItemStack it = p.getInventory().getItem(ARMOR[i]);
+                p.sendMessage(c("&e⚠ ").append(it.effectiveName()).append(c(" &esắp hỏng: đang hiện lại dù bật ẩn giáp để bạn thấy mà sửa"
+                        + " (đe hoặc phù phép Sửa chữa). Sửa xong tự ẩn lại.")));
+            }
+        }
+        for (Player v : p.getTrackedBy()) {
+            send(v, p, false);
+        }
+        send(p, p, false);
+        p.updateInventory();
+    }
+
     private void tick() {
         for (Player p : Bukkit.getOnlinePlayers()) {
             boolean hide = shouldHide(p);
             boolean was = hiddenNow.contains(p.getUniqueId());
             if (packets) {
+                updateWorn(p, hide);
                 if (hide) {
                     hiddenNow.add(p.getUniqueId());
                 } else {
@@ -259,6 +307,7 @@ final class ArmorHide implements Listener {
         if (packets) {
             ArmorHidePackets.HIDDEN.remove(e.getPlayer().getEntityId());
             ArmorHidePackets.SELF.remove(e.getPlayer().getEntityId());
+            ArmorHidePackets.SHOW.remove(e.getPlayer().getEntityId());
         }
         hiddenNow.remove(e.getPlayer().getUniqueId());
         lastFight.remove(e.getPlayer().getUniqueId());

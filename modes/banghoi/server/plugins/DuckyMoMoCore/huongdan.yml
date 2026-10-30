@@ -1186,6 +1186,7 @@ chapters:
     &0Ẩn ở mọi nơi, kể cả đất hoang, lúc đánh nhau.
     &4Chỉ khi công thành&0 (giờ đánh, trong vùng vây) giáp mới hiện.
     &0Đang ẩn thì dưới tên hiện &bset đồ&0 bạn mặc (vd &b⛨ Tân Thủ +7&0).
+    &0Món giáp &csắp hỏng&0 (còn ≤ 10% độ bền) tự hiện lại để bạn thấy mà sửa, sửa xong tự ẩn.
   - |-
     &6THÂN NHIỆT (THỜI TIẾT)
     &1/nhietdo&0: xem thân nhiệt và vì sao lạnh / nóng.

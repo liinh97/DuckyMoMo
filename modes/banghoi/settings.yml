@@ -194,14 +194,11 @@ tab_sb_lines:
   - '&7(12+)'
 tab_header:
   - '&r'
-  - <#FFC23D>✦ DUCKYMOMO ✦</#FF6A00>
-  - '&7Chào &f%player%&7! Mùa 1: &aĐại Lục Sương Mai'
+  - <#FFC23D>DUCKYMOMO</#FF6A00> &7· &fChào &e%player%&f!
   - '&r'
 tab_footer:
   - '&r'
-  - '&7☺ Online &f%online% &7· &7⚡ Ping %condition:pingmau%'
-  - '&e/huongdan &7· &e/warp &7· &e/choden &7· &e/jobs &7· &e/rank'
-  - '&7⚔ Công thành: tối T7, CN 20:00 & 21:00'
+  - '&a☻ &f%online% &7│ &a≋ %condition:pingmau% &7│ &e⚡ &f%tps%'
   - '&r'
 grim_simulation:
   - 100:40 [alert]

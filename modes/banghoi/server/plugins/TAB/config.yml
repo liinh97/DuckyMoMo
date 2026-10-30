@@ -5,15 +5,11 @@ header-footer:
     default:
       header:
         - '&r'
-        - <#FFC23D>✦ DUCKYMOMO ✦</#FF6A00>
-        - '&6⚔ &eDuckyMoMo &6⚔'
-        - '&7Chào &f%player%&7! Mùa 1: &aĐại Lục Sương Mai'
+        - '<#FFC23D>DUCKYMOMO</#FF6A00> &7· &fChào &e%player%&f!'
         - '&r'
       footer:
         - '&r'
-        - '&7☺ Online &f%online% &7· &7⚡ Ping %condition:pingmau%'
-        - '&e/huongdan &7· &e/warp &7· &e/choden &7· &e/jobs &7· &e/rank'
-        - '&7⚔ Công thành: tối T7, CN 20:00 & 21:00'
+        - '&a☻ &f%online% &7│ &a≋ %condition:pingmau% &7│ &e⚡ &f%tps%'
         - '&r'
 tablist-name-formatting:
   enabled: true
@@ -26,7 +22,7 @@ scoreboard-teams:
   invisible-nametags: false
   # https://github.com/NEZNAMY/TAB/wiki/Feature-guide:-Sorting-players-in-tablist
   sorting-types:
-    - "GROUPS:admin,mod,helper,builder,vip,default"
+    - "GROUPS:admin,quanly,mod,helper,builder,media,congtuoc,hautuoc,batuoc,tutuoc,namtuoc,haokiet,luongdan,dan,default"   # 30/10: staff -> rank ủng hộ -> danh phận cao -> thấp
     - "PLACEHOLDER_A_TO_Z:%player%"
   case-sensitive-sorting: true
   can-see-friendly-invisibles: false

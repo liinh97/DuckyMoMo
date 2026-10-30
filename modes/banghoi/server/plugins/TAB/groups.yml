@@ -11,7 +11,7 @@ _DEFAULT_:
   tabprefix: "%luckperms-prefix%&f"
   tagprefix: "%luckperms-prefix%&f"
   customtabname: "%player%"
-  tabsuffix: "%luckperms-suffix% &7[%dmmcap_mau%Cấp %dmmcap_cap%&7]"   # 30/10: giữ kiểu ban đầu; Tab chỉ hiện ~20 người (DuckyMoMoCore tab-limit)
+  tabsuffix: "%luckperms-suffix%"   # 30/10 chủ server (kiểu Tab gọn): [Rank] Tên + danh hiệu đang đeo (hậu tố LuckPerms), không [Cấp N]; Tab tối đa ~20 người
   tagsuffix: "%luckperms-suffix%%dmmgiap_tren%"   # 30/10: ẩn giáp thì hiện tên set sau tên (cả Bedrock thấy, dòng dưới tên Bedrock không có)
 
 per-world:

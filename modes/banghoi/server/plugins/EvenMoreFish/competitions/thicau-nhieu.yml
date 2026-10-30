@@ -1,0 +1,40 @@
+# DuckyMoMo 30/10: thi câu cá buổi tối (thi câu nhiều cá). Lịch cả tuần: T2/T5 nhiều cá nhất, T3/T6 đủ 3 cá Quý, T4 tổng chiều dài,
+# T7/CN cá dài nhất (thicau.yml). Thưởng tối thường thấp hơn cuối tuần. Admin mở tay: /emfa competition start thiCauNhieu 900
+id: thiCauNhieu
+disabled: false
+type: MOST_FISH
+allow-fishing: true
+allow-hunting: false
+duration: 15
+days:
+  Monday:
+    - "20:30"
+  Thursday:
+    - "20:30"
+minimum-players: 2
+broadcast-range: -1
+broadcast-only-rods: true
+show-bossbar: true
+bossbar-colour: GREEN
+bossbar-prefix: '<aqua>Ai câu nhiều cá nhất: '
+required-worlds:
+  - world
+alerts:
+  - "10:00"
+  - "5:00"
+  - "1:00"
+rewards:
+  '1':
+    - MESSAGE:<green>Giải nhất thi câu nhiều cá! +800 xu
+    - MONEY:800
+    - COMMAND:buabatpet give {player} 1
+    - MESSAGE:<aqua>+1 Bùa bắt pet (cầm tay trái khi bắt pet)
+  '2':
+    - MESSAGE:<aqua>Giải nhì thi câu nhiều cá! +400 xu
+    - MONEY:400
+  '3':
+    - MESSAGE:<yellow>Giải ba thi câu nhiều cá! +250 xu
+    - MONEY:250
+  participation:
+    - MESSAGE:<gray>Cảm ơn đã tham gia thi câu! +50 xu
+    - MONEY:50

@@ -8,6 +8,7 @@ panel hỏi lại qua RCON "dmm webma <tên> <mã>". Trang web không nhận m�
 """
 import os
 import json
+import copy
 import re
 import time
 import unicodedata
@@ -29,9 +30,22 @@ def db(database):
                            database=database, charset="utf8mb4", connect_timeout=5)
 
 
+_YAML_CACHE = {}
+
+
 def safe_yaml(path):
+    """Đọc YAML (an toàn). 30/10: nhớ theo (thời điểm sửa, cỡ file): config Bang Hội ~2.500 dòng mất ~0,8 giây mỗi lần đọc,
+    /vang trong game đọc 2-3 lần -> menu ví Vàng chờ ~2 giây. Trả bản sao để nơi gọi sửa không ảnh hưởng bản nhớ."""
     try:
-        return YAML(typ="safe").load(Path(path).read_text(encoding="utf-8")) or {}
+        p = Path(path)
+        st = p.stat()
+        key = str(p)
+        hit = _YAML_CACHE.get(key)
+        if hit and hit[0] == (st.st_mtime_ns, st.st_size):
+            return copy.deepcopy(hit[1])
+        data = YAML(typ="safe").load(p.read_text(encoding="utf-8")) or {}
+        _YAML_CACHE[key] = ((st.st_mtime_ns, st.st_size), data)
+        return copy.deepcopy(data)
     except Exception:
         return {}
 

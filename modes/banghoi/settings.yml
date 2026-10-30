@@ -1466,7 +1466,7 @@ rk_media_orders: 6
 rk_media_tuskin: 6
 rk_media_spin: 20
 rk_media_kit: "media"
-rk_namtuoc_homes: 0
+rk_namtuoc_homes: 2
 rk_namtuoc_balo: 2
 rk_namtuoc_slots: 27
 rk_namtuoc_ah: 0
@@ -1474,7 +1474,7 @@ rk_namtuoc_orders: 0
 rk_namtuoc_tuskin: 3
 rk_namtuoc_spin: 0
 rk_namtuoc_kit: ""
-rk_tutuoc_homes: 0
+rk_tutuoc_homes: 3
 rk_tutuoc_balo: 2
 rk_tutuoc_slots: 36
 rk_tutuoc_ah: 0
@@ -1482,7 +1482,7 @@ rk_tutuoc_orders: 0
 rk_tutuoc_tuskin: 5
 rk_tutuoc_spin: 0
 rk_tutuoc_kit: ""
-rk_batuoc_homes: 0
+rk_batuoc_homes: 4
 rk_batuoc_balo: 3
 rk_batuoc_slots: 36
 rk_batuoc_ah: 0
@@ -1490,7 +1490,7 @@ rk_batuoc_orders: 0
 rk_batuoc_tuskin: 8
 rk_batuoc_spin: 0
 rk_batuoc_kit: ""
-rk_hautuoc_homes: 0
+rk_hautuoc_homes: 5
 rk_hautuoc_balo: 3
 rk_hautuoc_slots: 45
 rk_hautuoc_ah: 0
@@ -1498,7 +1498,7 @@ rk_hautuoc_orders: 0
 rk_hautuoc_tuskin: 12
 rk_hautuoc_spin: 0
 rk_hautuoc_kit: ""
-rk_congtuoc_homes: 0
+rk_congtuoc_homes: 6
 rk_congtuoc_balo: 4
 rk_congtuoc_slots: 54
 rk_congtuoc_ah: 0

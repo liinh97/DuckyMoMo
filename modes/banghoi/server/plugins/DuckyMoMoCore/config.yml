@@ -1799,6 +1799,7 @@ play-ranks:
   # create: true = plugin tạo nhóm + tiền tố (vd Sứ Giả); false = nhóm có sẵn (ủng hộ, staff), chỉ đụng quyền lợi, giữ tiền tố của họ.
   # card: true = hiện thẻ trong /danhphan (info = yêu cầu đăng ký, contact = bấm vào thì hiện). Cấp rank Sứ Giả: /lp user <tên> parent add media
   # Rank ủng hộ (5 tước) có balo từ 22/10 (chủ server chốt): Nam 1 · Tử 2 · Bá 2 · Hầu 3 · Công 4 balo, mỗi balo 9 ô.
+  # 30/10 chủ server: rank ủng hộ có thêm nhà /sethome tăng dần: Nam 2 · Tử 3 · Bá 4 · Hầu 5 · Công 6 (trước 0 = theo danh phận, Tị Nạn chỉ 1).
   other-ranks:
     media:
       create: true
@@ -1819,11 +1820,11 @@ play-ranks:
       kit: media
       tp-delay: 2
       radar: true
-    namtuoc: {homes: 0, balo: 2, balo-slots: 27, ah: 0, orders: 0, tu-skin: 3, spin-faster: 0, kit: "", tp-delay: 3}
-    tutuoc: {homes: 0, balo: 2, balo-slots: 36, ah: 0, orders: 0, tu-skin: 5, spin-faster: 0, kit: "", tp-delay: 3}
-    batuoc: {homes: 0, balo: 3, balo-slots: 36, ah: 0, orders: 0, tu-skin: 8, spin-faster: 0, kit: "", tp-delay: 3}
-    hautuoc: {homes: 0, balo: 3, balo-slots: 45, ah: 0, orders: 0, tu-skin: 12, spin-faster: 0, kit: "", tp-delay: 2}
-    congtuoc: {homes: 0, balo: 4, balo-slots: 54, ah: 0, orders: 0, tu-skin: 20, spin-faster: 0, kit: "", tp-delay: 2}
+    namtuoc: {homes: 2, balo: 2, balo-slots: 27, ah: 0, orders: 0, tu-skin: 3, spin-faster: 0, kit: "", tp-delay: 3}
+    tutuoc: {homes: 3, balo: 2, balo-slots: 36, ah: 0, orders: 0, tu-skin: 5, spin-faster: 0, kit: "", tp-delay: 3}
+    batuoc: {homes: 4, balo: 3, balo-slots: 36, ah: 0, orders: 0, tu-skin: 8, spin-faster: 0, kit: "", tp-delay: 3}
+    hautuoc: {homes: 5, balo: 3, balo-slots: 45, ah: 0, orders: 0, tu-skin: 12, spin-faster: 0, kit: "", tp-delay: 2}
+    congtuoc: {homes: 6, balo: 4, balo-slots: 54, ah: 0, orders: 0, tu-skin: 20, spin-faster: 0, kit: "", tp-delay: 2}
     builder: {homes: 0, balo: 0, balo-slots: 0, ah: 0, orders: 0, tu-skin: 0, spin-faster: 0, kit: "", tp-delay: -1}
     helper: {homes: 0, balo: 0, balo-slots: 0, ah: 0, orders: 0, tu-skin: 0, spin-faster: 0, kit: "", tp-delay: -1, radar: true}
     mod: {homes: 0, balo: 0, balo-slots: 0, ah: 0, orders: 0, tu-skin: 0, spin-faster: 0, kit: "", tp-delay: -1, radar: true}

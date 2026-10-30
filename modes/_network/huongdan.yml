@@ -679,6 +679,28 @@ chapters:
     &1/bantron &0lịch, vụ án.
     &1/bantron toi &0án của bạn.
   - |-
+    &4Khi nào có án?
+    &0Giết dân hoà bình trong đất hoà bình hoặc trong &4100 block&0 quanh đó.
+    &2Không tính:&0 nạn nhân đánh trước (tự vệ 30 giây), đang trong trận công thành, trên Đấu Trường.
+  - |-
+    &4Phạt ngay (mức sàn)
+    &0Tự động bồi thường &6300 xu&0 cho nạn nhân (tái phạm &4gấp đôi&0).
+    &0Cấm vào đất hoà bình và vùng công thành tới khi Hội xử xong.
+    &8Không ai tha được mức sàn.
+  - |-
+    &4Hội phạt thêm
+    &0Phạt nặng: bồi thường tổng &4gấp 3&0.
+    &4Truy nã&0: &43 ngày&0, tên đỏ, ai hạ được nhận tiền thưởng.
+    &0Tù: 45 phút ở nhà tù kinh đô.
+    &0Lưu đày: cấm vào đất hoà bình 14 ngày.
+    &0Cấm công thành: 1 tới 3 tuần.
+  - |-
+    &4Họp Hội thế nào?
+    &0Hội gồm thủ lĩnh 5 quốc gia mạnh nhất và đại diện hoà bình.
+    &0Cần ít nhất &23 ghế&0 có mặt, đứng trong 16 block quanh bàn.
+    &030 phút trước giờ họp không ai dịch chuyển tới gần nơi họp (150 block) được: phải đi đường.
+    &0Mọi phiếu công khai.
+  - |-
     &4Bàn Tròn: lệnh
     &0Thành viên (thủ lĩnh quốc gia mạnh nhất) đứng gần bàn:
     &1/bantron xu <mã> <mức>

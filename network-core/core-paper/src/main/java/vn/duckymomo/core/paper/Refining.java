@@ -333,9 +333,13 @@ final class Refining implements Listener {
             lore.add(Tip.c("&7• &7Bán cho server: &6" + money(d.sell())));
         }
         List<String> kham = Kham.gemInfo(d.id());   // 31/10: nói rõ khảm được gì, phẩm, năng lượng
+        lore.add(Tip.c(Tip.LINE));
         if (!kham.isEmpty()) {
-            lore.add(Tip.c(Tip.LINE));
             kham.forEach(x -> lore.add(Tip.c(x)));
+        } else {   // món không khảm được: nói rõ dùng làm gì
+            lore.add(Tip.c("&7• &7Không khảm được. Dùng để:"));
+            lore.add(Tip.c("  &7▸ &fThợ Rèn lên set, giao đơn Nhà Buôn &7(/warp shop)"));
+            lore.add(Tip.c("  &7▸ &fTrao đổi với người chơi, bán cho server"));
         }
         lore.add(Tip.c(Tip.LINE));
         if (ok) {

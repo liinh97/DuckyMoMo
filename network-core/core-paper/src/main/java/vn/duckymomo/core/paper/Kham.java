@@ -486,14 +486,12 @@ final class Kham implements Listener {
         }
         out.add("  &7▸ &fGiáp: " + k.effect(g, true));
         out.add("  &7▸ &fVũ khí: " + k.effect(g, false));
-        StringBuilder t = new StringBuilder("  &7▸ &fPhẩm ngẫu nhiên: ");
+        out.add("  &7▸ &fPhẩm ngẫu nhiên khi khảm:");   // 31/10: mỗi phẩm một dòng (một dòng thì tràn khỏi màn hình)
         int total = k.tiers.stream().mapToInt(Tier::chance).sum();
-        for (int i = 0; i < k.tiers.size(); i++) {
-            Tier tr = k.tiers.get(i);
-            t.append(i > 0 ? "&7, " : "").append(tr.color()).append(tr.name()).append(" &7")
-                    .append(Math.round(100.0 * tr.chance() / Math.max(1, total))).append("% (").append(tr.min()).append("–").append(tr.max()).append("% chỉ số)");
+        for (Tier tr : k.tiers) {
+            out.add("     " + tr.color() + tr.name() + " &7" + Math.round(100.0 * tr.chance() / Math.max(1, total)) + "% &8· &7"
+                    + tr.min() + "–" + tr.max() + "% chỉ số");
         }
-        out.add(t.toString());
         java.util.LinkedHashSet<String> keys = new java.util.LinkedHashSet<>(g.armor().keySet());
         keys.addAll(g.weapon().keySet());
         List<String> caps = new ArrayList<>();

@@ -208,11 +208,49 @@ async function pickHomeNow(name) {
 
 // ---------------------------------------------------------------- bot
 
+const CHAT_LIB = {};
+/** Thay bộ xử lý player_info của mineflayer: chỉ giữ tên / uuid / ping / listed / chế độ chơi; tên hiển thị lưu thô, đọc tới mới giải mã
+ *  (rankOf dùng); thực thể người chơi mineflayer tự gắn lúc người đó xuất hiện nên bỏ vòng quét mọi thực thể. */
+function lightPlayerInfo(bot) {
+  if (!bot.supportFeature('playerInfoActionIsBitfield')) return;
+  const CM = CHAT_LIB[bot.version] || (CHAT_LIB[bot.version] = require('prismarine-chat')(bot.registry));
+  bot._client.removeAllListeners('player_info');
+  bot._client.on('player_info', packet => {
+    const a = packet.action || {};
+    for (const item of packet.data || []) {
+      let pl = bot._playerFromUUID(item.uuid);
+      if (!pl) {
+        if (!a.add_player || !item.player || !item.player.name) continue;
+        const name = item.player.name;
+        pl = { uuid: item.uuid, username: name, ping: 0, entity: null, _raw: null, _dn: undefined };
+        Object.defineProperty(pl, 'displayName', { enumerable: true, configurable: true,
+          get() { if (pl._dn === undefined) pl._dn = pl._raw ? CM.fromNotch(pl._raw) : new CM({ text: '', extra: [{ text: name }] }); return pl._dn; },
+          set(v) { pl._dn = v; } });
+        bot.players[name] = pl;
+        bot.uuidToUsername[item.uuid] = name;
+        if (name === bot.username) { pl.entity = bot.entity; bot.player = pl; }
+      }
+      if (a.initialize_chat && item.chatSession) pl.chatSession = { publicKey: item.chatSession.publicKey, sessionUuid: item.chatSession.uuid };
+      if (a.update_game_mode) pl.gamemode = item.gamemode;
+      if (a.update_listed) pl.listed = item.listed;
+      if (a.update_latency) pl.ping = item.latency;
+      if (a.update_display_name) { pl._raw = item.displayName || null; pl._dn = undefined; }
+    }
+  });
+}
+
 function make(name, host, i) {
   // keepAlive tự trả lời ngay = ping 0 ms trong Tab, trông giả: tự trả lời sau 45–60 ms (ping ~52 ms như người chơi trong nước)
   // viewDistance tiny (2 chunk): bot đứng yên, không cần thấy xa. Mặc định 'far' (12, server cắt còn 8) thì 22 bot giữ ~6.000 chunk
   // trong RAM, botfarm phình tới 4 GB rồi sập (27/10 22:51, "JavaScript heap out of memory"); server cũng đỡ gửi chunk.
-  const bot = mineflayer.createBot({ host, port: 25565, username: name, version: '1.21.4', auth: 'offline', hideErrors: true, keepAlive: false, viewDistance: 'tiny' });
+  // 30/10: botfarm ~98% CPU (một luồng) -> /bots quá hạn, proxy tạm không cộng bot vào số online. Đo: ~14% gói player_info (mineflayer quét
+  // mọi thực thể + dựng lại tên hiển thị cho từng người, × mỗi bot), ~8% vật lý (bot đứng yên trong phòng ẩn). Sửa: vật lý chỉ bật khi đi / nhảy
+  // (wander, dodgeTeleport), player_info xử lý nhẹ (lightPlayerInfo).
+  const bot = mineflayer.createBot({ host, port: 25565, username: name, version: '1.21.4', auth: 'offline', hideErrors: true, keepAlive: false, viewDistance: 'tiny',
+    physicsEnabled: false });
+  bot.once('login', () => { try { lightPlayerInfo(bot); } catch (e) { log(name, 'không thay được player_info:', e.message); } });
+  // tắt vật lý thì sau mỗi lần bị dịch chuyển mineflayer để "không chạm đất" mãi (không rơi xuống được): bot luôn được đặt lên chỗ có sàn
+  bot._client.on('position', () => setImmediate(() => { if (!bot.physicsEnabled && bot.entity) bot.entity.onGround = true; }));   // sau bộ xử lý của mineflayer (nó đăng ký sau)
   // Trả lời đúng thứ tự nhận: Paper ngắt kết nối khi câu trả lời sai thứ tự ("keepalive response out-of-order" -> "Timed out");
   // 27/10: trễ ngẫu nhiên từng gói làm 2 gói sát nhau đảo thứ tự, bot rớt ~3 lần / phút. Xếp hàng: gói sau chỉ gửi sau gói trước.
   let kaQ = Promise.resolve();
@@ -481,8 +519,10 @@ let ftpaNext = Date.now() + (20 + Math.random() * 40) * 60000;
 function dodgeTeleport(name) {
   const rt = RT[name], b = rt.bot; if (!b) return;
   try {
+    b.physicsEnabled = true;
     b.setControlState('jump', true); b.setControlState('forward', true);
     setTimeout(() => { try { b.setControlState('jump', false); b.setControlState('forward', false); b.chat('/tpacancel'); } catch (e) { /* bỏ qua */ } }, 700);
+    setTimeout(() => { try { if (!RT[name].wander) b.physicsEnabled = false; } catch (e) { /* bỏ qua */ } }, 2500);
   } catch (e) { /* bỏ qua */ }
   log(name, 'né dịch chuyển (người kia đã nhận TPA giả)');
 }
@@ -812,6 +852,7 @@ async function startWander(n, c) {
   const rt = RT[n], b = rt.bot;
   rt.wander = { going: true, hard: Date.now() + wanderCfg.maxDur * 1000, area: c.pt.name };
   rt.placedAt = Date.now();
+  b.physicsEnabled = true;   // đi lại cần vật lý (tắt khi đứng yên trong phòng ẩn)
   b.chat('/' + c.pt.cmd);
   let arrived = false;
   for (let i = 0; i < 12 && !arrived; i++) {   // chờ dịch chuyển xong (có thể có thời gian chờ theo danh phận)
@@ -933,7 +974,7 @@ function stopWander(n) {
   const rt = RT[n], st = state[n];
   const w = rt.wander;
   rt.wander = null;
-  try { if (rt.bot) { if (rt.bot.pathfinder) rt.bot.pathfinder.stop(); rt.bot.clearControlStates(); } } catch (e) { /* bỏ qua */ }
+  try { if (rt.bot) { if (rt.bot.pathfinder) rt.bot.pathfinder.stop(); rt.bot.clearControlStates(); rt.bot.physicsEnabled = false; } } catch (e) { /* bỏ qua */ }
   delete st.at['banghoi-1']; save();
   if (!rt.bot) return;
   rt.placing = true;

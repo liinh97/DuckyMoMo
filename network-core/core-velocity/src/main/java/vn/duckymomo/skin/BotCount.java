@@ -31,6 +31,8 @@ final class BotCount {
     private final HttpClient http = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(3)).build();
     private final URI url = URI.create(System.getenv().getOrDefault("BOTFARM_URL", "http://botfarm:8090") + "/bots");
     private volatile List<String> online = List.of();
+    /** Lần hỏi được gần nhất (30/10: botfarm bận CPU hay quá hạn vài lượt -> số online ngoài danh sách server tụt mất bot, lộ). */
+    private volatile long okAt;
 
     BotCount(Object plugin, ProxyServer proxy, Logger log) {
         this.log = log;
@@ -39,7 +41,7 @@ final class BotCount {
 
     private void poll() {
         try {
-            HttpResponse<String> r = http.send(HttpRequest.newBuilder(url).timeout(Duration.ofSeconds(4)).GET().build(),
+            HttpResponse<String> r = http.send(HttpRequest.newBuilder(url).timeout(Duration.ofSeconds(8)).GET().build(),
                     HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
             List<String> names = new ArrayList<>();
             JsonObject o = JsonParser.parseString(r.body()).getAsJsonObject();
@@ -50,11 +52,13 @@ final class BotCount {
                 }
             }
             online = names;
+            okAt = System.currentTimeMillis();
         } catch (Exception e) {
-            if (!online.isEmpty()) {
-                log.info("Bot: không hỏi được botfarm ({}), tạm không cộng bot vào số người", e.getMessage());
+            // giữ số lần trước tối đa 2 phút (botfarm bận một lúc); lâu hơn mới coi là tắt
+            if (!online.isEmpty() && System.currentTimeMillis() - okAt > 120_000) {
+                log.info("Bot: không hỏi được botfarm hơn 2 phút ({}), tạm không cộng bot vào số người", e.getMessage());
+                online = List.of();
             }
-            online = List.of();
         }
     }
 

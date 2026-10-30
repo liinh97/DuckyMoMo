@@ -336,6 +336,7 @@ groups:
       - ["mua dat <mua|kho|tudong>", "Đổi mùa bằng tay để thử; tudong = theo lịch", Chỉ admin]
       - ["dmm reload", "Nạp lại cấu hình DuckyMoMoCore", Chỉ admin]
       - ["dmm clean", "Dọn đồ rơi trên đất ngay", Chỉ admin]
+      - ["dmm console <lệnh>", "Chạy lệnh dưới quyền console để kết quả ghi vào log (trang Hoạt động dùng cho lệnh LuckPerms trả lời chậm); chỉ RCON / console", Console]
       - ["dmm botah [thu]", "Bot mua đồ /ah: xem hôm nay đã mua bao nhiêu; thu = xét và mua thử ngay", Chỉ admin]
       - ["dmm botgia", "Hệ số hoạt động giả của bot theo giờ chơi người thật đang online (botfarm hỏi qua RCON)", Chỉ admin]
       - ["dmm chetgia <bot> [loai]", "Tin tử vong giả của bot (lava roi duoi chay nghet zombie xuong creeper nhen enderman; botfarm gọi)", Chỉ admin]

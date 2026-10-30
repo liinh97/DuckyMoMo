@@ -1419,6 +1419,16 @@ public final class DuckyMoMoCore extends JavaPlugin {
                     } else {
                         quests.talkCommand(sender, args);
                     }
+                } else if (args.length >= 2 && args[0].equalsIgnoreCase("console")) {
+                    // 31/10: trang Hoạt động chạy lệnh qua RCON; lệnh trả lời chậm (LuckPerms…) gửi kết quả khi RCON đã đóng nên mất.
+                    // Chạy dưới quyền console thì kết quả ghi vào log, panel đọc lại (console_after).
+                    if (!(sender instanceof org.bukkit.command.ConsoleCommandSender || sender instanceof org.bukkit.command.RemoteConsoleCommandSender)) {
+                        sender.sendMessage("Chỉ RCON / console dùng được lệnh này.");   // không cho người trong game leo quyền console
+                        return true;
+                    }
+                    String line = String.join(" ", java.util.Arrays.copyOfRange(args, 1, args.length));
+                    sender.sendMessage("CONSOLE OK");
+                    getServer().getScheduler().runTask(this, () -> getServer().dispatchCommand(getServer().getConsoleSender(), line));
                 } else if (args.length >= 1 && args[0].equalsIgnoreCase("botah")) {
                     if (botAh == null) {
                         sender.sendMessage("Bot mua /ah chưa bật (config bot-ah.enabled, cần zAuctionHouse).");
@@ -1537,7 +1547,7 @@ public final class DuckyMoMoCore extends JavaPlugin {
     /** Đàn tế gọi boss (te-boss, 30/10); null nếu tắt. */
     private TeBoss teBoss;
     /** Lệnh con /dmm chỉ Admin (duckymomo.admin); còn lại Manager dùng được (duckymomo.dmm). */
-    private static final java.util.Set<String> DMM_ADMIN_ONLY = java.util.Set.of("reload", "decorate", "structures", "hang", "thegioi", "spawnmoi", "botgia", "chetgia", "botah");
+    private static final java.util.Set<String> DMM_ADMIN_ONLY = java.util.Set.of("reload", "decorate", "structures", "hang", "thegioi", "spawnmoi", "botgia", "chetgia", "botah", "console");
     /** World spawn riêng (/dmm spawnmoi, 24/10). */
     private SpawnWorld spawnWorld;
     /** Đổi map sang world thường (Đại Lục Sương Mai) (/dmm thegioi, 23/10). */

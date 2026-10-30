@@ -1807,10 +1807,23 @@ def say_command(text, target, full, who):
         cmd, note = fill_world(target, cmd, who)
     except Exception:
         note = ""
+    log = DATA_DIR / target / "logs" / "latest.log"
     try:
-        out = COLOR_RE.sub("", rcon(target, [cmd])[0][1]).strip()
+        log_start = log.stat().st_size
+    except OSError:
+        log_start = None
+    try:
+        out = ""
+        if ASYNC_CMD.match(cmd) and target in CORE_SERVERS:   # lệnh trả lời chậm: chạy dưới quyền console (dmm console) để kết quả vào log
+            r = COLOR_RE.sub("", rcon(target, ["dmm console " + cmd])[0][1])
+            if "CONSOLE OK" not in r:                         # core cũ chưa có dmm console: chạy thẳng như trước
+                out = COLOR_RE.sub("", rcon(target, [cmd])[0][1]).strip()
+        else:
+            out = COLOR_RE.sub("", rcon(target, [cmd])[0][1]).strip()
     except Exception:
         raise ValueError(f"Không chạy được: {SAY_SERVERS[target]} đang tắt")
+    if not out and log_start is not None:
+        out = console_after(log, log_start)   # 31/10: LuckPerms… in kết quả vào console chứ không trả qua RCON
     web_log({"viec": "/api/say", "nguoi": who or PANEL_USER, "hanh_dong": "/" + cmd, "doi_tuong": target, "ok": True})
     from datetime import datetime, timezone
     event = {"ts": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"), "server": target, "type": "admin",
@@ -1821,7 +1834,41 @@ def say_command(text, target, full, who):
             f.write(json.dumps(event, ensure_ascii=False) + "\n")
     except OSError as e:
         print(f"Không ghi được {ADMIN_FILE}: {e}", flush=True)
-    return {"ok": True, "message": f"/{cmd} ({SAY_SERVERS[target]}{', ' + note if note else ''}): " + (out[:600] or "đã chạy, server không trả lời gì")}
+    head = f"/{cmd} ({SAY_SERVERS[target]}{', ' + note if note else ''})"
+    return {"ok": True, "message": head + ": " + (out.splitlines()[0][:300] if out else "đã chạy, server không trả lời gì"),
+            "lenh": head, "ket_qua": out[:8000]}
+
+
+# Lệnh trả kết quả bất đồng bộ (gửi sau khi RCON đã đóng): LuckPerms. Server có DuckyMoMoCore chạy chúng qua /dmm console.
+ASYNC_CMD = re.compile(r"^(luckperms:)?(lp|luckperms|perm|perms|permission|permissions)\b", re.I)
+CORE_SERVERS = {"lobby", "banghoi-1", "practice-1", "sangtao-1"}
+CONSOLE_NOISE = re.compile(r"RCON (Client|Listener)|issued server command|Async Chat Thread|\[Not Secure\]")
+CONSOLE_PREFIX = re.compile(r"^\[\d\d:\d\d:\d\d\] \[[^\]]*/(INFO|WARN|ERROR)\]: ")
+
+
+def console_after(log, start, wait=3.0):
+    """Các dòng console mới sau vị trí start (đợi tối đa wait giây, dừng sớm khi 0,6 giây không có dòng mới); bỏ dòng RCON / chat / lệnh người chơi."""
+    lines, last, t0 = [], time.time(), time.time()
+    pos = start
+    while time.time() - t0 < wait:
+        time.sleep(0.25)
+        try:
+            with log.open("rb") as f:
+                f.seek(pos)
+                chunk = f.read(200_000)
+        except OSError:
+            break
+        if chunk:
+            cut = chunk.rfind(b"\n") + 1
+            if cut:
+                pos += cut
+                for ln in chunk[:cut].decode("utf-8", "replace").splitlines():
+                    if ln.strip() and not CONSOLE_NOISE.search(ln):
+                        lines.append(COLOR_RE.sub("", CONSOLE_PREFIX.sub("", ln)).rstrip())
+                last = time.time()
+        elif lines and time.time() - last > 0.6:
+            break
+    return "\n".join(lines[:150]).strip()
 
 
 # ---------------------------------------------------------------- Bot (dịch vụ botfarm, chỉ trong mạng Docker)

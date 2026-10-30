@@ -63,6 +63,11 @@
   #sayMsg { padding: 0 14px; font-size: 13px; color: var(--muted); background: var(--card-2); }
   #sayMsg:not(:empty) { padding-bottom: 10px; }
   #sayMsg.ok { color: var(--ok); } #sayMsg.err { color: var(--err); }
+  #sayOut { margin: 0 14px 12px; border: 1px solid var(--line, #333); border-radius: 8px; background: var(--card-2); }
+  #sayOut .so-head { display: flex; gap: 8px; align-items: center; padding: 6px 10px; font-size: 12px; color: var(--muted); border-bottom: 1px solid var(--line, #333); }
+  #sayOut .so-head span { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  #sayOut .so-head button { background: none; border: 1px solid var(--line, #444); color: inherit; border-radius: 6px; padding: 1px 8px; cursor: pointer; font-size: 12px; }
+  #sayOutText { margin: 0; padding: 8px 10px; max-height: 320px; overflow: auto; white-space: pre-wrap; word-break: break-word; font-size: 12.5px; line-height: 1.45; }
   @media (max-width: 900px) { #log { height: calc(100vh - 360px); } header.keep { border-radius: 0; } .logcard { border-radius: 0; border-left: 0; border-right: 0; } }
   @media (max-width: 700px) { .line { grid-template-columns: 62px minmax(0, 1fr); } .line .tag { display: none; } .line .where { grid-column: 2; } header.keep input#player, header.keep input#q { width: 130px; } header.keep .sepr { display: none; } }
 </style>
@@ -116,6 +121,7 @@
   <button type="submit" id="sayBtn" class="primary">Gửi vào game</button>
 </form>
 <div id="sayMsg"></div>
+<div id="sayOut" hidden><div class="so-head"><span id="sayOutCmd"></span><button type="button" id="sayOutCopy" title="Chép kết quả">Chép</button><button type="button" id="sayOutClose" title="Đóng">✕</button></div><pre id="sayOutText"></pre></div>
 </div>
 <script>
 const $ = (id) => document.getElementById(id);
@@ -319,8 +325,15 @@ $("say").onsubmit = async (ev) => {
     const r = await fetch("api/say", { method: "POST", headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ text, kind, target, name: $("sayName").value.trim() || "Admin" }) });
     const d = await r.json();
-    $("sayMsg").textContent = d.message || (d.ok ? "Đã gửi" : "Lỗi");
-    $("sayMsg").className = d.ok ? "ok" : "err";
+    if (d.ok && d.lenh) {   // 31/10: lệnh console: hiện kết quả đầy đủ trong khung riêng (giữ xuống dòng, cuộn được)
+      $("sayMsg").textContent = ""; $("sayMsg").className = "";
+      $("sayOutCmd").textContent = d.lenh;
+      $("sayOutText").textContent = d.ket_qua || "(đã chạy, server không trả lời gì)";
+      $("sayOut").hidden = false;
+    } else {
+      $("sayMsg").textContent = d.message || (d.ok ? "Đã gửi" : "Lỗi");
+      $("sayMsg").className = d.ok ? "ok" : "err";
+    }
     if (d.ok) { remember(text); $("sayText").value = ""; $("sayCount").textContent = "0/200"; firstRender = true; load(); }
   } catch (e) {
     $("sayMsg").textContent = "Không gửi được: " + e; $("sayMsg").className = "err";
@@ -328,6 +341,9 @@ $("say").onsubmit = async (ev) => {
   $("sayBtn").disabled = false;
   $("sayText").focus();
 };
+
+$("sayOutClose").onclick = () => { $("sayOut").hidden = true; };
+$("sayOutCopy").onclick = () => { try { navigator.clipboard.writeText($("sayOutText").textContent); $("sayOutCopy").textContent = "Đã chép"; setTimeout(() => { $("sayOutCopy").textContent = "Chép"; }, 1200); } catch (e) {} };
 
 load();
 schedule();

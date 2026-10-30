@@ -750,6 +750,13 @@ public final class DuckyMoMoCore extends JavaPlugin {
         bind("xuong", workshop == null ? null : workshop::command, "Xưởng chế tạo");
 
         // Thợ Rèn /thoren: set đồ trao đổi, nâng cấp theo bậc, hiệu ứng bộ, mòn theo cấp (Bang Hội Chiến: tho-ren.enabled)
+        bangTranh = new BangTranh(this);
+        getServer().getScheduler().runTaskLater(this, () -> {
+            int n = bangTranh.restore();
+            if (n > 0) {
+                getLogger().info("Bảng tranh: gắn lại " + n + " ô bản đồ");
+            }
+        }, 40L);
         thoRen = getConfig().getBoolean("tho-ren.enabled") && getConfig().isConfigurationSection("tho-ren")
                 ? new ThoRen(this, itemLibrary, getConfig().getConfigurationSection("tho-ren")) : null;
         if (thoRen != null) {
@@ -1300,6 +1307,8 @@ public final class DuckyMoMoCore extends JavaPlugin {
                     } else {
                         quests.talkCommand(sender, args);
                     }
+                } else if (args.length >= 1 && args[0].equalsIgnoreCase("bangtranh")) {
+                    bangTranh.command(sender, args);
                 } else if (args.length >= 1 && args[0].equalsIgnoreCase("thorennpc")) {
                     if (thoRen == null) {
                         sender.sendMessage("Thợ Rèn chưa bật trên server này (config: tho-ren.enabled).");
@@ -1365,12 +1374,15 @@ public final class DuckyMoMoCore extends JavaPlugin {
             "§e/dmm clean §7dọn rác ngay   §e/dmm reload §7nạp lại config   §e/dmm lenh §7xuất danh sách lệnh",
             "§e/dmm rtpnpc|shopnpc|donbuonnpc [remove] §7đặt/gỡ NPC   §e/dmm shopkhung lap|xoa|capnhat §7khung shop trên tường   §e/dmm phu add|remove|list §7tài khoản phụ",
             "§e/dmm thorennpc <quầy|remove> §7đặt NPC quầy đổi nguyên liệu / Thợ Rèn ở chỗ đứng",
+            "§e/dmm bangtranh <tên>|xoa <tên>|capnhat §7treo ảnh (plugins/DuckyMoMoCore/bangtranh/<tên>.png) lên tường bằng bản đồ",
             "§e/dmm viecnpc <người> <NPC> §7NPC giao / trả việc dân làng (hội thoại BetonQuest gọi)",
             "§e/dmm hoabinh setup|claim <r> §7Liên minh Hoà Bình   §e/dmm decorate|structures start|pause|status|reset");
     private static final List<String> DMM_SUBS = List.of("enchant", "sach", "laydo", "luudo", "thuvien", "clean", "reload", "lenh",
-            "rtpnpc", "shopnpc", "donbuonnpc", "shopkhung", "thorennpc", "viecnpc", "phu", "hoabinh", "decorate", "structures", "hang", "thegioi", "spawnmoi");
+            "rtpnpc", "shopnpc", "donbuonnpc", "shopkhung", "thorennpc", "bangtranh", "viecnpc", "phu", "hoabinh", "decorate", "structures", "hang", "thegioi", "spawnmoi");
     /** Thợ Rèn (/thoren, NPC quầy /dmm thorennpc); null nếu tắt. */
     private ThoRen thoRen;
+    /** Bảng tranh treo tường bằng bản đồ (/dmm bangtranh, 30/10). */
+    private BangTranh bangTranh;
     /** Lệnh con /dmm chỉ Admin (duckymomo.admin); còn lại Manager dùng được (duckymomo.dmm). */
     private static final java.util.Set<String> DMM_ADMIN_ONLY = java.util.Set.of("reload", "decorate", "structures", "hang", "thegioi", "spawnmoi");
     /** World spawn riêng (/dmm spawnmoi, 24/10). */
@@ -1400,6 +1412,15 @@ public final class DuckyMoMoCore extends JavaPlugin {
                         opts.addAll(sub.equals("enchant") ? List.of("0", "5", "10", "20", "30", "50") : List.of("5", "10", "20", "30", "50"));
                     } else if (a.length == 4 && sub.equals("sach")) {
                         opts.addAll(players.get());
+                    }
+                }
+                case "bangtranh" -> {
+                    if (a.length == 2) {
+                        opts.addAll(bangTranh.names());
+                        opts.add("xoa");
+                        opts.add("capnhat");
+                    } else if (a.length == 3 && a[1].equalsIgnoreCase("xoa")) {
+                        opts.addAll(bangTranh.names());
                     }
                 }
                 case "thorennpc" -> {

@@ -312,9 +312,10 @@ async function connect(name) {
     rt.wander = null;
     rt.placing = true; rt.placedAt = Date.now();   // khỏi bị vòng "bị dời" nhận nhầm chỗ vào game (spawn) làm chỗ đứng
     await sleep(2500);
-    if (!st.silent) {   // vào / ra không báo [+] [-] (DuckyMoMoCore DonateRanks: duckymomo.vaora.an), cấp một lần
-      rcon(host).cmd(`lp user ${name} permission set duckymomo.vaora.an true`).then(() => { st.silent = true; save(); }).catch(() => {});
-    }
+    // vào / ra không báo [+] [-] (DuckyMoMoCore DonateRanks: duckymomo.vaora.an) là MẶC ĐỊNH (dựng lại botfarm, bị đá… không hiện hàng loạt).
+    // 30/10: lượt vào / thoát theo phiên (thay phiên online) thì gỡ quyền trước để hiện tin như người thật; vào xong 30 giây thì im lại.
+    if (!st.silent) setTimeout(() => setSilent(name, true), st.announce ? 30000 : 0);
+    st.announce = false;
     if (!st.grim) {   // 29/10 (chủ server đồng ý): GrimAC kéo bot lùi mỗi bước khi đi dạo + báo admin "failed Simulation" = lộ bot
       rcon(host).cmd(`lp user ${name} permission set grim.exempt true`).then(() => { st.grim = true; save(); }).catch(() => {});
     }
@@ -667,6 +668,7 @@ async function chatOnce(force) {
     talk = fillSlots(['A:' + pickFresh(SOLO, x => 'solo|' + x)]); who = { A: pool[0] };
   }
   chatBusy = true;
+  { const ws = [...new Set(Object.values(who))]; ws.forEach(x => { lastTalk[x] = { with: ws.filter(y => y !== x), at: Date.now() }; }); }
   try {
     let prev = null;
     for (const line of talk) {
@@ -1055,19 +1057,60 @@ function rotPick() {
   const { lo, hi } = rotRange();
   return lo + Math.floor(Math.random() * (hi - lo + 1));
 }
+// 30/10 chủ server: "bot thoát im lặng lắm sợ user nghi ngờ … khi thoát thì một số bot chào nhau (ưu tiên bot vừa chat cùng)".
+// Trước: đủ mục tiêu thì 10–20 phút đổi ca một bot -> mỗi bot online ~5,5 giờ liền, cả server ~4 lượt ra/vào mỗi giờ, không hiện tin.
+// Giờ: mỗi lượt vào bot có một PHIÊN ngẫu nhiên SESSION_MIN..SESSION_MAX phút (lệch về phía ngắn, trung bình ~2 giờ như người thật);
+// hết phiên thì thoát (hiện [-], đôi khi chào, bot vừa chat cùng đáp lại) và 1–6 phút sau một bot nghỉ đủ lâu vào (hiện [+]).
+// ~22 bot online -> ~11 lượt thoát + 11 lượt vào mỗi giờ (~5 phút một lượt).
+const SESSION_MIN = 50, SESSION_MAX = 240;
+const sessionLen = () => (SESSION_MIN + (SESSION_MAX - SESSION_MIN) * Math.pow(Math.random(), 1.5)) * 60000;
+function setSilent(n, on) {
+  const st = state[n];
+  return rcon('banghoi-1').cmd(`lp user ${n} permission ${on ? 'set duckymomo.vaora.an true' : 'unset duckymomo.vaora.an'}`)
+    .then(() => { st.silent = on; save(); }).catch(() => {});
+}
+const BYE = ['t off đây ae', 'off nhé ae', 'bye ae', 'out đây', 't thoát tí', 'pp ae', 'off đây, gg', 'thôi t off', 'bye'];
+const BYE_REPLY = ['bye', 'ok bye', 'bb', 'pp', 'bai {A}', 'ok', 'gg', 'bye {A}'];
+const lastTalk = {};   // bot -> {with: [bot…], at}: ai vừa nói chuyện cùng (chatOnce ghi)
+async function sayBye(n) {
+  const b = RT[n].bot, h = vnHour();
+  if (!b || (h >= 1 && h < 7) || Math.random() >= 0.45) return;
+  await sayAs(n, BYE[Math.floor(Math.random() * BYE.length)], 1000);
+  const lt = lastTalk[n], recent = lt && Date.now() - lt.at < 45 * 60000 ? lt.with.filter(o => RT[o] && RT[o].bot) : [];
+  let o = null;
+  if (recent.length && Math.random() < 0.75) o = recent[Math.floor(Math.random() * recent.length)];
+  else if (Math.random() < 0.3) { const others = NAMES.filter(x => x !== n && RT[x].bot && state[x].server === 'banghoi-1'); if (others.length) o = others[Math.floor(Math.random() * others.length)]; }
+  if (o) await sayAs(o, BYE_REPLY[Math.floor(Math.random() * BYE_REPLY.length)].replace('{A}', n), 2500 + Math.random() * 6000);
+}
+async function rotLeaveNow(n, why) {
+  const st = state[n];
+  RT[n].leaving = true;
+  try {
+    await setSilent(n, false);
+    await sayBye(n).catch(() => {});
+    await sleep(4000 + Math.random() * 9000);
+    st.want = false; st.offSince = Date.now(); delete st.sessionEnd; save();
+    if (RT[n].bot) RT[n].bot.quit();
+    log('thay phiên:', n, 'thoát (' + why + ')');
+  } finally { RT[n].leaving = false; }
+}
+/** Thừa bot: thoát bot có phiên hết sớm nhất (không đợi tới hạn). */
 function rotLeave(on) {
-  const c = on.filter(n => !RT[n].wander && !RT[n].placing).sort((a, b) => (state[a].since || 0) - (state[b].since || 0));
+  const c = on.filter(n => !RT[n].wander && !RT[n].placing && !RT[n].leaving).sort((a, b) => (state[a].sessionEnd || 0) - (state[b].sessionEnd || 0));
   if (!c.length) return null;
-  const n = c[Math.floor(Math.random() * Math.min(3, c.length))];   // một trong 3 bot online lâu nhất
-  state[n].want = false; state[n].offSince = Date.now(); save();
-  if (RT[n].bot) RT[n].bot.quit();
+  const n = c[0];
+  rotLeaveNow(n, 'bớt cho đúng mục tiêu').catch(e => log('lỗi thoát:', e.message));
   return n;
 }
 function rotJoin(off) {
-  const c = off.slice().sort((a, b) => (state[a].offSince || 0) - (state[b].offSince || 0));
+  const c = off.filter(n => !RT[n].leaving).sort((a, b) => (state[a].offSince || 0) - (state[b].offSince || 0));
   if (!c.length) return null;
   const n = c[Math.floor(Math.random() * Math.min(3, c.length))];   // một trong 3 bot nghỉ lâu nhất
-  state[n].want = true; state[n].since = Date.now(); RT[n].retryAt = 0; save();
+  const st = state[n];
+  st.announce = true;
+  setSilent(n, false).then(() => {   // gỡ quyền im TRƯỚC khi vào để hiện [+]
+    st.want = true; st.since = Date.now(); st.sessionEnd = Date.now() + sessionLen(); RT[n].retryAt = 0; save();
+  });
   return n;
 }
 setInterval(() => {
@@ -1083,11 +1126,16 @@ setInterval(() => {
   const gap = Math.abs(on.length - rotTarget), pace = gap > 5 ? 1 + Math.random() * 2 : 2 + Math.random() * 6;   // lệch nhiều: 1–3 phút một bot
   if (on.length > rotTarget) { rotStep = now + pace * 60000; const n = rotLeave(on); if (n) log('thay phiên:', n, 'thoát (' + (on.length - 1) + '/' + rotTarget + ')'); }
   else if (on.length < rotTarget) { rotStep = now + pace * 60000; const n = rotJoin(off); if (n) log('thay phiên:', n, 'vào (' + (on.length + 1) + '/' + rotTarget + ')'); }
-  else if (off.length) {   // đủ mục tiêu: đổi ca, lần sau sau 10–20 phút
-    rotStep = now + (10 + Math.random() * 10) * 60000;
-    const n = rotLeave(on);
-    if (n) { rotJoinAt = now + (1 + Math.random() * 3) * 60000; log('thay phiên: đổi ca,', n, 'thoát'); }
-  } else rotStep = now + 5 * 60000;
+  else {   // đủ mục tiêu: bot hết phiên thì thoát, 1–6 phút sau một bot khác vào thay
+    on.forEach(n => { if (!state[n].sessionEnd) { state[n].sessionEnd = now + sessionLen() * Math.random(); save(); } });   // bot đang online từ trước: chia đều lượt hết
+    const due = on.filter(n => state[n].sessionEnd <= now && !RT[n].wander && !RT[n].placing && !RT[n].leaving);
+    if (due.length && off.length) {
+      const n = due[0];
+      rotLeaveNow(n, 'hết phiên').catch(e => log('lỗi thoát:', e.message));
+      rotJoinAt = now + (1 + Math.random() * 5) * 60000;
+      rotStep = now + 60000;
+    } else rotStep = now + 30000;
+  }
 }, 10000);   // 10 giây kiểm một lần (bước chỉnh vẫn theo rotStep)
 
 // ---------------------------------------------------------------- điều khiển

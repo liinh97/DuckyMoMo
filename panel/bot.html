@@ -115,7 +115,7 @@
       <button type="button" class="mini" id="wdBack" title="Trả mọi bot về chỗ đứng cũ (trước khi gom)">Trả về chỗ cũ</button>
       <span class="hint" id="wdState"></span>
     </form>
-    <form id="rot" autocomplete="off" title="Giữ số bot online ở Bang Hội Chiến trong khoảng đặt. Mục tiêu chọn ngẫu nhiên trong khoảng, đổi mỗi 15–50 phút; lệch mục tiêu thì mỗi 2–8 phút chỉnh một bot (lệch hơn 5 bot: 1–3 phút); đủ rồi thì thỉnh thoảng đổi ca (1 thoát, 1–4 phút sau 1 vào). Bật thì nút Vào / Thoát từng bot có thể bị thay phiên ghi đè.">
+    <form id="rot" autocomplete="off" title="Giữ số bot online ở Bang Hội Chiến trong khoảng đặt. Mục tiêu chọn ngẫu nhiên trong khoảng, đổi mỗi 15–50 phút; lệch mục tiêu thì mỗi 2–8 phút chỉnh một bot (lệch hơn 5 bot: 1–3 phút); đủ rồi thì mỗi bot chơi một phiên 50–240 phút (trung bình ~2 giờ), hết phiên thì thoát có hiện tin [-] (đôi khi chào, bot vừa chat cùng đáp lại), 1–6 phút sau một bot khác vào có hiện tin [+]. Khoảng 22 bot online thì ~5 phút một lượt ra / vào. Bật thì nút Vào / Thoát từng bot có thể bị thay phiên ghi đè.">
       <div class="rot-row">
         <label class="chk"><input type="checkbox" id="rotOn"> Thay phiên online</label>
         <span class="hint">mặc định</span><input id="rotMin" type="number" min="0" max="100"><span class="hint">–</span><input id="rotMax" type="number" min="0" max="100"><span class="hint">bot</span>

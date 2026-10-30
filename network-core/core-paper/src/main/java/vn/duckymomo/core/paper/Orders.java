@@ -312,6 +312,12 @@ final class Orders implements Listener {
         if (list.isEmpty()) {
             h.inv.setItem(22, button(Material.BARRIER, "&7Chưa có đơn nào", "&7Hãy là người đặt đơn đầu tiên!"));
         }
+        ItemStack bar = MenuFrame.pane(Material.YELLOW_STAINED_GLASS_PANE);   // 30/10: hàng dưới viền vàng (nhóm Kinh tế)
+        for (int i = 45; i < 54; i++) {
+            if (h.inv.getItem(i) == null) {
+                h.inv.setItem(i, bar);
+            }
+        }
         p.openInventory(h.inv);
     }
 
@@ -579,13 +585,7 @@ final class Orders implements Listener {
         }
         HubHolder h = new HubHolder();
         h.inv = Bukkit.createInventory(h, 27, c("&0☠ Chợ đen &8· mua bán giữa người chơi"));
-        ItemStack bg = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
-        ItemMeta bm = bg.getItemMeta();
-        bm.setHideTooltip(true);
-        bg.setItemMeta(bm);
-        for (int i = 0; i < 27; i++) {
-            h.inv.setItem(i, bg);
-        }
+        MenuFrame.paint(h.inv, Material.YELLOW_STAINED_GLASS_PANE);   // 30/10: khung như /menu
         int myOrders = 0, openOrders = 0;
         for (int id : ids()) {
             ConfigurationSection o = order(id);

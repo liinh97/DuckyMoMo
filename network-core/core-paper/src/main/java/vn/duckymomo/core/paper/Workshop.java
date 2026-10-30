@@ -1257,6 +1257,7 @@ final class Workshop implements Listener {
             h.slots.put(MAIN_SLOTS[i], r);
             i++;
         }
+        MenuFrame.paint(h.inv, Material.YELLOW_STAINED_GLASS_PANE);   // 30/10: khung như /menu (nhóm Kinh tế)
         p.openInventory(h.inv);
     }
 
@@ -1264,10 +1265,7 @@ final class Workshop implements Listener {
         Holder h = new Holder();
         h.view = r;
         h.inv = Bukkit.createInventory(h, 54, c("&0⚒ Chế tạo: " + LEGACY.serialize(c(r.name())).replaceAll("&.", "")));
-        ItemStack bg = pane(Material.GRAY_STAINED_GLASS_PANE, " ");
-        for (int s = 0; s < 54; s++) {
-            h.inv.setItem(s, bg);
-        }
+        MenuFrame.paint(h.inv, Material.YELLOW_STAINED_GLASS_PANE);   // 30/10: viền vàng, nền xám; ô lưới trống đặt lại null bên dưới
         for (int k = 0; k < 9; k++) {
             Object[] g = cell(r.grid().get(k));
             if (g == null) {

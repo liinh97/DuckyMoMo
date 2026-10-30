@@ -252,7 +252,7 @@ final class Refining implements Listener {
         Holder h = new Holder();
         int rows = Math.min(6, Math.max(3, (int) Math.ceil(items.size() / 7.0) + 2));
         h.inv = Bukkit.createInventory(h, rows * 9, c("&0♨ Tinh Luyện"));
-        ItemStack edge = pane(Material.LIGHT_BLUE_STAINED_GLASS_PANE), inner = pane(Material.WHITE_STAINED_GLASS_PANE);
+        ItemStack edge = pane(Material.LIGHT_BLUE_STAINED_GLASS_PANE), inner = pane(Material.GRAY_STAINED_GLASS_PANE);
         for (int s = 0; s < rows * 9; s++) {
             int r = s / 9, col = s % 9;
             h.inv.setItem(s, r == 0 || r == rows - 1 || col == 0 || col == 8 ? edge : inner);

@@ -1858,6 +1858,60 @@ resource-pack:
 # Menu chính cho người chơi (20/10): /menu hoặc Shift + F. Mỗi nút: slot (0..rows*9-1), icon, name, lore, và MỘT trong:
 #   cmd (chạy lệnh thay người chơi, không cần /), suggest (điền sẵn vào ô chat), proxy (lệnh của proxy: tuskin, skin), server (chuyển server).
 # Sảnh không có menu này (ở sảnh /menu = chọn chế độ). Không dùng mã chữ đậm: font tiếng Việt bị nhòe.
+# Đố vui trong chat (30/10, ChatGames.java): cứ interval-minutes phút ra 1 câu (cần ít nhất min-players người thật online),
+# ai gõ đúng đầu tiên trong timeout giây nhận reward-min..reward-max xu. Đáp án không dấu / hoa thường đều được.
+# Admin ra câu ngay: /dmm minigame [xaotron|toan|gonhanh|caudo]. weights = tỉ lệ ra từng kiểu (0 = tắt kiểu đó).
+chat-games:
+  enabled: true
+  interval-minutes: 12
+  timeout: 60
+  min-players: 1
+  reward-min: 50
+  reward-max: 150
+  weights: {xaotron: 3, toan: 3, gonhanh: 2, caudo: 3}
+  # xáo trộn: xáo chữ trong từng tiếng
+  words: ["kim cương", "thanh kiếm", "cây cuốc", "lò nung", "bàn chế tạo", "rương đồ", "quặng sắt", "ngọc lục bảo", "dân làng",
+    "thị trấn", "công thành", "bang hội", "câu cá", "cái rìu", "con bò", "con cừu", "bánh mì", "táo vàng", "ngọn đuốc", "cái khiên",
+    "cây cung", "mũi tên", "ngọc ender", "cổng địa ngục", "lưỡi liềm", "hạt giống", "cánh đồng", "nhà kho", "máy lọc nước", "ruộng lúa",
+    "con mèo", "cái giường", "cửa sổ", "mái nhà", "con thuyền", "bình thuốc", "đá đỏ", "cây tre", "hoa hồng", "mặt trời",
+    "trái đất", "mưa rào", "cầu vồng", "bông lúa", "chợ đen", "thợ rèn", "nhiệm vụ", "điểm danh", "kinh đô", "thái ấp"]
+  # gõ nhanh: gõ lại đúng câu
+  phrases: ["DuckyMoMo vui nhất", "Đại Lục Sương Mai", "điểm danh mỗi ngày", "thợ rèn ở chợ", "cùng nhau công thành",
+    "câu cá ven sông", "đào kim cương nào", "chúc cả nhà vui vẻ", "lập thị trấn thôi", "bán lúa lấy xu", "vote cho server nhé",
+    "Kinh Đô yên bình", "mùa mưa cây lớn nhanh", "đừng quên đặt nhà", "gacha ra đồ xịn"]
+  # câu đố: q = câu hỏi, a = các đáp án được chấp nhận
+  riddles:
+    - {q: "Con gì càng to càng nhỏ?", a: ["con cua"]}
+    - {q: "Cái gì có cổ nhưng không có đầu?", a: ["cái áo", "áo"]}
+    - {q: "Cái gì đen khi bạn mua, đỏ khi dùng và xám khi vứt đi?", a: ["than", "cục than", "than đá"]}
+    - {q: "Con gì đầu dê mình ốc?", a: ["con dốc", "dốc"]}
+    - {q: "Cái gì có răng mà không có miệng?", a: ["cái lược", "lược", "cái cưa", "cưa"]}
+    - {q: "Trong Minecraft, quái gì phát nổ khi tới gần người chơi?", a: ["creeper"]}
+    - {q: "Trong Minecraft, cần bao nhiêu khối hắc diện thạch tối thiểu để làm cổng địa ngục?", a: ["10", "mười"]}
+    - {q: "Trong Minecraft, quặng nào cần cuốc sắt trở lên mới đào được và cho đá quý xanh?", a: ["kim cương", "diamond"]}
+    - {q: "Trong Minecraft, dân làng dùng thứ gì để trao đổi?", a: ["ngọc lục bảo", "emerald"]}
+    - {q: "Trong Minecraft, con vật nào cho len?", a: ["cừu", "con cừu"]}
+    - {q: "Trong Minecraft, cần mấy khối sắt để làm một người sắt (iron golem)?", a: ["4", "bốn"]}
+    - {q: "Trong Minecraft, ngủ trên giường để bỏ qua cái gì?", a: ["ban đêm", "đêm"]}
+    - {q: "Một năm có bao nhiêu tháng có 28 ngày?", a: ["12", "mười hai", "tất cả"]}
+    - {q: "Cái gì luôn đi tới mà không bao giờ tới?", a: ["ngày mai"]}
+    - {q: "Cái gì càng lau càng ướt?", a: ["khăn", "cái khăn", "khăn lau"]}
+    - {q: "Bố mẹ có 6 người con trai, mỗi người con trai có 1 em gái. Hỏi nhà đó có mấy người con?", a: ["7", "bảy"]}
+    - {q: "Con gì không có chân mà vẫn đi khắp nơi?", a: ["con rắn", "rắn"]}
+    - {q: "Cái gì của bạn nhưng người khác dùng nhiều hơn bạn?", a: ["tên", "cái tên"]}
+    - {q: "Từ nào trong tiếng Việt luôn viết sai?", a: ["sai"]}
+    - {q: "Nước gì không bao giờ uống được?", a: ["nước cờ", "nước đi"]}
+    - {q: "Con gì có 4 chân ban sáng, 2 chân buổi trưa, 3 chân buổi tối?", a: ["con người", "người"]}
+    - {q: "Cái gì đầy lỗ mà vẫn giữ được nước?", a: ["miếng bọt biển", "bọt biển"]}
+    - {q: "Hôm qua là ngày mai của thứ hai. Hôm nay là thứ mấy?", a: ["thứ tư", "thu 4", "thứ 4"]}
+    - {q: "Số nào lớn nhất có hai chữ số?", a: ["99", "chín mươi chín"]}
+    - {q: "Trong Minecraft, nấu khoai tây trong lò nung được món gì?", a: ["khoai tây nướng", "baked potato"]}
+    - {q: "Trong Minecraft, quái nào sợ mèo?", a: ["creeper"]}
+    - {q: "Trong Minecraft, thả gì vào xô để bắt cá?", a: ["nước", "xô nước"]}
+    - {q: "Trong Minecraft, vật phẩm nào giúp không bị chết khi máu về 0?", a: ["vật tổ", "totem", "vật tổ bất tử"]}
+    - {q: "Con gì sáng đi bằng bốn chân, ăn cỏ, kêu ụm bò?", a: ["con bò", "bò"]}
+    - {q: "Cái gì có chân mà không biết đi?", a: ["cái bàn", "bàn", "cái ghế", "ghế"]}
+
 player-menu:
   enabled: true
   title: "&0✦ DuckyMoMo - Menu"

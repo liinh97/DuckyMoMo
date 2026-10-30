@@ -46,7 +46,7 @@ playerlist-objective:
 belowname-objective:
   enabled: true
   value: "%health%"
-  fancy-value: "&c%health% ❤%dmmgiap_tren%"   # 28/10: đang ẩn giáp thì hiện món giáp mạnh nhất (ArmorHide)
+  fancy-value: "&c%health% ❤"   # 30/10: tên set khi ẩn giáp chuyển lên sau tên (tagsuffix, groups.yml) cho cả Bedrock
   fancy-value-default: "NPC"
   title: " "   # 28/10: bỏ ❤ thừa ở cuối dòng (fancy-value đã có ❤)
   disable-condition: '%world%=disabledworld'

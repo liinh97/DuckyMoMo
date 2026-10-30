@@ -324,7 +324,7 @@ final class ArmorHide implements Listener {
         return best;
     }
 
-    /** Placeholder %dmmgiap_tren%: " · ⛨ <món mạnh nhất>" khi người đó đang ẩn giáp, rỗng khi không (TAB dòng dưới tên). */
+    /** Placeholder %dmmgiap_tren%: " [<tên set>]" khi người đó đang ẩn giáp, rỗng khi không (TAB tagsuffix sau tên trên đầu, 30/10). */
     me.clip.placeholderapi.expansion.PlaceholderExpansion placeholders() {
         return new me.clip.placeholderapi.expansion.PlaceholderExpansion() {
             @Override
@@ -354,7 +354,7 @@ final class ArmorHide implements Listener {
                     return "";
                 }
                 String b = ThoRen.wornSet(p);   // 28/10 chủ server: hiện TÊN SET (ai cũng có đồ kim cương, tên món không nói lên gì)
-                return b == null ? "" : " &8· &b⛨ " + LEGACY_STRIP.matcher(b).replaceAll("");
+                return b == null ? "" : " &8[&b" + LEGACY_STRIP.matcher(b).replaceAll("") + "&8]";   // 30/10: không dùng ⛨, font Bedrock không có
             }
         };
     }

@@ -12,7 +12,7 @@ _DEFAULT_:
   tagprefix: "%luckperms-prefix%&f"
   customtabname: "%player%"
   tabsuffix: "%luckperms-suffix% &8[%dmmcap_mau%Cấp %dmmcap_cap%&8]"
-  tagsuffix: "%luckperms-suffix%"
+  tagsuffix: "%luckperms-suffix%%dmmgiap_tren%"   # 30/10: ẩn giáp thì hiện tên set sau tên (cả Bedrock thấy, dòng dưới tên Bedrock không có)
 
 per-world:
   world1:

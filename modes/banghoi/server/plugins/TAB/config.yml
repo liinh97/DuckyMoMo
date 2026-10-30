@@ -5,6 +5,10 @@ header-footer:
     default:
       header:
         - '&r'
+        - '&r'
+        - '&r'
+        - '&r'
+        - '&r'
         - '<#FFC23D>DUCKYMOMO</#FF6A00> &7· &fChào &e%player%&f!'
         - '&r'
       footer:

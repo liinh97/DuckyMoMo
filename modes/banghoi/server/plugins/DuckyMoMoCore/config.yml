@@ -1644,6 +1644,13 @@ arena:
 
 # Tiêu đề khung nhắc lúc vào game (gom hướng dẫn, mùa, công thành, điểm danh… thành một khung)
 join-notes-title: "Bang Hội Chiến"
+# 30/10: khung lúc vào game: dòng chào (%name% = tên) + link cộng đồng (url trống = chỉ hiện chữ). Bỏ cả mục = khung cũ.
+join-welcome:
+  title: "&dDUCKYMOMO &8| &fChào mừng &e%name% &ftham gia máy chủ!"
+  links:
+    - {label: "Discord   ", text: "discord.gg/Hg9cDWApF", url: "https://discord.gg/Hg9cDWApF"}
+    - {label: "Trang web ", text: "app.goc6.io.vn/mc/web", url: "https://app.goc6.io.vn/mc/web/"}
+    - {label: "Địa chỉ    ", text: "mc.goc6.io.vn", url: ""}
 
 # Đăng nhập trang web bằng mã /web (19/10: 5 → 60 phút). Sửa ở Cài đặt › Đăng nhập trang web (ghi cả 4 server).
 web-login:

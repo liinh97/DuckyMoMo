@@ -138,11 +138,11 @@ SbDong1:
   change-interval: 8000
   texts:
     - '&#7CFC9A⛃ &a%vault_eco_balance_formatted% &2xu'
-    - '&#FF9F43⚑ &#FFD580%townyadvanced_town_unformatted%'
+    - '&#FF9F43⚑ &#FFD580%townyadvanced_town_unformatted%%condition:datthitran%'
 SbDong2:
   change-interval: 8000
   texts:
-    - '&#FFCC33❖ &e%dmmhom_chia% &7vé gacha'
+    - '&#FFCC33❖ &e%dmmhom_chia% &7vé gacha &8· &7%dmmhom_con%'
     - '&#C77DFF⚜ &#E0B0FF%townyadvanced_nation_unformatted%'
 SbDong3:
   change-interval: 8000

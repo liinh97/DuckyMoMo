@@ -89,6 +89,18 @@ final class VoteRewards implements Listener {
         }
     }
 
+    /** 30/10: hôm nay chưa vote thì nhắc trong khung lúc vào game (bấm = /vote). */
+    @org.bukkit.event.EventHandler
+    public void onJoin(org.bukkit.event.player.PlayerJoinEvent e) {
+        Player p = e.getPlayer();
+        if (LocalDate.now(VN).toString().equals(data.getString("players." + p.getUniqueId() + ".last-day", ""))) {
+            return;
+        }
+        JoinNotes.add(p, 25, c("&e⚡ &fĐừng quên &evote hằng ngày &fđể nhận &e" + VaultEconomy.format(cfg.getDouble("money-per-vote", 100))
+                + "&f/lượt. ").append(c("&a[/vote]").clickEvent(ClickEvent.runCommand("/vote"))
+                .hoverEvent(HoverEvent.showText(c("Bấm để mở link vote")))));
+    }
+
     /** Tìm người chơi theo tên đã từng vào server (tên Bedrock có dấu chấm đầu, trang vote có thể bỏ dấu chấm). */
     private static OfflinePlayer find(String name) {
         if (name.isEmpty()) {

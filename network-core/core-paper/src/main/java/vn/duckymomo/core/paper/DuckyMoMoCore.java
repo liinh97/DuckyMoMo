@@ -475,7 +475,7 @@ public final class DuckyMoMoCore extends JavaPlugin {
         // Giờ chơi thật (không tính AFK) cho dân hoạt động, quân hàm, lập thị trấn (banghoi): active-play.enabled
         activity = getConfig().getBoolean("active-play.enabled") ? new Activity(this, getConfig().getConfigurationSection("active-play")) : null;
         LowPop.init(activity, getConfig().getConfigurationSection("low-population"));
-        JoinNotes.init(this, getConfig().getString("join-notes-title", "DuckyMoMo"));
+        JoinNotes.init(this, getConfig().getString("join-notes-title", "DuckyMoMo"), getConfig().getConfigurationSection("join-welcome"));
         if (activity != null) {
             getServer().getPluginManager().registerEvents(activity, this);
             activity.start();
@@ -711,6 +711,9 @@ public final class DuckyMoMoCore extends JavaPlugin {
 
         // Thưởng vote server (Votifier ở banghoi-1; vote từ VPS qua relay socat 8192)
         VoteRewards vote = getConfig().getBoolean("vote.enabled") ? new VoteRewards(this, getConfig().getConfigurationSection("vote")) : null;
+        if (vote != null) {
+            getServer().getPluginManager().registerEvents(vote, this);   // nhắc vote lúc vào (30/10)
+        }
         if (vote != null && !vote.hook()) {
             getLogger().info("Thưởng vote: chưa có Votifier, /vote vẫn hiện link");
         }

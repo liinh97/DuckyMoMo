@@ -89,6 +89,7 @@ scoreboard:
         - '%animation:SbDong4%'
         - '&r'
         - '&#5FD3F3✪ &b%online% &7· &7%condition:pingmau%'
+        - '&8(12+)'   # 30/10: nhãn độ tuổi theo phân loại trò chơi VN (00+, 12+, 16+, 18+)
 layout:
   enabled: false
   direction: COLUMNS
@@ -168,6 +169,12 @@ placeholder-output-replacements:
 
 # https://github.com/NEZNAMY/TAB/wiki/Feature-guide:-Conditional-placeholders
 conditions:
+  # 30/10: số ô đất thị trấn sau tên thị trấn (không có thị trấn thì trống)
+  datthitran:
+    conditions:
+      - "%townyadvanced_town_townblocks_used%>0"
+    true: " &8· &7%townyadvanced_town_townblocks_used% ô"
+    false: ""
   # Ping có màu cho bảng bên phải: %condition:pingmau%
   pingmau:
     conditions:

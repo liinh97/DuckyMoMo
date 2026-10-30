@@ -23,15 +23,29 @@ final class JoinNotes {
     private static final long DELAY = 100L;   // 5 giây
     private static JavaPlugin plugin;
     private static String title = "DuckyMoMo";
+    /** 30/10: dòng chào ("%name%" = tên) + link cộng đồng (bấm mở), config join-welcome. Trống = khung cũ. */
+    private static String welcome = "";
+    private static final List<String[]> links = new ArrayList<>();
     private static final Map<UUID, List<Object[]>> pending = new HashMap<>();
 
     private JoinNotes() {
     }
 
-    static void init(JavaPlugin p, String serverTitle) {
+    static void init(JavaPlugin p, String serverTitle, org.bukkit.configuration.ConfigurationSection w) {
         plugin = p;
         title = serverTitle == null || serverTitle.isBlank() ? "DuckyMoMo" : serverTitle;
         pending.clear();
+        links.clear();
+        welcome = w == null ? "" : w.getString("title", "");
+        if (w != null) {
+            for (Map<?, ?> m : w.getMapList("links")) {
+                String label = String.valueOf(m.get("label")), text = String.valueOf(m.get("text"));
+                Object url = m.get("url");
+                if (!"null".equals(label) && !"null".equals(text)) {
+                    links.add(new String[] {label, text, url == null ? "" : String.valueOf(url)});
+                }
+            }
+        }
     }
 
     /** Thêm một dòng (order nhỏ đứng trước). Gửi gộp sau DELAY tick kể từ dòng đầu tiên. */
@@ -60,11 +74,33 @@ final class JoinNotes {
             return;
         }
         list.sort((a, b) -> Integer.compare((Integer) a[0], (Integer) b[0]));
-        p.sendMessage(c("&6&m          &r &6" + title + " &6&m          "));
-        for (Object[] o : list) {
-            p.sendMessage(c("&6▏ ").append((Component) o[1]));
+        if (welcome.isBlank()) {
+            p.sendMessage(c("&6&m          &r &6" + title + " &6&m          "));
+            for (Object[] o : list) {
+                p.sendMessage(c("&6▏ ").append((Component) o[1]));
+            }
+            p.sendMessage(c("&6&m                                        "));
+            return;
         }
-        p.sendMessage(c("&6&m                                        "));
+        // Bố cục 30/10: vạch · dòng chào · link cộng đồng · các dòng nhắc · vạch
+        p.sendMessage(c("&8&m                                                     "));
+        p.sendMessage(c(welcome.replace("%name%", p.getName())));
+        if (!links.isEmpty()) {
+            p.sendMessage(Component.empty());
+            for (String[] l : links) {
+                Component line = c(" &8▪ &7" + l[0] + " &8» &f" + l[1]);
+                if (!l[2].isBlank()) {
+                    line = line.clickEvent(net.kyori.adventure.text.event.ClickEvent.openUrl(l[2]))
+                            .hoverEvent(net.kyori.adventure.text.event.HoverEvent.showText(c("&7Bấm để mở")));
+                }
+                p.sendMessage(line);
+            }
+        }
+        p.sendMessage(Component.empty());
+        for (Object[] o : list) {
+            p.sendMessage(c(" ").append((Component) o[1]));
+        }
+        p.sendMessage(c("&8&m                                                     "));
     }
 
     static Component c(String s) {

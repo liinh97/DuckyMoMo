@@ -121,6 +121,7 @@
         <span class="hint">mặc định</span><input id="rotMin" type="number" min="0" max="100"><span class="hint">–</span><input id="rotMax" type="number" min="0" max="100"><span class="hint">bot</span>
         <button type="button" class="mini" id="rotAdd" title="Thêm khung giờ có khoảng bot riêng (giờ Việt Nam)">+ Khung giờ</button>
         <button type="submit" class="mini">Lưu</button>
+        <label class="chk" title="Tích: mỗi lượt bot vào / thoát khi thay phiên hiện tin [+] / [-] như người thật, đôi khi chào nhau. Bỏ tích: vào / thoát lặng lẽ. Nút Vào / Thoát từng bot vẫn chọn tay (có tin hoặc im)."><input type="checkbox" id="rotVaora"> Hiện tin vào/ra</label>
         <span class="hint" id="rotState"></span>
       </div>
       <div id="rotSlots"></div>
@@ -173,7 +174,7 @@ function renderBots() {
       <td class="name"><span class="dot ${st}"></span><b>${esc(b.name)}</b>${b.err && !b.online ? `<span class="err" title="${esc(b.err)}">${esc(b.err)}</span>` : ""}${devTag(b.name)}${TOWNS[b.name] ? `<span class="towntag" title="Thị trấn (Towny)">⌂ ${esc(TOWNS[b.name])}</span>` : ""}</td>
       <td><select data-a="server">${srvOptions(b.server)}</select></td>
       <td>${b.online && b.spawn ? `<span class="atsp" title="Đang đứng ở khu spawn${b.server === "banghoi-1" ? " — bấm Ngẫu nhiên để ra khu riêng" : ""}">Ở spawn</span>` : ""}<span class="pos" title="${b.home ? "Chỗ mặc định: " + b.home.join(" ") : ""}">${esc(pos)}</span></td>
-      <td><div class="acts">${b.want ? '<button data-a="leave">Thoát</button>' : '<button class="primary" data-a="join">Vào</button>'}
+      <td><div class="acts">${b.want ? '<button data-a="leave" title="Thoát có hiện tin [-] (có thể chào trước)">Thoát</button><button data-a="leaveim" title="Thoát lặng lẽ, không hiện tin">Thoát im</button>' : '<button class="primary" data-a="join" title="Vào có hiện tin [+] (có thể chào)">Vào</button><button data-a="joinim" title="Vào lặng lẽ, không hiện tin">Vào im</button>'}
         ${b.online ? `<button data-a="home" title="Về chỗ mặc định">Về chỗ</button>${b.server === "banghoi-1" ? `<button data-a="random"${b.spawn ? ' class="hl"' : ""} title="Ra một khu ngẫu nhiên chưa bot nào đứng (đặt làm chỗ mặc định)">Ngẫu nhiên</button>` : ""}<button data-a="move" title="Đi tới toạ độ X Z">Đi tới…</button>
         <button data-a="cmd" data-t="spawn">/spawn</button><button data-a="cmd" data-t="tpaccept">/tpaccept</button><button data-a="cmd" data-t="tpdeny">/tpdeny</button>
         <button data-a="sethome" title="Lấy chỗ đang đứng làm chỗ mặc định">Đặt chỗ</button><button data-a="pick" title="Chọn bot này ở khung chat">Chat</button>` : ""}
@@ -202,6 +203,8 @@ $("bots").addEventListener("click", async (ev) => {
     return act({ bot: name, action: "move", x: +m[0], z: +m[1] });
   }
   if (a === "join") return act({ bot: name, action: "join", server });
+  if (a === "joinim") return act({ bot: name, action: "join", server, silent: true });   // 31/10: vào / thoát im lặng song song với có tin
+  if (a === "leaveim") return act({ bot: name, action: "leave", silent: true });
   if (a === "cmd") return act({ bot: name, action: "cmd", text: btn.dataset.t });
   if (a === "remove") { if (await ask(`Xoá bot ${name} khỏi danh sách? (tài khoản trong game vẫn còn)`, { title: "Xoá bot", ok: "Xoá" })) act({ bot: name, action: "remove" }); return; }
   return act({ bot: name, action: a });
@@ -230,6 +233,7 @@ $("tcNow").onclick = () => act({ action: "chatnow" });
 $("wdOn").onchange = () => act({ action: "wandercfg", on: $("wdOn").checked });
 $("wdNow").onclick = () => act({ action: "wandernow" });
 $("rotOn").onchange = () => act({ action: "rotcfg", on: $("rotOn").checked });
+$("rotVaora").onchange = () => act({ action: "rotcfg", vaora: $("rotVaora").checked });   // 31/10: admin chọn thay phiên có tin / im lặng
 // 30/10: khung giờ thay phiên (mỗi khung một khoảng số bot; ngoài khung dùng mặc định)
 let ROT_DIRTY = false;
 function rotSlotRow(k) {
@@ -298,6 +302,8 @@ async function loadBots() {
     if (d.chetgia && document.activeElement !== $("chetOn")) $("chetOn").checked = !!d.chetgia.on;
     $("rotOn").disabled = !d.thayphien;
     if (d.thayphien && document.activeElement !== $("rotOn")) $("rotOn").checked = !!d.thayphien.on;
+    $("rotVaora").disabled = !d.thayphien || d.thayphien.vaora === undefined;
+    if (d.thayphien && document.activeElement !== $("rotVaora")) $("rotVaora").checked = d.thayphien.vaora !== false;
     const tp = d.thayphien;
     $("rotState").textContent = tp && tp.on && tp.dang ? "· bây giờ " + tp.dang.lo + "–" + tp.dang.hi + " bot" + (tp.dang.khung >= 0 ? " (khung " + (tp.dang.khung + 1) + ")" : " (mặc định)") + (tp.muctieu != null ? ", mục tiêu " + tp.muctieu : "") : "";
     if (tp && !ROT_DIRTY && !(document.activeElement && document.activeElement.closest("#rot"))) rotRender(tp);

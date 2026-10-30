@@ -314,8 +314,10 @@ async function connect(name) {
     await sleep(2500);
     // vào / ra không báo [+] [-] (DuckyMoMoCore DonateRanks: duckymomo.vaora.an) là MẶC ĐỊNH (dựng lại botfarm, bị đá… không hiện hàng loạt).
     // 30/10: lượt vào / thoát theo phiên (thay phiên online) thì gỡ quyền trước để hiện tin như người thật; vào xong 30 giây thì im lại.
-    if (!st.silent) setTimeout(() => setSilent(name, true), st.announce ? 30000 : 0);
+    const ann = !!st.announce;
+    if (!st.silent) setTimeout(() => setSilent(name, true), ann ? 30000 : 0);
     st.announce = false;
+    if (ann && host === 'banghoi-1') sayHi(name).catch(() => {});   // 31/10: vào có hiện [+] thì đôi khi chào
     if (!st.grim) {   // 29/10 (chủ server đồng ý): GrimAC kéo bot lùi mỗi bước khi đi dạo + báo admin "failed Simulation" = lộ bot
       rcon(host).cmd(`lp user ${name} permission set grim.exempt true`).then(() => { st.grim = true; save(); }).catch(() => {});
     }
@@ -1086,6 +1088,19 @@ function setSilent(n, on) {
 }
 const BYE = ['t off đây ae', 'off nhé ae', 'bye ae', 'out đây', 't thoát tí', 'pp ae', 'off đây, gg', 'thôi t off', 'bye'];
 const BYE_REPLY = ['bye', 'ok bye', 'bb', 'pp', 'bai {A}', 'ok', 'gg', 'bye {A}'];
+const HI = ['hi ae', 'chào ae', 'hello ae', 'hi', 'vào rồi', 'alo ae', 'hế lô'];
+const HI_REPLY = ['hi', 'chào {A}', 'hello', 'hi {A}', 'yo'];
+async function sayHi(n) {
+  const h = vnHour();
+  if ((h >= 1 && h < 7) || Math.random() >= 0.35) return;
+  if (!(await sayAs(n, HI[Math.floor(Math.random() * HI.length)], 6000 + Math.random() * 12000))) return;
+  const lt = lastTalk[n], recent = lt && Date.now() - lt.at < 3 * 3600e3 ? lt.with.filter(o => RT[o] && RT[o].bot) : [];
+  const others = recent.length ? recent : NAMES.filter(x => x !== n && RT[x].bot && state[x].server === 'banghoi-1');
+  if (others.length && Math.random() < (recent.length ? 0.6 : 0.3)) {
+    const o = others[Math.floor(Math.random() * others.length)];
+    await sayAs(o, HI_REPLY[Math.floor(Math.random() * HI_REPLY.length)].replace('{A}', n), 3000 + Math.random() * 8000);
+  }
+}
 const lastTalk = {};   // bot -> {with: [bot…], at}: ai vừa nói chuyện cùng (chatOnce ghi)
 async function sayBye(n) {
   const b = RT[n].bot, h = vnHour();
@@ -1097,12 +1112,16 @@ async function sayBye(n) {
   else if (Math.random() < 0.3) { const others = NAMES.filter(x => x !== n && RT[x].bot && state[x].server === 'banghoi-1'); if (others.length) o = others[Math.floor(Math.random() * others.length)]; }
   if (o) await sayAs(o, BYE_REPLY[Math.floor(Math.random() * BYE_REPLY.length)].replace('{A}', n), 2500 + Math.random() * 6000);
 }
-async function rotLeaveNow(n, why) {
+async function rotLeaveNow(n, why, silent) {
+  if (RT[n].leaving) return;
   const st = state[n];
   RT[n].leaving = true;
+  if (silent === undefined) silent = rotCfg.vaora === false;   // thay phiên: theo ô "Hiện tin vào/ra" ở trang Bot
   try {
-    await setSilent(n, false);
-    await sayBye(n).catch(() => {});
+    if (!silent) {
+      await setSilent(n, false);
+      await sayBye(n).catch(() => {});
+    }
     await sleep(4000 + Math.random() * 9000);
     st.want = false; st.offSince = Date.now(); delete st.sessionEnd; save();
     if (RT[n].bot) RT[n].bot.quit();
@@ -1122,10 +1141,11 @@ function rotJoin(off) {
   if (!c.length) return null;
   const n = c[Math.floor(Math.random() * Math.min(3, c.length))];   // một trong 3 bot nghỉ lâu nhất
   const st = state[n];
-  st.announce = true;
-  setSilent(n, false).then(() => {   // gỡ quyền im TRƯỚC khi vào để hiện [+]
-    st.want = true; st.since = Date.now(); st.sessionEnd = Date.now() + sessionLen(); RT[n].retryAt = 0; save();
-  });
+  const go = () => { st.want = true; st.since = Date.now(); st.sessionEnd = Date.now() + sessionLen(); RT[n].retryAt = 0; save(); };
+  if (rotCfg.vaora !== false) {   // 31/10 chủ server: admin chọn trên web thay phiên vào/ra có hiện tin hay im lặng
+    st.announce = true;
+    setSilent(n, false).then(go);   // gỡ quyền im TRƯỚC khi vào để hiện [+]
+  } else go();
   return n;
 }
 setInterval(() => {
@@ -1197,6 +1217,7 @@ async function act(b) {
       });
     }
     if (b.on != null) rotCfg.on = !!b.on;
+    if (b.vaora != null) rotCfg.vaora = !!b.vaora;   // 31/10: thay phiên vào/ra hiện tin (true) hay im lặng (false)
     saveRot(); rotTarget = null; rotSlotKey = null;
     const r = rotRange();
     return 'thay phiên online: ' + (rotCfg.on ? 'bật' : 'tắt') + ', mặc định ' + rotCfg.min + '–' + rotCfg.max + ' bot, ' + (rotCfg.khung || []).length
@@ -1213,7 +1234,7 @@ async function act(b) {
   if (b.action === 'chatnow') { chatOnce(true).then(r => log(r)).catch(e => log('lỗi bot chat:', e.message)); return 'cho bot chat thử ngay (vài giây nữa mới nói)'; }
   if (b.bot === '*') {
     const out = [];
-    for (const n of NAMES) out.push(await act(Object.assign({}, b, { bot: n })).catch(e => e.message));
+    for (const n of NAMES) out.push(await act(Object.assign({}, b, { bot: n, mass: true })).catch(e => e.message));   // hàng loạt: giữ im lặng
     return out.length + ' bot: ' + (b.action === 'join' ? 'vào' : b.action === 'leave' ? 'thoát' : b.action);
   }
   if (b.action === 'create') return create(String(b.bot || '').trim(), b.server, b.want !== false);
@@ -1223,9 +1244,15 @@ async function act(b) {
   switch (b.action) {
     case 'join':
       if (b.server && SERVERS[b.server]) st.server = b.server;
-      st.want = true; rt.retryAt = 0; save();
+      // 31/10 chủ server: bấm Vào một bot thì hiện [+] như người thật (và đôi khi chào); Vào tất cả thì vẫn im
+      if (!b.mass && !b.silent && !rt.bot && st.server === 'banghoi-1') { st.announce = true; await setSilent(b.bot, false); }
+      st.want = true; st.since = Date.now(); rt.retryAt = 0; save();
       return b.bot + ' vào ' + SERVERS[st.server];
     case 'leave':
+      if (!b.mass && rt.bot && st.server === 'banghoi-1' && !rt.leaving) {   // thoát từng bot: có tin (có thể chào) hoặc im (nút Thoát im)
+        rotLeaveNow(b.bot, b.silent ? 'thoát im' : 'thoát tay', !!b.silent).catch(e => log('lỗi thoát:', e.message));
+        return b.bot + (b.silent ? ' thoát im lặng (vài giây nữa)' : ' thoát (vài giây nữa, có thể chào trước)');
+      }
       st.want = false; save();
       if (rt.bot) rt.bot.quit();
       return b.bot + ' thoát';
@@ -1329,7 +1356,7 @@ http.createServer((req, res) => {
       tpa: tpaCfg,
       tpagia: ftpaCfg,
       chetgia: chetCfg,
-      thayphien: { on: rotCfg.on, min: rotCfg.min, max: rotCfg.max, khung: rotCfg.khung || [], muctieu: rotTarget, dang: rotCfg.on ? rotRange() : null, banghoi: NAMES.filter(n => state[n].server === 'banghoi-1').length },
+      thayphien: { on: rotCfg.on, vaora: rotCfg.vaora !== false, min: rotCfg.min, max: rotCfg.max, khung: rotCfg.khung || [], muctieu: rotTarget, dang: rotCfg.on ? rotRange() : null, banghoi: NAMES.filter(n => state[n].server === 'banghoi-1').length },
       dido: { on: wanderCfg.on, phong: NAMES.some(n => state[n].homeOld !== undefined), dang: NAMES.filter(n => RT[n].wander) },
     });
   }

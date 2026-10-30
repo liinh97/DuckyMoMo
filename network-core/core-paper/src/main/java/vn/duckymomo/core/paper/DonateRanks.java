@@ -42,7 +42,7 @@ final class DonateRanks implements Listener {
     record Tier(String group, String name, String color, List<String> perks, List<String> prices) {
     }
 
-    private static final LegacyComponentSerializer LEGACY = LegacyComponentSerializer.legacyAmpersand();
+    private static final LegacyComponentSerializer LEGACY = LegacyComponentSerializer.builder().character('&').hexColors().build();   // 30/10: tiền tố rank ủng hộ màu hex &#RRGGBB
     private static final DateTimeFormatter DATE = DateTimeFormatter.ofPattern("dd/MM/yyyy").withZone(ZoneId.of("Asia/Ho_Chi_Minh"));
 
     private final JavaPlugin plugin;

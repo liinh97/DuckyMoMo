@@ -24,7 +24,7 @@ import java.util.List;
  * KHÔNG dùng chữ in đậm (&l): font tiếng Việt vẽ đậm bị nhòe. Dòng dài tự xuống dòng ở ~38 ký tự để khung không quá rộng.
  */
 final class Tip {
-    private static final LegacyComponentSerializer LEGACY = LegacyComponentSerializer.legacyAmpersand();
+    private static final LegacyComponentSerializer LEGACY = LegacyComponentSerializer.builder().character('&').hexColors().build();   // 30/10: tiền tố rank ủng hộ màu hex &#RRGGBB
     static final String LINE = "&7&m                              ";
     private static final int WRAP = 38;
 

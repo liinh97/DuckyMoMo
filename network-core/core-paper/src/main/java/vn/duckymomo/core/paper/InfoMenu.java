@@ -40,7 +40,7 @@ import java.util.function.Consumer;
  */
 final class InfoMenu {
 
-    private static final LegacyComponentSerializer LEGACY = LegacyComponentSerializer.legacyAmpersand();
+    private static final LegacyComponentSerializer LEGACY = LegacyComponentSerializer.builder().character('&').hexColors().build();   // 30/10: tiền tố rank ủng hộ màu hex &#RRGGBB
     private static final int PER_ROW = 7;
     private static final int MAX_ROWS = 4;   // hàng nội dung mỗi trang
 

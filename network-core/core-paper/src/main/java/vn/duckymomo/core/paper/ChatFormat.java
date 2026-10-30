@@ -16,7 +16,7 @@ import org.bukkit.event.Listener;
  */
 final class ChatFormat implements Listener {
 
-    private static final LegacyComponentSerializer LEGACY = LegacyComponentSerializer.legacyAmpersand();
+    private static final LegacyComponentSerializer LEGACY = LegacyComponentSerializer.builder().character('&').hexColors().build();   // 30/10: tiền tố rank ủng hộ màu hex &#RRGGBB
 
     @EventHandler(ignoreCancelled = true)
     public void onChat(AsyncChatEvent e) {

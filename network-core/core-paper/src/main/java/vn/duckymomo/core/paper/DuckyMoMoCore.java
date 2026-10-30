@@ -421,6 +421,7 @@ public final class DuckyMoMoCore extends JavaPlugin {
             int sim = getConfig().getInt("bot-view.simulation-distance", 2), view = getConfig().getInt("bot-view.view-distance", 2);
             BotView botView = new BotView(sim, view, getLogger());
             getServer().getPluginManager().registerEvents(botView, this);
+            BotView.initKnown(this);   // nhớ UUID bot đã từng vào (bot mua /ah của người offline, 31/10)
             botView.startCleanup(this);   // dọn quái đông cứng quanh bot mỗi phút (29/10)
             botView.startHide(this, getConfig().getConfigurationSection("bot-hide"));   // phòng ẩn bot (29/10)
             getLogger().info("Bot botfarm: simulation-distance " + sim + ", view-distance " + view);

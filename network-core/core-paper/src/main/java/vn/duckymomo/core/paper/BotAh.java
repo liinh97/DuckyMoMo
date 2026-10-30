@@ -28,7 +28,8 @@ import org.bukkit.scheduler.BukkitTask;
 /**
  * Bot mua đồ người chơi treo /ah (30/10, chủ server: "check xem giá hợp lý thì mua").
  * Cứ every-min..every-max phút (× hệ số giả BotFake của người bán: người chơi lâu rồi thì ít, lâu hẳn thì không) xét các món đang treo:
- *  - người bán là người THẬT đang online (thấy thông báo "đã bán"), món đã treo ≥ min-age phút, tiền Vault;
+ *  - người bán là người THẬT (31/10: cả người offline, người online ưu tiên trước; offline-sellers: false để tắt), không phải bot
+ *    (kể cả bot đang offline: BotView.knownBot), món đã treo ≥ min-age phút, tiền Vault;
  *  - định giá: món Tinh Luyện = giá bán Tinh Luyện; đồ thường TRƠN (không tên, không phù phép, không dữ liệu riêng) = giá /sell trong
  *    Essentials worth.yml; đồ khác (đồ set, đồ thư viện, đồ phù phép, hộp shulker…) không định giá được -> không mua;
  *  - giá hợp lý: min-ratio × giá trị ≤ giá ≤ max-ratio × giá trị (rẻ quá = có thể đặt nhầm, để người thật mua), giá trị ≥ min-value, giá ≤ max-price;
@@ -175,8 +176,14 @@ final class BotAh {
             if (it.isExpired() || !"vault".equalsIgnoreCase(it.getEconomyName())) {
                 continue;
             }
-            Player seller = Bukkit.getPlayer(it.getSellerUniqueId());
-            if (seller == null || BotView.isBot(seller)) {
+            // 31/10 chủ server: mua cả của người OFFLINE (người online vẫn được ưu tiên); bỏ món của bot (kể cả bot đang offline)
+            java.util.UUID sid = it.getSellerUniqueId();
+            if (sid == null || BotView.knownBot(sid)) {
+                continue;
+            }
+            org.bukkit.OfflinePlayer seller = Bukkit.getOfflinePlayer(sid);
+            boolean online = seller.isOnline();
+            if (!online && !cfg.getBoolean("offline-sellers", true)) {
                 continue;
             }
             seen++;
@@ -184,7 +191,7 @@ final class BotAh {
             if (it.getCreatedAt() == null || now - it.getCreatedAt().getTime() < minAge || price > maxPrice || total + price > totalCap) {
                 continue;
             }
-            double[] s = sellers.getOrDefault(seller.getUniqueId(), new double[2]);
+            double[] s = sellers.getOrDefault(sid, new double[2]);
             if (s[0] >= sellerItems || s[1] + price > sellerXu) {
                 continue;
             }
@@ -195,20 +202,22 @@ final class BotAh {
             if (!force && ThreadLocalRandom.current().nextDouble() >= BotFake.factor(seller)) {
                 continue;   // người bán chơi lâu rồi: ít mua của họ
             }
-            ok.add(new Object[] {it, seller, v});
+            ok.add(new Object[] {it, seller, v, online});
         }
         if (ok.isEmpty()) {
-            return seen == 0 ? "không có món nào của người thật đang online" : "bỏ lượt: " + seen + " món đang treo, không món nào giá hợp lý / còn hạn mức";
+            return seen == 0 ? "không có món nào của người thật đang treo" : "bỏ lượt: " + seen + " món đang treo, không món nào giá hợp lý / còn hạn mức";
         }
-        Object[] pick = ok.get(ThreadLocalRandom.current().nextInt(ok.size()));
+        List<Object[]> on = ok.stream().filter(o -> (boolean) o[3]).toList();   // người online ưu tiên trước
+        List<Object[]> from = on.isEmpty() ? ok : on;
+        Object[] pick = from.get(ThreadLocalRandom.current().nextInt(from.size()));
         Item it = (Item) pick[0];
-        Player seller = (Player) pick[1];
+        org.bukkit.OfflinePlayer seller = (org.bukkit.OfflinePlayer) pick[1];
         Player bot = bots.get(ThreadLocalRandom.current().nextInt(bots.size()));
         double price = it.getPrice().doubleValue();
         if (VaultEconomy.available() && VaultEconomy.balance(bot) < price) {
             VaultEconomy.deposit(bot, price - VaultEconomy.balance(bot) + ThreadLocalRandom.current().nextInt(200, 2000));
         }
-        double[] s = sellers.computeIfAbsent(seller.getUniqueId(), k -> new double[2]);
+        double[] s = sellers.computeIfAbsent(sid(seller), k -> new double[2]);
         s[0]++;
         s[1] += price;
         total += price;
@@ -221,6 +230,10 @@ final class BotAh {
         });
         return bot.getName() + " mua của " + seller.getName() + ": " + what + " giá " + Rewards.xu(price) + " (giá trị ~" + Rewards.xu((double) pick[2])
                 + "; hôm nay cả server " + Rewards.xu(total) + ")";
+    }
+
+    private static java.util.UUID sid(org.bukkit.OfflinePlayer p) {
+        return p.getUniqueId();
     }
 
     void command(CommandSender sender, String[] args) {

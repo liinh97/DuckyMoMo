@@ -2827,6 +2827,7 @@ bot-gia:
 # cả server total-xu xu/ngày. /dmm botah xem, /dmm botah thu mua thử ngay.
 bot-ah:
   enabled: true
+  offline-sellers: true   # 31/10 chủ server: mua cả của người offline (người online vẫn được ưu tiên); bot (kể cả offline) không bao giờ
   every-min: 20
   every-max: 60
   min-age-minutes: 15

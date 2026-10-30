@@ -44,11 +44,11 @@ final class BotFake {
     private static final List<String> RANDOM = List.of("lava", "lava", "lava", "roi", "roi", "zombie", "zombie", "xuong", "xuong", "creeper",
             "creeper", "nhen", "duoi", "chay", "nghet", "enderman");
 
-    static double hours(Player p) {
+    static double hours(org.bukkit.OfflinePlayer p) {
         return p.getStatistic(Statistic.PLAY_ONE_MINUTE) / 20.0 / 3600.0;
     }
 
-    static double factor(Player p) {
+    static double factor(org.bukkit.OfflinePlayer p) {
         double h = hours(p);
         ConfigurationSection c = cfg;
         List<Map<?, ?>> muc = c == null ? List.of() : c.getMapList("muc");

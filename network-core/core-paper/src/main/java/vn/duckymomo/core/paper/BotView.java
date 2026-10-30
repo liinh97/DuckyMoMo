@@ -190,6 +190,51 @@ final class BotView implements Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     public void onJoin(PlayerJoinEvent e) {
         apply(e.getPlayer());
+        remember(e.getPlayer());
+    }
+
+    // ---------------------------------------------------------------- bot đã từng vào (31/10: bot mua /ah của người OFFLINE phải
+    // biết người bán offline có phải bot không; isBot chỉ nhận ra bot đang online qua IP 10.30.x.x). Lưu plugins/DuckyMoMoCore/bot-uuid.txt
+
+    private static final java.util.Set<java.util.UUID> KNOWN = java.util.concurrent.ConcurrentHashMap.newKeySet();
+    private static volatile java.io.File knownFile;
+
+    static void initKnown(org.bukkit.plugin.java.JavaPlugin plugin) {
+        knownFile = new java.io.File(plugin.getDataFolder(), "bot-uuid.txt");
+        try {
+            if (knownFile.exists()) {
+                for (String l : java.nio.file.Files.readAllLines(knownFile.toPath())) {
+                    try {
+                        KNOWN.add(java.util.UUID.fromString(l.trim()));
+                    } catch (IllegalArgumentException ignored) {
+                        // dòng hỏng
+                    }
+                }
+            }
+        } catch (java.io.IOException ex) {
+            plugin.getLogger().warning("Không đọc được bot-uuid.txt: " + ex.getMessage());
+        }
+        org.bukkit.Bukkit.getOnlinePlayers().forEach(BotView::remember);
+    }
+
+    private static void remember(Player p) {
+        if (isBot(p) && KNOWN.add(p.getUniqueId()) && knownFile != null) {
+            try {
+                java.nio.file.Files.writeString(knownFile.toPath(), p.getUniqueId() + "\n", java.nio.file.StandardOpenOption.CREATE,
+                        java.nio.file.StandardOpenOption.APPEND);
+            } catch (java.io.IOException ignored) {
+                // lần sau ghi lại
+            }
+        }
+    }
+
+    /** Bot (đang online qua IP giả, hoặc đã từng vào server này dưới dạng bot). */
+    static boolean knownBot(java.util.UUID id) {
+        if (KNOWN.contains(id)) {
+            return true;
+        }
+        Player p = org.bukkit.Bukkit.getPlayer(id);
+        return p != null && isBot(p);
     }
 
     @EventHandler(priority = EventPriority.MONITOR)

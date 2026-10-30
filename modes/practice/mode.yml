@@ -2,7 +2,7 @@ id: practice
 display_name: "Practice"
 description: "Luyện PvP: đấu 1v1, đấu đội, kit có sẵn, combat 1.8"
 icon: "minecraft:iron_sword"
-status: beta
+status: closed                   # 31/10 chủ server: Practice chưa mở (NPC sảnh, menu hiện "Sắp mở"). Mở thử thì đổi lại beta
 platform: paper
 minecraft_version: "26.2"
 clients: [java, bedrock]

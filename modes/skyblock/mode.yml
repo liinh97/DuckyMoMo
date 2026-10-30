@@ -1,0 +1,16 @@
+id: skyblock
+display_name: "Skyblock"
+description: "Bắt đầu trên hòn đảo nhỏ giữa trời, mở rộng đảo, nâng cấp, đua top cùng bạn bè"
+icon: "minecraft:grass_block"
+status: closed                   # 31/10: chưa có server, chỉ để NPC sảnh / menu hiện "Sắp mở". Khi làm server: ./ops/new-mode.sh rồi đổi status
+platform: paper
+minecraft_version: "26.2"
+clients: [java, bedrock]
+servers:
+  - name: skyblock-1
+    address: skyblock-1:25565
+visibility:
+  beta_permission: "network.beta"
+economy: isolated
+database: mode_skyblock
+cosmetics: [chat_tag, name_color]

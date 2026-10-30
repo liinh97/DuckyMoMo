@@ -15,6 +15,7 @@ lobby-npcs:
     practice: {skin: boy-fighting-sport, color: "&c", version: "Java 1.13 → 26.2 · Bedrock", pack: true}
     sangtao: {skin: girl-wizzard, color: "&a", version: "Java 1.13 → 26.2 · Bedrock", pack: true}
     pokemon: {skin: boy-axolotl, color: "&b", version: "Java 1.21.1 · cần modpack", pack: false}
+    skyblock: {skin: tree, color: "&2", version: "Java 1.13 → 26.2 · Bedrock", pack: true}   # 31/10: sắp mở (modes/skyblock/mode.yml status closed)
 
 # Giới hạn đăng ký AuthMe theo IP (luật mùa 1, mục 37). Không tính IP nội bộ. Lưu: dangky-ip.yml.
 # Không dùng maxRegPerIp của AuthMe vì không có danh sách IP miễn (whitelist) cho quán net / nhà đông người.

@@ -20,6 +20,34 @@ final class PlayerStatsPlaceholders extends PlaceholderExpansion {
         return new PlayerStatsPlaceholders();
     }
 
+    private static long newDaySec = -1;
+
+    /** 30/10: thời gian tới "ngày mới" của Towny (thu thuế / phí duy trì), dạng ngắn "5g12p". Đọc new_day_time (vd 12h) của Towny. */
+    private static String untilNewDay() {
+        if (newDaySec < 0) {
+            newDaySec = 12 * 3600;
+            var t = org.bukkit.Bukkit.getPluginManager().getPlugin("Towny");
+            if (t != null) {
+                var y = org.bukkit.configuration.file.YamlConfiguration.loadConfiguration(
+                        new java.io.File(t.getDataFolder(), "settings/config.yml"));
+                String v = y.getString("plugin.day_timer.new_day_time", y.getString("new_day_time", "12h")).trim().toLowerCase(Locale.ROOT);
+                try {
+                    long n = Long.parseLong(v.replaceAll("[^0-9]", ""));
+                    newDaySec = v.endsWith("h") ? n * 3600 : v.endsWith("m") ? n * 60 : n;
+                } catch (NumberFormatException ignored) {
+                    // giữ 12h
+                }
+            }
+        }
+        java.time.LocalDateTime now = java.time.LocalDateTime.now();
+        java.time.LocalDateTime next = now.toLocalDate().atStartOfDay().plusSeconds(newDaySec);
+        if (!next.isAfter(now)) {
+            next = next.plusDays(1);
+        }
+        long m = java.time.Duration.between(now, next).toMinutes();
+        return m >= 60 ? (m / 60) + "g" + (m % 60) + "p" : m + "p";
+    }
+
     @Override
     public String getIdentifier() {
         return "dmmtoi";
@@ -42,6 +70,9 @@ final class PlayerStatsPlaceholders extends PlaceholderExpansion {
 
     @Override
     public String onRequest(OfflinePlayer player, String params) {
+        if ("thue_con".equals(params)) {
+            return untilNewDay();
+        }
         if (player == null) {
             return "";
         }

@@ -20,7 +20,8 @@ import threading
 import time
 from pathlib import Path
 
-KINDS = {"vaora": "Người chơi vào / ra", "chuyen": "Người chơi chuyển server", "chat": "Chat của người chơi", "suco": "Sự cố server"}
+KINDS = {"vaora": "Người chơi vào / ra", "chuyen": "Người chơi chuyển server", "chat": "Chat của người chơi", "suco": "Sự cố server",
+         "donate": "Nạp tiền (lấy mã QR, báo đã chuyển)"}   # 30/10: chủ server: member nạp mà app không báo
 SRV = {"lobby": "Sảnh", "banghoi-1": "Bang Hội Chiến", "practice-1": "Practice", "sangtao-1": "Thái Ấp Sáng Tạo"}
 
 

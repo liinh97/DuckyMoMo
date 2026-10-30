@@ -3892,8 +3892,12 @@ def donate_code(name, tier_idx, months, rid):
     return f"DMM {re.sub(r'[^A-Za-z0-9]', '', name).upper()} R{tier_idx + 1} {months}T {rid}"
 
 
-def notify_admins(text):
-    """Báo admin đang online (có quyền duckymomo.rank.admin) bằng tin trong game + ghi dòng trang Hoạt động."""
+def notify_admins(text, push_title="💰 Có người báo đã chuyển tiền"):
+    """Báo admin đang online (có quyền duckymomo.rank.admin) bằng tin trong game + ghi dòng trang Hoạt động + thông báo app (loại donate)."""
+    try:
+        NOTIFIER.push("donate", push_title, text, tag="donate", url="donate")   # 30/10: trước chỉ báo trong game, app không biết
+    except Exception:
+        pass
     raw = ["", {"text": "[Donate] ", "color": "gold", "bold": True}, {"text": text, "color": "yellow"}]
     for name, srv in online_players().items():
         try:
@@ -4002,6 +4006,8 @@ def web_donate(data, ip):
                    "trang_thai": "tao", "tao_luc": int(time.time() * 1000), "ip": ip}
             rows.append(don)
             donate_save(rows)
+            threading.Thread(target=lambda d=don: NOTIFIER.push("donate", f"💳 {d['ten']} lấy mã QR nạp", f"{d['tien']:,}đ · {d['bac']} {d['goi']} · nội dung {d['noi_dung']}".replace(",", "."),
+                                                                tag="qr-" + d["id"], url="donate"), daemon=True).start()
             return {"ok": True, "don": don, **donate_qr(don)}
         if act == "tao":
             tiers = donate_tiers()
@@ -4021,6 +4027,8 @@ def web_donate(data, ip):
                    "tao_luc": int(time.time() * 1000), "ip": ip}
             rows.append(don)
             donate_save(rows)
+            threading.Thread(target=lambda d=don: NOTIFIER.push("donate", f"💳 {d['ten']} lấy mã QR nạp", f"{d['tien']:,}đ · {d['bac']} {d['goi']} · nội dung {d['noi_dung']}".replace(",", "."),
+                                                                tag="qr-" + d["id"], url="donate"), daemon=True).start()
             return {"ok": True, "don": don, **donate_qr(don)}
         if act == "bao":
             don = next((r for r in mine if r["id"] == str(data.get("id", ""))), None)

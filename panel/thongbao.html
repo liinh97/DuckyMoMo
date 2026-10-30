@@ -102,7 +102,7 @@ function render() {
   $("ios").hidden = !(ios && !standalone);
   const pr = (MINE && MINE.prefs) || {};
   $("kinds").innerHTML = Object.entries(KINDS).map(([k, t]) => `<label><input type="checkbox" data-k="${k}" ${pr[k] !== false ? "checked" : ""} ${on ? "" : "disabled"}>
-    <span>${esc(t)}<small>${{ vaora: "Người chơi thật (không tính bot, không tính staff) vào / thoát; ghi rõ lần đầu vào, số phút đã chơi, server cuối.", chuyen: "Người chơi thật đổi server (vd Sảnh → Bang Hội Chiến); lần vào sảnh ngay khi đăng nhập thì không báo.", chat: "Tin chat của người chơi thật, ghi rõ ở server nào, để kịp vào trả lời người mới hỏi.", suco: "Server không phản hồi / hoạt động lại, Bang Hội lag (TPS dưới 15 kéo dài), bot rớt hàng loạt." }[k] || ""}</small></span></label>`).join("");
+    <span>${esc(t)}<small>${{ vaora: "Người chơi thật (không tính bot, không tính staff) vào / thoát; ghi rõ lần đầu vào, số phút đã chơi, server cuối.", chuyen: "Người chơi thật đổi server (vd Sảnh → Bang Hội Chiến); lần vào sảnh ngay khi đăng nhập thì không báo.", chat: "Tin chat của người chơi thật, ghi rõ ở server nào, để kịp vào trả lời người mới hỏi.", suco: "Server không phản hồi / hoạt động lại, Bang Hội lag (TPS dưới 15 kéo dài), bot rớt hàng loạt.", donate: "Có người lấy mã QR nạp tiền, hoặc bấm Đã chuyển: vào trang Donate kiểm tra tiền về rồi duyệt." }[k] || ""}</small></span></label>`).join("");
   document.querySelectorAll("#kinds input").forEach((el) => el.onchange = async () => {
     try { await api({ action: "prefs", endpoint: SUB.endpoint, prefs: prefsNow() }); toast("Đã lưu", "ok"); } catch (e) { toast(e.message, "err"); }
   });
@@ -126,7 +126,7 @@ $("on").onclick = async () => {
     if (perm !== "granted") { toast("Chưa cho phép thông báo", "err"); return render(); }
     const reg = await navigator.serviceWorker.ready;
     SUB = await reg.pushManager.getSubscription() || await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64ToBytes(KEY) });
-    await api({ action: "subscribe", sub: SUB.toJSON(), prefs: { vaora: true, chat: true, suco: true }, ten: (ios ? "iPhone" : navigator.platform || "Máy") });
+    await api({ action: "subscribe", sub: SUB.toJSON(), prefs: { vaora: true, chat: true, suco: true, donate: true }, ten: (ios ? "iPhone" : navigator.platform || "Máy") });
     toast("Đã bật thông báo", "ok");
     await load();
   } catch (e) { toast("Không bật được: " + e.message, "err"); }

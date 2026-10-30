@@ -5,13 +5,24 @@ Player:
   tabprefix: "&0[&7Player&0] &3"
   tagprefix: "&2Player &3"
 
+# 30/10 chủ server: Tab chi chít, chữ đè sang cột bên -> danh phận thành ký hiệu màu, cấp chỉ còn số (nhóm LuckPerms của Danh phận).
+# Rank ủng hộ / Sứ Giả / staff (nhóm khác) vẫn dùng tiền tố đầy đủ của LuckPerms (_DEFAULT_).
+default:
+  tabprefix: "&7◇ &f"
+dan:
+  tabprefix: "&b◆ &f"
+luongdan:
+  tabprefix: "&a✦ &f"
+haokiet:
+  tabprefix: "&e♛ &f"
+
  # default settings for all groups, all groups will take properties from this section unless player's primary group overrides a specific setting
 _DEFAULT_:
   # &f sau tiền tố: tên trắng, không ăn màu tiền tố (27/10: "[Tị Nạn] Itrap" tên xám theo &8 của tiền tố)
   tabprefix: "%luckperms-prefix%&f"
   tagprefix: "%luckperms-prefix%&f"
   customtabname: "%player%"
-  tabsuffix: "%luckperms-suffix% &8[%dmmcap_mau%Cấp %dmmcap_cap%&8]"
+  tabsuffix: "%luckperms-suffix%"   # 30/10 chủ server: Tab gọn, không hiện cấp (cấp xem ở bảng bên phải / dưới tên)
   tagsuffix: "%luckperms-suffix%%dmmgiap_tren%"   # 30/10: ẩn giáp thì hiện tên set sau tên (cả Bedrock thấy, dòng dưới tên Bedrock không có)
 
 per-world:

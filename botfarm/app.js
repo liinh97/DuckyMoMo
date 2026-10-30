@@ -539,8 +539,12 @@ function rankOf(name) {
   const viewer = NAMES.find(n => RT[n].bot && RT[n].bot.players && RT[n].bot.players[name]);
   const p = viewer ? RT[viewer].bot.players[name] : null;
   const s = p && p.displayName ? p.displayName.toString() : '';
-  const r = /^\[([^\]]+)\]/.exec(s), c = /\[Cấp (\d+)\]/.exec(s);
-  return { hang: r ? r[1].trim() : '', cap: c ? +c[1] : 0 };
+  // 30/10: Tab gọn "◇ Tên 12" (◇ Tị Nạn, ◆ Dân, ✦ Lương Dân, ♛ Hào Kiệt); vẫn đọc được kiểu cũ "[Dân] Tên [Cấp 12]"
+  const SYM = { '◇': 'Tị Nạn', '◆': 'Dân', '✦': 'Lương Dân', '♛': 'Hào Kiệt' };
+  const t = s.trim();
+  const r = /^\[([^\]]+)\]/.exec(t), c = /\[Cấp (\d+)\]/.exec(t) || /\s(\d+)\s*$/.exec(t);
+  const hang = r ? r[1].trim() : (SYM[t[0]] || '');
+  return { hang, cap: c ? +c[1] : 0 };
 }
 function fitsRole(role, name) {
   if (!role) return true;

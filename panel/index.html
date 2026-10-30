@@ -5,6 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>DuckyMoMo · Cài đặt</title>
 <style>
+.order-box { display: flex; flex-direction: column; gap: 4px; max-width: 520px; }
+.order-row { display: flex; align-items: center; gap: 8px; padding: 6px 8px; border: 1px solid var(--line); border-radius: 8px; background: var(--card-2); cursor: grab; }
+.order-row.dragging { opacity: .45; }
+.order-row.over { border-color: var(--accent); }
+.order-num { min-width: 24px; text-align: right; color: var(--muted); font-variant-numeric: tabular-nums; }
+.order-name { flex: 1; }
+.order-btn { padding: 2px 8px; min-width: 0; }
   @media (max-width: 900px) { .page { padding: 18px 14px 0; } }
   .page { }
   .page-head .search { position: relative; width: min(420px, 100%); }
@@ -206,7 +213,7 @@ const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
 const CAT_ICON = { "Chiến tranh": "⚔️", "Thị trấn": "🏘️", "Thế giới": "🌍", "Thưởng & sự kiện": "🎁", "Shop": "🛒", "Hệ thống": "⚙️",
   "Kinh tế": "💰", "PvP & combat": "🗡️", "Hiển thị": "🎨", "Nghề": "⛏️", "Chống hack": "🛡️", "Phù phép": "✨", "Người mới": "🐣",
   "Chat": "💬", "Rank donate": "👑", "Sảnh": "🏰", "Role": "🎭", "Khác": "📁" };
-const WIDE = new Set(["kits", "rewards", "milestones", "quests", "spin", "fragtypes", "fragshop", "shopitems", "shoptitles", "dishes", "workshop", "shopcats", "crates"]);
+const WIDE = new Set(["order", "kits", "rewards", "milestones", "quests", "spin", "fragtypes", "fragshop", "shopitems", "shoptitles", "dishes", "workshop", "shopcats", "crates"]);
 const fold = (s) => String(s || "").normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/đ/g, "d").replace(/Đ/g, "D").toLowerCase();
 
 async function load() {
@@ -442,6 +449,8 @@ function fillCtl(mode, s, holder, ctl, compact) {
     input = spinEditor(value || [], v => change(mode, s, v, div));
   } else if (s.type === "kits") {
     input = kitsEditor(value || {}, v => change(mode, s, v, div));
+  } else if (s.type === "order") {
+    input = orderEditor(value || [], s.labels || {}, v => change(mode, s, v, div), s.ends || ["đầu", "cuối"]);
   } else if (s.type === "quests") {
     input = questsEditor(value || {}, v => change(mode, s, v, div));
   } else if (s.type === "milestones") {
@@ -537,6 +546,49 @@ $("q").oninput = () => { clearTimeout(qTimer); qTimer = setTimeout(() => { query
 window.addEventListener("beforeunload", (e) => { if (Object.keys(edits).length) { e.preventDefault(); e.returnValue = ""; } });
 
 // ---- Danh sách ngắn (từ cấm, tên thế giới…): thẻ nhỏ, gõ rồi Enter để thêm, dán nhiều dòng/dấu phẩy cũng được
+// 30/10: xếp thứ tự bằng kéo thả (máy tính) hoặc nút ▲▼ (điện thoại). labels: {mã: tên}; ends: [chữ ở đầu, chữ ở cuối]
+function orderEditor(list, labels, onChange, ends) {
+  let ids = list.filter(x => x in labels || !Object.keys(labels).length);
+  Object.keys(labels).forEach(k => { if (!ids.includes(k)) ids.push(k); });
+  const box = document.createElement("div");
+  box.className = "order-box";
+  let dragFrom = -1;
+  const draw = () => {
+    box.innerHTML = "";
+    ids.forEach((id, i) => {
+      const row = document.createElement("div");
+      row.className = "order-row";
+      row.draggable = true;
+      const num = document.createElement("span");
+      num.className = "order-num";
+      num.textContent = (i + 1);
+      const name = document.createElement("span");
+      name.className = "order-name";
+      name.textContent = labels[id] || id;
+      const hint = document.createElement("span");
+      hint.className = "small";
+      hint.textContent = i === 0 ? " · " + ends[0] : i === ids.length - 1 ? " · " + ends[1] : "";
+      name.appendChild(hint);
+      const mv = (d) => { const j = i + d; if (j < 0 || j >= ids.length) return; [ids[i], ids[j]] = [ids[j], ids[i]]; draw(); onChange(ids.slice()); };
+      const up = document.createElement("button"); up.type = "button"; up.className = "btn order-btn"; up.textContent = "▲"; up.disabled = i === 0; up.onclick = () => mv(-1);
+      const dn = document.createElement("button"); dn.type = "button"; dn.className = "btn order-btn"; dn.textContent = "▼"; dn.disabled = i === ids.length - 1; dn.onclick = () => mv(1);
+      row.addEventListener("dragstart", e => { dragFrom = i; row.classList.add("dragging"); e.dataTransfer.effectAllowed = "move"; });
+      row.addEventListener("dragend", () => row.classList.remove("dragging"));
+      row.addEventListener("dragover", e => { e.preventDefault(); row.classList.add("over"); });
+      row.addEventListener("dragleave", () => row.classList.remove("over"));
+      row.addEventListener("drop", e => {
+        e.preventDefault(); row.classList.remove("over");
+        if (dragFrom < 0 || dragFrom === i) return;
+        const [it] = ids.splice(dragFrom, 1); ids.splice(i, 0, it); dragFrom = -1; draw(); onChange(ids.slice());
+      });
+      row.append(num, name, up, dn);
+      box.appendChild(row);
+    });
+  };
+  draw();
+  return box;
+}
+
 function tagsEditor(list, onChange, opts) {
   let vals = (list || []).map(String);
   const box = document.createElement("div"); box.className = "tg";

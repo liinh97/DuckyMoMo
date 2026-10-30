@@ -614,6 +614,16 @@ def validate(s, v):
         if not out:
             raise ValueError(f"{label}: cần ít nhất một nhiệm vụ")
         return out
+    if t == "order":
+        # 30/10: danh sách mã xếp thứ tự (kéo thả), vd thứ tự set Thợ Rèn từ yếu tới mạnh. labels trong schema = các mã hợp lệ.
+        labels = s.get("labels") or {}
+        ids = [str(x).strip() for x in (v or []) if str(x).strip()]
+        if len(set(ids)) != len(ids):
+            raise ValueError(f"{label}: có mã bị lặp")
+        for x in ids:
+            if not LIB_ID_RE.match(x) or (labels and x not in labels):
+                raise ValueError(f"{label}: mã lạ \"{x}\"")
+        return ids + [k for k in labels if k not in ids]
     if t in ("list", "lines"):
         # list: các mục cách nhau dấu phẩy; lines: mỗi dòng một mục. items: int/number -> đổi sang số
         if isinstance(v, str):

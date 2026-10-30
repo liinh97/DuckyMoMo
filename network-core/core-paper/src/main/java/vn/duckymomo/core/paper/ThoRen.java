@@ -257,6 +257,11 @@ final class ThoRen implements Listener {
                 }
             }
         }
+        // 30/10: thứ tự set kéo thả ở Cài đặt › Thợ Rèn (tho-ren.set-order, yếu -> mạnh) đè bac từng set
+        List<String> order = c.getStringList("set-order");
+        for (int oi = 0; oi < order.size(); oi++) {
+            setRank.put(order.get(oi), oi + 1);
+        }
     }
 
     private static Number num(Object o) {

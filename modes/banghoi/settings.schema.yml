@@ -1332,6 +1332,10 @@ Admin (quyền duckymomo.sell.khonggioihan) không bị giới hạn." }
     apply: [dmm reload]
     settings:
       - { key: tr_on, label: Bật Thợ Rèn, type: select, file: plugins/DuckyMoMoCore/config.yml, path: tho-ren.enabled, options: [ { value: true, label: Bật }, { value: false, label: Tắt } ] }
+      - { key: tr_thutu, label: "Thứ tự set từ yếu tới mạnh (kéo thả)", type: order, file: plugins/DuckyMoMoCore/config.yml, path: tho-ren.set-order,
+          ends: ["yếu nhất", "mạnh nhất"],
+          labels: { nonggia: Nông Gia, thosan: Thợ Săn, thomo: Thợ Mỏ, nguphu: Ngư Phủ, duhiep: Du Hiệp, tanthu: Tân Thủ, chuyencan: Chuyên Cần, chienbinh: Chiến Binh, ulinh: U Linh, tinhanh: Tinh Anh, caocap: Cao Cấp, huyenthoai: Huyền Thoại, thanthoai: Thần Thoại, thanthanh: Thần Thánh },
+          info: "Dùng để chọn set hiện trên đầu khi ẩn giáp: món thuộc set đứng dưới (mạnh hơn) thắng, kể cả chỉ mặc 1 món. Thêm set mới vào Thợ Rèn thì thêm mã vào labels của ô này (settings.schema.yml)." }
       - { key: kham_on, label: "Bật Khảm Tinh Luyện (/thoren kham)", type: select, file: plugins/DuckyMoMoCore/config.yml, path: kham.enabled, options: [ { value: true, label: Bật }, { value: false, label: Tắt } ] }
       - { key: kham_thao_xu, label: "Khảm: tiền tháo một ngọc (xu)", type: int, min: 0, max: 1000000, file: plugins/DuckyMoMoCore/config.yml, path: kham.thao-xu }
       - { key: db_on, label: "Bật Đơn nhà buôn tuần (NPC Nhà Buôn ở /warp shop)", type: select, file: plugins/DuckyMoMoCore/config.yml, path: don-buon.enabled, options: [ { value: true, label: Bật }, { value: false, label: Tắt } ] }

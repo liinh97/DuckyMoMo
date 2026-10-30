@@ -2298,6 +2298,8 @@ tho-ren:
         thanthanh: [100, 140]
         thosan: [5, 15]
   fish-drop: {item: vaycahiem, chance: 5}   # % mỗi lần câu được cá: rơi Vảy Cá Hiếm (set Ngư Phủ)
+  # 30/10 thứ tự set từ yếu tới mạnh (Cài đặt › Thợ Rèn kéo thả), chọn set hiện trên đầu khi ẩn giáp; đè bac của từng set
+  set-order: [nonggia, thosan, thomo, nguphu, duhiep, tanthu, chuyencan, chienbinh, ulinh, tinhanh, caocap, huyenthoai, thanthoai, thanthanh]
   sets:
     tanthu:
       bac: 2   # 30/10 bậc sức mạnh (1 yếu nhất … 10 mạnh nhất), chọn set hiện trên đầu khi ẩn giáp

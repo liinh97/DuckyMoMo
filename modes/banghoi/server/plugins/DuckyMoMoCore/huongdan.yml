@@ -557,7 +557,8 @@ chapters:
     &6Thị trấn
     &0Cần 3 giờ&r&0 chơi thật.
     &1/t new <tên> &0lập (3.000 xu&r&0)
-    &8Vd: /t new HaNoi
+    &8Vd: /t new LangSuong
+    &0Lập ở đất hoang (&1/tpr&0): ngoài vòng 300 khối quanh Kinh Đô, cách thị trấn khác ~160 khối.
     &1/t claim &0mua ô 16x16 đang đứng (75 xu&r&0, ô sau đắt hơn 1,5%, tối đa 600)
     &1/t add <tên> &0mời dân
     &1/t kick <tên> &0đuổi
@@ -649,7 +650,7 @@ chapters:
     &2Rao hàng
     &0Thành viên Thương Hội có giấy phép:
     &1/quangcao <nội dung>
-    &8Vd: /quangcao Bán kim cương 50 xu ở HaNoi
+    &8Vd: /quangcao Bán kim cương 50 xu ở LangSuong
     &01 lần mỗi giờ, cả server thấy.
     &4Không spam, không lừa: bị thu hồi giấy phép.
   - |-

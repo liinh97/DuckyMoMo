@@ -103,6 +103,30 @@ final class TownRules implements Listener {
 
     // ------------------------------------------------------------------ lập thị trấn, chiếm đất, lập quốc gia
 
+    /** 30/10 chủ server: vòng reserved-spawn-radius quanh kinh đô là ĐẤT CẤM lập thị trấn. Chặn ngay ở lệnh (Towny kiểm khoảng cách trước
+     *  PreNewTownEvent, nên người chơi chỉ thấy "quá gần thị trấn khác", không hiểu vì sao). Admin (bypass) vẫn lập được. */
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    public void onTownCommand(org.bukkit.event.player.PlayerCommandPreprocessEvent e) {
+        String[] a = e.getMessage().substring(1).trim().split("\\s+");
+        if (a.length < 2 || !(a[1].equalsIgnoreCase("new") || a[1].equalsIgnoreCase("create"))) {
+            return;
+        }
+        String label = a[0].toLowerCase(Locale.ROOT);
+        int colon = label.indexOf(':');
+        label = colon >= 0 ? label.substring(colon + 1) : label;
+        if (!label.equals("t") && !label.equals("town") && !label.equals("thitran")) {
+            return;
+        }
+        Player p = e.getPlayer();
+        org.bukkit.Location l = p.getLocation();
+        if (bypass(p) || !inReserved(l.getWorld().getName(), l.getBlockX(), l.getBlockZ())) {
+            return;
+        }
+        e.setCancelled(true);
+        p.sendMessage(net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacyAmpersand().deserialize(
+                "&cVòng " + reservedRadius + " khối quanh Kinh Đô là đất cấm lập thị trấn. &7Gõ &e/tpr &7để tới đất hoang lập được thị trấn."));
+    }
+
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onNewTown(PreNewTownEvent e) {
         Player p = e.getPlayer();

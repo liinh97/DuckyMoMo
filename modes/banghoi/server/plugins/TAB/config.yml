@@ -87,7 +87,6 @@ scoreboard:
         - '%animation:SbDong2%'
         - '%animation:SbDong3%'
         - '%animation:SbDong4%'
-        - '%condition:thue%'   # 30/10: đếm ngược thu thuế / phí duy trì thị trấn (Towny ngày mới 12h)
         - '&r'
         - '&#5FD3F3✪ &b%online% &7· &7%condition:pingmau%'
         - '&8(12+)'   # 30/10: nhãn độ tuổi theo phân loại trò chơi VN (00+, 12+, 16+, 18+)
@@ -176,12 +175,33 @@ conditions:
       - "%townyadvanced_town_townblocks_used%>0"
     true: " &8· &7%townyadvanced_town_townblocks_used% ô"
     false: ""
+  # 30/10: trang Thị trấn của bảng bên phải (có thị trấn hay chưa: số ô đất > 0)
+  tt_ten:
+    conditions:
+      - "%townyadvanced_town_townblocks_used%>0"
+    true: "&#FF9F43⚑ &#FFD580%townyadvanced_town_unformatted% &8· &7%townyadvanced_town_townblocks_used% ô"
+    false: "&#FF9F43⚑ &7Chưa có thị trấn"
+  tt_dan:
+    conditions:
+      - "%townyadvanced_town_townblocks_used%>0"
+    true: "&#9AE6B4☺ &7Dân: &f%townyadvanced_town_residents_amount% &8(&a%townyadvanced_town_residents_online% online&8)"
+    false: "&#9AE6B4☺ &7Lập: &f/t new <tên>"
+  tt_kho:
+    conditions:
+      - "%townyadvanced_town_townblocks_used%>0"
+    true: "&#7CFC9A⛃ &7Ngân khố: &a%townyadvanced_town_balance%"
+    false: "&#7CFC9A⛃ &7Vào: &f/t join <tên>"
+  tt_quocgia:
+    conditions:
+      - "%townyadvanced_nation_unformatted%!="
+    true: "%townyadvanced_nation_unformatted%"
+    false: "&7Chưa có quốc gia"
   # 30/10: có thị trấn thì đếm ngược tới lúc Towny thu thuế (ngày mới), chưa có thì gợi ý lập
   thue:
     conditions:
       - "%townyadvanced_town_townblocks_used%>0"
     true: "&#FFB86B⛀ &fThuế sau &e%dmmtoi_thue_con% &8(%townyadvanced_daily_town_upkeep%)"
-    false: "&7⛀ Lập thị trấn: &f/t new"
+    false: "&#FFB86B⛀ &7Thuế: &fchưa có thị trấn"
   # Ping có màu cho bảng bên phải: %condition:pingmau%
   pingmau:
     conditions:

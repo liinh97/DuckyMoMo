@@ -1858,6 +1858,64 @@ resource-pack:
 # Menu chính cho người chơi (20/10): /menu hoặc Shift + F. Mỗi nút: slot (0..rows*9-1), icon, name, lore, và MỘT trong:
 #   cmd (chạy lệnh thay người chơi, không cần /), suggest (điền sẵn vào ô chat), proxy (lệnh của proxy: tuskin, skin), server (chuyển server).
 # Sảnh không có menu này (ở sảnh /menu = chọn chế độ). Không dùng mã chữ đậm: font tiếng Việt bị nhòe.
+# 30/10 Đàn tế gọi boss (TeBoss.java). Đặt đàn: nhìn vào khối, /dmm dante dat <đàn>; kiểu lua đặt thêm 4 lửa trại: /dmm dante lua <đàn> <1-4>.
+# KHÔNG đặt trong thị trấn tắt quái (Towny xoá quái, cả boss) hay vùng WorldGuard cấm sinh quái. Thử: /dmm dante goi <đàn>, đặt lại: huy.
+# mode: linhhon (hạ quái quanh đàn) | levat (dâng vật phẩm items: điểm) | an (cầm need Mảnh Ấn bấm đàn) | lua (thắp 4 lửa trong time giây)
+# rewards: top1/top2/top3 theo sát thương lên boss (pet tính cho chủ), all = mọi người góp hoặc đánh. Cú pháp quà như điểm danh (xu, vat, do…).
+te-boss:
+  enabled: true
+  despawn-minutes: 10      # boss chưa bị hạ sau ngần này phút thì biến mất
+  bossbar-range: 48
+  an-drop-chance: 0.02     # tỉ lệ quái thù địch rơi Mảnh Ấn Triệu Hồi (khi có đàn kiểu an trong world)
+  lua-guards: 2            # mỗi lần thắp lửa sinh ngần này quái canh
+  dan:
+    hammo:
+      name: "&5☠ Đàn Tế Hầm Mộ"
+      mode: linhhon
+      need: 200
+      radius: 24
+      cooldown-minutes: 30
+      boss: {type: SKELETON, name: "&5『Vua Hầm Mộ』", hp: 900, dmg: 12, scale: 1.8}
+      rewards:
+        top1: [xu 1500, vat DIAMOND 3]
+        top2: [xu 900, vat DIAMOND 2]
+        top3: [xu 600, vat DIAMOND 1]
+        all: [xu 200]
+    mohoang:
+      name: "&6⛩ Đàn Lễ Mỏ Hoang"
+      mode: levat
+      need: 300
+      cooldown-minutes: 45
+      items: {ROTTEN_FLESH: 1, BONE: 1, STRING: 1, ARROW: 1, GUNPOWDER: 2, SPIDER_EYE: 2, ENDER_PEARL: 4, IRON_INGOT: 3, GOLD_INGOT: 5, DIAMOND: 20}
+      boss: {type: RAVAGER, name: "&6『Quỷ Đá Sâu』", hp: 1400, dmg: 18, scale: 1.0}
+      rewards:
+        top1: [xu 2000, vat DIAMOND 4]
+        top2: [xu 1200, vat DIAMOND 2]
+        top3: [xu 800, vat DIAMOND 1]
+        all: [xu 250]
+    huvuc:
+      name: "&d✦ Đàn Ấn Hư Không"
+      mode: an
+      need: 8
+      cooldown-minutes: 20
+      boss: {type: ZOGLIN, name: "&d『Kẻ Gác Vực』", hp: 1600, dmg: 20, scale: 1.6}
+      rewards:
+        top1: [xu 1800, vat DIAMOND 3]
+        top2: [xu 1000, vat DIAMOND 2]
+        top3: [xu 700, vat DIAMOND 1]
+        all: [xu 200]
+    trotan:
+      name: "&c♨ Đàn Lửa Tro Tàn"
+      mode: lua
+      need: 4
+      time: 60
+      cooldown-minutes: 40
+      boss: {type: WITHER_SKELETON, name: "&c『Lãnh Chúa Tro Tàn』", hp: 1800, dmg: 22, scale: 1.8}
+      rewards:
+        top1: [xu 2200, vat DIAMOND 4]
+        top2: [xu 1300, vat DIAMOND 2]
+        top3: [xu 900, vat DIAMOND 1]
+        all: [xu 250]
 # 30/10 Báo cả server khi câu được cá hiếm (FishBroadcast.java, nghe EvenMoreFish). rarities = mã độ hiếm EvenMoreFish;
 # độ hiếm nào ở đây thì tắt broadcast.enabled của nó trong plugins/EvenMoreFish/rarities/ để không báo 2 lần.
 fish-broadcast:
@@ -1987,7 +2045,7 @@ player-menu:
         - {icon: GRASS_BLOCK, name: "&a❀ &fThái Ấp", sub: "/thaiap", lore: ["Đất riêng không ai chiếm được"], gom: ["Xây, trồng trọt an toàn"], bam: "Bấm để về Thái Ấp", cmd: thaiap}
         - {icon: WHEAT, name: "&e☂ &fMùa mưa / mùa khô", sub: "%dmmmua_ten%", lore: ["Mùa đổi theo ngày thật"], gom: ["Cây lớn nhanh, chậm theo mùa", "Cá theo mùa, sự kiện Lũ / Hạn"], bam: "Bấm để xem mùa", cmd: mua}
         - {icon: CROSSBOW, name: "&c☠ &fLệnh săn", sub: "/lenhsan", lore: ["Quái mạnh xuất hiện ở một vùng"], gom: ["Ai đánh nhiều nhất nhận thưởng"], bam: "Bấm để xem lệnh săn", cmd: lenhsan}
-        - {icon: SPAWNER, name: "&5⚔ &fDungeon", sub: "/dungeon", lore: ["Cày đồ hiếm cùng nhóm"], gom: ["Chuỗi chìa khoá 10 tầng", "Dungeon ẩn, Cổng Hoang"], bam: "Bấm để xem dungeon", cmd: dungeon}
+        - {icon: SPAWNER, name: "&5⚔ &fDungeon & boss", lore: ["Chọn nơi săn boss, cày đồ hiếm"], gom: ["Dungeon, Hầm Ngục, đàn tế gọi boss"], bam: "Bấm để chọn", open: chondungeon}
         - {icon: IRON_SWORD, name: "&c⚔ &fĐấu Trường", sub: "PvP", lore: ["Đấu 1v1, 2v2 không mất đồ"], gom: ["Máu cố định 10 tim, công bằng"], bam: "Bấm để tới Đấu Trường", cmd: "warp pvp"}
         - {icon: RECOVERY_COMPASS, name: "&d✈ &fChuyển server", lore: ["Mạng lưới máy chủ DuckyMoMo", "Đổi sang sảnh hoặc chế độ chơi khác"], bam: "Bấm để chọn server", open: chuyenserver}
     - id: nguoichoi
@@ -2022,6 +2080,17 @@ player-menu:
         - {icon: ANVIL, name: "&7⚒ &fChợ Thợ Rèn", sub: "/warp trade", lore: ["Rèn, nâng cấp đồ set, đổi nguyên liệu"], gom: ["Khảm Tinh Luyện, NPC quầy đổi đồ"], bam: "Bấm để tới chợ", cmd: "warp trade"}
         - {icon: FISHING_ROD, name: "&b≈ &fKhu câu cá", sub: "/warp cauca", lore: ["Thư giãn và câu những loài cá quý", "Tối nào cũng có thi câu cá lúc 20:30"], bam: "Bấm để tới khu câu cá", cmd: "warp cauca"}
         - {icon: IRON_SWORD, name: "&c⚔ &fĐấu Trường", sub: "/warp pvp", lore: ["Đấu 1v1, 2v2 không mất đồ"], bam: "Bấm để tới Đấu Trường", cmd: "warp pvp"}
+    - id: chondungeon
+      hidden: true          # mở bằng nút "Dungeon & boss" (open: chondungeon). Chưa mở cho member thì ghi [Tạm đóng].
+      icon: SPAWNER
+      name: "&5⚔ &dDungeon & boss"
+      border: PURPLE_STAINED_GLASS_PANE
+      border2: MAGENTA_STAINED_GLASS_PANE
+      title: "&0✦ DuckyMoMo - Dungeon & boss"
+      buttons:
+        - {icon: SPAWNER, name: "&a● &5Dungeon", sub: "Đang mở", lore: ["18 dungeon: chuỗi 10 tầng, dungeon ẩn,", "vé, quỹ chung, Cổng Hoang"], gom: ["Cấp đề nghị: 10 → 140", "Thưởng: đồ hiếm, mảnh, xu"], bam: "Bấm để chọn dungeon", cmd: dungeon}
+        - {icon: IRON_BARS, name: "&c● &7Hầm Ngục", sub: "Tạm đóng", lore: ["Dungeon nhiều phòng dựng riêng cho nhóm", "Đang thử nghiệm, sắp mở"], gom: ["4 hầm: Hầm Mộ Cổ, Mỏ Bỏ Hoang,", "Thành Cổ Hỏa Ngục, Vực Thẳm Hư Không"], bam: "Chưa mở cho mọi người", cmd: hamnguc}
+        - {icon: RESPAWN_ANCHOR, name: "&a● &cĐàn tế gọi boss", sub: "4 đàn", lore: ["Góp sức cả server gọi boss lên đánh"], gom: ["Đàn Tế Hầm Mộ: hạ quái góp linh hồn", "Đàn Lễ Mỏ Hoang: dâng vật phẩm", "Đàn Ấn Hư Không: gom Mảnh Ấn từ quái", "Đàn Lửa Tro Tàn: thắp 4 ngọn lửa"], bam: "Boss lên sẽ báo cả server"}
     - id: chuyenserver
       hidden: true          # không hiện ở menu chính / tab, mở bằng nút "Chuyển server" (open: chuyenserver)
       icon: RECOVERY_COMPASS

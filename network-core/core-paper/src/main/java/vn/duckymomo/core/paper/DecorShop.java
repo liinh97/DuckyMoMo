@@ -442,31 +442,32 @@ final class DecorShop implements Listener {
         if (o != null && o.title() != null) {
             t.desc("Danh hiệu hiện cạnh tên", "Đổi danh hiệu: /danhhieu");
         }
-        t.line();
+        // 30/10 chủ server: bố cục như shop quen thuộc (Giá mua / Giá bán / Cách sử dụng, mỗi khối một tiêu đề màu)
+        t.gap();
         if (o != null) {
-            t.kv("Giá mua", "&a" + money(o.price()) + (o.title() == null ? " &8/ " + o.amount() + " món" : ""));
+            t.raw("&aGiá mua").raw("&a■ &f" + money(o.price()) + (o.title() == null ? " &7/ " + o.amount() + " món" : "")).gap();
         }
         Material sm = en.sellMat();
         int have = sm == null ? 0 : count(p, sm);
         if (sm != null) {
-            t.kv("Giá bán lại", "&e" + money(worth.get(sm)) + " &8/ món");
-            t.kv("Bạn đang có", have > 0 ? "&f" + have : "&70");
+            t.raw("&cGiá bán").raw("&c■ &f" + money(worth.get(sm)) + " &7/ món").raw("&7Bạn đang có: " + (have > 0 ? "&f" + have : "&70")).gap();
         } else if (o != null && o.title() == null) {
-            t.kv("Giá bán lại", "&7server không thu mua");
+            t.raw("&cGiá bán").raw("&7Server không thu mua").gap();
         }
-        t.line();
+        t.raw("&eCách sử dụng:");
         if (o != null) {
-            t.click("Chuột trái", o.title() != null ? "mua danh hiệu" : "mua " + o.amount() + " món");
+            t.raw("&6 ↳» &fChuột trái để " + (o.title() != null ? "mua danh hiệu" : "mua " + o.amount() + " món"));
         }
         if (sm != null) {
-            int lot = Math.min(have, o != null ? o.amount() : 64);
             if (have > 0) {
-                t.click("Chuột phải", "bán " + lot + " món");
-                t.click("Shift + phải", "bán hết " + have + " món");
+                int lot = Math.min(have, o != null ? o.amount() : 64);
+                t.raw("&6 ↳» &fChuột phải để bán " + lot + " món");
+                t.raw("&6 ↳» &fShift + Chuột phải để bán tất cả");
             } else {
-                t.note("Có món này trong túi thì bán được ở đây");
+                t.raw("&6 ↳» &7Có món này trong túi thì bán được");
             }
         }
+        t.gap();
         if (o != null && o.title() == null && o.lib() == null) {
             t.note("Chỉ trang trí / vật liệu, không thêm sức mạnh");
         }

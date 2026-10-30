@@ -191,7 +191,7 @@ tab_sb_lines:
   - '%animation:SbDong4%'
   - '&r'
   - '&#5FD3F3✪ &b%online% &7· &7%condition:pingmau%'
-  - '&8(12+)'
+  - '&7(12+)'
 tab_header:
   - '&r'
   - <#FFC23D>✦ DUCKYMOMO ✦</#FF6A00>
@@ -200,9 +200,9 @@ tab_header:
   - '&r'
 tab_footer:
   - '&r'
-  - '&7☺ Online &f%online% &8· &7⚡ Ping %condition:pingmau%'
-  - '&e/huongdan &8· &e/warp &8· &e/choden &8· &e/jobs &8· &e/rank'
-  - '&8⚔ Công thành: tối T7, CN 20:00 & 21:00'
+  - '&7☺ Online &f%online% &7· &7⚡ Ping %condition:pingmau%'
+  - '&e/huongdan &7· &e/warp &7· &e/choden &7· &e/jobs &7· &e/rank'
+  - '&7⚔ Công thành: tối T7, CN 20:00 & 21:00'
   - '&r'
 grim_simulation:
   - 100:40 [alert]
@@ -255,32 +255,32 @@ ce_common_cost: 900
 ce_common_currency: Vault
 ce_common_lore:
   - '&a▍ &fSách ngẫu nhiên 1 phù phép độ hiếm Thường'
-  - '&8▍ &7Mỗi cuốn có tỉ lệ thành công riêng'
-  - '&8&m                              '
-  - '&8• &7Giá: &e900 xu'
-  - '&8&m                              '
+  - '&7▍ &7Mỗi cuốn có tỉ lệ thành công riêng'
+  - '&7&m'
+  - '&7• &7Giá: &e900 xu'
+  - '&7&m'
   - '&a➜ Bấm để mua'
 ce_rare_cost: 2400
 ce_rare_currency: Vault
 ce_rare_lore:
   - '&9▍ &fSách ngẫu nhiên 1 phù phép độ hiếm Hiếm'
-  - '&8▍ &7Mỗi cuốn có tỉ lệ thành công riêng'
-  - '&8&m                              '
-  - '&8• &7Giá: &e2.400 xu'
-  - '&8&m                              '
+  - '&7▍ &7Mỗi cuốn có tỉ lệ thành công riêng'
+  - '&7&m'
+  - '&7• &7Giá: &e2.400 xu'
+  - '&7&m'
   - '&a➜ Bấm để mua'
 ce_legendary_ingui: false
 ce_legendary_cost: 60
 ce_legendary_currency: XP_Level
 ce_legendary_lore:
-  - '&8▍ &7Không bán trong shop'
-  - '&8▍ &7Chỉ admin phát làm phần thưởng'
+  - '&7▍ &7Không bán trong shop'
+  - '&7▍ &7Chỉ admin phát làm phần thưởng'
 ce_mythical_ingui: false
 ce_mythical_cost: 120
 ce_mythical_currency: XP_Level
 ce_mythical_lore:
-  - '&8▍ &7Không bán trong shop'
-  - '&8▍ &7Chỉ admin phát làm phần thưởng'
+  - '&7▍ &7Không bán trong shop'
+  - '&7▍ &7Chỉ admin phát làm phần thưởng'
 ce_common_successpercent_min: 40
 ce_common_successpercent_max: 90
 ce_common_destroypercent_min: 0
@@ -1044,7 +1044,7 @@ petc_slots_congtuoc: 6
 hmh_dynamic: true
 hmh_timeout: 5
 hmh_range: 20
-hmh_text: "&f{Mob_Type_Or_Name} {DynamicColor}{Health_0}&7/{MaxHealth_0} ❤ &8({PercentageHealth_0}%)"
+hmh_text: "&f{Mob_Type_Or_Name} {DynamicColor}{Health_0}&7/{MaxHealth_0} ❤ &7({PercentageHealth_0}%)"
 hmh_damage: true
 arena_fight: 180
 arena_pet_reduce: 50
@@ -1580,7 +1580,7 @@ goiqua_list:
     qua:
       - vat BREAD 32
   tinan:
-    ten: '&8Quà tị nạn'
+    ten: '&7Quà tị nạn'
     icon: BREAD
     cho: 259200
     rank:

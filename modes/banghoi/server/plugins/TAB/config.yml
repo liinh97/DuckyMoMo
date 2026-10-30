@@ -30,7 +30,7 @@ scoreboard-teams:
 
 # https://github.com/NEZNAMY/TAB/wiki/Feature-guide:-Playerlist-Objective
 playerlist-objective:
-  enabled: true
+  enabled: false   # 30/10: bỏ cột "Ping: 58" cho Tab hẹp (vạch sóng ping của game vẫn còn)
   value: "%ping%"
   fancy-value: "&7Ping: %ping%"
   title: "TAB" # Only visible on Bedrock Edition

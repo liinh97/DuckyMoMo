@@ -1566,6 +1566,13 @@ petcap_charm_item: bua_bat_pet
 goiqua_on: true
 goiqua_landau: 'tinan'
 goiqua_list:
+  doan:
+    ten: '&eGói lương thực'
+    icon: HAY_BLOCK
+    cho: 3600
+    rank: []
+    qua:
+      - vat BREAD 32
   tinan:
     ten: '&8Quà tị nạn'
     icon: BREAD

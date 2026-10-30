@@ -83,6 +83,18 @@ final class Guide implements Listener {
                 .hoverEvent(HoverEvent.showText(Component.text("Bấm để mở cẩm nang"))));
     }
 
+    /** 30/10: gõ lệnh không có thì chỉ về /huongdan (bấm được) thay cho câu lỗi tiếng Anh của Minecraft. */
+    @EventHandler
+    public void onUnknown(org.bukkit.event.command.UnknownCommandEvent e) {
+        if (!(e.getSender() instanceof org.bukkit.entity.Player)) {
+            return;
+        }
+        String cmd = e.getCommandLine().split(" ")[0];
+        e.message(LEGACY.deserialize("&c✘ Không có lệnh &f/" + cmd + "&c. Xem các lệnh: ")
+                .append(LEGACY.deserialize("&e[/huongdan]").clickEvent(ClickEvent.runCommand("/huongdan"))
+                        .hoverEvent(HoverEvent.showText(Component.text("Bấm để mở cẩm nang")))));
+    }
+
     private YamlConfiguration load() {
         return YamlConfiguration.loadConfiguration(new File(plugin.getDataFolder(), "huongdan.yml"));
     }

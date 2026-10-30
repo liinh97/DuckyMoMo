@@ -74,6 +74,7 @@ final class PlayerSettings implements Listener {
         opt("tuvong", "Thông báo tử vong", Material.SKELETON_SKULL, true, "Dòng \"… đã chết\" của người khác (của mình vẫn thấy)", "");
         opt("donrac", "Thông báo dọn rác", Material.HOPPER, true, "Đếm ngược dọn đồ rơi trên đất", "Bang Hội Chiến");
         opt("sukien", "Thông báo sự kiện", Material.GOAT_HORN, true, "Lệnh săn, kho báu, tin đồn Cổng Hoang, kỷ lục dungeon…", "Bang Hội Chiến");
+        opt("chugiua", "Chữ giữa màn hình", Material.NAME_TAG, true, "Chữ to ngắn khi dịch chuyển, điểm danh, lên cấp, xong nhiệm vụ…", "");
         opt("khungnhac", "Khung nhắc lúc vào game", Material.BOOK, true, "Khung gom hướng dẫn, mùa, công thành, điểm danh… lúc vào", "");
         opt("bangphai", "Bảng bên phải", Material.CLOCK, true, "Bảng thông tin bên phải màn hình (như /sb)", "");
         opt("bossbar", "Thanh mẹo trên cùng", Material.DRAGON_BREATH, true, "Thanh chữ mẹo xoay vòng ở đầu màn hình", "");

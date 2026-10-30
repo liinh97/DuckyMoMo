@@ -302,6 +302,7 @@ final class ChatGames implements Listener {
         double lo = cfg.getDouble("reward-min", 50), hi = Math.max(lo, cfg.getDouble("reward-max", 150));
         double prize = Math.round(lo + rnd.nextDouble() * (hi - lo));
         VaultEconomy.deposit(p, prize);
+        ScreenNotify.show(p, "&a+" + VaultEconomy.format(prize), "&7Trả lời đúng đầu tiên!");
         broadcast(LINE, "&d✦ DuckyMoMo - Đố vui &8(" + label(kind) + ")",
                 "&a" + p.getName() + " &dtrả lời đúng đầu tiên, nhận &a" + VaultEconomy.format(prize) + "&d!", "&7Đáp án: &d" + shown, LINE);
     }

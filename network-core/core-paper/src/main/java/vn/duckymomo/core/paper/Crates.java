@@ -170,6 +170,7 @@ final class Crates implements Listener {
                 rewards.give(p, List.of("do " + onlineKey + " 1"));   // túi đầy thì rơi dưới chân
                 data.set(k + ".da-nhan", data.getInt(k + ".da-nhan") + 1);
                 p.sendMessage(c("&b▤ Bạn nhận 1 &f" + keyName(onlineKey) + " &b(chơi đủ " + minutesPerKey(p) + " phút). Gõ &f/gacha &bđể quay!"));
+                ScreenNotify.show(p, "&b+1 vé gacha", "&7Gõ &f/gacha &7để quay");
                 p.playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.7f, 1.2f);
             }
             data.set(k + ".phut", phut);

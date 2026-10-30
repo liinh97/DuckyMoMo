@@ -759,6 +759,16 @@ public final class DuckyMoMoCore extends JavaPlugin {
             getServer().getPluginManager().registerEvents(chatGames, this);
             chatGames.start();
         }
+        if (sleepVote != null) {
+            sleepVote.stop();
+        }
+        sleepVote = getConfig().getBoolean("sleep.enabled") && getConfig().isConfigurationSection("sleep")
+                ? new SleepVote(this, getConfig().getConfigurationSection("sleep")) : null;
+        if (sleepVote != null) {
+            getServer().getPluginManager().registerEvents(sleepVote, this);
+            sleepVote.start();
+        }
+        getServer().getPluginManager().registerEvents(new ScreenNotify(this), this);
         bangTranh = new BangTranh(this);
         getServer().getScheduler().runTaskLater(this, () -> {
             int n = bangTranh.restore();
@@ -1401,6 +1411,8 @@ public final class DuckyMoMoCore extends JavaPlugin {
     private BangTranh bangTranh;
     /** Đố vui trong chat (chat-games, 30/10); null nếu tắt. */
     private ChatGames chatGames;
+    /** Ngủ bỏ qua đêm (sleep, 30/10); null nếu tắt. */
+    private SleepVote sleepVote;
     /** Lệnh con /dmm chỉ Admin (duckymomo.admin); còn lại Manager dùng được (duckymomo.dmm). */
     private static final java.util.Set<String> DMM_ADMIN_ONLY = java.util.Set.of("reload", "decorate", "structures", "hang", "thegioi", "spawnmoi");
     /** World spawn riêng (/dmm spawnmoi, 24/10). */

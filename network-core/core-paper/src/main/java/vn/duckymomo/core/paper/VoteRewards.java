@@ -150,6 +150,9 @@ final class VoteRewards implements Listener {
         if (VaultEconomy.available()) {
             VaultEconomy.deposit(p, money + bonus);
         }
+        if (p instanceof Player online) {
+            ScreenNotify.show(online, "&a+" + VaultEconomy.format(money + bonus), "&7Cảm ơn bạn đã vote!");
+        }
         String who = p.getName() == null ? name : p.getName();
         if (cfg.getBoolean("broadcast", true)) {
             Bukkit.broadcast(c("&a✔ &f" + who + " &avừa vote cho server (" + site + ") và nhận &e" + VaultEconomy.format(money)

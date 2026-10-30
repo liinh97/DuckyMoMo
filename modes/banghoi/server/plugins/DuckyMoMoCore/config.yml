@@ -1858,6 +1858,10 @@ resource-pack:
 # Menu chính cho người chơi (20/10): /menu hoặc Shift + F. Mỗi nút: slot (0..rows*9-1), icon, name, lore, và MỘT trong:
 #   cmd (chạy lệnh thay người chơi, không cần /), suggest (điền sẵn vào ô chat), proxy (lệnh của proxy: tuskin, skin), server (chuyển server).
 # Sảnh không có menu này (ở sảnh /menu = chọn chế độ). Không dùng mã chữ đậm: font tiếng Việt bị nhòe.
+# 30/10 Ngủ bỏ qua đêm (SleepVote.java): cần percent % người thật (bot không tính) cùng ngủ; báo "Đang ngủ để bỏ qua đêm [x/y]".
+sleep:
+  enabled: true
+  percent: 50
 # Đố vui trong chat (30/10, ChatGames.java): cứ interval-minutes phút ra 1 câu (cần ít nhất min-players người thật online),
 # ai gõ đúng đầu tiên trong timeout giây nhận reward-min..reward-max xu. Đáp án không dấu / hoa thường đều được.
 # Admin ra câu ngay: /dmm minigame [xaotron|toan|gonhanh|caudo]. weights = tỉ lệ ra từng kiểu (0 = tắt kiểu đó).

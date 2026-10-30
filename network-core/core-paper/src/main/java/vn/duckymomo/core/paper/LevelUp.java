@@ -605,6 +605,7 @@ final class LevelUp implements Listener {
         p.playSound(p.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 0.8f, 1.1f);
         DailyQuests.feature(p, "capdo");
         p.sendMessage(c("&a⬆ Lên cấp " + next + "! &7+" + gain + " điểm thuộc tính (đang có " + freePoints(u) + "). Cộng điểm: &f/capdo"));
+        ScreenNotify.show(p, "&a⬆ Cấp " + next, "&7+" + gain + " điểm thuộc tính");
         if (!colorOf(next).equals(colorOf(next - 1))) {
             p.sendMessage(c("&e✦ Cấp của bạn đổi màu: " + colorOf(next) + "Cấp " + next + " &7(ở Tab, thanh chỉ số, bảng bên phải)"));
         }

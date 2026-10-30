@@ -818,6 +818,7 @@ final class DailyQuests implements Listener {
     private void complete(Player p, Quest q) {
         List<String> got = rewards.give(p, q.rewards());
         p.sendMessage(c("&a✔ Xong nhiệm vụ: &f" + title(q) + (got.isEmpty() ? "" : "&a. Nhận: &f" + String.join("&7, &f", got))));
+        ScreenNotify.show(p, "&a✔ Xong nhiệm vụ", "&f" + title(q));
         String key = "players." + p.getUniqueId();
         boolean all = true;
         for (String qid : todays(p.getUniqueId())) {
@@ -829,6 +830,7 @@ final class DailyQuests implements Listener {
         if (all && !data.getBoolean(key + ".bonus")) {
             data.set(key + ".bonus", true);
             List<String> bonus = rewards.give(p, cfg.getStringList("complete-all-rewards"));
+            ScreenNotify.show(p, "&6★ Xong hết nhiệm vụ!", "&7Hẹn bạn ngày mai");
             p.sendMessage(c("&6★ Xong hết nhiệm vụ hôm nay!" + (bonus.isEmpty() ? "" : " Thưởng thêm: &f" + String.join("&7, &f", bonus))));
         }
         flush();

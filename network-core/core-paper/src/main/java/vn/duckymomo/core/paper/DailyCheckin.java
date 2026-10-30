@@ -274,6 +274,7 @@ final class DailyCheckin implements Listener {
         List<String> mile = milestones().get(day);
         DailyQuests.feature(p, "diemdanh");
         p.sendMessage(c("&a✔ Điểm danh ngày thứ &f" + count + "&a!" + (got.isEmpty() ? "" : " Nhận: &f" + String.join("&7, &f", got))));
+        ScreenNotify.show(p, "&e☀ Đã điểm danh", "&7Ngày thứ &f" + count);
         if (mile != null && !mile.isEmpty()) {
             List<String> extra = rewards.give(p, mile);
             p.sendMessage(c("&6★ Chạm mốc " + day + " ngày! Thưởng thêm: &f" + String.join("&7, &f", extra)));

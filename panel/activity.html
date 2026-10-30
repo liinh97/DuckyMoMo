@@ -59,6 +59,13 @@
   #say { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; padding: 12px 14px; border-top: 1px solid var(--line); background: var(--card-2); }
   #say input#sayText { flex: 1; min-width: 220px; }
   #say input#sayName { width: 120px; }
+  #say { position: relative; }
+  #saySug { position: absolute; left: 14px; right: 14px; bottom: 100%; max-height: 300px; overflow: auto; background: var(--card); border: 1px solid var(--line); border-radius: 8px; box-shadow: 0 -6px 20px rgba(0,0,0,.35); z-index: 20; font-size: 13px; }
+  #saySug .sg { padding: 6px 10px; cursor: pointer; display: flex; gap: 10px; align-items: baseline; }
+  #saySug .sg.on, #saySug .sg:hover { background: var(--card-2); }
+  #saySug .sg code { white-space: nowrap; }
+  #saySug .sg .d { color: var(--muted); font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  #saySug .hd { padding: 4px 10px; font-size: 11px; color: var(--muted); border-bottom: 1px solid var(--line); }
   #say .count { color: var(--muted); font-size: 12px; min-width: 52px; text-align: right; }
   #sayMsg { padding: 0 14px; font-size: 13px; color: var(--muted); background: var(--card-2); }
   #sayMsg:not(:empty) { padding-bottom: 10px; }
@@ -116,7 +123,8 @@
     <option value="title">Thông báo giữa màn hình</option>
   </select>
   <input id="sayName" placeholder="Tên hiển thị" value="Admin" maxlength="24" title="Tên hiện trước tin chat">
-  <input id="sayText" placeholder="Nhập tin gửi vào game, hoặc /lệnh để chạy như console (Enter để gửi)" maxlength="200">
+  <div id="saySug" hidden></div>
+  <input id="sayText" autocomplete="off" placeholder="Nhập tin gửi vào game, hoặc /lệnh để chạy như console (Enter để gửi)" maxlength="200">
   <span class="count" id="sayCount">0/200</span>
   <button type="submit" id="sayBtn" class="primary">Gửi vào game</button>
 </form>
@@ -297,7 +305,49 @@ function remember(text) {
   histPos = -1;
   try { localStorage.setItem("dmm_say_hist", JSON.stringify(sayHist)); } catch (e) {}
 }
+// 31/10: gợi ý lệnh ADMIN (Chỉ admin / Console trong cẩm nang lệnh) khi gõ "/" — theo server đang chọn; ↑↓ chọn, Tab/Enter điền, Esc đóng
+let ADMIN_CMDS = {}, sugList = [], sugPos = -1;
+fetch("api/lenh-admin").then((r) => r.json()).then((d) => { ADMIN_CMDS = d || {}; }).catch(() => {});
+const escH = (t) => String(t).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+function sugClose() { $("saySug").hidden = true; sugList = []; sugPos = -1; }
+function sugShow() {
+  const v = $("sayText").value, srv = $("sayTarget").value;
+  if (!v.startsWith("/") || srv === "all") return sugClose();
+  const q = v.slice(1).toLowerCase().trimStart();
+  const pool = [...(ADMIN_CMDS[srv] || []), ...(ADMIN_CMDS.proxy || [])];
+  const head = pool.filter((c) => c.l.toLowerCase().startsWith(q));
+  const words = q.split(/\s+/).filter(Boolean);
+  const rest = q && head.length < 12 ? pool.filter((c) => !head.includes(c) && words.every((w) => (c.l + " " + c.d).toLowerCase().includes(w))) : [];
+  sugList = [...head, ...rest].slice(0, 12);
+  // đã gõ trọn lệnh + tham số (không còn lệnh nào dài hơn khớp) thì thôi gợi ý
+  if (!sugList.length || (sugList.length === 1 && q.startsWith(sugList[0].l.toLowerCase().split("<")[0].trim()) && q.length > sugList[0].l.split("<")[0].trim().length)) return sugClose();
+  sugPos = Math.min(sugPos, sugList.length - 1);
+  $("saySug").innerHTML = '<div class="hd">Lệnh admin · ' + escH($("sayTarget").selectedOptions[0].text) + " · ↑↓ chọn, Tab điền, Esc đóng</div>"
+    + sugList.map((c, i) => '<div class="sg' + (i === sugPos ? " on" : "") + '" data-i="' + i + '"><code>/' + escH(c.l) + (c.u ? " " + escH(c.u.replace(c.l, "").trim()) : "")
+      + '</code><span class="d">' + escH(c.d || c.p) + "</span></div>").join("");
+  $("saySug").hidden = false;
+  const on = $("saySug").querySelector(".sg.on"); if (on) on.scrollIntoView({ block: "nearest" });
+}
+function sugPick(i) {
+  const c = sugList[i]; if (!c) return;
+  const fill = "/" + c.l.split("<")[0].replace(/\s*\[.*$/, "").trimEnd() + " ";   // điền tới chỗ cần gõ (<tên>…)
+  $("sayText").value = fill; $("sayCount").textContent = fill.length + "/200";
+  sugClose(); $("sayText").focus();
+}
+$("saySug").onmousedown = (ev) => { const el = ev.target.closest(".sg"); if (el) { ev.preventDefault(); sugPick(+el.dataset.i); } };
+$("sayText").addEventListener("input", () => { sugPos = -1; sugShow(); });
+$("sayText").addEventListener("blur", () => setTimeout(sugClose, 150));
+$("sayTarget").addEventListener("change", sugShow);
 $("sayText").onkeydown = (ev) => {
+  if (!$("saySug").hidden && sugList.length && !ev.isComposing) {
+    if (ev.key === "ArrowDown" || ev.key === "ArrowUp") {
+      ev.preventDefault();
+      sugPos = ev.key === "ArrowDown" ? (sugPos + 1) % sugList.length : (sugPos <= 0 ? sugList.length - 1 : sugPos - 1);
+      sugShow(); return;
+    }
+    if (ev.key === "Tab" || (ev.key === "Enter" && sugPos >= 0)) { ev.preventDefault(); sugPick(Math.max(0, sugPos)); return; }
+    if (ev.key === "Escape") { ev.preventDefault(); sugClose(); return; }
+  }
   if ((ev.key !== "ArrowUp" && ev.key !== "ArrowDown") || ev.isComposing) return;
   if (histPos === -1) histDraft = $("sayText").value;
   const next = ev.key === "ArrowUp" ? Math.min(histPos + 1, sayHist.length - 1) : histPos - 1;
@@ -334,6 +384,7 @@ $("say").onsubmit = async (ev) => {
       $("sayMsg").textContent = d.message || (d.ok ? "Đã gửi" : "Lỗi");
       $("sayMsg").className = d.ok ? "ok" : "err";
     }
+    sugClose();
     if (d.ok) { remember(text); $("sayText").value = ""; $("sayCount").textContent = "0/200"; firstRender = true; load(); }
   } catch (e) {
     $("sayMsg").textContent = "Không gửi được: " + e; $("sayMsg").className = "err";

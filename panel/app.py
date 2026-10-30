@@ -965,6 +965,30 @@ def all_commands(doc):
     return out
 
 
+ADMIN_WHO = {"Chỉ admin", "Console"}
+
+
+def lenh_admin_json():
+    """31/10: gợi ý lệnh ở ô gửi trang Hoạt động: chỉ lệnh của admin (ai dùng được = Chỉ admin / Console), theo server."""
+    out = {}
+    for srv, d in (camnang_json().get("commands") or {}).items():
+        if not isinstance(d, dict) or not isinstance(d.get("commands"), list):
+            continue   # khoá khác của cẩm nang (danh sách mục ghi tay…), không phải lệnh của server
+        seen, rows = set(), []
+        for c in d.get("commands", []):
+            if c.get("who") not in ADMIN_WHO:
+                continue
+            name = str(c.get("name", "")).strip()
+            if not name or name in seen:
+                continue
+            seen.add(name)
+            use = str(c.get("usage") or "").replace("<command>", name.split()[0]).lstrip("/").strip()
+            rows.append({"l": name, "u": use if use and use != name else "", "d": str(c.get("desc_vi") or c.get("desc") or "")[:140],
+                         "p": str(c.get("plugin") or "")})
+        out[srv] = sorted(rows, key=lambda r: r["l"])
+    return out
+
+
 def huongdan_json():
     doc = YAML(typ="safe").load(HUONGDAN_FILE.read_text(encoding="utf-8")) or {}
     return {k: doc.get(k, "") for k in ("title", "author", "toc-title", "toc-footer")} | {"chapters": doc.get("chapters", [])}
@@ -4576,7 +4600,7 @@ PAGE_FEATURES = {"/": ("caidat",), "/thuvien": ("thuvien", "thuvien-dua"), "/bos
                  "/hoatdong": ("hoatdong",), "/camnang": ("camnang",), "/huongdan": ("huongdan",),
                  "/donate": ("donate",), "/hethong": ("hethong",), "/media": ("media",), "/bot": ("bot",), "/thongbao": ("hethong",)}
 API_GET_FEATURES = {"/api/modes": ("caidat",), "/api/camnang": ("camnang",), "/api/huongdan": ("huongdan",), "/api/roles": ("role", "role-quyen", "rank", "rank-quyen"),
-                    "/api/boss": ("boss",), "/api/activity": ("hoatdong",), "/api/donate": ("donate",), "/api/hethong": ("hethong",), "/api/hethong/thitran": ("hethong",), "/api/media": ("media",), "/api/bot": ("bot",), "/api/push": ("hethong",), "/api/thuvien": None, "/api/toi": None}
+                    "/api/boss": ("boss",), "/api/activity": ("hoatdong",), "/api/lenh-admin": ("hoatdong",), "/api/donate": ("donate",), "/api/hethong": ("hethong",), "/api/hethong/thitran": ("hethong",), "/api/media": ("media",), "/api/bot": ("bot",), "/api/push": ("hethong",), "/api/thuvien": None, "/api/toi": None}
 # Staff đăng nhập bằng tài khoản game chỉ thao tác được CẤP DƯỚI: role chức vụ có weight nhỏ hơn role chức vụ cao nhất của mình
 # (Manager 90: Mod, Helper, Builder, Dân; Mod 70: Helper, Builder, Dân…). Rank donate theo quyền riêng (web.rank / web.rank.quyen).
 # Không ai ngoài toàn quyền cấp được * hay quyền web/admin/LuckPerms, và chỉ cấp được quyền chính mình đang có.
@@ -4870,6 +4894,8 @@ class Handler(BaseHTTPRequestHandler):
             self.send_json(200, modes_json(self.who["acc"]["categories"] if scoped else None))
         elif path == "/api/camnang":
             self.send_json(200, camnang_json())
+        elif path == "/api/lenh-admin":
+            self.send_json(200, lenh_admin_json())
         elif path == "/api/huongdan":
             self.send_json(200, huongdan_json())
         elif path == "/api/roles":

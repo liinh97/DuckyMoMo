@@ -1868,8 +1868,10 @@ chat-games:
   min-players: 1
   reward-min: 50
   reward-max: 150
-  weights: {xaotron: 3, toan: 3, gonhanh: 2, caudo: 3}
-  # xáo trộn: xáo chữ trong từng tiếng
+  weights: {xaotron: 3, dienchu: 2, daonguoc: 1, toan: 3, dayso: 1, gonhanh: 1, caudo: 2}
+  use-item-names: true     # thêm ~1.800 tên vật phẩm tiếng Việt (lọc tên ≤ 3 tiếng) vào kho từ cho xaotron / dienchu / daonguoc
+  recent-memory: 300       # không ra lại từ / câu trong 300 câu gần nhất
+  # kho từ riêng (thêm vào tên vật phẩm) cho xáo trộn / điền chữ / đọc ngược
   words: ["kim cương", "thanh kiếm", "cây cuốc", "lò nung", "bàn chế tạo", "rương đồ", "quặng sắt", "ngọc lục bảo", "dân làng",
     "thị trấn", "công thành", "bang hội", "câu cá", "cái rìu", "con bò", "con cừu", "bánh mì", "táo vàng", "ngọn đuốc", "cái khiên",
     "cây cung", "mũi tên", "ngọc ender", "cổng địa ngục", "lưỡi liềm", "hạt giống", "cánh đồng", "nhà kho", "máy lọc nước", "ruộng lúa",

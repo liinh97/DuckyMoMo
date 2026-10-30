@@ -208,6 +208,11 @@ final class Rewards {
     }
 
     /** Tên Việt của vật phẩm: tên gọi riêng (VI), rồi tên tiếng Việt chính thức của Minecraft, cuối cùng mới tới tên gốc. */
+    /** Mọi tên vật phẩm tiếng Việt của Minecraft (đố vui ChatGames lấy làm kho từ). */
+    static java.util.Collection<String> vanillaNames() {
+        return VANILLA_VI.values();
+    }
+
     static String vi(String material) {
         String k = material.toUpperCase(Locale.ROOT);
         String v = VI.get(k);

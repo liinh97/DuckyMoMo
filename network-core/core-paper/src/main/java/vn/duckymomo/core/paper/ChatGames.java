@@ -23,8 +23,10 @@ import java.util.concurrent.ThreadLocalRandom;
 /**
  * Đố vui trong chat (30/10, chủ server: "câu đố có quà nhỏ, toán, tiếng Việt… đơn giản"). Cứ interval-minutes phút (có người thật
  * online) ra một câu, ai gõ đúng đầu tiên trong timeout giây nhận xu. Trả lời không dấu / hoa thường đều được.
- * Kiểu (weights): xaotron (xáo chữ trong từng tiếng của một cụm từ), toan (cộng trừ nhân), gonhanh (gõ lại đúng câu),
- * cauddo (câu hỏi + đáp án trong config). Admin: /dmm minigame [kiểu] ra câu ngay.
+ * Kiểu (weights): xaotron (xáo chữ trong từng tiếng), dienchu (điền chữ bị che), daonguoc (đọc ngược), toan (phép tính),
+ * dayso (số tiếp theo của dãy), gonhanh (gõ lại đúng câu), caudo (câu hỏi + đáp án trong config). Admin: /dmm minigame [kiểu].
+ * Kho từ: chat-games.words + (use-item-names) ~1.800 tên vật phẩm tiếng Việt của Minecraft, lọc tên ngắn. Nhớ recent-memory câu
+ * gần nhất để không lặp lại sớm.
  * Config chat-games: {enabled, interval-minutes, timeout, min-players, reward-min, reward-max, weights{}, words[], phrases[],
  *   riddles[{q, a[]}]}
  */
@@ -39,10 +41,37 @@ final class ChatGames implements Listener {
     private String kind;
     private BukkitTask timeout;
     private BukkitTask loop;
+    private static final List<String> KINDS = List.of("xaotron", "dienchu", "daonguoc", "toan", "dayso", "gonhanh", "caudo");
+    private final List<String> pool = new ArrayList<>();
+    private final java.util.ArrayDeque<String> recent = new java.util.ArrayDeque<>();
 
     ChatGames(JavaPlugin plugin, ConfigurationSection cfg) {
         this.plugin = plugin;
         this.cfg = cfg;
+        java.util.Set<String> seen = new java.util.LinkedHashSet<>(cfg.getStringList("words"));
+        if (cfg.getBoolean("use-item-names", true)) {
+            for (String n : Rewards.vanillaNames()) {
+                String t = n.toLowerCase(Locale.forLanguageTag("vi")).trim();
+                int words = t.split(" ").length;
+                if (words <= 3 && t.length() >= 4 && t.length() <= 20 && !t.matches(".*[0-9()].*")) {
+                    seen.add(t);
+                }
+            }
+        }
+        pool.addAll(seen);
+    }
+
+    /** Lấy ngẫu nhiên, tránh các mục ra gần đây. */
+    private String fresh(List<String> list) {
+        String pick = list.get(rnd.nextInt(list.size()));
+        for (int i = 0; i < 30 && recent.contains(pick); i++) {
+            pick = list.get(rnd.nextInt(list.size()));
+        }
+        recent.addLast(pick);
+        while (recent.size() > Math.max(10, cfg.getInt("recent-memory", 300))) {
+            recent.removeFirst();
+        }
+        return pick;
     }
 
     void start() {
@@ -71,7 +100,7 @@ final class ChatGames implements Listener {
 
     private String pickKind() {
         ConfigurationSection w = cfg.getConfigurationSection("weights");
-        List<String> kinds = List.of("xaotron", "toan", "gonhanh", "caudo");
+        List<String> kinds = KINDS;
         int total = 0;
         for (String k : kinds) {
             total += w == null ? 1 : Math.max(0, w.getInt(k, 1));
@@ -115,13 +144,50 @@ final class ChatGames implements Listener {
         List<String> ans = new ArrayList<>();
         switch (k) {
             case "xaotron" -> {
-                List<String> words = cfg.getStringList("words");
-                if (words.isEmpty()) {
+                if (pool.isEmpty()) {
                     return false;
                 }
-                shown = words.get(rnd.nextInt(words.size()));
+                shown = fresh(pool);
                 head = "Xếp lại chữ cho đúng!";
                 body = "&6Từ khoá: &f" + scramble(shown);
+                ans.add(shown);
+            }
+            case "dienchu" -> {
+                if (pool.isEmpty()) {
+                    return false;
+                }
+                shown = fresh(pool);
+                StringBuilder b = new StringBuilder();
+                int[] cps = shown.codePoints().toArray();
+                for (int i = 0; i < cps.length; i++) {
+                    // che ~40% chữ cái, giữ chữ đầu mỗi tiếng cho dễ đoán
+                    boolean first = i == 0 || cps[i - 1] == ' ';
+                    b.append(cps[i] != ' ' && !first && rnd.nextInt(100) < 45 ? "_" : new String(Character.toChars(cps[i])));
+                }
+                head = "Điền chữ còn thiếu!";
+                body = "&6Gợi ý: &f" + b + " &7(" + shown.split(" ").length + " tiếng)";
+                ans.add(shown);
+            }
+            case "daonguoc" -> {
+                if (pool.isEmpty()) {
+                    return false;
+                }
+                shown = fresh(pool);
+                head = "Đọc ngược lại là gì?";
+                body = "&6Chữ ngược: &f" + new StringBuilder(shown).reverse();
+                ans.add(shown);
+            }
+            case "dayso" -> {
+                int start = rnd.nextInt(1, 30), step = rnd.nextInt(2, 12), form = rnd.nextInt(3);
+                List<Integer> seq = new ArrayList<>();
+                int v = start;
+                for (int i = 0; i < 5; i++) {
+                    seq.add(v);
+                    v = form == 0 ? v + step : form == 1 ? v * 2 : v + step + i;   // cộng đều / nhân đôi / cộng tăng dần
+                }
+                head = "Số tiếp theo là gì?";
+                body = "&6Dãy: &f" + seq.subList(0, 4).toString().replaceAll("[\\[\\]]", "") + ", ?";
+                shown = String.valueOf(seq.get(4));
                 ans.add(shown);
             }
             case "gonhanh" -> {
@@ -129,7 +195,7 @@ final class ChatGames implements Listener {
                 if (ph.isEmpty()) {
                     return false;
                 }
-                shown = ph.get(rnd.nextInt(ph.size()));
+                shown = fresh(ph);
                 head = "Ai gõ nhanh nhất?";
                 body = "&6Gõ lại: &f" + shown;
                 ans.add(shown);
@@ -139,7 +205,9 @@ final class ChatGames implements Listener {
                 if (rs.isEmpty()) {
                     return false;
                 }
-                Map<?, ?> r = rs.get(rnd.nextInt(rs.size()));
+                List<String> qs = rs.stream().map(x -> String.valueOf(x.get("q"))).toList();
+                String q0 = fresh(qs);
+                Map<?, ?> r = rs.get(qs.indexOf(q0));
                 head = "Câu đố vui!";
                 body = "&f" + r.get("q");
                 if (r.get("a") instanceof List<?> l) {
@@ -151,9 +219,25 @@ final class ChatGames implements Listener {
             }
             default -> {
                 k = "toan";
-                int a = rnd.nextInt(5, 60), b = rnd.nextInt(2, 40), op = rnd.nextInt(3);
-                int res = op == 0 ? a + b : op == 1 ? a - b : (a % 12 + 2) * (b % 9 + 2);
-                String q = op == 0 ? a + " + " + b : op == 1 ? a + " - " + b : (a % 12 + 2) + " × " + (b % 9 + 2);
+                int a = rnd.nextInt(5, 99), b = rnd.nextInt(2, 60), c = rnd.nextInt(2, 10), op = rnd.nextInt(5);
+                int x = a % 12 + 2, y = b % 9 + 2;
+                int res = switch (op) {
+                    case 0 -> a + b;
+                    case 1 -> a - b;
+                    case 2 -> x * y;
+                    case 3 -> a + x * c;
+                    default -> x * y * c / c;   // chia hết: (x*y) : y
+                };
+                String q = switch (op) {
+                    case 0 -> a + " + " + b;
+                    case 1 -> a + " - " + b;
+                    case 2 -> x + " × " + y;
+                    case 3 -> a + " + " + x + " × " + c;
+                    default -> (x * y) + " : " + y;
+                };
+                if (op == 4) {
+                    res = x;
+                }
                 head = "Tính nhanh!";
                 body = "&6Phép tính: &f" + q + " = ?";
                 shown = String.valueOf(res);
@@ -180,6 +264,9 @@ final class ChatGames implements Listener {
             case "xaotron" -> "xáo trộn";
             case "gonhanh" -> "gõ nhanh";
             case "caudo" -> "câu đố";
+            case "dienchu" -> "điền chữ";
+            case "daonguoc" -> "đọc ngược";
+            case "dayso" -> "dãy số";
             default -> "toán";
         };
     }
@@ -221,8 +308,8 @@ final class ChatGames implements Listener {
 
     void command(CommandSender s, String[] args) {
         String k = args.length >= 2 ? args[1].toLowerCase(Locale.ROOT) : null;
-        if (k != null && !List.of("xaotron", "toan", "gonhanh", "caudo").contains(k)) {
-            s.sendMessage(Tip.c("&e/dmm minigame [xaotron|toan|gonhanh|caudo] &7ra câu đố ngay"));
+        if (k != null && !KINDS.contains(k)) {
+            s.sendMessage(Tip.c("&e/dmm minigame [" + String.join("|", KINDS) + "] &7ra câu đố ngay · kho từ: " + pool.size()));
             return;
         }
         s.sendMessage(Tip.c(ask(k) ? "&aĐã ra câu đố." : "&cĐang có câu đố chạy, hoặc kiểu này chưa có dữ liệu trong config."));

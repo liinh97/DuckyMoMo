@@ -1853,41 +1853,89 @@ resource-pack:
 # Sảnh không có menu này (ở sảnh /menu = chọn chế độ). Không dùng mã chữ đậm: font tiếng Việt bị nhòe.
 player-menu:
   enabled: true
-  title: "&0✦ Menu Bang Hội Chiến"
+  title: "&0✦ DuckyMoMo - Menu"
   rows: 5
   shift-f: true
   filler: GRAY_STAINED_GLASS_PANE
+  # 30/10 menu 2 cấp: menu chính = buttons (ô hồ sơ) + groups (nút nhóm); bấm nhóm mở menu con 6 hàng (viền border, hàng 2 border2,
+  # tab các nhóm ở hàng trên, nút tự xếp giữa, Quay lại + Đóng). Nút trong nhóm KHÔNG cần slot.
   # Mỗi nút: name (ký hiệu + tên), sub (phụ đề), lore (mô tả), gom (danh sách "Gồm"), bam (dòng bấm); dùng được %placeholder%.
-  # Hàng 2 vàng = việc hằng ngày, hàng 3 xanh lá = kinh tế, hàng 4 xanh dương = thế giới, hàng 5 tím = cá nhân.
   buttons:
-    - {slot: 4, icon: PLAYER_HEAD, name: "&e☺ &fHồ sơ của bạn", sub: "%player_name%", lore: ["Tóm tắt nhanh tài sản và tiến độ"], gom: ["&7Xu: &a%vault_eco_balance_formatted%", "&7Vàng: &6%dmmvang_so_du%", "&7Thăng Cấp: &fcấp %dmmcap_cap%", "&7Vé gacha online: &f%dmmhom_chia%", "&7Thị trấn: &f%townyadvanced_town_unformatted%", "&7Mùa: %dmmmua_ten%"], bam: "Bấm để xem danh phận", cmd: danhphan}
-    - {slot: 10, icon: CLOCK, name: "&e☀ &fĐiểm danh", sub: "mỗi ngày", lore: ["Vào game mỗi ngày nhận quà", "Giữ chuỗi càng dài quà càng to"], gom: ["Quà ngày thường + quà mốc chuỗi", "Bỏ một ngày vẫn giữ chuỗi"], bam: "Bấm để điểm danh", cmd: diemdanh}
-    - {slot: 11, icon: WRITABLE_BOOK, name: "&e✎ &fNhiệm vụ hôm nay", lore: ["Vài việc nhỏ mỗi ngày: đào, săn, câu, gặt"], gom: ["Mỗi nhiệm vụ có quà riêng", "Xong hết trong ngày có thưởng thêm"], bam: "Bấm để xem tiến độ", cmd: nhiemvu}
-    - {slot: 12, icon: NETHER_STAR, name: "&e✦ &fGacha", sub: "%dmmhom_chia% vé online", lore: ["Quay thưởng bằng vé miễn phí"], gom: ["Vé từ điểm danh và chơi online", "Xem tỉ lệ từng phần thưởng trong menu"], bam: "Bấm để quay", cmd: gacha}
-    - {slot: 13, icon: EXPERIENCE_BOTTLE, name: "&e⬆ &fThăng Cấp", sub: "cấp %dmmcap_cap%", lore: ["Lên cấp bằng xu, giờ chơi và điểm hạ gục"], gom: ["Mỗi cấp +1 điểm đổi đặc quyền tiện ích", "Mốc cấp có quà và thông báo cả server"], bam: "Bấm để xem cấp", cmd: capdo}
-    - {slot: 14, icon: NAME_TAG, name: "&e♛ &fDanh phận", lore: ["Rank chơi miễn phí, lên bằng cách chơi"], gom: ["Tị Nạn → Dân → Lương Dân → Hào Kiệt", "Bậc cao: thêm nhà, balo, ô chợ, đơn thu mua"], bam: "Bấm để xem điều kiện lên bậc", cmd: danhphan}
-    - {slot: 15, icon: GOLDEN_APPLE, name: "&e✪ &fSổ thành tích", lore: ["Mục tiêu chơi một mình, đạt là tự nhận quà"], gom: ["Khám phá, câu cá, săn quái, bắt pet…", "Mở khoá danh hiệu hiện trên tên"], bam: "Bấm để mở sổ", cmd: thanhtich}
-    - {slot: 16, icon: BOOK, name: "&e❖ &fCẩm nang", lore: ["Hướng dẫn cách chơi từ đầu"], gom: ["11 chương: kinh tế, thị trấn, công thành…", "Có ví dụ lệnh cho từng việc"], bam: "Bấm để đọc", cmd: huongdan}
-    - {slot: 19, icon: GOLD_INGOT, name: "&6☠ &fChợ đen", sub: "/choden", lore: ["Mua bán trực tiếp giữa người chơi"], gom: ["Đang bán: hàng người chơi treo, bấm là mua", "Đang thu mua: đơn cần mua, giao hàng lấy tiền", "Treo bán, đặt đơn, đồ của tôi"], bam: "Bấm để vào chợ", cmd: choden}
-    - {slot: 20, icon: EMERALD, name: "&a⛃ &fBán đồ cho server", sub: "/sell <tên món>", lore: ["Bán cho server theo bảng giá"], gom: ["Gõ /sell <tên món> [số], vd /sell wheat 64", "Hoặc bán ở /cuahang trong kinh đô", "Xem giá: /worth"], bam: "Bấm rồi gõ tên món", suggest: "/sell "}
-    - {slot: 21, icon: SMITHING_TABLE, name: "&a⚒ &fXưởng chế tạo", sub: "/xuong", lore: ["Đồ có kỹ năng riêng, độ bền và hạn dùng"], gom: ["Đào 3×3, chặt cả cây, gặt 3×3", "Kiếm lướt chém, khiên phản đòn, cung hút máu"], bam: "Bấm để vào xưởng", cmd: xuong}
-    - {slot: 22, icon: BLAST_FURNACE, name: "&a♨ &fTinh Luyện", sub: "/tinhluyen", lore: ["Đổi khối thường thành nguyên liệu quý"], gom: ["Trao đổi ở shop dân làng", "Nguyên liệu Xưởng, bán cho server"], bam: "Bấm để tinh luyện", cmd: tinhluyen}
-    - {slot: 23, icon: EMERALD_BLOCK, name: "&e⛃ &fCửa hàng Kinh Đô", sub: "/cuahang", lore: ["Mua vật liệu, bán nông sản, khoáng sản cho server"], gom: ["10 danh mục, giá theo từng món", "Mở ở NPC tại spawn; rank ủng hộ gõ /cuahang trong kinh đô"], bam: "Bấm để mở", cmd: cuahang}
-    - {slot: 24, icon: HOPPER, name: "&a⇄ &fĐổi đồ với người khác", sub: "/trade", lore: ["Hai bên bỏ đồ rồi cùng xác nhận"], gom: ["Một bên huỷ thì đồ trả lại", "Không bị lừa giữa chừng"], bam: "Bấm rồi gõ tên người muốn đổi", suggest: "/trade "}
-    - {slot: 25, icon: PAINTING, name: "&a✿ &fCửa hàng trang trí", sub: "/cuahang", lore: ["Đồ trang trí, danh hiệu mua bằng xu"], gom: ["Chỉ đẹp, không thêm sức mạnh"], bam: "Bấm để mua sắm", cmd: cuahang}
-    - {slot: 28, icon: ENDER_PEARL, name: "&b➹ &fDịch chuyển tới vùng", sub: "/tpr", lore: ["Bay tới đất trống ở vùng đã mở"], gom: ["Đứng yên 3 giây để đi", "Có phí xu tuỳ vùng"], bam: "Bấm để chọn vùng", cmd: tpr}
-    - {slot: 29, icon: RED_BED, name: "&b⌂ &fVề nhà", sub: "/home", lore: ["Về nhà đã đặt bằng /sethome"], gom: ["Số nhà theo danh phận", "Quay lại chỗ vừa chết: /back"], bam: "Bấm để về nhà", cmd: home}
-    - {slot: 30, icon: BELL, name: "&b⚑ &fThị trấn", sub: "%townyadvanced_town_unformatted%", lore: ["Thông tin thị trấn của bạn"], gom: ["Lập: /t new <tên> (500 xu)", "Mở đất: /t claim, ngân khố: /t deposit"], bam: "Bấm để xem thị trấn", cmd: t}
-    - {slot: 31, icon: WHEAT, name: "&b☂ &fMùa mưa / mùa khô", sub: "%dmmmua_ten%", lore: ["Mùa đổi theo ngày thật"], gom: ["Cây lớn nhanh, chậm theo mùa", "Cá theo mùa, mưa, sự kiện Lũ / Hạn"], bam: "Bấm để xem mùa", cmd: mua}
-    - {slot: 32, icon: CROSSBOW, name: "&b☠ &fLệnh săn", sub: "/lenhsan", lore: ["Quái mạnh xuất hiện ở một vùng"], gom: ["Ai đánh nhiều nhất nhận thưởng", "Pet đánh cũng được tính"], bam: "Bấm để xem lệnh săn", cmd: lenhsan}
-    - {slot: 33, icon: IRON_BARS, name: "&b⚔ &fDungeon", sub: "/dungeon", lore: ["Cày đồ hiếm cùng nhóm"], gom: ["Chuỗi chìa khoá 10 tầng", "Dungeon ẩn, vé, góp quỹ, Cổng Hoang"], bam: "Bấm để xem dungeon", cmd: dungeon}
-    - {slot: 34, icon: GRASS_BLOCK, name: "&b❀ &fThái Ấp", sub: "/thaiap", lore: ["Đất riêng không ai chiếm được"], gom: ["Xây, trồng trọt an toàn", "Có bản sáng tạo riêng"], bam: "Bấm để về Thái Ấp", cmd: thaiap}
-    - {slot: 37, icon: CHEST_MINECART, name: "&d▣ &fBalo", sub: "/balo", lore: ["Túi đồ thêm, mở ở đâu cũng được"], gom: ["Số balo và số ô theo danh phận", "Không mở được khi đang giao tranh"], bam: "Bấm để mở balo", cmd: balo}
-    - {slot: 38, icon: LEATHER_CHESTPLATE, name: "&d☺ &fTủ skin", sub: "/tuskin", lore: ["Lưu nhiều skin, đổi trong 1 bấm"], gom: ["Thêm bằng tên bản quyền hoặc ảnh trên web", "Số ô theo danh phận, rank"], bam: "Bấm để mở tủ", proxy: tuskin}
-    - {slot: 39, icon: COMPARATOR, name: "&d⚙ &fCài đặt cá nhân", sub: "/caidat", lore: ["Bật / tắt theo ý mình"], gom: ["Chat, tin nhắn riêng, nhận TPA", "Bảng bên phải, font tiếng Việt…"], bam: "Bấm để chỉnh", cmd: caidat}
-    - {slot: 40, icon: GOLD_INGOT, name: "&6◆ &fVàng & rank ủng hộ", sub: "%dmmvang_so_du% Vàng", lore: ["Ủng hộ server, nhận Vàng mua rank, trang trí"], gom: ["Rank ủng hộ có tiền tố, hiệu ứng, balo", "Đồ trang trí, đổi tên màu"], bam: "Bấm để mở ví Vàng", cmd: vang}
-    - {slot: 41, icon: IRON_SWORD, name: "&d⚔ &fĐấu Trường", sub: "PvP", lore: ["Đấu 1v1, 2v2 không mất đồ"], gom: ["Máu cố định 10 tim, công bằng", "Thắng có kinh nghiệm pet"], bam: "Bấm để tới Đấu Trường", cmd: "warp pvp"}
-    - {slot: 43, icon: COMPASS, name: "&7➜ &fVề sảnh", lore: ["Chọn chế độ chơi khác"], bam: "Bấm để về sảnh", server: lobby}
+    - {slot: 4, icon: PLAYER_HEAD, name: "&e☺ &fHồ sơ của bạn", sub: "%player_name%", lore: ["Tóm tắt nhanh tài sản và tiến độ"], gom: ["&7Xu: &a%vault_eco_balance_formatted%", "&7Vàng: &6%dmmvang_so_du%", "&7Thăng Cấp: &fcấp %dmmcap_cap%", "&7Vé gacha online: &f%dmmhom_chia% &8(vé sau: %dmmhom_con%)", "&7Thị trấn: &f%townyadvanced_town_unformatted%", "&7Mùa: %dmmmua_ten%"], bam: "Bấm để xem danh phận", cmd: danhphan}
+  groups:
+    - id: kinhte
+      slot: 19
+      icon: EMERALD
+      name: "&e⛃ &6Kinh tế"
+      lore: ["Xem mục kinh tế", "Mua bán, chế tạo, ủng hộ server"]
+      gom: ["Cửa hàng, bán đồ, chợ đen, đổi đồ", "Xưởng, Tinh Luyện, Vàng & rank ủng hộ"]
+      border: YELLOW_STAINED_GLASS_PANE
+      border2: ORANGE_STAINED_GLASS_PANE
+      title: "&0✦ DuckyMoMo - Kinh tế"
+      buttons:
+        - {icon: CHEST, name: "&e⛃ &fCửa hàng Kinh Đô", sub: "/shop", lore: ["Cửa hàng tổng hợp", "Mua vật liệu, bán nông sản, khoáng sản"], gom: ["10 danh mục, giá theo từng món"], bam: "Bấm để mở shop", cmd: cuahang}
+        - {icon: EMERALD, name: "&a⛃ &fBán đồ cho server", sub: "/sell <tên món>", lore: ["Bán cho server theo bảng giá"], gom: ["Gõ /sell <tên món> [số], vd /sell wheat 64", "Xem giá: /worth"], bam: "Bấm rồi gõ tên món", suggest: "/sell "}
+        - {icon: ENDER_CHEST, name: "&6☠ &fChợ đen", sub: "/choden", lore: ["Mua bán trực tiếp giữa người chơi"], gom: ["Đang bán: hàng người chơi treo", "Đang thu mua: giao hàng lấy tiền", "Treo bán, đặt đơn, đồ của tôi"], bam: "Bấm để vào chợ", cmd: choden}
+        - {icon: HOPPER, name: "&a⇄ &fĐổi đồ với người khác", sub: "/trade", lore: ["Hai bên bỏ đồ rồi cùng xác nhận"], gom: ["Một bên huỷ thì đồ trả lại"], bam: "Bấm rồi gõ tên người muốn đổi", suggest: "/trade "}
+        - {icon: PAINTING, name: "&d✿ &fCửa hàng trang trí", sub: "/cuahang", lore: ["Đồ trang trí, danh hiệu mua bằng xu"], gom: ["Chỉ đẹp, không thêm sức mạnh"], bam: "Bấm để mua sắm", cmd: cuahang}
+        - {icon: SMITHING_TABLE, name: "&a⚒ &fXưởng chế tạo", sub: "/xuong", lore: ["Đồ có kỹ năng riêng, độ bền và hạn dùng"], gom: ["Đào 3×3, chặt cả cây, gặt 3×3", "Kiếm lướt chém, khiên phản đòn…"], bam: "Bấm để vào xưởng", cmd: xuong}
+        - {icon: BLAST_FURNACE, name: "&c♨ &fTinh Luyện", sub: "/tinhluyen", lore: ["Đổi khối thường thành nguyên liệu quý"], gom: ["Nguyên liệu Xưởng, khảm đồ, bán cho server"], bam: "Bấm để tinh luyện", cmd: tinhluyen}
+        - {icon: GOLD_BLOCK, name: "&6◆ &fVàng & rank ủng hộ", sub: "%dmmvang_so_du% Vàng", lore: ["Ủng hộ server, nhận Vàng mua rank, trang trí"], gom: ["Rank ủng hộ có tiền tố, hiệu ứng, balo", "Đồ trang trí, đổi tên màu"], bam: "Bấm để mở ví Vàng", cmd: vang}
+    - id: hangngay
+      slot: 21
+      icon: SUNFLOWER
+      name: "&e☀ &6Hằng ngày"
+      lore: ["Xem mục hằng ngày", "Việc nên làm mỗi ngày, đều có quà"]
+      gom: ["Điểm danh, nhiệm vụ, gacha, vote", "Thăng Cấp, thành tích, bảng xếp hạng"]
+      border: ORANGE_STAINED_GLASS_PANE
+      border2: YELLOW_STAINED_GLASS_PANE
+      title: "&0✦ DuckyMoMo - Hằng ngày"
+      buttons:
+        - {icon: CLOCK, name: "&e☀ &fĐiểm danh", sub: "/diemdanh", lore: ["Vào game mỗi ngày nhận quà", "Giữ chuỗi càng dài quà càng to"], gom: ["Quà ngày thường + quà mốc 7/14/30 ngày"], bam: "Bấm để điểm danh", cmd: diemdanh}
+        - {icon: WRITABLE_BOOK, name: "&b✎ &fNhiệm vụ hôm nay", sub: "/nhiemvu", lore: ["Vài việc nhỏ mỗi ngày: đào, săn, câu, gặt"], gom: ["Mỗi nhiệm vụ có quà riêng", "Xong hết trong ngày có thưởng thêm"], bam: "Bấm để xem tiến độ", cmd: nhiemvu}
+        - {icon: TRIAL_KEY, name: "&d✦ &fGacha", sub: "%dmmhom_chia% vé · vé sau %dmmhom_con%", lore: ["Quay thưởng bằng vé miễn phí"], gom: ["Vé từ điểm danh và giờ chơi thật", "Xem tỉ lệ từng phần thưởng trong menu"], bam: "Bấm để quay", cmd: gacha}
+        - {icon: DIAMOND, name: "&b⚡ &fVote server", sub: "/vote", lore: ["Vote mỗi ngày nhận xu"], gom: ["Vote nhiều ngày liền có thưởng thêm", "Bảng vote tháng: /vote top"], bam: "Bấm để lấy link vote", cmd: vote}
+        - {icon: EXPERIENCE_BOTTLE, name: "&a⬆ &fThăng Cấp", sub: "cấp %dmmcap_cap%", lore: ["Lên cấp bằng xu, giờ chơi và điểm hạ gục"], gom: ["Mỗi cấp +1 điểm đổi đặc quyền tiện ích", "Mốc cấp có quà"], bam: "Bấm để xem cấp", cmd: capdo}
+        - {icon: KNOWLEDGE_BOOK, name: "&e✪ &fSổ thành tích", sub: "/thanhtich", lore: ["Mục tiêu chơi một mình, đạt là tự nhận quà"], gom: ["Mở khoá danh hiệu hiện trên tên"], bam: "Bấm để mở sổ", cmd: thanhtich}
+        - {icon: TOTEM_OF_UNDYING, name: "&6♛ &fBảng xếp hạng", sub: "/bxh", lore: ["Vinh danh top server"], gom: ["Giàu nhất, cấp cao nhất, hạ gục…"], bam: "Bấm để xem top", cmd: bxh}
+    - id: maychu
+      slot: 23
+      icon: FILLED_MAP
+      name: "&b✈ &3Máy chủ"
+      lore: ["Xem mục máy chủ", "Đi lại, thị trấn, khu vực, sự kiện"]
+      gom: ["Dịch chuyển, về nhà, khu tiện ích", "Thị trấn, lệnh săn, dungeon, Đấu Trường"]
+      border: PINK_STAINED_GLASS_PANE
+      border2: PURPLE_STAINED_GLASS_PANE
+      title: "&0✦ DuckyMoMo - Máy chủ"
+      buttons:
+        - {icon: ENDER_PEARL, name: "&b➹ &fDịch chuyển tới vùng", sub: "/tpr", lore: ["Bay tới đất trống ở vùng đã mở"], gom: ["Đứng yên 3 giây để đi", "Có phí xu tuỳ vùng"], bam: "Bấm để chọn vùng", cmd: tpr}
+        - {icon: RED_BED, name: "&c⌂ &fVề nhà", sub: "/home", lore: ["Về nhà đã đặt bằng /sethome"], gom: ["Số nhà theo danh phận", "Quay lại chỗ vừa chết: /back"], bam: "Bấm để về nhà", cmd: home}
+        - {icon: LODESTONE, name: "&e⚑ &fKhu vực tiện ích", sub: "/warp", lore: ["Danh sách điểm đến của server"], gom: ["Khu buôn bán, chợ Thợ Rèn, Đấu Trường…"], bam: "Bấm để xem danh sách", cmd: warp}
+        - {icon: BELL, name: "&6⚑ &fThị trấn", sub: "%townyadvanced_town_unformatted%", lore: ["Thông tin thị trấn của bạn"], gom: ["Lập: /t new <tên> (500 xu)", "Mở đất: /t claim, ngân khố: /t deposit"], bam: "Bấm để xem thị trấn", cmd: t}
+        - {icon: GRASS_BLOCK, name: "&a❀ &fThái Ấp", sub: "/thaiap", lore: ["Đất riêng không ai chiếm được"], gom: ["Xây, trồng trọt an toàn"], bam: "Bấm để về Thái Ấp", cmd: thaiap}
+        - {icon: WHEAT, name: "&e☂ &fMùa mưa / mùa khô", sub: "%dmmmua_ten%", lore: ["Mùa đổi theo ngày thật"], gom: ["Cây lớn nhanh, chậm theo mùa", "Cá theo mùa, sự kiện Lũ / Hạn"], bam: "Bấm để xem mùa", cmd: mua}
+        - {icon: CROSSBOW, name: "&c☠ &fLệnh săn", sub: "/lenhsan", lore: ["Quái mạnh xuất hiện ở một vùng"], gom: ["Ai đánh nhiều nhất nhận thưởng"], bam: "Bấm để xem lệnh săn", cmd: lenhsan}
+        - {icon: SPAWNER, name: "&5⚔ &fDungeon", sub: "/dungeon", lore: ["Cày đồ hiếm cùng nhóm"], gom: ["Chuỗi chìa khoá 10 tầng", "Dungeon ẩn, Cổng Hoang"], bam: "Bấm để xem dungeon", cmd: dungeon}
+        - {icon: IRON_SWORD, name: "&c⚔ &fĐấu Trường", sub: "PvP", lore: ["Đấu 1v1, 2v2 không mất đồ"], gom: ["Máu cố định 10 tim, công bằng"], bam: "Bấm để tới Đấu Trường", cmd: "warp pvp"}
+        - {icon: OAK_DOOR, name: "&7➜ &fVề sảnh", lore: ["Chọn chế độ chơi khác"], bam: "Bấm để về sảnh", server: lobby}
+    - id: nguoichoi
+      slot: 25
+      icon: ARMOR_STAND
+      name: "&a☺ &2Người chơi"
+      lore: ["Xem mục người chơi", "Hồ sơ, đồ dùng, cài đặt cá nhân"]
+      gom: ["Danh phận, danh hiệu, balo, tủ skin", "Cài đặt, ẩn giáp, tân thủ, cẩm nang"]
+      border: LIME_STAINED_GLASS_PANE
+      border2: GREEN_STAINED_GLASS_PANE
+      title: "&0✦ DuckyMoMo - Người chơi"
+      buttons:
+        - {icon: NAME_TAG, name: "&e♛ &fDanh phận", sub: "/danhphan", lore: ["Rank chơi miễn phí, lên bằng cách chơi"], gom: ["Tị Nạn → Dân → Lương Dân → Hào Kiệt", "Bậc cao: thêm nhà, balo, ô chợ"], bam: "Bấm để xem điều kiện lên bậc", cmd: danhphan}
+        - {icon: OAK_HANGING_SIGN, name: "&d✎ &fDanh hiệu", sub: "/danhhieu", lore: ["Chữ nhỏ hiện cạnh tên"], gom: ["Mở khoá bằng thành tích hoặc mua ở cửa hàng"], bam: "Bấm để chọn danh hiệu", cmd: danhhieu}
+        - {icon: CHEST_MINECART, name: "&6▣ &fBalo", sub: "/balo", lore: ["Túi đồ thêm, mở ở đâu cũng được"], gom: ["Số balo và số ô theo danh phận"], bam: "Bấm để mở balo", cmd: balo}
+        - {icon: LEATHER_CHESTPLATE, name: "&d☺ &fTủ skin", sub: "/tuskin", lore: ["Lưu nhiều skin, đổi trong 1 bấm"], gom: ["Thêm bằng tên bản quyền hoặc ảnh trên web"], bam: "Bấm để mở tủ", proxy: tuskin}
+        - {icon: CHAINMAIL_CHESTPLATE, name: "&7◈ &fẨn giáp", sub: "/angiap", lore: ["Ẩn giáp, vẫn thấy skin"], gom: ["Giáp vẫn bảo vệ như thường"], bam: "Bấm để bật / tắt", cmd: angiap}
+        - {icon: COMPARATOR, name: "&7⚙ &fCài đặt cá nhân", sub: "/caidat", lore: ["Bật / tắt các tính năng cá nhân"], gom: ["Chat, tin nhắn riêng, nhận TPA", "Bảng bên phải, font chữ…"], bam: "Bấm để chỉnh", cmd: caidat}
+        - {icon: OAK_SAPLING, name: "&a✦ &fĐường tân thủ", sub: "/tanthu", lore: ["Từng bước làm quen server, bước nào cũng có quà"], bam: "Bấm để xem", cmd: tanthu}
+        - {icon: BOOK, name: "&e❖ &fCẩm nang", sub: "/huongdan", lore: ["Hướng dẫn cách chơi từ đầu"], gom: ["Kinh tế, thị trấn, công thành…"], bam: "Bấm để đọc", cmd: huongdan}
 
 # Vàng (20/10): tiền ủng hộ. Nạp tiền thật -> admin duyệt ở trang quản trị › Donate -> cộng Vàng (ví chung toàn mạng, MariaDB network.vang_vi).
 # Người chơi tiêu Vàng: /vang (trong game) hoặc trang tài khoản. KHÔNG chuyển cho nhau, KHÔNG đổi ra xu (luật Mojang: chỉ trang trí).

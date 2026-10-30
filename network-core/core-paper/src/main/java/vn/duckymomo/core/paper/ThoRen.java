@@ -73,7 +73,7 @@ final class ThoRen implements Listener {
      * (giống ông lái buôn ở shop) dù đang dùng Citizens.
      */
     private record Stall(String id, String name, String sub, String profession, String open, String skin, List<Recipe> recipes,
-                         List<String> showSets, List<Map<?, ?>> go, boolean villager) { }
+                         List<String> showSets, List<Map<?, ?>> go, boolean villager, boolean nameOnly) { }
     /** Hiệu ứng đang áp cho một người (tổng các set) + mô tả để báo khi đổi. */
     private record Active(double mau, double dayLui, double giamSt, double thuHoach, double demSt, double kn, String text) { }
 
@@ -174,7 +174,7 @@ final class ThoRen implements Listener {
                 }
                 stalls.put(id, new Stall(id, q.getString("name", id), q.getString("sub", ""), q.getString("profession", "MASON"),
                         q.getString("open", ""), q.getString("skin", ""), rs, q.getStringList("sets"), q.getMapList("di"),
-                        "danlang".equalsIgnoreCase(q.getString("kieu", ""))));
+                        "danlang".equalsIgnoreCase(q.getString("kieu", "")), q.getBoolean("chi-ten", false)));
             }
         }
         guarded.addAll(c.getStringList("guard"));
@@ -560,9 +560,10 @@ final class ThoRen implements Listener {
         s.sendMessage(c("&a✔ Đã đặt NPC " + st.name() + "&a."));
     }
 
-    /** 3 dòng chữ nổi trên đầu NPC quầy (dòng thấp nhất ở độ cao base). */
+    /** Chữ nổi trên đầu NPC quầy (dòng thấp nhất ở độ cao base): tên + mô tả + "(bấm vào để mở)", hoặc chỉ tên nếu chi-ten: true. */
     private void labels(org.bukkit.World w, org.bukkit.Location loc, Stall st, double base) {
-        String[] lines = {st.name(), st.sub().isBlank() ? "&7Đổi nguyên liệu" : "&7" + st.sub(), "&8(bấm vào để mở)"};
+        String[] lines = st.nameOnly() ? new String[] {st.name()}
+                : new String[] {st.name(), st.sub().isBlank() ? "&7Đổi nguyên liệu" : "&7" + st.sub(), "&8(bấm vào để mở)"};
         double y = base + (lines.length - 1) * 0.28;
         for (String line : lines) {
             w.spawn(loc.clone().add(0, y, 0), org.bukkit.entity.ArmorStand.class, a -> {

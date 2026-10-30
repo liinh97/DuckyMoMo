@@ -1940,11 +1940,13 @@ tho-ren:
       skin: "https://cdn.minecraft.how/skin/168584/image.png"
       sub: "Xem đồ xịn nhất server (chỉ xem)"
       open: trungbay
+      chi-ten: true
       sets: [thanthanh, thanthoai, huyenthoai, caocap, ulinh, tinhanh, chienbinh, chuyencan, tanthu, thomo, thosan, nguphu, nonggia, duhiep]
     chiduong:
       name: "&a⚖ Lái Buôn Chỉ Đường"
       sub: "Muốn mua bán, rèn đồ? Bấm để tôi chỉ đường"
       open: chiduong
+      chi-ten: true
       kieu: danlang
       profession: cartographer
       di:

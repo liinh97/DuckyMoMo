@@ -1977,7 +1977,7 @@ player-menu:
       buttons:
         - {icon: ENDER_PEARL, name: "&b➹ &fDịch chuyển tới vùng", sub: "/tpr", lore: ["Bay tới đất trống ở vùng đã mở"], gom: ["Đứng yên 3 giây để đi", "Có phí xu tuỳ vùng"], bam: "Bấm để chọn vùng", cmd: tpr}
         - {icon: RED_BED, name: "&c⌂ &fVề nhà", sub: "/home", lore: ["Về nhà đã đặt bằng /sethome"], gom: ["Số nhà theo danh phận", "Quay lại chỗ vừa chết: /back"], bam: "Bấm để về nhà", cmd: home}
-        - {icon: LODESTONE, name: "&e⚑ &fKhu vực tiện ích", sub: "/warp", lore: ["Danh sách điểm đến của server"], gom: ["Khu buôn bán, chợ Thợ Rèn, Đấu Trường…"], bam: "Bấm để xem danh sách", cmd: warp}
+        - {icon: LODESTONE, name: "&e⚑ &fKhu vực tiện ích", lore: ["Các khu dịch vụ của server"], gom: ["Kinh Đô, khu buôn bán, chợ Thợ Rèn", "Khu câu cá, Đấu Trường"], bam: "Bấm để chọn khu", open: tienich}
         - {icon: BELL, name: "&6⚑ &fThị trấn", sub: "%townyadvanced_town_unformatted%", lore: ["Thông tin thị trấn của bạn"], gom: ["Lập: /t new <tên> (500 xu)", "Mở đất: /t claim, ngân khố: /t deposit"], bam: "Bấm để xem thị trấn", cmd: t}
         - {icon: GRASS_BLOCK, name: "&a❀ &fThái Ấp", sub: "/thaiap", lore: ["Đất riêng không ai chiếm được"], gom: ["Xây, trồng trọt an toàn"], bam: "Bấm để về Thái Ấp", cmd: thaiap}
         - {icon: WHEAT, name: "&e☂ &fMùa mưa / mùa khô", sub: "%dmmmua_ten%", lore: ["Mùa đổi theo ngày thật"], gom: ["Cây lớn nhanh, chậm theo mùa", "Cá theo mùa, sự kiện Lũ / Hạn"], bam: "Bấm để xem mùa", cmd: mua}
@@ -2004,6 +2004,19 @@ player-menu:
         - {icon: RED_SHULKER_BOX, name: "&c❤ &fGói quà", sub: "/goiqua", lore: ["Quà tân thủ & nhu yếu phẩm", "Nhận đồ theo bậc và quà định kỳ"], gom: ["Gói lương thực: 32 bánh mì, mỗi 1 tiếng", "Gói theo danh phận: mỗi 3 ngày"], bam: "Bấm để mở gói quà", cmd: goiqua}
         - {icon: OAK_SAPLING, name: "&a✦ &fĐường tân thủ", sub: "/tanthu", lore: ["Từng bước làm quen server, bước nào cũng có quà"], bam: "Bấm để xem", cmd: tanthu}
         - {icon: BOOK, name: "&e❖ &fCẩm nang", sub: "/huongdan", lore: ["Hướng dẫn cách chơi từ đầu"], gom: ["Kinh tế, thị trấn, công thành…"], bam: "Bấm để đọc", cmd: huongdan}
+    - id: tienich
+      hidden: true          # mở bằng nút "Khu vực tiện ích" (open: tienich)
+      icon: LODESTONE
+      name: "&e⚑ &6Khu vực tiện ích"
+      border: LIGHT_BLUE_STAINED_GLASS_PANE
+      border2: CYAN_STAINED_GLASS_PANE
+      title: "&0✦ DuckyMoMo - Khu vực tiện ích"
+      buttons:
+        - {icon: BEACON, name: "&6♛ &fKinh Đô", sub: "/warp kinhdo", lore: ["Trung tâm Đại Lục Sương Mai", "Khu an toàn, không quái, không PvP"], bam: "Bấm để tới Kinh Đô", cmd: "warp kinhdo"}
+        - {icon: EMERALD, name: "&a⛃ &fKhu buôn bán", sub: "/warp shop", lore: ["Nhà buôn mua bán đồ cho server"], gom: ["Chuột trái mua, chuột phải bán"], bam: "Bấm để tới khu buôn bán", cmd: "warp shop"}
+        - {icon: ANVIL, name: "&7⚒ &fChợ Thợ Rèn", sub: "/warp trade", lore: ["Rèn, nâng cấp đồ set, đổi nguyên liệu"], gom: ["Khảm Tinh Luyện, NPC quầy đổi đồ"], bam: "Bấm để tới chợ", cmd: "warp trade"}
+        - {icon: FISHING_ROD, name: "&b≈ &fKhu câu cá", sub: "/warp cauca", lore: ["Thư giãn và câu những loài cá quý", "Tối nào cũng có thi câu cá lúc 20:30"], bam: "Bấm để tới khu câu cá", cmd: "warp cauca"}
+        - {icon: IRON_SWORD, name: "&c⚔ &fĐấu Trường", sub: "/warp pvp", lore: ["Đấu 1v1, 2v2 không mất đồ"], bam: "Bấm để tới Đấu Trường", cmd: "warp pvp"}
     - id: chuyenserver
       hidden: true          # không hiện ở menu chính / tab, mở bằng nút "Chuyển server" (open: chuyenserver)
       icon: RECOVERY_COMPASS

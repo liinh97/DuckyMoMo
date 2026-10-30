@@ -46,6 +46,8 @@ final class TeleportDelay {
             Method teleportee = ev.getMethod("getTeleportee");
             Method getDelay = ev.getMethod("getDelay");
             Method setDelay = ev.getMethod("setDelay", double.class);
+            Method getTarget = ev.getMethod("getTarget");
+            Method targetLoc = Class.forName("com.earth2me.essentials.ITarget", true, ess.getClass().getClassLoader()).getMethod("getLocation");
             Bukkit.getPluginManager().registerEvent(ev, new Listener() { }, EventPriority.NORMAL, (l, e) -> {
                 if (!ev.isInstance(e)) {
                     return;
@@ -55,6 +57,15 @@ final class TeleportDelay {
                     if (user != null && user.getClass().getMethod("getBase").invoke(user) instanceof Player p) {
                         double cur = (double) getDelay.invoke(e);
                         int secs = seconds(p, (int) Math.round(cur));
+                        // 31/10: dân hoà bình về kinh đô (vòng spawn / đất KinhDo) chờ ít hơn (peace-alliance.capital-tp-delay)
+                        if (Bukkit.getPluginManager().isPluginEnabled("Towny")) {
+                            Object tg = getTarget.invoke(e);
+                            Object loc = tg == null ? null : targetLoc.invoke(tg);   // qua interface: lớp thật có thể không public
+                            int fast = loc instanceof org.bukkit.Location dest ? PeaceAlliance.capitalDelay(p, dest) : -1;
+                            if (fast >= 0 && fast < secs) {
+                                secs = fast;
+                            }
+                        }
                         setDelay.invoke(e, (double) secs);
                         ScreenNotify.countdown(p, secs);   // 30/10: đếm ngược giữa màn hình
                     }

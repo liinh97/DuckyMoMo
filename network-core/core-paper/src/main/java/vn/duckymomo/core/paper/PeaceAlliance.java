@@ -83,7 +83,14 @@ final class PeaceAlliance implements Listener {
     private final Set<String> autoJoin = new HashSet<>();
     private int siegeRadius = -1;
 
+    /** Bản đang chạy (TeleportDelay hỏi dân hoà bình về kinh đô). */
+    static volatile PeaceAlliance INSTANCE;
+    /** 31/10 chủ server: dân thị trấn hoà bình dịch chuyển VỀ kinh đô (vòng spawn / đất KinhDo) chỉ chờ chừng này giây; -1 = theo rank. */
+    private final int capitalTpDelay;
+
     PeaceAlliance(DuckyMoMoCore plugin, ConfigurationSection c) {
+        INSTANCE = this;
+        this.capitalTpDelay = c.getInt("capital-tp-delay", 1);
         this.plugin = plugin;
         this.nationName = c.getString("nation", "LienMinhHoaBinh");
         this.capitalName = c.getString("capital", "KinhDo");
@@ -150,6 +157,25 @@ final class PeaceAlliance implements Listener {
 
     private boolean isCapital(Town t) {
         return t != null && t.getName().equalsIgnoreCase(capitalName);
+    }
+
+    /** Giây chờ khi p (dân thị trấn hoà bình) dịch chuyển tới dest trong kinh đô; -1 = không áp dụng (theo rank). */
+    static int capitalDelay(Player p, Location dest) {
+        PeaceAlliance pa = INSTANCE;
+        if (pa == null || pa.capitalTpDelay < 0 || dest == null || dest.getWorld() == null) {
+            return -1;
+        }
+        try {
+            boolean toCapital = pa.inCapital(dest) || (pa.spawnRing != null && pa.spawnRing.test(dest));
+            if (!toCapital) {
+                return -1;
+            }
+            Resident r = TownyAPI.getInstance().getResident(p);
+            Town t = r == null ? null : r.getTownOrNull();
+            return t != null && pa.isMember(t) ? pa.capitalTpDelay : -1;
+        } catch (RuntimeException | LinkageError e) {
+            return -1;
+        }
     }
 
     /** Đang đứng trong đất kinh đô (thị trấn thủ đô của liên minh). */

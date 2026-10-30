@@ -426,6 +426,11 @@ chapters:
     &0Giữ đồ quý: khảm &6Ngọc Hộ Thân&0 (xem phần Khảm).
     &1/chet &0xem chi tiết và bạn có đang an toàn không.
   - |-
+    &6Ngủ qua đêm
+    &0Ban đêm lên giường. Đủ &2một nửa&0 người chơi trong thế giới đó ngủ là trời sáng.
+    &0Người đang treo máy không bị tính. Ai lên giường thì cả thế giới thấy số người đang ngủ &8[x/y]&0.
+    &0Ngủ ở giường cũng đặt chỗ hồi sinh tại đó.
+  - |-
     &6Đồ rơi & dọn rác
     &0Đồ dưới đất bị dọn mỗi 10 phút&r&0 (báo trước 30 và 5 giây).
     &2Chết: &0đồ quanh chỗ chết (8 khối) được giữ 10 phút&r&0, quay lại nhặt kịp.
@@ -598,6 +603,7 @@ chapters:
     &1/hoabinh &0thông tin
     &1/hoabinh danhsach
     &2Người mới:&0 gõ &1/t join KinhDo&0 làm dân kinh đô, hưởng hoà bình ngay (đất chung của kinh đô không xây phá được).
+    &0Dân thị trấn hoà bình về kinh đô (&1/spawn&0, &1/warp kinhdo&0) chỉ chờ &21 giây&0.
   - |-
     &2Vào / rời hoà bình
     &0Thị trưởng gõ:
@@ -1130,6 +1136,12 @@ chapters:
     &1/pettrade <người> [giá] &0bán/tặng
     &1/bxhpet &0xếp hạng
   - |-
+    &6Lệnh pet (tiếp)
+    &1/petstore &0cất pet vào kho
+    &1/petswitch &0đổi sang pet khác trong kho
+    &1/petcapturehelper &0bật/tắt gợi ý khi bắt pet
+    &0Số pet giữ được trong kho tăng theo rank.
+  - |-
     &6Pet đánh người
     &0Pet đánh người chơi bị giảm 50% sát thương&r&0.
     &0Công thành: có phiên cho, có phiên không cho pet tham chiến. Xem: &1/lichcongthanh
@@ -1171,6 +1183,7 @@ chapters:
     &1/tanthu &0xem các bước, &1/tanthu boqua &0nếu kẹt.
     &2RỦ BẠN
     &1/gioithieu &0xem mã (là tên bạn). Bạn mới gõ &1/gioithieu <tên bạn>&0 trong 3 ngày đầu: nhận 300 xu, bạn nhận 1.000 xu khi họ chơi đủ 2 giờ.
+    &0Rủ đủ &65 người&0: +3.000 xu, danh hiệu &3[Người Dẫn Đường]&0. Đủ &610 người&0: +8.000 xu, &6[Đại Sứ Làng]&0.
   - |-
     &2NHIỆM VỤ NGÀY
     &1/nhiemvu&0: mỗi ngày 3 nhiệm vụ (đào, chặt, săn, xây, câu, thu hoạch).
@@ -1210,7 +1223,7 @@ chapters:
   - |-
     &6RANK ỦNG HỘ
     &0Ủng hộ server, nhận tước vị&r&0.
-    &2Nam Tước &1Tử Tước &1Bá Tước &5Hầu Tước &6Công Tước
+    &6⚜ Nam Tước &8⚜ Tử Tước &5⚜ Bá Tước &d⚜ Hầu Tước &4⚜ Công Tước
     &0Mua bằng &6Vàng&0: nạp tiền ủng hộ được Vàng.
     &1/rank &0xem quyền lợi, &1/vang &0cửa hàng.
   - |-
@@ -1218,6 +1231,7 @@ chapters:
     &0Prefix màu, chat màu, &1/hat&0, &1/nick&0, hiệu ứng hạt &1/pp&0, chào khi vào server, &1/cuahang&0 trong kinh đô.
     &0Đổi skin &1/skin&0, tủ skin &1/tuskin&0 (Nam 3 … Công 20 skin).
     &0Pet trang trí &1/pet&0: Tử mèo, Bá 13 loài, Hầu loài hiếm, Công mọi pet.
+    &0Nhà &1/sethome&0: Nam 2, Tử 3, Bá 4, Hầu 5, Công 6.
     &8Không bán đồ, tiền, cape hay gì liên quan Pokémon.
   - |-
     &6Quyền lợi rank (tiếp)

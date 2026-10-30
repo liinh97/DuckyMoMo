@@ -324,6 +324,7 @@ peace-alliance:
   enabled: true
   nation: LienMinhHoaBinh
   capital: KinhDo
+  capital-tp-delay: 1   # 31/10: dân thị trấn hoà bình dịch chuyển VỀ kinh đô (vòng spawn / đất KinhDo: /spawn, /warp kinhdo…) chờ 1 giây; -1 = theo rank
   join-wait-days: 2
   join-max-distance: 8   # 21/10: thị trấn cách đất liên minh tối đa bao nhiêu ô (16 block) thì được /hoabinh vao; vào rồi chiếm đất nối liền mới bật hoà bình
   rejoin-cooldown-days: 14

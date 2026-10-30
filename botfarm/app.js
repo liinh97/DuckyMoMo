@@ -645,6 +645,9 @@ const noAccent = s => s.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/đ/g, 
 const styled = (n, s) => STYLE(n) === 1 ? noAccent(s) : STYLE(n) === 2 ? s.toLowerCase() : s;
 const vnHour = () => (new Date().getUTCHours() + 7) % 24;
 let chatBusy = false;
+const CHEN_RATE = 0.2;
+const CHEN = ['haha', '+1', 'đúng rồi', ':v', 'chuẩn', 'công nhận', 'hehe', 'ừ', 'gg', 'thật'];
+const CHEN_TRUNG = ['haha', ':v', 'hehe', 'gg'];
 
 async function chatOnce(force) {
   if (chatBusy) return 'đang có một đoạn chat dở';
@@ -682,6 +685,18 @@ async function chatOnce(force) {
       if (!RT[n] || !RT[n].bot) break;
       const msg = styled(n, text);
       RT[n].bot.chat(msg.startsWith('/') ? '.' + msg : msg);   // "./sell …": khoe lệnh trong chat như người thật, không chạy thành lệnh (28/10)
+    }
+    // 31/10 chủ server: đôi khi một bot ngoài cuộc chen một câu ngắn ở cuối (đoạn 2–3 bot thành 3–4 người, không phải viết lại kịch bản)
+    const inTalk = new Set(Object.values(who));
+    if (inTalk.size >= 2 && Math.random() < CHEN_RATE) {
+      const out = pool.filter(x => !inTalk.has(x) && RT[x] && RT[x].bot && !RT[x].leaving);
+      if (out.length) {
+        const last = (talk[talk.length - 1] || '').slice(2).trim();
+        const hoi = /\?$/.test(last) || ASK.test(last);   // câu cuối là câu hỏi: chỉ cười / gg, không "đúng rồi"
+        const o = out[Math.floor(Math.random() * out.length)];
+        const pickL = hoi ? CHEN_TRUNG : CHEN;
+        await sayAs(o, pickL[Math.floor(Math.random() * pickL.length)], 3000 + Math.random() * 9000);
+      }
     }
   } finally { chatBusy = false; }
   return 'bot chat ở ' + (SERVERS[srv] || srv) + ': ' + talk.length + ' câu';

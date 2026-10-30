@@ -75,7 +75,7 @@ quit_message: '&8[&c-&8] {prefix}&f{player}'
 rank_join_message: '&e✦ {tiercolor}{tier} &f{player} &evừa giá lâm!'
 donate_how_to_buy: '&7Mua rank: nhắn admin qua Discord/Zalo, chuyển khoản ghi &fTÊN NHÂN VẬT + GÓI&7. Admin cấp trong ngày.'
 tier0_name: Nam Tước
-tier0_prefix: '&a[Nam Tước]'
+tier0_prefix: '&#9C6B3C[&#E3A869⚜ Nam Tước&#9C6B3C]'
 tier0_prices:
   - 1 tháng 20k
   - 3 tháng 50k
@@ -94,7 +94,7 @@ tier0_perks:
   - kho 1 pet chiến đấu (MyPet)
   - /wb (bàn chế tạo mang theo)
 tier1_name: Tử Tước
-tier1_prefix: '&b[Tử Tước]'
+tier1_prefix: '&#6F8FAF[&#C9DDF0⚜ Tử Tước&#6F8FAF]'
 tier1_prices:
   - 1 tháng 40k
   - 3 tháng 100k
@@ -109,7 +109,7 @@ tier1_perks:
   - kho 2 pet chiến đấu
   - /anvil (đe mang theo)
 tier2_name: Bá Tước
-tier2_prefix: '&9[Bá Tước]'
+tier2_prefix: '&#7D55C7[&#C6A2FF⚜ Bá Tước&#7D55C7]'
 tier2_prices:
   - 1 tháng 70k
   - 3 tháng 180k
@@ -124,7 +124,7 @@ tier2_perks:
   - kho 3 pet chiến đấu
   - /ec (rương Ender mang theo, không mở khi giao tranh)
 tier3_name: Hầu Tước
-tier3_prefix: '&d[Hầu Tước]'
+tier3_prefix: '&#C2416F[&#FF9AC1⚜ Hầu Tước&#C2416F]'
 tier3_prices:
   - 1 tháng 100k
   - 3 tháng 260k
@@ -140,7 +140,7 @@ tier3_perks:
   - kho 4 pet chiến đấu
   - /feed (no bụng, hồi chiêu 10 phút)
 tier4_name: Công Tước
-tier4_prefix: '&6[Công Tước]&r'
+tier4_prefix: '&#B22222[&#FFD27A⚜ Công Tước&#B22222]'
 tier4_prices:
   - 1 tháng 150k
   - 3 tháng 390k

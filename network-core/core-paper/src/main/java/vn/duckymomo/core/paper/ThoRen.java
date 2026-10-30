@@ -122,6 +122,8 @@ final class ThoRen implements Listener {
         if (t == null || p == null) {
             return null;
         }
+        // 30/10 chủ server: món mạnh nhất phải thắng (1 giày Thần Thánh > 3 món Tân Thủ). Xếp theo bậc set (tho-ren.sets.<id>.bac,
+        // 1 = yếu nhất), cùng bậc thì nhiều món hơn, rồi cấp cao hơn.
         Map<SetDef, int[]> seen = new LinkedHashMap<>();   // set -> {số món, cấp thấp nhất}
         for (ItemStack it : p.getInventory().getArmorContents()) {
             Ref r = it == null ? null : t.byId.get(ItemLibrary.idOf(it));
@@ -136,7 +138,8 @@ final class ThoRen implements Listener {
         int[] bv = null;
         for (Map.Entry<SetDef, int[]> e : seen.entrySet()) {
             int[] v = e.getValue();
-            if (bv == null || v[0] > bv[0] || (v[0] == bv[0] && v[1] > bv[1])) {
+            int rk = t.setRank.getOrDefault(e.getKey().id(), 0), brk = best == null ? -1 : t.setRank.getOrDefault(best.id(), 0);
+            if (bv == null || rk > brk || (rk == brk && (v[0] > bv[0] || (v[0] == bv[0] && v[1] > bv[1])))) {
                 best = e.getKey();
                 bv = v;
             }
@@ -146,6 +149,9 @@ final class ThoRen implements Listener {
         }
         return best.name() + " +" + bv[1] + (bv[0] < 4 ? " (" + bv[0] + "/4)" : "");
     }
+
+    /** Bậc sức mạnh của set (tho-ren.sets.<id>.bac, 1 = yếu nhất), dùng chọn set hiện trên đầu khi ẩn giáp. */
+    private final Map<String, Integer> setRank = new java.util.HashMap<>();
 
     ThoRen(DuckyMoMoCore plugin, ItemLibrary lib, ConfigurationSection c) {
         INSTANCE = this;
@@ -241,6 +247,7 @@ final class ThoRen implements Listener {
                     se.getString("open", "auto"), se.getDouble("boost", 1), se.getDouble("damage", 0), se.getString("drop.item", ""),
                     se.getDouble("drop.chance", 0));
             Material icon = Material.matchMaterial(s.getString("icon", "IRON_CHESTPLATE"));
+            setRank.put(id, s.getInt("bac", 0));
             SetDef def = new SetDef(id, s.getString("name", id), icon == null ? Material.IRON_CHESTPLATE : icon, s.getString("desc", ""),
                     s.getString("requires", ""), pieces, costs, s.getIntegerList("wear"), bonus, season);
             sets.put(id, def);

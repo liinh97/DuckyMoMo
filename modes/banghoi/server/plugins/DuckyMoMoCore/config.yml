@@ -2300,6 +2300,7 @@ tho-ren:
   fish-drop: {item: vaycahiem, chance: 5}   # % mỗi lần câu được cá: rơi Vảy Cá Hiếm (set Ngư Phủ)
   sets:
     tanthu:
+      bac: 2   # 30/10 bậc sức mạnh (1 yếu nhất … 10 mạnh nhất), chọn set hiện trên đầu khi ẩn giáp
       name: "Tân Thủ"
       icon: IRON_CHESTPLATE
       desc: "Set khởi đầu: đánh quái, đào mỏ lấy nguyên liệu, nâng từ +0 tới +9."
@@ -2334,6 +2335,7 @@ tho-ren:
         - {from: 9, pieces: 2, mau: 8, day-lui: 5}
         - {from: 9, pieces: 4, mau: 15, day-lui: 15, giam-st: 5}
     chienbinh:
+      bac: 4   # 30/10 bậc sức mạnh (1 yếu nhất … 10 mạnh nhất), chọn set hiện trên đầu khi ẩn giáp
       name: "Chiến Binh"
       icon: DIAMOND_CHESTPLATE
       desc: "Bậc 2: nâng từ Tân Thủ +9. Mảnh Chiến Ấn rơi ở dungeon tầng 1–3."
@@ -2365,6 +2367,7 @@ tho-ren:
         - {from: 7, pieces: 2, mau: 8, day-lui: 5}
         - {from: 7, pieces: 4, mau: 15, day-lui: 15, giam-st: 6}
     tinhanh:
+      bac: 6   # 30/10 bậc sức mạnh (1 yếu nhất … 10 mạnh nhất), chọn set hiện trên đầu khi ẩn giáp
       name: "Tinh Anh"
       icon: NETHERITE_CHESTPLATE
       desc: "Bậc 3: nâng từ Chiến Binh +7. Mảnh Linh Ấn rơi ở dungeon tầng 4–6."
@@ -2394,6 +2397,7 @@ tho-ren:
         - {from: 5, pieces: 2, mau: 12, day-lui: 8}
         - {from: 5, pieces: 4, mau: 20, day-lui: 20, giam-st: 9}
     caocap:
+      bac: 7   # 30/10 bậc sức mạnh (1 yếu nhất … 10 mạnh nhất), chọn set hiện trên đầu khi ẩn giáp
       name: "Cao Cấp"
       icon: GOLDEN_CHESTPLATE
       desc: "Bậc 4, cao nhất cày được: nâng từ Tinh Anh +5. Mảnh Kim Ấn rơi ở dungeon tầng 7–10 và dungeon vé."
@@ -2423,6 +2427,7 @@ tho-ren:
         - {from: 5, pieces: 2, mau: 15, day-lui: 10}
         - {from: 5, pieces: 4, mau: 30, day-lui: 25, giam-st: 13}
     huyenthoai:
+      bac: 8   # 30/10 bậc sức mạnh (1 yếu nhất … 10 mạnh nhất), chọn set hiện trên đầu khi ẩn giáp
       name: "Huyền Thoại"
       icon: NETHERITE_SWORD
       desc: "Bậc 5 (Legendary, bản trao đổi): nâng từ Cao Cấp +5. Huyền Ấn rất hiếm, rơi ở dungeon tầng 10, Bắc Cực, dungeon vé và Kẻ Trói Buộc."
@@ -2449,6 +2454,7 @@ tho-ren:
         - {from: 2, pieces: 4, mau: 30, day-lui: 25, giam-st: 14}
         - {from: 3, pieces: 4, mau: 35, day-lui: 30, giam-st: 16}
     thanthoai:
+      bac: 9   # 30/10 bậc sức mạnh (1 yếu nhất … 10 mạnh nhất), chọn set hiện trên đầu khi ẩn giáp
       name: "Thần Thoại"
       icon: NETHER_STAR
       desc: "Bậc 6 (Mythic): nâng từ Huyền Thoại +3. Thần Ấn chưa ai tìm ra (sắp mở)."
@@ -2477,6 +2483,7 @@ tho-ren:
         - {from: 2, pieces: 4, mau: 42, day-lui: 35, giam-st: 19}
         - {from: 4, pieces: 4, mau: 48, day-lui: 40, giam-st: 21}
     thanthanh:
+      bac: 10   # 30/10 bậc sức mạnh (1 yếu nhất … 10 mạnh nhất), chọn set hiện trên đầu khi ẩn giáp
       name: "Thần Thánh"
       icon: BEACON
       desc: "Bậc 7 (Divine), cao nhất: nâng từ Thần Thoại +4. Thánh Ấn chưa ai tìm ra (sắp mở)."
@@ -2503,6 +2510,7 @@ tho-ren:
         - {from: 2, pieces: 4, mau: 55, day-lui: 45, giam-st: 24}
         - {from: 3, pieces: 4, mau: 60, day-lui: 50, giam-st: 26}
     ulinh:
+      bac: 5   # 30/10 bậc sức mạnh (1 yếu nhất … 10 mạnh nhất), chọn set hiện trên đầu khi ẩn giáp
       name: "U Linh"
       icon: CARVED_PUMPKIN
       desc: "Set mùa Lễ Hội Bí Ngô: chỉ rèn được trong mùa, đúng mùa hiệu ứng bộ x1,5 và kiếm +15% sát thương. Kẹo Linh Hồn rơi từ quái lúc đang mùa."
@@ -2530,6 +2538,7 @@ tho-ren:
         - {from: 2, pieces: 4, mau: 10, day-lui: 10, giam-st: 5}
         - {from: 4, pieces: 4, mau: 15, day-lui: 15, giam-st: 7}
     chuyencan:
+      bac: 3   # 30/10 bậc sức mạnh (1 yếu nhất … 10 mạnh nhất), chọn set hiện trên đầu khi ẩn giáp
       name: Chuyên Cần
       icon: SUNFLOWER
       desc: 'Set điểm danh: đổi bằng Phiếu Chuyên Cần (điểm danh mỗi ngày, mốc điểm danh). Cả bộ +0 cần ~1 tháng điểm danh. Đủ bộ thêm máu và kinh nghiệm, +5 tự vá đồ.'
@@ -2551,6 +2560,7 @@ tho-ren:
         quan: {name: Quần, ids: [cn_quan_0, cn_quan_1, cn_quan_2, cn_quan_3, cn_quan_4, cn_quan_5]}
         giay: {name: Giày, ids: [cn_giay_0, cn_giay_1, cn_giay_2, cn_giay_3, cn_giay_4, cn_giay_5]}
     nonggia:
+      bac: 1   # 30/10 bậc sức mạnh (1 yếu nhất … 10 mạnh nhất), chọn set hiện trên đầu khi ẩn giáp
       name: "Nông Gia"
       icon: GOLDEN_HOE
       desc: "Set nghề trồng trọt: cuốc 3x3, thu hoạch cả vùng, tự gieo hạt; mặc đủ bộ có cơ hội gấp đôi nông sản."
@@ -2571,6 +2581,7 @@ tho-ren:
         - {from: 2, pieces: 4, mau: 6, thu-hoach: 10}
         - {from: 4, pieces: 4, mau: 10, day-lui: 10, thu-hoach: 20}
     thosan:
+      bac: 1   # 30/10 bậc sức mạnh (1 yếu nhất … 10 mạnh nhất), chọn set hiện trên đầu khi ẩn giáp
       name: "Thợ Săn"
       icon: IRON_SWORD
       desc: "Set nghề đánh quái đêm: nhìn trong đêm, kiếm trừ tà rơi đầu quái; mặc đủ bộ đánh quái ban đêm mạnh hơn."
@@ -2591,6 +2602,7 @@ tho-ren:
         - {from: 2, pieces: 4, mau: 6, dem-st: 10}
         - {from: 4, pieces: 4, mau: 10, day-lui: 10, dem-st: 20}
     thomo:
+      bac: 1   # 30/10 bậc sức mạnh (1 yếu nhất … 10 mạnh nhất), chọn set hiện trên đầu khi ẩn giáp
       name: "Thợ Mỏ"
       icon: IRON_PICKAXE
       desc: "Set nghề đào mỏ: nhìn trong hầm, kháng lửa, cúp đào nhanh, đồ vào thẳng túi. Giáp nhẹ hơn Tân Thủ cùng tầm."
@@ -2611,6 +2623,7 @@ tho-ren:
         - {from: 2, pieces: 4, mau: 6}
         - {from: 4, pieces: 4, mau: 10, day-lui: 10}
     nguphu:
+      bac: 1   # 30/10 bậc sức mạnh (1 yếu nhất … 10 mạnh nhất), chọn set hiện trên đầu khi ẩn giáp
       name: "Ngư Phủ"
       icon: FISHING_ROD
       desc: "Set nghề câu cá: thở và đi nhanh dưới nước, cần câu cá cắn nhanh, ra đồ quý. Nguyên liệu chính: Vảy Cá Hiếm."
@@ -2631,6 +2644,7 @@ tho-ren:
         - {from: 2, pieces: 4, mau: 6}
         - {from: 4, pieces: 4, mau: 10, day-lui: 10}
     duhiep:
+      bac: 1   # 30/10 bậc sức mạnh (1 yếu nhất … 10 mạnh nhất), chọn set hiện trên đầu khi ẩn giáp
       name: "Du Hiệp"
       icon: BOW
       desc: "Set nghề cung thủ: nhảy cao, chạy nhanh, cung làm chậm và có cơ hội gấp đôi sát thương."

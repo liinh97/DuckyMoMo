@@ -176,6 +176,7 @@ tab_bossbar_tips:
   - '&6✦ &fChơi một mình: &e/khobau &f• &e/lenhsan &f• &e/thanhtich &6✦'
   - '&a✦ &fĐất riêng an toàn để xây, trồng trọt: &e/thaiap &a✦'
   - '&a✦ &fTắt chat, thông báo, TPA… theo ý mình: &e/caidat &a✦'
+  - '&b✦ &fChat sát nhau khó đọc? &eTuỳ chọn › Cài đặt trò chuyện › Khoảng cách dòng &b✦'
 tab_bossbar_interval: 8000
 tab_bossbar_enabled: true
 tab_sb_enabled: true

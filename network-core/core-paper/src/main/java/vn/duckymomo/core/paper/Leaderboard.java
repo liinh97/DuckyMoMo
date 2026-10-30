@@ -105,7 +105,7 @@ final class Leaderboard implements Listener {
     }
 
     private static Component c(String s) {
-        return LEGACY.deserialize(s);
+        return Tip.ns(LEGACY.deserialize(s));
     }
 
     private int pts(String key, int def) {

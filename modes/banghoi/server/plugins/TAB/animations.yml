@@ -126,6 +126,7 @@ MeoChoi:
     - "&6✦ &fChơi một mình: &e/khobau &f• &e/lenhsan &f• &e/thanhtich &6✦"
     - "&a✦ &fĐất riêng an toàn để xây, trồng trọt: &e/thaiap &a✦"
     - "&a✦ &fTắt chat, thông báo, TPA… theo ý mình: &e/caidat &a✦"
+    - "&b✦ &fChat sát nhau khó đọc? &eTuỳ chọn › Cài đặt trò chuyện › Khoảng cách dòng &b✦"
 
 # Bảng bên phải 3 trang tự đổi (30/10: thêm trang Thị trấn), dòng NGẮN (dòng dài nhất quyết định bề ngang bảng) (config.yml scoreboard: %animation:SbTieuDe%, %animation:SbDong1..4%). Cùng change-interval để đổi trang đồng thời.
 # Trang 1 kinh tế & mùa, trang 2 chiến tranh. %dmmtoi_*% (giết/chết/KDA) và %dmmmua_*% (mùa) do DuckyMoMoCore cung cấp.

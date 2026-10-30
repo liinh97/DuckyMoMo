@@ -121,7 +121,7 @@ final class Kits implements Listener {
     }
 
     private static Component c(String s) {
-        return LEGACY.deserialize(s).decorationIfAbsent(TextDecoration.ITALIC, TextDecoration.State.FALSE);
+        return Tip.ns(LEGACY.deserialize(s).decorationIfAbsent(TextDecoration.ITALIC, TextDecoration.State.FALSE));
     }
 
     // ---------------------------------------------------------------- điều kiện

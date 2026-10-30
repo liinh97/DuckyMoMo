@@ -74,7 +74,7 @@ final class PeaceCouncil {
     }
 
     private static Component c(String s) {
-        return LEGACY.deserialize(s);
+        return Tip.ns(LEGACY.deserialize(s));
     }
 
     // ------------------------------------------------------------------ thành viên, phiếu

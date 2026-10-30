@@ -211,8 +211,13 @@ final class Tip {
         return it;
     }
 
+    /** 30/10 chủ server: chữ có bóng đổ nhìn nhoè với dấu tiếng Việt -> mọi chữ của plugin tắt bóng (shadow_color trong suốt, MC 1.21.4+). */
+    static Component ns(Component c) {
+        return c.shadowColor(net.kyori.adventure.text.format.ShadowColor.none());
+    }
+
     static Component c(String s) {
-        return LEGACY.deserialize(s).decorationIfAbsent(TextDecoration.ITALIC, TextDecoration.State.FALSE);
+        return ns(LEGACY.deserialize(s).decorationIfAbsent(TextDecoration.ITALIC, TextDecoration.State.FALSE));
     }
 
     /** Xuống dòng theo số ký tự nhìn thấy (bỏ qua mã màu), giữ màu đang dùng sang dòng sau. */

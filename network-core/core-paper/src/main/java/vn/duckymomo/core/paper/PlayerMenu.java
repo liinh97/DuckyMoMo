@@ -159,7 +159,7 @@ final class PlayerMenu implements Listener {
     }
 
     private static Component c(String s) {
-        return L.deserialize(s).decoration(TextDecoration.ITALIC, false);
+        return Tip.ns(L.deserialize(s).decoration(TextDecoration.ITALIC, false));
     }
 
     int size() {

@@ -328,6 +328,6 @@ final class SellLimit implements Listener {
     }
 
     private static Component c(String s) {
-        return LegacyComponentSerializer.legacyAmpersand().deserialize(s);
+        return Tip.ns(LegacyComponentSerializer.legacyAmpersand().deserialize(s));
     }
 }

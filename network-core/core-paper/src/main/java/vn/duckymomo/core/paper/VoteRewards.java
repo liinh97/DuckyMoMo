@@ -48,7 +48,7 @@ final class VoteRewards implements Listener {
     }
 
     private static Component c(String s) {
-        return LEGACY.deserialize(s);
+        return Tip.ns(LEGACY.deserialize(s));
     }
 
     /** Gắn vào sự kiện vote của Votifier. Trả false nếu chưa cài Votifier. */

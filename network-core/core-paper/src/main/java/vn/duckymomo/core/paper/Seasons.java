@@ -130,7 +130,7 @@ final class Seasons implements Listener {
     }
 
     static Component c(String s) {
-        return LEGACY.deserialize(s);
+        return Tip.ns(LEGACY.deserialize(s));
     }
 
     static String plain(String s) {

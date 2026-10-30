@@ -47,7 +47,7 @@ final class WebLogin {
     }
 
     private static Component c(String s) {
-        return LEGACY.deserialize(s);
+        return Tip.ns(LEGACY.deserialize(s));
     }
 
     /** /web: cấp mã mới (mã cũ của người này hết hiệu lực). */

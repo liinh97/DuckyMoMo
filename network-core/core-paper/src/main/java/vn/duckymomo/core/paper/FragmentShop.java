@@ -146,7 +146,7 @@ final class FragmentShop implements Listener, Rewards.FragmentGiver {
     }
 
     private static Component c(String s) {
-        return LEGACY.deserialize(s).decorationIfAbsent(TextDecoration.ITALIC, TextDecoration.State.FALSE);
+        return Tip.ns(LEGACY.deserialize(s).decorationIfAbsent(TextDecoration.ITALIC, TextDecoration.State.FALSE));
     }
 
     /** Mảnh từ thư viện đồ (null nếu thư viện không có món này). */

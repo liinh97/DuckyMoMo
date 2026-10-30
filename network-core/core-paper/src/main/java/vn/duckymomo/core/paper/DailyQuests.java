@@ -717,7 +717,7 @@ final class DailyQuests implements Listener {
     }
 
     private static Component c(String s) {
-        return LEGACY.deserialize(s);
+        return Tip.ns(LEGACY.deserialize(s));
     }
 
     private static String today() {

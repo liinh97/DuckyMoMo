@@ -84,6 +84,6 @@ final class SkillSeason implements Listener {
     }
 
     private static Component c(String s) {
-        return LegacyComponentSerializer.legacyAmpersand().deserialize(s).decoration(TextDecoration.ITALIC, false);
+        return Tip.ns(LegacyComponentSerializer.legacyAmpersand().deserialize(s).decoration(TextDecoration.ITALIC, false));
     }
 }

@@ -491,7 +491,7 @@ final class PlayerSettings implements Listener {
     // ---------------------------------------------------------------- menu /caidat
 
     private static Component c(String s) {
-        return LEGACY.deserialize(s).decoration(TextDecoration.ITALIC, false);
+        return Tip.ns(LEGACY.deserialize(s).decoration(TextDecoration.ITALIC, false));
     }
 
     private ItemStack icon(Player p, Opt o) {

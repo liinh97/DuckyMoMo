@@ -357,6 +357,6 @@ final class PetCapture implements Listener {
     }
 
     private static Component c(String s) {
-        return LEGACY.deserialize(s).decoration(TextDecoration.ITALIC, false);
+        return Tip.ns(LEGACY.deserialize(s).decoration(TextDecoration.ITALIC, false));
     }
 }

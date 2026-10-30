@@ -271,7 +271,7 @@ final class WarRules implements Listener {
     }
 
     private static Component c(String s) {
-        return LEGACY.deserialize(s);
+        return Tip.ns(LEGACY.deserialize(s));
     }
 
     /** Lớp riêng: server không có Towny không nạp tới lớp này. */

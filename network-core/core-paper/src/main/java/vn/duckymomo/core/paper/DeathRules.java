@@ -197,7 +197,7 @@ final class DeathRules implements Listener {
                 .kv("Lệnh khảm", "/thoren kham &7(cầm đồ set trên tay)").click("Bấm để mở khảm");
         m.add(ht.apply(new ItemStack(org.bukkit.Material.HEART_OF_THE_SEA)), "thoren kham");
         m.add(Tip.of("&d♨ &fCách có Ngọc Hộ Thân").accent("&d").desc("Tinh Luyện Hộ Thân ở /tinhluyen:")
-                .line().item("2 Lõi Quái &7(quái dungeon rơi)").item("4 Tinh Luyện Netherite").item("5.000 xu")
+                .line().item("2 Lõi Quái &7(quái dungeon rơi)").item("1 Tinh Luyện Kim Cương").item("2 Tinh Luyện Lục Bảo").item("5.000 xu")
                 .note("Mua bán, trao đổi với người khác được.").click("Bấm để mở Tinh Luyện").apply(new ItemStack(org.bukkit.Material.NETHER_STAR)), "tinhluyen");
         m.open(p);
     }

@@ -303,6 +303,51 @@ final class Refining implements Listener {
         p.openInventory(h.inv);
     }
 
+    /** Nơi món tinh luyện id được dùng: set / quầy Thợ Rèn, đơn Nhà Buôn, công thức Tinh Luyện khác (đọc config đang chạy). */
+    private List<String> usageOf(String id) {
+        List<String> out = new ArrayList<>();
+        org.bukkit.configuration.file.FileConfiguration c = plugin.getConfig();
+        java.util.function.Function<String, String> plain = t -> t == null ? "" : t.replaceAll("(?i)&[0-9a-fk-or]|&#[0-9a-f]{6}", "").replaceAll("^[^\\p{L}]+", "").trim();
+        List<String> sets = new ArrayList<>();
+        ConfigurationSection ss = c.getConfigurationSection("tho-ren.sets");
+        if (ss != null) {
+            for (String k : ss.getKeys(false)) {
+                for (Map<?, ?> lv : ss.getMapList(k + ".cost")) {
+                    if (lv.containsKey(id)) {
+                        sets.add(plain.apply(ss.getString(k + ".name", k)));
+                        break;
+                    }
+                }
+            }
+        }
+        if (!sets.isEmpty()) {
+            out.add("Thợ Rèn, set " + String.join(", ", sets));
+        }
+        ConfigurationSection qs = c.getConfigurationSection("tho-ren.quay");
+        if (qs != null) {
+            for (String k : qs.getKeys(false)) {
+                for (Map<?, ?> r : qs.getMapList(k + ".recipes")) {
+                    if (r.get("cost") instanceof Map<?, ?> cm && cm.containsKey(id)) {
+                        out.add(plain.apply(qs.getString(k + ".name", k)));
+                        break;
+                    }
+                }
+            }
+        }
+        for (Map<?, ?> o : c.getMapList("don-buon.pool")) {
+            if (o.get("can") instanceof Map<?, ?> cm && cm.containsKey(id)) {
+                out.add("Đơn Nhà Buôn &7(/warp shop)");
+                break;
+            }
+        }
+        for (Item it : items.values()) {
+            if (it.recipe().containsKey(id)) {
+                out.add("Tinh Luyện " + plain.apply(it.name()).replaceFirst("^Tinh Luyện\\s*", ""));
+            }
+        }
+        return out;
+    }
+
     private static ItemStack pane(Material m) {
         ItemStack it = new ItemStack(m);
         ItemMeta meta = it.getItemMeta();
@@ -333,13 +378,18 @@ final class Refining implements Listener {
             lore.add(Tip.c("&7• &7Bán cho server: &6" + money(d.sell())));
         }
         List<String> kham = Kham.gemInfo(d.id());   // 31/10: nói rõ khảm được gì, phẩm, năng lượng
+        List<String> used = usageOf(d.id());          // 31/10: dùng ở đâu (đọc thẳng config Thợ Rèn / Nhà Buôn / Tinh Luyện)
         lore.add(Tip.c(Tip.LINE));
         if (!kham.isEmpty()) {
             kham.forEach(x -> lore.add(Tip.c(x)));
-        } else {   // món không khảm được: nói rõ dùng làm gì
-            lore.add(Tip.c("&7• &7Không khảm được. Dùng để:"));
-            lore.add(Tip.c("  &7▸ &fThợ Rèn lên set, giao đơn Nhà Buôn &7(/warp shop)"));
-            lore.add(Tip.c("  &7▸ &fTrao đổi với người chơi, bán cho server"));
+        } else {
+            lore.add(Tip.c("&7• &7Không khảm được."));
+        }
+        if (!used.isEmpty()) {
+            lore.add(Tip.c("&7• &6Dùng cho:"));
+            used.forEach(x -> lore.add(Tip.c("  &7▸ &f" + x)));
+        } else if (kham.isEmpty()) {
+            lore.add(Tip.c("&7• &7Chưa dùng vào việc gì: chỉ để bán / trao đổi."));
         }
         lore.add(Tip.c(Tip.LINE));
         if (ok) {

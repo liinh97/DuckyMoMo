@@ -1731,7 +1731,8 @@ tinh-luyen:
     netherite: {recipe: {NETHERITE_BLOCK: 32}, sell: 262000}
     dialinh: {recipe: {HAY_BLOCK: 64}, sell: 270}
     # 30/10: nguồn Ngọc Hộ Thân (khảm vào đồ set Tinh Anh+ để không rơi khi chết). xu = trả bằng tiền.
-    hothan: {recipe: {loiquai: 2, netherite: 4, xu: 5000}, sell: 0}
+    # 31/10 chủ server chọn phương án B (~69.000 xu theo giá bán; trước 4 TL Netherite ~1 triệu xu, gần như không ai làm được)
+    hothan: {recipe: {loiquai: 2, kimcuong: 1, lucbao: 2, xu: 5000}, sell: 0}
 
 # Đơn nhà buôn mỗi tuần (NPC Nhà Buôn ở khu shop, đặt bằng /dmm donbuonnpc; 27/10, DonBuon.java): thứ Hai chọn per-week đơn ngẫu nhiên từ pool; giao đủ món Tinh Luyện trong "can"
 # nhận gia % giá bán Tinh Luyện (tinh-luyen.items.<mã>.sell) bằng xu + quà "qua" (dạng như mọi quà: xu, do <mã> <số>…). Mỗi người mỗi đơn 1 lần/tuần,

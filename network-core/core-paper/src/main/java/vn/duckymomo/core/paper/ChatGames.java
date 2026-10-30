@@ -303,7 +303,8 @@ final class ChatGames implements Listener {
      *  thời gian; người thật đúng trước thì thôi. Có khi đoán sai một lần trước, hay gõ không dấu cho giống người. */
     private void botAnswer(int myRound, int secs, String answer) {
         ConfigurationSection b = cfg.getConfigurationSection("bot-answer");
-        if (b == null || !b.getBoolean("enabled", true) || rnd.nextDouble() >= b.getDouble("chance", 0.5)) {
+        // 30/10: người thật online đều chơi lâu rồi thì bot bớt trả lời (BotFake.factorAll)
+        if (b == null || !b.getBoolean("enabled", true) || rnd.nextDouble() >= b.getDouble("chance", 0.5) * BotFake.factorAll()) {
             return;
         }
         int lo = Math.max(5, b.getInt("min-seconds", 20)), hi = Math.min(secs - 3, Math.max(lo + 1, b.getInt("max-seconds", 55)));

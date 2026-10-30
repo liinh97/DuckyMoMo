@@ -453,6 +453,25 @@ function saveChat() { try { fs.writeFileSync(CHAT_CFG, JSON.stringify(chatCfg));
 // Bot thỉnh thoảng /tpa một người chơi THẬT rồi tự /tpacancel (28/10, chủ server: "tpa người chơi ngẫu nhiên rồi tự huỷ, không thực sự tới
 // người chơi để bị phát hiện, đừng tpa liên tục không lại bị nghi"). Hiếm: cả server ~1 lần / 40–90 phút, đêm 1–7 giờ im; một người thật
 // tối đa 1 lần / 3 giờ, một bot 1 lần / 4 giờ. Người kia lỡ bấm nhận: Essentials chờ 5 giây, bot nhảy + /tpacancel là huỷ (dodgeTeleport).
+// 30/10 chủ server: "người chơi đã chơi 1 tiếng rồi thì tần suất fake ít đi … lâu hẳn rồi thì không cần fake nữa". Hệ số 0..1 theo giờ chơi
+// người THẬT do core tính (/dmm botgia, config bot-gia.muc); all = của người mới nhất đang online (không có ai = 1). Core cũ chưa có lệnh = 1.
+const BOTGIA = {};
+async function botgia(host) {
+  const c = BOTGIA[host];
+  if (c && Date.now() - c.at < 60000) return c;
+  const out = { at: Date.now(), all: 1, per: {} };
+  try {
+    const r = await rcon(host).cmd('dmm botgia');
+    const m = r.match(/BOTGIA all=([\d.]+)(.*)/);
+    if (m) {
+      out.all = +m[1];
+      for (const part of m[2].split(';')) { const x = part.trim().match(/^(\S+)=([\d.]+):([\d.]+)$/); if (x) out.per[x[1].toLowerCase()] = +x[3]; }
+    }
+  } catch (e) { /* RCON lỗi: giữ như cũ */ }
+  BOTGIA[host] = out;
+  return out;
+}
+const fakeOf = (g, who) => { const f = g.per[String(who).toLowerCase()]; return f == null ? g.all : f; };
 const FTPA_CFG = '/state/tpa-gia.json';
 const ftpaCfg = { on: false };
 try { Object.assign(ftpaCfg, JSON.parse(fs.readFileSync(FTPA_CFG, 'utf8'))); } catch (e) { /* chưa cài: tắt */ }
@@ -467,14 +486,16 @@ function dodgeTeleport(name) {
   } catch (e) { /* bỏ qua */ }
   log(name, 'né dịch chuyển (người kia đã nhận TPA giả)');
 }
-function fakeTpaOnce() {
+async function fakeTpaOnce() {
   const h = new Date().getHours();
   if (h >= 1 && h < 7) return 'đêm: không tpa';
+  const g = await botgia('banghoi-1');   // 30/10: người chơi lâu rồi thì ít bị tpa giả, lâu hẳn thì không
   const now = Date.now();
   const bots = NAMES.filter(n => RT[n].bot && state[n].server === 'banghoi-1' && now - (ftpaLast.bot[n] || 0) > 4 * 3600e3).sort(() => Math.random() - 0.5);
   for (const n of bots) {
     const b = RT[n].bot;
-    const real = Object.keys(b.players || {}).filter(x => !NAMES.includes(x) && /^[A-Za-z0-9_.]{3,16}$/.test(x) && now - (ftpaLast.nguoi[x.toLowerCase()] || 0) > 3 * 3600e3);
+    const real = Object.keys(b.players || {}).filter(x => !NAMES.includes(x) && /^[A-Za-z0-9_.]{3,16}$/.test(x) && now - (ftpaLast.nguoi[x.toLowerCase()] || 0) > 3 * 3600e3
+      && Math.random() < fakeOf(g, x));
     if (!real.length) continue;
     const who = real[Math.floor(Math.random() * real.length)];
     ftpaLast.bot[n] = now; ftpaLast.nguoi[who.toLowerCase()] = now;
@@ -492,7 +513,7 @@ function fakeTpaOnce() {
 setInterval(() => {
   if (stopping || !ftpaCfg.on || Date.now() < ftpaNext) return;
   ftpaNext = Date.now() + (40 + Math.random() * 50) * 60000;
-  log('tpa giả:', fakeTpaOnce());
+  fakeTpaOnce().then(r => log('tpa giả:', r)).catch(e => log('lỗi tpa giả:', e.message));
 }, 60000);
 const TPA_CFG = '/state/tpa.json';
 const tpaCfg = { on: false };
@@ -584,7 +605,7 @@ const styled = (n, s) => STYLE(n) === 1 ? noAccent(s) : STYLE(n) === 2 ? s.toLow
 const vnHour = () => (new Date().getUTCHours() + 7) % 24;
 let chatBusy = false;
 
-async function chatOnce() {
+async function chatOnce(force) {
   if (chatBusy) return 'đang có một đoạn chat dở';
   // server có nhiều bot online nhất (thường là Bang Hội Chiến)
   const by = {};
@@ -592,6 +613,10 @@ async function chatOnce() {
   const srv = Object.keys(by).sort((a, b) => by[b].length - by[a].length)[0];
   const pool = srv ? by[srv].slice() : [];
   if (!pool.length) return 'không có bot nào online';
+  if (!force) {   // 30/10: người thật đang online đều chơi lâu rồi thì bớt chat (core /dmm botgia)
+    const g = await botgia(srv);
+    if (Math.random() >= g.all) return 'bỏ lượt chat (người chơi online đều đã chơi lâu, hệ số ' + g.all + ')';
+  }
   for (let k = pool.length - 1; k > 0; k--) { const j = Math.floor(Math.random() * (k + 1)); [pool[k], pool[j]] = [pool[j], pool[k]]; }
   const fit = (nhietOn ? TALKS.concat(NHIET) : TALKS).filter(t => assign(t, pool));
   let talk, who;
@@ -627,6 +652,76 @@ async function chatOnce() {
     if (chatCfg.on && !(h >= 1 && h < 7)) chatOnce().then(r => log(r)).catch(e => log('lỗi bot chat:', e.message));
     chatLoop();
   }, wait);
+})();
+
+
+// ---------------------------------------------------------------- bot chết giả (30/10, bật / tắt ở trang Bot)
+// Chủ server: "fake bot bị chết khi đi mine, lava, quái đánh… tần suất vừa thôi, chết xong thì chat gì đó". Bot bất tử (Sáng tạo + god) nên
+// core in tin tử vong GIẢ (/dmm chetgia <bot>: như tin thật, người tắt "tuvong" không thấy; có người thật trong 96 khối quanh bot thì thôi).
+// Bang Hội Chiến, ~1 lần / every phút cả server × hệ số botgia, chỉ khi có người thật online, đêm 1–7 giờ im; một bot tối đa 1 lần / 6 giờ.
+// Sau 4–15 giây bot (70%) than một câu hợp kiểu chết; 35% một bot khác đáp lại.
+const CHET_CFG = '/state/chet-gia.json';
+const chetCfg = { on: false, min: 35, max: 80 };
+try { Object.assign(chetCfg, JSON.parse(fs.readFileSync(CHET_CFG, 'utf8'))); } catch (e) { /* chưa cài: tắt */ }
+function saveChet() { try { fs.writeFileSync(CHET_CFG, JSON.stringify(chetCfg)); } catch (e) { log('không lưu được chet-gia.json:', e.message); } }
+const chetLast = {};
+const CHET_LINES = {
+  lava: ['rơi vào lava ngu thật', 'đang đào thì thủng ra lava', 'mất hết đồ trong lava rồi :(', 'lava ở đâu ra vậy trời', 'đào thẳng xuống dính lava luôn'],
+  roi: ['trượt chân ngã chết :v', 'nhảy xuống hang tưởng có nước', 'ngã từ trên núi xuống luôn', 'đang xây thì ngã'],
+  duoi: ['quên mất đang ở dưới nước', 'đào dưới nước chết đuối luôn'],
+  chay: ['cháy chết luôn', 'chạy không kịp ra chỗ nước'],
+  nghet: ['đào cát bị đè chết :v', 'sỏi rơi đè chết'],
+  zombie: ['bị cả đàn zombie vây', 'zombie đông vãi', 'đang đào thì zombie đánh sau lưng'],
+  xuong: ['bị xương bắn chết', 'con xương bắn đau thật', 'trong hang toàn xương'],
+  creeper: ['creeper nổ ngay sau lưng', 'lại creeper :(', 'creeper phá cả chỗ đang đào'],
+  nhen: ['nhện trong hang đông quá', 'bị nhện đánh chết'],
+  enderman: ['lỡ nhìn enderman', 'nhìn nhầm enderman, toang'],
+  chung: ['toang', 'mất đồ rồi :(', 'chán thật', 'đen thế', 'may mà cất bớt đồ vào balo', 'phải kiếm ngọc hộ thân thôi'],
+};
+const CHET_REPLY = ['f', 'haha', 'rip', 'cẩn thận chứ', 'lại chết à :v', 'mất đồ không'];
+const CHET_ANSWER = ['mất hết túi đồ', 'may còn giáp', 'đồ trong balo thì còn', 'mất ít thôi'];
+const pick = a => a[Math.floor(Math.random() * a.length)];
+async function sayAs(n, text, delay) {
+  await sleep(delay + Math.min(text.length * 250, 15000) * (0.8 + Math.random() * 0.4));
+  if (!RT[n] || !RT[n].bot) return false;
+  RT[n].bot.chat(styled(n, text));
+  return true;
+}
+async function fakeDeathOnce(force) {
+  const h = vnHour();
+  if (!force && h >= 1 && h < 7) return 'đêm: không chết giả';
+  if (!realOnline().length) return 'không có người thật online';
+  const g = await botgia('banghoi-1');
+  if (!force && Math.random() >= g.all) return 'bỏ lượt (người chơi online đều đã chơi lâu, hệ số ' + g.all + ')';
+  const now = Date.now();
+  const bots = NAMES.filter(n => RT[n].bot && state[n].server === 'banghoi-1' && !RT[n].wander && !RT[n].placing && now - (chetLast[n] || 0) > 6 * 3600e3)
+    .sort(() => Math.random() - 0.5);
+  for (const n of bots.slice(0, 4)) {
+    const r = await rcon('banghoi-1').cmd('dmm chetgia ' + n).catch(e => 'lỗi ' + e.message);
+    const m = r.match(/CHETGIA OK (\S+) (\S+)/);
+    if (!m) { if (/không phải|cách dùng|Unknown/i.test(r)) return 'core chưa có /dmm chetgia: ' + r.slice(0, 80); continue; }
+    chetLast[n] = now;
+    const kind = m[2];
+    event({ type: 'chet', bot: n, text: `${n} chết giả (${kind})` });
+    (async () => {
+      if (Math.random() < 0.7) {
+        await sayAs(n, Math.random() < 0.75 ? pick(CHET_LINES[kind] || CHET_LINES.chung) : pick(CHET_LINES.chung), 4000 + Math.random() * 11000);
+      }
+      const others = NAMES.filter(o => o !== n && RT[o].bot && state[o].server === 'banghoi-1');
+      if (others.length && Math.random() < 0.35) {
+        const o = pick(others), rep = pick(CHET_REPLY);
+        if (await sayAs(o, rep, 3000 + Math.random() * 9000) && rep === 'mất đồ không') await sayAs(n, pick(CHET_ANSWER), 3000 + Math.random() * 6000);
+      }
+    })().catch(e => log('lỗi chat sau chết giả:', e.message));
+    return `${n} chết giả (${kind})`;
+  }
+  return 'không bot nào chết giả được (có người thật đứng gần, hoặc bot vừa chết)';
+}
+(function chetLoop() {
+  setTimeout(() => {
+    if (chetCfg.on && !stopping) fakeDeathOnce().then(r => log('chết giả:', r)).catch(e => log('lỗi chết giả:', e.message));
+    chetLoop();
+  }, (chetCfg.min + Math.random() * Math.max(0, chetCfg.max - chetCfg.min)) * 60000);
 })();
 
 
@@ -687,11 +782,13 @@ const STAFF_FILE = '/state/staff.json';
 let staffSet = new Set();
 try { staffSet = new Set(JSON.parse(fs.readFileSync(STAFF_FILE, 'utf8')).map(x => String(x).toLowerCase())); } catch (e) { /* chưa có */ }
 const isStaff = who => staffSet.has(String(who).toLowerCase());
-async function wanderOnce() {
+async function wanderOnce(force) {
   const active = NAMES.filter(n => RT[n].wander).length;
   if (active >= wanderCfg.maxActive) return 'đang có đủ bot đi dạo';
   const R = rcon('banghoi-1'), cands = [];
+  const g = await botgia('banghoi-1');   // 30/10: người chơi lâu rồi thì bot ít ra lượn quanh, lâu hẳn thì không
   for (const who of realOnline().filter(w => !isStaff(w))) {
+    if (!force && Math.random() >= fakeOf(g, who)) continue;
     const dim = await R.cmd(`data get entity ${who} Dimension`).catch(() => '');
     if (!/overworld/.test(dim)) continue;
     const p = await serverPos(who, 'banghoi-1').catch(() => null);
@@ -965,6 +1062,11 @@ async function act(b) {
     saveChat();
     return 'bot tự chat: ' + (chatCfg.on ? 'bật' : 'tắt') + ', ' + chatCfg.min + '–' + chatCfg.max + ' phút một lần';
   }
+  if (b.action === 'chetcfg') {
+    chetCfg.on = !!b.on; saveChet();
+    return 'bot thỉnh thoảng chết giả: ' + (chetCfg.on ? 'bật (~1 lần / ' + chetCfg.min + '–' + chetCfg.max + ' phút, ít dần khi người chơi online đã chơi lâu)' : 'tắt');
+  }
+  if (b.action === 'chetnow') return await fakeDeathOnce(true);
   if (b.action === 'ftpacfg') {
     ftpaCfg.on = !!b.on; saveFtpa();
     return 'bot thỉnh thoảng tpa người chơi rồi tự huỷ: ' + (ftpaCfg.on ? 'bật (~1 lần / 40–90 phút cả server)' : 'tắt');
@@ -1001,10 +1103,10 @@ async function act(b) {
     try { fs.writeFileSync(STAFF_FILE, JSON.stringify([...staffSet])); } catch (e) { /* bỏ qua */ }
     return 'staff: ' + staffSet.size + ' tên (bot không diễn cho staff)';
   }
-  if (b.action === 'wandernow') return await wanderOnce();
+  if (b.action === 'wandernow') return await wanderOnce(true);
   if (b.action === 'gomphong') return await gatherRoom();
   if (b.action === 'trave') return await backHomes();
-  if (b.action === 'chatnow') { chatOnce().then(r => log(r)).catch(e => log('lỗi bot chat:', e.message)); return 'cho bot chat thử ngay (vài giây nữa mới nói)'; }
+  if (b.action === 'chatnow') { chatOnce(true).then(r => log(r)).catch(e => log('lỗi bot chat:', e.message)); return 'cho bot chat thử ngay (vài giây nữa mới nói)'; }
   if (b.bot === '*') {
     const out = [];
     for (const n of NAMES) out.push(await act(Object.assign({}, b, { bot: n })).catch(e => e.message));
@@ -1122,6 +1224,7 @@ http.createServer((req, res) => {
       chat: chatCfg,
       tpa: tpaCfg,
       tpagia: ftpaCfg,
+      chetgia: chetCfg,
       thayphien: { on: rotCfg.on, min: rotCfg.min, max: rotCfg.max, khung: rotCfg.khung || [], muctieu: rotTarget, dang: rotCfg.on ? rotRange() : null, banghoi: NAMES.filter(n => state[n].server === 'banghoi-1').length },
       dido: { on: wanderCfg.on, phong: NAMES.some(n => state[n].homeOld !== undefined), dang: NAMES.filter(n => RT[n].wander) },
     });

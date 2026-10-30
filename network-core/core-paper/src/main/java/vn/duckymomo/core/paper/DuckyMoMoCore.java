@@ -796,6 +796,7 @@ public final class DuckyMoMoCore extends JavaPlugin {
         }
         getServer().getPluginManager().registerEvents(new ScreenNotify(this), this);
         // Luật chết (death-rules, 30/10): < 30 giờ / công thành / thị trấn mình giữ đồ; còn lại rơi túi + 10% mỗi món mặc/cầm; Ngọc Hộ Thân giữ món
+        BotFake.cfg = getConfig().getConfigurationSection("bot-gia");
         PluginCommand chetCmd = getCommand("chet");
         if (getConfig().getBoolean("death-rules.enabled") && getConfig().isConfigurationSection("death-rules")) {
             DeathRules deathRules = new DeathRules(this, getConfig().getConfigurationSection("death-rules"));
@@ -1404,6 +1405,8 @@ public final class DuckyMoMoCore extends JavaPlugin {
                     } else {
                         quests.talkCommand(sender, args);
                     }
+                } else if (args.length >= 1 && (args[0].equalsIgnoreCase("botgia") || args[0].equalsIgnoreCase("chetgia"))) {
+                    BotFake.command(sender, args);   // botfarm gọi qua RCON (30/10)
                 } else if (args.length >= 1 && args[0].equalsIgnoreCase("npcsanh")) {
                     if (lobbyNpcs == null) {
                         sender.sendMessage("NPC sảnh chỉ có ở sảnh (config: lobby-npcs.enabled).");
@@ -1512,7 +1515,7 @@ public final class DuckyMoMoCore extends JavaPlugin {
     /** Đàn tế gọi boss (te-boss, 30/10); null nếu tắt. */
     private TeBoss teBoss;
     /** Lệnh con /dmm chỉ Admin (duckymomo.admin); còn lại Manager dùng được (duckymomo.dmm). */
-    private static final java.util.Set<String> DMM_ADMIN_ONLY = java.util.Set.of("reload", "decorate", "structures", "hang", "thegioi", "spawnmoi");
+    private static final java.util.Set<String> DMM_ADMIN_ONLY = java.util.Set.of("reload", "decorate", "structures", "hang", "thegioi", "spawnmoi", "botgia", "chetgia");
     /** World spawn riêng (/dmm spawnmoi, 24/10). */
     private SpawnWorld spawnWorld;
     /** Đổi map sang world thường (Đại Lục Sương Mai) (/dmm thegioi, 23/10). */

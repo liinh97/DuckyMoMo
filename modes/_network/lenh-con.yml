@@ -336,6 +336,8 @@ groups:
       - ["mua dat <mua|kho|tudong>", "Đổi mùa bằng tay để thử; tudong = theo lịch", Chỉ admin]
       - ["dmm reload", "Nạp lại cấu hình DuckyMoMoCore", Chỉ admin]
       - ["dmm clean", "Dọn đồ rơi trên đất ngay", Chỉ admin]
+      - ["dmm botgia", "Hệ số hoạt động giả của bot theo giờ chơi người thật đang online (botfarm hỏi qua RCON)", Chỉ admin]
+      - ["dmm chetgia <bot> [loai]", "Tin tử vong giả của bot (lava roi duoi chay nghet zombie xuong creeper nhen enderman; botfarm gọi)", Chỉ admin]
       - ["dmm enchant <phù phép> <cấp>", "Phù phép vượt cấp đồ đang cầm (vd sharpness 20)", Chỉ admin]
       - ["dmm sach <phù phép> <cấp> [người]", "Tạo sách phù phép vượt cấp (làm phần thưởng)", Chỉ admin]
       - ["dmm lenh", "Xuất lại danh sách lệnh cho trang Cẩm nang", Chỉ admin]

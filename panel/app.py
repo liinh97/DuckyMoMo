@@ -1828,7 +1828,7 @@ def say_command(text, target, full, who):
 
 BOTFARM_URL = os.environ.get("BOTFARM_URL", "http://botfarm:8090")
 BOT_ACTIONS = {"join": "vào", "leave": "thoát", "server": "đổi server", "chat": "nói", "cmd": "gõ lệnh", "move": "đi tới", "home": "về chỗ", "sethome": "đặt chỗ", "random": "ra khu ngẫu nhiên",
-               "create": "tạo bot", "remove": "xoá bot", "chatcfg": "cài bot tự chat", "chatnow": "cho bot chat thử", "tpacfg": "cài bot tự trả lời TPA", "ftpacfg": "cài bot tpa người chơi rồi tự huỷ",
+               "create": "tạo bot", "remove": "xoá bot", "chatcfg": "cài bot tự chat", "chatnow": "cho bot chat thử", "tpacfg": "cài bot tự trả lời TPA", "ftpacfg": "cài bot tpa người chơi rồi tự huỷ", "chetcfg": "cài bot chết giả", "chetnow": "cho bot chết giả thử",
                "wandercfg": "cài bot đi dạo", "rotcfg": "cài thay phiên online", "wanderwalk": "cho bot đi dạo được đi lại", "wandernow": "cho bot đi dạo thử", "gomphong": "gom bot vào phòng ẩn", "trave": "trả bot về chỗ cũ"}
 
 

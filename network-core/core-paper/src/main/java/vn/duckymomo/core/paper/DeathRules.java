@@ -192,7 +192,8 @@ final class DeathRules implements Listener {
         Tip ht = Tip.of("&6✦ &fNgọc Hộ Thân").accent("&6").desc("Khảm vào đồ set có ô (Tinh Anh trở lên): chết ở đâu món đó cũng KHÔNG rơi.")
                 .line().kv("Số lần giữ", Kham.keepSummary())
                 .kv("Khảm hỏng", "&c" + Kham.keepFailPct() + "% &7(ngọc vỡ, món nguyên)")
-                .note("Mỗi lần món đó lẽ ra bị rơi mà được giữ thì mất 1 lượt; hết lượt ngọc vỡ, không nạp lại.")
+                .note("Mỗi lần món đó lẽ ra bị rơi mà được giữ thì mất 1 lượt; đánh nhau cũng hao chút ít (bằng "
+                        + trim(Kham.keepCombatPct()) + "% ngọc thường). Hết năng lượng ngọc vỡ, không nạp lại.")
                 .kv("Lệnh khảm", "/thoren kham &7(cầm đồ set trên tay)").click("Bấm để mở khảm");
         m.add(ht.apply(new ItemStack(org.bukkit.Material.HEART_OF_THE_SEA)), "thoren kham");
         m.add(Tip.of("&d♨ &fCách có Ngọc Hộ Thân").accent("&d").desc("Tinh Luyện Hộ Thân ở /tinhluyen:")

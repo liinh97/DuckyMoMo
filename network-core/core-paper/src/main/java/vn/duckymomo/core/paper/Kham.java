@@ -99,6 +99,7 @@ final class Kham implements Listener {
     /** Ngọc Hộ Thân (30/10): món có ngọc này không rơi khi chết, mỗi lần giữ trừ keepCost[phẩm] % năng lượng; không hao khi đánh, không nạp lại. */
     private final String keepId;
     private final int keepFail;
+    private final double keepCombatPct;
     private final List<Double> keepCost;
     private final double rechargeCost;
     private final int warnPct;
@@ -138,6 +139,7 @@ final class Kham implements Listener {
         this.maxEnergy = Math.max(1, c.getInt("nang-luong", 3000));
         this.keepId = c.getString("ho-than.ngoc", "hothan");
         this.keepFail = Math.max(0, Math.min(100, c.getInt("ho-than.that-bai", 45)));
+        this.keepCombatPct = Math.max(0, Math.min(100, c.getDouble("ho-than.hao-danh", 20)));
         List<Double> kc = c.getDoubleList("ho-than.ton");
         this.keepCost = kc.isEmpty() ? List.of(25.0, 20.0, 12.5) : kc;
         this.rechargeCost = c.getDouble("nap-xu", 1000);
@@ -461,7 +463,12 @@ final class Kham implements Listener {
         return k == null ? "?" : k.thoRen.labelOf(ItemLibrary.idOf(it));
     }
 
-        static int keepFailPct() {
+        static double keepCombatPct() {
+        Kham k = INSTANCE;
+        return k == null ? 20 : k.keepCombatPct;
+    }
+
+    static int keepFailPct() {
         Kham k = INSTANCE;
         return k == null ? 45 : k.keepFail;
     }
@@ -1142,11 +1149,19 @@ final class Kham implements Listener {
         String item = thoRen.labelOf(ItemLibrary.idOf(it));
         for (int i = 0; i < list.size(); i++) {
             Sock sk = list.get(i);
-            if (sk.empty() || sk.code().equals(keepId)) {
-                continue;   // Ngọc Hộ Thân chỉ hao khi chết (useKeep)
+            if (sk.empty()) {
+                continue;
+            }
+            int use = n;
+            if (sk.code().equals(keepId)) {   // Ngọc Hộ Thân hao ít khi đánh (ho-than.hao-danh %), phần lẻ tính theo xác suất
+                double d = n * keepCombatPct / 100.0;
+                use = (int) d + (ThreadLocalRandom.current().nextDouble() < d - (int) d ? 1 : 0);
+                if (use <= 0) {
+                    continue;
+                }
             }
             any = true;
-            int left = sk.energy() - n;
+            int left = sk.energy() - use;
             Gem gem = gems.get(sk.code());
             String nm = gem == null ? sk.code() : gem.color() + gem.name();
             if (left <= 0) {

@@ -1770,7 +1770,8 @@ kham:
   # Ngọc Hộ Thân (30/10, chủ server chốt): món có ngọc này không rơi khi chết (death-rules); mỗi lần giữ trừ ton[phẩm] % năng lượng
   # (Thường 25% = 4 lần, Tốt 20% = 5 lần, Hoàn Mỹ 12,5% = 8 lần), hết thì vỡ. Không hao khi đánh, không nạp lại. Khảm hỏng that-bai %
   # (ngọc vỡ, món nguyên). Nguồn: Tinh Luyện hothan.
-  ho-than: {ngoc: hothan, that-bai: 45, ton: [25, 20, 12.5]}
+  # hao-danh: % mức hao khi đánh so với ngọc thường (30/10 chủ server: "vẫn tiêu hao nhưng ít").
+  ho-than: {ngoc: hothan, that-bai: 45, ton: [25, 20, 12.5], hao-danh: 20}
 
 # Danh phận (/danhphan, 19/10): rank CHƠI miễn phí, đủ yêu cầu thì bấm nhận trong menu. Sửa ở Cài đặt › Người mới › Danh phận.
 # Mỗi bậc: group (nhóm LuckPerms; bậc đầu PHẢI là default), name, prefix (tiền tố chat/Tab, priority càng cao càng ưu tiên, dưới staff),
@@ -2773,3 +2774,12 @@ death-rules:
   newbie-hours: 30
   capital-town: KinhDo
   gear-drop-percent: 10
+
+# Hoạt động giả của bot botfarm theo giờ chơi người THẬT (30/10, chủ server: người chơi lâu mà bot cứ lượn quanh là biết; lâu hẳn thì thôi).
+# Giờ chơi < gio thì nhân tần suất với he-so; quá mức cuối = 0 (không giả nữa). Áp cho: bot tự chat, chết giả, tpa giả, đi dạo (botfarm
+# hỏi /dmm botgia qua RCON), bot trả lời câu đố (chat-games.bot-answer). Cả server lấy người MỚI nhất đang online; không có ai = như cũ.
+bot-gia:
+  muc:
+    - {gio: 1, he-so: 1}
+    - {gio: 4, he-so: 0.5}
+    - {gio: 12, he-so: 0.2}

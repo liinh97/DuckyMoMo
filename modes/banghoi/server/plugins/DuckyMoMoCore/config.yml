@@ -636,7 +636,7 @@ newbie-path:
 # nhận new-rewards ngay; người rủ nhận referrer-rewards khi người mới chơi đủ need-hours giờ (offline thì phát lúc vào game);
 # milestones: tổng số người đã xác nhận -> thưởng thêm (danh hiệu chỉ là trang trí). Không tự giới thiệu, không cùng IP, bot không tính.
 # Giới thiệu bạn bè /gioithieu. 31/10 chủ server: quà là TÀI NGUYÊN (kim cương, nguyên liệu trade), rủ càng nhiều quà càng lớn, không danh hiệu.
-# Người mới: đủ tiền lập thị trấn + ít kim cương + vé gacha + bùa bắt pet. Người rủ nhận khi bạn chơi THẬT đủ need-hours giờ (treo máy không
+# Người mới: nửa phí lập thị trấn + ít kim cương + vé gacha + bùa bắt pet. Người rủ nhận khi bạn chơi THẬT đủ need-hours giờ (treo máy không
 # tính; nick phụ / chung mạng bị chặn). Giá tham khảo (bán cho server): kim cương 120 xu, Tinh Luyện Sắt 3.200, Vàng 6.400, Lục Bảo 8.000,
 # Kim Cương 48.000; Lõi Quái là nguyên liệu Thợ Rèn. Sửa quà thì sửa cả /hd (RỦ BẠN) và web (thẻ Rủ bạn cùng chơi).
 referral:

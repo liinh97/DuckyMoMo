@@ -87,6 +87,7 @@ scoreboard:
         - '%animation:SbDong2%'
         - '%animation:SbDong3%'
         - '%animation:SbDong4%'
+        - '%animation:SbDong5%'
         - '&r'
         - '&#5FD3F3✪ &b%online% &7· &7%condition:pingmau%'
         - '&7(12+)'   # 30/10: nhãn độ tuổi theo phân loại trò chơi VN (00+, 12+, 16+, 18+)

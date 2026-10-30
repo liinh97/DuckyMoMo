@@ -112,21 +112,32 @@ barcolors:
 MeoChoi:
   change-interval: 8000
   texts:
-    - "&e✦ &fGõ &e/warp &fđể tới các địa danh mùa 1 &e✦"
-    - "&e✦ &fLập thị trấn: &e/t new <tên> &f(1.500 xu) &e✦"
-    - "&e✦ &fChợ đen: &e/choden &f• Đổi đồ: &e/trade <tên> &e✦"
-    - "&e✦ &fKiếm tiền: chọn 1 nghề ở &e/jobs &e✦"
-    - "&e✦ &fBán đồ cho server: &e/cuahang &fở kinh đô hoặc đất hoà bình &e✦"
-    - "&a✦ &fDân hoà bình: mua bán với server, vào nghề ở đâu cũng được &7(/hoabinh) &a✦"
-    - "&c✦ &fĐang đánh nhau mà thoát game sẽ chết và rơi đồ &c✦"
-    - "&e✦ &fCông thành: tối thứ 7, Chủ nhật 20:00 và 21:00 &e✦"
-    - "&e✦ &fBản đồ thế giới online: Trạm 6 &e✦"
-    - "&5✦ &fDungeon cày đồ hiếm: &d/dungeon &f(trùm cuối rơi Chìa khoá tầng sau) &5✦"
-    - "&5✦ &fCổng Hoang giấu trên bản đồ: thấy &dhạt tím&f thì Shift &7(/conghoang) &5✦"
-    - "&6✦ &fChơi một mình: &e/khobau &f• &e/lenhsan &f• &e/thanhtich &6✦"
-    - "&a✦ &fĐất riêng an toàn để xây, trồng trọt: &e/thaiap &a✦"
-    - "&a✦ &fTắt chat, thông báo, TPA… theo ý mình: &e/caidat &a✦"
-    - "&b✦ &fChat sát nhau khó đọc? &eTuỳ chọn › Cài đặt trò chuyện › Khoảng cách dòng &b✦"
+    - '&e✦ &fGõ &e/warp &fđể tới các địa danh mùa 1 &e✦'
+    - '&e✦ &fLập thị trấn: &e/t new <tên> &f(3.000 xu) &e✦'
+    - '&e✦ &fChợ đen: &e/choden &f• Đổi đồ: &e/trade <tên> &e✦'
+    - '&e✦ &fKiếm tiền: chọn 1 nghề ở &e/jobs &e✦'
+    - '&e✦ &fBán đồ cho server: &e/cuahang &fở kinh đô hoặc đất hoà bình &e✦'
+    - '&a✦ &fDân hoà bình: mua bán với server, về kinh đô chỉ chờ 1 giây &7(/hoabinh) &a✦'
+    - '&c✦ &fChết có mất đồ không? Xem ngay: &e/chet &c✦'
+    - '&a✦ &fCất đồ quý vào &e/balo&f: chết không bao giờ rơi &a✦'
+    - '&c✦ &fĐang đánh nhau mà thoát game sẽ chết và rơi đồ &c✦'
+    - '&e✦ &fCông thành: tối thứ 7, Chủ nhật 20:00 và 21:00 &e✦'
+    - '&d✦ &fĐổi khối thành Tinh Luyện: &e/tinhluyen &f• khảm vào đồ set: &e/thoren kham &d✦'
+    - '&6✦ &fRèn, nâng cấp đồ set: &e/thoren &6✦'
+    - '&b✦ &fRủ bạn vào chơi, cả hai nhận kim cương: &e/gioithieu &b✦'
+    - '&e✦ &fMỗi ngày: &e/diemdanh &f• &e/nhiemvu &f• quay &e/gacha &e✦'
+    - '&5✦ &fDungeon cày đồ hiếm: &d/dungeon &f(trùm cuối rơi Chìa khoá tầng sau) &5✦'
+    - '&5✦ &fCổng Hoang giấu trên bản đồ: thấy &dhạt tím&f thì Shift &7(/conghoang) &5✦'
+    - '&6✦ &fChơi một mình: &e/khobau &f• &e/lenhsan &f• &e/thanhtich &6✦'
+    - '&b✦ &fPet chiến đấu: &e/petinfo &f• Đấu Trường: &e/warp pvp &b✦'
+    - '&3✦ &fCâu cá theo mùa: &e/emf &f• xem mùa: &e/mua &3✦'
+    - '&a✦ &fĐất riêng an toàn để xây, trồng trọt: &e/thaiap &a✦'
+    - '&7✦ &fCó skin đẹp mà giáp che mất? &e/angiap &7✦'
+    - '&a✦ &fNgủ qua đêm: đủ nửa số người lên giường là trời sáng &a✦'
+    - '&a✦ &fTắt chat, thông báo, TPA… theo ý mình: &e/caidat &a✦'
+    - '&e✦ &fCẩm nang đầy đủ: &e/hd &e✦'
+    - '&e✦ &fBản đồ thế giới online: Trạm 6 &e✦'
+    - '&b✦ &fChat sát nhau khó đọc? &eTuỳ chọn › Cài đặt trò chuyện › Khoảng cách dòng &b✦'
 
 # Bảng bên phải 3 trang tự đổi (30/10: thêm trang Thị trấn), dòng NGẮN (dòng dài nhất quyết định bề ngang bảng) (config.yml scoreboard: %animation:SbTieuDe%, %animation:SbDong1..4%). Cùng change-interval để đổi trang đồng thời.
 # Trang 1 kinh tế & mùa, trang 2 chiến tranh. %dmmtoi_*% (giết/chết/KDA) và %dmmmua_*% (mùa) do DuckyMoMoCore cung cấp.
@@ -159,4 +170,10 @@ SbDong4:
   texts:
     - '&#FFD24D★ &6%dmmvang_so_du% &eVàng'
     - '%condition:thue%'
-    - '&#FF6B6B⚑ &fCông thành: &e%dmmtoi_congthanh%'
+    - '&#FF6B6B⚑ &fCông thành:'
+SbDong5:   # 31/10 chủ server: giờ công thành xuống dòng, thụt đầu (trang 1, 2 để trống)
+  change-interval: 8000
+  texts:
+    - '&r'
+    - '&r'
+    - '&f   &e%dmmtoi_congthanh%'

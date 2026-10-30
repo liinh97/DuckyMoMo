@@ -1943,6 +1943,9 @@ chat-games:
   weights: {xaotron: 3, dienchu: 2, daonguoc: 1, toan: 3, dayso: 1, gonhanh: 1, caudo: 2}
   use-item-names: true     # thêm ~1.800 tên vật phẩm tiếng Việt (lọc tên ≤ 3 tiếng) vào kho từ cho xaotron / dienchu / daonguoc
   recent-memory: 300       # không ra lại từ / câu trong 300 câu gần nhất
+  # 30/10: bot thỉnh thoảng trả lời cho vui: chance = tỉ lệ có bot trả lời một câu, trả lời muộn trong khoảng min..max giây
+  # (người thật luôn có thời gian trước), wrong-guess = tỉ lệ bot đoán sai một lần trước khi đúng
+  bot-answer: {enabled: true, chance: 0.5, min-seconds: 20, max-seconds: 55, wrong-guess: 0.3}
   # kho từ riêng (thêm vào tên vật phẩm) cho xáo trộn / điền chữ / đọc ngược
   words: ["kim cương", "thanh kiếm", "cây cuốc", "lò nung", "bàn chế tạo", "rương đồ", "quặng sắt", "ngọc lục bảo", "dân làng",
     "thị trấn", "công thành", "bang hội", "câu cá", "cái rìu", "con bò", "con cừu", "bánh mì", "táo vàng", "ngọn đuốc", "cái khiên",

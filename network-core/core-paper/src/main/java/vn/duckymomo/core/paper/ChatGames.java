@@ -40,6 +40,8 @@ final class ChatGames implements Listener {
     private String shown;                     // đáp án hiện khi công bố
     private String kind;
     private BukkitTask timeout;
+    /** Lượt hỏi hiện tại: bot chỉ trả lời đúng lượt nó được hẹn (câu cũ đã xong thì thôi). */
+    private int round;
     private BukkitTask loop;
     private static final List<String> KINDS = List.of("xaotron", "dienchu", "daonguoc", "toan", "dayso", "gonhanh", "caudo");
     private final List<String> pool = new ArrayList<>();
@@ -254,6 +256,8 @@ final class ChatGames implements Listener {
         broadcast(LINE, "&d✦ DuckyMoMo - Đố vui &e(" + label(k) + ")", "&e" + head, body,
                 "&fGõ đáp án vào chat &7· &e" + secs + " giây &7· &fthưởng &a" + VaultEconomy.format(cfg.getDouble("reward-min", 50))
                         + "&f - &a" + VaultEconomy.format(cfg.getDouble("reward-max", 150)), LINE);
+        round++;
+        botAnswer(round, secs, ans.get(0));
         timeout = Bukkit.getScheduler().runTaskLater(plugin, () -> {
             if (answers != null) {
                 answers = null;
@@ -293,6 +297,39 @@ final class ChatGames implements Listener {
         }
         Player p = e.getPlayer();
         Bukkit.getScheduler().runTask(plugin, () -> win(p));
+    }
+
+    /** 30/10 chủ server: bot thỉnh thoảng trả lời cho vui, MUỘN (giữa bot-answer.min..max giây của timeout) để người thật có
+     *  thời gian; người thật đúng trước thì thôi. Có khi đoán sai một lần trước, hay gõ không dấu cho giống người. */
+    private void botAnswer(int myRound, int secs, String answer) {
+        ConfigurationSection b = cfg.getConfigurationSection("bot-answer");
+        if (b == null || !b.getBoolean("enabled", true) || rnd.nextDouble() >= b.getDouble("chance", 0.5)) {
+            return;
+        }
+        int lo = Math.max(5, b.getInt("min-seconds", 20)), hi = Math.min(secs - 3, Math.max(lo + 1, b.getInt("max-seconds", 55)));
+        int at = lo + rnd.nextInt(Math.max(1, hi - lo));
+        List<Player> bots = Bukkit.getOnlinePlayers().stream().filter(BotView::isBot).map(x -> (Player) x).toList();
+        if (bots.isEmpty()) {
+            return;
+        }
+        Player bot = bots.get(rnd.nextInt(bots.size()));
+        // đôi khi đoán sai trước vài giây
+        if (rnd.nextDouble() < b.getDouble("wrong-guess", 0.3) && at > lo + 4) {
+            List<String> pool2 = pool.isEmpty() ? List.of("ko biet", "kho qua") : pool;
+            String wrong = norm(pool2.get(rnd.nextInt(pool2.size())));
+            Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                if (answers != null && round == myRound && bot.isOnline()) {
+                    bot.chat(wrong);
+                }
+            }, (at - 3 - rnd.nextInt(3)) * 20L);
+        }
+        String say = rnd.nextBoolean() ? norm(answer) : answer.toLowerCase(java.util.Locale.forLanguageTag("vi"));
+        Bukkit.getScheduler().runTaskLater(plugin, () -> {
+            if (answers != null && round == myRound && bot.isOnline()) {
+                bot.chat(say);
+                Bukkit.getScheduler().runTaskLater(plugin, () -> win(bot), 2L);   // onChat bỏ qua bot nên trao giải ở đây
+            }
+        }, at * 20L);
     }
 
     private void win(Player p) {

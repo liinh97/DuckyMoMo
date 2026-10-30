@@ -274,7 +274,14 @@ final class Crates implements Listener {
             }
             it = m == null || !m.isItem() ? null : new ItemStack(m, Math.min(64, n));
         } else if (a[0].equalsIgnoreCase("xu")) {
-            it = new ItemStack(Material.GOLD_INGOT);
+            // 30/10 chủ server: xu không phải thỏi vàng -> hạt vàng, chồng nhiều hạt theo giá trị (150 xu = 1 hạt)
+            int n = 1;
+            try {
+                n = (int) Math.max(1, Math.min(64, Double.parseDouble(a[1]) / 150));
+            } catch (RuntimeException ignored) {
+                // giữ 1
+            }
+            it = new ItemStack(Material.GOLD_NUGGET, n);
         } else if (a[0].equalsIgnoreCase("manh")) {
             it = new ItemStack(Material.AMETHYST_SHARD);
         }
@@ -360,8 +367,12 @@ final class Crates implements Listener {
         for (int s = 0; s < 54; s++) {
             h.inv.setItem(s, s < 36 ? empty : bar);
         }
-        for (int i = 0; i < cr.prizes().size() && i < 36; i++) {
-            h.inv.setItem(i, prizeIcon(cr, cr.prizes().get(i)));
+        // 30/10: quà xếp trong khung (hàng 1-4, cột 1-7, căn giữa; ≤ 12 quà thì 4 ô một hàng có khoảng cách)
+        int n = Math.min(28, cr.prizes().size()), per = n > 12 ? 7 : 4, rowsNeed = Math.max(1, (n + per - 1) / per);
+        int first = 1 + Math.max(0, (4 - rowsNeed) / 2);
+        for (int i = 0; i < n; i++) {
+            int r = i / per, inRow = Math.min(per, n - r * per);
+            h.inv.setItem((first + r) * 9 + MenuFrame.cols(inRow)[i % per], prizeIcon(cr, cr.prizes().get(i)));
         }
         Tip info = Tip.of("&e❖ &fVé lấy từ đâu?").accent("&e").desc(keyName(cr.key()), "Vé miễn phí, không bán bằng tiền thật").line();
         List<String> src = sources(cr);

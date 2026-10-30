@@ -2435,7 +2435,7 @@ spawn-world:
 # Thân nhiệt /nhietdo (28/10): nhiệt môi trường = nhiệt nền của mùa / đợt (seasons ... temperature) + vùng đất + đêm/nắng + ướt
 # + giáp da + mái che + lửa/băng gần; thân nhiệt đuổi dần theo. Không chết vì nhiệt: mất máu dừng ở min-health.
 body-temp:
-  enabled: true
+  enabled: false          # 30/10 chủ server: tạm tắt, đợi đông member rồi bật (Cài đặt › Thân nhiệt)
   worlds: [world]
   newbie-hours: 2          # giờ chơi đầu tiên được miễn
   safe-towns: true         # đất thị trấn (cả Kinh Đô): thân nhiệt + ướt giữ nguyên (29/10)

@@ -805,7 +805,9 @@ public final class DuckyMoMoCore extends JavaPlugin {
         if (bodyTemp != null) {
             getServer().getPluginManager().registerEvents(bodyTemp, this);
         }
-        bind("nhietdo", bodyTemp == null ? null : bodyTemp::command, "Thân nhiệt");
+        // 30/10: Bang Hội Chiến có cấu hình nhưng đang tắt (chờ đông member) -> báo tạm tắt, không báo "chỉ có ở Bang Hội Chiến"
+        bind("nhietdo", bodyTemp != null ? bodyTemp::command : getConfig().isConfigurationSection("body-temp")
+                ? (sender, args) -> { sender.sendMessage(Tip.c("&7Thân nhiệt (nóng, lạnh, ướt) đang tạm tắt.")); return true; } : null, "Thân nhiệt");
 
         // Tài khoản tin cậy giữ đăng nhập AuthMe lâu hơn (sảnh: auth-trust.enabled), mặc định mọi người vẫn 60 phút
         if (getConfig().getBoolean("auth-trust.enabled")) {

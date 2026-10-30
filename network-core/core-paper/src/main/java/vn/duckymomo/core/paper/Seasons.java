@@ -196,6 +196,10 @@ final class Seasons implements Listener {
             if (e == null || !cur.equals(e.getString("season"))) {
                 continue;
             }
+            // 30/10: đợt chỉ để đổi nhiệt (Rét đậm, Nắng nóng: có khoá temperature) không diễn ra khi Thân nhiệt đang tắt
+            if (e.contains("temperature") && !plugin.getConfig().getBoolean("body-temp.enabled")) {
+                continue;
+            }
             int from = e.getInt("from-day", 1);
             int to = e.getInt("to-day", from);
             from = from < 0 ? per + from + 1 : from;

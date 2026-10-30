@@ -842,7 +842,25 @@ def core_json(name):
         return {}
 
 
-def season_view(sid, sc):
+def by_day(v, day=None):
+    """Tỉ lệ mưa: một số, hoặc danh sách theo ngày của mùa (31/10). day = ngày thứ mấy của mùa; không có thì lấy trung bình."""
+    if isinstance(v, list):
+        nums = []
+        for x in v:
+            try:
+                nums.append(float(x))
+            except (TypeError, ValueError):
+                pass
+        if not nums:
+            return 0.0
+        return nums[min(max(int(day) - 1, 0), len(nums) - 1)] if day else sum(nums) / len(nums)
+    try:
+        return float(v or 0)
+    except (TypeError, ValueError):
+        return 0.0
+
+
+def season_view(sid, sc, day=None):
     up, down = [], []
     for k, v in (sc.get("growth") or {}).items():
         try:
@@ -854,7 +872,9 @@ def season_view(sid, sc):
     bonus = [{"ten": CROP_VI.get(str(k).upper(), str(k).lower()), "pct": round(float(v))}
              for k, v in (sc.get("harvest-bonus") or {}).items() if float(v or 0) > 0]
     return {"id": sid, "ten": strip_colors(sc.get("name", sid)), "mo_ta": strip_colors(sc.get("subtitle", "")),
-            "mua_bat": float(sc.get("rain-start-chance", 0) or 0), "mua_tanh": float(sc.get("rain-stop-chance", 0) or 0),
+            "mua_bat": by_day(sc.get("rain-start-chance"), day), "mua_tanh": by_day(sc.get("rain-stop-chance"), day),
+            "mua_tang_dan": isinstance(sc.get("rain-start-chance"), list) and len(sc.get("rain-start-chance")) > 1
+                            and by_day(sc.get("rain-start-chance"), len(sc.get("rain-start-chance"))) > by_day(sc.get("rain-start-chance"), 1),
             "nhanh": sorted(up, key=lambda x: -x["pct"]), "cham": sorted(down, key=lambda x: x["pct"]), "duoc_mua": bonus}
 
 
@@ -964,7 +984,7 @@ def api_mua():
             for k, v in (ev.get("harvest-bonus") or {}).items():
                 hb[str(k).upper()] = hb.get(str(k).upper(), 0.0) + float(v)
             cur.update({"growth": g, "harvest-bonus": hb})
-        out.update({"bat": True, "hien_tai": season_view(st["cur"], cur), "tiep": season_view(st["next"], lst[st["next"]]),
+        out.update({"bat": True, "hien_tai": season_view(st["cur"], cur, st["day"]), "tiep": season_view(st["next"], lst[st["next"]]),
                     "con": st["left"], "ngay_thu": st["day"], "moi_mua": st["per"], "ghi_de": st["forced"],
                     "cac_mua": [season_view(o, lst[o]) for o in st["order"]]})
     out["nhiet"] = body_temp(core, cfg, st, out.get("su_kien"))

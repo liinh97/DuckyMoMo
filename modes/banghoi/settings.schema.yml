@@ -817,7 +817,10 @@ Admin (quyền duckymomo.sell.khonggioihan) không bị giới hạn." }
           note: "Một mùa server 10 tuần: 7 ngày = 5 vòng mưa/khô." }
       - { key: mua_join, label: Báo mùa khi vào game, type: select, file: plugins/DuckyMoMoCore/config.yml, path: seasons.join-message,
           options: [ { value: true, label: Có }, { value: false, label: Không } ] }
-      - { key: mua_mua_rain, label: "Mùa mưa: % đổ mưa mỗi 5 phút (khi đang tạnh)", type: number, min: 0, max: 100, file: plugins/DuckyMoMoCore/config.yml, path: seasons.list.mua.rain-start-chance }
+      - { key: mua_mua_rain, label: "Mùa mưa: % đổ mưa mỗi 5 phút theo NGÀY của mùa (ngày 1, 2, …)", type: list, items: int, file: plugins/DuckyMoMoCore/config.yml, path: seasons.list.mua.rain-start-chance,
+          note: "Mỗi ngày một số, ngày sau nhiều hơn = cuối mùa mưa nhiều (31/10). Ghi một số thì ngày nào cũng như nhau. Ngày cuối có Lũ thì mưa suốt ngày." }
+      - { key: mua_mua_stop, label: "Mùa mưa: % tạnh mưa mỗi 5 phút theo NGÀY của mùa", type: list, items: int, file: plugins/DuckyMoMoCore/config.yml, path: seasons.list.mua.rain-stop-chance,
+          note: "Tạnh càng ít thì cơn mưa càng dài. Tỉ lệ thời gian mưa ≈ đổ / (đổ + tạnh)." }
       - { key: mua_kho_stop, label: "Mùa khô: % tạnh mưa mỗi 5 phút (khi đang mưa)", type: number, min: 0, max: 100, file: plugins/DuckyMoMoCore/config.yml, path: seasons.list.kho.rain-stop-chance }
       - { key: mua_mua_wheat, label: "Mùa mưa: Lúa mì", type: number, min: 0, max: 5, file: plugins/DuckyMoMoCore/config.yml, path: seasons.list.mua.growth.WHEAT }
       - { key: mua_mua_sugar_cane, label: "Mùa mưa: Mía", type: number, min: 0, max: 5, file: plugins/DuckyMoMoCore/config.yml, path: seasons.list.mua.growth.SUGAR_CANE }

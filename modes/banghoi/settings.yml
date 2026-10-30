@@ -880,7 +880,22 @@ mua_on: true
 mua_start: "2026-10-12"
 mua_days: 7
 mua_join: true
-mua_mua_rain: 25
+mua_mua_rain:
+  - 6
+  - 8
+  - 11
+  - 14
+  - 18
+  - 24
+  - 30
+mua_mua_stop:
+  - 35
+  - 30
+  - 25
+  - 20
+  - 15
+  - 10
+  - 5
 mua_kho_stop: 50
 mua_mua_wheat: 1.4
 mua_mua_sugar_cane: 1.5

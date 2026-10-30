@@ -82,6 +82,7 @@ tier0_prices:
   - 6 tháng 90k
   - 1 năm 160k
 tier0_perks:
+  - 2 nhà (/sethome)
   - prefix
   - chat màu
   - /hat
@@ -101,9 +102,10 @@ tier1_prices:
   - 6 tháng 180k
   - 1 năm 320k
 tier1_perks:
+  - 3 nhà (/sethome)
   - /nick
   - 1 hiệu ứng hạt (/pp)
-  - pet trang trí: mèo (/pet)
+  - 'pet trang trí: mèo (/pet)'
   - 2 balo 36 ô
   - tủ 5 skin
   - kho 2 pet chiến đấu
@@ -116,9 +118,10 @@ tier2_prices:
   - 6 tháng 320k
   - 1 năm 560k
 tier2_perks:
+  - 4 nhà (/sethome)
   - nick có màu
   - 2 hiệu ứng hạt
-  - pet trang trí 13 loài: sói, cáo, ong, vẹt…
+  - 'pet trang trí 13 loài: sói, cáo, ong, vẹt…'
   - 3 balo 36 ô
   - tủ 8 skin
   - kho 3 pet chiến đấu
@@ -131,9 +134,10 @@ tier3_prices:
   - 6 tháng 460k
   - 1 năm 800k
 tier3_perks:
+  - 5 nhà (/sethome)
   - chat đậm/nghiêng
   - 3 hiệu ứng hạt
-  - pet trang trí hiếm: lạc đà, gấu trắng, cá heo, gấu trúc…
+  - 'pet trang trí hiếm: lạc đà, gấu trắng, cá heo, gấu trúc…'
   - 3 balo 45 ô
   - chờ dịch chuyển 2 giây
   - tủ 12 skin
@@ -147,6 +151,7 @@ tier4_prices:
   - 6 tháng 690k
   - 1 năm 1.200k
 tier4_perks:
+  - 6 nhà (/sethome)
   - chat/nick màu tuỳ chọn (hex)
   - 6 hiệu ứng hạt
   - mọi pet trang trí (cả loài quái)

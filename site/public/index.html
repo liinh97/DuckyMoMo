@@ -639,15 +639,19 @@ footer .fbrand img{width:44px}
       <div class="card"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#ef5350" stroke-width="2"><path d="M14.5 17.5 3 6V3h3l11.5 11.5M13 19l6-6M16 16l4 4M19 21l2-2"/></svg></div>
         <h3>PvP &amp; sinh tồn</h3>
         <ul class="clean r">
-          <li>Đất hoang: PvP <b id="pvpWild">bật</b>, chết rơi đồ</li>
-          <li>Đồ rơi khi chết được giữ <b data-k="player.death_keep_minutes">10</b> phút, không bị dọn rác</li>
+          <li>Đất hoang: PvP <b id="pvpWild">bật</b></li>
+          <li>Chơi chưa đủ <b>30 giờ</b>: chết <b>không mất gì</b></li>
+          <li>Chết trong thị trấn của mình, Kinh Đô hoặc trong trận công thành: <b>giữ đồ</b></li>
+          <li>Chết ở chỗ khác (quái, lava, ngã, bị người giết): rơi túi đồ; giáp và vũ khí đang cầm mỗi món <b>10%</b> rơi. Đồ trong <span class="kbd">/balo</span> không bao giờ rơi</li>
+          <li>Khảm <b>Ngọc Hộ Thân</b> vào đồ set (Tinh Anh trở lên): món đó chết không rơi. Gõ <span class="kbd">/chet</span> xem bạn có đang an toàn không</li>
+          <li>Đồ rơi khi chết được giữ <b data-k="player.death_keep_minutes">10</b> phút, không bị dọn rác (người khác vẫn nhặt được)</li>
           <li>Trong thị trấn và ở spawn: không ai đánh được bạn</li>
           <li>Thoát game khi đang đánh nhau = chết, rơi đồ</li>
           <li>Đang đánh nhau không dùng được lệnh dịch chuyển</li>
         </ul></div>
       <div class="card"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#b48cff" stroke-width="2"><path d="M12 22s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/></svg></div>
         <h3>Dịch chuyển ngẫu nhiên</h3>
-        <p class="muted">Gõ <span class="kbd">/tpr</span>, chọn khu. Bạn được thả xuống đất hoang an toàn, xa thị trấn khác. Chờ <b data-k="player.tpr_cooldown">5</b> phút giữa hai lần.</p>
+        <p class="muted">Gõ <span class="kbd">/tpr</span>, chọn khu. Bạn được thả xuống đất hoang an toàn, đủ xa thị trấn khác để <b>lập được thị trấn</b> ngay chỗ đó. Vòng 300 khối quanh Kinh Đô không lập được thị trấn. Chờ <b data-k="player.tpr_cooldown">5</b> phút giữa hai lần.</p>
         <div id="zoneList" class="votes"></div></div>
       <div class="card"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#f2b84b" stroke-width="2"><path d="M3 12a9 9 0 1 0 3-6.7L3 8M3 3v5h5"/></svg></div>
         <h3>Chơi lại từ đầu</h3>
@@ -1108,7 +1112,7 @@ footer .fbrand img{width:44px}
         <li><span class="kbd">/journal</span> nhật ký cốt truyện · <span class="kbd">/khobau</span> · <span class="kbd">/lenhsan</span></li></ul></div>
     </div>
     <div class="callout" style="margin-top:20px"><b>Nhớ kỹ:</b>
-      thoát game khi đang bị đánh (cờ giao tranh 15 giây) là <b>chết, rơi đồ</b> ·
+      thoát game khi đang bị đánh (cờ giao tranh 15 giây) là <b>chết, rơi đồ</b> (luật chết: <span class="kbd">/chet</span>) ·
       đồ dưới đất bị dọn mỗi 10 phút (chết thì đồ quanh chỗ chết được giữ 10 phút) ·
       thị trấn hết quỹ thì <b>phá sản, mắc nợ</b> (phí <span data-k="town.upkeep" data-f="xu">100 xu</span>/ngày) ·
       chuyển tiền, treo thưởng không lấy lại được ·
@@ -1172,11 +1176,12 @@ footer .fbrand img{width:44px}
     <details><summary>Làm sao có đồ mạnh?</summary><div>Rèn ở <a href="#thoren">Thợ Rèn</a> (<span class="kbd">/thoren</span>): đào mỏ, đánh quái, câu cá lấy đồ thô, đổi thành mảnh ở các quầy NPC ở Kinh Đô, ghép thành tinh thể rồi rèn và nâng cấp từ set Tân Thủ lên dần. Set cao hơn cần mảnh ấn rơi trong dungeon. Đồ set trao đổi được, không bán bằng tiền thật.</div></details>
     <details><summary>Không có Minecraft bản quyền có chơi được không?</summary><div>Được. Server chạy chế độ không bản quyền cho bản Java: dùng launcher miễn phí như TLauncher hay SKLauncher, đăng ký mật khẩu khi vào lần đầu. Điện thoại cần bản Minecraft Bedrock (mua trên App Store hoặc CH Play) và tài khoản Xbox miễn phí.</div></details>
     <details><summary>iPhone có chơi được không?</summary><div>Được, bằng Minecraft Bedrock trên iOS. Vào Máy chủ → Thêm máy chủ, nhập địa chỉ Bedrock và cổng ở mục Cách vào. Menu trên điện thoại hiện dạng nút bấm cho dễ chạm.</div></details>
+    <details><summary>Chết có mất đồ không?</summary><div>Chơi chưa đủ 30 giờ thì không mất gì. Chết trong thị trấn của mình, Kinh Đô hoặc trong trận công thành thì giữ đồ. Chỗ khác thì rơi túi đồ, còn giáp và vũ khí đang cầm mỗi món chỉ 10% rơi. Đồ cất trong <span class="kbd">/balo</span> không bao giờ rơi. Món đồ set khảm <b>Ngọc Hộ Thân</b> (làm ở <span class="kbd">/tinhluyen</span>: 2 Lõi Quái + 4 Tinh Luyện Netherite + 5.000 xu, khảm hỏng 45%) thì không rơi, mỗi lần giữ mất một lượt. Gõ <span class="kbd">/chet</span> trong game để xem chi tiết.</div></details>
     <details><summary>Tôi có bị mất hết đồ khi đang offline không?</summary><div>Không. Thành không thể bị phá hay trộm, chiến tranh chỉ diễn ra theo lịch công thành. Chết trong trận công thành cũng không rơi đồ (chỉ mòn 5%). Chỉ khi chết ngoài đất hoang mới rơi đồ, và đồ đó được giữ 10 phút cho bạn quay lại nhặt.</div></details>
     <details><summary>Tôi chỉ muốn xây và buôn bán, không thích đánh nhau?</summary><div>Vào Liên minh Hoà Bình: thị trấn không bao giờ bị vây hay chiếm, có chợ kinh đô, cửa hàng, sự kiện, giải Kiến Trúc Sư. Ra đất hoang vẫn có thể gặp người chơi khác, nhưng ai giết bạn gần vùng hoà bình sẽ phải ra Hội Bàn Tròn.</div></details>
     <details><summary>Ping cao không?</summary><div>Ping hiện khoảng 150–300 ms. Server chạy ổn định (không lag phía server), nên chơi xây dựng, buôn bán thoải mái; đánh PvP thì nên dùng mạng ổn định, tránh 4G yếu.</div></details>
     <details><summary>Lỡ chơi hỏng, muốn làm lại từ đầu?</summary><div>Gõ <span class="kbd">/choilai</span>: mất đồ, tiền, nhà, nghề, thị trấn; giữ rank và danh hiệu. Lần đầu trong mùa còn được nhận lại quà tân thủ.</div></details>
-    <details><summary>Mùa mưa, mùa khô là gì?</summary><div>Bang Hội Chiến đổi mùa theo ngày thật, mỗi mùa vài ngày, xen kẽ nhau. Mùa mưa lúa, mía, tre lớn nhanh và trời hay mưa; mùa khô khoai, cà rốt, dưa, bí lớn nhanh, ít mưa. Đúng mùa, gặt cây chín còn có cơ hội rơi thêm. Nhiều loài cá chỉ câu được trong một mùa. Xem mùa hiện tại ở mục <a href="#muavu">Mùa &amp; câu cá</a> hoặc gõ <span class="kbd">/mua</span>.</div></details>
+    <details><summary>Mùa mưa, mùa khô là gì?</summary><div>Bang Hội Chiến đổi mùa theo ngày thật, mỗi mùa vài ngày, xen kẽ nhau. Mùa mưa lúa, mía, tre lớn nhanh, đầu mùa ít mưa rồi mưa nhiều dần, ngày cuối có lũ; mùa khô khoai, cà rốt, dưa, bí lớn nhanh, ít mưa. Đúng mùa, gặt cây chín còn có cơ hội rơi thêm. Nhiều loài cá chỉ câu được trong một mùa. Xem mùa hiện tại ở mục <a href="#muavu">Mùa &amp; câu cá</a> hoặc gõ <span class="kbd">/mua</span>.</div></details>
     <details><summary>Có voice chat không?</summary><div><b>Sắp có</b> cho người chơi máy tính (Java, cài thêm mod Simple Voice Chat): nghe nhau trong khoảng 40 block, lập nhóm để cả thị trấn nói chuyện ở mọi nơi. Điện thoại (Bedrock) chưa dùng được voice trong game. Trong lúc chờ, hãy dùng Discord hoặc Zalo để nói chuyện với đồng đội.</div></details>
     <details><summary>Người mới là "Dân Tị Nạn"? Làm sao lên rank?</summary><div>Ở Bang Hội Chiến ai mới vào cũng là <b>Dân Tị Nạn</b>. Rank chơi (danh phận) <b>miễn phí</b>, kiếm bằng cách chơi rồi bấm nhận trong <span class="kbd">/danhphan</span>: <b>Dân</b> (chơi thật 6 giờ + xong chương 1 cốt truyện) → <b>Lương Dân</b> (24 giờ + Thăng Cấp 10) → <b>Hào Kiệt</b> (72 giờ + cấp 25). Bậc càng cao càng được đặt nhiều nhà (<span class="kbd">/sethome</span>), có balo to hơn (<span class="kbd">/balo</span>), treo nhiều món ở chợ (<span class="kbd">/choden</span>) và nhận gói quà riêng (<span class="kbd">/kit</span>, 3 ngày một lần). <b>Hào Kiệt</b> còn được đổi skin, thấy rada người chơi và dịch chuyển nhanh hơn. Giờ đứng AFK không được tính.</div></details>
     <details><summary>Có pet chiến đấu không? Có phải mua không?</summary><div>Có, và <b>không bán</b>. Đánh một con thú hoặc quái tới khi yếu máu (thanh máu hiện trên đầu khi đánh) rồi quăng dây xích vào là bắt được. Pet lên cấp, chọn hệ Chiến Binh, Hậu Cần, Đấu Sĩ, Thú Cưỡi hoặc Nông Trại; lớn lên thế nào còn theo bản tính loài (thú lớn trâu, thú săn đánh đau, chỉ loài bay mới cưỡi bay được). Rank ủng hộ chỉ được giữ thêm vài con trong kho, mỗi lúc ai cũng chỉ dẫn 1 con. Xem mục <a href="#pet">Pet</a>.</div></details>
@@ -1512,7 +1517,7 @@ function seaCard(m){
     ${m.ghi_de ? `<p class="dim" style="margin-top:14px">Admin đang thử mùa này, lịch tự động tạm dừng.</p>` :
       `<div class="days" title="Ngày ${m.ngay_thu}/${m.moi_mua}">${days}</div>
        <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:.92rem"><span>Còn <b>${m.con}</b> ngày</span><span class="muted">Tiếp theo: <b style="color:var(--text)">${esc(m.tiep.ten)}</b></span></div>`}
-    <p class="dim" style="margin:12px 0 0;font-size:.85rem">${n.mua_bat >= 15 ? "🌧️ Trời hay đổ mưa" : n.mua_tanh >= 30 ? "🌤️ Mưa hiếm, nhanh tạnh" : "⛅ Thời tiết bình thường"}</p>`;
+    <p class="dim" style="margin:12px 0 0;font-size:.85rem">${n.mua_bat >= 15 ? "🌧️ Trời hay đổ mưa" : n.mua_tanh >= 30 ? "🌤️ Mưa hiếm, nhanh tạnh" : "⛅ Thời tiết bình thường"}${n.mua_tang_dan ? " · đầu mùa ít mưa, cuối mùa mưa nhiều" : ""}</p>`;
   const chips = (a, c) => a.map(x => `<span class="chip ${c}">${esc(x.ten)} ${x.pct > 0 ? "+" : ""}${x.pct}%</span>`).join("");
   $("#seaCrops").innerHTML = `<h3>🌾 Nông sản ${esc(n.ten.replace(/^\S+\s/, "").toLowerCase())}</h3>
     ${n.nhanh.length ? `<div class="cropcol"><h4>▲ Lớn nhanh</h4><div class="chips">${chips(n.nhanh, "up")}</div>${n.nhanh.some(x => /^(Dưa hấu|Bí ngô)$/.test(x.ten)) ? `<p class="dim" style="font-size:.8rem;margin:6px 0 0">Dưa hấu, bí ngô: dây lớn nhanh hơn, gặt quả mọc từ dây có cơ hội rơi gấp đôi.</p>` : ""}</div>` : ""}

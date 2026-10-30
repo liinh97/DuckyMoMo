@@ -46,6 +46,7 @@ import java.util.concurrent.ThreadLocalRandom;
  *                 < 1: chậm lại (bỏ bớt lần lớn), > 1: nhanh hơn (cây có tuổi được lên thêm 1 bậc). Không ghi = 1.
  *   harvest-bonus % rơi thêm 1 nông sản khi phá cây đã chín (WHEAT, CARROTS, POTATOES, BEETROOTS, COCOA).
  *   rain-start-chance / rain-stop-chance  % mỗi 5 phút: trời đang tạnh thì đổ mưa / đang mưa thì tạnh (cộng thêm thời tiết gốc).
+ *     Một số, hoặc danh sách theo ngày của mùa (31/10: mùa mưa đầu mùa ít mưa, cuối mùa mưa nhiều).
  * Placeholder (cho EvenMoreFish cá theo mùa, TAB…): %dmmmua_id%, %dmmmua_ten%, %dmmmua_con% (số ngày còn lại), %dmmmua_sau% (mùa tới).
  * Sự kiện trong mùa (events.<id>): season, from-day..to-day (ngày thứ mấy của mùa, 1 = ngày đầu, số âm = đếm từ cuối: -1 = ngày cuối),
  *   name, subtitle, rain (on/off/không ghi), growth (nhân thêm), harvest-bonus (cộng thêm %), capture-bonus.<nhóm> (% bắt pet),
@@ -301,6 +302,18 @@ final class Seasons implements Listener {
         Bukkit.broadcast(c("&6[Mùa] &fĐã sang " + n + "&f. Gõ &e/mua &fxem cây nào lớn nhanh, cá nào xuất hiện."));
     }
 
+    /** 31/10 chủ server: "mùa mưa có bao nhiêu ngày là mưa từng đấy ngày, thường cuối mùa mới mưa nhiều". Giá trị có thể là MỘT số
+     *  (mọi ngày như nhau) hoặc DANH SÁCH theo ngày của mùa (ngày 1 = phần tử đầu; mùa dài hơn danh sách thì lấy phần tử cuối). */
+    private double byDay(ConfigurationSection s, String key) {
+        if (s.isList(key)) {
+            List<Double> l = s.getDoubleList(key);
+            if (!l.isEmpty()) {
+                return l.get((int) Math.max(0, Math.min(dayOfSeason() - 1, l.size() - 1)));
+            }
+        }
+        return s.getDouble(key, 0);
+    }
+
     private void weatherTick() {
         ConfigurationSection s = season(current());
         if (s == null) {
@@ -328,11 +341,11 @@ final class Seasons implements Listener {
                 continue;
             }
             if (!w.hasStorm()) {
-                if (r.nextDouble(100) < s.getDouble("rain-start-chance", 0)) {
+                if (r.nextDouble(100) < byDay(s, "rain-start-chance")) {
                     w.setStorm(true);
                     w.setWeatherDuration(r.nextInt(6000, 18000));
                 }
-            } else if (r.nextDouble(100) < s.getDouble("rain-stop-chance", 0)) {
+            } else if (r.nextDouble(100) < byDay(s, "rain-stop-chance")) {
                 w.setStorm(false);
                 w.setThundering(false);
             }

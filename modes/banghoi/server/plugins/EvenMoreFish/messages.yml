@@ -89,6 +89,7 @@ fish-sale: <white>Bạn đã bán </white><green>{amount} </green><white>cá v�
 #Help messages
 #General help (/emf help) - permission node dependant commands will only show if they are formatted with the forward-slash.
 help-general:
+  title: '[noPrefix]<gradient:#f1ffed:#73ff6b><st>         </st> <gradient:#E6F9FF:#8FD9FB>EvenMoreFish <st><gradient:#73ff6b:#f1ffed>         '
   top: '[noPrefix]Xem bảng xếp hạng cuộc thi đang diễn ra.'
   help: '[noPrefix]Xem trang này.'
   shop: '[noPrefix]Mở cửa hàng bán cá.'
@@ -194,6 +195,11 @@ lengthless-fish-hunted: <white>{player} vừa săn được {rarity} {fish}!
 fisherman-lore: '<white>Người câu: {player}'
 length-lore: <white>Dài {length}cm.
 leaderboard:
+  largest-fish: '<white>#{position} | {player} <white>({rarity} <reset>{fish}<white>, {length}cm)'
+  largest-total: '<white>#{position} | {player} <white>(tổng {amount}cm)'
+  shortest-fish: '<white>#{position} | {player} <white>({rarity} <reset>{fish}<white>, {length}cm)'
+  shortest-total: '<white>#{position} | {player} <white>(tổng {amount}cm)'
+  leaderboard-count: 5
   most-fish: <white>#{position} | {player} <white>({amount} <white>con)
   single-winner: <white>{player} thắng cuộc thi {type}. Chúc mừng!
   total-players: <white>Có tổng cộng {amount} người trên bảng xếp hạng.
@@ -236,6 +242,7 @@ journal-disabled: <white>Nhật ký câu cá đang tắt. Hãy bật cơ sở d�
 reward:
   catch-up: <white>Bạn có phần thưởng nhận lúc offline, đang trao ngay.
 bait:
+  baits: '<gold>► {amount} {bait}'
   rod-lore: "<white>\n<gray>Ô mồi: <yellow>({current_baits}/{max_baits})\n<white>\n{baits}\n<white>"
   bait-lore: "<white>\nTăng tỉ lệ câu được:\n{boosts}\n{lore}\n<white>\n<#dadada>Thả lên cần câu để lắp,\n<#dadada>hoặc giữ <u>SHIFT</u> để lắp hết.\n<white>"
   boosts-rarity: ► <white>1 độ hiếm
@@ -246,3 +253,9 @@ exploits:
   afk-fishing:
     detected: <white>Chỗ này hết cá rồi. Thử thả câu xa ra ít nhất {range} khối.
     blocked: <white>Chỗ này hết cá rồi. Thử thả câu xa ra ít nhất {range} khối.
+# 30/10: chữ ghép thời gian còn lại ({time_formatted}); thiếu mục này thì giờ còn lại hiện trống
+duration:
+  day: '<white>{day} ngày'
+  hour: '<white>{hour} giờ'
+  minute: '<white>{minute} phút'
+  second: '<white>{second} giây'

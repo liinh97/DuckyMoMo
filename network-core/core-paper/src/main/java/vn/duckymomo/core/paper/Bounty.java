@@ -342,8 +342,8 @@ final class Bounty implements Listener {
             h.inv.setItem(i, head);
         }
         ItemStack info = Tip.of("&e❖ &fTreo thưởng là gì?").desc("Bỏ xu ra treo thưởng lên đầu một người chơi", "Ai hạ được người đó thì nhận tiền")
-                .line().kv("Lệnh", "&e/treothuong dat <người> <xu>").kv("Phí", cfg.getDouble("fee-percent", 5) + "% &8(không hoàn)")
-                .kv("Hết hạn", cfg.getInt("days", 3) + " ngày &8(trả lại tiền)").deny("Không treo lên dân Liên minh Hoà Bình")
+                .line().kv("Lệnh", "&e/treothuong dat <người> <xu>").kv("Phí", cfg.getDouble("fee-percent", 5) + "% &7(không hoàn)")
+                .kv("Hết hạn", cfg.getInt("days", 3) + " ngày &7(trả lại tiền)").deny("Không treo lên dân Liên minh Hoà Bình")
                 .apply(new ItemStack(Material.BOOK));
         h.inv.setItem(49, info);
         if (list.isEmpty()) {

@@ -262,7 +262,7 @@ final class SiegeSupply {
         double pct = max > 0 ? Math.min(100, v * 100 / max) : 0;
         Tip top = Tip.of("&6♨ &fKho lương " + t.getName()).accent("&6").desc("Lương nuôi quân khi công thành.").line()
                 .kv("Đang có", "&e" + (long) v + "&7/" + (long) max + " điểm")
-                .raw("&a" + "■".repeat((int) Math.round(pct / 5)) + "&8" + "■".repeat(20 - (int) Math.round(pct / 5)))
+                .raw("&a" + "■".repeat((int) Math.round(pct / 5)) + "&7" + "■".repeat(20 - (int) Math.round(pct / 5)))
                 .kv("Nuôi được", "≈ " + (costPerMinute > 0 ? (long) (v / costPerMinute) : 0) + " phút-người")
                 .kv("Mỗi người đánh ăn", fmt(costPerMinute) + " điểm/phút (≈ " + (long) (costPerMinute * 60) + "/giờ)");
         if (spoil > 0) {
@@ -288,7 +288,7 @@ final class SiegeSupply {
             tops.desc("Chưa thị trấn nào có lương");
         }
         for (int k = 0; k < Math.min(10, rows.size()); k++) {
-            tops.raw("&6" + (k + 1) + ". &f" + rows.get(k)[0] + " &8— &e" + (long) (double) (Double) rows.get(k)[1] + " điểm");
+            tops.raw("&6" + (k + 1) + ". &f" + rows.get(k)[0] + " &7— &e" + (long) (double) (Double) rows.get(k)[1] + " điểm");
         }
         m.add(tops.apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.GOLD_INGOT)));
         m.open(p);

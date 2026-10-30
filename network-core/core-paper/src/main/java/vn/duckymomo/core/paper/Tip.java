@@ -25,7 +25,7 @@ import java.util.List;
  */
 final class Tip {
     private static final LegacyComponentSerializer LEGACY = LegacyComponentSerializer.legacyAmpersand();
-    static final String LINE = "&8&m                              ";
+    static final String LINE = "&7&m                              ";
     private static final int WRAP = 38;
 
     private Component name;
@@ -51,7 +51,7 @@ final class Tip {
 
     /** Phụ đề xám sau tên: "Tên (phụ đề)". */
     Tip sub(String text) {
-        name = name.append(c(" &8(" + text + "&8)"));
+        name = name.append(c(" &7(" + text + "&7)"));
         return this;
     }
 
@@ -64,7 +64,7 @@ final class Tip {
             }
             List<String> w = wrap(d, WRAP - 2);
             for (int i = 0; i < w.size(); i++) {
-                add((first && i == 0 ? accent + "▍ &f" : "&8▍ &7") + w.get(i));
+                add((first && i == 0 ? accent + "▍ &f" : "&7▍ &7") + w.get(i));
             }
             first = false;
         }
@@ -89,13 +89,13 @@ final class Tip {
     /** Thông tin: "• Nhãn: giá trị" (giá trị có mã màu riêng thì giữ, không có thì trắng). */
     Tip kv(String label, String value) {
         String v = value == null ? "" : value;
-        add("&8• &7" + label + ": " + (v.startsWith("&") ? v : "&f" + v));
+        add("&7• &7" + label + ": " + (v.startsWith("&") ? v : "&f" + v));
         return this;
     }
 
     /** Tiêu đề nhóm: "• Nhóm:" màu nhấn. */
     Tip head(String label) {
-        add("&8• " + accent + label + ":");
+        add("&7• " + accent + label + ":");
         return this;
     }
 
@@ -103,7 +103,7 @@ final class Tip {
     Tip item(String text) {
         List<String> w = wrap(text, WRAP - 4);
         for (int i = 0; i < w.size(); i++) {
-            add((i == 0 ? "  &8▸ &f" : "    &f") + w.get(i));
+            add((i == 0 ? "  &7▸ &f" : "    &f") + w.get(i));
         }
         return this;
     }
@@ -122,7 +122,7 @@ final class Tip {
     /** Ghi chú nhỏ xám đậm. */
     Tip note(String text) {
         for (String w : wrap(text, WRAP)) {
-            add("&8" + w);
+            add("&7" + w);
         }
         return this;
     }

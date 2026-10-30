@@ -469,7 +469,7 @@ final class PlayerSettings implements Listener {
             if (noCheck || left > 0) {
                 p.sendMessage(c("&e♫ " + (noCheck ? "Hôm nay bạn chưa điểm danh. " : "") + (left > 0 ? "Còn &f" + left + " &enhiệm vụ hằng ngày. " : ""))
                         .append(c(noCheck ? "&a&n[Điểm danh]" : "&a&n[Xem nhiệm vụ]").clickEvent(ClickEvent.runCommand(noCheck ? "/diemdanh" : "/nhiemvu")))
-                        .append(c(" &8(tắt nhắc: /caidat)")));
+                        .append(c(" &7(tắt nhắc: /caidat)")));
             }
         }
     }

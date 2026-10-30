@@ -58,10 +58,10 @@ final class ItemInspect implements Listener {
         }
         LAST_SHOW.put(p.getUniqueId(), now);
         List<Component> ls = lines(it, p);
-        p.sendMessage(LEGACY.deserialize("&8━━━━━━━━ &7Xem đồ" + (from == null ? "" : " &8· &7" + from) + " &8(" + ls.size() + " dòng) ━━━━━━━━"));
+        p.sendMessage(LEGACY.deserialize("&7━━━━━━━━ &7Xem đồ" + (from == null ? "" : " &7· &7" + from) + " &7(" + ls.size() + " dòng) ━━━━━━━━"));
         ls.forEach(p::sendMessage);
-        p.sendMessage(LEGACY.deserialize(inGui ? "&8━━━━━━━━ &7Đóng menu, mở chat (&fT&7), lăn chuột để xem hết &8━━━━━━━━"
-                : "&8━━━━━━━━ &7Mở chat (&fT&7), lăn chuột để xem hết &8━━━━━━━━"));
+        p.sendMessage(LEGACY.deserialize(inGui ? "&7━━━━━━━━ &7Đóng menu, mở chat (&fT&7), lăn chuột để xem hết &7━━━━━━━━"
+                : "&7━━━━━━━━ &7Mở chat (&fT&7), lăn chuột để xem hết &7━━━━━━━━"));
     }
 
     static boolean command(CommandSender s, String[] args) {

@@ -442,6 +442,7 @@ decor-shop:
   enabled: true
   # Cửa hàng Kinh Đô (14/10): rank ủng hộ (rank-permission) mở /cuahang khi đứng trong kinh đô; mọi người bấm NPC (/dmm shopnpc).
   rank-permission: duckymomo.cuahang
+  open-anywhere: true   # 30/10 chủ server: tạm cho mọi người mở /cuahang (/shop) ở bất cứ đâu; đông người thì false (rank + kinh đô)
   npc-name: "&6Cửa hàng Kinh Đô"
   frame-lot: 32   # khu shop khung vật phẩm (/warp shop): mỗi lần bấm mua / bán ngần này món (29/10); món không xếp chồng, Thư viện, danh hiệu = 1
   # Danh mục (20/10): trang chính /cuahang. slot = ô trong menu 6 hàng (0-44), sell = vật liệu server THU MUA hiện trong danh mục
@@ -513,7 +514,7 @@ goi-qua:
       qua:
         - vat BREAD 32
     tinan:
-      ten: '&8Quà tị nạn'
+      ten: '&7Quà tị nạn'
       icon: BREAD
       cho: 259200
       rank:

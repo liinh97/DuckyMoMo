@@ -157,7 +157,7 @@ final class Workshop implements Listener {
 
     /** Ghi chú giá gốc khi đang được giảm (22/10: menu từng hiện giá gốc dù chế bị trừ giá đã giảm). */
     private static String discountNote(Player p, Recipe r, double cost) {
-        return cost < r.cost() ? " &8(gốc " + money(r.cost()) + ", Thăng Cấp -" + Math.round(100 - cost * 100 / r.cost()) + "%)" : "";
+        return cost < r.cost() ? " &7(gốc " + money(r.cost()) + ", Thăng Cấp -" + Math.round(100 - cost * 100 / r.cost()) + "%)" : "";
     }
 
     record Recipe(String id, String name, Material material, String feature, double value, String text, int uses, int days, double cost,
@@ -446,11 +446,11 @@ final class Workshop implements Listener {
         if (!lore.isEmpty()) {
             lore.add(c(Tip.LINE));
         }
-        lore.add(c("&8• &7Kỹ năng: &b" + featureText(r)));
+        lore.add(c("&7• &7Kỹ năng: &b" + featureText(r)));
         if (uses >= 0) {
-            lore.add(c("&8• &7Độ bền: &6" + fmt(uses)));
+            lore.add(c("&7• &7Độ bền: &6" + fmt(uses)));
         }
-        lore.add(c("&8• &7Hết hạn: &b" + WHEN.format(Instant.ofEpochMilli(until))));
+        lore.add(c("&7• &7Hết hạn: &b" + WHEN.format(Instant.ofEpochMilli(until))));
         meta.lore(lore);
         it.setItemMeta(meta);
         BanBook.refresh(it);   // thêm lại dòng luật cấm (⛔) theo Sách cấm
@@ -1201,7 +1201,7 @@ final class Workshop implements Listener {
                     int have = rf == null ? 0 : rf.count(p, in.getKey());
                     all &= have >= in.getValue();
                     t.item((have >= in.getValue() ? "&a" : "&c") + in.getValue() + "× &f" + (rf == null ? in.getKey() : rf.name(in.getKey()))
-                            + " &8(có " + have + ")");
+                            + " &7(có " + have + ")");
                 }
             }
             for (Map.Entry<Material, Integer> in : r.ingredients().entrySet()) {
@@ -1278,8 +1278,8 @@ final class Workshop implements Listener {
             ItemMeta meta = it.getItemMeta();
             int have = countPlain(p, m);
             int need = r.ingredients().getOrDefault(m, n);
-            meta.lore(List.of(Tip.c("&8• &7Ô này cần: &f" + n + (need > n ? " &8(cả công thức " + need + ")" : "")),
-                    Tip.c("&8• &7Bạn có: " + (have >= need ? "&a" : "&c") + have)));
+            meta.lore(List.of(Tip.c("&7• &7Ô này cần: &f" + n + (need > n ? " &7(cả công thức " + need + ")" : "")),
+                    Tip.c("&7• &7Bạn có: " + (have >= need ? "&a" : "&c") + have)));
             it.setItemMeta(meta);
             h.inv.setItem(GRID_SLOTS[k], it);
         }

@@ -301,7 +301,7 @@ final class HamNguc implements Listener {
             } else {
                 s.sendMessage(Tip.c("&7Đang chạy: &f" + runs.size() + " lượt &7· " + describe()));
                 for (Run r : runs.values()) {
-                    s.sendMessage(Tip.c("&8- &f#" + r.id + " " + r.dg.name() + " &7slot " + r.slot + " · " + r.members.size() + " người"));
+                    s.sendMessage(Tip.c("&7- &f#" + r.id + " " + r.dg.name() + " &7slot " + r.slot + " · " + r.members.size() + " người"));
                 }
             }
             return true;
@@ -367,7 +367,7 @@ final class HamNguc implements Listener {
         for (Dg d : dungeons.values()) {
             boolean open = unlocked(u, d);
             int n = clears(u, d.id());
-            Tip t = Tip.of((open ? "&6" : "&8") + d.name()).accent("&6").sub("Set " + setName(d.set()))
+            Tip t = Tip.of((open ? "&6" : "&7") + d.name()).accent("&6").sub("Set " + setName(d.set()))
                     .kv("Rơi", "&f" + setName(d.set()) + " +0")
                     .kv("Số phòng", String.valueOf(d.rooms()))
                     .kv("Trùm", "&c" + strip(d.boss().name()));
@@ -903,7 +903,7 @@ final class HamNguc implements Listener {
                 side.line(0, Tip.c("&6⚔"));
                 side.line(1, Tip.c("&f" + r.dg.name()));
                 side.line(2, Tip.c("&7Set " + setName(r.dg.set())));
-                side.line(3, Tip.c("&8/hamnguc thoat"));
+                side.line(3, Tip.c("&7/hamnguc thoat"));
                 side.setGlowingText(true);
                 sg.update(true, false);
             }

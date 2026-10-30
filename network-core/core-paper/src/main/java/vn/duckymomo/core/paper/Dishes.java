@@ -107,9 +107,9 @@ final class Dishes implements Listener {
         ItemMeta meta = it.getItemMeta();
         List<Component> lore = meta.lore() == null ? new ArrayList<>() : new ArrayList<>(meta.lore());
         lore.add(c(Tip.LINE));
-        lore.add(c("&8• &aKhi ăn:"));
+        lore.add(c("&7• &aKhi ăn:"));
         for (String e : s.getStringList("hieu-ung")) {
-            lore.add(c("  &8▸ &f" + effectText(e)));
+            lore.add(c("  &7▸ &f" + effectText(e)));
         }
         lore.add(c("&7Món ăn ra trận · /nauan"));
         meta.lore(lore);
@@ -246,7 +246,7 @@ final class Dishes implements Listener {
         for (Map.Entry<String, Integer> e : d.need().entrySet()) {
             int have = count(p, e.getKey());
             ok &= have >= e.getValue();
-            t.item((have >= e.getValue() ? "&a" : "&c") + e.getValue() + " &f" + needName(e.getKey()) + " &8(có " + have + ")");
+            t.item((have >= e.getValue() ? "&a" : "&c") + e.getValue() + " &f" + needName(e.getKey()) + " &7(có " + have + ")");
         }
         t.line();
         if (ok) {

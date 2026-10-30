@@ -210,7 +210,7 @@ final class Wanderers {
                 int id = data.getInt(n(v.code()) + "id", -1);
                 Location l = CitizensBridge.exists(id) ? CitizensBridge.where(id) : null;
                 String xyz = l == null ? "?" : l.getBlockX() + " " + l.getBlockY() + " " + l.getBlockZ();
-                Component line = c("&6" + v.code() + " &8— &f" + v.name() + " &7· NPC #" + id + " · " + xyz + " · " + data.getString(n(v.code()) + "vung", "?")
+                Component line = c("&6" + v.code() + " &7— &f" + v.name() + " &7· NPC #" + id + " · " + xyz + " · " + data.getString(n(v.code()) + "vung", "?")
                         + " · cổng: " + value(v.code(), "cong"));
                 if (l != null) {
                     line = line.append(c(" &a[Tới]").clickEvent(ClickEvent.runCommand("/minecraft:tp @s " + xyz))
@@ -267,7 +267,7 @@ final class Wanderers {
                 + " chuyện. Cứ " + moveMs / 3_600_000L + " giờ họ lại dời đi chỗ khác."));
         for (Npc v : npcs.values()) {
             String vung = data.getString(n(v.code()) + "vung", "");
-            s.sendMessage(c("  &f" + v.name() + " &8— " + (vung.isEmpty() ? "&7chưa xuất hiện" : "&7đang ở &e" + vung + " &7(" + data.getString(n(v.code()) + "huong", "") + ")")));
+            s.sendMessage(c("  &f" + v.name() + " &7— " + (vung.isEmpty() ? "&7chưa xuất hiện" : "&7đang ở &e" + vung + " &7(" + data.getString(n(v.code()) + "huong", "") + ")")));
         }
         if (admin) {
             s.sendMessage(c("&7Admin: /lukhach ds · /lukhach doi <mã|all> · /lukhach xoa"));

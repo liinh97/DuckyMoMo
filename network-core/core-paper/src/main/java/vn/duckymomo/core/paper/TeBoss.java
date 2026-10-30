@@ -235,7 +235,7 @@ final class TeBoss implements Listener {
                 default -> "Linh hồn";
             };
             sb.append("&7").append(unit).append(": &f").append(d.progress).append("&7/&f").append(d.need).append(" &e").append(pct).append("%\n");
-            sb.append("&6").append("■".repeat(bars)).append("&8").append("■".repeat(10 - bars)).append('\n');
+            sb.append("&6").append("■".repeat(bars)).append("&7").append("■".repeat(10 - bars)).append('\n');
             if (d.mode.equals("lua") && d.fireDeadline > 0) {
                 sb.append("&cCòn &f").append(Math.max(0, (d.fireDeadline - now) / 1000)).append("s &cđể thắp hết!");
             } else {

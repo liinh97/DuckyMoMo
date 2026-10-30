@@ -354,7 +354,7 @@ final class ArmorHide implements Listener {
                     return "";
                 }
                 String b = ThoRen.wornSet(p);   // 28/10 chủ server: hiện TÊN SET (ai cũng có đồ kim cương, tên món không nói lên gì)
-                return b == null ? "" : " &8[&b" + LEGACY_STRIP.matcher(b).replaceAll("") + "&8]";   // 30/10: không dùng ⛨, font Bedrock không có
+                return b == null ? "" : " &7[&b" + LEGACY_STRIP.matcher(b).replaceAll("") + "&7]";   // 30/10: không dùng ⛨, font Bedrock không có
             }
         };
     }

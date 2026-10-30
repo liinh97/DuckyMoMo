@@ -90,7 +90,7 @@ final class PetTop {
                                 r.getString(5) == null ? "?" : r.getString(5), treeName(r.getString(4))});
                         lines.add("&6" + i++ + ". &f" + (name.isEmpty() ? r.getString(2) : name) + " &7(" + r.getString(2) + ") &ecấp "
                                 + level(r.getDouble(3)) + " &7· chủ &f" + (r.getString(5) == null ? "?" : r.getString(5))
-                                + (he == null ? " &8" + treeName(r.getString(4)) : ""));
+                                + (he == null ? " &7" + treeName(r.getString(4)) : ""));
                     }
                 }
             } catch (SQLException e) {
@@ -116,7 +116,7 @@ final class PetTop {
 
     /** /bxhpet cho người chơi: menu (22/10, trước in chat). Hàng 1 = top 10, hàng 2 = lọc theo hệ + xác suất bắt. */
     private void menu(Player p, String[] he, List<String[]> rows) {
-        InfoMenu m = InfoMenu.of("&6❖ Bảng xếp hạng pet" + (he != null ? " &8· &f" + he[1] : "")).accent(org.bukkit.Material.ORANGE_STAINED_GLASS_PANE);
+        InfoMenu m = InfoMenu.of("&6❖ Bảng xếp hạng pet" + (he != null ? " &7· &f" + he[1] : "")).accent(org.bukkit.Material.ORANGE_STAINED_GLASS_PANE);
         m.top(Tip.of("&6❖ &fBảng xếp hạng pet").accent("&6").desc(he != null ? "Hệ " + he[1] : "Mọi hệ", "Xếp theo kinh nghiệm của pet.")
                 .apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.BONE)));
         for (int i = 0; i < rows.size(); i++) {

@@ -311,7 +311,7 @@ final class Achievements implements Listener {
             double v = Math.min(g.target(), value(p.getUniqueId(), g.type()));
             boolean ok = done.contains(g.id());
             String bar = bar(v / g.target());
-            s.sendMessage(c((ok ? "&a✔ " : "&7□ ") + (ok ? "&a" : "&f") + g.name() + " &8— &7" + g.desc() + " " + (ok ? "" : bar + " &f" + fmt(v) + "/" + fmt(g.target()) + " "
+            s.sendMessage(c((ok ? "&a✔ " : "&7□ ") + (ok ? "&a" : "&f") + g.name() + " &7— &7" + g.desc() + " " + (ok ? "" : bar + " &f" + fmt(v) + "/" + fmt(g.target()) + " "
                     + TYPE_VI.getOrDefault(g.type(), g.type()))));
         }
         return true;
@@ -319,7 +319,7 @@ final class Achievements implements Listener {
 
     private static String bar(double f) {
         int n = (int) Math.round(Math.max(0, Math.min(1, f)) * 10);
-        return "&a" + "▮".repeat(n) + "&8" + "▮".repeat(10 - n);
+        return "&a" + "▮".repeat(n) + "&7" + "▮".repeat(10 - n);
     }
 
     private void flush() {

@@ -376,6 +376,7 @@ final class Crates implements Listener {
         h.inv.setItem(INFO_SLOT, info.apply(new ItemStack(Material.BOOK)));
         h.inv.setItem(BACK_SLOT, Tip.of("&c◂ &fCác máy gacha khác").accent("&c").click("Bấm để quay lại").apply(new ItemStack(Material.ARROW)));
         h.inv.setItem(SPIN_SLOT, spinButton(p, cr));
+        MenuFrame.paint(h.inv, Material.ORANGE_STAINED_GLASS_PANE);   // 30/10: ô quà trống + thanh dưới thành khung cam
         p.openInventory(h.inv);
     }
 

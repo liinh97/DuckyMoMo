@@ -17,10 +17,10 @@ Settings:
   CEFailureOverride: -1 #0-100, -1 for no override. Chance of destroying a CE Book
   EnchantmentBookLore: #The lore on the enchantments books.
     - '%description%'
-    - '&8&m                              '
+    - '&7&m                              '
     - '&8• &7Thành công: &a%success_rate%%'
     - '&8• &7Hỏng thì vỡ đồ: &c%destroy_rate%%'
-    - '&8&m                              '
+    - '&7&m                              '
     - '&eKéo thả&7: &flên món đồ để gắn'
     - '&eChuột phải&7: &fxem thêm'
   LostBook: #Lost book options.
@@ -35,7 +35,7 @@ Settings:
     Lore: #The lore of the lost books.
       - '&8▍ &7Sách cũ thất lạc, nhóm %category%'
       - '&8▍ &7Lau sạch mới biết là phù phép gì'
-      - '&8&m                              '
+      - '&7&m                              '
       - '&eChuột phải&7: &flau sạch sách'
   Scrambler:
     Item: 'SUNFLOWER' #The item it will be.
@@ -50,7 +50,7 @@ Settings:
     Lore: #The lore of the item.
       - '&e▍ &fQuay lại tỉ lệ của sách phù phép'
       - '&8▍ &7Ra tỉ lệ thành công và vỡ đồ mới'
-      - '&8&m                              '
+      - '&7&m                              '
       - '&eKéo thả&7: &flên sách phù phép'
     GUI: #Options for the GUI.
       Name: '&8Đang quay &eĐá Xáo Trộn' #Name of the GUI.
@@ -73,9 +73,9 @@ Settings:
     GUILore: #The lore of the item in the GUI.
       - '&e▍ &fQuay lại tỉ lệ của sách phù phép'
       - '&8▍ &7Ra tỉ lệ thành công và vỡ đồ mới'
-      - '&8&m                              '
-      - '&8• &7Giá: &e2.400 xu'
-      - '&8&m                              '
+      - '&7&m                              '
+      - '&7• &7Giá: &e2.400 xu'
+      - '&7&m                              '
       - '&a➜ Bấm để mua'
   Slot_Crystal:
     InGUI: false #If it's in the GUI.
@@ -91,14 +91,14 @@ Settings:
     Name: '&5Pha Lê &bThêm Ô' #Name of the item
     Lore: #Lore of the item
       - '&5▍ &fThêm 1 ô phù phép cho món đồ'
-      - '&8&m                              '
+      - '&7&m                              '
       - '&eKéo thả&7: &flên món đồ'
     GUIName: '&5Pha Lê &bThêm Ô'
     GUILore:
       - '&5▍ &fThêm 1 ô phù phép cho món đồ'
-      - '&8&m                              '
+      - '&7&m                              '
       - '&8• &7Giá: &e1.500 xu'
-      - '&8&m                              '
+      - '&7&m                              '
       - '&a➜ Bấm để mua'
   GKitz: #GKitz GUI option.
     InGUI: false #If you can open the GKitz GUI from the main /ce gui.
@@ -129,15 +129,15 @@ Settings:
     Lore: #Lore of the item
       - '&5▍ &fGiữ món đồ khi bạn chết'
       - '&8▍ &7Đồ có pha lê không rơi ra khi chết'
-      - '&8&m                              '
+      - '&7&m                              '
       - '&eKéo thả&7: &flên món đồ'
     GUIName: '&5Pha Lê &bBảo Hộ'
     GUILore:
       - '&5▍ &fGiữ món đồ khi bạn chết'
       - '&8▍ &7Đồ có pha lê không rơi ra khi chết'
-      - '&8&m                              '
+      - '&7&m                              '
       - '&8• &7Giá: &e1.500 xu'
-      - '&8&m                              '
+      - '&7&m                              '
       - '&a➜ Bấm để mua'
   BlackSmith: #Options for the Black Smith
     InGUI: true #In the GUI.
@@ -153,7 +153,7 @@ Settings:
     Name: '&7Thợ &bRèn'             #Name of the Item in the GUI
     Lore: #Lore on the item.
       - '&b▍ &fGhép 2 sách, hoặc gộp phù phép 2 món đồ'
-      - '&8&m                              '
+      - '&7&m                              '
       - '&a➜ Bấm để mở'
     GUIName: '&8Thợ Rèn'         #Name of the Black Smith's GUI
     Results:
@@ -169,7 +169,7 @@ Settings:
       None: '&cChưa có kết quả' #Name of the item when there are no results in the Black Smith
       Not-Found-Lore:
         - '&8▍ &7Chưa ghép được gì'
-        - '&8&m                              '
+        - '&7&m                              '
         - '&8• &7Đặt 2 sách cùng phù phép, cùng cấp'
         - '&8• &7Hoặc 2 món đồ để gộp phù phép'
       Found: '&8• &7Giá: &e%cost% cấp kinh nghiệm' #The lore at the bottom of the item
@@ -193,7 +193,7 @@ Settings:
     Name: '&7Thợ &bTái &9Chế'        #Name of the Item
     Lore: #Lore of the item
       - '&9▍ &fĐổi sách, đồ phù phép lấy kinh nghiệm'
-      - '&8&m                              '
+      - '&7&m                              '
       - '&a➜ Bấm để mở'
   Info: #Settings for Info item in the GUI
     InGUI: true #Toggle whether it is in the /CE GUI or not
@@ -209,7 +209,7 @@ Settings:
     Name: '&eThông tin phù phép'       #Name of the Item
     Lore: #Lore of the item
       - '&e▍ &fXem mọi phù phép và tác dụng'
-      - '&8&m                              '
+      - '&7&m                              '
       - '&a➜ Bấm để xem'
   Dust: #Settings for the Magical Dust
     MysteryDust:
@@ -224,7 +224,7 @@ Settings:
       Lore: #Use %percent% to set the percent
         - '&8▍ &7Mở ra Bụi Thành Công hoặc Bụi Chống Vỡ'
         - '&8• &7Mức: &a1–%percent%%'
-        - '&8&m                              '
+        - '&7&m                              '
         - '&eChuột phải&7: &fmở'
       Firework:
         Toggle: true #Toggle if the firework happens on open.
@@ -241,9 +241,9 @@ Settings:
       GUIName: '&aBụi Thành Công'     #Name of the item in the GUI
       GUILore: #Lore in the GUI.
         - '&a▍ &fTăng tỉ lệ thành công của sách'
-        - '&8&m                              '
+        - '&7&m                              '
         - '&8• &7Giá: &e1.500 xu'
-        - '&8&m                              '
+        - '&7&m                              '
         - '&a➜ Bấm để mua'
       Slot: 25 #Slot number it is on
       Item: 'SUGAR' #Item the dust is
@@ -256,7 +256,7 @@ Settings:
       Name: '&aBụi Thành Công'     #Name of the dust
       Lore: #Lore for the dust
         - '&a▍ &f+%percent%% tỉ lệ thành công'
-        - '&8&m                              '
+        - '&7&m                              '
         - '&eKéo thả&7: &flên sách phù phép'
       PercentRange: #Range the success rate will be.
         Max: 30 #Max percent
@@ -266,9 +266,9 @@ Settings:
       GUIName: '&eBụi Chống Vỡ'        #Name of the item in the GUI
       GUILore: #Lore in the GUI.
         - '&e▍ &fGiảm tỉ lệ vỡ đồ của sách'
-        - '&8&m                              '
+        - '&7&m                              '
         - '&8• &7Giá: &e1.500 xu'
-        - '&8&m                              '
+        - '&7&m                              '
         - '&a➜ Bấm để mua'
       Slot: 34 #Slot number it is on
       Item: 'REDSTONE' #Item the dust is
@@ -281,7 +281,7 @@ Settings:
       Name: '&eBụi Chống Vỡ'        #Name of the dust
       Lore: #Lore for the dust
         - '&e▍ &f−%percent%% tỉ lệ vỡ đồ'
-        - '&8&m                              '
+        - '&7&m                              '
         - '&eKéo thả&7: &flên sách phù phép'
       PercentRange: #Range the destroy rate will be.
         Max: 10 #Max percent
@@ -309,7 +309,7 @@ Settings:
     Name: '&8&nCuộn Giấy Đen' #The name of the black scroll
     Item-Lore: #The lore that will be on the black scroll.
       - '&8▍ &7Gỡ ngẫu nhiên 1 phù phép đặc biệt khỏi đồ'
-      - '&8&m                              '
+      - '&7&m                              '
       - '&eKéo thả&7: &flên món đồ'
       - '&8Chỉ dùng cho phù phép đặc biệt'
     Chance-Toggle: false #Toggle on and off if the black scrolls have a chance of failing.
@@ -320,9 +320,9 @@ Settings:
     Slot: 21 #Slot you can buy the scroll at
     Lore: #Lore of the item in the GUI
       - '&8▍ &7Gỡ ngẫu nhiên 1 phù phép đặc biệt khỏi đồ'
-      - '&8&m                              '
+      - '&7&m                              '
       - '&8• &7Giá: &e3.000 xu'
-      - '&8&m                              '
+      - '&7&m                              '
       - '&a➜ Bấm để mua'
     SuccessChance: #Controls what the success chance will be when they get the book from the Black Scroll
       Max: 75 #The Max percent
@@ -341,7 +341,7 @@ Settings:
     Name: '&eCuộn Giấy Trắng' #The name of the white scrolls.
     Item-Lore: #The lore that will be on the white scroll.
       - '&f▍ &fGiữ đồ không vỡ khi gắn sách bị hỏng'
-      - '&8&m                              '
+      - '&7&m                              '
       - '&eKéo thả&7: &flên món đồ'
     InGUI: true #Toggle being able to buy in the /CE GUI. Cost is controlled in the SignOptions section
     GUIName: '&7Cuộn Giấy Trắng'
@@ -349,9 +349,9 @@ Settings:
     Slot: 30 #Slot you can buy the scroll at
     Lore: #Lore of the scroll in the GUI
       - '&f▍ &fGiữ đồ không vỡ khi gắn sách bị hỏng'
-      - '&8&m                              '
+      - '&7&m                              '
       - '&8• &7Giá: &e6.000 xu'
-      - '&8&m                              '
+      - '&7&m                              '
       - '&a➜ Bấm để mua'
     ProtectedName: '&bĐƯỢC BẢO VỆ' #The lore that is added to protect an item.
   TransmogScroll:
@@ -366,7 +366,7 @@ Settings:
     Item-Lore: #The lore that will be on the scroll.
       - '&d▍ &fSắp xếp gọn các dòng phù phép'
       - '&8▍ &7Ghi số phù phép đang có lên tên đồ'
-      - '&8&m                              '
+      - '&7&m                              '
       - '&eKéo thả&7: &flên món đồ'
     InGUI: false #Toggle being able to buy in the /CE GUI. Cost is controlled in the SignOptions section
     GUIName: '&dCuộn Giấy Sắp Xếp'
@@ -375,9 +375,9 @@ Settings:
     Lore: #Lore of the scroll in the GUI
       - '&d▍ &fSắp xếp gọn các dòng phù phép'
       - '&8▍ &7Ghi số phù phép đang có lên tên đồ'
-      - '&8&m                              '
+      - '&7&m                              '
       - '&8• &7Giá: &e600 xu'
-      - '&8&m                              '
+      - '&7&m                              '
       - '&a➜ Bấm để mua'
     Amount-of-Enchantments: ' &7[&6&n%amount%&7]' #The suffix that will be added at the end of the item's name.
     Amount-Toggle: true #If the amount is added to the suffix of the item's name.
@@ -522,10 +522,10 @@ Categories: #You can make as many different categories as you want
     InGUI: true #Toggle if it's in the GUI or not.
     Lore: #The lore of the Item
       - '&a▍ &fSách ngẫu nhiên 1 phù phép độ hiếm Thường'
-      - '&8▍ &7Mỗi cuốn có tỉ lệ thành công riêng'
-      - '&8&m                              '
-      - '&8• &7Giá: &e900 xu'
-      - '&8&m                              '
+      - '&7▍ &7Mỗi cuốn có tỉ lệ thành công riêng'
+      - '&7&m                              '
+      - '&7• &7Giá: &e900 xu'
+      - '&7&m                              '
       - '&a➜ Bấm để mua'
     Item: 'LIME_STAINED_GLASS_PANE' #The id for the item
     # Item model settings
@@ -553,9 +553,9 @@ Categories: #You can make as many different categories as you want
       Lore: #Lore on the item
         - '&8▍ &7Sách thất lạc nhóm Thường, chưa ai lau'
         - '&8▍ &7Lau sạch mới biết là phù phép gì'
-        - '&8&m                              '
+        - '&7&m                              '
         - '&8• &7Giá: &e3.000 xu'
-        - '&8&m                              '
+        - '&7&m                              '
         - '&a➜ Bấm để mua'
       Cost: 3000
       Currency: Vault
@@ -580,10 +580,10 @@ Categories: #You can make as many different categories as you want
     InGUI: true
     Lore:
       - '&9▍ &fSách ngẫu nhiên 1 phù phép độ hiếm Hiếm'
-      - '&8▍ &7Mỗi cuốn có tỉ lệ thành công riêng'
-      - '&8&m                              '
-      - '&8• &7Giá: &e2.400 xu'
-      - '&8&m                              '
+      - '&7▍ &7Mỗi cuốn có tỉ lệ thành công riêng'
+      - '&7&m                              '
+      - '&7• &7Giá: &e2.400 xu'
+      - '&7&m                              '
       - '&a➜ Bấm để mua'
     Item: 'BLUE_STAINED_GLASS_PANE'
     # Item model settings
@@ -611,9 +611,9 @@ Categories: #You can make as many different categories as you want
       Lore:
         - '&8▍ &7Sách thất lạc nhóm Hiếm, chưa ai lau'
         - '&8▍ &7Lau sạch mới biết là phù phép gì'
-        - '&8&m                              '
+        - '&7&m                              '
         - '&8• &7Giá: &e6.000 xu'
-        - '&8&m                              '
+        - '&7&m                              '
         - '&a➜ Bấm để mua'
       Cost: 6000
       Currency: Vault
@@ -637,8 +637,8 @@ Categories: #You can make as many different categories as you want
     Slot: 33
     InGUI: false
     Lore:
-      - '&8▍ &7Không bán trong shop'
-      - '&8▍ &7Chỉ admin phát làm phần thưởng'
+      - '&7▍ &7Không bán trong shop'
+      - '&7▍ &7Chỉ admin phát làm phần thưởng'
     Item: 'RED_STAINED_GLASS_PANE'
     # Item model settings
     Model:
@@ -665,9 +665,9 @@ Categories: #You can make as many different categories as you want
       Lore:
         - '&8▍ &7Sách thất lạc nhóm Huyền thoại, chưa ai lau'
         - '&8▍ &7Lau sạch mới biết là phù phép gì'
-        - '&8&m                              '
+        - '&7&m                              '
         - '&8• &7Giá: &e9.000 xu'
-        - '&8&m                              '
+        - '&7&m                              '
         - '&a➜ Bấm để mua'
       Cost: 9000
       Currency: Vault
@@ -691,8 +691,8 @@ Categories: #You can make as many different categories as you want
     Slot: 41
     InGUI: false
     Lore:
-      - '&8▍ &7Không bán trong shop'
-      - '&8▍ &7Chỉ admin phát làm phần thưởng'
+      - '&7▍ &7Không bán trong shop'
+      - '&7▍ &7Chỉ admin phát làm phần thưởng'
     Item: 'AMETHYST_CLUSTER'
     # Item model settings
     Model:
@@ -719,9 +719,9 @@ Categories: #You can make as many different categories as you want
       Lore:
         - '&8▍ &7Sách thất lạc nhóm Thần thoại, chưa ai lau'
         - '&8▍ &7Lau sạch mới biết là phù phép gì'
-        - '&8&m                              '
+        - '&7&m                              '
         - '&8• &7Giá: &e30.000 xu'
-        - '&8&m                              '
+        - '&7&m                              '
         - '&a➜ Bấm để mua'
       Cost: 30000
       Currency: Vault

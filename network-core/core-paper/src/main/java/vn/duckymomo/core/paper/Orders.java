@@ -227,12 +227,12 @@ final class Orders implements Listener {
         int can = o.getInt("can");
         int da = o.getInt("da");
         double gia = o.getDouble("gia");
-        meta.displayName(c("&a✉ &f").append(name(m)).append(c(" &8(đơn #" + id + ")")));
+        meta.displayName(c("&a✉ &f").append(name(m)).append(c(" &7(đơn #" + id + ")")));
         List<Component> lore = new ArrayList<>();
         lore.add(c("&a▍ &fCần mua &a" + can + "× &f").append(name(m)));
         int pct = can == 0 ? 0 : da * 100 / can;
-        Tip t = Tip.of("").kv("Người đặt", o.getString("ten")).kv("Đơn giá", "&a" + money(gia) + " &8/ món")
-                .kv("Tiến độ", da + "/" + can + " &8(" + pct + "%)").kv("Còn trả", "&a" + money((can - da) * gia))
+        Tip t = Tip.of("").kv("Người đặt", o.getString("ten")).kv("Đơn giá", "&a" + money(gia) + " &7/ món")
+                .kv("Tiến độ", da + "/" + can + " &7(" + pct + "%)").kv("Còn trả", "&a" + money((can - da) * gia))
                 .kv("Hết hạn", o.getBoolean("dong") ? "&7đã đóng" : left(expiresAt(o) - System.currentTimeMillis())).line();
         if (mine) {
             int kho = o.getInt("kho");
@@ -242,7 +242,7 @@ final class Orders implements Listener {
                 t.note("Chưa có hàng giao tới");
             }
             if (!o.getBoolean("dong")) {
-                t.click("Chuột phải", "huỷ đơn &8(/choden huy " + id + ")");
+                t.click("Chuột phải", "huỷ đơn &7(/choden huy " + id + ")");
             }
         } else {
             t.click("Bấm để giao hàng").note("Chỉ nhận đồ thường, không tên, không phù phép");

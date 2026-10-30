@@ -510,7 +510,7 @@ final class Seasons implements Listener {
         ConfigurationSection ev = event();
         // 30/10 rút gọn khung chào: một ý, kèm nút lệnh
         JoinNotes.add(e.getPlayer(), 10, c(name(current()) + (forced() ? "" : " &7(còn " + daysLeft() + " ngày)")
-                + (ev == null ? "" : " &8· &f" + ev.getString("name", ev.getName())) + " ").append(c("&e[/mua]")
+                + (ev == null ? "" : " &7· &f" + ev.getString("name", ev.getName())) + " ").append(c("&e[/mua]")
                 .clickEvent(net.kyori.adventure.text.event.ClickEvent.runCommand("/mua"))));
     }
 

@@ -942,7 +942,7 @@ final class DailyQuests implements Listener {
             }
             int done = data.getInt(key + ".progress." + qid, 0);
             int bars = 10 * Math.min(done, need(q)) / need(q);
-            String bar = "&a" + "▮".repeat(bars) + "&8" + "▮".repeat(10 - bars);
+            String bar = "&a" + "▮".repeat(bars) + "&7" + "▮".repeat(10 - bars);
             p.sendMessage(c((done >= need(q) ? "&a✔ " : "&7• ") + "&f" + title(q) + " " + bar + " &7" + done + "/" + need(q)
                     + (q.rewards().isEmpty() ? "" : " &7→ &a" + String.join("&7, &a", rewards.describe(q.rewards())))));
         }

@@ -387,7 +387,7 @@ final class MediaProgram implements Listener {
         long het = data.getLong(k(u) + ".het");
         Bukkit.getScheduler().runTaskLater(plugin, () -> p.sendMessage(c("&d[Sứ Giả] 7 ngày qua: &f" + s[0] + "/" + minSessions + " buổi&7, &f"
                 + String.format(Locale.ROOT, "%.1f", (s[1] + s[2]) / 60.0) + "/" + fmt(minHours) + " giờ " + (meets(s) ? "&a✔ đạt" : "&e(chưa đạt)")
-                + (het > 0 ? " &7· rank hết hạn " + WHEN.format(Instant.ofEpochMilli(het)) : "") + " &8— live: /sugia live")), 60L);
+                + (het > 0 ? " &7· rank hết hạn " + WHEN.format(Instant.ofEpochMilli(het)) : "") + " &7— live: /sugia live")), 60L);
     }
 
     // ---------------------------------------------------------------- lệnh
@@ -528,7 +528,7 @@ final class MediaProgram implements Listener {
                     long[] st = stats(UUID.fromString(id), now - 7 * DAY, now);
                     s.sendMessage(LEGACY.serialize(c("&f" + n.getString(id + ".ten") + " &7[" + status(UUID.fromString(id)) + "] " + st[0] + " buổi, "
                             + String.format(Locale.ROOT, "%.1f", (st[1] + st[2]) / 60.0) + " giờ (chưa xác minh " + st[2] + "p)"
-                            + (meets(st) ? " &a✔" : " &c✘") + " &8" + n.getString(id + ".kenh"))));
+                            + (meets(st) ? " &a✔" : " &c✘") + " &7" + n.getString(id + ".kenh"))));
                 }
             }
             return true;

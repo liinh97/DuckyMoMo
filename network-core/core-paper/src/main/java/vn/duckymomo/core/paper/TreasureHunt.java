@@ -207,7 +207,7 @@ final class TreasureHunt implements Listener {
         ItemMeta m = it.getItemMeta();
         int rx = (int) Math.round(l.getX() / 50.0) * 50, rz = (int) Math.round(l.getZ() / 50.0) * 50;
         Tip tip = Tip.of("&6⌖ &fBản đồ kho báu").sub(t.name()).desc("Cầm trên tay để dò: lạnh → ấm → nóng").line()
-                .kv("Vùng", z.name()).kv("Quanh toạ độ", "X " + rx + " Z " + rz + " &8(±50)").line()
+                .kv("Vùng", z.name()).kv("Quanh toạ độ", "X " + rx + " Z " + rz + " &7(±50)").line()
                 .click("Tới nơi", "ngồi xuống (Shift) để đào").note("Lính canh sẽ xuất hiện!");
         m.displayName(tip.name());
         m.lore(tip.lore());

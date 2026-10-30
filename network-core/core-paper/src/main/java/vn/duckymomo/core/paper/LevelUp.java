@@ -634,7 +634,7 @@ final class LevelUp implements Listener {
         writeJson();   // trang tài khoản đọc "điểm chưa cộng" ở capdo.json (22/10: trước giữ số cũ tới lần lên cấp sau)
         applyStats(p);
         p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 0.7f, 1.4f);
-        p.sendMessage(c("&a✔ " + a.color + a.name + " &abậc " + (t + 1) + ": &f" + effect(a, t + 1) + (statsOff(p) ? " &8(tắt ở thế giới này)" : "")));
+        p.sendMessage(c("&a✔ " + a.color + a.name + " &abậc " + (t + 1) + ": &f" + effect(a, t + 1) + (statsOff(p) ? " &7(tắt ở thế giới này)" : "")));
     }
 
     private void respec(Player p) {
@@ -753,7 +753,7 @@ final class LevelUp implements Listener {
         StringBuilder b = new StringBuilder(color);
         for (int i = 0; i < max; i++) {
             if (i == t) {
-                b.append("&8");
+                b.append("&7");
             }
             b.append('▮');
         }
@@ -767,10 +767,10 @@ final class LevelUp implements Listener {
         h.inv = Bukkit.createInventory(h, 45, c("&0⬆ Thăng Cấp &8· cấp " + lv + "/" + maxLevel));
         Integer nextColor = colors.higherKey(lv);
         h.inv.setItem(4, Tip.of("&6⬆ " + colorOf(lv) + "Cấp " + lv).sub("tối đa " + maxLevel).desc("Tiến độ của bạn trong mùa này").line()
-                .kv("Màu cấp", colorOf(lv) + "■■■ &8" + (nextColor == null ? "(màu cao nhất)"
+                .kv("Màu cấp", colorOf(lv) + "■■■ &7" + (nextColor == null ? "(màu cao nhất)"
                         : "· cấp " + nextColor + " đổi sang " + colors.get(nextColor) + "■■■"))
-                .kv("Điểm thuộc tính", "&e" + freePoints(u) + " &7chưa dùng &8(" + totalPoints(lv) + " tổng)")
-                .kv("Điểm hạ gục", count(killPts(u)) + " &8(quái +" + mobPoints + ", người +" + playerPoints + ")")
+                .kv("Điểm thuộc tính", "&e" + freePoints(u) + " &7chưa dùng &7(" + totalPoints(lv) + " tổng)")
+                .kv("Điểm hạ gục", count(killPts(u)) + " &7(quái +" + mobPoints + ", người +" + playerPoints + ")")
                 .kv("Giờ chơi", time(hours(u), false))
                 .gap().note("Mỗi cấp +" + pointsPerLevel + " điểm, mỗi " + milestoneEvery + " cấp thưởng thêm " + milestonePoints
                         + ". Cấp " + maxLevel + " có " + totalPoints(maxLevel) + " điểm: đủ max " + totalPoints(maxLevel) / (maxTier * (maxTier + 1) / 2) + " thuộc tính.")
@@ -780,9 +780,9 @@ final class LevelUp implements Listener {
             boolean hOk = hours(u) >= hoursFor(next), kOk = killPts(u) >= killsFor(next);
             boolean all = mOk && hOk && kOk;
             Tip t = Tip.of((all ? "&a⬆ " : "&e⬆ ") + "&fLên cấp " + next).accent(all ? "&a" : "&e").head("Điều kiện")
-                    .item(mark(mOk) + money(VaultEconomy.available() ? VaultEconomy.balance(p) : 0) + "&7/" + money(moneyFor(next)) + " &8(trả khi lên)")
-                    .item(mark(kOk) + count(killPts(u)) + "&7/" + count(killsFor(next)) + " điểm hạ gục &8(tổng)")
-                    .item(mark(hOk) + time(hours(u), false) + "&7/" + time(hoursFor(next), true) + " chơi &8(tổng trong mùa)")
+                    .item(mark(mOk) + money(VaultEconomy.available() ? VaultEconomy.balance(p) : 0) + "&7/" + money(moneyFor(next)) + " &7(trả khi lên)")
+                    .item(mark(kOk) + count(killPts(u)) + "&7/" + count(killsFor(next)) + " điểm hạ gục &7(tổng)")
+                    .item(mark(hOk) + time(hours(u), false) + "&7/" + time(hoursFor(next), true) + " chơi &7(tổng trong mùa)")
                     .gap().head("Thưởng").item("&e+" + (totalPoints(next) - totalPoints(lv)) + " điểm thuộc tính");
             if (milestoneEvery > 0 && next % milestoneEvery == 0) {
                 t.item("&6Quà mốc cấp " + next);
@@ -820,7 +820,7 @@ final class LevelUp implements Listener {
             }
             if (t < maxTier) {
                 boolean can = freePoints(u) >= t + 1;
-                tip.kv("Bậc " + (t + 1), "&f" + effect(a, t + 1) + " &8· " + (can ? "&e" : "&c") + (t + 1) + " điểm").line();
+                tip.kv("Bậc " + (t + 1), "&f" + effect(a, t + 1) + " &7· " + (can ? "&e" : "&c") + (t + 1) + " điểm").line();
                 if (can) {
                     tip.click("Bấm để nâng");
                 } else {
@@ -886,7 +886,7 @@ final class LevelUp implements Listener {
                 boolean lvOk = level(u) >= ti.level();
                 boolean mOk = VaultEconomy.available() && VaultEconomy.has(p, ti.cost());
                 t.head(n > 1 ? "Mua bậc " + (have + 1) : "Điều kiện")
-                        .item(mark(lvOk) + "Thăng Cấp " + ti.level() + " &8(đang " + level(u) + ")")
+                        .item(mark(lvOk) + "Thăng Cấp " + ti.level() + " &7(đang " + level(u) + ")")
                         .item(mark(mOk) + money(ti.cost())).line();
                 if (lvOk && mOk) {
                     t.click("Bấm để mua");

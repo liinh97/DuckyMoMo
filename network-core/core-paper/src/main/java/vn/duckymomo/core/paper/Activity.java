@@ -281,7 +281,7 @@ final class Activity implements Listener {
         UUID id = target.getUniqueId();
         double week = weekHours(id);
         boolean active = week >= activeHoursPerWeek;
-        InfoMenu m = InfoMenu.of("&6⌚ Giờ chơi thật &8· &f" + target.getName()).accent(org.bukkit.Material.ORANGE_STAINED_GLASS_PANE);
+        InfoMenu m = InfoMenu.of("&6⌚ Giờ chơi thật &7· &f" + target.getName()).accent(org.bukkit.Material.ORANGE_STAINED_GLASS_PANE);
         Tip top = Tip.of("&6⌚ &fGiờ chơi thật của " + target.getName()).accent("&6").desc("Không tính lúc đứng yên (AFK).")
                 .kv("Trong mùa", String.format(Locale.ROOT, "&e%.1f giờ", totalHours(id)))
                 .kv("7 ngày qua", String.format(Locale.ROOT, "&e%.1f giờ", week)).line()

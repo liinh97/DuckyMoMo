@@ -1039,7 +1039,7 @@ final class WildGates implements Listener {
                     Location c = center(gid);
                     Town t = owner(gid);
                     String xyz = c == null ? "?" : c.getBlockX() + " " + c.getBlockY() + " " + c.getBlockZ();
-                    Component line = c("&d" + gid + " &8— &f" + xyz + " &7· " + data.getString(g(gid) + "kieu") + " · ★" + data.getInt(g(gid) + "bac", 1)
+                    Component line = c("&d" + gid + " &7— &f" + xyz + " &7· " + data.getString(g(gid) + "kieu") + " · ★" + data.getInt(g(gid) + "bac", 1)
                             + " · " + data.getString(g(gid) + "dungeon") + " · " + (found(gid) ? "tìm bởi " + data.getString(g(gid) + "tim-boi") : "chưa ai tìm")
                             + (t == null ? "" : " · chủ " + t.getName()));
                     if (c != null) {
@@ -1066,7 +1066,7 @@ final class WildGates implements Listener {
             String state = !found(gid) ? "&7chưa ai tìm ra · " + "★".repeat(Math.max(1, data.getInt(g(gid) + "bac", 1))) + " &7" + data.getString(g(gid) + "tin-don", "")
                     : "&7tìm bởi &f" + data.getString(g(gid) + "tim-boi") + " &7· " + (t == null ? "&ađất hoang, vào tự do"
                     : "&fthị trấn " + t.getName() + (data.getBoolean(g(gid) + "dong") ? " &c(đóng)" : " &7· phí " + money(data.getDouble(g(gid) + "phi", 0))));
-            s.sendMessage(c("  &d" + gid + " &8— &7" + (found(gid) ? dungeonName(gid) + " &8· " : "") + state));
+            s.sendMessage(c("  &d" + gid + " &7— &7" + (found(gid) ? dungeonName(gid) + " &7· " : "") + state));
         }
         if (gateIds().isEmpty()) {
             s.sendMessage(c("  &7Chưa có cổng nào xuất hiện."));
@@ -1089,7 +1089,7 @@ final class WildGates implements Listener {
             Town t = owner(gid);
             boolean f = found(gid);
             int bac = Math.max(1, data.getInt(g(gid) + "bac", 1));
-            Tip tip = Tip.of((f ? "&d" + dungeonName(gid) : "&7???") + " &8#" + gid).sub("★".repeat(bac)).accent("&d");
+            Tip tip = Tip.of((f ? "&d" + dungeonName(gid) : "&7???") + " &7#" + gid).sub("★".repeat(bac)).accent("&d");
             if (!f) {
                 tip.desc("Chưa ai tìm ra").line().kv("Tin đồn", "&7" + data.getString(g(gid) + "tin-don", "không rõ"));
             } else {

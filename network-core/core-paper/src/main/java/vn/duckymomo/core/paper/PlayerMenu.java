@@ -71,8 +71,12 @@ final class PlayerMenu implements Listener {
         }
     }
 
+    /** Nhóm /menu người chơi vừa bấm nút trong đó (nút "Về menu" ở menu tính năng quay lại đúng nhóm này). */
+    private static final Map<java.util.UUID, String> LAST_GROUP = new java.util.concurrent.ConcurrentHashMap<>();
+
     PlayerMenu(JavaPlugin plugin, ConfigurationSection cfg) {
         this.plugin = plugin;
+        MenuFrame.BACK_KEY = new org.bukkit.NamespacedKey(plugin, "ve_menu");
         this.title = cfg.getString("title", "&0Menu");
         this.rows = Math.max(1, Math.min(6, cfg.getInt("rows", 5)));
         this.swapHand = cfg.getBoolean("shift-f", true);
@@ -314,11 +318,38 @@ final class PlayerMenu implements Listener {
         } else if ("close".equals(what)) {
             p.closeInventory();
         } else if (what instanceof Button b) {
+            if (h.group != null && !h.group.hidden()) {
+                LAST_GROUP.put(p.getUniqueId(), h.group.id());
+            } else if (h.group == null) {
+                LAST_GROUP.remove(p.getUniqueId());
+            }
             if (b.open().isEmpty()) {
                 p.closeInventory();
             }
             Bukkit.getScheduler().runTask(plugin, () -> run(p, b));
         }
+    }
+
+    /** Nút "⬅ Về menu" (MenuFrame / InfoMenu) ở bất kỳ menu nào: mở lại nhóm /menu vừa vào, không có thì menu chính. */
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onBack(InventoryClickEvent e) {
+        if (MenuFrame.BACK_KEY == null || !(e.getWhoClicked() instanceof Player p) || e.getClickedInventory() != e.getView().getTopInventory()) {
+            return;
+        }
+        ItemStack it = e.getCurrentItem();
+        if (it == null || !it.hasItemMeta() || !it.getItemMeta().getPersistentDataContainer().has(MenuFrame.BACK_KEY)) {
+            return;
+        }
+        e.setCancelled(true);
+        String gid = LAST_GROUP.get(p.getUniqueId());
+        Bukkit.getScheduler().runTask(plugin, () -> {
+            Group g = gid == null ? null : groups.stream().filter(x -> x.id().equals(gid)).findFirst().orElse(null);
+            if (g != null) {
+                openGroup(p, g);
+            } else {
+                open(p);
+            }
+        });
     }
 
     @EventHandler

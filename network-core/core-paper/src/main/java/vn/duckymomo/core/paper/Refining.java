@@ -282,6 +282,7 @@ final class Refining implements Listener {
             h.slots.put(slot, d);
             i++;
         }
+        MenuFrame.paint(h.inv, Material.LIGHT_BLUE_STAINED_GLASS_PANE);   // 30/10: thêm nút Về menu ở góc
         p.openInventory(h.inv);
     }
 
@@ -302,17 +303,17 @@ final class Refining implements Listener {
         ItemMeta meta = it.getItemMeta();
         List<Component> lore = meta.lore() == null ? new ArrayList<>() : new ArrayList<>(meta.lore());
         lore.add(Tip.c(Tip.LINE));
-        lore.add(Tip.c("&8• &dNguyên liệu cần:"));
+        lore.add(Tip.c("&7• &dNguyên liệu cần:"));
         boolean ok = true;
         for (Map.Entry<String, Integer> in : d.recipe().entrySet()) {
             int have = count(p, in.getKey());
             boolean enough = have >= in.getValue();
             ok &= enough;
-            lore.add(Tip.c("  &8▸ " + (enough ? "&a" : "&c") + in.getValue() + " &f").append(ingredientName(in.getKey()).color(null).decoration(TextDecoration.ITALIC, false))
-                    .append(Tip.c(" &8(có " + have + ")")));
+            lore.add(Tip.c("  &7▸ " + (enough ? "&a" : "&c") + in.getValue() + " &f").append(ingredientName(in.getKey()).color(null).decoration(TextDecoration.ITALIC, false))
+                    .append(Tip.c(" &7(có " + have + ")")));
         }
         if (d.sell() > 0) {
-            lore.add(Tip.c("&8• &7Bán cho server: &6" + money(d.sell())));
+            lore.add(Tip.c("&7• &7Bán cho server: &6" + money(d.sell())));
         }
         lore.add(Tip.c(Tip.LINE));
         if (ok) {

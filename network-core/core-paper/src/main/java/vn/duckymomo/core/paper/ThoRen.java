@@ -447,7 +447,7 @@ final class ThoRen implements Listener {
             int need = num(e.getValue()).intValue();
             long have = have(p, e.getKey());
             ok &= have >= need;
-            add.add((have >= need ? "&a✔ &7" : "&c✘ &7") + label(e.getKey(), need) + " &8(" + fmt(have) + ")");
+            add.add((have >= need ? "&a✔ &7" : "&c✘ &7") + label(e.getKey(), need) + " &7(" + fmt(have) + ")");
         }
         add.add(ok ? "&e➜ Bấm để đổi" : "&c✘ Chưa đủ");
         it.editMeta(meta -> {
@@ -576,7 +576,7 @@ final class ThoRen implements Listener {
     /** Chữ nổi trên đầu NPC quầy (dòng thấp nhất ở độ cao base): tên + mô tả + "(bấm vào để mở)", hoặc chỉ tên nếu chi-ten: true. */
     private void labels(org.bukkit.World w, org.bukkit.Location loc, Stall st, double base) {
         String[] lines = st.nameOnly() ? new String[] {st.name()}
-                : new String[] {st.name(), st.sub().isBlank() ? "&7Đổi nguyên liệu" : "&7" + st.sub(), "&8(bấm vào để mở)"};
+                : new String[] {st.name(), st.sub().isBlank() ? "&7Đổi nguyên liệu" : "&7" + st.sub(), "&7(bấm vào để mở)"};
         double y = base + (lines.length - 1) * 0.28;
         for (String line : lines) {
             w.spawn(loc.clone().add(0, y, 0), org.bukkit.entity.ArmorStand.class, a -> {
@@ -838,7 +838,7 @@ final class ThoRen implements Listener {
      */
     private void setMenu(Player p, SetDef set, boolean back, int level) {
         int lv = Math.max(0, Math.min(set.max(), level));
-        InfoMenu m = InfoMenu.of("&6⚒ Rèn " + set.name() + " &8· &e+" + lv + " &8/ +" + set.max()).accent(Material.ORANGE_STAINED_GLASS_PANE);
+        InfoMenu m = InfoMenu.of("&6⚒ Rèn " + set.name() + " &7· &e+" + lv + " &7/ +" + set.max()).accent(Material.ORANGE_STAINED_GLASS_PANE);
         m.top(Tip.of("&6⚒ &fRèn " + set.name() + " &e+" + lv).accent("&6")
                 .desc(set.desc().isBlank() ? "Rê chuột vào từng món để xem đồ và nguyên liệu." : set.desc(),
                         "Nâng +N cần món cùng loại +N-1 (bị lấy đi). Không bao giờ thất bại.")
@@ -914,13 +914,13 @@ final class ThoRen implements Listener {
         if (prev != null) {
             boolean has = hasItem(p, prev);
             ok = has;
-            t.check(has, label(prev) + " &8(bị lấy đi)");
+            t.check(has, label(prev) + " &7(bị lấy đi)");
         }
         for (Map.Entry<String, Object> e : cost(set, piece, lv).entrySet()) {
             int need = num(e.getValue()).intValue();
             long have = have(p, e.getKey());
             ok &= have >= need;
-            t.check(have >= need, label(e.getKey(), need) + " &8(" + fmt(have) + ")");
+            t.check(have >= need, label(e.getKey(), need) + " &7(" + fmt(have) + ")");
         }
         if (ok) {
             t.click("Bấm để rèn");

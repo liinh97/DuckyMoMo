@@ -431,7 +431,7 @@ final class Kham implements Listener {
     private String bar(int energy) {
         int full = (int) Math.ceil(10.0 * Math.max(0, energy) / maxEnergy);
         String col = energy * 100 <= warnPct * maxEnergy ? "&c" : energy * 2 <= maxEnergy ? "&e" : "&a";
-        return col + "▮".repeat(full) + "&8" + "▮".repeat(10 - full);
+        return col + "▮".repeat(full) + "&7" + "▮".repeat(10 - full);
     }
 
     private int pct(int energy) {
@@ -593,7 +593,7 @@ final class Kham implements Listener {
     private String effect(Gem gem, boolean armor, int factor) {
         List<String> s = new ArrayList<>();
         (armor ? gem.armor() : gem.weapon()).forEach((k, v) -> s.add("&a+" + trim(v * factor / 100.0) + "&7" + STAT_VI.getOrDefault(k, " " + k)));
-        return s.isEmpty() ? "&8(không có tác dụng ở loại đồ này)" : String.join("&7, ", s);
+        return s.isEmpty() ? "&7(không có tác dụng ở loại đồ này)" : String.join("&7, ", s);
     }
 
     /** Món có ô mà chưa có khối lore khảm (mới rèn, món xem trước trong menu, đồ cũ): vẽ khối "◇ Ô trống" để biết món có mấy ô
@@ -777,7 +777,7 @@ final class Kham implements Listener {
                 tp.desc("Gốc: " + effect(gem, isArmor(in))).kv("Phẩm", "ngẫu nhiên khi khảm");
             } else {
                 Sock sk = parse(g + ":" + tag);
-                tp.desc(effect(gem, isArmor(in), sk.factor())).kv("Phẩm", tier(sk).color() + tier(sk).name() + " " + sk.factor() + "% &8(ngọc đã tháo)")
+                tp.desc(effect(gem, isArmor(in), sk.factor())).kv("Phẩm", tier(sk).color() + tier(sk).name() + " " + sk.factor() + "% &7(ngọc đã tháo)")
                         .kv("Năng lượng", bar(sk.energy()) + " &f" + pct(sk.energy()) + "%");
             }
             m.add(tp.kv("Đang có", String.valueOf(n)).click("Bấm để khảm").apply(icon != null ? icon : new ItemStack(Material.AMETHYST_SHARD)),
@@ -850,7 +850,7 @@ final class Kham implements Listener {
         Tier t = tier(sk);
         Tip nap = Tip.of("&a⚡ Nạp đầy năng lượng").accent("&a").desc(gem.name() + " " + t.color() + t.name() + " " + sk.factor() + "%&7: năng lượng "
                         + bar(sk.energy()) + " &f" + pct(sk.energy()) + "%")
-                .kv("Cần", "1 " + gem.color() + "Tinh Luyện " + gem.name() + " &8(có " + have + ")&7 + " + money(rechargeCost));
+                .kv("Cần", "1 " + gem.color() + "Tinh Luyện " + gem.name() + " &7(có " + have + ")&7 + " + money(rechargeCost));
         if (sk.energy() >= maxEnergy) {
             nap.deny("Đang đầy");
         } else if (have <= 0) {

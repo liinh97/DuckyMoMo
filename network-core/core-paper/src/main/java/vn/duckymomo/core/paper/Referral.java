@@ -142,7 +142,7 @@ final class Referral implements Listener {
         save();
         List<String> got = new ArrayList<>(rewards.give(r, cfg.getStringList("referrer-rewards")));
         r.playSound(r.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 0.8f, 1.2f);
-        r.sendMessage(Tip.c("&b✉ Một người bạn rủ đã chơi đủ giờ! &7Nhận: &e" + String.join("&7, &e", got) + " &8(đã rủ " + n + " người)"));
+        r.sendMessage(Tip.c("&b✉ Một người bạn rủ đã chơi đủ giờ! &7Nhận: &e" + String.join("&7, &e", got) + " &7(đã rủ " + n + " người)"));
         List<String> mile = cfg.getStringList("milestones." + n);
         if (!mile.isEmpty()) {
             List<String> extra = rewards.give(r, mile);
@@ -201,12 +201,12 @@ final class Referral implements Listener {
             }
             ms.forEach((n, t) -> p.sendMessage(Tip.c("&7• Mốc &f" + n + " người&7: &e" + t)));
         }
-        p.sendMessage(Tip.c("&7Đã rủ: &a" + ok + " người" + (wait > 0 ? " &7· đang chờ đủ giờ: &f" + wait : "") + " &8(/gioithieu top)"));
+        p.sendMessage(Tip.c("&7Đã rủ: &a" + ok + " người" + (wait > 0 ? " &7· đang chờ đủ giờ: &f" + wait : "") + " &7(/gioithieu top)"));
         String k = "ref." + u;
         if (data.contains(k)) {
-            p.sendMessage(Tip.c("&8Bạn được " + data.getString(k + ".byName") + " giới thiệu."));
+            p.sendMessage(Tip.c("&7Bạn được " + data.getString(k + ".byName") + " giới thiệu."));
         } else if (canEnter(p)) {
-            p.sendMessage(Tip.c("&8Bạn mới vào? Gõ &7/gioithieu <tên người rủ>&8 để nhận quà."));
+            p.sendMessage(Tip.c("&7Bạn mới vào? Gõ &7/gioithieu <tên người rủ>&7 để nhận quà."));
         }
     }
 

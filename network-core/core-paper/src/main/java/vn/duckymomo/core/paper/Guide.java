@@ -202,6 +202,7 @@ final class Guide implements Listener {
                     .line().click("Bấm để mở sách").apply(new ItemStack(Material.WRITABLE_BOOK)));
             h.target.put(book, FULL_BOOK);
         }
+        MenuFrame.paint(h.inv, Material.LIGHT_BLUE_STAINED_GLASS_PANE);   // 30/10: khung như /menu
         p.openInventory(h.inv);
     }
 
@@ -211,9 +212,9 @@ final class Guide implements Listener {
         for (String l : it.lines()) {
             int bar = l.indexOf('|');
             if (bar > 0) {
-                t.raw("&e" + l.substring(0, bar).trim() + " &8➜ &f" + l.substring(bar + 1).trim());
+                t.raw("&e" + l.substring(0, bar).trim() + " &7➜ &f" + l.substring(bar + 1).trim());
             } else {
-                t.raw("&8• &f" + l.trim());
+                t.raw("&7• &f" + l.trim());
             }
         }
         if (!it.note().isBlank()) {

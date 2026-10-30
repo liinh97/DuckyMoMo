@@ -862,7 +862,7 @@ final class SkillEnchants implements Listener {
                         c.idx = (c.idx + 1) % 3;
                         StringBuilder sb = new StringBuilder("&7Rút bài: ");
                         for (int i = 0; i < 3; i++) {
-                            sb.append(i == c.idx ? "&f[" + CARD_NAMES[i] + "&f] " : "&8" + CARD_NAMES[i].replaceAll("&.", "") + " ");
+                            sb.append(i == c.idx ? "&f[" + CARD_NAMES[i] + "&f] " : "&7" + CARD_NAMES[i].replaceAll("&.", "") + " ");
                         }
                         p.sendActionBar(LEGACY.deserialize(sb.append("&7· bấm lại để chốt").toString()));
                         p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_HAT, 0.5f, 1.6f);
@@ -914,7 +914,7 @@ final class SkillEnchants implements Listener {
                         reveal(p);
                     }
                 }, dur / 50 + 1);
-                p.sendActionBar(LEGACY.deserialize("&8Tàng hình &7" + fmtSec(value) + " giây · đòn đầu tiên &e+" + (15 + 15 * lv) + "% sát thương"));
+                p.sendActionBar(LEGACY.deserialize("&7Tàng hình &7" + fmtSec(value) + " giây · đòn đầu tiên &e+" + (15 + 15 * lv) + "% sát thương"));
             }
             case "nhay_cao" -> {
                 if (!p.isOnGround()) {
@@ -952,8 +952,8 @@ final class SkillEnchants implements Listener {
                         long held = System.currentTimeMillis() - (long) sl[0];
                         double frac = Math.min(1, held / 1200.0);
                         int bars = (int) Math.round(frac * 10);
-                        p.sendActionBar(LEGACY.deserialize("&aSúng cao su &8[" + (frac >= 1 ? "&e" : "&a") + "▮".repeat(bars) + "&7" + "▮".repeat(10 - bars)
-                                + "&8] &7bấm lần nữa để bật"));
+                        p.sendActionBar(LEGACY.deserialize("&aSúng cao su &7[" + (frac >= 1 ? "&e" : "&a") + "▮".repeat(bars) + "&7" + "▮".repeat(10 - bars)
+                                + "&7] &7bấm lần nữa để bật"));
                         if (held >= 2200) {
                             releaseSling(p);   // giữ quá lâu: tự bật
                             cancel();

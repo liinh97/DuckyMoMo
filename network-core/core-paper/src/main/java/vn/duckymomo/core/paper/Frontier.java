@@ -277,7 +277,7 @@ final class Frontier implements Listener {
 
     private static String bar(double pct, int cells) {
         int on = (int) Math.max(0, Math.min(cells, Math.floor(pct / 100.0 * cells)));
-        return "&a" + "■".repeat(on) + "&8" + "■".repeat(cells - on);
+        return "&a" + "■".repeat(on) + "&7" + "■".repeat(cells - on);
     }
 
     private List<Map.Entry<String, Double>> top(int n) {
@@ -348,14 +348,14 @@ final class Frontier implements Listener {
         for (Goal x : goals) {
             boolean ok = done.contains(x.id());
             double pct = Math.min(100, fund() * 100 / x.need());
-            s.sendMessage(c((ok ? "&a✔ " : x == g ? "&e➤ " : "&8○ ") + "&f" + x.name() + " &7" + (ok ? "(đã mở)"
+            s.sendMessage(c((ok ? "&a✔ " : x == g ? "&e➤ " : "&7○ ") + "&f" + x.name() + " &7" + (ok ? "(đã mở)"
                     : money(x.need()) + " " + bar(pct, 10) + " &f" + String.format(Locale.ROOT, "%.1f", pct) + "%")));
         }
         List<Map.Entry<String, Double>> t = top(5);
         if (!t.isEmpty()) {
             StringBuilder sb = new StringBuilder("&7Góp nhiều nhất: ");
             for (int i = 0; i < t.size(); i++) {
-                sb.append(i == 0 ? "" : "&7, ").append("&f").append(t.get(i).getKey()).append(" &8(").append(money(t.get(i).getValue())).append(")");
+                sb.append(i == 0 ? "" : "&7, ").append("&f").append(t.get(i).getKey()).append(" &7(").append(money(t.get(i).getValue())).append(")");
             }
             s.sendMessage(c(sb.toString()));
         }
@@ -379,7 +379,7 @@ final class Frontier implements Listener {
         for (Goal x : goals) {
             boolean ok = done.contains(x.id());
             double pct = Math.min(100, fund() * 100 / x.need());
-            Tip t = Tip.of((ok ? "&a✔ " : x == g ? "&e➤ " : "&8○ ") + "&f" + x.name()).accent(ok ? "&a" : "&e").line();
+            Tip t = Tip.of((ok ? "&a✔ " : x == g ? "&e➤ " : "&7○ ") + "&f" + x.name()).accent(ok ? "&a" : "&e").line();
             if (ok) {
                 t.check(true, "Đã mở");
             } else {
@@ -401,7 +401,7 @@ final class Frontier implements Listener {
             best.desc("Chưa ai góp");
         } else {
             for (int i = 0; i < tp.size(); i++) {
-                best.raw("&e" + (i + 1) + ". &f" + tp.get(i).getKey() + " &8(" + money(tp.get(i).getValue()) + "&8)");
+                best.raw("&e" + (i + 1) + ". &f" + tp.get(i).getKey() + " &7(" + money(tp.get(i).getValue()) + "&7)");
             }
         }
         m.bar(best.apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.GOLD_INGOT)), null);

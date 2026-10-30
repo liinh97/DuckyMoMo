@@ -153,7 +153,7 @@ final class InfoMenu {
         List<List<Entry>> mine = all.subList(Math.min(all.size(), pg * MAX_ROWS), Math.min(all.size(), (pg + 1) * MAX_ROWS));
         int rows = Math.max(3, mine.size() + 2);
         Holder h = new Holder();
-        Component title = LEGACY.deserialize(titleText + (pages > 1 ? " &8(" + (pg + 1) + "/" + pages + ")" : "")).decoration(TextDecoration.ITALIC, false);
+        Component title = LEGACY.deserialize(titleText + (pages > 1 ? " &7(" + (pg + 1) + "/" + pages + ")" : "")).decoration(TextDecoration.ITALIC, false);
         Inventory inv = Bukkit.createInventory(h, rows * 9, title);
         h.inv = inv;
         ItemStack pane = hidden(new ItemStack(frame));
@@ -182,6 +182,8 @@ final class InfoMenu {
         if (back != null) {
             inv.setItem(base, Tip.of("&7← &fQuay lại").apply(new ItemStack(Material.ARROW)));
             h.actions.put(base, back);
+        } else if (MenuFrame.BACK_KEY != null) {
+            inv.setItem(base, MenuFrame.backItem());   // 30/10: về /menu (PlayerMenu bắt khoá ve_menu)
         }
         if (pg > 0) {
             inv.setItem(base + 3, Tip.of("&e◀ &fTrang trước").sub((pg) + "/" + pages).apply(new ItemStack(Material.SPECTRAL_ARROW)));

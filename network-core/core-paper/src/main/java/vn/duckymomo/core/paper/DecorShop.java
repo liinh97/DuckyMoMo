@@ -84,6 +84,8 @@ final class DecorShop implements Listener {
     private final Leaderboard board;
     private final Predicate<Location> inCapital;
     private final String rankPermission;
+    /** 30/10 chủ server: tạm cho mọi người mở /cuahang (/shop) ở bất cứ đâu, đông người thì tắt (decor-shop.open-anywhere). */
+    private final boolean openAnywhere;
     private final String npcName;
     private final List<Offer> offers = new ArrayList<>();
     private int nextKey;
@@ -104,6 +106,7 @@ final class DecorShop implements Listener {
         this.board = board;
         this.inCapital = inCapital;
         this.rankPermission = c.getString("rank-permission", "duckymomo.cuahang");
+        this.openAnywhere = c.getBoolean("open-anywhere", false);
         this.frameLot = Math.max(1, Math.min(2304, c.getInt("frame-lot", 32)));
         this.npcName = c.getString("npc-name", "&6Cửa hàng Kinh Đô");
         this.offerKey = new NamespacedKey(plugin, "cuahang");
@@ -238,6 +241,10 @@ final class DecorShop implements Listener {
     /** /cuahang: rank ủng hộ, phải đứng trong kinh đô. */
     boolean command(CommandSender s, String[] args) {
         if (!(s instanceof Player p)) {
+            return true;
+        }
+        if (openAnywhere) {
+            openMenu(p);
             return true;
         }
         if (!p.hasPermission(rankPermission)) {
@@ -692,7 +699,7 @@ final class DecorShop implements Listener {
             s.sendMessage(c("&cKhông đặt được dân làng ở đây (có thể WorldGuard chặn sinh mob)."));
             return;
         }
-        String[] lines = {npcName, "&7Mua vật liệu · Bán nông sản, khoáng sản", "&8(bấm vào để mở)"};
+        String[] lines = {npcName, "&7Mua vật liệu · Bán nông sản, khoáng sản", "&7(bấm vào để mở)"};
         double y = 1.6 + (lines.length - 1) * 0.28;
         for (String line : lines) {
             world.spawn(loc.clone().add(0, y, 0), ArmorStand.class, a -> {
@@ -750,10 +757,10 @@ final class DecorShop implements Listener {
         StringBuilder sb = new StringBuilder(o == null ? "&f" + Rewards.vi(en.sellMat().name())
                 : k > 1 ? "&f" + (o.amount() * k) + " × " + Rewards.vi(o.icon().name()) : label(o));
         if (o != null) {
-            sb.append(" &8· &aMua ").append(money(o.price() * k));
+            sb.append(" &7· &aMua ").append(money(o.price() * k));
         }
         if (en.sellMat() != null && worth.containsKey(en.sellMat())) {
-            sb.append(" &8· &eBán ").append(frameLot).append(": ").append(money(worth.get(en.sellMat()) * frameLot));
+            sb.append(" &7· &eBán ").append(frameLot).append(": ").append(money(worth.get(en.sellMat()) * frameLot));
         }
         return sb.toString();
     }
@@ -765,7 +772,7 @@ final class DecorShop implements Listener {
             long n = patternOf.values().stream().filter(pat::equals).count();
             ItemStack g = new ItemStack(o.icon());
             ItemMeta gm = g.getItemMeta();
-            gm.displayName(c("&f" + groupName(pat) + " &7(" + n + " loại) &8· &aMua " + money(o.price()) + "&8/" + o.amount() + " &8· &7bấm để chọn")
+            gm.displayName(c("&f" + groupName(pat) + " &7(" + n + " loại) &7· &aMua " + money(o.price()) + "&7/" + o.amount() + " &7· &7bấm để chọn")
                     .decoration(TextDecoration.ITALIC, false));
             g.setItemMeta(gm);
             return g;

@@ -161,7 +161,7 @@ final class BodyTemp implements Listener {
         m.setMaxStackSize(1);
         m.displayName(Tip.c("&aÔ Lá").decoration(net.kyori.adventure.text.format.TextDecoration.ITALIC, false));
         List<net.kyori.adventure.text.Component> lore = new ArrayList<>();
-        for (String s : List.of("&8▍&7Cầm ở tay chính hoặc tay phụ:", "&8▍&7không ướt khi mưa, đỡ nắng.", "&8• &7Không đặt xuống được")) {
+        for (String s : List.of("&7▍&7Cầm ở tay chính hoặc tay phụ:", "&7▍&7không ướt khi mưa, đỡ nắng.", "&7• &7Không đặt xuống được")) {
             lore.add(Tip.c(s).decoration(net.kyori.adventure.text.format.TextDecoration.ITALIC, false));
         }
         m.lore(lore);
@@ -191,15 +191,15 @@ final class BodyTemp implements Listener {
 
     private void decorate(ItemMeta m, double t) {
         String state = t >= 40 ? "&cđang nóng" : t <= 8 ? "&bđang lạnh" : "&7nguội";
-        m.displayName(Tip.c("&6Đá Ôn Linh &8(" + state + "&8)").decoration(net.kyori.adventure.text.format.TextDecoration.ITALIC, false));
+        m.displayName(Tip.c("&6Đá Ôn Linh &7(" + state + "&7)").decoration(net.kyori.adventure.text.format.TextDecoration.ITALIC, false));
         List<net.kyori.adventure.text.Component> lore = new ArrayList<>();
         for (String s : List.of(
                 "&7Nhiệt độ đá: &f" + Math.round(t) + "°",
-                "&8▍&7Để cạnh lửa / lửa trại / dung nham: đá nóng lên,",
-                "&8▍&7mang theo sưởi ấm khi trời lạnh.",
-                "&8▍&7Để cạnh băng / tuyết: đá lạnh đi, mang theo khi nóng.",
-                "&8▍&7Đá nguội dần về nhiệt độ xung quanh.",
-                "&8• &7Chỉ cần nằm trong túi đồ")) {
+                "&7▍&7Để cạnh lửa / lửa trại / dung nham: đá nóng lên,",
+                "&7▍&7mang theo sưởi ấm khi trời lạnh.",
+                "&7▍&7Để cạnh băng / tuyết: đá lạnh đi, mang theo khi nóng.",
+                "&7▍&7Đá nguội dần về nhiệt độ xung quanh.",
+                "&7• &7Chỉ cần nằm trong túi đồ")) {
             lore.add(Tip.c(s).decoration(net.kyori.adventure.text.format.TextDecoration.ITALIC, false));
         }
         m.lore(lore);
@@ -380,7 +380,7 @@ final class BodyTemp implements Listener {
 
     private static void add(List<String> parts, String what, double v, boolean base) {
         if (parts != null && (base || Math.abs(v) >= 0.5)) {
-            parts.add("&8• &7" + what + ": " + (base ? "&f" + Math.round(v) + "°" : (v > 0 ? "&c+" : "&b") + Math.round(v) + "°"));
+            parts.add("&7• &7" + what + ": " + (base ? "&f" + Math.round(v) + "°" : (v > 0 ? "&c+" : "&b") + Math.round(v) + "°"));
         }
     }
 
@@ -520,8 +520,8 @@ final class BodyTemp implements Listener {
             if (now - warned.getOrDefault(p.getUniqueId(), 0L) > cfg.getLong("tip-minutes", 5) * 60_000L) {
                 warned.put(p.getUniqueId(), now);
                 p.sendMessage(Tip.c(lvl < 0
-                        ? "&b❄ Bạn đang lạnh. &7Vào nhà, lại gần lửa trại, mặc giáp da hoặc mang &6Đá Ôn Linh &7đã hơ nóng. &8(/nhietdo)"
-                        : "&c☀ Bạn đang nóng. &7Vào bóng râm, cầm &aô lá&7, ăn dưa hấu / uống nước, mang &6Đá Ôn Linh &7đã ướp lạnh. &8(/nhietdo)"));
+                        ? "&b❄ Bạn đang lạnh. &7Vào nhà, lại gần lửa trại, mặc giáp da hoặc mang &6Đá Ôn Linh &7đã hơ nóng. &7(/nhietdo)"
+                        : "&c☀ Bạn đang nóng. &7Vào bóng râm, cầm &aô lá&7, ăn dưa hấu / uống nước, mang &6Đá Ôn Linh &7đã ướp lạnh. &7(/nhietdo)"));
             }
         }
         showBar(p, b, w, lvl);
@@ -636,8 +636,8 @@ final class BodyTemp implements Listener {
         double env = environment(p, src[0], src[1], parts);
         ConfigurationSection ev = Seasons.eventNow();
         p.sendMessage(Tip.c(Tip.LINE));
-        p.sendMessage(Tip.c("&6Thân nhiệt &8· &f" + Math.round(b) + "° &7(dễ chịu " + Math.round(cfg.getDouble("cold", 10)) + "–"
-                + Math.round(cfg.getDouble("hot", 35)) + "°)" + (w >= 1 ? " &8· &3ướt " + Math.round(w) + "%" : "")));
+        p.sendMessage(Tip.c("&6Thân nhiệt &7· &f" + Math.round(b) + "° &7(dễ chịu " + Math.round(cfg.getDouble("cold", 10)) + "–"
+                + Math.round(cfg.getDouble("hot", 35)) + "°)" + (w >= 1 ? " &7· &3ướt " + Math.round(w) + "%" : "")));
         if (!affected(p)) {
             p.sendMessage(Tip.c("&7Bạn đang được miễn (người mới, chế độ sáng tạo, hoặc không ở thế giới chính)."));
         }
@@ -645,13 +645,13 @@ final class BodyTemp implements Listener {
             p.sendMessage(Tip.c("&a✔ Bạn đang ở khu an toàn (đất thị trấn / gần warp): thân nhiệt và độ ướt giữ nguyên."));
         }
         p.sendMessage(Tip.c("&7Môi trường quanh bạn: &f" + Math.round(env) + "°"
-                + (ev != null && ev.contains("temperature") ? " &8(" + Seasons.plain(ev.getString("name", "")) + ")" : "")));
+                + (ev != null && ev.contains("temperature") ? " &7(" + Seasons.plain(ev.getString("name", "")) + ")" : "")));
         for (String s : parts) {
             p.sendMessage(Tip.c("  " + s));
         }
-        p.sendMessage(Tip.c("&8▸ &6Đá Ôn Linh&7: chế 4 Đá (thường hoặc trơn) + 4 đá lửa + 1 sắt, xếp ô nào cũng được. Hơ cạnh lửa / ướp cạnh băng rồi mang theo."));
-        p.sendMessage(Tip.c("&8▸ &aÔ lá&7: cầm Lá Nhỏ Giọt (hang Lush, hoặc chế 3 lá cây + 2 que) để không ướt khi mưa, đỡ nắng."));
-        p.sendMessage(Tip.c("&8▸ &7Ấm: súp, lửa trại, giáp da, vào nhà. Mát: dưa hấu, nước, bóng râm, xuống nước."));
+        p.sendMessage(Tip.c("&7▸ &6Đá Ôn Linh&7: chế 4 Đá (thường hoặc trơn) + 4 đá lửa + 1 sắt, xếp ô nào cũng được. Hơ cạnh lửa / ướp cạnh băng rồi mang theo."));
+        p.sendMessage(Tip.c("&7▸ &aÔ lá&7: cầm Lá Nhỏ Giọt (hang Lush, hoặc chế 3 lá cây + 2 que) để không ướt khi mưa, đỡ nắng."));
+        p.sendMessage(Tip.c("&7▸ &7Ấm: súp, lửa trại, giáp da, vào nhà. Mát: dưa hấu, nước, bóng râm, xuống nước."));
         p.sendMessage(Tip.c(Tip.LINE));
         return true;
     }

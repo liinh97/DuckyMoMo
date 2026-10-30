@@ -153,9 +153,9 @@ final class NewbiePath implements Listener {
         int bi = Math.min(data.getInt(k + ".b"), steps.size() - 1);
         Step s = steps.get(bi);
         int dem = data.getInt(k + ".dem");
-        String title = "&eTân thủ " + (bi + 1) + "/" + steps.size() + " &8· &f" + s.name()
+        String title = "&eTân thủ " + (bi + 1) + "/" + steps.size() + " &7· &f" + s.name()
                 + (s.amount() > 1 ? " &7(" + Math.min(dem, s.amount()) + "/" + s.amount() + ")" : "")
-                + (s.rewards().isEmpty() ? "" : " &8· &6+" + String.join(", ", rewards.describe(s.rewards())));
+                + (s.rewards().isEmpty() ? "" : " &7· &6+" + String.join(", ", rewards.describe(s.rewards())));
         BossBar bar = bars.computeIfAbsent(u, x -> {
             BossBar nb = Bukkit.createBossBar("", BarColor.YELLOW, BarStyle.SEGMENTED_10);
             nb.addPlayer(p);
@@ -273,7 +273,7 @@ final class NewbiePath implements Listener {
             }
             if (fresh) {
                 start(p);
-                p.sendMessage(Tip.c("&6✦ Chào mừng tới Đại Lục Sương Mai! &7Làm theo &eđường tân thủ&7 trên đầu màn hình, mỗi bước đều có thưởng. &8(/tanthu)"));
+                p.sendMessage(Tip.c("&6✦ Chào mừng tới Đại Lục Sương Mai! &7Làm theo &eđường tân thủ&7 trên đầu màn hình, mỗi bước đều có thưởng. &7(/tanthu)"));
                 tellStep(p, 0);
             } else if (active(p.getUniqueId())) {
                 refresh(p);
@@ -372,7 +372,7 @@ final class NewbiePath implements Listener {
             case "boqua" -> {
                 int bi = data.getInt(k + ".b");
                 if (bi < steps.size()) {
-                    p.sendMessage(Tip.c("&7Đã bỏ qua: &f" + steps.get(bi).name() + " &8(không có thưởng bước này)"));
+                    p.sendMessage(Tip.c("&7Đã bỏ qua: &f" + steps.get(bi).name() + " &7(không có thưởng bước này)"));
                     advance(p, bi, false);
                 }
             }
@@ -381,11 +381,11 @@ final class NewbiePath implements Listener {
                 p.sendMessage(Tip.c("&6✦ Đường tân thủ &7(" + bi + "/" + steps.size() + " bước)"));
                 for (int i = 0; i < steps.size(); i++) {
                     Step st = steps.get(i);
-                    String mark = i < bi ? "&a✔ " : i == bi ? "&e➜ " : "&8• ";
-                    p.sendMessage(Tip.c(mark + (i <= bi ? "&f" : "&7") + st.name() + (st.rewards().isEmpty() ? "" : " &8(" + String.join(", ", rewards.describe(st.rewards())) + ")")));
+                    String mark = i < bi ? "&a✔ " : i == bi ? "&e➜ " : "&7• ";
+                    p.sendMessage(Tip.c(mark + (i <= bi ? "&f" : "&7") + st.name() + (st.rewards().isEmpty() ? "" : " &7(" + String.join(", ", rewards.describe(st.rewards())) + ")")));
                 }
                 tellStep(p, bi);
-                p.sendMessage(Tip.c("&8Kẹt bước nào: &7/tanthu boqua &8· ẩn thanh: &7/tanthu an"));
+                p.sendMessage(Tip.c("&7Kẹt bước nào: &7/tanthu boqua &7· ẩn thanh: &7/tanthu an"));
             }
         }
         return true;

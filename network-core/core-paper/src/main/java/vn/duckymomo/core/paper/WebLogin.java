@@ -72,7 +72,7 @@ final class WebLogin {
                 .apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.NAME_TAG)), pl -> {
                     pl.closeInventory();
                     pl.sendMessage(c("&7Mã đăng nhập web: ").append(c("&e" + code).clickEvent(ClickEvent.copyToClipboard(code))
-                            .hoverEvent(HoverEvent.showText(c("&7Bấm để sao chép")))).append(c(" &8(hết hạn sau " + minutes + " phút)")));
+                            .hoverEvent(HoverEvent.showText(c("&7Bấm để sao chép")))).append(c(" &7(hết hạn sau " + minutes + " phút)")));
                 });
         m.add(Tip.of("&fCách đăng nhập").accent("&b").line()
                 .item("Mở &f" + url).item("Bấm &fĐăng nhập &7→ &fMã từ game").item("Nhập tên &f" + p.getName() + " &7và mã")

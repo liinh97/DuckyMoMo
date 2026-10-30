@@ -128,7 +128,7 @@ final class DonBuon implements org.bukkit.event.Listener {
             s.sendMessage(c("&cKhông đặt được dân làng ở đây (có thể WorldGuard chặn sinh mob)."));
             return;
         }
-        String[] lines = {"&6✉ Nhà Buôn", "&7Đơn hàng tuần: cần Tinh Luyện, trả hậu", "&8(bấm vào để xem đơn)"};
+        String[] lines = {"&6✉ Nhà Buôn", "&7Đơn hàng tuần: cần Tinh Luyện, trả hậu", "&7(bấm vào để xem đơn)"};
         double y = 1.6 + (lines.length - 1) * 0.28;
         for (String line : lines) {
             world.spawn(loc.clone().add(0, y, 0), org.bukkit.entity.ArmorStand.class, a -> {
@@ -273,7 +273,7 @@ final class DonBuon implements org.bukkit.event.Listener {
             for (Map.Entry<String, Integer> e : o.need().entrySet()) {
                 int have = r == null ? 0 : r.count(p, e.getKey());
                 enough &= have >= e.getValue();
-                t.item((have >= e.getValue() ? "&a" : "&c") + e.getValue() + "× &f" + (r == null ? e.getKey() : LEGACY.serialize(r.nameOf(e.getKey()))) + " &8(có " + have + ")");
+                t.item((have >= e.getValue() ? "&a" : "&c") + e.getValue() + "× &f" + (r == null ? e.getKey() : LEGACY.serialize(r.nameOf(e.getKey()))) + " &7(có " + have + ")");
             }
             t.line().kv("Trả", "&6" + money(pay(o)));
             List<String> ex = rewards.describe(o.extra());

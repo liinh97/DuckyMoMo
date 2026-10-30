@@ -374,8 +374,8 @@ final class PlayRanks implements Listener {
             }
         }
         ItemStack info = Tip.of("&6♛ &fBạn đang là: " + tiers.get(cur).name()).desc("Rank chơi miễn phí, lên bằng cách chơi")
-                .line().kv("Giờ chơi thật", String.format(Locale.ROOT, "%.1f", hours(p)) + " giờ &8(/hoatdong)")
-                .kv("Thăng Cấp", level(p) + " &8(/capdo)").note("Không bán bằng tiền, giờ AFK không tính")
+                .line().kv("Giờ chơi thật", String.format(Locale.ROOT, "%.1f", hours(p)) + " giờ &7(/hoatdong)")
+                .kv("Thăng Cấp", level(p) + " &7(/capdo)").note("Không bán bằng tiền, giờ AFK không tính")
                 .apply(new ItemStack(Material.BOOK));
         h.inv.setItem(4, info);
         MenuFrame.paint(h.inv, Material.LIME_STAINED_GLASS_PANE);
@@ -385,16 +385,16 @@ final class PlayRanks implements Listener {
     private ItemStack icon(Player p, int i, int cur) {
         Tier t = tiers.get(i);
         boolean now = i == cur;
-        Tip tip = Tip.of((now ? "&a♛ " : i < cur ? "&8♛ " : "&e♛ ") + "&f" + t.name()).sub("bậc " + (i + 1)).accent(now ? "&a" : "&e")
+        Tip tip = Tip.of((now ? "&a♛ " : i < cur ? "&7♛ " : "&e♛ ") + "&f" + t.name()).sub("bậc " + (i + 1)).accent(now ? "&a" : "&e")
                 .kv("Tiền tố", t.prefix().isBlank() ? "&7không có" : t.prefix()).line().head("Quyền lợi");
         perkTip(tip, t.perks());
         if (i > 0) {
             tip.gap().head("Yêu cầu");
             if (t.hours() > 0) {
-                tip.check(hours(p) >= t.hours(), "Chơi thật " + fmt(t.hours()) + " giờ &8(đang " + String.format(Locale.ROOT, "%.1f", hours(p)) + ")");
+                tip.check(hours(p) >= t.hours(), "Chơi thật " + fmt(t.hours()) + " giờ &7(đang " + String.format(Locale.ROOT, "%.1f", hours(p)) + ")");
             }
             if (t.level() > 0) {
-                tip.check(level(p) >= t.level(), "Thăng Cấp " + t.level() + " &8(đang " + level(p) + ")");
+                tip.check(level(p) >= t.level(), "Thăng Cấp " + t.level() + " &7(đang " + level(p) + ")");
             }
             if (!t.perm().isBlank()) {
                 tip.check(p.hasPermission(t.perm()), t.permText());
@@ -427,24 +427,24 @@ final class PlayRanks implements Listener {
     /** Quyền lợi (dùng cho bậc danh phận và thẻ rank khác). */
     private void perkTip(Tip t, Perks k) {
         if (k.homes() > 0) {
-            t.item("&a" + k.homes() + "&f nhà &8(/sethome)");
+            t.item("&a" + k.homes() + "&f nhà &7(/sethome)");
         }
-        t.item(k.balo() > 0 ? "&a" + k.balo() + "&f balo, &a" + k.slots() + "&f ô &8(/balo)" : "&7Chưa có balo");
+        t.item(k.balo() > 0 ? "&a" + k.balo() + "&f balo, &a" + k.slots() + "&f ô &7(/balo)" : "&7Chưa có balo");
         if (k.ah() > 0) {
-            t.item("&a" + k.ah() + "&f món treo Chợ đen &8(/choden)");
+            t.item("&a" + k.ah() + "&f món treo Chợ đen &7(/choden)");
         }
         if (k.tpDelay() >= 0) {
-            t.item("Chờ dịch chuyển &a" + k.tpDelay() + "&f giây &8(/home, /tpa, /tpr…)");
+            t.item("Chờ dịch chuyển &a" + k.tpDelay() + "&f giây &7(/home, /tpa, /tpr…)");
         }
         if (k.orders() > 0) {
-            t.item("&a" + k.orders() + "&f đơn thu mua &8(/choden dat)");
+            t.item("&a" + k.orders() + "&f đơn thu mua &7(/choden dat)");
         }
         if (k.skins() > 0) {
-            t.item("Tủ skin &a" + k.skins() + "&f ô &8(/tuskin)");
+            t.item("Tủ skin &a" + k.skins() + "&f ô &7(/tuskin)");
         } else if (tiers.stream().anyMatch(x -> x.perks() == k)) {
             // 29/10 chủ server: bậc chưa được đổi skin thì tủ skin = 0, ghi rõ bậc mở (mục tiêu lên bậc)
             tiers.stream().filter(x -> x.perks().skins() > 0).findFirst()
-                    .ifPresent(x -> t.item("&7Tủ skin: mở khi lên &f" + x.name() + " &8(đổi skin, /tuskin)"));
+                    .ifPresent(x -> t.item("&7Tủ skin: mở khi lên &f" + x.name() + " &7(đổi skin, /tuskin)"));
         }
         if (k.spin() > 0) {
             t.item("Vé gacha online nhanh hơn &a" + k.spin() + "%");

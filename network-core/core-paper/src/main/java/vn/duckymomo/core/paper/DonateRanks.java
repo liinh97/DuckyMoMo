@@ -76,8 +76,8 @@ final class DonateRanks implements Listener {
         }
         this.skinSync = c.getBoolean("skin-sync", false);
         this.howToBuy = c.getString("how-to-buy", "&7Liên hệ admin để mua rank.");
-        this.joinMsg = c.getString("join-message", "&8[&a+&8] {prefix}&f{player}");
-        this.quitMsg = c.getString("quit-message", "&8[&c-&8] {prefix}&f{player}");
+        this.joinMsg = c.getString("join-message", "&7[&a+&7] {prefix}&f{player}");
+        this.quitMsg = c.getString("quit-message", "&7[&c-&7] {prefix}&f{player}");
         this.rankJoinMsg = c.getString("rank-join-message", "&e✦ {tiercolor}{tier} &f{player} &evừa giá lâm!");
     }
 
@@ -247,7 +247,7 @@ final class DonateRanks implements Listener {
             s.sendMessage(c("&eBước cuối: ").append(c("&a[Bấm để tạo skin]")
                     .clickEvent(net.kyori.adventure.text.event.ClickEvent.runCommand("/sr createcustom " + name + " " + url))
                     .hoverEvent(net.kyori.adventure.text.event.HoverEvent.showText(c("&7Chạy /sr createcustom " + name + " " + url
-                            + "\n&8(lệnh của proxy nên phải bấm từ trong game)")))));
+                            + "\n&7(lệnh của proxy nên phải bấm từ trong game)")))));
             if (!(s instanceof Player)) {
                 s.sendMessage(c("&7(Đang gõ từ console: vào game gõ &f/sr createcustom " + name + " " + url + "&7)"));
             }
@@ -420,7 +420,7 @@ final class DonateRanks implements Listener {
             }
             if (!t.prices().isEmpty()) {
                 tip.gap().head("Giá (quy ra Vàng)");
-                t.prices().forEach(pr -> tip.raw("  &8▸ &e" + pr));
+                t.prices().forEach(pr -> tip.raw("  &7▸ &e" + pr));
             }
             tip.line();
             if (have) {
@@ -456,10 +456,10 @@ final class DonateRanks implements Listener {
             s.sendMessage(c(t.color() + t.name() + "&7: " + String.join("&7, ", t.perks().stream().map(x -> "&f" + x).toList())));
             List<String> sk = tierSkins(t.group());
             if (!sk.isEmpty()) {
-                s.sendMessage(c("   &7Skin độc quyền (/skins): &f" + String.join(", ", sk) + " &8(+ skin của bậc dưới)"));
+                s.sendMessage(c("   &7Skin độc quyền (/skins): &f" + String.join(", ", sk) + " &7(+ skin của bậc dưới)"));
             }
             if (!t.prices().isEmpty()) {
-                s.sendMessage(c("   &7Giá (quy ra Vàng): &e" + String.join("&8 | &e", t.prices())));
+                s.sendMessage(c("   &7Giá (quy ra Vàng): &e" + String.join("&7 | &e", t.prices())));
             }
         }
         s.sendMessage(c("&7Bậc cao có đủ quyền của các bậc thấp hơn."));

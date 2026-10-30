@@ -280,6 +280,7 @@ groups:
     settings:
       - { key: decor_enabled, label: "Bật cửa hàng", type: select, file: plugins/DuckyMoMoCore/config.yml, path: decor-shop.enabled,
           options: [ { value: true, label: Bật }, { value: false, label: Tắt } ] }
+      - { key: decor_open_anywhere, label: "Ai cũng mở /shop ở bất cứ đâu (tạm khi vắng người)", type: select, file: plugins/DuckyMoMoCore/config.yml, path: decor-shop.open-anywhere, options: [ { value: true, label: "Bật: ai cũng mở" }, { value: false, label: "Tắt: rank ủng hộ, trong kinh đô" } ] }
       - { key: decor_categories, label: "Danh mục và món bán", type: shopcats, file: plugins/DuckyMoMoCore/config.yml, path: decor-shop.categories,
           note: "Mỗi khung là một danh mục trong /cuahang, món bên trong là món server BÁN ở danh mục đó (giá mỗi cái phải cao hơn giá /sell). \"Server thu mua\": vật liệu người chơi bán được ở danh mục này (giá theo Bảng giá bán /sell; *_LOG = mọi khúc gỗ). Ô = vị trí trong menu 6 hàng (0–44)." }
       - { key: decor_titles, label: "Danh hiệu bán bằng xu", type: shoptitles, file: plugins/DuckyMoMoCore/config.yml, path: decor-shop.titles,

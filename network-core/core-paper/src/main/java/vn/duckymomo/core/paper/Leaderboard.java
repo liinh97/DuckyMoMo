@@ -550,7 +550,7 @@ final class Leaderboard implements Listener {
         Tip a = Tip.of("&d♛ &fBá Chủ").sub("quốc gia").accent("&d").desc("Điểm chiến tranh của quốc gia").line();
         int i = 1;
         for (Map.Entry<String, Integer> e : topNations(10)) {
-            a.raw((i <= 3 ? "&6" : "&7") + i++ + ". &f" + e.getKey() + " &8— &e" + e.getValue() + " điểm");
+            a.raw((i <= 3 ? "&6" : "&7") + i++ + ". &f" + e.getKey() + " &7— &e" + e.getValue() + " điểm");
         }
         if (i == 1) {
             a.note("Chưa có điểm");
@@ -559,7 +559,7 @@ final class Leaderboard implements Listener {
         Tip b = Tip.of("&c⚔ &fChiến Thần").accent("&c").desc("Điểm đánh trận của từng người").line();
         i = 1;
         for (Map.Entry<String, Integer> e : topWarriors(10)) {
-            b.raw((i <= 3 ? "&6" : "&7") + i++ + ". &f" + e.getKey() + " &8— &e" + e.getValue() + " điểm");
+            b.raw((i <= 3 ? "&6" : "&7") + i++ + ". &f" + e.getKey() + " &7— &e" + e.getValue() + " điểm");
         }
         if (i == 1) {
             b.note("Chưa có điểm");
@@ -568,7 +568,7 @@ final class Leaderboard implements Listener {
         Tip r = Tip.of("&e⛃ &fĐại Phú Hộ").accent("&e").desc("Người giàu nhất").line();
         i = 1;
         for (Map.Entry<String, Double> e : topRich(10)) {
-            r.raw((i <= 3 ? "&6" : "&7") + i++ + ". &f" + e.getKey() + " &8— &e" + String.format(Locale.ROOT, "%,.0f xu", e.getValue()).replace(',', '.'));
+            r.raw((i <= 3 ? "&6" : "&7") + i++ + ". &f" + e.getKey() + " &7— &e" + String.format(Locale.ROOT, "%,.0f xu", e.getValue()).replace(',', '.'));
         }
         m.add(r.apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.GOLD_BLOCK)));
         m.add(Tip.of("&b⌂ &fKiến Trúc Sư").accent("&b").desc("Bình chọn công trình đẹp nhất (tuần " + cfg.getInt("vote-week", 10) + " của mùa)").line()

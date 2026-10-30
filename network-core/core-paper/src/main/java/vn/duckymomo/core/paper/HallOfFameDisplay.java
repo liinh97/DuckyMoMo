@@ -163,7 +163,7 @@ final class HallOfFameDisplay {
     private void build(Anchor a, JsonObject s) {
         String season = s == null ? a.season() : str(s, "mua");
         boolean tam = s != null && "tam".equals(str(s, "trang_thai"));
-        String tag = " &8· Mùa " + season + (tam ? " (đang diễn ra, tạm tính)" : "");
+        String tag = " &7· Mùa " + season + (tam ? " (đang diễn ra, tạm tính)" : "");
         List<String> lines = new ArrayList<>();
         List<String[]> heads = new ArrayList<>();   // {tên, uuid}
         switch (a.cat()) {
@@ -194,7 +194,7 @@ final class HallOfFameDisplay {
                                 JsonObject m = ms.get(k).getAsJsonObject();
                                 List<String> rl = new ArrayList<>();
                                 arr(m, "chuc_vu").forEach(x -> rl.add(x.getAsString()));
-                                mem.add("&f" + str(m, "ten") + (rl.isEmpty() ? "" : " &8(" + String.join(", ", rl) + ")"));
+                                mem.add("&f" + str(m, "ten") + (rl.isEmpty() ? "" : " &7(" + String.join(", ", rl) + ")"));
                             }
                             if (ms.size() > 30) {
                                 mem.add("&7và " + (ms.size() - 30) + " người nữa");
@@ -412,7 +412,7 @@ final class HallOfFameDisplay {
             s.sendMessage(c("&eMùa " + e.getKey() + ("tam".equals(str(e.getValue(), "trang_thai")) ? " &7(đang diễn ra)" : "") + "&7: Bá Chủ &f"
                     + (ns.isEmpty() ? "chưa có" : str(ns.get(0).getAsJsonObject(), "ten"))));
         }
-        s.sendMessage(c("&7Tới quảng trường: &f/danhvong tp" + (admin ? " &8· Admin: /vinhdanh dat <mùa|moinhat> <" + String.join("|", CATS)
+        s.sendMessage(c("&7Tới quảng trường: &f/danhvong tp" + (admin ? " &7· Admin: /vinhdanh dat <mùa|moinhat> <" + String.join("|", CATS)
                 + "> · xoa · lammoi" : "")));
         return true;
     }

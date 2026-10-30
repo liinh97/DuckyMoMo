@@ -229,7 +229,7 @@ final class VoteRewards implements Listener {
                 tp.desc("Chưa ai vote tháng này");
             }
             for (int i = 0; i < Math.min(10, rows.size()); i++) {
-                tp.raw((i < 3 ? "&6" : "&7") + (i + 1) + ". &f" + rows.get(i).getKey() + " &8— &a" + rows.get(i).getValue() + " lượt");
+                tp.raw((i < 3 ? "&6" : "&7") + (i + 1) + ". &f" + rows.get(i).getKey() + " &7— &a" + rows.get(i).getValue() + " lượt");
             }
             m.bar(tp.apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.GOLD_INGOT)), null);
             m.open(pm);

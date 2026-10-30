@@ -287,7 +287,7 @@ final class FragmentShop implements Listener, Rewards.FragmentGiver {
         for (Map.Entry<String, Integer> e : o.cost().entrySet()) {
             int have = count(p, e.getKey());
             enough &= have >= e.getValue();
-            t.item((have >= e.getValue() ? "&a" : "&c") + e.getValue() + " &f" + costName(e.getKey()) + " &8(có " + have + ")");
+            t.item((have >= e.getValue() ? "&a" : "&c") + e.getValue() + " &f" + costName(e.getKey()) + " &7(có " + have + ")");
         }
         boolean full = o.limit() > 0 && used(p, o) >= o.limit();
         if (o.limit() > 0) {

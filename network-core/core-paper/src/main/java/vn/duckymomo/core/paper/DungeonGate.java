@@ -773,7 +773,7 @@ final class DungeonGate implements Listener {
         ItemMeta m = it.getItemMeta();
         Tip t = Tip.of("&d✦ &fVé Vận Mệnh").sub(d.name()).accent("&d").desc("Mở cổng dungeon may mắn " + d.name()).line()
                 .kv("Dùng", "&e/dungeon vao " + d.id())
-                .kv("Mở cổng", d.rollChance() < 100 ? "&c" + Math.round(d.rollChance()) + "% &8(trượt thì vé tan biến)" : "&achắc chắn");
+                .kv("Mở cổng", d.rollChance() < 100 ? "&c" + Math.round(d.rollChance()) + "% &7(trượt thì vé tan biến)" : "&achắc chắn");
         m.displayName(t.name());
         m.lore(t.lore());
         m.setEnchantmentGlintOverride(true);
@@ -1169,7 +1169,7 @@ final class DungeonGate implements Listener {
                     }
                     Location l = spot(h.id());
                     if (l == null) {
-                        s.sendMessage(c("  &d" + h.name() + " &8— &cchưa có chỗ &7(/dungeon datan " + h.id() + " ngaunhien)"));
+                        s.sendMessage(c("  &d" + h.name() + " &7— &cchưa có chỗ &7(/dungeon datan " + h.id() + " ngaunhien)"));
                         continue;
                     }
                     String xyz = l.getBlockX() + " " + l.getBlockY() + " " + l.getBlockZ();
@@ -1180,7 +1180,7 @@ final class DungeonGate implements Listener {
                             n += data.getStringList("tim." + k).contains(h.id()) ? 1 : 0;
                         }
                     }
-                    s.sendMessage(c("  &d" + h.name() + " &8— &f" + l.getWorld().getName() + " " + xyz + " &7· " + n + " người đã tìm ra" + (h.nightOnly() ? " · chỉ lộ ban đêm" : ""))
+                    s.sendMessage(c("  &d" + h.name() + " &7— &f" + l.getWorld().getName() + " " + xyz + " &7· " + n + " người đã tìm ra" + (h.nightOnly() ? " · chỉ lộ ban đêm" : ""))
                             .append(c(" &a[Tới]").clickEvent(ClickEvent.runCommand("/minecraft:tp @s " + xyz))
                                     .hoverEvent(HoverEvent.showText(c("&7Dịch chuyển tới " + xyz)))));
                 }
@@ -1286,7 +1286,7 @@ final class DungeonGate implements Listener {
         }
         if (!problems.isEmpty()) {
             p.sendMessage(c("&cChưa vào được &f" + d.name() + "&c:"));
-            problems.forEach(x -> p.sendMessage(c("  &8• &7" + x)));
+            problems.forEach(x -> p.sendMessage(c("  &7• &7" + x)));
             return;
         }
         boolean ticketType = d.type().equals("ticket") || d.type().equals("luck");
@@ -1605,7 +1605,7 @@ final class DungeonGate implements Listener {
             Tip t = Tip.of("&d" + TYPE_VI.get(type)).sub(list.size() + " cổng").accent("&d").desc(TYPE_HOW.getOrDefault(type, "")).line();
             for (Dg d : list) {
                 boolean hid = type.equals("hidden") && !found(u, d.id());
-                t.raw((doneFor(u, d) ? "&a✔ " : "&8○ ") + (hid ? "&7???" : "&f" + d.name()) + (d.level().isBlank() ? "" : " &7cấp " + d.level())
+                t.raw((doneFor(u, d) ? "&a✔ " : "&7○ ") + (hid ? "&7???" : "&f" + d.name()) + (d.level().isBlank() ? "" : " &7cấp " + d.level())
                         + (d.id().equals(weekly) ? " &6★" : ""));
             }
             t.line().click("Bấm để xem từng cổng");
@@ -1750,7 +1750,7 @@ final class DungeonGate implements Listener {
                 s.sendMessage(c("&d" + TYPE_VI.get(d.type()) + ":"));
             }
             boolean inst = !hooked || installed(d.id());
-            String lv = d.level().isBlank() ? "" : " &8[cấp " + d.level() + "]";
+            String lv = d.level().isBlank() ? "" : " &7[cấp " + d.level() + "]";
             String state;
             if (!inst) {
                 state = "&7chưa cài";
@@ -1773,7 +1773,7 @@ final class DungeonGate implements Listener {
             }
             if (d.type().equals("hidden") && u != null && !found(u, d.id())) {
                 hiddenLeft++;
-                s.sendMessage(c("  &8• &7??? " + lv + " &8— " + state));
+                s.sendMessage(c("  &7• &7??? " + lv + " &7— " + state));
                 continue;
             }
             List<String> dk = condText(d);
@@ -1781,7 +1781,7 @@ final class DungeonGate implements Listener {
             List<String> rec = data.getStringList("kyluc." + d.id());
             String hover = (dk.isEmpty() ? "" : "\n&eĐiều kiện: &f" + String.join(", ", dk))
                     + (rec.isEmpty() ? "" : "\n&b⏱ Kỷ lục: &f" + clock(Long.parseLong(rec.get(0).split(";", 2)[0])) + " &7(" + rec.get(0).split(";", 2)[1] + ")");
-            Component line = c("  &8• &f" + d.name() + lv + star + " &8— " + state + (dk.isEmpty() ? "" : " &e⚠"));
+            Component line = c("  &7• &f" + d.name() + lv + star + " &7— " + state + (dk.isEmpty() ? "" : " &e⚠"));
             if (inst && !d.type().equals("gate")) {
                 String cmd = d.type().equals("ticket") && u != null && tickets(u, d.id()) == 0 ? "/dungeon mua " + d.id()
                         : d.type().equals("server") && !serverOpen(d.id()) ? "/dungeon gop " + d.id() + " " : "/dungeon vao " + d.id();
@@ -1793,7 +1793,7 @@ final class DungeonGate implements Listener {
         if (hiddenLeft > 0) {
             s.sendMessage(c("&7Còn &d" + hiddenLeft + " &7dungeon ẩn chưa tìm ra: lối vào giấu đâu đó trên bản đồ, để ý hạt tím lấp lánh."));
         }
-        s.sendMessage(c("&7Rê chuột lên tên: điều kiện (&e⚠&8) và kỷ lục tốc độ. Lệnh: /dungeon vao|mua|gop <mã>"));
+        s.sendMessage(c("&7Rê chuột lên tên: điều kiện (&e⚠&7) và kỷ lục tốc độ. Lệnh: /dungeon vao|mua|gop <mã>"));
     }
 
     private String until(String id) {

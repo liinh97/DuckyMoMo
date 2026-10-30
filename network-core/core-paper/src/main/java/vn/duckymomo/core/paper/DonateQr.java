@@ -239,8 +239,9 @@ final class DonateQr implements Listener {
             ItemStack shop = Tip.of("&6⛃ &fCửa hàng Vàng").sub(num(w, "so_du") + " Vàng").accent("&6")
                     .desc("Tiêu Vàng bạn đang có").gap().head("Gồm").item("Rank ủng hộ").item("Đồ trang trí, hiệu ứng").item("Đổi tên màu")
                     .line().click("Bấm để mở").apply(new ItemStack(Material.GOLD_INGOT));
-            h.inv.setItem(17, shop);
-            h.shopSlot = 17;
+            h.inv.setItem(16, shop);   // 30/10: trong khung (cột 8 là viền)
+            h.shopSlot = 16;
+            MenuFrame.paint(h.inv, Material.YELLOW_STAINED_GLASS_PANE);
             pl.openInventory(h.inv);
         });
     }
@@ -267,12 +268,13 @@ final class DonateQr implements Listener {
     private void openShop(Player p) {
         async(p, () -> wallet(p.getName()), (pl, w) -> {
             JsonArray mon = w.has("mon") ? w.getAsJsonArray("mon") : new JsonArray();
-            int rows = Math.min(6, Math.max(2, (mon.size() + 9) / 9 + 1));
+            int rows = Math.min(6, Math.max(3, (mon.size() + 6) / 7 + 2));   // 30/10: món nằm trong khung (7 cột giữa)
             Holder h = new Holder();
             long bal = num(w, "so_du");
             h.inv = Bukkit.createInventory(h, rows * 9, c("&0⛃ Cửa hàng Vàng &8· có " + bal + " Vàng"));
-            int slot = 0;
+            int idx = 0;
             for (JsonElement e : mon) {
+                int slot = (1 + idx / 7) * 9 + 1 + idx % 7;
                 if (slot >= rows * 9 - 9) {
                     break;
                 }
@@ -287,7 +289,7 @@ final class DonateQr implements Listener {
                 t.desc(str(m, "mo_ta")).line().kv("Giá", "&6" + gia + " Vàng");
                 long ngay = num(m, "ngay");
                 long gio = num(m, "gio");   // 29/10: tiện ích bán theo giờ
-                t.kv("Thời hạn", gio > 0 ? gio + " giờ &8(mua thêm cộng dồn)" : ngay > 0 ? ngay + " ngày &8(mua thêm cộng dồn)" : "vĩnh viễn");
+                t.kv("Thời hạn", gio > 0 ? gio + " giờ &7(mua thêm cộng dồn)" : ngay > 0 ? ngay + " ngày &7(mua thêm cộng dồn)" : "vĩnh viễn");
                 t.line();
                 if (can) {
                     t.click("Bấm 2 lần để mua");
@@ -297,13 +299,14 @@ final class DonateQr implements Listener {
                 ItemStack it = t.apply(new ItemStack(loai.equals("rank") ? Material.NAME_TAG : can ? Material.GOLD_INGOT : Material.IRON_INGOT));
                 h.inv.setItem(slot, it);
                 h.items.put(slot, m);
-                slot++;
+                idx++;
             }
             ItemStack nap = Tip.of("&e✚ &fNạp thêm Vàng").desc("Lấy mã QR chuyển khoản").line()
                     .kv("Tỉ giá", vnd(num(w, "ty_gia")) + " = 1 Vàng").click("Bấm để chọn số tiền")
                     .apply(new ItemStack(Material.GOLD_NUGGET));
             h.inv.setItem(rows * 9 - 5, nap);
             h.amounts.put(rows * 9 - 5, -1L);
+            MenuFrame.paint(h.inv, Material.YELLOW_STAINED_GLASS_PANE);
             pl.openInventory(h.inv);
         });
     }

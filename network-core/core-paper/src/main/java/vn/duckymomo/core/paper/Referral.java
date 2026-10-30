@@ -28,7 +28,7 @@ import java.util.UUID;
  * Người mới (vào lần đầu chưa quá window-days ngày) gõ /gioithieu <tên người giới thiệu>: nhận new-rewards ngay. Người giới thiệu nhận
  * referrer-rewards khi người mới chơi đủ need-hours giờ (thống kê thời gian chơi), mốc tổng số người (milestones) thưởng thêm.
  * Chống tài khoản phụ: không tự giới thiệu, không bot; 31/10: không từng dùng chung IP nào (nhớ 10 IP gần nhất mỗi người), không cùng chủ
- * theo /taikhoanphu; kiểm lại lúc trả quà (dính thì huỷ thưởng, ghi ref.<…>.chan); "đủ giờ" là giờ chơi thật (Activity, không tính treo máy).
+ * theo /taikhoanphu; mỗi mạng chỉ 1 người cho mỗi người rủ (các người được rủ không được chung IP với nhau); kiểm lại lúc trả quà (dính thì huỷ thưởng, ghi ref.<…>.chan); "đủ giờ" là giờ chơi thật (Activity, không tính treo máy).
  * Mỗi người mới chỉ nhập 1 lần.
  * Người giới thiệu offline lúc đủ giờ: thưởng giữ lại, phát khi vào game. Lưu plugins/DuckyMoMoCore/gioithieu.yml:
  * ref.<người mới>: {by, byName, name, t, ok}; ip.<uuid>; count.<uuid> (đã xác nhận); owed.<uuid> (chờ phát); name.<uuid>.
@@ -101,6 +101,24 @@ final class Referral implements Listener {
         String o1 = WarRules.ownerOf(newName), o2 = WarRules.ownerOf(refName);
         if (o1 != null && o2 != null && o1.equalsIgnoreCase(o2)) {
             return "cùng chủ (tài khoản phụ đã khai)";
+        }
+        // 31/10 chủ server: mỗi mạng chỉ tính 1 người cho mỗi người rủ (2 nick cùng mạng khác của người rủ không được tính 2 lần)
+        ConfigurationSection refs = data.getConfigurationSection("ref");
+        if (refs != null) {
+            java.util.Set<String> mine = ips(newUuid);
+            mine.remove("");
+            long myT = refs.getLong(newUuid + ".t", Long.MAX_VALUE);   // chưa nhập mã = mới nhất
+            for (String other : refs.getKeys(false)) {
+                if (other.equals(newUuid) || !refUuid.equals(refs.getString(other + ".by")) || refs.contains(other + ".chan")
+                        || refs.getLong(other + ".t", 0) >= myT) {
+                    continue;   // chỉ so với người nhập mã TRƯỚC (người đầu tiên của mạng được tính)
+                }
+                java.util.Set<String> o = ips(other);
+                o.retainAll(mine);
+                if (!o.isEmpty()) {
+                    return "cùng mạng với " + refs.getString(other + ".name", "một người") + " (người này cũng do " + refName + " rủ; mỗi mạng tính 1 người)";
+                }
+            }
         }
         return null;
     }

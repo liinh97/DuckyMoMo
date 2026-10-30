@@ -317,7 +317,9 @@ async function connect(name) {
     const ann = !!st.announce;
     if (!st.silent) setTimeout(() => setSilent(name, true), ann ? 30000 : 0);
     st.announce = false;
-    if (ann && host === 'banghoi-1') sayHi(name).catch(() => {});   // 31/10: vào có hiện [+] thì đôi khi chào
+    const hiForce = !!st.hiForce;
+    st.hiForce = false;
+    if (ann && host === 'banghoi-1') sayHi(name, hiForce).catch(() => {});   // 31/10: vào có hiện [+] thì đôi khi chào (bấm tay thì luôn chào)
     if (!st.grim) {   // 29/10 (chủ server đồng ý): GrimAC kéo bot lùi mỗi bước khi đi dạo + báo admin "failed Simulation" = lộ bot
       rcon(host).cmd(`lp user ${name} permission set grim.exempt true`).then(() => { st.grim = true; save(); }).catch(() => {});
     }
@@ -1090,9 +1092,9 @@ const BYE = ['t off đây ae', 'off nhé ae', 'bye ae', 'out đây', 't thoát t
 const BYE_REPLY = ['bye', 'ok bye', 'bb', 'pp', 'bai {A}', 'ok', 'gg', 'bye {A}'];
 const HI = ['hi ae', 'chào ae', 'hello ae', 'hi', 'vào rồi', 'alo ae', 'hế lô'];
 const HI_REPLY = ['hi', 'chào {A}', 'hello', 'hi {A}', 'yo'];
-async function sayHi(n) {
+async function sayHi(n, force) {
   const h = vnHour();
-  if ((h >= 1 && h < 7) || Math.random() >= 0.35) return;
+  if (!force && ((h >= 1 && h < 7) || Math.random() >= 0.35)) return;   // force: admin bấm Vào tay thì luôn chào (31/10)
   if (!(await sayAs(n, HI[Math.floor(Math.random() * HI.length)], 6000 + Math.random() * 12000))) return;
   const lt = lastTalk[n], recent = lt && Date.now() - lt.at < 3 * 3600e3 ? lt.with.filter(o => RT[o] && RT[o].bot) : [];
   const others = recent.length ? recent : NAMES.filter(x => x !== n && RT[x].bot && state[x].server === 'banghoi-1');
@@ -1102,9 +1104,9 @@ async function sayHi(n) {
   }
 }
 const lastTalk = {};   // bot -> {with: [bot…], at}: ai vừa nói chuyện cùng (chatOnce ghi)
-async function sayBye(n) {
+async function sayBye(n, force) {
   const b = RT[n].bot, h = vnHour();
-  if (!b || (h >= 1 && h < 7) || Math.random() >= 0.45) return;
+  if (!b || (!force && ((h >= 1 && h < 7) || Math.random() >= 0.45))) return;   // force: admin bấm Thoát tay thì luôn chào
   await sayAs(n, BYE[Math.floor(Math.random() * BYE.length)], 1000);
   const lt = lastTalk[n], recent = lt && Date.now() - lt.at < 45 * 60000 ? lt.with.filter(o => RT[o] && RT[o].bot) : [];
   let o = null;
@@ -1112,7 +1114,7 @@ async function sayBye(n) {
   else if (Math.random() < 0.3) { const others = NAMES.filter(x => x !== n && RT[x].bot && state[x].server === 'banghoi-1'); if (others.length) o = others[Math.floor(Math.random() * others.length)]; }
   if (o) await sayAs(o, BYE_REPLY[Math.floor(Math.random() * BYE_REPLY.length)].replace('{A}', n), 2500 + Math.random() * 6000);
 }
-async function rotLeaveNow(n, why, silent) {
+async function rotLeaveNow(n, why, silent, force) {
   if (RT[n].leaving) return;
   const st = state[n];
   RT[n].leaving = true;
@@ -1120,7 +1122,7 @@ async function rotLeaveNow(n, why, silent) {
   try {
     if (!silent) {
       await setSilent(n, false);
-      await sayBye(n).catch(() => {});
+      await sayBye(n, force).catch(() => {});
     }
     await sleep(4000 + Math.random() * 9000);
     st.want = false; st.offSince = Date.now(); delete st.sessionEnd; save();
@@ -1245,12 +1247,12 @@ async function act(b) {
     case 'join':
       if (b.server && SERVERS[b.server]) st.server = b.server;
       // 31/10 chủ server: bấm Vào một bot thì hiện [+] như người thật (và đôi khi chào); Vào tất cả thì vẫn im
-      if (!b.mass && !b.silent && !rt.bot && st.server === 'banghoi-1') { st.announce = true; await setSilent(b.bot, false); }
+      if (!b.mass && !b.silent && !rt.bot && st.server === 'banghoi-1') { st.announce = true; st.hiForce = true; await setSilent(b.bot, false); }
       st.want = true; st.since = Date.now(); rt.retryAt = 0; save();
       return b.bot + ' vào ' + SERVERS[st.server];
     case 'leave':
       if (!b.mass && rt.bot && st.server === 'banghoi-1' && !rt.leaving) {   // thoát từng bot: có tin (có thể chào) hoặc im (nút Thoát im)
-        rotLeaveNow(b.bot, b.silent ? 'thoát im' : 'thoát tay', !!b.silent).catch(e => log('lỗi thoát:', e.message));
+        rotLeaveNow(b.bot, b.silent ? 'thoát im' : 'thoát tay', !!b.silent, true).catch(e => log('lỗi thoát:', e.message));
         return b.bot + (b.silent ? ' thoát im lặng (vài giây nữa)' : ' thoát (vài giây nữa, có thể chào trước)');
       }
       st.want = false; save();

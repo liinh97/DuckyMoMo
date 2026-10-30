@@ -17,9 +17,9 @@ registration:
 password:
     match_error: '&cMật khẩu không đúng, vui lòng kiểm tra lại!'
     name_in_password: '&cBạn không thể đặt mật khẩu bằng tên của mình, vui lòng đặt lại...'
-    unsafe_password: '&cMật khẩu này quá dễ đoán (vd 123456, matkhau). Hãy đặt mật khẩu khác có cả chữ và số.'
-    forbidden_characters: '&cMật khẩu phải có cả CHỮ và SỐ, viết không dấu, ít nhất 6 ký tự. Ví dụ: &fvit2026 &choặc &fDuck_99'
-    wrong_length: '&cMật khẩu của bạn đặt quá dài hoặc quá ngắn, vui lòng đặt lại!'
+    unsafe_password: '&cMật khẩu này không dùng được, hãy đặt mật khẩu khác.'
+    forbidden_characters: '&cMật khẩu viết không dấu, không có khoảng trắng. Ví dụ: &fvit26'
+    wrong_length: '&cMật khẩu cần từ 4 tới 30 ký tự, vui lòng đặt lại!'
 
 # Login
 login:

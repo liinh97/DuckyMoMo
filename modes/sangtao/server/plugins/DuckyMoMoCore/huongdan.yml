@@ -295,7 +295,7 @@ chapters:
     &0Sai mật khẩu 3 lần: gõ &1/captcha <mã>&0 theo mã hiện trong chat. Sai 10 lần: chờ 30 phút.
   - |-
     &6Mật khẩu
-    &4Lưu ý: &0mật khẩu ít nhất 6 ký tự, không dùng 123456, matkhau…, không giống tài khoản khác, không đưa cho ai.
+    &4Lưu ý: &0mật khẩu ít nhất 4 ký tự, viết không dấu, không giống tài khoản khác, không đưa cho ai.
     &0Đổi: &1/changepassword <cũ> <mới>
   - |-
     &6Chọn chế độ

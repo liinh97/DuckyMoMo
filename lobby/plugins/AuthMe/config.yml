@@ -44,7 +44,7 @@ settings:
         registerTimeout: 90
         # 20/10: mật khẩu phải có cả CHỮ và SỐ (chặn 123455, 000000, abcdef… mà danh sách cấm không bắt hết). Chỉ ký tự ASCII thấy được.
         # Câu báo lỗi: messages_vn.yml › password.forbidden_characters (repo: lobby/plugins/AuthMe/messages/).
-        allowedPasswordCharacters: '(?=.*[A-Za-z])(?=.*[0-9])[!-~]*'
+        allowedPasswordCharacters: '[!-~]*'   # 30/10 chủ server: tạm bỏ bắt buộc chữ + số (vắng người); đông thì trả '(?=.*[A-Za-z])(?=.*[0-9])[!-~]*'
     registration:
         dialog:
             # Không dùng hộp thoại mật khẩu (người dùng muốn vào game rồi gõ /login, /register trong chat).
@@ -54,44 +54,10 @@ settings:
             postJoin:
                 enable: false
     security:
-        minPasswordLength: 6
+        minPasswordLength: 4   # 30/10: tạm 4 (cũ 6), đông thì trả 6
         passwordHash: BCRYPT
-        unsafePasswords:
-            -   '123456'
-            -   password
-            -   qwerty
-            -   '12345'
-            -   '54321'
-            -   '123456789'
+        unsafePasswords:   # 30/10: tạm chỉ cấm 'help' (trùng lệnh); danh sách cũ ở git, đông thì trả lại
             -   help
-            -   '12345678'
-            -   '1234567'
-            -   '111111'
-            -   '000000'
-            -   '123123'
-            -   abc123
-            -   matkhau
-            -   minecraft
-            -   iloveyou
-            -   admin
-            -   '666666'
-            -   '888888'
-            -   '112233'
-            -   qwerty123
-            -   '1234567890'
-            -   asdfgh
-            -   matkhau1
-            -   matkhau123
-            -   abc123456
-            -   a123456
-            -   123456a
-            -   minecraft1
-            -   qwerty1
-            -   admin123
-            -   duckymomo1
-            -   duckymomo123
-            -   vietnam1
-            -   password1
 Hooks:
     bungeecord: true
     # Lấy từ AUTHME_SECRET trong .env, phải trùng proxySharedSecret trên proxy

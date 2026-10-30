@@ -21,6 +21,7 @@ softdepend:
   - MyPet
   - Citizens
   - Jobs
+  - zAuctionHouse
 commands:
   goiqua:
     description: "Gói quà theo rank (/kit, /kits, /goiqua). Admin: /kit <mã> <người>, /kit lamlai <người> [mã]"

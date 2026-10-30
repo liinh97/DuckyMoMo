@@ -16,6 +16,9 @@ fi
 # PacketEvents (ẩn giáp sửa gói tin) biên dịch theo đúng jar ở banghoi
 pe=$(ls data/banghoi-1/plugins/packetevents-spigot-*.jar 2>/dev/null | head -1 || true)
 [ -n "$pe" ] && cp "$pe" network-core/libs/packetevents.jar
+# zAuctionHouse (bot mua đồ người chơi treo /ah, 30/10) biên dịch theo đúng jar ở banghoi
+za=$(ls data/banghoi-1/plugins/zAuctionHouse-*.jar 2>/dev/null | head -1 || true)
+[ -n "$za" ] && cp "$za" network-core/libs/zauctionhouse.jar
 
 docker run --rm \
   -u "$(id -u):$(id -g)" \

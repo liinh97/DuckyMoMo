@@ -82,6 +82,9 @@ final class RandomTeleport implements Listener {
     private final double cost;
     private final int maxAttempts;
     private final int townBuffer;
+    /** 30/10: chỉ thả chỗ lập được thị trấn (đúng khoảng cách tối thiểu của Towny) và ngoài vòng kinh đô (town-rules). */
+    private final boolean townReady;
+    private final int ringX, ringZ, ringR;
     private final Rect border;
     private final List<Rect> excludes = new ArrayList<>();
     private final List<String> badBiomes;
@@ -103,6 +106,11 @@ final class RandomTeleport implements Listener {
         this.warmupSeconds = Math.max(0, cfg.getInt("warmup-seconds", 3));
         this.maxAttempts = Math.max(1, cfg.getInt("max-attempts", 15));
         this.townBuffer = Math.max(0, cfg.getInt("town-buffer", 32));
+        this.townReady = cfg.getBoolean("town-ready", true);
+        List<Integer> sp = plugin.getConfig().getIntegerList("town-rules.spawn");
+        this.ringX = sp.size() >= 2 ? sp.get(0) : 0;
+        this.ringZ = sp.size() >= 2 ? sp.get(1) : 0;
+        this.ringR = plugin.getConfig().getBoolean("town-rules.enabled") && sp.size() >= 2 ? plugin.getConfig().getInt("town-rules.reserved-spawn-radius", 0) : 0;
         this.border = Rect.of(cfg.getIntegerList("border"));
         for (Object o : cfg.getList("exclude", List.of())) {
             if (o instanceof List<?> l) {
@@ -385,7 +393,10 @@ final class RandomTeleport implements Listener {
             p.sendMessage(c("&cKhông tìm được chỗ an toàn ở " + z.name() + "&c, thử lại hoặc chọn khu khác nhé."));
             return;
         }
-        int[] xz = pick(z);
+        int[] xz = null;
+        for (int k = 0; k < 40 && xz == null; k++) {   // bốc toạ độ rẻ (chưa nạp chunk): thử nhiều lần mỗi lượt
+            xz = pick(z);
+        }
         if (xz == null) {
             plugin.getServer().getScheduler().runTask(plugin, () -> attempt(p, z, w, n + 1));
             return;
@@ -426,6 +437,15 @@ final class RandomTeleport implements Listener {
         }
         for (Rect ex : excludes) {
             if (ex.contains(x, zz)) {
+                return null;
+            }
+        }
+        if (townReady) {   // 30/10 (cogainamay /rtp ~20 lần vẫn "quá gần thị trấn khác"): kiểm trước khi nạp chunk
+            long dx = x - ringX, dz = zz - ringZ;
+            if (ringR > 0 && dx * dx + dz * dz <= (long) ringR * ringR) {
+                return null;
+            }
+            if (plugin.getServer().getPluginManager().isPluginEnabled("Towny") && !TownyCheck.townable(worldName, x, zz)) {
                 return null;
             }
         }
@@ -626,6 +646,34 @@ final class RandomTeleport implements Listener {
 
     /** Kiểm tra đất hoang Towny (lớp riêng: server không có Towny không nạp tới lớp này). */
     private static final class TownyCheck {
+        /** Lập thị trấn được ở đây theo Towny: cách đất thị trấn khác ≥ min_plot_distance_from_town_plot ô, cách ô trung tâm
+         *  ≥ max(min_distance_between_homeblocks, min_distance_from_town_homeblock) ô (đo như Towny: khoảng cách thẳng theo ô 16x16). */
+        static boolean townable(String world, int x, int z) {
+            int cx = Math.floorDiv(x, 16), cz = Math.floorDiv(z, 16);
+            int plot = Math.max(0, com.palmergames.bukkit.towny.TownySettings.getMinDistanceFromTownPlotblocks());
+            int home = Math.max(com.palmergames.bukkit.towny.TownySettings.getMinDistanceBetweenHomeblocks(),
+                    com.palmergames.bukkit.towny.TownySettings.getMinDistanceFromTownHomeblocks());
+            long plot2 = (long) plot * plot, home2 = (long) home * home;
+            for (com.palmergames.bukkit.towny.object.Town t : com.palmergames.bukkit.towny.TownyAPI.getInstance().getTowns()) {
+                com.palmergames.bukkit.towny.object.TownBlock hb = t.getHomeBlockOrNull();
+                if (hb != null && hb.getWorld().getName().equals(world)) {
+                    long dx = hb.getX() - cx, dz = hb.getZ() - cz;
+                    if (dx * dx + dz * dz <= home2) {
+                        return false;
+                    }
+                }
+                if (plot2 > 0) {
+                    for (com.palmergames.bukkit.towny.object.TownBlock tb : t.getTownBlocks()) {
+                        long dx = tb.getX() - cx, dz = tb.getZ() - cz;
+                        if (dx * dx + dz * dz <= plot2 && tb.getWorld().getName().equals(world)) {
+                            return false;
+                        }
+                    }
+                }
+            }
+            return true;
+        }
+
         static boolean wilderness(Location loc, int buffer) {
             com.palmergames.bukkit.towny.TownyAPI api = com.palmergames.bukkit.towny.TownyAPI.getInstance();
             if (!api.isWilderness(loc)) {

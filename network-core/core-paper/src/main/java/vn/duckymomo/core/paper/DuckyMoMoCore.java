@@ -118,6 +118,10 @@ public final class DuckyMoMoCore extends JavaPlugin {
             chatGames.stop();
             chatGames = null;
         }
+        if (botAh != null) {
+            botAh.stop();
+            botAh = null;
+        }
         if (sleepVote != null) {
             sleepVote.stop();
             sleepVote = null;
@@ -776,6 +780,16 @@ public final class DuckyMoMoCore extends JavaPlugin {
         bind("xuong", workshop == null ? null : workshop::command, "Xưởng chế tạo");
 
         // Thợ Rèn /thoren: set đồ trao đổi, nâng cấp theo bậc, hiệu ứng bộ, mòn theo cấp (Bang Hội Chiến: tho-ren.enabled)
+        // Bot mua đồ người chơi treo /ah khi giá hợp lý (bot-ah, 30/10; cần zAuctionHouse)
+        if (botAh != null) {
+            botAh.stop();
+            botAh = null;
+        }
+        if (getConfig().getBoolean("bot-ah.enabled") && getConfig().isConfigurationSection("bot-ah")
+                && getServer().getPluginManager().isPluginEnabled("zAuctionHouse")) {
+            botAh = new BotAh(this, getConfig().getConfigurationSection("bot-ah"));
+            botAh.start();
+        }
         if (chatGames != null) {
             chatGames.stop();
         }
@@ -1405,6 +1419,12 @@ public final class DuckyMoMoCore extends JavaPlugin {
                     } else {
                         quests.talkCommand(sender, args);
                     }
+                } else if (args.length >= 1 && args[0].equalsIgnoreCase("botah")) {
+                    if (botAh == null) {
+                        sender.sendMessage("Bot mua /ah chưa bật (config bot-ah.enabled, cần zAuctionHouse).");
+                    } else {
+                        botAh.command(sender, args);
+                    }
                 } else if (args.length >= 1 && (args[0].equalsIgnoreCase("botgia") || args[0].equalsIgnoreCase("chetgia"))) {
                     BotFake.command(sender, args);   // botfarm gọi qua RCON (30/10)
                 } else if (args.length >= 1 && args[0].equalsIgnoreCase("npcsanh")) {
@@ -1510,12 +1530,14 @@ public final class DuckyMoMoCore extends JavaPlugin {
     private TabLimit tabLimit;
     /** Đố vui trong chat (chat-games, 30/10); null nếu tắt. */
     private ChatGames chatGames;
+    /** Bot mua đồ /ah (30/10); null nếu tắt / không có zAuctionHouse. */
+    private BotAh botAh;
     /** Ngủ bỏ qua đêm (sleep, 30/10); null nếu tắt. */
     private SleepVote sleepVote;
     /** Đàn tế gọi boss (te-boss, 30/10); null nếu tắt. */
     private TeBoss teBoss;
     /** Lệnh con /dmm chỉ Admin (duckymomo.admin); còn lại Manager dùng được (duckymomo.dmm). */
-    private static final java.util.Set<String> DMM_ADMIN_ONLY = java.util.Set.of("reload", "decorate", "structures", "hang", "thegioi", "spawnmoi", "botgia", "chetgia");
+    private static final java.util.Set<String> DMM_ADMIN_ONLY = java.util.Set.of("reload", "decorate", "structures", "hang", "thegioi", "spawnmoi", "botgia", "chetgia", "botah");
     /** World spawn riêng (/dmm spawnmoi, 24/10). */
     private SpawnWorld spawnWorld;
     /** Đổi map sang world thường (Đại Lục Sương Mai) (/dmm thegioi, 23/10). */

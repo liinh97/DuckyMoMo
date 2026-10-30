@@ -26,6 +26,8 @@ dependencies {
     compileOnly(rootProject.files("libs/worldedit-bukkit-7.4.6.jar"))
     // Ẩn giáp sửa gói tin (28/10): PacketEvents có sẵn ở banghoi; build-core.sh chép jar vào libs/ (không commit)
     compileOnly(rootProject.files("libs/packetevents.jar"))
+    // Bot mua đồ /ah (30/10): API zAuctionHouse, build-core.sh chép jar vào libs/ (không commit)
+    compileOnly(rootProject.files("libs/zauctionhouse.jar"))
 }
 
 tasks.withType<JavaCompile>().configureEach {

@@ -143,6 +143,9 @@ rtp:
   cost: 0                       # phí mỗi lần (0 = miễn phí); duckymomo.rtp.free không mất phí
   max-attempts: 30
   town-buffer: 32
+  # 30/10 (cogainamay /rtp ~20 lần vẫn "quá gần thị trấn khác": town-buffer 32 khối < khoảng cách Towny 5 ô đất / 10 ô trung tâm, và rơi cả
+  # vào vòng kinh đô): true = chỉ thả chỗ LẬP ĐƯỢC thị trấn (đọc khoảng cách từ Towny) và ngoài vòng town-rules.reserved-spawn-radius.
+  town-ready: true
   border: [11200, -3200, 15100, 1100]       # 27/10 mở hết map: khung /rtp = vùng thiết kế (hết 4 vùng khai hoang), không thả xa hơn cho đỡ sinh địa hình mới (giật); thả cách khung >= 16 block
   exclude:
     - [12556, -2623, 12801, -2298]           # khu spawn (công trình GlassCup + vùng WorldGuard spawn)
@@ -2783,3 +2786,22 @@ bot-gia:
     - {gio: 1, he-so: 1}
     - {gio: 4, he-so: 0.5}
     - {gio: 12, he-so: 0.2}
+
+# Bot mua đồ người chơi treo /ah khi giá hợp lý (30/10, chủ server; BotAh.java). every-min..every-max phút xét một lần (× hệ số bot-gia của người
+# bán: chơi lâu thì ít, từ 12 giờ thì không), đêm 1–7 giờ nghỉ. Chỉ mua của người THẬT đang online, món treo ≥ min-age-minutes phút.
+# Định giá: món Tinh Luyện = giá bán Tinh Luyện; đồ thường trơn = giá /sell (Essentials worth.yml); đồ set / thư viện / phù phép / có tên: KHÔNG mua.
+# Giá hợp lý: min-ratio × giá trị ≤ giá ≤ max-ratio × giá trị (rẻ quá có thể đặt nhầm: để người thật mua), giá trị ≥ min-value, giá ≤ max-price.
+# Hạn mức (bán cho server giới hạn 8.000 xu/ngày, /ah không được thành đường lách): mỗi người bán per-seller-items món + per-seller-xu xu/ngày,
+# cả server total-xu xu/ngày. /dmm botah xem, /dmm botah thu mua thử ngay.
+bot-ah:
+  enabled: true
+  every-min: 20
+  every-max: 60
+  min-age-minutes: 15
+  min-ratio: 0.5
+  max-ratio: 1.5
+  min-value: 50
+  max-price: 5000
+  per-seller-items: 2
+  per-seller-xu: 3000
+  total-xu: 15000

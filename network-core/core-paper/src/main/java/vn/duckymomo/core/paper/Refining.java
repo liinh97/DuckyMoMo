@@ -389,7 +389,7 @@ final class Refining implements Listener {
             lore.add(Tip.c("&7• &6Dùng cho:"));
             used.forEach(x -> lore.add(Tip.c("  &7▸ &f" + x)));
         } else if (kham.isEmpty()) {
-            lore.add(Tip.c("&7• &7Chưa dùng vào việc gì: chỉ để bán / trao đổi."));
+            lore.add(Tip.c("&7• &dNguyên liệu tương lai: &7sẽ dùng cho công thức mới, giữ lại hoặc trao đổi."));   // 31/10 chủ server: Đá, Xu Quái ×64 tính sau
         }
         lore.add(Tip.c(Tip.LINE));
         if (ok) {

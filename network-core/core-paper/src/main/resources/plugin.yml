@@ -80,7 +80,7 @@ commands:
     aliases: [rtp, ngaunhien, tprandom, randomtp]
     permission: duckymomo.rtp
   chet:
-    description: "Luật chết: khi nào mất đồ, Ngọc Hộ Thân, tình trạng của bạn"
+    description: "Luật chết rơi đồ: khi nào mất đồ, Ngọc Hộ Thân, tình trạng của bạn"
   hoatdong:
     description: "Xem giờ chơi thật (không tính AFK) của bạn"
     aliases: [giochoi]

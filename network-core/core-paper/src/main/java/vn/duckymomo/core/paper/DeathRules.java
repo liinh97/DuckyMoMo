@@ -155,7 +155,7 @@ final class DeathRules implements Listener {
             }
         }
 
-        InfoMenu m = InfoMenu.of("&4☠ Luật chết").accent(org.bukkit.Material.RED_STAINED_GLASS_PANE);
+        InfoMenu m = InfoMenu.of("&4☠ Luật chết rơi đồ").accent(org.bukkit.Material.RED_STAINED_GLASS_PANE);
         Tip top = Tip.of("&4☠ &fNếu bạn chết lúc này").accent(safe ? "&a" : "&c")
                 .desc(safe ? "&aBạn KHÔNG mất đồ." : "&cTúi đồ sẽ rơi, giáp và vũ khí mỗi món " + gearPct + "% rơi.").line()
                 .kv("Giờ chơi", trim(Math.floor(h * 10) / 10) + " / " + trim(newbieHours) + " giờ"

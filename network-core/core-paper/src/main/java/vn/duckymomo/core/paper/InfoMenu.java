@@ -153,7 +153,7 @@ final class InfoMenu {
         List<List<Entry>> mine = all.subList(Math.min(all.size(), pg * MAX_ROWS), Math.min(all.size(), (pg + 1) * MAX_ROWS));
         int rows = Math.max(3, mine.size() + 2);
         Holder h = new Holder();
-        Component title = LEGACY.deserialize(titleText + (pages > 1 ? " &7(" + (pg + 1) + "/" + pages + ")" : "")).decoration(TextDecoration.ITALIC, false);
+        Component title = LEGACY.deserialize(MenuFrame.darkTitle(titleText) + (pages > 1 ? " &8(" + (pg + 1) + "/" + pages + ")" : "")).decoration(TextDecoration.ITALIC, false);
         Inventory inv = Bukkit.createInventory(h, rows * 9, title);
         h.inv = inv;
         ItemStack pane = hidden(new ItemStack(frame));

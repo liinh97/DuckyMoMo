@@ -14,6 +14,11 @@ final class MenuFrame {
     private MenuFrame() {
     }
 
+    /** 30/10 chủ server: tiêu đề menu màu chói -> chữ đen như /menu (bỏ mọi mã màu, kể cả &#hex). */
+    static String darkTitle(String t) {
+        return "&0" + t.replaceAll("(?i)&#[0-9a-f]{6}", "").replaceAll("(?i)[&§][0-9a-fk-or]", "");
+    }
+
     static ItemStack pane(Material m) {
         ItemStack it = new ItemStack(m);
         it.editMeta(meta -> meta.setHideTooltip(true));

@@ -50,6 +50,8 @@ import org.bukkit.persistence.PersistentDataType;
  */
 final class Refining implements Listener {
 
+    /** Khoá đặc biệt trong recipe: trả bằng xu (tiền) thay vì vật phẩm. */
+    static final String XU = "xu";
     private static final LegacyComponentSerializer LEGACY = LegacyComponentSerializer.legacyAmpersand();
     private static final List<String> SELL_CMDS = List.of("sell", "esell", "essentials:sell", "essentials:esell");
 
@@ -103,7 +105,7 @@ final class Refining implements Listener {
         // nguyên liệu phải là vật liệu thật hoặc mã món khác
         for (Item it : items.values()) {
             for (String k : it.recipe().keySet()) {
-                if (!items.containsKey(k.toLowerCase(Locale.ROOT)) && Material.matchMaterial(k) == null) {
+                if (!XU.equals(k.toLowerCase(Locale.ROOT)) && !items.containsKey(k.toLowerCase(Locale.ROOT)) && Material.matchMaterial(k) == null) {
                     plugin.getLogger().warning("Tinh luyện: " + it.id() + " cần '" + k + "' không phải vật liệu hay món nào");
                 }
             }
@@ -169,6 +171,9 @@ final class Refining implements Listener {
     int count(Player p, String ingredient) {
         String low = ingredient.toLowerCase(Locale.ROOT);
         int n = 0;
+        if (XU.equals(low)) {   // 30/10: công thức trả thêm xu (Tinh Luyện Hộ Thân)
+            return VaultEconomy.available() ? (int) Math.min(Integer.MAX_VALUE, Math.floor(VaultEconomy.balance(p))) : 0;
+        }
         if (items.containsKey(low)) {
             for (ItemStack it : p.getInventory().getStorageContents()) {
                 if (low.equals(idOf(it))) {
@@ -192,6 +197,12 @@ final class Refining implements Listener {
 
     void take(Player p, String ingredient, int amount) {
         String low = ingredient.toLowerCase(Locale.ROOT);
+        if (XU.equals(low)) {
+            if (VaultEconomy.available()) {
+                VaultEconomy.withdraw(p, amount);
+            }
+            return;
+        }
         Material m = items.containsKey(low) ? null : Material.matchMaterial(ingredient);
         ItemStack plain = m == null ? null : new ItemStack(m);
         ItemStack[] inv = p.getInventory().getStorageContents();
@@ -226,6 +237,9 @@ final class Refining implements Listener {
 
     private Component ingredientName(String k) {
         String low = k.toLowerCase(Locale.ROOT);
+        if (XU.equals(low)) {
+            return Component.text("xu");
+        }
         if (items.containsKey(low)) {
             return c(items.get(low).name());
         }

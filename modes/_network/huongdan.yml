@@ -418,6 +418,12 @@ chapters:
     &0Combat kiểu 1.8&r&0: bấm nhanh, không hồi chiêu.
     &1/pvpstatus &0xem trạng thái.
   - |-
+    &6Chết có mất đồ không?
+    &2Không mất gì: &0chơi chưa đủ 30 giờ; đang trong trận công thành; chết trong thị trấn của mình hoặc Kinh Đô.
+    &4Còn lại &0(quái, rơi, cháy, bị người giết): &crơi hết túi đồ&0; giáp, vũ khí đang cầm mỗi món &c10%&0 rơi.
+    &0Đồ trong &1/balo &0không bao giờ rơi.
+    &0Giữ đồ quý: khảm &6Ngọc Hộ Thân&0 (xem phần Khảm).
+  - |-
     &6Đồ rơi & dọn rác
     &0Đồ dưới đất bị dọn mỗi 10 phút&r&0 (báo trước 30 và 5 giây).
     &2Chết: &0đồ quanh chỗ chết (8 khối) được giữ 10 phút&r&0, quay lại nhặt kịp.
@@ -901,6 +907,12 @@ chapters:
     &0Muốn giữ ngọc tốt: bấm ngọc trong &1/thoren kham&0 → &2Nạp đầy&0 (1 Tinh Luyện cùng loại + xu).
     &0Tháo ra vẫn giữ phẩm, năng lượng.
     &0Ngọc vỡ chỉ mất phần khảm, đồ vẫn nguyên.
+  - |-
+    &5NGỌC HỘ THÂN
+    &0Khảm vào đồ set có ô (Tinh Anh trở lên): chết &2không rơi&0 món đó.
+    &0Mỗi lần giữ mất 1 lượt: &7Thường&0 4 lượt, &2Tốt&0 5, &6Hoàn Mỹ&0 8. Hết lượt thì vỡ, không nạp lại.
+    &0Khảm hỏng &c45%&0 (ngọc vỡ, đồ nguyên).
+    &0Nguồn: &1/tinhluyen&0 Hộ Thân = 2 Lõi Quái + 4 Tinh Luyện Netherite + 5.000 xu.
   - |-
     &5HÀO QUANG NGỌC
     &0Đồ có ngọc phát &dánh sáng&0 màu theo loại ngọc, ai cũng thấy. Phẩm khác kiểu hạt: &7Thường&0 chấm, &2Tốt&0 xoáy, &6Hoàn Mỹ&0 vệt xoắn ốc. Năng lượng cạn thì mờ dần.

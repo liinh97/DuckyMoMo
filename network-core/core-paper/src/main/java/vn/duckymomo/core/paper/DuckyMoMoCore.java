@@ -795,6 +795,10 @@ public final class DuckyMoMoCore extends JavaPlugin {
             sleepVote.start();
         }
         getServer().getPluginManager().registerEvents(new ScreenNotify(this), this);
+        // Luật chết (death-rules, 30/10): < 30 giờ / công thành / thị trấn mình giữ đồ; còn lại rơi túi + 10% mỗi món mặc/cầm; Ngọc Hộ Thân giữ món
+        if (getConfig().getBoolean("death-rules.enabled") && getConfig().isConfigurationSection("death-rules")) {
+            getServer().getPluginManager().registerEvents(new DeathRules(this, getConfig().getConfigurationSection("death-rules")), this);
+        }
         if (tabLimit != null) {
             tabLimit.stop();
             tabLimit = null;

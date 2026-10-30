@@ -88,7 +88,18 @@ final class DonateQr implements Listener {
     /** Số dư Vàng của người đang online (tên thường -> Vàng) cho placeholder %dmmvang_so_du% (bảng bên phải). Làm mới mỗi phút. */
     static final Map<String, Long> BAL = new java.util.concurrent.ConcurrentHashMap<>();
 
+    static volatile DonateQr INSTANCE;
+
+    /** Luật chết (30/10): trả món giấu trong tấm QR về ô cũ trước khi tính rơi đồ. */
+    static void restoreAll(Player p) {
+        DonateQr d = INSTANCE;
+        if (d != null) {
+            d.removeAll(p);
+        }
+    }
+
     DonateQr(JavaPlugin plugin, ConfigurationSection cfg, List<DonateRanks.Tier> tiers) {
+        INSTANCE = this;
         this.plugin = plugin;
         this.cfg = cfg;
         this.key = new NamespacedKey(plugin, "qr_het");

@@ -479,6 +479,16 @@ items:
     lore: ["&7Tinh hoa mùa màng."]
     model: "duckymomo:tl_dialinh"
     cong-dung: tinh-luyen
+  hothan:
+    nguon: web
+    nhom: nguyen-lieu
+    ten-goi: "Tinh Luyện Hộ Thân"
+    material: HEART_POTTERY_SHERD
+    amount: 1
+    name: "&fTinh Luyện &6Hộ Thân"
+    lore: ["&7Khảm vào đồ set (Tinh Anh trở lên): món không rơi khi chết.", "&7Khảm hỏng 45% (ngọc vỡ, món nguyên)."]
+    model: "minecraft:ward_armor_trim_smithing_template"
+    cong-dung: tinh-luyen
   lamnguy:
     nguon: web
     nhom: manh

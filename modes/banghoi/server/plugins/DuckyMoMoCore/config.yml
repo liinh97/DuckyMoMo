@@ -1697,6 +1697,8 @@ tinh-luyen:
     lucbao: {recipe: {EMERALD_BLOCK: 32}, sell: 8000}
     netherite: {recipe: {NETHERITE_BLOCK: 32}, sell: 262000}
     dialinh: {recipe: {HAY_BLOCK: 64}, sell: 270}
+    # 30/10: nguồn Ngọc Hộ Thân (khảm vào đồ set Tinh Anh+ để không rơi khi chết). xu = trả bằng tiền.
+    hothan: {recipe: {loiquai: 2, netherite: 4, xu: 5000}, sell: 0}
 
 # Đơn nhà buôn mỗi tuần (NPC Nhà Buôn ở khu shop, đặt bằng /dmm donbuonnpc; 27/10, DonBuon.java): thứ Hai chọn per-week đơn ngẫu nhiên từ pool; giao đủ món Tinh Luyện trong "can"
 # nhận gia % giá bán Tinh Luyện (tinh-luyen.items.<mã>.sell) bằng xu + quà "qua" (dạng như mọi quà: xu, do <mã> <số>…). Mỗi người mỗi đơn 1 lần/tuần,
@@ -1763,7 +1765,12 @@ kham:
     dong: {name: "Đồng", color: "&6", rgb: "#E07B39", giap: {cham-mon: 15}, vukhi: {cham-mon: 20}}
     than: {name: "Than", color: "&8", rgb: "#3B3B3B", giap: {lua: 8}, vukhi: {st-chay: 6}}   # vũ khí set có ô đều sẵn Lửa: Than tăng sát thương lên mục tiêu đang cháy
     netherite: {name: "Netherite", color: "&5", rgb: "#8A3FD1", giap: {giam-st: 2.5}, vukhi: {st: 4.5}}
+    hothan: {name: "Hộ Thân", color: "&6", rgb: "#FFC94A"}   # không chỉ số: giữ món khi chết (ho-than)
   cap: {mau: 10, day-lui: 15, giam-st: 8, lua: 30, st: 12, toc-danh: 10, toc-chay: 6, kinh-nghiem: 25, hoi-mau: 24, hut-mau: 4, dot: 30, st-chay: 18, cham-mon: 50}
+  # Ngọc Hộ Thân (30/10, chủ server chốt): món có ngọc này không rơi khi chết (death-rules); mỗi lần giữ trừ ton[phẩm] % năng lượng
+  # (Thường 25% = 4 lần, Tốt 20% = 5 lần, Hoàn Mỹ 12,5% = 8 lần), hết thì vỡ. Không hao khi đánh, không nạp lại. Khảm hỏng that-bai %
+  # (ngọc vỡ, món nguyên). Nguồn: Tinh Luyện hothan.
+  ho-than: {ngoc: hothan, that-bai: 45, ton: [25, 20, 12.5]}
 
 # Danh phận (/danhphan, 19/10): rank CHƠI miễn phí, đủ yêu cầu thì bấm nhận trong menu. Sửa ở Cài đặt › Người mới › Danh phận.
 # Mỗi bậc: group (nhóm LuckPerms; bậc đầu PHẢI là default), name, prefix (tiền tố chat/Tab, priority càng cao càng ưu tiên, dưới staff),
@@ -2756,3 +2763,13 @@ town-fly:
 armor-hide:
   enabled: true
   combat-seconds: 15
+
+# Luật chết (30/10, chủ server chốt; class DeathRules). Theo thứ tự: chơi chưa đủ newbie-hours giờ -> giữ hết; trong trận công thành đang
+# diễn ra -> giữ hết; trong thị trấn của mình / Kinh Đô (capital-town) -> giữ hết; còn lại (quái, môi trường, bị người giết) -> rơi hết túi
+# đồ, giáp đang mặc + tay phụ + món đang cầm mỗi món gear-drop-percent % rơi. Món khảm Ngọc Hộ Thân không rơi (trừ lượt). Balo không bao giờ rơi.
+# Đấu Trường / chỗ đã tự giữ đồ thì để nguyên. Bùa Hộ Mệnh: để sau.
+death-rules:
+  enabled: true
+  newbie-hours: 30
+  capital-town: KinhDo
+  gear-drop-percent: 10

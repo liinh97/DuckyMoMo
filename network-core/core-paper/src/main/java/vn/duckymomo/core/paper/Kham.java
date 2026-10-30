@@ -96,6 +96,10 @@ final class Kham implements Listener {
     private final int breakChance;
     private final List<Tier> tiers = new ArrayList<>();
     private final int maxEnergy;
+    /** Ngọc Hộ Thân (30/10): món có ngọc này không rơi khi chết, mỗi lần giữ trừ keepCost[phẩm] % năng lượng; không hao khi đánh, không nạp lại. */
+    private final String keepId;
+    private final int keepFail;
+    private final List<Double> keepCost;
     private final double rechargeCost;
     private final int warnPct;
     private final boolean debug;
@@ -132,6 +136,10 @@ final class Kham implements Listener {
         this.unsocketCost = c.getDouble("thao-xu", 2000);
         this.breakChance = c.getInt("thao-vo", 50);
         this.maxEnergy = Math.max(1, c.getInt("nang-luong", 3000));
+        this.keepId = c.getString("ho-than.ngoc", "hothan");
+        this.keepFail = Math.max(0, Math.min(100, c.getInt("ho-than.that-bai", 45)));
+        List<Double> kc = c.getDoubleList("ho-than.ton");
+        this.keepCost = kc.isEmpty() ? List.of(25.0, 20.0, 12.5) : kc;
         this.rechargeCost = c.getDouble("nap-xu", 1000);
         this.warnPct = c.getInt("canh-bao", 10);
         this.debug = c.getBoolean("debug", false);
@@ -407,6 +415,42 @@ final class Kham implements Listener {
     }
 
     /** Ngọc từng ô (đủ số ô của món; ô trống = EMPTY). */
+    /**
+     * Luật chết (30/10): món có Ngọc Hộ Thân còn năng lượng thì được giữ, trừ một lượt (ho-than.ton theo phẩm: Thường 25%, Tốt 20%,
+     * Hoàn Mỹ 12,5% năng lượng đầy), hết thì ngọc vỡ. Ghi thẳng vào it. true = giữ món.
+     */
+    static boolean useKeep(Player p, ItemStack it) {
+        Kham k = INSTANCE;
+        if (k == null || it == null || !it.hasItemMeta() || !k.hasGems(it)) {
+            return false;
+        }
+        List<Sock> list = k.gemsOf(it);
+        for (int i = 0; i < list.size(); i++) {
+            Sock sk = list.get(i);
+            if (!sk.code().equals(k.keepId) || sk.energy() <= 0) {
+                continue;
+            }
+            double pc = k.keepCost.get(Math.max(0, Math.min(sk.tier(), k.keepCost.size() - 1)));
+            int cost = Math.max(1, (int) Math.ceil(k.maxEnergy * pc / 100.0));
+            int left = sk.energy() - cost;
+            Gem gem = k.gems.get(sk.code());
+            String nm = gem == null ? "Ngọc Hộ Thân" : gem.color() + gem.name();
+            String item = k.thoRen.labelOf(ItemLibrary.idOf(it));
+            if (left <= 0) {
+                list.set(i, EMPTY);
+                k.breakFx(p, gem);
+                p.sendMessage(c("&6✦ " + nm + " &6giữ lại &f" + item + "&6 lần cuối rồi vỡ."));
+            } else {
+                list.set(i, new Sock(sk.code(), sk.tier(), sk.factor(), left));
+                p.sendMessage(c("&6✦ " + nm + " &6giữ lại &f" + item + "&6, còn " + (left + cost - 1) / cost + " lượt."));
+            }
+            k.write(it, list);
+            k.plugin.getLogger().info("Hộ Thân: " + p.getName() + " giữ " + ItemLibrary.idOf(it) + " (" + sk.enc() + " -> " + Math.max(0, left) + ")");
+            return true;
+        }
+        return false;
+    }
+
     private List<Sock> gemsOf(ItemStack it) {
         int n = slotsOf(it);
         List<Sock> out = new ArrayList<>();
@@ -593,6 +637,9 @@ final class Kham implements Listener {
     private String effect(Gem gem, boolean armor, int factor) {
         List<String> s = new ArrayList<>();
         (armor ? gem.armor() : gem.weapon()).forEach((k, v) -> s.add("&a+" + trim(v * factor / 100.0) + "&7" + STAT_VI.getOrDefault(k, " " + k)));
+        if (s.isEmpty() && gem.id().equals(keepId)) {
+            return "&aGiữ món khi chết &7(không rơi)";
+        }
         return s.isEmpty() ? "&7(không có tác dụng ở loại đồ này)" : String.join("&7, ", s);
     }
 
@@ -816,6 +863,13 @@ final class Kham implements Listener {
             return;
         }
         p.getInventory().setStorageContents(inv);
+        if (g.equals(keepId) && ThreadLocalRandom.current().nextInt(100) < keepFail) {
+            breakFx(p, gems.get(g));
+            p.sendMessage(c("&c✖ Khảm thất bại: " + gems.get(g).color() + gems.get(g).name() + " &cvỡ (tỉ lệ thất bại " + keepFail + "%). &7Món đồ vẫn nguyên."));
+            plugin.getLogger().info("Khảm: " + p.getName() + " khảm hỏng " + g + (tag.isEmpty() ? "" : ":" + tag) + " -> " + handId + " ô " + (slot + 1));
+            open(p);
+            return;
+        }
         Sock sk = tag.isEmpty() ? roll(g) : parse(g + ":" + tag);
         list.set(slot, sk);
         write(hand, list);
@@ -874,6 +928,10 @@ final class Kham implements Listener {
         Sock sk = slot < list.size() ? list.get(slot) : EMPTY;
         if (sk.empty() || sk.energy() >= maxEnergy) {
             slotMenu(p, handId, slot);
+            return;
+        }
+        if (sk.code().equals(keepId)) {
+            p.sendMessage(c("&cNgọc Hộ Thân không nạp lại được: hết lượt thì ngọc vỡ, khảm viên mới."));
             return;
         }
         Refining r = Shared.refining;
@@ -1038,8 +1096,8 @@ final class Kham implements Listener {
         String item = thoRen.labelOf(ItemLibrary.idOf(it));
         for (int i = 0; i < list.size(); i++) {
             Sock sk = list.get(i);
-            if (sk.empty()) {
-                continue;
+            if (sk.empty() || sk.code().equals(keepId)) {
+                continue;   // Ngọc Hộ Thân chỉ hao khi chết (useKeep)
             }
             any = true;
             int left = sk.energy() - n;

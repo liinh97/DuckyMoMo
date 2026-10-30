@@ -22,6 +22,8 @@
   main > section:first-of-type { position: sticky; top: 18px; }
   @media (max-width: 860px) { main { grid-template-columns: minmax(0, 1fr); } main > section:first-of-type { position: static; } }
   .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; }
+  .card[hidden] { display: none !important; }
+  .card h2 { flex-wrap: wrap; }   /* 30/10: thêm nút Các set, điện thoại cho xuống dòng thay vì tràn ngang */   /* 30/10: #editor display:grid (màn ≥1500px) đè thuộc tính hidden */
   .card h2 { font-size: 15px; margin: 0 0 10px; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
   input, select, textarea { width: 100%; padding: 7px 9px; border: 1px solid var(--line); border-radius: 6px; background: var(--input); color: var(--text); font: inherit; }
   textarea { min-height: 84px; resize: vertical; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 13.5px; }
@@ -108,6 +110,17 @@
   .bar .sp { flex: 1; }
   .card h2 button { white-space: nowrap; padding: 7px 14px; }
   .sets { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0 4px; }
+  /* 30/10: bảng các set Thợ Rèn, kéo thả thứ tự yếu -> mạnh */
+  .bd-row { display: grid; grid-template-columns: 30px 1fr auto auto; gap: 10px; align-items: center; padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--chip); margin-bottom: 5px; cursor: grab; }
+  .bd-row.dragging { opacity: .45; }
+  .bd-row.over { border-color: var(--accent); }
+  .bd-num { text-align: right; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .bd-name { font-weight: 600; }
+  .bd-name small { display: block; font-weight: 400; color: var(--muted); font-size: 12.5px; }
+  .bd-meta { font-size: 13px; color: var(--muted); white-space: nowrap; }
+  .bd-btns { display: flex; gap: 4px; }
+  .bd-btns button { padding: 3px 9px; }
+  @media (max-width: 640px) { .bd-row { grid-template-columns: 26px 1fr auto; } .bd-meta { display: none; } }
   .sets:empty { display: none; }
   .sets button { border: 1px solid var(--line); background: var(--chip); color: var(--text); border-radius: 999px; padding: 3px 11px; font-size: 13px; cursor: pointer; }
   .sets button.on { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); font-weight: 600; }
@@ -156,7 +169,7 @@
 <script src="shell.js"></script>
 <main>
   <section class="card">
-    <h2><span>Đồ trong thư viện <span id="count" class="badge"></span></span><span style="display:flex;gap:6px"><button id="bookBtn" title="Luật cấm đồ theo hoạt động">📕 Sách cấm</button><button class="primary" id="new">+ Tạo mới</button></span></h2>
+    <h2><span>Đồ trong thư viện <span id="count" class="badge"></span></span><span style="display:flex;gap:6px"><button id="boardBtn" title="Các set đồ, kéo thả thứ tự yếu -> mạnh">📋 Các set</button><button id="bookBtn" title="Luật cấm đồ theo hoạt động">📕 Sách cấm</button><button class="primary" id="new">+ Tạo mới</button></span></h2>
     <input type="search" id="libq" placeholder="Tìm món: tên, mã, bộ…">
     <div class="sets" id="sets"></div>
     <div class="list" id="list"><p class="empty">Đang tải…</p></div>
@@ -272,6 +285,15 @@
     </div>
     <datalist id="online"></datalist>
     <div class="status" id="status"></div>
+  </section>
+
+  <section class="card" id="board" hidden>
+    <h2><span>📋 Các set đồ: yếu → mạnh <span id="boardCount" class="badge"></span></span><button class="primary" id="boardSave">Lưu thứ tự</button></h2>
+    <p class="note">Kéo thả từng dòng (điện thoại: ▲▼) để xếp set từ yếu nhất (trên) tới mạnh nhất (dưới), rồi bấm <b>Lưu thứ tự</b>.
+      Thứ tự này dùng chọn set hiện sau tên khi người chơi ẩn giáp (món thuộc set mạnh hơn thắng). Chung với Cài đặt › Shop › Thợ Rèn.
+      Bấm <b>Xem đồ</b> để lọc danh sách bên trái theo set đó.</p>
+    <div id="boardList"></div>
+    <div class="status" id="boardStatus"></div>
   </section>
 
   <section class="card" id="book" hidden>
@@ -699,6 +721,7 @@ function setEditable(on) {
   enchRows.forEach(r => { r.sel.disabled = r.lvl.disabled = !on; r.el.querySelector(":scope > button").disabled = !on; });
 }
 function load(it) {
+  if ($("board")) { $("board").hidden = true; $("editor").hidden = false; $("boardBtn").classList.remove("primary"); }
   cur = it; isNew = !it;
   $("id").value = it ? it.id : ""; $("id").disabled = !!it; $("rename").hidden = !it; $("rename").textContent = "Đổi mã"; if (typeof renderHowto === "function") renderHowto();
   $("tengoi").value = it ? it.ten_goi : ""; $("material").value = it ? it.material : "DIAMOND_SWORD";
@@ -742,7 +765,10 @@ try { setFilter = localStorage.getItem("dmm-tv-set") || ""; } catch (e) {}
 function allSets() {
   const m = new Map();
   for (const it of (data && data.items) || []) for (const b of it.bo || []) { const k = b.toLowerCase(); if (!m.has(k)) m.set(k, [b, 0]); m.get(k)[1]++; }
-  return [...m.values()].sort((a, b) => a[0].localeCompare(b[0], "vi"));
+  // 30/10: set Thợ Rèn đứng trước theo thứ tự yếu -> mạnh, bộ khác sau theo vần
+  const rank = Object.fromEntries(((data && data.tr_sets) || []).map((x, i) => [x.name.toLowerCase(), i]));
+  const r = n => rank[n.toLowerCase()] ?? 999;
+  return [...m.values()].sort((a, b) => r(a[0]) - r(b[0]) || a[0].localeCompare(b[0], "vi"));
 }
 function drawBo() {
   $("boChips").innerHTML = "";
@@ -988,8 +1014,53 @@ function banLines(id, dmm) {
   return out;
 }
 let bookRows = {};   // hoạt động -> [{el, sel, mode}]
+// 30/10: bảng các set Thợ Rèn (data.tr_sets theo thứ tự yếu -> mạnh), kéo thả rồi lưu tho-ren.set-order (ô tr_thutu của Cài đặt)
+let boardIds = null;
+function showBoard() {
+  $("book").hidden = true; $("editor").hidden = true; $("board").hidden = false;
+  $("bookBtn").classList.remove("primary"); $("boardBtn").classList.add("primary");
+  document.querySelectorAll(".li").forEach(b => b.classList.remove("on"));
+  if (!boardIds) boardIds = (data.tr_sets || []).map(x => x.id);
+  drawBoard();
+}
+function drawBoard() {
+  const by = Object.fromEntries((data.tr_sets || []).map(x => [x.id, x]));
+  const cnt = {};
+  for (const it of data.items || []) for (const b of it.bo || []) cnt[b.toLowerCase()] = (cnt[b.toLowerCase()] || 0) + 1;
+  const box = $("boardList"); box.innerHTML = "";
+  $("boardCount").textContent = boardIds.length;
+  if (!boardIds.length) { box.innerHTML = `<p class="empty">Chưa đọc được danh sách set (config Thợ Rèn của Bang Hội Chiến).</p>`; return; }
+  let from = -1;
+  boardIds.forEach((id, i) => {
+    const st = by[id] || { name: id, pieces: 0, max: 0, desc: "" };
+    const row = document.createElement("div"); row.className = "bd-row"; row.draggable = true;
+    const end = i === 0 ? " · yếu nhất" : i === boardIds.length - 1 ? " · mạnh nhất" : "";
+    row.innerHTML = `<span class="bd-num">${i + 1}</span>
+      <span class="bd-name"><span></span><small></small></span>
+      <span class="bd-meta" title="loại đồ trong set · cấp nâng · số mã trong thư viện">${st.pieces} loại đồ · +0…+${st.max} · ${cnt[st.name.toLowerCase()] || 0} mã</span>
+      <span class="bd-btns"><button type="button" title="Lọc đồ của set này">Xem đồ</button><button type="button">▲</button><button type="button">▼</button></span>`;
+    row.querySelector(".bd-name span").textContent = st.name + end;
+    row.querySelector(".bd-name small").textContent = st.desc || "";
+    const [see, up, dn] = row.querySelectorAll("button");
+    up.disabled = i === 0; dn.disabled = i === boardIds.length - 1;
+    const mv = d => { const j = i + d; [boardIds[i], boardIds[j]] = [boardIds[j], boardIds[i]]; drawBoard(); };
+    up.onclick = () => mv(-1); dn.onclick = () => mv(1);
+    see.onclick = () => { setFilter = st.name; try { localStorage.setItem("dmm-tv-set", st.name); } catch (e) {} renderList(); };
+    row.addEventListener("dragstart", e => { from = i; row.classList.add("dragging"); e.dataTransfer.effectAllowed = "move"; });
+    row.addEventListener("dragend", () => row.classList.remove("dragging"));
+    row.addEventListener("dragover", e => { e.preventDefault(); row.classList.add("over"); });
+    row.addEventListener("dragleave", () => row.classList.remove("over"));
+    row.addEventListener("drop", e => {
+      e.preventDefault(); row.classList.remove("over");
+      if (from < 0 || from === i) return;
+      const [x] = boardIds.splice(from, 1); boardIds.splice(i, 0, x); from = -1; drawBoard();
+    });
+    box.appendChild(row);
+  });
+}
+
 function showBook(on) {
-  $("book").hidden = !on; $("editor").hidden = on;
+  $("book").hidden = !on; $("editor").hidden = on; $("board").hidden = true; $("boardBtn").classList.remove("primary");
   $("bookBtn").classList.toggle("primary", on);
   if (on) { document.querySelectorAll(".li").forEach(b => b.classList.remove("on")); renderBook(); }
 }
@@ -1063,6 +1134,17 @@ function bookForm() {
   return out;
 }
 $("bookBtn").onclick = () => showBook($("book").hidden);
+$("boardBtn").onclick = () => showBoard();
+$("boardSave").onclick = async () => {
+  const st = $("boardStatus"); st.className = "status"; st.textContent = "Đang lưu…";
+  try {
+    const r = await fetch("api/modes/banghoi/save", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ values: { tr_thutu: boardIds } }) });
+    const res = await r.json().catch(() => ({}));
+    st.className = "status " + (r.ok && res.ok !== false ? "ok" : "err");
+    st.textContent = r.ok ? (res.message || "Đã lưu thứ tự set.") : (res.message || "Không lưu được (cần quyền Cài đặt).");
+    if (r.ok) { const d = await (await fetch("api/thuvien")).json(); data = d; boardIds = (d.tr_sets || []).map(x => x.id); drawBoard(); }
+  } catch (e) { st.className = "status err"; st.textContent = "Không gửi được: " + e; }
+};
 $("bookSave").onclick = async () => {
   const st = $("bookStatus"); st.className = "status"; st.textContent = "Đang lưu…";
   try {
@@ -1078,6 +1160,7 @@ fetch("api/thuvien").then(r => r.json()).then(d => {
   $("cdung").innerHTML = Object.entries(d.cong_dung || {}).map(([k, t]) => `<option value="${k}">${esc(t)}</option>`).join("");
   $("feat").innerHTML = Object.entries(d.features || {}).map(([k, t]) => `<option value="${k}">${esc(t[0])}</option>`).join("");
   buildEnchList(); renderList(); load(null);
+  if ((d.tr_sets || []).length) showBoard();   // 30/10: mới vào trang thấy bảng các set; "+ Tạo mới" mới mở form
   if (!d.meta) status(false, "Chưa có danh sách phù phép/vật liệu từ server (thuvien-meta.json): khởi động lại Bang Hội Chiến với bản DuckyMoMoCore mới.");
 }).catch(e => { $("list").innerHTML = `<p class="empty">${esc(e)}</p>`; });
 </script>

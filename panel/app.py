@@ -3016,9 +3016,28 @@ def thuvien_json():
                     c["tac_dung"] = str(v[2])   # tác dụng từng cấp của phù phép luôn có tác dụng (ce-vi.yml phần tử 3)
             if str(c.get("name", "")).lower() in ty:
                 c["ty_le"] = ty[str(c.get("name", "")).lower()]
-    return {"items": items, "meta": meta, "online": [n for n in online if PLAYER_RE.match(n)], "dung_o": lib_usage(),
+    return {"items": items, "meta": meta, "online": [n for n in online if PLAYER_RE.match(n)], "dung_o": lib_usage(), "tr_sets": lib_tr_sets(),
             "sach_cam": lib_book_json(doc), "hoat_dong": {k: list(v) for k, v in LIB_ACTIVITIES.items()}, "che_do": LIB_BAN_MODES,
             "nhom": LIB_NHOM, "cong_dung": LIB_USES, "features": WORKSHOP_FEATURES_VI, "effects": sorted(DISH_EFFECTS), "foods": sorted(DISH_FOODS)}
+
+
+def lib_tr_sets():
+    """30/10: các set Thợ Rèn theo thứ tự yếu -> mạnh (tho-ren.set-order, thiếu thì theo bac) cho bảng kéo thả ở trang Thư viện đồ."""
+    try:
+        tr = (YAML(typ="safe").load((LIB_DIR / "config.yml").read_text(encoding="utf-8")) or {}).get("tho-ren") or {}
+    except (OSError, ValueError):
+        return []
+    sets = tr.get("sets") or {}
+    order = [str(x) for x in (tr.get("set-order") or []) if str(x) in sets]
+    rest = sorted((k for k in sets if k not in order), key=lambda k: ((sets[k] or {}).get("bac", 0), k))
+    out = []
+    for sid in order + rest:
+        st = sets[sid] or {}
+        pcs = st.get("pieces") or {}
+        lv = [len((pc or {}).get("ids") or []) for pc in pcs.values()]
+        out.append({"id": sid, "name": str(st.get("name", sid)), "icon": str(st.get("icon", "")), "desc": str(st.get("desc", "")),
+                    "pieces": len(pcs), "max": (min(lv) - 1) if lv else 0, "requires": str(st.get("requires", "") or "")})
+    return out
 
 
 def lib_extra(it):

@@ -23,7 +23,10 @@
   @media (max-width: 860px) { main { grid-template-columns: minmax(0, 1fr); } main > section:first-of-type { position: static; } }
   .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; }
   .card[hidden] { display: none !important; }
-  .card h2 { flex-wrap: wrap; }   /* 30/10: thêm nút Các set, điện thoại cho xuống dòng thay vì tràn ngang */   /* 30/10: #editor display:grid (màn ≥1500px) đè thuộc tính hidden */
+  .card h2 { flex-wrap: wrap; }
+  /* 30/10: 3 nút đầu danh sách chia đều bề ngang khung, không tràn ra ngoài */
+  .card h2 .hbtns { display: flex; flex-wrap: wrap; gap: 6px; width: 100%; }
+  .card h2 .hbtns button { flex: 1 1 auto; white-space: nowrap; padding: 6px 9px; font-size: 13.5px; }   /* 30/10: thêm nút Các set, điện thoại cho xuống dòng thay vì tràn ngang */   /* 30/10: #editor display:grid (màn ≥1500px) đè thuộc tính hidden */
   .card h2 { font-size: 15px; margin: 0 0 10px; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
   input, select, textarea { width: 100%; padding: 7px 9px; border: 1px solid var(--line); border-radius: 6px; background: var(--input); color: var(--text); font: inherit; }
   textarea { min-height: 84px; resize: vertical; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 13.5px; }
@@ -169,7 +172,7 @@
 <script src="shell.js"></script>
 <main>
   <section class="card">
-    <h2><span>Đồ trong thư viện <span id="count" class="badge"></span></span><span style="display:flex;gap:6px"><button id="boardBtn" title="Các set đồ, kéo thả thứ tự yếu -> mạnh">📋 Các set</button><button id="bookBtn" title="Luật cấm đồ theo hoạt động">📕 Sách cấm</button><button class="primary" id="new">+ Tạo mới</button></span></h2>
+    <h2><span>Đồ trong thư viện <span id="count" class="badge"></span></span><span class="hbtns"><button id="boardBtn" title="Các set đồ, kéo thả thứ tự yếu -> mạnh">📋 Các set</button><button id="bookBtn" title="Luật cấm đồ theo hoạt động">📕 Sách cấm</button><button class="primary" id="new">+ Tạo mới</button></span></h2>
     <input type="search" id="libq" placeholder="Tìm món: tên, mã, bộ…">
     <div class="sets" id="sets"></div>
     <div class="list" id="list"><p class="empty">Đang tải…</p></div>

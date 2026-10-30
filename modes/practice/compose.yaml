@@ -24,6 +24,7 @@ services:
       VIEW_DISTANCE: "8"
       TZ: Asia/Ho_Chi_Minh
       RCON_PASSWORD: ${RCON_PASSWORD:?Chưa đặt RCON_PASSWORD trong .env (chạy lại ./ops/init.sh)}   # dùng chung với dịch vụ sao lưu, trang Cài đặt
+      BROADCAST_RCON_TO_OPS: "false"   # 31/10: lệnh RCON (botfarm, panel) không hiện "[Rcon: …]" cho admin trong game
       ONLINE_MODE: "FALSE"
       # Gói font tiếng Việt (ops/build-font-pack.sh ghi FONT_PACK_URL/SHA1 vào .env). Không bắt buộc: từ chối vẫn chơi được.
       # 20/10: server.properties KHÔNG gửi gói nữa; DuckyMoMoCore gửi theo lựa chọn từng người (/caidat › Font tiếng Việt)

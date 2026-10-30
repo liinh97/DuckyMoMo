@@ -31,3 +31,7 @@ meta-formatting:
     start-spacer: ""
     middle-spacer: ""
     end-spacer: ""
+
+# 31/10: botfarm bật / tắt quyền im lặng mỗi lần bot vào ra -> đừng báo "[LP] LOG > permission set duckymomo.vaora.an" cho admin
+log-notify-filtered-descriptions:
+  - "permission (un)?set duckymomo\\.vaora\\.an.*"

@@ -28,6 +28,7 @@ services:
       SIMULATION_DISTANCE: "4"
       TZ: Asia/Ho_Chi_Minh
       RCON_PASSWORD: ${RCON_PASSWORD:?Chưa đặt RCON_PASSWORD trong .env (chạy lại ./ops/init.sh)}
+      BROADCAST_RCON_TO_OPS: "false"   # 31/10: lệnh RCON (botfarm, panel) không hiện "[Rcon: …]" cho admin trong game
       ONLINE_MODE: "FALSE"
       # 20/10: server.properties KHÔNG gửi gói nữa; DuckyMoMoCore gửi theo lựa chọn từng người (/caidat › Font tiếng Việt)
       RESOURCE_PACK: ""

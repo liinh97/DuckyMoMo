@@ -516,7 +516,7 @@ final class PlayRanks implements Listener {
         ScreenNotify.show(p, "&6✦ " + t.name(), "&7Danh phận mới");
         p.sendMessage(c("&a✔ Bạn đã trở thành &f" + t.name() + "&a! &7Nhà: " + t.homes() + " · Balo: " + t.balo() + " · Chợ đen: " + t.ah() + " món Chợ đen."));
         if (announce) {
-            Bukkit.broadcast(c("&6✦ &f" + p.getName() + " &7vừa trở thành ").append(c(t.prefix().isBlank() ? "&f" + t.name() : t.prefix().trim())).append(c("&7!")));
+            ScreenNotify.invite("&6✦ &e" + p.getName() + " &fvừa trở thành &6" + t.name() + "&f! Xem cách lên bậc:", "/danhphan");
         }
         plugin.getLogger().info("Danh phận: " + p.getName() + " → " + t.id());
         DailyQuests.feature(p, "danhphan");

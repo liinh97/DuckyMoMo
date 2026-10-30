@@ -145,7 +145,7 @@ final class Achievements implements Listener {
             p.playSound(p.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 0.7f, 1.1f);
             p.sendMessage(c("&6✪ Thành tích: &e" + g.name() + " &7— " + g.desc() + (got.isEmpty() ? "" : " &a(" + String.join(", ", got) + "&a)")));
             if (g.rewards().stream().anyMatch(r -> r.startsWith("danhhieu"))) {
-                Bukkit.broadcast(c("&6✪ &f" + p.getName() + " &6đạt thành tích &e" + g.name() + "&6!"));
+                ScreenNotify.invite("&6✪ &e" + p.getName() + " &fđạt thành tích &e" + g.name() + "&f! Xem sổ:", "/thanhtich");
             }
         }
     }

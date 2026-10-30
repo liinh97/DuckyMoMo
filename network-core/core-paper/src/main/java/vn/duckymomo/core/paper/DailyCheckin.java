@@ -279,7 +279,7 @@ final class DailyCheckin implements Listener {
             List<String> extra = rewards.give(p, mile);
             p.sendMessage(c("&6★ Chạm mốc " + day + " ngày! Thưởng thêm: &f" + String.join("&7, &f", extra)));
             if (cfg.getBoolean("broadcast-milestone", true)) {
-                Bukkit.broadcast(c("&6★ &f" + p.getName() + " &6đã điểm danh đủ mốc &f" + day + " ngày&6! Gõ &f/diemdanh &6để nhận quà mỗi ngày."));
+                ScreenNotify.invite("&6★ &e" + p.getName() + " &fđã điểm danh đủ mốc &e" + day + " ngày&f! Nhận quà mỗi ngày:", "/diemdanh");
             }
         }
         status(p, count);

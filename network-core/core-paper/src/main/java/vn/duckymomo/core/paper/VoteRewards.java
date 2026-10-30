@@ -155,11 +155,11 @@ final class VoteRewards implements Listener {
         }
         String who = p.getName() == null ? name : p.getName();
         if (cfg.getBoolean("broadcast", true)) {
-            Bukkit.broadcast(c("&a✔ &f" + who + " &avừa vote cho server (" + site + ") và nhận &e" + VaultEconomy.format(money)
-                    + "&a. Gõ &f/vote &ađể nhận thưởng như vậy!"));
+            ScreenNotify.invite("&fNgười chơi &e" + who + " &fđã vote cho máy chủ và nhận &e" + VaultEconomy.format(money)
+                    + "&f! Bạn cũng vote được tại", "/vote");
         }
         if (bonus > 0) {
-            Bukkit.broadcast(c("&6★ " + who + " vote " + streak + " ngày liên tiếp: thưởng thêm &e" + VaultEconomy.format(bonus) + "&6!"));
+            ScreenNotify.invite("&6★ &e" + who + " &fvote &e" + streak + " ngày liên tiếp&f, thưởng thêm &e" + VaultEconomy.format(bonus) + "&f!", "/vote");
         }
 
         int every = cfg.getInt("party-every", 30);

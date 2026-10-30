@@ -38,6 +38,14 @@ final class ScreenNotify implements Listener {
         p.showTitle(Title.title(Tip.c(big), Tip.c(small == null ? "" : small), TIMES));
     }
 
+    /** Báo cả server một việc người chơi vừa làm để người khác làm theo, kèm nút lệnh bấm được (30/10). Ai tắt "Thông báo sự kiện"
+     *  (/caidat sukien) thì không thấy. msg dùng mã màu &, cmd dạng "/vote". */
+    static void invite(String msg, String cmd) {
+        PlayerSettings.broadcast("sukien", Tip.c("&d[DuckyMoMo] &r" + msg + " ").append(Tip.c("&b[" + cmd + "]")
+                .clickEvent(net.kyori.adventure.text.event.ClickEvent.runCommand(cmd))
+                .hoverEvent(net.kyori.adventure.text.event.HoverEvent.showText(Tip.c("&7Bấm để gõ &f" + cmd)))));
+    }
+
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
         joined.put(e.getPlayer().getUniqueId(), System.currentTimeMillis());

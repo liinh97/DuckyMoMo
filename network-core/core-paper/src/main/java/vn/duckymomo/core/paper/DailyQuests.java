@@ -831,6 +831,7 @@ final class DailyQuests implements Listener {
             data.set(key + ".bonus", true);
             List<String> bonus = rewards.give(p, cfg.getStringList("complete-all-rewards"));
             ScreenNotify.show(p, "&6★ Xong hết nhiệm vụ!", "&7Hẹn bạn ngày mai");
+            ScreenNotify.invite("&6★ &e" + p.getName() + " &fđã xong hết nhiệm vụ hôm nay và nhận thưởng thêm! Làm ngay:", "/nhiemvu");
             p.sendMessage(c("&6★ Xong hết nhiệm vụ hôm nay!" + (bonus.isEmpty() ? "" : " Thưởng thêm: &f" + String.join("&7, &f", bonus))));
         }
         flush();

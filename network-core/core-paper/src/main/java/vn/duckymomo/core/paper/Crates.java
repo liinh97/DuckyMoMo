@@ -444,7 +444,7 @@ final class Crates implements Listener {
             p.playSound(p.getLocation(), win.rare() ? Sound.UI_TOAST_CHALLENGE_COMPLETE : Sound.ENTITY_PLAYER_LEVELUP, 0.8f, 1f);
             p.sendMessage(c("&a✦ " + cr.name() + "&a: bạn trúng &f" + win.label() + (got.isEmpty() ? "" : " &7(" + String.join("&7, ", got) + "&7)")));
             if (win.rare()) {
-                Bukkit.broadcast(c("&6✦ &f" + p.getName() + " &6quay " + cr.name() + " &6trúng &f" + win.label() + "&6! &7(/gacha)"));
+                ScreenNotify.invite("&6✦ &e" + p.getName() + " &fquay " + cr.name() + " &ftrúng &e" + win.label() + "&f! Thử vận may:", "/gacha");
             }
             Bukkit.getScheduler().runTaskLater(plugin, () -> {
                 if (p.getOpenInventory().getTopInventory().getHolder() == h) {

@@ -611,7 +611,7 @@ final class LevelUp implements Listener {
         }
         if (milestoneEvery > 0 && next % milestoneEvery == 0) {
             List<String> got = rewards == null ? List.of() : rewards.give(p, milestoneRewards);
-            PlayerSettings.broadcast("sukien", c("&6⬆ " + p.getName() + " &eđã đạt &6Cấp " + next + "&e!" + (got.isEmpty() ? "" : " &7Quà mốc: &f" + String.join(", ", got))));
+            ScreenNotify.invite("&6⬆ &e" + p.getName() + " &fđã đạt &6Cấp " + next + "&f!" + (got.isEmpty() ? "" : " &7Quà mốc: &f" + String.join(", ", got)), "/capdo");
         }
     }
 

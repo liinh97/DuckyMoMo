@@ -7,7 +7,7 @@ const TALKS = [
   ['A:{B} ơi', 'B:sao', 'A:à thôi nhầm người :v'],
   ['A:map này đẹp nhỉ', 'B:ừ quần đảo nhiều chỗ đẹp phết'],
   ['A:có ai lập thị trấn chưa', 'B:t đang góp tiền lập nè', 'A:lập xong nhớ mời t'],
-  ['A:ae ở đây chơi lâu chưa', 'B:mới được mấy hôm', 'C:t cũng mới'],
+  [{ B: 'moi', C: 'moi' }, 'A:ae ở đây chơi lâu chưa', 'B:mới được mấy hôm', 'C:t cũng mới'],   // {vai trò}: xem app.js assign()
   ['A:chán quá', 'B:đi câu cá đi', 'A:ừ cũng được'],
   ['A:hello ae', 'B:hi', 'C:chào'],
   ['A:t afk tí nhé', 'B:ok'],

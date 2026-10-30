@@ -523,7 +523,43 @@ setTimeout(checkNhiet, 30000); setInterval(checkNhiet, 600000);
 const CHAT_USED = '/state/chat-used.json';
 let chatUsed = {};
 try { chatUsed = JSON.parse(fs.readFileSync(CHAT_USED, 'utf8')); } catch (e) { /* chưa có */ }
-const talkKey = t => t.join('|');
+// 30/10 chủ server: bot Lương Dân hỏi "bán đồ cho server ở đâu" (câu của người mới) -> vai trò người nói theo danh phận + cấp trên TAB.
+// Đoạn có thể mở đầu bằng {A: 'moi', B: 'cu'}; không ghi mà câu đầu của A là câu hỏi cách chơi (ở đâu, kiểu gì, là gì…) thì A = 'moi'.
+// moi: Tị Nạn, hoặc Dân cấp ≤ 8. cu: Lương Dân / Hào Kiệt, hoặc cấp ≥ 12. Không đủ bot hợp vai thì không chọn đoạn đó.
+const META = t => (t[0] && typeof t[0] === 'object' && !Array.isArray(t[0])) ? t[0] : null;
+const LINES = t => META(t) ? t.slice(1) : t;
+const ASK = /(kiểu gì|ở đâu|là gì|là cái gì|là ai|thế nào|làm sao|thì sao|cần gì|bằng gì|lúc nào|bao nhiêu|được không|ổn|có pvp không)( thế| nhỉ)?( ae)?( nhỉ)?$/i;
+function roles(t) {
+  const m = META(t);
+  if (m) return m;
+  const first = LINES(t)[0] || '';
+  return first.startsWith('A:') && ASK.test(first.slice(2).trim()) ? { A: 'moi' } : {};
+}
+function rankOf(name) {
+  const viewer = NAMES.find(n => RT[n].bot && RT[n].bot.players && RT[n].bot.players[name]);
+  const p = viewer ? RT[viewer].bot.players[name] : null;
+  const s = p && p.displayName ? p.displayName.toString() : '';
+  const r = /^\[([^\]]+)\]/.exec(s), c = /\[Cấp (\d+)\]/.exec(s);
+  return { hang: r ? r[1].trim() : '', cap: c ? +c[1] : 0 };
+}
+function fitsRole(role, name) {
+  if (!role) return true;
+  const i = rankOf(name);
+  if (role === 'moi') return i.hang === 'Tị Nạn' || (i.hang === 'Dân' && i.cap <= 8);
+  if (role === 'cu') return i.hang === 'Lương Dân' || i.hang === 'Hào Kiệt' || i.cap >= 12;
+  return true;
+}
+/** Gán bot cho A/B/C theo vai trò; null nếu không đủ. pool đã xáo. */
+function assign(t, pool) {
+  const r = roles(t), letters = [...new Set(LINES(t).map(l => l[0]))], who = {}, used = new Set();
+  for (const L of letters.filter(x => r[x]).concat(letters.filter(x => !r[x]))) {
+    const n = pool.find(b => !used.has(b) && fitsRole(r[L], b));
+    if (!n) return null;
+    who[L] = n; used.add(n);
+  }
+  return who;
+}
+const talkKey = t => LINES(t).join('|');
 function pickFresh(list, key) {
   const now = Date.now(), gap = (chatCfg.norepeat || 5) * 3600e3;
   const fresh = list.filter(t => now - (chatUsed[key(t)] || 0) > gap);
@@ -553,9 +589,14 @@ async function chatOnce() {
   const pool = srv ? by[srv].slice() : [];
   if (!pool.length) return 'không có bot nào online';
   for (let k = pool.length - 1; k > 0; k--) { const j = Math.floor(Math.random() * (k + 1)); [pool[k], pool[j]] = [pool[j], pool[k]]; }
-  const fit = (nhietOn ? TALKS.concat(NHIET) : TALKS).filter(t => new Set(t.map(l => l[0])).size <= pool.length);
-  const talk = fillSlots(pool.length >= 2 && Math.random() < 0.85 && fit.length ? pickFresh(fit, talkKey) : ['A:' + pickFresh(SOLO, x => 'solo|' + x)]);
-  const who = { A: pool[0], B: pool[1], C: pool[2] };
+  const fit = (nhietOn ? TALKS.concat(NHIET) : TALKS).filter(t => assign(t, pool));
+  let talk, who;
+  if (pool.length >= 2 && Math.random() < 0.85 && fit.length) {
+    const t = pickFresh(fit, talkKey);
+    who = assign(t, pool); talk = fillSlots(LINES(t));
+  } else {
+    talk = fillSlots(['A:' + pickFresh(SOLO, x => 'solo|' + x)]); who = { A: pool[0] };
+  }
   chatBusy = true;
   try {
     let prev = null;

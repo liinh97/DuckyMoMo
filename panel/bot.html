@@ -54,6 +54,8 @@
   .dev.bot { color: #1c1917; background: #f59e0b; }   /* 28/10: bot nền cam đặc, khác hẳn PC (xanh nhạt) */
   .ask.hoso { width: min(640px, calc(100vw - 32px)); }
   .towntag { display: block; font-size: 11px; color: #0ea5e9; margin-top: 1px; }
+  .gantag { display: block; font-size: 11px; color: #f59e0b; margin-top: 1px; }
+  .ask p { white-space: pre-line; }
   .devtag { display: block; font-size: 11px; color: #16a34a; margin-top: 2px; font-weight: 500; }
   .hs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; margin: 10px 0; }
   .hs-grid label { display: flex; flex-direction: column; gap: 4px; font-size: 13px; }
@@ -101,6 +103,11 @@
       <select id="mkSrv" title="Vào server nào"></select>
       <button type="submit" class="mini primary">Tạo bot</button>
       <span class="hint">3–16 ký tự không dấu, số, gạch dưới; không trùng tên người chơi đã từng vào.</span>
+    </form>
+    <form id="gan" autocomplete="off" title="Tài khoản người thật có sẵn (vd acc clone của admin, phải từng vào Bang Hội Chiến): botfarm vào và giữ online, điều khiển như bot (nói, lệnh, đi tới) nhưng server tính như NGƯỜI CHƠI (không thay phiên, tự chat, chết giả…). Chủ tài khoản tự vào game thì botfarm tự nhả.">
+      <input id="ganName" placeholder="Gắn tài khoản có sẵn (tên, Bedrock có dấu chấm)" maxlength="17">
+      <select id="ganSrv" title="Vào server nào"></select>
+      <button type="submit" class="mini">Gắn tài khoản</button>
     </form>
     <form id="ht" autocomplete="off" title="Khi không còn người THẬT nào online (bot không tính) đủ số phút này LIỀN (ai vào lại thì đếm lại từ đầu): bật lại mọi tuỳ chọn bot (thay phiên, hiện tin vào/ra, tự chat, chết giả, tpa, đi dạo) để mở máy là chạy đủ, rồi tắt server an toàn và tắt máy. Cần đăng ký tác vụ Windows một lần: ops/windows/dang-ky-hen-tat.ps1.">
       <span class="chk">⏻ Hẹn tắt máy khi hết người, sau</span><input id="htPhut" type="number" min="1" max="180" value="15" style="width:64px"><span class="hint">phút</span>
@@ -155,7 +162,7 @@
 <script>
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
-let BOTS = [], SERVERS = {}, busy = false;
+let BOTS = [], GANS = [], SERVERS = {}, busy = false;
 
 async function act(body, quiet) {
   try {
@@ -171,26 +178,39 @@ function srvOptions(cur) {
   return Object.entries(SERVERS).map(([k, v]) => `<option value="${esc(k)}"${k === cur ? " selected" : ""}>${esc(v)}</option>`).join("");
 }
 
-let DEV_STATE = {}, TOWNS = {}, TOWN_LIST = [];
-function renderBots() {
-  if (!BOTS.length) return;
-  const sel = $("who").value;
-  let h = '<table><thead><tr><th>Bot</th><th>Server</th><th>Vị trí</th><th>Thao tác</th></tr></thead><tbody>';
-  for (const b of BOTS) {
-    const st = b.online ? "on" : (b.want || b.connecting) ? "wait" : "";
-    const pos = b.online && b.x != null ? `${b.x} ${b.y} ${b.z}${b.away ? " · đang ở chỗ khác" : ""}` : (b.want ? "đang vào…" : "—");
-    h += `<tr data-n="${esc(b.name)}"${b.name === sel ? ' class="sel"' : ""}>
-      <td class="name"><span class="dot ${st}"></span><b>${esc(b.name)}</b>${b.err && !b.online ? `<span class="err" title="${esc(b.err)}">${esc(b.err)}</span>` : ""}${devTag(b.name)}${TOWNS[b.name] ? `<span class="towntag" title="Thị trấn (Towny)">⌂ ${esc(TOWNS[b.name])}</span>` : ""}</td>
-      <td><select data-a="server">${srvOptions(b.server)}</select></td>
-      <td>${b.online && b.spawn ? `<span class="atsp" title="Đang đứng ở khu spawn${b.server === "banghoi-1" ? " — bấm Ngẫu nhiên để ra khu riêng" : ""}">Ở spawn</span>` : ""}<span class="pos" title="${b.home ? "Chỗ mặc định: " + b.home.join(" ") : ""}">${esc(pos)}</span></td>
-      <td><div class="acts">${b.want ? '<button data-a="leave" title="Bot chào (bot khác có thể đáp) rồi thoát, hiện tin [-]">Chào rồi thoát</button><button data-a="leavenb" title="Không chào, thoát hiện tin [-]">Thoát (hiện [-])</button><button data-a="leaveim" title="Không chào, không hiện tin; chỉ mất tên khỏi bảng Tab">Thoát trộm</button>' : '<button class="primary" data-a="join" title="Vào, hiện tin [+] rồi chào (bot khác có thể đáp)">Vào rồi chào</button><button data-a="joinnh" title="Vào, hiện tin [+], không chào">Vào (hiện [+])</button><button data-a="joinim" title="Vào lặng lẽ, không hiện tin, không chào">Vào trộm</button>'}
+/** Nút thao tác một dòng. 1/11: tài khoản gắn (người thật botfarm giữ online) và bot đang cấp cho admin chơi tay có bộ nút riêng. */
+function acts(b) {
+  const online = b.online ? `<button data-a="move" title="Đi tới toạ độ X Z">Đi tới…</button>
+        <button data-a="cmd" data-t="spawn">/spawn</button><button data-a="cmd" data-t="tpaccept">/tpaccept</button><button data-a="cmd" data-t="tpdeny">/tpdeny</button>
+        <button data-a="pick" title="Chọn tài khoản này ở khung chat">Chat</button>` : "";
+  if (b.gan) return (b.want ? '<button data-a="ganleave" title="Botfarm thoát tài khoản này">Thoát</button>' : '<button class="primary" data-a="ganjoin" title="Botfarm vào và giữ tài khoản này online (như người thật vào)">Vào</button>')
+    + online + '<button data-a="bogan" title="Bỏ tài khoản này khỏi trang Bot (tài khoản vẫn nguyên)">Bỏ gắn</button>';
+  if (b.tay) return '<button class="primary" data-a="tratk" title="Admin chơi xong: trả tài khoản cho botfarm dùng lại">Trả lại cho bot</button>'
+    + '<button data-a="captk" title="Đặt mật khẩu mới cho tài khoản này">Đổi mật khẩu</button>'
+    + '<button data-a="hoso">Hồ sơ</button><button data-a="town">Thị trấn</button>';
+  return `${b.want ? '<button data-a="leave" title="Bot chào (bot khác có thể đáp) rồi thoát, hiện tin [-]">Chào rồi thoát</button><button data-a="leavenb" title="Không chào, thoát hiện tin [-]">Thoát (hiện [-])</button><button data-a="leaveim" title="Không chào, không hiện tin; chỉ mất tên khỏi bảng Tab">Thoát trộm</button>' : '<button class="primary" data-a="join" title="Vào, hiện tin [+] rồi chào (bot khác có thể đáp)">Vào rồi chào</button><button data-a="joinnh" title="Vào, hiện tin [+], không chào">Vào (hiện [+])</button><button data-a="joinim" title="Vào lặng lẽ, không hiện tin, không chào">Vào trộm</button>'}
         ${b.online ? `<button data-a="home" title="Về chỗ mặc định">Về chỗ</button>${b.server === "banghoi-1" ? `<button data-a="random"${b.spawn ? ' class="hl"' : ""} title="Ra một khu ngẫu nhiên chưa bot nào đứng (đặt làm chỗ mặc định)">Ngẫu nhiên</button>` : ""}<button data-a="move" title="Đi tới toạ độ X Z">Đi tới…</button>
         <button data-a="cmd" data-t="spawn">/spawn</button><button data-a="cmd" data-t="tpaccept">/tpaccept</button><button data-a="cmd" data-t="tpdeny">/tpdeny</button>
         <button data-a="sethome" title="Lấy chỗ đang đứng làm chỗ mặc định">Đặt chỗ</button><button data-a="pick" title="Chọn bot này ở khung chat">Chat</button>` : ""}
         <button data-a="hoso" title="Xu, Thăng Cấp, giờ chơi, danh phận, nghề, kỹ năng: số liệu giống người chơi thật">Hồ sơ</button>
         <button data-a="town" title="Cho bot vào / đổi / rời thị trấn">Thị trấn</button>
         <button data-a="dev"${(DEV_STATE[b.name] || {}).on ? ' class="hl"' : ""} title="Bot tự tăng số liệu dần như người thật (chỉ khi online ở Bang Hội Chiến), mỗi bot một tính cách riêng">${(DEV_STATE[b.name] || {}).on ? "Đang tự phát triển" : "Tự phát triển"}</button>
-        ${b.created && !b.want && !b.online ? '<button data-a="remove" title="Xoá bot tạo thêm khỏi danh sách">Xoá</button>' : ""}</div></td></tr>`;
+        ${b.created && !b.want && !b.online ? '<button data-a="remove" title="Xoá bot tạo thêm khỏi danh sách">Xoá</button>' : ""}`
+    + (b.want || b.online ? "" : '<button data-a="captk" title="Đặt mật khẩu đăng nhập riêng cho tài khoản bot này để admin vào chơi như người thật; botfarm khoá bot lại tới khi bấm Trả lại cho bot">Cấp tài khoản</button>');
+}
+let DEV_STATE = {}, TOWNS = {}, TOWN_LIST = [];
+function renderBots() {
+  if (!BOTS.length) return;
+  const sel = $("who").value;
+  let h = '<table><thead><tr><th>Bot</th><th>Server</th><th>Vị trí</th><th>Thao tác</th></tr></thead><tbody>';
+  for (const b of [...GANS, ...BOTS]) {
+    const st = b.online ? "on" : (b.want || b.connecting) ? "wait" : "";
+    const pos = b.online && b.x != null ? `${b.x} ${b.y} ${b.z}${b.away ? " · đang ở chỗ khác" : ""}` : (b.want ? "đang vào…" : "—");
+    h += `<tr data-n="${esc(b.name)}"${b.name === sel ? ' class="sel"' : ""}>
+      <td class="name"><span class="dot ${st}"></span><b>${esc(b.name)}</b>${b.err && !b.online ? `<span class="err" title="${esc(b.err)}">${esc(b.err)}</span>` : ""}${b.gan ? '<span class="gantag" title="Tài khoản người thật botfarm giữ online; server tính như người chơi">⚑ tài khoản gắn</span>' : ""}${b.tay ? '<span class="gantag" title="Đã cấp mật khẩu cho admin chơi tay; botfarm không cho vào">⚑ admin đang giữ</span>' : ""}${devTag(b.name)}${TOWNS[b.name] ? `<span class="towntag" title="Thị trấn (Towny)">⌂ ${esc(TOWNS[b.name])}</span>` : ""}</td>
+      <td><select data-a="server">${srvOptions(b.server)}</select></td>
+      <td>${b.online && b.spawn ? `<span class="atsp" title="Đang đứng ở khu spawn${b.server === "banghoi-1" ? " — bấm Ngẫu nhiên để ra khu riêng" : ""}">Ở spawn</span>` : ""}<span class="pos" title="${b.home ? "Chỗ mặc định: " + b.home.join(" ") : ""}">${esc(pos)}</span></td>
+      <td><div class="acts">${acts(b)}</div></td></tr>`;
   }
   $("bots").innerHTML = h + "</tbody></table>";
   // 1/11: số bot đang online (tổng + từng server)
@@ -198,7 +218,7 @@ function renderBots() {
   for (const b of on) per[b.server] = (per[b.server] || 0) + 1;
   $("botCount").textContent = `· ${on.length}/${BOTS.length} online` + (Object.keys(per).length > 1 ? " (" + Object.entries(per).map(([k, v]) => `${SERVERS[k] || k} ${v}`).join(", ") + ")" : "");
   const keep = $("who").value;
-  $("who").innerHTML = BOTS.filter((b) => b.online).map((b) => `<option>${esc(b.name)}</option>`).join("") || '<option value="">(chưa bot nào online)</option>';
+  $("who").innerHTML = [...GANS, ...BOTS].filter((b) => b.online).map((b) => `<option>${esc(b.name)}</option>`).join("") || '<option value="">(chưa bot nào online)</option>';
   if ([...$("who").options].some((o) => o.value === keep)) $("who").value = keep;
 }
 
@@ -229,6 +249,17 @@ $("bots").addEventListener("click", async (ev) => {
   }
   if (a === "join") return act({ bot: name, action: "join", server });
   if (a === "joinim") return act({ bot: name, action: "join", server, silent: true });
+  // 1/11: tài khoản gắn + cấp tài khoản bot cho admin
+  if (a === "ganjoin") return act({ bot: name, action: "join", server });
+  if (a === "ganleave") return act({ bot: name, action: "leave" });
+  if (a === "bogan") { if (await ask(`Bỏ gắn ${name}? Botfarm thoát tài khoản này (nếu đang giữ) và bỏ khỏi danh sách; tài khoản trong game giữ nguyên.`, { title: "Bỏ gắn", ok: "Bỏ gắn" })) act({ bot: name, action: "bogan" }); return; }
+  if (a === "tratk") return act({ bot: name, action: "tratk" });
+  if (a === "captk") {
+    if (!(await ask(`Cấp tài khoản ${name} cho admin chơi tay? Đặt mật khẩu đăng nhập mới, bot thoát và bị khoá tới khi bấm "Trả lại cho bot".`, { title: "Cấp tài khoản bot", ok: "Cấp" }))) return;
+    const d = await act({ bot: name, action: "captk" }, true);
+    if (d && d.ok && d.pass) await ask(`Tài khoản: ${name}\nMật khẩu: ${d.pass}\n\nVào game qua cổng VPS như người chơi thường, gõ /login ${d.pass}. Ghi lại mật khẩu, trang sẽ không hiện lại (quên thì bấm Đổi mật khẩu).`, { title: "Đã cấp tài khoản", ok: "Đã ghi lại" });
+    return;
+  }
   if (a === "joinnh") return act({ bot: name, action: "join", server, nohi: true });   // 1/11: có [+], không chào   // 31/10: vào / thoát im lặng song song với có tin
   if (a === "leaveim") return act({ bot: name, action: "leave", silent: true });
   if (a === "leavenb") return act({ bot: name, action: "leave", nobye: true });   // 1/11: có [-], không chào
@@ -316,9 +347,10 @@ async function loadBots() {
   try {
     const d = await (await fetch("api/bot")).json();
     if (!d.ok) { $("bots").innerHTML = `<div class="empty">${esc(d.message || "Không tải được")}</div>`; return; }
-    SERVERS = d.servers || {}; BOTS = d.bots || []; EVENTS = d.events || []; DEV_STATE = d.phattrien || {}; TOWNS = d.thitran || {}; TOWN_LIST = d.ds_thitran || [];
+    SERVERS = d.servers || {}; BOTS = d.bots || []; GANS = d.gan || []; EVENTS = d.events || []; DEV_STATE = d.phattrien || {}; TOWNS = d.thitran || {}; TOWN_LIST = d.ds_thitran || [];
     if ($("fsrv").options.length === 1) for (const [k, v] of Object.entries(SERVERS)) $("fsrv").add(new Option(v, k));
     if (!$("mkSrv").options.length) for (const [k, v] of Object.entries(SERVERS)) $("mkSrv").add(new Option(v, k));
+    if (!$("ganSrv").options.length) for (const [k, v] of Object.entries(SERVERS)) if (k !== "lobby") $("ganSrv").add(new Option(v, k));
     if (!document.activeElement || !document.activeElement.closest("#bots select")) renderBots();
     devLabel();
     if (d.chat && !(document.activeElement && document.activeElement.closest("#tc"))) {
@@ -531,6 +563,12 @@ $("ht").addEventListener("submit", async (ev) => {
   const phut = +$("htPhut").value;
   if (!(await ask(`Khi không còn người thật nào online đủ ${phut} phút liền thì tắt server và TẮT MÁY. Đồng ý?`, { title: "Hẹn tắt máy", ok: "Hẹn tắt" }))) return;
   await act({ action: "hentat", phut }); loadHenTat();
+});
+$("gan").addEventListener("submit", async (ev) => {
+  ev.preventDefault();
+  const n = $("ganName").value.trim(); if (!n) return;
+  const d = await act({ bot: n, action: "gan", server: $("ganSrv").value });
+  if (d && d.ok) $("ganName").value = "";
 });
 $("htHuy").onclick = async () => { await act({ action: "hentat", huy: true }); loadHenTat(); };
 loadHenTat(); setInterval(loadHenTat, 10000);

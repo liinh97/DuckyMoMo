@@ -1676,7 +1676,7 @@ def bot_names():
     if _t.time() - _bot_names["at"] > 60:
         _bot_names["at"] = _t.time()
         try:
-            _bot_names["names"] = {b["name"].lower() for b in bot_json().get("bots", [])}
+            _bot_names["names"] = {b["name"].lower() for b in bot_json().get("bots", []) if not b.get("tay")}   # admin đang chơi tay = người
         except Exception:
             pass
     return _bot_names["names"]
@@ -1922,7 +1922,8 @@ def console_after(log, start, wait=3.0):
 BOTFARM_URL = os.environ.get("BOTFARM_URL", "http://botfarm:8090")
 BOT_ACTIONS = {"join": "vào", "leave": "thoát", "server": "đổi server", "chat": "nói", "cmd": "gõ lệnh", "move": "đi tới", "home": "về chỗ", "sethome": "đặt chỗ", "random": "ra khu ngẫu nhiên",
                "create": "tạo bot", "remove": "xoá bot", "chatcfg": "cài bot tự chat", "chatnow": "cho bot chat thử", "tpacfg": "cài bot tự trả lời TPA", "ftpacfg": "cài bot tpa người chơi rồi tự huỷ", "chetcfg": "cài bot chết giả", "chetnow": "cho bot chết giả thử",
-               "wandercfg": "cài bot đi dạo", "rotcfg": "cài thay phiên online", "wanderwalk": "cho bot đi dạo được đi lại", "wandernow": "cho bot đi dạo thử", "gomphong": "gom bot vào phòng ẩn", "trave": "trả bot về chỗ cũ"}
+               "wandercfg": "cài bot đi dạo", "rotcfg": "cài thay phiên online", "wanderwalk": "cho bot đi dạo được đi lại", "wandernow": "cho bot đi dạo thử", "gomphong": "gom bot vào phòng ẩn", "trave": "trả bot về chỗ cũ",
+               "captk": "cấp tài khoản bot cho admin", "tratk": "trả tài khoản cho bot", "gan": "gắn tài khoản có sẵn", "bogan": "bỏ gắn tài khoản"}
 
 
 def known_player_names():
@@ -1941,6 +1942,11 @@ def bot_json():
     try:
         with urllib.request.urlopen(BOTFARM_URL + "/bots", timeout=5) as r:
             d = json.loads(r.read().decode("utf-8"))
+            # 1/11: tài khoản gắn (người thật botfarm giữ online) tách riêng: mọi chỗ dùng "bots" (đếm bot, ẩn bot, tự phát triển,
+            # hồ sơ…) không đụng tới, server tính họ như người chơi
+            allb = d.get("bots", [])
+            d["bots"] = [b for b in allb if not b.get("gan")]
+            d["gan"] = [b for b in allb if b.get("gan")]
             return d | {"ok": True, "phattrien": bot_dev_info(), "thitran": bot_towns_of([b.get("name", "") for b in d.get("bots", [])]),
                         "ds_thitran": sorted(_bot_towns().values(), key=str.lower)}
     except Exception as e:
@@ -2686,7 +2692,7 @@ def _cached(key, ttl, fn):
 
 
 def _noti_bots():
-    return _cached("bots", 60, lambda: {str(b.get("name", "")).lower() for b in bot_json().get("bots", [])})
+    return _cached("bots", 60, lambda: {str(b.get("name", "")).lower() for b in bot_json().get("bots", []) if not b.get("tay")})
 
 
 def _noti_staff():
@@ -2937,7 +2943,13 @@ def bot_action(body, who):
             raise ValueError("Tên bot 3–16 ký tự, chỉ chữ không dấu, số, gạch dưới")
         if name.lower() in known_player_names():
             raise ValueError(f"Tên {name} đã có tài khoản trong game (người chơi hoặc bot cũ), chọn tên khác")
-    payload = {k: body.get(k) for k in ("bot", "action", "server", "text", "x", "z", "on", "min", "max", "khung", "silent", "nobye", "nohi", "vaora", "phienMin", "phienMax") if body.get(k) is not None}
+    if act == "gan":   # 1/11: gắn tài khoản người thật có sẵn: phải từng vào Bang Hội Chiến (lấy UUID thật, Bedrock cần)
+        name = str(body.get("bot", "")).strip()
+        uid, real = _bot_uuid(name)
+        if not uid:
+            raise ValueError(f"Không thấy tài khoản {name} (phải vào Bang Hội Chiến ít nhất một lần, gõ đúng tên kể cả dấu chấm của Bedrock)")
+        body = dict(body, uuid=uid, bot=real)
+    payload = {k: body.get(k) for k in ("bot", "action", "server", "text", "x", "z", "on", "min", "max", "khung", "silent", "nobye", "nohi", "uuid", "vaora", "phienMin", "phienMax") if body.get(k) is not None}
     req = urllib.request.Request(BOTFARM_URL + "/act", data=json.dumps(payload).encode("utf-8"), headers={"Content-Type": "application/json"}, method="POST")
     try:
         with urllib.request.urlopen(req, timeout=15) as r:

@@ -45,7 +45,7 @@ const log = (...a) => console.log(new Date().toLocaleTimeString('vi-VN', { hour1
 let state = {};
 let fresh = false;
 try { state = JSON.parse(fs.readFileSync(STATE, 'utf8')); } catch (e) { state = {}; fresh = true; }
-for (const n of Object.keys(state)) if (state[n] && state[n].created && !NAMES.includes(n)) NAMES.push(n);
+for (const n of Object.keys(state)) if (state[n] && state[n].created && !state[n].gan && !NAMES.includes(n)) NAMES.push(n);   // tài khoản gắn không phải bot
 for (const n of NAMES) state[n] = Object.assign({ server: 'banghoi-1', want: false, home: {}, at: {} }, state[n] || {});
 for (const n of NAMES) delete state[n].bad;   // chỗ "xấu" của lượt chạy trước (thường do quái giết, nay bot bất tử): thử lại
 if (fresh) NAMES.slice(0, 7).forEach(n => { state[n].want = true; });   // lần đầu: 7 bot đang đứng từ trước (tools/bottest/dung-spawn.js) bật sẵn
@@ -65,6 +65,12 @@ function save() {
 const RT = {};   // name -> {bot, connecting, fast, retryAt, err, deaths: [ts], placedAt}
 const newRT = () => ({ bot: null, connecting: false, fast: false, retryAt: 0, err: '', deaths: [], placedAt: 0 });
 for (const n of NAMES) RT[n] = newRT();
+// 1/11 chủ server: TÀI KHOẢN GẮN = tài khoản người thật có sẵn (vd acc clone của admin), botfarm giữ online + điều khiển như bot
+// (nói, lệnh, đi tới) nhưng KHÔNG nằm trong NAMES (không thay phiên / tự chat / chết giả / đi dạo) và vào bằng IP 10.31.x
+// (core BotView.isBot chỉ nhận 10.30.x) -> server tính như người chơi thật. state[n].gan = true, uuid = UUID thật (Bedrock).
+const GAN = Object.keys(state).filter(n => state[n] && state[n].gan);
+for (const n of GAN) { state[n] = Object.assign({ server: 'banghoi-1', want: false, home: {}, at: {} }, state[n]); RT[n] = newRT(); }
+const ALL = () => NAMES.concat(GAN);
 /** Số IP giả của bot (10.30.i.(10+i)): bot gốc theo thứ tự, bot tạo thêm giữ số được cấp lúc tạo (xoá bot khác không đổi IP). */
 const ipIndex = n => state[n].ipn || (BASE.indexOf(n) + 1);
 const EVENTS = [];
@@ -263,8 +269,11 @@ function make(name, host, i) {
     if (p.channel !== 'velocity:player_info') return bot._client.write('login_plugin_response', { messageId: p.messageId });
     const varint = n => { const b = []; do { let t = n & 0x7f; n >>>= 7; if (n) t |= 0x80; b.push(t); } while (n); return Buffer.from(b); };
     const str = s => { const d = Buffer.from(s, 'utf8'); return Buffer.concat([varint(d.length), d]); };
-    const h = crypto.createHash('md5').update('OfflinePlayer:' + name).digest(); h[6] = (h[6] & 0x0f) | 0x30; h[8] = (h[8] & 0x3f) | 0x80;
-    const body = Buffer.concat([varint(1), str(`10.30.${i}.${10 + i}`), h, str(name), varint(0)]);   // mỗi bot một IP giả (khỏi bị coi là cùng máy)
+    const g = state[name] && state[name].gan;
+    let h = crypto.createHash('md5').update('OfflinePlayer:' + name).digest(); h[6] = (h[6] & 0x0f) | 0x30; h[8] = (h[8] & 0x3f) | 0x80;
+    if (g && state[name].uuid) h = Buffer.from(state[name].uuid.replace(/-/g, ''), 'hex');   // tài khoản gắn: UUID thật (Bedrock / Floodgate)
+    const ip = g ? `10.31.${i}.${10 + i}` : `10.30.${i}.${10 + i}`;   // tài khoản gắn: dải khác -> server tính là người thật
+    const body = Buffer.concat([varint(1), str(ip), h, str(name), varint(0)]);   // mỗi bot một IP giả (khỏi bị coi là cùng máy)
     const sig = crypto.createHmac('sha256', SECRET).update(body).digest();
     bot._client.write('login_plugin_response', { messageId: p.messageId, data: Buffer.concat([sig, body]) });
   });
@@ -277,7 +286,11 @@ async function connect(name) {
   const bot = make(name, host, i);
   let tick = null, first = true;
   bot.on('error', e => { rt.err = e.message; });
-  bot.on('kicked', r => { const t = typeof r === 'string' ? r : JSON.stringify(r); rt.err = 'bị đá: ' + t.replace(/\{"text":|"|\}/g, '').slice(0, 160); event({ type: 'kick', bot: name, text: rt.err }); });
+  bot.on('kicked', r => {
+    const t = typeof r === 'string' ? r : JSON.stringify(r); rt.err = 'bị đá: ' + t.replace(/\{"text":|"|\}/g, '').slice(0, 160); event({ type: 'kick', bot: name, text: rt.err });
+    // 1/11: tài khoản gắn bị đá vì chủ tài khoản vào game (đăng nhập trùng) -> nhả ra, đừng vào lại đá người ta
+    if (st.gan && /duplicate|another location|nơi khác/i.test(t)) { st.want = false; save(); log(name, 'chủ tài khoản vào game: nhả tài khoản gắn'); }
+  });
   bot.on('end', () => {
     clearInterval(tick);
     if (rt.bot === bot) rt.bot = null;
@@ -289,8 +302,9 @@ async function connect(name) {
   bot.on('messagestr', (msg, pos) => {
     const m = String(msg);
     if (host === 'lobby' && BOT_PASS) {   // AuthMe ở sảnh: tự đăng ký / đăng nhập
-      if (/\/register/i.test(m)) bot.chat(`/register ${BOT_PASS} ${BOT_PASS}`);
-      else if (/\/login/i.test(m)) bot.chat(`/login ${BOT_PASS}`);
+      const pw = st.pass || BOT_PASS;   // 1/11: bot đã cấp tài khoản cho admin thì mật khẩu riêng
+      if (/\/register/i.test(m)) bot.chat(`/register ${pw} ${pw}`);
+      else if (/\/login/i.test(m)) bot.chat(`/login ${pw}`);
     }
     let w = m.match(/^\[(.+?) -> (.+?)\] (.*)$/);
     if (w && w[1] !== name && !/^(tôi|me)$/i.test(w[1])) { event({ type: 'msg', bot: name, server: host, from: w[1], text: w[3] }); return; }
@@ -310,6 +324,7 @@ async function connect(name) {
       // nhắm tới, người chơi đánh không mất máu / không bị đẩy (Tab không hiện chế độ chơi nên member không nhận ra)
     }
     rt.wander = null;
+    if (st.gan) { rt.placing = false; return; }   // tài khoản gắn: không im lặng, không quyền Grim, không đổi chế độ, không dời chỗ
     rt.placing = true; rt.placedAt = Date.now();   // khỏi bị vòng "bị dời" nhận nhầm chỗ vào game (spawn) làm chỗ đứng
     await sleep(2500);
     // vào / ra không báo [+] [-] (DuckyMoMoCore DonateRanks: duckymomo.vaora.an) là MẶC ĐỊNH (dựng lại botfarm, bị đá… không hiện hàng loạt).
@@ -428,7 +443,7 @@ function realOnline() {
   for (const n of NAMES) {
     const b = RT[n].bot;
     if (!b || !b.players) continue;
-    for (const x of Object.keys(b.players)) if (!NAMES.includes(x)) seen.add(x);
+    for (const x of Object.keys(b.players)) if (!NAMES.includes(x) || (state[x] && state[x].tay)) seen.add(x);   // 1/11: admin chơi tay bằng tài khoản bot = người thật
   }
   return [...seen];
 }
@@ -436,7 +451,7 @@ function realOnline() {
 async function gracefulStop(sig) {
   if (stopping) return;
   stopping = true;
-  const on = NAMES.filter(n => RT[n].bot).sort(() => Math.random() - 0.5);
+  const on = ALL().filter(n => RT[n].bot).sort(() => Math.random() - 0.5);
   const real = realOnline();
   // 29/10 chủ server: không có người thật thì thoát hết luôn; có người chơi mới thoát dần (không lộ bot)
   log('nhận', sig, '-', on.length, 'bot', real.length ? 'thoát dần (đang có ' + real.join(', ') + ')' : 'thoát hết (không có người thật)');
@@ -451,11 +466,11 @@ process.on('SIGTERM', () => gracefulStop('SIGTERM'));
 process.on('SIGINT', () => gracefulStop('SIGINT'));
 setInterval(() => {
   if (stopping) return;
-  for (const n of NAMES) {
+  for (const n of ALL()) {
     if (!state[n].want && RT[n].bot) { RT[n].fast = false; RT[n].bot.quit(); }
   }
   if (Date.now() < nextJoin) return;
-  const n = NAMES.find(x => state[x].want && !RT[x].bot && !RT[x].connecting && Date.now() >= RT[x].retryAt);
+  const n = ALL().find(x => state[x].want && !state[x].tay && !RT[x].bot && !RT[x].connecting && Date.now() >= RT[x].retryAt);
   if (!n) return;
   const rt = RT[n];
   nextJoin = Date.now() + (rt.fast || !realOnline().length ? 2000 : 8000 + Math.random() * 12000);   // không có người thật: vào nhanh
@@ -1182,7 +1197,7 @@ function rotLeave(on) {
 const REST_MIN = 30;
 function rotJoin(off) {
   const now = Date.now();
-  const c = off.filter(n => !RT[n].leaving && now - (state[n].offSince || 0) >= REST_MIN * 60000)
+  const c = off.filter(n => !RT[n].leaving && !state[n].tay && now - (state[n].offSince || 0) >= REST_MIN * 60000)
     .sort((a, b) => (state[a].offSince || 0) - (state[b].offSince || 0));
   if (!c.length) return null;   // chưa bot nào nghỉ đủ: thôi, lượt sau tính tiếp
   const n = c[Math.floor(Math.random() * Math.min(3, c.length))];   // một trong 3 bot nghỉ lâu nhất
@@ -1295,18 +1310,31 @@ async function act(b) {
     return out.length + ' bot: ' + (b.action === 'join' ? 'vào' : b.action === 'leave' ? 'thoát' : b.action);
   }
   if (b.action === 'create') return create(String(b.bot || '').trim(), b.server, b.want !== false);
+  if (b.action === 'gan') return ganAdd(String(b.bot || '').trim(), b.server, b.uuid);
   const st = state[b.bot], rt = RT[b.bot];
   if (!st) throw new Error('không có bot ' + b.bot);
   const text = String(b.text || '').replace(/[\x00-\x1f\x7f§]/g, '').trim().slice(0, 240);
   switch (b.action) {
     case 'join':
+      if (st.tay) throw new Error(b.bot + ': admin đang chơi bằng tài khoản này (bấm Trả lại cho bot trước)');
       if (b.server && SERVERS[b.server]) st.server = b.server;
+      if (st.gan) {   // tài khoản gắn: vào như người thường (không đụng quyền im lặng)
+        if (st.server === 'lobby') throw new Error('tài khoản gắn không vào sảnh (vướng đăng nhập AuthMe)');
+        if (b.mass) return b.bot + ': tài khoản gắn, bỏ qua';
+        st.want = true; rt.retryAt = 0; save();
+        return b.bot + ' (tài khoản gắn) vào ' + SERVERS[st.server];
+      }
       // 31/10 chủ server: bấm Vào một bot thì hiện [+] như người thật (và đôi khi chào); Vào tất cả thì vẫn im
       if (!b.mass && !b.silent && !rt.bot && st.server === 'banghoi-1') { st.announce = true; st.hiForce = !b.nohi; st.noHi = !!b.nohi; await setSilent(b.bot, false); }   // 1/11: nohi = hiện [+], không chào
       else if (!rt.bot && !st.silent) await setSilent(b.bot, true);   // 1/11: Vào trộm / Vào tất cả: chắc chắn im (lượt trước có tin thì quyền im đã bị gỡ)
       st.want = true; st.since = Date.now(); rt.retryAt = 0; save();
       return b.bot + ' vào ' + SERVERS[st.server];
     case 'leave':
+      if (st.gan) {
+        if (b.mass) return b.bot + ': tài khoản gắn, bỏ qua';
+        st.want = false; save(); if (rt.bot) rt.bot.quit();
+        return b.bot + ' (tài khoản gắn) thoát';
+      }
       if (!b.mass && rt.bot && st.server === 'banghoi-1' && !rt.leaving) {   // thoát từng bot: có tin (có thể chào) hoặc im (nút Thoát im)
         rotLeaveNow(b.bot, b.silent ? 'thoát im' : b.nobye ? 'thoát không chào' : 'thoát tay', !!b.silent, true, !!b.nobye).catch(e => log('lỗi thoát:', e.message));
         return b.bot + (b.silent ? ' thoát im lặng (vài giây nữa)' : b.nobye ? ' thoát, có tin [-], không chào (vài giây nữa)' : ' thoát (vài giây nữa, có chào trước)');
@@ -1363,6 +1391,31 @@ async function act(b) {
       st.home[st.server] = p; delete st.at[st.server]; save();
       return b.bot + ': chỗ mặc định mới ' + Math.floor(p.x) + ' ' + Math.floor(p.y) + ' ' + Math.floor(p.z);
     }
+    case 'captk': {   // 1/11: cấp tài khoản bot cho admin chơi tay: mật khẩu AuthMe riêng, bot thoát + khoá (botfarm không cho vào nữa)
+      if (st.gan) throw new Error('đây là tài khoản gắn, không phải bot');
+      const pw = crypto.randomBytes(6).toString('base64').replace(/[^A-Za-z0-9]/g, '').slice(0, 8) + Math.floor(10 + Math.random() * 90);
+      // AuthMe trả lời bất đồng bộ (RCON nhận chuỗi rỗng): chạy cả hai, cùng một mật khẩu. Chưa đăng ký thì register tạo,
+      // đã đăng ký thì register báo trùng (vô hại) và password đổi.
+      const r1 = await rcon('lobby').cmd(`authme register ${b.bot} ${pw}`).catch(e => 'lỗi ' + e.message);
+      await sleep(1500);
+      const r2 = await rcon('lobby').cmd(`authme password ${b.bot} ${pw}`).catch(e => 'lỗi ' + e.message);
+      const out = r1 + ' / ' + r2;
+      if (/^lỗi/.test(r1) && /^lỗi/.test(r2)) throw new Error('không gửi được lệnh tới sảnh: ' + out);
+      st.pass = pw; st.tay = true; st.want = false; save();
+      if (rt.bot) rt.bot.quit();
+      await setSilent(b.bot, false);   // admin vào bằng tài khoản này thì hiện [+] / [-] như người thật
+      log('cấp tài khoản', b.bot, 'cho admin (AuthMe:', String(out).slice(0, 80) + ')');
+      return { message: 'Đã cấp tài khoản ' + b.bot + '. Đăng nhập: tên ' + b.bot + ', mật khẩu ' + pw + ' (/login ' + pw + ')', pass: pw };
+    }
+    case 'tratk':   // admin chơi xong: trả tài khoản cho botfarm (mật khẩu giữ nguyên, botfarm tự đăng nhập bằng nó ở sảnh)
+      st.tay = false; save();
+      await setSilent(b.bot, true);
+      return b.bot + ' đã trả lại cho bot (bấm Vào để bot vào lại)';
+    case 'bogan':
+      if (!st.gan) throw new Error(b.bot + ' không phải tài khoản gắn');
+      st.want = false; if (rt.bot) rt.bot.quit();
+      delete state[b.bot]; delete RT[b.bot]; GAN.splice(GAN.indexOf(b.bot), 1); save();
+      return 'đã bỏ gắn ' + b.bot;
     case 'remove':
       if (!st.created) throw new Error('chỉ xoá được bot tạo thêm (20 bot gốc giữ nguyên, muốn thì bấm Thoát)');
       if (st.want || rt.bot || rt.connecting) throw new Error('cho ' + b.bot + ' thoát trước rồi mới xoá');
@@ -1377,6 +1430,19 @@ async function act(b) {
 function offlineUuid(name) {
   const h = crypto.createHash('md5').update('OfflinePlayer:' + name).digest(); h[6] = (h[6] & 0x0f) | 0x30; h[8] = (h[8] & 0x3f) | 0x80;
   const x = h.toString('hex'); return `${x.slice(0, 8)}-${x.slice(8, 12)}-${x.slice(12, 16)}-${x.slice(16, 20)}-${x.slice(20)}`;
+}
+
+/** 1/11: gắn tài khoản người thật có sẵn (botfarm giữ online, server tính như người chơi). uuid: UUID thật (Bedrock bắt buộc). */
+async function ganAdd(name, server, uuid) {
+  if (!/^[.A-Za-z0-9_]{3,17}$/.test(name)) throw new Error('tên tài khoản không hợp lệ');
+  if (ALL().some(n => n.toLowerCase() === name.toLowerCase())) throw new Error(name + ' đã có trong danh sách');
+  if (name.startsWith('.') && !uuid) throw new Error('tài khoản Bedrock cần UUID (vào game ít nhất một lần)');
+  if (uuid && !/^[0-9a-f]{8}-?[0-9a-f]{4}-?[0-9a-f]{4}-?[0-9a-f]{4}-?[0-9a-f]{12}$/i.test(uuid)) throw new Error('UUID không hợp lệ');
+  const srv = SERVERS[server] && server !== 'lobby' ? server : 'banghoi-1';
+  const ipn = Math.max(0, ...GAN.map(n => state[n].ipn || 0)) + 1;
+  state[name] = { server: srv, want: false, home: {}, at: {}, gan: true, uuid: uuid || null, ipn, created: now() };
+  GAN.push(name); RT[name] = newRT(); save();
+  return 'đã gắn tài khoản ' + name + ' (' + SERVERS[srv] + '). Bấm Vào để botfarm giữ online; chủ tài khoản tự vào game thì botfarm tự nhả.';
 }
 
 async function create(name, server, want = true) {   // want=false: tạo ở trạng thái nghỉ, thay phiên cho vào dần
@@ -1402,13 +1468,14 @@ http.createServer((req, res) => {
   if (req.method === 'GET' && req.url.startsWith('/bots')) {
     return send(200, {
       servers: SERVERS,
-      bots: NAMES.map(n => {
+      bots: ALL().map(n => {
         const rt = RT[n], st = state[n], e = rt.bot && rt.bot.entity;
         const p = e && e.position;
         const h = st.home[st.server];
         return { name: n, want: st.want, server: st.server, online: !!rt.bot, connecting: rt.connecting, err: rt.err,
           x: p ? Math.floor(p.x) : null, y: p ? Math.floor(p.y) : null, z: p ? Math.floor(p.z) : null, spawn: atSpawn(st.server, p),
-          home: h ? [Math.floor(h.x), Math.floor(h.y), Math.floor(h.z)] : null, away: !!st.at[st.server], created: !!st.created };
+          home: h ? [Math.floor(h.x), Math.floor(h.y), Math.floor(h.z)] : null, away: !!st.at[st.server], created: !!st.created,
+          gan: !!st.gan, tay: !!st.tay };
       }),
       events: EVENTS.slice(-100),
       chat: chatCfg,
@@ -1423,7 +1490,11 @@ http.createServer((req, res) => {
     let body = '';
     req.on('data', d => { body += d; if (body.length > 4000) req.destroy(); });
     req.on('end', async () => {
-      try { const r = await act(JSON.parse(body || '{}')); log('điều khiển:', r); send(200, { ok: true, message: r }); } catch (e) { send(400, { ok: false, message: e.message }); }
+      try {
+        const r = await act(JSON.parse(body || '{}'));
+        if (r && typeof r === 'object') { log('điều khiển: (kết quả có mật khẩu, không ghi log)'); send(200, Object.assign({ ok: true }, r)); }
+        else { log('điều khiển:', r); send(200, { ok: true, message: r }); }
+      } catch (e) { send(400, { ok: false, message: e.message }); }
     });
     return;
   }

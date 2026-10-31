@@ -1101,7 +1101,11 @@ function rotPick() {
 // hết phiên thì thoát (hiện [-], đôi khi chào, bot vừa chat cùng đáp lại) và 1–6 phút sau một bot nghỉ đủ lâu vào (hiện [+]).
 // ~22 bot online -> ~11 lượt thoát + 11 lượt vào mỗi giờ (~5 phút một lượt).
 const SESSION_MIN = 50, SESSION_MAX = 240;
-const sessionLen = () => (SESSION_MIN + (SESSION_MAX - SESSION_MIN) * Math.pow(Math.random(), 1.5)) * 60000;
+// 31/10 chủ server: "thay phiên nhanh lắm" -> độ dài phiên chỉnh trên trang Bot (rotate.json phienMin / phienMax, phút)
+const sessionLen = () => {
+  const lo = rotCfg.phienMin || SESSION_MIN, hi = Math.max(lo, rotCfg.phienMax || SESSION_MAX);
+  return (lo + (hi - lo) * Math.pow(Math.random(), 1.5)) * 60000;
+};
 function setSilent(n, on) {
   const st = state[n];
   return rcon('banghoi-1').cmd(`lp user ${n} permission ${on ? 'set duckymomo.vaora.an true' : 'unset duckymomo.vaora.an'}`)
@@ -1251,10 +1255,19 @@ async function act(b) {
     }
     if (b.on != null) rotCfg.on = !!b.on;
     if (b.vaora != null) rotCfg.vaora = !!b.vaora;   // 31/10: thay phiên vào/ra hiện tin (true) hay im lặng (false)
+    if (b.phienMin != null || b.phienMax != null) {   // 31/10: độ dài phiên chơi mỗi bot (phút)
+      const a = Math.round(+b.phienMin), z = Math.round(+b.phienMax);
+      if (!(a >= 10 && z >= a && z <= 1440)) throw new Error('phiên chơi không hợp lệ (10 ≤ từ ≤ đến ≤ 1440 phút)');
+      const changed = a !== rotCfg.phienMin || z !== rotCfg.phienMax;
+      rotCfg.phienMin = a; rotCfg.phienMax = z;
+      if (changed) for (const n of NAMES) if (state[n].want && state[n].since) { state[n].sessionEnd = state[n].since + sessionLen(); }   // tính lại hạn phiên bot đang online
+      save();
+    }
     saveRot(); rotTarget = null; rotSlotKey = null;
     const r = rotRange();
     return 'thay phiên online: ' + (rotCfg.on ? 'bật' : 'tắt') + ', mặc định ' + rotCfg.min + '–' + rotCfg.max + ' bot, ' + (rotCfg.khung || []).length
-      + ' khung giờ; bây giờ ' + r.lo + '–' + r.hi + ' bot' + (r.khung >= 0 ? ' (khung ' + (r.khung + 1) + ')' : ' (mặc định)');
+      + ' khung giờ; bây giờ ' + r.lo + '–' + r.hi + ' bot' + (r.khung >= 0 ? ' (khung ' + (r.khung + 1) + ')' : ' (mặc định)')
+      + '; phiên mỗi bot ' + (rotCfg.phienMin || SESSION_MIN) + '–' + (rotCfg.phienMax || SESSION_MAX) + ' phút';
   }
   if (b.action === 'staff') {
     staffSet = new Set((Array.isArray(b.names) ? b.names : []).map(x => String(x).toLowerCase()));
@@ -1389,7 +1402,7 @@ http.createServer((req, res) => {
       tpa: tpaCfg,
       tpagia: ftpaCfg,
       chetgia: chetCfg,
-      thayphien: { on: rotCfg.on, vaora: rotCfg.vaora !== false, min: rotCfg.min, max: rotCfg.max, khung: rotCfg.khung || [], muctieu: rotTarget, dang: rotCfg.on ? rotRange() : null, banghoi: NAMES.filter(n => state[n].server === 'banghoi-1').length },
+      thayphien: { on: rotCfg.on, vaora: rotCfg.vaora !== false, phienMin: rotCfg.phienMin || SESSION_MIN, phienMax: rotCfg.phienMax || SESSION_MAX, min: rotCfg.min, max: rotCfg.max, khung: rotCfg.khung || [], muctieu: rotTarget, dang: rotCfg.on ? rotRange() : null, banghoi: NAMES.filter(n => state[n].server === 'banghoi-1').length },
       dido: { on: wanderCfg.on, phong: NAMES.some(n => state[n].homeOld !== undefined), dang: NAMES.filter(n => RT[n].wander) },
     });
   }

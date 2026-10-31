@@ -119,6 +119,7 @@
       <div class="rot-row">
         <label class="chk"><input type="checkbox" id="rotOn"> Thay phiên online</label>
         <span class="hint">mặc định</span><input id="rotMin" type="number" min="0" max="100"><span class="hint">–</span><input id="rotMax" type="number" min="0" max="100"><span class="hint">bot</span>
+        <span class="hint" title="Mỗi lần vào, bot chơi một phiên dài ngẫu nhiên trong khoảng này (nghiêng về phía ngắn) rồi thoát, bot khác vào thay. Phiên càng dài thì càng ít lượt ra / vào.">· mỗi bot chơi</span><input id="rotPhienMin" type="number" min="10" max="1440" style="width:64px"><span class="hint">–</span><input id="rotPhienMax" type="number" min="10" max="1440" style="width:64px"><span class="hint">phút</span>
         <button type="button" class="mini" id="rotAdd" title="Thêm khung giờ có khoảng bot riêng (giờ Việt Nam)">+ Khung giờ</button>
         <button type="submit" class="mini">Lưu</button>
         <label class="chk" title="Tích: mỗi lượt bot vào / thoát khi thay phiên hiện tin [+] / [-] như người thật, đôi khi chào nhau. Bỏ tích: vào / thoát lặng lẽ. Nút Vào / Thoát từng bot vẫn chọn tay (có tin hoặc im)."><input type="checkbox" id="rotVaora"> Hiện tin vào/ra</label>
@@ -250,14 +251,16 @@ function rotRender(tp) {
   const box = $("rotSlots"); box.innerHTML = "";
   (tp.khung || []).forEach(k => box.appendChild(rotSlotRow(k)));
   $("rotMin").value = tp.min; $("rotMax").value = tp.max;
+  if (tp.phienMin) { $("rotPhienMin").value = tp.phienMin; $("rotPhienMax").value = tp.phienMax; }
   ROT_DIRTY = false;
 }
 $("rotAdd").onclick = () => { $("rotSlots").appendChild(rotSlotRow({ tu: 19, den: 23, min: $("rotMin").value || 0, max: $("rotMax").value || 0 })); ROT_DIRTY = true; };
-$("rotMin").oninput = $("rotMax").oninput = () => { ROT_DIRTY = true; };
+$("rotMin").oninput = $("rotMax").oninput = $("rotPhienMin").oninput = $("rotPhienMax").oninput = () => { ROT_DIRTY = true; };
 $("rot").addEventListener("submit", async (ev) => {
   ev.preventDefault();
   const khung = [...$("rotSlots").querySelectorAll(".slot")].map(r => ({ tu: +r.querySelector(".tu").value, den: +r.querySelector(".den").value, min: +r.querySelector(".mn").value, max: +r.querySelector(".mx").value }));
-  const d = await act({ action: "rotcfg", on: $("rotOn").checked, min: +$("rotMin").value, max: +$("rotMax").value, khung });
+  const d = await act({ action: "rotcfg", on: $("rotOn").checked, min: +$("rotMin").value, max: +$("rotMax").value, khung,
+    phienMin: +$("rotPhienMin").value || undefined, phienMax: +$("rotPhienMax").value || undefined });
   if (d && d.ok) ROT_DIRTY = false;
 });
 $("wdRoom").onclick = async () => { if (await ask("Đặt chỗ mặc định của mọi bot vào phòng ẩn? Bot đang online sẽ được dời ngay; chỗ cũ được giữ để trả lại.", { title: "Gom vào phòng ẩn", ok: "Gom" })) act({ action: "gomphong" }); };

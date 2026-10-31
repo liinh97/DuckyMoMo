@@ -300,7 +300,7 @@ town-rules:
   town-min-hours: 0   # 31/10 chủ server: người mới vào lập thị trấn được luôn (trước 3 giờ chơi thật)
   nation-min-active-residents: 3
   siege-min-towns: 2
-  join-cooldown-days: 3
+  join-cooldown-days: 0   # 31/10 chủ server: tạm tắt chờ sau khi rời thị trấn (trước 3 ngày); bật lại thì đặt số ngày
   land-per-active-resident: true
   reserved-spawn-radius: 300
   reserved-nation: ""        # bỏ qua khi peace-alliance bật (dùng peace-alliance.nation)

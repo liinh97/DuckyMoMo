@@ -509,7 +509,7 @@ act_new_member_days: 3
 town_min_hours: 0.0
 nation_min_active: 3
 siege_min_towns: 2
-town_join_cooldown: 3
+town_join_cooldown: 0
 land_by_active: true
 spawn_reserved_radius: 300
 max_accounts: 2

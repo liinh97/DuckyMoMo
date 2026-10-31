@@ -1834,6 +1834,19 @@ def say_command(text, target, full, who):
     cmd = text[1:].strip()
     if not cmd:
         raise ValueError("Chưa nhập lệnh")
+    # 31/10: lệnh có tên một người đang online ở server KHÁC server đang chọn (vd /tp Itrap … khi Itrap ở sangtao-1) -> chạy ở server
+    # có người đó (admin hay quên đổi ô chọn server). Chỉ đổi khi người đó không có ở server đang chọn.
+    moved = ""
+    try:
+        where = online_players(fresh=True)
+        for tok in cmd.split()[1:]:
+            srv = where.get(tok.lower())
+            if srv and srv != target and srv in SAY_SERVERS and where.get(tok.lower()) != target:
+                moved = f"chạy ở {SAY_SERVERS[srv]} vì {tok} đang ở đó"
+                target = srv
+                break
+    except Exception:
+        pass
     try:
         cmd, note = fill_world(target, cmd, who)
     except Exception:
@@ -1865,6 +1878,8 @@ def say_command(text, target, full, who):
             f.write(json.dumps(event, ensure_ascii=False) + "\n")
     except OSError as e:
         print(f"Không ghi được {ADMIN_FILE}: {e}", flush=True)
+    if moved:
+        note = moved + (', ' + note if note else '')
     head = f"/{cmd} ({SAY_SERVERS[target]}{', ' + note if note else ''})"
     return {"ok": True, "message": head + ": " + (out.splitlines()[0][:300] if out else "đã chạy, server không trả lời gì"),
             "lenh": head, "ket_qua": out[:8000]}

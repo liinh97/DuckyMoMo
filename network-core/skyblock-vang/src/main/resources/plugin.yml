@@ -1,0 +1,9 @@
+name: SkyVang
+version: 1.0
+main: vn.duckymomo.skyvang.SkyVang
+api-version: 1.21.11
+description: "/vang cho Skyblock: ví Vàng và cửa hàng món Skyblock"
+commands:
+  vang:
+    description: "Ví Vàng, mua rank và xu Skyblock (/vang nap: nạp Vàng)"
+    aliases: [gold]

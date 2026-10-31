@@ -26,13 +26,14 @@ docker run --rm \
   -v duckymomo-gradle-cache:/cache \
   -v "$PWD/network-core:/src" \
   -w /src \
-  "$GRADLE_IMAGE" gradle --no-daemon -q :core-paper:build $( [ -f network-core/libs/velocity.jar ] && echo :core-velocity:build )
+  "$GRADLE_IMAGE" gradle --no-daemon -q :core-paper:build :skyblock-vang:build $( [ -f network-core/libs/velocity.jar ] && echo :core-velocity:build )
 
 # core-paper: lobby (menu chọn chế độ, Bedrock auto-login), banghoi-1 (trang trí map, dọn rác, chống đặt-phá) và practice-1 (lọc chat). File .jar không commit (.gitignore).
 cp network-core/core-paper/build/libs/DuckyMoMoCore.jar lobby/plugins/DuckyMoMoCore.jar
 cp network-core/core-paper/build/libs/DuckyMoMoCore.jar modes/banghoi/server/plugins/DuckyMoMoCore.jar
 cp network-core/core-paper/build/libs/DuckyMoMoCore.jar modes/practice/server/plugins/DuckyMoMoCore.jar
 cp network-core/core-paper/build/libs/DuckyMoMoCore.jar modes/sangtao/server/plugins/DuckyMoMoCore.jar
+cp network-core/skyblock-vang/build/libs/SkyVang.jar modes/skyblock/server/plugins/SkyVang.jar   # Skyblock không chạy core, chỉ có /vang
 if [ -f network-core/core-velocity/build/libs/DuckyMoMoSkin.jar ]; then
   cp network-core/core-velocity/build/libs/DuckyMoMoSkin.jar proxy/plugins/DuckyMoMoSkin.jar
   echo "Tủ skin (proxy): proxy/plugins/DuckyMoMoSkin.jar. Áp dụng: docker compose up -d proxy && docker compose --profile tunnel up -d --force-recreate relay"

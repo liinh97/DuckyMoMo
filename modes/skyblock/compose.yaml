@@ -42,6 +42,9 @@ services:
         https://ci.ender.zone/job/EssentialsX/1832/artifact/jars/EssentialsX-2.22.1-dev%2B27-e70bdb8.jar
         https://ci.ender.zone/job/EssentialsX/1832/artifact/jars/EssentialsXChat-2.22.1-dev%2B27-e70bdb8.jar
       CFG_SERVER_NAME: skyblock-1
+      # /vang (plugin SkyVang) hỏi panel: ví Vàng và món Skyblock
+      PANEL_URL: http://panel:8080
+      PANEL_SITE_KEY: ${PANEL_SITE_KEY:-}
       CFG_VELOCITY_SECRET: ${VELOCITY_SECRET}
     mem_limit: 6g
     volumes:

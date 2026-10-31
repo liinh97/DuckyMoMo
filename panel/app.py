@@ -4197,9 +4197,11 @@ def web_vang(data, ip):
     return res
 
 
-def vang_info(name):
+def vang_info(name, may=""):
+    """may: server hỏi (SkyVang ở Skyblock gửi skyblock-1): chỉ món của server đó, kể cả món an; không có may: mọi món không ẩn."""
     c = vang.cfg()
-    return {"ok": True, **vang.balance(name), "lich_su": vang.history(name, 15), "mon": [m for m in vang.shop(donate_tiers) if not m.get("an")],
+    mon = [m for m in vang.shop(donate_tiers) if m.get("server") == may] if may else [m for m in vang.shop(donate_tiers) if not m.get("an")]
+    return {"ok": True, **vang.balance(name), "lich_su": vang.history(name, 15), "mon": mon,
             "ty_gia": c["ty_gia"], "thuong": [{"tu": a, "pct": b} for a, b in c["thuong"]], "nap_toi_thieu": c["nap_toi_thieu"]}
 
 
@@ -4831,7 +4833,7 @@ class Handler(BaseHTTPRequestHandler):
                 q = {k: v[-1] for k, v in urllib.parse.parse_qs(query).items()}
                 if not PLAYER_RE.match(q.get("ten", "")):
                     raise ValueError("Tên không hợp lệ")
-                self.send_json(200, vang_info(q["ten"]))
+                self.send_json(200, vang_info(q["ten"], q.get("may", "") if re.fullmatch(r"[a-z0-9-]{1,24}", q.get("may", "")) else ""))
             elif method == "POST" and path == "/api/web/skin":
                 self.send_json(200, web_skin(self.read_body(80_000), self.headers.get("X-DMM-Ip", "")))
             elif method == "GET" and path == "/api/web/skin":

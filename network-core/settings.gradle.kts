@@ -4,3 +4,4 @@ rootProject.name = "network-core"
 
 include("core-paper")
 include("core-velocity")
+include("skyblock-vang")

@@ -1,12 +1,13 @@
 // Lời thoại bot tự chat (botfarm). A / B / C: người nói; {A} {B} {C}: tên bot đó.
 // Mỗi đoạn đã nói thì chatCfg.norepeat giờ (mặc định 5) sau mới được nói lại (app.js, lưu /state/chat-used.json).
+// 31/10 chủ server: không để bot hứa / mời / rủ / nhận có thị trấn, đồ để cho (người thật xin vào là lộ).
 const TALKS = [
   ['A:ae ơi /capdo lên cấp kiểu gì nhỉ', 'B:đủ xu, đủ giờ chơi với điểm hạ gục là bấm lên cấp được', 'A:à ok thanks'],
   ['A:đào mãi không thấy kim cương', 'B:xuống tầm y -58 mà đào', 'A:ok để thử'],
   ['A:gg', 'B:gg'],
   ['A:{B} ơi', 'B:sao', 'A:à thôi nhầm người :v'],
   ['A:map này đẹp nhỉ', 'B:ừ quần đảo nhiều chỗ đẹp phết'],
-  ['A:có ai lập thị trấn chưa', 'B:t đang góp tiền lập nè', 'A:lập xong nhớ mời t'],
+  ['A:lập thị trấn tốn nhiều xu không ae', 'B:cũng kha khá, góp dần thôi', 'A:ok'],
   [{ B: 'moi', C: 'moi' }, 'A:ae ở đây chơi lâu chưa', 'B:mới được mấy hôm', 'C:t cũng mới'],   // {vai trò}: xem app.js assign()
   ['A:chán quá', 'B:đi câu cá đi', 'A:ừ cũng được'],
   ['A:hello ae', 'B:hi', 'C:chào'],
@@ -28,7 +29,7 @@ const TALKS = [
   ['A:tạo shop rương kiểu gì nhỉ', 'B:cầm món muốn bán, nhìn vào rương rồi /qs create giá', 'A:để thử'],
   ['A:muốn tìm shop bán sắt thì sao', 'B:/qs find iron_ingot', 'C:hoặc lên /choden xem người ta treo'],
   ['A:chợ đen treo đồ bán kiểu gì', 'B:cầm món rồi /choden ban giá', 'A:có hết hạn không', 'B:có, hết hạn thì đồ tự về túi'],
-  ['A:{B} ơi có sắt không, t cần ít', 'B:có, /trade t đi', 'A:ok để t gửi'],
+  ['A:thiếu sắt quá ae', 'B:xuống hang mà đào, sắt đầy', 'A:ok'],
   ['A:đổi đồ với người khác thì dùng /trade cho an toàn nhé', 'B:ừ đừng ném đồ xuống đất, mất như chơi'],
   ['A:nghề nào kiếm tiền ổn ae', 'B:t làm thợ mỏ thấy cũng được', 'C:câu cá bán /emf shop cũng ra tiền', 'A:để t xem /jobs'],
   ['A:ai giàu nhất server nhỉ', 'B:xem /baltop ấy', 'A:toàn đại gia :v'],
@@ -66,23 +67,20 @@ const TALKS = [
   ['A:ae làm nghề gì', 'B:thợ mỏ', 'C:đốn gỗ', 'A:t câu cá :v'],
   ['A:nghề đốn gỗ lên cấp nhanh không', 'B:cũng nhanh, chặt rừng to là được', 'A:ok'],
   ['A:đào mỏ thì xuống sâu tầm bao nhiêu', 'B:kim cương thì sâu tầm y -58', 'C:sắt thì đâu cũng có'],
-  ['A:ai có than không cho t xin ít', 'B:có, đợi tí', 'A:thanks nhiều'],
+  ['A:hết than rồi', 'B:đốt gỗ làm than củi cũng được', 'A:à đúng rồi'],
   ['A:tinh luyện là gì ae', 'B:/tinhluyen đổi đồ thô ra đồ quý ấy', 'A:à để xem'],
   ['A:xưởng chế đồ ở đâu', 'B:/xuong', 'A:ok'],
   ['A:mở rương ra toàn đá với đất', 'B:cất bớt đi chứ', 'A:lười quá :v'],
   // thị trấn, bang, công thành
-  ['A:thị trấn {B} tên gì thế', 'B:bí mật :v', 'A:keo thế'],
-  ['A:có thị trấn nào nhận thêm người không', 'B:thị trấn t đang tuyển', 'A:cho t vào với', 'B:để t mời'],
   ['A:claim thêm đất tốn bao nhiêu nhỉ', 'B:càng nhiều càng đắt', 'A:hic'],
   ['A:thứ 7 có công thành không ae', 'B:xem /lichcongthanh', 'C:có phiên tối thứ 7 đấy'],
-  ['A:ai vây thị trấn t thì t khóc mất', 'B:vào liên minh hoà bình là khỏi lo', 'A:để xem /hoabinh'],
-  ['A:thị trấn t mắc nợ rồi', 'B:nộp quỹ đi, /t deposit', 'A:nghèo quá huhu'],
+  ['A:sợ bị vây thị trấn ghê', 'B:vào liên minh hoà bình là khỏi lo', 'A:để xem /hoabinh'],
+  ['A:thị trấn hết quỹ thì sao ae', 'B:mắc nợ, nộp quỹ /t deposit cho kịp', 'A:ok'],
   ['A:xây tường thị trấn bằng gì đẹp ae', 'B:đá cuội rêu nhìn cổ cổ', 'C:gạch đá cũng được'],
-  ['A:cổng thị trấn t xây xong rồi', 'B:đẹp không', 'A:tạm tạm', 'B:để qua xem'],
   ['A:ae xem bảng xếp hạng chưa', 'B:/bxh ấy', 'A:top toàn người quen :v'],
   ['A:muốn làm vua thì sao ae', 'B:lập nước rồi nhiều thị trấn theo', 'A:khó phết'],
   // dungeon, quái, boss
-  ['A:dungeon tầng {SO} khó vãi', 'B:đi nhóm đi', 'A:ai đi cùng không', 'C:t đi'],
+  ['A:dungeon tầng {SO} khó vãi', 'B:đi nhóm cho dễ', 'A:ừ để hôm nào'],
   ['A:trùm cuối rơi chìa khoá tầng sau đấy', 'B:biết rồi, mà đánh khó quá'],
   ['A:vừa bị cả đàn zombie vây', 'B:chạy chưa', 'A:chạy không kịp :('],
   ['A:đêm ra ngoài toàn quái', 'B:đặt đuốc quanh nhà vào', 'A:ok'],
@@ -137,7 +135,6 @@ const TALKS = [
   ['A:ai cho t mượn cái giường không', 'B:len trắng 3 với gỗ 3 tự chế', 'A:à quên mất'],
   ['A:hú', 'B:hú', 'C:hú gì :v'],
   ['A:vừa nhảy từ trên núi xuống nước', 'B:sống không', 'A:sống, ướt hết người :v'],
-  ['A:ai đi cùng t ra {VUNG} không', 'B:t rảnh', 'A:ok /tpa nhé'],
   ['A:đói quá mà hết bánh mì', 'B:đi giết bò đi', 'A:ok'],
   ['A:ae trồng lúa mì hay khoai', 'B:mùa này trồng lúa', 'C:khoai để mùa khô'],
   ['A:sao gà nhà t chạy mất hết rồi', 'B:quên đóng cổng à', 'A:chắc thế :('],
@@ -164,7 +161,6 @@ const TALKS = [
   ['A:{B} keo kiệt nhất server', 'B:tiết kiệm thôi', 'C:tiết kiệm cả lời chào :v'],
   ['A:{B} rủ đi dungeon xong chạy trước', 'B:t đi trinh sát', 'A:trinh sát gì chạy về spawn'],
   ['A:{B} lại lạc đường à', 'B:không, t đang khám phá', 'A:khám phá cả tiếng không thấy đường về'],
-  ['A:{B} đặt tên thị trấn gì mà dài thế', 'B:tên dài cho sang', 'C:đọc hết hơi luôn'],
   ['A:{B} nấu ăn trong game còn cháy', 'B:lò nướng lỗi', 'A:lò nào cũng lỗi khi {B} dùng :v'],
   ['A:{B} hôm trước tự ném kiếm xuống dung nham', 'B:lỡ tay thôi mà', 'C:lỡ tay mà đẹp thế', 'B:hic'],
   ['A:{B} chơi game này mấy năm vẫn không biết làm bàn phù phép', 'B:biết mà, lười thôi', 'A:ừ tin'],
@@ -225,7 +221,7 @@ const SOLO = [':v', 'hehe', 'gg', 'đi câu cá thôi', 'vừa đào được í
   'rét run', 'vừa thấy {SO} con creeper', 'hôm nay hên ghê', 'đen thôi đỏ quên đi', 'lag à', 'ok', 'kkk', 'haha',
   'lên cấp chậm ghê', 'đi dungeon không ae', 'cần mua {QUANG}', 'ai bán {QUANG} không', 'nắng quá', 'nhớ điểm danh ae ơi',
   'ae ơi', 'chào cả nhà', 'quay lại rồi đây', 'chán', 'vừa ra {VUNG}', 'đẹp thật', 'mất đồ rồi :(', 'hên thế',
-  'xong nhiệm vụ', 'ai đi câu không', 'hehe giàu rồi', 'nghèo quá', 'đang xây', 'tí quay lại', 'afk tí'];
+  'xong nhiệm vụ', 'đi câu tí đây', 'hehe giàu rồi', 'nghèo quá', 'đang xây', 'tí quay lại', 'afk tí'];
 // 30/10: đoạn nói về Thân nhiệt (đóng băng, /nhietdo, Đá Ôn Linh, ô lá, đợt rét đậm / nắng nóng): chỉ nói khi Thân nhiệt đang bật
 // (app.js hỏi /nhietdo qua RCON Bang Hội Chiến). Chủ server tạm tắt Thân nhiệt chờ đông member.
 const NHIET = [

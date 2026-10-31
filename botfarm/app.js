@@ -1157,7 +1157,9 @@ async function rotLeaveNow(n, why, silent, force, nobye) {
   RT[n].leaving = true;
   if (silent === undefined) silent = rotCfg.vaora === false;   // thay phiên: theo ô "Hiện tin vào/ra" ở trang Bot
   try {
-    if (!silent) {
+    if (silent) {
+      if (!st.silent) await setSilent(n, true);   // 1/11: lượt trước có tin thì quyền im đã bị gỡ -> bật lại, khỏi lộ [-]
+    } else {
       await setSilent(n, false);
       const rep = nobye ? 0 : await sayBye(n, force).catch(() => 0);   // 1/11: nút "Thoát, không chào": có [-] nhưng không chào
       if (rep) await sleep(3000 + Math.random() * 7000);   // có người đáp: nán lại đọc một lúc rồi mới thoát
@@ -1189,7 +1191,8 @@ function rotJoin(off) {
   if (rotCfg.vaora !== false) {   // 31/10 chủ server: admin chọn trên web thay phiên vào/ra có hiện tin hay im lặng
     st.announce = true;
     setSilent(n, false).then(go);   // gỡ quyền im TRƯỚC khi vào để hiện [+]
-  } else go();
+  } else if (!st.silent) setSilent(n, true).then(go);   // 1/11: chắc chắn im trước khi vào
+  else go();
   return n;
 }
 setInterval(() => {
@@ -1300,6 +1303,7 @@ async function act(b) {
       if (b.server && SERVERS[b.server]) st.server = b.server;
       // 31/10 chủ server: bấm Vào một bot thì hiện [+] như người thật (và đôi khi chào); Vào tất cả thì vẫn im
       if (!b.mass && !b.silent && !rt.bot && st.server === 'banghoi-1') { st.announce = true; st.hiForce = !b.nohi; st.noHi = !!b.nohi; await setSilent(b.bot, false); }   // 1/11: nohi = hiện [+], không chào
+      else if (!rt.bot && !st.silent) await setSilent(b.bot, true);   // 1/11: Vào trộm / Vào tất cả: chắc chắn im (lượt trước có tin thì quyền im đã bị gỡ)
       st.want = true; st.since = Date.now(); rt.retryAt = 0; save();
       return b.bot + ' vào ' + SERVERS[st.server];
     case 'leave':
@@ -1307,6 +1311,7 @@ async function act(b) {
         rotLeaveNow(b.bot, b.silent ? 'thoát im' : b.nobye ? 'thoát không chào' : 'thoát tay', !!b.silent, true, !!b.nobye).catch(e => log('lỗi thoát:', e.message));
         return b.bot + (b.silent ? ' thoát im lặng (vài giây nữa)' : b.nobye ? ' thoát, có tin [-], không chào (vài giây nữa)' : ' thoát (vài giây nữa, có chào trước)');
       }
+      if (rt.bot && !st.silent) await setSilent(b.bot, true);   // 1/11: Thoát tất cả: chắc chắn im
       st.want = false; save();
       if (rt.bot) rt.bot.quit();
       return b.bot + ' thoát';

@@ -90,7 +90,7 @@
 <script src="shell.js"></script>
 <div class="wrap">
   <div class="card">
-    <h3>Danh sách bot <span class="sp">
+    <h3>Danh sách bot <span id="botCount" class="hint" title="Bot đang online / tổng số bot (theo server)"></span> <span class="sp">
       <button class="mini" id="allJoin" title="Bật mọi bot (mỗi bot vào server đang chọn của nó)">Vào tất cả</button>
       <button class="mini" id="allLeave">Thoát tất cả</button>
       <button class="mini" id="devToggle" title="Bot tự tăng số liệu dần như người thật (mỗi bot một tính cách, nhịp riêng). Bấm: đang bật hết thì tắt hết, còn lại thì bật cho mọi bot. Bật / tắt từng bot ở nút trong danh sách.">Tự phát triển: …</button>
@@ -187,6 +187,10 @@ function renderBots() {
         ${b.created && !b.want && !b.online ? '<button data-a="remove" title="Xoá bot tạo thêm khỏi danh sách">Xoá</button>' : ""}</div></td></tr>`;
   }
   $("bots").innerHTML = h + "</tbody></table>";
+  // 1/11: số bot đang online (tổng + từng server)
+  const on = BOTS.filter((b) => b.online), per = {};
+  for (const b of on) per[b.server] = (per[b.server] || 0) + 1;
+  $("botCount").textContent = `· ${on.length}/${BOTS.length} online` + (Object.keys(per).length > 1 ? " (" + Object.entries(per).map(([k, v]) => `${SERVERS[k] || k} ${v}`).join(", ") + ")" : "");
   const keep = $("who").value;
   $("who").innerHTML = BOTS.filter((b) => b.online).map((b) => `<option>${esc(b.name)}</option>`).join("") || '<option value="">(chưa bot nào online)</option>';
   if ([...$("who").options].some((o) => o.value === keep)) $("who").value = keep;

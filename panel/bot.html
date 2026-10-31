@@ -102,6 +102,12 @@
       <button type="submit" class="mini primary">Tạo bot</button>
       <span class="hint">3–16 ký tự không dấu, số, gạch dưới; không trùng tên người chơi đã từng vào.</span>
     </form>
+    <form id="ht" autocomplete="off" title="Khi không còn người THẬT nào online (bot không tính) đủ số phút này LIỀN (ai vào lại thì đếm lại từ đầu): bật lại mọi tuỳ chọn bot (thay phiên, hiện tin vào/ra, tự chat, chết giả, tpa, đi dạo) để mở máy là chạy đủ, rồi tắt server an toàn và tắt máy. Cần đăng ký tác vụ Windows một lần: ops/windows/dang-ky-hen-tat.ps1.">
+      <span class="chk">⏻ Hẹn tắt máy khi hết người, sau</span><input id="htPhut" type="number" min="1" max="180" value="15" style="width:64px"><span class="hint">phút</span>
+      <button type="submit" class="mini primary" id="htGo">Hẹn tắt</button>
+      <button type="button" class="mini" id="htHuy">Huỷ hẹn</button>
+      <span class="hint" id="htState"></span>
+    </form>
     <form id="tc" autocomplete="off" title="Cứ vài phút 2–3 bot đang cùng server nói một đoạn hội thoại soạn sẵn (chuyện vặt, mẹo chơi), gõ chậm như người. Đêm 1–7 giờ im.">
       <label class="chk"><input type="checkbox" id="tcOn"> Bot tự chat với nhau</label>
       <span class="hint">mỗi</span><input id="tcMin" type="number" min="1" max="240"><span class="hint">–</span><input id="tcMax" type="number" min="1" max="240"><span class="hint">phút một đoạn</span>
@@ -509,6 +515,25 @@ $("say").onsubmit = async (ev) => {
 
 loadBots().then(loadFeed);
 setInterval(loadBots, 4000);
+// 1/11: hẹn tắt máy khi hết người
+async function loadHenTat() {
+  try {
+    const d = await (await fetch("api/bot", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "hentat_xem" }) })).json();
+    const h = (d && d.hentat) || {};
+    $("htHuy").style.display = h.on ? "" : "none";
+    $("htState").textContent = !h.on ? "chưa hẹn"
+      : h.con_giay != null ? `đã hẹn ${h.phut} phút · không còn người thật, tắt sau ${Math.floor(h.con_giay / 60)} phút ${h.con_giay % 60} giây`
+      : `đã hẹn ${h.phut} phút · đang chờ hết người (còn ${(h.nguoi || []).length}: ${(h.nguoi || []).join(", ")})`;
+  } catch (e) { /* bỏ qua */ }
+}
+$("ht").addEventListener("submit", async (ev) => {
+  ev.preventDefault();
+  const phut = +$("htPhut").value;
+  if (!(await ask(`Khi không còn người thật nào online đủ ${phut} phút liền thì tắt server và TẮT MÁY. Đồng ý?`, { title: "Hẹn tắt máy", ok: "Hẹn tắt" }))) return;
+  await act({ action: "hentat", phut }); loadHenTat();
+});
+$("htHuy").onclick = async () => { await act({ action: "hentat", huy: true }); loadHenTat(); };
+loadHenTat(); setInterval(loadHenTat, 10000);
 setInterval(loadFeed, 3000);
 </script>
 </body>

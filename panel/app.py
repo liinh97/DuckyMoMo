@@ -2798,8 +2798,127 @@ def bot_dev_info():
                 "nghe": v.get("nghe"), "ghi": v.get("ghi", ""), "quakhu": v.get("quakhu", "")} for n, v in d.items()}
 
 
+
+# ---------------------------------------------------------------- hẹn tắt máy khi hết người (1/11, chủ server)
+# Bấm "Hẹn tắt máy" ở trang Bot với N phút: khi không còn người THẬT nào online (bot botfarm không tính) đủ N phút liền
+# (phòng người vừa thoát vào lại) thì: bật lại mọi tuỳ chọn bot (tối hay tắt bớt, mở máy là chạy đủ), rồi ghi
+# data/ops/tat-may.now. Tác vụ Windows "DuckyMoMo hen tat" (ops/windows/hen-tat-may.ps1, người dùng tự đăng ký một lần bằng
+# ops/windows/dang-ky-hen-tat.ps1) thấy file đó thì tắt server an toàn (ops/tat-an-toan.sh) rồi tắt máy.
+HEN_TAT_FILE = os.path.join(DATA_DIR, "ops", "hen-tat.json")
+HEN_TAT_NOW = os.path.join(DATA_DIR, "ops", "tat-may.now")
+HEN_TAT_LOCK = threading.Lock()
+
+
+def _hen_tat_load():
+    try:
+        with open(HEN_TAT_FILE, encoding="utf-8") as f:
+            return json.load(f)
+    except Exception:
+        return {}
+
+
+def _hen_tat_save(d):
+    os.makedirs(os.path.dirname(HEN_TAT_FILE), exist_ok=True)
+    tmp = HEN_TAT_FILE + ".tmp"
+    with open(tmp, "w", encoding="utf-8") as f:
+        json.dump(d, f, ensure_ascii=False)
+    os.replace(tmp, HEN_TAT_FILE)
+
+
+def real_online_names():
+    """Người THẬT đang online ở mọi server game (bỏ bot botfarm). None nếu không hỏi được server nào (đừng tắt máy nhầm)."""
+    bots = bot_names()
+    names, ok = [], False
+    for srv in GAME_SERVERS + ["skyblock-1"]:
+        try:
+            got = server_online_names(srv)
+            ok = True
+        except Exception:
+            continue
+        names += [n for n in got if n.lower() not in bots]
+    return names if ok else None
+
+
+def hen_tat_status():
+    d = _hen_tat_load()
+    if not d.get("on"):
+        return {"on": False}
+    real = real_online_names()
+    out = {"on": True, "phut": d.get("phut"), "dat_luc": d.get("dat_luc"), "nguoi": real or []}
+    if d.get("het_luc"):
+        out["con_giay"] = max(0, int(d["het_luc"] + d.get("phut", 10) * 60 - time.time()))
+    return out
+
+
+def hen_tat_set(body, who):
+    with HEN_TAT_LOCK:
+        if body.get("huy"):
+            _hen_tat_save({"on": False})
+            try:
+                os.remove(HEN_TAT_NOW)
+            except OSError:
+                pass
+            web_log({"viec": "/api/bot", "nguoi": who or PANEL_USER, "hanh_dong": "huỷ hẹn tắt máy"})
+            return {"ok": True, "message": "Đã huỷ hẹn tắt máy."}
+        phut = int(body.get("phut") or 0)
+        if not 1 <= phut <= 180:
+            raise ValueError("số phút phải từ 1 đến 180")
+        _hen_tat_save({"on": True, "phut": phut, "dat_luc": time.time(), "het_luc": None})
+    web_log({"viec": "/api/bot", "nguoi": who or PANEL_USER, "hanh_dong": f"hẹn tắt máy {phut} phút sau khi hết người"})
+    return {"ok": True, "message": f"Đã hẹn: hết người thật đủ {phut} phút liền thì tắt server và tắt máy."}
+
+
+def _bot_all_on():
+    """Bật lại mọi tuỳ chọn bot (thay phiên + hiện tin vào/ra, tự chat, chết giả, tpa giả, trả lời tpa, đi dạo)."""
+    for payload in ({"action": "rotcfg", "on": True, "vaora": True}, {"action": "chatcfg", "on": True}, {"action": "chetcfg", "on": True},
+                    {"action": "ftpacfg", "on": True}, {"action": "tpacfg", "on": True}, {"action": "wandercfg", "on": True}):
+        try:
+            req = urllib.request.Request(BOTFARM_URL + "/act", data=json.dumps(payload).encode("utf-8"),
+                                         headers={"Content-Type": "application/json"}, method="POST")
+            urllib.request.urlopen(req, timeout=10).read()
+        except Exception as e:
+            print(f"Hẹn tắt máy: bật lại {payload['action']} lỗi {e}", flush=True)
+
+
+def hen_tat_loop():
+    time.sleep(30)
+    while True:
+        try:
+            with HEN_TAT_LOCK:
+                d = _hen_tat_load()
+            if d.get("on"):
+                real = real_online_names()
+                now = time.time()
+                if real is None:
+                    pass                      # không hỏi được server nào: chờ lượt sau
+                elif real:
+                    if d.get("het_luc"):
+                        d["het_luc"] = None
+                        with HEN_TAT_LOCK:
+                            _hen_tat_save(d)
+                elif not d.get("het_luc"):
+                    d["het_luc"] = now
+                    with HEN_TAT_LOCK:
+                        _hen_tat_save(d)
+                    print(f"Hẹn tắt máy: hết người thật, đếm {d.get('phut')} phút", flush=True)
+                elif now - d["het_luc"] >= d.get("phut", 10) * 60:
+                    print("Hẹn tắt máy: đủ giờ, bật lại tuỳ chọn bot rồi báo tắt máy", flush=True)
+                    _bot_all_on()
+                    with HEN_TAT_LOCK:
+                        _hen_tat_save({"on": False, "da_tat_luc": now})
+                    with open(HEN_TAT_NOW, "w", encoding="utf-8") as f:
+                        f.write(time.strftime("%F %T"))
+                    web_log({"viec": "/api/bot", "nguoi": PANEL_USER, "hanh_dong": "hết người: tắt server + tắt máy theo hẹn"})
+        except Exception as e:
+            print(f"Hẹn tắt máy: lỗi {e}", flush=True)
+        time.sleep(30)
+
 def bot_action(body, who):
     act = str(body.get("action", ""))
+    if act == "hentat":
+        return hen_tat_set(body, who)
+    if act == "hentat_xem":
+        return {"ok": True, "hentat": hen_tat_status()}
     if act == "hoso":
         return bot_profile(str(body.get("bot", "")).strip())
     if act == "hoso_luu":
@@ -5124,5 +5243,6 @@ if __name__ == "__main__":
     except Exception as e:
         print(f"Vàng: không tạo được bảng ({e})", flush=True)
     threading.Thread(target=bot_dev_loop, daemon=True).start()   # bot tự phát triển
+    threading.Thread(target=hen_tat_loop, daemon=True).start()   # hẹn tắt máy khi hết người (1/11)
     NOTIFIER.start()   # thông báo đẩy: người thật vào / ra, chat, sự cố
     ThreadingHTTPServer(("0.0.0.0", 8080), Handler).serve_forever()

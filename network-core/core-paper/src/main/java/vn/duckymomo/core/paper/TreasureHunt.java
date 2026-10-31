@@ -293,22 +293,34 @@ final class TreasureHunt implements Listener {
         }
         long now = System.currentTimeMillis();
         for (Dig d : new ArrayList<>(digs.values())) {
+            Player owner = Bukkit.getPlayer(d.player);
+            if (!d.loc.isChunkLoaded()) {          // không ai quanh đó: lính canh đang "ngủ" cùng chunk, đừng tính là đã chết
+                if (now > d.until && owner != null) {
+                    fail(d, owner);
+                }
+                continue;
+            }
             d.guards.removeIf(id -> {
                 var e = Bukkit.getEntity(id);
                 return e == null || e.isDead();
             });
             // 1/11 chủ server: "tranh" có thật. Người đào chết / rời đi không huỷ lượt: lính canh đứng nguyên, đồng hồ vẫn chạy.
             // Hạ hết lính: người hạ con cuối (đứng trong 40 khối) mở rương; không có thì người đào nếu đứng gần; không thì người gần nhất.
-            // Hết giờ mà lính còn, hoặc hết lính mà không ai đứng gần: huỷ, trả bản đồ cho người đào.
+            // Hết giờ còn lính: người đào online thì huỷ + trả bản đồ; người đào đã thoát thì lính cứ đứng đó tới khi bị hạ (ai hạ
+            // con cuối thì lấy) hoặc bị dọn; người đào vào lại sau giờ thì huỷ + trả bản đồ.
             if (d.guards.isEmpty()) {
                 Player win = winner(d);
                 if (win != null) {
                     finish(d, win);
-                } else if (now > d.until) {
-                    fail(d, Bukkit.getPlayer(d.player));
+                } else if (now > d.until || owner == null) {
+                    if (owner != null) {
+                        fail(d, owner);
+                    } else {
+                        digs.remove(d.player);   // lính bị dọn khi người đào không online: bản đồ mất
+                    }
                 }
-            } else if (now > d.until) {
-                fail(d, Bukkit.getPlayer(d.player));
+            } else if (now > d.until && owner != null) {
+                fail(d, owner);
             }
         }
     }

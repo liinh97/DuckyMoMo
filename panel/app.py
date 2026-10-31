@@ -718,7 +718,14 @@ def rcon(server, commands):
         send(sock, 1, 3, rcon_password(server))
         if recv(sock)[0] == -1:
             raise RuntimeError("sai mật khẩu RCON")
+        prev_lp = False
         for i, cmd in enumerate(commands, start=2):
+            # 31/10: LuckPerms chạy lệnh bất đồng bộ; "removeprefix" rồi "setprefix" gửi liền nhau có lúc xoá SAU khi đặt (mất tiền tố Nam Tước,
+            # Tử Tước). Lệnh lp nối tiếp lệnh lp thì chờ 1,5 giây cho lệnh trước xong.
+            is_lp = bool(re.match(r"\s*/?(luckperms:)?(lp|luckperms)\b", cmd, re.I))
+            if is_lp and prev_lp:
+                time.sleep(1.5)
+            prev_lp = is_lp
             send(sock, i, 2, cmd)
             _, text = recv(sock)
             out.append((cmd, re.sub(r"§.", "", text).strip()))

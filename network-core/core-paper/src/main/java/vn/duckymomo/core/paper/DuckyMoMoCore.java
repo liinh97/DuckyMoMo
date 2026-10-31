@@ -836,7 +836,7 @@ public final class DuckyMoMoCore extends JavaPlugin {
             tabLimit = null;
         }
         if (getConfig().getBoolean("tab-limit.enabled")) {
-            tabLimit = new TabLimit(this, getConfig().getInt("tab-limit.max", 20));
+            tabLimit = new TabLimit(this, getConfig().getInt("tab-limit.max", 20), getConfig().getInt("tab-limit.one-column", 11));
             getServer().getPluginManager().registerEvents(tabLimit, this);
             tabLimit.start();
         }

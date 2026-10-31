@@ -25,6 +25,14 @@ final class TabLimit implements Listener {
     private final int max;
     private BukkitTask task;
 
+    /** 31/10: tổng người ≤ 20 thì game chỉ vẽ 1 cột (tụt dài xuống): khi đó chỉ hiện tối đa oneColumn dòng (bằng chiều cao bảng 2 cột). */
+    private int oneColumn = 11;
+
+    TabLimit(JavaPlugin plugin, int max, int oneColumn) {
+        this(plugin, max);
+        this.oneColumn = Math.max(5, oneColumn);
+    }
+
     TabLimit(JavaPlugin plugin, int max) {
         this.plugin = plugin;
         this.max = Math.max(5, max);
@@ -56,6 +64,7 @@ final class TabLimit implements Listener {
         List<Player> all = new ArrayList<>(Bukkit.getOnlinePlayers());
         // người thật trước, rồi bot; trong mỗi nhóm theo tên cho ổn định
         all.sort(Comparator.comparing((Player p) -> BotView.isBot(p)).thenComparing(p -> p.getName().toLowerCase()));
+        int cap = all.size() > 20 ? max : Math.min(max, oneColumn);   // > 20: 2 cột (max); ≤ 20: 1 cột -> cắt ngắn
         for (Player viewer : all) {
             if (BotView.isBot(viewer)) {
                 continue;   // bot không nhìn Tab
@@ -63,7 +72,7 @@ final class TabLimit implements Listener {
             Set<Player> show = new HashSet<>();
             show.add(viewer);
             for (Player t : all) {
-                if (show.size() >= max) {
+                if (show.size() >= cap) {
                     break;
                 }
                 show.add(t);

@@ -1,118 +1,86 @@
-# Vườn rau tường đá đổ nát (lúa mì / cà rốt / khoai tây, đường đất vòng quanh) dựng bằng lệnh vanilla qua RCON.
-# Chạy trong container panel: python3 vuon-rau.py <server> <x> <y> <z> [rộng] [dài]
-#   x z = góc tây bắc, y = mặt đất + 1; rộng theo trục x (mặc định 13), dài theo trục z (mặc định 18).
-# 31/10 đặt ở LetGoMine: banghoi-1 13858 63 -2607 (bên trái biệt thự nhìn từ vịnh).
+# Vườn rau bậc thang 3 tầng, tường gạch đá răng cưa, đường đất vòng ngoài, dựng bằng lệnh vanilla qua RCON.
+# Chạy trong container panel: python3 vuon-rau.py <server> <x> <y> <z>
+#   x z = góc tây bắc của cả khu (kể cả đường đất), y = mặt đất + 1. Khu rộng 13 (trục x) x 15 (trục z).
+#   Mặt trước (luống thấp nhất) quay về phía tây; phía sau: luống cao nhất bên bắc, luống giữa bên nam.
+# 31/10 đặt ở LetGoMine: banghoi-1 13858 63 -2606 (bên trái biệt thự nhìn từ vịnh).
 import random, sys
 sys.path.insert(0, '/app')
 import app
 
 SERVER = sys.argv[1] if len(sys.argv) > 1 else 'sangtao-1'
 X0, Y0, Z0 = (int(v) for v in sys.argv[2:5]) if len(sys.argv) > 4 else (10060, -60, 10000)
-W = int(sys.argv[5]) if len(sys.argv) > 5 else 13
-L = int(sys.argv[6]) if len(sys.argv) > 6 else 18
 random.seed(5)
 cmds = []
+DEPTH, WIDTH = 13, 15          # u: trước -> sau (x tăng), v: trái/bắc -> phải/nam (z tăng)
+CU, CV = 1, 2                  # góc lõi (tường) trong khu
 
 
-def P(x, y, z):
-    return f'{X0 + x} {Y0 + y} {Z0 + z}'
+def P(u, y, v):
+    return f'{X0 + u} {Y0 + y} {Z0 + v}'
 
 
-def fill(x1, y1, z1, x2, y2, z2, b, mode=''):
-    cmds.append(f'minecraft:fill {P(x1, y1, z1)} {P(x2, y2, z2)} {b} {mode}'.strip())
+def fill(u1, y1, v1, u2, y2, v2, b, mode=''):
+    cmds.append(f'minecraft:fill {P(u1, y1, v1)} {P(u2, y2, v2)} {b} {mode}'.strip())
 
 
-def sb(x, y, z, b):
-    cmds.append(f'minecraft:setblock {P(x, y, z)} {b}')
+def sb(u, y, v, b):
+    cmds.append(f'minecraft:setblock {P(u, y, v)} {b}')
 
 
-STONE = ['minecraft:stone_bricks'] * 4 + ['minecraft:mossy_stone_bricks'] * 2 + ['minecraft:cracked_stone_bricks', 'minecraft:andesite',
-                                                                                 'minecraft:mossy_cobblestone']
-TOP = ['minecraft:stone_brick_slab', 'minecraft:mossy_stone_brick_slab', 'minecraft:stone_brick_wall', None, None]
+STONE = ['minecraft:stone_bricks'] * 5 + ['minecraft:mossy_stone_bricks'] * 2 + ['minecraft:cracked_stone_bricks']
+SLAB = ['minecraft:stone_brick_slab', 'minecraft:stone_brick_slab', 'minecraft:mossy_stone_brick_slab']
 
-# 0. san nền: dọn phía trên, đất bên dưới, cỏ mặt
-fill(0, 0, 0, W - 1, 14, L - 1, 'minecraft:air')
-fill(0, -4, 0, W - 1, -2, L - 1, 'minecraft:dirt')
-fill(0, -1, 0, W - 1, -1, L - 1, 'minecraft:grass_block')
+# 0. san nền
+fill(0, 0, 0, DEPTH - 1, 12, WIDTH - 1, 'minecraft:air')
+fill(0, -4, 0, DEPTH - 1, -2, WIDTH - 1, 'minecraft:dirt')
+fill(0, -1, 0, DEPTH - 1, -1, WIDTH - 1, 'minecraft:grass_block')
 
-# 1. đường đất vòng ngoài, lốm đốm đất thô
-for x in range(W):
-    for z in range(L):
-        if x in (0, W - 1) or z in (0, L - 1):
-            sb(x, -1, z, random.choice(['minecraft:dirt_path'] * 3 + ['minecraft:coarse_dirt', 'minecraft:rooted_dirt']))
+# 1. đường đất: hàng trước/sau sát mép, hai bên cách tường một dải cỏ; lốm đốm đất thô
+for u in range(DEPTH):
+    for v in range(WIDTH):
+        if u in (0, DEPTH - 1) or v in (0, WIDTH - 1):
+            sb(u, -1, v, 'minecraft:coarse_dirt' if random.random() < 0.3 else 'minecraft:dirt_path')
 
-# 2. tường đá đổ nát lx 1..W-2, lz 1..L-2; cổng tây và cổng đông
-x1, x2, z1, z2 = 1, W - 2, 1, L - 2
-mid = (z1 + z2) // 2
-gates = {(x1, mid), (x1, mid + 1), (x2, z2 - 3), (x2, z2 - 4)}
-H = {}
-for x in range(x1, x2 + 1):
-    for z in range(z1, z2 + 1):
-        if not (x in (x1, x2) or z in (z1, z2)) or (x, z) in gates:
-            continue
-        corner = x in (x1, x2) and z in (z1, z2)
-        h = 3 if corner else random.choice([1, 1, 2, 2, 2, 3])
-        H[(x, z)] = h
-        for y in range(h):
-            sb(x, y, z, random.choice(STONE))
-        t = random.choice(TOP)
-        if t and not corner:
-            sb(x, h, z, t)
-        if corner:
-            sb(x, 3, z, 'minecraft:oak_fence')
-            sb(x, 4, z, 'minecraft:lantern')
-# cổng: cửa rào gỗ, đèn hai bên
-sb(x1, 0, mid, 'minecraft:oak_fence_gate[facing=east]'); sb(x1, 0, mid + 1, 'minecraft:oak_fence_gate[facing=east]')
-sb(x2, 0, z2 - 3, 'minecraft:oak_fence_gate[facing=west]'); sb(x2, 0, z2 - 4, 'minecraft:oak_fence_gate[facing=west]')
+# 2. ba luống: (u1, v1, u2, v2) theo toạ độ lõi, độ cao luống (mặt đất cày = y lvl-1), cây trồng
+beds = [((0, 2, 5, 8), 0, 'minecraft:potatoes[age=7]'),       # trước, thấp nhất
+        ((5, 5, 10, 10), 1, 'minecraft:wheat[age=7]'),         # sau-phải (nam), tầng giữa
+        ((5, 0, 10, 5), 2, 'minecraft:carrots[age=7]')]        # sau-trái (bắc), cao nhất
+for (a1, b1, a2, b2), lvl, crop in beds:
+    u1, v1, u2, v2 = a1 + CU, b1 + CV, a2 + CU, b2 + CV
+    if lvl:
+        fill(u1, 0, v1, u2, lvl - 1, v2, 'minecraft:dirt')
+    top = lvl                                                   # tường cao tới ngang mặt cây
+    for u in range(u1, u2 + 1):
+        for v in range(v1, v2 + 1):
+            if u in (u1, u2) or v in (v1, v2):
+                for y in range(0, top + 1):
+                    sb(u, y, v, random.choice(STONE))
+                if (u + v) % 2 == 0:                            # răng cưa
+                    sb(u, top + 1, v, random.choice(STONE + SLAB))
+    fill(u1 + 1, lvl - 1, v1 + 1, u2 - 1, lvl - 1, v2 - 1, 'minecraft:farmland[moisture=7]')
+    fill(u1 + 1, lvl, v1 + 1, u2 - 1, lvl, v2 - 1, crop)
+    fill(u1 + 1, lvl + 1, v1 + 1, u2 - 1, lvl + 2, v2 - 1, 'minecraft:air')
+    # nước giấu trong tường: phiến đá ngập nước ngang mặt đất cày, giữa cạnh trước của luống (tưới đủ 4 ô)
+    sb(u1, lvl - 1, (v1 + v2) // 2, 'minecraft:stone_brick_slab[type=top,waterlogged=true]')
+    sb(u2, lvl - 1, (v1 + v2) // 2, 'minecraft:stone_brick_slab[type=top,waterlogged=true]')
 
-# 3. vách ngăn thấp giữa hai luống (lz = mid), lối đi ở giữa
-for x in range(x1 + 1, x2):
-    if x == (x1 + x2) // 2:
-        continue
-    sb(x, 0, mid, random.choice(STONE))
-    if random.random() < 0.4:
-        sb(x, 1, mid, random.choice(['minecraft:stone_brick_slab', 'minecraft:mossy_stone_brick_slab']))
+# 3. cột rào + đèn ở các góc ngoài, bụi azalea + hoa hồng trên dải cỏ hai bên
+for u, v, y in ((CU, CV + 2, 1), (CU, CV + 8, 1), (CU + 10, CV, 3), (CU + 10, CV + 10, 2), (CU + 5, CV, 3), (CU + 5, CV + 10, 2)):
+    sb(u, y, v, 'minecraft:oak_fence'); sb(u, y + 1, v, 'minecraft:lantern')
+for u, v in ((CU + 1, CV + 1), (CU + 3, CV - 1), (CU + 2, CV + 9), (CU + 8, CV + 11), (CU + 6, CV - 1)):
+    sb(u, 0, v, random.choice(['minecraft:azalea_leaves[persistent=true]', 'minecraft:flowering_azalea_leaves[persistent=true]']))
+for u, v in ((CU, CV + 1), (CU + 4, CV + 9), (CU + 9, CV - 1), (CU + 3, CV + 11)):
+    sb(u, 0, v, 'minecraft:rose_bush[half=lower]'); sb(u, 1, v, 'minecraft:rose_bush[half=upper]')
 
-# 4. luống: đất cày ẩm + cây chín; rãnh nước giữa mỗi luống (tưới đủ 4 ô hai bên)
-cx = (x1 + x2) // 2
-beds = [(z1 + 1, mid - 1, {'all': 'minecraft:wheat[age=7]'}),
-        (mid + 1, z2 - 1, {'w': 'minecraft:carrots[age=7]', 'e': 'minecraft:potatoes[age=7]'})]
-for za, zb, crop in beds:
-    fill(x1 + 1, -1, za, x2 - 1, -1, zb, 'minecraft:farmland[moisture=7]')
-    fill(cx, -1, za, cx, -1, zb, 'minecraft:water')
-    for x in range(x1 + 1, x2):
-        if x == cx:
-            continue
-        c = crop.get('all') or (crop['w'] if x < cx else crop['e'])
-        fill(x, 0, za, x, 0, zb, c)
-    # lá súng trên rãnh nước cho đỡ trống
-    for z in range(za, zb + 1, 2):
-        sb(cx, 0, z, 'minecraft:lily_pad')
-
-# lối đi giữa vách ngăn: đá lát thay cho nước ở hàng mid
-sb(cx, -1, mid, 'minecraft:mossy_cobblestone')
-
-# 5. bù nhìn trong luống lúa
-sx, sz = x1 + 2, (z1 + 1 + mid - 1) // 2
-sb(sx, -1, sz, 'minecraft:coarse_dirt')
-sb(sx, 0, sz, 'minecraft:oak_fence'); sb(sx, 1, sz, 'minecraft:hay_block'); sb(sx, 2, sz, 'minecraft:carved_pumpkin[facing=west]')
-
-# 6. bụi azalea và chậu hoa trên đỉnh tường (đặt ngay trên khối đá cao nhất, thay phiến/tường nhỏ nếu có)
-for x, z in ((x1, z1 + 3), (x2, z1 + 5), (x1, z2 - 2), (x2, z1 + 2), (x1 + 4, z1), (x2 - 2, z2)):
-    sb(x, H[(x, z)], z, random.choice(['minecraft:azalea_leaves[persistent=true]', 'minecraft:flowering_azalea_leaves[persistent=true]']))
-for x, z in ((x1 + 2, z1), (x2 - 3, z2), (x1, mid + 4), (x2, z1 + 7)):
-    sb(x, H[(x, z)], z, random.choice(['minecraft:potted_red_tulip', 'minecraft:potted_poppy', 'minecraft:potted_azalea_bush']))
-for z in (mid - 1, mid + 2):
-    sb(x1, 1, z, 'minecraft:oak_fence'); sb(x1, 2, z, 'minecraft:lantern')
-sb(x2, 1, z2 - 2, 'minecraft:oak_fence'); sb(x2, 2, z2 - 2, 'minecraft:lantern')
-sb(x2, 1, z2 - 5, 'minecraft:oak_fence'); sb(x2, 2, z2 - 5, 'minecraft:lantern')
+# 4. bù nhìn nhỏ trong luống trước
+sb(CU + 2, 0, CV + 5, 'minecraft:oak_fence'); sb(CU + 2, 1, CV + 5, 'minecraft:carved_pumpkin[facing=west]')
 
 print(len(cmds), 'lệnh')
 errs = 0
 for i in range(0, len(cmds), 150):
     for c, out in app.rcon(SERVER, cmds[i:i + 150]):
         o = app.COLOR_RE.sub('', out or '')
-        if any(k in o for k in ('Unknown', 'Incorrect', 'Expected', 'Invalid', 'not loaded', 'Too many', 'error', 'Could not')):
+        if any(k in o for k in ('Unknown', 'Incorrect', 'Expected', 'Invalid', 'not loaded', 'Too many', 'error'))   # 'Could not set' = khối đã giống, bỏ qua:
             errs += 1
             if errs <= 8:
                 print('LỖI:', c[:120], '->', o[:160])

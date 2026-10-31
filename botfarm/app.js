@@ -303,7 +303,7 @@ async function connect(name) {
   bot.on('spawn', async () => {
     if (first) {
       first = false;
-      rt.bot = bot; rt.connecting = false;
+      rt.bot = bot; rt.connecting = false; rt.err = '';   // 1/11: vào được rồi thì xoá lỗi cũ (khỏi hiện "vào không được" khi thoát tay)
       tick = setInterval(() => { try { bot._client.write('tick_end', {}); } catch (e) { /* bỏ qua */ } }, 50);   // Grim TickTimer (client 1.21.2+)
       log(name, 'vào', SERVERS[host] || host);
       // bất tử (Essentials /god) + chế độ Sáng tạo: bot đứng ngoài đất hoang ban đêm bị quái giết liên tục (27/10); Sáng tạo thì quái không

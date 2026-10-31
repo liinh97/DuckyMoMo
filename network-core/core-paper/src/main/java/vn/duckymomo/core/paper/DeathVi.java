@@ -18,7 +18,7 @@ import net.kyori.adventure.text.TranslationArgument;
  * Tin tử vong tiếng Việt dịch sẵn ở server (31/10, chủ server): tin tử vong vanilla là khoá dịch, máy người chơi để tiếng Anh thì
  * hiện "X fell out of the world". Ở đây thay các khoá death.* / entity.* / item.* / block.* bằng bản tiếng Việt CHÍNH THỨC của
  * Minecraft (vi_tuvong.json lấy từ vi_vn.json của Mojang, bản 26.2; tạo lại bằng tools/vi/tuvong-vi.py khi lên bản mới).
- * Khoá không có trong bảng thì giữ nguyên (máy người chơi tự dịch).
+ * Khoá không có trong bảng thì giữ nguyên (máy người chơi tự dịch). Tin thành tựu ("has made the advancement") cũng dịch như vậy.
  */
 final class DeathVi {
     private DeathVi() { }
@@ -36,6 +36,17 @@ final class DeathVi {
             // thiếu bảng thì để máy người chơi tự dịch như cũ
         }
         return m;
+    }
+
+    /** Tin thành tựu: chat.type.advancement.* + tên/mô tả thành tựu (advancements.*). */
+    static final class Advancements implements org.bukkit.event.Listener {
+        @org.bukkit.event.EventHandler(priority = org.bukkit.event.EventPriority.HIGH)
+        public void onAdvancement(org.bukkit.event.player.PlayerAdvancementDoneEvent e) {
+            Component m = e.message();
+            if (m != null) {
+                e.message(vi(m));
+            }
+        }
     }
 
     static Component vi(Component c) {

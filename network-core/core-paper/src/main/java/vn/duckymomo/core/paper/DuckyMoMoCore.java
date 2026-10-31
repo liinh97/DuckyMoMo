@@ -934,6 +934,7 @@ public final class DuckyMoMoCore extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new InfoMenu.Events(this), this);   // menu thông tin dùng chung (thay hướng dẫn qua chat)
         getServer().getPluginManager().registerEvents(new AttackSpeed(), this);   // tốc đánh món Thư viện đồ (OCM bỏ hồi đòn)
         getServer().getPluginManager().registerEvents(new ItemPercent(), this);   // % sát thương / tốc đánh / đẩy lùi món Thư viện đồ
+        getServer().getPluginManager().registerEvents(new DeathVi.Advancements(), this);   // tin thành tựu dịch sẵn tiếng Việt (31/10)
         getServer().getPluginManager().registerEvents(new SkillEnchants(), this);   // phù phép riêng Lướt / Hồi máu / Cầu lửa
         SkillEnchants.startPassive(this);   // phù phép thụ động (Tăng tốc)
         if (getServer().getPluginManager().getPlugin("CrazyEnchantments") != null) {

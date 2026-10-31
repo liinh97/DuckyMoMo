@@ -1101,6 +1101,8 @@ function rotPick() {
 // hết phiên thì thoát (hiện [-], đôi khi chào, bot vừa chat cùng đáp lại) và 1–6 phút sau một bot nghỉ đủ lâu vào (hiện [+]).
 // ~22 bot online -> ~11 lượt thoát + 11 lượt vào mỗi giờ (~5 phút một lượt).
 const SESSION_MIN = 50, SESSION_MAX = 240;
+/** Khoảng nghỉ giữa hai lượt ra/vào bất kỳ: 3–9 phút (tránh vào/ra dồn dập liền nhau). */
+const rotGap = () => (3 + Math.random() * 6) * 60000;
 // 31/10 chủ server: "thay phiên nhanh lắm" -> độ dài phiên chỉnh trên trang Bot (rotate.json phienMin / phienMax, phút)
 const sessionLen = () => {
   const lo = rotCfg.phienMin || SESSION_MIN, hi = Math.max(lo, rotCfg.phienMax || SESSION_MAX);
@@ -1173,9 +1175,13 @@ function rotLeave(on) {
   rotLeaveNow(n, 'bớt cho đúng mục tiêu').catch(e => log('lỗi thoát:', e.message));
   return n;
 }
+// 31/10 chủ server: "Tuan_Kiet vừa bye giờ lại vào" -> bot vừa thoát phải nghỉ ít nhất REST_MIN phút mới được vào lại.
+const REST_MIN = 30;
 function rotJoin(off) {
-  const c = off.filter(n => !RT[n].leaving).sort((a, b) => (state[a].offSince || 0) - (state[b].offSince || 0));
-  if (!c.length) return null;
+  const now = Date.now();
+  const c = off.filter(n => !RT[n].leaving && now - (state[n].offSince || 0) >= REST_MIN * 60000)
+    .sort((a, b) => (state[a].offSince || 0) - (state[b].offSince || 0));
+  if (!c.length) return null;   // chưa bot nào nghỉ đủ: thôi, lượt sau tính tiếp
   const n = c[Math.floor(Math.random() * Math.min(3, c.length))];   // một trong 3 bot nghỉ lâu nhất
   const st = state[n];
   const go = () => { st.want = true; st.since = Date.now(); st.sessionEnd = Date.now() + sessionLen(); RT[n].retryAt = 0; save(); };
@@ -1190,12 +1196,12 @@ setInterval(() => {
   const now = Date.now();
   const bh = NAMES.filter(n => state[n].server === 'banghoi-1');
   const on = bh.filter(n => state[n].want), off = bh.filter(n => !state[n].want);
-  if (rotJoinAt && now >= rotJoinAt) { rotJoinAt = 0; const j = rotJoin(off); if (j) log('thay phiên: đổi ca,', j, 'vào'); return; }
+  if (rotJoinAt && now >= rotJoinAt) { rotJoinAt = 0; rotStep = now + rotGap(); const j = rotJoin(off); if (j) log('thay phiên: đổi ca,', j, 'vào'); return; }
   const slot = rotSlot();
   if (slot !== rotSlotKey) { rotSlotKey = slot; rotTarget = null; }   // sang khung giờ mới: đặt mục tiêu ngay
   if (rotTarget == null || now >= rotRetarget) { rotTarget = rotPick(); rotRetarget = now + (15 + Math.random() * 35) * 60000; log('thay phiên: mục tiêu', rotTarget, 'bot'); }
   if (now < rotStep || rotJoinAt) return;
-  const gap = Math.abs(on.length - rotTarget), pace = gap > 5 ? 1 + Math.random() * 2 : 2 + Math.random() * 6;   // lệch nhiều: 1–3 phút một bot
+  const gap = Math.abs(on.length - rotTarget), pace = gap > 5 ? 2 + Math.random() * 3 : 3 + Math.random() * 7;   // lệch nhiều: 2–5 phút một bot
   if (on.length > rotTarget) { rotStep = now + pace * 60000; const n = rotLeave(on); if (n) log('thay phiên:', n, 'thoát (' + (on.length - 1) + '/' + rotTarget + ')'); }
   else if (on.length < rotTarget) { rotStep = now + pace * 60000; const n = rotJoin(off); if (n) log('thay phiên:', n, 'vào (' + (on.length + 1) + '/' + rotTarget + ')'); }
   else {   // đủ mục tiêu: bot hết phiên thì thoát, 1–6 phút sau một bot khác vào thay
@@ -1204,8 +1210,9 @@ setInterval(() => {
     if (due.length && off.length) {
       const n = due[0];
       rotLeaveNow(n, 'hết phiên').catch(e => log('lỗi thoát:', e.message));
-      rotJoinAt = now + (1 + Math.random() * 5) * 60000;
-      rotStep = now + 60000;
+      // 31/10 chủ server: "bot A vào cái là bot B thoát luôn" -> người thay vào sau 4–15 phút, các lượt ra/vào cách nhau ít nhất vài phút
+      rotJoinAt = now + (4 + Math.random() * 11) * 60000;
+      rotStep = now + rotGap();
     } else rotStep = now + 30000;
   }
 }, 10000);   // 10 giây kiểm một lần (bước chỉnh vẫn theo rotStep)

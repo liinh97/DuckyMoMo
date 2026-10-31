@@ -167,6 +167,12 @@ final class SellLimit implements Listener {
         if (a.length < 2) {
             return;
         }
+        if (a[1].equalsIgnoreCase("blocks")) {   // 1/11 chủ server: ẩn /sell blocks (dễ nhầm), dùng /sell all
+            e.setCancelled(true);
+            e.getPlayer().sendMessage(net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacyAmpersand()
+                    .deserialize("&eDùng &f/sell &e(bán món đang cầm) hoặc &f/sell all &e(bán cả túi)."));
+            return;
+        }
         Player p = e.getPlayer();
         if (remaining(p) == Double.MAX_VALUE) {
             return;

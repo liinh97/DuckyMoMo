@@ -1671,7 +1671,7 @@ decor_categories:
 sell_limit_on: true
 sell_limit_daily: 8000
 peace_jobs_join: false
-peace_economy_only: true
+peace_economy_only: false
 peace_economy_cmds: [emf shop, evenmorefish shop, ce, crazyenchantments, xuong, chetao, servertools, tinhluyen, tl, nguyenlieu]
 job_miner_break_stone: 0.04
 job_miner_break_deepslate: 0.044

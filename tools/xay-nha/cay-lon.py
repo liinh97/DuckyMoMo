@@ -1,4 +1,5 @@
 # Cây cổ thụ tán rộng (kiểu "Big Tree": thân gỗ sồi to, rễ toả, tán lá bông từng cụm) dựng bằng lệnh vanilla qua RCON.
+# Lá đặt kiểu keep: không đè lên nhà/khối có sẵn.
 # Chạy trong container panel: python3 cay-lon.py <server> <x> <y> <z> [seed]   (x y z = gốc cây, y = mặt đất + 1)
 import math, random, sys
 sys.path.insert(0, '/app')
@@ -39,12 +40,14 @@ def blob(cx, cy, cz, r):
         for y in range(-R, R + 1):
             for z in range(-R, R + 1):
                 d = math.sqrt(x * x + (y * 1.35) ** 2 + z * z)
+                if round(cy) + y < 4:                     # chừa thân trống dưới tán
+                    continue
                 if d <= r - 0.5 or (d <= r + 0.4 and random.random() < 0.45):
                     put(round(cx) + x, round(cy) + y, round(cz) + z, random.choice(LEAF))
 
 
-# 1. thân 2x2 cao 7, gốc loe thành 4x4 bằng gỗ
-for y in range(0, 8):
+# 1. thân 2x2 cao 5 (cây thấp, tán xoè), gốc loe thành 4x4 bằng gỗ
+for y in range(0, 5):
     for dx, dz in ((0, 0), (1, 0), (0, 1), (1, 1)):
         put(dx, y, dz, LOG, True)
 for dx, dz in ((-1, 0), (-1, 1), (2, 0), (2, 1), (0, -1), (1, -1), (0, 2), (1, 2)):
@@ -64,26 +67,26 @@ tips = []
 for k in range(7):
     a = math.radians(k * (360 / 7) + random.randint(-20, 20))
     L = random.uniform(4.5, 6.5)
-    y0 = random.randint(5, 7)
-    end = (0.5 + math.cos(a) * L, y0 + random.uniform(3, 6), 0.5 + math.sin(a) * L)
+    y0 = random.randint(3, 4)
+    end = (0.5 + math.cos(a) * L, y0 + random.uniform(2, 3.5), 0.5 + math.sin(a) * L)
     line((0.5, y0, 0.5), end, LOG, r=0.0)
     tips.append(end)
-line((0.5, 7, 0.5), (0.5, 12, 0.5), LOG)
-tips.append((0.5, 13, 0.5))
+line((0.5, 4, 0.5), (0.5, 8, 0.5), LOG)
+tips.append((0.5, 9, 0.5))
 
 for (x, y, z) in tips:
     blob(x, y, z, random.uniform(3.2, 4.2))
     for _ in range(2):                                     # cụm phụ cho tán bông lồi lõm
         blob(x + random.uniform(-3, 3), y + random.uniform(-1.5, 1.5), z + random.uniform(-3, 3), random.uniform(2.0, 2.8))
-blob(0.5, 11, 0.5, 4.5)                                    # lấp lõi tán
+blob(0.5, 7.5, 0.5, 4.5)                                    # lấp lõi tán
 
 # 4. lá rủ + đèn treo dưới tán
 under = sorted({(x, z) for (x, y, z), b in blocks.items() if 'leaves' in b})
 for x, z in under:
     ys = [y for (bx, y, bz) in blocks if bx == x and bz == z]
     low = min(ys)
-    if low > 4 and random.random() < 0.12:
-        for y in range(low - 1, low - 1 - random.randint(1, 3), -1):
+    if low > 3 and random.random() < 0.12:
+        for y in range(low - 1, max(2, low - 1 - random.randint(1, 3)), -1):
             if (x, y, z) not in blocks:
                 blocks[(x, y, z)] = random.choice(LEAF)
 for x, z in ((3, 0), (-2, 2), (1, -3)):
@@ -91,7 +94,7 @@ for x, z in ((3, 0), (-2, 2), (1, -3)):
     if ys and (x, min(ys) - 1, z) not in blocks:
         blocks[(x, min(ys) - 1, z)] = 'minecraft:lantern[hanging=true]'
 
-cmds = [f'minecraft:setblock {X0 + x} {Y0 + y} {Z0 + z} {b}' for (x, y, z), b in sorted(blocks.items(), key=lambda kv: kv[0][1])]
+cmds = [f'minecraft:setblock {X0 + x} {Y0 + y} {Z0 + z} {b}' + (' keep' if 'leaves' in b else '') for (x, y, z), b in sorted(blocks.items(), key=lambda kv: kv[0][1])]
 print(len(cmds), 'khối')
 errs = 0
 for i in range(0, len(cmds), 150):

@@ -1150,7 +1150,7 @@ async function sayBye(n, force) {
   const lt = lastTalk[n], recent = lt && Date.now() - lt.at < 45 * 60000 ? lt.with : [];
   return await replyMany(n, recent, BYE_REPLY, recent.length ? 0.8 : 0.45, 2500, 8000);
 }
-async function rotLeaveNow(n, why, silent, force) {
+async function rotLeaveNow(n, why, silent, force, nobye) {
   if (RT[n].leaving) return;
   const st = state[n];
   RT[n].leaving = true;
@@ -1158,7 +1158,7 @@ async function rotLeaveNow(n, why, silent, force) {
   try {
     if (!silent) {
       await setSilent(n, false);
-      const rep = await sayBye(n, force).catch(() => 0);
+      const rep = nobye ? 0 : await sayBye(n, force).catch(() => 0);   // 1/11: nút "Thoát, không chào": có [-] nhưng không chào
       if (rep) await sleep(3000 + Math.random() * 7000);   // có người đáp: nán lại đọc một lúc rồi mới thoát
     }
     await sleep(4000 + Math.random() * 9000);
@@ -1303,8 +1303,8 @@ async function act(b) {
       return b.bot + ' vào ' + SERVERS[st.server];
     case 'leave':
       if (!b.mass && rt.bot && st.server === 'banghoi-1' && !rt.leaving) {   // thoát từng bot: có tin (có thể chào) hoặc im (nút Thoát im)
-        rotLeaveNow(b.bot, b.silent ? 'thoát im' : 'thoát tay', !!b.silent, true).catch(e => log('lỗi thoát:', e.message));
-        return b.bot + (b.silent ? ' thoát im lặng (vài giây nữa)' : ' thoát (vài giây nữa, có thể chào trước)');
+        rotLeaveNow(b.bot, b.silent ? 'thoát im' : b.nobye ? 'thoát không chào' : 'thoát tay', !!b.silent, true, !!b.nobye).catch(e => log('lỗi thoát:', e.message));
+        return b.bot + (b.silent ? ' thoát im lặng (vài giây nữa)' : b.nobye ? ' thoát, có tin [-], không chào (vài giây nữa)' : ' thoát (vài giây nữa, có chào trước)');
       }
       st.want = false; save();
       if (rt.bot) rt.bot.quit();

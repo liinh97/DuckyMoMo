@@ -2818,7 +2818,7 @@ def bot_action(body, who):
             raise ValueError("Tên bot 3–16 ký tự, chỉ chữ không dấu, số, gạch dưới")
         if name.lower() in known_player_names():
             raise ValueError(f"Tên {name} đã có tài khoản trong game (người chơi hoặc bot cũ), chọn tên khác")
-    payload = {k: body.get(k) for k in ("bot", "action", "server", "text", "x", "z", "on", "min", "max", "khung", "silent", "vaora", "phienMin", "phienMax") if body.get(k) is not None}
+    payload = {k: body.get(k) for k in ("bot", "action", "server", "text", "x", "z", "on", "min", "max", "khung", "silent", "nobye", "vaora", "phienMin", "phienMax") if body.get(k) is not None}
     req = urllib.request.Request(BOTFARM_URL + "/act", data=json.dumps(payload).encode("utf-8"), headers={"Content-Type": "application/json"}, method="POST")
     try:
         with urllib.request.urlopen(req, timeout=15) as r:

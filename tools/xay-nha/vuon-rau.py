@@ -1,9 +1,9 @@
 # Vườn rau bậc thang 3 tầng, tường gạch đá răng cưa, đường đất vòng ngoài, dựng bằng lệnh vanilla qua RCON.
 # Chạy trong container panel: python3 vuon-rau.py <server> <x> <y> <z>
-#   x z = góc tây bắc của cả khu (kể cả đường đất), y = mặt đất + 1. Khu rộng 13 (trục x) x 15 (trục z).
+#   x z = góc tây bắc của cả khu (kể cả đường đất), y = mặt đất + 1. Khu rộng 15 (trục x) x 17 (trục z). Ruộng trong 5x5 (lẻ) để ô nước nằm đúng giữa.
 #   Không dùng khối ngập nước trong tường: nước chảy ra ngoài làm ngập luống thấp (31/10).
 #   Mặt trước (luống thấp nhất) quay về phía tây; phía sau: luống cao nhất bên bắc, luống giữa bên nam.
-# 31/10 đặt ở LetGoMine: banghoi-1 13858 63 -2606 (bên trái biệt thự nhìn từ vịnh).
+# 31/10 đặt ở LetGoMine: banghoi-1 13856 63 -2607 (lấn 2 cột mép vịnh) (bên trái biệt thự nhìn từ vịnh).
 import random, sys
 sys.path.insert(0, '/app')
 import app
@@ -12,7 +12,7 @@ SERVER = sys.argv[1] if len(sys.argv) > 1 else 'sangtao-1'
 X0, Y0, Z0 = (int(v) for v in sys.argv[2:5]) if len(sys.argv) > 4 else (10060, -60, 10000)
 random.seed(5)
 cmds = []
-DEPTH, WIDTH = 13, 15          # u: trước -> sau (x tăng), v: trái/bắc -> phải/nam (z tăng)
+DEPTH, WIDTH = 15, 17          # u: trước -> sau (x tăng), v: trái/bắc -> phải/nam (z tăng)
 CU, CV = 1, 2                  # góc lõi (tường) trong khu
 
 
@@ -33,7 +33,7 @@ SLAB = ['minecraft:stone_brick_slab', 'minecraft:stone_brick_slab', 'minecraft:m
 
 # 0. san nền
 fill(0, 0, 0, DEPTH - 1, 12, WIDTH - 1, 'minecraft:air')
-fill(0, -4, 0, DEPTH - 1, -2, WIDTH - 1, 'minecraft:dirt')
+fill(0, -12, 0, DEPTH - 1, -2, WIDTH - 1, 'minecraft:dirt')        # sâu để lấp được mép nước
 fill(0, -1, 0, DEPTH - 1, -1, WIDTH - 1, 'minecraft:grass_block')
 
 # 1. đường đất: hàng trước/sau sát mép, hai bên cách tường một dải cỏ; lốm đốm đất thô
@@ -42,10 +42,10 @@ for u in range(DEPTH):
         if u in (0, DEPTH - 1) or v in (0, WIDTH - 1):
             sb(u, -1, v, 'minecraft:coarse_dirt' if random.random() < 0.3 else 'minecraft:dirt_path')
 
-# 2. ba luống: (u1, v1, u2, v2) theo toạ độ lõi, độ cao luống (mặt đất cày = y lvl-1), cây trồng
-beds = [((0, 2, 5, 8), 0, 'minecraft:potatoes[age=7]'),       # trước, thấp nhất
-        ((5, 5, 10, 10), 1, 'minecraft:wheat[age=7]'),         # sau-phải (nam), tầng giữa
-        ((5, 0, 10, 5), 2, 'minecraft:carrots[age=7]')]        # sau-trái (bắc), cao nhất
+# 2. ba luống vuông (ruộng trong 5x5): (u1, v1, u2, v2) theo toạ độ lõi, độ cao luống (mặt đất cày = y lvl-1), cây trồng
+beds = [((0, 3, 6, 9), 0, 'minecraft:potatoes[age=7]'),       # trước, thấp nhất
+        ((6, 6, 12, 12), 1, 'minecraft:wheat[age=7]'),         # sau-phải (nam), tầng giữa
+        ((6, 0, 12, 6), 2, 'minecraft:carrots[age=7]')]        # sau-trái (bắc), cao nhất
 for (a1, b1, a2, b2), lvl, crop in beds:
     u1, v1, u2, v2 = a1 + CU, b1 + CV, a2 + CU, b2 + CV
     if lvl:
@@ -66,15 +66,15 @@ for (a1, b1, a2, b2), lvl, crop in beds:
     sb(cu, lvl, cv, 'minecraft:air'); sb(cu, lvl - 1, cv, 'minecraft:water')
 
 # 3. cột rào + đèn ở các góc ngoài, bụi azalea + hoa hồng trên dải cỏ hai bên
-for u, v, y in ((CU, CV + 2, 1), (CU, CV + 8, 1), (CU + 10, CV, 3), (CU + 10, CV + 10, 2), (CU + 5, CV, 3), (CU + 5, CV + 10, 2)):
+for u, v, y in ((CU, CV + 3, 1), (CU, CV + 9, 1), (CU + 12, CV, 3), (CU + 12, CV + 12, 2), (CU + 6, CV, 3), (CU + 6, CV + 12, 2)):
     sb(u, y, v, 'minecraft:oak_fence'); sb(u, y + 1, v, 'minecraft:lantern')
-for u, v in ((CU + 1, CV + 1), (CU + 3, CV - 1), (CU + 2, CV + 9), (CU + 8, CV + 11), (CU + 6, CV - 1)):
+for u, v in ((CU + 1, CV + 1), (CU + 3, CV - 1), (CU + 2, CV + 11), (CU + 10, CV + 13), (CU + 8, CV - 1)):
     sb(u, 0, v, random.choice(['minecraft:azalea_leaves[persistent=true]', 'minecraft:flowering_azalea_leaves[persistent=true]']))
-for u, v in ((CU, CV + 1), (CU + 4, CV + 9), (CU + 9, CV - 1), (CU + 3, CV + 11)):
+for u, v in ((CU, CV + 1), (CU + 4, CV + 11), (CU + 11, CV - 1), (CU + 3, CV + 13)):
     sb(u, 0, v, 'minecraft:rose_bush[half=lower]'); sb(u, 1, v, 'minecraft:rose_bush[half=upper]')
 
 # 4. bù nhìn nhỏ trong luống trước
-sb(CU + 2, 0, CV + 5, 'minecraft:oak_fence'); sb(CU + 2, 1, CV + 5, 'minecraft:carved_pumpkin[facing=west]')
+sb(CU + 5, 0, CV + 8, 'minecraft:oak_fence'); sb(CU + 5, 1, CV + 8, 'minecraft:carved_pumpkin[facing=west]')
 
 print(len(cmds), 'lệnh')
 errs = 0

@@ -31,6 +31,8 @@
   .acts { display: flex; gap: 4px; flex-wrap: wrap; }
   .acts button, .mini { padding: 3px 8px; font-size: 12.5px; border-radius: 7px; }
   tr.sel { background: color-mix(in srgb, var(--botc) 10%, transparent); }
+  td.name { cursor: pointer; }
+  tr.flash { outline: 2px solid var(--botc); outline-offset: -2px; }
   /* khung chat */
   #feed { height: calc(100vh - 330px); min-height: 320px; overflow-y: auto; font-size: 13.5px; }
   .ln { display: grid; grid-template-columns: 62px 64px minmax(0, 1fr); gap: 8px; padding: 5px 12px; border-bottom: 1px solid var(--line-2); align-items: baseline; }
@@ -190,7 +192,19 @@ function renderBots() {
   if ([...$("who").options].some((o) => o.value === keep)) $("who").value = keep;
 }
 
+/** 1/11: cuộn danh sách bot bên trái tới bot này (bấm tên trong lịch sử chat). */
+function scrollToBot(n) {
+  const tr = document.querySelector(`#bots tr[data-n="${CSS.escape(n)}"]`);
+  if (tr) { tr.scrollIntoView({ block: "center", behavior: "smooth" }); tr.classList.add("flash"); setTimeout(() => tr.classList.remove("flash"), 1200); }
+}
 $("bots").addEventListener("click", async (ev) => {
+  // 1/11: bấm tên bot (ô đầu) = chọn bot đó ở khung chat
+  const nameCell = ev.target.closest("td.name");
+  if (nameCell && !ev.target.closest("button, select, a")) {
+    const n = nameCell.closest("tr").dataset.n;
+    if (![...$("who").options].some((o) => o.value === n)) { window.toast && window.toast(n + " đang không online", "err"); return; }
+    $("who").value = n; $("txt").focus(); renderBots(); return;
+  }
   const btn = ev.target.closest("button[data-a]"); if (!btn) return;
   const name = btn.closest("tr").dataset.n, a = btn.dataset.a;
   const server = btn.closest("tr").querySelector('select[data-a="server"]').value;
@@ -457,8 +471,8 @@ $("feed").addEventListener("click", (ev) => {
   const pk = ev.target.closest("[data-pick]");
   if (pk) {
     const n = pk.dataset.pick;
-    if (![...$("who").options].some((o) => o.value === n)) { window.toast && window.toast(n + " đang không online", "err"); return; }
-    $("who").value = n; $("txt").focus(); renderBots(); return;
+    if (![...$("who").options].some((o) => o.value === n)) { window.toast && window.toast(n + " đang không online", "err"); scrollToBot(n); return; }
+    $("who").value = n; $("txt").focus(); renderBots(); scrollToBot(n); return;
   }
   const ln = ev.target.closest(".ln.hot"); if (!ln) return;
   if ([...$("who").options].some((o) => o.value === ln.dataset.bot)) $("who").value = ln.dataset.bot;

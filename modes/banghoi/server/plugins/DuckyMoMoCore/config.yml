@@ -235,6 +235,7 @@ sell-limit:
   enabled: true
   daily: 10000   # 1/11 chủ server: tối thiểu 10k (Thăng Cấp +1k mỗi bậc: 11k, 12k, 13k)
   extra-per-perk: 1000   # đặc quyền Thăng Cấp duckymomo.sell.them.<n>: +n × số này
+  extra-by-perk: {1: 3000, 2: 6000, 3: 10000}   # 1/11 chủ server: Thăng Cấp cấp 15 -> 13k, 35 -> 16k, 60 -> 20k (daily 10k)
 
 # Khai hoang vùng mới (/khaihoang, ý từ "Khai mở thứ nguyên" của UniMC). Quỹ chung tăng khi người chơi bán /sell (sell-percent % tiền bán,
 # người bán KHÔNG mất gì) và khi góp /khaihoang gop <xu> (tiền bị rút). Đủ mốc thì chạy commands (console) theo thứ tự goals.
@@ -1294,7 +1295,7 @@ level-up:
     banthem:
       name: "Bán cho server nhiều hơn"
       icon: HOPPER
-      description: ["+1.000 xu giới hạn bán cho server mỗi ngày, mỗi bậc"]
+      description: ["Giới hạn bán cho server mỗi ngày: 13.000 / 16.000 / 20.000 xu (thường 10.000)"]
       tiers:
         - {level: 15, cost: 15000, perms: [duckymomo.sell.them.1]}
         - {level: 35, cost: 40000, perms: [duckymomo.sell.them.2]}

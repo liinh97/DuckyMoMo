@@ -48,6 +48,8 @@ final class SellLimit implements Listener {
     private final JavaPlugin plugin;
     private final double daily;
     private final double extraPerPerk;
+    /** 1/11 chủ server: số xu cộng thêm riêng từng bậc (extra-by-perk: {1: 3000, 2: 6000, 3: 10000}); bậc không ghi = n × extra-per-perk. */
+    private final Map<Integer, Double> extraByPerk = new HashMap<>();
     private final File file;
     private final File worthFile;
     private final Map<UUID, Double> sold = new HashMap<>();
@@ -60,6 +62,16 @@ final class SellLimit implements Listener {
         this.plugin = plugin;
         this.daily = Math.max(0, c.getDouble("daily", 8000));
         this.extraPerPerk = Math.max(0, c.getDouble("extra-per-perk", 1000));
+        ConfigurationSection eb = c.getConfigurationSection("extra-by-perk");
+        if (eb != null) {
+            for (String k : eb.getKeys(false)) {
+                try {
+                    extraByPerk.put(Integer.parseInt(k), Math.max(0, eb.getDouble(k)));
+                } catch (NumberFormatException ignored) {
+                    // khoá không phải số: bỏ qua
+                }
+            }
+        }
         this.file = new File(plugin.getDataFolder(), "banchoserver.yml");
         this.worthFile = new File(plugin.getDataFolder().getParentFile(), "Essentials/worth.yml");
         YamlConfiguration y = YamlConfiguration.loadConfiguration(file);
@@ -91,7 +103,8 @@ final class SellLimit implements Listener {
     double limit(Player p) {
         for (int n = 9; n >= 1; n--) {
             if (p.hasPermission("duckymomo.sell.them." + n)) {
-                return daily + n * extraPerPerk;
+                Double fixed = extraByPerk.get(n);
+                return daily + (fixed != null ? fixed : n * extraPerPerk);
             }
         }
         return daily;

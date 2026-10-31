@@ -92,7 +92,8 @@
 <script src="shell.js"></script>
 <div class="wrap">
   <div class="card">
-    <h3>Danh sách bot <span id="botCount" class="hint" title="Bot đang online / tổng số bot (theo server)"></span> <span class="sp">
+    <h3>Danh sách bot <span id="botCount" class="hint" title="Bot đang online / tổng số bot (theo server)"></span>
+      <select id="bfilter" title="Lọc danh sách bot"><option value="">Tất cả</option><option value="on">Đang online</option><option value="off">Đang offline</option></select> <span class="sp">
       <button class="mini" id="allJoin" title="Bật mọi bot (mỗi bot vào server đang chọn của nó)">Vào tất cả</button>
       <button class="mini" id="allLeave">Thoát tất cả</button>
       <button class="mini" id="devToggle" title="Bot tự tăng số liệu dần như người thật (mỗi bot một tính cách, nhịp riêng). Bấm: đang bật hết thì tắt hết, còn lại thì bật cho mọi bot. Bật / tắt từng bot ở nút trong danh sách.">Tự phát triển: …</button>
@@ -203,7 +204,9 @@ function renderBots() {
   if (!BOTS.length) return;
   const sel = $("who").value;
   let h = '<table><thead><tr><th>Bot</th><th>Server</th><th>Vị trí</th><th>Thao tác</th></tr></thead><tbody>';
+  const fl = $("bfilter").value;   // 1/11: lọc online / offline
   for (const b of [...GANS, ...BOTS]) {
+    if ((fl === "on" && !b.online) || (fl === "off" && b.online)) continue;
     const st = b.online ? "on" : (b.want || b.connecting) ? "wait" : "";
     const pos = b.online && b.x != null ? `${b.x} ${b.y} ${b.z}${b.away ? " · đang ở chỗ khác" : ""}` : (b.want ? "đang vào…" : "—");
     h += `<tr data-n="${esc(b.name)}"${b.name === sel ? ' class="sel"' : ""}>
@@ -564,6 +567,8 @@ $("ht").addEventListener("submit", async (ev) => {
   if (!(await ask(`Khi không còn người thật nào online đủ ${phut} phút liền thì tắt server và TẮT MÁY. Đồng ý?`, { title: "Hẹn tắt máy", ok: "Hẹn tắt" }))) return;
   await act({ action: "hentat", phut }); loadHenTat();
 });
+try { $("bfilter").value = localStorage.getItem("bot.loc") || ""; } catch (e) { /* bỏ qua */ }
+$("bfilter").onchange = () => { try { localStorage.setItem("bot.loc", $("bfilter").value); } catch (e) { /* bỏ qua */ } renderBots(); };
 $("gan").addEventListener("submit", async (ev) => {
   ev.preventDefault();
   const n = $("ganName").value.trim(); if (!n) return;

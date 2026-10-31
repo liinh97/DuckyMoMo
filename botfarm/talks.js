@@ -23,7 +23,7 @@ const TALKS = [
   ['A:tìm mãi không thấy làng nào', 'B:đi thuyền dọc bờ biển dễ thấy hơn', 'A:để thử'],
   ['A:ae ơi cuốc vàng có tốt không', 'B:nhanh mà mau hỏng lắm', 'C:dùng sắt cho lành'],
   // buôn bán, cửa hàng, kiếm tiền
-  ['A:bán đồ cho server ở đâu thế ae', 'B:/cuahang hoặc /sell ấy', 'C:phải đứng trong kinh đô hoặc thị trấn hoà bình mới bán được', 'A:à thế à'],
+  ['A:bán đồ cho server ở đâu thế ae', 'B:/cuahang hoặc /sell ấy', 'A:à thế à'],
   ['A:/sell bán theo tên được không', 'B:được, vd /sell cobblestone 64', 'A:tiện ghê'],
   ['A:kim cương bán server được bao nhiêu nhỉ', 'B:cầm lên gõ /worth là biết giá', 'A:ok'],
   ['A:tạo shop rương kiểu gì nhỉ', 'B:cầm món muốn bán, nhìn vào rương rồi /qs create giá', 'A:để thử'],

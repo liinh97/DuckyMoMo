@@ -138,7 +138,16 @@ final class Refining implements Listener {
     private ItemStack stamp(ItemStack it, String id) {
         ItemMeta meta = it.getItemMeta();
         List<Component> lore = meta.lore() == null ? new ArrayList<>() : new ArrayList<>(meta.lore());
-        lore.add(c("&7Nguyên liệu tinh luyện · /tinhluyen"));
+        // 1/11 chủ server: Vảy Cá Hiếm ghi "Nguyên liệu tinh luyện" mà không công thức tinh luyện nào dùng. Chỉ ghi dòng này khi món
+        // có công thức hoặc là nguyên liệu của món khác; món chỉ để bán (vd Vảy Cá Hiếm, Lõi Quái) thì ghi bán được.
+        Item self = items.get(id);
+        boolean used = self != null && !self.recipe().isEmpty()
+                || items.values().stream().anyMatch(o -> o.recipe().keySet().stream().anyMatch(k -> k.equalsIgnoreCase(id)));
+        if (used) {
+            lore.add(c("&7Nguyên liệu tinh luyện · /tinhluyen"));
+        } else if (self != null && self.sell() > 0) {
+            lore.add(c("&7Bán cho server: /sell hand"));
+        }
         if (!Kham.gemInfo(id).isEmpty()) {
             lore.add(c("&dKhảm được vào đồ set &7· xem tác dụng ở /tinhluyen"));
         }
@@ -153,6 +162,45 @@ final class Refining implements Listener {
     }
 
     /** Mã món tinh luyện của vật phẩm (null = đồ thường). */
+    /** 1/11: món đã phát trước khi sửa vẫn ghi "Nguyên liệu tinh luyện" dù không công thức nào dùng; vào server thì sửa dòng đó. */
+    @EventHandler
+    public void fixOldLore(org.bukkit.event.player.PlayerJoinEvent e) {
+        for (ItemStack it : e.getPlayer().getInventory().getContents()) {
+            String id = it == null ? null : idOf(it);
+            if (id == null) {
+                continue;
+            }
+            Item self = items.get(id);
+            boolean used = self != null && !self.recipe().isEmpty()
+                    || items.values().stream().anyMatch(o -> o.recipe().keySet().stream().anyMatch(k -> k.equalsIgnoreCase(id)));
+            if (used) {
+                continue;
+            }
+            ItemMeta meta = it.getItemMeta();
+            List<Component> lore = meta.lore();
+            if (lore == null) {
+                continue;
+            }
+            List<Component> out = new ArrayList<>();
+            boolean changed = false;
+            for (Component l : lore) {
+                String plain = net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer.plainText().serialize(l);
+                if (plain.startsWith("Nguyên liệu tinh luyện")) {
+                    changed = true;
+                    if (self != null && self.sell() > 0) {
+                        out.add(c("&7Bán cho server: /sell hand"));
+                    }
+                } else {
+                    out.add(l);
+                }
+            }
+            if (changed) {
+                meta.lore(out);
+                it.setItemMeta(meta);
+            }
+        }
+    }
+
     String idOf(ItemStack it) {
         if (it == null || !it.hasItemMeta()) {
             return null;

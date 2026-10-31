@@ -359,7 +359,7 @@ final class PeaceAlliance implements Listener {
                 .apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.IRON_BARS)));
         if (economyOnlyInPeace || jobsOnlyInPeace) {
             m.add(Tip.of("&6⛃ &fĐặc quyền dân hoà bình").accent("&6").desc(jobsOnlyInPeace ? "Mua bán với server và vào nghề ở đâu cũng được" : "Mua bán với server ở đâu cũng được")
-                    .items(List.of("/sell, /emf shop, /ce, /xuong, /tinhluyen")).note("Người khác phải về kinh đô (quanh spawn) hoặc đất hoà bình.")
+                    .items(List.of("/emf shop, /ce, /xuong, /tinhluyen")).note("Người khác phải về kinh đô (quanh spawn) hoặc đất hoà bình.")
                     .apply(new org.bukkit.inventory.ItemStack(org.bukkit.Material.EMERALD)));
         }
         m.add(Tip.of("&e⬚ &fGiá đất").accent("&e").kv("Mua thêm ô", String.format(Locale.ROOT, "%.1f xu/ô", plotBase + plotPerPlot * memberPlots()).replace('.', ','))

@@ -1,4 +1,4 @@
-# Vườn rau bậc thang 3 tầng, tường gạch đá răng cưa, đường đất vòng ngoài, dựng bằng lệnh vanilla qua RCON.
+# Vườn rau bậc thang 3 tầng, tường gỗ răng cưa, đường đất vòng ngoài, dựng bằng lệnh vanilla qua RCON.
 # Chạy trong container panel: python3 vuon-rau.py <server> <x> <y> <z>
 #   x z = góc tây bắc của cả khu (kể cả đường đất), y = mặt đất + 1. Khu rộng 15 (trục x) x 17 (trục z). Ruộng trong 5x5 (lẻ) để ô nước nằm đúng giữa.
 #   Không dùng khối ngập nước trong tường: nước chảy ra ngoài làm ngập luống thấp (31/10).
@@ -28,8 +28,8 @@ def sb(u, y, v, b):
     cmds.append(f'minecraft:setblock {P(u, y, v)} {b}')
 
 
-STONE = ['minecraft:stone_bricks'] * 5 + ['minecraft:mossy_stone_bricks'] * 2 + ['minecraft:cracked_stone_bricks']
-SLAB = ['minecraft:stone_brick_slab', 'minecraft:stone_brick_slab', 'minecraft:mossy_stone_brick_slab']
+STONE = ['minecraft:spruce_planks'] * 5 + ['minecraft:stripped_spruce_wood'] * 2 + ['minecraft:oak_planks']   # 31/10: tường gỗ (trước là gạch đá)
+SLAB = ['minecraft:spruce_slab', 'minecraft:spruce_slab', 'minecraft:oak_slab']
 
 # 0. san nền
 fill(0, 0, 0, DEPTH - 1, 12, WIDTH - 1, 'minecraft:air')

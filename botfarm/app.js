@@ -741,6 +741,22 @@ const CHET_LINES = {
 };
 const CHET_REPLY = ['f', 'haha', 'rip', 'cẩn thận chứ', 'lại chết à :v', 'mất đồ không'];
 const CHET_ANSWER = ['mất hết túi đồ', 'may còn giáp', 'đồ trong balo thì còn', 'mất ít thôi'];
+// 31/10 chủ server: "Tị nạn làm gì có balo". Câu than / đáp theo rank: Tị Nạn (người mới < 30 giờ chết không mất đồ) không nói mất đồ / balo;
+// chỉ rank có balo (Dân trở lên, các tước) mới nhắc balo. Không đọc được rank thì coi như Tị Nạn cho an toàn.
+const CHET_MOI = ['may mà người mới chết không mất gì :v', 'chết lãng xẹt', 'toang', 'đen thế', 'hên là chưa mất đồ'];
+const CHET_ANSWER_MOI = ['người mới nên không mất gì :v', 'không mất gì, người mới mà', 'may chưa đủ 30 giờ'];
+function deathLineOk(line, hang) {
+  const moi = !hang || hang === 'Tị Nạn';
+  if (moi && /mất|balo|ngọc hộ thân/i.test(line)) return false;
+  if (/balo/i.test(line) && !(['Dân', 'Lương Dân', 'Hào Kiệt'].includes(hang) || /Tước/.test(hang))) return false;
+  return true;
+}
+function deathLine(kind, hang) {
+  const moi = !hang || hang === 'Tị Nạn';
+  const pool = (Math.random() < 0.75 ? (CHET_LINES[kind] || CHET_LINES.chung) : CHET_LINES.chung).filter(x => deathLineOk(x, hang));
+  const all = moi ? pool.concat(CHET_MOI) : pool;
+  return all.length ? pick(all) : pick(CHET_MOI);
+}
 const pick = a => a[Math.floor(Math.random() * a.length)];
 async function sayAs(n, text, delay) {
   await sleep(delay + Math.min(text.length * 250, 15000) * (0.8 + Math.random() * 0.4));
@@ -766,12 +782,15 @@ async function fakeDeathOnce(force) {
     event({ type: 'chet', bot: n, text: `${n} chết giả (${kind})` });
     (async () => {
       if (Math.random() < 0.7) {
-        await sayAs(n, Math.random() < 0.75 ? pick(CHET_LINES[kind] || CHET_LINES.chung) : pick(CHET_LINES.chung), 4000 + Math.random() * 11000);
+        await sayAs(n, deathLine(kind, rankOf(n).hang), 4000 + Math.random() * 11000);
       }
       const others = NAMES.filter(o => o !== n && RT[o].bot && state[o].server === 'banghoi-1');
       if (others.length && Math.random() < 0.35) {
         const o = pick(others), rep = pick(CHET_REPLY);
-        if (await sayAs(o, rep, 3000 + Math.random() * 9000) && rep === 'mất đồ không') await sayAs(n, pick(CHET_ANSWER), 3000 + Math.random() * 6000);
+        if (await sayAs(o, rep, 3000 + Math.random() * 9000) && rep === 'mất đồ không') {
+          const hang = rankOf(n).hang, moi = !hang || hang === 'Tị Nạn';
+          await sayAs(n, moi ? pick(CHET_ANSWER_MOI) : pick(CHET_ANSWER.filter(x => deathLineOk(x, hang))), 3000 + Math.random() * 6000);
+        }
       }
     })().catch(e => log('lỗi chat sau chết giả:', e.message));
     return `${n} chết giả (${kind})`;

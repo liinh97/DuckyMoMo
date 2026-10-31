@@ -18,7 +18,7 @@ bskyblock:
     # Sub-command of main player command that will be run on each player command call.
     # By default it is sub-command 'go'.
     # Added since 1.13.1.
-    default-action: go
+    default-action: cp
 world:
   # Friendly name for this world. Used in admin commands. Must be a single word
   friendly-name: BSkyBlock
@@ -143,9 +143,9 @@ world:
     dragon-spawn: false
   # Mob white list - these mobs will NOT be removed when logging in or doing /island
   remove-mobs-whitelist:
-  - wither
-  - zombie_villager
   - enderman
+  - zombie_villager
+  - wither
   # World flags. These are boolean settings for various flags for this world
   flags:
     CREEPER_DAMAGE: true

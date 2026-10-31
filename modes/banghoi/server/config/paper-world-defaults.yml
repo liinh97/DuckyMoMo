@@ -57,6 +57,8 @@ chunks:
     snowball: 8
 entities:
   behavior:
+    phantoms-spawn-attempt-min-seconds: 210   # 31/10 chủ server: phantom ít hơn ~3,5 lần (gốc 60–119 giây)
+    phantoms-spawn-attempt-max-seconds: 417
     disable-chest-cat-detection: true   # bỏ dò mèo ngồi trên rương mỗi lần mở rương
 misc:
   redstone-implementation: ALTERNATE_CURRENT   # redstone tính nhanh hơn nhiều lần (máy redstone phá lag hết tác dụng), mạch thường chạy như cũ

@@ -1,0 +1,81 @@
+# Skyblock (31/10): server RIÊNG, không liên quan các chế độ khác: thế giới, xu, đồ, quyền đều tách (LuckPerms H2 trong data/skyblock-1,
+# Essentials Economy riêng, KHÔNG có DuckyMoMoCore). Chỉ dùng chung proxy làm cửa vào (AuthMe đăng nhập, Geyser cho điện thoại, cổng VPS).
+# BentoBox + BSkyBlock; addon nằm ở data/skyblock-1/plugins/BentoBox/addons, tải tay bằng ops/skyblock-addons.sh (ghim phiên bản, GitHub hay ngắt kết nối).
+services:
+  skyblock-1:
+    image: itzg/minecraft-server
+    profiles: ["skyblock"]     # đang thử: chỉ chạy khi --profile skyblock. Bỏ dòng này khi mở chính thức
+    restart: unless-stopped
+    stop_grace_period: 1m        # cho server đủ thời gian lưu thế giới khi tắt (mặc định Docker chỉ chờ 10 giây)
+    environment:
+      EULA: "TRUE"
+      TYPE: PAPER
+      VERSION: ${MC_VERSION:-26.2}
+      MEMORY: 4G
+      USE_AIKAR_FLAGS: "TRUE"
+      MAX_PLAYERS: 100
+      LEVEL_TYPE: minecraft:flat  # thế giới chính bỏ không; người chơi ở bskyblock_world (BentoBox tạo)
+      GENERATE_STRUCTURES: "FALSE"
+      SPAWN_PROTECTION: 0
+      DIFFICULTY: normal
+      PVP: "FALSE"
+      ALLOW_NETHER: "TRUE"
+      VIEW_DISTANCE: "8"
+      SIMULATION_DISTANCE: "6"
+      TZ: Asia/Ho_Chi_Minh
+      RCON_PASSWORD: ${RCON_PASSWORD:?Chưa đặt RCON_PASSWORD trong .env (chạy lại ./ops/init.sh)}   # dùng chung với dịch vụ sao lưu, trang Cài đặt
+      ONLINE_MODE: "FALSE"
+      # viaversion/viabackwards/viarewind: cho client nhiều phiên bản vào (cài trên server Paper, không cài ở proxy).
+      #   viaversion: client mới hơn server, viabackwards: client cũ hơn, viarewind: 1.7-1.8
+      # Lưu ý: dòng bắt đầu bằng # BÊN TRONG khối '|' không phải comment, image itzg sẽ đọc thành tên plugin.
+      MODRINTH_PROJECTS: |
+        luckperms
+        viaversion
+        viabackwards
+        viarewind
+        vaultunlocked
+        bentobox
+        ultimateshop
+      PLUGINS: |
+        https://download.geysermc.org/v2/projects/floodgate/versions/latest/builds/latest/downloads/spigot
+        https://cdn.modrinth.com/data/TsLS8Py5/versions/ziIzW16f/SkinsRestorer.jar
+        https://ci.ender.zone/job/EssentialsX/1832/artifact/jars/EssentialsX-2.22.1-dev%2B27-e70bdb8.jar
+        https://ci.ender.zone/job/EssentialsX/1832/artifact/jars/EssentialsXChat-2.22.1-dev%2B27-e70bdb8.jar
+      CFG_SERVER_NAME: skyblock-1
+      CFG_VELOCITY_SECRET: ${VELOCITY_SECRET}
+    mem_limit: 6g
+    volumes:
+      - ../../data/skyblock-1:/data
+      - ../../data/proxy/plugins/floodgate/key.pem:/run/floodgate/key.pem:ro   # khoá Floodgate chung với proxy (điện thoại vào qua Geyser)
+      - ./server/config:/config:ro
+      - ./server/plugins:/plugins:ro
+
+  # Sao lưu thế giới + plugin của skyblock-1 (itzg/mc-backup + restic: tạm dừng ghi qua RCON, chỉ lưu phần thay đổi, xoá bản quá hạn).
+  # Sao lưu ngay: docker compose exec backup-skyblock-1 backup now. Khôi phục: README.md, mục "Sao lưu và khôi phục".
+  backup-skyblock-1:
+    image: itzg/mc-backup
+    profiles: ["skyblock"]
+    restart: unless-stopped
+    environment:
+      RCON_HOST: skyblock-1
+      RCON_PASSWORD: ${RCON_PASSWORD}
+      BACKUP_NAME: skyblock-1
+      BACKUP_INTERVAL: ${BACKUP_INTERVAL:-6h}
+      # restic: kho sao lưu khử trùng lặp, lần đầu ~ cỡ world, các lần sau chỉ phần thay đổi (map 1:1000 nặng 17+ GB,
+      # nén tar.gz mỗi lần sẽ đầy ổ). Mất RESTIC_PASSWORD là KHÔNG khôi phục được: cất thêm một bản ngoài máy.
+      BACKUP_METHOD: restic
+      RESTIC_REPOSITORY: /backups/restic
+      RESTIC_PASSWORD: ${RESTIC_PASSWORD:?Chưa đặt RESTIC_PASSWORD trong .env (chạy lại ./ops/init.sh)}
+      RESTIC_HOSTNAME: skyblock-1
+      PRUNE_RESTIC_RETENTION: "--keep-within ${BACKUP_KEEP_DAYS:-7}d --keep-daily 30"
+      # Không sao lưu file tải lại được (*.jar), log, cache, và các world cũ đã cất bằng ops/doi-map-banghoi.sh
+      EXCLUDES: "*.jar,cache,logs,*.tmp,world-*"   # world-* = các world cũ đã cất (world_nether, world_the_end dùng dấu gạch dưới nên vẫn được sao lưu)
+      PAUSE_IF_NO_PLAYERS: "false"     # 19/10: LUÔN sao lưu theo giờ (trước bật "true": không ai online là chờ mãi → mất cả ngày cấu hình). restic chỉ lưu phần đổi nên nhẹ
+      INITIAL_DELAY: 5m
+      TZ: Asia/Ho_Chi_Minh
+    volumes:
+      - ../../data/skyblock-1:/data:ro
+      # BACKUP_DIR trong .env phải là đường dẫn tuyệt đối (ví dụ /mnt/f/DuckyMoMo-backups); bỏ trống = backups/ trong repo
+      - ${BACKUP_DIR:-../../backups}/skyblock-1:/backups
+    depends_on:
+      - skyblock-1

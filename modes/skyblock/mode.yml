@@ -2,7 +2,7 @@ id: skyblock
 display_name: "Skyblock"
 description: "Bắt đầu trên hòn đảo nhỏ giữa trời, mở rộng đảo, nâng cấp, đua top cùng bạn bè"
 icon: "minecraft:grass_block"
-status: closed                   # 31/10: chưa có server, chỉ để NPC sảnh / menu hiện "Sắp mở". Khi làm server: ./ops/new-mode.sh rồi đổi status
+status: closed                   # 31/10: server đang dựng thử (profile skyblock); NPC sảnh / menu vẫn "Sắp mở". Mở chính thức: đổi status, bỏ profiles trong compose
 platform: paper
 minecraft_version: "26.2"
 clients: [java, bedrock]
@@ -12,5 +12,5 @@ servers:
 visibility:
   beta_permission: "network.beta"
 economy: isolated
-database: mode_skyblock
+database: none                   # BentoBox lưu JSON trong data/skyblock-1, tách khỏi MariaDB của mạng
 cosmetics: [chat_tag, name_color]

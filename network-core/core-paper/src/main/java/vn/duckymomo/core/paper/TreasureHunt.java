@@ -49,7 +49,8 @@ import org.bukkit.persistence.PersistentDataType;
  *  - tiers.<mã>: {name, weight, guards, guard-types, guard-health, rewards}. Bản đồ ghi sẵn vị trí: điểm ngẫu nhiên trên đất hoang (không trong
  *    thị trấn, không nước) trong một vùng /tpr đã mở.
  *  - Cầm bản đồ: thanh hành động báo lạnh / ấm / nóng theo khoảng cách. Tới nơi (<= dig-radius khối), ngồi xuống (Shift) để đào:
- *    lính canh xuất hiện; hạ hết (trong guard-minutes phút, người đào ở gần) thì nhận quà. Thất bại thì trả lại bản đồ.
+ *    lính canh xuất hiện; hạ hết trong guard-minutes phút thì mở rương (quà vào thẳng túi). 1/11: người hạ con cuối (đứng trong 40 khối)
+ *    nhận, không nhất thiết là người đào; người đào chết / rời đi không huỷ. Hết giờ còn lính (hoặc không ai gần): trả bản đồ người đào.
  *  - Bậc có broadcast: true thì báo cả server vùng đang đào (người khác có thể tới tranh).
  *  - Bậc có reveal-hidden: <%> thì mở rương có thể kèm mảnh giấy chỉ đường tới lối vào một dungeon ẩn (Cổng Dungeon) chưa tìm ra.
  * Lưu: khobau.yml (ngay.<uuid>.<ngày> = số bản đồ đã nhận).
@@ -69,6 +70,7 @@ final class TreasureHunt implements Listener {
         final ItemStack map;
         final Set<UUID> guards = new HashSet<>();
         final long until;
+        UUID lastKiller;      // người hạ lính canh gần nhất (1/11: ai hạ con cuối mà đứng gần thì người đó mở rương)
 
         Dig(UUID player, Location loc, Tier tier, ItemStack map, long until) {
             this.player = player;
@@ -258,6 +260,13 @@ final class TreasureHunt implements Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     public void onKill(EntityDeathEvent e) {
         Player k = e.getEntity().getKiller();
+        if (k != null && "linhcanh".equals(e.getEntity().getPersistentDataContainer().get(key, PersistentDataType.STRING))) {
+            for (Dig d : digs.values()) {
+                if (d.guards.contains(e.getEntity().getUniqueId())) {
+                    d.lastKiller = k.getUniqueId();
+                }
+            }
+        }
         if (k != null && e.getEntity() instanceof Monster && !e.getEntity().getPersistentDataContainer().has(key)
                 && ThreadLocalRandom.current().nextDouble(100) < mobChance) {
             give(k, true);
@@ -288,12 +297,18 @@ final class TreasureHunt implements Listener {
                 var e = Bukkit.getEntity(id);
                 return e == null || e.isDead();
             });
-            Player p = Bukkit.getPlayer(d.player);
-            boolean near = p != null && p.getWorld() == d.loc.getWorld() && p.getLocation().distanceSquared(d.loc) < 40 * 40;
-            if (d.guards.isEmpty() && near) {
-                finish(d, p);
-            } else if (now > d.until || p == null || !near) {
-                fail(d, p);
+            // 1/11 chủ server: "tranh" có thật. Người đào chết / rời đi không huỷ lượt: lính canh đứng nguyên, đồng hồ vẫn chạy.
+            // Hạ hết lính: người hạ con cuối (đứng trong 40 khối) mở rương; không có thì người đào nếu đứng gần; không thì người gần nhất.
+            // Hết giờ mà lính còn, hoặc hết lính mà không ai đứng gần: huỷ, trả bản đồ cho người đào.
+            if (d.guards.isEmpty()) {
+                Player win = winner(d);
+                if (win != null) {
+                    finish(d, win);
+                } else if (now > d.until) {
+                    fail(d, Bukkit.getPlayer(d.player));
+                }
+            } else if (now > d.until) {
+                fail(d, Bukkit.getPlayer(d.player));
             }
         }
     }
@@ -347,10 +362,10 @@ final class TreasureHunt implements Listener {
         w.playSound(ground, Sound.ITEM_SHOVEL_FLATTEN, 1f, 0.7f);
         w.spawnParticle(Particle.BLOCK, ground, 30, 0.6, 0.2, 0.6, Material.DIRT.createBlockData());
         p.sendMessage(c("&6⛏ Đang đào kho báu " + t.name() + "&6! " + (t.guards() > 0 ? "&cHạ hết " + t.guards() + " lính canh trong "
-                + guardMs / 60_000 + " phút &6(đứng trong 40 khối) để mở rương." : "")));
+                + guardMs / 60_000 + " phút &6để mở rương. Chết hay rời đi thì lính vẫn đứng đó: ai hạ con cuối (đứng trong 40 khối) sẽ lấy rương." : "")));
         if (t.broadcast()) {
             PlayerSettings.broadcast("sukien", c("&6⌖ &f" + p.getName() + " &6đang đào &e" + t.name() + " &6quanh &fX " + ground.getBlockX() / 50 * 50 + " Z "
-                    + ground.getBlockZ() / 50 * 50 + "&6! Ai nhanh chân thì tới tranh."));
+                    + ground.getBlockZ() / 50 * 50 + "&6! Ai hạ được lính canh cuối cùng sẽ lấy rương."));
         }
     }
 
@@ -361,6 +376,10 @@ final class TreasureHunt implements Listener {
         p.playSound(p.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 0.8f, 1f);
         p.sendMessage(c("&a✔ Mở rương kho báu " + d.tier.name() + "&a: " + (got.isEmpty() ? "" : String.join("&a, ", got))));
         Achievements.add(p, "khobau", 1);
+        Player owner = Bukkit.getPlayer(d.player);
+        if (owner != null && owner != p) {
+            owner.sendMessage(c("&c✘ " + p.getName() + " đã hạ lính canh cuối và lấy mất rương " + d.tier.name() + "&c."));
+        }
         DungeonGate dg = Shared.dungeonGate;
         if (d.tier.revealHidden() > 0 && ThreadLocalRandom.current().nextDouble(100) < d.tier.revealHidden()) {
             WildGates wg = Shared.wildGates;
@@ -376,6 +395,23 @@ final class TreasureHunt implements Listener {
         if (d.tier.broadcast()) {
             PlayerSettings.broadcast("sukien", c("&6⌖ &f" + p.getName() + " &6đã mở được &e" + d.tier.name() + "&6!"));
         }
+    }
+
+    private static boolean near(Player p, Dig d) {
+        return p != null && !p.isDead() && p.getWorld() == d.loc.getWorld() && p.getLocation().distanceSquared(d.loc) < 40 * 40;
+    }
+
+    private Player winner(Dig d) {
+        Player k = d.lastKiller == null ? null : Bukkit.getPlayer(d.lastKiller);
+        if (near(k, d)) {
+            return k;
+        }
+        Player owner = Bukkit.getPlayer(d.player);
+        if (near(owner, d)) {
+            return owner;
+        }
+        return d.loc.getWorld().getPlayers().stream().filter(o -> near(o, d) && o.getGameMode() == GameMode.SURVIVAL)
+                .min(java.util.Comparator.comparingDouble(o -> o.getLocation().distanceSquared(d.loc))).orElse(null);
     }
 
     private void fail(Dig d, Player p) {

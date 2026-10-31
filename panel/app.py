@@ -4169,9 +4169,9 @@ def vang_notify(name, text):
         pass
 
 
-def vang_run(cmds):
-    """Chạy lệnh cấp đồ mua bằng Vàng ở sảnh (LuckPerms dùng chung cả mạng). Lỗi RCON -> ném lỗi để hoàn Vàng."""
-    res = rcon("lobby", cmds)
+def vang_run(cmds, server="lobby"):
+    """Chạy lệnh cấp đồ mua bằng Vàng (mặc định ở sảnh: LuckPerms dùng chung cả mạng; món Skyblock chạy ở skyblock-1). Lỗi RCON -> ném lỗi để hoàn Vàng."""
+    res = rcon(server, cmds)
     bad = [r for r in res if re.search(r"(?i)unknown command|không tìm thấy|could not|error", str(r[1]))]
     if bad:
         raise RuntimeError(re.sub(r"§.", "", str(bad[0][1]))[:120])
@@ -4199,7 +4199,7 @@ def web_vang(data, ip):
 
 def vang_info(name):
     c = vang.cfg()
-    return {"ok": True, **vang.balance(name), "lich_su": vang.history(name, 15), "mon": vang.shop(donate_tiers),
+    return {"ok": True, **vang.balance(name), "lich_su": vang.history(name, 15), "mon": [m for m in vang.shop(donate_tiers) if not m.get("an")],
             "ty_gia": c["ty_gia"], "thuong": [{"tu": a, "pct": b} for a, b in c["thuong"]], "nap_toi_thieu": c["nap_toi_thieu"]}
 
 

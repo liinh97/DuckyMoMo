@@ -2,6 +2,7 @@
 
 - Ví lưu MariaDB database `network`: bảng vang_vi (số dư, tổng nạp) + vang_log (mọi giao dịch, ref duy nhất -> không cộng 2 lần).
 - KHÔNG chuyển Vàng cho người khác, KHÔNG đổi ra xu / đồ chơi game (luật Mojang: tiền thật chỉ mua trang trí).
+  Ngoại lệ RIÊNG Skyblock (chủ server chốt 31/10): vang.mon-rieng được bán xu, rank có lợi thế; lệnh chạy ở server ghi trong món.
 - Cấu hình: config DuckyMoMoCore ở Bang Hội Chiến (taikhoan.DMM), mục `vang` (tỉ giá, mốc thưởng nạp, món bán lẻ); rank lấy từ
   donate-ranks (giá tiền thật '1 tháng 20k' quy ra Vàng theo tỉ giá). Sửa tỉ giá / mốc thưởng: Cài đặt › Toàn mạng › Rank donate.
 - Mua: trừ Vàng trước (trong giao dịch DB), rồi chạy lệnh cấp qua RCON sảnh; lệnh lỗi thì HOÀN Vàng.
@@ -50,7 +51,7 @@ def cfg():
             bonus.append((int(m.group(1).replace(".", "")), int(m.group(2))))
     bonus.sort()
     return {"ty_gia": rate, "thuong": bonus, "nap_toi_thieu": int(v.get("nap-toi-thieu", 10000) or 10000),
-            "mon": v.get("mon") or [], "core": core}
+            "mon": v.get("mon") or [], "mon_rieng": v.get("mon-rieng") or [], "core": core}
 
 
 def vang_for(tien, c=None):
@@ -74,12 +75,13 @@ def shop(donate_tiers):
                         "mo_ta": "Rank ủng hộ: tiền tố, trang trí, balo. Mua thêm thì cộng dồn thời hạn.",
                         "gia": max(1, math.ceil(g["tien"] / c["ty_gia"])), "ngay": g["thang"] * 30,
                         "lenh": [f"rank give {{player}} {t['group']} {g['thang']}"], "nhom": t["ten"]})
-    for m in c["mon"]:
+    for m in list(c["mon"]) + list(c["mon_rieng"]):   # mon-rieng: trang /donate không sửa, nên giữ được server + an
         if not isinstance(m, dict) or not m.get("ma") or not m.get("lenh"):
             continue
         out.append({"ma": str(m["ma"]), "loai": str(m.get("loai", "trangtri")), "ten": str(m.get("ten", m["ma"])),
                     "mo_ta": str(m.get("mo-ta", "")), "gia": max(1, int(m.get("gia", 1))), "ngay": int(m.get("ngay", 0) or 0), "gio": int(m.get("gio", 0) or 0),
-                    "lenh": [str(x) for x in m.get("lenh") or []], "nhom": str(m.get("nhom", "Trang trí"))})
+                    "lenh": [str(x) for x in m.get("lenh") or []], "nhom": str(m.get("nhom", "Trang trí")),
+                    "server": str(m.get("server", "lobby")), "an": bool(m.get("an"))})
     return out
 
 
@@ -177,7 +179,7 @@ def known_player(name):
 
 
 def buy(name, ma, donate_tiers, run_cmds):
-    """Mua 1 món: trừ Vàng, chạy lệnh cấp (run_cmds(list) -> None, ném lỗi nếu hỏng); lỗi thì hoàn Vàng."""
+    """Mua 1 món: trừ Vàng, chạy lệnh cấp (run_cmds(list, server) -> None, ném lỗi nếu hỏng); lỗi thì hoàn Vàng."""
     item = next((m for m in shop(donate_tiers) if m["ma"] == ma), None)
     if not item:
         raise ValueError("Không có món này.")
@@ -185,7 +187,7 @@ def buy(name, ma, donate_tiers, run_cmds):
         raise ValueError("Tài khoản này chưa vào server lần nào. Vào game một lần rồi mua.")
     after = change(name, -item["gia"], "mua", f"Mua {item['ten']}")
     try:
-        run_cmds([x.replace("{player}", name) for x in item["lenh"]])
+        run_cmds([x.replace("{player}", name) for x in item["lenh"]], item.get("server", "lobby"))
     except Exception as e:
         change(name, item["gia"], "hoan", f"Hoàn: cấp {item['ten']} lỗi ({str(e)[:80]})")
         raise ValueError("Server đang bận, chưa cấp được. Đã hoàn Vàng, thử lại sau ít phút.")

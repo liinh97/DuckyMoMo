@@ -449,7 +449,7 @@ per-warp-permission: false
 list:
     # To merge groups under one name in /list, list each group on one line, separated by spaces.
     #Staff: owner admin moderator
-    Admins: owner admin
+    Người chơi: '*'   # 31/10: không chia nhóm theo rank (giấu quản lý trong /list)
     # To truncate group lists, set a max player limit.
     #builder: 20
     # To hide groups, set the group as hidden.

@@ -23,7 +23,7 @@ scoreboard-teams:
   invisible-nametags: false
   # https://github.com/NEZNAMY/TAB/wiki/Feature-guide:-Sorting-players-in-tablist
   sorting-types:
-    - "GROUPS:admin,quanly,mod,helper,builder,media,congtuoc,hautuoc,batuoc,tutuoc,namtuoc,haokiet,luongdan,dan,default"   # 30/10: staff -> rank ủng hộ -> danh phận cao -> thấp
+    - "PERMISSIONS:tab.sort.admin,tab.sort.quanly,tab.sort.mod,tab.sort.helper,tab.sort.builder,tab.sort.media,tab.sort.congtuoc,tab.sort.hautuoc,tab.sort.batuoc,tab.sort.tutuoc,tab.sort.namtuoc,tab.sort.haokiet,tab.sort.luongdan,tab.sort.dan,tab.sort.default"   # 30/10 staff -> rank ủng hộ -> danh phận; 31/10 theo quyền tab.sort.<nhóm> (mỗi nhóm LP một quyền) để quản lý ẩn danh đặt quyền riêng xếp như Dân
     - "PLACEHOLDER_A_TO_Z:%player%"
   case-sensitive-sorting: true
   can-see-friendly-invisibles: false

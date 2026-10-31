@@ -8,8 +8,10 @@ import random, sys
 sys.path.insert(0, '/app')
 import app
 
-SERVER = 'sangtao-1'
-X0, Y0, Z0 = 10000, -60, 10000
+# Tham số: python3 v.py [server x0 y0 z0]  (mặc định bản thử ở thế giới phẳng sangtao-1). y0 = khối KHÍ đầu tiên trên mặt đất.
+# 31/10 đặt bản thật: banghoi-1 13866 63 -2585 (thị trấn LetGoMine của Itrap).
+SERVER = sys.argv[1] if len(sys.argv) > 4 else 'sangtao-1'
+X0, Y0, Z0 = (int(sys.argv[2]), int(sys.argv[3]), int(sys.argv[4])) if len(sys.argv) > 4 else (10000, -60, 10000)
 random.seed(11)
 cmds = []
 

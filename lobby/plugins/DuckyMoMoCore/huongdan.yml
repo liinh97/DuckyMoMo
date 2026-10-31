@@ -135,7 +135,7 @@ menu:
     chuong: kinhte
     lenh:
     - "/bal|xem tiền"
-    - "/jobs|chọn nghề (mỗi người 1 nghề, chọn ở kinh đô)"
+    - "/jobs|chọn nghề (mỗi người 1 nghề)"
     - "/cuahang|bán cho server bằng nút trong cửa hàng"
     - "/sell <tên món> [số]|bán theo tên, vd /sell cobblestone 64"
     - "/worth|giá món đang cầm"
@@ -613,7 +613,7 @@ chapters:
     &0- Rời: mất bảo vệ ngay, 14 ngày&r&0 mới vào lại.
   - |-
     &2Quyền lợi hoà bình
-    &2Đặc quyền:&0 mua bán với server (/sell, /emf shop, /ce, /xuong, /tinhluyen) và vào nghề ở đâu cũng được&r&0. Người khác phải về kinh đô hoặc đất hoà bình.
+    &2Đặc quyền:&0 mua bán với server (/sell, /emf shop, /ce, /xuong, /tinhluyen) ở đâu cũng được&r&0. Người khác phải về kinh đô hoặc đất hoà bình.
     &0Bán &1/sell&0 ở kinh đô được +10%&r&0.
     &0Shop rương trong đất hoà bình miễn thuế&r&0 (ngoài: 5%).
     &0Có công thành gần nhà sẽ được báo trước 2 ngày: hãy di tản khỏi vùng vây.
@@ -816,7 +816,7 @@ chapters:
     &6Kiếm tiền
     &0Bắt đầu 500 xu&r&0. &1/bal &0xem tiền.
     &2Nghề:&0 gõ &1/jobs&0 chọn 1 nghề&r&0 (thợ mỏ, tiều phu, nông dân, thợ săn, ngư dân…). Làm đúng việc của nghề mới có tiền.
-    &8Vào / rời nghề phải đứng trong kinh đô hoặc thị trấn hoà bình (dân hoà bình ở đâu cũng được); xem nghề thì ở đâu cũng được. Đổi nghề chờ 1 ngày, vào lại nghề cũ mất bớt cấp.
+    &8Vào / rời nghề ở đâu cũng được. Đổi nghề chờ 1 ngày, vào lại nghề cũ mất bớt cấp.
     &4Lưu ý: &0phá lại khối tự đặt không có tiền; nhiệm vụ ngày cũng không tính.
   - |-
     &6Bán đồ cho server

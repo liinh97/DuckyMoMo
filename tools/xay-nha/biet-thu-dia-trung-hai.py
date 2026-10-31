@@ -9,7 +9,7 @@ sys.path.insert(0, '/app')
 import app
 
 # Tham số: python3 v.py [server x0 y0 z0]  (mặc định bản thử ở thế giới phẳng sangtao-1). y0 = khối KHÍ đầu tiên trên mặt đất.
-# 31/10 đặt bản thật: banghoi-1 13881 63 -2575 W (thị trấn LetGoMine của Itrap, mặt tiền nhìn ra vịnh phía tây).
+# 31/10 đặt bản thật: banghoi-1 13874 63 -2575 W (thị trấn LetGoMine của Itrap, mặt tiền nhìn ra vịnh phía tây).
 SERVER = sys.argv[1] if len(sys.argv) > 4 else 'sangtao-1'
 X0, Y0, Z0 = (int(sys.argv[2]), int(sys.argv[3]), int(sys.argv[4])) if len(sys.argv) > 4 else (10000, -60, 10000)
 # Hướng mặt tiền (tham số thứ 5): N (mặc định), W, S, E. 31/10 LetGoMine: W (nhìn ra vịnh phía tây).

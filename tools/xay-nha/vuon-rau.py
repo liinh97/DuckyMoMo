@@ -1,6 +1,7 @@
 # Vườn rau bậc thang 3 tầng, tường gạch đá răng cưa, đường đất vòng ngoài, dựng bằng lệnh vanilla qua RCON.
 # Chạy trong container panel: python3 vuon-rau.py <server> <x> <y> <z>
 #   x z = góc tây bắc của cả khu (kể cả đường đất), y = mặt đất + 1. Khu rộng 13 (trục x) x 15 (trục z).
+#   Không dùng khối ngập nước trong tường: nước chảy ra ngoài làm ngập luống thấp (31/10).
 #   Mặt trước (luống thấp nhất) quay về phía tây; phía sau: luống cao nhất bên bắc, luống giữa bên nam.
 # 31/10 đặt ở LetGoMine: banghoi-1 13858 63 -2606 (bên trái biệt thự nhìn từ vịnh).
 import random, sys
@@ -60,9 +61,9 @@ for (a1, b1, a2, b2), lvl, crop in beds:
     fill(u1 + 1, lvl - 1, v1 + 1, u2 - 1, lvl - 1, v2 - 1, 'minecraft:farmland[moisture=7]')
     fill(u1 + 1, lvl, v1 + 1, u2 - 1, lvl, v2 - 1, crop)
     fill(u1 + 1, lvl + 1, v1 + 1, u2 - 1, lvl + 2, v2 - 1, 'minecraft:air')
-    # nước giấu trong tường: phiến đá ngập nước ngang mặt đất cày, giữa cạnh trước của luống (tưới đủ 4 ô)
-    sb(u1, lvl - 1, (v1 + v2) // 2, 'minecraft:stone_brick_slab[type=top,waterlogged=true]')
-    sb(u2, lvl - 1, (v1 + v2) // 2, 'minecraft:stone_brick_slab[type=top,waterlogged=true]')
+    # một ô nước giữa ruộng, ngang mặt đất cày (xung quanh là đất cày nên nước không chảy, tưới đủ 4 ô)
+    cu, cv = (u1 + u2) // 2, (v1 + v2) // 2
+    sb(cu, lvl, cv, 'minecraft:air'); sb(cu, lvl - 1, cv, 'minecraft:water')
 
 # 3. cột rào + đèn ở các góc ngoài, bụi azalea + hoa hồng trên dải cỏ hai bên
 for u, v, y in ((CU, CV + 2, 1), (CU, CV + 8, 1), (CU + 10, CV, 3), (CU + 10, CV + 10, 2), (CU + 5, CV, 3), (CU + 5, CV + 10, 2)):

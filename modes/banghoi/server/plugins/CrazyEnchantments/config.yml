@@ -340,7 +340,8 @@ Settings:
       Key: ""
     Name: '&eCuộn Giấy Trắng' #The name of the white scrolls.
     Item-Lore: #The lore that will be on the white scroll.
-      - '&f▍ &fGiữ đồ không vỡ khi gắn sách bị hỏng'
+      - '&f▍ &fGắn sách phép thất bại thì đồ không bị mất (cứu 1 lần)'
+      - '&f▍ &cKhông làm đồ bền hơn&f, đồ vẫn mòn như thường'
       - '&7&m                              '
       - '&eKéo thả&7: &flên món đồ'
     InGUI: true #Toggle being able to buy in the /CE GUI. Cost is controlled in the SignOptions section
@@ -348,7 +349,8 @@ Settings:
     Glowing: false #If it has a glowing effect.
     Slot: 30 #Slot you can buy the scroll at
     Lore: #Lore of the scroll in the GUI
-      - '&f▍ &fGiữ đồ không vỡ khi gắn sách bị hỏng'
+      - '&f▍ &fGắn sách phép thất bại thì đồ không bị mất (cứu 1 lần)'
+      - '&f▍ &cKhông làm đồ bền hơn&f, đồ vẫn mòn như thường'
       - '&7&m                              '
       - '&8• &7Giá: &e6.000 xu'
       - '&7&m                              '

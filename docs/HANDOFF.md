@@ -5,6 +5,29 @@
 
 ---
 
+## 31/10/2026: SKYBLOCK (server riêng, đang thử, chưa mở cho member)
+
+**Việc tiếp theo, theo thứ tự:**
+1. Chủ server gõ `/velocity reload` trong game (proxy không có console ngoài; đã thêm `skyblock-1` vào `data/proxy/velocity.toml`, CHƯA thấy reload), rồi `/server skyblock-1`. Tới 31/10 chưa ai ngoài bot vào.
+2. Chủ server chơi thử 10–15 phút, báo chỗ cần sửa: đảo khởi đầu, rương, máy tạo đá, Chợ, các nút bảng `/is` (bot chưa bấm thử từng nút).
+3. Chưa thử: Bedrock thật; mua thật bằng ví Vàng (đã thử luồng mua với ví giả lập); túi quà lần đầu `daomoi`; mua `/is upgrade` thật; tiền tố rank trong khung chat; tin mua bán thiếu tên món ("Đã mua x1", có thể do bot đọc thiếu).
+4. Mở cho member (chỉ khi chủ server bảo): `whitelist off`, xoá ThuSky khỏi whitelist và đảo bot, bỏ dòng `profiles` trong `modes/skyblock/compose.yaml` (cả backup), `status` trong `mode.yml` thành open (NPC / menu sảnh đang "Sắp mở"), đổi `an: true` thành false ở `vang.mon-rieng`.
+
+**Quyết định của chủ server:** server RIÊNG, không liên quan server khác: thế giới, xu, đồ, quyền tách hẳn. Proxy chỉ là cửa vào (AuthMe, Geyser, cổng VPS). Skyblock ĐƯỢC PHÉP pay-to-win, không bắt buộc; riêng Skyblock, chế độ khác vẫn theo CLAUDE.md. Chủ server có nói "không thì dùng chung core", tôi đề xuất giữ SkyVang (cài cả core kéo theo listener luôn chạy, kỹ năng đồ, menu); chưa chốt dứt khoát. Lý do duy nhất đổi: muốn quét QR nạp trong game, có thể thêm riêng vào SkyVang.
+
+**Đã có:** `modes/skyblock` (service `skyblock-1` + `backup-skyblock-1`, `--profile skyblock`, RAM 4G / giới hạn 6g). Paper 26.2, BentoBox 3.23.5, BSkyBlock 1.20.0, addon ở `data/skyblock-1/plugins/BentoBox/addons` (tải bằng `ops/skyblock-addons.sh`, ghim bản): Level, Limits, Border, Challenges, Warps, MagicCobblestoneGenerator, Upgrades, ControlPanel. UltimateShop, EssentialsX Economy + VaultUnlocked, LuckPerms H2 cục bộ (không MariaDB / Redis), KHÔNG có DuckyMoMoCore.
+- Đảo 100x100 (distance 400), tự có đảo khi vào lần đầu, nhóm 8, 3 điểm nhà, bắt đầu 200 xu. Giới hạn: 100 phễu, 60 piston, 60 sticky piston, 60 observer.
+- `/is` mở bảng tiếng Việt (default-action cp), `/is go` về đảo. 62 thử thách 5 cấp tiếng Việt. 4 nâng cấp: Mở Rộng Đảo I, II (tới 300x300, cần cấp đảo + xu), Thêm Phễu, Cây Lớn Nhanh. `/huongdan` = Essentials info.txt. Admin: `/bsbadmin`; Itrap, Linh trong nhóm admin (lp cục bộ).
+- `/vang` = plugin nhỏ SkyVang (`network-core/skyblock-vang`, Skyblock không chạy core). Món ở `vang.mon-rieng` trong config Bang Hội Chiến (trang /donate KHÔNG ghi đè mục này; `vang.mon` thì có, nên đừng để món Skyblock ở đó): rank Đảo Chủ 49 Vàng, Đại Đảo Chủ 99 Vàng (30 ngày), xu 10 / 50 / 100 Vàng ra 2.000 / 12.000 / 30.000. Giá do tôi đề xuất, chủ server chưa chốt. Panel chạy lệnh ở server ghi trong món; lệnh `bal {player}` đầu tiên để người chưa từng vào Skyblock thì lỗi và tự hoàn Vàng. `/vang nap` chỉ ra link web. Rank không bán rộng đảo: quyền range có thể đè phần đã nâng ở `/is upgrade`.
+- Giá Chợ: `tools/skyblock-doi-gia.py` dò kẽ hở theo công thức thật (đang 0), `tools/skyblock-gia.py` đã hạ giá bán kính màu, bê tông, hoa cao, dropper; đá cuội bán 0,1 xu. Chưa đo xu mỗi giờ của người chơi thật.
+
+**Lưu ý vận hành:**
+- Phần lớn cấu hình CHỈ ở `data/skyblock-1`, không trong git: dựng lại bằng `tools/skyblock-shop.py`, `skyblock-gia.py`, `skyblock-locales.py`, `skyblock-thuthach.py`, `skyblock-huongdan.py` (chạy lúc server tắt). Nhóm LuckPerms và thử thách nằm trong dữ liệu server, có sao lưu restic.
+- Thử thách nạp bằng `/bsbadmin challenges` › Import Database › vietnam.json (không có lệnh console; bot: `tools/bottest/sb-import.js`). Bảng `/is`: sửa template thì xoá `database/ControlPanelObject/BSkyBlock_default.json` rồi khởi động lại.
+- Xu hiện "200 xu" nhờ `plugins/Essentials/messages/messages_vi.properties`; ký hiệu tiền Essentials chỉ 1 ký tự.
+- Bot: `HOST=skyblock-1 BOTN=ThuSky ./tools/bottest/run.sh sb-thu.js` (sb-shop, sb-cp, sb-vang). RCON `lp` không trả kết quả.
+- Build SkyVang: `:skyblock-vang:build` đã nằm trong `ops/build-core.sh`; khởi động lại Skyblock chỉ ảnh hưởng server này.
+
 ## 31/10/2026 sáng: luật chết, Ngọc Hộ Thân, bot (CPU, thay phiên, chết giả, mua /ah), web + /hd (đã push tới d1ff2de; sau đó còn commit chưa push)
 - Luật chết (DeathRules, `/chet` menu "Luật chết rơi đồ"): < 30 giờ / công thành / thị trấn mình + Kinh Đô giữ đồ; còn lại rơi túi + 10% mỗi món mặc/cầm;
   balo không rơi. Ngọc Hộ Thân (khảm, hỏng 45%, 4/5/8 lượt theo phẩm, hao 20% khi đánh, không nạp) = 2 Lõi Quái + 1 TL Kim Cương + 2 TL Lục Bảo + 5.000 xu.

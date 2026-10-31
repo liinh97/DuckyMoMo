@@ -506,7 +506,7 @@ siege_subvert: false
 towny_homeblock_distance: 10
 act_week_hours: 3
 act_new_member_days: 3
-town_min_hours: 3.0
+town_min_hours: 0.0
 nation_min_active: 3
 siege_min_towns: 2
 town_join_cooldown: 3

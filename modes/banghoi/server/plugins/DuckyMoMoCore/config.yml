@@ -297,7 +297,7 @@ active-play:
 # Luật đất đai Towny (mục 11E). spawn = toạ độ kinh đô; reserved-nation = tên quốc gia Liên minh Hoà Bình (đợt 2, trống = không ai lấn được vòng spawn).
 town-rules:
   enabled: true
-  town-min-hours: 3
+  town-min-hours: 0   # 31/10 chủ server: người mới vào lập thị trấn được luôn (trước 3 giờ chơi thật)
   nation-min-active-residents: 3
   siege-min-towns: 2
   join-cooldown-days: 3

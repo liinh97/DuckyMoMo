@@ -88,7 +88,7 @@ menu:
     mo: "Lập thị trấn, mua đất, lập nước"
     chuong: thitran
     lenh:
-    - "/t new <tên>|lập thị trấn (3.000 xu, 3 giờ chơi)"
+    - "/t new <tên>|lập thị trấn (3.000 xu)"
     - "/t claim|mua ô đang đứng (75 xu, ô sau đắt hơn 1,5%)"
     - "/t add <người>|mời dân"
     - "/t deposit <xu>|nộp quỹ"
@@ -406,7 +406,6 @@ chapters:
     &6Giờ chơi thật
     &1/hoatdong &0xem giờ.
     &0Chỉ tính lúc thật sự chơi, đứng AFK không tính.
-    &03 giờ: được lập thị trấn.
     &05 giờ: được phong quân hàm, ứng cử, bình chọn.
   - |-
     &6Giờ chơi thật (tiếp)
@@ -560,8 +559,7 @@ chapters:
   pages:
   - |-
     &6Thị trấn
-    &0Cần 3 giờ&r&0 chơi thật.
-    &1/t new <tên> &0lập (3.000 xu&r&0)
+    &1/t new <tên> &0lập (3.000 xu&r&0), người mới cũng lập được.
     &8Vd: /t new LangSuong
     &0Lập ở đất hoang (&1/tpr&0): ngoài vòng 300 khối quanh Kinh Đô, cách thị trấn khác ~160 khối.
     &1/t claim &0mua ô 16x16 đang đứng (75 xu&r&0, ô sau đắt hơn 1,5%, tối đa 600)

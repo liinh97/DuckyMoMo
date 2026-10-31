@@ -5,8 +5,9 @@
 # Nhật ký: data/ops/hen-tat.log
 $ten = "DuckyMoMo hen tat"
 $script = "\\wsl.localhost\Ubuntu-22.04\home\developer\works\DuckyMoMo\ops\windows\hen-tat-may.ps1"
-$action = New-ScheduledTaskAction -Execute "powershell.exe" `
-    -Argument "-NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -File `"$script`""
+# conhost --headless: không bật cửa sổ (Windows 11 mặc định mở Windows Terminal, -WindowStyle Hidden không ẩn được)
+$action = New-ScheduledTaskAction -Execute "conhost.exe" `
+    -Argument "--headless powershell.exe -NoProfile -ExecutionPolicy Bypass -File `"$script`""
 $trigger = New-ScheduledTaskTrigger -AtLogOn -User "$env:USERDOMAIN\$env:USERNAME"
 $trigger.Delay = "PT3M"
 $settings = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries `
@@ -14,5 +15,6 @@ $settings = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoi
 $principal = New-ScheduledTaskPrincipal -UserId "$env:USERDOMAIN\$env:USERNAME" -LogonType Interactive -RunLevel Limited
 Register-ScheduledTask -TaskName $ten -Action $action -Trigger $trigger -Settings $settings -Principal $principal `
     -Description "DuckyMoMo: tắt server an toàn rồi tắt máy khi trang quản trị hẹn (hết người chơi)" -Force | Out-Null
+Stop-ScheduledTask -TaskName $ten -ErrorAction SilentlyContinue
 Start-ScheduledTask -TaskName $ten
 Write-Host "Đã đăng ký và chạy tác vụ '$ten' (tự chạy mỗi lần đăng nhập Windows)."

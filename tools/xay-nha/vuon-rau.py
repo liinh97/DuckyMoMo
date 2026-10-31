@@ -80,7 +80,7 @@ errs = 0
 for i in range(0, len(cmds), 150):
     for c, out in app.rcon(SERVER, cmds[i:i + 150]):
         o = app.COLOR_RE.sub('', out or '')
-        if any(k in o for k in ('Unknown', 'Incorrect', 'Expected', 'Invalid', 'not loaded', 'Too many', 'error'))   # 'Could not set' = khối đã giống, bỏ qua:
+        if any(k in o for k in ('Unknown', 'Incorrect', 'Expected', 'Invalid', 'not loaded', 'Too many', 'error')):   # 'Could not set' = khối đã giống, bỏ qua
             errs += 1
             if errs <= 8:
                 print('LỖI:', c[:120], '->', o[:160])

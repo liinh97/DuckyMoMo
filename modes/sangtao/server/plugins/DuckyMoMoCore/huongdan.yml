@@ -141,7 +141,7 @@ menu:
     - "/worth|giá món đang cầm"
     - "/pay <người> <xu>|chuyển tiền"
     - "/baltop|top giàu"
-    ghi: "Bán cho server, /ce, /xuong, /tinhluyen chỉ trong kinh đô / thị trấn hoà bình (dân hoà bình ở đâu cũng được). Tối đa 8.000 xu/ngày."
+    ghi: "Bán cho server ở đâu cũng được, tối đa 10.000 xu/ngày (Thăng Cấp được thêm)."
   - slot: 20
     icon: EMERALD
     ten: "Chợ & buôn bán"
@@ -819,10 +819,11 @@ chapters:
   - |-
     &6Bán đồ cho server
     &1/cuahang &0bấm nút bán trong cửa hàng
+    &1/sell &0bán món đang cầm; &1/sell all &0bán cả túi
     &1/sell <tên món> [số] &0vd /sell cobblestone 64
     &1/worth &0xem giá món đang cầm
     &0Biển [Sell]&r&0 ở spawn: bấm để bán.
-    &8Chỉ bán được trong kinh đô / thị trấn hoà bình (dân hoà bình ở đâu cũng được). Ở kinh đô +10%. Tối đa 8.000 xu/ngày.
+    &8Bán ở đâu cũng được, ở kinh đô +10%. Tối đa 10.000 xu/ngày.
   - |-
     &6Chuyển tiền
     &1/pay <tên> <xu>
@@ -867,7 +868,7 @@ chapters:
     &6Dân làng bán hàng
     &0NPC dân làng ở spawn: bấm chuột phải để mua/bán như dân làng thường.
     &1/shopsearch <món> &0tìm shop
-    &8Bán cho dân làng tối đa 1.500 xu/ngày (riêng với /sell 8.000).
+    &8Bán cho dân làng tối đa 1.500 xu/ngày (riêng với /sell 10.000).
   - |-
     &6Cửa hàng Kinh Đô
     &0Bấm NPC cửa hàng&r&0 ở spawn: vật liệu (đất, đá, kính…), đồ trang trí, danh hiệu, trả bằng xu.
@@ -963,7 +964,7 @@ chapters:
     &6KHU SHOP (&1/warp shop&6)
     &0Khung treo tường: &2chuột trái mua 32&0, &6chuột phải bán 32&0, Shift + phải bán hết.
     &0Tên khung ghi giá cả lô.
-    &8Bán cho server tối đa 8.000 xu/ngày.
+    &8Bán cho server tối đa 10.000 xu/ngày.
   - |-
     &6ĐƠN NHÀ BUÔN
     &0Gặp &6Nhà Buôn&0 ở &1/warp shop&0: mỗi thứ Hai nhà buôn cần vài món Tinh Luyện, trả &6hơn 20%&0 giá bán + vé gacha.

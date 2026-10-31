@@ -1669,7 +1669,7 @@ decor_categories:
   - {id: khac, name: "Khác", icon: SADDLE, slot: 40, desc: "Dụng cụ, đồ tiện ích", sell: [], items: [{material: PAPER, amount: 1, price: 2}, {material: BOOK, amount: 1, price: 15}, {material: WRITABLE_BOOK, amount: 1, price: 20}, {material: FIREWORK_ROCKET, amount: 1, price: 10}, {material: FISHING_ROD, amount: 1, price: 30}, {material: CARROT_ON_A_STICK, amount: 1, price: 35}, {material: WARPED_FUNGUS_ON_A_STICK, amount: 1, price: 40}, {material: LEAD, amount: 1, price: 40}, {material: BRUSH, amount: 1, price: 25}, {material: EXPERIENCE_BOTTLE, amount: 1, price: 30}, {material: BELL, amount: 1, price: 150}, {material: ANVIL, amount: 1, price: 500}, {material: ENDER_CHEST, amount: 1, price: 400}, {material: SADDLE, amount: 1, price: 300}, {material: NAME_TAG, amount: 1, price: 300}]}
   - {id: danhhieu, name: "Danh hiệu", icon: NAME_TAG, slot: 42, desc: "Chữ hiện cạnh tên, đổi bằng /danhhieu", sell: [], items: []}
 sell_limit_on: true
-sell_limit_daily: 8000
+sell_limit_daily: 10000
 peace_jobs_join: false
 peace_economy_only: false
 peace_economy_cmds: [emf shop, evenmorefish shop, ce, crazyenchantments, xuong, chetao, servertools, tinhluyen, tl, nguyenlieu]

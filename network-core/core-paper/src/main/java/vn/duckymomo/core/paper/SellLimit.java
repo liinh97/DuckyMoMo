@@ -154,7 +154,17 @@ final class SellLimit implements Listener {
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onSellCommand(PlayerCommandPreprocessEvent e) {
         String[] a = e.getMessage().substring(1).trim().split("\\s+");
-        if (a.length < 2 || !SELL_CMDS.contains(a[0].toLowerCase(Locale.ROOT))) {
+        if (!SELL_CMDS.contains(a[0].toLowerCase(Locale.ROOT))) {
+            return;
+        }
+        // 1/11 chủ server: "/sell" trơn = bán đồ đang cầm (đúng xấp đang cầm); "/sell 5" = bán 5 cái đang cầm. Cầm tay không thì Essentials
+        // tự báo; món không bán được Essentials báo "Vật phẩm này không thể bán trên máy chủ".
+        if (a.length == 1 || (a.length == 2 && a[1].matches("\\d+"))) {
+            int n = a.length == 2 ? Integer.parseInt(a[1]) : Math.max(1, e.getPlayer().getInventory().getItemInMainHand().getAmount());
+            e.setMessage("/" + a[0] + " hand " + n);
+            a = new String[] {a[0], "hand", Integer.toString(n)};
+        }
+        if (a.length < 2) {
             return;
         }
         Player p = e.getPlayer();

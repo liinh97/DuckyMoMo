@@ -233,7 +233,7 @@ bounty:
 # Quyền duckymomo.sell.khonggioihan thì không bị giới hạn. Đã bán hôm nay: plugins/DuckyMoMoCore/banchoserver.yml.
 sell-limit:
   enabled: true
-  daily: 8000
+  daily: 10000   # 1/11 chủ server: tối thiểu 10k (Thăng Cấp +1k mỗi bậc: 11k, 12k, 13k)
   extra-per-perk: 1000   # đặc quyền Thăng Cấp duckymomo.sell.them.<n>: +n × số này
 
 # Khai hoang vùng mới (/khaihoang, ý từ "Khai mở thứ nguyên" của UniMC). Quỹ chung tăng khi người chơi bán /sell (sell-percent % tiền bán,

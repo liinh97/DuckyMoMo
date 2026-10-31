@@ -32,7 +32,7 @@ item-cleaner:
   warn-message: "&c[⚠] &7Dọn vật phẩm dưới đất sau &e{s}s&7."
   done-message: "&c[⚠] &7Đã dọn sạch &e{n} &7vật phẩm!"
   # Giữ đồ rơi khi chết: không dọn đồ trong bán kính death-protect-radius quanh chỗ chết trong death-protect-minutes phút (0 = tắt)
-  death-protect-minutes: 10
+  death-protect-minutes: 0   # 31/10 chủ server: dọn bình thường, không chừa đồ quanh chỗ chết
   death-protect-radius: 8
   # Không dọn trong giờ phiên đánh công thành (theo lịch battle_session_scheduler của SiegeWar)
   pause-during-battle: true

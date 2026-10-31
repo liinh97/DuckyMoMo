@@ -498,7 +498,7 @@ rtp_warmup: 3
 tele_delay: 5
 tele_cooldown: 0
 tele_invuln: 4
-cleaner_death_minutes: 10
+cleaner_death_minutes: 0
 cleaner_pause_battle: true
 cleaner_skip_towns: false
 cleaner_exclude: []

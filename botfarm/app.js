@@ -319,7 +319,8 @@ async function connect(name) {
     st.announce = false;
     const hiForce = !!st.hiForce;
     st.hiForce = false;
-    if (ann && host === 'banghoi-1') sayHi(name, hiForce).catch(() => {});   // 31/10: vào có hiện [+] thì đôi khi chào (bấm tay thì luôn chào)
+    const noHi = !!st.noHi; st.noHi = false;
+    if (ann && !noHi && host === 'banghoi-1') sayHi(name, hiForce).catch(() => {});   // 31/10: vào có hiện [+] thì đôi khi chào (bấm tay thì luôn chào)
     if (!st.grim) {   // 29/10 (chủ server đồng ý): GrimAC kéo bot lùi mỗi bước khi đi dạo + báo admin "failed Simulation" = lộ bot
       rcon(host).cmd(`lp user ${name} permission set grim.exempt true`).then(() => { st.grim = true; save(); }).catch(() => {});
     }
@@ -1298,7 +1299,7 @@ async function act(b) {
     case 'join':
       if (b.server && SERVERS[b.server]) st.server = b.server;
       // 31/10 chủ server: bấm Vào một bot thì hiện [+] như người thật (và đôi khi chào); Vào tất cả thì vẫn im
-      if (!b.mass && !b.silent && !rt.bot && st.server === 'banghoi-1') { st.announce = true; st.hiForce = true; await setSilent(b.bot, false); }
+      if (!b.mass && !b.silent && !rt.bot && st.server === 'banghoi-1') { st.announce = true; st.hiForce = !b.nohi; st.noHi = !!b.nohi; await setSilent(b.bot, false); }   // 1/11: nohi = hiện [+], không chào
       st.want = true; st.since = Date.now(); rt.retryAt = 0; save();
       return b.bot + ' vào ' + SERVERS[st.server];
     case 'leave':

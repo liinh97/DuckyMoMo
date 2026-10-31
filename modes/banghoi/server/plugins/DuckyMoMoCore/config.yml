@@ -22,7 +22,7 @@ decorate:
   auto-resume: false
 
 # Dọn rác: xoá vật phẩm rơi trên đất + mũi tên cắm đất định kỳ, báo trước trong chat. Dọn ngay: /dmm clean
-# Không xoá: vật phẩm rơi chưa đủ min-age-seconds (đồ rơi khi chết còn kịp nhặt), vật phẩm đã đổi tên, đinh ba.
+# Không xoá: vật phẩm rơi chưa đủ min-age-seconds (đồ rơi khi chết còn kịp nhặt), đinh ba cắm đất. 1/11: đồ đổi tên cũng dọn.
 item-cleaner:
   enabled: true
   interval-minutes: 10

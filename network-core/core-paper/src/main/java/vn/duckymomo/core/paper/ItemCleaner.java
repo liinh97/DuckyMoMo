@@ -24,7 +24,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 /**
  * Dọn rác định kỳ: báo trước trong chat (đếm ngược), rồi xoá vật phẩm rơi trên đất và mũi tên cắm đất.
- * Không xoá: vật phẩm vừa rơi (< min-age-seconds), vật phẩm có tên (đổi tên bằng đe; đồ plugin tự đặt tên như cá, đồ EliteMobs vẫn xoá), đinh ba,
+ * Không xoá: vật phẩm vừa rơi (< min-age-seconds), đinh ba cắm đất (1/11: đồ có tên, đổi tên bằng đe cũng xoá),
  * đồ quanh chỗ người chơi chết (death-protect-*), đồ trong exclude-areas hoặc đất thị trấn (skip-towns).
  * Trong phiên đánh công thành (SiegeWar) thì bỏ qua lượt dọn.
  * Cấu hình: item-cleaner trong plugins/DuckyMoMoCore/config.yml.
@@ -138,7 +138,7 @@ final class ItemCleaner implements Listener {
         for (World w : Bukkit.getWorlds()) {
             for (Entity e : w.getEntities()) {
                 if (e instanceof Item item) {
-                    if (item.getTicksLived() < minAgeTicks || (item.getItemStack().hasItemMeta() && item.getItemStack().getItemMeta().hasDisplayName() && !hasPluginData(item))) {
+                    if (item.getTicksLived() < minAgeTicks) {   // 1/11 chủ server: đồ đổi tên bằng đe cũng dọn
                         continue;
                     }
                 } else if (!(arrows && e instanceof AbstractArrow a && !(a instanceof Trident) && a.isInBlock())) {
@@ -167,12 +167,6 @@ final class ItemCleaner implements Listener {
             }
         }
         return false;
-    }
-
-    /** 1/11: đồ plugin tự đặt tên (cá EvenMoreFish, đồ rơi EliteMobs, đồ thư viện...) không phải đồ đổi tên bằng đe: vẫn dọn.
-     *  Đồ đổi tên bằng đe không có dữ liệu plugin (PDC rỗng) nên vẫn được giữ. */
-    private static boolean hasPluginData(org.bukkit.entity.Item item) {
-        return !item.getItemStack().getItemMeta().getPersistentDataContainer().getKeys().isEmpty();
     }
 
     private boolean inExcluded(Location l) {

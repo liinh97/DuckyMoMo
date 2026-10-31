@@ -433,8 +433,7 @@ chapters:
   - |-
     &6Đồ rơi & dọn rác
     &0Đồ dưới đất bị dọn mỗi 10 phút&r&0 (báo trước 30 và 5 giây).
-    &2Chết: &0đồ quanh chỗ chết (8 khối) được giữ 10 phút&r&0, quay lại nhặt kịp.
-    &0Đồ đổi tên bằng đe không bị dọn.
+    &0Đồ vừa rơi dưới 30 giây chưa bị dọn. Mọi đồ khác đều bị dọn, kể cả đồ rơi khi chết và đồ đổi tên.
     &0Giờ công thành tạm ngưng dọn.
   - |-
     &6MENU CHÍNH

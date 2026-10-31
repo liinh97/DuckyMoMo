@@ -9,20 +9,48 @@ sys.path.insert(0, '/app')
 import app
 
 # Tham số: python3 v.py [server x0 y0 z0]  (mặc định bản thử ở thế giới phẳng sangtao-1). y0 = khối KHÍ đầu tiên trên mặt đất.
-# 31/10 đặt bản thật: banghoi-1 13866 63 -2585 (thị trấn LetGoMine của Itrap).
+# 31/10 đặt bản thật: banghoi-1 13881 63 -2575 W (thị trấn LetGoMine của Itrap, mặt tiền nhìn ra vịnh phía tây).
 SERVER = sys.argv[1] if len(sys.argv) > 4 else 'sangtao-1'
 X0, Y0, Z0 = (int(sys.argv[2]), int(sys.argv[3]), int(sys.argv[4])) if len(sys.argv) > 4 else (10000, -60, 10000)
+# Hướng mặt tiền (tham số thứ 5): N (mặc định), W, S, E. 31/10 LetGoMine: W (nhìn ra vịnh phía tây).
+FACE = sys.argv[5].upper() if len(sys.argv) > 5 else 'N'
+TURNS = {'N': 0, 'W': 1, 'S': 2, 'E': 3}[FACE]   # số lần xoay 90° ngược chiều kim đồng hồ (nhìn từ trên)
+_ROT = {'north': 'west', 'west': 'south', 'south': 'east', 'east': 'north'}
+
+def _rot_xz(x, z):
+    for _ in range(TURNS):
+        x, z = z, -x
+    return x, z
+
+import re as _re
+def _rot_state(b):
+    m = _re.match(r'^([^\[]+)\[(.*)\]$', b)
+    if not m or TURNS == 0:
+        return b
+    props = []
+    for kv in m.group(2).split(','):
+        k, v = kv.split('=')
+        for _ in range(TURNS):
+            if k == 'facing' and v in _ROT:
+                v = _ROT[v]
+            elif k == 'axis' and v in ('x', 'z'):
+                v = 'z' if v == 'x' else 'x'
+            elif k in _ROT:
+                k = _ROT[k]
+        props.append(f'{k}={v}')
+    return f"{m.group(1)}[{','.join(props)}]"
 random.seed(11)
 cmds = []
 
 def P(x, y, z):
+    x, z = _rot_xz(x, z)
     return f"{X0 + x} {Y0 + y} {Z0 + z}"
 
 def fill(x1, y1, z1, x2, y2, z2, b, mode=''):
-    cmds.append(f"minecraft:fill {P(x1, y1, z1)} {P(x2, y2, z2)} {b} {mode}".strip())
+    cmds.append(f"minecraft:fill {P(x1, y1, z1)} {P(x2, y2, z2)} {_rot_state(b)} {mode}".strip())
 
 def sb(x, y, z, b):
-    cmds.append(f"minecraft:setblock {P(x, y, z)} {b}")
+    cmds.append(f"minecraft:setblock {P(x, y, z)} {_rot_state(b)}")
 
 LEAF = ['minecraft:azalea_leaves[persistent=true]', 'minecraft:flowering_azalea_leaves[persistent=true]',
         'minecraft:oak_leaves[persistent=true]', 'minecraft:azalea_leaves[persistent=true]', 'minecraft:jungle_leaves[persistent=true]']

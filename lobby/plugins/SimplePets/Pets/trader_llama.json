@@ -21,7 +21,7 @@
   "display_name": "&d✿ &fLạc đà thương nhân &7(%player%)",
   "item": {
     "components": {
-      "minecraft:custom_name": "&#C8F792Trader Llama",
+      "minecraft:custom_name": "&#C8F792Lạc đà thương nhân",
       "minecraft:profile": {
         "properties": [
           {
@@ -41,7 +41,7 @@
       "values": {
         "true": {
           "components": {
-            "minecraft:custom_name": "&#C8C8C8Half Scale: &atrue",
+            "minecraft:custom_name": "&#C8C8C8Nửa cỡ: &abật",
             "minecraft:profile": {
               "properties": [
                 {
@@ -56,7 +56,7 @@
         },
         "false": {
           "components": {
-            "minecraft:custom_name": "&#C8C8C8Half Scale: &cfalse",
+            "minecraft:custom_name": "&#C8C8C8Nửa cỡ: &ctắt",
             "minecraft:profile": {
               "properties": [
                 {
@@ -77,7 +77,7 @@
       "values": {
         "false": {
           "components": {
-            "minecraft:custom_name": "&#C8C8C8Visible: &atrue",
+            "minecraft:custom_name": "&#C8C8C8Hiện hình: &abật",
             "minecraft:potion_contents": {
               "potion": "minecraft:invisibility"
             }
@@ -87,7 +87,7 @@
         },
         "true": {
           "components": {
-            "minecraft:custom_name": "&#C8C8C8Visible: &cfalse"
+            "minecraft:custom_name": "&#C8C8C8Hiện hình: &ctắt"
           },
           "count": 1,
           "id": "minecraft:glass_bottle"
@@ -100,7 +100,7 @@
       "values": {
         "true": {
           "components": {
-            "minecraft:custom_name": "&#C8C8C8Frozen: &atrue",
+            "minecraft:custom_name": "&#C8C8C8Đứng yên: &abật",
             "minecraft:profile": {
               "properties": [
                 {
@@ -115,7 +115,7 @@
         },
         "false": {
           "components": {
-            "minecraft:custom_name": "&#C8C8C8Frozen: &cfalse",
+            "minecraft:custom_name": "&#C8C8C8Đứng yên: &ctắt",
             "minecraft:profile": {
               "properties": [
                 {
@@ -136,7 +136,7 @@
       "values": {
         "true": {
           "components": {
-            "minecraft:custom_name": "&#C8C8C8Burning: &atrue",
+            "minecraft:custom_name": "&#C8C8C8Bốc cháy: &abật",
             "minecraft:profile": {
               "properties": [
                 {
@@ -151,7 +151,7 @@
         },
         "false": {
           "components": {
-            "minecraft:custom_name": "&#C8C8C8Burning: &cfalse",
+            "minecraft:custom_name": "&#C8C8C8Bốc cháy: &ctắt",
             "minecraft:profile": {
               "properties": [
                 {
@@ -172,7 +172,7 @@
       "values": {
         "true": {
           "components": {
-            "minecraft:custom_name": "&#C8C8C8Silent: &atrue",
+            "minecraft:custom_name": "&#C8C8C8Im lặng: &abật",
             "minecraft:profile": {
               "properties": [
                 {
@@ -187,7 +187,7 @@
         },
         "false": {
           "components": {
-            "minecraft:custom_name": "&#C8C8C8Silent: &cfalse",
+            "minecraft:custom_name": "&#C8C8C8Im lặng: &ctắt",
             "minecraft:profile": {
               "properties": [
                 {
@@ -208,14 +208,14 @@
       "values": {
         "true": {
           "components": {
-            "minecraft:custom_name": "&#C8C8C8Baby: &atrue"
+            "minecraft:custom_name": "&#C8C8C8Con non: &abật"
           },
           "count": 1,
           "id": "minecraft:wheat"
         },
         "false": {
           "components": {
-            "minecraft:custom_name": "&#C8C8C8Baby: &cfalse"
+            "minecraft:custom_name": "&#C8C8C8Con non: &ctắt"
           },
           "count": 1,
           "id": "minecraft:wheat"
@@ -228,14 +228,14 @@
       "values": {
         "true": {
           "components": {
-            "minecraft:custom_name": "&#C8C8C8Chest: &atrue"
+            "minecraft:custom_name": "&#C8C8C8Có rương: &abật"
           },
           "count": 1,
           "id": "minecraft:chest_minecart"
         },
         "false": {
           "components": {
-            "minecraft:custom_name": "&#C8C8C8Chest: &cfalse"
+            "minecraft:custom_name": "&#C8C8C8Có rương: &ctắt"
           },
           "count": 1,
           "id": "minecraft:minecart"
@@ -249,9 +249,9 @@
         "NONE": {
           "components": {
             "minecraft:lore": [
-              "&#C8C8C8Previous: {previousColor}{previousName}",
-              "&#C8C8C8Current: {currentColor}{currentName}",
-              "&#C8C8C8Next: {nextColor}{nextName}"
+              "&#C8C8C8Trước: {previousColor}{previousName}",
+              "&#C8C8C8Đang chọn: {currentColor}{currentName}",
+              "&#C8C8C8Sau: {nextColor}{nextName}"
             ],
             "minecraft:custom_name": " ",
             "minecraft:profile": {
@@ -269,9 +269,9 @@
         "WHITE": {
           "components": {
             "minecraft:lore": [
-              "&#C8C8C8Previous: {previousColor}{previousName}",
-              "&#C8C8C8Current: {currentColor}{currentName}",
-              "&#C8C8C8Next: {nextColor}{nextName}"
+              "&#C8C8C8Trước: {previousColor}{previousName}",
+              "&#C8C8C8Đang chọn: {currentColor}{currentName}",
+              "&#C8C8C8Sau: {nextColor}{nextName}"
             ],
             "minecraft:custom_name": " ",
             "minecraft:profile": {
@@ -289,9 +289,9 @@
         "ORANGE": {
           "components": {
             "minecraft:lore": [
-              "&#C8C8C8Previous: {previousColor}{previousName}",
-              "&#C8C8C8Current: {currentColor}{currentName}",
-              "&#C8C8C8Next: {nextColor}{nextName}"
+              "&#C8C8C8Trước: {previousColor}{previousName}",
+              "&#C8C8C8Đang chọn: {currentColor}{currentName}",
+              "&#C8C8C8Sau: {nextColor}{nextName}"
             ],
             "minecraft:custom_name": " ",
             "minecraft:profile": {
@@ -309,9 +309,9 @@
         "MAGENTA": {
           "components": {
             "minecraft:lore": [
-              "&#C8C8C8Previous: {previousColor}{previousName}",
-              "&#C8C8C8Current: {currentColor}{currentName}",
-              "&#C8C8C8Next: {nextColor}{nextName}"
+              "&#C8C8C8Trước: {previousColor}{previousName}",
+              "&#C8C8C8Đang chọn: {currentColor}{currentName}",
+              "&#C8C8C8Sau: {nextColor}{nextName}"
             ],
             "minecraft:custom_name": " ",
             "minecraft:profile": {
@@ -329,9 +329,9 @@
         "LIGHT_BLUE": {
           "components": {
             "minecraft:lore": [
-              "&#C8C8C8Previous: {previousColor}{previousName}",
-              "&#C8C8C8Current: {currentColor}{currentName}",
-              "&#C8C8C8Next: {nextColor}{nextName}"
+              "&#C8C8C8Trước: {previousColor}{previousName}",
+              "&#C8C8C8Đang chọn: {currentColor}{currentName}",
+              "&#C8C8C8Sau: {nextColor}{nextName}"
             ],
             "minecraft:custom_name": " ",
             "minecraft:profile": {
@@ -349,9 +349,9 @@
         "YELLOW": {
           "components": {
             "minecraft:lore": [
-              "&#C8C8C8Previous: {previousColor}{previousName}",
-              "&#C8C8C8Current: {currentColor}{currentName}",
-              "&#C8C8C8Next: {nextColor}{nextName}"
+              "&#C8C8C8Trước: {previousColor}{previousName}",
+              "&#C8C8C8Đang chọn: {currentColor}{currentName}",
+              "&#C8C8C8Sau: {nextColor}{nextName}"
             ],
             "minecraft:custom_name": " ",
             "minecraft:profile": {
@@ -369,9 +369,9 @@
         "LIME": {
           "components": {
             "minecraft:lore": [
-              "&#C8C8C8Previous: {previousColor}{previousName}",
-              "&#C8C8C8Current: {currentColor}{currentName}",
-              "&#C8C8C8Next: {nextColor}{nextName}"
+              "&#C8C8C8Trước: {previousColor}{previousName}",
+              "&#C8C8C8Đang chọn: {currentColor}{currentName}",
+              "&#C8C8C8Sau: {nextColor}{nextName}"
             ],
             "minecraft:custom_name": " ",
             "minecraft:profile": {
@@ -389,9 +389,9 @@
         "PINK": {
           "components": {
             "minecraft:lore": [
-              "&#C8C8C8Previous: {previousColor}{previousName}",
-              "&#C8C8C8Current: {currentColor}{currentName}",
-              "&#C8C8C8Next: {nextColor}{nextName}"
+              "&#C8C8C8Trước: {previousColor}{previousName}",
+              "&#C8C8C8Đang chọn: {currentColor}{currentName}",
+              "&#C8C8C8Sau: {nextColor}{nextName}"
             ],
             "minecraft:custom_name": " ",
             "minecraft:profile": {
@@ -409,9 +409,9 @@
         "GRAY": {
           "components": {
             "minecraft:lore": [
-              "&#C8C8C8Previous: {previousColor}{previousName}",
-              "&#C8C8C8Current: {currentColor}{currentName}",
-              "&#C8C8C8Next: {nextColor}{nextName}"
+              "&#C8C8C8Trước: {previousColor}{previousName}",
+              "&#C8C8C8Đang chọn: {currentColor}{currentName}",
+              "&#C8C8C8Sau: {nextColor}{nextName}"
             ],
             "minecraft:custom_name": " ",
             "minecraft:profile": {
@@ -429,9 +429,9 @@
         "LIGHT_GRAY": {
           "components": {
             "minecraft:lore": [
-              "&#C8C8C8Previous: {previousColor}{previousName}",
-              "&#C8C8C8Current: {currentColor}{currentName}",
-              "&#C8C8C8Next: {nextColor}{nextName}"
+              "&#C8C8C8Trước: {previousColor}{previousName}",
+              "&#C8C8C8Đang chọn: {currentColor}{currentName}",
+              "&#C8C8C8Sau: {nextColor}{nextName}"
             ],
             "minecraft:custom_name": " ",
             "minecraft:profile": {
@@ -449,9 +449,9 @@
         "CYAN": {
           "components": {
             "minecraft:lore": [
-              "&#C8C8C8Previous: {previousColor}{previousName}",
-              "&#C8C8C8Current: {currentColor}{currentName}",
-              "&#C8C8C8Next: {nextColor}{nextName}"
+              "&#C8C8C8Trước: {previousColor}{previousName}",
+              "&#C8C8C8Đang chọn: {currentColor}{currentName}",
+              "&#C8C8C8Sau: {nextColor}{nextName}"
             ],
             "minecraft:custom_name": " ",
             "minecraft:profile": {
@@ -469,9 +469,9 @@
         "PURPLE": {
           "components": {
             "minecraft:lore": [
-              "&#C8C8C8Previous: {previousColor}{previousName}",
-              "&#C8C8C8Current: {currentColor}{currentName}",
-              "&#C8C8C8Next: {nextColor}{nextName}"
+              "&#C8C8C8Trước: {previousColor}{previousName}",
+              "&#C8C8C8Đang chọn: {currentColor}{currentName}",
+              "&#C8C8C8Sau: {nextColor}{nextName}"
             ],
             "minecraft:custom_name": " ",
             "minecraft:profile": {
@@ -489,9 +489,9 @@
         "BLUE": {
           "components": {
             "minecraft:lore": [
-              "&#C8C8C8Previous: {previousColor}{previousName}",
-              "&#C8C8C8Current: {currentColor}{currentName}",
-              "&#C8C8C8Next: {nextColor}{nextName}"
+              "&#C8C8C8Trước: {previousColor}{previousName}",
+              "&#C8C8C8Đang chọn: {currentColor}{currentName}",
+              "&#C8C8C8Sau: {nextColor}{nextName}"
             ],
             "minecraft:custom_name": " ",
             "minecraft:profile": {
@@ -509,9 +509,9 @@
         "BROWN": {
           "components": {
             "minecraft:lore": [
-              "&#C8C8C8Previous: {previousColor}{previousName}",
-              "&#C8C8C8Current: {currentColor}{currentName}",
-              "&#C8C8C8Next: {nextColor}{nextName}"
+              "&#C8C8C8Trước: {previousColor}{previousName}",
+              "&#C8C8C8Đang chọn: {currentColor}{currentName}",
+              "&#C8C8C8Sau: {nextColor}{nextName}"
             ],
             "minecraft:custom_name": " ",
             "minecraft:profile": {
@@ -529,9 +529,9 @@
         "GREEN": {
           "components": {
             "minecraft:lore": [
-              "&#C8C8C8Previous: {previousColor}{previousName}",
-              "&#C8C8C8Current: {currentColor}{currentName}",
-              "&#C8C8C8Next: {nextColor}{nextName}"
+              "&#C8C8C8Trước: {previousColor}{previousName}",
+              "&#C8C8C8Đang chọn: {currentColor}{currentName}",
+              "&#C8C8C8Sau: {nextColor}{nextName}"
             ],
             "minecraft:custom_name": " ",
             "minecraft:profile": {
@@ -549,9 +549,9 @@
         "RED": {
           "components": {
             "minecraft:lore": [
-              "&#C8C8C8Previous: {previousColor}{previousName}",
-              "&#C8C8C8Current: {currentColor}{currentName}",
-              "&#C8C8C8Next: {nextColor}{nextName}"
+              "&#C8C8C8Trước: {previousColor}{previousName}",
+              "&#C8C8C8Đang chọn: {currentColor}{currentName}",
+              "&#C8C8C8Sau: {nextColor}{nextName}"
             ],
             "minecraft:custom_name": " ",
             "minecraft:profile": {
@@ -569,9 +569,9 @@
         "BLACK": {
           "components": {
             "minecraft:lore": [
-              "&#C8C8C8Previous: {previousColor}{previousName}",
-              "&#C8C8C8Current: {currentColor}{currentName}",
-              "&#C8C8C8Next: {nextColor}{nextName}"
+              "&#C8C8C8Trước: {previousColor}{previousName}",
+              "&#C8C8C8Đang chọn: {currentColor}{currentName}",
+              "&#C8C8C8Sau: {nextColor}{nextName}"
             ],
             "minecraft:custom_name": " ",
             "minecraft:profile": {
@@ -594,7 +594,7 @@
       "values": {
         "CREAMY": {
           "components": {
-            "minecraft:custom_name": "&#C8C8C8Skin: &aCREAMY",
+            "minecraft:custom_name": "&#C8C8C8Màu lông: &akem",
             "minecraft:profile": {
               "properties": [
                 {
@@ -609,7 +609,7 @@
         },
         "WHITE": {
           "components": {
-            "minecraft:custom_name": "&#C8C8C8Skin: &aWHITE",
+            "minecraft:custom_name": "&#C8C8C8Màu lông: &atrắng",
             "minecraft:profile": {
               "properties": [
                 {
@@ -624,7 +624,7 @@
         },
         "BROWN": {
           "components": {
-            "minecraft:custom_name": "&#C8C8C8Skin: &aBROWN",
+            "minecraft:custom_name": "&#C8C8C8Màu lông: &anâu",
             "minecraft:profile": {
               "properties": [
                 {
@@ -639,7 +639,7 @@
         },
         "GRAY": {
           "components": {
-            "minecraft:custom_name": "&#C8C8C8Skin: &aGRAY",
+            "minecraft:custom_name": "&#C8C8C8Màu lông: &axám",
             "minecraft:profile": {
               "properties": [
                 {

@@ -1,0 +1,22 @@
+{
+  "enabled": true,
+  "item": {
+    "components": {
+      "minecraft:lore": [
+        "&#D1C9C9Bấm để sang",
+        "&#D1C9C9trang trước"
+      ],
+      "minecraft:custom_name": "&#E3AA4F<&#E3C79A----",
+      "minecraft:profile": {
+        "properties": [
+          {
+            "name": "textures",
+            "value": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZWU3OTY2NWEyMWU2NjA2NDg5OTA1MDVhOTY2NzU4OTMyNWRhNDAzODEzYmM5ZDhkYmQxODBhZmVmNGQ5ODlmMCJ9fX0="
+          }
+        ]
+      }
+    },
+    "count": 1,
+    "id": "minecraft:player_head"
+  }
+}

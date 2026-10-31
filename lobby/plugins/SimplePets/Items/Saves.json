@@ -1,0 +1,14 @@
+{
+  "enabled": true,
+  "item": {
+    "components": {
+      "minecraft:lore": [
+        "&7",
+        "&7Xem các pet đã lưu"
+      ],
+      "minecraft:custom_name": "&#E3C79APet đã lưu"
+    },
+    "count": 1,
+    "id": "minecraft:command_block"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "enabled": true,
+  "item": {
+    "components": {
+      "minecraft:custom_name": "&#E3C79ACưỡi pet"
+    },
+    "count": 1,
+    "id": "minecraft:diamond_horse_armor"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "enabled": true,
+  "item": {
+    "components": {
+      "minecraft:custom_name": "&#99FFACĐặt tên pet"
+    },
+    "count": 1,
+    "id": "minecraft:name_tag"
+  }
+}

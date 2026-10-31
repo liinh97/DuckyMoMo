@@ -1,0 +1,132 @@
+{
+  "_COMMENT_": "This menu is only viewed by people who have permission to it (Not recommended for regular users to have access to)",
+  "size": 54,
+  "title_comment": "The title of the GUI can support regular color codes '&c' and HEX color codes '&#FFFFFF'",
+  "title": "&#de9790[] &#b35349Tiện ích SimplePets",
+  "slots": [
+    {
+      "slot": 11,
+      "item": "air"
+    },
+    {
+      "slot": 12,
+      "item": "air"
+    },
+    {
+      "slot": 13,
+      "item": "air"
+    },
+    {
+      "slot": 14,
+      "item": "air"
+    },
+    {
+      "slot": 15,
+      "item": "air"
+    },
+    {
+      "slot": 16,
+      "item": "air"
+    },
+    {
+      "slot": 17,
+      "item": "air"
+    },
+    {
+      "slot": 20,
+      "item": "air"
+    },
+    {
+      "slot": 21,
+      "item": "air"
+    },
+    {
+      "slot": 22,
+      "item": "air"
+    },
+    {
+      "slot": 23,
+      "item": "air"
+    },
+    {
+      "slot": 24,
+      "item": "air"
+    },
+    {
+      "slot": 25,
+      "item": "air"
+    },
+    {
+      "slot": 26,
+      "item": "air"
+    },
+    {
+      "slot": 29,
+      "item": "air"
+    },
+    {
+      "slot": 30,
+      "item": "air"
+    },
+    {
+      "slot": 31,
+      "item": "air"
+    },
+    {
+      "slot": 32,
+      "item": "air"
+    },
+    {
+      "slot": 33,
+      "item": "air"
+    },
+    {
+      "slot": 34,
+      "item": "air"
+    },
+    {
+      "slot": 35,
+      "item": "air"
+    },
+    {
+      "slot": 38,
+      "item": "air"
+    },
+    {
+      "slot": 39,
+      "item": "air"
+    },
+    {
+      "slot": 40,
+      "item": "air"
+    },
+    {
+      "slot": 41,
+      "item": "air"
+    },
+    {
+      "slot": 42,
+      "item": "air"
+    },
+    {
+      "slot": 43,
+      "item": "air"
+    },
+    {
+      "slot": 44,
+      "item": "air"
+    },
+    {
+      "slot": 46,
+      "item": "previouspage"
+    },
+    {
+      "slot": 50,
+      "item": "installer"
+    },
+    {
+      "slot": 54,
+      "item": "nextpage"
+    }
+  ]
+}

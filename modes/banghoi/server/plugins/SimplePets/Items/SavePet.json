@@ -1,0 +1,14 @@
+{
+  "enabled": true,
+  "item": {
+    "components": {
+      "minecraft:lore": [
+        "&7Bấm để lưu pet đang gọi",
+        "&7để gọi lại sau"
+      ],
+      "minecraft:custom_name": "&#E3C79ALưu pet"
+    },
+    "count": 1,
+    "id": "minecraft:chain_command_block"
+  }
+}

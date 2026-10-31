@@ -18,10 +18,10 @@
   "water_speed": 0.15,
   "fly": false,
   "float_down": false,
-  "display_name": "&a%player%'s Zombie Villager Pet",
+  "display_name": "&d✿ &fDân làng zombie &7(%player%)",
   "item": {
     "components": {
-      "minecraft:custom_name": "&#C8F792Zombie Villager",
+      "minecraft:custom_name": "&#C8F792Dân làng zombie",
       "minecraft:profile": {
         "properties": [
           {
@@ -41,7 +41,7 @@
       "values": {
         "true": {
           "components": {
-            "minecraft:custom_name": "&#C8C8C8Half Scale: &atrue",
+            "minecraft:custom_name": "&#C8C8C8Nửa cỡ: &abật",
             "minecraft:profile": {
               "properties": [
                 {
@@ -56,7 +56,7 @@
         },
         "false": {
           "components": {
-            "minecraft:custom_name": "&#C8C8C8Half Scale: &cfalse",
+            "minecraft:custom_name": "&#C8C8C8Nửa cỡ: &ctắt",
             "minecraft:profile": {
               "properties": [
                 {
@@ -77,7 +77,7 @@
       "values": {
         "false": {
           "components": {
-            "minecraft:custom_name": "&#C8C8C8Visible: &atrue",
+            "minecraft:custom_name": "&#C8C8C8Hiện hình: &abật",
             "minecraft:potion_contents": {
               "potion": "minecraft:invisibility"
             }
@@ -87,7 +87,7 @@
         },
         "true": {
           "components": {
-            "minecraft:custom_name": "&#C8C8C8Visible: &cfalse"
+            "minecraft:custom_name": "&#C8C8C8Hiện hình: &ctắt"
           },
           "count": 1,
           "id": "minecraft:glass_bottle"
@@ -100,7 +100,7 @@
       "values": {
         "true": {
           "components": {
-            "minecraft:custom_name": "&#C8C8C8Frozen: &atrue",
+            "minecraft:custom_name": "&#C8C8C8Đứng yên: &abật",
             "minecraft:profile": {
               "properties": [
                 {
@@ -115,7 +115,7 @@
         },
         "false": {
           "components": {
-            "minecraft:custom_name": "&#C8C8C8Frozen: &cfalse",
+            "minecraft:custom_name": "&#C8C8C8Đứng yên: &ctắt",
             "minecraft:profile": {
               "properties": [
                 {
@@ -136,7 +136,7 @@
       "values": {
         "true": {
           "components": {
-            "minecraft:custom_name": "&#C8C8C8Burning: &atrue",
+            "minecraft:custom_name": "&#C8C8C8Bốc cháy: &abật",
             "minecraft:profile": {
               "properties": [
                 {
@@ -151,7 +151,7 @@
         },
         "false": {
           "components": {
-            "minecraft:custom_name": "&#C8C8C8Burning: &cfalse",
+            "minecraft:custom_name": "&#C8C8C8Bốc cháy: &ctắt",
             "minecraft:profile": {
               "properties": [
                 {
@@ -172,7 +172,7 @@
       "values": {
         "true": {
           "components": {
-            "minecraft:custom_name": "&#C8C8C8Silent: &atrue",
+            "minecraft:custom_name": "&#C8C8C8Im lặng: &abật",
             "minecraft:profile": {
               "properties": [
                 {
@@ -187,7 +187,7 @@
         },
         "false": {
           "components": {
-            "minecraft:custom_name": "&#C8C8C8Silent: &cfalse",
+            "minecraft:custom_name": "&#C8C8C8Im lặng: &ctắt",
             "minecraft:profile": {
               "properties": [
                 {
@@ -208,14 +208,14 @@
       "values": {
         "true": {
           "components": {
-            "minecraft:custom_name": "&#C8C8C8Baby: &atrue"
+            "minecraft:custom_name": "&#C8C8C8Con non: &abật"
           },
           "count": 1,
           "id": "minecraft:wheat"
         },
         "false": {
           "components": {
-            "minecraft:custom_name": "&#C8C8C8Baby: &cfalse"
+            "minecraft:custom_name": "&#C8C8C8Con non: &ctắt"
           },
           "count": 1,
           "id": "minecraft:wheat"
@@ -228,14 +228,14 @@
       "values": {
         "true": {
           "components": {
-            "minecraft:custom_name": "&#C8C8C8Raised Arms: &atrue"
+            "minecraft:custom_name": "&#C8C8C8Giơ tay: &abật"
           },
           "count": 1,
           "id": "minecraft:stick"
         },
         "false": {
           "components": {
-            "minecraft:custom_name": "&#C8C8C8Raised Arms: &cfalse"
+            "minecraft:custom_name": "&#C8C8C8Giơ tay: &ctắt"
           },
           "count": 1,
           "id": "minecraft:stick"
@@ -248,14 +248,14 @@
       "values": {
         "true": {
           "components": {
-            "minecraft:custom_name": "&#C8C8C8Shaking: &atrue"
+            "minecraft:custom_name": "&#C8C8C8Run rẩy: &abật"
           },
           "count": 1,
           "id": "minecraft:enchanted_golden_apple"
         },
         "false": {
           "components": {
-            "minecraft:custom_name": "&#C8C8C8Shaking: &cfalse"
+            "minecraft:custom_name": "&#C8C8C8Run rẩy: &ctắt"
           },
           "count": 1,
           "id": "minecraft:apple"
@@ -268,7 +268,7 @@
       "values": {
         "NONE": {
           "components": {
-            "minecraft:custom_name": "&#C8C8C8Profession: &aNONE",
+            "minecraft:custom_name": "&#C8C8C8Nghề: &akhông",
             "minecraft:profile": {
               "properties": [
                 {
@@ -283,7 +283,7 @@
         },
         "ARMORER": {
           "components": {
-            "minecraft:custom_name": "&#C8C8C8Profession: &aARMORER",
+            "minecraft:custom_name": "&#C8C8C8Nghề: &athợ giáp",
             "minecraft:profile": {
               "properties": [
                 {
@@ -298,7 +298,7 @@
         },
         "BUTCHER": {
           "components": {
-            "minecraft:custom_name": "&#C8C8C8Profession: &aBUTCHER",
+            "minecraft:custom_name": "&#C8C8C8Nghề: &ađồ tể",
             "minecraft:profile": {
               "properties": [
                 {
@@ -313,7 +313,7 @@
         },
         "CARTOGRAPHER": {
           "components": {
-            "minecraft:custom_name": "&#C8C8C8Profession: &aCARTOGRAPHER",
+            "minecraft:custom_name": "&#C8C8C8Nghề: &angười vẽ bản đồ",
             "minecraft:profile": {
               "properties": [
                 {
@@ -328,7 +328,7 @@
         },
         "CLERIC": {
           "components": {
-            "minecraft:custom_name": "&#C8C8C8Profession: &aCLERIC",
+            "minecraft:custom_name": "&#C8C8C8Nghề: &athầy tu",
             "minecraft:profile": {
               "properties": [
                 {
@@ -343,7 +343,7 @@
         },
         "FARMER": {
           "components": {
-            "minecraft:custom_name": "&#C8C8C8Profession: &aFARMER",
+            "minecraft:custom_name": "&#C8C8C8Nghề: &anông dân",
             "minecraft:profile": {
               "properties": [
                 {
@@ -358,7 +358,7 @@
         },
         "FISHERMAN": {
           "components": {
-            "minecraft:custom_name": "&#C8C8C8Profession: &aFISHERMAN",
+            "minecraft:custom_name": "&#C8C8C8Nghề: &angư dân",
             "minecraft:profile": {
               "properties": [
                 {
@@ -373,7 +373,7 @@
         },
         "FLETCHER": {
           "components": {
-            "minecraft:custom_name": "&#C8C8C8Profession: &aFLETCHER",
+            "minecraft:custom_name": "&#C8C8C8Nghề: &athợ cung",
             "minecraft:profile": {
               "properties": [
                 {
@@ -388,14 +388,14 @@
         },
         "LEATHERWORKER": {
           "components": {
-            "minecraft:custom_name": "&#C8C8C8Profession: &aLEATHERWORKER"
+            "minecraft:custom_name": "&#C8C8C8Nghề: &athợ da"
           },
           "count": 1,
           "id": "minecraft:leather"
         },
         "LIBRARIAN": {
           "components": {
-            "minecraft:custom_name": "&#C8C8C8Profession: &aLIBRARIAN",
+            "minecraft:custom_name": "&#C8C8C8Nghề: &athủ thư",
             "minecraft:profile": {
               "properties": [
                 {
@@ -410,7 +410,7 @@
         },
         "MASON": {
           "components": {
-            "minecraft:custom_name": "&#C8C8C8Profession: &aMASON",
+            "minecraft:custom_name": "&#C8C8C8Nghề: &athợ đá",
             "minecraft:profile": {
               "properties": [
                 {
@@ -425,7 +425,7 @@
         },
         "NITWIT": {
           "components": {
-            "minecraft:custom_name": "&#C8C8C8Profession: &aNITWIT",
+            "minecraft:custom_name": "&#C8C8C8Nghề: &akẻ ngốc",
             "minecraft:profile": {
               "properties": [
                 {
@@ -440,7 +440,7 @@
         },
         "SHEPHERD": {
           "components": {
-            "minecraft:custom_name": "&#C8C8C8Profession: &aSHEPHERD",
+            "minecraft:custom_name": "&#C8C8C8Nghề: &angười chăn cừu",
             "minecraft:profile": {
               "properties": [
                 {
@@ -455,7 +455,7 @@
         },
         "TOOLSMITH": {
           "components": {
-            "minecraft:custom_name": "&#C8C8C8Profession: &aTOOLSMITH",
+            "minecraft:custom_name": "&#C8C8C8Nghề: &athợ rèn dụng cụ",
             "minecraft:profile": {
               "properties": [
                 {
@@ -470,7 +470,7 @@
         },
         "WEAPONSMITH": {
           "components": {
-            "minecraft:custom_name": "&#C8C8C8Profession: &aWEAPONSMITH"
+            "minecraft:custom_name": "&#C8C8C8Nghề: &athợ rèn vũ khí"
           },
           "count": 1,
           "id": "minecraft:iron_sword"
@@ -483,49 +483,49 @@
       "values": {
         "DESERT": {
           "components": {
-            "minecraft:custom_name": "&#C8C8C8Biome: &aDESERT"
+            "minecraft:custom_name": "&#C8C8C8Vùng: &asa mạc"
           },
           "count": 1,
           "id": "minecraft:sand"
         },
         "JUNGLE": {
           "components": {
-            "minecraft:custom_name": "&#C8C8C8Biome: &aJUNGLE"
+            "minecraft:custom_name": "&#C8C8C8Vùng: &arừng rậm"
           },
           "count": 1,
           "id": "minecraft:vine"
         },
         "PLAINS": {
           "components": {
-            "minecraft:custom_name": "&#C8C8C8Biome: &aPLAINS"
+            "minecraft:custom_name": "&#C8C8C8Vùng: &ađồng bằng"
           },
           "count": 1,
           "id": "minecraft:grass_block"
         },
         "SAVANNA": {
           "components": {
-            "minecraft:custom_name": "&#C8C8C8Biome: &aSAVANNA"
+            "minecraft:custom_name": "&#C8C8C8Vùng: &athảo nguyên"
           },
           "count": 1,
           "id": "minecraft:acacia_log"
         },
         "SNOW": {
           "components": {
-            "minecraft:custom_name": "&#C8C8C8Biome: &aSNOW"
+            "minecraft:custom_name": "&#C8C8C8Vùng: &atuyết"
           },
           "count": 1,
           "id": "minecraft:snow_block"
         },
         "SWAMP": {
           "components": {
-            "minecraft:custom_name": "&#C8C8C8Biome: &aSWAMP"
+            "minecraft:custom_name": "&#C8C8C8Vùng: &ađầm lầy"
           },
           "count": 1,
           "id": "minecraft:slime_block"
         },
         "TAIGA": {
           "components": {
-            "minecraft:custom_name": "&#C8C8C8Biome: &aTAIGA"
+            "minecraft:custom_name": "&#C8C8C8Vùng: &arừng lá kim"
           },
           "count": 1,
           "id": "minecraft:podzol"
@@ -538,7 +538,7 @@
       "values": {
         "NOVICE": {
           "components": {
-            "minecraft:custom_name": "&#C8C8C8Level: &aNOVICE",
+            "minecraft:custom_name": "&#C8C8C8Bậc: &atập sự",
             "minecraft:profile": {
               "properties": [
                 {
@@ -553,7 +553,7 @@
         },
         "APPRENTICE": {
           "components": {
-            "minecraft:custom_name": "&#C8C8C8Level: &aAPPRENTICE",
+            "minecraft:custom_name": "&#C8C8C8Bậc: &ahọc việc",
             "minecraft:profile": {
               "properties": [
                 {
@@ -568,7 +568,7 @@
         },
         "JOURNEYMAN": {
           "components": {
-            "minecraft:custom_name": "&#C8C8C8Level: &aJOURNEYMAN",
+            "minecraft:custom_name": "&#C8C8C8Bậc: &athành thạo",
             "minecraft:profile": {
               "properties": [
                 {
@@ -583,7 +583,7 @@
         },
         "EXPERT": {
           "components": {
-            "minecraft:custom_name": "&#C8C8C8Level: &aEXPERT",
+            "minecraft:custom_name": "&#C8C8C8Bậc: &achuyên gia",
             "minecraft:profile": {
               "properties": [
                 {
@@ -598,7 +598,7 @@
         },
         "MASTER": {
           "components": {
-            "minecraft:custom_name": "&#C8C8C8Level: &aMASTER",
+            "minecraft:custom_name": "&#C8C8C8Bậc: &abậc thầy",
             "minecraft:profile": {
               "properties": [
                 {

@@ -371,6 +371,7 @@ final class PlayerSettings implements Listener {
             return;
         }
         e.deathMessage(null);
+        m = DeathVi.vi(m);                       // dịch sẵn tiếng Việt (máy để tiếng Anh vẫn thấy tiếng Việt)
         Bukkit.getConsoleSender().sendMessage(m);
         Player dead = e.getPlayer();
         for (Player o : Bukkit.getOnlinePlayers()) {

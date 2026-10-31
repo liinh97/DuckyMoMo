@@ -116,7 +116,7 @@ final class BotFake {
         if (k[1] != null) {
             with.add(Component.translatable(k[1]));
         }
-        Component msg = Component.translatable(k[0], with);
+        Component msg = DeathVi.vi(Component.translatable(k[0], with));
         Bukkit.getConsoleSender().sendMessage(msg);
         for (Player o : Bukkit.getOnlinePlayers()) {
             if (o != bot && PlayerSettings.on(o, "tuvong")) {

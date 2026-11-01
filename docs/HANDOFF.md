@@ -1,9 +1,43 @@
 # Bàn giao dự án DuckyMoMo Network
 
-> Dùng file này để tiếp tục ở session hoặc tài khoản Claude khác. Cập nhật: 30/10/2026 trưa. ĐỌC TỪ TRÊN XUỐNG: các mục có ngày ở đầu file là mới nhất (29/10 tối -> 29/10 -> 28/10 tối -> 28/10 rạng sáng -> 27/10 tối -> 27/10 chiều -> trưa -> rạng sáng -> 26/10), rồi mới tới mục 0000000000 (22/10) và các mục 000… cũ hơn.
+> Dùng file này để tiếp tục ở session hoặc tài khoản Claude khác. Cập nhật: 1/11/2026. ĐỌC TỪ TRÊN XUỐNG: các mục có ngày ở đầu file là mới nhất (1/11 -> 31/10 -> 29/10 tối -> 29/10 -> 28/10 tối -> 28/10 rạng sáng -> 27/10 tối -> 27/10 chiều -> trưa -> rạng sáng -> 26/10), rồi mới tới mục 0000000000 (22/10) và các mục 000… cũ hơn.
 > Đọc kèm: `README.md`, `docs/minecraft-server-plan.md` (kế hoạch, quyết định), `docs/network-architecture.md` (kiến trúc).
 
 ---
+
+## 1/11/2026: VIỆC CÒN LẠI + TÓM TẮT PHIÊN 31/10 tối → 1/11 (đọc trước)
+
+### Việc còn lại
+**Cần chủ server làm / cho phép:**
+1. Khởi động lại banghoi-1 để bảng bên phải hiện dòng "⏱ Phiên này" (%dmmmua_phien%, SeasonsPapi.java; TAB config đã sửa cả bản mẫu + data). Kiểm người online TÁCH RIÊNG trước.
+2. Dựng lại botfarm (`docker compose up -d --build botfarm`, lúc vắng người): áp sửa tpa giả "né dịch chuyển" (commit 7f2725d: server dời bot 0,8 khối để Essentials huỷ dịch chuyển chờ; 1/11 Linh_Chi bị kéo tới SiHaiTen vì bot đứng trong phòng ẩn nhảy không xê dịch).
+3. Đặt NPC rèn Thần Nông trong game: `/dmm thorennpc thannong`.
+4. Chủ server thử giúp (chưa kiểm được): Lưỡi hái Thần Nông gặt 5×5 + Hạt Giống Thần rơi + cây quanh lớn nhanh; `/gmc` khi giữ tài khoản bot (Cấp tài khoản / Đổi chỗ trộm: panel cấp essentials.gamemode*, có thể bị bộ lọc chặn như lần cấp duckymomo.admin); báo đẩy khi member nhắn riêng / tpa bot và khi member bị đá.
+5. Push: mọi commit từ d1ff2de trở đi CHƯA push (chờ chủ server bảo).
+6. Skyblock: chủ server gõ `/velocity reload` trong game rồi `/server skyblock-1` (xem mục SKYBLOCK bên dưới).
+
+**Chờ chủ server chốt:**
+7. Lời thoại bot: viết thêm ~130 đoạn (mỗi bộ ~60), đổi bộ MỖI NGÀY thay vì 3 ngày, nới tần suất 8–12 phút (tính ra mỗi bộ hiện chỉ 28–43 đoạn, một bộ dùng ~60–80 đoạn/ngày -> lặp nhiều).
+8. Đồ dùng phù phép chưa có món (75 cái chưa dùng: 30 phù phép riêng DMM + 45 CE; danh sách + đề xuất món đã gửi chủ server 1/11). Đợt 1: cơ chế "dùng một lần" (uống / ăn / ném -> kích hoạt phù phép riêng không hồi chiêu, mất 1 món) + ~10 món: Nước Khổng Lồ (khong_lo), Nước Tí Hon (thu_nho), Nước Lông Vũ (bay), Kẹo Lò Xo (nhay_cao), Nước Bóng Đêm (tang_hinh), Bánh Hồi Sức (hoi_mau), Nước Giải (giai_khong_che), Lưới Trói (troi), Bom Câm Lặng (cam_lang), Lựu Đạn Hố Đen (ho_den). Đợt 2: món cầm tay (Gậy Thuấn Di, Cần Móc Câu, Ná Cao Su, Khiên Phản Kích, Đồng Hồ Cát…) + Cánh Diều (phong_bay). Đợt 3: đồ gắn CE (giáp hào quang Blizzard/AcidRain…, Cúp Khai Khoáng VeinMiner/Blast, Rìu Tiều Phu TreeFeller…). Không bán bằng tiền thật.
+9. Đất cho thị trấn mới (4 phương án đề xuất từ trước, chưa chốt). Hiện TownRules.adjustLand trừ 8 ô mỗi dân chưa "hoạt động" (ở thị trấn <3 ngày hoặc <3 giờ/7 ngày) -> town mới gần như 0 ô sau 10 phút. Tạm thời: `/ta givebonus <town> <n>` (LetGoMine đã +8).
+10. Đề xuất nhỏ đang treo: tăng số làng; nâng giá bán cá EMF (đang 0,06–0,6 xu/cm); sửa lịch thi câu cho khớp (/hd ghi T7 CN 20h, menu ghi "tối nào 20:30"; thật: T3/T4/T6 20:30, T7/CN 20:00); bấm tên trong chat -> điền /msg; bớt báo Grim (KHÔNG bật setback: người chơi bản 1.21.11 qua Via bị báo nhầm rất nhiều, xem dưới).
+
+**Tồn từ trước, chưa làm:**
+11. Màn hình bị đá kiểu UniMC cho Velocity lang, Sonar, AuthMe, Essentials ban, whitelist/restart (chủ server bảo "làm tất cả").
+12. Proxy: BotCount (số bot cộng vào số online) cần khởi động lại proxy -> PHẢI tạo lại relay sau đó (`docker compose --profile tunnel up -d --force-recreate relay`), làm lúc vắng.
+
+### Tóm tắt phiên (31/10 tối → 1/11)
+- **Set Thần Nông** (thannong, bậc 6, requires nonggia, +0..+5; tools/thoren/gen_thannong.py chạy trong container panel rồi `dmm thuvien nap`): 30 món tn_{mu,ao,quan,giay,cuoc}_N (khoá "cuoc" như Nông Gia để nâng từ Nông Gia +4), 10 mảnh Lão Nông mới (cu_den, bi_vang, dua_ngot, duong_mia, ca_cao, qua_mong, nam_dia_nguc, qua_sang, tao_bien, qua_chorus), tinh thể ngu_coc / qua_linh / than_moc (Kim Hoàn), hat_than. ThoRen.java: `tho-ren.harvest-drop` {item hat_than, chance 0.0667 = 1/1.500, season-mult 2 (Seasons.growthOf > 1), scythe-prefix tn_cuoc_, scythe-radius 2}: Hạt chỉ rơi khi TỰ gặt cây chín (BlockDropItemEvent, Survival); Lưỡi hái gặt 5×5 bằng Player#breakBlock (có sự kiện, Towny chặn được) + gieo lại; bonus `thu-hoach` > 100 = chắc gấp đôi + % gấp ba; bonus mới `lon-nhanh` = % cây trong 5 ô lớn 1 nấc mỗi 4 giây. Cân bằng: +5 ≈ dưới Tinh Anh +5, cả bộ +5 ~1 tháng (xu ~265k là chặn chính). Không có hút máu (CE Vampire chỉ cho kiếm).
+- **Dọn rác**: dọn HẾT (min-age 0, death-protect 0, đồ có tên / cá EMF / đồ EliteMobs cũng dọn); chỉ chừa giờ công thành + đinh ba cắm đất.
+- **Kho báu tranh được** (TreasureHunt): người đào chết / rời đi không huỷ; ai hạ lính canh CUỐI (trong 40 khối) lấy rương; người đào thoát game thì lính đứng tới khi bị hạ / bị dọn; vào lại sau giờ thì trả bản đồ. Gợi ý nóng/lạnh chuyển lên boss bar (khỏi đè tin vùng Towny).
+- **Bán cho server**: `/sell` trơn = bán xấp đang cầm, `/sell N` = N cái đang cầm, `/sell blocks` bị chặn; `/sell all` ai cũng dùng (essentials.sell.bulk nhóm default, banghoi-1); hạn 10k/ngày, Thăng Cấp 15/35/60 -> 13k/16k/20k (`sell-limit.extra-by-perk`); tắt luật mua bán / vào nghề chỉ trong đất hoà bình (economy-only-in-peace false, jobs-join-only-in-peace false).
+- **Tin tử vong + thành tựu tiếng Việt** dịch sẵn ở server (DeathVi.java, resources/vi_tuvong.json từ vi_vn.json Mojang, tools/vi/tuvong-vi.py).
+- **Botfarm**: thay phiên (bot vừa thoát nghỉ ≥30 phút, người thay vào sau 4–15 phút, các lượt cách 3–9 phút); 3 kiểu vào / thoát (Vào rồi chào / Vào (hiện [+]) / Vào trộm, tương tự Thoát); vào/thoát trộm luôn bật lại quyền im (duckymomo.vaora.an); **tài khoản gắn** (người thật có sẵn, IP 10.31.x nên core tính là người, UUID thật từ usercache, tự nhả khi chủ vào; chủ đang tự chơi thì nói / lệnh qua `essentials:sudo`); **Cấp tài khoản** (mật khẩu AuthMe riêng, khoá bot) + **Đổi chỗ trộm** (bot online thoát trộm, admin vào thế chỗ cũng trộm); **gắn bot với member** (data/panel/bot-member.json, báo đẩy loại "goiy" khi member vào, dải "member quen đang online"); GMC/GMS từ console; lời thoại: TINHNANG (113 đoạn tính năng, chỉ bot mới nói) + BO 5 bộ chuyện phiếm đổi mỗi chatCfg.doiBo ngày (mặc định 3); bỏ câu hứa / mời / nhận có thị trấn.
+- **Panel**: hẹn tắt máy khi hết người (trang Bot; panel ghi data/ops/tat-may.now, tác vụ Windows "DuckyMoMo hen tat" = ops/windows/hen-tat-may.ps1 chạy qua conhost --headless, đăng ký bằng ops/windows/dang-ky-hen-tat.ps1; trước khi tắt bật lại mọi tuỳ chọn bot); lọc bot online/offline, số bot online, bấm tên bot ↔ khung chat; báo đẩy loại "tinrieng" khi member /msg hoặc tpa bot; Thư viện đồ nhớ người hay được đưa; trang Hoạt động chạy /t /ta /n /res /plot /grim qua `dmm console` để đọc kết quả từ log (ASYNC_CMD).
+- **Nhật ký hoạt động** (dashboard/log-feed.sh): đọc chat người có danh hiệu sau tên ("Itrap [Nhà Thám Hiểm]: …"); proxy "has disconnected: <lý do>" vẫn ghi rời network (có thông báo thoát); HISTORY 1s (khởi động lại không ghi trùng 6 giờ log).
+- **Khác**: SimplePets menu tiếng Việt (tools/vi/simplepets-menu.py); QuickShop tắt tạo shop nhanh (disable-quick-create, chỉ ở data); TAB xếp theo quyền tab.sort.<nhóm> (quản lý ẩn danh griimzz, .griim7833 hiện [Dân]); bảng bên phải bỏ dòng online/ping; /list không chia nhóm rank; Cuộn Giấy Trắng ghi rõ không làm đồ bền hơn; LetGoMine: biệt thự, cây cổ thụ, vườn rau 3 tầng (tools/xay-nha/), +8 ô bonus.
+- **Grim**: người chơi bản 1.21.11 (ntttuan4242, SiHaiTen) bị báo hàng nghìn lần / phiên, người 26.2 gần như sạch -> do dịch phiên bản (Via), không đủ kết luận hack. Grim vẫn chỉ báo (immediate-setback-threshold -1).
+
 
 ## 31/10/2026: SKYBLOCK (server riêng, đang thử, chưa mở cho member)
 

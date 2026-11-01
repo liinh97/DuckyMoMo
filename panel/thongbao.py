@@ -22,7 +22,7 @@ from pathlib import Path
 
 KINDS = {"vaora": "Người chơi vào / ra", "chuyen": "Người chơi chuyển server", "chat": "Chat của người chơi", "suco": "Sự cố server",
          "donate": "Nạp tiền (lấy mã QR, báo đã chuyển)",
-         "goiy": "Member quen vào: nên dùng bot nào",   # 1/11: bot gắn với member (trang Bot)
+         "goiy": "Member quen vào / chat: nên dùng bot nào",   # 1/11: bot gắn với member (trang Bot)
          "tinrieng": "Member nhắn riêng / tpa cho bot"}   # 1/11   # 30/10: chủ server: member nạp mà app không báo
 SRV = {"lobby": "Sảnh", "banghoi-1": "Bang Hội Chiến", "practice-1": "Practice", "sangtao-1": "Thái Ấp Sáng Tạo"}
 
@@ -141,7 +141,8 @@ class Notifier:
             self.log(f"Thông báo: gửi lỗi {e}")
             return False
 
-    def push(self, kind, title, body, tag="", url="hoatdong"):
+    def push(self, kind, title, body, tag="", url="hoatdong", hoac=""):
+        """hoac: loại thứ hai; người bật một trong hai loại đều nhận (một thông báo, không gửi đôi)."""
         payload = {"title": title, "body": body, "tag": tag or kind, "url": url}
         with self.lock:
             self.sent.append({"t": int(time.time()), "loai": kind, "tieu_de": title, "noi_dung": body})
@@ -152,7 +153,8 @@ class Notifier:
                 pass
             subs = self._load()
         for ep, s in subs.items():
-            if (s.get("prefs") or {}).get(kind, True):
+            pr = s.get("prefs") or {}
+            if pr.get(kind, True) or (hoac and pr.get(hoac, True)):
                 self._send_one(ep, s, payload)
 
     # ------------------------------------------------------------ theo dõi
@@ -237,7 +239,12 @@ class Notifier:
         elif e.get("type") == "chat" and e.get("server") != "proxy":
             msg = re.sub(r"^<[^>]+>\s*", "", text)[:180]
             srv = str(e.get("server", ""))
-            self.push("chat", f"💬 {name} · {SRV.get(srv, srv)}", msg, tag="chat-" + low)
+            goi = getattr(self, "goi_y", None)   # 1/11: member quen chat: báo bot nên trả lời, như lúc member vào game
+            bots = goi(low) if goi else []
+            if bots:
+                self.push("chat", f"💬 {name} · {SRV.get(srv, srv)}", msg + "\n🤝 Nên trả lời bằng bot: " + ", ".join(bots), tag="chat-" + low, url="bot", hoac="goiy")
+            else:
+                self.push("chat", f"💬 {name} · {SRV.get(srv, srv)}", msg, tag="chat-" + low)
 
     def _watch_servers(self):
         down, low_tps, last_tps_alert, last_bots = {}, 0, 0, None

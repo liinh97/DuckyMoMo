@@ -544,6 +544,11 @@ function renderFeed() {
       } else {
         tx = p && t.startsWith(p) ? (r.type === "command" ? `${who} <code>${esc(t.slice(p.length).replace(/^:\s*/, ""))}</code>` : who + esc(t.slice(p.length))) : esc(t);
       }
+      // 1/11: member quen chat: hiện bot nên trả lời (bấm để chọn bot đó), như lúc member vào game
+      if (r.type === "chat" && p && !isBot(p)) {
+        const lk = Object.keys(MEMBER).filter((b) => (MEMBER[b] || []).some((m) => m.toLowerCase() === p.toLowerCase()));
+        if (lk.length) tx += ` <span class="srv">🤝 trả lời bằng ${lk.map(botName).join(", ")}</span>`;
+      }
     }
     const hot = r.type === "msg" || r.type === "tpa";
     return `<div class="ln${hot ? " hot" : ""}"${hot ? ` data-bot="${esc(r.bot)}" data-from="${esc(r.from || "")}" data-type="${r.type}"` : ""}>

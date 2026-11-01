@@ -35,9 +35,11 @@ function js(v) { gsub(/\\/, "\\\\\\\\", v); gsub(/"/, "\\\"", v); gsub(/[\001-\0
 (m == "chat" || m == "all") && out == "" && line ~ /^\[Not Secure\] / {
   sub(/^\[Not Secure\] /, "", line); body = line
   while (body ~ /^\[[^]]*\] /) sub(/^\[[^]]*\] /, "", body)        # bỏ tiền tố [Admin] [Bang]…
-  if (body ~ /^[^ :]+: /) {
-    player = body; sub(/: .*/, "", player)
-    out = "<" player "> " substr(body, length(player) + 3); tag = "CHAT"; type = "chat"
+  # 1/11: tên có thể kèm danh hiệu phía sau: "Itrap [Nhà Thám Hiểm]: alo"
+  if (body ~ /^[^ :]+( \[[^]]*\])*: /) {
+    player = body; sub(/[ :].*/, "", player)
+    msg = body; sub(/^[^ :]+( \[[^]]*\])*: /, "", msg)
+    out = "<" player "> " msg; tag = "CHAT"; type = "chat"
   }
 }
 

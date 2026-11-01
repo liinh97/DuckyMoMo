@@ -40,7 +40,8 @@ services:
   # Đồng thời ghi data/activity/activity.jsonl cho trang "Hoạt động người chơi" của panel (lọc theo loại, chế độ, người chơi).
   activity:
     <<: *log-feed
-    environment: { PROJECT: duckymomo, MODE: all, TZ: Asia/Ho_Chi_Minh, JSONL: /out/activity.jsonl }
+    # HISTORY 1s (1/11): khởi động lại không đọc lại 6 giờ log cũ (ghi trùng vào activity.jsonl)
+    environment: { PROJECT: duckymomo, MODE: all, TZ: Asia/Ho_Chi_Minh, JSONL: /out/activity.jsonl, HISTORY: 1s }
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./:/feed:ro

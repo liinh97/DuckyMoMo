@@ -1947,6 +1947,11 @@ def bot_json():
             allb = d.get("bots", [])
             d["bots"] = [b for b in allb if not b.get("gan")]
             d["gan"] = [b for b in allb if b.get("gan")]
+            if d["gan"]:   # chủ tài khoản đang tự chơi (không qua botfarm): ở server nào
+                onl = online_players()
+                for g in d["gan"]:
+                    if not g.get("online"):
+                        g["tuchoi"] = onl.get(str(g.get("name", "")).lower())
             return d | {"ok": True, "phattrien": bot_dev_info(), "thitran": bot_towns_of([b.get("name", "") for b in d.get("bots", [])]),
                         "ds_thitran": sorted(_bot_towns().values(), key=str.lower)}
     except Exception as e:
@@ -2943,6 +2948,21 @@ def bot_action(body, who):
             raise ValueError("Tên bot 3–16 ký tự, chỉ chữ không dấu, số, gạch dưới")
         if name.lower() in known_player_names():
             raise ValueError(f"Tên {name} đã có tài khoản trong game (người chơi hoặc bot cũ), chọn tên khác")
+    if act in ("chat", "cmd"):   # 1/11: tài khoản gắn mà chủ đang tự online (máy treo): nói / chạy lệnh thay qua sudo của Essentials
+        nm = str(body.get("bot", "")).strip()
+        g = next((x for x in bot_json().get("gan", []) if str(x.get("name", "")).lower() == nm.lower()), None)
+        if g and not g.get("online"):
+            srv = online_players(fresh=True).get(nm.lower())
+            if not srv:
+                raise ValueError(f"{nm} đang không online (bấm Vào để botfarm giữ online, hoặc vào game)")
+            text = re.sub(r"[\x00-\x1f\x7f§]", "", str(body.get("text", ""))).strip()[:240]
+            if not text:
+                raise ValueError("chưa nhập nội dung")
+            line = f"essentials:sudo {g['name']} " + (text.lstrip("/") if act == "cmd" else "c:" + text)
+            out = rcon(srv, [line])[0][1]
+            web_log({"viec": "/api/bot", "nguoi": who or PANEL_USER, "hanh_dong": f"{g['name']} (tự chơi, qua sudo) {BOT_ACTIONS[act]} {text}"[:300],
+                     "doi_tuong": g["name"], "ok": True})
+            return {"ok": True, "message": f"{g['name']}: {text}" + (f" ({COLOR_RE.sub('', out)[:120]})" if act == "cmd" and out else "")}
     if act == "join":   # 1/11: tài khoản gắn đang được chủ tài khoản chơi thật thì KHÔNG cho botfarm vào (vào là đá người ta ra)
         nm = str(body.get("bot", "")).strip()
         if any(str(g.get("name", "")).lower() == nm.lower() and not g.get("online") for g in bot_json().get("gan", [])) \

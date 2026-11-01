@@ -1118,9 +1118,17 @@ async function followLoop(n, b, w) {
     const dim = await R.cmd(`data get entity ${who} Dimension`).catch(() => '');
     const p = /overworld/.test(dim) ? await serverPos(who, 'banghoi-1').catch(() => null) : null;
     if (!p) return;   // member ở Nether / End / server khác: đứng chờ, hết hạn thì tự thôi
+    // tắt vật lý trong lúc dời: chunk chỗ mới chưa tới mà vật lý chạy thì bot rơi xuyên đất (1/11 thử thật: rơi xuống y -8)
+    b.physicsEnabled = false;
     const r = await R.cmd(`execute in minecraft:overworld run spreadplayers ${Math.floor(p.x)} ${Math.floor(p.z)} 1 8 under ${Math.floor(p.y) + 3} false ${n}`).catch(() => 'could not');
     if (/could not|unable|error|không/i.test(r)) await R.cmd(`execute in minecraft:overworld run tp ${n} ${who}`).catch(() => '');
-    await sleep(1500);
+    await sleep(800);
+    for (let i = 0; i < 40 && alive(); i++) {   // tới 8 giây: chờ có địa hình dưới chân
+      const q = b.entity && b.entity.position, g = q && b.blockAt(q.offset(0, -1, 0));
+      if (g && Math.hypot(q.x - p.x, q.z - p.z) < 20) break;
+      await sleep(200);
+    }
+    if (alive()) b.physicsEnabled = true;
     moveAt = Date.now(); moveFrom = null;
   };
   const route = async (e) => {   // đứt vết: tìm đường (không đào, không đặt khối, rơi tối đa 2 khối)

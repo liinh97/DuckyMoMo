@@ -9,12 +9,12 @@
 
 ### Việc còn lại
 **Cần chủ server làm / cho phép:**
-1. Khởi động lại banghoi-1 để bảng bên phải hiện dòng "⏱ Phiên này" (%dmmmua_phien%, SeasonsPapi.java; TAB config đã sửa cả bản mẫu + data). Kiểm người online TÁCH RIÊNG trước.
-2. Dựng lại botfarm (`docker compose up -d --build botfarm`, lúc vắng người): áp sửa tpa giả "né dịch chuyển" (commit 7f2725d: server dời bot 0,8 khối để Essentials huỷ dịch chuyển chờ; 1/11 Linh_Chi bị kéo tới SiHaiTen vì bot đứng trong phòng ẩn nhảy không xê dịch).
+1. ĐÃ LÀM 1/11 13:30: khởi động lại banghoi-1 (dòng "⏱ Phiên này" (%dmmmua_phien%, SeasonsPapi.java; TAB config đã sửa cả bản mẫu + data). Kiểm người online TÁCH RIÊNG trước.
+2. ĐÃ LÀM 1/11 13:30: dựng lại botfarm, áp sửa tpa giả "né dịch chuyển" (commit 7f2725d: server dời bot 0,8 khối để Essentials huỷ dịch chuyển chờ; 1/11 Linh_Chi bị kéo tới SiHaiTen vì bot đứng trong phòng ẩn nhảy không xê dịch).
 3. Đặt NPC rèn Thần Nông trong game: `/dmm thorennpc thannong`.
 4. Chủ server thử giúp (chưa kiểm được): Lưỡi hái Thần Nông gặt 5×5 + Hạt Giống Thần rơi + cây quanh lớn nhanh; `/gmc` khi giữ tài khoản bot (Cấp tài khoản / Đổi chỗ trộm: panel cấp essentials.gamemode*, có thể bị bộ lọc chặn như lần cấp duckymomo.admin); báo đẩy khi member nhắn riêng / tpa bot và khi member bị đá.
 5. Push: mọi commit từ d1ff2de trở đi CHƯA push (chờ chủ server bảo).
-6. Skyblock: chủ server gõ `/velocity reload` trong game rồi `/server skyblock-1` (xem mục SKYBLOCK bên dưới).
+6. Skyblock: proxy đã khởi động lại 1/11 13:32 (nạp skyblock-1 trong velocity.toml, không cần /velocity reload nữa); chủ server vào thử `/server skyblock-1` (xem mục SKYBLOCK bên dưới).
 
 **Chờ chủ server chốt:**
 7. Lời thoại bot: viết thêm ~130 đoạn (mỗi bộ ~60), đổi bộ MỖI NGÀY thay vì 3 ngày, nới tần suất 8–12 phút (tính ra mỗi bộ hiện chỉ 28–43 đoạn, một bộ dùng ~60–80 đoạn/ngày -> lặp nhiều).
@@ -24,7 +24,7 @@
 
 **Tồn từ trước, chưa làm:**
 11. Màn hình bị đá kiểu UniMC cho Velocity lang, Sonar, AuthMe, Essentials ban, whitelist/restart (chủ server bảo "làm tất cả").
-12. Proxy: BotCount (số bot cộng vào số online) cần khởi động lại proxy -> PHẢI tạo lại relay sau đó (`docker compose --profile tunnel up -d --force-recreate relay`), làm lúc vắng.
+12. ĐÃ LÀM 1/11 13:32: khởi động lại proxy (BotCount) + tạo lại relay; tu-sua --kiem-tra: mọi cổng trả lời. Chưa kiểm số online trên danh sách server có cộng bot đúng không.
 
 ### Tóm tắt phiên (31/10 tối → 1/11)
 - **Set Thần Nông** (thannong, bậc 6, requires nonggia, +0..+5; tools/thoren/gen_thannong.py chạy trong container panel rồi `dmm thuvien nap`): 30 món tn_{mu,ao,quan,giay,cuoc}_N (khoá "cuoc" như Nông Gia để nâng từ Nông Gia +4), 10 mảnh Lão Nông mới (cu_den, bi_vang, dua_ngot, duong_mia, ca_cao, qua_mong, nam_dia_nguc, qua_sang, tao_bien, qua_chorus), tinh thể ngu_coc / qua_linh / than_moc (Kim Hoàn), hat_than. ThoRen.java: `tho-ren.harvest-drop` {item hat_than, chance 0.0667 = 1/1.500, season-mult 2 (Seasons.growthOf > 1), scythe-prefix tn_cuoc_, scythe-radius 2}: Hạt chỉ rơi khi TỰ gặt cây chín (BlockDropItemEvent, Survival); Lưỡi hái gặt 5×5 bằng Player#breakBlock (có sự kiện, Towny chặn được) + gieo lại; bonus `thu-hoach` > 100 = chắc gấp đôi + % gấp ba; bonus mới `lon-nhanh` = % cây trong 5 ô lớn 1 nấc mỗi 4 giây. Cân bằng: +5 ≈ dưới Tinh Anh +5, cả bộ +5 ~1 tháng (xu ~265k là chặn chính). Không có hút máu (CE Vampire chỉ cho kiếm).

@@ -253,6 +253,11 @@ final class Seasons implements Listener {
         return s == null ? id : s.getString("name", id);
     }
 
+    /** 1/11: cho Thợ Rèn biết mùa này có thuận cho cây này không (Hạt Giống Thần rơi nhiều hơn). */
+    double growthOf(Material m) {
+        return growth(m);
+    }
+
     private double growth(Material m) {
         ConfigurationSection s = season(current());
         ConfigurationSection e = event();

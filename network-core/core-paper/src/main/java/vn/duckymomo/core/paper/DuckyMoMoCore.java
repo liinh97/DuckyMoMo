@@ -1251,6 +1251,7 @@ public final class DuckyMoMoCore extends JavaPlugin {
         // Mùa mưa / mùa khô: cây lớn nhanh/chậm, được mùa, mưa theo mùa, placeholder cho cá theo mùa (Bang Hội Chiến: seasons.enabled)
         Seasons seasons = getConfig().getBoolean("seasons.enabled") && getConfig().isConfigurationSection("seasons")
                 ? new Seasons(this, getConfig().getConfigurationSection("seasons")) : null;
+        Shared.seasons = seasons != null && seasons.ready() ? seasons : null;   // 1/11: Thợ Rèn đọc mùa (Hạt Giống Thần)
         if (seasons != null && !seasons.ready()) {
             getLogger().warning("Mùa: seasons.order trống hoặc sai, tắt");
             seasons = null;

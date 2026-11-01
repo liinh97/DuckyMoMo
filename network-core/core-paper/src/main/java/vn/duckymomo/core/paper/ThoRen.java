@@ -17,6 +17,7 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.block.Block;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.command.CommandSender;
@@ -51,9 +52,9 @@ final class ThoRen implements Listener {
 
     /** an = mã mảnh ấn riêng của món (vd mũ, giày Chiến Binh: cb_an_khoi); khoá "an" trong cost được thay bằng mã này. */
     private record Piece(String key, String name, List<String> ids, String an) { }
-    private record Bonus(int from, int pieces, double mau, double dayLui, double giamSt, double thuHoach, double demSt, double kn) {
+    private record Bonus(int from, int pieces, double mau, double dayLui, double giamSt, double thuHoach, double demSt, double kn, double lonNhanh) {
         Bonus times(double k) {
-            return new Bonus(from, pieces, mau * k, dayLui * k, giamSt * k, thuHoach * k, demSt * k, kn * k);
+            return new Bonus(from, pieces, mau * k, dayLui * k, giamSt * k, thuHoach * k, demSt * k, kn * k, lonNhanh * k);
         }
     }
     private record Season(String name, String from, String to, String open, double boost, double damage, String drop, double dropChance) { }
@@ -75,7 +76,7 @@ final class ThoRen implements Listener {
     private record Stall(String id, String name, String sub, String profession, String open, String skin, List<Recipe> recipes,
                          List<String> showSets, List<Map<?, ?>> go, boolean villager, boolean nameOnly) { }
     /** Hiệu ứng đang áp cho một người (tổng các set) + mô tả để báo khi đổi. */
-    private record Active(double mau, double dayLui, double giamSt, double thuHoach, double demSt, double kn, String text) { }
+    private record Active(double mau, double dayLui, double giamSt, double thuHoach, double demSt, double kn, double lonNhanh, String text) { }
 
     private final DuckyMoMoCore plugin;
     private final ItemLibrary lib;
@@ -217,6 +218,11 @@ final class ThoRen implements Listener {
             }
         }
         this.fishChance = c.getDouble("fish-drop.chance", 0);
+        this.harvestItem = c.getString("harvest-drop.item", "");
+        this.harvestChance = c.getDouble("harvest-drop.chance", 0);
+        this.harvestSeason = c.getDouble("harvest-drop.season-mult", 1);
+        this.scythePrefix = c.getString("harvest-drop.scythe-prefix", "tn_hai_");
+        this.scytheRadius = c.getInt("harvest-drop.scythe-radius", 2);
         ConfigurationSection ss = c.getConfigurationSection("sets");
         if (ss == null) {
             return;
@@ -241,7 +247,7 @@ final class ThoRen implements Listener {
             for (Map<?, ?> m : s.getMapList("bonus")) {
                 bonus.add(new Bonus(num(m.get("from")).intValue(), num(m.get("pieces")).intValue(), num(m.get("mau")).doubleValue(),
                         num(m.get("day-lui")).doubleValue(), num(m.get("giam-st")).doubleValue(), num(m.get("thu-hoach")).doubleValue(),
-                        num(m.get("dem-st")).doubleValue(), num(m.get("kn")).doubleValue()));
+                        num(m.get("dem-st")).doubleValue(), num(m.get("kn")).doubleValue(), num(m.get("lon-nhanh")).doubleValue()));
             }
             ConfigurationSection se = s.getConfigurationSection("season");
             Season season = se == null ? null : new Season(se.getString("name", ""), se.getString("from", ""), se.getString("to", ""),
@@ -271,6 +277,7 @@ final class ThoRen implements Listener {
 
     void start() {
         Bukkit.getScheduler().runTaskTimer(plugin, () -> Bukkit.getOnlinePlayers().forEach(this::refresh), 100L, 40L);
+        Bukkit.getScheduler().runTaskTimer(plugin, this::growAround, 160L, 80L);   // 1/11 Thần Nông đủ bộ: cây quanh người lớn nhanh
         Bukkit.getScheduler().runTaskLater(plugin, () -> Bukkit.getWorlds().forEach(w -> w.getEntities().forEach(this::track)), 100L);
         Bukkit.getScheduler().runTaskTimer(plugin, this::lookAtPlayers, 120L, 5L);
         Bukkit.getScheduler().runTaskTimer(plugin, () -> Bukkit.getOnlinePlayers().forEach(this::updateItems), 200L, 1200L);
@@ -1121,7 +1128,10 @@ final class ThoRen implements Listener {
             s.add("-" + trim(b.giamSt()) + "% sát thương nhận");
         }
         if (b.thuHoach() != 0) {
-            s.add(trim(b.thuHoach()) + "% gấp đôi nông sản");
+            s.add(b.thuHoach() > 100 ? "nông sản gấp đôi, " + trim(b.thuHoach() - 100) + "% gấp ba" : trim(b.thuHoach()) + "% gấp đôi nông sản");
+        }
+        if (b.lonNhanh() != 0) {
+            s.add("cây quanh mình lớn nhanh");
         }
         if (b.demSt() != 0) {
             s.add("+" + trim(b.demSt()) + "% sát thương quái ban đêm");
@@ -1138,7 +1148,7 @@ final class ThoRen implements Listener {
     }
 
     private void refresh(Player p) {
-        double mau = 0, day = 0, giam = 0, thu = 0, dem = 0, kn = 0;
+        double mau = 0, day = 0, giam = 0, thu = 0, dem = 0, kn = 0, lon = 0;
         List<String> txt = new ArrayList<>();
         for (SetDef set : sets.values()) {
             Bonus b = best(p, set);
@@ -1153,6 +1163,7 @@ final class ThoRen implements Listener {
                 thu += b.thuHoach();
                 dem += b.demSt();
                 kn += b.kn();
+                lon += b.lonNhanh();
                 txt.add(set.name() + (boosted ? " (đúng mùa)" : "") + ": " + bonusText(b));
             }
         }
@@ -1166,7 +1177,7 @@ final class ThoRen implements Listener {
         if (text.isEmpty()) {
             active.remove(p.getUniqueId());
         } else {
-            active.put(p.getUniqueId(), new Active(mau, day, giam, thu, dem, kn, text));
+            active.put(p.getUniqueId(), new Active(mau, day, giam, thu, dem, kn, lon, text));
         }
         if (old != null || !text.isEmpty()) {
             p.sendActionBar(c(text.isEmpty() ? "&7Hiệu ứng bộ: không còn" : "&d✦ Hiệu ứng bộ &f" + text));
@@ -1435,11 +1446,118 @@ final class ThoRen implements Listener {
     public void onHarvest(org.bukkit.event.block.BlockDropItemEvent e) {
         Active a = active.get(e.getPlayer().getUniqueId());
         if (a == null || a.thuHoach() <= 0 || !(e.getBlockState().getBlockData() instanceof org.bukkit.block.data.Ageable ag)
-                || ag.getAge() < ag.getMaximumAge() || ThreadLocalRandom.current().nextDouble(100) >= a.thuHoach()) {
+                || ag.getAge() < ag.getMaximumAge()) {
             return;
         }
-        for (org.bukkit.entity.Item i : e.getItems()) {
-            e.getBlock().getWorld().dropItemNaturally(e.getBlock().getLocation().add(0.5, 0.5, 0.5), i.getItemStack().clone());
+        // 1/11 Thần Nông: thu-hoach > 100 = chắc chắn thêm 1 phần, phần lẻ là cơ hội thêm phần nữa (vd 120 = x2, 20% x3)
+        int extra = (int) (a.thuHoach() / 100) + (ThreadLocalRandom.current().nextDouble(100) < a.thuHoach() % 100 ? 1 : 0);
+        for (int k = 0; k < extra; k++) {
+            for (org.bukkit.entity.Item i : e.getItems()) {
+                e.getBlock().getWorld().dropItemNaturally(e.getBlock().getLocation().add(0.5, 0.5, 0.5), i.getItemStack().clone());
+            }
+        }
+    }
+
+    // ---------------------------------------------------------------- Thần Nông (1/11, chủ server)
+    private final String harvestItem;
+    private final double harvestChance;
+    private final double harvestSeason;
+    private final String scythePrefix;
+    private final int scytheRadius;
+    private boolean scything;
+
+    /** Hạt Giống Thần: TỰ TAY gặt cây đã chín (máy farm, dân làng không tính) có harvest-drop.chance % rơi; mùa thuận cho cây đó x season-mult. */
+    @EventHandler(ignoreCancelled = true)
+    public void onSeedDrop(org.bukkit.event.block.BlockDropItemEvent e) {
+        if (harvestItem.isBlank() || harvestChance <= 0 || e.getPlayer().getGameMode() != org.bukkit.GameMode.SURVIVAL
+                || !(e.getBlockState().getBlockData() instanceof org.bukkit.block.data.Ageable ag) || ag.getAge() < ag.getMaximumAge()
+                || e.getBlockState().getType() == Material.SUGAR_CANE || e.getBlockState().getType() == Material.CACTUS) {
+            return;
+        }
+        double ch = harvestChance;
+        Seasons se = Shared.seasons;
+        if (se != null && harvestSeason > 1 && se.growthOf(e.getBlockState().getType()) > 1.0) {
+            ch *= harvestSeason;
+        }
+        if (ThreadLocalRandom.current().nextDouble(100) >= ch) {
+            return;
+        }
+        ItemLibrary lib = Shared.library;
+        ItemStack it = lib == null ? null : lib.build(harvestItem, 1);
+        if (it == null) {
+            return;
+        }
+        e.getBlock().getWorld().dropItemNaturally(e.getBlock().getLocation().add(0.5, 0.5, 0.5), it);
+        e.getPlayer().sendMessage(c("&a✿ Bạn gặt được &6" + lib.name(harvestItem) + "&a!"));
+        e.getPlayer().playSound(e.getPlayer().getLocation(), org.bukkit.Sound.ENTITY_PLAYER_LEVELUP, 0.6f, 1.6f);
+    }
+
+    /** Lưỡi hái Thần Nông (mã thư viện bắt đầu scythe-prefix): phá một cây chín thì gặt cả vùng (2r+1)x(2r+1) cây chín cùng tầng, gieo lại. */
+    @EventHandler(ignoreCancelled = true)
+    public void onScythe(org.bukkit.event.block.BlockBreakEvent e) {
+        Player p = e.getPlayer();
+        if (scything || p.getGameMode() != org.bukkit.GameMode.SURVIVAL || !(e.getBlock().getBlockData() instanceof org.bukkit.block.data.Ageable ag)
+                || ag.getAge() < ag.getMaximumAge()) {
+            return;
+        }
+        String id = ItemLibrary.idOf(p.getInventory().getItemInMainHand());
+        if (id == null || !id.startsWith(scythePrefix)) {
+            return;
+        }
+        Material crop = e.getBlock().getType();
+        List<Block> todo = new ArrayList<>();
+        for (int dx = -scytheRadius; dx <= scytheRadius; dx++) {
+            for (int dz = -scytheRadius; dz <= scytheRadius; dz++) {
+                Block b = e.getBlock().getRelative(dx, 0, dz);
+                if ((dx != 0 || dz != 0) && b.getBlockData() instanceof org.bukkit.block.data.Ageable a2 && a2.getAge() >= a2.getMaximumAge()
+                        && b.getType() != Material.SUGAR_CANE && b.getType() != Material.CACTUS) {
+                    todo.add(b);
+                }
+            }
+        }
+        todo.add(e.getBlock());
+        Bukkit.getScheduler().runTask(plugin, () -> {
+            scything = true;
+            try {
+                for (Block b : todo) {
+                    Material m = b == e.getBlock() ? crop : b.getType();
+                    if (b != e.getBlock() && !p.breakBlock(b)) {   // như người chơi tự phá: có sự kiện (Hạt Giống Thần, gấp đôi nông sản, bảo vệ đất)
+                        continue;
+                    }
+                    if (b.getType().isAir() && m != Material.COCOA && m != Material.SWEET_BERRY_BUSH) {   // gieo lại
+                        Material under = b.getRelative(org.bukkit.block.BlockFace.DOWN).getType();
+                        if ((m == Material.NETHER_WART && under == Material.SOUL_SAND) || (m != Material.NETHER_WART && under == Material.FARMLAND)) {
+                            b.setType(m);
+                        }
+                    }
+                }
+            } finally {
+                scything = false;
+            }
+        });
+    }
+
+    /** Thần Nông đủ bộ: mỗi 4 giây cây non quanh người (bán kính 5) có lon-nhanh % cơ hội lớn thêm một nấc. */
+    private void growAround() {
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            Active a = active.get(p.getUniqueId());
+            if (a == null || a.lonNhanh() <= 0) {
+                continue;
+            }
+            Block c0 = p.getLocation().getBlock();
+            for (int dx = -5; dx <= 5; dx++) {
+                for (int dy = -2; dy <= 2; dy++) {
+                    for (int dz = -5; dz <= 5; dz++) {
+                        Block b = c0.getRelative(dx, dy, dz);
+                        if (b.getBlockData() instanceof org.bukkit.block.data.Ageable ag && ag.getAge() < ag.getMaximumAge()
+                                && b.getType() != Material.SUGAR_CANE && b.getType() != Material.CACTUS && b.getType() != Material.KELP
+                                && ThreadLocalRandom.current().nextDouble(100) < a.lonNhanh()) {
+                            ag.setAge(ag.getAge() + 1);
+                            b.setBlockData(ag);
+                        }
+                    }
+                }
+            }
         }
     }
 

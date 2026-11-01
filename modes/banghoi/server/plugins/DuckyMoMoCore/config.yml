@@ -1786,6 +1786,7 @@ kham:
     - {name: "Hoàn Mỹ", color: "&6", ti-le: 10, min: 120, max: 150, hat: xoan-oc, mat-do: 0.5}
   slots:
     tinhanh: [0, 0, 0, 1, 1, 1]
+    thannong: [0, 0, 0, 1, 1, 1]   # 1/11 như Tinh Anh
     caocap: [1, 1, 1, 1, 1, 2]
     huyenthoai: 3
     thanthoai: 3
@@ -2223,7 +2224,7 @@ tho-ren:
       sub: "Xem đồ xịn nhất server (chỉ xem)"
       open: trungbay
       chi-ten: true
-      sets: [thanthanh, thanthoai, huyenthoai, caocap, ulinh, tinhanh, chienbinh, chuyencan, tanthu, thomo, thosan, nguphu, nonggia, duhiep]
+      sets: [thanthanh, thanthoai, huyenthoai, caocap, ulinh, tinhanh, thannong, chienbinh, chuyencan, tanthu, thomo, thosan, nguphu, nonggia, duhiep]
     chiduong:
       name: "&a⚖ Lái Buôn Chỉ Đường"
       sub: "Muốn mua bán, rèn đồ? Bấm để tôi chỉ đường"
@@ -2281,6 +2282,9 @@ tho-ren:
         - {out: long_hon, cost: {xu: 2000, hon_quai: 2, hac_dieu: 1, ngoc_trieu: 1, huyet_tinh: 2}}
         - {out: nhat_nguyet, cost: {xu: 5000, long_hon: 2, ngoc_trieu: 2, hac_dieu: 2}}
         - {out: thien_menh, cost: {xu: 15000, nhat_nguyet: 2, hon_quai: 4, NETHER_STAR: 1}}
+        - {out: ngu_coc, cost: {xu: 400, bong_lua: 4, cu_qua: 4, cu_den: 2}}   # 1/11 Thần Nông
+        - {out: qua_linh, cost: {xu: 400, bi_vang: 2, dua_ngot: 2, qua_mong: 2, qua_sang: 2}}
+        - {out: than_moc, cost: {xu: 1000, ngu_coc: 1, qua_linh: 1, nam_dia_nguc: 2, dialinh: 1, hat_than: 1, mat_ong: 2}}
     laonong:
       name: "&2❀ Lão Nông"
       skin: "https://cdn.minecraft.how/skin/161770/image.png"
@@ -2290,6 +2294,17 @@ tho-ren:
         - {out: bong_lua, cost: {WHEAT: 64}}
         - {out: cu_qua, cost: {CARROT: 32, POTATO: 32}}
         - {out: mat_ong, cost: {HONEY_BOTTLE: 4}}
+        # 1/11 set Thần Nông: thêm mảnh, bắt trồng đủ loại cây (Nether, hang, biển, End)
+        - {out: cu_den, cost: {BEETROOT: 64}}
+        - {out: bi_vang, cost: {PUMPKIN: 32}}
+        - {out: dua_ngot, cost: {MELON: 32}}
+        - {out: duong_mia, cost: {SUGAR_CANE: 64}}
+        - {out: ca_cao, cost: {COCOA_BEANS: 64}}
+        - {out: qua_mong, cost: {SWEET_BERRIES: 64}}
+        - {out: nam_dia_nguc, cost: {NETHER_WART: 64}}
+        - {out: qua_sang, cost: {GLOW_BERRIES: 48}}
+        - {out: tao_bien, cost: {KELP: 128}}
+        - {out: qua_chorus, cost: {CHORUS_FRUIT: 32}}
     thoren:
       name: "&6⚒ Thợ Rèn"
       skin: "https://cdn.minecraft.how/skin/150520/image.png"
@@ -2306,6 +2321,7 @@ tho-ren:
     ren_thanthanh: {name: "&e✟ Rèn Thần Thánh", sub: "Nâng từ Thần Thoại +4", profession: cleric, open: "set:thanthanh", skin: "https://cdn.minecraft.how/skin/168584/image.png"}
     ren_ulinh: {name: "&6☾ Rèn U Linh", sub: "Set mùa Lễ Hội Bí Ngô", profession: leatherworker, open: "set:ulinh", skin: "https://cdn.minecraft.how/skin/217233/image.png"}
     ren_nonggia: {name: "&2❀ Rèn Nông Gia", sub: "Set nghề trồng trọt", profession: farmer, open: "set:nonggia", skin: "https://cdn.minecraft.how/skin/285938/image.png"}
+    ren_thannong: {name: "&6✿ Rèn Thần Nông", sub: "Nâng từ Nông Gia +4", profession: farmer, open: "set:thannong", skin: "https://cdn.minecraft.how/skin/161770/image.png"}   # 1/11
     ren_thosan: {name: "&c☽ Rèn Thợ Săn", sub: "Set nghề đánh quái đêm", profession: butcher, open: "set:thosan", skin: "https://cdn.minecraft.how/skin/222750/image.png"}
     ren_thomo: {name: "&6⛏ Rèn Thợ Mỏ", sub: "Set nghề đào mỏ", profession: toolsmith, open: "set:thomo", skin: "https://cdn.minecraft.how/skin/257181/image.png"}
     ren_nguphu: {name: "&3≈ Rèn Ngư Phủ", sub: "Set nghề câu cá", profession: fisherman, open: "set:nguphu", skin: "https://cdn.minecraft.how/skin/334605/image.png"}
@@ -2361,8 +2377,11 @@ tho-ren:
         thanthanh: [100, 140]
         thosan: [5, 15]
   fish-drop: {item: vaycahiem, chance: 5}   # % mỗi lần câu được cá: rơi Vảy Cá Hiếm (set Ngư Phủ)
+  # 1/11 Thần Nông: tự tay gặt cây chín có chance % rơi Hạt Giống Thần (1/1.500 = 0,0667); mùa thuận cho cây đó x season-mult.
+  # Lưỡi hái Thần Nông (mã thư viện bắt đầu scythe-prefix) gặt cả vùng (2r+1)x(2r+1).
+  harvest-drop: {item: hat_than, chance: 0.0667, season-mult: 2, scythe-prefix: tn_cuoc_, scythe-radius: 2}
   # 30/10 thứ tự set từ yếu tới mạnh (Cài đặt › Thợ Rèn kéo thả), chọn set hiện trên đầu khi ẩn giáp; đè bac của từng set
-  set-order: [nonggia, thosan, thomo, nguphu, duhiep, tanthu, chuyencan, chienbinh, ulinh, tinhanh, caocap, huyenthoai, thanthoai, thanthanh]
+  set-order: [nonggia, thosan, thomo, nguphu, duhiep, tanthu, chuyencan, chienbinh, thannong, ulinh, tinhanh, caocap, huyenthoai, thanthoai, thanthanh]
   sets:
     tanthu:
       bac: 2   # 30/10 bậc sức mạnh (1 yếu nhất … 10 mạnh nhất), chọn set hiện trên đầu khi ẩn giáp
@@ -2645,6 +2664,31 @@ tho-ren:
       bonus:
         - {from: 2, pieces: 4, mau: 6, thu-hoach: 10}
         - {from: 4, pieces: 4, mau: 10, day-lui: 10, thu-hoach: 20}
+    thannong:   # 1/11 chủ server: set nghề trồng trọt bậc cao, ~1 tháng cày cả bộ +5, mạnh ~ dưới Tinh Anh +5
+      bac: 6
+      name: "Thần Nông"
+      icon: NETHERITE_HOE
+      desc: "Nâng từ Nông Gia +4. Lưỡi hái gặt cả vùng 5x5, đủ bộ nông sản gấp 2-3 lần, cây quanh người lớn nhanh. Cần Hạt Giống Thần (tự gặt cây chín) và nông sản khắp nơi."
+      requires: nonggia
+      pieces:
+        mu: {name: "Mũ", ids: [tn_mu_0, tn_mu_1, tn_mu_2, tn_mu_3, tn_mu_4, tn_mu_5]}
+        ao: {name: "Giáp", ids: [tn_ao_0, tn_ao_1, tn_ao_2, tn_ao_3, tn_ao_4, tn_ao_5]}
+        quan: {name: "Quần", ids: [tn_quan_0, tn_quan_1, tn_quan_2, tn_quan_3, tn_quan_4, tn_quan_5]}
+        giay: {name: "Giày", ids: [tn_giay_0, tn_giay_1, tn_giay_2, tn_giay_3, tn_giay_4, tn_giay_5]}
+        cuoc: {name: "Lưỡi hái", ids: [tn_cuoc_0, tn_cuoc_1, tn_cuoc_2, tn_cuoc_3, tn_cuoc_4, tn_cuoc_5]}
+      cost:
+        - {xu: 2000, ngu_coc: 1, hat_than: 1}   # +0 (cộng món Nông Gia +4)
+        - {xu: 3000, ngu_coc: 1, qua_linh: 1, hat_than: 1, duong_mia: 2, ca_cao: 2}
+        - {xu: 5000, than_moc: 1, hat_than: 2, dialinh: 1, tao_bien: 2, ngoc_trieu: 1}
+        - {xu: 7000, than_moc: 1, hat_than: 2, dialinh: 2, nam_dia_nguc: 4, hac_dieu: 1}
+        - {xu: 10000, than_moc: 2, hat_than: 3, dialinh: 2, long_hon: 1}
+        - {xu: 14000, than_moc: 2, hat_than: 4, dialinh: 3, qua_chorus: 4, nhat_nguyet: 1}
+      wear: [60, 56, 52, 48, 44, 40]
+      bonus:
+        - {from: 0, pieces: 4, mau: 6, thu-hoach: 50}
+        - {from: 2, pieces: 4, mau: 10, giam-st: 2, thu-hoach: 80, lon-nhanh: 3}
+        - {from: 4, pieces: 4, mau: 14, day-lui: 10, giam-st: 3, thu-hoach: 100, lon-nhanh: 5}
+        - {from: 5, pieces: 4, mau: 18, day-lui: 15, giam-st: 5, thu-hoach: 120, lon-nhanh: 8}
     thosan:
       bac: 1   # 30/10 bậc sức mạnh (1 yếu nhất … 10 mạnh nhất), chọn set hiện trên đầu khi ẩn giáp
       name: "Thợ Săn"

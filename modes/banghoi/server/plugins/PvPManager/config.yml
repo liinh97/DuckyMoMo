@@ -121,7 +121,7 @@ Combat Log Punishments:
   Money Penalty: 0.0
   # Should the player be killed and, if so, what will the player drop
   Kill on Logout:
-    Enabled: true
+    Enabled: false
     Player Drops:
       Inventory: true
       Experience: true
@@ -136,8 +136,7 @@ Combat Log Punishments:
       - 'disconnect.spam'
   # List of commands to execute on combat log, use '{player}' for player name
   # The 'announce' command can be optionally used to broadcast, you can add more or to disable just delete the command
-  Commands On Combat Log:
-    - 'broadcast &c{player} &7thoát game khi đang giao tranh và bị xử thua!'
+  Commands On Combat Log: []   # 1/11 chủ server: giao tranh được thoát game, không thua
 
 ######################
 ####  PvP Toggle  ####

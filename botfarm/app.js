@@ -939,10 +939,10 @@ async function startWander(n, c) {
 }
 
 /** Đi tới (x, y, z) bằng pathfinder: không đào / đặt khối / nhảy vực, rơi tối đa 2 khối; quá hạn thì bỏ chặng. */
-async function walkTo(b, x, y, z, range, ms) {
+async function walkTo(b, x, y, z, range, ms, drop) {
   if (!b.pathfinder) b.loadPlugin(pathfinder);
   const mv = new Movements(b);
-  mv.canDig = false; mv.allowParkour = false; mv.allow1by1towers = false; mv.scafoldingBlocks = []; mv.maxDropDown = 2; mv.allowSprinting = false;
+  mv.canDig = false; mv.allowParkour = false; mv.allow1by1towers = false; mv.scafoldingBlocks = []; mv.maxDropDown = drop || 2; mv.allowSprinting = false;
   b.pathfinder.setMovements(mv);
   let done = false;
   await Promise.race([b.pathfinder.goto(new goals.GoalNear(x, y, z, range)).then(() => { done = true; }).catch(() => {}), sleep(ms)]);
@@ -1110,7 +1110,7 @@ function stopFollow(n) {
 }
 async function followLoop(n, b, w) {
   const rt = RT[n], who = w.follow, R = rcon('banghoi-1'), alive = () => rt.bot === b && rt.wander === w;
-  let crumbs = [], lastRec = null, lastRecAt = 0, gap = true, seenAt = Date.now(), onlineAt = Date.now(), lastTp = 0, lastRoute = 0, moveFrom = null, moveAt = Date.now(), lookAt = 0;
+  let crumbs = [], lastRec = null, lastRecAt = 0, gap = true, seenAt = Date.now(), onlineAt = Date.now(), lastTp = 0, lastRoute = 0, tpFail = 0, runUntil = 0, moveFrom = null, moveAt = Date.now(), lookAt = 0;
   const halt = () => { for (const c of ['forward', 'sprint', 'jump']) b.setControlState(c, false); };
   const appear = async () => {   // đứt hẳn (member dịch chuyển / quá xa): xuất hiện gần member, chỗ có nền
     if (Date.now() - lastTp < 15000) return;
@@ -1118,14 +1118,18 @@ async function followLoop(n, b, w) {
     const dim = await R.cmd(`data get entity ${who} Dimension`).catch(() => '');
     const p = /overworld/.test(dim) ? await serverPos(who, 'banghoi-1').catch(() => null) : null;
     if (!p) return;   // member ở Nether / End / server khác: đứng chờ, hết hạn thì tự thôi
-    // tắt vật lý trong lúc dời: chunk chỗ mới chưa tới mà vật lý chạy thì bot rơi xuyên đất (1/11 thử thật: rơi xuống y -8)
+    // 1/11 chủ server: hiện ngay cạnh thì member tưởng admin: hiện phía SAU lưng member cách 25–30 khối rồi chạy lại. Đã thử 2 lần mà không
+    // tới được (member trong hang…) mới hiện gần trong 8 khối.
+    const ent = b.players[who] && b.players[who].entity, yaw = ent ? ent.yaw : Math.random() * Math.PI * 2, far = tpFail < 2, r0 = 25 + Math.random() * 5;
+    const cx = Math.floor(p.x + (far ? Math.sin(yaw) * r0 : 0)), cz = Math.floor(p.z + (far ? Math.cos(yaw) * r0 : 0));
+    tpFail++;
     b.physicsEnabled = false;
-    const r = await R.cmd(`execute in minecraft:overworld run spreadplayers ${Math.floor(p.x)} ${Math.floor(p.z)} 1 8 under ${Math.floor(p.y) + 3} false ${n}`).catch(() => 'could not');
+    const r = await R.cmd(`execute in minecraft:overworld run spreadplayers ${cx} ${cz} 1 ${far ? 5 : 8} under ${Math.floor(p.y) + 3} false ${n}`).catch(() => 'could not');
     if (/could not|unable|error|không/i.test(r)) await R.cmd(`execute in minecraft:overworld run tp ${n} ${who}`).catch(() => '');
     await sleep(800);
     for (let i = 0; i < 40 && alive(); i++) {   // tới 8 giây: chờ có địa hình dưới chân
       const q = b.entity && b.entity.position, g = q && b.blockAt(q.offset(0, -1, 0));
-      if (g && Math.hypot(q.x - p.x, q.z - p.z) < 20) break;
+      if (g && Math.hypot(q.x - cx, q.z - cz) < 20) break;
       await sleep(200);
     }
     if (alive()) b.physicsEnabled = true;
@@ -1135,9 +1139,10 @@ async function followLoop(n, b, w) {
     halt();
     if (Date.now() - lastRoute < 12000) return;   // tìm đường nặng nhất: hỏng thì không thử lại liền (botfarm một luồng, 30/10 từng quá tải)
     lastRoute = Date.now(); crumbs = []; gap = false;
-    const ok = await walkTo(b, e.position.x, e.position.y, e.position.z, 3, 10000);
+    const ok = await walkTo(b, e.position.x, e.position.y, e.position.z, 3, 6000, 5);   // 1/11: rơi tới 5 khối (bot bất tử): đồi dốc, member nhảy bậc cao
     moveAt = Date.now(); moveFrom = null;
-    if (!ok && alive()) await appear();
+    if (ok) tpFail = 0;
+    else runUntil = Date.now() + 5000;   // không ra đường: chạy thẳng tới member 5 giây (nền an toàn) trước khi tính tới dịch chuyển
   };
   while (alive()) {
     await sleep(100);
@@ -1169,7 +1174,17 @@ async function followLoop(n, b, w) {
       const c = crumbs[i].p;
       if (Math.hypot(c.x - me.x, c.z - me.z) < 1.2 && Math.abs(c.y - me.y) < 1.5) { crumbs.splice(0, i); break; }
     }
+    if (now < runUntil && d >= 3.5) {   // chạy thẳng: nhìn member, có nền phía trước thì đi, vướng thì nhảy
+      const ax = e.position.x - me.x, az = e.position.z - me.z;
+      b.look(Math.atan2(-ax, -az), 0, true).catch(() => {});
+      const ok = safeAhead(b);
+      b.setControlState('forward', ok); b.setControlState('sprint', ok); b.setControlState('jump', ok && (!moveFrom || me.distanceTo(moveFrom) < 0.3 || b.entity.isInWater));
+      moveFrom = me.clone();
+      if (now >= runUntil - 150 && d > 10) await appear();
+      continue;
+    }
     if (d < 3.5) {   // đủ gần: đứng nhìn member
+      tpFail = 0; runUntil = 0;
       halt(); moveAt = now; moveFrom = null;
       if (now - lookAt > 400) { lookAt = now; b.lookAt(e.position.offset(0, 1.6, 0)).catch(() => {}); }
       continue;
@@ -1178,7 +1193,9 @@ async function followLoop(n, b, w) {
     const c = crumbs[0];
     if (!c) { if (d > 6) await route(e); else halt(); continue; }
     const dx = c.p.x - me.x, dz = c.p.z - me.z, h = Math.hypot(dx, dz);
-    if (c.gap || h > 4 || me.y - c.p.y > 3) { await route(e); continue; }   // vết đứt, hoặc member rơi cao: tìm đường, không nhảy theo
+    // 1/11 thử thật: đồi dốc, member nhảy bậc 3–5 khối là đứt vết -> tìm đường không ra -> đứng im 10 giây rồi dịch chuyển. Giờ chỗ member nhảy xuống
+    // được thì bot bước xuống theo (bất tử); chỉ tìm đường khi vết cách quá xa (member bay, dịch chuyển ngắn) hoặc vực quá sâu.
+    if (h > 6 || me.y - c.p.y > 8) { await route(e); continue; }
     b.look(Math.atan2(-dx, -dz), 0, true).catch(() => {});
     b.setControlState('forward', true);
     b.setControlState('sprint', c.sp > 4.6 || d > 12);   // member chạy thì chạy; tụt xa thì chạy đuổi

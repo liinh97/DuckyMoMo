@@ -55,6 +55,10 @@
   .ask.hoso { width: min(640px, calc(100vw - 32px)); }
   .towntag { display: block; font-size: 11px; color: #0ea5e9; margin-top: 1px; }
   .gantag { display: block; font-size: 11px; color: #f59e0b; margin-top: 1px; }
+  .memtag { display: block; font-size: 11px; color: #a78bfa; margin-top: 1px; }
+  .memberon { margin: 6px 0; font-size: 13px; }
+  .memberon:empty { display: none; }
+  .memberon .mo { display: inline-block; padding: 3px 8px; margin: 2px 4px 2px 0; border-radius: 999px; background: color-mix(in srgb, #a78bfa 18%, transparent); }
   .ask p { white-space: pre-line; }
   .devtag { display: block; font-size: 11px; color: #16a34a; margin-top: 2px; font-weight: 500; }
   .hs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; margin: 10px 0; }
@@ -144,6 +148,7 @@
       <div id="rotSlots"></div>
       <span class="hint" id="rotHint"></span>
     </form>
+    <div id="memberOn" class="memberon"></div>
     <div id="bots"><div class="empty">Đang tải…</div></div>
   </div>
   <div class="card">
@@ -163,7 +168,7 @@
 <script>
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
-let BOTS = [], GANS = [], SERVERS = {}, busy = false;
+let BOTS = [], GANS = [], SERVERS = {}, busy = false, MEMBER = {}, MEMBER_ON = [];
 
 async function act(body, quiet) {
   try {
@@ -192,12 +197,13 @@ function acts(b) {
   if (b.tay) return (b.tron ? '<button class="primary" data-a="tratk" title="Thoát game trước, rồi bấm: bot vào trộm lại (không hiện tin), về chỗ đứng cũ">Trả chỗ cho bot (trộm)</button>'
       : '<button class="primary" data-a="tratk" title="Admin chơi xong: trả tài khoản cho botfarm dùng lại">Trả lại cho bot</button>')
     + '<button data-a="captk" title="Đặt mật khẩu mới cho tài khoản này">Đổi mật khẩu</button>'
-    + '<button data-a="hoso">Hồ sơ</button><button data-a="town">Thị trấn</button>';
+    + '<button data-a="hoso">Hồ sơ</button><button data-a="town">Thị trấn</button><button data-a="member">Member…</button>';
   return `${b.want ? '<button data-a="leave" title="Bot chào (bot khác có thể đáp) rồi thoát, hiện tin [-]">Chào rồi thoát</button><button data-a="leavenb" title="Không chào, thoát hiện tin [-]">Thoát (hiện [-])</button><button data-a="leaveim" title="Không chào, không hiện tin; chỉ mất tên khỏi bảng Tab">Thoát trộm</button>' : '<button class="primary" data-a="join" title="Vào, hiện tin [+] rồi chào (bot khác có thể đáp)">Vào rồi chào</button><button data-a="joinnh" title="Vào, hiện tin [+], không chào">Vào (hiện [+])</button><button data-a="joinim" title="Vào lặng lẽ, không hiện tin, không chào">Vào trộm</button>'}
         ${b.online ? `<button data-a="home" title="Về chỗ mặc định">Về chỗ</button>${b.server === "banghoi-1" ? `<button data-a="random"${b.spawn ? ' class="hl"' : ""} title="Ra một khu ngẫu nhiên chưa bot nào đứng (đặt làm chỗ mặc định)">Ngẫu nhiên</button>` : ""}<button data-a="move" title="Đi tới toạ độ X Z">Đi tới…</button>
         <button data-a="cmd" data-t="spawn">/spawn</button><button data-a="cmd" data-t="tpaccept">/tpaccept</button><button data-a="cmd" data-t="tpdeny">/tpdeny</button>
         <button data-a="sethome" title="Lấy chỗ đang đứng làm chỗ mặc định">Đặt chỗ</button><button data-a="pick" title="Chọn bot này ở khung chat">Chat</button>` : ""}
         <button data-a="hoso" title="Xu, Thăng Cấp, giờ chơi, danh phận, nghề, kỹ năng: số liệu giống người chơi thật">Hồ sơ</button>
+        <button data-a="member" title="Gắn bot này với member quen: member vào game thì báo nên dùng bot này">Member…</button>
         <button data-a="town" title="Cho bot vào / đổi / rời thị trấn">Thị trấn</button>
         <button data-a="dev"${(DEV_STATE[b.name] || {}).on ? ' class="hl"' : ""} title="Bot tự tăng số liệu dần như người thật (chỉ khi online ở Bang Hội Chiến), mỗi bot một tính cách riêng">${(DEV_STATE[b.name] || {}).on ? "Đang tự phát triển" : "Tự phát triển"}</button>
         ${b.created && !b.want && !b.online ? '<button data-a="remove" title="Xoá bot tạo thêm khỏi danh sách">Xoá</button>' : ""}`
@@ -215,12 +221,14 @@ function renderBots() {
     const st = b.online || b.tuchoi ? "on" : (b.want || b.connecting) ? "wait" : "";
     const pos = b.online && b.x != null ? `${b.x} ${b.y} ${b.z}${b.away ? " · đang ở chỗ khác" : ""}` : (b.want ? "đang vào…" : "—");
     h += `<tr data-n="${esc(b.name)}"${b.name === sel ? ' class="sel"' : ""}>
-      <td class="name"><span class="dot ${st}"></span><b>${esc(b.name)}</b>${b.err && !b.online ? `<span class="err" title="${esc(b.err)}">${esc(b.err)}</span>` : ""}${b.gan ? `<span class="gantag" title="Tài khoản người thật; server tính như người chơi">⚑ tài khoản gắn${b.tuchoi ? " · đang tự chơi ở " + esc(SERVERS[b.tuchoi] || b.tuchoi) + " (chat qua sudo)" : ""}</span>` : ""}${b.tay ? '<span class="gantag" title="Đã cấp mật khẩu cho admin chơi tay; botfarm không cho vào">⚑ admin đang giữ</span>' : ""}${devTag(b.name)}${TOWNS[b.name] ? `<span class="towntag" title="Thị trấn (Towny)">⌂ ${esc(TOWNS[b.name])}</span>` : ""}</td>
+      <td class="name"><span class="dot ${st}"></span><b>${esc(b.name)}</b>${b.err && !b.online ? `<span class="err" title="${esc(b.err)}">${esc(b.err)}</span>` : ""}${b.gan ? `<span class="gantag" title="Tài khoản người thật; server tính như người chơi">⚑ tài khoản gắn${b.tuchoi ? " · đang tự chơi ở " + esc(SERVERS[b.tuchoi] || b.tuchoi) + " (chat qua sudo)" : ""}</span>` : ""}${b.tay ? '<span class="gantag" title="Đã cấp mật khẩu cho admin chơi tay; botfarm không cho vào">⚑ admin đang giữ</span>' : ""}${(MEMBER[b.name] || []).length ? `<span class="memtag" title="Member gắn với bot này: vào game thì trang báo nên dùng bot này">👥 ${esc(MEMBER[b.name].join(", "))}</span>` : ""}${devTag(b.name)}${TOWNS[b.name] ? `<span class="towntag" title="Thị trấn (Towny)">⌂ ${esc(TOWNS[b.name])}</span>` : ""}</td>
       <td><select data-a="server">${srvOptions(b.server)}</select></td>
       <td>${b.online && b.spawn ? `<span class="atsp" title="Đang đứng ở khu spawn${b.server === "banghoi-1" ? " — bấm Ngẫu nhiên để ra khu riêng" : ""}">Ở spawn</span>` : ""}<span class="pos" title="${b.home ? "Chỗ mặc định: " + b.home.join(" ") : ""}">${esc(pos)}</span></td>
       <td><div class="acts">${acts(b)}</div></td></tr>`;
   }
   $("bots").innerHTML = h + "</tbody></table>";
+  // 1/11: member quen đang online -> nên dùng bot nào
+  $("memberOn").innerHTML = MEMBER_ON.length ? "🤝 Member quen đang online: " + MEMBER_ON.map((m) => `<span class="mo"><b>${esc(m.member)}</b> (${esc(SERVERS[m.server] || m.server)}) → ${m.bots.map((b) => esc(b)).join(", ")}</span>`).join("") : "";
   // 1/11: số bot đang online (tổng + từng server)
   const on = BOTS.filter((b) => b.online), per = {};
   for (const b of on) per[b.server] = (per[b.server] || 0) + 1;
@@ -248,6 +256,12 @@ $("bots").addEventListener("click", async (ev) => {
   const server = btn.closest("tr").querySelector('select[data-a="server"]').value;
   if (a === "pick") { $("who").value = name; $("txt").focus(); renderBots(); return; }
   if (a === "hoso") return openProfile(name);
+  if (a === "member") {   // 1/11: gắn bot với member quen
+    const v = await ask(`Member gắn với ${name} (cách nhau dấu phẩy). Member này vào game thì trang báo nên dùng ${name}. Gõ - để bỏ gắn.`,
+      { title: "Gắn member", ok: "Lưu", input: (MEMBER[name] || []).join(", ") });
+    if (v === null) return;
+    return act({ bot: name, action: "member", members: v === "-" ? "" : v });
+  }
   if (a === "town") return openTown(name);
   if (a === "dev") return act({ bot: name, action: "phattrien", on: !(DEV_STATE[name] || {}).on });
   if (a === "move") {
@@ -357,7 +371,7 @@ async function loadBots() {
   try {
     const d = await (await fetch("api/bot")).json();
     if (!d.ok) { $("bots").innerHTML = `<div class="empty">${esc(d.message || "Không tải được")}</div>`; return; }
-    SERVERS = d.servers || {}; BOTS = d.bots || []; GANS = d.gan || []; EVENTS = d.events || []; DEV_STATE = d.phattrien || {}; TOWNS = d.thitran || {}; TOWN_LIST = d.ds_thitran || [];
+    SERVERS = d.servers || {}; BOTS = d.bots || []; GANS = d.gan || []; MEMBER = d.member || {}; MEMBER_ON = d.member_on || []; EVENTS = d.events || []; DEV_STATE = d.phattrien || {}; TOWNS = d.thitran || {}; TOWN_LIST = d.ds_thitran || [];
     if ($("fsrv").options.length === 1) for (const [k, v] of Object.entries(SERVERS)) $("fsrv").add(new Option(v, k));
     if (!$("mkSrv").options.length) for (const [k, v] of Object.entries(SERVERS)) $("mkSrv").add(new Option(v, k));
     if (!$("ganSrv").options.length) for (const [k, v] of Object.entries(SERVERS)) if (k !== "lobby") $("ganSrv").add(new Option(v, k));

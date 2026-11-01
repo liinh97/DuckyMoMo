@@ -39,6 +39,14 @@ final class SeasonsPapi {
             @Override
             public String onRequest(OfflinePlayer player, String params) {
                 return switch (params) {
+                    case "phien" -> {   // 1/11: đã chơi bao lâu trong phiên này (từ lần vào server gần nhất), cho bảng bên phải
+                        org.bukkit.entity.Player on = player == null ? null : player.getPlayer();
+                        if (on == null) {
+                            yield "";
+                        }
+                        long m = Math.max(0, (System.currentTimeMillis() - on.getLastLogin()) / 60000);
+                        yield m < 60 ? m + " phút" : (m / 60) + "g" + String.format("%02d", m % 60) + "p";
+                    }
                     case "id" -> s.current();
                     case "ten" -> LegacyComponentSerializer.legacySection().serialize(Seasons.c(s.name(s.current())));
                     case "ten_tron" -> Seasons.plain(s.name(s.current()));

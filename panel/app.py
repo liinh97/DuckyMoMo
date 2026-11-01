@@ -1952,6 +1952,11 @@ def bot_json():
                 for g in d["gan"]:
                     if not g.get("online"):
                         g["tuchoi"] = onl.get(str(g.get("name", "")).lower())
+            bm = bot_member_load()
+            onl = online_players()
+            d["member"] = bm
+            d["member_on"] = [{"member": m, "server": onl[m.lower()], "bots": [b for b, ms in bm.items() if m.lower() in {x.lower() for x in ms}]}
+                              for m in sorted({x for ms in bm.values() for x in ms}, key=str.lower) if m.lower() in onl]
             return d | {"ok": True, "phattrien": bot_dev_info(), "thitran": bot_towns_of([b.get("name", "") for b in d.get("bots", [])]),
                         "ds_thitran": sorted(_bot_towns().values(), key=str.lower)}
     except Exception as e:
@@ -2737,6 +2742,44 @@ NOTIFIER = thongbao.Notifier(DATA_DIR, ACTIVITY_FILE, _noti_bots, _noti_staff, _
                              log=lambda m: print(m, flush=True))
 
 
+# ---------------------------------------------------------------- bot gắn với member (1/11, chủ server: "admin thay phiên chơi bot để giao lưu
+# nhiều member; gắn bot với một hoặc nhiều member, member vào thì báo nên dùng bot nào"). data/panel/bot-member.json {bot: [member…]}.
+BOT_MEMBER_FILE = DATA_DIR / "panel" / "bot-member.json"
+
+
+def bot_member_load():
+    try:
+        return json.loads(BOT_MEMBER_FILE.read_text(encoding="utf-8"))
+    except Exception:
+        return {}
+
+
+def bot_member_set(body, who):
+    bot = str(body.get("bot", "")).strip()
+    names = [n for n in re.split(r"[\s,;]+", str(body.get("members", ""))) if n]
+    bad = [n for n in names if not PLAYER_RE.match(n)]
+    if not bot or bad:
+        raise ValueError("Tên không hợp lệ: " + ", ".join(bad) if bad else "Thiếu tên bot")
+    d = bot_member_load()
+    if names:
+        d[bot] = names
+    else:
+        d.pop(bot, None)
+    BOT_MEMBER_FILE.parent.mkdir(parents=True, exist_ok=True)
+    tmp = BOT_MEMBER_FILE.with_suffix(".tmp")
+    tmp.write_text(json.dumps(d, ensure_ascii=False, indent=1), encoding="utf-8")
+    tmp.replace(BOT_MEMBER_FILE)
+    web_log({"viec": "/api/bot", "nguoi": who or PANEL_USER, "hanh_dong": f"gắn {bot} với member: {', '.join(names) or '(bỏ)'}", "doi_tuong": bot})
+    return {"ok": True, "message": f"{bot}: " + (", ".join(names) if names else "bỏ gắn member")}
+
+
+def bots_for_member(low):
+    return [b for b, ms in bot_member_load().items() if low in {m.lower() for m in ms}]
+
+
+NOTIFIER.goi_y = bots_for_member
+
+
 def bot_dev_loop():
     time.sleep(90)
     while True:
@@ -2926,6 +2969,8 @@ def hen_tat_loop():
 
 def bot_action(body, who):
     act = str(body.get("action", ""))
+    if act == "member":
+        return bot_member_set(body, who)
     if act == "hentat":
         return hen_tat_set(body, who)
     if act == "hentat_xem":

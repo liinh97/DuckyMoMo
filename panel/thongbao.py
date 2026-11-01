@@ -21,7 +21,8 @@ import time
 from pathlib import Path
 
 KINDS = {"vaora": "Người chơi vào / ra", "chuyen": "Người chơi chuyển server", "chat": "Chat của người chơi", "suco": "Sự cố server",
-         "donate": "Nạp tiền (lấy mã QR, báo đã chuyển)"}   # 30/10: chủ server: member nạp mà app không báo
+         "donate": "Nạp tiền (lấy mã QR, báo đã chuyển)",
+         "goiy": "Member quen vào: nên dùng bot nào"}   # 1/11: bot gắn với member (trang Bot)   # 30/10: chủ server: member nạp mà app không báo
 SRV = {"lobby": "Sảnh", "banghoi-1": "Bang Hội Chiến", "practice-1": "Practice", "sangtao-1": "Thái Ấp Sáng Tạo"}
 
 
@@ -214,6 +215,10 @@ class Notifier:
             joined[low] = time.time()
             where.pop(low, None)
             self.push("vaora", f"🟢 {name} vào server", "Lần đầu vào DuckyMoMo" if first else "Đã từng chơi", tag="vao-" + low)
+            goi = getattr(self, "goi_y", None)   # 1/11: bot đã gắn với member này (trang Bot)
+            bots = goi(low) if goi else []
+            if bots:
+                self.push("goiy", f"🤝 {name} vào server", "Nên vào bằng bot: " + ", ".join(bots), tag="goiy-" + low, url="bot")
         elif e.get("server") == "proxy" and text.endswith(" rời network"):
             t0 = joined.pop(low, None)
             last = where.pop(low, None)

@@ -539,6 +539,11 @@ const ftpaLast = { bot: {}, nguoi: {} };   // tên -> lúc tpa gần nhất
 let ftpaNext = Date.now() + (20 + Math.random() * 40) * 60000;
 function dodgeTeleport(name) {
   const rt = RT[name], b = rt.bot; if (!b) return;
+  // 1/11: bot đứng trong phòng ẩn chật nên nhảy không xê dịch được -> Essentials không huỷ lượt dịch chuyển (Linh_Chi bị kéo tới SiHaiTen).
+  // Chắc ăn: server dời bot 0,8 khối rồi trả lại ngay (vị trí đổi = Essentials huỷ dịch chuyển đang chờ), không lệ thuộc vật lý.
+  const host = state[name].server;
+  rcon(host).cmd(`minecraft:execute as ${name} at @s run minecraft:tp @s ~0.8 ~ ~`)
+    .then(() => sleep(400)).then(() => rcon(host).cmd(`minecraft:execute as ${name} at @s run minecraft:tp @s ~-0.8 ~ ~`)).catch(() => {});
   try {
     b.physicsEnabled = true;
     b.setControlState('jump', true); b.setControlState('forward', true);

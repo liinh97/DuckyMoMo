@@ -1401,16 +1401,22 @@ async function act(b) {
       const r2 = await rcon('lobby').cmd(`authme password ${b.bot} ${pw}`).catch(e => 'lỗi ' + e.message);
       const out = r1 + ' / ' + r2;
       if (/^lỗi/.test(r1) && /^lỗi/.test(r2)) throw new Error('không gửi được lệnh tới sảnh: ' + out);
-      st.pass = pw; st.tay = true; st.want = false; save();
+      // 1/11: "Đổi chỗ trộm" (b.tron): bot đang online thoát im, admin vào thế chỗ cũng im (giữ quyền im lặng), không ai thấy đổi người
+      if (b.tron) { if (!st.silent) await setSilent(b.bot, true); }
+      st.pass = pw; st.tay = true; st.tron = !!b.tron; st.want = false; save();
       if (rt.bot) rt.bot.quit();
-      await setSilent(b.bot, false);   // admin vào bằng tài khoản này thì hiện [+] / [-] như người thật
+      if (!b.tron) await setSilent(b.bot, false);   // cấp thường: admin vào bằng tài khoản này thì hiện [+] / [-] như người thật
       log('cấp tài khoản', b.bot, 'cho admin (AuthMe:', String(out).slice(0, 80) + ')');
-      return { message: 'Đã cấp tài khoản ' + b.bot + '. Đăng nhập: tên ' + b.bot + ', mật khẩu ' + pw + ' (/login ' + pw + ')', pass: pw };
+      return { message: 'Đã cấp tài khoản ' + b.bot + '. Đăng nhập: tên ' + b.bot + ', mật khẩu ' + pw + ' (/login ' + pw + ')', pass: pw, tron: !!b.tron };
     }
-    case 'tratk':   // admin chơi xong: trả tài khoản cho botfarm (mật khẩu giữ nguyên, botfarm tự đăng nhập bằng nó ở sảnh)
-      st.tay = false; save();
+    case 'tratk': {   // admin chơi xong: trả tài khoản cho botfarm (mật khẩu giữ nguyên, botfarm tự đăng nhập bằng nó ở sảnh)
+      const tron = st.tron;
       await setSilent(b.bot, true);
-      return b.bot + ' đã trả lại cho bot (bấm Vào để bot vào lại)';
+      st.tay = false; st.tron = false;
+      if (tron) { st.want = true; st.since = Date.now(); rt.retryAt = Date.now() + 5000; }   // đổi chỗ trộm: bot tự vào trộm lại ngay chỗ admin đứng
+      save();
+      return b.bot + (tron ? ' đã trả lại: bot vào trộm lại sau vài giây, về chỗ đứng cũ của bot' : ' đã trả lại cho bot (bấm Vào để bot vào lại)');
+    }
     case 'bogan':
       if (!st.gan) throw new Error(b.bot + ' không phải tài khoản gắn');
       st.want = false; if (rt.bot) rt.bot.quit();
@@ -1475,7 +1481,7 @@ http.createServer((req, res) => {
         return { name: n, want: st.want, server: st.server, online: !!rt.bot, connecting: rt.connecting, err: rt.err,
           x: p ? Math.floor(p.x) : null, y: p ? Math.floor(p.y) : null, z: p ? Math.floor(p.z) : null, spawn: atSpawn(st.server, p),
           home: h ? [Math.floor(h.x), Math.floor(h.y), Math.floor(h.z)] : null, away: !!st.at[st.server], created: !!st.created,
-          gan: !!st.gan, tay: !!st.tay };
+          gan: !!st.gan, tay: !!st.tay, tron: !!st.tron };
       }),
       events: EVENTS.slice(-100),
       chat: chatCfg,

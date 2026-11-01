@@ -2963,6 +2963,10 @@ def bot_action(body, who):
             web_log({"viec": "/api/bot", "nguoi": who or PANEL_USER, "hanh_dong": f"{g['name']} (tự chơi, qua sudo) {BOT_ACTIONS[act]} {text}"[:300],
                      "doi_tuong": g["name"], "ok": True})
             return {"ok": True, "message": f"{g['name']}: {text}" + (f" ({COLOR_RE.sub('', out)[:120]})" if act == "cmd" and out else "")}
+    if act == "tratk":   # 1/11: admin còn đang chơi bằng tài khoản bot thì chưa trả (bot vào là đá admin ra)
+        nm = str(body.get("bot", "")).strip()
+        if nm.lower() in online_players(fresh=True):
+            raise ValueError(f"Bạn vẫn đang chơi bằng {nm}. Thoát game trước rồi mới bấm Trả lại cho bot.")
     if act == "join":   # 1/11: tài khoản gắn đang được chủ tài khoản chơi thật thì KHÔNG cho botfarm vào (vào là đá người ta ra)
         nm = str(body.get("bot", "")).strip()
         if any(str(g.get("name", "")).lower() == nm.lower() and not g.get("online") for g in bot_json().get("gan", [])) \
@@ -2974,7 +2978,7 @@ def bot_action(body, who):
         if not uid:
             raise ValueError(f"Không thấy tài khoản {name} (phải vào Bang Hội Chiến ít nhất một lần, gõ đúng tên kể cả dấu chấm của Bedrock)")
         body = dict(body, uuid=uid, bot=real)
-    payload = {k: body.get(k) for k in ("bot", "action", "server", "text", "x", "z", "on", "min", "max", "khung", "silent", "nobye", "nohi", "uuid", "vaora", "phienMin", "phienMax") if body.get(k) is not None}
+    payload = {k: body.get(k) for k in ("bot", "action", "server", "text", "x", "z", "on", "min", "max", "khung", "silent", "nobye", "nohi", "uuid", "tron", "vaora", "phienMin", "phienMax") if body.get(k) is not None}
     req = urllib.request.Request(BOTFARM_URL + "/act", data=json.dumps(payload).encode("utf-8"), headers={"Content-Type": "application/json"}, method="POST")
     try:
         with urllib.request.urlopen(req, timeout=15) as r:

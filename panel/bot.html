@@ -189,7 +189,8 @@ function acts(b) {
     + '<button data-a="bogan" title="Bỏ tài khoản này khỏi trang Bot (tài khoản vẫn nguyên)">Bỏ gắn</button>';
   if (b.gan) return (b.want ? '<button data-a="ganleave" title="Botfarm thoát tài khoản này">Thoát</button>' : '<button class="primary" data-a="ganjoin" title="Botfarm vào và giữ tài khoản này online (như người thật vào)">Vào</button>')
     + online + '<button data-a="bogan" title="Bỏ tài khoản này khỏi trang Bot (tài khoản vẫn nguyên)">Bỏ gắn</button>';
-  if (b.tay) return '<button class="primary" data-a="tratk" title="Admin chơi xong: trả tài khoản cho botfarm dùng lại">Trả lại cho bot</button>'
+  if (b.tay) return (b.tron ? '<button class="primary" data-a="tratk" title="Thoát game trước, rồi bấm: bot vào trộm lại (không hiện tin), về chỗ đứng cũ">Trả chỗ cho bot (trộm)</button>'
+      : '<button class="primary" data-a="tratk" title="Admin chơi xong: trả tài khoản cho botfarm dùng lại">Trả lại cho bot</button>')
     + '<button data-a="captk" title="Đặt mật khẩu mới cho tài khoản này">Đổi mật khẩu</button>'
     + '<button data-a="hoso">Hồ sơ</button><button data-a="town">Thị trấn</button>';
   return `${b.want ? '<button data-a="leave" title="Bot chào (bot khác có thể đáp) rồi thoát, hiện tin [-]">Chào rồi thoát</button><button data-a="leavenb" title="Không chào, thoát hiện tin [-]">Thoát (hiện [-])</button><button data-a="leaveim" title="Không chào, không hiện tin; chỉ mất tên khỏi bảng Tab">Thoát trộm</button>' : '<button class="primary" data-a="join" title="Vào, hiện tin [+] rồi chào (bot khác có thể đáp)">Vào rồi chào</button><button data-a="joinnh" title="Vào, hiện tin [+], không chào">Vào (hiện [+])</button><button data-a="joinim" title="Vào lặng lẽ, không hiện tin, không chào">Vào trộm</button>'}
@@ -200,6 +201,7 @@ function acts(b) {
         <button data-a="town" title="Cho bot vào / đổi / rời thị trấn">Thị trấn</button>
         <button data-a="dev"${(DEV_STATE[b.name] || {}).on ? ' class="hl"' : ""} title="Bot tự tăng số liệu dần như người thật (chỉ khi online ở Bang Hội Chiến), mỗi bot một tính cách riêng">${(DEV_STATE[b.name] || {}).on ? "Đang tự phát triển" : "Tự phát triển"}</button>
         ${b.created && !b.want && !b.online ? '<button data-a="remove" title="Xoá bot tạo thêm khỏi danh sách">Xoá</button>' : ""}`
+    + (b.online && b.server === "banghoi-1" ? '<button data-a="swap" title="Bot thoát trộm, bạn đăng nhập tài khoản này vào thế chỗ (cũng không hiện tin): không ai thấy đổi người">Đổi chỗ trộm</button>' : "")
     + (b.want || b.online ? "" : '<button data-a="captk" title="Đặt mật khẩu đăng nhập riêng cho tài khoản bot này để admin vào chơi như người thật; botfarm khoá bot lại tới khi bấm Trả lại cho bot">Cấp tài khoản</button>');
 }
 let DEV_STATE = {}, TOWNS = {}, TOWN_LIST = [];
@@ -260,9 +262,11 @@ $("bots").addEventListener("click", async (ev) => {
   if (a === "ganleave") return act({ bot: name, action: "leave" });
   if (a === "bogan") { if (await ask(`Bỏ gắn ${name}? Botfarm thoát tài khoản này (nếu đang giữ) và bỏ khỏi danh sách; tài khoản trong game giữ nguyên.`, { title: "Bỏ gắn", ok: "Bỏ gắn" })) act({ bot: name, action: "bogan" }); return; }
   if (a === "tratk") return act({ bot: name, action: "tratk" });
-  if (a === "captk") {
-    if (!(await ask(`Cấp tài khoản ${name} cho admin chơi tay? Đặt mật khẩu đăng nhập mới, bot thoát và bị khoá tới khi bấm "Trả lại cho bot".`, { title: "Cấp tài khoản bot", ok: "Cấp" }))) return;
-    const d = await act({ bot: name, action: "captk" }, true);
+  if (a === "captk" || a === "swap") {
+    const tron = a === "swap";
+    if (!(await ask(tron ? `Đổi chỗ trộm với ${name}? Bot thoát không hiện tin, bạn đăng nhập tài khoản này vào thế chỗ (vào / ra cũng không hiện tin). Chơi xong: thoát game rồi bấm "Trả chỗ cho bot".`
+      : `Cấp tài khoản ${name} cho admin chơi tay? Đặt mật khẩu đăng nhập mới, bot thoát và bị khoá tới khi bấm "Trả lại cho bot".`, { title: tron ? "Đổi chỗ trộm" : "Cấp tài khoản bot", ok: tron ? "Đổi chỗ" : "Cấp" }))) return;
+    const d = await act({ bot: name, action: "captk", tron }, true);
     if (d && d.ok && d.pass) await ask(`Tài khoản: ${name}\nMật khẩu: ${d.pass}\n\nVào game qua cổng VPS như người chơi thường, gõ /login ${d.pass}. Ghi lại mật khẩu, trang sẽ không hiện lại (quên thì bấm Đổi mật khẩu).`, { title: "Đã cấp tài khoản", ok: "Đã ghi lại" });
     return;
   }

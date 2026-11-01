@@ -7,7 +7,7 @@
 <style>
   :root { --chat: #3b82f6; --command: #c48a00; --msg: #8b5cf6; --tpa: #16a34a; --nhac: #e5484d; --botc: #0ea5a4; }
   @media (prefers-color-scheme: dark) { :root { --chat: #8ab4f8; --command: #fdd663; --msg: #c7a6ff; --tpa: #81c995; --nhac: #ff8a80; --botc: #5eead4; } }
-  .wrap { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: 14px; align-items: start; }
+  .wrap { display: grid; grid-template-columns: minmax(0, 1.75fr) minmax(0, 1fr); gap: 14px; align-items: start; }   /* 1/11: khung chat hẹp lại, danh sách bot rộng ra */
   @media (max-width: 1100px) { .wrap { grid-template-columns: 1fr; } }
   .card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
   .card h3 { margin: 0; padding: 12px 14px; font-size: 15px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; border-bottom: 1px solid var(--line); }
@@ -188,20 +188,20 @@ function srvOptions(cur) {
 function acts(b) {
   const online = b.online ? `<button data-a="move" title="Đi tới toạ độ X Z">Đi tới…</button>
         <button data-a="cmd" data-t="spawn">/spawn</button><button data-a="cmd" data-t="tpaccept">/tpaccept</button><button data-a="cmd" data-t="tpdeny">/tpdeny</button>
-        <button data-a="pick" title="Chọn tài khoản này ở khung chat">Chat</button>` : "";
+        <button data-a="pick" title="Chọn tài khoản này ở khung chat">Chat</button><button data-a="gmc" title="Chế độ Sáng tạo (chạy từ console)">GMC</button><button data-a="gms" title="Chế độ Sinh tồn">GMS</button>` : "";
   if (b.gan && b.tuchoi) return '<button class="primary" data-a="pick" title="Chọn ở khung chat: nói / chạy lệnh thay qua sudo, người đang chơi không bị đá">Chat</button>'
-    + '<button data-a="cmd" data-t="spawn">/spawn</button><button data-a="cmd" data-t="tpaccept">/tpaccept</button><button data-a="cmd" data-t="tpdeny">/tpdeny</button>'
-    + '<button data-a="bogan" title="Bỏ tài khoản này khỏi trang Bot (tài khoản vẫn nguyên)">Bỏ gắn</button>';
+    + '<button data-a="cmd" data-t="spawn">/spawn</button><button data-a="cmd" data-t="tpaccept">/tpaccept</button><button data-a="cmd" data-t="tpdeny">/tpdeny</button><button data-a="gmc" title="Chế độ Sáng tạo (chạy từ console)">GMC</button><button data-a="gms" title="Chế độ Sinh tồn">GMS</button>'
+    + '<button data-a="member" title="Gắn tài khoản này với member quen">Member…</button><button data-a="bogan" title="Bỏ tài khoản này khỏi trang Bot (tài khoản vẫn nguyên)">Bỏ gắn</button>';
   if (b.gan) return (b.want ? '<button data-a="ganleave" title="Botfarm thoát tài khoản này">Thoát</button>' : '<button class="primary" data-a="ganjoin" title="Botfarm vào và giữ tài khoản này online (như người thật vào)">Vào</button>')
-    + online + '<button data-a="bogan" title="Bỏ tài khoản này khỏi trang Bot (tài khoản vẫn nguyên)">Bỏ gắn</button>';
+    + online + '<button data-a="member" title="Gắn tài khoản này với member quen">Member…</button><button data-a="bogan" title="Bỏ tài khoản này khỏi trang Bot (tài khoản vẫn nguyên)">Bỏ gắn</button>';
   if (b.tay) return (b.tron ? '<button class="primary" data-a="tratk" title="Thoát game trước, rồi bấm: bot vào trộm lại (không hiện tin), về chỗ đứng cũ">Trả chỗ cho bot (trộm)</button>'
       : '<button class="primary" data-a="tratk" title="Admin chơi xong: trả tài khoản cho botfarm dùng lại">Trả lại cho bot</button>')
     + '<button data-a="captk" title="Đặt mật khẩu mới cho tài khoản này">Đổi mật khẩu</button>'
-    + '<button data-a="hoso">Hồ sơ</button><button data-a="town">Thị trấn</button><button data-a="member">Member…</button>';
+    + '<button data-a="gmc" title="Chế độ Sáng tạo (chạy từ console)">GMC</button><button data-a="gms" title="Chế độ Sinh tồn">GMS</button><button data-a="hoso">Hồ sơ</button><button data-a="town">Thị trấn</button><button data-a="member">Member…</button>';
   return `${b.want ? '<button data-a="leave" title="Bot chào (bot khác có thể đáp) rồi thoát, hiện tin [-]">Chào rồi thoát</button><button data-a="leavenb" title="Không chào, thoát hiện tin [-]">Thoát (hiện [-])</button><button data-a="leaveim" title="Không chào, không hiện tin; chỉ mất tên khỏi bảng Tab">Thoát trộm</button>' : '<button class="primary" data-a="join" title="Vào, hiện tin [+] rồi chào (bot khác có thể đáp)">Vào rồi chào</button><button data-a="joinnh" title="Vào, hiện tin [+], không chào">Vào (hiện [+])</button><button data-a="joinim" title="Vào lặng lẽ, không hiện tin, không chào">Vào trộm</button>'}
         ${b.online ? `<button data-a="home" title="Về chỗ mặc định">Về chỗ</button>${b.server === "banghoi-1" ? `<button data-a="random"${b.spawn ? ' class="hl"' : ""} title="Ra một khu ngẫu nhiên chưa bot nào đứng (đặt làm chỗ mặc định)">Ngẫu nhiên</button>` : ""}<button data-a="move" title="Đi tới toạ độ X Z">Đi tới…</button>
         <button data-a="cmd" data-t="spawn">/spawn</button><button data-a="cmd" data-t="tpaccept">/tpaccept</button><button data-a="cmd" data-t="tpdeny">/tpdeny</button>
-        <button data-a="sethome" title="Lấy chỗ đang đứng làm chỗ mặc định">Đặt chỗ</button><button data-a="pick" title="Chọn bot này ở khung chat">Chat</button>` : ""}
+        <button data-a="sethome" title="Lấy chỗ đang đứng làm chỗ mặc định">Đặt chỗ</button><button data-a="pick" title="Chọn bot này ở khung chat">Chat</button><button data-a="gmc" title="Chế độ Sáng tạo (chạy từ console)">GMC</button><button data-a="gms" title="Chế độ Sinh tồn">GMS</button>` : ""}
         <button data-a="hoso" title="Xu, Thăng Cấp, giờ chơi, danh phận, nghề, kỹ năng: số liệu giống người chơi thật">Hồ sơ</button>
         <button data-a="member" title="Gắn bot này với member quen: member vào game thì báo nên dùng bot này">Member…</button>
         <button data-a="town" title="Cho bot vào / đổi / rời thị trấn">Thị trấn</button>
@@ -256,6 +256,7 @@ $("bots").addEventListener("click", async (ev) => {
   const server = btn.closest("tr").querySelector('select[data-a="server"]').value;
   if (a === "pick") { $("who").value = name; $("txt").focus(); renderBots(); return; }
   if (a === "hoso") return openProfile(name);
+  if (a === "gmc" || a === "gms") return act({ bot: name, action: "gm", mode: a === "gmc" ? "c" : "s" });
   if (a === "member") {   // 1/11: gắn bot với member quen
     const v = await ask(`Member gắn với ${name} (cách nhau dấu phẩy). Member này vào game thì trang báo nên dùng ${name}. Gõ - để bỏ gắn.`,
       { title: "Gắn member", ok: "Lưu", input: (MEMBER[name] || []).join(", ") });

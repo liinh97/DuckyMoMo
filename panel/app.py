@@ -2780,6 +2780,29 @@ def bots_for_member(low):
 NOTIFIER.goi_y = bots_for_member
 
 
+def bot_msg_loop():
+    """1/11 chủ server: member nhắn riêng (/msg) hoặc gửi tpa cho bot thì báo đẩy về điện thoại (loại "tinrieng") để kịp trả lời."""
+    seen = None
+    while True:
+        try:
+            ev = [e for e in bot_json().get("events", []) if e.get("type") in ("msg", "tpa")]
+            keys = {(e.get("ts"), e.get("bot"), e.get("type"), e.get("text")) for e in ev}
+            if seen is not None:
+                for e in ev:
+                    k = (e.get("ts"), e.get("bot"), e.get("type"), e.get("text"))
+                    if k in seen:
+                        continue
+                    who_ = str(e.get("from", "") or "")
+                    if e.get("type") == "msg":
+                        NOTIFIER.push("tinrieng", f"✉ {who_} nhắn riêng {e.get('bot')}", str(e.get("text", ""))[:180], tag="msg-" + str(e.get("bot")), url="bot")
+                    else:
+                        NOTIFIER.push("tinrieng", f"↪ {who_} gửi tpa cho {e.get('bot')}", "Trả lời ở trang Bot (/tpaccept, /tpdeny)", tag="tpa-" + str(e.get("bot")), url="bot")
+            seen = keys
+        except Exception as e:
+            print(f"Báo tin riêng cho bot: lỗi {e}", flush=True)
+        time.sleep(8)
+
+
 def bot_dev_loop():
     time.sleep(90)
     while True:
@@ -2971,6 +2994,17 @@ def bot_action(body, who):
     act = str(body.get("action", ""))
     if act == "member":
         return bot_member_set(body, who)
+    if act == "gm":   # 1/11: đổi chế độ chơi cho bot / tài khoản từ console (không cần quyền trên tài khoản)
+        nm = str(body.get("bot", "")).strip()
+        mode = {"c": "creative", "s": "survival"}.get(str(body.get("mode", "")), "")
+        srv = online_players(fresh=True).get(nm.lower())
+        if not mode or not PLAYER_RE.match(nm):
+            raise ValueError("Thiếu tên hoặc chế độ")
+        if not srv:
+            raise ValueError(f"{nm} đang không online")
+        out = rcon(srv, [f"minecraft:gamemode {mode} {nm}"])[0][1]
+        web_log({"viec": "/api/bot", "nguoi": who or PANEL_USER, "hanh_dong": f"{nm} chế độ {mode}", "doi_tuong": nm, "ok": True})
+        return {"ok": True, "message": f"{nm}: {'Sáng tạo' if mode == 'creative' else 'Sinh tồn'} ({COLOR_RE.sub('', out)[:80]})"}
     if act == "hentat":
         return hen_tat_set(body, who)
     if act == "hentat_xem":
@@ -3036,6 +3070,14 @@ def bot_action(body, who):
              + (f" ({'bật' if payload.get('on') else 'tắt'}, {payload.get('min')}–{payload.get('max')} phút)" if act == "chatcfg" else "")
              + (f": {res.get('message', '')}" if act == "rotcfg" else ""),
              "doi_tuong": payload.get("bot", ""), "ok": bool(res.get("ok"))})
+    if act in ("captk", "tratk") and res.get("ok"):   # 1/11: admin giữ tài khoản bot thì tự /gmc /gms được; trả lại thì gỡ
+        nm = str(payload.get("bot", ""))
+        verb = "set" if act == "captk" else "unset"
+        try:
+            rcon("banghoi-1", [f"lp user {nm} permission {verb} {n}" + (" true" if verb == "set" else "")
+                               for n in ("essentials.gamemode", "essentials.gamemode.creative", "essentials.gamemode.survival")])
+        except Exception as e:
+            print(f"Quyền gamemode {nm}: lỗi {e}", flush=True)
     if act == "create" and res.get("ok"):
         # 28/10 chủ server: "lưu ý các tính năng này cho bot khi tạo mới" -> bot mới tự bật tự phát triển, xếp hàng tạo quá khứ, được cấp
         # quyền mở chợ (duckymomo.peace.admin; chủ server đã đồng ý cho bot) ở lần treo bán đầu (LuckPerms cần bot đã vào game).
@@ -5330,5 +5372,6 @@ if __name__ == "__main__":
         print(f"Vàng: không tạo được bảng ({e})", flush=True)
     threading.Thread(target=bot_dev_loop, daemon=True).start()   # bot tự phát triển
     threading.Thread(target=hen_tat_loop, daemon=True).start()   # hẹn tắt máy khi hết người (1/11)
+    threading.Thread(target=bot_msg_loop, daemon=True).start()   # báo tin riêng / tpa gửi bot (1/11)
     NOTIFIER.start()   # thông báo đẩy: người thật vào / ra, chat, sự cố
     ThreadingHTTPServer(("0.0.0.0", 8080), Handler).serve_forever()

@@ -149,6 +149,9 @@ final class TreasureHunt implements Listener {
     }
 
     void stop() {
+        for (UUID id : new ArrayList<>(bars.keySet())) {
+            hideBar(id);
+        }
         for (Dig d : digs.values()) {
             d.guards.forEach(id -> {
                 var e = Bukkit.getEntity(id);
@@ -275,21 +278,54 @@ final class TreasureHunt implements Listener {
 
     // ---------------------------------------------------------------- dò + đào
 
+    /** 1/11 chủ server: gợi ý nóng/lạnh ở thanh hành động bị tin vùng của Towny ("~ KinhDo (Hamlet) - (Không PVP)") đè qua đè lại
+     *  -> chuyển lên THANH TRÊN ĐẦU (boss bar) riêng từng người, chỉ hiện khi đang cầm bản đồ. */
+    private final Map<UUID, net.kyori.adventure.bossbar.BossBar> bars = new HashMap<>();
+
+    private void bar(Player p, String text, float progress, net.kyori.adventure.bossbar.BossBar.Color color) {
+        net.kyori.adventure.bossbar.BossBar b = bars.get(p.getUniqueId());
+        if (b == null) {
+            b = net.kyori.adventure.bossbar.BossBar.bossBar(c(text), progress, color, net.kyori.adventure.bossbar.BossBar.Overlay.PROGRESS);
+            bars.put(p.getUniqueId(), b);
+            p.showBossBar(b);
+        } else {
+            b.name(c(text)).progress(progress).color(color);
+        }
+    }
+
+    private void hideBar(UUID id) {
+        net.kyori.adventure.bossbar.BossBar b = bars.remove(id);
+        Player p = Bukkit.getPlayer(id);
+        if (b != null && p != null) {
+            p.hideBossBar(b);
+        }
+    }
+
     private void tick() {
+        Set<UUID> holding = new HashSet<>();
         for (Player p : Bukkit.getOnlinePlayers()) {
             String[] v = read(p.getInventory().getItemInMainHand());
             if (v == null || digs.containsKey(p.getUniqueId())) {
                 continue;
             }
+            holding.add(p.getUniqueId());
             World w = Bukkit.getWorld(v[1]);
             if (w == null || p.getWorld() != w) {
-                p.sendActionBar(c("&7⌖ Kho báu ở thế giới khác."));
+                bar(p, "&7⌖ Kho báu ở thế giới khác.", 0f, net.kyori.adventure.bossbar.BossBar.Color.WHITE);
                 continue;
             }
             double dx = p.getLocation().getX() - Integer.parseInt(v[2]), dz = p.getLocation().getZ() - Integer.parseInt(v[4]);
             double d = Math.sqrt(dx * dx + dz * dz);
-            p.sendActionBar(c(d <= digRadius ? "&c✹✹ Ngay dưới chân! &eNgồi xuống (Shift) để đào" : d < 30 ? "&c✹ Nóng lắm rồi (" + (int) d + " khối)"
-                    : d < 100 ? "&6☀ Ấm dần…" : d < 300 ? "&b❄ Lạnh" : "&9❄❄ Rất xa"));
+            float prog = (float) Math.max(0, Math.min(1, 1 - d / 500.0));   // càng gần càng đầy (500 khối trở ra = rỗng)
+            bar(p, d <= digRadius ? "&c✹✹ Ngay dưới chân! &eNgồi xuống (Shift) để đào" : d < 30 ? "&c✹ Nóng lắm rồi (" + (int) d + " khối)"
+                    : d < 100 ? "&6☀ Ấm dần…" : d < 300 ? "&b❄ Lạnh" : "&9❄❄ Rất xa", d <= digRadius ? 1f : prog,
+                    d < 30 ? net.kyori.adventure.bossbar.BossBar.Color.RED : d < 100 ? net.kyori.adventure.bossbar.BossBar.Color.YELLOW
+                    : net.kyori.adventure.bossbar.BossBar.Color.BLUE);
+        }
+        for (UUID id : new ArrayList<>(bars.keySet())) {
+            if (!holding.contains(id)) {
+                hideBar(id);
+            }
         }
         long now = System.currentTimeMillis();
         for (Dig d : new ArrayList<>(digs.values())) {

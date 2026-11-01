@@ -27,7 +27,7 @@ item-cleaner:
   enabled: true
   interval-minutes: 10
   warn-seconds: [30, 5]
-  min-age-seconds: 30
+  min-age-seconds: 0   # 1/11 chủ server: dọn là dọn hết, không chừa đồ vừa rơi
   arrows: true
   warn-message: "&c[⚠] &7Dọn vật phẩm dưới đất sau &e{s}s&7."
   done-message: "&c[⚠] &7Đã dọn sạch &e{n} &7vật phẩm!"

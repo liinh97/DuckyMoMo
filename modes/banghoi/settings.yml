@@ -141,7 +141,7 @@ cleaner_interval: 10
 cleaner_warn:
   - 30
   - 5
-cleaner_min_age: 30
+cleaner_min_age: 0
 cleaner_arrows: true
 cleaner_warn_msg: '&c[⚠] &7Dọn vật phẩm dưới đất sau &e{s}s&7.'
 cleaner_done_msg: '&c[⚠] &7Đã dọn sạch &e{n} &7vật phẩm!'

@@ -100,6 +100,8 @@
   #bots .towntag, #bots .gantag, #bots .memtag, #bots .devtag { display: inline; margin: 0; }
   #bots td .err { max-width: 100%; }
   #bots td .atsp { margin: 0; }
+  .theo-list { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0 10px; }
+  .theo-list button { padding: 8px 12px; font-size: 14px; }
   details#cfg > summary { padding: 8px 14px; font-size: 13px; font-weight: 600; cursor: pointer; border-bottom: 1px solid var(--line-2); }
   @media (max-width: 700px) {
     #bots { max-height: none; }
@@ -198,7 +200,7 @@
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 let BOTS = [], GANS = [], SERVERS = {}, busy = false, MEMBER = {}, MEMBER_ON = [];
-let THAT = [], DANG = [];
+let THAT = [], THAT_BH = [], DANG = [];
 
 async function act(body, quiet) {
   try {
@@ -234,7 +236,7 @@ function acts(b) {
         <button data-a="sethome" title="Lấy chỗ đang đứng làm chỗ mặc định">Đặt chỗ</button><button data-a="pick" title="Chọn bot này ở khung chat">Chat</button><button data-a="gmc" title="Chế độ Sáng tạo (chạy từ console)">GMC</button><button data-a="gms" title="Chế độ Sinh tồn">GMS</button>` : ""}
         <button data-a="hoso" title="Xu, Thăng Cấp, giờ chơi, danh phận, nghề, kỹ năng: số liệu giống người chơi thật">Hồ sơ</button>
         <button data-a="member" title="Gắn bot này với member quen: member vào game thì báo nên dùng bot này">Member…</button>
-        ${b.online && b.server === "banghoi-1" ? `<button data-a="theo"${b.follow ? ' class="hl"' : ""} title="Bot chạy theo người chơi, đi đúng các điểm người đó đã đi qua (tối đa 3 bot cùng lúc). Người đó rời server thì bot tự về.">${b.follow ? "Đang theo " + esc(b.follow) + " (bấm để thôi)" : "Chạy theo…"}</button>` : ""}
+        ${b.online && b.server === "banghoi-1" ? `<button data-a="theo"${b.follow ? ' class="hl"' : ""} title="Chọn người để bot chạy theo: đi đúng các điểm người đó đã đi qua. Đang xa thì bot xuất hiện gần người đó trước. Tối đa 3 bot cùng lúc; người đó rời server thì bot tự về.">${b.follow ? "Đang theo " + esc(b.follow) + " (bấm để thôi)" : "Chạy theo…"}</button>` : ""}
         <button data-a="town" title="Cho bot vào / đổi / rời thị trấn">Thị trấn</button>
         <button data-a="dev"${(DEV_STATE[b.name] || {}).on ? ' class="hl"' : ""} title="Bot tự tăng số liệu dần như người thật (chỉ khi online ở Bang Hội Chiến), mỗi bot một tính cách riêng">${(DEV_STATE[b.name] || {}).on ? "Đang tự phát triển" : "Tự phát triển"}</button>
         ${b.created && !b.want && !b.online ? '<button data-a="remove" title="Xoá bot tạo thêm khỏi danh sách">Xoá</button>' : ""}`
@@ -302,10 +304,7 @@ $("bots").addEventListener("click", async (ev) => {
   if (a === "theo") {   // 1/11: bot chạy theo member
     const cur = BOTS.find((b) => b.name === name);
     if (cur && cur.follow) return act({ bot: name, action: "theo", text: "" });
-    const dg = (MEMBER_ON.find((m) => m.server === "banghoi-1" && m.bots.includes(name)) || {}).member || "";
-    const v = await ask(`${name} chạy theo ai? (người đang online ở Bang Hội Chiến)`, { title: "Chạy theo", ok: "Chạy theo", input: dg });
-    if (!v) return;
-    return act({ bot: name, action: "theo", text: v.trim() });
+    return openTheo(name);
   }
   if (a === "town") return openTown(name);
   if (a === "dev") return act({ bot: name, action: "phattrien", on: !(DEV_STATE[name] || {}).on });
@@ -417,7 +416,7 @@ async function loadBots() {
   try {
     const d = await (await fetch("api/bot")).json();
     if (!d.ok) { $("bots").innerHTML = `<div class="empty">${esc(d.message || "Không tải được")}</div>`; return; }
-    SERVERS = d.servers || {}; BOTS = d.bots || []; GANS = d.gan || []; MEMBER = d.member || {}; MEMBER_ON = d.member_on || []; THAT = d.that || []; DANG = (d.dido && d.dido.dang) || []; EVENTS = d.events || []; DEV_STATE = d.phattrien || {}; TOWNS = d.thitran || {}; TOWN_LIST = d.ds_thitran || [];
+    SERVERS = d.servers || {}; BOTS = d.bots || []; GANS = d.gan || []; MEMBER = d.member || {}; MEMBER_ON = d.member_on || []; THAT = d.that || []; THAT_BH = d.that_bh || []; DANG = (d.dido && d.dido.dang) || []; EVENTS = d.events || []; DEV_STATE = d.phattrien || {}; TOWNS = d.thitran || {}; TOWN_LIST = d.ds_thitran || [];
     if ($("fsrv").options.length === 1) for (const [k, v] of Object.entries(SERVERS)) $("fsrv").add(new Option(v, k));
     if (!$("mkSrv").options.length) for (const [k, v] of Object.entries(SERVERS)) $("mkSrv").add(new Option(v, k));
     if (!$("ganSrv").options.length) for (const [k, v] of Object.entries(SERVERS)) if (k !== "lobby") $("ganSrv").add(new Option(v, k));
@@ -452,6 +451,25 @@ async function loadBots() {
 }
 
 // chọn thị trấn cho bot (vào / đổi / rời)
+// 1/11: chọn người để bot chạy theo: member gắn với bot lên đầu, rồi người thật khác đang ở Bang Hội Chiến; bấm tên là chạy luôn
+function openTheo(name) {
+  const gan = MEMBER_ON.filter((m) => m.server === "banghoi-1" && m.bots.includes(name)).map((m) => m.member);
+  const low = new Set(gan.map((m) => m.toLowerCase()));
+  const khac = THAT_BH.filter((n) => !low.has(n));
+  const nut = (n, c) => `<button type="button" class="${c}" data-ten="${esc(n)}">${esc(n)}</button>`;
+  const wrap = document.createElement("div"); wrap.className = "ask-wrap";
+  wrap.innerHTML = `<div class="ask" role="dialog" aria-modal="true"><h3>${esc(name)} chạy theo ai?</h3>
+    ${gan.length ? `<p class="muted">Member gắn với bot này</p><div class="theo-list">${gan.map((n) => nut(n, "primary")).join("")}</div>` : ""}
+    ${khac.length ? `<p class="muted">Người khác đang ở Bang Hội Chiến</p><div class="theo-list">${khac.map((n) => nut(n, "ghost")).join("")}</div>` : ""}
+    ${gan.length || khac.length ? "" : '<p class="muted">Không có người thật nào ở Bang Hội Chiến.</p>'}
+    <div class="ask-btns"><button type="button" class="ghost t-no">Huỷ</button></div></div>`;
+  const close = () => wrap.remove();
+  wrap.onmousedown = (e) => { if (e.target === wrap) close(); };
+  wrap.querySelector(".t-no").onclick = close;
+  wrap.querySelectorAll("[data-ten]").forEach((b) => { b.onclick = async () => { close(); await act({ bot: name, action: "theo", text: b.dataset.ten }); }; });
+  document.body.appendChild(wrap);
+}
+
 function openTown(name) {
   const cur = (TOWNS[name] || "").split(" · ")[0];
   const wrap = document.createElement("div"); wrap.className = "ask-wrap";

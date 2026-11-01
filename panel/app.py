@@ -1961,6 +1961,7 @@ def bot_json():
             # 1/11: người THẬT đang online: bỏ bot và tài khoản gắn botfarm đang giữ; admin chơi tay bằng tài khoản bot vẫn là người
             giu = {str(b.get("name", "")).lower() for b in allb if b.get("online") or (not b.get("gan") and not b.get("tay"))}
             d["that"] = sorted((n for n in onl if n not in giu), key=str.lower)
+            d["that_bh"] = [n for n in d["that"] if onl.get(n) == "banghoi-1"]
             d["member_on"] = [{"member": m, "server": onl[m.lower()], "bots": [b for b, ms in bm.items() if m.lower() in {x.lower() for x in ms}]}
                               for m in sorted({x for ms in bm.values() for x in ms}, key=str.lower) if m.lower() in onl]
             return d | {"ok": True, "phattrien": bot_dev_info(), "thitran": bot_towns_of([b.get("name", "") for b in d.get("bots", [])]),

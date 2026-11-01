@@ -96,7 +96,7 @@
 <script src="shell.js"></script>
 <div class="wrap">
   <div class="card">
-    <h3>Danh sách bot <span id="botCount" class="hint" title="Bot đang online / tổng số bot (theo server)"></span>
+    <h3>Danh sách bot <span id="botCount" class="hint" title="Bot đang online / tổng số bot (theo server)"></span> <span id="realCount" class="hint"></span>
       <select id="bfilter" title="Lọc danh sách bot"><option value="">Tất cả</option><option value="on">Đang online</option><option value="off">Đang offline</option></select> <span class="sp">
       <button class="mini" id="allJoin" title="Bật mọi bot (mỗi bot vào server đang chọn của nó)">Vào tất cả</button>
       <button class="mini" id="allLeave">Thoát tất cả</button>
@@ -169,6 +169,7 @@
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 let BOTS = [], GANS = [], SERVERS = {}, busy = false, MEMBER = {}, MEMBER_ON = [];
+let THAT = [];
 
 async function act(body, quiet) {
   try {
@@ -204,6 +205,7 @@ function acts(b) {
         <button data-a="sethome" title="Lấy chỗ đang đứng làm chỗ mặc định">Đặt chỗ</button><button data-a="pick" title="Chọn bot này ở khung chat">Chat</button><button data-a="gmc" title="Chế độ Sáng tạo (chạy từ console)">GMC</button><button data-a="gms" title="Chế độ Sinh tồn">GMS</button>` : ""}
         <button data-a="hoso" title="Xu, Thăng Cấp, giờ chơi, danh phận, nghề, kỹ năng: số liệu giống người chơi thật">Hồ sơ</button>
         <button data-a="member" title="Gắn bot này với member quen: member vào game thì báo nên dùng bot này">Member…</button>
+        ${b.online && b.server === "banghoi-1" ? `<button data-a="theo"${b.follow ? ' class="hl"' : ""} title="Bot chạy theo người chơi, đi đúng các điểm người đó đã đi qua (tối đa 3 bot cùng lúc). Người đó rời server thì bot tự về.">${b.follow ? "Đang theo " + esc(b.follow) + " (bấm để thôi)" : "Chạy theo…"}</button>` : ""}
         <button data-a="town" title="Cho bot vào / đổi / rời thị trấn">Thị trấn</button>
         <button data-a="dev"${(DEV_STATE[b.name] || {}).on ? ' class="hl"' : ""} title="Bot tự tăng số liệu dần như người thật (chỉ khi online ở Bang Hội Chiến), mỗi bot một tính cách riêng">${(DEV_STATE[b.name] || {}).on ? "Đang tự phát triển" : "Tự phát triển"}</button>
         ${b.created && !b.want && !b.online ? '<button data-a="remove" title="Xoá bot tạo thêm khỏi danh sách">Xoá</button>' : ""}`
@@ -233,6 +235,9 @@ function renderBots() {
   const on = BOTS.filter((b) => b.online), per = {};
   for (const b of on) per[b.server] = (per[b.server] || 0) + 1;
   $("botCount").textContent = `· ${on.length}/${BOTS.length} online` + (Object.keys(per).length > 1 ? " (" + Object.entries(per).map(([k, v]) => `${SERVERS[k] || k} ${v}`).join(", ") + ")" : "");
+  // 1/11: số người chơi thật (rê chuột xem tên)
+  $("realCount").textContent = `· ${THAT.length} người thật`;
+  $("realCount").title = THAT.length ? "Người thật đang online: " + THAT.join(", ") : "Không có người thật nào online";
   const keep = $("who").value;
   $("who").innerHTML = [...GANS, ...BOTS].filter((b) => b.online || b.tuchoi).map((b) => `<option>${esc(b.name)}</option>`).join("") || '<option value="">(chưa bot nào online)</option>';
   if ([...$("who").options].some((o) => o.value === keep)) $("who").value = keep;
@@ -262,6 +267,14 @@ $("bots").addEventListener("click", async (ev) => {
       { title: "Gắn member", ok: "Lưu", input: (MEMBER[name] || []).join(", ") });
     if (v === null) return;
     return act({ bot: name, action: "member", members: v === "-" ? "" : v });
+  }
+  if (a === "theo") {   // 1/11: bot chạy theo member
+    const cur = BOTS.find((b) => b.name === name);
+    if (cur && cur.follow) return act({ bot: name, action: "theo", text: "" });
+    const dg = (MEMBER_ON.find((m) => m.server === "banghoi-1" && m.bots.includes(name)) || {}).member || "";
+    const v = await ask(`${name} chạy theo ai? (người đang online ở Bang Hội Chiến)`, { title: "Chạy theo", ok: "Chạy theo", input: dg });
+    if (!v) return;
+    return act({ bot: name, action: "theo", text: v.trim() });
   }
   if (a === "town") return openTown(name);
   if (a === "dev") return act({ bot: name, action: "phattrien", on: !(DEV_STATE[name] || {}).on });
@@ -372,7 +385,7 @@ async function loadBots() {
   try {
     const d = await (await fetch("api/bot")).json();
     if (!d.ok) { $("bots").innerHTML = `<div class="empty">${esc(d.message || "Không tải được")}</div>`; return; }
-    SERVERS = d.servers || {}; BOTS = d.bots || []; GANS = d.gan || []; MEMBER = d.member || {}; MEMBER_ON = d.member_on || []; EVENTS = d.events || []; DEV_STATE = d.phattrien || {}; TOWNS = d.thitran || {}; TOWN_LIST = d.ds_thitran || [];
+    SERVERS = d.servers || {}; BOTS = d.bots || []; GANS = d.gan || []; MEMBER = d.member || {}; MEMBER_ON = d.member_on || []; THAT = d.that || []; EVENTS = d.events || []; DEV_STATE = d.phattrien || {}; TOWNS = d.thitran || {}; TOWN_LIST = d.ds_thitran || [];
     if ($("fsrv").options.length === 1) for (const [k, v] of Object.entries(SERVERS)) $("fsrv").add(new Option(v, k));
     if (!$("mkSrv").options.length) for (const [k, v] of Object.entries(SERVERS)) $("mkSrv").add(new Option(v, k));
     if (!$("ganSrv").options.length) for (const [k, v] of Object.entries(SERVERS)) if (k !== "lobby") $("ganSrv").add(new Option(v, k));

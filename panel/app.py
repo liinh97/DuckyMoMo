@@ -1926,7 +1926,7 @@ BOTFARM_URL = os.environ.get("BOTFARM_URL", "http://botfarm:8090")
 BOT_ACTIONS = {"join": "vào", "leave": "thoát", "server": "đổi server", "chat": "nói", "cmd": "gõ lệnh", "move": "đi tới", "home": "về chỗ", "sethome": "đặt chỗ", "random": "ra khu ngẫu nhiên",
                "create": "tạo bot", "remove": "xoá bot", "chatcfg": "cài bot tự chat", "chatnow": "cho bot chat thử", "tpacfg": "cài bot tự trả lời TPA", "ftpacfg": "cài bot tpa người chơi rồi tự huỷ", "chetcfg": "cài bot chết giả", "chetnow": "cho bot chết giả thử",
                "wandercfg": "cài bot đi dạo", "rotcfg": "cài thay phiên online", "wanderwalk": "cho bot đi dạo được đi lại", "wandernow": "cho bot đi dạo thử", "gomphong": "gom bot vào phòng ẩn", "trave": "trả bot về chỗ cũ",
-               "captk": "cấp tài khoản bot cho admin", "tratk": "trả tài khoản cho bot", "gan": "gắn tài khoản có sẵn", "bogan": "bỏ gắn tài khoản"}
+               "theo": "chạy theo", "captk": "cấp tài khoản bot cho admin", "tratk": "trả tài khoản cho bot", "gan": "gắn tài khoản có sẵn", "bogan": "bỏ gắn tài khoản"}
 
 
 def known_player_names():
@@ -1958,6 +1958,9 @@ def bot_json():
             bm = bot_member_load()
             onl = online_players()
             d["member"] = bm
+            # 1/11: người THẬT đang online: bỏ bot và tài khoản gắn botfarm đang giữ; admin chơi tay bằng tài khoản bot vẫn là người
+            giu = {str(b.get("name", "")).lower() for b in allb if b.get("online") or (not b.get("gan") and not b.get("tay"))}
+            d["that"] = sorted((n for n in onl if n not in giu), key=str.lower)
             d["member_on"] = [{"member": m, "server": onl[m.lower()], "bots": [b for b, ms in bm.items() if m.lower() in {x.lower() for x in ms}]}
                               for m in sorted({x for ms in bm.values() for x in ms}, key=str.lower) if m.lower() in onl]
             return d | {"ok": True, "phattrien": bot_dev_info(), "thitran": bot_towns_of([b.get("name", "") for b in d.get("bots", [])]),

@@ -895,7 +895,7 @@ let staffSet = new Set();
 try { staffSet = new Set(JSON.parse(fs.readFileSync(STAFF_FILE, 'utf8')).map(x => String(x).toLowerCase())); } catch (e) { /* chưa có */ }
 const isStaff = who => staffSet.has(String(who).toLowerCase());
 async function wanderOnce(force) {
-  const active = NAMES.filter(n => RT[n].wander).length;
+  const active = NAMES.filter(n => RT[n].wander && !RT[n].wander.follow).length;
   if (active >= wanderCfg.maxActive) return 'đang có đủ bot đi dạo';
   const R = rcon('banghoi-1'), cands = [];
   const g = await botgia('banghoi-1');   // 30/10: người chơi lâu rồi thì bot ít ra lượn quanh, lâu hẳn thì không
@@ -1064,6 +1064,120 @@ function stopWander(n) {
       if (rt.bot) await place(n, rt.bot);   // /back không về được phòng thì dời thẳng
     } catch (e) { log(n, e.message); } finally { rt.placing = false; rt.placedAt = Date.now(); }
   })();
+}
+// 1/11 chủ server: bot chạy theo member, cẩn thận địa hình, chép bước đi của member. Bot ghi lại các điểm member đã đi qua rồi đi đúng các điểm đó
+// (chỗ member đi được thì bot đi được, member nhảy thì bot nhảy, member chạy thì bot chạy). Pathfinder (nặng hơn) chỉ dùng khi đứt vết: member bay,
+// rơi cao, kẹt. Member dịch chuyển xa thì bot xuất hiện gần đó bằng spreadplayers (chỉ chọn chỗ có nền, không nước / dung nham).
+// Dùng lại rt.wander nên vòng "bị dời", thay phiên, chết giả, đi dạo đều bỏ qua bot đang theo. Không lưu qua lần vào lại.
+const THEO_MAX = 3;
+const followers = () => ALL().filter(n => RT[n].wander && RT[n].wander.follow);
+const HIEM = /lava|fire|magma|cactus|sweet_berry|powder_snow|wither_rose|campfire/;
+/** Dưới chân điểm p: 'ok' có nền trong 3 khối (hoặc nước), 'hiem' lửa / dung nham…, null chưa nạp hoặc lơ lửng (member đang bay). */
+function underFoot(b, p) {
+  for (let dy = 0; dy >= -3; dy--) {
+    const bl = b.blockAt(p.offset(0, dy, 0));
+    if (!bl) return null;
+    if (HIEM.test(bl.name)) return 'hiem';
+    if (bl.name === 'water' || bl.boundingBox === 'block') return 'ok';
+  }
+  return null;
+}
+async function startFollow(n, raw) {
+  const rt = RT[n], st = state[n], b = rt.bot;
+  if (!b || st.server !== 'banghoi-1') throw new Error(n + ' phải đang online ở Bang Hội Chiến');
+  if (st.gan || st.tay) throw new Error(n + ' là tài khoản người thật, không cho chạy theo');
+  if (rt.wander || rt.placing) throw new Error(n + ' đang đi dạo / dời chỗ, thử lại sau ít giây');
+  if (followers().length >= THEO_MAX) throw new Error('Tối đa ' + THEO_MAX + ' bot chạy theo cùng lúc (' + followers().join(', ') + ')');
+  const who = Object.keys(b.players).find(x => x.toLowerCase() === raw.toLowerCase());
+  if (!who || (NAMES.includes(who) && !(state[who] && state[who].tay))) throw new Error(raw + ' không phải người chơi đang online');
+  const w = rt.wander = { follow: who, going: false, hard: Infinity, area: 'theo' };
+  b.physicsEnabled = true;
+  try { b.setSettings({ viewDistance: 'short' }); } catch (e) { /* bỏ qua */ }   // 4 chunk: thấy member và địa hình tới ~64 khối
+  if (!b.pathfinder) b.loadPlugin(pathfinder);
+  b.pathfinder.thinkTimeout = 2000;
+  event({ type: 'doi', bot: n, server: 'banghoi-1', text: n + ' chạy theo ' + who });
+  followLoop(n, b, w).catch(e => log(n, 'chạy theo lỗi:', e.message)).finally(() => { if (rt.wander === w) stopFollow(n); });
+  return n + ' chạy theo ' + who;
+}
+function stopFollow(n) {
+  const rt = RT[n], w = rt.wander;
+  if (!w || !w.follow) return n + ' không chạy theo ai';
+  w.going = true;   // về thẳng phòng (place), không /back: /back chỉ về chỗ trước lần dịch chuyển gần nhất
+  try { if (rt.bot) rt.bot.setSettings({ viewDistance: 'tiny' }); } catch (e) { /* bỏ qua */ }
+  event({ type: 'doi', bot: n, server: 'banghoi-1', text: n + ' thôi chạy theo ' + w.follow });
+  stopWander(n);
+  return n + ' thôi chạy theo ' + w.follow;
+}
+async function followLoop(n, b, w) {
+  const rt = RT[n], who = w.follow, R = rcon('banghoi-1'), alive = () => rt.bot === b && rt.wander === w;
+  let crumbs = [], lastRec = null, lastRecAt = 0, gap = true, seenAt = Date.now(), onlineAt = Date.now(), lastTp = 0, moveFrom = null, moveAt = Date.now(), lookAt = 0;
+  const halt = () => { for (const c of ['forward', 'sprint', 'jump']) b.setControlState(c, false); };
+  const appear = async () => {   // đứt hẳn (member dịch chuyển / quá xa): xuất hiện gần member, chỗ có nền
+    if (Date.now() - lastTp < 15000) return;
+    lastTp = Date.now(); halt(); crumbs = []; lastRec = null; gap = false;
+    const dim = await R.cmd(`data get entity ${who} Dimension`).catch(() => '');
+    const p = /overworld/.test(dim) ? await serverPos(who, 'banghoi-1').catch(() => null) : null;
+    if (!p) return;   // member ở Nether / End / server khác: đứng chờ, hết hạn thì tự thôi
+    const r = await R.cmd(`execute in minecraft:overworld run spreadplayers ${Math.floor(p.x)} ${Math.floor(p.z)} 1 8 under ${Math.floor(p.y) + 3} false ${n}`).catch(() => 'could not');
+    if (/could not|unable|error|không/i.test(r)) await R.cmd(`execute in minecraft:overworld run tp ${n} ${who}`).catch(() => '');
+    await sleep(1500);
+    moveAt = Date.now(); moveFrom = null;
+  };
+  const route = async (e) => {   // đứt vết: tìm đường (không đào, không đặt khối, rơi tối đa 2 khối)
+    halt(); crumbs = []; gap = false;
+    const ok = await walkTo(b, e.position.x, e.position.y, e.position.z, 3, 10000);
+    moveAt = Date.now(); moveFrom = null;
+    if (!ok && alive()) await appear();
+  };
+  while (alive()) {
+    await sleep(100);
+    if (!alive()) return;
+    const now = Date.now(), me = b.entity && b.entity.position;
+    if (!me) continue;
+    if (b.players[who]) onlineAt = now;
+    else if (now - onlineAt > 20000) { log(n, who, 'đã rời server: thôi chạy theo'); return; }
+    const e = (b.players[who] && b.players[who].entity) || Object.values(b.entities).find(x => x.type === 'player' && x.username === who);
+    if (!e) {   // ngoài tầm nhìn: chờ 5 giây (đi qua góc chunk), rồi mới dịch chuyển
+      halt();
+      if (now - seenAt > 5000) { await appear(); if (now - seenAt > 60000 && !b.players[who]) return; }
+      continue;
+    }
+    seenAt = now;
+    const d = me.distanceTo(e.position);
+    if (d > 48) { await appear(); continue; }
+    // ghi vết: bỏ đoạn member bay, chỗ nguy hiểm, chưa nạp (đánh dấu đứt vết)
+    const u = underFoot(b, e.position);
+    if (u !== 'ok') gap = true;
+    else if (!lastRec || e.position.distanceTo(lastRec) >= 0.4) {
+      const sp = lastRec && now > lastRecAt ? e.position.distanceTo(lastRec) / ((now - lastRecAt) / 1000) : 0;
+      crumbs.push({ p: e.position.clone(), gap, sp }); gap = false;
+      lastRec = e.position.clone(); lastRecAt = now;
+      if (crumbs.length > 600) { crumbs.shift(); crumbs[0].gap = true; }
+    }
+    // member đi vòng lại gần bot: bỏ đoạn vòng
+    for (let i = crumbs.length - 1; i > 0; i--) {
+      const c = crumbs[i].p;
+      if (Math.hypot(c.x - me.x, c.z - me.z) < 1.2 && Math.abs(c.y - me.y) < 1.5) { crumbs.splice(0, i); break; }
+    }
+    if (d < 3.5) {   // đủ gần: đứng nhìn member
+      halt(); moveAt = now; moveFrom = null;
+      if (now - lookAt > 400) { lookAt = now; b.lookAt(e.position.offset(0, 1.6, 0)).catch(() => {}); }
+      continue;
+    }
+    while (crumbs.length && Math.hypot(crumbs[0].p.x - me.x, crumbs[0].p.z - me.z) < 0.6 && Math.abs(crumbs[0].p.y - me.y) < 1.5) crumbs.shift();
+    const c = crumbs[0];
+    if (!c) { if (d > 6) await route(e); else halt(); continue; }
+    const dx = c.p.x - me.x, dz = c.p.z - me.z, h = Math.hypot(dx, dz);
+    if (c.gap || h > 4 || me.y - c.p.y > 3) { await route(e); continue; }   // vết đứt, hoặc member rơi cao: tìm đường, không nhảy theo
+    b.look(Math.atan2(-dx, -dz), 0, true).catch(() => {});
+    b.setControlState('forward', true);
+    b.setControlState('sprint', c.sp > 4.6 || d > 12);   // member chạy thì chạy; tụt xa thì chạy đuổi
+    let jump = (c.p.y - me.y > 0.4 && b.entity.onGround) || b.entity.isInWater;   // member nhảy / lên bậc thì nhảy
+    if (!moveFrom || me.distanceTo(moveFrom) > 0.5) { moveFrom = me.clone(); moveAt = now; }
+    else if (now - moveAt > 4000) { await route(e); continue; }   // kẹt lâu: tìm đường
+    else if (now - moveAt > 1500) jump = true;   // kẹt: thử nhảy
+    b.setControlState('jump', jump);
+  }
 }
 // (29/10) nhịp đi lang thang ngẫu nhiên đã bỏ: bot đi theo lộ trình runRoute
 let wanderNext = Date.now() + 120000;
@@ -1336,6 +1450,8 @@ async function act(b) {
   if (!st) throw new Error('không có bot ' + b.bot);
   const text = String(b.text || '').replace(/[\x00-\x1f\x7f§]/g, '').trim().slice(0, 240);
   switch (b.action) {
+    case 'theo':   // 1/11: text = tên member; trống = thôi chạy theo
+      return text ? await startFollow(b.bot, text) : stopFollow(b.bot);
     case 'join':
       if (st.tay) throw new Error(b.bot + ': admin đang chơi bằng tài khoản này (bấm Trả lại cho bot trước)');
       if (b.server && SERVERS[b.server]) st.server = b.server;
@@ -1502,7 +1618,7 @@ http.createServer((req, res) => {
         return { name: n, want: st.want, server: st.server, online: !!rt.bot, connecting: rt.connecting, err: rt.err,
           x: p ? Math.floor(p.x) : null, y: p ? Math.floor(p.y) : null, z: p ? Math.floor(p.z) : null, spawn: atSpawn(st.server, p),
           home: h ? [Math.floor(h.x), Math.floor(h.y), Math.floor(h.z)] : null, away: !!st.at[st.server], created: !!st.created,
-          gan: !!st.gan, tay: !!st.tay, tron: !!st.tron };
+          gan: !!st.gan, tay: !!st.tay, tron: !!st.tron, follow: (rt.wander && rt.wander.follow) || '' };
       }),
       events: EVENTS.slice(-100),
       chat: Object.assign({}, chatCfg, { bo: curBo().ten, soBo: BO.length }),

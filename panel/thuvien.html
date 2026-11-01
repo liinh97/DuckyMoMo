@@ -165,6 +165,11 @@
   .baninfo { margin-top: 8px; font-size: 13.5px; }
   .baninfo a { color: var(--accent); cursor: pointer; }
   @media (max-width: 640px) { .bk-row { grid-template-columns: minmax(0, 1fr) 140px 30px; } }
+  .recent-give { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .recent-give .rg { display: inline-flex; align-items: center; border: 1px solid var(--line, #3a3f4b); border-radius: 999px; overflow: hidden; }
+  .recent-give .rg button { border: 0; background: transparent; padding: 3px 10px; cursor: pointer; color: inherit; font: inherit; }
+  .recent-give .rg b { padding: 0 8px; cursor: pointer; opacity: .55; font-weight: 400; }
+  .recent-give .rg b:hover { opacity: 1; }
 </style>
 <link rel="stylesheet" href="ui.css">
 </head>
@@ -278,7 +283,8 @@
         <input id="gamount" type="number" min="0" max="64" value="0" title="0 = số lượng ghi trong thư viện">
         <button id="give" class="ghost">Đưa</button>
       </div>
-      <p class="note">Số lượng 0 = theo số lượng ghi trong thư viện. Phải lưu đồ trước khi đưa.</p>
+      <div id="recentGive" class="recent-give"></div>
+      <p class="note">Số lượng 0 = theo số lượng ghi trong thư viện. Phải lưu đồ trước khi đưa. Người đã đưa gần đây hiện thành nút bấm chọn nhanh (lưu trên trình duyệt này).</p>
     </div>
 
     <div class="sec">
@@ -998,10 +1004,25 @@ $("save").onclick = async () => {
   if (res.ok) load(data.items.find(x => x.id === id));
 };
 $("del").onclick = async () => { if (cur && await ask(`Xoá "${cur.id}" khỏi thư viện? Quà/cửa hàng đang dùng mã này sẽ không phát được món này nữa.`, { title: "Xoá món", ok: "Xoá", danger: true })) { const res = await post({ action: "delete", id: cur.id }); if (res.ok) load(null); } };
+// 1/11: người hay được đưa đồ -> nút chọn nhanh (localStorage, đếm số lần; ghim lên đầu người đưa nhiều)
+const GIVE_KEY = "thuvien.daDua";
+function giveList() { try { return JSON.parse(localStorage.getItem(GIVE_KEY) || "{}"); } catch (e) { return {}; } }
+function renderRecentGive() {
+  const d = giveList(), names = Object.keys(d).sort((a, b) => (d[b].n - d[a].n) || (d[b].t - d[a].t)).slice(0, 12);
+  $("recentGive").innerHTML = names.map((n) => `<span class="rg"><button type="button" data-p="${esc(n)}" title="Đã đưa ${d[n].n} lần">${esc(n)}</button><b data-x="${esc(n)}" title="Bỏ khỏi danh sách">×</b></span>`).join("");
+}
+$("recentGive").onclick = (ev) => {
+  const x = ev.target.closest("[data-x]");
+  if (x) { const d = giveList(); delete d[x.dataset.x]; try { localStorage.setItem(GIVE_KEY, JSON.stringify(d)); } catch (e) { /* bỏ qua */ } renderRecentGive(); return; }
+  const b = ev.target.closest("[data-p]"); if (b) { $("player").value = b.dataset.p; $("player").focus(); }
+};
 $("give").onclick = () => {
   const p = $("player").value.trim(); if (!cur || !p) { status(false, "Chọn một món và nhập tên người chơi"); return; }
+  try { const d = giveList(); d[p] = { n: ((d[p] || {}).n || 0) + 1, t: Date.now() }; localStorage.setItem(GIVE_KEY, JSON.stringify(d)); } catch (e) { /* bỏ qua */ }
+  renderRecentGive();
   post({ action: "give", id: cur.id, player: p, amount: parseInt($("gamount").value || "0", 10) });
 };
+renderRecentGive();
 // ---- Sách cấm (BanBook.java): mỗi trang = hoạt động; chọn món + cách xử lý; phù phép riêng tắt ở hoạt động đó
 const BAN_TEXT = { "vo-hieu": "không dùng được", "chan-vao": "không cho mang vào" };
 // dòng ⛔ như trong game (khớp BanBook.loreLines)

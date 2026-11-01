@@ -47,6 +47,14 @@ final class SeasonsPapi {
                         long m = Math.max(0, (System.currentTimeMillis() - on.getLastLogin()) / 60000);
                         yield m < 60 ? m + " phút" : (m / 60) + "g" + String.format("%02d", m % 60) + "p";
                     }
+                    case "homnay" -> {   // 1/11 chủ server: đã chơi bao lâu hôm nay (phút chơi thật, không tính treo máy)
+                        Activity act = Shared.activity;
+                        if (act == null || player == null) {
+                            yield "";
+                        }
+                        long m = act.todayMinutes(player.getUniqueId());
+                        yield m < 60 ? m + " phút" : (m / 60) + "g" + String.format("%02d", m % 60) + "p";
+                    }
                     case "id" -> s.current();
                     case "ten" -> LegacyComponentSerializer.legacySection().serialize(Seasons.c(s.name(s.current())));
                     case "ten_tron" -> Seasons.plain(s.name(s.current()));

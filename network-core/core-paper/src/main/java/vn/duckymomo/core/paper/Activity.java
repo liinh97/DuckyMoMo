@@ -142,6 +142,11 @@ final class Activity implements Listener {
 
     // ------------------------------------------------------------------ đọc
 
+    /** 1/11: số phút chơi thật hôm nay (bảng bên phải: "Hôm nay"). */
+    int todayMinutes(UUID id) {
+        return data.getInt(id + ".ngay." + LocalDate.now());
+    }
+
     /** Tổng số giờ chơi thật trong mùa (từ lần /choilai gần nhất). */
     double totalHours(UUID id) {
         return data.getInt(id + ".tong") / 60.0;

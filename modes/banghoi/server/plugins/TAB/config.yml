@@ -86,7 +86,7 @@ scoreboard:
         - '%animation:SbDong4%'
         - '%animation:SbDong5%'
         - '&r'
-        - '&#9AE6B4⏱ &7Phiên này: &f%dmmmua_phien%'   # 1/11 chủ server: đã chơi bao lâu trong phiên
+        - '&#9AE6B4⏱ &7Hôm nay: &f%dmmmua_homnay%'   # 1/11 chủ server: đã chơi bao lâu hôm nay (phút chơi thật)
         - '&7(12+)'   # 30/10: nhãn độ tuổi theo phân loại trò chơi VN (00+, 12+, 16+, 18+)
 layout:
   enabled: false

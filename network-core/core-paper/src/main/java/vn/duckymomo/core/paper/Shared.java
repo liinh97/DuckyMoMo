@@ -20,6 +20,7 @@ final class Shared {
      *  Kiểu BiPredicate để lớp chạy ở sảnh (không có Towny) gọi được mà không nạp PeaceAlliance. */
     static volatile java.util.function.BiPredicate<org.bukkit.entity.Player, String> economyGate;
     static volatile Seasons seasons;   // 1/11: Thợ Rèn (Hạt Giống Thần theo mùa)
+    static volatile Activity activity;   // 1/11: bảng bên phải "Hôm nay" (%dmmmua_homnay%)
     /** Giới hạn tiền bán cho server mỗi ngày (null = tắt). */
     static volatile SellLimit sellLimit;
     /** Thư viện đồ: mọi module lấy vật phẩm đặc biệt từ đây (Xưởng, món ăn, Tinh Luyện, mảnh, bùa, boss). */
@@ -80,6 +81,7 @@ final class Shared {
         sellLimit = null;
         economyGate = null;
         seasons = null;
+        activity = null;
         library = null;
         ItemLibrary.STAMPERS.clear();
         FORGET.clear();

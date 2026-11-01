@@ -8,6 +8,8 @@
 ## 1/11/2026: VIỆC CÒN LẠI + TÓM TẮT PHIÊN 31/10 tối → 1/11 (đọc trước)
 
 ### Việc còn lại
+**Bot chạy theo member (1/11, code đã commit, CHƯA dựng lại botfarm nên chưa chạy thật):** `followLoop` trong `botfarm/app.js`, nút Chạy theo… ở trang Bot. Số đo thật bản cũ (Thu_Trang theo Itrap): đi đường bằng thì chạy được, đồi dốc đứt vết -> đứng im 7–15 giây -> dịch chuyển. Bản mới: bước xuống bậc tới 8 khối theo vết, tìm đường hỏng/đang giới hạn 12 giây thì chạy thẳng 5 giây, 5 giây không nhích mới dịch chuyển; xuất hiện sau lưng member cách 25–30 khối; giữ khoảng cách 5–13 khối, nhìn quanh (chủ server: bám sát thì member tưởng admin). Dựng lại botfarm phải kiểm người thật và hỏi trước. Sau đó đo lại vận tốc bot bằng mẫu 0,5 giây.
+
 **Cần chủ server làm / cho phép:**
 1. ĐÃ LÀM 1/11 13:30: khởi động lại banghoi-1 (dòng "⏱ Phiên này" (%dmmmua_phien%, SeasonsPapi.java; TAB config đã sửa cả bản mẫu + data). Kiểm người online TÁCH RIÊNG trước.
 2. ĐÃ LÀM 1/11 13:30: dựng lại botfarm, áp sửa tpa giả "né dịch chuyển" (commit 7f2725d: server dời bot 0,8 khối để Essentials huỷ dịch chuyển chờ; 1/11 Linh_Chi bị kéo tới SiHaiTen vì bot đứng trong phòng ẩn nhảy không xê dịch).

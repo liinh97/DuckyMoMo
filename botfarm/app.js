@@ -1110,7 +1110,7 @@ function stopFollow(n) {
 }
 async function followLoop(n, b, w) {
   const rt = RT[n], who = w.follow, R = rcon('banghoi-1'), alive = () => rt.bot === b && rt.wander === w;
-  let crumbs = [], lastRec = null, lastRecAt = 0, gap = true, seenAt = Date.now(), onlineAt = Date.now(), lastTp = 0, lastRoute = 0, tpFail = 0, runUntil = 0, moveFrom = null, moveAt = Date.now(), lookAt = 0;
+  let crumbs = [], lastRec = null, lastRecAt = 0, gap = true, seenAt = Date.now(), onlineAt = Date.now(), lastTp = 0, lastRoute = 0, tpFail = 0, runUntil = 0, runFrom = null, gapNow = 6, gapAt = 0, holding = false, moveFrom = null, moveAt = Date.now(), lookAt = 0;
   const halt = () => { for (const c of ['forward', 'sprint', 'jump']) b.setControlState(c, false); };
   const appear = async () => {   // đứt hẳn (member dịch chuyển / quá xa): xuất hiện gần member, chỗ có nền
     if (Date.now() - lastTp < 15000) return;
@@ -1137,12 +1137,13 @@ async function followLoop(n, b, w) {
   };
   const route = async (e) => {   // đứt vết: tìm đường (không đào, không đặt khối, rơi tối đa 2 khối)
     halt();
-    if (Date.now() - lastRoute < 12000) return;   // tìm đường nặng nhất: hỏng thì không thử lại liền (botfarm một luồng, 30/10 từng quá tải)
+    // tìm đường nặng nhất: hỏng thì không thử lại liền (botfarm một luồng, 30/10 từng quá tải); trong lúc chờ thì chạy thẳng, không đứng im
+    if (Date.now() - lastRoute < 12000) { if (Date.now() >= runUntil) { runUntil = Date.now() + 5000; runFrom = b.entity.position.clone(); } return; }
     lastRoute = Date.now(); crumbs = []; gap = false;
     const ok = await walkTo(b, e.position.x, e.position.y, e.position.z, 3, 6000, 5);   // 1/11: rơi tới 5 khối (bot bất tử): đồi dốc, member nhảy bậc cao
     moveAt = Date.now(); moveFrom = null;
     if (ok) tpFail = 0;
-    else runUntil = Date.now() + 5000;   // không ra đường: chạy thẳng tới member 5 giây (nền an toàn) trước khi tính tới dịch chuyển
+    else if (b.entity) { runUntil = Date.now() + 5000; runFrom = b.entity.position.clone(); }   // không ra đường: chạy thẳng tới member 5 giây (nền an toàn)
   };
   while (alive()) {
     await sleep(100);
@@ -1174,21 +1175,29 @@ async function followLoop(n, b, w) {
       const c = crumbs[i].p;
       if (Math.hypot(c.x - me.x, c.z - me.z) < 1.2 && Math.abs(c.y - me.y) < 1.5) { crumbs.splice(0, i); break; }
     }
-    if (now < runUntil && d >= 3.5) {   // chạy thẳng: nhìn member, có nền phía trước thì đi, vướng thì nhảy
+    // 1/11 chủ server: bám sát thì member tưởng admin đi theo: giữ khoảng cách đổi dần 5–13 khối, tới nơi đứng lại, member đi thêm 3 khối mới đi tiếp
+    if (now >= gapAt) { gapNow = 5 + Math.random() * 8; gapAt = now + 20000 + Math.random() * 25000; }
+    const near = gapNow + (holding ? 3 : 0);
+    if (now < runUntil && d >= near) {   // chạy thẳng: nhìn member, có nền phía trước thì đi, vướng thì nhảy
       const ax = e.position.x - me.x, az = e.position.z - me.z;
       b.look(Math.atan2(-ax, -az), 0, true).catch(() => {});
       const ok = safeAhead(b);
       b.setControlState('forward', ok); b.setControlState('sprint', ok); b.setControlState('jump', ok && (!moveFrom || me.distanceTo(moveFrom) < 0.3 || b.entity.isInWater));
       moveFrom = me.clone();
-      if (now >= runUntil - 150 && d > 10) await appear();
+      if (now >= runUntil - 150 && d > 16 && me.distanceTo(runFrom) < 4) await appear();   // 5 giây không nhích được: kẹt thật mới dịch chuyển
       continue;
     }
-    if (d < 3.5) {   // đủ gần: đứng nhìn member
-      tpFail = 0; runUntil = 0;
+    if (d < near) {   // đủ gần: đứng lại, lúc nhìn member lúc nhìn quanh (không nhìn chằm chằm)
+      tpFail = 0; runUntil = 0; holding = true;
       halt(); moveAt = now; moveFrom = null;
-      if (now - lookAt > 400) { lookAt = now; b.lookAt(e.position.offset(0, 1.6, 0)).catch(() => {}); }
+      if (now >= lookAt) {
+        lookAt = now + 1500 + Math.random() * 3000;
+        if (Math.random() < 0.5) b.lookAt(e.position.offset(0, 1.6, 0)).catch(() => {});
+        else b.look(Math.random() * Math.PI * 2, (Math.random() - 0.5) * 0.5, false).catch(() => {});
+      }
       continue;
     }
+    holding = false;
     while (crumbs.length && Math.hypot(crumbs[0].p.x - me.x, crumbs[0].p.z - me.z) < 0.6 && Math.abs(crumbs[0].p.y - me.y) < 1.5) crumbs.shift();
     const c = crumbs[0];
     if (!c) { if (d > 6) await route(e); else halt(); continue; }

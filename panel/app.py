@@ -1886,7 +1886,9 @@ def say_command(text, target, full, who):
 
 
 # Lệnh trả kết quả bất đồng bộ (gửi sau khi RCON đã đóng): LuckPerms. Server có DuckyMoMoCore chạy chúng qua /dmm console.
-ASYNC_CMD = re.compile(r"^(luckperms:)?(lp|luckperms|perm|perms|permission|permissions)\b", re.I)
+# 1/11: Towny cũng trả lời bất đồng bộ (/t, /ta, /n, /res, /plot…): RCON nhận chuỗi rỗng.
+ASYNC_CMD = re.compile(r"^((luckperms:)?(lp|luckperms|perm|perms|permission|permissions)"
+                       r"|(towny:)?(t|town|ta|townyadmin|n|nation|na|nationadmin|res|resident|plot|towny|tw))\b", re.I)
 CORE_SERVERS = {"lobby", "banghoi-1", "practice-1", "sangtao-1"}
 CONSOLE_NOISE = re.compile(r"RCON (Client|Listener)|issued server command|Async Chat Thread|\[Not Secure\]")
 CONSOLE_PREFIX = re.compile(r"^\[\d\d:\d\d:\d\d\] \[[^\]]*/(INFO|WARN|ERROR)\]: ")

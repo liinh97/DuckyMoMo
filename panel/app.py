@@ -2978,7 +2978,7 @@ def bot_action(body, who):
         if not uid:
             raise ValueError(f"Không thấy tài khoản {name} (phải vào Bang Hội Chiến ít nhất một lần, gõ đúng tên kể cả dấu chấm của Bedrock)")
         body = dict(body, uuid=uid, bot=real)
-    payload = {k: body.get(k) for k in ("bot", "action", "server", "text", "x", "z", "on", "min", "max", "khung", "silent", "nobye", "nohi", "uuid", "tron", "vaora", "phienMin", "phienMax") if body.get(k) is not None}
+    payload = {k: body.get(k) for k in ("bot", "action", "server", "text", "x", "z", "on", "min", "max", "khung", "silent", "nobye", "nohi", "uuid", "tron", "doiBo", "vaora", "phienMin", "phienMax") if body.get(k) is not None}
     req = urllib.request.Request(BOTFARM_URL + "/act", data=json.dumps(payload).encode("utf-8"), headers={"Content-Type": "application/json"}, method="POST")
     try:
         with urllib.request.urlopen(req, timeout=15) as r:

@@ -595,7 +595,15 @@ function autoTpa(name, from) {
   }, 4000 + Math.random() * 21000);
 }
 // Lời thoại: talks.js. 28/10 chủ server: tầm 5 tiếng mới lặp lại một đoạn → nhớ đoạn đã nói (chat-used.json), chỗ trống {CA} {VUNG}… điền ngẫu nhiên
-const { TALKS, SOLO, SLOTS, NHIET } = require('./talks');
+const { TINHNANG, BO, SLOTS, NHIET } = require('./talks');
+// 1/11 chủ server: đoạn nói tính năng game chỉ bot MỚI nói (mọi vai là bot mới); chuyện phiếm chia nhiều bộ, mỗi chatCfg.doiBo ngày (mặc định 3)
+// dùng một bộ rồi đổi, đỡ lặp. Bộ hiện tại hiện ở /bots (chat.bo).
+const allMoi = t => { const L = t.filter(x => typeof x === 'string'), m = {}; for (const l of L) m[l[0]] = 'moi'; return [m, ...L]; };
+const TN_MOI = TINHNANG.map(allMoi), NHIET_MOI = NHIET.map(allMoi);
+function curBo() {
+  const day = Math.floor((Date.now() + 7 * 3600e3) / 864e5), n = Math.max(1, chatCfg.doiBo || 3);
+  return BO[Math.floor(day / n) % BO.length];
+}
 // 30/10: Thân nhiệt đang bật không (hỏi /nhietdo qua RCON mỗi 10 phút; tắt thì báo "tạm tắt") -> đoạn chat NHIET chỉ nói khi bật
 let nhietOn = false;
 async function checkNhiet() {
@@ -682,13 +690,16 @@ async function chatOnce(force) {
     if (Math.random() >= g.all) return 'bỏ lượt chat (người chơi online đều đã chơi lâu, hệ số ' + g.all + ')';
   }
   for (let k = pool.length - 1; k > 0; k--) { const j = Math.floor(Math.random() * (k + 1)); [pool[k], pool[j]] = [pool[j], pool[k]]; }
-  const fit = (nhietOn ? TALKS.concat(NHIET) : TALKS).filter(t => assign(t, pool));
+  const bo = curBo();
+  const boFit = bo.talks.filter(t => assign(t, pool));
+  const tnFit = (nhietOn ? TN_MOI.concat(NHIET_MOI) : TN_MOI).filter(t => assign(t, pool));
+  const fit = tnFit.length && (!boFit.length || Math.random() < 0.25) ? tnFit : boFit;   // có bot mới: ~1/4 đoạn là hỏi đáp cách chơi
   let talk, who;
   if (pool.length >= 2 && Math.random() < 0.85 && fit.length) {
     const t = pickFresh(fit, talkKey);
     who = assign(t, pool); talk = fillSlots(LINES(t));
   } else {
-    talk = fillSlots(['A:' + pickFresh(SOLO, x => 'solo|' + x)]); who = { A: pool[0] };
+    talk = fillSlots(['A:' + pickFresh(bo.solo, x => 'solo|' + x)]); who = { A: pool[0] };
   }
   chatBusy = true;
   { const ws = [...new Set(Object.values(who))]; ws.forEach(x => { lastTalk[x] = { with: ws.filter(y => y !== x), at: Date.now() }; }); }
@@ -1242,6 +1253,11 @@ async function act(b) {
   if (b.action === 'chatcfg') {
     const min = Math.round(+b.min), max = Math.round(+b.max);
     if (b.on != null) chatCfg.on = !!b.on;
+    if (b.doiBo != null) {   // 1/11: số ngày đổi bộ chuyện phiếm
+      const d = Math.round(+b.doiBo);
+      if (!(d >= 1 && d <= 30)) throw new Error('số ngày đổi bộ chat từ 1 đến 30');
+      chatCfg.doiBo = d;
+    }
     if (b.min != null || b.max != null) {
       if (!(min >= 1 && max >= min && max <= 240)) throw new Error('khoảng phút không hợp lệ (1 ≤ từ ≤ đến ≤ 240)');
       chatCfg.min = min; chatCfg.max = max;
@@ -1484,7 +1500,7 @@ http.createServer((req, res) => {
           gan: !!st.gan, tay: !!st.tay, tron: !!st.tron };
       }),
       events: EVENTS.slice(-100),
-      chat: chatCfg,
+      chat: Object.assign({}, chatCfg, { bo: curBo().ten, soBo: BO.length }),
       tpa: tpaCfg,
       tpagia: ftpaCfg,
       chetgia: chetCfg,

@@ -118,7 +118,7 @@
     </form>
     <form id="tc" autocomplete="off" title="Cứ vài phút 2–3 bot đang cùng server nói một đoạn hội thoại soạn sẵn (chuyện vặt, mẹo chơi), gõ chậm như người. Đêm 1–7 giờ im.">
       <label class="chk"><input type="checkbox" id="tcOn"> Bot tự chat với nhau</label>
-      <span class="hint">mỗi</span><input id="tcMin" type="number" min="1" max="240"><span class="hint">–</span><input id="tcMax" type="number" min="1" max="240"><span class="hint">phút một đoạn</span>
+      <span class="hint">mỗi</span><input id="tcMin" type="number" min="1" max="240"><span class="hint">–</span><input id="tcMax" type="number" min="1" max="240"><span class="hint">phút một đoạn · đổi bộ chuyện mỗi</span><input id="tcBo" type="number" min="1" max="30" style="width:56px" title="Chuyện phiếm chia nhiều bộ, mỗi bấy nhiêu ngày đổi sang bộ khác cho đỡ lặp. Câu hỏi cách chơi chỉ bot mới nói."><span class="hint">ngày</span><span class="hint" id="tcBoNow"></span>
       <button type="submit" class="mini">Lưu</button>
       <button type="button" class="mini" id="tcNow" title="Cho 2–3 bot nói một đoạn ngay để xem thử">Chat thử</button>
       <label class="chk" title="Có người gửi /tpa tới bot: bot KHÔNG BAO GIỜ nhận (nhận thì lộ bot). Sau 4–25 giây tự /tpdeny, hoặc lơ cho lời mời tự hết hạn; mỗi bot một tỉ lệ riêng"><input type="checkbox" id="tpaOn"> Bot tự trả lời TPA</label>
@@ -290,7 +290,7 @@ $("mk").addEventListener("submit", async (ev) => {
 });
 $("tc").addEventListener("submit", (ev) => {
   ev.preventDefault();
-  act({ action: "chatcfg", on: $("tcOn").checked, min: +$("tcMin").value, max: +$("tcMax").value });
+  act({ action: "chatcfg", on: $("tcOn").checked, min: +$("tcMin").value, max: +$("tcMax").value, doiBo: +$("tcBo").value || 3 });
 });
 $("tcOn").onchange = () => act({ action: "chatcfg", on: $("tcOn").checked });
 $("tpaOn").onchange = () => act({ action: "tpacfg", on: $("tpaOn").checked });
@@ -365,6 +365,8 @@ async function loadBots() {
     devLabel();
     if (d.chat && !(document.activeElement && document.activeElement.closest("#tc"))) {
       $("tcOn").checked = !!d.chat.on; $("tcMin").value = d.chat.min; $("tcMax").value = d.chat.max;
+      if (document.activeElement !== $("tcBo")) $("tcBo").value = d.chat.doiBo || 3;
+      $("tcBoNow").textContent = d.chat.bo ? `· đang dùng bộ "${d.chat.bo}" (${d.chat.soBo} bộ)` : "";
     }
     if (d.tpa && document.activeElement !== $("tpaOn")) $("tpaOn").checked = !!d.tpa.on;
     $("ftpaOn").disabled = !d.tpagia;   // botfarm chưa có tính năng (chưa dựng lại)

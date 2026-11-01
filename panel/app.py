@@ -1923,7 +1923,7 @@ def console_after(log, start, wait=3.0):
 # ---------------------------------------------------------------- Bot (dịch vụ botfarm, chỉ trong mạng Docker)
 
 BOTFARM_URL = os.environ.get("BOTFARM_URL", "http://botfarm:8090")
-BOT_ACTIONS = {"join": "vào", "leave": "thoát", "server": "đổi server", "chat": "nói", "cmd": "gõ lệnh", "move": "đi tới", "home": "về chỗ", "sethome": "đặt chỗ", "random": "ra khu ngẫu nhiên",
+BOT_ACTIONS = {"join": "vào", "leave": "thoát", "server": "đổi server", "chat": "nói", "cmd": "gõ lệnh", "move": "đi tới", "home": "về chỗ", "vephong": "về phòng", "theocfg": "tự chạy theo", "theonow": "thử tự chạy theo", "sethome": "đặt chỗ", "random": "ra khu ngẫu nhiên",
                "create": "tạo bot", "remove": "xoá bot", "chatcfg": "cài bot tự chat", "chatnow": "cho bot chat thử", "tpacfg": "cài bot tự trả lời TPA", "ftpacfg": "cài bot tpa người chơi rồi tự huỷ", "chetcfg": "cài bot chết giả", "chetnow": "cho bot chết giả thử",
                "wandercfg": "cài bot đi dạo", "rotcfg": "cài thay phiên online", "wanderwalk": "cho bot đi dạo được đi lại", "wandernow": "cho bot đi dạo thử", "gomphong": "gom bot vào phòng ẩn", "trave": "trả bot về chỗ cũ",
                "theo": "chạy theo", "captk": "cấp tài khoản bot cho admin", "tratk": "trả tài khoản cho bot", "gan": "gắn tài khoản có sẵn", "bogan": "bỏ gắn tài khoản"}
@@ -2792,7 +2792,7 @@ def bot_msg_loop():
     seen = None
     while True:
         try:
-            ev = [e for e in bot_json().get("events", []) if e.get("type") in ("msg", "tpa")]
+            ev = [e for e in bot_json().get("events", []) if e.get("type") in ("msg", "tpa", "bidanh")]
             keys = {(e.get("ts"), e.get("bot"), e.get("type"), e.get("text")) for e in ev}
             if seen is not None:
                 for e in ev:
@@ -2800,7 +2800,9 @@ def bot_msg_loop():
                     if k in seen:
                         continue
                     who_ = str(e.get("from", "") or "")
-                    if e.get("type") == "msg":
+                    if e.get("type") == "bidanh":   # 1/11: người chơi đánh bot
+                        NOTIFIER.push("bidanh", f"🥊 {who_} đánh {e.get('bot')}", "Bot tự chạy trốn hoặc thoát game, xem ở trang Bot", tag="danh-" + str(e.get("bot")), url="bot")
+                    elif e.get("type") == "msg":
                         NOTIFIER.push("tinrieng", f"✉ {who_} nhắn riêng {e.get('bot')}", str(e.get("text", ""))[:180], tag="msg-" + str(e.get("bot")), url="bot")
                     else:
                         NOTIFIER.push("tinrieng", f"↪ {who_} gửi tpa cho {e.get('bot')}", "Trả lời ở trang Bot (/tpaccept, /tpdeny)", tag="tpa-" + str(e.get("bot")), url="bot")
@@ -3064,7 +3066,7 @@ def bot_action(body, who):
         if not uid:
             raise ValueError(f"Không thấy tài khoản {name} (phải vào Bang Hội Chiến ít nhất một lần, gõ đúng tên kể cả dấu chấm của Bedrock)")
         body = dict(body, uuid=uid, bot=real)
-    payload = {k: body.get(k) for k in ("bot", "action", "server", "text", "x", "z", "on", "min", "max", "khung", "silent", "nobye", "nohi", "uuid", "tron", "doiBo", "vaora", "phienMin", "phienMax") if body.get(k) is not None}
+    payload = {k: body.get(k) for k in ("bot", "action", "server", "text", "x", "z", "on", "min", "max", "khung", "silent", "nobye", "nohi", "uuid", "tron", "kieu", "doiBo", "vaora", "phienMin", "phienMax") if body.get(k) is not None}
     req = urllib.request.Request(BOTFARM_URL + "/act", data=json.dumps(payload).encode("utf-8"), headers={"Content-Type": "application/json"}, method="POST")
     try:
         with urllib.request.urlopen(req, timeout=15) as r:

@@ -1094,7 +1094,7 @@ async function startFollow(n, raw) {
   b.physicsEnabled = true;
   try { b.setSettings({ viewDistance: 'short' }); } catch (e) { /* bỏ qua */ }   // 4 chunk: thấy member và địa hình tới ~64 khối
   if (!b.pathfinder) b.loadPlugin(pathfinder);
-  b.pathfinder.thinkTimeout = 2000;
+  b.pathfinder.thinkTimeout = 2000; b.pathfinder.tickTimeout = 10; b.pathfinder.searchRadius = 32;   // tìm đường rải đều, không chiếm cả luồng
   event({ type: 'doi', bot: n, server: 'banghoi-1', text: n + ' chạy theo ' + who });
   followLoop(n, b, w).catch(e => log(n, 'chạy theo lỗi:', e.message)).finally(() => { if (rt.wander === w) stopFollow(n); });
   return n + ' chạy theo ' + who;
@@ -1110,7 +1110,7 @@ function stopFollow(n) {
 }
 async function followLoop(n, b, w) {
   const rt = RT[n], who = w.follow, R = rcon('banghoi-1'), alive = () => rt.bot === b && rt.wander === w;
-  let crumbs = [], lastRec = null, lastRecAt = 0, gap = true, seenAt = Date.now(), onlineAt = Date.now(), lastTp = 0, moveFrom = null, moveAt = Date.now(), lookAt = 0;
+  let crumbs = [], lastRec = null, lastRecAt = 0, gap = true, seenAt = Date.now(), onlineAt = Date.now(), lastTp = 0, lastRoute = 0, moveFrom = null, moveAt = Date.now(), lookAt = 0;
   const halt = () => { for (const c of ['forward', 'sprint', 'jump']) b.setControlState(c, false); };
   const appear = async () => {   // đứt hẳn (member dịch chuyển / quá xa): xuất hiện gần member, chỗ có nền
     if (Date.now() - lastTp < 15000) return;
@@ -1132,7 +1132,9 @@ async function followLoop(n, b, w) {
     moveAt = Date.now(); moveFrom = null;
   };
   const route = async (e) => {   // đứt vết: tìm đường (không đào, không đặt khối, rơi tối đa 2 khối)
-    halt(); crumbs = []; gap = false;
+    halt();
+    if (Date.now() - lastRoute < 12000) return;   // tìm đường nặng nhất: hỏng thì không thử lại liền (botfarm một luồng, 30/10 từng quá tải)
+    lastRoute = Date.now(); crumbs = []; gap = false;
     const ok = await walkTo(b, e.position.x, e.position.y, e.position.z, 3, 10000);
     moveAt = Date.now(); moveFrom = null;
     if (!ok && alive()) await appear();

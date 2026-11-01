@@ -55,7 +55,7 @@ function js(v) { gsub(/\\/, "\\\\\\\\", v); gsub(/"/, "\\\"", v); gsub(/[\001-\0
 
 (m == "join" || m == "all") && out == "" {
   if (line ~ /^\[connected player\] [^ ]+ .* has connected$/)         { split(line, a, " "); out = a[3] " vào network"; player = a[3] }
-  else if (line ~ /^\[connected player\] [^ ]+ .* has disconnected$/) { split(line, a, " "); out = a[3] " rời network"; player = a[3] }
+  else if (line ~ /^\[connected player\] [^ ]+ .* has disconnected(: .*)?$/) { split(line, a, " "); out = a[3] " rời network"; player = a[3] }   # 1/11: bị đá có kèm lý do
   else if (line ~ /^\[server connection\] [^ ]+ -> [^ ]+ has connected$/) { split(line, a, " "); out = a[3] " → " a[5]; player = a[3]; target = a[5] }
   else if (line ~ /^[^ ]+ lost connection: /) { out = line; sub(/ lost connection: /, " mất kết nối: ", out); player = line; sub(/ .*/, "", player) }
   if (out != "") { tag = "VÀO/RA"; type = "join" }

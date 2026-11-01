@@ -23,8 +23,8 @@
 10. Đề xuất nhỏ đang treo: tăng số làng; nâng giá bán cá EMF (đang 0,06–0,6 xu/cm); sửa lịch thi câu cho khớp (/hd ghi T7 CN 20h, menu ghi "tối nào 20:30"; thật: T3/T4/T6 20:30, T7/CN 20:00); bấm tên trong chat -> điền /msg; bớt báo Grim (KHÔNG bật setback: người chơi bản 1.21.11 qua Via bị báo nhầm rất nhiều, xem dưới).
 
 **Tồn từ trước, chưa làm:**
-11. Màn hình bị đá kiểu UniMC cho Velocity lang, Sonar, AuthMe, Essentials ban, whitelist/restart (chủ server bảo "làm tất cả").
-12. ĐÃ LÀM 1/11 13:32: khởi động lại proxy (BotCount) + tạo lại relay; tu-sua --kiem-tra: mọi cổng trả lời. Chưa kiểm số online trên danh sách server có cộng bot đúng không.
+11. ĐÃ LÀM 1/11 13:47 (commit 66ad766, proxy + relay đã khởi động lại): màn hình bị đá chung khung (core-velocity KickScreen, Velocity lang, Sonar; chi tiết: cẩm nang). CHƯA thấy tận mắt trong game. Câu tiếng Việt ở data/<server>/spigot.yml + bukkit.yml chỉ có hiệu lực sau lần khởi động lại từng server tới.
+12. ĐÃ LÀM 1/11 13:32: khởi động lại proxy (BotCount) + tạo lại relay; tu-sua --kiem-tra: mọi cổng trả lời. Đã kiểm 1/11: ping qua máy nhà và VPS đều 40 = 39 bot + 1 người thật, khớp /list.
 
 ### Tóm tắt phiên (31/10 tối → 1/11)
 - **Set Thần Nông** (thannong, bậc 6, requires nonggia, +0..+5; tools/thoren/gen_thannong.py chạy trong container panel rồi `dmm thuvien nap`): 30 món tn_{mu,ao,quan,giay,cuoc}_N (khoá "cuoc" như Nông Gia để nâng từ Nông Gia +4), 10 mảnh Lão Nông mới (cu_den, bi_vang, dua_ngot, duong_mia, ca_cao, qua_mong, nam_dia_nguc, qua_sang, tao_bien, qua_chorus), tinh thể ngu_coc / qua_linh / than_moc (Kim Hoàn), hat_than. ThoRen.java: `tho-ren.harvest-drop` {item hat_than, chance 0.0667 = 1/1.500, season-mult 2 (Seasons.growthOf > 1), scythe-prefix tn_cuoc_, scythe-radius 2}: Hạt chỉ rơi khi TỰ gặt cây chín (BlockDropItemEvent, Survival); Lưỡi hái gặt 5×5 bằng Player#breakBlock (có sự kiện, Towny chặn được) + gieo lại; bonus `thu-hoach` > 100 = chắc gấp đôi + % gấp ba; bonus mới `lon-nhanh` = % cây trong 5 ô lớn 1 nấc mỗi 4 giây. Cân bằng: +5 ≈ dưới Tinh Anh +5, cả bộ +5 ~1 tháng (xu ~265k là chặn chính). Không có hút máu (CE Vampire chỉ cho kiếm).

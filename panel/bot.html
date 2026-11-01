@@ -89,6 +89,28 @@
   #rot .rot-row.now { color: var(--accent, #e8791d); }
   #rot .rot-row.now .hint.tag { color: inherit; }
   label.chk { display: inline-flex; gap: 6px; align-items: center; font-size: 12.5px; color: var(--muted); font-weight: 400; }
+  /* 1/11: mỗi bot: tên + trạng thái ở trên, nút ở dưới */
+  #bots table, #bots tbody, #bots tr, #bots td { display: block; width: auto; }
+  #bots tr { padding: 8px 12px; border-bottom: 1px solid var(--line-2); }
+  #bots td { padding: 0; border: 0; }
+  #bots td.name { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 8px; margin-bottom: 6px; }
+  #bots td.name .dot { margin-right: 0; }
+  #bots .towntag, #bots .gantag, #bots .memtag, #bots .devtag { display: inline; margin: 0; }
+  #bots td .err { max-width: 100%; }
+  #bots td .atsp { margin: 0; }
+  details#cfg > summary { padding: 8px 14px; font-size: 13px; font-weight: 600; cursor: pointer; border-bottom: 1px solid var(--line-2); }
+  @media (max-width: 700px) {
+    #bots { max-height: none; }
+    .card h3 .sp { margin-left: 0; flex-wrap: wrap; }
+    #bots .acts { gap: 6px; }
+    #bots .acts button { padding: 7px 10px; font-size: 13px; }
+    #mk input { width: 100%; }
+    #feed { height: 60vh; }
+    .ln { grid-template-columns: 54px minmax(0, 1fr); gap: 2px 6px; padding: 5px 10px; }
+    .ln .tg { justify-self: start; padding: 1px 6px; }
+    .ln .tx { grid-column: 1 / -1; }
+    #say input#txt { min-width: 100%; }
+  }
 </style>
 <link rel="stylesheet" href="ui.css">
 </head>
@@ -102,6 +124,7 @@
       <button class="mini" id="allLeave">Thoát tất cả</button>
       <button class="mini" id="devToggle" title="Bot tự tăng số liệu dần như người thật (mỗi bot một tính cách, nhịp riêng). Bấm: đang bật hết thì tắt hết, còn lại thì bật cho mọi bot. Bật / tắt từng bot ở nút trong danh sách.">Tự phát triển: …</button>
       <button class="mini" id="devPast" title="Mỗi bot đang tự phát triển được giả lập 0–40 giờ đã chơi theo tính cách (một lần duy nhất)">Tạo quá khứ</button></span></h3>
+    <details id="cfg" open><summary>Cài đặt bot</summary>
     <div class="note">Bot không tự làm gì. Ở Bang Hội Chiến mỗi bot tự đứng một khu riêng (gần các điểm warp). Bot vào thẳng server con nên không tính vào số người ở danh sách server; đứng yên nên không tính giờ chơi.</div>
     <form id="mk" autocomplete="off" title="Bot mới làm y như bot cũ: vào / ra không báo, Sáng tạo + bất tử, tự đăng ký ở Sảnh">
       <input id="mkName" placeholder="Tên bot mới (vd Quoc_Bao)" maxlength="16" pattern="[A-Za-z0-9_]{3,16}">
@@ -148,6 +171,7 @@
       <div id="rotSlots"></div>
       <span class="hint" id="rotHint"></span>
     </form>
+    </details>
     <div id="memberOn" class="memberon"></div>
     <div id="bots"><div class="empty">Đang tải…</div></div>
   </div>
@@ -169,7 +193,7 @@
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 let BOTS = [], GANS = [], SERVERS = {}, busy = false, MEMBER = {}, MEMBER_ON = [];
-let THAT = [];
+let THAT = [], DANG = [];
 
 async function act(body, quiet) {
   try {
@@ -216,16 +240,18 @@ let DEV_STATE = {}, TOWNS = {}, TOWN_LIST = [];
 function renderBots() {
   if (!BOTS.length) return;
   const sel = $("who").value;
-  let h = '<table><thead><tr><th>Bot</th><th>Server</th><th>Vị trí</th><th>Thao tác</th></tr></thead><tbody>';
+  let h = '<table><tbody>';
   const fl = $("bfilter").value;   // 1/11: lọc online / offline
   for (const b of [...GANS, ...BOTS]) {
     if ((fl === "on" && !b.online) || (fl === "off" && b.online)) continue;
     const st = b.online || b.tuchoi ? "on" : (b.want || b.connecting) ? "wait" : "";
-    const pos = b.online && b.x != null ? `${b.x} ${b.y} ${b.z}${b.away ? " · đang ở chỗ khác" : ""}` : (b.want ? "đang vào…" : "—");
+    // 1/11: chỉ báo khi bot KHÔNG ở chỗ tập trung (phòng ẩn); server chỉ ghi khi khác Bang Hội Chiến
+    const toaDo = b.x != null ? `Toạ độ ${b.x} ${b.y} ${b.z}` + (b.home ? ` · chỗ mặc định ${b.home.join(" ")}` : "") : "";
+    const ngoai = b.online && !b.gan && b.server === "banghoi-1" && (!b.home || Math.hypot(b.x - b.home[0], b.z - b.home[2]) > 8);
+    const vt = !b.online ? (b.want && !b.tuchoi ? "Đang vào…" : "") : b.follow ? "Đang theo " + b.follow : DANG.includes(b.name) ? "Đi dạo" : !ngoai ? "" : b.spawn ? "Ở spawn" : "Ở ngoài";
+    const svTag = b.server && b.server !== "banghoi-1" ? `<span class="atsp">${esc(SERVERS[b.server] || b.server)}</span>` : "";
     h += `<tr data-n="${esc(b.name)}"${b.name === sel ? ' class="sel"' : ""}>
-      <td class="name"><span class="dot ${st}"></span><b>${esc(b.name)}</b>${b.err && !b.online ? `<span class="err" title="${esc(b.err)}">${esc(b.err)}</span>` : ""}${b.gan ? `<span class="gantag" title="Tài khoản người thật; server tính như người chơi">⚑ tài khoản gắn${b.tuchoi ? " · đang tự chơi ở " + esc(SERVERS[b.tuchoi] || b.tuchoi) + " (chat qua sudo)" : ""}</span>` : ""}${b.tay ? '<span class="gantag" title="Đã cấp mật khẩu cho admin chơi tay; botfarm không cho vào">⚑ admin đang giữ</span>' : ""}${(MEMBER[b.name] || []).length ? `<span class="memtag" title="Member gắn với bot này: vào game thì trang báo nên dùng bot này">👥 ${esc(MEMBER[b.name].join(", "))}</span>` : ""}${devTag(b.name)}${TOWNS[b.name] ? `<span class="towntag" title="Thị trấn (Towny)">⌂ ${esc(TOWNS[b.name])}</span>` : ""}</td>
-      <td><select data-a="server">${srvOptions(b.server)}</select></td>
-      <td>${b.online && b.spawn ? `<span class="atsp" title="Đang đứng ở khu spawn${b.server === "banghoi-1" ? " — bấm Ngẫu nhiên để ra khu riêng" : ""}">Ở spawn</span>` : ""}<span class="pos" title="${b.home ? "Chỗ mặc định: " + b.home.join(" ") : ""}">${esc(pos)}</span></td>
+      <td class="name"><span class="dot ${st}"></span><b>${esc(b.name)}</b>${svTag}${vt ? `<span class="atsp" title="${esc(toaDo)}">${esc(vt)}</span>` : ""}${b.err && !b.online ? `<span class="err" title="${esc(b.err)}">${esc(b.err)}</span>` : ""}${b.gan ? `<span class="gantag" title="Tài khoản người thật; server tính như người chơi">⚑ tài khoản gắn${b.tuchoi ? " · đang tự chơi ở " + esc(SERVERS[b.tuchoi] || b.tuchoi) + " (chat qua sudo)" : ""}</span>` : ""}${b.tay ? '<span class="gantag" title="Đã cấp mật khẩu cho admin chơi tay; botfarm không cho vào">⚑ admin đang giữ</span>' : ""}${(MEMBER[b.name] || []).length ? `<span class="memtag" title="Member gắn với bot này: vào game thì trang báo nên dùng bot này">👥 ${esc(MEMBER[b.name].join(", "))}</span>` : ""}${devTag(b.name)}${TOWNS[b.name] ? `<span class="towntag" title="Thị trấn (Towny)">⌂ ${esc(TOWNS[b.name])}</span>` : ""}</td>
       <td><div class="acts">${acts(b)}</div></td></tr>`;
   }
   $("bots").innerHTML = h + "</tbody></table>";
@@ -258,7 +284,7 @@ $("bots").addEventListener("click", async (ev) => {
   }
   const btn = ev.target.closest("button[data-a]"); if (!btn) return;
   const name = btn.closest("tr").dataset.n, a = btn.dataset.a;
-  const server = btn.closest("tr").querySelector('select[data-a="server"]').value;
+  const server = ([...GANS, ...BOTS].find((x) => x.name === name) || {}).server || "banghoi-1";
   if (a === "pick") { $("who").value = name; $("txt").focus(); renderBots(); return; }
   if (a === "hoso") return openProfile(name);
   if (a === "gmc" || a === "gms") return act({ bot: name, action: "gm", mode: a === "gmc" ? "c" : "s" });
@@ -381,11 +407,12 @@ $("devPast").onclick = async () => { if (await ask("Tạo quá khứ cho các bo
 $("allJoin").onclick = async () => { if (await ask(`Cho cả ${BOTS.length} bot vào game (mỗi bot vào server đang chọn của nó)?`, { title: "Vào tất cả", ok: "Vào" })) act({ bot: "*", action: "join" }); };
 $("allLeave").onclick = async () => { if (await ask("Cho mọi bot thoát game?", { title: "Thoát tất cả", ok: "Thoát" })) act({ bot: "*", action: "leave" }); };
 
+if (innerWidth <= 700) $("cfg").removeAttribute("open");   // 1/11: điện thoại: gập phần cài đặt để thấy danh sách bot ngay
 async function loadBots() {
   try {
     const d = await (await fetch("api/bot")).json();
     if (!d.ok) { $("bots").innerHTML = `<div class="empty">${esc(d.message || "Không tải được")}</div>`; return; }
-    SERVERS = d.servers || {}; BOTS = d.bots || []; GANS = d.gan || []; MEMBER = d.member || {}; MEMBER_ON = d.member_on || []; THAT = d.that || []; EVENTS = d.events || []; DEV_STATE = d.phattrien || {}; TOWNS = d.thitran || {}; TOWN_LIST = d.ds_thitran || [];
+    SERVERS = d.servers || {}; BOTS = d.bots || []; GANS = d.gan || []; MEMBER = d.member || {}; MEMBER_ON = d.member_on || []; THAT = d.that || []; DANG = (d.dido && d.dido.dang) || []; EVENTS = d.events || []; DEV_STATE = d.phattrien || {}; TOWNS = d.thitran || {}; TOWN_LIST = d.ds_thitran || [];
     if ($("fsrv").options.length === 1) for (const [k, v] of Object.entries(SERVERS)) $("fsrv").add(new Option(v, k));
     if (!$("mkSrv").options.length) for (const [k, v] of Object.entries(SERVERS)) $("mkSrv").add(new Option(v, k));
     if (!$("ganSrv").options.length) for (const [k, v] of Object.entries(SERVERS)) if (k !== "lobby") $("ganSrv").add(new Option(v, k));

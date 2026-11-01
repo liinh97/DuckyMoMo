@@ -716,9 +716,9 @@ Admin (quyền duckymomo.sell.khonggioihan) không bị giới hạn." }
       - { key: boom_tntcart, label: "Xe goòng TNT: hệ số sát thương", type: number, min: 0, max: 1, file: plugins/DuckyMoMoCore/config.yml, path: explosive-pvp.tnt-minecart }
 
   - title: Chống thoát game khi đánh nhau (PvPManager)
-    info: "Cờ giao tranh: đang đánh nhau mà thoát game để né chết thì vẫn chết và rơi đồ.\nBảo vệ người mới: người mới không bị đánh vài phút đầu."
+    info: "Cờ giao tranh: đang đánh nhau bị cấm dịch chuyển (nếu cấm); thoát game có chết hay không tuỳ ô bên dưới.\nBảo vệ người mới: người mới không bị đánh vài phút đầu."
     category: PvP & combat
-    description: Bị đánh thì gắn cờ giao tranh; thoát game lúc đó thì chết và rơi đồ. Người mới được bảo vệ khỏi PvP một thời gian.
+    description: Bị đánh thì gắn cờ giao tranh; thoát game lúc đó có chết hay không tuỳ cài đặt. Người mới được bảo vệ khỏi PvP một thời gian.
     apply: [pmr reload]
     settings:
       - { key: pvp_tag_seconds, info: "Là gì: bị đánh hoặc đánh người khác thì bị \"gắn cờ\" ngần này giây.\nTrong lúc gắn cờ: thoát game thì chết rơi đồ (nếu bật), không dịch chuyển được (nếu cấm).", label: Thời gian gắn cờ giao tranh (giây), type: int, min: 5, max: 120, file: plugins/PvPManager/config.yml, path: Combat Tag.Time }

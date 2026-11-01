@@ -312,7 +312,7 @@ chapters:
     &1/server banghoi-1
     &1/server practice-1
     &0Đồ, tiền mỗi chế độ riêng&r&0, không mang qua lại.
-    &4Lưu ý: &0đang giao tranh mà đổi server = thoát game lúc đánh nhau (chết, rơi đồ).
+    &4Lưu ý: &0đang giao tranh không dịch chuyển được.
   - |-
     &6Lệnh chung
     &1/msg <tên> <tin> &0nhắn riêng
@@ -413,7 +413,7 @@ chapters:
   - |-
     &6Đánh nhau
     &0Bị đánh thì bị gắn cờ giao tranh&r&0 15 giây:
-    &4thoát game lúc này là chết, rơi đồ.
+    &0thoát game lúc này không bị phạt.
     &0Đang giao tranh không dịch chuyển được.
     &0Combat kiểu 1.8&r&0: bấm nhanh, không hồi chiêu.
     &1/pvpstatus &0xem trạng thái.

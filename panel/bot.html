@@ -95,12 +95,17 @@
   #bots td { padding: 0; border: 0; }
   #bots td.name { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 8px; margin-bottom: 6px; }
   #bots td.name .dot { margin-right: 0; }
+  #bots td.name b { font-size: 15px; font-weight: 700; }
+  #bots .towntag, #bots .gantag, #bots .memtag, #bots .devtag { font-size: 12px; }
   #bots .towntag, #bots .gantag, #bots .memtag, #bots .devtag { display: inline; margin: 0; }
   #bots td .err { max-width: 100%; }
   #bots td .atsp { margin: 0; }
   details#cfg > summary { padding: 8px 14px; font-size: 13px; font-weight: 600; cursor: pointer; border-bottom: 1px solid var(--line-2); }
   @media (max-width: 700px) {
     #bots { max-height: none; }
+    #bots td.name b { font-size: 17px; }
+    #bots .towntag, #bots .gantag, #bots .memtag, #bots .devtag { font-size: 13px; }
+    #bots .dot { width: 11px; height: 11px; }
     .card h3 .sp { margin-left: 0; flex-wrap: wrap; }
     #bots .acts { gap: 6px; }
     #bots .acts button { padding: 7px 10px; font-size: 13px; }

@@ -2943,6 +2943,11 @@ def bot_action(body, who):
             raise ValueError("Tên bot 3–16 ký tự, chỉ chữ không dấu, số, gạch dưới")
         if name.lower() in known_player_names():
             raise ValueError(f"Tên {name} đã có tài khoản trong game (người chơi hoặc bot cũ), chọn tên khác")
+    if act == "join":   # 1/11: tài khoản gắn đang được chủ tài khoản chơi thật thì KHÔNG cho botfarm vào (vào là đá người ta ra)
+        nm = str(body.get("bot", "")).strip()
+        if any(str(g.get("name", "")).lower() == nm.lower() and not g.get("online") for g in bot_json().get("gan", [])) \
+                and nm.lower() in online_players(fresh=True):
+            raise ValueError(f"{nm} đang tự chơi trong game. Thoát game trước rồi mới bấm Vào (botfarm vào sẽ đá người đang chơi ra).")
     if act == "gan":   # 1/11: gắn tài khoản người thật có sẵn: phải từng vào Bang Hội Chiến (lấy UUID thật, Bedrock cần)
         name = str(body.get("bot", "")).strip()
         uid, real = _bot_uuid(name)
